@@ -1619,8 +1619,8 @@
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<))
-    ++  dead-hiss  |=(a=tang (give-sigh:abet %| a))
     ++  dead-this  |=(a=tang (fail:abet 500 0v0 a))
+    ++  dead-hiss  |=(a=tang (give-sigh:abet(req ~(nap to req)) %| a))
     ++  pass-note  |=([a=whir-se b=note] (pass-note:abet se/[a usr dom] b))
     ++  eyre-them  |=([a=whir-se b=vase] (eyre-them:abet se/[a usr dom] b))
     ::  XX block reqs until correct core checked in?
@@ -1679,12 +1679,34 @@
       =.  ..vi  (cast-thou(hen p.ole) q.ole httr/vax)    :: error?
       pump
     ::
-    ++  on-error
-      |=  [err=$+(tang _abet) try=$+(vase _abet)]
+    ++  on-ford-fail
+      |=  [err=$+(tang _abet) try=$+((each cage tang) _abet)]
       |=  a=(each cage tang)  ^+  abet
+      ?-(-.a %| (err p.a), %& (try a))
+    ::
+    ++  on-error
+      |=  [err=$+(tang _abet) handle-move=_|.(|+(vase:sec-move abet))]
+      |=  a=(each cage tang)  ^+  abet
+      =+  try=(possibly-stateful |=(b=_self (handle-move(+ b))))  :: XX types
       ?:  ?=(%| -.a)  (err p.a)
       =-  ?-(-.- %& p.-, %| (err p.-))
       (mule |.(~|(driver/dom ~|(bad-res/p.q.p.a (try q.p.a)))))
+    ::
+    ++  possibly-stateful
+      |=  han=_|+(_self |+(vase:sec-move abet))  :: XX |.(|+(vase:sec-move abet))
+      |=  res=vase  ^+  abet
+      ?:  ?=([@ *] q.res)
+        =.  p.res  (~(fuse ut p.res) p:!>(*[@ *]))
+        ((han self) res)
+      ?.  ?=([[@ *] *] q.res)
+        ~|(%misshapen-result !!)
+      =.  p.res  (~(fuse ut p.res) p:!>(*[[@ *] *]))
+      =+  [mow=(slot 2 res) roc=(slot 3 res)]
+      =-  ((han self(cor (some roc))) mow):+  ::  XX better stateless asserts
+      ?~  cor  ~|(%lost-core !!)
+      ~|  %core-mismatch
+      ?>  (~(nest ut p.u.cor) & p.roc)
+      ~
     ::
     ++  allow
       |=  a=(list ,[p=term q=$+(vase _abet)])
@@ -1700,17 +1722,11 @@
       $(a t.a)
     ::
     ++  res-in
-      %+  on-error  dead-this
+      %+  on-error  dead-this  |.
       (allow send/(do-send %in) ~)
     ::
-    ++  do-send
-      |=  wir=whir-se  ^-  $+(vase _abet)
-      |=  res=vase
-      (eyre-them wir (slam !>(|=([%send a=hiss] a)) res))
-    ::
     ++  res-res
-      %+  on-error  |=(a=tang (dead-hiss(req ~(nap to req)) a))
-      %-  stateful  |=  a=_self  =>  a
+      %+  on-error  dead-hiss  |.
       %-  allow  :~
         give/do-give
         send/(do-send %out)
@@ -1718,32 +1734,25 @@
       ==
     ::
     ++  res-bak
-      %+  on-error  dead-this
-      %-  stateful  |=  a=_self  =>  a
+      %+  on-error  dead-this  |.
       %-  allow  :~
         give/do-give
         redo/,_pump(..vi (give-html 200 ~ exit:xml))
       ==
     ::
-    ++  stateful
-      |=  han=$+(_self $+(vase:sec-move _abet))
-      |=  res=vase  ^+  abet
-      ?~  cor  ~|(%lost-core !!)
-      =^  mow  u.cor
-        ~|(%split [mow=(slot 2 res) cor=(slot 3 res)])
-      ((han self(cor cor)) mow)
-    ::
     ++  res-out
-      |=  a=(each cage tang)  ^+  abet
-      ?:  ?=(%| -.a)
-        (dead-hiss(req ~(nap to req)) p.a)
-      %.  a
-      %+  on-error  warn
+      %+  on-ford-fail  dead-hiss
+      %+  on-error  warn  |.
       %-  allow  :~
         give/do-give
         send/(do-send %out)
         show/do-show
       ==
+    ::
+    ++  do-send
+      |=  wir=whir-se  ^-  $+(vase _abet)
+      |=  res=vase
+      (eyre-them wir (slam !>(|=([%send a=hiss] a)) res))
     ::
     ++  do-show  (discard-with !>(auth-print))
     ++  discard-with
@@ -1770,6 +1779,7 @@
       :^  %mute  core/[root-beak (flop %_(dom . sec/dom))]
         [~[`12] `bale/!>(*(bale ,@))]  :: XX specify on type?
       ?~  cor  ~
+      ?:  (~(has in (sa (sloe p.u.cor))) %wipe)  ~      ::  XX proper adapt
       [~[`13] `noun/(slot 13 u.cor)]~
     ::
     ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) hen a)))

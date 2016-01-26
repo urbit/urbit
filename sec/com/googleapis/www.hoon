@@ -42,7 +42,7 @@
   ::
   ==
 ++  redirect-uri  'http://localhost:8443/~/ac/www.googleapis.com/_state'
-++  user-state  ,[ber=@t ref=@t ded=@da]
+++  user-state  ,[ber=@t ded=@da ref=[token=@t pending=?]]
 --
 ::
 ::::
@@ -54,12 +54,16 @@
 ::
 ++  need-refresh  (lth ded (add now ~m1))
 ++  out
-  |=  a=hiss  ^-  sec-move
-  ?~  ber  [%show (auth-url usr client-id 'userinfo.email' 'plus.me' ~)]
+  |=  a=hiss  ^-  [sec-move _+>]
+  =-  [mov +>.$(pending.ref is-ref)]
+  ^-  [is-ref=? mov=sec-move]
+  ?~  ber  [| [%show (auth-url usr client-id 'userinfo.email' 'plus.me' ~)]]
   ?:  need-refresh
-    [%send toke-url (toke-req refresh-token/ref grant-type/'refresh_token' ~)]
-  [%send %_(a q.q (~(add ja q.q.a) %authorization (cat 3 'Bearer ' ber)))]
+    [& [%send toke-url refresh-req]]
+  =.  q.q.a  (~(add ja q.q.a) %authorization (cat 3 'Bearer ' ber))
+  [| [%send a]]
 ::
+++  refresh-req  (toke-req refresh-token/token.ref grant-type/'refresh_token' ~)
 ++  toke-req
   |=  quy=quay  ^-  moth 
   :+  %post  (mo ~[content-type/~['application/x-www-form-urlencoded']])
@@ -76,19 +80,19 @@
   [%send toke-url (toke-req code/cod grant-type/'authorization_code' ~)]
 ::
 ++  res
-  |=  a=httr  ^-  [sec-move _+>]
-  ?:  need-refresh
-    ?:  (bad-response p.a)  [[%redo ~] +>.$]  ::  handle 4xx?
-    ~|  %refreshed-token
-    [[%redo ~] (new-token a)]
-  [[%give a] +>.$]
+  |=  a=httr  ^-  $&([sec-move _+>] sec-move)
+  ?.  pending.ref  [%give a]
+  ?:  (bad-response p.a)  [%redo ~]  ::  handle 4xx?
+  ~|  %refreshed-token
+  =.  pending.ref  |
+  [[%redo ~] (new-token a)]
 ::
 ++  bad-response  |=(a=@u ?:(=(2 (div a 100)) | ~&(bad-httr/a &)))
 ++  new-token
   |=  a=httr  ^+  +>
   =+  `[typ=term ber=@t tim=@u]`(grab a parse-toke)
   ?>  ?=(%bearer typ)
-  +>.$(ber ber, ded (add now (mul ~s1 tim)))
+  +>.$(ber ber, ded (add now (mul ~s1 tim)), pending.ref |)
 ::
 ++  grab
   |*  [a=httr b=fist:jo]
@@ -104,7 +108,9 @@
 ::
 ++  bak
   |=  a=httr  ^-  [sec-move _+>]
-  ?:  (bad-response p.a)  [[%redo ~] +>.$]  ::  handle 4xx?
-  =.  ref  (grab a (ot 'refresh_token'^so ~):jo)
-  [[%redo ~] (new-token a)]
+  :-  [%redo ~]
+  ?:  (bad-response p.a)  +>.$  ::  handle 4xx?
+  =.  token.ref  (grab a (ot 'refresh_token'^so ~):jo)
+  (new-token a)
+::++  wipe  ~
 --
