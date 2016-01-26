@@ -1070,10 +1070,10 @@ A few digraphs also have irregular sounds:
     ==  stet
     --  shed
     ++  slus
-    ->  dart
-    -<  dusk
-    +>  lark
-    +<  lush
+    ->  lark
+    -<  lush
+    +>  dark
+    +<  dush
 
 Hoon defines over 100 digraph ideograms (like `|=`). Ideograms
 (or *runes*) have consistent internal structure; for instance,
