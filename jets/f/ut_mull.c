@@ -505,6 +505,11 @@
         u3_noun typ = u3qfu_play(van, sut, gen);
         return _mull_both(van, gol, typ);
       }
+      case c3__hand: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mull_used();
+      {
+        return u3nc(u3k(p_gen), u3k(p_gen));
+      }
       case c3__ktbr: p_gen = u3t(gen);
       _mull_used();
       {
