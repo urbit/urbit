@@ -1,0 +1,352 @@
+//
+// fonts first
+//
+
+@import 'fonts'
+
+html
+body
+input
+label
+button
+  font-family "bau"
+  font-size 18px
+
+#c
+  position absolute
+  top 0rem
+  left 50%
+  width 34rem
+  margin-left -17rem
+  margin-bottom 12rem
+
+h1
+  font-weight 500
+
+input
+button
+.input
+  outline none
+  border 0
+
+h1.leader:after
+  content "—"
+  margin-left .6rem
+
+.ctrl .sort label
+.ctrl .filter label
+  text-transform capitalize
+  font-size 1rem
+  letter-spacing .07rem
+
+.item .status
+  text-transform uppercase
+  font-size .7rem
+  letter-spacing .07rem
+
+.ctrl
+  margin-top 2rem
+  
+  h1
+    font-size 1rem
+  
+  .sorts
+  .filters
+    margin-left -.3rem
+  
+  .sorts
+    margin-top 1rem
+  
+  .sort
+  .filter label
+    font-weight 500
+  
+  .filter
+    line-height 2rem
+    margin-right 1rem
+    vertical-align middle
+    
+  .sort
+    border 0
+    cursor pointer
+    background-color #000
+    color #fff
+    margin-right 1rem
+    
+  .filter label
+    margin-right .3rem 
+    
+  .sort label
+  .filter label
+    line-height 2rem
+  
+  .sort.s-1
+  .sort.s--1
+    label
+      margin-right .3rem
+      cursor pointer
+
+.input-bool
+  opacity .3
+
+.input-bool.true
+.input-bool.false
+  opacity 1
+  
+
+.input-bool
+.item .done
+  width 1rem
+  height 1rem
+  border .2rem solid #ccc
+  padding 0
+  outline none
+  background-color #fff
+
+.input-bool.true
+.item .done-true
+  background-color #ccc
+  
+.items
+  margin-top 2rem
+  margin-left -2rem
+
+.item
+  display block
+  min-height 3rem
+  max-height 3rem
+  margin-bottom 1.5rem
+  width 36rem
+  overflow hidden
+  background-color #fff
+  transition max-height 200ms linear
+  
+  .description
+  .discussion
+    transition visibility 0s linear 200ms
+    visibility hidden
+
+  &.expand
+    max-height 24rem
+    transition max-height 200ms linear
+    
+    .description
+    .discussion
+      transition visibility 0s
+      visibility visible
+
+  .expand
+    margin-left 2rem
+    cursor pointer
+    transform-origin 6px 12px
+    transition transform 200ms linear
+    -webkit-transform-origin 6px 12px
+
+  &.expand .expand
+    transform rotate(90deg)
+    -webkit-transform rotate(90deg)
+    transition transform 200ms linear
+  
+  .header
+    display block
+    width 100%
+    height 1rem
+    overflow hidden
+    white-space nowrap
+
+  .sort
+  .title
+  .date
+  .tags
+  .comment
+    line-height 2rem
+
+  .sort
+  .date
+    font-family 'scp'
+
+  .creator
+  .audience
+  .date
+  .ship
+    font-size .7rem
+
+  .sort
+    opacity 0
+    width 1rem
+    height .2rem
+    background-color #e0e0e0
+    border-top .2rem solid #ccc
+    border-bottom .2rem solid #ccc
+    margin 0 .5rem
+    margin-top -.6rem    
+
+  &:hover .sort
+    opacity 1
+  
+  .done
+    margin-top .5rem
+
+  .creator
+  .audience
+  .date
+  .ship
+    text-transform uppercase
+    height 1rem
+    letter-spacing .07rem
+  
+  .creator
+    max-width 7rem
+    margin 0 1rem 0 2rem
+  
+  .label
+    font-style italic
+    color #555
+  
+  &:hover .action-true .label
+  .action
+    display none
+  
+  &:hover .action-true .action
+    display inline-block
+
+  .audience
+    margin-left 2.2rem
+    width 24rem
+  
+  .audience .input
+    background-color transparent
+  
+  .title
+  .date
+  .tags
+    overflow hidden
+    white-space nowrap
+    height 2rem
+
+  .title
+    width 16rem
+    margin-left .5rem
+
+  .date
+  .tags
+    max-width 6rem
+    min-width 6rem
+
+  .description
+  .discussion
+    line-height 2rem
+    margin .5rem 0 .5rem 2rem
+  
+  .discussion
+    max-height 9rem
+    overflow-x hidden
+    overflow-y scroll
+  
+  .description textarea
+    min-width 32rem
+    min-height 6rem
+
+  .comp
+    width 3rem
+    opacity 0
+    .a
+      display block
+      font-size .7rem
+      font-weight 500
+      line-height .9rem
+
+  &:hover .comp
+    opacity 1
+    
+  .submit
+    font-size .7rem
+    font-weight 500
+    display inline-block
+    background-color #b9b9b9
+    letter-spacing .07rem
+    color #fff
+    border 0
+    padding .6rem .3rem
+    margin-top .5rem
+
+.comment
+  margin-bottom 1rem
+  
+  .date
+  .ship
+    max-width 12rem
+    margin-right 1rem
+
+  .body
+    margin-top 1rem
+
+  &.new .input
+    max-width 31rem
+    margin-top 1rem
+  
+/* global */
+
+.top
+  vertical-align top
+  
+.ib
+  display inline-block
+
+.hidden
+  display none
+
+.a
+  display inline
+  cursor pointer
+  text-decoration underline
+
+.input
+  padding 0 .6rem 0 .3rem
+  background-color #ececec
+  border 0
+  font inherit
+  resize none
+  -webkit-user-select text
+  user-select text
+  
+textarea:focus
+.input:focus
+  background-color #e6e6e6
+
+.invalid .input
+  color red
+
+.caret.left
+  border-left 12px solid #000
+  border-top 9px solid transparent
+  border-right 9px solid transparent
+  border-bottom 9px solid transparent
+  margin-top .4rem
+
+.s-1 .caret
+.caret.down
+  border-left 6px solid transparent
+  border-top 6px solid #fff
+  border-right 6px solid transparent
+  border-bottom 6px solid transparent
+
+.s--1 .caret
+.caret.up
+  border-left 6px solid transparent
+  border-top 6px solid transparent
+  border-right 6px solid transparent
+  border-bottom 6px solid #fff
+
+.hr1
+  height .2rem
+  width 6rem
+  background-color #ccc
+  margin-left 2.2rem
+  
+.hr2
+  height .1rem
+  width 3rem
+  background-color #ccc
+
+@import 'mobile'

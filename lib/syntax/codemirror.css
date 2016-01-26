@@ -1,0 +1,5 @@
+.CodeMirror {
+  height: 100%
+}
+.cm-s-default .cm-atom {color: #70f}
+.cm-s-default .cm-operator {color: #097}

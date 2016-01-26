@@ -1,0 +1,91 @@
+/* computers --------*/
+@media only screen and (min-width: 1024px)
+  #station-container:hover
+    max-height 30rem
+    height auto
+    -webkit-transition max-height .2s
+
+  #station-container:hover #where .caret
+    transform rotate(90deg)
+    transform-origin 0 50%
+    -webkit-transform rotate(90deg)
+    -webkit-transition -webkit-transform .2s
+
+/* laptops / small screens ----------- */
+@media only screen and (max-width: 1170px)
+  #station-container.open
+    max-height 30rem
+    height auto
+    -webkit-transition max-height .2s
+
+  #station-container.open #where .caret
+    transform rotate(90deg)
+    transform-origin 0 50%
+    -webkit-transform rotate(90deg)
+    -webkit-transition -webkit-transform .2s
+    
+  #c
+  #station-container
+    width 96%
+    left 0
+    margin-left 2%
+    margin-right 2%
+  
+  .mess
+  #writing
+    max-width 60%
+    line-height 1.6rem
+  
+  .attr
+  #stations
+  #where
+    width 20%
+    min-width 20%
+  
+  #audience
+  #who
+    width 60%
+  
+  #writing
+    padding .1rem
+    
+  #station-container.m-down
+  #station-container.m-up
+    position absolute
+  
+  #station-container.m-down.m-fixed
+    position fixed
+    top 0
+
+/* tablets + phones ----------- */
+// @media only screen and (min-width: 320px) and (max-width: 1024px)
+
+/* phones portrait and landscape ----------- */
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px)
+  .mess
+  #writing
+    max-width 70%
+    line-height 1.2rem
+  
+  #stations
+  #audience
+    width 96%
+  
+  #stations
+  #audience
+  .sour-ctrl input
+    text-align left
+  
+  #station
+    cursor pointer
+
+  #station-container.open
+    max-height 30rem
+    height auto
+    -webkit-transition max-height .2s
+    
+  #station-container.open #where .caret
+    transform rotate(90deg)
+    transform-origin 0 50%
+    -webkit-transform rotate(90deg)
+    -webkit-transition -webkit-transform .2s
