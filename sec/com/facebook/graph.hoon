@@ -6,16 +6,15 @@
 =+  aut=(oauth2 - /'v2.3'/oauth/'access_token')
 |_  [bal=(bale keys.aut) access-token=token.aut]
 ++  auth  ~(. aut bal /'user_about_me'/'user_posts')
-++  out  (out-quay:auth 'access_token'^access-token)
+++  out  
+  ~&  access-token
+  (out-quay:auth 'access_token'^access-token)
 ++  in   in-code:auth
 ++  bak
-  |=  res=httr
-  =+  a=auth
-  ?:  (bad-response.a p.res)  [%redo ~]
-  =+  ^-  [access-token=@t expires-in=@u]
-      (grab-json.a res (ot:jo access-token expires-in ~):a)
+  %-  (bak-parse:auth . access-token.aut expires-in.aut ~)
+  |=  [access-token=@t expires-in=@u]
   ?:  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token
-    (toke-req:a 'fb_exchange_token' fb-exchange-token/access-token ~)
+    (toke-req:auth 'fb_exchange_token' fb-exchange-token/access-token ~)
   [[%redo ~] ..bak(access-token access-token)]
 ::++  wipe  !!
 --

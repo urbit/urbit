@@ -7,5 +7,5 @@
 ++  aut  ~(. ^aut +<- /client/admin)
 ++  out  (out-quay:aut 'token'^tok)
 ++  in   in-code:aut
-++  bak  ((bak-parse-access:aut . ~) |=(tok=token:aut +>(tok tok)))
+++  bak  (bak-save-access:aut . |=(tok=token:aut +>(tok tok)))
 --
