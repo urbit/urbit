@@ -1716,7 +1716,7 @@
         ?>((~(nest ut p:!>(*sec-move)) %& p.b) ~)
       =+  opt=|.((sa (turn a head)))
       |-
-      ?~  a  ~|(allowed=*opt !!)
+      ?~  a  ~|(allowed=(opt) !!)
       ?:  =(p.i.a -.q.b)
         (q.i.a (spec b))
       $(a t.a)
@@ -1737,6 +1737,7 @@
       %+  on-error  dead-this  |.
       %-  allow  :~
         give/do-give
+        send/(do-send %in)
         redo/,_pump(..vi (give-html 200 ~ exit:xml))
       ==
     ::

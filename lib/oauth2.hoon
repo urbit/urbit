@@ -37,7 +37,7 @@
 ::::
   ::
 |=  [dialog=[p=host q=path r=quay] code-exchange=path]
-=+  state-usr=&
+=+  state-usr=|
 |_  [(bale keys) scope=(list cord)]
 ++  client-id      cid:(decode-keys key)
 ++  client-secret  cis:(decode-keys key)
@@ -67,7 +67,7 @@
   ?~  refresh  (otherwise a)
   ?:  (lth expires (add now ~m1))
     (otherwise a)
-  [%send toke-url (toke-req 'refresh_token' refresh-token/refresh ~)]
+  (toke-req 'refresh_token' refresh-token/refresh ~)
 ::  
 ++  out-filtered
   |=  [tok=token aut=$+(hiss hiss)]
@@ -86,7 +86,8 @@
   |=(a=hiss %_(a q.q (~(add ja q.q.a) hed)))
 ::
 ++  toke-req
-  |=  [grant-type=cord quy=quay]  ^-  moth 
+  |=  [grant-type=cord quy=quay]  ^-  [%send hiss]
+  :+  %send  toke-url
   :+  %post  (mo ~[content-type/~['application/x-www-form-urlencoded']])
   =-  `(tact +:(tail:earn -))
   %-  fass
@@ -100,7 +101,7 @@
 ++  in-code
   |=  a=quay  ^-  sec-move
   =+  code=~|(%no-code (~(got by (mo a)) %code))
-  [%send toke-url (toke-req 'authorization_code' code/code ~)]
+  (toke-req 'authorization_code' code/code ~)
 ::
 ++  token-type  'token_type'^(cu cass sa):jo
 ++  expires-in  'expires_in'^ni:jo
