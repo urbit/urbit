@@ -193,7 +193,7 @@ A few digraphs also have irregular sounds:
 ->  lark
 -<  lush
 +>  dark
-+<  dish
++<  dush
 ```
 
 You might remember wondering where the "lark syntax" of chapter 1
