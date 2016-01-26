@@ -1,4 +1,4 @@
-|_  [bal=(bale ,@t) ~]
-++  out  |=(a=hiss [%send %_(a q.q (~(add ja q.q.a) %authorization auth))]) 
-++  auth  (cat 3 'Basic ' key.bal)
+/+    basic-auth
+|_  [bal=(bale keys:basic-auth) ~]
+++  out  (basic-auth bal)
 --
