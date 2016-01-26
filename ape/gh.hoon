@@ -8,6 +8,7 @@
     ++  card  
       $%  [%diff sub-result]
           [%them wire (unit hiss)]
+          [%hiss wire %httr [%hiss hiss]]
       ==
     --
 |_  [hid=bowl cnt=@ hook=(map ,@t ,[id=@t listeners=(set bone)])]
@@ -21,9 +22,13 @@
     [(flop mow) +>.$]
   ++  real-pax  (scan "https://api.github.com{<`path`pax>}" auri:epur)
   ++  send-hiss 
-    |=  h=hiss
+    |=  [aut=? hiz=hiss]
     ^+  +>
-    +>.$(mow [[ost.hid %them [%x (scot %ud cnt) pax] ~ h] mow])
+    =+  wir=`wire`[%x (scot %ud cnt) pax]
+    =+  ^=  new-move
+        ?.  aut  [ost.hid %them wir ~ hiz]
+        [ost.hid %hiss wir %httr [%hiss hiz]]
+    +>.$(mow [new-move mow])
   ++  auth
     ['Authorization' 'Basic cGhpbGlwY21vbmt0ZXN0OjEzMzdwYXNzd29yZA==' ~]
   ++  scry
@@ -34,8 +39,8 @@
       %read-auth    read-auth
       %listen       listen
     ==
-  ++  read-unauth  (send-hiss real-pax %get ~ ~)
-  ++  read-auth    (send-hiss real-pax %get [auth ~ ~] ~)
+  ++  read-unauth  (send-hiss | real-pax %get ~ ~)
+  ++  read-auth    (send-hiss & real-pax %get ~ ~)
   ++  listen
     ^+  .
     ?>  ?=([@ @ *] pax)
@@ -53,7 +58,8 @@
     ^+  +>
     ?>  ?=([@ @ *] pax)
     %-  send-hiss
-    :*  %+  scan
+    :*  &
+        %+  scan
           =+  [(trip i.pax) (trip i.t.pax)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:epur
@@ -95,7 +101,6 @@
 ++  poke-json
   |=  jon=json
   ^-  [(list move) _+>.$]
-  ~&  %something
   =+  ^-  [repo=json sender=json hok=(list ,@t) hook-id=@t zen=json]
       %-  need
       %.  jon
@@ -126,19 +131,20 @@
   ~&  comment
   `+>.$
 ::
+++  sigh-httr-x  thou-x
 ++  thou-x
   |=  [way=wire res=httr]
   ^-  [(list move) _+>.$]
   ?>  ?=([@ *] way)
   :_  +>.$  :_  ~
-  :^  ost.hid  %diff  %json 
-  ?.  &((gte p.res 200) (lth p.res 300))
-    (jape "bad response {<p.res>} {<r.res>}")
+  :^  ost.hid  %diff  %json
   ?~  r.res
-    (jape "empty response {<p.res>}")
+    (jobe err/s/%empty-response code/(jone p.res) ~)
   =+  (rush q.u.r.res apex:poja)
   ?~  -
-    (jape "bad json {<p.res>} {<u.r.res>}")
+    (jobe err/s/%bad-json code/(jone p.res) body/s/q.u.r.res ~)
+  ?.  =(2 (div p.res 100))
+    (jobe err/s/%request-rejected code/(jone p.res) msg/u.- ~)
   u.-
 ::
 ++  peek

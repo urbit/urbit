@@ -66,8 +66,9 @@
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
 ++  whir-se
   $?  %core                                             ::  build agent
-      %bak                                              ::  ++bak auth response
       %out                                              ::  ++out mod request
+      %res                                              ::  ++res use result
+      %bak                                              ::  ++bak auth response
       %in                                               ::  ++in handle code 
   ==                                                    ::
 --                                                      ::
@@ -723,7 +724,7 @@
         %thou
       ?+    -.tee  !!
         %ay  (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
-        %hi  (cast-thou p.tee p.sih)
+        %hi  (cast-thou p.tee httr/!>(p.sih))
         %se  (get-thou:(dom-vi q.tee) p.tee p.sih)
       ==
     ::
@@ -880,8 +881,7 @@
     (pass-note tea (ford-req root-beak [%cast mar `cay]))
   ::
   ++  cast-thou
-    |=  [mar=mark hit=httr]
-    =+  cay=[%httr !>(`httr`hit)]
+    |=  [mar=mark cay=cage]
     ?:  ?=(%httr mar)  (give-sigh %& cay)
     (back si/~ mar cay)
   ::
@@ -1603,6 +1603,7 @@
     --
   ++  vi                                                ::  auth engine
     |_  [dom=path cor=(unit vase) req=(qeu ,[p=duct q=mark r=vase:hiss])]
+    ++  self  .
     ++  abet  +>(sec (~(put by sec) +<))
     ++  dead-hiss  |=(a=tang (give-sigh:abet %| a))
     ++  dead-this  |=(a=tang (fail:abet 500 0v0 a))
@@ -1620,7 +1621,7 @@
       (call(hen p.u.ole) %out hiss/r.u.ole)
     ::
     ++  call
-      |=  [arm=?(%bak %out %in) sam=cage]
+      |=  [arm=?(%bak %res %out %in) sam=cage]
       ?~  cor  ~|(%no-core !!)
       =.  +12.q.u.cor
         =+  ato=(sky %cx (tope root-beak [%atom (flop %_(dom . sec/dom))]))
@@ -1639,9 +1640,10 @@
       |=  [wir=whir-se dep=@uvH res=(each cage tang)]  ^+  abet
       ?-  wir
         %core  (get-upd dep res)
-        %bak   (res-bak res)
         %out   (res-out res)
+        %res   (res-res res)
         %in    (res-in res)
+        %bak   (res-bak res)
       ==
     ::
     ++  get-thou
@@ -1649,11 +1651,19 @@
       ?+  wir  !!
         %in  (call %bak httr/!>(hit))
         %out
-          =^  ole  req  ~(get to req)
-          =>  .(ole `[p=duct q=mark *]`ole)             :: XX types
-          =.  ..vi  (cast-thou(hen p.ole) q.ole hit)    :: error?
-          pump
+          =+  opt=(sa (sloe ?~(cor %void p.u.cor)))
+          ?:  (~(has in opt) %res)
+            (call %res httr/!>(hit))
+          (do-give !>([%give hit]))
       ==
+    ::
+    ++  do-give
+      |=  vax=vase
+      =.  vax  (slam !>(|=([%give a=httr] a)) vax)
+      =^  ole  req  ~(get to req)
+      =>  .(ole `[p=duct q=mark *]`ole)             :: XX types
+      =.  ..vi  (cast-thou(hen p.ole) q.ole httr/vax)    :: error?
+      pump
     ::
     ++  on-error
       |=  [err=$+(tang _abet) try=$+(vase _abet)]
@@ -1677,21 +1687,37 @@
     ::
     ++  res-in
       %+  on-error  dead-this
-      (allow send/(to-eyre %in) ~)
+      (allow send/(do-send %in) ~)
     ::
-    ++  to-eyre
+    ++  do-send
       |=  wir=whir-se  ^-  $+(vase _abet)
       |=  res=vase
       (eyre-them wir (slam !>(|=([%send a=hiss] a)) res))
     ::
+    ++  res-res
+      %+  on-error  |=(a=tang (dead-hiss(req ~(nap to req)) a))
+      %-  stateful  |=  a=_self  =>  a
+      %-  allow  :~
+        give/do-give
+        send/(do-send %out)
+        redo/,_pump
+      ==
+    ::
     ++  res-bak
       %+  on-error  dead-this
+      %-  stateful  |=  a=_self  =>  a
+      %-  allow  :~
+        give/do-give
+        redo/,_pump(..vi (give-html 200 ~ exit:xml))
+      ==
+    ::
+    ++  stateful
+      |=  han=$+(_self $+(vase:sec-move _abet))
       |=  res=vase  ^+  abet
       ?~  cor  ~|(%lost-core !!)
       =^  mow  u.cor
         ~|(%split [mow=(slot 2 res) cor=(slot 3 res)])
-      =<  ((allow redo/. ~) mow)
-      ,_pump(..vi (give-html 200 ~ exit:xml))
+      ((han self(cor cor)) mow)
     ::
     ++  res-out
       |=  a=(each cage tang)  ^+  abet
@@ -1700,10 +1726,12 @@
       %.  a
       %+  on-error  warn
       %-  allow  :~
-        send/(to-eyre %out)
-        show/(discard-with !>(auth-print))
+        give/do-give
+        send/(do-send %out)
+        show/do-show
       ==
     ::
+    ++  do-show  (discard-with !>(auth-print))
     ++  discard-with
       |=  a=vase:gate  ^-  $+(vase _abet)
       |=(b=vase =+((slam a b) abet))
