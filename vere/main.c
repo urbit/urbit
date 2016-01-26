@@ -82,10 +82,14 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"B:I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
+        break;
+      }
+      case 'B': {
+        u3_Host.ops_u.pil_c = strdup(optarg);
         break;
       }
       case 'I': {
@@ -183,6 +187,10 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.nuu = c3y;
   }
 
+  if ( u3_Host.ops_u.nuu != 0 && u3_Host.ops_u.pil_c != 0) {
+    fprintf(stderr, "-B only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
 
   if ( u3_Host.ops_u.nam_c == 0 ) {
     u3_Host.ops_u.nam_c = getenv("HOSTNAME");
