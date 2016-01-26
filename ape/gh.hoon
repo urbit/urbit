@@ -63,7 +63,7 @@
           =+  [(trip i.pax) (trip i.t.pax)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:epur
-        %post  [auth ~ ~]  ~
+        %post  ~  ~
         %-  taco  %-  crip  %-  pojo  %-  jobe  :~
           name/s/%web
           active/b/&
@@ -91,7 +91,7 @@
     ::        =+  [(trip i.pax) (trip i.t.pax)]
     ::        "https://api.github.com/repos/{-<}/{->}/hooks/{(trip (need hook))}"
     ::      auri:epur
-    ::      %post  [auth ~ ~]  ~
+    ::      %post  ~  ~
     ::      %-  taco  %-  crip  %-  pojo  %-  jobe  :~
     ::        [%'add_events' a/(turn `(list ,@t)`t.t.pax |=(a=@t s/a))]
     ::      ==
