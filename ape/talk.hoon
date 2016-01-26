@@ -2160,8 +2160,8 @@
 ++  poke-load
   |=  man/knot
   =+  ^=  grams
-      %-  (hard (list telegram))
-      .^  %cx
+      .^  (list telegram)
+          %cx
           /(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
       ==
   =+  toy=(~(got by stories) man)

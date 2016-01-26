@@ -1033,15 +1033,15 @@
 ++  feel                                                ::  simple file write
   |=  {pax/path val/cage}
   ^-  miso
-  =+  dir=((hard arch) .^(%cy pax))
+  =+  dir=.^(arch %cy pax)
   ?~  fil.dir  [%ins val]
   [%mut val]
 ::
 ++  file                                                ::  simple file load
   |=  pax/path
   ^-  (unit)
-  =+  dir=((hard arch) .^(%cy pax))
-  ?~(fil.dir ~ [~ .^(%cx pax)])
+  =+  dir=.^(arch %cy pax)
+  ?~(fil.dir ~ [~ .^(* %cx pax)])
 ::
 ++  foal                                                ::  high-level write
   |=  {pax/path val/cage}
@@ -1429,7 +1429,7 @@
   |=  {{our/@p now/@da} him/@p}  ^-  @t
   =+  yow=(scot %p him)
   =+  pax=[(scot %p our) %name (scot %da now) yow ~]
-  =+  woy=((hard @t) .^(%a pax))
+  =+  woy=.^(@t %a pax)
   ?:  =(%$ woy)  yow
   (rap 3 yow ' ' woy ~)
 ::

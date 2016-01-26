@@ -113,7 +113,7 @@
   %-  flop
   %+  turn  all
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)/arvo
-  =+  ark=(arch .^(%cy top))
+  =+  ark=.^(arch %cy top)
   =+  van=(~(tap by dir.ark))
   |=  nam/@tas
   =.  nam
@@ -125,7 +125,7 @@
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
   =+  way=(welp top /[nam])
-  =+  fil=(@ .^(%cx (welp way /hoon)))
+  =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
 ::
 ++  poke-invite                                       ::  send invite; fake
@@ -153,7 +153,7 @@
     ==
   |=  {p/@tas q/@tas}
   =+  way=`path`(welp top /[q])
-  =+  txt=((hard @) .^(%cx (welp way /hoon)))
+  =+  txt=.^(@ %cx (welp way /hoon))
   [%flog /reset %veer p way txt]
 ::
 ++  poke-deset                                        ::  deset system

@@ -135,14 +135,14 @@
   |=  {input/path output/path}
   %+  do-info  "copied"
   ?>  =(-:(flop input) -:(flop output))
-  (foal output -:(flop input) [%atom %t ~] .^(%cx input))    ::  XX type
+  (foal output -:(flop input) [%atom %t ~] .^(* %cx input))    ::  XX type
 ::
 ++  poke-mv
   |=  {input/path output/path} 
   %+  do-info  "moved"
   ?>  =(-:(flop input) -:(flop output))
   %+  furl  (fray output)
-  (foal output -:(flop input) %noun .^(%cx input))
+  (foal output -:(flop input) %noun .^(* %cx input))
 ::
 ++  poke-label
   |=  {syd/desk lab/@tas}
@@ -288,7 +288,7 @@
     :*  ost  %merg
         /kiln/sync/[syd]/(scot %p her)/[sud]
         our  syd  her  sud  ud+let
-        ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da now)))
+        ?:  =(0 .^(* %cw /(scot %p our)/[syd]/(scot %da now)))
           %init
         %mate
     ==
@@ -393,7 +393,7 @@
     =.  cas  [%da now]
     ?.  ?=($auto gim)
       perform(auto |, gem gim, her her, sud sud)
-    ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da now)))
+    ?:  =(0 .^(* %cw /(scot %p our)/[syd]/(scot %da now)))
       =>  $(gim %init)
       .(auto &)
     =>  $(gim %fine)

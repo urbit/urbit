@@ -244,8 +244,7 @@
     {$cnsg p/wing q/twig r/(list twig)}                 ::  new cnsg
     {$cnts p/wing q/(list (pair wing twig))}            ::  eval. p w+ q changes
   ::                                            ::::::  nock
-    {$dtkt p/twig}                                      ::  nock 11 data skyhook
-    {$dthx p/twig q/twig}                               ::  nock 12 data skyhook
+    {$dtkt p/twig q/twig}                               ::  nock 12 data skyhook
     {$dtls p/twig}                                      ::  nock 4 increment
     {$dttr p/twig q/twig}                               ::  nock p w+ formula q
     {$dtts p/twig q/twig}                               ::  nock 5 equality test
@@ -6499,7 +6498,7 @@
 ::
 ++  reck                                                ::  parse hoon file
   |=  bon/path
-  (rain bon ((hard @t) .^(%cx (weld bon `path`[%hoon ~]))))
+  (rain bon .^(@t %cx (weld bon `path`[%hoon ~])))
 ::
 ++  seem  |=(toy/typo `span`toy)                        ::  promote typo
 ++  seer  |=(vix/vise `vase`vix)                        ::  promote vise
@@ -8530,8 +8529,7 @@
         {$brcn *}  (grow %gold [%$ 1] p.gen)
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
-        {$dtkt *}  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
-        {$dthx *}
+        {$dtkt *}
       =+  nef=$(gen [%cnbc p.gen])
       [p.nef [%12 [%1 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
@@ -8681,8 +8679,7 @@
     ::
         {$brcn *}  (grow %gold [%$ 1] p.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
-        {$dtkt *}  =+($(gen p.gen, gol %noun) (beth %noun))
-        {$dthx *}  =+($(gen q.gen, gol %noun) $(gen [%cnbc p.gen]))
+        {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%cnbc p.gen]))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
         {$rock *}  (beth (play gen))
@@ -8975,8 +8972,7 @@
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$brcn *}  (core sut %gold sut [[%0 0] p.gen])
       {$cnts *}  ~(play et p.gen q.gen)
-      {$dtkt *}  %noun
-      {$dthx *}  $(gen [%cnbc p.gen])
+      {$dtkt *}  $(gen [%cnbc p.gen])
       {$dtls *}  [%atom %$ ~]
       {$rock *}  |-  ^-  span
                  ?@  q.gen  [%atom p.gen `q.gen]
@@ -9762,8 +9758,8 @@
                     ['*' (rune tar %dttr expb)]
                     ['=' (rune tis %dtts expb)]
                     ['?' (rune wut %dtwt expa)]
-                    ['^' (rune ket %dtkt expn)]
-                    ['#' (rune hax %dthx expx)]
+                    ['#' (rune hax %dtkt expx)]
+                    ['^' (rune ket %dtkt expx)]
                 ==
               ==
             :-  '^'

@@ -14,6 +14,8 @@
 =+  pax=`path`(weld top `path`[%hoon ~])
 ~&  %solid-start
 =+  gen=(reck pax)
+:: =+  nig=(rick pax)
+:: ~&  [%mugs gen+(mug gen) nig+(mug nig)]
 ~&  %solid-parsed
 =+  ken=q:(~(mint ut %noun) %noun gen)
 ~&  %solid-compiled
@@ -32,7 +34,7 @@
 |-  ^+  all
 ?~  vay  all
 =+  pax=(weld top `path`[q.i.vay ~])
-=+  txt=((hard @) .^(%cx (weld pax `path`[%hoon ~])))
+=+  txt=.^(@ %cx (weld pax `path`[%hoon ~]))
 =+  sam=[now `ovum`[[%gold ~] [%veer p.i.vay pax txt]]]
 ~&  [%solid-veer i.vay]
 =+  gat=.*(all .*(all [0 42]))
