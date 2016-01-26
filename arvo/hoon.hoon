@@ -196,6 +196,7 @@
     {$base p/base}                                      ::  base
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
+    {$hand p/span q/nock}
     {$knit p/(list beer)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
     {$limb p/term}                                      ::  pulls limb p
@@ -4597,12 +4598,6 @@
       $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
-      {$11 b/*}
-    =+  ben=$(fol b.fol)
-    ?.  ?=($0 -.ben)  ben
-    =+  val=(sky p.ben)
-    ?~(val [%1 p.ben ~] [%0 u.val])
-  ::
       {$12 b/* c/*}
     =+  ref=$(fol b.fol)
     =+  ben=$(fol c.fol)
@@ -8544,6 +8539,7 @@
       [(nice bool) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         {$dtwt *}  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
+        {$hand *}  [p.gen q.gen]
         {$ktbr *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
     ::
         {$ktls *}
@@ -8620,9 +8616,18 @@
       [%void [%0 0]]
     ::
         {$zpsm *}
-      =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
-      ::  [(nice (cell (sift (play p.gen)) p.vos)) (cons [%1 p.vos] q.vos)]
-      [(nice (cell (play p.gen) p.vos)) (cons [%1 p.vos] q.vos)]
+      =+  vos=$(gol %noun, gen q.gen)
+      =+  ref=p:$(gol %noun, gen p.gen)
+      ?>  (~(nest ut p:!>(*span)) & ref)
+      [(nice (cell ref p.vos)) (cons [%1 p.vos] q.vos)]
+    ::
+        {$zpgr *}
+      =+  vat=$(gen p.gen)
+      %=    $
+          gen
+        :-  [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 p.vat]] ~]
+        [%hand p.vat q.vat]
+      ==
     ::
         {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
         {$zpzp $~}  [%void [%0 0]]
@@ -8690,6 +8695,7 @@
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth bool))
     ::
         {$dtwt *}  =+($(gen p.gen, gol %noun) (beth bool))    ::  XX  =|
+        {$hand *}  [p.gen p.gen]
         {$ktbr *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
@@ -8767,6 +8773,10 @@
         {$zpsm *}
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
+    ::
+        {$zpgr *}
+      ?>  =(sut dox)
+      =+(typ=(play gen) [typ typ])
     ::
         {$zpzp *}  (beth %void)
         *
@@ -8984,6 +8994,7 @@
       {$dttr *}  %noun
       {$dtts *}  bool
       {$dtwt *}  bool
+      {$hand *}  p.gen
       {$ktbr *}  (wrap(sut $(gen p.gen)) %iron)
       {$ktls *}  $(gen p.gen)
       {$ktpm *}  (wrap(sut $(gen p.gen)) %zinc)
@@ -9003,6 +9014,10 @@
       {$wtts *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
       {$zpcm *}  (play p.gen)
+      {$zpgr *}  %=    $
+                     gen
+                   [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 $(gen p.gen)]] ~]
+                 ==
       {$lost *}  %void
       {$zpsm *}  (cell $(gen p.gen) $(gen q.gen))
       {$zpts *}  %noun
