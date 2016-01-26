@@ -192,6 +192,14 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  if ( u3_Host.ops_u.pil_c != 0 ) {
+    struct stat s;
+    if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
+      fprintf(stderr, "pill %s not found\n", u3_Host.ops_u.pil_c);
+      return c3n;
+    }
+  }
+
   if ( u3_Host.ops_u.nuu == c3y && u3_Host.ops_u.pil_c == 0) {
     struct stat s;
     if ( stat("urbit.pill", &s) == 0 ) {
