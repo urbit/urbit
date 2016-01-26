@@ -22,7 +22,7 @@
 ++  cote                                                ::  ++ap note
   $%  [%meta p=@tas q=vase]                             ::  
       [%send p=ship q=cush]                             ::  
-      [%hiss p=mark q=cage]
+      [%hiss p=(unit span) q=mark r=cage]               ::
   ==                                                    ::
 ++  cove  (pair bone (mold cote cuft))                  ::  internal move
 ++  move  ,[p=duct q=(mold note-arvo gift-arvo)]        ::  typed move
@@ -612,7 +612,7 @@
           %pass
         :+  %pass  `path`[%use dap p.q.cov]
         ?-  -.q.q.cov
-          %hiss  `note-arvo`[%e %hiss p.q.q.cov q.q.q.cov]
+          %hiss  `note-arvo`[%e %hiss +.q.q.cov]
           %send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
           %meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
         ==
@@ -806,11 +806,15 @@
     ++  ap-move-hiss                                    ::  pass %hiss
       |=  [sto=bone vax=vase]
       ^-  [(each cove tang) _+>]
-      ?.  &(?=([p=* q=@ q=^] q.vax) ((sane %tas) q.q.vax))
-        :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.[%hiss wire mark cage]")])
-      =^  gaw  vel  (~(slot wa vel) 7 vax)
+      ?.  &(?=([p=* q=* r=@ s=^] q.vax) ((sane %tas) r.q.vax))
+        =+  args="[%hiss wire (unit span) mark cage]"
+        :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.{args}")])
+      =^  gaw  vel  (~(slot wa vel) 15 vax)
       ?.  &(?=([p=@ q=^] q.gaw) ((sane %tas) p.q.gaw))
         :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
+      =+  usr=((soft (unit span)) q.q.vax)
+      ?.  &(?=(^ usr) ?~(u.usr & ((sane %ta) u.u.usr)))
+        :_(+>.$ [%| (ap-suck "hiss: malformed (unit span)")])
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         :_(+>.$ [%| (ap-suck "hiss: malformed path")])
@@ -818,7 +822,9 @@
       :_  +>.$
       :^  %&  sto  %pass
       :-  [(scot %p q.q.pry) %cay u.pux]
-      [%hiss q.q.vax [p.q.gaw paw]]
+      ~!  *cote
+      =-  ~!  -  `cote`-
+      [%hiss u.usr r.q.vax [p.q.gaw paw]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
       |=  vax=vase

@@ -8,7 +8,7 @@
     ++  card  
       $%  [%diff sub-result]
           [%them wire (unit hiss)]
-          [%hiss wire %httr [%hiss hiss]]
+          [%hiss wire [~ ~] %httr [%hiss hiss]]
       ==
     --
 |_  [hid=bowl cnt=@ hook=(map ,@t ,[id=@t listeners=(set bone)])]
@@ -27,7 +27,7 @@
     =+  wir=`wire`[%x (scot %ud cnt) pax]
     =+  ^=  new-move
         ?.  aut  [ost.hid %them wir ~ hiz]
-        [ost.hid %hiss wir %httr [%hiss hiz]]
+        [ost.hid %hiss wir `~ %httr [%hiss hiz]]
     +>.$(mow [new-move mow])
   ++  auth
     ['Authorization' 'Basic cGhpbGlwY21vbmt0ZXN0OjEzMzdwYXNzd29yZA==' ~]

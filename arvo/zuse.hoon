@@ -1820,8 +1820,8 @@
 ++  bale                                                ::  driver state
   |*  a=_,*                                             ::  %jael keys type
   $:  [our=ship now=@da eny=@uvI byk=beak]              ::  base info
-      dom=(list ,@t)                                    ::  intercepted domain
-      [usr=?(~ span) key=a]                             ::  req user, secrets
+      [usr=span dom=(list ,@t)]                         ::  req user, domain
+      key=a                                             ::  secrets from %jael
   ==                                                    ::
 ++  sec-move                                            ::  driver effect
   $%  [%send p=hiss]                                    ::  http out
@@ -2488,7 +2488,7 @@
 ++  kiss-eyre                                           ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
-              [%hiss p=mark q=cage]                     ::  outbound user req
+              [%hiss p=(unit span) q=mark r=cage]       ::  outbound user req
               [%init p=@p]                              ::  report install
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response
