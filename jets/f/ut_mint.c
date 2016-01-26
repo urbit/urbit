@@ -494,27 +494,16 @@
         return u3nc(typ,
                     u3nc(3, _mint_corn(van, sut, p_gen)));
       }
-      case c3__dtkt: p_gen = u3t(gen);
+      case c3__dtkt: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
-        u3_noun tom = c3__noun;
-        u3_noun sam = _mint_in(van, sut, tom, p_gen);
-
-        ret = u3nc(_mint_nice(van, gol, tom),
-                   u3nc(11, u3k(u3t(sam))));
-
-        u3z(sam);
-        return ret;
-      }
-      case c3__dthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mint_used();
-      {
-        u3_noun nog = u3nc(c3__cnbc, p_gen);
+        u3_noun nog = u3nc(c3__cnbc, u3k(p_gen));
         u3_noun nef = _mint_in(van, sut, gol, nog);
         u3_noun viz = _mint_in(van, sut, c3__noun, q_gen);
        
         ret = u3nc(u3k(u3h(nef)), 
-                   u3nt(12, u3nc(1, u3k(u3h(nef))), u3k(u3t(viz))));
+                    u3nt(12, u3nc(1, 0), u3k(u3t(viz))));
+                   // u3nt(12, u3nc(1, u3k(u3h(nef))), u3k(u3t(viz))));
 
         u3z(viz); 
         u3z(nef);

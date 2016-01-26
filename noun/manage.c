@@ -9,7 +9,7 @@
 
 #include "all.h"
 
-#define NO_OVERFLOW
+#undef NO_OVERFLOW
 
       /* (u3_noun)setjmp(u3R->esc.buf): setjmp within road.
       */

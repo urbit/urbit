@@ -460,19 +460,10 @@
         u3z(vay);
         return _mull_both(van, gol, _mull_bean());
       }
-      case c3__dtkt: p_gen = u3t(gen);
+      case c3__dtkt: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
-        u3_noun wuq = c3__noun;
-        u3_noun vay = _mull_in(van, sut, wuq, dox, p_gen);
-
-        u3z(vay);
-        return _mull_both(van, gol, wuq);
-      }
-      case c3__dthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mull_used();
-      {
-        u3_noun nog = u3nc(c3__cnbc, p_gen);
+        u3_noun nog = u3nc(c3__cnbc, u3k(p_gen));
         u3_noun vay = _mull_in(van, sut, c3__noun, dox, q_gen);
         u3_noun ret;
 
