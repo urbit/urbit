@@ -1060,7 +1060,8 @@ for punctuation are clumsy. So Hoon replaces them:
     doq "           lus +               tis =
     dot .           pam &               wut ?
     fas /           pat @               zap !
-
+    sig ~
+    
 For example, `%=` sounds like "centis" rather than "percent
 equals." Since even a silent reader will subvocalize, the length
 and complexity of the sound is a tax on reading the code.
