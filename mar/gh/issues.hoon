@@ -1,3 +1,4 @@
+::  Converts the result of an 'issues' event into a issues:gh.
 /-  gh
 /+  gh-parse
 |_  issues=issues:gh

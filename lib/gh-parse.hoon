@@ -1,3 +1,8 @@
+::  This library includes parsing functions for the json objects
+::  that Github's API produces.  In general, the conversion from
+::  JSON to urbit types should be performed in marks, so those
+::  marks should include this library.
+::
 /-  gh
 |%
 ++  repository

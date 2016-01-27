@@ -1,3 +1,12 @@
+::  https://developer.github.com/v3/
+::
+::  These types correspond to the types that Github's API
+::  produces, so please check Github's documentation for
+::  details.
+::
+::  For parsing JSON into these types, check out the gh-parse
+::  library.
+::
 |%
 ++  repository
   $:  id=id
