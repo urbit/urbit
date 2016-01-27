@@ -3769,7 +3769,7 @@
     ++  rig
       |=  hom=tape
       ^-  wall
-      ?:  (lte (lent hom) (sub edg tab))
+      ?:  & ::(lte (lent hom) (sub edg tab))
         [(runt [tab ' '] hom) lug]
       =>  .(tab (add tab 2), edg (sub edg 2))
       =+  mut=(trim (sub edg tab) hom)
@@ -4606,6 +4606,7 @@
   (mook (mink [sub fol] sky))
 ::
 ++  moop
+  ::=<  |=  pon=(list ,[@ta *])  pon
   |=  pon=(list ,[@ta *])  ^+  pon
   ?~  pon  ~
   :-  i.pon
