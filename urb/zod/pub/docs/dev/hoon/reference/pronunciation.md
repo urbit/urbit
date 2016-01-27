@@ -62,7 +62,7 @@ There are a few runes with irregular special pronunciations:
     +-    lushep    slep
     ++    luslus    slus
     ==    tistis    stet
-    +<    lusgal    glus
-    +>    lusgar    gras
-    -<    hepgal    gelp
-    ->    hepgar    garp     
+    ->    hepgar    lark     
+    -<    hepgal    lush
+    +>    lusgar    dark
+    +<    lusgal    dush
