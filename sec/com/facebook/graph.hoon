@@ -6,9 +6,7 @@
 =+  aut=(oauth2 - /'v2.3'/oauth/'access_token')
 |_  [bal=(bale keys.aut) access-token=token.aut]
 ++  auth  ~(. aut bal /'user_about_me'/'user_posts')
-++  out  
-  ~&  access-token
-  (out-quay:auth 'access_token'^access-token)
+++  out  (out-quay:auth 'access_token'^access-token)
 ++  in   in-code:auth
 ++  bak
   %-  (bak-parse:auth . access-token.aut expires-in.aut ~)
