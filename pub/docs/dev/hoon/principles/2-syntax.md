@@ -177,6 +177,7 @@ genuinely surprised at how easy they are to remember:
     doq "           lus +               tis =
     dot .           pam &               wut ?
     fas /           pat @               zap !
+    sig ~
 ```
 It's fun to confuse the muggles by using these outside Urbit.
 
