@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -35,9 +35,8 @@ module.exports = {
 };
 
 
-
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-tree/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-tree/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-tree/js/components/AnchorComponent.coffee":[function(require,module,exports){
-var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, li, query, reactify, recl, ref, ul;
+},{"../dispatcher/Dispatcher.coffee":15,"../persistence/TreePersistence.coffee":18}],2:[function(require,module,exports){
+var BodyComponent, Links, TreeActions, TreeStore, a, button, clas, div, li, query, reactify, recl, ref, ul, util;
 
 clas = require('classnames');
 
@@ -51,9 +50,11 @@ TreeStore = require('../stores/TreeStore.coffee');
 
 TreeActions = require('../actions/TreeActions.coffee');
 
+util = require('../utils/util.coffee');
+
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li;
+ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, button = ref.button;
 
 Links = React.createFactory(query({
   path: 't',
@@ -64,6 +65,9 @@ Links = React.createFactory(query({
   }
 }, recl({
   displayName: "Links",
+  toggleNav: function() {
+    return $('#nav').toggleClass('open');
+  },
   render: function() {
     return div({
       className: 'links'
@@ -75,7 +79,11 @@ Links = React.createFactory(query({
       className: 'app'
     }, ""), div({
       className: 'dpad'
-    }, this.renderUp(), this.renderArrows()), this.renderSibs()));
+    }, this.renderUp(), this.renderArrows()), button({
+      className: 'navbar-toggler',
+      type: 'button',
+      onClick: this.toggleNav
+    }, "☰"), this.renderSibs()));
   },
   renderUp: function() {
     if (this.props.sein) {
@@ -84,13 +92,13 @@ Links = React.createFactory(query({
   },
   renderSibs: function() {
     var keys;
-    keys = window.tree.util.getKeys(this.props.kids);
+    keys = util.getKeys(this.props.kids);
     return ul({
       className: "nav"
     }, keys.map((function(_this) {
       return function(key) {
         var className, data, head, href;
-        href = window.tree.basepath(_this.props.path + "/" + key);
+        href = util.basepath(_this.props.path + "/" + key);
         data = _this.props.kids[key];
         if (data.meta) {
           head = data.meta.title;
@@ -109,14 +117,14 @@ Links = React.createFactory(query({
         }, a({
           className: "nav-link",
           href: href,
-          onClick: _this.props.onClick
+          onClick: _this.toggleNav
         }, head));
       };
     })(this)));
   },
   renderArrow: function(name, path) {
     var href;
-    href = window.tree.basepath(path);
+    href = util.basepath(path);
     return a({
       href: href,
       key: "" + name,
@@ -125,7 +133,7 @@ Links = React.createFactory(query({
   },
   renderArrows: function() {
     var index, keys, next, prev, sein;
-    keys = window.tree.util.getKeys(this.props.kids);
+    keys = util.getKeys(this.props.kids);
     if (keys.length > 1) {
       index = keys.indexOf(this.props.curr);
       prev = index - 1;
@@ -176,8 +184,6 @@ Links = React.createFactory(query({
   }
 })));
 
-CLICK = 'a';
-
 module.exports = query({
   sein: 't',
   path: 't',
@@ -207,11 +213,11 @@ module.exports = query({
     return dt = this.ts - Number(Date.now());
   },
   toggleFocus: function(state) {
-    return $(this.getDOMNode()).toggleClass('focus', state);
+    return $(ReactDOM.findDOMNode(this)).toggleClass('focus', state);
   },
   componentWillUnmount: function() {
     clearInterval(this.interval);
-    return $('body').off('click', CLICK);
+    return $('body').off('click', 'a');
   },
   componentDidUpdate: function() {
     return this.setTitle();
@@ -221,20 +227,15 @@ module.exports = query({
     this.setTitle();
     this.interval = setInterval(this.checkURL, 100);
     _this = this;
-    return $('body').on('click', CLICK, function(e) {
-      var href, id;
+    return $('body').on('click', 'a', function(e) {
+      var href;
       href = $(this).attr('href');
-      id = $(this).attr('id');
       if (href && !/^https?:\/\//i.test(href)) {
         e.preventDefault();
-        e.stopPropagation();
         if ((href != null ? href[0] : void 0) !== "/") {
           href = (document.location.pathname.replace(/[^\/]*\/?$/, '')) + href;
         }
-        _this.goTo(window.tree.fragpath(href));
-      }
-      if (id) {
-        return window.location.hash = id;
+        return _this.goTo(util.fragpath(href));
       }
     });
   },
@@ -255,7 +256,7 @@ module.exports = query({
     }
     href_parts[0] = next;
     if (hist !== false) {
-      history.pushState({}, "", window.tree.basepath(href_parts.join("")));
+      history.pushState({}, "", util.basepath(href_parts.join("")));
     }
     if (next !== this.props.path) {
       React.unmountComponentAtNode($('#cont')[0]);
@@ -279,7 +280,7 @@ module.exports = query({
   checkURL: function() {
     if (this.state.url !== window.location.pathname) {
       this.reset();
-      this.setPath(window.tree.fragpath(window.location.pathname), false);
+      this.setPath(util.fragpath(window.location.pathname), false);
       return this.setState({
         url: window.location.pathname
       });
@@ -311,8 +312,7 @@ module.exports = query({
 }), "div");
 
 
-
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-tree/js/stores/TreeStore.coffee","./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-tree/js/components/BodyComponent.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-tree/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-tree/js/components/Async.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":19,"../utils/util.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":12,"classnames":17}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -422,15 +422,16 @@ module.exports = function(queries, Child, load) {
 };
 
 
-
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-tree/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-tree/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-tree/js/components/BodyComponent.coffee":[function(require,module,exports){
-var a, clas, div, extras, img, p, query, reactify, recl, ref, rele;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":19,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
+var a, clas, div, extras, img, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
 
 query = require('./Async.coffee');
 
 reactify = require('./Reactify.coffee');
+
+util = require('../utils/util.coffee');
 
 recl = React.createClass;
 
@@ -484,7 +485,7 @@ extras = {
       var curr, index, keys, next, ref1;
       curr = this.props.kids[this.props.curr];
       if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
-        keys = window.tree.util.getKeys(this.props.kids);
+        keys = util.getKeys(this.props.kids);
         if (keys.length > 1) {
           index = keys.indexOf(this.props.curr);
           next = index + 1;
@@ -552,8 +553,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-tree/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-tree/js/components/CodeMirror.coffee":[function(require,module,exports){
+},{"../utils/util.coffee":21,"./Async.coffee":3,"./Reactify.coffee":12,"classnames":17}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -568,7 +568,7 @@ module.exports = recl({
     }));
   },
   componentDidMount: function() {
-    return CodeMirror.fromTextArea(this.refs.ed.getDOMNode(), {
+    return CodeMirror.fromTextArea(ReactDOM.findDOMNode(this.refs.ed), {
       readOnly: true,
       lineNumbers: true
     });
@@ -576,8 +576,7 @@ module.exports = recl({
 });
 
 
-
-},{}],"/Users/galen/src/urbit-tree/js/components/Components.coffee":[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var div, recl;
 
 recl = React.createClass;
@@ -591,6 +590,7 @@ module.exports = {
   kids: require('./KidsComponent.coffee'),
   toc: require('./TocComponent.coffee'),
   email: require('./EmailComponent.coffee'),
+  module: require('./ModuleComponent.coffee'),
   lost: recl({
     render: function() {
       return div({}, "<lost(", this.props.children, ")>");
@@ -599,8 +599,7 @@ module.exports = {
 };
 
 
-
-},{"./CodeMirror.coffee":"/Users/galen/src/urbit-tree/js/components/CodeMirror.coffee","./EmailComponent.coffee":"/Users/galen/src/urbit-tree/js/components/EmailComponent.coffee","./KidsComponent.coffee":"/Users/galen/src/urbit-tree/js/components/KidsComponent.coffee","./ListComponent.coffee":"/Users/galen/src/urbit-tree/js/components/ListComponent.coffee","./SearchComponent.coffee":"/Users/galen/src/urbit-tree/js/components/SearchComponent.coffee","./TocComponent.coffee":"/Users/galen/src/urbit-tree/js/components/TocComponent.coffee"}],"/Users/galen/src/urbit-tree/js/components/EmailComponent.coffee":[function(require,module,exports){
+},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./ModuleComponent.coffee":11,"./SearchComponent.coffee":13,"./TocComponent.coffee":14}],7:[function(require,module,exports){
 var button, div, input, p, reactify, recl, ref;
 
 reactify = require('./Reactify.coffee');
@@ -681,8 +680,7 @@ module.exports = recl({
 });
 
 
-
-},{"./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/components/KidsComponent.coffee":[function(require,module,exports){
+},{"./Reactify.coffee":12}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -763,15 +761,16 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/components/ListComponent.coffee":[function(require,module,exports){
-var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul;
+},{"./Async.coffee":3,"./Reactify.coffee":12}],9:[function(require,module,exports){
+var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul, util;
 
 clas = require('classnames');
 
 reactify = require('./Reactify.coffee');
 
 query = require('./Async.coffee');
+
+util = require('../utils/util.coffee');
 
 recl = React.createClass;
 
@@ -794,7 +793,6 @@ module.exports = query({
       posts: this.props.dataType === 'post',
       "default": this.props['data-source'] === 'default'
     }, this.props.className);
-    console.log(this.props.className);
     kids = this.renderList();
     if (!(kids.length === 0 && (this.props.is404 != null))) {
       return ul({
@@ -847,7 +845,7 @@ module.exports = query({
       if (elem.meta.hide != null) {
         continue;
       }
-      href = window.tree.basepath(path);
+      href = util.basepath(path);
       if (elem.meta.link) {
         href = elem.meta.link;
       }
@@ -920,8 +918,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-tree/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-tree/js/components/LoadComponent.coffee":[function(require,module,exports){
+},{"../utils/util.coffee":21,"./Async.coffee":3,"./Reactify.coffee":12,"classnames":17}],10:[function(require,module,exports){
 var div, recl, ref, span;
 
 recl = React.createClass;
@@ -959,8 +956,71 @@ module.exports = recl({
 });
 
 
+},{}],11:[function(require,module,exports){
+var code, div, reactify, recl, ref, span;
 
-},{}],"/Users/galen/src/urbit-tree/js/components/Reactify.coffee":[function(require,module,exports){
+reactify = require('./Reactify.coffee');
+
+recl = React.createClass;
+
+ref = React.DOM, div = ref.div, span = ref.span, code = ref.code;
+
+module.exports = recl({
+  getInitialState: function() {
+    return {
+      loaded: false
+    };
+  },
+  loaded: function() {
+    return this.setState({
+      loaded: true
+    });
+  },
+  componentWillMount: function() {
+    this.js = null;
+    return this.css = null;
+  },
+  componentDidMount: function() {
+    var l, s;
+    s = document.createElement('script');
+    s.src = this.props.js;
+    s.async = 1;
+    s.onload = this.loaded;
+    s.onreadystatechange = this.loaded;
+    s.onerror = this.loaded;
+    document.body.appendChild(s);
+    this.js = s;
+    if (this.props.css) {
+      l = document.createElement('link');
+      l.rel = "stylesheet";
+      l.href = this.props.css;
+      document.body.appendChild(l);
+      return this.css = l;
+    }
+  },
+  componentWillUnmount: function() {
+    if (this.js) {
+      document.body.removeChild(this.js);
+    }
+    if (this.css) {
+      return document.body.removeChild(this.css);
+    }
+  },
+  render: function() {
+    if (!this.state.loaded) {
+      return div({}, "");
+    } else {
+      return reactify({
+        gn: this.props.component,
+        ga: this.props,
+        c: []
+      });
+    }
+  }
+});
+
+
+},{"./Reactify.coffee":12}],12:[function(require,module,exports){
 var Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -1027,8 +1087,7 @@ module.exports = _.extend(reactify, {
 });
 
 
-
-},{"./LoadComponent.coffee":"/Users/galen/src/urbit-tree/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-tree/js/components/SearchComponent.coffee":[function(require,module,exports){
+},{"./LoadComponent.coffee":10}],13:[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -1166,8 +1225,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/components/TocComponent.coffee":[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":12}],14:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
 
@@ -1295,13 +1353,8 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
-var Dispatcher;
-
-Dispatcher = require('flux').Dispatcher;
-
-module.exports = _.extend(new Dispatcher(), {
+},{"./Async.coffee":3,"./Reactify.coffee":12}],15:[function(require,module,exports){
+module.exports = _.extend(new Flux.Dispatcher(), {
   handleServerAction: function(action) {
     return this.dispatch({
       source: 'server',
@@ -1317,196 +1370,40 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-
-},{"flux":"/Users/galen/src/urbit-tree/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-tree/js/main.coffee":[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var rend;
 
-rend = React.render;
+rend = ReactDOM.render;
 
 $(function() {
-  var $body, TreeActions, TreePersistence, body, checkMove, checkScroll, frag, head, po, setSo, so;
-  $body = $('body');
-  React.initializeTouchEvents(true);
-  head = React.createFactory(require('./components/AnchorComponent.coffee'));
-  body = React.createFactory(require('./components/BodyComponent.coffee'));
+  var TreeActions, body, frag, head, util;
+  util = require('./utils/util.coffee');
+  require('./utils/scroll.coffee');
   window.tree.components = require('./components/Components.coffee');
-  window.tree._basepath = window.urb.util.basepath("/");
-  window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
-  window.tree.basepath = function(path) {
-    var _path, prefix;
-    prefix = window.tree._basepath;
-    if (prefix === "/") {
-      prefix = "";
-    }
-    if (path[0] !== "/") {
-      path = "/" + path;
-    }
-    _path = prefix + path;
-    if (_path.slice(-1) === "/") {
-      _path = _path.slice(0, -1);
-    }
-    return _path;
-  };
-  window.tree.fragpath = function(path) {
-    return path.replace(/\/$/, '').replace(window.tree._basepath, "");
-  };
   TreeActions = require('./actions/TreeActions.coffee');
-  TreePersistence = require('./persistence/TreePersistence.coffee');
-  frag = window.tree.fragpath(window.location.pathname);
+  frag = util.fragpath(window.location.pathname);
   TreeActions.setCurr(frag);
   TreeActions.loadPath(frag, window.tree.body, window.tree.kids);
+  head = React.createFactory(require('./components/AnchorComponent.coffee'));
+  body = React.createFactory(require('./components/BodyComponent.coffee'));
   rend(head({}, ""), $('#nav')[0]);
-  rend(body({}, ""), $('#cont')[0]);
-  window.tree.util = {
-    getKeys: function(kids) {
-      var k, keys, ref, ref1, ref2, sorted, v;
-      sorted = true;
-      keys = [];
-      for (k in kids) {
-        v = kids[k];
-        if ((ref = v.meta) != null ? ref.hide : void 0) {
-          continue;
-        }
-        if (((ref1 = v.meta) != null ? ref1.sort : void 0) == null) {
-          sorted = false;
-        }
-        keys[Number((ref2 = v.meta) != null ? ref2.sort : void 0)] = k;
-      }
-      if (sorted !== true) {
-        return keys = _.keys(kids).sort();
-      } else {
-        return keys = _.values(keys);
-      }
-    }
-  };
-  checkScroll = function() {
-    if ($(window).scrollTop() > 20) {
-      return $('#nav').addClass('scrolling');
-    } else {
-      return $('#nav').removeClass('scrolling');
-    }
-  };
-  setInterval(checkScroll, 500);
-  po = {};
-  po.cm = null;
-  po.lm = null;
-  po.cs = $(window).scrollTop();
-  po.ls = $(window).scrollTop();
-  $(document).mousemove(function(e) {
-    return po.cm = {
-      x: e.pageX,
-      y: e.pageY
-    };
-  });
-  checkMove = function() {
-    var db, ds, dx, dy;
-    if (po.lm !== null && po.cm !== null) {
-      po.cs = $(window).scrollTop();
-      db = $(window).height() - (po.cs + window.innerHeight);
-      ds = Math.abs(po.cs - po.ls);
-      dx = Math.abs(po.cm.x - po.lm.x);
-      dy = Math.abs(po.cm.y - po.lm.y);
-      $('#nav').toggleClass('moving', dx > 20 || dy > 20 || db < 180);
-    }
-    po.lm = po.cm;
-    return po.ls = po.cs;
-  };
-  setInterval(checkMove, 200);
-  so = {};
-  so.ls = $(window).scrollTop();
-  so.cs = $(window).scrollTop();
-  so.w = null;
-  so.$n = $('#nav');
-  so.$d = $('#nav > div');
-  so.nh = $('#nav').outerHeight(true);
-  setSo = function() {
-    so.w = $(window).width();
-    return so.$n = $('#nav');
-  };
-  setInterval(setSo, 200);
-  $(window).on('resize', function(e) {
-    if (so.w > 1170) {
-      return so.$n.removeClass('m-up m-down m-fixed');
-    }
-  });
-  return $(window).on('scroll', function(e) {
-    var dy, sto, top;
-    so.cs = $(window).scrollTop();
-    if (so.w > 1170) {
-      so.$n.removeClass('m-up m-down m-fixed');
-    }
-    if (so.w < 1170) {
-      dy = so.ls - so.cs;
-      so.$d.removeClass('focus');
-      if (so.cs <= 0) {
-        so.$n.removeClass('m-up');
-        so.$n.addClass('m-down m-fixed');
-        return;
-      }
-      if (so.$n.hasClass('m-fixed' && so.w < 1024)) {
-        so.$n.css({
-          left: -1 * $(window).scrollLeft()
-        });
-      }
-      if (dy > 0) {
-        if (!so.$n.hasClass('m-down')) {
-          so.$n.removeClass('m-up').addClass('m-down');
-          top = so.cs - so.nh;
-          if (top < 0) {
-            top = 0;
-          }
-          so.$n.offset({
-            top: top
-          });
-        }
-        if (so.$n.hasClass('m-down') && !so.$n.hasClass('m-fixed') && so.$n.offset().top >= so.cs) {
-          so.$n.addClass('m-fixed');
-          so.$n.attr({
-            style: ''
-          });
-        }
-      }
-      if (dy < 0) {
-        if (!so.$n.hasClass('m-up')) {
-          so.$n.removeClass('m-down m-fixed').addClass('m-up');
-          so.$n.attr({
-            style: ''
-          });
-          top = so.cs;
-          sto = so.$n.offset().top;
-          if (top < 0) {
-            top = 0;
-          }
-          if (top > sto && top < sto + so.nh) {
-            top = sto;
-          }
-          so.$n.offset({
-            top: top
-          });
-        }
-      }
-    }
-    return so.ls = so.cs;
-  });
+  return rend(body({}, ""), $('#cont')[0]);
 });
 
 
-
-},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-tree/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-tree/js/components/BodyComponent.coffee","./components/Components.coffee":"/Users/galen/src/urbit-tree/js/components/Components.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit-tree/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-tree/js/node_modules/classnames/index.js":[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./utils/scroll.coffee":20,"./utils/util.coffee":21}],17:[function(require,module,exports){
 /*!
-  Copyright (c) 2016 Jed Watson.
+  Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
   http://jedwatson.github.io/classnames
 */
-/* global define */
 
 (function () {
 	'use strict';
 
-	var hasOwn = {}.hasOwnProperty;
-
 	function classNames () {
-		var classes = [];
+
+		var classes = '';
 
 		for (var i = 0; i < arguments.length; i++) {
 			var arg = arguments[i];
@@ -1514,355 +1411,41 @@ $(function() {
 
 			var argType = typeof arg;
 
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
+			if ('string' === argType || 'number' === argType) {
+				classes += ' ' + arg;
+
 			} else if (Array.isArray(arg)) {
-				classes.push(classNames.apply(null, arg));
-			} else if (argType === 'object') {
+				classes += ' ' + classNames.apply(null, arg);
+
+			} else if ('object' === argType) {
 				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
+					if (arg.hasOwnProperty(key) && arg[key]) {
+						classes += ' ' + key;
 					}
 				}
 			}
 		}
 
-		return classes.join(' ');
+		return classes.substr(1);
 	}
 
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
-		// register as 'classnames', consistent with npm package name
-		define('classnames', [], function () {
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
+		// AMD. Register as an anonymous module.
+		define(function () {
 			return classNames;
 		});
 	} else {
 		window.classNames = classNames;
 	}
+
 }());
 
-},{}],"/Users/galen/src/urbit-tree/js/node_modules/flux/index.js":[function(require,module,exports){
-/**
- * Copyright (c) 2014-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+},{}],18:[function(require,module,exports){
+var dedup, util;
 
-module.exports.Dispatcher = require('./lib/Dispatcher')
-
-},{"./lib/Dispatcher":"/Users/galen/src/urbit-tree/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-tree/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
-/*
- * Copyright (c) 2014, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule Dispatcher
- * @typechecks
- */
-
-"use strict";
-
-var invariant = require('./invariant');
-
-var _lastID = 1;
-var _prefix = 'ID_';
-
-/**
- * Dispatcher is used to broadcast payloads to registered callbacks. This is
- * different from generic pub-sub systems in two ways:
- *
- *   1) Callbacks are not subscribed to particular events. Every payload is
- *      dispatched to every registered callback.
- *   2) Callbacks can be deferred in whole or part until other callbacks have
- *      been executed.
- *
- * For example, consider this hypothetical flight destination form, which
- * selects a default city when a country is selected:
- *
- *   var flightDispatcher = new Dispatcher();
- *
- *   // Keeps track of which country is selected
- *   var CountryStore = {country: null};
- *
- *   // Keeps track of which city is selected
- *   var CityStore = {city: null};
- *
- *   // Keeps track of the base flight price of the selected city
- *   var FlightPriceStore = {price: null}
- *
- * When a user changes the selected city, we dispatch the payload:
- *
- *   flightDispatcher.dispatch({
- *     actionType: 'city-update',
- *     selectedCity: 'paris'
- *   });
- *
- * This payload is digested by `CityStore`:
- *
- *   flightDispatcher.register(function(payload) {
- *     if (payload.actionType === 'city-update') {
- *       CityStore.city = payload.selectedCity;
- *     }
- *   });
- *
- * When the user selects a country, we dispatch the payload:
- *
- *   flightDispatcher.dispatch({
- *     actionType: 'country-update',
- *     selectedCountry: 'australia'
- *   });
- *
- * This payload is digested by both stores:
- *
- *    CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
- *     if (payload.actionType === 'country-update') {
- *       CountryStore.country = payload.selectedCountry;
- *     }
- *   });
- *
- * When the callback to update `CountryStore` is registered, we save a reference
- * to the returned token. Using this token with `waitFor()`, we can guarantee
- * that `CountryStore` is updated before the callback that updates `CityStore`
- * needs to query its data.
- *
- *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
- *     if (payload.actionType === 'country-update') {
- *       // `CountryStore.country` may not be updated.
- *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
- *       // `CountryStore.country` is now guaranteed to be updated.
- *
- *       // Select the default city for the new country
- *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
- *     }
- *   });
- *
- * The usage of `waitFor()` can be chained, for example:
- *
- *   FlightPriceStore.dispatchToken =
- *     flightDispatcher.register(function(payload) {
- *       switch (payload.actionType) {
- *         case 'country-update':
- *           flightDispatcher.waitFor([CityStore.dispatchToken]);
- *           FlightPriceStore.price =
- *             getFlightPriceStore(CountryStore.country, CityStore.city);
- *           break;
- *
- *         case 'city-update':
- *           FlightPriceStore.price =
- *             FlightPriceStore(CountryStore.country, CityStore.city);
- *           break;
- *     }
- *   });
- *
- * The `country-update` payload will be guaranteed to invoke the stores'
- * registered callbacks in order: `CountryStore`, `CityStore`, then
- * `FlightPriceStore`.
- */
-
-  function Dispatcher() {
-    this.$Dispatcher_callbacks = {};
-    this.$Dispatcher_isPending = {};
-    this.$Dispatcher_isHandled = {};
-    this.$Dispatcher_isDispatching = false;
-    this.$Dispatcher_pendingPayload = null;
-  }
-
-  /**
-   * Registers a callback to be invoked with every dispatched payload. Returns
-   * a token that can be used with `waitFor()`.
-   *
-   * @param {function} callback
-   * @return {string}
-   */
-  Dispatcher.prototype.register=function(callback) {
-    var id = _prefix + _lastID++;
-    this.$Dispatcher_callbacks[id] = callback;
-    return id;
-  };
-
-  /**
-   * Removes a callback based on its token.
-   *
-   * @param {string} id
-   */
-  Dispatcher.prototype.unregister=function(id) {
-    invariant(
-      this.$Dispatcher_callbacks[id],
-      'Dispatcher.unregister(...): `%s` does not map to a registered callback.',
-      id
-    );
-    delete this.$Dispatcher_callbacks[id];
-  };
-
-  /**
-   * Waits for the callbacks specified to be invoked before continuing execution
-   * of the current callback. This method should only be used by a callback in
-   * response to a dispatched payload.
-   *
-   * @param {array<string>} ids
-   */
-  Dispatcher.prototype.waitFor=function(ids) {
-    invariant(
-      this.$Dispatcher_isDispatching,
-      'Dispatcher.waitFor(...): Must be invoked while dispatching.'
-    );
-    for (var ii = 0; ii < ids.length; ii++) {
-      var id = ids[ii];
-      if (this.$Dispatcher_isPending[id]) {
-        invariant(
-          this.$Dispatcher_isHandled[id],
-          'Dispatcher.waitFor(...): Circular dependency detected while ' +
-          'waiting for `%s`.',
-          id
-        );
-        continue;
-      }
-      invariant(
-        this.$Dispatcher_callbacks[id],
-        'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',
-        id
-      );
-      this.$Dispatcher_invokeCallback(id);
-    }
-  };
-
-  /**
-   * Dispatches a payload to all registered callbacks.
-   *
-   * @param {object} payload
-   */
-  Dispatcher.prototype.dispatch=function(payload) {
-    invariant(
-      !this.$Dispatcher_isDispatching,
-      'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'
-    );
-    this.$Dispatcher_startDispatching(payload);
-    try {
-      for (var id in this.$Dispatcher_callbacks) {
-        if (this.$Dispatcher_isPending[id]) {
-          continue;
-        }
-        this.$Dispatcher_invokeCallback(id);
-      }
-    } finally {
-      this.$Dispatcher_stopDispatching();
-    }
-  };
-
-  /**
-   * Is this Dispatcher currently dispatching.
-   *
-   * @return {boolean}
-   */
-  Dispatcher.prototype.isDispatching=function() {
-    return this.$Dispatcher_isDispatching;
-  };
-
-  /**
-   * Call the callback stored with the given id. Also do some internal
-   * bookkeeping.
-   *
-   * @param {string} id
-   * @internal
-   */
-  Dispatcher.prototype.$Dispatcher_invokeCallback=function(id) {
-    this.$Dispatcher_isPending[id] = true;
-    this.$Dispatcher_callbacks[id](this.$Dispatcher_pendingPayload);
-    this.$Dispatcher_isHandled[id] = true;
-  };
-
-  /**
-   * Set up bookkeeping needed when dispatching.
-   *
-   * @param {object} payload
-   * @internal
-   */
-  Dispatcher.prototype.$Dispatcher_startDispatching=function(payload) {
-    for (var id in this.$Dispatcher_callbacks) {
-      this.$Dispatcher_isPending[id] = false;
-      this.$Dispatcher_isHandled[id] = false;
-    }
-    this.$Dispatcher_pendingPayload = payload;
-    this.$Dispatcher_isDispatching = true;
-  };
-
-  /**
-   * Clear bookkeeping used for dispatching.
-   *
-   * @internal
-   */
-  Dispatcher.prototype.$Dispatcher_stopDispatching=function() {
-    this.$Dispatcher_pendingPayload = null;
-    this.$Dispatcher_isDispatching = false;
-  };
-
-
-module.exports = Dispatcher;
-
-},{"./invariant":"/Users/galen/src/urbit-tree/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-tree/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
-/**
- * Copyright (c) 2014, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule invariant
- */
-
-"use strict";
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var invariant = function(condition, format, a, b, c, d, e, f) {
-  if (false) {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  }
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error(
-        'Minified exception occurred; use the non-minified dev environment ' +
-        'for the full error message and additional helpful warnings.'
-      );
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(
-        'Invariant Violation: ' +
-        format.replace(/%s/g, function() { return args[argIndex++]; })
-      );
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-};
-
-module.exports = invariant;
-
-},{}],"/Users/galen/src/urbit-tree/js/persistence/TreePersistence.coffee":[function(require,module,exports){
-var dedup;
+util = require('../utils/util.coffee');
 
 dedup = {};
 
@@ -1872,7 +1455,7 @@ module.exports = {
     if (query == null) {
       query = "no-query";
     }
-    url = (window.tree.basepath(path)) + ".json?q=" + (this.encode(query));
+    url = (util.basepath(path)) + ".json?q=" + (this.encode(query));
     if (dedup[url]) {
       return;
     }
@@ -1919,8 +1502,7 @@ module.exports = {
 };
 
 
-
-},{}],"/Users/galen/src/urbit-tree/js/stores/TreeStore.coffee":[function(require,module,exports){
+},{"../utils/util.coffee":21}],19:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -2145,8 +1727,148 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
+},{"../dispatcher/Dispatcher.coffee":15,"events":22}],20:[function(require,module,exports){
+var scroll;
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-tree/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+scroll = {
+  w: null,
+  $d: null,
+  $n: null,
+  nh: null,
+  cs: null,
+  ls: null,
+  track: function() {
+    this.w = $(window).width();
+    this.$n = $('.nav.container');
+    return this.nh = $('.nav.container .ctrl').outerHeight(true);
+  },
+  clearNav: function() {
+    return this.$n.removeClass('m-up m-down m-fixed');
+  },
+  resize: function() {
+    if (this.w > 1170) {
+      return this.clearNav();
+    }
+  },
+  scroll: function() {
+    var ct, dy, top;
+    this.cs = $(window).scrollTop();
+    if (this.w > 1170) {
+      this.clearNav();
+    }
+    if (this.w < 1170) {
+      dy = this.ls - this.cs;
+      this.$d.removeClass('focus');
+      if (this.cs <= 0) {
+        this.$n.removeClass('m-up');
+        this.$n.addClass('m-down m-fixed');
+        return;
+      }
+      if (dy > 0) {
+        if (!this.$n.hasClass('m-down')) {
+          this.$n.removeClass('m-up').addClass('m-down');
+          ct = this.$n.offset().top;
+          top = this.cs - this.nh;
+          if (this.cs > ct && this.cs < ct + this.nh) {
+            top = ct;
+          }
+          this.$n.offset({
+            top: this.$n.top
+          });
+        }
+        if (this.$n.hasClass('m-down') && !this.$n.hasClass('m-fixed') && this.$n.offset().top >= this.cs) {
+          this.$n.addClass('m-fixed');
+          this.$n.attr({
+            style: ''
+          });
+        }
+      }
+      if (dy < 0) {
+        if (!this.$n.hasClass('m-up')) {
+          this.$n.removeClass('m-down m-fixed').addClass('m-up');
+          top = this.cs < 0 ? 0 : this.cs;
+          ct = this.$n.offset().top;
+          if (top > ct && top < ct + this.nh) {
+            top = ct;
+          }
+          this.$n.offset({
+            top: top
+          });
+        }
+        if (this.$n.hasClass('m-up') && this.$d.hasClass('open')) {
+          if (this.cs > this.$n.offset().top + this.$n.height()) {
+            this.$d.removeClass('open');
+          }
+        }
+      }
+    }
+    return this.ls = this.cs;
+  },
+  init: function() {
+    setInterval(this.track.bind(this), 200);
+    this.ls = $(window).scrollTop();
+    this.cs = $(window).scrollTop();
+    this.$d = $('.nav.container .ctrl');
+    $(window).on('resize', this.resize.bind(this));
+    return $(window).on('scroll', this.scroll.bind(this));
+  }
+};
+
+scroll.init();
+
+module.exports = scroll;
+
+
+},{}],21:[function(require,module,exports){
+var _basepath;
+
+_basepath = window.urb.util.basepath("/");
+
+_basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
+
+module.exports = {
+  basepath: function(path) {
+    var _path, prefix;
+    prefix = _basepath;
+    if (prefix === "/") {
+      prefix = "";
+    }
+    if (path[0] !== "/") {
+      path = "/" + path;
+    }
+    _path = prefix + path;
+    if (_path.slice(-1) === "/") {
+      _path = _path.slice(0, -1);
+    }
+    return _path;
+  },
+  fragpath: function(path) {
+    return path.replace(/\/$/, '').replace(_basepath, "");
+  },
+  getKeys: function(kids) {
+    var k, keys, ref, ref1, ref2, sorted, v;
+    sorted = true;
+    keys = [];
+    for (k in kids) {
+      v = kids[k];
+      if ((ref = v.meta) != null ? ref.hide : void 0) {
+        continue;
+      }
+      if (((ref1 = v.meta) != null ? ref1.sort : void 0) == null) {
+        sorted = false;
+      }
+      keys[Number((ref2 = v.meta) != null ? ref2.sort : void 0)] = k;
+    }
+    if (sorted !== true) {
+      return keys = _.keys(kids).sort();
+    } else {
+      return keys = _.values(keys);
+    }
+  }
+};
+
+
+},{}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2206,10 +1928,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -2451,4 +2171,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/src/urbit-tree/js/main.coffee"]);
+},{}]},{},[16]);
