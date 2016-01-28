@@ -92,7 +92,7 @@
       sec=(map ,[iden (list ,@t)] driv)                 ::  security drivers
   ==                                                    ::
 ::
-++  driv  %+  pair  (unit vase)                         ::  driver state
+++  driv  %+  pair  (unit $|(~ vase))                   ::  driver state
           (qeu (trel duct mark vase:hiss))              ::  waiting requests
 ::
 ++  live                                                ::  in flight
@@ -1614,7 +1614,7 @@
     --
   ++  vi                                                ::  auth engine
     |_  $:  [usr=iden dom=path]
-            cor=(unit vase)
+            cor=(unit $|(~ vase))
             req=(qeu ,[p=duct q=mark r=vase:hiss])
         ==
     ++  self  .
@@ -1632,10 +1632,13 @@
       =+  ole=~(top to req)
       ?~  ole  abet
       ::  process hiss
-      (call(hen p.u.ole) %out hiss/r.u.ole)
+      =.  hen  p.u.ole
+      ?~  u.cor  (eyre-them %out r.u.ole)  :: don't process
+      (call %out hiss/r.u.ole)
     ::
     ++  prep-cor  ^-  silk
       ?~  cor  ~|(%no-core !!)
+      ?~  u.cor  ~|(%nil-driver !!)
       :+  ~  %core
       %_    u.cor
           +12.q
@@ -1653,7 +1656,10 @@
       |=  [dep=@uvH gag=(each cage tang)]
       ~&  got-upd/dep
       =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
-      ?-(-.gag %| (warn p.gag), %& pump(cor `q.p.gag))
+      ?~  -.gag  pump(cor `q.p.gag)
+      ?:  &(?=(~ cor) ?=(~ usr))
+        pump(cor `~)  :: userless %hiss defaults to "nop" driver
+      (warn p.gag)
     ::
     ++  get-made
       |=  [wir=whir-se dep=@uvH res=(each cage tang)]  ^+  abet
@@ -1671,15 +1677,15 @@
       ?+  wir  !!
         %in  (call %bak httr/!>(hit))
         %out
-          ?:  (has-arm %res)
-            (call %res httr/!>(hit))
-          (do-give !>([%give hit]))
+          ?.  (has-arm %res)  (do-httr !>(hit))
+          (call %res httr/!>(hit))
       ==
     ::
-    ++  has-arm  ~(has in (sa (sloe ?~(cor %void p.u.cor))))
-    ++  do-give
-      |=  vax=vase
-      =.  vax  (slam !>(|=([%give a=httr] a)) vax)
+    ++  has-arm  ~(has in (sa (sloe cor-type)))
+    ++  cor-type  ?~(cor %void ?~(u.cor %void p.u.cor))
+    ++  do-give  |=(vax=vase (do-httr (slam !>(|=([%give a=httr] a)) vax)))
+    ++  do-httr
+      |=  vax=vase:httr
       =^  ole  req  ~(get to req)
       =>  .(ole `[p=duct q=mark *]`ole)             :: XX types
       =.  ..vi  (cast-thou(hen p.ole) q.ole httr/vax)    :: error?
@@ -1709,10 +1715,9 @@
       =.  p.res  (~(fuse ut p.res) p:!>(*[[@ *] *]))
       =+  [mow=(slot 2 res) roc=(slot 3 res)]
       =-  ((han self(cor (some roc))) mow):+  ::  XX better stateless asserts
-      ?~  cor  ~|(%lost-core !!)
+      =+  typ=cor-type
       ~|  %core-mismatch
-      ?>  (~(nest ut p.u.cor) & p.roc)
-      ~
+      ?>((~(nest ut typ) & p.roc) ~)
     ::
     ++  allow
       |=  a=(list ,[p=term q=$+(vase _abet)])
@@ -1775,8 +1780,6 @@
     ::
     ++  get-quay
       |=  quy=quay  ^+  abet
-      ?~  cor
-        ~|(%no-core !!)
       (call %in quay/!>(quy))
     ::
     ++  rebuild  build(cor ~)
@@ -1786,6 +1789,7 @@
       :^  %mute  core/[root-beak (flop %_(dom . sec/dom))]
         [~[`12] `bale/!>(*(bale ,@))]  :: XX specify on type?
       ?~  cor  ~
+      ?~  u.cor  ~
       ?:  (has-arm %wyp)  ~
       ?:  (has-arm %upd)
         [~[`13] ride/[cnzy/%upd prep-cor]]~
