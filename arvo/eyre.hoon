@@ -89,7 +89,7 @@
       wup=(map hole cyst)                               ::  secure sessions
       sop=(map hole ,[ship ?])                          ::  foreign sess names
       wix=(map ixor stem)                               ::  open views
-      sec=(map ,[span (list ,@t)] driv)                 ::  security drivers
+      sec=(map ,[iden (list ,@t)] driv)                 ::  security drivers
   ==                                                    ::
 ::
 ++  driv  %+  pair  (unit vase)                         ::  driver state
@@ -1613,7 +1613,7 @@
     ++  print-subs  |=([a=dock b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
     --
   ++  vi                                                ::  auth engine
-    |_  $:  [usr=span dom=path]
+    |_  $:  [usr=iden dom=path]
             cor=(unit vase)
             req=(qeu ,[p=duct q=mark r=vase:hiss])
         ==
@@ -1634,14 +1634,19 @@
       ::  process hiss
       (call(hen p.u.ole) %out hiss/r.u.ole)
     ::
-    ++  call
-      |=  [arm=?(%bak %res %out %in) sam=cage]
+    ++  prep-cor  ^-  silk
       ?~  cor  ~|(%no-core !!)
-      =.  +12.q.u.cor
+      :+  ~  %core
+      %_    u.cor
+          +12.q
         =+  ato=(sky %cx (tope root-beak [%atom (flop %_(dom . sec/dom))]))
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
-      =+  call/[ride/[cnzy/arm `core/u.cor] `sam]
+      ==
+    ::
+    ++  call
+      |=  [arm=?(%bak %res %out %in) sam=cage]
+      =+  call/[ride/[cnzy/arm prep-cor] `sam]
       (pass-note arm (ford-req root-beak -))
     ::
     ++  get-upd  
@@ -1660,17 +1665,18 @@
         %bak   (res-bak res)
       ==
     ::
+    ::
     ++  get-thou
       |=  [wir=whir-se hit=httr]
       ?+  wir  !!
         %in  (call %bak httr/!>(hit))
         %out
-          =+  opt=(sa (sloe ?~(cor %void p.u.cor)))
-          ?:  (~(has in opt) %res)
+          ?:  (has-arm %res)
             (call %res httr/!>(hit))
           (do-give !>([%give hit]))
       ==
     ::
+    ++  has-arm  ~(has in (sa (sloe ?~(cor %void p.u.cor))))
     ++  do-give
       |=  vax=vase
       =.  vax  (slam !>(|=([%give a=httr] a)) vax)
@@ -1780,7 +1786,9 @@
       :^  %mute  core/[root-beak (flop %_(dom . sec/dom))]
         [~[`12] `bale/!>(*(bale ,@))]  :: XX specify on type?
       ?~  cor  ~
-      ?:  (~(has in (sa (sloe p.u.cor))) %wipe)  ~      ::  XX proper adapt
+      ?:  (has-arm %wyp)  ~
+      ?:  (has-arm %upd)
+        [~[`13] ride/[cnzy/%upd prep-cor]]~
       [~[`13] `noun/(slot 13 u.cor)]~
     ::
     ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) hen a)))

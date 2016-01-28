@@ -14,5 +14,5 @@
   ?:  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token
     (toke-req:auth 'fb_exchange_token' fb-exchange-token/access-token ~)
   [[%redo ~] ..bak(access-token access-token)]
-::++  wipe  !!
+::++  wyp  ~
 --

@@ -38,5 +38,5 @@
 ::
 ++  in  in-code:auth
 ++  bak  (bak-save-tokens:auth-re save-access)
-:: ++  wipe  ~
+:: ++  upd  *user-state
 --
