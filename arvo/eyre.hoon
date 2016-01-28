@@ -1113,7 +1113,7 @@
           ?:  ?=(%| -.dom)  ~|(auth-ip/dom !!)
           =-  [%oath - p.dom]
           ~|  bad-user/`path`t.but
-          ?>  ?=([@ ~] t.but)
+          ?>  ?=([@ %in ~] t.but)
           =+  in-quy=(rush i.t.but ;~(pfix cab fque:urlp))
           ?~  in-quy
             (slav %ta i.t.but)

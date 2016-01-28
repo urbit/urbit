@@ -62,7 +62,7 @@
 ++  redirect-uri  
   %-    crip    %-  earn
   =+  usr-span=?:(state-usr '_state' (scot %ta usr))
-  [urb-hart `/~/ac/(join '.' (flop dom))/[usr-span] ~]
+  [urb-hart `/~/ac/(join '.' (flop dom))/[usr-span]/in ~]
 ::
 ++  out-filtered
   |=  [tok=token aut=$+(hiss hiss)]
