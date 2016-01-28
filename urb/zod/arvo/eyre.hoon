@@ -141,7 +141,7 @@
   $|  ~
   $%  [%$ p=httr]                                       ::  direct response
       [%red ~]                                          ::  parent redirect
-      [%boil p=whir q=term r=beam]                      ::  ford request
+      [%boil p=whir q=term r=beam payload=quay]         ::  ford request
   :: 
       [%js p=@t]                                        ::  script
       [%json p=json]                                    ::  data
@@ -950,7 +950,7 @@
       (execute wir -.bem [%boil ext bem ~])
     ::
     ::
-    ++  apex                                              
+    ++  apex
       =<  abet
       ^+  done
       =+  oar=(host-to-ship r.hat)
@@ -968,7 +968,8 @@
           %json  (give-json 200 cug p.pez)
           %html  (give-html 200 cug p.pez)
           %htme  (give-html 401 cug p.pez)
-          %boil  (ford-boil +.pez)
+          %boil
+        (ford-boil(quy payload.pez) [p.pez q.pez r.pez])
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect/[p.pok url] !!)
@@ -1139,6 +1140,14 @@
         ==
       --
     ::
+    :: process-payload handles the translation of a payload for post.
+    :: currently this involves treating the payload as a urlencoded
+    :: request. In the future it's possible the payload could be
+    :: a specific mark instead.
+    ++  process-payload
+        ?+  mef  quy
+          %post  `quay`(weld quy `quay`(rash q:(need bod) yquy:urlp))
+        ==
     ++  process
       ^-  (each pest ,_done)
       =+  pet=parse
@@ -1152,16 +1161,19 @@
           %auth  (process-auth p.hem)
           %away  [%& %html logout-page:xml]
           ?(%beam %spur)
+        =+  nquy=process-payload
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
         =+  wir=`whir`[%ha (tope -.bem ~)]
-        =.  wir  ?+(mef !! %get wir, %head [%he wir])
+        =.  wir  ?+(mef !! %post wir, %get wir, %head [%he wir])
         ~|  bad-beam/q.bem
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
-        =+  [wir ext bem]
-        ?.(aut [%& %boil -] [%| (ford-boil -)])  ::  XX properly
+        ?.  aut
+          [%& %boil [wir ext bem nquy]]
+        [%| (ford-boil(quy nquy) [wir ext bem])]  ::  XX properly
       ::
-          %bugs  
+      ::
+          %bugs
         ?-  p.hem
           %as  (show-login-page)
           %to  [%& %html poke-test:xml]
