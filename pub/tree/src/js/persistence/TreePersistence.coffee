@@ -7,7 +7,7 @@ module.exports =
   put: (sup,mime,cb)-> urb.send {sup,mime},{mark:'write-tree'}, cb
     
   get: (path,query="no-query",cb) ->
-    url = "#{window.tree.basepath(path)}.json?q=#{@encode query}"
+    url = "#{window.tree.basepath(path)}.tree-json?q=#{@encode query}"
     return if dedup[url]
     dedup[url] = true
     $.get url, {}, (data) -> if cb then cb null,data

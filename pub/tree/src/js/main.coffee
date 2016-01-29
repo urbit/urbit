@@ -26,7 +26,7 @@ $ ->
   TreeActions       = require './actions/TreeActions.coffee'
   TreePersistence   = require './persistence/TreePersistence.coffee'
 
-  frag = window.tree.fragpath window.location.pathname
+  frag = window.tree.fragpath window.location.pathname.replace /\.[^\/]*$/, ''
 
   TreeActions.setCurr frag
   TreeActions.loadPath frag,window.tree.data

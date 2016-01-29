@@ -119,7 +119,7 @@ module.exports = query {
   sein:'t'
 }, recl
   displayName: "Body"
-  isOwn: -> urb.user? and urb.user is urb.ship
+  isOwn: -> no # urb.user? and urb.user is urb.ship # disabled pending review
   getInitialState: -> edit: @isOwn() and document.location.hash is "#edit"
   
   pauseWasp: ->
