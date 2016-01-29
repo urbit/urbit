@@ -146,7 +146,7 @@ more UTF-32 words.
 
 ##### Examples
 
-    ~zod/try=> :type; ~-foo
+    ~zod/try=> ? ~-foo
     ~-foo
     @c
     ~zod/try=> ~-i~2764.u
@@ -186,12 +186,12 @@ Note: the time of day and/or millisecond fragment is optional.
 
     ~zod/try=> ~2014.1.1
     ~2014.1.1
-    ~zod/try=> :type; ~2014.1.1
+    ~zod/try=> ? ~2014.1.1
     ~2014.1.1
     @da
     ~zod/try=> ~2014.1.1..01.01.01
     ~2014.1.1..01.01.01
-    ~zod/try=> :type; ~2014.1.1..01.01.01
+    ~zod/try=> ? ~2014.1.1..01.01.01
     ~2014.1.1..01.01.01
     @da
     ~zod/try=> ~2014.1.1..01.01.01..1234
@@ -230,7 +230,7 @@ are in order. The largest measurement is preceded by a `~`.
 
     ~zod/try=> ~d1.h19.m5.s29
     ~d1.h19.m5.s29
-    ~zod/try=> :type; ~d1.h19.m5.s29
+    ~zod/try=> ? ~d1.h19.m5.s29
     ~d1.h19.m5.s29
     @dr
     ~zod/try=> `@dr`(div ~s1 1.000)
@@ -273,7 +273,7 @@ forms.
 
     ~zod/try=> `@ud`.y
     0
-    ~zod/try=> :type; .y
+    ~zod/try=> ? .y
     %.y
     {%.y %.n}
     ~zod/try=> `@ud`.n
@@ -294,7 +294,7 @@ Nil
 Atoms of the odor `@n` indicate an absence of information, as in a list
 terminator. The only value is `~`, which is just `0`.
 
-    ~zod/try=> :type; ~
+    ~zod/try=> ? ~
     ~
     %~
     ~zod/try=> `@ud`%~
@@ -321,7 +321,7 @@ phrases of four pairs are separated by `--`.
 
     ~zod/try=> ~pasnut
     ~pasnut
-    ~zod/try=> :type; ~pasnut
+    ~zod/try=> ? ~pasnut
     ~pasnut
     @p
     ~zod/try=> `@p`0x4321
@@ -371,7 +371,7 @@ Atoms of the odor `@sb` represent signed binary numbers.
 
 #### Examples
 
-    ~zod/try=> :type; -0b1
+    ~zod/try=> ? -0b1
     -0b1
     @sb
     ~zod/try=> `@sd`-0b1
@@ -399,10 +399,10 @@ Atoms of odor `@sd` represent signed decimal numbers.
 
     ~zod/try=> -234
     -234
-    ~zod/try=> :type; -234
+    ~zod/try=> ? -234
     -234
     @sd
-    ~zod/try=> :type; --234
+    ~zod/try=> ? --234
     --234
     @sd
     ~zod/try=> (sum:si -234 --234)
@@ -425,7 +425,7 @@ Atoms of odor `@sv` represent signed base32 numbers.
 
     ~zod/try=> -0vv
     -0vv
-    ~zod/try=> :type; -0vv
+    ~zod/try=> ? -0vv
     -0vv
     @sv
     ~zod/try=> --0vb
@@ -455,7 +455,7 @@ Atoms of odor `@sw` represent base64 numbers.
 
     ~zod/try=> -0w--
     -0w--
-    ~zod/try=> :type; -0w--
+    ~zod/try=> ? -0w--
     -0w--
     @sw
     ~zod/try=> `@sd`(sum:si -0w-A -0w--)
@@ -504,10 +504,10 @@ UTF-8 bytes, LSB first. It is sometimes called a cord.
 
     ~zod/try=> ~~foo
     'foo'
-    ~zod/try=> :type; 'foo'
+    ~zod/try=> ? 'foo'
     'foo'
     @t
-    ~zod/try=> :type; ~~foo
+    ~zod/try=> ? ~~foo
     'foo'
     @t
 
@@ -528,7 +528,7 @@ literals: `a-z`, `0-9`, `~`, `-`, `.`, `_`.
 
     ~zod/try=> ~..asdf
     ~..asdf
-    ~zod/try=> :type; ~.asdf
+    ~zod/try=> ? ~.asdf
     ~.asdf
     @ta
     ~zod/try=> `@t`~.asdf
@@ -577,7 +577,7 @@ Atoms of the odor `@ub` represent unsigned binary numbers.
 
     ~zod/try=> `@`0b1
     1
-    ~zod/try=> :type; 0b1
+    ~zod/try=> ? 0b1
     0b1
     @ub
     ~zod/try=> `@`0b10
@@ -604,7 +604,7 @@ and linebreaks can appear between the dot and the next group.
     0
     ~zod/try=> 19
     19
-    ~zod/try=> :type; 19
+    ~zod/try=> ? 19
     19
     @ud
     ~zod/try=> 1.024
@@ -630,7 +630,7 @@ Atoms of the odor `@uv` represent unsigned base64 numbers.
 
     ~zod/try=> `@ud`0vv
     31
-    ~zod/try=> :type; 0vv
+    ~zod/try=> ? 0vv
     0vv
     @uv
     ~zod/try=> `@ud`(add 0vv 0v9)
@@ -650,7 +650,7 @@ Unsigned base64
 
     ~zod/try=> 0w~
     0w~
-    ~zod/try=> :type; 0w~
+    ~zod/try=> ? 0w~
     0w~
     @uw
     ~zod/try=> `@uv`(add 0w~ 0wZ)
@@ -673,7 +673,7 @@ Atoms of the odor `@ux` represent hexadecimal numbers.
 
     ~zod/try=> 0x0
     0x0
-    ~zod/try=> :type; 0x0
+    ~zod/try=> ? 0x0
     0x0
     @ux
     ~zod/try=> `@ud`0x17
