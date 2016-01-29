@@ -1,8 +1,7 @@
 ::  This is a command-line ui for the %gh Github driver.
 ::
 ::  Usage:
-::    :github &path /read-unauth{/endpoint}
-::    :github &path /read-auth{/endpoint}
+::    :github &path /read{/endpoint}
 ::    :github &path /listen/{owner}/{repo}/{events...}
 ::
 /-  gh

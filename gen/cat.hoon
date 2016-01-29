@@ -8,16 +8,16 @@
 ::::
   ::
 :-  %say
-|=  [^ [arg=(list path)] ~]
+|=  [^ [arg=(list path)] vane=?(%c %g)]
 =-  tang/(flop `tang`(zing -))
 %+  turn  arg
 |=  pax=path
 ^-  tang
-=+  ark=;;(arch .^(%cy pax))
+=+  ark=;;(arch .^((cat 3 vane %y) pax))
 ?^  fil.ark
   ?:  =(%sched -:(flop pax))
-    [>;;((map ,@da cord) .^(%cx pax))<]~
-  [leaf/(spud pax) (pretty-file .^(%cx pax))]
+    [>;;((map ,@da cord) .^((cat 3 vane %x) pax))<]~
+  [leaf/(spud pax) (pretty-file .^((cat 3 vane %x) pax))]
 ?-     dir.ark                                          ::  handle ambiguity
     ~
   [rose/[" " `~]^~[leaf/"~" (smyt pax)]]~
@@ -26,6 +26,6 @@
     *
   =-  [palm/[": " ``~]^-]~
   :~  rose/[" " `~]^~[leaf/"*" (smyt pax)] 
-      `tank`(subdir pax dir.ark)
+      `tank`(subdir vane pax dir.ark)
   ==
 ==

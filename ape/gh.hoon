@@ -2,25 +2,25 @@
 ::
 ::  You can interact with this in a few different ways:
 ::
-::    - .^(%gx /=gh=/read-unauth{/endpoint}) or subscribe to
-::      /scry/x/read-unauth{/endpoint} for unauthenticated reads.
-::
-::    - .^(%gx /=gh=/read-auth{/endpoint}) or subscribe to
-::      /scry/x/read-auth{/endpoint} for authenticated reads.
+::    - .^(%gx /=gh=/read{/endpoint}) or subscribe to
+::      /scry/x/read{/endpoint} for authenticated reads.
 ::
 ::    - subscribe to /scry/x/listen/{owner}/{repo}/{events...}
 ::      for webhook-powered event notifications.  For event list,
 ::      see https://developer.github.com/webhooks/.
 ::
 ::  See the %github app for example usage.
+::
 /?    314
 /-  gh
 =>  |%
     ++  move  (pair bone card)
     ++  sub-result
-      $%  [%json json]
+      $%  [%arch arch]
           [%gh-issues issues:gh]
           [%gh-issue-comment issue-comment:gh]
+          [%json json]
+          [%null ~]
       ==
     ++  card  
       $%  [%diff sub-result]
@@ -38,44 +38,45 @@
 ::  This core manages everything related to a particular request.
 ::
 ::  Each request has a particular 'style', which is currently
-::  one of 'read-auth', 'read-unauth', or 'listen'.  ++scry
-::  handles all three types of requests.
+::  one of 'read', or 'listen'.  ++scry handles all three types
+::  of requests.
+::
 ++  help
-  |=  [style=@tas pax=path]
+  |=  [ren=care style=@tas pax=path arg=path]
   =|  mow=(list move)
   |%
   ::  Resolve core.
+  ::
   ++  abet
     ^-  [(list move) _+>.$]
     [(flop mow) +>.$]
   ::
   ::  Append path to api.github.com and parse to a purl.
+  ::
   ++  real-pax  (scan "https://api.github.com{<`path`pax>}" auri:epur)
   ::
-  ::  Send a hiss with the correct authentication
+  ::  Send a hiss
+  ::
   ++  send-hiss 
-    |=  [aut=? hiz=hiss]
+    |=  hiz=hiss
     ^+  +>
-    =+  wir=`wire`[%x (scot %ud cnt) pax]
-    =+  ^=  new-move
-        ?.  aut  [ost.hid %them wir ~ hiz]
-        [ost.hid %hiss wir `~ %httr [%hiss hiz]]
+    =+  wir=`wire`[ren (scot %ud cnt) (scot %uv (jam arg)) style pax]
+    =+  new-move=[ost.hid %hiss wir `~ %httr [%hiss hiz]]
     +>.$(mow [new-move mow])
   ::
   ::  Decide how to handle a request based on its style.
+  ::
   ++  scry
     ^+  .
-    =-  ~&  [%requesting -]  -
     ?+  style  ~|(%invalid-style !!)
-      %read-unauth  read-unauth
-      %read-auth    read-auth
-      %listen       listen
+      %read     read
+      %listen   listen
     ==
   ::
-  ++  read-unauth  (send-hiss | real-pax %get ~ ~)
-  ++  read-auth    (send-hiss & real-pax %get ~ ~)
+  ++  read  (send-hiss real-pax %get ~ ~)
   ::
   ::  Create or update a webhook to listen for a set of events.
+  ::
   ++  listen
     ^+  .
     ?>  ?=([@ @ *] pax)
@@ -90,6 +91,7 @@
     $(events t.events)
   ::
   ::  Set up a webhook.
+  ::
   ++  create-hook
     |=  event=@t
     ^+  +>
@@ -102,8 +104,7 @@
           *[id=@t listeners=(set bone)]
       [id (~(put in listeners) ost.hid)]
     %-  send-hiss
-    :*  &
-        %+  scan
+    :*  %+  scan
           =+  [(trip i.pax) (trip i.t.pax)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:epur
@@ -123,6 +124,7 @@
     ==
   ::
   ::  Add current bone to the list of subscribers for this event.
+  ::
   ++  update-hook
     |=  event=@t
     ^+  +>
@@ -140,6 +142,7 @@
 ::  mark that we shouldn't get from a webhook, we reject it.
 ::  Otherwise, we spam out the event to everyone who's listening
 ::  for that event.
+::
 ++  poke
   |=  response=hook-response
   ^-  [(list move) _+>.$]
@@ -159,33 +162,71 @@
 ::
 ::  After some sanity checking we hand control to ++scry in
 ::  ++help.
-++  peer-scry-x
+::
+++  peer-scry
   |=  pax=path
   ^-  [(list move) _+>.$]
-  ?>  ?=(^ pax)
-  =-  ~&  [%peered -]  -
-  [abet(cnt now.hid)]:scry:(help i.pax t.pax)
+  ?>  ?=([care ^] pax)
+  ::  =-  ~&  [%peered -]  -
+  [abet(cnt now.hid)]:scry:(help i.pax i.t.pax t.t.pax ~)
 ::
 ::  HTTP response.  We make sure the response is good, then
 ::  produce the result (as JSON) to whoever sent the request.
-++  sigh-httr-x  thou-x
-++  thou-x
+::
+++  sigh-httr
   |=  [way=wire res=httr]
   ^-  [(list move) _+>.$]
-  ?>  ?=([@ *] way)
-  :_  +>.$  :_  ~
-  :^  ost.hid  %diff  %json
-  ?~  r.res
-    (jobe err/s/%empty-response code/(jone p.res) ~)
-  =+  (rush q.u.r.res apex:poja)
-  ?~  -
-    (jobe err/s/%bad-json code/(jone p.res) body/s/q.u.r.res ~)
-  ?.  =(2 (div p.res 100))
-    (jobe err/s/%request-rejected code/(jone p.res) msg/u.- ~)
-  u.-
+  ?>  ?=([care @ @ @ *] way)
+  =+  arg=(path (cue (slav %uv i.t.t.way)))
+  =-  ?:  ?=(%& -<)
+        [[ost.hid %diff p]~ +>.$]
+      ?~  t.t.t.t.way
+        [[ost.hid %diff p]~ +>.$]
+      =+  len=(lent t.t.t.t.way)
+      =+  pax=`path`(scag (dec len) `path`t.t.t.t.way)
+      =+  new-arg=`path`(slag (dec len) `path`t.t.t.t.way)
+      =-  ~&  [%giving -]  -
+      [abet(cnt now.hid)]:scry:(help i.way i.t.t.t.way pax new-arg)
+  ^-  (each sub-result sub-result)
+  ?+    i.way  `null/~
+      %x
+    ?~  r.res
+      [%| %json (jobe err/s/%empty-response code/(jone p.res) ~)]
+    =+  jon=(rush q.u.r.res apex:poja)
+    ?~  jon
+      [%| %json (jobe err/s/%bad-json code/(jone p.res) body/s/q.u.r.res ~)]
+    ?.  =(2 (div p.res 100))
+      [%| %json (jobe err/s/%request-rejected code/(jone p.res) msg/u.jon ~)]
+    |-  ^-  (each sub-result sub-result)
+    ?~  arg
+      `json/u.jon
+    =+  dir=((om:jo some) u.jon)
+    ?~  dir
+      [%| %json (jobe err/s/%json-not-object code/(jone p.res) body/u.jon ~)]
+    =+  new-jon=(~(get by u.dir) i.arg)
+    $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
+  ::
+      %y
+    ?~  r.res
+      ~&  [err/s/%empty-response code/(jone p.res)]
+      [%| arch/*arch]
+    =+  jon=(rush q.u.r.res apex:poja)
+    ?~  jon
+      ~&  [err/s/%bad-json code/(jone p.res) body/s/q.u.r.res]
+      [%| arch/*arch]
+    ?.  =(2 (div p.res 100))
+      ~&  [err/s/%request-rejected code/(jone p.res) msg/u.jon]
+      [%| arch/*arch]
+    =+  dir=((om:jo some) u.jon)
+    ?~  dir
+      ~&  [err/s/%json-not-object code/(jone p.res) body/u.jon]
+      [%| arch/*arch]
+    [%& %arch `(shax (jam u.jon)) (~(run by u.dir) ,~)]
+  ==
 ::
 ::  We can't actually give the response to pretty much anything
 ::  without blocking, so we just block unconditionally.
+::
 ++  peek
   |=  [ren=@tas tyl=path]
   ^-  (unit (unit (pair mark ,*)))
