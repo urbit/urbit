@@ -941,7 +941,7 @@
     ++  pass-note  (teba ^pass-note)
     ::
     ++  ford-boil
-      |=  [wir=whir ext=term bem=beam]
+      |=  [wir=whir ext=term bem=beam quy=quay]
       =+  yac=for-client
       =.  him.yac  ?.(aut anon him.yac)
       =:  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
@@ -969,7 +969,7 @@
           %html  (give-html 200 cug p.pez)
           %htme  (give-html 401 cug p.pez)
           %boil
-        (ford-boil(quy payload.pez) [p.pez q.pez r.pez])
+        (ford-boil [p.pez q.pez r.pez payload.pez])
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect/[p.pok url] !!)
@@ -1170,7 +1170,7 @@
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
         ?.  aut
           [%& %boil [wir ext bem nquy]]
-        [%| (ford-boil(quy nquy) [wir ext bem])]  ::  XX properly
+        [%| (ford-boil [wir ext bem nquy])]  ::  XX properly
       ::
       ::
           %bugs
