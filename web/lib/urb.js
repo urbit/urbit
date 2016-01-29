@@ -282,6 +282,9 @@ window.urb.util = {
     if(spur === '/') spur = ''
     pathname = pathname || window.location.pathname
     if(pathname[0] == '/') pathname = pathname.slice(1)
+    if(pathname[0] != '~' && pathname[0] != '='){
+      return spur
+    }
     pathname = pathname.split("/")
     
     var pref, pred, prec, base = "" 

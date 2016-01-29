@@ -65,14 +65,12 @@
     ::  includes
     ;*  =-  (turn `wall`- |=(a=tape ;script(type "text/javascript", src a);))
         :~  "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js"
-            "/{&2:% ~}/lib/syntax/hoon.js"
+            "/lib/syntax/hoon.js"
         ==
     ;link(rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/".
                                  "codemirror/4.3.0/codemirror.min.css");
     ;style:'''
-           .CodeMirror {
-             height: 70%
-           }
+           .CodeMirror {height: 70%}
            .cm-s-default .cm-atom {color: #70f}
            .cm-s-default .cm-operator {color: #097}
            '''

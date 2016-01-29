@@ -1,6 +1,6 @@
 /%    /,
     /talk  /talklog-hymn/
-    /pub   /|(/!hymn/ /tree-hymn/)
+    /web   /|(/!hymn/ /tree-hymn/)
     /      /tree-hymn/
       ==
 `manx`-.-

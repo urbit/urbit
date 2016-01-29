@@ -1234,10 +1234,10 @@
   =<  |=(pul=purl `tape`(apex ~ pul))
   |%
   ++  apex
-    |=  qur=quri
+    |=  qur=quri  ^-  tape
     ?-  -.qur
-      %&  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
-      %|  (weld (body p.qur) (tail q.qur))
+      %&  (weld (head p.p.qur) $(qur [%| +.p.qur]))
+      %|  ['/' (weld (body p.qur) (tail q.qur))]
     ==
   ::
   ++  body
@@ -1262,7 +1262,7 @@
            ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
       ==
     ::
-      ?~(q.har ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.har)))])
+      ?~(q.har ~ `tape`[':' ((d-co:co 1) u.q.har)])
     ==
   ::
   ++  tail
@@ -2457,6 +2457,7 @@
               [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%hiss p=mark q=cage]                     ::  outbound user req
               [%init p=@p]                              ::  report install
+              [%serv p=$|(desk beam)]                   ::  set serving root
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response
               [%this p=? q=clip r=httq]                 ::  inbound request

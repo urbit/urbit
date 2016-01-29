@@ -85,7 +85,7 @@
     ;*  =-  (turn `wall`- |=(a=tape ;script(type "text/javascript", src a);))
         :~  "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"
             "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js"
-            "/home/lib/syntax/hoon.js"
+            "/lib/syntax/hoon.js"
         ==
     ;link(rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/".
       "codemirror/4.3.0/codemirror.min.css");

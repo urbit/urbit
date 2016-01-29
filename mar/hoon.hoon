@@ -26,10 +26,10 @@
       ;head
         ;title:"Source"
         ;script@"//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js";
-        ;script@"/{(trip &2:%)}/lib/syntax/hoon.js";
+        ;script@"/lib/syntax/hoon.js";
         ;link(rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/".
           "codemirror/4.3.0/codemirror.min.css");
-        ;link/"/{(trip &2:%)}/lib/syntax/codemirror.css"(rel "stylesheet");
+        ;link/"/lib/syntax/codemirror.css"(rel "stylesheet");
       == 
       ;body
         ;textarea#src:"{(trip own)}"
