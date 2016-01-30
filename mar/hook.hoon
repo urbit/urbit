@@ -7,9 +7,9 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/text/hoon (taco own)]                     ::  convert to %mime
+  ++  mime  [/text/x-hoon (taco own)]                   ::  convert to %mime
   ++  elem                                              ::  convert to %html
-    ;div:pre(urb_codemirror ""):"{(trip own)}"
+    ;div:pre(urb_codemirror "", mode "hoon"):"{(trip own)}"
     :: =+  gen-id="src-{<`@ui`(mug own)>}"
     :: ;div
     ::   ;textarea(id "{gen-id}"):"{(trip own)}"
@@ -26,10 +26,10 @@
       ;head
         ;title:"Source"
         ;script@"//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js";
-        ;script@"/{(trip &2:%)}/lib/syntax/hoon.js";
+        ;script@"/lib/syntax/hoon.js";
         ;link(rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/".
           "codemirror/4.3.0/codemirror.min.css");
-        ;link/"/{(trip &2:%)}/lib/syntax/codemirror.css"(rel "stylesheet");
+        ;link/"/lib/syntax/codemirror.css"(rel "stylesheet");
       == 
       ;body
         ;textarea#src:"{(trip own)}"

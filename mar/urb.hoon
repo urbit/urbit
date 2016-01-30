@@ -14,8 +14,10 @@
 ++  grab  
   |%                                                    ::  convert from
   ++  noun  manx                                        ::  clam from %noun
-  ++  hymn                                              ::  inject into %hymn
-    |=  old=manx  old                 ::  moved to %eyre
+  ::  ++  tree-hymn                                         ::  inject into %hymn
+  ::  |=  old=manx  old                 ::  moved to %eyre
+    ::  XX in ren/
+    
     :: ~|  hymn//mal-formed
     :: ::  ~|  old
     :: ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] old) ::  XX static

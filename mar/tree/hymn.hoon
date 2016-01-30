@@ -1,17 +1,14 @@
 ::
-::::  /hoon/core/elem/mar
+::::  /hoon/core/hymn/mar
   ::
 /?  314
 |_  own=manx
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  hymn  ;html:(head:title:"Untitled" body:"+{own}") ::  convert to %hymn
-  ++  html  (crip (poxo hymn))                          ::  convert to %html
+  ++  html  (crip (poxo own))                          ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
-  ++  front  ~                                          ::  no frontmatter
   --
-++  garb  /snip                                         ::  grabbed by
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
 --        --

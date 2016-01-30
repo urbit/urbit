@@ -66,7 +66,7 @@
         'code'^code
         :-  'client_id'
         'd8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f'
-        'redirect_uri'^'http://localhost:8443/home/pub/cloud/fab'
+        'redirect_uri'^'http://localhost:8443/cloud/fab'
     ==
 ::
 ++  parse-iso8601
