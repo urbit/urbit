@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject 
@@ -7908,7 +7908,12 @@
     =+  fid=(find %both hyp)
     ?-  -.fid
       $|  sut
-      $&  =<  q
+      $&  =-  ~?  =([%tango ~] hyp)
+                  ~[%bad sut+sut fid+fid res+-]
+              ~?  =([%n %g %src ~] hyp) 
+                  ~[%gud sut+sut fid+fid res+-]
+              -
+          =<  q
           %+  take  p.p.fid 
           |=(a/span ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
     ==
@@ -7979,7 +7984,6 @@
   ++  endo
     |=  {lop/(pair palo palo) dox/span rig/(list (pair wing twig))}
     ^-  (pair span span)
-    ~|  %mull
     ?:  ?=($& -.q.p.lop)
       ?>  ?=($& -.q.q.lop)
       |-  ^-  (pair span span)
@@ -8170,7 +8174,6 @@
     ++  mull  
       |=  {gol/span dox/span}
       ^-  {span span}
-      ~|  %mull
       =+  lug=[p=(find %read hyp) q=(find(sut dox) %read hyp)]
       ?:  ?=($| -.p.lug) 
         ?>   &(?=($| -.q.lug) ?=($~ rig)) 
@@ -8352,7 +8355,9 @@
     |=  {way/vial hyp/wing}
     ^-  port
     ~|  [%find hyp]
-    =-  ?@  -  !!
+    =-  ~?  =([%tango ~] hyp)
+            ~[sut+sut res+-]
+        ?@  -  !!
         ?-    -<
           $&  [%& p.-]
           $|  ?-  -.p.-

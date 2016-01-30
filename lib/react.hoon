@@ -1,7 +1,7 @@
-!:
+!:  
 |%
 ++  react-elems ::  XX /~
-  ~+  %-  sa  ^-  (list term)
+  ~+  %-  silt  ^-  (list term)
   :~  %a  %abbr  %address  %area  %article  %aside  %audio  %b  %base
     %bdi  %bdo  %big  %blockquote  %body  %br  %button  %canvas  %caption
     %cite  %code  %col  %colgroup  %data  %datalist  %dd  %del  %details
@@ -20,9 +20,9 @@
   ==
 ++  react-attrs
   ~+  ^-  (map term cord)
-  %-  mo  ^-  (list {term cord})
+  %-  molt  ^-  (list (pair term cord))  
   :-  [%class 'className']
-  =-  (rash - (more next (cook |=(a/tape [(cass a) (crip a)]) (star alf))))
+  =-  (rash - (more next (cook |=(a/tape [(cass a) (crip a)]) (star alf))))  
   '''
   accept acceptCharset accessKey action allowFullScreen allowTransparency alt
   async autoComplete autoFocus autoPlay cellPadding cellSpacing charSet checked
@@ -41,15 +41,15 @@
 ::
 ++  react-to-json
   |=  src/manx  ^-  json
-  ?:  ?=(_:/(**) src)
+  ?:  ?=(_;/(**) src)
     (jape v.i.a.g.src)
-  =+  atr=(mo a.g.src)
+  =+  atr=(molt `(list (pair mane tape))`a.g.src)  
   ?:  (~(has by atr) [%urb %codemirror])
-    ?>  ?=({{$pre *} _:/(**) $~} src)
+    ?>  ?=({{$pre *} _;/(**) $~} src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
   ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag
-    ?>  ?=({{$pre *} _:/(**) $~} src)      ::  verify its only a text node
-    =*  code  v.i.a.g.i.c.src
+    ?>  ?=({{$pre *} _;/(**) $~} src)      ::  verify its only a text node
+    =*  code  v.i.a.g.i.c.src  
     %_    $
         src
       =+  =<  result=(mule .)
@@ -81,11 +81,11 @@
 ::  generates React javascript  XX deprecated
 ++  react-to-tape                                    
   |=  src/manx  ^-  tape
-  ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
-    ?>  ?=({{$pre *} _:/(**) $~} src)
+  ?:  (~(has by (molt `(list (pair mane tape))`a.g.src)) [%urb %codemirror])
+    ?>  ?=({{$pre *} _;/(**) $~} src)  
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
-  ?:  (~(has by (mo a.g.src)) [%urb %exec])           ::  runnable code attribute tag
-    ?>  ?=({{$pre *} _:/(**) $~} src)     ::  verify its only a text node
+  ?:  (~(has by (molt `(list (pair mane tape))`a.g.src)) [%urb %exec])
+    ?>  ?=({{$pre *} _;/(**) $~} src)     ::  verify its only a text node
     =*  code  v.i.a.g.i.c.src
     =+  ^=  result
       (mule |.((slap !>(.) (ream (crip code)))))      ::  compile and run safely
@@ -110,21 +110,21 @@
       ==
     $(src error)
   ;:  weld
-    "React.createElement("
-      =*  tan  n.g.src
-      ?^  tan  !!                           ::  namespaces unsupported
-      ?:  (react-vale tan)
-        "'{(trip tan)}'"
-      (trip tan)
+    "React.createElement("  
+      ?^  n.g.src  !!                           ::  namespaces unsupported
+      ?:  (react-vale n.g.src)
+        ~!  n.g.src    
+        "'{(trip n.g.src)}'"
+      (trip n.g.src)
     ", "
       =-  (pojo (jobe (turn a.g.src -)))
       |=  {a/mane b/tape}
       =.  a  ?+(a a $class 'className')
       ?^(a !! [a (jape b)])
     ", "
-      =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
+      =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))  
       |=  a/manx
-      ?:  ?=(_:/(**) a)
+      ?:  ?=(_;/(**) a)
         leaf+(pojo (jape v.i.a.g.a))
       leaf+^$(src a)
     ")"
