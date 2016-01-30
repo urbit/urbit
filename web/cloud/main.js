@@ -94,7 +94,7 @@ GCEControls = React.createClass({
   },
 
   render: function(){
-    ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&redirect_uri=http://localhost:8443/home/pub/cloud/fab&client_id=719712694742-6htfj2t9s1j2jid92rc4dfq9psrr9qpo.apps.googleusercontent.com"
+    ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&redirect_uri=http://localhost:8443/cloud/fab&client_id=719712694742-6htfj2t9s1j2jid92rc4dfq9psrr9qpo.apps.googleusercontent.com"
     return(
       div({}, [
         div({}, [

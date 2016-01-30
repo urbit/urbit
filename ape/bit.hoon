@@ -43,7 +43,7 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
 |_  [hid=bowl vat=axle]
 :: ++  prep  ~&(%bit-prep-wipe ,_`.)
 ++  return  [*(list move) .]
-++  redirect-uri  [hostname `/~~/home/pub/bit/fab ~]
+++  redirect-uri  [hostname `/~~/bit/fab ~]
 ++  hostname  ^-  hart
   ?+  (clan our.hid)  !!
      %czar  [| ?+(our.hid `8.443 %~fyr `8.444) `/localhost]

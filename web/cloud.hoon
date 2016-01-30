@@ -12,7 +12,7 @@
 
 ;html
   ;head
-    ;script@"/~/at/lib/urb.js";
+    ;script@"/~/at/lib/js/urb.js";
     ;script: urb.appl = 'cloud'
     ;script@"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js";
     ;script@"https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js";

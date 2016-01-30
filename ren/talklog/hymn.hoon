@@ -24,8 +24,8 @@
   ==    ==
   ;body
     ;div#cont;
-    ;script(type "text/javascript", src "/~/at/lib/urb.js");
-    ;link/"/talk/css/main.css"(type "text/css", rel "stylesheet");
+    ;script(type "text/javascript", src "/~/at/lib/js/urb.js");
+    ;link/"/talk/main.css"(type "text/css", rel "stylesheet");
     ;script: window.MessageData = {mez}
     ;script@"js/MessagesComponent.coffee"(type "text/coffeescript");
     ;script@"js/util.coffee"(type "text/coffeescript");

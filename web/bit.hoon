@@ -13,7 +13,7 @@
 ;html
   ;head
   ;title: Coinbase Auth
-  ;script@"/~/at/lib/urb.js";
+  ;script@"/~/at/lib/js/urb.js";
   ==
   ;body
   ;*

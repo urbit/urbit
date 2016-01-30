@@ -5,7 +5,7 @@
     ;link(rel "stylesheet", href "/lib/base.css");
     ;link(rel "stylesheet", href "/paste/main.css");
     ;script@"//code.jquery.com/jquery-2.1.4.min.js";
-    ;script@"/~/as/own/~/at/lib/urb.js";
+    ;script@"/~/as/own/~/at/lib/js/urb.js";
     ;script:'''
             document.title = 'pastebin - urbit'
             urb.appl = 'hood'

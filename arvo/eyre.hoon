@@ -420,12 +420,15 @@
           {ship:urb.ship,code:null},
           function(){urb.redir()})
     }
-    urb.submit = function(){
-      if(urb.ship !== $ship.text().toLowerCase())
-        return urb.redir($ship.text().toLowerCase())    //  XX redundant?
+    urb.is_me = function(ship) {
+      return (urb.ship === ship)
+    }
+    urb.submit = function(ship,pass){
+      if(!urb.is_me(ship))
+        return urb.redir(ship)
       req(
         "/~/auth.json?PUT", 
-        {ship:$ship.text().toLowerCase(), code:pass.value},
+        {ship:ship, code:pass},
         function(){
           if(urb.foreign) urb.redir()
           else document.location.reload()
@@ -456,15 +459,23 @@
 ++  xml
   |%
   ++  login-page
-    %+  titl  'Log in :urbit'
-    ;=  ;h1: Please log in
-        ;p.ship 
-          ;div.sig: ~
-          ;span#ship(contenteditable "");
+    %+  titl  'Sign in - Urbit'
+    ;=  ;div.container
+          ;div.row
+            ;div.col-md-2
+              ;h1.sign: Sign in
+            ==
+            ;div.col-md-8
+              ;p.ship 
+                ;label.sig: ~
+                ;input#ship.mono(contenteditable "", placeholder "planet");
+              ==
+              ;input#pass.mono(type "password", placeholder "passcode");
+              ;h2.advice: Your passcode code has been printed to your console.
+              ;pre:code#err;
+            ==
+          ==
         ==
-        ;input#pass(type "password");
-        ;h2.advice: (Your login code has been printed to your console.)
-        ;pre:code#err;
         ;script@"/~/at/~/auth.js";
         ;script:'''
                 $(function() {
@@ -472,8 +483,8 @@
                   $pass = $('#pass')
                   $ship.on('keydown', function(e) { 
                     if(e.keyCode === 13 || e.keyCode === 9) {
-                      if(urb.ship !== $ship.text().toLowerCase())
-                        urb.redir($ship.text().toLowerCase())
+                      if(!urb.is_me($ship.val().toLowerCase()))
+                        urb.redir($ship.val().toLowerCase())
                       $pass.show()
                       $pass.focus()
                       e.preventDefault()
@@ -484,11 +495,11 @@
                   })
                   $pass.on('keydown', function(e) { 
                     if(e.keyCode === 13) {
-                      urb.submit()
+                      urb.submit($ship.val().toLowerCase(),$pass.val())
                     }
                   })
                   if(window.ship) {
-                    $ship.text(urb.ship)
+                    $ship.val(urb.ship)
                     $pass.focus()
                   } else {
                     $pass.hide()
@@ -529,7 +540,8 @@
         ;title:"{(trip a)}" 
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/lib/base.css");
+        ;link(rel "stylesheet", href "/lib/css/fonts.css");
+        ;link(rel "stylesheet", href "/lib/css/bootstrap.css");
       ==
       ;body:div#c:"*{b}"
     ==

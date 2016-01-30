@@ -31,10 +31,10 @@
       "lodash.js/2.4.1/lodash.min.js"
       "react/0.13.1/react.js"
     ==
-    ;script(type "text/javascript", src "{?:(aut "/~~" "")}/~/at/lib/urb.js");
+    ;script(type "text/javascript", src "{?:(aut "/~~" "")}/~/at/lib/js/urb.js");
     ;meta(name "viewport", content "width=device-width, height=device-height, ".
      "initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0");
-    ;link(type "text/css", rel "stylesheet", href "/talk/css/main.css");
+    ;link(type "text/css", rel "stylesheet", href "/talk/main.css");
     ;title: Talk
   ==
   ;body
@@ -45,6 +45,6 @@
       ;div#scrolling: BOTTOM
     ==
     ;script: window.talk = {(pojo (joba 'mainStation' s/man))}
-    ;script(type "text/javascript", src "/talk/js/main.js");
+    ;script(type "text/javascript", src "/talk/main.js");
   ==
 ==

@@ -21,7 +21,7 @@
   ;head
     ;title: Coinbase Auth
     ;script@"/gop/hart.js";
-    ;script@"/gen/main/lib/urb.js";
+    ;script@"/gen/main/lib/js/urb.js";
     ;script@"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js";
   ==
   ;body

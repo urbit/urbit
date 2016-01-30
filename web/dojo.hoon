@@ -18,7 +18,7 @@
             "mousetrap/1.4.6/mousetrap.js"
             "react/0.11.0/react.js"
         ==
-    ;script@"/~~/~/at/lib/urb.js";
+    ;script@"/~~/~/at/lib/js/urb.js";
     ;script: urb.appl = 'dojo'
     ;style:'''
            #term {

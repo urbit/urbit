@@ -12,7 +12,7 @@
     ==
     ;script
       =type  "text/javascript"
-      =src   "/~~/~/at/lib/urb.js"
+      =src   "/~~/~/at/lib/js/urb.js"
       ;
     ==
     ;link
