@@ -1,6 +1,3 @@
-::  Anton, this entire file is basically the worst Hoon code I've ever seen.
-::  Please talk to me about it.
-:: 
 /-  tree-include
 !:
 |%
@@ -60,9 +57,6 @@
   ++  to-noun  |=(a/data ?@(a a [l.a $(a r.a)]))
   ++  to-tree
     |=  {acc/data a/(list {p/@u q/term})}
-    ~|  %anton-i-have-no-fscking-idea-what-this-does
-    ~|  %but-please-never-write-code-like-this-again
-    ~|  %or-at-least-tell-us-what-fscking-type-this-produces  
     %+  roll  a  =<  .(acc ^acc)
     |=  {{n/@u v/term} acc/data}
     ^-  data  
