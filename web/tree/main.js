@@ -245,7 +245,7 @@ module.exports = query({
   },
   setTitle: function() {
     var ref1, title;
-    title = $('#cont h1').first().text() || this.props.name;
+    title = $('#body h1').first().text() || this.props.name;
     if ((ref1 = this.props.meta) != null ? ref1.title : void 0) {
       title = this.props.meta.title;
     }
@@ -263,9 +263,9 @@ module.exports = query({
       history.pushState({}, "", util.basepath(href_parts.join("")));
     }
     if (next !== this.props.path) {
-      React.unmountComponentAtNode($('#cont')[0]);
+      React.unmountComponentAtNode($('#body')[0]);
       TreeActions.setCurr(next);
-      return React.render(BodyComponent({}, ""), $('#cont')[0]);
+      return React.render(BodyComponent({}, ""), $('#body')[0]);
     }
   },
   reset: function() {
@@ -277,7 +277,6 @@ module.exports = query({
     return $('#nav').addClass('m-down m-fixed');
   },
   goTo: function(path) {
-    this.toggleFocus(false);
     this.reset();
     return this.setPath(path);
   },
