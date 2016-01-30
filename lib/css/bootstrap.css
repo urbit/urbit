@@ -6065,7 +6065,7 @@ textarea:focus {
 }
 
 .body {
-  padding-left: 0;
+  padding-left: 1.875rem;
 }
 
 @media (max-width: 543px) {

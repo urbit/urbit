@@ -5,7 +5,7 @@
 div.meta {
   display: inline-block; }
 
-ul.grams {
+div.grams {
   list-style-type: none;
   padding: 0; }
 
@@ -39,10 +39,10 @@ div.meta h3 {
 div.meta .time {
   padding-right: 2rem; }
 
-li.gram.same div.meta {
+div.gram.same div.meta {
   display: none; }
 
-li.gram.same:hover div.meta {
+div.gram.same:hover div.meta {
   display: block;
   position: absolute;
   background-color: #fff;

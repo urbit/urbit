@@ -52,20 +52,25 @@ img.logo.first {
     .nav.container {
       margin-left: -570px; } }
 
+.nav.container .loading {
+  padding-top: 3rem;
+  display: block; }
+
 @media (max-width: 767px) {
   .nav.container {
     top: 0; }
-
   .nav.container.m-down,
   .nav.container.m-up {
     position: absolute; }
-
   .nav.container.m-down.m-fixed {
-    position: fixed; } }
+    position: fixed; }
+  .nav.container .loading {
+    padding-top: 0; } }
+
 @media (max-width: 543px) {
   .nav.container {
     left: 0; } }
-.ctrl,
+
 .menu .contents {
   padding-top: 3rem; }
 
@@ -73,7 +78,9 @@ img.logo.first {
   padding-left: 0.9375rem;
   background-color: #fff;
   max-width: 16.66667%;
-  transition: max-width .2s ease-in-out; }
+  transition: max-width .2s ease-in-out;
+  position: fixed;
+  z-index: 100; }
   .ctrl ul.nav {
     margin-top: 2rem;
     overflow: hidden; }
@@ -94,14 +101,15 @@ img.logo.first {
 .ctrl.open,
 .ctrl:hover {
   max-width: 33.33333%;
+  min-width: 16.66667%;
   width: auto; }
 
 @media (max-width: 991px) {
   ul.nav {
     line-height: 1.3rem; }
-
   a.nav-link {
     font-size: .8rem; } }
+
 @media (max-width: 767px) {
   .ctrl {
     position: relative;
@@ -114,30 +122,27 @@ img.logo.first {
     -webkit-transition: max-height 0.2s ease-in-out;
     -moz-transition: max-height 0.2s ease-in-out;
     transition: max-height 0.2s ease-in-out; }
-
   .ctrl.open,
   .ctrl:hover {
     width: inherit;
     max-width: inherit; }
-
   ul.nav {
     line-height: 2rem;
     margin-bottom: 2rem; }
-
   a.nav-link {
     font-size: 1rem; }
-
   .ctrl.open {
     max-height: 36rem; }
     .ctrl.open ul.nav {
       max-height: 9rem;
       overflow-y: scroll; }
-
   ul.nav {
     margin-top: 1rem; } }
+
 @media (max-width: 543px) {
   .ctrl {
     padding-left: 1.875rem; } }
+
 .navbar-toggler {
   font-size: 24px;
   transition: opacity .2s, transform .3s;
@@ -149,15 +154,22 @@ img.logo.first {
 
 @media (min-width: 768px) {
   .ctrl .navbar-toggler {
-    display: none; } }
+    display: none; }
+  .ctrl .navbar-toggler.show {
+    display: block;
+    padding: 0; } }
+
 @media (max-width: 767px) {
   .navbar-toggler {
     padding: 0;
     margin-left: 2rem; } }
+
 .icon div, .icon a {
   display: inline-block; }
+
 .icon a {
   margin-right: .6rem; }
+
 .icon .home {
   margin: 6px 9px 12px 0;
   width: 24px;
@@ -165,20 +177,24 @@ img.logo.first {
   border-radius: 50%;
   background-color: transparent;
   border: 6px solid #B1B7BD; }
+
 .icon .dpad {
   display: block; }
+
 .icon .up {
   width: 1px;
   height: 1px;
   border: 12.0006px solid transparent;
   border-bottom: 18px solid #000;
   border-top: 0 solid transparent; }
+
 .icon .prev {
   width: 1px;
   height: 1px;
   border: 12.0006px solid transparent;
   border-right: 18px solid #000;
   border-left: 0 solid transparent; }
+
 .icon .next {
   width: 1px;
   height: 1px;
@@ -207,13 +223,14 @@ img.logo.first {
     border: 8.0004px solid transparent;
     border-right: 12px solid #000;
     border-left: 0 solid transparent;
-    margin-right: 0.6rem; }
+    margin-right: .6rem; }
   .icon .next {
     width: 1px;
     height: 1px;
     border: 8.0004px solid transparent;
     border-left: 12px solid #000;
     border-right: 0 solid transparent; } }
+
 @media (max-width: 767px) {
   .icon {
     margin-left: 0; }
@@ -222,10 +239,29 @@ img.logo.first {
     .icon .home {
       margin-top: 0;
       margin-bottom: 0; } }
+
+@keyframes menu-open {
+  0% {
+    visibility: hidden; }
+  1% {
+    visibility: visible; }
+  100% {
+    visibility: visible; } }
+
+@keyframes menu-close {
+  0% {
+    visibility: visible; }
+  1% {
+    visibility: visible; }
+  100% {
+    visibility: hidden; } }
+
 .menu {
   padding-left: 0;
   padding-right: 0;
-  overflow: hidden; }
+  overflow: hidden;
+  position: fixed;
+  z-index: 99; }
   .menu .contents {
     padding-left: 0.9375rem;
     padding-right: 0.9375rem;
@@ -267,6 +303,16 @@ img.logo.first {
   background-color: #eceeef;
   border-left: 2px solid #B1B7BD; }
 
+.menu.closed {
+  animation-name: menu-close;
+  animation-duration: .3s;
+  animation-fill-mode: forwards; }
+
+.menu.open {
+  animation-name: menu-open;
+  animation-duration: .3s;
+  animation-fill-mode: forwards; }
+
 .menu.open .contents {
   left: 0; }
 
@@ -283,9 +329,9 @@ img.logo.first {
       transition: top 0.3s ease-in-out; }
     .menu .close {
       margin-top: 0; }
-
   .menu.open .contents {
     top: 0; } }
+
 .list h1 {
   font-size: inherit;
   font-weight: inherit; }
@@ -293,5 +339,3 @@ img.logo.first {
 .list.children h1 {
   font-weight: 500;
   font-size: 1.4rem; }
-
-/*# sourceMappingURL=main.css.map */

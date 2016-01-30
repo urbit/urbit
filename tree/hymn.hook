@@ -39,14 +39,11 @@
   ;body
     ;+  =+  inject=(jobe kids/kids-json body/body.dat ~)
         ;script(type "text/javascript"): window.tree = {(pojo inject)}
-    ;div.container.nav
-      ;div.row
-        ;div.col-md-2.ctrl#nav;
-      ==
-    ==
-    ;div.container#container
-      ;div.row
-        ;div.col-md-10.col-md-offset-2.body#cont;
+    ::;div.container.nav#nav;
+    ;div.container
+      ;div.row#main
+        ;div#head;
+        ;div#body;
       ==
     ==
   ==
