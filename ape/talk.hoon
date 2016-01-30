@@ -1971,7 +1971,6 @@
       $lin  tan+~[leaf+"{?:(p.sep "" "@ ")}{(trip q.sep)}"]
       $non  tan+~
       $app  tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip p.sep)}]" leaf+(trip q.sep)]]
-      $tax  tan+~[leaf+(rend-work-duty p.sep)]
       $url  url+(crip (earf p.sep))
       $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
       $fat  [%mor tan+(tr-rend-tors p.sep) $(sep q.sep) ~]
@@ -2037,9 +2036,6 @@
     ::
         $app
       (chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
-    ::
-        $tax
-      (chow 64 " {(rend-work-duty p.sep)}")
     ==
   -- 
 ::

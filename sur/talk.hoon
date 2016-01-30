@@ -65,7 +65,6 @@
       {$lin p/? q/@t}                                   ::  no/@ text line
       {$mor p/(list speech)}                            ::  multiplex
       {$app p/@tas q/@t}                                ::  app message
-      {$tax p/duty:work-stuff}                          ::
   ==                                                    ::
 ++  serial     @uvH                                     ::  unique identity
 ++  partner    (each station passport)                  ::  interlocutor
@@ -79,41 +78,4 @@
       {$text (list @t)}                                 ::  text lines
       {$tank (list tank)}                               ::  tank list
   ==                                                    ::
-++  work-stuff                                          ::
-  |%                                                    ::
-  ++  duty                                              ::
-    $%  {$create tax/task}                              ::  create new task
-        {$archive id/@uvH}                              ::  archive task
-        {$change id/@uvH meat/flesh}                    ::  request change
-        {$update id/@uvH version/@u her/ship meat/flesh}::  broadcast change
-    ==                                                  ::
-  ++  flesh                                             ::
-    $%  {$set-doer her/(unit @p)}                       ::  set doer
-        {$set-date-due wen/(unit @da)}                  ::  set due date
-        {$set-tags tag/(set @t)}                        ::  set tags
-        {$set-title til/@t}                             ::  set title
-        {$set-description des/@t} ::  XX (list @t)      ::  set description
-        {$set-done don/?}                               ::  set done
-        {$add-comment who/@p com/@t}   ::  XX (list @t) ::  add comment
-    ==                                                  ::
-  ++  task                                              ::
-    $:  id/@uvH                                         ::
-        date-created/@da                                ::
-        version/@u                                      ::
-        date-modified/@da                               ::
-        creator/@p                                      ::
-        doer/(unit @p)                                  ::
-        tags/(set @t)                                   ::
-        date-due/(unit @da)                             ::
-        done/(unit @da)                                 ::
-        title/@t                                        ::
-        description/@t                                  ::
-        discussion/(list comment)                       ::
-    ==                                                  ::
-  ++  comment                                           ::
-    $:  date/@da                                        ::
-        ship/@p                                         ::
-        body/@t                                         ::
-    ==                                                  ::
-  --
 --
