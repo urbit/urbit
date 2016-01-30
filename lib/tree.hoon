@@ -1,13 +1,17 @@
+::  Anton, this entire file is basically the worst Hoon code I've ever seen.
+::  Please talk to me about it.
+:: 
 /-  tree-include
 !:
 |%
 ++  extract
   |=  a/marl  ^-  tape
   ?~  a  ~
-  %-  weld  :_  $(a t.a)
-  ?.  ?=(_:/(**) i.a)
-    $(a c.i.a)
-  v.i.a.g.i.a
+  %+  weld  
+    ?.  ?=(_;/(**) i.a)
+      $(a c.i.a)
+    v.i.a.g.i.a
+  $(a t.a) 
 ::
 ++  getall
   |=  tag/(list mane)
@@ -27,21 +31,21 @@
     ?~  a  ~
     %+  biff  (paz i.a)
     |*  {b/(list json) c/*}  ^+  *fun
-    (baff (baff (fun c) try(a b)) try(a t.a))
+    (baff (baff (fun +<+) try(a +<-)) try(a t.a))
   --
 ::
 ++  map-to-json
   |*  {a/$+(* cord) b/$+(* json)}
   |*  c/(map)  ^-  json
   ~!  c
-  (jobe (turn (~(tap by c)) |*({k/* v/*} [(a k) (b v)])))
+  (jobe (turn (~(tap by c)) |*({* *} [(a +<-) (b +<+)])))
 :: 
 ++  json-front
   |=  a/json  ^-  json
   =-  (fall `(unit json)`- ~)
   %.  a
   %+  find-in-tree  (ot c+(ar some) gn+so ga+(om so) ~):jo
-  |=  {nom/span atr/(map span cord)}  ^-  (unit json)
+  |=  {nom/knot atr/(map knot cord)}  ^-  (unit json)
   ?.  (~(has by atr) 'urb:front')  ~
   ?>  ?=($meta nom)
   (biff (~(get by atr) %value) poja)
@@ -56,10 +60,17 @@
   ++  to-noun  |=(a/data ?@(a a [l.a $(a r.a)]))
   ++  to-tree
     |=  {acc/data a/(list {p/@u q/term})}
+    ~|  %anton-i-have-no-fscking-idea-what-this-does
+    ~|  %but-please-never-write-code-like-this-again
+    ~|  %or-at-least-tell-us-what-fscking-type-this-produces  
     %+  roll  a  =<  .(acc ^acc)
     |=  {{n/@u v/term} acc/data}
+    ^-  data  
     ?@  acc            [n acc v]
-    ?:  (gth n n.acc)  [n (to-noun acc) v]
+    ?:  (gth n n.acc)  
+      ::  [n (to-noun acc) v]
+      ~|  %this-code-was-abusing-the-type-loophole-and-is-incorrect
+      !!
     acc(r $(acc r.acc))
   --
 --
