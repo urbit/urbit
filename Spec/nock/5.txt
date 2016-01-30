@@ -1,6 +1,5 @@
-A noun is an atom or a cell.
-An atom is a natural number.
-A cell is an ordered pair of nouns.
+A noun is an atom or a cell.  An atom is a natural number.  A cell is an ordered 
+pair of nouns.
 
 nock(a)          *a
 [a b c]          [a [b c]]
@@ -37,3 +36,4 @@ nock(a)          *a
 *[a 10 b c]      *[a c]
 
 *a               *a
+
