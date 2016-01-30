@@ -331,7 +331,7 @@
     if ( (c3y == tyn) || (c3n == tel) ) {
       return tyn;
     } else {
-#if 0
+#if 1
       u3_noun dun = u3qfu_dunq(van, "need", sut);
       u3_noun niz = u3qfu_dunq(van, "have", ref);
 
