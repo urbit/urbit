@@ -22,6 +22,9 @@ module.exports = {
     }
     return TreePersistence.get(path, query, (function(_this) {
       return function(err, res) {
+        if (err != null) {
+          throw err;
+        }
         return _this.loadPath(path, res);
       };
     })(this));
@@ -1509,9 +1512,9 @@ $(function() {
   require('./utils/scroll.coffee');
   window.tree.components = require('./components/Components.coffee');
   window.tree.actions = require('./actions/TreeActions.coffee');
-  frag = util.fragpath(window.location.pathname);
+  frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
   window.tree.actions.setCurr(frag);
-  window.tree.actions.loadPath(frag, window.tree.body, window.tree.kids);
+  window.tree.actions.loadPath(frag, window.tree.data);
   head = React.createFactory(require('./components/AnchorComponent.coffee'));
   body = React.createFactory(require('./components/BodyComponent.coffee'));
   rend(head({}, ""), $('#head')[0]);
@@ -1532,7 +1535,7 @@ module.exports = {
     if (query == null) {
       query = "no-query";
     }
-    url = (util.basepath(path)) + ".json?q=" + (this.encode(query));
+    url = (util.basepath(path)) + ".tree-json?q=" + (this.encode(query));
     if (dedup[url]) {
       return;
     }
