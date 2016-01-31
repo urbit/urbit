@@ -1,5 +1,5 @@
 |%
-++  twit-do  =>  twit  {p/span q/command}               ::  user and action
+++  twit-do  =>  twit  {p/knot q/command}               ::  user and action
 ++  twit-stat  {id/@u who/@ta now/@da txt/@t}           ::  received tweet
 ++  twit
   |%

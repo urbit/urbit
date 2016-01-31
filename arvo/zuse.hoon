@@ -816,7 +816,6 @@
   ::
   ++  cu                                                ::  transform
     |*  {poq/$+(* *) wit/fist}
-    ~!  +<
     |=  jon/json
     (bind (wit jon) poq)
   ::
@@ -865,7 +864,6 @@
     |*  wer/(pole {cord fist})
     |=  jon/json
     ?.  ?=({$o *} jon)  ~
-    ~!  +<
     =+  raw=((ot-raw wer) p.jon)
     ?.((za raw) ~ (some (zp raw)))
   ::
@@ -896,7 +894,6 @@
   ::
   ++  pe                                                ::  prefix
     |*  {pre/* wit/fist}
-    ~!  +<
     (cu |*(* [pre +<]) wit)
   ::
   ++  sa                                                ::  string as tape

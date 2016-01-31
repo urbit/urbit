@@ -12,19 +12,21 @@
   |=  a/marl
   ^-  tape
   ?~  a  ~
-  %-  weld  :_  $(a t.a)
-  ^-  tape
-  ?~  n.g.i.a
-    ?>(?=(_:/(**) i.a) v.i.a.g.i.a)
-  ?+    n.g.i.a  $(a c.i.a)
-      $img
-    %-  zing  ^-  wall
-    %+  murn  a.g.i.a   |=  {a/mane b/tape}  
-    ^-  (unit tape)
-    ?+  a  ~
-      $alt  [~ b]
+  %+  weld
+    ^-  tape
+    ?~  n.g.i.a
+      ?>(?=(_;/(**) i.a) v.i.a.g.i.a)
+    ?+    n.g.i.a  $(a c.i.a)
+        $img
+      %-  zing  ^-  wall
+      %+  murn  a.g.i.a   |=  {a/mane b/tape}  
+      ^-  (unit tape)
+      ?+  a  ~
+        $alt  [~ b]
+      ==
     ==
-  ==
+  $(a t.a)
+::  
 ++  sanitize
  |=  a/marl  ^-  tape
  =-  (zing `wall`(scan (flat a) fel))
@@ -35,10 +37,11 @@
   |=  a/(list elem)
   ^-  marl
   ?~  a  ~
-  %-  weld  :_  $(a t.a)
-  ?.  ?=($para -.i.a)
-    (sing i.a ~)
-  (sung p.i.a)
+  %+  weld  
+    ?.  ?=($para -.i.a)
+      (sing i.a ~)
+    (sung p.i.a)
+  $(a t.a)
 ::
 ++  sing                                                ::  elem to manx
   =>  |%
@@ -80,7 +83,7 @@
     ?~  tal
       =^  cha  lum  (chomp tex prn)
       ?^  cha
-        (push :/([u.cha]~) ~)
+        (push ;/([u.cha]~) ~)
       (push ;lost:"{tex}" ~)
     ?:  =(had tal)
       [~ lum]
@@ -120,7 +123,7 @@
                =+  num=(pojo (jone p.q.p.a))
                ;ol(start num);
       ==
-    ?-  -.a  ::  :/("unimplemented {<p.a>}")
+    ?-  -.a  ::  ;/("unimplemented {<p.a>}")
       $html  !!                       ::  handled earlier   XX do type stuff
       $para  [/p (sung p.a)]
       $head  
@@ -135,10 +138,10 @@
              ::=+  (poxa tex)
              ::?^  -  u.-
              ::=+  (rush tex (star ;~(pose gah comt:poxa)))
-             ::?^  -  :/(~)
+             ::?^  -  ;/(~)
              ::;lost: {<p.a>}
-        :: :/([(role (turn p.a crip))]~)                ::  XX  haaaaaaack
-      $defn  :/(~)
+        :: ;/([(role (turn p.a crip))]~)                ::  XX  haaaaaaack
+      $defn  ;/(~)
       $code  =+  lan=?~(p.a ~ (first-word r.u.p.a))
              =+  tex=(trip (role q.a))
              ?~  lan  ;pre:code:"{tex}"
@@ -203,9 +206,8 @@
   ++  urly
     |=  a/tape  ^-  tape
     ?~  a  ~
-    :: ?:  (gth i.a 0xff)  "XX"                       ::  XX  
     ?:  ?|  [?=(^ q)]:(alp 1^1 a)
-            (~(has in (sa "!*'();:@&=+$,/?/%.~_")) i.a) ::  XX  reparse
+            (~(has in (silt "!*'();:@&=+$,/?/%.~_")) i.a) ::  XX  reparse
         ==
       [i.a $(a t.a)]
     (weld (urle (trip i.a)) $(a t.a))
@@ -215,7 +217,7 @@
     ^-  manx
     ?@  -.b
       ?-  -.b
-        $$     :/(p.b)
+        $$     ;/(p.b)  
         $line  ;br;
         $code  ;code:"{p.b}"
         $htmt  !!  ::p.b              ::  handled earlier ::  XX  do type stuff

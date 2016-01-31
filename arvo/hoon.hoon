@@ -7908,12 +7908,7 @@
     =+  fid=(find %both hyp)
     ?-  -.fid
       $|  sut
-      $&  =-  ~?  =([%tango ~] hyp)
-                  ~[%bad sut+sut fid+fid res+-]
-              ~?  =([%n %g %src ~] hyp) 
-                  ~[%gud sut+sut fid+fid res+-]
-              -
-          =<  q
+      $&  =<  q  
           %+  take  p.p.fid 
           |=(a/span ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
     ==
@@ -9177,7 +9172,7 @@
     %+  reel  p.gen
     |=  {a/twig b/_`(unit path)`[~ u=/]}
     ?~  b  ~
-    ?.  ?=({$sand $tas @} a)  ~
+    ?.  ?=({$sand ?($ta $tas) @} a)  ~
     `[q.a u.b]
   ::
   ++  pray

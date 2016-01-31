@@ -1,7 +1,7 @@
 $:  pax=path                                            ::
 $=  jof                                                 ::
 $%  [%line p=cord]                                      ::
-    [%res p=span]                                       ::
+    [%res p=knot]                                       ::
     [%cmd p=char]                                       ::
     [%type p=?]                                         ::
 ==  ==                                                  ::

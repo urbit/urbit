@@ -105,7 +105,7 @@
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session
-  |_  {moz/(list move) session}              ::
+  |_  {moz/(list move) session}                         ::  
   ++  dp                                                ::  dojo parser
     |%  
     ++  dp-default-app  %hood
