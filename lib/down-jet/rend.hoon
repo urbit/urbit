@@ -131,7 +131,8 @@
         [[hed id+(sanitize kid) ~] kid]
     ::
       $hrul  ;hr;
-      $meta  =+  jon=`json`o+(~(run by p.a) |=(cord s++<))
+      $meta  ?:  =(~ p.a)  ;/(~)
+             =+  jon=`json`o/(~(run by p.a) |=(cord s/+<))
              ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
   ::     %html  
              ::=+  tex=(role (turn p.a crip))

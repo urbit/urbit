@@ -1,6 +1,6 @@
 ::  File writer
 ::
-::::  /hoon+write+app
+::::  /hoon/write/app
   ::
 |_  {bowl $~}
 ++  beak-now  byk(r [%da now])

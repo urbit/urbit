@@ -1525,11 +1525,11 @@
       |=  ren/$?($u $v $x $y $z)                        ::  endpoint query
       ^-  (unit cage)
       ?-  ren
-        $u  !!  ::  [~ %null [%atom %n ~] ~]
+        $u  !!  ::  [~ %null [%atom %n] ~]
         $v  [~ %dome !>(dom)]
         $x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
         $y  !!  ::  [~ %arch !>(as-arch)]
-        $z  [~ %ankh !>(ank.dom)]
+        $z  !!  ::  [~ %ankh !>(ank.dom)]
       ==
     ::
     ++  new-lobes                                       ::  object hash set
@@ -1600,9 +1600,14 @@
       |=  {yon/aeon pax/path}
       ^-  (unit (unit {$dome (hypo dome)}))
       ?:  (lth yon let.dom)
-        ~
+        :*  ~  ~  %dome  -:!>(%dome)
+            ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
+            let=yon
+            hit=(mo (skim (~(tap by hit.dom)) |=([p=@ud *] (lte p yon))))
+            lab=(mo (skim (~(tap by lab.dom)) |=([* p=@ud] (lte p yon))))
+        ==
       ?:  (gth yon let.dom)
-        `~
+        ~
       ``[%dome -:!>(*dome) dom]
     ::
     ++  read-x
@@ -1652,7 +1657,29 @@
       ::  ~&  cy+pax
       :-  -:!>(*arch)
       ^-  arch
-      =+  ^-  descendants/(list (pair path lobe))
+      :-  (~(get by q.yak) pax)
+      ^-  (map knot $~)
+      %-  molt  ^-  (list (pair knot $~))
+      %+  turn
+        ^-  (list (pair path lobe))
+        %+  skim  (~(tap by (~(del by q.yak) pax)))
+        |=  {paf/path lob/lobe}
+        =(pax (scag len paf))
+      |=  {paf/path lob/lobe}
+      =+  pat=(slag len paf)
+      [?>(?=(^ pat) i.pat) ~]
+    ::
+    ++  read-z
+      |=  {yon/aeon pax/path}
+      ^-  (unit (unit {$uvi (hypo @uvI)}))
+      ?:  =(0 yon)
+        ``uvi/[-:!>(*@uvI) *@uvI]
+      =+  tak=(~(get by hit.dom) yon)
+      ?~  tak
+        ~
+      =+  yak=(tako-to-yaki u.tak)
+      =+  len=(lent pax)
+      =+  ^-  descendants=(list (pair path lobe))
           ::  ~&  %turning
           ::  =-  ~&  %turned  -
           %+  turn
@@ -1664,18 +1691,15 @@
           |=  {paf/path lob/lobe}
           [(slag len paf) lob]
       =+  us=(~(get by q.yak) pax)
-      :+  ?:  &(?=($~ descendants) ?=($~ us))
-            *@uvI
-          %+  roll
-            ^-  (list (pair path lobe))
-            [[~ ?~(us *lobe u.us)] descendants]
-          |=({{path lobe} @uvI} (shax (jam +<)))
-        us
-      ^-  (map knot $~)
-      %-  molt  ^-  (list (pair knot $~))
-      %+  turn  descendants
-      |=  {paf/path lob/lobe}
-      [?>(?=(^ paf) i.paf) ~]
+      ^-  (unit (unit {$uvi (hypo @uvI)}))
+      :^  ~  ~  %uvi
+      :-  -:!>(*@uvI)
+      ?:  &(?=($~ descendants) ?=($~ us))
+        *@uvI
+      %+  roll
+        ^-  (list (pair path lobe))
+        [[~ ?~(us *lobe u.us)] descendants]
+      |=({{path lobe} @uvI} (shax (jam +<)))
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  {yon/aeon mun/mood}                           ::  seek and read
@@ -1699,6 +1723,8 @@
         ::          ==
         ::      -
         (bind (read-y yon r.mun) (curr bind (cury same %&)))
+      ?:  ?=($z p.mun)
+        (bind (read-z yon r.mun) (curr bind (cury same %&)))
       %+  bind
         (rewind yon)
       |=  a/(unit _+>.$)
@@ -1803,7 +1829,7 @@
     ::
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     ++  me                                              ::  merge ali into bob
-      |=  {ali/(pair ship desk) alh/(unit ankh) new/?}  ::  from
+      |=  {ali/(pair ship desk) alh/(unit dome) new/?}  ::  from
       =+  bob=`(pair ship desk)`[our syd]               ::  to
       =+  ^-  dat/(each mery term)
           ?~  mer
@@ -2493,8 +2519,8 @@
           =+  hot=q.bob.dat
           =+  ^=  lal
               %+  biff  alh
-              |=  hal/ankh
-              (~(get by hat) pax)
+              |=  had/dome
+              (~(get by q:(tako-to-yaki (~(got by hit.had) let.had))) pax)
           =+  lol=(~(get by hot) pax)
           |-  ^-  silk
           ?:  =([~ lob] lol)
@@ -2502,7 +2528,7 @@
             ?>  ?=($& -<)
             [%$ p.-]
           ?:  =([~ lob] lal)
-            [%$ +:(need fil.ank:(descend-path:(zu (need alh)) pax))]
+            [%$ +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))]
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
             $direct     [%volt q.bol]
@@ -2773,12 +2799,12 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  dat=?-(+<.q.hin $writ [%& p.q.hin], $made [%| q.q.hin])
-    =+  ^-  kan/(unit ankh)
+    =+  ^-  kan=(unit dome)
         %+  biff  (~(get by fat.ruf) her)
         |=  room
         %+  bind  (~(get by dos) sud)
         |=  dojo
-        ank.dom
+        dom
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:our syd)
       abet:abet:(route:(me:ze:den [her sud] kan |) sat dat)

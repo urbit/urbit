@@ -66,10 +66,10 @@ compiler and inference engine is about 2000 lines of Hoon.
 Arvo is an event-driven OS written in Hoon.  It can upgrade
 itself and everything inside it over the network.  The Arvo
 kernel proper is 500 lines of Hoon, which implements a typed
-event system with explicit call-stack structure.  Arvo ships 
-it ships with modules that provide P2P networking (`%ames`), a
-revision-control system (`%clay`), a web client/server (`%eyre`),
-a functional build system (`%ford`), and an application engine
+event system with explicit call-stack structure.  Arvo ships
+with modules that provide P2P networking (`%ames`), a revision-
+control system (`%clay`), a web client/server (`%eyre`), a
+functional build system (`%ford`), and an application engine
 `(%gall)`.
 
 ### `%ames`
@@ -114,18 +114,18 @@ whatever you learn will stay true.  And bleeding edges are fun.
 If you're interested in following Urbit, you can:
 
 -   Read our documentation at
-    [urbit.org](http://urbit.org/docs) 
+    [urbit.org](http://urbit.org/docs)
 -   Subscribe to our newsletter at [urbit.org](http://urbit.org).
 -   Check out the
     [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev)
     mailing list.
 -   Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
--   Hit us up by email, <span class="mono">urbit@urbit.org</span>.  
+-   Hit us up by email, <span class="mono">urbit@urbit.org</span>.
     We're nice!
 
 ## Code of conduct
 
-Everyone involved in the Urbit project needs to understand and 
+Everyone involved in the Urbit project needs to understand and
 respect our code of conduct, which is: "don't be rude."
 
 ## Pronunciation and etymology

@@ -37,10 +37,11 @@
       ==
     ==
   ++  txt
-    (lore (cat 3 own '\0a'))
+    (lore own)
   --
 ++  grab
   |%                                            ::  convert from
+<<<<<<< HEAD
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t                                  ::  clam from %noun
   ++  txt
@@ -48,6 +49,11 @@
     ^-  @t
     =+  (role wan)
     (end 3 (dec (met 3 -)) -)
+=======
+  ++  mime  |=({p/mite q/octs} q.q)
+  ++  noun  @t                                  ::  clam from %noun
+  ++  txt   role
+>>>>>>> upstream/master
   --
 ++  grad  %txt
 --

@@ -485,10 +485,11 @@
       ::
           $show
         %+  dy-print  cay
+        =+  mar=|.(?:(=(%noun p.cay) ~ [%rose [~ "    " ~] >p.cay< ~]~))
         ?-  p.p.mad
           $0  ~
-          $1  [%rose [~ "  " ~] (skol p.q.cay) ~]~ 
-          $2  [%rose [~ "  " ~] (dy-show-span-noun p.q.cay) ~]~
+          $1  [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
+          $2  [[%rose [~ "  " ~] (dy-show-span-noun p.q.cay) ~] (mar)]
         ==
       ==
     ::
@@ -833,7 +834,7 @@
         "/"  ?:(=(%home q.dir) "=" (trip q.dir))
         "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
       == 
-    ?:(=(~ s.dir) "" (spud s.dir))
+    ?:(=(~ s.dir) "" (spud (flop s.dir)))
   ::
   ++  he-prom                                           ::  send prompt
     %-  he-diff

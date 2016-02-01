@@ -23,9 +23,9 @@
     ;script: authcode = {(pojo %s authcode)}
     ;script:'''
             if (authcode)
-            urb.send({
+            urb.send(authcode,
+              {
                     appl: "bit",
-                    data: authcode,
                     mark: "oauth2-code"
               }, function(){
               })

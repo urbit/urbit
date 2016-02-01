@@ -8,16 +8,13 @@
   |%
   ++  mime  [/text/x-markdown (taco mud)]
   ++  txt
-    (lore (cat 3 mud '\0a'))
+    (lore mud)
   --
 ++  grab
   |%
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t
-  ++  txt
-    |=  wan/wain
-    =+  (role wan)
-    (end 3 (dec (met 3 -)) -)
+  ++  txt   role
   --
 ++  grad  %txt
 --

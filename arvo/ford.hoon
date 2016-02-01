@@ -283,7 +283,7 @@
           =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
           |=  bem/beam 
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-          [%c [%warp [our p.bem] q.bem ~ [%next %y r.bem (flop s.bem)]]]
+          [%c [%warp [our p.bem] q.bem ~ [%next %z r.bem (flop s.bem)]]]
     ==  ==
   ::
   ++  zo
@@ -1781,9 +1781,9 @@
           =+  dif=((soft (urge cord)) q.q.coy)
           ?~  dif
             =-  (flaw cof leaf+"{<p.cay>} data with bad diff" -)
-            [>span=p.q.coy< >want=p:!>(*(urge cord))< ~]
-          =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
-          (fine cof %& p.cay [%atom %t ~] (end 3 (dec (met 3 pac)) pac))
+            [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
+          =+  pac=(role (lurk (lore u.txt) u.dif))
+          (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}

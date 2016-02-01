@@ -177,6 +177,7 @@ genuinely surprised at how easy they are to remember:
     doq "           lus +               tis =
     dot .           pam &               wut ?
     fas /           pat @               zap !
+    sig ~
 ```
 It's fun to confuse the muggles by using these outside Urbit.
 
@@ -193,7 +194,7 @@ A few digraphs also have irregular sounds:
 ->  lark
 -<  lush
 +>  dark
-+<  dish
++<  dush
 ```
 
 You might remember wondering where the "lark syntax" of chapter 1
