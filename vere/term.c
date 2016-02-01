@@ -22,6 +22,7 @@
 #include "all.h"
 #include "vere/vere.h"
 
+static        void _term_spinner_cb(void*);
 static        void _term_read_tn_cb(uv_stream_t* tcp_u,
                                     ssize_t      siz_i,
                                     const uv_buf_t *     buf_u);
@@ -36,7 +37,18 @@ static        void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
 #define _T_CTIM 3    //  suppress GA/char-at-a-time
 #define _T_NAWS 31   //  negotiate about window size
 
+#define _SPIN_WAIT_US 500000  //  spinner activation delay
+#define _SPIN_RATE_US 250000  //  spinner rate (microseconds/frame)
 
+/* _term_msc_out_host(): unix microseconds from current host time.
+*/
+static c3_d
+_term_msc_out_host()
+{
+  struct timeval tim_tv;
+  gettimeofday(&tim_tv, 0);
+  return 1000000ULL * tim_tv.tv_sec + tim_tv.tv_usec;
+}
 
 static void
 _term_alloc(uv_handle_t* had_u,
@@ -243,6 +255,27 @@ u3_term_io_init()
         c3_assert(!"init-fcntl");
       }
     }
+
+    //  Start spinner thread.
+    //
+    {
+      uty_u->tat_u.sun.sit_u = (uv_thread_t*)malloc(sizeof(uv_thread_t));
+      if ( uty_u->tat_u.sun.sit_u ) {
+        uv_mutex_init(&uty_u->tat_u.mex_u);
+        uv_mutex_lock(&uty_u->tat_u.mex_u);
+
+        c3_w ret_w = uv_thread_create(uty_u->tat_u.sun.sit_u,
+                                      _term_spinner_cb,
+                                      uty_u);
+        if ( 0 != ret_w ) {
+          uL(fprintf(uH, "term: spinner start: %s\n", uv_strerror(ret_w)));
+          free(uty_u->tat_u.sun.sit_u);
+          uty_u->tat_u.sun.sit_u = NULL;
+          uv_mutex_unlock(&uty_u->tat_u.mex_u);
+          uv_mutex_destroy(&uty_u->tat_u.mex_u);
+        }
+      }
+    }
   }
 }
 
@@ -382,6 +415,26 @@ u3_term_io_exit(void)
         c3_assert(!"exit-fcntl");
       }
       write(uty_u->fid_i, "\r\n", 2);
+
+      if ( uty_u->tat_u.sun.sit_u ) {
+        uv_thread_t* sit_u = uty_u->tat_u.sun.sit_u;
+        uty_u->tat_u.sun.sit_u = NULL;
+
+        uv_mutex_unlock(&uty_u->tat_u.mex_u);
+
+#if 0
+        //  XX can block exit waiting for wakeup (max _SPIN_WAIT_US)
+        c3_w ret_w;
+        if ( 0 != (ret_w = uv_thread_join(sit_u)) ) {
+          uL(fprintf(uH, "term: spinner exit: %s\n", uv_strerror(ret_w)));
+        }
+        else {
+          uv_mutex_destroy(&uty_u->tat_u.mex_u);
+        }
+#endif
+
+        free(sit_u);
+      }
     }
   }
 }
@@ -591,9 +644,11 @@ static void
 _term_it_refresh_line(u3_utty* uty_u)
 {
   c3_w len_w = uty_u->tat_u.mir.len_w;
+  c3_w cus_w = uty_u->tat_u.mir.cus_w;
 
   _term_it_show_clear(uty_u);
-  _term_it_show_wide(uty_u, len_w, uty_u->tat_u.mir.lin_w);
+  _term_it_show_line(uty_u, uty_u->tat_u.mir.lin_w, len_w);
+  _term_it_show_cursor(uty_u, cus_w);
 }
 
 /* _term_it_show_more(): new current line.
@@ -920,6 +975,172 @@ _term_read_cb(uv_stream_t* tcp_u,
   free(buf_u->base);
 }
 
+/* _term_try_write_str(): write null-terminated string (off-thread, retain).
+*/
+static void
+_term_try_write_str(u3_utty*    uty_u,
+                    const c3_c* hun_y)
+{
+  // c3_i fid_i = uv_fileno(&uty_u->pop_u);
+  c3_i fid_i = uty_u->pop_u.io_watcher.fd;  //  XX old libuv
+  write(fid_i, hun_y, strlen(hun_y));
+}
+
+/* _term_try_move_left(): move the cursor left (off-thread).
+*/
+static void
+_term_try_move_left(u3_utty* uty_u)
+{
+  _term_try_write_str(uty_u, (const c3_c*)uty_u->ufo_u.out.cub1_y);
+}
+
+/* _term_show_spinner(): render spinner (off-thread).
+*/
+static void
+_term_show_spinner(u3_utty* uty_u, c3_d lag_d)
+{
+  if ( 0 == uty_u->tat_u.sun.eve_d ) {
+    return;
+  }
+
+  c3_w cus_w = uty_u->tat_u.mir.cus_w;
+
+  if ( cus_w >= uty_u->tat_u.siz.col_l ) {  //  shenanigans!
+    return;
+  }
+
+  c3_w bac_w = uty_u->tat_u.siz.col_l - 1 - cus_w;  //  backoff from end of line
+
+  const c3_c daz_c[] = "|/-\\";
+  const c3_c dal_c[] = "\xc2\xab";
+  const c3_c dar_c[] = "\xc2\xbb";
+
+  c3_c buf_c[1 + 2 +  4  + 2 + 1];
+  //         | + « + why + » + \0
+
+  c3_c* cur_c = buf_c;
+
+  *cur_c++ = daz_c[(lag_d / _SPIN_RATE_US) % strlen(daz_c)];
+  c3_w sol_w = 1;  //  spinner length (utf-32)
+
+  c3_c* why_c = uty_u->tat_u.sun.why_c;
+  if ( why_c && strlen(why_c) <= 4 ) {
+    strcpy(cur_c, dal_c);
+    cur_c += strlen(dal_c);
+    sol_w += 1;  //  length of dal_c (utf-32)
+
+    c3_w wel_w = strlen(why_c);
+    strcpy(cur_c, why_c);
+    cur_c += wel_w;
+    sol_w += wel_w;
+
+    strcpy(cur_c, dar_c);
+    cur_c += strlen(dar_c);
+    sol_w += 1;  //  length of dar_c (utf-32)
+  }
+  *cur_c = '\0';
+
+  //  One-time cursor backoff.
+  if ( c3n == uty_u->tat_u.sun.diz_o ) {
+    c3_w i_w;
+    for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
+      _term_try_move_left(uty_u);
+    }
+  }
+
+  _term_try_write_str(uty_u, buf_c);
+  uty_u->tat_u.sun.diz_o = c3y;
+
+  //  Cursor stays on spinner.
+  while ( sol_w-- ) {
+    _term_try_move_left(uty_u);
+  }
+}
+
+/* _term_start_spinner(): prepare spinner state. RETAIN.
+*/
+static void
+_term_start_spinner(u3_utty* uty_u, u3_noun ovo)
+{
+  uty_u->tat_u.sun.diz_o = c3n;
+
+  c3_d lag_d = _SPIN_WAIT_US;
+  u3_noun why = u3h(u3t(u3h(u3t(ovo))));
+  if ( c3__term == why ) {
+    u3_noun eve = u3t(u3t(ovo));
+    if ( c3__belt == u3h(eve) && c3__ret == u3h(u3t(eve)) ) {
+      lag_d = 0;  //  No delay for %ret.
+    }
+  }
+  else {
+    uty_u->tat_u.sun.why_c = (c3_c*)u3r_string(why);
+  }
+
+  uty_u->tat_u.sun.eve_d = _term_msc_out_host() + lag_d;
+
+  uv_mutex_unlock(&uty_u->tat_u.mex_u);
+}
+
+/* _term_stop_spinner(): reset spinner state and restore input line.
+*/
+static void
+_term_stop_spinner(u3_utty* uty_u)
+{
+  uv_mutex_lock(&uty_u->tat_u.mex_u);
+
+  if ( c3y == uty_u->tat_u.sun.diz_o ) {
+    _term_it_refresh_line(uty_u);
+  }
+
+  uty_u->tat_u.sun.diz_o = c3n;
+  uty_u->tat_u.sun.eve_d = 0;
+  free(uty_u->tat_u.sun.why_c);
+  uty_u->tat_u.sun.why_c = NULL;
+}
+
+/* _term_spinner_cb(): manage spinner (off-thread).
+*/
+static void
+_term_spinner_cb(void* ptr_v)
+{
+  //  This thread shouldn't receive signals.
+  //
+  {
+    sigset_t set;
+    sigfillset(&set);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
+  }
+
+  u3_utty* uty_u = (u3_utty*)ptr_v;
+
+  for ( uv_mutex_lock(&uty_u->tat_u.mex_u);
+        uty_u->tat_u.sun.sit_u;
+        uv_mutex_lock(&uty_u->tat_u.mex_u) )
+  {
+    c3_d eve_d = uty_u->tat_u.sun.eve_d;
+
+    if ( 0 == eve_d ) {
+      uv_mutex_unlock(&uty_u->tat_u.mex_u);
+      usleep(_SPIN_WAIT_US);
+    }
+    else {
+      c3_d now_d = _term_msc_out_host();
+
+      if (now_d < eve_d) {
+        uv_mutex_unlock(&uty_u->tat_u.mex_u);
+        usleep(eve_d - now_d);
+      }
+      else {
+        _term_show_spinner(uty_u, now_d - eve_d);
+        uv_mutex_unlock(&uty_u->tat_u.mex_u);
+        usleep(_SPIN_RATE_US);
+      }
+    }
+  }
+
+  uv_mutex_unlock(&uty_u->tat_u.mex_u);
+}
+
 /* _term_main(): return main or console terminal.
 */
 static u3_utty*
@@ -1073,6 +1294,17 @@ _term_ef_blit(u3_utty* uty_u,
 {
   switch ( u3h(blt) ) {
     default: break;
+    case c3__bee: {
+      if ( c3n == u3_Host.ops_u.dem ) {
+        if ( u3_nul == u3t(blt) ) {
+          _term_stop_spinner(uty_u);
+        }
+        else {
+          _term_start_spinner(uty_u, u3t(blt));
+        }
+      }
+    } break;
+
     case c3__bel: {
       if ( c3n == u3_Host.ops_u.dem ) {
         _term_it_write_txt(uty_u, uty_u->ufo_u.out.bel_y);
