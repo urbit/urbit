@@ -1603,8 +1603,8 @@
         :*  ~  ~  %dome  -:!>(%dome)
             ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
             let=yon
-            hit=(mo (skim (~(tap by hit.dom)) |=([p=@ud *] (lte p yon))))
-            lab=(mo (skim (~(tap by lab.dom)) |=([* p=@ud] (lte p yon))))
+            hit=(molt (skim (~(tap by hit.dom)) |=({p/@ud *} (lte p yon))))
+            lab=(molt (skim (~(tap by lab.dom)) |=({* p/@ud} (lte p yon))))
         ==
       ?:  (gth yon let.dom)
         ~
@@ -1673,13 +1673,13 @@
       |=  {yon/aeon pax/path}
       ^-  (unit (unit {$uvi (hypo @uvI)}))
       ?:  =(0 yon)
-        ``uvi/[-:!>(*@uvI) *@uvI]
+        ``uvi+[-:!>(*@uvI) *@uvI]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
       =+  yak=(tako-to-yaki u.tak)
       =+  len=(lent pax)
-      =+  ^-  descendants=(list (pair path lobe))
+      =+  ^-  descendants/(list (pair path lobe))
           ::  ~&  %turning
           ::  =-  ~&  %turned  -
           %+  turn
@@ -2799,7 +2799,7 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  dat=?-(+<.q.hin $writ [%& p.q.hin], $made [%| q.q.hin])
-    =+  ^-  kan=(unit dome)
+    =+  ^-  kan/(unit dome)
         %+  biff  (~(get by fat.ruf) her)
         |=  room
         %+  bind  (~(get by dos) sud)

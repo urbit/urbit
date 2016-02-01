@@ -4798,7 +4798,7 @@
   |-  ^+  tez
   =+  ^=  wor
     =+  [meg=0 i=0]
-    |-  ^-  [meg=@ i=@ end=@f]
+    |-  ^-  {meg/@ i/@ end/@f}
     =+  gam=(cut 3 [i 1] lub)
     ?:  =(0 gam)
       [meg i %.y]
@@ -4816,7 +4816,7 @@
   |-  ^-  @
     ?~  tez
       our
-    ?:  =(0 i.tez)
+    ?:  =(%$ i.tez)
       $(i +(i), tez t.tez, our (cat 3 our 10))
     ?:  =(0 i)
       $(i +(i), tez t.tez, our i.tez)
@@ -10352,7 +10352,7 @@
   ==                                                    ::
 ++  mark  @tas                                          ::  content span
 ++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  (pair cord (each noun (list mash)))           ::  memory usage
+++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity

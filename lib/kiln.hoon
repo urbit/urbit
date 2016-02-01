@@ -109,7 +109,7 @@
   abet:(emit %ogre /unmount-point mon)
 ::
 ++  poke-track                                        ::
-  |=  hos=kiln-sync
+  |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:start-track:(auto hos)
@@ -180,7 +180,7 @@
   =.  cur-vanes
     %-  malt
     %+  turn  `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
-    |=  syd=@tas
+    |=  syd/@tas
     :-  syd
     .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
   =<  abet
@@ -248,7 +248,7 @@
       (emit %poke /kiln/reload/hoon [our %hood] %helm-reset ~)
       ::  XX  updates cur-vanes?
     =+  ^=  new-zuse
-        ((hard ,@uvI) .^(%cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon))
+        .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon)
     ?:  !=(new-zuse cur-zuse)
       =.  cur-zuse  new-zuse
       =.  cur-vanes
@@ -321,7 +321,7 @@
     %-  blab
     :~  :*  ost  %warp
             /kiln/sync/[syd]/(scot %p her)/[sud]
-            [our her]  sud  ~  %sing  %y  ud/let  /
+            [our her]  sud  ~  %sing  %y  ud+let  /
     ==  ==
   ::
   ++  start-sync
@@ -373,7 +373,7 @@
     %-  blab  :_  ~
     :*  ost  %warp
         /kiln/sync/[syd]/(scot %p her)/[sud]
-        [our her]  sud  ~  %sing  %y  ud/let  /
+        [our her]  sud  ~  %sing  %y  ud+let  /
     ==
   --
 ::

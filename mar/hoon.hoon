@@ -41,19 +41,9 @@
   --
 ++  grab
   |%                                            ::  convert from
-<<<<<<< HEAD
-  ++  mime  |=({p/mite q/octs} q.q)
-  ++  noun  @t                                  ::  clam from %noun
-  ++  txt
-    |=  wan/wain
-    ^-  @t
-    =+  (role wan)
-    (end 3 (dec (met 3 -)) -)
-=======
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t                                  ::  clam from %noun
   ++  txt   role
->>>>>>> upstream/master
   --
 ++  grad  %txt
 --

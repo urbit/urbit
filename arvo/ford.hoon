@@ -540,7 +540,7 @@
           %+  flaw  cof  :_  ~
           leaf+"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
         ?:  =(q.q.cay q.q.coy)
-          (fine cof %& %null [%atom %n ~] ~)
+          (fine cof [%& %null [%atom %n ~] ~])
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
@@ -568,7 +568,7 @@
         =+  for=((soft @tas) q:(slap gar [%limb %form]))
         ?~  for
           (flaw cof leaf+"bad ++form:grad" ~)
-        (fine cof %& u.for dif)
+        (fine cof [%& u.for dif])
       ==
     ::
     ++  daze                                            ::  remember depends
@@ -823,7 +823,7 @@
             leaf+"join on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
           leaf+"expected mark {(trip u.fom)}"
         ?:  =(q.q.cay q.q.coy)
-          (fine cof %& cay)
+          (fine cof [%& cay])
         ?.  (slab %join p.gar)
           (flaw cof leaf+"no ++join:grad" ~)
         %+  cope
@@ -832,8 +832,8 @@
           (slop q.cay q.coy)
         |=  {cof/cafe dif/vase}
         ?@  q.dif
-          (fine cof %& %null dif)
-        (fine cof %& u.fom (slot 3 dif))
+          (fine cof [%& %null dif])
+        (fine cof [%& u.fom (slot 3 dif)])
       ==
     ::
     ++  mash
@@ -1783,7 +1783,7 @@
             =-  (flaw cof leaf+"{<p.cay>} data with bad diff" -)
             [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
           =+  pac=(role (lurk (lore u.txt) u.dif))
-          (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
+          (fine cof `gage`[%& p.cay [%atom %t ~] (end 3 (dec (met 3 pac)) pac)])
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}

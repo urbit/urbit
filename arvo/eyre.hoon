@@ -963,8 +963,8 @@
       |=  {cug/(list @t) pez/pest}  ^+  done
       ?~  pez  done
       ?-  -.pez
-          ~  (give-thou (add-cookies cug p.pez))
-          $js  $(pez [%$ (resp 200 text+/javascript p.pez)])
+          $~     (give-thou (add-cookies cug p.pez))
+          $js    $(pez [%$ (resp 200 text+/javascript p.pez)])
           $json  (give-json 200 cug p.pez)
           $html  (give-html 200 cug p.pez)
           $htme  (give-html 401 cug p.pez)
@@ -1146,7 +1146,7 @@
     :: a specific mark instead.
     ++  process-payload
         ?+  mef  quy
-          %post  `quay`(weld quy `quay`(rash q:(need bod) yquy:urlp))
+          $post  `quay`(weld quy `quay`(rash q:(need bod) yquy:urlp))
         ==
     ++  process
       ^-  (each pest _done)
@@ -1166,7 +1166,7 @@
         =+  bem=?-(-.hem $beam p.hem, $spur [root-beak p.hem])
         =+  wir=`whir`[%ha (tope -.bem ~)]
         =.  wir  ?+(mef !! $post wir, $get wir, $head [%he wir])
-        ~|  bad-beam/q.bem
+        ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
         ?.  aut
           [%& %boil [wir ext bem nquy]]
