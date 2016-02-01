@@ -1343,7 +1343,7 @@
         %+  cope  (maim cof pit able)
         |=  [cof=cafe bax=vase]
         %+  cope  (chap cof bax [%fan fan.hyd])
-        |=  [cof=cafe gox=vase]
+        |=  [cof=cafe mar=mark gox=vase]
         %+  cope  (maim cof (slop gox bax) [%tssg (flop boy)])
         |=  [cof=cafe fin=vase]
         (fine cof fin) 
@@ -1384,7 +1384,7 @@
           %+  cope  $(poy t.poy)
           |=  [cof=cafe nex=(list (pair ,@ vase))]
           %+  cope  (chap(s.how [p.i.poy s.how]) cof bax hon)
-          (flux |=(elt=vase [[q.i.poy elt] nex]))
+          (flux |=([mar=mark elt=vase] [[q.i.poy elt] nex]))
         %-  flux
         |=  yal=(list (pair ,@ vase))  ^-  vase
         ?~  yal  [[%cube 0 [%atom %n]] 0]
@@ -1402,40 +1402,42 @@
             (flue cof)
           (cope nod (flux some))
         %-  flux
-        |=  doy=(map ,@ vase)  ^-  vase
+        |=  doy=(map ,@ cage)  ^-  vase
         ?~  doy  [[%cube 0 [%atom %n]] 0]
         %+  slop
-          (slop [[%atom %ta] p.n.doy] q.n.doy)
+          (slop [[%atom %ta] p.n.doy] q.q.n.doy)
         (slop $(doy l.doy) $(doy r.doy))
       ::
       ++  chap                                          ::  produce resources
         |=  [cof=cafe bax=vase hon=horn]
-        ^-  (bolt vase)
+        ^-  (bolt cage)
         ?-    -.hon
-            %ape  (maim cof bax p.hon)
+            %ape  (cope (maim cof bax p.hon) (flux |=(a=vase [%noun a])))
             %arg  
           %+  cope  (maim cof bax p.hon)
           |=  [cof=cafe gat=vase]
           %+  cope  (maim cof !>(~) ((jock |) arg))
           |=  [cof=cafe val=vase]
-          (maul cof gat (slop !>(how) val))
+          %+  cope  (maul cof gat (slop !>(how) val))
+          (flux |=(a=vase noun/a))
         ::
             %alt
           %.  cof
-          |=  cof=cafe  ^-  (bolt vase)
+          |=  cof=cafe  ^-  (bolt cage)
           ?~  p.hon  (flaw cof leaf/"ford: out of options" ~)
           (coop ^$(cof cof, hon i.p.hon) ..$(p.hon t.p.hon))
         ::
             %dub 
           %+  cope  $(hon q.hon)
-          (flux |=(vax=vase [[%face p.hon p.vax] q.vax]))
+          (flux |=([mar=mark vax=vase] [mar [%face p.hon p.vax] q.vax]))
         ::
             %fan
+          %-  cope  :_  (flux |=(a=vase noun/a))
           %+  cope
             |-  ^-  (bolt (list vase))
             ?~  p.hon  (flue cof)
             %+  cope  ^$(cof cof, hon i.p.hon)
-            |=  [cof=cafe vax=vase]
+            |=  [cof=cafe mar=mark vax=vase]
             %+  cope  ^$(cof cof, p.hon t.p.hon)
             (flux |=(tev=(list vase) [vax tev]))
           |=  [cof=cafe tev=(list vase)]
@@ -1446,15 +1448,19 @@
         ::
             %for          
           =+  opt=|.(>(turn p.hon |=([a=path ^] a))<)
-          |-  ^-  (bolt vase)
+          |-  ^-  (bolt cage)
           ?~  p.hon  (flaw cof leaf/"ford: no match" >(tope how)< *opt ~)
           ?:  =(p.i.p.hon (scag (lent p.i.p.hon) (flop s.how)))
             ^$(hon q.i.p.hon)
           $(p.hon t.p.hon)
         ::
             %hel  $(hon p.hon, lit |)
-            %hub  (chad cof bax %ud p.hon)
+            %hub
+          %+  cope  (chad cof bax %ud p.hon)
+          (flux |=(a=vase noun/a))
+        ::
             %man
+          %-  cope  :_  (flux |=(a=vase noun/a))
           |-  ^-  (bolt vase)
           ?~  p.hon  (fine cof [[%cube 0 [%atom %n]] 0])
           %+  cope  $(p.hon l.p.hon)
@@ -1462,42 +1468,50 @@
           %+  cope  ^$(cof cof, p.hon r.p.hon)
           |=  [cof=cafe rig=vase]
           %+  cope  ^^^$(cof cof, hon q.n.p.hon)
-          |=  [cof=cafe vax=vase]
+          |=  [cof=cafe mar=mark vax=vase]
           %+  fine  cof
           %+  slop
             (slop [[%atom %tas] p.n.p.hon] vax)
           (slop lef rig)
         ::
-            %now  (chad cof bax %da p.hon)
-            %nap  (chai cof bax p.hon)
+            %now
+          %+  cope  (chad cof bax %da p.hon)
+          (flux |=(a=vase noun/a))
+        ::
+            %nap
+          %+  cope  (chai cof bax p.hon)
+          (flux |=(a=vase noun/a))
+        ::
+            %saw  
+          %+  cope  $(hon q.hon)
+          |=  [cof=cafe mar=mark sam=vase]
+          %+  cope  (maim cof bax p.hon)
+          |=  [cof=cafe gat=vase]
+          %+  cope  (maul cof gat sam)
+          (flux |=(a=vase noun/a))
+        ::
             %see
           =.  r.p.hon  ?:(?=([%ud 0] r.p.hon) r.how r.p.hon)
           $(hon q.hon, how p.hon)
         ::
-            %saw  
-          %+  cope  $(hon q.hon)
-          |=  [cof=cafe sam=vase]
-          %+  cope  (maim cof bax p.hon)
-          |=  [cof=cafe gat=vase]
-          (maul cof gat sam)
-        ::
             %sic
           %+  cope  $(hon q.hon)
-          |=  [cof=cafe vax=vase]
+          |=  [cof=cafe mar=mark vax=vase]
           %+  cope  (maim cof bax [%bctr p.hon])
           |=  [cof=cafe tug=vase]
           ?.  (~(nest ut p.tug) | p.vax)
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
-          (fine cof [p.tug q.vax])
+          (fine cof [mar p.tug q.vax])
         ::
             %toy
           ?:  p.hon
             =.  arg  ?.(lit arg many/~)
-            (cope (cope (make cof %bake q.hon arg how) furl) feel)
+            (cope (make cof %bake q.hon arg how) furl)
           %+  cool  |.(leaf/"ford: hook {<q.hon>} {<(tope how)>}")
           %+  cope  (fade cof %hoon how)
           |=  [cof=cafe hyd=hood]
-          (cope (abut:(meow how arg) cof hyd) (lake q.hon))
+          %+  cope  (abut:(meow how arg) cof hyd) 
+          ;~(cope (lake q.hon) (flux |=(a=vase [q.hon a])))
         ==
       ::
       ++  head                                          ::  consume structures
