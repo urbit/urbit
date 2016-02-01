@@ -677,10 +677,10 @@
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
               (stag %hel ;~(pfix cen day:read))
-              (stag %hub ;~(pfix pat day:read))
+              (stag %lin ;~(pfix pam lin:read))
               (stag %man ;~(pfix tar man:read))
               (stag %nap ;~(pfix cab day:read))
-              (stag %now ;~(pfix pam day:read))
+              (stag %now ;~(pfix pat day:read))
               (stag %saw ;~(pfix sem saw:read))
               (stag %see ;~(pfix col see:read))
               (stag %sic ;~(pfix ket sic:read))
@@ -721,6 +721,12 @@
                 %+  rail  fail
                 =-  ;~(sfix (star -) gap duz)
                 ;~(pfix gap fas ;~(plug hath day))
+          ::
+              ++  lin
+                %+  rail
+                  ;~(plug (plus ;~(sfix sym pam)) day)
+                =+  (cook |=(a=term [a ~]) sym)
+                ;~(pfix gap ;~(plug - day))
           ::
               ++  man
                 %+  rail  fail
@@ -1455,9 +1461,13 @@
           $(p.hon t.p.hon)
         ::
             %hel  $(hon p.hon, lit |)
-            %hub
-          %+  cope  (chad cof bax %ud p.hon)
-          (flux |=(a=vase noun/a))
+            %lin
+          %+  cope  $(hon q.hon)
+          |=  [cof=cafe cay=cage]  ^-  (bolt cage)
+          ?~  p.hon  (fine cof cay)
+          %+  cope  $(p.hon t.p.hon)
+          |=  [cof=cafe cay=cage]
+          (cope (make cof %cast i.p.hon `cay) furl)
         ::
             %man
           %-  cope  :_  (flux |=(a=vase noun/a))
