@@ -1,5 +1,5 @@
 /%    /,
-    /web/modules   /|(/!elem/ /elem/)
-    /              /elem/
+    /web   /|(/!elem/ /elem/)
+    /      /elem/
       ==
 `manx`-.-
