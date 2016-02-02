@@ -1482,6 +1482,16 @@
   ?~  u.b  ~
   [~ u.u.b]
 ::
+++  myle                                                ::  new to old sky
+  |=  ska/$+({* *} (unit (unit)))
+  ^-  $+({* *} (unit))
+  |=  a/{* *}
+  ^-  (unit)
+  =+  b=(ska a)
+  ?~  b  ~
+  ?~  u.b  ~
+  [~ u.u.b]
+::
 ++  pack                                                ::  light path encoding
   |=  {a/term b/path}  ^-  knot
   %+  rap  3  :-  (wack a)

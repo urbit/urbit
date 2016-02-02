@@ -1264,7 +1264,7 @@
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  {cof/cafe typ/span fol/nock}
-      %+  (coup cof)  (mock [q.vax fol] (mole (slod save)))
+      %+  (coup cof)  (meck [q.vax fol] (myle (sloy syve)))
       |=(val/* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
@@ -1457,7 +1457,7 @@
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
       |=  {cof/cafe typ/span}
-      %+  (coup cof)  (mong [q.gat q.sam] (mole (slod save)))
+      %+  (coup cof)  (myng [q.gat q.sam] (myle (sloy syve)))
       |=(val/* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
@@ -1833,6 +1833,15 @@
       ?^  -
         ``u.-
       (ska +<.$)
+    ::
+    ++  syve
+      ^-  sley
+      |=  {* (unit (set monk)) tem/term bem/beam}
+      ^-  (unit (unit cage))
+      =+  (~(get by keg) tem bem)
+      ?^  -
+        ``u.-
+      (ska +<+.$)
     --
   --
 ::
