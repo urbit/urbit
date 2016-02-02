@@ -6,7 +6,7 @@
 /=    mez
   /;    pojo
   /;    |=(a=(list ,[@ p=json]) =.(a (flop a) ?~(a [%a ~] p.i.a)))
-  /&    /json/
+  /@    /json/
 |%
 ++  cdnj  |=(a=tape ;script(src "//cdnjs.cloudflare.com/ajax/libs/{a}");)
 --
