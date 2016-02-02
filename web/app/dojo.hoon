@@ -32,8 +32,6 @@
   ;body
     ;div#err;
     ;div#term:""
-    ;script@"dojo/share.coffee"(type "text/coffeescript");
-    ;script@"dojo/main.coffee"(type "text/coffeescript");
-    ;+  (cdnj "coffee-script/1.7.1/coffee-script.min.js")
+    ;script@"/lib/js/sole.js";
   ==  
 ==
