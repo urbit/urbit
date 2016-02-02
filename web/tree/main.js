@@ -127,6 +127,11 @@ Nav = React.createFactory(query({
     var dt;
     return dt = this.ts - Number(Date.now());
   },
+  _home: function() {
+    if (document.location.pathname !== "/") {
+      return document.location = "/";
+    }
+  },
   toggleFocus: function(state) {
     return $(ReactDOM.findDOMNode(this)).toggleClass('focus', state);
   },
@@ -170,7 +175,8 @@ Nav = React.createFactory(query({
     }, div({
       className: 'icon'
     }, div({
-      className: 'home'
+      className: 'home',
+      onClick: this._home
     }, ""), div({
       className: 'app'
     }, title), dpad, button({

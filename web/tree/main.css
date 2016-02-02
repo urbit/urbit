@@ -176,7 +176,11 @@ img.logo.first {
   height: 24px;
   border-radius: 50%;
   background-color: transparent;
-  border: 6px solid #B1B7BD; }
+  border: 6px solid #B1B7BD;
+  cursor: pointer; }
+
+.icon .home:hover {
+  border-color: #55595c; }
 
 .icon .dpad {
   display: block; }
@@ -285,18 +289,6 @@ img.logo.first {
     font-family: 'scp';
     margin-left: 0.9375rem;
     font-size: 1.2rem; }
-  .menu .name,
-  .menu .planet {
-    display: inline-block; }
-  .menu .name,
-  .menu .planet,
-  .menu .room {
-    font-size: .8rem; }
-  .menu .name {
-    min-width: 33.333%;
-    font-size: .9rem; }
-  .menu .planet {
-    min-width: 66.667%; }
 
 .menu.depth-1 .contents {
   background-color: #f7f7f9;

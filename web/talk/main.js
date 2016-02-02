@@ -664,6 +664,7 @@ Load = require('./LoadComponent.coffee');
 module.exports = recl({
   displayName: "Station",
   stateFromStore: function() {
+    var ref1;
     return {
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
@@ -672,7 +673,8 @@ module.exports = recl({
       configs: StationStore.getConfigs(),
       fetching: MessageStore.getFetching(),
       typing: StationStore.getTyping(),
-      listening: StationStore.getListening()
+      listening: StationStore.getListening(),
+      open: (((ref1 = this.state) != null ? ref1.open : void 0) ? this.state.open : null)
     };
   },
   getInitialState: function() {
@@ -691,9 +693,11 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
-  _toggleOpen: function(e) {
-    if ($(e.target).closest('.sour-ctrl').length === 0) {
-      return $("#station-container").toggleClass('open');
+  componentWillReceiveProps: function(nextProps) {
+    if (this.props.open === true && nextProps.open === false) {
+      return this.setState({
+        open: null
+      });
     }
   },
   validateSource: function(s) {
@@ -721,6 +725,18 @@ module.exports = recl({
       }
     }
   },
+  _openStation: function(e) {
+    var $t;
+    $t = $(e.target);
+    return this.setState({
+      open: $t.attr('data-station')
+    });
+  },
+  _closeStation: function() {
+    return this.setState({
+      open: null
+    });
+  },
   _remove: function(e) {
     var _sources, _station;
     e.stopPropagation();
@@ -731,9 +747,59 @@ module.exports = recl({
     return StationActions.setSources(this.state.station, _sources);
   },
   render: function() {
-    var _clas, members, parts, source, sources, sourcesSum;
+    var _clas, member, members, obj, parts, source, sources, sourcesSum, station;
     parts = [];
     members = [];
+    if (this.state.station && this.state.configs[this.state.station]) {
+      members = (function() {
+        var ref1, results;
+        ref1 = this.state.members;
+        results = [];
+        for (station in ref1) {
+          members = ref1[station];
+          _clas = clas({
+            open: this.state.open === station,
+            closed: !(this.state.open === station),
+            'col-md-4': true,
+            'col-md-offset-6': true,
+            menu: true,
+            'depth-2': true
+          });
+          results.push(div({
+            className: _clas,
+            "data-members": station
+          }, [
+            div({
+              className: "contents",
+              onClick: this._closeStation
+            }, [
+              div({
+                className: "close"
+              }, "✕"), h2({}, [
+                span({}, "Members"), label({
+                  className: "sum"
+                }, _.keys(members).length)
+              ]), (function() {
+                var results1;
+                results1 = [];
+                for (member in members) {
+                  obj = members[member];
+                  results1.push(div({}, [
+                    div({
+                      className: "name"
+                    }, ""), div({
+                      className: "planet"
+                    }, member)
+                  ]));
+                }
+                return results1;
+              })()
+            ])
+          ]));
+        }
+        return results;
+      }).call(this);
+    }
     if (this.state.station && this.state.configs[this.state.station]) {
       sources = (function() {
         var i, len, ref1, results;
@@ -744,7 +810,11 @@ module.exports = recl({
           results.push(div({
             className: "room"
           }, [
-            source.slice(1), div({
+            div({
+              className: (this.state.open === source ? "selected" : ""),
+              onClick: this._openStation,
+              "data-station": source
+            }, source.slice(1)), div({
               className: "close",
               onClick: this._remove,
               "data-station": source
@@ -772,21 +842,25 @@ module.exports = recl({
       'depth-1': true
     });
     return div({
-      className: _clas,
-      key: 'station'
+      key: "station-container"
     }, [
       div({
-        className: "contents"
+        className: _clas,
+        key: 'station'
       }, [
         div({
-          className: "close",
-          onClick: this.props.toggle
-        }, "✕"), h2({}, [
-          span({}, "Stations"), label({
-            className: "sum"
-          }, sourcesSum)
-        ]), div({}, sources)
-      ])
+          className: "contents"
+        }, [
+          div({
+            className: "close",
+            onClick: this.props.toggle
+          }, "✕"), h2({}, [
+            span({}, "Stations"), label({
+              className: "sum"
+            }, sourcesSum)
+          ]), div({}, sources)
+        ])
+      ]), members
     ]);
   }
 });
@@ -820,10 +894,12 @@ Audience = recl({
   onKeyDown: function(e) {
     if (e.keyCode === 13) {
       e.preventDefault();
-      setTimeout(function() {
-        return $('#writing').focus();
-      }, 0);
-      return false;
+      if (this.props.validate()) {
+        setTimeout((function() {
+          return $('#writing').focus();
+        }), 0);
+        return false;
+      }
     }
   },
   render: function() {
@@ -909,7 +985,9 @@ module.exports = recl({
   sendMessage: function() {
     var audi, txt;
     if (this._validateAudi() === false) {
-      $('#audience').focus();
+      setTimeout((function() {
+        return $('#audience .input').focus();
+      }), 0);
       return;
     }
     if (this.state.audi.length === 0 && $('#audience').text().trim().length > 0) {
@@ -979,7 +1057,7 @@ module.exports = recl({
   },
   _validateAudi: function() {
     var v;
-    v = $('#audience').text();
+    v = $('#audience .input').text();
     v = v.trim();
     if (v.length === 0) {
       return true;
@@ -994,7 +1072,7 @@ module.exports = recl({
     valid = this._validateAudi();
     StationActions.setValidAudience(valid);
     if (valid === true) {
-      stan = $('#audience').text() || window.util.mainStationPath(window.urb.user);
+      stan = $('#audience .input').text() || window.util.mainStationPath(window.urb.user);
       stan = (stan.split(/\ +/)).map(function(v) {
         if (v[0] === "~") {
           return v;
@@ -1069,6 +1147,7 @@ module.exports = recl({
       React.createElement(Audience, {
         audi: audi,
         valid: this.state.valid,
+        validate: this._validateAudi,
         onBlur: this._setAudi
       }), div({
         className: 'message',
@@ -1586,25 +1665,7 @@ StationStore = _.merge(new EventEmitter, {
     };
   },
   loadMembers: function(members) {
-    var list, member, presence, results, station;
-    _members = {};
-    results = [];
-    for (station in members) {
-      list = members[station];
-      results.push((function() {
-        var results1;
-        results1 = [];
-        for (member in list) {
-          presence = list[member];
-          if (!_members[member]) {
-            _members[member] = {};
-          }
-          results1.push(_members[member][station] = presence);
-        }
-        return results1;
-      })());
-    }
-    return results;
+    return _members = members;
   },
   getMembers: function() {
     return _members;
