@@ -63,7 +63,7 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":17,"../persistence/TreePersistence.coffee":19}],2:[function(require,module,exports){
-var BodyComponent, Dpad, Nav, Sibs, TreeActions, TreeStore, a, button, clas, div, li, query, recl, ref, ul, util;
+var BodyComponent, Dpad, Nav, Sibs, TreeActions, TreeStore, a, button, clas, div, li, query, recl, ref, rend, ul, util;
 
 clas = require('classnames');
 
@@ -82,6 +82,8 @@ Dpad = require('./DpadComponent.coffee');
 util = require('../utils/util.coffee');
 
 recl = React.createClass;
+
+rend = ReactDOM.render;
 
 ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, button = ref.button;
 
@@ -265,7 +267,7 @@ module.exports = query({
     if (next !== this.props.path) {
       React.unmountComponentAtNode($('#body')[0]);
       TreeActions.setCurr(next);
-      return React.render(BodyComponent({}, ""), $('#body')[0]);
+      return rend(BodyComponent({}, ""), $('#body')[0]);
     }
   },
   reset: function() {
@@ -305,7 +307,8 @@ module.exports = query({
     if (this.state.subnav) {
       kids.push(this.state.subnav({
         key: "subnav",
-        open: this.state.open
+        open: this.state.open,
+        toggle: TreeActions.toggleNav
       }, ""));
     }
     return div({}, kids);
@@ -544,7 +547,6 @@ module.exports = query({
       className: "col-md-10 col-md-offset-2 body"
     }, [
       div({
-        id: 'body',
         key: "body" + this.props.path,
         className: className
       }, extra('spam'), extra('logo', {
@@ -1029,6 +1031,7 @@ recl = React.createClass;
 ref = React.DOM, div = ref.div, span = ref.span, code = ref.code;
 
 module.exports = recl({
+  displayName: "Module",
   getInitialState: function() {
     return {
       loaded: false
@@ -1077,7 +1080,9 @@ module.exports = recl({
   },
   render: function() {
     if (!this.state.loaded) {
-      return div({}, "");
+      return div({
+        key: "module-loading"
+      }, "");
     } else {
       return reactify({
         gn: this.props.component,

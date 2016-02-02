@@ -2,6 +2,10 @@
 .room {
   font-family: 'scp'; }
 
+.valid-false {
+  color: #E20B0B;
+  border-color: #E20B0B; }
+
 div.meta {
   display: inline-block; }
 
@@ -15,6 +19,7 @@ div.meta label {
   height: 1rem;
   width: 1rem;
   text-align: center; }
+
 div.meta label:before {
   content: attr(data-glyph);
   color: #fff;
@@ -23,10 +28,12 @@ div.meta label:before {
   font-weight: 500;
   line-height: 1rem;
   vertical-align: middle; }
+
 div.meta label,
 div.meta h2,
 div.meta h3 {
   display: inline-block; }
+
 div.meta h2,
 div.meta h3 {
   font-family: 'scp';
@@ -34,10 +41,15 @@ div.meta h3 {
   font-weight: 400;
   margin-top: 0;
   padding-top: 0; }
+
 div.meta h3 {
   margin-left: 2rem; }
+
 div.meta .time {
   padding-right: 2rem; }
+
+div.gram.first {
+  margin-top: 1rem; }
 
 div.gram.same div.meta {
   display: none; }
@@ -55,6 +67,86 @@ div.gram.same:hover div.meta {
 @media (max-width: 767px) {
   div.meta > label {
     margin-right: 9px; } }
+
+div.gram label[data-glyph=">"],
+div.gram label[data-glyph="="],
+div.gram label[data-glyph="+"],
+div.gram label[data-glyph="-"],
+div.gram label[data-glyph="}"] {
+  background-color: #E20B0B; }
+
+div.gram label[data-glyph=")"],
+div.gram label[data-glyph=","],
+div.gram label[data-glyph="."],
+div.gram label[data-glyph='"'],
+div.gram label[data-glyph="'"] {
+  background-color: #FFF900; }
+
+div.gram label[data-glyph="*"],
+div.gram label[data-glyph="`"],
+div.gram label[data-glyph="^"],
+div.gram label[data-glyph="$"],
+div.gram label[data-glyph="%"],
+div.gram label[data-glyph="&"],
+div.gram label[data-glyph="@"] {
+  background-color: #0500F0; }
+
+input.action {
+  background-color: transparent;
+  border-color: transparent;
+  font-family: 'scp';
+  font-size: .8rem; }
+
+input.action.valid-false {
+  color: #E20B0B; }
+
+input.action::-webkit-input-placeholder {
+  color: #000;
+  font-family: 'bau';
+  font-size: 1rem; }
+
+input.action:-moz-placeholder {
+  color: #000;
+  font-family: 'bau';
+  font-size: 1rem; }
+
+input.action::-moz-placeholder {
+  color: #000;
+  font-family: 'bau';
+  font-size: 1rem; }
+
+input.action:-ms-input-placeholder {
+  color: #000;
+  font-family: 'bau';
+  font-size: 1rem; }
+
+input.action:focus::-webkit-input-placeholder {
+  color: transparent; }
+
+input.action:focus:-moz-placeholder {
+  color: transparent; }
+
+input.action:focus::-moz-placeholder {
+  color: transparent; }
+
+input.action:focus:-ms-input-placeholder {
+  color: transparent; }
+
+.room .close {
+  display: none;
+  margin: 0;
+  float: none;
+  margin-left: .6rem;
+  font-weight: 600;
+  font-size: .8rem;
+  color: #E20B0B; }
+
+.room:hover .close {
+  display: inline; }
+
+.room.disabled {
+  opacity: .6; }
+
 .input {
   border-bottom: 3px solid #000;
   display: inline-block;
@@ -70,7 +162,7 @@ div.gram.same:hover div.meta {
   margin-left: 2rem; }
 
 .audience {
-  margin-bottom: 2rem; }
+  margin-bottom: 1rem; }
 
 .audience .input {
   border-color: #B1B7BD;
@@ -83,6 +175,9 @@ div.gram.same:hover div.meta {
   border-color: #373a3c;
   font-family: 'bau'; }
 
+.writing {
+  margin-top: 2rem; }
+
 .length {
   display: inline-block;
   margin-left: 2rem;
@@ -91,5 +186,3 @@ div.gram.same:hover div.meta {
   font-size: .7rem;
   font-weight: 500;
   letter-spacing: 1px; }
-
-/*# sourceMappingURL=main.css.map */

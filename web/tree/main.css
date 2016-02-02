@@ -261,7 +261,8 @@ img.logo.first {
   padding-right: 0;
   overflow: hidden;
   position: fixed;
-  z-index: 99; }
+  z-index: 99;
+  margin-top: -3rem; }
   .menu .contents {
     padding-left: 0.9375rem;
     padding-right: 0.9375rem;
@@ -273,6 +274,8 @@ img.logo.first {
     transition: left 0.3s ease-in-out; }
   .menu .close {
     margin-top: -2rem; }
+  .menu .close:hover {
+    opacity: 1; }
   .menu h2 {
     font-size: 1rem;
     padding-top: 3rem; }

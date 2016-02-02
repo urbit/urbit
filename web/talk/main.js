@@ -640,7 +640,7 @@ module.exports = recl({
 
 
 },{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"./MessageComponent.coffee":5,"react-infinite":26}],7:[function(require,module,exports){
-var Load, Member, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style, textarea,
+var Load, Member, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 clas = require('classnames');
@@ -649,7 +649,7 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, style = ref.style, input = ref.input, textarea = ref.textarea, h1 = ref.h1, h2 = ref.h2, label = ref.label, span = ref.span, a = ref.a;
+ref = React.DOM, div = ref.div, style = ref.style, input = ref.input, h1 = ref.h1, h2 = ref.h2, label = ref.label, span = ref.span, a = ref.a;
 
 MessageStore = require('../stores/MessageStore.coffee');
 
@@ -680,7 +680,6 @@ module.exports = recl({
   },
   componentDidMount: function() {
     this.$el = $(ReactDOM.findDOMNode());
-    this.$input = this.$el.find('input');
     StationStore.addChangeListener(this._onChangeStore);
     if (this.state.listening.indexOf(this.state.station) === -1) {
       return StationActions.listenStation(this.state.station);
@@ -703,10 +702,11 @@ module.exports = recl({
     return indexOf.call(sources, s) < 0 && indexOf.call(s, "/") >= 0 && s[0] === "~" && s.length >= 5;
   },
   onKeyUp: function(e) {
-    var _sources, v;
-    $('.sour-ctrl .join').removeClass('valid-false');
+    var $input, _sources, v;
+    $('.menu.depth-1 .add').removeClass('valid-false');
     if (e.keyCode === 13) {
-      v = this.$input.val().toLowerCase();
+      $input = $(e.target);
+      v = $input.val().toLowerCase();
       if (v[0] !== "~") {
         v = "~" + v;
       }
@@ -714,10 +714,10 @@ module.exports = recl({
         _sources = _.clone(this.state.configs[this.state.station].sources);
         _sources.push(v);
         StationActions.setSources(this.state.station, _sources);
-        this.$input.val('');
-        return this.$input.blur();
+        $input.val('');
+        return $input.blur();
       } else {
-        return $('.sour-ctrl .join').addClass('valid-false');
+        return $('.menu.depth-1 .add').addClass('valid-false');
       }
     }
   },
@@ -731,9 +731,38 @@ module.exports = recl({
     return StationActions.setSources(this.state.station, _sources);
   },
   render: function() {
-    var _clas, members, parts;
+    var _clas, members, parts, source, sources, sourcesSum;
     parts = [];
     members = [];
+    if (this.state.station && this.state.configs[this.state.station]) {
+      sources = (function() {
+        var i, len, ref1, results;
+        ref1 = this.state.configs[this.state.station].sources;
+        results = [];
+        for (i = 0, len = ref1.length; i < len; i++) {
+          source = ref1[i];
+          results.push(div({
+            className: "room"
+          }, [
+            source.slice(1), div({
+              className: "close",
+              onClick: this._remove,
+              "data-station": source
+            }, "✕")
+          ]));
+        }
+        return results;
+      }).call(this);
+      sources.push(input({
+        className: "action add",
+        placeholder: "+ Listen",
+        onKeyUp: this.onKeyUp
+      }, ""));
+      sourcesSum = this.state.configs[this.state.station].sources.length;
+    } else {
+      sources = "";
+      sourcesSum = 0;
+    }
     _clas = clas({
       open: this.props.open === true,
       closed: this.props.open !== true,
@@ -750,34 +779,13 @@ module.exports = recl({
         className: "contents"
       }, [
         div({
-          className: "close"
+          className: "close",
+          onClick: this.props.toggle
         }, "✕"), h2({}, [
-          span({}, "Direct"), label({
-            className: "sum"
-          }, 3)
-        ]), div({}, [
-          div({
-            className: "name"
-          }, "Galen"), div({
-            className: "planet"
-          }, "~talsur-todres")
-        ]), div({
-          className: "action create"
-        }, [label({}, ""), span({}, "Message")]), h2({}, [
           span({}, "Stations"), label({
             className: "sum"
-          }, 4)
-        ]), div({}, [
-          div({
-            className: "room"
-          }, "/meta"), div({
-            className: "room"
-          }, "/help"), div({
-            className: "room"
-          }, "~talsur-todres/room"), div({
-            className: "action add"
-          }, [label({}, ""), span({}, "Listen")])
-        ])
+          }, sourcesSum)
+        ]), div({}, sources)
       ])
     ]);
   }
@@ -821,9 +829,11 @@ Audience = recl({
   render: function() {
     return div({
       className: 'audience',
-      id: 'audience'
+      id: 'audience',
+      key: 'audience'
     }, div({
       className: "input valid-" + this.props.valid,
+      key: 'input',
       contentEditable: true,
       onKeyDown: this.onKeyDown,
       onBlur: this.props.onBlur
@@ -1053,7 +1063,8 @@ module.exports = recl({
       audi[k] = v.slice(1);
     }
     return div({
-      className: 'writing'
+      className: 'writing',
+      key: 'writing'
     }, [
       React.createElement(Audience, {
         audi: audi,
@@ -1141,7 +1152,9 @@ TreeActions.registerComponent("talk", React.createClass({
     });
   },
   render: function() {
-    return div({}, [
+    return div({
+      key: "talk-container"
+    }, [
       div({
         key: "grams-container"
       }, MessagesComponent({
@@ -1273,7 +1286,7 @@ module.exports = function(arg) {
     setSources: function(station, ship, sources) {
       var cordon;
       cordon = {
-        posture: "white",
+        posture: "black",
         list: []
       };
       return design(station, {
