@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject 
@@ -4530,6 +4530,11 @@
   ^-  (unit)
   =+  ton=(mink [sub fol] |~(* ~))
   ?.(?=({$0 *} ton) ~ [~ p.ton])
+::
+++  mick
+  ~/  %mick
+  |=  {{sub/* fol/*} sea/$+({* *} (unit))}
+  (mink [sub fol] |=(* (sea [151 %noun] +<)))
 ::
 ++  mink
   ~/  %mink
@@ -10359,9 +10364,12 @@
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sled  $+  {(unit (set monk)) term beam}             ::  namespace function
           (unit (unit cage))                            ::
-++  slad  $+  {(unit (set monk)) term beam}             ::  underspand
+++  slad  $+  {(unit (set monk)) term beam}             ::  fully advanced
+          (unit (unit (cask)))                          ::
+++  slyd  $+  {* (unit (set monk)) term beam}           ::  super advanced
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
+++  slyt  $+({* *} (unit (unit)))                       ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ/span                                  ::  -:!>(*span)
               duc/span                                  ::  -:!>(*duct)
@@ -10390,6 +10398,30 @@
   =+  ron=q.p.u.hyr
   =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
   =+  bop=(sed ~ ron bed)
+  ?~  bop  ~
+  ?~  u.bop  [~ ~]
+  [~ ~ +.q.u.u.bop]
+::
+++  sloy
+  |=  sod/slyd
+  ^-  slyt
+  |=  {ref/* raw/*}
+  =+  pux=((soft path) raw)
+  ?~  pux  ~
+  ?.  ?=({@ @ @ @ *} u.pux)  ~
+  =+  :*  hyr=(slay i.u.pux)
+          fal=(slay i.t.u.pux)
+          dyc=(slay i.t.t.u.pux)
+          ved=(slay i.t.t.t.u.pux)
+          tyl=t.t.t.t.u.pux
+      ==
+  ?.  ?=({$~ $$ $tas @} hyr)  ~
+  ?.  ?=({$~ $$ $p @} fal)  ~
+  ?.  ?=({$~ $$ $tas @} dyc)  ~
+  ?.  ?=(^ ved)  ~
+  =+  ron=q.p.u.hyr
+  =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
+  =+  bop=(sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
   [~ ~ +.q.u.u.bop]
