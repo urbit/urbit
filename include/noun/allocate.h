@@ -146,7 +146,8 @@
         } jed;
 
         struct {                              //  namespace
-          u3_noun flu;                        //  (list $+(* (unit))), inward
+          u3_noun flu;                        //  (list $+(* (unit))), old
+          u3_noun sea;                        //  (list $+(* (unit))), new
         } ski;
 
         struct {                              //  trace stack

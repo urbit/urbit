@@ -350,8 +350,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3_noun val;
 
         u3t_off(noc_o);
-        u3z(ref);
-        val = u3m_soft_esc(u3k(gof));
+        val = u3m_soft_esc(ref, u3k(gof));
         u3t_on(noc_o);
 
         if ( !_(u3du(val)) ) {
@@ -374,7 +373,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3_noun val;
 
         u3t_off(noc_o);
-        val = u3m_soft_esc(u3k(gof));
+        val = u3m_soft_esc(0, u3k(gof));
         u3t_on(noc_o);
 
         if ( !_(u3du(val)) ) {
@@ -440,24 +439,12 @@ u3n_slam_on(u3_noun gat, u3_noun sam)
   return u3n_kick_on(cor);
 }
 
-/* u3n_nock_un(): produce .*(bus fol), as ++toon.
+/* u3n_nock_it(): produce .*(bus fol), as ++toon, in namespace.
 */
 u3_noun
-u3n_nock_un(u3_noun bus, u3_noun fol)
+u3n_nock_it(u3_noun sea, u3_noun bus, u3_noun fol)
 {
-  u3_noun fly = u3nt(u3nt(11, 0, 6), 0, 0);  //  |=(a=* .^(a))
-
-  return u3n_nock_in(fly, bus, fol);
-}
-
-/* u3n_slam_un(): produce (gat sam), as ++toon.
-*/
-u3_noun
-u3n_slam_un(u3_noun gat, u3_noun sam)
-{
-  u3_noun fly = u3nt(u3nt(11, 0, 6), 0, 0);  //  |=(a=* .^(a))
-
-  return u3n_slam_in(fly, gat, sam);
+  return u3m_soft_run(0, sea, u3n_nock_on, bus, fol);
 }
 
 /* u3n_nock_in(): produce .*(bus fol), as ++toon, in namespace.
@@ -465,7 +452,15 @@ u3n_slam_un(u3_noun gat, u3_noun sam)
 u3_noun
 u3n_nock_in(u3_noun fly, u3_noun bus, u3_noun fol)
 {
-  return u3m_soft_run(fly, u3n_nock_on, bus, fol);
+  return u3m_soft_run(fly, 0, u3n_nock_on, bus, fol);
+}
+
+/* u3n_slam_it(): produce (gat sam), as ++toon, in namespace.
+*/
+u3_noun
+u3n_slam_it(u3_noun sea, u3_noun gat, u3_noun sam)
+{
+  return u3m_soft_run(0, sea, u3n_slam_on, gat, sam);
 }
 
 /* u3n_slam_in(): produce (gat sam), as ++toon, in namespace.
@@ -473,7 +468,7 @@ u3n_nock_in(u3_noun fly, u3_noun bus, u3_noun fol)
 u3_noun
 u3n_slam_in(u3_noun fly, u3_noun gat, u3_noun sam)
 {
-  return u3m_soft_run(fly, u3n_slam_on, gat, sam);
+  return u3m_soft_run(fly, 0, u3n_slam_on, gat, sam);
 }
 
 /* u3n_nock_an(): as slam_in(), but with empty fly.

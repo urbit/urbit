@@ -19,25 +19,25 @@
       u3_noun
       u3n_kick_on(u3_noun gat);
 
-    /* u3n_nock_un(): produce .*(bus fol), as ++toon.
-    */
-      u3_noun
-      u3n_nock_un(u3_noun bus, u3_noun fol);
-
-    /* u3n_slam_un(): produce (gat sam), as ++toon.
-    */
-      u3_noun
-      u3n_slam_un(u3_noun gat, u3_noun sam);
-
     /* u3n_nock_in(): produce .*(bus fol), as ++toon, in namespace.
     */
       u3_noun
       u3n_nock_in(u3_noun fly, u3_noun bus, u3_noun fol);
 
+    /* u3n_nock_it(): produce .*(bus fol), as ++toon, in namespace.
+    */
+      u3_noun
+      u3n_nock_it(u3_noun sea, u3_noun bus, u3_noun fol);
+
     /* u3n_slam_in(): produce (gat sam), as ++toon, in namespace.
     */
       u3_noun
       u3n_slam_in(u3_noun fly, u3_noun gat, u3_noun sam);
+
+    /* u3n_slam_it(): produce (gat sam), as ++toon, in namespace.
+    */
+      u3_noun
+      u3n_slam_it(u3_noun sea, u3_noun gat, u3_noun sam);
 
     /* u3n_nock_an(): as slam_in(), but with empty fly.
     */
