@@ -11,8 +11,13 @@
 ::
 ::  See the %github app for example usage.
 ::
-/?    314
+/?  314
 /-  gh
+::  /ape/gh/split.hoon defines ++split, which splits a request
+::  at the end of the longest possible endpoint.
+::
+//  /%/split
+::
 =>  |%
     ++  move  (pair bone card)
     ++  sub-result
@@ -32,6 +37,7 @@
           [%gh-issue-comment issue-comment:gh]
       ==
     --
+::
 |_  [hid=bowl cnt=@ hook=(map ,@t ,[id=@t listeners=(set bone)])]
 ::++  prep  ,_`.
 ::
@@ -42,7 +48,8 @@
 ::  of requests.
 ::
 ++  help
-  |=  [ren=care style=@tas pax=path arg=path]
+  |=  [ren=care style=@tas pax=path]
+  =^  arg  pax  [+ -]:(split pax)
   =|  mow=(list move)
   |%
   ::  Resolve core.
@@ -53,7 +60,9 @@
   ::
   ::  Append path to api.github.com and parse to a purl.
   ::
-  ++  real-pax  (scan "https://api.github.com{<`path`pax>}" auri:epur)
+  ++  endpoint-to-purl
+    |=  endpoint=path
+    (scan "https://api.github.com{<`path`endpoint>}" auri:epur)
   ::
   ::  Send a hiss
   ::
@@ -62,6 +71,7 @@
     ^+  +>
     =+  wir=`wire`[ren (scot %ud cnt) (scot %uv (jam arg)) style pax]
     =+  new-move=[ost.hid %hiss wir `~ %httr [%hiss hiz]]
+    ::  ~&  [%sending-hiss new-move]
     +>.$(mow [new-move mow])
   ::
   ::  Decide how to handle a request based on its style.
@@ -73,7 +83,7 @@
       %listen   listen
     ==
   ::
-  ++  read  (send-hiss real-pax %get ~ ~)
+  ++  read  (send-hiss (endpoint-to-purl pax) %get ~ ~)
   ::
   ::  Create or update a webhook to listen for a set of events.
   ::
@@ -137,11 +147,11 @@
     ==
   --
 ::
-::  Pokes that haven't already been caught are handled here.
-::  These should be only from webhooks firing, so if we get any
-::  mark that we shouldn't get from a webhook, we reject it.
-::  Otherwise, we spam out the event to everyone who's listening
-::  for that event.
+::  Pokes that aren't caught in more specific arms are handled
+::  here.  These should be only from webhooks firing, so if we
+::  get any mark that we shouldn't get from a webhook, we reject
+::  it.  Otherwise, we spam out the event to everyone who's
+::  listening for that event.
 ::
 ++  poke
   |=  response=hook-response
@@ -149,12 +159,25 @@
   =+  hook-data=(~(get by hook) (rsh 3 3 -.response))
   ?~  hook-data
     ~&  [%strange-hook hook response]
-    `+>.$
+    [~ +>.$]
   ~&  response=response
   :_  +>.$
   %+  turn  (~(tap in listeners.u.hook-data))
   |=  ost=bone
   [ost %diff response]
+::
+::  Here we handle PUT, POST, and DELETE requests.  We probably
+::  should return the result somehow, but that doesn't fit well
+::  into poke semantics.
+::
+++  poke-gh-poke
+  |=  [method=meth endpoint=path jon=json]
+  ^-  [(list move) _+>.$]
+  :_  +>.$  :_  ~
+  :*  ost.hid  %hiss  /poke/[method]  `~  %httr  %hiss 
+      (scan "https://api.github.com{<`path`endpoint>}" auri:epur)
+      method  ~  `(taco (crip (pojo jon)))
+  ==
 ::
 ::  When a peek on a path blocks, ford turns it into a peer on
 ::  /scry/{care}/{path}.  You can also just peer to this
@@ -168,7 +191,7 @@
   ^-  [(list move) _+>.$]
   ?>  ?=([care ^] pax)
   ::  =-  ~&  [%peered -]  -
-  [abet(cnt now.hid)]:scry:(help i.pax i.t.pax t.t.pax ~)
+  [abet(cnt +(cnt))]:scry:(help i.pax i.t.pax t.t.pax)
 ::
 ::  HTTP response.  We make sure the response is good, then
 ::  produce the result (as JSON) to whoever sent the request.
@@ -176,52 +199,56 @@
 ++  sigh-httr
   |=  [way=wire res=httr]
   ^-  [(list move) _+>.$]
-  ?>  ?=([care @ @ @ *] way)
+  ?.  ?=([care @ @ @ *] way)
+    [~ +>.$]
   =+  arg=(path (cue (slav %uv i.t.t.way)))
-  =-  ?:  ?=(%& -<)
-        [[ost.hid %diff p]~ +>.$]
-      ?~  t.t.t.t.way
-        [[ost.hid %diff p]~ +>.$]
-      =+  len=(lent t.t.t.t.way)
-      =+  pax=`path`(scag (dec len) `path`t.t.t.t.way)
-      =+  new-arg=`path`(slag (dec len) `path`t.t.t.t.way)
-      =-  ~&  [%giving -]  -
-      [abet(cnt now.hid)]:scry:(help i.way i.t.t.t.way pax new-arg)
-  ^-  (each sub-result sub-result)
-  ?+    i.way  `null/~
+  :_  +>.$  :_  ~
+  :+  ost.hid  %diff
+  ?+    i.way  null/~
       %x
     ?~  r.res
-      [%| %json (jobe err/s/%empty-response code/(jone p.res) ~)]
+      json/(jobe err/s/%empty-response code/(jone p.res) ~)
     =+  jon=(rush q.u.r.res apex:poja)
     ?~  jon
-      [%| %json (jobe err/s/%bad-json code/(jone p.res) body/s/q.u.r.res ~)]
+      json/(jobe err/s/%bad-json code/(jone p.res) body/s/q.u.r.res ~)
     ?.  =(2 (div p.res 100))
-      [%| %json (jobe err/s/%request-rejected code/(jone p.res) msg/u.jon ~)]
-    |-  ^-  (each sub-result sub-result)
+      json/(jobe err/s/%request-rejected code/(jone p.res) msg/u.jon ~)
+    ::
+    ::  Once we know we have good data, we drill into the JSON
+    ::  to find the specific piece of data referred to by 'arg'
+    ::
+    |-  ^-  sub-result
     ?~  arg
-      `json/u.jon
+      json/u.jon
     =+  dir=((om:jo some) u.jon)
     ?~  dir
-      [%| %json (jobe err/s/%json-not-object code/(jone p.res) body/u.jon ~)]
+      json/(jobe err/s/%json-not-object code/(jone p.res) body/u.jon ~)
     =+  new-jon=(~(get by u.dir) i.arg)
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ::
       %y
     ?~  r.res
       ~&  [err/s/%empty-response code/(jone p.res)]
-      [%| arch/*arch]
+      arch/*arch
     =+  jon=(rush q.u.r.res apex:poja)
     ?~  jon
       ~&  [err/s/%bad-json code/(jone p.res) body/s/q.u.r.res]
-      [%| arch/*arch]
+      arch/*arch
     ?.  =(2 (div p.res 100))
       ~&  [err/s/%request-rejected code/(jone p.res) msg/u.jon]
-      [%| arch/*arch]
+      arch/*arch
+    ::
+    ::  Once we know we have good data, we drill into the JSON
+    ::  to find the specific piece of data referred to by 'arg'
+    ::
+    |-  ^-  sub-result
     =+  dir=((om:jo some) u.jon)
     ?~  dir
-      ~&  [err/s/%json-not-object code/(jone p.res) body/u.jon]
-      [%| arch/*arch]
-    [%& %arch `(shax (jam u.jon)) (~(run by u.dir) ,~)]
+      [%arch `(shax (jam u.jon)) ~]
+    ?~  arg
+      [%arch `(shax (jam u.jon)) (~(run by u.dir) ,~)]
+    =+  new-jon=(~(get by u.dir) i.arg)
+    $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==
 ::
 ::  We can't actually give the response to pretty much anything
@@ -232,23 +259,3 @@
   ^-  (unit (unit (pair mark ,*)))
   ~ ::``noun/[ren tyl]
 --
-
-
-
-
-::
-::++  poke-json
-::  |=  jon=json
-::  ^-  [(list move) _+>.$]
-::  =+  ^-  [repo=json sender=json hok=(list ,@t) hook-id=@t zen=json]
-::      %-  need
-::      %.  jon
-::      =>  jo
-::      (ot repository/some sender/some hook/(ot events/(ar so) ~) 'hook_id'^no zen/some ~)
-::  ?.  ?=([@ ~] hok)
-::    ~&  [%weird-hook hook-id hok]
-::    [~ +>.$]
-::  ~&  [%id hook-id hok]
-::  =+  old-bones=`(set bone)`(biff (~(get by hook) i.hok) tail)
-::  [~ +>.$(hook (~(put by hook) i.hok [hook-id (~(put in old-bones) ost.hid)]))]
-.

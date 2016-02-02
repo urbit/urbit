@@ -6,6 +6,7 @@
 !:
 ::::
   ::
+~&  %
 :-  %say
 |=  [^ [arg=path ~] vane=?(%c %g)]
 =+  lon=((hard arch) .^((cat 3 vane %y) arg))
