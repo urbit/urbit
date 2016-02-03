@@ -356,41 +356,24 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         if ( !_(u3du(val)) ) {
           u3m_bail(u3nt(1, gof, 0));
         } 
+        if ( !_(u3du(u3t(val))) ) {
+          //
+          //  replace with proper error stack push
+          //
+          u3m_p("lost", gof);
+          return u3m_bail(c3__exit);
+        }
         else {
           u3_noun pro;
 
           u3z(gof);
           u3z(fol);
-          pro = u3k(u3t(val));
+          pro = u3k(u3t(u3t(val)));
           u3z(val);
 
           return pro;
         }
       }  
-
-      case 12: {
-        u3_noun gof = _n_nock_on(bus, u3k(u3t(gal)));
-        u3_noun val;
-
-        u3t_off(noc_o);
-        val = u3m_soft_esc(0, u3k(gof));
-        u3t_on(noc_o);
-
-        if ( !_(u3du(val)) ) {
-          u3m_bail(u3nt(1, gof, 0));
-        } 
-        else {
-          u3_noun pro;
-
-          u3z(gof);
-          u3z(fol);
-          pro = u3k(u3t(val));
-          u3z(val);
-
-          return pro;
-        }
-      }  
-
       c3_assert(!"not reached");
     }
   }
@@ -444,7 +427,15 @@ u3n_slam_on(u3_noun gat, u3_noun sam)
 u3_noun
 u3n_nock_it(u3_noun sea, u3_noun bus, u3_noun fol)
 {
-  return u3m_soft_run(0, sea, u3n_nock_on, bus, fol);
+  return u3m_soft_run(0, sea, 0, u3n_nock_on, bus, fol);
+}
+
+/* u3n_nock_et(): produce .*(bus fol), as ++toon, in namespace.
+*/
+u3_noun
+u3n_nock_et(u3_noun gul, u3_noun bus, u3_noun fol)
+{
+  return u3m_soft_run(0, 0, gul, u3n_nock_on, bus, fol);
 }
 
 /* u3n_nock_in(): produce .*(bus fol), as ++toon, in namespace.
@@ -452,7 +443,7 @@ u3n_nock_it(u3_noun sea, u3_noun bus, u3_noun fol)
 u3_noun
 u3n_nock_in(u3_noun fly, u3_noun bus, u3_noun fol)
 {
-  return u3m_soft_run(fly, 0, u3n_nock_on, bus, fol);
+  return u3m_soft_run(fly, 0, 0, u3n_nock_on, bus, fol);
 }
 
 /* u3n_slam_it(): produce (gat sam), as ++toon, in namespace.
@@ -460,7 +451,15 @@ u3n_nock_in(u3_noun fly, u3_noun bus, u3_noun fol)
 u3_noun
 u3n_slam_it(u3_noun sea, u3_noun gat, u3_noun sam)
 {
-  return u3m_soft_run(0, sea, u3n_slam_on, gat, sam);
+  return u3m_soft_run(0, sea, 0, u3n_slam_on, gat, sam);
+}
+
+/* u3n_slam_et(): produce (gat sam), as ++toon, in namespace.
+*/
+u3_noun
+u3n_slam_et(u3_noun gul, u3_noun gat, u3_noun sam)
+{
+  return u3m_soft_run(0, 0, gul, u3n_slam_on, gat, sam);
 }
 
 /* u3n_slam_in(): produce (gat sam), as ++toon, in namespace.
@@ -468,7 +467,7 @@ u3n_slam_it(u3_noun sea, u3_noun gat, u3_noun sam)
 u3_noun
 u3n_slam_in(u3_noun fly, u3_noun gat, u3_noun sam)
 {
-  return u3m_soft_run(fly, 0, u3n_slam_on, gat, sam);
+  return u3m_soft_run(fly, 0, 0, u3n_slam_on, gat, sam);
 }
 
 /* u3n_nock_an(): as slam_in(), but with empty fly.

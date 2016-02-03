@@ -125,6 +125,7 @@ static u3j_harm _mood__hoon_rub_a[] = {{".2", u3we_rub}, {}};
 static u3j_harm _mood__hoon_lore_a[] = {{".2", u3we_lore}, {}};
 static u3j_harm _mood__hoon_loss_a[] = {{".2", u3we_loss}, {}};
 static u3j_harm _mood__hoon_mick_a[] = {{".2", u3we_mick}, {}};
+static u3j_harm _mood__hoon_micq_a[] = {{".2", u3we_micq}, {}};
 static u3j_harm _mood__hoon_mink_a[] = {{".2", u3we_mink}, {}};
 static u3j_harm _mood__hoon_mule_a[] = {{".2", u3we_mule}, {}};
 static u3j_harm _mood__hoon_repg_a[] = {{".2", u3we_repg}, {}};
@@ -487,6 +488,7 @@ static u3j_core _mood__hoon_d[] =
     { "loss", _mood__hoon_loss_a },
     { "mink", _mood__hoon_mink_a },
     { "mick", _mood__hoon_mick_a },
+    { "micq", _mood__hoon_micq_a },
     { "mule", _mood__hoon_mule_a },
     { "repg", _mood__hoon_repg_a },
     { "rexp", _mood__hoon_rexp_a },

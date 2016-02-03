@@ -502,7 +502,7 @@
         u3_noun viz = _mint_in(van, sut, c3__noun, q_gen);
        
         ret = u3nc(u3k(u3h(nef)), 
-                   u3nt(12, u3nc(1, u3k(u3h(nef))), u3k(u3t(viz))));
+                   u3nt(11, u3nc(1, u3nc(151, u3k(u3h(nef)))), u3k(u3t(viz))));
 
         u3z(viz); 
         u3z(nef);
