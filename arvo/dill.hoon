@@ -132,10 +132,7 @@
                        %czar  [%czar ~]
                        %duke  [%duke %anon ~]
                        %earl  [%earl (scot %p p.kyz)]
-                       %king  :-  %king 
-                              ?:  =(~doznec p.kyz)      ::  so old tickets work
-                                'Urban Republic' 
-                              (scot %p p.kyz)
+                       %king  [%king (scot %p p.kyz)]
                        %pawn  [%pawn ~]
                      ==
                  =+  yen=(scot %p (shax :(mix %ticket eny now)))
