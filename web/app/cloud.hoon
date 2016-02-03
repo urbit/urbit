@@ -16,7 +16,7 @@
     ;script: urb.appl = 'cloud'
     ;script@"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js";
     ;script@"https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js";
-    ::;link/"/cloud/main.css"(rel "stylesheet");
+    ::;link/"cloud/main.css"(rel "stylesheet");
     ;title: DO & GCE Manager
   ==
   ;body
@@ -25,6 +25,6 @@
           authcode.do='{?~(do ~ (trip u.do))}'
           """
     ;div#container;
-    ;script@"/cloud/main.js";
+    ;script@"cloud/main.js";
   ==
 ==
