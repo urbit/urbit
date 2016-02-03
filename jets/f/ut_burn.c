@@ -113,7 +113,6 @@
           return ret;
         }
       }
-      case c3__fuss:
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return _burn_in(van, q_sut, gil);

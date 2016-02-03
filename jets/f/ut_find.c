@@ -617,7 +617,6 @@
         // fprintf(stderr, "core\r\n");
         return _find_buck_core(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
-      case c3__fuss:
       case c3__face:
       {
         // fprintf(stderr, "face\r\n");
