@@ -242,65 +242,104 @@
 ::
 ++  crub                                                ::  cryptosuite B (Ed)
   ^-  acru
-  =|  [puc=pass sed=ring]
+  =|  [pub=[c=@ e=@] sek=[c=@ e=@]]
   =>  |%
-      ++  dap                                           ::  OEAP decode
-        |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
-        =+  pav=(sub wid xar)
-        =+  qoy=(cut 0 [xar pav] dog)
-        =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
-        [dez (mix qoy (shaw %pad-a pav dez))]
+      ++  skey
+        |=  [a=bloq key=@ nonc=@ ct=@ mctr=@ buf=(list ,[p=@ q=@])]
+        =+  ctext=(en:aesc key (mix (lsh (dec a) 1 nonc) ct))
+        ::  =+  nbuf=(mix (lsh a 1 buf) ctext)
+        =+  nbuf=[[p=1 q=ctext] buf]
+        ?:  =(ct mctr)
+          (can a buf)
+        $(ct +(ct), buf nbuf)
       ::
-      ++  pad                                           ::  OEAP encode
-        |=  [wid=@ rax=[p=@ q=@] meg=@]  ^-  @
-        =+  pav=(sub wid p.rax)
-        ?>  (gte pav (met 0 meg))
-        ^-  @
-        =+  qoy=(mix meg (shaw %pad-a pav q.rax))
-        =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
-        (can 0 [p.rax dez] [pav qoy] ~)
+      ++  hiv
+        |=  [ruz=@]
+        =+  haz=(shax ruz)
+        =+  hax=(mix (end 7 1 haz) (rsh 7 1 haz))
+        (mix (end 6 1 hax) (rsh 6 1 hax))
       --
   |%
   ++  as
     =>  |%
-        ++  haul                                        ::  revealing haul
+        ++  hail
           |=  a=pass
-          !!
+          =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+          ?>  =('b' mag)
+          ..as(pub [c=(rsh 8 1 bod) e=(end 8 1 bod)])
+        ::
+        ++  tide  ::  shared secret
+          |=  a=@  ^-  @
+          ::  (curt a (curt c.sek 9))
+          (curt c.sek a)
         --
     ^?
-    |%  ++  seal
-          |=  [a=pass b=@ c=@]
-          ^-  @
-          !!
-        ++  sign
-          |=  [a=@ b=@]  ^-  @
-          !!
-        ++  sure
-          |=  [a=@ b=@]
-          ^-  (unit ,@)
-          !!
-        ++  tear
-          |=  [a=pass b=@]
-          ^-  (unit ,[p=@ q=@])
-          !!
+    |%
+    ++  seal
+      |=  [a=pass b=@ c=@]
+      =+  =+  her=(hail a)
+        tie=(tide c.pub.her)
+      =+  [hog=(en tie b) ben=(en b c)]
+      =+  sig=(sign:ed ben e.sek)
+      (jam hog ben sig)
+    ::
+    ++  sign
+      |=  [a=@ b=@]  ^-  @
+      (jam (en a (shax b)) b)
+    ++  sure
+      |=  [a=@ b=@]
+      ^-  (unit ,@)
+      =+  bod=((hard ,[h=@ m=@]) (cue b))
+      ?:  =((need (de a h.bod)) (shax m.bod))
+        (some m.bod)
+      ~
+    ::
+    ++  tear
+      |=  [a=pass b=@]
+      ^-  (unit ,[p=@ q=@])
+      =+  bod=((hard ,[p=@ q=@ s=@]) (cue b))
+      =+  =+  her=(hail a)
+        tie=(tide c.pub.her)
+      ?.  (veri:ed s.bod q.bod (end 8 1 (rsh 3 1 a)))
+        ~
+      =+  hog=(de tie p.bod)
+      ?~  hog  ~
+      =+  ben=(de u.hog q.bod)
+      ?~  ben  ~
+      [~ u.hog u.ben]
     --
   ::
   ++  de
     |+  [key=@ cep=@]  ^-  (unit ,@)
-    !!
+    =+  noc=(end 6 1 cep)
+    =+  cth=(rsh 6 1 cep)
+    =+  byt=(end 7 1 cth)
+    =+  cex=(rsh 7 1 cth)
+    =+  nox=(met 7 cex)
+    =+  cip=(skey 7 key noc 0 (dec nox) ~)
+    =+  msg=(mix cex (end 3 byt cip))
+    =+  h=(hiv msg)
+    ?:  =(h noc)
+      (some msg)
+    ~
   ::
   ++  dy
     |+  [a=@ b=@]  ^-  @
-    !!
+    (need (de a b))
+  ::
   ++  en
     |+  [key=@ msg=@]  ^-  @ux
-    !!
+    =+  h=(hiv msg)
+    =+  boc=(met 7 msg)
+    =+  cip=(skey 7 key h 0 (dec boc) ~)
+    =+  byt=(met 3 msg)
+    `@u`(mix (lsh 6 1 (mix (lsh 7 1 (mix (end 3 byt cip) msg)) byt)) h)
   ::
   ++  ex  ^?
-    |%  ++  fig  ^-  @uvH  (shaf %bfig puc)
-        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sec))
-        ++  pub  ^-  pass  (cat 3 'b' puc)
-        ++  sec  ^-  ring  sed
+    |%  ++  fig  ^-  @uvH  (shaf %bfig e.^pub)
+        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod e.sek))
+        ++  pub  ^-  pass  (cat 3 'b' (mix (lsh 8 1 c.^pub) e.^pub))
+        ++  sec  ^-  ring  (cat 3 'B' (mix (lsh 8 1 c.sek) e.sek))
     --
   ::
   ++  nu
@@ -308,17 +347,19 @@
     |%  ++  com
           |=  a=@
           ^+  ^?(..nu)
-          ..nu(sed ~, puc a)
+          ..nu(sek [c=~ e=~], pub [c=(rsh 8 1 a) e=(end 8 1 a)])
         ::
         ++  pit
           |=  [a=@ b=@]
           ^+  ^?(..nu)
-          ..nu(sed b, puc (puck:ed b))
+          =+  [rb=(rsh 8 1 b) eb=(end 8 1 b)]
+          ..nu(sek [c=rb e=eb], pub [c=(curt rb 9) e=(puck:ed eb)])
         ::
         ++  nol
           |=  a=@
           ^+  ^?(..nu)
-          ..nu(sed a, puc (puck:ed a))
+          =+  [ra=(rsh 8 1 a) ea=(end 8 1 a)]
+          ..nu(sek [c=ra e=ea], pub [c=(curt ra 9) e=(puck:ed ea)])
     --
   --
 ++  brew                                                ::  create keypair
@@ -337,14 +378,14 @@
   |=  a=ring
   ^-  acru
   =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('b' mag)
+  ?>  =('B' mag)
   (nol:nu:crub bod)
 ::
 ++  trub                                                ::  test ed
   |=  msg=@tas
   ^-  @
-  =+  ali=(brew 1.024 (shax 'ali'))
-  =+  bob=(brew 1.024 (shax 'bob'))
+  =+  ali=(brew 1.024 (cat 8 (shax 'ali') (shad 'ali')))
+  =+  bob=(brew 1.024 (cat 8 (shax 'bob') (shad 'bob')))
   =+  tef=(sign:as.ali [0 msg])
   =+  lov=(sure:as.ali [0 tef])
   ?.  &(?=(^ lov) =(msg u.lov))
