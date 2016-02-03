@@ -2,8 +2,8 @@
 /=    mime    /mime/
 /=    body    /tree-elem/
 /=    sect    /tree-index/
+/=    meta    /|(/front/ /~[~])
 /=    snip    /&snip&elem&/tree-elem/
-/=    meta    /&front&elem&/tree-elem/
 !:
 ^-    tree-include
 =+  rj=react-to-json:react
