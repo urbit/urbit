@@ -118,7 +118,7 @@ img.logo.first {
     padding-top: 1rem;
     background-color: #fff;
     overflow: hidden;
-    border-bottom: 1px solid #000;
+    border-bottom: 2px solid #55595c;
     -webkit-transition: max-height 0.2s ease-in-out;
     -moz-transition: max-height 0.2s ease-in-out;
     transition: max-height 0.2s ease-in-out; }
@@ -162,7 +162,9 @@ img.logo.first {
 @media (max-width: 767px) {
   .navbar-toggler {
     padding: 0;
-    margin-left: 2rem; } }
+    margin-left: 2rem;
+    vertical-align: top;
+    line-height: 18px; } }
 
 .icon div, .icon a {
   display: inline-block; }
@@ -237,12 +239,46 @@ img.logo.first {
 
 @media (max-width: 767px) {
   .icon {
-    margin-left: 0; }
+    margin-left: -0.9375rem;
+    height: 2rem; }
     .icon .dpad {
       display: inline; }
     .icon .home {
       margin-top: 0;
       margin-bottom: 0; } }
+
+.app {
+  vertical-align: top;
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.3rem;
+  margin-top: 9px; }
+
+@media (max-width: 991px) {
+  .app {
+    font-size: 1.1rem;
+    margin-top: 6px; } }
+
+@media (max-width: 767px) {
+  .app {
+    margin-top: .1rem;
+    line-height: 1rem; } }
+
+.context {
+  margin-top: 1rem; }
+  .context .name {
+    font-weight: 300;
+    font-size: 1.2rem;
+    font-family: 'scp'; }
+
+@media (max-width: 991px) {
+  .context .name {
+    font-size: 1rem; } }
+
+@media (max-width: 767px) {
+  .context {
+    line-height: 1rem;
+    margin-bottom: 1rem; } }
 
 @keyframes menu-open {
   0% {
@@ -314,11 +350,14 @@ img.logo.first {
 @media (max-width: 767px) {
   .menu {
     height: 100%;
-    padding-left: 0.9375rem; }
+    width: 100%;
+    padding-left: 0;
+    border-left: 0; }
     .menu .contents {
       left: inherit;
       top: -100%;
       padding-top: 0.9375rem;
+      padding-bottom: 3.75rem;
       -webkit-transition: top 0.3s ease-in-out;
       -moz-transition: top 0.3s ease-in-out;
       transition: top 0.3s ease-in-out; }

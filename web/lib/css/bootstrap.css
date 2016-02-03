@@ -6130,49 +6130,4 @@ h2.advice {
 #pass {
   width: 100%;
 }
-
-.app {
-  margin-top: 9px;
-  font-size: 1.3rem;
-  font-weight: 500;
-  line-height: 1.3rem;
-  vertical-align: top;
-}
-
-@media (max-width: 991px) {
-  .app {
-    margin-top: 6px;
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 767px) {
-  .app {
-    margin-top: 0;
-    line-height: 1rem;
-  }
-}
-
-.context {
-  margin-top: 1rem;
-}
-
-.context .name {
-  font-family: 'scp';
-  font-size: 1.2rem;
-  font-weight: 300;
-}
-
-@media (max-width: 991px) {
-  .context .name {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 767px) {
-  .context {
-    margin-bottom: 1rem;
-    line-height: 1rem;
-  }
-}
 /*# sourceMappingURL=bootstrap.css.map */
