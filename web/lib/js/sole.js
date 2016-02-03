@@ -1,35 +1,48 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var DOM, Matr, Prompt, Share, div, pre, recl, ref, ref1, rend, span, str,
+var Matr, Prompt, Share, TreeActions, buffer, div, pre, recl, ref, ref1, rele, span, str, u,
   slice = [].slice,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-ref = [React.DOM, React.createClass, React.renderComponent], DOM = ref[0], recl = ref[1], rend = ref[2];
+ref = [React.createClass, React.createElement], recl = ref[0], rele = ref[1];
 
-ref1 = [DOM.div, DOM.pre, DOM.span], div = ref1[0], pre = ref1[1], span = ref1[2];
+ref1 = React.DOM, div = ref1.div, u = ref1.u, pre = ref1.pre, span = ref1.span;
+
+TreeActions = window.tree.actions;
 
 str = JSON.stringify;
 
 Share = require("./share.coffee");
 
+buffer = {
+  "": new Share("")
+};
+
 Prompt = recl({
+  displayName: "Prompt",
   render: function() {
     var buf, cur, pro, ref2, ref3;
-    ref3 = [(ref2 = this.props.prompt[this.props.appl]) != null ? ref2 : "X", this.props.cursor, this.props.input + " "], pro = ref3[0], cur = ref3[1], buf = ref3[2];
+    pro = (ref2 = this.props.prompt[this.props.appl]) != null ? ref2 : "X";
+    cur = this.props.cursor;
+    buf = this.props.input + " ";
     return pre({}, this.props.appl + pro, span({
       style: {
         background: 'lightgray'
       }
-    }, buf.slice(0, cur), "\u0332", buf.slice(cur)));
+    }, buf.slice(0, cur), u({}, (ref3 = buf[cur]) != null ? ref3 : " "), buf.slice(cur + 1)));
   }
 });
 
 Matr = recl({
+  displayName: "Matr",
   render: function() {
     var lines;
-    lines = this.props.rows.map(function(lin) {
-      return pre({}, lin, " ");
+    lines = this.props.rows.map(function(lin, key) {
+      return pre({
+        key: key
+      }, lin, " ");
     });
-    lines.push(Prompt({
+    lines.push(rele(Prompt, {
+      key: "prompt",
       appl: this.props.appl,
       prompt: this.props.prompt,
       input: this.props.input,
@@ -39,93 +52,89 @@ Matr = recl({
   }
 });
 
-$(function() {
-  var bell, buffer, choose, cycle, deltim, doEdit, eatKyev, flash, join, matr, met, part, peer, pressed, print, sendAction, subs, sync, sysStatus, updPrompt, update, yank;
-  met = $('<pre>').text('m').css({
-    display: 'none'
-  }).appendTo(term).width();
-  subs = "";
-  flash = function($el, background) {
+TreeActions.registerComponent("sole", recl({
+  displayName: "Sole",
+  getInitialState: function() {
+    return {
+      rows: [],
+      appl: this.props.appl,
+      prompt: {
+        "": "# "
+      },
+      input: "",
+      cursor: 0,
+      history: [],
+      offset: 0,
+      error: ""
+    };
+  },
+  render: function() {
+    return div({}, div({
+      id: "err"
+    }, this.state.error), rele(Matr, this.state));
+  },
+  flash: function($el, background) {
     $el.css({
       background: background
     });
     if (background) {
-      return setTimeout((function() {
-        return flash($el, '');
-      }), 50);
+      return setTimeout(((function(_this) {
+        return function() {
+          return _this.flash($el, '');
+        };
+      })(this)), 50);
     }
-  };
-  bell = function() {
-    return flash($('body'), 'black');
-  };
-  matr = rend(Matr({
-    rows: [],
-    appl: "",
-    prompt: {
-      "": "# "
-    },
-    input: "",
-    cursor: 0,
-    history: [],
-    offset: 0
-  }), term);
-  window.matr = matr;
-  update = function(a) {
-    return matr.setProps(a);
-  };
-  buffer = {
-    "": new Share("")
-  };
-  window.buffer = buffer;
-  choose = function(appl) {
-    urb.appl = appl;
+  },
+  bell: function() {
+    return this.flash($('body'), 'black');
+  },
+  choose: function(appl) {
     if (buffer[appl] == null) {
       buffer[appl] = new Share("");
     }
-    updPrompt('', null);
-    return update({
+    this.updPrompt('', null);
+    return this.setState({
       appl: appl,
       cursor: 0,
       input: buffer[appl].buf
     });
-  };
-  print = function(txt) {
-    return update({
-      rows: slice.call(matr.props.rows).concat([txt])
+  },
+  print: function(txt) {
+    return this.setState({
+      rows: slice.call(this.state.rows).concat([txt])
     });
-  };
-  sync = function(ted, app) {
+  },
+  sync: function(ted, app) {
     var b;
     if (app == null) {
-      app = matr.props.appl;
+      app = this.state.appl;
     }
-    if (app !== matr.props.appl) {
-      return;
+    if (app === this.state.appl) {
+      b = buffer[app];
+      return this.setState({
+        input: b.buf,
+        cursor: b.transpose(ted, this.state.cursor)
+      });
     }
-    b = buffer[app];
-    return update({
-      input: b.buf,
-      cursor: b.transpose(ted, matr.props.cursor)
-    });
-  };
-  updPrompt = function(app, pro) {
+  },
+  updPrompt: function(app, pro) {
     var prompt;
-    prompt = $.extend({}, matr.props.prompt);
+    prompt = $.extend({}, this.state.prompt);
     if (pro != null) {
       prompt[app] = pro;
     } else {
       delete prompt[app];
     }
-    return update({
+    return this.setState({
       prompt: prompt
     });
-  };
-  sysStatus = function() {
+  },
+  sysStatus: function() {
     var app, k, pro, ref2, v;
-    return updPrompt('', ((ref2 = [
-      matr.props.appl, (function() {
+    return this.updPrompt('', ((ref2 = [
+      this.state.appl, (function() {
         var ref2, results;
-        ref2 = matr.props.prompt;
+        ref2 = this.state.prompt;
         results = [];
         for (k in ref2) {
           v = ref2[k];
@@ -134,47 +143,49 @@ $(function() {
           }
         }
         return results;
-      })()
+      }).call(this)
     ], app = ref2[0], pro = ref2[1], ref2), app === '' ? (pro.join(', ')) + '# ' : null));
-  };
-  peer = function(ruh, app) {
+  },
+  peer: function(ruh, app) {
     var mapr, v;
     if (app == null) {
-      app = urb.appl;
+      app = this.state.appl;
     }
     if (ruh.map) {
-      return ruh.map(function(rul) {
-        return peer(rul, app);
-      });
+      return ruh.map((function(_this) {
+        return function(rul) {
+          return _this.peer(rul, app);
+        };
+      })(this));
     }
-    mapr = matr.props;
+    mapr = this.state;
     switch (Object.keys(ruh)[0]) {
       case 'txt':
-        return print(ruh.txt);
+        return this.print(ruh.txt);
       case 'tan':
-        return ruh.tan.split("\n").map(print);
+        return ruh.tan.split("\n").map(this.print);
       case 'pro':
-        return updPrompt(app, ruh.pro.cad);
+        return this.updPrompt(app, ruh.pro.cad);
       case 'hop':
-        update({
+        this.setState({
           cursor: ruh.hop
         });
-        return bell();
+        return this.bell();
       case 'blk':
         return console.log("Stub " + (str(ruh)));
       case 'det':
         buffer[app].receive(ruh.det);
-        return sync(ruh.det.ted, app);
+        return this.sync(ruh.det.ted, app);
       case 'act':
         switch (ruh.act) {
           case 'clr':
-            return update({
+            return this.setState({
               rows: []
             });
           case 'bel':
-            return bell();
+            return this.bell();
           case 'nex':
-            return update({
+            return this.setState({
               input: "",
               cursor: 0,
               history: !mapr.input ? mapr.history : [mapr.input].concat(slice.call(mapr.history)),
@@ -186,111 +197,122 @@ $(function() {
         v = Object.keys(ruh);
         return console.log(v, ruh[v[0]]);
     }
-  };
-  join = function(app) {
-    if (matr.props.prompt[app] != null) {
-      return print('# already-joined: ' + app);
+  },
+  join: function(app) {
+    if (this.state.prompt[app] != null) {
+      return this.print('# already-joined: ' + app);
     }
-    choose(app);
+    this.choose(app);
     return urb.bind("/sole", {
+      appl: this.state.appl,
       wire: "/"
-    }, function(err, d) {
-      if (err) {
-        return console.log(err);
-      } else if (d.data) {
-        return peer(d.data, app);
-      }
-    });
-  };
-  cycle = function() {
+    }, (function(_this) {
+      return function(err, d) {
+        if (err) {
+          return console.log(err);
+        } else if (d.data) {
+          return _this.peer(d.data, app);
+        }
+      };
+    })(this));
+  },
+  cycle: function() {
     var apps, ref2;
-    apps = Object.keys(matr.props.prompt);
+    apps = Object.keys(this.state.prompt);
     if (apps.length < 2) {
       return;
     }
-    return choose((ref2 = apps[1 + apps.indexOf(urb.appl)]) != null ? ref2 : apps[0]);
-  };
-  part = function(appl) {
+    return this.choose((ref2 = apps[1 + apps.indexOf(this.state.appl)]) != null ? ref2 : apps[0]);
+  },
+  part: function(appl) {
     var mapr;
-    mapr = matr.props;
+    mapr = this.state;
     if (mapr.prompt[appl] == null) {
-      return print('# not-joined: ' + appl);
+      return this.print('# not-joined: ' + appl);
     }
     urb.drop("/sole", {
       appl: appl,
       wire: "/"
     });
     if (appl === mapr.appl) {
-      cycle();
+      this.cycle();
     }
-    updPrompt(appl, null);
-    return sysStatus();
-  };
-  join(urb.appl);
-  window.join = join;
-  window.part = part;
-  pressed = [];
-  deltim = null;
-  urb.send.mark = 'sole-action';
-  sendAction = function(data) {
-    var app;
-    if (matr.props.appl) {
-      return urb.send(data, function(e, res) {
-        if (res.status !== 200) {
-          return $('#err')[0].innerText = res.data.mess;
-        }
-      });
+    this.updPrompt(appl, null);
+    return this.sysStatus();
+  },
+  componentWillUnmount: function() {
+    return this.mousetrapStop();
+  },
+  componentDidMount: function() {
+    this.mousetrapInit();
+    return this.join(this.state.appl);
+  },
+  sendAction: function(data) {
+    var app, appl;
+    appl = this.state.appl;
+    if (appl) {
+      return urb.send(data, {
+        appl: appl,
+        mark: 'sole-action'
+      }, (function(_this) {
+        return function(e, res) {
+          if (res.status !== 200) {
+            return _this.setState({
+              error: res.data.mess
+            });
+          }
+        };
+      })(this));
     } else if (data === 'ret') {
       app = /^[a-z-]+$/.exec(buffer[""].buf.slice(1));
       if (!((app != null) && (app[0] != null))) {
-        return bell();
+        return this.bell();
       } else {
         switch (buffer[""].buf[0]) {
           case '+':
-            doEdit({
+            this.doEdit({
               set: ""
             });
-            return join(app[0]);
+            return this.join(app[0]);
           case '-':
-            doEdit({
+            this.doEdit({
               set: ""
             });
-            return part(app[0]);
+            return this.part(app[0]);
           default:
-            return bell();
+            return this.bell();
         }
       }
     }
-  };
-  doEdit = function(ted) {
+  },
+  doEdit: function(ted) {
     var det;
-    det = buffer[matr.props.appl].transmit(ted);
-    sync(ted);
-    return sendAction({
+    det = buffer[this.state.appl].transmit(ted);
+    this.sync(ted);
+    return this.sendAction({
       det: det
     });
-  };
-  yank = '';
-  eatKyev = function(mod, key) {
+  },
+  eatKyev: function(mod, key) {
     var _, appl, cha, cursor, history, input, mapr, n, offset, prev, ref2, ref3, rest;
-    mapr = matr.props;
+    mapr = this.state;
     switch (mod.sort().join('-')) {
       case '':
       case 'shift':
         if (key.str) {
-          doEdit({
+          this.doEdit({
             ins: {
               cha: key.str,
               at: mapr.cursor
             }
           });
-          update({
+          this.setState({
             cursor: mapr.cursor + 1
           });
         }
         switch (key.act) {
           case 'entr':
-            return sendAction('ret');
+            return this.sendAction('ret');
           case 'up':
             history = mapr.history.slice();
             offset = mapr.offset;
@@ -299,10 +321,10 @@ $(function() {
             }
             ref2 = [history[offset], mapr.input], input = ref2[0], history[offset] = ref2[1];
             offset++;
-            doEdit({
+            this.doEdit({
               set: input
             });
-            return update({
+            return this.setState({
               offset: offset,
               history: history,
               cursor: input.length
@@ -315,31 +337,31 @@ $(function() {
               return;
             }
             ref3 = [history[offset], mapr.input], input = ref3[0], history[offset] = ref3[1];
-            doEdit({
+            this.doEdit({
               set: input
             });
-            return update({
+            return this.setState({
               offset: offset,
               history: history,
               cursor: input.length
             });
           case 'left':
             if (mapr.cursor > 0) {
-              return update({
+              return this.setState({
                 cursor: mapr.cursor - 1
               });
             }
             break;
           case 'right':
             if (mapr.cursor < mapr.input.length) {
-              return update({
+              return this.setState({
                 cursor: mapr.cursor + 1
               });
             }
             break;
           case 'baxp':
             if (mapr.cursor > 0) {
-              return doEdit({
+              return this.doEdit({
                 del: mapr.cursor - 1
               });
             }
@@ -349,61 +371,61 @@ $(function() {
         switch (key.str || key.act) {
           case 'a':
           case 'left':
-            return update({
+            return this.setState({
               cursor: 0
             });
           case 'e':
           case 'right':
-            return update({
+            return this.setState({
               cursor: mapr.input.length
             });
           case 'l':
-            return update({
+            return this.setState({
               rows: []
             });
           case 'entr':
-            return bell();
+            return this.bell();
           case 'w':
-            return eatKyev(['alt'], {
+            return this.eatKyev(['alt'], {
               act: 'baxp'
             });
           case 'p':
-            return eatKyev([], {
+            return this.eatKyev([], {
               act: 'up'
             });
           case 'n':
-            return eatKyev([], {
+            return this.eatKyev([], {
               act: 'down'
             });
           case 'b':
-            return eatKyev([], {
+            return this.eatKyev([], {
               act: 'left'
             });
           case 'f':
-            return eatKyev([], {
+            return this.eatKyev([], {
               act: 'right'
             });
           case 'g':
-            return bell();
+            return this.bell();
           case 'x':
-            return cycle();
+            return this.cycle();
           case 'v':
-            appl = mapr.appl !== '' ? '' : urb.appl;
-            update({
+            appl = mapr.appl !== '' ? '' : this.state.appl;
+            this.setState({
               appl: appl,
               cursor: 0,
               input: buffer[appl].buf
             });
-            return sysStatus();
+            return this.sysStatus();
           case 't':
             if (mapr.cursor === 0 || mapr.input.length < 2) {
-              return bell();
+              return this.bell();
             }
             cursor = mapr.cursor;
             if (cursor < mapr.input.length) {
               cursor++;
             }
-            doEdit([
+            this.doEdit([
               {
                 del: cursor - 1
               }, {
@@ -413,12 +435,12 @@ $(function() {
                 }
               }
             ]);
-            return update({
+            return this.setState({
               cursor: cursor
             });
           case 'u':
-            yank = mapr.input.slice(0, mapr.cursor);
-            return doEdit((function() {
+            this.yank = mapr.input.slice(0, mapr.cursor);
+            return this.doEdit((function() {
               var i, ref4, results;
               results = [];
               for (n = i = 1, ref4 = mapr.cursor; 1 <= ref4 ? i <= ref4 : i >= ref4; n = 1 <= ref4 ? ++i : --i) {
@@ -429,8 +451,8 @@ $(function() {
               return results;
             })());
           case 'k':
-            yank = mapr.input.slice(mapr.cursor);
-            return doEdit((function() {
+            this.yank = mapr.input.slice(mapr.cursor);
+            return this.doEdit((function() {
               var i, ref4, ref5, results;
               results = [];
               for (_ = i = ref4 = mapr.cursor, ref5 = mapr.input.length; ref4 <= ref5 ? i < ref5 : i > ref5; _ = ref4 <= ref5 ? ++i : --i) {
@@ -441,11 +463,12 @@ $(function() {
               return results;
             })());
           case 'y':
-            return doEdit((function() {
-              var i, len, results;
+            return this.doEdit((function() {
+              var i, len, ref4, ref5, results;
+              ref5 = (ref4 = this.yank) != null ? ref4 : '';
               results = [];
-              for (n = i = 0, len = yank.length; i < len; n = ++i) {
-                cha = yank[n];
+              for (n = i = 0, len = ref5.length; i < len; n = ++i) {
+                cha = ref5[n];
                 results.push({
                   ins: {
                     cha: cha,
@@ -454,7 +477,7 @@ $(function() {
                 });
               }
               return results;
-            })());
+            }).call(this));
           default:
             return console.log(mod, str(key));
         }
@@ -465,7 +488,7 @@ $(function() {
           case 'right':
             rest = mapr.input.slice(mapr.cursor);
             rest = rest.match(/\W*\w*/)[0];
-            return update({
+            return this.setState({
               cursor: mapr.cursor + rest.length
             });
           case 'b':
@@ -473,15 +496,15 @@ $(function() {
             prev = mapr.input.slice(0, mapr.cursor);
             prev = prev.split('').reverse().join('');
             prev = prev.match(/\W*\w*/)[0];
-            return update({
+            return this.setState({
               cursor: mapr.cursor - prev.length
             });
           case 'baxp':
             prev = mapr.input.slice(0, mapr.cursor);
             prev = prev.split('').reverse().join('');
             prev = prev.match(/\W*\w*/)[0];
-            yank = prev;
-            return doEdit((function() {
+            this.yank = prev;
+            return this.doEdit((function() {
               var i, len, results;
               results = [];
               for (n = i = 0, len = prev.length; i < len; n = ++i) {
@@ -497,53 +520,61 @@ $(function() {
       default:
         return console.log(mod, str(key));
     }
-  };
-  return Mousetrap.handleKey = function(char, mod, e) {
-    var chac, key, norm, ref2;
-    norm = {
-      capslock: 'caps',
-      pageup: 'pgup',
-      pagedown: 'pgdn',
-      backspace: 'baxp',
-      enter: 'entr'
-    };
-    key = (function() {
-      var ref2;
-      switch (false) {
-        case char.length !== 1:
-          if (e.type === 'keypress') {
-            chac = char.charCodeAt(0);
-            if (chac < 32) {
-              char = String.fromCharCode(chac | 96);
-            }
-            return {
-              str: char
-            };
+  },
+  mousetrapStop: function() {
+    return Mousetrap.handleKey = this._defaultHandleKey;
+  },
+  mousetrapInit: function() {
+    this._defaultHandleKey = Mousetrap.handleKey;
+    return Mousetrap.handleKey = (function(_this) {
+      return function(char, mod, e) {
+        var chac, key, norm, ref2;
+        norm = {
+          capslock: 'caps',
+          pageup: 'pgup',
+          pagedown: 'pgdn',
+          backspace: 'baxp',
+          enter: 'entr'
+        };
+        key = (function() {
+          var ref2;
+          switch (false) {
+            case char.length !== 1:
+              if (e.type === 'keypress') {
+                chac = char.charCodeAt(0);
+                if (chac < 32) {
+                  char = String.fromCharCode(chac | 96);
+                }
+                return {
+                  str: char
+                };
+              }
+              break;
+            case e.type !== 'keydown':
+              if (char !== 'space') {
+                return {
+                  act: (ref2 = norm[char]) != null ? ref2 : char
+                };
+              }
+              break;
+            case !(e.type === 'keyup' && norm[key] === 'caps'):
+              return {
+                act: 'uncap'
+              };
           }
-          break;
-        case e.type !== 'keydown':
-          if (char !== 'space') {
-            return {
-              act: (ref2 = norm[char]) != null ? ref2 : char
-            };
-          }
-          break;
-        case !(e.type === 'keyup' && norm[key] === 'caps'):
-          return {
-            act: 'uncap'
-          };
-      }
-    })();
-    if (!key) {
-      return;
-    }
-    if (key.act && (ref2 = key.act, indexOf.call(mod, ref2) >= 0)) {
-      return;
-    }
-    e.preventDefault();
-    return eatKyev(mod, key);
-  };
-});
+        })();
+        if (!key) {
+          return;
+        }
+        if (key.act && (ref2 = key.act, indexOf.call(mod, ref2) >= 0)) {
+          return;
+        }
+        e.preventDefault();
+        return _this.eatKyev(mod, key);
+      };
+    })(this);
+  }
+}));
 
 
 },{"./share.coffee":2}],2:[function(require,module,exports){
