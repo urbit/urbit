@@ -1039,7 +1039,7 @@
       ^-  (bolt beam)
       %+  cope
         ?:  ?=($ud -.r.bem)  (fine cof bem)
-        =+  von=(save ~ %cw bem(s ~))
+        =+  von=(syve %noun ~ %cw bem(s ~))
         ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
         (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
       |=  {cof/cafe bem/{{ship desk $ud r/@u} s/spur}}
@@ -1071,7 +1071,7 @@
     ++  lend                                            ::  load arch
       |=  {cof/cafe bem/beam}
       ^-  (bolt arch)
-      =+  von=(save ~ %cy bem)
+      =+  von=(syve %noun ~ %cy bem)
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
       ?>  ?=({$~ $arch ^} u.von)
       =+  arc=((hard arch) q.q.u.u.von)
@@ -1082,7 +1082,7 @@
     ++  liar                                            ::  load cage
       |=  {cof/cafe bem/beam}
       ^-  (bolt cage)
-      =+  von=(save ~ %cx bem)
+      =+  von=(syve %noun ~ %cx bem)
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
@@ -1264,7 +1264,7 @@
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  {cof/cafe typ/span fol/nock}
-      %+  (coup cof)  (meck [q.vax fol] (myle (sloy syve)))
+      %+  (coup cof)  (mecq [q.vax fol] (sloy syve))
       |=(val/* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
@@ -1457,7 +1457,7 @@
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
       |=  {cof/cafe typ/span}
-      %+  (coup cof)  (myng [q.gat q.sam] (myle (sloy syve)))
+      %+  (coup cof)  (mynq [q.gat q.sam] (sloy syve))
       |=(val/* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
@@ -1836,11 +1836,18 @@
     ::
     ++  syve
       ^-  sley
-      |=  {* (unit (set monk)) tem/term bem/beam}
+      |=  {ref/* sec/(unit (set monk)) tem/term bem/beam}
+      ^-  (unit (unit cage))
+      ::  ?>  =(%151 -.ref)
+      ::  =-  %+  biff  -   |=  (unit cage)
+      ::      %+  biff  +<  |=  cay/cage
+      ::      ?.  -:(nets:wa `span`p.q.cay +.ref)
+      ::        [~ ~]
+      ::      ``cay
       ^-  (unit (unit cage))
       =+  (~(get by keg) tem bem)
       ?^  -
-        ``u.-
+        (some -)
       (ska +<+.$)
     --
   --

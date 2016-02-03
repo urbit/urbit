@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject 
@@ -245,7 +245,7 @@
     {$cnsg p/wing q/twig r/(list twig)}                 ::  new cnsg
     {$cnts p/wing q/(list (pair wing twig))}            ::  eval. p w+ q changes
   ::                                            ::::::  nock
-    {$dtkt p/twig q/twig}                               ::  nock 12 data skyhook
+    {$dtkt p/twig q/twig}                               ::  nock 11 data skyhook
     {$dtls p/twig}                                      ::  nock 4 increment
     {$dttr p/twig q/twig}                               ::  nock p w+ formula q
     {$dtts p/twig q/twig}                               ::  nock 5 equality test
@@ -3910,7 +3910,7 @@
 ++  co  !.
   ~%  %co  ..co  ~
   =<  |_  lot/coin
-      ++  rear  |=(rom/tape =>(.(rex rom) rend))
+      ++  rear  |=(rom/tape =>(.(rep rom) rend))
       ++  rent  `@ta`(rap 3 rend)
       ++  rend
         ^-  tape
@@ -3920,50 +3920,50 @@
           :-  '.'
           |-  ^-  tape
           ?~   p.lot
-            ['_' '_' rex]
+            ['_' '_' rep]
           ['_' (weld (trip (wack rent(lot i.p.lot))) $(p.lot t.p.lot))]
         =+  [yed=(end 3 1 p.p.lot) hay=(cut 3 [1 1] p.p.lot)]
         |-  ^-  tape
         ?+    yed  (z-co q.p.lot)
-            $c   ['~' '-' (weld (rip 3 (wood (tuft q.p.lot))) rex)]
+            $c   ['~' '-' (weld (rip 3 (wood (tuft q.p.lot))) rep)]
             $d
           ?+    hay  (z-co q.p.lot)
               $a
             =+  yod=(yore q.p.lot)
-            =>  ^+(. .(rex ?~(f.t.yod rex ['.' (s-co f.t.yod)])))
+            =>  ^+(. .(rep ?~(f.t.yod rep ['.' (s-co f.t.yod)])))
             =>  ^+  .
                 %=    .
-                    rex
+                    rep
                   ?:  &(=(~ f.t.yod) =(0 h.t.yod) =(0 m.t.yod) =(0 s.t.yod))
-                    rex
-                  =>  .(rex ['.' (y-co s.t.yod)])
-                  =>  .(rex ['.' (y-co m.t.yod)])
+                    rep
+                  =>  .(rep ['.' (y-co s.t.yod)])
+                  =>  .(rep ['.' (y-co m.t.yod)])
                   ['.' '.' (y-co h.t.yod)]
                 ==
-            =>  .(rex ['.' (a-co d.t.yod)])
-            =>  .(rex ['.' (a-co m.yod)])
-            =>  .(rex ?:(a.yod rex ['-' rex]))
+            =>  .(rep ['.' (a-co d.t.yod)])
+            =>  .(rep ['.' (a-co m.yod)])
+            =>  .(rep ?:(a.yod rep ['-' rep]))
             ['~' (a-co y.yod)]
           ::
               $r
             =+  yug=(yell q.p.lot)
-            =>  ^+(. .(rex ?~(f.yug rex ['.' (s-co f.yug)])))
+            =>  ^+(. .(rep ?~(f.yug rep ['.' (s-co f.yug)])))
             :-  '~'
             ?:  &(=(0 d.yug) =(0 m.yug) =(0 h.yug) =(0 s.yug))
-              ['s' '0' rex]
-            =>  ^+(. ?:(=(0 s.yug) . .(rex ['.' 's' (a-co s.yug)])))
-            =>  ^+(. ?:(=(0 m.yug) . .(rex ['.' 'm' (a-co m.yug)])))
-            =>  ^+(. ?:(=(0 h.yug) . .(rex ['.' 'h' (a-co h.yug)])))
-            =>  ^+(. ?:(=(0 d.yug) . .(rex ['.' 'd' (a-co d.yug)])))
-            +.rex
+              ['s' '0' rep]
+            =>  ^+(. ?:(=(0 s.yug) . .(rep ['.' 's' (a-co s.yug)])))
+            =>  ^+(. ?:(=(0 m.yug) . .(rep ['.' 'm' (a-co m.yug)])))
+            =>  ^+(. ?:(=(0 h.yug) . .(rep ['.' 'h' (a-co h.yug)])))
+            =>  ^+(. ?:(=(0 d.yug) . .(rep ['.' 'd' (a-co d.yug)])))
+            +.rep
           ==
         ::
             $f
           ?:  =(& q.p.lot)
-            ['.' 'y' rex]
-          ?:(=(| q.p.lot) ['.' 'n' rex] (z-co q.p.lot))
+            ['.' 'y' rep]
+          ?:(=(| q.p.lot) ['.' 'n' rep] (z-co q.p.lot))
         ::
-            $n   ['~' rex]
+            $n   ['~' rep]
             $i
           ?+  hay  (z-co q.p.lot)
             $f  ((ro-co [3 10 4] |=(a/@ ~(d ne a))) q.p.lot)
@@ -3974,23 +3974,23 @@
           =+  dyx=(met 3 q.p.lot)
           :-  '~'
           ?:  (lte dyx 1)
-            (weld (trip (tod:po q.p.lot)) rex)
+            (weld (trip (tod:po q.p.lot)) rep)
           ?:  =(2 dyx)
             ;:  weld
               (trip (tos:po (end 3 1 q.p.lot)))
               (trip (tod:po (rsh 3 1 q.p.lot)))
-              rex
+              rep
             ==
           =+  [dyz=(met 5 q.p.lot) fin=| dub=&]
           |-  ^-  tape
           ?:  =(0 dyz)
-            rex
+            rep
           %=    $
               fin      &
               dub      !dub
               dyz      (dec dyz)
               q.p.lot  (rsh 5 1 q.p.lot)
-              rex
+              rep
             =+  syb=(wren:un (end 5 1 q.p.lot))
             =+  cog=~(zig mu [(rsh 4 1 syb) (end 4 1 syb)])
             ;:  weld
@@ -4000,7 +4000,7 @@
               (trip (tos:po (end 3 1 q.cog)))
               (trip (tod:po (rsh 3 1 q.cog)))
               `tape`?.(fin ~ ['-' ?.(dub ~ ['-' ~])])
-              rex
+              rep
             ==
           ==
         ::
@@ -4034,39 +4034,39 @@
             $t
           ?:  =('a' hay)
             ?:  =('s' (cut 3 [2 1] p.p.lot))
-              (weld (rip 3 q.p.lot) rex)
-            ['~' '.' (weld (rip 3 q.p.lot) rex)]
-          ['~' '~' (weld (rip 3 (wood q.p.lot)) rex)]
+              (weld (rip 3 q.p.lot) rep)
+            ['~' '.' (weld (rip 3 q.p.lot) rep)]
+          ['~' '~' (weld (rip 3 (wood q.p.lot)) rep)]
         ==
       --
-  =+  rex=*tape
+  =+  rep=*tape
   =<  |%
       ++  a-co  |=(dat/@ ((d-co 1) dat))
       ++  c-co  (em-co [58 1] |=({? b/@ c/tape} [~(c ne b) c]))
       ++  d-co  |=(min/@ (em-co [10 min] |=({? b/@ c/tape} [~(d ne b) c])))
       ++  r-co
         |=  a/dn
-        ?:  ?=({$i *} a)  (weld ?:(s.a "inf" "-inf") rex)
-        ?:  ?=({$n *} a)  (weld "nan" rex)
+        ?:  ?=({$i *} a)  (weld ?:(s.a "inf" "-inf") rep)
+        ?:  ?=({$n *} a)  (weld "nan" rep)
         =+  ^=  e  %+  ed-co  [10 1]
           |=  {a/? b/@ c/tape}
           ?:  a  [~(d ne b) '.' c]
           [~(d ne b) c]
         =+  ^=  f
-          =>(.(rex ~) (e a.a))
+          =>(.(rep ~) (e a.a))
         =.  e.a  (sum:si e.a (sun:si (dec +.f)))
         =+  b=?:((syn:si e.a) "e" "e-")
-        =>  .(rex ?~(e.a rex (weld b ((d-co 1) (abs:si e.a)))))
-        =>  .(rex (weld -.f rex))
-        ?:(s.a rex ['-' rex])
+        =>  .(rep ?~(e.a rep (weld b ((d-co 1) (abs:si e.a)))))
+        =>  .(rep (weld -.f rep))
+        ?:(s.a rep ['-' rep])
       ::
       ++  s-co
         |=  esc/(list @)  ^-  tape
         ~|  [%so-co esc]
         ?~  esc
-          rex
+          rep
         :-  '.'
-        =>(.(rex $(esc t.esc)) ((x-co 4) i.esc))
+        =>(.(rep $(esc t.esc)) ((x-co 4) i.esc))
       ::
       ++  v-co  |=(min/@ (em-co [32 min] |=({? b/@ c/tape} [~(v ne b) c])))
       ++  w-co  |=(min/@ (em-co [64 min] |=({? b/@ c/tape} [~(w ne b) c])))
@@ -4080,12 +4080,12 @@
     |=  hol/@
     ^-  tape
     ?:  &(=(0 hol) =(0 min))
-      rex
+      rep
     =+  [rad=(mod hol bas) dar=(div hol bas)]
     %=  $
       min  ?:(=(0 min) 0 (dec min))
       hol  dar
-      rex  (par =(0 dar) rad rex)
+      rep  (par =(0 dar) rad rep)
     ==
   ::
   ++  ed-co
@@ -4094,12 +4094,12 @@
     |=  hol/@
     ^-  {tape @}
     ?:  &(=(0 hol) =(0 min))
-      [rex cou]
+      [rep cou]
     =+  [rad=(mod hol bas) dar=(div hol bas)]
     %=  $
       min  ?:(=(0 min) 0 (dec min))
       hol  dar
-      rex  (par &(=(0 dar) !fir) rad rex)
+      rep  (par &(=(0 dar) !fir) rad rep)
       fir  |
       cou  +(cou)
     ==
@@ -4112,7 +4112,7 @@
     %+  weld
       ?:(top ~ `tape`['.' ~])
     %.  seg
-    %+  em-co(rex res)
+    %+  em-co(rep res)
       [bas ?:(top 0 gop)]
     |=({? b/@ c/tape} [(dug b) c])
   ::
@@ -4121,8 +4121,8 @@
     |=  hol/@
     ^-  tape
     ?:  =(0 dop)
-      rex
-    =>  .(rex $(dop (dec dop)))
+      rep
+    =>  .(rep $(dop (dec dop)))
     :-  '.'
     %-  (em-co [bas 1] |=({? b/@ c/tape} [(dug b) c]))
     [(cut buz [(dec dop) 1] hol)]
@@ -4542,6 +4542,12 @@
   |=  {{sub/* fol/*} sea/$+({* *} (unit))}
   (mink [sub fol] |=(* (sea [151 %noun] +<)))
 ::
+++  micq
+  ~/  %micq
+  |=  {{sub/* fol/*} gul/$+({* *} (unit (unit)))}
+  ~&  %soft-micq
+  (mick [sub fol] |=({* *} =+((gul +<) ?~(- ~ ?~(u.- ~ -)))))
+::
 ++  mink
   ~/  %mink
   |=  {{sub/* fol/*} sky/$+(* (unit))}
@@ -4626,6 +4632,10 @@
   |=  {{sub/* fol/*} sea/$+({* *} (unit))}
   (mook (mick [sub fol] sea))
 ::
+++  mecq
+  |=  {{sub/* fol/*} gul/$+({* *} (unit (unit)))}
+  (mook (micq [sub fol] gul))
+::
 ++  moop
   |=  pon/(list {@ta *})  ^+  pon
   ?~  pon  ~
@@ -4665,16 +4675,16 @@
     "[skipped {(scow %ud (sub yel 256))} frames]"
   |-  ^-  (list tank)
   ?~  p.ton  ~
-  =+  rex=$(p.ton t.p.ton)
-  ?+    -.i.p.ton  rex
-      $hunk  [(tank +.i.p.ton) rex]
-      $lose  [[%leaf (rip 3 (@ +.i.p.ton))] rex]
-      $hand  [[%leaf (scow %p (mug +.i.p.ton))] rex]
-      $mean  :_  rex
+  =+  rep=$(p.ton t.p.ton)
+  ?+    -.i.p.ton  rep
+      $hunk  [(tank +.i.p.ton) rep]
+      $lose  [[%leaf (rip 3 (@ +.i.p.ton))] rep]
+      $hand  [[%leaf (scow %p (mug +.i.p.ton))] rep]
+      $mean  :_  rep
              ?@  +.i.p.ton  [%leaf (rip 3 (@ +.i.p.ton))]
              =+  mac=(mack +.i.p.ton +<.i.p.ton)
              ?~(mac [%leaf "####"] (tank u.mac))
-      $spot  :_  rex
+      $spot  :_  rep
              =+  sot=(spot +.i.p.ton)
              :+  %rose  [":" ~ ~]
              :~  (smyt p.sot)
@@ -4694,6 +4704,13 @@
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (meck [[-.gat [sam +>.gat]] -.gat] sea)
+::
+++  mynq
+  |=  {{gat/* sam/*} gul/$+({* *} (unit (unit)))}
+  ^-  toon
+  ?.  &(?=(^ gat) ?=(^ +.gat))
+    [%2 ~]
+  (mecq [[-.gat [sam +>.gat]] -.gat] gul)
 ::
 ++  mong
   |=  {{gat/* sam/*} sky/$+(* (unit))}
@@ -8560,7 +8577,7 @@
         {$cnts *}  (~(mint et p.gen q.gen) gol)
         {$dtkt *}
       =+  nef=$(gen [%cnbc p.gen])
-      [p.nef [%12 [%1 p.nef] q:$(gen q.gen, gol %noun)]]
+      [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
