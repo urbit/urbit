@@ -150,6 +150,14 @@
         u3z(foz);
         return ret;
       }
+      case c3__fuss: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+        u3_noun foz = _crop_dext(van, q_sut, ref, bix);
+        u3_noun ret = u3qf_fuss(p_sut, foz);
+
+        u3z(foz);
+        return ret;
+      }
       case c3__fork: p_sut = u3t(sut);
       {
         u3_noun yed = u3qdi_tap(p_sut, u3_nul);
@@ -196,6 +204,7 @@
       default: return u3m_bail(c3__fail);
 
       case c3__core:
+      case c3__fuss:
       case c3__face: u3x_cell(u3t(ref), &p_ref, &q_ref);
       {
         return _crop_dext(van, sut, q_ref, bix);

@@ -34,6 +34,7 @@
           return u3nt(c3__cell, c3__noun, u3k(p_sut));
         }
       }
+      case c3__fuss:
       case c3__face: {
         if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
           return u3m_bail(c3__fail);
