@@ -515,7 +515,8 @@
       |-  ^-  $?  $%  {$atom @tas (unit @)}
                       {$cell _$ _$}
                       {$cube * _$}
-                      {$fuss $@(term ^tome) _$}
+                      {$face $@(term tomb) _$}
+                      {$fuss $@(term tomb) _$}
                       {$fork (set _$)}
                       {$hold _$ twig}
                   ==
@@ -523,7 +524,7 @@
                   $?($noun $void)
               ==
       ?+  a  a
-        {?($cube $fuss) ^}  a(q $(a q.a))
+        {?($cube $fuss $face) ^}  a(q $(a q.a))
         {$cell ^}  a(p $(a p.a), q $(a q.a))
         {$fork *}  a(p (silt (turn (~(tap in p.a)) |=(b/span ^$(a b)))))
         {$core ^}  `wain`/core
