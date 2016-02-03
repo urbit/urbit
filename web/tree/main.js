@@ -38,7 +38,6 @@ module.exports = {
     ));
   },
   addVirtual: function(components) {
-    console.log("addVirtual", components);
     return TreeDispatcher.handleViewAction({
       type: "addVirtual",
       components: components
@@ -329,12 +328,11 @@ module.exports = query({
       kids.push(reactify({
         gn: this.state.subnav,
         ga: {
-          key: "subnav",
           open: this.state.open,
           toggle: TreeActions.toggleNav
         },
         c: []
-      }));
+      }, "subnav"));
     }
     return div({}, kids);
   }
@@ -1073,8 +1071,8 @@ module.exports = recl({
       return function() {
         return TreeActions.setNav({
           title: _this.props["nav:title"],
-          dpad: !!_this.props["nav:dpad"],
-          sibs: !!_this.props["nav:sibs"],
+          dpad: _this.props["nav:no-dpad"] != null ? false : void 0,
+          sibs: _this.props["nav:no-sibs"] != null ? false : void 0,
           subnav: _this.props["nav:subnav"]
         }, 0);
       };
@@ -1194,6 +1192,7 @@ module.exports = recl({
     var s;
     s = document.createElement('script');
     _.assign(s, this.props);
+    urb.waspElem(s);
     document.body.appendChild(s);
     return this.js = s;
   },
