@@ -1,4 +1,4 @@
-/=  all  /;  flop  /^  (list (pair time ,*))  /@  /mime/
+/=  all  /:  /%%%/paste  /;  flop  /^  (list (pair time ,*))  /@  /mime/
 ;html
   ;head:title:"Pastebin"
   ;body
@@ -21,9 +21,9 @@
                 txt:$("textarea").val(),
                 typ:$("select :selected").val()
               }, function(){
-                $.getJSON('paste.paste-new',null,function(resp){
+                $.getJSON('../paste.paste-new',null,function(resp){
                   if(!resp) throw "No paste"
-                  window.location = "paste/"+resp.u
+                  window.location = "../paste/"+resp.u
               })})
             }
             '''
@@ -39,6 +39,6 @@
     ;button(onclick "submit()"):"Submit"
     ;hr;
     ;h1: Recent
-    ;*  (turn all |=([a=time *] ;p:a/"paste/{<a>}":"{<a>}"))
+    ;*  (turn all |=([a=time *] ;p:a/"../paste/{<a>}":"{<a>}"))
   ==
 ==
