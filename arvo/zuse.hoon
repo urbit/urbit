@@ -2493,15 +2493,14 @@
   $%  [%ape p=twig]                                     ::  /~  twig by hand
       [%arg p=twig]                                     ::  /$  argument
       [%alt p=(list horn)]                              ::  /|  options
-      :: [%day p=horn]                                     ::      list by @dr
       [%dub p=term q=horn]                              ::  /=  apply face
       [%fan p=(list horn)]                              ::  /.  list
       [%for p=(list (pair path:spur horn))]             ::  /,  switch by path
       [%hel p=horn]                                     ::  /%  propagate args
-      [%hub p=horn]                                     ::  /@  list by @ud
+      [%lin p=(list mark) q=horn]                       ::  /&  translates
       [%man p=(map span horn)]                          ::  /*  hetero map
       [%nap p=horn]                                     ::  /_  homo map
-      [%now p=horn]                                     ::  /&  list by @da
+      [%now p=horn]                                     ::  /@  list by @da
       [%saw p=twig q=horn]                              ::  /;  operate on
       [%see p=beam q=horn]                              ::  /:  relative to
       [%sic p=tile q=horn]                              ::  /^  cast

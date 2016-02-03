@@ -24,7 +24,7 @@
     ;link
       =type  "text/css"
       =rel   "stylesheet"
-      =href  "/oct3/main.css"
+      =href  "oct3/main.css"
       ;
     ==
     ;title: :oct3
@@ -43,6 +43,6 @@
     ==
     ;div#bord;
     ;div#audi;
-    ;script(type "text/javascript", src "/oct3/main.js");
+    ;script(type "text/javascript", src "oct3/main.js");
   ==
 ==

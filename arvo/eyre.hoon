@@ -441,19 +441,26 @@
   ++  etag
     '''
     if(!window.urb) window.urb = {}
-    urb.waspFrom = function(sel,attr){
-      Array.prototype.map.call(document.querySelectorAll(sel), 
-        function(ele){
-          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host)
-            return;
-          var xhr = new XMLHttpRequest()
-          xhr.open("HEAD", ele[attr])
-          xhr.send()
-          xhr.onload = function(){
-            var dep = this.getResponseHeader("etag")
-            if(dep) urb.wasp(JSON.parse(dep.substr(2)))
-    }})}
-    if(urb.wasp){urb.waspFrom('script','src'); urb.waspFrom('link','href')}
+    urb.waspAll = function(sel){
+      Array.prototype.map.call(document.querySelectorAll(sel), urb.waspElem)
+    }
+    urb.waspElem = function(ele){
+      url = ele.src || ele.href
+      if(!url || (new URL(url)).host != document.location.host)
+        return;
+      urb.waspUrl(url)
+    }
+    urb.waspUrl = function(url){
+      var xhr = new XMLHttpRequest()
+      xhr.open("HEAD", url)
+      xhr.send()
+      xhr.onload = urb.waspLoadedXHR
+    }
+    urb.waspLoadedXHR = function(){
+      var dep = this.getResponseHeader("etag")
+      if(dep) urb.wasp(JSON.parse(dep.substr(2)))
+    }
+    if(urb.wasp){urb.waspAll('script'); urb.waspAll('link')}
     '''
   --
 ++  xml
