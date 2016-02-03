@@ -417,7 +417,7 @@
   }
 
   static u3_noun
-  _find_buck_fuss_next(u3_noun van,
+  _find_buck_face_next(u3_noun van,
                        u3_noun sut,
                        u3_noun q_sut,
                        u3_noun qp_sut,
@@ -451,7 +451,7 @@
       else if ( (c3n == u3h(fid)) && (c3y == u3h(u3t(fid))) ) {
         u3_noun ret;
 
-        ret = _find_buck_fuss_next
+        ret = _find_buck_face_next
          (van, sut, q_sut, tqp_sut, way, p_heg, q_heg, u3t(u3t(fid)), lon, gil);
         u3z(fid);
         u3z(tiv);
@@ -489,73 +489,7 @@
   }
 
   static u3_noun
-  _find_buck_face_next(u3_noun van,
-                       u3_noun q_sut,
-                       u3_noun qp_sut,
-                       u3_noun way,
-                       u3_noun p_heg,
-                       u3_noun q_heg,
-                       u3_noun axe,
-                       u3_noun lon,
-                       u3_noun gil)
-  {
-    if ( u3_nul == qp_sut ) {
-      u3_noun nol = u3nc(u3_nul, u3k(lon));
-      u3_noun ret = _find_buck(van, q_sut, way, p_heg, q_heg, axe, nol, gil);
-      u3z(nol);
-      return ret;
-    }
-    else {
-      u3_noun iqp_sut = u3h(qp_sut);      //  (pair span nock)
-      u3_noun tqp_sut = u3t(qp_sut);      //  (list (pair span nock))
-      u3_noun piqp_sut = u3h(iqp_sut);    //  span
-      u3_noun qiqp_sut = u3t(iqp_sut);    //  nock
-      u3_noun fid = _find_buck            //  pony
-        (van, piqp_sut, way, p_heg, q_heg, 1, u3_nul, u3_nul);
-
-      if ( u3_nul == fid ) {
-        return u3_nul;
-      }
-      else if ( (c3n == u3h(fid)) && (c3y == u3h(u3t(fid))) ) {
-        u3_noun ret;
-
-        ret = _find_buck_face_next
-          (van, q_sut, tqp_sut, way, p_heg, q_heg, u3t(u3t(fid)), lon, gil);
-        u3z(fid);
-        return ret;
-      }
-      else {
-        u3_noun tor;                      //  port
-        u3_noun vat;                      //  (pair span nock)
-        u3_noun ret;
-        u3_noun dog = u3nc(0, u3k(axe));  //  nock
-
-        if ( c3y == u3h(fid) ) {
-          tor = u3k(fid);
-        } else {
-          tor = u3nc(c3n, u3k(u3t(u3t(fid))));
-        }
-        u3z(fid);
-
-        vat = u3qfu_fine(van, q_sut, tor);
-        u3z(tor);
-
-        ret = u3nq
-          (c3n, 
-           c3n, 
-           u3k(u3h(vat)), 
-           u3qf_comb(u3t(vat), u3qf_comb(dog, qiqp_sut)));
-
-        u3z(vat);
-        u3z(dog);
-
-        return ret;
-      }
-    }
-  }
-
-  static u3_noun
-  _find_buck_fuss(u3_noun van,
+  _find_buck_face(u3_noun van,
                   u3_noun sut,
                   u3_noun way,
                   u3_noun p_heg,
@@ -588,7 +522,7 @@
         u3_noun tyr = u3qdb_get(pp_sut, uq_heg);  //  (unit (unit port))
 
         if ( u3_nul == tyr ) {
-          return _find_buck_fuss_next
+          return _find_buck_face_next
             (van, sut, q_sut, qp_sut, way, p_heg, q_heg, axe, lon, gil);
         }
         else {
@@ -644,92 +578,6 @@
   }
 
   static u3_noun
-  _find_buck_face(u3_noun van,
-                  u3_noun sut,
-                  u3_noun way,
-                  u3_noun p_heg,
-                  u3_noun q_heg,
-                  u3_noun axe,
-                  u3_noun lon,
-                  u3_noun gil)
-  {
-    u3_noun p_sut, q_sut;
-
-    u3x_cell(u3t(sut), &p_sut, &q_sut);
-
-    if ( u3_nul == q_heg ) {
-      return _find_buck_here(van, q_sut, way, p_heg, q_heg, axe, lon, gil);
-    }
-    else {
-      u3_noun uq_heg = u3t(q_heg);          //  term
-
-      if ( c3y == u3ud(p_sut) ) {
-        if ( c3y == u3r_sing(p_sut, uq_heg) ) {
-          return _find_buck_here(van, q_sut, way, p_heg, q_heg, axe, lon, gil);
-        } 
-        else {
-          return _find_buck_lose(van, sut, way, p_heg, q_heg, axe, lon, gil);
-        }
-      }
-      else {
-        u3_noun pp_sut = u3h(p_sut);              //  (map term (unit port))
-        u3_noun qp_sut = u3t(p_sut);              //  (list (pair span nock))
-        u3_noun tyr = u3qdb_get(pp_sut, uq_heg);  //  (unit (unit port))
-
-        if ( u3_nul == tyr ) {
-          return _find_buck_face_next
-            (van, q_sut, qp_sut, way, p_heg, q_heg, axe, lon, gil);
-        }
-        else {
-          u3_noun u_tyr = u3t(tyr);       //  (unit port)
-
-          if ( u3_nul == u_tyr ) {
-            u3_noun nol = u3nc(u3_nul, u3k(lon));
-            u3_noun dep = u3qa_inc(p_heg);
-            u3_noun ret = _find_buck
-                              (van, q_sut, way, dep, q_heg, axe, nol, gil);
-
-            u3z(dep);
-            u3z(nol);
-            u3z(tyr);
-            return ret;
-          }
-          else {
-            u3_noun uu_tyr = u3t(u_tyr);
-
-            if ( c3y == u3h(uu_tyr) ) {
-              u3_noun puu_tyr = u3t(uu_tyr);      //  (pair vein opal)
-              u3_noun ppuu_tyr = u3h(puu_tyr);    //  vein
-              u3_noun qpuu_tyr = u3t(puu_tyr);    //  opal
-              u3_noun nol =                       //  vein
-                u3nt(u3_nul, u3nc(u3_nul, u3k(axe)), u3k(lon));
-              u3_noun ret;
- 
-              ret = u3nt(c3y, u3qb_weld(ppuu_tyr, nol), u3k(qpuu_tyr));
-              u3z(nol);
-              u3z(tyr);
-              return ret;
-            }
-            else {
-              u3_noun puu_tyr = u3t(uu_tyr);      // (pair span nock)
-              u3_noun ppuu_tyr = u3h(puu_tyr);    //  span
-              u3_noun qpuu_tyr = u3t(puu_tyr);    //  nock
-              u3_noun dog = u3nc(0, u3k(axe));    //  nock
-              u3_noun ret;
-
-              ret = u3nq(c3n, c3n, u3k(ppuu_tyr), u3qf_comb(dog, qpuu_tyr));
-              u3z(dog);
-              u3z(tyr);
-
-              return ret;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  static u3_noun
   _find_buck(u3_noun van,
              u3_noun sut,
              u3_noun way,
@@ -769,15 +617,11 @@
         // fprintf(stderr, "core\r\n");
         return _find_buck_core(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
+      case c3__fuss:
       case c3__face:
       {
         // fprintf(stderr, "face\r\n");
         return _find_buck_face(van, sut, way, p_heg, q_heg, axe, lon, gil);
-      }
-      case c3__fuss:
-      {
-        // fprintf(stderr, "face\r\n");
-        return _find_buck_fuss(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       case c3__fork:
       {

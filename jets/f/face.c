@@ -13,13 +13,9 @@
     if ( c3__void == tip ) {
       return c3__void;
     }
-    else if ( c3y == u3du(sag) ) {
-      return u3m_bail(c3__fail);
-    } else {
-      return u3nt(c3__fuss,
+    else return u3nt(c3__face,
                      u3k(sag),
                      u3k(tip));
-    }
   }
   u3_noun
   u3wf_face(u3_noun cor)
@@ -42,7 +38,7 @@
     if ( c3__void == tip ) {
       return c3__void;
     }
-    else return u3nt(c3__fuss,
+    else return u3nt(c3__face,
                      u3k(sag),
                      u3k(tip));
   }
