@@ -149,7 +149,7 @@
 =|  $:  $0                                              ::
         tym/{p/clok q/clok}                             ::  positive+negative
     ==                                                  ::
-|=  {now/@da eny/@ ski/sled}                            ::  current invocation
+|=  {now/@da eny/@ ski/sley}                            ::  current invocation
 ^?
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request

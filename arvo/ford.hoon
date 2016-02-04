@@ -166,10 +166,10 @@
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
 ::
 ++  norm                                                ::  normalize beam rev
-  |=  {ska/sled bem/beam}
+  |=  {ska/sley bem/beam}
   %_  bem
     r  ?:  ?=($ud -.r.bem)  r.bem
-       =+  num=(ska ~ %cw bem(s ~))
+       =+  num=(ska [%151 %noun] ~ %cw bem(s ~))
        ?.  ?=({$~ $~ * * @u} num)
          ~&  norm-lost+(tope bem(s ~))
          r.bem  ::  XX
@@ -181,7 +181,7 @@
               hen/duct                                  ::  event floor
               $:  now/@da                               ::  event date
                   eny/@                                 ::  unique entropy
-                  ska/sled                              ::  system namespace
+                  ska/sley                              ::  system namespace
               ==                                        ::
               mow/(list move)                           ::  pending actions
           ==                                            ::
@@ -1264,7 +1264,7 @@
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  {cof/cafe typ/span fol/nock}
-      %+  (coup cof)  (mecq [q.vax fol] (sloy syve))
+      %+  (coup cof)  (mock [q.vax fol] (sloy syve))
       |=(val/* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
@@ -1457,7 +1457,7 @@
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
       |=  {cof/cafe typ/span}
-      %+  (coup cof)  (mynq [q.gat q.sam] (sloy syve))
+      %+  (coup cof)  (mong [q.gat q.sam] (sloy syve))
       |=(val/* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
@@ -1839,7 +1839,7 @@
       =+  (~(get by keg) tem bem)
       ?^  -
         (some -)
-      (ska +<+.$)
+      (ska +<.$)
     --
   --
 ::
@@ -1847,7 +1847,7 @@
 .  ==
 =|  axle
 =*  lex  -
-|=  {now/@da eny/@ ski/sled}                            ::  activate
+|=  {now/@da eny/@ ski/sley}                            ::  activate
 ^?                                                      ::  opaque core
 ~%  %ford-d  ..is  ~
 |%                                                      ::

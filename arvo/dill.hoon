@@ -101,7 +101,7 @@
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
-|=  {now/@da eny/@ ski/sled}                            ::  current invocation
+|=  {now/@da eny/@ ski/sley}                            ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
       |_  $:  {moz/(list move) hen/duct our/ship}

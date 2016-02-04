@@ -328,8 +328,7 @@
               {$8 p/nock q/nock}                        ::  push onto subject
               {$9 p/@ q/nock}                           ::  select arm and fire
               {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
-              {$11 p/nock}                              ::  grab data from sky
-              {$12 p/nock q/nock}                       ::  typed data from sky
+              {$11 p/nock q/nock}                       ::  grab data from sky
           ==                                            ::
 ++  span  $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
@@ -4534,23 +4533,12 @@
 ++  mack
   |=  {sub/* fol/*}
   ^-  (unit)
-  =+  ton=(mink [sub fol] |~(* ~))
+  =+  ton=(mink [sub fol] |=({* *} ~))
   ?.(?=({$0 *} ton) ~ [~ p.ton])
-::
-++  mick
-  ~/  %mick
-  |=  {{sub/* fol/*} sea/$+({* *} (unit))}
-  (mink [sub fol] |=(* (sea [151 %noun] +<)))
-::
-++  micq
-  ~/  %micq
-  |=  {{sub/* fol/*} gul/$+({* *} (unit (unit)))}
-  ~&  %soft-micq
-  (mick [sub fol] |=({* *} =+((gul +<) ?~(- ~ ?~(u.- ~ -)))))
 ::
 ++  mink
   ~/  %mink
-  |=  {{sub/* fol/*} sky/$+(* (unit))}
+  |=  {{sub/* fol/*} gul/$+({* *} (unit (unit)))}
   =+  tax=*(list {@ta *})
   |-  ^-  tone
   ?@  fol
@@ -4615,26 +4603,18 @@
       $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
-      {$12 b/* c/*}
+      {$11 b/* c/*}
     =+  ref=$(fol b.fol)
     =+  ben=$(fol c.fol)
     ?.  ?=($0 -.ref)  ref
     ?.  ?=($0 -.ben)  ben
-    =+  val=(sky p.ben)
-    ?~(val [%1 p.ben ~] [%0 u.val])
+    =+  val=(gul p.ref p.ben)
+    ?~(val [%1 p.ben ~] ?~(u.val !! [%0 u.u.val]))
   ==
 ::
 ++  mock
-  |=  {{sub/* fol/*} sky/$+(* (unit))}
-  (mook (mink [sub fol] sky))
-::
-++  meck
-  |=  {{sub/* fol/*} sea/$+({* *} (unit))}
-  (mook (mick [sub fol] sea))
-::
-++  mecq
   |=  {{sub/* fol/*} gul/$+({* *} (unit (unit)))}
-  (mook (micq [sub fol] gul))
+  (mook (mink [sub fol] gul))
 ::
 ++  moop
   |=  pon/(list {@ta *})  ^+  pon
@@ -4692,41 +4672,14 @@
                  leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
   ==         ==
 ::
-++  mang
-  |=  {{gat/* sam/*} sky/$+(* (unit))}
-  ^-  (unit)
-  =+  ton=(mong [[gat sam] sky])
-  ?.(?=({$0 *} ton) ~ [~ p.ton])
-::
-++  myng
-  |=  {{gat/* sam/*} sea/$+({* *} (unit))}
-  ^-  toon
-  ?.  &(?=(^ gat) ?=(^ +.gat))
-    [%2 ~]
-  (meck [[-.gat [sam +>.gat]] -.gat] sea)
-::
-++  mynq
+++  mong
   |=  {{gat/* sam/*} gul/$+({* *} (unit (unit)))}
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
-  (mecq [[-.gat [sam +>.gat]] -.gat] gul)
+  (mock [[-.gat [sam +>.gat]] -.gat] gul)
 ::
-++  mong
-  |=  {{gat/* sam/*} sky/$+(* (unit))}
-  ^-  toon
-  ?.  &(?=(^ gat) ?=(^ +.gat))
-    [%2 ~]
-  (mock [[-.gat [sam +>.gat]] -.gat] sky)
-::
-++  mung
-  |=  {{gat/* sam/*} sky/$+(* (unit))}
-  ^-  tone
-  ?.  &(?=(^ gat) ?=(^ +.gat))
-    [%2 ~]
-  (mink [[-.gat [sam +>.gat]] -.gat] sky)
-::
-++  mule                                                ::  spand virtual
+++  mule                                                ::  typed virtual
   ~/  %mule
   |*  taq/_|.(**)
   =+  mud=(mute taq)
@@ -4735,10 +4688,10 @@
     $|  [%| p=p.mud]
   ==
 ::
-++  mute                                                ::  unspand virtual
+++  mute                                                ::  untyped virtual
   |=  taq/_^?(|.(**))
   ^-  (each * (list tank))
-  =+  ton=(mock [taq 9 2 0 1] |=(* ~))
+  =+  ton=(mock [taq 9 2 0 1] |=({* *} ~))
   ?-  -.ton
     $0  [%& p.ton]
     $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
@@ -6579,7 +6532,7 @@
   (slap gat(+<.q sam) [%limb %$])
 ::
 ++  slap
-  |=  {vax/vase gen/twig}  ^-  vase                     ::  unspand vase .*
+  |=  {vax/vase gen/twig}  ^-  vase                     ::  untyped vase .*
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
@@ -8599,7 +8552,7 @@
         {$ktpm *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
         {$ktsg *}
       =+  nef=$(gen p.gen)
-      =+  moc=(mink [burn q.nef] |=(* ~))
+      =+  moc=(mink [burn q.nef] |=({* *} ~))
       [p.nef ?:(?=($0 -.moc) [%1 p.moc] q.nef)]
     ::
         {$ktts *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
@@ -10408,15 +10361,10 @@
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
-++  sled  $+  {(unit (set monk)) term beam}             ::  namespace function
-          (unit (unit cage))                            ::
 ++  sley  $+  {* (unit (set monk)) term beam}           ::  namespace function
           (unit (unit cage))                            ::
-++  slad  $+  {(unit (set monk)) term beam}             ::  fully advanced
-          (unit (unit (cask)))                          ::
 ++  slyd  $+  {* (unit (set monk)) term beam}           ::  super advanced
           (unit (unit (cask)))                          ::
-++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  slyt  $+({* *} (unit (unit)))                       ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ/span                                  ::  -:!>(*span)
@@ -10425,31 +10373,6 @@
               mev/span                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wire  path                                          ::  event pretext
-::::: hacks and tools
-++  slod
-  |=  sed/slad
-  ^-  slut
-  |=  raw/*
-  =+  pux=((soft path) raw)
-  ?~  pux  ~
-  ?.  ?=({@ @ @ @ *} u.pux)  ~
-  =+  :*  hyr=(slay i.u.pux)
-          fal=(slay i.t.u.pux)
-          dyc=(slay i.t.t.u.pux)
-          ved=(slay i.t.t.t.u.pux)
-          tyl=t.t.t.t.u.pux
-      ==
-  ?.  ?=({$~ $$ $tas @} hyr)  ~
-  ?.  ?=({$~ $$ $p @} fal)  ~
-  ?.  ?=({$~ $$ $tas @} dyc)  ~
-  ?.  ?=(^ ved)  ~
-  =+  ron=q.p.u.hyr
-  =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
-  =+  bop=(sed ~ ron bed)
-  ?~  bop  ~
-  ?~  u.bop  [~ ~]
-  [~ ~ +.q.u.u.bop]
-::
 ++  sloy
   |=  sod/slyd
   ^-  slyt
@@ -10493,7 +10416,7 @@
     +>.^$(q.sew (slam (slap syg [%limb %load]) (slap rig [%limb %stay])))
   ::
   ++  wink                                              ::  deploy
-    |=  {now/@da eny/@ ski/slad}
+    |=  {now/@da eny/@ ski/slyd}
     =+  rig=(slym q.sew +<)                             ::  activate vane
     ~%  %wink  +>+>  ~
     |%
@@ -10718,8 +10641,8 @@
   |=  {vil/vile eny/@ bud/vase niz/(pair worm (list {p/@tas q/vase}))}
   |_  now/@da
   ++  beck
-    ^-  slad
-    |=  {fur/(unit (set monk)) ron/term bed/beam}
+    ^-  slyd
+    |=  {* fur/(unit (set monk)) ron/term bed/beam}
     ^-  (unit (unit (cask)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
@@ -10921,7 +10844,7 @@
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon]
-  =+  rob=((slod ~(beck (is vil eny bud niz) now)) hap)
+  =+  rob=((sloy ~(beck (is vil eny bud niz) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]

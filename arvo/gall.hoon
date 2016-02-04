@@ -92,7 +92,7 @@
 =|  all/axle                                            ::  all vane state
 |=  $:  now/@da                                         ::  urban time
         eny/@uvI                                        ::  entropy
-        ska/sled                                        ::  activate
+        ska/sley                                        ::  activate
     ==                                                  ::  opaque core
 ~%  %gall-top  ..is  ~
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state machine
@@ -1118,12 +1118,6 @@
         [%| (ap-suck "invalid core")]
       [%& vax]
     ::
-    ++  ap-mong
-      ~/  %ap-mong
-      |=  {{gat/* sam/*} sky/$+(* (unit))}
-      ^-  toon
-      (mong [gat sam] sky)
-    ::
     ++  ap-slam                                         ::  virtual slam
       ~/  %ap-slam
       |=  {cog/term gat/vase arg/vase}
@@ -1135,14 +1129,14 @@
             (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
         :_(+>.$ [%| (ap-suck "call: {<cog>}: type mismatch")])
       :_  +>.$(vel +>.wyz)
-      =+  ton=(ap-mong [q.gat q.arg] ap-sled)
+      =+  ton=(mong [q.gat q.arg] ap-sled)
       ?-  -.ton
         $0  [%& +<.wyz p.ton]
         $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
         $2  [%| p.ton]
       ==
     ::
-    ++  ap-sled  (mole (slod ska))                      ::  namespace view
+    ++  ap-sled  (sloy ska)                             ::  namespace view
     ++  ap-suck                                         ::  standard tang
       |=  msg/tape
       ^-  tang

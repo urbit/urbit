@@ -2574,7 +2574,7 @@
     $:  $0                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
-|=  {now/@da eny/@ ski/sled}                          ::  activate
+|=  {now/@da eny/@ ski/sley}                          ::  activate
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request

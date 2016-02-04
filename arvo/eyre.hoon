@@ -540,7 +540,7 @@
               $:  now/@da                               ::  event date
                   eny/@                                 ::  unique entropy
                   our/ship                              ::  current ship
-                  sky/$+(* (unit))                      ::  system namespace
+                  sky/$+({* *} (unit))                  ::  system namespace
               ==                                        ::
               mow/(list move)                           ::  pending actions
           ==                                            ::
@@ -918,7 +918,7 @@
     ^-  @ta
     =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
     %^  rsh  3  1
-    (scot %p (@ (need (sky %a pax))))
+    (scot %p (@ (need (sky [151 %noun] %a pax))))
   ::
   ::
   ++  handle
@@ -1167,7 +1167,7 @@
         =+  wir=`whir`[%ha (tope -.bem ~)]
         =.  wir  ?+(mef !! $post wir, $get wir, $head [%he wir])
         ~|  bad-beam+q.bem
-        ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
+        ?<  =([~ 0] (sky [%151 %noun] %cw (tope bem(+ ~, r [%da now]))))
         ?.  aut
           [%& %boil [wir ext bem nquy]]
         [%| (ford-boil [wir ext bem nquy])]  ::  XX properly
@@ -1564,7 +1564,7 @@
 .   ==
 =|  bolo
 =*  bol  -
-|=  {now/@da eny/@ ski/sled}                            ::  activate
+|=  {now/@da eny/@ ski/sley}                            ::  activate
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  call                                                ::  handle request
@@ -1592,8 +1592,8 @@
         misc+[%& bol]
     ==
   =+  our=`@p`0x100  ::  XX  sentinel
-  =+  ska=(slod ski)
-  =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
+  =+  ska=(sloy ski)
+  =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]
   =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
@@ -1632,8 +1632,8 @@
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
   =+  our=`@p`0x100  ::  XX  sentinel
-  =+  ska=(slod ski)
-  =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
+  =+  ska=(sloy ski)
+  =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]
   =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
