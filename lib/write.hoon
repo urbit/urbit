@@ -37,6 +37,11 @@
   |=  [typ=?(%hoon %md %txt) txt=@t]  ^+  abet
   (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco txt))
 ::
+++  poke-sec-atom
+  |=  [hot=host dat=@]
+  ?>  ?=(%& -.hot)
+  (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
+::
 ++  poke--data
   |=  [[ext=(unit ,@t) pax=path] dat=data]  ^+  abet
   ?~  ext  $(ext [~ -.dat])
