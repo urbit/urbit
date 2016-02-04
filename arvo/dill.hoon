@@ -211,7 +211,7 @@
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
-        =.  +>  ?:  ?=($czar can)  +>
+        =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)
         =.  +>  (sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
