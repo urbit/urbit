@@ -777,7 +777,7 @@
 ::
 ++  jo                                                  ::  json reparser
   =>  |%  ++  grub  (unit *) 
-          ++  fist  $+(json grub)
+          ++  fist  $-(json grub)
       --
   |%
   ++  ar                                                ::  array as list
@@ -810,12 +810,12 @@
     |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
   ::
   ++  ci                                                ::  maybe transform
-    |*  {poq/$+(* *) wit/fist}
+    |*  {poq/$-(* *) wit/fist}
     |=  jon/json
     (biff (wit jon) poq)
   ::
   ++  cu                                                ::  transform
-    |*  {poq/$+(* *) wit/fist}
+    |*  {poq/$-(* *) wit/fist}
     |=  jon/json
     (bind (wit jon) poq)
   ::
@@ -1457,7 +1457,7 @@
     ==
   ==
 ++  pale                                                ::  filter peers
-  |=  {hid/bowl fun/$+(sink ?)}
+  |=  {hid/bowl fun/$-(sink ?)}
   (skim (~(tap by sup.hid)) fun)
 ::
 ++  prix                                                ::  filter gate
@@ -1474,7 +1474,7 @@
   ?:((lth u.one u.two) one two)
 ::
 ++  mole                                                ::  new to old sky
-  |=  ska/$+(* (unit (unit)))
+  |=  ska/$-(* (unit (unit)))
   |=  a/*
   ^-  (unit)
   =+  b=(ska a)
@@ -1483,8 +1483,8 @@
   [~ u.u.b]
 ::
 ++  myle                                                ::  new to old sky
-  |=  ska/$+({* *} (unit (unit)))
-  ^-  $+({* *} (unit))
+  |=  ska/$-({* *} (unit (unit)))
+  ^-  $-({* *} (unit))
   |=  a/{* *}
   ^-  (unit)
   =+  b=(ska a)

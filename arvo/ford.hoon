@@ -31,7 +31,7 @@
       jav/(map * calx)                                  ::  cache
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
-  |*  a/$+(* *)                                         ::  product clam
+  |*  a/$-(* *)                                         ::  product clam
   $:  p/cafe                                            ::  cache
     $=  q                                               ::
       $%  {$0 p/(set beam) q/a}                         ::  depends+product
@@ -41,8 +41,8 @@
   ==                                                    ::
 ::                                                      ::
 ++  burg                                                ::  gonadic rule
-  |*  {a/$+(* *) b/$+(* *)}                             ::  from and to
-  $+({c/cafe d/a} (bolt b))                             ::
+  |*  {a/$-(* *) b/$-(* *)}                             ::  from and to
+  $-({c/cafe d/a} (bolt b))                             ::
 ::                                                      ::
 ++  cafe                                                ::  live cache
   $:  p/(set calx)                                      ::  used
@@ -147,7 +147,7 @@
   (~(gas by one) (~(tap by two) ~))                     ::  XX ugh
 ::
 ++  lark                                                ::  filter arch names
-  |=  {wox/$+(knot (unit @)) arc/arch}
+  |=  {wox/$-(knot (unit @)) arc/arch}
   ^-  (map @ knot)
   %-  ~(gas by *(map @ knot))
   =|  rac/(list (pair @ knot))
@@ -423,7 +423,7 @@
     ::
     ++  coup                                            ::  toon to bolt
       |=  cof/cafe
-      |*  {ton/toon fun/$+(* *)}
+      |*  {ton/toon fun/$-(* *)}
       :-  p=cof
       ^=  q
       ?-  -.ton
@@ -461,7 +461,7 @@
     ::
     ++  cowl                                            ::  each to bolt
       |=  cof/cafe
-      |*  {tod/(each * tang) fun/$+(* *)}
+      |*  {tod/(each * tang) fun/$-(* *)}
       %+  (coup cof)
         ?-  -.tod
           $&  [%0 p=p.tod]
@@ -927,7 +927,7 @@
       ::
       ++  done  .
       ++  with
-        |*  {a/(bolt _done) b/$+(_done (bolt))}  ^+  *b
+        |*  {a/(bolt _done) b/$-(_done (bolt))}  ^+  *b
         (cope a |=({cof/cafe c/_done} (b c(cof cof))))
       ::
       ++  return

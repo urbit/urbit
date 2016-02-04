@@ -119,7 +119,7 @@
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
   ++  stat
     =+  jo
-    ^-  $+(json (unit {id/@u who/@ta now/@da txt/@t}))
+    ^-  $-(json (unit {id/@u who/@ta now/@da txt/@t}))
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
@@ -128,7 +128,7 @@
     ==
   ++  usel
     =+  jo
-    ^-  $+(json (unit (list who/@ta)))
+    ^-  $-(json (unit (list who/@ta)))
     =-  (ot users+(ar -) ~)
     (ot (fasp screen-name+(su user)) ~)
   --
@@ -192,7 +192,7 @@
     (roll +< |=({p/tid q/@t} (cat 3 (cat 3 q ',') (lutt p))))
   ::
   ++  mold                                        ::  construct request
-    |*  {med/meth pax/path a/$+(* *)}
+    |*  {med/meth pax/path a/$-(* *)}
     |=  {args/a quy/quay}
     (valve med (cowl pax args quy) key est eny)
   ::

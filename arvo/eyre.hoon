@@ -176,7 +176,7 @@
   (biff (from-cookies maf |=({k/@ @} =(%ship k))) (slat %p))
 ::
 ++  from-cookies
-  |=  {maf/math fil/$+({@t @t} ?)}
+  |=  {maf/math fil/$-({@t @t} ?)}
   =+  `cot/(list @t)`(~(get ju maf) 'cookie')
   =+  `cok/quay`(zing `(list quay)`(murn cot (curr rush cock:epur)))
   |-  ^-  (unit cord)
@@ -540,7 +540,7 @@
               $:  now/@da                               ::  event date
                   eny/@                                 ::  unique entropy
                   our/ship                              ::  current ship
-                  sky/$+({* *} (unit))                  ::  system namespace
+                  sky/$-({* *} (unit))                  ::  system namespace
               ==                                        ::
               mow/(list move)                           ::  pending actions
           ==                                            ::
@@ -930,7 +930,7 @@
     |%
     ++  abet  ..handle
     ++  done  .
-    ++  teba  |*(a/$+(* ..handle) |*(b/* %_(done ..handle (a b))))
+    ++  teba  |*(a/$-(* ..handle) |*(b/* %_(done ..handle (a b))))
     ++  execute  (teba ^execute)
     ++  del-deps  (teba ^del-deps)
     ++  new-deps  (teba ^new-deps)
@@ -1432,7 +1432,7 @@
       =.  +>  poll-rest
       ..ix(wix (~(del by wix) ire))
     ::
-    ++  teba  |*(a/$+(* ..ix) |*(b/* %_(done ..ix (a b))))
+    ++  teba  |*(a/$-(* ..ix) |*(b/* %_(done ..ix (a b))))
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
     ++  hurl-note 

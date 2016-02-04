@@ -85,7 +85,7 @@
   [i.q.tub $(q.tub t.q.tub)]
 ::
 ++  enrule                                              ::  XX
-  |*  a/$+(tape *)
+  |*  a/$-(tape *)
   |=  tub/nail
   ^-  (like a)
   [[0 0] ~ (a q.tub) [0 0] ~]
@@ -93,7 +93,7 @@
   =~
 |%
 ++  strip
-  |=  {a/$+(nail edge) b/tape}
+  |=  {a/$-(nail edge) b/tape}
   ^-  tape
   =+  q:(a 1^1 b)
   ?~(- b q.q.u.-)
@@ -183,7 +183,7 @@
           |=({a/kids b/{tape (unit tape)}} [[%link b] a])
       |%
       ++  apex  
-        =+  ^-  rob/$+(nail (like {kids $@(cord {tape (unit tape)})}))
+        =+  ^-  rob/$-(nail (like {kids $@(cord {tape (unit tape)})}))
             ;~(plug text(nol &) labe)
         ::
         |=  tub/nail  

@@ -55,30 +55,30 @@
 ::                                                      ::
 ::                                                      ::
 ++  sole-dialog                                         ::  standard dialog
-  |*  out/$+(* *)                                       ::  output structure
-  $+(sole-input (sole-result out))                      ::  output function
+  |*  out/$-(* *)                                       ::  output structure
+  $-(sole-input (sole-result out))                      ::  output function
 ::                                                      ::
 ++  sole-input  tape                                    ::  prompt input
 ++  sole-result                                         ::  conditional result
-  |*  out/$+(* *)                                       ::  output structure
+  |*  out/$-(* *)                                       ::  output structure
   $@(@ud (sole-product out))                            ::  error position
 ::                                                      ::
 ++  sole-product                                        ::  success result
-  |*  out/$+(* *)                                       ::
+  |*  out/$-(* *)                                       ::
   %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
   (pair sole-prompt (sole-dialog out))                  ::  ask and continue
 ::                                                      ::
 ++  sole-request                                        ::  scraper result
-  |*  out/$+(* *)                                       ::  output structure
+  |*  out/$-(* *)                                       ::  output structure
   %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
-  (pair hiss $+(httr (sole-request out)))               ::  fetch and continue
+  (pair hiss $-(httr (sole-request out)))               ::  fetch and continue
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
-  $%  {$say $+((sole-args) (cask))}                     ::  direct noun
-      {$ask $+((sole-args) (sole-product (cask)))}      ::  dialog
-      {$get $+((sole-args) (sole-request (cask)))}      ::  scraper
+  $%  {$say $-((sole-args) (cask))}                     ::  direct noun
+      {$ask $-((sole-args) (sole-product (cask)))}      ::  dialog
+      {$get $-((sole-args) (sole-request (cask)))}      ::  scraper
   ==                                                    ::
 ++  sole-args                                           ::  generator arguments
   |*  _[* *]                                         ::
@@ -99,14 +99,14 @@
   [p=*(list tank) q=[%| p=pom q=mor]]                   ::
 ::                                                      ::
 ++  sole-at                                             ::  fetch url
-  |*  {pul/_purl fun/$+(httr *)}                     ::
+  |*  {pul/_purl fun/$-(httr *)}                     ::
   [p=*(list tank) q=[%| p=[pul %get ~ ~] q=fun]]        ::
 ::                                                      ::
 ++  sole-no                                             ::  empty result
   [p=*(list tank) q=[%& ~]]                             ::
 ::                                                      ::
 ++  sole-go                                             ::  parse by rule
-  |*  {sef/rule fun/$+(* *)}                            ::
+  |*  {sef/rule fun/$-(* *)}                            ::
   |=  txt/sole-input                                    ::
   =+  vex=(sef [0 0] txt)                               ::
   ?:  |(!=((lent txt) q.p.vex) ?=($~ q.vex))            ::

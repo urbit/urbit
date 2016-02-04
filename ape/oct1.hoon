@@ -32,7 +32,7 @@
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. _+>)                                    ::  self-transformer
+++  bike  $-(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad/card %_(+> moz [[ost cad] moz]))       ::  request
 ++  eels  (~(tap by sup))                               ::  all clients
 ++  echo  |=  {all/(list sink) fun/bike}  =+  old=+>+<- ::

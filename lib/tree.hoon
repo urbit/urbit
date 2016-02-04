@@ -19,7 +19,7 @@
 ::
 ++  baff  |*({a/(unit) b/(trap)} ?^(a a *b))
 ++  find-in-tree
-  |*  {paz/fist:jo fun/$+(* (unit))}
+  |*  {paz/fist:jo fun/$-(* (unit))}
   |=  jon/json
   =+  a=`(list json)`~[jon]
   |^  (try)
@@ -32,7 +32,7 @@
   --
 ::
 ++  map-to-json
-  |*  {a/$+(* cord) b/$+(* json)}
+  |*  {a/$-(* cord) b/$-(* json)}
   |*  c/(map)  ^-  json
   ~!  c
   (jobe (turn (~(tap by c)) |*({* *} [(a +<-) (b +<+)])))

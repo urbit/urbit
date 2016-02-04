@@ -263,7 +263,7 @@
         (emil cards)
     %+  roll  `(list @tas)`vanes
     =<  %_(. cur-vanes ^cur-vanes)
-    ::^-  $+([@tas _+>.^$] _+>.^$)
+    ::^-  $-([@tas _+>.^$] _+>.^$)
     |=  {syd/@tas cur-vanes/(map @tas @uvI) cards/(list card)}
     =+  ^=  new-vane
         .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)

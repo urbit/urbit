@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject 
@@ -16,7 +16,7 @@
 ~%  %k.151  ~  ~                                        ::
 |%                                                      ::
 ++  hoon  %151                                          ::  version stub
---                                                      ::
+--                                                      ::  
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 1, Hoon models                 ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -132,7 +132,7 @@
 ++  pole  |*  a/$-(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  port  (each palo (pair span nock))                  ::  successful match
-++  qual  |*  {a/$-(* *) b/$-(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
+++  qual  |*  {a/$-(* *) b/$-(* *) c/$-(* *) d/$-(* *)} ::  just a quadruple
           {p/a q/b r/c s/d}                             ::
 ++  ring  @                                             ::  private key
 ++  rule  _|=(nail *edge)                               ::  parsing rule
@@ -178,7 +178,7 @@
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
 ++  trap  |*(a/_* _|?(*a))                        ::  makes perfect sense
-++  trel  |*  {a/$-(* *) b/$-(* *) c/$+(* *)}           ::  just a triple
+++  trel  |*  {a/$-(* *) b/$-(* *) c/$-(* *)}           ::  just a triple
           {p/a q/b r/c}                                 ::
 ++  tuna                                                ::  tagflow
           $%  {$a p/twig}                               ::  plain text
@@ -212,7 +212,6 @@
     {$bccl p/(list twig)}                               ::  tuple
     {$bccn p/(list twig)}                               ::  tagged fork (kelp)
     {$bchp p/twig q/twig}                               ::  function
-    {$bcls p/twig q/twig}                               ::  function
     {$bckt p/twig q/twig}                               ::  pairhead fork (bush)
     {$bcwt p/(list twig)}                               ::  untagged fork
     {$bcts p/term q/twig}                               ::  name
@@ -7003,7 +7002,6 @@
     ::
         {$bckt *}  [%bush boil(gen p.gen) boil(gen q.gen)]
         {$bchp *}  [%weed [%brsg p.gen [%cnbc [%tsgr [%$ 7] q.gen]]]]  
-        {$bcls *}  [%weed [%brsg p.gen [%cnbc [%tsgr [%$ 7] q.gen]]]]  
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7063,7 +7061,6 @@
         {$bccl *}  ~(clam al boil)
         {$bccn *}  ~(clam al boil)
         {$bchp *}  ~(clam al boil)
-        {$bcls *}  ~(clam al boil)
         {$bckt *}  ~(clam al boil)
         {$bcwt *}  ~(clam al boil)
         {$bcts *}  ~(clam al boil)
@@ -9741,7 +9738,6 @@
                     [':' (rune col %bccl exps)]
                     ['%' (rune cen %bccn exps)]
                     ['^' (rune ket %bckt expb)]
-                    ['+' (rune lus %bcls expb)]
                     ['-' (rune hep %bchp expb)]
                     ['=' (rune tis %bcts expg)]
                     ['?' (rune wut %bcwt exps)]

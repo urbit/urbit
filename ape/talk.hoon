@@ -1294,7 +1294,7 @@
   ::
   ++  ra-know                                           ::  story monad
     |=  man/knot
-    |*  fun/$+(_pa _+>)
+    |*  fun/$-(_pa _+>)
     ^+  +>+>
     =+  pur=(~(get by stories) man)
     ?~  pur
@@ -2092,12 +2092,12 @@
   ==
 ::
 ++  etch-friend                                         ::
-  |=  {way/wire fun/$+({man/knot cuz/station} {(list move) _.})}
+  |=  {way/wire fun/$-({man/knot cuz/station} {(list move) _.})}
   =+  wer=(etch way)
   ?>(?=($friend -.wer) (fun p.wer q.wer))
 ::
 ++  etch-repeat                                         ::
-  |=  {way/wire fun/$+({num/@ud src/@p man/knot} {(list move) _.})}
+  |=  {way/wire fun/$-({num/@ud src/@p man/knot} {(list move) _.})}
   =+  wer=(etch way)
   ?>(?=($repeat -.wer) (fun p.wer q.wer r.wer))
 ::

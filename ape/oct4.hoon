@@ -54,7 +54,7 @@
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. _+>)                                    ::  self-transformer
+++  bike  $-(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad/card %_(+> moz [[ost cad] moz]))       ::  request
 ++  done  (echo eels |=(_. (dish:+< %quit ~)))          ::  cancel everyone
 ++  echo  |=  {all/(list sink) fun/bike}  =+  old=+>+<- ::  publish to all

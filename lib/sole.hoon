@@ -112,7 +112,7 @@
   [dat abet:(apply(his.ven +(his.ven)) dat)]
 ::
 ++  remit                                             ::  conditional accept
-  |=  {cal/sole-change ask/$+((list @c) ?)}
+  |=  {cal/sole-change ask/$-((list @c) ?)}
   ^-  {(unit sole-change) sole-share}
   =+  old=buf
   =^  dat  +>+<.$  (receive cal)

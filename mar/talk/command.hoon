@@ -39,7 +39,7 @@
       |*  a/fist 
       (cu ~(gas in *(set _(need *a))) (ar a))
     ::
-    ++  lake  |*(a/_* $+(json (unit a)))
+    ++  lake  |*(a/_* $-(json (unit a)))
     ++  peach
       |*  a/{rule rule}
       |=  tub/nail  
@@ -56,7 +56,7 @@
     ::
     ::
     ++  thot
-      ^-  $+(json (unit thought))
+      ^-  $-(json (unit thought))
       %-  ot  :~
         serial+ceri  
         audience+audi 
@@ -64,11 +64,11 @@
       ==
     ::
     ++  ceri
-      ^-  $+(json (unit serial))
+      ^-  $-(json (unit serial))
       (ci (slat %uv) so)
     ::
     ++  audi  
-      ^-  $+(json (unit audience))
+      ^-  $-(json (unit audience))
       (op parn memb) 
     ::
     ++  auri  (op parn (ci (soft presence) so))  
@@ -76,7 +76,7 @@
     ++  lope  (ot [visible+bo sender+(mu (su parn)) ~])  
     ::
     ++  parn
-      ^-  $+(nail (like partner))
+      ^-  $-(nail (like partner))
       %+  peach
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
       %+  sear  (soft passport)
@@ -97,7 +97,7 @@
       ==
     ::
     ++  stam
-      ^-  $+(json (unit statement))   
+      ^-  $-(json (unit statement))   
       %+  cu  eval
       (ot date+di bouquet+(as (ar so)) speech+spec ~)
     ::
@@ -113,7 +113,7 @@
       ==
     ::
     ++  conf
-      ^-  $+(json (unit config))
+      ^-  $-(json (unit config))
       %-  ot  :~
         sources+(as (su parn))
         caption+so
