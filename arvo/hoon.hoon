@@ -25,7 +25,7 @@
   ~
 |%                                                      ::
 ++  abel  typo                                          ::  original sin: span
-++  ache  |*  {a/$+(* *) b/$+(* *)}                     ::  either a or b
+++  ache  |*  {a/$-(* *) b/$-(* *)}                     ::  either a or b
           $%({$| p/b} {$& p/a})                         ::    b default
 ++  axis  @                                             ::  tree address
 ++  bank  (list @cF)                                    ::  UTF-32 string
@@ -43,7 +43,7 @@
           $%  {$a p/twig}                               ::  take tape
               {$b p/twig}                               ::  take manx
               {$c p/twig}                               ::  take marl
-              {$d p/twig}                               ::  take $+(marl marl)
+              {$d p/twig}                               ::  take $-(marl marl)
               {$e p/twig q/(list tuna)}                 ::  element literal
           ==                                            ::
 ++  bloq  @                                             ::  blockclass
@@ -71,16 +71,16 @@
 ++  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
 ++  dime  {p/@ta q/@}                                   ::
 ++  dock  (pair @p term)                                ::  message target
-++  each  |*  {a/$+(* *) b/$+(* *)}                     ::  either a or b
+++  each  |*  {a/$-(* *) b/$-(* *)}                     ::  either a or b
           $%({$& p/a} {$| p/b})                         ::    a default
 ++  edge  {p/hair q/(unit {p/* q/nail})}                ::  parsing output
 ++  foot  $%  {$ash p/twig}                             ::  dry arm, geometric
               {$elm p/twig}                             ::  wet arm, generic
           ==                                            ::
-++  gate  $+(* *)                                       ::  general gate
+++  gate  $-(* *)                                       ::  general gate
 ++  hair  {p/@ud q/@ud}                                 ::  parsing trace
 ++  knot  @ta                                           ::  ASCII text
-++  like  |*  a/$+(* *)                                 ::  generic edge
+++  like  |*  a/$-(* *)                                 ::  generic edge
           |=  b/_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
           ^=  q                                         ::
@@ -92,9 +92,9 @@
               {$| p/@ud q/(unit term)}                  ::  by name
           ==                                            ::
 ++  line  {p/{$leaf p/odor q/@} q/tile}                 ::  %kelp case
-++  list  |*  a/$+(* *)                                 ::  null-term list
+++  list  |*  a/$-(* *)                                 ::  null-term list
           $@($~ {i/a t/(list a)})                       ::
-++  lone  |*(a/$+(* *) p/a)                             ::  just one thing
+++  lone  |*(a/$-(* *) p/a)                             ::  just one thing
 ++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
 ++  manx  {g/marx c/marl}                               ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
@@ -107,14 +107,14 @@
 ++  odor  @ta                                           ::  atom format
 ++  tarp  {d/@ud h/@ud m/@ud s/@ud f/(list @ux)}        ::  parsed time
 ++  time  @da                                           ::  galactic time
-++  tree  |*  a/$+(* *)                                 ::  binary tree
+++  tree  |*  a/$-(* *)                                 ::  binary tree
           $@($~ {n/a l/(tree a) r/(tree a)})            ::
 ++  nail  {p/hair q/tape}                               ::  parsing input
 ++  numb  @                                             ::  just a number
-++  pair  |*({a/$+(* *) b/$+(* *)} {p/a q/b})           ::  just a pair
-++  quid  |*({a/$+(* *) b/*} {a _b})                    ::  for =^
-++  quip  |*({a/$+(* *) b/*} {(list a) _b})             ::  for =^
-++  wand  |*  a/(pole $+(* *))                          ::  hetero list
+++  pair  |*({a/$-(* *) b/$-(* *)} {p/a q/b})           ::  just a pair
+++  quid  |*({a/$-(* *) b/*} {a _b})                    ::  for =^
+++  quip  |*({a/$-(* *) b/*} {(list a) _b})             ::  for =^
+++  wand  |*  a/(pole $-(* *))                          ::  hetero list
           |=  b/*                                       ::
           ?~  a  ~                                      ::
           ?@  b  ~                                      ::
@@ -129,10 +129,10 @@
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  palo  (pair vein opal)                              ::  wing trace, match
 ++  pock  (pair axis nock)                              ::  changes
-++  pole  |*  a/$+(* *)                                 ::  nameless list
+++  pole  |*  a/$-(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  port  (each palo (pair span nock))                  ::  successful match
-++  qual  |*  {a/$+(* *) b/$+(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
+++  qual  |*  {a/$-(* *) b/$-(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
           {p/a q/b r/c s/d}                             ::
 ++  ring  @                                             ::  private key
 ++  rule  _|=(nail *edge)                               ::  parsing rule
@@ -178,7 +178,7 @@
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
 ++  trap  |*(a/_* _|?(*a))                        ::  makes perfect sense
-++  trel  |*  {a/$+(* *) b/$+(* *) c/$+(* *)}           ::  just a triple
+++  trel  |*  {a/$-(* *) b/$-(* *) c/$+(* *)}           ::  just a triple
           {p/a q/b r/c}                                 ::
 ++  tuna                                                ::  tagflow
           $%  {$a p/twig}                               ::  plain text
@@ -211,6 +211,7 @@
     {$bccb p/twig}                                      ::  example
     {$bccl p/(list twig)}                               ::  tuple
     {$bccn p/(list twig)}                               ::  tagged fork (kelp)
+    {$bchp p/twig q/twig}                               ::  function
     {$bcls p/twig q/twig}                               ::  function
     {$bckt p/twig q/twig}                               ::  pairhead fork (bush)
     {$bcwt p/(list twig)}                               ::  untagged fork
@@ -387,11 +388,11 @@
               ==                                        ::
           $%  {$d p/@ud}                                ::  blocklist
           ==                                            ::
-++  unce  |*  a/$+(* *)                                 ::  change part
+++  unce  |*  a/$-(* *)                                 ::  change part
           $%  {$& p/@ud}                                ::  skip[copy]
               {$| p/(list a) q/(list a)}                ::  p -> q[chunk]
           ==                                            ::
-++  unit  |*  a/$+(* *)                                 ::  maybe
+++  unit  |*  a/$-(* *)                                 ::  maybe
           $@($~ {$~ u/a})                               ::
 ++  upas                                                ::  tree change (%d)
           $^  {p/upas q/upas}                           ::  cell
@@ -399,7 +400,7 @@
               {$1 p/*}                                  ::  insert new
               {$2 p/axis q/udon}                        ::  mutate!
           ==                                            ::
-++  urge  |*(a/$+(* *) (list (unce a)))                 ::  list change
+++  urge  |*(a/$-(* *) (list (unce a)))                 ::  list change
 ++  vase  {p/span q/*}                                  ::  span-value pair
 ++  vise  {p/typo q/*}                                  ::  old vase
 ++  wall  (list tape)                                   ::  text lines (no \n)
@@ -415,14 +416,14 @@
       mit/(map (pair span twig) (pair span nock))       ::  ++mint
   ==                                                    ::
 ::                                                      ::
-++  map  |*  {a/$+(* *) b/$+(* *)}                      ::  associative tree
+++  map  |*  {a/$-(* *) b/$-(* *)}                      ::  associative tree
          $@($~ {n/{p/a q/b} l/(map a b) r/(map a b)})   ::
-++  qeu  |*  a/$+(* *)                                  ::  queue
+++  qeu  |*  a/$-(* *)                                  ::  queue
          $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
-++  set  |*  a/$+(* *)                                  ::  set
+++  set  |*  a/$-(* *)                                  ::  set
          $@($~ {n/a l/(set a) r/(set a)})               ::
-++  jar  |*({a/$+(* *) b/$+(* *)} (map a (list b)))     ::  map of lists
-++  jug  |*({a/$+(* *) b/$+(* *)} (map a (set b)))      ::  map of sets
+++  jar  |*({a/$-(* *) b/$-(* *)} (map a (list b)))     ::  map of lists
+++  jug  |*({a/$-(* *) b/$-(* *)} (map a (set b)))      ::  map of sets
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 2, Hoon libraries and compiler ::::::
@@ -572,7 +573,7 @@
 ::                Section 2bA, units                    ::
 ::
 ++  biff                                                ::  apply
-  |*  {a/(unit) b/$+(* (unit))}
+  |*  {a/(unit) b/$-(* (unit))}
   ?~  a  ~
   (b u.a)
 ::
@@ -609,7 +610,7 @@
   ?~(a b u.a)
 ::
 ++  flit                                                ::  make filter
-  |*  a/$+(* ?)
+  |*  a/$-(* ?)
   |*  b/*
   ?.((a b) ~ [~ u=b])
 ::
@@ -670,7 +671,7 @@
 ::
 ++  levy
   ~/  %levy                                             ::  all of
-  |*  {a/(list) b/$+(* ?)}
+  |*  {a/(list) b/$-(* ?)}
   |-  ^-  ?
   ?~  a  &
   ?.  (b i.a)  |
@@ -678,7 +679,7 @@
 ::
 ++  lien                                                ::  some of
   ~/  %lien
-  |*  {a/(list) b/$+(* ?)}
+  |*  {a/(list) b/$-(* ?)}
   |-  ^-  ?
   ?~  a  |
   ?:  (b i.a)  &
@@ -686,7 +687,7 @@
 ::
 ++  murn                                                ::  maybe transform
   ~/  %murn
-  |*  {a/(list) b/$+(* (unit))}
+  |*  {a/(list) b/$-(* (unit))}
   |-
   ?~  a  ~
   =+  c=(b i.a)
@@ -719,7 +720,7 @@
 ::
 ++  skid                                                ::  separate
   ~/  %skid
-  |*  {a/(list) b/$+(* ?)}
+  |*  {a/(list) b/$-(* ?)}
   |-  ^+  [p=a q=a]
   ?~  a  [~ ~]
   =+  c=$(a t.a)
@@ -727,7 +728,7 @@
 ::
 ++  skim                                                ::  only
   ~/  %skim
-  |*  {a/(list) b/$+(* ?)}
+  |*  {a/(list) b/$-(* ?)}
   |-
   ^+  a
   ?~  a  ~
@@ -735,7 +736,7 @@
 ::
 ++  skip                                                ::  except
   ~/  %skip
-  |*  {a/(list) b/$+(* ?)}
+  |*  {a/(list) b/$-(* ?)}
   |-
   ^+  a
   ?~  a  ~
@@ -767,7 +768,7 @@
 ::
 ++  sort   !.                                           ::  quicksort
   ~/  %sort
-  |*  {a/(list) b/$+([* *] ?)}
+  |*  {a/(list) b/$-([* *] ?)}
   =>  .(a ^.(homo a))
   |-  ^+  a
   ?~  a  ~
@@ -782,7 +783,7 @@
 ::
 ++  turn                                                ::  transform
   ~/  %turn
-  |*  {a/(list) b/$+(* *)}
+  |*  {a/(list) b/$-(* *)}
   |-
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
@@ -1255,7 +1256,7 @@
   --
 ::
 ++  stat                                                ::  positive counter
-  |*  a/$+(* *)
+  |*  a/$-(* *)
   |=  (trel ? a (map a @ud))
   ^+  r
   =+  (~(get by r) q)
@@ -2214,8 +2215,8 @@
 ++  same  |*(* +<)                                      ::  identity
 ++  head  |*(^ +<-)                                     ::  get head
 ++  tail  |*(^ +<+)                                     ::  get head
-++  fore  |*(a/$+(* *) |*(b/$+(* *) (pair a b)))        ::  pair before
-++  aftr  |*(a/$+(* *) |*(b/$+(* *) (pair b a)))        ::  pair after
+++  fore  |*(a/$-(* *) |*(b/$-(* *) (pair a b)))        ::  pair before
+++  aftr  |*(a/$-(* *) |*(b/$-(* *) (pair b a)))        ::  pair after
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ++  cork  |*({a/_|=(* **) b/gate} (corl b a))           ::  compose forward
 ++  corl                                                ::  compose backwards
@@ -2238,14 +2239,14 @@
   |=({a/@ b/@} `(list @)`?:(=(a +(b)) ~ [a $(a +(a))]))
 ::
 ++  hard                                                ::  force coerce to span
-  |*  han/$+(* *)
+  |*  han/$-(* *)
   |=  fud/*  ^-  han
   ~|  %hard
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
 ++  soft                                                ::  maybe coerce to span
-  |*  han/$+(* *)
+  |*  han/$-(* *)
   |=  fud/*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
@@ -2310,7 +2311,7 @@
   |_  a/(set)
   +-  all                                               ::  logical AND
     ~/  %all
-    |*  b/$+(* ?)
+    |*  b/$-(* ?)
     |-  ^-  ?
     ?~  a
       &
@@ -2318,7 +2319,7 @@
   ::
   +-  any                                               ::  logical OR
     ~/  %any
-    |*  b/$+(* ?)
+    |*  b/$-(* ?)
     |-  ^-  ?
     ?~  a
       |
@@ -2449,7 +2450,7 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  run                                               ::  apply gate to values
-    |*  {b/$+(* *) c/*}
+    |*  {b/$-(* *) c/*}
     |-
     ?~  a  c
     $(a r.a, c [(b n.a) $(a l.a)])
@@ -2552,7 +2553,7 @@
   |_  a/(map)
   +-  all                                               ::  logical AND
     ~/  %all
-    |*  b/$+(* ?)
+    |*  b/$-(* ?)
     |-  ^-  ?
     ?~  a
       &
@@ -2560,7 +2561,7 @@
   ::
   +-  any                                               ::  logical OR
     ~/  %any
-    |*  b/$+(* ?)
+    |*  b/$-(* ?)
     |-  ^-  ?
     ?~  a
       |
@@ -2715,7 +2716,7 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  rib                                               ::  transform + product
-    |*  {b/* c/$+(* *)}
+    |*  {b/* c/$-(* *)}
     |-  ^+  [b a]
     ?~  a  [b ~]
     =+  d=(c n.a b)
@@ -2725,7 +2726,7 @@
     [-.f [n.a +.e +.f]]
   ::
   +-  run                                               ::  apply gate to values
-    |*  b/$+(* *)
+    |*  b/$-(* *)
     |-
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
@@ -2759,7 +2760,7 @@
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  urn                                               ::  apply gate to nodes
-    |*  b/$+({* *} *)
+    |*  b/$-({* *} *)
     |-
     ?~  a  ~
     [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
@@ -2959,7 +2960,7 @@
 ::
 ++  cook                                                ::  apply gate
   ~/  %cook
-  |*  {poq/$+(* *) sef/rule}
+  |*  {poq/$-(* *) sef/rule}
   ~/  %fun
   |=  tub/nail
   =+  vex=(sef tub)
@@ -3066,7 +3067,7 @@
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
 ++  sear                                                ::  conditional cook
-  |*  {pyq/$+(* (unit)) sef/rule}
+  |*  {pyq/$-(* (unit)) sef/rule}
   |=  tub/nail
   =+  vex=(sef tub)
   ?~  q.vex
@@ -4075,7 +4076,7 @@
       --
   |%
   ++  em-co
-    |=  {{bas/@ min/@} par/$+({? @ tape} tape)}
+    |=  {{bas/@ min/@} par/$-({? @ tape} tape)}
     |=  hol/@
     ^-  tape
     ?:  &(=(0 hol) =(0 min))
@@ -4088,7 +4089,7 @@
     ==
   ::
   ++  ed-co
-    |=  {{bas/@ min/@} par/$+({? @ tape} tape)}
+    |=  {{bas/@ min/@} par/$-({? @ tape} tape)}
     =+  [fir=& cou=0]
     |=  hol/@
     ^-  {tape @}
@@ -4104,7 +4105,7 @@
     ==
   ::
   ++  ox-co
-    |=  {{bas/@ gop/@} dug/$+(@ @)}
+    |=  {{bas/@ gop/@} dug/$-(@ @)}
     %+  em-co
       [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
     |=  {top/? seg/@ res/tape}
@@ -4116,7 +4117,7 @@
     |=({? b/@ c/tape} [(dug b) c])
   ::
   ++  ro-co
-    |=  {{buz/@ bas/@ dop/@} dug/$+(@ @)}
+    |=  {{buz/@ bas/@ dop/@} dug/$-(@ @)}
     |=  hol/@
     ^-  tape
     ?:  =(0 dop)
@@ -4538,7 +4539,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  {{sub/* fol/*} gul/$+({* *} (unit (unit)))}
+  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   =+  tax=*(list {@ta *})
   |-  ^-  tone
   ?@  fol
@@ -4613,7 +4614,7 @@
   ==
 ::
 ++  mock
-  |=  {{sub/* fol/*} gul/$+({* *} (unit (unit)))}
+  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   (mook (mink [sub fol] gul))
 ::
 ++  moop
@@ -4673,7 +4674,7 @@
   ==         ==
 ::
 ++  mong
-  |=  {{gat/* sam/*} gul/$+({* *} (unit (unit)))}
+  |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
@@ -6166,7 +6167,7 @@
     (weld ~(ram re (show d -.gar)) $(i (add 2 i), gar +.gar))
   ::
   ++  shop
-    |=  {aug/* vel/$+(a/@ tape)}
+    |=  {aug/* vel/$-(a/@ tape)}
     ^-  tank
     ?:  ?=(@ aug)
       [%leaf (vel aug)]
@@ -6203,7 +6204,7 @@
   ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b/@ (add '0' b)))]
   ++  rud   (rum 10 ~ |=(b/@ (add '0' b)))
   ++  rum
-    |=  {b/@ c/tape d/$+(@ @)}
+    |=  {b/@ c/tape d/$-(@ @)}
     ^-  tape
     ?:  =(0 a)
       [(d 0) c]
@@ -6261,7 +6262,7 @@
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2fA, miscellaneous funs       ::
 ::                                                      ::
-++  cain  |=(vax/vase (sell vax))                       ::  $+(vase tank) for />
+++  cain  |=(vax/vase (sell vax))                       ::  $-(vase tank) for />
 ++  cell                                                ::  make %cell span
   ~/  %cell
   |=  {hed/span tal/span}
@@ -6479,8 +6480,8 @@
   |=  txt/@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax/vase (pave vax))                       ::  $+(vase tape) for /<
-++  onan  |=(vix/vise (seer vix))                       ::  $+(vise vase) for !>
+++  noah  |=(vax/vase (pave vax))                       ::  $-(vase tape) for /<
+++  onan  |=(vix/vise (seer vix))                       ::  $-(vise vase) for !>
 ::
 ++  rain                                                ::  parse with % path
   |=  {bon/path txt/@}
@@ -6541,7 +6542,7 @@
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
-++  skol                                                ::  $+(span tank) for ~!
+++  skol                                                ::  $-(span tank) for ~!
   |=  typ/span  ^-  tank
   ~(duck ut typ)
 ::
@@ -6790,7 +6791,7 @@
   ++  whip
     |=  axe/axis
     =+  ^=  tun
-        |=  noy/$+(* twig)
+        |=  noy/$-(* twig)
         ^-  twig
         ?@  nag
           =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
@@ -7001,6 +7002,7 @@
       ==
     ::
         {$bckt *}  [%bush boil(gen p.gen) boil(gen q.gen)]
+        {$bchp *}  [%weed [%brsg p.gen [%cnbc [%tsgr [%$ 7] q.gen]]]]  
         {$bcls *}  [%weed [%brsg p.gen [%cnbc [%tsgr [%$ 7] q.gen]]]]  
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
@@ -7060,6 +7062,7 @@
         {$bccb *}  ~(clam al boil)
         {$bccl *}  ~(clam al boil)
         {$bccn *}  ~(clam al boil)
+        {$bchp *}  ~(clam al boil)
         {$bcls *}  ~(clam al boil)
         {$bckt *}  ~(clam al boil)
         {$bcwt *}  ~(clam al boil)
@@ -8043,16 +8046,16 @@
       ++  deft
         =>  (def deft:arc)
         |%
-        ++  halp  $+(twig fleg)
+        ++  halp  $-(twig fleg)
         ++  vant
-          |%  ++  trep  $+({bath wing bath} {axis bath})
-              ++  tasp  $+({{axis bath} fleg foat} foat)
-              ++  tyle  $+(foat foat)
+          |%  ++  trep  $-({bath wing bath} {axis bath})
+              ++  tasp  $-({{axis bath} fleg foat} foat)
+              ++  tyle  $-(foat foat)
           --
         ++  vunt  
-          |%  ++  trep  $+({claw wing bath} {axis claw})
-              ++  tasp  $+({{axis claw} fleg fult} fult)
-              ++  tyle  $+(fult foat)
+          |%  ++  trep  $-({claw wing bath} {axis claw})
+              ++  tasp  $-({{axis claw} fleg fult} fult)
+              ++  tyle  $-(fult foat)
         --  --
       ::
       ++  make
@@ -9058,7 +9061,7 @@
     ~
   ::
   ++  take
-    |=  {vit/vein duz/$+(span span)}
+    |=  {vit/vein duz/$-(span span)}
     ^-  (pair axis span)
     :-  (tend vit)
     =.  vit  (flop vit)
@@ -9739,6 +9742,7 @@
                     ['%' (rune cen %bccn exps)]
                     ['^' (rune ket %bckt expb)]
                     ['+' (rune lus %bcls expb)]
+                    ['-' (rune hep %bchp expb)]
                     ['=' (rune tis %bcts expg)]
                     ['?' (rune wut %bcwt exps)]
                 ==
@@ -10314,15 +10318,15 @@
           ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a/$+(* *) (pair mark a))                   ::  global data
+++  cask  |*(a/$-(* *) (pair mark a))                   ::  global data
 ++  cuff                                                ::  permissions
           $:  p/(unit (set monk))                       ::  can be read by
               q/(set monk)                              ::  caused or created by
           ==                                            ::
 ++  curd  {p/@tas q/*}                                  ::  spanless card
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/$+(* *) (pair span a))                   ::  span associated
-++  hobo  |*  a/$+(* *)                                 ::  kiss wrapper
+++  hypo  |*(a/$-(* *) (pair span a))                   ::  span associated
+++  hobo  |*  a/$-(* *)                                 ::  kiss wrapper
           $?  $%  {$soft p/*}                           ::
               ==                                        ::
               a                                         ::
@@ -10348,7 +10352,7 @@
 ++  milt  {p/* q/*}                                     ::  metavase
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
 ++  mold                                                ::  new kernel action
-          |*  {a/$+(* *) b/$+(* *)}                     ::  forward+reverse
+          |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
           $%  {$pass p/path q/a}                        ::  advance
               {$slip p/a}                               ::  lateral
               {$sick p/b}                               ::  lame refactoring
@@ -10361,11 +10365,11 @@
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
-++  sley  $+  {* (unit (set monk)) term beam}           ::  namespace function
+++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
           (unit (unit cage))                            ::
-++  slyd  $+  {* (unit (set monk)) term beam}           ::  super advanced
+++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
           (unit (unit (cask)))                          ::
-++  slyt  $+({* *} (unit (unit)))                       ::  old namespace
+++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ/span                                  ::  -:!>(*span)
               duc/span                                  ::  -:!>(*duct)
