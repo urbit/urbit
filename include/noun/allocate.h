@@ -146,8 +146,6 @@
         } jed;
 
         struct {                              //  namespace
-          u3_noun flu;                        //  (list $+(* (unit))), old
-          u3_noun sea;                        //  (list $+(* (unit))), new
           u3_noun gul;                        //  (list $+(* (unit (unit)))) now
         } ski;
 

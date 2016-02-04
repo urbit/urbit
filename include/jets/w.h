@@ -102,8 +102,6 @@
     u3_noun u3we_rub(u3_noun);
     u3_noun u3we_lore(u3_noun);
     u3_noun u3we_loss(u3_noun);
-    u3_noun u3we_micq(u3_noun);
-    u3_noun u3we_mick(u3_noun);
     u3_noun u3we_mink(u3_noun);
     u3_noun u3we_mule(u3_noun);
     u3_noun u3we_repg(u3_noun);

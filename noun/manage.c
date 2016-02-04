@@ -469,8 +469,6 @@ u3m_mark(void)
   c3_w tot_w = 0;
   tot_w += u3h_mark(u3R->jed.har_p);
   tot_w += u3a_mark_noun(u3R->jed.das);
-  tot_w += u3a_mark_noun(u3R->ski.flu);
-  tot_w += u3a_mark_noun(u3R->ski.sea);
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
@@ -970,9 +968,7 @@ u3m_soft_nock(u3_noun bus, u3_noun fol)
 /* u3m_soft_run(): descend into virtualization context.
 */
 u3_noun 
-u3m_soft_run(u3_noun fly,
-             u3_noun sea,
-             u3_noun gul,
+u3m_soft_run(u3_noun gul,
              u3_funq fun_f,
              u3_noun aga,
              u3_noun agb)
@@ -986,8 +982,6 @@ u3m_soft_run(u3_noun fly,
   /* Configure the new road.
   */
   {
-    u3R->ski.flu = u3nc(fly, u3to(u3_road, u3R->par_p)->ski.flu);
-    u3R->ski.sea = u3nc(sea, u3to(u3_road, u3R->par_p)->ski.sea);
     u3R->ski.gul = u3nc(gul, u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
     u3R->bug.tax = 0;
@@ -1050,8 +1044,6 @@ u3m_soft_run(u3_noun fly,
   /* Release the arguments.
   */
   {
-    u3z(fly);
-    u3z(sea);
     u3z(gul);
     u3z(aga);
     u3z(agb);
@@ -1067,17 +1059,13 @@ u3m_soft_run(u3_noun fly,
 u3_noun
 u3m_soft_esc(u3_noun ref, u3_noun sam)
 {
-  u3_noun why, fly, sea, gul, pro;
+  u3_noun why, gul, pro;
  
   /* Assert preconditions. 
   */
   {
-    c3_assert(0 != u3R->ski.flu);
-    c3_assert(0 != u3R->ski.sea);
     c3_assert(0 != u3R->ski.gul);
     gul = u3h(u3R->ski.gul);
-    sea = u3h(u3R->ski.sea);
-    fly = u3h(u3R->ski.flu);
   }
 
   /* Record the cap, and leap.
@@ -1087,8 +1075,6 @@ u3m_soft_esc(u3_noun ref, u3_noun sam)
   /* Configure the new road.
   */
   {
-    u3R->ski.flu = u3t(u3to(u3_road, u3R->par_p)->ski.flu);
-    u3R->ski.sea = u3t(u3to(u3_road, u3R->par_p)->ski.sea);
     u3R->ski.gul = u3t(u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
     u3R->bug.tax = 0;
@@ -1097,25 +1083,7 @@ u3m_soft_esc(u3_noun ref, u3_noun sam)
   /* Trap for exceptions.
   */
   if ( 0 == (why = (u3_noun)_setjmp(u3R->esc.buf)) ) {
-    if ( 0 != fly ) {
-      // fprintf(stderr, "fly escape\r\n");
-      pro = u3n_slam_on(fly, sam);
-      if ( u3_nul != pro ) {
-        pro = u3nc(u3_nul, pro);
-      }
-    } else if ( 0 != sea ) {
-      // fprintf(stderr, "sea escape\r\n");
-      pro = u3n_slam_on(sea, u3nc(ref, sam));
-      if ( u3_nul != pro ) {
-        pro = u3nc(u3_nul, pro);
-      }
-    } else if ( 0 != gul ) {
-      // fprintf(stderr, "gul escape\r\n");
-      pro = u3n_slam_on(gul, u3nc(ref, sam));
-    }
-    else { 
-      return u3m_bail(c3__oops);
-    }
+    pro = u3n_slam_on(gul, u3nc(ref, sam));
 
     /* Fall back to the old road, leaving temporary memory intact.
     */

@@ -71,9 +71,7 @@
       /* u3m_soft_run(): descend into virtualization context.
       */
         u3_noun 
-        u3m_soft_run(u3_noun fly,
-                     u3_noun sea,
-                     u3_noun gul,
+        u3m_soft_run(u3_noun gul,
                      u3_funq fun_f,
                      u3_noun aga,
                      u3_noun agb);
