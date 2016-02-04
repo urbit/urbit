@@ -6121,10 +6121,22 @@ h2.advice {
   color: #b1b7bd;
 }
 
+p.ship {
+  white-space: nowrap;
+}
+
+input#ship {
+  width: 66.7%;
+}
+
 .sig,
 #ship,
 #pass {
   font-size: 2rem;
+}
+
+.sig {
+  margin-right: .3rem;
 }
 
 #pass {

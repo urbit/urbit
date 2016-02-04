@@ -6,7 +6,7 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  hymn  ;html:(head:title:"Untitled" body:"+{own}") ::  convert to %hymn
+  ++  hymn  ;html:(head body:"+{own}") ::  convert to %hymn
   ++  html  (crip (poxo hymn))                          ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   ++  front  ~                                          ::  no frontmatter

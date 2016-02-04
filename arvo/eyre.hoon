@@ -469,7 +469,7 @@
     %+  titl  'Sign in - Urbit'
     ;=  ;div.container
           ;div.row
-            ;div.col-md-2
+            ;div.col-md-4
               ;h1.sign: Sign in
             ==
             ;div.col-md-8

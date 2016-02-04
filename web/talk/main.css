@@ -15,9 +15,9 @@ div.grams {
 
 div.meta label {
   background-color: #B1B7BD;
-  margin-right: 1rem;
-  height: 1rem;
-  width: 1rem;
+  margin-right: 0.9375rem;
+  height: 0.9375rem;
+  width: 0.9375rem;
   text-align: center; }
 
 div.meta label:before {
@@ -49,6 +49,9 @@ div.meta h3 {
 div.meta .time {
   padding-right: 2rem; }
 
+div.grams:first-of-type .gram {
+  margin-top: 0; }
+
 div.gram.first {
   margin-top: 1rem; }
 
@@ -63,11 +66,7 @@ div.gram.same:hover div.meta {
   padding-top: 1rem; }
 
 .speech {
-  margin-left: 2rem; }
-
-@media (max-width: 767px) {
-  div.meta > label {
-    margin-right: 9px; } }
+  margin-left: 1.875rem; }
 
 div.gram label[data-glyph=">"],
 div.gram label[data-glyph="="],
@@ -184,7 +183,7 @@ input.action:focus:-ms-input-placeholder {
 
 .audience,
 .message {
-  margin-left: 2rem; }
+  margin-left: 1.875rem; }
 
 .audience {
   margin-bottom: 1rem; }
