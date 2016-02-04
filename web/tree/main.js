@@ -43,6 +43,9 @@ module.exports = {
       components: components
     });
   },
+  addComment: function(path, text) {
+    return TreePersistence.put("write-comment", path, text);
+  },
   setCurr: function(path) {
     return TreeDispatcher.handleViewAction({
       type: "setCurr",
@@ -71,6 +74,7 @@ module.exports = {
     });
   }
 };
+
 
 
 },{"../dispatcher/Dispatcher.coffee":18,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
@@ -338,6 +342,7 @@ module.exports = query({
 }));
 
 
+
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"../utils/util.coffee":23,"./Async.coffee":3,"./BodyComponent.coffee":4,"./DpadComponent.coffee":7,"./Reactify.coffee":13,"./SibsComponent.coffee":16,"classnames":24}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -448,14 +453,19 @@ module.exports = function(queries, Child, load) {
 };
 
 
+
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":11}],4:[function(require,module,exports){
-var a, clas, div, extras, img, p, query, reactify, recl, ref, rele, util;
+var Comment, TreeActions, a, clas, div, extras, img, input, load, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
+
+load = require('./LoadComponent.coffee');
 
 query = require('./Async.coffee');
 
 reactify = require('./Reactify.coffee');
+
+TreeActions = require('../actions/TreeActions.coffee');
 
 util = require('../utils/util.coffee');
 
@@ -463,7 +473,13 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a;
+ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a, input = ref.input;
+
+Comment = function(arg) {
+  var body, time;
+  time = arg.time, body = arg.body;
+  return div({}, "" + (new Date(time)), reactify(body));
+};
 
 extras = {
   spam: recl({
@@ -523,15 +539,44 @@ extras = {
           if (next) {
             return div({
               className: "link-next"
-            }, [
-              a({
-                href: this.props.path + "/" + next.name
-              }, "Next: " + next.meta.title)
-            ]);
+            }, a({
+              href: this.props.path + "/" + next.name
+            }, "Next: " + next.meta.title));
           }
         }
       }
       return div({}, "");
+    }
+  })),
+  comments: query({
+    comt: 'j',
+    path: 't'
+  }, recl({
+    displayName: "Comments",
+    getInitialState: function() {
+      return {
+        loading: false
+      };
+    },
+    onKeyDown: function(e) {
+      if ("Enter" === e.key) {
+        this.setState({
+          loading: true
+        });
+        return TreeActions.addComment(this.props.path, this.refs["in"].value);
+      }
+    },
+    render: function() {
+      return div({}, "Add comment:", (this.state.loading ? rele(load) : input({
+        className: "comment",
+        type: "text",
+        ref: "in",
+        onKeyDown: this.onKeyDown
+      })), this.props.comt.map(function(props, key) {
+        return rele(Comment, _.extend({
+          key: key
+        }, props));
+      }));
     }
   })),
   footer: recl({
@@ -576,13 +621,14 @@ module.exports = query({
       }), reactify(this.props.body), extra('next', {
         dataPath: this.props.sein,
         curr: this.props.name
-      }), extra('footer'))
+      }), extra('comments'), extra('footer'))
     ]);
   }
 }));
 
 
-},{"../utils/util.coffee":23,"./Async.coffee":3,"./Reactify.coffee":13,"classnames":24}],5:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":1,"../utils/util.coffee":23,"./Async.coffee":3,"./LoadComponent.coffee":11,"./Reactify.coffee":13,"classnames":24}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -603,6 +649,7 @@ module.exports = recl({
     });
   }
 });
+
 
 
 },{}],6:[function(require,module,exports){
@@ -627,6 +674,7 @@ module.exports = {
     }
   })
 };
+
 
 
 },{"./CodeMirror.coffee":5,"./EmailComponent.coffee":8,"./KidsComponent.coffee":9,"./ListComponent.coffee":10,"./ModuleComponent.coffee":12,"./ScriptComponent.coffee":14,"./SearchComponent.coffee":15,"./TocComponent.coffee":17}],7:[function(require,module,exports){
@@ -682,9 +730,10 @@ module.exports = React.createFactory(recl({
     return div({
       className: 'dpad',
       key: 'dpad'
-    }, [this.renderUp(), this.renderArrows()]);
+    }, this.renderUp(), this.renderArrows());
   }
 }));
+
 
 
 },{"../utils/util.coffee":23}],8:[function(require,module,exports){
@@ -768,6 +817,7 @@ module.exports = recl({
 });
 
 
+
 },{"./Reactify.coffee":13}],9:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
@@ -847,6 +897,7 @@ module.exports = query({
     }).call(this));
   }
 }));
+
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":13}],10:[function(require,module,exports){
@@ -1006,6 +1057,7 @@ module.exports = query({
 }));
 
 
+
 },{"../utils/util.coffee":23,"./Async.coffee":3,"./Reactify.coffee":13,"classnames":24}],11:[function(require,module,exports){
 var div, recl, ref, span;
 
@@ -1044,6 +1096,7 @@ module.exports = recl({
 });
 
 
+
 },{}],12:[function(require,module,exports){
 var TreeActions, div, recl;
 
@@ -1076,6 +1129,7 @@ module.exports = recl({
     }, this.props.children);
   }
 });
+
 
 
 },{"../actions/TreeActions.coffee":1}],13:[function(require,module,exports){
@@ -1148,7 +1202,7 @@ Virtual = recl({
       gn = arg.gn, ga = arg.ga, c = arg.c;
       return rele((ref1 = components[gn]) != null ? ref1 : gn, _.extend({
         key: key
-      }, ga), c);
+      }, ga), c.length ? c : void 0);
     });
   }
 });
@@ -1164,6 +1218,7 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
+
 
 
 },{"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":11}],14:[function(require,module,exports){
@@ -1190,6 +1245,7 @@ module.exports = recl({
     return rele("script", this.props);
   }
 });
+
 
 
 },{}],15:[function(require,module,exports){
@@ -1330,6 +1386,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":13}],16:[function(require,module,exports){
 var a, clas, li, reactify, recl, ref, ul, util;
 
@@ -1389,6 +1446,7 @@ module.exports = React.createFactory(recl({
     })(this)));
   }
 }));
+
 
 
 },{"../utils/util.coffee":23,"./Reactify.coffee":13,"classnames":24}],17:[function(require,module,exports){
@@ -1519,6 +1577,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":13}],18:[function(require,module,exports){
 module.exports = _.extend(new Flux.Dispatcher(), {
   handleServerAction: function(action) {
@@ -1534,6 +1593,7 @@ module.exports = _.extend(new Flux.Dispatcher(), {
     });
   }
 });
+
 
 
 },{}],19:[function(require,module,exports){
@@ -1557,6 +1617,7 @@ $(function() {
 });
 
 
+
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./utils/scroll.coffee":22,"./utils/util.coffee":23}],20:[function(require,module,exports){
 var dedup, util;
 
@@ -1575,10 +1636,20 @@ module.exports = {
       return;
     }
     dedup[url] = true;
-    return $.get(url, {}, function(data) {
+    return $.get(url, {}, function(data, status, xhr) {
+      urb.waspLoadedXHR.call(xhr);
       if (cb) {
         return cb(null, data);
       }
+    });
+  },
+  put: function(mark, pax, txt) {
+    return urb.send({
+      pax: pax,
+      txt: txt
+    }, {
+      mark: mark,
+      appl: 'hood'
     });
   },
   encode: function(obj) {
@@ -1617,6 +1688,7 @@ module.exports = {
 };
 
 
+
 },{"../utils/util.coffee":23}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _nav, _tree, _virt, clog;
 
@@ -1641,7 +1713,8 @@ QUERIES = {
   head: 'r',
   snip: 'r',
   sect: 'j',
-  meta: 'j'
+  meta: 'j',
+  comt: 'j'
 };
 
 TreeStore = _.extend(new EventEmitter, {
@@ -1881,6 +1954,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(p) {
 module.exports = TreeStore;
 
 
+
 },{"../dispatcher/Dispatcher.coffee":18,"events":25}],22:[function(require,module,exports){
 var scroll;
 
@@ -1973,6 +2047,7 @@ scroll.init();
 module.exports = scroll;
 
 
+
 },{}],23:[function(require,module,exports){
 var _basepath;
 
@@ -2020,6 +2095,7 @@ module.exports = {
     }
   }
 };
+
 
 
 },{}],24:[function(require,module,exports){
@@ -2156,11 +2232,18 @@ EventEmitter.prototype.emit = function(type) {
         break;
       // slower
       default:
-        args = Array.prototype.slice.call(arguments, 1);
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
         handler.apply(this, args);
     }
   } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
     listeners = handler.slice();
     len = listeners.length;
     for (i = 0; i < len; i++)
@@ -2198,6 +2281,7 @@ EventEmitter.prototype.addListener = function(type, listener) {
 
   // Check for listener leak
   if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
     if (!isUndefined(this._maxListeners)) {
       m = this._maxListeners;
     } else {
@@ -2319,7 +2403,7 @@ EventEmitter.prototype.removeAllListeners = function(type) {
 
   if (isFunction(listeners)) {
     this.removeListener(type, listeners);
-  } else if (listeners) {
+  } else {
     // LIFO order
     while (listeners.length)
       this.removeListener(type, listeners[listeners.length - 1]);
@@ -2340,20 +2424,15 @@ EventEmitter.prototype.listeners = function(type) {
   return ret;
 };
 
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
-};
-
 EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
 };
 
 function isFunction(arg) {

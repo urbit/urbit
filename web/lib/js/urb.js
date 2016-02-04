@@ -282,14 +282,12 @@ window.urb.util = {
     if(spur === '/') spur = ''
     pathname = pathname || window.location.pathname
     if(pathname[0] == '/') pathname = pathname.slice(1)
-    if(pathname[0] != '~' && pathname[0] != '='){
-      return spur
-    }
     pathname = pathname.split("/")
     
     var pref, pred, prec, base = "" 
-    while(base += "/"+(pref = pathname.shift()), pathname.length>0){
-      if(pref[0] !== '~') break;
+    while(pref = pathname.shift(), pathname.length>0){
+      if(pref[0] != '~' && pref[0] != '=') break;
+      base += "/"+pref;
       if(pref === "~~") continue;
       base += "/"+(pred = pathname.shift())
       if(/[a-z\-]+/.test(pref.slice(1))){

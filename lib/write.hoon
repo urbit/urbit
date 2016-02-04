@@ -48,6 +48,12 @@
   |=  [typ=?(%hoon %md %txt) txt=@t]  ^+  abet
   (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco txt))
 ::
+++  poke-comment
+  |=  [pax=path txt=@t]  ^+  abet
+  =.  pax  [%web (welp pax /(scot %da now))]
+  =.  txt  (rap 3 (scot %p src) ': ' txt ~)
+  (poke--data [`%comment-md pax] %mime / (taco txt))
+::
 ++  poke--data
   |=  [[ext=(unit ,@t) pax=path] dat=data]  ^+  abet
   ?~  ext  $(ext [~ -.dat])
@@ -59,8 +65,8 @@
 ::
 ++  made
   |=  [pax=wire @ res=gage]  ^+  abet
-  ?.  =(our src)
-    ~|(foreign-write/[our=our src=src] !!)
+  :: ?.  =(our src)
+  ::   ~|(foreign-write/[our=our src=src] !!)
   ?+  -.res  ~|(gage/-.res !!)
     %|  (mean p.res)
     %&  =-  abet:(emit %info write/~ our -)

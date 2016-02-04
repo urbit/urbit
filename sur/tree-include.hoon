@@ -5,4 +5,5 @@ $:  mime=mime
     snip=json
     meta=json
     sect=json
+    comt=json
 ==
