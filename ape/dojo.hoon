@@ -31,7 +31,7 @@
           [%pill p=path]                                ::  noun to unix pill
           ::  [%tree p=path]                            ::  noun to unix tree
           [%file p=beam]                                ::  save to clay
-          [%http p=?(%post %put) q=purl]                ::  http outbound
+          [%http p=?(%post %put) q=iden r=purl]         ::  http outbound
           [%poke p=goal]                                ::  poke app
           [%show p=?(0 1 2 3)]                          ::  print val/type/twig
           [%verb p=term]                                ::  store variable
@@ -40,8 +40,8 @@
       $:  p=@ud                                         ::  assembly index
           q=dojo-build                                  ::  general build
       ==                                                ::
-    ++  dojo-build                                      ::  one ford step
-      $%  [%ur p=purl]                                  ::  http GET request
+    ++  dojo-build                                      ::  one arvo step
+      $%  [%ur p=iden q=purl]                           ::  http GET request
           [%ge p=dojo-model]                            ::  generator
           [%dv p=path]                                  ::  core from source
           [%ex p=twig]                                  ::  hoon expression
@@ -86,7 +86,7 @@
     ++  card                                            ::  general card
       $%  [%diff %sole-effect sole-effect]              ::
           [%send wire [ship term] clap]                 ::
-          [%hiss wire [~ ~] %httr [%hiss hiss]]         ::
+          [%hiss wire [~ iden] %httr [%hiss hiss]]      ::
           [%exec wire @p (unit ,[beak silk])]           ::
           [%deal wire sock term club]                   ::
           [%info wire @p toro]                          ::
@@ -164,8 +164,8 @@
         ;~(plug (cold %file tar) dp-beam)
         ;~(plug (cold %flat pat) (most fas qut))
         ;~(plug (cold %pill dot) (most fas sym))
-        ;~(plug (cold %http lus) (easy %post) auri:epur)
-        ;~(plug (cold %http hep) (easy %put) auri:epur)
+        ;~(plug (cold %http lus) (easy %post) dp-iden-url)
+        ;~(plug (cold %http hep) (easy %put) dp-iden-url)
         (stag %show (cook ?(1 2 3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
@@ -196,7 +196,7 @@
     ++  dp-build                                        ::  ++dojo-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        ;~(plug (cold %ur lus) auri:epur)
+        ;~(plug (cold %ur lus) dp-iden-url)
         ;~(plug (cold %ge lus) dp-model)
         ;~(plug (cold %as pam) sym ;~(pfix ace dp-source))
         ;~(plug (cold %do cab) dp-twig ;~(pfix ace dp-source))
@@ -217,6 +217,9 @@
       %+  cook  |=(a=path =+((tome a) ?^(- u [he-beak (flop a)])))
       =+  vez=(vang | dp-path)
       (sear plex:vez (stag %clsg poor:vez))
+    ::
+    ++  dp-iden-url
+      (cook |=([a=(unit iden) b=purl] [(fall a *iden) b]) auru:epur)
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (tope he-beam)                       ::  ++path
@@ -264,10 +267,10 @@
       (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
     ++  dy-eyre                                         ::  send work to eyre
-      |=  [way=wire req=hiss]
+      |=  [way=wire usr=iden req=hiss]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %hiss way `~ %httr %hiss req)
+      (he-card(poy `+>+<(pux `way)) %hiss way `usr %httr %hiss req)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -479,7 +482,7 @@
         ?>  ?=(%mime p.cay)
         =+  mim=;;(mime q.q.cay)
         =+  maf=(~(add ja *math) content-type/(moon p.mim))
-        (dy-eyre /show [q.p.mad p.p.mad maf ~ q.mim])
+        (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
       ::
           %show
         %+  dy-print  cay
@@ -535,7 +538,7 @@
       =+  `[@ bil=dojo-build]`a
       |-  ^-  $&  [_$ _$]
               $?  twig
-                  $%  [%ur purl]
+                  $%  [%ur iden purl]
                       [%dv path]
                       [%as mark _$]
                       [%do twig _$]
@@ -658,7 +661,7 @@
           %|
         =+  hiz=;;(hiss +<.q.vax)
         =.  ..dy  (he-diff %tan leaf/"< {(earn p.hiz)}" ~)
-        (dy-eyre(pro `(slap (slot 7 vax) cnzy/%q)) /scar hiz)
+        (dy-eyre(pro `(slap (slot 7 vax) cnzy/%q)) /scar ~. hiz)
       ==
     ::
     ++  dy-sigh-scar                                    ::  scraper result
@@ -677,7 +680,7 @@
       ?>  ?=(^ cud)
       =+  bil=q.u.cud                 ::  XX =*
       ?:  ?=(%ur -.bil)
-        (dy-eyre /hand [p.bil %get ~ ~])
+        (dy-eyre /hand p.bil [q.bil %get ~ ~])
       %-  dy-ford
       ^-  (pair path silk)
       ?-  -.bil

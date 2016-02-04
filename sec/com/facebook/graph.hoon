@@ -9,9 +9,10 @@
 ++  out  (out-quay:auth 'access_token'^access-token)
 ++  in   in-code:auth
 ++  bak
-  %-  (bak-parse-access:auth . expires-in.aut ~)
-  |=  [access-token=token.aut expires-in=@u]
-  =+  token-expires=`@da`(add now.bal (mul ~s1 expires-in))
-  ~&  authenticated-until/token-expires   :: XX handle timeout
-  +>.$(access-token access-token)
+  %-  (bak-parse:auth . access-token.aut expires-in.aut ~)
+  |=  [access-token=@t expires-in=@u]
+  ?:  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token
+    (toke-req:auth 'fb_exchange_token' fb-exchange-token/access-token ~)
+  [[%redo ~] ..bak(access-token access-token)]
+::++  wyp  ~
 --

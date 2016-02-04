@@ -1308,21 +1308,30 @@
   ++  aurf                                              ::  2396 with fragment
     %+  cook  |=(a=purf a)
     ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
+  ++  auru                                              ::  2396 with maybe user
+    %+  cook
+      |=  $:  a=[p=? q=(unit iden) r=[(unit ,@ud) host]]
+              b=[pork quay]
+          ==
+      ^-  (pair (unit iden) purl)
+      [q.a [[p.a r.a] b]]
+    ::
+    ;~  plug
+      ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
+      ;~(plug ;~(pose apat (easy *pork)) yque)
+    ==
   ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
       ?.(?=(hoke r.p.a) a a(p.p &))
     ;~  plug
-      ;~  plug
-        %+  sear
-          |=  a=@t
-          ^-  (unit ,?)
-          ?+(a ~ %http [~ %|], %https [~ %&])
-        ;~(sfix scem ;~(plug col fas fas))
-        thor
-      ==
+      ;~(plug htts thor)
       ;~(plug ;~(pose apat (easy *pork)) yque)
     ==
+  ++  htts  
+    %+  sear  ~(get by (mo http/| https/& ~))
+    ;~(sfix scem ;~(plug col fas fas))
+  ::
   ++  cock                                              ::  cookie
     (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
   ++  dlab                                              ::  2396 domainlabel
@@ -1820,9 +1829,10 @@
 ++  bale                                                ::  driver state
   |*  a=_,*                                             ::  %jael keys type
   $:  [our=ship now=@da eny=@uvI byk=beak]              ::  base info
-      [usr=span dom=(list ,@t)]                         ::  req user, domain
+      [usr=iden dom=(list ,@t)]                         ::  req user, domain
       key=a                                             ::  secrets from %jael
   ==                                                    ::
+++  iden  span:?(~ @ta)                                 ::  username
 ++  sec-move                                            ::  driver effect
   $%  [%send p=hiss]                                    ::  http out
       [%show p=purl]                                    ::  direct user to url
@@ -2488,7 +2498,7 @@
 ++  kiss-eyre                                           ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
-              [%hiss p=(unit span) q=mark r=cage]       ::  outbound user req
+              [%hiss p=(unit iden) q=mark r=cage]       ::  outbound req
               [%init p=@p]                              ::  report install
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response

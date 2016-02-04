@@ -57,16 +57,16 @@
               [%ha p=path:beak]                         ::  GET request
               [%he p=whir]                              ::  HEAD request
               [%hi p=span:(unit span) q=mark ~]         ::  outbound HTTP
-              [%se p=whir-se q=[span (list ,@t)]]       ::  outbound to domain 
+              [%se p=whir-se q=[iden (list ,@t)]]       ::  outbound to domain 
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%ow p=ixor ~]                            ::  dying view
               [%on ~]                                   ::  dependency
           ==                                            ::
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
-++  whir-se
-  $?  %core                                             ::  build agent
-      %out                                              ::  ++out mod request
+++  whir-se  ?(%core vi-arm)                            ::  build/call
+++  vi-arm
+  $?  %out                                              ::  ++out mod request
       %res                                              ::  ++res use result
       %bak                                              ::  ++bak auth response
       %in                                               ::  ++in handle code 
@@ -89,10 +89,10 @@
       wup=(map hole cyst)                               ::  secure sessions
       sop=(map hole ,[ship ?])                          ::  foreign sess names
       wix=(map ixor stem)                               ::  open views
-      sec=(map ,[span (list ,@t)] driv)                 ::  security drivers
+      sec=(map ,[iden (list ,@t)] driv)                 ::  security drivers
   ==                                                    ::
 ::
-++  driv  %+  pair  (unit vase)                         ::  driver state
+++  driv  %+  pair  (unit $|(~ vase))                   ::  driver state
           (qeu (trel duct mark vase:hiss))              ::  waiting requests
 ::
 ++  live                                                ::  in flight
@@ -755,7 +755,7 @@
     ::
         %news                                         ::  dependency updated
       ?:  ?=([%se *] tee)
-        build:(dom-vi q.tee)
+        (get-news:(dom-vi q.tee) p.sih)
       ?.  ?=([%on ~] tee)
         ~&(e/lost/[tee hen] +>.$)
       %+  roll  (~(tap in (~(get ju liz) p.sih)))
@@ -1113,7 +1113,7 @@
           ?:  ?=(%| -.dom)  ~|(auth-ip/dom !!)
           =-  [%oath - p.dom]
           ~|  bad-user/`path`t.but
-          ?>  ?=([@ ~] t.but)
+          ?>  ?=([@ %in ~] t.but)
           =+  in-quy=(rush i.t.but ;~(pfix cab fque:urlp))
           ?~  in-quy
             (slav %ta i.t.but)
@@ -1613,18 +1613,52 @@
     ++  print-subs  |=([a=dock b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
     --
   ++  vi                                                ::  auth engine
-    |_  $:  [usr=span dom=path]
-            cor=(unit vase)
+    |_  $:  [usr=iden dom=path]
+            cor=(unit $|(~ vase))
             req=(qeu ,[p=duct q=mark r=vase:hiss])
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<))
     ++  dead-this  |=(a=tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a=tang (give-sigh:abet(req ~(nap to req)) %| a))
-    ++  pass-note  |=([a=whir-se b=note] (pass-note:abet se/[a usr dom] b))
     ++  eyre-them  |=([a=whir-se b=vase] (eyre-them:abet se/[a usr dom] b))
+    ++  pass-note  |=([a=whir-se b=note] (pass-note:abet se/[a usr dom] b))
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a=tang ((slog (flop a)) abet))
+    ++  with  |*([a=vase:gate b=$+(vase abet)] |=(c=vase (b (slam a c))))
+    ::
+    ::  Main
+    ::
+    ++  cor-type  ?~(cor %void ?~(u.cor %void p.u.cor))
+    ++  has-arm  ~(has in (sa (sloe cor-type)))
+    ++  build
+      =-  (pass-note %core (ford-req root-beak -))
+      :::+  %dude  [|.(+)]:>%mod-samp<
+      :^  %mute  core/[root-beak (flop %_(dom . sec/dom))]
+        [~[`12] `bale/!>(*(bale ,@))]  :: XX specify on type?
+      ?~  cor  ~
+      ?~  u.cor  ~
+      ?:  (has-arm %wyp)  ~
+      ?:  (has-arm %upd)
+        [~[`13] ride/[cnzy/%upd prep-cor]]~
+      [~[`13] `noun/(slot 13 u.cor)]~
+    ::
+    ++  call
+      |=  [arm=vi-arm sam=cage]
+      =+  call/[ride/[cnzy/arm prep-cor] `sam]
+      (pass-note arm (ford-req root-beak -))
+    ::
+    ++  prep-cor  ^-  silk
+      ?~  cor  ~|(%no-core !!)
+      ?~  u.cor  ~|(%nil-driver !!)
+      :+  ~  %core
+      %_    u.cor
+          +12.q
+        =+  ato=(sky %cx (tope root-beak [%atom (flop %_(dom . sec/dom))]))
+        =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
+        `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
+      ==
+    ::
     ++  pump
       ^+  abet
       ?~  cor
@@ -1632,52 +1666,73 @@
       =+  ole=~(top to req)
       ?~  ole  abet
       ::  process hiss
-      (call(hen p.u.ole) %out hiss/r.u.ole)
+      =.  hen  p.u.ole
+      ?~  u.cor  (eyre-them %out r.u.ole)  :: don't process
+      (call %out hiss/r.u.ole)
     ::
-    ++  call
-      |=  [arm=?(%bak %res %out %in) sam=cage]
-      ?~  cor  ~|(%no-core !!)
-      =.  +12.q.u.cor
-        =+  ato=(sky %cx (tope root-beak [%atom (flop %_(dom . sec/dom))]))
-        =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
-        `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
-      =+  call/[ride/[cnzy/arm `core/u.cor] `sam]
-      (pass-note arm (ford-req root-beak -))
+    ++  fin-httr
+      |=  vax=vase:httr
+      =^  ole  req  ~(get to req)
+      =>  .(ole `[p=duct q=mark *]`ole)             :: XX types
+      =.  ..vi  (cast-thou(hen p.ole) q.ole httr/vax)    :: error?
+      pump
     ::
-    ++  get-upd  
-      |=  [dep=@uvH gag=(each cage tang)]
-      ~&  got-upd/dep
-      =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
-      ?-(-.gag %| (warn p.gag), %& pump(cor `q.p.gag))
+    ::  Interfaces
     ::
-    ++  get-made
-      |=  [wir=whir-se dep=@uvH res=(each cage tang)]  ^+  abet
-      ?-  wir
-        %core  (get-upd dep res)
-        %out   (res-out res)
-        %res   (res-res res)
-        %in    (res-in res)
-        %bak   (res-bak res)
-      ==
-    ::
+    ++  get-news  ,_build
+    ++  get-quay  |=(quy=quay (call %in quay/!>(quy)))
+    ++  get-req   |=(a=[mark vase:hiss] pump(req (~(put to req) hen a)))
     ++  get-thou
       |=  [wir=whir-se hit=httr]
       ?+  wir  !!
         %in  (call %bak httr/!>(hit))
         %out
-          =+  opt=(sa (sloe ?~(cor %void p.u.cor)))
-          ?:  (~(has in opt) %res)
-            (call %res httr/!>(hit))
-          (do-give !>([%give hit]))
+          ?.  (has-arm %res)  (fin-httr !>(hit))
+          (call %res httr/!>(hit))
       ==
     ::
-    ++  do-give
-      |=  vax=vase
-      =.  vax  (slam !>(|=([%give a=httr] a)) vax)
-      =^  ole  req  ~(get to req)
-      =>  .(ole `[p=duct q=mark *]`ole)             :: XX types
-      =.  ..vi  (cast-thou(hen p.ole) q.ole httr/vax)    :: error?
-      pump
+    ++  get-made
+      |=  [wir=whir-se dep=@uvH res=(each cage tang)]  ^+  abet
+      ?:  ?=(%core wir)  (update dep res)
+      %.  res
+      ?-(wir %out res-out, %res res-res, %bak res-bak, %in res-in)
+    ::
+    ++  update  
+      |=  [dep=@uvH gag=(each cage tang)]
+      :: ~&  got-upd/dep
+      =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
+      ?~  -.gag  pump(cor `q.p.gag)
+      ?:  &(?=(~ cor) ?=(~ usr))
+        pump(cor `~)  :: userless %hiss defaults to "nop" driver
+      (warn p.gag)
+    ::
+    ::  Result handling
+    ::
+    ::    XX formal dill-blit %url via hood
+    ++  auth-print  |=([%show a=purl] (slog auth-tank leaf/(earn a) ~))
+    ++  auth-tank
+      =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
+      rose/[" " `~]^~[leaf/"To authenticate" . leaf/"visit:"]
+    ::
+    ++  do-give  (with !>(|=([%give a=httr] a)) fin-httr)
+    ++  do-show  (with !>(auth-print) ,_abet)
+    ++  do-send
+      |=  wir=whir-se  ^-  $+(vase _abet)
+      |=  res=vase
+      (eyre-them wir (slam !>(|=([%send a=hiss] a)) res))
+    ::
+    ++  handle-moves
+      |=  a=(list ,[p=term q=$+(vase _abet)])
+      |=  b=vase
+      ~>  %nil.
+        ~|  %bad-sec-move  :: XX move ~| into ?> properly
+        ?>((~(nest ut p:!>(*sec-move)) %& p.b) ~)
+      =+  opt=|.((sa (turn a head)))
+      |-
+      ?~  a  ~|(allowed=(opt) !!)
+      ?:  =(p.i.a -.q.b)
+        (q.i.a (spec b))
+      $(a t.a)
     ::
     ++  on-ford-fail
       |=  [err=$+(tang _abet) try=$+((each cage tang) _abet)]
@@ -1703,31 +1758,18 @@
       =.  p.res  (~(fuse ut p.res) p:!>(*[[@ *] *]))
       =+  [mow=(slot 2 res) roc=(slot 3 res)]
       =-  ((han self(cor (some roc))) mow):+  ::  XX better stateless asserts
-      ?~  cor  ~|(%lost-core !!)
+      =+  typ=cor-type
       ~|  %core-mismatch
-      ?>  (~(nest ut p.u.cor) & p.roc)
-      ~
+      ?>((~(nest ut typ) & p.roc) ~)
     ::
-    ++  allow
-      |=  a=(list ,[p=term q=$+(vase _abet)])
-      |=  b=vase
-      ~>  %nil.
-        ~|  %bad-sec-move  :: XX move ~| into ?> properly
-        ?>((~(nest ut p:!>(*sec-move)) %& p.b) ~)
-      =+  opt=|.((sa (turn a head)))
-      |-
-      ?~  a  ~|(allowed=*opt !!)
-      ?:  =(p.i.a -.q.b)
-        (q.i.a (spec b))
-      $(a t.a)
     ::
     ++  res-in
       %+  on-error  dead-this  |.
-      (allow send/(do-send %in) ~)
+      (handle-moves send/(do-send %in) ~)
     ::
     ++  res-res
       %+  on-error  dead-hiss  |.
-      %-  allow  :~
+      %-  handle-moves  :~
         give/do-give
         send/(do-send %out)
         redo/,_pump
@@ -1735,54 +1777,20 @@
     ::
     ++  res-bak
       %+  on-error  dead-this  |.
-      %-  allow  :~
+      %-  handle-moves  :~
         give/do-give
+        send/(do-send %in)
         redo/,_pump(..vi (give-html 200 ~ exit:xml))
       ==
     ::
     ++  res-out
       %+  on-ford-fail  dead-hiss
       %+  on-error  warn  |.
-      %-  allow  :~
+      %-  handle-moves  :~
         give/do-give
         send/(do-send %out)
         show/do-show
       ==
-    ::
-    ++  do-send
-      |=  wir=whir-se  ^-  $+(vase _abet)
-      |=  res=vase
-      (eyre-them wir (slam !>(|=([%send a=hiss] a)) res))
-    ::
-    ++  do-show  (discard-with !>(auth-print))
-    ++  discard-with
-      |=  a=vase:gate  ^-  $+(vase _abet)
-      |=(b=vase =+((slam a b) abet))
-    ::
-    ::    XX formal dill-blit %url via hood
-    ++  auth-print  |=([%show a=purl] (slog auth-tank leaf/(earn a) ~))
-    ++  auth-tank
-      =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
-      rose/[" " `~]^~[leaf/"To authenticate" . leaf/"visit:"]
-    ::
-    ::
-    ++  get-quay
-      |=  quy=quay  ^+  abet
-      ?~  cor
-        ~|(%no-core !!)
-      (call %in quay/!>(quy))
-    ::
-    ++  rebuild  build(cor ~)
-    ++  build
-      =-  (pass-note %core (ford-req root-beak -))
-      :::+  %dude  [|.(+)]:>%mod-samp<
-      :^  %mute  core/[root-beak (flop %_(dom . sec/dom))]
-        [~[`12] `bale/!>(*(bale ,@))]  :: XX specify on type?
-      ?~  cor  ~
-      ?:  (~(has in (sa (sloe p.u.cor))) %wipe)  ~      ::  XX proper adapt
-      [~[`13] `noun/(slot 13 u.cor)]~
-    ::
-    ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) hen a)))
 --  --
 --
 .   ==
