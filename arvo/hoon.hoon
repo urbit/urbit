@@ -6653,7 +6653,7 @@
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
   ++  nets                                              ::  spanless nest
-    |=  {sut/span ref/*}
+    |=  {sut/* ref/*}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     =+  gat=|=({a/span b/span} (~(nest ut a) | b))

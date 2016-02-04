@@ -1039,7 +1039,7 @@
       ^-  (bolt beam)
       %+  cope
         ?:  ?=($ud -.r.bem)  (fine cof bem)
-        =+  von=(save ~ %cw bem(s ~))
+        =+  von=(syve [151 %noun] ~ %cw bem(s ~))
         ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
         (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
       |=  {cof/cafe bem/{{ship desk $ud r/@u} s/spur}}
@@ -1071,7 +1071,7 @@
     ++  lend                                            ::  load arch
       |=  {cof/cafe bem/beam}
       ^-  (bolt arch)
-      =+  von=(save ~ %cy bem)
+      =+  von=(syve [151 %noun] ~ %cy bem)
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
       ?>  ?=({$~ $arch ^} u.von)
       =+  arc=((hard arch) q.q.u.u.von)
@@ -1082,7 +1082,7 @@
     ++  liar                                            ::  load cage
       |=  {cof/cafe bem/beam}
       ^-  (bolt cage)
-      =+  von=(save ~ %cx bem)
+      =+  von=(syve [151 %noun] ~ %cx bem)
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
@@ -1825,15 +1825,6 @@
       =+  (cat 3 'c' ren)
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
     ::
-    ++  save
-      ^-  sled
-      |=  {(unit (set monk)) tem/term bem/beam}
-      ^-  (unit (unit cage))
-      =+  (~(get by keg) tem bem)
-      ?^  -
-        ``u.-
-      (ska +<.$)
-    ::
     ++  syve
       ^-  sley
       |=  {ref/* sec/(unit (set monk)) tem/term bem/beam}
@@ -1841,7 +1832,7 @@
       ?>  =(%151 -.ref)
       =-  %+  biff  -   |=  (unit cage)
           %+  biff  +<  |=  cay/cage
-          ?.  -:(nets:wa `span`p.q.cay +.ref)
+          ?.  -:(nets:wa +.ref `span`p.q.cay)
             [~ ~]
           ``cay
       ^-  (unit (unit cage))
