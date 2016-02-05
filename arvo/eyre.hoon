@@ -358,14 +358,14 @@
     urb.tries = 0
     urb.call = function() {
       urb.wreq = new XMLHttpRequest()
-      urb.wreq.open('GET', urb.wurl, true)
+      urb.wreq.open('GET', "/~/on.json?"+urb.deps.join('&'), true)
       urb.wreq.addEventListener('load', function() {
         // if(~~(this.status / 100) == 4)
         //   return document.write(this.responseText)
-        if(this.status !== 205) {
+        if(this.status !== 200) {
           return urb.keep()
         }
-        urb.onupdate()
+        urb.onupdate(JSON.parse(this.responseText))
       })
       urb.wreq.addEventListener('error', urb.keep)
       urb.wreq.addEventListener('abort', urb.keep)
@@ -378,13 +378,36 @@
     urb.onupdate = function(){document.location.reload()}
     urb.call()
     urb.wasp = function(deh){
-      var old = /[^/]*$/.exec(urb.wurl)[0]
-      var deps = old.replace(/^on.json\?|.json$/,'').split('&')
-      if (deps.indexOf(deh) !== -1) return;
-      deps.push(deh)
-      urb.wurl = "/~/on.json?"+deps.join('&')
+      if (!deh) return;
+      if (urb.deps.indexOf(deh) !== -1) return;
+      urb.deps.push(deh)
       urb.wreq.abort() // trigger keep 
     }
+    urb.dewasp = function(deh){
+      var index = urb.deps.indexOf(deh)
+      if (-1 !== index) {
+        urb.deps.splice(index,1)
+        urb.wreq.abort() // trigger keep
+      }
+    }
+    urb.waspElem = function(ele){
+      url = ele.src || ele.href
+      if(!url || (new URL(url)).host != document.location.host)
+        return;
+      urb.waspUrl(url)
+    }
+    urb.waspUrl = function(url){
+      var xhr = new XMLHttpRequest()
+      xhr.open("HEAD", url)
+      xhr.send()
+      xhr.onload = urb.waspLoadedXHR
+    }
+    urb.waspLoadedXHR = function(){urb.wasp(urb.getXHRWasp(this))}
+    urb.getXHRWasp = function(xhr){
+      var dep = xhr.getResponseHeader("etag")
+      if(dep) return JSON.parse(dep.substr(2))
+    }
+
     '''
   ::
   ++  auth-redir
@@ -443,22 +466,6 @@
     if(!window.urb) window.urb = {}
     urb.waspAll = function(sel){
       Array.prototype.map.call(document.querySelectorAll(sel), urb.waspElem)
-    }
-    urb.waspElem = function(ele){
-      url = ele.src || ele.href
-      if(!url || (new URL(url)).host != document.location.host)
-        return;
-      urb.waspUrl(url)
-    }
-    urb.waspUrl = function(url){
-      var xhr = new XMLHttpRequest()
-      xhr.open("HEAD", url)
-      xhr.send()
-      xhr.onload = urb.waspLoadedXHR
-    }
-    urb.waspLoadedXHR = function(){
-      var dep = this.getResponseHeader("etag")
-      if(dep) urb.wasp(JSON.parse(dep.substr(2)))
     }
     if(urb.wasp){urb.waspAll('script'); urb.waspAll('link')}
     '''
@@ -781,7 +788,7 @@
       |=  [sus=(each duct ixor) con=_..axon]
       =.  ..axon  con
       ?-  -.sus
-        %&  (give-json(hen p.sus) 205 ~ %b &) 
+        %&  (give-json(hen p.sus) 200 ~ %s (scot %uv p.sih))
         %|  (get-even:(ire-ix p.sus) +.sih)
       ==
     ::
@@ -1230,8 +1237,8 @@
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          =+  polling-url=(apex:earn %| pok(u.p %json) quy)
-          [%& %js (add-json (joba %wurl (jape polling-url)) poll:js)]
+          =+  deps=[%a (turn `(list ,@uvH)`p.hem |=(a=@ s/(scot %uv a)))]
+          [%& %js (add-json (joba %deps deps) poll:js)]
         =.  lyv  (~(put by lyv) hen %wasp p.hem)
         |-
           =.  done  (new-deps i.p.hem %& hen)
