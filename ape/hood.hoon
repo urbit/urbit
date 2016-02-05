@@ -127,6 +127,7 @@
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
+++  poke-write-comment        (wrap poke-comment):from-write
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-write-tree           (wrap poke-tree):from-write
 ++  poke-write-wipe           (wrap poke-wipe):from-write

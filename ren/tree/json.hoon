@@ -18,9 +18,11 @@
       [%name %t]
       [%path %t]
       [%spur %t]
+  ::
+      [%comt %j]
+      [%head %r]
       [%sect %j]
       [%snip %r]
-      [%head %r]
       [%body %r]
       [%meta %j]
       [%mime %m]
@@ -52,6 +54,7 @@
     %name  (from-type +.a ?^(s.bem i.s.bem q.bem))
     %path  (from-type +.a (crip (spud (flop s.bem))))
     %spur  (from-type +.a (crip (spud s.bem)))
+    %comt  (from-type +.a comt.dat)
     %head  (from-type +.a head.dat)
     %snip  (from-type +.a snip.dat)
     %sect  (from-type +.a sect.dat)
@@ -69,7 +72,8 @@
   ::
 [tree .]
 ^-  json
+=+  default='spur.t_mime.m_body.r_comt.j_kids.name.t'
 =+  ^=  schem
-    =+  seh=(fall (~(get by qix.gas) 'q') 'spur.t_mime.m_body.r_kids.name.t')
+    =+  seh=(fall (~(get by qix.gas) 'q') default)
     ~|(bad-noun/seh ;;(schema (rash seh read-schem)))
 (from-queries bem.gas(s but.gas) (to-queries schem))

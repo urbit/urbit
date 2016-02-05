@@ -3,8 +3,11 @@
 /-    tree-include
 /=    dat    /%  /tree-json/ :: default include
 /=    tub    /$  |=([bem=beam *] (flop s.bem))
-/=    aut    /;  |=(gas=epic (~(has ju aut.ced.gas) %$ (scot %p p.bem.gas)))
-             /$    fuel
+/=    aut
+  /$  %+  cork  fuel                                    :: after parsing params,
+      |=  gas=epic  ^-  ?                               :: check that the fcgi
+      %+  lien  (~(tap in (~(get ju aut.ced.gas) %$)))  :: has an identity
+      |=(a=span !=(%pawn (slav %p a)))                  :: which isn't a comet
 ::
 !:
 ::::
@@ -31,8 +34,8 @@
     ;script(type "text/javascript", src "/tree/main.js");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/".
       "codemirror/4.3.0/mode/markdown/markdown.min.js");
-    ;*  ?.  aut  ~
-        [;script(type "text/javascript", src "/~/as/own/~/at/lib/js/urb.js");]~
+    ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
+                                        "/~/at/lib/js/urb.js");
   ==
   ;body
     ;script(type "text/javascript"): window.tree = {(pojo (joba %data dat))}

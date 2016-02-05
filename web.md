@@ -1,3 +1,15 @@
+---
+anchor: none
+---
+
 # Hello.
 
-Nice day today, isn't it?
+<hr></hr>
+
+## <a class="red" href="/~~/talk">Talk</a>
+## <a class="green" href="/~~/dojo">Dojo</a>
+
+<hr></hr>
+
+## <a class="blue" href="/static">Static files</a>
+

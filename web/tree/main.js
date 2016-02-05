@@ -690,6 +690,7 @@ module.exports = React.createFactory(recl({
   displayName: "Dpad",
   renderUp: function() {
     if (this.props.sein) {
+      console.log(util.basepath(this.props.sein));
       return this.renderArrow("up", this.props.sein);
     }
   },
@@ -2066,7 +2067,7 @@ module.exports = {
       path = "/" + path;
     }
     _path = prefix + path;
-    if (_path.slice(-1) === "/") {
+    if (_path.slice(-1) === "/" && _path.length > 1) {
       _path = _path.slice(0, -1);
     }
     return _path;
