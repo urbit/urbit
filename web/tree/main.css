@@ -385,6 +385,10 @@ img.logo.first {
   font-size: inherit;
   font-weight: inherit; }
 
+.list h1.error {
+  font-size: 1.6rem;
+  font-weight: 500; }
+
 .list.children h1 {
   font-weight: 500;
   font-size: 1.4rem; }

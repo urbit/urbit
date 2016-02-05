@@ -6004,6 +6004,13 @@ ul {
   padding: 0 1rem;
 }
 
+hr {
+  width: 33.333333%;
+  height: .3rem;
+  margin-left: 0;
+  background-color: #000;
+}
+
 button:focus {
   outline: none;
 }
@@ -6014,6 +6021,7 @@ h3 {
   padding-top: 2rem;
 }
 
+.even,
 h1:first-of-type {
   padding-top: 0;
 }
@@ -6080,6 +6088,39 @@ textarea:focus {
   color: #0500f0;
 }
 
+.inverse,
+.inverse:focus,
+.inverse:hover {
+  color: #fff;
+}
+
+.inverse.red {
+  background-color: #ff0808;
+}
+
+.inverse.green {
+  background-color: #61e000;
+}
+
+.inverse.yellow {
+  background-color: #fff900;
+}
+
+.inverse.blue {
+  background-color: #0500f0;
+}
+
+.block {
+  display: inline-block;
+  padding: .6rem;
+  margin-left: -.6rem;
+  font-weight: 500;
+}
+
+.block:first-of-type {
+  padding-top: .6rem;
+}
+
 .action {
   margin-top: 1rem;
   font-weight: 500;
@@ -6121,13 +6162,34 @@ h2.advice {
   color: #b1b7bd;
 }
 
+p.ship {
+  white-space: nowrap;
+}
+
+input#ship {
+  width: 66.7%;
+}
+
 .sig,
 #ship,
 #pass {
   font-size: 2rem;
 }
 
+.sig {
+  margin-right: .3rem;
+}
+
 #pass {
   width: 100%;
+}
+
+button#act {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #fff;
+  text-decoration: underline;
+  background-color: #000;
+  border: 0;
 }
 /*# sourceMappingURL=bootstrap.css.map */

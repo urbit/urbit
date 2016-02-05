@@ -435,7 +435,7 @@
       })
     }
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
-      function(){document.getElementById("c").innerHTML = "<p>Goodbye.</p>" }
+      function(){document.getElementById("c").innerHTML = "" }
     )}
     '''
   ++  etag
@@ -517,11 +517,23 @@
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;h1: Goodbye ~;{span#ship}.
-        ;button#act(onclick "urb.away()"): Log out
-        ;pre:code#err;
-        ;script@"/~/at/~/auth.js";
-    ==
+    ;=  ;div.container
+          ;div.row
+            ;div.col-md-4
+              ;h1.sign: Bye!
+            ==
+            ;div.col-md-8#c
+              ;p.ship 
+                ;label.sig: ~
+                ;span#ship;
+              ==
+              ;button#act(onclick "urb.away()"): Go
+              ;pre:code#err;
+              ;script@"/~/at/~/auth.js";
+            ==
+          ==
+        ==
+      ==
   ::
   ++  poke-test
     %+  titl  'Poke'

@@ -6,10 +6,16 @@ anchor: none
 
 <hr></hr>
 
-## <a class="red" href="/~~/talk">Talk</a>
-## <a class="green" href="/~~/dojo">Dojo</a>
+<h2 class="even">
+    <a class="blue inverse block" href="/~~/talk">Talk</a>
+</h2>
+<h2 class="even">
+    <a class="blue inverse block" href="/~~/dojo">Dojo</a>
+</h2>
 
 <hr></hr>
 
-## <a class="blue" href="/static">Static files</a>
+<h2 class="even">
+    <a class="blue inverse block" href="/static">Static files</a>
+</h2>
 
