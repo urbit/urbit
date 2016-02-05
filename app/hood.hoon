@@ -101,7 +101,7 @@
 ::++  poke-drum-exit            (wrap poke-exit):from-drum
 ++  poke-drum-start           (wrap poke-start):from-drum
 ++  poke-helm-hi              (wrap poke-hi):from-helm
-++  poke-helm-init            (wrap poke-init):from-helm
+++  poke-helm-init            (wrap poke-init):from-helm   :: XX used?
 ++  poke-helm-invite          (wrap poke-invite):from-helm
 ++  poke-helm-mass            (wrap poke-mass):from-helm
 ++  poke-helm-reload          (wrap poke-reload):from-helm
