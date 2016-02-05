@@ -1,3 +1,6 @@
+::
+::::  /hoon
+  ::
 /-  sole
 [sole]
 :-  %get  |=  [^ [a=tape ~] ~]

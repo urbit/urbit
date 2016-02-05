@@ -1,3 +1,6 @@
+::
+::::  /hoon
+  ::
 |%
 ++  subdir
   |=  [pax=path des=(map ,@t ,~)]
