@@ -1,4 +1,4 @@
-!:  ::  %gall, agent execution
+!:  ::  %gall, agent execution  
 !?  163
 ::::
 |=  pit/vase
@@ -1123,7 +1123,7 @@
       |=  {cog/term gat/vase arg/vase}
       ^-  {(each vase tang) _+>}
       =+  ^=  wyz  %-  mule  |.
-          (~(play wa vel) [%cell p.gat p.arg] [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
+          (~(play wa vel) [%cell p.gat p.arg] [%with [%$ ~] [%$ 2] [%$ 3] ~])
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
             (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)

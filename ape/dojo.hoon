@@ -172,7 +172,7 @@
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
-      :(stag 0 %ex %clsg (most ;~(plug com gaw) dp-hoof))
+      :(stag 0 %ex %ray (most ;~(plug com gaw) dp-hoof))
     ::
     ++  dp-hoof                                         ::  ++ford-hoof twig
       ;~  plug
@@ -218,7 +218,7 @@
     ++  dp-beam                                         ::  ++beam
       %+  cook  |=(a/path =+((tome a) ?^(- u [he-beak (flop a)])))
       =+  vez=(vang | dp-path)
-      (sear plex:vez (stag %clsg poor:vez))
+      (sear plex:vez (stag %ray poor:vez))
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (tope he-beam)                       ::  ++path
@@ -229,7 +229,7 @@
       ;~  pose
         rood
       ::
-        =-  ;~(pfix cen (stag %clsg -))                 ::  XX refactor ++scat
+        =-  ;~(pfix cen (stag %ray -))                 ::  XX refactor ++scat
         %+  sear  |=({a/@ud b/tyke} (posh ~ ~ a b))
         ;~  pose
           porc

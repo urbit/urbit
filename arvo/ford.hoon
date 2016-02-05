@@ -661,7 +661,7 @@
           [~ u=(^case a)]
         nuck:so
       ::
-      ++  hath  (sear plex:vez (stag %clsg poor:vez))   ::  hood path
+      ++  hath  (sear plex:vez (stag %ray poor:vez))   ::  hood path
       ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
       ++  hood
         %+  ifix  [gay gay]
@@ -736,7 +736,7 @@
         ++  read
           |%  ++  ape
                 %+  rail
-                  (ifix [sel ser] (stag %cltr (most ace wide:vez)))
+                  (ifix [sel ser] (stag %all (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
           ::
               ++  day  
@@ -910,7 +910,7 @@
         ?~  yom  [[%atom %n ~] ~]
         (slop q.i.yom $(yom t.yom))
       ^-  twig
-      :+  %cncb  [%& 2]~
+      :+  %keep  [%& 2]~
       =+  axe=3
       |-  ^-  (list (pair wing twig))
       ?~  yom  ~
@@ -1484,8 +1484,8 @@
       ++  able                                          ::  assemble preamble
         ^-  twig
         :+  %tsgr
-          ?:(=(~ rop) [%$ 1] [%brcn (~(run by rop) |=({^ a/twig} [%ash a]))])
-        ?:(=(~ bil) [%$ 1] [%brcn (~(run by bil) |=({^ a/twig} [%ash a]))])
+          ?:(=(~ rop) [%$ 1] [%core (~(run by rop) |=({^ a/twig} [%ash a]))])
+        ?:(=(~ bil) [%$ 1] [%core (~(run by bil) |=({^ a/twig} [%ash a]))])
       ::
       ++  abut                                          ::  generate
         |=  {cof/cafe hyd/hood}
@@ -1629,7 +1629,7 @@
             $sic
           %+  cope  $(hon q.hon)
           |=  {cof/cafe vax/vase}
-          %+  cope  (maim cof bax [%cnbc p.hon])
+          %+  cope  (maim cof bax [%cold p.hon])
           |=  {cof/cafe tug/vase}
           ?.  (~(nest ut p.tug) | p.vax)
             (flaw cof [%leaf "span error: {<p.hon>} {<q.hon>}"]~)
@@ -1758,7 +1758,7 @@
           |=  {cof/cafe mav/(map term foot) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(tope p.hop)>}"]~)
-          (fine cof sel(boy [[%brcn mav] boy]))
+          (fine cof sel(boy [[%core mav] boy]))
         ==
       --
     ::
