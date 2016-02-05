@@ -473,7 +473,7 @@
       case c3__wish: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
-        u3_noun nog = u3nc(c3__cnbc, u3k(p_gen));
+        u3_noun nog = u3nc(c3__cold, u3k(p_gen));
         u3_noun vay = _mull_in(van, sut, c3__noun, dox, q_gen);
         u3_noun ret;
 
