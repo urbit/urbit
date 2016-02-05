@@ -145,9 +145,7 @@ Nav = React.createFactory(query({
     return dt = this.ts - Number(Date.now());
   },
   _home: function() {
-    if (document.location.pathname !== "/") {
-      return document.location = "/";
-    }
+    return this.props.goTo("/");
   },
   toggleFocus: function(state) {
     return $(ReactDOM.findDOMNode(this)).toggleClass('focus', state);
@@ -324,6 +322,7 @@ module.exports = query({
         curr: this.props.name,
         dataPath: this.props.sein,
         sein: this.props.sein,
+        goTo: this.goTo,
         key: "nav"
       }, "div")
     ];
@@ -598,8 +597,7 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
-    var className, extra, ref1;
-    className = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
+    var bodyClas, containerClas, extra, ref1;
     extra = (function(_this) {
       return function(name, props) {
         if (props == null) {
@@ -610,12 +608,18 @@ module.exports = query({
         }
       };
     })(this);
+    containerClas = {
+      "col-md-10": true,
+      "col-md-offset-2": this.props.meta.anchor !== 'none',
+      body: true
+    };
+    bodyClas = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
     return div({
-      className: "col-md-10 col-md-offset-2 body"
+      className: containerClas
     }, [
       div({
         key: "body" + this.props.path,
-        className: className
+        bodyClas: bodyClas
       }, extra('spam'), extra('logo', {
         color: this.props.meta.logo
       }), reactify(this.props.body), extra('next', {
@@ -690,7 +694,6 @@ module.exports = React.createFactory(recl({
   displayName: "Dpad",
   renderUp: function() {
     if (this.props.sein) {
-      console.log(util.basepath(this.props.sein));
       return this.renderArrow("up", this.props.sein);
     }
   },

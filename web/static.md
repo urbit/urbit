@@ -1,3 +1,7 @@
+---
+comments: true
+---
+
 # Static
 
 You can put static files in here to serve them to the web.  Actually, you can put static files anywhere in `/web` and see them in a browser.

@@ -6064,20 +6064,20 @@ textarea:focus {
   }
 }
 
-.body {
-  padding-left: 1.875rem;
+.red {
+  color: #ff0808;
 }
 
-@media (max-width: 543px) {
-  .body {
-    padding-left: .9375rem;
-  }
+.green {
+  color: #61e000;
 }
 
-@media (max-width: 767px) {
-  .body {
-    margin-top: 4rem;
-  }
+.yellow {
+  color: #fff900;
+}
+
+.blue {
+  color: #0500f0;
 }
 
 .action {
@@ -6121,22 +6121,10 @@ h2.advice {
   color: #b1b7bd;
 }
 
-p.ship {
-  white-space: nowrap;
-}
-
-input#ship {
-  width: 66.7%;
-}
-
 .sig,
 #ship,
 #pass {
   font-size: 2rem;
-}
-
-.sig {
-  margin-right: .3rem;
 }
 
 #pass {
