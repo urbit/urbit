@@ -6657,7 +6657,7 @@
   ?@  -.q.vax
     ^=  typ
     %-  ~(play ut p.vax)
-    [%aye [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
+    [%aye [%fit [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
 ++  slew                                                ::  get axis in vase
@@ -6758,9 +6758,9 @@
     |=  vax/vase
     ^-  {vase worm}
     =+  ^=  gen  ^-  twig
-      ?@  q.vax    [%wtts [%base [%atom %$]] [%& 1]~]
-      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%& 2]~]
-      [%wtts [%base %cell] [%& 1]~]
+      ?@  q.vax    [%fit [%base [%atom %$]] [%& 1]~]
+      ?@  -.q.vax  [%fit [%leaf %tas -.q.vax] [%& 2]~]
+      [%fit [%base %cell] [%& 1]~]
     =^  typ  +>+<.$  (play p.vax [%aye gen [%$ 1]])
     [[typ q.vax] +>+<.$]
   ::
@@ -6811,7 +6811,7 @@
             [puce (blue gen) (turn opt |=({a/twig b/twig} [a (blue b)]))]
   ++  wtpt  |=({sic/twig non/twig} (gray [%dab puce (blue sic) (blue non)]))
   ++  wtsg  |=({sic/twig non/twig} (gray [%non puce (blue sic) (blue non)]))
-  ++  wtts  |=(gen/twig (gray [%wtts (blue gen) puce]))
+  ++  wtts  |=(gen/twig (gray [%fit (blue gen) puce]))
   --
 ::
 ++  al                                                  ::  tile engine
@@ -7362,14 +7362,14 @@
         {?($wtdt $lest) *}   [%wtcl p.gen r.gen q.gen]
         {?($wtgl $nay) *}   [%wtcl p.gen [%zpzp ~] q.gen]
         {?($wtgr $aye) *}   [%wtcl p.gen q.gen [%zpzp ~]]
-        {?($wtkt $dig) *}   [%wtcl [%wtts [%base %atom %$] p.gen] r.gen q.gen]
+        {?($wtkt $dig) *}   [%wtcl [%fit [%base %atom %$] p.gen] r.gen q.gen]
     ::
         {?($wthp $case) *}
       |-
       ?~  q.gen
         [%lost [%wing p.gen]]
       :^    %wtcl
-          [%wtts p.i.q.gen p.gen]
+          [%fit p.i.q.gen p.gen]
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
@@ -7380,8 +7380,8 @@
       |-
       ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
-        {?($wtpt $dab) *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
-        {?($wtsg $non) *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
+        {?($wtpt $dab) *}   [%wtcl [%fit [%base %atom %$] p.gen] q.gen r.gen]
+        {?($wtsg $non) *}   [%wtcl [%fit [%base %null] p.gen] q.gen r.gen]
         {?($wtzp $not) *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {?($zpgr $wrap) *}
       [%call [%limb %onan] [%zpsm [%cold [%limb %abel]] p.gen] ~]
@@ -9619,7 +9619,7 @@
         ==
       :-  '!'
         ;~  pose
-          (stag %wtzp ;~(pfix zap wide))
+          (stag %not ;~(pfix zap wide))
           (stag %zpzp (cold ~ ;~(plug zap zap)))
         ==
       :-  '_'
@@ -9948,7 +9948,7 @@
                     ['&' (rune pam %and exps)]
                     ['@' ;~(pfix pat (toad tkpt))]
                     ['~' ;~(pfix sig (toad tksg))]
-                    ['!' (rune zap %wtzp expa)]
+                    ['!' (rune zap %not expa)]
                 ==
               ==
             :-  '!'
