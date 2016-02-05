@@ -548,7 +548,7 @@
       |-  ^-  dy-shown
       ?-  -.bil
         $?($ur $dv)  bil
-        $ex  ?.  ?=({$cltr *} p.bil)  p.bil
+        $ex  ?.  ?=({$all *} p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!
                  ?~  t.p.p.bil  i.p.p.bil
@@ -703,15 +703,15 @@
     ++  dy-twig-mark                                    ::  XX architect
       =+  ^=  ope
           |=  gen/twig  ^-  twig
-          ?:  ?=(?($sggl $sggr) -.gen)
+          ?:  ?=(?($thin $hint) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
       |=  gen/twig  ^-  (unit mark)
       =.  gen  (ope gen)
-      ?:  ?=({$cnts {@ $~} $~} gen)
+      ?:  ?=({$make {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
-      ?.  ?=($dtkt -.gen)  ~
+      ?.  ?=($wish -.gen)  ~
       =.  p.gen  (ope p.gen)
       ?@  -.p.gen  ~
       ?+    ~(feck ap p.p.gen)  ~
