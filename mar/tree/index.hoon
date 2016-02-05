@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/elem/mar
+::::  /hoon/index/tree/mar
   ::
 /?    314
 /+    tree,react

@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/jam/mar
+::::  /hoon/jam/mar
   ::
 !:
 |_  mud=@

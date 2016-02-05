@@ -1,5 +1,5 @@
 ::
-::::  /hoon/term-line/mar
+::::  /hoon/txt-diff/mar
   ::
 /?  314
 |_  txt-diff=(urge cord)

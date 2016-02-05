@@ -1,5 +1,5 @@
 ::
-::::  /hoon/gate/down/sur
+::::  /hoon/down/sur
   ::
 /?  314
 /-  markdown

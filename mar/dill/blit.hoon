@@ -1,5 +1,5 @@
 ::
-::::  /hoon/dill-blit/mar
+::::  /hoon/blit/dill/mar
   ::
 /?    314
 /-    sole

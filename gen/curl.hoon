@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/curl/gen
   ::
 /-  sole
 [sole]

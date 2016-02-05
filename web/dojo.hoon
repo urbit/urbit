@@ -1,6 +1,6 @@
 ::    Console front-end
 ::
-::::  /hook/hymn/dojo/web
+::::  /hoon/dojo/web
   ::
 /?    310
 |%

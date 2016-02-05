@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/index/tree/ren
   ::
 /+    tree
 /,        /

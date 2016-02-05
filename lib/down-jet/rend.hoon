@@ -1,6 +1,6 @@
 ::    ++down rendering arms
 !:
-::::  /hoon
+::::  /hoon/rend/down-jet/lib
   ::
 |%
 ++  into-inner

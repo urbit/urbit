@@ -1,6 +1,6 @@
 ::    %kahn, social state
 ::
-::::  /hoon/kahn
+::::  /hoon/kahn/arvo
   ::
 !?  164
 ::::

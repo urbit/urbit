@@ -1,6 +1,6 @@
 ::    %jael, secret storage
 ::
-::::  /hoon/jael
+::::  /hoon/jael/arvo
   ::
 !?  164
 ::::

@@ -1,5 +1,5 @@
 ::
-::::  /hoon/link/hood/gen
+::::  /hoon/unlink/hood/gen
   ::
 /?  314
 ::

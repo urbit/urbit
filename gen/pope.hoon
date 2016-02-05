@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/pope/gen
   ::
 ::  Input twitter keys
 /-    sole

@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/tree/lib
   ::
 /-  tree-include
 !:

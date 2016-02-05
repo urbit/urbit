@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/react/lib
   ::
 !:
 |%

@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/ask/hood/gen
   ::
 :-  %say
 |=  [^ [mel=cord ~] ~]

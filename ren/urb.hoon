@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/urb/ren
   ::
 /%    /,
     /talk/log  /talklog-hymn/

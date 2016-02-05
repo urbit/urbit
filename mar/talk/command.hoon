@@ -1,5 +1,5 @@
 ::
-::::  /hoon/talk-command/mar
+::::  /hoon/command/talk/mar
   ::
 /?    314
 /-    talk

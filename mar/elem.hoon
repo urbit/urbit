@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/elem/mar
+::::  /hoon/elem/mar
   ::
 /?  314
 |_  own=manx

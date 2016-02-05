@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/pretty/cat/gen
   ::
 !:
 |%

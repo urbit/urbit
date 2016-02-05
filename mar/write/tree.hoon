@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/save/mar
+::::  /hoon/tree/write/mar
   ::
 !:
 |_  [sup=spur mim=mime]

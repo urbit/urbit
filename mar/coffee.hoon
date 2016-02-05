@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/md/pro
+::::  /hoon/coffee/mar
   ::
 /?  314
 |_  mud=@t

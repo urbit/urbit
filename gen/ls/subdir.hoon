@@ -1,5 +1,5 @@
 ::
-::::  /hoon
+::::  /hoon/subdir/ls/gen
   ::
 |%
 ++  subdir
