@@ -382,7 +382,7 @@
       }
 
       case c3__tstr: 
-      case c3__aka: case c3__tshx: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      case c3__aka: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
         u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
