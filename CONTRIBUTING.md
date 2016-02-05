@@ -32,7 +32,7 @@ install the new kernel is `|reset` in `dojo`.  This rebuilds from the
 `arvo` directory in the `home` desk in `%clay`.  Currently, `|reset`
 does not reload apps like `dojo` itself, which will still reference the
 old kernel. To force them to reload, make a trivial edit to their main
-source file (under the `ape` directory) in `%clay`.
+source file (under the `app` directory) in `%clay`.
 
 If you do any kernel development, be sure to read the section below about
 pills.
