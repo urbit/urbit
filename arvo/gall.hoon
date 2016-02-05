@@ -210,7 +210,7 @@
     ::  ~&  [%mo-boot dap how byk]
     %+  mo-pass  [%sys how dap (scot %p p.byk) q.byk (scot r.byk) ~]
     ^-  note-arvo
-    [%f %exec our `[byk %core [byk [dap %ape ~]]]]
+    [%f %exec our `[byk %core [byk [dap %app ~]]]]
   ::
   ++  mo-away                                           ::  foreign request
     |=  [him=ship caz=cush]                             ::  

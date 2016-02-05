@@ -1,5 +1,5 @@
 !:
-::::
+::::  /hoon/curl/app
   ::
 |_  [[^ ^ ost=@ ^] ~]
 ++  poke  |*(a=[mark *] :_(+> [ost %hiss / %wain a]~))

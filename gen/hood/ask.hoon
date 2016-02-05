@@ -1,3 +1,6 @@
+::
+::::  /hoon/ask/hood/gen
+  ::
 :-  %say
 |=  [^ [mel=cord ~] ~]
 =+  adr=(star ;~(less (mask "\"\\()[],:;<>@") prn))

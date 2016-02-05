@@ -1,5 +1,5 @@
 ::
-::::  /hook/json/tree
+::::  /hoon/json/tree/ren
   ::
 /?    314
 /+    tree

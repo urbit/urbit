@@ -1,5 +1,5 @@
 ::
-::::  /hoon/ticket/gen
+::::  /hoon/moon/gen
   ::
 /?  314
 ::

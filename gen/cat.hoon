@@ -1,6 +1,6 @@
 ::  ConCATenate file listings
 ::  
-::::  /hoon/gen/cat
+::::  /hoon/cat/gen
   ::
 //  /%%/ls/subdir
 //  /%/pretty

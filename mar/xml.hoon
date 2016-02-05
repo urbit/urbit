@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/html/mar
+::::  /hoon/xml/mar
   ::
 /?  314
   ::

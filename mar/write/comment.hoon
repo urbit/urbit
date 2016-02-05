@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/save/mar
+::::  /hoon/comment/write/mar
   ::
 !:
 |_  [pax=path txt=@t]

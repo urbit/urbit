@@ -1,6 +1,6 @@
 ::    %lunt, fleet job control
 ::
-::::  /hoon/lunt
+::::  /hoon/lunt/arvo
   ::
 !?  164
 ::::

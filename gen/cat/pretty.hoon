@@ -1,3 +1,6 @@
+::
+::::  /hoon/pretty/cat/gen
+  ::
 !:
 |%
 ++  pretty-noun

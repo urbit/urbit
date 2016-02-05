@@ -1,3 +1,6 @@
+::
+::::  /hoon/curl/gen
+  ::
 /-  sole
 [sole]
 :-  %get  |=  [^ [a=tape ~] ~]

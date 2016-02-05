@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/hood/ape                                    ::  ::
+::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
 /+  sole, talk, helm, kiln, drum, write                 ::  libraries

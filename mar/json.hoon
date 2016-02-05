@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/json/mar
+::::  /hoon/json/mar
   ::
 /?  314
   ::

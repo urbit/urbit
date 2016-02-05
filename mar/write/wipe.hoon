@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/save/mar
+::::  /hoon/wipe/write/mar
   ::
 !:
 |_  spur

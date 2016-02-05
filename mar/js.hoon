@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/js/mar
+::::  /hoon/js/mar
   ::
 !:
 |_  mud=@

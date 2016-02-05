@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/tang/mar
+::::  /hoon/tang/mar
   ::
 /?  314
 !:

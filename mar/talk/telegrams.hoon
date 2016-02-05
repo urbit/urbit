@@ -1,5 +1,5 @@
 ::
-::::  /hoon/talk-telegrams/mar
+::::  /hoon/telegrams/talk/mar
   ::
 /?  314
 /-  talk

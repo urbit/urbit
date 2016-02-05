@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/save/mar
+::::  /hoon/paste/write/mar
   ::
 !:
 |_  [typ=?(%hoon %md %txt) txt=@t]

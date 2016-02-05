@@ -1,6 +1,6 @@
 ::  There is no love that is not an echo
 ::
-::::  /hoon/echo/ape
+::::  /hoon/ask/app
   ::
 /?    314
 /+    sole

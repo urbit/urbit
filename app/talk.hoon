@@ -2151,14 +2151,14 @@
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
-++  poke-save
+++  poke-talk-save
   |=  man=span
   ^-  (quip move +>)
   =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
   =+  grams:(~(got by stories) man)
   [[ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]~ +>.$]
 ::
-++  poke-load
+++  poke-talk-load
   |=  man=span
   =+  ^=  grams
       %-  (hard (list telegram))
@@ -2168,15 +2168,14 @@
   =+  toy=(~(got by stories) man)
   [~ +>.$(stories (~(put by stories) man toy(grams grams, count (lent grams))))]
 ::
-++  poke-log
+++  poke-talk-log
   |=  man=span
   ~&  %poke-log
-
   ^-  (quip move +>)
   :-  [(log-to-file man) ~]
   +>.$(log (~(put by log) man count:(~(got by stories) man)))
 ::
-++  poke-unlog
+++  poke-talk-unlog
   |=  man=span
   ^-  (quip move +>)
   :-  ~
