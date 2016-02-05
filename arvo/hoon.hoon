@@ -272,7 +272,7 @@
     {$warn p/@ud q/twig r/twig s/twig}                  ::  ~?  tested printf
     {$type p/twig q/twig}                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
-    {$smcl p/twig q/(list twig)}                        ::  ;:  binary to nary
+    {$wad p/twig q/(list twig)}                         ::  ;:  binary to nary
     {$nub p/twig}                                       ::  ;/  [%$ [%$ p ~] ~]
     {$dip p/twig q/(list twig)}                         ::  ;~  kleisli arrow
     {$fry p/twig q/twig}                                ::  ;;  normalize
@@ -287,7 +287,7 @@
     {$per p/twig q/twig}                                ::  =>  q w/subject p 
     {$eat p/taco q/wing r/twig s/twig}                  ::  =^  state machine
     {$has p/twig q/twig}                                ::  =+  q w/[p subject]
-    {$all p/(list twig)}                                ::  =~  twig stack
+    {$tow p/(list twig)}                                ::  =~  twig stack
     {$aka p/term q/twig r/twig}                         ::  =*  r w/alias p/q
   ::                                            ::::::  conditionals
     {$or p/(list twig)}                                 ::  ?|  loobean or
@@ -6791,7 +6791,7 @@
     |=  gen/twig
     ^-  twig
     ?-  -.tik
-      $&  ?~(p.tik gen [%tstr u.p.tik [%wing q.tik] gen])
+      $&  ?~(p.tik gen [%aka u.p.tik [%wing q.tik] gen])
       $|  [%has ?~(p.tik q.tik [%name u.p.tik q.tik]) gen]
     ==
   ::
@@ -6838,7 +6838,7 @@
         $noun      [%kick [%rock %$ 0] [[%rock %$ 0] [%rock %$ 1]]]
         $cell      =+(nec=$(sec [%axil %noun]) [nec nec])
         $bean      [%same [%rock %$ 0] [%rock %$ 0]]
-        $void      [%zpzp ~]
+        $void      [%fail ~]
         $null      [%rock %n %$]
       ==
     ::
@@ -7155,9 +7155,9 @@
     ::
         {$leaf *}  ~(clam al boil)
         {$limb *}  [%make [p.gen ~] ~]
-        {$tell *}  [%call [%limb %noah] [%zpgr [%all p.gen]] ~]
+        {$tell *}  [%call [%limb %noah] [%wrap [%all p.gen]] ~]
         {$wing *}  [%make p.gen ~]
-        {$yell *}  [%call [%limb %cain] [%zpgr [%all p.gen]] ~]
+        {$yell *}  [%call [%limb %cain] [%wrap [%all p.gen]] ~]
     ::
         {?($bcpt $flap) *}  ~(clam al boil)
         {?($bccb $slug) *}  ~(clam al boil)
@@ -7192,7 +7192,7 @@
         {?($cltr $all) *}
       |-  ^-  twig
       ?~  p.gen
-        [%zpzp ~]
+        [%fail ~]
       ?~  t.p.gen
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
@@ -7233,7 +7233,7 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
-        [%trap [%call [%limb %cain] [%zpgr [%per [%$ 3] p.gen]] ~]]
+        [%trap [%call [%limb %cain] [%wrap [%per [%$ 3] p.gen]] ~]]
       q.gen
     ::
         {?($sgcb $lurk) *}  [%hint [%mean [%trap p.gen]] q.gen]
@@ -7242,13 +7242,13 @@
         :-  %fast
         :-  %tri
         :+  [%rock %$ p.gen]
-          [%zpts q.gen]
+          [%nock q.gen]
         :-  %ray
         =+  nob=`(list twig)`~
         |-  ^-  (list twig)
         ?~  r.gen
           nob
-        [[[%rock %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
+        [[[%rock %$ p.i.r.gen] [%nock q.i.r.gen]] $(r.gen t.r.gen)]
       s.gen
     ::
         {?($sgfs $funk) *}  [%fast p.gen [%$ 7] ~ q.gen]
@@ -7257,7 +7257,7 @@
         {?($sgls $memo) *}  [%hint [%memo %rock %$ p.gen] q.gen]
         {?($sgpm $show) *}
       :+  %hint
-        [%slog [%sand %$ p.gen] [%call [%limb %cain] [%zpgr q.gen] ~]]
+        [%slog [%sand %$ p.gen] [%call [%limb %cain] [%wrap q.gen] ~]]
       r.gen
     ::
         {?($sgts $germ) *}  [%hint [%germ p.gen] q.gen]
@@ -7267,9 +7267,9 @@
         [%per [%$ 3] s.gen]
       [%show p.gen [%$ 5] [%per [%$ 3] s.gen]]
     ::
-        {$smcl *}
+        {?($smcl $wad) *}
       ?-    q.gen
-          $~      [%zpzp ~]
+          $~      [%fail ~]
           {* $~}  i.q.gen
           ^
         :+  %has
@@ -7349,7 +7349,7 @@
         {?($tsgl $rap) *}  [%per q.gen p.gen]
         {?($tsls $has) *}  [%per [p.gen [%$ 1]] q.gen]
         {?($tshp $saw) *}  [%has q.gen p.gen]
-        {?($tssg $all) *}
+        {?($tssg $tow) *}
       |-  ^-  twig
       ?~  p.gen    [%$ 1]
       ?~  t.p.gen  i.p.gen
@@ -7360,8 +7360,8 @@
       ?~(p.gen [%rock %f 1] [%if i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
     ::
         {?($wtdt $lest) *}   [%if p.gen r.gen q.gen]
-        {?($wtgl $nay) *}   [%if p.gen [%zpzp ~] q.gen]
-        {?($wtgr $aye) *}   [%if p.gen q.gen [%zpzp ~]]
+        {?($wtgl $nay) *}   [%if p.gen [%fail ~] q.gen]
+        {?($wtgr $aye) *}   [%if p.gen q.gen [%fail ~]]
         {?($wtkt $dig) *}   [%if [%fit [%base %atom %$] p.gen] r.gen q.gen]
     ::
         {?($wthp $case) *}
@@ -7384,7 +7384,7 @@
         {?($wtsg $non) *}   [%if [%fit [%base %null] p.gen] q.gen r.gen]
         {?($wtzp $not) *}   [%if p.gen [%rock %f 1] [%rock %f 0]]
         {?($zpgr $wrap) *}
-      [%call [%limb %onan] [%zpsm [%cold [%limb %abel]] p.gen] ~]
+      [%call [%limb %onan] [%spit [%cold [%limb %abel]] p.gen] ~]
     ::
         {?($zpwt $need) *}
       ?:  ?:  ?=(@ p.gen)
@@ -9620,7 +9620,7 @@
       :-  '!'
         ;~  pose
           (stag %not ;~(pfix zap wide))
-          (stag %zpzp (cold ~ ;~(plug zap zap)))
+          (stag %fail (cold ~ ;~(plug zap zap)))
         ==
       :-  '_'
         ;~(pfix cab (stag %slug wide))
@@ -9705,7 +9705,7 @@
       :-  ':'
         ;~  pfix  col
           ;~  pose
-            (stag %smcl (ifix [pel per] (most ace wide)))
+            (stag %wad (ifix [pel per] (most ace wide)))
             ;~(pfix fas (stag %nub wide))
           ==
         ==
@@ -9747,7 +9747,7 @@
       :-  '|'
         ;~  pose
           (cook |=(a/wing [%make a ~]) rope)
-          (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
+          (stag %or ;~(pfix bar (ifix [pel per] (most ace wide))))
           ;~(plug (stag %rock (stag %f (cold | bar))) ;~(pfix lus wide))
           (stag %sand (stag %f (cold | bar)))
         ==
@@ -9909,7 +9909,7 @@
               ;~  pfix  sem
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  [':' (rune col %smcl expi)]
+                :~  [':' (rune col %wad expi)]
                     ['/' (rune fas %nub expa)]
                     ['~' (rune sig %dip expi)]
                     [';' (rune sem %fry expb)]
@@ -9926,16 +9926,16 @@
                     ['<' (rune gal %rap expb)]
                     ['>' (rune gar %per expb)]
                     ['-' (rune hep %saw expb)]
-                    ['*' (rune tar %tstr expl)]
+                    ['*' (rune tar %aka expl)]
                     ['+' (rune lus %has expb)]
-                    ['~' (rune sig %tssg expi)]
+                    ['~' (rune sig %tow expi)]
                 ==
               ==
             :-  '?'
               ;~  pfix  wut
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['|' (rune bar %wtbr exps)]
+                :~  ['|' (rune bar %or exps)]
                     [':' (rune col %if expc)]
                     ['.' (rune dot %lest expc)]
                     ['<' (rune gal %nay expb)]
@@ -9956,11 +9956,11 @@
                 ^.  stet  ^.  limo
                 :~  [':' ;~(pfix col (toad expz))]
                     ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
-                    [',' (rune com %zpcm expb)]
-                    [';' (rune sem %zpsm expb)]
-                    ['>' (rune gar %zpgr expa)]
-                    ['=' (rune tis %zpts expa)]
-                    ['?' (rune wut %zpwt hinh)]
+                    [',' (rune com %twig expb)]
+                    [';' (rune sem %spit expb)]
+                    ['>' (rune gar %wrap expa)]
+                    ['=' (rune tis %nock expa)]
+                    ['?' (rune wut %need hinh)]
                 ==
               ==
         ==

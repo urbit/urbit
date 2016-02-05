@@ -1497,7 +1497,7 @@
         |=  {cof/cafe bax/vase}
         %+  cope  (chap cof bax [%fan fan.hyd])
         |=  {cof/cafe gox/vase}
-        %+  cope  (maim cof (slop gox bax) [%tssg (flop boy)])
+        %+  cope  (maim cof (slop gox bax) [%tow (flop boy)])
         |=  {cof/cafe fin/vase}
         (fine cof fin) 
         ::  ~>  %slog.[0 ~(duck ut p.q.cay)]
@@ -1690,7 +1690,7 @@
               how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
                       p.i.bir 
-                   [i.bir [%tssg (flop boy.sel)]]
+                   [i.bir [%tow (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)
       ::
@@ -1719,7 +1719,7 @@
         =.  ..neck  
             %=  sel
               how  how
-              bil  (~(put by bil) p.i.bir [i.bir [%tssg (flop boy.sel)]])
+              bil  (~(put by bil) p.i.bir [i.bir [%tow (flop boy.sel)]])
             ==
         ^^^$(cof cof, bir t.bir)
       ::
@@ -1737,7 +1737,7 @@
             %+  cope  (fade cof %hoon p.hop)
             |=  {cof/cafe hyd/hood}
             %+  cope  (apex(boy ~) cof hyd)
-            (flux |=(sel/_..wilt sel(boy [[%tssg boy.sel] boy])))
+            (flux |=(sel/_..wilt sel(boy [[%tow boy.sel] boy])))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  cope
             |-  ^-  (bolt (pair (map term foot) _..wilt))
@@ -1754,7 +1754,7 @@
               ==
             |=  {cof/cafe sel/_..wilt}
             %+  fine  cof
-            [`(map term foot)`[[p.n.all [%ash [%tssg boy.sel]]] lef rig] sel]
+            [`(map term foot)`[[p.n.all [%ash [%tow boy.sel]]] lef rig] sel]
           |=  {cof/cafe mav/(map term foot) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(tope p.hop)>}"]~)
