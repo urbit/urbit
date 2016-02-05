@@ -9746,14 +9746,107 @@
               ==
             :-  ':'
               ;~  pfix  col
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['_' (rune cab %bud expb)]
-                    ['^' (rune ket %qua expd)]
-                    ['+' (rune lus %tri expc)]
-                    ['-' (rune hep %dub expb)]
-                    ['~' (rune sig %ray exps)]
-                    ['*' (rune tar %all exps)]
+                ;~  pose
+                  %-  stew
+                  ^.  stet  ^.  limo
+                  :~  ['_' (rune cab %bud expb)]
+                      ['^' (rune ket %qua expd)]
+                      ['+' (rune lus %tri expc)]
+                      ['-' (rune hep %dub expb)]
+                      ['~' (rune sig %ray exps)]
+                      ['*' (rune tar %all exps)]
+                  ==
+                ::
+                  (word %door expr)
+                  (word %core expe)
+                  (word %gasp expb)
+                  (word %trap expa)
+                  (word %door expr)
+                  (word %loop expa)
+                  (word %cork expr)
+                  (word %port expb)
+                  (word %lock expb)
+                  (word %lamp expb)
+                  (word %tray expa)
+                ::
+                  (word %flap expb)
+                  (word %slug expa)
+                  (word %rack exps)
+                  (word %book exps)
+                  (word %bush expb)
+                  (word %gate expb)
+                  (word %coat expg)
+                  (word %pick exps)
+                ::
+                  (word %keep exph)
+                  (word %lace expb)
+                  (word %quid expd)
+                  (word %quip expc)
+                  (word %call expk)
+                  (word %with expu)
+                  (word %bake expm)
+                  (word %make exph)
+                ::
+                  (word %bud expb)
+                  (word %qua expd)
+                  (word %tri expc)
+                  (word %dub expb)
+                  (word %ray exps)
+                  (word %all exps)
+                ::
+                  (word %bump expa)
+                  (word %kick expb)
+                  (word %same expb)
+                  (word %deep expa)
+                  (word %wish expx)
+                  (word %wish expx)
+                ::
+                  (word %iron expa)
+                  (word %ward expb)
+                  (word %cast expb)
+                  (word %like expb)
+                  (word %zinc expa)
+                  (word %burn expa)
+                  (word %name expg)
+                  (word %lead expa)
+                ::
+                  (word %fate expb)
+                  (word %live expg)
+                  (word %lurk expb)
+                  (word %fast hind)
+                  (word %funk hine)
+                  (word %thin hinb)
+                  (word %hint hinb)
+                  (word %memo hinc)
+                  (word %show hinf)
+                  (word %warn hing)
+                  (word %germ expb)
+                  (word %type expb)
+                ::
+                  (word %wad expi)
+                  (word %nub expa)
+                  (word %dip expi)
+                  (word %fry expb)
+                ::
+                  (word %or exps)
+                  (word %if expc)
+                  (word %lest expc)
+                  (word %nay expb)
+                  (word %aye expb)
+                  ;~(pfix (jest %case) (toad tkhp))
+                  ;~(pfix (jest %dig) (toad tkkt))
+                  ;~(pfix (jest %fit) (toad tkts))
+                  ;~(pfix (jest %deal) (toad tkls))
+                  (word %and exps)
+                  ;~(pfix (jest %dab) (toad tkpt))
+                  ;~(pfix (jest %non) (toad tksg))
+                  (word %not expa)
+                ::
+                  (word %twig expb)
+                  (word %spit expb)
+                  (word %wrap expa)
+                  (word %nock expa)
+                  (word %need hinh)
                 ==
               ==
             :-  '.'
@@ -9896,6 +9989,10 @@
     ++  rune                                            ::  build rune
       |*  {dif/rule tuq/* har/_expa}
       ;~(pfix dif (stag tuq (toad har)))
+    ::
+    ++  word                                            ::  build keyword
+      |*  {key/cord har/_expa}
+      ;~(pfix (jest key) (stag key (toad har)))
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
