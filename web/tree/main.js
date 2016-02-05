@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee":[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -43,6 +43,9 @@ module.exports = {
       components: components
     });
   },
+  addComment: function(path, text) {
+    return TreePersistence.put("write-comment", path, text);
+  },
   setCurr: function(path) {
     return TreeDispatcher.handleViewAction({
       type: "setCurr",
@@ -73,7 +76,8 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":18,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-tree/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-tree/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-tree/js/components/AnchorComponent.coffee":[function(require,module,exports){
 var BodyComponent, Dpad, Nav, Sibs, TreeActions, TreeStore, a, button, clas, div, li, query, reactify, recl, ref, rend, ul, util;
 
 clas = require('classnames');
@@ -338,7 +342,8 @@ module.exports = query({
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"../utils/util.coffee":23,"./Async.coffee":3,"./BodyComponent.coffee":4,"./DpadComponent.coffee":7,"./Reactify.coffee":13,"./SibsComponent.coffee":16,"classnames":24}],3:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-tree/js/stores/TreeStore.coffee","../utils/util.coffee":"/Users/galen/src/urbit-tree/js/utils/util.coffee","./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-tree/js/components/BodyComponent.coffee","./DpadComponent.coffee":"/Users/galen/src/urbit-tree/js/components/DpadComponent.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee","./SibsComponent.coffee":"/Users/galen/src/urbit-tree/js/components/SibsComponent.coffee","classnames":"/Users/galen/src/urbit-tree/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-tree/js/components/Async.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -448,14 +453,19 @@ module.exports = function(queries, Child, load) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":11}],4:[function(require,module,exports){
-var a, clas, div, extras, img, p, query, reactify, recl, ref, rele, util;
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-tree/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-tree/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-tree/js/components/BodyComponent.coffee":[function(require,module,exports){
+var Comment, TreeActions, a, clas, div, extras, img, input, load, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
+
+load = require('./LoadComponent.coffee');
 
 query = require('./Async.coffee');
 
 reactify = require('./Reactify.coffee');
+
+TreeActions = require('../actions/TreeActions.coffee');
 
 util = require('../utils/util.coffee');
 
@@ -463,7 +473,13 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a;
+ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a, input = ref.input;
+
+Comment = function(arg) {
+  var body, time;
+  time = arg.time, body = arg.body;
+  return div({}, "" + (new Date(time)), reactify(body));
+};
 
 extras = {
   spam: recl({
@@ -523,15 +539,44 @@ extras = {
           if (next) {
             return div({
               className: "link-next"
-            }, [
-              a({
-                href: this.props.path + "/" + next.name
-              }, "Next: " + next.meta.title)
-            ]);
+            }, a({
+              href: this.props.path + "/" + next.name
+            }, "Next: " + next.meta.title));
           }
         }
       }
       return div({}, "");
+    }
+  })),
+  comments: query({
+    comt: 'j',
+    path: 't'
+  }, recl({
+    displayName: "Comments",
+    getInitialState: function() {
+      return {
+        loading: false
+      };
+    },
+    onKeyDown: function(e) {
+      if ("Enter" === e.key) {
+        this.setState({
+          loading: true
+        });
+        return TreeActions.addComment(this.props.path, this.refs["in"].value);
+      }
+    },
+    render: function() {
+      return div({}, "Add comment:", (this.state.loading ? rele(load) : input({
+        className: "comment",
+        type: "text",
+        ref: "in",
+        onKeyDown: this.onKeyDown
+      })), this.props.comt.map(function(props, key) {
+        return rele(Comment, _.extend({
+          key: key
+        }, props));
+      }));
     }
   })),
   footer: recl({
@@ -576,13 +621,14 @@ module.exports = query({
       }), reactify(this.props.body), extra('next', {
         dataPath: this.props.sein,
         curr: this.props.name
-      }), extra('footer'))
+      }), extra('comments'), extra('footer'))
     ]);
   }
 }));
 
 
-},{"../utils/util.coffee":23,"./Async.coffee":3,"./Reactify.coffee":13,"classnames":24}],5:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee","../utils/util.coffee":"/Users/galen/src/urbit-tree/js/utils/util.coffee","./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-tree/js/components/LoadComponent.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-tree/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-tree/js/components/CodeMirror.coffee":[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -605,7 +651,8 @@ module.exports = recl({
 });
 
 
-},{}],6:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-tree/js/components/Components.coffee":[function(require,module,exports){
 var div, recl;
 
 recl = React.createClass;
@@ -629,7 +676,8 @@ module.exports = {
 };
 
 
-},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":8,"./KidsComponent.coffee":9,"./ListComponent.coffee":10,"./ModuleComponent.coffee":12,"./ScriptComponent.coffee":14,"./SearchComponent.coffee":15,"./TocComponent.coffee":17}],7:[function(require,module,exports){
+
+},{"./CodeMirror.coffee":"/Users/galen/src/urbit-tree/js/components/CodeMirror.coffee","./EmailComponent.coffee":"/Users/galen/src/urbit-tree/js/components/EmailComponent.coffee","./KidsComponent.coffee":"/Users/galen/src/urbit-tree/js/components/KidsComponent.coffee","./ListComponent.coffee":"/Users/galen/src/urbit-tree/js/components/ListComponent.coffee","./ModuleComponent.coffee":"/Users/galen/src/urbit-tree/js/components/ModuleComponent.coffee","./ScriptComponent.coffee":"/Users/galen/src/urbit-tree/js/components/ScriptComponent.coffee","./SearchComponent.coffee":"/Users/galen/src/urbit-tree/js/components/SearchComponent.coffee","./TocComponent.coffee":"/Users/galen/src/urbit-tree/js/components/TocComponent.coffee"}],"/Users/galen/src/urbit-tree/js/components/DpadComponent.coffee":[function(require,module,exports){
 var a, div, recl, ref, util;
 
 util = require('../utils/util.coffee');
@@ -682,12 +730,13 @@ module.exports = React.createFactory(recl({
     return div({
       className: 'dpad',
       key: 'dpad'
-    }, [this.renderUp(), this.renderArrows()]);
+    }, this.renderUp(), this.renderArrows());
   }
 }));
 
 
-},{"../utils/util.coffee":23}],8:[function(require,module,exports){
+
+},{"../utils/util.coffee":"/Users/galen/src/urbit-tree/js/utils/util.coffee"}],"/Users/galen/src/urbit-tree/js/components/EmailComponent.coffee":[function(require,module,exports){
 var button, div, input, p, reactify, recl, ref;
 
 reactify = require('./Reactify.coffee');
@@ -768,7 +817,8 @@ module.exports = recl({
 });
 
 
-},{"./Reactify.coffee":13}],9:[function(require,module,exports){
+
+},{"./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/components/KidsComponent.coffee":[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -849,7 +899,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":13}],10:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/components/ListComponent.coffee":[function(require,module,exports){
 var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul, util;
 
 clas = require('classnames');
@@ -1006,7 +1057,8 @@ module.exports = query({
 }));
 
 
-},{"../utils/util.coffee":23,"./Async.coffee":3,"./Reactify.coffee":13,"classnames":24}],11:[function(require,module,exports){
+
+},{"../utils/util.coffee":"/Users/galen/src/urbit-tree/js/utils/util.coffee","./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-tree/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-tree/js/components/LoadComponent.coffee":[function(require,module,exports){
 var div, recl, ref, span;
 
 recl = React.createClass;
@@ -1044,7 +1096,8 @@ module.exports = recl({
 });
 
 
-},{}],12:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-tree/js/components/ModuleComponent.coffee":[function(require,module,exports){
 var TreeActions, div, recl;
 
 recl = React.createClass;
@@ -1078,7 +1131,8 @@ module.exports = recl({
 });
 
 
-},{"../actions/TreeActions.coffee":1}],13:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee"}],"/Users/galen/src/urbit-tree/js/components/Reactify.coffee":[function(require,module,exports){
 var TreeStore, Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -1148,7 +1202,7 @@ Virtual = recl({
       gn = arg.gn, ga = arg.ga, c = arg.c;
       return rele((ref1 = components[gn]) != null ? ref1 : gn, _.extend({
         key: key
-      }, ga), c);
+      }, ga), c.length ? c : void 0);
     });
   }
 });
@@ -1166,7 +1220,8 @@ module.exports = _.extend(reactify, {
 });
 
 
-},{"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":11}],14:[function(require,module,exports){
+
+},{"../stores/TreeStore.coffee":"/Users/galen/src/urbit-tree/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-tree/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-tree/js/components/ScriptComponent.coffee":[function(require,module,exports){
 var recl, rele;
 
 recl = React.createClass;
@@ -1192,7 +1247,8 @@ module.exports = recl({
 });
 
 
-},{}],15:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-tree/js/components/SearchComponent.coffee":[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -1330,7 +1386,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":13}],16:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/components/SibsComponent.coffee":[function(require,module,exports){
 var a, clas, li, reactify, recl, ref, ul, util;
 
 util = require('../utils/util.coffee');
@@ -1391,7 +1448,8 @@ module.exports = React.createFactory(recl({
 }));
 
 
-},{"../utils/util.coffee":23,"./Reactify.coffee":13,"classnames":24}],17:[function(require,module,exports){
+
+},{"../utils/util.coffee":"/Users/galen/src/urbit-tree/js/utils/util.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-tree/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-tree/js/components/TocComponent.coffee":[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
 
@@ -1519,7 +1577,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":13}],18:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-tree/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-tree/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-tree/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 module.exports = _.extend(new Flux.Dispatcher(), {
   handleServerAction: function(action) {
     return this.dispatch({
@@ -1536,7 +1595,8 @@ module.exports = _.extend(new Flux.Dispatcher(), {
 });
 
 
-},{}],19:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-tree/js/main.coffee":[function(require,module,exports){
 var rend;
 
 rend = ReactDOM.render;
@@ -1557,7 +1617,8 @@ $(function() {
 });
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./utils/scroll.coffee":22,"./utils/util.coffee":23}],20:[function(require,module,exports){
+
+},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-tree/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-tree/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-tree/js/components/BodyComponent.coffee","./components/Components.coffee":"/Users/galen/src/urbit-tree/js/components/Components.coffee","./utils/scroll.coffee":"/Users/galen/src/urbit-tree/js/utils/scroll.coffee","./utils/util.coffee":"/Users/galen/src/urbit-tree/js/utils/util.coffee"}],"/Users/galen/src/urbit-tree/js/persistence/TreePersistence.coffee":[function(require,module,exports){
 var dedup, util;
 
 util = require('../utils/util.coffee');
@@ -1575,10 +1636,20 @@ module.exports = {
       return;
     }
     dedup[url] = true;
-    return $.get(url, {}, function(data) {
+    return $.get(url, {}, function(data, status, xhr) {
+      urb.waspLoadedXHR.call(xhr);
       if (cb) {
         return cb(null, data);
       }
+    });
+  },
+  put: function(mark, pax, txt) {
+    return urb.send({
+      pax: pax,
+      txt: txt
+    }, {
+      mark: mark,
+      appl: 'hood'
     });
   },
   encode: function(obj) {
@@ -1617,7 +1688,8 @@ module.exports = {
 };
 
 
-},{"../utils/util.coffee":23}],21:[function(require,module,exports){
+
+},{"../utils/util.coffee":"/Users/galen/src/urbit-tree/js/utils/util.coffee"}],"/Users/galen/src/urbit-tree/js/stores/TreeStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _nav, _tree, _virt, clog;
 
 EventEmitter = require('events').EventEmitter.EventEmitter;
@@ -1641,10 +1713,11 @@ QUERIES = {
   head: 'r',
   snip: 'r',
   sect: 'j',
-  meta: 'j'
+  meta: 'j',
+  comt: 'j'
 };
 
-TreeStore = _.extend(new EventEmitter, {
+TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
   addChangeListener: function(cb) {
     return this.on('change', cb);
   },
@@ -1881,7 +1954,8 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(p) {
 module.exports = TreeStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":18,"events":25}],22:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-tree/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/Users/galen/src/urbit-tree/js/utils/scroll.coffee":[function(require,module,exports){
 var scroll;
 
 scroll = {
@@ -1973,7 +2047,8 @@ scroll.init();
 module.exports = scroll;
 
 
-},{}],23:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-tree/js/utils/util.coffee":[function(require,module,exports){
 var _basepath;
 
 _basepath = window.urb.util.basepath("/");
@@ -2022,7 +2097,8 @@ module.exports = {
 };
 
 
-},{}],24:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-tree/node_modules/classnames/index.js":[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -2072,7 +2148,7 @@ module.exports = {
 	}
 }());
 
-},{}],25:[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2132,8 +2208,10 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      return false;
     }
   }
 
@@ -2156,11 +2234,18 @@ EventEmitter.prototype.emit = function(type) {
         break;
       // slower
       default:
-        args = Array.prototype.slice.call(arguments, 1);
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
         handler.apply(this, args);
     }
   } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
     listeners = handler.slice();
     len = listeners.length;
     for (i = 0; i < len; i++)
@@ -2198,6 +2283,7 @@ EventEmitter.prototype.addListener = function(type, listener) {
 
   // Check for listener leak
   if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
     if (!isUndefined(this._maxListeners)) {
       m = this._maxListeners;
     } else {
@@ -2319,7 +2405,7 @@ EventEmitter.prototype.removeAllListeners = function(type) {
 
   if (isFunction(listeners)) {
     this.removeListener(type, listeners);
-  } else if (listeners) {
+  } else {
     // LIFO order
     while (listeners.length)
       this.removeListener(type, listeners[listeners.length - 1]);
@@ -2340,20 +2426,15 @@ EventEmitter.prototype.listeners = function(type) {
   return ret;
 };
 
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
-};
-
 EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
 };
 
 function isFunction(arg) {
@@ -2372,4 +2453,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[19]);
+},{}]},{},["/Users/galen/src/urbit-tree/js/main.coffee"]);
