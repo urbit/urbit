@@ -1,4 +1,4 @@
-!:::::  
+!::::: 
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -1204,7 +1204,7 @@
       ?:  &((slob %grow p.pro) (slob too p:(slap pro [%limb %grow])))
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
-        (maim cof pox [%tsgr [%limb %grow] [%limb too]])
+        (maim cof pox [%per [%limb %grow] [%limb too]])
       %+  cope  (fang cof too)
       |=  {cof/cafe pro/vase}
       =+  ^=  zat  ^-  (unit vase)
@@ -1483,7 +1483,7 @@
       |%
       ++  able                                          ::  assemble preamble
         ^-  twig
-        :+  %tsgr
+        :+  %per
           ?:(=(~ rop) [%$ 1] [%core (~(run by rop) |=({^ a/twig} [%ash a]))])
         ?:(=(~ bil) [%$ 1] [%core (~(run by bil) |=({^ a/twig} [%ash a]))])
       ::
