@@ -340,6 +340,7 @@
            || ((c3y == u3du(gen)) &&
                ((c3__zpfs == u3h(gen)) || 
                 (c3__lost == u3h(gen)) || 
+                (c3__fail == u3h(gen)) ||
                 (c3__zpzp == u3h(gen)))) )
       {
         return u3nt(c3__void, 0, 0);
