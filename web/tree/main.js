@@ -1954,8 +1954,9 @@ scroll = {
   ls: null,
   track: function() {
     this.w = $(window).width();
-    this.$n = $('.nav.container');
-    return this.nh = $('.nav.container .ctrl').outerHeight(true);
+    this.$n = $('#head');
+    this.$d = $('#head .ctrl');
+    return this.nh = $('#head .ctrl').outerHeight(true);
   },
   clearNav: function() {
     return this.$n.removeClass('m-up m-down m-fixed');
@@ -1988,7 +1989,7 @@ scroll = {
             top = ct;
           }
           this.$n.offset({
-            top: this.$n.top
+            top: top
           });
         }
         if (this.$n.hasClass('m-down') && !this.$n.hasClass('m-fixed') && this.$n.offset().top >= this.cs) {
@@ -2001,6 +2002,8 @@ scroll = {
       if (dy < 0) {
         if (!this.$n.hasClass('m-up')) {
           this.$n.removeClass('m-down m-fixed').addClass('m-up');
+          this.$d.removeClass('open');
+          $('.menu.open').removeClass('open');
           top = this.cs < 0 ? 0 : this.cs;
           ct = this.$n.offset().top;
           if (top > ct && top < ct + this.nh) {
@@ -2023,7 +2026,6 @@ scroll = {
     setInterval(this.track.bind(this), 200);
     this.ls = $(window).scrollTop();
     this.cs = $(window).scrollTop();
-    this.$d = $('.nav.container .ctrl');
     $(window).on('resize', this.resize.bind(this));
     return $(window).on('scroll', this.scroll.bind(this));
   }

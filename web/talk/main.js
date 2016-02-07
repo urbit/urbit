@@ -292,7 +292,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var MESSAGE_HEIGHT, Member, a, clas, div, h2, h3, label, moment, pre, recl, ref,
+var Member, a, clas, div, h2, h3, label, moment, pre, recl, ref,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 moment = require('moment-timezone');
@@ -304,8 +304,6 @@ recl = React.createClass;
 ref = React.DOM, div = ref.div, pre = ref.pre, a = ref.a, label = ref.label, h2 = ref.h2, h3 = ref.h3;
 
 Member = require('./MemberComponent.coffee');
-
-MESSAGE_HEIGHT = 48;
 
 module.exports = recl({
   displayName: "Message",
@@ -326,7 +324,7 @@ module.exports = recl({
   },
   _handleAudi: function(e) {
     var audi;
-    audi = _.map($(e.target).closest('.audi').find('div'), function(div) {
+    audi = _.map($(e.target).closest('.path').find('div'), function(div) {
       return "~" + $(div).text();
     });
     return this.props._handleAudi(audi);
@@ -436,7 +434,7 @@ module.exports = recl({
 
 
 },{"./MemberComponent.coffee":4,"classnames":17,"moment-timezone":20}],6:[function(require,module,exports){
-var Infinite, MESSAGE_HEIGHT, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl;
+var Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl;
 
 Infinite = null;
 
@@ -454,7 +452,9 @@ StationStore = require('../stores/StationStore.coffee');
 
 Message = require('./MessageComponent.coffee');
 
-MESSAGE_HEIGHT = 36;
+MESSAGE_HEIGHT_FIRST = 96.75;
+
+MESSAGE_HEIGHT_SAME = 36;
 
 module.exports = recl({
   displayName: "Messages",
@@ -530,19 +530,8 @@ module.exports = recl({
     $(window).on('focus', this._focus);
     return window.util.scrollToBottom();
   },
-  componentWillUpdate: function() {
-    var $window, ref;
-    $window = $(window);
-    if ($('#writing').is(function() {
-      return $(this).offset().top < $window.scrollTop() + $window.height();
-    })) {
-      return this.anchorKey = Number.MAX_VALUE;
-    } else {
-      return this.anchorKey = (ref = $('.message').first().attr('data-index')) != null ? ref : 0;
-    }
-  },
   componentDidUpdate: function(_props, _state) {
-    var $window, _messages, d, i, j, key, len, len1, old, ref, ref1, scrollTop, t;
+    var $window, _messages, d, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, sameAs, scrollTop, t;
     $window = $(window);
     scrollTop = $window.scrollTop();
     old = {};
@@ -551,12 +540,16 @@ module.exports = recl({
       key = ref[i].key;
       old[key] = true;
     }
+    lastSaid = null;
     ref1 = this.state.messages;
     for (j = 0, len1 = ref1.length; j < len1; j++) {
-      key = ref1[j].key;
-      if (!old[key] && key < this.anchorKey) {
-        scrollTop += MESSAGE_HEIGHT;
+      message = ref1[j];
+      nowSaid = [message.ship, message.thought.audience];
+      if (!old[message.key]) {
+        sameAs = _.isEqual(lastSaid, nowSaid);
+        scrollTop += sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST;
       }
+      lastSaid = nowSaid;
     }
     $window.scrollTop(scrollTop);
     if (this.focused === false && this.last !== this.lastSeen) {
@@ -589,7 +582,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, lastIndex, lastSaid, messages, ref, station;
+    var _messages, lastIndex, lastSaid, messageHeights, messages, ref, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
@@ -606,12 +599,14 @@ module.exports = recl({
     })(this)), 1);
     lastIndex = this.lastSeen ? messages.indexOf(this.lastSeen) + 1 : null;
     lastSaid = null;
+    messageHeights = [];
     _messages = messages.map((function(_this) {
       return function(message, index) {
         var nowSaid, sameAs, speech;
         nowSaid = [message.ship, message.thought.audience];
         sameAs = _.isEqual(lastSaid, nowSaid);
         lastSaid = nowSaid;
+        messageHeights.push((sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST));
         speech = message.thought.statement.speech;
         return React.createElement(Message, _.extend({}, message, {
           station: station,
@@ -632,7 +627,7 @@ module.exports = recl({
     }, React.createElement(Infinite, {
       useWindowAsScrollContainer: true,
       containerHeight: window.innerHeight,
-      elementHeight: MESSAGE_HEIGHT,
+      elementHeight: messageHeights,
       key: "messages-infinite"
     }, _messages));
   }
@@ -896,7 +891,7 @@ Audience = recl({
       e.preventDefault();
       if (this.props.validate()) {
         setTimeout((function() {
-          return $('#writing').focus();
+          return $('.writing').focus();
         }), 0);
         return false;
       }
@@ -1987,27 +1982,20 @@ _.merge(window.util, {
     return send();
   },
   scrollToBottom: function() {
-    return $(window).scrollTop($("#container").height());
+    return $(window).scrollTop($(".container").height());
   },
   getScroll: function() {
-    return this.writingPosition = $('#container').outerHeight(true) + $('#container').offset().top - $(window).height();
+    return this.writingPosition = $('.container').outerHeight(true) + $('.container').offset().top - $(window).height();
   },
   setScroll: function() {
     window.util.getScroll();
-    return $(window).scrollTop($("#container").height());
+    return $(window).scrollTop($(".container").height());
   },
   isScrolling: function() {
     if (!window.util.writingPosition) {
       window.util.getScroll();
     }
     return $(window).scrollTop() + $('.writing').outerHeight() < window.util.writingPosition;
-  },
-  checkScroll: function() {
-    if (window.util.isScrolling()) {
-      return $('body').addClass('scrolling');
-    } else {
-      return $('body').removeClass('scrolling');
-    }
   }
 });
 
@@ -15885,10 +15873,7 @@ var ReactDOMOption = {
       }
     });
 
-    if (content) {
-      nativeProps.children = content;
-    }
-
+    nativeProps.children = content;
     return nativeProps;
   }
 
@@ -22057,7 +22042,7 @@ module.exports = ReactUpdates;
 
 'use strict';
 
-module.exports = '0.14.7';
+module.exports = '0.14.6';
 },{}],121:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23152,7 +23137,6 @@ var warning = require('fbjs/lib/warning');
  */
 var EventInterface = {
   type: null,
-  target: null,
   // currentTarget is set when dispatching; no use in copying it here
   currentTarget: emptyFunction.thatReturnsNull,
   eventPhase: null,
@@ -23186,6 +23170,8 @@ function SyntheticEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEvent
   this.dispatchConfig = dispatchConfig;
   this.dispatchMarker = dispatchMarker;
   this.nativeEvent = nativeEvent;
+  this.target = nativeEventTarget;
+  this.currentTarget = nativeEventTarget;
 
   var Interface = this.constructor.Interface;
   for (var propName in Interface) {
@@ -23196,11 +23182,7 @@ function SyntheticEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEvent
     if (normalize) {
       this[propName] = normalize(nativeEvent);
     } else {
-      if (propName === 'target') {
-        this.target = nativeEventTarget;
-      } else {
-        this[propName] = nativeEvent[propName];
-      }
+      this[propName] = nativeEvent[propName];
     }
   }
 
