@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/mime/mar
+::::  /hoon/mime/mar
   ::
 /?  314
 !:

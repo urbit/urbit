@@ -1,5 +1,5 @@
 ::
-::::  /hoon/dill-belt/mar
+::::  /hoon/belt/dill/mar
   ::
 /?    314
 /-    kyev,sole

@@ -66,9 +66,10 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  %3                                                ::  version
+  $:  %4                                                ::  version
       gub=@t                                            ::  random identity
       hov=(unit ship)                                   ::  master for remote
+      top=beam                                          ::  ford serve prefix
       ged=duct                                          ::  client interface
       ded=(set duct)                                    ::  killed requests
       lyv=(map duct live)                               ::  living requests
@@ -141,7 +142,7 @@
   $|  ~
   $%  [%$ p=httr]                                       ::  direct response
       [%red ~]                                          ::  parent redirect
-      [%boil p=whir q=term r=beam payload=quay]         ::  ford request
+      [%bake p=whir q=mark r=coin s=beam]               ::  ford request
   :: 
       [%js p=@t]                                        ::  script
       [%json p=json]                                    ::  data
@@ -159,13 +160,11 @@
 ::
 ++  fcgi                                                ::  credential caboose
   |=  [quy=quay ced=cred]  ^-  coin
-  :*  %many
-      [%$ %ta ~]
-      [%blob ced]
-      |-  ^-  (list coin)
-      ?~  quy  ~
-      [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
-  ==
+  :+  %many
+    [%blob ced]
+  |-  ^-  (list coin)
+  ?~  quy  [%$ %n ~]~
+  [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
 ::
 ++  gsig  |=([a=dock b=path] [(scot %p p.a) q.a b])
 ++  session-from-cookies
@@ -232,7 +231,7 @@
   |=  tan=tang
   ;html
     ;head
-      ;link(rel "stylesheet", href "/home/lib/base.css"); ::  XX desk
+      ;link(rel "stylesheet", href "/lib/base.css");
       ;title: server error
     ==
     ;body:div#c.err:pre:code:"{(wush 80 tan)}"
@@ -421,51 +420,69 @@
           {ship:urb.ship,code:null},
           function(){urb.redir()})
     }
-    urb.submit = function(){
-      if(urb.ship !== $ship.text().toLowerCase())
-        return urb.redir($ship.text().toLowerCase())    //  XX redundant?
+    urb.is_me = function(ship) {
+      return (urb.ship === ship)
+    }
+    urb.submit = function(ship,pass){
+      if(!urb.is_me(ship))
+        return urb.redir(ship)
       req(
         "/~/auth.json?PUT", 
-        {ship:$ship.text().toLowerCase(), code:pass.value},
+        {ship:ship, code:pass},
         function(){
           if(urb.foreign) urb.redir()
           else document.location.reload()
       })
     }
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
-      function(){document.getElementById("c").innerHTML = "<p>Goodbye.</p>" }
+      function(){document.getElementById("c").innerHTML = "" }
     )}
     '''
   ++  etag
     '''
     if(!window.urb) window.urb = {}
-    urb.waspFrom = function(sel,attr){
-      Array.prototype.map.call(document.querySelectorAll(sel), 
-        function(ele){
-          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host)
-            return;
-          var xhr = new XMLHttpRequest()
-          xhr.open("HEAD", ele[attr])
-          xhr.send()
-          xhr.onload = function(){
-            var dep = this.getResponseHeader("etag")
-            if(dep) urb.wasp(JSON.parse(dep.substr(2)))
-    }})}
-    if(urb.wasp){urb.waspFrom('script','src'); urb.waspFrom('link','href')}
+    urb.waspAll = function(sel){
+      Array.prototype.map.call(document.querySelectorAll(sel), urb.waspElem)
+    }
+    urb.waspElem = function(ele){
+      url = ele.src || ele.href
+      if(!url || (new URL(url)).host != document.location.host)
+        return;
+      urb.waspUrl(url)
+    }
+    urb.waspUrl = function(url){
+      var xhr = new XMLHttpRequest()
+      xhr.open("HEAD", url)
+      xhr.send()
+      xhr.onload = urb.waspLoadedXHR
+    }
+    urb.waspLoadedXHR = function(){
+      var dep = this.getResponseHeader("etag")
+      if(dep) urb.wasp(JSON.parse(dep.substr(2)))
+    }
+    if(urb.wasp){urb.waspAll('script'); urb.waspAll('link')}
     '''
   --
 ++  xml
   |%
   ++  login-page
-    %+  titl  'Log in :urbit'
-    ;=  ;h1: Please log in
-        ;p.ship 
-          ;div.sig: ~
-          ;span#ship(contenteditable "");
+    %+  titl  'Sign in - Urbit'
+    ;=  ;div.container
+          ;div.row
+            ;div.col-md-4
+              ;h1.sign: Sign in
+            ==
+            ;div.col-md-8
+              ;p.ship 
+                ;label.sig: ~
+                ;input#ship.mono(contenteditable "", placeholder "planet");
+              ==
+              ;input#pass.mono(type "password", placeholder "passcode");
+              ;h2.advice: Your passcode code has been printed to your console.
+              ;pre:code#err;
+            ==
+          ==
         ==
-        ;input#pass(type "password");
-        ;h2.advice: (Your login code has been printed to your console.)
-        ;pre:code#err;
         ;script@"/~/at/~/auth.js";
         ;script:'''
                 $(function() {
@@ -473,8 +490,8 @@
                   $pass = $('#pass')
                   $ship.on('keydown', function(e) { 
                     if(e.keyCode === 13 || e.keyCode === 9) {
-                      if(urb.ship !== $ship.text().toLowerCase())
-                        urb.redir($ship.text().toLowerCase())
+                      if(!urb.is_me($ship.val().toLowerCase()))
+                        urb.redir($ship.val().toLowerCase())
                       $pass.show()
                       $pass.focus()
                       e.preventDefault()
@@ -485,11 +502,11 @@
                   })
                   $pass.on('keydown', function(e) { 
                     if(e.keyCode === 13) {
-                      urb.submit()
+                      urb.submit($ship.val().toLowerCase(),$pass.val())
                     }
                   })
                   if(window.ship) {
-                    $ship.text(urb.ship)
+                    $ship.val(urb.ship)
                     $pass.focus()
                   } else {
                     $pass.hide()
@@ -500,11 +517,23 @@
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;h1: Goodbye ~;{span#ship}.
-        ;button#act(onclick "urb.away()"): Log out
-        ;pre:code#err;
-        ;script@"/~/at/~/auth.js";
-    ==
+    ;=  ;div.container
+          ;div.row
+            ;div.col-md-4
+              ;h1.sign: Bye!
+            ==
+            ;div.col-md-8#c
+              ;p.ship 
+                ;label.sig: ~
+                ;span#ship;
+              ==
+              ;button#act(onclick "urb.away()"): Go
+              ;pre:code#err;
+              ;script@"/~/at/~/auth.js";
+            ==
+          ==
+        ==
+      ==
   ::
   ++  poke-test
     %+  titl  'Poke'
@@ -530,7 +559,8 @@
         ;title:"{(trip a)}" 
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/home/lib/base.css");
+        ;link(rel "stylesheet", href "/lib/css/fonts.css");
+        ;link(rel "stylesheet", href "/lib/css/bootstrap.css");
       ==
       ;body:div#c:"*{b}"
     ==
@@ -561,13 +591,19 @@
     |=  kyz=kiss
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
+    =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
         %born  +>.$(ged hen)                            ::  register external
+        %serv
+      =<  ~&([%serving (tope top)] .)
+      ?^(p.kyz +>.$(top p.kyz) +>.$(q.top p.kyz))
+    ::
         %crud
       +>.$(mow [[hen %slip %d %flog kyz] mow])
     ::
         %init                                           ::  register ownership
-      +>.$(hov ?~(hov [~ p.kyz] [~ (min u.hov p.kyz)]))
+      =.  our  ?~(hov p.kyz (min u.hov p.kyz))
+      +>.$(hov [~ our], top [[our %home ud/0] /web])
     ::
         %this                                           ::  inbound request
       %-  emule  |.  ^+  ..apex
@@ -757,12 +793,14 @@
           $|(~ [?(%on %ay %ow) *])  ~|(e/ford/lost/tee !!)
           [%of @ ~]  ~|(e/ford/lost/tee !!)
           [%si ~]  (give-sigh q.sih)
+      ::
           [%hi ^]
         ?:  ?=(%| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
         =*  cay  p.q.sih
         ?>  ?=(%hiss p.cay)
         (pass-note tee [%e %meta :(slop !>(%them) !>(~) q.cay)])
+      ::
           [%he *]                     ::  XX hack
         =.  ..axon  $(tee p.tee)
         %_  ..axon
@@ -796,6 +834,9 @@
         ?.  ?=(%& -.q.sih)
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
+        ?:  ?=(%red-quri p.cay)
+          =+  url=((hard quri) q.q.cay)
+          (give-thou 307 [location/(crip (apex:earn url))]~ ~)
         ?.  ?=(%mime p.cay)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek [%ud %0] bek(r da/now))
@@ -816,7 +857,6 @@
       ==
     ==
   ::
-  ++  root-beak  `beak`[our %home da/now]               ::  XX
   ++  emule
     |=  a=_|?(..emule)  ^+  ..emule
     =+  mul=(mule a)
@@ -842,7 +882,7 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  [tea=whir mar=mark cay=cage]
-    (pass-note tea (ford-req root-beak [%cast mar `cay]))
+    (pass-note tea (ford-req -.top [%cast mar `cay]))
   ::
   ++  del-deps
     |=  [a=@uvH b=(each duct ixor)]  ^+  +>.$
@@ -940,14 +980,10 @@
     ++  nice-json  (teba ^nice-json)
     ++  pass-note  (teba ^pass-note)
     ::
-    ++  ford-boil
-      |=  [wir=whir ext=term bem=beam quy=quay]
-      =+  yac=for-client
-      =.  him.yac  ?.(aut anon him.yac)
-      =:  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
-          s.bem  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
-        ==
-      (execute wir -.bem [%boil ext bem ~])
+    ++  fcgi-cred
+      ^-  cred
+      ?:  aut  fcgi-cred:for-client
+      %*(fcgi-cred for-client him anon)
     ::
     ::
     ++  apex
@@ -968,8 +1004,11 @@
           %json  (give-json 200 cug p.pez)
           %html  (give-html 200 cug p.pez)
           %htme  (give-html 401 cug p.pez)
-          %boil
-        (ford-boil [p.pez q.pez r.pez payload.pez])
+          %bake
+        =+  req=[%bake mar=q.pez [r s]:pez]
+        =+  red=req(mar %red-quri)
+        (execute p.pez -.s.pez `silk`[%alts ~[red req]])
+      ::
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect/[p.pok url] !!)
@@ -1008,6 +1047,8 @@
       ^-  (each perk httr)
       |^  =+  hit=as-magic-filename
           ?^  hit  [%| u.hit]
+          ?:  is-spur
+            [%& %spur (flop q.pok)]
           =+  bem=as-beam
           ?^  bem  [%& %beam u.bem]
           ?.  check-oryx
@@ -1033,14 +1074,16 @@
           ==
         ==
       ::
-      ++  as-beam
+      ++  is-spur  |(?~(q.pok & ((sane %tas) i.q.pok)))
+      ++  as-beam                     
         ^-  (unit beam)
-        |-
-        ?~  q.pok
-          $(q.pok /index)
-        ?.  ((sane %tas) i.q.pok)
-          (tome q.pok)
-        `[[our i.q.pok ud/0] (flop t.q.pok)]
+        ?~  q.pok  ~
+        =+  ^-  (unit ,[@ dez=desk rel=?])              :: /=desk/, /=desk=/
+            (rush i.q.pok ;~(plug tis sym ;~(pose (cold | tis) (easy &))))
+        ?~  -  (tome q.pok)                             :: /~ship/desk/case/...
+        :+  ~  [our dez.u r.top]
+        ?.  rel.u  (flop t.q.pok)
+        (weld (flop t.q.pok) s.top)   :: /=desk/... as hoon /=desk%/...
       ::
       ++  as-aux-request                                ::  /~/... req parser
         ^-  (unit perk)
@@ -1145,8 +1188,9 @@
     :: request. In the future it's possible the payload could be
     :: a specific mark instead.
     ++  process-payload
-        ?+  mef  quy
-          %post  `quay`(weld quy `quay`(rash q:(need bod) yquy:urlp))
+        ^-  [quay meth]
+        ?+  mef  [quy mef]
+          %post  [`quay`(weld quy `quay`(rash q:(need bod) yquy:urlp)) %get]
         ==
     ++  process
       ^-  (each pest ,_done)
@@ -1161,17 +1205,17 @@
           %auth  (process-auth p.hem)
           %away  [%& %html logout-page:xml]
           ?(%beam %spur)
-        =+  nquy=process-payload
+        =^  payload  mef  process-payload
         =+  ext=(fall p.pok %urb)
-        =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
-        =+  wir=`whir`[%ha (tope -.bem ~)]
-        =.  wir  ?+(mef !! %post wir, %get wir, %head [%he wir])
+        =+  bem=?-(-.hem %beam p.hem, %spur [-.top (weld p.hem s.top)])
         ~|  bad-beam/q.bem
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
-        ?.  aut
-          [%& %boil [wir ext bem nquy]]
-        [%| (ford-boil [wir ext bem nquy])]  ::  XX properly
-      ::
+        =+  wir=`whir`[%ha (tope -.bem ~)]
+        =.  wir  ?+(mef !! %get wir, %head [%he wir])
+        =.  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
+        =+  arg=(fcgi payload fcgi-cred)
+        =+  [%& %bake wir ext arg bem]
+        ?.(aut - [%| (resolve -)])  ::  XX properly
       ::
           %bugs
         ?-  p.hem
@@ -1196,7 +1240,7 @@
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
+          =+  polling-url=(apex:earn %| pok(u.p %json) quy)
           [%& %js (add-json (joba %wurl (jape polling-url)) poll:js)]
         =.  lyv  (~(put by lyv) hen %wasp p.hem)
         |-
@@ -1231,7 +1275,7 @@
         ?~  p.pez  pez
         ?+    -.p.pez  ~&(bad-inject/p.pez !!)
             %red  pez
-            %boil
+            %bake
           =.  ya  abet.yac 
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
@@ -1607,19 +1651,21 @@
   ~
 ::
 ++  load                                                ::  take previous state
+  =+  bolo-3=,_[%3 +(|2 |3.+)]:*bolo                    ::  no top
   =+  even-2=?(even [%mean p=[dock path] *])            ::  old %quit
   =+  ^=  stem-2                                        ::  no die, sus
       ,_=+(*stem -(|3 |5.-, q.eve *(map ,@u even-2)))
-  =+  bolo-2=,_[%2 %*(+ *bolo wix *(map ixor stem-2))]
+  =+  bolo-2=,_[%2 %*(+ *bolo-3 wix *(map ixor stem-2))]
   =+  bolo-1=,_[%1 +(|4 |5.+)]:*bolo-2                  ::  no lyv
-  |=  old=?(bolo bolo-1 bolo-2)
+  |=  old=?(bolo bolo-1 bolo-2 bolo-3)
   ^+  ..^$
   ?-  -.old
-    %3  ..^$(+>- old)
+    %4  ..^$(+>- old)
+    %3  $(-.old %4, |2.+.old [[[(need hov.old) %home ud/0] /web] |2.+.old])
     %2  =+  evn=|=(a=even-2 ?+(-.a a %mean [%quit p.a]))
         =+  stm=|=(a=stem-2 a(|3 [now ~ |3.a(q.eve (~(run by q.eve.a) evn))]))
-        $(old [%3 +.old(wix (~(run by wix.old) stm))])
-    %1  $(old [%2 +(|4 [~ |4.+])]:old)
+        $(-.old %3, wix.old (~(run by wix.old) stm))
+    %1  $(-.old %2, |4.+.old [~ |4.+.old])
   ==
 ::
 ++  scry
@@ -1646,3 +1692,4 @@
     q.hin
   [mos ..^$]
 --
+

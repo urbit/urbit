@@ -1,5 +1,5 @@
 ::
-::::  /hoon/sole-action/mar
+::::  /hoon/action/sole/mar
   ::
 /?    314
 /-    sole

@@ -1,5 +1,5 @@
 ::
-::::  /hoon/term-line/mar
+::::  /hoon/txt/mar
   ::
 /?  314
 !:

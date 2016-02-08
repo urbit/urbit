@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/hymn/mar
+::::  /hoon/hymn/mar
   ::
 /?  314
 |_  own=manx

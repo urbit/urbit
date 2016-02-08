@@ -1,5 +1,5 @@
 ::
-::::  /hoon/verb/hood/gun
+::::  /hoon/verb/hood/gen
   ::
 /?  314
 /-  sole

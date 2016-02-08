@@ -1,3 +1,6 @@
+::
+::::  /hoon/subdir/ls/gen
+  ::
 |%
 ++  subdir
   |=  [pax=path des=(map ,@t ,~)]

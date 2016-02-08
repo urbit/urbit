@@ -4631,7 +4631,7 @@
   ^-  toon
   ?.  ?=([2 *] ton)  ton
   :-  %2
-  =.  p.ton  (moop p.ton)
+  :: =.  p.ton  (moop p.ton)
   =+  yel=(lent p.ton)
   =.  p.ton
     ?.  (gth yel 256)  p.ton
@@ -8808,7 +8808,8 @@
                  $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
       [%dtkt *]  %noun
       [%dtls *]  [%atom %$]
-      [%dtzy *]  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen])
+      [%dtzy *]  ?:  =(%n p.gen)  ?>(=(0 q.gen) [%cube 0 [%atom %n]])
+                 ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen])
       [%dtzz *]  [%cube q.gen ?:(.?(q.gen) %noun [%atom p.gen])]
       [%dttr *]  %noun
       [%dtts *]  bool

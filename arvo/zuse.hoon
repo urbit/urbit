@@ -1158,32 +1158,11 @@
   ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
 ::
 ++  fuel                                                ::  parse fcgi
-  |=  [bem=beam but=path]
+  =+  packed-quay=|-($|(~ [p=@t q=@t t=$]))
+  |=  [bem=beam ced=noun:cred quy=packed-quay]
   ^-  epic
-  ?>  ?=([%web @ *] but)
-  =+  dyb=(slay i.t.but)
-  ?>  ?&  ?=([~ %many *] dyb)
-          ?=([* * *] p.u.dyb)
-          ?=([%$ %ta *] i.p.u.dyb)
-          ?=([%blob *] i.t.p.u.dyb)
-      ==
-  =+  ced=((hard cred) p.i.t.p.u.dyb)
-  ::  =+  nep=q.p.i.p.u.dyb
-  =+  ^=  gut  ^-  (list ,@t)
-      %+  turn  t.t.p.u.dyb
-      |=  a=coin  ^-  @t
-      ?>  ?=([%$ %t @] a)
-      ?>(((sane %t) q.p.a) q.p.a)
-  =+  ^=  quy
-      |-  ^-  (list ,[p=@t q=@t])
-      ?~  gut  ~
-      ?>  ?=(^ t.gut)
-      [[i.gut i.t.gut] $(gut t.t.gut)]
-  :*  (~(gas by *(map cord cord)) quy)
-      ced
-      bem
-      t.t.but
-  ==
+  =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
+  [(mo qix) ((hard cred) ced) bem /]
 ::
 ++  sifo                                                ::  64-bit encode
   |=  tig=@
@@ -1296,10 +1275,10 @@
   =<  |=(pul=purl `tape`(apex ~ pul))
   |%
   ++  apex
-    |=  qur=quri
+    |=  qur=quri  ^-  tape
     ?-  -.qur
-      %&  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
-      %|  (weld (body p.qur) (tail q.qur))
+      %&  (weld (head p.p.qur) $(qur [%| +.p.qur]))
+      %|  ['/' (weld (body p.qur) (tail q.qur))]
     ==
   ::
   ++  body
@@ -1324,7 +1303,7 @@
            ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
       ==
     ::
-      ?~(q.har ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.har)))])
+      ?~(q.har ~ `tape`[':' ((d-co:co 1) u.q.har)])
     ==
   ::
   ++  tail
@@ -2519,6 +2498,7 @@
               [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%hiss p=mark q=cage]                     ::  outbound user req
               [%init p=@p]                              ::  report install
+              [%serv p=$|(desk beam)]                   ::  set serving root
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response
               [%this p=? q=clip r=httq]                 ::  inbound request
@@ -2553,26 +2533,26 @@
 ++  horn                                                ::  resource tree
   $%  [%ape p=twig]                                     ::  /~  twig by hand
       [%arg p=twig]                                     ::  /$  argument
-      [%day p=horn]                                     ::  /|  list by @dr
+      [%alt p=(list horn)]                              ::  /|  options
       [%dub p=term q=horn]                              ::  /=  apply face
       [%fan p=(list horn)]                              ::  /.  list
-      [%for p=path q=horn]                              ::  /,  descend
-      [%hel p=@ud q=horn]                               ::  /%  propagate heel
-      [%hub p=horn]                                     ::  /@  list by @ud
+      [%for p=(list (pair path:spur horn))]             ::  /,  switch by path
+      [%hel p=horn]                                     ::  /%  propagate args
+      [%lin p=(list mark) q=horn]                       ::  /&  translates
       [%man p=(map span horn)]                          ::  /*  hetero map
       [%nap p=horn]                                     ::  /_  homo map
-      [%now p=horn]                                     ::  /&  list by @da
+      [%now p=horn]                                     ::  /@  list by @da
       [%saw p=twig q=horn]                              ::  /;  operate on
       [%see p=beam q=horn]                              ::  /:  relative to
       [%sic p=tile q=horn]                              ::  /^  cast
-      [%toy p=mark]                                     ::  /mark/  static
+      [%toy p=? q=mark]                                 ::  /mark/  static/hook
   ==                                                    ::
 ++  milk  (trel ship desk silk)                         ::  sourced silk
 ++  silk                                                ::  construction layer
   $&  [p=silk q=silk]                                   ::  cons
   $%  [%$ p=cage]                                       ::  literal
-      [%bake p=mark q=beam r=path]                      ::  local synthesis
-      [%boil p=mark q=beam r=path]                      ::  general synthesis
+      [%alts p=(list silk)]                             ::  options
+      [%bake p=mark q=coin r=beam]                      ::  local synthesis
       [%bunt p=mark]                                    ::  example of mark
       [%call p=silk q=silk]                             ::  slam
       [%cast p=mark q=silk]                             ::  translate
@@ -2585,7 +2565,7 @@
       [%mash p=mark q=milk r=milk]                      ::  annotate
       [%mute p=silk q=(list (pair wing silk))]          ::  mutant
       [%pact p=silk q=silk]                             ::  patch
-      [%plan p=beam q=spur r=hood]                      ::  structured assembly
+      [%plan p=beam q=coin r=hood]                      ::  structured assembly
       [%reef ~]                                         ::  kernel reef
       [%ride p=twig q=silk]                             ::  silk thru twig
       [%tabl p=(list (pair silk silk))]                 ::  list

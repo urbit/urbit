@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/elem/mar
+::::  /hoon/snip/mar
   ::
 /?  314
 !:
