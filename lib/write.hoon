@@ -50,9 +50,9 @@
 ::
 ++  poke-comment
   |=  [pax=path txt=@t]  ^+  abet
-  =.  pax  [%web (welp pax /(scot %da now))]
+  =.  pax  [%web (welp pax /comments/(scot %da now))]
   =.  txt  (rap 3 (scot %p src) ': ' txt ~)
-  (poke--data [`%comment-md pax] %mime / (taco txt))
+  (poke--data [`%md pax] %mime / (taco txt))
 ::
 ++  poke--data
   |=  [[ext=(unit ,@t) pax=path] dat=data]  ^+  abet
