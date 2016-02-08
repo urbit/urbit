@@ -266,6 +266,13 @@
       case c3__dtzy: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
+        if ( 'n' == p_gen ) {
+          if ( (q_gen != 0) ) {
+            return u3m_bail(c3__exit);
+          } else {
+            return u3nq(c3__cube, q_gen, c3__atom, p_gen);
+          }
+        }
         if ( 'f' == p_gen ) {
           if ( (q_gen > 1) ) {
             return u3m_bail(c3__exit);
