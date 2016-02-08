@@ -10,100 +10,85 @@
 :-  %noun
 =-  %+  turn  -
     |=  {a/@tas b/@tas}
-    "s/?(${<a>} ${<b>})/${<b>}/gc"
+    ?:  |
+      ^-  @ta
+      %-  crip
+      ;:  weld
+        "s/\\$"
+        (trip a)
+        "/"
+        "?($"
+        (trip a)
+        " $"
+        (trip b) 
+        ")"
+        "/g"
+      ==
+    ?:  |
+      ^-  @ta
+      %-  crip
+      ;:  weld
+        "s/%"
+        (trip a)
+        "/"
+        "%"
+        (trip b)
+        "/g"
+      ==
+    ?:  &
+      ^-  @ta
+      %-  crip
+      ;:  weld
+        "s/?(\\$"
+        (trip a)
+        " \\$"
+        (trip b) 
+        ")/$"
+        (trip b)
+        "/g"
+      ==
+    !!
 ^-  (list (pair @tas @tas))
-:~
-[%bcpt %flap]
-[%bccb %slug]
-[%bccl %rack]
-[%bccn %book]
-[%bchp %gate]
-[%bckt %bush]
-[%bcwt %pick]
-[%bcts %coat]
-[%brcb %door]
-[%brcl %gasp]
-[%brcn %core]
-[%brdt %trap]
-[%brkt %cork]
-[%brhp %loop]
-[%brsg %port]
-[%brtr %lock]
-[%brts %lamp]
-[%brwt %tray]
-[%clcb %bud]
-[%clkt %qua]
-[%clhp %dub]
-[%clls %tri]
-[%clsg %ray]
-[%cltr %all]
-[%cnbc %cold]
-[%cncb %keep]
-[%cndt %lace]
-[%cnhp %call]
-[%cntr %bake]
-[%cnkt %quid]
-[%cnls %quip]
-[%cnsg %with]
-[%cnts %make]
-[%dtkt %wish]
-[%dtls %bump]
-[%dttr %kick]
-[%dtts %same]
-[%dtwt %deep]
-[%ktbr %iron]
-[%ktdt %ward]
-[%ktls %like]
-[%kthp %cast]
-[%ktpm %zinc]
-[%ktsg %burn]
-[%ktts %name]
-[%ktwt %lead]
-[%sgbr %fate]
-[%sgcb %lurk]
-[%sgcn %fast]
-[%sgfs %funk]
-[%sggl %thin]
-[%sggr %hint]
-[%sgbc %live]
-[%sgls %memo]
-[%sgpm %show]
-[%sgts %germ]
-[%sgwt %warn]
-[%sgzp %type]
-[%smcl %wad]
-[%smfs %nub]
-[%smsg %dip]
-[%smsm %fry]
-[%tsbr %new]
-[%tscl %fly]
-[%tssm %var]
-[%tsfs %ram]
-[%tsdt %set]
-[%tsgl %rap]
-[%tshp %saw]
-[%tsgr %per]
-[%tskt %eat]
-[%tsls %has]
-[%tssg %tow]
-[%tstr %aka]
-[%wtbr %or]
-[%wthp %case]
-[%wtcl %if]
-[%wtdt %lest]
-[%wtkt %dig]
-[%wtgl %nay]
-[%wtgr %aye]
-[%wtls %deal]
-[%wtpm %and]
-[%wtpt %dab]
-[%wtsg %non]
-[%wtts %fit]
-[%wtzp %not]
-[%zpcm %twig]
-[%zpgr %wrap]
-[%zpsm %spit]
-[%zpts %nock]
-[%zpwt %need]
-[%zpzp %fail]
+:~  ::  [%flap %claw]   used in ames
+    [%slug %shoe] 
+    [%rack %bank]
+    [%gate %lamb]
+    [%pick %fork]
+
+    [%lock %gill]
+    :: [%lamp %gate]     reused
+
+    [%bud %scon]
+    [%qua %conq]
+    [%dub %cons]
+    :: [%tri %cont]    collides with %trip
+    [%ray %conl]
+    [%all %conp]
+
+    :: [%cold %bunt]   parser jet
+    [%quid %calq]
+    [%quip %calt]
+    [%with %open]
+
+    :: [%kick %nock]   reused; used in ames
+    :: [%live %poll]   also a hint
+    :: [%show %dump]   used in %ames
+    :: [%germ %ddup]   also a hint
+    [%type %peep]
+
+    [%fly %fix]
+    :: [%ram %rev]     also %ramp
+    [%eat %sip]     
+    [%has %pin]
+    [%saw %nip]
+
+    :: [%dig %ifcl]    %digitalocean in ape/cloud
+    [%nay %deny]
+    [%aye %sure]
+    :: [%deal %deft]   used in all vanes
+    [%dab %ifat]
+    :: [%non %ifno]    also %none
+    :: [%fit %fits]    also %fitz
+
+    :: [%nock %code]   reused 
 ==
