@@ -218,14 +218,12 @@
     else switch ( u3h(gen) ) {
       default: goto open;
 
-      case c3__fit:
       case c3__fits: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_bean();
       }
 
-      case c3__wtcl:
       case c3__if: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
@@ -242,8 +240,7 @@
         return ret;
       }
 
-      case c3__clhp:
-      case c3__dub: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__cons: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun dis = _play_x(van, sut, p_gen);
@@ -255,33 +252,29 @@
         return ret;
       }
 
-      case c3__dtkt:
       case c3__wish: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun nog = u3nc(c3__cold, u3k(p_gen));
+        u3_noun nog = u3nc(c3__bunt, u3k(p_gen));
         u3_noun ret = _play_x(van, sut, nog);
 
         u3z(nog);
         return ret;
       }
 
-      case c3__dtwt: 
       case c3__deep: p_gen = u3t(gen);
       _play_used();
       {
         return _play_bean();
       }
 
-      case c3__dtts:
       case c3__same: u3x_cell(u3t(gen), &p_gen, &q_gen); 
       _play_used();
       {
         return _play_bean();
       }
       
-      case c3__bump:
-      case c3__dtls: p_gen = u3t(gen);
+      case c3__bump: p_gen = u3t(gen);
       _play_used();
       {
         return u3nt(c3__atom, u3_blip, u3_nul);
@@ -293,8 +286,7 @@
         return _play_rock(p_gen, q_gen);
       }
 
-      case c3__dttr: 
-      case c3__kick: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__nock: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return c3__noun;
@@ -312,7 +304,6 @@
         return u3k(p_gen);
       }
 
-      case c3__ktbr: 
       case c3__iron: p_gen = u3t(gen);
       _play_used();
       {
@@ -323,7 +314,6 @@
         return pro;
       }
 
-      case c3__ktpm: 
       case c3__zinc: p_gen = u3t(gen);
       _play_used();
       {
@@ -334,7 +324,6 @@
         return pro;
       }
 
-      case c3__ktwt: 
       case c3__lead: p_gen = u3t(gen);
       _play_used();
       {
@@ -345,7 +334,6 @@
         return pro;
       }
 
-      case c3__ktts: 
       case c3__name: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
@@ -356,21 +344,18 @@
         return ret;
       }
 
-      case c3__ktsg: 
       case c3__burn: p_gen = u3t(gen);
       _play_used();
       {
         return _play_x(van, sut, p_gen);
       }
 
-      case c3__ktls: 
       case c3__like: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_x(van, sut, p_gen);
       }
 
-      case c3__tsgr: 
       case c3__per: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
@@ -381,7 +366,6 @@
         return ret;
       }
 
-      case c3__tstr: 
       case c3__aka: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
@@ -392,14 +376,12 @@
         return ret;
       }
 
-      case c3__cnts: 
       case c3__make: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_cnts(van, sut, p_gen, q_gen);
       }
 
-      case c3__brcn: 
       case c3__core: p_gen = u3t(gen);
       _play_used();
       {
@@ -410,7 +392,6 @@
         return ret;
       }
 
-      case c3__type: 
       case c3__peep: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
@@ -428,21 +409,18 @@
         return ret;
       }
 
-      case c3__sggr: 
       case c3__hint: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_x(van, sut, q_gen);
       }
 
-      case c3__nock: 
       case c3__code: p_gen = u3t(gen);
       _play_used();
       {
         return c3__noun;
       }
 
-      case c3__zpcm: 
       case c3__twig: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
@@ -461,7 +439,6 @@
         return ret;
       }
 
-      case c3__zpsm: 
       case c3__spit: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
@@ -476,7 +453,6 @@
       }
 
       case c3__lost:
-      case c3__zpzp:
       case c3__fail:
       _play_used();
       {
