@@ -39,7 +39,7 @@
       ^-  @ta
       %-  crip
       ;:  weld
-        "s/?(\\$"
+        "s/\\?(\\$"
         (trip a)
         " \\$"
         (trip b) 
@@ -49,46 +49,39 @@
       ==
     !!
 ^-  (list (pair @tas @tas))
-:~  ::  [%flap %claw]   used in ames
+:~  [%flap %claw]  ::  used in ames
     [%slug %shoe] 
     [%rack %bank]
     [%gate %lamb]
-    [%pick %fork]
-
     [%lock %gill]
-    :: [%lamp %gate]     reused
-
+    ::  [%lamp %gate]     reused
     [%bud %scon]
     [%qua %conq]
     [%dub %cons]
-    :: [%tri %cont]    collides with %trip
+    [%tri %cont]  :: collides with %trip
     [%ray %conl]
     [%all %conp]
 
-    :: [%cold %bunt]   parser jet
+    [%cold %bunt]   :: parser jet
     [%quid %calq]
     [%quip %calt]
     [%with %open]
-
-    :: [%kick %nock]   reused; used in ames
-    :: [%live %poll]   also a hint
-    :: [%show %dump]   used in %ames
-    :: [%germ %ddup]   also a hint
+    ::  [%kick %nock]   reused; used in ames
+    [%live %poll]  :: also a hint
+    [%show %dump]  :: used in %ames
+    [%germ %ddup]  :: also a hint
     [%type %peep]
-
     [%fly %fix]
-    :: [%ram %rev]     also %ramp
+    [%ram %rev]   :: also %ramp
     [%eat %sip]     
     [%has %pin]
     [%saw %nip]
-
-    :: [%dig %ifcl]    %digitalocean in ape/cloud
+    [%dig %ifcl]    :: %digitalocean in ape/cloud
     [%nay %deny]
     [%aye %sure]
-    :: [%deal %deft]   used in all vanes
+    [%deal %deft]   :: used in all vanes
     [%dab %ifat]
-    :: [%non %ifno]    also %none
-    :: [%fit %fits]    also %fitz
-
-    :: [%nock %code]   reused 
+    [%non %ifno]    :: also %none
+    [%fit %fits]    :: also %fitz
+    [%nock %code]   :: reused 
 ==

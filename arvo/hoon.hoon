@@ -207,46 +207,79 @@
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
   ::                                            ::::::  molds
-    {$flap p/twig q/twig}      ::  claw                 ::  $@ depth fork
-    {$slug p/twig}             ::  shoe                 ::  $_ example
-    {$rack p/(list twig)}      ::  bank                 ::  $: tuple
-    {$book p/(list twig)}      ::  -                    ::  $% tagged fork
-    {$gate p/twig q/twig}      ::  lamb                 ::  $- function
-    {$bush p/twig q/twig}      ::  -                    ::  $^ pairhead fork
-    {$pick p/(list twig)}      ::  fork                 ::  $? untagged fork
-    {$coat p/term q/twig}      ::  -                    ::  $= name
+    {$claw p/twig q/twig}                               ::  $@ depth fork
+    {$flap p/twig q/twig}                               ::  $@ depth fork
+
+    {$shoe p/twig}                                      ::  $_ example
+    {$slug p/twig}                                      ::  $_ example
+
+    {$bank p/(list twig)}                               ::  $: tuple
+    {$rack p/(list twig)}                               ::  $: tuple
+
+    {$book p/(list twig)}                               ::  $% tagged fork
+
+    {$lamb p/twig q/twig}                               ::  $- function
+    {$gate p/twig q/twig}                               ::  $- function
+
+    {$bush p/twig q/twig}                               ::  $^ pairhead fork
+    {$pick p/(list twig)}                               ::  $? untagged fork
+    {$coat p/term q/twig}                               ::  $= name
   ::                                            ::::::  cores
-    {$door p/twig q/(map term foot)}   ::  -            ::  |_
-    {$gasp p/twig q/twig}              ::  --           ::  |:
-    {$core p/(map term foot)}          ::  -            ::  |%
-    {$trap p/twig}                     ::  -            ::  |.
-    {$cork p/twig q/(map term foot)}   ::  -            ::  |^
-    {$loop p/twig}                     ::  -            ::  |-
-    {$port p/twig q/twig}              ::  --           ::  |~
-    {$lock p/twig q/twig}              ::  gill         ::  |*
-    {$lamp p/twig q/twig}              ::  gate         ::  |=
-    {$tray p/twig}                     ::  --           ::  |?  
+    {$door p/twig q/(map term foot)}                    ::  |_
+    {$gasp p/twig q/twig}                               ::  |=
+    {$core p/(map term foot)}                           ::  |%
+    {$trap p/twig}                                      ::  |.
+    {$cork p/twig q/(map term foot)}                    ::  |^
+    {$loop p/twig}                                      ::  |-
+    {$port p/twig q/twig}                               ::  |~
+
+    {$gill p/twig q/twig}                               ::  |*
+    {$lock p/twig q/twig}                               ::  |*
+
+    {$lamp p/twig q/twig}                               ::  |=
+    {$tray p/twig}                                      ::  |?  
   ::                                            ::::::  tuples
-    {$bud p/twig q/twig}                    ::  scon    ::  :_ [q p]
-    {$qua p/twig q/twig r/twig s/twig}      ::  quad    ::  :^ [p q r s]
-    {$dub p/twig q/twig}                    ::  cons    ::  :- [p q]
-    {$tri p/twig q/twig r/twig}             ::  trip    ::  :+ [p q r]
-    {$ray p/(list twig)}                    ::  list    ::  :~ [p ~]
-    {$all p/(list twig)}                    ::  rack    ::  :* p as a tuple
+    {$scon p/twig q/twig}                                ::  :_ [q p]
+    {$bud p/twig q/twig}                                ::  :_ [q p]
+
+    {$conq p/twig q/twig r/twig s/twig}                  ::  :^ [p q r s]
+    {$qua p/twig q/twig r/twig s/twig}                  ::  :^ [p q r s]
+
+    {$cons p/twig q/twig}                                ::  :- [p q]
+    {$dub p/twig q/twig}                                ::  :- [p q]
+
+    {$cont p/twig q/twig r/twig}                         ::  :+ [p q r]
+    {$tri p/twig q/twig r/twig}                         ::  :+ [p q r]
+
+    {$conl p/(list twig)}                                ::  :~ [p ~]
+    {$ray p/(list twig)}                                ::  :~ [p ~]
+
+    {$conp p/(list twig)}                                ::  :* p as a tuple
+    {$all p/(list twig)}                                ::  :* p as a tuple
   ::                                            ::::::  invocations
-    {$cold p/twig}                              ::  bunt::  %$
-    {$keep p/wing q/(list (pair wing twig))}    ::  -   ::  %_
-    {$lace p/twig q/twig}                       ::  -   ::  %.
+
+    {$bunt p/twig}                                      ::  %$
+    {$cold p/twig}                                      ::  %$
+
+    {$keep p/wing q/(list (pair wing twig))}            ::  %_
+    {$lace p/twig q/twig}                               ::  %.
     {$call p/twig q/(list twig)}                        ::  %-
-    {$bake p/wing q/twig r/(list (pair wing twig))}:: --::  %*
+    {$bake p/wing q/twig r/(list (pair wing twig))}     ::  %*
+
+    {$calq p/twig q/twig r/twig s/twig}                 ::  %^
     {$quid p/twig q/twig r/twig s/twig}                 ::  %^
+
+    {$calt p/twig q/twig r/twig}                        ::  %+
     {$quip p/twig q/twig r/twig}                        ::  %+
-    {$with p/wing q/twig r/(list twig)}         :: open ::  %~
+
+    {$open p/wing q/twig r/(list twig)}                 ::  %~
+    {$with p/wing q/twig r/(list twig)}                 ::  %~
+
     {$make p/wing q/(list (pair wing twig))}            ::  %=
   ::                                            ::::::  nock
     {$wish p/twig q/twig}                               ::  .^  nock 11
     {$bump p/twig}                                      ::  .+  nock 4
-    {$kick p/twig q/twig}                       :: nock ::  .*  nock 2
+    {$kick p/twig q/twig}                               ::  .*  nock 2
     {$same p/twig q/twig}                               ::  .=  nock 5
     {$deep p/twig}                                      ::  .?  nock 3
   ::                                            ::::::  span conversion
@@ -265,49 +298,90 @@
     {$funk p/chum q/twig}                               ::  ~/  function j-hint
     {$thin p/$@(term {p/term q/twig}) q/twig}           ::  ~<  backward hint
     {$hint p/$@(term {p/term q/twig}) q/twig}           ::  ~>  forward hint
-    {$live p/term q/twig}                     ::  poll  ::  ~$  profiler hit
+    
+    {$poll p/term q/twig}                               ::  ~$  profiler hit
+    {$live p/term q/twig}                               ::  ~$  profiler hit
+
     {$memo p/@ q/twig}                                  ::  ~+  cache/memoize
-    {$show p/@ud q/twig r/twig}               ::  dump  ::  ~&  printf/priority
-    {$germ p/twig q/twig}                     ::  ddup  ::  ~=  don't duplicate
+
+
+    {$dump p/@ud q/twig r/twig}                         ::  ~&  printf/priority
+    {$show p/@ud q/twig r/twig}                         ::  ~&  printf/priority
+
+    {$ddup p/twig q/twig}                               ::  ~=  don't duplicate
+    {$germ p/twig q/twig}                               ::  ~=  don't duplicate
+
     {$warn p/@ud q/twig r/twig s/twig}                  ::  ~?  tested printf
-    {$type p/twig q/twig}                     ::  peep  ::  ~!  type on trace
+
+    {$peep p/twig q/twig}                               ::  ~!  type on trace
+    {$type p/twig q/twig}                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
     {$wad p/twig q/(list twig)}                         ::  ;:  binary to nary
     {$nub p/twig}                                       ::  ;/  [%$ [%$ p ~] ~]
     {$dip p/twig q/(list twig)}                         ::  ;~  kleisli arrow
     {$fry p/twig q/twig}                                ::  ;;  normalize
   ::                                            ::::::  compositions
-    {$new p/twig q/twig}                      ::  -     ::  =|  push bunt
-    {$fly p/(list (pair wing twig)) q/twig}   ::  fix   ::  =:  q with p changes
-    {$var p/taco q/twig r/twig}               ::  -     ::  =;  typed variable
-    {$ram p/twig q/taco r/twig}               ::  raw   ::  =/  =;(q p r)
-    {$set p/wing q/twig r/twig}               ::  -     ::  =.  r with p as q
+    {$new p/twig q/twig}                                ::  =|  push bunt
+
+    {$fix p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
+    {$fly p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
+
+    {$var p/taco q/twig r/twig}                         ::  =;  typed variable
+
+    {$rev p/twig q/taco r/twig}                         ::  =/  =;(q p r)
+    {$ram p/twig q/taco r/twig}                         ::  =/  =;(q p r)
+
+    {$set p/wing q/twig r/twig}                         ::  =.  r with p as q
     {$rap p/twig q/twig}                                ::  =<  =>(q p)
+
+    {$nip p/twig q/twig}                                ::  =-  =+(q p)
     {$saw p/twig q/twig}                                ::  =-  =+(q p)
+
     {$per p/twig q/twig}                                ::  =>  q w/subject p 
-    {$eat p/taco q/wing r/twig s/twig}        ::  sip   ::  =^  state machine
+
+    {$sip p/taco q/wing r/twig s/twig}                  ::  =^  state machine
+    {$eat p/taco q/wing r/twig s/twig}                  ::  =^  state machine
+
+    {$pin p/twig q/twig}                                ::  =+  q w/[p subject]
     {$has p/twig q/twig}                                ::  =+  q w/[p subject]
-    {$tow p/(list twig)}                      ::  --    ::  =~  twig stack
+
+    {$tow p/(list twig)}                                ::  =~  twig stack
     {$aka p/term q/twig r/twig}                         ::  =*  r w/alias p/q
   ::                                            ::::::  conditionals
-    {$or p/(list twig)}                                -::  ?|  loobean or
-    {$case p/wing q/(list (pair twig twig))}           -::  ?-  pick case in q
-    {$if p/twig q/twig r/twig}                         -::  ?:  if/then/else
-    {$lest p/twig q/twig r/twig}                       -::  ?.  ?:(p r q)
-    {$dig p/wing q/twig r/twig}                    ::ifce:  ?^  if p is a cell
-    {$nay p/twig q/twig}                           ::deny:  ?>  ?:(p !! q)
-    {$aye p/twig q/twig}                           ::sure:  ?<  ?:(p q !!)
-    {$deal p/wing q/twig r/(list (pair twig twig))}::deft:  ?+  ?-  w/default
+    {$or p/(list twig)}                                 ::  ?|  loobean or
+    {$case p/wing q/(list (pair twig twig))}            ::  ?-  pick case in q
+    {$if p/twig q/twig r/twig}                          ::  ?:  if/then/else
+    {$lest p/twig q/twig r/twig}                        ::  ?.  ?:(p r q)
+
+    {$ifcl p/wing q/twig r/twig}                         ::  ?^  if p is a cell
+    {$dig p/wing q/twig r/twig}                         ::  ?^  if p is a cell
+
+    {$deny p/twig q/twig}                                ::  ?<  ?:(p !! q)
+    {$nay p/twig q/twig}                                ::  ?<  ?:(p !! q)
+
+    {$sure p/twig q/twig}                                ::  ?>  ?:(p q !!)
+    {$aye p/twig q/twig}                                ::  ?<  ?:(p q !!)
+
+    {$deft p/wing q/twig r/(list (pair twig twig))}     ::  ?+  ?-  w/default
+    {$deal p/wing q/twig r/(list (pair twig twig))}     ::  ?+  ?-  w/default
+
     {$and p/(list twig)}                                ::  ?&  loobean and
-    {$dab p/wing q/twig r/twig}                    ::ifat:  ?@  if p is atom
-    {$non p/wing q/twig r/twig}                    ::ifno:  ?~  if p is null
-    {$fit p/twig q/wing}                           ::fits:  ?=  if q matches p 
+
+    {$ifat p/wing q/twig r/twig}                         ::  ?@  if p is atom
+    {$dab p/wing q/twig r/twig}                         ::  ?@  if p is atom
+
+    {$ifno p/wing q/twig r/twig}                         ::  ?~  if p is null
+    {$non p/wing q/twig r/twig}                         ::  ?~  if p is null
+
+    {$fits p/twig q/wing}                                ::  ?=  if q matches p 
+    {$fit p/twig q/wing}                                ::  ?=  if q matches p 
+
     {$not p/twig}                                       ::  ?!  loobean not
   ::                                            ::::::  special
     {$twig p/twig q/twig}                               ::  !,
     {$wrap p/twig}                                      ::  !>
     {$spit p/twig q/twig}                               ::  !;
-    {$nock p/twig}              ::  code                ::  !=
+    {$nock p/twig}                                      ::  !=
     {$need p/$@(p/@ {p/@ q/@}) q/twig}                  ::  !?
     {$fail $~}                                          ::  !!
   ==                                                    ::
@@ -6936,11 +7010,11 @@
 ::  ?+  gen  ~
 ::    {^ *}       `[p.gen q.gen]
 ::    {$dbug *}   $(gen q.gen)
-::    {$bud *}   `[q.gen p.gen]
-::    {$dub *}   `[p.gen q.gen]
-::    {$qua *}   `[p.gen %tri q.gen r.gen s.gen]
-::    {$ray *}   ?~(p.gen ~ `[i.p.gen %ray t.p.gen])
-::    {$all *}   ?~  p.gen  ~ 
+::    {?($bud $scon) *}   `[q.gen p.gen]
+::    {?($dub $cons) *}   `[p.gen q.gen]
+::    {?($qua $conq) *}   `[p.gen %tri q.gen r.gen s.gen]
+::    {?($ray $conl) *}   ?~(p.gen ~ `[i.p.gen %ray t.p.gen])
+::    {?($all $conp) *}   ?~  p.gen  ~ 
 ::                ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %all t.p.gen])
 ::  == 
 ::::
@@ -6974,9 +7048,9 @@
         {$dbug *}  [%deet p.gen boil(gen q.gen)]
         {$leaf *}  [%leaf p.gen]
     ::
-        {$flap *}  [%reed boil(gen p.gen) boil(gen q.gen)]
-        {$slug *}  [%weed p.gen]
-        {$rack *}
+        {?($flap $claw) *}  [%reed boil(gen p.gen) boil(gen q.gen)]
+        {?($slug $shoe) *}  [%weed p.gen]
+        {?($rack $bank) *}
       |-  ^-  tile
       ?~  p.gen  [%axil %null]
       ?~  t.p.gen  boil(gen i.p.gen)
@@ -6999,7 +7073,7 @@
       ==
     ::
         {$bush *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$gate *}  [%weed [%port p.gen [%cold [%per [%$ 7] q.gen]]]]  
+        {?($gate $lamb) *}  [%weed [%port p.gen [%cold [%per [%$ 7] q.gen]]]]  
         {$coat *}  [%bark p.gen boil(gen q.gen)]
         {$pick *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7054,11 +7128,11 @@
         {$wing *}  [%make p.gen ~]
         {$yell *}  [%call [%limb %cain] [%wrap [%all p.gen]] ~]
     ::
-        {$flap *}  ~(clam al boil)
-        {$slug *}  ~(clam al boil)
-        {$rack *}  ~(clam al boil)
+        {?($flap $claw) *}  ~(clam al boil)
+        {?($slug $shoe) *}  ~(clam al boil)
+        {?($rack $bank) *}  ~(clam al boil)
         {$book *}  ~(clam al boil)
-        {$gate *}  ~(clam al boil)
+        {?($gate $lamb) *}  ~(clam al boil)
         {$bush *}  ~(clam al boil)
         {$pick *}  ~(clam al boil)
         {$coat *}  ~(clam al boil)
@@ -7069,22 +7143,22 @@
         {$cork *}  [%per [%core (~(put by q.gen) %$ [%ash p.gen])] [%limb %$]]
         {$loop *}  [%rap [%limb %$] [%trap p.gen]]
         {$port *}  [%iron [%lamp p.gen q.gen]]
-        {$lock *}  :+  %has  [%cold p.gen] 
+        {?($lock $gill) *}  :+  %has  [%cold p.gen] 
                    [%core (~(put by *(map term foot)) %$ [%elm q.gen])]
         {$lamp *}  [%door p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         {$tray *}  [%lead %trap p.gen]
     ::
-        {$qua *}  [p.gen q.gen r.gen s.gen]
-        {$tri *}  [p.gen q.gen r.gen]
-        {$bud *}  [q.gen p.gen]
-        {$dub *}  [p.gen q.gen]
-        {$ray *}
+        {?($qua $conq) *}  [p.gen q.gen r.gen s.gen]
+        {?($tri $cont) *}  [p.gen q.gen r.gen]
+        {?($bud $scon) *}  [q.gen p.gen]
+        {?($dub $cons) *}  [p.gen q.gen]
+        {?($ray $conl) *}
       |-  ^-  twig
       ?~  p.gen
         [%rock %n ~]
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$all *}
+        {?($all $conp) *}
       |-  ^-  twig
       ?~  p.gen
         [%fail ~]
@@ -7092,13 +7166,13 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$cold *}  [%burn ~(bunt al %herb p.gen)]
+        {?($cold $bunt) *}  [%burn ~(bunt al %herb p.gen)]
         {$keep *}  [%like [%wing p.gen] %make p.gen q.gen]
         {$lace *}  [%call q.gen [p.gen ~]]
-        {$quid *}  [%call p.gen q.gen r.gen s.gen ~]
-        {$quip *}  [%call p.gen q.gen r.gen ~]
+        {?($quid $calq) *}  [%call p.gen q.gen r.gen s.gen ~]
+        {?($quip $calt) *}  [%call p.gen q.gen r.gen ~]
         {$call *}  [%with [%$ ~] p.gen q.gen]
-        {$with *}  :: [%bake p.gen q.gen (hail(gen [%all r.gen]) 6)]
+        {?($with $open) *}  :: [%bake p.gen q.gen (hail(gen [%all r.gen]) 6)]
       :^  %bake  p.gen  q.gen
       ::
       ::  the use of ++hail is probably the right language design, but
@@ -7148,14 +7222,14 @@
     ::
         {$funk *}  [%fast p.gen [%$ 7] ~ q.gen]
         {$thin *}  [%rap [%hint p.gen [%$ 1]] q.gen]
-        {$live *}  [%hint [%live [%rock %$ p.gen]] q.gen]
+        {?($live $poll) *}  [%hint [%live [%rock %$ p.gen]] q.gen]
         {$memo *}  [%hint [%memo %rock %$ p.gen] q.gen]
-        {$show *}
+        {?($show $dump) *}
       :+  %hint
         [%slog [%sand %$ p.gen] [%call [%limb %cain] [%wrap q.gen] ~]]
       r.gen
     ::
-        {$germ *}  [%hint [%germ p.gen] q.gen]
+        {?($germ $ddup) *}  [%hint [%germ p.gen] q.gen]
         {$warn *}
       :+  %has  [%lest q.gen [%bust %null] [[%bust %null] r.gen]]
       :^  %non  [%& 2]~
@@ -7216,7 +7290,7 @@
         {$new *}
       [%has ~(bunt al %herb p.gen) q.gen]
     ::
-        {$fly *}
+        {?($fly $fix) *}
       [%per [%keep [[%& 1] ~] p.gen] q.gen]
     ::
         {$var *}
@@ -7224,11 +7298,11 @@
         [%has [%name p.gen q.gen] r.gen]
       [%has [%cast [%coat p.gen] q.gen] r.gen]
     ::
-        {$ram *}  [%var q.gen p.gen r.gen]
+        {?($ram $rev) *}  [%var q.gen p.gen r.gen]
         {$set *}
       [%per [%keep [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
     ::
-        {$eat *}                                       ::                  =^
+        {?($eat $sip) *}                                       ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                 ::
       :+  %per  [%name %v %$ 1]                        ::  =>  v=.
       :+  %has  [%name %a %per [%limb %v] r.gen]      ::  =+  a==>(v \r.gen)
@@ -7242,8 +7316,8 @@
       s.gen                                             ::  s.gen
     ::
         {$rap *}  [%per q.gen p.gen]
-        {$has *}  [%per [p.gen [%$ 1]] q.gen]
-        {$saw *}  [%has q.gen p.gen]
+        {?($has $pin) *}  [%per [p.gen [%$ 1]] q.gen]
+        {?($saw $nip) *}  [%has q.gen p.gen]
         {$tow *}
       |-  ^-  twig
       ?~  p.gen    [%$ 1]
@@ -7255,9 +7329,9 @@
       ?~(p.gen [%rock %f 1] [%if i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
     ::
         {$lest *}   [%if p.gen r.gen q.gen]
-        {$nay *}   [%if p.gen [%fail ~] q.gen]
-        {$aye *}   [%if p.gen q.gen [%fail ~]]
-        {$dig *}   [%if [%fit [%base %atom %$] p.gen] r.gen q.gen]
+        {?($nay $deny) *}   [%if p.gen [%fail ~] q.gen]
+        {?($aye $sure) *}   [%if p.gen q.gen [%fail ~]]
+        {?($dig $ifcl) *}   [%if [%fit [%base %atom %$] p.gen] r.gen q.gen]
     ::
         {$case *}
       |-
@@ -7268,15 +7342,15 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
-        {$deal *}   
+        {?($deal $deft) *}   
       [%case p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
     ::
         {$and *}
       |-
       ?~(p.gen [%rock %f 0] [%if i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
-        {$dab *}   [%if [%fit [%base %atom %$] p.gen] q.gen r.gen]
-        {$non *}   [%if [%fit [%base %null] p.gen] q.gen r.gen]
+        {?($dab $ifat) *}   [%if [%fit [%base %atom %$] p.gen] q.gen r.gen]
+        {?($non $ifno) *}   [%if [%fit [%base %null] p.gen] q.gen r.gen]
         {$not *}   [%if p.gen [%rock %f 1] [%rock %f 0]]
         {$wrap *}
       [%call [%limb %onan] [%spit [%cold [%limb %abel]] p.gen] ~]
@@ -8497,7 +8571,7 @@
   ++  chip
     ~/  %chip
     |=  {how/? gen/twig}  ^-  span
-    ?:  ?=({$fit *} gen)  
+    ?:  ?=({?($fit $fits) *} gen)  
       (cool how q.gen (play ~(bunt al [%herb p.gen])))  
     ?:  ?&(how ?=({$and *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
@@ -8555,7 +8629,7 @@
     ::
         {$name *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         {$lead *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
-        {$type *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
+        {?($type $peep) *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
         {$hint *}
       =+  hum=$(gen q.gen)
       :: ?:  &(huz !?=($|(@ [?(%fast %memo) ^]) p.gen))
@@ -8588,7 +8662,7 @@
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran ~) (cond duy q.hiq q.ran)]
     ::
-        {$fit *}
+        {?($fit $fits) *}
       :-  (nice bool)
       =+  ref=(play ~(bunt al %herb p.gen))
       =+  fid=(find %read q.gen)
@@ -8628,7 +8702,7 @@
         [%hand p.vat q.vat]
       ==
     ::
-        {$nock *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
+        {?($nock $code) *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
         {$fail $~}  [%void [%0 0]]
         *
       =+  doz=~(open ap gen)
@@ -8712,7 +8786,7 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
     ::
         {$burn *}  $(gen p.gen)
-        {$type *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
+        {?($type $peep) *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
         {$hint *}  $(gen q.gen)
         {$per *}
       =+  lem=$(gen p.gen, gol %noun)
@@ -8743,7 +8817,7 @@
           $(sut p.wux, dox q.wux, gen r.gen)
       [(nice (fork p.hiq p.ran ~)) (fork q.hiq q.ran ~)]
     ::
-        {$fit *}
+        {?($fit $fits) *}
       =+  nob=~(bunt al %herb p.gen)
       =+  waz=[p=(play nob) q=(play(sut dox) nob)]
       =+  ^=  syx  :-  p=(cove q:(mint %noun [%wing q.gen]))
@@ -8761,7 +8835,7 @@
         ~|(%mull-skip !!)
       (beth %void)
     ::
-        {$nock *}  (beth %noun)
+        {?($nock $code) *}  (beth %noun)
         {$spit *}
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
@@ -8993,7 +9067,7 @@
       {$burn *}  $(gen p.gen)
       {$name *}  (conk(sut $(gen q.gen)) p.gen)
       {$lead *}  (wrap(sut $(gen p.gen)) %lead)
-      {$type *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
+      {?($type $peep) *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$hint *}  $(gen q.gen)
       {$per *}  $(gen q.gen, sut $(gen p.gen))
       {$aka *}  $(gen r.gen, sut (buss p.gen q.gen))
@@ -9002,7 +9076,7 @@
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                    ?:(=(%void wux) %void $(sut wux, gen r.gen))
                  ==
-      {$fit *}  bool
+      {?($fit $fits) *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
       {$twig *}  (play p.gen)
       {$wrap *}  %=    $
@@ -9011,7 +9085,7 @@
                  ==
       {$lost *}  %void
       {$spit *}  (cell $(gen p.gen) $(gen q.gen))
-      {$nock *}  %noun
+      {?($nock $code) *}  %noun
       {$fail *}  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
@@ -9159,7 +9233,7 @@
     |=  gen/twig  ^-  (unit path)
     ?:  ?=({$dbug *} gen)
       $(gen q.gen)
-    ?.  ?=({$ray *} gen)  ~
+    ?.  ?=({?($ray $conl) *} gen)  ~
     %+  reel  p.gen
     |=  {a/twig b/_`(unit path)`[~ u=/]}
     ?~  b  ~
