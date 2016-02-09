@@ -313,7 +313,7 @@
       ==
     ::
     ++  clad                                            ::  hash dependencies
-      |*  hoc=(bolt)  ^+  [dep=*@uvH hoc=hoc]
+      |*  hoc=(bolt)  ^+  [*@uvH hoc]
       ?:  ?=(%1 -.q.hoc)  [*@uvH hoc]
       =^  dep  r.p.hoc  (daze [p.q r.p]:hoc)
       [dep hoc]
@@ -674,6 +674,7 @@
               (stag %ape ;~(pfix sig ape:read))
               (stag %arg ;~(pfix buc ape:read))
               (stag %alt ;~(pfix bar alt:read))
+              (stag %dep ;~(pfix hax day:read))
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
@@ -1434,9 +1435,18 @@
           ?~  p.hon  (flaw cof leaf/"ford: out of options" ~)
           (coop ^$(cof cof, hon i.p.hon) ..$(p.hon t.p.hon))
         ::
+            %dep
+          =+  [dep bot]=(clad $(hon p.hon))    :: XX review
+          %+  cope  bot
+          %-  flux
+          |=  [mark vax=vase]
+          [%noun (slop [atom/'uvH' dep] vax)]
+        ::
             %dub 
           %+  cope  $(hon q.hon)
-          (flux |=([mar=mark vax=vase] [mar [%face p.hon p.vax] q.vax]))
+          %-  flux
+          |=  [mar=mark vax=vase]
+          [mar [%face p.hon p.vax] q.vax]
         ::
             %fan
           %-  cope  :_  (flux |=(a=vase noun/a))

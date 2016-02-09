@@ -2493,6 +2493,7 @@
   $%  [%ape p=twig]                                     ::  /~  twig by hand
       [%arg p=twig]                                     ::  /$  argument
       [%alt p=(list horn)]                              ::  /|  options
+      [%dep p=horn]                                     ::  /#  insert dephash
       [%dub p=term q=horn]                              ::  /=  apply face
       [%fan p=(list horn)]                              ::  /.  list
       [%for p=(list (pair path:spur horn))]             ::  /,  switch by path
