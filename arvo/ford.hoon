@@ -570,10 +570,15 @@
     ++  fade                                            ::  compile to hood
       |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
+      (fape cof for bem bem)
+    ::
+    ++  fape                                            ::  XX compile at path
+      |=  [cof=cafe for=mark bem=beam bim=beam]
+      ^-  (bolt hood)
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
       %+  cope  (liar cof %*(. bem s [for s.bem]))
       |=  [cof=cafe cay=cage]
-      %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
+      %+  (clef %hood)  (fine cof bim(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
       |=  [cof=cafe bum=beam cay=cage]
       ~|  fade/(tope bum)
@@ -969,9 +974,13 @@
     ::
     ++  lear                                            ::  load core
       |=  [cof=cafe bem=beam]  ^-  (bolt vase)
+      (leap cof bem bem many/~)
+    ::
+    ++  leap                                            :: XX load with path
+      |=  [cof=cafe bem=beam bom=beam arg=coin]
       %+  cope  (fame cof bem)
       |=  [cof=cafe bem=beam]
-      (cope (fade cof %hoon bem) abut:(meow bem many/~))
+      (cope (fape cof %hoon bem bom) abut:(meow bom arg))
     ::
     ++  lend                                            ::  load arch
       |=  [cof=cafe bem=beam]
@@ -1030,17 +1039,7 @@
       %+  cope  (lima cof for arg bem)
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
-      (limp cof for arg bem)
-    ::
-    ++  limp                                            ::  render
-      |=  [cof=cafe for=mark arg=coin bem=beam]
-      %+  cope  (fame cof -.bem /[for]/ren)
-      |=  [cof=cafe bom=beam]
-      (cope (fade cof %hoon bom) abut:(meow bem arg))
-      
-::       |=  [cof=cafe vax=vase]
-::       %+  flaw  cof
-::       ~[leaf/"build {<for>}" leaf/"no usable ancestors" (smyt (tope bem))]
+      (leap cof [-.bem /[for]/ren] bem arg)
     ::
     ++  link                                            ::  translate
       |=  [cof=cafe too=mark for=mark vax=vase]
