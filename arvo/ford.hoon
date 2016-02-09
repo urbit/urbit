@@ -48,6 +48,7 @@
 ++  cafe                                                ::  live cache
   $:  p=(set calx)                                      ::  used
       q=(map ,* calx)                                   ::  cache
+      r=(map ,@uvH deps)                                ::  dependss
   ==                                                    ::
 ::                                                      ::
 ++  calm                                                ::  cache metadata
@@ -311,6 +312,12 @@
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
+    ++  clad                                            ::  hash dependencies
+      |*  hoc=(bolt)  ^+  [dep=*@uvH hoc=hoc]
+      ?:  ?=(%1 -.q.hoc)  [*@uvH hoc]
+      =^  dep  r.p.hoc  (daze [p.q r.p]:hoc)
+      [dep hoc]
+    ::
     ++  clef                                            ::  cache a result
       |*  sem=*
       |*  [hoc=(bolt) fun=(burg)]
@@ -480,7 +487,7 @@
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
-      %_(+> jav.bay q.cof)
+      %_(+> jav.bay q.cof, deh.bay r.cof)
     ::
     ++  diff                                            ::  diff
       |=  [cof=cafe kas=silk kos=silk]
@@ -527,29 +534,28 @@
       ==
     ::
     ++  daze                                            ::  remember depends
-      |=  dep=(set beam)
-      ^+  [*@uvH deh.bay]
+      |=  [dep=(set beam) deh=(map ,@uvH deps)]
+      ^+  [*@uvH deh]
       =.  dep
         =<  (sa (skip (~(tap in dep)) .))
         |=  dap=beam  ^-  ?
         ?~  s.dap  |
         =>(.(s.dap t.s.dap) |((~(has in dep) dap) $))
-      ?~  dep  [0v0 deh.bay]
+      ?~  dep  [0v0 deh]
       =+  hap=(sham dep)
-      ?:  (~(has by deh.bay) hap)
-        [hap deh.bay]
-      [hap (~(put by deh.bay) hap [%init dep])]
+      ?:  (~(has by deh) hap)
+        [hap deh]
+      [hap (~(put by deh) hap [%init dep])]
     ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      =+  bot=(make [~ jav.bay] kas)
+      =+  bot=(make [~ jav.bay deh.bay] kas)
+      =^  dep  bot  (clad bot)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        %0  =^  dep  deh.bay  (daze p.q.bot)
-            amok:(expo [%made dep q.q.bot])
-        %2  =^  dep  deh.bay  (daze p.q.bot)
-            amok:(expo [%made dep %| q.q.bot])
+        %0  amok:(expo [%made dep q.q.bot])
+        %2  amok:(expo [%made dep %| q.q.bot])
         %1  =+  zuk=(~(tap by p.q.bot) ~)
             =<  abet
             |-  ^+  ..exec
@@ -1671,7 +1677,7 @@
       ?>  (~(has by q.kig) tik)
       =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
       ?~  rot
-        =^  dep  deh.bay  (daze ~)                      ::  dependencies?
+        =^  dep  deh.bay  (daze ~ deh.bay)              ::  dependencies?
         amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
       =+  (cat 3 'c' ren)
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
