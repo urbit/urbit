@@ -397,8 +397,8 @@
         return ret;
       }
 
-      case c3__wtts: 
       case c3__fit: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__fits: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun heb = u3nc(c3__herb, u3k(p_gen));
@@ -709,8 +709,8 @@
         return ret;
       }
 
-      case c3__sgzp: 
-      case c3__type: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__type: 
+      case c3__peep: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun typ = u3qfu_play(van, sut, p_gen);
@@ -746,8 +746,8 @@
         return ret;
       }
 
-      case c3__zpts: 
-      case c3__nock: p_gen = u3t(gen);
+      case c3__nock:
+      case c3__code: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun von = u3i_molt(u3k(van), u3qfu_van_vet, c3n, 0);

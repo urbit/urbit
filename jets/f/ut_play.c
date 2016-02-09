@@ -218,8 +218,8 @@
     else switch ( u3h(gen) ) {
       default: goto open;
 
-      case c3__wtts:
-      case c3__fit: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__fit:
+      case c3__fits: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_bean();
@@ -410,8 +410,8 @@
         return ret;
       }
 
-      case c3__sgzp: 
-      case c3__type: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__type: 
+      case c3__peep: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun typ = u3qfu_play(van, sut, p_gen);
@@ -435,8 +435,8 @@
         return _play_x(van, sut, q_gen);
       }
 
-      case c3__zpts: 
-      case c3__nock: p_gen = u3t(gen);
+      case c3__nock: 
+      case c3__code: p_gen = u3t(gen);
       _play_used();
       {
         return c3__noun;
