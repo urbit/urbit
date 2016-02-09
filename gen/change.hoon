@@ -69,6 +69,9 @@
     ::  [%kick %nock]   reused; used in ames
     [%live %poll]  :: also a hint
     [%show %dump]  :: used in %ames
+
+    ::  [%fate %show]   reused
+
     [%germ %ddup]  :: also a hint
     [%type %peep]
     [%fly %fix]
