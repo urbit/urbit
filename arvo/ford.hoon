@@ -101,11 +101,6 @@
   ^-  cafe                                              ::
   a(q (~(put by q.a) [-.b q.b] b))                      ::
 ::                                                      ::
-++  chub                                                ::  cache merge
-  |=  [a=cafe b=cafe]                                   ::
-  ^-  cafe                                              ::
-  [(~(uni in p.a) p.b) (~(uni by q.a) q.b)]             ::
-::                                                      ::
 ++  faun  (flux |=(a=vase [%& %noun a]))                ::  vase to gage
 ++  feel  (flux |=(a=cage q.a))                         ::  cage to vase
 ++  furl                                                ::  unwrap gage to cage
