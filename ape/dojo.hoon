@@ -548,7 +548,7 @@
       |-  ^-  dy-shown
       ?-  -.bil
         $?($ur $dv)  bil
-        $ex  ?.  ?=({$all *} p.bil)  p.bil
+        $ex  ?.  ?=({$conp *} p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!
                  ?~  t.p.p.bil  i.p.p.bil
