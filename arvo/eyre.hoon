@@ -354,10 +354,12 @@
       urb.wreq.addEventListener('load', function() {
         // if(~~(this.status / 100) == 4)
         //   return document.write(this.responseText)
-        if(this.status !== 200) {
-          return urb.keep()
+        if(this.status === 200) {
+          var dep = JSON.parse(this.responseText)
+          urb.onupdate(dep)
+          urb.dewasp(dep)
         }
-        urb.onupdate(JSON.parse(this.responseText))
+        urb.keep()
       })
       urb.wreq.addEventListener('error', urb.keep)
       urb.wreq.addEventListener('abort', urb.keep)
