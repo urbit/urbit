@@ -2,4 +2,4 @@
 ::::  /hoon/rm/hood/gen
   ::
 :-  %say
-|=([^ [input=path ~] ~] kiln-rm/input)
+|=({^ {input/path $~} $~} kiln-rm+input)

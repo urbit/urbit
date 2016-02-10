@@ -2,11 +2,11 @@
 ::::  /hoon/hymn/tree/mar
   ::
 /?  314
-|_  own=manx
+|_  own/manx
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  html  (crip (poxo own))                          ::  convert to %html
+  ++  html  (crip (poxo own))                           ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from

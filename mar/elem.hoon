@@ -2,7 +2,7 @@
 ::::  /hoon/elem/mar
   ::
 /?  314
-|_  own=manx
+|_  own/manx
 ::
 ++  grow                                                ::  convert to
   |%

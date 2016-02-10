@@ -1,13 +1,13 @@
 ::
-::::  /hoon/mount/hood/gen
+::::  /hoon+mount+hood+gen
   ::
 /?  314
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [[pax=path pot=$|(~ [v=@tas ~])] ~]
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {{pax/path pot/$@($~ {v/@tas $~})} $~}
     ==
 ?~  pot
   =+  bem=(need (tome pax))

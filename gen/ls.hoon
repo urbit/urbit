@@ -1,12 +1,12 @@
 ::  LiSt directory subnodes
 ::
-::::  /hoon/ls/gen
+::::  /hoon+ls+gen
   ::
 //  /%/subdir
 !:
 ::::
   ::
 :-  %say
-|=  [^ [arg=path ~] ~]
+|=  {^ {arg/path $~} $~}
 =+  lon=((hard arch) .^(%cy arg))
-tang/[?~(dir.lon leaf/"~" (subdir arg dir.lon))]~
+tang+[?~(dir.lon leaf+"~" (subdir arg dir.lon))]~

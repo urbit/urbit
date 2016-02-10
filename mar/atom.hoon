@@ -4,11 +4,11 @@
 /?  314
 !:
 ::::  A minimal atom mark
-|_  ato=@
+|_  ato/@
 ++  grab  |%
-          ++  noun  ,@
-          ++  mime  |=([* p=octs] q.p)
+          ++  noun  @
+          ++  mime  |=({* p/octs} q.p)
           --
 ++  grow  |%
-          ++  mime  [/aplication/x-urb-unknown (taco ato)]
+          ++  mime  [/application/x-urb-unknown (taco ato)]
 --        --

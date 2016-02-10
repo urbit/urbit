@@ -6,5 +6,5 @@
 :::::
   !:
 :-  %say
-|=  [^ [arg=tape ~] ~]
-purl/(scan arg auri:epur)
+|=  {^ {arg/tape $~} $~}
+purl+(scan arg auri:epur)

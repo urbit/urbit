@@ -1,5 +1,5 @@
 ::
-::::  /hoon/reboot/hood/gen
+::::  /hoon+deset+hood+gen
   ::
 /?  314
 ::
@@ -9,4 +9,4 @@
 |=  $:  {now/@da eny/@uvI bec/beak}
         {arg/$~ $~}
     ==
-[%helm-reload ~[%z %a %b %c %d %e %f %g]]
+[%helm-deset ~]

@@ -18,7 +18,7 @@
 ::      /userid             ::  user identity
 ::
 ::  /urb                    ::  urbit secrets
-::    /tok/hash
+::    /tok+hash
 
 |=  pit=vase   
 =>  =~
@@ -137,7 +137,7 @@
   ::  actually scry
   ~
 ::
-++  stay                                                ::  save w/o cache
+++  stay                                                ::  save w+o cache
   `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
 ::
 ++  take                                                ::  response

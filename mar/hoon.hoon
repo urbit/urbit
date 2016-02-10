@@ -3,7 +3,7 @@
   ::
 /?  314
 !:
-|_  own=@t
+|_  own/@t
 ::
 ++  grow                                                ::  convert to
   |%
@@ -41,8 +41,8 @@
   --
 ++  grab
   |%                                            ::  convert from
-  ++  mime  |=([p=mite q=octs] q.q)
-  ++  noun  ,@t                                 ::  clam from %noun
+  ++  mime  |=({p/mite q/octs} q.q)
+  ++  noun  @t                                  ::  clam from %noun
   ++  txt   role
   --
 ++  grad  %txt

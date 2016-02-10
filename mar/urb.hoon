@@ -3,7 +3,7 @@
   ::
 /?  314
 !:
-|_  own=manx
+|_  own/manx
 ::
 ++  grow                                                ::  convert to
   |%

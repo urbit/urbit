@@ -5,17 +5,17 @@
 !:
 |%
 ++  getall                                              :: search in manx
-  |=  tag=(list mane)
-  |=  ele=manx  ^-  marl
-  ?:  (lien tag |=(a=mane =(a n.g.ele)))
+  |=  tag/(list mane)
+  |=  ele/manx  ^-  marl
+  ?:  (lien tag |=(a/mane =(a n.g.ele)))
     ~[ele]
   (zing (turn c.ele ..$))
 ::
 ++  map-to-json                                         :: hoon data to json 
-  |*  [a=$+(* cord) b=$+(* json)]
-  |*  c=(map)  ^-  json               :: XX c=(map _+<.a _+<.b)
+  |*  {a/$-(* cord) b/$-(* json)}
+  |*  c/(map)  ^-  json               :: XX c=(map _+<.a _+<.b)
   ~!  c
-  (jobe (turn (~(tap by c)) |*([k=* v=*] [(a k) (b v)])))
+  (jobe (turn (~(tap by c)) |*(* [(a +<-) (b +<+)])))
 ::
 ::  a.b_c.d => [[%a %b] [%c %d]]
 ::  a.b_c, a_b__c => [[%a %b] %c]
@@ -23,16 +23,16 @@
 ++  read-schem                                          :: decode gapped noun
   =<  (cook to-noun (cook build-grove apex))
   |%
-  ++  noun  $|(term [noun noun])       ::  shadow
+  ++  noun  $@(term {noun noun})       ::  shadow
   ::  improper list of possible entry points
-  ++  grove  $|(term [gap=@ sealed=noun pending=grove])
+  ++  grove  $@(term {gap/@ sealed/noun pending/grove})
   ++  apex  ;~(plug sym (star ;~(plug delim sym)))
   ++  delim  ;~(pose (cold 0 dot) (cook lent (plus cab)))
-  ++  to-noun  |=(a=grove ?@(a a [sealed.a $(a pending.a)]))
+  ++  to-noun  |=(a/grove ?@(a a [sealed.a $(a pending.a)]))
   ++  build-grove
-    |=  [a=grove b=(list ,[p=@u q=term])]  ^-  grove
+    |=  {a/grove b/(list {p/@u q/term})}  ^-  grove
     %+  roll  b  =<  .(acc a)
-    |=  [[gap=@u v=term] acc=grove]  ^-  grove
+    |=  {{gap/@u v/term} acc/grove}  ^-  grove
     ?@  acc            [gap acc v]
     ?:  (gth gap gap.acc)  [gap (to-noun acc) v]
     acc(pending $(acc pending.acc))
