@@ -15,35 +15,23 @@
     if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3k(sut);
 
-      case c3__noun:
-        return u3nt(c3__fork,
-                    u3nc(c3__atom, u3_blip),
-                    u3nt(c3__cell, c3__noun, c3__noun));
+      case c3__noun: {
+        return u3kf_fork(u3nt(u3nt(c3__atom, u3_blip, u3_nul),
+                              u3nt(c3__cell, c3__noun, c3__noun),
+                              u3_nul));
+      }
     }
     else switch ( u3h(sut) ) {
       default: {
+        u3m_p("head", u3h(sut));
         return u3m_error("repo-flat");
       }
 
-      case c3__bull: {
-        if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
-          return u3m_bail(c3__fail);
-        } else {
-          return u3k(q_sut);
-        }
-      }
       case c3__core: {
         if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut) ) {
           return u3m_bail(c3__fail);
         } else {
           return u3nt(c3__cell, c3__noun, u3k(p_sut));
-        }
-      }
-      case c3__cube: {
-        if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
-          return u3m_bail(c3__fail);
-        } else {
-          return u3k(q_sut);
         }
       }
       case c3__face: {
@@ -54,8 +42,16 @@
         }
       }
       case c3__hold: {
-        p_sut = u3t(sut);
-        return u3qfu_rest(van, sut, p_sut);
+        if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
+          return u3m_bail(c3__fail);
+        } else {
+          u3_noun old = u3nc(u3nc(u3k(p_sut), u3k(q_sut)), u3_nul);
+          u3_noun ret;
+ 
+          ret = u3qfu_rest(van, sut, old);
+          u3z(old);
+          return ret;
+        }
       }
     }
   }

@@ -3,7 +3,6 @@
 */
 #include "all.h"
 
-
 /* logic
 */
 # define _play_used()
@@ -12,11 +11,38 @@
   _play_in(u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _play_bean(void)
+  _play_bean()
   {
-    return u3nt(c3__fork,
-                u3nq(c3__cube, 0, c3__atom, 'f'),
-                u3nq(c3__cube, 1, c3__atom, 'f'));
+    return u3kf_fork(u3nt(u3nq(c3__atom, 'f', u3_nul, 0),
+                          u3nq(c3__atom, 'f', u3_nul, 1),
+                          u3_nul));
+  }
+
+  static u3_noun
+  _play_rock(u3_noun odo, u3_noun bob)
+  { 
+    if ( c3y == u3ud(bob) ) {
+      return u3nq(c3__atom, u3k(odo), u3_nul, u3k(bob));
+    }
+    else return u3nt(c3__cell, _play_rock(odo, u3h(bob)), 
+                               _play_rock(odo, u3t(bob)));
+  }
+
+  static u3_noun
+  _play_sand(u3_noun odo, u3_noun bob)
+  { 
+    if ( c3y == u3ud(bob) ) {
+      if ( 'f' == odo ) {
+        if ( (bob > 1) ) {
+          return u3m_bail(c3__exit);
+        } else {
+          return _play_bean();
+        }
+      }
+      return u3nt(c3__atom, u3k(odo), u3_nul);
+    }
+    else return u3nt(c3__cell, _play_rock(odo, u3h(bob)), 
+                               _play_rock(odo, u3t(bob)));
   }
 
   static u3_noun
@@ -46,34 +72,24 @@
     return ret;
   }
 
+#if 1
   static u3_noun
-  _play_foil(u3_noun pok)
+  _play_cnts(u3_noun van,
+             u3_noun sut,
+             u3_noun hyp,
+             u3_noun rig)
   {
-    u3_noun p_pok = u3h(pok);
-    u3_noun q_pok = u3t(pok);
-    u3_noun ret;
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "epla");
 
-    if ( c3y == u3h(q_pok) ) {
-      u3_noun pq_pok = u3t(q_pok);
-
-      ret = u3nc(u3k(p_pok),
-                 u3nc(u3_nul,
-                      u3nc(u3nc(u3k(pq_pok),
-                                u3nt(c3__elm, u3_nul, 1)),
-                           u3_nul)));
-    }
-    else {
-      u3_noun pq_pok = u3h(u3t(q_pok));
-      u3_noun qq_pok = u3t(u3t(q_pok));
-
-      ret = u3nc(u3k(p_pok),
-                 u3nc(u3k(pq_pok),
-                      u3k(qq_pok)));
-    }
-    u3z(pok);
-    return ret;
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam_2, 
+                                u3k(hyp), 
+                                u3x_sam_3, 
+                                u3k(rig),
+                                0));
   }
-
+#else
   static u3_noun
   _play_edit(u3_noun van,
              u3_noun sut,
@@ -89,7 +105,7 @@
         u3_noun pi_mew = u3h(i_mew);
         u3_noun qi_mew = u3t(i_mew);
         u3_noun laf = _play_in(van, sut, qi_mew);
-        u3_noun ruz = u3qfu_tock(van, sut, pi_mew, laf, rag);
+        u3_noun ruz = u3qfu_toss(van, sut, pi_mew, laf, rag);
 
         u3z(laf);
         u3z(rag);
@@ -100,6 +116,25 @@
       }
     }
   }
+  static u3_noun
+  _play_cnts_old(u3_noun van,
+                 u3_noun sut,
+                 u3_noun hyp,
+                 u3_noun rig)
+  {
+    u3_noun lar = u3qfu_seek(van, sut, c3__read, hyp);
+    u3_noun q_lar = u3t(lar);
+    u3_noun qq_lar = u3t(q_lar);
+    u3_noun mew = rig;
+    u3_noun rag = _play_edit(van, sut, mew, u3k(qq_lar));
+    u3_noun ret = u3qfu_fire(van, sut, rag);
+
+    u3z(rag);
+    u3z(lar);
+
+    return ret;
+  }
+#endif
 
   static u3_noun
   _play_grow(u3_noun van,
@@ -183,25 +218,13 @@
     else switch ( u3h(gen) ) {
       default: goto open;
 
-      case c3__bcpt: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun sep = u3qfu_seep(van, sut, c3__read, p_gen);
-        u3_noun axe = u3h(sep);
-        u3_noun rex = u3qfl_whip(van, q_gen, axe);
-        u3_noun ret = _play_x(van, sut, rex);
-
-        u3z(sep);
-        u3z(rex);
-
-        return ret;
-      }
-      case c3__wtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__fits: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_bean();
       }
-      case c3__wtcl: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+
+      case c3__if: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
         u3_noun fex = u3qfu_gain(van, sut, p_gen);
@@ -210,13 +233,14 @@
                                         : _play_x(van, fex, q_gen);
         u3_noun doz = (wux == c3__void) ? c3__void
                                         : _play_x(van, wux, r_gen);
-        u3_noun ret = u3qf_fork(dez, doz);
+        u3_noun ret = u3qf_forq(dez, doz);
 
         u3z(dez); u3z(doz);
         u3z(fex); u3z(wux);
         return ret;
       }
-      case c3__clhp: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__cons: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun dis = _play_x(van, sut, p_gen);
@@ -227,55 +251,60 @@
         u3z(dat);
         return ret;
       }
-      case c3__dtkt: p_gen = u3t(gen);
-      _play_used();
-      {
-        return c3__noun;
-      }
-      case c3__dtwt: p_gen = u3t(gen);
-      _play_used();
-      {
-        return _play_bean();
-      }
-      case c3__dtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        return _play_bean();
-      }
-      case c3__dtls: p_gen = u3t(gen);
-      _play_used();
-      {
-        return u3nc(c3__atom, u3_blip);
-      }
-      case c3__dtzz: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun boc = (c3n == u3ud(q_gen))
-                        ? c3__noun
-                        : u3nc(c3__atom, u3k(p_gen));
-        u3_noun ret = u3qf_cube(q_gen, boc);
 
-        u3z(boc);
+      case c3__wish: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        u3_noun nog = u3nc(c3__bunt, u3k(p_gen));
+        u3_noun ret = _play_x(van, sut, nog);
+
+        u3z(nog);
         return ret;
       }
-      case c3__dttr: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__deep: p_gen = u3t(gen);
+      _play_used();
+      {
+        return _play_bean();
+      }
+
+      case c3__same: u3x_cell(u3t(gen), &p_gen, &q_gen); 
+      _play_used();
+      {
+        return _play_bean();
+      }
+      
+      case c3__bump: p_gen = u3t(gen);
+      _play_used();
+      {
+        return u3nt(c3__atom, u3_blip, u3_nul);
+      }
+
+      case c3__rock: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        return _play_rock(p_gen, q_gen);
+      }
+
+      case c3__nock: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return c3__noun;
       }
-      case c3__dtzy: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__sand: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        if ( 'f' == p_gen ) {
-          if ( (q_gen > 1) ) {
-            return u3m_bail(c3__exit);
-          } else {
-            return _play_bean();
-          }
-        }
-        else return u3nc(c3__atom, u3k(p_gen));
+        return _play_sand(p_gen, q_gen);
       }
-      case c3__ktbr: p_gen = u3t(gen);
+
+      case c3__hand: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        return u3k(p_gen);
+      }
+
+      case c3__iron: p_gen = u3t(gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
@@ -284,7 +313,8 @@
         u3z(boc);
         return pro;
       }
-      case c3__ktpm: p_gen = u3t(gen);
+
+      case c3__zinc: p_gen = u3t(gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
@@ -293,7 +323,8 @@
         u3z(boc);
         return pro;
       }
-      case c3__ktwt: p_gen = u3t(gen);
+
+      case c3__lead: p_gen = u3t(gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
@@ -302,7 +333,8 @@
         u3z(boc);
         return pro;
       }
-      case c3__ktts: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__name: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, q_gen);
@@ -311,31 +343,20 @@
         u3z(boc);
         return ret;
       }
-      case c3__ktzp: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun boc = _play_x(van, sut, q_gen);
-        u3_noun ret = u3qfu_conk(van, boc, p_gen);
 
-        u3z(boc);
-        return ret;
-      }
-      case c3__ktsg: p_gen = u3t(gen);
+      case c3__burn: p_gen = u3t(gen);
       _play_used();
       {
         return _play_x(van, sut, p_gen);
       }
-      case c3__kthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__like: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_x(van, sut, p_gen);
       }
-      case c3__ktls: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        return _play_x(van, sut, p_gen);
-      }
-      case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__per: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
@@ -344,48 +365,24 @@
         u3z(boc);
         return ret;
       }
-      case c3__tstr: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+
+      case c3__aka: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
-        u3_noun sep = u3qfu_seep(van, sut, c3__both, q_gen);
-        u3_noun bid = u3nt(u3k(p_gen), u3k(q_gen), sep);
-        u3_noun boc = u3qf_bull(bid, sut);
+        u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
         u3_noun ret = _play_x(van, boc, r_gen);
 
-        u3z(bid);
         u3z(boc);
-
         return ret;
       }
-      case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__make: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun sec = u3qfu_seek(van, sut, c3__read, p_gen);
-        u3_noun lar = _play_foil(sec);
-        u3_noun q_lar = u3t(lar);
-        u3_noun qq_lar = u3t(q_lar);
-        u3_noun mew = u3qfu_snub(van, sut, q_gen);
-        u3_noun rag = _play_edit(van, sut, mew, u3k(qq_lar));
-        u3_noun ret = u3qfu_fire(van, sut, rag);
-
-        u3z(rag);
-        u3z(mew);
-        u3z(lar);
-
-        return ret;
+        return _play_cnts(van, sut, p_gen, q_gen);
       }
-      case c3__pmcl: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _play_grow(van, sut, c3__zinc, ruf, q_gen);
 
-        u3z(ruf);
-        return ret;
-      }
-      case c3__brcn: p_gen = u3t(gen);
+      case c3__core: p_gen = u3t(gen);
       _play_used();
       {
         u3_noun ruf = u3nc(u3_nul, 1);
@@ -394,27 +391,8 @@
         u3z(ruf);
         return ret;
       }
-      case c3__pmcn: p_gen = u3t(gen);
-      _play_used();
-      {
-        u3_noun ruf = u3nc(u3_nul, 1);
-        u3_noun ret = _play_grow(van, sut, c3__lead, ruf, p_gen);
 
-        u3z(ruf);
-        return ret;
-      }
-      case c3__pmls: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _play_grow(van, sut, c3__iron, ruf, q_gen);
-
-        u3z(ruf);
-        return ret;
-      }
-      case c3__sgzp: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__peep: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun typ = u3qfu_play(van, sut, p_gen);
@@ -430,22 +408,26 @@
         u3z(typ);
         return ret;
       }
-      case c3__sggr: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__hint: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_x(van, sut, q_gen);
       }
-      case c3__zpts: p_gen = u3t(gen);
+
+      case c3__code: p_gen = u3t(gen);
       _play_used();
       {
         return c3__noun;
       }
-      case c3__zpcm: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__twig: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_x(van, sut, p_gen);
       }
-      case c3__zpcb: u3x_cell(u3t(gen), &p_gen, &q_gen);
+
+      case c3__dbug: u3x_cell(u3t(gen), &p_gen, &q_gen);
       {
         u3_noun ret;
 
@@ -456,16 +438,8 @@
         u3t_drop();
         return ret;
       }
-      case c3__zpcn:
-      _play_used();
-      {
-        u3_noun pet = u3j_hook(u3k(van), "seed");
-        u3_noun ret = u3k(u3h(pet));
 
-        u3z(pet);
-        return ret;
-      }
-      case c3__zpsm: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__spit: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun zur = _play_x(van, sut, p_gen);
@@ -477,8 +451,9 @@
 
         return ret;
       }
-      case c3__zpfs:
-      case c3__zpzp:
+
+      case c3__lost:
+      case c3__fail:
       _play_used();
       {
         return c3__void;

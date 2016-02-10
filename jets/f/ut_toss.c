@@ -1,4 +1,4 @@
-/* j/6/tock.c
+/* j/6/toss.c
 **
 */
 #include "all.h"
@@ -7,7 +7,7 @@
 /* internals
 */
   static u3_noun
-  _tock_in(u3_noun van,
+  _toss_in(u3_noun van,
            u3_noun sut,
            u3_noun peh,
            u3_noun mur,
@@ -24,7 +24,7 @@
       u3_noun geq    = u3qfu_tack(van, pi_men, peh, mur);
       u3_noun p_geq  = u3h(geq);
       u3_noun q_geq  = u3t(geq);
-      u3_noun mox    = _tock_in(van, sut, peh, mur, t_men);
+      u3_noun mox    = _toss_in(van, sut, peh, mur, t_men);
       u3_noun p_mox  = u3h(mox);
       u3_noun q_mox  = u3t(mox);
       u3_noun ret;
@@ -46,13 +46,13 @@
 /* functions
 */
   u3_noun
-  _cqfu_tock(u3_noun van,
+  _cqfu_toss(u3_noun van,
              u3_noun sut,
              u3_noun peh,
              u3_noun mur,
              u3_noun men)
   {
-    u3_noun wib = _tock_in(van, sut, peh, mur, men);
+    u3_noun wib = _toss_in(van, sut, peh, mur, men);
     u3_noun p_wib = u3h(wib);
     u3_noun q_wib = u3t(wib);
 
@@ -69,7 +69,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_tock(u3_noun cor)
+  u3wfu_toss(u3_noun cor)
   {
     u3_noun van, sut, peh, mur, men;
 
@@ -82,16 +82,16 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return _cqfu_tock(van, sut, peh, mur, men);
+      return _cqfu_toss(van, sut, peh, mur, men);
     }
   }
 
   u3_noun
-  u3qfu_tock(u3_noun van,
+  u3qfu_toss(u3_noun van,
              u3_noun sut,
              u3_noun peh,
              u3_noun mur,
              u3_noun men)
   {
-    return _cqfu_tock(van, sut, peh, mur, men);
+    return _cqfu_toss(van, sut, peh, mur, men);
   }
