@@ -2608,6 +2608,7 @@
           $%  [%exec p=@p q=(unit bilk)]                ::  make / kill
               [%wasp p=@p q=[@uvH ?]]                   ::  depends ask / kill
               [%wegh ~]                                 ::  report memory
+              [%wipe p=@p ~]                            ::  clear cache
           ==                                            ::
 ::
 ::::    %gall
