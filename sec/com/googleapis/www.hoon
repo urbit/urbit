@@ -17,7 +17,7 @@
   =<  .(state-usr &)
   %-  oauth2
   =-  [[`/com/google/accounts /o/oauth2/v2/auth -] /oauth2/v4/token]
-  :~  login-hint/(crip (rash lon suffix-email))
+  :~  login-hint/?~(lon '' (crip (rash lon suffix-email)))
       access-type/%offline
       response-type/%code
   ==

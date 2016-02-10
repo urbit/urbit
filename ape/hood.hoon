@@ -127,6 +127,7 @@
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
+++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-will                 (wrap poke-will):from-helm
 ++  quit-drum-phat            (wrap quit-phat):from-drum
