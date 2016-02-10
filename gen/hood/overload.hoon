@@ -7,7 +7,7 @@
   !:
 :-  %say
 |=  $:  [now=@da eny=@uvI bec=beak]
-        [[arg=term ~] ~]
+        [arg=$|(~ [tym=@dr ~]) ~]
     ==
-:-  %kiln-overload
-arg
+?~  arg  $(arg [~60m ~])
+[%kiln-overload tym.arg]
