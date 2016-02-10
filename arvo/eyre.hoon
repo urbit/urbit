@@ -197,15 +197,6 @@
   =+  cuh=(turn `(list ,@t)`cug |=(a=@t set-cookie/a))
   hit(q (weld cuh q.hit))
 ::
-++  inject                                            ::  inject dependency
-  |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]]
-  ^-  manx
-  =:  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
-      tal.max  (welp tal.max ;script(urb_injected ""):"{(trip etag:js)}" ~)
-    ==
-  ?~  dep  max
-  max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
-::
 ++  add-json                                            ::  inject window.urb
   |=  [urb=json jaz=cord]  ^-  cord 
   =-  (cat 3 (crip -) jaz)
@@ -228,13 +219,14 @@
   [sas ~[content-type/(moon mit)] [~ (taco rez)]]
 ::
 ++  render-tang                                         ::  tanks to manx
-  |=  tan=tang
+  |=  [dep=@uvH tan=tang]
   ;html
     ;head
       ;link(rel "stylesheet", href "/lib/base.css");
       ;title: server error
     ==
     ;body:div#c.err:pre:code:"{(wush 80 tan)}"
+    ;script@"/~/on/{<dep>}.js";
   ==
 ::
 ++  favi                                                ::  XX favicon
@@ -460,14 +452,6 @@
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
       function(){document.getElementById("c").innerHTML = "" }
     )}
-    '''
-  ++  etag
-    '''
-    if(!window.urb) window.urb = {}
-    urb.waspAll = function(sel){
-      Array.prototype.map.call(document.querySelectorAll(sel), urb.waspElem)
-    }
-    if(urb.wasp){urb.waspAll('script'); urb.waspAll('link')}
     '''
   --
 ++  xml
@@ -847,16 +831,7 @@
         ?.  ?=(%mime p.cay)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek [%ud %0] bek(r da/now))
-          =-  (execute tee bik [%flag [p.sih `~] -])
-          =-  `silk`[%cast %mime `[p.cay -]]
-          ?.  ?=([%ud 0] r.bek)  q.cay
-          ?+  p.cay  q.cay          :: inject dependency long-poll
-            %urb  =<  (slam !>(.) q.cay)
-                  |=  urb=manx
-                  ~|  [%malformed-urb urb]
-                  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] *] ~] urb)
-                  (inject p.sih urb)
-          ==
+          (execute tee bik [%flag [p.sih `~] %cast %mime q.sih])
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
         =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
@@ -920,7 +895,7 @@
     |=  [sas=@ud dep=@uvH mez=tang]
     ^+  +>
     :: (back ha/~ dep %tang !>(mez))  ::tang->urb chain may be source of failure
-    (give-html sas ~ (inject dep (render-tang mez)))
+    (give-html sas ~ (render-tang dep mez))
   ::
   ++  give-html
     |=  [sas=@ud cug=(list ,@t) max=manx]
