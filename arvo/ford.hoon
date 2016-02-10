@@ -235,9 +235,11 @@
       ?~  tus
         ~&  [%ford-lost num]
         +>.$
-      ?.  ?=(%diff -.p.+.sih)
-        +>.$
-      (~(resd zo [num u.tus]) tik p.p.+.sih)
+      ?+  -.p.+.sih  ~|(%ford-strange-unto !!)
+        %diff  (~(resd zo [num u.tus]) tik p.p.+.sih)
+        %reap  ?~  p.p.+.sih  +>.$
+               ((slog leaf/"ford-reap-fail" u.p.p.+.sih) +>.$)
+      ==
     ==
   ::
   ++  axun                                              ::  take rev update
