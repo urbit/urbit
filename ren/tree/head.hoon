@@ -1,10 +1,8 @@
 ::
-::::  /hoon/hymn/tree/ren
+::::  /hoon/head/tree/ren
   ::
 ::
 /?    314
-/-    tree-include
-/=    dat    /%  /tree-json/ :: default include
 /=    tub    /$  |=([bem=beam *] (flop s.bem))
 /=    aut
   /$  %+  cork  fuel                                    :: after parsing params,
@@ -15,9 +13,8 @@
 !:
 ::::
   ::
-;html
-  ;head
-    ;title: Tree
+^-  marl
+;=  ;title: Tree
     ;meta(name "viewport", content "width=device-width, initial-scale=1");
     ;link(type "text/css", rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.min.css");
     ;link(type "text/css", rel "stylesheet", href "/lib/css/fonts.css");
@@ -39,14 +36,4 @@
       "codemirror/4.3.0/mode/markdown/markdown.min.js");
     ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
                                         "/~/at/lib/js/urb.js");
-  ==
-  ;body
-    ;script(type "text/javascript"): window.tree = {(pojo (joba %data dat))}
-    ;div.container
-      ;div.row#main
-        ;div#head;
-        ;div#body;
-      ==
-    ==
-  ==
 ==

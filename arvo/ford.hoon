@@ -48,6 +48,7 @@
 ++  cafe                                                ::  live cache
   $:  p=(set calx)                                      ::  used
       q=(map ,* calx)                                   ::  cache
+      r=(map ,@uvH deps)                                ::  dependss
   ==                                                    ::
 ::                                                      ::
 ++  calm                                                ::  cache metadata
@@ -100,11 +101,6 @@
   |=  [a=cafe b=calx]                                   ::  cache install
   ^-  cafe                                              ::
   a(q (~(put by q.a) [-.b q.b] b))                      ::
-::                                                      ::
-++  chub                                                ::  cache merge
-  |=  [a=cafe b=cafe]                                   ::
-  ^-  cafe                                              ::
-  [(~(uni in p.a) p.b) (~(uni by q.a) q.b)]             ::
 ::                                                      ::
 ++  faun  (flux |=(a=vase [%& %noun a]))                ::  vase to gage
 ++  feel  (flux |=(a=cage q.a))                         ::  cage to vase
@@ -316,6 +312,12 @@
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
+    ++  clad                                            ::  hash dependencies
+      |*  hoc=(bolt)  ^+  [*@uvH hoc]
+      ?:  ?=(%1 -.q.hoc)  [*@uvH hoc]
+      =^  dep  r.p.hoc  (daze [p.q r.p]:hoc)
+      [dep hoc]
+    ::
     ++  clef                                            ::  cache a result
       |*  sem=*
       |*  [hoc=(bolt) fun=(burg)]
@@ -485,7 +487,7 @@
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
-      %_(+> jav.bay q.cof)
+      %_(+> jav.bay q.cof, deh.bay r.cof)
     ::
     ++  diff                                            ::  diff
       |=  [cof=cafe kas=silk kos=silk]
@@ -532,29 +534,28 @@
       ==
     ::
     ++  daze                                            ::  remember depends
-      |=  dep=(set beam)
-      ^+  [*@uvH deh.bay]
+      |=  [dep=(set beam) deh=(map ,@uvH deps)]
+      ^+  [*@uvH deh]
       =.  dep
         =<  (sa (skip (~(tap in dep)) .))
         |=  dap=beam  ^-  ?
         ?~  s.dap  |
         =>(.(s.dap t.s.dap) |((~(has in dep) dap) $))
-      ?~  dep  [0v0 deh.bay]
+      ?~  dep  [0v0 deh]
       =+  hap=(sham dep)
-      ?:  (~(has by deh.bay) hap)
-        [hap deh.bay]
-      [hap (~(put by deh.bay) hap [%init dep])]
+      ?:  (~(has by deh) hap)
+        [hap deh]
+      [hap (~(put by deh) hap [%init dep])]
     ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      =+  bot=(make [~ jav.bay] kas)
+      =+  bot=(make [~ jav.bay deh.bay] kas)
+      =^  dep  bot  (clad bot)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        %0  =^  dep  deh.bay  (daze p.q.bot)
-            amok:(expo [%made dep q.q.bot])
-        %2  =^  dep  deh.bay  (daze p.q.bot)
-            amok:(expo [%made dep %| q.q.bot])
+        %0  amok:(expo [%made dep q.q.bot])
+        %2  amok:(expo [%made dep %| q.q.bot])
         %1  =+  zuk=(~(tap by p.q.bot) ~)
             =<  abet
             |-  ^+  ..exec
@@ -678,6 +679,7 @@
               (stag %ape ;~(pfix sig ape:read))
               (stag %arg ;~(pfix buc ape:read))
               (stag %alt ;~(pfix bar alt:read))
+              (stag %dep ;~(pfix hax day:read))
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
@@ -1432,9 +1434,18 @@
           ?~  p.hon  (flaw cof leaf/"ford: out of options" ~)
           (coop ^$(cof cof, hon i.p.hon) ..$(p.hon t.p.hon))
         ::
+            %dep
+          =+  [dep bot]=(clad $(hon p.hon))    :: XX review
+          %+  cope  bot
+          %-  flux
+          |=  [mark vax=vase]
+          [%noun (slop [atom/'uvH' dep] vax)]
+        ::
             %dub 
           %+  cope  $(hon q.hon)
-          (flux |=([mar=mark vax=vase] [mar [%face p.hon p.vax] q.vax]))
+          %-  flux
+          |=  [mar=mark vax=vase]
+          [mar [%face p.hon p.vax] q.vax]
         ::
             %fan
           %-  cope  :_  (flux |=(a=vase noun/a))
@@ -1675,7 +1686,7 @@
       ?>  (~(has by q.kig) tik)
       =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
       ?~  rot
-        =^  dep  deh.bay  (daze ~)                      ::  dependencies?
+        =^  dep  deh.bay  (daze ~ deh.bay)              ::  dependencies?
         amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
       =+  (cat 3 'c' ren)
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
