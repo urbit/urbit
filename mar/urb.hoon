@@ -3,7 +3,7 @@
   ::
 /?  314
 !:
-|_  [dep=@uvH own=manx]
+|_  [dep=@uvH own=[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]]
 ::
 ++  etag-js
   '''
@@ -18,16 +18,11 @@
   ++  html  (crip (poxo hymn))                          ::  convert to %html
   ++  hymn                                              ::  inject dependencies
     ^-  manx
-    =+  ^=  max                       ::  XX types
-      ~|  [%malformed-urb own]
-      ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] *] ~] own)
-      `[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]`own
-    ::
-    =:  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
-        tal.max  (welp tal.max ;script(urb_injected ""):"{(trip etag-js)}" ~)
+    =:  hed.own  :_(hed.own ;meta(charset "utf-8", urb_injected "");)
+        tal.own  (welp tal.own ;script(urb_injected ""):"{(trip etag-js)}" ~)
       ==
-    ?~  dep  max
-    max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
+    ?~  dep  own
+    own(hed :_(hed.own ;script@"/~/on/{<dep>}.js"(urb_injected "");))
   --
 ++  grab  
   |%                                                    ::  convert from

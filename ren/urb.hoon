@@ -1,9 +1,10 @@
 ::
 ::::  /hoon/urb/ren
   ::
-/#    /%    /,
-          /talk/log  /talklog-hymn/
-          /web/app   /|(/!hymn/ /tree-hymn/)
-          /      /tree-hymn/
-            ==
-`[@uvH manx]`-.-
+/#    /%
+    /^  [[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]
+    /,
+        /web/app   /|(/!hymn/ /tree-hymn/)
+        /      /tree-hymn/
+    ==
+-.-
