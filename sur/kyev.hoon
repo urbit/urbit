@@ -1,10 +1,10 @@
 ::  Modified key event
 ::
-::::  /hoon/kyev/sur
+::::  /hoon+kyev+sur
   ::
-=-  ,[p=(set ?(%ctrl %shift %alt %meta)) q=$|(cord [%act speck])]
+=-  {p/(set ?($ctrl $shift $alt $meta)) q/$@(cord {$act speck})}
 ^=  speck
-$?  %ctrl  %shift  %alt   %meta   %entr  %esc  %caps  %uncap
-    %pgup  %pgdn   %home  %end    %baxp  %del  %ins
-    %up    %down   %left  %right
+$?  $ctrl  $shift  $alt   $meta   $entr  $esc  $caps  $uncap
+    $pgup  $pgdn   $home  $end    $baxp  $del  $ins
+    $up    $down   $left  $right
 ==

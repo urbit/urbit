@@ -1,7 +1,7 @@
 ::
-::::  /hoon/gate/down/sur
+::::  /hoon/down/sur
   ::
 /?  314
-/-  *markdown
-down
+/-  markdown
+down.markdown
 

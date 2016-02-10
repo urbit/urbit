@@ -1,25 +1,22 @@
 ::
-::::  /hoon/core/markdown/pro
+::::  /hoon/markdown/mar
   ::
 /?  314
 ::
-|_  mud=@t
+|_  mud/@t
 ++  grow
   |%
   ++  mime  [/text/x-markdown (taco mud)]
   ++  md  mud
   ++  txt
-    (lore (cat 3 mud '\0a'))
+    (lore mud)
   --
 ++  grab
   |%
-  ++  mime  |=([p=mite q=octs] q.q)
-  ++  noun  ,@t
+  ++  mime  |=({p/mite q/octs} q.q)
+  ++  noun  @t
   ++  md  |=(@t +<)
-  ++  txt
-    |=  wan=wain
-    =+  (role wan)
-    (end 3 (dec (met 3 -)) -)
+  ++  txt  role
   --
 ++  grad  %txt
 --

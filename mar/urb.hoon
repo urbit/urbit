@@ -2,9 +2,8 @@
 ::::  /hoon/urb/mar
   ::
 /?  314
-:: /=  dep  /$  |=([^ but=path] `@uvH`?>(?=([%dep @ ~] but) (slav %uv i.t.but)))
 !:
-|_  own=manx
+|_  own/manx
 ::
 ++  grow                                                ::  convert to
   |%
@@ -14,18 +13,8 @@
 ++  grab  
   |%                                                    ::  convert from
   ++  noun  manx                                        ::  clam from %noun
-  ++  hymn                                              ::  inject into %hymn
-    |=  old=manx  old                 ::  moved to %eyre
-    :: ~|  hymn//mal-formed
-    :: ::  ~|  old
-    :: ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] old) ::  XX static
-    :: ::  =+  bek=(sa (turn (turn dep) |=(a=beam (tope a(s ~)))))
-    :: %_    old
-    ::     c.i.c
-    ::   :-  ;meta(charset "utf-8", urb_injected "");
-    ::   ?~  dep  c.i.c.old
-    ::   :-  ;script@"/~/on/{<dep>}.js";
-    ::   c.i.c.old
-    :: ==
+  ::  conversion from hymn is handled specially by %eyre,
+  ::  which injects dependency information
+  ::  ++  hymn  !!                                      ::  inject into %hymn
   --
 --

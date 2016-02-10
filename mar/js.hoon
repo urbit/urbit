@@ -1,19 +1,19 @@
 ::
-::::  /hoon/core/js/mar
+::::  /hoon/js/mar
   ::
 !:
-|_  mud=@
+|_  mud/@
 ++  grow
   |%
-  ++  mime  [/application/javascript (taco (,@t mud))]
+  ++  mime  [/application/javascript (taco (@t mud))]
   ++  elem  ;script
-              ;-  (trip (,@t mud))
+              ;-  (trip (@t mud))
             ==
   ++  hymn  ;html:(head:"+{elem}" body)
   --
 ++  grab
   |%                                                    ::  convert from
-  ++  mime  |=([p=mite q=octs] (,@t q.q))
+  ++  mime  |=({p/mite q/octs} (@t q.q))
   ++  noun  cord                                        ::  clam from %noun
   --
 ++  grad  %mime

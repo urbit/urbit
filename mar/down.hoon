@@ -2,20 +2,25 @@
 ::::  /hoon/down/mar
   ::
 /?    314
-/-    *markdown
-/+    down-jet
+/-    markdown
+/+    down-jet, frontmatter
 ::
 ::::
   ::
-|_  don=down
+[markdown .]
+|_  don/down
 ++  grab                                                ::  convert from
   |%
-  ++  md  |=(src=@t (mark:down-jet src))
   ++  noun  down                                        ::  clam from %noun
+  ++  md
+    |=  src/@t
+    =+  [atr mud]=(parse:frontmatter (lore src))
+    [[%meta atr] (mark:down-jet mud)]
   --
 ::
 ++  grow                                                ::  convert into
   |%
+  ++  front  ?~(don ~ ?:(?=($meta -.i.don) p.i.don front(don t.don)))
   ++  hymn                                          ::  convert to %hymn
       ;html
         ;head:title:"Untitled"

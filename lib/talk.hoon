@@ -1,24 +1,25 @@
 ::
-::::  /hoon/talk/lib
+::::  /hoon+talk+lib
   ::  
   ::  This file is in the public domain.
   ::
 /?    314 
-/-    *talk
+/-    talk
 !:
 ::::
   ::
+[. ^talk]
 |%
 ++  main                                                ::  main story
-  |=  our=ship  ^-  cord
+  |=  our/ship  ^-  cord
   =+  can=(clan our)
   ?+  can  %porch
-    %czar  %court
-    %king  %floor
+    $czar  %court
+    $king  %floor
   == 
 ::
 ++  said                                                ::  app message
-  |=  [our=@p dap=term now=@da eny=@uvI mes=(list tank)]
+  |=  {our/@p dap/term now/@da eny/@uvI mes/(list tank)}
   :-  %talk-command
   ^-  command
   :-  %publish
