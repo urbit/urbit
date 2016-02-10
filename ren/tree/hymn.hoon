@@ -4,7 +4,7 @@
 ::
 /?    314
 /-    tree-include
-:: /=    dat    /%  /tree-json/ :: default include
+/=    dat    /%  /tree-json/ :: default include
 /=    tub    /$  |=([bem=beam *] (flop s.bem))
 /=    aut
   /$  %+  cork  fuel                                    :: after parsing params,
@@ -41,7 +41,7 @@
                                         "/~/at/lib/js/urb.js");
   ==
   ;body
-::     ;script(type "text/javascript"): window.tree = {(pojo (joba %data dat))}
+    ;script(type "text/javascript"): window.tree = {(pojo (joba %data dat))}
     ;div.container
       ;div.row#main
         ;div#head;
