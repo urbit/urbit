@@ -1,10 +1,11 @@
 ::
 ::::  /hoon/urb/ren
   ::
-/#    /%
-    /^  [[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]
-    /,
-        /web/app   /|(/!hymn/ /tree-hymn/)
-        /      /tree-hymn/
-    ==
+/+    urb-split    :: for single-page apps
+/%    /^  [hed=[@uvH marl] bod=[@uvH marl]]
+      /,      /web/app
+          /|(/;urb-split;/#/!hymn/ /urb-tree/)
+              /
+          /urb-tree/
+      ==
 -.-

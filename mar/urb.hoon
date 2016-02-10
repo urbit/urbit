@@ -2,13 +2,13 @@
 ::::  /hoon/urb/mar
   ::
 /?  314
+/=  urb-wasp-data-js    /:    /%/wasp-data    /js/
 !:
-|_  [dep=@uvH own=[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]]
-::
-++  etag-js
+|_  [[dep=@uvH hed=marl] [dep-bod=@uvH bod=marl]]
+++  linked-deps-js
   '''
   urb.waspAll = function(sel){
-    Array.prototype.map.call(document.querySelectorAll(sel), urb.waspElem)
+    [].map.call(document.querySelectorAll(sel), urb.waspElem)
   }
   if(urb.wasp){urb.waspAll('script'); urb.waspAll('link')}
   '''
@@ -18,11 +18,23 @@
   ++  html  (crip (poxo hymn))                          ::  convert to %html
   ++  hymn                                              ::  inject dependencies
     ^-  manx
-    =:  hed.own  :_(hed.own ;meta(charset "utf-8", urb_injected "");)
-        tal.own  (welp tal.own ;script(urb_injected ""):"{(trip etag-js)}" ~)
+    ;html
+      ;head
+        ;meta(charset "utf-8", urb_injected "");
+        ;*  ?~  dep  ~
+            :~  ;script@"/~/on/{<dep>}.js"(urb_injected "");  
+                ;script(urb_injected "")
+                  ;-  (trip urb-wasp-data-js)
+                  ;-  "urb.waspData({(pojo %s (scot %uv dep-bod))})"
+                ==
+            ==
+        ;*  hed
       ==
-    ?~  dep  own
-    own(hed :_(hed.own ;script@"/~/on/{<dep>}.js"(urb_injected "");))
+      ;body
+        ;*  bod
+        ;script(urb_injected ""):"{(trip linked-deps-js)}"
+      ==
+    ==
   --
 ++  grab  
   |%                                                    ::  convert from

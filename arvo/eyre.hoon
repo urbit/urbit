@@ -382,23 +382,6 @@
         urb.wreq.abort() // trigger keep
       }
     }
-    urb.waspElem = function(ele){
-      url = ele.src || ele.href
-      if(!url || (new URL(url)).host != document.location.host)
-        return;
-      urb.waspUrl(url)
-    }
-    urb.waspUrl = function(url){
-      var xhr = new XMLHttpRequest()
-      xhr.open("HEAD", url)
-      xhr.send()
-      xhr.onload = urb.waspLoadedXHR
-    }
-    urb.waspLoadedXHR = function(){urb.wasp(urb.getXHRWasp(this))}
-    urb.getXHRWasp = function(xhr){
-      var dep = xhr.getResponseHeader("etag")
-      if(dep) return JSON.parse(dep.substr(2))
-    }
 
     '''
   ::
