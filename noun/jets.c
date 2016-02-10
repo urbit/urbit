@@ -357,6 +357,11 @@ _cj_soft(u3_noun cor, u3_noun axe)
   return u3n_nock_on(cor, u3k(arm));
 }
 
+  void
+  find_error(u3_noun cor,
+             u3_noun old,
+             u3_noun new);
+
 /* _cj_kick_z(): try to kick by jet.  If no kick, produce u3_none.
 **
 ** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.  
@@ -402,16 +407,19 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c,
                u3r_mug(ame), 
                u3r_mug(pro));
-       
+        ham_u->liv = c3n;
+
         c3_assert(0);
         return u3m_bail(c3__fail);
       }
       else {
-#if 1
+#if 0
         fprintf(stderr, "test: %s %s\r\n",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);
 #endif
+        u3z(ame);
+        return pro;
       }
     }
     return u3_none;

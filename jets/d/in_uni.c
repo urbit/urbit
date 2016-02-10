@@ -6,6 +6,17 @@
 
 /* functions
 */
+  u3_noun 
+  u3kdi_uni(u3_noun a,
+            u3_noun b)
+  {
+    u3_noun c = u3qdi_uni(a, b);
+
+    u3z(a);
+    u3z(b);
+    return c;
+  }
+
   u3_noun
   u3qdi_uni(u3_noun a,
             u3_noun b)
@@ -36,56 +47,58 @@
           }
           else if ( c3y == u3r_sing(n_a, n_b) ) {
             return u3nt(u3k(n_b),
-                        u3qdi_uni(u3k(l_a), u3k(l_b)),
-                        u3qdi_uni(u3k(r_a), u3k(r_b)));
+                        u3kdi_uni(u3k(l_a), u3k(l_b)),
+                        u3kdi_uni(u3k(r_a), u3k(r_b)));
           }
           else if ( c3y == u3qc_hor(n_b, n_a) ) {
-            return u3qdi_uni(u3nt(u3k(n_a),
-                                  u3qdi_uni(u3k(l_a),
+            return u3kdi_uni(u3nt(u3k(n_a),
+                                  u3kdi_uni(u3k(l_a),
                                             u3nt(u3k(n_b),
                                                  u3k(l_b),
-                                                 u3k(u3_nul))),
+                                                 u3_nul)),
                                   u3k(r_a)),
                              u3k(r_b));
           }
           else {
-            return u3qdi_uni(u3nt(u3k(n_a),
+            return u3kdi_uni(u3nt(u3k(n_a),
                                   u3k(l_a),
-                                  u3qdi_uni(u3k(r_a),
+                                  u3kdi_uni(u3k(r_a),
                                             u3nt(u3k(n_b),
-                                                 u3k(u3_nul),
+                                                 u3_nul,
                                                  u3k(r_b)))),
                              u3k(l_b));
           }
         }
-        else if ( c3n == u3r_cell(lr_b, &l_b, &r_b) ) {
-          return u3m_bail(c3__exit);
-        }
-        else if ( c3n == u3r_cell(lr_a, &l_a, &r_a) ) {
-          return u3m_bail(c3__exit);
-        }
-        else if ( c3y == u3r_sing(n_b, n_a) ) {
-          return u3nt(u3k(n_b),
-                      u3qdi_uni(u3k(r_b), u3k(r_a)),
-                      u3qdi_uni(u3k(l_b), u3k(l_a)));
-        }
-        else if ( c3y == u3qc_hor(n_a, n_b) ) {
-          return u3qdi_uni(u3k(r_a),
-                           u3nt(u3k(n_b),
-                                u3qdi_uni(u3nt(u3k(n_a),
-                                               u3k(l_a),
-                                               u3_nul),
-                                          u3k(l_b)),
-                                u3k(r_b)));
-        }
         else {
-          return u3qdi_uni(u3k(l_a),
-                           u3nt(u3k(n_b),
-                                u3k(l_b),
-                                u3qdi_uni(u3nt(u3k(n_a),
-                                               u3k(u3_nul),
-                                               u3k(r_a)),
-                                          u3k(r_b))));
+          if ( c3n == u3r_cell(lr_b, &l_b, &r_b) ) {
+            return u3m_bail(c3__exit);
+          }
+          else if ( c3n == u3r_cell(lr_a, &l_a, &r_a) ) {
+            return u3m_bail(c3__exit);
+          }
+          else if ( c3y == u3r_sing(n_b, n_a) ) {
+            return u3nt(u3k(n_b),
+                        u3kdi_uni(u3k(l_a), u3k(l_b)),
+                        u3kdi_uni(u3k(r_a), u3k(r_b)));
+          }
+          else if ( c3y == u3qc_hor(n_a, n_b) ) {
+            return u3kdi_uni(u3k(r_a),
+                             u3nt(u3k(n_b),
+                                  u3kdi_uni(u3nt(u3k(n_a),
+                                                 u3k(l_a),
+                                                 u3_nul),
+                                            u3k(l_b)),
+                                  u3k(r_b)));
+          }
+          else {
+            return u3kdi_uni(u3k(l_a),
+                             u3nt(u3k(n_b),
+                                  u3k(l_b),
+                                  u3kdi_uni(u3nt(u3k(n_a),
+                                                 u3_nul,
+                                                 u3k(r_a)),
+                                            u3k(r_b))));
+          }
         }
       }
     }

@@ -71,7 +71,7 @@
       /* u3m_soft_run(): descend into virtualization context.
       */
         u3_noun 
-        u3m_soft_run(u3_noun fly,
+        u3m_soft_run(u3_noun gul,
                      u3_funq fun_f,
                      u3_noun aga,
                      u3_noun agb);
@@ -79,7 +79,7 @@
       /* u3m_soft_esc(): namespace lookup to (unit ,*).
       */
         u3_noun
-        u3m_soft_esc(u3_noun sam);
+        u3m_soft_esc(u3_noun ref, u3_noun sam);
 
       /* u3m_mark(): mark all nouns in the road.
       */

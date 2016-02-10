@@ -75,6 +75,11 @@
     u3_weak
     u3kdi_put(u3_noun a, u3_noun b);
 
+  /* u3kdi_uni(): set union.
+  */
+    u3_noun 
+    u3kdi_uni(u3_noun a, u3_noun b);
+
 #   define u3kdb_tap(a, b) u3kdi_tap(a, b)
 
 /* u3ke: tier 5 functions
@@ -89,8 +94,17 @@
     u3_atom
     u3ke_jam(u3_noun a);
 
-  /* u3ke_trip: atom to tape.
+  /* u3ke_trip(): atom to tape.
   */
     u3_noun
     u3ke_trip(u3_noun a);
 
+  /* u3kf_fork(): build %fork span.
+  */
+    u3_noun
+    u3kf_fork(u3_noun yed);
+
+  /* u3kfu_repo(): 
+  */
+    u3_noun 
+    u3kfu_repo(u3_noun, u3_noun);

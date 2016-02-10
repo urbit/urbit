@@ -5,6 +5,24 @@
 
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
+      /* u3_term_io_hija(): hijack console for cooked print.
+      */
+        FILE*
+        u3_term_io_hija(void);
+
+      /* u3_term_io_loja(): release console from cooked print.
+      */
+        void
+        u3_term_io_loja(int x);
+
+      /* uL, uH: wrap hijack/lojack around fprintf.
+      **
+      **  uL(fprintf(uH, ...));
+      */
+#       define uH    u3_term_io_hija()
+#       define uL(x) u3_term_io_loja(x)
+
+
 /* _n_hint(): process hint.
 */
 static u3_noun
@@ -31,12 +49,22 @@ _n_hint(u3_noun zep,
 
       u3t_push(tac);
 #if 0
-      if ( c3__spot == zep ) {
-        printf("spot %d/%d : %d/%d\r\n",
-               u3h(u3h(u3t(hod))),
-               u3t(u3h(u3t(hod))),
-               u3h(u3t(u3t(hod))),
-               u3t(u3t(u3t(hod))));
+      {
+        static int low_i;
+
+        if ( !low_i ) {
+          low_i = 1;
+          if ( 0 == (u3R->pro.nox_d % 65536ULL) ) {
+            if ( c3__spot == zep ) {
+              uL(fprintf(uH, "spot %d/%d : %d/%d\r\n",
+                             u3h(u3h(u3t(hod))),
+                             u3t(u3h(u3t(hod))),
+                             u3h(u3t(u3t(hod))),
+                             u3t(u3t(u3t(hod)))));
+            }
+          }
+          low_i = 0;
+        }
       }
 #endif
       pro = _n_nock_on(bus, nex);
@@ -317,22 +345,30 @@ _n_nock_on(u3_noun bus, u3_noun fol)
       }
 
       case 11: {
-        u3_noun gof = _n_nock_on(bus, u3k(gal));
+        u3_noun ref = _n_nock_on(u3k(bus), u3k(u3h(gal)));
+        u3_noun gof = _n_nock_on(bus, u3k(u3t(gal)));
         u3_noun val;
 
         u3t_off(noc_o);
-        val = u3m_soft_esc(u3k(gof));
+        val = u3m_soft_esc(ref, u3k(gof));
         u3t_on(noc_o);
 
         if ( !_(u3du(val)) ) {
           u3m_bail(u3nt(1, gof, 0));
         } 
+        if ( !_(u3du(u3t(val))) ) {
+          //
+          //  replace with proper error stack push
+          //
+          u3m_p("lost", gof);
+          return u3m_bail(c3__exit);
+        }
         else {
           u3_noun pro;
 
           u3z(gof);
           u3z(fol);
-          pro = u3k(u3t(val));
+          pro = u3k(u3t(u3t(val)));
           u3z(val);
 
           return pro;
@@ -386,40 +422,20 @@ u3n_slam_on(u3_noun gat, u3_noun sam)
   return u3n_kick_on(cor);
 }
 
-/* u3n_nock_un(): produce .*(bus fol), as ++toon.
+/* u3n_nock_et(): produce .*(bus fol), as ++toon, in namespace.
 */
 u3_noun
-u3n_nock_un(u3_noun bus, u3_noun fol)
+u3n_nock_et(u3_noun gul, u3_noun bus, u3_noun fol)
 {
-  u3_noun fly = u3nt(u3nt(11, 0, 6), 0, 0);  //  |=(a=* .^(a))
-
-  return u3n_nock_in(fly, bus, fol);
+  return u3m_soft_run(gul, u3n_nock_on, bus, fol);
 }
 
-/* u3n_slam_un(): produce (gat sam), as ++toon.
+/* u3n_slam_et(): produce (gat sam), as ++toon, in namespace.
 */
 u3_noun
-u3n_slam_un(u3_noun gat, u3_noun sam)
+u3n_slam_et(u3_noun gul, u3_noun gat, u3_noun sam)
 {
-  u3_noun fly = u3nt(u3nt(11, 0, 6), 0, 0);  //  |=(a=* .^(a))
-
-  return u3n_slam_in(fly, gat, sam);
-}
-
-/* u3n_nock_in(): produce .*(bus fol), as ++toon, in namespace.
-*/
-u3_noun
-u3n_nock_in(u3_noun fly, u3_noun bus, u3_noun fol)
-{
-  return u3m_soft_run(fly, u3n_nock_on, bus, fol);
-}
-
-/* u3n_slam_in(): produce (gat sam), as ++toon, in namespace.
-*/
-u3_noun
-u3n_slam_in(u3_noun fly, u3_noun gat, u3_noun sam)
-{
-  return u3m_soft_run(fly, u3n_slam_on, gat, sam);
+  return u3m_soft_run(gul, u3n_slam_on, gat, sam);
 }
 
 /* u3n_nock_an(): as slam_in(), but with empty fly.
@@ -427,7 +443,7 @@ u3n_slam_in(u3_noun fly, u3_noun gat, u3_noun sam)
 u3_noun
 u3n_nock_an(u3_noun bus, u3_noun fol)
 {
-  u3_noun fly = u3nt(u3nc(1, 0), 0, 0);  //  |=(a=* ~)
+  u3_noun gul = u3nt(u3nt(1, 0, 0), 0, 0);  //  |=(a/{* *} ~)
 
-  return u3n_nock_in(fly, bus, fol);
+  return u3n_nock_et(gul, bus, fol);
 }
