@@ -9,9 +9,7 @@
 /=    snip    /&snip&elem&/tree-elem/
 /=    meta    /&json&front&/|(/front/ /~[~])
 /=    comt    /^  (list (pair time manx))
-              /|  /:  /%/comments    /@  /&elem&md&mime&/comment-md/
-                  /~  ~
-              ==
+              /:  /%/comments    /@  /&elem&/md/
 !:
 ^-    tree-include
 =+  rj=react-to-json:react
