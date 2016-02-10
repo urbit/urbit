@@ -20,5 +20,5 @@
     (rj /div tal.snip)  :: snip
     meta
     sect
-    [%a (turn (sort comt lor) cj)]
+    [%a (turn (sort comt |=([a=* b=*] (lor b a))) cj)]
 ==
