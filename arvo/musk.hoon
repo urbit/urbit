@@ -38,10 +38,10 @@
 ++  rank                                                ::  relative privilege
           $?  %0                                        ::  enemy
               %1                                        ::  neighbor
-              %2                                        ::  guest/customer
-              %3                                        ::  friend/employee
-              %4                                        ::  officer/family
-              %5                                        ::  self/admin
+              %2                                        ::  guest+customer
+              %3                                        ::  friend+employee
+              %4                                        ::  officer+family
+              %5                                        ::  self+admin
           ==                                            ::
 ++  girl                                                ::
           $:  hop=pony                                  ::  status
@@ -84,7 +84,7 @@
   ^-  (unit (unit (pair mark ,*)))
   ~
 ::
-++  stay                                                ::  save w/o cache
+++  stay                                                ::  save w+o cache
   `axle`+>-.$
 ::
 ++  take                                                ::  response

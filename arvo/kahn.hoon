@@ -30,7 +30,7 @@
               [%know p=monk q=(map monk link)]          ::  set forward links
               [%nuke ~]                                 ::  erase subscriber
           ==                                            ::
-++  link  (pair rank ,@da)                              ::  trust/expiration
+++  link  (pair rank ,@da)                              ::  trust+expiration
 ++  monk  (each ship khan)                              ::  general identity
 ++  rank                                                ::  privilege ring
           $?  %0                                        ::  complete trust
@@ -93,7 +93,7 @@
       (
       
 ::
-++  stay                                                ::  save w/o cache
+++  stay                                                ::  save w+o cache
   `axle`+>-.$
 ::
 ++  take                                                ::  response

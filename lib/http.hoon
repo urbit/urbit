@@ -7,19 +7,21 @@
 !:
 |%
 ++  request
-  $:  domain=(list cord)  end-point=path
-      req-type=$?(%get [%post p=json])  headers=math
-      queries=quay
+  $:  domain/(list cord)  
+      end-point/path
+      req-type/$?($get {$post p/json})  
+      headers/math
+      queries/quay
   ==
 ++  send
-  |=  [ost=bone pour-path=wire params=request]
+  |=  {ost/bone pour-path/wire params/request}
   :^  ost  %them  pour-path
   `(unit hiss)`[~ (request-to-hiss params)]
 ::
 ++  request-to-hiss
   |=  request  ^-  hiss
   =-  ~&  hiss=-  -
-  :-  ^-  parsed-url=purl
+  :-  ^-  parsed-url/purl
       :+  :+  security=%.y
             port=~
           host=[%.y [path=domain]]

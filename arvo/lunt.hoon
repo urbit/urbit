@@ -94,7 +94,7 @@
   ^-  (unit (unit (pair mark ,*)))
   ~
 ::
-++  stay                                                ::  save w/o cache
+++  stay                                                ::  save w+o cache
   `axle`+>-.$
 ::
 ++  take                                                ::  response

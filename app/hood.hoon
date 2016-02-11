@@ -2,70 +2,70 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
-/+  sole, talk, helm, kiln, drum, write                 ::  libraries
+/+  sole, talk, helm, kiln, drum ::, write                 ::  libraries
 [. helm kiln drum]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
     ++  hood-0                                          :: 
-      ,[%0 lac=(map ,@tas hood-part)]                   ::
+      {$0 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
-      |*  hed=hood-head                                 ::
-      |=  paw=hood-part                                 ::
+      |*  hed/hood-head                                 ::
+      |=  paw/hood-part                                 ::
       ?-  hed                                           ::
-        %drum  ?>(?=(%drum -.paw) `drum-part`paw)       ::
-        %helm  ?>(?=(%helm -.paw) `helm-part`paw)       ::
-        %kiln  ?>(?=(%kiln -.paw) `kiln-part`paw)       ::
-        %write  ?>(?=(%write -.paw) `part:write`paw)    ::
+        $drum  ?>(?=($drum -.paw) `drum-part`paw)       ::
+        $helm  ?>(?=($helm -.paw) `helm-part`paw)       ::
+        $kiln  ?>(?=($kiln -.paw) `kiln-part`paw)       ::
+        :: $write  ?>(?=($write -.paw) `part:write`paw)    ::
       ==                                                ::
-    ++  hood-head  ,_-:*hood-part                       ::
+    ++  hood-head  _-:*hood-part                     ::
     ++  hood-make                                       ::
-      |*  [our=@p hed=hood-head]                        ::
+      |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
-        %drum  (drum-port our)                          ::
-        %helm  *helm-part                               ::
-        %kiln  *kiln-part                               ::
-        %write  *part:write                             ::
+        $drum  (drum-port our)                          ::
+        $helm  *helm-part                               ::
+        $kiln  *kiln-part                               ::
+        ::  $write  *part:write                             ::
       ==                                                ::
     ++  hood-part                                       ::
-      $%  [%drum %0 drum-pith]                          ::
-          [%helm %0 helm-pith]                          ::
-          [%kiln %0 kiln-pith]                          ::
-          [%write %0 pith:write]                        ::
+      $%  {$drum $0 drum-pith}                          ::
+          {$helm $0 helm-pith}                          ::
+          {$kiln $0 kiln-pith}                          ::
+          :: {$write $0 pith:write}                        ::
       ==                                                ::
     --                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|_  $:  hid=bowl                                        ::  system state
+|_  $:  hid/bowl                                        ::  system state
         hood-0                                          ::  server state
     ==                                                  ::
-++  able                                                ::  find/make part
-  |*  hed=hood-head
+++  able                                                ::  find+make part
+  |*  hed/hood-head
   =+  rep=(~(get by lac) hed)
   =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
   ((hood-good hed) par)
 ::
 ++  ably                                                ::  save part
-  |*  [moz=(list) rep=hood-part]
-  [(flop moz) %_(+> lac (~(put by lac) -.rep rep))]
+  |*  {(list) hood-part}
+  [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  coup-kiln-fancy  (wrap take-coup-fancy):from-kiln
 ++  coup-kiln-spam                                      ::
-  |=  [way=wire saw=(unit tang)]
+  |=  {way/wire saw/(unit tang)}
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   [~ +>]
 ::
 ++  coup-kiln-reload                                    ::
-  |=  [way=wire saw=(unit tang)]
+  |=  {way/wire saw/(unit tang)}
   ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
   [~ +>]
 ::
 ++  coup-kiln-overload                                  ::
-  |=  [way=wire saw=(unit tang)]
+  |=  {way/wire saw/(unit tang)}
   ~?  ?=(^ saw)  [%kiln-overload-lame u.saw]
   [~ +>]
 ::
@@ -73,21 +73,21 @@
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
-  |*  _[%helm ..$ ,_abet]:(helm)
+  |*  _[%helm ..$ _abet]:(helm)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
-  |*  handle=_finish
+  |*  handle/_finish
   |=  _+<.handle
   =.  +>.handle  (start hid (able identity))
   (ably (handle +<))
 ::
-++  from-drum  (from-lib %drum [..$ ,_se-abet]:(drum))
-++  from-helm  (from-lib %helm [..$ ,_abet]:(helm))
-++  from-kiln  (from-lib %kiln [..$ ,_abet]:(kiln))
-++  from-write  (from-lib %write [..$ ,_abet]:(write))
+++  from-drum  (from-lib %drum [..$ _se-abet]:(drum))
+++  from-helm  (from-lib %helm [..$ _abet]:(helm))
+++  from-kiln  (from-lib %kiln [..$ _abet]:(kiln))
+:: ++  from-write  (from-lib %write [..$ _abet]:(write))
 ::
-++  init-helm                 |=([way=wire *] [~ +>])
-++  made-write                (wrap made):from-write
+++  init-helm                 |=({way/wire *} [~ +>])
+:: ++  made-write                (wrap made):from-write
 ++  made-kiln                 (wrap take-made):from-kiln
 ++  mere-kiln                 (wrap take-mere):from-kiln
 ++  mere-kiln-sync            (wrap take-mere-sync):from-kiln
@@ -107,6 +107,7 @@
 ++  poke-helm-reload          (wrap poke-reload):from-helm
 ++  poke-helm-reload-desk     (wrap poke-reload-desk):from-helm
 ++  poke-helm-reset           (wrap poke-reset):from-helm
+++  poke-helm-deset           (wrap poke-deset):from-helm
 ++  poke-helm-serve           (wrap poke-serve):from-helm
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
 ++  poke-helm-send-ask        (wrap poke-send-ask):from-helm
@@ -121,16 +122,18 @@
 ++  poke-kiln-mv              (wrap poke-mv):from-kiln
 ++  poke-kiln-rm              (wrap poke-rm):from-kiln
 ++  poke-kiln-schedule        (wrap poke-schedule):from-kiln
+++  poke-kiln-track           (wrap poke-track):from-kiln
 ++  poke-kiln-sync            (wrap poke-sync):from-kiln
 ++  poke-kiln-start-autoload  (wrap poke-start-autoload):from-kiln
 ++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
-++  poke-write-comment        (wrap poke-comment):from-write
-++  poke-write-paste          (wrap poke-paste):from-write
-++  poke-write-tree           (wrap poke-tree):from-write
-++  poke-write-wipe           (wrap poke-wipe):from-write
+:: ++  poke-write-paste          (wrap poke-paste):from-write
+:: ++  poke-write-comment        (wrap poke-comment):from-write
+:: ++  poke-write-paste          (wrap poke-paste):from-write
+:: ++  poke-write-tree           (wrap poke-tree):from-write
+:: ++  poke-write-wipe           (wrap poke-wipe):from-write
 ++  poke-will                 (wrap poke-will):from-helm
 ++  quit-drum-phat            (wrap quit-phat):from-drum
 ++  reap-drum-phat            (wrap reap-phat):from-drum

@@ -2,12 +2,12 @@
 ::::  /hoon/tree/write/mar
   ::
 !:
-|_  [sup=spur mim=mime]
+|_  {sup/spur mim/mime}
 ++  grab
   |%
-  ++  noun  ,[spur mime]
+  ++  noun  {spur mime}
   ++  json
     %+  corl  need                    :: XX {pax, mite, octs}
-    =>(jo (ot sup/(su fel:stab) mime/(cu |=(a=@t [/ (taco a)]) so) ~))
+    =>(jo (ot sup+(su fel:stab) mime+(cu |=(a/@t [/ (taco a)]) so) ~))
   --
 --

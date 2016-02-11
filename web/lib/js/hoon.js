@@ -1,22 +1,13 @@
 CodeMirror.defineMode("hoon", function() {
   glyph = /[+\-|$%:.#^~;=?!_,&\/<>%*]/
   term = /^[$&|]|^[a-z]([a-z0-9\-]*[a-z0-9])?/
-  num = /-?-?^[0-9]([0-9.]*|[xwbv]?[0-9a-zA-Z.-~]*)/
+  num = /~[a-z0-9._~-]+|-?-?^[0-9]([0-9.]*|[xwbv]?[0-9a-zA-Z.-~]*)/
   res = {}
-  res.startState = function(){return {soblock: false, doqblock:false, inter:[], sail:false, space:true}}
+  res.startState = function(){return {soblock: false, doqblock:false, sail:false, space:true}}
   var propOrVar = function(c){
       if(c == '.')
         return 'property'
       return 'variable'
-  }
-  var nomQuote = function(stream,state){
-    reg = new RegExp('^[^'+state.inter[0]+'{\\\\]')
-    while(stream.match(reg) || stream.match(/\\./));
-    if(!stream.eat("{")) {
-      if(state.inter[0]){stream.eat(state.inter[0])}
-      state.inter.shift()
-    }
-    return 'string'
   }
   res.token = function(stream, state){
     if(state.soqblock && stream.sol()){
@@ -37,9 +28,6 @@ CodeMirror.defineMode("hoon", function() {
       }
       return "string"
     }
-    if((state.inter.length) && stream.eat('}')){
-      return nomQuote(stream,state)
-    }
 
     if(stream.sol())
       state.space = true
@@ -48,7 +36,6 @@ CodeMirror.defineMode("hoon", function() {
       if(stream.peek().match(/[^#./() ]/)||stream.eol()){
         state.sail = false
         if(stream.match(/:? /)){
-          // state.inter = ''
           stream.skipToEnd()
           return 'string'
         }
@@ -75,8 +62,9 @@ CodeMirror.defineMode("hoon", function() {
         stream.skipToEnd()
         return 'string'
       }
-      state.inter.unshift('"')
-      return nomQuote(stream,state)
+      while(stream.match(/^[^"\\]/) || stream.match(/\\./));
+      stream.eat('"')
+      return 'string'
     }
     if(stream.match(' ;')){
       if(stream.eat(' ')){
@@ -104,17 +92,24 @@ CodeMirror.defineMode("hoon", function() {
       else return 'header'
     }
 
-    if(stream.eat('%'))
-      if(stream.match(term) || stream.match(num))
+    if(stream.match(/^@[a-z]*[A-Z]?/))
+      return 'atom'
+    if(stream.match(num))
+      return 'number'
+
+    if(stream.eat(/[%$]/))
+      if(stream.match(term) || stream.match(num) || stream.match('~'))
         return 'tag'
       else stream.backUp(1)
     if(state.space && stream.match('==')){
       return 'tag'
     }
-    if(stream.match(/^@[a-z]*[A-Z]?/))
-      return 'atom'
-    if(stream.match(num))
-      return 'number'
+    
+    if(stream.eat('~')){
+      if(/[()]/.exec(stream.peek()))
+        return 'builtin'
+      return 'tag'
+    }
 
     if(stream.eat(/[+\-]/)){
       while(stream.eat(/[<>]/) && stream.eat(/[+\-]/));
@@ -122,7 +117,7 @@ CodeMirror.defineMode("hoon", function() {
     }
 
     if(stream.eat('`')){
-      state.space = true
+      state.space = false
       return 'operator'
     }
     if(stream.sol() && stream.eatWhile(glyph)){
@@ -143,34 +138,27 @@ CodeMirror.defineMode("hoon", function() {
           return 'builtin'
         return 'operator'
       }
-      if(stream.eat(/[=:.^]/)){
-        state.space = true
+      if(stream.eat(/[=:.^/]/))
         return 'operator'
-      }
       stream.next()
       return 'builtin'
     }
 
     if(stream.match(term)){
-      if(state.space && stream.match('/'))
+      if(state.space && stream.match('+'))
         return 'tag'
       state.space = false
       return propOrVar(stream.peek())
     }
-    if(stream.eat(/[ \[(]/)){
+    if(stream.eat(/[ \[({]/)){
       state.space = true
       return
     }
-    if(stream.eat(')') || stream.eat(']')){  //  XX paren match
-      return
-    }
     stream.next()
-    return "error"
   }
   res.lineComment = '::'
   res.fold = "indent"
   return res
 });
 
-CodeMirror.registerHelper("wordChars", "hoon", /[-\\w]/);
 CodeMirror.defineMIME("text/x-hoon", "hoon");

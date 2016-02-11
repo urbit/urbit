@@ -11,7 +11,8 @@ div.meta {
 
 div.grams {
   list-style-type: none;
-  padding: 0; }
+  padding: 0;
+  margin-top: -1.875rem; }
 
 div.meta label {
   background-color: #B1B7BD;
@@ -49,11 +50,11 @@ div.meta h3 {
 div.meta .time {
   padding-right: 2rem; }
 
-div.grams:first-of-type .gram {
+div.gram.first:first-of-type {
   margin-top: 0; }
 
 div.gram.first {
-  margin-top: 1rem; }
+  margin-top: 1.875rem; }
 
 div.gram.same div.meta {
   display: none; }
@@ -68,28 +69,19 @@ div.gram.same:hover div.meta {
 .speech {
   margin-left: 1.875rem; }
 
-div.gram label[data-glyph=">"],
-div.gram label[data-glyph="="],
-div.gram label[data-glyph="+"],
-div.gram label[data-glyph="-"],
-div.gram label[data-glyph="}"] {
-  background-color: #FF0808; }
+.exp {
+  font-family: 'scp';
+  font-size: .9rem; }
 
-div.gram label[data-glyph=")"],
-div.gram label[data-glyph=","],
-div.gram label[data-glyph="."],
-div.gram label[data-glyph='"'],
-div.gram label[data-glyph="'"] {
-  background-color: #61E000; }
+.gram pre {
+  background-color: transparent; }
 
-div.gram label[data-glyph="*"],
-div.gram label[data-glyph="`"],
-div.gram label[data-glyph="^"],
-div.gram label[data-glyph="$"],
-div.gram label[data-glyph="%"],
-div.gram label[data-glyph="&"],
-div.gram label[data-glyph="@"] {
+div.gram label {
   background-color: #0500F0; }
+
+.author,
+.path {
+  cursor: pointer; }
 
 input.action {
   background-color: transparent;
@@ -190,7 +182,8 @@ input.action:focus:-ms-input-placeholder {
 
 .audience .input {
   border-color: #B1B7BD;
-  font-family: 'scp'; }
+  font-family: 'scp';
+  font-size: .8rem; }
 
 .message {
   display: inline-block; }

@@ -4,7 +4,7 @@
 /?  314
 /=  urb-wasp-data-js    /:    /%/wasp-data    /js/
 !:
-|_  [[dep=@uvH hed=marl] [dep-bod=@uvH bod=marl]]
+|_  {{dep/@uvH hed/marl} {dep-bod/@uvH bod/marl}}
 ++  linked-deps-js
   '''
   urb.waspAll = function(sel){

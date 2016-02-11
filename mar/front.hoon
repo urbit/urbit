@@ -5,16 +5,16 @@
 !:
 ::::
   ::
-|_  all=(map span cord)
+|_  all/(map knot cord)
 ::
-++  grow                                                         ::  convert to
+++  grow                                                ::  convert to
   |%
   ++  json
     :-  %o
     %-  ~(run by all)
-    |=(a=cord s/a)
+    |=(a/cord s+a)
   --
-++  grab  |%                                                     ::  convert from
-          ++  noun  (map span cord)                              ::  clam from %noun
+++  grab  |%                                            ::  convert from
+          ++  noun  (map knot cord)                     ::  clam from %noun
           :: ++  elem  ,~
 --        --
