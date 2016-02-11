@@ -33,7 +33,7 @@
   |=(a=(list ,@ta) ['https://mail.google.com' (turn a |=(b=@ta (crip (earn (scope b)))))])
 ::
 ++  out  (out-fix-expired:auth-re (out-math:auth ber))
-++  res  |=(a=httr ~&(a ((res-handle-refreshed:auth-re save-access res-give:auth) a)))
+++  res  |=(a=httr ~&(a/a ((res-handle-refreshed:auth-re save-access res-give:auth) a)))
 ++  save-access  |=(a=cord:[token:oauth2] +>(ber a))
 ::
 ++  in  
@@ -42,5 +42,5 @@
   (in-code:auth a)
 ++  bak  |=(a=httr ~&(bak/a ((bak-save-tokens:auth-re save-access) a)))
 ++  upd  *user-state
-
+::
 --
