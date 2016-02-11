@@ -38,6 +38,6 @@
   --
 ++  grab  
   |%                                                    ::  convert from
-  ++  noun  ,[@uvH manx]                                ::  clam from %noun
+  ++  noun  {@uvH manx}                                 ::  clam from %noun
   --
 --

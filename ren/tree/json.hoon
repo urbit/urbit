@@ -13,6 +13,7 @@
 |%
 ++  schema  (dict {term $@(mark schema)})
 ++  dict    |*(a/_* $^({a (dict a)} a))
+++  plist   (list {term $@(mark plist)})
 ++  query
   $%  {$kids p/(list query)}
       {$name $t}
@@ -27,16 +28,14 @@
       {$meta $j}
       {$mime $m}
   ==
-++  to-queries
-  |=  a/schema  ^-  (list query)
-  ?@(-.a [(to-query a) ~] [(to-query -.a) $(a +.a)])
+++  schema-to-plist                   :: pad improper list
+  |=  a/schema  ^-  plist
+  ?@(-.a [(to-item a) ~] [(to-item -.a) $(a +.a)])
 ::
-++  to-query
-  |=  a/{term $@(mark schema)}  ^-  query
-  ~|  invalid-query+a
-  ?+  -.a  ;;(query a)
-    $kids  [%kids (to-queries ?@(+.a !! +.a))]
-  ==
+++  to-item
+  |=  b/{term $@(mark schema)}  ^-  {term $@(mark plist)}
+  ?@(+.b b [-.b (schema-to-plist +.b)])
+::
 ++  from-type                         ::  XX holding out for noun odors
   |=  a/$%({$t p/cord} {$r p/json} {$j p/json} {$m mime})
   ?-  -.a
@@ -76,4 +75,6 @@
 =+  ^=  schem
     =+  seh=(fall (~(get by qix.gas) 'q') default)
     ~|(bad-noun+seh ;;(schema (rash seh read-schem)))
-(from-queries bem.gas(s but.gas) (to-queries schem))
+%+  from-queries  bem.gas(s but.gas)
+~|  invalid-query+schem
+;;((list query) (schema-to-plist schem))
