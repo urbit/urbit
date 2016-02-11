@@ -1,6 +1,6 @@
 ::  Modified key event
 ::
-::::  /hoon+kyev+sur
+::::  /hoon/kyev/sur
   ::
 =-  {p/(set ?($ctrl $shift $alt $meta)) q/$@(cord {$act speck})}
 ^=  speck

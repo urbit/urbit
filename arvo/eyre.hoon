@@ -106,7 +106,7 @@
       die/@da                                           ::  collection date
       sus/(set {dock $json wire path})                  ::  subscriptions
       eve/{p/@u q/(map @u even)}                        ::  queued events
-      med/(qeu duct)                                    ::  waiting /~/to+
+      med/(qeu duct)                                    ::  waiting /~/to/
   ==
 ++  even                                                ::  client event
   $%  {$news p/@uvH}
@@ -202,7 +202,7 @@
       tal.max  (welp tal.max ;script(urb_injected ""):"{(trip etag:js)}" ~)
     ==
   ?~  dep  max
-  max(hed :_(hed.max ;script@"/~/on+{<dep>}.js"(urb_injected "");))
+  max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
 ::
 ++  add-json                                            ::  inject window.urb
   |=  {urb/json jaz/cord}  ^-  cord 
@@ -371,7 +371,7 @@
     }
     urb.keep = function() {
       setTimeout(urb.call,1000*urb.tries)
-      urb.tries/+
+      urb.tries++
     }
     urb.onupdate = function(){document.location.reload()}
     urb.call()

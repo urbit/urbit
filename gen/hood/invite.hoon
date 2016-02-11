@@ -1,5 +1,5 @@
 ::
-::::  /hoon+invite+hood+gen
+::::  /hoon/invite/hood/gen
   ::
 /?  314
 ::

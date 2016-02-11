@@ -1,5 +1,5 @@
 ::
-::::  /hoon+ticket+gen
+::::  /hoon/ticket/gen
   ::
 /?  314
 ::
@@ -10,4 +10,4 @@
         {{her/@p ~} ~}
     ==
 :-  %noun
-.^(@p /a+(scot %p p.bec)/tick+(scot %da now)/(scot %p her))
+.^(@p /a/(scot %p p.bec)/tick/(scot %da now)/(scot %p her))

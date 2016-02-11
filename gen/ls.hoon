@@ -1,6 +1,6 @@
 ::  LiSt directory subnodes
 ::
-::::  /hoon+ls+gen
+::::  /hoon/ls/gen
   ::
 //  /%/subdir
 !:

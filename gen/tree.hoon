@@ -1,6 +1,6 @@
 ::  Tree view recursive directory contents
 ::  
-::::  /hoon+tree+gen
+::::  /hoon/tree/gen
   ::
 !:
 ::::

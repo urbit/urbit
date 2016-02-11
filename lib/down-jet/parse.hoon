@@ -21,7 +21,7 @@
 ::
 ++  skem-symb  (star ;~(pose dot alp))
 ++  skem-set  ~+  ^-  (set cord)                        ::  URI schemes
-  ::     (sa `wain`/http+https+javascript)
+  ::     (sa `wain`/http/https/javascript)
   =-  (silt `wain`(rash - (more gah (cook crip skem-symb))))  
   '''
   coap doi javascript aaa aaas about acap cap cid crid data dav dict dns file

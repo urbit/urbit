@@ -1203,7 +1203,7 @@
   tup=|*({a/@tas b/(pole @tas)} =+(c=(odo:raid a) ?~(b c {c (..$ -.b +.b)})))
 ::
 ::  .=  [p=%ack q=~sarnel r=&]
-::  (raid /ack+~sarnel+.y p=%tas q=%p r=%f ~)
+::  (raid /ack/~sarnel+.y p=%tas q=%p r=%f ~)
 ++  raid                                                ::  demand path odors
   =-  |*  {a/path b/{@tas (pole @tas)}}
       ?~  +.b  `(odo -.b)`(slav -.b -.a)

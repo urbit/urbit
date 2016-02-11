@@ -18,7 +18,7 @@
 ::      /userid             ::  user identity
 ::
 ::  /urb                    ::  urbit secrets
-::    /tok+hash
+::    /tok/hash
 
 |=  pit=vase   
 =>  =~
