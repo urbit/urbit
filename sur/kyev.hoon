@@ -2,6 +2,7 @@
 ::
 ::::  /hoon/kyev/sur
   ::
+/?    314
 =-  {p/(set ?($ctrl $shift $alt $meta)) q/$@(cord {$act speck})}
 ^=  speck
 $?  $ctrl  $shift  $alt   $meta   $entr  $esc  $caps  $uncap
