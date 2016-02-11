@@ -1,5 +1,5 @@
 ::
-::::  /hoon/ask-mail+mar
+::::  /hoon/ask-mail/mar
   ::
 /?  314
 |_  txt/cord

@@ -1,6 +1,6 @@
 ::  Combine /tree-head/ and /tree-body/
 ::
-::::  /hoon/urb/ren
+::::  /hoon/tree/urb/ren
   ::
 /=   hed    /#    /%   /:  /===/ren   /tree-head/  :: XX static
 /=   bod    /#    /%   /tree-body/
