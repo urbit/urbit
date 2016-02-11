@@ -14,11 +14,11 @@
 %+  turn  arg
 |=  pax/path
 ^-  tang
-=+  ark=;;(arch .^(%cy pax))
+=+  ark=.^(arch %cy pax)
 ?^  fil.ark
   ?:  =(%sched -:(flop pax))
-    [>;;((map ,@da cord) .^(%cx pax))<]~
-  [leaf+(spud pax) (pretty-file .^(%cx pax))]
+    [>.^((map @da cord) %cx pax)<]~
+  [leaf+(spud pax) (pretty-file .^(noun %cx pax))]
 ?-     dir.ark                                          ::  handle ambiguity
     $~
   [rose+[" " `~]^~[leaf+"~" (smyt pax)]]~

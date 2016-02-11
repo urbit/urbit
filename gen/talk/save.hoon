@@ -7,6 +7,6 @@
   !:
 :-  %say
 |=  $:  [now=@da eny=@uvI byk=beak]
-        [[man=span ~] ~]
+        [[man=knot ~] ~]
     ==
 [%talk-save man]

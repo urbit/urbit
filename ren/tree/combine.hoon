@@ -14,12 +14,12 @@
 !:
 ^-    tree-include
 =+  rj=react-to-json:react
-=+  cj=|=([a=time b=manx] (jobe time/(jode a) body/(rj b) ~))
+=+  cj=|=({a/time b/manx} (jobe time+(jode a) body+(rj b) ~))
 :*  mime
     (rj body)
     (rj /h1 hed.snip)   :: head
     (rj /div tal.snip)  :: snip
     meta
     sect
-    [%a (turn (sort comt |=([a=* b=*] (lor b a))) cj)]
+    [%a (turn (sort comt |=({a/* b/*} (lor b a))) cj)]
 ==

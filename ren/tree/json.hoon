@@ -5,14 +5,14 @@
 /+    tree
 /=    gas    /$    fuel
 /=    dat    /^    tree-include    /tree-include/
-/=    kid    /^    (map span tree-include)
+/=    kid    /^    (map knot tree-include)
              /_    /tree-include/
 !:
 ::::
   ::
 |%
 ++  schema  (dict {term $@(mark schema)})
-++  dict    |*(a=_* $^({a (dict a)} a))
+++  dict    |*(a/_* $^({a (dict a)} a))
 ++  query
   $%  {$kids p/(list query)}
       {$name $t}
@@ -32,10 +32,10 @@
   ?@(-.a [(to-query a) ~] [(to-query -.a) $(a +.a)])
 ::
 ++  to-query
-  |=  a/{term $@(mark schema)}
+  |=  a/{term $@(mark schema)}  ^-  query
   ~|  invalid-query+a
   ?+  -.a  ;;(query a)
-    %kids  [%kids (to-queries ?@(+.a !! +.a))]
+    $kids  [%kids (to-queries ?@(+.a !! +.a))]
   ==
 ++  from-type                         ::  XX holding out for noun odors
   |=  a/$%({$t p/cord} {$r p/json} {$j p/json} {$m mime})
@@ -61,9 +61,9 @@
     $meta  (from-type +.a meta.dat)
     $mime  (from-type +.a mime.dat)
     $body  (from-type +.a body.dat)
-    $kids  ?<  (~(has by (mo p.a)) %kids)  ::  XX recursion? 
+    $kids  ?<  (~(has by (malt p.a)) %kids)  ::  XX recursion? 
            =<  o+(~(urn by kid) .)
-           |=  {dir/span dak/tree-include}
+           |=  {dir/knot dak/tree-include}  ^-  json
            ^^$(quy p.a, s.bem [dir s.bem], dat dak, kid ~)
   ==
 --
