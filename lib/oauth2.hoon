@@ -24,6 +24,7 @@
 ++  grab-json
   |*  [a=httr b=fist:jo]
   ~|  bad-json/r.a
+  ~|  (poja q:(need r.a))
   (need (;~(biff poja b) q:(need r.a)))
 --
 ::

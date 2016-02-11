@@ -22,21 +22,25 @@
       response-type/%code
   ==
 --
-::
+!:
 ::::
   ::
 |_  [bal=(bale keys:oauth2) user-state]
 ++  auth-re  ~(. (re:auth .) ref |=(a=_ref +>(ref a)))
-++  auth  ~(. (auth-usr usr.bal) bal (scopes 'userinfo.email' 'plus.me' ~))
+++  auth  ~(. (auth-usr usr.bal) bal ~&((scopes 'userinfo.email' 'plus.me' ~) (scopes 'userinfo.email' 'plus.me' ~)))
 ++  scopes
   =+  scope=|=(b=@ta (endpoint:oauth2 dom.bal /auth/[b]))
-  |=(a=(list ,@ta) (turn a |=(b=@ta (crip (earn (scope b))))))
+  |=(a=(list ,@ta) ['https://mail.google.com' (turn a |=(b=@ta (crip (earn (scope b)))))])
 ::
 ++  out  (out-fix-expired:auth-re (out-math:auth ber))
-++  res  (res-handle-refreshed:auth-re save-access res-give:auth)
+++  res  |=(a=httr ~&(a ((res-handle-refreshed:auth-re save-access res-give:auth) a)))
 ++  save-access  |=(a=cord:[token:oauth2] +>(ber a))
 ::
-++  in  in-code:auth
-++  bak  (bak-save-tokens:auth-re save-access)
-:: ++  upd  *user-state
+++  in  
+  |=  a=quay
+  ~&  got-quay/a
+  (in-code:auth a)
+++  bak  |=(a=httr ~&(bak/a ((bak-save-tokens:auth-re save-access) a)))
+++  upd  *user-state
+
 --
