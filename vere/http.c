@@ -631,6 +631,18 @@ _http_conn_new(u3_http *htp_u)
     uv_close((uv_handle_t*)&hon_u->wax_u, _http_conn_free_early);
   }
   else {
+    struct sockaddr_in name;
+    int namelen = sizeof(name);
+    int ret = 0;
+    if (0 != (ret = uv_tcp_getpeername(&hon_u->wax_u, (struct sockaddr*) &name, &namelen))) {
+      uL(fprintf(uH, "failed to get peer name: %s\r\n", uv_strerror(ret)));
+    }
+    {
+      char addr[16];
+      uv_inet_ntop(AF_INET, &name.sin_addr, addr, sizeof(addr));
+      uL(fprintf(uH, "connection from: %s\r\n", addr));
+    }
+
     uv_read_start((uv_stream_t*)&hon_u->wax_u,
                   _http_alloc,
                   _http_conn_read_cb);
@@ -1033,7 +1045,14 @@ _http_start(u3_http* htp_u)
 
   memset(&add_u, 0, sizeof(add_u));
   add_u.sin_family = AF_INET;
-  add_u.sin_addr.s_addr = INADDR_ANY;
+
+  if ( c3y == htp_u->lop ) {
+    //add_u.sin_addr.s_addr = INADDR_ANY;
+    inet_pton(AF_INET, "127.0.0.1", &add_u.sin_addr);
+  }
+  else {
+    add_u.sin_addr.s_addr = INADDR_ANY;
+  }
 
   /*  Try ascending ports.
   */
@@ -1061,8 +1080,9 @@ _http_start(u3_http* htp_u)
       }
     }
 #if 1
-    uL(fprintf(uH, "http: live (%s) on %d\n",
+    uL(fprintf(uH, "http: live (%s, %s) on %d\n",
                    (c3y == htp_u->sec) ? "\"secure\"" : "insecure",
+                   (c3y == htp_u->lop) ? "loopback" : "public",
                    htp_u->por_w));
 #endif
     break;
@@ -1074,6 +1094,24 @@ _http_start(u3_http* htp_u)
 void
 u3_http_io_init()
 {
+  //  Lens port
+  //
+  {
+    u3_http *htp_u = c3_malloc(sizeof(*htp_u));
+
+    htp_u->sev_l = u3A->sev_l + 2;
+    htp_u->coq_l = 1;
+    htp_u->por_w = 12321;
+    htp_u->sec = c3n;
+    htp_u->lop = c3y;
+
+    htp_u->hon_u = 0;
+    htp_u->nex_u = 0;
+
+    htp_u->nex_u = u3_Host.htp_u;
+    u3_Host.htp_u = htp_u;
+  }
+
   //  Logically secure port.
   {
     u3_http *htp_u = c3_malloc(sizeof(*htp_u));
@@ -1082,6 +1120,7 @@ u3_http_io_init()
     htp_u->coq_l = 1;
     htp_u->por_w = 8443;
     htp_u->sec = c3y;
+    htp_u->lop = c3n;
 
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
@@ -1099,6 +1138,7 @@ u3_http_io_init()
     htp_u->coq_l = 1;
     htp_u->por_w = 8080;
     htp_u->sec = c3n;
+    htp_u->lop = c3n;
 
     htp_u->hon_u = 0;
     htp_u->nex_u = 0;
