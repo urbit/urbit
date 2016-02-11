@@ -1690,11 +1690,12 @@
       |=  {ref/* sec/(unit (set monk)) tem/term bem/beam}
       ^-  (unit (unit cage))
       ?>  =(%151 -.ref)
-      =-  %+  biff  -   |=  (unit cage)
-          %+  biff  +<  |=  cay/cage
-          ?.  -:(nets:wa +.ref `span`p.q.cay)
-            [~ ~]
-          ``cay
+      %-  %-  lift  |=  (unit cage)                     :: ignore block
+          %+  biff  +<
+          |=  cay/cage  ^-  (unit cage)                
+          ?.  -:(nets:wa +.ref `span`p.q.cay)           :: error if bad type
+            ~
+          `cay
       ^-  (unit (unit cage))
       =+  (~(get by keg) tem bem)
       ?^  -
