@@ -3,9 +3,32 @@
 */
 #include "all.h"
 
-
 /* functions
 */
+  static u3_noun
+  _fish_in(u3_noun, u3_noun, u3_atom, u3_noun);
+
+  static u3_noun
+  _fish_fork(u3_noun van,
+             u3_noun p_sut,
+             u3_atom axe,
+             u3_noun vit)
+  {
+    if ( u3_nul == p_sut ) {
+      return u3nc(1, 1);
+    } 
+    else {
+      u3_noun hed = _fish_in(van, u3h(p_sut), axe, vit);
+      u3_noun tal = _fish_fork(van, u3t(p_sut), axe, vit);
+      u3_noun pro = u3qf_flor(hed, tal);
+
+      u3z(hed);
+      u3z(tal);
+
+      return pro;
+    }
+  }
+
   static u3_noun
   _fish_in(u3_noun van,
            u3_noun sut,
@@ -28,14 +51,21 @@
       default: return u3m_bail(c3__fail);
 
       case c3__atom: {
-        u3_noun ton = u3nt(3, 0, u3k(axe));
-        u3_noun pro = u3qf_flip(ton);
+        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
+          return u3m_bail(c3__fail);
+        } else {
+          if ( c3n == u3du(q_sut) ) {
+            u3_noun ton = u3nt(3, 0, u3k(axe));
+            u3_noun pro = u3qf_flip(ton);
 
-        u3z(ton);
-        return pro;
-      }
-      case c3__bull: {
-        return u3m_error("bull-fish");
+            u3z(ton);
+            return pro;
+          } else {
+            return u3nt(5,
+                        u3nc(1, u3k(u3t(q_sut))),
+                        u3nc(0, u3k(axe)));
+          }
+        }
       }
       case c3__cell: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
@@ -62,15 +92,6 @@
       case c3__core: {
         return u3nc(0, 0);
       }
-      case c3__cube: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        } else {
-          return u3nt(5,
-                      u3nc(1, u3k(p_sut)),
-                      u3nc(0, u3k(axe)));
-        }
-      }
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
@@ -78,20 +99,13 @@
           return _fish_in(van, q_sut, axe, vit);
         }
       }
-      case c3__fork: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        }
-        else {
-          u3_noun hed = _fish_in(van, p_sut, axe, vit);
-          u3_noun tal = _fish_in(van, q_sut, axe, vit);
-          u3_noun pro = u3qf_flor(hed, tal);
+      case c3__fork: p_sut = u3t(sut);
+      {
+        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun ret = _fish_fork(van, yed, axe, vit);
 
-          u3z(hed);
-          u3z(tal);
-
-          return pro;
-        }
+        u3z(yed);
+        return ret;
       }
       case c3__hold: {
         p_sut = u3t(sut);
@@ -107,7 +121,7 @@
             return u3m_error("fish-loop");
           } else {
             u3_noun zoc = u3qdi_put(vit, sut);
-            u3_noun fop = u3qfu_rest(van, sut, p_sut);
+            u3_noun fop = u3qfu_repo(van, sut);
             u3_noun pro = _fish_in(van, fop, axe, zoc);
 
             u3z(fop);
@@ -150,7 +164,7 @@
              u3_noun sut,
              u3_noun axe)
   {
-    c3_m    fun_m = c3__fish;
+    c3_m    fun_m = c3__fish + !!u3r_at(u3qfu_van_vet, van);
     u3_noun pro   = u3z_find_2(fun_m, sut, axe);
 
     if ( u3_none != pro ) {

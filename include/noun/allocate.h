@@ -14,6 +14,7 @@
      *  U3_MEMORY_DEBUG is on, this should generally be on as well.
     */
 #     undef U3_CELLOC_TOGGLE
+
     /* U3_PRINT_WATERMARK: print watermark information for each road
     */
 #     undef U3_PRINT_WATERMARK
@@ -145,7 +146,7 @@
         } jed;
 
         struct {                              //  namespace
-          u3_noun flu;                        //  (list $+(* (unit))), inward
+          u3_noun gul;                        //  (list $+(* (unit (unit)))) now
         } ski;
 
         struct {                              //  trace stack
