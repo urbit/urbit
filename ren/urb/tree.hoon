@@ -5,5 +5,5 @@
 /?    314
 /=   hed    /#    /%   /:  /===/ren   /tree-head/  :: XX static
 /=   bod    /#    /%   /tree-body/
-^-  [hed=[@uvH marl] bod=[@uvH marl]]
+^-  {hed/{@uvH marl} bod/{@uvH marl}}
 [hed bod]

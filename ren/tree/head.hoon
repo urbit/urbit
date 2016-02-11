@@ -3,12 +3,12 @@
   ::
 ::
 /?    314
-/=    tub    /$  |=([bem=beam *] (flop s.bem))
+/=    tub    /$  |=({bem/beam *} (flop s.bem))
 /=    aut
   /$  %+  cork  fuel                                    :: after parsing params,
-      |=  gas=epic  ^-  ?                               :: check that the fcgi
+      |=  gas/epic  ^-  ?                               :: check that the fcgi
       %+  lien  (~(tap in (~(get ju aut.ced.gas) %$)))  :: has an identity
-      |=(a=span !=(%pawn (slav %p a)))                  :: which isn't a comet
+      |=(a/knot !=(%pawn (slav %p a)))                  :: which isn't a comet
 ::
 !:
 ::::
