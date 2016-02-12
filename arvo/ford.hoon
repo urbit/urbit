@@ -333,9 +333,9 @@
             $1  nuf
             $0
           :: ~&  :-  %clef-new
-          ::     ?+  sem  `@tas`sem
-          ::       %hood  [%hood (tope &1.q.q.hoc)]
-          ::       %bake  [%bake `mark`&1.q.q.hoc (tope &2.q.q.hoc)]
+          ::     ?+  sem  `term`sem
+          ::       $hood  [%hood (tope &1.q.q.hoc)]
+          ::       $bake  [%bake `mark`&1.q.q.hoc (tope |2.q.q.hoc)]
           ::     ==
           :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
           q=q.nuf
