@@ -150,17 +150,6 @@
   =-  |=(a/term (rush a (most hep sym)))
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
 ::
-++  norm                                                ::  normalize beam rev
-  |=  {ska/sley bem/beam}
-  %_  bem
-    r  ?:  ?=($ud -.r.bem)  r.bem
-       =+  num=(ska [%151 %noun] ~ %cw bem(s ~))
-       ?.  ?=({$~ $~ * * @u} num)
-         ~&  norm-lost+(tope bem(s ~))
-         r.bem  ::  XX
-       [%ud q.q.u.u.num]
-  ==
-::
 ++  za                                                  ::  per event
   =|  $:  $:  our/ship                                  ::  computation owner
               hen/duct                                  ::  event floor
@@ -551,7 +540,7 @@
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      =+  bot=(make [~ jav.bay deh.bay] kas)
+      =+  bot=(make-norm-bek [~ jav.bay deh.bay] kas)
       =^  dep  bot  (clad bot)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
@@ -612,7 +601,7 @@
     ::
     ++  fang                                            ::  protocol door
       |=  {cof/cafe for/mark}  ^-  (bolt vase)
-      (cope (lamp cof bek /[for]/mar) lear)
+      (lear cof bek /[for]/mar)
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem/beam
@@ -979,6 +968,8 @@
     ::
     ++  leap                                            :: XX load with path
       |=  {cof/cafe bem/beam bom/beam arg/coin}
+      %+  cope  (lamp cof bem)
+      |=  {cof/cafe bem/beam}
       %+  cope  (fame cof bem)
       |=  {cof/cafe bem/beam}
       (cope (fape cof %hoon bem bom) abut:(meow bom arg))
@@ -1126,6 +1117,11 @@
       |=  {cof/cafe typ/span fol/nock}
       %+  (coup cof)  (mock [q.vax fol] (sloy syve))
       |=(val/* `vase`[typ val])
+    ::
+    ++  make-norm-bek                                   ::  normalize root beak
+      |=  {cof/cafe kas/silk}
+      %+  cope  (lamp cof bek ~)
+      |=({cof/cafe byk/beak *} (make(bek byk) cof kas))
     ::
     ++  make                                            ::  reduce silk
       |=  {cof/cafe kas/silk}
@@ -1755,7 +1751,6 @@
         $exec
       ?~  q.q.hic
         abet:~(apax za [our hen [now eny ski] ~] bay)
-      =.  p.u.q.q.hic  -:(norm ski p.u.q.q.hic ~)
       abet:(~(apex za [our hen [now eny ski] ~] bay) u.q.q.hic)
     ==
   [mos ..^$(pol (~(put by pol) our bay))]
