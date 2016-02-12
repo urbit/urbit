@@ -793,8 +793,9 @@
         ((hard json) q.q.p.q.sih)
       ::
           {$at ^}
-        ?.  ?=({$& $js ^} q.sih)
-          ~&  e+at-lost+p.tee
+        ?:  ?=($| -.q.sih)  $(tee q.tee)
+        ?.  ?=($js -.p.q.sih)
+          ~&  e+at-lost+[-.p.q.sih q.tee]
           $(tee q.tee)
         ?>  ?=(@ q.q.p.q.sih)
         =+  cyz=(~(got by wup) p.tee)
