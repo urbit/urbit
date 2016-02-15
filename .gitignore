@@ -1,3 +1,6 @@
+# arvo and pills
+/arvo/
+urbit.pill
 # autoconf
 /.MAKEFILE-VERSION
 /make.conf
@@ -17,8 +20,6 @@ GPATH
 GTAGS
 GRTAGS
 # scratch
-/urb/*/
-!/urb/zod/
 /zod/
 # dependencies
 node_modules/

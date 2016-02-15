@@ -33,7 +33,7 @@ ENDIAN=little
 #
 BIN=bin
 
-LIB=$(shell pwd)/urb
+LIB=.
 
 # Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
