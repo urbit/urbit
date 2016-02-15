@@ -7,11 +7,22 @@ Thank you for your interest in contributing to urbit.
 You may have an identity on the live network, but doing all your
 development on the live network would be cumbersome and unnecessary.
 Standard practice in urbit development is to work on a fake `~zod`. A
-fake `~zod` will get its initial files from the `urb/zod/` directory
-rather than trying to sync them over the network, which is invaluable
-for working in Hoon. Also, a fake `~zod` or any fake urbit instances you
+fake `~zod` will get its initial files from the `arvo/` directory rather
+than trying to sync them over the network, which is invaluable for
+working in Hoon. Also, a fake `~zod` or any fake urbit instances you
 start do not talk to the live network, but to a fake network that exists
 only on your computer.
+
+First, you'll want to get an `arvo/` directory. Arvo is kept in its own
+repository, and changes more rapidly than the main C project does.
+
+From inside your `urbit` directory, do:
+
+    git clone https://github.com/urbit/arvo
+
+The arvo repository can live safely inside the main urbit repository,
+since it's listed in .gitignore. However, vere will try to find the
+arvo directory in the current directory when starting a fake `~zod`.
 
 To start a fake `~zod`, the command is:
 
@@ -25,23 +36,24 @@ galaxy.
 ## Kernel development
 
 Working on either C or non-kernel Hoon should not bring any surprises,
-but the Hoon kernel (anything under `urb/zod/arvo/`) is bootstrapped
-from `urbit.pill` in `urb/`, and must be manually recompiled if any
-changes are made. The command to manually recompile the kernel and
-install the new kernel is `|reset` in `dojo`.  This rebuilds from the
-`arvo` directory in the `home` desk in `%clay`.  Currently, `|reset`
-does not reload apps like `dojo` itself, which will still reference the
-old kernel. To force them to reload, make a trivial edit to their main
-source file (under the `app` directory) in `%clay`.
+but the Hoon kernel (anything under `arvo/arvo/`) is bootstrapped
+from `urbit.pill`, and must be recompiled if any changes are made. This
+should happen automatically when you make changes, but if it doesn't,
+the command to manually recompile the kernel and install the new kernel
+is `|reset` in `dojo`.  This rebuilds from the `arvo` directory in the
+`home` desk in `%clay`.  Currently, `|reset` does not reload apps like
+`dojo` itself, which will still reference the old kernel. To force them
+to reload, make a trivial edit to their main source file (under the
+`app` directory) in `%clay`.
 
 If you do any kernel development, be sure to read the section below about
 pills.
 
 ## Git practice
 
-Since we use the GitHub issue tracker, it is helpful to contribute via a
-GitHub pull request. If you already know what you are doing, skip down
-to the Style section.
+Since we use the GitHub issue tracker, it is helpful (though not
+required) to contribute via a GitHub pull request. If you already know
+what you are doing, skip down to the Style section.
 
 Start by cloning the repository on your work machine:
 
@@ -106,12 +118,11 @@ less obvious stylistic rules are:
 
 ## The kernel and pills
 
-urbit bootstraps itself using a binary blob called `urbit.pill`, which
-we do indeed keep in version control. This creates some special
-requirements. If you are not changing anything in the kernel (everything
-under `urb/zod/arvo/`) then you can skim this section (please do not
-skip it entirely, though).  If you *are* working there, then this
-section is critically important!
+urbit bootstraps itself using a binary blob called `urbit.pill`. You
+probably remember fetching it from `bootstrap.urbit.org` before your
+first boot. This is just the compiled version of the kernel, which you
+can find in the `arvo/arvo/` directory - `hoon.hoon`, `zuse.hoon`, and
+so on.
 
 The procedure for creating `urbit.pill` is often called "soliding". It
 is somewhat similar to `|reset`, but instead of replacing your running
@@ -121,28 +132,16 @@ is, on a fakezod:
     .urbit/pill +solid
 
 When the compilation finishes, your `urbit.pill` will be found in the
-`[pier]/.urb/put/` directory. Copy it into `urb/` and add it to your
-commit.
+`[pier]/.urb/put/` directory.
 
-The requirement here is that every commit that changes the kernel must
-come with an `urbit.pill` built from the same code in `urb/zod/arvo/`
-for that commit. (Only changing the actual Hoon code counts, so a change
-to a jet with no corresponding Hoon change does not require a new pill.)
-This is so that checking out an arbitrary revision and starting up a
-fakezod actually works as expected. However you do this is fine, but I
-like to do it as part of my committing process - just before `git
-commit`, I fire up a new fakezod. This will use the previous
-`urbit.pill`, but the kernel code in `%clay` will be copied from
-`urb/zod/arvo/`, so `+solid` will compile it. Then I copy `urbit.pill`
-into `urb/` and make my commit.
+Ordinarily, `http://bootstrap.urbit.org/latest.pill` will be updated
+to match whatever's on `master` in the `arvo` repository with every
+merge to `master`. Older pills will be stored with the `git` SHA1 of the
+relevant commit as `[sha1].pill`.
 
-If you rebase or interactive rebase your commits, be sure to preserve
-this property on all the commits you end up with. If multiple people
-were collaborating on your branch, you may end up with conflicts in
-`urbit.pill` and have to merge the branch into itself to resolve them.
-Just do the same procedure to create a new, merged pill before
-committing the merge. Otherwise, just make sure to use the correct
-`urbit.pill` for each commit.
+If you're doing heavy kernel hacking and want to submit intermediate
+pills for your branch, please include them with your pull request, and
+they'll be uploaded to `bootstrap.urbit.org` when your branch is merged.
 
 ## Debug urbit with `gdb`
 
@@ -188,20 +187,7 @@ The urbit developers communicate on urbit itself. Joining the
 Subscribing to `urbit-dev` on Google Groups is also recommended, since
 this is where continuity breach notifications are sent.
 
-You can also contact one of the following people:
-
--   Philip Monk
-
-    email: philip.monk@tlon.io
-
-    urbit: `~wictuc-folrex`
-
-    GitHub: [@philipcmonk](https://github.com/philipcmonk/)
-
--   Raymond Pasco
-
-    email: ray@the.ug
-
-    urbit: `~ramtev-wisbyt`
-
-    GitHub: [@juped](https://github.com/juped/)
+Pull requests in non-GitHub forms can go to Raymond Pasco
+([ray@the.ug](mailto:ray@the.ug)). Questions or other communications
+about contributing to Urbit can go to Raymond Pasco or Philip Monk
+([philip.monk@tlon.io](mailto:philip.monk@tlon.io)).

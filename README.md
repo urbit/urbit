@@ -145,7 +145,7 @@ three packages, at least with Homebrew. Your mileage may vary.
 
 Clone the repo:
 
-    git clone git://github.com/urbit/urbit.git
+    git clone https://github.com/urbit/urbit.git
 
 `cd` to the directory you just created:
 
@@ -157,8 +157,17 @@ Run `make`:
 
 (On FreeBSD, use `gmake` instead.)
 
-The executable is `bin/urbit`. Install it somewhere, or just use it
-where it is.
+The executable is `bin/urbit`.
+
+Fetch the latest bootstrapping pill:
+
+    curl -o urbit.pill http://bootstrap.urbit.org/latest.pill
+
+You can use your preferred way to fetch things from the web here.
+Urbit looks for a pill named `urbit.pill` in the current directory
+by default, so if you have anything different, you'll need to tell
+Urbit where it is (on first launch only) with the `-B` command-line
+option.
 
 Launch
 ======
