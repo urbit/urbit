@@ -32,6 +32,13 @@
   _play_sand(u3_noun odo, u3_noun bob)
   { 
     if ( c3y == u3ud(bob) ) {
+      if ( 'n' == odo ) {
+        if ( (bob != 0) ) {
+          return u3m_bail(c3__exit);
+        } else {
+          return u3nq(c3__atom, odo, u3_nul, bob);
+        }
+      }
       if ( 'f' == odo ) {
         if ( (bob > 1) ) {
           return u3m_bail(c3__exit);
