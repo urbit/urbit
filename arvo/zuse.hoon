@@ -1203,7 +1203,7 @@
   tup=|*({a/@tas b/(pole @tas)} =+(c=(odo:raid a) ?~(b c {c (..$ -.b +.b)})))
 ::
 ::  .=  [p=%ack q=~sarnel r=&]
-::  (raid /ack+~sarnel+.y p=%tas q=%p r=%f ~)
+::  (raid /ack/~sarnel+.y p=%tas q=%p r=%f ~)
 ++  raid                                                ::  demand path odors
   =-  |*  {a/path b/{@tas (pole @tas)}}
       ?~  +.b  `(odo -.b)`(slav -.b -.a)
@@ -2201,6 +2201,7 @@
   $%  {$ape p/twig}                                     ::  /~  twig by hand
       {$arg p/twig}                                     ::  /$  argument
       {$alt p/(list horn)}                              ::  /|  options
+      {$dep p/horn}                                     ::  /#  insert dephash
       {$dub p/term q/horn}                              ::  /=  apply face
       {$fan p/(list horn)}                              ::  /.  list
       {$for p/(list (pair path:spur horn))}             ::  /,  switch by path

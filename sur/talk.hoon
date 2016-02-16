@@ -1,5 +1,5 @@
 ::  
-::::  /hoon+talk+sur
+::::  /hoon/talk/sur
   !:
 |%
 ++  audience  (map partner (pair envelope delivery))    ::  destination+state

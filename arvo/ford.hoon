@@ -47,6 +47,7 @@
 ++  cafe                                                ::  live cache
   $:  p/(set calx)                                      ::  used
       q/(map * calx)                                    ::  cache
+      r/(map @uvH deps)                                 ::  dependss
   ==                                                    ::
 ::                                                      ::
 ++  calm                                                ::  cache metadata
@@ -100,11 +101,6 @@
   ^-  cafe                                              ::
   a(q (~(put by q.a) [-.b q.b] b))                      ::
 ::                                                      ::
-++  chub                                                ::  cache merge
-  |=  {a/cafe b/cafe}                                   ::
-  ^-  cafe                                              ::
-  [(~(uni in p.a) p.b) (~(uni by q.a) q.b)]             ::
-::                                                      ::
 ++  faun  (flux |=(a/vase [%& %noun a]))                ::  vase to gage
 ++  feel  (flux |=(a/cage q.a))                         ::  cage to vase
 ++  furl                                                ::  unwrap gage to cage
@@ -153,17 +149,6 @@
 ++  tear                                                ::  split term
   =-  |=(a/term (rush a (most hep sym)))
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
-::
-++  norm                                                ::  normalize beam rev
-  |=  {ska/sley bem/beam}
-  %_  bem
-    r  ?:  ?=($ud -.r.bem)  r.bem
-       =+  num=(ska [%151 %noun] ~ %cw bem(s ~))
-       ?.  ?=({$~ $~ * * @u} num)
-         ~&  norm-lost+(tope bem(s ~))
-         r.bem  ::  XX
-       [%ud q.q.u.u.num]
-  ==
 ::
 ++  za                                                  ::  per event
   =|  $:  $:  our/ship                                  ::  computation owner
@@ -315,6 +300,12 @@
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
+    ++  clad                                            ::  hash dependencies
+      |*  hoc/(bolt)  ^+  [*@uvH hoc]
+      ?:  ?=($1 -.q.hoc)  [*@uvH hoc]
+      =^  dep  r.p.hoc  (daze [p.q r.p]:hoc)
+      [dep hoc]
+    ::
     ++  clef                                            ::  cache a result
       |*  sem/*
       |*  {hoc/(bolt) fun/(burg)}
@@ -331,9 +322,9 @@
             $1  nuf
             $0
           :: ~&  :-  %clef-new
-          ::     ?+  sem  `@tas`sem
-          ::       %hood  [%hood (tope &1.q.q.hoc)]
-          ::       %bake  [%bake `mark`&1.q.q.hoc (tope &2.q.q.hoc)]
+          ::     ?+  sem  `term`sem
+          ::       $hood  [%hood (tope &1.q.q.hoc)]
+          ::       $bake  [%bake `mark`&1.q.q.hoc (tope |2.q.q.hoc)]
           ::     ==
           :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
           q=q.nuf
@@ -485,7 +476,7 @@
     ++  dash                                          ::  process cache
       |=  cof/cafe
       ^+  +>
-      %_(+> jav.bay q.cof)
+      %_(+> jav.bay q.cof, deh.bay r.cof)
     ::
     ++  diff                                            ::  diff
       |=  {cof/cafe kas/silk kos/silk}
@@ -533,29 +524,28 @@
       ==
     ::
     ++  daze                                            ::  remember depends
-      |=  dep/(set beam)
+      |=  {dep/(set beam) deh/(map @uvH deps)}
       ^+  [*@uvH deh.bay]
       =.  dep
         =<  (silt (skip (~(tap in dep)) .))
         |=  dap/beam  ^-  ?
         ?~  s.dap  |
         =>(.(s.dap t.s.dap) |((~(has in dep) dap) $))
-      ?~  dep  [0v0 deh.bay]
+      ?~  dep  [0v0 deh]
       =+  hap=(sham dep)
-      ?:  (~(has by deh.bay) hap)
-        [hap deh.bay]
-      [hap (~(put by deh.bay) hap [%init dep])]
+      ?:  (~(has by deh) hap)
+        [hap deh]
+      [hap (~(put by deh) hap [%init dep])]
     ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      =+  bot=(make [~ jav.bay] kas)
+      =+  bot=(make-norm-bek [~ jav.bay deh.bay] kas)
+      =^  dep  bot  (clad bot)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        $0  =^  dep  deh.bay  (daze p.q.bot)
-            amok:(expo [%made dep q.q.bot])
-        $2  =^  dep  deh.bay  (daze p.q.bot)
-            amok:(expo [%made dep %| q.q.bot])
+        $0  amok:(expo [%made dep q.q.bot])
+        $2  amok:(expo [%made dep %| q.q.bot])
         $1  =+  zuk=(~(tap by p.q.bot) ~)
             =<  abet
             |-  ^+  ..exec
@@ -570,10 +560,15 @@
     ++  fade                                            ::  compile to hood
       |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt hood)
+      (fape cof for bem bem)
+    ::
+    ++  fape                                            ::  XX compile at path
+      |=  {cof/cafe for/mark bem/beam bim/beam}
+      ^-  (bolt hood)
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
       %+  cope  (liar cof %*(. bem s [for s.bem]))
       |=  {cof/cafe cay/cage}
-      %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
+      %+  (clef %hood)  (fine cof bim(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
       |=  {cof/cafe bum/beam cay/cage}
       ~|  fade+(tope bum)
@@ -606,7 +601,7 @@
     ::
     ++  fang                                            ::  protocol door
       |=  {cof/cafe for/mark}  ^-  (bolt vase)
-      (cope (lamp cof bek /[for]/mar) lear)
+      (lear cof bek /[for]/mar)
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem/beam
@@ -673,6 +668,7 @@
               (stag %ape ;~(pfix sig ape:read))
               (stag %arg ;~(pfix buc ape:read))
               (stag %alt ;~(pfix bar alt:read))
+              (stag %dep ;~(pfix hax day:read))
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
@@ -968,9 +964,15 @@
     ::
     ++  lear                                            ::  load core
       |=  {cof/cafe bem/beam}  ^-  (bolt vase)
+      (leap cof bem bem many+~)
+    ::
+    ++  leap                                            :: XX load with path
+      |=  {cof/cafe bem/beam bom/beam arg/coin}
+      %+  cope  (lamp cof bem)
+      |=  {cof/cafe bem/beam}
       %+  cope  (fame cof bem)
       |=  {cof/cafe bem/beam}
-      (cope (fade cof %hoon bem) abut:(meow bem many+~))
+      (cope (fape cof %hoon bem bom) abut:(meow bom arg))
     ::
     ++  lend                                            ::  load arch
       |=  {cof/cafe bem/beam}
@@ -1029,13 +1031,7 @@
       %+  cope  (lima cof for arg bem)
       |=  {cof/cafe vux/(unit vase)}
       ?^  vux  (fine cof u.vux)
-      (limp cof for arg bem)
-    ::
-    ++  limp                                            ::  render
-      |=  {cof/cafe for/mark arg/coin bem/beam}
-      %+  cope  (fame cof -.bem /[for]/ren)
-      |=  {cof/cafe bom/beam}
-      (cope (fade cof %hoon bom) abut:(meow bem arg))
+      (leap cof [-.bem /[for]/ren] bem arg)
     ::
     ++  link                                            ::  translate
       |=  {cof/cafe too/mark for/mark vax/vase}
@@ -1121,6 +1117,11 @@
       |=  {cof/cafe typ/span fol/nock}
       %+  (coup cof)  (mock [q.vax fol] (sloy syve))
       |=(val/* `vase`[typ val])
+    ::
+    ++  make-norm-bek                                   ::  normalize root beak
+      |=  {cof/cafe kas/silk}
+      %+  cope  (lamp cof bek ~)
+      |=({cof/cafe byk/beak *} (make(bek byk) cof kas))
     ::
     ++  make                                            ::  reduce silk
       |=  {cof/cafe kas/silk}
@@ -1421,9 +1422,18 @@
           ?~  p.hon  (flaw cof leaf+"ford: out of options" ~)
           (coop ^$(cof cof, hon i.p.hon) ..$(p.hon t.p.hon))
         ::
+            $dep
+          =+  [dep bot]=(clad $(hon p.hon))    :: XX review
+          %+  cope  bot
+          %-  flux
+          |=  {mark vax/vase}
+          [%noun (slop [atom+['uvH' ~] dep] vax)]
+        ::
             $dub 
           %+  cope  $(hon q.hon)
-          (flux |=({mar/mark vax/vase} [mar [%face p.hon p.vax] q.vax]))
+          %-  flux
+          |=  {mar/mark vax/vase}
+          [mar [%face p.hon p.vax] q.vax]
         ::
             $fan
           %+  cope  
@@ -1666,7 +1676,7 @@
       ?>  (~(has by q.kig) tik)
       =+  `{ren/care bem/beam}`(~(got by q.kig) tik)
       ?~  rot
-        =^  dep  deh.bay  (daze ~)                      ::  dependencies?
+        =^  dep  deh.bay  (daze ~ deh.bay)              ::  dependencies?
         amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
       =+  (cat 3 'c' ren)
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
@@ -1676,11 +1686,12 @@
       |=  {ref/* sec/(unit (set monk)) tem/term bem/beam}
       ^-  (unit (unit cage))
       ?>  =(%151 -.ref)
-      =-  %+  biff  -   |=  (unit cage)
-          %+  biff  +<  |=  cay/cage
-          ?.  -:(nets:wa +.ref `span`p.q.cay)
-            [~ ~]
-          ``cay
+      %-  %-  lift  |=  (unit cage)                     :: ignore block
+          %+  biff  +<
+          |=  cay/cage  ^-  (unit cage)                
+          ?.  -:(nets:wa +.ref `span`p.q.cay)           :: error if bad type
+            ~
+          `cay
       ^-  (unit (unit cage))
       =+  (~(get by keg) tem bem)
       ?^  -
@@ -1741,7 +1752,6 @@
         $exec
       ?~  q.q.hic
         abet:~(apax za [our hen [now eny ski] ~] bay)
-      =.  p.u.q.q.hic  -:(norm ski p.u.q.q.hic ~)
       abet:(~(apex za [our hen [now eny ski] ~] bay) u.q.q.hic)
     ==
   [mos ..^$(pol (~(put by pol) our bay))]

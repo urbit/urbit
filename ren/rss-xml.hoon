@@ -2,8 +2,9 @@
 ::
 ::::  /hoon/rss-xml/ren
   ::
+/?    314
 /=  sum  /snip/
-/^  kid=(map span ,[marl marl])
+/^  kid=(map knot ,[marl marl])
     /_  /snip/
 /$    |=([bem=beam but=path] [our=p.bem tub=(slag 1 (flop but))])
 ::

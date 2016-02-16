@@ -10,4 +10,4 @@
         {{her/@p $~} $~}
     ==
 :-  %noun
-.^(* /a/(scot %p p.bec)/tick/(scot %da now)/(scot %p her))
+.^(@p /a/(scot %p p.bec)/tick/(scot %da now)/(scot %p her))

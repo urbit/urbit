@@ -106,7 +106,7 @@
       die/@da                                           ::  collection date
       sus/(set {dock $json wire path})                  ::  subscriptions
       eve/{p/@u q/(map @u even)}                        ::  queued events
-      med/(qeu duct)                                    ::  waiting /~/to+
+      med/(qeu duct)                                    ::  waiting /~/to/
   ==
 ++  even                                                ::  client event
   $%  {$news p/@uvH}
@@ -195,15 +195,6 @@
   =+  cuh=(turn `(list @t)`cug |=(a/@t set-cookie+a))
   hit(q (weld cuh q.hit))
 ::
-++  inject                                            ::  inject dependency
-  |=  {dep/@uvH max/{{$html $~} {{$head $~} hed/marl} {{$body $~} tal/marl} $~}}
-  ^-  manx
-  =:  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
-      tal.max  (welp tal.max ;script(urb_injected ""):"{(trip etag:js)}" ~)
-    ==
-  ?~  dep  max
-  max(hed :_(hed.max ;script@"/~/on+{<dep>}.js"(urb_injected "");))
-::
 ++  add-json                                            ::  inject window.urb
   |=  {urb/json jaz/cord}  ^-  cord 
   =-  (cat 3 (crip -) jaz)
@@ -226,13 +217,14 @@
   [sas ~[content-type+(moon mit)] [~ (taco rez)]]
 ::
 ++  render-tang                                         ::  tanks to manx
-  |=  tan/tang
+  |=  {dep/@uvH tan/tang}
   ;html
     ;head
       ;link(rel "stylesheet", href "/lib/base.css");
       ;title: server error
     ==
     ;body:div#c.err:pre:code:"{(wush 80 tan)}"
+    ;script@"/~/on/{<dep>}.js";
   ==
 ::
 ++  favi                                                ::  XX favicon
@@ -356,14 +348,16 @@
     urb.tries = 0
     urb.call = function() {
       urb.wreq = new XMLHttpRequest()
-      urb.wreq.open('GET', urb.wurl, true)
+      urb.wreq.open('GET', "/~/on.json?"+urb.deps.join('&'), true)
       urb.wreq.addEventListener('load', function() {
         // if(~~(this.status / 100) == 4)
         //   return document.write(this.responseText)
-        if(this.status !== 205) {
-          return urb.keep()
+        if(this.status === 200) {
+          var dep = JSON.parse(this.responseText)
+          urb.onupdate(dep)
+          urb.dewasp(dep)
         }
-        urb.onupdate()
+        urb.keep()
       })
       urb.wreq.addEventListener('error', urb.keep)
       urb.wreq.addEventListener('abort', urb.keep)
@@ -371,18 +365,24 @@
     }
     urb.keep = function() {
       setTimeout(urb.call,1000*urb.tries)
-      urb.tries/+
+      urb.tries++
     }
     urb.onupdate = function(){document.location.reload()}
     urb.call()
     urb.wasp = function(deh){
-      var old = /[^/]*$/.exec(urb.wurl)[0]
-      var deps = old.replace(/^on.json\?|.json$/,'').split('&')
-      if (deps.indexOf(deh) !== -1) return;
-      deps.push(deh)
-      urb.wurl = "/~/on.json?"+deps.join('&')
+      if (!deh) return;
+      if (urb.deps.indexOf(deh) !== -1) return;
+      urb.deps.push(deh)
       urb.wreq.abort() // trigger keep 
     }
+    urb.dewasp = function(deh){
+      var index = urb.deps.indexOf(deh)
+      if (-1 !== index) {
+        urb.deps.splice(index,1)
+        urb.wreq.abort() // trigger keep
+      }
+    }
+
     '''
   ::
   ++  auth-redir
@@ -435,30 +435,6 @@
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
       function(){document.getElementById("c").innerHTML = "" }
     )}
-    '''
-  ++  etag
-    '''
-    if(!window.urb) window.urb = {}
-    urb.waspAll = function(sel){
-      Array.prototype.map.call(document.querySelectorAll(sel), urb.waspElem)
-    }
-    urb.waspElem = function(ele){
-      url = ele.src || ele.href
-      if(!url || (new URL(url)).host != document.location.host)
-        return;
-      urb.waspUrl(url)
-    }
-    urb.waspUrl = function(url){
-      var xhr = new XMLHttpRequest()
-      xhr.open("HEAD", url)
-      xhr.send()
-      xhr.onload = urb.waspLoadedXHR
-    }
-    urb.waspLoadedXHR = function(){
-      var dep = this.getResponseHeader("etag")
-      if(dep) urb.wasp(JSON.parse(dep.substr(2)))
-    }
-    if(urb.wasp){urb.waspAll('script'); urb.waspAll('link')}
     '''
   --
 ++  xml
@@ -779,7 +755,7 @@
       |=  {sus/(each duct ixor) con/_..axon}
       =.  ..axon  con
       ?-  -.sus
-        $&  (give-json(hen p.sus) 205 ~ %b &) 
+        $&  (give-json(hen p.sus) 200 ~ %s (scot %uv p.sih))
         $|  (get-even:(ire-ix p.sus) +.sih)
       ==
     ::
@@ -817,8 +793,9 @@
         ((hard json) q.q.p.q.sih)
       ::
           {$at ^}
-        ?.  ?=({$& $js ^} q.sih)
-          ~&  e+at-lost+p.tee
+        ?:  ?=($| -.q.sih)  $(tee q.tee)
+        ?.  ?=($js -.p.q.sih)
+          ~&  e+at-lost+[-.p.q.sih q.tee]
           $(tee q.tee)
         ?>  ?=(@ q.q.p.q.sih)
         =+  cyz=(~(got by wup) p.tee)
@@ -836,18 +813,9 @@
         ?.  ?=($mime p.cay)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek {$ud $0} bek(r da+now))
-          =-  (execute tee bik `silk`[%flag [p.sih `~] -])
-          =-  `silk`[%cast %mime [%$ p.p.q.sih -]]
-          ?.  ?=({$ud $0} r.bek)  q.p.q.sih
-          ?+  p.p.q.sih  q.p.q.sih          :: inject dependency long-poll
-            $urb  =<  (slam !>(.) q.p.q.sih)
-                  |=  urb/manx
-                  ~|  [%malformed-urb urb]
-                  ?>  ?=({{$html $~} {{$head $~} *} {{$body $~} *} $~} urb)
-                  (inject p.sih urb)
-          ==
-        ~|  q.q.p.q.sih
-        =+  ((hard {mit/mite rez/octs}) q.q.p.q.sih)
+          (execute tee bik [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+        ~|  q.q.cay
+        =+  ((hard {mit/mite rez/octs}) q.q.cay)
         =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
         (give-thou 200 ~[etag+dep content-type+(moon mit)] ~ rez)
       ==
@@ -909,7 +877,7 @@
     |=  {sas/@ud dep/@uvH mez/tang}
     ^+  +>
     :: (back ha+~ dep %tang !>(mez))  ::tang->urb chain may be source of failure
-    (give-html sas ~ (inject dep (render-tang mez)))
+    (give-html sas ~ (render-tang dep mez))
   ::
   ++  give-html
     |=  {sas/@ud cug/(list @t) max/manx}
@@ -1236,8 +1204,8 @@
       ::
           $poll
         ?:  ?=({$~ $js} p.pok)  ::  XX treat non-json cases?
-          =+  polling-url=(apex:earn %| pok(u.p %json) quy)
-          [%& %js (add-json (joba %wurl (jape polling-url)) poll:js)]
+          =+  deps=[%a (turn `(list @uvH)`p.hem |=(a/@ s+(scot %uv a)))]
+          [%& %js (add-json (joba %deps deps) poll:js)]
         =.  lyv  (~(put by lyv) hen %wasp p.hem)
         |-
           =.  done  (new-deps i.p.hem %& hen)

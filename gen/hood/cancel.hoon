@@ -1,5 +1,5 @@
 ::
-::::  /hoon+cancel+hood+gen
+::::  /hoon/cancel/hood/gen
   ::
 /?  314
 ::

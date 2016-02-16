@@ -7,7 +7,7 @@
   !:
 :-  %say
 |=  $:  [now=@da eny=@uvI bec=beak]
-        [[pax=$|(term [i=span t=path]) ~] ~]
+        [[pax=$|(term [i=knot t=path]) ~] ~]
     ==
 :-  %helm-serve
 ?@  pax  pax

@@ -1,5 +1,5 @@
 ::
-::::  /hoon+urbit+mar
+::::  /hoon/urbit/mar
   ::
 /?  314
 ::::  A minimal urbit mark

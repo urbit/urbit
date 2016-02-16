@@ -1,5 +1,5 @@
 ::  
-::::  /hoon+sole+lib
+::::  /hoon/sole/lib
   ::  
 /?    310
 /-    sole

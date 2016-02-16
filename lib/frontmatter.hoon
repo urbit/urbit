@@ -1,5 +1,5 @@
 ::
-::::  /hoon+frontmatter+lib
+::::  /hoon/frontmatter/lib
   ::
 /?  314
 !:
