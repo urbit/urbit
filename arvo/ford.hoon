@@ -937,15 +937,10 @@
     ++  lamp                                            ::  normalize version
       |=  {cof/cafe bem/beam}
       ^-  (bolt beam)
-      %+  cope
-        ?:  ?=($ud -.r.bem)  (fine cof bem)
-        =+  von=(syve [151 %noun] ~ %cw bem(s ~))
-        ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
-        (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
-      |=  {cof/cafe bem/{{ship desk $ud r/@u} s/spur}}
-      ?:  =(0 r.bem)
-        (flaw cof [leaf+"ford: no data: {<(tope bem(s ~))>}"]~)
-      (fine cof bem)
+      ?:  ?=($ud -.r.bem)  (fine cof bem)
+      =+  von=(syve [151 %noun] ~ %cw bem(s ~))
+      ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
+      (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
     ::
     ++  lave                                            ::  validate
       |=  {cof/cafe for/mark som/*}
@@ -988,9 +983,11 @@
     ++  liar                                            ::  load cage
       |=  {cof/cafe bem/beam}
       ^-  (bolt cage)
+      ?:  =([%ud 0] r.bem)
+        (flaw cof [leaf+"ford: no data: {<(tope bem(s ~))>}"]~)
       =+  von=(syve [151 %noun] ~ %cx bem)
       ?~  von
-        [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
+        [p=cof q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
         (flaw cof leaf+"file not found" (smyt (tope bem)) ~)
       (fine cof u.u.von)
