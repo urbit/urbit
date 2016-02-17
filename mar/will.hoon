@@ -1,8 +1,8 @@
 ::
-::::  /hoon/will/mar
+::::  /hoon+will+mar
   ::
 /?  314
-|_  wyl=(unit will)
+|_  wyl/(unit will)
 ::
 ++  grab                                                ::  convert from
   |%

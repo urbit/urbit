@@ -6,7 +6,7 @@
 /-  gh
 |%
 ++  repository
-  ^-  $+(json (unit repository:gh))
+  ^-  $-(json (unit repository:gh))
   =+  jo
   %-  ot  :~
       'id'^id
@@ -78,7 +78,7 @@
       'default_branch'^so
   ==
 ++  user
-  ^-  $+(json (unit user:gh))
+  ^-  $-(json (unit user:gh))
   =+  jo
   %-  ot  :~
       'login'^so
@@ -100,7 +100,7 @@
       'site_admin'^bo
   ==
 ++  issue
-  ^-  $+(json (unit issue:gh))
+  ^-  $-(json (unit issue:gh))
   =+  jo
   %-  ot  :~
       'url'^so
@@ -124,7 +124,7 @@
       'body'^so
   ==
 ++  label
-  ^-  $+(json (unit label:gh))
+  ^-  $-(json (unit label:gh))
   =+  jo
   %-  ot  :~
       'url'^so
@@ -132,7 +132,7 @@
       'color'^so
   ==
 ++  comment
-  ^-  $+(json (unit comment:gh))
+  ^-  $-(json (unit comment:gh))
   =+  jo
   %-  ot  :~
       'url'^so

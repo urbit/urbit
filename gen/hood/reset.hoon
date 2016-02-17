@@ -1,12 +1,12 @@
 ::
-::::  /hoon/reset/hood/gen
+::::  /hoon+reset+hood+gen
   ::
 /?  314
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=~ ~]
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {arg/$~ $~}
     ==
 [%helm-reset ~]

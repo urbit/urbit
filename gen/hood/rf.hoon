@@ -1,12 +1,12 @@
 ::
-::::  /hoon/reload/hood/gen
+::::  /hoon/rf/hood/gen
   ::
 /?  314
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=~ ~]
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {arg/$~ $~}
     ==
 [%helm-reload ~[%f]]

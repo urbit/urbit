@@ -1,12 +1,12 @@
 ::
-::::  /hoon/urbit/mar
+::::  /hoon+urbit+mar
   ::
 /?  314
 ::::  A minimal urbit mark
 !:
-|_  her=@p
+|_  her/@p
 ++  grab
   |%
-  ++  noun  ,@p
+  ++  noun  @p
   --
 --

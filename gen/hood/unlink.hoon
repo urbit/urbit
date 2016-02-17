@@ -1,13 +1,13 @@
 ::
-::::  /hoon/link/hood/gen
+::::  /hoon/unlink/hood/gen
   ::
 /?  314
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI byk=beak]
-        [arg=$?([dap=term ~] [who=ship dap=term ~]) ~]
+|=  $:  {now/@da eny/@uvI byk/beak}
+        {arg/$?({dap/term $~} {who/ship dap/term $~}) $~}
     ==
 :-  %drum-unlink
 ?~  +.arg

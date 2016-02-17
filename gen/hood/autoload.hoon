@@ -1,13 +1,13 @@
 ::
-::::  /hoon/autoload/hood/gen
+::::  /hoon+autoload+hood+gen
   ::
 /?  314
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=?(~ [? ~]) ~]
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {arg/?($~ {? $~}) $~}
     ==
 :-  %kiln-autoload
-`(unit ,?)`?~(arg ~ `-.arg)
+`(unit ?)`?~(arg ~ `-.arg)

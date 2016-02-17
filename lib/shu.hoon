@@ -1,3 +1,0 @@
-::  Alias
-/+  sh-utils
-.

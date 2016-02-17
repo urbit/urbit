@@ -1,16 +1,16 @@
 ::
-::::  /hoon/core/elem/mar
+::::  /hoon+core+elem+mar
   ::
 /?  314
 !:
 |%
   ++  words  1
   ++  hedtal
-    =|  met=marl
-    |=  a=marl  ^-  [hed=marl tal=marl]
+    =|  met/marl
+    |=  a/marl  ^-  {hed/marl tal/marl}
     ?~  a  [~ ~]
-    ?.  ?=(%h1 n.g.i.a)
-      ?:  ?=(%meta n.g.i.a)
+    ?.  ?=($h1 n.g.i.a)
+      ?:  ?=($meta n.g.i.a)
         $(a t.a, met [i.a met])
       =+  had=$(a c.i.a)
       ?^  -.had  had
@@ -18,19 +18,19 @@
     [c.i.a (weld (flop met) (limit words t.a))]
   ::
   ++  limit
-    |=  [lim=@u mal=marl]
+    |=  {lim/@u mal/marl}
     =<  res
-    |-  ^-  [rem=@u res=marl]
+    |-  ^-  {rem/@u res/marl}
     ?~  mal  [lim ~]
     ?~  lim  [0 ~]
-    =+  ^-  [lam=@u hed=manx]
-      ?:  ?=(_:/(**) i.mal)
-        [lim :/(tay)]:(deword lim v.i.a.g.i.mal)
+    =+  ^-  {lam/@u hed/manx}
+      ?:  ?=(_;/(**) i.mal)
+        [lim ;/(tay)]:(deword lim v.i.a.g.i.mal)
       [rem ele(c res)]:[ele=i.mal $(mal c.i.mal)]
     [rem - res]:[hed $(lim lam, mal t.mal)]
   ::
   ++  deword
-    |=  [lim=@u tay=tape]  ^-  [lim=@u tay=tape]
+    |=  {lim/@u tay/tape}  ^-  {lim/@u tay/tape}
     ?~  tay  [lim tay]
     ?~  lim  [0 ~]
     =+  wer=(dot 1^1 tay)
@@ -41,20 +41,20 @@
 --
 ::
 !:
-|_  [hed=marl tal=marl]
+|_  {hed/marl tal/marl}
 ::
-++  grow                                                         ::  convert to
+++  grow                                                ::  convert to
   |%
   ++  mime
     =<  mime
     |%
-    ++  elem  ;div:(h1:"*{hed}" div:"*{tal}")                    ::  convert to %elem
-    ++  hymn  ;html:(head:title:"snip" body:"+{elem}")           ::  convert to %hymn
-    ++  html  (crip (poxo hymn))                                 ::  convert to %html
-    ++  mime  [/text/html (taco html)]                           ::  convert to %mime
+    ++  elem  ;div:(h1:"*{hed}" div:"*{tal}")           ::  convert to %elem
+    ++  hymn  ;html:(head:title:"snip" body:"+{elem}")  ::  convert to %hymn
+    ++  html  (crip (poxo hymn))                        ::  convert to %html
+    ++  mime  [/text/html (taco html)]                  ::  convert to %mime
     --
   --
-++  grab  |%                                                     ::  convert from
-          ++  noun  ,[marl marl]                                 ::  clam from %noun
-          ++  elem  |=(a=manx (hedtal +.a))
+++  grab  |%                                            ::  convert from
+          ++  noun  {marl marl}                         ::  clam from $noun
+          ++  elem  |=(a/manx (hedtal +.a))
 --        --

@@ -1,8 +1,8 @@
 ::
-::::  /hoon/purl/mar
+::::  /hoon+purl+mar
   ::
 /?  314
-|_  url=purl
+|_  url/purl
 ::
 ++  grow  |%    ++  hiss  [url %get ~ ~]
           --
