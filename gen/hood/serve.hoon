@@ -6,8 +6,8 @@
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [[pax=$|(term [i=knot t=path]) ~] ~]
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {{pax/$@(term {i/knot t/path}) $~} $~}
     ==
 :-  %helm-serve
 ?@  pax  pax

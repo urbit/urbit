@@ -7,7 +7,7 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvI bec/beak}
-        [$~ $~]
+        {$~ $~}
     ==
 :-  %noun
 ?>  =(1 (met 5 p.bec))
