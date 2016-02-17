@@ -2,7 +2,7 @@
 ::::  /hoon/index/tree/mar
   ::
 /?    310
-/+    tree,react
+/+    tree,react,map-to-json
 [. tree react]
 !:
 ::::

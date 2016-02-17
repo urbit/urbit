@@ -12,12 +12,6 @@
     ~[ele]
   (zing (turn c.ele ..$))
 ::
-++  map-to-json                                         :: hoon data to json 
-  |*  {a/$-(* cord) b/$-(* json)}
-  |*  c/(map)  ^-  json               :: XX c=(map _+<.a _+<.b)
-  ~!  c
-  (jobe (turn (~(tap by c)) |*(* [(a +<-) (b +<+)])))
-::
 ::  a.b_c.d => [[%a %b] [%c %d]]
 ::  a.b_c, a_b__c => [[%a %b] %c]
 ::  a_b_c, a__b_c => [%a [%b %c]]
