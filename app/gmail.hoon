@@ -38,7 +38,7 @@
       ==
     --
 ::
-|_  [hid=bowl count=@ web-hooks=(map ,@t ,[id=@t listenters=(set bone)])]
+|_  [hid=bowl count=@ web-hooks=(map ,@t ,[id=@t listeners=(set bone)])]
 
 ::  We can't actually give the response to pretty much anything
 ::  without blocking, so we just block unconditionally.
@@ -46,35 +46,33 @@
 ++  peek
   |=  [ren=@tas pax=path]
   ^-  (unit (unit (pair mark ,*)))
-  ~&  'arrived at peek'
   ~
 ::
 ++  peer-scry
   |=  pax=path
-  ~&  'arrived at peer-scry'
   ^-  [(list move) _+>.$]
   ?>  ?=([care ^] pax)                ::  assert %u
-  ~&  'arrived at peer-scry, passed the care assert'
   =>  (help i.pax i.t.pax t.t.pax)
-  ~&  'past help'
-  =>  scry  ::HERE IS THE PROBLEM
-  ~&  mow.+>.$
-  ~&  'arrived after scry'
-  make-move
+  =>  scry
+  %=  make-move
+    count  +(count)
+  ==
 ::
 ++  poke-gmail-req
-  |=  [method=meth endpoint=path quy=quay]:: jon=(unit json)]  :: XX [%get json]?
+  |=  [method=meth endpoint=path quy=quay jon=(unit json)]
   ^-  [(list move) _+>.$]
-  ~&  [endpoint/endpoint method/method]
   ?>  ?=(valid-get-endpoint endpoint)
   :_  +>.$  :_  ~
   ^-  move
   :*  ost.hid  %hiss  /poke/[method]  `~  %httr  %hiss
-      `purl`[[& ~ [%& /com/googleapis/www]] [~ gmail/v1/users/me/`valid-get-endpoint`endpoint] ~]
-      :+  method  ~
+      ^-  purl
+      :+  [& ~ [%& /com/googleapis/www]]
+        [~ gmail/v1/users/me/`valid-get-endpoint`endpoint]
       ~
-      ::?~  jon  ~
-      ::(some (taco (crip (pojo u.jon)))) ::
+      :+  method  ~
+      ?~  jon  ~
+      ~&  (taco (crip (pojo u.jon)))
+      (some (taco (crip (pojo u.jon))))                 ::  have to make it a unit again
   ==
 ::
 ::  HTTP response.  We make sure the response is good, then
@@ -83,39 +81,87 @@
 
 ++  sigh-httr
   |=  [wir=wire res=httr]
-  ~&  'reached sigh-httr'
-  ~&  wir
   ^-  [(list move) _+>.$]
   ?.  ?=([care @ @ @ *] wir)
   ::  pokes don't return anything
+  ~&  poke/res
     [~ +>.$]
-    ~&  [i.t.t.wir wir]
   =+  arg=(path (cue (slav %uv i.t.t.wir)))
-  :_  +>.$
-  ~
-
+  :_  +>.$  :_  ~
+  :+  ost.hid  %diff
+  ?+  i.wir  null/~
+      %x
+    ?~  r.res
+      json/(jobe err/s/%empty-response code/(jone p.res) ~)
+    =+  jon=(rush q.u.r.res apex:poja)
+    ?~  jon
+      json/(jobe err/s/%bad-json code/(jone p.res) body/s/q.u.r.res ~)
+    ?.  =(2 (div p.res 100))
+      json/(jobe err/s/%request-rejected code/(jone p.res) msg/u.jon ~)
+    ::
+    ::  Once we know we have good data, we drill into the JSON
+    ::  to find the specific piece of data referred to by 'arg'
+    ::
+  |-  ^-  subscription-result
+  ?~  arg
+   [%json `json`u.jon]
+  =+  dir=((om:jo some) u.jon)
+  ?~  dir  json/(jobe err/s/%no-children ~)
+  =+  new-jon=(~(get by u.dir) i.arg)
+  `subscription-result`$(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
+           ::  redo with next argument
+  ::
+    %y
+  ?~  r.res 
+    ~&  [err/s/%empty-response code/(jone p.res)]
+      arch/*arch
+  =+  jon=(rush q.u.r.res apex:poja)
+  ?~  jon
+    ~&  [err/s/%bad-json code/(jone p.res) body/s/q.u.r.res]
+    arch/*arch
+  ?.  =(2 (div p.res 100))
+    ~&  [err/s/%request-rejected code/(jone p.res) msg/u.jon]
+    arch/*arch
+    ::
+    ::  Once we know we have good data, we drill into the JSON
+    ::  to find the specific piece of data referred to by 'arg'
+    ::
+    |-  ^-  subscription-result
+    =+  dir=((om:jo some) u.jon)
+    ?~  dir
+      [%arch `(shax (jam u.jon)) ~]
+    ?~  arg
+      [%arch `(shax (jam u.jon)) (~(run by u.dir) ,~)]
+    =+  new-jon=(~(get by u.dir) i.arg)
+    $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
+  ==
 
 ++  sigh
-  |=  *
-  ~&  sigh-no-httr/.
+  |=  a=*
+  ~&  a/a
   :_  +>.$  ~
 ::
 ++  help
   |=  [ren=care style=@tas pax=path]
-  =^  arg  pax  [+ -]:(split pax)
+  =^  query-n-arg  pax  [+ -]:(split pax)
+  =+  ind=(snag '?' query-n-arg)
+  =+  [arg query]=[(slag ind query-n-arg) (scag ind query-n-arg)]
+  ~&  [arg/arg q/query]
   =|  mow=(list move)
   |%
   ::  Resolve core
   ::
   ++  make-move
     ^-  [(list move) _+>.$]
-    ~&  'make move is called'
-    [(flop mow) +>.$]
+    !!
+    ::[(flop mow) +>.$]
     ::
   ++  endpoint-to-purl
     |=  endpoint=path
-    =+  pnt=(scan "https://googleapis.com/v1/users/me{<`path`endpoint>}" auri:epur)
-    ~&  pnt  pnt
+   ^-  purl
+    %+  scan 
+      "https://www.googleapis.com/gmail/v1/users/me{<`path`endpoint>}"
+    auri:epur
     ::  Send an HTTP req
   ++  send-http
     |=  hiz=hiss
@@ -126,13 +172,12 @@
   ::
   ++  scry
     ^+  .
-    ~&  style/style
     ?+  style  ~|(%invalid-style !!)
-      %read   ~&  'reached read'  read
+      %read   read
 ::        %listen listen
     ==
   :: Standard GET request
-  ++  read  ~&((send-http (endpoint-to-purl pax) %get ~ ~) (send-http (endpoint-to-purl pax) %get ~ ~))
+  ++  read  (send-http (endpoint-to-purl pax) %get ~ ~)
   
   ::  Subscription request
 ::    ++  listen
