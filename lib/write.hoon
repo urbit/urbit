@@ -2,7 +2,7 @@
 ::
 ::::  /hoon/write/lib
   ::
-/?    314
+/?    310
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
