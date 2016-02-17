@@ -6110,13 +6110,12 @@
           {s/$d c/*}        (shop c.vem |=(a/@ ~(rud at a)))
           {s/$k c/*}        (tank c.vem)
           {s/$h c/*}
-        ?:  =(0 c.vem)      ::  XX remove after 220
-          [%leaf '#' ~]
         :+  %rose
           [['/' ~] ['/' ~] ~]
         =+  yol=((list @ta) c.vem)
         (turn yol |=(a/@ta [%leaf (trip a)]))
       ::
+          {s/$l c/*}        (shol c.vem)
           {s/$o c/*}
         %=    $
             vem
@@ -6177,6 +6176,25 @@
     ?:  ?=(@ aug)
       [^$ ~]
     [^$(aug -.aug) $(aug +.aug)]
+  ::
+  ++  shol
+    |=  lim/*
+    :+  %rose
+      [['.' ~] ~ ~]
+    |-    ^-  (list tank)
+    ?:  ?=(@ lim)  ~
+    :_  $(lim +.lim)
+    ?+  -.lim  (show '#')
+        $~   (show '$')
+        c/@  (show c.lim)
+        {$& $1}  (show '.')
+        {$& c/@}
+      [%leaf '+' ~(rud at c.lim)]
+    ::
+        {$| @ $~}  (show ',')
+        {$| n/@ $~ c/@}
+      [%leaf (weld (reap n.lim '^') ?~(c.lim "$" (trip c.lim)))]
+    ==
   --
 ++  at
   |_  a/@
@@ -8343,7 +8361,7 @@
     ~/  %find
     |=  {way/vial hyp/wing}
     ^-  port
-    ~|  [%find hyp]
+    ~_  (show [%c %find] %l hyp)
     =-  ~?  =([%tango ~] hyp)
             ~[sut+sut res+-]
         ?@  -  !!
