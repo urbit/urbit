@@ -2,7 +2,7 @@
 ::::  /hoon/head/tree/ren
   ::
 ::
-/?    314
+/?    310
 /=    tub    /$  |=({bem/beam *} (flop s.bem))
 /=    aut
   /$  %+  cork  fuel                                    :: after parsing params,

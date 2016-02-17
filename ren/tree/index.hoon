@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/index/tree/ren
   ::
-/?    314
+/?    310
 /+    tree
 /,        /
     /;  (getall:tree /h1/h2/h3/h4/h5/h6)  /tree-elem/
