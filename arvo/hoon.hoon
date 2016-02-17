@@ -8361,7 +8361,7 @@
     ~/  %find
     |=  {way/vial hyp/wing}
     ^-  port
-    ~|  [%find hyp]
+    ~_  (show [%c %find] %l hyp)
     =-  ~?  =([%tango ~] hyp)
             ~[sut+sut res+-]
         ?@  -  !!
