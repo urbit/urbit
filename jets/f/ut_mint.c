@@ -96,20 +96,15 @@
   static u3_noun
   _mint_coke(u3_noun nug)
   {
-    u3_atom axe;
-
     if ( 0 == u3h(nug) ) {
-      axe = u3t(nug);
-    } else if ( 10 == u3h(nug) ) {
-      u3_noun xin = u3k(u3t(u3t(nug)));
-
-      axe = _mint_coke(xin);
+      return u3k(u3t(nug));
+    } 
+    else if ( 10 == u3h(nug) ) {
+      return _mint_coke(u3t(u3t(nug)));
     }
     else {
       return u3m_error("mint-coke");
     }
-    u3z(nug);
-    return axe;
   }
 
   static u3_noun
@@ -411,6 +406,7 @@
                    u3qfu_fish(van, wam, axe));
 
         u3z(axe);
+        u3z(vol);
         u3z(wam);
         u3z(nob);
         u3z(dok);

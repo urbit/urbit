@@ -44,20 +44,15 @@
   static u3_noun
   _mull_coke(u3_noun nug)
   {
-    u3_atom axe;
-
     if ( 0 == u3h(nug) ) {
-      axe = u3t(nug);
-    } else if ( 10 == u3h(nug) ) {
-      u3_noun xin = u3k(u3t(u3t(nug)));
-
-      axe = _mull_coke(xin);
+      return u3k(u3t(nug));
+    } 
+    else if ( 10 == u3h(nug) ) {
+      return _mull_coke(u3t(u3t(nug)));
     }
     else {
-      return u3m_error("mint-coke");
+      return u3m_error("mull-coke");
     }
-    u3z(nug);
-    return axe;
   }
 
   static u3_noun
@@ -66,7 +61,7 @@
              u3_noun gen)
   {
     u3_noun fug = u3qfu_mint(van, sut, c3__noun, gen);
-    u3_noun axe = _mull_coke(u3k(u3t(fug)));
+    u3_noun axe = _mull_coke(u3t(fug));
 
     u3z(fug);
     return axe;
