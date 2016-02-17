@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/ask/hood/gen
   ::
-/?    314
+/?    310
 :-  %say
 |=  {^ {mel/cord $~} $~}
 =+  adr=(star ;~(less (mask "\"\\()[],:;<>@") prn))

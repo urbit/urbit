@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/begin/hood/gen
   ::
-/?  314
+/?    310
 /-  sole
 ::
 ::::

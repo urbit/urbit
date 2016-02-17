@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/merge/hood/gen
   ::
-/?  314
+/?    310
 !:
 |%
 ++  beaky  {knot knot knot $~}

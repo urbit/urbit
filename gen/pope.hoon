@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/pope/gen
   ::
-/?    314
+/?    310
 ::  Input twitter keys
 /-    sole
 !:

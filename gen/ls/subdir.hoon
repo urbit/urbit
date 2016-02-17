@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/subdir/ls/gen
   ::
-/?    314
+/?    310
 |%
 ++  subdir
   |=  {pax/path des/(map @t $~)}
