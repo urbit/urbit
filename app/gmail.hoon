@@ -144,9 +144,13 @@
 ++  help
   |=  [ren=care style=@tas pax=path]
   =^  query-n-arg  pax  [+ -]:(split pax)
-  =+  ind=(snag '?' query-n-arg)
-  =+  [arg query]=[(slag ind query-n-arg) (scag ind query-n-arg)]
-  ~&  [arg/arg q/query]
+  =+  ^-  [query=quay arg=path]
+      =+  gra=(flop query-n-arg)
+      ?~  gra  [~ ~]
+      =+  query=(rush i.gra ;~(pfix wut yquy:urlp))
+      ?~  query  [~ (flop gra)]
+      [u.query (flop t.gra)]
+  ~&  [arg=arg q=query]
   =|  mow=(list move)
   |%
   ::  Resolve core
