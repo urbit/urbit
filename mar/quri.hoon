@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/quri/mar
   ::
-/?  314
+/?    310
 |_  url/quri
 ::
 ++  grow  |%    ++  mime  [text+/x-uri (tact (apex:earn url))]

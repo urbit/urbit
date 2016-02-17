@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/comment/write/mar
   ::
-/?    314
+/?    310
 !:
 |_  {pax/path txt/@t}
 ++  grab

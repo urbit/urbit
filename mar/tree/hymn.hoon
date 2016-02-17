@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/hymn/tree/mar
   ::
-/?  314
+/?    310
 |_  own/manx
 ::
 ++  grow                                                ::  convert to
