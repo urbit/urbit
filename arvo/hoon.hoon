@@ -778,7 +778,7 @@
 ::
 ++  swag                                                ::  infix
   |*  {{a/@ b/@} c/(list)}
-  (scag b (slag a c))
+  (scag +<-> (slag +<-< c))
 ::
 ++  turn                                                ::  transform
   ~/  %turn
