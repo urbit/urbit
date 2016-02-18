@@ -4609,7 +4609,7 @@
     ?.  ?=($0 -.ref)  ref
     ?.  ?=($0 -.ben)  ben
     =+  val=(gul p.ref p.ben)
-    ?~(val [%1 p.ben ~] ?~(u.val !! [%0 u.u.val]))
+    ?~(val [%1 p.ben ~] ?~(u.val [%2 [[%hunk (mush p.ben)] tax]] [%0 u.u.val]))
   ==
 ::
 ++  mock
@@ -4671,6 +4671,13 @@
                  =>  [ud=|=(a/@u (scow %ud a)) q.sot]
                  leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
   ==         ==
+::
+++  mush                                                ::  sane name to leaf
+  |=  val/*
+  ^-  tank
+  :+  %rose
+    [['/' ~] ['/' ~] ~]
+  (turn ((list @ta) val) |=(a/@ta [%leaf (trip a)]))
 ::
 ++  mong
   |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
