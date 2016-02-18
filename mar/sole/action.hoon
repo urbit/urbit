@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/action/sole/mar
   ::
-/?    314
+/?    310
 /-    sole
 !:
 ::::

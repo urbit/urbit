@@ -1,7 +1,7 @@
 ::
-::::  /hoon+link+hood+gen
+::::  /hoon/link/hood/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:

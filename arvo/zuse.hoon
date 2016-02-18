@@ -1203,7 +1203,7 @@
   tup=|*({a/@tas b/(pole @tas)} =+(c=(odo:raid a) ?~(b c {c (..$ -.b +.b)})))
 ::
 ::  .=  [p=%ack q=~sarnel r=&]
-::  (raid /ack+~sarnel+.y p=%tas q=%p r=%f ~)
+::  (raid /ack/~sarnel+.y p=%tas q=%p r=%f ~)
 ++  raid                                                ::  demand path odors
   =-  |*  {a/path b/{@tas (pole @tas)}}
       ?~  +.b  `(odo -.b)`(slav -.b -.a)
@@ -1864,7 +1864,7 @@
           ==                                            ::
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  oryx  @t                                            ::  CSRF secret
-++  page  (cask)                                        ::  untyped cage
+++  page  (cask *)                                      ::  untyped cage
 ++  pail  ?($none $warm $cold)                          ::  connection status
 ++  plan  (trel view (pair @da (unit @dr)) path)        ::  subscription
 ++  plea  {p/@ud q/{p/? q/@t}}                          ::  live prompt
@@ -2223,6 +2223,7 @@
   $%  {$ape p/twig}                                     ::  /~  twig by hand
       {$arg p/twig}                                     ::  /$  argument
       {$alt p/(list horn)}                              ::  /|  options
+      {$dep p/horn}                                     ::  /#  insert dephash
       {$dub p/term q/horn}                              ::  /=  apply face
       {$fan p/(list horn)}                              ::  /.  list
       {$for p/(list (pair path:spur horn))}             ::  /,  switch by path
@@ -2277,6 +2278,7 @@
           $%  {$exec p/@p q/(unit bilk)}                ::  make / kill
               {$wasp p/@p q/{@uvH ?}}                   ::  depends ask / kill
               {$wegh $~}                                ::  report memory
+              {$wipe p/@p $~}                           ::  clear cache
           ==                                            ::
 ::
 ::::    %gall

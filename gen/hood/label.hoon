@@ -1,7 +1,7 @@
 ::
-::::  /hoon+label+hood+gen
+::::  /hoon/label/hood/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:

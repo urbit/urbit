@@ -1,7 +1,7 @@
 ::
-::::  /hoon+deset+hood+gen
+::::  /hoon/deset/hood/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:

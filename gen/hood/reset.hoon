@@ -1,7 +1,7 @@
 ::
-::::  /hoon+reset+hood+gen
+::::  /hoon/reset/hood/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:

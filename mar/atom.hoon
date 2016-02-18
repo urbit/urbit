@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/atom/mar
   ::
-/?  314
+/?    310
 !:
 ::::  A minimal atom mark
 |_  ato/@

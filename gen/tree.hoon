@@ -1,7 +1,8 @@
 ::  Tree view recursive directory contents
 ::  
-::::  /hoon+tree+gen
+::::  /hoon/tree/gen
   ::
+/?    310
 !:
 ::::
   ::
@@ -11,7 +12,7 @@
 =+  rend=?^(fla smyt |=(a/path (smyt (slag len a))))
 :-  %tang  %-  flop
 |-  ^-  tang
-=+  ark=;;(arch .^(cy+pax))
+=+  ark=.^(arch cy+pax)
 =-  ?~  fil.ark  -
     [(rend pax) -]
 %-  zing

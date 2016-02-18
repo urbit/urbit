@@ -1,9 +1,9 @@
 ::
 ::::  /hoon/telegrams/talk/mar
   ::
-/?  314
+/?    310
 /-  talk
-/+  talk
+/+  talk,map-to-json
 !:
 =+  talk
 |_  gam/(list telegram)
@@ -127,20 +127,12 @@
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
     ++  joke  |=(a/tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a/time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
-    ++  jome                                            ::  stringify keys
-      |*  {a/_cord b/_json}
-      |=  c/(map _+<.a _+<.b)
-      (jobe (turn (~(tap by c)) (both a b)))
-    ::
-    ++  both                                            ::  cons two gates
-      |*  {a/_* b/_*}
-      |=(c/_[+<.a +<.b] [(a -.c) (b +.c)])
     ::
     ++  thot
       |=  thought
       (jobe serial+(jape <p>) audience+(audi q) statement+(stam r) ~)
     ::
-    ++  audi  (jome parn jove)
+    ++  audi  (map-to-json parn jove)
     ++  bouq
       |=  a/bouquet
       a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))  

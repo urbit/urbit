@@ -1,12 +1,12 @@
 ::
 ::::  /hoon/save/talk/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI byk=beak]
-        [[man=span ~] ~]
+|=  $:  {now/@da eny/@uvI byk/beak}
+        {{man/knot $~} $~}
     ==
 [%talk-save man]

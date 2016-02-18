@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/begin/hood/gen
   ::
-/?  314
+/?    310
 /-  sole
 ::
 ::::
@@ -13,7 +13,7 @@
 [sole .]
 :-  %ask
 |=  $:  {now/@da eny/@uvI bec/beak}
-        {arg/_(scug *@ ~{his/*@p tic/*@p})}
+        {arg/_(scug *@ *{his/@p tic/@p $~})}
         safety/?($on $off)
     ==
 ^-  (sole-result (cask begs))
@@ -22,10 +22,7 @@
     :-  %leaf
     "|begin is deprecated, please invoke urbit with -w [name] -t [ticket]"
   sole-no
-=-  ?~  arg  -
-    =+  (fun.q.q his.arg)
-    ?~  +.arg  -
-    (fun.q.q tic.arg)
+=-  -
 %+  sole-lo
   [%& %helm-begin "your urbit: ~"]
 %+  sole-go  fed:ag

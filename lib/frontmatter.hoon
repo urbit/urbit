@@ -1,7 +1,7 @@
 ::
-::::  /hoon+frontmatter+lib
+::::  /hoon/frontmatter/lib
   ::
-/?  314
+/?    310
 !:
 |%
 ++  atr-lines

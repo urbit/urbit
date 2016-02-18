@@ -1,7 +1,7 @@
 ::
-::::  /hoon+solid+gen
+::::  /hoon/solid/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:

@@ -1,13 +1,13 @@
 ::
-::::  /hoon/sync/hood/gen
+::::  /hoon/track/hood/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=[syd=@tas her=@p sud=@tas ~] ~]
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {arg/{syd/@tas her/@p sud/@tas $~} $~}
     ==
 :-  %kiln-track
 [syd her sud]:arg

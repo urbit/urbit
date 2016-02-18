@@ -1,13 +1,13 @@
 ::
 ::::  /hoon/serve/hood/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [[pax=$|(term [i=span t=path]) ~] ~]
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {{pax/$@(term {i/knot t/path}) $~} $~}
     ==
 :-  %helm-serve
 ?@  pax  pax

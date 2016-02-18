@@ -13,6 +13,12 @@ module.exports = {
       type: "loadPath"
     });
   },
+  clearData: function() {
+    TreePersistence.refresh();
+    return TreeDispatcher.handleServerAction({
+      type: "clearData"
+    });
+  },
   sendQuery: function(path, query) {
     if (query == null) {
       return;
@@ -44,6 +50,9 @@ module.exports = {
     });
   },
   addComment: function(path, text) {
+    if (path[0] !== "/") {
+      path = "/" + path;
+    }
     return TreePersistence.put("write-comment", path, text);
   },
   setCurr: function(path) {
@@ -119,7 +128,9 @@ Nav = React.createFactory(query({
     return this.stateFromStore();
   },
   _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
+    if (this.isMounted()) {
+      return this.setState(this.stateFromStore());
+    }
   },
   componentDidMount: function() {
     return TreeStore.addChangeListener(this._onChangeStore);
@@ -241,7 +252,9 @@ module.exports = query({
     });
   },
   _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
+    if (this.isMounted()) {
+      return this.setState(this.stateFromStore());
+    }
   },
   componentWillUnmount: function() {
     clearInterval(this.interval);
@@ -381,8 +394,11 @@ module.exports = function(queries, Child, load) {
       }
     },
     stateFromStore: function() {
+      var fresh, ref1;
+      fresh = TreeStore.fulfill(this.getPath(), queries);
       return {
-        got: TreeStore.fulfill(this.getPath(), queries)
+        fresh: fresh,
+        got: _.merge({}, (ref1 = this.state) != null ? ref1.got : void 0, fresh)
       };
     },
     componentDidMount: function() {
@@ -399,7 +415,10 @@ module.exports = function(queries, Child, load) {
       return this.checkPath();
     },
     checkPath: function() {
-      return TreeActions.sendQuery(this.getPath(), this.filterQueries());
+      return TreeActions.sendQuery(this.getPath(), this.filterFreshQueries());
+    },
+    filterFreshQueries: function() {
+      return this.filterWith(this.state.fresh, queries);
     },
     filterQueries: function() {
       return this.filterWith(this.state.got, queries);
@@ -557,6 +576,13 @@ extras = {
       return {
         loading: false
       };
+    },
+    componentDidUpdate: function(_props) {
+      if (this.props.comt.length > _props.comt.length) {
+        return this.setState({
+          loading: false
+        });
+      }
     },
     onKeyDown: function(e) {
       if ("Enter" === e.key) {
@@ -1600,6 +1626,13 @@ $(function() {
   frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
   window.tree.actions.setCurr(frag);
   window.tree.actions.loadPath(frag, window.tree.data);
+  window.urb.ondataupdate = function(dep) {
+    var dat;
+    for (dat in window.urb.datadeps) {
+      window.urb.dewasp(dat);
+    }
+    return window.tree.actions.clearData();
+  };
   head = React.createFactory(require('./components/AnchorComponent.coffee'));
   body = React.createFactory(require('./components/BodyComponent.coffee'));
   rend(head({}, ""), $('#head')[0]);
@@ -1615,6 +1648,9 @@ util = require('../utils/util.coffee');
 dedup = {};
 
 module.exports = {
+  refresh: function() {
+    return dedup = {};
+  },
   get: function(path, query, cb) {
     var url;
     if (query == null) {
@@ -1626,7 +1662,10 @@ module.exports = {
     }
     dedup[url] = true;
     return $.get(url, {}, function(data, status, xhr) {
-      urb.waspLoadedXHR.call(xhr);
+      var dep;
+      dep = urb.getXHRWasp(xhr);
+      urb.sources[dep] = url;
+      urb.waspData(dep);
       if (cb) {
         return cb(null, data);
       }
@@ -1792,6 +1831,10 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
   },
   getVirtualComponents: function() {
     return _virt;
+  },
+  clearData: function() {
+    _data = {};
+    return _tree = {};
   },
   loadPath: function(arg) {
     var data, path;

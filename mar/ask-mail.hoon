@@ -1,7 +1,7 @@
 ::
-::::  /hoon+ask-mail+mar
+::::  /hoon/ask-mail/mar
   ::
-/?  314
+/?    310
 |_  txt/cord
 ::
 ++  grab                                                ::  convert from

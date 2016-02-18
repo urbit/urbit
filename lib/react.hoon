@@ -1,6 +1,7 @@
 ::
 ::::  /hoon/react/lib
   ::
+/?    310
 |%
 ++  react-elems ::  XX /~
   ~+  %-  silt  ^-  (list term)
@@ -117,8 +118,7 @@
   ;:  weld
     "React.createElement("  
       ?^  n.g.src  !!                           ::  namespaces unsupported
-      ?:  (react-vale n.g.src)
-        ~!  n.g.src    
+      ?:  (react-vale n.g.src)  
         "'{(trip n.g.src)}'"
       (trip n.g.src)
     ", "

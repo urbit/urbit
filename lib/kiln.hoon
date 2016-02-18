@@ -64,6 +64,7 @@
           {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
           {$poke wire dock pear}                        ::
+          {$wipe wire @p $~}                            ::
           {$wait wire @da}                              ::
           {$warp wire sock riff}                        ::
       ==                                                ::
@@ -191,8 +192,8 @@
   ==
 ::
 ++  poke-overload
-  |=  syd/term
-  abet:(emit %wait /kiln/overload/[syd] (add ~s10 now))
+  |=  tym/@dr
+  abet:(emit %wait /kiln/overload/(scot %dr tym) (add ~s10 now))
 ::
 ++  take  |=(way/wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
@@ -281,11 +282,11 @@
 ++  take-wake-overload
   |=  {way/wire $~}
   ?>  ?=({@ $~} way)
-  =+  syd=(slav %tas i.way)
+  =+  tym=(slav %dr i.way)
   =.  +>.$
-    (emit %poke /kiln/overload/[syd] [our %hood] %helm-reload ~[syd])
+    (emit %wipe /kiln/overload/[i.way] our ~)
   =.  +>.$
-    (emit %wait /kiln/overload/[syd] (add ~m60 now))
+    (emit %wait /kiln/overload/[i.way] (add tym now))
   abet
 ::
 ++  spam

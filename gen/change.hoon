@@ -1,7 +1,7 @@
 ::
-::::  /hoon+hello+gen
+::::  /hoon/change/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:

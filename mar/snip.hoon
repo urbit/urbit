@@ -1,7 +1,7 @@
 ::
-::::  /hoon+core+elem+mar
+::::  /hoon/snip/mar
   ::
-/?  314
+/?    310
 !:
 |%
   ++  words  1

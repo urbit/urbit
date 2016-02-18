@@ -1,7 +1,7 @@
 ::
-::::  /hoon+reload+hood+gen
+::::  /hoon/reload/hood/gen
   ::
-/?  314
+/?    310
 ::
 ::::
   !:

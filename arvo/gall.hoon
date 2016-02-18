@@ -1195,6 +1195,7 @@
         $want  `%a
         $wont  `%a                                      ::  XX for begin; remove
         $warp  `%c
+        $wipe  `%f                                      ::  XX cache clear
       ==
     --
   --

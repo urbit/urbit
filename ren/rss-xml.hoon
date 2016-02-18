@@ -2,18 +2,20 @@
 ::
 ::::  /hoon/rss-xml/ren
   ::
+/?    310
 /=  sum  /snip/
-/^  kid=(map span ,[marl marl])
-    /_  /snip/
-/$    |=([bem=beam but=path] [our=p.bem tub=(slag 1 (flop but))])
-::
-::::  ~fyr
+/=  kid  /^  (map knot {marl marl})
+         /_  /snip/
+/$    |=({bem/beam *} [our=p.bem tub=(slag 1 (flop s.bem))])
+!:
+::::  ~fyr, ~tasfyn-partyv
   ::
+~&  [sum=sum kid=kid]
 ::  Link from relative path
-=+  hok=`hart`[& ~ `/org/urbit/(rsh 3 1 (scot %p our))]
-=+  ref=|=(a=path (earn hok `(weld tub a) ~))
+=+  hok=`hart`[& ~ &+/org/urbit/(rsh 3 1 (scot %p our))]
+=+  ref=|=(a/path (earn hok `(weld tub a) ~))
 ::  urb:front attrs confuse RSS validators, readers
-=+  no-meta=|=(a=marl `_a`?~(a ~ ?.(?=(%meta n.g.i.a) a $(a t.a))))
+=+  no-meta=|=(a/marl ^+(a ?~(a ~ ?.(?=($meta n.g.i.a) a $(a t.a)))))
 ::
 %-  crip  %-  poxo
 ;rss(version "2.0")
@@ -22,7 +24,7 @@
     ;link: {(ref /)}
     ;description: *{(no-meta tal.sum)}
     ;*  %+  turn  (~(tap by kid))
-        |=  [nom=@t hed=marl tal=marl]
+        |=  {nom/@t hed/marl tal/marl}
         ;item
           ;title: *{hed}
           ;description: *{(no-meta tal)}
