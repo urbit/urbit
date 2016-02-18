@@ -1735,6 +1735,7 @@
       ?~(buy *baby u.buy)
   =^  mos  bay
     ?-    -.q.hic
+        $wipe  ~&(%ford-cache-wiped [~ bay(jav ~)])
         $wasp
       abet:(~(awap za [our hen [now eny ski] ~] bay) q.q.hic)
         $exec

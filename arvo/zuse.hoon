@@ -1842,7 +1842,7 @@
           ==                                            ::
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  oryx  @t                                            ::  CSRF secret
-++  page  (cask)                                        ::  untyped cage
+++  page  (cask *)                                      ::  untyped cage
 ++  pail  ?($none $warm $cold)                          ::  connection status
 ++  plan  (trel view (pair @da (unit @dr)) path)        ::  subscription
 ++  plea  {p/@ud q/{p/? q/@t}}                          ::  live prompt
@@ -2255,6 +2255,7 @@
           $%  {$exec p/@p q/(unit bilk)}                ::  make / kill
               {$wasp p/@p q/{@uvH ?}}                   ::  depends ask / kill
               {$wegh $~}                                ::  report memory
+              {$wipe p/@p $~}                           ::  clear cache
           ==                                            ::
 ::
 ::::    %gall
