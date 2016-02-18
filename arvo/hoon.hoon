@@ -3823,8 +3823,12 @@
   |%
   ++  bix  (bass 16 (stun [2 2] six))
   ++  fem  (sear |=(a/@ (cha:fa a)) aln)
-  ++  hef  (bass 256 ;~(plug tep tiq (easy ~)))
+  ++  haf  (bass 256 ;~(plug tep tiq (easy ~)))
+  ++  hef  %+  sear  |=(a/@ ?:(=(a 0) ~ (some a)))
+           %+  bass  256
+           ;~(plug tip tiq (easy ~))
   ++  hif  (bass 256 ;~(plug tip tiq (easy ~)))
+  ++  hof  (bass 0x1.0000 ;~(plug hef (stun [1 3] ;~(pfix hep hif))))
   ++  huf  (bass 0x1.0000 ;~(plug hef (stun [0 3] ;~(pfix hep hif))))
   ++  hyf  (bass 0x1.0000 ;~(plug hif (stun [3 3] ;~(pfix hep hif))))
   ++  pev  (bass 32 ;~(plug sev (stun [0 4] siv)))
@@ -3890,12 +3894,14 @@
   ++  dum  (bass 10 (plus sid:ab))
   ++  fed  %+  cook  fend:ob
            ;~  pose
-             tiq:ab
-             %+  bass  0x1.0000.0000.0000.0000
+             %+  bass  0x1.0000.0000.0000.0000          ::  oversized
                ;~  plug
                  huf:ab
-                 (star ;~(pfix doh hyf:ab))
+                 (plus ;~(pfix doh hyf:ab))
                ==
+             hof:ab                                     ::  planet or moon
+             haf:ab                                     ::  star
+             tiq:ab                                     ::  galaxy
            ==
   ++  fim  (sear den:fa (bass 58 (plus fem:ab)))
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
