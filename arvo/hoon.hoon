@@ -9104,7 +9104,7 @@
   ::
   ++  tack
     |=  {hyp/wing mur/span}
-    ~|  [%tack hyp]
+    ~_  (show [%c %tack] %l hyp)
     =+  fid=(find %rite hyp)
     ?>  ?=($& -.fid)
     (take p.p.fid |=(span mur))
