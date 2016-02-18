@@ -1,11 +1,11 @@
 ::  Converts the result of an 'issues' event into a issues:gh.
 /-  gh
 /+  gh-parse
-|_  issue-comment=issue-comment:gh
+|_  issue-comment/issue-comment:gh
 ++  grab
   |%
   ++  json
-    |=  jon=^json
+    |=  jon/^json
     ^-  issue-comment:gh
     =+  top=(need ((om:jo some) jon))
     :*  (need (repository:gh-parse (~(got by top) %repository)))

@@ -885,7 +885,7 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    (pass-note tea (ford-req -.top [%cast mar $+cay]))
+    (pass-note tea (ford-req -.top [%dude |.(>[hen tea mar -.cay]<) [%cast mar $+cay]]))
   ::
   ++  cast-thou
     |=  {mar/mark cay/cage}
@@ -1230,7 +1230,7 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
-        ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
+        ?<  =([~ 0] (sky [151 %noun] %cw (tope bem(+ ~, r [%da now]))))
         =+  wir=`whir`[%ha (tope -.bem ~)]
         =.  wir  ?+(mef !! $get wir, $head [%he wir])
         =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
@@ -1674,7 +1674,7 @@
       :+  %$  %core
       %_    u.cor
           +12.q
-        =+  ato=(sky %cx (tope root-beak [%atom (flop %_(dom . sec+dom))]))
+        =+  ato=(sky [151 %noun] %cx (tope root-beak [%atom (flop %_(dom . sec+dom))]))
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
       ==

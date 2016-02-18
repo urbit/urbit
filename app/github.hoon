@@ -38,6 +38,10 @@
         leaf+(trip body.comment)
       ==
   [~ +>.$]
+++  diff-json
+  |=  {way/wire jon/json}
+  ~&  jon
+  [~ +>.$]
 ++  peek
   |=  {ren/@tas tyl/path}
   ^-  (unit (unit (pair mark *)))

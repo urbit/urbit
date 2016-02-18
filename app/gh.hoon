@@ -18,6 +18,7 @@
 ::
 //  /%/split
 ::
+!:
 =>  |%
     ++  move  (pair bone card)
     ++  sub-result
@@ -39,7 +40,7 @@
     --
 ::
 |_  {hid/bowl cnt/@ hook/(map @t {id/@t listeners/(set bone)})}
-::++  prep  ,_`.
+++  prep  _`.
 ::
 ::  This core manages everything related to a particular request.
 ::
@@ -79,8 +80,8 @@
   ++  scry
     ^+  .
     ?+  style  ~|(%invalid-style !!)
-      %read     read
-      %listen   listen
+      $read     read
+      $listen   listen
     ==
   ::
   ++  read  (send-hiss (endpoint-to-purl pax) %get ~ ~)
@@ -89,15 +90,16 @@
   ::
   ++  listen
     ^+  .
-    ?>  ?=({@ @ *} pax)
-    =+  events=t.t.pax
-    |-  ^+  +>.$
+    =+  paf=`path`(weld pax arg)
+    ?>  ?=({@ @ *} paf)
+    =+  events=t.t.paf
+    |-  ^+  +>+.$
     ?~  events
-      +>.$
+      +>+.$
     ?:  (~(has by hook) i.events)
-      =.  +>.$  =>((update-hook i.events) ?>(?=({@ @ *} pax) .))
+      =.  +>+.$  (update-hook i.events)
       $(events t.events)
-    =.  +>.$  =>((create-hook i.events) ?>(?=({@ @ *} pax) .))
+    =.  +>+.$  (create-hook i.events)
     $(events t.events)
   ::
   ::  Set up a webhook.
@@ -105,7 +107,8 @@
   ++  create-hook
     |=  event/@t
     ^+  +>
-    ?>  ?=({@ @ *} pax)
+    =+  paf=`path`(weld pax arg)
+    ?>  ?=({@ @ *} paf)
     =+  clean-event=`tape`(turn (trip event) |=(a/@tD ?:(=('_' a) '-' a)))
     =.  hook
       %+  ~(put by hook)  (crip clean-event)
@@ -115,7 +118,7 @@
       [id (~(put in listeners) ost.hid)]
     %-  send-hiss
     :*  %+  scan
-          =+  [(trip i.pax) (trip i.t.pax)]
+          =+  [(trip i.paf) (trip i.t.paf)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:epur
         %post  ~  ~
@@ -138,7 +141,6 @@
   ++  update-hook
     |=  event/@t
     ^+  +>
-    ?>  ?=({@ @ @ *} pax)
     =+  hok=(~(got by hook) event)
     %_    +>.$
         hook
@@ -160,7 +162,7 @@
   ?~  hook-data
     ~&  [%strange-hook hook response]
     [~ +>.$]
-  ~&  response=response
+  ::  ~&  response=response
   :_  +>.$
   %+  turn  (~(tap in listeners.u.hook-data))
   |=  ost/bone
@@ -200,12 +202,13 @@
   |=  {way/wire res/httr}
   ^-  {(list move) _+>.$}
   ?.  ?=({care @ @ @ *} way)
+    ~&  res=res
     [~ +>.$]
   =+  arg=(path (cue (slav %uv i.t.t.way)))
   :_  +>.$  :_  ~
   :+  ost.hid  %diff
   ?+    i.way  null+~
-      %x
+      $x
     ?~  r.res
       json+(jobe err+s+%empty-response code+(jone p.res) ~)
     =+  jon=(rush q.u.r.res apex:poja)
@@ -226,7 +229,7 @@
     =+  new-jon=(~(get by u.dir) i.arg)
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ::
-      %y
+      $y
     ?~  r.res
       ~&  [err+s+%empty-response code+(jone p.res)]
       arch+*arch
@@ -246,10 +249,15 @@
     ?~  dir
       [%arch `(shax (jam u.jon)) ~]
     ?~  arg
-      [%arch `(shax (jam u.jon)) (~(run by u.dir) ~)]
+      [%arch `(shax (jam u.jon)) (~(run by u.dir) _~)]
     =+  new-jon=(~(get by u.dir) i.arg)
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==
+::
+++  sigh-tang
+  |=  {way/wire tan/tang}
+  ^-  {(list move) _+>.$}
+  ((slog >%gh-sigh-tang< tan) `+>.$)
 ::
 ::  We can't actually give the response to pretty much anything
 ::  without blocking, so we just block unconditionally.

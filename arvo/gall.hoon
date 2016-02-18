@@ -810,7 +810,7 @@
       ?.  &(?=({p/* q/* r/@ s/^} q.vax) ((sane %tas) r.q.vax))
         =+  args="[%hiss wire (unit knot) mark cage]"
         :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.{args}")])
-      =^  gaw  vel  (~(slot wa vel) 7 vax)
+      =^  gaw  vel  (~(slot wa vel) 15 vax)
       ?.  &(?=({p/@ q/^} q.gaw) ((sane %tas) p.q.gaw))
         :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
       =+  usr=((soft (unit knot)) q.q.vax)
