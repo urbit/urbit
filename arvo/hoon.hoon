@@ -10367,6 +10367,7 @@
 ++  pi-tell                                             ::  produce dump
   |=  day/doss
   ^-  (list tape)
+  ?:  =(day *doss)  ~
   =+  tot=(pi-moth mon.day)
   ;:  welp
     [(welp "events: " (pi-mumm mon.day)) ~]
@@ -10393,7 +10394,8 @@
       ?:  =(~ out.hup)  ~
       :-  "into:"
       %+  turn
-        (~(tap by out.hup) ~)
+        %+  sort  (~(tap by out.hup) ~)
+        |=({{* a/@ud} {* b/@ud}} (gth a b))
       |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
@@ -10401,7 +10403,8 @@
       ?:  =(~ inn.hup)  ~
       :-  "from:"
       %+  turn
-        (~(tap by inn.hup) ~)
+        %+  sort  (~(tap by inn.hup) ~)
+        |=({{* a/@ud} {* b/@ud}} (gth a b))
       |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
