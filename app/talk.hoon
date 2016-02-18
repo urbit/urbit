@@ -1,7 +1,7 @@
 ::                                                      ::  ::  
 ::::  /hoon/talk/app                                    ::  ::
   ::                                                    ::  ::   
-/?    314
+/?    310
 /-    talk, sole
 /+    talk, sole
 /=    seed  /~  !>(.)

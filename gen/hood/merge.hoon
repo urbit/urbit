@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/merge/hood/gen
   ::
-/?  314
+/?    310
 !:
 |%
 ++  beaky  {knot knot knot $~}
@@ -31,9 +31,9 @@
     ::
       {* ^ $~}
         :-  (pars-src syd.arg)
-        =+((pars bek.arg) [who dez (opt-case caz) gem])]
+        =+((pars bek.arg) [who dez (opt-case caz) gem])
     ==
-++  opt-case  |=(a=case ?:(=(*case cas) a cas))  :: override
+++  opt-case  |=(a/case ?:(=(*case cas) a cas))  :: override
 ++  pars  |=(a/beaky `{{who/ship dez/desk caz/case} *}`(need (tome a)))
 ++  pars-src
   |=  syd/$@(desk beaky)

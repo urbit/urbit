@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/begin/hood/gen
   ::
-/?  314
+/?    310
 /-  sole
 ::
 ::::
@@ -13,7 +13,7 @@
 [sole .]
 :-  %ask
 |=  $:  {now/@da eny/@uvI bec/beak}
-        arg/$~
+        {arg/_(scug *@ *{his/@p tic/@p $~})}
         safety/?($on $off)
     ==
 ^-  (sole-result (cask begs))

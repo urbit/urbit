@@ -2,7 +2,7 @@
 ::  
 ::::  /hoon/cat/gen
   ::
-/?    314
+/?    310
 //  /%%/ls/subdir
 //  /%/pretty
 !:

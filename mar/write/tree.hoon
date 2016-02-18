@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/tree/write/mar
   ::
-/?    314
+/?    310
 !:
 |_  {sup/spur mim/mime}
 ++  grab

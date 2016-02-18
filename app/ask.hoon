@@ -1,7 +1,7 @@
 ::
 ::::  /hoon/ask/app
   ::
-/?    314
+/?    310
 /+    sole
 [. sole]
 |%
@@ -15,7 +15,7 @@
   |=  path
   ^-  (quip {bone card} +>)
   ~|  [%not-in-whitelist src.bow]
-  ?>  (~(has in (sa (limo ~zod our.bow ~talsur-todres ~))) src.bow)
+  ?>  (~(has in (sy ~zod our.bow ~talsur-todres ~)) src.bow)
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
   =-  [(effect %mor pro+[& %$ "<listening>"] -)]~
   =+  all=adrs
