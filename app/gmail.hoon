@@ -19,6 +19,9 @@
 ::
 /?  314
 /+  http
+::::
+/=  rfc  /:  /%/rfc  /txt/
+::
 //  /%/split
 ::/-  gmail
 ::  /ape/gh/split.hoon defines ++split, which splits a request
@@ -59,7 +62,7 @@
   ==
 ::
 ++  poke-gmail-req
-  |=  [method=meth endpoint=path quy=quay jon=(unit json)]
+  |=  [method=meth endpoint=path quy=quay]::jon=(unit json)]
   ^-  [(list move) _+>.$]
   ?>  ?=(valid-get-endpoint endpoint)
   :_  +>.$  :_  ~
@@ -68,11 +71,17 @@
       ^-  purl
       :+  [& ~ [%& /com/googleapis/www]]
         [~ gmail/v1/users/me/`valid-get-endpoint`endpoint]
-      ~
-      :+  method  ~
-      ?~  jon  ~
-      ~&  (taco (crip (pojo u.jon)))
-      (some (taco (crip (pojo u.jon))))                 ::  have to make it a unit again
+      `quay`[[%alt %json] ~] 
+  ::
+      :+  method  `math`(mo ~[content-type/['application/json']~])
+      =+  json-data=(joba %raw (jape (sifo (role rfc))))
+      ~&  json-data
+      =+  six-four=(tact (pojo json-data))
+      ~&  sixf/six-four
+      (some six-four)
+      ::?~  jon  ~
+      ::~&  (taco (crip (pojo u.jon)))
+      ::(some (taco (crip (pojo u.jon))))                 ::  have to make it a unit again
   ==
 ::
 ::  HTTP response.  We make sure the response is good, then
@@ -82,6 +91,7 @@
 ++  sigh-httr
   |=  [wir=wire res=httr]
   ^-  [(list move) _+>.$]
+  ~&  rfc/rfc
   ?.  ?=([care @ @ @ *] wir)
   ::  pokes don't return anything
   ~&  poke/res
@@ -143,22 +153,22 @@
 ::
 ++  help
   |=  [ren=care style=@tas pax=path]
-  =^  query-n-arg  pax  [+ -]:(split pax)
-  =+  ^-  [query=quay arg=path]
-      =+  gra=(flop query-n-arg)
-      ?~  gra  [~ ~]
-      =+  query=(rush i.gra ;~(pfix wut yquy:urlp))
-      ?~  query  [~ (flop gra)]
-      [u.query (flop t.gra)]
-  ~&  [arg=arg q=query]
+  ~&  pax
+  =^  query  pax
+    =+  xap=(flop pax)
+    ?~  xap  [~ ~]
+    =+  query=(rush i.xap ;~(pfix wut yquy:urlp))
+    ?~  query  [~ pax]
+    [u.query (flop t.xap)]
+  =^  arg  pax  [+ -]:(split pax)
+  ~&  [pax=pax arg=arg query=query]
   =|  mow=(list move)
   |%
   ::  Resolve core
   ::
   ++  make-move
     ^-  [(list move) _+>.$]
-    !!
-    ::[(flop mow) +>.$]
+    [(flop mow) +>.$]
     ::
   ++  endpoint-to-purl
     |=  endpoint=path
