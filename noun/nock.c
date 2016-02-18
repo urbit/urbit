@@ -139,9 +139,44 @@ _n_hint(u3_noun zep,
   }
 }
 
+/* _n_mush_in(): see _n_mush().
+*/
+static u3_noun
+_n_mush_in(u3_noun val)
+{
+  if ( c3n == u3du(val) ) {
+    return u3_nul;
+  }
+  else {
+    u3_noun h_val = u3h(val);
+    u3_noun ite;
+
+    if ( c3n == u3ud(h_val) ) {
+      ite = u3nc(c3__leaf, u3_nul);
+    } else {
+      ite = u3nc(c3__leaf, u3qe_trip(h_val));
+    }
+    return u3nc(ite, _n_mush_in(u3t(val)));
+  }
+}
+
+/* _n_mush(): tank from failed path request.
+*/
+static u3_noun 
+_n_mush(u3_noun val)
+{
+  u3_noun pro;
+
+  pro = u3nt(c3__rose,
+             u3nt(u3nc('/', u3_nul), u3nc('/', u3_nul), u3_nul),
+             _n_mush_in(val));
+  u3z(val);
+  return pro;
+}
+
 /* _n_nock_on(): produce .*(bus fol).  Do not virtualize.
 */
-u3_noun
+static u3_noun
 _n_nock_on(u3_noun bus, u3_noun fol)
 {
   u3_noun hib, gal;
@@ -360,7 +395,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
           //
           //  replace with proper error stack push
           //
-          u3m_p("lost", gof);
+          u3t_push(u3nc(c3__hunk, _n_mush(gof)));
           return u3m_bail(c3__exit);
         }
         else {
