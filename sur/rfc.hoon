@@ -1,14 +1,14 @@
 :: This structure is the hoon equivalent of the RFC 822 E-mail message format
 
 |%
-++  message  ,[from=email-address to=email-address subject=@t body=@t]
-++  email-address  ,[name=@t domain=@t]
+++  message  {from/email-address to/email-address subject/@t body/@t}
+++  email-address  {name/@t domain/@t}
 --
 ::
 |%
-++  email-adr-to-text  |=([name=@t domain=@t] (trip (rap 3 name '@' domain ~)))
+++  email-adr-to-text  |=({name/@t domain/@t} (trip (rap 3 name '@' domain ~)))
 ++  message-to-rfc822
-  |=  a=message  ^-  cord
+  |=  a/message  ^-  cord
   %-  crip  ^-  tape  %-  sifo
   %-  crip
   """

@@ -81,7 +81,8 @@
       ::=+  hoon-json-object=(joba %raw s/(message-to-rfc822:rfc mes))
       ::=+  request-body=(tact (pojo hoon-json-object))
       ::(some request-body)
-      (some (pojo label-req-to-json:gmail-label label-req:gmail-label ~))
+      ~
+      ::(some (pojo label-req-to-json:gmail-label label-req:gmail-label ~)) XX
   ==
 ::
 ::  HTTP response.  We make sure the response is good, then
@@ -146,7 +147,7 @@
   ==
 
 ++  sigh
-  |=  a=*
+  |=  a/*
   ~&  a+a
   :_  +>.$  ~
 ::
