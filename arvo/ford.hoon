@@ -55,7 +55,7 @@
       dep/(set beam)                                    ::  dependencies
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
-  $%  {$hood p/calm q/(trel beam beam cage) r/hood}     ::  compile
+  $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
       {$bake p/calm q/(trel mark coin beam) r/(unit vase)} ::  load
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
       {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
@@ -561,17 +561,12 @@
     ++  fade                                            ::  compile to hood
       |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt hood)
-      (fape cof for bem bem)
-    ::
-    ++  fape                                            ::  XX compile at path
-      |=  {cof/cafe for/mark bem/beam bim/beam}
-      ^-  (bolt hood)
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
       %+  cope  (liar cof %*(. bem s [for s.bem]))
       |=  {cof/cafe cay/cage}
-      %+  (clef %hood)  (fine cof bem(r [%ud 0]) bim(r [%ud 0]) cay)
-      ^-  (burg (trel beam beam cage) hood)
-      |=  {cof/cafe bem/beam bim/beam cay/cage}
+      %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
+      ^-  (burg (pair beam cage) hood)
+      |=  {cof/cafe bem/beam cay/cage}
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
       =+  vex=((full (fair bem)) [[1 1] (trip q.q.cay)])
@@ -980,7 +975,7 @@
       |=  {cof/cafe bem/beam}
       %+  cope  (fame cof bem)
       |=  {cof/cafe bem/beam}
-      (cope (fape cof %hoon bem bom) abut:(meow bom arg))
+      (cope (fade cof %hoon bem) abut:(meow bom arg))
     ::
     ++  lend                                            ::  load arch
       |=  {cof/cafe bem/beam}
