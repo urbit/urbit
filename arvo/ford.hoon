@@ -262,6 +262,7 @@
   ::
   ++  zo
     ~%  %ford-z  ..is  ~
+    :: =|  dyv/@
     |_  {num/@ud task}
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
     ++  amok  
@@ -1137,9 +1138,9 @@
       :: =+  ^=  pre
       ::     ?+  -.kas  -.kas
       ::       ^  %cell
-      :: ::      %boil  [-.kas p.kas (tope q.kas)]
-      ::       %bake  [-.kas p.kas (tope q.kas)]
-      ::       %core  [-.kas (tope p.kas)]
+      :: ::      $boil  [-.kas p.kas (tope q.kas)]
+      ::       $bake  [-.kas p.kas (tope q.kas)]
+      ::       $core  [-.kas (tope p.kas)]
       ::     ==
       :: ~&  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
       :: =-  ~&  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
