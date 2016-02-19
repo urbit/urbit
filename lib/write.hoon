@@ -48,8 +48,8 @@
   (poke--data [`%md pax] %mime / (taco txt))
 ::
 ++  poke-sec-atom
-  |=  [hot=host dat=@]
-  ?>  ?=(%& -.hot)
+  |=  {hot/host dat/@}
+  ?>  ?=($& -.hot)
   (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
 ::
 ++  poke--data
