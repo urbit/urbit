@@ -416,13 +416,13 @@ u3_term_io_exit(void)
       }
       write(uty_u->fid_i, "\r\n", 2);
 
+#if 0
       if ( uty_u->tat_u.sun.sit_u ) {
         uv_thread_t* sit_u = uty_u->tat_u.sun.sit_u;
         uty_u->tat_u.sun.sit_u = NULL;
 
         uv_mutex_unlock(&uty_u->tat_u.mex_u);
 
-#if 0
         //  XX can block exit waiting for wakeup (max _SPIN_WAIT_US)
         c3_w ret_w;
         if ( 0 != (ret_w = uv_thread_join(sit_u)) ) {
@@ -431,10 +431,10 @@ u3_term_io_exit(void)
         else {
           uv_mutex_destroy(&uty_u->tat_u.mex_u);
         }
-#endif
 
         free(sit_u);
       }
+#endif
     }
   }
 }
