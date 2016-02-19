@@ -2197,6 +2197,7 @@
   $%  {$& p/twig}                                       ::  direct twig
       {$| p/beam}                                       ::  resource location   
   ==                                                    ::
+++  hops   {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}  ::  XX late-bound path
 ++  horn                                                ::  resource tree
   $%  {$ape p/twig}                                     ::  /~  twig by hand
       {$arg p/twig}                                     ::  /$  argument
@@ -2211,7 +2212,7 @@
       {$nap p/horn}                                     ::  /_  homo map
       {$now p/horn}                                     ::  /@  list by @da
       {$saw p/twig q/horn}                              ::  /;  operate on
-      {$see p/beam q/horn}                              ::  /:  relative to
+      {$see p/hops q/horn}                              ::  /:  relative to
       {$sic p/twig q/horn}                              ::  /^  cast
       {$toy p/? q/mark}                                 ::  /mark/  static/hook
   ==                                                    ::

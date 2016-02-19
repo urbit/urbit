@@ -55,7 +55,7 @@
       dep/(set beam)                                    ::  dependencies
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
-  $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
+  $%  {$hood p/calm q/(trel beam beam cage) r/hood}     ::  compile
       {$bake p/calm q/(trel mark coin beam) r/(unit vase)} ::  load
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
       {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
@@ -568,14 +568,12 @@
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
       %+  cope  (liar cof %*(. bem s [for s.bem]))
       |=  {cof/cafe cay/cage}
-      %+  (clef %hood)  (fine cof bim(r [%ud 0]) cay)
-      ^-  (burg (pair beam cage) hood)
-      |=  {cof/cafe bum/beam cay/cage}
-      ~|  fade+(tope bum)
-      =+  rul=(fair bum)
+      %+  (clef %hood)  (fine cof bem(r [%ud 0]) bim(r [%ud 0]) cay)
+      ^-  (burg (trel beam beam cage) hood)
+      |=  {cof/cafe bem/beam bim/beam cay/cage}
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
-      =+  vex=((full rul) [[1 1] (trip q.q.cay)])
+      =+  vex=((full (fair bem)) [[1 1] (trip q.q.cay)])
       ?~  q.vex
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
@@ -605,7 +603,7 @@
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem/beam
-      ?>  ?=({$ud $0} r.bem)           ::  XX sentinel
+      ?>  ?=({$ud $0} r.bem)          ::  XX sentinel
       =+  vez=(vang & (tope bem))
       =<  hood
       |%  
@@ -616,8 +614,22 @@
           [~ u=(^case a)]
         nuck:so
       ::
-      ++  hath  (sear plex:vez (stag %conl poor:vez))   ::  hood path
+      ++  hath  (sear plex (stag %conl poor)):vez       ::  hood path
       ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
+      ++  hith                                          ::  static path
+        =>  vez
+        (sear plex (stag %conl (more fas hasp)))
+      ::
+      ++  hive                                          ::  late-bound path
+        ;~  pfix  fas
+          %+  cook  |=(a/hops a)
+          =>  vez
+          ;~  plug
+            (stag ~ gash)
+            ;~(pose (stag ~ ;~(pfix cen porc)) (easy ~))
+          ==
+        ==
+      ::
       ++  hood
         %+  ifix  [gay gay]
         ;~  plug
@@ -716,7 +728,7 @@
               ++  for
                 %+  rail  fail
                 =-  ;~(sfix (star -) gap duz)
-                ;~(pfix gap fas ;~(plug hath day))
+                ;~(pfix gap fas ;~(plug hith day))
           ::
               ++  lin
                 %+  rail
@@ -738,8 +750,8 @@
           ::
               ++  see
                 %+  rail  
-                  ;~(plug ;~(sfix have col) day)
-                ;~(pfix gap ;~(plug have day))
+                  ;~(plug ;~(sfix hive col) day)
+                ;~(pfix gap ;~(plug hive day))
           ::
               ++  sic
                 %+  rail  
@@ -1498,8 +1510,14 @@
           (flux |=(a/vase noun+a))
         ::
             $see
-          =.  r.p.hon  ?:(?=({$ud $0} r.p.hon) r.how r.p.hon)
-          $(hon q.hon, how p.hon)
+          =+  vez=(vang & (tope how))
+          =+  tuz=(posh:vez p.hon)
+          ?~  tuz  (flaw cof leaf+"bad tusk: {<p.hon>}" ~)
+          =+  pax=(plex:vez %conl u.tuz)
+          ?~  pax  (flaw cof leaf+"bad path: {<u.tuz>}" ~)
+          =+  bem=(tome u.pax)
+          ?~  bem  (flaw cof leaf+"bad beam: {<u.pax>}" ~)
+          $(hon q.hon, how u.bem)
         ::
             $sic
           %+  cope  $(hon q.hon)
@@ -1759,7 +1777,7 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-  |=(old/axle ..^$(+>- old))
+  :: |=(old/axle ..^$(+>- old))
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
   ::    :-  %1 
@@ -1768,13 +1786,13 @@
   ::    ?>  ?=([n=[p=* q=[tad=* dym=* deh=* jav=*]] l=* r=*] +.old)
   ::    :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old deh.q.n.+.old ~]]
   ::    [$(+.old l.+.old) $(+.old r.+.old)]
-  ::|=  old=*
-  ::=+  lox=((soft axle) old)
-  ::^+  ..^$
-  ::?~  lox
-  ::  ~&  %ford-reset
-  ::  ..^$
-  ::..^$(+>- u.lox)
+  |=  old/*
+  =+  lox=((soft axle) old)
+  ^+  ..^$
+  ?~  lox
+   ~&  %ford-reset
+   ..^$
+  ..^$(+>- u.lox)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
