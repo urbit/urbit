@@ -846,7 +846,8 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    (pass-note tea (ford-req -.top [%cast mar $+cay]))
+    =+  bek=?+(r.top -.top {$ud $0} -.top(r da+now))
+    (pass-note tea (ford-req bek [%cast mar $+cay]))
   ::
   ++  del-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$

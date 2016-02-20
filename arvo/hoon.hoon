@@ -7392,7 +7392,7 @@
           $noun      :_(gid [%leaf '*' ~])
           $path      :_(gid [%leaf '/' ~])
           $span      :_(gid [%leaf '#' 't' ~]) 
-          $void      :_(gid [%leaf '#' ~])
+          $void      :_(gid [%leaf '#' '!' ~])
           $wool      :_(gid [%leaf '*' '"' '"' ~])
           $wall      :_(gid [%leaf '*' '\'' '\'' ~])
           $yarn      :_(gid [%leaf '"' '"' ~])
@@ -7408,7 +7408,7 @@
       ::
           {$face *}
         =^  cox  gid  $(q.ham q.q.ham)
-        :_(gid [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
+        :_(gid [%palm [['/' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
       ::
           {$list *}
         =^  cox  gid  $(q.ham q.q.ham)
@@ -7420,21 +7420,21 @@
       ::
           {$plot *}
         =^  coz  gid  (many p.q.ham)
-        :_(gid [%rose [[' ' ~] ['[' ~] [']' ~]] coz])
+        :_(gid [%rose [[' ' ~] ['{' ~] ['}' ~]] coz])
       ::
           {$pear *}
-        :_(gid [%leaf '%' ~(rend co [%$ p.q.ham q.q.ham])])
+        :_(gid [%leaf '$' ~(rend co [%$ p.q.ham q.q.ham])])
       ::
           {$stop *}
         =+  num=~(rend co [%$ %ud p.q.ham])
         ?:  (~(has in gid) p.q.ham)
-          :_(gid [%leaf '$' num])
+          :_(gid [%leaf '#' num])
         =^  cox  gid
             %=  $
               gid    (~(put in gid) p.q.ham)
               q.ham  (~(got by p.ham) p.q.ham)
             ==
-        :_(gid [%palm [['.' ~] ['^' '$' num] ~ ~] cox ~])
+        :_(gid [%palm [['.' ~] ~ ~ ~] [%leaf ['^' '#' num]] cox ~])
       ::
           {$tree *}
         =^  cox  gid  $(q.ham q.q.ham)
@@ -10374,6 +10374,7 @@
 ++  pi-tell                                             ::  produce dump
   |=  day/doss
   ^-  (list tape)
+  ?:  =(day *doss)  ~
   =+  tot=(pi-moth mon.day)
   ;:  welp
     [(welp "events: " (pi-mumm mon.day)) ~]
@@ -10400,7 +10401,8 @@
       ?:  =(~ out.hup)  ~
       :-  "into:"
       %+  turn
-        (~(tap by out.hup) ~)
+        %+  sort  (~(tap by out.hup) ~)
+        |=({{* a/@ud} {* b/@ud}} (gth a b))
       |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
@@ -10408,7 +10410,8 @@
       ?:  =(~ inn.hup)  ~
       :-  "from:"
       %+  turn
-        (~(tap by inn.hup) ~)
+        %+  sort  (~(tap by inn.hup) ~)
+        |=({{* a/@ud} {* b/@ud}} (gth a b))
       |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
