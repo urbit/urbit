@@ -1128,17 +1128,19 @@
       %+  cope  (lamp cof bek ~)
       |=({cof/cafe byk/beak *} (make(bek byk) cof kas))
     ::
+    ++  abbrev                                          ::  shorten coin
+      |=(a/coin ?-(-.a $$ a, $blob a(p (mug p.a)), $many a(p (turn p.a ..$))))
+    ::
     ++  make                                            ::  reduce silk
       |=  {cof/cafe kas/silk}
       :: =+  ^=  pre
-      ::     ?+  -.kas  -.kas
+      ::     ?+  -.kas  `term`-.kas
       ::       ^  %cell
-      :: ::      $boil  [-.kas p.kas (tope q.kas)]
-      ::       $bake  [-.kas p.kas (tope q.kas)]
+      ::       $bake  [-.kas p.kas (tope r.kas) ~(rent co (abbrev q.kas))]
       ::       $core  [-.kas (tope p.kas)]
       ::     ==
-      :: ~&  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
-      :: =-  ~&  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
+      :: ~?  !=(%$ pre)  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
+      :: =-  ~?  !=(%$ pre)  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
       :: =.  dyv  +(dyv)
       ^-  (bolt gage)
       ?-    -.kas
