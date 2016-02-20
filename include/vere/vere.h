@@ -258,6 +258,7 @@
           uv_thread_t* sit_u;               //  spinner thread
           c3_o         diz_o;               //  spinner activated
           c3_d         eve_d;               //  spinner start tick (unix μs)
+          c3_d         end_d;               //  spinner end tick (unix μs)
           c3_c*        why_c;               //  spinner event wire (root only)
         } sun;
 
