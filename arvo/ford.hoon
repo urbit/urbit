@@ -559,6 +559,7 @@
       %_(+> mow :_(mow [hen %give gef]))
     ::
     ++  fade                                            ::  compile to hood
+      ~/  %fade
       |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt hood)
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
@@ -1013,8 +1014,9 @@
       (fall ((soft (list mark)) q) ~)
     ::
     ++  lima                                            ::  load at depth
+      ~/  %lima
       |=  {cof/cafe for/mark arg/coin bem/beam}
-      %+  (clef %bake)  [p=cof q=[%0 p=[bem `~] q=[for arg bem]]]
+      %+  (clef %bake)  (flag bem (fine cof for arg bem))
       |=  {cof/cafe for/mark arg/coin bem/beam}
       ^-  (bolt (unit vase))
       %+  cope  (laze cof bem)
@@ -1039,6 +1041,7 @@
       (leap cof [-.bem /[for]/ren] bem arg)
     ::
     ++  link                                            ::  translate
+      ~/  %link
       |=  {cof/cafe too/mark for/mark vax/vase}
       ^-  (bolt vase)
       :: %+  cool   |.(leaf+"ford: link {<too>} {<for>} {<p.vax>}")
@@ -1064,8 +1067,9 @@
       (maul cof u.zat vax)
     ::
     ++  lion                                            ::  translation search
+      ~/  %lion
       |=  {cof/cafe too/mark fro/(set mark)}
-      :: ~&  lion+[too=too fro=(silt fro)]
+      ::  ~&  lion+[too=too fro=fro]
       ^-  (bolt (list mark))
       =-  %+  coop  (gro cof too ~ ~)                    :: XX better grab layer
           |=  cof/cafe
@@ -1105,6 +1109,7 @@
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
     ++  mail                                            ::  cached mint
+      ~/  %mail
       |=  {cof/cafe sut/span gen/twig}
       ^-  (bolt (pair span nock))
       %+  (clef %slim)  (fine cof sut gen)
@@ -1301,6 +1306,7 @@
       ==
     ::
     ++  malt                                            ::  cached slit
+      ~/  %slit
       |=  {cof/cafe gat/span sam/span}
       ^-  (bolt span)
       %+  (clef %slit)  (fine cof gat sam)
