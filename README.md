@@ -41,10 +41,16 @@ Documentation
 In-progress documentation can be found at
 [urbit.org/docs](http://urbit.org/docs).
 
-These docs ship with your urbit. If you're running one locally you
-can access them at
+These docs shipped with your urbit as recently as `~2016.2.1`, but
+we have since embraced the vice of centralization, and declared
+`~samsev-sildur` the single source of truth(name may vary as
+urbits sink, check the footer of [urbit.org](http://urbit.org) for
+more information). If you really want them, you can run
+`|merge /=home= /~samsev-sildur/home/=`, or sync in the [github
+mirror](https://github.com/urbit/docs). They will then be
+accessible at
 
-    http://localhost:8080/home/docs
+    http://localhost:8080/docs
 
 Assuming you're running on port 8080. The port is printed on startup.
 
