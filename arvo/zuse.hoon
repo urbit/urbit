@@ -1024,7 +1024,7 @@
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
   |^  |*  a/(pole _;/(*{$^(rule tape)}))            ::  ;"chars{rule}chars"
-      %-  cook  :_  (bill (norm a))
+      =-  (cook - (bill (norm a)))
       |*  (list)
       ?~  +<  ~
       ?~  t  i
