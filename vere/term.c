@@ -37,8 +37,10 @@ static        void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
 #define _T_CTIM 3    //  suppress GA/char-at-a-time
 #define _T_NAWS 31   //  negotiate about window size
 
-#define _SPIN_WAIT_US 500000  //  spinner activation delay
+#define _SPIN_COOL_US 500000  //  spinner activation delay when cool
+#define _SPIN_WARM_US 50000   //  spinner activation delay when warm
 #define _SPIN_RATE_US 250000  //  spinner rate (microseconds/frame)
+#define _SPIN_IDLE_US 500000  //  spinner cools down if stopped this long
 
 /* _term_msc_out_host(): unix microseconds from current host time.
 */
@@ -423,7 +425,7 @@ u3_term_io_exit(void)
 
         uv_mutex_unlock(&uty_u->tat_u.mex_u);
 
-        //  XX can block exit waiting for wakeup (max _SPIN_WAIT_US)
+        //  XX can block exit waiting for wakeup (max _SPIN_COOL_US)
         c3_w ret_w;
         if ( 0 != (ret_w = uv_thread_join(sit_u)) ) {
           uL(fprintf(uH, "term: spinner exit: %s\n", uv_strerror(ret_w)));
@@ -1064,7 +1066,19 @@ _term_start_spinner(u3_utty* uty_u, u3_noun ovo)
 {
   uty_u->tat_u.sun.diz_o = c3n;
 
-  c3_d lag_d = _SPIN_WAIT_US;
+  c3_d now_d = _term_msc_out_host();
+
+  //  If we receive an event shortly after a previous spin, use a shorter delay
+  //  to avoid giving the impression of a half-idle system.
+  //
+  c3_d lag_d;
+  if ( now_d - uty_u->tat_u.sun.end_d < _SPIN_IDLE_US ) {
+    lag_d = _SPIN_WARM_US;
+  }
+  else {
+    lag_d = _SPIN_COOL_US;
+  }
+
   u3_noun why = u3h(u3t(u3h(u3t(ovo))));
   if ( c3__term == why ) {
     u3_noun eve = u3t(u3t(ovo));
@@ -1076,7 +1090,7 @@ _term_start_spinner(u3_utty* uty_u, u3_noun ovo)
     uty_u->tat_u.sun.why_c = (c3_c*)u3r_string(why);
   }
 
-  uty_u->tat_u.sun.eve_d = _term_msc_out_host() + lag_d;
+  uty_u->tat_u.sun.eve_d = now_d + lag_d;
 
   uv_mutex_unlock(&uty_u->tat_u.mex_u);
 }
@@ -1090,6 +1104,10 @@ _term_stop_spinner(u3_utty* uty_u)
 
   if ( c3y == uty_u->tat_u.sun.diz_o ) {
     _term_it_refresh_line(uty_u);
+    uty_u->tat_u.sun.end_d = _term_msc_out_host();
+  }
+  else {
+    uty_u->tat_u.sun.end_d = 0;
   }
 
   uty_u->tat_u.sun.diz_o = c3n;
@@ -1120,8 +1138,9 @@ _term_spinner_cb(void* ptr_v)
     c3_d eve_d = uty_u->tat_u.sun.eve_d;
 
     if ( 0 == eve_d ) {
+      c3_o diz_o = uty_u->tat_u.sun.diz_o;
       uv_mutex_unlock(&uty_u->tat_u.mex_u);
-      usleep(_SPIN_WAIT_US);
+      usleep(c3y == diz_o ? _SPIN_WARM_US : _SPIN_COOL_US);
     }
     else {
       c3_d now_d = _term_msc_out_host();
