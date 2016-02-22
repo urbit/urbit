@@ -10381,11 +10381,10 @@
     %-  zing
     ^-  (list (list tape))
     %+  turn
-      %+  sort  (~(tap by cut.day))
-      |=  {one/(pair path hump) two/(pair path hump)}
-      (gth (pi-moth mon.q.one) (pi-moth mon.q.two))
-    |=  {pax/path hup/hump}
-    =+  ott=(pi-moth mon.hup)
+      =-  (sort - lor)
+      %+  turn  (~(tap by cut.day))
+      |=({p/path q/hump} [(pi-moth mon.q) p q])
+    |=  {ott/@u pax/path hup/hump}
     ;:  welp
       [(welp "label: " (spud pax)) ~]
       [(welp "price: " (scow %ud (div (mul 100 ott) tot))) ~]
@@ -10395,7 +10394,7 @@
       :-  "into:"
       %+  turn
         %+  sort  (~(tap by out.hup) ~)
-        |=({{* a/@ud} {* b/@ud}} (gth a b))
+        |=({{* a/@ud} {* b/@ud}} (lth a b))
       |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
@@ -10404,7 +10403,7 @@
       :-  "from:"
       %+  turn
         %+  sort  (~(tap by inn.hup) ~)
-        |=({{* a/@ud} {* b/@ud}} (gth a b))
+        |=({{* a/@ud} {* b/@ud}} (lth a b))
       |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
