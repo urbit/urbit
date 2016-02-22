@@ -530,28 +530,37 @@ module.exports = recl({
     $(window).on('focus', this._focus);
     return window.util.scrollToBottom();
   },
-  componentDidUpdate: function(_props, _state) {
-    var $window, _messages, d, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, sameAs, scrollTop, t;
+  componentWillUpdate: function(props, state) {
+    var $window, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, sameAs, scrollTop;
     $window = $(window);
     scrollTop = $window.scrollTop();
     old = {};
-    ref = _state.messages;
+    ref = this.state.messages;
     for (i = 0, len = ref.length; i < len; i++) {
       key = ref[i].key;
       old[key] = true;
     }
     lastSaid = null;
-    ref1 = this.state.messages;
-    for (j = 0, len1 = ref1.length; j < len1; j++) {
-      message = ref1[j];
-      nowSaid = [message.ship, message.thought.audience];
-      if (!old[message.key]) {
-        sameAs = _.isEqual(lastSaid, nowSaid);
-        scrollTop += sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST;
+    if (window.innerHeight + scrollTop > $('.writing').offset().top) {
+      ref1 = state.messages;
+      for (j = 0, len1 = ref1.length; j < len1; j++) {
+        message = ref1[j];
+        nowSaid = [message.ship, message.thought.audience];
+        if (!old[message.key]) {
+          sameAs = _.isEqual(lastSaid, nowSaid);
+          scrollTop += sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST;
+        }
+        lastSaid = nowSaid;
       }
-      lastSaid = nowSaid;
+      return this.setOffset = scrollTop;
     }
-    $window.scrollTop(scrollTop);
+  },
+  componentDidUpdate: function(_props, _state) {
+    var _messages, d, t;
+    if (this.setOffset) {
+      $(window).scrollTop(this.setOffset);
+      this.setOffset = null;
+    }
     if (this.focused === false && this.last !== this.lastSeen) {
       _messages = this.sortedMessages(this.state.messages);
       d = _messages.length - _messages.indexOf(this.lastSeen) - 1;
@@ -603,7 +612,7 @@ module.exports = recl({
     _messages = messages.map((function(_this) {
       return function(message, index) {
         var nowSaid, sameAs, speech;
-        nowSaid = [message.ship, message.thought.audience];
+        nowSaid = [message.ship, _.keys(message.thought.audience)];
         sameAs = _.isEqual(lastSaid, nowSaid);
         lastSaid = nowSaid;
         messageHeights.push((sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST));
@@ -1912,7 +1921,7 @@ _.merge(window.util, {
         return "court";
       case 6:
         return "floor";
-      case 13:
+      default:
         return "porch";
     }
   },

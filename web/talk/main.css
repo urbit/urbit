@@ -79,6 +79,12 @@ div.gram.same:hover div.meta {
 div.gram label {
   background-color: #0500F0; }
 
+div.gram.say .speech {
+  font-style: italic; }
+
+div.gram.pending .speech {
+  color: #B1B7BD; }
+
 .author,
 .path {
   cursor: pointer; }
