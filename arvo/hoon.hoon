@@ -10380,10 +10380,10 @@
       %+  turn  (~(tap by cut.day))
       |=({p/path q/hump} [(pi-moth mon.q) p q])
     |=  {ott/@u pax/path hup/hump}
-    ?:  (lth (mul 10 ott) tot)  ~                       :: omit misc
+    ?:  (lth (mul 20 ott) tot)  ~                       :: omit misc
     ;:  welp
       [(welp "label: " (spud pax)) ~]
-      [(welp "price: " (scow %ud (div (mul 100 ott) tot))) ~]
+      [(welp "price: " (scow %ud (div (mul 100.000 ott) tot))) ~]
       [(welp "shape: " (pi-mumm mon.hup)) ~]
     ::
       ?:  =(~ out.hup)  ~
@@ -10395,6 +10395,7 @@
       |=  {pax/path num/@ud}
       ^-  (unit tape)
       ?:  (lth (mul 20 num) ott)  ~
+      =.  num  (div (mul 100.000 num) tot)
       (some :(welp "  " (spud pax) ": " (scow %ud num)))
     ::
       ?:  =(~ inn.hup)  ~
@@ -10406,6 +10407,7 @@
       |=  {pax/path num/@ud}
       ^-  (unit tape)
       ?:  (lth (mul 20 num) ott)  ~
+      =.  num  (div (mul 100.000 num) tot)
       (some :(welp "  " (spud pax) ": " (scow %ud num)))
     ::
       ["" ~]
