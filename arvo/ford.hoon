@@ -57,6 +57,7 @@
 ++  calx                                                ::  concrete cache line
   $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
       {$bake p/calm q/(pair mark beam) r/(unit vase)}   ::  load
+      {$boil p/calm q/(trel coin beam beam) r/vase}     ::  execute
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
       {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
       {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
@@ -82,6 +83,7 @@
   ?+  sem  !!
     $hood  ?>(?=($hood -.cax) r.cax)
     $bake  ?>(?=($bake -.cax) r.cax)
+    $boil  ?>(?=($boil -.cax) r.cax)
     $slap  ?>(?=($slap -.cax) r.cax)
     $slam  ?>(?=($slam -.cax) r.cax)
     $slim  ?>(?=($slim -.cax) r.cax)
@@ -975,6 +977,9 @@
       (leap cof many+~ bem bem)
     ::
     ++  leap                                            :: XX load with path
+      ~/  %leap
+      |=  {cof/cafe arg/coin bem/beam bom/beam}
+      %+  (clef %boil)  (fine cof arg bem bom)
       |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (lamp cof bem)
       |=  {cof/cafe bem/beam}
