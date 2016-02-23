@@ -56,7 +56,7 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
-      {$bake p/calm q/(trel mark coin beam) r/(unit vase)} ::  load
+      {$bake p/calm q/(pair mark beam) r/(unit vase)}   ::  load
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
       {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
       {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
@@ -584,7 +584,7 @@
         ?~  opt  (flue cof)
         |-  ^-  (bolt (unit beam))
         =.  i.s.bem  (tack opt)
-        %+  cope  (lima cof %hoon many+~ bem)
+        %+  cope  (lima cof %hoon bem)
         |=  {cof/cafe vax/(unit vase)}  ^-  (bolt (unit beam))
         ?^  vax  (fine cof `bem)
         ?~  t.opt  (flue cof)
@@ -904,8 +904,8 @@
       |=  {cof/cafe arc/arch}
       (fine cof (bind fil.arc $~))
     ::
-    ++  lace                                            ::  load real or virtual
-      |=  {cof/cafe for/mark arg/coin bem/beam}
+    ++  lace                                            ::  load file
+      |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt vase)
       %+  cool  |.(leaf+"ford: load {<for>} {<(tope bem)>}")
       =.  s.bem  [for s.bem]
@@ -968,10 +968,10 @@
     ::
     ++  lear                                            ::  load core
       |=  {cof/cafe bem/beam}  ^-  (bolt vase)
-      (leap cof bem bem many+~)
+      (leap cof many+~ bem bem)
     ::
     ++  leap                                            :: XX load with path
-      |=  {cof/cafe bem/beam bom/beam arg/coin}
+      |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (lamp cof bem)
       |=  {cof/cafe bem/beam}
       %+  cope  (fame cof bem)
@@ -1015,30 +1015,30 @@
     ::
     ++  lima                                            ::  load at depth
       ~/  %lima
-      |=  {cof/cafe for/mark arg/coin bem/beam}
-      %+  (clef %bake)  (flag bem (fine cof for arg bem))
-      |=  {cof/cafe for/mark arg/coin bem/beam}
+      |=  {cof/cafe for/mark bem/beam}
+      %+  (clef %bake)  (flag bem (fine cof for bem))
+      |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt (unit vase))
       %+  cope  (laze cof bem)
       |=  {cof/cafe mal/(map mark $~)}
       ?:  (~(has by mal) for)
-        (cope (lace cof for arg bem) (flux some))
+        (cope (lace cof for bem) (flux some))
       =+  opt=(silt (turn (~(tap by mal)) head))        ::  XX asymptotics  
       %+  cope  (lion cof for opt)
       |=  {cof/cafe wuy/(list @tas)}
       ?~  wuy  (flue cof)
       %+  cope  
-        (lace cof i.wuy arg bem)
+        (lace cof i.wuy bem)
       |=  {cof/cafe hoc/vase}
       (cope (lope cof i.wuy t.wuy hoc) (flux some))
     ::
     ++  lime                                            ::  load beam
       |=  {cof/cafe for/mark arg/coin bem/beam}
       ^-  (bolt vase)
-      %+  cope  (lima cof for arg bem)
+      %+  cope  (lima cof for bem)
       |=  {cof/cafe vux/(unit vase)}
       ?^  vux  (fine cof u.vux)
-      (leap cof [-.bem /[for]/ren] bem arg)
+      (leap cof arg [-.bem /[for]/ren] bem)
     ::
     ++  link                                            ::  translate
       ~/  %link
