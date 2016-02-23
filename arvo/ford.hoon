@@ -262,7 +262,7 @@
   ::
   ++  zo
     ~%  %ford-z  ..is  ~
-    :: =|  dyv/@
+    =|  dyv/@
     |_  {num/@ud task}
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
     ++  amok  
@@ -561,12 +561,14 @@
     ++  fade                                            ::  compile to hood
       ~/  %fade
       |=  {cof/cafe for/mark bem/beam}
+      :: ~&  fade+(tope bem)
       ^-  (bolt hood)
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
       %+  cope  (liar cof %*(. bem s [for s.bem]))
       |=  {cof/cafe cay/cage}
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
+      ~%  %hood-miss  ..abet  ~
       |=  {cof/cafe bem/beam cay/cage}
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
@@ -576,6 +578,7 @@
       (fine cof p.u.q.vex)
     ::
     ++  fame                                            ::  beam with - as /
+      ~/  %fame
       |=  {cof/cafe bem/beam}
       ^-  (bolt beam)
       %+  cope  
@@ -596,6 +599,7 @@
     ::
     ++  fang                                            ::  protocol door
       |=  {cof/cafe for/mark}  ^-  (bolt vase)
+      :: ~&  fang+for
       (lear cof bek /[for]/mar)
     ::
     ++  fair                                            ::  hood parsing rule
@@ -990,6 +994,7 @@
       (flag bem (fine cof arc))
     ::
     ++  liar                                            ::  load cage
+      ~/  %liar
       |=  {cof/cafe bem/beam}
       ^-  (bolt cage)
       ?:  =([%ud 0] r.bem)
@@ -1002,6 +1007,7 @@
       (fine cof u.u.von)
     ::
     ++  lily
+      ~/  %lily
       |=  {cof/cafe for/mark}  ^-  (bolt (set @tas))
       %+  cope  (coop (fang cof for) |=(cof/cafe (fine cof %void ~)))
       %-  flux
@@ -1043,6 +1049,8 @@
     ++  link                                            ::  translate
       ~/  %link
       |=  {cof/cafe too/mark for/mark vax/vase}
+      =*  link-jet  .
+      :: ~$  link
       ^-  (bolt vase)
       :: %+  cool   |.(leaf+"ford: link {<too>} {<for>} {<p.vax>}")
       ?:  =(too for)  (fine cof vax)
@@ -1050,28 +1058,39 @@
         ((lake too) cof vax)
       %+  cope  (fang cof for)
       |=  {cof/cafe pro/vase}  ^-  (bolt vase)
-      ?:  &((slob %grow p.pro) (slob too p:(slap pro [%limb %grow])))
+      ?:  :: =<  $  ~%  %limb-grow  link-jet  ~  |.
+          &((slob %grow p.pro) (slob too p:(slap pro [%limb %grow])))
+        :: ~$  link-grow
+        :: =<  $  ~%  %grow  link-jet  ~  |.
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
         (maim cof pox [%per [%limb %grow] [%limb too]])
       %+  cope  (fang cof too)
+      ~%  %grab  link-jet  ~
       |=  {cof/cafe pro/vase}
-      =+  ^=  zat  ^-  (unit vase)
+      =+  :: =<  $  ~%  %limb-grab  +  ~  |.
+          ^=  zat  ^-  (unit vase)
           ?.  (slob %grab p.pro)  ~
           =+  gab=(slap pro [%limb %grab])
           ?.  (slob for p.gab)  ~
           `(slap gab [%limb for])
       ?~  zat
+        :: ~$  link-miss
         (flaw cof [%leaf "ford: no link: {<[for too]>}"]~)
+      :: ~$  link-grab
       ~|  [%link-maul for too] 
       (maul cof u.zat vax)
     ::
     ++  lion                                            ::  translation search
       ~/  %lion
       |=  {cof/cafe too/mark fro/(set mark)}
-      ::  ~&  lion+[too=too fro=fro]
+      =*  lion-jet  .
+      :: ~&  lion+[too=too fro=fro]
+      :: =-  =+  (cope - (flux |=(a/(list mark) ~&(lioned+a ~))))
+      ::     +<
       ^-  (bolt (list mark))
       =-  %+  coop  (gro cof too ~ ~)                    :: XX better grab layer
+          ~%  %grab  lion-jet  ~
           |=  cof/cafe
           %+  cope  (fang cof too)
           |=  {cof/cafe vax/vase}  ^-  (bolt (list mark))
@@ -1121,6 +1140,7 @@
       ==
     ::
     ++  maim                                            ::  slap
+      ~/  %maim
       |=  {cof/cafe vax/vase gen/twig}
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
@@ -1146,7 +1166,7 @@
       ::     ==
       :: ~?  !=(%$ pre)  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
       :: =-  ~?  !=(%$ pre)  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
-      :: =.  dyv  +(dyv)
+      =.  dyv  +(dyv)
       ^-  (bolt gage)
       ?-    -.kas
           ^
@@ -1209,6 +1229,9 @@
         %+  cope  $(kas q.kas)
         %-  tabl-run
         |=  {cof/cafe cay/cage}
+        :: ~$  make-cast
+        :: ~>  %live.  :: ~$(make-cast-{to}--{from} ~)
+        ::   (rap 3 %make-cast- p.kas '--' p.cay ~)
         ^-  (bolt gage)
         %+  cool  |.(leaf+"ford: casting {<p.cay>} to {<p.kas>}")
         %+  cope  (lion cof p.kas p.cay `~)
@@ -1320,6 +1343,7 @@
       ==
     ::
     ++  maul                                            ::  slam
+      ~/  %maul
       |=  {cof/cafe gat/vase sam/vase}
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
