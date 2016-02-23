@@ -44,7 +44,8 @@ img.logo.first {
   content: "\25D0"; }
 
 #head {
-  position: fixed; }
+  position: fixed;
+  z-index: 10; }
   @media (min-width: 544px) {
     #head {
       width: 576px; } }
