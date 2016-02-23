@@ -10364,20 +10364,15 @@
     (welp (scow %ud (div (mul 100 euq.mon) tot)) "e ")
   ==
 ::
-++  pi-tell                                             ::  produce dump
+++  pi-tell                                              ::  produce dump
   |=  day/doss
   ^-  (list tape)
   ?:  =(day *doss)  ~
   =+  tot=(pi-moth mon.day)
   ;:  welp
-    [(welp "events: " (pi-mumm mon.day)) ~]
-  ::
-    %+  turn
-      (~(tap by hit.day) ~)
-    |=  {nam/term num/@ud}
-    :(welp (trip nam) ": " (scow %ud num))
     ["" ~]
   ::
+    ^-  wall
     %-  zing
     ^-  (list (list tape))
     %+  turn
@@ -10399,7 +10394,7 @@
         |=({{* a/@ud} {* b/@ud}} (lth a b))
       |=  {pax/path num/@ud}
       ^-  (unit tape)
-      ?:  (lth (mul 10 num) ott)  ~
+      ?:  (lth (mul 20 num) ott)  ~
       (some :(welp "  " (spud pax) ": " (scow %ud num)))
     ::
       ?:  =(~ inn.hup)  ~
@@ -10410,12 +10405,18 @@
         |=({{* a/@ud} {* b/@ud}} (lth a b))
       |=  {pax/path num/@ud}
       ^-  (unit tape)
-      ?:  (lth (mul 10 num) ott)  ~
+      ?:  (lth (mul 20 num) ott)  ~
       (some :(welp "  " (spud pax) ": " (scow %ud num)))
     ::
       ["" ~]
-      ~
     ==
+  ::
+    [(welp "events: " (pi-mumm mon.day)) "" ~]
+  ::
+    %+  turn
+      (~(tap by hit.day) ~)
+    |=  {nam/term num/@ud}
+    :(welp (trip nam) ": " (scow %ud num))
   ==
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
