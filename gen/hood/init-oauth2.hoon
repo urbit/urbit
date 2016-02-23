@@ -8,26 +8,26 @@
   !:
 [sole .]
 :-  %ask
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=$|(~ [dom=path ~])]
-        ~
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {arg/$@($~ {dom/path $~})}
+        $~
     ==
-^-  (sole-result ,[%write-sec-atom p=host q=@])
+^-  (sole-result {$write-sec-atom p/host q/@})
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])
 %+  sole-lo
   [%& %oauth-hostname "api hostname: https://"]
 %+  sole-go  thos:urlp
-|=  hot=host
-?:  ?=(%| -.hot)
+|=  hot/host
+?:  ?=($| -.hot)
   ~|(%ips-unsupported !!)
 %+  sole-lo
   [%& %oauth-client "client id: "]
 %+  sole-go  (boss 256 (star prn))
-|=  cid=@t
+|=  cid/@t
 %+  sole-lo  
   [%& %oauth-secret "client secret: "]
 %+  sole-go  (boss 256 (star prn))
-|=  cis=@t
+|=  cis/@t
 %+  sole-so  %write-sec-atom    :: XX typed pair
 [hot (role cid cis ~)]

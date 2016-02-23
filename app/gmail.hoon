@@ -15,7 +15,7 @@
 ::      for webhook-powered event notifications.  For event list,
 ::      see https://developer.github.com/webhooks/.
 ::
-::  See the %github app for example usage.
+::  See the%github app for example usage.
 ::
 /?  314
 /-  rfc, gmail-label

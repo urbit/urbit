@@ -34,7 +34,7 @@
 ++  token  ?(~ @t)
 ++  refresh  {tok/token needed/@da pending/_`?`|}
 ++  keys  cord:{cid/@t cis/@t}
-++  core-move  |*(a/* $&([sec-move _a] sec-move))
+++  core-move  |*(a/* $&({sec-move _a} sec-move)) ::here's a change
 ++  decode-keys                       :: XX from bale w/ typed %jael
   |=(key/keys ((hard {cid/@t cis/@t $~}) (lore key)))
 --
