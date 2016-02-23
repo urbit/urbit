@@ -302,7 +302,7 @@
     {$ifat p/wing q/twig r/twig}                        ::  ?@  if p is atom
     {$ifno p/wing q/twig r/twig}                        ::  ?~  if p is null
   ::
-    {$fits p/twig q/wing}                                ::  ?=  if q matches p 
+    {$fits p/twig q/wing}                               ::  ?=  if q matches p 
     {$not p/twig}                                       ::  ?!  loobean not
   ::                                            ::::::  special
     {$twig p/twig q/twig}                               ::  !,
@@ -7332,7 +7332,7 @@
 ::
 ++  us
   =>  |%
-      ++  calf  {p/(map @ud wine) q/wine}               ::
+      ++  cape  {p/(map @ud wine) q/wine}               ::
       ++  wine                                          ::
                 $@  $?  $noun                           ::
                         $path                           ::
@@ -7367,7 +7367,7 @@
   ::
   ++  deal  |=(lum/* (dish dole lum))
   ++  dial
-    |=  ham/calf
+    |=  ham/cape
     =+  gid=*(set @ud)
     =<  `tank`-:$
     |%  
@@ -7440,7 +7440,7 @@
     --
   ::
   ++  dish
-    |=  {ham/calf lum/*}  ^-  tank
+    |=  {ham/cape lum/*}  ^-  tank
     ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
     ~|  [%lump lum]
     ~|  [%ham ham]
@@ -7626,7 +7626,7 @@
     ==
   ::
   ++  doge
-    |=  ham/calf
+    |=  ham/cape
     =-  ?+  woz  woz
           {$list * {$mato $'ta'}}  %path
           {$list * {$mato $'t'}}   %wall
@@ -7681,7 +7681,7 @@
     q.ham
   ::
   ++  dole
-    ^-  calf
+    ^-  cape
     =+  gil=*(set span)
     =+  dex=[p=*(map span @) q=*(map @ wine)]
     =<  [q.p q]
@@ -9820,8 +9820,8 @@
                   (word %nock expb)
                   (word %same expb)
                   (word %deep expa)
-                  (word %wish expx)
-                  (word %wish expx)
+                  (word %wish expn)
+                  (word %wish expn)
                 ::
                   (word %iron expa)
                   (word %ward expb)
@@ -9833,7 +9833,7 @@
                   (word %lead expa)
                 ::
                   (word %show expb)
-                  (word %poll expg)
+                  (word %poll expf)
                   (word %lurk expb)
                   (word %fast hind)
                   (word %funk hine)
@@ -9890,7 +9890,7 @@
                     ['*' (rune tar %nock expb)]
                     ['=' (rune tis %same expb)]
                     ['?' (rune wut %deep expa)]
-                    ['^' (rune ket %wish expx)]
+                    ['^' (rune ket %wish expn)]
                 ==
               ==
             :-  '^'
@@ -10077,6 +10077,7 @@
     ++  expc  |.(;~(gunk loaf loaf loaf))               ::  three twigs
     ++  expd  |.(;~(gunk loaf loaf loaf loaf))          ::  four twigs
     ++  expe  |.(wisp)                                  ::  core tail
+    ++  expf  |.(;~(gunk ;~(pfix cen sym) loaf))        ::  %term and twig
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and twig
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [tile twig]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more twigs
@@ -10084,8 +10085,7 @@
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two twigs
     ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two twigs 
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
-    ++  expn  |.((stag %conp (butt hank)))              ::  autoconsed twigs
-    ++  expx  |.(;~(gunk loaf (stag %conp (butt hank))))::  autoconsed twigs
+    ++  expn  |.(;~(gunk loaf (stag %conp (butt hank))))::  autoconsed twigs
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
