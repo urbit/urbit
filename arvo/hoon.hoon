@@ -10385,6 +10385,7 @@
       %+  turn  (~(tap by cut.day))
       |=({p/path q/hump} [(pi-moth mon.q) p q])
     |=  {ott/@u pax/path hup/hump}
+    ?:  (lth (mul 10 ott) tot)  ~                       :: omit misc
     ;:  welp
       [(welp "label: " (spud pax)) ~]
       [(welp "price: " (scow %ud (div (mul 100 ott) tot))) ~]
@@ -10392,21 +10393,25 @@
     ::
       ?:  =(~ out.hup)  ~
       :-  "into:"
-      %+  turn
+      ^-  wall
+      %+  murn
         %+  sort  (~(tap by out.hup) ~)
         |=({{* a/@ud} {* b/@ud}} (lth a b))
       |=  {pax/path num/@ud}
-      ^-  tape
-      :(welp "  " (spud pax) ": " (scow %ud num))
+      ^-  (unit tape)
+      ?:  (lth (mul 10 num) ott)  ~
+      (some :(welp "  " (spud pax) ": " (scow %ud num)))
     ::
       ?:  =(~ inn.hup)  ~
       :-  "from:"
-      %+  turn
+      ^-  wall
+      %+  murn
         %+  sort  (~(tap by inn.hup) ~)
         |=({{* a/@ud} {* b/@ud}} (lth a b))
       |=  {pax/path num/@ud}
-      ^-  tape
-      :(welp "  " (spud pax) ": " (scow %ud num))
+      ^-  (unit tape)
+      ?:  (lth (mul 10 num) ott)  ~
+      (some :(welp "  " (spud pax) ": " (scow %ud num)))
     ::
       ["" ~]
       ~
