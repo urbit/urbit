@@ -75,7 +75,9 @@ _n_hint(u3_noun zep,
 
     case c3__live: {
       if ( c3y == u3ud(hod) ) {
+        u3t_off(noc_o);
         u3t_heck(hod);
+        u3t_on(noc_o);
       } else {
         u3z(hod);
       }

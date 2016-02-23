@@ -91,7 +91,6 @@ u3t_heck(u3_atom cog)
     rod_u = u3R;
     u3R = &(u3H->rod_u);
     {
-
       if ( 0 == u3R->pro.day ) { 
         u3R->pro.day = u3v_do("doss", 0);
       }
