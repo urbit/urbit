@@ -221,7 +221,7 @@
       (sear plex:vez (stag %conl poor:vez))
     ::
     ++  dp-iden-url
-      (cook |=([a=(unit iden) b=purl] [(fall a *iden) b]) auru:epur)
+      (cook |=({a/(unit iden) b/purl} [(fall a *iden) b]) auru:epur)
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (tope he-beam)                       ::  ++path
@@ -509,8 +509,8 @@
           :-  "HTTP {<p.hit>}"
           %+  weld
             (turn q.hit |=({a/@t b/@t} "{(trip a)}: {(trip b)}"))
-          :-  ""
-          (turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
+          :-  i=""
+          t=(turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
       ==
     ::
     ++  dy-show-span-noun
