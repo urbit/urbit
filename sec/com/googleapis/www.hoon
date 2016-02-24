@@ -20,6 +20,7 @@
   :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
       access-type+%offline
       response-type+%code
+      prompt+%consent
   ==
 --
 !:

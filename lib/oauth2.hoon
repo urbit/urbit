@@ -50,6 +50,8 @@
 ++  urb-hart  [| `8.443 [%& /localhost]]  :: XX get from eyre
 ++  toke-url  (endpoint dom code-exchange)
 ++  auth-url
+  ~&  [%oauth-warning "Make sure this urbit".
+                      "is running on {(earn urb-hart `~ ~)}"]
   ^-  purl
   :+  [& ~ p.dialog]  [~ q.dialog]
   %-  fass  
