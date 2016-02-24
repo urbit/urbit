@@ -16,7 +16,7 @@
   =+  lon=(fall (slaw %t usr) usr)
   =<  .(state-usr &)
   %-  oauth2
-  =-  [[`/com/google/accounts /o/oauth2/v2/auth -] /oauth2/v4/token]
+  =-  [[&+/com/google/accounts /o/oauth2/v2/auth -] /oauth2/v4/token]
   :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
       access-type+%offline
       response-type+%code
@@ -30,7 +30,7 @@
 ++  auth  ~(. (auth-usr usr.bal) bal (scopes 'userinfo.email' 'plus.me' ~))
 ++  scopes
   =+  scope=|=(b/@ta (endpoint:oauth2 dom.bal /auth/[b]))
-  |=(a/(list ,@ta) ['https://mail.google.com' (turn a |=(b/@ta (crip (earn (scope b)))))])
+  |=(a/(list @ta) ['https://mail.google.com' (turn a |=(b/@ta (crip (earn (scope b)))))])
 ::
 ++  out  (out-fix-expired:auth-re (out-math:auth ber))
 ++  res  |=(a/httr ((res-handle-refreshed:auth-re save-access res-give:auth) a))
@@ -41,6 +41,6 @@
   |=  a/quay
   (in-code:auth a)
 ++  bak  |=(a/httr ((bak-save-tokens:auth-re save-access) a))
-::++  upd  *user-state
+++  upd  *user-state
 ::
 --

@@ -8,7 +8,7 @@
 ++  gsub                                                ::  replace chars
   |=  {a/@t b/@t t/@t}
   ^-  @t
-  ?~  t  t
+  ?:  =('' t)  t
   %+  add  (lsh 3 1 $(t (rsh 3 1 t)))
   =+  c=(mod t (bex 8))
   ?:(=(a c) b c)
@@ -18,8 +18,8 @@
   ?~  b  ''
   (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
 ::
-++  dbg-post  `purl`[[| `6.000 `/localhost] `/testing /]
-++  endpoint  |=({dom/(list cord) a/path} [[& ~ `dom] [~ a] ~])
+++  dbg-post  `purl`[`hart`[| `6.000 [%& /localhost]] `pork``/testing `quay`/]
+++  endpoint  |=({dom/(list cord) a/path} [[& ~ &+dom] [~ a] ~])
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  grab-json
   |*  {a/httr b/fist:jo}
@@ -31,10 +31,10 @@
 ::::
   ::
 |%
-++  token  ?(~ @t)
+++  token  ?($~ @t)
 ++  refresh  {tok/token needed/@da pending/_`?`|}
 ++  keys  cord:{cid/@t cis/@t}
-++  core-move  |*(a/* $&({sec-move _a} sec-move)) ::here's a change
+++  core-move  |*(a/* $^({sec-move _a} sec-move)) ::here's a change
 ++  decode-keys                       :: XX from bale w/ typed %jael
   |=(key/keys ((hard {cid/@t cis/@t $~}) (lore key)))
 --
@@ -47,7 +47,7 @@
 ++  client-id      cid:(decode-keys key)
 ++  client-secret  cis:(decode-keys key)
 ::
-++  urb-hart  [| `8.443 `/localhost]  :: XX get from eyre
+++  urb-hart  [| `8.443 [%& /localhost]]  :: XX get from eyre
 ++  toke-url  (endpoint dom code-exchange)
 ++  auth-url
   ^-  purl
@@ -63,7 +63,7 @@
 ++  redirect-uri  
   %-    crip    %-  earn
   =+  usr-knot=?:(state-usr '_state' (scot %ta usr))
-  [urb-hart `/~/ac/(join '.' (flop dom))/[usr-knot]/in ~]
+  `purl`[`hart`urb-hart `pork``/~/ac/(join '.' (flop dom))/[usr-knot]/in `quay`~]
 ::
 ++  out-filtered
   |=  {tok/token aut/$-(hiss hiss)}
@@ -73,13 +73,15 @@
 ++  out-quay
   |=  {nam/knot tok/token}
   %+  out-filtered  tok
-  |=(a=hiss %_(a r.p :_(r.p.a nam^`@t`tok)))
+  |=(a/hiss %_(a r.p :_(r.p.a nam^`@t`tok)))
 ::
 ++  out-math
   |=  ber/token
-  =+  hed=authorization/(cat 3 'Bearer ' `@t`ber)
+  =+  hed=(cat 3 'Bearer ' `@t`ber)
   %+  out-filtered  ber
-  |=(a/hiss %_(a q.q (~(add ja q.q.a) hed)))
+  |=  a/hiss  ^+  a
+  :: =.  p.a  dbg-post
+  %_(a q.q (~(add ja q.q.a) %authorization hed))
 ::
 ++  toke-req
   |=  {grant-type/cord quy/quay}  ^-  {$send hiss}
@@ -99,7 +101,7 @@
   =+  code=~|(%no-code (~(got by (malt a)) %code))
   (toke-req 'authorization_code' code+code ~)
 ::
-++  token-type  'token_type'^(cu cass silt):jo
+++  token-type  'token_type'^(cu cass sa):jo
 ++  expires-in  'expires_in'^ni:jo
 ++  access-token  'access_token'^so:jo
 ++  refresh-token  'refresh_token'^so:jo
