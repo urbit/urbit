@@ -73,6 +73,17 @@ _n_hint(u3_noun zep,
       return pro;
     }
 
+    case c3__live: {
+      if ( c3y == u3ud(hod) ) {
+        u3t_off(noc_o);
+        u3t_heck(hod);
+        u3t_on(noc_o);
+      } else {
+        u3z(hod);
+      }
+      return _n_nock_on(bus, nex);
+    }
+
     case c3__slog: {
       if ( !(u3C.wag_w & u3o_quiet) ) {
         u3t_off(noc_o);

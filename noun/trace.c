@@ -87,15 +87,14 @@ u3t_heck(u3_atom cog)
   //
   if ( &(u3H->rod_u) != u3R ) {
     u3a_road* rod_u;
-   
+ 
     rod_u = u3R;
     u3R = &(u3H->rod_u);
     {
-
       if ( 0 == u3R->pro.day ) { 
         u3R->pro.day = u3v_do("doss", 0);
       }
-      u3R->pro.day = u3dc("pi-heck", cog, u3R->pro.day);
+      u3R->pro.day = u3dc("pi-heck", u3a_take(cog), u3R->pro.day);
     }
     u3R = rod_u;
   }
