@@ -18,7 +18,7 @@
 ::  See the%github app for example usage.
 ::
 /?  314
-/-  rfc, gmail-label
+/-  rfc, gmail-label, gmail-message
 /+  http
 ::::
 /=  rfctext  /:  /%/rfc  /txt/
@@ -33,19 +33,39 @@
     ++  move  (pair bone card)
     ++  subscription-result
       $%  {$arch arch}
-          {$json json}      
+          {$json json}
           {$null $~}
+          {$inbox (list {thread-id/@t message-id/@t})}
+          {$message from/@t subject/@t}
       ==
     ++  card
       $%  {$diff subscription-result}
           {$hiss wire {$~ $~} $httr {$hiss hiss}}
       ==
+    ++  easy-ot  |*({key/@t parser/fist:jo} =+(jo (ot [key parser] ~)))
+    ++  ofis-google  ::  XX broken
+  =-  |=(a/cord (rash a fel))
+  =<  fel=(cook |~(a/@ `@t`(swap 3 a)) (bass 64 .))
+  =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
+  ^=  siw
+  ;~  pose
+     (cook |=(a/@ (sub a 'A')) (shim 'A' 'Z'))
+     (cook |=(a/@ (sub a 'G')) (shim 'a' 'z'))
+     (cook |=(a/@ (add a 4)) (shim '0' '9'))
+     (cold 62 (just '-'))
+     (cold 63 (just '_'))
+   ==
     --
 ::
-|_  {hid/bowl count/@ web-hooks/(map @t {id/@t listeners/(set bone)})}
+|_  $:  hid/bowl  count/@  
+        web-hooks/(map @t {id/@t listeners/(set bone)})
+        received-ids/(list @t)
+    ==
 
 ::  We can't actually give the response to pretty much anything
 ::  without blocking, so we just block unconditionally.
+::
+++  prep  ~&  'prep'  _`.  ::
 ::
 ++  peek
   |=  {ren/@tas pax/path}
@@ -92,11 +112,13 @@
 ++  sigh-httr
   |=  {wir/wire res/httr}
   ^-  {(list move) _+>.$}
+  :: ~&  wir+wir
   ?.  ?=({care @ @ @ *} wir)
-  ::  pokes don't return anything
-  ~&  poke+res
+    ::  pokes don't return anything
+    ~&  poke+res
     [~ +>.$]
   =+  arg=(path (cue (slav %uv i.t.t.wir)))
+  :: ~&  ittwir+i.t.t.wir
   :_  +>.$  :_  ~
   :+  ost.hid  %diff
   ?+  i.wir  null+~
@@ -114,7 +136,50 @@
     ::
   |-  ^-  subscription-result
   ?~  arg
-   [%json `json`u.jon]
+    =+  switch=t.t.t.t.wir
+    ?+  switch  [%json `json`u.jon]
+      {$messages $~}
+    =+  new-mezes=((ot messages+(ar (ot id+so 'threadId'^so ~)) ~):jo u.jon)
+    ::%+  turn  new-mezes
+    ::|=  id  
+    ::?<  ?=($~ new-mezes)
+    ::=.  received-ids  [new-mezes received-ids]
+    ::~&  received-ids
+    ::=.  received  
+    [%inbox (need new-mezes)]
+      ::
+      {$messages @t $~}
+      ::
+    :: =+  body-parser==+(jo (ot body+(ot data+(cu ofis-google so) ~) ~)) :: (ok /body/data so):jo
+    :: ~&  %.(u.jon (om (om |=(a/json (some -.a))):jo))
+    :: ~&  %.(u.jon (ot headers+(cu milt (ar (ot name+so value+so ~))) ~))
+    =+  ^-  $:  headers/{from/@t subject/@t}
+                ::body-text/wain
+            ==
+        ~|  u.jon
+        =-  (need (reparse u.jon))
+        ^=  reparse
+        =+  jo
+        =+  ^=  from-and-subject
+            |=  a/(map @t @t)  ^-  {@t @t}
+            [(~(got by a) 'From') (~(got by a) 'Subject')]
+        =+  ^=  text-body
+            |=  a/(list {@t @t})  ^-  wain
+            %-  lore
+            %-  ofis-google
+            (~(got by (~(gas by *(map @t @t)) a)) 'text/plain')
+        %+  easy-ot  %payload
+        %-  ot  :~
+          headers+(cu from-and-subject (cu ~(gas by *(map @t @t)) (ar (ot name+so value+so ~))))
+          :: parts+(cu text-body (ar (ot 'mimeType'^so body+(ot data+so ~) ~)))
+        ==
+    :: =+  parsed-headers==+(jo ((ot payload+(easy-ot 'headers' (ar some)) ~) u.jon)) :: 
+    :: =+  parsed-message==+(jo ((ot payload+(easy-ot 'parts' (ar body-parser)) ~) u.jon)) :: 
+    ::~&  [headers body-text]
+    ::=+  body==+(jo ((ot body+(easy-ot 'body' (easy-ot 'data' so))) parsed-message))
+    [%message headers]
+    ==
+   
   =+  dir=((om:jo some) u.jon)
   ?~  dir  json+(jobe err+s+%no-children ~)
   =+  new-jon=(~(get by u.dir) i.arg)
@@ -153,15 +218,14 @@
 ::
 ++  help
   |=  {ren/care style/@tas pax/path}
-  ~&  pax
   =^  query  pax
     =+  xap=(flop pax)
     ?~  xap  [~ ~]
     =+  query=(rush i.xap ;~(pfix wut yquy:urlp))
     ?~  query  [~ pax]
     [u.query (flop t.xap)]
-  =^  arg  pax  [+ -]:(split pax)
-  ~&  [pax=pax arg=arg query=query]
+  =^  arg  pax  ~|(pax [+ -]:(split pax))
+  ~|  [pax=pax arg=arg query=query]
   =|  mow/(list move)
   |%
   ::  Resolve core
