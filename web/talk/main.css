@@ -71,7 +71,23 @@ div.gram.same:hover div.meta {
 
 .exp {
   font-family: 'scp';
-  font-size: .9rem; }
+  font-size: .9rem;
+  max-height: 2rem; }
+  .exp .speech > span {
+    color: #fff;
+    background-color: #000;
+    padding: .3rem; }
+  .exp .fat {
+    max-height: 0;
+    transition: max-height .1s ease-in-out;
+    overflow: hidden; }
+  .exp .fat pre {
+    color: #fff; }
+  .exp:hover .fat {
+    max-height: 16rem;
+    overflow: scroll;
+    background-color: #000;
+    color: #fff; }
 
 .gram pre {
   background-color: transparent; }

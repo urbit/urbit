@@ -531,7 +531,7 @@ module.exports = recl({
     return window.util.scrollToBottom();
   },
   componentWillUpdate: function(props, state) {
-    var $window, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, sameAs, scrollTop;
+    var $window, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, results, sameAs, scrollTop;
     $window = $(window);
     scrollTop = $window.scrollTop();
     old = {};
@@ -541,19 +541,19 @@ module.exports = recl({
       old[key] = true;
     }
     lastSaid = null;
-    if (window.innerHeight + scrollTop > $('.writing').offset().top) {
-      ref1 = state.messages;
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        message = ref1[j];
-        nowSaid = [message.ship, message.thought.audience];
-        if (!old[message.key]) {
-          sameAs = _.isEqual(lastSaid, nowSaid);
-          scrollTop += sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST;
-        }
-        lastSaid = nowSaid;
+    ref1 = state.messages;
+    results = [];
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      message = ref1[j];
+      nowSaid = [message.ship, message.thought.audience];
+      if (!old[message.key]) {
+        sameAs = _.isEqual(lastSaid, nowSaid);
+        scrollTop += sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST;
       }
-      return this.setOffset = scrollTop;
+      lastSaid = nowSaid;
+      results.push(this.setOffset = scrollTop);
     }
+    return results;
   },
   componentDidUpdate: function(_props, _state) {
     var _messages, d, t;
@@ -15882,7 +15882,10 @@ var ReactDOMOption = {
       }
     });
 
-    nativeProps.children = content;
+    if (content) {
+      nativeProps.children = content;
+    }
+
     return nativeProps;
   }
 
@@ -22051,7 +22054,7 @@ module.exports = ReactUpdates;
 
 'use strict';
 
-module.exports = '0.14.6';
+module.exports = '0.14.7';
 },{}],121:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23146,6 +23149,7 @@ var warning = require('fbjs/lib/warning');
  */
 var EventInterface = {
   type: null,
+  target: null,
   // currentTarget is set when dispatching; no use in copying it here
   currentTarget: emptyFunction.thatReturnsNull,
   eventPhase: null,
@@ -23179,8 +23183,6 @@ function SyntheticEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEvent
   this.dispatchConfig = dispatchConfig;
   this.dispatchMarker = dispatchMarker;
   this.nativeEvent = nativeEvent;
-  this.target = nativeEventTarget;
-  this.currentTarget = nativeEventTarget;
 
   var Interface = this.constructor.Interface;
   for (var propName in Interface) {
@@ -23191,7 +23193,11 @@ function SyntheticEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEvent
     if (normalize) {
       this[propName] = normalize(nativeEvent);
     } else {
-      this[propName] = nativeEvent[propName];
+      if (propName === 'target') {
+        this.target = nativeEventTarget;
+      } else {
+        this[propName] = nativeEvent[propName];
+      }
     }
   }
 
