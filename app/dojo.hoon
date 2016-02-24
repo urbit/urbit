@@ -995,6 +995,13 @@
 ++  poke-sole-action
   |=  act/sole-action  ~|  poke+act  %.  act
   (wrap he-span):arm
+::
+++  poke-json
+  |=  jon/json
+  ^-  {(list move) _+>.$}
+  ~&  jon=jon
+  [~ +>.$]
+::
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=({a/wire b/tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
