@@ -6,10 +6,13 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}  $~  $~
+|=  $:  {now/@da eny/@uvI bec/beak}  
+        arg/$@($~ {number/@u $~})
+        $~
     ==
+?~  arg  $(arg [5 ~])
 :-  %noun
-%+  turn  (scag 5 .^((list {@t @t}) %gx /=gmail=/read/messages))
+%+  turn  (scag number.arg .^((list {@t @t}) %gx /=gmail=/read/messages))
 |=  {message-id/@t thread-id/@t}
 =+  .^({from/@t subject/@t} %gx /=gmail=/read/messages/[message-id])
-[from=from subject=(trip subject)]
+[from=from (trip subject)]
