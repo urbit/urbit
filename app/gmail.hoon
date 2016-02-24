@@ -35,7 +35,7 @@
       $%  {$arch arch}
           {$json json}
           {$null $~}
-          {$inbox (list {thread-id/@t message-id/@t})}
+          {$inbox (list {message-id/@t thread-id/@t})}
           {$message from/@t subject/@t}
       ==
     ++  card
@@ -84,8 +84,8 @@
 ::
 ++  poke-gmail-req
   |=  $:  method/meth  endpoint/path  quy/quay
-          ::mes/$?(message:rfc )
-          label-req:gmail-label
+          mes/message:rfc
+          :: label-req:gmail-label
       ==
   ^-  {(list move) _+>.$}
   ?>  ?=(valid-get-endpoint endpoint)
@@ -98,10 +98,9 @@
       `quay`[[%alt %json] ~] 
   ::
       :+  method  `math`(malt ~[content-type+['application/json']~])
-      ::=+  hoon-json-object=(joba %raw s/(message-to-rfc822:rfc mes))
-      ::=+  request-body=(tact (pojo hoon-json-object))
-      ::(some request-body)
-      ~
+      =+  hoon-json-object=(joba %raw s+(message-to-rfc822:rfc mes))
+      =+  request-body=(tact (pojo hoon-json-object))
+      (some request-body)
       ::(some (pojo label-req-to-json:gmail-label label-req:gmail-label ~)) XX
   ==
 ::

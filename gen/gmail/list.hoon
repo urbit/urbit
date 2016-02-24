@@ -10,6 +10,6 @@
     ==
 :-  %noun
 %+  turn  (scag 5 .^((list {@t @t}) %gx /=gmail=/read/messages))
-|=  {thread-id/@t email-id/@t}
-=+  .^({from/@t subject/@t} %gx /=gmail=/read/messages/[email-id])
+|=  {message-id/@t thread-id/@t}
+=+  .^({from/@t subject/@t} %gx /=gmail=/read/messages/[message-id])
 [from=from subject=(trip subject)]
