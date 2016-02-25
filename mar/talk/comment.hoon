@@ -1,5 +1,5 @@
 ::
-::::  /hoon/comment/write/mar
+::::  /hoon/comment/talk/mar
   ::
 /?    310
 !:

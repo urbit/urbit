@@ -72,6 +72,7 @@
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
+          {$write-comment path ship cord}               ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -1292,6 +1293,17 @@
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
     ?:(neu +>.$ ra-homes)
   ::
+  ++  ra-comment
+    |=  {pax/path txt/@t}
+    =.  ..ra-emit
+      %+  ra-emit  ost.hid
+      :*  %poke
+          /comment
+          [our.hid %hood]
+          [%write-comment pax src.hid txt]
+      ==
+    +>
+  ::
   ++  ra-know                                           ::  story monad
     |=  man/knot
     |*  fun/$-(_pa _+>)
@@ -2145,6 +2157,10 @@
       /talk-telegrams/(scot %da day)/[man]/talk
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
+::
+++  poke-talk-comment
+  |=  {pax/path txt/@t}  ^-  (quip move +>)
+  ra-abet:(ra-comment:ra pax txt)
 ::
 ++  poke-talk-save
   |=  man/knot
