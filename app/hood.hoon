@@ -114,6 +114,7 @@
 ++  poke-helm-verb            (wrap poke-verb):from-helm
 ++  poke-helm-begin           (wrap poke-begin):from-helm
 ++  poke-hood-sync            (wrap poke-sync):from-kiln
+++  poke-hood-init-sync       (wrap poke-init-sync):from-kiln
 ++  poke-kiln-cp              (wrap poke-cp):from-kiln
 ++  poke-kiln-label           (wrap poke-label):from-kiln
 ++  poke-kiln-merge           (wrap poke-merge):from-kiln

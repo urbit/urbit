@@ -213,7 +213,9 @@
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)
-        =.  +>  (sync %home our %base)
+        =.  +>  ?:  ?=(?($czar $pawn) can)
+                  (sync %home our %base)
+                (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
                 (sync %kids our %base)
         =.  +>  autoload
@@ -258,6 +260,16 @@
           :_  moz
           :*  hen  %pass  /sync  %g  %deal  [our our]
               ram  %poke  %hood-sync  -:!>(syn)  syn
+          ==
+        ==
+      ::
+      ++  init-sync
+        |=  syn/{desk ship desk}
+        %_    +>.$
+            moz
+          :_  moz
+          :*  hen  %pass  /init-sync  %g  %deal  [our our]
+              ram  %poke  %hood-init-sync  -:!>(syn)  syn
           ==
         ==
       ::
