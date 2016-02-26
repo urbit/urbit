@@ -2,7 +2,7 @@
 ::::  /hoon/comments/tree/mar
   ::
 /?    310
-/+    react
+/+    react, time-to-id
 !:
 ::::
   ::
@@ -15,6 +15,7 @@
     %+  turn
       (sort all |=({a/* b/*} (lor b a)))
     |=  {a/time b/manx}  ^-  ^json
+    =.  a.g.b  [id+(time-to-id a) a.g.b]
     (jobe time+(jode a) body+(react-to-json:react b) ~)
   --
 ++  grab  |%                                            ::  convert from

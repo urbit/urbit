@@ -3,7 +3,7 @@
   ::                                                    ::  ::   
 /?    310
 /-    talk, sole
-/+    talk, sole
+/+    talk, sole, time-to-id
 /=    seed  /~  !>(.)
 ::
 ::::
@@ -1303,14 +1303,15 @@
           [our.hid %hood]
           [%write-comment pax src.hid txt]
       ==
-    =+  =+(xap=(flop pax) ?~(xap nam="/" nam=<i.xap>))
+    =+  =+(xap=(flop pax) ?~(xap nam="" nam=<i.xap>))   :: file name
+    =+  fra=(crip (time-to-id now.hid))                 :: url fragment
     %+  ra-record  (main our.hid)
     :^  src.hid  (shaf %comt eny.hid)
       [[[%& our.hid (main our.hid)] *envelope %pending] ~ ~]
     :+  now.hid  (sy /comment eyre+pax ~)
     :-  %mor  :~
-      [%app %tree (crip "comment on {nam}")]
-      [%fat text+(lore txt) [%url [ra-base-hart `pax ~] ~]]
+      [%fat text+(lore txt) [%url [ra-base-hart `pax ~] `fra]]
+      [%app %tree (crip "comment on /{nam}")]
     ==
   ::
   ++  ra-know                                           ::  story monad
