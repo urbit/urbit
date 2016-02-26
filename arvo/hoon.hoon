@@ -9890,6 +9890,7 @@
                   (word %wrap expa)
                   (word %code expa)
                   (word %need hinh)
+                  moar
                 ==
               ==
             :-  '.'
@@ -10038,6 +10039,13 @@
       |*  {key/cord har/_expa}
       ;~(pfix (jest key) (stag key (toad har)))
     ::
+    ++  moar                                            ::  :moar hack
+      %+  cook
+        |=  {a/(list) b/(list (pair wing twig))}
+        ^-  twig
+        [%make [[%| (lent a) `%$] ~] b]
+      ;~(pfix (jest %moar) ;~(plug (star (jest %r)) (toad |.((butt rick)))))
+    ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
     ++  butt  |*  zor/rule                              ::  closing == if tall
@@ -10105,6 +10113,7 @@
     ++  exps  |.((butt hank))                           ::  closed gapped twigs
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
     ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
+    ++  expv  |.((butt rick))                           ::  just changes
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::
     ::    tiki expansion for %wt runes
