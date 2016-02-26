@@ -1985,7 +1985,7 @@
       $app  tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip p.sep)}]" leaf+(trip q.sep)]]
       $url  url+(crip (earf p.sep))
       $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
-      $fat  [%mor tan+(tr-rend-tors p.sep) $(sep q.sep) ~]
+      $fat  [%mor $(sep q.sep) tan+(tr-rend-tors p.sep) ~]
     ==
   ::
   ++  tr-rend-tors
@@ -2001,8 +2001,8 @@
     %-  ~(gas in *(set partner))
     (turn (~(tap by aud)) |=({a/partner *} a))
   ::
-  ++  chow
-    |=  {len/@u txt/tape}
+  ++  tr-chow
+    |=  {len/@u txt/tape}  ^-  tape
     ?:  (gth len (lent txt))  txt
     =.  txt  (scag len txt)
     |-
@@ -2012,19 +2012,29 @@
     ?~  t.txt  "…"
     [i.txt $(txt t.txt)]
   ::
+  ++  tr-both
+    |=  {a/tape b/tape}  ^-  tape
+    ?:  (gth (lent a) 62)  (tr-chow 64 a)
+    %+  weld  a
+    (tr-chow (sub 64 (lent a)) "  {b}")
+  ::
   ++  tr-text
     |=  oug/?
     ^-  tape
     ?+    -.sep  ~&(tr-lost+sep "")
+        $mor
+      ?~  p.sep  ~&(%tr-mor-empty "")
+      |-  ^-  tape
+      ?~  t.p.sep  ^$(sep i.p.sep)
+      (tr-both ^$(sep i.p.sep) $(p.sep t.p.sep))
+    ::
         $fat
-      =+  rem=$(sep q.sep)
-      ?:  (gth (lent rem) 62)  (chow 64 rem)
-      =-  "{rem}{(chow (sub 64 (lent rem)) "  {-}")}"
+      %+  tr-both  $(sep q.sep)
       ?+  -.p.sep  "..."
         $tank  ~(ram re %rose [" " `~] +.p.sep)
       ==
     ::
-        $exp  (chow 66 '#' ' ' (trip p.sep))
+        $exp  (tr-chow 66 '#' ' ' (trip p.sep))
         $url  =+  ful=(earf p.sep)
               ?:  (gth 64 (lent ful))  ['/' ' ' ful]
               :+  '/'  '_' 
@@ -2047,7 +2057,7 @@
       (weld " " txt)
     ::
         $app
-      (chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
+      (tr-chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
     ==
   -- 
 ::
