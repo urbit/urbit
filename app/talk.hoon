@@ -1303,15 +1303,24 @@
           [our.hid %hood]
           [%write-comment pax src.hid txt]
       ==
-    =+  =+(xap=(flop pax) ?~(xap nam="" nam=<i.xap>))   :: file name
+    =+  man=%comments
+    =.  ..ra-config
+      ?:  (~(has by stories) man)
+        ..ra-config
+      %+  ra-config  man
+      [*(set partner) 'letters to the editor' [%brown ~]]
+    =+  nam==+(xap=(flop pax) ?~(xap "" (trip i.xap)))  :: file name
     =+  fra=(crip (time-to-id now.hid))                 :: url fragment
-    %+  ra-record  (main our.hid)
-    :^  src.hid  (shaf %comt eny.hid)
-      [[[%& our.hid (main our.hid)] *envelope %pending] ~ ~]
-    :+  now.hid  (sy /comment eyre+pax ~)
-    :-  %mor  :~
-      [%fat text+(lore txt) [%url [ra-base-hart `pax ~] `fra]]
-      [%app %tree (crip "comment on /{nam}")]
+    %^  ra-consume  &
+      src.hid
+    :*  (shaf %comt eny.hid)
+        (my [[%& our.hid man] *envelope %pending] ~)
+        now.hid
+        (sy /comment eyre+pax ~)
+      :-  %mor  :~
+        [%fat text+(lore txt) [%url [ra-base-hart `pax ~] `fra]]
+        [%app %tree (crip "comment on /{nam}")]
+      ==
     ==
   ::
   ++  ra-know                                           ::  story monad
