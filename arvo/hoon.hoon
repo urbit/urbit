@@ -27,6 +27,7 @@
 ++  abel  typo                                          ::  original sin: span
 ++  ache  |*  {a/$-(* *) b/$-(* *)}                     ::  either a or b
           $%({$| p/b} {$& p/a})                         ::    b default
+++  atom  @                                             ::  just an atom
 ++  axis  @                                             ::  tree address
 ++  bank  (list @cF)                                    ::  UTF-32 string
 ++  base                                                ::  base mold
@@ -280,7 +281,7 @@
     {$new p/twig q/twig}                                ::  =|  push bunt
     {$fix p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
     {$var p/taco q/twig r/twig}                         ::  =;  typed variable
-    {$rev p/twig q/taco r/twig}                         ::  =/  =;(q p r)
+    {$rev p/taco q/twig r/twig}                         ::  =/  =;(q p r)
     {$set p/wing q/twig r/twig}                         ::  =.  r with p as q
     {$rap p/twig q/twig}                                ::  =<  =>(q p)
     {$nip p/twig q/twig}                                ::  =-  =+(q p)
@@ -7250,7 +7251,7 @@
         [%pin [%name p.gen q.gen] r.gen]
       [%pin [%cast [%coat p.gen] q.gen] r.gen]
     ::
-        {$rev *}  [%var q.gen p.gen r.gen]
+        {$rev *}  [%var p.gen r.gen q.gen]
         {$set *}
       [%per [%keep [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
     ::
@@ -9862,6 +9863,8 @@
                   (word %sip expt)
                   (word %fix expp)
                   (word %rap expb)
+                  (word %var expo)
+                  (word %rev expo)
                   (word %per expb)
                   (word %nip expb)
                   (word %aka expl)
@@ -9950,6 +9953,8 @@
                     ['.' (rune dot %set expq)]
                     ['^' (rune ket %sip expt)]
                     [':' (rune col %fix expp)]
+                    [';' (rune sem %var expo)]
+                    ['/' (rune fas %rev expo)]
                     ['<' (rune gal %rap expb)]
                     ['>' (rune gar %per expb)]
                     ['-' (rune hep %nip expb)]
