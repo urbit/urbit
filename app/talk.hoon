@@ -1293,6 +1293,7 @@
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
     ?:(neu +>.$ ra-homes)
   ::
+  ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/fake)
   ++  ra-comment
     |=  {pax/path txt/@t}
     =.  ..ra-emit
@@ -1302,7 +1303,15 @@
           [our.hid %hood]
           [%write-comment pax src.hid txt]
       ==
-    +>
+    =+  =+(xap=(flop pax) ?~(xap nam="/" nam=<i.xap>))
+    %+  ra-record  (main our.hid)
+    :^  src.hid  (shaf %comt eny.hid)
+      [[[%& our.hid (main our.hid)] *envelope %pending] ~ ~]
+    :+  now.hid  (sy /comment eyre+pax ~)
+    :-  %mor  :~
+      [%app %tree (crip "comment on {nam}")]
+      [%fat text+(lore txt) [%url [ra-base-hart `pax ~] ~]]
+    ==
   ::
   ++  ra-know                                           ::  story monad
     |=  man/knot
