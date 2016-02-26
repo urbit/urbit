@@ -10371,54 +10371,65 @@
     (welp (scow %ud (div (mul 100 euq.mon) tot)) "e ")
   ==
 ::
-++  pi-tell                                             ::  produce dump
+++  pi-tell                                              ::  produce dump
   |=  day/doss
   ^-  (list tape)
   ?:  =(day *doss)  ~
   =+  tot=(pi-moth mon.day)
   ;:  welp
-    [(welp "events: " (pi-mumm mon.day)) ~]
-  ::
-    %+  turn
-      (~(tap by hit.day) ~)
-    |=  {nam/term num/@ud}
-    :(welp (trip nam) ": " (scow %ud num))
     ["" ~]
   ::
+    ^-  wall
     %-  zing
     ^-  (list (list tape))
     %+  turn
-      %+  sort  (~(tap by cut.day))
-      |=  {one/(pair path hump) two/(pair path hump)}
-      (gth (pi-moth mon.q.one) (pi-moth mon.q.two))
-    |=  {pax/path hup/hump}
-    =+  ott=(pi-moth mon.hup)
+      =-  (sort - lor)
+      %+  turn  (~(tap by cut.day))
+      |=({p/path q/hump} [(pi-moth mon.q) p q])
+    |=  {ott/@u pax/path hup/hump}
+    ?:  (lth (mul 15 ott) tot)  ~                       :: omit misc
     ;:  welp
       [(welp "label: " (spud pax)) ~]
       [(welp "price: " (scow %ud (div (mul 100 ott) tot))) ~]
       [(welp "shape: " (pi-mumm mon.hup)) ~]
     ::
-      ?:  =(~ out.hup)  ~
-      :-  "into:"
-      %+  turn
-        %+  sort  (~(tap by out.hup) ~)
-        |=({{* a/@ud} {* b/@ud}} (gth a b))
-      |=  {pax/path num/@ud}
-      ^-  tape
-      :(welp "  " (spud pax) ": " (scow %ud num))
-    ::
       ?:  =(~ inn.hup)  ~
+      ?:  &(?=([^ ~ ~] inn.hup) =(ott q.n.inn.hup))
+        ["from: {(spud p.n.inn.hup)}" ~]
       :-  "from:"
-      %+  turn
+      ^-  wall
+      %+  murn
         %+  sort  (~(tap by inn.hup) ~)
-        |=({{* a/@ud} {* b/@ud}} (gth a b))
+        |=({{* a/@ud} {* b/@ud}} (lth a b))
       |=  {pax/path num/@ud}
-      ^-  tape
-      :(welp "  " (spud pax) ": " (scow %ud num))
+      ^-  (unit tape)
+      ?:  (lth (mul 20 num) ott)  ~
+      =.  num  (div (mul 100 num) ott)
+      (some :(welp "  " (spud pax) ": " (scow %ud num)))
+    ::
+      ?:  =(~ out.hup)  ~
+      :: ?:  &(?=([^ ~ ~] out.hup) =(ott q.n.out.hup))
+      ::   ["into: {(spud p.n.out.hup)}" ~]
+      :-  "into:"
+      ^-  wall
+      %+  murn
+        %+  sort  (~(tap by out.hup) ~)
+        |=({{* a/@ud} {* b/@ud}} (lth a b))
+      |=  {pax/path num/@ud}
+      ^-  (unit tape)
+      ?:  (lth (mul 20 num) ott)  ~
+      =.  num  (div (mul 100 num) ott)
+      (some :(welp "  " (spud pax) ": " (scow %ud num)))
     ::
       ["" ~]
-      ~
     ==
+  ::
+    [(welp "events: " (pi-mumm mon.day)) "" ~]
+  ::
+    %+  turn
+      (~(tap by hit.day) ~)
+    |=  {nam/term num/@ud}
+    :(welp (trip nam) ": " (scow %ud num))
   ==
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -275,6 +275,9 @@ module.exports = query({
     return $('body').on('click', 'a', function(e) {
       var href;
       href = $(this).attr('href');
+      if (href[0] === "#") {
+        return true;
+      }
       if (href && !/^https?:\/\//i.test(href)) {
         e.preventDefault();
         if ((href != null ? href[0] : void 0) !== "/") {
@@ -301,10 +304,10 @@ module.exports = query({
     }
     href_parts[0] = next;
     if (hist !== false) {
-      history.pushState({}, "", util.basepath(href_parts.join("")));
+      history.pushState({}, "", util.basepath(href_parts.join("#")));
     }
     if (next !== this.props.path) {
-      React.unmountComponentAtNode($('#body')[0]);
+      ReactDOM.unmountComponentAtNode($('#body')[0]);
       TreeActions.setCurr(next);
       return rend(BodyComponent({}, ""), $('#body')[0]);
     }
@@ -396,15 +399,22 @@ module.exports = function(queries, Child, load) {
       }
     },
     stateFromStore: function() {
-      var fresh, ref1;
-      fresh = TreeStore.fulfill(this.getPath(), queries);
+      var fresh, got, path;
+      path = this.getPath();
+      fresh = TreeStore.fulfill(path, queries);
+      if (!((this.state != null) && path === this.state.path)) {
+        got = fresh;
+      } else {
+        got = this.mergeWith(this.state.got, fresh);
+      }
       return {
+        path: path,
         fresh: fresh,
-        got: this.mergeWith((ref1 = this.state) != null ? ref1.got : void 0, fresh)
+        got: got
       };
     },
     mergeWith: function(have, fresh, _queries) {
-      var got, k, kid, ref1, ref2, ref3, ref4;
+      var got, k, kid, ref1, ref2, ref3;
       if (have == null) {
         have = {};
       }
@@ -424,11 +434,11 @@ module.exports = function(queries, Child, load) {
         if (fresh.kids == null) {
           got.kids = have.kids;
         } else {
-          got.kids = (ref2 = _.clone(have.kids)) != null ? ref2 : {};
-          ref3 = fresh.kids;
-          for (k in ref3) {
-            kid = ref3[k];
-            got.kids[k] = this.mergeWith((ref4 = got.kids) != null ? ref4[k] : void 0, kid, _queries.kids);
+          got.kids = {};
+          ref2 = fresh.kids;
+          for (k in ref2) {
+            kid = ref2[k];
+            got.kids[k] = this.mergeWith((ref3 = have.kids) != null ? ref3[k] : void 0, kid, _queries.kids);
           }
         }
       }
@@ -629,7 +639,7 @@ module.exports = query({
     })(this);
     containerClas = clas({
       "col-md-10": true,
-      "col-md-offset-2": this.props.meta.anchor !== 'none',
+      "col-md-offset-3": this.props.meta.anchor !== 'none',
       body: true
     });
     bodyClas = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
@@ -647,6 +657,12 @@ module.exports = query({
         curr: this.props.name
       }), extra('comments'), extra('footer'))
     ]);
+  }
+}), recl({
+  render: function() {
+    return div({
+      className: "col-md-offset-3 col-md-10"
+    }, rele(load));
   }
 }));
 
@@ -933,7 +949,9 @@ module.exports = recl({
 
 
 },{"./Reactify.coffee":14}],10:[function(require,module,exports){
-var a, div, hr, li, query, reactify, recl, ref, ul;
+var a, clas, div, hr, li, query, reactify, recl, ref, ul;
+
+clas = require('classnames');
 
 reactify = require('./Reactify.coffee');
 
@@ -951,11 +969,7 @@ module.exports = query({
 }, recl({
   displayName: "Kids",
   render: function() {
-    var _k, d, elem, k, keyed, keys, klass, ref1, ref2, ref3, ref4, sorted, str, v;
-    klass = "kids";
-    if (this.props.dataType) {
-      klass += " " + this.props.dataType;
-    }
+    var _k, d, elem, k, keyed, keys, ref1, ref2, ref3, ref4, sorted, str, v;
     sorted = true;
     keyed = {};
     ref1 = this.props.kids;
@@ -993,8 +1007,12 @@ module.exports = query({
     if (this.props.sortBy === 'date') {
       keys.reverse();
     }
+    k = clas({
+      kids: true
+    }, this.props.className);
     return div({
-      className: klass
+      className: k,
+      key: "kids"
     }, (function() {
       var i, len, ref5, results;
       results = [];
@@ -1003,7 +1021,8 @@ module.exports = query({
         elem = (ref5 = this.props.kids[keyed[k]]) != null ? ref5 : "";
         results.push([
           div({
-            key: keyed[k]
+            key: keyed[k],
+            id: keyed[k]
           }, reactify(elem.body)), hr({})
         ]);
       }
@@ -1013,7 +1032,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":14}],11:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":14,"classnames":25}],11:[function(require,module,exports){
 var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul, util;
 
 clas = require('classnames');
@@ -1098,6 +1117,12 @@ module.exports = query({
         continue;
       }
       href = util.basepath(path);
+      if (this.props.linkToFragments != null) {
+        href = "#" + item;
+      }
+      if (this.props.childIsFragment != null) {
+        href = (util.basepath(this.props.path)) + "#" + item;
+      }
       if (elem.meta.link) {
         href = elem.meta.link;
       }
@@ -1640,9 +1665,14 @@ module.exports = query({
     return clearInterval(this.int);
   },
   collectHeader: function(arg) {
-    var c, ga, gn;
+    var c, comp, ga, gn;
     gn = arg.gn, ga = arg.ga, c = arg.c;
-    if (gn && gn[0] === 'h' && parseInt(gn[1]) !== NaN) {
+    if (this.props.match) {
+      comp = gn === this.props.match;
+    } else {
+      comp = gn && gn[0] === 'h' && parseInt(gn[1]) !== NaN;
+    }
+    if (comp) {
       ga = _.clone(ga);
       ga.onClick = this._click(ga.id);
       delete ga.id;
@@ -1654,24 +1684,28 @@ module.exports = query({
     }
   },
   parseHeaders: function() {
-    var i, len, ref, ref1, v;
+    var contents, i, len, ref, ref1, v;
     if (this.props.body.c) {
       ref = this.props.body.c;
       for (i = 0, len = ref.length; i < len; i++) {
         v = ref[i];
         if (v.gn === 'div' && ((ref1 = v.ga) != null ? ref1.id : void 0) === "toc") {
+          contents = [{
+              gn: "h1",
+              ga: {
+                className: "t"
+              },
+              c: ["Table of contents"]
+            }].concat(slice.call(_.filter(v.c.map(this.collectHeader))));
+          if (this.props.noHeader) {
+            contents.shift();
+          }
           return {
             gn: "div",
             ga: {
               className: "toc"
             },
-            c: [{
-                gn: "h1",
-                ga: {
-                  className: "t"
-                },
-                c: ["Table of contents"]
-              }].concat(slice.call(_.filter(v.c.map(this.collectHeader))))
+            c: contents
           };
         }
       }
@@ -1729,11 +1763,15 @@ $(function() {
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":7,"./utils/scroll.coffee":23,"./utils/util.coffee":24}],21:[function(require,module,exports){
-var dedup, util;
+var dedup, pending, util, waspWait;
 
 util = require('../utils/util.coffee');
 
 dedup = {};
+
+pending = {};
+
+waspWait = [];
 
 module.exports = {
   refresh: function() {
@@ -1749,11 +1787,17 @@ module.exports = {
       return;
     }
     dedup[url] = true;
+    pending[url] = true;
     return $.get(url, {}, function(data, status, xhr) {
       var dep;
+      delete pending[url];
       dep = urb.getXHRWasp(xhr);
       urb.sources[dep] = url;
-      urb.waspData(dep);
+      waspWait.push(dep);
+      if (_.isEmpty(pending)) {
+        waspWait.map(urb.waspData);
+        waspWait = [];
+      }
       if (cb) {
         return cb(null, data);
       }
