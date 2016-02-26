@@ -782,7 +782,7 @@
   ::
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host  `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
-  ::                  [| [~ 8.445] `/localhost]       :: XX testing
+  ::                  [| [~ 8.443] `/localhost]       :: XX testing
   ::
   ++  ames-gram
     |=({him/ship gam/gram} (pass-note ~ %a %wont [our him] [%e -.gam] +.gam))
@@ -1563,9 +1563,28 @@
   ..^$(+>- old)
 ::
 ++  scry
-  |=  {our/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
-  ^-  (unit (unit (pair mark *)))
-  ~
+  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+  ^-  (unit (unit cage))
+  =+  our=(need hov)                  :: XX single home
+  =+  ska=(sloy ski)
+  =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
+  ?.  ?=($$ ren)  [~ ~]
+  ?.  ?=($$ -.lot)  [~ ~]
+  ?+    syd  [~ ~]
+      $host
+    %-  (lift (lift |=(a/hart [%hart !>(a)])))
+    ^-  (unit (unit hart))
+    ?.  =(our who)
+      ?.  =([%da now] p.lot)  [~ ~]
+      ~&  [%e %scry-foreign-host who]
+      ~  :: XX add non-scry binding to $hat gram
+    =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
+    ?+  p.lot  [~ ~]
+      {$tas $fake}  ``[& [~ 8.443] %& /localhost]       :: XX from unix
+      {$tas $real}  
+        ``~(our-host ye [`duct`~[/] [now eny our sky] ~] bol)
+    ==
+  ==
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
