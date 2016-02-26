@@ -595,14 +595,6 @@
       |=  {cay/cage cig/dojo-config}
       ^-  {wire silk}
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
-        ?:  ?=({$core *} p.q.cay)
-          ::
-          ::  naked trap
-          ::
-          ?.  &(?=($~ p.cig) ?=($~ q.cig))     
-            ~|(%no-argument !!)
-          :-  /noun
-          [%ride [%limb %$] (dy-silk-vase q.cay)]
         ::  
         ::  naked gate
         ::
