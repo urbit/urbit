@@ -280,8 +280,8 @@
   ::                                            ::::::  compositions
     {$new p/twig q/twig}                                ::  =|  push bunt
     {$fix p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
-    {$var p/taco q/twig r/twig}                         ::  =;  typed variable
-    {$rev p/taco q/twig r/twig}                         ::  =/  =;(q p r)
+    {$var p/taco q/twig r/twig}                         ::  =/  typed variable
+    {$rev p/taco q/twig r/twig}                         ::  =;  =/(q p r)
     {$set p/wing q/twig r/twig}                         ::  =.  r with p as q
     {$rap p/twig q/twig}                                ::  =<  =>(q p)
     {$nip p/twig q/twig}                                ::  =-  =+(q p)
@@ -7231,12 +7231,12 @@
         [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
       ==                                                ::
     ::
-        {$fry *}                                       ::                  ;;
-      :+  %per  [%name %v %$ 1]                        ::  =>  v=.
-      :+  %pin  :+  %name  %a                          ::  =+  ^=  a
-                 [%per [%limb %v] p.gen]               ::  =>(v {p.gen})
-      :+  %pin  [%name %b [%per [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
-      :+  %pin                                         ::  =+  c=(a b)
+        {$fry *}                                        ::                  ;;
+      :+  %per  [%name %v %$ 1]                         ::  =>  v=.
+      :+  %pin  :+  %name  %a                           ::  =+  ^=  a
+                 [%per [%limb %v] p.gen]                ::  =>(v {p.gen})
+      :+  %pin  [%name %b [%per [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
+      :+  %pin                                          ::  =+  c=(a b)
         [%name %c [%call [%limb %a] [%limb %b] ~]]      ::
       [%sure [%same [%limb %c] [%limb %b]] [%limb %c]]  ::  ?>(=(c b) c)
     ::
@@ -7255,17 +7255,19 @@
         {$set *}
       [%per [%keep [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
     ::
-        {$sip *}                                       ::                  =^
+        {$sip *}                                        ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                 ::
-      :+  %per  [%name %v %$ 1]                        ::  =>  v=.
-      :+  %pin  [%name %a %per [%limb %v] r.gen]      ::  =+  a==>(v \r.gen)
-      :^  %set  wuy  [%rap [%$ 3] [%limb %a]]         ::  =.  \wuy  +.a
-      :+  %per  :-  ?@  p.gen                          ::
+      :+  %per  [%name %v %$ 1]                         ::  =>  v=.
+      :+  %pin  [%name %a %per [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
+      :^  %set  wuy  [%rap [%$ 3] [%limb %a]]           ::  =.  \wuy  +.a
+      :+  %per  :-  ?@  p.gen                           ::
                        :+  %name  p.gen                 ::  =>  :-  ^=  \p.gen
-                       [%rap [%$ 2] [%limb %a]]        ::          -.a
-                     :+  %cast  [%coat p.gen]           ::  =>  :-  ^-  \p.gen
-                     [%rap [%$ 2] [%limb %a]]          ::          -.a
-                 [%limb %v]                             ::      v
+                       [%rap [%$ 2] [%limb %a]]         ::          -.a
+                     :+  %cast  
+                        :+  %coat  -.p.gen 
+                        [%per [%limb %v] +.p.gen]       ::  =>  :-  ^-  \p.gen
+                     [%rap [%$ 2] [%limb %a]]           ::          -.a
+                [%limb %v]                              ::      v
       s.gen                                             ::  s.gen
     ::
         {$rap *}  [%per q.gen p.gen]
@@ -9954,8 +9956,8 @@
                     ['.' (rune dot %set expq)]
                     ['^' (rune ket %sip expt)]
                     [':' (rune col %fix expp)]
-                    [';' (rune sem %var expo)]
-                    ['/' (rune fas %rev expo)]
+                    ['/' (rune fas %var expo)]
+                    [';' (rune sem %rev expo)]
                     ['<' (rune gal %rap expb)]
                     ['>' (rune gar %per expb)]
                     ['-' (rune hep %nip expb)]
