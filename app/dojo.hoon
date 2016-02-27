@@ -2,7 +2,7 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
-/-  sole                                                ::  console structures
+/-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
 [. sole]
 ::                                                      ::  ::
@@ -999,6 +999,12 @@
 ++  poke-sole-action
   |=  act/sole-action  ~|  poke+act  %.  act
   (wrap he-span):arm
+::
+++  poke-lens-command
+  |=  com/command:lens
+  ^-  {(list move) _+>.$}
+  ~&  com=`*`com
+  [~ +>.$]
 ::
 ++  poke-json
   |=  jon/json

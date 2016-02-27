@@ -1262,7 +1262,7 @@
         ==
       ::
           $lens
-        $(hem [%mess [our %dojo] %json /lens p.hem])
+        $(hem [%mess [our %dojo] %lens-command /lens p.hem])
         ::  :-  %|
         ::  =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
         ::  =+  vew=(ire-ix (oryx-to-ixor orx))
@@ -1902,4 +1902,3 @@
     q.hin
   [mos ..^$]
 --
-

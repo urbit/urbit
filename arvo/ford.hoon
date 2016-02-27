@@ -1674,7 +1674,7 @@
             =-  (flaw cof leaf+"{<p.cay>} data with bad diff" -)
             [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
           =+  pac=(role (lurk (lore u.txt) u.dif))
-          (fine cof `gage`[%& p.cay [%atom %t ~] (end 3 (dec (met 3 pac)) pac)])
+          (fine cof `gage`[%& p.cay [%atom %t ~] pac])
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
