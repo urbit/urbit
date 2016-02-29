@@ -4819,6 +4819,38 @@
       $(i +(i), tez t.tez, our i.tez)
     $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
 ::
+++  lune                                                ::  cord by unix line
+  ~/  %lune
+  |=  txt/@t
+  ?~  txt
+    ^-  (list @t)  ~
+  =+  [byt=(rip 3 txt) len=(met 3 txt)]
+  =|  {lin/(list @t) off/@}
+  ^-  (list @t)
+  %-  flop
+  |-  ^+  lin
+  ?:  =(off len)
+    ~|  %noeol  !!
+  ?:  =((snag off byt) 10)
+    ?:  =(+(off) len)
+      [(rep 3 (scag off byt)) lin]
+    %=  $
+      lin  [(rep 3 (scag off byt)) lin]
+      byt  (slag +(off) byt)
+      len  (sub len +(off))
+      off  0
+    ==
+  $(off +(off))
+::
+++  nule                                                ::  lines to unix cord
+  ~/  %nule
+  |=  lin/(list @t)
+  ^-  @t
+  %+  can  3
+  %+  turn  lin
+  |=  t/@t
+  [+((met 3 t)) (cat 3 t 10)]
+::
 ++  lump                                                ::  apply patch
   |=  {don/udon src/*}
   ^-  *
