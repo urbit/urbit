@@ -3,16 +3,16 @@
 ::::  /hoon/rss-xml/ren
   ::
 /?    310
-/=  sum  /snip/
+/=  sum  /&snip&elem&/|(/elem/ /~[;div;])
 /=  kid  /^  (map knot {marl marl})
-         /_  /snip/
+         /_  /&snip&/elem/
 /$    |=({bem/beam *} [our=p.bem tub=(slag 1 (flop s.bem))])
 !:
 ::::  ~fyr, ~tasfyn-partyv
   ::
-~&  [sum=sum kid=kid]
+::~&  [sum=sum kid=kid]
 ::  Link from relative path
-=+  hok=`hart`[& ~ &+/org/urbit/(rsh 3 1 (scot %p our))]
+=+  hok=.^(hart %e /(scot %p our)/host/real)
 =+  ref=|=(a/path (earn hok `(weld tub a) ~))
 ::  urb:front attrs confuse RSS validators, readers
 =+  no-meta=|=(a/marl ^+(a ?~(a ~ ?.(?=($meta n.g.i.a) a $(a t.a)))))

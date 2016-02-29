@@ -53,7 +53,7 @@ module.exports = {
     if (path[0] !== "/") {
       path = "/" + path;
     }
-    return TreePersistence.put("write-comment", path, text);
+    return TreePersistence.put("talk-comment", path, text);
   },
   setCurr: function(path) {
     return TreeDispatcher.handleViewAction({
@@ -1804,12 +1804,14 @@ module.exports = {
     });
   },
   put: function(mark, pax, txt) {
+    var appl;
+    appl = /[a-z]*/.exec(mark)[0];
     return urb.send({
       pax: pax,
       txt: txt
     }, {
       mark: mark,
-      appl: 'hood'
+      appl: appl
     });
   },
   encode: function(obj) {
