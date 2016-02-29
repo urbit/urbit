@@ -1293,7 +1293,7 @@
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
     ?:(neu +>.$ ra-homes)
   ::
-  ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/fake)
+  ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
   ++  ra-comment
     |=  {pax/path txt/@t}
     =.  ..ra-emit
