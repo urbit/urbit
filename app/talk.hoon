@@ -1304,11 +1304,24 @@
           [%write-comment pax src.hid txt]
       ==
     =+  man=%comments
-    =.  ..ra-config
-      ?:  (~(has by stories) man)
-        ..ra-config
-      %+  ra-config  man
-      [*(set partner) 'letters to the editor' [%brown ~]]
+    ?:  (~(has by stories) man)
+      (ra-consume-comment man pax txt)
+    =.  ..ra-apply
+      %+  ra-apply  our.hid
+      :+  %design  man
+      :-  ~  :-  ~
+      :-  'letters to the editor'
+      [%brown ~] 
+    =.  ..ra-consume
+      %^  ra-consume  &  our.hid
+      :^    (shaf %init eny.hid)  
+          (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+        now.hid
+      [~ %app %tree 'receiving comments, ;join %comments for details']
+    (ra-consume-comment man pax txt)
+  ::
+  ++  ra-consume-comment
+    |=  {man/knot pax/path txt/@t}  ^+  +>
     =+  nam==+(xap=(flop pax) ?~(xap "" (trip i.xap)))  :: file name
     =+  fra=(crip (time-to-id now.hid))                 :: url fragment
     %^  ra-consume  &

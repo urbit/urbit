@@ -340,40 +340,83 @@ module.exports = recl({
     }
     return this.props._handlePm(user);
   },
-  renderSpeech: function(speech) {
-    var con, x;
+  renderSpeech: function(arg) {
+    var app, con, exp, fat, lin, mor, tax, url, x;
+    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat;
     switch (false) {
-      case !((con = speech.lin) || (con = speech.app) || (con = speech.exp) || (con = speech.tax)):
+      case !(con = lin || app || exp || tax):
         return con.txt;
-      case !(con = speech.url):
+      case !url:
         return a({
-          href: con.txt,
+          href: url.txt,
           target: "_blank",
           key: "speech"
-        }, con.txt);
-      case !(con = speech.mor):
-        return con.map(this.renderSpeech);
+        }, url.txt);
+      case !mor:
+        return mor.map(this.renderSpeech);
+      case !fat:
+        return [
+          this.renderSpeech(fat.taf), div({
+            className: "fat"
+          }, this.renderTorso(fat.tor))
+        ];
       default:
         return "Unknown speech type:" + ((function() {
           var results;
           results = [];
-          for (x in speech) {
+          for (x in arguments[0]) {
             results.push(" %" + x);
           }
           return results;
-        })()).join('');
+        }).apply(this, arguments)).join('');
+    }
+  },
+  renderTorso: function(arg) {
+    var name, tank, text, x;
+    text = arg.text, tank = arg.tank, name = arg.name;
+    switch (false) {
+      case text == null:
+        return text;
+      case tank == null:
+        return pre({}, tank.join("\n"));
+      case name == null:
+        return [name.nom, ": ", this.renderTorso(name.mon)];
+      default:
+        return "Unknown torso:" + ((function() {
+          var results;
+          results = [];
+          for (x in arguments[0]) {
+            results.push(" %" + x);
+          }
+          return results;
+        }).apply(this, arguments)).join('');
+    }
+  },
+  classesInSpeech: function(arg) {
+    var app, exp, fat, lin, mor, url;
+    url = arg.url, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
+    switch (false) {
+      case !url:
+        return "url";
+      case !exp:
+        return "exp";
+      case !app:
+        return "say";
+      case !lin:
+        return {
+          say: lin.say === false
+        };
+      case !mor:
+        return mor != null ? mor.map(this.classesInSpeech) : void 0;
+      case !fat:
+        return this.classesInSpeech(fat.taf);
     }
   },
   render: function() {
-    var attachments, aude, audi, className, delivery, mainStation, name, ref1, speech, thought, type;
+    var aude, audi, className, delivery, mainStation, name, speech, thought, type;
     thought = this.props.thought;
     delivery = _.uniq(_.pluck(thought.audience, "delivery"));
     speech = thought.statement.speech;
-    attachments = [];
-    while (speech.fat != null) {
-      attachments.push(pre({}, speech.fat.tor.tank.join("\n")));
-      speech = speech.fat.taf;
-    }
     if (speech == null) {
       return;
     }
@@ -385,17 +428,8 @@ module.exports = recl({
     mainStation = window.util.mainStationPath(window.urb.user);
     type = indexOf.call(aude, mainStation) >= 0 ? 'private' : 'public';
     className = clas('gram', (this.props.sameAs ? "same" : "first"), (delivery.indexOf("received") !== -1 ? "received" : "pending"), {
-      say: ((ref1 = speech.lin) != null ? ref1.say : void 0) === false,
-      url: speech.url,
       'new': this.props.unseen
-    }, (function() {
-      switch (false) {
-        case speech.app == null:
-          return "say";
-        case speech.exp == null:
-          return "exp";
-      }
-    })());
+    }, this.classesInSpeech(speech));
     return div({
       className: className,
       'data-index': this.props.index,
@@ -425,10 +459,7 @@ module.exports = recl({
     }, this.convTime(thought.statement.date))), div({
       className: "speech",
       key: "speech"
-    }, this.renderSpeech(speech), attachments.length ? div({
-      className: "fat",
-      key: "fat"
-    }, attachments) : void 0));
+    }, this.renderSpeech(speech)));
   }
 });
 
