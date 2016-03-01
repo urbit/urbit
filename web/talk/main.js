@@ -466,7 +466,7 @@ module.exports = recl({
       last: MessageStore.getLast(),
       fetching: MessageStore.getFetching(),
       listening: MessageStore.getListening(),
-      station: window.util.mainStation(),
+      station: StationStore.getStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: MessageStore.getTyping(),
@@ -510,10 +510,16 @@ module.exports = recl({
   sortedMessages: function(messages) {
     var station;
     station = this.state.station;
-    return _.sortBy(messages, function(message) {
-      message.pending = message.thought.audience[station];
-      return message.key;
-    });
+    return _.sortBy(messages, (function(_this) {
+      return function(message) {
+        message.pending = message.thought.audience[station];
+        if (_this.props.chrono === "reverse") {
+          return -message.key;
+        } else {
+          return message.key;
+        }
+      };
+    })(this));
   },
   componentWillMount: function() {
     return Infinite = require('react-infinite');
@@ -941,6 +947,7 @@ module.exports = recl({
       config: StationStore.getConfigs(),
       members: StationStore.getMembers(),
       typing: StationStore.getTyping(),
+      station: StationStore.getStation(),
       valid: StationStore.getValidAudience()
     };
     s.audi = _.without(s.audi, window.util.mainStationPath(window.urb.user));
@@ -969,20 +976,10 @@ module.exports = recl({
     return this.cursorAtEnd;
   },
   addCC: function(audi) {
-    var cc, i, len, listening, s;
-    listening = this.state.config[window.util.mainStation(window.urb.user)].sources;
-    cc = false;
-    for (i = 0, len = audi.length; i < len; i++) {
-      s = audi[i];
-      if (listening.indexOf(s) === -1) {
-        cc = true;
-      }
-    }
-    if (listening.length === 0) {
-      cc = true;
-    }
-    if (cc === true) {
-      audi.push(window.util.mainStationPath(window.urb.user));
+    var listening, ref1, ref2;
+    listening = (ref1 = (ref2 = this.state.config[this.props.station]) != null ? ref2.sources : void 0) != null ? ref1 : [];
+    if (_.isEmpty(_.intersection(audi, listening))) {
+      audi.push("~" + window.urb.user + "/" + this.props.station);
     }
     return audi;
   },
@@ -1222,25 +1219,35 @@ ref = React.DOM, div = ref.div, link = ref.link;
 
 TreeActions.registerComponent("talk", React.createClass({
   displayName: "talk",
+  getStation: function() {
+    return this.props.station || window.util.defaultStation();
+  },
   componentWillMount: function() {
+    var station;
     require('./utils/util.coffee');
     require('./utils/move.coffee');
+    station = this.getStation();
     StationActions.listen();
-    return StationActions.listenStation(window.util.mainStation());
+    StationActions.listenStation(station);
+    return StationActions.switchStation(station);
   },
   render: function() {
+    var station;
+    station = this.getStation();
     return div({
       key: "talk-container"
     }, [
       div({
         key: "grams-container"
-      }, MessagesComponent({
+      }, MessagesComponent(_.merge({}, this.props, {
+        station: station,
         key: 'grams'
-      }, '')), div({
+      }), '')), this.props.readOnly == null ? div({
         key: 'writing-container'
-      }, WritingComponent({
+      }, WritingComponent(_.merge({}, this.props, {
+        station: station,
         key: 'writing'
-      }, ''))
+      }), '')) : void 0
     ]);
   }
 }));
@@ -1394,6 +1401,7 @@ module.exports = function(arg) {
     },
     listen: function() {
       return window.urb.bind("/", function(err, res) {
+        var house;
         if (err || !res.data) {
           console.log('/ err');
           console.log(err);
@@ -1401,14 +1409,15 @@ module.exports = function(arg) {
         }
         console.log('/');
         console.log(res.data);
-        if (res.data.house) {
+        house = res.data.house;
+        if (house) {
           return StationActions.loadStations(res.data.house);
         }
       });
     },
     listenStation: function(station) {
       return window.urb.bind("/avx/" + station, function(err, res) {
-        var ref;
+        var cabal, glyph, group, ok, ref;
         if (err || !res) {
           console.log('/avx/ err');
           console.log(err);
@@ -1416,18 +1425,17 @@ module.exports = function(arg) {
         }
         console.log('/avx/');
         console.log(res.data);
-        if (res.data.ok === true) {
-          StationActions.listeningStation(station);
-        }
-        if (res.data.group) {
-          res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
-          StationActions.loadMembers(res.data.group.global);
-        }
-        if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
-          StationActions.loadConfig(station, res.data.cabal.loc);
-        }
-        if (res.data.glyph) {
-          return StationActions.loadGlyphs(res.data.glyph);
+        ref = res.data, ok = ref.ok, group = ref.group, cabal = ref.cabal, glyph = ref.glyph;
+        switch (false) {
+          case !ok:
+            return StationActions.listeningStation(station);
+          case !group:
+            group.global[window.util.mainStationPath(window.urb.user)] = group.local;
+            return StationActions.loadMembers(group.global);
+          case !(cabal != null ? cabal.loc : void 0):
+            return StationActions.loadConfig(station, cabal.loc);
+          case !glyph:
+            return StationActions.loadGlyphs(glyph);
         }
       });
     }
@@ -1813,8 +1821,6 @@ so.cs = $(window).scrollTop();
 
 so.w = null;
 
-so.$d = $('#nav > div');
-
 setSo = function() {
   so.$n = $('#station-container');
   so.w = $(window).width();
@@ -1908,6 +1914,13 @@ if (!window.util) {
 }
 
 _.merge(window.util, {
+  defaultStation: function() {
+    if (document.location.search) {
+      return document.location.search.replace(/^\?/, '');
+    } else {
+      return window.util.mainStation();
+    }
+  },
   mainStations: ["court", "floor", "porch"],
   mainStationPath: function(user) {
     return "~" + user + "/" + (window.util.mainStation(user));
