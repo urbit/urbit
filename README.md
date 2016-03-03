@@ -27,26 +27,13 @@ If you're interested in following Urbit, you can:
     [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev)
     mailing list.
 -   Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
--   Hit us up by email, `urbit@urbit.org`. We're nice!
+-   Email us: [`urbit@urbit.org`](mailto:urbit@urbit.org).  We're happy to answer questions and chat.
 
 Code of conduct
 ---------------
 
 Everyone involved in the Urbit project needs to understand and
 respect our code of conduct, which is: "don't be rude."
-
-Documentation
-=============
-
-In-progress documentation can be found at
-[urbit.org/docs](http://urbit.org/docs).
-
-These docs ship with your urbit. If you're running one locally you
-can access them at
-
-    http://localhost:8080/home/docs
-
-Assuming you're running on port 8080. The port is printed on startup.
 
 Install
 =======
@@ -65,23 +52,19 @@ cloud virtual machines (Amazon or Digital Ocean), the default
 memory configuration is smaller than this, and you need to
 manually configure a swapfile.
 
-To add swap to a DO droplet:
-
-https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
-
-To add swap on an Amazon instance:
-
-http://stackoverflow.com/questions/17173972/how-do-you-add-swap-to-an-ec2-instance
+To add swap to a DO droplet, [read this](https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04).  To add swap on an Amazon instance, [read this](http://stackoverflow.com/questions/17173972/how-do-you-add-swap-to-an-ec2-instance)
 
 Don't spend a lot of time tweaking these settings; the simplest
 thing is fine.
 
 Install as a package
 --------------------
-
+<!-- 
+waiting on makefile changes.
 ### OS X - Homebrew
 
-    brew install --HEAD homebrew/head-only/urbit
+    brew install --HEAD homebrew/head-only/urbit 
+-->
 
 ### Ubuntu or Debian
 
@@ -169,8 +152,8 @@ by default, so if you have anything different, you'll need to tell
 Urbit where it is (on first launch only) with the `-B` command-line
 option.
 
-Launch
-======
+Start
+=====
 
 An urbit is a persistent server on the `%ames` P2P network. You'll
 create one of these servers now.
@@ -193,18 +176,16 @@ over Urbit itself. Go get a cup of coffee. Or a beer.
 
 Wait until you see a prompt, something like
 
-      ~fintud-macrep:talk()
-
-or
-
       ~fintud-macrep:dojo>
 
 Your urbit is launched! Ladies and gentlemen, we are floating in
 space.
 
-### Relaunch
+### Restarting
 
-To use Urbit normally after creating your planet or comet:
+If you want to shut your Urbit down you can `^d` from the `dojo>` prompt.  To use Urbit normally after creating your planet or comet there's no need for the `-w -t` or `-c` options.  
+
+Instead:
 
     urbit fintud-macrep
 
@@ -212,34 +193,20 @@ or
 
     urbit mycomet
 
-Docs
+Talk
 ====
 
-Your urbit is your personal web server. The best place to read its
-docs is by pointing your browser at it.
+We use Urbit to talk to each other and coordinate about building the system.  To join the main Urbit talk station use `^x` to switch to the `talk()` prompt, then run: 
 
-Urbit prints the HTTP port it's serving when it starts up:
+    ;join ~doznec/urbit-meta
 
-    http: live (insecure) on 8080
+Learn more
+==========
 
-8080 is the default. When it's not available we use 8081. Then 8082, and so on. If you're running on AWS or another cloud
-service, this port may be firewalled; go to the firewall
-configuration to open it.
+Urbit's own official planet `~winsen-pagdel` hosts the public docs
+[here](http://urbit.org/docs).  The docs also live in their own repo, [`urbit/docs`](http://github.com/urbit/docs).
 
-(*Always run any urbit HTTP server which is even semi-serious inside a reliable, battle-proven frontline server like nginx.*)
-
-Urbit's own official planet `~winsen-pagdel` is also bound to just
-plain `urbit.org`, and hosts the public docs
-[here](http://urbit.org/docs). (They are, of course, the same as
-those that ship with your urbit.)
-
-Assuming your Urbit is on `localhost:8080`, your copy of the docs are at
-
-    http://localhost:8080/home/docs
-
-To continue getting setup, start here:
-
-    http://localhost:8080/home/docs/user/start
+If this is your first time using Urbit, we'd recommend starting  [here](http://urbit.org/docs/user/basic#-basic-operation).
 
 Contributing
 ============
