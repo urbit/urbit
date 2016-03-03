@@ -97,6 +97,7 @@
     u3_noun u3qe_rub(u3_atom, u3_atom);
     u3_noun u3qe_lore(u3_atom);
     u3_noun u3qe_loss(u3_noun, u3_noun);
+    u3_noun u3qe_lune(u3_atom);
     u3_noun u3qe_repg(u3_noun, u3_noun, u3_noun);
     u3_noun u3qe_rexp(u3_noun, u3_noun);
     u3_noun u3qe_trip(u3_atom);
