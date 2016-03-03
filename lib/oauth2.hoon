@@ -36,7 +36,10 @@
 ++  keys  cord:{cid/@t cis/@t}
 ++  core-move  |*(a/* $^({sec-move _a} sec-move)) ::here's a change
 ++  decode-keys                       :: XX from bale w/ typed %jael
-  |=(key/keys ((hard {cid/@t cis/@t $~}) (lore key)))
+  |=  key/keys
+  ?~  key  ~|(%oauth-no-keys ~_(leaf+"Run |init-oauth2" !!))
+  ~|  %oauth-bad-keys
+  ((hard {cid/@t cis/@t $~}) (lore key))
 --
 ::
 ::::
