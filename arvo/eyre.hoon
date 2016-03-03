@@ -845,7 +845,7 @@
         ?.  ?=($mime p.cay)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek {$ud $0} bek(r da+now))
-          (execute tee bik [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          (exec-live tee bik [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
         ~|  q.q.cay
         =+  ((hard {mit/mite rez/octs}) q.q.cay)
         =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
@@ -885,7 +885,7 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    (pass-note tea (ford-req -.top [%dude |.(>[hen tea mar -.cay]<) [%cast mar $+cay]]))
+    (execute tea -.top [%cast mar $+cay])
   ::
   ++  cast-thou
     |=  {mar/mark cay/cage}
@@ -912,10 +912,16 @@
     (pass-note(hen `~) on+~ %f [%wasp our a &])
   ::
   ++  ford-req  |=({bek/beak kas/silk} [%f [%exec our `[bek kas]]])
-  ++  execute  
+  ++  exec-live  
     |=  {tea/whir req/{beak silk}}
     =.  lyv  (~(put by lyv) hen [%exec tea])
-    (pass-note tea (ford-req req))
+    (execute tea req)
+  ::
+  ++  execute
+    |=  {tea/whir bek/beak sil/silk}
+    %+  pass-note  tea
+    :^  %f  %exec  our
+    `[bek [%dude |.(leaf+"eyre: execute {<tea>}") sil]]
   ::
   ++  fail
     |=  {sas/@ud dep/@uvH mez/tang}
@@ -979,9 +985,9 @@
     ++  abet  ..handle
     ++  done  .
     ++  teba  |*(a/$-(* ..handle) |*(b/* %_(done ..handle (a b))))
-    ++  execute  (teba ^execute)
     ++  del-deps  (teba ^del-deps)
     ++  new-deps  (teba ^new-deps)
+    ++  exec-live  (teba ^exec-live)
     ++  give-html  (teba ^give-html)
     ++  give-thou  (teba ^give-thou)
     ++  give-json  (teba ^give-json)
@@ -1014,7 +1020,7 @@
           $bake
         =+  req=[%bake mar=q.pez [r s]:pez]
         =+  red=req(mar %red-quri)
-        (execute p.pez -.s.pez `silk`[%alts ~[red req]])
+        (exec-live p.pez -.s.pez `silk`[%alts ~[red req]])
       ::
           $red
         =+  url=(earn hat pok(p [~ %html]) quy)
@@ -1637,6 +1643,7 @@
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
+    ++  execute  |=({a/whir-se b/{beak silk}} (execute:abet se+[a usr dom] b))
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang (give-sigh:abet(req ~(nap to req)) %| a))
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
@@ -1651,7 +1658,7 @@
     ++  cor-type  ?~(cor %void ?~(u.cor %void p.u.cor))
     ++  has-arm  ~(has in (silt (sloe cor-type)))
     ++  build
-      =-  (pass-note %core (ford-req root-beak -))
+      %^  execute  %core  root-beak
       :::+  %dude  [|.(+)]:>%mod-samp<
       ^-  silk
       :^  %mute  core+[root-beak (flop %_(dom . sec+dom))]
@@ -1665,8 +1672,8 @@
     ::
     ++  call
       |=  {arm/vi-arm sam/cage}
-      =+  call+[ride+[limb+arm prep-cor] [%$ sam]]
-      (pass-note arm (ford-req root-beak -))
+      %^  execute  arm  root-beak
+      call+[ride+[limb+arm prep-cor] [%$ sam]]
     ::
     ++  prep-cor  ^-  silk
       ?~  cor  ~|(%no-core !!)
