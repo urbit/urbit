@@ -2212,8 +2212,7 @@
       {$nap p/horn}                                     ::  /_  homo map
       {$now p/horn}                                     ::  /@  list by @da
       {$saw p/twig q/horn}                              ::  /;  operate on
-      {$see p/beam q/horn}                              ::  XX remove on breach
-      {$sei p/hops q/horn}                              ::  /:  relative to XX see
+      {$see p/hops q/horn}                              ::  /:  relative to
       {$sic p/twig q/horn}                              ::  /^  cast
       {$toy p/? q/mark}                                 ::  /mark/  static/hook
   ==                                                    ::

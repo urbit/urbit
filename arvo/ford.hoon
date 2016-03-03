@@ -693,7 +693,7 @@
               (stag %nap ;~(pfix cab day:read))
               (stag %now ;~(pfix pat day:read))
               (stag %saw ;~(pfix sem saw:read))
-              (stag %sei ;~(pfix col sei:read))
+              (stag %see ;~(pfix col see:read))
               (stag %sic ;~(pfix ket sic:read))
               (stag %toy ;~(sfix toy:read fas))
             ==
@@ -751,7 +751,7 @@
                   ;~(plug ;~(sfix wide:vez sem) day)
                 ;~(pfix gap ;~(plug tall:vez day))
           ::
-              ++  sei                 :: XX see
+              ++  see
                 %+  rail  
                   ;~(plug ;~(sfix hive col) day)
                 ;~(pfix gap ;~(plug hive day))
@@ -1542,11 +1542,7 @@
           %+  cope  (maul cof gat sam)
           (flux |=(a/vase noun+a))
         ::
-            $see                      ::  XX remove on breach
-          =.  r.p.hon  ?:(?=({$ud $0} r.p.hon) r.how r.p.hon)
-          $(hon q.hon, how p.hon)
-        ::
-            $sei                      ::  XX see
+            $see
           =+  vez=(vang & (tope how))
           =+  tuz=(posh:vez p.hon)
           ?~  tuz  (flaw cof leaf+"bad tusk: {<p.hon>}" ~)
