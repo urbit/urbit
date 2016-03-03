@@ -1670,6 +1670,11 @@
         ==
       --
     ::
+    ++  pact-hoon                                       ::  .hoon special case
+      |=  {a/@t b/(urge cord)}  ^-  @t
+      ~|  %lurk-hoon
+      (role (lurk (lore a) b))
+    ::
     ++  pact                                            ::  patch
       |=  {cof/cafe kas/silk kos/silk}
       ^-  (bolt gage)
@@ -1683,15 +1688,8 @@
         ?:  ?=($hoon p.cay)
           ?.  ?=($txt-diff p.coy)
             (flaw cof leaf+"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
-          =+  txt=((soft @t) q.q.cay)
-          ?~  txt
-            (flaw cof leaf+"{<p.cay>} mark on bad data" ~)
-          =+  dif=((soft (urge cord)) q.q.coy)
-          ?~  dif
-            =-  (flaw cof leaf+"{<p.cay>} data with bad diff" -)
-            [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
-          =+  pac=(role (lurk (lore u.txt) u.dif))
-          (fine cof `gage`[%& p.cay [%atom %t ~] pac])
+          %+  cope  (maul cof !>(pact-hoon) (slop q.cay q.coy))
+          (flux |=(vax/vase:cord [%& p.cay vax]))
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
