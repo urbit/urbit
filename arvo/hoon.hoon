@@ -27,6 +27,7 @@
 ++  abel  typo                                          ::  original sin: span
 ++  ache  |*  {a/$-(* *) b/$-(* *)}                     ::  either a or b
           $%({$| p/b} {$& p/a})                         ::    b default
+++  atom  @                                             ::  just an atom
 ++  axis  @                                             ::  tree address
 ++  bank  (list @cF)                                    ::  UTF-32 string
 ++  base                                                ::  base mold
@@ -279,8 +280,8 @@
   ::                                            ::::::  compositions
     {$new p/twig q/twig}                                ::  =|  push bunt
     {$fix p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
-    {$var p/taco q/twig r/twig}                         ::  =;  typed variable
-    {$rev p/twig q/taco r/twig}                         ::  =/  =;(q p r)
+    {$var p/taco q/twig r/twig}                         ::  =/  typed variable
+    {$rev p/taco q/twig r/twig}                         ::  =;  =/(q p r)
     {$set p/wing q/twig r/twig}                         ::  =.  r with p as q
     {$rap p/twig q/twig}                                ::  =<  =>(q p)
     {$nip p/twig q/twig}                                ::  =-  =+(q p)
@@ -3786,7 +3787,7 @@
     ++  rig
       |=  hom/tape
       ^-  wall
-      ?:  (lte (lent hom) (sub edg tab))
+      ?:  & ::(lte (lent hom) (sub edg tab))
         [(runt [tab ' '] hom) lug]
       =>  .(tab (add tab 2), edg (sub edg 2))
       =+  mut=(trim (sub edg tab) hom)
@@ -7262,12 +7263,12 @@
         [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
       ==                                                ::
     ::
-        {$fry *}                                       ::                  ;;
-      :+  %per  [%name %v %$ 1]                        ::  =>  v=.
-      :+  %pin  :+  %name  %a                          ::  =+  ^=  a
-                 [%per [%limb %v] p.gen]               ::  =>(v {p.gen})
-      :+  %pin  [%name %b [%per [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
-      :+  %pin                                         ::  =+  c=(a b)
+        {$fry *}                                        ::                  ;;
+      :+  %per  [%name %v %$ 1]                         ::  =>  v=.
+      :+  %pin  :+  %name  %a                           ::  =+  ^=  a
+                 [%per [%limb %v] p.gen]                ::  =>(v {p.gen})
+      :+  %pin  [%name %b [%per [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
+      :+  %pin                                          ::  =+  c=(a b)
         [%name %c [%call [%limb %a] [%limb %b] ~]]      ::
       [%sure [%same [%limb %c] [%limb %b]] [%limb %c]]  ::  ?>(=(c b) c)
     ::
@@ -7282,21 +7283,23 @@
         [%pin [%name p.gen q.gen] r.gen]
       [%pin [%cast [%coat p.gen] q.gen] r.gen]
     ::
-        {$rev *}  [%var q.gen p.gen r.gen]
+        {$rev *}  [%var p.gen r.gen q.gen]
         {$set *}
       [%per [%keep [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
     ::
-        {$sip *}                                       ::                  =^
+        {$sip *}                                        ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                 ::
-      :+  %per  [%name %v %$ 1]                        ::  =>  v=.
-      :+  %pin  [%name %a %per [%limb %v] r.gen]      ::  =+  a==>(v \r.gen)
-      :^  %set  wuy  [%rap [%$ 3] [%limb %a]]         ::  =.  \wuy  +.a
-      :+  %per  :-  ?@  p.gen                          ::
+      :+  %per  [%name %v %$ 1]                         ::  =>  v=.
+      :+  %pin  [%name %a %per [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
+      :^  %set  wuy  [%rap [%$ 3] [%limb %a]]           ::  =.  \wuy  +.a
+      :+  %per  :-  ?@  p.gen                           ::
                        :+  %name  p.gen                 ::  =>  :-  ^=  \p.gen
-                       [%rap [%$ 2] [%limb %a]]        ::          -.a
-                     :+  %cast  [%coat p.gen]           ::  =>  :-  ^-  \p.gen
-                     [%rap [%$ 2] [%limb %a]]          ::          -.a
-                 [%limb %v]                             ::      v
+                       [%rap [%$ 2] [%limb %a]]         ::          -.a
+                     :+  %cast  
+                        :+  %coat  -.p.gen 
+                        [%per [%limb %v] +.p.gen]       ::  =>  :-  ^-  \p.gen
+                     [%rap [%$ 2] [%limb %a]]           ::          -.a
+                [%limb %v]                              ::      v
       s.gen                                             ::  s.gen
     ::
         {$rap *}  [%per q.gen p.gen]
@@ -9894,6 +9897,8 @@
                   (word %sip expt)
                   (word %fix expp)
                   (word %rap expb)
+                  (word %var expo)
+                  (word %rev expo)
                   (word %per expb)
                   (word %nip expb)
                   (word %aka expl)
@@ -9919,6 +9924,7 @@
                   (word %wrap expa)
                   (word %code expa)
                   (word %need hinh)
+                  moar
                 ==
               ==
             :-  '.'
@@ -9982,6 +9988,8 @@
                     ['.' (rune dot %set expq)]
                     ['^' (rune ket %sip expt)]
                     [':' (rune col %fix expp)]
+                    ['/' (rune fas %var expo)]
+                    [';' (rune sem %rev expo)]
                     ['<' (rune gal %rap expb)]
                     ['>' (rune gar %per expb)]
                     ['-' (rune hep %nip expb)]
@@ -10065,6 +10073,13 @@
       |*  {key/cord har/_expa}
       ;~(pfix (jest key) (stag key (toad har)))
     ::
+    ++  moar                                            ::  :moar hack
+      %+  cook
+        |=  {a/(list) b/(list (pair wing twig))}
+        ^-  twig
+        [%make [[%| (lent a) `%$] ~] b]
+      ;~(pfix (jest %moar) ;~(plug (star (jest %r)) (toad |.((butt rick)))))
+    ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
     ++  butt  |*  zor/rule                              ::  closing == if tall
@@ -10132,6 +10147,7 @@
     ++  exps  |.((butt hank))                           ::  closed gapped twigs
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
     ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
+    ++  expv  |.((butt rick))                           ::  just changes
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::
     ::    tiki expansion for %wt runes

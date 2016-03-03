@@ -47,6 +47,11 @@
   =.  txt  (rap 3 (scot %p him) ': ' txt ~)
   (poke--data [`%md pax] %mime / (taco txt))
 ::
+++  poke-sec-atom
+  |=  {hot/host dat/@}
+  ?>  ?=($& -.hot)
+  (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
+::
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet
   ?~  ext  $(ext [~ -.dat])

@@ -1328,21 +1328,30 @@
   ++  aurf                                              ::  2396 with fragment
     %+  cook  |~(a/purf a)
     ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
+  ++  auru                                              ::  2396 with maybe user
+    %+  cook
+      |=  $:  a/{p/? q/(unit iden) r/{(unit @ud) host}}
+              b/{pork quay}
+          ==
+      ^-  (pair (unit iden) purl)
+      [q.a [[p.a r.a] b]]
+    ::
+    ;~  plug
+      ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
+      ;~(plug ;~(pose apat (easy *pork)) yque)
+    ==
   ++  auri                                              ::  2396 URL
     %+  cook
       |=  a/purl
       ?.(?=(hoke r.p.a) a a(p.p &))
     ;~  plug
-      ;~  plug
-        %+  sear
-          |=  a/@t
-          ^-  (unit ?)
-          ?+(a ~ $http [~ %|], $https [~ %&])
-        ;~(sfix scem ;~(plug col fas fas))
-        thor
-      ==
+      ;~(plug htts thor)
       ;~(plug ;~(pose apat (easy *pork)) yque)
     ==
+  ++  htts  
+    %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
+    ;~(sfix scem ;~(plug col fas fas))
+  ::
   ++  cock                                              ::  cookie
     (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
   ++  dlab                                              ::  2396 domainlabel
@@ -1571,6 +1580,19 @@
           ==                                            ::
 ++  apex  {p/@uvI q/(map @ta @uvI) r/(map @ta $~)}      ::  node report (old)
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
+++  bale                                                ::  driver state
+  |*  a/_*                                              ::  %jael keys type
+  $:  {our/ship now/@da eny/@uvI byk/beak}              ::  base info
+      {usr/iden dom/(list @t)}                          ::  req user, domain
+      key/a                                             ::  secrets from %jael
+  ==                                                    ::
+++  iden  knot:?($~ @ta)                                ::  username
+++  sec-move                                            ::  driver effect
+  $%  {$send p/hiss}                                    ::  http out
+      {$show p/purl}                                    ::  direct user to url
+      {$give p/httr}                                    ::  respond immediately
+      {$redo $~}                                         ::  restart request qeu
+  ==                                                    ::
 ++  ball  @uw                                           ::  statement payload
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client
@@ -2163,7 +2185,7 @@
 ++  kiss-eyre                                           ::  in request ->$
           $%  {$born $~}                                ::  new unix process
               {$crud p/@tas q/(list tank)}              ::  XX rethink
-              {$hiss p/mark q/cage}                     ::  outbound user req
+              {$hiss p/(unit iden) q/mark r/cage}       ::  outbound user req
               {$init p/@p}                              ::  report install
               {$serv p/$@(desk beam)}                   ::  set serving root
               {$them p/(unit hiss)}                     ::  outbound request
@@ -2212,8 +2234,7 @@
       {$nap p/horn}                                     ::  /_  homo map
       {$now p/horn}                                     ::  /@  list by @da
       {$saw p/twig q/horn}                              ::  /;  operate on
-      {$see p/beam q/horn}                              ::  XX remove on breach
-      {$sei p/hops q/horn}                              ::  /:  relative to XX see
+      {$see p/hops q/horn}                              ::  /:  relative to
       {$sic p/twig q/horn}                              ::  /^  cast
       {$toy p/? q/mark}                                 ::  /mark/  static/hook
   ==                                                    ::

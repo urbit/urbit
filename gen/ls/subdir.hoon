@@ -4,7 +4,7 @@
 /?    310
 |%
 ++  subdir
-  |=  {pax/path des/(map @t $~)}
+  |=  {vane/?($c $g) pax/path des/(map @t $~)}
   ^-  tank
   :+  %rose  [" " `~]
   %+  turn  (sort (~(tap by des)) aor)
@@ -13,7 +13,7 @@
   =-  :+  %rose  ["/" ~ ?:(dir "/" ~)]
       (turn paf |=(a/knot leaf+(trip a)))
   |-  ^-  {dir/? paf/path}
-  =+  arf=.^(arch %cy (weld pax paf))
+  =+  arf=.^(arch (cat 3 vane %y) (weld pax paf))
   ?^  fil.arf  
     [| paf]
   ?~  dir.arf

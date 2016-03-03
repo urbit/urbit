@@ -7,7 +7,8 @@
 !:
 ::::
   ::
+~&  %
 :-  %say
-|=  {^ {arg/path $~} $~}
-=+  lon=.^(arch %cy arg)
-tang+[?~(dir.lon leaf+"~" (subdir arg dir.lon))]~
+|=  {^ {arg/path $~} vane/?($c $g)}
+=+  lon=.^(arch (cat 3 vane %y) arg)
+tang+[?~(dir.lon leaf+"~" (subdir vane arg dir.lon))]~
