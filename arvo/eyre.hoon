@@ -63,13 +63,29 @@
               {$ow p/ixor $~}                           ::  dying view
               {$on $~}                                  ::  dependency
           ==                                            ::
-++  whir-of  {p/knot:ship q/term r/wire}                ::  path in dock
+++  whir-of  {p/knot:ship q/term r/?($mess $lens) s/wire} ::  path in dock
 ++  whir-se  ?($core vi-arm)                            ::  build/call
 ++  vi-arm
   $?  $out                                              ::  ++out mod request
       $res                                              ::  ++res use result
       $bak                                              ::  ++bak auth response
       $in                                               ::  ++in handle code 
+  ==                                                    ::
+++  sole-effect                                         ::  app to sole
+  $%  {$bel $~}                                         ::  beep
+      {$blk p/@ud q/@c}                                 ::  blink+match char at
+      {$clr $~}                                         ::  clear screen
+      {$det *}  ::  sole-change                         ::  edit command
+      {$err p/@ud}                                      ::  error point
+      {$mor p/(list sole-effect)}                       ::  multiple effects
+      {$nex $~}                                         ::  save clear command
+      {$pro *}  ::  sole-prompt                         ::  set prompt
+      {$sag p/path q/*}                                 ::  save to jamfile
+      {$sav p/path q/@}                                 ::  save to file
+      {$tan p/(list tank)}                              ::  classic tank
+  ::  {$taq p/tanq}                                     ::  modern tank
+      {$txt p/tape}                                     ::  text line
+      {$url p/@t}                                       ::  activate url
   ==                                                    ::
 --                                                      ::
 |%                                                      ::  models
@@ -178,7 +194,7 @@
   ?~  quy  [%$ %n ~]~
   [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
 ::
-++  gsig  |=({a/dock b/path} [(scot %p p.a) q.a b])
+++  gsig  |=({a/dock b/?($mess $lens) c/path} [(scot %p p.a) q.a b c])
 ++  session-from-cookies
   |=  {nam/@t maf/math}
   ^-  (unit hole)
@@ -599,7 +615,7 @@
       =.  our  ?~(hov p.kyz (min u.hov p.kyz))
       +>.$(hov [~ our], top [[our %home ud+0] /web])
     ::
-        $this                                           ::  inbound request
+      $this                                           ::  inbound request
       %-  emule  |.  ^+  ..apex
       =*  sec  q.kyz    ::  ?                           ::  https bit
       =*  heq  s.kyz    ::  httq                        ::  request content
@@ -745,10 +761,20 @@
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
           ?($coup $reap)
+        ?:  ?=($lens r.q.tee)
+          ~&  hen=hen^hcuf=-.cuf
+          ?.  ?=($coup -.cuf)
+            +>.$
+          +>.$
+          ::  abet:(give-json:(ire-ix p.tee) 200 ~ (joba %okey-dokey %b &))
         (get-ack:(ire-ix p.tee) q.tee ?~(p.cuf ~ `[-.cuf u.p.cuf]))
       ::
           $doff  !!
           $diff
+        ?:  ?=($lens r.q.tee)
+          ~&  [%lens-diffing (sole-effect q.q.p.cuf)]
+          =+  fec=((hard sole-effect) q.q.p.cuf)
+          (get-lens:(ire-ix p.tee) q.tee fec)
         ?.  ?=($json p.p.cuf)
           :: ~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
           (back tee %json p.cuf)
@@ -886,7 +912,9 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    (pass-note tea (ford-req -.top [%dude |.(>[hen tea mar -.cay]<) [%cast mar $+cay]]))
+    %+  pass-note  tea
+    %+  ford-req  -.top
+    [%dude |.(>[%eyre-back hen tea mar -.cay]<) [%cast mar $+cay]]
   ::
   ++  cast-thou
     |=  {mar/mark cay/cage}
@@ -972,7 +1000,7 @@
   ::
   ++  handle
     |=  $:  {hat/hart pok/pork quy/quay}                ::  purl parsed url
-            {lop/? cip/clip aut/?}                            ::  client ip nonymous?
+            {lop/? cip/clip aut/?}                      ::  client ip nonymous?
             {mef/meth maf/math bod/(unit octs)}         ::  method+headers+body
         ==
     =<  apex
@@ -1262,15 +1290,15 @@
         ==
       ::
           $lens
-        $(hem [%mess [our %dojo] %lens-command /lens p.hem])
-        ::  :-  %|
-        ::  =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
-        ::  =+  vew=(ire-ix (oryx-to-ixor orx))
-        ::  ((teba new-mess.vew) [our %dojo] /lens %json %json !>(`json`p.hem))
+        ::  $(hem [%mess [our %dojo] %lens-command /lens p.hem])
+        :-  %|
+        =^  orx  ..ya  new-view:for-client
+        =+  vew=(ire-ix (oryx-to-ixor orx))
+        ((teba new-lens.vew) p.hem)
       ::
           $mess
         :-  %|
-        =^  orx  ..ya  new-view:for-client
+        =^  orx  ..ya  ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
         =+  vew=(ire-ix (oryx-to-ixor orx))
         ((teba new-mess.vew) p.hem r.hem q.hem %json !>(`json`s.hem))
       ::
@@ -1521,7 +1549,7 @@
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
     ++  hurl-note 
-      |=  {a/{dock path} b/note}  ^+  ..ix
+      |=  {a/{dock ?($mess $lens) path} b/note}  ^+  ..ix
       =:  med  (~(put to med) hen)
           hen  `~
         ==
@@ -1541,33 +1569,57 @@
       |=  a/even  ^+  eve
       [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
+    ++  new-lens
+      |=  jon/json  ^+  ..ix
+      =.  +>.$
+        %+  pass-note
+          [%of ire (gsig [our %dojo] lens+/)]
+        [%g %deal [him our] %dojo %peer /sole]  ::  XX  maybe peel json?
+      =.  +>.$
+        %+  pass-note
+          [%of ire (gsig [our %dojo] lens+/)]
+        [%g %deal [him our] %dojo %punk %lens-command %json !>(`json`jon)]
+      abet
+    ::
     ++  new-mess
       |=  {a/dock b/wire c/mark d/cage}  ^+  ..ix
-      (hurl-note [a b] [%g %deal [him -.a] +.a %punk c d])
+      (hurl-note [a mess+b] [%g %deal [him -.a] +.a %punk c d])
     ::
     ++  add-subs
       |=  {a/dock $json b/wire c/path}  ^+  ..ix
       ?:  (~(has in sus) +<)  ~|(duplicate+c !!)
       =.  sus  (~(put in sus) +<)
-      (hurl-note [a b] [%g %deal [him -.a] +.a %peel %json c])
+      (hurl-note [a mess+b] [%g %deal [him -.a] +.a %peel %json c])
     ::
     ++  pul-subs
       |=  {a/dock $json b/wire c/path}  ^+  ..ix
       =.  sus  (~(del in sus) +<)
-      (hurl-note [a b] [%g %deal [him -.a] +.a %pull ~])
+      (hurl-note [a mess+b] [%g %deal [him -.a] +.a %pull ~])
     ::
     ++  del-subs                      ::  XX per path?
       |=  {a/dock $json b/wire c/path}  ^+  ..ix
       =.  ..ix  (pul-subs +<)
       (nice-json:pop-duct:(ire-ix ire))          ::  XX gall ack
     ::
+    ++  get-lens
+      |=  {a/whir-of fec/sole-effect}  ^+  ..ix
+      ?.  ?=($tan -.fec)
+        ..ix
+      =+  txt=(role (turn (flop p.fec) |=(a/tank (crip ~(ram re a)))))
+      =+  jon=`json`a+[s+txt]~
+      =.  +>.$
+        %+  pass-note
+          `whir`[%of ire (gsig [our %dojo] lens+/)]
+        `note`[%g %deal [him our] %dojo %pull ~]
+      abet:(give-json 200 ~ jon)
+    ::
     ++  get-rush
       |=  {a/whir-of b/json}  ^+  ..ix
-      (get-even [%rush [[(slav %p p.a) q.a] r.a] (joba %json b)])
+      (get-even [%rush [[(slav %p p.a) q.a] s.a] (joba %json b)])
     ::
     ++  get-quit
       |=  a/whir-of  ^+  ..ix
-      (get-even [%quit [[(slav %p p.a) q.a] r.a]])
+      (get-even [%quit [[(slav %p p.a) q.a] s.a]])
     ::
     ++  get-ack
       |=  {a/whir-of b/(unit {term tang})}  ^+  ..ix
@@ -1587,7 +1639,7 @@
     ++  give-even
       |=  {pol/? num/@u ven/even}  ^+  done
       =:  q.eve  (~(del by q.eve) (dec num))              ::  TODO ponder a-2
-          mow    ?.(?=($rush -.ven) mow mow:(pass-took p.ven))
+          mow    ?.(?=($rush -.ven) mow mow:(pass-took [- %mess +]:p.ven))
         ==
       ?>  pol                         ::  XX eventstream  
       %^  give-json  200  ~
@@ -1604,7 +1656,7 @@
       (pass-note of+/[ire] [%b %rest era])
     ::
     ++  pass-took
-      |=  a/{p/dock wire}
+      |=  a/{p/dock ?($mess $lens) wire}
       %+  pass-note(hen `~)
         [%of ire (gsig a)] 
       [%g %deal [him -.p.a] +.p.a %pump ~]

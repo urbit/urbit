@@ -950,6 +950,11 @@
       $clr  he-pine(buf "")
     ==
   ::
+  ++  he-lens
+    |=  com/command:lens
+    ^+  +>
+    (he-plan [%show %0] [0 %ur '' (rash 'http://example.com' auri:epur)])
+  ::
   ++  he-lame                                           ::  handle error
     |=  {wut/term why/tang}
     ^+  +>
@@ -1001,10 +1006,8 @@
   (wrap he-span):arm
 ::
 ++  poke-lens-command
-  |=  com/command:lens
-  ^-  {(list move) _+>.$}
-  ~&  com=`*`com
-  [~ +>.$]
+  |=  com/command:lens  ~|  poke-lens+com  %.  com
+  (wrap he-lens):arm
 ::
 ++  poke-json
   |=  jon/json
