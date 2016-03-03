@@ -262,6 +262,7 @@ J_E_OFILES=\
        jets/e/shax.o \
        jets/e/lore.o \
        jets/e/loss.o \
+       jets/e/lune.o \
        jets/e/trip.o
 
 J_E_OFILES_ED=\
