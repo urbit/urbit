@@ -20,12 +20,24 @@
         return u3m_error("noeol");
       }
 
+      if (pos_w == 0) {
+        if (u3r_byte(0, lub) == 10) {
+          return u3nc(u3_nul, lin);
+        } else {
+          return u3m_error("noeol");
+        }
+      }
+
       while (--pos_w) {
         if (u3r_byte(pos_w, lub) == 10) {
           lin = u3nc(u3qc_cut(3, (pos_w + 1), (end_w - pos_w - 1), lub), lin);
           end_w = pos_w;
-          continue;
         }
+      }
+
+      if (u3r_byte(pos_w, lub) == 10) {
+        return u3nc(u3_nul,
+                    u3nc(u3qc_cut(3, pos_w, (end_w - pos_w), lub), lin));
       }
 
       return u3nc(u3qc_cut(3, pos_w, (end_w - pos_w), lub), lin);
