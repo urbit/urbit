@@ -31,8 +31,9 @@
           $%  {$deal p/sock q/cush}                     ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  $a                                    ::  by %aformedmes
-          $%  {$woot p/ship q/coop}                     ::
+          $?  $:  $a                                    ::  by %ames
+          $%  {$woot p/ship q/coop}                     ::  ackgnowledgment
+              {$went ship cape}                         ::  XX ignore
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
           $%  {$wake $~}                                ::  timer activate
@@ -675,6 +676,11 @@
     ::    (emule |.(~|(gall-dumb+tee !!)))
     ::
         $woot  +>.$
+        $went
+          :: XX eyre sends no wests, so should get no wents
+          ::~&  e+unexpected+sih  
+          +>.$
+    ::
         $thou
       ?+    -.tee  !!
         $ay  (ames-gram (slav %p p.tee) got+~ (slav %uv q.tee) |2.sih)
