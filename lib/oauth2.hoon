@@ -152,7 +152,9 @@
   |*  {done/* parse/(pole {knot fist}:jo)}
   |=  handle/$-(_?~(parse ~ (need *(ot:jo parse))) (core-move done))
   |=  a/httr  ^-  (core-move done)
-  ?:  (bad-response p.a)  [%redo ~]  ::  handle 4xx?
+  ?:  (bad-response p.a)
+    [%give a]
+    :: [%redo ~]  ::  handle 4xx?
   (handle (grab-json a (ot:jo parse)))
 ::
 ++  res-give  |=(a/httr [%give a])
