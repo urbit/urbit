@@ -21,6 +21,11 @@
   ?~  b  ''
   (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
 ::
+++  mean-wall  !.
+  |=  {a/term b/tape}  ^+  !!
+  =-  (mean (flop `tang`[>a< -]))
+  (turn (lore (crip b)) |=(c/cord leaf+(trip c)))
+::
 ++  dbg-post  `purl`[`hart`[| `6.000 [%& /localhost]] `pork``/testing `quay`/]
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  grab-json
@@ -61,11 +66,6 @@
 ++  refresh  {tok/token needed/@da pending/_`?`|}
 ++  keys  cord:{cid/@t cis/@t}
 ++  core-move  |*(a/* $^({sec-move _a} sec-move)) ::here's a change
-++  decode-keys                       :: XX from bale w/ typed %jael
-  |=  key/keys
-  ?~  key  ~|(%oauth-no-keys ~_(leaf+"Run |init-oauth2" !!))
-  ~|  %oauth-bad-keys
-  ((hard {cid/@t cis/@t $~}) (lore key))
 --
 ::
 ::::
@@ -75,8 +75,19 @@
       dialog-url=(parse-url dialog)
     exchange-url=(parse-url code-exchange)
 |_  {(bale keys) scope/(list cord)}
-++  client-id      cid:(decode-keys key)
-++  client-secret  cis:(decode-keys key)
+++  client-id      cid:decode-keys
+++  client-secret  cis:decode-keys
+++  decode-keys                       :: XX from bale w/ typed %jael
+  ^-  {cid/@t cis/@t $~}
+  ?.  =(~ `@`key)
+    ~|  %oauth-bad-keys
+    ((hard {cid/@t cis/@t $~}) (lore key))
+  %+  mean-wall  %oauth-no-keys
+  """
+  Run |init-oauth2
+  If necessary, obtain client keys configured for a redirect_uri of
+    {(trip redirect-uri)}
+  """
 ::
 ++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  auth-url
