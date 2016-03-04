@@ -20,11 +20,16 @@
   =+  lon=(fall (slaw %t usr) usr)
   =<  .(state-usr &)
   %-  oauth2
-  =-  [[&+/com/google/accounts /o/oauth2/v2/auth -] /oauth2/v4/token]
-  :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
-      access-type+%offline
-      response-type+%code
-      prompt+%consent
+  :_  exchange='https://www.googleapis.com/oauth2/v4/token'
+  ^=  dialog
+  %*  .  (need (epur 'https://accounts.google.com/o/oauth2/v2/auth'))
+      r
+    %-  fass:oauth2
+    :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
+        access-type+%offline
+        response-type+%code
+        prompt+%consent
+    ==
   ==
 --
 !:

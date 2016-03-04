@@ -29,6 +29,30 @@
   ~|  bad-json+r.a
   ~|  (poja q:(need r.a))
   (need (;~(biff poja b) q:(need r.a)))
+::
+++  parse-url
+  |=  a/$@(cord:purl purl)  ^-  purl
+  ?^  a  a
+  ~|  bad-url+a
+  (rash a auri:epur)
+::
+++  interpolate-url
+  |=  {a/$@(cord purl) b/(unit hart) c/(list (pair term knot))}
+  ^-  purl
+  ?@  a  $(a (parse-url a))  :: deal with cord
+  %_  a
+    p    ?^(b u.b p.a)
+    q.q  (interpolate-path q.q.a c)
+  ==
+::
+++  interpolate-path    ::  [/a/:b/c [%b 'foo']~] -> /a/foo/c
+  |=  {a/path b/(list (pair term knot))}  ^-  path
+  ?~  a  ?~(b ~ ~|(unused-values+b !!))
+  =+  (rush i.a ;~(pfix col sym))
+  ?~  -  [i.a $(a t.a)]  ::  not interpolable
+  ?~  b  ~|(no-value+u !!)
+  ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
+  [q.i.b $(a t.a, b t.b)]
 --
 ::
 ::::
@@ -47,31 +71,37 @@
 ::
 ::::
   ::
-|=  {dialog/{p/host q/path r/quay} code-exchange/path}
-=+  state-usr=|
+|=  {dialog/$@(cord:purl purl) code-exchange/$@(cord:purl purl)}
+=+  :+  state-usr=|
+      dialog-url=(parse-url dialog)
+    exchange-url=(parse-url code-exchange)
 |_  {(bale keys) scope/(list cord)}
 ++  client-id      cid:(decode-keys key)
 ++  client-secret  cis:(decode-keys key)
 ::
-++  urb-hart  [| `8.443 [%& /localhost]]  :: XX get from eyre
-++  toke-url  (endpoint dom code-exchange)
+++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  auth-url
-  ~&  [%oauth-warning "Make sure this urbit".
-                      "is running on {(earn urb-hart `~ ~)}"]
+  ~&  [%oauth-warning "Make sure this urbit ".
+                      "is running on {(earn our-host `~ ~)}"]
   ^-  purl
-  :+  [& ~ p.dialog]  [~ q.dialog]
-  %-  fass  
-  %+  welp  r.dialog
-  :~  state+?.(state-usr '' (pack usr /''))
-      client-id+client-id
-      redirect-uri+redirect-uri
-      scope+(join ' ' scope)
+  %_    dialog-url
+      r
+    %+  welp  r.dialog-url
+    %-  fass  
+    :~  state+?.(state-usr '' (pack usr /''))
+        client-id+client-id
+        redirect-uri+redirect-uri
+        scope+(join ' ' scope)
+    ==
   ==
 ::
-++  redirect-uri  
+++  redirect-uri
   %-    crip    %-  earn
-  =+  usr-knot=?:(state-usr '_state' (scot %ta usr))
-  `purl`[`hart`urb-hart `pork``/~/ac/(join '.' (flop dom))/[usr-knot]/in `quay`~]
+  %^  interpolate-url  'https://our-host/~/ac/:domain/:user/in'
+    `our-host
+  :~  domain+(join '.' (flop dom))
+      user+?:(state-usr '_state' (scot %ta usr))
+  ==
 ::
 ++  out-filtered
   |=  {tok/token aut/$-(hiss hiss)}
@@ -93,7 +123,7 @@
 ::
 ++  toke-req
   |=  {grant-type/cord quy/quay}  ^-  {$send hiss}
-  :+  %send  toke-url
+  :+  %send  exchange-url
   :+  %post  (malt ~[content-type+~['application/x-www-form-urlencoded']])
   =-  `(tact +:(tail:earn -))
   %-  fass
@@ -159,4 +189,3 @@
     [[%redo ~] (handle-access axs.tok)]
   --
 --
-                                                                

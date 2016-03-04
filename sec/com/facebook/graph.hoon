@@ -6,8 +6,10 @@
 ::
 ::::
   ::
-=+  [`/com/facebook/www /dialog/oauth response-type/%code ~]
-=+  aut=(oauth2 - /'v2.3'/oauth/'access_token')
+=+  ^=  aut
+    %+   oauth2
+      dialog='https://www.facebook.com/dialog/oauth?response_type=code'
+    exchange='https://graph.facebook.com/v2.3/oauth/access_token'
 |_  {bal/(bale keys.aut) access-token/token.aut}
 ++  auth  ~(. aut bal /'user_about_me'/'user_posts')
 ++  out  (out-quay:auth key='access_token' value=access-token)

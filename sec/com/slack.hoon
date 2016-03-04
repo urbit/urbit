@@ -6,7 +6,10 @@
 ::
 ::::
   ::
-=+  aut=(oauth2 [`/com/slack /oauth/authorize ~] /api/'oauth.access')
+=+  ^=  aut
+    %+  oauth2
+      'https://slack.com/oauth/authorize'
+    'https://slack.com/api/oauth.access'
 |_  {(bale keys:oauth2) tok/token.aut}
 ++  aut  ~(. ^aut +<- /client/admin)
 ++  out  (out-quay:aut 'token'^tok)
