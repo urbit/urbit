@@ -44,7 +44,11 @@
 ++  poke-comment
   |=  {pax/path him/ship txt/@t}  ^+  abet
   =.  pax  [%web (welp pax /comments/(scot %da now))]
-  =.  txt  (rap 3 (scot %p him) ': ' txt ~)
+  =.  txt  
+    %+  rap  3  :~
+      '## `'  (scot %p him)  '`'
+      '\0a'  txt
+    ==
   (poke--data [`%md pax] %mime / (taco txt))
 ::
 ++  poke-sec-atom
