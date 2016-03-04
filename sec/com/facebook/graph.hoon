@@ -1,3 +1,7 @@
+::  Test url +https://graph.facebook.com/v2.5/me
+::
+::::  /hoon/graph/facebook/com/sec
+  ::
 /+    oauth2
 ::
 ::::

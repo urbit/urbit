@@ -1,3 +1,7 @@
+::  Test url +https://slack.com/api/auth.test
+::
+::::  /hoon/slack/com/sec
+  ::
 /+    oauth2
 ::
 ::::
