@@ -22,7 +22,6 @@
   (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
 ::
 ++  dbg-post  `purl`[`hart`[| `6.000 [%& /localhost]] `pork``/testing `quay`/]
-++  endpoint  |=({dom/(list cord) a/path} [[& ~ &+dom] [~ a] ~])
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  grab-json
   |*  {a/httr b/fist:jo}

@@ -37,10 +37,12 @@
   ::
 |_  {bal/(bale keys:oauth2) user-state}
 ++  auth-re  ~(. (re:auth .) ref |=(a/_ref +>(ref a)))
-++  auth  ~(. (auth-usr usr.bal) bal (scopes 'userinfo.email' 'plus.me' ~))
+++  auth  ~(. (auth-usr usr.bal) bal scopes)
 ++  scopes
-  =+  scope=|=(b/@ta (endpoint:oauth2 dom.bal /auth/[b]))
-  |=(a/(list @ta) ['https://mail.google.com' (turn a |=(b/@ta (crip (earn (scope b)))))])
+  :~  'https://mail.google.com'
+      'https://www.googleapis.com/auth/plus.me'
+      'https://www.googleapis.com/auth/userinfo.email'
+  ==
 ::
 ++  out  (out-fix-expired:auth-re (out-math:auth ber))
 ++  res  |=(a/httr ((res-handle-refreshed:auth-re save-access res-give:auth) a))
