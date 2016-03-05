@@ -4,7 +4,7 @@
   =>  =~
 ::  structures
 |%
-++  move  {p/duct q/(mold note gift-ames)}              ::  local move
+++  move  {p/duct q/(wind note gift-ames)}              ::  local move
 ++  note                                                ::  out request $->
           $?  $:  $d                                    ::  to %dill
           $%  {$flog p/flog}                            ::

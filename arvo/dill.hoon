@@ -43,7 +43,7 @@
 ++  mess                                                ::
   $%  {$dill-belt p/(hypo dill-belt)}                   ::
   ==                                                    ::
-++  move  {p/duct q/(mold note gift)}                   ::  local move   
+++  move  {p/duct q/(wind note gift)}                   ::  local move   
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
       {$sith p/@p q/@uw r/?}                            ::
