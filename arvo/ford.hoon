@@ -425,7 +425,7 @@
     ::
     ++  coup                                            ::  toon to bolt
       |=  cof/cafe
-      |*  {ton/toon fun/$-(* *)}
+      |*  {ton/toon fun/gate}
       :-  p=cof
       ^=  q
       ?-  -.ton
@@ -468,7 +468,7 @@
     ::
     ++  cowl                                            ::  each to bolt
       |=  cof/cafe
-      |*  {tod/(each * tang) fun/$-(* *)}
+      |*  {tod/(each * tang) fun/gate}
       %+  (coup cof)
         ?-  -.tod
           $&  [%0 p=p.tod]

@@ -784,7 +784,7 @@
 ::
 ++  turn                                                ::  transform
   ~/  %turn
-  |*  {a/(list) b/$-(* *)}
+  |*  {a/(list) b/gate}
   |-
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
@@ -2452,7 +2452,7 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  run                                               ::  apply gate to values
-    |*  {b/$-(* *) c/*}
+    |*  {b/gate c/*}
     |-
     ?~  a  c
     $(a r.a, c [(b n.a) $(a l.a)])
@@ -2718,7 +2718,7 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  rib                                               ::  transform + product
-    |*  {b/* c/$-(* *)}
+    |*  {b/* c/gate}
     |-  ^+  [b a]
     ?~  a  [b ~]
     =+  d=(c n.a b)
@@ -2728,7 +2728,7 @@
     [-.f [n.a +.e +.f]]
   ::
   +-  run                                               ::  apply gate to values
-    |*  b/$-(* *)
+    |*  b/gate
     |-
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
@@ -2962,7 +2962,7 @@
 ::
 ++  cook                                                ::  apply gate
   ~/  %cook
-  |*  {poq/$-(* *) sef/rule}
+  |*  {poq/gate sef/rule}
   ~/  %fun
   |=  tub/nail
   =+  vex=(sef tub)
