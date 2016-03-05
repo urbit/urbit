@@ -1,5 +1,5 @@
 ::
-::::  /hoon/init-oauth2/hood/gen
+::::  /hoon/google/init-oauth2/hood/gen
   ::
 /?  314
 /-  sole

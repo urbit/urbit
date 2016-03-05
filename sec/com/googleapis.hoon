@@ -1,6 +1,6 @@
 ::  Test url +https://www.googleapis.com/oauth2/v1/userinfo
 ::
-::::  /hoon/www/googleapis/com/sec
+::::  /hoon/googleapis/com/sec
   ::
 /+    oauth2
 ::

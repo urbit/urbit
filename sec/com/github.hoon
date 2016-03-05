@@ -1,6 +1,6 @@
 ::  Test url +https://api.github.com/user
 ::
-::::  /hoon/api/github/com/sec
+::::  /hoon/github/com/sec
   ::
 /+    basic-auth
 !:
