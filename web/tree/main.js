@@ -1356,11 +1356,24 @@ module.exports = _.extend(reactify, {
 
 
 },{"../stores/TreeStore.coffee":22,"./LoadComponent.coffee":12}],15:[function(require,module,exports){
-var recl, rele;
+var appendNext, recl, rele, waitingScripts;
 
 recl = React.createClass;
 
 rele = React.createElement;
+
+waitingScripts = null;
+
+appendNext = function() {
+  if (waitingScripts == null) {
+    return;
+  }
+  if (waitingScripts.length === 0) {
+    return waitingScripts = null;
+  } else {
+    return document.body.appendChild(waitingScripts.shift());
+  }
+};
 
 module.exports = recl({
   displayName: "Script",
@@ -1369,8 +1382,14 @@ module.exports = recl({
     s = document.createElement('script');
     _.assign(s, this.props);
     urb.waspElem(s);
-    document.body.appendChild(s);
-    return this.js = s;
+    s.onload = appendNext;
+    this.js = s;
+    if (waitingScripts != null) {
+      return waitingScripts.push(s);
+    } else {
+      waitingScripts = [s];
+      return appendNext();
+    }
   },
   componentWillUnmount: function() {
     return document.body.removeChild(this.js);
