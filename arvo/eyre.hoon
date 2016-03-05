@@ -6,7 +6,7 @@
 |%                                                      ::  interfaces
 ++  gift  gift-eyre                                     ::  out result <-$
 ++  kiss  kiss-eyre                                     ::  in request ->$
-++  move  {p/duct q/(mold note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift)}                   ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
           $%  {$wont p/sock q/{path *}}                 ::

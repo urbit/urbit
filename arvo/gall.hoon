@@ -24,8 +24,8 @@
       {$send p/ship q/cush}                             ::  
       {$hiss p/(unit knot) q/mark r/cage}               ::
   ==                                                    ::
-++  cove  (pair bone (mold cote cuft))                  ::  internal move
-++  move  {p/duct q/(mold note-arvo gift-arvo)}         ::  typed move
+++  cove  (pair bone (wind cote cuft))                  ::  internal move
+++  move  {p/duct q/(wind note-arvo gift-arvo)}         ::  typed move
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::

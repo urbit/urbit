@@ -40,7 +40,7 @@
               [%nuke ~]                                 ::  erase subscriber
               [%tell p=@uw q=(unit ,@da) r=path]        ::  save secret
           ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  typed move
+++  move  ,[p=duct q=(wind note gift)]                  ::  typed move
 ++  note                                                ::  out request $->
           $%  $:  %b                                    ::  to %behn
           $%  [%wait p=@da]                             ::

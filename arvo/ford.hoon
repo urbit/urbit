@@ -9,7 +9,7 @@
 ++  gift  gift-ford                                     ::  out result <-$
 ++  heel  path                                          ::  functional ending
 ++  kiss  kiss-ford                                     ::  in request ->$
-++  move  {p/duct q/(mold note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift)}                   ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $c                                    ::  to %clay
           $%  {$warp p/sock q/riff}                     ::
@@ -37,7 +37,7 @@
       jav/(map * calx)                                  ::  cache
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
-  |*  a/$-(* *)                                         ::  product clam
+  |*  a/mold                                            ::  product clam
   $:  p/cafe                                            ::  cache
     $=  q                                               ::
       $%  {$0 p/(set beam) q/a}                         ::  depends+product
@@ -47,7 +47,7 @@
   ==                                                    ::
 ::                                                      ::
 ++  burg                                                ::  gonadic rule
-  |*  {a/$-(* *) b/$-(* *)}                             ::  from and to
+  |*  {a/mold b/mold}                             ::  from and to
   $-({c/cafe d/a} (bolt b))                             ::
 ::                                                      ::
 ++  cafe                                                ::  live cache
