@@ -109,10 +109,11 @@ window.urb.send = function(data,params,cb) { // or send(data, cb)
 
   this.qreq('post',url,params,true,function(err,data) {
     /* if(err) { $send.seqn--; }
-    else */ if(data && data.data.fail && urb.wall !== false)
+    else */ if(data && data.data.fail && urb.wall !== false) {
       document.location = "#ERROR"
       document.write("<pre>"+JSON.stringify(params.xyro)+"\n"
                             +data.data.mess+"</pre>") // XX
+    }
     if(cb) { cb.apply(this,arguments); }
   })
 }
