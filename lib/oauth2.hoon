@@ -9,8 +9,8 @@
   |=  {a/@t b/@t t/@t}
   ^-  @t
   ?:  =('' t)  t
-  %+  add  (lsh 3 1 $(t (rsh 3 1 t)))
-  =+  c=(mod t (bex 8))
+  %+  mix  (lsh 3 1 $(t (rsh 3 1 t)))
+  =+  c=(end 3 1 t)
   ?:(=(a c) b c)
 ::
 ++  join  
