@@ -1005,7 +1005,9 @@
 ::
 ++  peer-sole
   ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid]
-  ::  ?>  =(src.hid our.hid)
+  ?>  ?|  =(src.hid our.hid) 
+          &(=(%earl (clan src.hid)) =(our.hid (sein src.hid)))
+      ==
   =^  moz  .
     ?.  (~(has by hoc) ost.hid)  [~ .]
     ~&  [%dojo-peer-replaced ost.hid]
