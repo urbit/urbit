@@ -763,6 +763,9 @@
           ?($coup $reap)
         ?:  ?=($lens r.q.tee)
           ~&  hen=hen^hcuf=-.cuf
+          ?:  ?=(^ p.cuf)
+            %-  (slog >%eyre-unto-error< >-.cuf< u.p.cuf)
+            +>.$
           ?.  ?=($coup -.cuf)
             +>.$
           +>.$
@@ -1603,15 +1606,29 @@
     ::
     ++  get-lens
       |=  {a/whir-of fec/sole-effect}  ^+  ..ix
-      ?.  ?=($tan -.fec)
-        ..ix
-      =+  txt=(role (turn (flop p.fec) |=(a/tank (crip ~(ram re a)))))
-      =+  jon=`json`a+[s+txt]~
-      =.  +>.$
-        %+  pass-note
-          `whir`[%of ire (gsig [our %dojo] lens+/)]
-        `note`[%g %deal [him our] %dojo %pull ~]
-      abet:(give-json 200 ~ jon)
+      ?+    -.fec  ..ix
+          $tan
+        =+  txt=(role (turn (flop p.fec) |=(a/tank (crip ~(ram re a)))))
+        =+  jon=`json`a+[s+txt]~
+        =.  +>.$
+          %+  pass-note
+            `whir`[%of ire (gsig [our %dojo] lens+/)]
+          `note`[%g %deal [him our] %dojo %pull ~]
+        abet:(give-json 200 ~ jon)
+      ::
+          $txt
+        =+  jon=`json`a+[s+(crip p.fec)]~
+        =.  +>.$
+          %+  pass-note
+            `whir`[%of ire (gsig [our %dojo] lens+/)]
+          `note`[%g %deal [him our] %dojo %pull ~]
+        abet:(give-json 200 ~ jon)
+      ::
+          $mor
+        |-  ^+  ..ix
+        ?~  p.fec  ..ix
+        $(p.fec t.p.fec, ..ix ^$(fec i.p.fec))
+      ==
     ::
     ++  get-rush
       |=  {a/whir-of b/json}  ^+  ..ix

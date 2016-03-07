@@ -22,10 +22,15 @@
       %-  of  :~
         data+so:jo
         dojo+so:jo
-        clay+(su (easy /sentinel/path))  ::  XX  parse-to-pah
+        clay+so:jo
         url+(su auri:urlp)
         api+(su ;~(plug sym ;~(pfix col prn)))
-        get-api+(su ;~(plug sym ;~(pfix col auri:urlp)))
+        :-  %get-api
+        %-  su
+        ;~  plug
+            sym
+            ;~(pfix col (more fas (cook crip (star ;~(less fas prn)))))
+        ==
         listen-api+(su ;~(plug sym ;~(pfix col sym)))
       ==
     ++  transformer  (of as+so hoon+so ~):jo

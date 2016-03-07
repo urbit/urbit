@@ -8,10 +8,10 @@
 ++  source
   $%  {$data data/@}
       {$dojo command/@t}
-      {$clay pax/path}
+      {$clay pax/@t}
       {$url url/purl}
       {$api api/term command/@t}
-      {$get-api api/term endpoint/purl}
+      {$get-api api/term endpoint/(list @t)}
       {$listen-api api/term event/term}
   ==
 ++  transformer
@@ -21,7 +21,6 @@
 ++  sink
   $%  {$stdout $~}
       {$output-file pax/@t}
-
       {$output-clay pax/path}
       {$url url/purl}
       {$to-api api/term command/@t}

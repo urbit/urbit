@@ -87,7 +87,7 @@
     ++  card                                            ::  general card
       $%  {$diff $sole-effect sole-effect}              ::
           {$send wire {ship term} clap}                 ::
-          {$hiss wire {$~ iden} mark {$hiss hiss}}                ::
+          {$hiss wire {$~ iden} mark {$hiss hiss}}      ::
           {$exec wire @p (unit {beak silk})}            ::
           {$deal wire sock term club}                   ::
           {$info wire @p toro}                          ::
@@ -953,7 +953,54 @@
   ++  he-lens
     |=  com/command:lens
     ^+  +>
-    (he-plan [%show %0] [0 %ur '' (rash 'http://example.com' auri:epur)])
+    ::  (he-plan [%show %0] [0 %ur '' (rash 'http://example.com' auri:epur)])
+    ?.  ?=(^ sources.com)
+      ~|(%no-source !!)
+    ?.  ?=(^ sinks.com)
+      ~|(%no-sink !!)
+    =+  ^-  source/dojo-build
+        ?-    -.i.sources.com
+            $data        [%ex %sand %t data.i.sources.com]
+            $dojo        (rash command.i.sources.com dp-build:dp)
+            $clay
+          :-  %ex
+          :*  %wish
+              [%base %noun]
+              :+  %cons
+                [%rock %tas %cx]
+              %+  rash  pax.i.sources.com
+              rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+           ==
+        ::
+            $url         [%ur '' url.i.sources.com]
+            $api         !!
+            $get-api
+          :*  %ex
+              %wish
+              [%wing ~[%json]]
+              :*  %conl
+                  [%rock %tas %gx]
+                  [%sand %ta (scot %p our.hid)]
+                  [%sand %tas api.i.sources.com]
+                  [%sand %ta (scot %da now.hid)]
+                  (turn endpoint.i.sources.com |=(a/@t [%sand %ta a]))
+              ==
+          ==
+        ::
+            $listen-api  !!
+        ==
+    =+  ^-  sink/dojo-sink
+        ?-  -.i.sinks.com
+          $stdout       [%show %0]
+          $output-file  [%show %0]
+          $output-clay  [%file (need (tome pax.i.sinks.com))]
+          $url          [%http %post '' url.i.sinks.com]
+          $to-api       !!
+          $send-api     !!
+          $command      (rash command.i.sinks.com dp-sink:dp)
+          $app          [%poke our.hid app.i.sinks.com]
+        ==
+    (he-plan sink [0 source])
   ::
   ++  he-lame                                           ::  handle error
     |=  {wut/term why/tang}
