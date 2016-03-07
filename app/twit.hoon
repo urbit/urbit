@@ -2,12 +2,10 @@
 ::
 ::::  /hook/core/twit/app
   ::
-/-    twitter
 /+    twitter, talk
 ::
 ::::  ~fyr
   ::
-[twitter .]
 |%
 ++  twit-path                                           ::  valid peer path
   $%  ::  [%home ~]                                         ::  home timeline
@@ -17,7 +15,7 @@
 ::
 ++  axle                                                ::  app state
   $:  %0
-      kes=(map span keys:twit-do)                       ::  auth
+      kes=(map span keys:twittter)                      ::  auth
       out=(map ,@uvI (each ,[span cord] stat))          ::  sent tweets
       ran=(map path ,[p=@ud q=@da])                     ::  polls active
       fed=(jar path stat)                               ::  feed cache
@@ -46,7 +44,8 @@
       [%t %wake ~]                                      ::  timeout ping
   ==
 ::
-++  stat  twit-stat                                     ::  recieved tweet
+++  stat  stat:twitter                                  ::  recieved tweet
+++  twit  main:twitter                                  ::  api interface
 --
 !:
 ::::
@@ -86,19 +85,19 @@
   mof
 ::
 ++  poke-twit-do                                        ::  recieve request
-  |=  act=twit-do
+  |=  [usr=span act=command:twitter]
   ^+  [*(list move) +>]
-  ?-    -.q.act
+  ?-    -.act
       %auth
-    :-  [(print "authed @{(trip p.act)}")]~
-    +>.$(kes (~(put by kes) p.act p.q.act))             ::  XX verify key
+    :-  [(print "authed @{(trip usr)}")]~
+    +>.$(kes (~(put by kes) usr p.act))             ::  XX verify key
       %post
-    =:  out  (~(put by out) p.q.act %& p.act q.q.act)
+    =:  out  (~(put by out) p.act %& usr q.act)
         ran  (~(del by ran) /peer/home)
       ==
     %+  wait  /peer/home
-    =+  mez=(stat-upda:(auth p.act) [%status q.q.act]~ ~)
-    [ost %them /post/(scot %uv p.q.act) ~ mez]~
+    =+  mez=(stat-upda:(auth usr) [%status q.act]~ ~)
+    [ost %them /post/(scot %uv p.act) ~ mez]~
   ==
 ::
 ++  wake-peer
