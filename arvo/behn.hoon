@@ -19,7 +19,7 @@
               {$wake $~}                                ::  timer activate
               {$wegh $~}                                ::  report memory
           ==                                            ::
-++  move  {p/duct q/(mold note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift)}                   ::  local move
 ++  note  $~                                            ::  out request $->
 ++  sign  $~                                            ::  in result $<-
 ++  clok  (broq @da duct)                               ::  stored timers
