@@ -70,12 +70,12 @@
 ++  twip                                                ::  response printers
   |%
   ++  mean
-    |=  [msg=@t num=@ud]  ^-  tank
-    rose/[": " `~]^~[leaf/"Error {<num>}" leaf/(trip msg)]
+    |=  {msg/@t num/@ud}  ^-  tank
+    rose+[": " `~]^~[leaf+"Error {<num>}" leaf+(trip msg)]
   --
 ++  twir                                                ::  response parsers
   |%
-  ++  fasp  |*({a/@tas b/*} [(gsub '-' '_' a) b])
+  ++  fasp  |*(a/{@tas *} [(gsub '-' '_' -.a) +.a])     ::  XX usable electroplating
   ++  user  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
   ++  stat
@@ -87,7 +87,7 @@
         (fasp created-at+da)
         text+so
     ==
-  ++  usel
+  ++  usel 
     =+  jo
     ^-  $-(json (unit (list who/@ta)))
     =-  (ot users+(ar -) ~)
@@ -162,7 +162,7 @@
             ban/(list {p/@t q/?(@ (list @))})
             quy/quay
         ==
-    ^-  [path quay]
+    ^-  {tape:path quay}
     ?~  ban
       [(fass pax) quy]
     ?:  =('!inline' p.i.ban)
@@ -173,7 +173,7 @@
     %+  welp  quy
     %+  turn  `(list {p/@t q/?(@ (list @))})`ban
     |=  {p/@t q/?(@ (list @))}
-    ^-  [@t @t]
+    ^-  {@t @t}
     :-  (gsub '-' '_' p)
     ?@  q
       ?-  p
