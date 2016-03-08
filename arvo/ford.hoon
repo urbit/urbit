@@ -1666,7 +1666,9 @@
         =.  ..neck  
             %=  sel
               how  how
-              bil  (~(put by bil) p.i.bir [i.bir [%tow (flop boy.sel)]])
+              bil  %+  ~(put by (~(uni by bil) bil.sel))
+                     p.i.bir
+                   [i.bir [%tow (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)
       ::
