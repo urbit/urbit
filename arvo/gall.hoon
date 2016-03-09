@@ -509,6 +509,7 @@
     |=  {dap/dude pry/prey cub/club}
     ^+  +>
     ?:  |(!(~(has by bum) dap) (~(has by wub) dap))
+      ~&  >>  [%mo-not-running dap -.cub]
       ::  ~&  [%mo-club-qeu dap cub]
       =+  syf=(fall (~(get by wub) dap) *sofa)
       +>.$(wub (~(put by wub) dap syf(kys (~(put to kys.syf) [hen pry cub]))))
