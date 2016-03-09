@@ -1,5 +1,5 @@
 ::
-::::  /hoon/init-oauth2/hood/gen
+::::  /hoon/init-oauth1/hood/gen
   ::
 /?  314
 /-  sole
@@ -23,12 +23,12 @@
   ~|(%ips-unsupported !!)
 =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
 %+  sole-lo
-  [%& %oauth-client "client id: "]
+  [%& %oauth-client "consumer key: "]
 %+  sole-go  (boss 256 (star prn))
-|=  cid/@t
+|=  key/@t
 %+  sole-lo  
-  [%& %oauth-secret "client secret: "]
+  [%& %oauth-secret "consumer secret: "]
 %+  sole-go  (boss 256 (star prn))
-|=  cis/@t
+|=  sec/@t
 %+  sole-so  %write-sec-atom    :: XX typed pair
-[hot (role cid cis ~)]
+[hot (role key sec ~)]
