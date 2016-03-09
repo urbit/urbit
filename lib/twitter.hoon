@@ -23,6 +23,12 @@
   =+  c=(end 3 1 t)
   ?:(=(a c) b c)
 ::
+++  join
+  |=  {a/char b/(list @t)}  ^-  @t
+  %+  rap  3
+  ?~  b  ~
+  |-(?~(t.b b [i.b a $(b t.b)])) 
+::
 ++  interpolate-some  ::  [/a/:b/c [d+'bar' b+'foo']~] -> [/a/foo/c [d+'bar']~]
   |=  {pax/path quy/quay}  ^-  {path quay}
   =+  ^=  inline                                        ::  required names
@@ -112,7 +118,6 @@
       ++  fo  {$follow p/lid}
       ++  gr  {$grant-type p/gat}
       ++  id  {$id p/tid}
-      ++  ii  {$'!inline' p/@t}
       ++  is  {$id p/lid}
       ++  la  {$lat p/lat}
       ++  lo  {$long p/lon}
@@ -134,20 +139,25 @@
       ++  ur  {$url p/url}
       ++  ui  {$user-id p/tid}
       ++  us  {$user-id p/lid}
+      ++  param                                        :: (any) required param
+        $?  at  de  fo  gr  id  is  la  lo  na  oa  os  pl  qq
+            sc  sd  ss  sl  si  st  te  ti  ts  tr  ur  ui  us
+        ==
       --
   |_  {key/keys est/time eny/@uv}
-  ++  lutt  |=(@ `@t`(rsh 3 2 (scot %ui +<)))
+  ++  lutt  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
   ++  llsc  
-    |=  (list scr) 
-    (roll +< |=({p/scr q/@t} (cat 3 (cat 3 q ',') p)))
+    |=  a/$@(scr (list scr))  ^-  @t
+    ?@(a `@t`a (join ',' a))
   ::
   ++  llst  
-    |=  (list @t) 
-    (roll +< |=({p/@t q/@t} (cat 3 (cat 3 q ',') p)))
+    |=  a/$@(@t (list @t))  ^-  @t
+    ?@(a `@t`a (join ',' a))
   ::
   ++  llid
-    |=  (list tid) 
-    (roll +< |=({p/tid q/@t} (cat 3 (cat 3 q ',') (lutt p))))
+    |=  a/$@(tid (list tid))  ^-  @t
+    ?~  a  ~|(%nil-id !!)
+    ?@(a (lutt a) (join ',' (turn `(list tid)`a lutt)))
   ::
   ++  mold                                        ::  construct request
     |*  {med/meth pax/path a/$-(* *)}
@@ -156,32 +166,21 @@
   ::
   ++  cowl                                        ::  handle parameters
     |=  $:  pax/path 
-            ban/(list {p/@t q/?(@ (list @))})
+            ban/(list param)
             quy/quay
         ==
-    ^-  {tape:path quay}
-    ?~  ban
-      [(fass pax) quy]
-    ?:  =('!inline' p.i.ban)
-      ?@  q.i.ban
-        [(fass (welp pax /[`@t`q.i.ban])) quy]
-      !!
-    :-  (fass pax)
-    %+  welp  quy
-    %+  turn  `(list {p/@t q/?(@ (list @))})`ban
-    |=  {p/@t q/?(@ (list @))}
+    ^-  {path quay}
+    %+  interpolate-some  (fass pax)
+    =-  (weld - quy)
+    %+  turn  ban
+    |=  p/param
     ^-  {@t @t}
-    :-  (gsub '-' '_' p)
-    ?@  q
-      ?-  p
-        ?($id $source-id $target-id $user-id)  (lutt q)
-        @                                      `@t`q
-      ==
-    ?-  p
-      ?($follow $id $name $user-id)  (llid q)
-      $track                         (llst q)
-      $screen-name                   (llsc q)
-      *                              !!
+    :-  (gsub '-' '_' -.p)
+    ?+  -.p  p.p  :: usually plain text
+      ?($source-id $target-id)       (lutt p.p)
+      ?($follow $id $name $user-id)  (llid p.p)
+      $track                         (llst p.p)
+      $screen-name                   (llsc p.p)
     ==
   ::
   ++  stat-ment  
@@ -197,19 +196,19 @@
     (mold %get /statuses/retweets-of-me $~)
   ::
   ++  stat-rets-iddd  
-    (mold %get /statuses/retweets {ii $~})
+    (mold %get /statuses/retweets/':id' {id $~})
   ::
   ++  stat-show  
     (mold %get /statuses/show {id $~})
   ::
   ++  stat-dest-iddd  
-    (mold %post /statuses/destroy {ii $~})
+    (mold %post /statuses/destroy/':id' {id $~})
   ::
   ++  stat-upda  
     (mold %post /statuses/update {st $~})
   ::
   ++  stat-retw-iddd  
-    (mold %post /statuses/retweet {ii $~})
+    (mold %post /statuses/retweet/':id' {id $~})
   ::
   ++  stat-oemb-iddd  
     (mold %get /statuses/oembed {id $~})
@@ -431,16 +430,16 @@
     (mold %get /saved-searches/list $~)
   ::
   ++  save-show-iddd  
-    (mold %get /saved-searches/show {ii $~})
+    (mold %get /saved-searches/show/':id' {id $~})
   ::
   ++  save-crea  
     (mold %post /saved-searches/create {qq $~})
   ::
   ++  save-dest-iddd  
-    (mold %post /saved-searches/destroy {ii $~})
+    (mold %post /saved-searches/destroy/':id' {id $~})
   ::
   ++  geoo-iddd-plac  
-    (mold %get /geo/id {ii $~})
+    (mold %get /geo/id/':id' {id $~})
   ::
   ++  geoo-reve  
     (mold %get /geo/reverse-geocode {la lo $~})
