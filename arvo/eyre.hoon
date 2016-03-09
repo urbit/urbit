@@ -472,7 +472,7 @@
                 ;input#ship.mono(contenteditable "", placeholder "planet");
               ==
               ;input#pass.mono(type "password", placeholder "passcode");
-              ;h2.advice: Your passcode code has been printed to your console.
+              ;h2.advice: Type +{;code:("+code")} in your dojo for your passcode.
               ;pre:code#err;
             ==
           ==
@@ -1347,8 +1347,7 @@
         ?.  ?|  (~(has in aut.yac) him.ham) 
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
-          ~&  code=`@t`load-secret
-          ~|([%try 'code' %in %console] !!)  ::  XX security
+          ~|(%auth-fail !!)
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
         =.  cug.yac  :_(cug.yac (set-cookie %ship (scot %p him.ham)))
         (give-json 200 cug.yac jon)
@@ -1356,7 +1355,6 @@
     ::
     ++  show-login-page
       |=  ses/(unit hole)  ^-  (each pest _done)
-      %-  (slog leaf+"login code for {(scow %p our)}: {(trip load-secret)}" ~)
       ?.  ?=($@($~ {$~ $html}) p.pok)
         [%& %red ~]
       ?~  ses
