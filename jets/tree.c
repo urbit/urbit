@@ -414,6 +414,34 @@ static u3j_core _arvo_d[] =
     {}
   };
 
+
+  u3_noun
+  u3qa_dope(u3_atom a)
+  {
+    fprintf(stderr, "c dope %x\r\n", a);
+    return (a * a * a);
+  }
+  u3_noun
+  u3wa_dope(u3_noun cor)
+  {
+    u3_noun a;
+
+    if ( (c3n == u3r_mean(cor, u3x_sam, &a, 0)) ||
+         (c3n == u3ud(a)) )
+    {
+      return u3m_bail(c3__exit);
+    } else {
+      return u3wa_dope(a);
+    }
+  }
+
+static u3j_harm _mood__hoon_dope_a[] = {{".2", u3wa_dope, c3y}, {}};
+  
+static u3j_core _zuse_d[] = 
+  { { "dope", _mood__hoon_dope_a },
+    {}
+  };
+
 static u3j_core _mood__hoon_d[] = 
   { { "add", _mood__hoon_add_a },
     { "dec", _mood__hoon_dec_a },
@@ -543,6 +571,7 @@ static u3j_core _mood__hoon_d[] =
     // { "al", _mood__hoon__al_a },
     { "ut", _mood__hoon__ut_a, _mood__hoon__ut_d },
     { "arvo", 0, _arvo_d },
+    { "zuse", 0, _zuse_d },
 #endif
     {}
   };
