@@ -1,4 +1,4 @@
-/* j/dash.c
+/* j/teee.c
 **
 */
 #include "all.h"
@@ -411,9 +411,11 @@ static u3j_core _down_d[] =
 
 static u3j_core _arvo_d[] =
   { { "down", 0, _down_d },
+    { "lore", _mood__hoon_lore_a },
+    { "loss", _mood__hoon_loss_a },
+    { "lune", _mood__hoon_lune_a },
     {}
   };
-
 
   u3_noun
   u3qa_dope(u3_atom a)
@@ -434,13 +436,6 @@ static u3j_core _arvo_d[] =
       return u3wa_dope(a);
     }
   }
-
-static u3j_harm _mood__hoon_dope_a[] = {{".2", u3wa_dope, c3y}, {}};
-  
-static u3j_core _zuse_d[] = 
-  { { "dope", _mood__hoon_dope_a },
-    {}
-  };
 
 static u3j_core _mood__hoon_d[] = 
   { { "add", _mood__hoon_add_a },
@@ -511,10 +506,6 @@ static u3j_core _mood__hoon_d[] =
     { "jam", _mood__hoon_jam_a },
     { "mat", _mood__hoon_mat_a },
     { "rub", _mood__hoon_rub_a },
-    { "lore", _mood__hoon_lore_a },
-    { "loss", _mood__hoon_loss_a },
-    { "lune", _mood__hoon_lune_a },
-    { "mink", _mood__hoon_mink_a },
     { "mule", _mood__hoon_mule_a },
     { "repg", _mood__hoon_repg_a },
     { "rexp", _mood__hoon_rexp_a },
@@ -571,7 +562,6 @@ static u3j_core _mood__hoon_d[] =
     // { "al", _mood__hoon__al_a },
     { "ut", _mood__hoon__ut_a, _mood__hoon__ut_d },
     { "arvo", 0, _arvo_d },
-    { "zuse", 0, _zuse_d },
 #endif
     {}
   };
