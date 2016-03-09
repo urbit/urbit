@@ -56,14 +56,15 @@
           eny/@
       ==
   ^-  hiss
-  =+  url=(scan "https://api.twitter.com/1.1.json" auri:epur)  :: base path
+  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:epur)  :: base path
   =.  q.q.url  (welp q.q.url pax)
-  =+  hed=(~(add ja *math) %authorization (oauth1 med url quy key est eny))
+  =.  r.url  quy
+  %-  (oauth1 key est eny)
   ?-  med
-    $get  [url(r quy) med hed ~]
+    $get  [url med *math ~]
     $post
-      =.  hed  (~(add ja hed) %content-type 'application/x-www-form-urlencoded')
-      [url med hed (some (tact +:(tail:earn quy)))]
+      =+  hed=(~(add ja *math) %content-type 'application/x-www-form-urlencoded')
+      [url(r ~) med hed (some (tact +:(tail:earn r.url)))]
   ==
 --
 !:
