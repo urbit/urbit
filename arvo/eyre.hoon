@@ -764,8 +764,11 @@
         ?:  ?=($lens r.q.tee)
           ~&  hen=hen^hcuf=-.cuf
           ?:  ?=(^ p.cuf)
-            %-  (slog >%eyre-unto-error< >-.cuf< u.p.cuf)
-            +>.$
+            =+  tag=`tang`[>%eyre-unto-error< >-.cuf< u.p.cuf]
+            %-  (slog tag)
+            =+  txt=(role (turn (flop tag) |=(a/tank (crip ~(ram re a)))))
+            =+  jon=`json`s+txt
+            (give-json 200 ~ jon)
           ?.  ?=($coup -.cuf)
             +>.$
           +>.$
@@ -1609,7 +1612,7 @@
       ?+    -.fec  ..ix
           $tan
         =+  txt=(role (turn (flop p.fec) |=(a/tank (crip ~(ram re a)))))
-        =+  jon=`json`a+[s+txt]~
+        =+  jon=`json`s+txt
         =.  +>.$
           %+  pass-note
             `whir`[%of ire (gsig [our %dojo] lens+/)]
@@ -1617,7 +1620,7 @@
         abet:(give-json 200 ~ jon)
       ::
           $txt
-        =+  jon=`json`a+[s+(crip p.fec)]~
+        =+  jon=`json`s+(crip p.fec)
         =.  +>.$
           %+  pass-note
             `whir`[%of ire (gsig [our %dojo] lens+/)]

@@ -1,9 +1,7 @@
 |%
 ++  command
-  $:  flags/{merge-input/? fan-output/?}
-      sources/(list source)
-      transformers/(list transformer)
-      sinks/(list sink)
+  $:  source/source
+      sink/sink
   ==
 ++  source
   $%  {$data data/@}
@@ -12,11 +10,10 @@
       {$url url/purl}
       {$api api/term command/@t}
       {$get-api api/term endpoint/(list @t)}
+      {$as mar/mark next/source}          ::  can't be at the
+      {$hoon code/@t next/source}         ::  end since they
+      {$tuple next/(list source)}         ::  don't bunt well
       {$listen-api api/term event/term}
-  ==
-++  transformer
-  $%  {$as mar/mark}
-      {$hoon code/@t}
   ==
 ++  sink
   $%  {$stdout $~}
@@ -24,7 +21,7 @@
       {$output-clay pax/path}
       {$url url/purl}
       {$to-api api/term command/@t}
-      {$send-api api/term endpoint/purl}
+      {$send-api api/term endpoint/(list @t)}
       {$command command/@t}
       {$app app/term}
   ==

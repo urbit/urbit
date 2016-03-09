@@ -173,11 +173,12 @@
 ::  into poke semantics.
 ::
 ++  poke-gh-poke
-  |=  {method/meth endpoint/path jon/json}
+  |=  {method/meth endpoint/(list @t) jon/json}
   ^-  {(list move) _+>.$}
   :_  +>.$  :_  ~
   :*  ost.hid  %hiss  /poke/[method]  `~  %httr  %hiss 
-      (scan "https://api.github.com{<`path`endpoint>}" auri:epur)
+      ~|  stuff="https://api.github.com{<(path endpoint)>}"
+      (scan "https://api.github.com{<(path endpoint)>}" auri:epur)
       method  ~  `(taco (crip (pojo jon)))
   ==
 ::

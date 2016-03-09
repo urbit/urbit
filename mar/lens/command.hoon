@@ -11,14 +11,14 @@
     %.  jon
     =>  [. jo]
     =<  %-  ot  :~
-          flags+(ot merge-input+bo fan-output+bo ~)
-          sources+(ar source)
-          transformers+(ar transformer)
-          sinks+(ar sink)
+          source+source
+          sink+sink
         ==
     |%
     ++  source
       ^-  $-(^json (unit source:lens))
+      |=  jon/^json
+      %.  jon
       %-  of  :~
         data+so:jo
         dojo+so:jo
@@ -32,8 +32,10 @@
             ;~(pfix col (more fas (cook crip (star ;~(less fas prn)))))
         ==
         listen-api+(su ;~(plug sym ;~(pfix col sym)))
+        as+(ot mark+(su sym) next+source ~)
+        hoon+(ot code+so:jo next+source ~)
+        tuple+(ar source)
       ==
-    ++  transformer  (of as+so hoon+so ~):jo
     ++  sink
       ^-  $-(^json (unit sink:lens))
       %-  of  :~
@@ -42,7 +44,12 @@
         output-clay+(su (easy /sentinel/path))
         url+(su auri:urlp)
         to-api+(su ;~(plug sym ;~(pfix col prn)))
-        send-api+(su ;~(plug sym ;~(pfix col auri:urlp)))
+        :-  %send-api
+        %-  su
+        ;~  plug
+            sym
+            ;~(pfix col (more fas (cook crip (star ;~(less fas prn)))))
+        ==
         command+so:jo
         app+(su sym)
       ==

@@ -32,7 +32,7 @@
           {$pill p/path}                                ::  noun to unix pill
           ::  {$tree p/path}                            ::  noun to unix tree
           {$file p/beam}                                ::  save to clay
-          {$http p/?($post $put) q/iden r/purl}                ::  http outbound
+          {$http p/?($post $put) q/iden r/purl}         ::  http outbound
           {$poke p/goal}                                ::  poke app
           {$show p/?($0 $1 $2 $3)}                      ::  print val+span+twig
           {$verb p/term}                                ::  store variable
@@ -953,26 +953,36 @@
   ++  he-lens
     |=  com/command:lens
     ^+  +>
-    ::  (he-plan [%show %0] [0 %ur '' (rash 'http://example.com' auri:epur)])
-    ?.  ?=(^ sources.com)
-      ~|(%no-source !!)
-    ?.  ?=(^ sinks.com)
-      ~|(%no-sink !!)
-    =+  ^-  source/dojo-build
-        ?-    -.i.sources.com
-            $data        [%ex %sand %t data.i.sources.com]
-            $dojo        (rash command.i.sources.com dp-build:dp)
+    =+  ^-  source/dojo-source
+        =|  num/@
+        =-  ?.  ?=($send-api -.sink.com)  ::  XX  num is incorrect
+              sor
+            :-  0
+            :+  %as  `mark`(cat 3 api.sink.com '-poke')
+            :-  1
+            :+  %do
+              :+  %gill  [%base %noun]
+              :^  %cont  [%rock %tas %post]
+                [%rock %$ endpoint.sink.com]
+              [%make ~[[%.y 6]] ~]
+            sor
+        ^=  sor
+        |-  ^-  dojo-source
+        :-  num
+        ?-    -.source.com
+            $data        [%ex %sand %t data.source.com]
+            $dojo        (rash command.source.com dp-build:dp)
             $clay
           :-  %ex
           :*  %wish
               [%base %noun]
               :+  %cons
                 [%rock %tas %cx]
-              %+  rash  pax.i.sources.com
+              %+  rash  pax.source.com
               rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
            ==
         ::
-            $url         [%ur '' url.i.sources.com]
+            $url         [%ur '' url.source.com]
             $api         !!
             $get-api
           :*  %ex
@@ -981,26 +991,46 @@
               :*  %conl
                   [%rock %tas %gx]
                   [%sand %ta (scot %p our.hid)]
-                  [%sand %tas api.i.sources.com]
+                  [%sand %tas api.source.com]
                   [%sand %ta (scot %da now.hid)]
-                  (turn endpoint.i.sources.com |=(a/@t [%sand %ta a]))
+                  (turn endpoint.source.com |=(a/@t [%sand %ta a]))
               ==
           ==
         ::
             $listen-api  !!
+            $as          
+          :*  %as  mar.source.com
+              $(num +(num), source.com next.source.com)
+          ==
+        ::
+            $hoon 
+          :*  %do
+              %+  rash  code.source.com
+              tall:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+              $(num +(num), source.com next.source.com)
+          ==
+        ::
+            $tuple  
+          :-  %tu
+          |-  ^-  (list dojo-source)
+          ?~  next.source.com
+            ~
+          =.  num  +(num)
+          :-  ^$(source.com i.next.source.com)
+          $(next.source.com t.next.source.com)
         ==
     =+  ^-  sink/dojo-sink
-        ?-  -.i.sinks.com
+        ?-  -.sink.com
           $stdout       [%show %0]
           $output-file  [%show %0]
-          $output-clay  [%file (need (tome pax.i.sinks.com))]
-          $url          [%http %post '' url.i.sinks.com]
+          $output-clay  [%file (need (tome pax.sink.com))]
+          $url          [%http %post '' url.sink.com]
           $to-api       !!
-          $send-api     !!
-          $command      (rash command.i.sinks.com dp-sink:dp)
-          $app          [%poke our.hid app.i.sinks.com]
+          $send-api     [%poke our.hid api.sink.com]
+          $command      (rash command.sink.com dp-sink:dp)
+          $app          [%poke our.hid app.sink.com]
         ==
-    (he-plan sink [0 source])
+    (he-plan sink source)
   ::
   ++  he-lame                                           ::  handle error
     |=  {wut/term why/tang}
