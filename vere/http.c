@@ -894,9 +894,10 @@ _http_request(u3_hreq* req_u)
 
     u3v_plan(pox,
                u3nq(c3__this,
+                    req_u->hon_u->htp_u->lop,
                     req_u->hon_u->htp_u->sec,
-                    u3nc(c3y, u3i_words(1, &req_u->ipf_w)),
-                    req));
+                    u3nc(u3nc(c3y, u3i_words(1, &req_u->ipf_w)),
+                         req)));
   }
 }
 
