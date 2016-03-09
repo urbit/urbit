@@ -179,7 +179,9 @@ Wait until you see a prompt, something like
       ~fintud-macrep:dojo>
 
 Your urbit is launched! Ladies and gentlemen, we are floating in
-space.
+space.  
+
+In either case you'll notice that we created a directory in unix called either `mycomet` or `fintud-macrep`.  All of your state (a log and checkpoint) lives in that directory.  You can move it around, but don't delete it!
 
 ### Restarting
 
@@ -192,6 +194,18 @@ Instead:
 or
 
     urbit mycomet
+
+### Continuity breaches / network reboots
+
+Urbit is still young, and we reboot the network from time to time.  Urbit can upgrade itself over the air, but at this stage it's easier to bring in breaking api changes this way.  Since our crypto is stateful we call this a 'continuity breach'.  
+
+If you have files in your Urbit you'd like to backup first make a copy of your pier.  Then you'll need to shut down your urbit (with `^d`) and:
+
+    git pull origin master
+    make clean; make
+    curl -o urbit.pill http://bootstrap.urbit.org/latest.pill
+
+Then start over at the top of this section.
 
 Talk
 ====
