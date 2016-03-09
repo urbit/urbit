@@ -5,7 +5,6 @@
 /?    314
 /-    twitter
 /+    oauth1
-=+  oauth1=oauth1
 =+  sur-twit:^twitter  :: XX
 !:
 ::::  functions
@@ -13,11 +12,8 @@
 |%
 ++  fass                                                ::  rewrite path
   |=  a/path
-  %-  trip
-  %^  gsub  '-'  '_'
-  %+  reel  a
-  |=  {p/@t q/@t}
-  (cat 3 '/' (cat 3 p q))
+  %+  turn  a
+  |=(b/@t (gsub '-' '_' b))
 ::
 ++  gsub                                                ::  replace chars
   |=  {a/@t b/@t t/@t}
@@ -47,40 +43,22 @@
   [q.i.b $(a t.a, b t.b)]
 ::
 ++  valve                                               ::  produce request
-  |=  $:  med/meth 
-          {rus/tape quy/quay}
+  |=  $:  med/?($get $post)
+          {pax/path quy/quay}
           key/keys
           est/time 
           eny/@
       ==
   ^-  hiss
-  =+  url="https://api.twitter.com/1.1{rus}.json"
-  =+  req=|=(a/tape (scan a auri:epur))
-  =+  ^=  help
-      |=  quy/(list {tape tape})
-      ^-  (list tape)
-      %+  turn  quy 
-        |=  a/{p/tape q/tape}
-        :(weld (urle p.a) "=" (urle q.a))
-  =+  tan=(turn quy |=({p/@t q/@t} [(trip p) (trip q)]))
-  =+  har=(help (turn tan |=(p/{p/tape q/tape} [p.p (urle q.p)])))
-  =+  hab=(help tan)
-  =+  lav=(reel har |=({p/tape q/tape} :(weld p "&" q)))
-  =+  voy=?:(=(0 (lent lav)) ~ (scag (dec (lent lav)) `tape`lav))
-  =+  vab=(reel hab |=({p/tape q/tape} :(weld p "&" q)))
-  =+  vur=(crip ?:(=(0 (lent vab)) ~ (scag (dec (lent vab)) `tape`vab)))
-  =+  ^=  head
-      %-  ~(gas by *math)
-      ~!  ^twitter
-      ~!  oauth1:^twitter
-      :~  ['authorization' [(oauth1 med url hab key est eny) ~]]
-          ['content-type' ['application/x-www-form-urlencoded' ~]]
-      ==
-  ?:  =(%get med)
-    ?~  voy
-      [(req url) med head ~]
-    [(req :(weld url "?" voy)) med head ~]
-  [(req url) med head (some [(met 3 vur) vur])]
+  =+  url=(scan "https://api.twitter.com/1.1.json" auri:epur)  :: base path
+  =.  q.q.url  (welp q.q.url pax)
+  =+  hed=(~(add ja *math) %authorization (oauth1 med url quy key est eny))
+  ?-  med
+    $get  [url(r quy) med hed ~]
+    $post
+      =.  hed  (~(add ja hed) %content-type 'application/x-www-form-urlencoded')
+      [url med hed (some (tact +:(tail:earn quy)))]
+  ==
 --
 !:
 ::::  library
@@ -157,7 +135,7 @@
       ++  ui  {$user-id p/tid}
       ++  us  {$user-id p/lid}
       --
-  |_  {key/keys est/time eny/@uw}
+  |_  {key/keys est/time eny/@uv}
   ++  lutt  |=(@ `@t`(rsh 3 2 (scot %ui +<)))
   ++  llsc  
     |=  (list scr) 
