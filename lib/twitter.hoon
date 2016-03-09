@@ -70,13 +70,13 @@
 ::::  library
   ::
 |%
-++  twip                                                ::  response printers
+++  render                                                ::  response printers
   |%
   ++  mean
     |=  {msg/@t num/@ud}  ^-  tank
     rose+[": " `~]^~[leaf+"Error {<num>}" leaf+(trip msg)]
   --
-++  twir                                                ::  response parsers
+++  parse                                                ::  json reparsers
   |%
   ++  fasp  |*(a/{@tas *} [(gsub '-' '_' -.a) +.a])     ::  XX usable electroplating
   ++  user  (cook crip (plus ;~(pose aln cab)))

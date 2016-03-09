@@ -46,6 +46,8 @@
 ::
 ++  stat  stat:twitter                                  ::  recieved tweet
 ++  twit  main:twitter                                  ::  api interface
+++  twir  parse:twitter                                 ::  reparsers
+++  twip  render:twitter                                ::  printers
 --
 !:
 ::::
