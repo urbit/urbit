@@ -27,6 +27,25 @@
   =+  c=(end 3 1 t)
   ?:(=(a c) b c)
 ::
+++  interpolate-some  ::  [/a/:b/c [d+'bar' b+'foo']~] -> [/a/foo/c [d+'bar']~]
+  |=  {pax/path quy/quay}  ^-  {path quay}
+  =+  ^=  inline                                        ::  required names
+      %-  ~(gas in *(set term))
+      (murn pax replacable:interpolate-path)
+  =^  inter  quy
+    (skid quy |=({a/knot @} (~(has in inline) a)))
+  [(interpolate-path pax inter) quy]
+::
+++  interpolate-path  ::  [/a/:b/c [%b 'foo']~] -> /a/foo/c
+  =+  replacable=|=(a/knot `(unit term)`(rush a ;~(pfix col sym)))
+  |=  {a/path b/(list (pair term knot))}  ^-  path
+  ?~  a  ?~(b ~ ~|(unused-values+b !!))
+  =+  (replacable i.a)
+  ?~  -  [i.a $(a t.a)]  ::  literal value
+  ?~  b  ~|(no-value+u !!)
+  ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
+  [q.i.b $(a t.a, b t.b)]
+::
 ++  valve                                               ::  produce request
   |=  $:  med/meth 
           {rus/tape quy/quay}
