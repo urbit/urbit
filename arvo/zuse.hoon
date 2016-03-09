@@ -10,7 +10,7 @@
 ::                section 3bA, lite number theory       ::
 ::
 ++  dope
-  ~/  %dope
+  ~%  %dope  ..is   ~  
   |=  a/@
   ~&  [%dope-zuse (mug +>)]
   :(mul a a a)
