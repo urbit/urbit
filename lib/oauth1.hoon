@@ -15,12 +15,12 @@
         url/tape 
         pas/(list tape) 
         key/keys
-        zet/time 
-        ken/@
+        now/time 
+        eny/@
     ==
 ^-  @t
-=+  non=(turn (rip 2 (shaw zet 128 ken)) |=(a/@ ~(x ne a)))
-=+  tim=(slag 2 (scow %ui (unt zet)))
+=+  non=(scow %uw (shaf %non eny))
+=+  tim=(slag 2 (scow %ui (unt now)))
 =+  sky=(crip :(weld (urle (trip sec.con.key)) "&" (urle (trip sec.acc.key))))
 =+  ^=  bas  
     ^-  tape
