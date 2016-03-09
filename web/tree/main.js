@@ -375,7 +375,11 @@ extras = {
     render: function() {
       return div({
         className: "footer"
-      }, p({}, "This page was served by Urbit."));
+      }, p({}, [
+        "This page was served by an Urbit.", a({
+          href: "mailto:urbit@urbit.org"
+        }, "urbit@urbit.org")
+      ]));
     }
   })
 };
@@ -1492,11 +1496,7 @@ module.exports = _.extend(reactify, {
 });
 
 
-<<<<<<< HEAD
 },{"../stores/TreeStore.coffee":22,"./LoadComponent.coffee":11}],15:[function(require,module,exports){
-=======
-},{"../stores/TreeStore.coffee":22,"./LoadComponent.coffee":12}],15:[function(require,module,exports){
->>>>>>> master
 var appendNext, recl, rele, waitingScripts;
 
 recl = React.createClass;
