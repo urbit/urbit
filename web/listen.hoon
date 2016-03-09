@@ -1,5 +1,5 @@
 ::
-::::  /hoon/talk/web
+::::  /hoon/listen/web
   ::
 /?    310
 ;div.mini-module

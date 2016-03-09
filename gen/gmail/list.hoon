@@ -1,5 +1,5 @@
 ::
-::::  /hoon/ticket/gen
+::::  /hoon/list/gmail/gen
   ::
 /?    310
 ::

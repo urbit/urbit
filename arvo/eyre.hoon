@@ -745,9 +745,9 @@
         =+  usr=(slav %ta p.tee)
         =+  ((hard {pul/purl ^}) q.q.cay)
         ?.  ?=($& -.r.p.pul)
-          ~&  [%auth-lost usr p.r.p.pul]
+          ~&  [%auth-lost usr (head:earn p.pul)]
           (eyre-them tee q.cay)
-        (get-req:(dom-vi usr p.r.p.pul) q.tee q.cay)
+        (get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
       ::
 ::           {$hi ^}
 ::         ?:  ?=($| -.q.sih)
