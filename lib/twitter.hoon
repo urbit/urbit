@@ -64,7 +64,7 @@
   =+  url=(scan "https://api.twitter.com/1.1/.json" auri:epur)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
-  %^  ~(add-auth auth bal)  sec.acc.key 
+  %^  ~(add-auth auth ~ bal '')  sec.acc.key 
     [oauth-token+tok.acc.key]~
   ^-  hiss
   ?-  med
@@ -238,12 +238,6 @@
   ::
   ++  stat-fire  
     (mold %get /statuses/firehose $~)
-  ::
-  ++  user  
-    (mold %get /user $~)
-  ::
-  ++  site  
-    (mold %get /site {fo $~})
   ::
   ++  dire  
     (mold %get /direct-messages $~)

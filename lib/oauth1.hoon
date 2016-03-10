@@ -6,7 +6,6 @@
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
 ++  token  $@(req/@t {pub/@t sec/@t})                   ::  pending/authorized
 ++  quay-enc  (list tape):quay        ::  partially rendered query string
-++  core-move  |*(a/* $^({sec-move _a} sec-move))
 --
 ::
 ::::
@@ -63,14 +62,15 @@
 ::
 ++  dbg-post  `purl`[`hart`[| `6.000 [%& /localhost]] `pork``/testing `quay`/]
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
-++  grab-quay
+++  quay-keys  |-($@(knot {knot $}))  :: improper list
+++  grab-quay  :: ?=({@t @t @t} ((grab-quay *httr) %key1 %key2 %key3))
   |=  a/httr
   ~|  bad-quay+r.a
   =+  quy=(rash q:(need r.a) yquy:urlp)
   ~|  quy
   =+  all=(malt quy)
-  |*  b/{knot (pole knot)}
-  ?~  +.b  ~|(-.b (~(got by all) -.b))
+  |*  b/quay-keys
+  ?@  b  ~|(b (~(got by all) b))
   :-  ~|(-.b (~(got by all) -.b))
   (..$ +.b)
 ::
@@ -105,7 +105,8 @@
 =+  :+  dialog-url=(parse-url dialog)
       exchange-url=(parse-url code-exchange)
     token-reqs-url=(parse-url request)
-|_  (bale keys)
+|_  {done/* (bale keys) oauth-token/token}
+++  core-move  $^({sec-move _done} sec-move)  :: stateful
 ++  consumer-key     key:decode-keys
 ++  consumer-secret  sec:decode-keys
 ++  decode-keys                       :: XX from bale w/ typed %jael
@@ -116,7 +117,10 @@
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth1
+  If necessary, obtain consumer keys configured for a oauth_callback of
+    {(trip oauth-callback)}
   """
+::
 ++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  oauth-callback
   ~&  [%oauth-warning "Make sure this urbit ".
@@ -132,6 +136,7 @@
 :: post with blank user-secret, used in token exhcange flow
 ++  post-no-secret                    
   |=  {url/purl auq/quay}  ^-  {$send hiss}
+  ?^  oauth-token  ~|(%should-use-token !!)
   [%send (add-auth '' auq url %post *math ~)]
 ::
 ++  toke-url
@@ -140,10 +145,12 @@
     r  (fass ?~(usr quy [screen-name+usr quy]))
   ==
 ::
+::  use token to sign authorization header. requires:
+::    ++  res  (res-handle-reqt handle-token)      :: take request token
+::    ++  bak  (res-save-access handle-token)      :: obtained access token
 ++  out-math
-  |=  oauth-token/token
   ^-  $-(hiss $%({$send hiss} {$show purl}))
-  ?~  oauth-token
+  ?:  =('' oauth-token)  :: XX ?~
     _(post-no-secret token-reqs-url oauth-callback+oauth-callback ~)
   ?@  oauth-token
     _[%show (toke-url oauth-token+req.oauth-token ~)]
@@ -151,22 +158,40 @@
   |=  a/hiss  ^-  {$send hiss}
   [%send (add-auth sec.oauth-token auq a)]
 ::
-++  in-code
+++  in-oauth-token
   |=  a/quay  ^-  sec-move
   ~|  no-token+a
   ?>  ?=({{$'oauth_token' @} $~} a)
   (post-no-secret exchange-url a)
 ::
-++  bak-save-access
-  |*  {done/* handle/$-(token *)}    :: $+(token _done)
-  |=  a/httr  ^-  (core-move done)
++-  bak-save-access
+  |=  handle/$-(token _done)
+  %-  (res-parse 'oauth_token' 'oauth_secret')
+  |=(tok/{@t @t} [[%redo ~] (handle `token`tok)])
+::
++-  res-parse
+  |*  para/quay-keys
+  |=  handle/$-(_?~(para ~ (*grab-quay para)) core-move)
+  |=  a/httr  ^-  core-move
   ?:  (bad-response p.a)
     [%give a]
     :: [%redo ~]  ::  handle 4xx?
-  =+  tok=`token`((grab-quay a) 'oauth_token' 'oauth_secret' ~)
-  [[%redo ~] (handle tok)]
+  (handle ((grab-quay a) para))
 ::
 ++  res-give  |=(a/httr [%give a])
++-  res-handle-reqt
+  |=  handle/$-(token _done)
+  ?~  oauth-token
+    (res-save-reqt . handle)
+  res-give
+::
++-  res-save-reqt
+  |=  handle/$-(token _done)
+  %-  (res-parse 'oauth_token' 'oauth_callback_confirmed')
+  |=  {tok/@t cof/term}  ^-  core-move
+  ?.  =(%true cof)
+    ~|(%callback-rejected !!)
+  [[%redo ~] (handle tok)]
 ::
 ::
 ++  add-auth
