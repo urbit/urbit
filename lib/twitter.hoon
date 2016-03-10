@@ -48,18 +48,25 @@
   ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
   [q.i.b $(a t.a, b t.b)]
 ::
+++  auth
+  %^    oauth1
+      'https://api.twitter.com/oauth/request_token'
+    'https://api.twitter.com/oauth/authorize'
+  'https://api.twitter.com/oauth/access_token'
+::
 ++  valve                                               ::  produce request
   |=  $:  med/?($get $post)
           {pax/path quy/quay}
           key/keys
-          est/time 
-          eny/@
+          bal/(bale keys:oauth1)
       ==
   ^-  hiss
   =+  url=(scan "https://api.twitter.com/1.1/.json" auri:epur)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
-  %-  (oauth1 key est eny)
+  %^  ~(add-auth auth bal)  sec.acc.key 
+    [oauth-token+tok.acc.key]~
+  ^-  hiss
   ?-  med
     $get  [url med *math ~]
     $post
@@ -145,7 +152,7 @@
             sc  sd  ss  sl  si  st  te  ti  ts  tr  ur  ui  us
         ==
       --
-  |_  {key/keys est/time eny/@uv}
+  |_  {key/keys bal/(bale @)}
   ++  lutt  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
   ++  llsc  
     |=  a/$@(scr (list scr))  ^-  @t
@@ -163,7 +170,7 @@
   ++  mold                                        ::  construct request
     |*  {med/meth pax/path a/$-(* *)}
     |=  {args/a quy/quay}
-    (valve med (cowl pax args quy) key est eny)
+    (valve med (cowl pax args quy) key bal)
   ::
   ++  cowl                                        ::  handle parameters
     |=  $:  pax/path 
