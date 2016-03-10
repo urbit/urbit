@@ -4,7 +4,7 @@
   ::
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
-++  token  $@(req/@t {pub/@t sec/@t})                   ::  pending/authorized
+++  token  $@($~ {req/? pub/@t sec/@t})            ::  none/request/authorized
 ++  quay-enc  (list tape):quay        ::  partially rendered query string
 --
 ::
@@ -132,36 +132,37 @@
   ==
 ::
 ::
-:: post with blank user-secret, used in token exhcange flow
-++  post-no-secret                    
-  |=  {url/purl auq/quay}  ^-  {$send hiss}
-  ?^  oauth-token  ~|(%should-use-token !!)
-  [%send (add-auth '' auq url %post *math ~)]
-::
 ++  toke-url
   |=  quy/quay  ^-  purl
   %_  dialog-url
     r  (fass ?~(usr quy [screen-name+usr quy]))
   ==
 ::
+++  exhange-token  `hiss`[exchange-url %post *math ~]
+++  request-token  `hiss`[token-reqs-url %post *math ~]
+::
 ::  use token to sign authorization header. requires:
 ::    ++  res  (res-handle-reqt handle-token)      :: take request token
 ::    ++  bak  (res-save-access handle-token)      :: obtained access token
 ++  out-math
   ^-  $-(hiss $%({$send hiss} {$show purl}))
-  ?:  =('' oauth-token)  :: XX ?~
-    _(post-no-secret token-reqs-url oauth-callback+oauth-callback ~)
-  ?@  oauth-token
-    _[%show (toke-url oauth-token+req.oauth-token ~)]
-  =+  auq=[oauth-token+pub.oauth-token]~
+  ?~  oauth-token
+    _[%send (add-auth [oauth-callback+oauth-callback]~ request-token)]
+  ?:  req.oauth-token
+    _[%show (toke-url oauth-token+pub.oauth-token ~)]
   |=  a/hiss  ^-  {$send hiss}
-  [%send (add-auth sec.oauth-token auq a)]
+  [%send (add-auth [oauth-token+pub.oauth-token]~ a)]
 ::
 ++  in-oauth-token
   |=  a/quay  ^-  sec-move
-  ~|  no-token+a
-  ?>  ?=({{$'oauth_token' @} $~} a)
-  (post-no-secret exchange-url a)
+  ?.  ?=({{$'oauth_token' @} $~} a)
+    ~|(no-token+a !!)
+  ?~  oauth-token
+    ~|(%no-secret-for-token !!)
+  ?.  =(q.i.a pub.oauth-token)
+    ~|  wrong-token+[id=usr tok=q.i.a]
+    ~|(%multiple-tokens-unsupported !!)
+  [%send (add-auth [oauth-token+pub.oauth-token]~ exhange-token)]
 ::
 +-  bak-save-access
   |=  handle/$-(token _done)
@@ -181,7 +182,7 @@
 +-  res-handle-reqt
   |=  handle/$-(token _done)
   ?~  oauth-token
-    (res-save-reqt . handle)
+    (res-save-reqt handle)
   res-give
 ::
 +-  res-save-reqt
@@ -194,11 +195,11 @@
 ::
 ::
 ++  add-auth
-  |=  $:  token-secret/@t
-          auq/quay                    :: extra oauth parameters
+  |=  $:  auq/quay                    :: extra oauth parameters
           hiz/{purl meth hed/math (unit octs)}
       ==
   ^-  hiss
+  ~&  add-auth+(earn -.hiz)
   =<  %_  hiz
         hed  (~(add ja hed.hiz) %authorization authorization)
       ==
@@ -236,6 +237,7 @@
     (sifo (swap 3 (hmac (swap 3 signing-key) (crip bay))))
   ::
   ++  signing-key
+    =+  token-secret=?~(oauth-token '' pub.oauth-token)
     %-  crip
     %-  join-urle  :~
       (trip consumer-secret)
