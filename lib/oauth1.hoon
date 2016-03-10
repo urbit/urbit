@@ -62,7 +62,7 @@
 ::
 ++  dbg-post  `purl`[`hart`[| `6.000 [%& /localhost]] `pork``/testing `quay`/]
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
-++  quay-keys  |-($@(knot {knot $}))  :: improper list
+++  quay-keys  |-($@(knot {$ $}))  :: improper tree
 ++  grab-quay  :: ?=({@t @t @t} ((grab-quay *httr) %key1 %key2 %key3))
   |=  a/httr
   ~|  bad-quay+r.a
@@ -71,8 +71,7 @@
   =+  all=(malt quy)
   |*  b/quay-keys
   ?@  b  ~|(b (~(got by all) b))
-  :-  ~|(-.b (~(got by all) -.b))
-  (..$ +.b)
+  [(..$ -.b) (..$ +.b)]
 ::
 ++  parse-url
   |=  a/$@(cord:purl purl)  ^-  purl
@@ -171,7 +170,7 @@
 ::
 +-  res-parse
   |*  para/quay-keys
-  |=  handle/$-(_?~(para ~ (*grab-quay para)) core-move)
+  |=  handle/$-(_para core-move)  :: same structure of values as keys
   |=  a/httr  ^-  core-move
   ?:  (bad-response p.a)
     [%give a]
