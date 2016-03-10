@@ -570,16 +570,48 @@ static u3j_core _mood_d[] =
   { { "hoon", 0, _mood__hoon_d },
     {}
   };
-
 static u3j_core _k151_d[] =
   { { "mood", 0, _mood_d },
     {}
   };
 
+
+static u3j_core _hex_d[] =
+  {  {}
+  };
+static u3j_core _pen_d[] =
+  { { "hex", 0, _hex_d },
+    {}
+  };
+static u3j_core _tri_d[] =
+  { { "qua", 0, _qua_d },
+    {}
+  };
+static u3j_core _two_d[] =
+  { { "tri", 0, _tri_d },
+    {}
+  };
+static u3j_core _one_d[] =
+  { { "two", 0, _two_d },
+    {}
+  };
+static u3j_core _k150_d[] =
+  { { "one", 0, _one_d },
+    {}
+  };
+
+static u3j_core _d[] = {
+  { "k151", 0, _k151_d},
+  { "k150", 0, _k150_d},
+  {}
+};
+
+
 static u3j_core _d[] = {
   { "k151", 0, _k151_d},
   {}
 };
+
 
 u3j_dash 
 u3j_Dash = {
