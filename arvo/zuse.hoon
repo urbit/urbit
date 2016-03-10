@@ -8,6 +8,40 @@
 ::                section 2eP, diff (move me)           ::
 ::
 ::
+++  udal                                                ::  atomic change (%b)
+          $:  p/@ud                                     ::  blockwidth
+              q/(list {p/@ud q/(unit {p/@ q/@})})       ::  indels
+          ==                                            ::
+++  udon                                                ::  abstract delta
+          $:  p/umph                                    ::  preprocessor
+              $=  q                                     ::  patch
+              $%  {$a p/* q/*}                          ::  trivial replace
+                  {$b p/udal}                           ::  atomic indel
+                  {$c p/(urge)}                         ::  list indel
+                  {$d p/upas q/upas}                    ::  tree edit
+              ==                                        ::
+          ==                                            ::
+++  umph                                                ::  change filter
+          $@  $?  $a                                    ::  no filter
+                  $b                                    ::  jamfile
+                  $c                                    ::  LF text
+              ==                                        ::
+          $%  {$d p/@ud}                                ::  blocklist
+          ==                                            ::
+++  unce  |*  a/mold                                    ::  change part
+          $%  {$& p/@ud}                                ::  skip[copy]
+              {$| p/(list a) q/(list a)}                ::  p -> q[chunk]
+          ==                                            ::
+++  unit  |*  a/mold                                    ::  maybe
+          $@($~ {$~ u/a})                               ::
+++  upas                                                ::  tree change (%d)
+          $^  {p/upas q/upas}                           ::  cell
+          $%  {$0 p/axis}                               ::  copy old
+              {$1 p/*}                                  ::  insert new
+              {$2 p/axis q/udon}                        ::  mutate!
+          ==                                            ::
+++  urge  |*(a/mold (list (unce a)))                    ::  list change
+::
 ++  berk                                                ::  invert diff patch
   |*  bur/(urge)
   |-  ^+  bur

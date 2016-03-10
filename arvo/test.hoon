@@ -1,10 +1,11 @@
 !:                                                      ::
 ::::    /hoon/hoon                                      ::
   ::                                                    ::
-=>  %151  =>  
+=>  %150  =>  
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
+~%  %k.150  ~  ~                                        ::
 |%
 ++  hoon  +
 --  =>
@@ -15,12 +16,10 @@
   ::      1b: tree addressing                           ::
   ::      1c: molds and mold builders                   ::
   ::
+~%  %one  +  ~
 |%
 ::                                                      ::
 ::::    1a: unsigned arithmetic and tree addressing     ::
-  ::                                                    ::
-  ::      add, dec, div, dvr, gte, gth, lte,            ::
-  ::      lth, max, min, mod, mul, sub                  ::
   ::
 ++  add                                                 ::  unsigned addition
   ~/  %add
@@ -162,8 +161,6 @@
 ::                                                      ::
 ::::  1c: ideal containers                              ::
   ::                                                    ::
-  ::    ache, bloq, each, gate, list, lone, pair, pole  ::
-  ::    qual, quid, quip, trap, tree, trel, unit        ::
   ::
 ++  ache  |*({a/gate b/gate} $%({$| p/b} {$& p/a}))     ::  a or b, b default
 ++  bloq  @                                             ::  bitblock, eg 3=byte
@@ -203,6 +200,7 @@
   ::    2p: serialization                               ::
   ::    2q: molds
   ::
+~%  %two  +  ~
 |%
 ::                                                      ::
 ::::  2a: unit logic                                    ::
@@ -1523,6 +1521,7 @@
 ::                                                      ::
 ::::  3: layer three                                    ::
   ::                                                    ::
+~%  %tri  +  ~
 |%
 ::
 ::::  3a: signed and modular ints                       ::
@@ -1664,8 +1663,7 @@
   ::  rlyd, rlys, rlyh, rlyq                            ::
   ::  ryld, ryls, rylh, rylq                            ::
   ::
---  =>
-|%
+%
 ++  fn  ::  float, infinity, or NaN
         ::  s=sign, e=exponent, a=arithmetic form
         ::  (-1)^s * a * 2^e
@@ -2563,8 +2561,6 @@
 ::::                                                    ::
   ::  year, yore, yell, yule, yall, yawn, yelp, yo      ::
   ::
---  =>
-|%
 ++  year                                                ::  date to @d
   |=  det/date
   ^-  @da
@@ -3022,8 +3018,6 @@
   ::                                                    ::
   ::    aesc, ga                                        ::
   ::
---  =>
-|%
 ++  aesc                                                ::  AES-256
   ~%  %aesc  +  ~
   |%
@@ -3309,8 +3303,6 @@
   ::                                                    ::
   ::    ob                                              ::
   ::
---  => 
-|%
 ++  un                                                  ::  =(x (wred (wren x)))
   |%
   ++  wren                                              ::  conceal structure
@@ -3490,7 +3482,6 @@
 ::
 ::::  3g: molds and mold builders
   ::
---  =>  |%
 ++  coin  $%  {$$ p/dime}                               ::  print format
               {$blob p/*}                               ::
               {$many p/(list coin)}                     ::
@@ -3523,6 +3514,12 @@
 ::                                                      ::
 ::::  4: layer four                                     ::
   ::                                                    ::
+~%    %qua  
+    + 
+  ==
+    %mute  mute
+    %show  show
+  ==
 |%
 ::
 ::::  4a: exotic bases
@@ -3607,7 +3604,6 @@
 ::
 ::::  4b: miscellaneous text processing
   :: 
---  =>  |%
 ++  at                                                  ::  basic printing
   |_  a/@
   ++  r
@@ -3935,7 +3931,6 @@
 ::
 ::::  4c: tank printer
   ::
---  =>  |%
 ++  wash                                                ::  render tank at width
   |=  {{tab/@ edg/@} tac/tank}  ^-  wall
   (~(win re tac) tab edg)
@@ -4139,7 +4134,6 @@
 ::
 ::::  4d: parsing (tracing)
   ::
---  =>  |%
 ++  last  |=  {zyc/hair naz/hair}                       ::  farther trace
           ^-  hair
           ?:  =(p.zyc p.naz)
@@ -4152,7 +4146,6 @@
 ::
 ::::  4e: parsing (combinators)
   ::
---  =>  |%
 ++  bend                                                ::  conditional comp
   ~/  %bend
   |*  raq/_|*({a/* b/*} [~ u=[a b]])
@@ -4234,8 +4227,6 @@
 ::
 ::::  4f: parsing (rule builders)
   ::
---  =>  |%
-::
 ++  bass                                                ::  leftmost base
   |*  {wuc/@ tyd/rule}
   %+  cook
@@ -4507,7 +4498,6 @@
 ::
 ::::  4g: parsing (outside caller)
   ::
---  =>  |%
 ++  rash  |*({naf/@ sab/rule} (scan (trip naf) sab))   ::
 ++  rose  |*  {los/tape sab/rule}
           =+  vex=(sab [[1 1] los])
@@ -4529,7 +4519,6 @@
 ::
 ::::  4h: parsing (ascii glyphs)
   ::
---  =>  |%
 ++  ace  (just ' ')
 ++  bar  (just '|')
 ++  bas  (just '\\')
@@ -4566,7 +4555,6 @@
 ::
 ::::  4i: parsing (useful idioms)
   ::
---  =>  |%
 ++  alf  ;~(pose low hig)                               ::  alphabetic
 ++  aln  ;~(pose low hig nud)                           ::  alphanumeric
 ++  alp  ;~(pose low hig nud hep)                       ::  alphanumeric and -
@@ -4680,7 +4668,6 @@
 ::
 ::::  4j: parsing (bases and base digits)
   ::
---  =>  |%
 ++  ab
   |%
   ++  bix  (bass 16 (stun [2 2] six))
@@ -4784,7 +4771,6 @@
 ::
 ::::  4k: atom printing
   ::
---  =>  |%
 ++  co  !.
   ~%  %co  ..co  ~
   =<  |_  lot/coin
@@ -5007,7 +4993,6 @@
 ::
 ::::  4l: atom parsing
   ::
---  =>  |%
 ++  so
   ~%  %so  +  ~
   |%
@@ -5185,7 +5170,6 @@
 ::
 ::::  4m: formatting functions
   ::
---  =>  |%
 ++  scot  |=(mol/dime ~(rent co %$ mol))
 ++  scow  |=(mol/dime ~(rend co %$ mol))
 ++  slat  |=(mod/@tas |=(txt/@ta (slaw mod txt)))
@@ -5220,7 +5204,6 @@
 ::
 ::::  4n: virtualization
   ::
---  =>  |%
 ++  mack
   |=  {sub/* fol/*}
   ^-  (unit)
@@ -5398,7 +5381,6 @@
 ::
 ::::  4o: molds and mold builders
   ::
---  =>  |%
 ++  abel  typo                                          ::  original sin: span
 ++  atom  @                                             ::  just an atom
 ++  aura  @ta                                           ::  atom format
@@ -5664,6 +5646,13 @@
 ::                                                      ::
 ::::  5: layer five
   ::
+~%    %pen
+    +
+  ==
+    %al    al
+    %ap    ap
+    %ut    ut
+  ==
 |%
 ::
 ::::  5a: compiler utilities
@@ -6522,7 +6511,6 @@
 ::
 ::::  5c: compiler backend and prettyprinter
   ::
---  =>  |%
 ++  ut
   ~%    %ut
       +>+
@@ -8431,7 +8419,6 @@
 ::
 ::::  5d: hoon parser
   ::
---  =>  |%
 ++  vang
   |=  {bug/? wer/path}
   %*(. vast bug bug, wer wer)
@@ -9590,7 +9577,6 @@
 ::
 ::::  5e: caching compiler
   ::
---  =>  |%
 ++  wa  !:                                              ::  cached compile
   |_  worm
   ++  nell  |=(ref/span (nest [%cell %noun %noun] ref)) ::  nest in cell
@@ -9673,7 +9659,6 @@
 ::
 ::::  5f: profiling support (XX move)
   ::
---  =>  |%
 ++  doss
   $:  mon/moan                                          ::  sample count
       hit/(map term @ud)                                ::  hit points
@@ -9898,6 +9883,7 @@
 ::                                                      ::
 ::::  6: layer six
   ::
+~%  %hex  +  ~
 |%
 ::
 ::::  6a: arvo core
