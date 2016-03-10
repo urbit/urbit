@@ -4,7 +4,11 @@
   ::
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
-++  token  $@($~ {req/? pub/@t sec/@t})            ::  none/request/authorized
+++  token                                               ::  user keys
+  $@  $~                                                ::  none
+  $%  {$request-token oauth-token/@t token-secret/@t}   ::  intermediate
+      {$access-token oauth-token/@t token-secret/@t}    ::  full
+  ==
 ++  quay-enc  (list tape):quay        ::  partially rendered query string
 --
 ::
@@ -104,7 +108,7 @@
 =+  :+  dialog-url=(parse-url dialog)
       exchange-url=(parse-url code-exchange)
     token-reqs-url=(parse-url request)
-|_  {done/* (bale keys) oauth-token/token}
+|_  {done/* (bale keys) tok/token}
 ++  core-move  $^({sec-move _done} sec-move)  :: stateful
 ++  consumer-key     key:decode-keys
 ++  consumer-secret  sec:decode-keys
@@ -138,36 +142,36 @@
     r  (fass ?~(usr quy [screen-name+usr quy]))
   ==
 ::
-++  exhange-token  `hiss`[exchange-url %post *math ~]
-++  request-token  `hiss`[token-reqs-url %post *math ~]
+++  token-exchange  `hiss`[exchange-url %post *math ~]
+++  token-request   `hiss`[token-reqs-url %post *math ~]
 ::
 ::  use token to sign authorization header. requires:
 ::    ++  res  (res-handle-reqt handle-token)      :: take request token
 ::    ++  bak  (res-save-access handle-token)      :: obtained access token
 ++  out-math
   ^-  $-(hiss $%({$send hiss} {$show purl}))
-  ?~  oauth-token
-    _[%send (add-auth [oauth-callback+oauth-callback]~ request-token)]
-  ?:  req.oauth-token
-    _[%show (toke-url oauth-token+pub.oauth-token ~)]
+  ?~  tok
+    _[%send (add-auth [oauth-callback+oauth-callback]~ token-request)]
+  ?:  ?=($request-token -.tok)
+    _[%show (toke-url oauth-token+oauth-token.tok ~)]
   |=  a/hiss  ^-  {$send hiss}
-  [%send (add-auth [oauth-token+pub.oauth-token]~ a)]
+  [%send (add-auth [oauth-token+oauth-token.tok]~ a)]
 ::
 ++  in-oauth-token
   |=  a/quay  ^-  sec-move
   ?.  ?=({{$'oauth_token' @} $~} a)
     ~|(no-token+a !!)
-  ?~  oauth-token
+  ?~  tok
     ~|(%no-secret-for-token !!)
-  ?.  =(q.i.a pub.oauth-token)
+  ?.  =(q.i.a oauth-token.tok)
     ~|  wrong-token+[id=usr tok=q.i.a]
     ~|(%multiple-tokens-unsupported !!)
-  [%send (add-auth [oauth-token+pub.oauth-token]~ exhange-token)]
+  [%send (add-auth [oauth-token+oauth-token.tok]~ token-exchange)]
 ::
 +-  bak-save-access
   |=  handle/$-(token _done)
   %-  (res-parse 'oauth_token' 'oauth_secret')
-  |=(tok/{@t @t} [[%redo ~] (handle `token`tok)])
+  |=(axs-tok/{@t @t} [[%redo ~] (handle `token`access-token+axs-tok)])
 ::
 +-  res-parse
   |*  para/quay-keys
@@ -181,17 +185,17 @@
 ++  res-give  |=(a/httr [%give a])
 +-  res-handle-reqt
   |=  handle/$-(token _done)
-  ?~  oauth-token
+  ?~  tok
     (res-save-reqt handle)
   res-give
 ::
 +-  res-save-reqt
   |=  handle/$-(token _done)
-  %-  (res-parse 'oauth_token' 'oauth_callback_confirmed')
-  |=  {tok/@t cof/term}  ^-  core-move
+  %-  (res-parse ['oauth_token' 'oauth_secret'] 'oauth_callback_confirmed')
+  |=  {req-tok/{@t @t} cof/term}  ^-  core-move
   ?.  =(%true cof)
     ~|(%callback-rejected !!)
-  [[%redo ~] (handle tok)]
+  [[%redo ~] (handle [%request-token req-tok])]
 ::
 ::
 ++  add-auth
@@ -237,11 +241,10 @@
     (sifo (swap 3 (hmac (swap 3 signing-key) (crip bay))))
   ::
   ++  signing-key
-    =+  token-secret=?~(oauth-token '' pub.oauth-token)
     %-  crip
     %-  join-urle  :~
       (trip consumer-secret)
-      (trip token-secret)
+      (trip ?^(tok token-secret.tok ''))
     ==
   --
 --
