@@ -58,6 +58,11 @@
   ?~  bod  ~
   (rash q.u.bod (more pam (plus ;~(less pam prn))))
 ::
+++  post-quay
+  |=  {a/purl b/quay}  ^-  hiss
+  =-  [a %post - (some (tact +:(tail:earn b)))]
+  (my content-type+['application/x-www-form-urlencoded']~ ~)
+::
 ::
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
@@ -142,8 +147,8 @@
     r  (fass ?~(usr quy [screen-name+usr quy]))
   ==
 ::
-++  token-exchange  `hiss`[exchange-url %post *math ~]
-++  token-request   `hiss`[token-reqs-url %post *math ~]
+++  token-exchange  (post-quay exchange-url ~)
+++  token-request   (post-quay token-reqs-url oauth-callback+oauth-callback ~)
 ::
 ::  use token to sign authorization header. requires:
 ::    ++  res  (res-handle-reqt handle-token)      :: take request token
@@ -151,7 +156,7 @@
 ++  out-math
   ^-  $-(hiss $%({$send hiss} {$show purl}))
   ?~  tok
-    _[%send (add-auth [oauth-callback+oauth-callback]~ token-request)]
+    _[%send (add-auth ~ token-request)]
   ?:  ?=($request-token -.tok)
     _[%show (toke-url oauth-token+oauth-token.tok ~)]
   |=  a/hiss  ^-  {$send hiss}
@@ -159,14 +164,15 @@
 ::
 ++  in-oauth-token
   |=  a/quay  ^-  sec-move
-  ?.  ?=({{$'oauth_token' @} $~} a)
+  =.  a  (sort a aor)
+  ?.  ?=({{$'oauth_token' oauth-token/@t} {$'oauth_verifier' @t} $~} a)
     ~|(no-token+a !!)
   ?~  tok
     ~|(%no-secret-for-token !!)
-  ?.  =(q.i.a oauth-token.tok)
-    ~|  wrong-token+[id=usr tok=q.i.a]
+  ?.  =(oauth-token.tok oauth-token.q.i.a)
+    ~|  wrong-token+[id=usr q.i.a]
     ~|(%multiple-tokens-unsupported !!)
-  [%send (add-auth [oauth-token+oauth-token.tok]~ token-exchange)]
+  [%send (add-auth a token-exchange)]
 ::
 +-  bak-save-access
   |=  handle/$-(token _done)
@@ -175,7 +181,7 @@
 ::
 +-  res-parse
   |*  para/quay-keys
-  |=  handle/$-(_para core-move)  :: same structure of values as keys
+  |=  handle/$-(_?~(para ~ (*grab-quay para)) core-move)
   |=  a/httr  ^-  core-move
   ?:  (bad-response p.a)
     [%give a]
