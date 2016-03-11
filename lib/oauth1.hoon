@@ -125,7 +125,7 @@
     ((hard {cid/@t cis/@t $~}) (lore key))
   %+  mean-wall  %oauth-no-keys
   """
-  Run |init-oauth1
+  Run |init-oauth1 {<`path`dom>}
   If necessary, obtain consumer keys configured for a oauth_callback of
     {(trip oauth-callback)}
   """

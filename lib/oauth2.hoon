@@ -84,7 +84,7 @@
     ((hard {cid/@t cis/@t $~}) (lore key))
   %+  mean-wall  %oauth-no-keys
   """
-  Run |init-oauth2
+  Run |init-oauth2 {<`path`dom>}
   If necessary, obtain client keys configured for a redirect_uri of
     {(trip redirect-uri)}
   """
