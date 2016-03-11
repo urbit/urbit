@@ -1633,6 +1633,11 @@
           +12.q
         =+  ato=(sky [151 %noun] %cx (tope root-beak [%atom (flop %_(dom . sec+dom))]))
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
+        =.  key
+          ?~  key  ''
+          %-  (bond |.(~&(bad-key+[dom key] '')))
+          =+  (slaw %uw key)
+          ?~(- ~ (de:crua load-secret u))  :: XX clay permissions
         `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
       ==
     ::

@@ -51,10 +51,16 @@
     ==
   (poke--data [`%md pax] %mime / (taco txt))
 ::
+++  ames-secret
+  ^-  @t
+  =-  (crip +:<.^(@p %a pax)>)
+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
+::
 ++  poke-sec-atom
   |=  {hot/host dat/@}
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
+  =.  dat  (scot %uw (en:crua ames-secret dat))  ::  XX clay permissions
   (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
 ::
 ++  poke--data
