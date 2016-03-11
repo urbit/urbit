@@ -54,6 +54,7 @@
 ++  poke-sec-atom
   |=  {hot/host dat/@}
   ?>  ?=($& -.hot)
+  =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
 ::
 ++  poke--data

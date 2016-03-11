@@ -21,7 +21,6 @@
 |=  hot/host
 ?:  ?=($| -.hot)
   ~|(%ips-unsupported !!)
-=.  p.hot  (scag 2 p.hot)      :: ignore subdomain
 %+  sole-lo
   [%& %oauth-client "consumer key: "]
 %+  sole-go  (boss 256 (star prn))

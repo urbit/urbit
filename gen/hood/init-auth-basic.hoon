@@ -1,5 +1,5 @@
 ::
-::::  /hoon/init-oauth2/hood/gen
+::::  /hoon/init-auth-basic/hood/gen
   ::
 /?  314
 /-  sole
@@ -22,12 +22,12 @@
 ?:  ?=($| -.hot)
   ~|(%ips-unsupported !!)
 %+  sole-lo
-  [%& %oauth-client "client id: "]
-%+  sole-go  (boss 256 (star prn))
-|=  cid/@t
+  [%& %auth-user "username: "]
+%+  sole-go  (boss 256 (star ;~(less col prn)))
+|=  usr/@t
 %+  sole-lo  
-  [%& %oauth-secret "client secret: "]
+  [%| %auth-passwd "password: "]
 %+  sole-go  (boss 256 (star prn))
-|=  cis/@t
+|=  pas/@t
 %+  sole-so  %write-sec-atom    :: XX typed pair
-[hot (role cid cis ~)]
+[hot (crip (sifo (rap 3 usr ':' pas ~)))]
