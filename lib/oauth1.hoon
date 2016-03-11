@@ -205,24 +205,24 @@
 ::
 ::
 ++  add-auth
-  |=  $:  auq/quay                    :: extra oauth parameters
+  =<  |=  $:  auq/quay                    :: extra oauth parameters
           hiz/{purl meth hed/math (unit octs)}
-      ==
-  ^-  hiss
-  ~&  add-auth+(earn -.hiz)
-  =<  %_  hiz
-        hed  (~(add ja hed.hiz) %authorization authorization)
+        ==
+      ^-  hiss
+      ~&  add-auth+(earn -.hiz)
+      %_  hiz
+        hed  (~(add ja hed.hiz) %authorization (authorization auq hiz))
       ==
   |%  
   ++  authorization
-    =+  [url med ~ bod]=hiz
+    |=  {auq/quay url/purl med/meth math bod/(unit octs)}
     =^  quy  url  [r.url url(r ~)]      :: query string handled separately
     =.  auq  (fass (weld auq auth-quay))
     =+  ^-  qen/quay-enc                 :: semi-encoded for sorting
         %+  weld  (parse-pairs bod)
         (encode-pairs (weld auq quy))
-    =+  hds=(base-string med url qen)
-    =+  sig=(sign hds)
+    =+  bay=(base-string med url qen)
+    =+  sig=(sign signing-key bay)
     =.  auq  ['oauth_signature'^(crip (urle sig)) auq]
     (crip "OAuth {(to-header auq)}")
   ::
