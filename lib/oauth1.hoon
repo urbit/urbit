@@ -73,11 +73,12 @@
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  quay-keys  |-($@(knot {$ $}))  :: improper tree
 ++  grab-quay  :: ?=({@t @t @t} ((grab-quay *httr) %key1 %key2 %key3))
-  |=  a/httr
+  |*  {a/httr b/quay-keys}
   ~|  bad-quay+r.a
   =+  quy=(rash q:(need r.a) yquy:urlp)
   ~|  quy
   =+  all=(malt quy)
+  %.  b
   |*  b/quay-keys
   ?@  b  ~|(b (~(got by all) b))
   [(..$ -.b) (..$ +.b)]
@@ -181,12 +182,12 @@
 ::
 +-  res-parse
   |*  para/quay-keys
-  |=  handle/$-(_?~(para ~ (*grab-quay para)) core-move)
+  |=  handle/$-(_?~(para ~ (grab-quay *httr para)) core-move)
   |=  a/httr  ^-  core-move
   ?:  (bad-response p.a)
     [%give a]
     :: [%redo ~]  ::  handle 4xx?
-  (handle ((grab-quay a) para))
+  (handle (grab-quay a para))
 ::
 ++  res-give  |=(a/httr [%give a])
 +-  res-handle-reqt
