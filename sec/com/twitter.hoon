@@ -1,4 +1,4 @@
-::  Test url +https://api.twitter.com/1.1/account/verify_credentials
+::  Test url +https://api.twitter.com/1.1/account/verify_credentials.json
 :: 
 ::::  /hoon/twitter/com/sec
   ::
