@@ -21,7 +21,7 @@
               $:  $e                                    ::  to self
           $%  {$thud $~}                                ::  proxied death
               {$this p/? q/clip r/httq}                 ::  proxied request
-              {$meta vase:{$them (unit httr)}}          ::  type check
+              {$meta vase}                              ::  type check
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
           $%  {$exec p/@p q/(unit {beak silk})}         ::
@@ -54,10 +54,10 @@
 ++  ixor  @t                                            ::  oryx hash
 ++  whir  $@  $~                                        ::  wire subset
           $%  {$at p/hole q/whir}                       ::  authenticated
-              {$ay p/knot:ship q/knot:@uvH $~}          ::  remote duct
-              {$ha p/path:beak}                         ::  GET request
+              {$ay p/knot q/knot $~}                    ::  remote duct
+              {$ha p/path}                              ::  GET request
               {$he p/whir}                              ::  HEAD request
-              {$hi p/knot:(unit knot) q/mark $~}        ::  outbound HTTP
+              {$hi p/knot q/mark $~}                    ::  outbound HTTP
               {$se p/whir-se q/{iden (list @t)}}        ::  outbound to domain
               {$si $~}                                  ::  response done
               {$of p/ixor q/$@($~ whir-of)}             ::  associated view
@@ -95,7 +95,7 @@
   ==                                                    ::
 ::
 ++  driv  %+  pair  (unit $@($~ vase))                  ::  driver state
-          (qeu (trel duct mark vase:hiss))              ::  waiting requests
+          (qeu (trel duct mark vase))                   ::  waiting requests
 ::
 ++  live                                                ::  in flight
   $%  {$exec p/whir}                                    ::  ford build
@@ -883,7 +883,7 @@
   ::                  [| [~ 8.443] `/localhost]       :: XX testing
   ::
   ++  eyre-them
-    |=  {tea/whir vax/vase:hiss}
+    |=  {tea/whir vax/vase}
     (pass-note tea [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
@@ -1646,7 +1646,7 @@
   ++  vi                                                ::  auth engine
     |_  $:  {usr/iden dom/path}
             cor/(unit $@($~ vase))
-            req/(qeu {p/duct q/mark r/vase:hiss})
+            req/(qeu {p/duct q/mark r/vase})  
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
@@ -1657,7 +1657,7 @@
     ++  pass-note  |=({a/whir-se b/note} (pass-note:abet se+[a usr dom] b))
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a/tang ((slog (flop a)) abet))
-    ++  with  |*({a/vase:gate b/$-(vase abet)} |=(c/vase (b (slam a c))))
+    ++  with  |*({a/vase b/$-(vase abet)} |=(c/vase (b (slam a c))))
     ++  root-beak  `beak`[our %home da+now]
     ::
     ::  Main
@@ -1705,7 +1705,7 @@
       (call %out hiss+r.u.ole)
     ::
     ++  fin-httr
-      |=  vax/vase:httr
+      |=  vax/vase
       =^  ole  req  ~(get to req)
       =>  .(ole `{p/duct q/mark *}`ole)             :: XX types
       =.  ..vi  (cast-thou(hen p.ole) q.ole httr+vax)    :: error?
@@ -1715,7 +1715,7 @@
     ::
     ++  get-news  _build
     ++  get-quay  |=(quy/quay (call %in quay+!>(quy)))
-    ++  get-req   |=(a/{mark vase:hiss} pump(req (~(put to req) hen a)))
+    ++  get-req   |=(a/{mark vase} pump(req (~(put to req) hen a)))
     ++  get-thou
       |=  {wir/whir-se hit/httr}
       ?+  wir  !!
@@ -1775,7 +1775,7 @@
       ?-(-.a $| (err p.a), $& (try a))
     ::
     ++  on-error
-      |=  {err/$-(tang _abet) handle-move/_|.(|~(vase:sec-move abet))}
+      |=  {err/$-(tang _abet) handle-move/_|.(|~(vase abet))}
       |=  a/(each cage tang)  ^+  abet
       =+  try=(possibly-stateful |=(b/_self (handle-move(+ b))))  :: XX types
       ?:  ?=($| -.a)  (err p.a)
@@ -1783,7 +1783,7 @@
       (mule |.(~|(driver+dom ~|(bad-res+p.q.p.a (try q.p.a)))))
     ::
     ++  possibly-stateful
-      |=  han/$-(_self $-(vase _abet))  :: XX |.(|+(vase:sec-move abet))
+      |=  han/$-(_self $-(vase _abet))  :: XX |.(|+(vase abet))
       |=  res/vase  ^+  abet
       ?:  ?=({@ *} q.res)
         =.  p.res  (~(fuse ut p.res) p:!>(*{@ *}))

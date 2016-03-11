@@ -1,5 +1,5 @@
-!:                                                      ::
-::::    /hoon/hoon                                      ::
+::                                                      ::
+::::    /hoon/hoon                                      ::  
   ::                                                    ::
 =>  %150  =>  
 ::                                                      ::
@@ -162,22 +162,23 @@
 ::::  1c: ideal containers                              ::
   ::                                                    ::
   ::
-++  ache  |*({a/gate b/gate} $%({$| p/b} {$& p/a}))     ::  a or b, b default
+++  ache  |*({a/mold b/mold} $%({$| p/b} {$& p/a}))     ::  a or b, b default
 ++  bloq  @                                             ::  bitblock, eg 3=byte
-++  each  |*({a/gate b/gate} $%({$& p/a} {$| p/b}))     ::  a or b, a default
-++  gate  $-(* *)                                       ::  generic gate
-++  list  |*(a/gate $@($~ {i/a t/(list a)}))            ::  nullterminated list 
-++  lone  |*(a/gate p/a)                                ::  1-tuple
-++  pair  |*({a/gate b/gate} {p/a q/b})                 ::  2-tuple
-++  pole  |*(a/gate $@($~ {a (pole a)}))                ::  faceless list
-++  qual  |*  {a/gate b/gate c/gate d/gate}             ::  4-tuple
+++  each  |*({a/mold b/mold} $%({$& p/a} {$| p/b}))     ::  a or b, a default
+++  gate  $-(* *)                                       ::  generic mold
+++  list  |*(a/mold $@($~ {i/a t/(list a)}))            ::  nullterminated list 
+++  lone  |*(a/mold p/a)                                ::  1-tuple
+++  mold  gate                                          ::  normalizing gate
+++  pair  |*({a/mold b/mold} {p/a q/b})                 ::  2-tuple
+++  pole  |*(a/mold $@($~ {a (pole a)}))                ::  faceless list
+++  qual  |*  {a/mold b/mold c/mold d/mold}             ::  4-tuple
           {p/a q/b r/c s/d}                             ::
-++  quid  |*({a/gate b/*} {a _b})                       ::  mixed for sip
-++  quip  |*({a/gate b/*} {(list a) _b})                ::  list-mixed for sip
-++  trap  |*(a/gate _|?(*a))                            ::  producer
-++  tree  |*(a/gate $@($~ {n/a l/(tree a) r/(tree a)})) ::  binary tree
-++  trel  |*({a/gate b/gate c/gate} {p/a q/b r/c})      ::  3-tuple
-++  unit  |*(a/gate $@($~ {$~ u/a}))                    ::  maybe
+++  quid  |*({a/mold b/*} {a _b})                       ::  mixed for sip
+++  quip  |*({a/mold b/*} {(list a) _b})                ::  list-mixed for sip
+++  trap  |*(a/mold _|?(*a))                            ::  producer
+++  tree  |*(a/mold $@($~ {n/a l/(tree a) r/(tree a)})) ::  binary tree
+++  trel  |*({a/mold b/mold c/mold} {p/a q/b r/c})      ::  3-tuple
+++  unit  |*(a/mold $@($~ {$~ u/a}))                    ::  maybe
 --  =>
 ::                                                      ::
 ::::  2: layer two                                      ::
@@ -214,7 +215,7 @@
   (b u.a)
 ::
 ++  bind                                                ::  argue
-  |*  {a/(unit) b/gate}
+  |*  {a/(unit) b/mold}
   ?~  a  ~
   [~ u=(b u.a)]
 ::
@@ -250,8 +251,8 @@
   |*  b/*
   ?.((a b) ~ [~ u=b])
 ::
-++  lift                                                ::  lift gate (fmap)
-  |*  a/gate                                            ::  flipped
+++  lift                                                ::  lift mold (fmap)
+  |*  a/mold                                            ::  flipped
   |*  b/(unit)                                          ::  curried
   (bind b a)                                            ::  bind
 ::
@@ -363,6 +364,13 @@
     +<+.b
   $(a t.a, b b(+<+ (b i.a +<+.b)))
 ::
+++  scag                                                ::  prefix
+  ~/  %scag
+  |*  {a/@ b/(list)}
+  |-  ^+  b
+  ?:  |(?=($~ b) =(0 a))  ~
+  [i.b $(b t.b, a (dec a))]
+::
 ++  skid                                                ::  separate
   ~/  %skid
   |*  {a/(list) b/$-(* ?)}
@@ -386,13 +394,6 @@
   ^+  a
   ?~  a  ~
   ?:((b i.a) $(a t.a) [i.a $(a t.a)])
-::
-++  scag                                                ::  prefix
-  ~/  %scag
-  |*  {a/@ b/(list)}
-  |-  ^+  b
-  ?:  |(?=($~ b) =(0 a))  ~
-  [i.b $(b t.b, a (dec a))]
 ::
 ++  slag                                                ::  suffix
   ~/  %slag
@@ -1333,7 +1334,7 @@
 ::
 ++  molt                                                ::  map from pair list
   |*  a/(list (pair))
-  (~(gas by `(tree {_p.i.-.a _q.i.-.a})`~) a)
+  (~(gas by `(tree {p/_p.i.-.a q/_q.i.-.a})`~) a)
 ::
 ++  silt                                                ::  set from list
   |*  a/(list)
@@ -1366,18 +1367,18 @@
 ++  corl                                                ::  compose backwards
   |*  {a/gate b/_|=(* **)}
   =<  +:|.((a (b)))      ::  span check
-  =+  c=+<.b
-  |.((a (b c)))
+  |*  c/_+<.b
+  (a (b c))
 ::
 ++  cury                                                ::  curry left
   |*  {a/_|=(^ **) b/*}
-  =+  c=+<+.a
-  |.((a b c))
+  |*  c/_+<+.a
+  (a b c)
 ::
 ++  curr                                                ::  curry right
-  |*  {a/_|=(^ **) b/*}     
-  =+  c=+<+.a
-  |.((a c b))
+  |*  {a/_|=(^ **) c/*}     
+  |*  b/_+<+.a
+  (a b c)
 ::
 ++  fore  |*(a/$-(* *) |*(b/$-(* *) (pair a b)))        ::  pair before
 ++  hard                                                ::  force remold
@@ -1404,13 +1405,13 @@
   ::                                                    ::
   ::    jar, jug, map, set, qeu                         ::
   ::
-++  jar  |*({a/gate b/gate} (map a (list b)))           ::  map of lists
-++  jug  |*({a/gate b/gate} (map a (set b)))            ::  map of sets
-++  map  |*  {a/gate b/gate}                            ::  table
+++  jar  |*({a/mold b/mold} (map a (list b)))           ::  map of lists
+++  jug  |*({a/mold b/mold} (map a (set b)))            ::  map of sets
+++  map  |*  {a/mold b/mold}                            ::  table
          $@($~ {n/{p/a q/b} l/(map a b) r/(map a b)})   ::
-++  qeu  |*  a/gate                                     ::  queue
+++  qeu  |*  a/mold                                     ::  queue
          $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
-++  set  |*  a/gate                                     ::  set
+++  set  |*  a/mold                                     ::  set
          $@($~ {n/a l/(set a) r/(set a)})               ::
 ::
 ::::  2p: serialization                                 ::
@@ -1663,7 +1664,6 @@
   ::  rlyd, rlys, rlyh, rlyq                            ::
   ::  ryld, ryls, rylh, rylq                            ::
   ::
-%
 ++  fn  ::  float, infinity, or NaN
         ::  s=sign, e=exponent, a=arithmetic form
         ::  (-1)^s * a * 2^e
@@ -9808,7 +9808,7 @@
 ::::  5g: molds and mold builders
   ::
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
-++  arvo  (mold {p/term q/mill} mill)                   ::  arvo card
+++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
 ++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
 ++  beak  {p/ship q/desk r/case}                        ::  path prefix
 ++  bone  @ud                                           ::  opaque duct
@@ -9826,6 +9826,7 @@
               q/(set monk)                              ::  caused or created by
           ==                                            ::
 ++  curd  {p/@tas q/*}                                  ::  spanless card
+++  dock  (pair @p term)                                ::  message target
 ++  duct  (list wire)                                   ::  causal history
 ++  hypo  |*(a/$-(* *) (pair span a))                   ::  span associated
 ++  hobo  |*  a/$-(* *)                                 ::  kiss wrapper
@@ -9843,28 +9844,29 @@
       ++  y  *(unit (unit arch))                        ::  directory
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
+++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
+++  manx  {g/marx c/marl}                               ::  XML node
 ++  marc                                                ::  structured mark
   $@  mark                                              ::  plain mark
   $%  {$tabl p/(list (pair marc marc))}                 ::  map
   ==                                                    ::
 ++  mark  @tas                                          ::  content span
+++  marl  (list manx)                                   ::  XML node list
+++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/$~}} c/$~}      ::  XML cdata
+++  mart  (list {n/mane v/tape})                        ::  XML attributes
+++  marx  {n/mane a/mart}                               ::  XML tag
 ++  mash  |=(* (mass +<))                               ::  producing mass
 ++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
-++  mold                                                ::  new kernel action
-          |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
-          $%  {$pass p/path q/a}                        ::  advance
-              {$slip p/a}                               ::  lateral
-              {$sick p/b}                               ::  lame refactoring
-              {$give p/b}                               ::  retreat
-          ==                                            ::
 ++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
 ++  move  {p/duct q/arvo}                               ::  arvo move
 ++  ovum  {p/wire q/curd}                               ::  spanless ovum
 ++  pane  (list {p/@tas q/vase})                        ::  kernel modules
+++  pass  @                                             ::  public key
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
+++  ring  @                                             ::  private key
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
@@ -9872,11 +9874,19 @@
 ++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
           (unit (unit (cask)))                          ::
 ++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
+++  time  @da                                           ::  galactic time
 ++  vile                                                ::  reflexive constants
           $:  typ/span                                  ::  -:!>(*span)
               duc/span                                  ::  -:!>(*duct)
               pah/span                                  ::  -:!>(*path)
               mev/span                                  ::  -:!>([%meta *vase])
+          ==                                            ::
+++  wind                                                ::  new kernel action
+          |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
+          $%  {$pass p/path q/a}                        ::  advance
+              {$slip p/a}                               ::  lateral
+              {$sick p/b}                               ::  lame refactoring
+              {$give p/b}                               ::  retreat
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 --  =>
@@ -9888,6 +9898,14 @@
 ::
 ::::  6a: arvo core
   ::
+++  mean  |=(a/tang (fear (flop a) |.(!!)))             ::  deify stack trace
+++  fear                                                ::  insert user mean
+  |*  {a/tang _|?(**)}
+  ^+  (+<+)
+  =>  .(a `tang`a)
+  ?~  a  (+<+)
+  ~_(i.a $(a t.a))
+::
 ++  slog                                                ::  deify printf
   =|  pri/@                                             ::  priority level
   |=  a/tang  ^+  same                                  ::  .=  ~&(%a 1)

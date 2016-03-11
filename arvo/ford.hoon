@@ -1723,7 +1723,7 @@
           ?.  ?=($txt-diff p.coy)
             (flaw cof leaf+"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
           %+  cope  (maul cof !>(pact-hoon) (slop q.cay q.coy))
-          (flux |=(vax/vase:cord [%& p.cay vax]))
+          (flux |=(vax/vase [%& p.cay vax]))
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
