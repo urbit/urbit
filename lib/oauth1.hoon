@@ -246,8 +246,8 @@
         (joint "&" qen)
     ==
   ++  sign
-    |=  bay/tape  ^-  tape
-    (sifo (swap 3 (hmac (swap 3 signing-key) (crip bay))))
+    |=  {key/cord bay/tape}  ^-  tape
+    (sifo (swap 3 (hmac key (crip bay))))
   ::
   ++  signing-key
     %-  crip
