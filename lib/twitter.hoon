@@ -4,7 +4,6 @@
   ::
 /?    314
 /-    twitter
-/+    oauth1
 =+  sur-twit:^twitter  :: XX
 !:
 ::::  functions
@@ -48,29 +47,17 @@
   ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
   [q.i.b $(a t.a, b t.b)]
 ::
-++  auth
-  %^    oauth1
-      'https://api.twitter.com/oauth/request_token'
-    'https://api.twitter.com/oauth/authorize'
-  'https://api.twitter.com/oauth/access_token'
-::
 ++  valve                                               ::  produce request
-  |=  $:  med/?($get $post)
-          {pax/path quy/quay}
-          key/keys
-          bal/(bale keys:oauth1)
-      ==
+  |=  {med/?($get $post) pax/path quy/quay}
   ^-  hiss
   =+  url=(scan "https://api.twitter.com/1.1/.json" auri:epur)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
-  %^  ~(add-auth auth ~ bal '')  sec.acc.key 
-    [oauth-token+tok.acc.key]~
   ^-  hiss
   ?-  med
     $get  [url med *math ~]
     $post
-      =+  hed=(~(add ja *math) %content-type 'application/x-www-form-urlencoded')
+      =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
       [url(r ~) med hed (some (tact +:(tail:earn r.url)))]
   ==
 --
@@ -121,7 +108,6 @@
       ++  tok  @t                                       ::  oauth token
       ++  url  @t                                       ::  callback url
       ::
-      ++  at  {$access-token p/tok}
       ++  de  {$device p/dev}
       ++  fo  {$follow p/lid}
       ++  gr  {$grant-type p/gat}
@@ -130,7 +116,6 @@
       ++  la  {$lat p/lat}
       ++  lo  {$long p/lon}
       ++  na  {$name p/lid}
-      ++  oa  {$oauth-callback p/url}
       ++  os  {$source-screen-name p/scr}
       ++  pl  {$place-id p/pla}
       ++  qq  {$q p/@t}
@@ -148,11 +133,11 @@
       ++  ui  {$user-id p/tid}
       ++  us  {$user-id p/lid}
       ++  param                                        :: (any) required param
-        $?  at  de  fo  gr  id  is  la  lo  na  oa  os  pl  qq
-            sc  sd  ss  sl  si  st  te  ti  ts  tr  ur  ui  us
+        $?  de  fo  gr  id  is  la  lo  na  os  pl  qq  sc
+            sd  ss  sl  si  st  te  ti  ts  tr  ur  ui  us
         ==
       --
-  |_  {key/keys bal/(bale @)}
+  |%
   ++  lutt  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
   ++  llsc  
     |=  a/$@(scr (list scr))  ^-  @t
@@ -170,7 +155,7 @@
   ++  mold                                        ::  construct request
     |*  {med/meth pax/path a/$-(* *)}
     |=  {args/a quy/quay}
-    (valve med (cowl pax args quy) key bal)
+    (valve med (cowl pax args quy))
   ::
   ++  cowl                                        ::  handle parameters
     |=  $:  pax/path 
@@ -463,24 +448,6 @@
   ::
   ++  user-repo  
     (mold %post /users/report-spam {sd $~})
-  ::
-  ++  oaut-auth-cate  
-    (mold %get /oauth/authenticate $~)
-  ::
-  ++  oaut-auth-rize  
-    (mold %get /oauth/authorize $~)
-  ::
-  ++  oaut-acce  
-    (mold %post /oauth/access-token $~)
-  ::
-  ++  oaut-requ  
-    (mold %post /oauth/request-token {oa $~})
-  ::
-  ++  oaut-toke  
-    (mold %post /oauth2/token {gr $~})
-  ::
-  ++  oaut-inva  
-    (mold %post /oauth2/invalidate-token {at $~})
   ::
   ++  help-conf  
     (mold %get /help/configuration $~)
