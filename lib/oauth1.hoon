@@ -60,7 +60,7 @@
 ::
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss
-  =-  [a %post - (some (tact +:(tail:earn b)))]
+  =-  [a %post - ?~(b ~ (some (tact +:(tail:earn b))))]
   (my content-type+['application/x-www-form-urlencoded']~ ~)
 ::
 ::
@@ -115,7 +115,7 @@
       exchange-url=(parse-url code-exchange)
     token-reqs-url=(parse-url request)
 |_  {done/* (bale keys) tok/token}
-++  core-move  $^({sec-move _done} sec-move)  :: stateful
++-  core-move  $^({sec-move _done} sec-move)  :: stateful
 ++  consumer-key     key:decode-keys
 ++  consumer-secret  sec:decode-keys
 ++  decode-keys                       :: XX from bale w/ typed %jael
