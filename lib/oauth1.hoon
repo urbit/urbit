@@ -175,10 +175,12 @@
     ~|(%multiple-tokens-unsupported !!)
   [%send (add-auth a token-exchange)]
 ::
+++  token-response  ['oauth_token' 'oauth_token_secret']
 +-  bak-save-access
   |=  handle/$-(token _done)
-  %-  (res-parse 'oauth_token' 'oauth_secret')
-  |=(axs-tok/{@t @t} [[%redo ~] (handle `token`access-token+axs-tok)])
+  %-  (res-parse token-response)
+  |=  access-token/{tok/@t sec/@t}  ^-  core-move
+  [[%redo ~] (handle `token`[%access-token access-token])]
 ::
 +-  res-parse
   |*  para/quay-keys
@@ -191,18 +193,18 @@
 ::
 ++  res-give  |=(a/httr [%give a])
 +-  res-handle-reqt
-  |=  handle/$-(token _done)
+  |=  handle/$-(token _done)  ^-  $-(httr core-move)
   ?~  tok
     (res-save-reqt handle)
   res-give
 ::
 +-  res-save-reqt
-  |=  handle/$-(token _done)
-  %-  (res-parse ['oauth_token' 'oauth_secret'] 'oauth_callback_confirmed')
-  |=  {req-tok/{@t @t} cof/term}  ^-  core-move
+  |=  handle/$-(token _done)  ^-  $-(httr core-move)
+  %-  (res-parse token-response 'oauth_callback_confirmed')
+  |=  {request-token/{tok/@t sec/@t} cof/term}  ^-  core-move
   ?.  =(%true cof)
     ~|(%callback-rejected !!)
-  [[%redo ~] (handle [%request-token req-tok])]
+  [[%redo ~] (handle `token`[%request-token request-token])]
 ::
 ::
 ++  add-auth
