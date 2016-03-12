@@ -1,0 +1,320 @@
+#!/usr/bin/python
+
+# TODO:
+# - stdin (default)
+# - file (construct_value)
+# - stdout shouldn't require argument (also, should be default)
+# - -h text
+
+import sys
+import logging
+import json
+import requests
+import argparse
+
+logging.basicConfig(level=logging.WARNING,
+                    format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
+                    stream=sys.stderr)
+
+logging.debug(['sys.argv', sys.argv])
+
+def preprocess_args(old_args):
+    """Split out []
+
+    We use [] to delimit tuples.  The following syntaxes are all equivalent:
+
+    --  --open --open a b --close --open c d --close --close
+    --  [ [ a b ] [ c d ] ]
+    --  [ [a b] [c d] ]
+    --  [[a b] [c d]]
+    --  etc
+
+    We don't allow [[a b][c d]].  The rule is that we accept zero or more [ at
+    the beginning of a token and zero or more ] at the end of a token.
+
+    In this function, we convert all legal syntaxes to as if they were entered
+    as in the first example above.  This allows them to be parsed by a
+    relatively sane argparse system.
+    """
+
+    if old_args == []:
+        return []
+    if old_args[0][0] == '[':
+        if len(old_args[0]) > 1:
+            return ['--open'] + preprocess_args([old_args[0][1:]] + old_args[1:])
+        else:
+            return ['--open'] + preprocess_args(old_args[1:])
+    if old_args[0][-1] == ']':
+        if len(old_args[0]) > 1:
+            return preprocess_args([old_args[0][:-1]]) + \
+                    ['--close'] + preprocess_args(old_args[1:])
+        else:
+            return ['--close'] + preprocess_args(old_args[1:])
+    return [old_args[0]] + preprocess_args(old_args[1:])
+
+args = preprocess_args(sys.argv[1:])
+
+logging.debug(['preprocessed', args])
+
+
+class sourceAction(argparse.Action):
+    """Handle source flag.
+
+    This is all the 'primitive' source flags -- no nesting, no tuple stuff,
+    just one flag with one argument.
+
+    Besides the normal argparse.Action arguments, we require the following named
+    argument:
+
+    -- which='foo'.  Since all source flags use res.source, this specifies the
+        key of the entry for this flag.
+    """
+
+    def __init__(self, option_strings, dest, **kwargs):
+        self.which = kwargs['which']
+        del kwargs['which']
+        super(sourceAction, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, res, new_value, option_string):
+        logging.debug('%r %r' % (new_value, option_string))
+        logging.debug('source %s' % res.source)
+        logging.debug('level %s' % res.level)
+
+        if res.source is not None:
+            def help(source, level):
+                logging.debug('source %s' % source)
+                logging.debug('level %s' % level)
+                if not isinstance(source, list):
+                    raise ValueError('Already specified one source')
+                elif level == 0:
+                    raise ValueError('Already specified a source %r %s' % (source, level))
+                elif level == 1:
+                    return source + [{self.which: self.construct_value(new_value)}]
+                else:
+                    return source[:-1] + [help(source[-1], level - 1)]
+            res.source = help(res.source, res.level)
+        else:
+            res.source = \
+              {self.which: self.construct_value(new_value)}
+
+        logging.debug(res.source)
+
+    def construct_value(self, new_value):
+        return new_value
+
+class transformerAction(argparse.Action):
+    """Handle transformer flag.
+
+    This is all the tranformer flags.  Each flag takes one argument and
+    transforms the previous source.
+
+    Besides the normal argparse.Action arguments, we require the following named
+    arguments:
+
+    -- which='foo'.  Since all source flags use res.source, this specifies the
+        key of the entry for this flag.
+    
+    -- nesting='foo'.  The key for the argument is 'foo'.
+    """
+
+    def __init__(self, option_strings, dest, **kwargs):
+        self.which = kwargs['which']
+        self.nesting = kwargs['nesting']
+        del kwargs['which']
+        del kwargs['nesting']
+        super(transformerAction, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, res, new_value, option_string):
+        logging.debug('%r %r' % (new_value, option_string))
+        logging.debug('source %s' % res.source)
+        logging.debug('level %s' % res.level)
+
+        if res.source is None:
+            raise ValueError('Need source before transformer')
+        else:
+            def help(source, level):
+                logging.debug('source %s' % source)
+                logging.debug('level %s' % level)
+                if level == 0:
+                    return {self.which: {self.nesting: new_value, "next": source}}
+                elif not isinstance(source, list):
+                    raise ValueError('Already specified one source')
+                else:
+                    return source[:-1] + [help(source[-1], level - 1)]
+            res.source = help(res.source, res.level)
+
+        logging.debug(res.source)
+
+    def construct_value(self, new_value):
+        return new_value
+
+class openAction(argparse.Action):
+    """Handle open tuple.
+
+    Opens a source tuple.  Can only exist in the same places as any other
+    source.
+    """
+
+    def __init__(self, option_strings, dest, **kwargs):
+        super(openAction, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, res, new_value, option_string):
+        if res.level is None:
+            res.level = 0
+
+        logging.debug('source %s' % res.source)
+        logging.debug('level %s' % res.level)
+
+        if res.source is None:
+            res.source = []
+            res.level = 1
+            return
+
+        def help(source, level):
+            if not isinstance(source, list):
+                raise ValueError('Starting tuple after source is finished')
+            if level == 1:
+                return (source + [[]], level + 1)
+            elif level > 1:
+                rsource, rlevel = help(source[-1], level - 1)
+                return (source[:-1] + [rsource], rlevel + 1)
+            else:
+                raise ValueError('opening strange level %r %s' % (source, level))
+
+        res.source, res.level = help(res.source, res.level)
+
+class closeAction(argparse.Action):
+    """Handle close tuple.
+
+    Closes a source tuple.  Can only exist when a tuple is already open.
+    """
+
+    def __init__(self, option_strings, dest, **kwargs):
+        super(closeAction, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, res, new_value, option_string):
+        if res.level is None:
+            raise ValueError('Ending tuple before starting one')
+
+        logging.debug('level %s' % res.level)
+
+        if res.source is None:
+            raise ValueError('Ending tuple with empty source')
+
+        def help(source, level):
+            if not isinstance(source, list):
+                raise ValueError('Ending tuple that isn\'t a tuple')
+            if level == 1:
+                return level - 1
+            elif level > 1:
+                return help(source[-1], level - 1) + 1
+            else:
+                raise ValueError('closing strange level %r %s' % (source, level))
+
+        res.level = help(res.source, res.level)
+
+        logging.debug('level %s' % res.level)
+
+class sinkAction(argparse.Action):
+    """Handle sink flag.
+
+    We expect only one sinkAction to ever be executed.  We recommend using
+    mutually_exclusive_group's.
+
+    Besides the normal action flags, we require the following named argument:
+
+    -- which='foo'.  Since all sink flags use res.sink, this specifies the key
+        of the entry for this flag.
+    """
+
+    def __init__(self, option_strings, dest, **kwargs):
+        self.which = kwargs['which']
+        del kwargs['which']
+        super(sinkAction, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, res, new_value, option_string):
+        old_value = res.sink
+
+        if old_value:
+            raise ValueError('Already specified sink')
+
+        res.sink = {self.which: new_value}
+
+        logging.debug(res.sink)
+
+parser = argparse.ArgumentParser(description='headless urbit')
+parser.add_argument('-d', '--dojo', which='dojo',
+                    metavar='command-line',
+                    action=sourceAction, dest='source')
+parser.add_argument('-D', '--data', which='data',
+                    metavar='text-data',
+                    action=sourceAction)
+parser.add_argument('-f', '--file', which='file',
+                    metavar='path',
+                    action=sourceAction)
+parser.add_argument('-c', '--clay', which='clay',
+                    metavar='clay-path',
+                    action=sourceAction)
+parser.add_argument('-u', '--url', which='url',
+                    metavar='url',
+                    action=sourceAction)
+parser.add_argument('-a', '--api', which='api',
+                    metavar='api-command',
+                    action=sourceAction)
+parser.add_argument('-g', '--get-api', which='get-api',
+                    metavar='api:endpoint',
+                    action=sourceAction)
+parser.add_argument('-l', '--listen-api', which='listen-api',
+                    metavar='api:event',
+                    action=sourceAction)
+parser.add_argument('-m', '--as', which='as',
+                    metavar='mark',
+                    nesting='mark',
+                    action=transformerAction)
+parser.add_argument('-H', '--hoon', which='hoon',
+                    metavar='code',
+                    nesting='code',
+                    action=transformerAction)
+parser.add_argument('--open',
+                    nargs=0,
+                    action=openAction, dest='level')
+parser.add_argument('--close',
+                    nargs=0,
+                    action=closeAction)
+
+sinks = parser.add_mutually_exclusive_group(required=True)
+sinks.add_argument('-s', '--stdout', which='stdout',
+                   action=sinkAction, dest='sink')
+sinks.add_argument('-F', '--output-file', which='output-file',
+                   metavar='path',
+                   action=sinkAction)
+sinks.add_argument('-C', '--output-clay', which='output-clay',
+                   metavar='clay-path',
+                   action=sinkAction)
+sinks.add_argument('-U', '--output-url', which='url',
+                   metavar='url',
+                   action=sinkAction)
+sinks.add_argument('-t', '--to-api', which='to-api',
+                   metavar='api-command',
+                   action=sinkAction)
+sinks.add_argument('-n', '--send-api', which='send-api',
+                   metavar='api:endpoint',
+                   action=sinkAction)
+sinks.add_argument('-x', '--command', which='command',
+                   metavar='command',
+                   action=sinkAction)
+sinks.add_argument('-p', '--app', which='app',
+                   metavar='app',
+                   action=sinkAction)
+
+
+args = parser.parse_args(args)
+
+
+
+payload = {"source": args.source, "sink": args.sink}
+logging.debug(['payload', json.dumps(payload)])
+
+url = "http://localhost:12321"
+r = requests.post(url, data=json.dumps(payload))
+print r.text[1:-1].decode('string_escape')
