@@ -87,7 +87,7 @@
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
   ++  stat
     =+  jo
-    %+  ce  {id+@u who+@ta now+@da txt+@t}
+    %+  ce  stat:sur-twit
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
@@ -99,6 +99,24 @@
     %+  ce  (list who/@ta)
     =-  (ot users+(ar -) ~)
     (ot (fasp screen-name+(su user)) ~)
+  --
+++  print
+  =+  args:reqs
+  |%
+  ++  tid  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
+  ++  scr  |=(@t +<)
+  ++  lsc
+    |=  a/$@(^scr ^lsc)  ^-  @t
+    ?@(a `@t`a (join ',' a))
+  ::
+  ++  lst
+    |=  a/$@(@t ^lst)  ^-  @t
+    ?@(a `@t`a (join ',' a))
+  ::
+  ++  lid
+    |=  a/$@(^tid (list ^tid))  ^-  @t
+    ?~  a  ~|(%nil-id !!)
+    ?@(a (tid a) (join ',' (turn `(list ^tid)`a tid)))
   --
 ++  request
   =<  apex
@@ -138,10 +156,10 @@
     ^-  {@t @t}
     :-  (gsub '-' '_' -.p)
     ?+  -.p  p.p  :: usually plain text
-      ?($source-id $target-id)       (lutt p.p)
-      ?($follow $id $name $user-id)  (llid p.p)
-      $track                         (llst p.p)
-      $screen-name                   (llsc p.p)
+      ?($source-id $target-id)       (tid:print p.p)
+      ?($follow $id $name $user-id)  (lid:print p.p)
+      $track                         (lst:print p.p)
+      $screen-name                   (lsc:print p.p)
     ==
   --
 --
