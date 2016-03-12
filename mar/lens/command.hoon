@@ -18,6 +18,9 @@
     ++  source
       ^-  $-(^json (unit source:lens))
       |=  jon/^json
+      =+  tuple=%.(jon (ar source))
+      ?^  tuple
+        `[%tuple u.tuple]
       %.  jon
       %-  of  :~
         data+so:jo
@@ -34,7 +37,6 @@
         listen-api+(su ;~(plug sym ;~(pfix col sym)))
         as+(ot mark+(su sym) next+source ~)
         hoon+(ot code+so:jo next+source ~)
-        tuple+(ar source)
       ==
     ++  sink
       ^-  $-(^json (unit sink:lens))
