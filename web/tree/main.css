@@ -120,7 +120,8 @@ img.logo.first {
 .ctrl.navbar {
   position: relative;
   margin-bottom: 3rem;
-  padding: 0; }
+  padding: 0;
+  background-color: transparent; }
   .ctrl.navbar .icon,
   .ctrl.navbar ul.nav,
   .ctrl.navbar li {
@@ -433,6 +434,16 @@ img.logo.first {
     .urbit.navbar.ctrl .subnav ul.nav .btn a {
       line-height: 3rem; }
 
+.urbit.home.navbar.ctrl .icon .home {
+  border-color: #fff;
+  background-color: #fff; }
+
+.urbit.home.navbar.ctrl .icon .home:before {
+  color: #000; }
+
+.urbit.home.navbar.ctrl ul.nav li a {
+  color: #f7f7f9; }
+
 @media (max-width: 767px) {
   .urbit.navbar.ctrl .icon {
     margin-top: .5rem;
@@ -562,6 +573,22 @@ img.logo.first {
   .body .urbit .front h1 a {
     font-size: 4rem;
     line-height: 6rem; }
+
+.body .urbit .image-fs {
+  height: 44rem;
+  overflow: hidden; }
+  .body .urbit .image-fs h1 {
+    position: absolute;
+    line-height: 44rem;
+    width: 100%;
+    text-align: center;
+    color: #fff; }
+  .body .urbit .image-fs img {
+    min-height: 44rem;
+    min-width: 100%; }
+
+.body .urbit .image-fs.first {
+  margin-top: -9rem; }
 
 .body .urbit .slide {
   margin-bottom: 12rem;

@@ -6086,7 +6086,7 @@ textarea:focus {
   border-color: #000;
 }
 
-.container {
+body {
   padding-top: 3rem;
   padding-bottom: 9rem;
 }
