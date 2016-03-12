@@ -3,13 +3,13 @@
 ::::  /hoon/req/twit/mar
   ::
 /+  twitter
-|_  {url/purl met/meth hed/math bod/(unit octs)}
+|_  {req/endpoint:reqs:twitter quy/quay}
 ++  grab
   |%
-  ++  noun  hiss
+  ++  noun  {endpoint:reqs:twitter quay}
   --
 ++  grow
   |%
-  ++  hiss  +<.grow
+  ++  hiss  (request:twitter req quy)
   --
 --

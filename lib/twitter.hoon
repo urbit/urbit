@@ -81,12 +81,13 @@
   --
 ++  parse                                                ::  json reparsers
   |%
+  ++  ce  |*({a/_* b/fist:jo} (cu:jo |=(c/a c) b))       ::  output type
   ++  fasp  |*(a/{@tas *} [(gsub '-' '_' -.a) +.a])     ::  XX usable electroplating
   ++  user  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
   ++  stat
     =+  jo
-    ^-  $-(json (unit {id+@u who+@ta now+@da txt+@t}))
+    %+  ce  {id+@u who+@ta now+@da txt+@t}
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
@@ -95,7 +96,7 @@
     ==
   ++  usel 
     =+  jo
-    ^-  $-(json (unit (list who/@ta)))
+    %+  ce  (list who/@ta)
     =-  (ot users+(ar -) ~)
     (ot (fasp screen-name+(su user)) ~)
   --
