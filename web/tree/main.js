@@ -240,7 +240,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":23,"./LoadComponent.coffee":11}],3:[function(require,module,exports){
-var Comments, TreeActions, a, clas, div, extras, h1, h3, img, input, load, p, query, reactify, recl, ref, rele, util;
+var Comments, TreeActions, TreeStore, a, clas, div, extras, h1, h3, img, input, load, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
 
@@ -251,6 +251,8 @@ query = require('./Async.coffee');
 reactify = require('./Reactify.coffee');
 
 TreeActions = require('../actions/TreeActions.coffee');
+
+TreeStore = require('../stores/TreeStore.coffee');
 
 Comments = require('./CommentsComponent.coffee');
 
@@ -373,13 +375,27 @@ extras = {
   footer: recl({
     displayName: "Footer",
     render: function() {
+      var containerClas, footerClas;
+      containerClas = clas({
+        footer: true,
+        container: this.props.container === 'false'
+      });
+      footerClas = clas({
+        'col-md-12': this.props.container === 'false'
+      });
       return div({
-        className: "footer"
-      }, p({}, [
-        "This page was served by an Urbit.", a({
-          href: "mailto:urbit@urbit.org"
-        }, "urbit@urbit.org")
-      ]));
+        className: containerClas,
+        key: 'footer-container'
+      }, [
+        div({
+          className: footerClas,
+          key: 'footer-inner'
+        }, [
+          "This page was served by an Urbit.", a({
+            href: "mailto:urbit@urbit.org"
+          }, "urbit@urbit.org")
+        ])
+      ]);
     }
   })
 };
@@ -392,8 +408,24 @@ module.exports = query({
   sein: 't'
 }, recl({
   displayName: "Body",
+  stateFromStore: function() {
+    return {
+      curr: TreeStore.getCurr()
+    };
+  },
+  getInitialState: function() {
+    return this.stateFromStore();
+  },
+  _onChangeStore: function() {
+    if (this.isMounted()) {
+      return this.setState(this.stateFromStore());
+    }
+  },
+  componentDidMount: function() {
+    return TreeStore.addChangeListener(this._onChangeStore);
+  },
   render: function() {
-    var bodyClas, extra, innerClas, outerClas, parts, ref1;
+    var bodyClas, extra, innerClas, parts, ref1;
     extra = (function(_this) {
       return function(name, props) {
         if (props == null) {
@@ -407,9 +439,6 @@ module.exports = query({
         }
       };
     })(this);
-    outerClas = clas({
-      container: this.props.meta.container !== 'false'
-    });
     innerClas = {
       body: true
     };
@@ -429,17 +458,21 @@ module.exports = query({
       }), reactify(this.props.body), extra('next', {
         dataPath: this.props.sein,
         curr: this.props.name
-      }), extra('comments'), extra('footer')
+      }), extra('comments'), extra('footer', {
+        container: this.props.meta.container
+      })
     ];
     if (this.props.meta.type === "post") {
       parts.splice(1, 0, extra('date'), extra('title'), extra('image'), extra('preview'), extra('author'));
     }
     return div({
-      className: outerClas
+      dataPath: this.state.curr,
+      key: this.state.curr
     }, [
       div({
         className: innerClas,
-        'data-path': this.props.path
+        'data-path': this.props.path,
+        key: 'body-inner'
       }, [
         div({
           key: "body" + this.props.path,
@@ -459,7 +492,7 @@ module.exports = query({
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../utils/util.coffee":25,"./Async.coffee":2,"./CommentsComponent.coffee":5,"./LoadComponent.coffee":11,"./Reactify.coffee":14,"classnames":26}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":23,"../utils/util.coffee":25,"./Async.coffee":2,"./CommentsComponent.coffee":5,"./LoadComponent.coffee":11,"./Reactify.coffee":14,"classnames":26}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -679,9 +712,12 @@ module.exports = recl({
   onClick: function() {
     return this.submit();
   },
-  onKeyUp: function(e) {
+  onChange: function(e) {
     var email, valid;
-    email = this.$email.val();
+    email = e.target.value;
+    this.setState({
+      email: e.target.value
+    });
     valid = email.indexOf('@') !== -1 && email.indexOf('.') !== -1 && email.length > 7 && email.split(".")[1].length > 1 && email.split("@")[0].length > 0 && email.split("@")[1].length > 4;
     this.$email.toggleClass('valid', valid);
     this.$email.removeClass('error');
@@ -711,19 +747,21 @@ module.exports = recl({
     return this.$email = $('input.email');
   },
   render: function() {
-    var cont;
+    var cont, ref1, submit;
     if (this.state.submit === false) {
+      submit = (ref1 = this.props.submit) != null ? ref1 : "Sign up";
       cont = [
         input({
           key: "field",
           className: "email",
           placeholder: "your@email.com",
-          onKeyUp: this.onKeyUp
-        }, this.state.email), button({
+          onChange: this.onChange,
+          value: this.state.email
+        }), button({
           key: "submit",
           className: "submit",
           onClick: this.onClick
-        }, "Sign up")
+        }, submit)
       ];
     } else {
       cont = [
@@ -1364,9 +1402,7 @@ module.exports = query({
       history.pushState({}, "", util.basepath(href_parts.join("#")));
     }
     if (next !== this.props.path) {
-      ReactDOM.unmountComponentAtNode($('#body')[0]);
-      TreeActions.setCurr(next);
-      return rend(BodyComponent({}, ""), $('#body')[0]);
+      return TreeActions.setCurr(next);
     }
   },
   reset: function() {
@@ -1954,7 +1990,13 @@ module.exports = query({
     });
     return div({
       className: treeClas
-    }, [head({}, ""), body({}, "")]);
+    }, [
+      head({
+        key: 'head-container'
+      }, ""), body({
+        key: 'body-container'
+      }, "")
+    ]);
   }
 }));
 
