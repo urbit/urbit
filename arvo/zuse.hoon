@@ -1194,6 +1194,8 @@
      (cold 63 (just '/'))
    ==
 ::
+::  .=  ~[p=~.ack q=~.~sarnel r=~..y]
+::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
 ++  dray                                                ::  load tuple into path
   =-  |*  {a/{@tas (pole @tas)} b/*}  ^-  (paf a)
       =>  .(b `(tup -.a +.a)`b)
@@ -1211,7 +1213,7 @@
   ^=  odo
   |*  a/@tas
   |=  b/*
-  =<  a(. (. b))                  ::  preserve face
+  =<  a(, (. b))                  ::  preserve face
   ?+  a   @
     $c  @c  $da  @da  $dr  @dr  $f   @f   $if  @if  $is  @is  $p   @p
     $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw
