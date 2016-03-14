@@ -1395,6 +1395,7 @@
       |=(val/* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
+      :: =+  dyv=0
       |=  {how/beam arg/coin}
       =|  $:  rop/(map term (pair hoof twig))           ::  structures
               bil/(map term (pair hoof twig))           ::  libraries
@@ -1428,6 +1429,9 @@
         |=  {cof/cafe hyd/hood}
         ^-  (bolt _..apex)
         %+  cope  (body cof src.hyd)
+        ::=.  dyv  +(dyv)
+        ::~&  [`term`(cat 3 %apex (fil 4 dyv '  ')) `path`(flop s.how) libs]
+        ::=-  ~&  [`term`(cat 3 %xepa (fil 4 dyv '  ')) `path`(flop s.how)]  -
         |=  {cof/cafe sel/_..apex}
         =.  ..apex  sel
         %+  cope  (neck cof lib.hyd)
@@ -1445,6 +1449,7 @@
         |=  {cof/cafe sel/_..body}
         ^$(src t.src, ..body sel, cof cof)
       ::
+      :: ++  libs  `(set term)`(silt (turn (~(tap by bil)) head.is))
       ++  chad                                          ::  atomic list
         |=  {cof/cafe bax/vase doe/term hon/horn}
         ^-  (bolt vase)
@@ -1661,7 +1666,9 @@
         =.  ..neck  
             %=  sel
               how  how
-              bil  (~(put by bil) p.i.bir [i.bir [%tow (flop boy.sel)]])
+              bil  %+  ~(put by (~(uni by bil) bil.sel))
+                     p.i.bir
+                   [i.bir [%tow (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)
       ::

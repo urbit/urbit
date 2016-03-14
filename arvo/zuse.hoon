@@ -404,7 +404,7 @@
   =+  op=(fil 3 64 0x5c)
   =+  ^=  kex
       ?:  (gth (met 3 key) 64)
-        (lsh 3 44 (shan (swap 3 key)))
+        (lsh 3 44 (shan key))
       (lsh 3 (sub 64 (met 3 key)) (swap 3 key))
   =+  inn=(shan (swap 3 (cat 3 (swap 3 mes) (mix ip kex))))
   (shan (swap 3 (cat 3 inn (mix op kex))))

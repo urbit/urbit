@@ -12,8 +12,8 @@
   |=  {a/@t b/@t t/@t}
   ^-  @t
   ?:  =('' t)  t
-  %+  add  (lsh 3 1 $(t (rsh 3 1 t)))
-  =+  c=(mod t (bex 8))
+  %+  mix  (lsh 3 1 $(t (rsh 3 1 t)))
+  =+  c=(end 3 1 t)
   ?:(=(a c) b c)
 ::
 ++  join  
@@ -84,7 +84,7 @@
     ((hard {cid/@t cis/@t $~}) (lore key))
   %+  mean-wall  %oauth-no-keys
   """
-  Run |init-oauth2
+  Run |init-oauth2 {<`path`dom>}
   If necessary, obtain client keys configured for a redirect_uri of
     {(trip redirect-uri)}
   """
@@ -112,6 +112,7 @@
   :~  domain+(join '.' (flop dom))
       user+?:(state-usr '_state' (scot %ta usr))
   ==
+::
 ::
 ++  out-filtered
   |=  {tok/token aut/$-(hiss hiss)}
