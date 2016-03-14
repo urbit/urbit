@@ -6,11 +6,10 @@
   ==
 ::
 ++  command                                           ::  poke action
-  $%  {$auth p/keys}                                  ::  set API keys
-      {$post p/@uvI q/cord}                           ::  post a tweet
+  $%  {$post p/@uvI q/cord}                           ::  post a tweet
   ==
 ++  sur-twit  .  :: XX 
-::  
+::
 ++  reqs
   |%
   ++  args

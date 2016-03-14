@@ -15,8 +15,7 @@
 ::
 ++  axle                                                ::  app state
   $:  %0
-      kes=(map span keys:twittter)                      ::  auth
-      out=(map ,@uvI (each ,[span cord] stat))          ::  sent tweets
+      out=(map ,@uvI (each ,[knot cord] stat))          ::  sent tweets
       ran=(map path ,[p=@ud q=@da])                     ::  polls active
       fed=(jar path stat)                               ::  feed cache
   ==
@@ -45,19 +44,14 @@
   ==
 ::
 ++  stat  stat:twitter                                  ::  recieved tweet
-++  twit  main:twitter                                  ::  api interface
+++  twit  args:reqs:twitter                             ::  arugment types
 ++  twir  parse:twitter                                 ::  reparsers
-++  twip  render:twitter                                ::  printers
+++  twip  print:twitter                                 ::  printers
 --
 !:
 ::::
   ::
 |_  [bowl axle]
-++  any-auth  ?~(kes (auth) (auth p.n.kes))             ::  use any keys
-++  auth                                                ::  build API door
-  |=  a=span
-  ~|  [%no-auth a] 
-  ~(. twit (~(got by kes) a) now `@`eny)
 ::
 ++  cull                                                ::  remove seen tweets
   |=  [pax=path rep=(list stat)]  ^+  rep
@@ -90,16 +84,13 @@
   |=  [usr=span act=command:twitter]
   ^+  [*(list move) +>]
   ?-    -.act
-      %auth
-    :-  [(print "authed @{(trip usr)}")]~
-    +>.$(kes (~(put by kes) usr p.act))             ::  XX verify key
       %post
     =:  out  (~(put by out) p.act %& usr q.act)
         ran  (~(del by ran) /peer/home)
       ==
     %+  wait  /peer/home
-    =+  mez=(stat-upda:(auth usr) [%status q.act]~ ~)
-    [ost %them /post/(scot %uv p.act) ~ mez]~
+    =+  req=[%twit-req stat-upda+[%status q.act]~ ~]
+    [ost %hiss /post/(scot %uv p.act) `~ %twit-status req]~
   ==
 ::
 ++  wake-peer
@@ -115,54 +106,122 @@
   ~&  peer-again/[pax ran]
   (pear | our pax)
 ::
-++  thou
-  |=  [pax=path hit=httr]  ^+  done
-  ?+    p.hit  ~|([%unknown-code p.hit] !!)
-      429                           ::  Rate-limit
-    =.  ran  (~(put by ran) pax 6 now)
-    =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.hit)) poja ni:jo))
-    =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
-    ~&  retrying-in/`@dr`(sub tym now)
-    :_(+>.$ [ost %wait pax tym]~)
-  ::
-      200                           ::  OK
-    =+  jon=(need (poja q:(need r.hit)))
-    :: ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
-    ?+    pax  ~|([%http-missed pax] !!)
-        [%post @ ~]                                   ::  post acknowledged
-      =+  ^=  rep
-          ~|  [%bad-post jon]
-          (need %.(jon stat:twir))
-      =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
-      :_  +>.$
-      =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
-      :-  (print (earn [& ~ `/com/twitter] `pax ~))
-      (spam pax (tweet-good rep))
-        [%peer *]                                     ::  feed data
-      =+  ^=  rep
-          ~|  [%bad-feed jon]
-          (need %.(jon (ar:jo stat:twir)))
-      :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
-      =+  ren=(cull t.pax rep)                       ::  new messages
-      ?~  ren
-        (wait pax ~)                              ::  pump polling
-      :: ~&  spam-feed/ren
-      =:  ran  (~(del by ran) pax)                    ::  clear poll delay
-          fed  (~(put by fed) t.pax rep)              ::  saw last message
-        ==
-      (wait pax (spam t.pax [%diff twit-feed/(flop ren)] ~))
+::  XX parse from stack trace?
+:: ++  hiss-429                          ::  Rate-limit
+::   |=  [pax=path hit=httr]
+::   =.  ran  (~(put by ran) pax 6 now)
+::   =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.hit)) poja ni:jo))
+::   =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
+::   ~&  retrying-in/`@dr`(sub tym now)
+::   :_(+>.$ [ost %wait pax tym]~)
+::
+++  hiss-twit-status-post                               ::  post acknowledged
+  |=  [wir=wire rep=stat:twir]  ^+  done
+  ?>  ?=([@ ~] wir)                                 
+  =.  out  (~(put by out) (slav %uv i.wir) %| rep)
+  :_  +>.$
+  =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
+  :-  (print (earn [& ~ `/com/twitter] `pax ~))
+  (spam pax (tweet-good rep))
+::
+++  hiss-twit-feed-peer                                 ::  feed data
+  |=  [wir=path rep=(list stat:twir)]
+  :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
+  =+  ren=(cull wir rep)                       ::  new messages
+  ?~  ren
+    (wait peer+wir ~)                              ::  pump polling
+  :: ~&  spam-feed/ren
+  =:  ran  (~(del by ran) peer+wir)                    ::  clear poll delay
+      fed  (~(put by fed) wir rep)              ::  saw last message
     ==
+  (wait peer+wir (spam wir [%diff twit-feed/(flop ren)] ~))
   ::
-      ?(400 401 403 404)            ::  Err
-    =+  ^-  git=gift
-        =+  err=%.(q:(need r.hit) ;~(biff poja mean:twir))
-        :^  %diff  %ares  %bad-http
-        [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:twip)]
-    ?+    pax  [[ost git]~ +>.$]
-      [%post @ ~]
-        [(spam pax git ~) +>.$]
-    ==
+:: ++  hiss-json
+::   |=  [pax=path jon=json]  ^+  done
+::   :: ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
+::   ?+    pax  ~|([%http-missed pax] !!)
+::       [%post @ ~]                                   ::  post acknowledged
+::     =+  ^=  rep
+::         ~|  [%bad-post jon]
+::         (need %.(jon stat:twir))
+::     =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
+::     :_  +>.$
+::     =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
+::     :-  (print (earn [& ~ `/com/twitter] `pax ~))
+::     (spam pax (tweet-good rep))
+::       [%peer *]                                     ::  feed data
+::     =+  ^=  rep
+::         ~|  [%bad-feed jon]
+::         (need %.(jon (ar:jo stat:twir)))
+::     :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
+::     =+  ren=(cull t.pax rep)                       ::  new messages
+::     ?~  ren
+::       (wait pax ~)                              ::  pump polling
+::     :: ~&  spam-feed/ren
+::     =:  ran  (~(del by ran) pax)                    ::  clear poll delay
+::         fed  (~(put by fed) t.pax rep)              ::  saw last message
+::       ==
+::     (wait pax (spam t.pax [%diff twit-feed/(flop ren)] ~))
+::   ==
+::   ::
+++  hiss-mean                       ::  Err
+  |=  [pax=path tan=tang]
+  =+  ^-  git=gift
+      =+  err='' ::%.(q:(need r.hit) ;~(biff poja mean:twir))  :: XX parse?
+      :^  %diff  %ares  %bad-http
+      [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:render:twit)]
+  ?+    pax  [[ost git]~ +>.$]
+    [%post @ ~]
+      [(spam pax git ~) +>.$]
   ==
+:: ++  thou
+::   |=  [pax=path hit=httr]  ^+  done
+::   ?+    p.hit  ~|([%unknown-code p.hit] !!)
+::       429                           ::  Rate-limit
+::     =.  ran  (~(put by ran) pax 6 now)
+::     =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.hit)) poja ni:jo))
+::     =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
+::     ~&  retrying-in/`@dr`(sub tym now)
+::     :_(+>.$ [ost %wait pax tym]~)
+::   ::
+::       200                           ::  OK
+::     =+  jon=(need (poja q:(need r.hit)))
+::     :: ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
+::     ?+    pax  ~|([%http-missed pax] !!)
+::         [%post @ ~]                                   ::  post acknowledged
+::       =+  ^=  rep
+::           ~|  [%bad-post jon]
+::           (need %.(jon stat:twir))
+::       =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
+::       :_  +>.$
+::       =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
+::       :-  (print (earn [& ~ `/com/twitter] `pax ~))
+::       (spam pax (tweet-good rep))
+::         [%peer *]                                     ::  feed data
+::       =+  ^=  rep
+::           ~|  [%bad-feed jon]
+::           (need %.(jon (ar:jo stat:twir)))
+::       :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
+::       =+  ren=(cull t.pax rep)                       ::  new messages
+::       ?~  ren
+::         (wait pax ~)                              ::  pump polling
+::       :: ~&  spam-feed/ren
+::       =:  ran  (~(del by ran) pax)                    ::  clear poll delay
+::           fed  (~(put by fed) t.pax rep)              ::  saw last message
+::         ==
+::       (wait pax (spam t.pax [%diff twit-feed/(flop ren)] ~))
+::     ==
+::   ::
+::       ?(400 401 403 404)            ::  Err
+::     =+  ^-  git=gift
+::         =+  err=%.(q:(need r.hit) ;~(biff poja mean:twir))
+::         :^  %diff  %ares  %bad-http
+::         [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:render:twit)]
+::     ?+    pax  [[ost git]~ +>.$]
+::       [%post @ ~]
+::         [(spam pax git ~) +>.$]
+::     ==
+::   ==
 ++  tweet-good  |=(rep=stat `(list gift)`~[[%diff %twit-stat rep] [%quit ~]]) 
 ++  peer  |=(pax=path :_(+> (pear & src pax)))       ::  accept subscription
 ++  pear                              ::  poll, possibly returning current data
@@ -182,12 +241,11 @@
       ?.  ver  ~
       ?~  ole  ~
       [ost %diff %twit-feed (flop ole)]~
-  =-  `move`[ost %them peer/pax ~ `hiss`-]
-  =+  opt=?~(ole ~ ['since_id' (lutt:twit id.i.ole)]~)
-  =+  aut=any-auth
+  =-  `move`[ost %hiss peer/pax `~ -]
+  =+  opt=?~(ole ~ ['since_id' (tid:twip id.i.ole)]~)
   ?-    -.pax
-    %user  (stat-user:aut [(to-sd p.pax)]~ opt)
-::     %home  (stat-home:auth ~ opt)
+    %user  [%twit-feed twit-req+[stat-user+[(to-sd p.pax)]~ opt]]
+::     %home  [%twit-home stat-home+~ opt]
   ==
 ::
 ++  to-sd                                               ::  parse user name/numb
