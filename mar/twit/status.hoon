@@ -1,13 +1,13 @@
-::  List of twitter users
+::  Twitter status
 ::
-::::  /hoon/usel/twit/mar
+::::  /hoon/stat/twit/mar
   ::
 /+  twitter, httr-to-json
-|_  (list who/@ta)
+|_  stat:twitter
 ++  grab
   |%
-  ++  noun  (list who/@ta)
-  ++  json  (corl need usel:parse:twitter)
+  ++  noun  stat:twitter
+  ++  json  (corl need stat:parse:twitter)
   ++  httr  (cork httr-to-json json)  ::  XX mark translation
   --
 ++  grow
