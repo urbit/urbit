@@ -33,22 +33,25 @@
 ++  move  {bone card}
 ++  card                                                ::  arvo request
   $?  gift
-  $%  {$them path $~ u/hiss}                             ::  HTTP request
+  $%  {$hiss wire {$~ $~} api-call}                     ::  api request
       {$poke wire dock $talk-command command:talk}      ::
-      {$wait path p/@da}                                ::  timeout
+      {$wait wire p/@da}                                ::  timeout
   ==  ==
 ::
+++  api-call  {response-mark $twit-req {endpoint quay}} :: full hiss payload
+++  response-mark  ?($twit-status $twit-feed)           :: sigh options
 ++  sign                                                ::  arvo response
   $%  {$e $thou p/httr}                                 ::  HTTP result
       {$t $wake $~}                                      ::  timeout ping
   ==
 ::
 ::  XX =*
-++  stat     stat:twitter                               ::  recieved tweet
-++  command  command:twitter                            ::  incoming command
-++  param    param:reqs:twitter                         ::  twit-req paramters
-++  print    print:twitter                              ::  their serialization
-++  parse    parse:twitter                              ::  and deserialization
+++  stat      stat:twitter                              ::  recieved tweet
+++  command   command:twitter                           ::  incoming command
+++  endpoint  endpoint:reqs:twitter                     ::  outgoing target
+++  param  param:reqs:twitter                           ::  twit-req paramters
+++  print  print:twitter                                ::  their serialization
+++  parse  parse:twitter                                ::  and deserialization
 ::
 :: ++  twit  args:reqs:twitter                             ::  arugment types
 :: ++  twir  parse:twitter                                 ::  reparsers
@@ -61,7 +64,7 @@
 ::
 ++  cull                                                ::  remove seen tweets
   |=  {pax/path rep/(list stat)}  ^+  rep
-  =+  pev=(sa (turn (~(get ja fed) pax) |=(stat id)))
+  =+  pev=(silt (turn (~(get ja fed) pax) |=(stat id)))
   (skip rep |=(stat (~(has in pev) id)))
 ::
 ++  done  [*(list move) .]
@@ -95,8 +98,8 @@
         ran  (~(del by ran) /peer/home)
       ==
     %+  wait  /peer/home
-    =+  req=[%twit-req stat-upda+[%status q.act]~ ~]
-    [ost %hiss /post/(dray ~[%uv] p.act) `~ %twit-status req]~
+    =+  req=[%twit-req `endpoint`stat-upda+[%status q.act]~ ~]
+    [ost %hiss post+(dray ~[%uv] p.act) `~ %twit-status req]~
   ==
 ::
 ++  wake-peer
@@ -113,7 +116,7 @@
   (pear | our pax)
 ::
 ::  XX parse from stack trace?
-:: ++  hiss-429                          ::  Rate-limit
+:: ++  sigh-429                          ::  Rate-limit
 ::   |=  {pax/path hit/httr}
 ::   =.  ran  (~(put by ran) pax 6 now)
 ::   =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.hit)) poja ni:jo))
@@ -121,7 +124,7 @@
 ::   ~&  retrying-in+`@dr`(sub tym now)
 ::   :_(+>.$ [ost %wait pax tym]~)
 ::
-++  hiss-twit-status-post                               ::  post acknowledged
+++  sigh-twit-status-post                               ::  post acknowledged
   |=  {wir/wire rep/stat}  ^+  done
   =+  (raid wir mez=%uv ~)
   =.  out  (~(put by out) mez %| rep)
@@ -130,7 +133,7 @@
   :-  (show-url [& ~ &+/com/twitter] `pax ~)
   (spam pax (tweet-good rep))
 ::
-++  hiss-twit-feed-peer                                 ::  feed data
+++  sigh-twit-feed-peer                                 ::  feed data
   |=  {wir/path rep/(list stat)}
   :: ~&  got-feed+[(scag 5 (turn rep |=(stat id))) fed]
   =+  ren=(cull wir rep)                       ::  new messages
@@ -142,7 +145,7 @@
     ==
   (wait peer+wir (spam wir [%diff twit-feed+(flop ren)] ~))
   ::
-:: ++  hiss-json
+:: ++  sigh-json
 ::   |=  {pax/path jon/json}  ^+  done
 ::   :: ~&  twit-resp+%.(jon ?+(-.jon !! %o stat:twir %a (ar:jo stat:twir)))
 ::    ?+    pax  ~|([%http-missed pax] !!)
@@ -170,7 +173,7 @@
 ::     (wait pax (spam t.pax [%diff twit-feed+(flop ren)] ~))
 ::   ==
 ::   ::
-++  hiss-mean                       ::  Err
+++  sigh-mean                       ::  Err
   |=  {pax/path tan/tang}
   =+  ^-  git/gift
       =+  err='' ::%.(q:(need r.hit) ;~(biff poja mean:twir))  :: XX parse?
@@ -253,7 +256,7 @@
   ~!  print
   =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
   ?-    -.pax
-    $user  [%twit-feed twit-req+[stat-user+[(to-sd p.pax)]~ opt]]
+    $user  [%twit-feed twit-req+[`endpoint`stat-user+[(to-sd p.pax)]~ opt]]
 ::     %home  [%twit-home stat-home+~ opt]
   ==
 ::

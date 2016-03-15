@@ -20,7 +20,7 @@
 ::
 ++  said-url                                            ::  app url
   |=  url/purl
-  :+  ost.bol  %poke  /said-url
+  :^  ost.bol  %poke  /said-url
   :+  [our.bol %talk]  %talk-command
   ^-  command
   :-  %publish
