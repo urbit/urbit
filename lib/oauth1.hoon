@@ -150,6 +150,10 @@
 ::
 ++  token-exchange  (post-quay exchange-url ~)
 ++  token-request   (post-quay token-reqs-url oauth-callback+oauth-callback ~)
+++  identity
+  %+  weld
+    ?~(usr "default identity for " "{(trip usr)}@")
+  (trip (join '.' (flop dom)))
 ::
 ::  use token to sign authorization header. requires:
 ::    ++  res  (res-handle-reqt handle-token)      :: take request token
@@ -169,7 +173,10 @@
   ?.  ?=({{$'oauth_token' oauth-token/@t} {$'oauth_verifier' @t} $~} a)
     ~|(no-token+a !!)
   ?~  tok
-    ~|(%no-secret-for-token !!)
+    %+  mean-wall  %no-secret-for-token
+    """
+    Attempting to authorize {identity}
+    """
   ?.  =(oauth-token.tok oauth-token.q.i.a)
     ~|  wrong-token+[id=usr q.i.a]
     ~|(%multiple-tokens-unsupported !!)
