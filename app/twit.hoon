@@ -99,7 +99,7 @@
       ==
     %+  wait  /peer/home
     =+  req=[%twit-req `endpoint`stat-upda+[%status q.act]~ ~]
-    [ost %hiss post+(dray ~[%uv] p.act) `~ %twit-status req]~
+    [ost %hiss post+(dray ~[%uv] p.act) `usr %twit-status req]~
   ==
 ::
 ++  wake-peer
