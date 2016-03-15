@@ -1694,7 +1694,8 @@
     ::    XX formal dill-blit %url via hood
     ++  auth-print  |=({$show a/purl} (slog auth-tank leaf+(earn a) ~))
     ++  auth-tank
-      =>  rose+["." `~]^(turn (flop dom) |=(a/cord leaf+(trip a)))
+      =>  =-  ?~(usr - rose+["@" `~]^~[leaf+(trip usr) -])
+          rose+["." `~]^(turn (flop dom) |=(a/cord leaf+(trip a)))
       rose+[" " `~]^~[leaf+"To authenticate" . leaf+"visit:"]
     ::
     ++  do-give  (with !>(|=({$give a/httr} a)) fin-httr)

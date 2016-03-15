@@ -185,8 +185,12 @@
 ++  token-response  ['oauth_token' 'oauth_token_secret']
 +-  bak-save-access
   |=  handle/$-(token _done)
-  %-  (res-parse token-response)
-  |=  access-token/{tok/@t sec/@t}  ^-  core-move
+  %-  (res-parse token-response 'screen_name')
+  |=  {access-token/{tok/@t sec/@t} nam/knot}  ^-  core-move
+  ?.  ?~(usr & =(usr nam))
+    %-  %-  %*(. slog pri 1)
+        (flop p:(mule |.(~|(wrong-user+[req=usr got=nam] !!))))
+    [[%redo ~] (handle `token`~)]
   [[%redo ~] (handle `token`[%access-token access-token])]
 ::
 +-  res-parse
