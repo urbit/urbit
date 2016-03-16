@@ -1627,6 +1627,15 @@
           `note`[%g %deal [him our] %dojo %pull ~]
         abet:(give-json 200 ~ jon)
       ::
+          $sav
+        =+  ^=  jon
+            (jobe file+s+(crip <`path`p.fec>) data+s+(crip (sifo q.fec)) ~)
+        =.  +>.$
+          %+  pass-note
+            `whir`[%of ire (gsig [our %dojo] lens+/)]
+          `note`[%g %deal [him our] %dojo %pull ~]
+        abet:(give-json 200 ~ jon)
+      ::
           $mor
         |-  ^+  ..ix
         ?~  p.fec  ..ix

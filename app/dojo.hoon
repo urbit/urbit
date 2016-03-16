@@ -165,7 +165,7 @@
     ++  dp-sink
       ;~  pose
         ;~(plug (cold %file tar) dp-beam)
-        ;~(plug (cold %flat pat) (most fas qut))
+        ;~(plug (cold %flat pat) (most fas sym))
         ;~(plug (cold %pill dot) (most fas sym))
         ;~(plug (cold %http lus) (easy %post) dp-iden-url)
         ;~(plug (cold %http hep) (easy %put) dp-iden-url)
@@ -1019,10 +1019,10 @@
           :-  ^$(source.com i.next.source.com)
           $(next.source.com t.next.source.com)
         ==
-    =+  ^-  sink/dojo-sink
+    =+  |-  ^-  sink/dojo-sink
         ?-  -.sink.com
           $stdout       [%show %0]
-          $output-file  [%show %0]
+          $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
           $output-clay  [%file (need (tome pax.sink.com))]
           $url          [%http %post '' url.sink.com]
           $to-api       !!
