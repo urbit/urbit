@@ -1,18 +1,17 @@
 #!/usr/bin/python
 
 # TODO:
-# - stdin (default)
-# - file (construct_value)
-# - stdout shouldn't require argument (also, should be default)
 # - -h text
+# - output file
 
 import sys
 import logging
 import json
 import requests
 import argparse
+import base64
 
-logging.basicConfig(level=logging.WARNING,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
                     stream=sys.stderr)
 
@@ -89,18 +88,25 @@ class sourceAction(argparse.Action):
                 elif level == 0:
                     raise ValueError('Already specified a source %r %s' % (source, level))
                 elif level == 1:
-                    return source + [{self.which: self.construct_value(new_value)}]
+                    return source + [self.construct_value(new_value)]
                 else:
                     return source[:-1] + [help(source[-1], level - 1)]
             res.source = help(res.source, res.level)
         else:
             res.source = \
-              {self.which: self.construct_value(new_value)}
+              self.construct_value(new_value)
 
         logging.debug(res.source)
 
     def construct_value(self, new_value):
-        return new_value
+        if new_value == '-':
+            return {self.which: ''.join(sys.stdin)}
+        if new_value[0:2] == '@@':
+            with open(new_value[2:]) as f:
+              content = f.readlines()
+            return {self.which: ''.join(content)}
+        else:
+           return {self.which: new_value}
 
 class transformerAction(argparse.Action):
     """Handle transformer flag.
@@ -135,7 +141,7 @@ class transformerAction(argparse.Action):
             def help(source, level):
                 logging.debug('source %s' % source)
                 logging.debug('level %s' % level)
-                if level == 0:
+                if level == 0 or level is None:
                     return {self.which: {self.nesting: new_value, "next": source}}
                 elif not isinstance(source, list):
                     raise ValueError('Already specified one source')
@@ -235,17 +241,17 @@ class sinkAction(argparse.Action):
     def __call__(self, parser, res, new_value, option_string):
         old_value = res.sink
 
-        if old_value:
-            raise ValueError('Already specified sink')
-
         res.sink = {self.which: new_value}
 
         logging.debug(res.sink)
 
 parser = argparse.ArgumentParser(description='headless urbit')
+parser.add_argument('-i', '--stdin', which='stdin',
+                    metavar='HRM',
+                    action=sourceAction, dest='source')
 parser.add_argument('-d', '--dojo', which='dojo',
                     metavar='command-line',
-                    action=sourceAction, dest='source')
+                    action=sourceAction)
 parser.add_argument('-D', '--data', which='data',
                     metavar='text-data',
                     action=sourceAction)
@@ -282,9 +288,10 @@ parser.add_argument('--close',
                     nargs=0,
                     action=closeAction)
 
-sinks = parser.add_mutually_exclusive_group(required=True)
-sinks.add_argument('-s', '--stdout', which='stdout',
-                   action=sinkAction, dest='sink')
+sinks = parser.add_mutually_exclusive_group()
+sinks.add_argument('-s', '--stdout', const={'stdout': None},
+                   default={'stdout': None},
+                   action='store_const', dest='sink')
 sinks.add_argument('-F', '--output-file', which='output-file',
                    metavar='path',
                    action=sinkAction)
@@ -311,10 +318,21 @@ sinks.add_argument('-p', '--app', which='app',
 args = parser.parse_args(args)
 
 
+if args.source is None:
+    args.source = {"data": ''.join(sys.stdin)}
 
 payload = {"source": args.source, "sink": args.sink}
 logging.debug(['payload', json.dumps(payload)])
 
 url = "http://localhost:12321"
 r = requests.post(url, data=json.dumps(payload))
-print r.text[1:-1].decode('string_escape')
+if r.text[0] == "'":
+  print r.text[1:-1].decode('string_escape')
+elif r.text[0] == "{":
+  # print r.text
+  json_data = json.loads(r.text)
+  logging.debug(json_data)
+  with open(json_data['file'][:0:-1].replace('/','.',1)[::-1], 'w') as f:
+      f.write(base64.b64decode(json_data['data']))
+else:
+  print r.text
