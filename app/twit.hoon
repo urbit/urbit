@@ -113,7 +113,7 @@
   ?~  (~(get ju pus) pax)
     ~
   ~&  peer-again+[pax ran]
-  (pear | our pax)
+  (pear | `~. pax) ::(user-from-path pax))
 ::
 ::  XX parse from stack trace?
 :: ++  sigh-429                          ::  Rate-limit
