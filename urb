@@ -2,7 +2,7 @@
 
 # TODO:
 # - -h text
-# - output file
+# - output to clay
 
 import sys
 import logging
@@ -100,11 +100,11 @@ class sourceAction(argparse.Action):
 
     def construct_value(self, new_value):
         if new_value == '-':
-            return {self.which: ''.join(sys.stdin)}
-        if new_value[0:2] == '@@':
+            return self.construct_value(''.join(sys.stdin))
+        elif new_value[0:2] == '@@':
             with open(new_value[2:]) as f:
               content = f.readlines()
-            return {self.which: ''.join(content)}
+            return self.construct_value(''.join(content))
         else:
            return {self.which: new_value}
 
@@ -150,9 +150,6 @@ class transformerAction(argparse.Action):
             res.source = help(res.source, res.level)
 
         logging.debug(res.source)
-
-    def construct_value(self, new_value):
-        return new_value
 
 class openAction(argparse.Action):
     """Handle open tuple.
@@ -239,60 +236,69 @@ class sinkAction(argparse.Action):
         super(sinkAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, res, new_value, option_string):
-        old_value = res.sink
-
-        res.sink = {self.which: new_value}
+        res.sink = self.construct_value(new_value)
 
         logging.debug(res.sink)
 
+    def construct_value(self, new_value):
+        if self.which == 'output-file':
+            return {self.which: new_value[::-1].replace('.','/',1)[::-1]}
+        else:
+            return {new_value}
+
 parser = argparse.ArgumentParser(description='headless urbit')
-parser.add_argument('-i', '--stdin', which='stdin',
-                    metavar='HRM',
-                    action=sourceAction, dest='source')
 parser.add_argument('-d', '--dojo', which='dojo',
                     metavar='command-line',
-                    action=sourceAction)
+                    help='run dojo command',
+                    action=sourceAction, dest='source')
 parser.add_argument('-D', '--data', which='data',
-                    metavar='text-data',
-                    action=sourceAction)
-parser.add_argument('-f', '--file', which='file',
-                    metavar='path',
+                    metavar='text',
+                    help='literal text data',
                     action=sourceAction)
 parser.add_argument('-c', '--clay', which='clay',
                     metavar='clay-path',
+                    help='load data from clay',
                     action=sourceAction)
 parser.add_argument('-u', '--url', which='url',
                     metavar='url',
+                    help='pull data from url',
                     action=sourceAction)
 parser.add_argument('-a', '--api', which='api',
-                    metavar='api-command',
+                    metavar='command',
+                    help='get data from api',
                     action=sourceAction)
 parser.add_argument('-g', '--get-api', which='get-api',
                     metavar='api:endpoint',
+                    help='get data from api endpoint',
                     action=sourceAction)
 parser.add_argument('-l', '--listen-api', which='listen-api',
                     metavar='api:event',
+                    help='listen to event from api',
                     action=sourceAction)
 parser.add_argument('-m', '--as', which='as',
                     metavar='mark',
+                    help='transform a source to another mark',
                     nesting='mark',
                     action=transformerAction)
 parser.add_argument('-H', '--hoon', which='hoon',
                     metavar='code',
+                    help='transform a source by hoon code',
                     nesting='code',
                     action=transformerAction)
 parser.add_argument('--open',
                     nargs=0,
+                    help='start tuple',
                     action=openAction, dest='level')
 parser.add_argument('--close',
                     nargs=0,
+                    help='stop tuple',
                     action=closeAction)
 
 sinks = parser.add_mutually_exclusive_group()
 sinks.add_argument('-s', '--stdout', const={'stdout': None},
                    default={'stdout': None},
                    action='store_const', dest='sink')
-sinks.add_argument('-F', '--output-file', which='output-file',
+sinks.add_argument('-f', '--output-file', which='output-file',
                    metavar='path',
                    action=sinkAction)
 sinks.add_argument('-C', '--output-clay', which='output-clay',
@@ -326,13 +332,14 @@ logging.debug(['payload', json.dumps(payload)])
 
 url = "http://localhost:12321"
 r = requests.post(url, data=json.dumps(payload))
-if r.text[0] == "'":
-  print r.text[1:-1].decode('string_escape')
-elif r.text[0] == "{":
-  # print r.text
-  json_data = json.loads(r.text)
-  logging.debug(json_data)
-  with open(json_data['file'][:0:-1].replace('/','.',1)[::-1], 'w') as f:
+if r.text[0] == '"':
+    print r.text[1:-1].decode('string_escape')
+elif r.text[0] == '{':
+    # print r.text
+    json_data = json.loads(r.text)
+    logging.debug(json_data)
+    with open(json_data['file'][:0:-1].replace('/','.',1)[::-1], 'w') as f:
       f.write(base64.b64decode(json_data['data']))
 else:
-  print r.text
+    loggin.warn("unrecognized response")
+    print r.text
