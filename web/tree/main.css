@@ -1,5 +1,6 @@
+@charset "UTF-8";
 .col-md-10.body {
-  padding-left: 2.8125rem; }
+  padding-left: 0; }
 
 @media (max-width: 767px) {
   .col-md-10.body {
@@ -61,10 +62,11 @@ img.logo.first {
 #head .loading {
   display: none; }
 
-@media (max-width: 767px) {
+@media (max-width: 543px) {
   #head {
     top: 0;
-    z-index: 10; }
+    z-index: 10;
+    width: 100%; }
   #head.m-down,
   #head.m-up {
     position: absolute; }
@@ -82,7 +84,6 @@ img.logo.first {
   padding-left: 0;
   padding-right: 0;
   background-color: #fff;
-  max-width: 16.66667%;
   transition: max-width .2s ease-in-out;
   position: fixed;
   z-index: 100; }
@@ -100,8 +101,7 @@ img.logo.first {
   .ctrl a.nav-link {
     letter-spacing: 1px; }
   .ctrl .selected a.nav-link {
-    font-weight: 500;
-    letter-spacing: 0; }
+    font-weight: 500; }
 
 .ctrl.open,
 .ctrl:hover {
@@ -127,20 +127,20 @@ img.logo.first {
     -webkit-transition: max-height 0.2s ease-in-out;
     -moz-transition: max-height 0.2s ease-in-out;
     transition: max-height 0.2s ease-in-out; }
+    .ctrl ul.nav {
+      line-height: 2rem;
+      margin: 0 0 2rem 0.9375rem; }
   .ctrl.open,
   .ctrl:hover {
     width: inherit;
     max-width: inherit; }
-  ul.nav {
-    line-height: 2rem;
-    margin-bottom: 2rem; }
+  .ctrl.open {
+    max-height: 12rem; }
   a.nav-link {
     font-size: 1rem; }
   .ctrl.open ul.nav {
     max-height: 9rem;
-    overflow-y: scroll; }
-  ul.nav {
-    margin-top: 1rem; } }
+    overflow-y: scroll; } }
 
 .navbar-toggler {
   font-size: 24px;
@@ -249,6 +249,46 @@ img.logo.first {
       margin-top: 0;
       margin-bottom: 0; } }
 
+[data-path^='/docs'] .selected .nav-link {
+  color: #02D124; }
+
+[data-path^='/docs'] .nav-link {
+  font-weight: 500; }
+
+[data-path^='/docs'] .home {
+  background-color: #0500F0;
+  border-color: #0500F0; }
+
+[data-path^='/docs'] .home:hover {
+  background-color: #0500F0;
+  border-color: #0500F0;
+  opacity: .6; }
+
+[data-path^='/docs'] .home:before {
+  content: "~";
+  color: #fff;
+  line-height: .8rem;
+  font-size: 1.4rem; }
+
+@media (max-width: 991px) {
+  [data-path^='/docs'] .home:before {
+    line-height: 0.7rem;
+    font-size: 1rem;
+    margin-left: .06rem; } }
+
+@media (max-width: 767px) {
+  [data-path^='/docs'] .home:before {
+    line-height: .7rem;
+    margin-left: .05rem;
+    font-size: 1rem; } }
+
+[data-path^='/docs/system/hoon/runes'] .nav-link {
+  font-family: 'scp'; }
+
+[data-path^='/docs/system/hoon/runes'] .nav-link,
+[data-path^='/docs/system/hoon/runes'] .ctrl .selected a.nav-link {
+  font-weight: 600; }
+
 .app {
   vertical-align: top;
   font-size: 1.6rem;
@@ -281,6 +321,46 @@ img.logo.first {
   .context {
     line-height: 1rem;
     margin-bottom: 1rem; } }
+
+.lead h1:first-of-type {
+  padding-bottom: 0; }
+
+.body[data-path^='/docs'] h1 {
+  color: #0500F0; }
+
+.body[data-path^='/docs'] h1 code {
+  background-color: transparent;
+  color: #0500F0;
+  padding: 0; }
+
+.body[data-path^='/docs'] .book h2 {
+  color: #B1B7BD; }
+
+.body[data-path^='/docs'] .book h2 code {
+  color: #0500F0;
+  background-color: transparent; }
+
+.body[data-path^='/docs'] .book h2 a {
+  color: #0500F0; }
+
+.body[data-path^='/docs'] .book hr {
+  margin-bottom: 3rem; }
+
+.body[data-path^='/docs/system/hoon/runes/'] h1 {
+  color: #B1B7BD; }
+
+.body[data-path^='/docs/system/hoon/runes/basic'] h1 {
+  color: #0500F0; }
+
+.body[data-path^='/docs/system/hoon/library/'] h3 {
+  font-size: 1.5rem; }
+
+.body[data-path^='/docs/system/hoon/library/'] h2 {
+  font-size: 1rem; }
+
+.body[data-path^='/docs/system/hoon/library/'] .toc h3 {
+  padding-top: 0;
+  margin-bottom: 0; }
 
 @keyframes menu-open {
   0% {
@@ -372,9 +452,13 @@ img.logo.first {
   .menu.open .contents {
     top: 3rem; } }
 
-.list h1 {
+.list h1,
+.list h1:first-of-type {
   font-size: inherit;
-  font-weight: inherit; }
+  font-weight: inherit;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  line-height: 2rem; }
 
 .list h1.error {
   font-size: 1.6rem;
@@ -383,3 +467,149 @@ img.logo.first {
 .list.children h1 {
   font-weight: 500;
   font-size: 1.4rem; }
+
+.body[data-path^='/docs'] .list {
+  list-style-type: none;
+  padding-left: 0; }
+  .body[data-path^='/docs'] .list a,
+  .body[data-path^='/docs'] .list h1 {
+    color: #02D124;
+    font-weight: 500;
+    height: 2rem; }
+
+.body[data-path^='/docs'] .list.runes {
+  margin-top: 3rem; }
+  .body[data-path^='/docs'] .list.runes li {
+    height: 3rem; }
+  .body[data-path^='/docs'] .list.runes a h1,
+  .body[data-path^='/docs'] .list.runes a div,
+  .body[data-path^='/docs'] .list.runes a p {
+    display: inline; }
+  .body[data-path^='/docs'] .list.runes a {
+    text-decoration: none; }
+  .body[data-path^='/docs'] .list.runes a,
+  .body[data-path^='/docs'] .list.runes a h1 code {
+    color: #000; }
+  .body[data-path^='/docs'] .list.runes a h1 code {
+    margin-right: 1rem;
+    background-color: transparent;
+    color: #0500F0; }
+  .body[data-path^='/docs'] .list.runes a code {
+    background-color: #eceeef; }
+  .body[data-path^='/docs'] .list.runes a code {
+    padding: .3rem; }
+  .body[data-path^='/docs'] .list.runes a:after {
+    content: "▶";
+    width: 1rem;
+    font-size: .6rem;
+    vertical-align: middle;
+    padding: .3rem;
+    padding-top: .4rem;
+    line-height: 1rem;
+    margin-left: 1rem;
+    background-color: #B1B7BD;
+    color: #fff; }
+  .body[data-path^='/docs'] .list.runes a:hover:after {
+    background-color: #0500F0; }
+
+.kids.runes h1 {
+  padding-top: 3rem; }
+
+.kids.runes h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem; }
+
+.kids.runes > div {
+  margin-top: 6rem; }
+
+.kids.runes > hr {
+  display: none; }
+
+.kids.runes > div p:first-of-type {
+  font-weight: 500; }
+
+.sections h1 {
+  font-size: 2rem;
+  color: #0500F0; }
+
+.sections h1:first-of-type {
+  padding-bottom: 0; }
+
+.sections li h1 {
+  font-size: 1.2rem; }
+
+.sections ul {
+  list-style-type: none;
+  font-weight: 500;
+  padding-left: 0; }
+
+.sections ul li,
+.sections ul li a,
+.sections ul li h1 span {
+  color: #02D124;
+  height: 2rem; }
+
+.sections .kids > div {
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 3rem;
+  margin-top: 2rem;
+  min-width: 14rem;
+  margin-bottom: 3rem; }
+
+.sections .kids > div p {
+  font-weight: 500; }
+
+.sections hr {
+  display: none; }
+
+.lead-offset {
+  margin-left: 8rem; }
+
+@media (max-width: 991px) {
+  .lead-offset {
+    margin-left: 4rem; } }
+
+@media (max-width: 767px) {
+  .lead-offset {
+    margin-left: 0; }
+  .sections h1 {
+    font-size: 1.6rem; } }
+
+.add-comment {
+  width: 100%;
+  border-top: 3px dotted #000;
+  margin-top: 6rem; }
+  .add-comment .btn {
+    font-size: .8rem; }
+  .add-comment textarea {
+    width: 66%;
+    display: block;
+    height: 12rem;
+    background-color: #F7F7F7;
+    border-bottom: 0;
+    margin-bottom: 2rem;
+    margin-top: 3rem;
+    padding: .3rem; }
+
+.comments {
+  padding-top: 3rem; }
+  .comments .comment {
+    margin-top: 2rem; }
+    .comments .comment h3,
+    .comments .comment > span {
+      font-family: 'scp'; }
+    .comments .comment > span {
+      font-size: .8rem;
+      color: #B1B7BD; }
+    .comments .comment h3 {
+      padding-top: 0;
+      font-size: 1rem;
+      font-weight: 500; }
+    .comments .comment p {
+      width: 66%; }
+
+@media (max-width: 767px) {
+  .add-comment textarea,
+  .comments .comment p {
+    width: 100%; } }

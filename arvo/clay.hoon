@@ -49,7 +49,7 @@
               $merge  $build  $checkout   $ergo         ::  waiting for?
           ==                                            ::
 ++  moot  {p/case q/case r/path s/(map path lobe)}      ::  stored change range
-++  move  {p/duct q/(mold note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift)}                   ::  local move
 ++  nako  $:  gar/(map aeon tako)                       ::  new ids
               let/aeon                                  ::  next id
               lar/(set yaki)                            ::  new commits

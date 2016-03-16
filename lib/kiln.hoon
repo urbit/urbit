@@ -119,7 +119,13 @@
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
-  abet:abet:start-sync:(auto hos)
+  abet:abet:(start-sync:(auto hos) |)
+::
+++  poke-init-sync
+  |=  hos/kiln-sync
+  ?:  (~(has by syn) hos)
+    abet:(spam (render "already syncing" [sud her syd]:hos) ~)
+  abet:abet:(start-sync:(auto hos) &)
 ::
 ++  poke-unsync                                         ::
   |=  hus/kiln-unsync
@@ -210,23 +216,23 @@
 ::
 ++  take-mere-sync                                    ::
   |=  {way/wire mes/(each (set path) (pair term tang))}
-  ?>  ?=({@ @ @ $~} way)
+  ?>  ?=({@ @ @ *} way)
   =+  ^-  hos/kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
-  abet:abet:(mere:(auto hos) mes)
+  abet:abet:(mere:(auto hos) .?(t.t.t.way) mes)
 ::
 ++  take-writ-sync                                    ::
   |=  {way/wire rot/riot}
-  ?>  ?=({@ @ @ $~} way)
+  ?>  ?=({@ @ @ *} way)
   =+  ^-  hos/kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
-  abet:abet:(writ:(auto hos) rot)
+  abet:abet:(writ:(auto hos) .?(t.t.t.way) rot)
 ::
 ++  take-writ-autoload
   |=  {way/wire rot/riot}
@@ -326,15 +332,16 @@
     ==  ==
   ::
   ++  start-sync
-    =>  (spam (render "activated sync" sud her syd) ~)
+    |=  reset/?
+    =.  +>.$  (spam (render "activated sync" sud her syd) ~)
     %-  blab
     :~  :*  ost  %warp
-            /kiln/sync/[syd]/(scot %p her)/[sud]
+            [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
             [our her]  sud  ~  %sing  %w  [%da now]  /
     ==  ==
   ::
   ++  writ
-    |=  rot/riot
+    |=  {reset/? rot/riot}
     ?~  rot
       %^    spam
           leaf+"bad %writ response"
@@ -343,7 +350,7 @@
     =.  let  ?.  ?=($w p.p.u.rot)  let  ((hard @ud) q.q.r.u.rot)
     %-  blab  ^-  (list move)  :_  ~
     :*  ost  %merg
-        /kiln/sync/[syd]/(scot %p her)/[sud]
+        [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
         our  syd  her  sud  ud+let
         ?:  =(0 .^(* %cw /(scot %p our)/[syd]/(scot %da now)))
           %init
@@ -351,7 +358,7 @@
     ==
   ::
   ++  mere
-    |=  mes/(each (set path) (pair term tang))
+    |=  {reset/? mes/(each (set path) (pair term tang))}
     =.  let  +(let)
     =.  +>.$
       %-  spam
@@ -371,6 +378,9 @@
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
       ==
+    =.  +>.$
+      ?.  reset  +>.$
+      (blab [ost %poke /init-reset [our %hood] %helm-reset ~]~)
     %-  blab  :_  ~
     :*  ost  %warp
         /kiln/sync/[syd]/(scot %p her)/[sud]

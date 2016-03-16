@@ -1,3 +1,7 @@
+::  Test url +https://www.googleapis.com/oauth2/v1/userinfo
+::
+::::  /hoon/googleapis/com/sec
+  ::
 /+    oauth2
 ::
 ::::
@@ -16,10 +20,16 @@
   =+  lon=(fall (slaw %t usr) usr)
   =<  .(state-usr &)
   %-  oauth2
-  =-  [[`/com/google/accounts /o/oauth2/v2/auth -] /oauth2/v4/token]
-  :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
-      access-type+%offline
-      response-type+%code
+  :_  exchange='https://www.googleapis.com/oauth2/v4/token'
+  ^=  dialog
+  %*  .  (need (epur 'https://accounts.google.com/o/oauth2/v2/auth'))
+      r
+    %-  fass:oauth2
+    :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
+        access-type+%offline
+        response-type+%code
+        prompt+%consent
+    ==
   ==
 --
 !:
@@ -27,10 +37,12 @@
   ::
 |_  {bal/(bale keys:oauth2) user-state}
 ++  auth-re  ~(. (re:auth .) ref |=(a/_ref +>(ref a)))
-++  auth  ~(. (auth-usr usr.bal) bal (scopes 'userinfo.email' 'plus.me' ~))
+++  auth  ~(. (auth-usr usr.bal) bal scopes)
 ++  scopes
-  =+  scope=|=(b/@ta (endpoint:oauth2 dom.bal /auth/[b]))
-  |=(a/(list ,@ta) ['https://mail.google.com' (turn a |=(b/@ta (crip (earn (scope b)))))])
+  :~  'https://mail.google.com'
+      'https://www.googleapis.com/auth/plus.me'
+      'https://www.googleapis.com/auth/userinfo.email'
+  ==
 ::
 ++  out  (out-fix-expired:auth-re (out-math:auth ber))
 ++  res  |=(a/httr ((res-handle-refreshed:auth-re save-access res-give:auth) a))
@@ -41,6 +53,5 @@
   |=  a/quay
   (in-code:auth a)
 ++  bak  |=(a/httr ((bak-save-tokens:auth-re save-access) a))
-::++  upd  *user-state
-::
+++  upd  *user-state
 --

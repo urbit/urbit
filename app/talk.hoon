@@ -3,7 +3,7 @@
   ::                                                    ::  ::   
 /?    310
 /-    talk, sole
-/+    talk, sole
+/+    talk, sole, time-to-id, twitter
 /=    seed  /~  !>(.)
 ::
 ::::
@@ -72,6 +72,7 @@
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
+          {$write-comment path ship cord}               ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -1292,6 +1293,49 @@
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
     ?:(neu +>.$ ra-homes)
   ::
+  ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
+  ++  ra-comment
+    |=  {pax/path txt/@t}
+    =.  ..ra-emit
+      %+  ra-emit  ost.hid
+      :*  %poke
+          /comment
+          [our.hid %hood]
+          [%write-comment pax src.hid txt]
+      ==
+    =+  man=%comments
+    ?:  (~(has by stories) man)
+      (ra-consume-comment man pax txt)
+    =.  ..ra-apply
+      %+  ra-apply  our.hid
+      :+  %design  man
+      :-  ~  :-  ~
+      :-  'letters to the editor'
+      [%brown ~] 
+    =.  ..ra-consume
+      %^  ra-consume  &  our.hid
+      :^    (shaf %init eny.hid)  
+          (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+        now.hid
+      [~ %app %tree 'receiving comments, ;join %comments for details']
+    (ra-consume-comment man pax txt)
+  ::
+  ++  ra-consume-comment
+    |=  {man/knot pax/path txt/@t}  ^+  +>
+    =+  nam==+(xap=(flop pax) ?~(xap "" (trip i.xap)))  :: file name
+    =+  fra=(crip (time-to-id now.hid))                 :: url fragment
+    %^  ra-consume  &
+      src.hid
+    :*  (shaf %comt eny.hid)
+        (my [[%& our.hid man] *envelope %pending] ~)
+        now.hid
+        (sy /comment eyre+pax ~)
+      :-  %mor  :~
+        [%fat text+(lore txt) [%url [ra-base-hart `pax ~] `fra]]
+        [%app %tree (crip "comment on /{nam}")]
+      ==
+    ==
+  ::
   ++  ra-know                                           ::  story monad
     |=  man/knot
     |*  fun/$-(_pa _+>)
@@ -1973,7 +2017,7 @@
       $app  tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip p.sep)}]" leaf+(trip q.sep)]]
       $url  url+(crip (earf p.sep))
       $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
-      $fat  [%mor tan+(tr-rend-tors p.sep) $(sep q.sep) ~]
+      $fat  [%mor $(sep q.sep) tan+(tr-rend-tors p.sep) ~]
     ==
   ::
   ++  tr-rend-tors
@@ -1989,8 +2033,8 @@
     %-  ~(gas in *(set partner))
     (turn (~(tap by aud)) |=({a/partner *} a))
   ::
-  ++  chow
-    |=  {len/@u txt/tape}
+  ++  tr-chow
+    |=  {len/@u txt/tape}  ^-  tape
     ?:  (gth len (lent txt))  txt
     =.  txt  (scag len txt)
     |-
@@ -2000,19 +2044,29 @@
     ?~  t.txt  "…"
     [i.txt $(txt t.txt)]
   ::
+  ++  tr-both
+    |=  {a/tape b/tape}  ^-  tape
+    ?:  (gth (lent a) 62)  (tr-chow 64 a)
+    %+  weld  a
+    (tr-chow (sub 64 (lent a)) "  {b}")
+  ::
   ++  tr-text
     |=  oug/?
     ^-  tape
     ?+    -.sep  ~&(tr-lost+sep "")
+        $mor
+      ?~  p.sep  ~&(%tr-mor-empty "")
+      |-  ^-  tape
+      ?~  t.p.sep  ^$(sep i.p.sep)
+      (tr-both ^$(sep i.p.sep) $(p.sep t.p.sep))
+    ::
         $fat
-      =+  rem=$(sep q.sep)
-      ?:  (gth (lent rem) 62)  (chow 64 rem)
-      =-  "{rem}{(chow (sub 64 (lent rem)) "  {-}")}"
+      %+  tr-both  $(sep q.sep)
       ?+  -.p.sep  "..."
         $tank  ~(ram re %rose [" " `~] +.p.sep)
       ==
     ::
-        $exp  (chow 66 '#' ' ' (trip p.sep))
+        $exp  (tr-chow 66 '#' ' ' (trip p.sep))
         $url  =+  ful=(earf p.sep)
               ?:  (gth 64 (lent ful))  ['/' ' ' ful]
               :+  '/'  '_' 
@@ -2035,7 +2089,7 @@
       (weld " " txt)
     ::
         $app
-      (chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
+      (tr-chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
     ==
   -- 
 ::
@@ -2145,6 +2199,10 @@
       /talk-telegrams/(scot %da day)/[man]/talk
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
+::
+++  poke-talk-comment
+  |=  {pax/path txt/@t}  ^-  (quip move +>)
+  ra-abet:(ra-comment:ra pax txt)
 ::
 ++  poke-talk-save
   |=  man/knot

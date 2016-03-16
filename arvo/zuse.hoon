@@ -404,7 +404,7 @@
   =+  op=(fil 3 64 0x5c)
   =+  ^=  kex
       ?:  (gth (met 3 key) 64)
-        (lsh 3 44 (shan (swap 3 key)))
+        (lsh 3 44 (shan key))
       (lsh 3 (sub 64 (met 3 key)) (swap 3 key))
   =+  inn=(shan (swap 3 (cat 3 (swap 3 mes) (mix ip kex))))
   (shan (swap 3 (cat 3 inn (mix op kex))))
@@ -851,12 +851,12 @@
     |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
   ::
   ++  ci                                                ::  maybe transform
-    |*  {poq/$-(* *) wit/fist}
+    |*  {poq/gate wit/fist}
     |=  jon/json
     (biff (wit jon) poq)
   ::
   ++  cu                                                ::  transform
-    |*  {poq/$-(* *) wit/fist}
+    |*  {poq/gate wit/fist}
     |=  jon/json
     (bind (wit jon) poq)
   ::
@@ -1024,7 +1024,7 @@
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
   |^  |*  a/(pole _;/(*{$^(rule tape)}))            ::  ;"chars{rule}chars"
-      %-  cook  :_  (bill (norm a))
+      =-  (cook - (bill (norm a)))
       |*  (list)
       ?~  +<  ~
       ?~  t  i
@@ -2219,6 +2219,7 @@
   $%  {$& p/twig}                                       ::  direct twig
       {$| p/beam}                                       ::  resource location   
   ==                                                    ::
+++  hops   {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}  ::  XX late-bound path
 ++  horn                                                ::  resource tree
   $%  {$ape p/twig}                                     ::  /~  twig by hand
       {$arg p/twig}                                     ::  /$  argument
@@ -2233,7 +2234,7 @@
       {$nap p/horn}                                     ::  /_  homo map
       {$now p/horn}                                     ::  /@  list by @da
       {$saw p/twig q/horn}                              ::  /;  operate on
-      {$see p/beam q/horn}                              ::  /:  relative to
+      {$see p/hops q/horn}                              ::  /:  relative to
       {$sic p/twig q/horn}                              ::  /^  cast
       {$toy p/? q/mark}                                 ::  /mark/  static/hook
   ==                                                    ::

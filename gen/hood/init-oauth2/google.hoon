@@ -1,0 +1,28 @@
+::
+::::  /hoon/google/init-oauth2/hood/gen
+  ::
+/?  314
+/-  sole
+::
+::::
+  !:
+[sole .]
+:-  %ask
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {arg/$@($~ {jon/json $~})}
+        $~
+    ==
+^-  (sole-result {$write-sec-atom p/host q/@})
+%+  sole-yo  leaf+"Accepting credentials for https://*.googleapis.com"
+=+  hot=[%& /com/googleapis]
+=-  ?~  arg  -
+    (fun.q.q jon.arg)
+%+  sole-lo
+  [%& %oauth-json "json credentials: "]
+%+  sole-go  apex:poja
+|=  jon/json
+=+  ~|  bad-json+jon
+    =-  `{cid/@t cis/@t}`(need (rep jon))
+    rep=(ot web+(ot 'client_id'^so 'client_secret'^so ~) ~):jo
+%+  sole-so  %write-sec-atom    :: XX typed pair
+[hot (role cid cis ~)]

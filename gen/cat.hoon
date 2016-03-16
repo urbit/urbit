@@ -9,7 +9,7 @@
 ::::
   ::
 :-  %say
-|=  {^ {arg/(list path)} vane=?($c $g)}
+|=  {^ {arg/(list path)} vane/?($c $g)}
 =-  tang+(flop `tang`(zing -))
 %+  turn  arg
 |=  pax/path
@@ -17,7 +17,7 @@
 =+  ark=.^(arch (cat 3 vane %y) pax)
 ?^  fil.ark
   ?:  =(%sched -:(flop pax))
-    [> .^((map ,@da cord) (cat 3 vane %x) pax)<]~
+    [>.^((map @da cord) (cat 3 vane %x) pax)<]~
   [leaf+(spud pax) (pretty-file .^(noun (cat 3 vane %x) pax))]
 ?-     dir.ark                                          ::  handle ambiguity
     $~

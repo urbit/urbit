@@ -24,8 +24,8 @@
       {$send p/ship q/cush}                             ::  
       {$hiss p/(unit knot) q/mark r/cage}               ::
   ==                                                    ::
-++  cove  (pair bone (mold cote cuft))                  ::  internal move
-++  move  {p/duct q/(mold note-arvo gift-arvo)}         ::  typed move
+++  cove  (pair bone (wind cote cuft))                  ::  internal move
+++  move  {p/duct q/(wind note-arvo gift-arvo)}         ::  typed move
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -509,6 +509,7 @@
     |=  {dap/dude pry/prey cub/club}
     ^+  +>
     ?:  |(!(~(has by bum) dap) (~(has by wub) dap))
+      ~&  >>  [%mo-not-running dap -.cub]
       ::  ~&  [%mo-club-qeu dap cub]
       =+  syf=(fall (~(get by wub) dap) *sofa)
       +>.$(wub (~(put by wub) dap syf(kys (~(put to kys.syf) [hen pry cub]))))
@@ -807,19 +808,19 @@
     ++  ap-move-hiss                                    ::  pass %hiss
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
-      ?.  &(?=({p/* q/* r/@ s/^} q.vax) ((sane %tas) r.q.vax))
+      ?.  &(?=({p/* q/* r/@ s/{p/@ *}} q.vax) ((sane %tas) r.q.vax))
         =+  args="[%hiss wire (unit knot) mark cage]"
         :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.{args}")])
       =^  gaw  vel  (~(slot wa vel) 15 vax)
-      ?.  &(?=({p/@ q/^} q.gaw) ((sane %tas) p.q.gaw))
+      ?.  &(?=({p/@ *} q.gaw) ((sane %tas) p.q.gaw))
         :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
+      =^  paw  vel  (~(stop wa vel) 3 gaw)
       =+  usr=((soft (unit knot)) q.q.vax)
       ?.  &(?=(^ usr) ?~(u.usr & ((sane %ta) u.u.usr)))
         :_(+>.$ [%| (ap-suck "hiss: malformed (unit knot)")])
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         :_(+>.$ [%| (ap-suck "hiss: malformed path")])
-      =^  paw  vel  (~(stop wa vel) 3 gaw)
       :_  +>.$
       :^  %&  sto  %pass
       :-  [(scot %p q.q.pry) %cay u.pux]

@@ -588,7 +588,7 @@
     ++  dy-cage       |=(num/@ud (~(got by rez) num))   ::  known cage
     ++  dy-vase       |=(num/@ud q:(dy-cage num))       ::  known vase
     ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
-    ++  dy-silk-sources                                 ::  sources to silk
+    ++  dy-silk-sources                                 ::  arglist to silk
       |=  src/(list dojo-source)  ^-  silk
       %-  dy-silk-vase
       |-
@@ -598,6 +598,18 @@
     ++  dy-silk-config                                  ::  configure
       |=  {cay/cage cig/dojo-config}
       ^-  {wire silk}
+      ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
+        ::  
+        ::  naked gate
+        ::
+        ?.  &(?=({* $~} p.cig) ?=($~ q.cig))     
+          ~|(%one-argument !!)
+        :-  /noun
+        :+  %call  (dy-silk-vase q.cay)
+        (dy-silk-vase (dy-vase p.i.p.cig)) 
+      ::
+      ::  normal generator
+      ::
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
             $say  /gent
             $ask  /dial
@@ -679,6 +691,10 @@
     ++  dy-made-gent                                    ::  generator product
       |=  cag/cage
       (dy-meal q.cag)
+    ::
+    ++  dy-made-noun                                    ::  generator product
+      |=  cag/cage
+      (dy-hand %noun q.cag)
     ::
     ++  dy-make                                         ::  build step
       ^+  +>
@@ -857,6 +873,7 @@
             {$hand $~}  dy-hand:dye
             {$dial $~}  dy-made-dial:dye
             {$gent $~}  dy-made-gent:dye
+            {$noun $~}  dy-made-noun:dye
             {$scar $~}  dy-made-scar:dye
             {$edit $~}  dy-made-edit:dye
           ==
@@ -1070,7 +1087,9 @@
 ::
 ++  peer-sole
   ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid]
-  ::  ?>  =(src.hid our.hid)
+  ?>  ?|  =(src.hid our.hid) 
+          &(=(%earl (clan src.hid)) =(our.hid (sein src.hid)))
+      ==
   =^  moz  .
     ?.  (~(has by hoc) ost.hid)  [~ .]
     ~&  [%dojo-peer-replaced ost.hid]

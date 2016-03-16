@@ -4,7 +4,7 @@
   =>  =~
 ::  structures
 |%
-++  move  {p/duct q/(mold note gift-ames)}              ::  local move
+++  move  {p/duct q/(wind note gift-ames)}              ::  local move
 ++  note                                                ::  out request $->
           $?  $:  $d                                    ::  to %dill
           $%  {$flog p/flog}                            ::
@@ -413,7 +413,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(1 vez)
+    ?>  =(2 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -433,7 +433,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 1]
+      :~  [3 2]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1018,7 +1018,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  {kay/cape ryn/lane pac/rock}                  ::  process packet
       ^-  {p/(list boon) q/fort}
-      ?.  =(1 (end 0 3 pac))  [~ fox]
+      ?.  =(2 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1605,21 +1605,14 @@
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
-      =-  ?~  old  ~
-          [~ ~ u.old]
-      ^=  old
       ?.  =(`@`0 ren)  ~
       ?+    lot  ~
           {$$ $ud @}
-        %+  bind
-          (perm who u.hun q.p.lot [syd t.tyl])
-        |=(a/* [%noun !>(a)])
+        (perm who u.hun q.p.lot [syd t.tyl])
       ::
           {$$ $da @}
         ?.  =(now q.p.lot)  ~
-        %+  bind
-          (temp who u.hun [syd t.tyl])
-        |=(a/* [%noun !>(a)])
+        (temp who u.hun [syd t.tyl])
       ==
     ::
     ++  stay  fox
@@ -1730,15 +1723,13 @@
     ::
         $wine
       :_  fox
-      =+  nym=(temp p.p.bon q.p.bon /name)
       =+  fom=~(rend co %$ %p q.p.bon)
       :~  :-  hen
           :+  %slip  %d
           :+  %flog  %text
           ;:  weld
             "; "
-            ?:  |(?=($~ nym) =(%$ u.nym))  fom
-            :(weld fom " " (trip ((hard @) u.nym)))
+            fom
             q.bon
           ==
       ==
@@ -1839,49 +1830,50 @@
   ::
   ++  perm
     |=  {our/ship his/ship mar/@ud tyl/path}
-    ^-  (unit)
+    ^-  (unit (unit cage))
     ?~  tyl  ~
     ?:  ?=({$name $~} tyl)
       =+  wul=$(tyl [%will ~])
-      [~ ?~(wul (scot %p his) (gnow his q.q.q:((hard deed) -.u.wul)))]
+      ``[%noun !>(?~(wul (scot %p his) (gnow his q.q.q:((hard deed) -.u.wul))))]
     ?:  ?=({$gcos $~} tyl)
       =+  wul=$(tyl [%will ~])
-      [~ ?~(wul ~ [~ `gcos`q.q.q:((hard deed) -.u.wul)])]
+      ?~(wul ~ ``[%noun !>(`gcos`q.q.q:((hard deed) -.u.wul))])
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
       ?:  ?=({$will $~} tyl)
         =+  fod=(~(get by hoc.saf.u.gys) his)
         ?~  fod  ~
-        (rick mar his lew.wod.u.fod)
+        %+  bind  (rick mar his lew.wod.u.fod)
+        |=(a/will `[%noun !>(a)])
       ?:  ?=({$tick $~} tyl)
         ?.  =(our (sein his))  ~
-        [~ (end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys))))]
+        ``[%noun !>((end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys)))))]
       ~
     ?:  ?=({$buck $~} tyl)
       =+  muc=(rice mar sex:u.gys)
       =+  luw=(rick mar our law.saf.u.gys)
       ?.  &(?=(^ muc) ?=(^ luw))  ~
-      [~ `buck`[u.muc u.luw]]
+      ``[%noun !>(`buck`[u.muc u.luw])]
     ?:  ?=({$code $~} tyl)
-      [~ (end 6 1 (shaf %pass (shax sec:ex:q:sen:u.gys)))]
+      ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:q:sen:u.gys))))]
     ?:  ?=({$will $~} tyl)
-      (rick mar our law.saf.u.gys)
+      (bind (rick mar our law.saf.u.gys) |=(a/will `[%noun !>(a)]))
     ~
   ::
   ++  temp
     |=  {our/ship his/ship tyl/path}
-    ^-  (unit)
+    ^-  (unit (unit cage))
     ?:  ?=({?($show $tell) *} tyl)
-      ?^  t.tyl  ~
+      ?^  t.tyl  [~ ~]
       =+  gys=(~(us go ton.fox) our)
-      ?~  gys  ~
+      ?~  gys  [~ ~]
       =+  zet=zest:(ho:(~(um am [now fox]) our) his)
-      [~ ?:(=(%show i.tyl) >zet< zet)]
+      ``[%noun ?:(=(%show i.tyl) !>(>zet<) !>(zet))]
     ?:  ?=({$pals $~} tyl)
       ?.  =(our his)
         ~
-      [~ pals:(~(um am [now fox]) our)]
+      ``[%noun !>(pals:(~(um am [now fox]) our))]
     ?.  ?=({$life $~} tyl)
       =+  muc=$(tyl [%life ~])
       (perm our his ?~(muc 0 (@ud u.muc)) tyl)
@@ -1891,9 +1883,9 @@
       =+  fod=(~(get by hoc.saf.u.gys) his)
       ?~  fod  ~
       ?~  lew.wod.u.fod  ~
-      [~ `@ud`p.p.q.i.lew.wod.u.fod]
+      ``[%noun !>(`@ud`p.p.q.i.lew.wod.u.fod)]
     ?~  val.saf.u.gys  ~
-    [~ `@ud`p.i.val.saf.u.gys]
+    ``[%noun !>(`@ud`p.i.val.saf.u.gys)]
   ::
   ++  wegh
     ^-  mass

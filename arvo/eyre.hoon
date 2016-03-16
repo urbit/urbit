@@ -6,7 +6,7 @@
 |%                                                      ::  interfaces
 ++  gift  gift-eyre                                     ::  out result <-$
 ++  kiss  kiss-eyre                                     ::  in request ->$
-++  move  {p/duct q/(mold note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift)}                   ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
           $%  {$wont p/sock q/{path *}}                 ::
@@ -31,8 +31,9 @@
           $%  {$deal p/sock q/cush}                     ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  $a                                    ::  by %aformedmes
-          $%  {$woot p/ship q/coop}                     ::
+          $?  $:  $a                                    ::  by %ames
+          $%  {$woot p/ship q/coop}                     ::  ackgnowledgment
+              {$went ship cape}                         ::  XX ignore
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
           $%  {$wake $~}                                ::  timer activate
@@ -488,7 +489,7 @@
                 ;input#ship.mono(contenteditable "", placeholder "planet");
               ==
               ;input#pass.mono(type "password", placeholder "passcode");
-              ;h2.advice: Your passcode code has been printed to your console.
+              ;h2.advice: Type +{;code:("+code")} in your dojo for your passcode.
               ;pre:code#err;
             ==
           ==
@@ -749,6 +750,11 @@
     ::    (emule |.(~|(gall-dumb+tee !!)))
     ::
         $woot  +>.$
+        $went
+          :: XX eyre sends no wests, so should get no wents
+          ::~&  e+unexpected+sih  
+          +>.$
+    ::
         $thou
       ?+    -.tee  !!
         $ay  (ames-gram (slav %p p.tee) got+~ (slav %uv q.tee) |2.sih)
@@ -829,9 +835,9 @@
         =+  usr=(slav %ta p.tee)
         =+  ((hard {pul/purl ^}) q.q.cay)
         ?.  ?=($& -.r.p.pul)
-          ~&  [%auth-lost usr p.r.p.pul]
+          ~&  [%auth-lost usr (head:earn p.pul)]
           (eyre-them tee q.cay)
-        (get-req:(dom-vi usr p.r.p.pul) q.tee q.cay)
+        (get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
       ::
 ::           {$hi ^}
 ::         ?:  ?=($| -.q.sih)
@@ -878,7 +884,7 @@
         ?.  ?=($mime p.cay)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek {$ud $0} bek(r da+now))
-          (execute tee bik [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          (exec-live tee bik [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
         ~|  q.q.cay
         =+  ((hard {mit/mite rez/octs}) q.q.cay)
         =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
@@ -907,7 +913,7 @@
   ::
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host  `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
-  ::                  [| [~ 8.445] `/localhost]       :: XX testing
+  ::                  [| [~ 8.443] `/localhost]       :: XX testing
   ::
   ++  eyre-them
     |=  {tea/whir vax/vase:hiss}
@@ -918,9 +924,8 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    %+  pass-note  tea
-    %+  ford-req  -.top
-    [%dude |.(>[%eyre-back hen tea mar -.cay]<) [%cast mar $+cay]]
+    =+  bek=?+(r.top -.top {$ud $0} -.top(r da+now))
+    (execute tea bek [%cast mar $+cay])
   ::
   ++  cast-thou
     |=  {mar/mark cay/cage}
@@ -947,10 +952,16 @@
     (pass-note(hen `~) on+~ %f [%wasp our a &])
   ::
   ++  ford-req  |=({bek/beak kas/silk} [%f [%exec our `[bek kas]]])
-  ++  execute  
+  ++  exec-live  
     |=  {tea/whir req/{beak silk}}
     =.  lyv  (~(put by lyv) hen [%exec tea])
-    (pass-note tea (ford-req req))
+    (execute tea req)
+  ::
+  ++  execute
+    |=  {tea/whir bek/beak sil/silk}
+    %+  pass-note  tea
+    :^  %f  %exec  our
+    `[bek [%dude |.(leaf+"eyre: execute {<tea>}") sil]]
   ::
   ++  fail
     |=  {sas/@ud dep/@uvH mez/tang}
@@ -1014,9 +1025,9 @@
     ++  abet  ..handle
     ++  done  .
     ++  teba  |*(a/$-(* ..handle) |*(b/* %_(done ..handle (a b))))
-    ++  execute  (teba ^execute)
     ++  del-deps  (teba ^del-deps)
     ++  new-deps  (teba ^new-deps)
+    ++  exec-live  (teba ^exec-live)
     ++  give-html  (teba ^give-html)
     ++  give-thou  (teba ^give-thou)
     ++  give-json  (teba ^give-json)
@@ -1049,7 +1060,7 @@
           $bake
         =+  req=[%bake mar=q.pez [r s]:pez]
         =+  red=req(mar %red-quri)
-        (execute p.pez -.s.pez `silk`[%alts ~[red req]])
+        (exec-live p.pez -.s.pez `silk`[%alts ~[red req]])
       ::
           $red
         =+  url=(earn hat pok(p [~ %html]) quy)
@@ -1383,8 +1394,7 @@
         ?.  ?|  (~(has in aut.yac) him.ham) 
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
-          ~&  code=`@t`load-secret
-          ~|([%try 'code' %in %console] !!)  ::  XX security
+          ~|(%auth-fail !!)
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
         =.  cug.yac  :_(cug.yac (set-cookie %ship (scot %p him.ham)))
         (give-json 200 cug.yac jon)
@@ -1392,7 +1402,6 @@
     ::
     ++  show-login-page
       |=  ses/(unit hole)  ^-  (each pest _done)
-      %-  (slog leaf+"login code for {(scow %p our)}: {(trip load-secret)}" ~)
       ?.  ?=($@($~ {$~ $html}) p.pok)
         [%& %red ~]
       ?~  ses
@@ -1733,6 +1742,7 @@
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
+    ++  execute  |=({a/whir-se b/{beak silk}} (execute:abet se+[a usr dom] b))
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang (give-sigh:abet(req ~(nap to req)) %| a))
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
@@ -1747,7 +1757,7 @@
     ++  cor-type  ?~(cor %void ?~(u.cor %void p.u.cor))
     ++  has-arm  ~(has in (silt (sloe cor-type)))
     ++  build
-      =-  (pass-note %core (ford-req root-beak -))
+      %^  execute  %core  root-beak
       :::+  %dude  [|.(+)]:>%mod-samp<
       ^-  silk
       :^  %mute  core+[root-beak (flop %_(dom . sec+dom))]
@@ -1761,8 +1771,8 @@
     ::
     ++  call
       |=  {arm/vi-arm sam/cage}
-      =+  call+[ride+[limb+arm prep-cor] [%$ sam]]
-      (pass-note arm (ford-req root-beak -))
+      %^  execute  arm  root-beak
+      call+[ride+[limb+arm prep-cor] [%$ sam]]
     ::
     ++  prep-cor  ^-  silk
       ?~  cor  ~|(%no-core !!)
@@ -1772,6 +1782,11 @@
           +12.q
         =+  ato=(sky [151 %noun] %cx (tope root-beak [%atom (flop %_(dom . sec+dom))]))
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
+        =.  key
+          ?~  key  ''
+          %-  (bond |.(~&(bad-key+[dom key] '')))
+          =+  (slaw %uw key)
+          ?~(- ~ (de:crua load-secret u))  :: XX clay permissions
         `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
       ==
     ::
@@ -1960,9 +1975,28 @@
   ..^$(+>- old)
 ::
 ++  scry
-  |=  {our/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
-  ^-  (unit (unit (pair mark *)))
-  ~
+  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+  ^-  (unit (unit cage))
+  =+  our=(need hov)                  :: XX single home
+  =+  ska=(sloy ski)
+  =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
+  ?.  ?=($$ ren)  [~ ~]
+  ?.  ?=($$ -.lot)  [~ ~]
+  ?+    syd  [~ ~]
+      $host
+    %-  (lift (lift |=(a/hart [%hart !>(a)])))
+    ^-  (unit (unit hart))
+    ?.  =(our who)
+      ?.  =([%da now] p.lot)  [~ ~]
+      ~&  [%e %scry-foreign-host who]
+      ~  :: XX add non-scry binding to $hat gram
+    =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
+    ?+  p.lot  [~ ~]
+      {$tas $fake}  ``[& [~ 8.443] %& /localhost]       :: XX from unix
+      {$tas $real}  
+        ``~(our-host ye [`duct`~[/] [now eny our sky] ~] bol)
+    ==
+  ==
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
