@@ -130,20 +130,21 @@
   :_  +>.$
   =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
   :-  (show-url [& ~ &+/com/twitter] `pax ~)
-  %+  weld  (spam pax (tweet-good rep))
-  (spam scry+x+pax (tweet-good rep))
+  %+  weld  (spam post+wir (tweet-good rep))
+  (spam scry+x+post+wir (tweet-good rep))
 ::
 ++  sigh-twit-feed                                      ::  feed data
   |=  {wir/wire rep/(list stat)}  ^+  done
   ?>  ?=({?($peer $scry) *} wir)
   =*  pax  t.wir
   :: ~&  got-feed+[(scag 5 (turn rep |=(stat id))) fed]
-  =:  ran  (~(del by ran) wir)                    ::  clear poll delay
-      fed  (~(put by fed) pax rep)              ::  saw last message
+  =+  ren=(cull pax rep)                       ::  new messages
+  =.  rep  (weld ren (~(get ja fed) pax))
+  =:  fed  (~(put by fed) pax rep)             ::  save full list
+      ran  (~(del by ran) wir)                 ::  clear poll delay
     ==
   ?:  ?=($scry -.wir)
     [(spam scry+x+pax [%diff twit-feed+(flop rep)] [%quit ~] ~) +>.$]
-  =+  ren=(cull pax rep)                       ::  new messages
   ?~  ren
     (wait wir ~)                              ::  pump polling
   :: ~&  spam-feed+ren
@@ -151,6 +152,8 @@
 ::
 ++  sigh-tang                       ::  Err
   |=  {pax/path tan/tang}  ^+  done
+  ~&  sigh-tang+pax
+  %-  (slog (flop tan))
   =+  ^-  git/gift
       =+  err='' ::%.(q:(need r.hit) ;~(biff poja mean:twir))  :: XX parse?
       :^  %diff  %ares  %bad-http
@@ -226,8 +229,8 @@
   |=  pax/twit-path  ^-  $%({$none $~} {$part p/gilt} {$full p/gilt})
   ?-    -.pax
       $post
-    =+  mez=(slav %uv p.pax)
     =+  (raid +.pax mez=%uv ~)
+    ~&  [mez=mez out=out]
     =+  sta=(~(get by out) mez)
     ?.  ?=({$~ $| *} sta)
       [%none ~]
@@ -272,6 +275,8 @@
 ++  spam                                                ::  send by path
   |=  {a/path b/(list gift)}  ^-  (list move)
   %-  zing  ^-  (list (list move))
+  ~&  spam+[(turn b head) a]
+  ~&  sup
   %+  turn  (~(tap by sup))
   |=  {ost/bone @ pax/path}
   ?.  =(pax a)  ~
