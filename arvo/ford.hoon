@@ -206,9 +206,11 @@
       (~(resp zo [num u.tus]) tik p.+.sih)
     ::
         $unto
+      ?:  ?=($quit -.p.+.sih)
+        +>.$
       =+  tus=(~(get by q.tad.bay) num)
       ?~  tus
-        ~&  [%ford-lost num]
+        ~&  [%ford-lost num -.p.+.sih]
         +>.$
       ?+  -.p.+.sih  ~|(%ford-strange-unto !!)
         $diff  (~(resd zo [num u.tus]) tik p.p.+.sih)
@@ -1769,15 +1771,25 @@
       ?~  rot
         =^  dep  deh.bay  (daze ~ deh.bay)              ::  dependencies?
         amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
-      =+  (cat 3 'c' ren)
+      ?>  ?=($c van)  
+      =+  (cat 3 van ren)
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
+    ::
+    ++  pull-tik
+      |=  {tik/@ud ren/care bem/beam}
+      :^    %pass
+          [(scot %p our) (scot %ud num) (scot %ud tik) ~]
+        %g
+      [%deal [our p.bem] q.bem [%pull ~]]
     ::
     ++  resd
       |=  {tik/@ud cag/cage}
       ^+  ..zo
       ?>  (~(has by q.kig) tik)
       =+  `{van/vane ren/care bem/beam}`(~(got by q.kig) tik)
-      =+  (cat 3 'g' ren)
+      =.  mow  :_(mow [hen (pull-tik tik ren bem)])
+      ?>  ?=($g van)
+      =+  (cat 3 van ren)
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] cag))
     ::
     ++  syve
