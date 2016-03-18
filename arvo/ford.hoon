@@ -1777,6 +1777,9 @@
           %+  biff  +<
           |=  cay/cage  ^-  (unit cage)                
           ?.  -:(nets:wa +.ref `span`p.q.cay)           :: error if bad type
+            ~&  :^  %ford-syve-lost  `path`[tem (tope bem)]
+                  want=;;(span +.ref)
+                have=p.q.cay
             ~
           `cay
       ^-  (unit (unit cage))
@@ -1864,6 +1867,7 @@
   ?~  lox
    ~&  %ford-reset
    ..^$
+  ~&  kigs=(~(run by pol.u.lox) |=(baby (~(run by q.tad) |=(task kig))))
   ..^$(+>- u.lox)
 ::
 ++  scry
