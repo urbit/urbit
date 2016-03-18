@@ -647,7 +647,11 @@
       ?+  q.p.zem  ((slog leaf+"peek bad result" ~) [~ ~])
         $~              ~
         {$~ $~}         [~ ~]
-        {$~ $~ term *}  ``[+14.q.p.zem (slot 15 p.zem)]
+        {$~ $~ ^}
+          =+  caz=(spec (slot 7 p.zem))
+          ?.  &(?=({p/@ *} q.caz) ((sane %tas) p.q.caz))
+            ((slog leaf+"scry: malformed cage" ~) [~ ~])
+          ``[p.q.caz (slot 3 caz)]
       ==
     ::
     ++  ap-club                                         ::  apply effect
