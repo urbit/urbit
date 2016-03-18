@@ -78,6 +78,10 @@
     [~ ran]
   [`tym (~(put by ran) pax ?~(cur 0 (min 5 +(p.u.cur))) tym)]
 ::
+++  wait-new                                            ::  poll with min delay
+  |=  {pax/path mof/(list move)}
+  (wait(ran (~(del by ran) pax)) pax mof)
+::
 ++  wait                                                ::  ensure poll by path
   |=  {pax/path mof/(list move)}  ^+  done
   =^  tym  ran  (dely pax)
@@ -93,10 +97,8 @@
   |=  {usr/knot act/command}  ^+  done
   ?-    -.act
       $post
-    =:  out  (~(put by out) p.act %& usr q.act)
-        ran  (~(del by ran) /peer/home)
-      ==
-    %+  wait  /peer/home
+    =.  out  (~(put by out) p.act %& usr q.act)
+    %+  wait-new  /peer/home
     =+  req=[%twit-req `endpoint`stat-upda+[%status q.act]~ ~]
     [ost %hiss post+(dray ~[%uv] p.act) `usr %twit-status req]~
   ==
@@ -111,7 +113,7 @@
       pus=(~(gas ju *(jug path bone)) (turn (~(tap by sup)) .))
   ?~  (~(get ju pus) pax)
     ~
-  ~&  peer-again+[pax ran]
+  ~&  peer-again+[pax ran]  
   (pear | `~. pax) ::(user-from-path pax))
 ::
 ::  XX parse from stack trace?
@@ -140,15 +142,13 @@
   :: ~&  got-feed+[(scag 5 (turn rep |=(stat id))) fed]
   =+  ren=(cull pax rep)                       ::  new messages
   =.  rep  (weld ren (~(get ja fed) pax))
-  =:  fed  (~(put by fed) pax rep)             ::  save full list
-      ran  (~(del by ran) wir)                 ::  clear poll delay
-    ==
+  =.  fed  (~(put by fed) pax rep)             ::  save full list
   ?:  ?=($scry -.wir)
     [(spam scry+x+pax [%diff twit-feed+(flop rep)] [%quit ~] ~) +>.$]
   ?~  ren
     (wait wir ~)                              ::  pump polling
   :: ~&  spam-feed+ren
-  (wait wir (spam pax [%diff twit-feed+(flop ren)] ~))
+  (wait-new wir (spam pax [%diff twit-feed+(flop ren)] ~))
 ::
 ++  sigh-tang                       ::  Err
   |=  {pax/path tan/tang}  ^+  done
@@ -276,7 +276,7 @@
   |=  {a/path b/(list gift)}  ^-  (list move)
   %-  zing  ^-  (list (list move))
   ~&  spam+[(turn b head) a]
-  ~&  sup
+  ~&  (skim (~(tap by sup)) |=({@ @ pax/path} =(pax a)))
   %+  turn  (~(tap by sup))
   |=  {ost/bone @ pax/path}
   ?.  =(pax a)  ~
