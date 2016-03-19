@@ -11,11 +11,12 @@
 [. talk sole]
 =+  twit=args:reqs:twitter
 =>  |%                                                  ::  data structures
-    ++  house  {$5 house-5}                             ::  full state
+    ++  house  {$6 house-6}                             ::  full state
     ++  house-any                                       ::  app history
       $%  {$3 house-3}                                  ::  3: talk
           {$4 house-4}                                  ::  4: talk
           {$5 house-5}                                  ::  5: talk
+          {$6 house-6}                                  ::  6: talk
       ==                                                ::
     ++  house-3                                         ::
       %+  cork  house-4  |=  house-4                    ::  modern house with
@@ -24,6 +25,9 @@
       %+  cork  house-5  |=  house-5                    ::  modern house with
       +<(shells (~(run by shells) shell-4))             ::  no settings
     ++  house-5                                         ::
+      %+  cork  house-6  |=  house-6                    ::  modern house with
+      +<(|3 |4.+<)                                      ::  no sent
+    ++  house-6                                         ::
       $:  stories/(map knot story)                      ::  conversations
           general/(set bone)                            ::  meta-subscribe
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
@@ -2316,7 +2320,8 @@
     ra-abet:ra-init:ra
   |-
   ?-  -.u.old
-    $5  [~ ..prep(+<+ u.old)]
+    $6  [~ ..prep(+<+ u.old)]
+    $5  $(-.u.old %6, |3.+.u.old [~ |3.+.u.old])
     $4  =<  ^$(-.u.old %5, shells.u.old (~(run by shells.u.old) .))
         |=(shell-4 `shell`+<(system [system settings=*(set knot)]))
     $3  =<  ^$(-.u.old %4, stories.u.old (~(run by stories.u.old) .))
