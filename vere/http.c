@@ -498,7 +498,7 @@ _http_message_complete(http_parser* par_u)
       hon_u->qer_u = hon_u->req_u = req_u;
     }
     else {
-      hon_u->qer_u->nex_u = req_u;
+      hon_u->qer_u = hon_u->qer_u->nex_u = req_u;
     }
   }
 
