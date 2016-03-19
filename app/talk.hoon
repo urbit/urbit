@@ -76,8 +76,13 @@
       $%  {$talk-command command}                       ::
           {$write-comment path ship cord}               ::
       ==                                                ::
+    ++  api-call                                        ::  REST apis
+      $?  $:  ?($twit-status $twit-feed)                ::  response mark
+              {$twit-req endpoint:twit quay}            ::  outgoing request
+      ==  ==                                            ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
+          {$hiss wire (unit iden) api-call}             ::
           {$info wire @p @tas nori}                     ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
@@ -127,14 +132,12 @@
     --
 |_  {hid/bowl house}
 ++  ti
-  =>  ~(. twit key lat.hid `@`eny.hid)
+  =+  [twitter reqs:twit]                               ::  XX new =*
   =+  me=%hoontap                                       ::  XX  use %khan
   |%
-  ++  sta    |=(who/span [%| %twitter who])
-  ++  post   |=(a/cord `hiss`(stat-upda [%status a]~ ~))
-  ++  mine  `hiss`(stat-home)
-  ::
-  ++  line  (ar:jo stat:parse)                          ::  reparse timeline
+  ++  sta    |=(who/knot `partner`[%| %twitter who])
+  ++  post   |=(a/cord [`endpoint`stat-upda+[%status a]~ ~])
+  ++  mine  [`endpoint`stat-home+~ ~]
   --
 ::
 ++  ra                                                  ::  per transaction
@@ -1364,32 +1367,25 @@
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
   ::
-  ++  ra-thou-twitter                                        ::  %twitter response
-    |=  {met/?($stat $mine) hit/httr}
-    ^+  +>
-    ?.  &(=(2 (div p.hit 100)) ?=(^ r.hit))
-      ~&  [%twit-lost met [p `(unit {@ @t})`r]:[hit .]]
-      +>
-    ?-    -.met
-        %stat
-      =+  sta=(need %.(q.u.r.hit ;~(biff poja stat:twir)))
-      ~&  [%tweet-ack p.met sta]
-      =.  sent  (~(put by sent) id:sta p.met)
-      +>.$
-        %mine
-      =+  pur=(~(get by parties) p.met)                 ::  XX all subscribed
-      ?~  pur  ~&  [%ra-twitter-none p.met]  !!
-      =<  pa-abet
-      %-  ~(pa-lesson pa p.met u.pur)
-      %+  turn  (need %.(q.u.r.hit ;~(biff poja line:ti)))
-      |=  {id/tid:twit who/scr:twit now/@da txt/@t}
-      ^-  telegram
-      :*  our.hid
-          ((bond |.((shaf %twit id))) (~(get by sent) id))
-          [[(sta me):ti %received] `~]
-          now
-          [%say txt]
-      ==
+  ++  ra-sigh-twit-status                               ::  status response
+    |=  {ser/serial res/stat:twit}  ^+  +>
+    ~&  [%tweet-ack ser res]
+    =.  twit.sent  (~(put by twit.sent) id:res ser)
+    +>.$
+  ::
+  ++  ra-sigh-twit-feed                                 ::  timeline response
+    |=  {man/knot res/(list stat):twit}  ^+  +>
+    %-  (ra-know man)  |=  par/_pa  =<  pa-abet         ::  XX all subscribed
+    %-  pa-lesson:par
+    %+  turn  res
+    |=  {id/tid:twit who/scr:twit now/@da txt/@t}
+    ^-  telegram
+    :*  our.hid
+        ((bond |.((shaf %twit id))) (~(get by twit.sent) id))
+        [[(sta me):ti *envelope %received] `~]
+        now
+        *bouquet
+        [%lin & txt]
     ==
   ::
   ++  ra-quit                                           ::  subscription quit
@@ -1521,16 +1517,18 @@
               $twitter
             ~&  [%conduct-twitters p.p.tay]
             ?>  =(me:ti p.p.tay)
-            =+  ^=  msg
-                ?+  -.q.r.tip  !!
-                  %say  "{<her>}: {(trip p.q.r.tip)}"
-                  %own  "{<her>} {(trip p.q.r.tip)}"
-                ==
+            =+  sep=`speech`r.r.tip
+            =+  ^=  msg               :: XX tr-line?
+                ?+  -.sep  !!
+                  $lin  ?-  p.sep
+                          $&  "{<her>}: {(trip q.sep)}"
+                          $|  "{<her>} {(trip q.sep)}"
+                ==      ==
             ?:  (gth (lent msg) 140)
               (ra-evil %radio-tweet-long)
-            %+  ra-hiss
-              /twitter/stat/(scot %uv p.tip)
-            (post:ti (crip msg))
+            %+  ra-emit  ost.hid
+            :^  %hiss  /status/(scot %uv p.tip)  `~.
+            `api-call`[%twit-status twit-req+(post:ti (crip msg))]
     ==    ==
   ::
   ++  ra-record                                         ::  add to story
@@ -1663,10 +1661,10 @@
       ^-  (list card)
       ?-  -.tay
         $|  ~&  tweet-abjure+p.p.tay
-            :_  ~
-            :-  /twitter/mine/[p.p.tay]/[man]
-            ?>  =(me:ti p.p.tay)
-            [%e %them ~]
+            ~  :: XX the %hiss interface doesn't support cancelation
+            :: :_  ~
+            :: :^  %hiss  /mine/[p.p.tay]/[man]  `~.
+            :: ?>(=(me:ti p.p.tay) ~)
       ::
         $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
@@ -1689,9 +1687,9 @@
       ?-  -.tay
         $|  ~&  tweet-acquire+p.p.tay
             :_  ~
-            :-  /twitter/mine/[p.p.tay]/[man]
+            :^  %hiss  /feed/[p.p.tay]/[man]  `~.
             ?>  =(me:ti p.p.tay)
-            [%e %them ~ mine:ti]
+            `api-call`[%twit-feed twit-req+mine:ti]
       ::
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
@@ -2239,6 +2237,19 @@
   ::  ~&  [%talk-pull src.hid ost.hid pax]
   =^  moz  +>.$  ra-abet:(ra-cancel:ra src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
+::
+++  sigh-twit-status-status
+  |=  {wir/wire res/stat:twit}  ^-  (quip move +>)
+  ?>  ?=({@ $~} wir)
+  ra-abet:(ra-sigh-twit-status:ra (slav %uv i.wir) res)
+::
+++  sigh-twit-feed-feed
+  |=  {wir/wire res/(list stat):twit}  ^-  (quip move +>)
+  ?>  ?=({@ $~} wir)
+  ra-abet:(ra-sigh-twit-feed:ra i.wir res)
+::
+++  sigh-tang
+  |=({wir/wire tan/tang} ~&(bad-hiss+wir ((slog (flop tan)) `+>)))
 ::
 ++  log-all-to-file
   ^-  (quip move .)
