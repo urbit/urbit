@@ -9,6 +9,7 @@
 ::::
   ::
 [. talk sole]
+=+  twit=args:reqs:twitter
 =>  |%                                                  ::  data structures
     ++  house  {$5 house-5}                             ::  full state
     ++  house-any                                       ::  app history
@@ -26,6 +27,7 @@
       $:  stories/(map knot story)                      ::  conversations
           general/(set bone)                            ::  meta-subscribe
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
+          sent/twit/(map tid:twit serial)               ::  foreign outbox
           folks/(map ship human)                        ::  human identities
           shells/(map bone shell)                       ::  interaction state
           log/(map knot @ud)                            ::  logged to clay
@@ -124,6 +126,17 @@
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool
     --
 |_  {hid/bowl house}
+++  ti
+  =>  ~(. twit key lat.hid `@`eny.hid)
+  =+  me=%hoontap                                       ::  XX  use %khan
+  |%
+  ++  sta    |=(who/span [%| %twitter who])
+  ++  post   |=(a/cord `hiss`(stat-upda [%status a]~ ~))
+  ++  mine  `hiss`(stat-home)
+  ::
+  ++  line  (ar:jo stat:parse)                          ::  reparse timeline
+  --
+::
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
   ++  sh                                                ::  per console
@@ -1351,6 +1364,34 @@
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
   ::
+  ++  ra-thou-twitter                                        ::  %twitter response
+    |=  {met/?($stat $mine) hit/httr}
+    ^+  +>
+    ?.  &(=(2 (div p.hit 100)) ?=(^ r.hit))
+      ~&  [%twit-lost met [p `(unit {@ @t})`r]:[hit .]]
+      +>
+    ?-    -.met
+        %stat
+      =+  sta=(need %.(q.u.r.hit ;~(biff poja stat:twir)))
+      ~&  [%tweet-ack p.met sta]
+      =.  sent  (~(put by sent) id:sta p.met)
+      +>.$
+        %mine
+      =+  pur=(~(get by parties) p.met)                 ::  XX all subscribed
+      ?~  pur  ~&  [%ra-twitter-none p.met]  !!
+      =<  pa-abet
+      %-  ~(pa-lesson pa p.met u.pur)
+      %+  turn  (need %.(q.u.r.hit ;~(biff poja line:ti)))
+      |=  {id/tid:twit who/scr:twit now/@da txt/@t}
+      ^-  telegram
+      :*  our.hid
+          ((bond |.((shaf %twit id))) (~(get by sent) id))
+          [[(sta me):ti %received] `~]
+          now
+          [%say txt]
+      ==
+    ==
+  ::
   ++  ra-quit                                           ::  subscription quit
     |=  {man/knot cuz/station}
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
@@ -1474,8 +1515,23 @@
           ?.  =(our.hid p.p.tay)
             +>
           (ra-record q.p.tay her tip)
-      $|  !!
-    ==
+    ::
+      $|  ?.  pub  +>
+          ?-    -.p.tay
+              $twitter
+            ~&  [%conduct-twitters p.p.tay]
+            ?>  =(me:ti p.p.tay)
+            =+  ^=  msg
+                ?+  -.q.r.tip  !!
+                  %say  "{<her>}: {(trip p.q.r.tip)}"
+                  %own  "{<her>} {(trip p.q.r.tip)}"
+                ==
+            ?:  (gth (lent msg) 140)
+              (ra-evil %radio-tweet-long)
+            %+  ra-hiss
+              /twitter/stat/(scot %uv p.tip)
+            (post:ti (crip msg))
+    ==    ==
   ::
   ++  ra-record                                         ::  add to story
     |=  {man/knot gam/telegram}
@@ -1607,7 +1663,10 @@
       ^-  (list card)
       ?-  -.tay
         $|  ~&  tweet-abjure+p.p.tay
-            !!
+            :_  ~
+            :-  /twitter/mine/[p.p.tay]/[man]
+            ?>  =(me:ti p.p.tay)
+            [%e %them ~]
       ::
         $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
@@ -1628,7 +1687,12 @@
       :: =+  num=(fall (~(get by sequence) tay) 0) :: XX unused
       =+  old=(sub now.hid ~d1)
       ?-  -.tay
-        $|  !!
+        $|  ~&  tweet-acquire+p.p.tay
+            :_  ~
+            :-  /twitter/mine/[p.p.tay]/[man]
+            ?>  =(me:ti p.p.tay)
+            [%e %them ~ mine:ti]
+      ::
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
             :*  %peer
