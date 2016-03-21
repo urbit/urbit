@@ -19,10 +19,11 @@ div.logo {
   height: 3rem;
   background-color: #fff;
   display: inline-block;
-  margin-right: 2rem;
+  margin-right: 1rem;
   border-radius: 50%;
   vertical-align: middle;
-  margin-top: -.8rem; }
+  margin-top: -.8rem;
+  background-color: #000; }
 
 div.logo:before {
   content: "~";
@@ -34,6 +35,12 @@ div.logo:before {
   text-align: center;
   width: 2rem;
   display: inline-block; }
+
+div.logo.inverse:before {
+  color: #fff; }
+
+.lead .logo.inverse {
+  margin-top: -1.4rem; }
 
 .short {
   width: 75%; }
@@ -51,6 +58,18 @@ div.logo:before {
     font-size: 1rem;
     line-height: 2rem; }
 
+.link-next {
+  margin-top: 4rem; }
+  .link-next a {
+    padding: .6rem;
+    border: 2px solid;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 4rem; }
+  .link-next a:hover {
+    background-color: #000;
+    color: #fff; }
+
 .loading:before {
   font-family: 'scp';
   background-color: #000;
@@ -61,6 +80,7 @@ div.logo:before {
   height: 1.6rem;
   text-align: center;
   font-size: .8rem;
+  line-height: 1.7rem;
   display: block;
   font-weight: 600;
   z-index: 3; }
@@ -128,13 +148,15 @@ div.logo:before {
     .ctrl ul.nav li {
       width: 100%;
       overflow: hidden;
-      white-space: nowrap; }
+      white-space: nowrap;
+      margin-bottom: .6rem; }
   .ctrl ul.nav:hover {
     overflow: visible; }
-  .ctrl a.nav-link:hover {
-    text-decoration: underline; }
   .ctrl a.nav-link {
-    letter-spacing: 1px; }
+    letter-spacing: 1px;
+    text-decoration: none;
+    border-bottom: 2px solid;
+    line-height: 1rem; }
   .ctrl .selected a.nav-link {
     font-weight: 500; }
 
@@ -202,7 +224,10 @@ div.logo:before {
   .ctrl.open {
     max-height: 12rem; }
   a.nav-link {
-    font-size: 1rem; }
+    font-size: 1rem;
+    line-height: 1rem;
+    text-decoration: none;
+    border-bottom: 2px solid; }
   .ctrl.open ul.nav {
     max-height: 9rem;
     overflow-y: scroll; } }
@@ -316,7 +341,7 @@ div.logo:before {
 
 [data-path^='/docs'] .selected .nav-link,
 [data-path^='/work'] .selected .nav-link {
-  color: #02D124; }
+  color: #55595c; }
 
 [data-path^='/docs'] .nav-link,
 [data-path^='/work'] .nav-link {
@@ -324,13 +349,13 @@ div.logo:before {
 
 [data-path^='/docs'] .home,
 [data-path^='/work'] .home {
-  background-color: #0500F0;
-  border-color: #0500F0; }
+  background-color: #55595c;
+  border-color: #55595c; }
 
 [data-path^='/docs'] .home:hover,
 [data-path^='/work'] .home:hover {
-  background-color: #0500F0;
-  border-color: #0500F0;
+  background-color: #B1B7BD;
+  border-color: #B1B7BD;
   opacity: .6; }
 
 [data-path^='/docs'] .home:before,
@@ -500,11 +525,14 @@ div.logo:before {
       border: 0; }
       .urbit.navbar.ctrl ul.nav li.btn a,
       .urbit.navbar.ctrl .subnav ul.nav li.btn a {
-        color: #02D124;
+        color: #64DE79;
         line-height: 1.5rem; } }
 
 .lead h1:first-of-type {
   padding-bottom: 0; }
+
+.flush {
+  padding-top: 0; }
 
 .h-arrow {
   width: 100%;
@@ -585,7 +613,7 @@ div.logo:before {
   line-height: 4rem; }
 
 .body .urbit a.green:hover {
-  color: #02D124; }
+  color: #64DE79; }
 
 .body .urbit .container.stack {
   margin-bottom: 3rem; }
@@ -689,7 +717,7 @@ div.logo:before {
 
 .body .urbit .end {
   padding: 1rem;
-  background-color: #02D124;
+  background-color: #64DE79;
   color: white;
   text-decoration: none;
   font-size: 2rem;
@@ -924,12 +952,12 @@ div.logo:before {
     margin-bottom: 12rem; }
   .urbit ul.blog .btn {
     padding: .3rem;
-    border: 3px solid #02D124;
-    color: #02D124;
+    border: 3px solid #64DE79;
+    color: #64DE79;
     text-decoration: none;
     text-transform: none; }
   .urbit ul.blog .btn:hover {
-    background-color: #02D124;
+    background-color: #64DE79;
     color: #fff; }
 
 .kids.runes h1 {
@@ -1022,7 +1050,8 @@ div.logo:before {
   margin-right: 3rem;
   margin-top: 2rem;
   min-width: 14rem;
-  margin-bottom: 3rem; }
+  margin-bottom: 3rem;
+  padding: 0; }
 
 .sections .kids > div p {
   font-weight: 500; }
@@ -1031,7 +1060,7 @@ div.logo:before {
   display: none; }
 
 .lead-offset {
-  margin-left: 8rem; }
+  margin-left: 4rem; }
 
 @media (max-width: 991px) {
   .lead-offset {

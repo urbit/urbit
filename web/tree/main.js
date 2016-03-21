@@ -852,7 +852,8 @@ module.exports = query({
         results.push([
           div({
             key: keyed[k],
-            id: keyed[k]
+            id: keyed[k],
+            className: "col-md-4"
           }, reactify(elem.body)), hr({})
         ]);
       }
@@ -1234,7 +1235,6 @@ Nav = React.createFactory(query({
       subnav: (this.props.meta.navsub != null)
     });
     navClas = {
-      'col-md-1': this.props.meta.navmode !== 'navbar',
       navbar: this.props.meta.navmode === 'navbar',
       ctrl: true,
       open: this.state.open === true
@@ -1354,21 +1354,21 @@ module.exports = query({
   componentDidMount: function() {
     var _this;
     this.setTitle();
-    this.interval = setInterval(this.checkURL, 100);
     TreeStore.addChangeListener(this._onChangeStore);
     _this = this;
     $('body').on('click', 'a', function(e) {
-      var href;
+      var href, url;
       href = $(this).attr('href');
       if (href[0] === "#") {
         return true;
       }
       if (href && !/^https?:\/\//i.test(href)) {
         e.preventDefault();
-        if ((href != null ? href[0] : void 0) !== "/") {
-          href = (document.location.pathname.replace(/[^\/]*\/?$/, '')) + href;
+        url = new URL(this.href);
+        if (url.pathname.substr(-1) !== "/") {
+          url.pathname += "/";
         }
-        return _this.goTo(util.fragpath(href));
+        return _this.goTo(url.pathname + url.search + url.hash);
       }
     });
     return this.checkRedirect();
@@ -1390,17 +1390,12 @@ module.exports = query({
     }
     return document.title = title + " - " + this.props.path;
   },
-  setPath: function(href, hist) {
-    var href_parts, next;
-    href_parts = href.split("#");
-    next = href_parts[0];
-    if (next.substr(-1) === "/") {
-      next = next.slice(0, -1);
-    }
-    href_parts[0] = next;
+  setPath: function(path, hist) {
+    var next;
     if (hist !== false) {
-      history.pushState({}, "", util.basepath(href_parts.join("#")));
+      history.pushState({}, "", path);
     }
+    next = util.fragpath(path.split('#')[0]);
     if (next !== this.props.path) {
       return TreeActions.setCurr(next);
     }
@@ -1417,7 +1412,7 @@ module.exports = query({
   checkURL: function() {
     if (this.state.url !== window.location.pathname) {
       this.reset();
-      this.setPath(util.fragpath(window.location.pathname), false);
+      this.setPath(window.location.pathname, false);
       return this.setState({
         url: window.location.pathname
       });
@@ -2027,6 +2022,9 @@ $(function() {
   var frag, main, util;
   util = require('./utils/util.coffee');
   require('./utils/scroll.coffee');
+  if (document.location.pathname.substr(-1) !== "/") {
+    history.replaceState({}, "", document.location.pathname + "/" + document.location.search + document.location.hash);
+  }
   window.tree.actions = require('./actions/TreeActions.coffee');
   window.tree.actions.addVirtual(require('./components/Components.coffee'));
   frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
