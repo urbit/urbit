@@ -1374,7 +1374,7 @@
   ::
   ::
   ++  ra-sigh-twit-feed                                 ::  timeline response
-    |=  {man/knot res/(list post):twit}  ^+  +>
+    |=  {{usr/iden man/knot} res/(list post):twit}  ^+  +>
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet         ::  XX all subscribed
     %-  pa-lesson:par
     %+  turn  res
@@ -1382,9 +1382,9 @@
     ^-  telegram
     :*  our.hid
         ((bond |.((shaf %twit id))) (~(get by twit.sent) id))
-        [[(sta me):ti *envelope %received] `~]
+        [[(sta:ti usr) *envelope %received] `~]
         now
-        *bouquet
+        (sy /twitter/[who] ~)
         [%lin & txt]
     ==
   ::
@@ -1702,8 +1702,8 @@
       ?-  -.tay
         $|  ~&  tweet-acquire+p.p.tay
             :_  ~
-            :^  %hiss  /feed/[p.p.tay]/[man]  `~.
             ?>  =(me:ti p.p.tay)
+            :^  %hiss  /feed/[p.p.tay]/[man]  `~.
             `api-call`[%twit-feed twit-req+mine:ti]
       ::
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
@@ -2265,8 +2265,8 @@
 ::
 ++  sigh-twit-feed-feed
   |=  {way/wire res/(list post):twit}  ^-  (quip move +>)
-  ?>  ?=({@ $~} way)
-  ra-abet:(ra-sigh-twit-feed:ra i.way res)
+  ?>  ?=({@ @ $~} way)
+  ra-abet:(ra-sigh-twit-feed:ra [i.way i.t.way] res)
 ::
 ++  sigh-tang
   |=({way/wire tan/tang} ~&(bad-hiss+way ((slog (flop tan)) `+>)))
