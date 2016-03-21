@@ -79,6 +79,7 @@
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
           {$write-comment path ship cord}               ::
+          {$twit-do iden command:twitter}               ::
       ==                                                ::
     ++  api-call                                        ::  REST apis
       $?  $:  ?($twit-status $twit-feed)                ::  response mark
@@ -1371,11 +1372,6 @@
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
   ::
-  ++  ra-sigh-twit-status                               ::  status response
-    |=  {ser/serial res/stat:twit}  ^+  +>
-    ~&  [%tweet-ack ser res]
-    =.  twit.sent  (~(put by twit.sent) id:res ser)
-    +>.$
   ::
   ++  ra-sigh-twit-feed                                 ::  timeline response
     |=  {man/knot res/(list stat):twit}  ^+  +>
@@ -1520,7 +1516,6 @@
           ?-    -.p.tay
               $twitter
             ~&  [%conduct-twitters p.p.tay]
-            ?>  =(me:ti p.p.tay)
             =+  sep=`speech`r.r.tip
             =+  ^=  msg               :: XX tr-line?
                 ?+  -.sep  !!
@@ -1530,10 +1525,26 @@
                 ==      ==
             ?:  (gth (lent msg) 140)
               (ra-evil %radio-tweet-long)
-            %+  ra-emit  ost.hid
-            :^  %hiss  /status/(scot %uv p.tip)  `~.
-            `api-call`[%twit-status twit-req+(post:ti (crip msg))]
+            %-  ra-emil  :~
+              :^  ost.hid  %poke  /post/(scot %uv p.tip)
+              [[our.hid %twit] [%twit-do p.p.tay %post p.tip (crip msg)]]
+            ::
+              :^  ost.hid  %peer  /post/(scot %uv p.tip)
+              [[our.hid %twit] /post/(scot %uv p.tip)]
+            ==
     ==    ==
+  ::
+  ++  ra-coup-post
+    |=  {sen/serial saw/(unit tang)}  ^+  +>
+    ?~  saw  +>
+    =.  u.saw   [>%post sen< u.saw]
+    ((slog (flop u.saw)) +>)          
+  ::
+  ++  ra-diff-twit-post                                ::  status received
+    |=  {sen/serial sat/stat:twit}  ^+  +>
+    =.  twit.sent  (~(put by twit.sent) id.sat sen)
+    :: XX route through ra-repeat for proper handling of %accepted?
+    +>.$
   ::
   ++  ra-record                                         ::  add to story
     |=  {man/knot gam/telegram}
@@ -2242,18 +2253,23 @@
   =^  moz  +>.$  ra-abet:(ra-cancel:ra src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
-++  sigh-twit-status-status
-  |=  {wir/wire res/stat:twit}  ^-  (quip move +>)
-  ?>  ?=({@ $~} wir)
-  ra-abet:(ra-sigh-twit-status:ra (slav %uv i.wir) res)
+++  coup-post
+  |=  {way/wire saw/(unit tang)}
+  ?>  ?=({@ $~} way)
+  ra-abet:(ra-coup-post:ra (slav %uv i.way) saw)
+::
+++  diff-twit-stat-post
+  |=  {way/wire res/stat:twit}  ^-  (quip move +>)
+  ?>  ?=({@ $~} way)
+  ra-abet:(ra-diff-twit-post:ra (slav %uv i.way) res)
 ::
 ++  sigh-twit-feed-feed
-  |=  {wir/wire res/(list stat):twit}  ^-  (quip move +>)
-  ?>  ?=({@ $~} wir)
-  ra-abet:(ra-sigh-twit-feed:ra i.wir res)
+  |=  {way/wire res/(list stat):twit}  ^-  (quip move +>)
+  ?>  ?=({@ $~} way)
+  ra-abet:(ra-sigh-twit-feed:ra i.way res)
 ::
 ++  sigh-tang
-  |=({wir/wire tan/tang} ~&(bad-hiss+wir ((slog (flop tan)) `+>)))
+  |=({way/wire tan/tang} ~&(bad-hiss+way ((slog (flop tan)) `+>)))
 ::
 ++  log-all-to-file
   ^-  (quip move .)

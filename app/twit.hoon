@@ -94,7 +94,8 @@
   mof
 ::
 ++  poke-twit-do                                        ::  recieve request
-  |=  {usr/knot act/command}  ^+  done
+  |=  {usr/iden act/command}  ^+  done
+  ~&  twit-do++<
   ?-    -.act
       $post
     =.  out  (~(put by out) p.act %& usr q.act)
@@ -230,7 +231,6 @@
   ?-    -.pax
       $post
     =+  (raid +.pax mez=%uv ~)
-    ~&  [mez=mez out=out]
     =+  sta=(~(get by out) mez)
     ?.  ?=({$~ $| *} sta)
       [%none ~]
