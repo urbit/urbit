@@ -1,5 +1,5 @@
 |%
-++  stat  {id/@u who/@ta now/@da txt/@t}              ::  recieved tweet
+++  post  {id/@u who/@ta now/@da txt/@t}              ::  recieved tweet
 ++  keys                                              ::  twitter-key type
   $:  con/{tok/@t sec/@t}                             ::  user key pair
       acc/{tok/@t sec/@t}                             ::  app key pair

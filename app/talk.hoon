@@ -82,7 +82,7 @@
           {$twit-do iden command:twitter}               ::
       ==                                                ::
     ++  api-call                                        ::  REST apis
-      $?  $:  ?($twit-status $twit-feed)                ::  response mark
+      $?  $:  ?($twit-post $twit-feed)                  ::  response mark
               {$twit-req endpoint:twit quay}            ::  outgoing request
       ==  ==                                            ::
     ++  card                                            ::  general card
@@ -1374,7 +1374,7 @@
   ::
   ::
   ++  ra-sigh-twit-feed                                 ::  timeline response
-    |=  {man/knot res/(list stat):twit}  ^+  +>
+    |=  {man/knot res/(list post):twit}  ^+  +>
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet         ::  XX all subscribed
     %-  pa-lesson:par
     %+  turn  res
@@ -1541,7 +1541,7 @@
     ((slog (flop u.saw)) +>)          
   ::
   ++  ra-diff-twit-post                                ::  status received
-    |=  {sen/serial sat/stat:twit}  ^+  +>
+    |=  {sen/serial sat/post:twit}  ^+  +>
     =.  twit.sent  (~(put by twit.sent) id.sat sen)
     :: XX route through ra-repeat for proper handling of %accepted?
     +>.$
@@ -2258,13 +2258,13 @@
   ?>  ?=({@ $~} way)
   ra-abet:(ra-coup-post:ra (slav %uv i.way) saw)
 ::
-++  diff-twit-stat-post
-  |=  {way/wire res/stat:twit}  ^-  (quip move +>)
+++  diff-twit-post-post
+  |=  {way/wire res/post:twit}  ^-  (quip move +>)
   ?>  ?=({@ $~} way)
   ra-abet:(ra-diff-twit-post:ra (slav %uv i.way) res)
 ::
 ++  sigh-twit-feed-feed
-  |=  {way/wire res/(list stat):twit}  ^-  (quip move +>)
+  |=  {way/wire res/(list post):twit}  ^-  (quip move +>)
   ?>  ?=({@ $~} way)
   ra-abet:(ra-sigh-twit-feed:ra i.way res)
 ::

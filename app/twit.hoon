@@ -26,7 +26,7 @@
   ==
 ++  gilt  
   $%  {$twit-feed p/(list stat)}                        ::  posts in feed
-      {$twit-stat p/stat}                               ::  tweet accepted
+      {$twit-post p/stat}                               ::  tweet accepted
       {$ares term (list tank)}
   ==
 ::
@@ -39,14 +39,14 @@
   ==  ==
 ::
 ++  api-call  {response-mark $twit-req {endpoint quay}} :: full hiss payload
-++  response-mark  ?($twit-status $twit-feed)           :: sigh options
+++  response-mark  ?($twit-post $twit-feed)             :: sigh options
 ++  sign                                                ::  arvo response
   $%  {$e $thou p/httr}                                 ::  HTTP result
       {$t $wake $~}                                      ::  timeout ping
   ==
 ::
 ::  XX =*
-++  stat      stat:twitter                              ::  recieved tweet
+++  stat      post:twitter                              ::  recieved tweet
 ++  command   command:twitter                           ::  incoming command
 ++  endpoint  endpoint:reqs:twitter                     ::  outgoing target
 ++  param  param:reqs:twitter                           ::  twit-req paramters
@@ -101,7 +101,7 @@
     =.  out  (~(put by out) p.act %& usr q.act)
     %+  wait-new  /peer/home
     =+  req=[%twit-req `endpoint`stat-upda+[%status q.act]~ ~]
-    [ost %hiss post+(dray ~[%uv] p.act) `usr %twit-status req]~
+    [ost %hiss post+(dray ~[%uv] p.act) `usr %twit-post req]~
   ==
 ::
 ++  wake-peer
@@ -126,15 +126,15 @@
 ::   ~&  retrying-in+`@dr`(sub tym now)
 ::   :_(+>.$ [ost %wait pax tym]~)
 ::
-++  sigh-twit-status-post                               ::  post acknowledged
+++  sigh-twit-post-post                                ::  status acknowledged
   |=  {wir/wire rep/stat}  ^+  done
   =+  (raid wir mez=%uv ~)
   =.  out  (~(put by out) mez %| rep)
   :_  +>.$
   =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
   :-  (show-url [& ~ &+/com/twitter] `pax ~)
-  %+  weld  (spam post+wir (tweet-good rep))
-  (spam scry+x+post+wir (tweet-good rep))
+  =+  mof=~[[%twit-post rep] [%quit ~]]
+  (weld (spam post+wir mof) (spam scry+x+post+wir mof))
 ::
 ++  sigh-twit-feed                                      ::  feed data
   |=  {wir/wire rep/(list stat)}  ^+  done
@@ -204,7 +204,6 @@
   ?~  hiz  ~                          :: already in flight
   [ost %hiss scry+pax usr u.hiz]~  
 ::
-++  tweet-good  |=(rep/stat `(list gift)`~[[%diff %twit-stat rep] [%quit ~]]) 
 ++  peer  |=(pax/path :_(+> (pear & `~. pax)))       ::  accept subscription
 ++  pear                              ::  poll, possibly returning current data
   |=  {ver/? usr/(unit iden) pax/path}
@@ -234,7 +233,7 @@
     =+  sta=(~(get by out) mez)
     ?.  ?=({$~ $| *} sta)
       [%none ~]
-    [%full twit-stat+p.u.sta]
+    [%full twit-post+p.u.sta]
   ::
       $user  ::?($user $home)
     [%part twit-feed+(flop (~(get ja fed) pax))]

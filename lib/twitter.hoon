@@ -85,9 +85,9 @@
   ++  fasp  |*(a/{@tas *} [(gsub '-' '_' -.a) +.a])     ::  XX usable electroplating
   ++  user  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
-  ++  stat
+  ++  post
     =+  jo
-    %+  ce  stat:sur-twit
+    %+  ce  post:sur-twit
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
