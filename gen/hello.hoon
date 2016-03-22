@@ -8,4 +8,4 @@
 :-  %say
 |=  {^ {{txt/@tas $~} $~}}
 :-  %noun
-(crip (weld "hello, " (flop txt)))
+(crip (weld "hello, " (trip txt)))
