@@ -8,8 +8,8 @@
   ::
 |%
 ++  twit-path                                           ::  valid peer path
-  $%  ::  {$home $~}                                         ::  home timeline
-      {$user p/@t $~}                                    ::  user's tweets
+  $%  {$home $~}                                         ::  home timeline
+      :: {$user p/@t $~}                                    ::  user's tweets
       {$post p/@taxuv $~}                             ::  status of status
   ==
 ::
@@ -133,7 +133,7 @@
   :_  +>.$
   =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
   :-  (show-url [& ~ &+/com/twitter] `pax ~)
-  =+  mof=~[[%twit-post rep] [%quit ~]]
+  =+  mof=~[[%diff %twit-post rep] [%quit ~]]
   (weld (spam post+wir mof) (spam scry+x+post+wir mof))
 ::
 ++  sigh-twit-feed                                      ::  feed data
@@ -235,7 +235,7 @@
       [%none ~]
     [%full twit-post+p.u.sta]
   ::
-      $user  ::?($user $home)
+      $home  ::?($user $home)
     [%part twit-feed+(flop (~(get ja fed) pax))]
   ==
 ::
@@ -243,15 +243,15 @@
   |=  pax/twit-path  ^-  (unit api-call)
   ?-    -.pax
       $post  ~                        :: future/unacked
-      $user
-    =+  ole=(~(get ja fed) pax)
-    =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
-    `[%twit-feed twit-req+[stat-user+[(to-sd p.pax)]~ opt]]
-  ::
-::       $home
+::       $user
 ::     =+  ole=(~(get ja fed) pax)
 ::     =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
-::     `[%twit-feed stat-home+~ opt]
+::     `[%twit-feed twit-req+[stat-user+[(to-sd p.pax)]~ opt]]
+::   ::
+      $home
+    =+  ole=(~(get ja fed) pax)
+    =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
+    `[%twit-feed twit-req+[stat-home+~ opt]]
   ==
 ::
 ++  to-sd                                               ::  parse user name/numb

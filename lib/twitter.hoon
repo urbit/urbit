@@ -58,7 +58,7 @@
     $get  [url med *math ~]
     $post
       =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
-      [url(r ~) med hed (some (tact +:(tail:earn r.url)))]
+      [url(r ~) med hed ?~(r.url ~ (some (tact +:(tail:earn r.url))))]
   ==
 ::
 ++  find-req
@@ -123,7 +123,7 @@
   =+  args:reqs
   |%
   ++  apex
-    |=  {a/endpoint b/quay}
+    |=  {a/endpoint b/quay}  ^-  hiss
     =+  [med pax]=(find-req -.a)
     (valve med (cowl pax +.a b))
   ::
