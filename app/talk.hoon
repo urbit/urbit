@@ -137,12 +137,12 @@
     --
 |_  {hid/bowl house}
 ++  ti                                                    :: twitter interop
-  |_  _usr=%hoontap                                       ::  XX  use %khan
+  |_  usr/iden
   ++  to-telegram
     |=  a/post:twitter  ^-  telegram
     :*  our.hid
         ((bond |.((shaf %twit id.a))) (~(get by twit.sent) id.a))
-        [[[%| %twitter who.a] *envelope %received] `~]
+        [[[%| %twitter usr] *envelope %received] `~]
         now.a
         (sy /twitter/[who.a] ~)
         [%lin & txt.a]
@@ -1696,10 +1696,9 @@
       ?-  -.tay
         $|  ~&  tweet-acquire+p.p.tay
             :_  ~
-            ?>  =(usr:ti p.p.tay)  :: XX auth
             :^  %peer  /feed/[p.p.tay]/[man]
               [our.hid %twit]
-            /home
+            /home/[p.p.tay]
       ::
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
@@ -1712,7 +1711,6 @@
     ::
     ++  pa-diff-twit-feed                               ::  timeline response
       |=  {usr/iden res/(list post):twit}  ^+  +>
-      ?>  ?=(_usr:ti usr)                               :: XX auth
       (pa-lesson (turn res ~(to-telegram ti usr)))
     ::
     ++  pa-reform                                       ::  reconfigure, ugly

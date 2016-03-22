@@ -8,15 +8,15 @@
   ::
 |%
 ++  twit-path                                           ::  valid peer path
-  $%  {$home $~}                                         ::  home timeline
-      :: {$user p/@t $~}                                    ::  user's tweets
-      {$post p/@taxuv $~}                             ::  status of status
+  $%  {$home p/@t $~}                                   ::  home timeline
+      {$user p/@t $~}                                   ::  user's tweets
+      {$post p/@taxuv $~}                               ::  status of status
   ==
 ::
 ++  axle                                                ::  app state
   $:  $0
-      out/(map @uvI (each {knot cord} stat))           ::  sent tweets
-      ran/(map path {p/@ud q/@da})                     ::  polls active
+      out/(map @uvI (each {knot cord} stat))            ::  sent tweets
+      ran/(map path {p/@ud q/@da})                      ::  polls active
       fed/(jar path stat)                               ::  feed cache
   ==
 ::
@@ -99,7 +99,7 @@
   ?-    -.act
       $post
     =.  out  (~(put by out) p.act %& usr q.act)
-    %+  wait-new  /peer/home
+    %+  wait-new  /peer/home/[usr]
     =+  req=[%twit-req `endpoint`stat-upda+[%status q.act]~ ~]
     [ost %hiss post+(dray ~[%uv] p.act) `usr %twit-post req]~
   ==
@@ -175,7 +175,9 @@
 ::   [`(slav %ta i.pax) t.pax]
 ::
 ::
-::  .^(twit-feed %gx /=twit=/~/user/urbit_test)
+++  compat  |=({usr/(unit iden) req/(unit iden)} ?~(req & =(usr req)))
+::
+::  .^(twit-feed %gx /=twit=/~/home/urbit_test)
 ::  .^(twit-stat %gx /=twit=/~./post/0vv0old.0post.hash0.0000)
 ++  peek
   |=  {ren/care pax/path}  ^-  (unit (unit gilt))
@@ -202,7 +204,8 @@
     ~|([%missed-path pax] !!)
   =+  hiz=(pear-hiss pax)
   ?~  hiz  ~                          :: already in flight
-  [ost %hiss scry+pax usr u.hiz]~  
+  ::?>  (compat usr -.u.hiz)                  ::  XX better auth
+  [ost %hiss scry+pax usr +.u.hiz]~  
 ::
 ++  peer  |=(pax/path :_(+> (pear & `~. pax)))       ::  accept subscription
 ++  pear                              ::  poll, possibly returning current data
@@ -216,7 +219,8 @@
     ?:  ?=($full -.gil)  ~       :: permanent result
     =+  hiz=(pear-hiss pax)
     ?~  hiz  ~
-    [ost %hiss peer+pax usr u.hiz]~
+    ::?>  (compat usr -.u.hiz)                  ::  XX better auth
+    [ost %hiss peer+pax usr +.u.hiz]~
   ^-  (list move)
   ?.  ver  ~
   ?-  -.gil
@@ -235,23 +239,23 @@
       [%none ~]
     [%full twit-post+p.u.sta]
   ::
-      $home  ::?($user $home)
+      ?($user $home)
     [%part twit-feed+(flop (~(get ja fed) pax))]
   ==
 ::
 ++  pear-hiss
-  |=  pax/twit-path  ^-  (unit api-call)
+  |=  pax/twit-path  ^-  (unit {(unit iden) api-call})
   ?-    -.pax
       $post  ~                        :: future/unacked
-::       $user
-::     =+  ole=(~(get ja fed) pax)
-::     =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
-::     `[%twit-feed twit-req+[stat-user+[(to-sd p.pax)]~ opt]]
-::   ::
+      $user
+    =+  ole=(~(get ja fed) pax)
+    =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
+    `[`~. [%twit-feed twit-req+[stat-user+[(to-sd p.pax)]~ opt]]]
+  ::
       $home
     =+  ole=(~(get ja fed) pax)
     =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
-    `[%twit-feed twit-req+[stat-home+~ opt]]
+    `[`p.pax [%twit-feed twit-req+[stat-home+~ opt]]]
   ==
 ::
 ++  to-sd                                               ::  parse user name/numb
@@ -274,7 +278,6 @@
 ++  spam                                                ::  send by path
   |=  {a/path b/(list gift)}  ^-  (list move)
   %-  zing  ^-  (list (list move))
-  ~&  spam+[(turn b head) a]
   ~&  (skim (~(tap by sup)) |=({@ @ pax/path} =(pax a)))
   %+  turn  (~(tap by sup))
   |=  {ost/bone @ pax/path}
