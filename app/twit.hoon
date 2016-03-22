@@ -117,14 +117,12 @@
   ~&  peer-again+[pax ran]  
   (pear | `~. pax) ::(user-from-path pax))
 ::
-::  XX parse from stack trace?
-:: ++  sigh-429                          ::  Rate-limit
-::   |=  {pax/path hit/httr}
-::   =.  ran  (~(put by ran) pax 6 now)
-::   =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.hit)) poja ni:jo))
-::   =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
-::   ~&  retrying-in+`@dr`(sub tym now)
-::   :_(+>.$ [ost %wait pax tym]~)
+++  sigh-recoverable-error                              ::  Rate-limit
+  |=  {pax/path $429 $rate-limit lim/(unit @da)}
+  =.  ran  (~(put by ran) pax 6 now)
+  =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
+  ~&  retrying-in+`@dr`(sub tym now)
+  :_(+>.$ [ost %wait pax tym]~)
 ::
 ++  sigh-twit-post-post                                ::  status acknowledged
   |=  {wir/wire rep/stat}  ^+  done
