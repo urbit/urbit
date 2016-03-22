@@ -792,9 +792,8 @@
           =+  url=((hard quri) q.q.cay)
           (give-thou 307 [location+(crip (apex:earn url))]~ ~)
         ?.  ?=($mime p.cay)
-          =+  bek=-:(need (tome p.tee))
-          =+  bik=?+(r.bek bek {$ud $0} bek(r da+now))
-          (exec-live tee bik [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          =+  bek=(norm-beak -:(need (tome p.tee)))
+          (exec-live tee bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
         ~|  q.q.cay
         =+  ((hard {mit/mite rez/octs}) q.q.cay)
         =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
@@ -802,6 +801,7 @@
       ==
     ==
   ::
+  ++  norm-beak  |=(bek/beak ?+(r.bek bek {$ud $0} bek(r da+now)))
   ++  emule
     |=  a/_|?(..emule)  ^+  ..emule
     =+  mul=(mule a)
@@ -834,13 +834,13 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    =+  bek=?+(r.top -.top {$ud $0} -.top(r da+now))
-    (execute tea bek [%cast mar $+cay])
+    (execute tea (norm-beak -.top) [%cast mar $+cay])
   ::
   ++  cast-thou
     |=  {mar/mark cay/cage}
     ?:  ?=($httr mar)  (give-sigh %& cay)
-    (back si+~ mar cay)
+    %^  execute  si+~  (norm-beak -.top)
+    [%alts [%cast mar $+cay] [%cast %recoverable-error $+cay] ~]
   ::
   ++  del-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
