@@ -136,13 +136,17 @@
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool
     --
 |_  {hid/bowl house}
-++  ti
-  =+  [twitter reqs:twit]                               ::  XX new =*
-  =+  me=%hoontap                                       ::  XX  use %khan
-  |%
-  ++  sta    |=(who/knot `partner`[%| %twitter who])
-  ++  post   |=(a/cord [`endpoint`stat-upda+[%status a]~ ~])
-  ++  mine  [`endpoint`stat-home+~ ~]
+++  ti                                                    :: twitter interop
+  |_  _usr=%hoontap                                       ::  XX  use %khan
+  ++  to-telegram
+    |=  a/post:twitter  ^-  telegram
+    :*  our.hid
+        ((bond |.((shaf %twit id.a))) (~(get by twit.sent) id.a))
+        [[[%| %twitter who.a] *envelope %received] `~]
+        now.a
+        (sy /twitter/[who.a] ~)
+        [%lin & txt.a]
+    ==
   --
 ::
 ++  ra                                                  ::  per transaction
@@ -1692,7 +1696,7 @@
       ?-  -.tay
         $|  ~&  tweet-acquire+p.p.tay
             :_  ~
-            ?>  =(me:ti p.p.tay)  :: XX auth
+            ?>  =(usr:ti p.p.tay)  :: XX auth
             :^  %peer  /feed/[p.p.tay]/[man]
               [our.hid %twit]
             /home
@@ -1708,17 +1712,8 @@
     ::
     ++  pa-diff-twit-feed                               ::  timeline response
       |=  {usr/iden res/(list post):twit}  ^+  +>
-      %-  pa-lesson
-      %+  turn  res
-      |=  {id/tid:twit who/scr:twit now/@da txt/@t}
-      ^-  telegram
-      :*  our.hid
-          ((bond |.((shaf %twip id))) (~(get by twit.sent) id))
-          [[(sta:ti usr) *envelope %received] `~]
-          now
-          (sy /twitter/[who] ~)
-          [%lin & txt]
-      ==
+      ?>  ?=(_usr:ti usr)                               :: XX auth
+      (pa-lesson (turn res ~(to-telegram ti usr)))
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
       |=  cof/config
