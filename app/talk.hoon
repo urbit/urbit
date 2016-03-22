@@ -81,13 +81,8 @@
           {$write-comment path ship cord}               ::
           {$twit-do iden command:twitter}               ::
       ==                                                ::
-    ++  api-call                                        ::  REST apis
-      $?  $:  ?($twit-post $twit-feed)                  ::  response mark
-              {$twit-req endpoint:twit quay}            ::  outgoing request
-      ==  ==                                            ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
-          {$hiss wire (unit iden) api-call}             ::
           {$info wire @p @tas nori}                     ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::

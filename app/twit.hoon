@@ -95,7 +95,6 @@
 ::
 ++  poke-twit-do                                        ::  recieve request
   |=  {usr/iden act/command}  ^+  done
-  ~&  twit-do++<
   ?-    -.act
       $post
     =.  out  (~(put by out) p.act %& usr q.act)
@@ -276,7 +275,6 @@
 ++  spam                                                ::  send by path
   |=  {a/path b/(list gift)}  ^-  (list move)
   %-  zing  ^-  (list (list move))
-  ~&  (skim (~(tap by sup)) |=({@ @ pax/path} =(pax a)))
   %+  turn  (~(tap by sup))
   |=  {ost/bone @ pax/path}
   ?.  =(pax a)  ~
