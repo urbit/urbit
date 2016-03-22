@@ -1,23 +1,17 @@
 ::  Display twitter feed
 ::
-::::  /hook/core/twitter-feed/app
+::::  /hoon/feed/twit/gen
   ::
-/+    sh-utils
+/-    twitter
 !:
-::
 ::::  ~fyr
   ::
-|_  [hide ~]
-++  stat  ,[id=@u who=@ta now=@da txt=@t]
-++  rens
 :-  %say
-  |=(stat rose/[": " `~]^~[leaf/"{<now>} @{(trip who)}" leaf/(trip txt)])
-++  peer  ,_`.
-++  poke--args  
-  |=  [ost=bone his=ship who=span ~]
-  %.(+< (add-subs [[our /twit] our /user/[who]] ,_`+>.$))
-::
-++  posh-twit-feed 
-  (args-into-gate . |=(a=(list stat) tang/(turn a rens)))
-:: ++  pour  |*([ost=@ * sih=[@ ^]] :_(+>.$ [ost %give +.sih]~))
---
+|=  $:  {now/@da eny/@uvI bek/beak}
+        {{who/iden $~} typ/?($home $user)}
+    ==
+=+  pax=/(scot %p p.bek)/twit/(scot %da now)/[typ]/[who]
+:-  %tang
+%+  turn   (flop .^((list post:twitter) %gx pax))
+|=  post:twitter  ^-  tank
+rose+[": " `~]^~[leaf+"{<now>} @{(trip who)}" leaf+(trip txt)]
