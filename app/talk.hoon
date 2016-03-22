@@ -1373,10 +1373,10 @@
     (pa-diff-talk-report:par cuz rad)
   ::
   ::
-  ++  ra-sigh-twit-feed                                 ::  timeline response
+  ++  ra-diff-twit-feed                                 ::  timeline response
     |=  {{usr/iden man/knot} res/(list post):twit}  ^+  +>
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet         ::  XX all subscribed
-    (pa-sigh-twit-feed:par usr res)
+    (pa-diff-twit-feed:par usr res)
   ::
   ++  ra-quit                                           ::  subscription quit
     |=  {man/knot cuz/station}
@@ -1666,10 +1666,10 @@
       ^-  (list card)
       ?-  -.tay
         $|  ~&  tweet-abjure+p.p.tay
-            ~  :: XX the %hiss interface doesn't support cancelation
-            :: :_  ~
-            :: :^  %hiss  /feed/[p.p.tay]/[man]  `~.
-            :: ?>(=(me:ti p.p.tay) ~)
+            :_  ~ 
+            :^  %pull  /feed/[p.p.tay]/[man]
+              [our.hid %twit]
+            ~
       ::
         $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
@@ -1692,9 +1692,10 @@
       ?-  -.tay
         $|  ~&  tweet-acquire+p.p.tay
             :_  ~
-            ?>  =(me:ti p.p.tay)
-            :^  %hiss  /feed/[p.p.tay]/[man]  `~.
-            `api-call`[%twit-feed twit-req+mine:ti]
+            ?>  =(me:ti p.p.tay)  :: XX auth
+            :^  %peer  /feed/[p.p.tay]/[man]
+              [our.hid %twit]
+            /home
       ::
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
@@ -1705,14 +1706,14 @@
             ==
       ==
     ::
-    ++  pa-sigh-twit-feed                               ::  timeline response
+    ++  pa-diff-twit-feed                               ::  timeline response
       |=  {usr/iden res/(list post):twit}  ^+  +>
       %-  pa-lesson
       %+  turn  res
       |=  {id/tid:twit who/scr:twit now/@da txt/@t}
       ^-  telegram
       :*  our.hid
-          ((bond |.((shaf %twit id))) (~(get by twit.sent) id))
+          ((bond |.((shaf %twip id))) (~(get by twit.sent) id))
           [[(sta:ti usr) *envelope %received] `~]
           now
           (sy /twitter/[who] ~)
@@ -2267,13 +2268,10 @@
   ?>  ?=({@ $~} way)
   ra-abet:(ra-diff-twit-post:ra (slav %uv i.way) res)
 ::
-++  sigh-twit-feed-feed
+++  diff-twit-feed-feed
   |=  {way/wire res/(list post):twit}  ^-  (quip move +>)
   ?>  ?=({@ @ $~} way)
-  ra-abet:(ra-sigh-twit-feed:ra [i.way i.t.way] res)
-::
-++  sigh-tang
-  |=({way/wire tan/tang} ~&(bad-hiss+way ((slog (flop tan)) `+>)))
+  ra-abet:(ra-diff-twit-feed:ra [i.way i.t.way] res)
 ::
 ++  log-all-to-file
   ^-  (quip move .)
