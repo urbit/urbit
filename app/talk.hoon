@@ -1376,17 +1376,7 @@
   ++  ra-sigh-twit-feed                                 ::  timeline response
     |=  {{usr/iden man/knot} res/(list post):twit}  ^+  +>
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet         ::  XX all subscribed
-    %-  pa-lesson:par
-    %+  turn  res
-    |=  {id/tid:twit who/scr:twit now/@da txt/@t}
-    ^-  telegram
-    :*  our.hid
-        ((bond |.((shaf %twit id))) (~(get by twit.sent) id))
-        [[(sta:ti usr) *envelope %received] `~]
-        now
-        (sy /twitter/[who] ~)
-        [%lin & txt]
-    ==
+    (pa-sigh-twit-feed:par usr res)
   ::
   ++  ra-quit                                           ::  subscription quit
     |=  {man/knot cuz/station}
@@ -1678,7 +1668,7 @@
         $|  ~&  tweet-abjure+p.p.tay
             ~  :: XX the %hiss interface doesn't support cancelation
             :: :_  ~
-            :: :^  %hiss  /mine/[p.p.tay]/[man]  `~.
+            :: :^  %hiss  /feed/[p.p.tay]/[man]  `~.
             :: ?>(=(me:ti p.p.tay) ~)
       ::
         $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
@@ -1713,6 +1703,20 @@
                 [p.p.tay %talk] 
                 /afx/[q.p.tay]/(scot %da old)
             ==
+      ==
+    ::
+    ++  pa-sigh-twit-feed                               ::  timeline response
+      |=  {usr/iden res/(list post):twit}  ^+  +>
+      %-  pa-lesson
+      %+  turn  res
+      |=  {id/tid:twit who/scr:twit now/@da txt/@t}
+      ^-  telegram
+      :*  our.hid
+          ((bond |.((shaf %twit id))) (~(get by twit.sent) id))
+          [[(sta:ti usr) *envelope %received] `~]
+          now
+          (sy /twitter/[who] ~)
+          [%lin & txt]
       ==
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
