@@ -141,17 +141,20 @@ div.logo.inverse:before {
   background-color: #fff;
   transition: max-width .2s ease-in-out;
   position: fixed;
+  height: 100%;
   z-index: 100; }
   .ctrl ul.nav {
     margin-top: 2rem;
-    overflow: hidden; }
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 100%; }
     .ctrl ul.nav li {
       width: 100%;
       overflow: hidden;
       white-space: nowrap;
       margin-bottom: .6rem; }
   .ctrl ul.nav:hover {
-    overflow: visible; }
+    overflow-x: visible; }
   .ctrl a.nav-link {
     letter-spacing: 1px;
     text-decoration: none;
@@ -241,6 +244,9 @@ div.logo.inverse:before {
   transform: rotate(0.25turn);
   opacity: .2;
   margin-left: -.2rem; }
+
+.items {
+  height: 80%; }
 
 @media (min-width: 768px) {
   .ctrl .navbar-toggler {
@@ -1051,7 +1057,8 @@ div.logo.inverse:before {
   margin-top: 2rem;
   min-width: 14rem;
   margin-bottom: 3rem;
-  padding: 0; }
+  padding: 0;
+  float: none; }
 
 .sections .kids > div p {
   font-weight: 500; }
