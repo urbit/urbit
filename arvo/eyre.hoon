@@ -1067,14 +1067,15 @@
       ^-  (each perk httr)
       |^  =+  hit=as-magic-filename
           ?^  hit  [%| u.hit]
-          ?:  is-spur
-            [%& %spur (flop q.pok)]
+          =+  hem=as-aux-request
+          ?^  hem
+            ?.  check-oryx
+              ~|(%bad-oryx ~|([grab-oryx vew.cyz:for-client] !!))
+            [%& u.hem]
           =+  bem=as-beam
           ?^  bem  [%& %beam u.bem]
-          ?.  check-oryx
-            ~|(%bad-oryx ~|([grab-oryx vew.cyz:for-client] !!))
-          =+  hem=as-aux-request
-          ?^  hem  [%& u.hem]
+          ?:  is-spur
+            [%& %spur (flop q.pok)]
           ~|(strange-path+q.pok !!)
       ::
       ++  as-magic-filename
@@ -1094,8 +1095,8 @@
           ==
         ==
       ::
-      ++  is-spur  |(?~(q.pok & ((sane %tas) i.q.pok)))
-      ++  as-beam                     
+      ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
+      ++  as-beam                                       :: /~sipnym/desk/3/...
         ^-  (unit beam)
         ?~  q.pok  ~
         =+  ^-  (unit {@ dez/desk rel/?})              :: /=desk/, /=desk=/
