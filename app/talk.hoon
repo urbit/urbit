@@ -1282,11 +1282,16 @@
     (ra-house n.gel)
   ::
   ++  ra-init                                           ::  initialize talk
+    %+  roll
+      ^-  (list {posture knot cord})
+      :~  [%brown (main our.hid) 'default home']
+          [%green ~.public 'visible activity']
+      ==
+    |:  [[typ=*posture man=*knot des=*cord] ..ra-init]  ^+  ..ra-init
     %+  ra-apply  our.hid
-    :+  %design  (main our.hid)
+    :+  %design  man
     :-  ~  :-  ~
-    :-  'default home'
-    [%brown ~] 
+    [des [typ ~]]
   ::
   ++  ra-apply                                          ::  apply command
     |=  {her/ship cod/command}
