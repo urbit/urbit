@@ -77,6 +77,11 @@ module.exports = {
       type: "toggleNav"
     });
   },
+  closeNav: function() {
+    return TreeDispatcher.handleViewAction({
+      type: "closeNav"
+    });
+  },
   clearNav: function() {
     return TreeDispatcher.handleViewAction({
       type: "clearNav"
@@ -799,7 +804,7 @@ module.exports = query({
 }, recl({
   displayName: "Kids",
   render: function() {
-    var _k, d, elem, k, keyed, keys, ref1, ref2, ref3, ref4, sorted, str, v;
+    var _k, d, elem, k, keyed, keys, kidClas, kidsClas, ref1, ref2, ref3, ref4, sorted, str, v;
     sorted = true;
     keyed = {};
     ref1 = this.props.kids;
@@ -837,11 +842,14 @@ module.exports = query({
     if (this.props.sortBy === 'date') {
       keys.reverse();
     }
-    k = clas({
+    kidsClas = clas({
       kids: true
     }, this.props.className);
+    kidClas = clas({
+      "col-md-4": this.props.grid === 'true'
+    });
     return div({
-      className: k,
+      className: kidsClas,
       key: "kids"
     }, (function() {
       var i, len, ref5, results;
@@ -853,7 +861,7 @@ module.exports = query({
           div({
             key: keyed[k],
             id: keyed[k],
-            className: "col-md-4"
+            className: kidClas
           }, reactify(elem.body)), hr({})
         ]);
       }
@@ -1216,6 +1224,9 @@ Nav = React.createFactory(query({
   toggleNav: function() {
     return TreeActions.toggleNav();
   },
+  closeNav: function() {
+    return TreeActions.closeNav();
+  },
   render: function() {
     var attr, dpad, i, iconClass, itemsClass, len, linksClas, navClas, ref1, ref2, ref3, sibs, sub, subprops, title, toggleClas, v;
     attr = {
@@ -1236,6 +1247,7 @@ Nav = React.createFactory(query({
     });
     navClas = {
       navbar: this.props.meta.navmode === 'navbar',
+      'col-md-2': this.props.meta.navmode !== 'navbar',
       ctrl: true,
       open: this.state.open === true
     };
@@ -1258,7 +1270,7 @@ Nav = React.createFactory(query({
     title = this.state.title ? this.state.title : "";
     dpad = this.state.dpad !== false && ((ref2 = this.props.meta) != null ? ref2.navdpad : void 0) !== "false" ? Dpad(this.props, "") : "";
     sibs = this.state.sibs !== false && ((ref3 = this.props.meta) != null ? ref3.navsibs : void 0) !== "false" ? Sibs(_.merge(_.clone(this.props), {
-      toggleNav: this.toggleNav
+      closeNav: this.closeNav
     }), "") : "";
     itemsClass = clas({
       items: true,
@@ -1354,6 +1366,7 @@ module.exports = query({
   componentDidMount: function() {
     var _this;
     this.setTitle();
+    window.onpopstate = this.pullPath;
     TreeStore.addChangeListener(this._onChangeStore);
     _this = this;
     $('body').on('click', 'a', function(e) {
@@ -1390,6 +1403,12 @@ module.exports = query({
     }
     return document.title = title + " - " + this.props.path;
   },
+  pullPath: function() {
+    var l, path;
+    l = document.location;
+    path = l.pathname + l.search + l.hash;
+    return this.setPath(path, false);
+  },
   setPath: function(path, hist) {
     var next;
     if (hist !== false) {
@@ -1408,15 +1427,6 @@ module.exports = query({
   goTo: function(path) {
     this.reset();
     return this.setPath(path);
-  },
-  checkURL: function() {
-    if (this.state.url !== window.location.pathname) {
-      this.reset();
-      this.setPath(window.location.pathname, false);
-      return this.setState({
-        url: window.location.pathname
-      });
-    }
   },
   render: function() {
     var kids, kidsPath, navClas;
@@ -2375,6 +2385,9 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
   },
   toggleNav: function() {
     return _nav.open = !_nav.open;
+  },
+  closeNav: function() {
+    return _nav.open = false;
   },
   clearNav: function() {
     return _nav = {

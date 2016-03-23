@@ -6024,14 +6024,12 @@ h1,
 h2,
 h3 {
   padding-top: 2rem;
-  line-height: 4rem;
 }
 
 h4,
 h5,
 h6 {
   padding-top: 1rem;
-  line-height: 2rem;
 }
 
 h3, h4 {
@@ -6048,7 +6046,7 @@ h3 code,
 h4 code,
 h5 code,
 h6 code {
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .even,
@@ -6095,8 +6093,11 @@ h3.child {
 
 code,
 pre {
-  padding-left: .3rem;
   background-color: #f7f7f7;
+}
+
+p code {
+  padding: .2rem .1rem;
 }
 
 pre code {
