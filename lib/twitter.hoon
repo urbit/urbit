@@ -109,10 +109,6 @@
     |=  a/$@(^scr ^lsc)  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
-  ++  lst
-    |=  a/$@(@t ^lst)  ^-  @t
-    ?@(a `@t`a (join ',' a))
-  ::
   ++  lid
     |=  a/$@(^tid (list ^tid))  ^-  @t
     ?~  a  ~|(%nil-id !!)
@@ -157,8 +153,7 @@
     :-  (gsub '-' '_' -.p)
     ?+  -.p  p.p  :: usually plain text
       ?($source-id $target-id)       (tid:print p.p)
-      ?($follow $id $name $user-id)  (lid:print p.p)
-      $track                         (lst:print p.p)
+      ?($id $name $user-id)  (lid:print p.p)
       $screen-name                   (lsc:print p.p)
     ==
   --

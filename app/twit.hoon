@@ -99,7 +99,7 @@
       $post
     =.  out  (~(put by out) p.act %& usr q.act)
     %+  wait-new  /peer/home/[usr]
-    =+  req=[%twit-req `endpoint`stat-upda+[%status q.act]~ ~]
+    =+  req=[%twit-req `endpoint`update+[%status q.act]~ ~]
     [ost %hiss post+(dray ~[%uv] p.act) `usr %twit-post req]~
   ==
 ::
@@ -247,12 +247,12 @@
       $user
     =+  ole=(~(get ja fed) pax)
     =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
-    `[`~. [%twit-feed twit-req+[stat-user+[(to-sd p.pax)]~ opt]]]
+    `[`~. [%twit-feed twit-req+[posts-by+[(to-sd p.pax)]~ opt]]]
   ::
       $home
     =+  ole=(~(get ja fed) pax)
     =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
-    `[`p.pax [%twit-feed twit-req+[stat-home+~ opt]]]
+    `[`p.pax [%twit-feed twit-req+[timeline+~ opt]]]
   ==
 ::
 ++  to-sd                                               ::  parse user name/numb
