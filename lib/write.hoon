@@ -3,6 +3,7 @@
 ::::  /hoon/write/lib
   ::
 /?    310
+/-    plan-diff
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
@@ -36,6 +37,13 @@
 ++  poke-tree
   |=  {sup/spur mim/mime}  ^+  abet     ::  XX determine extension, beak
   (poke--data [`%md (flop sup)] %mime mim)
+::
+++  poke-plan
+  |=  {sev/knot usr/iden}
+  =-  abet:(emit %info write+~ our `toro`[q.byk %& - ~])
+  ^-  {path miso}
+  :^  /web/plan  %dif  %plan-diff
+  !>(`plan-diff`[~ [[sev usr] `~]])
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
