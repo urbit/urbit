@@ -1,0 +1,1 @@
+{del/(map knot $~) put/(map knot iden)}
