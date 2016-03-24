@@ -40,7 +40,10 @@
     --
 ::
 |_  {hid/bowl cnt/@ hook/(map @t {id/@t listeners/(set bone)})}
-++  prep  _`.
+++  prep
+  |=  a/(unit)  ^-  (quip move +>)
+  ?^  a  [~ +>]
+  (peer-scry %x %read /user)
 ::
 ::  This core manages everything related to a particular request.
 ::
@@ -208,6 +211,16 @@
     [%| %request-rejected code+(jone p.res) msg+u.jon ~]
   [%& u.jon]
 ::
+::  Anywhere recieved data should go besides the initiating request
+::
+++  side-effects
+  |=  {pax/path rep/(each json ^)}  ^-  (list move)
+  ?.  ?=($& -.rep)  ~                 ::  XX logging maybe?
+  ?~  pax  ~
+  ?+  -.pax  ~
+    $user  ~&([%gh-usr p=%github q=p.rep] ~)
+  ==
+::
 ::  HTTP response.  We make sure the response is good, then
 ::  produce the result (as JSON) to whoever sent the request.
 ::
@@ -221,7 +234,7 @@
       [i.t.way (need (puck i.t.t.way)) t.t.t.way]
   :_  +>.$
   =+  rep=(parse-json res)
-  :_  +>.$  :_  ~
+  :_  (side-effects pax rep)
   :+  ost.hid  %diff
   ?+    ren  null+~
       $x
