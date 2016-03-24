@@ -92,7 +92,7 @@
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
         (fasp created-at+da)
-        text+so
+        text+(cu crip (su (star escp:poxa)))  :: parse html escapes
     ==
   ++  usel 
     =+  jo
