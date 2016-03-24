@@ -65,6 +65,7 @@
       {$lin p/? q/@t}                                   ::  no/@ text line
       {$mor p/(list speech)}                            ::  multiplex
       {$app p/@tas q/@t}                                ::  app message
+      {$api service/@tas id/@t summary/@t body/@t url/purl} :: api message
   ==                                                    ::
 ++  serial     @uvH                                     ::  unique identity
 ++  partner    (each station passport)                  ::  interlocutor
