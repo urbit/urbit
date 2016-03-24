@@ -44,5 +44,20 @@
     |-  ^+  all
     ?~  del  all
     $(del t.del, all (~(del by all) p.i.del))
+  ::
+  ++  can-join
+    |=  {ali/plan-diff bob/plan-diff}  ^-  ?
+    ?&  =(~ (~(int by `(map knot *)`del.ali) put.bob))  :: no del-put
+        =(~ (~(int by `(map knot *)`put.ali) del.bob))  :: conflicts
+        .=  (~(int by put.ali) put.bob)                 :: and all put
+        (~(int by put.bob) put.ali)                     :: values match
+    ==
+  ::
+  ++  join
+    |=  {ali/plan-diff bob/plan-diff}
+    ^-  (unit plan-diff)
+    ?.  (can-join ali bob)
+      ~
+    (some [(~(uni by del.ali) del.bob) (~(uni by put.ali) put.bob)])
   --
 --
