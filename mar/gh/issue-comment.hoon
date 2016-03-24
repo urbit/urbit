@@ -9,9 +9,13 @@
     :_  ~
     :*  %api  %github
         login.sender.issue-comment
-        (end 3 64 body.comment.issue-comment)
-        body.comment.issue-comment
-        (need (epur url.comment.issue-comment))
+        =-  [- - (need (epur url.comment.issue-comment))]
+        ;:  (cury cat 3)
+            'on issue #'
+            `@t`(rsh 3 2 (scot %ui number.issue.issue-comment))
+            ': '
+            body.comment.issue-comment
+        ==
     ==
   --
 ++  grab

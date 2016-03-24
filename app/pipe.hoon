@@ -13,28 +13,38 @@
   |=  arg/*
   ^-  {(list move) _+>.$}
   ?:  ?=($list arg)
-    %-  %-  slog
-        %+  turn  (~(tap in connections))
-        |=  {app/term source/path station/knot}
-        leaf+"{(trip app)}{<`path`source>} ---> {(trip station)}"
-    [~ +>.$]
+    (poke-pipe-list ~)
   =+  ((soft {$cancel app/term source/path station/knot}) arg)
   ?^  -
-    ?.  (~(has in connections) [app.u source.u station.u])
-      %-  %-  slog  :~
-            leaf+"no connection:"
-            leaf+"{(trip app.u)}{<`path`source.u>} ---> {(trip station.u)}"
-          ==
-      [~ +>.$]
-    %-  %-  slog  :~
-          leaf+"canceling:"
-          leaf+"{(trip app.u)}{<`path`source.u>} ---> {(trip station.u)}"
-        ==
-    [~ +>.$(connections (~(del in connections) [app.u source.u station.u]))]
+    (poke-pipe-cancel app.u source.u station.u)
   =+  ((hard {app/term source/path station/knot}) arg)
-  (poke-pipe-arg app source station)
+  (poke-pipe-connect app source station)
 ::
-++  poke-pipe-arg
+++  poke-pipe-list
+  |=  $~
+  ^-  {(list move) _+>.$}
+  %-  %-  slog
+      %+  turn  (~(tap in connections))
+      |=  {app/term source/path station/knot}
+      leaf+"{(trip app)}{<`path`source>} ---> {(trip station)}"
+  [~ +>.$]
+::
+++  poke-pipe-cancel
+  |=  {app/term source/path station/knot}
+  ^-  {(list move) _+>.$}
+  ?.  (~(has in connections) [app source station])
+    %-  %-  slog  :~
+          leaf+"no connection:"
+          leaf+"{(trip app)}{<`path`source>} ---> {(trip station)}"
+        ==
+    [~ +>.$]
+  %-  %-  slog  :~
+        leaf+"canceling:"
+        leaf+"{(trip app)}{<`path`source>} ---> {(trip station)}"
+      ==
+  [~ +>.$(connections (~(del in connections) [app source station]))]
+::
+++  poke-pipe-connect
   |=  {app/term source/path station/knot}
   ^-  {(list move) _+>.$}
   :_  +>.$(connections (~(put in connections) [app source station]))

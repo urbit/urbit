@@ -14,7 +14,7 @@
             $assigned
           ;:  (cury cat 3)
               'assigned issue #'
-              (scot %ud number.issue.issues)
+              (rsh 3 2 (scot %ui number.issue.issues))
               ' to '
               login.assignee.action.issues
               ' ('
@@ -25,7 +25,7 @@
             $unassigned
           ;:  (cury cat 3)
               'unassigned issue #'
-              (scot %ud number.issue.issues)
+              (rsh 3 2 (scot %ui number.issue.issues))
               ' from '
               login.assignee.action.issues
               ' ('
@@ -36,7 +36,7 @@
             $labeled
           ;:  (cury cat 3)
               'labeled issue #'
-              (scot %ud number.issue.issues)
+              (rsh 3 2 (scot %ui number.issue.issues))
               ' as '
               name.label.action.issues
               ' ('
@@ -47,7 +47,7 @@
             $unlabeled
           ;:  (cury cat 3)
               'unlabeled issue #'
-              (scot %ud number.issue.issues)
+              (rsh 3 2 (scot %ui number.issue.issues))
               ' as '
               name.label.action.issues
               ' ('
@@ -58,7 +58,7 @@
             $opened
           ;:  (cury cat 3)
               'opened issue #'
-              (scot %ud number.issue.issues)
+              (rsh 3 2 (scot %ui number.issue.issues))
               ': '
               title.issue.issues
           ==
@@ -66,7 +66,7 @@
             $closed
           ;:  (cury cat 3)
               'closed issue #'
-              (scot %ud number.issue.issues)
+              (rsh 3 2 (scot %ui number.issue.issues))
               ': '
               title.issue.issues
           ==
@@ -74,7 +74,7 @@
             $reopened
           ;:  (cury cat 3)
               'reopened issue #'
-              (scot %ud number.issue.issues)
+              (rsh 3 2 (scot %ui number.issue.issues))
               ': '
               title.issue.issues
           ==
