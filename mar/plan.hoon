@@ -6,28 +6,37 @@
 !:
 ::::  ~fyr
   ::
-|_  all/(map knot plan-data)
+|_  all/{{who/cord loc/govt} usr/(map knot plan-data)}
 ::
 ++  grow                                                ::  convert to
+  =+  all
   |%
   ++  txt
-    %+  turn  (sort (~(tap by all)) aor)
+    ^-  wain
+    :+  ?~(who 'Urbit User' who)
+      (cat 3 'Location ' (moon ?~(loc /unknown loc)))
+    %+  turn  (sort (~(tap by usr)) aor)
     |=  {a/knot b/iden c/(unit purf)}  ^-  cord
-    %-  crip
-    "{(trip a)}: {(trip b)}".
-      "{?~(c "" ", {(earf u.c)}")}"
+    %+  rap  3
+    :^  a  ': '  b
+    ?~(c ~ [', ' (earf u.c)])
   --
 ++  grab  |%                                            ::  convert from
-          ++  noun  (map knot plan-data)                ::  clam from %noun
+          ++  noun  {{cord govt} (map knot plan-data)}  ::  clam from %noun
           ++  txt
-            =;  fel
-              |=  a/wain  ^+  all
-              (malt (turn a |=(b/cord (rash b fel))))
-            ;~  plug
-              urs:ab
-              ;~(pfix col ace urs:ab)
-              (punt ;~(pfix com ace aurf:urlp))
-            ==
+            |^  |=  a/wain  ^+  all
+                ?>  ?=({@t @t *} a)
+                :-  [i.a (rash i.t.a loca)]
+                (malt (turn t.t.a |=(b/cord (rash b acct))))
+            ::
+            ++  loca  ;~(pfix (jest 'Location ') (more fas urs:ab))
+            ++  acct
+              ;~  plug
+                urs:ab
+                ;~(pfix col ace urs:ab)
+                (punt ;~(pfix com ace aurf:urlp))
+              ==
+            --
           ++  mime  |=({* a/octs} (txt (lore q.a)))     ::  XX mark translation
           --
 ++  grad
@@ -36,26 +45,27 @@
   ++  diff
     =|  out/plan-diff
     |=  neu/(map knot plan-data)  ^+  out               :: XXX map functions
-    :-  =<  (malt `(list {knot $~})`(murn (~(tap by all)) .))
+    :-  =<  (malt `(list {knot $~})`(murn (~(tap by usr.all)) .))
         |=  {a/knot *}  ^-  (unit {knot $~})
         ?:((~(has by neu) a) ~ (some [a ~]))
     =<  (malt (murn (~(tap by neu)) .))
     |=  {a/knot b/plan-data}  ^-  (unit {knot plan-data})
-    ?:  =([~ b] (~(get by all) a))
+    ?:  =([~ b] (~(get by usr.all) a))
       ~
     (some [a b])
   ::
   ++  pact
-    |=  dif/plan-diff  ^+  all                          :: XXX map functions
+    |=  dif/plan-diff  ^+  usr.all                          :: XXX map functions
     =;  neu  (~(uni by neu) put.dif)
     =+  del=(~(tap by del.dif))
-    |-  ^+  all
-    ?~  del  all
-    $(del t.del, all (~(del by all) p.i.del))
+    |-  ^+  usr.all
+    ?~  del  usr.all
+    $(del t.del, usr.all (~(del by usr.all) p.i.del))
   ::
   ++  can-join
     |=  {ali/plan-diff bob/plan-diff}  ^-  ?
-    ?&  =(~ (~(int by `(map knot *)`del.ali) put.bob))  :: no del-put
+    ?&  ::|(!?=({{^ *} {^ *}} +<) =(u.inf.ali u.inf.bob)) :: compatible info
+        =(~ (~(int by `(map knot *)`del.ali) put.bob))  :: no del-put
         =(~ (~(int by `(map knot *)`put.ali) del.bob))  :: conflicts
         .=  (~(int by put.ali) put.bob)                 :: and all put
         (~(int by put.bob) put.ali)                     :: values match
