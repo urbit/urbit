@@ -7783,7 +7783,7 @@
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
-      =+  yed=(~(tap in p.sut))
+      =+  yed=(sort (~(tap in p.sut)) aor)
       =-  [p [%pick q]]
       |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/(list wine)}
       ?~  yed
