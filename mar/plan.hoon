@@ -2,24 +2,32 @@
 ::::  /hoon/plan/mar
   ::
 /?    310
-/-    plan-diff
+/-    plan-data, plan-diff
 !:
 ::::  ~fyr
   ::
-|_  all/(map knot iden)
+|_  all/(map knot plan-data)
 ::
 ++  grow                                                ::  convert to
   |%
   ++  txt
     %+  turn  (sort (~(tap by all)) aor)
-    |=({a/knot b/iden} (crip "{(trip a)}: {(trip b)}"))
+    |=  {a/knot b/iden c/(unit purf)}  ^-  cord
+    %-  crip
+    "{(trip a)}: {(trip b)}".
+      "{?~(c "" ", {(earf u.c)}")}"
   --
 ++  grab  |%                                            ::  convert from
-          ++  noun  (map knot iden)                     ::  clam from %noun
+          ++  noun  (map knot plan-data)                ::  clam from %noun
           ++  txt
-            |=  a/wain
-            %-  ~(gas by all)
-            (turn a |=(b/cord (rash b ;~((glue (jest ': ')) urs:ab urs:ab))))
+            =;  fel
+              |=  a/wain  ^+  all
+              (malt (turn a |=(b/cord (rash b fel))))
+            ;~  plug
+              urs:ab
+              ;~(pfix col ace urs:ab)
+              (punt ;~(pfix com ace aurf:urlp))
+            ==
           ++  mime  |=({* a/octs} (txt (lore q.a)))     ::  XX mark translation
           --
 ++  grad
@@ -27,12 +35,12 @@
   ++  form  %plan-diff
   ++  diff
     =|  out/plan-diff
-    |=  neu/(map knot iden)  ^+  out                    :: XXX map functions
+    |=  neu/(map knot plan-data)  ^+  out               :: XXX map functions
     :-  =<  (malt `(list {knot $~})`(murn (~(tap by all)) .))
-        |=  {a/knot @}  ^-  (unit {knot $~})
+        |=  {a/knot *}  ^-  (unit {knot $~})
         ?:((~(has by neu) a) ~ (some [a ~]))
     =<  (malt (murn (~(tap by neu)) .))
-    |=  {a/knot b/iden}  ^-  (unit {knot iden})
+    |=  {a/knot b/plan-data}  ^-  (unit {knot plan-data})
     ?:  =([~ b] (~(get by all) a))
       ~
     (some [a b])
