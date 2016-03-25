@@ -20,7 +20,7 @@
             |=  a/wain
             %-  ~(gas by all)
             (turn a |=(b/cord (rash b ;~((glue (jest ': ')) urs:ab urs:ab))))
-          :: ++  elem  ,~
+          ++  mime  |=({* a/octs} (txt (lore q.a)))     ::  XX mark translation
           --
 ++  grad
   |%  

@@ -39,11 +39,18 @@
   (poke--data [`%md (flop sup)] %mime mim)
 ::
 ++  poke-plan
-  |=  {sev/knot usr/iden}
-  =-  abet:(emit %info write+~ our `toro`[q.byk %& - ~])
-  ^-  {path miso}
-  :^  /web/plan  %dif  %plan-diff
-  !>(`plan-diff`[~ [[sev usr] `~]])
+  |=  {sev/knot usr/iden}  ^+  abet
+  =;  sob/soba
+    ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
+  =+  pax=`path`/web/plan
+  =+  paf=(tope beak-now (flop pax))
+  =+  new=`(map knot iden)`[[sev usr] ~ ~]
+  ?~  [fil:.^(arch %cy paf)]
+    [pax %ins plan+!>(new)]~
+  =+  ole=.^((map knot iden) %cx paf)
+  ?:  =([~ usr] (~(get by ole) sev))
+    ~
+  [pax %dif plan-diff+!>(`plan-diff`[~ new])]~
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
