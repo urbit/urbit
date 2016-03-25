@@ -6,16 +6,16 @@
 !:
 ::::  ~fyr
   ::
-|_  all/{{who/cord loc/govt} usr/(map knot plan-data)}
+|_  all/{{who/cord loc/govt} acc/(map knot plan-data)}
 ::
 ++  grow                                                ::  convert to
   =+  all
   |%
   ++  txt
     ^-  wain
-    :+  ?~(who 'Urbit User' who)
+    :+  (cat 3 'User ' ?~(who 'of Urbit' who))
       (cat 3 'Location ' (moon ?~(loc /unknown loc)))
-    %+  turn  (sort (~(tap by usr)) aor)
+    %+  turn  (sort (~(tap by acc)) aor)
     |=  {a/knot b/iden c/(unit purf)}  ^-  cord
     %+  rap  3
     :^  a  ': '  b
@@ -26,11 +26,12 @@
           ++  txt
             |^  |=  a/wain  ^+  all
                 ?>  ?=({@t @t *} a)
-                :-  [i.a (rash i.t.a loca)]
-                (malt (turn t.t.a |=(b/cord (rash b acct))))
+                :-  [(rash i.a user) (rash i.t.a location)]
+                (malt (turn t.t.a |=(b/cord (rash b account))))
             ::
-            ++  loca  ;~(pfix (jest 'Location ') (more fas urs:ab))
-            ++  acct
+            ++  user  ;~(pfix (jest 'User ') (cook crip (star prn)))
+            ++  location  ;~(pfix (jest 'Location ') (more fas urs:ab))
+            ++  account
               ;~  plug
                 urs:ab
                 ;~(pfix col ace urs:ab)
@@ -45,22 +46,22 @@
   ++  diff
     =|  out/plan-diff
     |=  neu/(map knot plan-data)  ^+  out               :: XXX map functions
-    :-  =<  (malt `(list {knot $~})`(murn (~(tap by usr.all)) .))
+    :-  =<  (malt `(list {knot $~})`(murn (~(tap by acc.all)) .))
         |=  {a/knot *}  ^-  (unit {knot $~})
         ?:((~(has by neu) a) ~ (some [a ~]))
     =<  (malt (murn (~(tap by neu)) .))
     |=  {a/knot b/plan-data}  ^-  (unit {knot plan-data})
-    ?:  =([~ b] (~(get by usr.all) a))
+    ?:  =([~ b] (~(get by acc.all) a))
       ~
     (some [a b])
   ::
   ++  pact
-    |=  dif/plan-diff  ^+  usr.all                          :: XXX map functions
+    |=  dif/plan-diff  ^+  acc.all                          :: XXX map functions
     =;  neu  (~(uni by neu) put.dif)
     =+  del=(~(tap by del.dif))
-    |-  ^+  usr.all
-    ?~  del  usr.all
-    $(del t.del, usr.all (~(del by usr.all) p.i.del))
+    |-  ^+  acc.all
+    ?~  del  acc.all
+    $(del t.del, acc.all (~(del by acc.all) p.i.del))
   ::
   ++  can-join
     |=  {ali/plan-diff bob/plan-diff}  ^-  ?
