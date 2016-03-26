@@ -7,14 +7,23 @@
   ++  talk-speeches
     ^-  (list speech:talk)
     :_  ~
-    :*  %api  %github
-        login.sender.issue-comment
-        =-  [- - (need (epur url.comment.issue-comment))]
+    =+  ^=  txt
         ;:  (cury cat 3)
             'on issue #'
             `@t`(rsh 3 2 (scot %ui number.issue.issue-comment))
             ': '
             body.comment.issue-comment
+        ==
+    :*  %api  %github
+        login.sender.issue-comment
+        (need (epur url.sender.issue-comment))
+        txt
+        txt
+        (need (epur url.comment.issue-comment))
+        %-  jobe  :~
+          repository+s+name.repository.issue-comment
+          number+(jone number.issue.issue-comment)
+          title+s+title.issue.issue-comment
         ==
     ==
   --

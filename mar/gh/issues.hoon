@@ -7,9 +7,7 @@
   ++  talk-speeches
     ^-  (list speech:talk)
     :_  ~
-    :*  %api  %github
-        login.sender.issues
-        =-  [- - (need (epur url.issue.issues))]
+    =+  ^=  txt
         ?-    -.action.issues
             $assigned
           ;:  (cury cat 3)
@@ -78,6 +76,41 @@
               ': '
               title.issue.issues
           ==
+        ==
+    :*  %api  %github
+        login.sender.issues
+        (need (epur url.sender.issues))
+        txt  txt
+        (need (epur url.issue.issues))
+        %-  jobe
+        %+  welp
+          :~  repository+s+name.repository.issues
+              number+(jone number.issue.issues)
+              title+s+title.issue.issues
+              action+s+-.action.issues
+          ==
+        ?-    -.action.issues
+            $assigned
+          :~  assignee+s+login.assignee.action.issues
+              assignee-url+s+url.assignee.action.issues
+          ==
+        ::
+            $unassigned
+          :~  assignee+s+login.assignee.action.issues
+              assignee-url+s+url.assignee.action.issues
+          ==
+        ::
+            $labeled
+          :~  label+s+name.label.action.issues
+          ==
+        ::
+            $unlabeled
+          :~  label+s+name.label.action.issues
+          ==
+        ::
+            $opened    ~
+            $closed    ~
+            $reopened  ~
         ==
     ==
   --
