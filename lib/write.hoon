@@ -3,7 +3,7 @@
 ::::  /hoon/write/lib
   ::
 /?    310
-/-    plan-diff
+/-    plan-diff, plan-acct
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
@@ -38,19 +38,19 @@
   |=  {sup/spur mim/mime}  ^+  abet     ::  XX determine extension, beak
   (poke--data [`%md (flop sup)] %mime mim)
 ::
-++  poke-plan
-  |=  {sev/knot usr/iden}  ^+  abet
+++  poke-plan-account
+  |=  {sev/knot usr/plan-acct}  ^+  abet
   =;  sob/soba
     ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(tope beak-now (flop pax))
-  =+  new=`(map knot iden)`[[sev usr] ~ ~]
+  =+  new=`(map knot plan-acct)`[[sev usr] ~ ~]
   ?~  [fil:.^(arch %cy paf)]
-    [pax %ins plan+!>(new)]~
-  =+  ole=.^((map knot iden) %cx paf)
-  ?:  =([~ usr] (~(get by ole) sev))
+    [pax %ins plan+!>([['' /] new])]~
+  =+  ole=.^({^ acc/(map knot plan-acct)} %cx paf)
+  ?:  =([~ usr] (~(get by acc.ole) sev))
     ~
-  [pax %dif plan-diff+!>(`plan-diff`[~ new])]~
+  [pax %dif plan-diff+!>(`plan-diff`[~ ~ new])]~
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet

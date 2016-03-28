@@ -2,11 +2,11 @@
 ::::  /hoon/plan/mar
   ::
 /?    310
-/-    plan-data, plan-diff
+/-    plan-acct, plan-diff
 !:
 ::::  ~fyr
   ::
-|_  all/{{who/cord loc/govt} acc/(map knot plan-data)}
+|_  all/{{who/@txname loc/govt} acc/(map knot plan-acct)}
 ::
 ++  grow                                                ::  convert to
   =+  all
@@ -22,7 +22,7 @@
     ?~(c ~ [', ' (earf u.c)])
   --
 ++  grab  |%                                            ::  convert from
-          ++  noun  {{cord govt} (map knot plan-data)}  ::  clam from %noun
+          ++  noun  {{cord govt} (map knot plan-acct)}  ::  clam from %noun
           ++  txt
             |^  |=  a/wain  ^+  all
                 ?>  ?=({@t @t *} a)
@@ -30,11 +30,12 @@
                 (malt (turn t.t.a |=(b/cord (rash b account))))
             ::
             ++  user  ;~(pfix (jest 'User ') (cook crip (star prn)))
-            ++  location  ;~(pfix (jest 'Location ') (more fas urs:ab))
+            ++  knot  (sear (flit |=(a/^knot !=('' a))) urs:ab)
+            ++  location  ;~(pfix (jest 'Location ') (more fas knot))
             ++  account
               ;~  plug
-                urs:ab
-                ;~(pfix col ace urs:ab)
+                knot
+                ;~(pfix col ace knot)
                 (punt ;~(pfix com ace aurf:urlp))
               ==
             --
@@ -44,19 +45,20 @@
   |%  
   ++  form  %plan-diff
   ++  diff
-    =|  out/plan-diff
-    |=  neu/(map knot plan-data)  ^+  out               :: XXX map functions
-    :-  =<  (malt `(list {knot $~})`(murn (~(tap by acc.all)) .))
-        |=  {a/knot *}  ^-  (unit {knot $~})
-        ?:((~(has by neu) a) ~ (some [a ~]))
-    =<  (malt (murn (~(tap by neu)) .))
-    |=  {a/knot b/plan-data}  ^-  (unit {knot plan-data})
+    |=  neu/_all  ^-  plan-diff                        :: XXX map functions
+    :+  ?:(=(-.all -.neu) ~ (some -.neu))
+      =<  (malt `(list {knot $~})`(murn (~(tap by acc.all)) .))
+      |=  {a/knot *}  ^-  (unit {knot $~})
+      ?:((~(has by acc.neu) a) ~ (some [a ~]))
+    =<  (malt (murn (~(tap by acc.neu)) .))
+    |=  {a/knot b/plan-acct}  ^-  (unit {knot plan-acct})
     ?:  =([~ b] (~(get by acc.all) a))
       ~
     (some [a b])
   ::
   ++  pact
-    |=  dif/plan-diff  ^+  acc.all                          :: XXX map functions
+    |=  dif/plan-diff  ^+  all                          :: XXX map functions
+    :-  (fall inf.dif -.all)
     =;  neu  (~(uni by neu) put.dif)
     =+  del=(~(tap by del.dif))
     |-  ^+  acc.all
@@ -65,7 +67,7 @@
   ::
   ++  can-join
     |=  {ali/plan-diff bob/plan-diff}  ^-  ?
-    ?&  ::|(!?=({{^ *} {^ *}} +<) =(u.inf.ali u.inf.bob)) :: compatible info
+    ?&  !&(?=({{^ *} {^ *}} +<) !=(u.inf.ali u.inf.bob)) :: compatible info
         =(~ (~(int by `(map knot *)`del.ali) put.bob))  :: no del-put
         =(~ (~(int by `(map knot *)`put.ali) del.bob))  :: conflicts
         .=  (~(int by put.ali) put.bob)                 :: and all put
@@ -77,6 +79,9 @@
     ^-  (unit plan-diff)
     ?.  (can-join ali bob)
       ~
-    (some [(~(uni by del.ali) del.bob) (~(uni by put.ali) put.bob)])
+    %^    some
+        (mate inf.ali inf.bob)
+      (~(uni by del.ali) del.bob)
+    (~(uni by put.ali) put.bob)
   --
 --

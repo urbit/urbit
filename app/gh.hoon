@@ -32,7 +32,7 @@
       $%  {$diff sub-result}
           {$them wire (unit hiss)}
           {$hiss wire {$~ $~} $httr {$hiss hiss}}
-          {$poke wire {ship $hood} $write-plan {knot iden}}
+          {$poke wire {ship $hood} $write-plan-account {knot iden}}
       ==
     ++  hook-response
       $%  {$gh-issues issues:gh}
@@ -221,7 +221,7 @@
   ?+    -.pax  ~
       $user
     =+  usr=(need ((ot login+so ~):jo p.rep))
-    [ost.hid %poke user+~ [our.hid %hood] %write-plan ~.github usr]~
+    [ost.hid %poke user+~ [our.hid %hood] %write-plan-account ~.github usr]~
   ==
 ::
 ::  HTTP response.  We make sure the response is good, then

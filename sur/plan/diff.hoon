@@ -1,2 +1,2 @@
-/-    plan-data
-{del/(map knot $~) put/(map knot plan-data)}
+/-    plan-acct
+{inf/(unit {@txname govt}) del/(map knot $~) put/(map knot plan-acct)}
