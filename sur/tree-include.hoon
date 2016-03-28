@@ -10,4 +10,5 @@ $:  mime/mime
     meta/json
     sect/json
     comt/json
+    plan/json
 ==

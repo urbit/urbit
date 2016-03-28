@@ -21,6 +21,7 @@
       {$spur $t}
   ::
       {$comt $j}
+      {$plan $j}
       {$head $r}
       {$sect $j}
       {$snip $r}
@@ -53,6 +54,7 @@
     $name  (from-type +.a ?^(s.bem i.s.bem q.bem))
     $path  (from-type +.a (crip (spud (flop s.bem))))
     $spur  (from-type +.a (crip (spud s.bem)))
+    $plan  (from-type +.a plan.dat)
     $comt  (from-type +.a comt.dat)
     $head  (from-type +.a head.dat)
     $snip  (from-type +.a snip.dat)

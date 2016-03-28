@@ -16,10 +16,20 @@
     :+  (cat 3 'User ' ?~(who 'of Urbit' who))
       (cat 3 'Location ' (moon ?~(loc /unknown loc)))
     %+  turn  (sort (~(tap by acc)) aor)
-    |=  {a/knot b/iden c/(unit purf)}  ^-  cord
+    |=  {a/knot b/plan-acct}  ^-  cord
     %+  rap  3
-    :^  a  ': '  b
-    ?~(c ~ [', ' (earf u.c)])
+    :^  a  ': '  usr.b
+    ?~(url.b ~ [', ' (earf u.url.b)])
+  ::
+  ++  plan-json
+    %-  jobe  :~
+      who+?~(who ~ s+who)
+      loc+?~(loc ~ s+(moon loc))
+      acc+o+(~(run by acc) json-acct)
+    ==
+  ++  json-acct                       ::  helper                     
+    |=  a/plan-acct  ^-  json
+    (jobe usr+s+usr.a url+?~(url.a ~ (jape (earf u.url.a))) ~)
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  {{cord govt} (map knot plan-acct)}  ::  clam from %noun

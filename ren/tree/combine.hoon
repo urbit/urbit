@@ -9,6 +9,7 @@
 /=    sect    /&json&/tree-index/
 /=    snip    /&snip&elem&/tree-elem/
 /=    meta    /&json&front&/|(/front/ /~[~])
+/=    plan    /^  json  /|(/plan-json/ /~[~])
 /=    comt    /&json&/tree-comments/
 !:
 ^-    tree-include
@@ -20,4 +21,5 @@
     meta
     sect
     comt
+    plan
 ==
