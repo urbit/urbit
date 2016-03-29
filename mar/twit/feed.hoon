@@ -3,11 +3,11 @@
 ::::  /hoon/feed/twit/mar
   ::
 /+  twitter, httr-to-json
-|_  (list stat:twitter)
+|_  (list post:twitter)
 ++  grab
   |%
-  ++  noun  (list stat:twitter)
-  ++  json  (corl need (ar:jo stat:parse:twitter))
+  ++  noun  (list post:twitter)
+  ++  json  (corl need (ar:jo post:parse:twitter))
   ++  httr  (cork httr-to-json json)  ::  XX mark translation
   --
 ++  grow

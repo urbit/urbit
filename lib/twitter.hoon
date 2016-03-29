@@ -58,7 +58,7 @@
     $get  [url med *math ~]
     $post
       =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
-      [url(r ~) med hed (some (tact +:(tail:earn r.url)))]
+      [url(r ~) med hed ?~(r.url ~ (some (tact +:(tail:earn r.url))))]
   ==
 ::
 ++  find-req
@@ -85,14 +85,14 @@
   ++  fasp  |*(a/{@tas *} [(gsub '-' '_' -.a) +.a])     ::  XX usable electroplating
   ++  user  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
-  ++  stat
+  ++  post
     =+  jo
-    %+  ce  stat:sur-twit
+    %+  ce  post:sur-twit
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
         (fasp created-at+da)
-        text+so
+        text+(cu crip (su (star escp:poxa)))  :: parse html escapes
     ==
   ++  usel 
     =+  jo
@@ -109,10 +109,6 @@
     |=  a/$@(^scr ^lsc)  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
-  ++  lst
-    |=  a/$@(@t ^lst)  ^-  @t
-    ?@(a `@t`a (join ',' a))
-  ::
   ++  lid
     |=  a/$@(^tid (list ^tid))  ^-  @t
     ?~  a  ~|(%nil-id !!)
@@ -123,7 +119,7 @@
   =+  args:reqs
   |%
   ++  apex
-    |=  {a/endpoint b/quay}
+    |=  {a/endpoint b/quay}  ^-  hiss
     =+  [med pax]=(find-req -.a)
     (valve med (cowl pax +.a b))
   ::
@@ -157,8 +153,7 @@
     :-  (gsub '-' '_' -.p)
     ?+  -.p  p.p  :: usually plain text
       ?($source-id $target-id)       (tid:print p.p)
-      ?($follow $id $name $user-id)  (lid:print p.p)
-      $track                         (lst:print p.p)
+      ?($id $name $user-id)  (lid:print p.p)
       $screen-name                   (lsc:print p.p)
     ==
   --

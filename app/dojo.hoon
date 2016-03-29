@@ -32,7 +32,7 @@
           {$pill p/path}                                ::  noun to unix pill
           ::  {$tree p/path}                            ::  noun to unix tree
           {$file p/beam}                                ::  save to clay
-          {$http p/?($post $put) q/iden r/purl}                ::  http outbound
+          {$http p/?($post $put) q/(unit iden) r/purl}  ::  http outbound
           {$poke p/goal}                                ::  poke app
           {$show p/?($0 $1 $2 $3)}                      ::  print val+span+twig
           {$verb p/term}                                ::  store variable
@@ -42,7 +42,7 @@
           q/dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one arvo step
-      $%  {$ur p/iden q/purl}                           ::  http GET request
+      $%  {$ur p/(unit iden) q/purl}                    ::  http GET request
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
           {$ex p/twig}                                  ::  hoon expression
@@ -87,7 +87,7 @@
     ++  card                                            ::  general card
       $%  {$diff $sole-effect sole-effect}              ::
           {$send wire {ship term} clap}                 ::
-          {$hiss wire {$~ iden} mark {$hiss hiss}}                ::
+          {$hiss wire (unit iden) mark {$hiss hiss}}    ::
           {$exec wire @p (unit {beak silk})}            ::
           {$deal wire sock term club}                   ::
           {$info wire @p toro}                          ::
@@ -167,8 +167,8 @@
         ;~(plug (cold %file tar) dp-beam)
         ;~(plug (cold %flat pat) (most fas qut))
         ;~(plug (cold %pill dot) (most fas sym))
-        ;~(plug (cold %http lus) (easy %post) dp-iden-url)
-        ;~(plug (cold %http hep) (easy %put) dp-iden-url)
+        ;~(plug (cold %http lus) (stag %post dp-iden-url))
+        ;~(plug (cold %http hep) (stag %put dp-iden-url))
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
@@ -221,7 +221,7 @@
       (sear plex:vez (stag %conl poor:vez))
     ::
     ++  dp-iden-url
-      (cook |=({a/(unit iden) b/purl} [(fall a *iden) b]) auru:epur)
+      (cook |=({a/(unit iden) b/purl} [`(fall a *iden) b]) auru:epur)
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (tope he-beam)                       ::  ++path
@@ -269,10 +269,10 @@
       (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
     ++  dy-eyre                                         ::  send work to eyre
-      |=  {way/wire usr/iden req/hiss}
+      |=  {way/wire usr/(unit iden) req/hiss}
       ^+  +>+>
       ?>  ?=($~ pux)
-      (he-card(poy `+>+<(pux `way)) %hiss way `usr %httr %hiss req)
+      (he-card(poy `+>+<(pux `way)) %hiss way usr %httr %hiss req)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -415,6 +415,7 @@
     ++  dy-cast
       |*  {typ/_* bun/vase}
       |=  a/vase  ^-  typ
+      ~|  [p.bun p.a]
       ?>  (~(nest ut p.bun) & p.a)
       ;;(typ q.a)
     ::
@@ -537,7 +538,7 @@
     ++  dy-shown
       $?  twig
           $^  {dy-shown dy-shown}
-          $%  {$ur iden purl}
+          $%  {$ur (unit iden) purl}
               {$dv path}
               {$as mark dy-shown}
               {$do twig dy-shown}
@@ -676,9 +677,11 @@
         (dy-meal (slot 7 vax))
       ::
           $|
-        =+  hiz=;;(hiss +<.q.vax)
+        =>  .(vax (slap vax !,(*twig ?>(?=($| -) .))))  :: XX working spec  #72
+        =+  typ={$| (unit iden) hiss *}
+        =+  [~ usr hiz ~]=((dy-cast typ !>(*typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(earn p.hiz)}" ~)
-        (dy-eyre(pro `(slap (slot 7 vax) limb+%q)) /scar ~. hiz)
+        (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
       ==
     ::
     ++  dy-sigh-scar                                    ::  scraper result

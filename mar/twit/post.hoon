@@ -1,13 +1,13 @@
 ::  Twitter status
 ::
-::::  /hoon/stat/twit/mar
+::::  /hoon/post/twit/mar
   ::
 /+  twitter, httr-to-json
-|_  stat:twitter
+|_  post:twitter
 ++  grab
   |%
-  ++  noun  stat:twitter
-  ++  json  (corl need stat:parse:twitter)
+  ++  noun  post:twitter
+  ++  json  (corl need post:parse:twitter)
   ++  httr  (cork httr-to-json json)  ::  XX mark translation
   --
 ++  grow
