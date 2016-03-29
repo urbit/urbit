@@ -12,7 +12,7 @@
 ::  See the %github app for example usage.
 ::
 /?  314
-/-  gh
+/-  gh, plan-acct
 ::  /ape/gh/split.hoon defines ++split, which splits a request
 ::  at the end of the longest possible endpoint.
 ::
@@ -32,7 +32,7 @@
       $%  {$diff sub-result}
           {$them wire (unit hiss)}
           {$hiss wire {$~ $~} $httr {$hiss hiss}}
-          {$poke wire {ship $hood} $write-plan-account {knot iden}}
+          {$poke wire {ship $hood} $write-plan-account {knot plan-acct}}
       ==
     ++  hook-response
       $%  {$gh-issues issues:gh}
@@ -220,7 +220,8 @@
   ?~  pax  ~
   ?+    -.pax  ~
       $user
-    =+  usr=(need ((ot login+so ~):jo p.rep))
+    =+  =;  jop  usr=(need (jop p.rep))
+        (ot login+so url+(cu some (su aurf:urlp)) ~):jo
     [ost.hid %poke user+~ [our.hid %hood] %write-plan-account ~.github usr]~
   ==
 ::

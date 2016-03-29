@@ -17,7 +17,7 @@
               {$info wire @p toro}
           ==
 --
-::
+!:
 ::::
   ::
 |=  {bowl part}
