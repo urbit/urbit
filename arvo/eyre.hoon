@@ -1494,6 +1494,7 @@
       %-  jobe  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
+        sein+(jape +:<(sein our)>)
         ship+(jape +:<our>)
         user+(jape +:<him>)
         auth+a+(turn (~(tap in aut)) |=(a/@p (jape +:<a>)))

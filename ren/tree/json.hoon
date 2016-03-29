@@ -20,6 +20,7 @@
       {$path $t}
       {$spur $t}
   ::
+      {$beak $t}
       {$comt $j}
       {$plan $j}
       {$head $r}
@@ -52,6 +53,7 @@
   :-  -.a
   ?-  -.a
     $name  (from-type +.a ?^(s.bem i.s.bem q.bem))
+    $beak  (from-type +.a (crip (spud (tope bem(s /)))))
     $path  (from-type +.a (crip (spud (flop s.bem))))
     $spur  (from-type +.a (crip (spud s.bem)))
     $plan  (from-type +.a plan.dat)
@@ -73,10 +75,10 @@
   ::
 [tree .]
 ^-  json
-=+  default='spur.t_mime.m_body.r_comt.j_kids.name.t'
+=+  default='spur.t_mime.m_body.r_comt.j_plan.j_beak.t_kids.name.t'
 =+  ^=  schem
     =+  seh=(fall (~(get by qix.gas) 'q') default)
     ~|(bad-noun+seh ;;(schema (rash seh read-schem)))
-%+  from-queries  bem.gas(s but.gas)
+%+  from-queries  bem.gas
 ~|  invalid-query+schem
 ;;((list query) (schema-to-plist schem))
