@@ -9,14 +9,12 @@
 ::::
   ::
 [. talk sole]
-=+  twit=args:reqs:twitter
 =>  |%                                                  ::  data structures
-    ++  house  {$6 house-6}                             ::  full state
+    ++  house  {$5 house-5}                             ::  full state
     ++  house-any                                       ::  app history
       $%  {$3 house-3}                                  ::  3: talk
           {$4 house-4}                                  ::  4: talk
           {$5 house-5}                                  ::  5: talk
-          {$6 house-6}                                  ::  6: talk
       ==                                                ::
     ++  house-3                                         ::
       %+  cork  house-4  |=  house-4                    ::  modern house with
@@ -25,13 +23,9 @@
       %+  cork  house-5  |=  house-5                    ::  modern house with
       +<(shells (~(run by shells) shell-4))             ::  no settings
     ++  house-5                                         ::
-      %+  cork  house-6  |=  house-6                    ::  modern house with
-      +<(|3 |4.+<)                                      ::  no sent
-    ++  house-6                                         ::
       $:  stories/(map knot story)                      ::  conversations
           general/(set bone)                            ::  meta-subscribe
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
-          sent/twit/(map tid:twit serial)               ::  foreign outbox
           folks/(map ship human)                        ::  human identities
           shells/(map bone shell)                       ::  interaction state
           log/(map knot @ud)                            ::  logged to clay
@@ -79,7 +73,6 @@
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
           {$write-comment path ship cord}               ::
-          {$twit-do iden command:twitter}               ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -131,19 +124,6 @@
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool
     --
 |_  {hid/bowl house}
-++  ti                                                    :: twitter interop
-  |_  usr/iden
-  ++  to-telegram
-    |=  a/post:twitter  ^-  telegram
-    :*  our.hid
-        ((bond |.((shaf %twit id.a))) (~(get by twit.sent) id.a))
-        [[[%| %twitter usr] *envelope %received] `~]
-        now.a
-        (sy /twitter/[who.a] ~)
-        [%lin & txt.a]
-    ==
-  --
-::
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
   ++  sh                                                ::  per console
@@ -1282,16 +1262,11 @@
     (ra-house n.gel)
   ::
   ++  ra-init                                           ::  initialize talk
-    %+  roll
-      ^-  (list {posture knot cord})
-      :~  [%brown (main our.hid) 'default home']
-          [%green ~.public 'visible activity']
-      ==
-    |:  [[typ=*posture man=*knot des=*cord] ..ra-init]  ^+  ..ra-init
     %+  ra-apply  our.hid
-    :+  %design  man
+    :+  %design  (main our.hid)
     :-  ~  :-  ~
-    [des [typ ~]]
+    :-  'default home'
+    [%brown ~] 
   ::
   ++  ra-apply                                          ::  apply command
     |=  {her/ship cod/command}
@@ -1375,12 +1350,6 @@
     |=  {man/knot cuz/station rad/report}
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
-  ::
-  ::
-  ++  ra-diff-twit-feed                                 ::  timeline response
-    |=  {{usr/iden man/knot} res/(list post):twit}  ^+  +>
-    %-  (ra-know man)  |=  par/_pa  =<  pa-abet         ::  XX all subscribed
-    (pa-diff-twit-feed:par usr res)
   ::
   ++  ra-quit                                           ::  subscription quit
     |=  {man/knot cuz/station}
@@ -1505,40 +1474,8 @@
           ?.  =(our.hid p.p.tay)
             +>
           (ra-record q.p.tay her tip)
-    ::
-      $|  ?.  pub  +>
-          ?-    -.p.tay
-              $twitter
-            ~&  [%conduct-twitters p.p.tay]
-            =+  sep=`speech`r.r.tip
-            =+  ^=  msg               :: XX tr-line?
-                ?+  -.sep  !!
-                  $lin  ?-  p.sep
-                          $&  "{<her>}: {(trip q.sep)}"
-                          $|  "{<her>} {(trip q.sep)}"
-                ==      ==
-            ?:  (gth (lent msg) 140)
-              (ra-evil %radio-tweet-long)
-            %-  ra-emil  :~
-              :^  ost.hid  %poke  /post/(scot %uv p.tip)
-              [[our.hid %twit] [%twit-do p.p.tay %post p.tip (crip msg)]]
-            ::
-              :^  ost.hid  %peer  /post/(scot %uv p.tip)
-              [[our.hid %twit] /post/(scot %uv p.tip)]
-            ==
-    ==    ==
-  ::
-  ++  ra-coup-post
-    |=  {sen/serial saw/(unit tang)}  ^+  +>
-    ?~  saw  +>
-    =.  u.saw   [>%post sen< u.saw]
-    ((slog (flop u.saw)) +>)          
-  ::
-  ++  ra-diff-twit-post                                ::  status received
-    |=  {sen/serial sat/post:twit}  ^+  +>
-    =.  twit.sent  (~(put by twit.sent) id.sat sen)
-    :: XX route through ra-repeat for proper handling of %accepted?
-    +>.$
+      $|  !!
+    ==
   ::
   ++  ra-record                                         ::  add to story
     |=  {man/knot gam/telegram}
@@ -1670,10 +1607,7 @@
       ^-  (list card)
       ?-  -.tay
         $|  ~&  tweet-abjure+p.p.tay
-            :_  ~ 
-            :^  %pull  /feed/[p.p.tay]/[man]
-              [our.hid %twit]
-            ~
+            !!
       ::
         $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
@@ -1694,12 +1628,7 @@
       :: =+  num=(fall (~(get by sequence) tay) 0) :: XX unused
       =+  old=(sub now.hid ~d1)
       ?-  -.tay
-        $|  ~&  tweet-acquire+p.p.tay
-            :_  ~
-            :^  %peer  /feed/[p.p.tay]/[man]
-              [our.hid %twit]
-            /home/[p.p.tay]
-      ::
+        $|  !!
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
             :*  %peer
@@ -1708,10 +1637,6 @@
                 /afx/[q.p.tay]/(scot %da old)
             ==
       ==
-    ::
-    ++  pa-diff-twit-feed                               ::  timeline response
-      |=  {usr/iden res/(list post):twit}  ^+  +>
-      (pa-lesson (turn res ~(to-telegram ti usr)))
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
       |=  cof/config
@@ -2251,21 +2176,6 @@
   =^  moz  +>.$  ra-abet:(ra-cancel:ra src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
-++  coup-post
-  |=  {way/wire saw/(unit tang)}
-  ?>  ?=({@ $~} way)
-  ra-abet:(ra-coup-post:ra (slav %uv i.way) saw)
-::
-++  diff-twit-post-post
-  |=  {way/wire res/post:twit}  ^-  (quip move +>)
-  ?>  ?=({@ $~} way)
-  ra-abet:(ra-diff-twit-post:ra (slav %uv i.way) res)
-::
-++  diff-twit-feed-feed
-  |=  {way/wire res/(list post):twit}  ^-  (quip move +>)
-  ?>  ?=({@ @ $~} way)
-  ra-abet:(ra-diff-twit-feed:ra [i.way i.t.way] res)
-::
 ++  log-all-to-file
   ^-  (quip move .)
   ?:  &  [~ .]  ::  XXX!!!!
@@ -2331,8 +2241,7 @@
     ra-abet:ra-init:ra
   |-
   ?-  -.u.old
-    $6  [~ ..prep(+<+ u.old)]
-    $5  $(-.u.old %6, |3.+.u.old [~ |3.+.u.old])
+    $5  [~ ..prep(+<+ u.old)]
     $4  =<  ^$(-.u.old %5, shells.u.old (~(run by shells.u.old) .))
         |=(shell-4 `shell`+<(system [system settings=*(set knot)]))
     $3  =<  ^$(-.u.old %4, stories.u.old (~(run by stories.u.old) .))
