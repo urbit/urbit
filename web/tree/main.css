@@ -17,6 +17,19 @@ img.logo.first {
 .short {
   width: 75%; }
 
+.meta-data {
+  padding: 1rem;
+  background-color: #f7f7f9;
+  font-family: 'scp';
+  max-width: 12rem;
+  margin-bottom: 2rem; }
+  .meta-data h2,
+  .meta-data h3 {
+    padding: 0;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 2rem; }
+
 .loading:before {
   font-family: 'scp';
   background-color: #000;
@@ -249,35 +262,43 @@ img.logo.first {
       margin-top: 0;
       margin-bottom: 0; } }
 
-[data-path^='/docs'] .selected .nav-link {
+[data-path^='/docs'] .selected .nav-link,
+[data-path^='/work'] .selected .nav-link {
   color: #02D124; }
 
-[data-path^='/docs'] .nav-link {
+[data-path^='/docs'] .nav-link,
+[data-path^='/work'] .nav-link {
   font-weight: 500; }
 
-[data-path^='/docs'] .home {
+[data-path^='/docs'] .home,
+[data-path^='/work'] .home {
   background-color: #0500F0;
   border-color: #0500F0; }
 
-[data-path^='/docs'] .home:hover {
+[data-path^='/docs'] .home:hover,
+[data-path^='/work'] .home:hover {
   background-color: #0500F0;
   border-color: #0500F0;
   opacity: .6; }
 
-[data-path^='/docs'] .home:before {
+[data-path^='/docs'] .home:before,
+[data-path^='/work'] .home:before {
   content: "~";
   color: #fff;
   line-height: .8rem;
-  font-size: 1.4rem; }
+  font-size: 1.4rem;
+  padding-left: 1px; }
 
 @media (max-width: 991px) {
-  [data-path^='/docs'] .home:before {
+  [data-path^='/docs'] .home:before,
+  [data-path^='/work'] .home:before {
     line-height: 0.7rem;
     font-size: 1rem;
     margin-left: .06rem; } }
 
 @media (max-width: 767px) {
-  [data-path^='/docs'] .home:before {
+  [data-path^='/docs'] .home:before,
+  [data-path^='/work'] .home:before {
     line-height: .7rem;
     margin-left: .05rem;
     font-size: 1rem; } }
@@ -325,26 +346,47 @@ img.logo.first {
 .lead h1:first-of-type {
   padding-bottom: 0; }
 
-.body[data-path^='/docs'] h1 {
+.h-arrow {
+  float: left;
+  margin-bottom: 3rem; }
+  .h-arrow h1 {
+    color: #0500F0;
+    display: inline; }
+  .h-arrow h1 code {
+    background-color: transparent;
+    color: #0500F0; }
+  .h-arrow img {
+    float: right; }
+
+.body[data-path^='/docs'] h1,
+.body[data-path^='/work'] h1 {
   color: #0500F0; }
 
-.body[data-path^='/docs'] h1 code {
+.body[data-path^='/docs'] h1 code,
+.body[data-path^='/work'] h1 code {
   background-color: transparent;
   color: #0500F0;
   padding: 0; }
 
-.body[data-path^='/docs'] .book h2 {
+.body[data-path^='/docs'] .book h2,
+.body[data-path^='/work'] .book h2 {
   color: #B1B7BD; }
 
-.body[data-path^='/docs'] .book h2 code {
+.body[data-path^='/docs'] .book h2 code,
+.body[data-path^='/work'] .book h2 code {
   color: #0500F0;
   background-color: transparent; }
 
-.body[data-path^='/docs'] .book h2 a {
+.body[data-path^='/docs'] .book h2 a,
+.body[data-path^='/work'] .book h2 a {
   color: #0500F0; }
 
-.body[data-path^='/docs'] .book hr {
+.body[data-path^='/docs'] .book hr,
+.body[data-path^='/work'] .book hr {
   margin-bottom: 3rem; }
+
+.body[data-path^='/work'] h2 {
+  color: #0500F0; }
 
 .body[data-path^='/docs/system/hoon/runes/'] h1 {
   color: #B1B7BD; }
@@ -468,14 +510,31 @@ img.logo.first {
   font-weight: 500;
   font-size: 1.4rem; }
 
-.body[data-path^='/docs'] .list {
+.body[data-path^='/docs'] .list,
+.body[data-path^='/work'] .list {
   list-style-type: none;
   padding-left: 0; }
   .body[data-path^='/docs'] .list a,
-  .body[data-path^='/docs'] .list h1 {
+  .body[data-path^='/docs'] .list h1,
+  .body[data-path^='/work'] .list a,
+  .body[data-path^='/work'] .list h1 {
     color: #02D124;
     font-weight: 500;
-    height: 2rem; }
+    height: 2rem;
+    display: inline;
+    text-decoration: none; }
+  .body[data-path^='/docs'] .list h1,
+  .body[data-path^='/work'] .list h1 {
+    border-bottom: 2px solid #02D124; }
+
+.body[data-path^='/work'] .list.main a,
+.body[data-path^='/work'] .list.main h1 {
+  font-size: 2rem;
+  line-height: 4rem;
+  height: 4rem; }
+
+.body[data-path^='/work'] .list.main h1 {
+  border-width: 4px; }
 
 .body[data-path^='/docs'] .list.runes {
   margin-top: 3rem; }
@@ -578,7 +637,7 @@ img.logo.first {
 
 .add-comment {
   width: 100%;
-  border-top: 3px dotted #000;
+  border-top: 3px dotted #f7f7f9;
   margin-top: 6rem; }
   .add-comment .btn {
     font-size: .8rem; }
@@ -586,7 +645,7 @@ img.logo.first {
     width: 66%;
     display: block;
     height: 12rem;
-    background-color: #F7F7F7;
+    background-color: #f7f7f9;
     border-bottom: 0;
     margin-bottom: 2rem;
     margin-top: 3rem;
