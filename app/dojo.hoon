@@ -519,7 +519,7 @@
       |-  ^-  $?  $%  {$atom @tas (unit @)}
                       {$cell _$ _$}
                       {$cube * _$}
-                      {$face $@(term tomb) _$}
+                      {$face $@(term tune) _$}
                       {$fork (set _$)}
                       {$hold _$ twig}
                   ==

@@ -1,4 +1,4 @@
-::                                                      ::  
+!:                                                      ::  
 ::::    /hoon/hoon                                      ::  
   ::                                                    ::
 =>  %150  =>  
@@ -31,7 +31,7 @@
 ++  dec                                                 ::  unsigned decrement
   ~/  %dec
   |=  a/@
-  ~>  %mean.[%leaf "decrement-underflow"]
+  ~_  leaf+"decrement-underflow"
   ?<  =(0 a)
   =+  b=0
   |-  ^-  @
@@ -43,7 +43,7 @@
   =+  [a=`@`1 b=`@`1]
   |.
   ^-  @
-  ~>  %mean.[%leaf "divide-by-zero"]
+  ~_  leaf+"divide-by-zero"
   ?<  =(0 b)
   =+  c=0
   |-
@@ -117,7 +117,7 @@
 ++  sub                                                 ::  subtract
   ~/  %sub
   |=  {a/@ b/@}
-  ~>  %mean.[%leaf "subtract-underflow"]
+  ~_  leaf+"subtract-underflow"
   ^-  @
   ?:  =(0 b)  a
   $(a (dec a), b (dec b))
@@ -408,7 +408,7 @@
   |*  {a/@ b/(list)}
   |-
   ?~  b
-    ~>  %mean.[%leaf "snag-fail"]
+    ~_  leaf+"snag-fail"
     !!
   ?:  =(0 a)  i.b
   $(b t.b, a (dec a))
@@ -1384,7 +1384,7 @@
 ++  hard                                                ::  force remold
   |*  han/$-(* *)
   |=  fud/*  ^-  han
-  ~>  %mean.[%leaf "hard"]
+  ~_  leaf+"hard"
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
@@ -1949,7 +1949,7 @@
     ++  ned                                             ::  require ?=({$f *} a)
       |=  {a/fn}  ^-  {$f s/? e/@s a/@u}
       ?:  ?=({$f *} a)  a
-      ~>  %mean.[leaf+"need-float"]
+      ~_  leaf+"need-float"
       !!
     ::
     ++  shf                                             ::  a * 2^b; no rounding
@@ -2288,56 +2288,56 @@
   ::
   ++  add  ~/  %add                                     ::  add
     |=  {a/@rd b/@rd}  ^-  @rd  
-    ~>  %mean.[leaf+"rd-fail"]
+    ~_  leaf+"rd-fail"
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
     |=  {a/@rd b/@rd}  ^-  @rd  
-    ~>  %mean.[leaf+"rd-fail"]
+    ~_  leaf+"rd-fail"
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
     |=  {a/@rd b/@rd}  ^-  @rd  
-    ~>  %mean.[leaf+"rd-fail"]
+    ~_  leaf+"rd-fail"
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
     |=  {a/@rd b/@rd}  ^-  @rd  
-    ~>  %mean.[leaf+"rd-fail"]
+    ~_  leaf+"rd-fail"
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
     |=  {a/@rd b/@rd c/@rd}  ^-  @rd  
-    ~>  %mean.[leaf+"rd-fail"]
+    ~_  leaf+"rd-fail"
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
-    |=  {a/@rd}  ^-  @rd  ~>  %mean.[leaf+"rd-fail"]
+    |=  {a/@rd}  ^-  @rd  ~_  leaf+"rd-fail"
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  {a/@rd b/@rd}  
-    ~>  %mean.[leaf+"rd-fail"]  
+    ~_  leaf+"rd-fail"
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  {a/@rd b/@rd}  
-    ~>  %mean.[leaf+"rd-fail"]  
+    ~_  leaf+"rd-fail"
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  {a/@rd b/@rd}  
-    ~>  %mean.[leaf+"rd-fail"]  
+    ~_  leaf+"rd-fail"
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  {a/@rd b/@rd}  
-    ~>  %mean.[leaf+"rd-fail"]  
+    ~_  leaf+"rd-fail"
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  {a/@rd b/@rd}  
-    ~>  %mean.[leaf+"rd-fail"]  
+    ~_  leaf+"rd-fail"
     (gth:ma a b)
   ::
   ++  sun  |=  {a/@u}  ^-  @rd  (sun:ma a)              ::  uns integer to @rd
@@ -2365,57 +2365,57 @@
   ::
   ++  add  ~/  %add                                     ::  add
     |=  {a/@rs b/@rs}  ^-  @rs  
-    ~>  %mean.[leaf+"rs-fail"]
+    ~_  leaf+"rs-fail"
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
     |=  {a/@rs b/@rs}  ^-  @rs  
-    ~>  %mean.[leaf+"rs-fail"]
+    ~_  leaf+"rs-fail"
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
     |=  {a/@rs b/@rs}  ^-  @rs  
-    ~>  %mean.[leaf+"rs-fail"]
+    ~_  leaf+"rs-fail"
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
     |=  {a/@rs b/@rs}  ^-  @rs  
-    ~>  %mean.[leaf+"rs-fail"]
+    ~_  leaf+"rs-fail"
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
     |=  {a/@rs b/@rs c/@rs}  ^-  @rs  
-    ~>  %mean.[leaf+"rs-fail"]
+    ~_  leaf+"rs-fail"
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
     |=  {a/@rs}  ^-  @rs  
-    ~>  %mean.[leaf+"rs-fail"]
+    ~_  leaf+"rs-fail"
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  {a/@rs b/@rs}  
-    ~>  %mean.[leaf+"rs-fail"]  
+    ~_  leaf+"rs-fail"
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  {a/@rs b/@rs}  
-    ~>  %mean.[leaf+"rs-fail"]  
+    ~_  leaf+"rs-fail"
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  {a/@rs b/@rs}  
-    ~>  %mean.[leaf+"rs-fail"]  
+    ~_  leaf+"rs-fail"
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  {a/@rs b/@rs}  
-    ~>  %mean.[leaf+"rs-fail"]  
+    ~_  leaf+"rs-fail"
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  {a/@rs b/@rs}  
-    ~>  %mean.[leaf+"rs-fail"]  
+    ~_  leaf+"rs-fail"
     (gth:ma a b)
   ::
   ++  sun  |=  {a/@u}  ^-  @rs  (sun:ma a)              ::  uns integer to @rs
@@ -2443,57 +2443,57 @@
   ::
   ++  add  ~/  %add                                     ::  add
     |=  {a/@rq b/@rq}  ^-  @rq  
-    ~>  %mean.[leaf+"rq-fail"]
+    ~_  leaf+"rq-fail"
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
     |=  {a/@rq b/@rq}  ^-  @rq  
-    ~>  %mean.[leaf+"rq-fail"]
+    ~_  leaf+"rq-fail"
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
     |=  {a/@rq b/@rq}  ^-  @rq  
-    ~>  %mean.[leaf+"rq-fail"]
+    ~_  leaf+"rq-fail"
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
     |=  {a/@rq b/@rq}  ^-  @rq  
-    ~>  %mean.[leaf+"rq-fail"]
+    ~_  leaf+"rq-fail"
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
     |=  {a/@rq b/@rq c/@rq}  ^-  @rq  
-    ~>  %mean.[leaf+"rq-fail"]
+    ~_  leaf+"rq-fail"
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
     |=  {a/@rq}  ^-  @rq  
-    ~>  %mean.[leaf+"rq-fail"]
+    ~_  leaf+"rq-fail"
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  {a/@rq b/@rq}  
-    ~>  %mean.[leaf+"rq-fail"]
+    ~_  leaf+"rq-fail"
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  {a/@rq b/@rq}  
-    ~>  %mean.[leaf+"rq-fail"]  
+    ~_  leaf+"rq-fail"
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  {a/@rq b/@rq}  
-    ~>  %mean.[leaf+"rq-fail"]  
+    ~_  leaf+"rq-fail"
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  {a/@rq b/@rq}  
-    ~>  %mean.[leaf+"rq-fail"]  
+    ~_  leaf+"rq-fail"
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  {a/@rq b/@rq}  
-    ~>  %mean.[leaf+"rq-fail"]  
+    ~_  leaf+"rq-fail"
     (gth:ma a b)
   ::
   ++  sun  |=  {a/@u}  ^-  @rq  (sun:ma a)              ::  uns integer to @rq
@@ -2526,27 +2526,27 @@
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  {a/@rh b/@rh}  
-    ~>  %mean.[leaf+"rh-fail"]  
+    ~_  leaf+"rh-fail"
     (lth:ma a b)
   ::
   ++  lte  ~/  %lte                                     ::  less-equals
     |=  {a/@rh b/@rh}  
-    ~>  %mean.[leaf+"rh-fail"]  
+    ~_  leaf+"rh-fail"
     (lte:ma a b)
   ::
   ++  equ  ~/  %equ                                     ::  equals
     |=  {a/@rh b/@rh}  
-    ~>  %mean.[leaf+"rh-fail"]  
+    ~_  leaf+"rh-fail"
     (equ:ma a b)
   ::
   ++  gte  ~/  %gte                                     ::  greater-equals
     |=  {a/@rh b/@rh}  
-    ~>  %mean.[leaf+"rh-fail"]  
+    ~_  leaf+"rh-fail"
     (gte:ma a b)
   ::
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  {a/@rh b/@rh}  
-    ~>  %mean.[leaf+"rh-fail"]  
+    ~_  leaf+"rh-fail"
     (gth:ma a b)
   ::
   ++  sun  |=  {a/@u}  ^-  @rh  (sun:ma a)              ::  uns integer to @rh
@@ -4514,7 +4514,7 @@
           =+  vex=((full sab) [[1 1] los])
           ?~  q.vex
             ~_  (show [%m '{%d %d}'] p.p.vex q.p.vex ~)
-            ~>(%mean.[%leaf "syntax error"] !!)
+            ~_(leaf+"syntax error" !!)
           p.u.q.vex
 ::
 ::::  4h: parsing (ascii glyphs)
@@ -5395,7 +5395,7 @@
   {$atom p/aura}                                        ::  atom
 ::
 ++  bean  ?                                             ::  0=&=yes, 1=|=no
-++  beer  $@(@ {$~ p/twig})                             ::  simple embed
+++  woof  $@(@ {$~ p/twig})                             ::  simple embed
 ++  beet  $@  @                                         ::  advanced embed
           $%  {$a p/twig}                               ::  take tape
               {$b p/twig}                               ::  take manx
@@ -5421,6 +5421,7 @@
           ==                                            ::
 ++  line  {p/{$leaf p/aura q/@} q/tile}                 ::  %book case
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
+++  moss  twig                                          ::  twig producing mold
 ++  noun  *                                             ::  any noun
 ++  null  $~                                            ::  null, nil, etc
 ++  onyx  (list (pair span foot))                       ::  arm activation
@@ -5453,7 +5454,7 @@
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
           $%  {$0 $~}                                   ::  no toga
-              {$1 p/term q/toga}                        ::  deep toga
+              {$1 p/?@(term tune) q/toga}               ::  deep toga
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
 ++  tuna                                                ::  tagflow
@@ -5473,13 +5474,14 @@
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
     {$hand p/span q/nock}                               ::  premade result
-    {$knit p/(list beer)}                               ::  assemble string
+    {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
     {$limb p/term}                                      ::  pulls limb p
     {$lost p/twig}                                      ::  not to be taken
     {$rock p/term q/*}                                  ::  fixed constant
     {$sand p/term q/*}                                  ::  unfixed constant
     {$tell p/(list twig)}                               ::  render as tape
+    {$tune p/$@(term tune)}                             ::  minimal face
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
   ::                                            ::::::  molds
@@ -5612,7 +5614,7 @@
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
-              {$face p/$@(term tomb) q/span}            ::  namespace (new)
+              {$face p/$@(term tune) q/span}            ::  namespace (new)
               {$fork p/(set span)}                      ::  union
               {$hold p/span q/twig}                     ::  lazy evaluation
           ==                                            ::
@@ -5620,7 +5622,7 @@
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
           ==                                            ::
-++  tomb                                                ::  complex 
+++  tune                                                ::  complex 
           $:  p/(map term (unit twig))                  ::  definitions
               q/(list twig)                             ::  bridges
           ==                                            ::
@@ -5671,7 +5673,7 @@
 ::
 ++  face                                                ::  make %face span
   ~/  %face
-  |=  {giz/$@(term tomb) der/span}
+  |=  {giz/$@(term tune) der/span}
   ^-  span
   ?:  =(%void der)
     %void
@@ -5700,7 +5702,7 @@
   ?-    nug
       {$0 *}   p.nug
       {$10 *}  $(nug q.nug)
-      *        ~>  %mean.[%leaf "cove"]  !!
+      *        ~_(leaf+"cove" !!)
   ==
 ++  comb                                                ::  combine two formulas
   ~/  %comb
@@ -6104,7 +6106,7 @@
     ==
   |_  gen/twig
   ++  etch
-    ~>  %mean.[%leaf "etch"]
+    ~_  leaf+"etch"
     |-  ^-  term
     ?:  ?=({$name *} gen)
       ?>(?=(@ p.gen) p.gen)
@@ -6187,7 +6189,7 @@
         boil(gen i.p.gen)
       =+  :*  def=bile(gen i.p.gen)
               ^=  end  ^-  (list line)
-              ~>  %mean.[%leaf "book-foul"]
+              ~_  leaf+"book-foul"
               %+  turn  `(list twig)`t.p.gen
               |=(a/twig =+(bile(gen a) ?>(?=($& -<) ->)))
           ==
@@ -6380,7 +6382,7 @@
         {$dip *}                                       ::                  ;~
       |-  ^-  twig
       ?-  q.gen
-          $~      ~>(%mean.[%leaf "open-smsg"] !!)
+          $~      ~_(leaf+"open-smsg" !!)
           ^
         :+  %per  [%name %v %$ 1]                      ::  =>  v=.
         |-  ^-  twig                                    ::
@@ -6486,7 +6488,7 @@
             (lte hoon p.gen)
           &((lte hoon p.p.gen) (gte hoon q.p.gen))
         q.gen
-      ~>(%mean.[%leaf "hoon-version"] !!)
+      ~_(leaf+"hoon-version" !!)
     ::
         *           gen
     ==
@@ -6559,7 +6561,7 @@
   |%
   ++  burn
     =+  gil=*(set span)
-    ~>  %mean.[%leaf "burn"]
+    ~_  leaf+"burn"
     %-  need
     |-  ^-  (unit)
     ?-    sut
@@ -6611,7 +6613,7 @@
     |%
     ++  dext
       ^-  span
-      ~>  %mean.[%leaf "crop"]
+      ~_  leaf+"crop"
       ::  ~_  (dunk 'dext: sut')
       ::  ~_  (dunk(sut ref) 'dext: ref')
       ?:  |(=(sut ref) =(%noun ref))
@@ -7005,7 +7007,7 @@
           ++  stop  ?~(q.heg here lose)
           ++  twin  |=  {hax/pony yor/pony}
                     ^-  pony
-                    ~>  %mean.[%leaf "find-fork"]
+                    ~_  leaf+"find-fork"
                     ?:  =(hax yor)  hax
                     ?~  hax  yor
                     ?~  yor  hax
@@ -7316,6 +7318,7 @@
       [p.nef ?:(?=($0 -.moc) [%1 p.moc] q.nef)]
     ::
         {$name *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
+        {$tune *}  [(face p.gen sut) [%0 %1]]
         {$lead *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
         {$peep *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
         {$hint *}
@@ -7402,7 +7405,7 @@
     ::
     ++  nice
       |=  typ/span
-      ~>  %mean.[%leaf "mint-nice"]
+      ~_  leaf+"mint-nice"
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
@@ -7470,6 +7473,9 @@
     ::
         {$name *}
       =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) (conk(sut q.vat) p.gen)])
+    ::
+        {$tune *}
+      [(face p.gen sut) (face p.gen dox)]
     ::
         {$lead *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
@@ -7556,13 +7562,13 @@
       |=  typ/span
       ::  ~_  (dunk(sut gol) 'need')
       ::  ~_  (dunk(sut typ) 'have')
-      ~>  %mean.[%leaf "mull-nice"]
+      ~_  leaf+"mull-nice"
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
     ++  grow
       |=  {mel/vair ruf/twig dab/(map term foot)}
-      ~>  %mean.[%leaf "mull-grow"]
+      ~_  leaf+"mull-grow"
       ^-  {p/span q/span}
       =+  dan=^$(gen ruf, gol %noun)
       =+  ^=  toc  :-  p=(core p.dan [%gold p.dan [~ dab]])
@@ -7753,6 +7759,7 @@
                    ?:  =(%n p.gen)  ?>(=(0 q.gen) [%atom p.gen ~ q.gen])
                    ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
+      {$tune *}  (face p.gen sut)
       {$nock *}  %noun
       {$same *}  bool
       {$deep *}  bool
@@ -7878,7 +7885,7 @@
   ++  wrap
     ~/  %wrap
     |=  yoz/?($lead $iron $zinc)
-    ~>  %mean.[%leaf "wrap"]
+    ~_  leaf+"wrap"
     ^-  span
     ?+  sut  sut
       {$cell *}  (cell $(sut p.sut) $(sut q.sut)) 
@@ -8478,7 +8485,7 @@
     (bind $(gun t.gun) |=(a/twig [%per u.gup a]))
   ::
   ++  phax
-    |=  ruw/(list (list beer))
+    |=  ruw/(list (list woof))
     =+  [yun=*(list twig) cah=*(list @)]
     =+  wod=|=({a/tape b/(list twig)} ^+(b ?~(a b [[%nub %knit (flop a)] b])))
     |-  ^+  yun
@@ -8867,9 +8874,9 @@
           (stag %bump ;~(pfix lus (ifix [pel per] wide)))
         ::
           %+  cook
-            |=  a/(list (list beer))
+            |=  a/(list (list woof))
             :-  %nub
-            [%knit |-(^-((list beer) ?~(a ~ (weld i.a $(a t.a)))))]
+            [%knit |-(^-((list woof) ?~(a ~ (weld i.a $(a t.a)))))]
           (most dog ;~(pfix lus soil))
         ::
           (cook |=(a/wing [%make a ~]) rope)
@@ -8879,7 +8886,7 @@
           (stag %sand tash:so)
         ::
           %+  cook
-            |=  a/(list (list beer))
+            |=  a/(list (list woof))
             [%conl (phax a)]
           (most dog ;~(pfix hep soil))
         ::
@@ -8932,8 +8939,8 @@
         ==
       :-  '"'
         %+  cook
-          |=  a/(list (list beer))
-          [%knit |-(^-((list beer) ?~(a ~ (weld i.a $(a t.a)))))]
+          |=  a/(list (list woof))
+          [%knit |-(^-((list woof) ?~(a ~ (weld i.a $(a t.a)))))]
         (most dog soil)
       :-  ['a' 'z']
         rump

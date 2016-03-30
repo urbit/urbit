@@ -6,6 +6,13 @@
 ::::
   !:
 :-  %say
-|=  {^ {{txt/@tas $~} $~}}
+|=  {* {{txt/@tas $~} $~}}
+=+  ^=  foo
+    ^-  tape
+    """
+      foo  bar \{b/@}
+          (add a b)
+          [1 1]
+    """
 :-  %noun
-(crip (weld "hello, " (flop (trip txt))))
+foo
