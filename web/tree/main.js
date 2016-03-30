@@ -49,11 +49,22 @@ module.exports = {
       components: components
     });
   },
-  addComment: function(path, text) {
-    if (path[0] !== "/") {
-      path = "/" + path;
+  addComment: function(pax, txt) {
+    if (pax[0] !== "/") {
+      pax = "/" + pax;
     }
-    return TreePersistence.put("talk-comment", path, text);
+    return TreePersistence.put({
+      pax: pax,
+      txt: txt
+    }, "talk-comment");
+  },
+  setPlanInfo: function(arg) {
+    var loc, who;
+    who = arg.who, loc = arg.loc;
+    return TreePersistence.put({
+      who: who,
+      loc: loc
+    }, "write-plan-info", "hood");
   },
   setCurr: function(path) {
     return TreeDispatcher.handleViewAction({
@@ -1271,16 +1282,22 @@ module.exports = recl({
 
 
 },{"../actions/TreeActions.coffee":1}],14:[function(require,module,exports){
-var Grid, a, code, div, h6, query, recl, ref, ref1, table, tbody, td, textarea, tr,
+var Grid, TreeActions, a, button, code, div, h6, input, load, query, recl, ref1, ref2, rele, span, table, tbody, td, textarea, tr,
   slice = [].slice;
+
+load = require('./LoadComponent.coffee');
 
 query = require('./Async.coffee');
 
+TreeActions = require('../actions/TreeActions.coffee');
+
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, textarea = ref.textarea, a = ref.a, h6 = ref.h6, code = ref.code;
+rele = React.createElement;
 
-ref1 = React.DOM, table = ref1.table, tbody = ref1.tbody, tr = ref1.tr, td = ref1.td;
+ref1 = React.DOM, div = ref1.div, textarea = ref1.textarea, button = ref1.button, input = ref1.input, a = ref1.a, h6 = ref1.h6, code = ref1.code, span = ref1.span;
+
+ref2 = React.DOM, table = ref2.table, tbody = ref2.tbody, tr = ref2.tr, td = ref2.td;
 
 Grid = function() {
   var _td, _tr, props, rows;
@@ -1302,25 +1319,120 @@ module.exports = query({
   path: 't'
 }, recl({
   displayName: "Plan",
+  getInitialState: function() {
+    return {
+      edit: false,
+      plan: this.props.plan,
+      focus: null
+    };
+  },
+  componentWillReceiveProps: function(props) {
+    if (_.isEqual(this.props.plan, this.state.plan)) {
+      return this.setState({
+        plan: props.plan
+      });
+    }
+  },
+  refInput: function(ref) {
+    return (function(_this) {
+      return function(node) {
+        _this[ref] = node;
+        if (ref === _this.state.focus) {
+          return node != null ? node.focus() : void 0;
+        }
+      };
+    })(this);
+  },
+  saveInfo: function() {
+    var plan, ref3;
+    plan = {
+      who: this.who.value,
+      loc: this.loc.value,
+      acc: (ref3 = this.props.plan) != null ? ref3.acc : void 0
+    };
+    if (!_.isEqual(plan, this.state.plan)) {
+      TreeActions.setPlanInfo(plan);
+      this.setState({
+        plan: plan
+      });
+    }
+    return this.setState({
+      edit: false,
+      focus: null
+    });
+  },
   render: function() {
-    var acc, beak, issuedBy, key, loc, path, plan, ref2, ref3, url, usr, who;
-    ref2 = this.props, beak = ref2.beak, path = ref2.path, plan = ref2.plan;
-    ref3 = plan != null ? plan : {}, acc = ref3.acc, loc = ref3.loc, who = ref3.who;
+    var acc, beak, editButton, editable, issuedBy, key, loc, path, ref3, ref4, ref5, url, usr, who;
+    ref3 = this.props, beak = ref3.beak, path = ref3.path;
+    ref5 = (ref4 = this.state.plan) != null ? ref4 : {}, acc = ref5.acc, loc = ref5.loc, who = ref5.who;
     issuedBy = urb.sein !== urb.ship ? "~" + urb.sein : "self";
+    if (urb.user !== urb.ship) {
+      editButton = null;
+      editable = function(ref, s) {
+        return s;
+      };
+    } else if (this.state.edit) {
+      editButton = button({
+        onClick: (function(_this) {
+          return function() {
+            return _this.saveInfo();
+          };
+        })(this)
+      }, "save");
+      editable = (function(_this) {
+        return function(ref, s) {
+          return input({
+            defaultValue: s,
+            ref: _this.refInput(ref),
+            onKeyDown: function(arg) {
+              var keyCode;
+              keyCode = arg.keyCode;
+              if (keyCode === 13) {
+                return _this.saveInfo();
+              }
+            }
+          });
+        };
+      })(this);
+    } else {
+      editButton = button({
+        onClick: (function(_this) {
+          return function() {
+            return _this.setState({
+              edit: true
+            });
+          };
+        })(this)
+      }, "edit");
+      editable = (function(_this) {
+        return function(ref, s) {
+          var loading, ref6, ref7;
+          loading = ((ref6 = _this.props.plan) != null ? ref6[ref] : void 0) !== ((ref7 = _this.state.plan) != null ? ref7[ref] : void 0) ? rele(load, {}) : void 0;
+          return span({
+            onClick: function() {
+              return _this.setState({
+                edit: true,
+                focus: ref
+              });
+            }
+          }, s, loading);
+        };
+      })(this);
+    }
     return div({
       className: "plan"
-    }, code({}, "~" + urb.ship), who != null ? h6({}, who) : void 0, Grid({
+    }, editButton, code({}, "~" + urb.ship), (who != null) || this.state.edit ? h6({}, editable('who', who)) : void 0, Grid({
       className: "grid"
-    }, ["Location:", loc != null ? loc : "unknown"], ["Issued by:", issuedBy], [
+    }, ["Location:", editable('loc', loc != null ? loc : "unknown")], ["Issued by:", issuedBy], [
       "Immutable link:", a({
         href: beak + "/web" + path
       }, beak)
     ], !_.isEmpty(acc) ? [
       "Connected to:", div({}, (function() {
-        var ref4, results;
+        var ref6, results;
         results = [];
         for (key in acc) {
-          ref4 = acc[key], usr = ref4.usr, url = ref4.url;
+          ref6 = acc[key], usr = ref6.usr, url = ref6.url;
           results.push(div({
             key: key
           }, url == null ? key + "/" + usr : a({
@@ -1334,7 +1446,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3}],15:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"./Async.coffee":3,"./LoadComponent.coffee":12}],15:[function(require,module,exports){
 var TreeStore, Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -1889,13 +2001,11 @@ module.exports = {
       }
     });
   },
-  put: function(mark, pax, txt) {
-    var appl;
-    appl = /[a-z]*/.exec(mark)[0];
-    return urb.send({
-      pax: pax,
-      txt: txt
-    }, {
+  put: function(data, mark, appl) {
+    if (appl == null) {
+      appl = /[a-z]*/.exec(mark)[0];
+    }
+    return urb.send(data, {
       mark: mark,
       appl: appl
     });

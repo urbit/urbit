@@ -40,17 +40,24 @@
 ::
 ++  poke-plan-account
   |=  {sev/knot usr/plan-acct}  ^+  abet
+  (poke-plan-diff [~ ~ [[sev usr] ~ ~]])
+::
+++  poke-plan-info
+  |=  {who/@t loc/govt}
+  (poke-plan-diff [[~ who loc] ~ ~])
+::
+++  poke-plan-diff
+  |=  dif/plan-diff  ^+  abet
+  ?.  =(our src)
+    ~|(foreign-write+[our=our src=src] !!)
   =;  sob/soba
     ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(tope beak-now (flop pax))
-  =+  new=`(map knot plan-acct)`[[sev usr] ~ ~]
-  ?~  [fil:.^(arch %cy paf)]
-    [pax %ins plan+!>([['' /] new])]~
-  =+  ole=.^({^ acc/(map knot plan-acct)} %cx paf)
-  ?:  =([~ usr] (~(get by acc.ole) sev))
-    ~
-  [pax %dif plan-diff+!>(`plan-diff`[~ ~ new])]~
+  %+  welp
+    ?^  [fil:.^(arch %cy paf)]  ~
+    [pax %ins plan+!>([['' /] ~])]~
+  [pax %dif plan-diff+!>(dif)]~
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
