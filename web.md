@@ -3,6 +3,8 @@ anchor: none
 plan: y
 ---
 
+<iframe src="/talk?public" width="100%" height="100%"/>
+
 # Hello.
 
 <h2 class="even">
