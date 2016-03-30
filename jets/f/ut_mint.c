@@ -605,6 +605,12 @@
         return ret;
       }
 
+      case c3__tune: p_gen = u3t(gen);
+      _mint_used();
+      {
+        return u3nc(u3qf_face(p_gen, sut), u3nc(0, 1));
+      }
+
       case c3__burn: p_gen = u3t(gen);
       _mint_used();
       {

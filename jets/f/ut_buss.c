@@ -12,15 +12,16 @@
              u3_noun cog,
              u3_noun gen)
   {
-    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "buss");
+    u3_noun cug, ret;
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam_2, 
-                                u3k(cog), 
-                                u3x_sam_3, 
-                                u3k(gen),
-                                0));
+    cug = u3nc(u3nt(u3nt(u3k(cog), u3_nul, u3k(gen)), 
+                    u3_nul, 
+                    u3_nul),
+               u3_nul);
+    ret = u3qf_face(cug, sut);
+
+    u3z(cug);
+    return ret;
   }
 
 /* boilerplate

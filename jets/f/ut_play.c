@@ -351,6 +351,12 @@
         return ret;
       }
 
+      case c3__tune: p_gen = u3t(gen);
+      _play_used();
+      {
+        return u3qf_face(p_gen, sut);
+      }
+
       case c3__burn: p_gen = u3t(gen);
       _play_used();
       {
