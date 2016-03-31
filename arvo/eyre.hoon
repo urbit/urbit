@@ -91,7 +91,7 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  $4                                                ::  version
+  $:  $5                                                ::  version
       gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
@@ -1968,8 +1968,12 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  |=  old/bolo
-  ..^$(+>- old)
+  =+  bolo-4={$4 _%*(+ *bolo lyv *(map duct ^))}
+  |=  old/?(bolo bolo-4)
+  ?-  -.old
+    $5  ..^$(+>- old)
+    $4  $(old [%5 +.old(lyv ~)])          :: minor leak
+  ==
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
