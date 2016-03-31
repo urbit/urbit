@@ -2177,7 +2177,7 @@
   $?  {{$lon $~} p/hole}                                ::  login request
       {{$aut $~} p/hole}                                ::  login reply
       {{$hat $~} p/hole q/hart}                         ::  login redirect
-      {{$get $~} p/@uvH q/{? ? clip httq}}              ::  remote request
+      {{$get $~} p/@uvH q/{? clip httq}}                ::  remote request
       {{$got $~} p/@uvH q/httr}                         ::  remote response
       {{$gib $~} p/@uvH}                                ::  remote cancel
   ==                                                    ::
@@ -2190,7 +2190,8 @@
               {$serv p/$@(desk beam)}                   ::  set serving root
               {$them p/(unit hiss)}                     ::  outbound request
               {$they p/@ud q/httr}                      ::  inbound response
-              {$this p/? q/? r/clip s/httq}             ::  inbound request
+              {$chis p/? q/clip r/httq}                 ::  IPC inbound request
+              {$this p/? q/clip r/httq}                 ::  inbound request
               {$thud $~}                                ::  inbound cancel
               {$wegh $~}                                ::  report memory
               {$west p/sack q/fuz:gram}                 ::  network request

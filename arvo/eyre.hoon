@@ -20,7 +20,7 @@
           ==  ==                                        ::
               $:  $e                                    ::  to self
           $%  {$thud $~}                                ::  proxied death
-              {$this p/? q/? r/clip s/httq}             ::  proxied request
+              {$this p/? r/clip s/httq}             ::  proxied request
               {$meta vase:{$them (unit httr)}}          ::  type check
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
@@ -616,10 +616,10 @@
       =.  our  ?~(hov p.kyz (min u.hov p.kyz))
       +>.$(hov [~ our], top [[our %home ud+0] /web])
     ::
-      $this                                           ::  inbound request
+        ?($chis $this)                                  ::  inbound request
       %-  emule  |.  ^+  ..apex
-      =*  sec  q.kyz    ::  ?                           ::  https bit
-      =*  heq  s.kyz    ::  httq                        ::  request content
+      =*  sec  p.kyz    ::  ?                           ::  https bit
+      =*  heq  r.kyz    ::  httq                        ::  request content
       =+  ryp=`quri`(rash q.heq zest:epur)
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
@@ -630,9 +630,11 @@
                 [[sec (rash i.hot thor:epur)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
+      ?:  ?=($chis -.kyz)                               :: IPC escape hatch
+        ~(lens handle pul [q.+.kyz |] [p.heq maf s.heq])
       =+  her=(host-to-ship r.p.pul)
       ?:  |(?=($~ her) =(our u.her))
-        (handle pul [p.+.kyz r.+.kyz |] [p.heq maf s.heq])
+        ~(apex handle pul [q.+.kyz |] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
@@ -1016,12 +1018,10 @@
   ::
   ::
   ++  handle
-    |=  $:  {hat/hart pok/pork quy/quay}                ::  purl parsed url
-            {lop/? cip/clip aut/?}                      ::  client ip nonymous?
+    |_  $:  {hat/hart pok/pork quy/quay}                ::  purl parsed url
+            {cip/clip aut/?}                            ::  client ip nonymous?
             {mef/meth maf/math bod/(unit octs)}         ::  method+headers+body
         ==
-    =<  apex
-    |%
     ++  abet  ..handle
     ++  done  .
     ++  teba  |*(a/$-(* ..handle) |*(b/* %_(done ..handle (a b))))
@@ -1047,6 +1047,10 @@
       =+  pez=process
       ?:  ?=($| -.pez)  p.pez
       (resolve ~ p.pez)
+    ::
+    ++  lens
+      =<  abet
+      (process-parsed [%lens (need grab-json)])
     ::
     ++  resolve
       |=  {cug/(list @t) pez/pest}  ^+  done
@@ -1098,9 +1102,7 @@
     ::
     ++  parse
       ^-  (each perk httr)
-      |^  =+  pol=as-loopback
-          ?^  pol  [%& u.pol]
-          =+  hit=as-magic-filename
+      |^  =+  hit=as-magic-filename
           ?^  hit  [%| u.hit]
           ?:  is-spur
             [%& %spur (flop q.pok)]
@@ -1111,11 +1113,6 @@
           =+  hem=as-aux-request
           ?^  hem  [%& u.hem]
           ~|(strange-path+q.pok !!)
-      ::
-      ++  as-loopback
-        ^-  (unit perk)
-        ?.  lop  ~
-        `lens+(need grab-json)
       ::
       ++  as-magic-filename
         ^-  (unit httr)
