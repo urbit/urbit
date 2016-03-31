@@ -891,13 +891,16 @@ _http_request(u3_hreq* req_u)
     u3_noun pox = _http_pox_to_noun(req_u->hon_u->htp_u->sev_l,
                                     req_u->hon_u->coq_l,
                                     req_u->seq_l);
-
+    u3_noun typ =
+      _(req_u->hon_u->htp_u->lop) ?
+        c3__chis :
+      c3__this;
+    
     u3v_plan(pox,
-               u3nq(c3__this,
-                    req_u->hon_u->htp_u->lop,
+               u3nq(typ,
                     req_u->hon_u->htp_u->sec,
-                    u3nc(u3nc(c3y, u3i_words(1, &req_u->ipf_w)),
-                         req)));
+                    u3nc(c3y, u3i_words(1, &req_u->ipf_w)),
+                    req));
   }
 }
 
