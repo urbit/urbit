@@ -54,10 +54,23 @@
     ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(tope beak-now (flop pax))
-  %+  welp
-    ?^  [fil:.^(arch %cy paf)]  ~
-    [pax %ins plan+!>([['' /] ~])]~
+  ?~  [fil:.^(arch %cy paf)]
+    =+  ins=(pact-plan [['' /] ~] dif)
+    [pax %ins plan+!>(ins)]~
+  =+  ole=.^({{@t govt} (map iden plan-acct)} %cx paf)
+  =+  neu=(pact-plan ole dif)
+  ?:  =(ole neu)  ~
   [pax %dif plan-diff+!>(dif)]~
+::
+++  pact-plan                         :: XX clay should handle fused insert+diff
+  |=  {all/{{who/@t loc/govt} acc/(map iden plan-acct)} dif/plan-diff}
+  ^+  all
+  :-  (fall inf.dif -.all)
+  =;  neu  (~(uni by neu) put.dif)
+  =+  del=(~(tap by del.dif))                           :: XXX map functions
+  |-  ^+  acc.all
+  ?~  del  acc.all
+  $(del t.del, acc.all (~(del by acc.all) p.i.del))
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
