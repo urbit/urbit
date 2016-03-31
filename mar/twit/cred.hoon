@@ -3,7 +3,7 @@
 ::::  /hoon/cred/twit/mar
   ::
 /-  plan-acct
-/+  httr-to-json
+/+  httr-to-json, twitter
 |_  {acc/plan-acct raw/json}
 ++  grab
   |%
@@ -12,12 +12,11 @@
   ++  json
     |=  jon/^json  ^-  {plan-acct ^json}
     =+  usr=(need ((ot 'screen_name'^so ~):jo jon))
-    =+  url=(scan "https://twitter.com/FIXME" aurf:epur)
-    =.  q.q.p.url  /[usr]             ::  XX friendlier url format  #717
-    [[usr (some url)] jon]
+    =+  url=(user-url:render:twitter usr)
+    [[usr (some [url ~])] jon]
   --
 ++  grow
   |%
-  ++  tank  >[+<]<
+  ++  tank  >[+<.+]<
   --
 --

@@ -47,6 +47,11 @@
   ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
   [q.i.b $(a t.a, b t.b)]
 ::
+++  interpolate-url                   ::  XX friendlier url format  #717
+  |=  {a/tape b/(list (pair term knot))}  ^-  purl
+  =+  url=`purl`(scan a auri:epur)
+  url(q.q (interpolate-path q.q.url b))
+::
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
   ^-  hiss
@@ -74,10 +79,20 @@
   ::
 |%
 ++  render                                                ::  response printers
+  =+  args:reqs
   |%
   ++  mean
     |=  {msg/@t num/@ud}  ^-  tank
     rose+[": " `~]^~[leaf+"Error {<num>}" leaf+(trip msg)]
+  ::
+  ++  user-url
+    |=  a/scr  ^-  purl
+    (interpolate-url "https://twitter.com/:scr" scr+a ~)
+  ::
+  ++  post-url
+    |=  {a/scr b/tid}   ^-  purl
+    %+  interpolate-url  "https://twitter.com/:scr/status/:tid"
+    ~[scr+a tid+(tid:print b)]
   --
 ++  parse                                                ::  json reparsers
   |%
