@@ -7733,8 +7733,6 @@
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
     ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
-    ?:  (~(meet ut sut) -:!>(*span))
-      [dex %span]
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
@@ -7783,6 +7781,8 @@
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
+      ?:  (~(meet ut sut) -:!>(*span))
+        [dex %span]
       =+  yed=(sort (~(tap in p.sut)) aor)
       =-  [p [%pick q]]
       |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/(list wine)}
@@ -10560,6 +10560,7 @@
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ++  sloy
+  !:
   |=  sod/slyd
   ^-  slyt
   |=  {ref/* raw/*}
