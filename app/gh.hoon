@@ -42,8 +42,8 @@
 ::
 |_  {hid/bowl cnt/@ hook/(map @t {id/@t listeners/(set bone)})}
 ++  prep
-  |=  a/(unit)  ^-  (quip move +>)
-  ?^  a  [~ +>]
+  |=  a/(unit _+<+)  ^-  (quip move +>)
+  ?^  a  [~ +>(+<+ u.a)]
   (peer-scry %x %read /user)
 ::
 ::  This core manages everything related to a particular request.

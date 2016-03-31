@@ -38,12 +38,16 @@
 ++  card                                                ::  arvo request
   $?  gift
   $%  {$hiss wire (unit iden) api-call}                 ::  api request
-      {$poke wire dock $talk-command command:talk}      ::
+      {$poke wire app-message}                          ::
       {$wait wire p/@da}                                ::  timeout
   ==  ==
 ::
 ++  api-call  {response-mark $twit-req {endpoint quay}} :: full hiss payload
 ++  response-mark  ?($twit-post $twit-feed $twit-cred)  :: sigh options
+++  app-message
+  $?  {{ship $talk} $talk-command command:talk}         ::  chat message
+      {{ship $hood} $write-plan-account iden plan-acct} :: registration
+  ==                                                    ::
 ++  sign                                                ::  arvo response
   $%  {$e $thou p/httr}                                 ::  HTTP result
       {$t $wake $~}                                      ::  timeout ping
@@ -65,6 +69,11 @@
 ::::
   ::
 |_  {bowl axle}
+::
+++  prep
+  |=  a/(unit axle)  ^-  (quip move +>)
+  ?^  a  [~ +>(+<+ u.a)]
+  (peer-scry-x /cred)
 ::
 ++  cull                                                ::  remove seen tweets
   |=  {pax/path rep/(list stat)}  ^+  rep
@@ -133,6 +142,7 @@
   ?>  ?=($~ wir)
   =+  pax=`twit-path`cred+wir
   :_  +>.$(ced `[now raw])
+  :-  [ost %poke pax [our %hood] %write-plan-account ~.twitter acc]
   (spam-with-scry-x pax json+raw)
 ::
 ++  sigh-twit-post-post                                ::  status acknowledged
