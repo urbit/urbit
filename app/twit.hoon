@@ -2,13 +2,15 @@
 ::
 ::::  /hook/core/twit/app
   ::
+/-    plan-acct
 /+    twitter, talk
 ::
 ::::  ~fyr
   ::
 |%
 ++  twit-path                                           ::  valid peer path
-  $%  {$home p/@t $~}                                   ::  home timeline
+  $%  {$cred $~}                                        ::  credential info
+      {$home p/@t $~}                                   ::  home timeline
       {$user p/@t $~}                                   ::  user's tweets
       {$post p/@taxuv $~}                               ::  status of status
   ==
@@ -18,6 +20,7 @@
       out/(map @uvI (each {knot cord} stat))            ::  sent tweets
       ran/(map path {p/@ud q/@da})                      ::  polls active
       fed/(jar path stat)                               ::  feed cache
+      ced/(unit (pair @da json))                        ::  credentials
   ==
 ::
 ++  gift                                                ::  subscription action
@@ -27,7 +30,8 @@
 ++  gilt  
   $%  {$twit-feed p/(list stat)}                        ::  posts in feed
       {$twit-post p/stat}                               ::  tweet accepted
-      {$ares term (list tank)}
+      {$ares term (list tank)}                          ::  error
+      {$json json}                                      ::  unspecialized
   ==
 ::
 ++  move  {bone card}
@@ -39,7 +43,7 @@
   ==  ==
 ::
 ++  api-call  {response-mark $twit-req {endpoint quay}} :: full hiss payload
-++  response-mark  ?($twit-post $twit-feed)             :: sigh options
+++  response-mark  ?($twit-post $twit-feed $twit-cred)  :: sigh options
 ++  sign                                                ::  arvo response
   $%  {$e $thou p/httr}                                 ::  HTTP result
       {$t $wake $~}                                      ::  timeout ping
@@ -123,6 +127,14 @@
   ~&  retrying-in+`@dr`(sub tym now)
   :_(+>.$ [ost %wait pax tym]~)
 ::
+++  sigh-twit-cred-scry-cred  sigh-twit-cred-cred       :: alias
+++  sigh-twit-cred-cred
+  |=  {wir/wire acc/plan-acct raw/json}  ^+  done
+  ?>  ?=($~ wir)
+  =+  pax=`twit-path`cred+wir
+  :_  +>.$(ced `[now raw])
+  (spam-with-scry-x pax json+raw)
+::
 ++  sigh-twit-post-post                                ::  status acknowledged
   |=  {wir/wire rep/stat}  ^+  done
   =+  (raid wir mez=%uv ~)
@@ -130,8 +142,7 @@
   :_  +>.$
   =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
   :-  (show-url [& ~ &+/com/twitter] `pax ~)
-  =+  mof=~[[%diff %twit-post rep] [%quit ~]]
-  (weld (spam post+wir mof) (spam scry+x+post+wir mof))
+  (spam-with-scry-x post+wir twit-post+rep)
 ::
 ++  sigh-twit-feed                                      ::  feed data
   |=  {wir/wire rep/(list stat)}  ^+  done
@@ -238,12 +249,21 @@
   ::
       ?($user $home)
     [%part twit-feed+(flop (~(get ja fed) pax))]
+  ::
+      $cred
+    ?~  ced  [%none ~]
+    ?:  (gth now (add p.u.ced ~m1))   ::  stale
+      [%none ~]
+    [%full %json q.u.ced]
   ==
 ::
 ++  pear-hiss
   |=  pax/twit-path  ^-  (unit {(unit iden) api-call})
   ?-    -.pax
       $post  ~                        :: future/unacked
+      $cred
+    `[`~. %twit-cred twit-req+[test-login+~ ['skip_status'^%t]~]]
+  ::
       $user
     =+  ole=(~(get ja fed) pax)
     =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
@@ -271,6 +291,11 @@
 ::       fed  (~(del by fed) pax)
 ::     ==
 ::   `+>.$
+::
+++  spam-with-scry-x                                    :: recieve final
+  |=  {a/path b/gilt}  ^-  (list move)
+  =+  mof=~[[%diff b] [%quit ~]]
+  (weld (spam a mof) (spam scry+x+a mof))
 ::
 ++  spam                                                ::  send by path
   |=  {a/path b/(list gift)}  ^-  (list move)
