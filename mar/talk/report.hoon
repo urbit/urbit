@@ -95,7 +95,6 @@
           %-  jobe  :~
             service+s+service.a
             id+s+id.a
-            ~&  url=`*`id-url.a
             id-url+s+(crip (earn id-url.a))
             summary+s+summary.a
             body+s+body.a

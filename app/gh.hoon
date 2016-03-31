@@ -83,7 +83,7 @@
   ::
   ++  scry
     ^+  .
-    ?+  style  ~|(%invalid-style !!)
+    ?+  style  ~|(invalid-style+[style want=p:!>(*?($read $listen))] !!)
       $read     read
       $listen   listen
     ==

@@ -30,14 +30,13 @@
 ++  grab
   |%
   ++  json
-    |=  jon/^json
-    ^-  issue-comment:gh
-    =+  top=(need ((om:jo some) jon))
-    :*  (need (repository:gh-parse (~(got by top) %repository)))
-        (need (user:gh-parse (~(got by top) %sender)))
-        (need (so:jo (~(got by top) %action)))
-        (need (issue:gh-parse (~(got by top) %issue)))
-        (need (comment:gh-parse (~(got by top) %comment)))
+    =;  jop  |=(jon/^json `issue-comment:gh`(need (jop jon)))
+    %-  ot:jo
+    :~  repository+repository:gh-parse
+        sender+user:gh-parse
+        action+so:jo
+        issue+issue:gh-parse
+        comment+comment:gh-parse
     ==
   --
 --
