@@ -72,22 +72,6 @@
       $bak                                              ::  ++bak auth response
       $in                                               ::  ++in handle code 
   ==                                                    ::
-++  sole-effect                                         ::  app to sole
-  $%  {$bel $~}                                         ::  beep
-      {$blk p/@ud q/@c}                                 ::  blink+match char at
-      {$clr $~}                                         ::  clear screen
-      {$det *}  ::  sole-change                         ::  edit command
-      {$err p/@ud}                                      ::  error point
-      {$mor p/(list sole-effect)}                       ::  multiple effects
-      {$nex $~}                                         ::  save clear command
-      {$pro *}  ::  sole-prompt                         ::  set prompt
-      {$sag p/path q/*}                                 ::  save to jamfile
-      {$sav p/path q/@}                                 ::  save to file
-      {$tan p/(list tank)}                              ::  classic tank
-  ::  {$taq p/tanq}                                     ::  modern tank
-      {$txt p/tape}                                     ::  text line
-      {$url p/@t}                                       ::  activate url
-  ==                                                    ::
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
@@ -150,7 +134,6 @@
       {$bugs p/?($as $to) $~}
       {$beam p/beam}
       {$deps p/?($put $delt) q/@uvH}
-      {$lens p/json}
       {$mess p/dock q/mark r/wire s/json}
       {$poll p/{i/@uvH t/(list @uvH)}}
       {$spur p/spur}
@@ -769,26 +752,11 @@
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
           ?($coup $reap)
-        ?:  ?=($lens r.q.tee)
-          ~&  hen=hen^hcuf=-.cuf
-          ?:  ?=(^ p.cuf)
-            =+  tag=`tang`[>%eyre-unto-error< >-.cuf< u.p.cuf]
-            %-  (slog tag)
-            =+  txt=(role (turn (flop tag) |=(a/tank (crip ~(ram re a)))))
-            =+  jon=`json`s+txt
-            (give-json 200 ~ jon)
-          ?.  ?=($coup -.cuf)
-            +>.$
-          +>.$
-          ::  abet:(give-json:(ire-ix p.tee) 200 ~ (joba %okey-dokey %b &))
+        ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
         (get-ack:(ire-ix p.tee) q.tee ?~(p.cuf ~ `[-.cuf u.p.cuf]))
       ::
           $doff  !!
           $diff
-        ?:  ?=($lens r.q.tee)
-          ~&  [%lens-diffing (sole-effect q.q.p.cuf)]
-          =+  fec=((hard sole-effect) q.q.p.cuf)
-          (get-lens:(ire-ix p.tee) q.tee fec)
         ?.  ?=($json p.p.cuf)
           :: ~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
           (back tee %json p.cuf)
@@ -946,7 +914,7 @@
   ++  new-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
     :: ~&  new-deps+[a b]
-    ?:  =(`@`0 a)  +>.$
+    ?:  =(`@`~ a)  +>.$
     =+  had=(~(has by liz) a)
     =.  liz  (~(put ju liz) a b)
     ?:  had  +>.$
@@ -1050,7 +1018,10 @@
     ::
     ++  lens
       =<  abet
-      (process-parsed [%lens (need grab-json)])
+      ::  (process-parsed [%mess [our %dojo] %lens-command /lens (need grab-json)])
+      =^  orx  ..ya  new-view:(logon:for-client our)
+      =+  vew=(ire-ix (oryx-to-ixor orx))
+      ((teba new-lens.vew) (need grab-json))
     ::
     ++  resolve
       |=  {cug/(list @t) pez/pest}  ^+  done
@@ -1302,13 +1273,6 @@
           $put   (new-deps q.hem %| ire)
           $delt  (del-deps q.hem %| ire)
         ==
-      ::
-          $lens
-        ::  $(hem [%mess [our %dojo] %lens-command /lens p.hem])
-        :-  %|
-        =^  orx  ..ya  new-view:for-client
-        =+  vew=(ire-ix (oryx-to-ixor orx))
-        ((teba new-lens.vew) p.hem)
       ::
           $mess
         :-  %|
@@ -1586,7 +1550,7 @@
       =.  +>.$
         %+  pass-note
           [%of ire (gsig [our %dojo] lens+/)]
-        [%g %deal [him our] %dojo %peer /sole]  ::  XX  maybe peel json?
+        [%g %deal [him our] %dojo %peel %lens-json /sole]
       =.  +>.$
         %+  pass-note
           [%of ire (gsig [our %dojo] lens+/)]
@@ -1614,42 +1578,18 @@
       (nice-json:pop-duct:(ire-ix ire))          ::  XX gall ack
     ::
     ++  get-lens
-      |=  {a/whir-of fec/sole-effect}  ^+  ..ix
-      ?+    -.fec  ..ix
-          $tan
-        =+  txt=(role (turn (flop p.fec) |=(a/tank (crip ~(ram re a)))))
-        =+  jon=`json`s+txt
-        =.  +>.$
-          %+  pass-note
-            `whir`[%of ire (gsig [our %dojo] lens+/)]
-          `note`[%g %deal [him our] %dojo %pull ~]
-        abet:(give-json 200 ~ jon)
-      ::
-          $txt
-        =+  jon=`json`s+(crip p.fec)
-        =.  +>.$
-          %+  pass-note
-            `whir`[%of ire (gsig [our %dojo] lens+/)]
-          `note`[%g %deal [him our] %dojo %pull ~]
-        abet:(give-json 200 ~ jon)
-      ::
-          $sav
-        =+  ^=  jon
-            (jobe file+s+(crip <`path`p.fec>) data+s+(crip (sifo q.fec)) ~)
-        =.  +>.$
-          %+  pass-note
-            `whir`[%of ire (gsig [our %dojo] lens+/)]
-          `note`[%g %deal [him our] %dojo %pull ~]
-        abet:(give-json 200 ~ jon)
-      ::
-          $mor
-        |-  ^+  ..ix
-        ?~  p.fec  ..ix
-        $(p.fec t.p.fec, ..ix ^$(fec i.p.fec))
-      ==
+      |=  {a/whir-of fec/json}  ^+  ..ix
+      ?~  fec  ..ix                   ::  nulled event we don't care about
+      =.  +>.$
+        %+  pass-note
+          `whir`[%of ire (gsig [our %dojo] lens+/)]
+        `note`[%g %deal [him our] %dojo %pull ~]
+      abet:(give-json 200 ~ fec)
     ::
     ++  get-rush
       |=  {a/whir-of b/json}  ^+  ..ix
+      ?:  ?=($lens r.a)
+        (get-lens a b)
       (get-even [%rush [[(slav %p p.a) q.a] s.a] (joba %json b)])
     ::
     ++  get-quit
@@ -1658,9 +1598,19 @@
     ::
     ++  get-ack
       |=  {a/whir-of b/(unit {term tang})}  ^+  ..ix
+      ?:  ?=($lens r.a)
+        (ack-lens b)
       ?:  =(~ med)  ~&  resp-lost+ire  ..ix
       ?~  b  (nice-json:pop-duct)
       (mean-json:pop-duct 500 b)
+    ::
+    ++  ack-lens
+      |=  a/(unit (pair term tang))  ^+  ..ix
+      ?~  a
+        ..ix  :: (give-json 200 ~ (joba %okey-dokey %b &))
+      =+  tag=(flop `tang`[>[%eyre-lens-fail p.u.a]< q.u.a])
+      %-  (slog tag)
+      abet:(give-json 500 ~ (jape (wush 160 tag)))
     ::
     ++  get-even
       |=  ven/even  ^+  ..ix
