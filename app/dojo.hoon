@@ -2,7 +2,7 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
-/-  sole                                                ::  console structures
+/-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
 [. sole]
 ::                                                      ::  ::
@@ -165,7 +165,7 @@
     ++  dp-sink
       ;~  pose
         ;~(plug (cold %file tar) dp-beam)
-        ;~(plug (cold %flat pat) (most fas qut))
+        ;~(plug (cold %flat pat) (most fas sym))
         ;~(plug (cold %pill dot) (most fas sym))
         ;~(plug (cold %http lus) (stag %post dp-iden-url))
         ;~(plug (cold %http hep) (stag %put dp-iden-url))
@@ -970,6 +970,88 @@
       $clr  he-pine(buf "")
     ==
   ::
+  ++  he-lens
+    |=  com/command:lens
+    ^+  +>
+    =+  ^-  source/dojo-source
+        =|  num/@
+        =-  ?.  ?=($send-api -.sink.com)  ::  XX  num is incorrect
+              sor
+            :-  0
+            :+  %as  `mark`(cat 3 api.sink.com '-poke')
+            :-  1
+            :+  %do
+              :+  %gill  [%base %noun]
+              :^  %cont  [%rock %tas %post]
+                [%rock %$ endpoint.sink.com]
+              [%make ~[[%.y 6]] ~]
+            sor
+        ^=  sor
+        |-  ^-  dojo-source
+        :-  num
+        ?-    -.source.com
+            $data        [%ex %sand %t data.source.com]
+            $dojo        (rash command.source.com dp-build:dp)
+            $clay
+          :-  %ex
+          :*  %wish
+              [%base %noun]
+              :+  %cons
+                [%rock %tas %cx]
+              %+  rash  pax.source.com
+              rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+           ==
+        ::
+            $url         [%ur `~. url.source.com]
+            $api         !!
+            $get-api
+          :*  %ex
+              %wish
+              [%wing ~[%json]]
+              :*  %conl
+                  [%rock %tas %gx]
+                  [%sand %ta (scot %p our.hid)]
+                  [%sand %tas api.source.com]
+                  [%sand %ta (scot %da now.hid)]
+                  (turn endpoint.source.com |=(a/@t [%sand %ta a]))
+              ==
+          ==
+        ::
+            $listen-api  !!
+            $as          
+          :*  %as  mar.source.com
+              $(num +(num), source.com next.source.com)
+          ==
+        ::
+            $hoon 
+          :*  %do
+              %+  rash  code.source.com
+              tall:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+              $(num +(num), source.com next.source.com)
+          ==
+        ::
+            $tuple  
+          :-  %tu
+          |-  ^-  (list dojo-source)
+          ?~  next.source.com
+            ~
+          =.  num  +(num)
+          :-  ^$(source.com i.next.source.com)
+          $(next.source.com t.next.source.com)
+        ==
+    =+  |-  ^-  sink/dojo-sink
+        ?-  -.sink.com
+          $stdout       [%show %0]
+          $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
+          $output-clay  [%file (need (tome pax.sink.com))]
+          $url          [%http %post `~. url.sink.com]
+          $to-api       !!
+          $send-api     [%poke our.hid api.sink.com]
+          $command      (rash command.sink.com dp-sink:dp)
+          $app          [%poke our.hid app.sink.com]
+        ==
+    (he-plan sink source)
+  ::
   ++  he-lame                                           ::  handle error
     |=  {wut/term why/tang}
     ^+  +>
@@ -1021,6 +1103,17 @@
 ++  poke-sole-action
   |=  act/sole-action  ~|  poke+act  %.  act
   (wrap he-span):arm
+::
+++  poke-lens-command
+  |=  com/command:lens  ~|  poke-lens+com  %.  com
+  (wrap he-lens):arm
+::
+++  poke-json
+  |=  jon/json
+  ^-  {(list move) _+>.$}
+  ~&  jon=jon
+  [~ +>.$]
+::
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=({a/wire b/tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
