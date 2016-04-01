@@ -95,10 +95,10 @@
           %-  jobe  :~
             service+s+service.a
             id+s+id.a
-            id-url+s+(crip (earn id-url.a))
+            id-url+s+(crip (earf id-url.a))
             summary+s+summary.a
             body+s+body.a
-            url+s+(crip (earn url.a))
+            url+s+(crip (earf url.a))
             meta+meta.a
           ==
         ::  %inv  (jobe ship+(jope p.a) party+[%s q.a] ~)

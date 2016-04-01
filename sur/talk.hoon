@@ -68,10 +68,10 @@
       $:  $api                                          ::  api message
           service/@tas                                  ::  service name
           id/@t                                         ::  id on the service
-          id-url/purl                                   ::  link to id
+          id-url/purf                                   ::  link to id
           summary/@t                                    ::  summary of event
           body/@t                                       ::  body of event
-          url/purl                                      ::  link to event
+          url/purf                                      ::  link to event
           meta/json                                     ::  other data for web
       ==                                                ::
   ==                                                    ::

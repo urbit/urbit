@@ -2030,7 +2030,7 @@
           [": " ~ ~]
         :~  leaf+"[{(trip id.sep)} on {(trip service.sep)}]"
             leaf+(trip body.sep)
-            leaf+(earn url.sep)
+            leaf+(earf url.sep)
         ==
     ==
   ::

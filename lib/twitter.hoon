@@ -48,9 +48,9 @@
   [q.i.b $(a t.a, b t.b)]
 ::
 ++  interpolate-url                   ::  XX friendlier url format  #717
-  |=  {a/tape b/(list (pair term knot))}  ^-  purl
-  =+  url=`purl`(scan a auri:epur)
-  url(q.q (interpolate-path q.q.url b))
+  |=  {a/tape b/(list (pair term knot))}  ^-  purf
+  =+  url=`purf`(scan a aurf:epur)
+  url(q.q.p (interpolate-path q.q.p.url b)) 
 ::
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
@@ -86,11 +86,11 @@
     rose+[": " `~]^~[leaf+"Error {<num>}" leaf+(trip msg)]
   ::
   ++  user-url
-    |=  a/scr  ^-  purl
+    |=  a/scr  ^-  purf
     (interpolate-url "https://twitter.com/:scr" scr+a ~)
   ::
   ++  post-url
-    |=  {a/scr b/tid}   ^-  purl
+    |=  {a/scr b/tid}   ^-  purf
     %+  interpolate-url  "https://twitter.com/:scr/status/:tid"
     ~[scr+a tid+(tid:print b)]
   --

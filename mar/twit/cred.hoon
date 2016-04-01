@@ -13,7 +13,7 @@
     |=  jon/^json  ^-  {plan-acct ^json}
     =+  usr=(need ((ot 'screen_name'^so ~):jo jon))
     =+  url=(user-url:render:twitter usr)
-    [[usr (some [url ~])] jon]
+    [[usr (some url)] jon]
   --
 ++  grow
   |%
