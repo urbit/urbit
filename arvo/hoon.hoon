@@ -199,7 +199,7 @@
   ::    2n: functional hacks                            ::
   ::    2o: normalizing containers                      ::
   ::    2p: serialization                               ::
-  ::    2q: molds
+  ::    2q: molds and mold builders                     ::
   ::
 ~%  %two  +  ~
 |%
@@ -273,9 +273,6 @@
 ::
 ::::  2b: list logic                                    ::
   ::                                                    ::
-  ::    flop, homo, lent, levy, lien, limo, murn, reap, ::
-  ::    reel, roll, skid, skim, skip, scag, slag, snag, ::
-  ::    sort, swag, turn, weld, welp, zing              ::
   ::                                                    ::
 ++  flop                                                ::  reverse
   ~/  %flop
@@ -463,8 +460,6 @@
 ::                                                      ::
 ::::  2c: bit arithmetic                                ::
   ::                                                    ::
-  ::    bex, can, cat, cut, end, fil, lsh, met,         ::
-  ::    rap, rep, rip, rsh, swp, xeb                    ::
   ::
 ++  bex                                                 ::  binary exponent
   ~/  %bex
@@ -555,7 +550,6 @@
 ::                                                      ::
 ::::  2d: bit logic                                     ::
   ::                                                    ::
-  ::    con, dis, mix, not                              ::
   ::
 ++  con                                                 ::  binary or
   ~/  %con
@@ -610,7 +604,6 @@
 ::                                                      ::
 ::::  2e: insecure hashing                              ::
   ::                                                    ::
-  ::  fnv, mum, mug                                     ::
   ::
 ++  fnv  |=(a/@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
 ++  mum                                                 ::  mug with murmur3
@@ -661,7 +654,7 @@
     |-  ^-  @
     =+  c=(fnv (mix p.b (fnv q.b)))
     =+  d=(mix (rsh 0 31 c) (end 0 31 c))
-    ?.  =(0 c)  c
+    ?.  =(0 d)  d
     $(q.b +(q.b))
   =+  b=2.166.136.261
   |-  ^-  @
@@ -753,7 +746,6 @@
 ::::                                                    ::
   ::  2g: unsigned powers                               ::
   ::                                                    ::
-  ::    pow, sqt                                        ::
   ::
 ++  pow                                                 ::  unsigned exponent
   ~/  %pow
@@ -783,7 +775,6 @@
   ::                                                    ::
   ::  2h: set logic                                     ::
   ::                                                    ::
-  ::    in                                              ::
   ::
 ++  in                                                  ::  set engine
   ~/  %in
@@ -978,7 +969,6 @@
 ::                                                      ::
 ::::  2i: map logic                                     ::
   ::                                                    ::
-  ::    by                                              ::
   ::
 ++  by                                                  ::  map engine
   ~/  %by
@@ -1262,7 +1252,6 @@
 ::                                                      ::
 ::::  2k: queue logic                                   ::
   ::                                                    ::
-  ::    to                                              ::
   ::
 ++  to                                                  ::  queue engine
   |_  a/(tree)
@@ -1312,7 +1301,7 @@
   ::
   +-  tap                                               ::  adds list to end
     |=  b/(list _?>(?=(^ a) n.a))
-    =+  0                                               ::  breaks tap.in match
+    =+  0                                               ::  hack for jet match
     ^+  b
     ?~  a
       b
@@ -1326,7 +1315,6 @@
 ::                                                      ::
 ::::  2l: container from container                      ::
   ::                                                    ::
-  ::    malt, molt, silt                                ::
   ::
 ++  malt                                                ::  map from list
   |*  a/(list) 
@@ -1343,7 +1331,6 @@
 ::                                                      ::
 ::::  2m: container from noun                           ::
   ::                                                    ::
-  ::    ly, my, sy                                      ::
   ::
 ++  ly                                                  ::  list from raw noun
   |*  a/*
@@ -1359,8 +1346,6 @@
 ::                                                      ::
 ::::  2n: functional hacks                              ::
   ::                                                    ::
-  ::    aftr, cork, corl, cury, curr, fore,             ::
-  ::    hard, head, same, soft, tail, test              ::
   ::
 ++  aftr  |*(a/$-(* *) |*(b/$-(* *) (pair b a)))        ::  pair after
 ++  cork  |*({a/_|=(* **) b/gate} (corl b a))           ::  compose forward
@@ -1403,7 +1388,6 @@
 ::                                                      ::
 ::::  2o: normalizing containers                        ::
   ::                                                    ::
-  ::    jar, jug, map, set, qeu                         ::
   ::
 ++  jar  |*({a/mold b/mold} (map a (list b)))           ::  map of lists
 ++  jug  |*({a/mold b/mold} (map a (set b)))            ::  map of sets
@@ -1416,7 +1400,6 @@
 ::
 ::::  2p: serialization                                 ::
   ::                                                    ::
-  ::    cue, jam, mat, rub                              ::
   ::
 ++  cue                                                 ::  unpack
   ~/  %cue
@@ -1491,7 +1474,6 @@
 ::
 ::::  2q: molds and mold builders                       ::
   ::                                                    ::
-  ::    tape                                            ::
   ::
 ++  char  @t                                            ::  UTF8 byte
 ++  cord  @t                                            ::  UTF8, LSB first
@@ -1522,12 +1504,19 @@
 ::                                                      ::
 ::::  3: layer three                                    ::
   ::                                                    ::
+  ::    3a: signed and modular ints                     ::
+  ::    3b: floating point                              ::
+  ::    3c: urbit time                                  ::
+  ::    3d: SHA hash family                             ::
+  ::    3e: AES encryption                              ::
+  ::    3f: scrambling                                  ::
+  ::    3g: molds and mold builders                     ::
+  ::                                                    ::
 ~%  %tri  +  ~
 |%
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
-  ::    egcd, fe, fo, si                                ::
   ::
 ++  egcd                                                ::  schneier's egcd
   |=  {a/@ b/@}
@@ -1660,9 +1649,6 @@
 ::                                                      ::
 ::::  3b: floating point                                ::
   ::                                                    ::
-  ::  rd, rh, rs, rq                                    ::
-  ::  rlyd, rlys, rlyh, rlyq                            ::
-  ::  ryld, ryls, rylh, rylq                            ::
   ::
 ++  fn  ::  float, infinity, or NaN
         ::  s=sign, e=exponent, a=arithmetic form
@@ -2683,10 +2669,8 @@
       ++  yer  31.536.000             ::  (mul 365 day)
   --
 ::                                                      ::
-::::  3d: SHA family                                    ::
+::::  3d: SHA hash family                               ::
   ::                                                    ::
-  ::    shad, shaf, sham, shas, shax, shay, shaw,       ::
-  ::    shal, shaz, shan, og                            ::
   ::
 ++  shad  |=(ruz/@ (shax (shax ruz)))                   ::  double sha-256
 ++  shaf                                                ::  half sha-256
@@ -3014,7 +2998,7 @@
     [r +>.$(a (shas %og-s r))]
   --
 ::                                                      ::
-::::  3e: AES and friends                               ::
+::::  3e: AES encryption                                ::
   ::                                                    ::
   ::    aesc, ga                                        ::
   ::
@@ -3514,6 +3498,22 @@
 ::                                                      ::
 ::::  4: layer four                                     ::
   ::                                                    ::
+  ::    4a: exotic bases                                ::
+  ::    4b: text processing                             ::
+  ::    4c: tank printer                                ::
+  ::    4d: parsing (tracing)                           ::
+  ::    4e: parsing (combinators)                       ::
+  ::    4f: parsing (rule builders)                     ::
+  ::    4g: parsing (outside caller)                    ::
+  ::    4h: parsing (ascii glyphs)                      ::
+  ::    4i: parsing (useful idioms)                     ::
+  ::    4j: parsing (bases and base digits)             ::
+  ::    4k: atom printing                               ::
+  ::    4l: atom parsing                                ::
+  ::    4m: formatting functions                        ::
+  ::    4n: virtualization                              ::
+  ::    4o: molds and mold builders                     ::
+  ::
 ~%    %qua  
     + 
   ==
@@ -3602,7 +3602,7 @@
     `b
   --
 ::
-::::  4b: miscellaneous text processing
+::::  4b: text processing
   :: 
 ++  at                                                  ::  basic printing
   |_  a/@
@@ -5431,9 +5431,6 @@
 ++  palo  (pair vein opal)                              ::  wing trace, match
 ++  pock  (pair axis nock)                              ::  changes
 ++  port  (each palo (pair span nock))                  ::  successful match
-++  rule  _|=(nail *edge)                               ::  parsing rule
-++  spot  {p/path q/pint}                               ::  range in file
-++  tape  (list char)                                   ::  string as list
 ++  tiki                                                ::  test case
           $%  {$& p/(unit term) q/wing}                 ::  simple wing
               {$| p/(unit term) q/twig}                 ::  named wing
@@ -5644,7 +5641,15 @@
   ==                                                    ::
 --  =>
 ::                                                      ::
-::::  5: layer five
+::::  5: layer five                                     ::
+  ::                                                    ::
+  ::    5a: compiler utilities                          ::
+  ::    5b: macro expansion                             ::
+  ::    5c: compiler backend and prettyprinter          ::
+  ::    5d: parser                                      ::
+  ::    5e: caching compiler                            ::
+  ::    5f: molds and mold builders                     ::
+  ::    5g: profiling support (XX remove)               ::
   ::
 ~%    %pen
     +
@@ -5657,6 +5662,7 @@
 ::
 ::::  5a: compiler utilities
   ::
+++  bool  `span`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
 ++  cell                                                ::  make %cell span
   ~/  %cell
   |=  {hed/span tal/span}
@@ -5677,7 +5683,6 @@
     %void
   [%face giz der]
 ::
-++  bool  `span`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobeal
 ++  fork                                                ::  make %fork span
   ~/  %fork
   |=  yed/(list span)
@@ -8417,7 +8422,7 @@
     [%sure [%fits [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
-::::  5d: hoon parser
+::::  5d: parser
   ::
 ++  vang
   |=  {bug/? wer/path}
@@ -9657,7 +9662,92 @@
     (slot axe xav)
   --
 ::
-::::  5f: profiling support (XX move)
+::::  5f: molds and mold builders
+  ::
+++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
+++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
+++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
+++  beak  {p/ship q/desk r/case}                        ::  path prefix
+++  bone  @ud                                           ::  opaque duct
+++  care  ?($$ $u $v $w $x $y $z)                       ::  namespace mode
+++  case                                                ::  version
+          $%  {$da p/@da}                               ::  date
+              {$tas p/@tas}                             ::  label
+              {$ud p/@ud}                               ::  sequence
+          ==                                            ::
+++  desk  @tas                                          ::  ship desk case spur
+++  cage  (cask vase)                                   ::  global metadata
+++  cask  |*(a/$-(* *) (pair mark a))                   ::  global data
+++  cuff                                                ::  permissions
+          $:  p/(unit (set monk))                       ::  can be read by
+              q/(set monk)                              ::  caused or created by
+          ==                                            ::
+++  curd  {p/@tas q/*}                                  ::  spanless card
+++  dock  (pair @p term)                                ::  message target
+++  duct  (list wire)                                   ::  causal history
+++  hypo  |*(a/$-(* *) (pair span a))                   ::  span associated
+++  hobo  |*  a/$-(* *)                                 ::  kiss wrapper
+          $?  $%  {$soft p/*}                           ::
+              ==                                        ::
+              a                                         ::
+          ==                                            ::
+++  kirk  (unit (set monk))                             ::  audience
+++  lens                                                ::  observation core
+  $_  ^?                                                ::
+  |%  ++  u  *(unit (unit $~))                          ::  existence
+      ++  v  *(unit (unit cage))                        ::  full history
+      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
+      ++  x  *(unit (unit cage))                        ::  data at path
+      ++  y  *(unit (unit arch))                        ::  directory
+      ++  z  *(unit (unit cage))                        ::  current subtree
+  --                                                    ::
+++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
+++  manx  {g/marx c/marl}                               ::  XML node
+++  marc                                                ::  structured mark
+  $@  mark                                              ::  plain mark
+  $%  {$tabl p/(list (pair marc marc))}                 ::  map
+  ==                                                    ::
+++  mark  @tas                                          ::  content span
+++  marl  (list manx)                                   ::  XML node list
+++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/$~}} c/$~}      ::  XML cdata
+++  mart  (list {n/mane v/tape})                        ::  XML attributes
+++  marx  {n/mane a/mart}                               ::  XML tag
+++  mash  |=(* (mass +<))                               ::  producing mass
+++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
+++  mill  (each vase milt)                              ::  vase+metavase
+++  milt  {p/* q/*}                                     ::  metavase
+++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
+++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
+++  move  {p/duct q/arvo}                               ::  arvo move
+++  ovum  {p/wire q/curd}                               ::  spanless ovum
+++  pane  (list {p/@tas q/vase})                        ::  kernel modules
+++  pass  @                                             ::  public key
+++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
+++  ring  @                                             ::  private key
+++  ship  @p                                            ::  network identity
+++  sink  (trel bone ship path)                         ::  subscription
+++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
+          (unit (unit cage))                            ::
+++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
+          (unit (unit (cask)))                          ::
+++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
+++  time  @da                                           ::  galactic time
+++  vile                                                ::  reflexive constants
+          $:  typ/span                                  ::  -:!>(*span)
+              duc/span                                  ::  -:!>(*duct)
+              pah/span                                  ::  -:!>(*path)
+              mev/span                                  ::  -:!>([%meta *vase])
+          ==                                            ::
+++  wind                                                ::  new kernel action
+          |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
+          $%  {$pass p/path q/a}                        ::  advance
+              {$slip p/a}                               ::  lateral
+              {$sick p/b}                               ::  lame refactoring
+              {$give p/b}                               ::  retreat
+          ==                                            ::
+++  wire  path                                          ::  event pretext
+::
+::::  5g: profiling support (XX move)
   ::
 ++  doss
   $:  mon/moan                                          ::  sample count
@@ -9804,91 +9894,6 @@
       ~
     ==
   ==
-::
-::::  5g: molds and mold builders
-  ::
-++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
-++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
-++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
-++  beak  {p/ship q/desk r/case}                        ::  path prefix
-++  bone  @ud                                           ::  opaque duct
-++  care  ?($$ $u $v $w $x $y $z)                       ::  namespace mode
-++  case                                                ::  version
-          $%  {$da p/@da}                               ::  date
-              {$tas p/@tas}                             ::  label
-              {$ud p/@ud}                               ::  sequence
-          ==                                            ::
-++  desk  @tas                                          ::  ship desk case spur
-++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a/$-(* *) (pair mark a))                   ::  global data
-++  cuff                                                ::  permissions
-          $:  p/(unit (set monk))                       ::  can be read by
-              q/(set monk)                              ::  caused or created by
-          ==                                            ::
-++  curd  {p/@tas q/*}                                  ::  spanless card
-++  dock  (pair @p term)                                ::  message target
-++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/$-(* *) (pair span a))                   ::  span associated
-++  hobo  |*  a/$-(* *)                                 ::  kiss wrapper
-          $?  $%  {$soft p/*}                           ::
-              ==                                        ::
-              a                                         ::
-          ==                                            ::
-++  kirk  (unit (set monk))                             ::  audience
-++  lens                                                ::  observation core
-  $_  ^?                                                ::
-  |%  ++  u  *(unit (unit $~))                          ::  existence
-      ++  v  *(unit (unit cage))                        ::  full history
-      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
-      ++  x  *(unit (unit cage))                        ::  data at path
-      ++  y  *(unit (unit arch))                        ::  directory
-      ++  z  *(unit (unit cage))                        ::  current subtree
-  --                                                    ::
-++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
-++  manx  {g/marx c/marl}                               ::  XML node
-++  marc                                                ::  structured mark
-  $@  mark                                              ::  plain mark
-  $%  {$tabl p/(list (pair marc marc))}                 ::  map
-  ==                                                    ::
-++  mark  @tas                                          ::  content span
-++  marl  (list manx)                                   ::  XML node list
-++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/$~}} c/$~}      ::  XML cdata
-++  mart  (list {n/mane v/tape})                        ::  XML attributes
-++  marx  {n/mane a/mart}                               ::  XML tag
-++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
-++  mill  (each vase milt)                              ::  vase+metavase
-++  milt  {p/* q/*}                                     ::  metavase
-++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
-++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
-++  move  {p/duct q/arvo}                               ::  arvo move
-++  ovum  {p/wire q/curd}                               ::  spanless ovum
-++  pane  (list {p/@tas q/vase})                        ::  kernel modules
-++  pass  @                                             ::  public key
-++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
-++  ring  @                                             ::  private key
-++  ship  @p                                            ::  network identity
-++  sink  (trel bone ship path)                         ::  subscription
-++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
-          (unit (unit cage))                            ::
-++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
-          (unit (unit (cask)))                          ::
-++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
-++  time  @da                                           ::  galactic time
-++  vile                                                ::  reflexive constants
-          $:  typ/span                                  ::  -:!>(*span)
-              duc/span                                  ::  -:!>(*duct)
-              pah/span                                  ::  -:!>(*path)
-              mev/span                                  ::  -:!>([%meta *vase])
-          ==                                            ::
-++  wind                                                ::  new kernel action
-          |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
-          $%  {$pass p/path q/a}                        ::  advance
-              {$slip p/a}                               ::  lateral
-              {$sick p/b}                               ::  lame refactoring
-              {$give p/b}                               ::  retreat
-          ==                                            ::
-++  wire  path                                          ::  event pretext
 --  =>
 ::                                                      ::
 ::::  6: layer six
