@@ -11,7 +11,7 @@ import requests
 import argparse
 import base64
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.WARNING,
                     format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
                     stream=sys.stderr)
 
