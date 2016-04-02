@@ -7269,7 +7269,9 @@
       :+  %per  [%name %v %$ 1]                         ::  =>  v=.
       :+  %pin  :+  %name  %a                           ::  =+  ^=  a
                  [%per [%limb %v] p.gen]                ::  =>(v {p.gen})
-      :+  %pin  [%name %b [%per [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
+      :+  %pin  
+        :+  %name  %b                                   ::  =+  ^=  b
+        [%cast [%base %noun] [%per [%limb %v] q.gen]]  ::  =+  `*`=>(v {q.gen})
       :+  %pin                                          ::  =+  c=(a b)
         [%name %c [%call [%limb %a] [%limb %b] ~]]      ::
       [%sure [%same [%limb %c] [%limb %b]] [%limb %c]]  ::  ?>(=(c b) c)
