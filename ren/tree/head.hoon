@@ -8,7 +8,7 @@
   /$  %+  cork  fuel                                    :: after parsing params,
       |=  gas/epic  ^-  ?                               :: check that the fcgi
       %+  lien  (~(tap in (~(get ju aut.ced.gas) %$)))  :: has an identity
-      |=(a/knot !=(%pawn (slav %p a)))                  :: which isn't a comet
+      |=(a/knot !=(%pawn (clan (slav %p a))))           :: which isn't a comet
 ::
 !:
 ::::
