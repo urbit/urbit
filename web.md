@@ -1,7 +1,8 @@
 ---
 anchor: none
-plan: y
 ---
+
+<plan />
 
 <div class="mini-module">
     <p>Stream:</p>
