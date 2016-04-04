@@ -256,7 +256,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":24,"./LoadComponent.coffee":11}],3:[function(require,module,exports){
-var Comments, Plan, TreeActions, TreeStore, a, clas, div, extras, h1, h3, img, input, load, p, query, reactify, recl, ref, rele, util;
+var Comments, TreeActions, TreeStore, a, clas, div, extras, h1, h3, img, input, load, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
 
@@ -271,8 +271,6 @@ TreeActions = require('../actions/TreeActions.coffee');
 TreeStore = require('../stores/TreeStore.coffee');
 
 Comments = require('./CommentsComponent.coffee');
-
-Plan = require('./PlanComponent.coffee');
 
 util = require('../utils/util.coffee');
 
@@ -355,7 +353,6 @@ extras = {
       }, this.props.author);
     }
   }),
-  plan: Plan,
   next: query({
     path: 't',
     kids: {
@@ -474,7 +471,7 @@ module.exports = query({
     parts = [
       extra('spam'), extra('logo', {
         color: this.props.meta.logo
-      }), extra('plan'), reactify(this.props.body), extra('next', {
+      }), reactify(this.props.body), extra('next', {
         dataPath: this.props.sein,
         curr: this.props.name
       }), extra('comments'), extra('footer', {
@@ -511,7 +508,7 @@ module.exports = query({
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":24,"../utils/util.coffee":26,"./Async.coffee":2,"./CommentsComponent.coffee":5,"./LoadComponent.coffee":11,"./PlanComponent.coffee":14,"./Reactify.coffee":15,"classnames":27}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":24,"../utils/util.coffee":26,"./Async.coffee":2,"./CommentsComponent.coffee":5,"./LoadComponent.coffee":11,"./Reactify.coffee":15,"classnames":27}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -645,6 +642,7 @@ module.exports = {
   email: require('./EmailComponent.coffee'),
   module: require('./ModuleComponent.coffee'),
   script: require('./ScriptComponent.coffee'),
+  plan: require('./PlanComponent.coffee'),
   lost: recl({
     render: function() {
       return div({}, "<lost(", this.props.children, ")>");
@@ -653,7 +651,7 @@ module.exports = {
 };
 
 
-},{"./CodeMirror.coffee":4,"./EmailComponent.coffee":8,"./KidsComponent.coffee":9,"./ListComponent.coffee":10,"./ModuleComponent.coffee":12,"./ScriptComponent.coffee":16,"./SearchComponent.coffee":17,"./TocComponent.coffee":19}],7:[function(require,module,exports){
+},{"./CodeMirror.coffee":4,"./EmailComponent.coffee":8,"./KidsComponent.coffee":9,"./ListComponent.coffee":10,"./ModuleComponent.coffee":12,"./PlanComponent.coffee":14,"./ScriptComponent.coffee":16,"./SearchComponent.coffee":17,"./TocComponent.coffee":19}],7:[function(require,module,exports){
 var a, div, recl, ref, util;
 
 util = require('../utils/util.coffee');
@@ -1504,14 +1502,18 @@ Grid = function() {
   var _td, _tr, props, rows;
   props = arguments[0], rows = 2 <= arguments.length ? slice.call(arguments, 1) : [];
   _td = function(x) {
-    return td({}, x);
+    return div({
+      className: "td"
+    }, x);
   };
   _tr = function(x) {
     if (x != null) {
-      return tr.apply(null, [{}].concat(slice.call(x.map(_td))));
+      return div.apply(null, [{
+        className: "tr"
+      }].concat(slice.call(x.map(_td))));
     }
   };
-  return table(props, tbody.apply(null, [{}].concat(slice.call(rows.map(_tr)))));
+  return div.apply(null, [props].concat(slice.call(rows.map(_tr))));
 };
 
 module.exports = query({
@@ -1574,12 +1576,13 @@ module.exports = query({
       };
     } else if (this.state.edit) {
       editButton = button({
+        className: 'edit',
         onClick: (function(_this) {
           return function() {
             return _this.saveInfo();
           };
         })(this)
-      }, "save");
+      }, "Save");
       editable = (function(_this) {
         return function(ref, val, placeholder) {
           return input({
@@ -1598,6 +1601,7 @@ module.exports = query({
       })(this);
     } else {
       editButton = button({
+        className: 'edit',
         onClick: (function(_this) {
           return function() {
             return _this.setState({
@@ -1605,7 +1609,7 @@ module.exports = query({
             });
           };
         })(this)
-      }, "edit");
+      }, "Edit");
       editable = (function(_this) {
         return function(ref, val, placeholder) {
           var ref6, ref7;
@@ -1622,9 +1626,13 @@ module.exports = query({
     }
     return div({
       className: "plan"
-    }, editButton, code({}, "~" + urb.ship), (who != null) || this.state.edit ? h6({}, editable('who', who)) : void 0, Grid({
+    }, div({
+      className: "home"
+    }, ""), div({
+      className: "mono"
+    }, "~" + urb.ship), (who != null) || this.state.edit ? h6({}, editable('who', who, "Sun Tzu")) : void 0, Grid({
       className: "grid"
-    }, ["Location:", editable('loc', loc, "unknown")], ["Issued by:", issuedBy], [
+    }, ["Location:", editable('loc', loc, "94107/usa")], ["Issued by:", issuedBy], [
       "Immutable link:", a({
         href: beak + "/web" + path
       }, beak)
@@ -1635,14 +1643,15 @@ module.exports = query({
         for (key in acc) {
           ref6 = acc[key], usr = ref6.usr, url = ref6.url;
           results.push(div({
-            key: key
+            key: key,
+            className: 'service'
           }, url == null ? key + "/" + usr : a({
             href: url
           }, key + "/" + usr)));
         }
         return results;
       })())
-    ] : void 0));
+    ] : void 0), editButton);
   }
 }));
 
