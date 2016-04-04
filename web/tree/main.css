@@ -821,8 +821,23 @@ div.logo.inverse:before {
     background-color: #373a3c;
     border: none; }
 
-.body .plan .head,
-.body .plan .head a {
+.body .plan .panel.stack {
+  padding-top: 0;
+  padding-bottom: 0; }
+
+.body .plan .plan.stack {
+  padding-top: 4rem; }
+
+.body .plan .panel a {
+  text-decoration: none;
+  border-bottom: 2px solid #fff;
+  font-weight: 500; }
+
+.body .plan .pull-right {
+  float: right; }
+
+.body .plan .above,
+.body .plan .above a {
   color: #fff; }
 
 .body .plan .service {
