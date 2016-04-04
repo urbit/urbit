@@ -461,7 +461,7 @@
   ::
   ++  login-page
     %+  titl  'Sign in - Urbit'
-    ;=  ;div.container
+    ;=  ;div.container.top
           ;div.row
             ;div.col-md-4
               ;h1.sign: Sign in
@@ -511,7 +511,7 @@
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;div.container
+    ;=  ;div.container.top
           ;div.row
             ;div.col-md-10
               ;h1.sign: Bye!

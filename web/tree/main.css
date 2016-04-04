@@ -820,6 +820,14 @@ div.logo.inverse:before {
   .body .plan .above input {
     background-color: #373a3c;
     border: none; }
+  .body .plan .above .panel a {
+    text-decoration: none;
+    border-bottom: 2px solid #55595c;
+    font-weight: 500;
+    color: #55595c; }
+  .body .plan .above .panel a:hover {
+    border-color: #fff;
+    color: #fff; }
 
 .body .plan .panel.stack {
   padding-top: 0;
@@ -827,11 +835,6 @@ div.logo.inverse:before {
 
 .body .plan .plan.stack {
   padding-top: 4rem; }
-
-.body .plan .panel a {
-  text-decoration: none;
-  border-bottom: 2px solid #fff;
-  font-weight: 500; }
 
 .body .plan .pull-right {
   float: right; }
@@ -860,6 +863,14 @@ div.logo.inverse:before {
   margin-right: 2rem;
   letter-spacing: 1px;
   color: #B1B7BD; }
+
+.stream .mini-module {
+  margin-top: 3rem; }
+
+.stream h6 {
+  color: #55595c;
+  font-size: 1rem;
+  margin-bottom: 2rem; }
 
 @media (max-width: 767px) {
   .grid .td {

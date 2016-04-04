@@ -15,10 +15,10 @@ anchor: none
   </div>
 </div>
 
-<div class="container stack">
+<div class="container stack stream">
   <div class="col-md-10">
     <div class="mini-module">
-      <p>Stream:</p>
+      <h6>Stream:</h6>
       <script src="/~/at/lib/js/urb.js"/>
       <script src="https://cdn.rawgit.com/seatgeek/react-infinite/0.8.0/dist/react-infinite.js"/>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment-with-locales.js"/>

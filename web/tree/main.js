@@ -1390,6 +1390,10 @@ module.exports = query({
       if (href && !/^https?:\/\//i.test(href)) {
         e.preventDefault();
         url = new URL(this.href);
+        if (urb.util.basepath("", url.pathname) !== urb.util.basepath("", document.location.pathname)) {
+          document.location = this.href;
+          return;
+        }
         if (url.pathname.substr(-1) !== "/") {
           url.pathname += "/";
         }
@@ -1492,9 +1496,19 @@ ref = React.DOM, nav = ref.nav, ul = ref.ul, li = ref.li, a = ref.a;
 module.exports = recl({
   render: function() {
     if (urb.user !== urb.ship) {
-      return div({
-        className: "panel"
-      }, [div({}, "Log in")]);
+      return nav({
+        className: "navbar panel"
+      }, [
+        ul({
+          className: "nav navbar-nav"
+        }, [
+          li({
+            className: 'nav-item pull-right'
+          }, a({
+            href: "/~~"
+          }, "Log in"))
+        ])
+      ]);
     } else {
       return nav({
         className: "navbar panel"
@@ -1505,15 +1519,15 @@ module.exports = recl({
           li({
             className: "nav-item"
           }, a({
-            href: "/talk"
+            href: "/~~/talk"
           }, "Talk")), li({
             className: "nav-item"
           }, a({
-            href: "/dojo"
+            href: "/~~/dojo"
           }, "Dojo")), li({
             className: "nav-item"
           }, a({
-            href: "/static"
+            href: "/~~/static"
           }, "Static")), li({
             className: 'nav-item pull-right'
           }, a({
