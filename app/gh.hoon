@@ -13,6 +13,7 @@
 ::
 /?  314
 /-  gh, plan-acct
+/+  gh-parse
 ::  /ape/gh/split.hoon defines ++split, which splits a request
 ::  at the end of the longest possible endpoint.
 ::
@@ -23,6 +24,7 @@
     ++  move  (pair bone card)
     ++  sub-result
       $%  {$arch arch}
+          {$gh-list-issues (list issue:gh)}
           {$gh-issues issues:gh}
           {$gh-issue-comment issue-comment:gh}
           {$json json}
@@ -32,7 +34,6 @@
       $%  {$diff sub-result}
           {$them wire (unit hiss)}
           {$hiss wire {$~ $~} $httr {$hiss hiss}}
-          {$poke wire {ship $hood} $write-plan-account {knot plan-acct}}
       ==
     ++  hook-response
       $%  {$gh-issues issues:gh}
@@ -41,10 +42,7 @@
     --
 ::
 |_  {hid/bowl cnt/@ hook/(map @t {id/@t listeners/(set bone)})}
-++  prep
-  |=  a/(unit _+<+)  ^-  (quip move +>)
-  ?^  a  [~ +>(+<+ u.a)]
-  (peer-scry %x %read /user)
+++  prep  _`.
 ::
 ::  This core manages everything related to a particular request.
 ::
@@ -54,7 +52,8 @@
 ::
 ++  help
   |=  {ren/care style/@tas pax/path}
-  =^  arg  pax  [+ -]:(split pax)
+  ::  =^  arg  pax  [+ -]:(split pax)
+  =|  arg/path
   =|  mow/(list move)
   |%
   ::  Resolve core.
@@ -62,6 +61,22 @@
   ++  abet
     ^-  {(list move) _+>.$}
     [(flop mow) +>.$]
+  ::
+  ::  Send a move.
+  ::
+  ++  send
+    |=  mov/move
+    +>.$(mow [mov mow])
+  ::
+  ::  Produce null
+  ::
+  ++  send-null
+    (send ost.hid %diff %null ~)
+  ::
+  ::  Produce empty arch
+  ::
+  ++  send-null-arch
+    (send ost.hid %diff %arch ~ ~)
   ::
   ::  Append path to api.github.com and parse to a purl.
   ::
@@ -74,21 +89,72 @@
   ++  send-hiss 
     |=  hiz/hiss
     ^+  +>
-    =+  wir=`wire`[(scot %ud cnt) ren (pack style arg) pax]
-    =+  new-move=[ost.hid %hiss wir `~ %httr [%hiss hiz]]
-    ::  ~&  [%sending-hiss new-move]
-    +>.$(mow [new-move mow])
+    =+  wir=`wire`[ren (scot %ud cnt) (scot %uv (jam arg)) style pax]
+    (send ost.hid %hiss wir `~ %httr [%hiss hiz])
+  ::
+  ::  Send a %get hiss
+  ::
+  ++  get
+    |=  endpoint/path
+    (send-hiss (endpoint-to-purl endpoint) %get ~ ~)
   ::
   ::  Decide how to handle a request based on its style.
   ::
   ++  scry
     ^+  .
-    ?+  style  ~|(invalid-style+[style want=p:!>(*?($read $listen))] !!)
-      $read     read
+    ?+  style  ~|([%invalid-style style] !!)
+      $read     ?+(ren ~&([%invalid-care ren] !!) $x read-x, $y read-y)
       $listen   listen
     ==
   ::
-  ++  read  (send-hiss (endpoint-to-purl pax) %get ~ ~)
+  ++  read-x
+    ~&  [%read-x pax]
+    ?+    pax  ~&([%strange-path pax] send-null)
+        $~  send-null
+        {$issues *}
+      ?+    +.pax  ~&([%strange-path pax] send-null)
+          $~         send-null
+          {$mine *}  (get /issues)
+          {$by-repo *}
+        ?+  +>.pax  ~&([%strange-path pax] send-null)
+          $~          send-null
+          {@t $~}     send-null
+          {@t @t $~}  (get /repos/[-.+>.pax]/[-.+>+.pax]/issues)
+        ==
+      ==
+    ==
+  ::
+  ++  read-y
+    ~&  [%read-y pax]
+    ?+    pax  ~&([%strange-path pax] send-null-arch)
+        $~  (send-children %issues ~)
+        {$issues *}
+      ?+    +.pax  ~&([%strange-path pax] send-null-arch)
+          $~            (send-children %mine %by-repo ~)
+          {$mine *}     (get /issues)
+          {$by-repo *}
+        ?+    +>.pax  ~&([%strange-path pax] send-null-arch)
+            $~
+          =+  /(scot %p our.hid)/home/(scot %da now.hid)/web/plan
+          =+  .^({* acc/(map knot plan-acct)} %cx -)
+          (send-children usr:(~(got by acc) %github) ~)
+        ::
+            {@t $~}     (get /users/[-.+>.pax]/repos)
+            {@t @t $~}  (get /repos/[-.+>.pax]/[-.+>+.pax]/issues)
+        ==
+      ==
+    ==
+  ::
+  ::  (send-hiss (endpoint-to-purl /issues) %get ~ ~)
+  ::
+  ::  Produce an arch with the given list of children
+  ::
+  ++  send-children
+    |=  children/(list @t)
+    %-  send  :*
+      ost.hid  %diff  %arch  ~
+      (malt (turn children |=(@t [+< ~])))
+    ==
   ::
   ::  Create or update a webhook to listen for a set of events.
   ::
@@ -200,86 +266,110 @@
   ::  =-  ~&  [%peered -]  -
   [abet(cnt +(cnt))]:scry:(help i.pax i.t.pax t.t.pax)
 ::
-::  Deconstruct an http request into a json result or error information  
-::
-++  parse-json  
-  |=  res/httr  ^-  (each json {err/term inf/(list {term json})})
-  ?~  r.res
-    [%| %empty-response code+(jone p.res) ~]
-  =+  jon=(rush q.u.r.res apex:poja)
-  ?~  jon
-    [%| %bad-json code+(jone p.res) body+s+q.u.r.res ~]
-  ?.  =(2 (div p.res 100))
-    [%| %request-rejected code+(jone p.res) msg+u.jon ~]
-  [%& u.jon]
-::
-::  Anywhere recieved data should go besides the initiating request
-::
-++  side-effects
-  |=  {pax/path rep/(each json ^)}  ^-  (list move)
-  ?.  ?=($& -.rep)  ~                 ::  XX logging maybe?
-  ?~  pax  ~
-  ?+    -.pax  ~
-      $user
-    =+  =;  jop  usr=(need (jop p.rep))
-        (ot login+so url+(cu some (su aurf:urlp)) ~):jo
-    [ost.hid %poke user+~ [our.hid %hood] %write-plan-account ~.github usr]~
-  ==
-::
 ::  HTTP response.  We make sure the response is good, then
 ::  produce the result (as JSON) to whoever sent the request.
 ::
 ++  sigh-httr
   |=  {way/wire res/httr}
   ^-  {(list move) _+>.$}
-  ?.  ?=({@ care @ *} way)
-    ~&  bad-wire+[way res=res]
+  ?.  ?=({care @ @ @ *} way)
+    ~&  res=res
     [~ +>.$]
-  =+  ^-  {ren/care {syl/term arg/path} pax/path}
-      [i.t.way (need (puck i.t.t.way)) t.t.t.way]
-  :_  +>.$
-  =+  rep=(parse-json res)
-  :_  (side-effects pax rep)
+  =+  arg=(path (cue (slav %uv i.t.t.way)))
+  =*  pax  t.t.t.way
+  :_  +>.$  :_  ~
   :+  ost.hid  %diff
-  ?+    ren  null+~
+  ?+    i.way  null+~
       $x
-    ?.  ?=($& -.rep)
-      json+(jobe err+s+err.p.rep inf.p.rep)
+    ?~  r.res
+      json+(jobe err+s+%empty-response code+(jone p.res) ~)
+    =+  jon=(rush q.u.r.res apex:poja)
+    ?~  jon
+      json+(jobe err+s+%bad-json code+(jone p.res) body+s+q.u.r.res ~)
+    ?.  =(2 (div p.res 100))
+      json+(jobe err+s+%request-rejected code+(jone p.res) msg+u.jon ~)
+    ?+    +.pax  ~&([%sigh-strange-path pax] null+~)
+        {$issues $mine $~}
+      =+  issues=((ar:jo issue:gh-parse) u.jon)
+      ?~  issues
+        ~&  [err+s+%response-not-issues pax+pax code+(jone p.res) msg+u.jon]
+        null+~
+      gh-list-issues+u.issues
     ::
-    ::  Once we know we have good data, we drill into the JSON
-    ::  to find the specific piece of data referred to by 'arg'
-    ::
-    |-  ^-  sub-result
-    ?~  arg
-      json+p.rep
-    =+  dir=((om:jo some) p.rep)
-    ?~  dir
-      json+(jobe err+s+%json-not-object code+(jone p.res) body+p.rep ~)
-    =+  new-jon=(~(get by u.dir) i.arg)
-    $(arg t.arg, p.rep ?~(new-jon ~ u.new-jon))
+        {$issues $by-repo @t @t $~}
+      =+  issues=((ar:jo issue:gh-parse) u.jon)
+      ?~  issues
+        ~&  [err+s+%response-not-issues pax+pax code+(jone p.res) msg+u.jon]
+        null+~
+      gh-list-issues+u.issues
+    ==
+    ::  ::
+    ::  ::  Once we know we have good data, we drill into the JSON
+    ::  ::  to find the specific piece of data referred to by 'arg'
+    ::  ::
+    ::  |-  ^-  sub-result
+    ::  ?~  arg
+    ::    json+u.jon
+    ::  =+  dir=((om:jo some) u.jon)
+    ::  ?~  dir
+    ::    json+(jobe err+s+%json-not-object code+(jone p.res) body+u.jon ~)
+    ::  =+  new-jon=(~(get by u.dir) i.arg)
+    ::  $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ::
       $y
-    ?.  ?=($& -.rep)
-      ~&  [%scry-gh-y err.p.rep inf.p.rep]
+    ?~  r.res
+      ~&  [err+s+%empty-response code+(jone p.res)]
       arch+*arch
+    =+  jon=(rush q.u.r.res apex:poja)
+    ?~  jon
+      ~&  [err+s+%bad-json code+(jone p.res) body+s+q.u.r.res]
+      arch+*arch
+    ?.  =(2 (div p.res 100))
+      ~&  [err+s+%request-rejected code+(jone p.res) msg+u.jon]
+      arch+*arch
+    ?+    +.pax  ~&([%sigh-strange-path pax] arch+*arch)
+        {$issues $mine $~}
+      =+  issues=((ar:jo issue:gh-parse) u.jon)
+      ?~  issues
+        ~&  [err+s+%response-not-issues pax+pax code+(jone p.res) msg+u.jon]
+        arch+*arch
+      :+  %arch  `(shax (jam u.issues))
+      (malt (turn u.issues |=(issue:gh [id ~])))
     ::
-    ::  Once we know we have good data, we drill into the JSON
-    ::  to find the specific piece of data referred to by 'arg'
+        {$issues $by-repo @t $~}
+      =+  repos=((ar:jo repository:gh-parse) u.jon)
+      ?~  repos
+        ~&  [err+s+%response-not-repos pax+pax code+(jone p.res) msg+u.jon]
+        arch+*arch
+      :+  %arch  `(shax (jam u.repos))
+      (malt (turn u.repos |=(repository:gh [name ~])))
     ::
-    |-  ^-  sub-result
-    =+  dir=((om:jo some) p.rep)
-    ?~  dir
-      [%arch `(shax (jam p.rep)) ~]
-    ?~  arg
-      [%arch `(shax (jam p.rep)) (~(run by u.dir) _~)]
-    =+  new-jon=(~(get by u.dir) i.arg)
-    $(arg t.arg, p.rep ?~(new-jon ~ u.new-jon))
+        {$issues $by-repo @t @t $~}
+      =+  issues=((ar:jo issue:gh-parse) u.jon)
+      ?~  issues
+        ~&  [err+s+%response-not-issues pax+pax code+(jone p.res) msg+u.jon]
+        arch+*arch
+      :+  %arch  `(shax (jam u.issues))
+      (malt (turn u.issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~])))
+    ==
+    ::  ::
+    ::  ::  Once we know we have good data, we drill into the JSON
+    ::  ::  to find the specific piece of data referred to by 'arg'
+    ::  ::
+    ::  |-  ^-  sub-result
+    ::  =+  dir=((om:jo some) u.jon)
+    ::  ?~  dir
+    ::    [%arch `(shax (jam u.jon)) ~]
+    ::  ?~  arg
+    ::    [%arch `(shax (jam u.jon)) (~(run by u.dir) _~)]
+    ::  =+  new-jon=(~(get by u.dir) i.arg)
+    ::  $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==
 ::
 ++  sigh-tang
   |=  {way/wire tan/tang}
   ^-  {(list move) _+>.$}
-  ((slog >%gh-sigh-tang way< tan) `+>.$)
+  ((slog >%gh-sigh-tang< tan) `+>.$)
 ::
 ::  We can't actually give the response to pretty much anything
 ::  without blocking, so we just block unconditionally.
