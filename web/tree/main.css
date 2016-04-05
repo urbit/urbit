@@ -426,65 +426,63 @@ div.logo.inverse:before {
     line-height: 1rem;
     margin-bottom: 1rem; } }
 
-.urbit.navbar.ctrl .icon .home {
-  border-color: #B1B7BD;
-  background-color: #B1B7BD;
-  width: 3rem;
-  height: 3rem;
-  margin: 0 4rem 0 0; }
-
-.urbit.navbar.ctrl .icon .home:before {
-  content: "~";
-  color: #fff;
-  font-size: 2.6rem;
-  line-height: 2.6rem;
-  text-align: center;
-  width: 2.4rem;
-  display: inline-block; }
-
-.urbit.navbar.ctrl ul.nav li {
-  height: 3rem;
-  vertical-align: middle; }
-
-.urbit.navbar.ctrl ul.nav li a {
-  text-decoration: none;
-  color: #B1B7BD;
-  font-weight: 500;
-  font-size: 1rem;
-  line-height: 3rem; }
-
-.urbit.navbar.ctrl ul.nav .btn {
-  border: 3px solid #000;
-  margin-top: -3px;
-  height: 3rem;
-  padding: 0rem; }
-  .urbit.navbar.ctrl ul.nav .btn a {
-    font-size: 1rem;
-    color: #000;
-    letter-spacing: 0; }
-
-.urbit.navbar.ctrl ul.nav .btn.selected,
-.urbit.navbar.ctrl ul.nav .btn:hover {
-  background-color: #000; }
-  .urbit.navbar.ctrl ul.nav .btn.selected a,
-  .urbit.navbar.ctrl ul.nav .btn:hover a {
-    color: #fff; }
-
-.urbit.navbar.ctrl ul.nav li a:hover,
-.urbit.navbar.ctrl ul.nav li.selected a {
-  color: #000; }
-
-.urbit.navbar.ctrl .subnav ul.nav {
-  height: 1.5rem; }
-  .urbit.navbar.ctrl .subnav ul.nav li {
-    height: 1.5rem; }
-  .urbit.navbar.ctrl .subnav ul.nav li a {
-    line-height: 1.5rem; }
-  .urbit.navbar.ctrl .subnav ul.nav .btn {
-    position: relative;
+.urbit.navbar.ctrl {
+  margin-top: 1rem; }
+  .urbit.navbar.ctrl,
+  .urbit.navbar.ctrl .items {
     height: 3rem; }
-    .urbit.navbar.ctrl .subnav ul.nav .btn a {
-      line-height: 3rem; }
+  .urbit.navbar.ctrl .icon .home {
+    border-color: #B1B7BD;
+    background-color: #B1B7BD;
+    width: 3rem;
+    height: 3rem;
+    margin: 0 4rem 0 0; }
+  .urbit.navbar.ctrl .icon .home:before {
+    content: "~";
+    color: #fff;
+    font-size: 2.6rem;
+    line-height: 2.6rem;
+    text-align: center;
+    width: 2.4rem;
+    display: inline-block; }
+  .urbit.navbar.ctrl ul.nav li {
+    height: 3rem;
+    vertical-align: middle; }
+  .urbit.navbar.ctrl ul.nav li a {
+    text-decoration: none;
+    color: #B1B7BD;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 3rem; }
+  .urbit.navbar.ctrl ul.nav .btn {
+    border: 3px solid #000;
+    margin-top: -3px;
+    height: 3rem;
+    padding: 0rem; }
+    .urbit.navbar.ctrl ul.nav .btn a {
+      font-size: 1rem;
+      color: #000;
+      letter-spacing: 0; }
+  .urbit.navbar.ctrl ul.nav .btn.selected,
+  .urbit.navbar.ctrl ul.nav .btn:hover {
+    background-color: #000; }
+    .urbit.navbar.ctrl ul.nav .btn.selected a,
+    .urbit.navbar.ctrl ul.nav .btn:hover a {
+      color: #fff; }
+  .urbit.navbar.ctrl ul.nav li a:hover,
+  .urbit.navbar.ctrl ul.nav li.selected a {
+    color: #000; }
+  .urbit.navbar.ctrl .subnav ul.nav {
+    height: 1.5rem; }
+    .urbit.navbar.ctrl .subnav ul.nav li {
+      height: 1.5rem; }
+    .urbit.navbar.ctrl .subnav ul.nav li a {
+      line-height: 1.5rem; }
+    .urbit.navbar.ctrl .subnav ul.nav .btn {
+      position: relative;
+      height: 3rem; }
+      .urbit.navbar.ctrl .subnav ul.nav .btn a {
+        line-height: 3rem; }
 
 .urbit.home.navbar.ctrl .icon .home {
   opacity: 0;
@@ -613,6 +611,9 @@ div.logo.inverse:before {
 .body[data-path^='/docs/system/hoon/library/'] .toc h3 {
   padding-top: 0;
   margin-bottom: 0; }
+
+.body .urbit .logo {
+  background-color: #fff; }
 
 .body .urbit h1 {
   color: #000;
