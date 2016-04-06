@@ -23,10 +23,14 @@
 ::  create a developer app on https://www.instagram.com/developer/ to get a
 ::  client id and secret
 
+::  Be sure to be on https://localhost:8443, and to have registered 
+::  http://localhost:8443/~/ac/instagram.com/~./in as the redirect URI.
+::  (If unable to change port number of ship, change the redirect URI port in %eyre)
 ::  |init-oauth2 |init-oauth2 /com/instagram
 
-::  Enter home this sample command to get your user information.
-::  Before you receive the response, you'll have to clink on the link.
-::  If you successfully auth, you should receive the response in the dojo
+::  Enter home this sample command to get your user information:
+::  +https://api.instagram.com/v1/users/self
 
+::  Before you receive the response, you'll have to clink on the link to
+::  authenicate yourself. You should then receive the response.
 
