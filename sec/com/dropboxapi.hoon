@@ -1,4 +1,4 @@
-::  Test url +https://api.dropboxapi.com/2/files/list_folder
+::
 ::::  /hoon/dropboxapi/com/sec
   ::
 /+    oauth2
