@@ -23,7 +23,7 @@
 ::  create a developer app on https://www.instagram.com/developer/ to get a
 ::  client id and secret
 
-::  |init-oauth2
+::  |init-oauth2 |init-oauth2 /com/instagram
 
 ::  Enter home this sample command to get your user information.
 ::  Before you receive the response, you'll have to clink on the link.
