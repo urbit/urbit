@@ -20,3 +20,13 @@
 ++  bak  (bak-save-access:aut . |=(tok/token:aut +>(tok tok)))
 --
 
+::  create a developer app on https://www.instagram.com/developer/ to get a
+::  client id and secret
+
+::  |init-oauth2
+
+::  Enter home this sample command to get your user information.
+::  Before you receive the response, you'll have to clink on the link.
+::  If you successfully auth, you should receive the response in the dojo
+
+
