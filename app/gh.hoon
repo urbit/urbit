@@ -27,6 +27,7 @@
     ++  move  (pair bone card)
     ++  sub-result
       $%  {$arch arch}
+          {$gh-issue issue:gh}
           {$gh-list-issues (list issue:gh)}
           {$gh-issues issues:gh}
           {$gh-issue-comment issue-comment:gh}
@@ -53,28 +54,28 @@
   |=  wir/wire
   =<  
     ^-  (list place)
-    :~  ^-  place
+    :~  ^-  place                     ::  /
         :*  guard=$~
             read-x=read-null
             read-y=(read-static %issues ~)
             sigh-x=sigh-strange
             sigh-y=sigh-strange
         ==
-        ^-  place
+        ^-  place                     ::  /issues
         :*  guard={$issues $~}
             read-x=read-null
             read-y=(read-static %mine %by-repo ~)
             sigh-x=sigh-strange
             sigh-y=sigh-strange
         ==
-        ^-  place
+        ^-  place                     ::  /issues/mine
         :*  guard={$issues $mine $~}
             read-x=(read-get /issues)
             read-y=(read-get /issues)
             sigh-x=sigh-list-issues-x
             sigh-y=sigh-list-issues-y
         ==
-        ^-  place
+        ^-  place                     ::  /issues/by-repo
         :*  guard={$issues $by-repo $~}
             read-x=read-null
             ^=  read-y
@@ -86,7 +87,7 @@
             sigh-x=sigh-strange
             sigh-y=sigh-strange
         ==
-        ^-  place
+        ^-  place                     ::  /issues/by-repo/<user>
         :*  guard={$issues $by-repo @t $~}
             read-x=read-null
             read-y=|=(pax/path (get /users/[-.+>.pax]/repos))
@@ -98,12 +99,26 @@
             :-  `(shax (jam repos))
             (malt (turn repos |=(repository:gh [name ~])))
         ==
-        ^-  place
+        ^-  place                     ::  /issues/by-repo/<user>/<repo>
         :*  guard={$issues $by-repo @t @t $~}
             read-x=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
             read-y=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
             sigh-x=sigh-list-issues-x
             sigh-y=sigh-list-issues-y
+        ==
+        ^-  place                     ::  /issues/by-repo/<user>/<repo>
+        :*  guard={$issues $by-repo @t @t @t $~}
+            ^=  read-x
+            |=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues/[-.+>+>.pax]))
+          ::
+            read-y=read-null
+            ^=  sigh-x
+            |=  jon/json
+            %+  bind  (issue:gh-parse jon)
+            |=  issue/issue:gh
+            gh-issue+issue
+          ::
+            sigh-y=sigh-strange
         ==
     ==
   =>
