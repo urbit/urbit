@@ -6,22 +6,20 @@ div.input.valid-false {
   color: #FF0808;
   border-color: #FF0808; }
 
-div.meta {
-  display: inline-block; }
-
-div.grams {
+.grams {
   list-style-type: none;
   padding: 0;
   margin-top: -1.875rem; }
+  .grams .meta {
+    display: inline-block; }
 
-div.meta label {
-  background-color: #B1B7BD;
+.grams .meta label {
   margin-right: 0.9375rem;
   height: 0.9375rem;
   width: 0.9375rem;
   text-align: center; }
 
-div.meta label:before {
+.grams .meta label:before {
   content: attr(data-glyph);
   color: #fff;
   font-family: 'scp';
@@ -30,24 +28,24 @@ div.meta label:before {
   line-height: 1rem;
   vertical-align: middle; }
 
-div.meta label,
-div.meta h2,
-div.meta h3 {
+.grams .meta label,
+.grams .meta h2,
+.grams .meta h3 {
   display: inline-block; }
 
-div.meta h2,
-div.meta h3 {
+.grams .meta h2,
+.grams .meta h3 {
   font-family: 'scp';
   font-size: .8rem;
   font-weight: 400;
   margin-top: 0;
   padding-top: 0; }
 
-div.meta h3 {
+.grams .meta h3 {
   margin-left: 2rem;
   line-height: 1rem; }
 
-div.meta .time {
+.grams .meta .time {
   padding-right: 2rem; }
 
 div.gram.first:first-of-type {
@@ -71,8 +69,11 @@ div.gram.same:hover div.meta {
 
 .exp {
   font-family: 'scp';
-  font-size: .9rem;
-  max-height: 2rem; }
+  font-size: .9rem; }
+  .exp .speech {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow-x: scroll; }
   .exp .speech > span {
     color: #fff;
     background-color: #000;
@@ -88,6 +89,19 @@ div.gram.same:hover div.meta {
     overflow: scroll;
     background-color: #000;
     color: #fff; }
+
+.comment .speech a.btn {
+  background-color: transparent;
+  color: #B1B7BD;
+  font-size: .9rem;
+  border: 0;
+  border-bottom: 3px solid #b1b7bd;
+  text-transform: none;
+  text-decoration: none;
+  padding: 0;
+  line-height: 1rem;
+  margin: 1rem 0 2rem 0;
+  letter-spacing: 0; }
 
 .gram pre {
   background-color: transparent; }
