@@ -5,5 +5,6 @@
 /+    basic-auth
 !:
 |_  {bal/(bale keys:basic-auth) $~}
-++  out  (basic-auth bal)
+++  aut  ~(standard basic-auth bal)
+++  out  out-adding-header:aut
 --
