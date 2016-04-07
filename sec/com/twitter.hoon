@@ -16,11 +16,11 @@
   oauth-dialog='https://api.twitter.com/oauth/authorize'
 ::
 ++  res  res-handle-request-token:aut
-++  bak  bak-save-token:aut
 ::
 ++  in
   %-  in-token-exchange:aut
   exchange-url='https://api.twitter.com/oauth/access_token'
 ::
+++  bak  bak-save-token:aut
 :: ++  wyp  ~
 --

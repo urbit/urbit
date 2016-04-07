@@ -149,6 +149,15 @@
   |=  a/$@(@t purl)  ^-  hiss
   (post-quay (parse-url a) oauth-callback+oauth-callback ~)
 ::
+++  token-url
+  |=  a/$@(@t purl)  ^-  purl
+  %+  add-query  a
+  %-  fass
+  ?.  ?=({$request-token ^} tok)
+    ~|(%no-token-for-dialog !!)
+  :-  oauth-token+oauth-token.tok
+  ?~(usr ~ [screen-name+usr]~)
+::
 ++  grab-token-response
   |=  a/httr  ^-  {tok/@t sec/@t}
   (grab-quay r.a 'oauth_token' 'oauth_token_secret')
@@ -237,11 +246,7 @@
       [%send (add-auth-header [oauth-token+oauth-token.tok]~ a)]
     ::
         {$request-token ^}
-      :-  %show
-      %+  add-query  dialog-url
-      %-  fass
-      :-  oauth-token+oauth-token.tok
-      ?~(usr ~ [screen-name+usr]~)
+      [%show (token-url dialog-url)]
     ==
   ::
   ::  If no token is saved, the http response we just got has a request token
@@ -272,3 +277,74 @@
   ::
   --
 --
+::
+::::  Example "standard" sec/ core:
+  ::
+::
+::  :: 
+::  ::::  /hoon/my-api/com/sec
+::    ::
+::  /+    oauth1
+::  ::
+::  ::::
+::    ::
+::  |_  {bal/(bale keys:oauth1) tok/token:oauth1}
+::  ++  aut  (~(standard oauth1 bal tok) . |=(tok/token:oauth1 +>(tok tok)))
+::  ++  out
+::    %+  out-adding-header:aut
+::      token-request='https://my-api.com/request_token'
+::    oauth-dialog='https://my-api.com/authorize'
+::  ::
+::  ++  res  res-handle-request-token:aut
+::  ++  in
+::    %-  in-token-exchange:aut
+::    exchange-url='https://my-api.com/access_token'
+::  ::
+::  ++  bak  bak-save-token:aut
+::  --
+::
+::
+::::  Equivalent imperative code:
+  ::
+::
+::  :: 
+::  ::::  /hoon/my-api/com/sec
+::    ::
+::  /+    oauth1
+::  ::
+::  ::::
+::    ::
+::  |_  {bal/(bale keys:oauth1) tok/token:oauth1}
+::  ++  aut  ~(. oauth1 bal tok)
+::  ++  out
+::    =+  aut
+::    |=  req/hiss  ^-  $%({$send hiss} {$show purl})
+::    ?~  tok
+::      [%send (add-auth-header ~ (token-request 'https://my-api.com/request_token'))]
+::    ?:  ?=($request-token -.tok)
+::      [%show (token-url 'https://my-api.com/authorize')]
+::    [%send (add-auth-header [oauth-token+ouath-token.tok]~ req)]
+::  ::
+::  ++  res
+::    =+  aut
+::    |=  res/httr  ^-  $%({{$redo $~} _..res} {$give httr})
+::    ?^  tok  [%give a]
+::    ?>  =(%true (grab r.res 'oauth_callback_confirmed'))
+::    =.  tok  [%request-token (grab-token-response res)]
+::    [[%redo ~] ..res]
+::  ::
+::  ++  in
+::    =+  aut
+::    |=  inp/quay  ^-  {$send hiss}
+::    ?>  (check-token-quay inp)
+::    :-  %send
+::    (add-auth-header inp (token-exchange 'https://my-api.com/access_token'))
+::  ::
+::  ++  bak
+::    =+  aut
+::    |=  bak/httr  ^-  $%({{$redo $~} _..bak} {$give httr})
+::    ?:  (bad-response bak)  [%give bak]
+::    =.  tok  [%access-token (grab-token-response res)]
+::    [[%redo ~] ..bak]
+::  --
+::
