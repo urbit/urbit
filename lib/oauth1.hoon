@@ -48,6 +48,7 @@
 ::
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss
+  =.  b  (quay:hep-to-cab b)
   =-  [a %post - ?~(b ~ (some (tact +:(tail:earn b))))]
   (my content-type+['application/x-www-form-urlencoded']~ ~)
 ::
@@ -80,13 +81,21 @@
   ^-  {key/@t sec/@t $~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {cid/@t cis/@t $~}) (lore key))
+    ((hard {key/@t sec/@t $~}) (lore key))
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth1 {<`path`dom>}
   If necessary, obtain consumer keys configured for a oauth_callback of
     {(trip oauth-callback)}
   """
+::
+++  token-exchange
+  |=  a/$@(@t purl)  ^-  hiss
+  (post-quay (parse-url a) ~)
+::
+++  token-request   
+  |=  a/$@(@t purl)  ^-  hiss
+  (post-quay (parse-url a) oauth-callback+oauth-callback ~)
 ::
 ++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  oauth-callback
@@ -99,15 +108,7 @@
       user+(scot %ta usr)
   ==
 ::
-++  token-exchange  
-  |=  a/$@(@t purl)  ^-  hiss
-  (post-quay (parse-url a) ~)
-::
-++  token-request   
-  |=  a/$@(@t purl)  ^-  hiss
-  (post-quay (parse-url a) oauth-callback+oauth-callback ~)
-::
-++  token-url
+++  auth-url
   |=  a/$@(@t purl)  ^-  purl
   %+  add-query:interpolate  a
   %-  quay:hep-to-cab
@@ -205,7 +206,7 @@
       [%send (add-auth-header [oauth-token+oauth-token.tok]~ a)]
     ::
         {$request-token ^}
-      [%show (token-url dialog-url)]
+      [%show (auth-url dialog-url)]
     ==
   ::
   ::  If no token is saved, the http response we just got has a request token
@@ -281,7 +282,7 @@
 ::    ?~  tok
 ::      [%send (add-auth-header ~ (token-request 'https://my-api.com/request_token'))]
 ::    ?:  ?=($request-token -.tok)
-::      [%show (token-url 'https://my-api.com/authorize')]
+::      [%show (auth-url 'https://my-api.com/authorize')]
 ::    [%send (add-auth-header [oauth-token+ouath-token.tok]~ req)]
 ::  ::
 ::  ++  res
