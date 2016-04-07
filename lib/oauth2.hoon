@@ -26,7 +26,6 @@
   =-  (mean (flop `tang`[>a< -]))
   (turn (lore (crip b)) |=(c/cord leaf+(trip c)))
 ::
-++  dbg-post  `purl`[`hart`[| `6.000 [%& /localhost]] `pork``/testing `quay`/]
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  grab-json
   |*  {a/httr b/fist:jo}
@@ -122,14 +121,16 @@
 ++  out-quay
   |=  {nam/knot tok/token}
   %+  out-filtered  tok
-  |=(a/hiss %_(a r.p :_(r.p.a nam^`@t`tok)))
+  |=  a/hiss  ^-  hiss
+  :: =.  p.p.a   [| `6.000 [%& /localhost]]             ::  for use with unix nc
+  %_(a r.p :_(r.p.a nam^`@t`tok)))
 ::
 ++  out-math
   |=  ber/token
   =+  hed=(cat 3 'Bearer ' `@t`ber)
   %+  out-filtered  ber
   |=  a/hiss  ^+  a
-  :: =.  p.a  dbg-post
+  :: =.  p.p.a   [| `6.000 [%& /localhost]]             ::  for use with unix nc
   %_(a q.q (~(add ja q.q.a) %authorization hed))
 ::
 ++  toke-req

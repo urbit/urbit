@@ -69,7 +69,6 @@
   =-  (mean (flop `tang`[>a< -]))
   (turn (lore (crip b)) |=(c/cord leaf+(trip c)))
 ::
-++  dbg-post  `purl`[`hart`[| `6.000 [%& /localhost]] `pork``/testing `quay`/]
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  quay-keys  |-($@(knot {$ $}))  :: improper tree
 ++  grab-quay  :: ?=({@t @t @t} (grab-quay r:*httr %key1 %key2 %key3))
@@ -220,6 +219,7 @@
 ++  add-auth-header
   |=  {extra/quay request/{url/purl meth hed/math (unit octs)}}
   ^-  hiss
+  ::  =.  url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
   ~&  add-auth-header+(earn url.request)
   %_    request
       hed
