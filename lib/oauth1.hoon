@@ -109,8 +109,8 @@
   ==
 ::
 ++  auth-url
-  |=  a/$@(@t purl)  ^-  purl
-  %+  add-query:interpolate  a
+  |=  url/$@(@t purl)  ^-  purl
+  %+  add-query:interpolate  url
   %-  quay:hep-to-cab
   ?.  ?=({$request-token ^} tok)
     ~|(%no-token-for-dialog !!)
@@ -194,7 +194,7 @@
   ::  use token to sign authorization header. expects:
   ::    ++  res  res-handle-request-token               ::  save request token
   ::    ++  in   (in-token-exhange 'http://...')        ::  handle callback
-  ++  out-adding-header
+  ++  out-add-header
     |=  {request-url/$@(@t purl) dialog-url/$@(@t purl)}
     ::
     |=  a/hiss  ^-  $%({$send hiss} {$show purl})
@@ -234,7 +234,6 @@
       [%give a]  :: [%redo ~]  ::  handle 4xx?
     =+  access-token=(grab-token-response a)
     [[%redo ~] (save `token`[%access-token access-token])]
-  ::
   --
 --
 ::
@@ -251,7 +250,7 @@
 ::  |_  {bal/(bale keys:oauth1) tok/token:oauth1}
 ::  ++  aut  (~(standard oauth1 bal tok) . |=(tok/token:oauth1 +>(tok tok)))
 ::  ++  out
-::    %+  out-adding-header:aut
+::    %+  out-add-header:aut
 ::      token-request='https://my-api.com/request_token'
 ::    oauth-dialog='https://my-api.com/authorize'
 ::  ::

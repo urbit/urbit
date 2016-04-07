@@ -4,10 +4,17 @@
   ::
 /+    hep-to-cab, interpolate
 |%
+++  parse-url  parse-url:interpolate
 ++  join  
   |=  {a/cord b/(list cord)}
   ?~  b  ''
   (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
+::
+++  post-quay
+  |=  {a/purl b/quay}  ^-  hiss
+  =.  b  (quay:hep-to-cab b)
+  =-  [a %post - ?~(b ~ (some (tact +:(tail:earn b))))]
+  (my content-type+['application/x-www-form-urlencoded']~ ~)
 ::
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
@@ -20,26 +27,21 @@
   ~|  bad-json+r.a
   ~|  (poja q:(need r.a))
   (need (;~(biff poja b) q:(need r.a)))
-::
-++  parse-url  parse-url:interpolate
 --
 ::
 ::::
   ::
 |%
 ++  token  ?($~ @t)
-++  refresh  {tok/token needed/@da pending/_`?`|}
+++  refresh  {tok/token expiry/@da pending/_`?`|}
+++  both-tokens  {token refresh}
 ++  keys  cord:{cid/@t cis/@t}
-++  core-move  |*(a/* $^({sec-move _a} sec-move)) ::here's a change
 --
 ::
 ::::
   ::
-|=  {dialog/$@(cord:purl purl) code-exchange/$@(cord:purl purl)}
-=+  :+  state-usr=|
-      dialog-url=(parse-url dialog)
-    exchange-url=(parse-url code-exchange)
-|_  {(bale keys) scope/(list cord)}
+=+  state-usr=|
+|_  {(bale keys) tok/token}
 ++  client-id      cid:decode-keys
 ++  client-secret  cis:decode-keys
 ++  decode-keys                       :: XX from bale w/ typed %jael
@@ -54,23 +56,20 @@
     {(trip redirect-uri)}
   """
 ::
-++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  auth-url
-  ~&  [%oauth-warning "Make sure this urbit ".
-                      "is running on {(earn our-host `~ ~)}"]
-  ^-  purl
-  %_    dialog-url
-      r
-    %+  welp  r.dialog-url
-    %-  quay:hep-to-cab  
-    :~  state+?.(state-usr '' (pack usr /''))
-        client-id+client-id
-        redirect-uri+redirect-uri
-        scope+(join ' ' scope)
-    ==
+  |=  {scopes/(list @t) url/$@(@t purl)}  ^-  purl
+  %+  add-query:interpolate  url
+  %-  quay:hep-to-cab
+  :~  state+?.(state-usr '' (pack usr /''))
+      client-id+client-id
+      redirect-uri+redirect-uri
+      scope+(join ' ' scopes)
   ==
 ::
+++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  redirect-uri
+  ~&  [%oauth-warning "Make sure this urbit ".
+                      "is running on {(earn our-host `~ ~)}"]
   %-    crip    %-  earn
   %^  interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
@@ -79,31 +78,9 @@
   ==
 ::
 ::
-++  out-filtered
-  |=  {tok/token aut/$-(hiss hiss)}
-  |=  a/hiss  ^-  sec-move
-  ?~(tok [%show auth-url] [%send (aut a)])
-::
-++  out-quay
-  |=  {nam/knot tok/token}
-  %+  out-filtered  tok
-  |=  a/hiss  ^-  hiss
-  :: =.  p.p.a   [| `6.000 [%& /localhost]]             ::  for use with unix nc
-  %_(a r.p :_(r.p.a nam^`@t`tok))
-::
-++  out-math
-  |=  ber/token
-  =+  hed=(cat 3 'Bearer ' `@t`ber)
-  %+  out-filtered  ber
-  |=  a/hiss  ^+  a
-  :: =.  p.p.a   [| `6.000 [%& /localhost]]             ::  for use with unix nc
-  %_(a q.q (~(add ja q.q.a) %authorization hed))
-::
-++  toke-req
-  |=  {grant-type/cord quy/quay}  ^-  {$send hiss}
-  :+  %send  exchange-url
-  :+  %post  (malt ~[content-type+~['application/x-www-form-urlencoded']])
-  =-  `(tact +:(tail:earn -))
+++  token-request
+  |=  {a/$@(@t purl) grant-type/cord quy/quay}  ^-  hiss
+  %+  post-quay  (parse-url a)
   %-  quay:hep-to-cab
   %+  welp  quy
   :~  client-id+client-id
@@ -112,60 +89,114 @@
       grant-type+grant-type
   ==
 ::
-++  in-code
-  |=  a/quay  ^-  sec-move
-  =+  code=~|(%no-code (~(got by (malt a)) %code))
-  (toke-req 'authorization_code' code+code ~)
+++  grab-token
+  |=  a/httr  ^-  token
+  (grab-json a (ot 'access_token'^so ~):jo)
 ::
-++  token-type  'token_type'^(cu cass sa):jo
-++  expires-in  'expires_in'^ni:jo
-++  access-token  'access_token'^so:jo
-++  refresh-token  'refresh_token'^so:jo
-++  bak-save-access
-  |*  {done/* handle/$-(cord:token *)}  :: $+(token _done)
-  %-  (bak-parse done access-token ~)
-  |=(tok/cord:token [[%redo ~] (handle tok)])
+++  grab-token-after-refresh
+  |=  a/httr  ^-  {exp/@u axs/token}
+  (grab-json a (ot 'expires_in'^ni 'access_token'^so ~):jo)
 ::
-++  bak-parse
-  |*  {done/* parse/(pole {knot fist}:jo)}
-  |=  handle/$-(_?~(parse ~ (need *(ot:jo parse))) (core-move done))
-  |=  a/httr  ^-  (core-move done)
-  ?:  (bad-response p.a)
-    [%give a]
-    :: [%redo ~]  ::  handle 4xx?
-  (handle (grab-json a (ot:jo parse)))
+++  grab-refresh-token
+  |=  a/httr  ^-  {exp/@u ref/token axs/token}
+  (grab-json a (ot 'expires_in'^ni 'refresh_token'^so 'access_token'^so ~):jo)
 ::
-++  res-give  |=(a/httr [%give a])
+++  auth
+  ?~  tok  ~|(%no-bearer-token !!)
+  |%
+  ++  header  `cord`(cat 3 'Bearer ' `@t`tok)
+  ++  query   `cord`tok
+  --
+::
+++  add-auth-header
+  |=  request/{url/purl meth hed/math (unit octs)}
+  ^+  request
+  ::  =.  url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
+  ~&  add-auth-header+(earn url.request)
+  request(hed (~(add ja hed.request) %authorization header:auth))
+::
+++  add-auth-query
+  |=  {token-name/cord request/{url/purl meth math (unit octs)}}
+  ^+  request
+  ::  =.  url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
+  ~&  add-auth-query+(earn url.request)
+  request(r.url [[token-name query:auth] r.url.request])
 ::
 ++  re
-  |*  cor/*           :: XX redundant with *export, but type headaches
-  |_  {ref/refresh export/$-(refresh _cor)}
-  ++  out-fix-expired
-    |=  default/$-(hiss sec-move)
-    ^-  $-(hiss (core-move cor))
-    ?~  tok.ref  default
-    ?.  (lth needed.ref (add now ~m59.s30))
-      default
-    |=  a/hiss
-    :_  (export ref(pending &))
-    (toke-req 'refresh_token' refresh-token+tok.ref ~)
+  |_  ref/refresh
+  ++  needs-refresh  ?~(tok.ref | is-expired)
+  ++  is-expired  (lth expiry.ref (add now ~m59.s30))
+  ++  update
+    |=  exp/@u  ^+  ref
+    ref(pending |, expiry (add now (mul ~s1 exp)))
+  --
+::
+++  standard
+  |*  {done/* save/$-(token *)}                         ::  save/$-(token _done)
+  |%
+  ++  core-move  $^({sec-move _done} sec-move)          ::  stateful
+  ::
+  ++  out-add-query-param
+    |=  {token-name/knot scopes/(list cord) dialog/$@(@t purl)}
+    ::
+    |=  a/hiss  ^-  $%({$send hiss} {$show purl})
+    ?~  tok  [%show (auth-url scopes dialog)]
+    [%send (add-auth-query token-name a)]
+  ::
+  ++  out-add-header
+    |=  {scopes/(list cord) dialog/$@(@t purl)}
+    ::
+    |=  a/hiss  ^-  sec-move
+    ?~  tok  [%show (auth-url scopes dialog)]
+    [%send (add-auth-header a)]
+  ::
+  ++  in-code-to-token
+    |=  exchange-url/$@(@t purl)
+    ::
+    |=  a/quay  ^-  sec-move
+    =+  code=~|(%no-code (~(got by (malt a)) %code))
+    [%send (token-request exchange-url 'authorization_code' code+code ~)]
+  ::
+  ++  bak-save-token
+    |=  a/httr  ^-  core-move
+    ?:  (bad-response p.a)  
+      [%give a]  :: [%redo ~]  ::  handle 4xx?
+    [[%redo ~] (save `token`(grab-token a))]
+  --
+::
+++  standard-refreshing
+  |*  {done/* ref/refresh save/$-({token refresh} *)}   ::  $-(both-tokens _done)
+  =+  s=(standard done |=(tok/token (save tok ref)))
+  |%
+  ++  core-move  $^({sec-move _done} sec-move)          ::  stateful
+  ::
+  ::  See ++out-add-query-param:standard
+  ++  out-refresh-or-add-query-param
+    |=  {exchange/$@(@t purl) {knot (list cord) $@(@t purl)}}
+    ?.  ~(needs-refresh re ref)  (out-add-query-param.s +<+)
+    =;  exchange  [[%send exchange] (save tok ref(pending &))]
+    (token-request exchange 'refresh_token' refresh-token+tok.ref ~)
+  ::
+  ::  See ++out-add-header:standard
+  ++  out-refresh-or-add-header
+    |=  {exchange/$@(@t purl) {(list cord) dialog/$@(@t purl)}}
+    ?.  ~(needs-refresh re ref)  (out-add-header.s +<+)
+    =;  exchange  [[%send exchange] (save tok ref(pending &))]
+    (token-request exchange 'refresh_token' refresh-token+tok.ref ~)
   ::
   ++  res-handle-refreshed
-    |=  {handle-access/_=>(cor |=(@t +>)) default/$-(httr sec-move)}
-    ^-  $-(httr (core-move cor))
-    ?.  pending.ref  default
-    %-  (bak-parse cor expires-in access-token ~)
-    |=  {exp/@u tok/axs/@t}  ^-  {sec-move _cor}
-    =.  +>.handle-access
-      (export tok.ref (add now (mul ~s1 exp)) |)
-    [[%redo ~] (handle-access axs.tok)]
+    |=  a/httr  ^-  core-move
+    ?.  pending.ref  [%give a]
+    =+  `{exp/@u axs/@t}`(grab-token-after-refresh a)
+    =.  ref  %.(exp ~(update re ref))
+    [[%redo ~] (save axs ref)]
   ::
-  ++  bak-save-tokens
-    |=  handle-access/_=>(cor |=(@t +>))
-    %-  (bak-parse cor expires-in access-token refresh-token ~)
-    |=  {exp/@u tok/{axs/@t ref/@t}}  ^-  {sec-move _cor}
-    =.  +>.handle-access
-      (export ref.tok (add now (mul ~s1 exp)) |)
-    [[%redo ~] (handle-access axs.tok)]
+  ++  in-code-to-token  in-code-to-token.s
+  ++  bak-save-both-tokens
+    |=  a/httr  ^-  sec-move
+    =+  `{exp/@u axs/@t ref-new/@t}`(grab-refresh-token a)
+    =.  tok.ref  ref-new
+    =.  ref  (~(update re ref) exp)
+    [[%redo ~] (save axs ref)]
   --
 --

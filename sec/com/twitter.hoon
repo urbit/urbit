@@ -11,7 +11,7 @@
 ::  most common handling of oauth1 semantics. see lib/oauth1 for more details.
 ++  aut  (~(standard oauth1 bal tok) . |=(tok/token:oauth1 +>(tok tok)))
 ++  out
-  %+  out-adding-header:aut
+  %+  out-add-header:aut
     token-request='https://api.twitter.com/oauth/request_token'
   oauth-dialog='https://api.twitter.com/oauth/authorize'
 ::
