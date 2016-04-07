@@ -25,6 +25,7 @@
 static void _http_request(u3_hreq* req_u);
 static void _http_request_dead(u3_hreq* req_u);
 static void _http_conn_dead(u3_hcon *hon_u);
+static u3_hreq* _http_req_new(u3_hcon* hon_u);
 
 /* _http_alloc(): libuv buffer allocator.
 */
@@ -115,7 +116,6 @@ _http_req_free(u3_hreq* req_u)
     _http_bods_free(req_u->bod_u);
     _http_bods_free(req_u->bur_u);
 
-    free(req_u->par_u);
     free(req_u);
   }
 }
@@ -308,6 +308,8 @@ _http_conn_free(uv_handle_t* han_t)
     _http_req_free(req_u);
     hon_u->req_u = nex_u;
   }
+
+  free(hon_u->par_u);
   free(hon_u);
 }
 
@@ -358,6 +360,10 @@ _http_req_dump(u3_hreq* req_u)
 static c3_i
 _http_message_begin(http_parser* par_u)
 {
+  u3_hcon* hon_u = par_u->data;
+
+  c3_assert( !hon_u->ruc_u );
+  hon_u->ruc_u = _http_req_new(hon_u);
   return 0;
 }
 
@@ -386,9 +392,9 @@ _http_more(c3_c* str_c, const c3_c* buf_c, size_t siz_i)
 static c3_i
 _http_url(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 {
-  u3_hreq *req_u = par_u->data;
+  u3_hcon *hon_u = par_u->data;
 
-  req_u->url_c = _http_more(req_u->url_c, buf_c, siz_i);
+  hon_u->ruc_u->url_c = _http_more(hon_u->ruc_u->url_c, buf_c, siz_i);
   return 0;
 }
 
@@ -397,7 +403,7 @@ _http_url(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 static c3_i
 _http_header_field(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 {
-  u3_hreq *req_u = par_u->data;
+  u3_hreq *req_u = ((u3_hcon*)par_u->data)->ruc_u;
 
   switch ( req_u->rat_e ) {
     case u3_hreq_non:
@@ -425,7 +431,7 @@ _http_header_field(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 static c3_i
 _http_header_value(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 {
-  u3_hreq *req_u = par_u->data;
+  u3_hreq *req_u = ((u3_hcon*)par_u->data)->ruc_u;
 
   switch ( req_u->rat_e ) {
     case u3_hreq_non: fprintf(stderr, "http: odd value\r\n"); return 1;
@@ -448,7 +454,7 @@ _http_header_value(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 static c3_i
 _http_headers_complete(http_parser* par_u)
 {
-  u3_hreq *req_u = par_u->data;
+  u3_hreq *req_u = ((u3_hcon*)par_u->data)->ruc_u;
 
   if ( par_u->method >= u3_hmet_other ) {
     req_u->met_e = u3_hmet_other;
@@ -462,7 +468,7 @@ _http_headers_complete(http_parser* par_u)
 static c3_i
 _http_body(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 {
-  u3_hreq *req_u = par_u->data;
+  u3_hreq *req_u = ((u3_hcon*)par_u->data)->ruc_u;
   u3_hbod* bod_u;
 
   bod_u = _http_bod(siz_i, (const c3_y*)buf_c);
@@ -483,22 +489,20 @@ _http_body(http_parser* par_u, const c3_c* buf_c, size_t siz_i)
 static c3_i
 _http_message_complete(http_parser* par_u)
 {
-  u3_hreq* req_u = par_u->data;
-  u3_hcon* hon_u = req_u->hon_u;
+  u3_hcon* hon_u = par_u->data;
+  u3_hreq* req_u = hon_u->ruc_u;
 
-  c3_assert(req_u == hon_u->ruc_u);
   hon_u->ruc_u = 0;
-  // _http_req_dump(req_u);
+  //_http_req_dump(req_u);
 
   // Queue request for response control.
   {
     if ( !hon_u->qer_u ) {
       c3_assert(!(hon_u->req_u));
-
       hon_u->qer_u = hon_u->req_u = req_u;
     }
     else {
-      hon_u->qer_u->nex_u = req_u;
+      hon_u->qer_u = hon_u->qer_u->nex_u = req_u;
     }
   }
 
@@ -532,10 +536,6 @@ _http_req_new(u3_hcon* hon_u)
 
   req_u->met_e = (u3_hmet)0;
   req_u->rat_e = (u3_hrat)0;
-
-  req_u->par_u = c3_malloc(sizeof(struct http_parser));
-  http_parser_init(req_u->par_u, HTTP_REQUEST);
-  ((struct http_parser *)(req_u->par_u))->data = req_u;
 
   {
     struct sockaddr_in adr_u;
@@ -592,11 +592,7 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
       _http_conn_dead(hon_u);
     }
     else {
-      if ( !hon_u->ruc_u ) {
-        hon_u->ruc_u = _http_req_new(hon_u);
-      }
-
-      if ( siz_w != http_parser_execute(hon_u->ruc_u->par_u,
+      if ( siz_w != http_parser_execute(hon_u->par_u,
                                         &_http_settings,
                                         (c3_c*)buf_u->base,
                                         siz_w) )
@@ -645,6 +641,10 @@ _http_conn_new(u3_http *htp_u)
     hon_u->htp_u = htp_u;
     hon_u->nex_u = htp_u->hon_u;
     htp_u->hon_u = hon_u;
+
+    hon_u->par_u = c3_malloc(sizeof(struct http_parser));
+    http_parser_init(hon_u->par_u, HTTP_REQUEST);
+    ((struct http_parser *)(hon_u->par_u))->data = hon_u;
   }
 }
 
