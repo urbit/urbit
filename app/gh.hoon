@@ -45,7 +45,7 @@
       ==
     --
 ::
-|_  {hid/bowl cnt/@ hook/(map @t {id/@t listeners/(set bone)})}
+|_  {hid/bowl hook/(map @t {id/@t listeners/(set bone)})}
 ++  prep  _`.
 ::
 ::  List of endpoints
@@ -162,52 +162,27 @@
     (malt (turn issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~])))
   --
 ::
-::  This core manages everything related to a particular request.
+::  This core handles one-time requests by mapping them to their
+::  handling in ++places.
 ::
-::  Each request has a particular 'style', which is currently
-::  one of 'read', or 'listen'.  ++scry handles all three types
-::  of requests.
-::
-++  help
-  |=  {ren/care style/@tas pax/path}
-  ::  =^  arg  pax  [+ -]:(split pax)
-  =|  arg/path
+++  scry
+  |=  {ren/care pax/path}
   =|  mow/(list move)
+  =<  abet:read
   |%
-  ::  Resolve core.
-  ::
-  ++  abet
+  ++  abet                                              ::  Resolve core
     ^-  {(list move) _+>.$}
     [(flop mow) +>.$]
   ::
-  ::  Send a move.
-  ::
-  ++  send
+  ++  send                                              ::  Send a move
     |=  mov/move
     +>.$(mow [mov mow])
-  ::
-  ::  Send a hiss
-  ::
-  ++  send-hiss 
-    |=  hiz/hiss
-    ^+  +>
-    =+  wir=`wire`[ren style pax]
-    (send ost.hid %hiss wir `~ %httr [%hiss hiz])
-  ::
-  ::  Decide how to handle a request based on its style.
-  ::
-  ++  scry
-    ^+  .
-    ?+  style  ~|([%invalid-style style] !!)
-      $read     read
-      $listen   listen
-    ==
   ::
   ::  Match to the endpoint in ++places and execute read-x or read-y
   ::
   ++  read
     ~&  [%read pax]
-    =+  places=(places ren style pax)
+    =+  places=(places ren %read pax)
     |-  ^+  +>.$
     ?~  places
       ~&  [%strange-path pax]
@@ -216,14 +191,33 @@
     ?~  match
       $(places t.places)
     (send (?+(ren !! $x read-x.i.places, $y read-y.i.places) pax))
+  --
+::
+::  This core handles event subscription requests by starting or
+::  updating the webhook flow for each event.
+::
+++  listen
+  |=  pax/path
+  =|  mow/(list move)
+  =<  abet:listen
+  |%
+  ++  abet                                              ::  Resolve core.
+    ^-  {(list move) _+>.$}
+    [(flop mow) +>.$]
+  ::
+  ++  send-hiss                                         ::  Send a hiss
+    |=  hiz/hiss
+    ^+  +>
+    =+  wir=`wire`[%x %listen pax]
+    +>.$(mow [[ost.hid %hiss wir `~ %httr [%hiss hiz]] mow])
   ::
   ::  Create or update a webhook to listen for a set of events.
   ::
   ++  listen
     ^+  .
-    =+  paf=`path`(weld pax arg)
-    ?>  ?=({@ @ *} paf)
-    =+  events=t.t.paf
+    =+  pax=pax  ::  TMI-proofing
+    ?>  ?=({@ @ *} pax)
+    =+  events=t.t.pax
     |-  ^+  +>+.$
     ?~  events
       +>+.$
@@ -238,8 +232,7 @@
   ++  create-hook
     |=  event/@t
     ^+  +>
-    =+  paf=`path`(weld pax arg)
-    ?>  ?=({@ @ *} paf)
+    ?>  ?=({@ @ *} pax)
     =+  clean-event=`tape`(turn (trip event) |=(a/@tD ?:(=('_' a) '-' a)))
     =.  hook
       %+  ~(put by hook)  (crip clean-event)
@@ -249,7 +242,7 @@
       [id (~(put in listeners) ost.hid)]
     %-  send-hiss
     :*  %+  scan
-          =+  [(trip i.paf) (trip i.t.paf)]
+          =+  [(trip i.pax) (trip i.t.pax)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:epur
         %post  ~  ~
@@ -299,33 +292,30 @@
   |=  ost/bone
   [ost %diff response]
 ::
-::  Here we handle PUT, POST, and DELETE requests.  We probably
-::  should return the result somehow, but that doesn't fit well
-::  into poke semantics.
-::
-++  poke-gh-poke
-  |=  {method/meth endpoint/(list @t) jon/json}
-  ^-  {(list move) _+>.$}
-  :_  +>.$  :_  ~
-  :*  ost.hid  %hiss  /poke/[method]  `~  %httr  %hiss 
-      ~|  stuff="https://api.github.com{<(path endpoint)>}"
-      (scan "https://api.github.com{<(path endpoint)>}" auri:epur)
-      method  ~  `(taco (crip (pojo jon)))
-  ==
-::
 ::  When a peek on a path blocks, ford turns it into a peer on
 ::  /scry/{care}/{path}.  You can also just peer to this
 ::  directly.
 ::
-::  After some sanity checking we hand control to ++scry in
-::  ++help.
+::  We hand control to ++scry.
 ::
 ++  peer-scry
   |=  pax/path
   ^-  {(list move) _+>.$}
-  ?>  ?=({care ^} pax)
-  ::  =-  ~&  [%peered -]  -
-  [abet(cnt +(cnt))]:scry:(help i.pax i.t.pax t.t.pax)
+  ?>  ?=({care *} pax)
+  (scry i.pax t.pax)
+::
+::  To listen to a webhook-powered stream of events, subscribe
+::  to /listen/<user>/<repo>/<events...>
+::
+::  We hand control to ++listen.
+::
+++  peer-listen
+  |=  pax/path
+  ^-  {(list move) _+>.$}
+  ?.  ?=({care @ @ *} pax)
+    ~&  [%bad-listen-path pax]
+    [~ +>.$]
+  (listen pax)
 ::
 ::  HTTP response.  We make sure the response is good, then
 ::  produce the result (as JSON) to whoever sent the request.
