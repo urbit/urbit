@@ -1,21 +1,9 @@
+::  OAuth 2.0 %authorization
 ::
 ::::  /hoon/oauth2/lib
   ::
+/+    hep-to-cab, interpolate
 |%
-++  fass                                                ::  rewrite quay
-  |=  a/quay
-  %+  turn  a
-  |=  {p/@t q/@t}  ^+  +<
-  [(gsub '-' '_' p) q]
-::
-++  gsub                                                ::  replace chars
-  |=  {a/@t b/@t t/@t}
-  ^-  @t
-  ?:  =('' t)  t
-  %+  mix  (lsh 3 1 $(t (rsh 3 1 t)))
-  =+  c=(end 3 1 t)
-  ?:(=(a c) b c)
-::
 ++  join  
   |=  {a/cord b/(list cord)}
   ?~  b  ''
@@ -33,29 +21,7 @@
   ~|  (poja q:(need r.a))
   (need (;~(biff poja b) q:(need r.a)))
 ::
-++  parse-url
-  |=  a/$@(cord:purl purl)  ^-  purl
-  ?^  a  a
-  ~|  bad-url+a
-  (rash a auri:epur)
-::
-++  interpolate-url
-  |=  {a/$@(cord purl) b/(unit hart) c/(list (pair term knot))}
-  ^-  purl
-  ?@  a  $(a (parse-url a))  :: deal with cord
-  %_  a
-    p    ?^(b u.b p.a)
-    q.q  (interpolate-path q.q.a c)
-  ==
-::
-++  interpolate-path    ::  [/a/:b/c [%b 'foo']~] -> /a/foo/c
-  |=  {a/path b/(list (pair term knot))}  ^-  path
-  ?~  a  ?~(b ~ ~|(unused-values+b !!))
-  =+  (rush i.a ;~(pfix col sym))
-  ?~  -  [i.a $(a t.a)]  ::  not interpolable
-  ?~  b  ~|(no-value+u !!)
-  ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
-  [q.i.b $(a t.a, b t.b)]
+++  parse-url  parse-url:interpolate
 --
 ::
 ::::
@@ -96,7 +62,7 @@
   %_    dialog-url
       r
     %+  welp  r.dialog-url
-    %-  fass  
+    %-  quay:hep-to-cab  
     :~  state+?.(state-usr '' (pack usr /''))
         client-id+client-id
         redirect-uri+redirect-uri
@@ -106,7 +72,7 @@
 ::
 ++  redirect-uri
   %-    crip    %-  earn
-  %^  interpolate-url  'https://our-host/~/ac/:domain/:user/in'
+  %^  interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
   :~  domain+(join '.' (flop dom))
       user+?:(state-usr '_state' (scot %ta usr))
@@ -123,7 +89,7 @@
   %+  out-filtered  tok
   |=  a/hiss  ^-  hiss
   :: =.  p.p.a   [| `6.000 [%& /localhost]]             ::  for use with unix nc
-  %_(a r.p :_(r.p.a nam^`@t`tok)))
+  %_(a r.p :_(r.p.a nam^`@t`tok))
 ::
 ++  out-math
   |=  ber/token
@@ -138,7 +104,7 @@
   :+  %send  exchange-url
   :+  %post  (malt ~[content-type+~['application/x-www-form-urlencoded']])
   =-  `(tact +:(tail:earn -))
-  %-  fass
+  %-  quay:hep-to-cab
   %+  welp  quy
   :~  client-id+client-id
       client-secret+client-secret

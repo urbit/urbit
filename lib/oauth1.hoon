@@ -2,6 +2,7 @@
 ::
 ::::  /hoon/oauth1/lib
   ::
+/+    interpolate, hep-to-cab
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
 ++  token                                               ::  user keys
@@ -15,20 +16,7 @@
 ::::
   ::
 |%
-++  fass                                                ::  rewrite quay
-  |=  a/quay
-  %+  turn  a
-  |=  {p/@t q/@t}  ^+  +<
-  [(gsub '-' '_' p) q]
-::
-++  gsub                                                ::  replace chars
-  |=  {a/@t b/@t t/@t}
-  ^-  @t
-  ?:  =('' t)  t
-  %+  mix  (lsh 3 1 $(t (rsh 3 1 t)))
-  =+  c=(end 3 1 t)
-  ?:(=(a c) b c)
-::
+++  parse-url  parse-url:interpolate
 ++  join  
   |=  {a/cord b/(list cord)}
   ?~  b  ''
@@ -43,7 +31,7 @@
 ++  to-header
   |=  a/quay  ^-  tape
   %+  joint  ", "
-  (turn a |=({k/@t v/@t} `tape`~[k '="' v '"']))      ::  normalized later
+  (turn a |=({k/@t v/@t} `tape`~[k '="' v '"']))        ::  normalized later
 ::
 ::   partial tail:earn for sorting
 ++  encode-pairs
@@ -52,7 +40,7 @@
   |=  {k/@t v/@t}  ^-  tape
   :(weld (urle (trip k)) "=" (urle (trip v)))
 ::
-++  parse-pairs                                       ::  x-form-urlencoded
+++  parse-pairs                                         ::  x-form-urlencoded
   |=  bod/(unit octs)  ^-  quay-enc
   ~|  %parsing-body
   ?~  bod  ~
@@ -81,35 +69,6 @@
   |*  b/quay-keys
   ?@  b  ~|(b (~(got by all) b))
   [(..$ -.b) (..$ +.b)]
-::
-++  parse-url
-  |=  a/$@(cord:purl purl)  ^-  purl
-  ?^  a  a
-  ~|  bad-url+a
-  (rash a auri:epur)
-::
-++  add-query
-  |=  {a/$@(@t purl) b/quay}  ^-  purl
-  ?@  a  $(a (parse-url a))  :: deal with cord
-  a(r (weld r.a b))
-::
-++  interpolate-url
-  |=  {a/$@(cord purl) b/(unit hart) c/(list (pair term knot))}
-  ^-  purl
-  ?@  a  $(a (parse-url a))  :: deal with cord
-  %_  a
-    p    ?^(b u.b p.a)
-    q.q  (interpolate-path q.q.a c)
-  ==
-::
-++  interpolate-path    ::  [/a/:b/c [%b 'foo']~] -> /a/foo/c
-  |=  {a/path b/(list (pair term knot))}  ^-  path
-  ?~  a  ?~(b ~ ~|(unused-values+b !!))
-  =+  (rush i.a ;~(pfix col sym))
-  ?~  -  [i.a $(a t.a)]  ::  not interpolable
-  ?~  b  ~|(no-value+u !!)
-  ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
-  [q.i.b $(a t.a, b t.b)]
 --
 !:
 ::::
@@ -134,7 +93,7 @@
   ~&  [%oauth-warning "Make sure this urbit ".
                       "is running on {(earn our-host `~ ~)}"]
   %-    crip    %-  earn
-  %^  interpolate-url  'https://our-host/~/ac/:domain/:user/in'
+  %^  interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
   :~  domain+(join '.' (flop dom))
       user+(scot %ta usr)
@@ -150,8 +109,8 @@
 ::
 ++  token-url
   |=  a/$@(@t purl)  ^-  purl
-  %+  add-query  a
-  %-  fass
+  %+  add-query:interpolate  a
+  %-  quay:hep-to-cab
   ?.  ?=({$request-token ^} tok)
     ~|(%no-token-for-dialog !!)
   :-  oauth-token+oauth-token.tok
@@ -179,7 +138,7 @@
     |=  {auq/quay url/purl med/meth math bod/(unit octs)}
     ^-  cord
     =^  quy  url  [r.url url(r ~)]      :: query string handled separately
-    =.  auq  (fass (weld auq computed-query))
+    =.  auq  (quay:hep-to-cab (weld auq computed-query))
     =+  ^-  qen/quay-enc                 :: semi-encoded for sorting
         %+  weld  (parse-pairs bod)
         (encode-pairs (weld auq quy))

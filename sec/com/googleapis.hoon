@@ -2,7 +2,7 @@
 ::
 ::::  /hoon/googleapis/com/sec
   ::
-/+    oauth2
+/+    oauth2, interpolate, hep-to-cab
 ::
 ::::
   ::
@@ -22,14 +22,12 @@
   %-  oauth2
   :_  exchange='https://www.googleapis.com/oauth2/v4/token'
   ^=  dialog
-  %*  .  (need (epur 'https://accounts.google.com/o/oauth2/v2/auth'))
-      r
-    %-  fass:oauth2
-    :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
-        access-type+%offline
-        response-type+%code
-        prompt+%consent
-    ==
+  %+  add-query:interpolate  'https://accounts.google.com/o/oauth2/v2/auth'
+  %-  hep-to-cab
+  :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
+      access-type+%offline
+      response-type+%code
+      prompt+%consent
   ==
 --
 !:
