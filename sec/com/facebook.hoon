@@ -35,7 +35,7 @@
   ?.  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token
     [[%redo ~] ..bak(access-token access-token)]
   :-  %send
-  %^  token-request:aut  exchange-url
+  %^  request-token:aut  exchange-url
     grant-type='fb_exchange_token'
   [key='fb_exchange_token' value=access-token]~
 --

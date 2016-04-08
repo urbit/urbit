@@ -18,7 +18,7 @@
 ++  res  res-handle-request-token:aut
 ::
 ++  in
-  %-  in-token-exchange:aut
+  %-  in-exchange-token:aut
   exchange-url='https://api.twitter.com/oauth/access_token'
 ::
 ++  bak  bak-save-token:aut

@@ -78,7 +78,7 @@
   ==
 ::
 ::
-++  token-request
+++  request-token
   |=  {a/$@(@t purl) grant-type/cord quy/quay}  ^-  hiss
   %+  post-quay  (parse-url a)
   %-  quay:hep-to-cab
@@ -88,6 +88,9 @@
       redirect-uri+redirect-uri
       grant-type+grant-type
   ==
+::
+++  request-token-by-code
+  |=({a/$@(@t purl) b/@t} (request-token a 'authorization_code' code+b ~))
 ::
 ++  grab-token
   |=  a/httr  ^-  axs/@t
@@ -136,7 +139,7 @@
     ?~  tok.ref  `ref
     ?.  is-expired  `ref
     :_  ref(pending &)
-    `(token-request exchange-url 'refresh_token' refresh-token+tok.ref ~)
+    `(request-token exchange-url 'refresh_token' refresh-token+tok.ref ~)
   --
 ::
 ::  expected semantics, to be copied and modified if anything doesn't work
@@ -165,7 +168,7 @@
     ::
     |=  a/quay  ^-  sec-move
     =+  code=~|(%no-code (~(got by (malt a)) %code))
-    [%send (token-request exchange-url 'authorization_code' code+code ~)]
+    [%send (request-token-by-code exchange-url code)]
   ::
   ++  bak-save-token
     |=  a/httr  ^-  core-move
@@ -186,8 +189,8 @@
     |=  {exchange/$@(@t purl) s-args/{knot (list cord) $@(@t purl)}}
     ::
     |=  a/hiss  ^-  core-move
-    =^  req  ref  (~(update-if-needed re ref) exchange)
-    ?^  req  [[%send u.req] (save tok ref)]
+    =^  upd  ref  (~(update-if-needed re ref) exchange)
+    ?^  upd  [[%send u.upd] (save tok ref)]
     %.(a (out-add-query-param.s s-args))
   ::
   ::  See ++out-add-header:standard
@@ -195,8 +198,8 @@
     |=  {exchange/$@(@t purl) s-args/{(list cord) dialog/$@(@t purl)}}
     ::
     |=  a/hiss  ^-  core-move
-    =^  req  ref  (~(update-if-needed re ref) exchange)
-    ?^  req  [[%send u.req] (save tok ref)]
+    =^  upd  ref  (~(update-if-needed re ref) exchange)
+    ?^  upd  [[%send u.upd] (save tok ref)]
     %.(a (out-add-header.s s-args))
   ::
   ++  res-save-after-refresh

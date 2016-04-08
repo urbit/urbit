@@ -89,11 +89,11 @@
     {(trip oauth-callback)}
   """
 ::
-++  token-exchange
+++  exchange-token
   |=  a/$@(@t purl)  ^-  hiss
   (post-quay (parse-url a) ~)
 ::
-++  token-request   
+++  request-token
   |=  a/$@(@t purl)  ^-  hiss
   (post-quay (parse-url a) oauth-callback+oauth-callback ~)
 ::
@@ -201,7 +201,7 @@
     |=  a/hiss  ^-  $%({$send hiss} {$show purl})
     ?-    tok
         $~
-      [%send (add-auth-header ~ (token-request request-url))]
+      [%send (add-auth-header ~ (request-token request-url))]
     ::
         {$access-token ^}
       [%send (add-auth-header [oauth-token+oauth-token.tok]~ a)]
@@ -221,12 +221,12 @@
   ::
   ::  Exchange oauth_token in query string for access token. expects:
   ::    ++  bak  bak-save-token                         :: save access token
-  ++  in-token-exchange
+  ++  in-exchange-token
     |=  exchange-url/$@(@t purl)
     ::
     |=  a/quay  ^-  sec-move
     ?>  (check-token-quay a)
-    [%send (add-auth-header a (token-exchange exchange-url))]
+    [%send (add-auth-header a (exchange-token exchange-url))]
   ::
   ::  If a valid access token has been returned, save it
   ++  bak-save-token
@@ -252,12 +252,12 @@
 ::  ++  aut  (~(standard oauth1 bal tok) . |=(tok/token:oauth1 +>(tok tok)))
 ::  ++  out
 ::    %+  out-add-header:aut
-::      token-request='https://my-api.com/request_token'
+::      request-token='https://my-api.com/request_token'
 ::    oauth-dialog='https://my-api.com/authorize'
 ::  ::
 ::  ++  res  res-handle-request-token:aut
 ::  ++  in
-::    %-  in-token-exchange:aut
+::    %-  in-exchagne-token:aut
 ::    exchange-url='https://my-api.com/access_token'
 ::  ::
 ::  ++  bak  bak-save-token:aut
@@ -276,16 +276,16 @@
 ::    ::
 ::  |_  {bal/(bale keys:oauth1) tok/token:oauth1}
 ::  ++  aut  ~(. oauth1 bal tok)
-::  ++  out
+::  ++  out  ::  add header
 ::    =+  aut
 ::    |=  req/hiss  ^-  $%({$send hiss} {$show purl})
 ::    ?~  tok
-::      [%send (add-auth-header ~ (token-request 'https://my-api.com/request_token'))]
+::      [%send (add-auth-header ~ (request-token 'https://my-api.com/request_token'))]
 ::    ?:  ?=($request-token -.tok)
 ::      [%show (auth-url 'https://my-api.com/authorize')]
 ::    [%send (add-auth-header [oauth-token+ouath-token.tok]~ req)]
 ::  ::
-::  ++  res
+::  ++  res  :: handle request token
 ::    =+  aut
 ::    |=  res/httr  ^-  $%({{$redo $~} _..res} {$give httr})
 ::    ?^  tok  [%give a]
@@ -293,14 +293,14 @@
 ::    =.  tok  [%request-token (grab-token-response res)]
 ::    [[%redo ~] ..res]
 ::  ::
-::  ++  in
+::  ++  in  ::  exchange token
 ::    =+  aut
 ::    |=  inp/quay  ^-  {$send hiss}
 ::    ?>  (check-token-quay inp)
 ::    :-  %send
-::    (add-auth-header inp (token-exchange 'https://my-api.com/access_token'))
+::    (add-auth-header inp (exchange-token 'https://my-api.com/access_token'))
 ::  ::
-::  ++  bak
+::  ++  bak  ::  save token
 ::    =+  aut
 ::    |=  bak/httr  ^-  $%({{$redo $~} _..bak} {$give httr})
 ::    ?:  (bad-response bak)  [%give bak]
