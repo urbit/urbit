@@ -1,25 +1,27 @@
-::  Test url +https://api.dropboxapi.com/2/files/list_folder
+::  Test url +https://api.dropboxapi.com/2/users/get_current_account &json ~
+::
 ::::  /hoon/dropboxapi/com/sec
   ::
 /+    oauth2
 ::
 ::::
   ::
-=+  ^=  aut
-    %+  oauth2
-      'https://www.dropbox.com/1/oauth2/authorize?response_type=code'
-    'https://api.dropboxapi.com/1/oauth2/token'
-|_  {(bale keys:oauth2) tok/token.aut}
-++  aut  ~(. ^aut +<- /)
-++  out
-  |=  a/hiss
-  =;  mow  ~&  db-authorized+mow  mow
-  %.  a
-  (out-math:aut tok)
-++  in   in-code:aut
-++  bak  (bak-save-access:aut . |=(tok/token:aut +>(tok tok)))
+|%
+++  dialog-url    'https://www.dropbox.com/1/oauth2/authorize?response_type=code'
+++  exchange-url  'https://api.dropboxapi.com/1/oauth2/token'
 --
-
+::
+::::
+  ::
+|_  {bal/(bale keys:oauth2) tok/token:oauth2}
+::  aut is a "standard oauth2" core, which implements the 
+::  most common handling of oauth2 semantics. see lib/oauth2 for more details.
+++  aut  (~(standard oauth2 bal tok) . |=(tok/token:oauth2 +>(tok tok)))
+++  out  (out-add-header:aut scope=~ dialog-url)
+::
+++  in   (in-code-to-token:aut exchange-url)
+++  bak  bak-save-token:aut
+--
 ::  create a developer app on https://www.instagram.com/developer/ to get a
 ::  client id and secret.
 
