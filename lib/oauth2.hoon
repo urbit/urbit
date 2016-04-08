@@ -58,6 +58,8 @@
 ::
 ++  auth-url
   |=  {scopes/(list @t) url/$@(@t purl)}  ^-  purl
+  ~&  [%oauth-warning "Make sure this urbit ".
+                      "is running on {(earn our-host `~ ~)}"]
   %+  add-query:interpolate  url
   %-  quay:hep-to-cab
   :~  state+?.(state-usr '' (pack usr /''))
@@ -68,8 +70,6 @@
 ::
 ++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  redirect-uri
-  ~&  [%oauth-warning "Make sure this urbit ".
-                      "is running on {(earn our-host `~ ~)}"]
   %-    crip    %-  earn
   %^  interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
@@ -132,8 +132,9 @@
   --
 ::
 ++  standard
-  |*  {done/* save/$-(token *)}                         ::  save/$-(token _done)
+  |*  {done/* save/$-(token *)}
   |%
+  ++  save  ^-($-(token _done) ^save)                   ::  shadow(type canary)
   ++  core-move  $^({sec-move _done} sec-move)          ::  stateful
   ::
   ++  out-add-query-param
@@ -165,9 +166,10 @@
   --
 ::
 ++  standard-refreshing
-  |*  {done/* ref/refresh save/$-({token refresh} *)}   ::  $-(both-tokens _done)
+  |*  {done/* ref/refresh save/$-({token refresh} *)}
   =+  s=(standard done |=(tok/token (save tok ref)))
   |%
+  ++  save  ^-($-(both-tokens _done) ^save)             ::  shadow(type canary)
   ++  core-move  $^({sec-move _done} sec-move)          ::  stateful
   ::
   ::  See ++out-add-query-param:standard

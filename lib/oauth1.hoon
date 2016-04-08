@@ -189,6 +189,7 @@
 ++  standard
   |*  {done/* save/$-(token *)}                         ::  save/$-(token _done)
   |%
+  ++  save  ^-($-(token _done) ^save)                   ::  shadow(type canary)
   ++  core-move  $^({sec-move _done} sec-move)          ::  stateful
   ::
   ::  use token to sign authorization header. expects:
@@ -230,7 +231,7 @@
   ::  If a valid access token has been returned, save it
   ++  bak-save-token
     |=  a/httr  ^-  core-move
-    ?:  (bad-response p.a)  
+    ?:  (bad-response p.a)
       [%give a]  :: [%redo ~]  ::  handle 4xx?
     =+  access-token=(grab-token-response a)
     [[%redo ~] (save `token`[%access-token access-token])]
