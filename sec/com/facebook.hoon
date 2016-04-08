@@ -14,8 +14,9 @@
 ::::
   ::
 |_  {bal/(bale keys:oauth2) access-token/token:oauth2}
-::  aut is a "standard oauth2" core, which implements the 
-::  most common handling of oauth2 semantics. see lib/oauth2 for more details.
+::  ++aut is a "standard oauth2" core, which implements the
+::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
+::  and examples at the bottom of the file.
 ++  aut
   %+  ~(standard oauth2 bal access-token)  .
   |=(access-token/token:oauth2 +>(access-token access-token))
@@ -29,7 +30,7 @@
 ::
 ++  bak
   |=  a/httr  ^-  core-move:aut
-  ?:  (bad-response:aut p.a)  
+  ?:  (bad-response:aut p.a)
     [%give a]  :: [%redo ~]  ::  handle 4xx?
   =+  `{access-token/@t expires-in/@u}`(grab-expiring-token:aut a)
   ?.  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token

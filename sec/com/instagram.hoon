@@ -1,5 +1,5 @@
 ::  Test url +https://api.instagram.com/v1/users/self
-::  
+::
 ::::  /hoon/instagram/com/sec
   ::
 /+    oauth2
@@ -14,8 +14,9 @@
 ::::
   ::
 |_  {bal/(bale keys:oauth2) tok/token:oauth2}
-::  aut is a "standard oauth2" core, which implements the 
-::  most common handling of oauth2 semantics. see lib/oauth2 for more details.
+::  ++aut is a "standard oauth2" core, which implements the
+::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
+::  and examples at the bottom of the file.
 ++  aut  (~(standard oauth2 bal tok) . |=(tok/token:oauth2 +>(tok tok)))
 ++  out
   %^  out-add-query-param:aut  'access_token'
@@ -28,7 +29,7 @@
 ::  create a developer app on https://www.instagram.com/developer/ to get a
 ::  client id and secret
 
-::  Be sure to be on https://localhost:8443, and to have registered 
+::  Be sure to be on https://localhost:8443, and to have registered
 ::  http://localhost:8443/~/ac/instagram.com/~./in as the redirect URI.
 ::  (If unable to change port number of ship, change the redirect URI port in %eyre)
 ::  |init-oauth2 |init-oauth2 /com/instagram

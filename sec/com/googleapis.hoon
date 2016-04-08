@@ -37,6 +37,9 @@
 ::::
   ::
 |_  {bal/(bale keys:oauth2) own/user-state}
+::  ++auth is a "standard refreshing oauth2" core, which implements the
+::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
+::  and examples at the bottom of the file.
 ++  auth
   =+  a=~(standard-refreshing oauth2 bal ber.own)
   (a(state-usr &) ..auth ref.own |=(a/user-state ..auth(own a)))

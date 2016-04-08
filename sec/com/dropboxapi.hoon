@@ -14,8 +14,9 @@
 ::::
   ::
 |_  {bal/(bale keys:oauth2) tok/token:oauth2}
-::  aut is a "standard oauth2" core, which implements the 
-::  most common handling of oauth2 semantics. see lib/oauth2 for more details.
+::  ++aut is a "standard oauth2" core, which implements the
+::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
+::  and examples at the bottom of the file.
 ++  aut  (~(standard oauth2 bal tok) . |=(tok/token:oauth2 +>(tok tok)))
 ++  out  (out-add-header:aut scope=~ dialog-url)
 ::
@@ -25,7 +26,7 @@
 ::  create a developer app on https://www.dropbox.com/developers-v1/apps to get a
 ::  client id and secret.
 
-::  Be sure to be on https://localhost:8443 and to have registered 
+::  Be sure to be on https://localhost:8443 and to have registered
 ::  'http://localhost:8443/~/ac/dropboxapi.com/~./in' as the redirect URI.
 ::  (If unable to change port number of ship, change the redirect URI port in %eyre)
 
@@ -37,4 +38,4 @@
 ::  Before you receive the response, you'll have to click on the link in the
 ::  dojo to authenticate yourself.
 
-:: You should receive a response listing the contents of that directory. 
+:: You should receive a response listing the contents of that directory.
