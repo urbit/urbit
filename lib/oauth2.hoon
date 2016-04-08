@@ -206,7 +206,7 @@
     |=  a/httr  ^-  core-move
     ?.  pending.ref  [%give a]
     =+  `{axs/token exp/@u}`(grab-expiring-token a)
-    =.  ref  %.(exp ~(update re ref))
+    =.  ref  (~(update re ref) exp)
     [[%redo ~] (save axs ref)]
   ::
   ++  in-code-to-token  in-code-to-token.s
@@ -218,3 +218,146 @@
     [[%redo ~] (save axs ref)]
   --
 --
+::
+::  XX move-me
+::
+::
+::::  Example "standard" sec/ core:
+  ::
+::
+::  :: 
+::  ::::  /hoon/my-api/com/sec
+::    ::
+::  /+    oauth2
+::  ::
+::  ::::
+::    ::
+::  |_  {bal/(bale keys:oauth2) tok/token:oauth2}
+::  ++  aut  (~(standard oauth2 bal tok) . |=(tok/token:oauth2 +>(tok tok)))
+::  ++  out
+::    %+  out-add-header:aut  scope=/full
+::    oauth-dialog='https://my-api.com/authorize'
+::  ::
+::  ++  in
+::    %-  in-code-to-token:aut
+::    exchange-url='https://my-api.com/access_token'
+::  ::
+::  ++  bak  bak-save-token:aut
+::  --
+::
+::
+::::  Equivalent imperative code:
+  ::
+::
+::  :: 
+::  ::::  /hoon/my-api/com/sec
+::    ::
+::  /+    oauth2
+::  ::
+::  ::::
+::    ::
+::  |_  {bal/(bale keys:oauth2) tok/token:oauth2}
+::  ++  aut  ~(. oauth2 bal tok)
+::  ++  out  ::  add header
+::    =+  aut
+::    |=  req/hiss  ^-  $%({$send hiss} {$show purl})
+::    ?~  tok
+::      [%show (auth-url scope=/full 'https://my-api.com/authorize')]
+::    [%send (add-auth-header req)]
+::  ::
+::  ++  in  :: code to token
+::    =+  aut
+::    |=  inp/quay  ^-  {$send hiss}
+::    =+  code=~|(%no-code (~(got by (malt inp)) %code))
+::    [%send (request-token-by-code 'https://my-api.com/access_token' code)]
+::  ::
+::  ++  bak  ::  save token
+::    =+  aut
+::    |=  bak/httr  ^-  $%({{$redo $~} _..bak} {$give httr})
+::    ?:  (bad-response bak)  [%give bak]
+::    =.  tok  (grab-token bak)
+::    [[%redo ~] ..bak]
+::  --
+::
+:::   :::
+  ::::: ::
+:::   :::
+::
+::::  Example "standard-refreshing" sec/ core:
+  ::
+::
+::  :: 
+::  ::::  /hoon/my-api/com/sec
+::    ::
+::  /+    oauth2
+::  ::
+::  ::::
+::    ::
+::  |_  {bal/(bale keys:oauth2) tok/token:oauth2 ref/refresh:oauth2}
+::  ++  aut
+::    %^  ~(standard-refreshing oauth2 bal tok)  .  ref
+::    |=({tok/token ref/refresh}:oauth2 +>(tok tok, ref ref))
+::  ::
+::  ++  exchange-url  'https://my-api.com/access_token'
+::  ++  out
+::    %^  out-refresh-or-add-header:aut  exchange-url
+::      scope=/full
+::    oauth-dialog='https://my-api.com/authorize'
+::  ::
+::  ++  res  res-save-after-refresh:aut
+::  ++  in  (in-code-to-token:aut exchange-url)
+::  ++  bak  bak-save-both-tokens:aut
+::  --
+::
+::
+::::  Equivalent imperative code:
+  ::
+::
+::  :: 
+::  ::::  /hoon/my-api/com/sec
+::    ::
+::  /+    oauth2
+::  ::
+::  ::::
+::    ::
+::  |_  {bal/(bale keys:oauth2) axs/token:oauth2 ref/refresh:oauth2}
+::  ++  aut  ~(. oauth2 bal axs)
+::  ++  exchange-url  'https://my-api.com/access_token'
+::  ++  out  :: refresh or add header
+::    =+  aut
+::    |=  req/hiss  ^-  $^({{$send hiss} _..out} $%({$send hiss} {$show purl}))
+::    ?~  axs
+::      [%show (auth-url scope=/full 'https://my-api.com/authorize')]
+::    =^  upd  ref  (~(update-if-needed re ref) exchange-url)
+::    ?^  upd  [[%send u.upd] ..out]
+::    [%send (add-auth-header req)]
+::   ::
+::  ++  res  :: save after refresh
+::    =+  aut
+::    |=  a/httr  ^-  $^({{$redo $~} _..res} {$give httr})
+::    ?.  pending.ref  [%give a]
+::    =+  `{axs/token exp/@u}`(grab-expiring-token a)
+::    [[%redo ~] ..out(axs axs, ref (~(update re ref) exp))]
+::  ::
+::  ++  in  :: exchange token
+::    =+  aut
+::    |=  inp/quay  ^-  {$send hiss}
+::    =+  code=~|(%no-code (~(got by (malt inp)) %code))
+::    [%send (request-token-by-code exchange-url code)]
+::
+::   ++  bak  :: save both tokens
+::     =+  aut
+::     |=  a/httr  ^-  {{$redo $~} _..res}
+::     =+  `{axs/token exp/@u ref-new/token}`(grab-both-tokens a)
+::     =.  tok.ref  ref-new
+::     [[%redo ~] ..bak(axs axs, ref (~(update re ref) exp))]
+::  ::
+::  ::
+::  ++  bak
+::    =+  aut
+::    |=  bak/httr  ^-  $%({{$redo $~} _..bak} {$give httr})
+::    ?:  (bad-response bak)  [%give bak]
+::    =.  tok  (grab-token bak)
+::    [[%redo ~] ..bak]
+::  --
+::
