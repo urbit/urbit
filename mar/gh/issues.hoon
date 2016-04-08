@@ -77,11 +77,12 @@
               title.issue.issues
           ==
         ==
+    ^-  speech:talk
     :*  %api  %github
         login.sender.issues
-        (need (epur url.sender.issues))
+        (rash html-url.sender.issues aurf:epur)
         txt  txt
-        (need (epur url.issue.issues))
+        (rash html-url.issue.issues aurf:epur)
         %-  jobe
         %+  welp
           :~  repository+s+name.repository.issues
