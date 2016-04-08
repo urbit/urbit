@@ -33,7 +33,7 @@
 ::  (If unable to change port number of ship, change the redirect URI port in %eyre)
 ::  |init-oauth2 |init-oauth2 /com/instagram
 
-::  Enter home this sample command to get your user information:
+::  Enter this sample command to get your user information:
 ::  +https://api.instagram.com/v1/users/self
 
 ::  Before you receive the response, you'll have to clink on the link to

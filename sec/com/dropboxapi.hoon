@@ -22,7 +22,7 @@
 ++  in   (in-code-to-token:aut exchange-url)
 ++  bak  bak-save-token:aut
 --
-::  create a developer app on https://www.instagram.com/developer/ to get a
+::  create a developer app on https://www.dropbox.com/developers-v1/apps to get a
 ::  client id and secret.
 
 ::  Be sure to be on https://localhost:8443 and to have registered 
@@ -31,8 +31,8 @@
 
 ::  |init-oauth2 |init-oauth2 /com/instagram
 
-::  Enter this sample command to list the contents of one of your directories:
-::  +https://api.dropboxapi.com/2/files/list_folder &json (joba %paths+'/{INSERT-DIR-NAME')
+::  Enter this sample command to show your user info:
+::  +https://api.dropboxapi.com/2/users/get_current_account &json ~
 
 ::  Before you receive the response, you'll have to click on the link in the
 ::  dojo to authenticate yourself.
