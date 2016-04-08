@@ -5,7 +5,7 @@
 /+    hep-to-cab, interpolate
 |%
 ++  parse-url  parse-url:interpolate
-++  join  
+++  join
   |=  {a/cord b/(list cord)}
   ?~  b  ''
   (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
@@ -149,6 +149,8 @@
   ++  save  ^-($-(token _done) ^save)                   ::  shadow(type canary)
   ++  core-move  $^({sec-move _done} sec-move)          ::  stateful
   ::
+  ::  Insert token into query string. expects:
+  ::    ++  in   (in-code-to-token 'http://...')        ::  handle callback
   ++  out-add-query-param
     |=  {token-name/knot scopes/(list cord) dialog/$@(@t purl)}
     ::
@@ -156,6 +158,8 @@
     ?~  tok  [%show (auth-url scopes dialog)]
     [%send (add-auth-query token-name a)]
   ::
+  ::  Add token as a header. expects:
+  ::    ++  in   (in-code-to-token 'http://...')        ::  handle callback
   ++  out-add-header
     |=  {scopes/(list cord) dialog/$@(@t purl)}
     ::
@@ -163,6 +167,8 @@
     ?~  tok  [%show (auth-url scopes dialog)]
     [%send (add-auth-header a)]
   ::
+  ::  Exchange code in query string for access token. expects:
+  ::    ++  bak  bak-save-token                         :: save access token
   ++  in-code-to-token
     |=  exchange-url/$@(@t purl)
     ::
@@ -170,9 +176,10 @@
     =+  code=~|(%no-code (~(got by (malt a)) %code))
     [%send (request-token-by-code exchange-url code)]
   ::
+  ::  If an access token has been returned, save it
   ++  bak-save-token
     |=  a/httr  ^-  core-move
-    ?:  (bad-response p.a)  
+    ?:  (bad-response p.a)
       [%give a]  :: [%redo ~]  ::  handle 4xx?
     [[%redo ~] (save `token`(grab-token a))]
   --
@@ -185,6 +192,10 @@
   ++  core-move  $^({sec-move _done} sec-move)          ::  stateful
   ::
   ::  See ++out-add-query-param:standard
+  ::  Refresh token if we have an expired one, ask for authentication if none is present,
+  ::  insert auth token into the query string if it's valid. expects:
+  ::    ++  in   (in-code-to-token 'http://...')        ::  handle callback
+  ::    ++  res  res-save-after-refresh
   ++  out-refresh-or-add-query-param
     |=  {exchange/$@(@t purl) s-args/{knot (list cord) $@(@t purl)}}
     ::
@@ -194,6 +205,10 @@
     %.(a (out-add-query-param.s s-args))
   ::
   ::  See ++out-add-header:standard
+  ::  Refresh token if we have an expired one, ask for authentication if none is present,
+  ::  add token as a header if it's valid. expects:
+  ::    ++  in   (in-code-to-token 'http://...')        ::  handle callback
+  ::    ++  res  res-save-after-refresh
   ++  out-refresh-or-add-header
     |=  {exchange/$@(@t purl) s-args/{(list cord) dialog/$@(@t purl)}}
     ::
@@ -202,6 +217,7 @@
     ?^  upd  [[%send u.upd] (save tok ref)]
     %.(a (out-add-header.s s-args))
   ::
+  ::  If the last request refreshed the access token, save it.
   ++  res-save-after-refresh
     |=  a/httr  ^-  core-move
     ?.  pending.ref  [%give a]
@@ -209,7 +225,11 @@
     =.  ref  (~(update re ref) exp)
     [[%redo ~] (save axs ref)]
   ::
+  ::  Exchange code in query string for access and refresh tokens. expects:
+  ::    ++  bak  bak-save-both-tokens                   :: save access token
   ++  in-code-to-token  in-code-to-token.s
+  ::
+  ::  If valid access and refresh tokens have been returned, save them
   ++  bak-save-both-tokens
     |=  a/httr  ^-  core-move
     =+  `{axs/token exp/@u ref-new/token}`(grab-both-tokens a)
@@ -225,7 +245,7 @@
 ::::  Example "standard" sec/ core:
   ::
 ::
-::  :: 
+::  ::
 ::  ::::  /hoon/my-api/com/sec
 ::    ::
 ::  /+    oauth2
@@ -249,7 +269,7 @@
 ::::  Equivalent imperative code:
   ::
 ::
-::  :: 
+::  ::
 ::  ::::  /hoon/my-api/com/sec
 ::    ::
 ::  /+    oauth2
@@ -286,7 +306,7 @@
 ::::  Example "standard-refreshing" sec/ core:
   ::
 ::
-::  :: 
+::  ::
 ::  ::::  /hoon/my-api/com/sec
 ::    ::
 ::  /+    oauth2
@@ -313,7 +333,7 @@
 ::::  Equivalent imperative code:
   ::
 ::
-::  :: 
+::  ::
 ::  ::::  /hoon/my-api/com/sec
 ::    ::
 ::  /+    oauth2
