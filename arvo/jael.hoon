@@ -28,7 +28,6 @@
       own/(map @ud (safe ring))                         ::  private key per life
   ==                                                    ::  
 ++  user  @ta                                           ::  user id per service
-++  visa  (map ship will)                               ::  meta-will
 --
 ::  system structures
 |%
@@ -39,22 +38,26 @@
       api/(map @tas wapi)                               ::  web services
       tix/(map @pG @p)                                  ::  old style tickets
       tls/tlsy                                          ::  tls keys
-      val/(map @tas bitx)                               ::  bitcoin etc
-      sub/(map path (set duct))                         ::  subscribers
+      bix/(map @tas bitx)                               ::  bitcoin etc
+      sud/(map path (set duct))                         ::  subscribers
   ==                                                    ::
 ++  gift                                                ::  out result <-$
   $%  {$dead p/path}                                    ::  key expired
       {$save p/(each * *)}                              ::  backup
   ==                                                    ::
 ++  kiss                                                ::  in request ->$
-  $%  {$kill p/path}                                    ::  cancel path
+  $%  {$kill p/ship q/path}                             ::  cancel path
       {$know p/visa}                                    ::  learn will (new pki)
       {$knew p/ship q/will}                             ::  learn will (old pki)
-      {$next p/ring}                                    ::  update private key
+      {$next p/ship q/(unit ring)}                      ::  update private key
       {$tell p/path q/@da r/@}                          ::  save atomic secret
       {$tick p/@pG q/@p}                                ::  save old ticket
   ==
 --
+=|  axle$:  $0                                              ::
+        tym/{p/clok q/clok}                             ::  positive+negative
+    ==                                                  ::
+|=  {now/@da eny/@ ski/sley}                            ::  current invocation
 |%                                                      ::
 ++  call                                                ::  request
   |=  {hen/duct hic/(hypo (hobo kiss))}
@@ -88,3 +91,4 @@
   |=  {tea/wire hen/duct hin/(hypo noun)}
   !!
 --
+
