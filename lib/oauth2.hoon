@@ -90,16 +90,16 @@
   ==
 ::
 ++  grab-token
-  |=  a/httr  ^-  token
+  |=  a/httr  ^-  axs/@t
   (grab-json a (ot 'access_token'^so ~):jo)
 ::
-++  grab-token-after-refresh
-  |=  a/httr  ^-  {exp/@u axs/token}
-  (grab-json a (ot 'expires_in'^ni 'access_token'^so ~):jo)
+++  grab-expiring-token
+  |=  a/httr  ^-  {axs/@t exp/@u}
+  (grab-json a (ot 'access_token'^so 'expires_in'^ni ~):jo)
 ::
 ++  grab-both-tokens
-  |=  a/httr  ^-  {exp/@u axs/token ref/token}
-  (grab-json a (ot 'expires_in'^ni 'access_token'^so 'refresh_token'^so ~):jo)
+  |=  a/httr  ^-  {axs/@t exp/@u ref/@t}
+  (grab-json a (ot 'access_token'^so 'expires_in'^ni 'refresh_token'^so ~):jo)
 ::
 ++  auth
   ?~  tok  ~|(%no-bearer-token !!)
@@ -202,14 +202,14 @@
   ++  res-save-after-refresh
     |=  a/httr  ^-  core-move
     ?.  pending.ref  [%give a]
-    =+  `{exp/@u axs/token}`(grab-token-after-refresh a)
+    =+  `{axs/token exp/@u}`(grab-expiring-token a)
     =.  ref  %.(exp ~(update re ref))
     [[%redo ~] (save axs ref)]
   ::
   ++  in-code-to-token  in-code-to-token.s
   ++  bak-save-both-tokens
     |=  a/httr  ^-  core-move
-    =+  `{exp/@u axs/token ref-new/token}`(grab-both-tokens a)
+    =+  `{axs/token exp/@u ref-new/token}`(grab-both-tokens a)
     =.  tok.ref  ref-new
     =.  ref  (~(update re ref) exp)
     [[%redo ~] (save axs ref)]
