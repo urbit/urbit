@@ -13,17 +13,10 @@
 ::
 /?  314
 /-  gh, plan-acct
-/+  gh-parse
+/+  gh-parse, connector
 ::
 !:
 =>  |%
-    ++  place
-      $:  guard/mold
-          read-x/$-(path move)
-          read-y/$-(path move)
-          sigh-x/$-(jon/json (unit sub-result))
-          sigh-y/$-(jon/json (unit arch))
-      ==
     ++  move  (pair bone card)
     ++  sub-result
       $%  {$arch arch}
@@ -44,6 +37,7 @@
           {$gh-issue-comment issue-comment:gh}
       ==
     --
+=+  connector=(connector move sub-result)
 ::
 |_  {hid/bowl hook/(map @t {id/@t listeners/(set bone)})}
 ++  prep  _`.
@@ -52,8 +46,8 @@
 ::
 ++  places
   |=  wir/wire
+  ^-  (list place:connector)
   =<  
-    ^-  (list place)
     :~  ^-  place                     ::  /
         :*  guard=$~
             read-x=read-null
@@ -121,32 +115,7 @@
             sigh-y=sigh-strange
         ==
     ==
-  =>
-    |%                              ::  generic helpers (should be library)
-    ++  read-null  |=(pax/path [ost.hid %diff %null ~])
-    ++  read-static
-      |=  children/(list @t)
-      |=  pax/path
-      [ost.hid %diff %arch ~ (malt (turn children |=(@t [+< ~])))]
-    ::
-    ++  read-get
-      |=  endpoint/path
-      |=  pax/path
-      (get endpoint)
-    ::
-    ++  sigh-strange  |=(jon/json ~)
-    ::
-    ++  get
-      |=  endpoint/path
-      ^-  move
-      :*  ost.hid  %hiss  wir  `~  %httr  %hiss
-          (endpoint-to-purl endpoint)  %get  ~  ~
-      ==
-    ::
-    ++  endpoint-to-purl
-      |=  endpoint/path
-      (scan "https://api.github.com{<`path`endpoint>}" auri:epur)
-    --
+  =+  (helpers:connector ost.hid wir)
   |%                                ::  gh-specific helpers
   ++  sigh-list-issues-x
     |=  jon/json
@@ -160,37 +129,6 @@
     |=  issues/(list issue:gh)
     :-  `(shax (jam issues))
     (malt (turn issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~])))
-  --
-::
-::  This core handles one-time requests by mapping them to their
-::  handling in ++places.
-::
-++  scry
-  |=  {ren/care pax/path}
-  =|  mow/(list move)
-  =<  abet:read
-  |%
-  ++  abet                                              ::  Resolve core
-    ^-  {(list move) _+>.$}
-    [(flop mow) +>.$]
-  ::
-  ++  send                                              ::  Send a move
-    |=  mov/move
-    +>.$(mow [mov mow])
-  ::
-  ::  Match to the endpoint in ++places and execute read-x or read-y
-  ::
-  ++  read
-    ~&  [%read pax]
-    =+  places=(places ren %read pax)
-    |-  ^+  +>.$
-    ?~  places
-      ~&  [%strange-path pax]
-      (send ost.hid %diff ?+(ren !! $x null+~, $y arch+*arch))
-    =+  match=((soft guard.i.places) pax)
-    ?~  match
-      $(places t.places)
-    (send (?+(ren !! $x read-x.i.places, $y read-y.i.places) pax))
   --
 ::
 ::  This core handles event subscription requests by starting or
@@ -302,7 +240,8 @@
   |=  pax/path
   ^-  {(list move) _+>.$}
   ?>  ?=({care *} pax)
-  (scry i.pax t.pax)
+  :_  +>.$  :_  ~
+  (read:connector ost.hid (places %read pax) i.pax t.pax)
 ::
 ::  To listen to a webhook-powered stream of events, subscribe
 ::  to /listen/<user>/<repo>/<events...>
@@ -323,60 +262,15 @@
 ++  sigh-httr
   |=  {way/wire res/httr}
   ^-  {(list move) _+>.$}
-  ?.  ?=({care ?($read $listen) @ *} way)
+  ?.  ?=({$read care @ *} way)
     ~&  res=res
     [~ +>.$]
-  =*  ren  i.way
-  =*  style  i.t.way
+  =*  style  i.way
+  =*  ren  i.t.way
   =*  pax  t.t.way
   :_  +>.$  :_  ~
   :+  ost.hid  %diff
-  ?+    ren  null+~
-      $x
-    ?~  r.res
-      json+(jobe err+s+%empty-response code+(jone p.res) ~)
-    =+  jon=(rush q.u.r.res apex:poja)
-    ?~  jon
-      json+(jobe err+s+%bad-json code+(jone p.res) body+s+q.u.r.res ~)
-    ?.  =(2 (div p.res 100))
-      json+(jobe err+s+%request-rejected code+(jone p.res) msg+u.jon ~)
-    =+  places=(places ren style pax)
-    |-  ^-  sub-result
-    ?~  places
-      ~&([%sigh-strange-path pax] null+~)
-    =+  match=((soft guard.i.places) pax)
-    ?~  match
-      $(places t.places)
-    =+  (sigh-x.i.places u.jon)
-    ?~  -
-      ~&  [err+s+%response-not-valid pax+pax code+(jone p.res) msg+u.jon]
-      null+~
-    u.-
-  ::
-      $y
-    ?~  r.res
-      ~&  [err+s+%empty-response code+(jone p.res)]
-      arch+*arch
-    =+  jon=(rush q.u.r.res apex:poja)
-    ?~  jon
-      ~&  [err+s+%bad-json code+(jone p.res) body+s+q.u.r.res]
-      arch+*arch
-    ?.  =(2 (div p.res 100))
-      ~&  [err+s+%request-rejected code+(jone p.res) msg+u.jon]
-      arch+*arch
-    =+  places=(places ren style pax)
-    |-  ^-  sub-result
-    ?~  places
-      ~&([%sigh-strange-path pax] arch+*arch)
-    =+  match=((soft guard.i.places) pax)
-    ?~  match
-      $(places t.places)
-    =+  (sigh-y.i.places u.jon)
-    ?~  -
-      ~&  [err+s+%response-not-valid pax+pax code+(jone p.res) msg+u.jon]
-      arch+*arch
-    arch+u.-
-  ==
+  (sigh:connector (places ren style pax) ren pax res)
 ::
 ++  sigh-tang
   |=  {way/wire tan/tang}
