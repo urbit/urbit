@@ -1,6 +1,6 @@
 ::  Twitter status
 ::
-::::  /hoon/stat/twit/mar
+::::  /hoon/status/twit/mar
   ::
 /+  twitter, httr-to-json
 |_  stat:twitter

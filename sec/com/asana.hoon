@@ -1,6 +1,6 @@
 ::  Test url +https://app.asana.com/api/1.0/users/me
 ::  
-::::  /hoon/digitalocean/com/sec
+::::  /hoon/asana/com/sec
   ::
 /+    oauth2
 ::
