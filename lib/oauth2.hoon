@@ -97,9 +97,9 @@
   |=  a/httr  ^-  {exp/@u axs/token}
   (grab-json a (ot 'expires_in'^ni 'access_token'^so ~):jo)
 ::
-++  grab-refresh-token
-  |=  a/httr  ^-  {exp/@u ref/token axs/token}
-  (grab-json a (ot 'expires_in'^ni 'refresh_token'^so 'access_token'^so ~):jo)
+++  grab-both-tokens
+  |=  a/httr  ^-  {exp/@u axs/token ref/token}
+  (grab-json a (ot 'expires_in'^ni 'access_token'^so 'refresh_token'^so ~):jo)
 ::
 ++  auth
   ?~  tok  ~|(%no-bearer-token !!)
@@ -111,26 +111,35 @@
 ++  add-auth-header
   |=  request/{url/purl meth hed/math (unit octs)}
   ^+  request
-  ::  =.  url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
+  ::  =.  p.url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
   ~&  add-auth-header+(earn url.request)
   request(hed (~(add ja hed.request) %authorization header:auth))
 ::
 ++  add-auth-query
   |=  {token-name/cord request/{url/purl meth math (unit octs)}}
   ^+  request
-  ::  =.  url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
+  ::  =.  p.url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
   ~&  add-auth-query+(earn url.request)
   request(r.url [[token-name query:auth] r.url.request])
 ::
 ++  re
   |_  ref/refresh
   ++  needs-refresh  ?~(tok.ref | is-expired)
-  ++  is-expired  (lth expiry.ref (add now ~m59.s30))
+  ++  is-expired  (lth expiry.ref (add now ~m5))
   ++  update
     |=  exp/@u  ^+  ref
     ref(pending |, expiry (add now (mul ~s1 exp)))
+  ::
+  ++  update-if-needed
+    |=  exchange-url/$@(@t purl)
+    ^-  {(unit hiss) refresh}
+    ?~  tok.ref  `ref
+    ?.  is-expired  `ref
+    :_  ref(pending &)
+    `(token-request exchange-url 'refresh_token' refresh-token+tok.ref ~)
   --
 ::
+::  expected semantics, to be copied and modified if anything doesn't work
 ++  standard
   |*  {done/* save/$-(token *)}
   |%
@@ -174,29 +183,33 @@
   ::
   ::  See ++out-add-query-param:standard
   ++  out-refresh-or-add-query-param
-    |=  {exchange/$@(@t purl) {knot (list cord) $@(@t purl)}}
-    ?.  ~(needs-refresh re ref)  (out-add-query-param.s +<+)
-    =;  exchange  [[%send exchange] (save tok ref(pending &))]
-    (token-request exchange 'refresh_token' refresh-token+tok.ref ~)
+    |=  {exchange/$@(@t purl) s-args/{knot (list cord) $@(@t purl)}}
+    ::
+    |=  a/hiss  ^-  core-move
+    =^  req  ref  (~(update-if-needed re ref) exchange)
+    ?^  req  [[%send u.req] (save tok ref)]
+    %.(a (out-add-query-param.s s-args))
   ::
   ::  See ++out-add-header:standard
   ++  out-refresh-or-add-header
-    |=  {exchange/$@(@t purl) {(list cord) dialog/$@(@t purl)}}
-    ?.  ~(needs-refresh re ref)  (out-add-header.s +<+)
-    =;  exchange  [[%send exchange] (save tok ref(pending &))]
-    (token-request exchange 'refresh_token' refresh-token+tok.ref ~)
+    |=  {exchange/$@(@t purl) s-args/{(list cord) dialog/$@(@t purl)}}
+    ::
+    |=  a/hiss  ^-  core-move
+    =^  req  ref  (~(update-if-needed re ref) exchange)
+    ?^  req  [[%send u.req] (save tok ref)]
+    %.(a (out-add-header.s s-args))
   ::
-  ++  res-handle-refreshed
+  ++  res-save-after-refresh
     |=  a/httr  ^-  core-move
     ?.  pending.ref  [%give a]
-    =+  `{exp/@u axs/@t}`(grab-token-after-refresh a)
+    =+  `{exp/@u axs/token}`(grab-token-after-refresh a)
     =.  ref  %.(exp ~(update re ref))
     [[%redo ~] (save axs ref)]
   ::
   ++  in-code-to-token  in-code-to-token.s
   ++  bak-save-both-tokens
-    |=  a/httr  ^-  sec-move
-    =+  `{exp/@u axs/@t ref-new/@t}`(grab-refresh-token a)
+    |=  a/httr  ^-  core-move
+    =+  `{exp/@u axs/token ref-new/token}`(grab-both-tokens a)
     =.  tok.ref  ref-new
     =.  ref  (~(update re ref) exp)
     [[%redo ~] (save axs ref)]
