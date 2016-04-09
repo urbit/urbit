@@ -85,284 +85,7 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":19,"../persistence/TreePersistence.coffee":21}],2:[function(require,module,exports){
-var BodyComponent, Dpad, Nav, Sibs, TreeActions, TreeStore, a, button, clas, div, li, query, reactify, recl, ref, rend, ul, util;
-
-clas = require('classnames');
-
-BodyComponent = React.createFactory(require('./BodyComponent.coffee'));
-
-query = require('./Async.coffee');
-
-reactify = require('./Reactify.coffee');
-
-TreeStore = require('../stores/TreeStore.coffee');
-
-TreeActions = require('../actions/TreeActions.coffee');
-
-Sibs = require('./SibsComponent.coffee');
-
-Dpad = require('./DpadComponent.coffee');
-
-util = require('../utils/util.coffee');
-
-recl = React.createClass;
-
-rend = ReactDOM.render;
-
-ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, button = ref.button;
-
-Nav = React.createFactory(query({
-  path: 't',
-  kids: {
-    name: 't',
-    head: 'r',
-    meta: 'j'
-  }
-}, recl({
-  displayName: "Links",
-  stateFromStore: function() {
-    return TreeStore.getNav();
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  _onChangeStore: function() {
-    if (this.isMounted()) {
-      return this.setState(this.stateFromStore());
-    }
-  },
-  componentDidMount: function() {
-    return TreeStore.addChangeListener(this._onChangeStore);
-  },
-  componentWillUnmount: function() {
-    return TreeStore.removeChangeListener(this._onChangeStore);
-  },
-  onClick: function() {
-    return this.toggleFocus();
-  },
-  onMouseOver: function() {
-    return this.toggleFocus(true);
-  },
-  onMouseOut: function() {
-    return this.toggleFocus(false);
-  },
-  onTouchStart: function() {
-    return this.ts = Number(Date.now());
-  },
-  onTouchEnd: function() {
-    var dt;
-    return dt = this.ts - Number(Date.now());
-  },
-  _home: function() {
-    return this.props.goTo("/");
-  },
-  toggleFocus: function(state) {
-    return $(ReactDOM.findDOMNode(this)).toggleClass('focus', state);
-  },
-  toggleNav: function() {
-    return TreeActions.toggleNav();
-  },
-  render: function() {
-    var attr, dpad, navClas, sibs, title, toggleClas;
-    attr = {
-      onMouseOver: this.onMouseOver,
-      onMouseOut: this.onMouseOut,
-      onClick: this.onClick,
-      onTouchStart: this.onTouchStart,
-      onTouchEnd: this.onTouchEnd,
-      'data-path': this.props.dataPath
-    };
-    if (_.keys(window).indexOf("ontouchstart") !== -1) {
-      delete attr.onMouseOver;
-      delete attr.onMouseOut;
-    }
-    navClas = clas({
-      'col-md-2': true,
-      ctrl: true,
-      open: this.state.open === true
-    });
-    attr = _.extend(attr, {
-      className: navClas,
-      key: "nav"
-    });
-    title = this.state.title ? this.state.title : "";
-    dpad = this.state.dpad !== false ? Dpad(this.props, "") : "";
-    sibs = this.state.sibs !== false ? Sibs(_.merge(this.props, {
-      toggleNav: this.toggleNav
-    }), "") : "";
-    toggleClas = clas({
-      'navbar-toggler': true,
-      show: this.state.subnav != null
-    });
-    return div(attr, div({
-      className: 'links',
-      key: "links"
-    }, div({
-      className: 'icon'
-    }, div({
-      className: 'home',
-      onClick: this._home
-    }, ""), div({
-      className: 'app'
-    }, title), dpad, button({
-      className: toggleClas,
-      type: 'button',
-      onClick: this.toggleNav
-    }, "☰")), sibs));
-  }
-}), recl({
-  displayName: "Links_loading",
-  _home: function() {
-    return this.props.goTo("/");
-  },
-  render: function() {
-    return div({
-      className: "col-md-2 ctrl",
-      "data-path": this.props.dataPath,
-      key: "nav-loading"
-    }, div({
-      className: 'links'
-    }, div({
-      className: 'icon'
-    }, div({
-      className: 'home',
-      onClick: this._home
-    }, "")), ul({
-      className: "nav"
-    }, li({
-      className: "nav-item selected"
-    }, a({
-      className: "nav-link"
-    }, this.props.curr)))));
-  }
-})));
-
-module.exports = query({
-  sein: 't',
-  path: 't',
-  name: 't',
-  meta: 'j'
-}, recl({
-  displayName: "Anchor",
-  stateFromStore: function() {
-    return TreeStore.getNav();
-  },
-  getInitialState: function() {
-    return _.extend(this.stateFromStore(), {
-      url: window.location.pathname
-    });
-  },
-  _onChangeStore: function() {
-    if (this.isMounted()) {
-      return this.setState(this.stateFromStore());
-    }
-  },
-  componentWillUnmount: function() {
-    clearInterval(this.interval);
-    $('body').off('click', 'a');
-    return TreeStore.removeChangeListener(this._onChangeStore);
-  },
-  componentDidUpdate: function() {
-    return this.setTitle();
-  },
-  componentDidMount: function() {
-    var _this;
-    this.setTitle();
-    this.interval = setInterval(this.checkURL, 100);
-    TreeStore.addChangeListener(this._onChangeStore);
-    _this = this;
-    return $('body').on('click', 'a', function(e) {
-      var href;
-      href = $(this).attr('href');
-      if (href[0] === "#") {
-        return true;
-      }
-      if (href && !/^https?:\/\//i.test(href)) {
-        e.preventDefault();
-        if ((href != null ? href[0] : void 0) !== "/") {
-          href = (document.location.pathname.replace(/[^\/]*\/?$/, '')) + href;
-        }
-        return _this.goTo(util.fragpath(href));
-      }
-    });
-  },
-  setTitle: function() {
-    var ref1, title;
-    title = $('#body h1').first().text() || this.props.name;
-    if ((ref1 = this.props.meta) != null ? ref1.title : void 0) {
-      title = this.props.meta.title;
-    }
-    return document.title = title + " - " + this.props.path;
-  },
-  setPath: function(href, hist) {
-    var href_parts, next;
-    href_parts = href.split("#");
-    next = href_parts[0];
-    if (next.substr(-1) === "/") {
-      next = next.slice(0, -1);
-    }
-    href_parts[0] = next;
-    if (hist !== false) {
-      history.pushState({}, "", util.basepath(href_parts.join("#")));
-    }
-    if (next !== this.props.path) {
-      ReactDOM.unmountComponentAtNode($('#body')[0]);
-      TreeActions.setCurr(next);
-      return rend(BodyComponent({}, ""), $('#body')[0]);
-    }
-  },
-  reset: function() {
-    $("html,body").animate({
-      scrollTop: 0
-    });
-    $('#nav').attr('style', '');
-    $('#nav').removeClass('scrolling m-up');
-    return $('#nav').addClass('m-down m-fixed');
-  },
-  goTo: function(path) {
-    this.reset();
-    return this.setPath(path);
-  },
-  checkURL: function() {
-    if (this.state.url !== window.location.pathname) {
-      this.reset();
-      this.setPath(util.fragpath(window.location.pathname), false);
-      return this.setState({
-        url: window.location.pathname
-      });
-    }
-  },
-  render: function() {
-    var kids;
-    if (this.props.meta.anchor === 'none') {
-      return div({}, "");
-    }
-    kids = [
-      Nav({
-        curr: this.props.name,
-        dataPath: this.props.sein,
-        sein: this.props.sein,
-        goTo: this.goTo,
-        key: "nav"
-      }, "div")
-    ];
-    if (this.state.subnav) {
-      kids.push(reactify({
-        gn: this.state.subnav,
-        ga: {
-          open: this.state.open,
-          toggle: TreeActions.toggleNav
-        },
-        c: []
-      }, "subnav"));
-    }
-    return div({}, kids);
-  }
-}));
-
-
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":22,"../utils/util.coffee":24,"./Async.coffee":3,"./BodyComponent.coffee":4,"./DpadComponent.coffee":8,"./Reactify.coffee":14,"./SibsComponent.coffee":17,"classnames":25}],3:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":20,"../persistence/TreePersistence.coffee":22}],2:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -516,8 +239,8 @@ module.exports = function(queries, Child, load) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":22,"./LoadComponent.coffee":12}],4:[function(require,module,exports){
-var Comments, TreeActions, a, clas, div, extras, img, input, load, p, query, reactify, recl, ref, rele, util;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":23,"./LoadComponent.coffee":11}],3:[function(require,module,exports){
+var Comments, TreeActions, TreeStore, a, clas, div, extras, h1, h3, img, input, load, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
 
@@ -529,6 +252,8 @@ reactify = require('./Reactify.coffee');
 
 TreeActions = require('../actions/TreeActions.coffee');
 
+TreeStore = require('../stores/TreeStore.coffee');
+
 Comments = require('./CommentsComponent.coffee');
 
 util = require('../utils/util.coffee');
@@ -537,7 +262,7 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a, input = ref.input;
+ref = React.DOM, div = ref.div, h1 = ref.h1, h3 = ref.h3, p = ref.p, img = ref.img, a = ref.a, input = ref.input;
 
 extras = {
   spam: recl({
@@ -570,6 +295,46 @@ extras = {
         src: src,
         className: "logo first"
       }));
+    }
+  }),
+  date: recl({
+    displayName: "Date",
+    render: function() {
+      return div({
+        className: 'date'
+      }, this.props.date);
+    }
+  }),
+  title: recl({
+    displayName: "Title",
+    render: function() {
+      return h1({
+        className: 'title'
+      }, this.props.title);
+    }
+  }),
+  image: recl({
+    displayName: "Image",
+    render: function() {
+      return img({
+        src: this.props.image
+      }, "");
+    }
+  }),
+  preview: recl({
+    displayName: "Preview",
+    render: function() {
+      return p({
+        className: 'preview'
+      }, this.props.preview);
+    }
+  }),
+  author: recl({
+    displayName: "Author",
+    render: function() {
+      return h3({
+        className: 'author'
+      }, this.props.author);
     }
   }),
   next: query({
@@ -610,9 +375,27 @@ extras = {
   footer: recl({
     displayName: "Footer",
     render: function() {
+      var containerClas, footerClas;
+      containerClas = clas({
+        footer: true,
+        container: this.props.container === 'false'
+      });
+      footerClas = clas({
+        'col-md-12': this.props.container === 'false'
+      });
       return div({
-        className: "footer"
-      }, p({}, "This page was served by Urbit."));
+        className: containerClas,
+        key: 'footer-container'
+      }, [
+        div({
+          className: footerClas,
+          key: 'footer-inner'
+        }, [
+          "This page was served by an Urbit.", a({
+            href: "mailto:urbit@urbit.org"
+          }, "urbit@urbit.org")
+        ])
+      ]);
     }
   })
 };
@@ -625,49 +408,91 @@ module.exports = query({
   sein: 't'
 }, recl({
   displayName: "Body",
+  stateFromStore: function() {
+    return {
+      curr: TreeStore.getCurr()
+    };
+  },
+  getInitialState: function() {
+    return this.stateFromStore();
+  },
+  _onChangeStore: function() {
+    if (this.isMounted()) {
+      return this.setState(this.stateFromStore());
+    }
+  },
+  componentDidMount: function() {
+    return TreeStore.addChangeListener(this._onChangeStore);
+  },
   render: function() {
-    var bodyClas, containerClas, extra, ref1;
+    var bodyClas, extra, innerClas, parts, ref1;
     extra = (function(_this) {
       return function(name, props) {
         if (props == null) {
           props = {};
         }
         if (_this.props.meta[name] != null) {
+          if ((_.keys(props)).length === 0) {
+            props[name] = _this.props.meta[name];
+          }
           return React.createElement(extras[name], props);
         }
       };
     })(this);
-    containerClas = clas({
-      "col-md-10": true,
-      "col-md-offset-3": this.props.meta.anchor !== 'none',
+    innerClas = {
       body: true
-    });
+    };
+    if (this.props.meta.anchor !== 'none' && this.props.meta.navmode !== 'navbar') {
+      innerClas['col-md-10'] = true;
+      innerClas['col-md-offset-3'] = true;
+    }
+    if (this.props.meta.navmode === 'navbar' && this.props.meta.container !== 'false') {
+      innerClas['col-md-9'] = true;
+      innerClas['col-md-offset-1'] = true;
+    }
+    innerClas = clas(innerClas);
     bodyClas = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
-    return div({
-      className: containerClas,
-      'data-path': this.props.path
-    }, [
-      div({
-        key: "body" + this.props.path,
-        bodyClas: bodyClas
-      }, extra('spam'), extra('logo', {
+    parts = [
+      extra('spam'), extra('logo', {
         color: this.props.meta.logo
       }), reactify(this.props.body), extra('next', {
         dataPath: this.props.sein,
         curr: this.props.name
-      }), extra('comments'), extra('footer'))
+      }), extra('comments'), extra('footer', {
+        container: this.props.meta.container
+      })
+    ];
+    if (this.props.meta.type === "post") {
+      parts.splice(1, 0, extra('date'), extra('title'), extra('image'), extra('preview'), extra('author'));
+    }
+    return div({
+      dataPath: this.state.curr,
+      key: this.state.curr
+    }, [
+      div({
+        className: innerClas,
+        'data-path': this.props.path,
+        key: 'body-inner'
+      }, [
+        div({
+          key: "body" + this.props.path,
+          id: 'body',
+          className: bodyClas
+        }, parts)
+      ])
     ]);
   }
 }), recl({
   render: function() {
     return div({
+      id: 'body',
       className: "col-md-offset-3 col-md-10"
     }, rele(load));
   }
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../utils/util.coffee":24,"./Async.coffee":3,"./CommentsComponent.coffee":6,"./LoadComponent.coffee":12,"./Reactify.coffee":14,"classnames":25}],5:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":23,"../utils/util.coffee":25,"./Async.coffee":2,"./CommentsComponent.coffee":5,"./LoadComponent.coffee":11,"./Reactify.coffee":14,"classnames":26}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -690,7 +515,7 @@ module.exports = recl({
 });
 
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var Comment, TreeActions, a, clas, div, form, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
 
 clas = require('classnames');
@@ -785,7 +610,7 @@ module.exports = query({
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../utils/util.coffee":24,"./Async.coffee":3,"./LoadComponent.coffee":12,"./Reactify.coffee":14,"classnames":25}],7:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../utils/util.coffee":25,"./Async.coffee":2,"./LoadComponent.coffee":11,"./Reactify.coffee":14,"classnames":26}],6:[function(require,module,exports){
 var div, recl;
 
 recl = React.createClass;
@@ -809,7 +634,7 @@ module.exports = {
 };
 
 
-},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":9,"./KidsComponent.coffee":10,"./ListComponent.coffee":11,"./ModuleComponent.coffee":13,"./ScriptComponent.coffee":15,"./SearchComponent.coffee":16,"./TocComponent.coffee":18}],8:[function(require,module,exports){
+},{"./CodeMirror.coffee":4,"./EmailComponent.coffee":8,"./KidsComponent.coffee":9,"./ListComponent.coffee":10,"./ModuleComponent.coffee":12,"./ScriptComponent.coffee":15,"./SearchComponent.coffee":16,"./TocComponent.coffee":18}],7:[function(require,module,exports){
 var a, div, recl, ref, util;
 
 util = require('../utils/util.coffee');
@@ -818,7 +643,7 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, a = ref.a;
 
-module.exports = React.createFactory(recl({
+module.exports = recl({
   displayName: "Dpad",
   renderUp: function() {
     if (this.props.sein) {
@@ -864,10 +689,10 @@ module.exports = React.createFactory(recl({
       key: 'dpad'
     }, this.renderUp(), this.renderArrows());
   }
-}));
+});
 
 
-},{"../utils/util.coffee":24}],9:[function(require,module,exports){
+},{"../utils/util.coffee":25}],8:[function(require,module,exports){
 var button, div, input, p, reactify, recl, ref;
 
 reactify = require('./Reactify.coffee');
@@ -887,9 +712,12 @@ module.exports = recl({
   onClick: function() {
     return this.submit();
   },
-  onKeyUp: function(e) {
+  onChange: function(e) {
     var email, valid;
-    email = this.$email.val();
+    email = e.target.value;
+    this.setState({
+      email: e.target.value
+    });
     valid = email.indexOf('@') !== -1 && email.indexOf('.') !== -1 && email.length > 7 && email.split(".")[1].length > 1 && email.split("@")[0].length > 0 && email.split("@")[1].length > 4;
     this.$email.toggleClass('valid', valid);
     this.$email.removeClass('error');
@@ -919,19 +747,21 @@ module.exports = recl({
     return this.$email = $('input.email');
   },
   render: function() {
-    var cont;
+    var cont, ref1, submit;
     if (this.state.submit === false) {
+      submit = (ref1 = this.props.submit) != null ? ref1 : "Sign up";
       cont = [
         input({
           key: "field",
           className: "email",
           placeholder: "your@email.com",
-          onKeyUp: this.onKeyUp
-        }, this.state.email), button({
+          onChange: this.onChange,
+          value: this.state.email
+        }), button({
           key: "submit",
           className: "submit",
           onClick: this.onClick
-        }, "Sign up")
+        }, submit)
       ];
     } else {
       cont = [
@@ -948,7 +778,7 @@ module.exports = recl({
 });
 
 
-},{"./Reactify.coffee":14}],10:[function(require,module,exports){
+},{"./Reactify.coffee":14}],9:[function(require,module,exports){
 var a, clas, div, hr, li, query, reactify, recl, ref, ul;
 
 clas = require('classnames');
@@ -1022,7 +852,8 @@ module.exports = query({
         results.push([
           div({
             key: keyed[k],
-            id: keyed[k]
+            id: keyed[k],
+            className: "col-md-4"
           }, reactify(elem.body)), hr({})
         ]);
       }
@@ -1032,7 +863,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":14,"classnames":25}],11:[function(require,module,exports){
+},{"./Async.coffee":2,"./Reactify.coffee":14,"classnames":26}],10:[function(require,module,exports){
 var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul, util;
 
 clas = require('classnames');
@@ -1061,7 +892,6 @@ module.exports = query({
     k = clas({
       list: true
     }, this.props.dataType, {
-      posts: this.props.dataType === 'post',
       "default": this.props['data-source'] === 'default'
     }, this.props.className);
     kids = this.renderList();
@@ -1077,7 +907,7 @@ module.exports = query({
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
-    var _date, _k, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, ref7, results, sorted, title, v;
+    var _date, _k, _keys, author, cont, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -1131,6 +961,9 @@ module.exports = query({
       if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
         title = {
           gn: 'h1',
+          ga: {
+            className: 'title'
+          },
           c: [elem.meta.title]
         };
       }
@@ -1140,62 +973,100 @@ module.exports = query({
       if (!title) {
         title = {
           gn: 'h1',
+          ga: {
+            className: 'title'
+          },
           c: [item]
         };
       }
       if (!this.props.titlesOnly) {
-        if (this.props.dataDates) {
-          _date = elem.meta.date;
-          if (!_date || _date.length === 0) {
-            _date = "";
-          }
-          date = {
-            gn: 'div',
-            ga: {
-              className: 'date'
-            },
-            c: [_date]
-          };
-          parts.push(date);
+        _date = elem.meta.date;
+        if (!_date || _date.length === 0) {
+          _date = "";
         }
+        date = {
+          gn: 'div',
+          ga: {
+            className: 'date'
+          },
+          c: [_date]
+        };
+        parts.push(date);
       }
       parts.push(title);
       if (!this.props.titlesOnly) {
-        if (this.props.dataPreview) {
-          if (this.props.dataType === 'post' && !elem.meta.preview) {
-            parts.push.apply(parts, elem.snip.c.slice(0, 2));
-          } else {
-            if (elem.meta.preview) {
-              preview = {
-                gn: 'p',
-                c: [elem.meta.preview]
-              };
+        if (this.props.dataType === 'post') {
+          if (elem.meta.image) {
+            image = {
+              gn: 'img',
+              ga: {
+                src: elem.meta.image
+              }
+            };
+            parts.push(image);
+          }
+          if (this.props.dataPreview) {
+            if (!elem.meta.preview) {
+              parts.push.apply(parts, elem.snip.c.slice(0, 2));
             } else {
-              preview = elem.snip;
+              if (elem.meta.preview) {
+                preview = {
+                  gn: 'p',
+                  ga: {
+                    className: 'preview'
+                  },
+                  c: [elem.meta.preview]
+                };
+              } else {
+                preview = elem.snip;
+              }
+              parts.push(preview);
             }
-            parts.push(preview);
+            if (elem.meta.author) {
+              author = {
+                gn: 'h3',
+                ga: {
+                  className: 'author'
+                },
+                c: [elem.meta.author]
+              };
+              parts.push(author);
+            }
+            cont = {
+              gn: 'a',
+              ga: {
+                className: 'btn continue',
+                href: href
+              },
+              c: ['Continue reading']
+            };
+            parts.push(cont);
+            linked = true;
           }
         }
       }
-      results.push(li({
-        key: item,
-        className: (ref7 = this.props.dataType) != null ? ref7 : ""
-      }, a({
-        href: href,
-        className: clas({
-          preview: this.props.dataPreview != null
-        })
-      }, reactify({
+      node = reactify({
         gn: 'div',
         c: parts
-      }))));
+      });
+      if (linked == null) {
+        node = a({
+          href: href,
+          className: clas({
+            preview: this.props.dataPreview != null
+          })
+        }, node);
+      }
+      results.push(li({
+        key: item
+      }, node));
     }
     return results;
   }
 }));
 
 
-},{"../utils/util.coffee":24,"./Async.coffee":3,"./Reactify.coffee":14,"classnames":25}],12:[function(require,module,exports){
+},{"../utils/util.coffee":25,"./Async.coffee":2,"./Reactify.coffee":14,"classnames":26}],11:[function(require,module,exports){
 var div, recl, ref, span;
 
 recl = React.createClass;
@@ -1233,7 +1104,7 @@ module.exports = recl({
 });
 
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var TreeActions, div, recl;
 
 recl = React.createClass;
@@ -1267,7 +1138,327 @@ module.exports = recl({
 });
 
 
-},{"../actions/TreeActions.coffee":1}],14:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1}],13:[function(require,module,exports){
+var BodyComponent, Dpad, Nav, Sibs, TreeActions, TreeStore, a, button, clas, div, li, query, reactify, recl, ref, rend, ul, util;
+
+clas = require('classnames');
+
+BodyComponent = React.createFactory(require('./BodyComponent.coffee'));
+
+query = require('./Async.coffee');
+
+reactify = require('./Reactify.coffee');
+
+TreeStore = require('../stores/TreeStore.coffee');
+
+TreeActions = require('../actions/TreeActions.coffee');
+
+Sibs = React.createFactory(require('./SibsComponent.coffee'));
+
+Dpad = React.createFactory(require('./DpadComponent.coffee'));
+
+util = require('../utils/util.coffee');
+
+recl = React.createClass;
+
+rend = ReactDOM.render;
+
+ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, button = ref.button;
+
+Nav = React.createFactory(query({
+  path: 't',
+  kids: {
+    name: 't',
+    head: 'r',
+    meta: 'j'
+  }
+}, recl({
+  displayName: "Links",
+  stateFromStore: function() {
+    return TreeStore.getNav();
+  },
+  getInitialState: function() {
+    return this.stateFromStore();
+  },
+  _onChangeStore: function() {
+    if (this.isMounted()) {
+      return this.setState(this.stateFromStore());
+    }
+  },
+  componentDidMount: function() {
+    return TreeStore.addChangeListener(this._onChangeStore);
+  },
+  componentWillUnmount: function() {
+    return TreeStore.removeChangeListener(this._onChangeStore);
+  },
+  onClick: function() {
+    return this.toggleFocus();
+  },
+  onMouseOver: function() {
+    return this.toggleFocus(true);
+  },
+  onMouseOut: function() {
+    return this.toggleFocus(false);
+  },
+  onTouchStart: function() {
+    return this.ts = Number(Date.now());
+  },
+  onTouchEnd: function() {
+    var dt;
+    return dt = this.ts - Number(Date.now());
+  },
+  _home: function() {
+    return this.props.goTo(this.props.meta.navhome ? this.props.meta.navhome : "/");
+  },
+  toggleFocus: function(state) {
+    return $(ReactDOM.findDOMNode(this)).toggleClass('focus', state);
+  },
+  toggleNav: function() {
+    return TreeActions.toggleNav();
+  },
+  render: function() {
+    var attr, dpad, i, iconClass, itemsClass, len, linksClas, navClas, ref1, ref2, ref3, sibs, sub, subprops, title, toggleClas, v;
+    attr = {
+      onMouseOver: this.onMouseOver,
+      onMouseOut: this.onMouseOut,
+      onClick: this.onClick,
+      onTouchStart: this.onTouchStart,
+      onTouchEnd: this.onTouchEnd,
+      'data-path': this.props.dataPath
+    };
+    if (_.keys(window).indexOf("ontouchstart") !== -1) {
+      delete attr.onMouseOver;
+      delete attr.onMouseOut;
+    }
+    linksClas = clas({
+      links: true,
+      subnav: (this.props.meta.navsub != null)
+    });
+    navClas = {
+      navbar: this.props.meta.navmode === 'navbar',
+      ctrl: true,
+      open: this.state.open === true
+    };
+    if (this.props.meta.layout) {
+      ref1 = this.props.meta.layout.split(",");
+      for (i = 0, len = ref1.length; i < len; i++) {
+        v = ref1[i];
+        navClas[v.trim()] = true;
+      }
+    }
+    navClas = clas(navClas);
+    iconClass = clas({
+      icon: true,
+      'col-md-1': this.props.meta.navmode === 'navbar'
+    });
+    attr = _.extend(attr, {
+      className: navClas,
+      key: "nav"
+    });
+    title = this.state.title ? this.state.title : "";
+    dpad = this.state.dpad !== false && ((ref2 = this.props.meta) != null ? ref2.navdpad : void 0) !== "false" ? Dpad(this.props, "") : "";
+    sibs = this.state.sibs !== false && ((ref3 = this.props.meta) != null ? ref3.navsibs : void 0) !== "false" ? Sibs(_.merge(_.clone(this.props), {
+      toggleNav: this.toggleNav
+    }), "") : "";
+    itemsClass = clas({
+      items: true,
+      'col-md-11': this.props.meta.navmode === 'navbar'
+    });
+    if (this.props.meta.navsub) {
+      subprops = _.cloneDeep(this.props);
+      subprops.dataPath = subprops.meta.navsub;
+      delete subprops.meta.navselect;
+      subprops.className = 'subnav';
+      sub = Sibs(_.merge(subprops, {
+        toggleNav: this.toggleNav
+      }), "");
+    }
+    toggleClas = clas({
+      'navbar-toggler': true,
+      show: this.state.subnav != null
+    });
+    return div(attr, div({
+      className: linksClas,
+      key: "links"
+    }, div({
+      className: iconClass
+    }, div({
+      className: 'home',
+      onClick: this._home
+    }, ""), div({
+      className: 'app'
+    }, title), dpad, button({
+      className: toggleClas,
+      type: 'button',
+      onClick: this.toggleNav
+    }, "☰")), div({
+      className: itemsClass
+    }, sibs, sub)));
+  }
+}), recl({
+  displayName: "Links_loading",
+  _home: function() {
+    return this.props.goTo("/");
+  },
+  render: function() {
+    return div({
+      className: "col-md-2 ctrl",
+      "data-path": this.props.dataPath,
+      key: "nav-loading"
+    }, div({
+      className: 'links'
+    }, div({
+      className: 'icon'
+    }, div({
+      className: 'home',
+      onClick: this._home
+    }, "")), ul({
+      className: "nav"
+    }, li({
+      className: "nav-item selected"
+    }, a({
+      className: "nav-link"
+    }, this.props.curr)))));
+  }
+})));
+
+module.exports = query({
+  sein: 't',
+  path: 't',
+  name: 't',
+  meta: 'j'
+}, recl({
+  displayName: "Anchor",
+  stateFromStore: function() {
+    return TreeStore.getNav();
+  },
+  getInitialState: function() {
+    return _.extend(this.stateFromStore(), {
+      url: window.location.pathname
+    });
+  },
+  _onChangeStore: function() {
+    if (this.isMounted()) {
+      return this.setState(this.stateFromStore());
+    }
+  },
+  componentWillUnmount: function() {
+    clearInterval(this.interval);
+    $('body').off('click', 'a');
+    return TreeStore.removeChangeListener(this._onChangeStore);
+  },
+  componentDidUpdate: function() {
+    this.setTitle();
+    return this.checkRedirect();
+  },
+  componentDidMount: function() {
+    var _this;
+    this.setTitle();
+    TreeStore.addChangeListener(this._onChangeStore);
+    _this = this;
+    $('body').on('click', 'a', function(e) {
+      var href, url;
+      href = $(this).attr('href');
+      if (href[0] === "#") {
+        return true;
+      }
+      if (href && !/^https?:\/\//i.test(href)) {
+        e.preventDefault();
+        url = new URL(this.href);
+        if (url.pathname.substr(-1) !== "/") {
+          url.pathname += "/";
+        }
+        return _this.goTo(url.pathname + url.search + url.hash);
+      }
+    });
+    return this.checkRedirect();
+  },
+  checkRedirect: function() {
+    if (this.props.meta.redirect) {
+      return setTimeout(((function(_this) {
+        return function() {
+          return _this.goTo(_this.props.meta.redirect);
+        };
+      })(this)), 0);
+    }
+  },
+  setTitle: function() {
+    var ref1, title;
+    title = $('#body h1').first().text() || this.props.name;
+    if ((ref1 = this.props.meta) != null ? ref1.title : void 0) {
+      title = this.props.meta.title;
+    }
+    return document.title = title + " - " + this.props.path;
+  },
+  setPath: function(path, hist) {
+    var next;
+    if (hist !== false) {
+      history.pushState({}, "", path);
+    }
+    next = util.fragpath(path.split('#')[0]);
+    if (next !== this.props.path) {
+      return TreeActions.setCurr(next);
+    }
+  },
+  reset: function() {
+    return $("html,body").animate({
+      scrollTop: 0
+    });
+  },
+  goTo: function(path) {
+    this.reset();
+    return this.setPath(path);
+  },
+  checkURL: function() {
+    if (this.state.url !== window.location.pathname) {
+      this.reset();
+      this.setPath(window.location.pathname, false);
+      return this.setState({
+        url: window.location.pathname
+      });
+    }
+  },
+  render: function() {
+    var kids, kidsPath, navClas;
+    if (this.props.meta.anchor === 'none') {
+      return div({}, "");
+    }
+    navClas = clas({
+      container: this.props.meta.container === 'false'
+    });
+    kidsPath = this.props.sein;
+    if (this.props.meta.navpath) {
+      kidsPath = this.props.meta.navpath;
+    }
+    kids = [
+      Nav({
+        curr: this.props.name,
+        dataPath: kidsPath,
+        meta: this.props.meta,
+        sein: this.props.sein,
+        goTo: this.goTo,
+        key: "nav"
+      }, "div")
+    ];
+    if (this.state.subnav) {
+      kids.push(reactify({
+        gn: this.state.subnav,
+        ga: {
+          open: this.state.open,
+          toggle: TreeActions.toggleNav
+        },
+        c: []
+      }, "subnav"));
+    }
+    return div({
+      id: 'head',
+      className: navClas
+    }, kids);
+  }
+}));
+
+
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":23,"../utils/util.coffee":25,"./Async.coffee":2,"./BodyComponent.coffee":3,"./DpadComponent.coffee":7,"./Reactify.coffee":14,"./SibsComponent.coffee":17,"classnames":26}],14:[function(require,module,exports){
 var TreeStore, Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -1355,7 +1546,7 @@ module.exports = _.extend(reactify, {
 });
 
 
-},{"../stores/TreeStore.coffee":22,"./LoadComponent.coffee":12}],15:[function(require,module,exports){
+},{"../stores/TreeStore.coffee":23,"./LoadComponent.coffee":11}],15:[function(require,module,exports){
 var appendNext, recl, rele, waitingScripts;
 
 recl = React.createClass;
@@ -1392,7 +1583,9 @@ module.exports = recl({
     }
   },
   componentWillUnmount: function() {
-    return document.body.removeChild(this.js);
+    if (this.js.parentNode === document.body) {
+      return document.body.removeChild(this.js);
+    }
   },
   render: function() {
     return rele("script", this.props);
@@ -1538,8 +1731,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":14}],17:[function(require,module,exports){
-var a, clas, li, reactify, recl, ref, ul, util;
+},{"./Async.coffee":2,"./Reactify.coffee":14}],17:[function(require,module,exports){
+var a, clas, li, query, reactify, recl, ref, ul, util;
 
 util = require('../utils/util.coffee');
 
@@ -1547,11 +1740,20 @@ clas = require('classnames');
 
 reactify = require('./Reactify.coffee');
 
+query = require('./Async.coffee');
+
 recl = React.createClass;
 
 ref = React.DOM, ul = ref.ul, li = ref.li, a = ref.a;
 
-module.exports = React.createFactory(recl({
+module.exports = query({
+  path: 't',
+  kids: {
+    snip: 'r',
+    head: 'r',
+    meta: 'j'
+  }
+}, recl({
   displayName: "Siblings",
   toText: function(elem) {
     return reactify.walk(elem, function() {
@@ -1565,13 +1767,25 @@ module.exports = React.createFactory(recl({
     });
   },
   render: function() {
-    var keys;
+    var keys, navClas;
     keys = util.getKeys(this.props.kids);
+    navClas = {
+      nav: true,
+      'col-md-12': this.props.meta.navmode === 'navbar'
+    };
+    if (this.props.className) {
+      navClas[this.props.className] = true;
+    }
+    navClas = clas(navClas);
     return ul({
-      className: "nav"
+      className: navClas
     }, keys.map((function(_this) {
       return function(key) {
-        var className, data, head, href;
+        var className, data, head, href, selected;
+        selected = key === _this.props.curr;
+        if (_this.props.meta.navselect) {
+          selected = key === _this.props.meta.navselect;
+        }
         href = util.basepath(_this.props.path + "/" + key);
         data = _this.props.kids[key];
         if (data.meta) {
@@ -1583,8 +1797,11 @@ module.exports = React.createFactory(recl({
         head || (head = key);
         className = clas({
           "nav-item": true,
-          selected: key === _this.props.curr
+          selected: selected
         });
+        if (data.meta.sibsclass) {
+          className += " " + clas(data.meta.sibsclass.split(","));
+        }
         return li({
           className: className,
           key: key
@@ -1599,7 +1816,7 @@ module.exports = React.createFactory(recl({
 }));
 
 
-},{"../utils/util.coffee":24,"./Reactify.coffee":14,"classnames":25}],18:[function(require,module,exports){
+},{"../utils/util.coffee":25,"./Async.coffee":2,"./Reactify.coffee":14,"classnames":26}],18:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
 
@@ -1736,7 +1953,50 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":14}],19:[function(require,module,exports){
+},{"./Async.coffee":2,"./Reactify.coffee":14}],19:[function(require,module,exports){
+var body, clas, div, head, query, recf, recl;
+
+query = require('./Async.coffee');
+
+clas = require('classnames');
+
+recf = React.createFactory;
+
+recl = React.createClass;
+
+head = recf(require('./NavComponent.coffee'));
+
+body = recf(require('./BodyComponent.coffee'));
+
+div = React.DOM.div;
+
+module.exports = query({
+  body: 'r',
+  name: 't',
+  path: 't',
+  meta: 'j',
+  sein: 't'
+}, recl({
+  displayName: "Tree",
+  render: function() {
+    var treeClas;
+    treeClas = clas({
+      container: this.props.meta.container !== 'false'
+    });
+    return div({
+      className: treeClas
+    }, [
+      head({
+        key: 'head-container'
+      }, ""), body({
+        key: 'body-container'
+      }, "")
+    ]);
+  }
+}));
+
+
+},{"./Async.coffee":2,"./BodyComponent.coffee":3,"./NavComponent.coffee":13,"classnames":26}],20:[function(require,module,exports){
 module.exports = _.extend(new Flux.Dispatcher(), {
   handleServerAction: function(action) {
     return this.dispatch({
@@ -1753,15 +2013,18 @@ module.exports = _.extend(new Flux.Dispatcher(), {
 });
 
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var rend;
 
 rend = ReactDOM.render;
 
 $(function() {
-  var body, frag, head, util;
+  var frag, main, util;
   util = require('./utils/util.coffee');
   require('./utils/scroll.coffee');
+  if (document.location.pathname.substr(-1) !== "/") {
+    history.replaceState({}, "", document.location.pathname + "/" + document.location.search + document.location.hash);
+  }
   window.tree.actions = require('./actions/TreeActions.coffee');
   window.tree.actions.addVirtual(require('./components/Components.coffee'));
   frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
@@ -1774,14 +2037,12 @@ $(function() {
     }
     return window.tree.actions.clearData();
   };
-  head = React.createFactory(require('./components/AnchorComponent.coffee'));
-  body = React.createFactory(require('./components/BodyComponent.coffee'));
-  rend(head({}, ""), $('#head')[0]);
-  return rend(body({}, ""), $('#body')[0]);
+  main = React.createFactory(require('./components/TreeComponent.coffee'));
+  return rend(main({}, ""), document.getElementById('tree'));
 });
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":7,"./utils/scroll.coffee":23,"./utils/util.coffee":24}],21:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/Components.coffee":6,"./components/TreeComponent.coffee":19,"./utils/scroll.coffee":24,"./utils/util.coffee":25}],22:[function(require,module,exports){
 var dedup, pending, util, waspWait;
 
 util = require('../utils/util.coffee');
@@ -1869,7 +2130,7 @@ module.exports = {
 };
 
 
-},{"../utils/util.coffee":24}],22:[function(require,module,exports){
+},{"../utils/util.coffee":25}],23:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _nav, _tree, _virt, clog;
 
 EventEmitter = require('events').EventEmitter.EventEmitter;
@@ -2138,7 +2399,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(p) {
 module.exports = TreeStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":19,"events":26}],23:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":20,"events":27}],24:[function(require,module,exports){
 var scroll;
 
 scroll = {
@@ -2232,7 +2493,7 @@ scroll.init();
 module.exports = scroll;
 
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var _basepath;
 
 _basepath = window.urb.util.basepath("/");
@@ -2281,7 +2542,7 @@ module.exports = {
 };
 
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -2331,7 +2592,7 @@ module.exports = {
 	}
 }());
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2631,4 +2892,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[20]);
+},{}]},{},[21]);

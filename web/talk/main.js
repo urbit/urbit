@@ -590,11 +590,13 @@ module.exports = recl({
     if (this.state.station && this.state.listening.indexOf(this.state.station) === -1) {
       MessageActions.listenStation(this.state.station);
     }
-    $(window).on('scroll', this.checkMore);
+    if (this.props.readOnly == null) {
+      $(window).on('scroll', this.checkMore);
+      window.util.scrollToBottom();
+    }
     this.focused = true;
     $(window).on('blur', this._blur);
-    $(window).on('focus', this._focus);
-    return window.util.scrollToBottom();
+    return $(window).on('focus', this._focus);
   },
   componentWillUpdate: function(props, state) {
     var $window, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, results, sameAs, scrollTop;
@@ -623,7 +625,7 @@ module.exports = recl({
   },
   componentDidUpdate: function(_props, _state) {
     var _messages, d, t;
-    if (this.setOffset) {
+    if (this.setOffset && (this.props.readOnly == null)) {
       $(window).scrollTop(this.setOffset);
       this.setOffset = null;
     }
@@ -657,7 +659,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, lastIndex, lastSaid, messageHeights, messages, ref, station;
+    var _messages, body, lastIndex, lastSaid, messageHeights, messages, ref, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
@@ -696,15 +698,20 @@ module.exports = recl({
         }));
       };
     })(this));
+    if (this.props.readOnly == null) {
+      body = React.createElement(Infinite, {
+        useWindowAsScrollContainer: true,
+        containerHeight: window.innerHeight,
+        elementHeight: messageHeights,
+        key: "messages-infinite"
+      }, _messages);
+    } else {
+      body = _messages;
+    }
     return div({
       className: "grams",
       key: "messages"
-    }, React.createElement(Infinite, {
-      useWindowAsScrollContainer: true,
-      containerHeight: window.innerHeight,
-      elementHeight: messageHeights,
-      key: "messages-infinite"
-    }, _messages));
+    }, body);
   }
 });
 
@@ -1280,6 +1287,9 @@ TreeActions.registerComponent("talk", React.createClass({
     var station;
     require('./utils/util.coffee');
     require('./utils/move.coffee');
+    if (!this.props.readonly) {
+      $(window).on('scroll', window.util.checkScroll);
+    }
     station = this.getStation();
     StationActions.listen();
     StationActions.listenStation(station);
@@ -1958,8 +1968,6 @@ $(window).on('scroll', function(e) {
   ldy = dy;
   return so.ls = so.cs;
 });
-
-$(window).on('scroll', window.util.checkScroll);
 
 
 },{}],16:[function(require,module,exports){
