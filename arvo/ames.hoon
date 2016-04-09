@@ -471,6 +471,12 @@
         :-  [~ wil]
         +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
       ::
+      ++  taxi
+        |=  {her/ship key/code}
+        ^+  +>
+        =+  diz=(myx her)
+        (nux (wasc:diz key))
+      ::
       ++  lax                                           ::    lax:as:go
         |_  {her/ship dur/dore}                         ::  per client
         ++  cluy                                        ::    cluy:lax:as:go
@@ -1781,6 +1787,10 @@
             (scot %p q.p.kyz)
           q.kyz
       [hen %pass pax %g %deal p.kyz %hood %poke %will !>(wyl)]~
+    ?:  ?=($funk -.kyz)
+      =+  gus=(need (~(us go ton.fox) p.kyz))
+      =.  ton.fox  (~(su go ton.fox) (taxi:gus q.kyz r.kyz))
+      [~ +>.$]
     ?:  ?=($wegh -.kyz)
       ~&  %ames-weighing
       [[hen %give %mass wegh]~ +>]

@@ -1180,7 +1180,7 @@
   =+  op=(fil 3 64 0x5c)
   =+  ^=  kex
       ?:  (gth (met 3 key) 64)
-        (lsh 3 44 (shan (swp 3 key)))
+        (lsh 3 44 (shan key))
       (lsh 3 (sub 64 (met 3 key)) (swp 3 key))
   =+  inn=(shan (swp 3 (cat 3 (swp 3 mes) (mix ip kex))))
   (shan (swp 3 (cat 3 inn (mix op kex))))
@@ -2798,6 +2798,7 @@
           $%  {$barn $~}                                ::  new unix process
               {$crud p/@tas q/(list tank)}              ::  error with trace
               {$cash p/@p q/buck}                       ::  civil license
+              {$funk p/@p q/@p r/@}                     ::  local symticket
               {$hear p/lane q/@}                        ::  receive packet
               {$hole p/lane q/@}                        ::  packet failed
               {$junk p/@}                               ::  entropy
@@ -2808,7 +2809,7 @@
               {$want p/sock q/path r/*}                 ::  send message
               {$wegh $~}                                ::  report memory
               {$west p/sack q/path r/*}                 ::  network request
-              {$wont p/sock q/path r/*}                 ::  e2e send message
+              {$wont p/sock q/path r/*}                 ::  e2e send message  
           ==                                            ::
 ::
 ::::    %behn

@@ -1,4 +1,4 @@
-!:                                                      ::  
+::                                                      ::  
 ::::    /hoon/hoon                                      ::  
   ::                                                    ::
 =>  %150  =>  
@@ -5454,7 +5454,7 @@
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
           $%  {$0 $~}                                   ::  no toga
-              {$1 p/?@(term tune) q/toga}               ::  deep toga
+              {$1 p/$@(term tune) q/toga}               ::  deep toga
               {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
 ++  tuna                                                ::  tagflow
