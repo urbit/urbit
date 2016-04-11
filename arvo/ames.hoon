@@ -683,6 +683,8 @@
       ::
       ++  sen                                           ::  current crypto
         ^-  {p/life q/acru}
+        ?.  ?=(^ law.saf)
+          ~|(%send-cold !!)
         ?~(val.saf !! [p.i.val.saf r.i.val.saf])
       ::
       ++  sev                                           ::  crypto by life
@@ -718,7 +720,13 @@
         ?:((lth her 256) ~ $(her (sein her)))
       --                                                ::  --as:go
     ::
-    ++  ha  !:                                          ::  adopt new license
+    ++  la                                              ::  hierarchy
+      |=  our/@p
+      %-  flop
+      |-  ^-  (list ship)
+      ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
+    ::
+    ++  ha  !:                                          ::  new ship by mace
       |=  {our/ship mac/mace wil/will}
       ^-  town
       ?>  !=(~ mac)
@@ -731,14 +739,38 @@
           urb
         %+  ~(put by urb.ton)
           our
-        :*  %-  flop
-            |-  ^-  (list ship)
-            ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
-        ::
+        :*  (la our)
             (turn mac |=({p/life q/ring} [p q (weur q)]))
             wil
             ~
             ~
+        ==
+      ==
+    ::
+    ++  hi                                              ::  new ship by code
+      |=  {our/ship mac/mace key/code}
+      ^-  town
+      %_    ton
+          urb
+        %+  ~(put by urb.ton)
+          our
+        ^-  sufi
+        :*  (la our)
+            (turn mac |=({p/life q/ring} [p q (weur q)]))
+            ~
+            ~
+            ^-  (map ship dore) 
+            :_  [~ ~]
+            :-  (sein our)
+            ^-  dore
+            :*  *road
+                ~
+                =+  had=(shaf %hand key)
+                :*  `[had key]
+                    ~
+                    [[had key] ~ ~]
+                ==
+            ==
         ==
       ==
     ::
@@ -989,12 +1021,12 @@
       ==
     ++  come                                            ::    come:am
       |=  {ges/(unit @t) wid/@ bur/@ fak/?}            ::  instantiate pawn
-      ^-  {p/{p/ship q/@uvG} q/fort}
+      ^-  {p/ship q/fort}
       =+  loy=(bruw wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
       =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
-      :-  [our pac:ex:loy]
+      :-  our
       %_    fox
           ton
         %^    ~(ha go ton.fox)
@@ -1014,12 +1046,36 @@
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
       =+  ded=`deed`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
-      =+  buq=`buck`[mac [ded ~]]
-      =:  ton.fox  (~(ha go ton.fox) our buq)
+      =:  ton.fox  (~(ha go ton.fox) our mac [ded ~])
           zac.fox  (~(put by zac.fox) our *corn)
           fak.ton.fox  fak
         ==
-      [[[%beer our pac:ex:loy] ~] fox]
+      [[[%beer our] ~] fox]
+    ::
+    ++  dude                                            ::    dude:am
+      |=  {our/ship key/code fak/?}                     ::
+      ^-  {p/(list boon) q/fort}
+      ~&  [%dude +<]
+      =+  loy=(bruw 2.048 (shax (mix now any.ton.fox)))
+      =.  any.ton.fox  (shax any.ton.fox)
+      =+  mac=`mace`[[0 sec:ex:loy] ~]
+      =+  ^=  gec
+          ^-  gcos
+          =+  rac=(clan our)
+          ?-  rac
+            $czar  [%czar ~]
+            $king  [%king (scot %p our)]
+            $duke  [%duke %punk %white (scot %p our)]
+            $earl  [%earl (scot %p our)]
+            $pawn  [%pawn ~]
+          ==
+      =+  syp=`step`[`bray`[0 ~ our now] [%en gec] pub:ex:loy]
+      =+  ded=`deed`[0 syp fak]
+      =:  ton.fox  (~(hi go ton.fox) our mac key)
+          zac.fox  (~(put by zac.fox) our *corn)
+          fak.ton.fox  fak
+        ==
+      [[[%bier our ded] ~] fox]
     ::
     ++  gnaw                                            ::    gnaw:am
       |=  {kay/cape ryn/lane pac/rock}                  ::  process packet
@@ -1058,7 +1114,7 @@
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
         ==
-      [[[%beer our pac:ex:q:sen:(need (~(us go ton.fox) our))] ~] fox]
+      [[[%beer our] ~] fox]
     ::
     ++  kick                                            ::    kick:am
       |=  hen/duct                                      ::  refresh net
@@ -1214,7 +1270,7 @@
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
                 ?~  dey
-                  ::  ~&  [%bad-key her mag]
+                  ~&  [%bad-key her mag]
                   +>.$                           ::  ignore unknown key
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
@@ -1637,13 +1693,24 @@
     ?-    -.bon
         $beer
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
-      :*  [hen [%slip %c %init p.bon]]
+      :~  [hen [%slip %c %init p.bon]]
           [hen [%give %init p.bon]]
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
           [hen [%slip %g %init p.bon]]
           [hen [%slip %d %init p.bon]]                  ::  must be after gall
-          ~
+      ==
+        $bier
+      :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
+      :~  [hen [%slip %c %init p.bon]]
+          [hen [%give %init p.bon]]
+          [hen [%slip %a %kick now]]
+          [hen [%slip %e %init p.bon]]
+          [hen [%slip %g %init p.bon]]
+          [hen [%slip %d %init p.bon]]                  ::  must be after gall
+          :+  hen
+            %pass
+          [~ %g %deal [p.bon (sein p.bon)] %hood %poke %boot !>(`deed`q.bon)]
       ==
     ::
         $cake
@@ -1788,6 +1855,7 @@
           q.kyz
       [hen %pass pax %g %deal p.kyz %hood %poke %will !>(wyl)]~
     ?:  ?=($funk -.kyz)
+      ~&  [%ames-install-ticket +.kyz]
       =+  gus=(need (~(us go ton.fox) p.kyz))
       =.  ton.fox  (~(su go ton.fox) (taxi:gus q.kyz r.kyz))
       [~ +>.$]
@@ -1797,6 +1865,9 @@
     =+  ^=  fuy  
         ^-  {p/(list boon) q/fort}
         ?-    -.kyz
+            $born
+          (~(dude am [now fox]) p.kyz q.kyz r.kyz)
+        ::
             $barn
           [~ fox(gad hen)]
             $cash

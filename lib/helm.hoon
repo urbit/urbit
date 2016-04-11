@@ -53,6 +53,7 @@
       $%  {$cash wire p/@p q/buck}                    ::
           {$conf wire dock $load ship term}           ::
           {$flog wire flog}                           ::
+          {$funk wire @p @p @}                        ::   
           {$serv wire ?(desk beam)}                   ::
           {$poke wire dock pear}                      ::
           {$wont wire sock path *}                    ::  send message
@@ -82,6 +83,11 @@
   =+  loy=(bruw 2.048 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
   [%wont /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
+::
+++  poke-spawn
+  |=  {him/ship key/@pG}  =<  abet
+  %-  emit
+  [%funk ~ our him (shax key)]
 ::
 ++  poke-init                                         ::  initialize
   |=  him/ship  =<  abet

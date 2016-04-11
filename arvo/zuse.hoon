@@ -2392,7 +2392,8 @@
           ==                                            ::
 ++  boat  (map (pair bone wire) (trel bean ship path))  ::  outgoing subs
 ++  boon                                                ::  fort output
-          $%  {$beer p/ship q/@uvG}                     ::  gained ownership
+          $%  {$beer p/ship}                            ::  gained ownership
+              {$bier p/ship q/deed}                     ::  unsigned deed
               {$cake p/sock q/soap r/coop s/duct}       ::  e2e message result
               {$coke p/sock q/soap r/cape s/duct}       ::  message result
               {$mead p/lane q/rock}                     ::  accept packet
@@ -2795,10 +2796,11 @@
               {$woot p/ship q/coop}                     ::  e2e reaction message
           ==                                            ::
 ++  kiss-ames                                           ::  in request ->$
-          $%  {$barn $~}                                ::  new unix process
+          $%  {$born p/@p q/@pG r/?}                    ::  ticket birth
+              {$barn $~}                                ::  new unix process
               {$crud p/@tas q/(list tank)}              ::  error with trace
               {$cash p/@p q/buck}                       ::  civil license
-              {$funk p/@p q/@p r/@}                     ::  local symticket
+              {$funk p/@p q/@p r/@}                     ::  symtix from/to/key
               {$hear p/lane q/@}                        ::  receive packet
               {$hole p/lane q/@}                        ::  packet failed
               {$junk p/@}                               ::  entropy

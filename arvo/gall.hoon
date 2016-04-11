@@ -1185,6 +1185,7 @@
         $deal  `%g
         $exec  `%f
         $flog  `%d
+        $funk  `%a
         $drop  `%c
         $info  `%c
         $merg  `%c
