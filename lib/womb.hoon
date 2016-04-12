@@ -242,13 +242,16 @@
   ?~  c  [c d]
   [(some (rep a b u.c ~)) d]
 ::
+++  in-list
+  |*  {a/(list) b/@u}  ^+  [(snag *@ a) b]
+  =+  c=(lent a)
+  [(snag (mod b c) a) (div b c)]
+::
 ++  shop-star
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
-  ?~  lax  [~ nth]
-  =^  out  nth
-    (prefix 3 who.i.lax (~(get fo r.i.lax) nth))
-  ?^  out  [out nth]
-  $(lax t.lax)
+  ?:  =(~ lax)  [~ nth]
+  =^  sel  nth  (in-list lax nth)
+  (prefix 3 who.sel (~(get fo r.sel) nth))
 ::
 ++  shop-planets
   |=  nth/@u  ^-  cursor
@@ -259,20 +262,16 @@
   (shop-planet-gal nth (issuing galaxies.office))
 ::
 ++  shop-planet
-  |=  {nth/@u sat/(list {who/@p * q/(foil planet)})}  ^-  cursor
-  ?~  sat  [~ nth]
-  =^  out  nth
-    (prefix 4 who.i.sat (~(get fo q.i.sat) nth))
-  ?^  out  [out nth]
-  $(sat t.sat)
+  |=  {nth/@u sta/(list {who/@p * q/(foil planet)})}  ^-  cursor
+  ?:  =(~ sta)  [~ nth]
+  =^  sel  nth  (in-list sta nth)
+  (prefix 4 who.sel (~(get fo q.sel) nth))
 ::
 ++  shop-planet-gal
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
-  ?~  lax  [~ nth]
-  =^  out  nth
-    (shop-planet nth (issuing-under 3 who.i.lax box.r.i.lax))
-  ?^  out  [out nth]
-  $(lax t.lax)
+  ?:  =(~ lax)  [~ nth]
+  =^  sel  nth  (in-list lax nth)
+  (shop-planet nth (issuing-under 3 who.sel box.r.sel))
 ::
 ++  peek-x-shop
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
