@@ -208,11 +208,13 @@
   
 ::
 ++  cursor  (pair (unit ship) @u)
-++  take-3
-  |=  {nth/@u get/$-(@u cursor)}
+++  take-n
+  |=  {{index/@u count/@u} get/$-(@u cursor)}
   ^-  (list ship)
-  :: =.  nth  (mul 3 nth)
-  :(weld (drop p:(get nth)) (drop p:(get +(nth))) (drop p:(get +(+(nth)))))
+  ?~  count  ~
+  %+  biff  p:(get index)
+  |=  a/ship  ^-  (list ship)
+  [a ^$(index +(index), count (dec count))]
 ::
 ++  available
   |=  all/(map ship (managed))  ^-  $-(@u cursor)
@@ -220,15 +222,11 @@
   =+  len=(lent pur)
   |=(a/@u ?:((gte a len) [~ (sub a len)] [(some (snag a pur)) a]))
 ::
-++  shop-galaxies
-  |=  nth/@u  ^-  (list ship)
-  (take-3 nth (available galaxies:invert-office))
+++  shop-galaxies  (available galaxies.office)
 ::
 ::  Stars can be either whole or children of galaxies
 ++  shop-stars
-  |=  nth/@u  ^-  (list ship)
-  %+  take-3  nth
-  |=  nth/@u
+  |=  nth/@u  ^-  cursor
   =^  out  nth  %.(nth (available stars.office))
   ?^  out  [out nth]
   (shop-star nth (issuing galaxies.office))
@@ -241,8 +239,6 @@
   $(lax t.lax)
 ::
 ++  shop-planets
-  |=  nth/@u  ^-  (list ship)
-  %+  take-3  nth
   |=  nth/@u  ^-  cursor
   =^  out  nth  %.(nth (available planets.office))
   ?^  out  [out nth]
@@ -268,12 +264,11 @@
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
   =;  res  (some (some [%ships res]))
   =+  ~|(bad-path+tyl (raid tyl typ=%tas nth=%ud ~))
-  ?.  ?=(_-:*property typ)
-    ~|(bad-type+typ !!)
-  ?-  typ
-    $galaxy  (shop-galaxies nth)
-    $planet  (shop-planets nth)
-    $star    (shop-stars nth)
+  :: =.  nth  (mul 3 nth)
+  ?+  typ  ~|(bad-type+typ !!)
+    $galaxy  (take-n [nth 3] shop-galaxies)
+    $planet  (take-n [nth 3] shop-planets)
+    $star    (take-n [nth 3] shop-stars)
   ==
 ::
 ++  stats-ship
