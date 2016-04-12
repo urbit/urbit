@@ -74,10 +74,10 @@
   $:  sta/@ud                                           ::  unused star refs
       has/(set @p)                                      ::  planets owned
   ==                                                    ::
-++  property                                            ::  subdivided plot
-  $%  {$galaxy galaxy}                                  ::  galaxy
-      {$star star}                                      ::  star
-      {$planet planet}                                  ::  planet
+++  property                                            ::  subdivided plots
+  $:  galaxies/(map @p galaxy)                          ::  galaxy
+      planets/(map @p planet)                           ::  star
+      stars/(map @p star)                               ::  planet
   ==                                                    ::
 ++  invite                                              ::
   $:  who/mail                                          ::  who to send to
@@ -100,7 +100,7 @@
 ++  womb-pith                                           ::  womb content
   $:  boss/(unit @p)                                    ::  outside master
       bureau/(map passcode balance)                     ::  active invitations
-      office/(map @p property)                          ::  properties managed
+      office/property                                   ::  properties managed
       hotel/(map mail client)                           ::  everyone we know
   ==                                                    ::
 --                                                      ::
@@ -184,7 +184,8 @@
 |=  {bowl womb-part}                                  ::  main womb work
 |_  moz/(list move)
 ++  abet                                              ::  resolve
-  [(flop moz) +>+>+<+]
+  ^-  (quip move *womb-part)
+  [(flop moz) +>+<+]
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
 ++  emil                                              ::  return cards
@@ -206,13 +207,6 @@
 ::   ^+  office
   
 ::
-++  invert-office                                     ::  XX state format?
-  ^-  {galaxies/(map @p galaxy) planets/(map @p planet) stars/(map @p star)}
-  :*  (murn-by office |=(a/property ?+(-.a ~ $galaxy (some +.a))))
-      (murn-by office |=(a/property ?+(-.a ~ $planet (some +.a))))
-      (murn-by office |=(a/property ?+(-.a ~ $star (some +.a))))
-  ==
-::
 ++  cursor  (pair (unit ship) @u)
 ++  take-3
   |=  {nth/@u get/$-(@u cursor)}
@@ -233,12 +227,11 @@
 ::  Stars can be either whole or children of galaxies
 ++  shop-stars
   |=  nth/@u  ^-  (list ship)
-  =+  eciffo=invert-office
   %+  take-3  nth
   |=  nth/@u
-  =^  out  nth  %.(nth (available stars.eciffo))
+  =^  out  nth  %.(nth (available stars.office))
   ?^  out  [out nth]
-  (shop-star nth (issuing galaxies.eciffo))
+  (shop-star nth (issuing galaxies.office))
 ::
 ++  shop-star
   |=  {nth/@u lax/(list {* * r/(foil star)})}  ^-  cursor
@@ -249,14 +242,13 @@
 ::
 ++  shop-planets
   |=  nth/@u  ^-  (list ship)
-  =+  eciffo=invert-office
   %+  take-3  nth
   |=  nth/@u  ^-  cursor
-  =^  out  nth  %.(nth (available planets.eciffo))
+  =^  out  nth  %.(nth (available planets.office))
   ?^  out  [out nth]
-  =^  out  nth  (shop-planet nth (issuing stars.eciffo))
+  =^  out  nth  (shop-planet nth (issuing stars.office))
   ?^  out  [out nth]
-  (shop-planet-gal nth (issuing galaxies.eciffo))
+  (shop-planet-gal nth (issuing galaxies.office))
 ::
 ++  shop-planet
   |=  {nth/@u sat/(list {* q/(foil planet)})}  ^-  cursor
