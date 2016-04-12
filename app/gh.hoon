@@ -1,15 +1,17 @@
-::  This is a driver for the Github API v3.
+::  This is a connector for the Github API v3.
 ::
 ::  You can interact with this in a few different ways:
 ::
-::    - .^(%gx /=gh=/read{/endpoint}) or subscribe to
-::      /scry/x/read{/endpoint} for authenticated reads.
+::    - .^({type} %gx /=gh={/endpoint}) to read data or
+::      .^(arch %gy /=gh={/endpoint}) to explore the possible
+::      endpoints.
 ::
-::    - subscribe to /scry/x/listen/{owner}/{repo}/{events...}
-::      for webhook-powered event notifications.  For event list,
-::      see kttps://developer.github.com/webhooks/.
+::    - subscribe to /listen/{owner}/{repo}/{events...} for
+::      webhook-powered event notifications.  For event list, see
+::      https://developer.github.com/webhooks/.
 ::
-::  See the %github app for example usage.
+::  This is written with the standard structure for api
+::  connectors, as described in lib/connector.hoon.
 ::
 /?  314
 /-  gh, plan-acct
@@ -18,6 +20,14 @@
 !:
 =>  |%
     ++  move  (pair bone card)
+    ++  card  
+      $%  {$diff sub-result}
+          {$them wire (unit hiss)}
+          {$hiss wire {$~ $~} $httr {$hiss hiss}}
+      ==
+    ::
+    ::  Types of results we produce to subscribers.
+    ::
     ++  sub-result
       $%  {$arch arch}
           {$gh-issue issue:gh}
@@ -27,109 +37,169 @@
           {$json json}
           {$null $~}
       ==
-    ++  card  
-      $%  {$diff sub-result}
-          {$them wire (unit hiss)}
-          {$hiss wire {$~ $~} $httr {$hiss hiss}}
-      ==
+    ::
+    ::  Types of webhooks we expect.
+    ::
     ++  hook-response
       $%  {$gh-issues issues:gh}
           {$gh-issue-comment issue-comment:gh}
       ==
     --
-=+  connector=(connector move sub-result)
+=+  connector=(connector move sub-result)  ::  Set up connector library
 ::
-|_  {hid/bowl hook/(map @t {id/@t listeners/(set bone)})}
-++  prep  _`.
+|_  $:  hid/bowl
+        hook/(map @t {id/@t listeners/(set bone)})  ::  map events to listeners
+    ==
+::  ++  prep  _`.  ::  Clear state when code changes
 ::
 ::  List of endpoints
 ::
 ++  places
   |=  wir/wire
   ^-  (list place:connector)
-  =<  
-    :~  ^-  place                     ::  /
-        :*  guard=$~
-            read-x=read-null
-            read-y=(read-static %issues ~)
-            sigh-x=sigh-strange
-            sigh-y=sigh-strange
-        ==
-        ^-  place                     ::  /issues
-        :*  guard={$issues $~}
-            read-x=read-null
-            read-y=(read-static %mine %by-repo ~)
-            sigh-x=sigh-strange
-            sigh-y=sigh-strange
-        ==
-        ^-  place                     ::  /issues/mine
-        :*  guard={$issues $mine $~}
-            read-x=(read-get /issues)
-            read-y=(read-get /issues)
-            sigh-x=sigh-list-issues-x
-            sigh-y=sigh-list-issues-y
-        ==
-        ^-  place                     ::  /issues/by-repo
-        :*  guard={$issues $by-repo $~}
-            read-x=read-null
-            ^=  read-y
-            |=  pax/path
-            =+  /(scot %p our.hid)/home/(scot %da now.hid)/web/plan
-            =+  .^({* acc/(map knot plan-acct)} %cx -)
-          ::
-            ((read-static usr:(~(got by acc) %github) ~) pax)
-            sigh-x=sigh-strange
-            sigh-y=sigh-strange
-        ==
-        ^-  place                     ::  /issues/by-repo/<user>
-        :*  guard={$issues $by-repo @t $~}
-            read-x=read-null
-            read-y=|=(pax/path (get /users/[-.+>.pax]/repos))
-            sigh-x=sigh-strange
-            ^=  sigh-y
-            |=  jon/json
-            %+  bind  ((ar:jo repository:gh-parse) jon)
-            |=  repos/(list repository:gh)
-            :-  `(shax (jam repos))
-            (malt (turn repos |=(repository:gh [name ~])))
-        ==
-        ^-  place                     ::  /issues/by-repo/<user>/<repo>
-        :*  guard={$issues $by-repo @t @t $~}
-            read-x=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
-            read-y=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
-            sigh-x=sigh-list-issues-x
-            sigh-y=sigh-list-issues-y
-        ==
-        ^-  place                     ::  /issues/by-repo/<user>/<repo>
-        :*  guard={$issues $by-repo @t @t @t $~}
-            ^=  read-x
-            |=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues/[-.+>+>.pax]))
-          ::
-            read-y=read-null
-            ^=  sigh-x
-            |=  jon/json
-            %+  bind  (issue:gh-parse jon)
-            |=  issue/issue:gh
-            gh-issue+issue
-          ::
-            sigh-y=sigh-strange
-        ==
-    ==
-  =+  (helpers:connector ost.hid wir)
-  |%                                ::  gh-specific helpers
-  ++  sigh-list-issues-x
-    |=  jon/json
-    %+  bind  ((ar:jo issue:gh-parse) jon)
-    |=  issues/(list issue:gh)
-    gh-list-issues+issues
-  ::
-  ++  sigh-list-issues-y
-    |=  jon/json
-    %+  bind  ((ar:jo issue:gh-parse) jon)
-    |=  issues/(list issue:gh)
-    :-  `(shax (jam issues))
-    (malt (turn issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~])))
-  --
+  =+  (helpers:connector ost.hid wir "https://api.github.com")
+  =>  |%                              ::  gh-specific helpers
+      ++  sigh-list-issues-x
+        |=  jon/json
+        %+  bind  ((ar:jo issue:gh-parse) jon)
+        |=  issues/(list issue:gh)
+        gh-list-issues+issues
+      ::
+      ++  sigh-list-issues-y
+        |=  jon/json
+        %+  bind  ((ar:jo issue:gh-parse) jon)
+        |=  issues/(list issue:gh)
+        :-  `(shax (jam issues))
+        (malt (turn issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~])))
+      --
+  :~  ^-  place                       ::  /
+      :*  guard=$~
+          read-x=read-null
+          read-y=(read-static %issues ~)
+          sigh-x=sigh-strange
+          sigh-y=sigh-strange
+      ==
+      ^-  place                       ::  /issues
+      :*  guard={$issues $~}
+          read-x=read-null
+          read-y=(read-static %mine %by-repo ~)
+          sigh-x=sigh-strange
+          sigh-y=sigh-strange
+      ==
+      ^-  place                       ::  /issues/mine
+      :*  guard={$issues $mine $~}
+          read-x=(read-get /issues)
+          read-y=(read-get /issues)
+          sigh-x=sigh-list-issues-x
+          sigh-y=sigh-list-issues-y
+      ==
+      ^-  place                       ::  /issues/by-repo
+      :*  guard={$issues $by-repo $~}
+          read-x=read-null
+          ^=  read-y
+          |=  pax/path
+          =+  /(scot %p our.hid)/home/(scot %da now.hid)/web/plan
+          =+  .^({* acc/(map knot plan-acct)} %cx -)
+        ::
+          ((read-static usr:(~(got by acc) %github) ~) pax)
+          sigh-x=sigh-strange
+          sigh-y=sigh-strange
+      ==
+      ^-  place                       ::  /issues/by-repo/<user>
+      :*  guard={$issues $by-repo @t $~}
+          read-x=read-null
+          read-y=|=(pax/path (get /users/[-.+>.pax]/repos))
+          sigh-x=sigh-strange
+          ^=  sigh-y
+          |=  jon/json
+          %+  bind  ((ar:jo repository:gh-parse) jon)
+          |=  repos/(list repository:gh)
+          [~ (malt (turn repos |=(repository:gh [name ~])))]
+      ==
+      ^-  place                       ::  /issues/by-repo/<user>/<repo>
+      :*  guard={$issues $by-repo @t @t $~}
+          read-x=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
+          read-y=|=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues))
+          sigh-x=sigh-list-issues-x
+          sigh-y=sigh-list-issues-y
+      ==
+      ^-  place                       ::  /issues/by-repo/<user>/<repo>
+      :*  guard={$issues $by-repo @t @t @t $~}
+          ^=  read-x
+          |=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues/[-.+>+>.pax]))
+        ::
+          read-y=(read-static ~)
+          ^=  sigh-x
+          |=  jon/json
+          %+  bind  (issue:gh-parse jon)
+          |=  issue/issue:gh
+          gh-issue+issue
+        ::
+          sigh-y=sigh-strange
+      ==
+  ==
+::
+::  When a peek on a path blocks, ford turns it into a peer on
+::  /scry/{care}/{path}.  You can also just peer to this
+::  directly.
+::
+::  We hand control to ++scry.
+::
+++  peer-scry
+  |=  pax/path
+  ^-  {(list move) _+>.$}
+  ?>  ?=({care *} pax)
+  :_  +>.$  :_  ~
+  (read:connector ost.hid (places %read pax) i.pax t.pax)
+::
+::  HTTP response.  We make sure the response is good, then
+::  produce the result (as JSON) to whoever sent the request.
+::
+++  sigh-httr
+  |=  {way/wire res/httr}
+  ^-  {(list move) _+>.$}
+  ?.  ?=({$read care @ *} way)
+    ~&  res=res
+    [~ +>.$]
+  =*  style  i.way
+  =*  ren  i.t.way
+  =*  pax  t.t.way
+  :_  +>.$  :_  ~
+  :+  ost.hid  %diff
+  (sigh:connector (places ren style pax) ren pax res)
+::
+::  HTTP error.  We just print it out, though maybe we should
+::  also produce a result so that the request doesn't hang?
+::
+++  sigh-tang
+  |=  {way/wire tan/tang}
+  ^-  {(list move) _+>.$}
+  ((slog >%gh-sigh-tang< tan) `+>.$)
+::
+::  We can't actually give the response to pretty much anything
+::  without blocking, so we just block unconditionally.
+::
+++  peek
+  |=  {ren/@tas tyl/path}
+  ^-  (unit (unit (pair mark *)))
+  ~ ::``noun/[ren tyl]
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::         Webhook-powered event streams (/listen)            ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+::  To listen to a webhook-powered stream of events, subscribe
+::  to /listen/<user>/<repo>/<events...>
+::
+::  We hand control to ++listen.
+::
+++  peer-listen
+  |=  pax/path
+  ^-  {(list move) _+>.$}
+  ?.  ?=({@ @ *} pax)
+    ~&  [%bad-listen-path pax]
+    [~ +>.$]
+  (listen pax)
 ::
 ::  This core handles event subscription requests by starting or
 ::  updating the webhook flow for each event.
@@ -160,10 +230,8 @@
     ?~  events
       +>+.$
     ?:  (~(has by hook) i.events)
-      =.  +>+.$  (update-hook i.events)
-      $(events t.events)
-    =.  +>+.$  (create-hook i.events)
-    $(events t.events)
+      $(+>+ (update-hook i.events), events t.events)
+    $(+>+ (create-hook i.events), events t.events)
   ::
   ::  Set up a webhook.
   ::
@@ -229,59 +297,4 @@
   %+  turn  (~(tap in listeners.u.hook-data))
   |=  ost/bone
   [ost %diff response]
-::
-::  When a peek on a path blocks, ford turns it into a peer on
-::  /scry/{care}/{path}.  You can also just peer to this
-::  directly.
-::
-::  We hand control to ++scry.
-::
-++  peer-scry
-  |=  pax/path
-  ^-  {(list move) _+>.$}
-  ?>  ?=({care *} pax)
-  :_  +>.$  :_  ~
-  (read:connector ost.hid (places %read pax) i.pax t.pax)
-::
-::  To listen to a webhook-powered stream of events, subscribe
-::  to /listen/<user>/<repo>/<events...>
-::
-::  We hand control to ++listen.
-::
-++  peer-listen
-  |=  pax/path
-  ^-  {(list move) _+>.$}
-  ?.  ?=({care @ @ *} pax)
-    ~&  [%bad-listen-path pax]
-    [~ +>.$]
-  (listen pax)
-::
-::  HTTP response.  We make sure the response is good, then
-::  produce the result (as JSON) to whoever sent the request.
-::
-++  sigh-httr
-  |=  {way/wire res/httr}
-  ^-  {(list move) _+>.$}
-  ?.  ?=({$read care @ *} way)
-    ~&  res=res
-    [~ +>.$]
-  =*  style  i.way
-  =*  ren  i.t.way
-  =*  pax  t.t.way
-  :_  +>.$  :_  ~
-  :+  ost.hid  %diff
-  (sigh:connector (places ren style pax) ren pax res)
-::
-++  sigh-tang
-  |=  {way/wire tan/tang}
-  ^-  {(list move) _+>.$}
-  ((slog >%gh-sigh-tang< tan) `+>.$)
-::
-::  We can't actually give the response to pretty much anything
-::  without blocking, so we just block unconditionally.
-::
-++  peek
-  |=  {ren/@tas tyl/path}
-  ^-  (unit (unit (pair mark *)))
-  ~ ::``noun/[ren tyl]
 --
