@@ -55,13 +55,6 @@
 ++  galaxy                                              ::  subdivided galaxy
   (managed (trel (foil moon) (foil planet) (foil star)))::
 ::                                                      ::
-:: ++  new-office
-::   $:  galaxies/(map ship state)
-::       planets/(map ship state)
-::       stars/(map ship state)
-::   ==
-:: ++  state
-
 ++  passcode  @pG                                       ::  64-bit passcode
 ++  mail  @ta                                           ::  email address
 ++  balance                                             ::  invitation balance
@@ -144,11 +137,9 @@
   %+  turn  (sort (~(tap by (murn-by c divided))) lor)
   |*(d/{@u *} [(rep a b -.d ~) +.d])
 ::
-::++  grand-map  (map @p czar/(map @p king/(map @p duke/(map @p (set @p)))))
-::++  deep-uni-by
-::
 ++  cursor  (pair (unit ship) @u)
-::  Create new foil, with parent as a certain size
+::
+::  Create new foil of size
 ++  fo-init
   |=  a/bloq  ::  ^-  (foil *)
   [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
@@ -222,19 +213,6 @@
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
-:: ++  huge-set
-::   ^-  (map @p ?($xeno $free $divd))
-  
-  
-:: ++  to-grand-map                                         ::  XX state format?
-::   ^-  grand-map
-::   =+  ofc=invert-office
-::   ;:  deep-uni-by
-:: ::
-:: ++  from-grand-map
-::   |=  a/grand-map
-::   ^+  office
-  
 ::
 ++  take-n
   |=  {{index/@u count/@u} get/$-(@u cursor)}
