@@ -9,12 +9,12 @@
 |%
 ++  foil                                                ::  ship allocation map
   |*  mold                                              ::  entry mold
-  $:  min/@p                                            ::  minimum entry
-      ctr/@p                                            ::  next allocated
-      und/(set @p)                                      ::  free under counter
-      ove/(set @p)                                      ::  alloc over counter
-      max/@p                                            ::  maximum entry
-      box/(map @p +<)                                   ::  entries
+  $:  min/@u                                            ::  minimum entry
+      ctr/@u                                            ::  next allocated
+      und/(set @u)                                      ::  free under counter
+      ove/(set @u)                                      ::  alloc over counter
+      max/@u                                            ::  maximum entry
+      box/(map @u +<)                                   ::  entries
   ==                                                    ::
 --                                                      ::
 ::   $:  min/@p
@@ -135,8 +135,14 @@
 ::
 ++  issuing
   |*  a/(map ship (managed))
-  ^-  (list _(need (divided *~(got by a))))
-  (turn (sort (~(tap by (murn-by a divided))) lor) tail)
+  ^-  (list {ship _(need (divided *~(got by a)))})
+  (sort (~(tap by (murn-by a divided))) lor)
+::
+++  issuing-under
+  |*  {a/bloq b/ship c/(map @u (managed))}
+  ^-  (list {ship _(need (divided *~(got by c)))})
+  %+  turn  (sort (~(tap by (murn-by c divided))) lor)
+  |*(d/{@u *} [(rep a b -.d ~) +.d])
 ::
 ::++  grand-map  (map @p czar/(map @p king/(map @p duke/(map @p (set @p)))))
 ::++  deep-uni-by
@@ -144,20 +150,18 @@
 ++  cursor  (pair (unit ship) @u)
 ::  Create new foil, with parent as a certain size
 ++  fo-init
-  |=  {who/@p syz/bloq}  ::  ^-  (foil *)
-  =+  :-  min=(add who (bex syz))
-      max=(add who (sub (bex (mul 2 syz)) (bex syz)))
-  [min ctr=min und=~ ove=~ max box=~]
+  |=  a/bloq  ::  ^-  (foil *)
+  [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
 ::
 ++  fo
   |_  (foil)
   ++  get                                             ::  nth
-    |=  a/@u  ^-  cursor
+    |=  a/@u  ^-  (pair (unit @u) @u)
     ?:  (lth a ~(wyt in und))
       =+  out=(snag a (sort (~(tap in und)) lth))
       [(some out) 0]
     =.  a  (sub a ~(wyt in und))
-    |-  ^-  {(unit @p) @u}
+    |-  ^-  {(unit @u) @u}
     ?:  =(ctr +(max))  [~ a]
     ?:  =(0 a)  [(some ctr) a]
     $(a (dec a), +<.get new)
@@ -170,7 +174,8 @@
     new(ove (~(del in ove) ctr))
   ::
   +-  put
-    |*  {a/@p b/*}  ^+  fin           ::  b/_(~(got by box))
+    |*  {a/@u b/*}  ^+  fin           ::  b/_(~(got by box))
+    ~|  put+[a fin]
     ?>  (fit a)
     =;  adj  adj(box (~(put by box) a b))
     ?:  (~(has in box) a)  fin
@@ -183,12 +188,12 @@
     =+  n=new(+< new)
     n(und (~(put in und.n) ctr))
   ::
-  ++  fit  |=(a/@p &((lte min a) (lte a max)))        ::  in range
+  ++  fit  |=(a/@u &((lte min a) (lte a max)))        ::  in range
   ++  gud                                             ::  invariant
     ?&  (fit(max +(max)) ctr)
         (~(all in und) fit(max ctr))
         (~(all in ove) fit(min ctr))
-        (~(all in box) |=({a/@p *} (fit a)))
+        (~(all in box) |=({a/@u *} (fit a)))
         |-  ^-  ?
         ?:  =(min max)  &
         =-  &(- $(min +(min)))
@@ -254,10 +259,16 @@
   ?^  out  [out nth]
   (shop-star nth (issuing galaxies.office))
 ::
+++  prefix
+  |=  {a/bloq b/@p {c/(unit @u) d/@u}}  ^-  cursor
+  ?~  c  [c d]
+  [(some (rep a b u.c ~)) d]
+::
 ++  shop-star
-  |=  {nth/@u lax/(list {* * r/(foil star)})}  ^-  cursor
+  |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
   ?~  lax  [~ nth]
-  =^  out  nth  (~(get fo r.i.lax) nth)
+  =^  out  nth
+    (prefix 3 who.i.lax (~(get fo r.i.lax) nth))
   ?^  out  [out nth]
   $(lax t.lax)
 ::
@@ -270,16 +281,18 @@
   (shop-planet-gal nth (issuing galaxies.office))
 ::
 ++  shop-planet
-  |=  {nth/@u sat/(list {* q/(foil planet)})}  ^-  cursor
+  |=  {nth/@u sat/(list {who/@p * q/(foil planet)})}  ^-  cursor
   ?~  sat  [~ nth]
-  =^  out  nth  (~(get fo q.i.sat) nth)
+  =^  out  nth
+    (prefix 4 who.i.sat (~(get fo q.i.sat) nth))
   ?^  out  [out nth]
   $(sat t.sat)
 ::
 ++  shop-planet-gal
-  |=  {nth/@u lax/(list {* * r/(foil star)})}  ^-  cursor
+  |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
   ?~  lax  [~ nth]
-  =^  out  nth  (shop-planet nth (issuing box.r.i.lax))
+  =^  out  nth
+    (shop-planet nth (issuing-under 3 who.i.lax box.r.i.lax))
   ?^  out  [out nth]
   $(lax t.lax)
 ::
@@ -380,7 +393,7 @@
 ++  release-galaxy
   =+  [who=*@p res=.]
   |.  ^+  res
-  =+  new=(some %& (fo-init who 32) (fo-init who 16) (fo-init who 8))
+  =+  new=(some %& (fo-init 5) (fo-init 4) (fo-init 3))
   =+  gal=(~(got by galaxies.office.res) who)
   ?^  gal  ~|(already-used+who !!)
   res(galaxies.office (~(put by galaxies.office.res) who new))
@@ -389,7 +402,7 @@
   =+  [who=*@p res=.]
   |.  ^+  res
   ~&  release+who
-  =+  new=(some %& (fo-init who 32) (fo-init who 16))
+  =+  new=(some %& (fo-init 5) (fo-init 4))
   ?:  (~(has by stars.office.res) who)
     =+  sta=(~(got by stars.office.res) who)
     ?~  sta
@@ -403,9 +416,10 @@
   %_  gal
       r.p.u
     =+  sta=r.p.u.gal  ^+  sta
-    =+  ole=(~(get by box.sta) who)
-    ?~  ole  (~(put fo sta) who new)
-    ?~  u.ole  (~(put fo sta) who new)
+    =+  ind=(rsh 3 1 who)
+    =+  ole=(~(get by box.sta) ind)
+    ?~  ole  (~(put fo sta) ind new)
+    ?~  u.ole  (~(put fo sta) ind new)
     ~|(already-used+[(sein who) who u.ole] !!)
   ==
 ::
