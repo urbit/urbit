@@ -11,17 +11,17 @@
 ::  most common handling of oauth1 semantics. see lib/oauth1 for more details,
 ::  and examples at the bottom of the file.
 ++  aut  (~(standard oauth1 bal tok) . |=(tok/token:oauth1 +>(tok tok)))
-++  out
+++  filter-request
   %+  out-add-header:aut
     token-request='https://api.twitter.com/oauth/request_token'
   oauth-dialog='https://api.twitter.com/oauth/authorize'
 ::
-++  res  res-handle-request-token:aut
+++  filter-response  res-handle-request-token:aut
 ::
-++  in
+++  receive-auth-query-string
   %-  in-exchange-token:aut
   exchange-url='https://api.twitter.com/oauth/access_token'
 ::
-++  bak  bak-save-token:aut
-:: ++  wyp  ~
+++  receive-auth-response  bak-save-token:aut
+:: ++  discard-state  ~
 --

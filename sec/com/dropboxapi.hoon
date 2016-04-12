@@ -18,10 +18,10 @@
 ::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
 ::  and examples at the bottom of the file.
 ++  aut  (~(standard oauth2 bal tok) . |=(tok/token:oauth2 +>(tok tok)))
-++  out  (out-add-header:aut scope=~ dialog-url)
+++  filter-request  (out-add-header:aut scope=~ dialog-url)
 ::
-++  in   (in-code-to-token:aut exchange-url)
-++  bak  bak-save-token:aut
+++  receive-auth-query-string  (in-code-to-token:aut exchange-url)
+++  receive-auth-response      bak-save-token:aut
 --
 ::  create a developer app on https://www.dropbox.com/developers-v1/apps to get a
 ::  client id and secret.

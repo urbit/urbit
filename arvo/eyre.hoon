@@ -67,10 +67,14 @@
 ++  whir-of  {p/knot:ship q/term r/wire}                ::  path in dock
 ++  whir-se  ?($core vi-arm)                            ::  build/call
 ++  vi-arm
-  $?  $out                                              ::  ++out mod request
-      $res                                              ::  ++res use result
-      $bak                                              ::  ++bak auth response
-      $in                                               ::  ++in handle code 
+  $?  $filter-request                                   ::  ++out mod request
+      $filter-response                                  ::  ++res use result
+      $receive-auth-response                            ::  ++bak auth response
+      $receive-auth-query-string                        ::  ++in handle code 
+      $out
+      $res
+      $bak
+      $in
   ==                                                    ::
 --                                                      ::
 |%                                                      ::  models
@@ -1670,9 +1674,9 @@
         [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
       ?~  cor  ~
       ?~  u.cor  ~
-      ?:  (has-arm %wyp)  ~
-      ?:  (has-arm %upd)
-        [[%& 13]~ ride+[limb+%upd prep-cor]]~
+      ?:  (has-arm %discard-state)  ~
+      ?:  (has-arm %update)
+        [[%& 13]~ ride+[limb+%update prep-cor]]~
       [[%& 13]~ %$ noun+(slot 13 u.cor)]~
     ::
     ++  call
@@ -1704,8 +1708,8 @@
       ?~  ole  abet
       ::  process hiss
       =.  hen  p.u.ole
-      ?~  u.cor  (eyre-them %out r.u.ole)  :: don't process
-      (call %out hiss+r.u.ole)
+      ?~  u.cor  (eyre-them %filter-request r.u.ole)  :: don't process
+      (call %filter-request hiss+r.u.ole)
     ::
     ++  fin-httr
       |=  vax/vase:httr
@@ -1717,26 +1721,31 @@
     ::  Interfaces
     ::
     ++  get-news  _build
-    ++  get-quay  |=(quy/quay (call %in quay+!>(quy)))
+    ++  get-quay  |=(quy/quay (call %receive-auth-query-string quay+!>(quy)))
     ++  get-req   |=(a/{mark vase:hiss} pump(req (~(put to req) hen a)))
     ++  get-thou
       |=  {wir/whir-se hit/httr}
       ?+  wir  !!
-        $in  (call %bak httr+!>(hit))
-        $out
-          ?.  (has-arm %res)  (fin-httr !>(hit))
-          (call %res httr+!>(hit))
+        ?($receive-auth-query-string $in)  (call %receive-auth-response httr+!>(hit))
+        ?($filter-request $out)
+          ?.  (has-arm %filter-response)  (fin-httr !>(hit))
+          (call %filter-response httr+!>(hit))
       ==
     ::
     ++  get-made
       |=  {wir/whir-se dep/@uvH res/(each cage tang)}  ^+  abet
       ?:  ?=($core wir)  (update dep res)
       %.  res
-      ?-(wir $out res-out, $res res-res, $bak res-bak, $in res-in)
+      ?-  wir
+        ?($filter-request $out)             res-out
+        ?($filter-response $res)            res-res
+        ?($receive-auth-response $bak)      res-bak
+        ?($receive-auth-query-string $in)   res-in
+      ==
     ::
     ++  update  
       |=  {dep/@uvH gag/(each cage tang)}
-      :: ~&  got-upd/dep
+      :: ~&  got-update/dep
       =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
       ?~  -.gag  pump(cor `q.p.gag)
       ?:  &(=(~ cor) =(%$ usr))
@@ -1803,13 +1812,13 @@
     ::
     ++  res-in
       %+  on-error  dead-this  |.
-      (handle-moves send+(do-send %in) ~)
+      (handle-moves send+(do-send %receive-auth-query-string) ~)
     ::
     ++  res-res
       %+  on-error  dead-hiss  |.
       %-  handle-moves  :~
         give+do-give
-        send+(do-send %out)
+        send+(do-send %filter-request)
         redo+_pump
       ==
     ::
@@ -1817,7 +1826,7 @@
       %+  on-error  dead-this  |.
       %-  handle-moves  :~
         give+do-give
-        send+(do-send %in)
+        send+(do-send %receive-auth-query-string)
         redo+_pump(..vi (give-html 200 ~ exit:xml))
       ==
     ::
@@ -1826,7 +1835,7 @@
       %+  on-error  warn  |.
       %-  handle-moves  :~
         give+do-give
-        send+(do-send %out)
+        send+(do-send %filter-request)
         show+do-show
       ==
 --  --
