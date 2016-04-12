@@ -1,6 +1,6 @@
 ::  Display twitter feed
 ::
-::::  /hook/core/twitter-feed/app
+::::  /hoon/twitter-feed/twit/gen
   ::
 /+    sh-utils
 !:

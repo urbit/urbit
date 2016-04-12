@@ -4,48 +4,17 @@
   ::
 /?    314
 /-    twitter
+/+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
 !:
 ::::  functions
   ::
 |%
-++  fass                                                ::  rewrite path
-  |=  a/path
-  %+  turn  a
-  |=(b/@t (gsub '-' '_' b))
-::
-++  gsub                                                ::  replace chars
-  |=  {a/@t b/@t t/@t}
-  ^-  @t
-  ?:  =('' t)  t
-  %+  mix  (lsh 3 1 $(t (rsh 3 1 t)))
-  =+  c=(end 3 1 t)
-  ?:(=(a c) b c)
-::
 ++  join
   |=  {a/char b/(list @t)}  ^-  @t
   %+  rap  3
   ?~  b  ~
   |-(?~(t.b b [i.b a $(b t.b)])) 
-::
-++  interpolate-some  ::  [/a/:b/c [d+'bar' b+'foo']~] -> [/a/foo/c [d+'bar']~]
-  |=  {pax/path quy/quay}  ^-  {path quay}
-  =+  ^=  inline                                        ::  required names
-      %-  ~(gas in *(set term))
-      (murn pax replacable:interpolate-path)
-  =^  inter  quy
-    (skid quy |=({a/knot @} (~(has in inline) a)))
-  [(interpolate-path pax inter) quy]
-::
-++  interpolate-path  ::  [/a/:b/c [%b 'foo']~] -> /a/foo/c
-  =+  replacable=|=(a/knot `(unit term)`(rush a ;~(pfix col sym)))
-  |=  {a/path b/(list (pair term knot))}  ^-  path
-  ?~  a  ?~(b ~ ~|(unused-values+b !!))
-  =+  (replacable i.a)
-  ?~  -  [i.a $(a t.a)]  ::  literal value
-  ?~  b  ~|(no-value+u !!)
-  ?.  =(u p.i.b)  ~|(mismatch+[u p.i.b] !!)
-  [q.i.b $(a t.a, b t.b)]
 ::
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
@@ -82,7 +51,7 @@
 ++  parse                                                ::  json reparsers
   |%
   ++  ce  |*({a/_* b/fist:jo} (cu:jo |=(c/a c) b))       ::  output type
-  ++  fasp  |*(a/{@tas *} [(gsub '-' '_' -.a) +.a])     ::  XX usable electroplating
+  ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])        ::  XX usable electroplating
   ++  user  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
   ++  stat
@@ -149,12 +118,13 @@
             quy/quay
         ==
     ^-  {path quay}
-    %+  interpolate-some  (fass pax)
+    %+  into-path-partial:interpolate
+      (path:hep-to-cab pax)
     =-  (weld - quy)
     %+  turn  ban
     |=  p/param
     ^-  {@t @t}
-    :-  (gsub '-' '_' -.p)
+    :-  (hep-to-cab -.p)
     ?+  -.p  p.p  :: usually plain text
       ?($source-id $target-id)       (tid:print p.p)
       ?($follow $id $name $user-id)  (lid:print p.p)
