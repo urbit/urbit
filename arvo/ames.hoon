@@ -1866,7 +1866,7 @@
         ^-  {p/(list boon) q/fort}
         ?-    -.kyz
             $born
-          (~(dude am [now fox]) p.kyz q.kyz r.kyz)
+          (~(dude am [now fox]) p.kyz (shax q.kyz) r.kyz)
         ::
             $barn
           [~ fox(gad hen)]

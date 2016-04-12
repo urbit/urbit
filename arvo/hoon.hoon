@@ -1495,7 +1495,7 @@
               {$~ $~ p/tape}                            ::  simple string
               (pair @tas tanq)                          ::  captioned
           ==                                            ::
-++  tape  (list @t)                                     ::  UTF8 string as list
+++  tape  (list @tD)                                    ::  UTF8 string as list
 ++  tarp  {d/@ud h/@ud m/@ud s/@ud f/(list @ux)}        ::  parsed time
 ++  term  @tas                                          ::  ascii symbol
 ++  wain  (list cord)                                   ::  text lines
@@ -7908,7 +7908,6 @@
                         $path                           ::
                         $span                           ::
                         $void                           ::
-                        $wall                           ::
                         $wool                           ::
                         $yarn                           ::
                     ==                                  ::
@@ -7957,7 +7956,6 @@
           $span      :_(gid [%leaf '#' 't' ~]) 
           $void      :_(gid [%leaf '#' '!' ~])
           $wool      :_(gid [%leaf '*' '"' '"' ~])
-          $wall      :_(gid [%leaf '*' '\'' '\'' ~])
           $yarn      :_(gid [%leaf '"' '"' ~])
           {$mato *}  :_(gid [%leaf '@' (trip p.q.ham)])
           {$core *}
@@ -8045,15 +8043,6 @@
       :^  ~   %palm
         [~ ~ ~ ~]
       [[%leaf '#' 't' '/' ~] cis ~]
-    ::
-        $wall
-      :-  ~
-      :+  %rose
-        [[' ' ~] ['<' '|' ~] ['|' '>' ~]]
-      |-  ^-  (list tank)
-      ?~  lum  ~
-      ?@  lum  !!
-      [[%leaf (trip ((hard @) -.lum))] $(lum +.lum)]
     ::
         $wool
       :-  ~
@@ -8199,7 +8188,7 @@
     |=  ham/cape
     =-  ?+  woz  woz
           {$list * {$mato $'ta'}}  %path
-          {$list * {$mato $'t'}}   %wall
+          ::  {$list * {$mato $'t'}}   %wall
           {$list * {$mato $'tD'}}  %yarn
           {$list * $yarn}          %wool
         ==
@@ -8334,10 +8323,10 @@
   ::
   ++  duck  (dial dole)
   --
-++  cain  |=(vax/vase (sell vax))                       ::  $-(vase tank) 
-++  noah  |=(vax/vase (pave vax))                       ::  $-(vase tape)
-++  onan  |=(vix/vise (seer vix))                       ::  $-(vise vase)
-++  pave                                                ::  tape pretty-print
+++  cain  sell                                          ::  $-(vase tank) 
+++  noah  text                                          ::  $-(vase tape)
+++  onan  seer                                          ::  $-(vise vase)  
+++  text                                                ::  tape pretty-print
   |=  vax/vase  ^-  tape
   ~(ram re (sell vax))
 ::
