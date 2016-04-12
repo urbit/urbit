@@ -138,12 +138,21 @@
   ^-  (list _(need (divided *~(got by a))))
   (turn (sort (~(tap by (murn-by a divided))) lor) tail)
 ::
-++  grand-map  (map @p czar/(map @p king/(map @p duke/(map @p (set @p)))))
+::++  grand-map  (map @p czar/(map @p king/(map @p duke/(map @p (set @p)))))
 ::++  deep-uni-by
+::
+++  cursor  (pair (unit ship) @u)
+::  Create new foil, with parent as a certain size
+++  fo-init
+  |=  {who/@p syz/bloq}  ::  ^-  (foil *)
+  =+  :-  min=(add who (bex syz))
+      max=(add who (sub (bex (mul 2 syz)) (bex syz)))
+  [min ctr=min und=~ ove=~ max box=~]
+::
 ++  fo
   |_  (foil)
   ++  get                                             ::  nth
-    |=  a/@u  ^-  {(unit @p) @u}
+    |=  a/@u  ^-  cursor
     ?:  (lth a ~(wyt in und))
       =+  out=(snag a (sort (~(tap in und)) lth))
       [(some out) 0]
@@ -153,11 +162,26 @@
     ?:  =(0 a)  [(some ctr) a]
     $(a (dec a), +<.get new)
   ::
+  +-  fin  +<                                         ::  abet
   ++  new                                             ::  alloc
     ?:  =(ctr +(max))  +<
     =.  ctr  +(ctr)
     ?.  (~(has in ove) ctr)  +<
     new(ove (~(del in ove) ctr))
+  ::
+  +-  put
+    |*  {a/@p b/*}  ^+  fin           ::  b/_(~(got by box))
+    ?>  (fit a)
+    =;  adj  adj(box (~(put by box) a b))
+    ?:  (~(has in box) a)  fin
+    ?:  =(ctr a)  new 
+    ?:  (lth a ctr)
+      ?.  (~(has in und) a)  fin
+      fin(und (~(del in und) a))
+    ?.  =(a ctr:new)    :: heuristic
+      fin(ove (~(put in ove) a))
+    =+  n=new(+< new)
+    n(und (~(put in und.n) ctr))
   ::
   ++  fit  |=(a/@p &((lte min a) (lte a max)))        ::  in range
   ++  gud                                             ::  invariant
@@ -207,7 +231,6 @@
 ::   ^+  office
   
 ::
-++  cursor  (pair (unit ship) @u)
 ++  take-n
   |=  {{index/@u count/@u} get/$-(@u cursor)}
   ^-  (list ship)
@@ -338,9 +361,53 @@
 ::
 ++  poke-release                                      ::  release to subdivide
   |=  {gal/@ud sta/@ud}                               ::
-  =<  abet
+  =<  abet  ^+  +>
   ?>  =(our src)                                      ::  privileged
-  .
+  =.  +>
+    ?~  gal  +>
+    =+  all=(take-n [0 gal] shop-galaxies)
+    ?.  (gth gal (lent all))
+      (roll all release-galaxy)
+    ~|(too-few-galaxies+[want=gal has=(lent all)] !!)
+  ^+  +>
+  ?~  sta  +>
+  =+  all=(take-n [0 sta] shop-stars)
+  ~&  got-stars+all
+  ?.  (gth sta (lent all))
+    (roll all release-star)
+  ~|(too-few-stars+[want=sta has=(lent all)] !!)
+::
+++  release-galaxy
+  =+  [who=*@p res=.]
+  |.  ^+  res
+  =+  new=(some %& (fo-init who 32) (fo-init who 16) (fo-init who 8))
+  =+  gal=(~(got by galaxies.office.res) who)
+  ?^  gal  ~|(already-used+who !!)
+  res(galaxies.office (~(put by galaxies.office.res) who new))
+::
+++  release-star
+  =+  [who=*@p res=.]
+  |.  ^+  res
+  ~&  release+who
+  =+  new=(some %& (fo-init who 32) (fo-init who 16))
+  ?:  (~(has by stars.office.res) who)
+    =+  sta=(~(got by stars.office.res) who)
+    ?~  sta
+      res(stars.office (~(put by stars.office.res) who new))
+    ~|(already-used+[who u.sta] !!)
+  =+  gal=(~(got by galaxies.office.res) (sein who))
+  =;  lax/galaxy
+    res(galaxies.office (~(put by galaxies.office.res) (sein who) lax))
+  ?.  ?=({$~ $& *} gal)
+    ~|(unavailable-galaxy+(sein who) !!)
+  %_  gal
+      r.p.u
+    =+  sta=r.p.u.gal  ^+  sta
+    =+  ole=(~(get by box.sta) who)
+    ?~  ole  (~(put fo sta) who new)
+    ?~  u.ole  (~(put fo sta) who new)
+    ~|(already-used+[(sein who) who u.ole] !!)
+  ==
 ::
 ++  poke-reinvite                                     ::  split invitation
   |=  $:  aut/@uvH                                    ::  hash w/passcode
