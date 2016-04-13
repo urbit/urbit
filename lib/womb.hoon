@@ -152,8 +152,8 @@
   [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
 ::
 ++  fo
-  |_  (foil)
-  ++  get                                             ::  nth
+  |_  (foil $@($~ *))
+  ++  nth                                             ::  index
     |=  a/@u  ^-  (pair (unit @u) @u)
     ?:  (lth a ~(wyt in und))
       =+  out=(snag a (sort (~(tap in und)) lth))
@@ -162,7 +162,7 @@
     |-  ^-  {(unit @u) @u}
     ?:  =(ctr +(max))  [~ a]
     ?:  =(0 a)  [(some ctr) a]
-    $(a (dec a), +<.get new)
+    $(a (dec a), +<.nth new)
   ::
   +-  fin  +<                                         ::  abet
   ++  new                                             ::  alloc
@@ -170,6 +170,10 @@
     =.  ctr  +(ctr)
     ?.  (~(has in ove) ctr)  +<
     new(ove (~(del in ove) ctr))
+  ::
+  +-  get                                             ::  nullable
+    |=  a/@p  ^+  ?~(box ~ q.n.box)
+    (fall (~(get by box) (neis a)) ~)
   ::
   +-  put
     |*  {a/@u b/*}  ^+  fin           ::  b/_(~(got by box))
@@ -260,7 +264,7 @@
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
   ?:  =(~ lax)  [~ nth]
   =^  sel  nth  (in-list lax nth)
-  (prefix 3 who.sel (~(get fo r.sel) nth))
+  (prefix 3 who.sel (~(nth fo r.sel) nth))
 ::
 ++  shop-planets                                      ::  unassigned %duke
   |=  nth/@u  ^-  cursor
@@ -274,7 +278,7 @@
   |=  {nth/@u sta/(list {who/@p * q/(foil planet)})}  ^-  cursor
   ?:  =(~ sta)  [~ nth]
   =^  sel  nth  (in-list sta nth)
-  (prefix 4 who.sel (~(get fo q.sel) nth))
+  (prefix 4 who.sel (~(nth fo q.sel) nth))
 ::
 ++  shop-planet-gal                                   ::  planet from galaxies
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
@@ -325,10 +329,10 @@
   ?:  (~(has by galaxies.office) (sein who))    
     =+  gal=(get-managed-galaxy (sein who))
     ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
-    (fall (~(get by box.q.p.u.gal) (neis who)) ~)
+    (~(get fo q.p.u.gal) who)
   =+  sta=(get-managed-star (sein who))
   ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
-  (fall (~(get by box.q.p.u.sta) (neis who)) ~)
+  (~(get fo q.p.u.sta) who)
 ::
 ++  mod-managed-planet                                ::  office write
   |=  {who/@p mod/$-(planet planet)}  ^+  +>
