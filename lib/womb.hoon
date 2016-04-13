@@ -84,6 +84,12 @@
   ==                                                    ::
 ++  reference                                           ::  affiliate credit
   (unit (each @p mail))                                 ::  ship or email
+::                                                      ::
+++  stat                                                ::  external info
+  $%  {$free $~}                                        ::  unallocated
+      {$owned mail}                                     ::  granted
+      {$split (map ship stat)}                          ::  all given ships
+  ==                                                    ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -339,16 +345,64 @@
   ?>  ?=({$~ $& *} sta)
   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
+++  stat-any  |=(a/(managed _!!) `stat`?~(a [%free ~] [%owned p.u.a]))
+++  stat-planet
+  |=  {who/@p man/planet}  ^-  stat
+  ?.  ?=({$~ $& ^} man)  (stat-any man)
+  =+  pla=u:(divided man)
+  :-  %split
+  %-  malt
+  %+  turn  (~(tap by box.p.pla))
+  |=({a/@u b/moon} [(rep 5 who a ~) (stat-any b)])
+::
+++  stat-star
+  |=  {who/@p man/star}  ^-  stat
+  ?.  ?=({$~ $& ^} man)  (stat-any man)
+  =+  sta=u:(divided man)
+  :-  %split
+  %-  malt
+  %+  welp
+    %+  turn  (~(tap by box.p.sta))
+    |=({a/@u b/moon} [(rep 5 who a ~) (stat-any b)])
+  %+  turn  (~(tap by box.q.sta))
+  |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
+::
+++  stat-galaxy
+  |=  {who/@p man/galaxy}  ^-  stat
+  ?.  ?=({$~ $& ^} man)  (stat-any man)
+  =+  gal=u:(divided man)
+  :-  %split
+  %-  malt
+  ;:  welp
+    %+  turn  (~(tap by box.p.gal))
+    |=({a/@u b/moon} [(rep 5 who a ~) (stat-any b)])
+  ::
+    %+  turn  (~(tap by box.q.gal))
+    |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
+  ::
+    %+  turn  (~(tap by box.r.gal))
+    |=({a/@u b/star} =+((rep 3 who a ~) [- (stat-star - b)]))
+  ==
+::
 ++  stats-ship                                        ::  inspect ship
-  |=  who/@p  ^-  (unit (unit (cask _!!)))
-  ~
+  |=  who/@p  ^-  (unit (unit {$womb-stat stat}))
+  ?-  (clan who)
+    $pawn  !!
+    $earl  !!
+    $duke  ``womb-stat+(stat-planet who (get-managed-planet who))
+    $king  ``womb-stat+(stat-star who (get-managed-star who))
+    $czar  ``womb-stat+(stat-galaxy who (get-managed-galaxy who))
+  ==
 ::
 ++  peek-x-stats                                      ::  inspect ship/system
   |=  tyl/path
   ?^  tyl
     (stats-ship ~|(bad-path+tyl (raid tyl who=%p ~)))
-  ^-  (unit (unit (cask _!!)))
-  ~
+  ^-  (unit (unit {$womb-stat-all (map ship stat)}))
+  :^  ~  ~  %womb-stat-all
+  %-  ~(uni by (~(urn by planets.office) stat-planet))
+  %-  ~(uni by (~(urn by stars.office) stat-star))
+  (~(urn by galaxies.office) stat-galaxy)
 ::
 ++  peek-x-invite                                     ::  inspect invitation
   |=  tyl/path  ^-  (unit (unit {$womb-balance balance}))
