@@ -36,14 +36,14 @@
   %+  each  +<                                          ::  subdivided
   mail                                                  ::  delivered
 ::                                                      ::
-++  divided
-  |*  (managed)
-  ?-  +<
-    $~      ~
-    {$~ $| *}  ~
-    {$~ $& *}  (some p.u.+<)
-  ==
-::
+++  divided                                             ::  get division state
+  |*  (managed)                                         ::
+  ?-  +<                                                ::
+    $~      ~                                           ::  unsplit
+    {$~ $| *}  ~                                        ::  delivered
+    {$~ $& *}  (some p.u.+<)                            ::  subdivided
+  ==                                                    ::
+::                                                      ::
 ++  moon  (managed _!!)                                 ::  undivided moon
 ::
 ++  planet                                              ::  subdivided planet
@@ -215,7 +215,7 @@
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
 ::
-++  take-n
+++  take-n                                            ::  compute range
   |=  {{index/@u count/@u} get/$-(@u cursor)}
   ^-  (list ship)
   ?~  count  ~
@@ -223,38 +223,40 @@
   |=  a/ship  ^-  (list ship)
   [a ^$(index +(index), count (dec count))]
 ::
-++  available
+++  available                                         ::  enumerate free ships
   |=  all/(map ship (managed))  ^-  $-(@u cursor)
   =+  pur=(sort (turn (unsplit all) head) lth)
   =+  len=(lent pur)
   |=(a/@u ?:((gte a len) [~ (sub a len)] [(some (snag a pur)) a]))
 ::
-++  shop-galaxies  (available galaxies.office)
-::
-::  Stars can be either whole or children of galaxies
-++  shop-stars
-  |=  nth/@u  ^-  cursor
-  =^  out  nth  %.(nth (available stars.office))
-  ?^  out  [out nth]
-  (shop-star nth (issuing galaxies.office))
-::
+:: foil cursor to ship cursor, using sized parent
 ++  prefix
   |=  {a/bloq b/@p {c/(unit @u) d/@u}}  ^-  cursor
   ?~  c  [c d]
   [(some (rep a b u.c ~)) d]
 ::
-++  in-list
+++  in-list                                           ::  distribute among options
   |*  {a/(list) b/@u}  ^+  [(snag *@ a) b]
   =+  c=(lent a)
   [(snag (mod b c) a) (div b c)]
 ::
-++  shop-star
+::
+++  shop-galaxies  (available galaxies.office)        ::  unassigned %czar
+::
+::  Stars can be either whole or children of galaxies
+++  shop-stars                                        ::  unassigned %king
+  |=  nth/@u  ^-  cursor
+  =^  out  nth  %.(nth (available stars.office))
+  ?^  out  [out nth]
+  (shop-star nth (issuing galaxies.office))
+::
+++  shop-star                                         ::  star from galaxies
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
   ?:  =(~ lax)  [~ nth]
   =^  sel  nth  (in-list lax nth)
   (prefix 3 who.sel (~(get fo r.sel) nth))
 ::
-++  shop-planets
+++  shop-planets                                      ::  unassigned %duke
   |=  nth/@u  ^-  cursor
   =^  out  nth  %.(nth (available planets.office))
   ?^  out  [out nth]
@@ -262,19 +264,19 @@
   ?^  out  [out nth]
   (shop-planet-gal nth (issuing galaxies.office))
 ::
-++  shop-planet
+++  shop-planet                                       ::  planet from stars
   |=  {nth/@u sta/(list {who/@p * q/(foil planet)})}  ^-  cursor
   ?:  =(~ sta)  [~ nth]
   =^  sel  nth  (in-list sta nth)
   (prefix 4 who.sel (~(get fo q.sel) nth))
 ::
-++  shop-planet-gal
+++  shop-planet-gal                                   ::  planet from galaxies
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
   ?:  =(~ lax)  [~ nth]
   =^  sel  nth  (in-list lax nth)
   (shop-planet nth (issuing-under 3 who.sel box.r.sel))
 ::
-++  peek-x-shop
+++  peek-x-shop                                       ::  available ships
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
   =;  a   ~&  peek-x-shop+[tyl a]  a
   =;  res  (some (some [%ships res]))
@@ -286,13 +288,13 @@
     $stars     (take-n [nth 3] shop-stars)
   ==
 ::
-++  get-managed-galaxy  ~(got by galaxies.office)
-++  mod-managed-galaxy
+++  get-managed-galaxy  ~(got by galaxies.office)     ::  office read
+++  mod-managed-galaxy                                ::  office write
   |=  {who/@p mod/$-(galaxy galaxy)}  ^+  +>
   =+  gal=(mod (get-managed-galaxy who))
   +>.$(galaxies.office (~(put by galaxies.office) who gal))
 ::
-++  get-managed-star
+++  get-managed-star                                  ::  office read
   |=  who/@p  ^-  star
   =+  (~(get by stars.office) who)
   ?^  -  u
@@ -300,9 +302,9 @@
   ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
   (fall (~(get by box.r.p.u.gal) (neis who)) ~)
 ::
-++  mod-managed-star
+++  mod-managed-star                                  ::  office write
   |=  {who/@p mod/$-(star star)}  ^+  +>
-  =+  sta=(mod (get-managed-star who))                  ::  XX double traverse
+  =+  sta=(mod (get-managed-star who))                ::  XX double traverse
   ?:  (~(has by stars.office) who)
     +>.$(stars.office (~(put by stars.office) who sta))
   %+  mod-managed-galaxy  (sein who)
@@ -310,7 +312,7 @@
   ?>  ?=({$~ $& *} gal)
   gal(r.p.u (~(put fo r.p.u.gal) (neis who) sta))
 ::
-++  get-managed-planet
+++  get-managed-planet                                ::  office read
   |=  who/@p  ^-  planet
   =+  (~(get by planets.office) who)
   ?^  -  u
@@ -322,9 +324,9 @@
   ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
   (fall (~(get by box.q.p.u.sta) (neis who)) ~)
 ::
-++  mod-managed-planet
+++  mod-managed-planet                                ::  office write
   |=  {who/@p mod/$-(planet planet)}  ^+  +>
-  =+  pla=(mod (get-managed-planet who))                ::  XX double traverse
+  =+  pla=(mod (get-managed-planet who))              ::  XX double traverse
   ?:  (~(has by planets.office) who)
     +>.$(planets.office (~(put by planets.office) who pla))
   ?:  (~(has by galaxies.office) (sein who))    
@@ -337,18 +339,18 @@
   ?>  ?=({$~ $& *} sta)
   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
-++  stats-ship
+++  stats-ship                                        ::  inspect ship
   |=  who/@p  ^-  (unit (unit (cask _!!)))
   ~
 ::
-++  peek-x-stats
+++  peek-x-stats                                      ::  inspect ship/system
   |=  tyl/path
   ?^  tyl
     (stats-ship ~|(bad-path+tyl (raid tyl who=%p ~)))
   ^-  (unit (unit (cask _!!)))
   ~
 ::
-++  peek-x-invite
+++  peek-x-invite                                     ::  inspect invitation
   |=  tyl/path  ^-  (unit (unit {$womb-balance balance}))
   =+  pas=~|(bad-path+tyl (raid tyl pas=%p ~))
   %-  some
@@ -419,7 +421,7 @@
     (roll all release-star)
   ~|(too-few-stars+[want=sta has=(lent all)] !!)
 ::
-++  release-galaxy
+++  release-galaxy                                    ::  subdivide %czar
   =+  [who=*@p res=.]
   |.  ^+  res
   %+  mod-managed-galaxy:res  who
@@ -428,7 +430,7 @@
   ?^  gal  ~|(already-used+who !!)
   (some %& (fo-init 5) (fo-init 4) (fo-init 3))
 ::
-++  release-star
+++  release-star                                      ::  subdivide %king
   =+  [who=*@p res=.]
   |.  ^+  res
   %+  mod-managed-star:res  who
