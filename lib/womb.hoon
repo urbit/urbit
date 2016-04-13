@@ -138,6 +138,7 @@
   |*(d/{@u *} [(rep a b -.d ~) +.d])
 ::
 ++  cursor  (pair (unit ship) @u)
+++  neis  |=(a/ship ^-(@u (rsh (dec (xeb (xeb a))) 1 a)))  ::  postfix
 ::
 ::  Create new foil of size
 ++  fo-init
@@ -285,6 +286,57 @@
     $stars     (take-n [nth 3] shop-stars)
   ==
 ::
+++  get-managed-galaxy  ~(got by galaxies.office)
+++  mod-managed-galaxy
+  |=  {who/@p mod/$-(galaxy galaxy)}  ^+  +>
+  =+  gal=(mod (get-managed-galaxy who))
+  +>.$(galaxies.office (~(put by galaxies.office) who gal))
+::
+++  get-managed-star
+  |=  who/@p  ^-  star
+  =+  (~(get by stars.office) who)
+  ?^  -  u
+  =+  gal=(get-managed-galaxy (sein who))
+  ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
+  (fall (~(get by box.r.p.u.gal) (neis who)) ~)
+::
+++  mod-managed-star
+  |=  {who/@p mod/$-(star star)}  ^+  +>
+  =+  sta=(mod (get-managed-star who))                  ::  XX double traverse
+  ?:  (~(has by stars.office) who)
+    +>.$(stars.office (~(put by stars.office) who sta))
+  %+  mod-managed-galaxy  (sein who)
+  |=  gal/galaxy  ^-  galaxy
+  ?>  ?=({$~ $& *} gal)
+  gal(r.p.u (~(put fo r.p.u.gal) (neis who) sta))
+::
+++  get-managed-planet
+  |=  who/@p  ^-  planet
+  =+  (~(get by planets.office) who)
+  ?^  -  u
+  ?:  (~(has by galaxies.office) (sein who))    
+    =+  gal=(get-managed-galaxy (sein who))
+    ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
+    (fall (~(get by box.q.p.u.gal) (neis who)) ~)
+  =+  sta=(get-managed-star (sein who))
+  ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
+  (fall (~(get by box.q.p.u.sta) (neis who)) ~)
+::
+++  mod-managed-planet
+  |=  {who/@p mod/$-(planet planet)}  ^+  +>
+  =+  pla=(mod (get-managed-planet who))                ::  XX double traverse
+  ?:  (~(has by planets.office) who)
+    +>.$(planets.office (~(put by planets.office) who pla))
+  ?:  (~(has by galaxies.office) (sein who))    
+    %+  mod-managed-galaxy  (sein who)
+    |=  gal/galaxy  ^-  galaxy
+    ?>  ?=({$~ $& *} gal)
+    gal(q.p.u (~(put fo q.p.u.gal) (neis who) pla))
+  %+  mod-managed-star  (sein who)
+  |=  sta/star  ^-  star
+  ?>  ?=({$~ $& *} sta)
+  sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
+::
 ++  stats-ship
   |=  who/@p  ^-  (unit (unit (cask _!!)))
   ~
@@ -370,36 +422,20 @@
 ++  release-galaxy
   =+  [who=*@p res=.]
   |.  ^+  res
+  %+  mod-managed-galaxy:res  who
+  |=  gal/galaxy  ^-  galaxy
   ~&  release+who
-  =+  new=(some %& (fo-init 5) (fo-init 4) (fo-init 3))
-  =+  gal=(~(got by galaxies.office.res) who)
   ?^  gal  ~|(already-used+who !!)
-  res(galaxies.office (~(put by galaxies.office.res) who new))
+  (some %& (fo-init 5) (fo-init 4) (fo-init 3))
 ::
 ++  release-star
   =+  [who=*@p res=.]
   |.  ^+  res
+  %+  mod-managed-star:res  who
+  |=  sta/star  ^-  star
   ~&  release+who
-  =+  new=(some %& (fo-init 5) (fo-init 4))
-  ?:  (~(has by stars.office.res) who)
-    =+  sta=(~(got by stars.office.res) who)
-    ?~  sta
-      res(stars.office (~(put by stars.office.res) who new))
-    ~|(already-used+[who u.sta] !!)
-  =+  gal=(~(got by galaxies.office.res) (sein who))
-  =;  lax/galaxy
-    res(galaxies.office (~(put by galaxies.office.res) (sein who) lax))
-  ?.  ?=({$~ $& *} gal)
-    ~|(unavailable-galaxy+(sein who) !!)
-  %_  gal
-      r.p.u
-    =+  sta=r.p.u.gal  ^+  sta
-    =+  ind=(rsh 3 1 who)
-    =+  ole=(~(get by box.sta) ind)
-    ?~  ole  (~(put fo sta) ind new)
-    ?~  u.ole  (~(put fo sta) ind new)
-    ~|(already-used+[(sein who) who u.ole] !!)
-  ==
+  ?^  sta  ~|(already-used+[who u.sta] !!)
+  (some %& (fo-init 4) (fo-init 3))
 ::
 ++  poke-reinvite                                     ::  split invitation
   |=  $:  aut/@uvH                                    ::  hash w/passcode
