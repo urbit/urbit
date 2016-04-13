@@ -1,9 +1,9 @@
 ::                                                      ::  ::
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
-/?    310                                                 ::  zuse version
-/+  sole, talk, helm, kiln, drum, write                 ::  libraries
-[. helm kiln drum]
+/?    310                                               ::  zuse version
+/+  sole, talk, helm, kiln, drum, write, womb           ::  libraries
+[. helm kiln drum]                                      
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
@@ -17,21 +17,24 @@
         $drum  ?>(?=($drum -.paw) `drum-part`paw)       ::
         $helm  ?>(?=($helm -.paw) `helm-part`paw)       ::
         $kiln  ?>(?=($kiln -.paw) `kiln-part`paw)       ::
+        $womb  ?>(?=($womb -.paw) `part:womb`paw)       ::
         $write  ?>(?=($write -.paw) `part:write`paw)    ::
       ==                                                ::
-    ++  hood-head  _-:*hood-part                     ::
+    ++  hood-head  _-:*hood-part                        ::
     ++  hood-make                                       ::
       |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
         $drum  (drum-port our)                          ::
         $helm  *helm-part                               ::
         $kiln  *kiln-part                               ::
-         $write  *part:write                             ::
+        $womb  *part:womb                               ::
+        $write  *part:write                             ::
       ==                                                ::
     ++  hood-part                                       ::
       $%  {$drum $0 drum-pith}                          ::
           {$helm $0 helm-pith}                          ::
           {$kiln $0 kiln-pith}                          ::
+          {$womb $0 pith:womb}                          ::
           {$write $0 pith:write}                        ::
       ==                                                ::
     --                                                  ::
@@ -84,6 +87,7 @@
 ++  from-drum  (from-lib %drum [..$ _se-abet]:(drum))
 ++  from-helm  (from-lib %helm [..$ _abet]:(helm))
 ++  from-kiln  (from-lib %kiln [..$ _abet]:(kiln))
+++  from-womb  (from-lib %womb [..$ _abet]:(womb))
 ++  from-write  (from-lib %write [..$ _abet]:(write))
 ::
 ++  init-helm                 |=({way/wire *} [~ +>])
@@ -95,6 +99,7 @@
 ++  note-helm                 (wrap take-note):from-helm
 ++  onto-drum                 (wrap take-onto):from-drum
 ++  peer-drum                 (wrap peer):from-drum
+++  peek-x-womb               peek-x:(womb hid (able %womb))
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
 ++  poke-drum-link            (wrap poke-link):from-drum
 ++  poke-drum-unlink          (wrap poke-unlink):from-drum

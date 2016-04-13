@@ -89,8 +89,8 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%
-++  womb-part  {$womb $0 womb-pith}                     ::  womb state
-++  womb-pith                                           ::  womb content
+++  part  {$womb $0 pith}                               ::  womb state
+++  pith                                                ::  womb content
   $:  boss/(unit @p)                                    ::  outside master
       bureau/(map passcode balance)                     ::  active invitations
       office/property                                   ::  properties managed
@@ -201,10 +201,10 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   !:                                                  ::  ::
-|=  {bowl womb-part}                                  ::  main womb work
+|=  {bowl part}                                       ::  main womb work
 |_  moz/(list move)
 ++  abet                                              ::  resolve
-  ^-  (quip move *womb-part)
+  ^-  (quip move *part)
   [(flop moz) +>+<+]
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
@@ -275,13 +275,14 @@
 ::
 ++  peek-x-shop
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
+  =;  a   ~&  peek-x-shop+[tyl a]  a
   =;  res  (some (some [%ships res]))
-  =+  ~|(bad-path+tyl (raid tyl typ=%tas nth=%ud ~))
+  =+  [typ nth]=~|(bad-path+tyl (raid tyl typ=%tas nth=%ud ~))
   :: =.  nth  (mul 3 nth)
   ?+  typ  ~|(bad-type+typ !!)
-    $galaxy  (take-n [nth 3] shop-galaxies)
-    $planet  (take-n [nth 3] shop-planets)
-    $star    (take-n [nth 3] shop-stars)
+    $galaxies  (take-n [nth 3] shop-galaxies)
+    $planets   (take-n [nth 3] shop-planets)
+    $stars     (take-n [nth 3] shop-stars)
   ==
 ::
 ++  stats-ship
@@ -297,20 +298,19 @@
 ::
 ++  peek-x-invite
   |=  tyl/path  ^-  (unit (unit {$womb-balance balance}))
-  =+  ~|(bad-path+tyl (raid tyl pas=%p ~))
+  =+  pas=~|(bad-path+tyl (raid tyl pas=%p ~))
   %-  some
   %+  bind  (~(get by bureau) pas)
   |=(bal/balance [%womb-balance bal])
 ::
-++  peek
-  |=  {ren/@tas tyl/path}
-::  ^-  (unit (unit (pair mark *)))
-  ?.  =(ren %x)  ~
+++  peek-x
+  |=  tyl/path  ::  ^-  (unit (unit (pair mark *)))
+  ~&  peek-x+tyl
   ?~  tyl  ~
   ?+  -.tyl  ~
-  ::  /shop/planet/@ud   (list @p)    up to 3 planets
-  ::  /shop/star/@ud     (list @p)    up to 3 stars
-  ::  /shop/galaxy/@ud   (list @p)    up to 3 galaxies 
+  ::  /shop/planets/@ud   (list @p)    up to 3 planets
+  ::  /shop/stars/@ud     (list @p)    up to 3 stars
+  ::  /shop/galaxies/@ud  (list @p)    up to 3 galaxies 
     $shop  (peek-x-shop +.tyl)
   ::  /stats                          general stats dump
   ::  /stats/@p                       what we know about @p
@@ -370,6 +370,7 @@
 ++  release-galaxy
   =+  [who=*@p res=.]
   |.  ^+  res
+  ~&  release+who
   =+  new=(some %& (fo-init 5) (fo-init 4) (fo-init 3))
   =+  gal=(~(got by galaxies.office.res) who)
   ?^  gal  ~|(already-used+who !!)
