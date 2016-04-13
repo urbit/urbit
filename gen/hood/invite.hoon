@@ -7,6 +7,7 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvI bec/beak}
-        {{who/@p myl/@t $~} $~}
+        {{who/@ta $~} $~}
     ==
-[%helm-invite who myl]
+:-  %womb-invite
+[~ who 10 0 "You have been invited to Urbit" "This is an invite of 10 planets"]
