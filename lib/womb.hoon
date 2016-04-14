@@ -433,6 +433,29 @@
     $invite  (peek-x-invite +.tyl)
   ==
 ::
+++  poke-manage                                       ::  add to property
+  |=  a/(list ship)
+  =<  abet
+  ?>  |(=(our src) =([~ src] boss))                   ::  privileged
+  |-
+  ?~  a  .
+  ?+      (clan i.a)  ~|(bad-size+(clan i.a) !!)
+        $duke
+    ?.  (~(has by stars.office) i.a)
+      $(a t.a, stars.office (~(put by stars.office) i.a ~))
+    ~|(already-managing+i.a !!)
+  ::
+        $king
+    ?.  (~(has by planets.office) i.a)
+      $(a t.a, planets.office (~(put by planets.office) i.a ~))
+    ~|(already-managing+i.a !!)
+  ::
+        $czar
+    ?.  (~(has by galaxies.office) i.a)
+      $(a t.a, galaxies.office (~(put by galaxies.office) i.a ~))
+    ~|(already-managing+i.a !!)
+  ==
+::
 ++  email
   |=  {adr/mail msg/tape}  ^+  +>
   :: (emit %poke /invite %gmail %gmail-send adr msg)
