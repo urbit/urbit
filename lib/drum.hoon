@@ -475,7 +475,10 @@
 ++  se-talk  
   |=  tac/(list tank) 
   ^+  +>
-  (se-emit 0 %poke /drum/talk [our %talk] (said:talk our %drum now eny tac))
+  :: XX talk should be usable for stack traces, see urbit#584 which this change
+  :: closed for the problems there
+  ((slog (flop tac)) +>)
+  ::(se-emit 0 %poke /drum/talk [our %talk] (said:talk our %drum now eny tac))
 ::
 ++  se-text                                           ::  return text
   |=  txt/tape

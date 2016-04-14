@@ -18,7 +18,7 @@
       $:  say/sole-share                                ::  command-line state
           dir/beam                                      ::  active path
           poy/(unit dojo-project)                       ::  working
-          {lib/(list hoof) arc/(list hoof)}             ::  lib+sur
+          {lib/(list hoof) sur/(list hoof)}             ::  lib+sur
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
           buf/tape                                      ::  multiline buffer
@@ -154,7 +154,7 @@
       ::
         ;~  pfix  fas 
           ;~  pose
-            (dp-variable (cold %arc hep) ;~(pfix gap dp-hooves))
+            (dp-variable (cold %sur hep) ;~(pfix gap dp-hooves))
             (dp-variable (cold %lib lus) ;~(pfix gap dp-hooves))
           ==
         ==
@@ -429,7 +429,7 @@
         ?+  p.mad  . 
           $?($eny $now $our)  !!
           $lib  .(lib ~)
-          $arc  .(arc ~)
+          $sur  .(sur ~)
           $dir  .(dir [[our.hid %home ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
@@ -443,7 +443,7 @@
           $now  ~|(%time-is-immutable !!)
           $our  ~|(%self-is-immutable !!)
           $lib  .(lib ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
-          $arc  .(arc ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
+          $sur  .(sur ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
           $dir  =+  ^=  pax  ^-  path
                     =+  pax=((dy-cast path !>(*path)) q.cay)
                     ?:  ?=($~ pax)  ~[(scot %p our.hid) %home '0']
@@ -484,7 +484,7 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math) %content-span (moon p.mim))
+        =+  maf=(~(add ja *math) %content-type (moon p.mim))
         (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
       ::
           $show
@@ -757,7 +757,7 @@
       =-  ?~(too - [%cast u.too -])
       :+  %ride  gen
       :-  [%$ dy-twig-head]
-      [%plan he-beam blob+** [zuse arc lib ~ ~]]
+      [%plan he-beam blob+** [zuse sur lib ~ ~]]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex/@ud
