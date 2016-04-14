@@ -1,4 +1,5 @@
 !:  ::  %gall, agent execution  
+
 !?  163
 ::::
 |=  pit/vase
@@ -647,7 +648,11 @@
       ?+  q.p.zem  ((slog leaf+"peek bad result" ~) [~ ~])
         $~              ~
         {$~ $~}         [~ ~]
-        {$~ $~ term *}  ``[+14.q.p.zem (slot 15 p.zem)]
+        {$~ $~ ^}
+          =+  caz=(spec (slot 7 p.zem))
+          ?.  &(?=({p/@ *} q.caz) ((sane %tas) p.q.caz))
+            ((slog leaf+"scry: malformed cage" ~) [~ ~])
+          ``[p.q.caz (slot 3 caz)]
       ==
     ::
     ++  ap-club                                         ::  apply effect
@@ -782,6 +787,7 @@
                (ap-move-pass -.q.vax +<.q.vax cav)
         $diff  (ap-move-diff -.q.vax cav)
         $hiss  (ap-move-hiss -.q.vax cav)
+        $peel  (ap-move-peel -.q.vax cav)
         $peer  (ap-move-peer -.q.vax cav)
         $pull  (ap-move-pull -.q.vax cav)
         $poke  (ap-move-poke -.q.vax cav)
@@ -870,6 +876,22 @@
       :^  %&  sto  %pass
       :-  p.p.yep
       [%send q.p.yep r.p.yep %poke p.q.gaw paw]
+    ::
+    ++  ap-move-peel                                    ::  pass %peel
+      |=  {sto/bone vax/vase}
+      ^-  {(each cove tang) _+>}
+      =^  yep  +>.$  (ap-move-mess vax)
+      :_  +>.$
+      ?:  ?=($| -.yep)  yep
+      =+  mar=((soft mark) +>-.q.vax)
+      ?~  mar
+        [%| (ap-suck "peel: malformed mark")]
+      =+  pux=((soft path) +>+.q.vax)
+      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+        [%| (ap-suck "peel: malformed path")]
+      :^  %&  sto  %pass
+      :-  p.p.yep
+      [%send q.p.yep r.p.yep %peel u.mar u.pux]
     ::
     ++  ap-move-peer                                    ::  pass %peer
       |=  {sto/bone vax/vase}

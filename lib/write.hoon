@@ -3,6 +3,7 @@
 ::::  /hoon/write/lib
   ::
 /?    310
+/-    plan-diff, plan-acct
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
@@ -16,7 +17,7 @@
               {$info wire @p toro}
           ==
 --
-::
+!:
 ::::
   ::
 |=  {bowl part}
@@ -36,6 +37,40 @@
 ++  poke-tree
   |=  {sup/spur mim/mime}  ^+  abet     ::  XX determine extension, beak
   (poke--data [`%md (flop sup)] %mime mim)
+::
+++  poke-plan-account
+  |=  {sev/knot usr/plan-acct}  ^+  abet
+  (poke-plan-diff [~ ~ [[sev usr] ~ ~]])
+::
+++  poke-plan-info
+  |=  {who/@t loc/govt}
+  (poke-plan-diff [[~ who loc] ~ ~])
+::
+++  poke-plan-diff
+  |=  dif/plan-diff  ^+  abet
+  ?.  =(our src)
+    ~|(foreign-write+[our=our src=src] !!)
+  =;  sob/soba
+    ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
+  =+  pax=`path`/web/plan
+  =+  paf=(tope beak-now (flop pax))
+  ?~  [fil:.^(arch %cy paf)]
+    =+  ins=(pact-plan [['' /] ~] dif)
+    [pax %ins plan+!>(ins)]~
+  =+  ole=.^({{@t govt} (map iden plan-acct)} %cx paf)
+  =+  neu=(pact-plan ole dif)
+  ?:  =(ole neu)  ~
+  [pax %dif plan-diff+!>(dif)]~
+::
+++  pact-plan                         :: XX clay should handle fused insert+diff
+  |=  {all/{{who/@t loc/govt} acc/(map iden plan-acct)} dif/plan-diff}
+  ^+  all
+  :-  (fall inf.dif -.all)
+  =;  neu  (~(uni by neu) put.dif)
+  =+  del=(~(tap by del.dif))                           :: XXX map functions
+  |-  ^+  acc.all
+  ?~  del  acc.all
+  $(del t.del, acc.all (~(del by acc.all) p.i.del))
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet

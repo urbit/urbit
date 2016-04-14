@@ -292,7 +292,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Member, a, clas, div, h2, h3, label, pre, recl, ref,
+var Member, a, clas, div, h2, h3, label, pre, recl, ref, yaml,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 clas = require('classnames');
@@ -302,6 +302,26 @@ recl = React.createClass;
 ref = React.DOM, div = ref.div, pre = ref.pre, a = ref.a, label = ref.label, h2 = ref.h2, h3 = ref.h3;
 
 Member = require('./MemberComponent.coffee');
+
+yaml = function(x, pad) {
+  var k, v;
+  if (pad == null) {
+    pad = "";
+  }
+  if ("object" !== typeof x) {
+    return "" + x;
+  } else {
+    return ((function() {
+      var results;
+      results = [];
+      for (k in x) {
+        v = x[k];
+        results.push("\n" + pad + k + ": " + (yaml(v, pad + "  ")));
+      }
+      return results;
+    })()).join('');
+  }
+};
 
 module.exports = recl({
   displayName: "Message",
@@ -339,8 +359,8 @@ module.exports = recl({
     return this.props._handlePm(user);
   },
   renderSpeech: function(arg) {
-    var app, com, exp, fat, lin, mor, tax, url, x;
-    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, com = arg.com;
+    var api, app, com, exp, fat, lin, mor, tax, url, x;
+    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, api = arg.api, com = arg.com;
     switch (false) {
       case !(lin || app || exp || tax):
         return (lin || app || exp || tax).txt;
@@ -361,6 +381,10 @@ module.exports = recl({
         return div({}, this.renderSpeech(fat.taf), div({
           className: "fat"
         }, this.renderTorso(fat.tor)));
+      case !api:
+        return div({}, a({
+          href: api.url
+        }, "[Piped data]"), pre({}, yaml(api)));
       default:
         return "Unknown speech type:" + ((function() {
           var results;
@@ -394,11 +418,13 @@ module.exports = recl({
     }
   },
   classesInSpeech: function(arg) {
-    var app, exp, fat, lin, mor, url;
-    url = arg.url, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
+    var api, app, exp, fat, lin, mor, url;
+    url = arg.url, api = arg.api, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
     switch (false) {
       case !url:
         return "url";
+      case !api:
+        return "api";
       case !exp:
         return "exp";
       case !app:
@@ -590,11 +616,13 @@ module.exports = recl({
     if (this.state.station && this.state.listening.indexOf(this.state.station) === -1) {
       MessageActions.listenStation(this.state.station);
     }
-    $(window).on('scroll', this.checkMore);
+    if (this.props.readOnly == null) {
+      $(window).on('scroll', this.checkMore);
+      window.util.scrollToBottom();
+    }
     this.focused = true;
     $(window).on('blur', this._blur);
-    $(window).on('focus', this._focus);
-    return window.util.scrollToBottom();
+    return $(window).on('focus', this._focus);
   },
   componentWillUpdate: function(props, state) {
     var $window, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, results, sameAs, scrollTop;
@@ -623,7 +651,7 @@ module.exports = recl({
   },
   componentDidUpdate: function(_props, _state) {
     var _messages, d, t;
-    if (this.setOffset) {
+    if (this.setOffset && (this.props.readOnly == null)) {
       $(window).scrollTop(this.setOffset);
       this.setOffset = null;
     }
@@ -657,7 +685,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, lastIndex, lastSaid, messageHeights, messages, ref, station;
+    var _messages, body, lastIndex, lastSaid, messageHeights, messages, ref, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
@@ -696,15 +724,20 @@ module.exports = recl({
         }));
       };
     })(this));
+    if (this.props.readOnly == null) {
+      body = React.createElement(Infinite, {
+        useWindowAsScrollContainer: true,
+        containerHeight: window.innerHeight,
+        elementHeight: messageHeights,
+        key: "messages-infinite"
+      }, _messages);
+    } else {
+      body = _messages;
+    }
     return div({
       className: "grams",
       key: "messages"
-    }, React.createElement(Infinite, {
-      useWindowAsScrollContainer: true,
-      containerHeight: window.innerHeight,
-      elementHeight: messageHeights,
-      key: "messages-infinite"
-    }, _messages));
+    }, body);
   }
 });
 
@@ -1280,6 +1313,9 @@ TreeActions.registerComponent("talk", React.createClass({
     var station;
     require('./utils/util.coffee');
     require('./utils/move.coffee');
+    if (!this.props.readonly) {
+      $(window).on('scroll', window.util.checkScroll);
+    }
     station = this.getStation();
     StationActions.listen();
     StationActions.listenStation(station);
@@ -1958,8 +1994,6 @@ $(window).on('scroll', function(e) {
   ldy = dy;
   return so.ls = so.cs;
 });
-
-$(window).on('scroll', window.util.checkScroll);
 
 
 },{}],16:[function(require,module,exports){

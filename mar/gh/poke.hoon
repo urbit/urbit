@@ -1,6 +1,6 @@
-|_  {method/meth endpoint/path jon/json}
+|_  {method/meth endpoint/(list @t) jon/json}
 ++  grab
   |%
-  ++  noun  {method/meth endpoint/path jon/json}
+  ++  noun  {method/meth endpoint/(list @t) jon/json}
   --
 --
