@@ -514,13 +514,8 @@
     ?^  -  u   :: prefer using references
     =+  (use-reference |+owner.bal)
     ?^  -  u
-    =+  cli=(fall (~(get by hotel) |+owner.bal) *client)
-    |-  ^+  ..poke-claim
-    ?.  =(~ has.cli)
-      =^  who  has.cli  ~(get to has.cli)
-      =+((use-reference &+who) ?^(- u $))
     =.  stars.bal  ~|(%no-stars (dec stars.bal))
-    ..poke-claim(bureau (~(put by bureau) aut bal))
+    +>.$(bureau (~(put by bureau) aut bal))
   ::
       $duke
     =.  planets.bal  ~|(%no-planets (dec planets.bal))
