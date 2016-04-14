@@ -18,10 +18,10 @@
 ::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
 ::  and examples at the bottom of the file.
 ++  aut  (~(standard oauth2 bal tok) . |=(tok/token:oauth2 +>(tok tok)))
-++  out  (out-add-header:aut scope=~ dialog-url)
+++  filter-request  (out-add-header:aut scope=~ dialog-url)
 ::
-++  in   (in-code-to-token:aut exchange-url)
-++  bak  bak-save-token:aut
+++  receive-auth-query-string  (in-code-to-token:aut exchange-url)
+++  receive-auth-response      bak-save-token:aut
 --
 ::  create a developer app on https://www.dropbox.com/developers-v1/apps to get a
 ::  client id and secret.
@@ -30,7 +30,7 @@
 ::  'http://localhost:8443/~/ac/dropboxapi.com/~./in' as the redirect URI.
 ::  (If unable to change port number of ship, change the redirect URI port in %eyre)
 
-::  |init-oauth2 |init-oauth2 /com/instagram
+::  |init-oauth2 |init-oauth2 /com/dropbox
 
 ::  Enter this sample command to show your user info:
 ::  +https://api.dropboxapi.com/2/users/get_current_account &json ~
