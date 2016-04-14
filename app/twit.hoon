@@ -1,6 +1,6 @@
 ::  Twitter daemon
 ::
-::::  /hook/core/twit/app
+::::  /hoon/twit/app
   ::
 /-    plan-acct
 /+    twitter, talk
