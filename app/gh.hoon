@@ -12,7 +12,7 @@
 ::  See the %github app for example usage.
 ::
 /?  314
-/-  gh
+/-  gh, plan-acct
 ::  /ape/gh/split.hoon defines ++split, which splits a request
 ::  at the end of the longest possible endpoint.
 ::
@@ -32,6 +32,7 @@
       $%  {$diff sub-result}
           {$them wire (unit hiss)}
           {$hiss wire {$~ $~} $httr {$hiss hiss}}
+          {$poke wire {ship $hood} $write-plan-account {knot plan-acct}}
       ==
     ++  hook-response
       $%  {$gh-issues issues:gh}
@@ -40,7 +41,10 @@
     --
 ::
 |_  {hid/bowl cnt/@ hook/(map @t {id/@t listeners/(set bone)})}
-++  prep  _`.
+++  prep
+  |=  a/(unit _+<+)  ^-  (quip move +>)
+  ?^  a  [~ +>(+<+ u.a)]
+  (peer-scry %x %read /user)
 ::
 ::  This core manages everything related to a particular request.
 ::
@@ -70,7 +74,7 @@
   ++  send-hiss 
     |=  hiz/hiss
     ^+  +>
-    =+  wir=`wire`[ren (scot %ud cnt) (scot %uv (jam arg)) style pax]
+    =+  wir=`wire`[(scot %ud cnt) ren (pack style arg) pax]
     =+  new-move=[ost.hid %hiss wir `~ %httr [%hiss hiz]]
     ::  ~&  [%sending-hiss new-move]
     +>.$(mow [new-move mow])
@@ -79,7 +83,7 @@
   ::
   ++  scry
     ^+  .
-    ?+  style  ~|(%invalid-style !!)
+    ?+  style  ~|(invalid-style+[style want=p:!>(*?($read $listen))] !!)
       $read     read
       $listen   listen
     ==
@@ -173,11 +177,12 @@
 ::  into poke semantics.
 ::
 ++  poke-gh-poke
-  |=  {method/meth endpoint/path jon/json}
+  |=  {method/meth endpoint/(list @t) jon/json}
   ^-  {(list move) _+>.$}
   :_  +>.$  :_  ~
   :*  ost.hid  %hiss  /poke/[method]  `~  %httr  %hiss 
-      (scan "https://api.github.com{<`path`endpoint>}" auri:epur)
+      ~|  stuff="https://api.github.com{<(path endpoint)>}"
+      (scan "https://api.github.com{<(path endpoint)>}" auri:epur)
       method  ~  `(taco (crip (pojo jon)))
   ==
 ::
@@ -195,69 +200,86 @@
   ::  =-  ~&  [%peered -]  -
   [abet(cnt +(cnt))]:scry:(help i.pax i.t.pax t.t.pax)
 ::
+::  Deconstruct an http request into a json result or error information  
+::
+++  parse-json  
+  |=  res/httr  ^-  (each json {err/term inf/(list {term json})})
+  ?~  r.res
+    [%| %empty-response code+(jone p.res) ~]
+  =+  jon=(rush q.u.r.res apex:poja)
+  ?~  jon
+    [%| %bad-json code+(jone p.res) body+s+q.u.r.res ~]
+  ?.  =(2 (div p.res 100))
+    [%| %request-rejected code+(jone p.res) msg+u.jon ~]
+  [%& u.jon]
+::
+::  Anywhere recieved data should go besides the initiating request
+::
+++  side-effects
+  |=  {pax/path rep/(each json ^)}  ^-  (list move)
+  ?.  ?=($& -.rep)  ~                 ::  XX logging maybe?
+  ?~  pax  ~
+  ?+    -.pax  ~
+      $user
+    =+  =;  jop  usr=(need (jop p.rep))
+        (ot login+so url+(cu some (su aurf:urlp)) ~):jo
+    [ost.hid %poke user+~ [our.hid %hood] %write-plan-account ~.github usr]~
+  ==
+::
 ::  HTTP response.  We make sure the response is good, then
 ::  produce the result (as JSON) to whoever sent the request.
 ::
 ++  sigh-httr
   |=  {way/wire res/httr}
   ^-  {(list move) _+>.$}
-  ?.  ?=({care @ @ @ *} way)
-    ~&  res=res
+  ?.  ?=({@ care @ *} way)
+    ~&  bad-wire+[way res=res]
     [~ +>.$]
-  =+  arg=(path (cue (slav %uv i.t.t.way)))
-  :_  +>.$  :_  ~
+  =+  ^-  {ren/care {syl/term arg/path} pax/path}
+      [i.t.way (need (puck i.t.t.way)) t.t.t.way]
+  :_  +>.$
+  =+  rep=(parse-json res)
+  :_  (side-effects pax rep)
   :+  ost.hid  %diff
-  ?+    i.way  null+~
+  ?+    ren  null+~
       $x
-    ?~  r.res
-      json+(jobe err+s+%empty-response code+(jone p.res) ~)
-    =+  jon=(rush q.u.r.res apex:poja)
-    ?~  jon
-      json+(jobe err+s+%bad-json code+(jone p.res) body+s+q.u.r.res ~)
-    ?.  =(2 (div p.res 100))
-      json+(jobe err+s+%request-rejected code+(jone p.res) msg+u.jon ~)
+    ?.  ?=($& -.rep)
+      json+(jobe err+s+err.p.rep inf.p.rep)
     ::
     ::  Once we know we have good data, we drill into the JSON
     ::  to find the specific piece of data referred to by 'arg'
     ::
     |-  ^-  sub-result
     ?~  arg
-      json+u.jon
-    =+  dir=((om:jo some) u.jon)
+      json+p.rep
+    =+  dir=((om:jo some) p.rep)
     ?~  dir
-      json+(jobe err+s+%json-not-object code+(jone p.res) body+u.jon ~)
+      json+(jobe err+s+%json-not-object code+(jone p.res) body+p.rep ~)
     =+  new-jon=(~(get by u.dir) i.arg)
-    $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
+    $(arg t.arg, p.rep ?~(new-jon ~ u.new-jon))
   ::
       $y
-    ?~  r.res
-      ~&  [err+s+%empty-response code+(jone p.res)]
-      arch+*arch
-    =+  jon=(rush q.u.r.res apex:poja)
-    ?~  jon
-      ~&  [err+s+%bad-json code+(jone p.res) body+s+q.u.r.res]
-      arch+*arch
-    ?.  =(2 (div p.res 100))
-      ~&  [err+s+%request-rejected code+(jone p.res) msg+u.jon]
+    ?.  ?=($& -.rep)
+      ~&  [%scry-gh-y err.p.rep inf.p.rep]
       arch+*arch
     ::
     ::  Once we know we have good data, we drill into the JSON
     ::  to find the specific piece of data referred to by 'arg'
     ::
     |-  ^-  sub-result
-    =+  dir=((om:jo some) u.jon)
+    =+  dir=((om:jo some) p.rep)
     ?~  dir
-      [%arch `(shax (jam u.jon)) ~]
+      [%arch `(shax (jam p.rep)) ~]
     ?~  arg
-      [%arch `(shax (jam u.jon)) (~(run by u.dir) _~)]
+      [%arch `(shax (jam p.rep)) (~(run by u.dir) _~)]
     =+  new-jon=(~(get by u.dir) i.arg)
-    $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
+    $(arg t.arg, p.rep ?~(new-jon ~ u.new-jon))
   ==
 ::
 ++  sigh-tang
   |=  {way/wire tan/tang}
   ^-  {(list move) _+>.$}
-  ((slog >%gh-sigh-tang< tan) `+>.$)
+  ((slog >%gh-sigh-tang way< tan) `+>.$)
 ::
 ::  We can't actually give the response to pretty much anything
 ::  without blocking, so we just block unconditionally.

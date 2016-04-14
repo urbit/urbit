@@ -121,13 +121,30 @@
   |=  a/httr  ^-  {tok/@t sec/@t}
   (grab-quay r.a 'oauth_token' 'oauth_token_secret')
 ::
+++  identity
+  %+  weld
+    ?~(usr "default identity for " "{(trip usr)}@")
+  (trip (join '.' (flop dom)))
+::
+++  check-screen-name
+  |=  a/httr  ^-  ?
+  =+  nam=(grab-quay r.a 'screen_name')
+  ?~  usr  &
+  ?:  =(usr nam)  &
+  =<  |
+  %-  %*(. slog pri 1)
+  (flop p:(mule |.(~|(wrong-user+[req=usr got=nam] !!))))
+::
 ++  check-token-quay
   |=  a/quay  ^+  %&
   =.  a  (sort a aor)
   ?.  ?=({{$'oauth_token' oauth-token/@t} {$'oauth_verifier' @t} $~} a)
     ~|(no-token+a !!)
   ?~  tok
-    ~|(%no-secret-for-token !!)
+    %+  mean-wall  %no-secret-for-token
+    """
+    Attempting to authorize {identity}
+    """
   ?.  =(oauth-token.tok oauth-token.q.i.a)
     ~|  wrong-token+[id=usr q.i.a]
     ~|(%multiple-tokens-unsupported !!)
@@ -233,6 +250,8 @@
     |=  a/httr  ^-  core-move
     ?:  (bad-response p.a)
       [%give a]  :: [%redo ~]  ::  handle 4xx?
+    ?.  (check-screen-name a)
+      [[%redo ~] (handle `token`~)]
     =+  access-token=(grab-token-response a)
     [[%redo ~] (save `token`[%access-token access-token])]
   --

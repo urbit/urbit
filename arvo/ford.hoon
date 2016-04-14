@@ -78,7 +78,7 @@
   $:  nah/duct                                          ::  cause
       {bek/beak kas/silk}                               ::  problem
       keg/(map (pair term beam) cage)                   ::  block results
-      kig/{p/@ud q/(map @ud {van/vane ren/care bem/beam})}  ::  blocks
+      kig/(set (trel vane care beam))                   ::  blocks
   ==                                                    ::
 ++  gagl  (list (pair gage gage))                       ::
 ++  vane  ?($a $b $c $d $e $f $g)                       ::
@@ -192,26 +192,22 @@
     =:  p.tad.bay  +(p.tad.bay)
         dym.bay    (~(put by dym.bay) hen num)
       ==
-    ~(exec zo [num `task`[hen kub ~ 0 ~]])
+    ~(exec zo [num `task`[hen kub ~ ~]])
   ::
   ++  axon                                              ::  take
-    |=  {num/@ud tik/@ud sih/sign}
+    |=  {num/@ud {van/vane ren/care bem/beam} sih/sign}
     ^+  +>
+    ?:  ?=({$unto $quit *} +.sih)
+      +>.$
+    =+  tus=(~(get by q.tad.bay) num)
+    ?~  tus
+      ~&  [%ford-lost van num]
+      +>.$
     ?-    -.+.sih
-        $writ
-      =+  tus=(~(get by q.tad.bay) num)
-      ?~  tus
-        ~&  [%ford-lost num]
-        +>.$
-      (~(resp zo [num u.tus]) tik p.+.sih)
-    ::
+        $writ  (~(resp zo [num u.tus]) [van ren bem] p.+.sih)
         $unto
-      =+  tus=(~(get by q.tad.bay) num)
-      ?~  tus
-        ~&  [%ford-lost num]
-        +>.$
-      ?+  -.p.+.sih  ~|(%ford-strange-unto !!)
-        $diff  (~(resd zo [num u.tus]) tik p.p.+.sih)
+      ?+  -.p.+.sih  ~|(ford-strange-unto+-.p.+.sih !!)
+        $diff  (~(resd zo [num u.tus]) [van ren bem] p.p.+.sih)
         $reap  ?~  p.p.+.sih  +>.$
                ((slog leaf+"ford-reap-fail" u.p.p.+.sih) +>.$)
       ==
@@ -292,49 +288,40 @@
       ==
     ++  camo                                            ::  stop requests
       ^+  .
-      =+  kiz=(~(tap by q.kig) *(list {p/@ud q/{van/vane ren/care bem/beam}}))
+      =+  kiz=(~(tap in kig))
       |-  ^+  +>
       ?~  kiz  +>
-      ?.  ?=($c van.q.i.kiz)  +>
-      %=    $
-          kiz  t.kiz
-          mow
-        :_  mow
-        :-  hen
-        :^    %pass
-            [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) ~]
-          %c
-        [%warp [our p.bem.q.i.kiz] q.bem.q.i.kiz ~]
+      $(kiz t.kiz, mow :_(mow [hen (cancel i.kiz)]))
+    ::
+    ++  cancel                                          ::  stop a request
+      |=  {van/vane ren/care bem/beam}  ^-  (wind note gift)
+      ?+  van  ~|(stub-cancel+van !!)
+        $c  [%pass (camp-wire +<) van [%warp [our p.bem] q.bem ~]]
+        $g  [%pass (camp-wire +<) van [%deal [our p.bem] q.bem [%pull ~]]]
       ==
+    ++  camp-wire                                       ::  encode block
+      |=  {van/vane ren/care bem/beam}  ^-  wire
+      [(scot %p our) (scot %ud num) van ren (tope bem)]
     ::
     ++  camp                                            ::  request a file
       |=  {van/vane ren/care bem/beam}
       ^+  +>
-      ?:  ?=($g van)
-        %=    +>.$
-            kig  [+(p.kig) (~(put by q.kig) p.kig [%g ren bem])]
-            mow
-          :_  mow
-          :-  hen
-          :^    %pass
-              [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
-            %g
-          ~&  >>  [%camping van ren bem]
-          [%deal [our p.bem] q.bem [%peer %scry ren (flop s.bem)]]
+      ~&  >>  [%camping van ren bem]
+      %_    +>.$
+          kig  (~(put in kig) +<)
+          mow
+        :_  mow
+        :-  hen
+        ?+    van  ~&(%camp-stub !!)
+            $g
+          :+  %pass  (camp-wire +<)
+          [%g [%deal [our p.bem] q.bem [%peer %scry ren (flop s.bem)]]]
+        ::
+            $c
+          :+  %pass  (camp-wire +<)
+          [%c [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]]
         ==
-      ?:  ?=($c van)
-        %=    +>.$
-            kig  [+(p.kig) (~(put by q.kig) p.kig [%c ren bem])]
-            mow
-          :_  mow
-          :-  hen
-          :^    %pass
-              [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
-            %c
-          ~&  >>  [%camping van ren bem]
-          [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
-        ==
-      +>.$
+      ==
     ::
     ++  clad                                            ::  hash dependencies
       |*  hoc/(bolt)  ^+  [*@uvH hoc]
@@ -580,7 +567,7 @@
     ::
     ++  exec                                            ::  execute app
       ^+  ..zo
-      ?:  !=(~ q.kig)  ..zo
+      ?:  !=(~ kig)  ..zo
       =+  bot=(make-norm-bek [~ jav.bay deh.bay] kas)
       =^  dep  bot  (clad bot)
       =.  ..exec  (dash p.bot)
@@ -1762,23 +1749,24 @@
       ==
     ::
     ++  resp
-      |=  {tik/@ud rot/riot}
+      |=  {{van/vane ren/care bem/beam} rot/riot}
       ^+  ..zo
-      ?>  (~(has by q.kig) tik)
-      =+  `{van/vane ren/care bem/beam}`(~(got by q.kig) tik)
+      ?>  ?=($c van)
+      =.  kig  (~(del in kig) +<-.$)
       ?~  rot
         =^  dep  deh.bay  (daze ~ deh.bay)              ::  dependencies?
         amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
-      =+  (cat 3 'c' ren)
-      exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
+      =+  (cat 3 van ren)
+      exec(keg (~(put by keg) [- bem] r.u.rot))
     ::
     ++  resd
-      |=  {tik/@ud cag/cage}
+      |=  {{van/vane ren/care bem/beam} cag/cage}
       ^+  ..zo
-      ?>  (~(has by q.kig) tik)
-      =+  `{van/vane ren/care bem/beam}`(~(got by q.kig) tik)
-      =+  (cat 3 'g' ren)
-      exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] cag))
+      ?>  ?=($g van)
+      =.  kig  (~(del in kig) +<-.$)
+      =.  mow  :_(mow [hen (cancel van ren bem)])
+      =+  (cat 3 van ren)
+      exec(keg (~(put by keg) [- bem] cag))
     ::
     ++  syve
       ^-  sley
@@ -1789,6 +1777,9 @@
           %+  biff  +<
           |=  cay/cage  ^-  (unit cage)                
           ?.  -:(nets:wa +.ref `span`p.q.cay)           :: error if bad type
+            ~&  :^  %ford-syve-lost  `path`[tem (tope bem)]
+                  want=;;(span +.ref)
+                have=p.q.cay
             ~
           `cay
       ^-  (unit (unit cage))
@@ -1897,10 +1888,12 @@
     ?^  dep
       =+  bem=(need (tome t.t.tea))
       abet:(~(axun za [our hen [now eny ski] ~] bay) tea u.dep bem q.hin)
-    ?>  ?=({@ $~} t.t.tea)
+    ?>  ?=({@ @ ^} t.t.tea)
     =+  :*  num=(slav %ud i.t.tea)
-            tik=(slav %ud i.t.t.tea)
+            van=((hard vane) i.t.t.tea)
+            ren=((hard care) i.t.t.t.tea)
+            bem=(need (tome t.t.t.t.tea))
         ==
-    abet:(~(axon za [our hen [now eny ski] ~] bay) num tik q.hin)
+    abet:(~(axon za [our hen [now eny ski] ~] bay) num [van ren bem] q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --

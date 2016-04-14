@@ -9,7 +9,7 @@
 ::::
   ::
 [. ^talk]
-|%
+|_  bol/bowl
 ++  main                                                ::  main story
   |=  our/ship  ^-  cord
   =+  can=(clan our)
@@ -17,6 +17,18 @@
     $czar  %court
     $king  %floor
   == 
+::
+++  said-url                                            ::  app url
+  |=  url/purl
+  :^  ost.bol  %poke  /said-url
+  :+  [our.bol %talk]  %talk-command
+  ^-  command
+  :-  %publish
+  :_  ~
+  ^-  thought
+  :+  (shaf %thot eny.bol)
+    [[[%& our.bol (main our.bol)] [*envelope %pending]] ~ ~]
+  [now.bol *bouquet [%app dap.bol (crip (earn url))]]   :: XX
 ::
 ++  said                                                ::  app message
   |=  {our/@p dap/term now/@da eny/@uvI mes/(list tank)}

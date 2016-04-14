@@ -6,5 +6,5 @@
 !:
 |_  {bal/(bale keys:basic-auth) $~}
 ++  aut  ~(standard basic-auth bal ~)
-++  out  out-adding-header:aut
+++  filter-request  out-adding-header:aut
 --

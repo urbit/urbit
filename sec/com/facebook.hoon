@@ -21,14 +21,14 @@
   %+  ~(standard oauth2 bal access-token)  .
   |=(access-token/token:oauth2 +>(access-token access-token))
 ::
-++  out
+++  filter-request
   %^  out-add-query-param:aut  'access_token'
     scope=~['user_about_me' 'user_posts']
   dialog-url
 ::
-++  in  (in-code-to-token:aut exchange-url)
+++  receive-auth-query-string  (in-code-to-token:aut exchange-url)
 ::
-++  bak
+++  receive-auth-response
   |=  a/httr  ^-  core-move:aut
   ?:  (bad-response:aut p.a)
     [%give a]  :: [%redo ~]  ::  handle 4xx?

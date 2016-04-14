@@ -44,12 +44,12 @@
   =+  a=~(standard-refreshing oauth2 bal ber.own)
   (a(state-usr &) ..auth ref.own |=(a/user-state ..auth(own a)))
 ::
-++  out  (out-refresh-or-add-header:auth exchange-url scopes dialog-url)
+++  filter-request  (out-refresh-or-add-header:auth exchange-url scopes dialog-url)
 ++  dialog-url  (auth-usr usr.bal)
 ::
-++  res  res-save-after-refresh:auth
+++  filter-response  res-save-after-refresh:auth
 ::
-++  in   (in-code-to-token:auth exchange-url)
-++  bak  bak-save-both-tokens:auth
-:: ++  upd  *user-state
+++  receive-auth-query-string  (in-code-to-token:auth exchange-url)
+++  receive-auth-response      bak-save-both-tokens:auth
+:: ++  update  *user-state
 --
