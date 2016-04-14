@@ -114,6 +114,7 @@
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port
         c3_o             sec;               //  logically secure
+        c3_o             lop;               //  loopback-only
         struct _u3_hcon* hon_u;             //  connection list
         struct _u3_http* nex_u;             //  next in list
       } u3_http;

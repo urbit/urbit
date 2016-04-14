@@ -124,6 +124,10 @@ three packages, at least with Homebrew. Your mileage may vary.
 
     pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
 
+#### Archlinux
+
+    pacman -S gcc gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool ncurses
+
 ### Download and make
 
 Clone the repo:
