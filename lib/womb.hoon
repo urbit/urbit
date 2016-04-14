@@ -309,7 +309,7 @@
   =+  (~(get by stars.office) who)
   ?^  -  u
   =+  gal=(get-managed-galaxy (sein who))
-  ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
+  ?.  ?=({$~ $& *} gal)  ~|(unavailable-star+(sein who) !!)
   (fall (~(get by box.r.p.u.gal) (neis who)) ~)
 ::
 ++  mod-managed-star                                  ::  office write
@@ -431,11 +431,41 @@
     $invite  (peek-x-invite +.tyl)
   ==
 ::
+++  email
+  |=  {adr/mail msg/tape}
+  :: (emit %poke /invite %gmail %gmail-send adr msg)
+  ~&([%email-stub adr msg] .)
+::
 ++  poke-invite                                       ::  create invitation
   |=  {ref/reference inv/invite}
   =<  abet
+  =+  ~:ref                                           :: XX deal with reference?
+  (invite-from ~ inv)
+::
+++  invite-from                                       ::  historical invitation
+  |=  {hiz/(list mail) inv/invite}  ^+  +>
   ?>  |(=(our src) =([~ src] boss))                   ::  me or boss
-  .
+  =+  pas=`passcode`(shaf %pass eny)
+  =.  hotel  
+    ?:  (~(has by hotel) who.inv)  !!                 :: legitimate?
+    (~(put by hotel) who.inv sta.inv ~)
+  =.  bureau
+    :: ?<  (~(has by bureau) pas)                     :: somewhat unlikely
+    (~(put by bureau) pas [pla.inv sta.inv who.inv ~])
+  =+  ~:ref                                           :: XX deal with reference?
+  (email who.inv "{intro.wel.inv}: {<pas>}")
+::
+:: ++  coup-invite                                      ::  invite sent
+::
+++  poke-reinvite                                     ::  split invitation
+  |=  {aut/passcode inv/invite}                       ::  further invite
+  ?>  =(src src)                                      ::
+  =<  abet
+  =+  bal=(~(got by bureau) aut)
+  =.  stars.bal  (sub stars.bal sta.inv)
+  =.  planets.bal  (sub planets.bal pla.inv)
+  =.  bureau  (~(put by bureau) aut bal)
+  (invite-from [owner.bal history.bal] inv)
 ::
 ++  poke-obey                                         ::  set/reset boss
   |=  who/(unit @p)
@@ -456,10 +486,46 @@
   .
 ::
 ++  poke-claim                                        ::  claim plot, send ticket
-  |=  {aut/@uvH her/@p}                               ::
+  |=  {aut/passcode her/@p}
   =<  abet
   ?>  =(src src)
-  .
+  =+  bal=(~(got by bureau) aut)
+  =+  tik=(shaf %tick eny)
+  =;  con  
+    :: =.  emit  (emit /tick %tick tik her)
+    (email:con owner.bal "Ticket for {<her>}: {<`@pG`tik>}")
+  ?+    (clan her)  ~|(bad-size+(clan her) !!)
+      $king
+    =.  stars.bal  ~|(%no-stars (dec stars.bal))
+    =.  bureau  (~(put by bureau) aut bal)
+    (claim-star owner.bal her)
+  ::
+      $duke
+    =.  planets.bal  ~|(%no-planets (dec planets.bal))
+    =.  bureau  (~(put by bureau) aut bal)
+    (claim-planet owner.bal her)
+  ==
+::
+++  claim-star                                        ::  register
+  |=  {who/mail her/@p}  ^+  +>
+  =.  hotel
+    %+  ~(put by hotel)  who
+    =+((~(got by hotel) who) -(sta (dec sta)))        ::  error handling?
+  %+  mod-managed-star  her
+  |=  a/star  ^-  star
+  ?^  a  ~|(impure-star+[her a] !!)
+  (some %| who)
+::
+++  claim-planet                                      ::  register
+  |=  {who/mail her/@p}  ^+  +>
+  =.  hotel
+    %+  ~(put by hotel)  who
+    =+  cli=(~(got by hotel) who)                     ::  error handling?
+    cli(has (~(put in has.cli) her))
+  %+  mod-managed-planet  her
+  |=  a/planet  ^-  planet
+  ?^  a  ~|(impure-planet+[her a] !!)
+  (some %| who)
 ::
 ++  poke-release                                      ::  release to subdivide
   |=  {gal/@ud sta/@ud}                               ::
@@ -496,12 +562,4 @@
   ~&  release+who
   ?^  sta  ~|(already-used+[who u.sta] !!)
   (some %& (fo-init 4) (fo-init 3))
-::
-++  poke-reinvite                                     ::  split invitation
-  |=  $:  aut/@uvH                                    ::  hash w/passcode
-          inv/invite                                  ::  further invite
-      ==
-  ?>  =(src src)                                      ::
-  =<  abet
-  .
 --
