@@ -85,6 +85,7 @@
 ++  reference                                           ::  affiliate credit
   (unit (each @p mail))                                 ::  ship or email
 ::                                                      ::
+++  reference-rate  2                                   ::  star refs per star
 ++  stat                                                ::  external info
   $%  {$free $~}                                        ::  unallocated
       {$owned mail}                                     ::  granted
@@ -100,7 +101,7 @@
   $:  boss/(unit @p)                                    ::  outside master
       bureau/(map passcode balance)                     ::  active invitations
       office/property                                   ::  properties managed
-      hotel/(map mail client)                           ::  everyone we know
+      hotel/(map (each @p mail) client)                 ::  everyone we know
   ==                                                    ::
 --                                                      ::
 ::                                                      ::  ::
@@ -440,16 +441,18 @@
 ++  poke-invite                                       ::  create invitation
   |=  {ref/reference inv/invite}
   =<  abet
-  =+  ~:ref                                           :: XX deal with reference?
+  =.  hotel
+    ?~  ref  hotel
+    ?~  sta.inv  hotel
+    %+  ~(put by hotel)  u.ref
+    =+  cli=(fall (~(get by hotel) u.ref) *client)
+    cli(sta +(sta.cli))
   (invite-from ~ inv)
 ::
-++  invite-from                                       ::  historical invitation
+++  invite-from                                       ::  traced invitation
   |=  {hiz/(list mail) inv/invite}  ^+  +>
   ?>  |(=(our src) =([~ src] boss))                   ::  me or boss
   =+  pas=`passcode`(shaf %pass eny)
-  =.  hotel  
-    ?:  (~(has by hotel) who.inv)  !!                 :: legitimate?
-    (~(put by hotel) who.inv [sta.inv ~])
   =.  bureau
     :: ?<  (~(has by bureau) pas)                     :: somewhat unlikely
     (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
@@ -461,7 +464,7 @@
   |=  {aut/passcode inv/invite}                       ::  further invite
   ?>  =(src src)                                      ::
   =<  abet
-  =+  bal=(~(got by bureau) aut)
+  =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
   =.  stars.bal  (sub stars.bal sta.inv)
   =.  planets.bal  (sub planets.bal pla.inv)
   =.  bureau  (~(put by bureau) aut bal)
@@ -486,20 +489,38 @@
   ?>  =(src src)                                      ::  self-authenticated
   (emit %knew /report her wyl)
 ::
+++  use-reference
+  |=  a/(each @p mail)  ^-  (unit _+>)
+  ?.  (~(has by hotel) a)  ~
+  =+  cli=(~(get by hotel) a)
+  ?~  cli  ~
+  ?.  (gte sta.u.cli reference-rate)  ~
+  =.  sta.u.cli  (sub sta.u.cli reference-rate)
+  `+>.$(hotel (~(put by hotel) a u.cli))
+::
 ++  poke-claim                                        ::  claim plot, send ticket
   |=  {aut/passcode her/@p}
   =<  abet
   ?>  =(src src)
-  =+  bal=(~(got by bureau) aut)
+  =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
   =+  tik=(shaf %tick eny)
   =;  con  
     :: =.  emit  (emit /tick %tick tik her)
     (email:con owner.bal "Ticket for {<her>}: {<`@pG`tik>}")
   ?+    (clan her)  ~|(bad-size+(clan her) !!)
       $king
+    =;  con  (claim-star:con owner.bal her)
+    =+  (use-reference &+src)
+    ?^  -  u   :: prefer using references
+    =+  (use-reference |+owner.bal)
+    ?^  -  u
+    =+  cli=(fall (~(get by hotel) |+owner.bal) *client)
+    |-  ^+  ..poke-claim
+    ?.  =(~ has.cli)
+      =^  who  has.cli  ~(get to has.cli)
+      =+((use-reference &+who) ?^(- u $))
     =.  stars.bal  ~|(%no-stars (dec stars.bal))
-    =.  bureau  (~(put by bureau) aut bal)
-    (claim-star owner.bal her)
+    ..poke-claim(bureau (~(put by bureau) aut bal))
   ::
       $duke
     =.  planets.bal  ~|(%no-planets (dec planets.bal))
@@ -509,9 +530,6 @@
 ::
 ++  claim-star                                        ::  register
   |=  {who/mail her/@p}  ^+  +>
-  =.  hotel
-    %+  ~(put by hotel)  who
-    =+((~(got by hotel) who) -(sta (dec sta)))        ::  error handling?
   %+  mod-managed-star  her
   |=  a/star  ^-  star
   ?^  a  ~|(impure-star+[her a] !!)
@@ -520,8 +538,8 @@
 ++  claim-planet                                      ::  register
   |=  {who/mail her/@p}  ^+  +>
   =.  hotel
-    %+  ~(put by hotel)  who
-    =+  cli=(~(got by hotel) who)                     ::  error handling?
+    %+  ~(put by hotel)  |+who
+    =+  cli=(fall (~(get by hotel) |+who) *client)
     cli(has (~(put in has.cli) her))
   %+  mod-managed-planet  her
   |=  a/planet  ^-  planet
