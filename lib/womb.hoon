@@ -109,10 +109,11 @@
 |%                                                      ::  arvo structures
 ++  card                                                ::
   $%  {$flog wire flog}                                 ::
-      ::{$wait $~}
-      :: {$poke
-      {$next p/ring}                                    ::  update private key
-      {$tick p/@pG q/@p}                                ::  save ticket
+      :: {$wait $~}                                        :: delay acknowledgment
+      :: {$poke wire {ship %gmail} {%gmail-send mail tape}}:: send email
+      {$next wire p/ring}                               ::  update private key
+      {$tick wire p/@pG q/@p}                           ::  save ticket
+      {$knew wire p/ship q/will}                        ::  learn will (old pki)
   ==                                                    ::
 ++  move  (pair bone card)                              ::  user-level move
 --
@@ -432,9 +433,9 @@
   ==
 ::
 ++  email
-  |=  {adr/mail msg/tape}
+  |=  {adr/mail msg/tape}  ^+  +>
   :: (emit %poke /invite %gmail %gmail-send adr msg)
-  ~&([%email-stub adr msg] .)
+  ~&([%email-stub adr msg] +>)
 ::
 ++  poke-invite                                       ::  create invitation
   |=  {ref/reference inv/invite}
@@ -448,11 +449,10 @@
   =+  pas=`passcode`(shaf %pass eny)
   =.  hotel  
     ?:  (~(has by hotel) who.inv)  !!                 :: legitimate?
-    (~(put by hotel) who.inv sta.inv ~)
+    (~(put by hotel) who.inv [sta.inv ~])
   =.  bureau
     :: ?<  (~(has by bureau) pas)                     :: somewhat unlikely
-    (~(put by bureau) pas [pla.inv sta.inv who.inv ~])
-  =+  ~:ref                                           :: XX deal with reference?
+    (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
   (email who.inv "{intro.wel.inv}: {<pas>}")
 ::
 :: ++  coup-invite                                      ::  invite sent
@@ -471,19 +471,20 @@
   |=  who/(unit @p)
   =<  abet
   ?>  =(our src)                                      ::  me only
-  .
+  .(boss who)
 ::
 ++  poke-rekey                                        ::  extend will
   |=  $~
   =<  abet
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
-  .
+  ::  (emit /rekey %next sec:ex:(brew 128 (shas %next eny)))
+  ~&(rekey-stub+sec:ex:(brew 128 (shas %next eny)) .)
 ::
 ++  poke-report                                       ::  report will
   |=  {her/@p wyl/will}                               ::
   =<  abet
   ?>  =(src src)                                      ::  self-authenticated
-  .
+  (emit %knew /report her wyl)
 ::
 ++  poke-claim                                        ::  claim plot, send ticket
   |=  {aut/passcode her/@p}
