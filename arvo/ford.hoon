@@ -156,7 +156,7 @@
   (rap 3 |-([i.a ?~(t.a ~ ['-' $(a t.a)])]))
 ::
 ++  tear                                                ::  split term
-  =-  |=(a/term (rush a (most hep sym)))
+  =-  |=(a/term `(list term)`(rash a (most hep sym)))
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
 ::
 ++  za                                                  ::  per event
@@ -608,21 +608,37 @@
       ~/  %fame
       |=  {cof/cafe bem/beam}
       ^-  (bolt beam)
-      %+  cope  
-        ?~  s.bem  (flue cof)
-        =+  opt=`(list term)`(fall (tear i.s.bem) ~)
-        ?~  opt  (flue cof)
-        |-  ^-  (bolt (unit beam))
-        =.  i.s.bem  (tack opt)
+      =^  pax  bem  [(flop s.bem) bem(s ~)]
+      |^  (cope opts (flux |=(a/(unit beam) (fall a bem))))
+      ::
+      ++  opts                                          ::  search unless done
+        ^-  (bolt (unit beam))
+        ?^  pax  (wide(pax t.pax) (tear i.pax))
         %+  cope  (lima cof %hoon bem)
-        |=  {cof/cafe vax/(unit vase)}  ^-  (bolt (unit beam))
-        ?^  vax  (fine cof `bem)
-        ?~  t.opt  (flue cof)
-        %+  cope  ^$(opt t.opt, t.s.bem :_(t.s.bem i.opt), cof cof)
-        |=  {cof/cafe bem/(unit beam)}  ^-  (bolt (unit beam))
-        ?^  bem  (fine cof bem)
-        ^$(opt :_(t.t.opt (tack i.opt i.t.opt ~)), cof cof)
-      (flux |=(a/(unit beam) (fall a bem)))
+        (flux |=(a/(unit vase) ?~(a ~ `bem)))
+      ::
+      ++  wide                                          ::  match segments
+        |=  sub/(list term)  ^-  (bolt (unit beam))
+        ?:  =(~ sub)  opts
+        =-  (cope - flat)
+        %^  lash  cof  bem
+        |=  {cof/cafe dir/knot}  ^-  (bolt (unit beam))
+        =+  sus=(tear dir)
+        ?.  =(sus (scag (lent sus) sub))
+          (flue cof)
+        %_  ^$
+          cof  cof
+          sub   (slag (lent sus) sub)
+          s.bem  [dir s.bem]
+        ==
+      ::
+      ++  flat                                          ::  at most one
+        |=  {cof/cafe opt/(map term beam)}  ^-  (bolt (unit beam))
+        ?~  opt  (flue cof)
+        ?:  ?=({^ $~ $~} opt)  (fine cof `q.n.opt)
+        =+  all=(~(run by `(map term beam)`opt) tope)
+        (flaw cof leaf+"fame: fork {<all>}" ~)
+      --
     ::
     ++  fang                                            ::  protocol door
       |=  {cof/cafe for/mark}  ^-  (bolt vase)
