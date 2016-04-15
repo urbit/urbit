@@ -111,7 +111,8 @@
 ++  card                                                ::
   $%  {$flog wire flog}                                 ::
       :: {$wait $~}                                        :: delay acknowledgment
-      :: {$poke wire {ship %gmail} {%gmail-send mail tape}}:: send email
+      :: {$poke wire {ship $gmail} {$gmail-send mail tape}}:: send email
+      {$poke wire {ship $hood} {$womb-do-claim mail @p}}::  issue ship
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
       {$knew wire p/ship q/will}                        ::  learn will (old pki)
@@ -474,7 +475,7 @@
 ::
 ++  invite-from                                       ::  traced invitation
   |=  {hiz/(list mail) inv/invite}  ^+  +>
-  ?>  |(=(our src) =([~ src] boss))                   ::  me or boss
+  ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
   =+  pas=`passcode`(shaf %pass eny)
   =.  bureau
     :: ?<  (~(has by bureau) pas)                     :: somewhat unlikely
@@ -521,18 +522,25 @@
   =.  sta.u.cli  (sub sta.u.cli reference-rate)
   `+>.$(hotel (~(put by hotel) a u.cli))
 ::
-++  poke-claim                                        ::  claim plot, send ticket
+++  poke-do-claim                                     ::  issue child ticket
+  |=  {who/mail her/@p}
+  =<  abet
+  ?>  =(our (sein her))
+  ?>  |(=(our src) =([~ src] boss))                   ::  privileged
+  =+  tik=.^(@p %a /(scot %p our)/tick/(scot %da now)/(scot %p her))
+  :: =.  emit  (emit /tick %tick tik her)
+  (email who "Ticket for {<her>}: {<`@pG`tik>}")
+::
+++  poke-claim                                        ::  claim plot, req ticket
   |=  {aut/passcode her/@p}
   =<  abet
   ?>  =(src src)
   =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
-  =+  tik=(shaf %tick eny)
-  =;  con  
-    :: =.  emit  (emit /tick %tick tik her)
-    (email:con owner.bal "Ticket for {<her>}: {<`@pG`tik>}")
+  =;  claimed
+    (emit.claimed %poke /tick [(sein her) %hood] [%womb-do-claim owner.bal her])
   ?+    (clan her)  ~|(bad-size+(clan her) !!)
       $king
-    =;  con  (claim-star:con owner.bal her)
+    =;  all  (claim-star.all owner.bal her)
     =+  (use-reference &+src)
     ?^  -  u   :: prefer using references
     =+  (use-reference |+owner.bal)

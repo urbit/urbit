@@ -138,6 +138,7 @@
 ++  poke-womb-invite          (wrap poke-invite):from-womb
 ++  poke-womb-obey            (wrap poke-obey):from-womb
 ++  poke-womb-claim           (wrap poke-claim):from-womb
+++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
 ++  poke-womb-rekey           (wrap poke-rekey):from-womb
 ++  poke-womb-report          (wrap poke-report):from-womb
 ++  poke-womb-manage          (wrap poke-manage):from-womb
