@@ -111,11 +111,14 @@
 ++  card                                                ::
   $%  {$flog wire flog}                                 ::
       :: {$wait $~}                                        :: delay acknowledgment
-      :: {$poke wire {ship $gmail} {$gmail-send mail tape}}:: send email
-      {$poke wire {ship $hood} {$womb-do-claim mail @p}}::  issue ship
+      {$poke wire pear}                                 ::  app RPC
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
       {$knew wire p/ship q/will}                        ::  learn will (old pki)
+  ==                                                    ::
+++  pear                                                ::
+  $?  {{ship $gmail} {$email mail tape}}                :: send email
+      {{ship $hood} {$womb-do-claim mail @p}}           ::  issue ship
   ==                                                    ::
 ++  move  (pair bone card)                              ::  user-level move
 --
@@ -458,9 +461,9 @@
   ==
 ::
 ++  email
-  |=  {adr/mail msg/tape}  ^+  +>
-  :: (emit %poke /invite %gmail %gmail-send adr msg)
-  ~&([%email-stub adr msg] +>)
+  |=  {wir/wire adr/mail msg/tape}  ^+  +>
+  ::  (emit %poke [%mail wir] [our %gmail] %email adr msg)
+  ~&([%email-stub wir adr msg] +>)
 ::
 ++  poke-invite                                       ::  create invitation
   |=  {ref/reference inv/invite}
@@ -480,7 +483,7 @@
   =.  bureau
     :: ?<  (~(has by bureau) pas)                     :: somewhat unlikely
     (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
-  (email who.inv "{intro.wel.inv}: {<pas>}")
+  (email /invite who.inv "{intro.wel.inv}: {<pas>}")
 ::
 :: ++  coup-invite                                      ::  invite sent
 ::
@@ -529,7 +532,7 @@
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   =+  tik=.^(@p %a /(scot %p our)/tick/(scot %da now)/(scot %p her))
   :: =.  emit  (emit /tick %tick tik her)
-  (email who "Ticket for {<her>}: {<`@pG`tik>}")
+  (email /ticket who "Ticket for {<her>}: {<`@pG`tik>}")
 ::
 ++  poke-claim                                        ::  claim plot, req ticket
   |=  {aut/passcode her/@p}
