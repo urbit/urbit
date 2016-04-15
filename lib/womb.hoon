@@ -150,7 +150,7 @@
   |*(d/{@u *} [(rep a b -.d ~) +.d])
 ::
 ++  cursor  (pair (unit ship) @u)
-++  neis  |=(a/ship ^-(@u (rsh (dec (xeb (xeb a))) 1 a)))  ::  postfix
+++  neis  |=(a/ship ^-(@u (rsh (dec (xeb (dec (xeb a)))) 1 a)))  ::  postfix
 ::
 ::  Create new foil of size
 ++  fo-init
@@ -462,8 +462,8 @@
 ::
 ++  email
   |=  {wir/wire adr/mail msg/tape}  ^+  +>
-  ::  (emit %poke [%mail wir] [our %gmail] %email adr msg)
-  ~&([%email-stub wir adr msg] +>)
+  (emit %poke [%mail wir] [our %gmail] %email adr msg)
+  ::~&([%email-stub adr msg] +>)
 ::
 ++  poke-invite                                       ::  create invitation
   |=  {ref/reference inv/invite}
