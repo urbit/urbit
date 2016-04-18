@@ -110,6 +110,7 @@
 |%                                                      ::  arvo structures
 ++  card                                                ::
   $%  {$flog wire flog}                                 ::
+      {$info wire @p @tas nori}                         ::  fs write (backup)
       :: {$wait $~}                                        :: delay acknowledgment
       {$poke wire pear}                                 ::  app RPC
       {$next wire p/ring}                               ::  update private key
@@ -502,6 +503,11 @@
   =<  abet
   ?>  =(our src)                                      ::  me only
   .(boss who)
+::
+++  poke-save                                         ::  write backup
+  |=  pax/path
+  =<  abet
+  (emit %info /backup [our (foal pax [%womb-part !>(`part`+:abet)])]) 
 ::
 ++  poke-rekey                                        ::  extend will
   |=  $~

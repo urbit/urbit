@@ -72,6 +72,12 @@
   ~?  ?=(^ saw)  [%kiln-overload-lame u.saw]
   [~ +>]
 ::
+++  poke-hood-load
+  |=  dat/hood-part
+  ?>  =(our src)
+  ~&  loaded+-.dat
+  [~ %_(+> lac (~(put by lac) -.dat dat))]
+::
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
@@ -136,6 +142,7 @@
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
 ++  poke-womb-invite          (wrap poke-invite):from-womb
+++  poke-womb-save            (wrap poke-save):from-womb
 ++  poke-womb-obey            (wrap poke-obey):from-womb
 ++  poke-womb-claim           (wrap poke-claim):from-womb
 ++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
