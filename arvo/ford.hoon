@@ -950,17 +950,17 @@
       |=  {cof/cafe cay/cage}
       ?.  =(for p.cay)
         (flaw cof leaf+"unexpected mark {<p.cay>}" ~)
-      ((lake for) cof q.cay)
+      ((lake | for) cof q.cay)
     ::
     ++  lake                                            ::  check+coerce
-      |=  for/mark
+      |=  {fit/? for/mark}
       |=  {cof/cafe sam/vase}
       ^-  (bolt vase)
       %+  cool  |.(leaf+"ford: check {<[for bek `@p`(mug q.sam)]>}")
       ?:  ?=($hoon for)
         =+  mas=((soft @t) q.sam)
         ?~  mas
-          (flaw cof [leaf+"ford: bad hoon: {<[for bek]>}"]~)
+          (flaw cof [leaf+"ford: bad hoon"]~)
         (fine cof [%atom %t ~] u.mas)
       %+  cope  (fang cof for)
       |=  {cof/cafe tux/vase}
@@ -968,6 +968,7 @@
       =.  typ  ?+(-.typ typ $face q.typ)
       ?:  (~(nest ut typ) | p.sam)
         (fine cof typ q.sam)
+      ?.  fit  (flaw cof [%leaf "ford: invalid type: {<p.sam>}"]~)
       ?.  (slob %grab p.tux)
         (flaw cof [%leaf "ford: no grab: {<[for bek]>}"]~)
       =+  gab=(slap tux [%limb %grab])
@@ -987,11 +988,6 @@
       =+  von=(syve [151 %noun] ~ %cw bem(s ~))
       ?~  von  [p=cof q=[%1 [%c %w bem ~] ~ ~]]
       (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
-    ::
-    ++  lave                                            ::  validate
-      |=  {cof/cafe for/mark som/*}
-      ^-  (bolt vase)
-      ((lake for) cof [%noun som])
     ::
     ++  lane                                            ::  span infer
       |=  {cof/cafe typ/span gen/twig}
@@ -1091,7 +1087,7 @@
       :: %+  cool   |.(leaf+"ford: link {<too>} {<for>} {<p.vax>}")
       ?:  =(too for)  (fine cof vax)
       ?:  |(=(%noun for) =(%$ for))
-        ((lake too) cof vax)
+        ((lake & too) cof vax)
       %+  cope  (fang cof for)
       |=  {cof/cafe pro/vase}  ^-  (bolt vase)
       ?:  :: =<  $  ~%  %limb-grow  link-jet  ~  |.
@@ -1352,7 +1348,7 @@
       ::
           $vale  
         %+  cool  |.(leaf+"ford: vale {<p.kas>} {<`@p`(mug q.kas)>}")
-        %+  cope  (lave cof p.kas q.kas)
+        %+  cope  ((lake & p.kas) cof [%noun q.kas])
         (flux |=(vax/vase `gage`[%& p.kas vax]))
       ::
           $volt
@@ -1605,7 +1601,7 @@
           %+  cope  (fade cof %hoon how)
           |=  {cof/cafe hyd/hood}
           %+  cope  (abut:(meow how arg) cof hyd) 
-          ;~(cope (lake q.hon) (flux |=(a/vase [q.hon a])))
+          ;~(cope (lake | q.hon) (flux |=(a/vase [q.hon a])))
         ==
       ::
       ++  head                                          ::  consume structures
