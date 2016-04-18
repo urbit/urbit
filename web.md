@@ -2,6 +2,7 @@
 container: false
 layout: plan
 anchor: none
+title: Home - Urbit
 ---
 
 <div class="above">

@@ -102,7 +102,9 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":22,"../persistence/TreePersistence.coffee":24}],2:[function(require,module,exports){
-var TreeActions, TreeStore, _load, code, div, recl, ref, span;
+var TreeActions, TreeStore, _load, code, div, fragsrc, recl, ref, span, util;
+
+util = require('../utils/util.coffee');
 
 _load = require('./LoadComponent.coffee');
 
@@ -113,6 +115,16 @@ TreeActions = require('../actions/TreeActions.coffee');
 recl = React.createClass;
 
 ref = React.DOM, div = ref.div, span = ref.span, code = ref.code;
+
+fragsrc = function(src, basePath) {
+  var base, pathname;
+  if (src != null) {
+    base = new URL(document.location);
+    base.pathname = util.basepath(basePath);
+    pathname = new URL(src, base).pathname;
+    return util.fragpath(pathname);
+  }
+};
 
 module.exports = function(queries, Child, load) {
   if (load == null) {
@@ -129,8 +141,12 @@ module.exports = function(queries, Child, load) {
       }
     },
     getPath: function() {
-      var path, ref1;
-      path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      var base, path, ref1, ref2;
+      path = this.props.dataPath;
+      base = (ref1 = this.props.basePath) != null ? ref1 : TreeStore.getCurr();
+      if (path == null) {
+        path = (ref2 = fragsrc(this.props.src, base)) != null ? ref2 : base;
+      }
       if (path.slice(-1) === "/") {
         return path.slice(0, -1);
       } else {
@@ -255,7 +271,7 @@ module.exports = function(queries, Child, load) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":25,"./LoadComponent.coffee":11}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":25,"../utils/util.coffee":27,"./LoadComponent.coffee":11}],3:[function(require,module,exports){
 var Comments, TreeActions, TreeStore, a, clas, div, extras, h1, h3, img, input, load, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
@@ -811,12 +827,13 @@ ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, hr = ref.hr
 module.exports = query({
   kids: {
     body: 'r',
-    meta: 'j'
+    meta: 'j',
+    path: 't'
   }
 }, recl({
   displayName: "Kids",
   render: function() {
-    var _k, d, elem, k, keyed, keys, kidClas, kidsClas, ref1, ref2, ref3, ref4, sorted, str, v;
+    var _k, body, d, elem, k, keyed, keys, kidClas, kidsClas, ref1, ref2, ref3, ref4, sorted, str, v;
     sorted = true;
     keyed = {};
     ref1 = this.props.kids;
@@ -869,12 +886,15 @@ module.exports = query({
       for (i = 0, len = keys.length; i < len; i++) {
         k = keys[i];
         elem = (ref5 = this.props.kids[keyed[k]]) != null ? ref5 : "";
+        body = reactify(elem.body, k, {
+          basePath: elem.path
+        });
         results.push([
           div({
             key: keyed[k],
             id: keyed[k],
             className: kidClas
-          }, reactify(elem.body)), hr({})
+          }, body), hr({})
         ]);
       }
       return results;
@@ -1692,7 +1712,7 @@ module.exports = query({
       className: "mono"
     }, "~" + urb.ship), (who != null) || this.state.edit ? h6({}, editable('who', who, "Sun Tzu")) : void 0, Grid({
       className: "grid"
-    }, ["Location:", editable('loc', loc, "94107/usa")], ["Issued by:", issuedBy], [
+    }, ["Location:", editable('loc', loc, "Unknown")], ["Issued by:", issuedBy], [
       "Immutable link:", a({
         href: beak + "/web" + path
       }, beak)
@@ -1775,26 +1795,34 @@ Virtual = recl({
     return TreeStore.removeChangeListener(this._onChangeStore);
   },
   render: function() {
-    var components;
+    var basePath, components;
     components = this.state.components;
+    basePath = this.props.basePath;
     return walk(this.props.manx, function() {
       return load({}, "");
     }, function(str) {
       return str;
     }, function(arg, key) {
-      var c, ga, gn, ref1;
+      var c, ga, gn, props, ref1;
       gn = arg.gn, ga = arg.ga, c = arg.c;
-      return rele((ref1 = components[gn]) != null ? ref1 : gn, _.extend({
+      props = {
         key: key
-      }, ga), c.length ? c : void 0);
+      };
+      if (components[gn]) {
+        props.basePath = basePath;
+      }
+      return rele((ref1 = components[gn]) != null ? ref1 : gn, _.extend(props, ga), c.length ? c : void 0);
     });
   }
 });
 
-reactify = function(manx, key) {
+reactify = function(manx, key, arg) {
+  var basePath;
+  basePath = (arg != null ? arg : {}).basePath;
   return rele(Virtual, {
     manx: manx,
-    key: key
+    key: key,
+    basePath: basePath
   });
 };
 
