@@ -898,11 +898,17 @@
     ++  keel                                            ::  apply mutations
       |=  {cof/cafe suh/vase yom/(list (pair wing vase))}
       ^-  (bolt vase)
-      %+  cool  =<  |.(leaf+"ford: keel {<(murn yom +)>}")
-                |=  {a/wing b/span *}
-                =+  c=p:(slap suh wing+a)
-                ?:  (~(nest ut c) | b)  ~
-                (some [a c b])
+      %+  cool
+        =<  |.  ^-  tank
+            :+  %palm  [" " ~ ~ ~]
+            ~[leaf+"ford: keel" rose+[" " ~ ~]^(murn yom +)]
+        |=  {a/wing b/span *}  ^-  (unit tank)
+        =+  typ=(mule |.(p:(slap suh wing+a)))
+        ?:  ?=($| -.typ)
+          (some (show [%c %pull] %l a))
+        ?:  (~(nest ut p.typ) | b)  ~
+        %^  some  %palm  ["." ~ ~ ~]
+        ~[(show [%c %mute] %l a) >[p.typ b]<]
       %^  maim  cof 
         %+  slop  suh
         |-  ^-  vase
