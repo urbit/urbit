@@ -642,6 +642,7 @@
           [~ u=(^case a)]
         nuck:so
       ::
+      ++  mota  ;~(pfix pat mota:vez)                   ::  atom odor
       ++  hath  (sear plex (stag %conl poor)):vez       ::  hood path
       ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
       ++  hith                                          ::  static path
@@ -716,7 +717,7 @@
               (stag %lin ;~(pfix pam lin:read))
               (stag %man ;~(pfix tar man:read))
               (stag %nap ;~(pfix cab day:read))
-              (stag %now ;~(pfix pat day:read))
+              (stag %nod ;~(pfix cab now:read))
               (stag %saw ;~(pfix sem saw:read))
               (stag %see ;~(pfix col see:read))
               (stag %sic ;~(pfix ket sic:read))
@@ -770,6 +771,10 @@
                 =<  ;~(sfix (star (sear . day)) gap duz)
                 |=  a/^horn  ^-  (unit {term ^horn})
                 ?+(-.a ~ $dub `[p.a q.a])
+          ::
+              ++  now
+                %+  rail  ;~((glue cab) mota day)
+                ;~(pfix gap ;~(plug mota day))
           ::
               ++  saw
                 %+  rail
@@ -1560,6 +1565,10 @@
         ::
             $now
           %+  cope  (chad cof bax %da p.hon)
+          (flux |=(a/vase noun+a))
+        ::
+            $nod
+          %+  cope  (chad cof bax p.hon q.hon)
           (flux |=(a/vase noun+a))
         ::
             $nap
