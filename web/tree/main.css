@@ -98,20 +98,40 @@ div.logo.inverse:before {
   content: "\25D0"; }
 
 @media (min-width: 544px) {
-  #head {
-    width: 576px; } }
+  .ctrl {
+    width: 114px; }
+  .ctrl.open,
+  .ctrl:hover {
+    max-width: 258px;
+    min-width: 114px;
+    width: auto; } }
 
 @media (min-width: 768px) {
-  #head {
-    width: 720px; } }
+  .ctrl {
+    width: 150px; }
+  .ctrl.open,
+  .ctrl:hover {
+    max-width: 330px;
+    min-width: 150px;
+    width: auto; } }
 
 @media (min-width: 992px) {
-  #head {
-    width: 940px; } }
+  .ctrl {
+    width: 205px; }
+  .ctrl.open,
+  .ctrl:hover {
+    max-width: 440px;
+    min-width: 205px;
+    width: auto; } }
 
 @media (min-width: 1200px) {
-  #head {
-    width: 1140px; } }
+  .ctrl {
+    width: 255px; }
+  .ctrl.open,
+  .ctrl:hover {
+    max-width: 540px;
+    min-width: 255px;
+    width: auto; } }
 
 #head .loading {
   display: none; }
@@ -187,12 +207,6 @@ div.logo.inverse:before {
       padding: 0;
       border: 0;
       text-transform: none; }
-
-.ctrl.open,
-.ctrl:hover {
-  max-width: 33.33333%;
-  min-width: 16.66667%;
-  width: auto; }
 
 .ctrl.navbar.open,
 .ctrl.navbar:hover {

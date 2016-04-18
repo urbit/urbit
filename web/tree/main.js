@@ -1279,7 +1279,6 @@ Nav = React.createFactory(query({
     });
     navClas = {
       navbar: this.props.meta.navmode === 'navbar',
-      'col-md-2': this.props.meta.navmode !== 'navbar',
       ctrl: true,
       open: this.state.open === true
     };
@@ -1346,7 +1345,7 @@ Nav = React.createFactory(query({
   },
   render: function() {
     return div({
-      className: "col-md-2 ctrl",
+      className: "ctrl",
       "data-path": this.props.dataPath,
       key: "nav-loading"
     }, div({
