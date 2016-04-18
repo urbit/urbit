@@ -633,11 +633,6 @@ _http_conn_new(u3_http *htp_u)
     if (0 != (ret = uv_tcp_getpeername(&hon_u->wax_u, (struct sockaddr*) &name, &namelen))) {
       uL(fprintf(uH, "failed to get peer name: %s\r\n", uv_strerror(ret)));
     }
-    {
-      char addr[16];
-      uv_inet_ntop(AF_INET, &name.sin_addr, addr, sizeof(addr));
-      uL(fprintf(uH, "connection from: %s\r\n", addr));
-    }
 
     uv_read_start((uv_stream_t*)&hon_u->wax_u,
                   _http_alloc,
