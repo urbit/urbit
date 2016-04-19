@@ -1048,44 +1048,46 @@ module.exports = query({
             };
             parts.push(image);
           }
-          if (this.props.dataPreview) {
-            if (!elem.meta.preview) {
-              parts.push.apply(parts, elem.snip.c.slice(0, 2));
-            } else {
-              if (elem.meta.preview) {
-                preview = {
-                  gn: 'p',
-                  ga: {
-                    className: 'preview'
-                  },
-                  c: [elem.meta.preview]
-                };
-              } else {
-                preview = elem.snip;
-              }
-              parts.push(preview);
-            }
-            if (elem.meta.author) {
-              author = {
-                gn: 'h3',
+        }
+        if (this.props.dataPreview) {
+          if (!elem.meta.preview) {
+            parts.push.apply(parts, elem.snip.c.slice(0, 2));
+          } else {
+            if (elem.meta.preview) {
+              preview = {
+                gn: 'p',
                 ga: {
-                  className: 'author'
+                  className: 'preview'
                 },
-                c: [elem.meta.author]
+                c: [elem.meta.preview]
               };
-              parts.push(author);
+            } else {
+              preview = elem.snip;
             }
-            cont = {
-              gn: 'a',
-              ga: {
-                className: 'btn continue',
-                href: href
-              },
-              c: ['Continue reading']
-            };
-            parts.push(cont);
-            linked = true;
+            parts.push(preview);
           }
+        }
+        if (this.props.dataType === 'post') {
+          if (elem.meta.author) {
+            author = {
+              gn: 'h3',
+              ga: {
+                className: 'author'
+              },
+              c: [elem.meta.author]
+            };
+            parts.push(author);
+          }
+          cont = {
+            gn: 'a',
+            ga: {
+              className: 'btn continue',
+              href: href
+            },
+            c: ['Continue reading']
+          };
+          parts.push(cont);
+          linked = true;
         }
       }
       node = reactify({

@@ -1022,7 +1022,7 @@ div.logo.inverse:before {
     text-decoration: none; }
   .body[data-path^='/docs'] .list h1,
   .body[data-path^='/work'] .list h1 {
-    border-bottom: 2px solid #55595c; }
+    border-bottom: 2px solid #000; }
 
 .body[data-path^='/work'] .list.main a,
 .body[data-path^='/work'] .list.main h1 {
@@ -1033,40 +1033,37 @@ div.logo.inverse:before {
 .body[data-path^='/work'] .list.main h1 {
   border-width: 4px; }
 
-.body[data-path^='/docs'] .list.runes {
-  margin-top: 3rem; }
-  .body[data-path^='/docs'] .list.runes li {
-    height: 3rem; }
-  .body[data-path^='/docs'] .list.runes a h1,
-  .body[data-path^='/docs'] .list.runes a div,
-  .body[data-path^='/docs'] .list.runes a p {
-    display: inline; }
-  .body[data-path^='/docs'] .list.runes a {
-    text-decoration: none; }
-  .body[data-path^='/docs'] .list.runes a,
-  .body[data-path^='/docs'] .list.runes a h1 code {
-    color: #000; }
-  .body[data-path^='/docs'] .list.runes a h1 code {
-    margin-right: 1rem;
-    background-color: transparent;
-    color: #55595c; }
-  .body[data-path^='/docs'] .list.runes a code {
-    background-color: #eceeef; }
-  .body[data-path^='/docs'] .list.runes a code {
-    padding: .3rem; }
-  .body[data-path^='/docs'] .list.runes a:after {
-    content: "▶";
-    width: 1rem;
-    font-size: .6rem;
-    vertical-align: middle;
-    padding: .3rem;
-    padding-top: .4rem;
-    line-height: 1rem;
-    margin-left: 1rem;
-    background-color: #B1B7BD;
-    color: #fff; }
-  .body[data-path^='/docs'] .list.runes a:hover:after {
-    background-color: #0500F0; }
+.body[data-path^='/docs'] .list.runes a h1,
+.body[data-path^='/docs'] .list.runes a div,
+.body[data-path^='/docs'] .list.runes a p {
+  display: inline-block; }
+
+.body[data-path^='/docs'] .list.runes a p {
+  font-weight: 300; }
+
+.body[data-path^='/docs'] .list.runes a {
+  text-decoration: none; }
+
+.body[data-path^='/docs'] .list.runes a,
+.body[data-path^='/docs'] .list.runes a h1 code {
+  color: #000; }
+
+.body[data-path^='/docs'] .list.runes a h1 {
+  display: block;
+  margin-bottom: .3rem;
+  height: 1.8rem; }
+
+.body[data-path^='/docs'] .list.runes a h1 code {
+  background-color: transparent;
+  font-weight: 500;
+  font-size: 1.2rem;
+  padding: 0; }
+
+.body[data-path^='/docs'] .list.runes a code {
+  background-color: #eceeef; }
+
+.body[data-path^='/docs'] .list.runes a code {
+  padding: .3rem; }
 
 .urbit ul.blog {
   list-style-type: none;
