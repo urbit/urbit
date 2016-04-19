@@ -119,8 +119,11 @@ ref = React.DOM, div = ref.div, span = ref.span, code = ref.code;
 fragsrc = function(src, basePath) {
   var base, pathname;
   if (src != null) {
-    base = new URL(document.location);
-    base.pathname = util.basepath(basePath);
+    basePath = util.basepath(basePath);
+    if (basePath.slice(-1) !== "/") {
+      basePath += "/";
+    }
+    base = new URL(basePath, document.location);
     pathname = new URL(src, base).pathname;
     return util.fragpath(pathname);
   }
@@ -476,7 +479,7 @@ module.exports = query({
       body: true
     };
     if (this.props.meta.anchor !== 'none' && this.props.meta.navmode !== 'navbar') {
-      innerClas['col-md-10'] = true;
+      innerClas['col-md-9'] = true;
       innerClas['col-md-offset-3'] = true;
     }
     if (this.props.meta.navmode === 'navbar' && this.props.meta.container !== 'false') {
@@ -519,7 +522,7 @@ module.exports = query({
   render: function() {
     return div({
       id: 'body',
-      className: "col-md-offset-3 col-md-10"
+      className: "col-md-offset-3 col-md-9"
     }, rele(load));
   }
 }));

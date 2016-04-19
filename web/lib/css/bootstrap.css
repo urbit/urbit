@@ -6069,6 +6069,13 @@ h3.child {
   padding-bottom: 0;
 }
 
+blockquote {
+  padding-left: 1rem;
+  font-style: italic;
+  color: #55595c;
+  border-left: 3px solid #b1b7bd;
+}
+
 .gray {
   color: #55595c;
 }

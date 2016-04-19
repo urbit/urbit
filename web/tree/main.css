@@ -97,40 +97,31 @@ div.logo.inverse:before {
 .loading.state-3:before {
   content: "\25D0"; }
 
-@media (min-width: 544px) {
-  .ctrl {
-    width: 114px; }
-  .ctrl.open,
-  .ctrl:hover {
-    max-width: 258px;
-    min-width: 114px;
-    width: auto; } }
-
 @media (min-width: 768px) {
   .ctrl {
-    width: 150px; }
+    width: 180px; }
   .ctrl.open,
   .ctrl:hover {
-    max-width: 330px;
-    min-width: 150px;
+    max-width: 360px;
+    min-width: 180px;
     width: auto; } }
 
 @media (min-width: 992px) {
   .ctrl {
-    width: 205px; }
+    width: 235px; }
   .ctrl.open,
   .ctrl:hover {
-    max-width: 440px;
-    min-width: 205px;
+    max-width: 470px;
+    min-width: 235px;
     width: auto; } }
 
 @media (min-width: 1200px) {
   .ctrl {
-    width: 255px; }
+    width: 285px; }
   .ctrl.open,
   .ctrl:hover {
-    max-width: 540px;
-    min-width: 255px;
+    max-width: 570px;
+    min-width: 285px;
     width: auto; } }
 
 #head .loading {
@@ -549,6 +540,12 @@ div.logo.inverse:before {
 #tree > div > .container {
   padding-top: 3rem;
   padding-bottom: 6rem; }
+
+@media (max-width: 767px) {
+  #tree > div > .container {
+    padding-top: 0; }
+  .body {
+    padding-top: 1rem; } }
 
 .lead h1:first-of-type {
   padding-bottom: 0; }
