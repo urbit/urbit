@@ -962,11 +962,11 @@
       |=  {cof/cafe sam/vase}
       ^-  (bolt vase)
       %+  cool  |.(leaf+"ford: check {<[for bek `@p`(mug q.sam)]>}")
-      ?:  ?=($hoon for)
-        =+  mas=((soft @t) q.sam)
-        ?~  mas
+      ?:  &(!fit ?=($hoon for))                         ::  break depends loop
+        ~&  %lake-hoon-loop
+        ?.  (~(nest ut [%atom %t ~]) | p.sam)
           (flaw cof [leaf+"ford: bad hoon"]~)
-        (fine cof [%atom %t ~] u.mas)
+        (fine cof [%atom %t ~] q.sam)
       %+  cope  (fang cof for)
       |=  {cof/cafe tux/vase}
       =+  typ=p:(slot 6 tux)
@@ -1237,8 +1237,12 @@
       ::
           $bunt
         %+  cool  |.(leaf+"ford: bunt {<p.kas>}")
-        ?:  ?=($hoon p.kas)
-          (fine cof %& p.kas [%atom %t ~] '')
+        ~|  bunt+p.kas
+        =-  ?.  ?=($hoon p.kas)  -
+            %+  coop  -
+            |=  cof/cafe  ^-  (bolt gage)
+            ~&  bunt-hoon+(tope bek ~)
+            (fine cof %& p.kas [%atom %t ~] '')
         %+  cope  (fang cof p.kas)
         |=  {cof/cafe tux/vase}
         =+  [typ=p val=q]:(slot 6 tux)
@@ -1724,11 +1728,15 @@
           |=({cof/cafe p/silk q/silk} (cope (make cof q) furl))
         ==
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
-        ?:  ?=($hoon p.cay)
-          ?.  ?=($txt-diff p.coy)
-            (flaw cof leaf+"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
-          %+  cope  (maul cof !>(pact-hoon) (slop q.cay q.coy))
-          (flux |=(vax/vase:cord [%& p.cay vax]))
+        ~|  pact+[p.cay p.coy]
+        =-  ?.  ?=($hoon p.cay)  -
+            %+  coop  -
+            |=  cof/cafe  ^-  (bolt gage)
+            ~&  pact-hoon+(tope bek ~)
+            ?.  ?=($txt-diff p.coy)
+              (flaw cof leaf+"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
+            %+  cope  (maul cof !>(pact-hoon) (slop q.cay q.coy))
+            (flux |=(vax/vase:cord [%& p.cay vax]))
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
