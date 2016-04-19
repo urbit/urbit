@@ -952,10 +952,10 @@
       %+  cool  |.(leaf+"ford: load {<for>} {<(tope bem)>}")
       =.  s.bem  [for s.bem]
       %+  cope  (liar cof bem)
-      |=  {cof/cafe cay/cage}
+      |=  {cof/cafe cay/cage}  ^-  (bolt vase)
       ?.  =(for p.cay)
         (flaw cof leaf+"unexpected mark {<p.cay>}" ~)
-      ((lake | for) cof q.cay)
+      (fine cof q.cay)
     ::
     ++  lake                                            ::  check+coerce
       |=  {fit/? for/mark}
