@@ -544,8 +544,8 @@ div.logo.inverse:before {
 @media (max-width: 767px) {
   #tree > div > .container {
     padding-top: 0; }
-  .body {
-    padding-top: 1rem; } }
+  #body {
+    padding-top: 4rem; } }
 
 .lead h1:first-of-type {
   padding-bottom: 0; }
@@ -802,6 +802,10 @@ div.logo.inverse:before {
       margin-bottom: 2rem; }
     .body .urbit .slide .pair .image.right {
       margin-top: 2rem; } }
+
+@media (max-width: 767px) {
+  #body.plan {
+    padding-top: 0; } }
 
 .body .plan .above {
   background-color: #000; }
