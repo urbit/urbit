@@ -1374,7 +1374,7 @@ module.exports = query({
   name: 't',
   meta: 'j'
 }, recl({
-  displayName: "Anchor",
+  displayName: "Nav",
   stateFromStore: function() {
     return TreeStore.getNav();
   },
@@ -1434,12 +1434,16 @@ module.exports = query({
     }
   },
   setTitle: function() {
-    var ref1, title;
+    var path, ref1, title;
     title = $('#body h1').first().text() || this.props.name;
     if ((ref1 = this.props.meta) != null ? ref1.title : void 0) {
       title = this.props.meta.title;
     }
-    return document.title = title + " - " + this.props.path;
+    path = this.props.path;
+    if (path === "") {
+      path = "/";
+    }
+    return document.title = title + " - " + path;
   },
   pullPath: function() {
     var l, path;

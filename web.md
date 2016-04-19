@@ -2,7 +2,7 @@
 container: false
 layout: plan
 anchor: none
-title: Home - Urbit
+title: Home
 ---
 
 <div class="above">
