@@ -13,7 +13,7 @@
 |*  {move/mold sub-result/mold}
 =>  |%
     ::  A place consists of:
-    ::  --  `guard`, the type of the paths we should math.  For
+    ::  --  `guard`, the type of the paths we should match.  For
     ::      example, to match `/issues/<user>/<repo>` use
     ::      `{$issues @t @t $~}`.
     ::  --  `read-x`, called when someone tries to read the

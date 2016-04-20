@@ -174,7 +174,8 @@
 ++  sigh-tang
   |=  {way/wire tan/tang}
   ^-  {(list move) _+>.$}
-  ((slog >%gh-sigh-tang< tan) `+>.$)
+  %-  (slog >%gh-sigh-tang< tan)
+  [[ost.hid %diff null+~]~ +>.$]
 ::
 ::  We can't actually give the response to pretty much anything
 ::  without blocking, so we just block unconditionally.
