@@ -451,7 +451,7 @@
       })
     }
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
-      function(){document.getElementById("c").innerHTML = "" }
+      function(){document.body.innerHTML = "" }
     )}
     '''
   --
@@ -465,7 +465,7 @@
   ::
   ++  login-page
     %+  titl  'Sign in - Urbit'
-    ;=  ;div.container
+    ;=  ;div.container.top
           ;div.row
             ;div.col-md-4
               ;h1.sign: Sign in
@@ -515,17 +515,11 @@
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;div.container
+    ;=  ;div.container.top
           ;div.row
-            ;div.col-md-4
+            ;div.col-md-10
               ;h1.sign: Bye!
-            ==
-            ;div.col-md-8#c
-              ;p.ship 
-                ;label.sig: ~
-                ;span#ship;
-              ==
-              ;button#act(onclick "urb.away()"): Go
+              ;button#act(onclick "urb.away()"): Log out
               ;pre:code#err;
               ;script@"/~/at/~/auth.js";
             ==
@@ -560,7 +554,7 @@
         ;link(rel "stylesheet", href "/lib/css/fonts.css");
         ;link(rel "stylesheet", href "/lib/css/bootstrap.css");
       ==
-      ;body:div#c:"*{b}"
+      ;body:"*{b}"
     ==
   --
 --

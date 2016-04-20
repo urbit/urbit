@@ -283,28 +283,16 @@ window.urb.util = {
     spur = spur || ''
     if(spur === '/') spur = ''
     pathname = pathname || window.location.pathname
-    if(pathname[0] == '/') pathname = pathname.slice(1)
-    pathname = pathname.split("/")
+
+    base = ""
+
+    if(pathname.indexOf("/~~") == 0)
+      base = "/~~"
+    if(pathname.indexOf("/~/as/") == 0)
+      base = "/~/as/"+pathname.split("/")[3]
+    if(pathname.indexOf("/~/away") == 0)
+      base = "/~/away"
     
-    var pref, pred, prec, base = "" 
-    while(pref = pathname.shift(), pathname.length>0){
-      if(pref[0] != '~' && pref[0] != '=') break;
-      base += "/"+pref;
-      if(pref === "~~") continue;
-      base += "/"+(pred = pathname.shift())
-      if(/[a-z\-]+/.test(pref.slice(1))){
-        base += "/"+(prec = pathname.shift())
-        if(prec == null) throw "Bad basepath."
-        break;
-      }
-      if(pref !== "~") throw "Bad basepath /"+pref
-      if(pred === "as"){
-        base += "/"+(prec = pathname.shift())
-        if(prec == null) throw "Bad basepath."        
-        continue;
-      }
-      throw "Bad basepath /~/"+pred
-    }
     return base+spur
   }
 }
