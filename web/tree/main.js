@@ -795,7 +795,7 @@ module.exports = recl({
           value: this.state.email
         }), button({
           key: "submit",
-          className: "submit",
+          className: "submit btn",
           onClick: this.onClick
         }, submit)
       ];
@@ -1811,11 +1811,19 @@ Virtual = recl({
     }, function(str) {
       return str;
     }, function(arg, key) {
-      var c, ga, gn, props, ref1;
+      var c, e, error, ga, gn, props, ref1;
       gn = arg.gn, ga = arg.ga, c = arg.c;
       props = {
         key: key
       };
+      if (ga != null ? ga.style : void 0) {
+        try {
+          ga.style = eval("(" + ga.style + ")");
+        } catch (error) {
+          e = error;
+          ga.style = ga.style;
+        }
+      }
       if (components[gn]) {
         props.basePath = basePath;
       }
