@@ -1081,10 +1081,10 @@ module.exports = query({
           cont = {
             gn: 'a',
             ga: {
-              className: 'btn continue',
+              className: 'continue',
               href: href
             },
-            c: ['Continue reading']
+            c: ['Read more']
           };
           parts.push(cont);
           linked = true;

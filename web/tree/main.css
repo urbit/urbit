@@ -458,10 +458,10 @@ div.logo.inverse:before {
     margin-right: 2rem; }
   .urbit.navbar.ctrl ul.nav li a {
     text-decoration: none;
-    color: #fff;
+    color: #000;
     font-weight: 500;
     font-size: 1rem;
-    border-bottom: 3px solid #fff;
+    border-bottom: 3px solid #000;
     margin-top: 1rem; }
   .urbit.navbar.ctrl ul.nav .btn {
     border: 3px solid #000;
@@ -480,7 +480,8 @@ div.logo.inverse:before {
       color: #fff; }
   .urbit.navbar.ctrl ul.nav li a:hover,
   .urbit.navbar.ctrl ul.nav li.selected a {
-    color: #000; }
+    color: #55595c;
+    border-color: #55595c; }
   .urbit.navbar.ctrl .subnav ul.nav {
     height: 1.5rem; }
     .urbit.navbar.ctrl .subnav ul.nav li {
@@ -500,6 +501,10 @@ div.logo.inverse:before {
 
 .urbit.home.navbar.ctrl .icon .home:before {
   color: #B1B7BD; }
+
+.urbit.home.navbar.ctrl ul li a {
+  color: #fff;
+  border-color: #fff; }
 
 @media (max-width: 767px) {
   .urbit.navbar.ctrl {
@@ -1085,15 +1090,10 @@ div.logo.inverse:before {
   padding-left: 0; }
   .urbit ul.blog li {
     margin-bottom: 12rem; }
-  .urbit ul.blog .btn {
-    padding: .3rem;
-    border: 3px solid #64DE79;
-    color: #64DE79;
+  .urbit ul.blog .continue {
+    font-weight: 500;
     text-decoration: none;
-    text-transform: none; }
-  .urbit ul.blog .btn:hover {
-    background-color: #64DE79;
-    color: #fff; }
+    border-bottom: 3px solid #000; }
 
 .kids.runes h1 {
   padding-top: 3rem; }
@@ -1135,6 +1135,10 @@ div.logo.inverse:before {
 .urbit.post img {
   width: 100%;
   margin-bottom: 2rem; }
+
+.urbit .post img,
+.urbit.post img {
+  border: 12px solid #000; }
 
 .urbit .post .date,
 .urbit .post p.preview,
