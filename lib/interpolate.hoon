@@ -6,7 +6,6 @@
 ::
 ::::  ~fyr
   ::
-=<  into-url
 |%
 ++  parse-url
   |=  a/$@(cord:purl purl)  ^-  purl

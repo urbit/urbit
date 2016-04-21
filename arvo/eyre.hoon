@@ -71,6 +71,10 @@
       $filter-response                                  ::  ++res use result
       $receive-auth-response                            ::  ++bak auth response
       $receive-auth-query-string                        ::  ++in handle code 
+      $out
+      $res
+      $bak
+      $in
   ==                                                    ::
 --                                                      ::
 |%                                                      ::  models
@@ -447,7 +451,7 @@
       })
     }
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
-      function(){document.getElementById("c").innerHTML = "" }
+      function(){document.body.innerHTML = "" }
     )}
     '''
   --
@@ -461,7 +465,7 @@
   ::
   ++  login-page
     %+  titl  'Sign in - Urbit'
-    ;=  ;div.container
+    ;=  ;div.container.top
           ;div.row
             ;div.col-md-4
               ;h1.sign: Sign in
@@ -511,17 +515,11 @@
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;div.container
+    ;=  ;div.container.top
           ;div.row
-            ;div.col-md-4
+            ;div.col-md-10
               ;h1.sign: Bye!
-            ==
-            ;div.col-md-8#c
-              ;p.ship 
-                ;label.sig: ~
-                ;span#ship;
-              ==
-              ;button#act(onclick "urb.away()"): Go
+              ;button#act(onclick "urb.away()"): Log out
               ;pre:code#err;
               ;script@"/~/at/~/auth.js";
             ==
@@ -556,7 +554,7 @@
         ;link(rel "stylesheet", href "/lib/css/fonts.css");
         ;link(rel "stylesheet", href "/lib/css/bootstrap.css");
       ==
-      ;body:div#c:"*{b}"
+      ;body:"*{b}"
     ==
   --
 --
@@ -1075,14 +1073,15 @@
       ^-  (each perk httr)
       |^  =+  hit=as-magic-filename
           ?^  hit  [%| u.hit]
-          ?:  is-spur
-            [%& %spur (flop q.pok)]
+          =+  hem=as-aux-request
+          ?^  hem
+            ?.  check-oryx
+              ~|(%bad-oryx ~|([grab-oryx vew.cyz:for-client] !!))
+            [%& u.hem]
           =+  bem=as-beam
           ?^  bem  [%& %beam u.bem]
-          ?.  check-oryx
-            ~|(%bad-oryx ~|([grab-oryx vew.cyz:for-client] !!))
-          =+  hem=as-aux-request
-          ?^  hem  [%& u.hem]
+          ?:  is-spur
+            [%& %spur (flop q.pok)]
           ~|(strange-path+q.pok !!)
       ::
       ++  as-magic-filename
@@ -1102,16 +1101,17 @@
           ==
         ==
       ::
-      ++  is-spur  |(?~(q.pok & ((sane %tas) i.q.pok)))
-      ++  as-beam                     
+      ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
+      ++  as-beam                                       :: /~sipnym/desk/3/...
         ^-  (unit beam)
-        ?~  q.pok  ~
-        =+  ^-  (unit {@ dez/desk rel/?})              :: /=desk/, /=desk=/
-            (rush i.q.pok ;~(plug tis sym ;~(pose (cold | tis) (easy &))))
-        ?~  -  (tome q.pok)                             :: /~ship/desk/case/...
-        :+  ~  [our dez.u r.top]
-        ?.  rel.u  (flop t.q.pok)
-        (weld (flop t.q.pok) s.top)   :: /=desk/... as hoon /=desk%/...
+        =+  =<  tyk=(zl:jo (turn q.pok .))              :: a path whose elements
+            |=(a/knot `(unit tyke)`(rush a gasp:vast))  :: are in /=foo==/=bar
+        ?~  tyk  ~                                      :: syntax
+        =+  %-  posh:(vang & (tope top))                :: that the base path
+            [[~ (zing u.tyk)] ~]                        :: can interpolate into
+        ?~  -  ~                                        :: 
+        =+  (plex:vast %conl u)                         :: staticly, and make a
+        (biff - tome)                                   :: valid beam
       ::
       ++  as-aux-request                                ::  /~/... req parser
         ^-  (unit perk)
@@ -1764,8 +1764,8 @@
     ++  get-thou
       |=  {wir/whir-se hit/httr}
       ?+  wir  !!
-        $receive-auth-query-string  (call %receive-auth-response httr+!>(hit))
-        $filter-request
+        ?($receive-auth-query-string $in)  (call %receive-auth-response httr+!>(hit))
+        ?($filter-request $out)
           ?.  (has-arm %filter-response)  (fin-httr !>(hit))
           (call %filter-response httr+!>(hit))
       ==
@@ -1775,10 +1775,10 @@
       ?:  ?=($core wir)  (update dep res)
       %.  res
       ?-  wir
-        $filter-request             res-out
-        $filter-response            res-res
-        $receive-auth-response      res-bak
-        $receive-auth-query-string  res-in
+        ?($filter-request $out)             res-out
+        ?($filter-response $res)            res-res
+        ?($receive-auth-response $bak)      res-bak
+        ?($receive-auth-query-string $in)   res-in
       ==
     ::
     ++  update  

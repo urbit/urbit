@@ -2,7 +2,7 @@
 ::::  /hoon/comments/tree/ren
   ::
 /?    310
-/:    /%/comments    /@  /&elem&/md/    :: XX descend horn
+/:    /%/comments    /_  @da  /&elem&/md/
 ::
 ::::
   ::

@@ -1296,7 +1296,12 @@
         $delta      p.q
         $direct     p.q
       ==
-    ++  lobe-to-silk                  ::  XX  maybe move hoo{n,k} stuff here
+    ++  page-to-silk                                    :: %hoon bootstrapping
+      |=  a/page
+      ?.  ?=($hoon p.a)  [%volt a]
+      [%$ p.a [%atom %t ~] q.a]
+    ::
+    ++  lobe-to-silk
       |=  {pax/path lob/lobe}
       ^-  silk
       =+  ^-  hat/(map path lobe)
@@ -1311,9 +1316,9 @@
         [%$ p.-]
       =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
-        $direct     [%volt q.bol]
+        $direct     (page-to-silk q.bol)
         $delta      ~|  delta+q.q.bol
-                    [%pact $(lob q.q.bol) [%volt r.bol]]
+                    [%pact $(lob q.q.bol) (page-to-silk r.bol)]
       ==
     ::
     ++  page-to-lobe  |=(page (shax (jam +<)))
@@ -2529,8 +2534,8 @@
             [%$ +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))]
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
-            $direct     [%volt q.bol]
-            $delta      [%pact $(lob q.q.bol) [%volt r.bol]]
+            $direct     (page-to-silk q.bol)
+            $delta      [%pact $(lob q.q.bol) (page-to-silk r.bol)]
           ==
         ::
         ++  reduce-merge-points

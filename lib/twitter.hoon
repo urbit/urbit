@@ -51,11 +51,16 @@
   ::
   ++  user-url
     |=  a/scr  ^-  purf
-    (url:interpolate "https://twitter.com/:scr" scr+a ~)
+    :_  ~
+    %^  into-url:interpolate  'https://twitter.com/:scr'
+      ~
+    ~[scr+a]
   ::
   ++  post-url
-    |=  {a/scr b/tid}   ^-  purf
-    %+  url:interpolate  "https://twitter.com/:scr/status/:tid"
+    |=  {a/scr b/tid}  ^-  purf
+    :_  ~
+    %^  into-url:interpolate  'https://twitter.com/:scr/status/:tid'
+      ~
     ~[scr+a tid+(tid:print b)]
   --
 ++  parse                                                ::  json reparsers
