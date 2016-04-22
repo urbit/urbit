@@ -1108,13 +1108,15 @@ ol > li:before {
 .body[data-path^='/docs'] .list.runes a h1 {
   display: block;
   margin-bottom: .3rem;
-  height: 1.8rem; }
+  height: auto;
+  border-bottom: none; }
 
 .body[data-path^='/docs'] .list.runes a h1 code {
   background-color: transparent;
   font-weight: 500;
   font-size: 1.2rem;
-  padding: 0; }
+  padding: 0;
+  border-bottom: 2px solid #000; }
 
 .body[data-path^='/docs'] .list.runes a code {
   background-color: #eceeef; }
