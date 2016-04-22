@@ -1024,10 +1024,10 @@
     ++  leap                                            :: XX load with path
       ~/  %leap
       |=  {cof/cafe arg/coin bem/beam bom/beam}
-      %+  (clef %boil)  (fine cof arg bem bom)
-      |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (lamp cof bem)
       |=  {cof/cafe bem/beam}
+      %+  (clef %boil)  (fine cof arg bem bom)
+      |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (fame cof bem)
       |=  {cof/cafe bem/beam}
       (cope (fade cof %hoon bem) abut:(meow bom arg))
