@@ -619,7 +619,9 @@
       ::
       ++  wide                                          ::  match segments
         |=  sub/(list term)  ^-  (bolt (unit beam))
-        ?:  =(~ sub)  opts
+        ?~  sub  opts
+        ?~  t.sub  opts(s.bem [i.sub s.bem])
+        =>  .(sub `(list term)`sub)                     ::  TMI
         =-  (cope - flat)
         %^  lash  cof  bem
         |=  {cof/cafe dir/knot}  ^-  (bolt (unit beam))
