@@ -426,7 +426,7 @@ extras = {
           className: footerClas,
           key: 'footer-inner'
         }, [
-          "This page was served by an Urbit.", a({
+          "This page was served by Urbit.", a({
             href: "mailto:urbit@urbit.org"
           }, "urbit@urbit.org")
         ])
