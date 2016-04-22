@@ -950,7 +950,7 @@ module.exports = query({
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
-    var _date, _k, _keys, author, cont, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
+    var _date, _k, _keys, author, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -1002,13 +1002,31 @@ module.exports = query({
       parts = [];
       title = null;
       if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
-        title = {
-          gn: 'h1',
-          ga: {
-            className: 'title'
-          },
-          c: [elem.meta.title]
-        };
+        if (this.props.dataType === 'post') {
+          title = {
+            gn: 'a',
+            ga: {
+              href: href
+            },
+            c: [
+              {
+                gn: 'h1',
+                ga: {
+                  className: 'title'
+                },
+                c: [elem.meta.title]
+              }
+            ]
+          };
+        } else {
+          title = {
+            gn: 'h1',
+            ga: {
+              className: 'title'
+            },
+            c: [elem.meta.title]
+          };
+        }
       }
       if (!title && elem.head.c.length > 0) {
         title = elem.head;
@@ -1041,10 +1059,18 @@ module.exports = query({
         if (this.props.dataType === 'post') {
           if (elem.meta.image) {
             image = {
-              gn: 'img',
+              gn: 'a',
               ga: {
-                src: elem.meta.image
-              }
+                href: href
+              },
+              c: [
+                {
+                  gn: 'img',
+                  ga: {
+                    src: elem.meta.image
+                  }
+                }
+              ]
             };
             parts.push(image);
           }
@@ -1078,15 +1104,6 @@ module.exports = query({
             };
             parts.push(author);
           }
-          cont = {
-            gn: 'a',
-            ga: {
-              className: 'continue',
-              href: href
-            },
-            c: ['Read more']
-          };
-          parts.push(cont);
           linked = true;
         }
       }
@@ -2110,7 +2127,7 @@ module.exports = query({
         }, a({
           className: "nav-link",
           href: href,
-          onClick: _this.props.toggleNav
+          onClick: _this.props.closeNav
         }, head));
       };
     })(this)));
