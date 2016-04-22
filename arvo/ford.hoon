@@ -156,7 +156,7 @@
   (rap 3 |-([i.a ?~(t.a ~ ['-' $(a t.a)])]))
 ::
 ++  tear                                                ::  split term
-  =-  |=(a/term `(list term)`(rash a (most hep sym)))
+  =-  |=(a/term `(list term)`(fall (rush a (most hep sym)) /[a]))
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
 ::
 ++  za                                                  ::  per event
