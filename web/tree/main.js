@@ -426,9 +426,11 @@ extras = {
           className: footerClas,
           key: 'footer-inner'
         }, [
-          "This page was served by Urbit.", a({
+          "This page was made by Urbit. ", a({
+            href: "urbit.org"
+          }, "urbit.org"), a({
             href: "mailto:urbit@urbit.org"
-          }, "urbit@urbit.org")
+          }, "contact")
         ])
       ]);
     }
@@ -488,6 +490,9 @@ module.exports = query({
     }
     innerClas = clas(innerClas);
     bodyClas = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
+    if (this.props.meta.type && bodyClas.indexOf(this.props.meta.type) === -1) {
+      bodyClas += " " + this.props.meta.type;
+    }
     parts = [
       extra('spam'), extra('logo', {
         color: this.props.meta.logo

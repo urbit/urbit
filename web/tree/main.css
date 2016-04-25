@@ -180,6 +180,9 @@ div.logo.inverse:before {
   padding: 0;
   background-color: transparent;
   width: auto; }
+  .ctrl.navbar,
+  .ctrl.navbar .items {
+    height: 3rem; }
   .ctrl.navbar .icon,
   .ctrl.navbar ul.nav,
   .ctrl.navbar li {
@@ -433,9 +436,6 @@ div.logo.inverse:before {
 
 .urbit.navbar.ctrl {
   margin-top: 1rem; }
-  .urbit.navbar.ctrl,
-  .urbit.navbar.ctrl .items {
-    height: 3rem; }
   .urbit.navbar.ctrl .icon .home {
     border-color: #B1B7BD;
     background-color: #B1B7BD;
@@ -1064,6 +1064,10 @@ ol > li:before {
   font-weight: 500;
   font-size: 1.4rem; }
 
+.list.post .date {
+  font-family: 'scp';
+  font-size: .7rem; }
+
 .body[data-path^='/docs'] .list,
 .body[data-path^='/work'] .list {
   list-style-type: none;
@@ -1154,12 +1158,25 @@ ol > li:before {
 .kids.runes > div p:first-of-type {
   font-weight: 500; }
 
-.urbit .post .date,
-.urbit.post .date {
+#body.post .date {
   font-family: 'scp';
   color: #B1B7BD;
   font-size: .7rem;
   font-weight: 200; }
+
+#body.post .date,
+#body.post p.preview,
+#body.post h3.author {
+  margin-bottom: .6rem; }
+
+#body.post h3.author {
+  padding-top: 0;
+  font-size: 1rem;
+  font-weight: 200; }
+
+#body.post h3.author:before {
+  content: "—";
+  margin-right: .6rem; }
 
 .urbit .post h1.title,
 .urbit .post p.preview,
@@ -1182,25 +1199,6 @@ ol > li:before {
 .urbit .post img,
 .urbit.post img {
   border: 12px solid #000; }
-
-.urbit .post .date,
-.urbit .post p.preview,
-.urbit .post h3.author,
-.urbit.post .date,
-.urbit.post p.preview,
-.urbit.post h3.author {
-  margin-bottom: .6rem; }
-
-.urbit .post h3.author,
-.urbit.post h3.author {
-  padding-top: 0;
-  font-size: 1rem;
-  font-weight: 200; }
-
-.urbit .post h3:before,
-.urbit.post h3:before {
-  content: "—";
-  margin-right: .6rem; }
 
 .urbit.post .preview {
   max-width: 75%; }
