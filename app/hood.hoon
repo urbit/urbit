@@ -106,6 +106,7 @@
 ++  onto-drum                 (wrap take-onto):from-drum
 ++  peer-drum                 (wrap peer):from-drum
 ++  peek-x-womb               peek-x:(womb hid (able %womb))
+++  peer-scry-x-womb          (wrap peer-scry-x):from-womb
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
 ++  poke-drum-link            (wrap poke-link):from-drum
 ++  poke-drum-unlink          (wrap poke-unlink):from-drum

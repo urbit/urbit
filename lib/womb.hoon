@@ -112,6 +112,7 @@
   $%  {$flog wire flog}                                 ::
       {$info wire @p @tas nori}                         ::  fs write (backup)
       :: {$wait $~}                                        :: delay acknowledgment
+      {$diff gilt}                                      :: subscription response
       {$poke wire pear}                                 ::  app RPC
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
@@ -121,6 +122,12 @@
   $?  {{ship $gmail} {$email mail tape}}                :: send email
       {{ship $hood} {$womb-do-claim mail @p}}           ::  issue ship
   ==                                                    ::
+++  gilt                                                :: scry result
+  $%  {$ships (list ship)}                              ::
+      {$womb-balance balance}                           ::
+      {$womb-stat stat}                                 ::
+      {$womb-stat-all (map ship stat)}                  ::
+  ==
 ++  move  (pair bone card)                              ::  user-level move
 --
 |%
@@ -422,9 +429,18 @@
   %+  bind  (~(get by bureau) pas)
   |=(bal/balance [%womb-balance bal])
 ::
+++  peer-scry-x
+  |=  tyl/path
+  =<  abet
+  =+  gil=(peek-x tyl)
+  ~|  tyl
+  ?~  gil  ~|(%block-stub !!)
+  ?~  u.gil  ~|(%bad-path !!)
+  (emit %diff u.u.gil)
+::
 ++  peek-x
-  |=  tyl/path  ::  ^-  (unit (unit (pair mark *)))
-  ~&  peek-x+tyl
+  |=  tyl/path  ^-  (unit (unit gilt))
+  ~|  peek+x+tyl
   ?~  tyl  ~
   ?+  -.tyl  ~
   ::  /shop/planets/@ud   (list @p)    up to 3 planets
