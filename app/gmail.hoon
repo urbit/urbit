@@ -43,18 +43,14 @@
           {$hiss wire {$~ $~} $httr {$hiss hiss}}
       ==
     ++  easy-ot  |*({key/@t parser/fist:jo} =+(jo (ot [key parser] ~)))
-    ++  ofis-google  ::  XX broken
-  =-  |=(a/cord (rash a fel))
-  =<  fel=(cook |~(a/@ `@t`(swap 3 a)) (bass 64 .))
-  =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
-  ^=  siw
-  ;~  pose
-     (cook |=(a/@ (sub a 'A')) (shim 'A' 'Z'))
-     (cook |=(a/@ (sub a 'G')) (shim 'a' 'z'))
-     (cook |=(a/@ (add a 4)) (shim '0' '9'))
-     (cold 62 (just '-'))
-     (cold 63 (just '_'))
-   ==
+    ++  sifo-google
+  |=  a/cord  ^-  cord
+  =;  fel  (crip (scan (sifo a) fel))
+  (star ;~(pose (cold '-' (just '+')) (cold '_' (just '/')) next))
+    ++  ofis-google
+  |=  a/cord  ^-  cord
+  =;  fel  (ofis (crip (rash a fel)))
+  (star ;~(pose (cold '+' (just '-')) (cold '/' (just '_')) next))
     --
 ::
 |_  $:  hid/bowl  count/@  
@@ -82,6 +78,21 @@
     count  +(count)
   ==
 ::
+++  poke-email
+  |=  {adr/@ta mez/tape}  ^-  (quip move +>)
+  %-  poke-gmail-req  :*
+    %post
+    /messages/send
+    ~['uploadType'^%simple]
+    [(crip "urbit+{<our.hid>}") 'urbit.org']
+  ::
+    =-  (rash adr -)
+    [;~((glue pat) . .)]:(cook crip (plus ;~(less pat next)))  :: /[^@]+@[^@]+/
+  ::
+    ?:  (lth (lent mez) 57)  [(crip mez) '']
+    [(crip "{(scag 54 mez)}...") (crip mez)]
+  ==
+::
 ++  poke-gmail-req
   |=  $:  method/meth  endpoint/path  quy/quay
           mes/message:rfc
@@ -89,6 +100,7 @@
       ==
   ^-  {(list move) _+>.$}
   ?>  ?=(valid-get-endpoint endpoint)
+  ?>  =(our.hid src.hid)
   :_  +>.$  :_  ~
   ^-  move
   :*  ost.hid  %hiss  /poke/[method]  `~  %httr  %hiss
@@ -98,7 +110,7 @@
       `quay`[[%alt %json] ~] 
   ::
       :+  method  `math`(malt ~[content-type+['application/json']~])
-      =+  hoon-json-object=(joba %raw s+(message-to-rfc822:rfc mes))
+      =+  hoon-json-object=(joba %raw s+(sifo-google (message-to-rfc822:rfc mes)))
       =+  request-body=(tact (pojo hoon-json-object))
       (some request-body)
       ::(some (pojo label-req-to-json:gmail-label label-req:gmail-label ~)) XX
@@ -209,7 +221,8 @@
     =+  new-jon=(~(get by u.dir) i.arg)
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==
-
+::
+++  sigh-tang  |=(a/tang (mean a))
 ++  sigh
   |=  a/*
   ~&  a+a
