@@ -1,5 +1,5 @@
 ::
-::::  /hoon/womb-do-claim/mar
+::::  /hoon/do-claim/womb/mar
   ::
 /?    310
 |_  {who/@ta her/@p}

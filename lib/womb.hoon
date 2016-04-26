@@ -88,8 +88,8 @@
 ++  reference-rate  2                                   ::  star refs per star
 ++  stat                                                ::  external info
   $%  {$free $~}                                        ::  unallocated
-      {$owned mail}                                     ::  granted
-      {$split (map ship stat)}                          ::  all given ships
+      {$owned p/mail}                                   ::  granted
+      {$split p/(map ship stat)}                        ::  all given ships
   ==                                                    ::
 --                                                      ::
 ::                                                      ::  ::
@@ -404,6 +404,7 @@
 ::
 ++  stats-ship                                        ::  inspect ship
   |=  who/@p  ^-  (unit (unit {$womb-stat stat}))
+  ?>  |(=(our src) =([~ src] boss))                   ::  privileged info
   ?-  (clan who)
     $pawn  !!
     $earl  !!
