@@ -274,10 +274,18 @@
 ::
 ++  ames-last-seen                                    ::  last succesful ping
   |=  a/ship  ~+  ^-  (unit time)
+  ?:  =(a our)  (some now)
   %-  (hard (unit time))
   ~|  ames-look+/(scot %p our)/tell/(scot %da now)/(scot %p a)
   %+  ames-grab  %rue
   .^(ames-tell %a /(scot %p our)/tell/(scot %da now)/(scot %p a))
+::
+++  responsive                                        ::  filter for connectivity
+  |*  a/(list {ship *})  ^+  a
+  %+  skim  a
+  |=  {b/ship *}
+  =+  rue=(fall (ames-last-seen b) *@da)
+  (gth ~m2 (sub now rue))
 ::
 ++  shop-galaxies  (available galaxies.office)        ::  unassigned %czar
 ::
@@ -286,7 +294,8 @@
   |=  nth/@u  ^-  cursor
   =^  out  nth  %.(nth (available stars.office))
   ?^  out  [out nth]
-  (shop-star nth (issuing galaxies.office))
+  %+  shop-star   nth 
+  (responsive (issuing galaxies.office))
 ::
 ++  shop-star                                         ::  star from galaxies
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
@@ -298,7 +307,9 @@
   |=  nth/@u  ^-  cursor
   =^  out  nth  %.(nth (available planets.office))
   ?^  out  [out nth]
-  =^  out  nth  (shop-planet nth (issuing stars.office))
+  =^  out  nth
+    %+  shop-planet   nth 
+    (responsive (issuing stars.office))
   ?^  out  [out nth]
   (shop-planet-gal nth (issuing galaxies.office))
 ::
@@ -312,7 +323,8 @@
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
   ?:  =(~ lax)  [~ nth]
   =^  sel  nth  (in-list lax nth)
-  (shop-planet nth (issuing-under 3 who.sel box.r.sel))
+  %+  shop-planet   nth 
+  (responsive (issuing-under 3 who.sel box.r.sel))
 ::
 ++  peek-x-shop                                       ::  available ships
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
@@ -379,7 +391,6 @@
 ::
 ++  get-live                                          ::  last-heard time ++live
   |=  a/ship  ^-  live
-  ?:  =(a our)  %live
   =+  rue=(ames-last-seen a)
   ?~  rue  %cold 
   ?:((gth (sub now u.rue) ~m5) %seen %live)
@@ -640,8 +651,8 @@
   ?~  sta  +>
   =+  all=(take-n [0 sta] shop-stars)
   ~&  got-stars+all
-  %-  (slog leaf+"For issuing to proceed smoothly, these should immediately ".
-                 "be started, |obey {<our>} to honor ticket requests, and ".
+  %-  (slog leaf+"For issuing to proceed smoothly, immediately upon boot, ".
+                 "each should |obey {<our>} to honor ticket requests, and ".
                  "|start %gmail for ticket distribution." ~)
   ?.  (gth sta (lent all))
     (roll all release-star)
