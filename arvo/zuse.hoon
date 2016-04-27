@@ -47,8 +47,693 @@
     [(mod c p.a) (mod c q.a)]
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bB, cryptosuites             ::
+::                section 3bB, crypto                   ::
 ::
+++  aes
+  ~%  %aes  +  ~
+  |%
+  ++  ahem                                              ::  AES engine
+    |=  {nnk/@ nnb/@ nnr/@}
+    =>
+      =+  =>  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
+          [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
+      =>  |%
+          ++  cipa                                      ::  AES params
+            $_  ^?  |%
+            ++  co  *{p/@ q/@ r/@ s/@}                  ::  col coefs
+            ++  ix  |~(a/@ *@)                          ::  key index
+            ++  ro  *{p/@ q/@ r/@ s/@}                  ::  row shifts
+            ++  su  *@                                  ::  s-box
+            --
+          --
+      |%
+      ++  pen                                           ::  encrypt
+        ^-  cipa
+        |%
+        ++  co  [0x2 0x3 1 1]
+        ++  ix  |~(a/@ a)
+        ++  ro  [0 1 2 3]
+        ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
+                  df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
+                  9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
+                  8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
+                  08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
+                  79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
+                  db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
+                  7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
+                  d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
+                  a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
+                  cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
+                  842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
+                  75b2.27eb.e280.1207.9a05.9618.c323.c704.
+                  1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
+                  c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
+                  76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
+        --
+      ::
+      ++  pin                                           :: decrypt
+        ^-  cipa
+        |%
+        ++  co  [0xe 0xb 0xd 0x9]
+        ++  ix  |~(a/@ (sub nnr a))
+        ++  ro  [0 3 2 1]
+        ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
+                  6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
+                  ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
+                  5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
+                  f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
+                  1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
+                  6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
+                  73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
+                  6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
+                  0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
+                  849d.8da7.5746.155e.dab9.edfd.5048.706c.
+                  92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
+                  25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
+                  4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
+                  cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
+                  fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
+        --
+      ::
+      ++  mcol
+        |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  ^-  (list @)
+        =+  c=[p=*@ q=*@ r=*@ s=*@]
+        |-  ^-  (list @)
+        ?~  a  ~
+        =>  .(p.c (cut 3 [0 1] i.a))
+        =>  .(q.c (cut 3 [1 1] i.a))
+        =>  .(r.c (cut 3 [2 1] i.a))
+        =>  .(s.c (cut 3 [3 1] i.a))
+        :_  $(a t.a)
+        %+  rep  3
+        %+  turn
+          %-  limo
+          :~  [[p.c p.b] [q.c q.b] [r.c r.b] [s.c s.b]]
+              [[p.c s.b] [q.c p.b] [r.c q.b] [s.c r.b]]
+              [[p.c r.b] [q.c s.b] [r.c p.b] [s.c q.b]]
+              [[p.c q.b] [q.c r.b] [r.c s.b] [s.c p.b]]
+          ==
+        |=  {a/{@ @} b/{@ @} c/{@ @} d/{@ @}}
+        :(dif (pro a) (pro b) (pro c) (pro d))
+      ::
+      ++  pode                                          ::  explode to block
+        |=  {a/bloq b/@ c/@}  ^-  (list @)
+        =+  d=(rip a c)
+        =+  m=(met a c)
+        |-
+        ?:  =(m b)
+          d
+        $(m +(m), d (weld d (limo [0 ~])))
+      ++  sube                                          ::  s-box word
+        |=  {a/@ b/@}  ^-  @
+        (rep 3 (turn (pode 3 4 a) |=(c/@ (cut 3 [c 1] b))))
+      --
+    |%
+    ++  be                                              ::  block cipher
+      |=  {a/? b/@ c/@H}  ^-  @uxH
+      ~|  %be-aesc
+      =>  %=    .
+              +
+            =>  +
+            |%
+            ++  ankh
+              |=  {a/cipa b/@ c/@}
+              (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
+            ++  sark
+              |=  {c/(list @) d/(list @)}  ^-  (list @)
+              ?~  c  ~
+              ?~  d  !!
+              [(mix i.c i.d) $(c t.c, d t.d)]
+            ++  srow
+              |=  {a/cipa b/(list @)}  ^-  (list @)
+              =+  [c=0 d=~ e=ro.a]
+              |-
+              ?:  =(c nnb)
+                d
+              :_  $(c +(c))
+              %+  rep  3
+              %+  turn
+                (limo [0 p.e] [1 q.e] [2 r.e] [3 s.e] ~)
+              |=  {f/@ g/@}
+              (cut 3 [f 1] (snag (mod (add g c) nnb) b))
+            ++  subs
+              |=  {a/cipa b/(list @)}  ^-  (list @)
+              ?~  b  ~
+              [(sube i.b su.a) $(b t.b)]
+            --
+          ==
+      =+  [d=?:(a pen pin) e=(pode 5 nnb c) f=1]
+      =>  .(e (sark e (ankh d 0 b)))
+      |-
+      ?.  =(nnr f)
+        =>  .(e (subs d e))
+        =>  .(e (srow d e))
+        =>  .(e (mcol e co.d))
+        =>  .(e (sark e (ankh d f b)))
+        $(f +(f))
+      =>  .(e (subs d e))
+      =>  .(e (srow d e))
+      =>  .(e (sark e (ankh d nnr b)))
+      (rep 5 e)
+    ::
+    ++  ex                                              ::  key expand
+      |=  a/@I  ^-  @
+      =+  [b=a c=0 d=su:pen i=nnk]
+      |-
+      ?:  =(i (mul nnb +(nnr)))
+        b
+      =>  .(c (cut 5 [(dec i) 1] b))
+      =>  ?:  =(0 (mod i nnk))
+            =>  .(c (ror 3 1 c))
+            =>  .(c (sube c d))
+            .(c (mix c (pow (dec (div i nnk)) 2)))
+          ?:  &((gth nnk 6) =(4 (mod i nnk)))
+            .(c (sube c d))
+          .
+      =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
+      =>  .(b (can 5 [i b] [1 c] ~))
+      $(i +(i))
+    ::
+    ++  ix                                              ::  key expand, inv
+      |=  a/@  ^-  @
+      =+  [i=1 j=*@ b=*@ c=co:pin]
+      |-
+      ?:  =(nnr i)
+        a
+      =>  .(b (cut 7 [i 1] a))
+      =>  .(b (rep 5 (mcol (pode 5 4 b) c)))
+      =>  .(j (sub nnr i))
+      %=    $
+          i  +(i)
+          a
+        %+  can  7
+        :~  [i (cut 7 [0 i] a)]
+            [1 b]
+            [j (cut 7 [+(i) j] a)]
+        ==
+      ==
+    --
+  ::
+  ++  ecba                                              ::  AES-128 ECB
+    ~%  %ecba  +>+  ~
+    =+  (ahem 4 4 10)
+    |_  key/@H
+    ++  en
+      ~/  %en
+      |=  blk/@H  ^-  @uxH
+      =:
+        key  (~(net fe 7) key)
+        blk  (~(net fe 7) blk)
+      ==
+      %-  ~(net fe 7)
+      (be & (ex key) blk)
+    ++  de
+      ~/  %de
+      |=  blk/@H  ^-  @uxH
+      =:
+        key  (~(net fe 7) key)
+        blk  (~(net fe 7) blk)
+      ==
+      %-  ~(net fe 7)
+      (be | (ix (ex key)) blk)
+    --
+  ::
+  ++  ecbb                                              ::  AES-192 ECB
+    ~%  %ecbb  +>+  ~
+    =+  (ahem 6 4 12)
+    |_  key/@I
+    ++  en
+      ~/  %en
+      |=  blk/@H  ^-  @uxH
+      =:
+        key  (rsh 6 1 (~(net fe 8) key))
+        blk  (~(net fe 7) blk)
+      ==
+      %-  ~(net fe 7)
+      (be & (ex key) blk)
+    ++  de
+      ~/  %de
+      |=  blk/@H  ^-  @uxH
+      =:
+        key  (rsh 6 1 (~(net fe 8) key))
+        blk  (~(net fe 7) blk)
+      ==
+      %-  ~(net fe 7)
+      (be | (ix (ex key)) blk)
+    --
+  ::
+  ++  ecbc                                              ::  AES-256 ECB
+    ~%  %ecbc  +>+  ~
+    =+  (ahem 8 4 14)
+    |_  key/@I
+    ++  en
+      ~/  %en
+      |=  blk/@H  ^-  @uxH
+      =:
+        key  (~(net fe 8) key)
+        blk  (~(net fe 7) blk)
+      ==
+      %-  ~(net fe 7)
+      (be & (ex key) blk)
+    ++  de
+      ~/  %de
+      |=  blk/@H  ^-  @uxH
+      =:
+        key  (~(net fe 8) key)
+        blk  (~(net fe 7) blk)
+      ==
+      %-  ~(net fe 7)
+      (be | (ix (ex key)) blk)
+    --
+  ::
+  ++  cbca                                              ::  AES-128 CBC
+    ~%  %cbca  +>  ~
+    |_  {key/@H prv/@H}
+    ++  en
+      ~/  %en
+      |=  txt/@  ^-  @ux
+      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+      =|  cts/(list @)
+      %+  rep  7
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  pts
+        cts
+      =+  cph=(~(en ecba key) (mix prv i.pts))
+      %=  $
+        cts  [cph cts]
+        pts  t.pts
+        prv  cph
+      ==
+    ++  de
+      ~/  %de
+      |=  txt/@  ^-  @ux
+      =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+      =|  pts/(list @)
+      %+  rep  7
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  cts
+        pts
+      =+  pln=(mix prv (~(de ecba key) i.cts))
+      %=  $
+        pts  [pln pts]
+        cts  t.cts
+        prv  i.cts
+      ==
+    --
+  ::
+  ++  cbcb                                              ::  AES-192 CBC
+    ~%  %cbcb  +>  ~
+    |_  {key/@I prv/@H}
+    ++  en
+      ~/  %en
+      |=  txt/@  ^-  @ux
+      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+      =|  cts/(list @)
+      %+  rep  7
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  pts
+        cts
+      =+  cph=(~(en ecbb key) (mix prv i.pts))
+      %=  $
+        cts  [cph cts]
+        pts  t.pts
+        prv  cph
+      ==
+    ++  de
+      ~/  %de
+      |=  txt/@  ^-  @ux
+      =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+      =|  pts/(list @)
+      %+  rep  7
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  cts
+        pts
+      =+  pln=(mix prv (~(de ecbb key) i.cts))
+      %=  $
+        pts  [pln pts]
+        cts  t.cts
+        prv  i.cts
+      ==
+    --
+  ::
+  ++  cbcc                                              ::  AES-256 CBC
+    ~%  %cbcc  +>  ~
+    |_  {key/@I prv/@H}
+    ++  en
+      ~/  %en
+      |=  txt/@  ^-  @ux
+      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+      =|  cts/(list @)
+      %+  rep  7
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  pts
+        cts
+      =+  cph=(~(en ecbc key) (mix prv i.pts))
+      %=  $
+        cts  [cph cts]
+        pts  t.pts
+        prv  cph
+      ==
+    ++  de
+      ~/  %de
+      |=  txt/@  ^-  @ux
+      =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+      =|  pts/(list @)
+      %+  rep  7
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  cts
+        pts
+      =+  pln=(mix prv (~(de ecbc key) i.cts))
+      %=  $
+        pts  [pln pts]
+        cts  t.cts
+        prv  i.cts
+      ==
+    --
+  ::
+  ++  inc                                               ::  inc. low bloq
+    |=  {mod/bloq ctr/@H}
+    ^-  @uxH
+    =+  bqs=(rip mod ctr)
+    ?~  bqs  0x1
+    %+  rep  mod
+    [(~(sum fe mod) i.bqs 1) t.bqs]
+  ::
+  ++  ctra                                              ::  AES-128 CTR
+    ~%  %ctra  +>  ~
+    |_  {key/@H mod/bloq ctr/@H}
+    ++  en
+      ~/  %en
+      |=  txt/@  ^-  @ux
+      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
+      =|  cts/(list @)
+      =+  str=(flop (rip 3 (~(en ecba key) ctr)))
+      %+  rep  3
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  pts
+        cts
+      ?~  str
+        =+  nctr=(inc mod ctr)
+        $(str (flop (rip 3 (~(en ecba key) nctr))), ctr nctr)
+      %=  $
+        cts  :_  cts
+             (mix i.str i.pts)
+        str  t.str
+        pts  t.pts
+      ==
+    ++  de  en
+    --
+  ::
+  ++  ctrb                                              ::  AES-192 CTR
+    ~%  %ctrb  +>  ~
+    |_  {key/@I mod/bloq ctr/@H}
+    ++  en
+      ~/  %en
+      |=  txt/@  ^-  @ux
+      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
+      =|  cts/(list @)
+      =+  str=(flop (rip 3 (~(en ecbb key) ctr)))
+      %+  rep  3
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  pts
+        cts
+      ?~  str
+        =+  nctr=(inc mod ctr)
+        $(str (flop (rip 3 (~(en ecbb key) nctr))), ctr nctr)
+      %=  $
+        cts  :_  cts
+             (mix i.str i.pts)
+        str  t.str
+        pts  t.pts
+      ==
+    ++  de  en
+    --
+  ::
+  ++  ctrc                                              ::  AES-256 CTR
+    ~%  %ctrc  +>  ~
+    |_  {key/@I mod/bloq ctr/@H}
+    ++  en
+      ~/  %en
+      |=  txt/@  ^-  @ux
+      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
+      =|  cts/(list @)
+      =+  str=(flop (rip 3 (~(en ecbc key) ctr)))
+      %+  rep  3
+      ::  logically, flop twice here
+      |-  ^-  (list @)
+      ?~  pts
+        cts
+      ?~  str
+        =+  nctr=(inc mod ctr)
+        $(str (flop (rip 3 (~(en ecbc key) nctr))), ctr nctr)
+      %=  $
+        cts  :_  cts
+             (mix i.str i.pts)
+        str  t.str
+        pts  t.pts
+      ==
+    ++  de  en
+    --
+  ::
+  ++  doub                                              ::  double 128-bit
+    |=  str/@H                                          ::  string mod finite
+    ^-  @uxH                                            ::  field (see spec)
+    %-  ~(sit fe 7)
+    ?.  =((xeb str) 128)
+      (lsh 0 1 str)
+    (mix 0x87 (lsh 0 1 str))
+  ::
+  ++  mpad                ::  pad message to multiple of 128 bits
+    |=  {oct/@ txt/@}     ::  by appending 1, then 0s
+    ^-  @ux               ::  the spec is unclear, but it must be octet based
+    =+  pad=(mod oct 16)  ::  to match the test vectors
+    ?:  =(pad 0)  0x8000.0000.0000.0000.0000.0000.0000.0000
+    (lsh 3 (sub 15 pad) (mix 0x80 (lsh 3 1 txt)))
+  ::
+  ++  suba                                              ::  AES-128 subkeys
+    |=  key/@H
+    =+  l=(~(en ecba key) 0)
+    =+  k1=(doub l)
+    =+  k2=(doub k1)
+    ^-  {@ux @ux}
+    [k1 k2]
+  ::
+  ++  subb                                              ::  AES-192 subkeys
+    |=  key/@I
+    =+  l=(~(en ecbb key) 0)
+    =+  k1=(doub l)
+    =+  k2=(doub k1)
+    ^-  {@ux @ux}
+    [k1 k2]
+  ::
+  ++  subc                                              ::  AES-256 subkeys
+    |=  key/@I
+    =+  l=(~(en ecbc key) 0)
+    =+  k1=(doub l)
+    =+  k2=(doub k1)
+    ^-  {@ux @ux}
+    [k1 k2]
+  ::
+  ++  maca                                              :: AES-128 CMAC
+    ~/  %maca
+    |=  {key/@H oct/(unit @) txt/@}
+    ^-  @ux
+    =+  [sub=(suba key) len=?~(oct (met 3 txt) u.oct)]
+    =+  ^=  pdt
+      ?:  &(=((mod len 16) 0) !=(len 0))
+        [& txt]
+      [| (mpad len txt)]
+    =+  ^=  mac
+      %-  ~(en cbca key 0)
+      %+  mix  +.pdt
+      ?-  -.pdt
+        $&  -.sub
+        $|  +.sub
+      ==
+    (~(sit fe 7) mac)  ::  spec says MSBs, LSBs match test vectors
+  ::
+  ++  macb                                              :: AES-192 CMAC
+    ~/  %macb
+    |=  {key/@I oct/(unit @) txt/@}
+    ^-  @ux
+    =+  [sub=(subb key) len=?~(oct (met 3 txt) u.oct)]
+    =+  ^=  pdt
+      ?:  &(=((mod len 16) 0) !=(len 0))
+        [& txt]
+      [| (mpad len txt)]
+    =+  ^=  mac
+      %-  ~(en cbcb key 0)
+      %+  mix  +.pdt
+      ?-  -.pdt
+        $&  -.sub
+        $|  +.sub
+      ==
+    (~(sit fe 7) mac)  ::  spec says MSBs, LSBs match test vectors
+  ::
+  ++  macc                                              :: AES-256 CMAC
+    ~/  %macc
+    |=  {key/@I oct/(unit @) txt/@}
+    ^-  @ux
+    =+  [sub=(subc key) len=?~(oct (met 3 txt) u.oct)]
+    =+  ^=  pdt
+      ?:  &(=((mod len 16) 0) !=(len 0))
+        [& txt]
+      [| (mpad len txt)]
+    =+  ^=  mac
+      %-  ~(en cbcc key 0)
+      %+  mix  +.pdt
+      ?-  -.pdt
+        $&  -.sub
+        $|  +.sub
+      ==
+    (~(sit fe 7) mac)  ::  spec says MSBs, LSBs match test vectors
+  ::
+  ++  s2va                                              ::  AES-128 S2V
+    ~/  %s2va
+    |=  {key/@H ads/(list @)}
+    =+  res=(maca key `16 0x0)
+    %^  maca  key  ~
+    |-  ^-  @uxH
+    ?~  ads  (maca key `16 0x1)
+    ?~  t.ads
+      ?:  (gte (xeb i.ads) 128)
+        (mix i.ads res)
+      %+  mix
+        (doub res)
+        (mpad (met 3 i.ads) i.ads)
+    %=  $
+      res  %+  mix
+             (doub res)
+             (maca key ~ i.ads)
+      ads  t.ads
+    ==
+  ::
+  ++  s2vb                                              ::  AES-192 S2V
+    ~/  %s2vb
+    |=  {key/@I ads/(list @)}
+    =+  res=(macb key `16 0x0)
+    %^  macb  key  ~
+    |-  ^-  @uxH
+    ?~  ads  (macb key `16 0x1)
+    ?~  t.ads
+      ?:  (gte (xeb i.ads) 128)
+        (mix i.ads res)
+      %+  mix
+        (doub res)
+        (mpad (met 3 i.ads) i.ads)
+    %=  $
+      res  %+  mix
+             (doub res)
+             (macb key ~ i.ads)
+      ads  t.ads
+    ==
+  ::
+  ++  s2vc                                              ::  AES-256 S2V
+    ~/  %s2vc
+    |=  {key/@I ads/(list @)}
+    =+  res=(macc key `16 0x0)
+    %^  macc  key  ~
+    |-  ^-  @uxH
+    ?~  ads  (macc key `16 0x1)
+    ?~  t.ads
+      ?:  (gte (xeb i.ads) 128)
+        (mix i.ads res)
+      %+  mix
+        (doub res)
+        (mpad (met 3 i.ads) i.ads)
+    %=  $
+      res  %+  mix
+             (doub res)
+             (macc key ~ i.ads)
+      ads  t.ads
+    ==
+  ::
+  ++  siva                                              ::  AES-128 SIV
+    ~%  %siva  +>  ~
+    |_  {key/@I vec/(list @)}
+    ++  en
+      ~/  %en
+      |=  txt/@
+      ^-  @ux
+      =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
+      =+  iv=(s2va k1 (weld vec (limo ~[txt])))
+      %^  cat  7
+        iv  ::  WARNING: iv glued to "wrong" side!
+      (~(en ctra k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+    ++  de
+      ~/  %de
+      |=  txt/@
+      ^-  (unit @ux)
+      =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
+      =+  iv=(end 7 1 txt)
+      =+  cph=(rsh 7 1 txt)
+      =+  ^=  pln
+        (~(de ctra k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) cph)
+      ?.  =((s2va k1 (weld vec (limo ~[pln]))) iv)
+        ~
+      `pln
+    --
+  ::
+  ++  sivb                                              ::  AES-192 SIV
+    ~%  %sivb  +>  ~
+    |_  {key/@J vec/(list @)}
+    ++  en
+      ~/  %en
+      |=  txt/@
+      ^-  @ux
+      =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+      =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
+      %^  cat  7
+        iv  ::  WARNING: iv glued to "wrong" side!
+      (~(en ctrb k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+    ++  de
+      ~/  %de
+      |=  txt/@
+      ^-  (unit @ux)
+      =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+      =+  iv=(end 7 1 txt)
+      =+  cph=(rsh 7 1 txt)
+      =+  ^=  pln
+        (~(de ctrb k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) cph)
+      ?.  =((s2vb k1 (weld vec (limo ~[pln]))) iv)
+        ~
+      `pln
+    --
+  ::
+  ++  sivc                                              ::  AES-256 SIV
+    ~%  %sivc  +>  ~
+    |_  {key/@J vec/(list @)}
+    ++  en
+      ~/  %en
+      |=  txt/@
+      ^-  @ux
+      =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
+      =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
+      %^  cat  7
+        iv  ::  WARNING: iv glued to "wrong" side!
+      (~(en ctrc k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+    ++  de
+      ~/  %de
+      |=  txt/@
+      ^-  (unit @ux)
+      =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
+      =+  iv=(end 7 1 txt)
+      =+  cph=(rsh 7 1 txt)
+      =+  ^=  pln
+        (~(de ctrc k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) cph)
+      ?.  =((s2vc k1 (weld vec (limo ~[pln]))) iv)
+        ~
+      `pln
+    --
+  --
 ++  crua  !:                                            ::  cryptosuite A (RSA)
   ^-  acru
   =|  {mos/@ pon/(unit {p/@ q/@ r/{p/@ q/@} s/_*fu})}
