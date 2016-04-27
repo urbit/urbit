@@ -77,11 +77,19 @@
   (unit (each @p mail))                                 ::  ship or email
 ::                                                      ::
 ++  reference-rate  2                                   ::  star refs per star
-++  stat                                                ::  external info
+++  stat  (pair live dist)                              ::  external info
+++  live  ?($cold $seen $live)                          ::  online status
+++  dist                                                ::  allocation
   $%  {$free $~}                                        ::  unallocated
-      {$owned p/mail}                                   ::  granted
+      {$owned p/mail}                                   ::  granted, status
       {$split p/(map ship stat)}                        ::  all given ships
   ==                                                    ::
+::                                                      ::
+++  ames-tell                                           ::  .^ a+/=tell= type
+  |^  {p/(list elem) q/(list elem)}                     ::
+  ++  elem  $^  {p/elem q/elem}                         ::
+            {term p/*}                                  ::  somewhat underspecified
+  --                                                    ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -122,6 +130,16 @@
 ++  move  (pair bone card)                              ::  user-level move
 --
 |%
+++  ames-grab                                           :: XX better ames scry
+  |=  {a/term b/ames-tell}  ^-  *
+  =;  all  (~(got by all) a)
+  %-  ~(gas by *(map term *))
+  %-  zing
+  %+  turn  (weld p.b q.b)
+  |=  b/elem:ames-tell  ^-  (list {term *})
+  ?@  -.b  [b]~
+  (weld $(b p.b) $(b q.b))
+::
 ++  murn-by
   |*  {a/(map) b/$-(* (unit))}
   ^-  ?~(a !! (map _p.n.a _(need (b q.n.a))))
@@ -147,7 +165,6 @@
   ^-  (list {ship _(need (divided *~(got by c)))})
   %+  turn  (sort (~(tap by (murn-by c divided))) lor)
   |*(d/{@u *} [(rep a b -.d ~) +.d])
-::
 ++  cursor  (pair (unit ship) @u)
 ++  neis  |=(a/ship ^-(@u (rsh (dec (xeb (dec (xeb a)))) 1 a)))  ::  postfix
 ::
@@ -255,6 +272,12 @@
   =+  c=(lent a)
   [(snag (mod b c) a) (div b c)]
 ::
+++  ames-last-seen                                    ::  last succesful ping
+  |=  a/ship  ~+  ^-  (unit time)
+  %-  (hard (unit time))
+  ~|  ames-look+/(scot %p our)/tell/(scot %da now)/(scot %p a)
+  %+  ames-grab  %rue
+  .^(ames-tell %a /(scot %p our)/tell/(scot %da now)/(scot %p a))
 ::
 ++  shop-galaxies  (available galaxies.office)        ::  unassigned %czar
 ::
@@ -354,37 +377,51 @@
   ?>  ?=({$~ $& *} sta)
   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
-++  stat-any  |=(a/(managed _!!) `stat`?~(a [%free ~] [%owned p.u.a]))
+++  get-live
+  |=  a/ship  ^-  live
+  ?:  =(a our)  %live
+  =+  rue=(ames-last-seen a)
+  ?~  rue  %cold 
+  ?:((gth (sub now u.rue) ~m5) %seen %live)
+::
+++  stat-any
+  |=  {who/@p man/(managed _!!)}  ^-  stat
+  :-  (get-live who)
+  ?~(man [%free ~] [%owned p.u.man])
+::
 ++  stat-planet
   |=  {who/@p man/planet}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any man)
+  ?.  ?=({$~ $& ^} man)  (stat-any who man)
+  :-  (get-live who)
   =+  pla=u:(divided man)
   :-  %split
   %-  malt
   %+  turn  (~(tap by box.p.pla))
-  |=({a/@u b/moon} [(rep 5 who a ~) (stat-any b)])
+  |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
 ::
 ++  stat-star
   |=  {who/@p man/star}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any man)
+  ?.  ?=({$~ $& ^} man)  (stat-any who man)
+  :-  (get-live who)
   =+  sta=u:(divided man)
   :-  %split
   %-  malt
   %+  welp
     %+  turn  (~(tap by box.p.sta))
-    |=({a/@u b/moon} [(rep 5 who a ~) (stat-any b)])
+    |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
   %+  turn  (~(tap by box.q.sta))
   |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
 ::
 ++  stat-galaxy
   |=  {who/@p man/galaxy}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any man)
+  ?.  ?=({$~ $& ^} man)  (stat-any who man)
   =+  gal=u:(divided man)
+  :-  (get-live who)
   :-  %split
   %-  malt
   ;:  welp
     %+  turn  (~(tap by box.p.gal))
-    |=({a/@u b/moon} [(rep 5 who a ~) (stat-any b)])
+    |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
   ::
     %+  turn  (~(tap by box.q.gal))
     |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))

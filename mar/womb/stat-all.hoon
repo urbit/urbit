@@ -19,11 +19,15 @@
     %+  turn  (~(tap by all))
     |=  {a/ship b/stat:womb}  ^-  {cord ^json}
     :-  (crip +:<a>)
-    %+  joba  -.b
-    ?-  -.b
+    (jobe live+[%s p.b] dist+(json-dist q.b) ~)
+  ::
+  ++  json-dist
+    |=  a/dist:womb
+    %+  joba  -.a
+    ?-  -.a
       $free  b+&
-      $owned  s+p.b
-      $split  json(all p.b)
+      $owned  b+& :: s+p.a :: XX proper security
+      $split  json(all p.a)
     ==
   --
 --

@@ -7,27 +7,43 @@ Persistence = require('./Persistence.coffee');
 
 module.exports = {
   claimShip: function(pass, ship) {
+    Dispatcher.dispatch({
+      putClaim: {
+        pass: pass,
+        ship: ship
+      }
+    });
     return Persistence.put("womb-claim", {
       aut: pass,
       her: ship
-    }, function(err, arg) {
-      var data, gotClaim, status;
-      data = arg.data, status = arg.status;
-      gotClaim = {
-        pass: pass,
-        ship: ship,
-        own: true
+    }, (function(_this) {
+      return function(err, arg) {
+        var data, gotClaim, status;
+        data = arg.data, status = arg.status;
+        gotClaim = {
+          pass: pass,
+          ship: ship,
+          own: true
+        };
+        if (status !== 200) {
+          gotClaim.own = false;
+        }
+        Dispatcher.dispatch({
+          gotClaim: gotClaim
+        });
+        _this.getData("/stats", true);
+        return _this.getData("/balance/~" + pass, true);
       };
-      if (status !== 200) {
-        gotClaim.own = false;
-      }
-      return Dispatcher.dispatch({
-        gotClaim: gotClaim
-      });
-    });
+    })(this));
   },
-  getData: function(path) {
-    return Persistence.get(path, function(err, arg) {
+  getData: function(path, fresh) {
+    if (fresh == null) {
+      fresh = false;
+    }
+    return Persistence.get({
+      path: path,
+      fresh: fresh
+    }, function(err, arg) {
       var data, status;
       status = arg.status, data = arg.data;
       if (err != null) {
@@ -64,19 +80,27 @@ module.exports = {
       wall: false
     }, cb);
   },
-  get: function(path, cb) {
-    if (!dup[path]) {
+  get: function(arg, cb) {
+    var fresh, path;
+    path = arg.path, fresh = arg.fresh;
+    if (fresh || !dup[path]) {
       dup[path] = true;
       return urb.bind("/scry/x/womb" + path, {
         appl: "hood"
-      }, cb);
+      }, function() {
+        urb.drop("/scry/x/womb" + path, {
+          appl: "hood"
+        }, function() {});
+        return cb.apply(this, arguments);
+      });
     }
   }
 };
 
 
 },{}],4:[function(require,module,exports){
-var EventEmitter, WombDispatcher, WombStore, _data, unpackFrond;
+var EventEmitter, WombDispatcher, WombStore, _data, _local, _localDefault, unpackFrond,
+  slice = [].slice;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -85,6 +109,14 @@ unpackFrond = require('./util.coffee').unpackFrond;
 WombDispatcher = require('./Dispatcher.coffee');
 
 _data = {};
+
+_local = {
+  claim: {}
+};
+
+_localDefault = {
+  claim: "none"
+};
 
 WombStore = _.extend(new EventEmitter, {
   emitChange: function() {
@@ -97,15 +129,27 @@ WombStore = _.extend(new EventEmitter, {
     return this.removeListener("change", cb);
   },
   retrieve: function(path) {
-    return _data[path];
+    var key, ref, ref1, ref2;
+    if (path[0] !== "_") {
+      return _data[path];
+    }
+    ref = path.slice(1).split("/"), key = ref[0], path = 2 <= ref.length ? slice.call(ref, 1) : [];
+    return (ref1 = (ref2 = _local[key]) != null ? ref2[path.join("/")] : void 0) != null ? ref1 : _localDefault[key];
   },
   gotData: function(arg1) {
     var data, path;
     path = arg1.path, data = arg1.data;
     return _data[path] = data;
   },
-  gotClaim: function(x) {
-    return console.log("got claim", x);
+  putClaim: function(arg1) {
+    var ship;
+    ship = arg1.ship;
+    return _local.claim[ship] = "wait";
+  },
+  gotClaim: function(arg1) {
+    var own, ship;
+    ship = arg1.ship, own = arg1.own;
+    return _local.claim[ship] = (own ? "own" : "xeno");
   }
 });
 
@@ -121,7 +165,7 @@ WombStore.dispatchToken = WombDispatcher.register(function(action) {
 module.exports = WombStore;
 
 
-},{"./Dispatcher.coffee":2,"./util.coffee":11,"events":13}],5:[function(require,module,exports){
+},{"./Dispatcher.coffee":2,"./util.coffee":12,"events":14}],5:[function(require,module,exports){
 var Balance, History, Mail, Planets, Scry, Shop, Stars, b, clas, code, div, h6, input, p, recl, ref, rele, shipShape, span;
 
 clas = require('classnames');
@@ -212,7 +256,22 @@ module.exports = recl({
 });
 
 
-},{"../util.coffee":11,"./Scry.coffee":7,"./Shop.coffee":9,"classnames":12}],6:[function(require,module,exports){
+},{"../util.coffee":12,"./Scry.coffee":8,"./Shop.coffee":10,"classnames":13}],6:[function(require,module,exports){
+var span;
+
+span = React.DOM.span;
+
+module.exports = function(s, type) {
+  if (type == null) {
+    type = "default";
+  }
+  return span({
+    className: "label label-" + type
+  }, s);
+};
+
+
+},{}],7:[function(require,module,exports){
 var Claim, Ships, div, h4, ref, rele;
 
 Claim = require('./Claim.coffee');
@@ -228,7 +287,7 @@ module.exports = function() {
 };
 
 
-},{"./Claim.coffee":5,"./Ships.coffee":8}],7:[function(require,module,exports){
+},{"./Claim.coffee":5,"./Ships.coffee":9}],8:[function(require,module,exports){
 var Actions, Store, div, i, recl, ref, rele;
 
 Actions = require('../Actions.coffee');
@@ -280,7 +339,11 @@ module.exports = function(path, Child) {
       }
     },
     render: function() {
-      return div({}, this.state.data == null ? i({
+      return div({
+        style: {
+          display: "inline"
+        }
+      }, this.state.data == null ? i({
         key: "load"
       }, "Fetching data...") : rele(Child, _.extend({}, this.props, {
         key: "got",
@@ -291,12 +354,14 @@ module.exports = function(path, Child) {
 };
 
 
-},{"../Actions.coffee":1,"../Store.coffee":4}],8:[function(require,module,exports){
+},{"../Actions.coffee":1,"../Store.coffee":4}],9:[function(require,module,exports){
 var Label, Scry, Stat, clas, code, div, labels, li, name, p, pre, recl, ref, rele, span, ul;
 
 clas = require('classnames');
 
 Scry = require('./Scry.coffee');
+
+Label = require('./Label.coffee');
 
 recl = React.createClass;
 
@@ -316,27 +381,21 @@ labels = {
   split: "Distributing"
 };
 
-Label = function(s) {
-  return span({
-    className: "label label-default"
-  }, s);
-};
-
 Stat = name("Stat", function(stats) {
-  var className, free, owned, ship, split, stat;
+  var className, dist, free, live, owned, ship, split;
   return ul({}, (function() {
-    var results;
+    var ref1, results;
     results = [];
     for (ship in stats) {
-      stat = stats[ship];
-      free = stat.free, owned = stat.owned, split = stat.split;
-      className = clas(stat);
+      ref1 = stats[ship], live = ref1.live, dist = ref1.dist;
+      free = dist.free, owned = dist.owned, split = dist.split;
+      className = clas(dist);
       results.push(li({
         className: className,
         key: ship
       }, span({
         className: "mono"
-      }, "~" + ship + ": "), (function() {
+      }, "~" + ship), " (", live, "): ", (function() {
         switch (false) {
           case free == null:
             return Label(labels.free);
@@ -350,7 +409,7 @@ Stat = name("Stat", function(stats) {
             }
             break;
           default:
-            throw new Error("Bad stat: " + (_.keys(stat)));
+            throw new Error("Bad stat: " + (_.keys(dist)));
         }
       })()));
     }
@@ -365,18 +424,37 @@ module.exports = Scry("/stats", function(arg) {
 });
 
 
-},{"./Scry.coffee":7,"classnames":12}],9:[function(require,module,exports){
-var Actions, Scry, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
+},{"./Label.coffee":6,"./Scry.coffee":8,"classnames":13}],10:[function(require,module,exports){
+var Actions, ClaimButton, Label, Scry, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
 
 Actions = require('../Actions.coffee');
 
 Scry = require('./Scry.coffee');
+
+Label = require('./Label.coffee');
 
 ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, h6 = ref.h6, button = ref.button, span = ref.span;
 
 recl = React.createClass;
 
 rele = React.createElement;
+
+ClaimButton = Scry("_claim", function(arg) {
+  var data, onClick;
+  data = arg.data, onClick = arg.onClick;
+  switch (data) {
+    case "own":
+      return Label("Claimed!", "success");
+    case "wait":
+      return Label("Claiming...");
+    case "xeno":
+      return Label("Taken", "warning");
+    case "none":
+      return button({
+        onClick: onClick
+      }, "Claim");
+  }
+});
 
 ShopShips = Scry("/shop", function(arg) {
   var claimShip, data, who;
@@ -393,9 +471,10 @@ ShopShips = Scry("/shop", function(arg) {
         key: who
       }, span({
         className: "mono"
-      }, "~", who, " "), button({
+      }, "~", who, " "), rele(ClaimButton, {
+        spur: "/" + who,
         onClick: claimShip(who)
-      }, "Claim")));
+      })));
     }
     return results;
   })());
@@ -438,7 +517,7 @@ Shop = function(type) {
 module.exports = Shop;
 
 
-},{"../Actions.coffee":1,"./Scry.coffee":7}],10:[function(require,module,exports){
+},{"../Actions.coffee":1,"./Label.coffee":6,"./Scry.coffee":8}],11:[function(require,module,exports){
 var MainComponent, TreeActions;
 
 MainComponent = require('./components/Main.coffee');
@@ -448,7 +527,7 @@ TreeActions = window.tree.actions;
 TreeActions.registerComponent("womb", MainComponent);
 
 
-},{"./components/Main.coffee":6}],11:[function(require,module,exports){
+},{"./components/Main.coffee":7}],12:[function(require,module,exports){
 var PO, SHIPSHAPE,
   slice = [].slice;
 
@@ -473,7 +552,7 @@ module.exports = {
 };
 
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -523,7 +602,7 @@ module.exports = {
 	}
 }());
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -823,4 +902,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[10]);
+},{}]},{},[11]);
