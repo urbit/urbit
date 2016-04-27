@@ -86,7 +86,7 @@ module.exports = WombStore;
 
 
 },{"./Dispatcher.coffee":2,"./util.coffee":10,"events":12}],5:[function(require,module,exports){
-var Balance, History, Mail, Scry, clas, code, div, h6, input, name, p, pre, recl, ref, rele, shipShape, span;
+var Balance, History, Mail, Planets, Scry, Stars, _Options, b, button, clas, code, div, h6, input, li, name, p, pre, recl, ref, rele, shipShape, span, ul;
 
 clas = require('classnames');
 
@@ -104,7 +104,7 @@ name = function(displayName, component) {
   });
 };
 
-ref = React.DOM, div = ref.div, h6 = ref.h6, input = ref.input, p = ref.p, span = ref.span, pre = ref.pre, code = ref.code;
+ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, b = ref.b, h6 = ref.h6, input = ref.input, button = ref.button, p = ref.p, span = ref.span, pre = ref.pre, code = ref.code;
 
 Mail = function(email) {
   return code({
@@ -131,12 +131,58 @@ History = function(history) {
   }
 };
 
+_Options = function(type) {
+  var Shop;
+  Shop = Scry("/shop/" + type, function(arg) {
+    var data, who;
+    data = arg.data;
+    return ul({
+      className: "options options-" + type
+    }, (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = data.length; i < len; i++) {
+        who = data[i];
+        results.push(li({
+          className: "shop",
+          key: who
+        }, span({
+          className: "mono"
+        }, who)));
+      }
+      return results;
+    })());
+  });
+  return recl({
+    reroll: function() {
+      return {
+        shipSelector: Math.floor(Math.random() * 10)
+      };
+    },
+    onClick: function() {
+      return this.setState(this.reroll());
+    },
+    getInitialState: function() {
+      return this.reroll();
+    },
+    render: function() {
+      return div({}, h6({}, "Semi-random avaliable " + type + ".", button({
+        onClick: this.onClick
+      }, "Reroll")), rele(Shop, _.extend({}, this.props, {
+        spur: "/" + this.state.shipSelector
+      })));
+    }
+  });
+};
+
+Stars = _Options("stars");
+
+Planets = _Options("planets");
+
 Balance = Scry("/balance", function(arg) {
   var history, owner, planets, ref1, stars;
   ref1 = arg.data, planets = ref1.planets, stars = ref1.stars, owner = ref1.owner, history = ref1.history;
-  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", planets || "no", " Planets ", "and ", stars || "no", " Stars."), p({
-    className: "red inverse block error"
-  }, "Stub: issuing"));
+  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
 });
 
 module.exports = recl({
@@ -162,7 +208,7 @@ module.exports = recl({
       onChange: this.onChange,
       defaultValue: ""
     }), this.state.passcode ? rele(Balance, {
-      subPath: "/" + this.state.passcode
+      spur: "/" + this.state.passcode
     }) : void 0);
   }
 });
@@ -210,7 +256,7 @@ module.exports = function(path, Child) {
     },
     getPath: function() {
       var ref1;
-      return path + ((ref1 = this.props.subPath) != null ? ref1 : "");
+      return path + ((ref1 = this.props.spur) != null ? ref1 : "");
     },
     checkState: function() {
       if (this.state.data == null) {
@@ -248,7 +294,7 @@ module.exports = function(path, Child) {
 
 
 },{"../Actions.coffee":1,"../Store.coffee":4}],8:[function(require,module,exports){
-var Scry, Stat, clas, code, div, li, name, p, pre, recl, ref, rele, ul;
+var Label, Scry, Stat, clas, code, div, labels, li, name, p, pre, recl, ref, rele, span, ul;
 
 clas = require('classnames');
 
@@ -264,7 +310,19 @@ name = function(displayName, component) {
   });
 };
 
-ref = React.DOM, p = ref.p, ul = ref.ul, li = ref.li, div = ref.div, pre = ref.pre, code = ref.code;
+ref = React.DOM, p = ref.p, ul = ref.ul, li = ref.li, span = ref.span, div = ref.div, pre = ref.pre, code = ref.code;
+
+labels = {
+  free: "Unallocated",
+  owned: "Issued",
+  split: "Distributing"
+};
+
+Label = function(s) {
+  return span({
+    className: "label label-default"
+  }, s);
+};
 
 Stat = name("Stat", function(stats) {
   var className, free, owned, ship, split, stat;
@@ -278,15 +336,17 @@ Stat = name("Stat", function(stats) {
       results.push(li({
         className: className,
         key: ship
-      }, "~" + ship + ": ", (function() {
+      }, span({
+        className: "mono"
+      }, "~" + ship + ": "), (function() {
         switch (false) {
           case free == null:
-            return "Unallocated";
+            return Label(labels.free);
           case owned == null:
-            return "Granted to " + owned;
+            return Label(labels.owned);
           case split == null:
             if (_.isEmpty(split)) {
-              return "Split";
+              return Label(labels.split);
             } else {
               return rele(Stat, split);
             }
