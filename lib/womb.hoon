@@ -377,19 +377,19 @@
   ?>  ?=({$~ $& *} sta)
   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
-++  get-live
+++  get-live                                          ::  last-heard time ++live
   |=  a/ship  ^-  live
   ?:  =(a our)  %live
   =+  rue=(ames-last-seen a)
   ?~  rue  %cold 
   ?:((gth (sub now u.rue) ~m5) %seen %live)
 ::
-++  stat-any
+++  stat-any                                          ::  unsplit status
   |=  {who/@p man/(managed _!!)}  ^-  stat
   :-  (get-live who)
   ?~(man [%free ~] [%owned p.u.man])
 ::
-++  stat-planet
+++  stat-planet                                       ::  stat of planet
   |=  {who/@p man/planet}  ^-  stat
   ?.  ?=({$~ $& ^} man)  (stat-any who man)
   :-  (get-live who)
@@ -399,7 +399,7 @@
   %+  turn  (~(tap by box.p.pla))
   |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
 ::
-++  stat-star
+++  stat-star                                         ::  stat of star
   |=  {who/@p man/star}  ^-  stat
   ?.  ?=({$~ $& ^} man)  (stat-any who man)
   :-  (get-live who)
@@ -412,7 +412,7 @@
   %+  turn  (~(tap by box.q.sta))
   |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
 ::
-++  stat-galaxy
+++  stat-galaxy                                       :: stat of galaxy
   |=  {who/@p man/galaxy}  ^-  stat
   ?.  ?=({$~ $& ^} man)  (stat-any who man)
   =+  gal=u:(divided man)
@@ -458,7 +458,7 @@
   %+  bind  (~(get by bureau) pas)
   |=(bal/balance [%womb-balance bal])
 ::
-++  peer-scry-x
+++  peer-scry-x                                        ::  subscription like .^
   |=  tyl/path
   =<  abet
   =+  gil=(peek-x tyl)
@@ -467,7 +467,7 @@
   ?~  u.gil  ~|(%bad-path !!)
   (emit %diff u.u.gil)
 ::
-++  peek-x
+++  peek-x                                             ::  stateless read
   |=  tyl/path  ^-  (unit (unit gilt))
   ~|  peek+x+tyl
   ?~  tyl  ~
@@ -506,7 +506,7 @@
     ~|(already-managing+i.a !!)
   ==
 ::
-++  email
+++  email                                             ::  send email
   |=  {wir/wire adr/mail msg/tape}  ^+  +>
   (emit %poke [%mail wir] [our %gmail] %email adr msg)
   ::~&([%email-stub adr msg] +>)
@@ -567,7 +567,7 @@
   ?>  =(src src)                                      ::  self-authenticated
   (emit %knew /report her wyl)
 ::
-++  use-reference
+++  use-reference                                     ::  bonus stars
   |=  a/(each @p mail)  ^-  (unit _+>)
   ?.  (~(has by hotel) a)  ~
   =+  cli=(~(get by hotel) a)
