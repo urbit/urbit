@@ -29,11 +29,18 @@ module.exports = new Flux.Dispatcher();
 
 
 },{}],3:[function(require,module,exports){
+var dup;
+
+dup = {};
+
 module.exports = {
   get: function(path, cb) {
-    return urb.bind("/scry/x/womb" + path, {
-      appl: "hood"
-    }, cb);
+    if (!dup[path]) {
+      dup[path] = true;
+      return urb.bind("/scry/x/womb" + path, {
+        appl: "hood"
+      }, cb);
+    }
   }
 };
 
@@ -78,7 +85,106 @@ WombStore.dispatchToken = WombDispatcher.register(function(action) {
 module.exports = WombStore;
 
 
-},{"./Dispatcher.coffee":2,"./util.coffee":9,"events":10}],5:[function(require,module,exports){
+},{"./Dispatcher.coffee":2,"./util.coffee":10,"events":12}],5:[function(require,module,exports){
+var Balance, History, Mail, Scry, clas, code, div, h6, input, name, p, pre, recl, ref, rele, shipShape, span;
+
+clas = require('classnames');
+
+shipShape = require('../util.coffee').shipShape;
+
+Scry = require('./Scry.coffee');
+
+recl = React.createClass;
+
+rele = React.createElement;
+
+name = function(displayName, component) {
+  return _.extend(component, {
+    displayName: displayName
+  });
+};
+
+ref = React.DOM, div = ref.div, h6 = ref.h6, input = ref.input, p = ref.p, span = ref.span, pre = ref.pre, code = ref.code;
+
+Mail = function(email) {
+  return code({
+    className: "email"
+  }, email);
+};
+
+History = function(history) {
+  var key, who;
+  if (!history.length) {
+    return "purchased directly from Tlon Inc. ";
+  } else {
+    return span({}, "previously owned by ", (function() {
+      var i, len, results;
+      results = [];
+      for (key = i = 0, len = history.length; i < len; key = ++i) {
+        who = history[key];
+        results.push(span({
+          key: key
+        }, Mail(who)));
+      }
+      return results;
+    })(), "and Tlon Inc. ");
+  }
+};
+
+Balance = Scry("/balance", function(arg) {
+  var history, owner, planets, ref1, stars;
+  ref1 = arg.data, planets = ref1.planets, stars = ref1.stars, owner = ref1.owner, history = ref1.history;
+  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", planets || "no", " Planets ", "and ", stars || "no", " Stars."), p({
+    className: "red inverse block error"
+  }, "Stub: issuing"));
+});
+
+module.exports = recl({
+  displayName: "Claim",
+  getInitialState: function() {
+    return {
+      passcode: "~waclev-nornex-bornec-fitfed--librys-tapsut-docrus-fittel"
+    };
+  },
+  onChange: function(arg) {
+    var pass, target;
+    target = arg.target;
+    pass = target.value.trim();
+    if (pass[0] !== '~') {
+      pass = "~" + pass;
+    }
+    return this.setState({
+      passcode: (shipShape(pass)) && pass.length === 57 ? pass : void 0
+    });
+  },
+  render: function() {
+    return div({}, p({}, "Input a passcode to claim ships: "), input({
+      onChange: this.onChange,
+      defaultValue: ""
+    }), this.state.passcode ? rele(Balance, {
+      subPath: "/" + this.state.passcode
+    }) : void 0);
+  }
+});
+
+
+},{"../util.coffee":10,"./Scry.coffee":7,"classnames":11}],6:[function(require,module,exports){
+var Claim, Ships, div, h4, ref, rele;
+
+Claim = require('./Claim.coffee');
+
+Ships = require('./Ships.coffee');
+
+rele = React.createElement;
+
+ref = React.DOM, div = ref.div, h4 = ref.h4;
+
+module.exports = function() {
+  return div({}, h4({}, "Claims"), rele(Claim, {}), h4({}, "Network"), rele(Ships, {}));
+};
+
+
+},{"./Claim.coffee":5,"./Ships.coffee":8}],7:[function(require,module,exports){
 var Actions, Store, div, i, recl, ref, rele;
 
 Actions = require('../Actions.coffee');
@@ -93,23 +199,36 @@ ref = React.DOM, div = ref.div, i = ref.i;
 
 module.exports = function(path, Child) {
   return recl({
-    displayName: "Async",
+    displayName: "Scry" + path.split('/').join('-'),
     getInitialState: function() {
       return this.retrieveData();
     },
     retrieveData: function() {
       return {
-        data: Store.retrieve(path)
+        data: Store.retrieve(this.getPath())
       };
+    },
+    getPath: function() {
+      var ref1;
+      return path + ((ref1 = this.props.subPath) != null ? ref1 : "");
+    },
+    checkState: function() {
+      if (this.state.data == null) {
+        return Actions.getData(this.getPath());
+      }
     },
     componentDidMount: function() {
       Store.addChangeListener(this.changeListener);
-      if (this.state.data == null) {
-        return Actions.getData(path);
-      }
+      return this.checkState();
     },
     componentWillUnmount: function() {
       return Store.removeChangeListener(this.changeListener);
+    },
+    componentDidUpdate: function(_props, _state) {
+      if (_props !== this.props) {
+        this.setState(this.retrieveData());
+      }
+      return this.checkState();
     },
     changeListener: function() {
       if (this.isMounted()) {
@@ -128,35 +247,67 @@ module.exports = function(path, Child) {
 };
 
 
-},{"../Actions.coffee":1,"../Store.coffee":4}],6:[function(require,module,exports){
-var Ships, div, rele;
+},{"../Actions.coffee":1,"../Store.coffee":4}],8:[function(require,module,exports){
+var Scry, Stat, clas, code, div, li, name, p, pre, recl, ref, rele, ul;
 
-Ships = require('./Ships.coffee');
+clas = require('classnames');
+
+Scry = require('./Scry.coffee');
+
+recl = React.createClass;
 
 rele = React.createElement;
 
-div = React.DOM.div;
-
-module.exports = function() {
-  return div({}, rele(Ships, {}));
+name = function(displayName, component) {
+  return _.extend(component, {
+    displayName: displayName
+  });
 };
 
+ref = React.DOM, p = ref.p, ul = ref.ul, li = ref.li, div = ref.div, pre = ref.pre, code = ref.code;
 
-},{"./Ships.coffee":7}],7:[function(require,module,exports){
-var Async, code, div, p, pre, ref;
+Stat = name("Stat", function(stats) {
+  var className, free, owned, ship, split, stat;
+  return ul({}, (function() {
+    var results;
+    results = [];
+    for (ship in stats) {
+      stat = stats[ship];
+      free = stat.free, owned = stat.owned, split = stat.split;
+      className = clas(stat);
+      results.push(li({
+        className: className,
+        key: ship
+      }, "~" + ship + ": ", (function() {
+        switch (false) {
+          case free == null:
+            return "Unallocated";
+          case owned == null:
+            return "Granted to " + owned;
+          case split == null:
+            if (_.isEmpty(split)) {
+              return "Split";
+            } else {
+              return rele(Stat, split);
+            }
+            break;
+          default:
+            throw new Error("Bad stat: " + (_.keys(stat)));
+        }
+      })()));
+    }
+    return results;
+  })());
+});
 
-Async = require('./Async.coffee');
-
-ref = React.DOM, p = ref.p, div = ref.div, pre = ref.pre, code = ref.code;
-
-module.exports = Async("/stats", function(arg) {
+module.exports = Scry("/stats", function(arg) {
   var data;
   data = arg.data;
-  return div({}, p({}, "Womb stub: ships"), pre({}, code({}, JSON.stringify(data))));
+  return rele(Stat, data);
 });
 
 
-},{"./Async.coffee":5}],8:[function(require,module,exports){
+},{"./Scry.coffee":7,"classnames":11}],9:[function(require,module,exports){
 var MainComponent, TreeActions;
 
 MainComponent = require('./components/Main.coffee');
@@ -166,8 +317,13 @@ TreeActions = window.tree.actions;
 TreeActions.registerComponent("womb", MainComponent);
 
 
-},{"./components/Main.coffee":6}],9:[function(require,module,exports){
-var slice = [].slice;
+},{"./components/Main.coffee":6}],10:[function(require,module,exports){
+var PO, SHIPSHAPE,
+  slice = [].slice;
+
+SHIPSHAPE = /^~?([a-z]{3}|[a-z]{6}(-[a-z]{6}){0,3}|[a-z]{6}(-[a-z]{6}){3}(--[a-z]{6}(-[a-z]{6}){3})+)$/;
+
+PO = 'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\nrigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\nholpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\nlosdilforpilramtirwintadbicdifrocwidbisdasmidlop\nrilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\nritpodmottamtolsavposnapnopsomfinfonbanporworsip\nronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\nsivtagpadsaldivdactansidfabtarmonranniswolmispal\nlasdismaprabtobrollatlonnodnavfignomnibpagsopral\nbilhaddocridmocpacravripfaltodtiltinhapmicfanpat\ntaclabmogsimsonpinlomrictapfirhasbosbatpochactid\nhavsaplindibhosdabbitbarracparloddosbortochilmac\ntomdigfilfasmithobharmighinradmashalraglagfadtop\nmophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\nnimlarfitwalrapsarnalmoslandondanladdovrivbacpol\nlaptalpitnambonrostonfodponsovnocsorlavmatmipfap\n\nzodnecbudwessevpersutletfulpensytdurwepserwylsun\nrypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\nlunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\npyldulhetmevruttylwydtepbesdexsefwycburderneppur\nrysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\nsecmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\nselrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\nsyptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\nlytdusnebrumtynseglyxpunresredfunrevrefmectedrus\nbexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\ntenlusnussyltecmexpubrymtucfyllepdebbermughuttun\nbylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\nwedducfurfexnulluclennerlexrupnedlecrydlydfenwel\nnydhusrelrudneshesfetdesretdunlernyrsebhulryllud\nremlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\nlyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes';
 
 module.exports = {
   unpackFrond: function(a) {
@@ -177,11 +333,66 @@ module.exports = {
       throw new Error("Improper frond: " + ([key].concat(slice.call(alts)).join(',')));
     }
     return [key, a[key]];
+  },
+  shipShape: function(a) {
+    return (SHIPSHAPE.test(a)) && _.all(a.match(/[a-z]{3}/g), function(b) {
+      return -1 !== PO.indexOf(b);
+    });
   }
 };
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+/*!
+  Copyright (c) 2016 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg)) {
+				classes.push(classNames.apply(null, arg));
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', [], function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+},{}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -481,4 +692,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[8]);
+},{}]},{},[9]);

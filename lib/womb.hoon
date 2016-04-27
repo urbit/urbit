@@ -17,18 +17,9 @@
       box/(map @u +<)                                   ::  entries
   ==                                                    ::
 --                                                      ::
-::   $:  min/@p
-::       mid/@p
-::       max/@p
-::       box/(map @p (each mail ))
-::   ==
-  
-:: |%
-:: ++  ships  (list {min/@p mid/@p max/@p ish/(map @p state)})
-:: ++  state  ?($given $split {$~ mail})
-
-  
-:: ++  
+::                                                      ::
+::::                                                    ::
+  ::                                                    ::
 |%                                                      ::
 ++  managed                                             ::  managed plot
   |*  mold                                              ::  
@@ -423,7 +414,7 @@
   %-  ~(uni by (~(urn by stars.office) stat-star))
   (~(urn by galaxies.office) stat-galaxy)
 ::
-++  peek-x-invite                                     ::  inspect invitation
+++  peek-x-balance                                     ::  inspect invitation
   |=  tyl/path  ^-  (unit (unit {$womb-balance balance}))
   =+  pas=~|(bad-path+tyl (raid tyl pas=%p ~))
   %-  some
@@ -451,8 +442,8 @@
   ::  /stats                          general stats dump
   ::  /stats/@p                       what we know about @p
     $stats  (peek-x-stats +.tyl)
-  ::  /invite/passcode                invitation status  
-    $invite  (peek-x-invite +.tyl)
+  ::  /balance/passcode                invitation status  
+    $balance  (peek-x-balance +.tyl)
   ==
 ::
 ++  poke-manage                                       ::  add to property
