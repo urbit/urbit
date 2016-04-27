@@ -603,6 +603,9 @@
   ?~  sta  +>
   =+  all=(take-n [0 sta] shop-stars)
   ~&  got-stars+all
+  %-  (slog leaf+"For issuing to proceed smoothly, these should immediately ".
+                 "be started, |obey {<our>} to honor ticket requests, and ".
+                 "|start %gmail for ticket distribution." ~)
   ?.  (gth sta (lent all))
     (roll all release-star)
   ~|(too-few-stars+[want=sta has=(lent all)] !!)
