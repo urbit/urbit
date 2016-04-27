@@ -163,6 +163,9 @@ window.urb.poll = function(params) {
           $this.cabs[fn].call(this,err2,
             {status: res.status, data: res.data.data.json}) // XX non-json
         break;
+          case "quit":
+        //  XX necessary behaviour?
+        break;
           default:
         throw new Error("Lost event %"+res.data.type)
       }
