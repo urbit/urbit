@@ -234,7 +234,9 @@ div.logo.inverse:before {
     width: inherit;
     max-width: inherit; }
   .ctrl.open {
-    max-height: 12rem; }
+    height: auto;
+    max-height: 12rem;
+    min-height: 3rem; }
   a.nav-link {
     font-size: 1rem;
     line-height: 1rem;
@@ -979,7 +981,7 @@ ol > li:before {
   padding-right: 0;
   position: fixed;
   overflow: hidden;
-  z-index: 99;
+  z-index: 101;
   margin-top: -3rem; }
   .menu .contents {
     padding-left: 0.9375rem;
