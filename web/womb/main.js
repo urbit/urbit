@@ -6,12 +6,35 @@ Dispatcher = require('./Dispatcher.coffee');
 Persistence = require('./Persistence.coffee');
 
 module.exports = {
+  claimShip: function(pass, ship) {
+    return Persistence.put("womb-claim", {
+      aut: pass,
+      her: ship
+    }, function(err, arg) {
+      var data, gotClaim, status;
+      data = arg.data, status = arg.status;
+      gotClaim = {
+        pass: pass,
+        ship: ship,
+        own: true
+      };
+      if (status !== 200) {
+        gotClaim.own = false;
+      }
+      return Dispatcher.dispatch({
+        gotClaim: gotClaim
+      });
+    });
+  },
   getData: function(path) {
     return Persistence.get(path, function(err, arg) {
-      var data;
-      data = arg.data;
+      var data, status;
+      status = arg.status, data = arg.data;
       if (err != null) {
-        throw new "Server error";
+        throw new Error("Client error");
+      }
+      if (status !== 200) {
+        throw new Error("Server error");
       }
       return Dispatcher.dispatch({
         gotData: {
@@ -34,6 +57,13 @@ var dup;
 dup = {};
 
 module.exports = {
+  put: function(mark, data, cb) {
+    return urb.send(data, {
+      mark: mark,
+      appl: "hood",
+      wall: false
+    }, cb);
+  },
   get: function(path, cb) {
     if (!dup[path]) {
       dup[path] = true;
@@ -63,6 +93,9 @@ WombStore = _.extend(new EventEmitter, {
   addChangeListener: function(cb) {
     return this.on('change', cb);
   },
+  removeChangeListener: function(cb) {
+    return this.removeListener("change", cb);
+  },
   retrieve: function(path) {
     return _data[path];
   },
@@ -70,6 +103,9 @@ WombStore = _.extend(new EventEmitter, {
     var data, path;
     path = arg1.path, data = arg1.data;
     return _data[path] = data;
+  },
+  gotClaim: function(x) {
+    return console.log("got claim", x);
   }
 });
 
@@ -85,8 +121,8 @@ WombStore.dispatchToken = WombDispatcher.register(function(action) {
 module.exports = WombStore;
 
 
-},{"./Dispatcher.coffee":2,"./util.coffee":10,"events":12}],5:[function(require,module,exports){
-var Balance, History, Mail, Planets, Scry, Stars, _Options, b, button, clas, code, div, h6, input, li, name, p, pre, recl, ref, rele, shipShape, span, ul;
+},{"./Dispatcher.coffee":2,"./util.coffee":11,"events":13}],5:[function(require,module,exports){
+var Balance, History, Mail, Planets, Scry, Shop, Stars, b, clas, code, div, h6, input, p, recl, ref, rele, shipShape, span;
 
 clas = require('classnames');
 
@@ -94,17 +130,13 @@ shipShape = require('../util.coffee').shipShape;
 
 Scry = require('./Scry.coffee');
 
+Shop = require('./Shop.coffee');
+
 recl = React.createClass;
 
 rele = React.createElement;
 
-name = function(displayName, component) {
-  return _.extend(component, {
-    displayName: displayName
-  });
-};
-
-ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, b = ref.b, h6 = ref.h6, input = ref.input, button = ref.button, p = ref.p, span = ref.span, pre = ref.pre, code = ref.code;
+ref = React.DOM, div = ref.div, b = ref.b, h6 = ref.h6, input = ref.input, p = ref.p, span = ref.span, code = ref.code;
 
 Mail = function(email) {
   return code({
@@ -131,66 +163,33 @@ History = function(history) {
   }
 };
 
-_Options = function(type) {
-  var Shop;
-  Shop = Scry("/shop/" + type, function(arg) {
-    var data, who;
-    data = arg.data;
-    return ul({
-      className: "options options-" + type
-    }, (function() {
-      var i, len, results;
-      results = [];
-      for (i = 0, len = data.length; i < len; i++) {
-        who = data[i];
-        results.push(li({
-          className: "shop",
-          key: who
-        }, span({
-          className: "mono"
-        }, who)));
-      }
-      return results;
-    })());
-  });
-  return recl({
-    reroll: function() {
-      return {
-        shipSelector: Math.floor(Math.random() * 10)
-      };
-    },
-    onClick: function() {
-      return this.setState(this.reroll());
-    },
-    getInitialState: function() {
-      return this.reroll();
-    },
-    render: function() {
-      return div({}, h6({}, "Semi-random avaliable " + type + ".", button({
-        onClick: this.onClick
-      }, "Reroll")), rele(Shop, _.extend({}, this.props, {
-        spur: "/" + this.state.shipSelector
-      })));
-    }
-  });
-};
+Stars = Shop("stars");
 
-Stars = _Options("stars");
-
-Planets = _Options("planets");
+Planets = Shop("planets");
 
 Balance = Scry("/balance", function(arg) {
-  var history, owner, planets, ref1, stars;
-  ref1 = arg.data, planets = ref1.planets, stars = ref1.stars, owner = ref1.owner, history = ref1.history;
-  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
+  var history, owner, pass, planets, ref1, stars;
+  pass = arg.pass, (ref1 = arg.data, planets = ref1.planets, stars = ref1.stars, owner = ref1.owner, history = ref1.history);
+  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars, {
+    pass: pass
+  }) : void 0, planets ? rele(Planets, {
+    pass: pass
+  }) : void 0);
 });
 
 module.exports = recl({
   displayName: "Claim",
   getInitialState: function() {
+    var ref1;
     return {
-      passcode: "~waclev-nornex-bornec-fitfed--librys-tapsut-docrus-fittel"
+      passcode: (ref1 = localStorage.womb_claim) != null ? ref1 : ""
     };
+  },
+  setPasscode: function(passcode) {
+    localStorage.womb_claim = passcode != null ? passcode : "";
+    return this.setState({
+      passcode: passcode
+    });
   },
   onChange: function(arg) {
     var pass, target;
@@ -199,22 +198,21 @@ module.exports = recl({
     if (pass[0] !== '~') {
       pass = "~" + pass;
     }
-    return this.setState({
-      passcode: (shipShape(pass)) && pass.length === 57 ? pass : void 0
-    });
+    return this.setPasscode(((shipShape(pass)) && pass.length === 57 ? pass.slice(1) : void 0));
   },
   render: function() {
     return div({}, p({}, "Input a passcode to claim ships: "), input({
       onChange: this.onChange,
-      defaultValue: ""
+      defaultValue: this.state.passcode
     }), this.state.passcode ? rele(Balance, {
-      spur: "/" + this.state.passcode
+      pass: this.state.passcode,
+      spur: "/~" + this.state.passcode
     }) : void 0);
   }
 });
 
 
-},{"../util.coffee":10,"./Scry.coffee":7,"classnames":11}],6:[function(require,module,exports){
+},{"../util.coffee":11,"./Scry.coffee":7,"./Shop.coffee":9,"classnames":12}],6:[function(require,module,exports){
 var Claim, Ships, div, h4, ref, rele;
 
 Claim = require('./Claim.coffee');
@@ -367,7 +365,80 @@ module.exports = Scry("/stats", function(arg) {
 });
 
 
-},{"./Scry.coffee":7,"classnames":11}],9:[function(require,module,exports){
+},{"./Scry.coffee":7,"classnames":12}],9:[function(require,module,exports){
+var Actions, Scry, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
+
+Actions = require('../Actions.coffee');
+
+Scry = require('./Scry.coffee');
+
+ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, h6 = ref.h6, button = ref.button, span = ref.span;
+
+recl = React.createClass;
+
+rele = React.createElement;
+
+ShopShips = Scry("/shop", function(arg) {
+  var claimShip, data, who;
+  data = arg.data, claimShip = arg.claimShip;
+  return ul({
+    className: "shop"
+  }, (function() {
+    var i, len, results;
+    results = [];
+    for (i = 0, len = data.length; i < len; i++) {
+      who = data[i];
+      results.push(li({
+        className: "option",
+        key: who
+      }, span({
+        className: "mono"
+      }, "~", who, " "), button({
+        onClick: claimShip(who)
+      }, "Claim")));
+    }
+    return results;
+  })());
+});
+
+Shop = function(type) {
+  return recl({
+    displayName: "Shop-" + type,
+    roll: function() {
+      return {
+        shipSelector: Math.floor(Math.random() * 10)
+      };
+    },
+    reroll: function() {
+      return this.setState(this.roll());
+    },
+    getInitialState: function() {
+      return this.roll();
+    },
+    claimShip: function(ship) {
+      return (function(_this) {
+        return function() {
+          return Actions.claimShip(_this.props.pass, ship);
+        };
+      })(this);
+    },
+    render: function() {
+      var spur;
+      spur = "/" + type + "/" + this.state.shipSelector;
+      return div({}, h6({}, "Avaliable " + type + " (random). ", button({
+        onClick: this.reroll
+      }, "Reroll")), rele(ShopShips, _.extend({}, this.props, {
+        spur: spur,
+        claimShip: this.claimShip
+      })));
+    }
+  });
+};
+
+module.exports = Shop;
+
+
+},{"../Actions.coffee":1,"./Scry.coffee":7}],10:[function(require,module,exports){
 var MainComponent, TreeActions;
 
 MainComponent = require('./components/Main.coffee');
@@ -377,7 +448,7 @@ TreeActions = window.tree.actions;
 TreeActions.registerComponent("womb", MainComponent);
 
 
-},{"./components/Main.coffee":6}],10:[function(require,module,exports){
+},{"./components/Main.coffee":6}],11:[function(require,module,exports){
 var PO, SHIPSHAPE,
   slice = [].slice;
 
@@ -402,7 +473,7 @@ module.exports = {
 };
 
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -452,7 +523,7 @@ module.exports = {
 	}
 }());
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -752,4 +823,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[9]);
+},{}]},{},[10]);
