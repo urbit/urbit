@@ -398,7 +398,7 @@
 ++  stat-any                                          ::  unsplit status
   |=  {who/@p man/(managed _!!)}  ^-  stat
   :-  (get-live who)
-  ?~(man [%free ~] [%owned p.u.man])
+  ?~(man [%free ~] [%owned '']) :: p.u.man]) :: XX private scry?
 ::
 ++  stat-planet                                       ::  stat of planet
   |=  {who/@p man/planet}  ^-  stat

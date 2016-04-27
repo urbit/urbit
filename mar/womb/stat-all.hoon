@@ -26,7 +26,7 @@
     %+  joba  -.a
     ?-  -.a
       $free  b+&
-      $owned  b+& :: s+p.a :: XX proper security
+      $owned  s+p.a
       $split  json(all p.a)
     ==
   --
