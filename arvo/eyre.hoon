@@ -750,7 +750,7 @@
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
           ?($coup $reap)
-        ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
+        ::  ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
         (get-ack:(ire-ix p.tee) q.tee ?~(p.cuf ~ `[-.cuf u.p.cuf]))
       ::
           $doff  !!
@@ -1469,11 +1469,11 @@
         him   her
         aut   (~(put in aut) her)
         ..ya
-          ~&  logon+[our her ses]
+          ::  ~&  logon+[our her ses]
           ?.  =(our her)
             ..ya
           =+  sap=(~(get by sop) ses)
-          ~&  sap
+          ::  ~&  sap+sap
           ?.  ?=({$~ @ $|} sap)
             ..ya
           (ames-gram -.u.sap aut+~ ses)

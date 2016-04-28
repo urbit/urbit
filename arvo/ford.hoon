@@ -14,12 +14,18 @@
           $%  $:  $c                                    ::  to %clay
           $%  {$warp p/sock q/riff}                     ::
           ==  ==                                        ::
-              $:  $g                                    ::  to %clay
+              $:  $f                                    ::  to %ford
+          $%  {$exec p/@p q/(unit bilk)}                ::
+          ==  ==                                        ::
+              $:  $g                                    ::  to %gall
           $%  {$deal p/sock q/cush}                     ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $c                                    ::  by %clay
           $%  {$writ p/riot}                            ::
+          ==  ==                                        ::
+              $:  $f                                    ::  by %ford
+          $%  {$made p/@uvH q/gage}                     ::
           ==  ==                                        ::
               $:  $g                                    ::  by %gall
           $%  {$unto p/cuft}                            ::
@@ -205,6 +211,7 @@
       +>.$
     ?-    -.+.sih
         $writ  (~(resp zo [num u.tus]) [van ren bem] p.+.sih)
+        $made  (~(resm zo [num u.tus]) [van ren bem] [p q]:+.sih)
         $unto
       ?+  -.p.+.sih  ~|(ford-strange-unto+-.p.+.sih !!)
         $diff  (~(resd zo [num u.tus]) [van ren bem] p.p.+.sih)
@@ -1773,14 +1780,28 @@
       =+  (cat 3 van ren)
       exec(keg (~(put by keg) [- bem] r.u.rot))
     ::
-    ++  resd
+    ++  resd                                            ::  take %diff
       |=  {{van/vane ren/care bem/beam} cag/cage}
+      ^+  ..zo
+      ?>  ?=($g van)
+      =.  mow
+        :_  mow
+        :^  hen  %pass  (camp-wire van ren bem)
+        [%f %exec our ~ bek %cast ((hard mark) -.s.bem) %$ cag]
+      ..zo
+    ::
+    ++  resm                                            ::  take %made
+      |=  {{van/vane ren/care bem/beam} dep/@uvH gag/gage}  ::  XX  depends?
       ^+  ..zo
       ?>  ?=($g van)
       =.  kig  (~(del in kig) +<-.$)
       =.  mow  :_(mow [hen (cancel van ren bem)])
+      ?:  ?=($| -.gag)
+        amok:(expo [%made dep %| leaf+"ford-scry-made-fail" p.gag])
+      ?:  ?=($tabl -.gag)
+        amok:(expo [%made dep %| leaf+"ford-scry-made-strange" ~])
       =+  (cat 3 van ren)
-      exec(keg (~(put by keg) [- bem] cag))
+      exec(keg (~(put by keg) [- bem] p.gag))
     ::
     ++  syve
       ^-  sley

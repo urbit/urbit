@@ -1,5 +1,4 @@
 !:  ::  %gall, agent execution  
-
 !?  163
 ::::
 |=  pit/vase
@@ -490,9 +489,9 @@
     byk:(~(got by bum) dap)
   ::
   ++  mo-peek
-    |=  {dap/dude pry/prey ren/@tas tyl/path}
+    |=  {dap/dude pry/prey ren/@tas tyl/path mar/mark}
     ^-  (unit (unit cage))
-    (ap-peek:(ap-abed:ap dap pry) ren tyl)
+    (ap-peek:(ap-abed:ap dap pry) ren tyl mar)
   ::
   ++  mo-clip                                           ::  apply club
     |=  {dap/dude pry/prey cub/club}
@@ -636,11 +635,11 @@
       (ap-sake p.zem) 
     ::
     ++  ap-peek
-      |=  {ren/@tas tyl/path}
+      |=  {ren/@tas tyl/path mar/mark}
       ^-  (unit (unit cage))
       =+  cug=(ap-find %peek ren tyl)
       ?~  cug
-        ((slog leaf+"peek find fail" >tyl< ~) [~ ~])
+        ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
       =^  arm  +>.$  (ap-farm q.u.cug)
       ?:  ?=($| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
       =^  zem  +>.$  (ap-slam q.u.cug p.arm !>([ren (slag p.u.cug tyl)]))
@@ -652,6 +651,8 @@
           =+  caz=(spec (slot 7 p.zem))
           ?.  &(?=({p/@ *} q.caz) ((sane %tas) p.q.caz))
             ((slog leaf+"scry: malformed cage" ~) [~ ~])
+          ?.  =(mar p.q.caz)
+            [~ ~]
           ``[p.q.caz (slot 3 caz)]
       ==
     ::
@@ -1306,7 +1307,12 @@
     ~
   ?.  (~(has by bum:(~(got by pol.all) who)) syd)
     [~ ~]
-  (mo-peek:(mo-abed:mo who *duct) syd high+`who ren tyl)
+  ?.  ?=(^ tyl)
+    ~
+  =+  =+  `path`(flop tyl)
+      ?>  ?=(^ -)
+      [mar=i pax=(flop t)]
+  (mo-peek:(mo-abed:mo who *duct) syd high+`who ren pax mar)
 ::
 ++  stay                                                ::  save w+o cache
   `axle`all
