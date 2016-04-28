@@ -426,9 +426,11 @@ extras = {
           className: footerClas,
           key: 'footer-inner'
         }, [
-          "This page was served by an Urbit.", a({
+          "This page was made by Urbit. ", a({
+            href: "urbit.org"
+          }, "urbit.org"), a({
             href: "mailto:urbit@urbit.org"
-          }, "urbit@urbit.org")
+          }, "contact")
         ])
       ]);
     }
@@ -488,6 +490,9 @@ module.exports = query({
     }
     innerClas = clas(innerClas);
     bodyClas = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
+    if (this.props.meta.type && bodyClas.indexOf(this.props.meta.type) === -1) {
+      bodyClas += " " + this.props.meta.type;
+    }
     parts = [
       extra('spam'), extra('logo', {
         color: this.props.meta.logo
@@ -795,7 +800,7 @@ module.exports = recl({
           value: this.state.email
         }), button({
           key: "submit",
-          className: "submit",
+          className: "submit btn",
           onClick: this.onClick
         }, submit)
       ];
@@ -950,7 +955,7 @@ module.exports = query({
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
-    var _date, _k, _keys, author, cont, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
+    var _date, _k, _keys, author, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -1002,13 +1007,31 @@ module.exports = query({
       parts = [];
       title = null;
       if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
-        title = {
-          gn: 'h1',
-          ga: {
-            className: 'title'
-          },
-          c: [elem.meta.title]
-        };
+        if (this.props.dataType === 'post') {
+          title = {
+            gn: 'a',
+            ga: {
+              href: href
+            },
+            c: [
+              {
+                gn: 'h1',
+                ga: {
+                  className: 'title'
+                },
+                c: [elem.meta.title]
+              }
+            ]
+          };
+        } else {
+          title = {
+            gn: 'h1',
+            ga: {
+              className: 'title'
+            },
+            c: [elem.meta.title]
+          };
+        }
       }
       if (!title && elem.head.c.length > 0) {
         title = elem.head;
@@ -1041,10 +1064,18 @@ module.exports = query({
         if (this.props.dataType === 'post') {
           if (elem.meta.image) {
             image = {
-              gn: 'img',
+              gn: 'a',
               ga: {
-                src: elem.meta.image
-              }
+                href: href
+              },
+              c: [
+                {
+                  gn: 'img',
+                  ga: {
+                    src: elem.meta.image
+                  }
+                }
+              ]
             };
             parts.push(image);
           }
@@ -1078,15 +1109,6 @@ module.exports = query({
             };
             parts.push(author);
           }
-          cont = {
-            gn: 'a',
-            ga: {
-              className: 'btn continue',
-              href: href
-            },
-            c: ['Continue reading']
-          };
-          parts.push(cont);
           linked = true;
         }
       }
@@ -1811,11 +1833,19 @@ Virtual = recl({
     }, function(str) {
       return str;
     }, function(arg, key) {
-      var c, ga, gn, props, ref1;
+      var c, e, error, ga, gn, props, ref1;
       gn = arg.gn, ga = arg.ga, c = arg.c;
       props = {
         key: key
       };
+      if (ga != null ? ga.style : void 0) {
+        try {
+          ga.style = eval("(" + ga.style + ")");
+        } catch (error) {
+          e = error;
+          ga.style = ga.style;
+        }
+      }
       if (components[gn]) {
         props.basePath = basePath;
       }
@@ -2102,7 +2132,7 @@ module.exports = query({
         }, a({
           className: "nav-link",
           href: href,
-          onClick: _this.props.toggleNav
+          onClick: _this.props.closeNav
         }, head));
       };
     })(this)));
