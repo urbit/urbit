@@ -108,6 +108,7 @@
 ++  peek-x-womb               peek-x:(womb hid (able %womb))
 ++  peer-scry-x-womb          (wrap peer-scry-x):from-womb
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
+++  poke-drum-put             (wrap poke-put):from-drum
 ++  poke-drum-link            (wrap poke-link):from-drum
 ++  poke-drum-unlink          (wrap poke-unlink):from-drum
 ++  poke-drum-exit            (wrap poke-exit):from-drum
@@ -152,6 +153,7 @@
 ++  poke-womb-manage          (wrap poke-manage):from-womb
 ++  poke-womb-release         (wrap poke-release):from-womb
 ++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
+++  poke-womb-replay-log      (wrap poke-replay-log):from-womb
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-write-comment        (wrap poke-comment):from-write

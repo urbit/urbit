@@ -186,6 +186,10 @@
 ++  poke-exit                                         ::
   |=($~ se-abet:(se-blit-all `dill-blit`[%qit ~]))    ::  XX specific?
 ::
+++  poke-put                                          ::
+  |=  {pax/path txt/@}
+  se-abet:(se-blit-all [%sav pax txt])                ::  XX specific?
+::
 ++  reap-phat                                         ::
   |=  {way/wire saw/(unit tang)}  
   =<  se-abet  =<  se-view

@@ -47,7 +47,7 @@
   (managed (trel (foil moon) (foil planet) (foil star)))::
 ::                                                      ::
 ++  passcode  @pG                                       ::  64-bit passcode
-++  mail  @ta                                           ::  email address
+++  mail  @t                                            ::  email address
 ++  balance                                             ::  invitation balance
   $:  planets/@ud                                       ::  planet count
       stars/@ud                                         ::  star count
@@ -112,14 +112,15 @@
       {$info wire @p @tas nori}                         ::  fs write (backup)
       :: {$wait $~}                                        :: delay acknowledgment
       {$diff gilt}                                      :: subscription response
-      {$poke wire pear}                                 ::  app RPC
+      {$poke wire dock pear}                            ::  app RPC
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
       {$knew wire p/ship q/will}                        ::  learn will (old pki)
   ==                                                    ::
 ++  pear                                                ::
-  $?  {{ship $gmail} {$email mail tape}}                :: send email
-      {{ship $hood} {$womb-do-claim mail @p}}           ::  issue ship
+  $%  {$email mail tape}                                ::  send email
+      {$womb-do-claim mail @p}                          ::  issue ship
+      {$drum-put path @t}                               ::  log transaction      
   ==                                                    ::
 ++  gilt                                                :: scry result
   $%  {$ships (list ship)}                              ::
@@ -129,6 +130,14 @@
       {$womb-stat-all (map ship stat)}                  ::
   ==
 ++  move  (pair bone card)                              ::  user-level move
+::
+++  transaction                                         ::  logged poke
+  $%  {$report her/@p wyl/will}
+      {$release gal/@ud sta/@ud}
+      {$claim aut/passcode her/@p}
+      {$invite ref/reference inv/invite}
+      {$reinvite aut/passcode inv/invite}
+  ==
 --
 |%
 ++  ames-grab                                           :: XX better ames scry
@@ -235,11 +244,16 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   !:                                                  ::  ::
+=+  replay=|
 |=  {bowl part}                                       ::  main womb work
 |_  moz/(list move)
 ++  abet                                              ::  resolve
   ^-  (quip move *part)
   [(flop moz) +>+<+]
+::
+++  teba                                              ::  install resolved
+  |=  a/(quip move *part)  ^+  +>
+  +>(moz (flop -.a), +>+<+ +.a)
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
 ++  emil                                              ::  return cards
@@ -525,12 +539,36 @@
 ::
 ++  email                                             ::  send email
   |=  {wir/wire adr/mail msg/tape}  ^+  +>
+  ?:  replay  +>                      ::  dont's send email in replay mode
   (emit %poke [%mail wir] [our %gmail] %email adr msg)
   ::~&([%email-stub adr msg] +>)
+::
+++  log-transaction                                   ::  logged poke
+  |=  a/transaction  ^+  +>
+  ?:  replay  +>
+  (emit %poke /log [our %hood] %drum-put /womb-events/(scot %da now)/hoon (crip <eny a>))
+::
+++  poke-replay-log                                   ::  rerun transactions
+  =.  replay  &
+  |=  a/(list {eny/@uvI pok/transaction})
+  ?~  a  abet
+  =.  eny  eny.i.a
+  %_    $
+      a  t.a
+      +>
+    ?-  -.pok.i.a
+      $claim     (teba (poke-claim +.pok.i.a))
+      $invite    (teba (poke-invite +.pok.i.a))
+      $report    (teba (poke-report +.pok.i.a))
+      $release   (teba (poke-release +.pok.i.a))
+      $reinvite  (teba (poke-reinvite +.pok.i.a))
+    ==
+  ==
 ::
 ++  poke-invite                                       ::  create invitation
   |=  {ref/reference inv/invite}
   =<  abet
+  =.  log-transaction  (log-transaction %invite +<)
   =.  hotel
     ?~  ref  hotel
     ?~  sta.inv  hotel
@@ -543,17 +581,18 @@
   |=  {hiz/(list mail) inv/invite}  ^+  +>
   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
   =+  pas=`passcode`(shaf %pass eny)
-  =.  bureau
-    :: ?<  (~(has by bureau) pas)                     :: somewhat unlikely
-    (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
+  ?:  (~(has by bureau) pas)
+    ~|([%duplicate-passcode pas who.inv replay=replay] !!)
+  =.  bureau  (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
   (email /invite who.inv "{intro.wel.inv}: {<pas>}")
 ::
 :: ++  coup-invite                                      ::  invite sent
 ::
 ++  poke-reinvite                                     ::  split invitation
   |=  {aut/passcode inv/invite}                       ::  further invite
-  ?>  =(src src)                                      ::
   =<  abet
+  =.  log-transaction  (log-transaction %reinvite +<)
+  ?>  =(src src)                                      ::  self-authenticated
   =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
   =.  stars.bal  (sub stars.bal sta.inv)
   =.  planets.bal  (sub planets.bal pla.inv)
@@ -581,6 +620,7 @@
 ++  poke-report                                       ::  report will
   |=  {her/@p wyl/will}                               ::
   =<  abet
+  =.  log-transaction  (log-transaction %report +<)
   ?>  =(src src)                                      ::  self-authenticated
   (emit %knew /report her wyl)
 ::
@@ -605,6 +645,7 @@
 ++  poke-claim                                        ::  claim plot, req ticket
   |=  {aut/passcode her/@p}
   =<  abet
+  =.  log-transaction  (log-transaction %claim +<)
   ?>  =(src src)
   =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
   =;  claimed
@@ -646,6 +687,7 @@
 ++  poke-release                                      ::  release to subdivide
   |=  {gal/@ud sta/@ud}                               ::
   =<  abet  ^+  +>
+  =.  log-transaction  (log-transaction %release +<)  
   ?>  =(our src)                                      ::  privileged
   =.  +>
     ?~  gal  +>
