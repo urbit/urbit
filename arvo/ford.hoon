@@ -162,7 +162,7 @@
   (rap 3 |-([i.a ?~(t.a ~ ['-' $(a t.a)])]))
 ::
 ++  tear                                                ::  split term
-  =-  |=(a/term `(list term)`(rash a (most hep sym)))
+  =-  |=(a/term `(list term)`(fall (rush a (most hep sym)) /[a]))
   sym=(cook crip ;~(plug low (star ;~(pose low nud))))
 ::
 ++  za                                                  ::  per event
@@ -626,7 +626,9 @@
       ::
       ++  wide                                          ::  match segments
         |=  sub/(list term)  ^-  (bolt (unit beam))
-        ?:  =(~ sub)  opts
+        ?~  sub  opts
+        ?~  t.sub  opts(s.bem [i.sub s.bem])
+        =>  .(sub `(list term)`sub)                     ::  TMI
         =-  (cope - flat)
         %^  lash  cof  bem
         |=  {cof/cafe dir/knot}  ^-  (bolt (unit beam))
@@ -1029,10 +1031,10 @@
     ++  leap                                            :: XX load with path
       ~/  %leap
       |=  {cof/cafe arg/coin bem/beam bom/beam}
-      %+  (clef %boil)  (fine cof arg bem bom)
-      |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (lamp cof bem)
       |=  {cof/cafe bem/beam}
+      %+  (clef %boil)  (fine cof arg bem bom)
+      |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (fame cof bem)
       |=  {cof/cafe bem/beam}
       (cope (fade cof %hoon bem) abut:(meow bom arg))
