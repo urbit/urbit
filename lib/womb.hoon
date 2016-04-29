@@ -124,6 +124,7 @@
 ++  gilt                                                :: scry result
   $%  {$ships (list ship)}                              ::
       {$womb-balance balance}                           ::
+      {$womb-balance-all (map passcode mail)}           ::
       {$womb-stat stat}                                 ::
       {$womb-stat-all (map ship stat)}                  ::
   ==
@@ -463,7 +464,11 @@
   (~(urn by galaxies.office) stat-galaxy)
 ::
 ++  peek-x-balance                                     ::  inspect invitation
-  |=  tyl/path  ^-  (unit (unit {$womb-balance balance}))
+  |=  tyl/path
+  ?~  tyl
+    ?>  |(=(our src) =([~ src] boss))                  ::  priveledged
+    ``[%womb-balance-all (~(run by bureau) |=(balance owner))]
+  ^-  (unit (unit {$womb-balance balance}))
   =+  pas=~|(bad-path+tyl (raid tyl pas=%p ~))
   %-  some
   %+  bind  (~(get by bureau) pas)
@@ -490,6 +495,7 @@
   ::  /stats                          general stats dump
   ::  /stats/@p                       what we know about @p
     $stats  (peek-x-stats +.tyl)
+  ::  /balance                         all invitations
   ::  /balance/passcode                invitation status  
     $balance  (peek-x-balance +.tyl)
   ==
