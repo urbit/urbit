@@ -183,9 +183,9 @@
   =<  se-abet  =<  se-view
   (se-klin gyl)
 ::
-:: ++  poke-exit                                         ::
-::   |=(~ se-abet:(se-blit `dill-blit`[%qit ~]))  ::  XX find bone
-:: ::
+++  poke-exit                                         ::
+  |=($~ se-abet:(se-blit-all `dill-blit`[%qit ~]))    ::  XX specific?
+::
 ++  reap-phat                                         ::
   |=  {way/wire saw/(unit tang)}  
   =<  se-abet  =<  se-view
@@ -445,6 +445,11 @@
   |=  bil/dill-blit
   +>(biz [bil biz])
 ::
+++  se-blit-all                                       ::  output to all sources
+  |=  bil/dill-blit
+  =>  |=(* [%diff %dill-blit bil])
+  (se-emil (~(tap by (~(run by bin) .))))
+::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud (list @c))
   ^+  +>
@@ -471,6 +476,11 @@
 ++  se-emit                                           ::  emit move
   |=  mov/move
   %_(+> moz [mov moz])
+::
+++  se-emil                                           ::  emit moves
+  |=  mov/(list move)
+  ?~  mov  +>
+  $(mov t.mov, +> (se-emit i.mov))
 ::
 ++  se-talk  
   |=  tac/(list tank) 
