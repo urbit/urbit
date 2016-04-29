@@ -4,11 +4,12 @@
 /?    310
 ::
 ::::
-  !:
-=+  mail=@ta
+  ::
+/+  womb
 :-  %say
 |=  $:  {now/@da eny/@uvI bec/beak}
-        {{who/@ta $~} ref/(each ship mail) sta/@}
+        {{who/@ta $~} ref/(unit (each ship mail:womb)) sta/@}
     ==
 :-  %womb-invite
-[ref who 10 sta "You have been invited to Urbit" "This is an invite of 10 planets"]
+^-  {reference invite}:womb
+[ref [who 10 sta "You have been invited to Urbit" "This is an invite of 10 planets"]]
