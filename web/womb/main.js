@@ -6,6 +6,11 @@ Dispatcher = require('./Dispatcher.coffee');
 Persistence = require('./Persistence.coffee');
 
 module.exports = {
+  setPasscode: function(pass) {
+    return Dispatcher.dispatch({
+      setPasscode: pass
+    });
+  },
   claimShip: function(pass, ship) {
     Dispatcher.dispatch({
       putClaim: {
@@ -48,16 +53,14 @@ module.exports = {
       status = arg.status, data = arg.data;
       if (err != null) {
         throw new Error("Client error");
+      } else {
+        return Dispatcher.dispatch({
+          gotData: {
+            path: path,
+            data: data
+          }
+        });
       }
-      if (status !== 200) {
-        throw new Error("Server error");
-      }
-      return Dispatcher.dispatch({
-        gotData: {
-          path: path,
-          data: data
-        }
-      });
     });
   }
 };
@@ -83,15 +86,23 @@ module.exports = {
   get: function(arg, cb) {
     var fresh, path;
     path = arg.path, fresh = arg.fresh;
-    if (fresh || !dup[path]) {
-      dup[path] = true;
+    if (!(dup[path] === "pending" || (!fresh && dup[path] === "got"))) {
+      dup[path] = "pending";
       return urb.bind("/scry/x/womb" + path, {
         appl: "hood"
-      }, function() {
-        urb.drop("/scry/x/womb" + path, {
+      }, function(err, dat) {
+        cb(err, dat);
+        return urb.drop("/scry/x/womb" + path, {
           appl: "hood"
-        }, function() {});
-        return cb.apply(this, arguments);
+        }, function() {
+          return dup[path] = "got";
+        });
+      }, function(err, nice) {
+        var ref;
+        if (!(nice != null ? (ref = nice.data) != null ? ref.ok : void 0 : void 0)) {
+          dup[path] = "got";
+          return cb(err, nice);
+        }
       });
     }
   }
@@ -99,8 +110,7 @@ module.exports = {
 
 
 },{}],4:[function(require,module,exports){
-var EventEmitter, WombDispatcher, WombStore, _data, _local, _localDefault, unpackFrond,
-  slice = [].slice;
+var EventEmitter, WombDispatcher, WombStore, _data, _default, unpackFrond;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -108,17 +118,16 @@ unpackFrond = require('./util.coffee').unpackFrond;
 
 WombDispatcher = require('./Dispatcher.coffee');
 
-_data = {};
-
-_local = {
-  claim: {}
+_data = {
+  pass: sessionStorage.womb_pass
 };
 
-_localDefault = {
-  claim: "none"
+_default = {
+  claim: "none",
+  pass: ""
 };
 
-WombStore = _.extend(new EventEmitter, {
+WombStore = _.extend((new EventEmitter).setMaxListeners(50), {
   emitChange: function() {
     return this.emit('change');
   },
@@ -129,12 +138,8 @@ WombStore = _.extend(new EventEmitter, {
     return this.removeListener("change", cb);
   },
   retrieve: function(path) {
-    var key, ref, ref1, ref2;
-    if (path[0] !== "_") {
-      return _data[path];
-    }
-    ref = path.slice(1).split("/"), key = ref[0], path = 2 <= ref.length ? slice.call(ref, 1) : [];
-    return (ref1 = (ref2 = _local[key]) != null ? ref2[path.join("/")] : void 0) != null ? ref1 : _localDefault[key];
+    var ref;
+    return (ref = _data[path]) != null ? ref : _default[path.split("/")[0]];
   },
   gotData: function(arg1) {
     var data, path;
@@ -144,12 +149,16 @@ WombStore = _.extend(new EventEmitter, {
   putClaim: function(arg1) {
     var ship;
     ship = arg1.ship;
-    return _local.claim[ship] = "wait";
+    return _data["claim/" + ship] = "wait";
   },
   gotClaim: function(arg1) {
     var own, ship;
     ship = arg1.ship, own = arg1.own;
-    return _local.claim[ship] = (own ? "own" : "xeno");
+    return _data["claim/" + ship] = (own ? "own" : "xeno");
+  },
+  setPasscode: function(pass) {
+    _data.pass = pass;
+    return sessionStorage.womb_pass = pass != null ? pass : "";
   }
 });
 
@@ -165,22 +174,32 @@ WombStore.dispatchToken = WombDispatcher.register(function(action) {
 module.exports = WombStore;
 
 
-},{"./Dispatcher.coffee":2,"./util.coffee":12,"events":14}],5:[function(require,module,exports){
-var Balance, History, Mail, Planets, Scry, Shop, Stars, b, clas, code, div, h6, input, p, recl, ref, rele, shipShape, span;
+},{"./Dispatcher.coffee":2,"./util.coffee":14,"events":16}],5:[function(require,module,exports){
+var Actions, Balance, FromStore, History, Label, Mail, Planets, Scry, ShipInput, Shop, Stars, b, clas, code, div, h6, name, p, recl, ref, rele, span;
 
 clas = require('classnames');
 
-shipShape = require('../util.coffee').shipShape;
+Actions = require('../Actions.coffee');
 
-Scry = require('./Scry.coffee');
+FromStore = (Scry = require('./Scry.coffee')).FromStore;
 
 Shop = require('./Shop.coffee');
+
+Label = require('./Label.coffee');
+
+ShipInput = require('./ShipInput.coffee');
 
 recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, b = ref.b, h6 = ref.h6, input = ref.input, p = ref.p, span = ref.span, code = ref.code;
+name = function(displayName, component) {
+  return _.extend(component, {
+    displayName: displayName
+  });
+};
+
+ref = React.DOM, div = ref.div, b = ref.b, h6 = ref.h6, p = ref.p, span = ref.span, code = ref.code;
 
 Mail = function(email) {
   return code({
@@ -207,56 +226,95 @@ History = function(history) {
   }
 };
 
-Stars = Shop("stars");
+Stars = Shop("stars", 7);
 
-Planets = Shop("planets");
+Planets = Shop("planets", 14);
 
-Balance = Scry("/balance", function(arg) {
-  var history, owner, pass, planets, ref1, stars;
-  pass = arg.pass, (ref1 = arg.data, planets = ref1.planets, stars = ref1.stars, owner = ref1.owner, history = ref1.history);
-  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars, {
-    pass: pass
-  }) : void 0, planets ? rele(Planets, {
-    pass: pass
-  }) : void 0);
+Balance = Scry("/balance/~:pass", function(arg) {
+  var balance, history, owner, planets, stars;
+  balance = arg.balance;
+  if (balance.fail) {
+    return div({}, Label("Invalid passcode", "warning"));
+  }
+  planets = balance.planets, stars = balance.stars, owner = balance.owner, history = balance.history;
+  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
 });
 
-module.exports = recl({
-  displayName: "Claim",
-  getInitialState: function() {
-    var ref1;
-    return {
-      passcode: (ref1 = localStorage.womb_claim) != null ? ref1 : ""
-    };
-  },
-  setPasscode: function(passcode) {
-    localStorage.womb_claim = passcode != null ? passcode : "";
-    return this.setState({
-      passcode: passcode
-    });
-  },
-  onChange: function(arg) {
-    var pass, target;
-    target = arg.target;
-    pass = target.value.trim();
-    if (pass[0] !== '~') {
-      pass = "~" + pass;
+module.exports = name("Claim", FromStore("pass", function(arg) {
+  var pass;
+  pass = arg.pass;
+  return div({}, p({}, "Input a passcode to claim ships: "), ShipInput({
+    length: 57,
+    defaultValue: pass,
+    onInputShip: Actions.setPasscode
+  }), pass ? rele(Balance, {
+    pass: pass
+  }) : void 0);
+}));
+
+
+},{"../Actions.coffee":1,"./Label.coffee":7,"./Scry.coffee":9,"./ShipInput.coffee":10,"./Shop.coffee":12,"classnames":15}],6:[function(require,module,exports){
+var Actions, ClaimButton, FromStore, Label, ShipInput, _ClaimButton, button, name, recl, rele;
+
+Actions = require('../Actions.coffee');
+
+FromStore = require('./Scry.coffee').FromStore;
+
+Label = require('./Label.coffee');
+
+ShipInput = require('./ShipInput.coffee');
+
+button = React.DOM.button;
+
+recl = React.createClass;
+
+rele = React.createElement;
+
+name = function(displayName, component) {
+  return _.extend(component, {
+    displayName: displayName
+  });
+};
+
+ClaimButton = FromStore("pass", function(arg) {
+  var pass, ship;
+  pass = arg.pass, ship = arg.ship;
+  if (!ship) {
+    return button({
+      disabled: true
+    }, "Claim (invalid)");
+  }
+  return rele(_ClaimButton, {
+    ship: ship,
+    onClick: function() {
+      return Actions.claimShip(pass, ship);
     }
-    return this.setPasscode(((shipShape(pass)) && pass.length === 57 ? pass.slice(1) : void 0));
-  },
-  render: function() {
-    return div({}, p({}, "Input a passcode to claim ships: "), input({
-      onChange: this.onChange,
-      defaultValue: this.state.passcode
-    }), this.state.passcode ? rele(Balance, {
-      pass: this.state.passcode,
-      spur: "/~" + this.state.passcode
-    }) : void 0);
+  });
+});
+
+_ClaimButton = FromStore("claim/:ship", function(arg) {
+  var claim, onClick;
+  claim = arg.claim, onClick = arg.onClick;
+  switch (claim) {
+    case "own":
+      return Label("Claimed!", "success");
+    case "wait":
+      return Label("Claiming...");
+    case "xeno":
+      return Label("Taken", "warning");
+    case "none":
+      return button({
+        onClick: onClick
+      }, "Claim");
+    default:
+      throw new Error("Bad claim type: " + claim);
   }
 });
 
+module.exports = name("ClaimButton", ClaimButton);
 
-},{"../util.coffee":12,"./Scry.coffee":8,"./Shop.coffee":10,"classnames":13}],6:[function(require,module,exports){
+
+},{"../Actions.coffee":1,"./Label.coffee":7,"./Scry.coffee":9,"./ShipInput.coffee":10}],7:[function(require,module,exports){
 var span;
 
 span = React.DOM.span;
@@ -271,7 +329,7 @@ module.exports = function(s, type) {
 };
 
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Claim, Ships, div, h4, ref, rele;
 
 Claim = require('./Claim.coffee');
@@ -287,8 +345,8 @@ module.exports = function() {
 };
 
 
-},{"./Claim.coffee":5,"./Ships.coffee":9}],8:[function(require,module,exports){
-var Actions, Store, div, i, recl, ref, rele;
+},{"./Claim.coffee":5,"./Ships.coffee":11}],9:[function(require,module,exports){
+var Actions, FromStore, Scry, Store, div, i, recl, ref, rele;
 
 Actions = require('../Actions.coffee');
 
@@ -300,38 +358,43 @@ rele = React.createElement;
 
 ref = React.DOM, div = ref.div, i = ref.i;
 
-module.exports = function(path, Child) {
+FromStore = function(path, Child) {
   return recl({
-    displayName: "Scry" + path.split('/').join('-'),
+    displayName: "FromStore." + path.split('/').join('-'),
     getInitialState: function() {
       return this.retrieveData();
     },
     retrieveData: function() {
-      return {
-        data: Store.retrieve(this.getPath())
-      };
+      var data, obj;
+      data = Store.retrieve(this.getPath());
+      return (
+        obj = {
+          loaded: data != null
+        },
+        obj["" + (this.getKey())] = data,
+        obj
+      );
+    },
+    getKey: function() {
+      return path.match(/[a-z0-9-]+/)[0];
     },
     getPath: function() {
-      var ref1;
-      return path + ((ref1 = this.props.spur) != null ? ref1 : "");
-    },
-    checkState: function() {
-      if (this.state.data == null) {
-        return Actions.getData(this.getPath());
-      }
+      return path.replace(/:([a-z0-9_.~-]+)/g, (function(_this) {
+        return function(m, key) {
+          return _this.props[key];
+        };
+      })(this));
     },
     componentDidMount: function() {
-      Store.addChangeListener(this.changeListener);
-      return this.checkState();
+      return Store.addChangeListener(this.changeListener);
     },
     componentWillUnmount: function() {
       return Store.removeChangeListener(this.changeListener);
     },
     componentDidUpdate: function(_props, _state) {
       if (_props !== this.props) {
-        this.setState(this.retrieveData());
+        return this.setState(this.retrieveData());
       }
-      return this.checkState();
     },
     changeListener: function() {
       if (this.isMounted()) {
@@ -339,22 +402,80 @@ module.exports = function(path, Child) {
       }
     },
     render: function() {
-      return div({
-        style: {
-          display: "inline"
-        }
-      }, this.state.data == null ? i({
-        key: "load"
-      }, "Fetching data...") : rele(Child, _.extend({}, this.props, {
-        key: "got",
-        data: this.state.data
-      }), this.props.children));
+      return rele(Child, _.extend({}, this.props, this.state, {
+        path: this.getPath()
+      }));
     }
   });
 };
 
+Scry = function(path, Child) {
+  return FromStore(path, recl({
+    displayName: "Scry",
+    checkProps: function() {
+      if (!this.props.loaded) {
+        return Actions.getData(this.props.path);
+      }
+    },
+    componentDidMount: function() {
+      return this.checkProps();
+    },
+    componentDidUpdate: function(_props, _state) {
+      return this.checkProps();
+    },
+    render: function() {
+      return div({
+        style: {
+          display: "inline"
+        }
+      }, !this.props.loaded ? i({
+        key: "load"
+      }, "Fetching data...") : rele(Child, _.extend({}, this.props, {
+        key: "got"
+      }), this.props.children));
+    }
+  }));
+};
 
-},{"../Actions.coffee":1,"../Store.coffee":4}],9:[function(require,module,exports){
+module.exports = Scry;
+
+module.exports.FromStore = FromStore;
+
+
+},{"../Actions.coffee":1,"../Store.coffee":4}],10:[function(require,module,exports){
+var input, name, recl, shipShape;
+
+shipShape = require('../util.coffee').shipShape;
+
+input = React.DOM.input;
+
+recl = React.createClass;
+
+name = function(displayName, component) {
+  return _.extend(component, {
+    displayName: displayName
+  });
+};
+
+module.exports = name("ShipInput", function(arg) {
+  var defaultValue, length, onInputShip;
+  onInputShip = arg.onInputShip, length = arg.length, defaultValue = arg.defaultValue;
+  return input({
+    defaultValue: defaultValue,
+    onChange: function(arg1) {
+      var ship, target;
+      target = arg1.target;
+      ship = target.value.trim();
+      if (ship[0] !== '~') {
+        ship = "~" + ship;
+      }
+      return onInputShip(((shipShape(ship)) && ship.length === length ? ship.slice(1) : void 0));
+    }
+  });
+});
+
+
+},{"../util.coffee":14}],11:[function(require,module,exports){
 var Label, Scry, Stat, clas, code, div, labels, li, name, p, pre, recl, ref, rele, span, ul;
 
 clas = require('classnames');
@@ -381,8 +502,9 @@ labels = {
   split: "Distributing"
 };
 
-Stat = name("Stat", function(stats) {
-  var className, dist, free, live, owned, ship, split;
+Stat = name("Stat", function(arg) {
+  var className, dist, free, live, owned, ship, split, stats;
+  stats = arg.stats;
   return ul({}, (function() {
     var ref1, results;
     results = [];
@@ -405,7 +527,9 @@ Stat = name("Stat", function(stats) {
             if (_.isEmpty(split)) {
               return Label(labels.split);
             } else {
-              return rele(Stat, split);
+              return rele(Stat, {
+                stats: split
+              });
             }
             break;
           default:
@@ -417,21 +541,17 @@ Stat = name("Stat", function(stats) {
   })());
 });
 
-module.exports = Scry("/stats", function(arg) {
-  var data;
-  data = arg.data;
-  return rele(Stat, data);
-});
+module.exports = Scry("/stats", Stat);
 
 
-},{"./Label.coffee":6,"./Scry.coffee":8,"classnames":13}],10:[function(require,module,exports){
-var Actions, ClaimButton, Label, Scry, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
-
-Actions = require('../Actions.coffee');
+},{"./Label.coffee":7,"./Scry.coffee":9,"classnames":15}],12:[function(require,module,exports){
+var ClaimButton, Scry, ShipInput, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
 
 Scry = require('./Scry.coffee');
 
-Label = require('./Label.coffee');
+ShipInput = require('./ShipInput.coffee');
+
+ClaimButton = require('./ClaimButton.coffee');
 
 ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, h6 = ref.h6, button = ref.button, span = ref.span;
 
@@ -439,48 +559,30 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ClaimButton = Scry("_claim", function(arg) {
-  var data, onClick;
-  data = arg.data, onClick = arg.onClick;
-  switch (data) {
-    case "own":
-      return Label("Claimed!", "success");
-    case "wait":
-      return Label("Claiming...");
-    case "xeno":
-      return Label("Taken", "warning");
-    case "none":
-      return button({
-        onClick: onClick
-      }, "Claim");
-  }
-});
-
-ShopShips = Scry("/shop", function(arg) {
-  var claimShip, data, who;
-  data = arg.data, claimShip = arg.claimShip;
+ShopShips = Scry("/shop/:type/:nth", function(arg) {
+  var ship, shop;
+  shop = arg.shop;
   return ul({
     className: "shop"
   }, (function() {
     var i, len, results;
     results = [];
-    for (i = 0, len = data.length; i < len; i++) {
-      who = data[i];
+    for (i = 0, len = shop.length; i < len; i++) {
+      ship = shop[i];
       results.push(li({
         className: "option",
-        key: who
+        key: ship
       }, span({
         className: "mono"
-      }, "~", who, " "), rele(ClaimButton, {
-        spur: "/" + who,
-        onClick: claimShip(who)
+      }, "~", ship, " "), rele(ClaimButton, {
+        ship: ship
       })));
     }
     return results;
   })());
 });
 
-Shop = function(type) {
+Shop = function(type, length) {
   return recl({
     displayName: "Shop-" + type,
     roll: function() {
@@ -494,21 +596,23 @@ Shop = function(type) {
     getInitialState: function() {
       return this.roll();
     },
-    claimShip: function(ship) {
-      return (function(_this) {
-        return function() {
-          return Actions.claimShip(_this.props.pass, ship);
-        };
-      })(this);
+    onInputShip: function(customShip) {
+      return this.setState({
+        customShip: customShip
+      });
     },
     render: function() {
-      var spur;
-      spur = "/" + type + "/" + this.state.shipSelector;
+      var ref1;
       return div({}, h6({}, "Avaliable " + type + " (random). ", button({
         onClick: this.reroll
       }, "Reroll")), rele(ShopShips, _.extend({}, this.props, {
-        spur: spur,
-        claimShip: this.claimShip
+        type: type,
+        nth: this.state.shipSelector
+      })), h6({}, "Custom"), div({}, "Specific " + type + ": ", rele(ShipInput, {
+        length: length,
+        onInputShip: this.onInputShip
+      }), rele(ClaimButton, {
+        ship: (ref1 = this.state.customShip) != null ? ref1 : ""
       })));
     }
   });
@@ -517,7 +621,7 @@ Shop = function(type) {
 module.exports = Shop;
 
 
-},{"../Actions.coffee":1,"./Label.coffee":6,"./Scry.coffee":8}],11:[function(require,module,exports){
+},{"./ClaimButton.coffee":6,"./Scry.coffee":9,"./ShipInput.coffee":10}],13:[function(require,module,exports){
 var MainComponent, TreeActions;
 
 MainComponent = require('./components/Main.coffee');
@@ -527,7 +631,7 @@ TreeActions = window.tree.actions;
 TreeActions.registerComponent("womb", MainComponent);
 
 
-},{"./components/Main.coffee":7}],12:[function(require,module,exports){
+},{"./components/Main.coffee":8}],14:[function(require,module,exports){
 var PO, SHIPSHAPE,
   slice = [].slice;
 
@@ -552,7 +656,7 @@ module.exports = {
 };
 
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -602,7 +706,7 @@ module.exports = {
 	}
 }());
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -902,4 +1006,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[11]);
+},{}]},{},[13]);
