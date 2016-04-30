@@ -147,6 +147,7 @@
 ++  poke-womb-save            (wrap poke-save):from-womb
 ++  poke-womb-obey            (wrap poke-obey):from-womb
 ++  poke-womb-claim           (wrap poke-claim):from-womb
+++  poke-womb-do-ticket       (wrap poke-do-ticket):from-womb
 ++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
 ++  poke-womb-rekey           (wrap poke-rekey):from-womb
 ++  poke-womb-report          (wrap poke-report):from-womb

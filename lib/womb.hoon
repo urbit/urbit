@@ -97,10 +97,10 @@
 |%
 ++  part  {$womb $0 pith}                               ::  womb state
 ++  pith                                                ::  womb content
-  $:  boss/(unit @p)                                    ::  outside master
+  $:  boss/(unit ship)                                  ::  outside master
       bureau/(map passcode balance)                     ::  active invitations
       office/property                                   ::  properties managed
-      hotel/(map (each @p mail) client)                 ::  everyone we know
+      hotel/(map (each ship mail) client)               ::  everyone we know
   ==                                                    ::
 --                                                      ::
 ::                                                      ::  ::
@@ -119,7 +119,8 @@
   ==                                                    ::
 ++  pear                                                ::
   $%  {$email mail tape}                                ::  send email
-      {$womb-do-claim mail @p}                          ::  issue ship
+      {$womb-do-ticket ship}                            ::  request ticket
+      {$womb-do-claim ship @p}                          ::  issue ship
       {$drum-put path @t}                               ::  log transaction      
   ==                                                    ::
 ++  gilt                                                :: scry result
@@ -244,7 +245,7 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   !:                                                  ::  ::
-=+  replay=|
+=+  [replay=| stat-no-email=|]                              ::  XX globals
 |=  {bowl part}                                       ::  main womb work
 |_  moz/(list move)
 ++  abet                                              ::  resolve
@@ -413,7 +414,9 @@
 ++  stat-any                                          ::  unsplit status
   |=  {who/@p man/(managed _!!)}  ^-  stat
   :-  (get-live who)
-  ?~(man [%free ~] [%owned '']) :: p.u.man]) :: XX private scry?
+  ?~  man  [%free ~]
+  ?:  stat-no-email  [%owned '']
+  [%owned p.u.man]
 ::
 ++  stat-planet                                       ::  stat of planet
   |=  {who/@p man/planet}  ^-  stat
@@ -457,21 +460,22 @@
   ==
 ::
 ++  stats-ship                                        ::  inspect ship
-  |=  who/@p  ^-  (unit (unit {$womb-stat stat}))
-  ?>  |(=(our src) =([~ src] boss))                   ::  privileged info
+  |=  who/@p  ^-  stat
   ?-  (clan who)
     $pawn  !!
     $earl  !!
-    $duke  ``womb-stat+(stat-planet who (get-managed-planet who))
-    $king  ``womb-stat+(stat-star who (get-managed-star who))
-    $czar  ``womb-stat+(stat-galaxy who (get-managed-galaxy who))
+    $duke  (stat-planet who (get-managed-planet who))
+    $king  (stat-star who (get-managed-star who))
+    $czar  (stat-galaxy who (get-managed-galaxy who))
   ==
 ::
 ++  peek-x-stats                                      ::  inspect ship/system
   |=  tyl/path
   ?^  tyl
-    (stats-ship ~|(bad-path+tyl (raid tyl who=%p ~)))
+    ?>  |(=(our src) =([~ src] boss))                   ::  privileged info
+    ``womb-stat+(stats-ship ~|(bad-path+tyl (raid tyl who=%p ~)))
   ^-  (unit (unit {$womb-stat-all (map ship stat)}))
+  =.  stat-no-email  &                      ::  censor adresses
   :^  ~  ~  %womb-stat-all
   %-  ~(uni by (~(urn by planets.office) stat-planet))
   %-  ~(uni by (~(urn by stars.office) stat-star))
@@ -540,6 +544,7 @@
 ++  email                                             ::  send email
   |=  {wir/wire adr/mail msg/tape}  ^+  +>
   ?:  replay  +>                      ::  dont's send email in replay mode
+  ~&  do-email+[adr msg]
   (emit %poke [%mail wir] [our %gmail] %email adr msg)
   ::~&([%email-stub adr msg] +>)
 ::
@@ -633,13 +638,30 @@
   =.  sta.u.cli  (sub sta.u.cli reference-rate)
   `+>.$(hotel (~(put by hotel) a u.cli))
 ::
-++  poke-do-claim                                     ::  issue child ticket
-  |=  {who/mail her/@p}
+++  poke-do-ticket                                       ::  issue child ticket
+  |=  her/ship
   =<  abet
   ?>  =(our (sein her))
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   =+  tik=.^(@p %a /(scot %p our)/tick/(scot %da now)/(scot %p her))
   :: =.  emit  (emit /tick %tick tik her)
+  (emit %poke /tick [src %hood] [%womb-do-claim her tik])
+::
+++  needy
+  |*  a/(each * tang)
+  ?-  -.a
+    $&  p.a
+    $|  ((slog (flop p.a)) (mean p.a))
+  ==
+::
+++  poke-do-claim                                     ::  deliver ticket
+  |=  {her/ship tik/@p}
+  =<  abet
+  ^+  +>
+  ?>  =(src (sein her))               ::  from the parent which could ticket
+  =+  sta=(stats-ship her)
+  ?>  ?=({$cold $owned @} sta)        ::  a ship issued but not yet started,
+  =+  who=p.q.sta                     ::  send ticket to the issuee.
   (email /ticket who "Ticket for {<her>}: {<`@pG`tik>}")
 ::
 ++  poke-claim                                        ::  claim plot, req ticket
@@ -647,9 +669,9 @@
   =<  abet
   =.  log-transaction  (log-transaction %claim +<)
   ?>  =(src src)
-  =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
   =;  claimed
-    (emit.claimed %poke /tick [(sein her) %hood] [%womb-do-claim owner.bal her])
+    (emit.claimed %poke /tick [(sein her) %hood] [%womb-do-ticket her])
+  =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
   ?+    (clan her)  ~|(bad-size+(clan her) !!)
       $king
     =;  all  (claim-star.all owner.bal her)
@@ -700,8 +722,7 @@
   =+  all=(take-n [0 sta] shop-stars)
   ~&  got-stars+all
   %-  (slog leaf+"For issuing to proceed smoothly, immediately upon boot, ".
-                 "each should |obey {<our>} to honor ticket requests, and ".
-                 "|start %gmail for ticket distribution." ~)
+                 "each should |obey {<our>} to honor ticket requests." ~)
   ?.  (gth sta (lent all))
     (roll all release-star)
   ~|(too-few-stars+[want=sta has=(lent all)] !!)
