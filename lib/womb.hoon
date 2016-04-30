@@ -670,6 +670,7 @@
   =.  log-transaction  (log-transaction %claim +<)
   ?>  =(src src)
   =;  claimed
+    :: =.  claimed  (emit.claimed %wait $~)          :: XX delay ack
     (emit.claimed %poke /tick [(sein her) %hood] [%womb-do-ticket her])
   =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
   ?+    (clan her)  ~|(bad-size+(clan her) !!)
