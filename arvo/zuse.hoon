@@ -922,23 +922,7 @@
 ::
 ++  crub                                                ::  cryptosuite B (Ed)
   ^-  acru
-  =|  {pub/{c/@ e/@} sek/{c/@ e/@}}
-  =>  |%
-      ++  skey
-        |=  {a/bloq key/@ nonc/@ ct/@ mctr/@ buf/(list {p/@ q/@})}
-        =+  ctext=(en:aesc key (mix (lsh (dec a) 1 nonc) ct))
-        ::  =+  nbuf=(mix (lsh a 1 buf) ctext)
-        =+  nbuf=[[p=1 q=ctext] buf]
-        ?:  =(ct mctr)
-          (can a buf)
-        $(ct +(ct), buf nbuf)
-      ::
-      ++  hiv
-        |=  ruz/@
-        =+  haz=(shax ruz)
-        =+  hax=(mix (end 7 1 haz) (rsh 7 1 haz))
-        (mix (end 6 1 hax) (rsh 6 1 hax))
-      --
+  =|  {pub/{ckey/@ skey/@} sek/(unit {ckey/@ skey/@})}
   |%
   ++  as
     =>  |%
@@ -946,21 +930,23 @@
           |=  a/pass
           =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
           ?>  =('b' mag)
-          ..as(pub [c=(rsh 8 1 bod) e=(end 8 1 bod)])
+          ..as(pub [ckey=(rsh 8 1 bod) skey=(end 8 1 bod)])
         ::
         ++  tide  ::  shared secret
           |=  a/@  ^-  @
-          ::  (curt a (curt c.sek 9))
-          (curt c.sek a)
+          ?~  sek  ~|  %pubkey-only  !!
+          ::  (curt a (curt ckey.u.sek 9))
+          (curt ckey.u.sek a)
         --
     ^?
     |%
     ++  seal
       |=  {a/pass b/@ c/@}
+      ?~  sek  ~|  %pubkey-only  !!
       =+  =+  her=(hail a)
-        tie=(tide c.pub.her)
+        tie=(tide ckey.pub.her)
       =+  [hog=(en tie b) ben=(en b c)]
-      =+  sig=(sign:ed ben e.sek)
+      =+  sig=(sign:ed ben skey.u.sek)
       (jam hog ben sig)
     ::
     ++  sign
@@ -979,7 +965,7 @@
       ^-  (unit {p/@ q/@})
       =+  bod=((hard {p/@ q/@ s/@}) (cue b))
       =+  =+  her=(hail a)
-        tie=(tide c.pub.her)
+        tie=(tide ckey.pub.her)
       ?.  (veri:ed s.bod q.bod (end 8 1 (rsh 3 1 a)))
         ~
       =+  hog=(de tie p.bod)
@@ -990,18 +976,8 @@
     --
   ::
   ++  de
-    |~  {key/@ cep/@}  ^-  (unit @)
-    =+  noc=(end 6 1 cep)
-    =+  cth=(rsh 6 1 cep)
-    =+  byt=(end 7 1 cth)
-    =+  cex=(rsh 7 1 cth)
-    =+  nox=(met 7 cex)
-    =+  cip=(skey 7 key noc 0 (dec nox) ~)
-    =+  msg=(mix cex (end 3 byt cip))
-    =+  h=(hiv msg)
-    ?:  =(h noc)
-      (some msg)
-    ~
+    |~  {key/@ cep/@}  ^-  (unit @ux)
+    (~(de siva:aes key ~) (end 7 1 cep) (rsh 7 1 cep))
   ::
   ++  dy
     |~  {a/@ b/@}  ^-  @
@@ -1009,17 +985,15 @@
   ::
   ++  en
     |~  {key/@ msg/@}  ^-  @ux
-    =+  h=(hiv msg)
-    =+  boc=(met 7 msg)
-    =+  cip=(skey 7 key h 0 (dec boc) ~)
-    =+  byt=(met 3 msg)
-    `@u`(mix (lsh 6 1 (mix (lsh 7 1 (mix (end 3 byt cip) msg)) byt)) h)
+    (cat 7 (~(en siva:aes key ~) msg))
   ::
   ++  ex  ^?
-    |%  ++  fig  ^-  @uvH  (shaf %bfig e.^pub)
-        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod e.sek))
-        ++  pub  ^-  pass  (cat 3 'b' (mix (lsh 8 1 c.^pub) e.^pub))
-        ++  sec  ^-  ring  (cat 3 'B' (mix (lsh 8 1 c.sek) e.sek))
+    |%  ++  fig  ^-  @uvH  (shaf %bfig skey.^pub)
+        ++  pac  ^-  @uvG  ?~  sek  ~|  %pubkey-only  !!
+                           (end 6 1 (shaf %acod skey.u.sek))
+        ++  pub  ^-  pass  (cat 3 'b' (mix (lsh 8 1 ckey.^pub) skey.^pub))
+        ++  sec  ^-  ring  ?~  sek  ~|  %pubkey-only  !!
+                           (cat 3 'B' (mix (lsh 8 1 ckey.u.sek) skey.u.sek))
     --
   ::
   ++  nu
@@ -1027,19 +1001,19 @@
     |%  ++  com
           |=  a/@
           ^+  ^?(..nu)
-          ..nu(sek [c=~ e=~], pub [c=(rsh 8 1 a) e=(end 8 1 a)])
+          ..nu(sek ~, pub [ckey=(rsh 8 1 a) skey=(end 8 1 a)])
         ::
         ++  pit
           |=  {a/@ b/@}
           ^+  ^?(..nu)
           =+  [rb=(rsh 8 1 b) eb=(end 8 1 b)]
-          ..nu(sek [c=rb e=eb], pub [c=(curt rb 9) e=(puck:ed eb)])
+          ..nu(sek `[ckey=rb skey=eb], pub [ckey=(curt rb 9) skey=(puck:ed eb)])
         ::
         ++  nol
           |=  a/@
           ^+  ^?(..nu)
           =+  [ra=(rsh 8 1 a) ea=(end 8 1 a)]
-          ..nu(sek [c=ra e=ea], pub [c=(curt ra 9) e=(puck:ed ea)])
+          ..nu(sek `[ckey=ra skey=ea], pub [ckey=(curt ra 9) skey=(puck:ed ea)])
     --
   --
 ++  brew                                                ::  create keypair
