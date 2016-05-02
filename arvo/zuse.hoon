@@ -662,21 +662,19 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  @ux
+      ^-  {@uxH @ux}
       =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
       =+  iv=(s2va k1 (weld vec (limo ~[txt])))
-      %^  cat  7
-        iv  ::  WARNING: iv glued to "wrong" side!
+      :-
+        iv
       (~(en ctra k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
     ++  de
       ~/  %de
-      |=  txt/@
+      |=  {iv/@H txt/@}
       ^-  (unit @ux)
       =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
-      =+  iv=(end 7 1 txt)
-      =+  cph=(rsh 7 1 txt)
       =+  ^=  pln
-        (~(de ctra k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) cph)
+        (~(de ctra k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
       ?.  =((s2va k1 (weld vec (limo ~[pln]))) iv)
         ~
       `pln
@@ -688,21 +686,19 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  @ux
+      ^-  {@uxH @ux}
       =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
       =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
-      %^  cat  7
-        iv  ::  WARNING: iv glued to "wrong" side!
+      :-
+        iv
       (~(en ctrb k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
     ++  de
       ~/  %de
-      |=  txt/@
+      |=  {iv/@H txt/@}
       ^-  (unit @ux)
       =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
-      =+  iv=(end 7 1 txt)
-      =+  cph=(rsh 7 1 txt)
       =+  ^=  pln
-        (~(de ctrb k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) cph)
+        (~(de ctrb k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
       ?.  =((s2vb k1 (weld vec (limo ~[pln]))) iv)
         ~
       `pln
@@ -714,21 +710,19 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  @ux
+      ^-  {@uxH @ux}
       =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
       =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
-      %^  cat  7
-        iv  ::  WARNING: iv glued to "wrong" side!
+      :-
+        iv
       (~(en ctrc k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
     ++  de
       ~/  %de
-      |=  txt/@
+      |=  {iv/@H txt/@}
       ^-  (unit @ux)
       =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
-      =+  iv=(end 7 1 txt)
-      =+  cph=(rsh 7 1 txt)
       =+  ^=  pln
-        (~(de ctrc k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) cph)
+        (~(de ctrc k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
       ?.  =((s2vc k1 (weld vec (limo ~[pln]))) iv)
         ~
       `pln
