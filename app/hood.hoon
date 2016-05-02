@@ -8,8 +8,10 @@
 ::::                                                    ::  ::
   !:                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
+    ++  hood-old                                        :: 
+      {?($0 $1) lac/(map @tas hood-part)}               ::  
     ++  hood-0                                          :: 
-      {$0 lac/(map @tas hood-part)}                     ::
+      {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
       |*  hed/hood-head                                 ::
       |=  paw/hood-part                                 ::
@@ -24,14 +26,21 @@
     ++  hood-make                                       ::
       |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
-        $drum  (drum-port our)                          ::
+        $drum  (drum-make our)                          ::
         $helm  *helm-part                               ::
         $kiln  *kiln-part                               ::
         $womb  *part:womb                               ::
         $write  *part:write                             ::
       ==                                                ::
+    ++  hood-part-old  ?(hood-part drum-part-old)       ::
+    ++  hood-port                                       ::
+      |=  paw/hood-part-old  ^-  hood-part              ::
+      ?+  -.paw  paw                                    ::
+        $drum    (drum-port paw)                        ::         
+      ==                                                ::
+    ::                                                  ::
     ++  hood-part                                       ::
-      $%  {$drum $0 drum-pith}                          ::
+      $%  {$drum $1 drum-pith-1}                        ::
           {$helm $0 helm-pith}                          ::
           {$kiln $0 kiln-pith}                          ::
           {$womb $0 pith:womb}                          ::
@@ -56,6 +65,12 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+++  prep
+  |=  old/(unit hood-old)  ^-  (quip _!! +>)            ::
+  :-  ~
+  ?~  old  +>
+  +>(lac (~(run by lac.u.old) hood-port))
+::
 ++  coup-kiln-fancy  (wrap take-coup-fancy):from-kiln
 ++  coup-kiln-spam                                      ::
   |=  {way/wire saw/(unit tang)}

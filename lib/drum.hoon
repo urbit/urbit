@@ -9,9 +9,12 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  drum-part  {$drum $0 drum-pith}                     ::
-++  drum-pith                                           ::
-  $:  eel/(set gill)                                    ::  connect to 
+++  drum-part  {$drum $1 drum-pith-1}                   ::
+++  drum-part-old  {$drum $0 drum-pith-0}               ::
+++  drum-pith-0  _+:*drum-pith-1                        ::  no sys
+++  drum-pith-1                                         ::
+  $:  sys/(unit bone)                                   ::  local console
+      eel/(set gill)                                    ::  connect to 
       ray/(set well)                                    ::  
       fur/(map dude (unit server))                      ::  servers
       bin/(map bone source)                             ::  terminals
@@ -103,16 +106,26 @@
   ==
 ::
 ++  deft-tart  *target                                  ::  default target
-++  drum-port                                           ::  initial part
+++  drum-make                                           ::  initial part
   |=  our/ship
-  ^-  drum-part 
+  ^-  drum-part
   :*  %drum
-      %0
+      %1
+      ~                                                 ::  sys
       (deft-fish our)                                   ::  eel
       (deft-apes our)                                   ::  ray
       ~                                                 ::  fur
       ~                                                 ::  bin
   ==                                                    ::
+++  drum-port
+  |=  old/?(drum-part drum-part-old)  ^-  drum-part
+  ?:  ?=($1 &2.old)  old
+  ~&  [%drum-porting &2.old]
+  =;  sys  [%drum %1 [sys |2.old]]
+  ?-  bin.old
+    {^ $~ $~}  (some `bone`p.n.bin.old)
+    *  ~&(drum-port-sys-fail+(~(run by bin.old) $~) sys=~)
+  ==
 ::
 ++  drum-path                                           ::  encode path
   |=  gyl/gill
@@ -184,11 +197,11 @@
   (se-klin gyl)
 ::
 ++  poke-exit                                         ::
-  |=($~ se-abet:(se-blit-all `dill-blit`[%qit ~]))    ::  XX specific?
+  |=($~ se-abet:(se-blit-sys `dill-blit`[%qit ~]))    ::
 ::
 ++  poke-put                                          ::
   |=  {pax/path txt/@}
-  se-abet:(se-blit-all [%sav pax txt])                ::  XX specific?
+  se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
 ++  reap-phat                                         ::
   |=  {way/wire saw/(unit tang)}  
@@ -234,6 +247,7 @@
   ?.  se-ably
     =.  .  se-adit
     [(flop moz) +>+>+<+]
+  =.  sys  ?^(sys sys `ost)
   =.  .  se-subze:se-adze:se-adit
   :_  %_(+>+>+<+ bin (~(put by bin) ost `source`+>+<))
   ^-  (list move)
@@ -449,10 +463,10 @@
   |=  bil/dill-blit
   +>(biz [bil biz])
 ::
-++  se-blit-all                                       ::  output to all sources
-  |=  bil/dill-blit
-  =>  |=(* [%diff %dill-blit bil])
-  (se-emil (~(tap by (~(run by bin) .))))
+++  se-blit-sys                                       ::  output to system console
+  |=  bil/dill-blit  ^+  +>
+  ?~  sys  ~&(%se-blit-no-sys +>)
+  (se-emit [u.sys %diff %dill-blit bil])
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud (list @c))
