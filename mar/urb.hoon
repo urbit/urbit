@@ -10,7 +10,8 @@
   urb.waspAll = function(sel){
     [].map.call(document.querySelectorAll(sel), urb.waspElem)
   }
-  if(urb.wasp){urb.waspAll('script'); urb.waspAll('link')}
+  urb.waspAll('script'); urb.waspAll('link')
+  
   '''
 ++  grow                                                ::  convert to
   |%
@@ -21,18 +22,22 @@
     ;html
       ;head
         ;meta(charset "utf-8", urb_injected "");
-        ;*  ?~  dep  ~
-            :~  ;script@"/~/on/{<dep>}.js"(urb_injected "");  
-                ;script(urb_injected "")
-                  ;-  (trip urb-wasp-data-js)
-                  ;-  "urb.waspData({(pojo %s (scot %uv dep-bod))})"
-                ==
-            ==
         ;*  hed
       ==
       ;body
         ;*  bod
-        ;script(urb_injected ""):"{(trip linked-deps-js)}"
+        ;*  ?~  dep  ~
+            :~  ;script@"/~/on/{<dep>}.js"(urb_injected "", async "", onload "setTimeout(urb.onDep,2000)");  
+                ;script(urb_injected "")
+                  ;-  (trip urb-wasp-data-js)
+                  ;  window.urb = window.urb || \{}
+                  ;  urb.onDep = function()\{
+                  ;   urb.waspDeps();
+                  ;   urb.waspData({(pojo %s (scot %uv dep-bod))});
+                  ;-  (trip linked-deps-js)
+                  ;  }
+                ==
+            ==
       ==
     ==
   --
