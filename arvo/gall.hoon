@@ -489,9 +489,9 @@
     byk:(~(got by bum) dap)
   ::
   ++  mo-peek
-    |=  {dap/dude pry/prey ren/@tas tyl/path mar/mark}
+    |=  {dap/dude pry/prey ren/@tas tyl/path}
     ^-  (unit (unit cage))
-    (ap-peek:(ap-abed:ap dap pry) ren tyl mar)
+    (ap-peek:(ap-abed:ap dap pry) ren tyl)
   ::
   ++  mo-clip                                           ::  apply club
     |=  {dap/dude pry/prey cub/club}
@@ -635,8 +635,13 @@
       (ap-sake p.zem) 
     ::
     ++  ap-peek
-      |=  {ren/@tas tyl/path mar/mark}
+      |=  {ren/@tas tyl/path}
       ^-  (unit (unit cage))
+      =+  ?.  ?=($x ren)
+            [mar=%$ tyl=tyl]
+          =+  `path`(flop tyl)
+          ?>  ?=(^ -)
+          [mar=i tyl=(flop t)]
       =+  cug=(ap-find %peek ren tyl)
       ?~  cug
         ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
@@ -1309,10 +1314,7 @@
     [~ ~]
   ?.  ?=(^ tyl)
     ~
-  =+  =+  `path`(flop tyl)
-      ?>  ?=(^ -)
-      [mar=i pax=(flop t)]
-  (mo-peek:(mo-abed:mo who *duct) syd high+`who ren pax mar)
+  (mo-peek:(mo-abed:mo who *duct) syd high+`who ren tyl)
 ::
 ++  stay                                                ::  save w+o cache
   `axle`all

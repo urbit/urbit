@@ -322,7 +322,13 @@
         ?+    van  ~&(%camp-stub !!)
             $g
           :+  %pass  (camp-wire +<)
-          [%g [%deal [our p.bem] q.bem [%peer %scry ren (flop s.bem)]]]
+          =+  ^=  tyl
+              ?.  ?=($x ren)
+                s.bem
+              ?>  ?=(^ s.bem)
+              t.s.bem
+
+          [%g [%deal [our p.bem] q.bem [%peer %scry ren (flop tyl)]]]
         ::
             $c
           :+  %pass  (camp-wire +<)
@@ -1786,6 +1792,11 @@
       |=  {{van/vane ren/care bem/beam} cag/cage}
       ^+  ..zo
       ?>  ?=($g van)
+      ?:  |(!?=($x ren) =(-.s.bem p.cag))
+        =.  kig  (~(del in kig) +<-.$)
+        =.  mow  :_(mow [hen (cancel van ren bem)])
+        =+  (cat 3 van ren)
+        exec(keg (~(put by keg) [- bem] cag))
       =.  mow
         :_  mow
         :^  hen  %pass  (camp-wire van ren bem)

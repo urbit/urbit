@@ -101,6 +101,9 @@
   ==
 ++  issue
   ^-  $-(json (unit issue:gh))
+  |=  jon/json
+  =-  (bind - |*(issue/* `issue:gh`[jon issue]))
+  %.  jon
   =+  jo
   %-  ot  :~
       'url'^so

@@ -59,6 +59,9 @@
   ^-  (list place:connector)
   =+  (helpers:connector ost.hid wir "https://api.github.com")
   =>  |%                              ::  gh-specific helpers
+      ++  read-sentinel
+        |=(pax/path [ost %diff %arch `0vsen.tinel ~])
+      ::
       ++  sigh-list-issues-x
         |=  jon/json
         %+  bind  ((ar:jo issue:gh-parse) jon)
@@ -70,7 +73,9 @@
         %+  bind  ((ar:jo issue:gh-parse) jon)
         |=  issues/(list issue:gh)
         :-  `(shax (jam issues))
-        (malt (turn issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~])))
+        %-  malt  ^-  (list {@ta $~})
+        :-  [%gh-list-issues ~]
+        (turn issues |=(issue:gh [(rsh 3 2 (scot %ui number)) ~]))
       --
   :~  ^-  place                       ::  /
       :*  guard=$~
@@ -89,7 +94,14 @@
       ^-  place                       ::  /issues/mine
       :*  guard={$issues $mine $~}
           read-x=(read-get /issues)
-          read-y=(read-get /issues)
+          read-y=(read-static %gh-list-issues ~)
+          sigh-x=sigh-list-issues-x
+          sigh-y=sigh-list-issues-y
+      ==
+      ^-  place                       ::  /issues/mine/<mark>
+      :*  guard={$issues $mine @t $~}
+          read-x=read-null
+          read-y=read-sentinel
           sigh-x=sigh-list-issues-x
           sigh-y=sigh-list-issues-y
       ==
@@ -123,18 +135,31 @@
           sigh-x=sigh-list-issues-x
           sigh-y=sigh-list-issues-y
       ==
-      ^-  place                       ::  /issues/by-repo/<user>/<repo>
+      ^-  place                       ::  /issues/by-repo/<user>/<repo>/<number>
       :*  guard={$issues $by-repo @t @t @t $~}
           ^=  read-x
           |=(pax/path (get /repos/[-.+>.pax]/[-.+>+.pax]/issues/[-.+>+>.pax]))
         ::
-          read-y=(read-static ~)
+          ^=  read-y
+          |=  pax/path
+          %.  pax
+          ?:  ((sane %tas) -.+>+>.pax)
+            read-sentinel
+          (read-static %gh-issue ~)
+        ::
           ^=  sigh-x
           |=  jon/json
           %+  bind  (issue:gh-parse jon)
           |=  issue/issue:gh
           gh-issue+issue
         ::
+          sigh-y=sigh-strange
+      ==
+      ^-  place                       ::  /issues/by-repo/<u>/<r>/<n>/<mark>
+      :*  guard={$issues $by-repo @t @t @t @t $~}
+          read-x=read-null
+          read-y=read-sentinel
+          sigh-x=sigh-strange
           sigh-y=sigh-strange
       ==
   ==

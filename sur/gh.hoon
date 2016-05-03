@@ -97,7 +97,8 @@
       site-admin/?
   ==
 ++  issue
-  $:  url/@t
+  $:  raw/json
+      url/@t
       labels-url/@t
       comments-url/@t
       events-url/@t
