@@ -1075,6 +1075,13 @@
       !!
     ==
   ::
+  ++  vale-page
+    |=  a/page
+    ^-  silk
+    ?.  ?=($hoon p.a)  [%vale a]
+    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%fail ~] %$ *cage]
+    [%$ p.a [%atom %t ~] q.a]
+  ::
   ++  validate-x
     |=  {car/care cas/case pax/path peg/page}
     ^+  +>
@@ -1082,7 +1089,7 @@
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
         %f  %exec  our  ~  [her syd cas]
-        [%vale peg]
+        (vale-page peg)
     ==
   ::
   ++  take-foreign-x
@@ -1109,8 +1116,9 @@
         %+  turn  (~(tap in pop))
         |=  a/plop
         ?-  -.a
-          $delta   [[%$ %blob !>([%delta p.a q.a *page])] [%vale p.r.a q.r.a]]
-          $direct  [[%$ %blob !>([%direct p.a *page])] [%vale p.q.a q.q.a]]
+          $direct  [[%$ %blob !>([%direct p.a *page])] (vale-page p.q.a q.q.a)]
+          $delta
+            [[%$ %blob !>([%delta p.a q.a *page])] (vale-page p.r.a q.r.a)]
         ==
     ==
   ::
