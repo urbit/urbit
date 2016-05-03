@@ -217,8 +217,8 @@
   |=  {urb/json jaz/cord}  ^-  cord 
   =-  (cat 3 (crip -) jaz)
   """
-  var _urb = {(pojo urb)}
-  window.urb = window.urb || \{}; for(k in _urb) window.urb[k] = _urb[k]
+  var _urb = {(pojo urb)};
+  window.urb = window.urb || \{}; for(k in _urb) window.urb[k] = _urb[k];
   
   """
 ::
