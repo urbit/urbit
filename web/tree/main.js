@@ -13,6 +13,13 @@ module.exports = {
       type: "loadPath"
     });
   },
+  loadSein: function(path, data) {
+    return TreeDispatcher.handleServerAction({
+      path: path,
+      data: data,
+      type: "loadSein"
+    });
+  },
   clearData: function() {
     TreePersistence.refresh();
     return TreeDispatcher.handleServerAction({
@@ -2073,7 +2080,6 @@ ref = React.DOM, ul = ref.ul, li = ref.li, a = ref.a;
 module.exports = query({
   path: 't',
   kids: {
-    snip: 'r',
     head: 'r',
     meta: 'j'
   }
@@ -2354,6 +2360,9 @@ $(function() {
   frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
   window.tree.actions.setCurr(frag);
   window.tree.actions.loadPath(frag, window.tree.data);
+  if (window.tree.sein != null) {
+    window.tree.actions.loadSein(frag, window.tree.sein);
+  }
   window.urb.ondataupdate = function(dep) {
     var dat;
     for (dat in window.urb.datadeps) {
@@ -2516,17 +2525,17 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
         }
         data[k] = have[k];
       }
-      if (query.kids) {
-        if (have.kids === false) {
-          data.kids = {};
-        } else {
-          for (k in tree) {
-            sub = tree[k];
-            if (data.kids == null) {
-              data.kids = {};
-            }
-            data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+    }
+    if (query.kids) {
+      if ((have != null ? have.kids : void 0) === false) {
+        data.kids = {};
+      } else {
+        for (k in tree) {
+          sub = tree[k];
+          if (data.kids == null) {
+            data.kids = {};
           }
+          data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
         }
       }
     }
@@ -2574,13 +2583,24 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
     _data = {};
     return _tree = {};
   },
+  loadSein: function(arg) {
+    var data, path, sein;
+    path = arg.path, data = arg.data;
+    sein = this.getPare(path);
+    if (sein != null) {
+      return this.loadPath({
+        path: sein,
+        data: data
+      });
+    }
+  },
   loadPath: function(arg) {
     var data, path;
     path = arg.path, data = arg.data;
     return this.loadValues(this.getTree(path.split('/'), true), path, data);
   },
   loadValues: function(tree, path, data) {
-    var k, old, ref, ref1, v;
+    var _path, k, old, ref, ref1, v;
     old = (ref = _data[path]) != null ? ref : {};
     for (k in data) {
       if (QUERIES[k]) {
@@ -2593,7 +2613,11 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
       if (tree[k] == null) {
         tree[k] = {};
       }
-      this.loadValues(tree[k], path + "/" + k, v);
+      _path = path;
+      if (_path === "/") {
+        _path = "";
+      }
+      this.loadValues(tree[k], _path + "/" + k, v);
     }
     if (data.kids && _.isEmpty(data.kids)) {
       old.kids = false;
@@ -2621,6 +2645,9 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
     tree = _tree;
     for (i = 0, len = _path.length; i < len; i++) {
       sub = _path[i];
+      if (!sub) {
+        continue;
+      }
       if (tree[sub] == null) {
         if (!make) {
           return null;
