@@ -611,7 +611,7 @@
 ++  invite-from                                       ::  traced invitation
   |=  {hiz/(list mail) inv/invite}  ^+  +>
   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
-  =+  pas=`passcode`(shaf %pass eny)
+  =+  pas=`passcode`(end 6 1 (shaf %pass eny))
   ?:  (~(has by bureau) pas)
     ~|([%duplicate-passcode pas who.inv replay=replay] !!)
   =.  bureau  (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])

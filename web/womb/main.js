@@ -244,7 +244,7 @@ module.exports = name("Claim", FromStore("pass", function(arg) {
   var pass;
   pass = arg.pass;
   return div({}, p({}, "Input a passcode to claim ships: "), ShipInput({
-    length: 57,
+    length: 28,
     defaultValue: pass,
     onInputShip: Actions.setPasscode
   }), pass ? rele(Balance, {
