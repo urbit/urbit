@@ -1,4 +1,5 @@
 /-  gh
+/+  gh-parse
 |_  issue/issue:gh
 ++  grab
   |%
@@ -8,5 +9,6 @@
   |%
   ++  json  raw.issue
   ++  mime  [/txt/plain (taco (crip <issue>))]
+  ++  txt   (print-issue:gh-parse issue)
   --
 --
