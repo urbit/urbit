@@ -1,5 +1,5 @@
 ::
-::::  /hoon/do-claim/womb/mar
+::::  /hoon/claim/womb/mar
   ::
 /?    310
 |_  {aut/@pG her/@p}

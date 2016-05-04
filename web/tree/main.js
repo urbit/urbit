@@ -13,6 +13,13 @@ module.exports = {
       type: "loadPath"
     });
   },
+  loadSein: function(path, data) {
+    return TreeDispatcher.handleServerAction({
+      path: path,
+      data: data,
+      type: "loadSein"
+    });
+  },
   clearData: function() {
     TreePersistence.refresh();
     return TreeDispatcher.handleServerAction({
@@ -426,9 +433,11 @@ extras = {
           className: footerClas,
           key: 'footer-inner'
         }, [
-          "This page was served by an Urbit.", a({
+          "This page was made by Urbit. ", a({
+            href: "urbit.org"
+          }, "urbit.org"), a({
             href: "mailto:urbit@urbit.org"
-          }, "urbit@urbit.org")
+          }, "contact")
         ])
       ]);
     }
@@ -488,6 +497,9 @@ module.exports = query({
     }
     innerClas = clas(innerClas);
     bodyClas = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
+    if (this.props.meta.type && bodyClas.indexOf(this.props.meta.type) === -1) {
+      bodyClas += " " + this.props.meta.type;
+    }
     parts = [
       extra('spam'), extra('logo', {
         color: this.props.meta.logo
@@ -795,7 +807,7 @@ module.exports = recl({
           value: this.state.email
         }), button({
           key: "submit",
-          className: "submit",
+          className: "submit btn",
           onClick: this.onClick
         }, submit)
       ];
@@ -950,7 +962,7 @@ module.exports = query({
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
-    var _date, _k, _keys, author, cont, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
+    var _date, _k, _keys, author, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -1002,13 +1014,31 @@ module.exports = query({
       parts = [];
       title = null;
       if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
-        title = {
-          gn: 'h1',
-          ga: {
-            className: 'title'
-          },
-          c: [elem.meta.title]
-        };
+        if (this.props.dataType === 'post') {
+          title = {
+            gn: 'a',
+            ga: {
+              href: href
+            },
+            c: [
+              {
+                gn: 'h1',
+                ga: {
+                  className: 'title'
+                },
+                c: [elem.meta.title]
+              }
+            ]
+          };
+        } else {
+          title = {
+            gn: 'h1',
+            ga: {
+              className: 'title'
+            },
+            c: [elem.meta.title]
+          };
+        }
       }
       if (!title && elem.head.c.length > 0) {
         title = elem.head;
@@ -1041,10 +1071,18 @@ module.exports = query({
         if (this.props.dataType === 'post') {
           if (elem.meta.image) {
             image = {
-              gn: 'img',
+              gn: 'a',
               ga: {
-                src: elem.meta.image
-              }
+                href: href
+              },
+              c: [
+                {
+                  gn: 'img',
+                  ga: {
+                    src: elem.meta.image
+                  }
+                }
+              ]
             };
             parts.push(image);
           }
@@ -1078,15 +1116,6 @@ module.exports = query({
             };
             parts.push(author);
           }
-          cont = {
-            gn: 'a',
-            ga: {
-              className: 'btn continue',
-              href: href
-            },
-            c: ['Continue reading']
-          };
-          parts.push(cont);
           linked = true;
         }
       }
@@ -1408,7 +1437,7 @@ module.exports = query({
     $('body').on('click', 'a', function(e) {
       var href, url;
       href = $(this).attr('href');
-      if (href[0] === "#") {
+      if ((href != null ? href[0] : void 0) === "#") {
         return true;
       }
       if (href && !/^https?:\/\//i.test(href)) {
@@ -1811,11 +1840,19 @@ Virtual = recl({
     }, function(str) {
       return str;
     }, function(arg, key) {
-      var c, ga, gn, props, ref1;
+      var c, e, error, ga, gn, props, ref1;
       gn = arg.gn, ga = arg.ga, c = arg.c;
       props = {
         key: key
       };
+      if (ga != null ? ga.style : void 0) {
+        try {
+          ga.style = eval("(" + ga.style + ")");
+        } catch (error) {
+          e = error;
+          ga.style = ga.style;
+        }
+      }
       if (components[gn]) {
         props.basePath = basePath;
       }
@@ -2043,7 +2080,6 @@ ref = React.DOM, ul = ref.ul, li = ref.li, a = ref.a;
 module.exports = query({
   path: 't',
   kids: {
-    snip: 'r',
     head: 'r',
     meta: 'j'
   }
@@ -2102,7 +2138,7 @@ module.exports = query({
         }, a({
           className: "nav-link",
           href: href,
-          onClick: _this.props.toggleNav
+          onClick: _this.props.closeNav
         }, head));
       };
     })(this)));
@@ -2324,6 +2360,9 @@ $(function() {
   frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
   window.tree.actions.setCurr(frag);
   window.tree.actions.loadPath(frag, window.tree.data);
+  if (window.tree.sein != null) {
+    window.tree.actions.loadSein(frag, window.tree.sein);
+  }
   window.urb.ondataupdate = function(dep) {
     var dat;
     for (dat in window.urb.datadeps) {
@@ -2486,17 +2525,17 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
         }
         data[k] = have[k];
       }
-      if (query.kids) {
-        if (have.kids === false) {
-          data.kids = {};
-        } else {
-          for (k in tree) {
-            sub = tree[k];
-            if (data.kids == null) {
-              data.kids = {};
-            }
-            data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+    }
+    if (query.kids) {
+      if ((have != null ? have.kids : void 0) === false) {
+        data.kids = {};
+      } else {
+        for (k in tree) {
+          sub = tree[k];
+          if (data.kids == null) {
+            data.kids = {};
           }
+          data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
         }
       }
     }
@@ -2544,13 +2583,24 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
     _data = {};
     return _tree = {};
   },
+  loadSein: function(arg) {
+    var data, path, sein;
+    path = arg.path, data = arg.data;
+    sein = this.getPare(path);
+    if (sein != null) {
+      return this.loadPath({
+        path: sein,
+        data: data
+      });
+    }
+  },
   loadPath: function(arg) {
     var data, path;
     path = arg.path, data = arg.data;
     return this.loadValues(this.getTree(path.split('/'), true), path, data);
   },
   loadValues: function(tree, path, data) {
-    var k, old, ref, ref1, v;
+    var _path, k, old, ref, ref1, v;
     old = (ref = _data[path]) != null ? ref : {};
     for (k in data) {
       if (QUERIES[k]) {
@@ -2563,7 +2613,11 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
       if (tree[k] == null) {
         tree[k] = {};
       }
-      this.loadValues(tree[k], path + "/" + k, v);
+      _path = path;
+      if (_path === "/") {
+        _path = "";
+      }
+      this.loadValues(tree[k], _path + "/" + k, v);
     }
     if (data.kids && _.isEmpty(data.kids)) {
       old.kids = false;
@@ -2591,6 +2645,9 @@ TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
     tree = _tree;
     for (i = 0, len = _path.length; i < len; i++) {
       sub = _path[i];
+      if (!sub) {
+        continue;
+      }
       if (tree[sub] == null) {
         if (!make) {
           return null;

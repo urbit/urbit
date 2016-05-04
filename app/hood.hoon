@@ -167,6 +167,7 @@
 ++  poke-womb-rekey           (wrap poke-rekey):from-womb
 ++  poke-womb-report          (wrap poke-report):from-womb
 ++  poke-womb-manage          (wrap poke-manage):from-womb
+++  poke-womb-recycle         (wrap poke-recycle):from-womb
 ++  poke-womb-manage-old-key  (wrap poke-manage-old-key):from-womb
 ++  poke-womb-release         (wrap poke-release):from-womb
 ++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
