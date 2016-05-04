@@ -129,6 +129,7 @@
       {$womb-balance-all (map passcode mail)}           ::
       {$womb-stat stat}                                 ::
       {$womb-stat-all (map ship stat)}                  ::
+      {$womb-tick-info ?($fail $good $used)}            ::
   ==
 ++  move  (pair bone card)                              ::  user-level move
 ::
@@ -136,6 +137,7 @@
   $%  {$report her/@p wyl/will}
       {$release gal/@ud sta/@ud}
       {$claim aut/passcode her/@p}
+      {$claim-old who/mail him/knot tik/knot her/@p}
       {$invite ref/reference inv/invite}
       {$reinvite aut/passcode inv/invite}
   ==
@@ -492,6 +494,26 @@
   %+  bind  (~(get by bureau) pas)
   |=(bal/balance [%womb-balance bal])
 ::
+++  old-phon    ;~(pfix sig fed:ag)  :: stub
+++  parse-ticket
+  |=  {a/knot b/knot}  ^-  {him/@ tik/@}
+  [him=(rash a old-phon) tik=(rash b old-phon)]
+::
+++  check-ticket
+  |=  {a/@ b/@}  ^-  ?
+  =(b `@p`!!)
+::
+++  peek-x-ticket                                
+  |=  tyl/path
+  ^-  (unit (unit {$womb-tick-info ?($fail $good $used)}))
+  ?.  ?=({@ @ $~} tyl)  ~|(bad-path+tyl !!)
+  =+  [him tik]=(parse-ticket i.tyl i.t.tyl)
+  :^  ~   ~  %womb-tick-info
+  ?.  (check-ticket i.tyl i.t.tyl)  %fail
+  ?.  (~(has by bureau) (shas %tick tik))
+    %good
+  %used
+::
 ++  peer-scry-x                                        ::  subscription like .^
   |=  tyl/path
   =<  abet
@@ -516,6 +538,8 @@
   ::  /balance                         all invitations
   ::  /balance/passcode                invitation status  
     $balance  (peek-x-balance +.tyl)
+  ::  /ticket/ship/ticket              check ticket usability
+    $ticket  (peek-x-ticket +.tyl)
   ==
 ::
 ++  poke-manage                                       ::  add to property
@@ -568,6 +592,7 @@
       $report    (teba (poke-report +.pok.i.a))
       $release   (teba (poke-release +.pok.i.a))
       $reinvite  (teba (poke-reinvite +.pok.i.a))
+      $claim-old  (teba (poke-claim-old +.pok.i.a))
     ==
   ==
 ::
@@ -665,11 +690,29 @@
   =+  who=p.q.sta                     ::  send ticket to the issuee.
   (email /ticket who "Ticket for {<her>}: {<`@pG`tik>}")
 ::
+++  poke-claim-old                                    ::  claim with old ticket
+  |=  {who/mail him-t/knot tik-t/knot her/@p}
+  =<  abet
+  =.  log-transaction  (log-transaction %claim-old +<)
+  ?>  =(src src)
+  =+  [him tik]=(parse-ticket him-t tik-t)
+  ?>  (check-ticket him tik)
+  =+  pas=(shas %tick tik)
+  ?:  (~(has by bureau) pas)
+    ~|(already-claimed+[him-t tik-t] !!)
+  =+  bal=`balance`?+((clan him) !! $duke [1 0 who ~], $king [0 1 who ~])
+  =.  bureau  (~(put by bureau) pas bal)
+  (claim-any pas her)
+::
 ++  poke-claim                                        ::  claim plot, req ticket
   |=  {aut/passcode her/@p}
   =<  abet
   =.  log-transaction  (log-transaction %claim +<)
   ?>  =(src src)
+  (claim-any aut her)
+::
+++  claim-any
+  |=  {aut/passcode her/@p}
   =;  claimed
     :: =.  claimed  (emit.claimed %wait $~)          :: XX delay ack
     (emit.claimed %poke /tick [(sein her) %hood] [%womb-do-ticket her])
