@@ -130,7 +130,7 @@
       {$womb-balance-all (map passcode mail)}           ::
       {$womb-stat stat}                                 ::
       {$womb-stat-all (map ship stat)}                  ::
-      {$womb-tick-info ?($fail $good $used)}            ::
+      {$womb-ticket-info passcode ?($fail $good $used)} ::
   ==
 ++  move  (pair bone card)                              ::  user-level move
 ::
@@ -138,7 +138,7 @@
   $%  {$report her/@p wyl/will}
       {$release gal/@ud sta/@ud}
       {$claim aut/passcode her/@p}
-      {$claim-old who/mail him/knot tik/knot her/@p}
+      {$recycle who/mail him/knot tik/knot}
       {$invite ref/reference inv/invite}
       {$reinvite aut/passcode inv/invite}
   ==
@@ -506,18 +506,20 @@
   |=  key/@  ^-  ?
   =(b `@p`(end 6 1 (shaf %tick (mix a (shax key)))))
 ::
+::
 ++  peek-x-ticket                                
   |=  tyl/path
-  ^-  (unit (unit {$womb-tick-info ?($fail $good $used)}))
+  ^-  (unit (unit {$womb-ticket-info passcode ?($fail $good $used)}))
   ?.  ?=({@ @ $~} tyl)  ~|(bad-path+tyl !!)
   =+  [him tik]=(parse-ticket i.tyl i.t.tyl)
   %+  bind  (check-old-ticket him tik)
   |=  gud/?
-  :+  ~  %womb-tick-info
-  ?.  gud    %fail
-  ?.  (~(has by bureau) (shas %tick tik))
-    %good
-  %used
+  :+  ~  %womb-ticket-info
+  =+  pas=`passcode`(end 6 1 (sham %tick him tik))
+  :-  pas
+  ?.  gud  %fail
+  ?:  (~(has by bureau) pas)  %used
+  %good
 ::
 ++  peer-scry-x                                        ::  subscription like .^
   |=  tyl/path
@@ -602,8 +604,8 @@
       $invite    (teba (poke-invite +.pok.i.a))
       $report    (teba (poke-report +.pok.i.a))
       $release   (teba (poke-release +.pok.i.a))
+      $recycle   (teba (poke-recycle +.pok.i.a))
       $reinvite  (teba (poke-reinvite +.pok.i.a))
-      $claim-old  (teba (poke-claim-old +.pok.i.a))
     ==
   ==
 ::
@@ -701,19 +703,18 @@
   =+  who=p.q.sta                     ::  send ticket to the issuee.
   (email /ticket who "Ticket for {<her>}: {<`@pG`tik>}")
 ::
-++  poke-claim-old                                    ::  claim with old ticket
-  |=  {who/mail him-t/knot tik-t/knot her/@p}
+++  poke-recycle                                      ::  save ticket as balance
+  |=  {who/mail him-t/knot tik-t/knot}
   =<  abet
-  =.  log-transaction  (log-transaction %claim-old +<)
+  =.  log-transaction  (log-transaction %recycle +<)
   ?>  =(src src)
   =+  [him tik]=(parse-ticket him-t tik-t)
   ?>  (need (check-old-ticket him tik))
-  =+  pas=(shas %tick tik)
+  =+  pas=`passcode`(end 6 1 (sham %tick him tik))
   ?:  (~(has by bureau) pas)
-    ~|(already-claimed+[him-t tik-t] !!)
+    ~|(already-recycled+[him-t tik-t] !!)
   =+  bal=`balance`?+((clan him) !! $duke [1 0 who ~], $king [0 1 who ~])
-  =.  bureau  (~(put by bureau) pas bal)
-  (claim-any pas her)
+  .(bureau (~(put by bureau) pas bal))
 ::
 ++  poke-claim                                        ::  claim plot, req ticket
   |=  {aut/passcode her/@p}
