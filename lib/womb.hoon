@@ -95,12 +95,13 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%
-++  part  {$womb $0 pith}                               ::  womb state
+++  part  {$womb $1 pith}                               ::  womb state
 ++  pith                                                ::  womb content
   $:  boss/(unit ship)                                  ::  outside master
       bureau/(map passcode balance)                     ::  active invitations
       office/property                                   ::  properties managed
       hotel/(map (each ship mail) client)               ::  everyone we know
+      recycling/(map ship @)                            ::  old ticket keys      
   ==                                                    ::
 --                                                      ::
 ::                                                      ::  ::
@@ -499,17 +500,21 @@
   |=  {a/knot b/knot}  ^-  {him/@ tik/@}
   [him=(rash a old-phon) tik=(rash b old-phon)]
 ::
-++  check-ticket
-  |=  {a/@ b/@}  ^-  ?
-  =(b `@p`!!)
+++  check-old-ticket
+  |=  {a/ship b/@pG}  ^-  (unit ?)
+  %+  bind   (~(get by recycling) (sein a))
+  |=  key/@  ^-  ?
+  =(b `@p`(end 6 1 (shaf %tick (mix a (shax key)))))
 ::
 ++  peek-x-ticket                                
   |=  tyl/path
   ^-  (unit (unit {$womb-tick-info ?($fail $good $used)}))
   ?.  ?=({@ @ $~} tyl)  ~|(bad-path+tyl !!)
   =+  [him tik]=(parse-ticket i.tyl i.t.tyl)
-  :^  ~   ~  %womb-tick-info
-  ?.  (check-ticket i.tyl i.t.tyl)  %fail
+  %+  bind  (check-old-ticket him tik)
+  |=  gud/?
+  :+  ~  %womb-tick-info
+  ?.  gud    %fail
   ?.  (~(has by bureau) (shas %tick tik))
     %good
   %used
@@ -541,6 +546,12 @@
   ::  /ticket/ship/ticket              check ticket usability
     $ticket  (peek-x-ticket +.tyl)
   ==
+::
+++  poke-manage-old-key                               ::  add to recyclable tickets
+  |=  {a/ship b/@}
+  =<  abet
+  ?>  |(=(our src) =([~ src] boss))                   ::  privileged
+  .(recycling (~(put by recycling) a b))
 ::
 ++  poke-manage                                       ::  add to property
   |=  a/(list ship)
@@ -696,7 +707,7 @@
   =.  log-transaction  (log-transaction %claim-old +<)
   ?>  =(src src)
   =+  [him tik]=(parse-ticket him-t tik-t)
-  ?>  (check-ticket him tik)
+  ?>  (need (check-old-ticket him tik))
   =+  pas=(shas %tick tik)
   ?:  (~(has by bureau) pas)
     ~|(already-claimed+[him-t tik-t] !!)
@@ -711,7 +722,7 @@
   ?>  =(src src)
   (claim-any aut her)
 ::
-++  claim-any
+++  claim-any                                        ::  register
   |=  {aut/passcode her/@p}
   =;  claimed
     :: =.  claimed  (emit.claimed %wait $~)          :: XX delay ack

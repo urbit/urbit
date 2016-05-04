@@ -43,7 +43,7 @@
       $%  {$drum $1 drum-pith-1}                        ::
           {$helm $0 helm-pith}                          ::
           {$kiln $0 kiln-pith}                          ::
-          {$womb $0 pith:womb}                          ::
+          {$womb $1 pith:womb}                          ::
           {$write $0 pith:write}                        ::
       ==                                                ::
     --                                                  ::
@@ -167,6 +167,7 @@
 ++  poke-womb-rekey           (wrap poke-rekey):from-womb
 ++  poke-womb-report          (wrap poke-report):from-womb
 ++  poke-womb-manage          (wrap poke-manage):from-womb
+++  poke-womb-manage-old-key  (wrap poke-manage-old-key):from-womb
 ++  poke-womb-release         (wrap poke-release):from-womb
 ++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
 ++  poke-womb-replay-log      (wrap poke-replay-log):from-womb
