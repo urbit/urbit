@@ -6103,6 +6103,10 @@ pre {
   background-color: #f7f7f7;
 }
 
+pre {
+  padding: .6rem;
+}
+
 p code {
   padding: .2rem .1rem;
 }
