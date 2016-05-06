@@ -1068,7 +1068,16 @@ ol > li:before {
 
 .list.post .date {
   font-family: 'scp';
-  font-size: .7rem; }
+  font-size: .7rem;
+  margin-bottom: .6rem; }
+
+.list.post .author {
+  font-size: 1rem;
+  padding-top: 0; }
+
+.list.post .author:before {
+  content: "—";
+  margin-right: .6rem; }
 
 .body[data-path^='/docs'] .list,
 .body[data-path^='/work'] .list {
