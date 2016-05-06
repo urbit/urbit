@@ -652,6 +652,7 @@
 ++  poke-save                                         ::  write backup
   |=  pax/path
   =<  abet
+  ?>  =(our src)                                      ::  me only
   (emit %info /backup [our (foal pax [%womb-part !>(`part`+:abet)])]) 
 ::
 ++  poke-rekey                                        ::  extend will
