@@ -865,6 +865,10 @@
       =+  fix=(sh-sane inv buf.say.she)
       ?~  lit.fix
         +>.$
+      ?~  err.fix
+        (sh-slug fix)                 :: just capital correction
+      ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.say.she)))
+        +>.$                          :: allow interior edits, deletes
       (sh-slug fix)
     ::
     ++  sh-lame                                         ::  send error
