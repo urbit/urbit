@@ -356,26 +356,26 @@ div.logo.inverse:before {
       margin-top: 0;
       margin-bottom: 0; } }
 
-[data-path^='/docs'] .selected .nav-link,
+[data-path*='/docs'] .selected .nav-link,
 [data-path^='/work'] .selected .nav-link {
   color: #55595c; }
 
-[data-path^='/docs'] .nav-link,
+[data-path*='/docs'] .nav-link,
 [data-path^='/work'] .nav-link {
   font-weight: 500; }
 
-[data-path^='/docs'] .home,
+[data-path*='/docs'] .home,
 [data-path^='/work'] .home {
   background-color: #55595c;
   border-color: #55595c; }
 
-[data-path^='/docs'] .home:hover,
+[data-path*='/docs'] .home:hover,
 [data-path^='/work'] .home:hover {
   background-color: #B1B7BD;
   border-color: #B1B7BD;
   opacity: .6; }
 
-[data-path^='/docs'] .home:before,
+[data-path*='/docs'] .home:before,
 [data-path^='/work'] .home:before {
   content: "~";
   color: #fff;
@@ -383,14 +383,14 @@ div.logo.inverse:before {
   font-size: 1.4rem; }
 
 @media (max-width: 991px) {
-  [data-path^='/docs'] .home:before,
+  [data-path*='/docs'] .home:before,
   [data-path^='/work'] .home:before {
     line-height: 0.7rem;
     font-size: 1rem;
     margin-left: .06rem; } }
 
 @media (max-width: 767px) {
-  [data-path^='/docs'] .home:before,
+  [data-path*='/docs'] .home:before,
   [data-path^='/work'] .home:before {
     line-height: .7rem;
     margin-left: .05rem;
@@ -622,30 +622,30 @@ ol > li:before {
   margin-right: 1rem;
   margin-left: -2rem; }
 
-.body[data-path^='/docs'] h1,
+.body[data-path*='/docs'] h1,
 .body[data-path^='/work'] h1 {
   color: #000; }
 
-.body[data-path^='/docs'] h1 code,
+.body[data-path*='/docs'] h1 code,
 .body[data-path^='/work'] h1 code {
   background-color: transparent;
   color: #000;
   padding: 0; }
 
-.body[data-path^='/docs'] .book h2,
+.body[data-path*='/docs'] .book h2,
 .body[data-path^='/work'] .book h2 {
   color: #B1B7BD; }
 
-.body[data-path^='/docs'] .book h2 code,
+.body[data-path*='/docs'] .book h2 code,
 .body[data-path^='/work'] .book h2 code {
   color: #000;
   background-color: transparent; }
 
-.body[data-path^='/docs'] .book h2 a,
+.body[data-path*='/docs'] .book h2 a,
 .body[data-path^='/work'] .book h2 a {
   color: #000; }
 
-.body[data-path^='/docs'] .book hr,
+.body[data-path*='/docs'] .book hr,
 .body[data-path^='/work'] .book hr {
   margin-bottom: 3rem; }
 
@@ -1079,12 +1079,12 @@ ol > li:before {
   content: "—";
   margin-right: .6rem; }
 
-.body[data-path^='/docs'] .list,
+.body[data-path*='/docs'] .list,
 .body[data-path^='/work'] .list {
   list-style-type: none;
   padding-left: 0; }
-  .body[data-path^='/docs'] .list a,
-  .body[data-path^='/docs'] .list h1,
+  .body[data-path*='/docs'] .list a,
+  .body[data-path*='/docs'] .list h1,
   .body[data-path^='/work'] .list a,
   .body[data-path^='/work'] .list h1 {
     color: #55595c;
@@ -1092,7 +1092,7 @@ ol > li:before {
     height: 2rem;
     display: inline;
     text-decoration: none; }
-  .body[data-path^='/docs'] .list h1,
+  .body[data-path*='/docs'] .list h1,
   .body[data-path^='/work'] .list h1 {
     border-bottom: 2px solid #000; }
 
@@ -1105,38 +1105,38 @@ ol > li:before {
 .body[data-path^='/work'] .list.main h1 {
   border-width: 4px; }
 
-.body[data-path^='/docs'] .list.runes a h1,
-.body[data-path^='/docs'] .list.runes a div,
-.body[data-path^='/docs'] .list.runes a p {
+.body[data-path*='/docs'] .list.runes a h1,
+.body[data-path*='/docs'] .list.runes a div,
+.body[data-path*='/docs'] .list.runes a p {
   display: inline-block; }
 
-.body[data-path^='/docs'] .list.runes a p {
+.body[data-path*='/docs'] .list.runes a p {
   font-weight: 300; }
 
-.body[data-path^='/docs'] .list.runes a {
+.body[data-path*='/docs'] .list.runes a {
   text-decoration: none; }
 
-.body[data-path^='/docs'] .list.runes a,
-.body[data-path^='/docs'] .list.runes a h1 code {
+.body[data-path*='/docs'] .list.runes a,
+.body[data-path*='/docs'] .list.runes a h1 code {
   color: #000; }
 
-.body[data-path^='/docs'] .list.runes a h1 {
+.body[data-path*='/docs'] .list.runes a h1 {
   display: block;
   margin-bottom: .3rem;
   height: auto;
   border-bottom: none; }
 
-.body[data-path^='/docs'] .list.runes a h1 code {
+.body[data-path*='/docs'] .list.runes a h1 code {
   background-color: transparent;
   font-weight: 500;
   font-size: 1.2rem;
   padding: 0;
   border-bottom: 2px solid #000; }
 
-.body[data-path^='/docs'] .list.runes a code {
+.body[data-path*='/docs'] .list.runes a code {
   background-color: #eceeef; }
 
-.body[data-path^='/docs'] .list.runes a code {
+.body[data-path*='/docs'] .list.runes a code {
   padding: .3rem; }
 
 .urbit ul.blog {
