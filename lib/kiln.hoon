@@ -143,33 +143,20 @@
   |=  syd/desk
   abet:(emit %drop /cancel our syd)
 ::
-++  do-info
+++  poke-info
   |=  {mez/tape tor/toro}
   abet:(emit:(spam leaf+mez ~) %info /kiln our tor)
 ::
-++  poke-rm  |=(a/path (do-info "removed" (fray a)))
-++  poke-cp
-  |=  {input/path output/path}
-  %+  do-info  "copied"
-  ?>  =(-:(flop input) -:(flop output))
-  (foal output -:(flop input) [%atom %t ~] .^(* %cx input))    ::  XX type
-::
-++  poke-mv
-  |=  {input/path output/path} 
-  %+  do-info  "moved"
-  ?>  =(-:(flop input) -:(flop output))
-  %+  furl  (fray input)
-  (foal output -:(flop input) %noun .^(* %cx input))
-::
+++  poke-rm  |=(a/path (poke-info "removed" (fray a)))
 ++  poke-label
   |=  {syd/desk lab/@tas}
   =+  pax=/(scot %p our)/[syd]/[lab]
-  (do-info "labeled {(spud pax)}" [syd %| lab])
+  (poke-info "labeled {(spud pax)}" [syd %| lab])
 ::
 ++  poke-schedule
   |=  {where/path tym/@da eve/@t}
   =.  where  (welp where /sched)
-  %+  do-info  "scheduled"
+  %+  poke-info  "scheduled"
   =+  old=;;((map @da cord) (fall (file where) ~))
   (foal where %sched !>((~(put by old) tym eve)))
 ::
