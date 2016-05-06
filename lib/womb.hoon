@@ -139,7 +139,7 @@
       {$release gal/@ud sta/@ud}
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
-      {$invite ref/reference inv/invite}
+      {$invite tid/cord ref/reference inv/invite}
       {$reinvite aut/passcode inv/invite}
   ==
 --
@@ -610,7 +610,7 @@
   ==
 ::
 ++  poke-invite                                       ::  create invitation
-  |=  {ref/reference inv/invite}
+  |=  {tid/cord ref/reference inv/invite}
   =<  abet
   =.  log-transaction  (log-transaction %invite +<)
   =.  hotel
@@ -619,7 +619,7 @@
     %+  ~(put by hotel)  u.ref
     =+  cli=(fall (~(get by hotel) u.ref) *client)
     cli(sta +(sta.cli))
-  (invite-from ~ inv)
+  (invite-from(eny (shax tid)) ~ inv)
 ::
 ++  invite-from                                       ::  traced invitation
   |=  {hiz/(list mail) inv/invite}  ^+  +>
