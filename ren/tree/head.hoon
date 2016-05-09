@@ -29,13 +29,13 @@
 ::     ;link(type "text/css", rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.min.css");
     ;*  ?.  nopack.dbg
           :_  ~
-          ;link(type "text/css", rel "stylesheet", href "/tree/main_codemirror_fonts_bootstrap.css");
-::           ;link(type "text/css", rel "stylesheet", href "/tree/main_codemirror_bootstrap.css");
+          ;link(type "text/css", rel "stylesheet", href "/=home=/web/tree/~.main_codemirror_fonts_bootstrap.css");
+::           ;link(type "text/css", rel "stylesheet", href "/=home=/web/tree/~.main_codemirror_bootstrap.css");
         ;=
-          ;link(type "text/css", rel "stylesheet", href "/lib/css/fonts.css");
-          ;link(type "text/css", rel "stylesheet", href "/lib/css/bootstrap.css");
-          ;link(type "text/css", rel "stylesheet", href "/lib/css/codemirror.css");
-          ;link(type "text/css", rel "stylesheet", href "/tree/main.css");
+          ;link(type "text/css", rel "stylesheet", href "/=home=/web/lib/css/fonts.css");
+          ;link(type "text/css", rel "stylesheet", href "/=home=/web/lib/css/bootstrap.css");
+          ;link(type "text/css", rel "stylesheet", href "/=home=/web/lib/css/codemirror.css");
+          ;link(type "text/css", rel "stylesheet", href "/=home=/web/tree/main.css");
         ==
     ::;link(type "text/css", rel "stylesheet", href "http://localhost:8000/docs/pub/tree/main.css");
     ;script(type "text/javascript", src "{(cdnjs "jquery/2.1.3/jquery")}");
@@ -49,13 +49,13 @@
     ;*  ?.  nopack.dbg 
           :_  ~
           ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
-                                            "/~/at/tree/main_urb.js");
-::                                             "/~/at/tree/main_hoon_urb.js");
+                                            "/~/at/=home=/web/tree/~.main_urb.js");
+::                                             "/~/at/=home=/web/tree/~.main_hoon_urb.js");
         ;=
-::           ;script(type "text/javascript", src "/lib/js/hoon.js");
-          ;script(type "text/javascript", src "/tree/main.js");
+::           ;script(type "text/javascript", src "/=home=/web/lib/js/hoon.js");
+          ;script(type "text/javascript", src "/=home=/web/tree/main.js");
           ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
-                                              "/~/at/lib/js/urb.js");
+                                              "/~/at/=home=/web/lib/js/urb.js");
         ==
     ;link(type "application/rss+xml", rel "alternate", href "{(spud tub)}.rss-xml");
 ==
