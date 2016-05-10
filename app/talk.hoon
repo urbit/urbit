@@ -834,37 +834,42 @@
     ::
     ++  sh-sane                                         ::  sanitize input
       |=  {inv/sole-edit buf/(list @c)}
-      ^-  (list sole-edit)
+      ^-  {lit/(list sole-edit) err/(unit @u)}
       =+  res=(rose (tufa buf) sh-scad)
-      ?:  ?=($| -.res)  [inv ~]
-      =+  wok=`(unit work)`p.res
+      ?:  ?=($| -.res)  [[inv]~ `p.res]
+      :_  ~
+      ?~  p.res  ~
+      =+  wok=u.p.res
       |-  ^-  (list sole-edit)
-      ?~  wok  ~
-      ?+  -.u.wok  ~
-        $target  $(wok q.u.wok)
+      ?+  -.wok  ~
+        $target  ?~(q.wok ~ $(wok u.q.wok))
         $say  |-  ::  XX per line
-              ?~  p.u.wok  ~
-              ?:  ?=($lin -.i.p.u.wok)
+              ?~  p.wok  ~
+              ?:  ?=($lin -.i.p.wok)
                 (sh-sane-chat buf)
-              $(p.u.wok t.p.u.wok)
+              $(p.wok t.p.wok)
       ==
     ::
     ++  sh-slug                                         ::  edit to sanity
-      |=  lit/(list sole-edit)
+      |=  {lit/(list sole-edit) err/(unit @u)}
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
           (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
-      (sh-fact [%mor [%det lic] ~])
+      (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-stir                                         ::  apply edit
       |=  cal/sole-change
       ^+  +>
       =^  inv  say.she  (~(transceive sole say.she) cal)
-      =+  lit=(sh-sane inv buf.say.she)
-      ?~  lit
+      =+  fix=(sh-sane inv buf.say.she)
+      ?~  lit.fix
         +>.$
-      (sh-slug lit)
+      ?~  err.fix
+        (sh-slug fix)                 :: just capital correction
+      ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.say.she)))
+        +>.$                          :: allow interior edits, deletes
+      (sh-slug fix)
     ::
     ++  sh-lame                                         ::  send error
       |=  txt/tape
@@ -1143,9 +1148,9 @@
       --
     ::
     ++  sh-done                                         ::  apply result
-      =+  lit=(sh-sane [%nop ~] buf.say.she)
-      ?^  lit
-        (sh-slug lit)
+      =+  fix=(sh-sane [%nop ~] buf.say.she)
+      ?^  lit.fix
+        (sh-slug fix)
       =+  jub=(rust (tufa buf.say.she) sh-scad)
       ?~  jub  (sh-fact %bel ~)
       %.  u.jub

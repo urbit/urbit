@@ -286,6 +286,11 @@
       ^+  +>+>
       (dy-ford way `silk`[%call [%$ %noun gat] [%$ %noun sam]])
     ::
+    ++  dy-errd                                         ::  reject change, abet
+      |=  {rev/(unit sole-edit) err/@u}
+      ^+  +>+>
+      (he-errd(poy `+>+<) rev err)
+    ::
     ++  dy-diff                                         ::  send effects, abet
       |=  fec/sole-effect
       ^+  +>+>
@@ -402,8 +407,7 @@
               !&(?=($del -.u.per) =(+(p.u.per) (lent buf.say)))
           ==
         dy-abet(per ~)
-      =^  lic  say  (~(transmit sole say) u.per)
-      (dy-diff(per ~) %mor [%det lic] [%err q.q.cag] ~)
+      (dy-errd(per ~) per q.q.cag)
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt/tape
@@ -642,7 +646,7 @@
       |=  cag/cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
-        (dy-diff %err q.q.cag)
+        (dy-errd ~ q.q.cag)
       =+  tan=((list tank) +2.q.q.cag)
       =.  +>+>.$  (he-diff %tan tan)
       =+  vax=(spec (slot 3 q.cag))
@@ -664,7 +668,7 @@
       |=  cag/cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
-        (dy-diff %err q.q.cag)
+        (dy-errd ~ q.q.cag)
       =+  tan=((list tank) +2.q.q.cag)
       =.  +>+>.$  (he-diff %tan tan)
       =+  vax=(spec (slot 3 q.cag))
@@ -841,6 +845,12 @@
     ?^  poy  .
     he-prom:he-pone
   ::
+  ++  he-errd                                           ::  reject update
+    |=  {rev/(unit sole-edit) err/@u}  ^+  +>
+    =+  red=(fall rev [%nop ~])       ::  required for error location sync
+    =^  lic  say  (~(transmit sole say) red)
+    (he-diff %mor [%det lic] [%err err] ~)
+  ::
   ++  he-pone                                           ::  clear prompt
     ^+  .
     =^  cal  say  (~(transmit sole say) [%set ~])
@@ -924,9 +934,8 @@
     =+  foy=(he-dope (tufa buf.say))
     ?:  ?=($& -.foy)  +>.$
     ::  ~&  [%bad-change dat ted.cal]
-    =^  lic  say  (~(transmit sole say) dat)
     ::  ~&  [%our-leg leg.say]
-    (he-diff %mor [%det lic] [%err q.p.foy] ~)
+    (he-errd `dat q.p.foy)
   ::
   ++  he-plan                                           ::  execute command
     |=  mad/dojo-command
@@ -946,10 +955,10 @@
       ==
     =+  doy=(he-duke txt)
     ?-    -.doy
-        $|  (he-diff [%err p.doy])
+        $|  (he-errd ~ p.doy)
         $&
       ?~  p.doy
-        (he-diff [%err (lent txt)])
+        (he-errd ~ (lent txt))
       =+  old=(weld ?~(buf "> " "  ") (tufa buf.say))
       =^  cal  say  (~(transmit sole say) [%set ~])
       =.  +>.$   (he-diff %mor txt+old nex+~ det+cal ~)
