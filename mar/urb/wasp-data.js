@@ -1,7 +1,10 @@
 // debugging 
 urb.verb = false
 urb.sources = {}
-urb.deps.map(function(a){urb.sources[a] = "dep"})
+
+urb.waspDeps = function(){
+  urb.deps.map(function(a){urb.sources[a] = "dep"})
+}
 
 urb.waspElem = function(ele){
   url = ele.src || ele.href
