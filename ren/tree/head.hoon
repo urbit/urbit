@@ -19,6 +19,8 @@
 |%
 ++  cdnjs
   |=(a/tape "//cdnjs.cloudflare.com/ajax/libs/{a}{?:(nomin.dbg "" ".min")}.js")
+++  maxcdn
+  |=(a/tape "//maxcdn.bootstrapcdn.com/{a}{?:(nomin.dbg "" ".min")}.js")
 --
 !:
 ::::
@@ -39,6 +41,7 @@
         ==
     ::;link(type "text/css", rel "stylesheet", href "http://localhost:8000/docs/pub/tree/main.css");
     ;script(type "text/javascript", src "{(cdnjs "jquery/2.1.3/jquery")}");
+    ;script(type "text/javascript", src "{(maxcdn "bootstrap/3.3.6/js/bootstrap")}");
     ;script(type "text/javascript", src "{(cdnjs "lodash.js/2.4.1/lodash")}");
     ;script(type "text/javascript", src "{(cdnjs "react/0.14.6/react")}");
     ;script(type "text/javascript", src "{(cdnjs "react/0.14.6/react-dom")}");
