@@ -371,6 +371,7 @@
   ++  duce                                              ::  produce request
     |=  rov/rove
     ^+  +>
+    =.  rov  (dedupe rov)
     =.  qyx  (~(put ju qyx) rov hen)
     ?~  ref
       (mabe rov |=(@da (bait hen +<)))
@@ -387,6 +388,32 @@
       nix.u.ref  +(nix.u.ref)
       bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
+    ==
+  ::
+  ++  dedupe                                            ::  find existing alias
+    |=  rov/rove  ^-  rove
+    =;  ros/(list rove)  ?+(ros rov {^ $~} i.ros)
+    ?-    -.rov
+        $sing  ~
+        $next
+      ?~  (case-to-aeon:ze q.p.rov)  ~
+      %-  ~(rep by qyx)
+      |=  {{a/rove *} b/(list rove)}  ^+  b
+      =-  ?.(- b [a b])
+      ?&  ?=($next -.a)
+          =(p.a p.rov(q q.p.a))
+          ?=(^ (case-to-aeon:ze q.p.a))
+      ==
+    ::
+        $many
+      ?~  (case-to-aeon:ze p.q.rov)  ~
+      %-  ~(rep by qyx)
+      |=  {{a/rove *} b/(list rove)}  ^+  b
+      =-  ?.(- b [a b])
+      ?&  ?=($many -.a)
+          =(a rov(p.q p.q.a))
+          ?=(^ (case-to-aeon:ze p.q.a))
+      ==
     ==
   ::
   ++  must-ergo
@@ -1196,6 +1223,7 @@
     |-  ^+  ..wake
     ?~  xiq
       ..wake(qyx (~(gas by *cult) xaq))
+    ?:  =(~ q.i.xiq)  $(xiq t.xiq, xaq xaq)           :: drop forgotten
     ?-    -.p.i.xiq
         $sing
       =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.p.i.xiq))
