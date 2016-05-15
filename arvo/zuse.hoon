@@ -2235,7 +2235,8 @@
       {$lin p/(list mark) q/horn}                       ::  /&  translates
       {$man p/(map knot horn)}                          ::  /*  hetero map
       {$nap p/horn}                                     ::  /_  homo map
-      {$now p/horn}                                     ::  /@  list by @da
+      {$now p/horn}                                     ::  DEPRECATED
+      {$nod p/term q/horn}                              ::  /_  @  list by odor
       {$saw p/twig q/horn}                              ::  /;  operate on
       {$see p/hops q/horn}                              ::  /:  relative to
       {$sic p/twig q/horn}                              ::  /^  cast

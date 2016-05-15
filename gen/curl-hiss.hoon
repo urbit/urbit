@@ -1,5 +1,5 @@
 ::
-::::  /hoon/curl/gen
+::::  /hoon/curl-hiss/gen
   ::
 /?    310
 /-  sole

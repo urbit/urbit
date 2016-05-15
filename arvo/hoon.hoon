@@ -1088,7 +1088,7 @@
     |-  ^-  @
     =+  c=(fnv (mix p.b (fnv q.b)))
     =+  d=(mix (rsh 0 31 c) (end 0 31 c))
-    ?.  =(0 c)  c
+    ?.  =(0 d)  d
     $(q.b +(q.b))
   =+  b=2.166.136.261
   |-  ^-  @
@@ -7269,7 +7269,9 @@
       :+  %per  [%name %v %$ 1]                         ::  =>  v=.
       :+  %pin  :+  %name  %a                           ::  =+  ^=  a
                  [%per [%limb %v] p.gen]                ::  =>(v {p.gen})
-      :+  %pin  [%name %b [%per [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
+      :+  %pin  
+        :+  %name  %b                                   ::  =+  ^=  b
+        [%cast [%base %noun] [%per [%limb %v] q.gen]]  ::  =+  `*`=>(v {q.gen})
       :+  %pin                                          ::  =+  c=(a b)
         [%name %c [%call [%limb %a] [%limb %b] ~]]      ::
       [%sure [%same [%limb %c] [%limb %b]] [%limb %c]]  ::  ?>(=(c b) c)
@@ -7733,8 +7735,6 @@
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
     ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
-    ?:  (~(meet ut sut) -:!>(*span))
-      [dex %span]
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
@@ -7783,7 +7783,9 @@
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
-      =+  yed=(~(tap in p.sut))
+      ?:  (~(meet ut sut) -:!>(*span))
+        [dex %span]
+      =+  yed=(sort (~(tap in p.sut)) aor)
       =-  [p [%pick q]]
       |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/(list wine)}
       ?~  yed
@@ -10560,6 +10562,7 @@
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ++  sloy
+  !:
   |=  sod/slyd
   ^-  slyt
   |=  {ref/* raw/*}

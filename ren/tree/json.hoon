@@ -42,7 +42,7 @@
   |=  a/$%({$t p/cord} {$r p/json} {$j p/json} {$m mime})
   ?-  -.a
     $t  [%s p.a]
-    $m  (jobe mite+[%s (moon p.a)] octs+[%s q.q.a] ~)
+    $m  (jobe mite+[%s (moon p.a)] octs+(jape (sifo q.q.a)) ~)
     $r  p.a
     $j  p.a
   ==
@@ -75,7 +75,7 @@
   ::
 [tree .]
 ^-  json
-=+  default='spur.t_mime.m_body.r_comt.j_plan.j_beak.t_kids.name.t'
+=+  default='spur.t_body.r_comt.j_plan.j_beak.t_meta.j_kids_meta.j_head.r'
 =+  ^=  schem
     =+  seh=(fall (~(get by qix.gas) 'q') default)
     ~|(bad-noun+seh ;;(schema (rash seh read-schem)))

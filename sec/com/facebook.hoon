@@ -6,21 +6,37 @@
 ::
 ::::
   ::
-=+  ^=  aut
-    %+   oauth2
-      dialog='https://www.facebook.com/dialog/oauth?response_type=code'
-    exchange='https://graph.facebook.com/v2.3/oauth/access_token'
-|_  {bal/(bale keys.aut) access-token/token.aut}
-++  auth  ~(. aut bal /'user_about_me'/'user_posts')
-++  out  (out-quay:auth key='access_token' value=access-token)
-++  in   in-code:auth
-++  bak
-  %-  (bak-parse:auth . access-token.aut expires-in.aut ~)
-  |=  {access-token/@t expires-in/@u}
-  ?:  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token
-    %^  toke-req:auth  grant-type='fb_exchange_token'
-      [key='fb_exchange_token' value=access-token]
-    ~
-  [[%redo ~] ..bak(access-token access-token)]
-::++  wyp  ~
+|%
+++  dialog-url    'https://www.facebook.com/dialog/oauth?response_type=code'
+++  exchange-url  'https://graph.facebook.com/v2.3/oauth/access_token'
+--
+::
+::::
+  ::
+|_  {bal/(bale keys:oauth2) access-token/token:oauth2}
+::  ++aut is a "standard oauth2" core, which implements the
+::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
+::  and examples at the bottom of the file.
+++  aut
+  %+  ~(standard oauth2 bal access-token)  .
+  |=(access-token/token:oauth2 +>(access-token access-token))
+::
+++  filter-request
+  %^  out-add-query-param:aut  'access_token'
+    scope=~['user_about_me' 'user_posts']
+  dialog-url
+::
+++  receive-auth-query-string  (in-code-to-token:aut exchange-url)
+::
+++  receive-auth-response
+  |=  a/httr  ^-  core-move:aut
+  ?:  (bad-response:aut p.a)
+    [%give a]  :: [%redo ~]  ::  handle 4xx?
+  =+  `{access-token/@t expires-in/@u}`(grab-expiring-token:aut a)
+  ?.  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token
+    [[%redo ~] ..bak(access-token access-token)]
+  :-  %send
+  %^  request-token:aut  exchange-url
+    grant-type='fb_exchange_token'
+  [key='fb_exchange_token' value=access-token]~
 --
