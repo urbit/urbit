@@ -793,31 +793,42 @@ ol > li:before {
     text-decoration: none;
     font-size: 2rem;
     font-weight: 500; }
+  .body .urbit p.last {
+    margin-bottom: 2rem; }
   .body .urbit p.email {
     margin-top: 2rem; }
   .body .urbit input.email {
     font-weight: 500;
-    background-color: #000;
-    color: #fff;
+    font-family: 'scp';
+    background-color: #eceeef;
+    color: #000;
     font-size: 1rem;
     margin-right: 1rem;
-    border: 3px solid #000;
+    border: 3px solid #eceeef;
     padding: .375rem 1rem;
     margin: 0 1rem 0 0;
     line-height: 1.6rem;
     vertical-align: top;
-    margin-bottom: .6rem; }
+    margin-bottom: .6rem;
+    min-width: 16rem; }
   .body .urbit input.email::-moz-placeholder {
-    color: #D2D2D2; }
+    color: #55595c;
+    font-weight: 400; }
   .body .urbit input.email::-webkit-input-placeholder {
-    color: #D2D2D2; }
+    color: #55595c;
+    font-weight: 400; }
   .body .urbit button.submit {
     text-transform: none;
     text-decoration: none;
-    background-color: #000000;
-    color: #fff;
+    background-color: #fff;
+    color: #000;
+    border: 3px solid #000;
     font-weight: 500;
     letter-spacing: 0; }
+  .body .urbit .image-fs input.email {
+    background-color: #fff; }
+  .body .urbit .image-fs input.email, .body .urbit .image-fs button.submit {
+    border-color: #fff; }
   .body .urbit .last a {
     display: block;
     font-weight: 500;
@@ -860,6 +871,8 @@ ol > li:before {
     margin-bottom: 2rem; }
   .body .urbit .slide .pair .image.right {
     margin-top: 2rem; }
+  .body .urbit .slide .pair .image img {
+    max-width: 12rem; }
   .body .urbit .last .col-md-4 {
     margin-top: 2rem; }
   .body .urbit .last .col-md-4.col-md-offset-1 {
