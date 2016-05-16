@@ -62,6 +62,7 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
+      {$hoop p/calm q/beam r/(unit beam)}               ::  -to/ transformation
       {$bake p/calm q/(pair mark beam) r/(unit vase)}   ::  load
       {$boil p/calm q/(trel coin beam beam) r/vase}     ::  execute
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
@@ -89,6 +90,7 @@
   |=  cax/calx
   ?+  sem  !!
     $hood  ?>(?=($hood -.cax) r.cax)
+    $hoop  ?>(?=($hoop -.cax) r.cax)
     $bake  ?>(?=($bake -.cax) r.cax)
     $boil  ?>(?=($boil -.cax) r.cax)
     $slap  ?>(?=($slap -.cax) r.cax)
@@ -608,9 +610,15 @@
       ~/  %fame
       |=  {cof/cafe bem/beam}
       ^-  (bolt beam)
+      =;  une/(bolt (unit beam))
+        %+  cope  une
+        |=  {cof/cafe bom/(unit beam)}  ^-  (bolt beam)
+        ?^  bom  (fine cof u.bom)
+        (flaw cof leaf+"fame: no {<(tope bem)>}" ~)
+      %+  (clef %hoop)  (fine cof bem)
+      |=  {cof/cafe bem/beam}
       =^  pax  bem  [(flop s.bem) bem(s ~)]
-      |^  (cope opts (flux |=(a/(unit beam) (fall a bem))))
-      ::
+      |^  opts
       ++  opts                                          ::  search unless done
         ^-  (bolt (unit beam))
         ?^  pax  (wide(pax t.pax) (tear i.pax))
