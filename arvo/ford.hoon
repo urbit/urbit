@@ -1099,10 +1099,12 @@
     ++  lime                                            ::  load beam
       |=  {cof/cafe for/mark arg/coin bem/beam}
       ^-  (bolt vase)
+      %+  coop  (leap cof arg [-.bem /[for]/ren] bem)
+      |=  cof/cafe  ^-  (bolt vase)
       %+  cope  (lima cof for bem)
       |=  {cof/cafe vux/(unit vase)}
       ?^  vux  (fine cof u.vux)
-      (leap cof arg [-.bem /[for]/ren] bem)
+      (flaw cof leaf+"ford: no {<for>} at {<(tope bem)>}" ~)
     ::
     ++  link                                            ::  translate
       ~/  %link
