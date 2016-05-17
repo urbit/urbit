@@ -3,5 +3,5 @@
   ::
 /?    310
 /-  markdown
-down.markdown
+down:markdown
 
