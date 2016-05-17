@@ -1431,7 +1431,7 @@
               cip
               ~
           ==
-          [anon ~]
+          [`@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses)))) ~]
       ::
           [(set-cookie cookie-prefix ses)]~
       ::
