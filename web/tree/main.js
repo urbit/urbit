@@ -1010,9 +1010,6 @@ module.exports = query({
     if (sorted !== true) {
       _keys = _.keys(this.props.kids).sort();
     }
-    if (this.props.dataType === 'post') {
-      _keys = _keys.reverse();
-    }
     ref5 = _.values(_keys);
     results = [];
     for (i = 0, len = ref5.length; i < len; i++) {

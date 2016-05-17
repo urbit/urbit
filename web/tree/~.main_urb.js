@@ -983,7 +983,7 @@ module.exports = query({
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
-    var _date, _k, _keys, author, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
+    var _date, _k, _keys, author, cont, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -1009,9 +1009,6 @@ module.exports = query({
     }
     if (sorted !== true) {
       _keys = _.keys(this.props.kids).sort();
-    }
-    if (this.props.dataType === 'post') {
-      _keys = _keys.reverse();
     }
     ref5 = _.values(_keys);
     results = [];
@@ -1137,6 +1134,15 @@ module.exports = query({
             };
             parts.push(author);
           }
+          cont = {
+            gn: 'a',
+            ga: {
+              className: 'continue',
+              href: href
+            },
+            c: ['Read more']
+          };
+          parts.push(cont);
           linked = true;
         }
       }

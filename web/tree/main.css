@@ -439,8 +439,8 @@ div.logo.inverse:before {
 .urbit.navbar.ctrl {
   margin-top: 1rem; }
   .urbit.navbar.ctrl .icon .home {
-    border-color: #B1B7BD;
-    background-color: #B1B7BD;
+    border-color: #000;
+    background-color: #000;
     width: 3rem;
     height: 3rem;
     margin: 0 4rem 0 0; }
@@ -1198,8 +1198,7 @@ ol > li:before {
 
 #body.post h3.author {
   padding-top: 0;
-  font-size: 1rem;
-  font-weight: 200; }
+  font-size: 1rem; }
 
 #body.post h3.author:before {
   content: "—";
@@ -1220,15 +1219,25 @@ ol > li:before {
 .urbit .post img,
 .urbit.post h1.title,
 .urbit.post img {
-  width: 100%;
+  width: 600px;
   margin-bottom: 2rem; }
 
 .urbit .post img,
 .urbit.post img {
   border: 12px solid #000; }
 
+.urbit .post p.preview,
+.urbit.post p.preview {
+  margin-bottom: .6rem;
+  max-width: 32rem; }
+
+.urbit .post h3.author,
+.urbit.post h3.author {
+  line-height: 1rem;
+  margin-bottom: 1rem; }
+
 .urbit .post img {
-  max-width: 24rem; }
+  max-width: 32rem; }
 
 .urbit.post .preview {
   display: none; }
