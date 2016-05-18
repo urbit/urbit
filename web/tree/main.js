@@ -564,7 +564,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Comment, TreeActions, a, clas, div, form, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
+var Comment, Ship, TreeActions, a, clas, code, div, form, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
 
 clas = require('classnames');
 
@@ -582,13 +582,21 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a, form = ref.form, textarea = ref.textarea, input = ref.input;
+ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a, form = ref.form, textarea = ref.textarea, input = ref.input, code = ref.code;
+
+Ship = function(name) {
+  return code({
+    title: "~" + name
+  }, "~", util.shortShip(name));
+};
 
 Comment = function(arg) {
-  var body, time;
-  time = arg.time, body = arg.body;
+  var body, loading, ref1, time;
+  time = arg.time, body = arg.body, loading = (ref1 = arg.loading) != null ? ref1 : false;
   return div({
-    className: "comment"
+    className: clas("comment", {
+      loading: loading
+    })
   }, "" + (window.urb.util.toDate(new Date(time))), reactify(body));
 };
 
@@ -599,22 +607,40 @@ module.exports = query({
   displayName: "Comments",
   getInitialState: function() {
     return {
-      loading: false,
+      loading: null,
       value: ""
     };
   },
   componentDidUpdate: function(_props) {
     if (this.props.comt.length > _props.comt.length) {
       return this.setState({
-        loading: false
+        loading: null
       });
     }
   },
   onSubmit: function(e) {
-    TreeActions.addComment(this.props.path, this.refs["in"].comment.value);
+    var body, value;
+    value = this.refs["in"].comment.value;
+    TreeActions.addComment(this.props.path, value);
+    body = {
+      gn: 'div',
+      c: [
+        {
+          gn: 'h2',
+          c: ["~" + urb.user]
+        }, {
+          gn: 'p',
+          c: [value]
+        }
+      ]
+    };
     this.setState({
-      loading: true,
-      value: ""
+      value: "",
+      loading: {
+        'loading': 'loading',
+        body: body,
+        time: Date.now()
+      }
     });
     return e.preventDefault();
   },
@@ -645,9 +671,9 @@ module.exports = query({
     }, form({
       ref: "in",
       onSubmit: this.onSubmit
-    }, textarea(textareaAttr), input(inputAttr))), (this.state.loading === true ? rele(load) : ""), div({
+    }, Ship(urb.user), textarea(textareaAttr), input(inputAttr))), div({
       className: "comments"
-    }, this.props.comt.map(function(props, key) {
+    }, (this.state.loading != null ? rele(Comment, this.state.loading) : void 0), this.props.comt.map(function(props, key) {
       return rele(Comment, _.extend({
         key: key
       }, props));
@@ -983,7 +1009,7 @@ module.exports = query({
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
-    var _date, _k, _keys, author, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
+    var _date, _k, _keys, author, cont, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -1137,6 +1163,15 @@ module.exports = query({
             };
             parts.push(author);
           }
+          cont = {
+            gn: 'a',
+            ga: {
+              className: 'continue',
+              href: href
+            },
+            c: ['Read more']
+          };
+          parts.push(cont);
           linked = true;
         }
       }
@@ -2800,6 +2835,7 @@ scroll = {
   },
   scroll: function() {
     var ct, dy, top;
+    return;
     this.cs = $(window).scrollTop();
     if (this.w > 767) {
       this.clearNav();
@@ -2893,6 +2929,16 @@ module.exports = {
   },
   fragpath: function(path) {
     return path.replace(/\/$/, '').replace(_basepath, "");
+  },
+  shortShip: function(ship) {
+    if (ship == null) {
+      ship = urb.user;
+    }
+    if (ship.length <= 13) {
+      return ship;
+    } else {
+      return ship.slice(0, 6) + "_" + ship.slice(-6);
+    }
   },
   getKeys: function(kids) {
     var k, keys, ref, ref1, ref2, sorted, v;
