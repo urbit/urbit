@@ -1,5 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Dispatcher, Persistence, _persistence;
+var Dispatcher, Persistence, _persistence, util;
+
+util = require('../util.coffee');
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
@@ -39,9 +41,12 @@ Persistence = _persistence({
       });
       return Persistence.get(station, start, end);
     },
-    sendMessage: function(txt, audience) {
-      var _audi, j, k, len, message, ref, ref1, results, say, serial, speech, speeches, v;
-      serial = window.util.uuid32();
+    sendMessage: function(txt, audience, global) {
+      var _audi, j, k, len, message, messageType, ref, ref1, results, say, serial, speech, speeches, v;
+      if (global == null) {
+        global = urb.user === urb.ship;
+      }
+      serial = util.uuid32();
       audience = _.uniq(audience);
       _audi = {};
       for (k in audience) {
@@ -87,7 +92,7 @@ Persistence = _persistence({
         message = {
           ship: window.urb.ship,
           thought: {
-            serial: window.util.uuid32(),
+            serial: util.uuid32(),
             audience: _audi,
             statement: {
               bouquet: [],
@@ -100,7 +105,8 @@ Persistence = _persistence({
           message: message,
           type: "message-send"
         });
-        results.push(Persistence.sendMessage(message.thought));
+        messageType = (global ? "publish" : "review");
+        results.push(Persistence.sendMessage(messageType, message.thought));
       }
       return results;
     }
@@ -108,7 +114,7 @@ Persistence = _persistence({
 });
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"../persistence/MessagePersistence.coffee":11}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"../persistence/MessagePersistence.coffee":11,"../util.coffee":15}],2:[function(require,module,exports){
 var Dispatcher, Persistence, _persistence, serverAction, viewAction;
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -292,8 +298,10 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Member, a, clas, div, h2, h3, label, pre, recl, ref, yaml,
+var Member, a, clas, div, h2, h3, label, pre, recl, ref, util,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+util = require('../util.coffee');
 
 clas = require('classnames');
 
@@ -302,26 +310,6 @@ recl = React.createClass;
 ref = React.DOM, div = ref.div, pre = ref.pre, a = ref.a, label = ref.label, h2 = ref.h2, h3 = ref.h3;
 
 Member = require('./MemberComponent.coffee');
-
-yaml = function(x, pad) {
-  var k, v;
-  if (pad == null) {
-    pad = "";
-  }
-  if ("object" !== typeof x) {
-    return "" + x;
-  } else {
-    return ((function() {
-      var results;
-      results = [];
-      for (k in x) {
-        v = x[k];
-        results.push("\n" + pad + k + ": " + (yaml(v, pad + "  ")));
-      }
-      return results;
-    })()).join('');
-  }
-};
 
 module.exports = recl({
   displayName: "Message",
@@ -359,8 +347,8 @@ module.exports = recl({
     return this.props._handlePm(user);
   },
   renderSpeech: function(arg) {
-    var api, app, com, exp, fat, lin, mor, tax, url, x;
-    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, api = arg.api, com = arg.com;
+    var app, com, exp, fat, lin, mor, tax, url, x;
+    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, com = arg.com;
     switch (false) {
       case !(lin || app || exp || tax):
         return (lin || app || exp || tax).txt;
@@ -381,10 +369,6 @@ module.exports = recl({
         return div({}, this.renderSpeech(fat.taf), div({
           className: "fat"
         }, this.renderTorso(fat.tor)));
-      case !api:
-        return div({}, a({
-          href: api.url
-        }, "[Piped data]"), pre({}, yaml(api)));
       default:
         return "Unknown speech type:" + ((function() {
           var results;
@@ -418,13 +402,11 @@ module.exports = recl({
     }
   },
   classesInSpeech: function(arg) {
-    var api, app, exp, fat, lin, mor, url;
-    url = arg.url, api = arg.api, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
+    var app, exp, fat, lin, mor, url;
+    url = arg.url, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
     switch (false) {
       case !url:
         return "url";
-      case !api:
-        return "api";
       case !exp:
         return "exp";
       case !app:
@@ -440,7 +422,7 @@ module.exports = recl({
     }
   },
   render: function() {
-    var aude, audi, bouquet, className, comment, delivery, k, mainStation, name, path, ref1, speech, thought, txt, type, url, v;
+    var aude, audi, bouquet, className, comment, delivery, k, mainStation, name, path, ref1, speech, style, thought, txt, type, url, v;
     thought = this.props.thought;
     delivery = _.uniq(_.pluck(thought.audience, "delivery"));
     speech = thought.statement.speech;
@@ -450,12 +432,12 @@ module.exports = recl({
     }
     name = this.props.name ? this.props.name : "";
     aude = _.keys(thought.audience);
-    audi = window.util.clipAudi(aude).map(function(_audi) {
+    audi = util.clipAudi(aude).map(function(_audi) {
       return div({
         key: _audi
       }, _audi.slice(1));
     });
-    mainStation = window.util.mainStationPath(window.urb.user);
+    mainStation = util.mainStationPath(window.urb.user);
     type = indexOf.call(aude, mainStation) >= 0 ? 'private' : 'public';
     if (_.filter(bouquet, ["comment"]).length > 0) {
       comment = true;
@@ -485,10 +467,14 @@ module.exports = recl({
     }, {
       comment: comment
     }, this.classesInSpeech(speech));
+    style = {
+      height: this.props.height
+    };
     return div({
       className: className,
       'data-index': this.props.index,
-      key: "message"
+      key: "message",
+      style: style
     }, div({
       className: "meta",
       key: "meta"
@@ -502,7 +488,6 @@ module.exports = recl({
       key: "member"
     }, React.createElement(Member, {
       ship: this.props.ship,
-      glyph: this.props.glyph,
       key: "member"
     })), h3({
       className: "path",
@@ -519,8 +504,10 @@ module.exports = recl({
 });
 
 
-},{"./MemberComponent.coffee":4,"classnames":17}],6:[function(require,module,exports){
-var Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl;
+},{"../util.coffee":15,"./MemberComponent.coffee":4,"classnames":16}],6:[function(require,module,exports){
+var INFINITE, Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, util;
+
+util = require('../util.coffee');
 
 Infinite = null;
 
@@ -538,14 +525,17 @@ StationStore = require('../stores/StationStore.coffee');
 
 Message = require('./MessageComponent.coffee');
 
-MESSAGE_HEIGHT_FIRST = 96.75;
+INFINITE = true;
 
-MESSAGE_HEIGHT_SAME = 36;
+MESSAGE_HEIGHT_FIRST = 54;
+
+MESSAGE_HEIGHT_SAME = 27;
 
 module.exports = recl({
   displayName: "Messages",
-  pageSize: 50,
+  pageSize: 200,
   paddingTop: 100,
+  paddingBottom: 100,
   stateFromStore: function() {
     return {
       messages: MessageStore.getAll(),
@@ -572,9 +562,17 @@ module.exports = recl({
     $('.message.new').removeClass('new');
     return document.title = document.title.replace(/\ \([0-9]*\)/, "");
   },
+  atScrollEdge: function() {
+    switch (this.props.chrono) {
+      case "reverse":
+        return $(window).height() < $(window).scrollTop() + $(window)[0].innerHeight + this.paddingBottom;
+      default:
+        return $(window).scrollTop() < this.paddingTop;
+    }
+  },
   checkMore: function() {
     var end;
-    if ($(window).scrollTop() < this.paddingTop && this.state.fetching === false && this.state.last && this.state.last > 0) {
+    if (this.atScrollEdge() && this.state.fetching === false && this.state.last && this.state.last > 0) {
       end = this.state.last - this.pageSize;
       if (end < 0) {
         end = 0;
@@ -616,9 +614,11 @@ module.exports = recl({
     if (this.state.station && this.state.listening.indexOf(this.state.station) === -1) {
       MessageActions.listenStation(this.state.station);
     }
-    if (this.props.readOnly == null) {
+    if (this.props["static"] == null) {
       $(window).on('scroll', this.checkMore);
-      window.util.scrollToBottom();
+    }
+    if (this.props.chrono !== "reverse") {
+      util.scrollToBottom();
     }
     this.focused = true;
     $(window).on('blur', this._blur);
@@ -675,7 +675,7 @@ module.exports = recl({
   },
   _handlePm: function(user) {
     var audi;
-    audi = [window.util.mainStationPath(user)];
+    audi = [util.mainStationPath(user)];
     if (user === window.urb.user) {
       audi.pop();
     }
@@ -705,17 +705,19 @@ module.exports = recl({
     messageHeights = [];
     _messages = messages.map((function(_this) {
       return function(message, index) {
-        var nowSaid, sameAs, speech;
+        var height, nowSaid, sameAs, speech;
         nowSaid = [message.ship, _.keys(message.thought.audience)];
         sameAs = _.isEqual(lastSaid, nowSaid);
         lastSaid = nowSaid;
-        messageHeights.push((sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST));
+        height = INFINITE ? sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST : void 0;
+        messageHeights.push(height);
         speech = message.thought.statement.speech;
         return React.createElement(Message, _.extend({}, message, {
           station: station,
           sameAs: sameAs,
           _handlePm: _this._handlePm,
           _handleAudi: _this._handleAudi,
+          height: height,
           index: message.key,
           key: "message-" + message.key,
           ship: (speech != null ? speech.app : void 0) ? "system" : message.ship,
@@ -724,7 +726,7 @@ module.exports = recl({
         }));
       };
     })(this));
-    if (this.props.readOnly == null) {
+    if ((this.props.readOnly == null) && INFINITE) {
       body = React.createElement(Infinite, {
         useWindowAsScrollContainer: true,
         containerHeight: window.innerHeight,
@@ -742,9 +744,11 @@ module.exports = recl({
 });
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"./MessageComponent.coffee":5}],7:[function(require,module,exports){
-var Load, Member, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style,
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./MessageComponent.coffee":5}],7:[function(require,module,exports){
+var Load, Member, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style, util,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+util = require('../util.coffee');
 
 clas = require('classnames');
 
@@ -771,7 +775,7 @@ module.exports = recl({
     return {
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
-      station: window.util.mainStation(),
+      station: util.mainStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       fetching: MessageStore.getFetching(),
@@ -955,8 +959,10 @@ module.exports = recl({
 });
 
 
-},{"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"./LoadComponent.coffee":3,"./MemberComponent.coffee":4,"classnames":17}],8:[function(require,module,exports){
-var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, husl, input, recl, ref, textToHTML, textarea;
+},{"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./LoadComponent.coffee":3,"./MemberComponent.coffee":4,"classnames":16}],8:[function(require,module,exports){
+var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, husl, input, recl, ref, textToHTML, textarea, util;
+
+util = require('../util.coffee');
 
 recl = React.createClass;
 
@@ -1005,7 +1011,7 @@ Audience = recl({
     }, div({
       className: "input valid-" + this.props.valid,
       key: 'input',
-      contentEditable: true,
+      contentEditable: this.props.editable ? true : void 0,
       onKeyDown: this.onKeyDown,
       onBlur: this.props.onBlur,
       dangerouslySetInnerHTML: textToHTML(this.props.audi.join(" "))
@@ -1036,8 +1042,8 @@ module.exports = recl({
       station: StationStore.getStation(),
       valid: StationStore.getValidAudience()
     };
-    s.audi = _.without(s.audi, window.util.mainStationPath(window.urb.user));
-    s.ludi = _.without(s.ludi, window.util.mainStationPath(window.urb.user));
+    s.audi = _.without(s.audi, util.mainStationPath(window.urb.user));
+    s.ludi = _.without(s.ludi, util.mainStationPath(window.urb.user));
     return s;
   },
   getInitialState: function() {
@@ -1063,6 +1069,9 @@ module.exports = recl({
   },
   addCC: function(audi) {
     var listening, ref1, ref2;
+    if (urb.user !== urb.ship) {
+      return audi;
+    }
     listening = (ref1 = (ref2 = this.state.config[this.props.station]) != null ? ref2.sources : void 0) != null ? ref1 : [];
     if (_.isEmpty(_.intersection(audi, listening))) {
       audi.push("~" + window.urb.user + "/" + this.props.station);
@@ -1159,7 +1168,7 @@ module.exports = recl({
     valid = this._validateAudi();
     StationActions.setValidAudience(valid);
     if (valid === true) {
-      stan = $('#audience .input').text() || window.util.mainStationPath(window.urb.user);
+      stan = $('#audience .input').text() || util.mainStationPath(window.urb.user);
       stan = (stan.split(/\ +/)).map(function(v) {
         if (v[0] === "~") {
           return v;
@@ -1192,7 +1201,7 @@ module.exports = recl({
     return selection.addRange(range);
   },
   componentDidMount: function() {
-    window.util.sendMessage = this.sendMessage;
+    util.sendMessage = this.sendMessage;
     StationStore.addChangeListener(this._onChangeStore);
     MessageStore.addChangeListener(this._onChangeStore);
     this.$el = $(ReactDOM.findDOMNode(this));
@@ -1222,7 +1231,7 @@ module.exports = recl({
     ship = iden ? iden.ship : user;
     name = iden ? iden.name : "";
     audi = this.state.audi.length === 0 ? this.state.ludi : this.state.audi;
-    audi = window.util.clipAudi(audi);
+    audi = util.clipAudi(audi);
     for (k in audi) {
       v = audi[k];
       audi[k] = v.slice(1);
@@ -1234,6 +1243,7 @@ module.exports = recl({
       audi: audi,
       valid: this.state.valid,
       validate: this._validateAudi,
+      editable: this.props['audience-lock'] == null,
       onBlur: this._setAudi
     }), div({
       className: 'message',
@@ -1259,7 +1269,7 @@ module.exports = recl({
 });
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"./MemberComponent.coffee":4,"husl":18}],9:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./MemberComponent.coffee":4,"husl":17}],9:[function(require,module,exports){
 module.exports = _.extend(new Flux.Dispatcher(), {
   handleServerAction: function(action) {
     return this.dispatch({
@@ -1277,15 +1287,20 @@ module.exports = _.extend(new Flux.Dispatcher(), {
 
 
 },{}],10:[function(require,module,exports){
-var MessagesComponent, StationActions, StationComponent, TreeActions, WritingComponent, div, link, ref;
+var MessageListComponent, StationActions, StationComponent, TreeActions, WritingComponent, div, link, ref, util;
+
+util = require('./util.coffee');
+
+_.merge(window, {
+  util: util,
+  talk: {
+    online: true
+  }
+});
 
 StationActions = require('./actions/StationActions.coffee');
 
 TreeActions = window.tree.actions;
-
-window.talk = {
-  online: true
-};
 
 setInterval((function() {
   window.talk.online = window.urb.poll.dely < 500;
@@ -1298,7 +1313,7 @@ setInterval((function() {
 
 StationComponent = require('./components/StationComponent.coffee');
 
-MessagesComponent = React.createFactory(require('./components/MessagesComponent.coffee'));
+MessageListComponent = React.createFactory(require('./components/MessageListComponent.coffee'));
 
 WritingComponent = React.createFactory(require('./components/WritingComponent.coffee'));
 
@@ -1307,14 +1322,12 @@ ref = React.DOM, div = ref.div, link = ref.link;
 TreeActions.registerComponent("talk", React.createClass({
   displayName: "talk",
   getStation: function() {
-    return this.props.station || window.util.defaultStation();
+    return this.props.station || util.defaultStation();
   },
   componentWillMount: function() {
     var station;
-    require('./utils/util.coffee');
-    require('./utils/move.coffee');
     if (!this.props.readonly) {
-      $(window).on('scroll', window.util.checkScroll);
+      $(window).on('scroll', util.checkScroll);
     }
     station = this.getStation();
     StationActions.listen();
@@ -1322,14 +1335,12 @@ TreeActions.registerComponent("talk", React.createClass({
     return StationActions.switchStation(station);
   },
   render: function() {
-    var station;
+    var children, station;
     station = this.getStation();
-    return div({
-      key: "talk-container"
-    }, [
+    children = [
       div({
         key: "grams-container"
-      }, MessagesComponent(_.merge({}, this.props, {
+      }, MessageListComponent(_.merge({}, this.props, {
         station: station,
         key: 'grams'
       }), '')), this.props.readOnly == null ? div({
@@ -1338,14 +1349,20 @@ TreeActions.registerComponent("talk", React.createClass({
         station: station,
         key: 'writing'
       }), '')) : void 0
-    ]);
+    ];
+    if (this.props.chrono === "reverse") {
+      children = children.reverse();
+    }
+    return div({
+      key: "talk-container"
+    }, children);
   }
 }));
 
 TreeActions.registerComponent("talk-station", StationComponent);
 
 
-},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":6,"./components/StationComponent.coffee":7,"./components/WritingComponent.coffee":8,"./utils/move.coffee":15,"./utils/util.coffee":16}],11:[function(require,module,exports){
+},{"./actions/StationActions.coffee":2,"./components/MessageListComponent.coffee":6,"./components/StationComponent.coffee":7,"./components/WritingComponent.coffee":8,"./util.coffee":15}],11:[function(require,module,exports){
 var send;
 
 window.urb.appl = "talk";
@@ -1407,10 +1424,13 @@ module.exports = function(arg) {
         }
       });
     },
-    sendMessage: function(message, cb) {
-      return send({
-        publish: [message]
-      }, function(err, res) {
+    sendMessage: function(messageType, message, cb) {
+      var obj;
+      return send((
+        obj = {},
+        obj["" + messageType] = [message],
+        obj
+      ), function(err, res) {
         console.log('sent');
         console.log(arguments);
         if (cb) {
@@ -1423,7 +1443,9 @@ module.exports = function(arg) {
 
 
 },{}],12:[function(require,module,exports){
-var design, send;
+var design, send, util;
+
+util = require('../util.coffee');
 
 window.urb.appl = "talk";
 
@@ -1520,7 +1542,7 @@ module.exports = function(arg) {
           case !ok:
             return StationActions.listeningStation(station);
           case !group:
-            group.global[window.util.mainStationPath(window.urb.user)] = group.local;
+            group.global[util.mainStationPath(window.urb.user)] = group.local;
             return StationActions.loadMembers(group.global);
           case !(cabal != null ? cabal.loc : void 0):
             return StationActions.loadConfig(station, cabal.loc);
@@ -1533,7 +1555,7 @@ module.exports = function(arg) {
 };
 
 
-},{}],13:[function(require,module,exports){
+},{"../util.coffee":15}],13:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = window.moment.tz;
@@ -1679,7 +1701,7 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = MessageStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"events":19}],14:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"events":18}],14:[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _glyphs, _listening, _members, _shpylg, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
@@ -1900,118 +1922,20 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
 module.exports = StationStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"events":19}],15:[function(require,module,exports){
-var ldy, setSo, so;
+},{"../dispatcher/Dispatcher.coffee":9,"events":18}],15:[function(require,module,exports){
+var util;
 
-so = {};
-
-so.ls = $(window).scrollTop();
-
-so.cs = $(window).scrollTop();
-
-so.w = null;
-
-setSo = function() {
-  so.$n = $('#station-container');
-  so.w = $(window).width();
-  so.h = $(window).height();
-  so.dh = $("#c").height();
-  return so.nh = so.$n.outerHeight(true);
-};
-
-setSo();
-
-setInterval(setSo, 200);
-
-$(window).on('resize', function(e) {
-  if (so.w > 1170) {
-    return so.$n.removeClass('m-up m-down m-fixed');
-  }
-});
-
-ldy = 0;
-
-$(window).on('scroll', function(e) {
-  var dy, sto, top;
-  so.cs = $(window).scrollTop();
-  if (so.w > 1170) {
-    so.$n.removeClass('m-up m-down m-fixed');
-  }
-  if (so.w < 1170) {
-    dy = so.ls - so.cs;
-    if (so.cs <= 0) {
-      so.$n.removeClass('m-up');
-      so.$n.addClass('m-down m-fixed');
-      return;
-    }
-    if (so.cs + so.h > so.dh) {
-      return;
-    }
-    if (so.$n.hasClass('m-fixed' && so.w < 1024)) {
-      so.$n.css({
-        left: -1 * $(window).scrollLeft()
-      });
-    }
-    if (dy > 0 && ldy > 0) {
-      if (!so.$n.hasClass('m-down')) {
-        so.$n.removeClass('m-up').addClass('m-down');
-        top = so.cs - so.nh;
-        if (top < 0) {
-          top = 0;
-        }
-        so.$n.offset({
-          top: top
-        });
-      }
-      if (so.$n.hasClass('m-down') && !so.$n.hasClass('m-fixed') && so.$n.offset().top >= so.cs) {
-        so.$n.addClass('m-fixed');
-        so.$n.attr({
-          style: ''
-        });
-      }
-    }
-    if (dy < 0 && ldy < 0) {
-      if (!so.$n.hasClass('m-up')) {
-        so.$n.removeClass('open');
-        so.$n.removeClass('m-down m-fixed').addClass('m-up');
-        so.$n.attr({
-          style: ''
-        });
-        top = so.cs;
-        sto = so.$n.offset().top;
-        if (top < 0) {
-          top = 0;
-        }
-        if (top > sto && top < sto + so.nh) {
-          top = sto;
-        }
-        so.$n.offset({
-          top: top
-        });
-      }
-    }
-  }
-  ldy = dy;
-  return so.ls = so.cs;
-});
-
-
-},{}],16:[function(require,module,exports){
-if (!window.util) {
-  window.util = {};
-}
-
-_.merge(window.util, {
+module.exports = util = {
   defaultStation: function() {
     if (document.location.search) {
       return document.location.search.replace(/^\?/, '');
     } else {
-      return window.util.mainStation();
+      return util.mainStation();
     }
   },
   mainStations: ["court", "floor", "porch"],
   mainStationPath: function(user) {
-    return "~" + user + "/" + (window.util.mainStation(user));
+    return "~" + user + "/" + (util.mainStation(user));
   },
   mainStation: function(user) {
     if (!user) {
@@ -2029,7 +1953,7 @@ _.merge(window.util, {
   clipAudi: function(audi) {
     var ms, regx;
     audi = audi.join(" ");
-    ms = window.util.mainStationPath(window.urb.user);
+    ms = util.mainStationPath(window.urb.user);
     regx = new RegExp("/" + ms, "g");
     audi = audi.replace(regx, "");
     return audi.split(" ");
@@ -2037,7 +1961,7 @@ _.merge(window.util, {
   expandAudi: function(audi) {
     var ms;
     audi = audi.join(" ");
-    ms = window.util.mainStationPath(window.urb.user);
+    ms = util.mainStationPath(window.urb.user);
     if (audi.indexOf(ms) === -1) {
       if (audi.length > 0) {
         audi += " ";
@@ -2077,7 +2001,7 @@ _.merge(window.util, {
       _audi = {};
       _audi[station] = "pending";
       _message = {
-        serial: window.util.uuid32(),
+        serial: util.uuid32(),
         audience: _audi,
         statement: {
           speech: {
@@ -2098,19 +2022,19 @@ _.merge(window.util, {
     return this.writingPosition = $('.container').outerHeight(true) + $('.container').offset().top - $(window).height();
   },
   setScroll: function() {
-    window.util.getScroll();
+    util.getScroll();
     return $(window).scrollTop($(".container").height());
   },
   isScrolling: function() {
-    if (!window.util.writingPosition) {
-      window.util.getScroll();
+    if (!util.writingPosition) {
+      util.getScroll();
     }
-    return $(window).scrollTop() + $('.writing').outerHeight() < window.util.writingPosition;
+    return $(window).scrollTop() + $('.writing').outerHeight() < util.writingPosition;
   }
-});
+};
 
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -2160,7 +2084,7 @@ _.merge(window.util, {
 	}
 }());
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // Generated by CoffeeScript 1.9.3
 (function() {
   var L_to_Y, Y_to_L, conv, distanceFromPole, dotProduct, epsilon, fromLinear, getBounds, intersectLineLine, kappa, lengthOfRayUntilIntersect, m, m_inv, maxChromaForLH, maxSafeChromaForL, refU, refV, root, toLinear;
@@ -2544,7 +2468,7 @@ _.merge(window.util, {
 
 }).call(this);
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
