@@ -795,8 +795,6 @@ ol > li:before {
     font-weight: 500; }
   .body .urbit p.last {
     margin-bottom: 2rem; }
-  .body .urbit p.email {
-    margin-top: 2rem; }
   .body .urbit input.email {
     font-weight: 500;
     font-family: 'scp';
