@@ -200,7 +200,6 @@ input.action:focus:-ms-input-placeholder {
   min-width: 66.667%; }
 
 .input {
-  border-bottom: 3px solid #000;
   display: inline-block;
   line-height: 2rem;
   font-size: 1rem;
@@ -208,6 +207,8 @@ input.action:focus:-ms-input-placeholder {
   min-width: 1rem;
   min-height: 1rem;
   outline: none; }
+  .input[contenteditable] {
+    border-bottom: 3px solid #000; }
 
 .audience,
 .message {
