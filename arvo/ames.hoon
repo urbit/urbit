@@ -206,7 +206,7 @@
         0w0                           ::   61, ~der, Galen Wolfe-Pauly
         0w0                           ::   62, ~nep, Galen Wolfe-Pauly
         0w0                           ::   63, ~pur, Herbert Yarvin
-        0w0                           ::   64, ~rys, Charlie Cummings
+        0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings
         0w0                           ::   65, ~reb, Herbert Yarvin
         0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl
         0w0                           ::   67, ~nut, Henry Yarvin
