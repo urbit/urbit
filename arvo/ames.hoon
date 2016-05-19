@@ -181,7 +181,7 @@
         0w0                           ::   36, ~pes, Jennifer Kollmer
         0w2J.WSHlR.t5VHN.X8GKE.DB-yz  ::   37, ~del, Kingdon Barrett
         0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham
-        0w0                           ::   39, ~ped, Jeremy Wall
+        0w3x.XaJbE.xaOn3.zXbaG.5xUiY  ::   39, ~ped, Jeremy Wall
         0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Tlon Investor 10
         0w0                           ::   41, ~led, Nick Caruso
         0w0                           ::   42, ~tul, Susan Yarvin
@@ -206,7 +206,7 @@
         0w0                           ::   61, ~der, Galen Wolfe-Pauly
         0w0                           ::   62, ~nep, Galen Wolfe-Pauly
         0w0                           ::   63, ~pur, Herbert Yarvin
-        0w0                           ::   64, ~rys, Charlie Cummings
+        0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings
         0w0                           ::   65, ~reb, Herbert Yarvin
         0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl
         0w0                           ::   67, ~nut, Henry Yarvin
