@@ -31,8 +31,7 @@
 ::     ;link(type "text/css", rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.min.css");
     ;*  ?.  nopack.dbg
           :_  ~
-          ;link(type "text/css", rel "stylesheet", href "/=home=/web/tree/~.main_codemirror_fonts_bootstrap.css");
-::           ;link(type "text/css", rel "stylesheet", href "/=home=/web/tree/~.main_codemirror_bootstrap.css");
+          ;link(type "text/css", rel "stylesheet", href "/=home=/web/tree/~.codemirror_fonts_bootstrap_main.css");
         ;=
           ;link(type "text/css", rel "stylesheet", href "/=home=/web/lib/css/fonts.css");
           ;link(type "text/css", rel "stylesheet", href "/=home=/web/lib/css/bootstrap.css");
@@ -49,7 +48,7 @@
 ::     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js");
 ::     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/".
 ::       "codemirror/4.3.0/mode/markdown/markdown.min.js");
-    ;*  ?.  nopack.dbg 
+    ;*  ?.  nopack.dbg
           :_  ~
           ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
                                             "/~/at/=home=/web/tree/~.main_urb.js");
