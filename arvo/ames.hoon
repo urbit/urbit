@@ -224,7 +224,7 @@
         0w2L.tavpW.Lk4R-.elm7E.4KEqZ  ::   79, ~net, Anthony Martinez
         0w0                           ::   80, ~sec, Curtis Yarvin
         0w0                           ::   81, ~mul, Curtis Yarvin
-        0w0                           ::   82, ~nym, Max Greer
+        0w1F.Tqroo.wyq2m.cBaTM.9MbG-  ::   82, ~nym, Max Greer
         0w0                           ::   83, ~tev, Sibyl Kollmer
         0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::   84, ~web, Ar Vicco
         0w0                           ::   85, ~sum, Philip Monk
