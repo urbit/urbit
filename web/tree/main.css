@@ -98,31 +98,46 @@ div.logo.inverse:before {
   content: "\25D0"; }
 
 @media (min-width: 768px) {
+  .menu,
   .ctrl {
     width: 180px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 360px;
     min-width: 180px;
-    width: auto; } }
+    width: auto; }
+  .menu.depth-1 {
+    margin-left: 180px; }
+  .menu.depth-2 {
+    margin-left: 360px; } }
 
 @media (min-width: 992px) {
+  .menu,
   .ctrl {
     width: 235px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 470px;
     min-width: 235px;
-    width: auto; } }
+    width: auto; }
+  .menu.depth-1 {
+    margin-left: 235px; }
+  .menu.depth-2 {
+    margin-left: 470px; } }
 
 @media (min-width: 1200px) {
+  .menu,
   .ctrl {
     width: 285px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 570px;
     min-width: 285px;
-    width: auto; } }
+    width: auto; }
+  .menu.depth-1 {
+    margin-left: 285px; }
+  .menu.depth-2 {
+    margin-left: 570px; } }
 
 #head .loading {
   display: none; }
@@ -439,8 +454,8 @@ div.logo.inverse:before {
 .urbit.navbar.ctrl {
   margin-top: 1rem; }
   .urbit.navbar.ctrl .icon .home {
-    border-color: #000;
-    background-color: #000;
+    border-color: #B1B7BD;
+    background-color: #B1B7BD;
     width: 3rem;
     height: 3rem;
     margin: 0 4rem 0 0; }
@@ -795,6 +810,8 @@ ol > li:before {
     font-weight: 500; }
   .body .urbit p.last {
     margin-bottom: 2rem; }
+  .body .urbit p.email {
+    margin-top: 2rem; }
   .body .urbit input.email {
     font-weight: 500;
     font-family: 'scp';
@@ -1196,7 +1213,8 @@ ol > li:before {
 
 #body.post h3.author {
   padding-top: 0;
-  font-size: 1rem; }
+  font-size: 1rem;
+  font-weight: 200; }
 
 #body.post h3.author:before {
   content: "—";
@@ -1217,25 +1235,15 @@ ol > li:before {
 .urbit .post img,
 .urbit.post h1.title,
 .urbit.post img {
-  width: 600px;
+  width: 100%;
   margin-bottom: 2rem; }
 
 .urbit .post img,
 .urbit.post img {
   border: 12px solid #000; }
 
-.urbit .post p.preview,
-.urbit.post p.preview {
-  margin-bottom: .6rem;
-  max-width: 32rem; }
-
-.urbit .post h3.author,
-.urbit.post h3.author {
-  line-height: 1rem;
-  margin-bottom: 1rem; }
-
 .urbit .post img {
-  max-width: 32rem; }
+  max-width: 24rem; }
 
 .urbit.post .preview {
   display: none; }
@@ -1320,6 +1328,10 @@ ol > li:before {
         padding: 0; }
     .comments .comment p {
       width: 66%; }
+    .comments .comment.loading {
+      color: #B1B7BD; }
+    .comments .comment.loading > span {
+      color: #eceeef; }
 
 @media (max-width: 767px) {
   .add-comment textarea,

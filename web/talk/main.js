@@ -292,7 +292,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Member, a, clas, div, h2, h3, label, pre, recl, ref, yaml,
+var Member, a, clas, div, h2, h3, label, pre, recl, ref,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 clas = require('classnames');
@@ -302,26 +302,6 @@ recl = React.createClass;
 ref = React.DOM, div = ref.div, pre = ref.pre, a = ref.a, label = ref.label, h2 = ref.h2, h3 = ref.h3;
 
 Member = require('./MemberComponent.coffee');
-
-yaml = function(x, pad) {
-  var k, v;
-  if (pad == null) {
-    pad = "";
-  }
-  if ("object" !== typeof x) {
-    return "" + x;
-  } else {
-    return ((function() {
-      var results;
-      results = [];
-      for (k in x) {
-        v = x[k];
-        results.push("\n" + pad + k + ": " + (yaml(v, pad + "  ")));
-      }
-      return results;
-    })()).join('');
-  }
-};
 
 module.exports = recl({
   displayName: "Message",
@@ -359,8 +339,8 @@ module.exports = recl({
     return this.props._handlePm(user);
   },
   renderSpeech: function(arg) {
-    var api, app, com, exp, fat, lin, mor, tax, url, x;
-    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, api = arg.api, com = arg.com;
+    var app, com, exp, fat, lin, mor, tax, url, x;
+    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, com = arg.com;
     switch (false) {
       case !(lin || app || exp || tax):
         return (lin || app || exp || tax).txt;
@@ -381,10 +361,6 @@ module.exports = recl({
         return div({}, this.renderSpeech(fat.taf), div({
           className: "fat"
         }, this.renderTorso(fat.tor)));
-      case !api:
-        return div({}, a({
-          href: api.url
-        }, "[Piped data]"), pre({}, yaml(api)));
       default:
         return "Unknown speech type:" + ((function() {
           var results;
@@ -418,13 +394,11 @@ module.exports = recl({
     }
   },
   classesInSpeech: function(arg) {
-    var api, app, exp, fat, lin, mor, url;
-    url = arg.url, api = arg.api, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
+    var app, exp, fat, lin, mor, url;
+    url = arg.url, exp = arg.exp, app = arg.app, lin = arg.lin, mor = arg.mor, fat = arg.fat;
     switch (false) {
       case !url:
         return "url";
-      case !api:
-        return "api";
       case !exp:
         return "exp";
       case !app:
@@ -863,8 +837,6 @@ module.exports = recl({
           _clas = clas({
             open: this.state.open === station,
             closed: !(this.state.open === station),
-            'col-md-4': true,
-            'col-md-offset-6': true,
             menu: true,
             'depth-2': true
           });
@@ -933,8 +905,6 @@ module.exports = recl({
     _clas = clas({
       open: this.props.open === true,
       closed: this.props.open !== true,
-      'col-md-4': true,
-      'col-md-offset-2': true,
       menu: true,
       'depth-1': true
     });
@@ -2003,8 +1973,12 @@ if (!window.util) {
 
 _.merge(window.util, {
   defaultStation: function() {
+    var s;
     if (document.location.search) {
-      return document.location.search.replace(/^\?/, '');
+      s = document.location.search.replace(/^\?/, '');
+      if (s.indexOf('dbg.nopack') !== -1) {
+        return window.util.mainStation();
+      }
     } else {
       return window.util.mainStation();
     }
