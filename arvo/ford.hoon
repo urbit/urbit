@@ -1027,6 +1027,8 @@
     ::
     ++  lear                                            ::  load core
       |=  {cof/cafe bem/beam}  ^-  (bolt vase)
+      %+  cope  (lamp cof bem)
+      |=  {cof/cafe bem/beam}
       (leap cof many+~ bem bem)
     ::
     ++  leap                                            :: XX load with path
