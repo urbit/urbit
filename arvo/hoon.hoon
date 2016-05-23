@@ -4489,7 +4489,8 @@
     |=  nor/@                                           ::  black and rogaway
     ^-  @                                               ::  "ciphers with
     =+  ^=  sel                                         ::   arbitrary finite
-    %+  rynd  2                                         ::   domains", 2002
+    %+  rynd  3                                         ::   domains", 2002
+    %+  rynd  2
     %+  rynd  1
     %+  rynd  0
     [(mod nor 65.535) (div nor 65.535)]
@@ -4502,6 +4503,7 @@
     %+  rund  0
     %+  rund  1
     %+  rund  2
+    %+  rund  3
     [(mod vip 65.535) (div vip 65.535)]
     (add (mul 65.535 -.sel) +.sel)
   ::
@@ -4510,25 +4512,23 @@
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(sum fo 65.535) l (en:aesc (snag n raku) r))
-    (~(sum fo 65.536) l (en:aesc (snag n raku) r))
+      (~(sum fo 65.535) l (muk (snag n raku) r))
+    (~(sum fo 65.536) l (muk (snag n raku) r))
   ::
   ++  rund                                              ::  reverse round
     |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(dif fo 65.535) l (en:aesc (snag n raku) r))
-    (~(dif fo 65.536) l (en:aesc (snag n raku) r))
+      (~(dif fo 65.535) l (muk (snag n raku) r))
+    (~(dif fo 65.536) l (muk (snag n raku) r))
   ::
   ++  raku
     ^-  (list @ux)
-    :~  0x15f6.25e3.083a.eb3e.7a55.d4db.fb99.32a3.
-          43af.2750.219e.8a24.e5f8.fac3.6c36.f968
-        0xf2ff.24fe.54d0.1abd.4b2a.d8aa.4402.8e88.
-          e82f.19ec.948d.b1bb.ed2e.f791.83a3.8133
-        0xa3d8.6a7b.400e.9e91.187d.91a7.6942.f34a.
-          6f5f.ab8e.88b9.c089.b2dc.95a6.aed5.e3a4
+    :~  0xb76d.5eed
+        0xee28.1300
+        0x85bc.ae01
+        0x4b38.7af7
     ==
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
