@@ -4470,7 +4470,7 @@
       =+  lo=(dis pyn 0xffff.ffff)
       =+  hi=(dis pyn 0xffff.ffff.0000.0000)
       %+  con  hi
-      (add 0x1.0000 (fice (sub lo 0x1.0000)))
+      $(pyn lo)
     pyn
   ::
   ++  fend                                              ::  restore structure v2
@@ -4481,7 +4481,7 @@
       =+  lo=(dis cry 0xffff.ffff)
       =+  hi=(dis cry 0xffff.ffff.0000.0000)
       %+  con  hi
-      (add 0x1.0000 (teil (sub lo 0x1.0000)))
+      $(cry lo)
     cry
   ::
   ++  fice                                              ::  adapted from
