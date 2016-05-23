@@ -1051,6 +1051,80 @@
     ~|(%test-fail-seal !!)
   msg
 ::
+++  cruc
+  ^-  acru
+  =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
+  |%
+  ++  as
+    |%
+    ++  sign
+      |=  {nonc/@ msg/@}
+      ^-  @ux
+      ?~  sek  ~|  %pubkey-only  !!
+      =+  nms=(jam [nonc msg])
+      (jam [(sign:ed nms sgn.u.sek) nms])
+    ++  sure
+      |=  {nonc/@ txt/@}
+      ^-  (unit @ux)
+      =+  ((hard {sig/@ nms/@}) (cue txt))
+      ?.  (veri:ed sig nms sgn.pub)  ~
+      =+  ((hard {n/@ msg/@}) (cue nms))
+      ?.  =(nonc n)  ~
+      (some msg)
+    ++  seal
+      |=  {bpk/pass nonc/@ msg/@}
+      ^-  @ux
+      ?~  sek  ~|  %pubkey-only  !!
+      ?>  =('b' (end 3 1 bpk))
+      =+  pk=(rsh 8 1 (rsh 3 1 bpk))
+      =+  shar=(shax (shar:ed pk cry.u.sek))
+      (jam [nonc (~(en siva:aes shar ~[nonc]) msg)])
+    ++  tear
+      |=  {bpk/pass txt/@}
+      ^-  (unit {@ux @ux})
+      ?~  sek  ~|  %pubkey-only  !!
+      ?>  =('b' (end 3 1 bpk))
+      =+  pk=(rsh 8 1 (rsh 3 1 bpk))
+      =+  shar=(shax (shar:ed pk cry.u.sek))
+      =+  ((hard {nonc/@ iv/@ cph/@}) (cue txt))
+      %+  both  (some nonc)
+      (~(de siva:aes shar ~[nonc]) iv cph)
+    --
+  ++  de
+    |=  {key/@I cph/@}
+    ^-  (unit @ux)
+    %+  ~(de siva:aes key ~)
+      (end 7 1 cph)
+      (rsh 7 1 cph)
+  ++  dy  |=({key/@I cph/@} (need (de key cph)))
+  ++  en
+    |=  {key/@I msg/@}
+    ^-  @ux
+    (cat 7 (~(en siva:aes key ~) msg))
+  ++  ex
+    |%
+    ++  fig  ^-  @uvH  (shaf %bfig sgn.^pub)
+    ++  pac  ^-  @uvG  ?~  sek  ~|  %pubkey-only  !!
+                       (end 6 1 (shaf %bcod sgn.u.sek))
+    ++  pub  ^-  pass  (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
+    ++  sec  ^-  ring  ?~  sek  ~|  %pubkey-only  !!
+                       (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
+    --
+  ++  nu
+    |%
+    ++  pit
+      |=  {w/@ seed/@}
+      ?.  =(w 512)
+        ~|  %ed-seed-width  !!
+      =+  [c=(rsh 8 1 seed) s=(end 8 1 seed)]
+      ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
+    ++  nol  ^+  nol:nu:*acru  (cury 512 pit)
+    ++  com
+      |=  a/pass
+      ..nu(pub [cry=(rsh 8 1 a) sgn=(end 8 1 a)], sek ~)
+    --
+  --
+::
 ++  hmac                                                ::  HMAC-SHA1
   |=  {key/@ mes/@}
   =+  ip=(fil 3 64 0x36)

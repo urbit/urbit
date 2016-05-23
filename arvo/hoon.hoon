@@ -5563,6 +5563,17 @@
     =+  pu=(puck se)
     (can 0 ~[[b se] [b pu]])
   ::
+  ++  shar                                              ::  curve25519 secret
+    ~/  %shar
+    |=  {pub/@ sek/@}
+    ^-  @ux
+    =+  exp=(shal (rsh 0 3 b) sek)
+    =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
+    =.  exp  (con exp (lsh 3 31 0b100.0000))
+    =+  prv=(end 8 1 exp)
+    =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
+    (curt prv crv)
+  ::
   ++  sign                                              ::  certify
     ~/  %sign
     |=  {m/@ se/@}  ^-  @
