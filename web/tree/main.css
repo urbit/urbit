@@ -897,7 +897,10 @@ ol > li:before {
 
 .ship {
   color: #fff;
-  padding-right: 2rem; }
+  padding-right: 2rem;
+  max-width: 12rem;
+  overflow: hidden;
+  white-space: nowrap; }
 
 .ship:before {
   content: attr(data-alias);
@@ -905,7 +908,10 @@ ol > li:before {
   color: #000; }
 
 .ship:hover {
-  color: #000; }
+  color: #000;
+  max-width: none;
+  overflow: visible;
+  white-space: normal; }
   .ship:hover:before {
     display: none; }
 

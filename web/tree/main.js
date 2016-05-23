@@ -662,7 +662,6 @@ module.exports = query({
       type: "text",
       name: "comment",
       value: this.state.value,
-      placeholder: "Join the conversation.",
       onChange: this.onChange
     });
     inputAttr = _.create(_attr, {
