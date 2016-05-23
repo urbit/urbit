@@ -922,137 +922,6 @@
 ::
 ++  crub                                                ::  cryptosuite B (Ed)
   ^-  acru
-  =|  {pub/{ckey/@ skey/@} sek/(unit {ckey/@ skey/@})}
-  |%
-  ++  as
-    =>  |%
-        ++  hail
-          |=  a/pass
-          =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-          ?>  =('b' mag)
-          ..as(pub [ckey=(rsh 8 1 bod) skey=(end 8 1 bod)])
-        ::
-        ++  tide  ::  shared secret
-          |=  a/@  ^-  @
-          ?~  sek  ~|  %pubkey-only  !!
-          ::  (curt a (curt ckey.u.sek 9))
-          (curt ckey.u.sek a)
-        --
-    ^?
-    |%
-    ++  seal
-      |=  {a/pass b/@ c/@}
-      ?~  sek  ~|  %pubkey-only  !!
-      =+  =+  her=(hail a)
-        tie=(tide ckey.pub.her)
-      =+  [hog=(en tie b) ben=(en b c)]
-      =+  sig=(sign:ed ben skey.u.sek)
-      (jam hog ben sig)
-    ::
-    ++  sign
-      |=  {a/@ b/@}  ^-  @
-      (jam (en a (shax b)) b)
-    ++  sure
-      |=  {a/@ b/@}
-      ^-  (unit @)
-      =+  bod=((hard {h/@ m/@}) (cue b))
-      ?:  =((need (de a h.bod)) (shax m.bod))
-        (some m.bod)
-      ~
-    ::
-    ++  tear
-      |=  {a/pass b/@}
-      ^-  (unit {p/@ q/@})
-      =+  bod=((hard {p/@ q/@ s/@}) (cue b))
-      =+  =+  her=(hail a)
-        tie=(tide ckey.pub.her)
-      ?.  (veri:ed s.bod q.bod (end 8 1 (rsh 3 1 a)))
-        ~
-      =+  hog=(de tie p.bod)
-      ?~  hog  ~
-      =+  ben=(de u.hog q.bod)
-      ?~  ben  ~
-      [~ u.hog u.ben]
-    --
-  ::
-  ++  de
-    |~  {key/@ cep/@}  ^-  (unit @ux)
-    (~(de siva:aes key ~) (end 7 1 cep) (rsh 7 1 cep))
-  ::
-  ++  dy
-    |~  {a/@ b/@}  ^-  @
-    (need (de a b))
-  ::
-  ++  en
-    |~  {key/@ msg/@}  ^-  @ux
-    (cat 7 (~(en siva:aes key ~) msg))
-  ::
-  ++  ex  ^?
-    |%  ++  fig  ^-  @uvH  (shaf %bfig skey.^pub)
-        ++  pac  ^-  @uvG  ?~  sek  ~|  %pubkey-only  !!
-                           (end 6 1 (shaf %acod skey.u.sek))
-        ++  pub  ^-  pass  (cat 3 'b' (mix (lsh 8 1 ckey.^pub) skey.^pub))
-        ++  sec  ^-  ring  ?~  sek  ~|  %pubkey-only  !!
-                           (cat 3 'B' (mix (lsh 8 1 ckey.u.sek) skey.u.sek))
-    --
-  ::
-  ++  nu
-    ^?
-    |%  ++  com
-          |=  a/@
-          ^+  ^?(..nu)
-          ..nu(sek ~, pub [ckey=(rsh 8 1 a) skey=(end 8 1 a)])
-        ::
-        ++  pit
-          |=  {a/@ b/@}
-          ^+  ^?(..nu)
-          =+  [rb=(rsh 8 1 b) eb=(end 8 1 b)]
-          ..nu(sek `[ckey=rb skey=eb], pub [ckey=(curt rb 9) skey=(puck:ed eb)])
-        ::
-        ++  nol
-          |=  a/@
-          ^+  ^?(..nu)
-          =+  [ra=(rsh 8 1 a) ea=(end 8 1 a)]
-          ..nu(sek `[ckey=ra skey=ea], pub [ckey=(curt ra 9) skey=(puck:ed ea)])
-    --
-  --
-++  brew                                                ::  create keypair
-  |=  {a/@ b/@}                                         ::  width seed
-  ^-  acru
-  (pit:nu:crub a b)
-::
-++  hail                                                ::  activate public key
-  |=  a/pass
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('b' mag)
-  (com:nu:crub bod)
-::
-++  wear                                                ::  activate secret key
-  |=  a/ring
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('B' mag)
-  (nol:nu:crub bod)
-::
-++  trub                                                ::  test ed
-  |=  msg/@tas
-  ^-  @
-  =+  ali=(brew 1.024 (cat 8 (shax 'ali') (shad 'ali')))
-  =+  bob=(brew 1.024 (cat 8 (shax 'bob') (shad 'bob')))
-  =+  tef=(sign:as.ali [0 msg])
-  =+  lov=(sure:as.ali [0 tef])
-  ?.  &(?=(^ lov) =(msg u.lov))
-    ~|(%test-fail-sign !!)
-  =+  key=(shax (shax (shax msg)))
-  =+  sax=(seal:as.ali pub:ex.bob key msg)
-  =+  tin=(tear:as.bob pub:ex.ali sax)
-  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
-    ~|(%test-fail-seal !!)
-  msg
-::
-++  cruc
-  ^-  acru
   =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
   |%
   ++  as
@@ -1124,6 +993,41 @@
       ..nu(pub [cry=(rsh 8 1 a) sgn=(end 8 1 a)], sek ~)
     --
   --
+::
+++  brew                                                ::  create keypair
+  |=  {a/@ b/@}                                         ::  width seed
+  ^-  acru
+  (pit:nu:crub a b)
+::
+++  hail                                                ::  activate public key
+  |=  a/pass
+  ^-  acru
+  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+  ?>  =('b' mag)
+  (com:nu:crub bod)
+::
+++  wear                                                ::  activate secret key
+  |=  a/ring
+  ^-  acru
+  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+  ?>  =('B' mag)
+  (nol:nu:crub bod)
+::
+++  trub                                                ::  test ed
+  |=  msg/@tas
+  ^-  @
+  =+  ali=(brew 1.024 (cat 8 (shax 'ali') (shad 'ali')))
+  =+  bob=(brew 1.024 (cat 8 (shax 'bob') (shad 'bob')))
+  =+  tef=(sign:as.ali [0 msg])
+  =+  lov=(sure:as.ali [0 tef])
+  ?.  &(?=(^ lov) =(msg u.lov))
+    ~|(%test-fail-sign !!)
+  =+  key=(shax (shax (shax msg)))
+  =+  sax=(seal:as.ali pub:ex.bob key msg)
+  =+  tin=(tear:as.bob pub:ex.ali sax)
+  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
+    ~|(%test-fail-seal !!)
+  msg
 ::
 ++  hmac                                                ::  HMAC-SHA1
   |=  {key/@ mes/@}
