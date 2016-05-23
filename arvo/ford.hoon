@@ -62,6 +62,7 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
+      {$hoop p/calm q/beam r/(unit beam)}               ::  -to/ transformation
       {$bake p/calm q/(pair mark beam) r/(unit vase)}   ::  load
       {$boil p/calm q/(trel coin beam beam) r/vase}     ::  execute
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
@@ -89,6 +90,7 @@
   |=  cax/calx
   ?+  sem  !!
     $hood  ?>(?=($hood -.cax) r.cax)
+    $hoop  ?>(?=($hoop -.cax) r.cax)
     $bake  ?>(?=($bake -.cax) r.cax)
     $boil  ?>(?=($boil -.cax) r.cax)
     $slap  ?>(?=($slap -.cax) r.cax)
@@ -587,11 +589,11 @@
     ::
     ++  fade                                            ::  compile to hood
       ~/  %fade
-      |=  {cof/cafe for/mark bem/beam}
+      |=  {cof/cafe bem/beam}
       :: ~&  fade+(tope bem)
       ^-  (bolt hood)
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
-      %+  cope  (liar cof %*(. bem s [for s.bem]))
+      %+  cope  (liar cof %*(. bem s [%hoon s.bem]))
       |=  {cof/cafe cay/cage}
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
@@ -608,9 +610,15 @@
       ~/  %fame
       |=  {cof/cafe bem/beam}
       ^-  (bolt beam)
+      =;  une/(bolt (unit beam))
+        %+  cope  une
+        |=  {cof/cafe bom/(unit beam)}  ^-  (bolt beam)
+        ?^  bom  (fine cof u.bom)
+        (flaw cof leaf+"fame: no {<(tope bem)>}" ~)
+      %+  (clef %hoop)  (fine cof bem)
+      |=  {cof/cafe bem/beam}
       =^  pax  bem  [(flop s.bem) bem(s ~)]
-      |^  (cope opts (flux |=(a/(unit beam) (fall a bem))))
-      ::
+      |^  opts
       ++  opts                                          ::  search unless done
         ^-  (bolt (unit beam))
         ?^  pax  (wide(pax t.pax) (tear i.pax))
@@ -1030,7 +1038,7 @@
       |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (fame cof bem)
       |=  {cof/cafe bem/beam}
-      (cope (fade cof %hoon bem) abut:(meow bom arg))
+      (cope (fade cof bem) abut:(meow bom arg))
     ::
     ++  lend                                            ::  load arch
       |=  {cof/cafe bem/beam}
@@ -1091,10 +1099,12 @@
     ++  lime                                            ::  load beam
       |=  {cof/cafe for/mark arg/coin bem/beam}
       ^-  (bolt vase)
+      %+  coop  (leap cof arg [-.bem /[for]/ren] bem)
+      |=  cof/cafe  ^-  (bolt vase)
       %+  cope  (lima cof for bem)
       |=  {cof/cafe vux/(unit vase)}
       ?^  vux  (fine cof u.vux)
-      (leap cof arg [-.bem /[for]/ren] bem)
+      (flaw cof leaf+"ford: no {<for>} at {<(tope bem)>}" ~)
     ::
     ++  link                                            ::  translate
       ~/  %link
@@ -1618,7 +1628,7 @@
             =.  arg  ?.(lit arg many+~)
             (cope (make cof %bake q.hon arg how) furl)
           %+  cool  |.(leaf+"ford: hook {<q.hon>} {<(tope how)>}")
-          %+  cope  (fade cof %hoon how)
+          %+  cope  (fade cof how)
           |=  {cof/cafe hyd/hood}
           %+  cope  (abut:(meow how arg) cof hyd) 
           ;~(cope (lake | q.hon) (flux |=(a/vase [q.hon a])))
@@ -1636,7 +1646,7 @@
           $(bir t.bir)
         %+  cope  (fame cof (hone %sur i.bir))
         |=  {cof/cafe bem/beam}
-        %+  cope  (fade cof %hoon bem)
+        %+  cope  (fade cof bem)
         |=  {cof/cafe hyd/hood}
         %+  cope  (apex(how bem, boy ~) cof hyd)
         |=  {cof/cafe sel/_..head}
@@ -1668,7 +1678,7 @@
           $(bir t.bir)
         %+  cope  (fame cof (hone %lib i.bir))
         |=  {cof/cafe bem/beam}
-        %+  cope  (fade cof %hoon bem)
+        %+  cope  (fade cof bem)
         |=  {cof/cafe hyd/hood}
         %+  cope  (apex(how bem, boy ~) cof hyd)
         |=  {cof/cafe sel/_..neck}
@@ -1692,7 +1702,7 @@
           %+  cope  (lend cof p.hop)
           |=  {cof/cafe arc/arch}
           ?:  (~(has by dir.arc) %hoon)
-            %+  cope  (fade cof %hoon p.hop)
+            %+  cope  (fade cof p.hop)
             |=  {cof/cafe hyd/hood}
             %+  cope  (apex(boy ~) cof hyd)
             (flux |=(sel/_..wilt sel(boy [[%tow boy.sel] boy])))
