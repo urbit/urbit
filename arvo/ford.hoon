@@ -62,9 +62,9 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
-      {$hoop p/calm q/beam r/(unit beam)}               ::  -to/ transformation
       {$bake p/calm q/(pair mark beam) r/(unit vase)}   ::  load
       {$boil p/calm q/(trel coin beam beam) r/vase}     ::  execute
+      {$path p/calm q/beam r/(unit beam)}               ::  -to/ transformation
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
       {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
       {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
@@ -90,9 +90,9 @@
   |=  cax/calx
   ?+  sem  !!
     $hood  ?>(?=($hood -.cax) r.cax)
-    $hoop  ?>(?=($hoop -.cax) r.cax)
     $bake  ?>(?=($bake -.cax) r.cax)
     $boil  ?>(?=($boil -.cax) r.cax)
+    $path  ?>(?=($path -.cax) r.cax)
     $slap  ?>(?=($slap -.cax) r.cax)
     $slam  ?>(?=($slam -.cax) r.cax)
     $slim  ?>(?=($slim -.cax) r.cax)
@@ -253,7 +253,7 @@
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed+dep +>.$)  ::  XX  ~|  !!
-    :: ~&  awap+[dep u.dap]
+    ~&  awap+[dep u.dap]
     ?-  -.u.dap
       $done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
       $sent
@@ -615,7 +615,7 @@
         |=  {cof/cafe bom/(unit beam)}  ^-  (bolt beam)
         ?^  bom  (fine cof u.bom)
         (flaw cof leaf+"fame: no {<(tope bem)>}" ~)
-      %+  (clef %hoop)  (fine cof bem)
+      %+  (clef %path)  (fine cof bem)
       |=  {cof/cafe bem/beam}
       =^  pax  bem  [(flop s.bem) bem(s ~)]
       |^  opts
