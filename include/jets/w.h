@@ -114,6 +114,20 @@
     u3_noun u3we_pose(u3_noun);
     u3_noun u3we_sfix(u3_noun);
 
+    u3_noun u3wea_ecba_en(u3_noun);
+    u3_noun u3wea_ecba_de(u3_noun);
+    u3_noun u3wea_ecbb_en(u3_noun);
+    u3_noun u3wea_ecbb_de(u3_noun);
+    u3_noun u3wea_ecbc_en(u3_noun);
+    u3_noun u3wea_ecbc_de(u3_noun);
+
+    u3_noun u3wea_cbca_en(u3_noun);
+    u3_noun u3wea_cbca_de(u3_noun);
+    u3_noun u3wea_cbcb_en(u3_noun);
+    u3_noun u3wea_cbcb_de(u3_noun);
+    u3_noun u3wea_cbcc_en(u3_noun);
+    u3_noun u3wea_cbcc_de(u3_noun);
+
     u3_noun u3wea_de(u3_noun);
     u3_noun u3wea_en(u3_noun);
 

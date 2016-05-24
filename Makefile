@@ -244,6 +244,8 @@ J_D_OFILES=\
        jets/d/by_dif.o
 
 J_E_OFILES=\
+       jets/e/aes_ecb.o \
+       jets/e/aes_cbc.o \
        jets/e/aesc.o \
        jets/e/cue.o \
        jets/e/fl.o \

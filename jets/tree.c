@@ -412,8 +412,76 @@ static u3j_core _down_d[] =
     {}
   };
 
+static u3j_harm _zuse__aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
+static u3j_harm _zuse__aes_ecba_de_a[] = {{".2", u3wea_ecba_de}, {}};
+static u3j_harm _zuse__aes_ecbb_en_a[] = {{".2", u3wea_ecbb_en}, {}};
+static u3j_harm _zuse__aes_ecbb_de_a[] = {{".2", u3wea_ecbb_de}, {}};
+static u3j_harm _zuse__aes_ecbc_en_a[] = {{".2", u3wea_ecbc_en}, {}};
+static u3j_harm _zuse__aes_ecbc_de_a[] = {{".2", u3wea_ecbc_de}, {}};
+
+static u3j_harm _zuse__aes_cbca_en_a[] = {{".2", u3wea_cbca_en}, {}};
+static u3j_harm _zuse__aes_cbca_de_a[] = {{".2", u3wea_cbca_de}, {}};
+static u3j_harm _zuse__aes_cbcb_en_a[] = {{".2", u3wea_cbcb_en}, {}};
+static u3j_harm _zuse__aes_cbcb_de_a[] = {{".2", u3wea_cbcb_de}, {}};
+static u3j_harm _zuse__aes_cbcc_en_a[] = {{".2", u3wea_cbcc_en}, {}};
+static u3j_harm _zuse__aes_cbcc_de_a[] = {{".2", u3wea_cbcc_de}, {}};
+
+static u3j_core _zuse__aes_ecba_d[] =
+  { { "en", _zuse__aes_ecba_en_a },
+    { "de", _zuse__aes_ecba_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_ecbb_d[] =
+  { { "en", _zuse__aes_ecbb_en_a },
+    { "de", _zuse__aes_ecbb_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_ecbc_d[] =
+  { { "en", _zuse__aes_ecbc_en_a },
+    { "de", _zuse__aes_ecbc_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_cbca_d[] =
+  { { "en", _zuse__aes_cbca_en_a },
+    { "de", _zuse__aes_cbca_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_cbcb_d[] =
+  { { "en", _zuse__aes_cbcb_en_a },
+    { "de", _zuse__aes_cbcb_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_cbcc_d[] =
+  { { "en", _zuse__aes_cbcc_en_a },
+    { "de", _zuse__aes_cbcc_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_d[] =
+  { { "ecba", 0, _zuse__aes_ecba_d },
+    { "ecbb", 0, _zuse__aes_ecbb_d },
+    { "ecbc", 0, _zuse__aes_ecbc_d },
+    { "cbca", 0, _zuse__aes_cbca_d },
+    { "cbcb", 0, _zuse__aes_cbcb_d },
+    { "cbcc", 0, _zuse__aes_cbcc_d },
+    {}
+  };
+
+/*
+static u3j_core _zuse_d[] =
+  { { "aes", 0, _zuse__aes_d },
+    {}
+  };
+*/
+
 static u3j_core _arvo_d[] =
   { { "down", 0, _down_d },
+    { "aes", 0, _zuse__aes_d },
     {}
   };
 
