@@ -300,10 +300,13 @@ static u3j_core _mood__hoon__rq_d[] =
 static u3j_harm _mood__hoon__coed__ed_puck_a[] = {{".2", u3wee_puck}, {}};
 static u3j_harm _mood__hoon__coed__ed_sign_a[] = {{".2", u3wee_sign}, {}};
 static u3j_harm _mood__hoon__coed__ed_veri_a[] = {{".2", u3wee_veri}, {}};
+static u3j_harm _mood__hoon__coed__ed_shar_a[] = {{".2", u3wee_shar}, {}};
+
 static u3j_core _mood__hoon__coed__ed_d[] =
   { { "sign", _mood__hoon__coed__ed_sign_a },
     { "puck", _mood__hoon__coed__ed_puck_a },
     { "veri", _mood__hoon__coed__ed_veri_a },
+    { "shar", _mood__hoon__coed__ed_shar_a },
     {}
   };
 static u3j_core _mood__hoon__coed_d[] =

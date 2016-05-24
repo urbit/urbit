@@ -268,7 +268,8 @@ J_E_OFILES=\
 J_E_OFILES_ED=\
        jets/e/ed_puck.o \
        jets/e/ed_sign.o \
-       jets/e/ed_veri.o
+       jets/e/ed_veri.o \
+       jets/e/ed_shar.o
 
 J_F_OFILES=\
        jets/f/al.o \

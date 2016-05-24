@@ -132,6 +132,7 @@
     u3_noun u3wee_puck(u3_noun);
     u3_noun u3wee_sign(u3_noun);
     u3_noun u3wee_veri(u3_noun);
+    u3_noun u3wee_shar(u3_noun);
 
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);
