@@ -3,11 +3,11 @@
   ::
 /?    310
 !:
-|_  {pax/path txt/@t}
+|_  {pax/path sup/spur txt/@t}
 ++  grab
   |%
-  ++  noun  {path @t}
+  ++  noun  {path spur @t}
   ++  json  
-    (corl need =>(jo (ot pax+(su fel:stab) txt+so ~)))
+    (corl need =>(jo (ot pax+(su fel:stab) sup+(su fel:stab) txt+so ~)))
   --
 --
