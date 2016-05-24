@@ -1333,10 +1333,11 @@ ol > li:before {
 
 .add-comment {
   width: 100%;
-  border-top: 3px dotted #f7f7f9;
-  margin-top: 6rem; }
+  border-top: 3px solid #B1B7BD;
+  margin-top: 8rem; }
   .add-comment .btn {
-    font-size: .8rem; }
+    padding: .6rem .3rem .4rem .3rem;
+    text-transform: none; }
   .add-comment .ship {
     display: inline-block;
     margin-top: 2rem;
@@ -1348,7 +1349,7 @@ ol > li:before {
     height: 12rem;
     background-color: #f7f7f9;
     border-bottom: 0;
-    margin-bottom: 2rem;
+    margin-bottom: .6rem;
     margin-top: .6rem;
     padding: .3rem; }
 
@@ -1358,7 +1359,9 @@ ol > li:before {
   font-size: 1rem; }
 
 .comments {
-  padding-top: 3rem; }
+  margin-top: 4rem;
+  padding-top: 1rem;
+  border-top: 3px solid #eceeef; }
   .comments .comment {
     margin-top: 2rem; }
     .comments .comment > span {
