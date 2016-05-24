@@ -1344,7 +1344,7 @@ ol > li:before {
     background-color: transparent;
     padding: 0; }
   .add-comment textarea {
-    width: 66%;
+    width: 100%;
     display: block;
     height: 12rem;
     background-color: #f7f7f9;

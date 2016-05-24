@@ -1437,7 +1437,7 @@ Nav = React.createFactory(query({
   },
   render: function() {
     return div({
-      className: "ctrl",
+      className: "ctrl loading",
       "data-path": this.props.dataPath,
       key: "nav-loading"
     }, div({
