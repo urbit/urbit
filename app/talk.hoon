@@ -72,7 +72,7 @@
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
-          {$write-comment path ship cord}               ::
+          {$write-comment spur ship cord}               ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -1300,17 +1300,17 @@
   ::
   ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
   ++  ra-comment
-    |=  {pax/path txt/@t}
+    |=  {pax/path sup/spur txt/@t}
     =.  ..ra-emit
       %+  ra-emit  ost.hid
       :*  %poke
           /comment
           [our.hid %hood]
-          [%write-comment pax src.hid txt]
+          [%write-comment sup src.hid txt]
       ==
     =+  man=%comments
     ?:  (~(has by stories) man)
-      (ra-consume-comment man pax txt)
+      (ra-consume-comment man pax sup txt)
     =.  ..ra-apply
       %+  ra-apply  our.hid
       :+  %design  man
@@ -1323,11 +1323,11 @@
           (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
         now.hid
       [~ %app %tree 'receiving comments, ;join %comments for details']
-    (ra-consume-comment man pax txt)
+    (ra-consume-comment man pax sup txt)
   ::
   ++  ra-consume-comment
-    |=  {man/knot pax/path txt/@t}  ^+  +>
-    =+  nam==+(xap=(flop pax) ?~(xap "" (trip i.xap)))  :: file name
+    |=  {man/knot pax/path sup/spur txt/@t}  ^+  +>
+    =+  nam=?~(sup "" (trip i.sup))                     :: file name
     =+  fra=(crip (time-to-id now.hid))                 :: url fragment
     %^  ra-consume  &
       src.hid
@@ -2218,8 +2218,8 @@
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-talk-comment
-  |=  {pax/path txt/@t}  ^-  (quip move +>)
-  ra-abet:(ra-comment:ra pax txt)
+  |=  {pax/path sup/spur txt/@t}  ^-  (quip move +>)
+  ra-abet:(ra-comment:ra pax sup txt)
 ::
 ++  poke-talk-save
   |=  man/knot
