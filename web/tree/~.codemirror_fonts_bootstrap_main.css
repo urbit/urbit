@@ -7762,7 +7762,8 @@ ol > li:before {
 .add-comment .ship,
 .comments .ship {
   font-family: 'scp';
-  font-size: 1rem; }
+  font-size: 1rem;
+  font-weight: 400; }
 
 .comments {
   margin-top: 4rem;

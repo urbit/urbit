@@ -56,12 +56,10 @@ module.exports = {
       components: components
     });
   },
-  addComment: function(pax, txt) {
-    if (pax[0] !== "/") {
-      pax = "/" + pax;
-    }
+  addComment: function(pax, sup, txt) {
     return TreePersistence.put({
       pax: pax,
+      sup: sup,
       txt: txt
     }, "talk-comment");
   },
@@ -175,7 +173,8 @@ module.exports = function(queries, Child, load) {
       return {
         path: path,
         fresh: fresh,
-        got: got
+        got: got,
+        queries: queries
       };
     },
     mergeWith: function(have, fresh, _queries) {
@@ -564,7 +563,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Comment, Ship, TreeActions, a, clas, code, div, form, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
+var Comment, Ship, TreeActions, a, clas, code, div, form, h2, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
 
 clas = require('classnames');
 
@@ -584,25 +583,26 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a, form = ref.form, textarea = ref.textarea, input = ref.input, code = ref.code;
+ref = React.DOM, div = ref.div, p = ref.p, h2 = ref.h2, img = ref.img, a = ref.a, form = ref.form, textarea = ref.textarea, input = ref.input, code = ref.code;
 
 Comment = function(arg) {
-  var body, loading, ref1, time;
-  time = arg.time, body = arg.body, loading = (ref1 = arg.loading) != null ? ref1 : false;
+  var body, loading, ref1, time, user;
+  time = arg.time, user = arg.user, body = arg.body, loading = (ref1 = arg.loading) != null ? ref1 : false;
   return div({
     className: clas("comment", {
       loading: loading
     })
-  }, "" + (window.urb.util.toDate(new Date(time))), reactify(body, "comt", {
-    components: {
-      ship: Ship
-    }
+  }, "" + (window.urb.util.toDate(new Date(time))), h2({}, rele(Ship, {
+    ship: user
+  })), reactify(body, "comt", {
+    components: {}
   }));
 };
 
 module.exports = query({
   comt: 'j',
-  path: 't'
+  path: 't',
+  spur: 't'
 }, recl({
   displayName: "Comments",
   getInitialState: function() {
@@ -619,29 +619,20 @@ module.exports = query({
     }
   },
   onSubmit: function(e) {
-    var body, value;
+    var body, user, value;
     value = this.refs["in"].comment.value;
-    TreeActions.addComment(this.props.path, value);
+    TreeActions.addComment(this.props.path, this.props.spur, value);
     body = {
-      gn: 'div',
-      c: [
-        {
-          gn: 'ship',
-          ga: {
-            ship: urb.user
-          },
-          c: []
-        }, {
-          gn: 'p',
-          c: [value]
-        }
-      ]
+      gn: 'p',
+      c: [value]
     };
+    user = urb.user;
     this.setState({
       value: "",
       loading: {
         'loading': 'loading',
         body: body,
+        user: urb.user,
         time: Date.now()
       }
     });
@@ -2586,7 +2577,8 @@ QUERIES = {
   meta: 'j',
   comt: 'j',
   plan: 'j',
-  beak: 't'
+  beak: 't',
+  spur: 't'
 };
 
 TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
@@ -3358,170 +3350,6 @@ function isUndefined(arg) {
 }
 
 },{}]},{},[25]);
-CodeMirror.defineMode("hoon", function() {
-  glyph = /[+\-|$%:.#^~;=?!_,&\/<>%*]/
-  term = /^[$&|]|^[a-z]([a-z0-9\-]*[a-z0-9])?/
-  num = /~[a-z0-9._~-]+|-?-?^[0-9]([0-9.]*|[xwbv]?[0-9a-zA-Z.-~]*)/
-  res = {}
-  res.startState = function(){return {soblock: false, doqblock:false, sail:false, space:true}}
-  var propOrVar = function(c){
-      if(c == '.')
-        return 'property'
-      return 'variable'
-  }
-  res.token = function(stream, state){
-    if(state.soqblock && stream.sol()){
-      if(stream.match(/\s*'''/)){
-        state.soqblock = false
-      }
-      else {
-        stream.skipToEnd()
-      }
-      return "string"
-    }
-    if(state.doqblock){
-      if(stream.match(/\s*"""/)){
-        state.doqblock = false
-      }
-      else {
-        stream.skipToEnd()
-      }
-      return "string"
-    }
-
-    if(stream.sol())
-      state.space = true
-
-    if(state.sail){
-      if(stream.peek().match(/[^#./() ]/)||stream.eol()){
-        state.sail = false
-        if(stream.match(/:? /)){
-          stream.skipToEnd()
-          return 'string'
-        }
-        if(stream.match(term))
-          state.sail = true
-          return;
-        if(stream.match(':'))
-          state.sail = true
-          return 'operator'
-      }
-    }
-    if(stream.match("'")){
-      if(stream.match("''")){
-        state.soqblock = true
-        return 'string'
-      }
-      while(stream.match(/^[^'\\]/) || stream.match(/\\./));
-      stream.eat("'")
-      return 'string'
-    }
-    if(stream.match('"')){
-      if(stream.match('""')){
-        state.doqblock = true
-        stream.skipToEnd()
-        return 'string'
-      }
-      while(stream.match(/^[^"\\]/) || stream.match(/\\./));
-      stream.eat('"')
-      return 'string'
-    }
-    if(stream.match(' ;')){
-      if(stream.eat(' ')){
-        stream.skipToEnd()
-        return 'string'
-      }
-      if(!stream.match(glyph)){
-        state.sail = true
-      }
-      return 'builtin'
-    }
-
-    if(stream.match('::')){
-      stream.skipToEnd()
-      return 'comment'
-    }
-
-    if(stream.match('++  ') || stream.match('+-  ')){
-      stream.match(term)
-      return 'header'
-    }
-    if(state.space && stream.match('--')){
-      if(stream.eat(glyph) || stream.eat(/[a-z0-9]/))
-        stream.backUp(3)
-      else return 'header'
-    }
-
-    if(stream.match(/^@[a-z]*[A-Z]?/))
-      return 'atom'
-    if(stream.match(num))
-      return 'number'
-
-    if(stream.eat(/[%$]/))
-      if(stream.match(term) || stream.match(num) || stream.match('~'))
-        return 'tag'
-      else stream.backUp(1)
-    if(state.space && stream.match('==')){
-      return 'tag'
-    }
-    
-    if(stream.eat('~')){
-      if(/[()]/.exec(stream.peek()))
-        return 'builtin'
-      return 'tag'
-    }
-
-    if(stream.eat(/[+\-]/)){
-      while(stream.eat(/[<>]/) && stream.eat(/[+\-]/));
-      return propOrVar(stream.peek())
-    }
-
-    if(stream.eat('`')){
-      state.space = false
-      return 'operator'
-    }
-    if(stream.sol() && stream.eatWhile(glyph)){
-      state.space = false
-      return 'builtin'
-    }
-    if(stream.eat(glyph)){
-      state.space = false
-      stream.backUp(2)
-      if(stream.eat(/[ ([{]/) || (stream.peek().match(/[^+\-<>]/)
-                             && stream.eat(glyph))){  //  expression start
-        stream.eatWhile(glyph)
-        return 'builtin'
-      }
-      stream.next()
-      if(state.space && stream.eat('=')){
-        if(/[()]/.exec(stream.peek()))
-          return 'builtin'
-        return 'operator'
-      }
-      if(stream.eat(/[=:.^/]/))
-        return 'operator'
-      stream.next()
-      return 'builtin'
-    }
-
-    if(stream.match(term)){
-      if(state.space && stream.match('+'))
-        return 'tag'
-      state.space = false
-      return propOrVar(stream.peek())
-    }
-    if(stream.eat(/[ \[({]/)){
-      state.space = true
-      return
-    }
-    stream.next()
-  }
-  res.lineComment = '::'
-  res.fold = "indent"
-  return res
-});
-
-CodeMirror.defineMIME("text/x-hoon", "hoon");
 window.urb = window.urb || {}
 window.urb.appl = window.urb.appl || null
 
