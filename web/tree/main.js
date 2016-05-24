@@ -563,7 +563,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Comment, Ship, TreeActions, a, clas, code, div, form, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
+var Comment, Ship, TreeActions, a, clas, code, div, form, h2, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
 
 clas = require('classnames');
 
@@ -581,7 +581,7 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a, form = ref.form, textarea = ref.textarea, input = ref.input, code = ref.code;
+ref = React.DOM, div = ref.div, p = ref.p, h2 = ref.h2, img = ref.img, a = ref.a, form = ref.form, textarea = ref.textarea, input = ref.input, code = ref.code;
 
 Ship = function(name) {
   return code({
@@ -590,13 +590,13 @@ Ship = function(name) {
 };
 
 Comment = function(arg) {
-  var body, loading, ref1, time;
-  time = arg.time, body = arg.body, loading = (ref1 = arg.loading) != null ? ref1 : false;
+  var body, loading, ref1, time, user;
+  time = arg.time, user = arg.user, body = arg.body, loading = (ref1 = arg.loading) != null ? ref1 : false;
   return div({
     className: clas("comment", {
       loading: loading
     })
-  }, "" + (window.urb.util.toDate(new Date(time))), reactify(body, "comt", {
+  }, "" + (window.urb.util.toDate(new Date(time))), h2({}, Ship(user)), reactify(body, "comt", {
     components: {}
   }));
 };
@@ -621,26 +621,20 @@ module.exports = query({
     }
   },
   onSubmit: function(e) {
-    var body, value;
+    var body, user, value;
     value = this.refs["in"].comment.value;
     TreeActions.addComment(this.props.path, this.props.spur, value);
     body = {
-      gn: 'div',
-      c: [
-        {
-          gn: 'h2',
-          c: ["~" + urb.user]
-        }, {
-          gn: 'p',
-          c: [value]
-        }
-      ]
+      gn: 'p',
+      c: [value]
     };
+    user = urb.user;
     this.setState({
       value: "",
       loading: {
         'loading': 'loading',
         body: body,
+        user: urb.user,
         time: Date.now()
       }
     });
