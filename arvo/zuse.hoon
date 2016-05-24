@@ -983,11 +983,13 @@
     |%
     ++  pit
       |=  {w/@ seed/@}
-      ?.  =(w 512)
-        ~|  %ed-seed-width  !!
+      =+  bits=(shaz seed)  ::  need 512 bits
       =+  [c=(rsh 8 1 seed) s=(end 8 1 seed)]
       ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
-    ++  nol  ^+  nol:nu:*acru  (cury 512 pit)
+    ++  nol
+      |=  a/ring
+      =+  [c=(rsh 8 1 a) s=(end 8 1 a)]
+      ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
     ++  com
       |=  a/pass
       ..nu(pub [cry=(rsh 8 1 a) sgn=(end 8 1 a)], sek ~)
