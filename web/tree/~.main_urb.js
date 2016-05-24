@@ -606,10 +606,21 @@ module.exports = query({
 }, recl({
   displayName: "Comments",
   getInitialState: function() {
+    var ref1;
     return {
       loading: null,
-      value: ""
+      value: "",
+      user: (ref1 = urb.user) != null ? ref1 : ""
     };
+  },
+  componentDidMount: function() {
+    return urb.init((function(_this) {
+      return function() {
+        return _this.setState({
+          user: urb.user
+        });
+      };
+    })(this));
   },
   componentDidUpdate: function(_props) {
     if (this.props.comt.length > _props.comt.length) {
@@ -619,20 +630,17 @@ module.exports = query({
     }
   },
   onSubmit: function(e) {
-    var body, user, value;
+    var value;
     value = this.refs["in"].comment.value;
     TreeActions.addComment(this.props.path, this.props.spur, value);
-    body = {
-      gn: 'p',
-      c: [value]
-    };
-    user = urb.user;
     this.setState({
       value: "",
       loading: {
         'loading': 'loading',
-        body: body,
-        user: urb.user,
+        body: {
+          gn: 'p',
+          c: [value]
+        },
         time: Date.now()
       }
     });
@@ -666,10 +674,12 @@ module.exports = query({
       ref: "in",
       onSubmit: this.onSubmit
     }, rele(Ship, {
-      ship: urb.user
+      ship: this.state.user
     }), textarea(textareaAttr), input(inputAttr))), div({
       className: "comments"
-    }, (this.state.loading != null ? rele(Comment, this.state.loading) : void 0), this.props.comt.map(function(props, key) {
+    }, (this.state.loading != null ? rele(Comment, _.extend({}, this.state.loading, {
+      user: this.state.user
+    })) : void 0), this.props.comt.map(function(props, key) {
       return rele(Comment, _.extend({
         key: key
       }, props));
@@ -1601,7 +1611,7 @@ ref = React.DOM, nav = ref.nav, ul = ref.ul, li = ref.li, a = ref.a;
 
 module.exports = recl({
   render: function() {
-    if (urb.user !== urb.ship) {
+    if ((urb.user == null) || urb.user !== urb.ship) {
       return nav({
         className: "navbar panel"
       }, [
@@ -1692,8 +1702,18 @@ module.exports = query({
     return {
       edit: false,
       plan: this.props.plan,
-      focus: null
+      focus: null,
+      loaded: urb.ship != null
     };
+  },
+  componentDidMount: function() {
+    return urb.init((function(_this) {
+      return function() {
+        return _this.setState({
+          'loaded': 'loaded'
+        });
+      };
+    })(this));
   },
   componentWillReceiveProps: function(props) {
     if (_.isEqual(this.props.plan, this.state.plan)) {
@@ -1732,6 +1752,11 @@ module.exports = query({
   },
   render: function() {
     var acc, beak, editButton, editable, issuedBy, key, loc, path, ref3, ref4, ref5, url, usr, who;
+    if (!this.state.loaded) {
+      return div({
+        className: "plan"
+      }, "Loading authentication info");
+    }
     ref3 = this.props, beak = ref3.beak, path = ref3.path;
     ref5 = (ref4 = this.state.plan) != null ? ref4 : {}, acc = ref5.acc, loc = ref5.loc, who = ref5.who;
     issuedBy = urb.sein !== urb.ship ? "~" + urb.sein : "self";
@@ -2509,9 +2534,11 @@ module.exports = {
     if (appl == null) {
       appl = /[a-z]*/.exec(mark)[0];
     }
-    return urb.send(data, {
-      mark: mark,
-      appl: appl
+    return urb.init(function() {
+      return urb.send(data, {
+        mark: mark,
+        appl: appl
+      });
     });
   },
   encode: function(obj) {
@@ -3352,6 +3379,23 @@ function isUndefined(arg) {
 },{}]},{},[25]);
 window.urb = window.urb || {}
 window.urb.appl = window.urb.appl || null
+
+window.urb.init = function(onload){ // XX proper class?
+  onload = onload || function(){}
+  var $init = this.init
+  if($init.loaded) return onload()
+  if($init.loading) return $init.loading.push(onload)
+  $init.loading = [onload]
+  var s = document.createElement('script')
+  s.src = "/~/at/~/auth.js" // XX nop.js? auth.json?
+  s.onload = function(){
+    $init.loading.map(function(f){f()})
+    delete $init.loading
+    $init.loaded = true
+  }
+  document.body.appendChild(s)
+}
+window.urb.init.loaded = window.urb.oryx
 
 window.urb.req = function(method,url,params,json,cb) {
   var xhr = new XMLHttpRequest()

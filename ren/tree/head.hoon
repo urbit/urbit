@@ -50,14 +50,14 @@
 ::       "codemirror/4.3.0/mode/markdown/markdown.min.js");
     ;*  ?.  nopack.dbg
           :_  ~
-          ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
-                                            "/~/at/=home=/web/tree/~.main_urb.js");
-::                                             "/~/at/=home=/web/tree/~.main_hoon_urb.js");
+          ;script(type "text/javascript", src "{?.(aut "" "/~~/~/at")}".
+                                            "/=home=/web/tree/~.main_urb.js");
+::                                             "/=home=/web/tree/~.main_hoon_urb.js");
         ;=
 ::           ;script(type "text/javascript", src "/=home=/web/lib/js/hoon.js");
           ;script(type "text/javascript", src "/=home=/web/tree/main.js");
-          ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
-                                              "/~/at/=home=/web/lib/js/urb.js");
+          ;script(type "text/javascript", src "{?.(aut "" "/~~/~/at")}".
+                                              "/=home=/web/lib/js/urb.js");
         ==
     ;link(type "application/rss+xml", rel "alternate", href "{(spud tub)}.rss-xml");
 ==
