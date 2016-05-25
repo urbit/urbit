@@ -50,7 +50,7 @@
 ::                section 3bB, crypto                   ::
 ::
 ++  aes
-  ~%  %aes  +  ~
+  ~%  %aes  ..is  ~
   |%
   ++  ahem                                              ::  AES engine
     |=  {nnk/@ nnb/@ nnr/@}
