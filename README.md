@@ -16,24 +16,6 @@ which the Internet can't easily address. Programming for a
 deterministic single-level store is also a different experience from
 Unix programming, regardless of language.
 
-Getting involved
-----------------
-
-If you're interested in following Urbit, you can:
-
--   Read our documentation at [urbit.org](http://urbit.org/docs)
--   Check out the
-    [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev)
-    mailing list.
--   Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
--   Email us: [`urbit@urbit.org`](mailto:urbit@urbit.org).  We're happy to answer questions and chat.
-
-Code of conduct
----------------
-
-Everyone involved in the Urbit project needs to understand and
-respect our code of conduct, which is: "don't be rude."
-
 Install
 =======
 
@@ -184,10 +166,26 @@ which indicates the command was processed.
 Learn more
 ==========
 
-Urbit's own official planet `~winsen-pagdel` hosts the public docs
-[here](http://urbit.org/docs).  The docs also live in their own repo, [`urbit/docs`](http://github.com/urbit/docs).
+If this is your first time using Urbit, we'd recommend starting  [here](http://urbit.org/docs/using/admin/).
 
-If this is your first time using Urbit, we'd recommend starting  [here](http://urbit.org/docs/using/).
+### Docs
+[urbit.org/docs](http://urbit.org/docs) is the public documentation site.  
+
+The source is also in its own repo: [urbit/docs](http://github.com/urbit/docs)
+
+### Keep in touch
+
+- Check out the [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev) mailing list for long-form discussion.
+- Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
+- Email [urbit@urbit.org](mailto:urbit@urbit.org).  We're happy to answer questions and chat.
+
+
+Code of conduct
+===============
+
+Everyone involved in the Urbit project needs to understand and
+respect our code of conduct, which is: "don't be rude."
+
 
 Contributing
 ============
