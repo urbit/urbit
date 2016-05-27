@@ -7684,6 +7684,25 @@ ol > li:before {
   line-height: 1rem;
   margin-bottom: 1rem; }
 
+.urbit.post .person {
+  margin-bottom: 2rem; }
+  .urbit.post .person:first-of-type {
+    margin-top: 3rem; }
+  .urbit.post .person:last-of-type {
+    margin-bottom: 3rem; }
+  .urbit.post .person > p,
+  .urbit.post .person img {
+    display: inline-block; }
+  .urbit.post .person > p {
+    width: 60%; }
+  .urbit.post .person img {
+    width: 30%;
+    margin: 0 2rem 0 0;
+    border: 6px solid #555; }
+
+.urbit .post h1.title {
+  line-height: 3rem; }
+
 .urbit .post img {
   max-width: 32rem; }
 
