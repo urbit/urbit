@@ -20,7 +20,7 @@ Install
 =======
 
 Urbit is designed to run on any Unix box with an internet connection.  Debian
-(jessie), OS X, FreeBSD and Fedora all work well.
+(jessie), OS X, FreeBSD and Fedora all work well.  
 
 Urbit is alpha software.  It’s not yet completely stable, its crypto hasn’t
 been audited, and there are plenty of rough edges.  Urbit is lots of fun to play
@@ -169,9 +169,13 @@ Learn more
 If this is your first time using Urbit, we'd recommend starting  [here](http://urbit.org/docs/using/admin/).
 
 ### Docs
-[urbit.org/docs](http://urbit.org/docs) is the public documentation site.  
+[urbit.org/docs](http://urbit.org/docs/) is the public documentation site.  
 
-The source is also in its own repo: [urbit/docs](http://github.com/urbit/docs)
+The source is also in its own repo: [urbit/docs](http://github.com/urbit/docs).
+
+### About
+
+[urbit.org/posts](http://urbit.org/docs/) contains some essays on the theory and future of urbit.
 
 ### Keep in touch
 
