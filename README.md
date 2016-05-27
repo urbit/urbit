@@ -166,7 +166,7 @@ which indicates the command was processed.
 Learn more
 ==========
 
-If this is your first time using Urbit, we'd recommend starting  [here](http://urbit.org/docs/using/admin/).
+If this is your first time using Urbit, and you've followed the instructions above, we'd recommend continuing the sequence [here](http://urbit.org/docs/using/admin/).
 
 ### Docs
 [urbit.org/docs](http://urbit.org/docs/) is the public documentation site.  
