@@ -111,7 +111,7 @@ Without a planet anyone can create a comet:
 
     bin/urbit -c comet
 
-This will create a directory `comet/` and start up a random 64-bit comet.  You can specify any name you like.
+This will create a directory `comet/` and start up a random 128-bit comet.  You can specify any name you like.
 
 ## Orientation
 
