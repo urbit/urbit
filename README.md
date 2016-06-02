@@ -89,7 +89,7 @@ Once your dependencies are installed the rest is easy:
     git clone https://github.com/urbit/urbit
     cd urbit
     make
-    curl -o urbit.pill https://bootstrap.urbit.org/latest.pill
+    curl -o urbit.pill http://bootstrap.urbit.org/latest.pill
 
 After running `make`, your Urbit executable lives at `bin/urbit`.  The `.pill` file is a compiled binary of Arvo that Urbit uses to bootstrap itself.
 
@@ -111,7 +111,7 @@ Without a planet anyone can create a comet:
 
     bin/urbit -c comet
 
-This will create a directory `comet/` and start up a random 64-bit comet.  You can specify any name you like.
+This will create a directory `comet/` and start up a random 128-bit comet.  You can specify any name you like.
 
 ## Orientation
 
