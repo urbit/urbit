@@ -715,7 +715,9 @@ _me_wash_north(u3_noun dog)
   {
     u3a_noun* dog_u = u3a_to_ptr(dog);
 
-    if ( dog_u->mug_w == 0 ) return;  dog_u->mug_w = 0;    //  power wash
+    if ( dog_u->mug_w == 0 ) return;
+
+    dog_u->mug_w = 0;    //  power wash
     // if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
     if ( _(u3a_is_pom(dog)) ) {
@@ -746,7 +748,9 @@ _me_wash_south(u3_noun dog)
   {
     u3a_noun* dog_u = u3a_to_ptr(dog);
 
-    if ( dog_u->mug_w == 0 ) return;  dog_u->mug_w = 0;    //  power wash
+    if ( dog_u->mug_w == 0 ) return;
+
+    dog_u->mug_w = 0;    //  power wash
     //  if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
     if ( _(u3a_is_pom(dog)) ) {
