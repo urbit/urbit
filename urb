@@ -341,5 +341,5 @@ elif r.text[0] == '{':
     with open(json_data['file'][:0:-1].replace('/','.',1)[::-1], 'w') as f:
       f.write(base64.b64decode(json_data['data']))
 else:
-    loggin.warn("unrecognized response")
+    logging.warn("unrecognized response")
     print r.text
