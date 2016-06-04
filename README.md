@@ -40,7 +40,6 @@ Urbit depends on:
     autoconf
     ragel
     cmake
-    re2c
     libtool
     libssl-dev (Linux only)
     ncurses (Linux only)
@@ -54,19 +53,19 @@ Which can usually be installed with the following one-liners:
     sudo port install git gmp libsigsegv openssl autoconf automake cmake
 
     # Ubuntu or Debian
-    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
+    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake
 
     # Fedora
-    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c
+    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake
 
     # FreeBSD
-    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
+    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake libtool
 
     # Arch
-    pacman -S gcc gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool ncurses
+    pacman -S gcc gmp libsigsegv openssl automake autoconf ragel cmake libtool ncurses
 
     # AWS
-    sudo yum —enablerepo epel install gcc gcc-c++ git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
+    sudo yum —enablerepo epel install gcc gcc-c++ git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake
 
 ### Setting up swap
 
