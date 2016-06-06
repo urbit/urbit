@@ -571,6 +571,7 @@
           bolo                                          ::  all vane state
       ==                                                ::
   =*  bol  ->
+  ~%  %eyre-y  ..is  ~
   |%
   ++  abet                                              ::  resolve moves
     ^-  {(list move) bolo}
@@ -721,7 +722,7 @@
   ::    [%of @ ^]  (get-ack:(ire-ix p.tee) q.tee hon)
   ::  ==
   ++  axon                                              ::  accept response
-    |=  {tee/whir typ/span sih/sign}
+    |=  {tee/whir sih/sign}
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
@@ -750,7 +751,7 @@
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
           ?($coup $reap)
-        ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
+        ::  ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
         (get-ack:(ire-ix p.tee) q.tee ?~(p.cuf ~ `[-.cuf u.p.cuf]))
       ::
           $doff  !!
@@ -862,6 +863,8 @@
   ++  norm-beak  |=(bek/beak ?+(r.bek bek {$ud $0} bek(r da+now)))
   ++  emule
     |=  a/_|?(..emule)  ^+  ..emule
+    ?:  [unsafe=|]
+      (a)
     =+  mul=(mule a)
     ?~  -.mul  p.mul
     (fail 500 0v0 >%exit< p.mul)
@@ -984,6 +987,7 @@
   ::
   ::
   ++  handle
+    ~%  %eyre-h  ..is  ~
     |_  $:  {hat/hart pok/pork quy/quay}                ::  purl parsed url
             {cip/clip aut/?}                            ::  client ip nonymous?
             {mef/meth maf/math bod/(unit octs)}         ::  method+headers+body
@@ -1033,7 +1037,7 @@
           $bake
         =+  req=[%bake mar=q.pez [r s]:pez]
         =+  red=req(mar %red-quri)
-        (exec-live p.pez -.s.pez `silk`[%alts ~[red req]])
+        (exec-live p.pez -.s.pez `silk`[%alts ~[req red]])
       ::
           $red
         =+  url=(earn hat pok(p [~ %html]) quy)
@@ -1440,6 +1444,7 @@
   ::
   ++  oryx-to-ixor  |=(a/oryx (rsh 3 1 (scot %p (end 6 1 (shas %ire a)))))
   ++  ya                                                ::  session engine
+    ~%  %eyre-y  ..is  ~
     =|  {ses/hole cyst}
     =*  cyz  ->
     |%
@@ -1469,11 +1474,11 @@
         him   her
         aut   (~(put in aut) her)
         ..ya
-          ~&  logon+[our her ses]
+          ::  ~&  logon+[our her ses]
           ?.  =(our her)
             ..ya
           =+  sap=(~(get by sop) ses)
-          ~&  sap
+          ::  ~&  sap+sap
           ?.  ?=({$~ @ $|} sap)
             ..ya
           (ames-gram -.u.sap aut+~ ses)
@@ -1510,6 +1515,7 @@
     --
   ::
   ++  ix
+    ~%  %eyre-x  ..is  ~
     =|  {ire/ixor stem}
     =*  sem  ->
     |%
@@ -1684,6 +1690,7 @@
     ++  print-subs  |=({a/dock b/path} "{<p.a>}/{(trip q.a)}{(spud b)}")
     --
   ++  vi                                                ::  auth engine
+    ~%  %eyre-v  ..is  ~
     |_  $:  {usr/iden dom/path}
             cor/(unit $@($~ vase))
             req/(qeu {p/duct q/mark r/vase:hiss})
@@ -1970,8 +1977,6 @@
   ?~  tee  ~&  [%e %lost -.q.hin hen]  [~ ..^$]
   =^  mos  bol
     =<  abet
-    %^  axon:~(adit ye [hen [now eny our sky] ~] bol)  u.tee
-      (~(peek ut p.hin) %free 3) 
-    q.hin
+    (axon:~(adit ye [hen [now eny our sky] ~] bol) u.tee q.hin)
   [mos ..^$]
 --

@@ -1,5 +1,4 @@
 !:  ::  %gall, agent execution  
-
 !?  163
 ::::
 |=  pit/vase
@@ -638,9 +637,14 @@
     ++  ap-peek
       |=  {ren/@tas tyl/path}
       ^-  (unit (unit cage))
+      =+  ?.  ?=($x ren)
+            [mar=%$ tyl=tyl]
+          =+  `path`(flop tyl)
+          ?>  ?=(^ -)
+          [mar=i tyl=(flop t)]
       =+  cug=(ap-find %peek ren tyl)
       ?~  cug
-        ((slog leaf+"peek find fail" >tyl< ~) [~ ~])
+        ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
       =^  arm  +>.$  (ap-farm q.u.cug)
       ?:  ?=($| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
       =^  zem  +>.$  (ap-slam q.u.cug p.arm !>([ren (slag p.u.cug tyl)]))
@@ -652,6 +656,8 @@
           =+  caz=(spec (slot 7 p.zem))
           ?.  &(?=({p/@ *} q.caz) ((sane %tas) p.q.caz))
             ((slog leaf+"scry: malformed cage" ~) [~ ~])
+          ?.  =(mar p.q.caz)
+            [~ ~]
           ``[p.q.caz (slot 3 caz)]
       ==
     ::
@@ -1306,6 +1312,8 @@
     ~
   ?.  (~(has by bum:(~(got by pol.all) who)) syd)
     [~ ~]
+  ?.  ?=(^ tyl)
+    ~
   (mo-peek:(mo-abed:mo who *duct) syd high+`who ren tyl)
 ::
 ++  stay                                                ::  save w+o cache

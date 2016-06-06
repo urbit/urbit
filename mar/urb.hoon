@@ -5,14 +5,6 @@
 /=  urb-wasp-data-js    /:    /%/wasp-data    /js/
 !:
 |_  {{dep/@uvH hed/marl} {dep-bod/@uvH bod/marl}}
-++  linked-deps-js
-  '''
-  urb.waspAll = function(sel){
-    [].map.call(document.querySelectorAll(sel), urb.waspElem)
-  }
-  urb.waspAll('script'); urb.waspAll('link')
-  
-  '''
 ++  grow                                                ::  convert to
   |%
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
@@ -30,11 +22,12 @@
             :~  ;script@"/~/on/{<dep>}.js"(urb_injected "", async "", onload "setTimeout(urb.onDep,2000)");  
                 ;script(urb_injected "")
                   ;-  (trip urb-wasp-data-js)
-                  ;  window.urb = window.urb || \{}
+                  ;  urb.waspWait = []
+                  ;  urb.wasp = urb.wasp || [].push.bind(urb.waspWait)
                   ;  urb.onDep = function()\{
-                  ;   urb.waspDeps();
-                  ;   urb.waspData({(pojo %s (scot %uv dep-bod))});
-                  ;-  (trip linked-deps-js)
+                  ;    urb.waspWait.map(urb.wasp)
+                  ;    urb.onLoadUrbJS()
+                  ;    urb.waspData({(pojo %s (scot %uv dep-bod))})
                   ;  }
                 ==
             ==

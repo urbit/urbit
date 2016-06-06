@@ -14,12 +14,18 @@
           $%  $:  $c                                    ::  to %clay
           $%  {$warp p/sock q/riff}                     ::
           ==  ==                                        ::
-              $:  $g                                    ::  to %clay
+              $:  $f                                    ::  to %ford
+          $%  {$exec p/@p q/(unit bilk)}                ::
+          ==  ==                                        ::
+              $:  $g                                    ::  to %gall
           $%  {$deal p/sock q/cush}                     ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $c                                    ::  by %clay
           $%  {$writ p/riot}                            ::
+          ==  ==                                        ::
+              $:  $f                                    ::  by %ford
+          $%  {$made p/@uvH q/gage}                     ::
           ==  ==                                        ::
               $:  $g                                    ::  by %gall
           $%  {$unto p/cuft}                            ::
@@ -64,6 +70,7 @@
   $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
       {$bake p/calm q/(pair mark beam) r/(unit vase)}   ::  load
       {$boil p/calm q/(trel coin beam beam) r/vase}     ::  execute
+      {$path p/calm q/beam r/(unit beam)}               ::  -to/ transformation
       {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
       {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
       {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
@@ -91,6 +98,7 @@
     $hood  ?>(?=($hood -.cax) r.cax)
     $bake  ?>(?=($bake -.cax) r.cax)
     $boil  ?>(?=($boil -.cax) r.cax)
+    $path  ?>(?=($path -.cax) r.cax)
     $slap  ?>(?=($slap -.cax) r.cax)
     $slam  ?>(?=($slam -.cax) r.cax)
     $slim  ?>(?=($slim -.cax) r.cax)
@@ -205,6 +213,7 @@
       +>.$
     ?-    -.+.sih
         $writ  (~(resp zo [num u.tus]) [van ren bem] p.+.sih)
+        $made  (~(resm zo [num u.tus]) [van ren bem] [p q]:+.sih)
         $unto
       ?+  -.p.+.sih  ~|(ford-strange-unto+-.p.+.sih !!)
         $diff  (~(resd zo [num u.tus]) [van ren bem] p.p.+.sih)
@@ -251,7 +260,7 @@
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed+dep +>.$)  ::  XX  ~|  !!
-    :: ~&  awap+[dep u.dap]
+    ~&  awap+[dep u.dap]
     ?-  -.u.dap
       $done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
       $sent
@@ -315,7 +324,13 @@
         ?+    van  ~&(%camp-stub !!)
             $g
           :+  %pass  (camp-wire +<)
-          [%g [%deal [our p.bem] q.bem [%peer %scry ren (flop s.bem)]]]
+          =+  ^=  tyl
+              ?.  ?=($x ren)
+                s.bem
+              ?>  ?=(^ s.bem)
+              t.s.bem
+
+          [%g [%deal [our p.bem] q.bem [%peer %scry ren (flop tyl)]]]
         ::
             $c
           :+  %pass  (camp-wire +<)
@@ -587,11 +602,11 @@
     ::
     ++  fade                                            ::  compile to hood
       ~/  %fade
-      |=  {cof/cafe for/mark bem/beam}
+      |=  {cof/cafe bem/beam}
       :: ~&  fade+(tope bem)
       ^-  (bolt hood)
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
-      %+  cope  (liar cof %*(. bem s [for s.bem]))
+      %+  cope  (liar cof %*(. bem s [%hoon s.bem]))
       |=  {cof/cafe cay/cage}
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
@@ -608,9 +623,15 @@
       ~/  %fame
       |=  {cof/cafe bem/beam}
       ^-  (bolt beam)
+      =;  une/(bolt (unit beam))
+        %+  cope  une
+        |=  {cof/cafe bom/(unit beam)}  ^-  (bolt beam)
+        ?^  bom  (fine cof u.bom)
+        (flaw cof leaf+"fame: no {<(tope bem)>}" ~)
+      %+  (clef %path)  (fine cof bem)
+      |=  {cof/cafe bem/beam}
       =^  pax  bem  [(flop s.bem) bem(s ~)]
-      |^  (cope opts (flux |=(a/(unit beam) (fall a bem))))
-      ::
+      |^  opts
       ++  opts                                          ::  search unless done
         ^-  (bolt (unit beam))
         ?^  pax  (wide(pax t.pax) (tear i.pax))
@@ -1019,6 +1040,8 @@
     ::
     ++  lear                                            ::  load core
       |=  {cof/cafe bem/beam}  ^-  (bolt vase)
+      %+  cope  (lamp cof bem)
+      |=  {cof/cafe bem/beam}
       (leap cof many+~ bem bem)
     ::
     ++  leap                                            :: XX load with path
@@ -1030,7 +1053,7 @@
       |=  {cof/cafe arg/coin bem/beam bom/beam}
       %+  cope  (fame cof bem)
       |=  {cof/cafe bem/beam}
-      (cope (fade cof %hoon bem) abut:(meow bom arg))
+      (cope (fade cof bem) abut:(meow bom arg))
     ::
     ++  lend                                            ::  load arch
       |=  {cof/cafe bem/beam}
@@ -1091,10 +1114,12 @@
     ++  lime                                            ::  load beam
       |=  {cof/cafe for/mark arg/coin bem/beam}
       ^-  (bolt vase)
+      %+  coop  (leap cof arg [-.bem /[for]/ren] bem)
+      |=  cof/cafe  ^-  (bolt vase)
       %+  cope  (lima cof for bem)
       |=  {cof/cafe vux/(unit vase)}
       ?^  vux  (fine cof u.vux)
-      (leap cof arg [-.bem /[for]/ren] bem)
+      (flaw cof leaf+"ford: no {<for>} at {<(tope bem)>}" ~)
     ::
     ++  link                                            ::  translate
       ~/  %link
@@ -1618,7 +1643,7 @@
             =.  arg  ?.(lit arg many+~)
             (cope (make cof %bake q.hon arg how) furl)
           %+  cool  |.(leaf+"ford: hook {<q.hon>} {<(tope how)>}")
-          %+  cope  (fade cof %hoon how)
+          %+  cope  (fade cof how)
           |=  {cof/cafe hyd/hood}
           %+  cope  (abut:(meow how arg) cof hyd) 
           ;~(cope (lake | q.hon) (flux |=(a/vase [q.hon a])))
@@ -1636,7 +1661,7 @@
           $(bir t.bir)
         %+  cope  (fame cof (hone %sur i.bir))
         |=  {cof/cafe bem/beam}
-        %+  cope  (fade cof %hoon bem)
+        %+  cope  (fade cof bem)
         |=  {cof/cafe hyd/hood}
         %+  cope  (apex(how bem, boy ~) cof hyd)
         |=  {cof/cafe sel/_..head}
@@ -1668,7 +1693,7 @@
           $(bir t.bir)
         %+  cope  (fame cof (hone %lib i.bir))
         |=  {cof/cafe bem/beam}
-        %+  cope  (fade cof %hoon bem)
+        %+  cope  (fade cof bem)
         |=  {cof/cafe hyd/hood}
         %+  cope  (apex(how bem, boy ~) cof hyd)
         |=  {cof/cafe sel/_..neck}
@@ -1692,7 +1717,7 @@
           %+  cope  (lend cof p.hop)
           |=  {cof/cafe arc/arch}
           ?:  (~(has by dir.arc) %hoon)
-            %+  cope  (fade cof %hoon p.hop)
+            %+  cope  (fade cof p.hop)
             |=  {cof/cafe hyd/hood}
             %+  cope  (apex(boy ~) cof hyd)
             (flux |=(sel/_..wilt sel(boy [[%tow boy.sel] boy])))
@@ -1775,14 +1800,33 @@
       =+  (cat 3 van ren)
       exec(keg (~(put by keg) [- bem] r.u.rot))
     ::
-    ++  resd
+    ++  resd                                            ::  take %diff
       |=  {{van/vane ren/care bem/beam} cag/cage}
+      ^+  ..zo
+      ?>  ?=($g van)
+      ?:  |(!?=($x ren) =(-.s.bem p.cag))
+        =.  kig  (~(del in kig) +<-.$)
+        =.  mow  :_(mow [hen (cancel van ren bem)])
+        =+  (cat 3 van ren)
+        exec(keg (~(put by keg) [- bem] cag))
+      =.  mow
+        :_  mow
+        :^  hen  %pass  (camp-wire van ren bem)
+        [%f %exec our ~ bek %cast ((hard mark) -.s.bem) %$ cag]
+      ..zo
+    ::
+    ++  resm                                            ::  take %made
+      |=  {{van/vane ren/care bem/beam} dep/@uvH gag/gage}  ::  XX  depends?
       ^+  ..zo
       ?>  ?=($g van)
       =.  kig  (~(del in kig) +<-.$)
       =.  mow  :_(mow [hen (cancel van ren bem)])
+      ?:  ?=($| -.gag)
+        amok:(expo [%made dep %| leaf+"ford-scry-made-fail" p.gag])
+      ?:  ?=($tabl -.gag)
+        amok:(expo [%made dep %| leaf+"ford-scry-made-strange" ~])
       =+  (cat 3 van ren)
-      exec(keg (~(put by keg) [- bem] cag))
+      exec(keg (~(put by keg) [- bem] p.gag))
     ::
     ++  syve
       ^-  sley

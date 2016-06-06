@@ -7,6 +7,7 @@
   ++  json
     |=  jon/^json
     ^-  command:lens
+    ~|  jon=jon
     %-  need
     %.  jon
     =>  [. jo]
