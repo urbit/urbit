@@ -43,7 +43,7 @@
   (poke-plan-diff [~ ~ [[sev usr] ~ ~]])
 ::
 ++  poke-plan-info
-  |=  {who/@t loc/govt}
+  |=  {who/@t loc/@t}
   (poke-plan-diff [[~ who loc] ~ ~])
 ::
 ++  poke-plan-diff
@@ -55,15 +55,15 @@
   =+  pax=`path`/web/plan
   =+  paf=(tope beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
-    =+  ins=(pact-plan [['' /] ~] dif)
+    =+  ins=(pact-plan [['' ''] ~] dif)
     [pax %ins plan+!>(ins)]~
-  =+  ole=.^({{@t govt} (map iden plan-acct)} %cx paf)
+  =+  ole=.^({{@t @t} (map iden plan-acct)} %cx paf)
   =+  neu=(pact-plan ole dif)
   ?:  =(ole neu)  ~
   [pax %dif plan-diff+!>(dif)]~
 ::
 ++  pact-plan                         :: XX clay should handle fused insert+diff
-  |=  {all/{{who/@t loc/govt} acc/(map iden plan-acct)} dif/plan-diff}
+  |=  {all/{{who/@t loc/@t} acc/(map iden plan-acct)} dif/plan-diff}
   ^+  all
   :-  (fall inf.dif -.all)
   =;  neu  (~(uni by neu) put.dif)

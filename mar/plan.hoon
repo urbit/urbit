@@ -6,7 +6,7 @@
 !:
 ::::  ~fyr
   ::
-|_  all/{{who/@txname loc/govt} acc/(map knot plan-acct)}
+|_  all/{{who/@txname loc/@txloc} acc/(map knot plan-acct)}
 ::
 ++  grow                                                ::  convert to
   =+  all
@@ -14,7 +14,7 @@
   ++  txt
     ^-  wain
     :+  (cat 3 'User ' ?~(who 'of Urbit' who))
-      (cat 3 'Location ' (moon ?~(loc /unknown loc)))
+      (cat 3 'Location ' ?~(loc %unknown loc))
     %+  turn  (sort (~(tap by acc)) aor)
     |=  {a/knot b/plan-acct}  ^-  cord
     %+  rap  3
@@ -24,7 +24,7 @@
   ++  plan-json
     %-  jobe  :~
       who+?~(who ~ s+who)
-      loc+?~(loc ~ s+(moon loc))
+      loc+?~(loc ~ s+loc)
       acc+o+(~(run by acc) json-acct)
     ==
   ++  json-acct                       ::  helper                     
@@ -41,7 +41,7 @@
             ::
             ++  user  ;~(pfix (jest 'User ') (cook crip (star prn)))
             ++  knot  (sear (flit |=(a/^knot !=('' a))) urs:ab)
-            ++  location  ;~(pfix (jest 'Location ') (more fas knot))
+            ++  location  ;~(pfix (jest 'Location ') (cook crip (star prn)))
             ++  account
               ;~  plug
                 knot

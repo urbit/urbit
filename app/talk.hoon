@@ -1816,6 +1816,8 @@
     ++  pa-revise                                       ::  revise existing
       |=  {num/@ud gam/telegram}
       =+  way=(sub count num)
+      ?:  =(gam (snag (dec way) grams))
+        +>.$                                            ::  no change    
       =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
       (pa-refresh num gam)
     --
