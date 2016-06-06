@@ -71,7 +71,7 @@
   $?  $filter-request                                   ::  ++out mod request
       $filter-response                                  ::  ++res use result
       $receive-auth-response                            ::  ++bak auth response
-      $receive-auth-query-string                        ::  ++in handle code 
+      $receive-auth-query-string                        ::  ++in handle code
       $out
       $res
       $bak
@@ -164,14 +164,14 @@
       {$js p/@t}                                        ::  script
       {$json p/json}                                    ::  data
       {$html p/manx}                                    ::  successful page
-      {$htme p/manx}                                    ::  authentication fail 
+      {$htme p/manx}                                    ::  authentication fail
   ==
 --                                                      ::
 |%
 ++  eat-headers
   |=  hed/(list {p/@t q/@t})  ^-  math
   %+  roll  hed
-  |=  {a/{p/cord q/cord} b/math} 
+  |=  {a/{p/cord q/cord} b/math}
   =.  p.a  (cass (trip p.a))
   (~(add ja b) p.a q.a)
 ::
@@ -215,12 +215,12 @@
   hit(q (weld cuh q.hit))
 ::
 ++  add-json                                            ::  inject window.urb
-  |=  {urb/json jaz/cord}  ^-  cord 
+  |=  {urb/json jaz/cord}  ^-  cord
   =-  (cat 3 (crip -) jaz)
   """
   var _urb = {(pojo urb)};
   window.urb = window.urb || \{}; for(k in _urb) window.urb[k] = _urb[k];
-  
+
   """
 ::
 ++  ares-to-json
@@ -392,7 +392,7 @@
       if (!deh) return;
       if (urb.deps.indexOf(deh) !== -1) return;
       urb.deps.push(deh)
-      urb.wreq.abort() // trigger keep 
+      urb.wreq.abort() // trigger keep
     }
     urb.dewasp = function(deh){
       var index = urb.deps.indexOf(deh)
@@ -420,12 +420,12 @@
         else if(cb) return cb(xhr.responseText,ev)
       })
     }
-    
+
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
     urb.redir = function(ship){
       if(ship) document.location.pathname =
         document.location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
-      else document.location = 
+      else document.location =
         document.location.hash.match(/#[^?]+/)[0].slice(1) +
         document.location.pathname.replace(
           /^\/~\/am\/[^/]+/,
@@ -444,14 +444,14 @@
       if(!urb.is_me(ship))
         return urb.redir(ship)
       req(
-        "/~/auth.json?PUT", 
+        "/~/auth.json?PUT",
         {ship:ship, code:pass},
         function(){
           if(urb.foreign) urb.redir()
           else document.location.reload()
       })
     }
-    urb.away = function(){req("/~/auth.json?DELETE", {}, 
+    urb.away = function(){req("/~/auth.json?DELETE", {},
       function(){document.body.innerHTML = "" }
     )}
     '''
@@ -472,9 +472,9 @@
               ;h1.sign: Sign in
             ==
             ;div.col-md-8
-              ;p.ship 
+              ;p.ship
                 ;label.sig: ~
-                ;input#ship.mono(contenteditable "", placeholder "planet");
+                ;input#ship.mono(contenteditable "", placeholder "your-urbit");
               ==
               ;input#pass.mono(type "password", placeholder "passcode");
               ;h2.advice: Type +{;code:("+code")} in your dojo for your passcode.
@@ -487,7 +487,7 @@
                 $(function() {
                   $ship = $('#ship')
                   $pass = $('#pass')
-                  $ship.on('keydown', function(e) { 
+                  $ship.on('keydown', function(e) {
                     if(e.keyCode === 13 || e.keyCode === 9) {
                       if(!urb.is_me($ship.val().toLowerCase()))
                         urb.redir($ship.val().toLowerCase())
@@ -496,10 +496,10 @@
                       e.preventDefault()
                     }
                   })
-                  $ship.on('focus', function(e) { 
+                  $ship.on('focus', function(e) {
                     $pass.hide()
                   })
-                  $pass.on('keydown', function(e) { 
+                  $pass.on('keydown', function(e) {
                     if(e.keyCode === 13) {
                       urb.submit($ship.val().toLowerCase(),$pass.val())
                     }
@@ -541,15 +541,15 @@
                 }
                 '''
     ==
-  ++  titl  
-    |=  {a/cord b/marl} 
+  ++  titl
+    |=  {a/cord b/marl}
     ;html
       ;head
         ;meta(charset "utf-8");
         ;meta(name "viewport", content "width=device-width, ".
         "height=device-height, initial-scale=1.0, user-scalable=0, ".
         "minimum-scale=1.0, maximum-scale=1.0");
-        ;title:"{(trip a)}" 
+        ;title:"{(trip a)}"
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
         ;link(rel "stylesheet", href "/lib/css/fonts.css");
@@ -638,7 +638,7 @@
         kes    (~(put by kes) hen p.ask)
       ==
     ::
-        $hiss                                           ::  outbound cage 
+        $hiss                                           ::  outbound cage
       ::?~  p.kyz                                       ::  XX cancel
       ::  =+  sud=(need (~(get by kes) hen))
       ::  %=  +>.$
@@ -670,7 +670,7 @@
       ::
           $poll
         ?.  (~(has by wix) p.lid)
-         +>.$ 
+         +>.$
         poll-dead:(ire-ix p.lid)
       ::
           $xeno
@@ -704,9 +704,9 @@
             ==
           (give-thou q.u.mez)
       ::
-        $lon  
+        $lon
           ~&  ses-ask+[p.u.mez sop (~(run by wup) $~)]
-          ?:  (ses-authed p.u.mez)  
+          ?:  (ses-authed p.u.mez)
             (ames-gram q.p.kyz aut+~ p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
           (ames-gram q.p.kyz hat+~ p.u.mez our-host)
@@ -730,14 +730,14 @@
       ~&(dead-ire+[`whir`tee ({term term $~} +.sih)] +>)
     ?-    &2.sih
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
-    ::  $dumb  
+    ::  $dumb
     ::    =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
     ::    (emule |.(~|(gall-dumb+tee !!)))
     ::
         $woot  +>.$
         $went
           :: XX eyre sends no wests, so should get no wents
-          ::~&  e+unexpected+sih  
+          ::~&  e+unexpected+sih
           +>.$
     ::
         $thou
@@ -877,11 +877,11 @@
     (fail 500 0v0 >%exit< p.mul)
   ::
   ++  ire-ix  |=(ire/ixor ~(. ix ire (~(got by wix) ire)))
-  ++  dom-vi  
+  ++  dom-vi
     |=  {usr/knot dom/path}  ^+  vi    :: XX default to initialized user?
     ~(. vi [usr dom] (fall (~(get by sec) usr dom) *driv))
   ::
-  ++  ses-authed 
+  ++  ses-authed
     |=  ses/hole
     =+  sap=(~(get by sop) ses)
     ?:  ?=({$~ @ $&} sap)  &
@@ -930,7 +930,7 @@
     (pass-note(hen `~) on+~ %f [%wasp our a &])
   ::
   ++  ford-req  |=({bek/beak kas/silk} [%f [%exec our `[bek kas]]])
-  ++  exec-live  
+  ++  exec-live
     |=  {tea/whir req/{beak silk}}
     =.  lyv  (~(put by lyv) hen [%exec tea])
     (execute tea req)
@@ -1120,7 +1120,7 @@
         ?~  tyk  ~                                      :: syntax
         =+  %-  posh:(vang & (tope top))                :: that the base path
             [[~ (zing u.tyk)] ~]                        :: can interpolate into
-        ?~  -  ~                                        :: 
+        ?~  -  ~                                        ::
         =+  (plex:vast %conl u)                         :: staticly, and make a
         (biff - tome)                                   :: valid beam
       ::
@@ -1334,7 +1334,7 @@
         ?+    -.p.pez  ~&(bad-inject+p.pez !!)
             $red  pez
             $bake
-          =.  ya  abet.yac 
+          =.  ya  abet.yac
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
             $js
@@ -1342,7 +1342,7 @@
           [%| (resolve cug.yac p.pez(p (add-json jon p.p.pez)))]
         ==
       ::
-          $del  
+          $del
         =.  ..ya  (logoff:yac p.ham)
         =+  cug=[(set-cookie cookie-prefix '~')]~
         [%| (give-json 200 cug (joba %ok %b &))]
@@ -1363,7 +1363,7 @@
         :-  %|
         ?.  =(our him.ham)
           ~|(stub-foreign+him.ham !!)
-        ?.  ?|  (~(has in aut.yac) him.ham) 
+        ?.  ?|  (~(has in aut.yac) him.ham)
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
           ~|(%auth-fail !!)
@@ -1381,7 +1381,7 @@
       ?:  (~(has by wup) u.ses)
         [%& %htme login-page:xml]
       =+  yac=(new-ya u.ses)
-      =+  =-  lon=?~(- | (~(has in aut.u.-) our)) 
+      =+  =-  lon=?~(- | (~(has in aut.u.-) our))
           (biff (session-from-cookies cookie-prefix maf) ~(get by wup))
       =.  yac  ?.(lon yac (logon.yac our))
       [%| (give-html(..ya abet.yac) 401 cug.yac login-page:xml)]
@@ -1389,12 +1389,12 @@
     ++  cookie-prefix  (rsh 3 1 (scot %p our))
     ++  cookie-domain
       ^-  cord
-      ?-  r.hat 
+      ?-  r.hat
         {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
         {$& $org $urbit *}  '; Domain=.urbit.org'
         {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
                     (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
-                    
+
         {$& *}  ''  ::  XX security?
       ==
     ::
@@ -1419,7 +1419,7 @@
       ?~  cyz
         ~&  bad-cookie+u.lig
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
-      ~(. ya u.lig u.cyz(cug ~)) 
+      ~(. ya u.lig u.cyz(cug ~))
     ::
     ++  new-ya  |=(ses/hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
@@ -1429,7 +1429,7 @@
       :*  ^-  cred
           :*  hat(p sec)
               ~
-              'not-yet-implemented' 
+              'not-yet-implemented'
               ::(rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
           ::
               =+  lag=(~(get by maf) %accept-language)
@@ -1468,7 +1468,7 @@
       ~|  way
       =^  pul  hen  (~(got by way) him)
       =:  way       (~(del by way) him)
-          dop       (~(put by dop) r.hat him)  
+          dop       (~(put by dop) r.hat him)
           q.q.pul   ['~' %am ses q.q.pul]
         ==
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
@@ -1490,7 +1490,7 @@
             ..ya
           (ames-gram -.u.sap aut+~ ses)
       ==
-    ++  logoff    
+    ++  logoff
       |=  her/(unit ship)  ^+  ..ya
       ?~  her  abut
       =.  aut  (~(del in aut) u.her)
@@ -1538,7 +1538,7 @@
     ++  teba  |*(a/$-(* ..ix) |*(b/* %_(done ..ix (a b))))
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
-    ++  hurl-note 
+    ++  hurl-note
       |=  {a/{dock ?($mess $lens) path} b/note}  ^+  ..ix
       =:  med  (~(put to med) hen)
           hen  `~
@@ -1547,12 +1547,12 @@
       (pass-note:abet [%of ire (gsig a)] b)
     ::
     ++  init
-      =.  die  (add ~d1 now) 
+      =.  die  (add ~d1 now)
       abet(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  refresh
       =.  mow  :_(mow [`/ %pass ow+/[ire] [%b %rest die]])
-      =.  die  (add ~d1 now) 
+      =.  die  (add ~d1 now)
       done(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  add-even
@@ -1640,7 +1640,7 @@
       =:  q.eve  (~(del by q.eve) (dec num))              ::  TODO ponder a-2
           mow    ?.(?=($rush -.ven) mow mow:(pass-took [- %mess +]:p.ven))
         ==
-      ?>  pol                         ::  XX eventstream  
+      ?>  pol                         ::  XX eventstream
       %^  give-json  200  ~
       %^  jobe  id+(jone num)  type+[%s -.ven]
       ?-  -.ven
@@ -1657,7 +1657,7 @@
     ++  pass-took
       |=  a/{p/dock ?($mess $lens) wire}
       %+  pass-note(hen `~)
-        [%of ire (gsig a)] 
+        [%of ire (gsig a)]
       [%g %deal [him -.p.a] +.p.a %pump ~]
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
@@ -1675,7 +1675,7 @@
       (give-even & a ven)
     ::
     ++  poll-rest
-      ?~  ude  done 
+      ?~  ude  done
       %*(. pass-rest(hen p.u.ude) hen hen)
     ::
     ++  poll-dead
@@ -1689,7 +1689,7 @@
       |=  {a/dock b/path}
       %-  jobe  :~
         ship+[%s (rsh 3 1 (scot %p p.a))]
-        appl+[%s q.a] 
+        appl+[%s q.a]
         path+(jape (spud b))
       ==
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
@@ -1795,7 +1795,7 @@
         ?($receive-auth-query-string $in)   res-in
       ==
     ::
-    ++  update  
+    ++  update
       |=  {dep/@uvH gag/(each cage tang)}
       :: ~&  got-update/dep
       =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
@@ -1965,7 +1965,7 @@
     =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
     ?+  p.lot  [~ ~]
       {$tas $fake}  ``[& [~ 8.443] %& /localhost]       :: XX from unix
-      {$tas $real}  
+      {$tas $real}
         ``~(our-host ye [`duct`~[/] [now eny our sky] ~] bol)
     ==
   ==
