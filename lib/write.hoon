@@ -77,8 +77,8 @@
   (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco txt))
 ::
 ++  poke-comment
-  |=  {pax/path him/ship txt/@t}  ^+  abet
-  =.  pax  [%web (welp pax /comments/(scot %da now))]
+  |=  {sup/spur him/ship txt/@t}  ^+  abet
+  =+  pax=(welp (flop sup) /comments/(scot %da now))
   =.  txt  
     %+  rap  3  :~
       '## `'  (scot %p him)  '`'

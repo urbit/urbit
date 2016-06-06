@@ -6504,46 +6504,31 @@ div.logo.inverse:before {
   content: "\25D0"; }
 
 @media (min-width: 768px) {
-  .menu,
   .ctrl {
     width: 180px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 360px;
     min-width: 180px;
-    width: auto; }
-  .menu.depth-1 {
-    margin-left: 180px; }
-  .menu.depth-2 {
-    margin-left: 360px; } }
+    width: auto; } }
 
 @media (min-width: 992px) {
-  .menu,
   .ctrl {
     width: 235px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 470px;
     min-width: 235px;
-    width: auto; }
-  .menu.depth-1 {
-    margin-left: 235px; }
-  .menu.depth-2 {
-    margin-left: 470px; } }
+    width: auto; } }
 
 @media (min-width: 1200px) {
-  .menu,
   .ctrl {
     width: 285px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 570px;
     min-width: 285px;
-    width: auto; }
-  .menu.depth-1 {
-    margin-left: 285px; }
-  .menu.depth-2 {
-    margin-left: 570px; } }
+    width: auto; } }
 
 #head .loading {
   display: none; }

@@ -875,6 +875,8 @@ module.exports = recl({
           _clas = clas({
             open: this.state.open === station,
             closed: !(this.state.open === station),
+            'col-md-4': true,
+            'col-md-offset-6': true,
             menu: true,
             'depth-2': true
           });
@@ -943,6 +945,8 @@ module.exports = recl({
     _clas = clas({
       open: this.props.open === true,
       closed: this.props.open !== true,
+      'col-md-4': true,
+      'col-md-offset-2': true,
       menu: true,
       'depth-1': true
     });

@@ -53,7 +53,8 @@
           ==  ==  ==                                    ::
 ++  ixor  @t                                            ::  oryx hash
 ++  whir  $@  $~                                        ::  wire subset
-          $%  {$at p/hole q/whir}                       ::  authenticated
+          $%  {$ac p/hole q/whir}                       ::  cookied
+              {$at p/hole q/whir}                       ::  authenticated
               {$ay p/knot:ship q/knot:@uvH $~}          ::  remote duct
               {$ha p/path:beak}                         ::  GET request
               {$he p/whir}                              ::  HEAD request
@@ -788,6 +789,7 @@
         $made
       ?<  ?=($tabl -.q.sih)
       =.  our  (need hov)                             ::  XX
+      =|  ses/(unit hole)
       |-  ^+  ..axon
       ?-    tee
           $@($~ {?($on $ay $ow) *})  ~|(e+ford+lost+tee !!)
@@ -838,10 +840,12 @@
           ~&  e+at-lost+[-.p.q.sih q.tee]
           $(tee q.tee)
         ?>  ?=(@ q.q.p.q.sih)
+        =.  ses  (some p.tee)
         =+  cyz=(~(got by wup) p.tee)
         =^  jon  ..ya  ~(stat-json ya p.tee cyz)
         $(tee q.tee, q.q.p.q.sih (add-json jon q.q.p.q.sih))
       ::
+          {$ac ^}  ?>((~(has by wup) p.tee) $(ses `p.tee, tee q.tee))
           {$ha *}
         %-  emule  |.  ^+  ..apex
         ?.  ?=($& -.q.sih)
@@ -852,11 +856,14 @@
           (give-thou 307 [location+(crip (apex:earn url))]~ ~)
         ?.  ?=($mime p.cay)
           =+  bek=(norm-beak -:(need (tome p.tee)))
-          (exec-live tee bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          =+  tee-ses=?~(ses tee [%ac u.ses tee])
+          (exec-live tee-ses bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
         ~|  q.q.cay
+        =+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
         =+  ((hard {mit/mite rez/octs}) q.q.cay)
         =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
-        (give-thou 200 ~[etag+dep content-type+(moon mit)] ~ rez)
+        =+  hit=[200 ~[etag+dep content-type+(moon mit)] ~ rez]
+        (give-thou (add-cookies cug hit))
       ==
     ==
   ::
@@ -1316,7 +1323,7 @@
       ?-    -.ham
           $js    [%& %js auth:js]
           $json  =^  jon  ..ya  stat-json.yac
-                 [%| (give-json 200 ~ jon)]
+                 [%| (give-json 200 cug.yac jon)]
           $xen   (show-login-page ~ ses.ham)
       ::
           $at
@@ -1331,7 +1338,7 @@
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
             $js
-          =^  jon  ..ya  stat-json.yac
+          =^  jon  ..ya  stat-json.yac  
           [%| (resolve cug.yac p.pez(p (add-json jon p.p.pez)))]
         ==
       ::
@@ -1431,7 +1438,7 @@
               cip
               ~
           ==
-          [anon ~]
+          [`@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses)))) ~]
       ::
           [(set-cookie cookie-prefix ses)]~
       ::
