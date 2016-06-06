@@ -260,7 +260,6 @@
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed+dep +>.$)  ::  XX  ~|  !!
-    ~&  awap+[dep u.dap]
     ?-  -.u.dap
       $done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
       $sent

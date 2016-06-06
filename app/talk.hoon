@@ -1138,13 +1138,11 @@
       ++  say                                           ::  publish
         |=  sep/(list speech)
         ^+  ..sh-work
-        ?~  sep    ..sh-work
+        =-  ..sh-work(coz ?~(tot coz :_(coz [%publish tot])))
+        |-  ^-  tot/(list thought)
+        ?~  sep  ~
         =^  sir  ..sh-work  sh-uniq
-        %_    $
-            sep  t.sep
-            coz  :_  coz
-          [%publish [[sir sh-whom [now.hid ~ i.sep]] ~]]
-        ==
+        [[sir sh-whom [now.hid ~ i.sep]] $(sep t.sep)]
       --
     ::
     ++  sh-done                                         ::  apply result
