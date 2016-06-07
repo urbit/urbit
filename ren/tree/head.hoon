@@ -31,7 +31,7 @@
 ::     ;link(type "text/css", rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.min.css");
     ;*  ?.  nopack.dbg
           :_  ~
-          ;link(type "text/css", rel "stylesheet", href "/===/web/tree/~.codemirror_fonts_bootstrap_main.css");
+          ;link(type "text/css", rel "stylesheet", href "/===/web/pack/css/codemirror-fonts-bootstrap-tree.css");
         ;=
           ;link(type "text/css", rel "stylesheet", href "/===/web/lib/css/fonts.css");
           ;link(type "text/css", rel "stylesheet", href "/===/web/lib/css/bootstrap.css");
@@ -51,8 +51,8 @@
     ;*  ?.  nopack.dbg
           :_  ~
           ;script(type "text/javascript", src "{?.(aut "" "/~~")}".
-                                            "/~/at/===/web/tree/~.main_urb.js");
-::                                             "/~/at/===/web/tree/~.main_hoon_urb.js");
+                                            "/~/at/===/web/pack/js/tree-urb.js");
+::                                             "/~/at/===/web/pack/js/tree-hoon-urb.js");
         ;=
 ::           ;script(type "text/javascript", src "/===/web/lib/js/hoon.js");
           ;script(type "text/javascript", src "/===/web/tree/main.js");
