@@ -46,6 +46,10 @@ div.input.valid-false {
   .grams .meta .time {
     padding-right: 2rem; }
 
+div.gram.same .meta {
+  max-height: none;
+  overflow: auto; }
+
 div.gram.first:first-of-type {
   margin-top: 0; }
 
@@ -159,9 +163,9 @@ input.action:focus:-ms-input-placeholder {
   color: transparent; }
 
 .menu {
-  max-height: 100%;
-  overflow: scroll; }
-  .menu .planet {
+  max-height: 100%; }
+  .menu .planet,
+  .menu .room {
     margin-bottom: .8rem; }
   .menu .name,
   .menu .planet {
@@ -193,6 +197,9 @@ input.action:focus:-ms-input-placeholder {
     font-size: .9rem; }
   .menu .planet {
     min-width: 66.667%; }
+
+.menu.depth-2 {
+  overflow: scroll; }
 
 .input {
   display: inline-block;

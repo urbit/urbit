@@ -472,7 +472,8 @@ module.exports = recl({
       comment: comment
     }, this.classesInSpeech(speech));
     style = {
-      height: this.props.height
+      height: this.props.height,
+      marginTop: this.props.marginTop
     };
     return div({
       className: className,
@@ -510,7 +511,7 @@ module.exports = recl({
 
 
 },{"../util.coffee":15,"./MemberComponent.coffee":4,"classnames":16}],6:[function(require,module,exports){
-var INFINITE, Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, util;
+var INFINITE, Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_FIRST_MARGIN_TOP, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, util;
 
 util = require('../util.coffee');
 
@@ -533,6 +534,8 @@ Message = require('./MessageComponent.coffee');
 INFINITE = true;
 
 MESSAGE_HEIGHT_FIRST = 54;
+
+MESSAGE_HEIGHT_FIRST_MARGIN_TOP = 36;
 
 MESSAGE_HEIGHT_SAME = 27;
 
@@ -713,12 +716,23 @@ module.exports = recl({
     messageHeights = [];
     _messages = messages.map((function(_this) {
       return function(message, index) {
-        var height, nowSaid, sameAs, speech;
+        var height, marginTop, nowSaid, sameAs, speech;
         nowSaid = [message.ship, _.keys(message.thought.audience)];
         sameAs = _.isEqual(lastSaid, nowSaid);
         lastSaid = nowSaid;
-        height = INFINITE ? sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST : void 0;
-        messageHeights.push(height);
+        if (INFINITE) {
+          if (sameAs) {
+            height = MESSAGE_HEIGHT_SAME;
+            marginTop = 0;
+          } else {
+            height = MESSAGE_HEIGHT_FIRST;
+            marginTop = MESSAGE_HEIGHT_FIRST_MARGIN_TOP;
+          }
+        } else {
+          height = null;
+          marginTop = null;
+        }
+        messageHeights.push(height + marginTop);
         speech = message.thought.statement.speech;
         return React.createElement(Message, _.extend({}, message, {
           station: station,
@@ -726,6 +740,7 @@ module.exports = recl({
           _handlePm: _this._handlePm,
           _handleAudi: _this._handleAudi,
           height: height,
+          marginTop: marginTop,
           index: message.key,
           key: "message-" + message.key,
           ship: (speech != null ? speech.app : void 0) ? "system" : message.ship,
@@ -2028,7 +2043,7 @@ module.exports = util = {
     return send();
   },
   scrollToBottom: function() {
-    return $(window).scrollTop($(".container").height());
+    return $(window).scrollTop($(".container").outerHeight(true));
   },
   getScroll: function() {
     return this.writingPosition = $('.container').outerHeight(true) + $('.container').offset().top - $(window).height();
