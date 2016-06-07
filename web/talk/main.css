@@ -46,6 +46,10 @@ div.input.valid-false {
   .grams .meta .time {
     padding-right: 2rem; }
 
+div.gram.same .meta {
+  max-height: none;
+  overflow: auto; }
+
 div.gram.first:first-of-type {
   margin-top: 0; }
 
