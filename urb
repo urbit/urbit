@@ -11,7 +11,7 @@ import requests
 import argparse
 import base64
 
-logging.basicConfig(level=logging.WARNING,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
                     stream=sys.stderr)
 
@@ -244,7 +244,7 @@ class sinkAction(argparse.Action):
         if self.which == 'output-file':
             return {self.which: new_value[::-1].replace('.','/',1)[::-1]}
         else:
-            return {new_value}
+            return {self.which: new_value}
 
 parser = argparse.ArgumentParser(description='headless urbit')
 parser.add_argument('-d', '--dojo', which='dojo',
