@@ -1,6 +1,23 @@
 window.urb = window.urb || {}
 window.urb.appl = window.urb.appl || null
 
+window.urb.init = function(onload){ // XX proper class?
+  onload = onload || function(){}
+  var $init = this.init
+  if($init.loaded) return onload()
+  if($init.loading) return $init.loading.push(onload)
+  $init.loading = [onload]
+  var s = document.createElement('script')
+  s.src = "/~/at/~/auth.js" // XX nop.js? auth.json?
+  s.onload = function(){
+    $init.loading.map(function(f){f()})
+    delete $init.loading
+    $init.loaded = true
+  }
+  document.body.appendChild(s)
+}
+window.urb.init.loaded = window.urb.oryx
+
 window.urb.req = function(method,url,params,json,cb) {
   var xhr = new XMLHttpRequest()
   method = method.toUpperCase()
