@@ -633,38 +633,20 @@ module.exports = recl({
     return $(window).on('focus', this._focus);
   },
   componentWillUpdate: function(props, state) {
-    var $window, i, j, key, lastSaid, len, len1, message, nowSaid, old, ref, ref1, results, sameAs, scrollTop;
-    $window = $(window);
-    scrollTop = $window.scrollTop();
-    old = {};
-    ref = this.state.messages;
-    for (i = 0, len = ref.length; i < len; i++) {
-      key = ref[i].key;
-      old[key] = true;
-    }
-    lastSaid = null;
-    ref1 = state.messages;
-    results = [];
-    for (j = 0, len1 = ref1.length; j < len1; j++) {
-      message = ref1[j];
-      nowSaid = [message.ship, message.thought.audience];
-      if (!old[message.key]) {
-        sameAs = _.isEqual(lastSaid, nowSaid);
-        scrollTop += sameAs ? MESSAGE_HEIGHT_SAME : MESSAGE_HEIGHT_FIRST;
-      }
-      lastSaid = nowSaid;
-      results.push(this.setOffset = scrollTop);
-    }
-    return results;
+    return this.scrollBottom = $(document).height() - ($(window).scrollTop() + window.innerHeight);
   },
   componentDidUpdate: function(_props, _state) {
-    var _messages, d, t;
-    if (this.setOffset && this.props.chrono !== "reverse") {
-      $(window).scrollTop(this.setOffset);
-      this.setOffset = null;
+    var _messages, _oldMessages, appendedToBottom, d, ref, ref1, ref2, setOffset, t;
+    _messages = this.sortedMessages(this.state.messages);
+    _oldMessages = this.sortedMessages(_state.messages);
+    appendedToBottom = (((ref = _.last(_messages)) != null ? ref.key : void 0) == null) || ((ref1 = _.last(_messages)) != null ? ref1.key : void 0) > ((ref2 = _.last(_oldMessages)) != null ? ref2.key : void 0);
+    setOffset = $(document).height() - window.innerHeight - this.scrollBottom;
+    if (this.props.chrono !== "reverse") {
+      if (!(this.scrollBottom > 0 && appendedToBottom)) {
+        $(window).scrollTop(setOffset);
+      }
     }
     if (this.focused === false && this.last !== this.lastSeen) {
-      _messages = this.sortedMessages(this.state.messages);
       d = _messages.length - _messages.indexOf(this.lastSeen) - 1;
       t = document.title;
       if (document.title.match(/\([0-9]*\)/)) {
