@@ -29,10 +29,3 @@ node_modules/
 # ??
 /inst
 cscope.*
-
-# Ignore crap from folks hacking on urbit-vagrant
-.made
-.installed
-fintud-macrep
-
-

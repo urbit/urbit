@@ -486,7 +486,6 @@ osxpackage:
 	mkdir -p inst/usr/local/lib/urb inst/usr/local/bin
 	cp $(BIN)/urbit inst/usr/local/bin
 	cp urb/urbit.pill inst/usr/local/lib/urb
-	#cp -R urb/zod inst/usr/local/lib/urb
 	pkgbuild --root inst --identifier org.urbit.urbit --version 0.2 urbit.pkg
 
 debbuild:
@@ -496,7 +495,6 @@ debinstall:
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/urb
 	install -m755 $(BIN)/urbit $(DESTDIR)/usr/bin
 	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
-	#cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean:
 	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES) $(TAGS)
