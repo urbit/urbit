@@ -2452,10 +2452,13 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  run                                               ::  apply gate to values
-    |*  {b/gate c/*}
-    |-
-    ?~  a  c
-    $(a r.a, c [(b n.a) $(a l.a)])
+    ~/  %run
+    |*  b/gate
+    =|  c/(set _?>(?=(^ a) (b n.a)))
+    |-  ?~  a  c
+    =.  c  (~(put in c) (b n.a))
+    =.  c  $(a l.a, c c)
+    $(a r.a, c c)
   ::
   +-  tap                                               ::  convert to list
     ~/  %tap
