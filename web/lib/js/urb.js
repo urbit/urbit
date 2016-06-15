@@ -28,6 +28,8 @@ window.urb.req = function(method,url,params,json,cb) {
   if(json)
     xhr.setRequestHeader("content-type", "text/json")
 
+  xhr.timeout = 60000
+
   if(!window.urb.oryx) throw "No CSRF token" // XX fetch auth.json
   _data = {oryx: window.urb.oryx}
   if(params.xyro) { _data.xyro = params.xyro; }
@@ -58,6 +60,12 @@ window.urb.req = function(method,url,params,json,cb) {
       finally {
        cb(err,res)
       }
+    }
+    xhr.ontimeout = function() {
+      cb({
+        status:408,
+        data:null
+      })
     }
     xhr.onerror = function() {
       cb({
@@ -165,8 +173,10 @@ window.urb.poll = function(params) {
   this.req("get",url,params,true,function(err,res) {
     $this.poll.dely = params.dely || $this.poll.dely
     if(res){
-      if(res.data.beat)
+      if(res.data.beat) {
+        $this.poll.dely = params.dely || 250
         return $this.poll(params)
+      }
       switch(res.data.type){
           case "news":
         return document.location.reload()  // XX check autoreload
