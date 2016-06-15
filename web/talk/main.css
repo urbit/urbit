@@ -64,10 +64,12 @@ div.gram.same:hover div.meta {
   position: absolute;
   background-color: #fff;
   margin-top: -2.5rem;
-  padding-top: 1rem; }
+  padding-top: 1rem;
+  white-space: nowrap; }
 
 .speech {
-  margin-left: 1.875rem; }
+  margin-left: 1.875rem;
+  white-space: nowrap; }
 
 .exp {
   font-family: 'scp';
