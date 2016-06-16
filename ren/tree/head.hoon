@@ -26,7 +26,7 @@
 ::::
   ::
 ^-  marl
-;=  ;title: Tree
+;=  ;title: Urbit - A personal server
     ;meta(name "viewport", content "width=device-width, initial-scale=1");
 ::     ;link(type "text/css", rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.min.css");
     ;*  ?.  nopack.dbg
