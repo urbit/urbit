@@ -5927,7 +5927,7 @@
   ++  rads                                              ::  random continuation
     |=  b/@
     =+  r=(rad b)
-    [r +>.$(a (shas %og-s r))]
+    [r +>.$(a (shas %og-s (mix a r)))]
   ::
   ++  raw                                               ::  random bits
     ~/  %raw
@@ -5946,7 +5946,7 @@
   ++  raws                                              ::  random bits
     |=  b/@                                             ::  continuation
     =+  r=(raw b)
-    [r +>.$(a (shas %og-s r))]
+    [r +>.$(a (shas %og-s (mix a r)))]
   --
 ++  shaz                                                ::  sha-512
   |=  ruz/@  ^-  @
