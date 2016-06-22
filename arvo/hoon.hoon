@@ -196,6 +196,7 @@
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
+    {$bunt p/twig}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
     {$hand p/span q/nock}                               ::  premade result
@@ -236,7 +237,6 @@
     {$conl p/(list twig)}                                ::  :~ [p ~]
     {$conp p/(list twig)}                                ::  :* p as a tuple
   ::                                            ::::::  invocations
-    {$bunt p/twig}                                      ::  %$
     {$keep p/wing q/(list (pair wing twig))}            ::  %_
     {$lace p/twig q/twig}                               ::  %.
     {$call p/twig q/(list twig)}                        ::  %-
@@ -9837,6 +9837,7 @@
                   (word %gate expb)
                   (word %tray expa)
                 ::
+                  (word %bunt expa)
                   (word %claw expb)
                   (word %shoe expa)
                   (word %bank exps)
