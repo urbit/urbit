@@ -98,31 +98,49 @@ div.logo.inverse:before {
   content: "\25D0"; }
 
 @media (min-width: 768px) {
+  .menu,
   .ctrl {
-    width: 180px; }
+    width: 180px;
+    max-width: 180px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 360px;
     min-width: 180px;
-    width: auto; } }
+    width: auto; }
+  .menu.depth-1 {
+    margin-left: 180px; }
+  .menu.depth-2 {
+    margin-left: 360px; } }
 
 @media (min-width: 992px) {
+  .menu,
   .ctrl {
-    width: 235px; }
+    width: 235px;
+    max-width: 235px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 470px;
     min-width: 235px;
-    width: auto; } }
+    width: auto; }
+  .menu.depth-1 {
+    margin-left: 235px; }
+  .menu.depth-2 {
+    margin-left: 470px; } }
 
 @media (min-width: 1200px) {
+  .menu,
   .ctrl {
-    width: 285px; }
+    width: 285px;
+    max-width: 285px; }
   .ctrl.open,
   .ctrl:hover {
     max-width: 570px;
     min-width: 285px;
-    width: auto; } }
+    width: auto; }
+  .menu.depth-1 {
+    margin-left: 285px; }
+  .menu.depth-2 {
+    margin-left: 570px; } }
 
 #head .loading {
   display: none; }
@@ -203,9 +221,11 @@ div.logo.inverse:before {
       border: 0;
       text-transform: none; }
 
+.ctrl.navbar {
+  max-width: none; }
+
 .ctrl.navbar.open,
 .ctrl.navbar:hover {
-  max-width: none;
   min-width: none; }
 
 @media (max-width: 991px) {
@@ -631,6 +651,11 @@ ol > li:before {
   background-color: transparent;
   color: #000;
   padding: 0; }
+
+.body[data-path*='/docs'] .head,
+.body[data-path^='/work'] .head {
+  margin-bottom: 4rem;
+  padding-left: 0; }
 
 .body[data-path*='/docs'] .book h2,
 .body[data-path^='/work'] .book h2 {
@@ -1312,7 +1337,7 @@ ol > li:before {
   color: #0500F0; }
 
 .sections h1:first-of-type {
-  padding-bottom: 0; }
+  padding-bottom: 1rem; }
 
 .sections li h1 {
   font-size: 1.2rem; }
@@ -1334,9 +1359,6 @@ ol > li:before {
   vertical-align: top;
   margin-bottom: 3rem;
   float: none; }
-
-.sections .kids > div p {
-  font-weight: 500; }
 
 .sections hr {
   display: none; }
