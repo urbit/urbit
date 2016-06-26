@@ -189,7 +189,7 @@
         0w0                           ::   44, ~wen, Susan Yarvin
         0w0                           ::   45, ~byn, Susan Yarvin 
         0w0                           ::   46, ~hex, James Torre
-        0w0                           ::   47, ~feb, Raymond Pasco
+        0w0                           ::   47, ~feb, urbit.org
         0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl
         0w0                           ::   49, ~dul, Jennifer Kollmer
         0w0                           ::   50, ~het, Jennifer Kollmer
@@ -279,7 +279,7 @@
         0w0                           ::  134, ~lyx, urbit.org
         0w0                           ::  135, ~pun, urbit.org
         0w0                           ::  136, ~res, urbit.org
-        0w0                           ::  137, ~red, urbit.org
+        0w0                           ::  137, ~red, Alex Kravets
         0w3J.15iJA.0pbNk.mZXyh.A~uKb  ::  138, ~fun, Aaron Beckerman
         0w0                           ::  139, ~rev, urbit.org
         0w3m.Cqumo.ZC7-e.794A4.Bqhh8  ::  140, ~ref, Matt Brubeck
@@ -392,7 +392,7 @@
         0w28.bRVMq.Oi3tM.zOCNV.j00Yq  ::  247, ~fyr, Anton Dyudin
         0w0                           ::  248, ~mur, Tlon
         0w0                           ::  249, ~tel, Tlon
-        0w0                           ::  250, ~rep, Tlon
+        0w0                           ::  250, ~rep, Raymond Pasco
         0w0                           ::  251, ~teg, Tlon
         0w0                           ::  252, ~pec, Tlon
         0w0                           ::  253, ~nel, Tlon
