@@ -511,7 +511,7 @@ module.exports = recl({
 
 
 },{"../util.coffee":15,"./MemberComponent.coffee":4,"classnames":16}],6:[function(require,module,exports){
-var INFINITE, Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_FIRST_MARGIN_TOP, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, util;
+var FONT_SIZE, INFINITE, Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_FIRST_MARGIN_TOP, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, util;
 
 util = require('../util.coffee');
 
@@ -533,11 +533,13 @@ Message = require('./MessageComponent.coffee');
 
 INFINITE = true;
 
-MESSAGE_HEIGHT_FIRST = 54;
-
-MESSAGE_HEIGHT_FIRST_MARGIN_TOP = 36;
-
 MESSAGE_HEIGHT_SAME = 27;
+
+MESSAGE_HEIGHT_FIRST = 56 - MESSAGE_HEIGHT_SAME;
+
+MESSAGE_HEIGHT_FIRST_MARGIN_TOP = 16;
+
+FONT_SIZE = parseInt($('body').css('font-size').match(/(\d*)px/)[1]);
 
 module.exports = recl({
   displayName: "Messages",
@@ -630,7 +632,12 @@ module.exports = recl({
     }
     this.focused = true;
     $(window).on('blur', this._blur);
-    return $(window).on('focus', this._focus);
+    $(window).on('focus', this._focus);
+    return $(window).on('resize', _.debounce((function(_this) {
+      return function() {
+        return _this.forceUpdate();
+      };
+    })(this), 250));
   },
   componentWillUpdate: function(props, state) {
     return this.scrollBottom = $(document).height() - ($(window).scrollTop() + window.innerHeight);
@@ -678,7 +685,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, body, lastIndex, lastSaid, messageHeights, messages, ref, station;
+    var _messages, body, canvas, context, lastIndex, lastSaid, messageHeights, messages, ref, speechLength, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
@@ -696,18 +703,46 @@ module.exports = recl({
     lastIndex = this.lastSeen ? messages.indexOf(this.lastSeen) + 1 : null;
     lastSaid = null;
     messageHeights = [];
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+    speechLength = $('.grams').width() - (FONT_SIZE * 1.875);
     _messages = messages.map((function(_this) {
       return function(message, index) {
-        var height, marginTop, nowSaid, sameAs, speech;
+        var height, lineNums, marginTop, nowSaid, sameAs, speech, speechArr;
         nowSaid = [message.ship, _.keys(message.thought.audience)];
         sameAs = _.isEqual(lastSaid, nowSaid);
         lastSaid = nowSaid;
+        lineNums = 1;
+        speechArr = [];
+        context.font = FONT_SIZE + 'px bau';
+        if (message.thought.statement.speech.lin != null) {
+          speechArr = message.thought.statement.speech.lin.txt.split(/(\s|-)/);
+        } else if (message.thought.statement.speech.url != null) {
+          speechArr = message.thought.statement.speech.url.txt.split(/(\s|-)/);
+        } else if (message.thought.statement.speech.fat != null) {
+          context.font = (FONT_SIZE * 0.9) + 'px scp';
+          speechArr = message.thought.statement.speech.fat.taf.exp.txt.split(/(\s|-)/);
+        }
+        _.reduce(_.tail(speechArr), function(base, word) {
+          if (context.measureText(base + word).width > speechLength) {
+            lineNums += 1;
+            if (word === ' ') {
+              return '';
+            } else if (word === '-') {
+              return _.head(base.split(/\s|-/).reverse()) + word;
+            } else {
+              return word;
+            }
+          } else {
+            return base + word;
+          }
+        }, _.head(speechArr));
         if (INFINITE) {
           if (sameAs) {
-            height = MESSAGE_HEIGHT_SAME;
+            height = MESSAGE_HEIGHT_SAME * lineNums;
             marginTop = 0;
           } else {
-            height = MESSAGE_HEIGHT_FIRST;
+            height = MESSAGE_HEIGHT_FIRST + (MESSAGE_HEIGHT_SAME * lineNums);
             marginTop = MESSAGE_HEIGHT_FIRST_MARGIN_TOP;
           }
         } else {

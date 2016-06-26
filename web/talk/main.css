@@ -68,14 +68,12 @@ div.gram.same:hover div.meta {
   white-space: nowrap; }
 
 .speech {
-  margin-left: 1.875rem;
-  white-space: nowrap; }
+  margin-left: 1.875rem; }
 
 .exp {
   font-family: 'scp';
   font-size: .9rem; }
   .exp .speech {
-    white-space: nowrap;
     max-width: 100%;
     overflow-x: scroll; }
   .exp .speech > span {
