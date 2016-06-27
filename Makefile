@@ -113,9 +113,6 @@ CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-I$(INCLUDE) \
 	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \
-	-Ioutside/bpt \
-	-Ioutside/re2 \
-	-Ioutside/cre2/src/src \
 	-Ioutside/ed25519/src \
 	-Ioutside/commonmark/src \
 	-Ioutside/commonmark/build/src \
@@ -255,8 +252,6 @@ J_E_OFILES=\
        jets/e/rd.o \
        jets/e/rq.o \
        jets/e/rs.o \
-       jets/e/repg.o \
-       jets/e/rexp.o \
        jets/e/rub.o \
        jets/e/scr.o \
        jets/e/shax.o \
@@ -289,10 +284,10 @@ J_F_OFILES=\
 J_F_OFILES_UT=\
        jets/f/ut.o \
        jets/f/ut_burn.o \
-			 jets/f/ut_buss.o \
+       jets/f/ut_buss.o \
        jets/f/ut_conk.o \
        jets/f/ut_crop.o \
-			 jets/f/ut_find.o \
+       jets/f/ut_find.o \
        jets/f/ut_fire.o \
        jets/f/ut_fish.o \
        jets/f/ut_fuse.o \
@@ -327,9 +322,6 @@ J_OFILES=\
 
 BASE_OFILES=$(N_OFILES) $(J_OFILES)
 
-CRE2_OFILES=\
-       outside/cre2/src/src/cre2.o
-
 OUT_OFILES=\
        outside/jhttp/http_parser.o
 
@@ -352,7 +344,6 @@ MAIN_FILE =\
        vere/main.o
 
 VERE_OFILES=\
-       $(CRE2_OFILES) \
        $(OUT_OFILES) \
        $(BASE_OFILES) \
        $(MAIN_FILE) \
@@ -380,8 +371,6 @@ LIBUV_MAKEFILE=outside/$(LIBUV_VER)/Makefile
 LIBUV_MAKEFILE2=outside/$(LIBUV_VER)/config.log
 
 LIBUV=outside/$(LIBUV_VER)/.libs/libuv.a
-
-LIBRE2=outside/re2/obj/libre2.a
 
 LIBED25519=outside/ed25519/ed25519.a
 
@@ -431,9 +420,6 @@ $(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
 	$(MAKE) -C outside/$(LIBUV_VER) all-am -j1
 
-$(LIBRE2):
-	$(MAKE) -C outside/re2 obj/libre2.a
-
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
 
@@ -449,20 +435,17 @@ $(LIBSCRYPT):
 $(LIBSOFTFLOAT):
 	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC
 
-$(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
 $(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 else
-$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
 tags: ctags etags gtags cscope
@@ -486,7 +469,6 @@ osxpackage:
 	mkdir -p inst/usr/local/lib/urb inst/usr/local/bin
 	cp $(BIN)/urbit inst/usr/local/bin
 	cp urb/urbit.pill inst/usr/local/lib/urb
-	cp -R urb/zod inst/usr/local/lib/urb
 	pkgbuild --root inst --identifier org.urbit.urbit --version 0.2 urbit.pkg
 
 debbuild:
@@ -496,7 +478,6 @@ debinstall:
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/urb
 	install -m755 $(BIN)/urbit $(DESTDIR)/usr/bin
 	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
-	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean:
 	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES) $(TAGS)
@@ -506,7 +487,6 @@ clean:
 # Make will attempt to build urbit while it is also cleaning urbit..
 distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/$(LIBUV_VER) distclean
-	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
 	$(MAKE) -C outside/scrypt clean

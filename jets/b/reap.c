@@ -18,7 +18,7 @@
       c3_w i_w = a;
 
       while ( i_w ) {
-        acc = u3nc(b, acc);
+        acc = u3nc(u3k(b), acc);
         i_w--;
       }
 
