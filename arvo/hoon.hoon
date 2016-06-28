@@ -670,6 +670,37 @@
   ?~  a  b
   $(a t.a, b +(b))
 ::
+++  find                                                ::  first index
+  ~/  %find
+  |=  {nedl/(list) hstk/(list)}
+  =|  i/@ud
+  |-   ^-  (unit @ud)
+  =+  [n=nedl h=hstk]
+  |-
+  ?:  |(?=($~ n) ?=($~ h))
+     ~
+  ?:  =(i.n i.h)
+    ?~  t.n
+      `i
+    $(n t.n, h t.h)
+  ^$(i +(i), hstk +.hstk)
+::
+++  fand                                                ::  all indices
+  ~/  %fand
+  |=  {nedl/(list) hstk/(list)}
+  =|  i/@ud
+  =|  fnd/(list @ud)
+  |-  ^+  fnd
+  =+  [n=nedl h=hstk]
+  |-
+  ?:  |(?=($~ n) ?=($~ h))
+    (flop fnd)
+  ?:  =(i.n i.h)
+    ?~  t.n
+      ^$(i +(i), hstk +.hstk, fnd [i fnd])
+    $(n t.n, h t.h)
+  ^$(i +(i), hstk +.hstk)
+::
 ++  levy
   ~/  %levy                                             ::  all of
   |*  {a/(list) b/$-(* ?)}
