@@ -183,7 +183,7 @@ eager to have outside contributions on. Check here first!
 ## Staying in touch
 
 The urbit developers communicate on urbit itself. Joining the
-`~doznec/urbit-meta` channel on `talk` is highly recommended.
+`~dozbud/urbit-meta` channel on `talk` is highly recommended.
 Subscribing to `urbit-dev` on Google Groups is also recommended, since
 this is where continuity breach notifications are sent.
 
