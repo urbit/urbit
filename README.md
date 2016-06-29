@@ -1,32 +1,80 @@
-Urbit
-=====
+# Urbit
 
-Urbit is a clean-slate system software stack defined as a
-deterministic computer. An encrypted P2P network, `%ames`, runs on a
-functional operating system, Arvo, written in a strict, typed
-functional language, Hoon, which compiles itself to a combinator
-interpreter, Nock, whose spec gzips to 340 bytes.
+Urbit is a clean-slate system software stack defined as a deterministic
+computer. An encrypted P2P network, `%ames`, runs on a functional
+operating system, Arvo, written in a strict, typed functional language,
+Hoon, which compiles itself to a combinator interpreter, Nock, whose
+spec gzips to 340 bytes.
 
-What is this for? Most directly, Urbit is designed as a personal
-cloud server for self-hosted web apps. It also uses HTTP APIs to
-manage data stuck in traditional web applications.
+What is this for? Most directly, Urbit is designed as a personal cloud
+server for self-hosted web apps. It also uses HTTP APIs to manage data
+stuck in traditional web applications.
 
 More broadly, Urbit's network tackles identity and security problems
-which the Internet can't easily address. Programming for a
-deterministic single-level store is also a different experience from
-Unix programming, regardless of language.
+which the Internet can't easily address. Programming for a deterministic
+single-level store is also a different experience from Unix programming,
+regardless of language.
 
-Install
-=======
+## Getting involved
 
-Urbit is designed to run on any Unix box with an internet connection.  Debian
-(jessie), OS X, FreeBSD and Fedora all work well.  
+If you're interested in following Urbit, you can:
 
-Urbit is alpha software.  It’s not yet completely stable, its crypto hasn’t
-been audited, and there are plenty of rough edges.  Urbit is lots of fun to play
-with, but not quite ready for your important or sensitive data.
+-   Read our documentation at [urbit.org](http://urbit.org/docs)
+-   Subscribe to our newsletter at [urbit.org](http://urbit.org).
+-   Check out the
+    [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev)
+    mailing list.
+-   Follow [@urbit \_](https://twitter.com/urbit\_) on Twitter.
+-   Email us: [`urbit@urbit.org`](mailto:urbit@urbit.org). We're happy
+    to answer questions and chat.
 
-## Build from source
+## Code of conduct
+
+Everyone involved in the Urbit project needs to understand and respect
+our code of conduct, which is: "don't be rude."
+
+# Install
+
+Urbit can be installed on most Unix systems. There is no Windows port.
+Windows is a wonderful OS, we just haven't gotten to it yet. Use a VM.
+
+## Configure swap if needed
+
+Urbit wants to map 2GB of memory when it boots up. We won't necessarily
+use all this memory, we just want to see it. On a normal modern PC or
+Mac, this is not an issue. On some small cloud virtual machines (Amazon
+or Digital Ocean), the default memory configuration is smaller than
+this, and you need to manually configure a swapfile.
+
+To add swap to a DO droplet, [read
+this](https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04).
+To add swap on an Amazon instance, [read
+this](http://stackoverflow.com/questions/17173972/how-do-you-add-swap-to-an-ec2-instance)
+
+Don't spend a lot of time tweaking these settings; the simplest thing is
+fine.
+
+## Install as a package
+
+<!-- 
+waiting on makefile changes.
+### OS X - Homebrew
+
+    brew install --HEAD homebrew/head-only/urbit 
+-->
+
+### Ubuntu or Debian
+
+Third-party packages are available, at:
+
+    https://github.com/yebyen/urbit-deb
+
+Urbit is only supported on Jessie onward (but outbound HTTPS requests
+only work on Stretch; I wish we knew why; help us!)
+
+## Hand-build from source
+
+First, install all external dependencies. Then, make.
 
 ### Dependencies
 
@@ -40,158 +88,150 @@ Urbit depends on:
     autoconf
     ragel
     cmake
+    re2c
     libtool
     libssl-dev (Linux only)
     ncurses (Linux only)
 
-Which can usually be installed with the following one-liners:
+#### Ubuntu or Debian
 
-    # Mac OS X [Homebrew]
+    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
+
+#### Fedora
+
+    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c
+
+#### AWS
+
+    sudo yum --enablerepo epel install gcc gcc-c++ git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
+
+#### OS X - Homebrew
+
     brew install git gmp libsigsegv openssl libtool autoconf automake cmake
 
-    # Mac OS X [Macports]
+#### OS X - Macports
+
     sudo port install git gmp libsigsegv openssl autoconf automake cmake
 
-    # Ubuntu or Debian
-    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake
+Although `automake`/`autoconf`/`libtool` are generally installed by
+default, some have reported needing to uninstall and reinstall those
+three packages, at least with Homebrew. Your mileage may vary.
 
-    # Fedora
-    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake
+#### FreeBSD
 
-    # FreeBSD
-    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake libtool
+    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
 
-    # Arch
-    pacman -S gcc gmp libsigsegv openssl automake autoconf ragel cmake libtool ncurses
+#### Archlinux
 
-    # AWS
-    sudo yum —enablerepo epel install gcc gcc-c++ git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake
+    pacman -S gcc gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool ncurses
 
-### Setting up swap
+### Download and make
 
-Urbit wants to map 2GB of memory when it boots up.  We won’t
-necessarily use all this memory, we just want to see it.  On a
-normal modern PC or Mac, this is not an issue.  On some small
-cloud virtual machines (Amazon or Digital Ocean), the default
-memory configuration is smaller than this, and you need to
-manually configure a swapfile.
+Clone the repo:
 
-Digital Ocean has a post on adding swap [here](https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04).  For Amazon there’s a StackOverflow thread [here](http://stackoverflow.com/questions/17173972/how-do-you-add-swap-to-an-ec2-instance).
+    git clone https://github.com/urbit/urbit.git
 
-Don’t spend a lot of time tweaking these settings; the simplest
-thing is fine.
+`cd` to the directory you just created:
 
-### Clone and make
-
-Once your dependencies are installed the rest is easy:
-
-    git clone https://github.com/urbit/urbit
     cd urbit
+
+Run `make`:
+
     make
-    curl -o urbit.pill https://bootstrap.urbit.org/latest.pill
 
-After running `make`, your Urbit executable lives at `bin/urbit`.  The `.pill` file is a compiled binary of Arvo that Urbit uses to bootstrap itself.
+(On FreeBSD, use `gmake` instead.)
 
-# Getting started
+The executable is `bin/urbit`.
 
-On disk your Urbit is an append-only log and a checkpoint.  Or, in simpler terms, a directory where we keep all of your Urbit’s state.  We call this a ‘pier’.
+Fetch the latest bootstrapping pill:
 
-## Initialize
+    curl -o urbit.pill http://bootstrap.urbit.org/latest.pill
 
-When you first start an Urbit we create this pier directory and write to it.
+You can use your preferred way to fetch things from the web here. Urbit
+looks for a pill named `urbit.pill` in the current directory by default,
+so if you have anything different, you'll need to tell Urbit where it is
+(on first launch only) with the `-B` command-line option.
 
-To start with a planet (`~fintud-macrep`) and ticket (`~fortyv-tombyt-tabsen-sonres`):
+# Start
 
-    bin/urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
+An urbit is a persistent server on the `%ames` P2P network. You'll
+create one of these servers now.
 
-This will create a directory `fintud-macrep/` and begin the initialization process for that planet.  Be patient, it can take a few minutes.  
+If you have an invitation, it's a planet like `~fintud-macrep` and a
+ticket like `~fortyv-tombyt-tabsen-sonres`. Run
 
-Without a planet anyone can create a comet:
+    urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
 
-    bin/urbit -c comet
+(You can leave the `~` on, but it annoys some Unix shells.)
 
-This will create a directory `comet/` and start up a random 128-bit comet.  You can specify any name you like.
+If you don't have an invitation, pick a nickname for your comet, like
+`mycomet`. Urbit will randomly generate a 128-bit plot:
 
-## Orientation
+    urbit -c mycomet
 
-When your Urbit is finished booting you should see a `dojo>` prompt.  Welcome!  
+Either way, creating your urbit will take some time. Some of this time
+involves creating keys; some of it involves downloading code over Urbit
+itself. Go get a cup of coffee. Or a beer.
 
-By default your Urbit is quite bare bones.  Let's take a very short stroll through what's running by default:
+Wait until you see a prompt, something like
 
-### Shell — `:dojo`
+      ~fintud-macrep:dojo>
 
-The command prompt in front of you is a simple shell and Hoon REPL.  Let's make sure it works:
+Your urbit is launched! Ladies and gentlemen, we are floating in space.
 
-    ~fitund-macrep:dojo> (add 2 2)
+In either case you'll notice that we created a directory in unix called
+either `mycomet` or `fintud-macrep`. All of your state (a log and
+checkpoint) lives in that directory. You can move it around, but don't
+delete it!
 
-Should produce:
+### Restarting
 
-    > (add 2 2)
-    4
+If you want to shut your Urbit down you can `ctrl-d` from the `dojo>`
+prompt. To use Urbit normally after creating your planet or comet
+there's no need for the `-w -t` or `-c` options.
 
-Good.
+Instead:
 
-### Messaging — `:talk`
+    urbit fintud-macrep
 
-Use `^X` to change your prompt.  Let's join the main Urbit chat channel:
+or
 
-    ~fitund-macrep:talk() ;join ~doznec/urbit-meta
+    urbit mycomet
 
-This may take a bit as `:talk` is stateful so your Urbit will download some backlog.  `/urbit-meta` is the place to ask questions, get help and talk about anything Urbit related.
+### Continuity breaches / network reboots
 
-### Web — `:tree`
+Urbit is still young, and we reboot the network from time to time. Urbit
+can upgrade itself over the air, but at this stage it's easier to bring
+in breaking api changes this way. Since our crypto is stateful we call
+this a 'continuity breach'.
 
-Urbit is also accessible through the web.  Try opening:
+If you have files in your Urbit you'd like to backup first make a copy
+of your pier. Then you'll need to shut down your urbit (with `^d`) and:
 
-    http://localhost:8080/
+    git pull origin master
+    make clean; make
+    curl -o urbit.pill http://bootstrap.urbit.org/latest.pill
 
-in your favorite browser.  You'll be prompted to use `+code`.  This page was generated by `:tree`, the basic Urbit web interface.  You can also access your Urbit through `http://fintud-macrep.urbit.org` (where `fintud-macrep` is your planet name).  
+Then start over at the top of this section.
 
-### Filesystem — `%clay`
+# Talk
 
-`%clay`, the Urbit filesystem, isn't mounted to unix by default.  Switch to the `:dojo` prompt and run:
+We use Urbit to talk to each other and coordinate about building the
+system. To join the main Urbit talk station use `^x` to switch to the
+`talk()` prompt, then run:
 
-    ~fitund-macrep:dojo> |mount %
+    ;join ~dozbud/urbit-meta
 
-This should produce:
+# Learn more
 
-    > |mount %
-    >=
+Urbit's own official planet `~winsen-pagdel` hosts the public docs
+[here](http://urbit.org/docs). The docs also live in their own repo,
+[`urbit/docs`](http://github.com/urbit/docs).
 
-which indicates the command was processed.
+If this is your first time using Urbit, we'd recommend starting
+[here](http://urbit.org/docs/user/basic#-basic-operation).
 
-`|mount %` will cause a `home/` directory to appear inside your pier folder.  Changes to these files are automatically synced into your Urbit.
-
-Learn more
-==========
-
-If this is your first time using Urbit, and you've followed the instructions above, we'd recommend continuing the sequence [here](http://urbit.org/docs/using/admin/).
-
-### Docs
-[urbit.org/docs](http://urbit.org/docs/) is the public documentation site.  
-
-The source is also in its own repo: [urbit/docs](http://github.com/urbit/docs).
-
-### About
-
-[urbit.org/posts](http://urbit.org/docs/) contains some essays on the theory and future of urbit.
-
-### Keep in touch
-
-- Check out the [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev) mailing list for long-form discussion.
-- Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
-- Email [urbit@urbit.org](mailto:urbit@urbit.org).  We're happy to answer questions and chat.
-
-
-Code of conduct
-===============
-
-Everyone involved in the Urbit project needs to understand and
-respect our code of conduct, which is: "don't be rude."
-
-
-Contributing
-============
+# Contributing
 
 The first step in contributing to urbit is to come and join us on
 `:talk`.
