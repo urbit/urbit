@@ -78,7 +78,7 @@ First, install all external dependencies. Then, make.
 
 ### Dependencies
 
-urbit depends on:
+Urbit depends on:
 
     gcc (or clang)
     gmp
@@ -186,7 +186,7 @@ delete it!
 
 ### Restarting
 
-If you want to shut your Urbit down you can `^d` from the `dojo>`
+If you want to shut your Urbit down you can `ctrl-d` from the `dojo>`
 prompt. To use Urbit normally after creating your planet or comet
 there's no need for the `-w -t` or `-c` options.
 
