@@ -1466,6 +1466,8 @@
     ++  foreign-hat
       |=  {him/ship hat/hart}  ^+  ..ya
       ~|  way
+      ?.  (~(has by way) him)  :: XX crashes should be handled by ames
+        ~&(strange-auth+[way him hat] ..ya)
       =^  pul  hen  (~(got by way) him)
       =:  way       (~(del by way) him)
           dop       (~(put by dop) r.hat him)
