@@ -1287,7 +1287,7 @@
     |=  pok/pork  ^-  tape
     ?~  q.pok  ~
     |-
-    =+  seg=(trip i.q.pok)
+    =+  seg=(urle (trip i.q.pok))
     ?~  t.q.pok
       ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
     (welp seg '/' $(q.pok t.q.pok))

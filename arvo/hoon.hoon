@@ -196,6 +196,7 @@
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
+    {$bunt p/twig}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
     {$hand p/span q/nock}                               ::  premade result
@@ -236,7 +237,6 @@
     {$conl p/(list twig)}                                ::  :~ [p ~]
     {$conp p/(list twig)}                                ::  :* p as a tuple
   ::                                            ::::::  invocations
-    {$bunt p/twig}                                      ::  %$
     {$keep p/wing q/(list (pair wing twig))}            ::  %_
     {$lace p/twig q/twig}                               ::  %.
     {$call p/twig q/(list twig)}                        ::  %-
@@ -777,6 +777,24 @@
     $(a (skim t.a |=(c/_i.a (b c i.a))))
   ^+  t.a
   [i.a $(a (skim t.a |=(c/_i.a !(b c i.a))))]
+::
+++  spin
+  |*  {a/(list) b/_|=({* *} [** +<+]) c/*}
+  ::  ?<  ?=($-([_?<(?=($~ a) i.a) _c] [* _c]) b)
+  |-
+  ?~  a
+    ~
+  =+  v=(b i.a c)
+  [i=-.v t=$(a t.a, c +.v)]
+::
+++  spun
+  |*  {a/(list) b/_|=({* *} [** +<+])}
+  =|  c/_+<+.b
+  |-
+  ?~  a
+    ~
+  =+  v=(b i.a c)
+  [i=-.v t=$(a t.a, c +.v)]
 ::
 ++  swag                                                ::  infix
   |*  {{a/@ b/@} c/(list)}
@@ -2452,10 +2470,13 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  run                                               ::  apply gate to values
-    |*  {b/gate c/*}
-    |-
-    ?~  a  c
-    $(a r.a, c [(b n.a) $(a l.a)])
+    ~/  %run
+    |*  b/gate
+    =|  c/(set _?>(?=(^ a) (b n.a)))
+    |-  ?~  a  c
+    =.  c  (~(put in c) (b n.a))
+    =.  c  $(a l.a, c c)
+    $(a r.a, c c)
   ::
   +-  tap                                               ::  convert to list
     ~/  %tap
@@ -5927,7 +5948,7 @@
   ++  rads                                              ::  random continuation
     |=  b/@
     =+  r=(rad b)
-    [r +>.$(a (shas %og-s r))]
+    [r +>.$(a (shas %og-s (mix a r)))]
   ::
   ++  raw                                               ::  random bits
     ~/  %raw
@@ -5946,7 +5967,7 @@
   ++  raws                                              ::  random bits
     |=  b/@                                             ::  continuation
     =+  r=(raw b)
-    [r +>.$(a (shas %og-s r))]
+    [r +>.$(a (shas %og-s (mix a r)))]
   --
 ++  shaz                                                ::  sha-512
   |=  ruz/@  ^-  @
@@ -9837,6 +9858,7 @@
                   (word %gate expb)
                   (word %tray expa)
                 ::
+                  (word %bunt expa)
                   (word %claw expb)
                   (word %shoe expa)
                   (word %bank exps)

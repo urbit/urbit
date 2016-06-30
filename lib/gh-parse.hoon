@@ -101,6 +101,9 @@
   ==
 ++  issue
   ^-  $-(json (unit issue:gh))
+  |=  jon/json
+  =-  (bind - |*(issue/* `issue:gh`[jon issue]))
+  %.  jon
   =+  jo
   %-  ot  :~
       'url'^so
@@ -145,4 +148,31 @@
       'body'^so
   ==
 ++  id  no:jo
+++  print-issue
+  |=  issue:gh
+  ^-  wain
+  =+  c=(cury cat 3)
+  :*  :(c 'title: ' title ' (#' (rsh 3 2 (scot %ui number)) ')')
+      (c 'state: ' state)
+      (c 'creator: ' login.user)
+      (c 'created-at: ' created-at)
+      (c 'assignee: ' ?~(assignee 'none' login.u.assignee))
+    ::
+      %+  c  'labels: '
+      ?~  labels  ''
+      |-  ^-  @t
+      ?~  t.labels  name.i.labels
+      :(c name.i.t.labels ', ' $(t.labels t.t.labels))
+    ::
+      (c 'comments: ' (rsh 3 2 (scot %ui comments)))
+      (c 'url: ' url)
+      ''
+      %+  turn  (lore body)  ::  strip carriage returns
+      |=  l/@t
+      ?:  =('' l)
+        l
+      ?.  =('\0d' (rsh 3 (dec (met 3 l)) l))
+        l
+      (end 3 (dec (met 3 l)) l)
+  ==
 --

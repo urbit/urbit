@@ -6,7 +6,7 @@
 !:
 ::::
   ::
-|_  all/(list (pair time manx))
+|_  all/(list (pair time {ship marl}))
 ::
 ++  grow                                                ::  convert to
   |%
@@ -14,9 +14,9 @@
     :-  %a 
     %+  turn
       (sort all |=({a/* b/*} (lor b a)))
-    |=  {a/time b/manx}  ^-  ^json
-    =.  a.g.b  [id+(time-to-id a) a.g.b]
-    (jobe time+(jode a) body+(react-to-json:react b) ~)
+    |=  {a/time b/ship c/marl}  ^-  ^json
+    =+  bod=[[%div id+(time-to-id a) ~] c]
+    (jobe time+(jode a) user+(jape +:<b>) body+(react-to-json:react bod) ~)
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  (list {time manx})                  ::  clam from %noun

@@ -72,7 +72,7 @@
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
-          {$write-comment path ship cord}               ::
+          {$write-comment spur ship cord}               ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -834,37 +834,42 @@
     ::
     ++  sh-sane                                         ::  sanitize input
       |=  {inv/sole-edit buf/(list @c)}
-      ^-  (list sole-edit)
+      ^-  {lit/(list sole-edit) err/(unit @u)}
       =+  res=(rose (tufa buf) sh-scad)
-      ?:  ?=($| -.res)  [inv ~]
-      =+  wok=`(unit work)`p.res
+      ?:  ?=($| -.res)  [[inv]~ `p.res]
+      :_  ~
+      ?~  p.res  ~
+      =+  wok=u.p.res
       |-  ^-  (list sole-edit)
-      ?~  wok  ~
-      ?+  -.u.wok  ~
-        $target  $(wok q.u.wok)
+      ?+  -.wok  ~
+        $target  ?~(q.wok ~ $(wok u.q.wok))
         $say  |-  ::  XX per line
-              ?~  p.u.wok  ~
-              ?:  ?=($lin -.i.p.u.wok)
+              ?~  p.wok  ~
+              ?:  ?=($lin -.i.p.wok)
                 (sh-sane-chat buf)
-              $(p.u.wok t.p.u.wok)
+              $(p.wok t.p.wok)
       ==
     ::
     ++  sh-slug                                         ::  edit to sanity
-      |=  lit/(list sole-edit)
+      |=  {lit/(list sole-edit) err/(unit @u)}
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
           (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
-      (sh-fact [%mor [%det lic] ~])
+      (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-stir                                         ::  apply edit
       |=  cal/sole-change
       ^+  +>
       =^  inv  say.she  (~(transceive sole say.she) cal)
-      =+  lit=(sh-sane inv buf.say.she)
-      ?~  lit
+      =+  fix=(sh-sane inv buf.say.she)
+      ?~  lit.fix
         +>.$
-      (sh-slug lit)
+      ?~  err.fix
+        (sh-slug fix)                 :: just capital correction
+      ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.say.she)))
+        +>.$                          :: allow interior edits, deletes
+      (sh-slug fix)
     ::
     ++  sh-lame                                         ::  send error
       |=  txt/tape
@@ -1133,19 +1138,17 @@
       ++  say                                           ::  publish
         |=  sep/(list speech)
         ^+  ..sh-work
-        ?~  sep    ..sh-work
+        =-  ..sh-work(coz ?~(tot coz :_(coz [%publish tot])))
+        |-  ^-  tot/(list thought)
+        ?~  sep  ~
         =^  sir  ..sh-work  sh-uniq
-        %_    $
-            sep  t.sep
-            coz  :_  coz
-          [%publish [[sir sh-whom [now.hid ~ i.sep]] ~]]
-        ==
+        [[sir sh-whom [now.hid ~ i.sep]] $(sep t.sep)]
       --
     ::
     ++  sh-done                                         ::  apply result
-      =+  lit=(sh-sane [%nop ~] buf.say.she)
-      ?^  lit
-        (sh-slug lit)
+      =+  fix=(sh-sane [%nop ~] buf.say.she)
+      ?^  lit.fix
+        (sh-slug fix)
       =+  jub=(rust (tufa buf.say.she) sh-scad)
       ?~  jub  (sh-fact %bel ~)
       %.  u.jub
@@ -1300,17 +1303,17 @@
   ::
   ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
   ++  ra-comment
-    |=  {pax/path txt/@t}
+    |=  {pax/path sup/spur txt/@t}
     =.  ..ra-emit
       %+  ra-emit  ost.hid
       :*  %poke
           /comment
           [our.hid %hood]
-          [%write-comment pax src.hid txt]
+          [%write-comment sup src.hid txt]
       ==
     =+  man=%comments
     ?:  (~(has by stories) man)
-      (ra-consume-comment man pax txt)
+      (ra-consume-comment man pax sup txt)
     =.  ..ra-apply
       %+  ra-apply  our.hid
       :+  %design  man
@@ -1323,11 +1326,11 @@
           (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
         now.hid
       [~ %app %tree 'receiving comments, ;join %comments for details']
-    (ra-consume-comment man pax txt)
+    (ra-consume-comment man pax sup txt)
   ::
   ++  ra-consume-comment
-    |=  {man/knot pax/path txt/@t}  ^+  +>
-    =+  nam==+(xap=(flop pax) ?~(xap "" (trip i.xap)))  :: file name
+    |=  {man/knot pax/path sup/spur txt/@t}  ^+  +>
+    =+  nam=?~(sup "" (trip i.sup))                     :: file name
     =+  fra=(crip (time-to-id now.hid))                 :: url fragment
     %^  ra-consume  &
       src.hid
@@ -1811,6 +1814,8 @@
     ++  pa-revise                                       ::  revise existing
       |=  {num/@ud gam/telegram}
       =+  way=(sub count num)
+      ?:  =(gam (snag (dec way) grams))
+        +>.$                                            ::  no change    
       =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
       (pa-refresh num gam)
     --
@@ -2218,8 +2223,8 @@
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-talk-comment
-  |=  {pax/path txt/@t}  ^-  (quip move +>)
-  ra-abet:(ra-comment:ra pax txt)
+  |=  {pax/path sup/spur txt/@t}  ^-  (quip move +>)
+  ra-abet:(ra-comment:ra pax sup txt)
 ::
 ++  poke-talk-save
   |=  man/knot

@@ -1,7 +1,14 @@
+window.urb = window.urb || {}
+
+urb.waspWait = []
+urb.wasp = urb.wasp || [].push.bind(urb.waspWait)
+  
 // debugging 
 urb.verb = false
 urb.sources = {}
-urb.deps.map(function(a){urb.sources[a] = "dep"})
+urb.waspDeps = function(){
+  urb.deps.map(function(a){urb.sources[a] = "dep"})
+}
 
 urb.waspElem = function(ele){
   url = ele.src || ele.href
@@ -30,12 +37,21 @@ urb.waspData = function(dep){
   urb.datadeps[dep] = true
   urb.wasp(dep)
 }
-urb.ondataupdate = urb.onupdate  // overridable
 
-var _onupdate = urb.onupdate
-urb.onupdate = function(dep){
-  if(urb.verb)
-    console.log("update", urb.datadeps[dep] ? "data" : "full", dep, urb.sources[dep])
-  if(urb.datadeps[dep]) urb.ondataupdate(dep)
-  else _onupdate(dep)
+urb.onLoadUrbJS = function(){
+  urb.ondataupdate = urb.ondataupdate || urb.onupdate  // overridable
+
+  var _onupdate = urb.onupdate
+  urb.onupdate = function(dep){
+    if(urb.verb)
+      console.log("update", urb.datadeps[dep] ? "data" : "full", dep, urb.sources[dep])
+    if(urb.datadeps[dep]) urb.ondataupdate(dep)
+    else _onupdate(dep)
+  }
+  urb.waspDeps()
+  
+  urb.waspAll = function(sel){
+    [].map.call(document.querySelectorAll(sel), urb.waspElem)
+  }
+  urb.waspAll('script'); urb.waspAll('link')
 }

@@ -3,8 +3,8 @@
   font-family: 'scp'; }
 
 div.input.valid-false {
-  color: #FF0808;
-  border-color: #FF0808; }
+  color: #E20B0B;
+  border-color: #E20B0B; }
 
 .grams {
   list-style-type: none;
@@ -13,40 +13,42 @@ div.input.valid-false {
   .grams .meta {
     display: inline-block; }
 
-.grams .meta label {
-  margin-right: 0.9375rem;
-  height: 0.9375rem;
-  width: 0.9375rem;
-  text-align: center; }
+.grams .meta {
+  max-height: 1.6rem;
+  overflow: hidden; }
+  .grams .meta label {
+    margin-right: 0.9375rem;
+    height: 0.9375rem;
+    width: 0.9375rem;
+    text-align: center; }
+  .grams .meta label:before {
+    content: attr(data-glyph);
+    color: #fff;
+    font-family: 'scp';
+    font-size: .8rem;
+    font-weight: 500;
+    line-height: 1rem;
+    vertical-align: middle; }
+  .grams .meta label,
+  .grams .meta h2,
+  .grams .meta h3 {
+    display: inline-block; }
+  .grams .meta h2,
+  .grams .meta h3 {
+    font-family: 'scp';
+    font-size: .8rem;
+    font-weight: 400;
+    margin-top: 0;
+    padding-top: 0; }
+  .grams .meta h3 {
+    margin-left: 2rem;
+    line-height: 1rem; }
+  .grams .meta .time {
+    padding-right: 2rem; }
 
-.grams .meta label:before {
-  content: attr(data-glyph);
-  color: #fff;
-  font-family: 'scp';
-  font-size: .8rem;
-  font-weight: 500;
-  line-height: 1rem;
-  vertical-align: middle; }
-
-.grams .meta label,
-.grams .meta h2,
-.grams .meta h3 {
-  display: inline-block; }
-
-.grams .meta h2,
-.grams .meta h3 {
-  font-family: 'scp';
-  font-size: .8rem;
-  font-weight: 400;
-  margin-top: 0;
-  padding-top: 0; }
-
-.grams .meta h3 {
-  margin-left: 2rem;
-  line-height: 1rem; }
-
-.grams .meta .time {
-  padding-right: 2rem; }
+div.gram.same .meta {
+  max-height: none;
+  overflow: auto; }
 
 div.gram.first:first-of-type {
   margin-top: 0; }
@@ -62,7 +64,8 @@ div.gram.same:hover div.meta {
   position: absolute;
   background-color: #fff;
   margin-top: -2.5rem;
-  padding-top: 1rem; }
+  padding-top: 1rem;
+  white-space: nowrap; }
 
 .speech {
   margin-left: 1.875rem; }
@@ -71,7 +74,6 @@ div.gram.same:hover div.meta {
   font-family: 'scp';
   font-size: .9rem; }
   .exp .speech {
-    white-space: nowrap;
     max-width: 100%;
     overflow-x: scroll; }
   .exp .speech > span {
@@ -126,7 +128,7 @@ input.action {
   font-size: .8rem; }
 
 input.action.valid-false {
-  color: #FF0808; }
+  color: #E20B0B; }
 
 input.action::-webkit-input-placeholder {
   color: #000;
@@ -160,47 +162,46 @@ input.action:focus::-moz-placeholder {
 input.action:focus:-ms-input-placeholder {
   color: transparent; }
 
-.menu .name,
-.menu .planet {
-  display: inline-block; }
+.menu {
+  max-height: 100%; }
+  .menu .planet,
+  .menu .room {
+    margin-bottom: .8rem; }
+  .menu .name,
+  .menu .planet {
+    display: inline-block; }
+  .menu .name,
+  .menu .planet,
+  .menu .room {
+    font-size: .8rem; }
+  .menu .room > div {
+    display: inline;
+    cursor: pointer; }
+  .menu .room > div.selected {
+    font-weight: 500; }
+  .menu .room .close {
+    display: none;
+    margin: 0;
+    float: none;
+    margin-left: .6rem;
+    font-weight: 600;
+    font-size: .8rem;
+    color: #E20B0B; }
+  .menu .room:hover .close {
+    display: inline; }
+  .menu .room.disabled {
+    opacity: .6; }
+  .menu .name {
+    display: none;
+    min-width: 33.333%;
+    font-size: .9rem; }
+  .menu .planet {
+    min-width: 66.667%; }
 
-.menu .name,
-.menu .planet,
-.menu .room {
-  font-size: .8rem; }
-
-.menu .room > div {
-  display: inline;
-  cursor: pointer; }
-
-.menu .room > div.selected {
-  font-weight: 500; }
-
-.menu .room .close {
-  display: none;
-  margin: 0;
-  float: none;
-  margin-left: .6rem;
-  font-weight: 600;
-  font-size: .8rem;
-  color: #FF0808; }
-
-.menu .room:hover .close {
-  display: inline; }
-
-.menu .room.disabled {
-  opacity: .6; }
-
-.menu .name {
-  display: none;
-  min-width: 33.333%;
-  font-size: .9rem; }
-
-.menu .planet {
-  min-width: 66.667%; }
+.menu.depth-2 {
+  overflow: scroll; }
 
 .input {
-  border-bottom: 3px solid #000;
   display: inline-block;
   line-height: 2rem;
   font-size: 1rem;
@@ -208,6 +209,8 @@ input.action:focus:-ms-input-placeholder {
   min-width: 1rem;
   min-height: 1rem;
   outline: none; }
+  .input[contenteditable] {
+    border-bottom: 3px solid #000; }
 
 .audience,
 .message {
