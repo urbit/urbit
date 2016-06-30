@@ -193,8 +193,8 @@ WombStore.dispatchToken = WombDispatcher.register(function(action) {
 module.exports = WombStore;
 
 
-},{"./Dispatcher.coffee":2,"./util.coffee":17,"events":19}],5:[function(require,module,exports){
-var Actions, Balance, FromStore, History, InfoBox, Label, Mail, Planets, Recycling, Scry, ShipInput, Shop, Stars, b, clas, code, div, h6, name, p, recl, ref, rele, span;
+},{"./Dispatcher.coffee":2,"./util.coffee":14,"events":16}],5:[function(require,module,exports){
+var Actions, Balance, FromStore, History, Label, Mail, Planets, SHOP, Scry, ShipInput, Shop, Stars, b, clas, code, div, h6, name, p, recl, ref, rele, span;
 
 clas = require('classnames');
 
@@ -204,13 +204,9 @@ FromStore = (Scry = require('./Scry.coffee')).FromStore;
 
 Label = require('./Label.coffee');
 
-InfoBox = require('./InfoBox.coffee');
-
 Shop = require('./Shop.coffee');
 
 ShipInput = require('./ShipInput.coffee');
-
-Recycling = require('./Recycling.coffee');
 
 recl = React.createClass;
 
@@ -223,6 +219,17 @@ name = function(displayName, component) {
 };
 
 ref = React.DOM, div = ref.div, b = ref.b, h6 = ref.h6, p = ref.p, span = ref.span, code = ref.code;
+
+SHOP = false;
+
+if (!SHOP) {
+  Shop = function(type, length) {
+    return function(arg) {
+      arg;
+      return h6({}, "Distribution of ", type, " not yet live.");
+    };
+  };
+}
 
 Mail = function(email) {
   return code({
@@ -266,17 +273,17 @@ Balance = Scry("/balance/~:pass", function(arg) {
 module.exports = name("Claim", FromStore("pass", function(arg) {
   var pass;
   pass = arg.pass;
-  return div({}, p({}, "Input a passcode to claim ships: "), ShipInput({
+  return div({}, p({}, "Input a passcode to view ship allocation: "), ShipInput({
     length: 28,
     defaultValue: pass,
     onInputShip: Actions.setPasscode
   }), pass ? rele(Balance, {
     pass: pass
-  }) : rele(InfoBox, {}, "What if I have an old ticket?", "Old tickets can be converted to a balance:", rele(Recycling, {})));
+  }) : void 0);
 }));
 
 
-},{"../Actions.coffee":1,"./InfoBox.coffee":7,"./Label.coffee":8,"./Recycling.coffee":11,"./Scry.coffee":12,"./ShipInput.coffee":13,"./Shop.coffee":15,"classnames":18}],6:[function(require,module,exports){
+},{"../Actions.coffee":1,"./Label.coffee":7,"./Scry.coffee":9,"./ShipInput.coffee":10,"./Shop.coffee":12,"classnames":15}],6:[function(require,module,exports){
 var Actions, ClaimButton, FromStore, Label, ShipInput, _ClaimButton, button, name, recl, rele;
 
 Actions = require('../Actions.coffee');
@@ -337,42 +344,7 @@ _ClaimButton = FromStore("claim/:ship", function(arg) {
 module.exports = name("ClaimButton", ClaimButton);
 
 
-},{"../Actions.coffee":1,"./Label.coffee":8,"./Scry.coffee":12,"./ShipInput.coffee":13}],7:[function(require,module,exports){
-var a, div, recl, ref,
-  slice = [].slice;
-
-ref = React.DOM, a = ref.a, div = ref.div;
-
-recl = React.createClass;
-
-module.exports = recl({
-  displayName: "InfoBox",
-  getInitialState: function() {
-    return {
-      expanded: false
-    };
-  },
-  onClick: function() {
-    return this.setState({
-      expanded: !this.state.expanded
-    });
-  },
-  render: function() {
-    var contents, expanded, prompt, ref1;
-    expanded = this.state.expanded;
-    ref1 = this.props.children, prompt = ref1[0], contents = 2 <= ref1.length ? slice.call(ref1, 1) : [];
-    return div({
-      className: "info"
-    }, a({
-      onClick: this.onClick
-    }, prompt), expanded ? div.apply(null, [{
-      "info contents": "info contents"
-    }].concat(slice.call(contents))) : void 0);
-  }
-});
-
-
-},{}],8:[function(require,module,exports){
+},{"../Actions.coffee":1,"./Label.coffee":7,"./Scry.coffee":9,"./ShipInput.coffee":10}],7:[function(require,module,exports){
 var span;
 
 span = React.DOM.span;
@@ -387,37 +359,7 @@ module.exports = function(s, type) {
 };
 
 
-},{}],9:[function(require,module,exports){
-var input, mailShape, name, recl;
-
-mailShape = require('../util.coffee').mailShape;
-
-input = React.DOM.input;
-
-recl = React.createClass;
-
-name = function(displayName, component) {
-  return _.extend(component, {
-    displayName: displayName
-  });
-};
-
-module.exports = name("MailInput", function(arg) {
-  var onInputMail;
-  onInputMail = arg.onInputMail;
-  return input({
-    placeholder: "me@example.com",
-    onChange: function(arg1) {
-      var mail, target;
-      target = arg1.target;
-      mail = target.value.trim();
-      return onInputMail((mailShape(mail) ? mail : void 0));
-    }
-  });
-});
-
-
-},{"../util.coffee":17}],10:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Claim, Ships, div, h4, ref, rele;
 
 Claim = require('./Claim.coffee');
@@ -433,128 +375,7 @@ module.exports = function() {
 };
 
 
-},{"./Claim.coffee":5,"./Ships.coffee":14}],11:[function(require,module,exports){
-var Actions, Label, MailInput, RecycleButton, RecycleTicket, Recycling, Scry, ShipInput, a, button, div, name, recl, ref, rele, span;
-
-Actions = require('../Actions.coffee');
-
-Scry = require('./Scry.coffee');
-
-Label = require('./Label.coffee');
-
-ShipInput = require('./ShipInput.coffee');
-
-MailInput = require('./MailInput.coffee');
-
-ref = React.DOM, a = ref.a, div = ref.div, span = ref.span, button = ref.button;
-
-recl = React.createClass;
-
-rele = React.createElement;
-
-name = function(displayName, component) {
-  return _.extend(component, {
-    displayName: displayName
-  });
-};
-
-RecycleButton = name("RecycleButton", function(arg) {
-  var disabled, onClick;
-  disabled = arg.disabled, onClick = arg.onClick;
-  if (!disabled) {
-    return button({
-      onClick: onClick
-    }, "Exchange");
-  } else {
-    return button({
-      disabled: disabled
-    }, "Exchange (email required)");
-  }
-});
-
-RecycleTicket = name("RecycleTicket", Scry("/ticket/~:ship/~:tick", function(arg) {
-  var doRecycle, mail, passcode, ref1, ship, status, tick;
-  ship = arg.ship, tick = arg.tick, mail = arg.mail, (ref1 = arg.ticket, passcode = ref1.passcode, status = ref1.status);
-  doRecycle = function() {
-    return Actions.recycleTicket({
-      ship: ship,
-      tick: tick,
-      mail: mail
-    }, passcode);
-  };
-  switch (status) {
-    case "fail":
-      return Label("Bad ticket", "warning");
-    case "good":
-      return rele(RecycleButton, {
-        disabled: !mail,
-        onClick: doRecycle
-      });
-    case "used":
-      return span({}, a({
-        onClick: function() {
-          return Actions.setPasscode(passcode);
-        }
-      }, passcode), Label("Ticket exchanged", "info"));
-    default:
-      throw new Error("Bad ticket status: " + status);
-  }
-}));
-
-Recycling = recl({
-  getInitialState: function() {
-    return {
-      ship: "",
-      tick: "",
-      mail: ""
-    };
-  },
-  render: function() {
-    var getMail, getShip, getTick, mail, ref1, ship, tick;
-    getShip = rele(ShipInput, {
-      length: 14,
-      old: true,
-      onInputShip: (function(_this) {
-        return function(ship) {
-          return _this.setState({
-            ship: ship
-          });
-        };
-      })(this)
-    });
-    getTick = rele(ShipInput, {
-      length: 28,
-      old: true,
-      onInputShip: (function(_this) {
-        return function(tick) {
-          return _this.setState({
-            tick: tick
-          });
-        };
-      })(this)
-    });
-    getMail = rele(MailInput, {
-      onInputMail: (function(_this) {
-        return function(mail) {
-          return _this.setState({
-            mail: mail
-          });
-        };
-      })(this)
-    });
-    ref1 = this.state, ship = ref1.ship, tick = ref1.tick, mail = ref1.mail;
-    return div({}, div({}, "Planet", getShip, (ship ? Label("✓", "success") : void 0)), div({}, "Ticket", getTick, (tick ? Label("✓", "success") : void 0)), div({}, "Email", getMail, (mail ? Label("✓", "success") : void 0)), ship && tick ? rele(RecycleTicket, {
-      ship: ship,
-      tick: tick,
-      mail: mail
-    }) : void 0);
-  }
-});
-
-module.exports = name("Recycling", Recycling);
-
-
-},{"../Actions.coffee":1,"./Label.coffee":8,"./MailInput.coffee":9,"./Scry.coffee":12,"./ShipInput.coffee":13}],12:[function(require,module,exports){
+},{"./Claim.coffee":5,"./Ships.coffee":11}],9:[function(require,module,exports){
 var Actions, FromStore, Scry, Store, div, i, recl, ref, rele;
 
 Actions = require('../Actions.coffee');
@@ -651,7 +472,7 @@ module.exports = Scry;
 module.exports.FromStore = FromStore;
 
 
-},{"../Actions.coffee":1,"../Store.coffee":4}],13:[function(require,module,exports){
+},{"../Actions.coffee":1,"../Store.coffee":4}],10:[function(require,module,exports){
 var input, name, recl, shipShape;
 
 shipShape = require('../util.coffee').shipShape;
@@ -684,7 +505,7 @@ module.exports = name("ShipInput", function(arg) {
 });
 
 
-},{"../util.coffee":17}],14:[function(require,module,exports){
+},{"../util.coffee":14}],11:[function(require,module,exports){
 var Label, Scry, Stat, clas, code, div, labels, li, name, p, pre, recl, ref, rele, span, ul;
 
 clas = require('classnames');
@@ -753,7 +574,7 @@ Stat = name("Stat", function(arg) {
 module.exports = Scry("/stats", Stat);
 
 
-},{"./Label.coffee":8,"./Scry.coffee":12,"classnames":18}],15:[function(require,module,exports){
+},{"./Label.coffee":7,"./Scry.coffee":9,"classnames":15}],12:[function(require,module,exports){
 var ClaimButton, Scry, ShipInput, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
 
 Scry = require('./Scry.coffee');
@@ -830,7 +651,7 @@ Shop = function(type, length) {
 module.exports = Shop;
 
 
-},{"./ClaimButton.coffee":6,"./Scry.coffee":12,"./ShipInput.coffee":13}],16:[function(require,module,exports){
+},{"./ClaimButton.coffee":6,"./Scry.coffee":9,"./ShipInput.coffee":10}],13:[function(require,module,exports){
 var MainComponent, TreeActions;
 
 MainComponent = require('./components/Main.coffee');
@@ -840,7 +661,7 @@ TreeActions = window.tree.actions;
 TreeActions.registerComponent("womb", MainComponent);
 
 
-},{"./components/Main.coffee":10}],17:[function(require,module,exports){
+},{"./components/Main.coffee":8}],14:[function(require,module,exports){
 var PO, SHIPSHAPE,
   slice = [].slice;
 
@@ -869,7 +690,7 @@ module.exports = {
 };
 
 
-},{}],18:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -919,7 +740,7 @@ module.exports = {
 	}
 }());
 
-},{}],19:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1219,4 +1040,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[16]);
+},{}]},{},[13]);
