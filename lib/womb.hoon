@@ -119,7 +119,7 @@
       {$knew wire p/ship q/will}                        ::  learn will (old pki)
   ==                                                    ::
 ++  pear                                                ::
-  $%  {$email mail tape}                                ::  send email
+  $%  {$email mail tape wall}                           ::  send email
       {$womb-do-ticket ship}                            ::  request ticket
       {$womb-do-claim ship @p}                          ::  issue ship
       {$drum-put path @t}                               ::  log transaction      
@@ -583,8 +583,8 @@
   |=  {wir/wire adr/mail msg/tape}  ^+  +>
   ?:  replay  +>                      ::  dont's send email in replay mode
   ~&  do-email+[adr msg]
-  (emit %poke [%mail wir] [our %gmail] %email adr msg)
   ::~&([%email-stub adr msg] +>)
+  (emit %poke [%mail wir] [our %gmail] %email adr "A message from Urbit" [msg]~)
 ::
 ++  log-transaction                                   ::  logged poke
   |=  a/transaction  ^+  +>

@@ -79,7 +79,7 @@
   ==
 ::
 ++  poke-email
-  |=  {adr/@ta mez/tape}  ^-  (quip move +>)
+  |=  {adr/@ta tyl/tape mez/wall}  ^-  (quip move +>)
   %-  poke-gmail-req  :*
     %post
     /messages/send
@@ -89,8 +89,8 @@
     =-  (rash adr -)
     [;~((glue pat) . .)]:(cook crip (plus ;~(less pat next)))  :: /[^@]+@[^@]+/
   ::
-    ?:  (lth (lent mez) 57)  [(crip mez) '']
-    [(crip "{(scag 54 mez)}...") (crip mez)]
+    (crip tyl)
+    (role (turn mez crip))
   ==
 ::
 ++  poke-gmail-req
