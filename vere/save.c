@@ -71,7 +71,7 @@ u3_save_io_init(void)
   sav_u->pid_w = 0;
 
   uv_timer_init(u3L, &sav_u->tim_u);
-  uv_timer_start(&sav_u->tim_u, _save_time_cb, 15000, 15000);
+  uv_timer_start(&sav_u->tim_u, _save_time_cb, 120000, 120000);
 }
 
 /* u3_save_io_exit(): terminate save I/O.
