@@ -360,7 +360,7 @@ module.exports = function(s, type) {
 
 
 },{}],8:[function(require,module,exports){
-var Claim, Ships, div, h4, ref, rele;
+var Claim, NET, Ships, div, h4, ref, rele;
 
 Claim = require('./Claim.coffee');
 
@@ -368,10 +368,12 @@ Ships = require('./Ships.coffee');
 
 rele = React.createElement;
 
+NET = false;
+
 ref = React.DOM, div = ref.div, h4 = ref.h4;
 
 module.exports = function() {
-  return div({}, h4({}, "Claims"), rele(Claim, {}), h4({}, "Network"), rele(Ships, {}));
+  return div({}, h4({}, "Claims"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0);
 };
 
 
