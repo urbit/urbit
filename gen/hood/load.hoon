@@ -8,9 +8,11 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvI byk/beak}
-        {{dap/term $~} $~}
+        {{dap/term pas/@uw $~} $~}
     ==
 ^-  {$hood-load ?(part:womb)}
 ?+  dap  ~|(unknown-backup+dap !!)
-  $womb  [%hood-load .^(part:womb %cx (tope byk /womb-part/bak/hood/app))]
+  $womb
+    =+  dat=.^(@ %cx (tope byk /jam-crub/womb-part/bak/hood/app))
+    [%hood-load ;;(part:womb (cue (dy:crub pas dat)))]
 ==

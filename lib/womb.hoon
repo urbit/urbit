@@ -653,7 +653,11 @@
   |=  pax/path
   =<  abet
   ?>  =(our src)                                      ::  me only
-  (emit %info /backup [our (foal pax [%womb-part !>(`part`+:abet)])]) 
+  =+  pas=`@uw`(shas %back eny)
+  ~&  [%backing-up pas=pas]
+  =;  dif  (emit %info /backup [our dif])
+  %+  foal  (welp pax /jam-crub)
+  [%jam-crub !>((en:crub pas (jam `part`+:abet)))]
 ::
 ++  poke-rekey                                        ::  extend will
   |=  $~
