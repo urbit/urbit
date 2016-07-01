@@ -248,6 +248,7 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   !:                                                  ::  ::
+=+  cfg=[can-claim=| can-recycle=|]                   ::  temporarily disabled
 =+  [replay=| stat-no-email=|]                              ::  XX globals
 |=  {bowl part}                                       ::  main womb work
 |_  moz/(list move)
@@ -710,6 +711,7 @@
 ::
 ++  poke-recycle                                      ::  save ticket as balance
   |=  {who/mail him-t/knot tik-t/knot}
+  ?.  can-recycle.cfg  ~|(%ticket-recycling-offline !!)
   =<  abet
   =.  log-transaction  (log-transaction %recycle +<)
   ?>  =(src src)
@@ -723,6 +725,7 @@
 ::
 ++  poke-claim                                        ::  claim plot, req ticket
   |=  {aut/passcode her/@p}
+  ?.  can-claim.cfg  ~|(%ticketing-offline !!)
   =<  abet
   =.  log-transaction  (log-transaction %claim +<)
   ?>  =(src src)
