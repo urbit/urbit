@@ -34,6 +34,13 @@ ENDIAN=little
 BIN=bin
 
 # Only include/link with this if it exists.
+# For the Nix package manager
+ifdef NIX_PROFILE
+  NIXINC=-I$(NIX_PROFILE)/include
+  NIXLIB=-L$(NIX_PROFILE)/lib
+endif
+
+# Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
 ifneq (,$(wildcard /opt/local/.))
   OPTLOCALINC?=/opt/local/include
@@ -69,7 +76,7 @@ CC=cc
 LN=ln -f
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=$(CXX) $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
+CLD=$(CXX) $(CFLAGS) -L/usr/local/lib $(NIXLIB) $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -106,6 +113,7 @@ endif
 CFLAGS+= $(COSFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
+	$(NIXINC) \
 	$(OPTLOCALIFLAGS) \
 	$(OPENSSLIFLAGS) \
 	$(CURLINC) \
