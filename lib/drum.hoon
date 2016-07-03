@@ -725,38 +725,32 @@
   ::
   ++  ta-met                                          ::  meta key
     |=  key/@ud
-    ?.  ?=(?($b $d $f) key)
+    ?.  ?=(?($dot $bac $b $d $f) key)
       ~&  [%ta-met key]
       +>
-    ?-    key
-      :: ::
-      :: ::  TODO: meta dot
-      :: ::
-      :: ??  ?.  &(?=(^ old.hit) ?=(^ -.old.hit))
-      ::       ta-bel
-      ::     =+  old=`(list @c)`-.old.hit
-      ::     %-  ta-hom(ris ~)
-      ::     (ta-cat pos.inp (slag (jump-bwrd (dec (lent old)) old) old))
-      :: ::
-      :: ::  TODO: meta backspace
-      :: ::
-      :: ??  ?:  =(0 pos.inp)
-      ::       ta-bel
-      ::     =+  b=(jump-bwrd pos.inp buf.say.inp)
-      ::     %-  ta-hom(kil `(slag b (scag pos.inp buf.say.inp)), ris ~)
-      ::     (ta-cut b (sub pos.inp b))
-      :: ::
-      $b  ?:  =(0 pos.inp)
-            ta-bel
-          +>(pos.inp (jump-bwrd pos.inp buf.say.inp))
-      $d  ?:  =(pos.inp (lent buf.say.inp))
-            ta-bel
-          =+  f=(jump-fwrd pos.inp buf.say.inp)
-          %-  ta-hom(kil `(slag pos.inp (scag f buf.say.inp)), ris ~)
-          (ta-cut pos.inp (sub f pos.inp))
-      $f  ?:  =(pos.inp (lent buf.say.inp))
-            ta-bel
-          +>(pos.inp (jump-fwrd pos.inp buf.say.inp))
+    ?-  key
+      $dot  ?.  &(?=(^ old.hit) ?=(^ -.old.hit))
+              ta-bel
+            =+  old=`(list @c)`-.old.hit
+            =+  b=(jump-bwrd (lent old) old)
+            %-  ta-hom(ris ~)
+            (ta-cat pos.inp (slag b old))
+      $bac  ?:  =(0 pos.inp)
+              ta-bel
+            =+  b=(jump-bwrd pos.inp buf.say.inp)
+            %-  ta-hom(kil `(slag b (scag pos.inp buf.say.inp)), ris ~)
+            (ta-cut b (sub pos.inp b))
+      $b    ?:  =(0 pos.inp)
+              ta-bel
+            +>(pos.inp (jump-bwrd pos.inp buf.say.inp))
+      $d    ?:  =(pos.inp (lent buf.say.inp))
+              ta-bel
+            =+  f=(jump-fwrd pos.inp buf.say.inp)
+            %-  ta-hom(kil `(slag pos.inp (scag f buf.say.inp)), ris ~)
+            (ta-cut pos.inp (sub f pos.inp))
+      $f    ?:  =(pos.inp (lent buf.say.inp))
+              ta-bel
+            +>(pos.inp (jump-fwrd pos.inp buf.say.inp))
     ==
   ::
   ++  ta-mov                                          ::  move in history
