@@ -716,6 +716,14 @@
       i
     $(i +(i), buf t.buf)
   ::
+  ++  next-word
+    |=  buf/(list @c)
+    =+  i=0
+    |-  ^-  @ud
+    ?:  |(?=($~ buf) (alnum i.buf))
+      i
+    $(i +(i), buf t.buf)
+  ::
   ++  jump-bwrd
     |=  {pos/@ud buf/(list @c)}
     ^-  @ud
@@ -745,6 +753,17 @@
       $b    ?:  =(0 pos.inp)
               ta-bel
             +>(pos.inp (jump-bwrd pos.inp buf.say.inp))
+            ::
+      $c    ?:  =(pos.inp (lent buf.say.inp))
+              ta-bel
+            =+  sop=(add pos.inp (next-word (slag pos.inp buf.say.inp)))
+            %-  ta-hom(pos.inp (jump-fwrd sop buf.say.inp))
+            :~  %mor
+              [%del sop]
+              :+  %ins  sop
+              (turf (cuss [(tuft (snag sop buf.say.inp))]~))
+            ==
+            ::
       $d    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             =+  f=(jump-fwrd pos.inp buf.say.inp)
@@ -754,6 +773,21 @@
       $f    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             +>(pos.inp (jump-fwrd pos.inp buf.say.inp))
+            ::
+      $r    ta-bel
+      $t    ta-bel
+            ::
+      ?($u $l)
+            ?:  =(pos.inp (lent buf.say.inp))
+              ta-bel
+            =+  case=?:(?=($u key) cuss cass)
+            =+  sop=(add pos.inp (next-word (slag pos.inp buf.say.inp)))
+            =+  f=(jump-fwrd sop buf.say.inp)
+            %-  ta-hom
+            :~  %mor
+              (ta-cut sop (sub f pos.inp))
+              (ta-cat sop (tuba (trip (case (tufa (slag sop (scag f buf.say.inp)))))))
+            ==
     ==
   ::
   ++  ta-mov                                          ::  move in history
