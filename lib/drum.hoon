@@ -699,47 +699,49 @@
     +>
   ::
   ++  alnum
-    |=  a/@c  ^-  ?
-    ?|  &((gte a 48) (lte a 57))                      ::  0-9
-        &((gte a 65) (lte a 90))                      ::  A-Z
-        &((gte a 97) (lte a 122))                     ::  a-z
+    |=  a/@  ^-  ?
+    ?|  &((gte a '0') (lte a '9'))
+        &((gte a 'A') (lte a 'Z'))
+        &((gte a 'a') (lte a 'z'))
     ==
   ::
-  ++  next-word-pos
+  ++  next-edge
     |=  buf/(list @c)
-    =+  i=0
+    =+  [i=0 m=|]
     |-  ^-  @ud
-    ?:  |(?=($~ buf) !|(=(0 i) (alnum i.buf)))
+    ?~  buf  i
+    =+  w=(alnum i.buf)
+    =.  m  |(m w)
+    ?:  &(m !|(=(0 i) w))
       i
     $(i +(i), buf t.buf)
   ::
   ++  jump-bwrd
     |=  {pos/@ud buf/(list @c)}
     ^-  @ud
-    (sub pos (next-word-pos (flop (scag pos buf))))
+    (sub pos (next-edge (flop (scag pos buf))))
   ::
   ++  jump-fwrd
     |=  {pos/@ud buf/(list @c)}
     ^-  @ud
-    (add pos (next-word-pos (slag pos buf)))
+    (add pos (next-edge (slag pos buf)))
   ::
   ++  ta-met                                          ::  meta key
     |=  key/@ud
-    ?.  ?=(?($dot $bac $b $d $f) key)
-      ~&  [%ta-met key]
-      +>
-    ?-  key
+    ?+    key    ta-bel
       $dot  ?.  &(?=(^ old.hit) ?=(^ -.old.hit))
               ta-bel
             =+  old=`(list @c)`-.old.hit
             =+  b=(jump-bwrd (lent old) old)
             %-  ta-hom(ris ~)
             (ta-cat pos.inp (slag b old))
+            ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
             =+  b=(jump-bwrd pos.inp buf.say.inp)
             %-  ta-hom(kil `(slag b (scag pos.inp buf.say.inp)), ris ~)
             (ta-cut b (sub pos.inp b))
+            ::
       $b    ?:  =(0 pos.inp)
               ta-bel
             +>(pos.inp (jump-bwrd pos.inp buf.say.inp))
@@ -748,6 +750,7 @@
             =+  f=(jump-fwrd pos.inp buf.say.inp)
             %-  ta-hom(kil `(slag pos.inp (scag f buf.say.inp)), ris ~)
             (ta-cut pos.inp (sub f pos.inp))
+            ::
       $f    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             +>(pos.inp (jump-fwrd pos.inp buf.say.inp))
