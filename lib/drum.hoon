@@ -775,7 +775,20 @@
             +>(pos.inp (jump-fwrd pos.inp buf.say.inp))
             ::
       $r    ta-bel
-      $t    ta-bel
+      $t    =+  a=(jump-fwrd pos.inp buf.say.inp)
+            =+  b=(jump-bwrd a buf.say.inp)
+            =+  c=(jump-bwrd b buf.say.inp)
+            ?:  =(b c)
+              ta-bel
+            =+  prev=`(pair @ud @ud)`[c (jump-fwrd c buf.say.inp)]
+            =+  next=`(pair @ud @ud)`[b a]
+            %-  ta-hom(pos.inp q.next)
+            :~  %mor
+              (ta-cut p.next (sub q.next p.next))
+              (ta-cat p.next (slag p.prev (scag q.prev buf.say.inp)))
+              (ta-cut p.prev (sub q.prev p.prev))
+              (ta-cat p.prev (slag p.next (scag q.next buf.say.inp)))
+            ==
             ::
       ?($u $l)
             ?:  =(pos.inp (lent buf.say.inp))
