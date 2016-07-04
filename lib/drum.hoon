@@ -698,7 +698,19 @@
     =.  +>  (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
     +>
   ::
-  ++  alnum
+  ++  lcas                                            ::  lowercase
+    |*  a/(list @)
+    ^+  a
+    %+  turn  a
+    |=(a/@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a)))
+  ::
+  ++  ucas                                            ::  uppercase
+    |*  a/(list @)
+    ^+  a
+    %+  turn  a
+    |=(a/@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32)))
+  ::
+  ++  alnm
     |=  a/@  ^-  ?
     ?|  &((gte a '0') (lte a '9'))
         &((gte a 'A') (lte a 'Z'))
@@ -707,10 +719,11 @@
   ::
   ++  next-edge
     |=  buf/(list @c)
-    =+  [i=0 m=|]
-    |-  ^-  @ud
+    =|  i/@ud
+    =+  m=|
+    |-  ^+  i
     ?~  buf  i
-    =+  w=(alnum i.buf)
+    =+  w=(alnm i.buf)
     =.  m  |(m w)
     ?:  &(m !|(=(0 i) w))
       i
@@ -718,9 +731,9 @@
   ::
   ++  next-word
     |=  buf/(list @c)
-    =+  i=0
-    |-  ^-  @ud
-    ?:  |(?=($~ buf) (alnum i.buf))
+    =|  i/@ud
+    |-  ^+  i
+    ?:  |(?=($~ buf) (alnm i.buf))
       i
     $(i +(i), buf t.buf)
   ::
@@ -761,7 +774,7 @@
             :~  %mor
               [%del sop]
               :+  %ins  sop
-              (turf (cuss [(tuft (snag sop buf.say.inp))]~))
+              (head (ucas (limo [(snag sop buf.say.inp)]~)))
             ==
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))
@@ -793,13 +806,13 @@
       ?($u $l)
             ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  case=?:(?=($u key) cuss cass)
+            =+  case=?:(?=($u key) ucas lcas)
             =+  sop=(add pos.inp (next-word (slag pos.inp buf.say.inp)))
             =+  f=(jump-fwrd sop buf.say.inp)
             %-  ta-hom
             :~  %mor
               (ta-cut sop (sub f pos.inp))
-              (ta-cat sop (tuba (trip (case (tufa (slag sop (scag f buf.say.inp)))))))
+              (ta-cat sop (case (slag sop (scag f buf.say.inp))))
             ==
     ==
   ::
