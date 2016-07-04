@@ -3910,7 +3910,8 @@
   ++  bip  =+  tod=(ape qex:ab)
            (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
   ++  dem  (ape (bass 1.000 ;~(plug ted:ab (star ;~(pfix dog tid:ab)))))
-  ++  dim  (ape (bass 10 ;~(plug sed:ab (star sid:ab))))
+  ++  dim  (ape dip)
+  ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
   ++  dum  (bass 10 (plus sid:ab))
   ++  fed  ;~  pose
              %+  bass  0x1.0000.0000.0000.0000
@@ -3925,6 +3926,13 @@
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
   ++  lip  =+  tod=(ape ted:ab)
            (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dog tod))))
+  ++  mot  ;~  pose
+             ;~  pfix
+               (just '1')
+               (cook |=(a/@ (add 10 (sub a '0'))) (shim '0' '2'))
+             ==
+             sed:ab
+           ==
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
   ++  vum  (bass 32 (plus siv:ab))
   ++  wiz  (ape (bass 0x4000.0000 ;~(plug pew:ab (star ;~(pfix dog piw:ab)))))
@@ -4194,8 +4202,8 @@
         %+  cook
           |=({a/@ b/?} [b a])
         ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
-        ;~(pfix dot dim:ag)   ::  month
-        ;~(pfix dot dim:ag)   ::  day
+        ;~(pfix dot mot:ag)   ::  month
+        ;~(pfix dot dip:ag)   ::  day
         ;~  pose
           ;~  pfix
             ;~(plug dot dot)
