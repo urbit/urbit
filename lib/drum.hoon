@@ -11,8 +11,8 @@
 |%                                                      ::  ::
 ++  drum-part  {$drum $0 drum-pith}                     ::
 ++  drum-pith                                           ::
-  $:  eel/(set gill)                                    ::  connect to 
-      ray/(set well)                                    ::  
+  $:  eel/(set gill)                                    ::  connect to
+      ray/(set well)                                    ::
       fur/(map dude (unit server))                      ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
@@ -93,7 +93,7 @@
 ::
 ++  deft-pipe                                           ::  default source
   |=  our/ship                                          ::
-  ^-  source                                            ::  
+  ^-  source                                            ::
   :*  80                                                ::  edg
       0                                                 ::  off
       ~                                                 ::  kil
@@ -105,7 +105,7 @@
 ++  deft-tart  *target                                  ::  default target
 ++  drum-port                                           ::  initial part
   |=  our/ship
-  ^-  drum-part 
+  ^-  drum-part
   :*  %drum
       %0
       (deft-fish our)                                   ::  eel
@@ -147,7 +147,7 @@
     --
 |_  {moz/(list move) biz/(list dill-blit)}
 ++  diff-sole-effect-phat                             ::
-  |=  {way/wire fec/sole-effect}  
+  |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
   =+  gyl=(drum-phat way)
   ?:  (se-aint gyl)  +>.$
@@ -164,12 +164,12 @@
   se-view:(se-text "[{<src>}, driving {<our>}]")
 ::
 ++  poke-dill-belt                                    ::
-  |=  bet/dill-belt   
+  |=  bet/dill-belt
   =<  se-abet  =<  se-view
   (se-belt bet)
 ::
 ++  poke-start                                        ::
-  |=  wel/well  
+  |=  wel/well
   =<  se-abet  =<  se-view
   (se-born wel)
 ::
@@ -187,7 +187,7 @@
 ::   |=(~ se-abet:(se-blit `dill-blit`[%qit ~]))  ::  XX find bone
 :: ::
 ++  reap-phat                                         ::
-  |=  {way/wire saw/(unit tang)}  
+  |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
   =+  gyl=(drum-phat way)
   ?~  saw
@@ -195,7 +195,7 @@
   (se-dump:(se-drop & gyl) u.saw)
 ::
 ++  take-coup-phat                                    ::
-  |=  {way/wire saw/(unit tang)}  
+  |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
   ?~  saw  +>
   =+  gyl=(drum-phat way)
@@ -204,7 +204,7 @@
   (se-dump:(se-drop & gyl) u.saw)
 ::
 ++  take-onto                                         ::
-  |=  {way/wire saw/(each suss tang)}  
+  |=  {way/wire saw/(each suss tang)}
   =<  se-abet  =<  se-view
   ?>  ?=({@ @ $~} way)
   ?>  (~(has by fur) i.t.way)
@@ -213,11 +213,11 @@
     $|  (se-dump p.saw)
     $&  ?>  =(q.wel p.p.saw)
         ::  =.  +>.$  (se-text "live {<p.saw>}")
-        +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))  
-  == 
+        +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
+  ==
 ::
 ++  quit-phat                                         ::
-  |=  way/wire  
+  |=  way/wire
   =<  se-abet  =<  se-view
   =+  gyl=(drum-phat way)
   ~&  [%drum-quit src ost gyl]
@@ -233,7 +233,7 @@
   =.  .  se-subze:se-adze:se-adit
   :_  %_(+>+>+<+ bin (~(put by bin) ost `source`+>+<))
   ^-  (list move)
-  %+  welp  (flop moz) 
+  %+  welp  (flop moz)
   ^-  (list move)
   ?~  biz  ~
   [ost %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]~
@@ -245,7 +245,7 @@
   =<  .(con +>)
   |=  {wel/well con/_..se-adit}  ^+  con
   =.  +>.$  con
-  =+  hig=(~(get by fur) q.wel) 
+  =+  hig=(~(get by fur) q.wel)
   ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
@@ -353,7 +353,7 @@
   ?.  (~(has by fug) gyl)  +>.$
   =.  fug  (~(del by fug) gyl)
   =.  eel  ?.(pej eel (~(del in eel) gyl))
-  =.  +>.$  ?.  &(?=(^ lag) !=(gyl u.lag))  
+  =.  +>.$  ?.  &(?=(^ lag) !=(gyl u.lag))
               +>.$(inx 0)
             (se-alas u.lag)
   =.  +>.$  (se-text "[unlinked from {<gyl>}]")
@@ -393,7 +393,7 @@
 ++  se-like                                           ::  act in master
   |=  kus/ukase
   ?-    -.kus
-      $add  
+      $add
     |-  ^+  +>.^$
     ?~  p.kus  +>.^$
     $(p.kus t.p.kus, +>.^$ (se-link i.p.kus))
@@ -453,7 +453,7 @@
   =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
   +>(mir lin)
 ::
-++  se-just                                           ::  adjusted buffer 
+++  se-just                                           ::  adjusted buffer
   |=  lin/(pair @ud (list @c))
   ^+  +>
   =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
@@ -472,8 +472,8 @@
   |=  mov/move
   %_(+> moz [mov moz])
 ::
-++  se-talk  
-  |=  tac/(list tank) 
+++  se-talk
+  |=  tac/(list tank)
   ^+  +>
   :: XX talk should be usable for stack traces, see urbit#584 which this change
   :: closed for the problems there
@@ -516,7 +516,7 @@
       ==                                              ::
   ++  ta-abet                                         ::  resolve
     ^+  ..ta
-    ?.  liv  
+    ?.  liv
       ?:   (~(has in (deft-fish our)) gyl)
         (se-blit qit+~)
       (se-nuke gyl)
@@ -534,7 +534,7 @@
     ^+  +>
     ?-  key
       $d  =.  ris  ~
-          ?.  =(num.hit pos.hit) 
+          ?.  =(num.hit pos.hit)
             (ta-mov +(pos.hit))
           ?:  =(0 (lent buf.say.inp))
             ta-bel
@@ -596,21 +596,21 @@
             (ta-hom(pos.hit num.hit, ris ~) [%set ~])
         $k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
-              ta-bel 
+              ta-bel
             %-  ta-hom(kil `(slag pos.inp buf.say.inp), ris ~)
             (ta-cut pos.inp (sub len pos.inp))
         $l  +>(+> (se-blit %clr ~))
         $n  (ta-aro %d)
         $p  (ta-aro %u)
-        $r  ?~  ris 
-              +>(ris `[pos.hit ~]) 
+        $r  ?~  ris
+              +>(ris `[pos.hit ~])
             ?:  =(0 pos.u.ris)
               ta-bel
             (ta-ser ~)
         $t  =+  len=(lent buf.say.inp)
             ?:  |(=(0 pos.inp) (lth len 2))
               ta-bel
-            =+  sop=?:(=(len pos.inp) (dec pos.inp) pos.inp) 
+            =+  sop=?:(=(len pos.inp) (dec pos.inp) pos.inp)
             =.  pos.inp  +(sop)
             =.  ris  ~
             %-  ta-hom
@@ -640,7 +640,7 @@
     (ta-hom %del pos.inp)
   ::
   ++  ta-erl                                          ::  hear local error
-    |=  pos/@ud 
+    |=  pos/@ud
     ta-bel(pos.inp (min pos (lent buf.say.inp)))
   ::
   ++  ta-err                                          ::  hear remote error
@@ -829,8 +829,8 @@
     ?:  =(sop pos.hit)  +>
     %+  %=  ta-hom
           pos.hit  sop
-          lay.hit  %+  ~(put by lay.hit)  
-                     pos.hit 
+          lay.hit  %+  ~(put by lay.hit)
+                     pos.hit
                    buf.say.inp
         ==
       %set
@@ -870,7 +870,7 @@
             ?~(a & ?~(b | &(=(i.a i.b) $(a t.a, b t.b))))
         |=  {a/(list @c) b/(list @c)}  ^-  ?
         ?~(a & ?~(b | |((beg a b) $(b t.b))))
-    =+  ^=  sup  
+    =+  ^=  sup
         |-  ^-  (unit @ud)
         ?~  dol  ~
         ?:  (ser tot i.dol)
@@ -902,7 +902,7 @@
     ?^  ris
       %=    $
           ris  ~
-          cad.pom 
+          cad.pom
         :(welp "(reverse-i-search)'" (tufa str.u.ris) "': ")
       ==
     =-  [(add pos.inp (lent p.vew)) (weld (tuba p.vew) q.vew)]
@@ -917,8 +917,8 @@
             "> "
           ==
         ==
-    =+  len=(lent buf.say.inp) 
-    |-  ^-  (list @c) 
+    =+  len=(lent buf.say.inp)
+    |-  ^-  (list @c)
     ?:(=(0 len) ~ [`@c`'*' $(len (dec len))])
   --
 --
