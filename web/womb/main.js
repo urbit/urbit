@@ -274,7 +274,7 @@ module.exports = name("Claim", FromStore("pass", function(arg) {
   var pass;
   pass = arg.pass;
   return div({}, p({}, "Input a passcode to view ship allocation: "), PassInput({
-    minLength: 12,
+    minLength: 32,
     defaultValue: pass,
     onInputPass: Actions.setPasscode
   }), pass ? rele(Balance, {

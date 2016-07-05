@@ -10,4 +10,4 @@
     ==
 :-  %womb-balance-all
 =+  [him=(scot %p ?^(who u.who p.bec)) cas=(scot %da now)]
-.^((set {@pG mail:womb}) %gx /[him]/hood/[cas]/womb/balance)
+.^((set {@uvH mail:womb}) %gx /[him]/hood/[cas]/womb/balance)

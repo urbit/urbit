@@ -47,7 +47,7 @@
   (managed (trel (foil moon) (foil planet) (foil star)))::
 ::                                                      ::
 ++  ticket  @G                                          ::  old 64-bit ticket
-++  passcode  @uvG                                      ::  64-bit passcode
+++  passcode  @uvH                                      ::  64-bit passcode
 ++  mail  @t                                            ::  email address
 ++  balance                                             ::  invitation balance
   $:  planets/@ud                                       ::  planet count
@@ -517,7 +517,7 @@
   %+  bind  (check-old-ticket him tik)
   |=  gud/?
   :+  ~  %womb-ticket-info
-  =+  pas=`passcode`(end 6 1 (sham %tick him tik))
+  =+  pas=`passcode`(end 7 1 (sham %tick him tik))
   :-  pas
   ?.  gud  %fail
   ?:  (~(has by bureau) pas)  %used
@@ -643,7 +643,7 @@
   =.  stars.bal  (sub stars.bal sta.inv)
   =.  planets.bal  (sub planets.bal pla.inv)
   =.  bureau  (~(put by bureau) aut bal)
-  =+  tid=(scot %uv (end 6 1 (shaf %pass eny)))
+  =+  tid=(scot %uv (end 7 1 (shaf %pass eny)))
   (invite-from [owner.bal history.bal] tid inv)
 ::
 ++  poke-obey                                         ::  set/reset boss
@@ -719,7 +719,7 @@
   ?>  =(src src)
   =+  [him tik]=(parse-ticket him-t tik-t)
   ?>  (need (check-old-ticket him tik))
-  =+  pas=`passcode`(end 6 1 (sham %tick him tik))
+  =+  pas=`passcode`(end 7 1 (sham %tick him tik))
   ?:  (~(has by bureau) pas)
     ~|(already-recycled+[him-t tik-t] !!)
   =+  bal=`balance`?+((clan him) !! $duke [1 0 who ~], $king [0 1 who ~])

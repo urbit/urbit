@@ -7,7 +7,7 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvI bec/beak}
-        {{pas/@pG her/@p $~} $~}
+        {{pas/@uvH her/@p $~} $~}
     ==
 :-  %womb-claim
 [pas her]
