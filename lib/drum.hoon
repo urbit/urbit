@@ -787,7 +787,14 @@
               ta-bel
             +>(pos.inp (jump-fwrd pos.inp buf.say.inp))
             ::
-      $r    ta-bel
+      $r    %-  ta-hom(lay.hit (~(put by lay.hit) pos.hit ~))
+            :~  %mor
+              (ta-cut 0 (lent buf.say.inp))
+              %+  ta-cat  0
+              ?:  =(pos.hit num.hit)  ~
+              (snag (sub num.hit +(pos.hit)) old.hit)
+            ==
+            ::
       $t    =+  a=(jump-fwrd pos.inp buf.say.inp)
             =+  b=(jump-bwrd a buf.say.inp)
             =+  c=(jump-bwrd b buf.say.inp)
