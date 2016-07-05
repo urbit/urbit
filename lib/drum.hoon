@@ -623,6 +623,11 @@
             %-  ta-hom(kil `(scag pos.inp buf.say.inp), ris ~)
             (ta-cut 0 pos.inp)
         $v  ta-bel
+        $w  ?:  =(0 pos.inp)
+              ta-bel
+            =+  b=(bwrd pos.inp buf.say.inp nace)
+            %-  ta-hom(kil `(slag b (scag pos.inp buf.say.inp)), ris ~)
+            (ta-cut b (sub pos.inp b))
         $x  +>(+> se-anon)
         $y  ?~  kil  ta-bel
             (ta-hom(ris ~) (ta-cat pos.inp u.kil))
@@ -716,6 +721,18 @@
         &((gte a 'A') (lte a 'Z'))
         &((gte a 'a') (lte a 'z'))
     ==
+  ::
+  ++  nace                                            ::  next ace offset
+    |=  a/(list @)
+    =|  i/@ud
+    =+  b=|
+    |-  ^+  i
+    ?~  a  i
+    =+  c=.=(32 i.a)
+    =.  b  |(b c)
+    ?:  &(b !|(=(0 i) c))
+      i
+    $(i +(i), a t.a)
   ::
   ++  nedg                                            ::  next boundary offset
     |=  a/(list @)
