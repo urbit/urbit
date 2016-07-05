@@ -18,9 +18,13 @@ Persistence = _persistence({
       });
     },
     listenStation: function(station, date) {
+      var now;
       if (!date) {
-        date = window.urb.util.toDate(new Date());
+        date = window.urb.util.toDate((now = new Date(), now.setSeconds(0), now.setMilliseconds(0), new Date(now - 24 * 3600 * 1000)));
       }
+      Dispatcher.handleViewAction({
+        type: "messages-fetch"
+      });
       return Persistence.listenStation(station, date);
     },
     listeningStation: function(station) {
@@ -227,11 +231,11 @@ Persistence = _persistence({
 
 
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/StationPersistence.coffee":12}],3:[function(require,module,exports){
-var div, input, recl, ref, textarea;
+var div, recl, ref, span;
 
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, input = ref.input, textarea = ref.textarea;
+ref = React.DOM, span = ref.span, div = ref.div;
 
 module.exports = recl({
   displayName: "Load",
@@ -257,11 +261,9 @@ module.exports = recl({
     });
   },
   render: function() {
-    return div({
-      className: "loading"
-    }, div({
-      className: "spin state-" + this.state.anim
-    }, ""));
+    return span({
+      className: "loading state-" + this.state.anim
+    }, '');
   }
 });
 
@@ -511,13 +513,15 @@ module.exports = recl({
 
 
 },{"../util.coffee":15,"./MemberComponent.coffee":4,"classnames":16}],6:[function(require,module,exports){
-var INFINITE, Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_FIRST_MARGIN_TOP, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, util;
+var FONT_SIZE, INFINITE, Infinite, Load, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_FIRST_MARGIN_TOP, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, rele, util;
 
 util = require('../util.coffee');
 
 Infinite = null;
 
 recl = React.createClass;
+
+rele = React.createElement;
 
 div = React.DOM.div;
 
@@ -531,13 +535,17 @@ StationStore = require('../stores/StationStore.coffee');
 
 Message = require('./MessageComponent.coffee');
 
+Load = require('./LoadComponent.coffee');
+
 INFINITE = true;
 
-MESSAGE_HEIGHT_FIRST = 54;
-
-MESSAGE_HEIGHT_FIRST_MARGIN_TOP = 36;
-
 MESSAGE_HEIGHT_SAME = 27;
+
+MESSAGE_HEIGHT_FIRST = 56 - MESSAGE_HEIGHT_SAME;
+
+MESSAGE_HEIGHT_FIRST_MARGIN_TOP = 16;
+
+FONT_SIZE = parseInt($('body').css('font-size').match(/(\d*)px/)[1]);
 
 module.exports = recl({
   displayName: "Messages",
@@ -630,7 +638,12 @@ module.exports = recl({
     }
     this.focused = true;
     $(window).on('blur', this._blur);
-    return $(window).on('focus', this._focus);
+    $(window).on('focus', this._focus);
+    return $(window).on('resize', _.debounce((function(_this) {
+      return function() {
+        return _this.forceUpdate();
+      };
+    })(this), 250));
   },
   componentWillUpdate: function(props, state) {
     return this.scrollBottom = $(document).height() - ($(window).scrollTop() + window.innerHeight);
@@ -678,7 +691,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, body, lastIndex, lastSaid, messageHeights, messages, ref, station;
+    var _messages, body, canvas, context, fetching, lastIndex, lastSaid, messageHeights, messages, ref, speechLength, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
@@ -696,18 +709,46 @@ module.exports = recl({
     lastIndex = this.lastSeen ? messages.indexOf(this.lastSeen) + 1 : null;
     lastSaid = null;
     messageHeights = [];
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+    speechLength = $('.grams').width() - (FONT_SIZE * 1.875);
     _messages = messages.map((function(_this) {
       return function(message, index) {
-        var height, marginTop, nowSaid, sameAs, speech;
+        var height, lineNums, marginTop, nowSaid, sameAs, speech, speechArr;
         nowSaid = [message.ship, _.keys(message.thought.audience)];
         sameAs = _.isEqual(lastSaid, nowSaid);
         lastSaid = nowSaid;
+        lineNums = 1;
+        speechArr = [];
+        context.font = FONT_SIZE + 'px bau';
+        if (message.thought.statement.speech.lin != null) {
+          speechArr = message.thought.statement.speech.lin.txt.split(/(\s|-)/);
+        } else if (message.thought.statement.speech.url != null) {
+          speechArr = message.thought.statement.speech.url.txt.split(/(\s|-)/);
+        } else if (message.thought.statement.speech.fat != null) {
+          context.font = (FONT_SIZE * 0.9) + 'px scp';
+          speechArr = message.thought.statement.speech.fat.taf.exp.txt.split(/(\s|-)/);
+        }
+        _.reduce(_.tail(speechArr), function(base, word) {
+          if (context.measureText(base + word).width > speechLength) {
+            lineNums += 1;
+            if (word === ' ') {
+              return '';
+            } else if (word === '-') {
+              return _.head(base.split(/\s|-/).reverse()) + word;
+            } else {
+              return word;
+            }
+          } else {
+            return base + word;
+          }
+        }, _.head(speechArr));
         if (INFINITE) {
           if (sameAs) {
-            height = MESSAGE_HEIGHT_SAME;
+            height = MESSAGE_HEIGHT_SAME * lineNums;
             marginTop = 0;
           } else {
-            height = MESSAGE_HEIGHT_FIRST;
+            height = MESSAGE_HEIGHT_FIRST + (MESSAGE_HEIGHT_SAME * lineNums);
             marginTop = MESSAGE_HEIGHT_FIRST_MARGIN_TOP;
           }
         } else {
@@ -716,7 +757,7 @@ module.exports = recl({
         }
         messageHeights.push(height + marginTop);
         speech = message.thought.statement.speech;
-        return React.createElement(Message, _.extend({}, message, {
+        return rele(Message, _.extend({}, message, {
           station: station,
           sameAs: sameAs,
           _handlePm: _this._handlePm,
@@ -732,7 +773,7 @@ module.exports = recl({
       };
     })(this));
     if ((this.props.readOnly == null) && INFINITE) {
-      body = React.createElement(Infinite, {
+      body = rele(Infinite, {
         useWindowAsScrollContainer: true,
         containerHeight: window.innerHeight,
         elementHeight: messageHeights,
@@ -741,15 +782,16 @@ module.exports = recl({
     } else {
       body = _messages;
     }
+    fetching = this.state.fetching ? rele(Load, {}) : void 0;
     return div({
       className: "grams",
       key: "messages"
-    }, body);
+    }, body, fetching);
   }
 });
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./MessageComponent.coffee":5}],7:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./LoadComponent.coffee":3,"./MessageComponent.coffee":5}],7:[function(require,module,exports){
 var Load, Member, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style, util,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -872,8 +914,6 @@ module.exports = recl({
           _clas = clas({
             open: this.state.open === station,
             closed: !(this.state.open === station),
-            'col-md-4': true,
-            'col-md-offset-6': true,
             menu: true,
             'depth-2': true
           });
@@ -942,8 +982,6 @@ module.exports = recl({
     _clas = clas({
       open: this.props.open === true,
       closed: this.props.open !== true,
-      'col-md-4': true,
-      'col-md-offset-2': true,
       menu: true,
       'depth-1': true
     });
@@ -1091,10 +1129,13 @@ module.exports = recl({
       }), 0);
       return;
     }
-    if (this.state.audi.length === 0 && $('#audience').text().trim().length > 0) {
-      audi = this._setAudi() ? this._setAudi() : this.state.ludi;
-    } else {
+    if (!(this.state.audi.length === 0 && $('#audience').text().trim().length > 0)) {
       audi = this.state.audi;
+    } else {
+      audi = this._setAudi() || this.state.ludi;
+    }
+    if (this.props['audience-lock'] != null) {
+      audi = _.union(audi, ["~" + window.urb.ship + "/" + this.props.station]);
     }
     audi = this.addCC(audi);
     txt = this.$message.text().trim().replace(/\xa0/g, ' ');
@@ -1944,11 +1985,16 @@ module.exports = util = {
   },
   mainStations: ["court", "floor", "porch"],
   mainStationPath: function(user) {
-    return "~" + user + "/" + (util.mainStation(user));
+    if (user) {
+      return "~" + user + "/" + (util.mainStation(user));
+    }
   },
   mainStation: function(user) {
     if (!user) {
       user = window.urb.user;
+    }
+    if (!user) {
+      return;
     }
     switch (user.length) {
       case 3:

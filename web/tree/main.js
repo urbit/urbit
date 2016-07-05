@@ -1,9 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var TreeDispatcher, TreePersistence;
+var TreeDispatcher, TreePersistence, _initialLoad;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
 
 TreePersistence = require('../persistence/TreePersistence.coffee');
+
+_initialLoad = true;
 
 module.exports = {
   loadPath: function(path, data) {
@@ -21,6 +23,7 @@ module.exports = {
     });
   },
   clearData: function() {
+    _initialLoad = false;
     TreePersistence.refresh();
     return TreeDispatcher.handleServerAction({
       type: "clearData"
@@ -29,6 +32,9 @@ module.exports = {
   sendQuery: function(path, query) {
     if (query == null) {
       return;
+    }
+    if (_initialLoad) {
+      console.warn("Requesting data druing initial page load", JSON.stringify(path), query);
     }
     if (path.slice(-1) === "/") {
       path = path.slice(0, -1);
@@ -50,6 +56,9 @@ module.exports = {
       obj
     ));
   },
+  registerScriptElement: function(elem) {
+    return TreePersistence.waspElem(elem);
+  },
   addVirtual: function(components) {
     return TreeDispatcher.handleViewAction({
       type: "addVirtual",
@@ -61,7 +70,13 @@ module.exports = {
       pax: pax,
       sup: sup,
       txt: txt
-    }, "talk-comment");
+    }, "talk-comment", "talk", (function(_this) {
+      return function(err, res) {
+        if (err == null) {
+          return _this.clearData();
+        }
+      };
+    })(this));
   },
   setPlanInfo: function(arg) {
     var loc, who;
@@ -71,7 +86,11 @@ module.exports = {
       loc: loc
     }, "write-plan-info", "hood");
   },
-  setCurr: function(path) {
+  setCurr: function(path, init) {
+    if (init == null) {
+      init = true;
+    }
+    _initialLoad &= init;
     return TreeDispatcher.handleViewAction({
       type: "setCurr",
       path: path
@@ -281,7 +300,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":27,"../utils/util.coffee":29,"./LoadComponent.coffee":12}],3:[function(require,module,exports){
-var Comments, TreeActions, TreeStore, a, clas, div, extras, h1, h3, img, input, load, p, query, reactify, recl, ref, rele, util;
+var Comments, TreeActions, TreeStore, a, clas, div, extras, h1, h3, img, input, load, name, p, query, reactify, recl, ref, rele, util;
 
 clas = require('classnames');
 
@@ -299,6 +318,12 @@ Comments = require('./CommentsComponent.coffee');
 
 util = require('../utils/util.coffee');
 
+name = function(displayName, component) {
+  return _.extend(component, {
+    displayName: displayName
+  });
+};
+
 recl = React.createClass;
 
 rele = React.createElement;
@@ -306,77 +331,66 @@ rele = React.createElement;
 ref = React.DOM, div = ref.div, h1 = ref.h1, h3 = ref.h3, p = ref.p, img = ref.img, a = ref.a, input = ref.input;
 
 extras = {
-  spam: recl({
-    displayName: "Spam",
-    render: function() {
-      if (document.location.hostname !== 'urbit.org') {
-        return div({});
+  spam: name("Spam", function() {
+    if (document.location.hostname !== 'urbit.org') {
+      return div({});
+    }
+    return div({
+      className: 'spam'
+    }, a({
+      href: "http://urbit.org#sign-up"
+    }, "Sign up"), " for our newsletter.");
+  }),
+  logo: name("Logo", function(arg) {
+    var color, src;
+    color = arg.color;
+    if (color === "white" || color === "black") {
+      src = "//media.urbit.org/logo/logo-" + color + "-100x100.png";
+    }
+    return a({
+      href: "http://urbit.org",
+      style: {
+        border: "none"
       }
-      return div({
-        className: 'spam'
-      }, a({
-        href: "http://urbit.org#sign-up"
-      }, "Sign up"), " for our newsletter.");
-    }
+    }, img({
+      src: src,
+      className: "logo first"
+    }));
   }),
-  logo: recl({
-    displayName: "Logo",
-    render: function() {
-      var color, src;
-      color = this.props.color;
-      if (color === "white" || color === "black") {
-        src = "//media.urbit.org/logo/logo-" + color + "-100x100.png";
-      }
-      return a({
-        href: "http://urbit.org",
-        style: {
-          border: "none"
-        }
-      }, img({
-        src: src,
-        className: "logo first"
-      }));
-    }
+  date: name("Date", function(arg) {
+    var date;
+    date = arg.date;
+    return div({
+      className: 'date'
+    }, date);
   }),
-  date: recl({
-    displayName: "Date",
-    render: function() {
-      return div({
-        className: 'date'
-      }, this.props.date);
-    }
+  title: name("Title", function(arg) {
+    var title;
+    title = arg.title;
+    return h1({
+      className: 'title'
+    }, title);
   }),
-  title: recl({
-    displayName: "Title",
-    render: function() {
-      return h1({
-        className: 'title'
-      }, this.props.title);
-    }
+  image: name("Image", function(arg) {
+    var image;
+    image = arg.image;
+    return img({
+      src: image
+    });
   }),
-  image: recl({
-    displayName: "Image",
-    render: function() {
-      return img({
-        src: this.props.image
-      }, "");
-    }
+  preview: name("Preview", function(arg) {
+    var preview;
+    preview = arg.preview;
+    return p({
+      className: 'preview'
+    }, preview);
   }),
-  preview: recl({
-    displayName: "Preview",
-    render: function() {
-      return p({
-        className: 'preview'
-      }, this.props.preview);
-    }
-  }),
-  author: recl({
-    displayName: "Author",
-    render: function() {
-      return h3({
-        className: 'author'
-      }, this.props.author);
-    }
+  author: name("Author", function(arg) {
+    var author;
+    author = arg.author;
+    return h3({
+      className: 'author'
+    }, author);
   }),
   next: query({
     path: 't',
@@ -385,61 +399,56 @@ extras = {
       head: 'r',
       meta: 'j'
     }
-  }, recl({
-    displayName: "Next",
-    render: function() {
-      var curr, index, keys, next, ref1;
-      curr = this.props.kids[this.props.curr];
-      if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
-        keys = util.getKeys(this.props.kids);
-        if (keys.length > 1) {
-          index = keys.indexOf(this.props.curr);
-          next = index + 1;
-          if (next === keys.length) {
-            next = 0;
-          }
-          next = keys[next];
-          next = this.props.kids[next];
-          if (next) {
-            return div({
-              className: "link-next"
-            }, a({
-              href: this.props.path + "/" + next.name
-            }, "Next: " + next.meta.title));
-          }
+  }, name("Next", function(arg) {
+    var curr, index, keys, kids, next, path, ref1, ref2;
+    curr = arg.curr, path = arg.path, kids = arg.kids;
+    if ((ref1 = kids[curr]) != null ? (ref2 = ref1.meta) != null ? ref2.next : void 0 : void 0) {
+      keys = util.getKeys(kids);
+      if (keys.length > 1) {
+        index = keys.indexOf(curr);
+        next = index + 1;
+        if (next === keys.length) {
+          next = 0;
+        }
+        next = keys[next];
+        next = kids[next];
+        if (next) {
+          return div({
+            className: "link-next"
+          }, a({
+            href: path + "/" + next.name
+          }, "Next: " + next.meta.title));
         }
       }
-      return div({}, "");
     }
+    return div({}, "");
   })),
   comments: Comments,
-  footer: recl({
-    displayName: "Footer",
-    render: function() {
-      var containerClas, footerClas;
-      containerClas = clas({
-        footer: true,
-        container: this.props.container === 'false'
-      });
-      footerClas = clas({
-        'col-md-12': this.props.container === 'false'
-      });
-      return div({
-        className: containerClas,
-        key: 'footer-container'
+  footer: name("Footer", function(arg) {
+    var container, containerClas, footerClas;
+    container = arg.container;
+    containerClas = clas({
+      footer: true,
+      container: container === 'false'
+    });
+    footerClas = clas({
+      'col-md-12': container === 'false'
+    });
+    return div({
+      className: containerClas,
+      key: 'footer-container'
+    }, [
+      div({
+        className: footerClas,
+        key: 'footer-inner'
       }, [
-        div({
-          className: footerClas,
-          key: 'footer-inner'
-        }, [
-          "This page was made by Urbit. Feedback: ", a({
-            href: "mailto:urbit@urbit.org"
-          }, "urbit@urbit.org"), " ", a({
-            href: "https://twitter.com/urbit_"
-          }, "@urbit_")
-        ])
-      ]);
-    }
+        "This page was made by Urbit. Feedback: ", a({
+          href: "mailto:urbit@urbit.org"
+        }, "urbit@urbit.org"), " ", a({
+          href: "https://twitter.com/urbit_"
+        }, "@urbit_")
+      ])
+    ]);
   })
 };
 
@@ -563,7 +572,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Comment, Ship, TreeActions, a, clas, code, div, form, h2, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
+var Comment, DEFER_USER, Ship, TreeActions, a, clas, code, div, form, h2, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
 
 clas = require('classnames');
 
@@ -584,6 +593,8 @@ recl = React.createClass;
 rele = React.createElement;
 
 ref = React.DOM, div = ref.div, p = ref.p, h2 = ref.h2, img = ref.img, a = ref.a, form = ref.form, textarea = ref.textarea, input = ref.input, code = ref.code;
+
+DEFER_USER = true;
 
 Comment = function(arg) {
   var body, loading, ref1, time, user;
@@ -614,15 +625,23 @@ module.exports = query({
     };
   },
   componentDidMount: function() {
-    return urb.init((function(_this) {
-      return function() {
-        return _this.setState({
-          user: urb.user
-        });
-      };
-    })(this));
+    if (!DEFER_USER) {
+      return urb.init((function(_this) {
+        return function() {
+          return _this.setState({
+            user: urb.user
+          });
+        };
+      })(this));
+    }
   },
   componentDidUpdate: function(_props) {
+    var ref1;
+    if (urb.user && !this.state.user) {
+      this.setState({
+        user: (ref1 = urb.user) != null ? ref1 : ""
+      });
+    }
     if (this.props.comt.length > _props.comt.length) {
       return this.setState({
         loading: null
@@ -860,22 +879,27 @@ module.exports = recl({
 
 
 },{}],9:[function(require,module,exports){
-var div, recl;
+var div, name, recl;
 
 recl = React.createClass;
 
+name = function(displayName, component) {
+  return _.extend(component, {
+    displayName: displayName
+  });
+};
+
 div = React.DOM.div;
 
-module.exports = recl({
-  displayName: "ImagePanel",
-  render: function() {
-    return div({
-      className: "image-container",
-      style: {
-        backgroundImage: "url('" + this.props.src + "')"
-      }
-    });
-  }
+module.exports = name("ImagePanel", function(arg) {
+  var src;
+  src = arg.src;
+  return div({
+    className: "image-container",
+    style: {
+      backgroundImage: "url('" + src + "')"
+    }
+  });
 });
 
 
@@ -1261,7 +1285,9 @@ module.exports = recl({
     })(this));
   },
   componentWillUnmount: function() {
-    return TreeActions.clearNav();
+    return setTimeout((function() {
+      return TreeActions.clearNav();
+    }), 0);
   },
   render: function() {
     return div({
@@ -1494,15 +1520,19 @@ module.exports = query({
     TreeStore.addChangeListener(this._onChangeStore);
     _this = this;
     $('body').on('click', 'a', function(e) {
-      var href, url;
+      var basepath, href, url;
       href = $(this).attr('href');
       if ((href != null ? href[0] : void 0) === "#") {
         return true;
       }
       if (href && !/^https?:\/\//i.test(href)) {
-        e.preventDefault();
         url = new URL(this.href);
-        if (urb.util.basepath("", url.pathname) !== urb.util.basepath("", document.location.pathname)) {
+        if (!/http/.test(url.protocol)) {
+          return;
+        }
+        e.preventDefault();
+        basepath = urb.util.basepath;
+        if (basepath("", url.pathname) !== basepath("", document.location.pathname)) {
           document.location = this.href;
           return;
         }
@@ -1972,11 +2002,13 @@ module.exports = _.extend(reactify, {
 
 
 },{"../stores/TreeStore.coffee":27,"./LoadComponent.coffee":12}],18:[function(require,module,exports){
-var appendNext, recl, rele, waitingScripts;
+var TreeActions, appendNext, recl, rele, waitingScripts;
 
 recl = React.createClass;
 
 rele = React.createElement;
+
+TreeActions = require('../actions/TreeActions.coffee');
 
 waitingScripts = null;
 
@@ -1997,7 +2029,7 @@ module.exports = recl({
     var s;
     s = document.createElement('script');
     _.assign(s, this.props);
-    urb.waspElem(s);
+    TreeActions.registerScriptElement(s);
     s.onload = appendNext;
     this.js = s;
     if (waitingScripts != null) {
@@ -2018,7 +2050,7 @@ module.exports = recl({
 });
 
 
-},{}],19:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1}],19:[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -2472,7 +2504,7 @@ $(function() {
   window.tree.actions = require('./actions/TreeActions.coffee');
   window.tree.actions.addVirtual(require('./components/Components.coffee'));
   frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
-  window.tree.actions.setCurr(frag);
+  window.tree.actions.setCurr(frag, true);
   window.tree.actions.loadPath(frag, window.tree.data);
   if (window.tree.sein != null) {
     window.tree.actions.loadSein(frag, window.tree.sein);
@@ -2518,19 +2550,21 @@ module.exports = {
     return $.get(url, {}, function(data, status, xhr) {
       var dep;
       delete pending[url];
-      dep = urb.getXHRWasp(xhr);
-      urb.sources[dep] = url;
-      waspWait.push(dep);
-      if (_.isEmpty(pending)) {
-        waspWait.map(urb.waspData);
-        waspWait = [];
+      if (urb.wasp != null) {
+        dep = urb.getXHRWasp(xhr);
+        urb.sources[dep] = url;
+        waspWait.push(dep);
+        if (_.isEmpty(pending)) {
+          waspWait.map(urb.waspData);
+          waspWait = [];
+        }
       }
       if (cb) {
         return cb(null, data);
       }
     });
   },
-  put: function(data, mark, appl) {
+  put: function(data, mark, appl, cb) {
     if (appl == null) {
       appl = /[a-z]*/.exec(mark)[0];
     }
@@ -2538,8 +2572,13 @@ module.exports = {
       return urb.send(data, {
         mark: mark,
         appl: appl
-      });
+      }, cb);
     });
+  },
+  waspElem: function(a) {
+    if (urb.wasp != null) {
+      return urb.waspElem(a);
+    }
   },
   encode: function(obj) {
     var _encode, delim;
@@ -2871,7 +2910,9 @@ module.exports = TreeStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":24,"events":31}],28:[function(require,module,exports){
-var scroll;
+var TreeActions, scroll;
+
+TreeActions = require('../actions/TreeActions.coffee');
 
 scroll = {
   w: null,
@@ -2880,6 +2921,8 @@ scroll = {
   nh: null,
   cs: null,
   ls: null,
+  cwh: null,
+  lwh: null,
   track: function() {
     this.w = $(window).width();
     this.$n = $('#head');
@@ -2896,7 +2939,16 @@ scroll = {
   },
   scroll: function() {
     var ct, dy, top;
+    if (!((this.$n != null) && (this.$d != null))) {
+      return;
+    }
     this.cs = $(window).scrollTop();
+    this.cwh = window.innerHeight;
+    if ((this.ls - this.cs) < 0 && this.cwh !== this.lwh) {
+      console.log('current scroll: ' + this.cs);
+      console.log('last scroll: ' + this.ls);
+      console.log('window.innerHeight: ' + window.innerHeight);
+    }
     if (this.w > 767) {
       this.clearNav();
     }
@@ -2928,27 +2980,30 @@ scroll = {
         }
       }
       if (dy < 0) {
-        if (!this.$n.hasClass('m-up')) {
-          this.$n.removeClass('m-down m-fixed').addClass('m-up');
-          this.$d.removeClass('open');
-          $('.menu.open').removeClass('open');
-          top = this.cs < 0 ? 0 : this.cs;
-          ct = this.$n.offset().top;
-          if (top > ct && top < ct + this.nh) {
-            top = ct;
+        if (this.cwh === this.lwh) {
+          if (!this.$n.hasClass('m-up')) {
+            this.$n.removeClass('m-down m-fixed').addClass('m-up');
+            TreeActions.closeNav();
+            $('.menu.open').removeClass('open');
+            top = this.cs < 0 ? 0 : this.cs;
+            ct = this.$n.offset().top;
+            if (top > ct && top < ct + this.nh) {
+              top = ct;
+            }
+            this.$n.offset({
+              top: top
+            });
           }
-          this.$n.offset({
-            top: top
-          });
-        }
-        if (this.$n.hasClass('m-up') && this.$d.hasClass('open')) {
-          if (this.cs > this.$n.offset().top + this.$n.height()) {
-            this.$d.removeClass('open');
+          if (this.$n.hasClass('m-up') && this.$d.hasClass('open')) {
+            if (this.cs > this.$n.offset().top + this.$n.height()) {
+              TreeActions.closeNav();
+            }
           }
         }
       }
     }
-    return this.ls = this.cs;
+    this.ls = this.cs;
+    return this.lwh = this.cwh;
   },
   init: function() {
     setInterval(this.track.bind(this), 200);
@@ -2964,7 +3019,7 @@ scroll.init();
 module.exports = scroll;
 
 
-},{}],29:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1}],29:[function(require,module,exports){
 var _basepath;
 
 _basepath = window.urb.util.basepath("/");
@@ -2999,6 +3054,8 @@ module.exports = {
     }
     if (ship.length <= 13) {
       return ship;
+    } else if (ship.length === 27) {
+      return ship.slice(14, 20) + "^" + ship.slice(-6);
     } else {
       return ship.slice(0, 6) + "_" + ship.slice(-6);
     }

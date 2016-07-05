@@ -64,7 +64,8 @@ div.gram.same:hover div.meta {
   position: absolute;
   background-color: #fff;
   margin-top: -2.5rem;
-  padding-top: 1rem; }
+  padding-top: 1rem;
+  white-space: nowrap; }
 
 .speech {
   margin-left: 1.875rem; }
@@ -73,7 +74,6 @@ div.gram.same:hover div.meta {
   font-family: 'scp';
   font-size: .9rem; }
   .exp .speech {
-    white-space: nowrap;
     max-width: 100%;
     overflow-x: scroll; }
   .exp .speech > span {
