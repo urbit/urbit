@@ -46,7 +46,8 @@
 ++  galaxy                                              ::  subdivided galaxy
   (managed (trel (foil moon) (foil planet) (foil star)))::
 ::                                                      ::
-++  passcode  @pG                                       ::  64-bit passcode
+++  ticket  @G                                          ::  old 64-bit ticket
+++  passcode  @uvG                                      ::  64-bit passcode
 ++  mail  @t                                            ::  email address
 ++  balance                                             ::  invitation balance
   $:  planets/@ud                                       ::  planet count
@@ -491,7 +492,7 @@
     ?>  |(=(our src) =([~ src] boss))                  ::  priveledged
     ``[%womb-balance-all (~(run by bureau) |=(balance owner))]
   ^-  (unit (unit {$womb-balance balance}))
-  =+  pas=~|(bad-path+tyl (raid tyl pas=%p ~))
+  =+  pas=~|(bad-path+tyl (raid tyl pas=%uv ~))
   %-  some
   %+  bind  (~(get by bureau) pas)
   |=(bal/balance [%womb-balance bal])
@@ -625,7 +626,7 @@
 ++  invite-from                                       ::  traced invitation
   |=  {hiz/(list mail) tid/cord inv/invite}  ^+  +>
   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
-  =+  pas=`passcode`(slav %p tid)
+  =+  pas=`passcode`(slav %uv tid)
   ?:  (~(has by bureau) pas)
     ~|([%duplicate-passcode pas who.inv replay=replay] !!)
   =.  bureau  (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
@@ -642,7 +643,7 @@
   =.  stars.bal  (sub stars.bal sta.inv)
   =.  planets.bal  (sub planets.bal pla.inv)
   =.  bureau  (~(put by bureau) aut bal)
-  =+  tid=(scot %p (end 6 1 (shaf %pass eny)))
+  =+  tid=(scot %uv (end 6 1 (shaf %pass eny)))
   (invite-from [owner.bal history.bal] tid inv)
 ::
 ++  poke-obey                                         ::  set/reset boss

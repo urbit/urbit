@@ -21,7 +21,7 @@
         ==
     %-  ot  :~
       tid+so
-      ref+(mu (su (pick ;~(pfix sig fed:ag) mail)))
+      ref+(mu (su (pick ;~(pfix (jest '0v') viz:ag) mail)))
       inv+(ot who+(su mail) pla+ni sta+ni wel+(ot intro+sa hello+sa ~) ~)
     ==
   --

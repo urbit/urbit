@@ -5,11 +5,11 @@
 ::
 ::::  ~fyr
   ::
-|_  {pas/@pG status/?($fail $good $used)}
+|_  {pas/@uvG status/?($fail $good $used)}
 ::
 ++  grab
   |%
-  ++  noun  {@pG ?($fail $good $used)}
+  ++  noun  {@uvG ?($fail $good $used)}
   --
 ++  grow
   |%
