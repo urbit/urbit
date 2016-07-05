@@ -710,42 +710,42 @@
     %+  turn  a
     |=(a/@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32)))
   ::
-  ++  alnm
+  ++  alnm                                            ::  alpha-numeric
     |=  a/@  ^-  ?
     ?|  &((gte a '0') (lte a '9'))
         &((gte a 'A') (lte a 'Z'))
         &((gte a 'a') (lte a 'z'))
     ==
   ::
-  ++  next-edge
-    |=  buf/(list @c)
+  ++  nedg                                            ::  next boundary offset
+    |=  a/(list @)
     =|  i/@ud
-    =+  m=|
+    =+  b=|
     |-  ^+  i
-    ?~  buf  i
-    =+  w=(alnm i.buf)
-    =.  m  |(m w)
-    ?:  &(m !|(=(0 i) w))
+    ?~  a  i
+    =+  c=(alnm i.a)
+    =.  b  |(b c)
+    ?:  &(b !|(=(0 i) c))
       i
-    $(i +(i), buf t.buf)
+    $(i +(i), a t.a)
   ::
-  ++  next-word
-    |=  buf/(list @c)
+  ++  nwrd                                            ::  word-offset
+    |=  a/(list @)
     =|  i/@ud
     |-  ^+  i
-    ?:  |(?=($~ buf) (alnm i.buf))
+    ?:  |(?=($~ a) (alnm i.a))
       i
-    $(i +(i), buf t.buf)
+    $(i +(i), a t.a)
   ::
-  ++  jump-bwrd
-    |=  {pos/@ud buf/(list @c)}
+  ++  bwrd                                            :: prev pos by offset
+    |=  {a/@ud b/(list @) c/$-((list @) @)}
     ^-  @ud
-    (sub pos (next-edge (flop (scag pos buf))))
+    (sub a (c (flop (scag a b))))
   ::
-  ++  jump-fwrd
-    |=  {pos/@ud buf/(list @c)}
+  ++  fwrd                                            :: next pos by offset
+    |=  {a/@ud b/(list @) c/$-((list @) @)}
     ^-  @ud
-    (add pos (next-edge (slag pos buf)))
+    (add a (c (slag a b)))
   ::
   ++  ta-met                                          ::  meta key
     |=  key/@ud
@@ -753,24 +753,24 @@
       $dot  ?.  &(?=(^ old.hit) ?=(^ -.old.hit))
               ta-bel
             =+  old=`(list @c)`-.old.hit
-            =+  b=(jump-bwrd (lent old) old)
+            =+  b=(bwrd (lent old) old nedg)
             %-  ta-hom(ris ~)
             (ta-cat pos.inp (slag b old))
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
-            =+  b=(jump-bwrd pos.inp buf.say.inp)
+            =+  b=(bwrd pos.inp buf.say.inp nedg)
             %-  ta-hom(kil `(slag b (scag pos.inp buf.say.inp)), ris ~)
             (ta-cut b (sub pos.inp b))
             ::
       $b    ?:  =(0 pos.inp)
               ta-bel
-            +>(pos.inp (jump-bwrd pos.inp buf.say.inp))
+            +>(pos.inp (bwrd pos.inp buf.say.inp nedg))
             ::
       $c    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  sop=(add pos.inp (next-word (slag pos.inp buf.say.inp)))
-            %-  ta-hom(pos.inp (jump-fwrd sop buf.say.inp))
+            =+  sop=(fwrd pos.inp buf.say.inp nwrd)
+            %-  ta-hom(pos.inp (fwrd sop buf.say.inp nedg))
             :~  %mor
               [%del sop]
               :+  %ins  sop
@@ -779,13 +779,13 @@
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  f=(jump-fwrd pos.inp buf.say.inp)
+            =+  f=(fwrd pos.inp buf.say.inp nedg)
             %-  ta-hom(kil `(slag pos.inp (scag f buf.say.inp)), ris ~)
             (ta-cut pos.inp (sub f pos.inp))
             ::
       $f    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            +>(pos.inp (jump-fwrd pos.inp buf.say.inp))
+            +>(pos.inp (fwrd pos.inp buf.say.inp nedg))
             ::
       $r    %-  ta-hom(lay.hit (~(put by lay.hit) pos.hit ~))
             :~  %mor
@@ -795,12 +795,12 @@
               (snag (sub num.hit +(pos.hit)) old.hit)
             ==
             ::
-      $t    =+  a=(jump-fwrd pos.inp buf.say.inp)
-            =+  b=(jump-bwrd a buf.say.inp)
-            =+  c=(jump-bwrd b buf.say.inp)
+      $t    =+  a=(fwrd pos.inp buf.say.inp nedg)
+            =+  b=(bwrd a buf.say.inp nedg)
+            =+  c=(bwrd b buf.say.inp nedg)
             ?:  =(b c)
               ta-bel
-            =+  prev=`(pair @ud @ud)`[c (jump-fwrd c buf.say.inp)]
+            =+  prev=`(pair @ud @ud)`[c (fwrd c buf.say.inp nedg)]
             =+  next=`(pair @ud @ud)`[b a]
             %-  ta-hom(pos.inp q.next)
             :~  %mor
@@ -814,8 +814,8 @@
             ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             =+  case=?:(?=($u key) ucas lcas)
-            =+  sop=(add pos.inp (next-word (slag pos.inp buf.say.inp)))
-            =+  f=(jump-fwrd sop buf.say.inp)
+            =+  sop=(fwrd pos.inp buf.say.inp nwrd)
+            =+  f=(fwrd sop buf.say.inp nedg)
             %-  ta-hom
             :~  %mor
               (ta-cut sop (sub f pos.inp))
