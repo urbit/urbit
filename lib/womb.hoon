@@ -620,12 +620,12 @@
     %+  ~(put by hotel)  u.ref
     =+  cli=(fall (~(get by hotel) u.ref) *client)
     cli(sta +(sta.cli))
-  (invite-from(eny (shax tid)) ~ inv)
+  (invite-from ~ tid inv)
 ::
 ++  invite-from                                       ::  traced invitation
-  |=  {hiz/(list mail) inv/invite}  ^+  +>
+  |=  {hiz/(list mail) tid/cord inv/invite}  ^+  +>
   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
-  =+  pas=`passcode`(end 6 1 (shaf %pass eny))
+  =+  pas=`passcode`(slav %p tid)
   ?:  (~(has by bureau) pas)
     ~|([%duplicate-passcode pas who.inv replay=replay] !!)
   =.  bureau  (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
@@ -642,7 +642,8 @@
   =.  stars.bal  (sub stars.bal sta.inv)
   =.  planets.bal  (sub planets.bal pla.inv)
   =.  bureau  (~(put by bureau) aut bal)
-  (invite-from [owner.bal history.bal] inv)
+  =+  tid=(scot %p (end 6 1 (shaf %pass eny)))
+  (invite-from [owner.bal history.bal] tid inv)
 ::
 ++  poke-obey                                         ::  set/reset boss
   |=  who/(unit @p)
