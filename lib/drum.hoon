@@ -25,7 +25,7 @@
       cas/case                                          ::  boot case
   ==                                                    ::
 ++  source                                              ::  input device
-  $:  edg/_80                                        ::  terminal columns
+  $:  edg/_80                                           ::  terminal columns
       off/@ud                                           ::  window offset
       kil/(unit (list @c))                              ::  kill buffer
       inx/@ud                                           ::  ring index
@@ -718,6 +718,10 @@
     (~(get by lay.hit) sop)
   ::
   ++  ta-nex                                          ::  advance history
+    ?:  ?|  =(0 (lent buf.say.inp))
+            &(?=(^ old.hit) =(-.old.hit buf.say.inp))
+        ==
+      %_(. pos.hit num.hit, ris ~, lay.hit ~)
     %_  .
       num.hit  +(num.hit)
       pos.hit  +(num.hit)

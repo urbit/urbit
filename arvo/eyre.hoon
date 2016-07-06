@@ -1103,13 +1103,7 @@
           %^  resp  200  image+/png
           favi
         ::
-            {$txt $robots $~}
-          :-  ~
-          %^  resp  200  text+/plain
-          %-  role
-          :~  'User-agent: *'
-              'Disallow: /'
-          ==
+          ::  {$txt $robots $~}  !!
         ==
       ::
       ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
@@ -1466,6 +1460,8 @@
     ++  foreign-hat
       |=  {him/ship hat/hart}  ^+  ..ya
       ~|  way
+      ?.  (~(has by way) him)  :: XX crashes should be handled by ames
+        ~&(strange-auth+[way him hat] ..ya)
       =^  pul  hen  (~(got by way) him)
       =:  way       (~(del by way) him)
           dop       (~(put by dop) r.hat him)

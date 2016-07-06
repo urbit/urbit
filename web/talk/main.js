@@ -18,9 +18,13 @@ Persistence = _persistence({
       });
     },
     listenStation: function(station, date) {
+      var now;
       if (!date) {
-        date = window.urb.util.toDate(new Date());
+        date = window.urb.util.toDate((now = new Date(), now.setSeconds(0), now.setMilliseconds(0), new Date(now - 24 * 3600 * 1000)));
       }
+      Dispatcher.handleViewAction({
+        type: "messages-fetch"
+      });
       return Persistence.listenStation(station, date);
     },
     listeningStation: function(station) {
@@ -227,11 +231,11 @@ Persistence = _persistence({
 
 
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/StationPersistence.coffee":12}],3:[function(require,module,exports){
-var div, input, recl, ref, textarea;
+var div, recl, ref, span;
 
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, input = ref.input, textarea = ref.textarea;
+ref = React.DOM, span = ref.span, div = ref.div;
 
 module.exports = recl({
   displayName: "Load",
@@ -257,11 +261,9 @@ module.exports = recl({
     });
   },
   render: function() {
-    return div({
-      className: "loading"
-    }, div({
-      className: "spin state-" + this.state.anim
-    }, ""));
+    return span({
+      className: "loading state-" + this.state.anim
+    }, '');
   }
 });
 
@@ -511,13 +513,15 @@ module.exports = recl({
 
 
 },{"../util.coffee":15,"./MemberComponent.coffee":4,"classnames":16}],6:[function(require,module,exports){
-var FONT_SIZE, INFINITE, Infinite, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_FIRST_MARGIN_TOP, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, util;
+var FONT_SIZE, INFINITE, Infinite, Load, MESSAGE_HEIGHT_FIRST, MESSAGE_HEIGHT_FIRST_MARGIN_TOP, MESSAGE_HEIGHT_SAME, Message, MessageActions, MessageStore, StationActions, StationStore, div, recl, rele, util;
 
 util = require('../util.coffee');
 
 Infinite = null;
 
 recl = React.createClass;
+
+rele = React.createElement;
 
 div = React.DOM.div;
 
@@ -530,6 +534,8 @@ StationActions = require('../actions/StationActions.coffee');
 StationStore = require('../stores/StationStore.coffee');
 
 Message = require('./MessageComponent.coffee');
+
+Load = require('./LoadComponent.coffee');
 
 INFINITE = true;
 
@@ -685,7 +691,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, body, canvas, context, lastIndex, lastSaid, messageHeights, messages, ref, speechLength, station;
+    var _messages, body, canvas, context, fetching, lastIndex, lastSaid, messageHeights, messages, ref, speechLength, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
@@ -751,7 +757,7 @@ module.exports = recl({
         }
         messageHeights.push(height + marginTop);
         speech = message.thought.statement.speech;
-        return React.createElement(Message, _.extend({}, message, {
+        return rele(Message, _.extend({}, message, {
           station: station,
           sameAs: sameAs,
           _handlePm: _this._handlePm,
@@ -767,7 +773,7 @@ module.exports = recl({
       };
     })(this));
     if ((this.props.readOnly == null) && INFINITE) {
-      body = React.createElement(Infinite, {
+      body = rele(Infinite, {
         useWindowAsScrollContainer: true,
         containerHeight: window.innerHeight,
         elementHeight: messageHeights,
@@ -776,15 +782,16 @@ module.exports = recl({
     } else {
       body = _messages;
     }
+    fetching = this.state.fetching ? rele(Load, {}) : void 0;
     return div({
       className: "grams",
       key: "messages"
-    }, body);
+    }, body, fetching);
   }
 });
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./MessageComponent.coffee":5}],7:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./LoadComponent.coffee":3,"./MessageComponent.coffee":5}],7:[function(require,module,exports){
 var Load, Member, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style, util,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -907,8 +914,6 @@ module.exports = recl({
           _clas = clas({
             open: this.state.open === station,
             closed: !(this.state.open === station),
-            'col-md-4': true,
-            'col-md-offset-6': true,
             menu: true,
             'depth-2': true
           });
@@ -977,8 +982,6 @@ module.exports = recl({
     _clas = clas({
       open: this.props.open === true,
       closed: this.props.open !== true,
-      'col-md-4': true,
-      'col-md-offset-2': true,
       menu: true,
       'depth-1': true
     });
@@ -1126,10 +1129,13 @@ module.exports = recl({
       }), 0);
       return;
     }
-    if (this.state.audi.length === 0 && $('#audience').text().trim().length > 0) {
-      audi = this._setAudi() ? this._setAudi() : this.state.ludi;
-    } else {
+    if (!(this.state.audi.length === 0 && $('#audience').text().trim().length > 0)) {
       audi = this.state.audi;
+    } else {
+      audi = this._setAudi() || this.state.ludi;
+    }
+    if (this.props['audience-lock'] != null) {
+      audi = _.union(audi, ["~" + window.urb.ship + "/" + this.props.station]);
     }
     audi = this.addCC(audi);
     txt = this.$message.text().trim().replace(/\xa0/g, ' ');
@@ -1979,11 +1985,16 @@ module.exports = util = {
   },
   mainStations: ["court", "floor", "porch"],
   mainStationPath: function(user) {
-    return "~" + user + "/" + (util.mainStation(user));
+    if (user) {
+      return "~" + user + "/" + (util.mainStation(user));
+    }
   },
   mainStation: function(user) {
     if (!user) {
       user = window.urb.user;
+    }
+    if (!user) {
+      return;
     }
     switch (user.length) {
       case 3:
