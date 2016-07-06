@@ -631,7 +631,7 @@
   ?:  (~(has by bureau) (shaf %pass pas))
     ~|([%duplicate-passcode pas who.inv replay=replay] !!)
   =.  bureau  (~(put by bureau) (shaf %pass pas) [pla.inv sta.inv who.inv hiz])
-  (email /invite who.inv "{intro.wel.inv}: {<pas>}")
+  (email /invite who.inv intro.wel.inv)
 ::
 :: ++  coup-invite                                      ::  invite sent
 ::
