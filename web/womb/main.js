@@ -194,7 +194,7 @@ module.exports = WombStore;
 
 
 },{"./Dispatcher.coffee":2,"./util.coffee":15,"events":17}],5:[function(require,module,exports){
-var Actions, Balance, FromStore, History, Label, Mail, PassInput, Planets, SHOP, Scry, Shop, Stars, b, clas, code, div, h6, name, p, recl, ref, rele, span;
+var Actions, Balance, FromStore, History, Label, Mail, PassInput, Planets, SHOP, Scry, Shop, Stars, b, clas, code, div, h3, h6, name, p, recl, ref, rele, span;
 
 clas = require('classnames');
 
@@ -218,7 +218,7 @@ name = function(displayName, component) {
   });
 };
 
-ref = React.DOM, div = ref.div, b = ref.b, h6 = ref.h6, p = ref.p, span = ref.span, code = ref.code;
+ref = React.DOM, div = ref.div, b = ref.b, h3 = ref.h3, h6 = ref.h6, p = ref.p, span = ref.span, code = ref.code;
 
 SHOP = false;
 
@@ -264,16 +264,20 @@ Balance = Scry("/balance/:pass", function(arg) {
   var balance, history, owner, planets, stars;
   balance = arg.balance;
   if (balance.fail) {
-    return div({}, Label("Invalid passcode", "warning"));
+    return div({
+      style: {
+        marginTop: '1rem'
+      }
+    }, Label("Invalid passcode", "warning"));
   }
   planets = balance.planets, stars = balance.stars, owner = balance.owner, history = balance.history;
-  return div({}, h6({}, "Balance"), p({}, "Hello ", Mail(owner)), p({}, "This balance was ", History(history), "It contains ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
+  return div({}, h3({}, "Balance"), p({}, "Hello ", Mail(owner), ", "), p({}, "This balance was ", History(history)), p({}, "You currently hold ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
 });
 
 module.exports = name("Claim", FromStore("pass", function(arg) {
   var pass;
   pass = arg.pass;
-  return div({}, p({}, "Input a passcode to view ship allocation: "), PassInput({
+  return div({}, p({}, "To view your ships, input your passcode."), PassInput({
     minLength: 32,
     defaultValue: pass,
     onInputPass: Actions.setPasscode
@@ -360,7 +364,7 @@ module.exports = function(s, type) {
 
 
 },{}],8:[function(require,module,exports){
-var Claim, NET, Ships, div, h4, ref, rele;
+var Claim, NET, Ships, div, h3, ref, rele;
 
 Claim = require('./Claim.coffee');
 
@@ -370,10 +374,15 @@ rele = React.createElement;
 
 NET = false;
 
-ref = React.DOM, div = ref.div, h4 = ref.h4;
+ref = React.DOM, div = ref.div, h3 = ref.h3;
 
 module.exports = function() {
-  return div({}, h4({}, "Claims"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0);
+  return div({}, h3({
+    className: 'first',
+    style: {
+      lineHeight: '1.5rem'
+    }
+  }, "Check your balance"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0);
 };
 
 
@@ -397,7 +406,11 @@ module.exports = name("PassInput", function(arg) {
   onInputPass = arg.onInputPass, minLength = arg.minLength, defaultValue = arg.defaultValue;
   return input({
     defaultValue: defaultValue,
-    placeholder: "0v0",
+    className: 'mono',
+    style: {
+      width: '100%'
+    },
+    placeholder: "0v0.00000.00000.00000.00000.00000",
     onChange: function(arg1) {
       var pass, target;
       target = arg1.target;
