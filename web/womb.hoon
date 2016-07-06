@@ -5,7 +5,7 @@
 ;module(nav_title "Hello", nav_no-dpad "", nav_no-sibs "")
   ;script@"/~/at/lib/js/urb.js";
 ::   ;link/"/womb/main.css"(rel "stylesheet");
-  ;script@"/womb/main.js";
+  ;script@"./main.js";
 ::   ;h3: Warning: planet and star names not final.
 ::   ;p
 ::     ; This is a test network, and the ;{code "@p"} phonetic network address
