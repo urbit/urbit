@@ -1058,42 +1058,43 @@
 ::
 ++  fnv  |=(a/@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
 ::
+++  muk                                                 ::  standard murmur3
+  ~/  %muk
+  |=  {syd/@ key/@}
+  ?>  (lte (met 5 syd) 1)
+  =+  ^=  row
+      |=  {a/@ b/@}
+      (con (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
+  =+  mow=|=({a/@ b/@} (end 5 1 (mul a b)))
+  =+  len=(met 5 key)
+  =-  =.  goc  (mix goc len)
+      =.  goc  (mix goc (rsh 4 1 goc))
+      =.  goc  (mow goc 0x85eb.ca6b)
+      =.  goc  (mix goc (rsh 0 13 goc))
+      =.  goc  (mow goc 0xc2b2.ae35)
+      (mix goc (rsh 4 1 goc))
+  ^=  goc
+  =+  [inx=0 goc=syd]
+  |-  ^-  @
+  ?:  =(inx len)  goc
+  =+  kop=(cut 5 [inx 1] key)
+  =.  kop  (mow kop 0xcc9e.2d51)
+  =.  kop  (row 15 kop)
+  =.  kop  (mow kop 0x1b87.3593)
+  =.  goc  (mix kop goc)
+  =.  goc  (row 13 goc)
+  =.  goc  (end 5 1 (add 0xe654.6b64 (mul 5 goc)))
+  $(inx +(inx))
+::
 ++  mum                                                 ::  mug with murmur3
   ~/  %mum
   |=  a/*
   |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
-  ++  spec                                              ::  standard murmur3
-    |=  {syd/@ key/@}
-    ?>  (lte (met 5 syd) 1)
-    =+  ^=  row
-        |=  {a/@ b/@}
-        (con (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
-    =+  mow=|=({a/@ b/@} (end 5 1 (mul a b)))
-    =+  len=(met 5 key)
-    =-  =.  goc  (mix goc len)
-        =.  goc  (mix goc (rsh 4 1 goc))
-        =.  goc  (mow goc 0x85eb.ca6b)
-        =.  goc  (mix goc (rsh 0 13 goc))
-        =.  goc  (mow goc 0xc2b2.ae35)
-        (mix goc (rsh 4 1 goc))
-    ^=  goc
-    =+  [inx=0 goc=syd]
-    |-  ^-  @
-    ?:  =(inx len)  goc
-    =+  kop=(cut 5 [inx 1] key)
-    =.  kop  (mow kop 0xcc9e.2d51)
-    =.  kop  (row 15 kop)
-    =.  kop  (mow kop 0x1b87.3593)
-    =.  goc  (mix kop goc)
-    =.  goc  (row 13 goc)
-    =.  goc  (end 5 1 (add 0xe654.6b64 (mul 5 goc)))
-    $(inx +(inx))
-  ::
   ++  trim                                              ::  31-bit nonzero
     |=  key/@
     =+  syd=0xcafe.babe
     |-  ^-  @
-    =+  haz=(spec syd key)
+    =+  haz=(muk syd key)
     =+  ham=(mix (rsh 0 31 haz) (end 0 31 haz))
     ?.(=(0 ham) ham $(syd +(syd)))
   --
@@ -4491,7 +4492,7 @@
       =+  lo=(dis pyn 0xffff.ffff)
       =+  hi=(dis pyn 0xffff.ffff.0000.0000)
       %+  con  hi
-      (add 0x1.0000 (fice (sub lo 0x1.0000)))
+      $(pyn lo)
     pyn
   ::
   ++  fend                                              ::  restore structure v2
@@ -4502,14 +4503,15 @@
       =+  lo=(dis cry 0xffff.ffff)
       =+  hi=(dis cry 0xffff.ffff.0000.0000)
       %+  con  hi
-      (add 0x1.0000 (teil (sub lo 0x1.0000)))
+      $(cry lo)
     cry
   ::
   ++  fice                                              ::  adapted from
     |=  nor/@                                           ::  black and rogaway
     ^-  @                                               ::  "ciphers with
     =+  ^=  sel                                         ::   arbitrary finite
-    %+  rynd  2                                         ::   domains", 2002
+    %+  rynd  3                                         ::   domains", 2002
+    %+  rynd  2
     %+  rynd  1
     %+  rynd  0
     [(mod nor 65.535) (div nor 65.535)]
@@ -4522,6 +4524,7 @@
     %+  rund  0
     %+  rund  1
     %+  rund  2
+    %+  rund  3
     [(mod vip 65.535) (div vip 65.535)]
     (add (mul 65.535 -.sel) +.sel)
   ::
@@ -4530,25 +4533,23 @@
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(sum fo 65.535) l (en:aesc (snag n raku) r))
-    (~(sum fo 65.536) l (en:aesc (snag n raku) r))
+      (~(sum fo 65.535) l (muk (snag n raku) r))
+    (~(sum fo 65.536) l (muk (snag n raku) r))
   ::
   ++  rund                                              ::  reverse round
     |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(dif fo 65.535) l (en:aesc (snag n raku) r))
-    (~(dif fo 65.536) l (en:aesc (snag n raku) r))
+      (~(dif fo 65.535) l (muk (snag n raku) r))
+    (~(dif fo 65.536) l (muk (snag n raku) r))
   ::
   ++  raku
     ^-  (list @ux)
-    :~  0x15f6.25e3.083a.eb3e.7a55.d4db.fb99.32a3.
-          43af.2750.219e.8a24.e5f8.fac3.6c36.f968
-        0xf2ff.24fe.54d0.1abd.4b2a.d8aa.4402.8e88.
-          e82f.19ec.948d.b1bb.ed2e.f791.83a3.8133
-        0xa3d8.6a7b.400e.9e91.187d.91a7.6942.f34a.
-          6f5f.ab8e.88b9.c089.b2dc.95a6.aed5.e3a4
+    :~  0xb76d.5eed
+        0xee28.1300
+        0x85bc.ae01
+        0x4b38.7af7
     ==
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -5583,6 +5584,17 @@
     |=  se/@I  ^-  @uJ
     =+  pu=(puck se)
     (can 0 ~[[b se] [b pu]])
+  ::
+  ++  shar                                              ::  curve25519 secret
+    ~/  %shar
+    |=  {pub/@ sek/@}
+    ^-  @ux
+    =+  exp=(shal (rsh 0 3 b) sek)
+    =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
+    =.  exp  (con exp (lsh 3 31 0b100.0000))
+    =+  prv=(end 8 1 exp)
+    =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
+    (curt prv crv)
   ::
   ++  sign                                              ::  certify
     ~/  %sign
