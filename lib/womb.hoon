@@ -586,7 +586,7 @@
   ?:  replay  +>                      ::  dont's send email in replay mode
   ~&  do-email+[adr msg]
   ::~&([%email-stub adr msg] +>)
-  (emit %poke [%mail wir] [our %gmail] %email adr "A message from Urbit" [msg]~)
+  (emit %poke [%mail wir] [our %gmail] %email adr "Your Urbit Invitation" [msg]~)
 ::
 ++  log-transaction                                   ::  logged poke
   |=  a/transaction  ^+  +>
