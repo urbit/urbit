@@ -22,7 +22,7 @@
   ::                                                    ::
 |%                                                      ::
 ++  managed                                             ::  managed plot
-  |*  mold                                              ::  
+  |*  mold                                              ::
   %-  unit                                              ::  unsplit
   %+  each  +<                                          ::  subdivided
   mail                                                  ::  delivered
@@ -102,7 +102,7 @@
       bureau/(map passcode balance)                     ::  active invitations
       office/property                                   ::  properties managed
       hotel/(map (each ship mail) client)               ::  everyone we know
-      recycling/(map ship @)                            ::  old ticket keys      
+      recycling/(map ship @)                            ::  old ticket keys
   ==                                                    ::
 --                                                      ::
 ::                                                      ::  ::
@@ -123,7 +123,7 @@
   $%  {$email mail tape wall}                           ::  send email
       {$womb-do-ticket ship}                            ::  request ticket
       {$womb-do-claim ship @p}                          ::  issue ship
-      {$drum-put path @t}                               ::  log transaction      
+      {$drum-put path @t}                               ::  log transaction
   ==                                                    ::
 ++  gilt                                                :: scry result
   $%  {$ships (list ship)}                              ::
@@ -218,7 +218,7 @@
     ?>  (fit a)
     =;  adj  adj(box (~(put by box) a b))
     ?:  (~(has in box) a)  fin
-    ?:  =(ctr a)  new 
+    ?:  =(ctr a)  new
     ?:  (lth a ctr)
       ?.  (~(has in und) a)  fin
       fin(und (~(del in und) a))
@@ -263,7 +263,7 @@
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
 ++  emil                                              ::  return cards
-  |=  (list card) 
+  |=  (list card)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -315,7 +315,7 @@
   |=  nth/@u  ^-  cursor
   =^  out  nth  %.(nth (available stars.office))
   ?^  out  [out nth]
-  %+  shop-star   nth 
+  %+  shop-star   nth
   (responsive (issuing galaxies.office))
 ::
 ++  shop-star                                         ::  star from galaxies
@@ -329,7 +329,7 @@
   =^  out  nth  %.(nth (available planets.office))
   ?^  out  [out nth]
   =^  out  nth
-    %+  shop-planet   nth 
+    %+  shop-planet   nth
     (responsive (issuing stars.office))
   ?^  out  [out nth]
   (shop-planet-gal nth (issuing galaxies.office))
@@ -344,7 +344,7 @@
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
   ?:  =(~ lax)  [~ nth]
   =^  sel  nth  (in-list lax nth)
-  %+  shop-planet   nth 
+  %+  shop-planet   nth
   (responsive (issuing-under 3 who.sel box.r.sel))
 ::
 ++  peek-x-shop                                       ::  available ships
@@ -387,7 +387,7 @@
   |=  who/@p  ^-  planet
   =+  (~(get by planets.office) who)
   ?^  -  u
-  ?:  (~(has by galaxies.office) (sein who))    
+  ?:  (~(has by galaxies.office) (sein who))
     =+  gal=(get-managed-galaxy (sein who))
     ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
     (~(get fo q.p.u.gal) who)
@@ -400,7 +400,7 @@
   =+  pla=(mod (get-managed-planet who))              ::  XX double traverse
   ?:  (~(has by planets.office) who)
     +>.$(planets.office (~(put by planets.office) who pla))
-  ?:  (~(has by galaxies.office) (sein who))    
+  ?:  (~(has by galaxies.office) (sein who))
     %+  mod-managed-galaxy  (sein who)
     |=  gal/galaxy  ^-  galaxy
     ?>  ?=({$~ $& *} gal)
@@ -413,7 +413,7 @@
 ++  get-live                                          ::  last-heard time ++live
   |=  a/ship  ^-  live
   =+  rue=(ames-last-seen a)
-  ?~  rue  %cold 
+  ?~  rue  %cold
   ?:((gth (sub now u.rue) ~m5) %seen %live)
 ::
 ++  stat-any                                          ::  unsplit status
@@ -509,7 +509,7 @@
   =(b `@p`(end 6 1 (shaf %tick (mix a (shax key)))))
 ::
 ::
-++  peek-x-ticket                                
+++  peek-x-ticket
   |=  tyl/path
   ^-  (unit (unit {$womb-ticket-info passcode ?($fail $good $used)}))
   ?.  ?=({@ @ $~} tyl)  ~|(bad-path+tyl !!)
@@ -539,13 +539,13 @@
   ?+  -.tyl  ~
   ::  /shop/planets/@ud   (list @p)    up to 3 planets
   ::  /shop/stars/@ud     (list @p)    up to 3 stars
-  ::  /shop/galaxies/@ud  (list @p)    up to 3 galaxies 
+  ::  /shop/galaxies/@ud  (list @p)    up to 3 galaxies
     $shop  (peek-x-shop +.tyl)
   ::  /stats                          general stats dump
   ::  /stats/@p                       what we know about @p
     $stats  (peek-x-stats +.tyl)
   ::  /balance                         all invitations
-  ::  /balance/passcode                invitation status  
+  ::  /balance/passcode                invitation status
     $balance  (peek-x-balance +.tyl)
   ::  /ticket/ship/ticket              check ticket usability
     $ticket  (peek-x-ticket +.tyl)
@@ -776,7 +776,7 @@
 ++  poke-release                                      ::  release to subdivide
   |=  {gal/@ud sta/@ud}                               ::
   =<  abet  ^+  +>
-  =.  log-transaction  (log-transaction %release +<)  
+  =.  log-transaction  (log-transaction %release +<)
   ?>  =(our src)                                      ::  privileged
   =.  +>
     ?~  gal  +>

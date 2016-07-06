@@ -7,6 +7,11 @@
     margin-top: 0.9375rem;
     padding-left: 0.9375rem; } }
 
+.label {
+  font-size: inherit;
+  font-weight: 500;
+  line-height: inherit; }
+
 img.logo {
   height: 2rem;
   width: 2rem; }
@@ -149,8 +154,10 @@ div.logo.inverse:before {
   #head {
     top: 0;
     z-index: 10;
-    width: 100%;
-    position: absolute; }
+    width: calc(100% - 1.875rem);
+    position: absolute;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0); }
   #head.m-down,
   #head.m-up {
     position: absolute; }

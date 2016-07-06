@@ -86,8 +86,11 @@ module.exports = {
       loc: loc
     }, "write-plan-info", "hood");
   },
-  setCurr: function(path) {
-    _initialLoad = false;
+  setCurr: function(path, init) {
+    if (init == null) {
+      init = true;
+    }
+    _initialLoad &= init;
     return TreeDispatcher.handleViewAction({
       type: "setCurr",
       path: path
@@ -1517,18 +1520,19 @@ module.exports = query({
     TreeStore.addChangeListener(this._onChangeStore);
     _this = this;
     $('body').on('click', 'a', function(e) {
-      var href, url;
+      var basepath, href, url;
       href = $(this).attr('href');
       if ((href != null ? href[0] : void 0) === "#") {
         return true;
       }
       if (href && !/^https?:\/\//i.test(href)) {
-        e.preventDefault();
         url = new URL(this.href);
         if (!/http/.test(url.protocol)) {
           return;
         }
-        if (urb.util.basepath("", url.pathname) !== urb.util.basepath("", document.location.pathname)) {
+        e.preventDefault();
+        basepath = urb.util.basepath;
+        if (basepath("", url.pathname) !== basepath("", document.location.pathname)) {
           document.location = this.href;
           return;
         }
@@ -2500,7 +2504,7 @@ $(function() {
   window.tree.actions = require('./actions/TreeActions.coffee');
   window.tree.actions.addVirtual(require('./components/Components.coffee'));
   frag = util.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
-  window.tree.actions.setCurr(frag);
+  window.tree.actions.setCurr(frag, true);
   window.tree.actions.loadPath(frag, window.tree.data);
   if (window.tree.sein != null) {
     window.tree.actions.loadSein(frag, window.tree.sein);
@@ -2906,7 +2910,9 @@ module.exports = TreeStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":24,"events":31}],28:[function(require,module,exports){
-var scroll;
+var TreeActions, scroll;
+
+TreeActions = require('../actions/TreeActions.coffee');
 
 scroll = {
   w: null,
@@ -2915,6 +2921,8 @@ scroll = {
   nh: null,
   cs: null,
   ls: null,
+  cwh: null,
+  lwh: null,
   track: function() {
     this.w = $(window).width();
     this.$n = $('#head');
@@ -2935,6 +2943,12 @@ scroll = {
       return;
     }
     this.cs = $(window).scrollTop();
+    this.cwh = window.innerHeight;
+    if ((this.ls - this.cs) < 0 && this.cwh !== this.lwh) {
+      console.log('current scroll: ' + this.cs);
+      console.log('last scroll: ' + this.ls);
+      console.log('window.innerHeight: ' + window.innerHeight);
+    }
     if (this.w > 767) {
       this.clearNav();
     }
@@ -2966,27 +2980,30 @@ scroll = {
         }
       }
       if (dy < 0) {
-        if (!this.$n.hasClass('m-up')) {
-          this.$n.removeClass('m-down m-fixed').addClass('m-up');
-          this.$d.removeClass('open');
-          $('.menu.open').removeClass('open');
-          top = this.cs < 0 ? 0 : this.cs;
-          ct = this.$n.offset().top;
-          if (top > ct && top < ct + this.nh) {
-            top = ct;
+        if (this.cwh === this.lwh) {
+          if (!this.$n.hasClass('m-up')) {
+            this.$n.removeClass('m-down m-fixed').addClass('m-up');
+            TreeActions.closeNav();
+            $('.menu.open').removeClass('open');
+            top = this.cs < 0 ? 0 : this.cs;
+            ct = this.$n.offset().top;
+            if (top > ct && top < ct + this.nh) {
+              top = ct;
+            }
+            this.$n.offset({
+              top: top
+            });
           }
-          this.$n.offset({
-            top: top
-          });
-        }
-        if (this.$n.hasClass('m-up') && this.$d.hasClass('open')) {
-          if (this.cs > this.$n.offset().top + this.$n.height()) {
-            this.$d.removeClass('open');
+          if (this.$n.hasClass('m-up') && this.$d.hasClass('open')) {
+            if (this.cs > this.$n.offset().top + this.$n.height()) {
+              TreeActions.closeNav();
+            }
           }
         }
       }
     }
-    return this.ls = this.cs;
+    this.ls = this.cs;
+    return this.lwh = this.cwh;
   },
   init: function() {
     setInterval(this.track.bind(this), 200);
@@ -3002,7 +3019,7 @@ scroll.init();
 module.exports = scroll;
 
 
-},{}],29:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1}],29:[function(require,module,exports){
 var _basepath;
 
 _basepath = window.urb.util.basepath("/");
@@ -3037,6 +3054,8 @@ module.exports = {
     }
     if (ship.length <= 13) {
       return ship;
+    } else if (ship.length === 27) {
+      return ship.slice(14, 20) + "^" + ship.slice(-6);
     } else {
       return ship.slice(0, 6) + "_" + ship.slice(-6);
     }
