@@ -47,7 +47,8 @@
   (managed (trel (foil moon) (foil planet) (foil star)))::
 ::                                                      ::
 ++  ticket  @G                                          ::  old 64-bit ticket
-++  passcode  @uvH                                      ::  64-bit passcode
+++  passcode  @uvH                                      ::  128-bit passcode
+++  passhash  @uwH                                      ::  passocde hash
 ++  mail  @t                                            ::  email address
 ++  balance                                             ::  invitation balance
   $:  planets/@ud                                       ::  planet count
@@ -99,7 +100,7 @@
 ++  part  {$womb $1 pith}                               ::  womb state
 ++  pith                                                ::  womb content
   $:  boss/(unit ship)                                  ::  outside master
-      bureau/(map passcode balance)                     ::  active invitations
+      bureau/(map passhash balance)                     ::  active invitations
       office/property                                   ::  properties managed
       hotel/(map (each ship mail) client)               ::  everyone we know
       recycling/(map ship @)                            ::  old ticket keys
@@ -128,7 +129,7 @@
 ++  gilt                                                :: scry result
   $%  {$ships (list ship)}                              ::
       {$womb-balance balance}                           ::
-      {$womb-balance-all (map passcode mail)}           ::
+      {$womb-balance-all (map passhash mail)}           ::
       {$womb-stat stat}                                 ::
       {$womb-stat-all (map ship stat)}                  ::
       {$womb-ticket-info passcode ?($fail $good $used)} ::
@@ -494,7 +495,7 @@
   ^-  (unit (unit {$womb-balance balance}))
   =+  pas=~|(bad-path+tyl (raid tyl pas=%uv ~))
   %-  some
-  %+  bind  (~(get by bureau) pas)
+  %+  bind  (~(get by bureau) (shaf %pass pas))
   |=(bal/balance [%womb-balance bal])
 ::
 ++  old-phon    ;~(pfix sig fed:ag)  :: stub
@@ -520,7 +521,7 @@
   =+  pas=`passcode`(end 7 1 (sham %tick him tik))
   :-  pas
   ?.  gud  %fail
-  ?:  (~(has by bureau) pas)  %used
+  ?:  (~(has by bureau) (shaf %pass pas))  %used
   %good
 ::
 ++  peer-scry-x                                        ::  subscription like .^
@@ -627,9 +628,9 @@
   |=  {hiz/(list mail) tid/cord inv/invite}  ^+  +>
   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
   =+  pas=~|(bad-invite+tid `passcode`(slav %uv tid))
-  ?:  (~(has by bureau) pas)
+  ?:  (~(has by bureau) (shaf %pass pas))
     ~|([%duplicate-passcode pas who.inv replay=replay] !!)
-  =.  bureau  (~(put by bureau) pas [pla.inv sta.inv who.inv hiz])
+  =.  bureau  (~(put by bureau) (shaf %pass pas) [pla.inv sta.inv who.inv hiz])
   (email /invite who.inv "{intro.wel.inv}: {<pas>}")
 ::
 :: ++  coup-invite                                      ::  invite sent
@@ -639,10 +640,10 @@
   =<  abet
   =.  log-transaction  (log-transaction %reinvite +<)
   ?>  =(src src)                                      ::  self-authenticated
-  =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
+  =+  ~|(%bad-passcode bal=(~(got by bureau) (shaf %pass aut)))
   =.  stars.bal  (sub stars.bal sta.inv)
   =.  planets.bal  (sub planets.bal pla.inv)
-  =.  bureau  (~(put by bureau) aut bal)
+  =.  bureau  (~(put by bureau) (shaf %pass aut) bal)
   =+  tid=(scot %uv (end 7 1 (shaf %pass eny)))
   (invite-from [owner.bal history.bal] tid inv)
 ::
@@ -720,10 +721,10 @@
   =+  [him tik]=(parse-ticket him-t tik-t)
   ?>  (need (check-old-ticket him tik))
   =+  pas=`passcode`(end 7 1 (sham %tick him tik))
-  ?:  (~(has by bureau) pas)
+  ?:  (~(has by bureau) (shaf %pass pas))
     ~|(already-recycled+[him-t tik-t] !!)
   =+  bal=`balance`?+((clan him) !! $duke [1 0 who ~], $king [0 1 who ~])
-  .(bureau (~(put by bureau) pas bal))
+  .(bureau (~(put by bureau) (shaf %pass pas) bal))
 ::
 ++  poke-claim                                        ::  claim plot, req ticket
   |=  {aut/passcode her/@p}
@@ -738,7 +739,7 @@
   =;  claimed
     :: =.  claimed  (emit.claimed %wait $~)          :: XX delay ack
     (emit.claimed %poke /tick [(sein her) %hood] [%womb-do-ticket her])
-  =+  ~|(%bad-passcode bal=(~(got by bureau) aut))
+  =+  ~|(%bad-passcode bal=(~(got by bureau) (shaf %pass aut)))
   ?+    (clan her)  ~|(bad-size+(clan her) !!)
       $king
     =;  all  (claim-star.all owner.bal her)
@@ -747,11 +748,11 @@
     =+  (use-reference |+owner.bal)
     ?^  -  u
     =.  stars.bal  ~|(%no-stars (dec stars.bal))
-    +>.$(bureau (~(put by bureau) aut bal))
+    +>.$(bureau (~(put by bureau) (shaf %pass aut) bal))
   ::
       $duke
     =.  planets.bal  ~|(%no-planets (dec planets.bal))
-    =.  bureau  (~(put by bureau) aut bal)
+    =.  bureau  (~(put by bureau) (shaf %pass aut) bal)
     (claim-planet owner.bal her)
   ==
 ::
