@@ -84,7 +84,7 @@
     %post
     /messages/send
     ~['uploadType'^%simple]
-    [(crip "urbit+{<our.hid>}") 'urbit.org']
+    ['urbit' 'urbit.org'] :: [(crip "urbit+{<our.hid>}") 'urbit.org']
   ::
     =-  (rash adr -)
     [;~((glue pat) . .)]:(cook crip (plus ;~(less pat next)))  :: /[^@]+@[^@]+/
