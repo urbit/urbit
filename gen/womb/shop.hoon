@@ -8,5 +8,5 @@
         who/(unit @p)
     ==
 ?~  arg  $(arg ~[typ=%planets])
-=-  [%ships .^((list ship) %gx /[him]/hood/[cas]/womb/shop/[typ.arg]/[nth])]
+=-  [%ships .^((list ship) %gx /[him]/hood/[cas]/womb/shop/[typ.arg]/[nth]/ships)]
 [him=(scot %p ?^(who u.who p.bec)) cas=(scot %da now) nth=(scot %ud %.(10 ~(rad og eny)))]

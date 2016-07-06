@@ -10,4 +10,4 @@
     ==
 :-  %womb-stat-all
 =+  [him=(scot %p ?^(who u.who p.bec)) cas=(scot %da now)]
-.^((map ship stat:womb) %gx /[him]/hood/[cas]/womb/stats)
+.^((map ship stat:womb) %gx /[him]/hood/[cas]/womb/stats/womb-stat-all)
