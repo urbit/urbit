@@ -126,7 +126,7 @@
   :: ~&  wir+wir
   ?.  ?=({care @ @ @ *} wir)
     ::  pokes don't return anything
-    ~&  poke+res
+    ~&  sigh-poke+p.res
     [~ +>.$]
   =+  arg=(path (cue (slav %uv i.t.t.wir)))
   :: ~&  ittwir+i.t.t.wir
