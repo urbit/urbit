@@ -11,7 +11,9 @@ import requests
 import argparse
 import base64
 
-logging.basicConfig(level=logging.DEBUG,
+PORT = 12322
+
+logging.basicConfig(level=logging.WARNING,
                     format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
                     stream=sys.stderr)
 
@@ -330,7 +332,7 @@ if args.source is None:
 payload = {"source": args.source, "sink": args.sink}
 logging.debug(['payload', json.dumps(payload)])
 
-url = "http://localhost:12321"
+url = "http://localhost:%s" % PORT
 r = requests.post(url, data=json.dumps(payload))
 if r.text[0] == '"':
     print r.text[1:-1].decode('string_escape')
