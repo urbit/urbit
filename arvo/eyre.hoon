@@ -1108,7 +1108,7 @@
           %^  resp  200  text+/plain
           %-  role
           :~  'User-agent: *'
-              'Disallow: /'
+              'Disallow: '
           ==
         ==
       ::
