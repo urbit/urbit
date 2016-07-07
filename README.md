@@ -229,7 +229,7 @@ Urbit's own official planet `~winsen-pagdel` hosts the public docs
 [`urbit/docs`](http://github.com/urbit/docs).
 
 If this is your first time using Urbit, we'd recommend starting
-[here](http://urbit.org/docs/user/basic#-basic-operation).
+[here](http://urbit.org/docs/using/admin/).
 
 # Contributing
 
