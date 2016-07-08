@@ -124,6 +124,7 @@
 ++  poke-kiln-schedule        (wrap poke-schedule):from-kiln
 ++  poke-kiln-track           (wrap poke-track):from-kiln
 ++  poke-kiln-sync            (wrap poke-sync):from-kiln
+++  poke-kiln-syncs           (wrap poke-syncs):from-kiln
 ++  poke-kiln-start-autoload  (wrap poke-start-autoload):from-kiln
 ++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln

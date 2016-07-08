@@ -121,6 +121,16 @@
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:(start-sync:(auto hos) |)
 ::
+++  poke-syncs                                        ::
+  |=  $~
+  =<  abet  %-  spam
+  =+  a=(~(tap by syn))
+  ?:  =(0 (lent a))
+    [%leaf "no syncs configured"]~
+  %-  flop  %+  turn  a
+  |=  a/(pair kiln-sync *)
+  (render "sync configured" [sud her syd]:p.a)
+::
 ++  poke-init-sync
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
