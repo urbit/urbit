@@ -3,11 +3,11 @@
   ::
 /?    310
 !:
-|_  {who/@txname loc/govt}
+|_  {who/@txname loc/@txloc}
 ++  grab
   |%
-  ++  noun  {@txname govt}
+  ++  noun  {@txname @txloc}
   ++  json  
-    (corl need =>(jo (ot who+so loc+(su (more fas urs:ab)) ~)))
+    (corl need =>(jo (ot who+so loc+so ~)))
   --
 --

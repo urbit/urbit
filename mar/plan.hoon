@@ -32,7 +32,7 @@
     (jobe usr+s+usr.a url+?~(url.a ~ (jape (earf u.url.a))) ~)
   --
 ++  grab  |%                                            ::  convert from
-          ++  noun  {{cord govt} (map knot plan-acct)}  ::  clam from %noun
+          ++  noun  {{cord cord} (map knot plan-acct)}  ::  clam from %noun
           ++  txt
             |^  |=  a/wain  ^+  all
                 ?>  ?=({@t @t *} a)
