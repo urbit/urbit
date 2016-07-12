@@ -392,7 +392,7 @@
         0w28.bRVMq.Oi3tM.zOCNV.j00Yq  ::  247, ~fyr, Anton Dyudin
         0w0                           ::  248, ~mur, Tlon
         0w0                           ::  249, ~tel, Tlon
-        0w0                           ::  250, ~rep, Raymond Pasco
+        0w37.wifWc.lQlwD.VTHvd.PKLVP  ::  250, ~rep, Raymond Pasco
         0w0                           ::  251, ~teg, Tlon
         0w0                           ::  252, ~pec, Tlon
         0w0                           ::  253, ~nel, Tlon
