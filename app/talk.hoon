@@ -808,19 +808,22 @@
       |=  buf/(list @c)
       ^-  (list sole-edit)
       ?~  buf  ~
-      =+  [inx=0 sap=0 con=0]
+      =+  [inx=0 sap=0 con=0 new=|]
       |^  ^-  (list sole-edit)
           ?:  =(i.buf (turf '•'))
-            ?.  =(0 con)  newline
-            [[%del inx] ?~(t.buf ~ $(buf t.buf))]
+            ?:  =(0 con)
+              [[%del inx] ?~(t.buf ~ $(buf t.buf))]
+            ?:  new
+              [(fix ' ') $(i.buf `@c`' ')] 
+            newline
           ?:  =(i.buf `@`' ')
             ?.  =(64 con)  advance(sap inx)
-            [(fix (turf '•')) newline]
+            [(fix (turf '•')) newline(new &)]
           ?:  =(64 con)
             =+  dif=(sub inx sap)
             ?:  (lth dif 64)
-              [(fix(inx sap) (turf '•')) $(con dif)]
-            [[%ins inx (turf '•')] $(con 0, inx +(inx))]
+              [(fix(inx sap) (turf '•')) $(con dif, new &)]
+            [[%ins inx (turf '•')] $(con 0, inx +(inx), new &)]
           ?:  |((lth i.buf 32) (gth i.buf 126))
             [(fix '?') advance]
           ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
