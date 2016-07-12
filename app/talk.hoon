@@ -925,7 +925,7 @@
         sh-prod(active.she `tr-pals:tay)
       ::
       ++  help  
-        (sh-fact %txt "see http://urbit.org/docs/user/talk")
+        (sh-fact %txt "see http://urbit.org/docs/using/messaging/")
       ::
       ++  glyph
         |=  idx/@
