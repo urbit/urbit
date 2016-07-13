@@ -1,14 +1,14 @@
 ::                                                      ::  ::
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
-/?    310                                                 ::  zuse version
+/?    310                                               ::  zuse version
 /+  sole, talk, helm, kiln, drum, write                 ::  libraries
 [. helm kiln drum]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
-    ++  hood-0                                          :: 
+    ++  hood-0                                          ::
       {$0 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
       |*  hed/hood-head                                 ::
@@ -19,17 +19,27 @@
         $kiln  ?>(?=($kiln -.paw) `kiln-part`paw)       ::
         $write  ?>(?=($write -.paw) `part:write`paw)    ::
       ==                                                ::
-    ++  hood-head  _-:*hood-part                     ::
+    ++  hood-head  _-:*hood-part                        ::
     ++  hood-make                                       ::
       |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
-        $drum  (drum-port our)                          ::
+        $drum  (drum-make our)                          ::
         $helm  *helm-part                               ::
         $kiln  *kiln-part                               ::
-         $write  *part:write                             ::
+        $write  *part:write                             ::
       ==                                                ::
+    ++  hood-part-old                                   ::
+      $?  hood-part                                     ::
+          {$drum $0 drum-pith-0}                        ::
+      ==                                                ::
+    ++  hood-port                                       ::
+      |=  paw/hood-part-old  ^-  hood-part              ::
+      ?+  -.paw  paw                                    ::
+        $drum    (drum-port paw)                        ::
+      ==                                                ::
+    ::                                                  ::
     ++  hood-part                                       ::
-      $%  {$drum $0 drum-pith}                          ::
+      $%  {$drum $1 drum-pith}                          ::
           {$helm $0 helm-pith}                          ::
           {$kiln $0 kiln-pith}                          ::
           {$write $0 pith:write}                        ::
@@ -53,6 +63,12 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+++  prep                                                ::
+  |=  old/(unit hood-0)  ^-  (quip _!! +>)
+  :-  ~
+  ?~  old  +>
+  +>(lac (~(run by lac.u.old) hood-port))
+::
 ++  coup-kiln-fancy  (wrap take-coup-fancy):from-kiln
 ++  coup-kiln-spam                                      ::
   |=  {way/wire saw/(unit tang)}

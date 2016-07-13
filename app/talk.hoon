@@ -808,27 +808,32 @@
       |=  buf/(list @c)
       ^-  (list sole-edit)
       ?~  buf  ~
-      =+  [inx=0 sap=0 con=0]
+      =+  [[pre=*@c cur=i.buf buf=t.buf] inx=0 brk=0 len=0 new=|]
+      =*  txt  -<
       |^  ^-  (list sole-edit)
-          ?:  =(i.buf (turf '•'))
-            ?.  =(0 con)  newline
-            [[%del inx] ?~(t.buf ~ $(buf t.buf))]
-          ?:  =(i.buf `@`' ')
-            ?.  =(64 con)  advance(sap inx)
-            [(fix (turf '•')) newline]
-          ?:  =(64 con)
-            =+  dif=(sub inx sap)
+          ?:  =(cur (turf '•'))
+            ?:  =(pre (turf '•'))
+              [[%del inx] ?~(buf ~ $(txt +.txt))]
+            ?:  new
+              [(fix ' ') $(cur `@c`' ')] 
+            newline
+          ?:  =(cur `@`' ')
+            =.  brk  ?:(=(pre `@`' ') brk inx)
+            ?.  =(64 len)  advance
+            [(fix(inx brk) (turf '•')) newline(new &)]
+          ?:  =(64 len)
+            =+  dif=(sub inx brk)
             ?:  (lth dif 64)
-              [(fix(inx sap) (turf '•')) $(con dif)]
-            [[%ins inx (turf '•')] $(con 0, inx +(inx))]
-          ?:  |((lth i.buf 32) (gth i.buf 126))
+              [(fix(inx brk) (turf '•')) $(len dif, new &)]
+            [[%ins inx (turf '•')] $(len 0, inx +(inx), new &)]
+          ?:  |((lth cur 32) (gth cur 126))
             [(fix '?') advance]
-          ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
-            [(fix (add 32 i.buf)) advance]
+          ?:  &((gte cur 'A') (lte cur 'Z'))
+            [(fix (add 32 cur)) advance]
           advance
       ::
-      ++  advance  ?~(t.buf ~ $(con +(con), inx +(inx), buf t.buf))
-      ++  newline  ?~(t.buf ~ $(con 0, inx +(inx), buf t.buf))
+      ++  advance  ?~(buf ~ $(len +(len), inx +(inx), txt +.txt))
+      ++  newline  ?~(buf ~ $(len 0, inx +(inx), txt +.txt))
       ++  fix  |=(cha/@ [%mor [%del inx] [%ins inx `@c`cha] ~])  
       --
     ::
