@@ -1655,8 +1655,9 @@
       %+  turn  tal
       |=  tay/partner
       ^-  (list card)
-      :: =+  num=(fall (~(get by sequence) tay) 0) :: XX unused
-      =+  old=(sub now.hid ~d1)
+      =+  num=(~(get by sequence) tay)
+      =+  old=(sub now.hid ~d1)                         :: XX full backlog
+      =+  ini=?^(num (scot %ud u.num) (scot %da old))
       =/  typ
         =+  (ly ~[%a-group %f-grams %x-cabal])
         (rap 3 (turn - encode:peer-type))
@@ -1667,7 +1668,7 @@
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk] 
-                /[typ]/[q.p.tay]/(scot %da old)
+                /[typ]/[q.p.tay]/[ini]
             ==
       ==
     ::
