@@ -5628,7 +5628,7 @@
     ~/  %shar
     |=  {pub/@ sek/@}
     ^-  @ux
-    =+  exp=(shal (rsh 0 3 b) sek)
+    =+  exp=(shal (rsh 0 3 b) (suck sek))
     =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
     =.  exp  (con exp (lsh 3 31 0b100.0000))
     =+  prv=(end 8 1 exp)
