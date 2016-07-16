@@ -7,6 +7,11 @@
     margin-top: 0.9375rem;
     padding-left: 0.9375rem; } }
 
+.label {
+  font-size: inherit;
+  font-weight: 500;
+  line-height: inherit; }
+
 img.logo {
   height: 2rem;
   width: 2rem; }
@@ -883,40 +888,40 @@ ol > li:before {
   .body .urbit .last .col-md-4.col-md-offset-1 {
     margin-top: 0; } }
 
-.body[data-path="/stream"] .audience {
+.body .talk-stream .audience {
   display: none; }
 
-.body[data-path="/stream"] .speech, .body[data-path="/stream"] .message {
+.body .talk-stream .speech, .body .talk-stream .message {
   margin-left: 0; }
 
-.body[data-path="/stream"] .length {
+.body .talk-stream .length {
   color: #55595c; }
 
-.body[data-path="/stream"] .input[contenteditable=true]:empty:before {
+.body .talk-stream .input[contenteditable=true]:empty:before {
   content: 'say hello, or ask a question';
   color: #B1B7BD; }
 
-.body[data-path="/stream"] .grams {
+.body .talk-stream .grams {
   margin: 2rem 0; }
 
-.body[data-path="/stream"] .grams .meta .time, .body[data-path="/stream"] .grams .meta .path {
+.body .talk-stream .grams .meta .time, .body .talk-stream .grams .meta .path {
   display: none; }
 
-.body[data-path="/stream"] .grams .gram label {
+.body .talk-stream .grams .gram label {
   background-color: #000; }
 
-.body[data-path="/stream"] .grams .gram .meta h2 {
+.body .talk-stream .grams .gram .meta h2 {
   margin-bottom: 0;
   vertical-align: middle; }
 
-.body[data-path="/stream"] .grams .gram .meta label:before {
+.body .talk-stream .grams .gram .meta label:before {
   font-weight: 200; }
 
-.body[data-path="/stream"] .grams .gram .time {
+.body .talk-stream .grams .gram .time {
   display: none; }
 
-.body[data-path="/stream"] .grams .gram .iden,
-.body[data-path="/stream"] .grams .gram .path {
+.body .talk-stream .grams .gram .iden,
+.body .talk-stream .grams .gram .path {
   max-width: 32rem;
   white-space: nowrap;
   overflow: hidden;

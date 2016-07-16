@@ -94,7 +94,7 @@ Persistence = _persistence({
       for (j = 0, len = speeches.length; j < len; j++) {
         speech = speeches[j];
         message = {
-          ship: window.urb.ship,
+          ship: window.urb.user,
           thought: {
             serial: util.uuid32(),
             audience: _audi,
@@ -218,7 +218,11 @@ Persistence = _persistence({
       return Persistence.removeStation(station);
     },
     listenStation: function(station) {
-      return Persistence.listenStation(station);
+      return Persistence.listenStation(station, {
+        'group': 'group',
+        'glyph': 'glyph',
+        'cabal': 'cabal'
+      });
     },
     createStation: function(name) {
       return Persistence.createStation(name);
@@ -487,7 +491,6 @@ module.exports = recl({
       key: "meta"
     }, label({
       className: "type " + type,
-      key: "glyph",
       "data-glyph": this.props.glyph || "*"
     }), h2({
       className: 'author planet',
@@ -613,11 +616,7 @@ module.exports = recl({
     return _.sortBy(messages, (function(_this) {
       return function(message) {
         message.pending = message.thought.audience[station];
-        if (_this.props.chrono === "reverse") {
-          return -message.key;
-        } else {
-          return message.key;
-        }
+        return message.key;
       };
     })(this));
   },
@@ -678,7 +677,7 @@ module.exports = recl({
   },
   _handlePm: function(user) {
     var audi;
-    if (this.props.chrono === 'reverse') {
+    if (this.props['audience-lock'] != null) {
       return;
     }
     audi = [util.mainStationPath(user)];
@@ -691,7 +690,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, body, canvas, context, fetching, lastIndex, lastSaid, messageHeights, messages, ref, speechLength, station;
+    var _messageGroups, _messages, audience, body, canvas, context, fetching, height, i, index, lastIndex, lastSaid, len, lineNums, marginTop, message, messageHeights, messages, mez, nowSaid, ref, sameAs, speech, speechArr, speechLength, station;
     station = this.state.station;
     messages = this.sortedMessages(this.state.messages);
     this.last = messages[messages.length - 1];
@@ -712,71 +711,80 @@ module.exports = recl({
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');
     speechLength = $('.grams').width() - (FONT_SIZE * 1.875);
-    _messages = messages.map((function(_this) {
-      return function(message, index) {
-        var height, lineNums, marginTop, nowSaid, sameAs, speech, speechArr;
-        nowSaid = [message.ship, _.keys(message.thought.audience)];
-        sameAs = _.isEqual(lastSaid, nowSaid);
-        lastSaid = nowSaid;
-        lineNums = 1;
-        speechArr = [];
-        context.font = FONT_SIZE + 'px bau';
-        if (message.thought.statement.speech.lin != null) {
-          speechArr = message.thought.statement.speech.lin.txt.split(/(\s|-)/);
-        } else if (message.thought.statement.speech.url != null) {
-          speechArr = message.thought.statement.speech.url.txt.split(/(\s|-)/);
-        } else if (message.thought.statement.speech.fat != null) {
-          context.font = (FONT_SIZE * 0.9) + 'px scp';
-          speechArr = message.thought.statement.speech.fat.taf.exp.txt.split(/(\s|-)/);
-        }
-        _.reduce(_.tail(speechArr), function(base, word) {
-          if (context.measureText(base + word).width > speechLength) {
-            lineNums += 1;
-            if (word === ' ') {
-              return '';
-            } else if (word === '-') {
-              return _.head(base.split(/\s|-/).reverse()) + word;
-            } else {
-              return word;
-            }
+    _messageGroups = [[]];
+    for (index = i = 0, len = messages.length; i < len; index = ++i) {
+      message = messages[index];
+      nowSaid = [message.ship, _.keys(message.thought.audience)];
+      sameAs = _.isEqual(lastSaid, nowSaid);
+      lastSaid = nowSaid;
+      lineNums = 1;
+      speechArr = [];
+      context.font = FONT_SIZE + 'px bau';
+      if (message.thought.statement.speech.lin != null) {
+        speechArr = message.thought.statement.speech.lin.txt.split(/(\s|-)/);
+      } else if (message.thought.statement.speech.url != null) {
+        speechArr = message.thought.statement.speech.url.txt.split(/(\s|-)/);
+      } else if (message.thought.statement.speech.fat != null) {
+        context.font = (FONT_SIZE * 0.9) + 'px scp';
+        speechArr = message.thought.statement.speech.fat.taf.exp.txt.split(/(\s|-)/);
+      }
+      _.reduce(_.tail(speechArr), function(base, word) {
+        if (context.measureText(base + word).width > speechLength) {
+          lineNums += 1;
+          if (word === ' ') {
+            return '';
+          } else if (word === '-') {
+            return _.head(base.split(/\s|-/).reverse()) + word;
           } else {
-            return base + word;
-          }
-        }, _.head(speechArr));
-        if (INFINITE) {
-          if (sameAs) {
-            height = MESSAGE_HEIGHT_SAME * lineNums;
-            marginTop = 0;
-          } else {
-            height = MESSAGE_HEIGHT_FIRST + (MESSAGE_HEIGHT_SAME * lineNums);
-            marginTop = MESSAGE_HEIGHT_FIRST_MARGIN_TOP;
+            return word;
           }
         } else {
-          height = null;
-          marginTop = null;
+          return base + word;
         }
-        messageHeights.push(height + marginTop);
-        speech = message.thought.statement.speech;
-        return rele(Message, _.extend({}, message, {
-          station: station,
-          sameAs: sameAs,
-          _handlePm: _this._handlePm,
-          _handleAudi: _this._handleAudi,
-          height: height,
-          marginTop: marginTop,
-          index: message.key,
-          key: "message-" + message.key,
-          ship: (speech != null ? speech.app : void 0) ? "system" : message.ship,
-          glyph: _this.state.glyph[(_.keys(message.thought.audience)).join(" ")],
-          unseen: lastIndex && lastIndex === index
-        }));
-      };
-    })(this));
+      }, _.head(speechArr));
+      if (INFINITE) {
+        height = MESSAGE_HEIGHT_SAME * lineNums;
+        if (sameAs) {
+          marginTop = 0;
+        } else {
+          height += MESSAGE_HEIGHT_FIRST;
+          marginTop = MESSAGE_HEIGHT_FIRST_MARGIN_TOP;
+        }
+      } else {
+        height = null;
+        marginTop = null;
+      }
+      speech = message.thought.statement.speech;
+      audience = (_.keys(message.thought.audience)).join(" ");
+      mez = rele(Message, _.extend({}, message, {
+        station: station,
+        sameAs: sameAs,
+        _handlePm: this._handlePm,
+        _handleAudi: this._handleAudi,
+        height: height,
+        marginTop: marginTop,
+        index: message.key,
+        key: "message-" + message.key,
+        ship: (speech != null ? speech.app : void 0) ? "system" : message.ship,
+        glyph: this.state.glyph[audience] || this.props['default-glyph'],
+        unseen: lastIndex && lastIndex === index
+      }));
+      mez.computedHeight = height + marginTop;
+      if (sameAs) {
+        _messageGroups[0].push(mez);
+      } else {
+        _messageGroups.unshift([mez]);
+      }
+    }
+    if (this.props.chrono !== "reverse") {
+      _messageGroups = _messageGroups.reverse();
+    }
+    _messages = _.flatten(_messageGroups);
     if ((this.props.readOnly == null) && INFINITE) {
       body = rele(Infinite, {
         useWindowAsScrollContainer: true,
         containerHeight: window.innerHeight,
-        elementHeight: messageHeights,
+        elementHeight: _.map(_messages, 'computedHeight'),
         key: "messages-infinite"
       }, _messages);
     } else {
@@ -1003,7 +1011,8 @@ module.exports = recl({
 
 
 },{"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./LoadComponent.coffee":3,"./MemberComponent.coffee":4,"classnames":16}],8:[function(require,module,exports){
-var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, husl, input, recl, ref, textToHTML, textarea, util;
+var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, husl, input, recl, ref, textToHTML, textarea, util,
+  hasProp = {}.hasOwnProperty;
 
 util = require('../util.coffee');
 
@@ -1134,6 +1143,10 @@ module.exports = recl({
     } else {
       audi = this._setAudi() || this.state.ludi;
     }
+    if (_.isEmpty(audi)) {
+      console.warn("No audience");
+      return;
+    }
     if (this.props['audience-lock'] != null) {
       audi = _.union(audi, ["~" + window.urb.ship + "/" + this.props.station]);
     }
@@ -1170,8 +1183,66 @@ module.exports = recl({
       }
       return false;
     }
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      this._autoComplete();
+      return false;
+    } else if ((this.tabList != null) && e.keyCode !== 16) {
+      this.tabList = null;
+      this.tabIndex = null;
+    }
     this.onInput();
     return this.set();
+  },
+  _autoComplete: function() {
+    var i, msg, name, obj, ptxt, ref1, ref2, tindex, txt;
+    txt = this.$message.text();
+    tindex = txt.lastIndexOf('~');
+    if (tindex === -1) {
+      return;
+    }
+    if (this.tabList == null) {
+      ptxt = txt.substr(tindex + 1);
+      if (ptxt.length < 13 && (ptxt.match('^[a-z]{0,6}([\\-\\^_][a-z]{0,5})?$') != null)) {
+        this.tabList = [];
+        ref1 = MessageStore.getAll();
+        for (i = ref1.length - 1; i >= 0; i += -1) {
+          msg = ref1[i];
+          this._processAutoCompleteName(ptxt, msg.ship);
+        }
+        ref2 = this.state.members[this.state.ludi[0]];
+        for (name in ref2) {
+          if (!hasProp.call(ref2, name)) continue;
+          obj = ref2[name];
+          this._processAutoCompleteName(ptxt, name.substr(1));
+        }
+      }
+    }
+    if ((this.tabList != null) && this.tabList.length > 0) {
+      if (this.tabIndex != null) {
+        if (event.shiftKey) {
+          this.tabIndex--;
+        } else {
+          this.tabIndex++;
+        }
+        this.tabIndex = (this.tabIndex % this.tabList.length + this.tabList.length) % this.tabList.length;
+      } else {
+        this.tabIndex = 0;
+      }
+      name = this.tabList[this.tabIndex];
+      this.$message.text(this.$message.text().substr(0, tindex + 1) + name);
+      return this.cursorAtEnd();
+    }
+  },
+  _processAutoCompleteName: function(ptxt, name) {
+    if (name.length === 27) {
+      name = name.substr(-13).replace('-', '^');
+    } else if (name.length === 56) {
+      name = name.substr(0, 6) + '_' + name.substr(-6);
+    }
+    if (name.indexOf(ptxt) === 0 && this.tabList.indexOf(name) === -1) {
+      return this.tabList.push(name);
+    }
   },
   onInput: function(e) {
     var length, text;
@@ -1377,7 +1448,6 @@ TreeActions.registerComponent("talk", React.createClass({
     }
     station = this.getStation();
     StationActions.listen();
-    StationActions.listenStation(station);
     return StationActions.switchStation(station);
   },
   render: function() {
@@ -1409,7 +1479,9 @@ TreeActions.registerComponent("talk-station", StationComponent);
 
 
 },{"./actions/StationActions.coffee":2,"./components/MessageListComponent.coffee":6,"./components/StationComponent.coffee":7,"./components/WritingComponent.coffee":8,"./util.coffee":15}],11:[function(require,module,exports){
-var send;
+var send, util;
+
+util = require('../util.coffee');
 
 window.urb.appl = "talk";
 
@@ -1424,46 +1496,55 @@ module.exports = function(arg) {
   MessageActions = arg.MessageActions;
   return {
     listenStation: function(station, since) {
-      var $this;
+      var $this, path;
       console.log('listen station');
       console.log(arguments);
       $this = this;
-      return window.urb.bind("/f/" + station + "/" + since, function(err, res) {
+      path = util.talkPath({
+        'f_grams': 'f_grams'
+      }, station, since);
+      return window.urb.bind(path, function(err, res) {
         var num, ref, ref1, ref2, ref3, tele;
         if (err || !res.data) {
-          console.log('/f/ err!');
+          console.log(path, 'err!');
           console.log(err);
           console.log(res);
           $this.listenStation(station, since);
           return;
         }
-        console.log('/f/');
+        console.log(path);
         console.log(res.data);
         if (res.data.ok === true) {
           MessageActions.listeningStation(station);
         }
         if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
           ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
-          return MessageActions.loadMessages(tele, num);
+          return setTimeout((function() {
+            return MessageActions.loadMessages(tele, num);
+          }), 5000);
         }
       });
     },
     get: function(station, start, end) {
+      var path;
       end = window.urb.util.numDot(end);
       start = window.urb.util.numDot(start);
-      return window.urb.bind("/f/" + station + "/" + end + "/" + start, function(err, res) {
+      path = util.talkPath({
+        'f_grams': 'f_grams'
+      }, station, end, start);
+      return window.urb.bind(path, function(err, res) {
         var num, ref, ref1, ref2, ref3, tele;
         if (err || !res.data) {
-          console.log('/f/ /e/s err');
+          console.log(path, '/e/s err');
           console.log(err);
           return;
         }
-        console.log('/f/ /e/s');
+        console.log(path, '/e/s');
         console.log(res);
         if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
           ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
           MessageActions.loadMessages(tele, num, true);
-          return window.urb.drop("/f/" + station + "/" + end + "/" + start, function(err, res) {
+          return window.urb.drop(path, function(err, res) {
             console.log('done');
             return console.log(res);
           });
@@ -1488,8 +1569,8 @@ module.exports = function(arg) {
 };
 
 
-},{}],12:[function(require,module,exports){
-var design, send, util;
+},{"../util.coffee":15}],12:[function(require,module,exports){
+var design, send, subscribed, util;
 
 util = require('../util.coffee');
 
@@ -1509,6 +1590,8 @@ design = function(party, config, cb) {
     }
   }, cb);
 };
+
+subscribed = {};
 
 module.exports = function(arg) {
   var StationActions;
@@ -1542,21 +1625,6 @@ module.exports = function(arg) {
         return console.log(arguments);
       });
     },
-    members: function() {
-      return window.urb.bind("/a/court", function(err, res) {
-        var ref, ref1;
-        if (err || !res) {
-          console.log('/a/ err');
-          console.log(err);
-          return;
-        }
-        console.log('/a/');
-        console.log(res.data);
-        if ((ref = res.data) != null ? (ref1 = ref.group) != null ? ref1.global : void 0 : void 0) {
-          return StationActions.loadMembers(res.data.group.global);
-        }
-      });
-    },
     listen: function() {
       return window.urb.bind("/", function(err, res) {
         var house;
@@ -1573,15 +1641,36 @@ module.exports = function(arg) {
         }
       });
     },
-    listenStation: function(station) {
-      return window.urb.bind("/avx/" + station, function(err, res) {
-        var cabal, glyph, group, ok, ref;
+    listenStation: function(station, arg1) {
+      var cabal, glyph, group, k, path, types;
+      group = arg1.group, glyph = arg1.glyph, cabal = arg1.cabal;
+      if (subscribed[station] == null) {
+        subscribed[station] = {};
+      }
+      types = {
+        a_group: group,
+        v_glyph: glyph,
+        x_cabal: cabal
+      };
+      for (k in types) {
+        if (subscribed[station][k]) {
+          delete types[k];
+        } else {
+          subscribed[station][k] = types[k];
+        }
+      }
+      if (_.isEmpty(types)) {
+        return;
+      }
+      path = util.talkPath(types, station);
+      return window.urb.bind(path, function(err, res) {
+        var ok, ref;
         if (err || !res) {
-          console.log('/avx/ err');
+          console.log(path, 'err');
           console.log(err);
           return;
         }
-        console.log('/avx/');
+        console.log(path);
         console.log(res.data);
         ref = res.data, ok = ref.ok, group = ref.group, cabal = ref.cabal, glyph = ref.glyph;
         switch (false) {
@@ -1969,7 +2058,8 @@ module.exports = StationStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":9,"events":18}],15:[function(require,module,exports){
-var util;
+var util,
+  slice = [].slice;
 
 module.exports = util = {
   defaultStation: function() {
@@ -2085,6 +2175,27 @@ module.exports = util = {
       util.getScroll();
     }
     return $(window).scrollTop() + $('.writing').outerHeight() < util.writingPosition;
+  },
+  talkPath: function() {
+    var components, encodedTypes, key, types, val;
+    types = arguments[0], components = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+    encodedTypes = ((function() {
+      var results;
+      results = [];
+      for (key in types) {
+        val = types[key];
+        if (key !== 'a_group' && key !== 'f_grams' && key !== 'v_glyph' && key !== 'x_cabal') {
+          throw new Error("Weird type: '" + key + "'");
+        }
+        if (val) {
+          results.push(key[0]);
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    })()).join('');
+    return ['', encodedTypes].concat(slice.call(components)).join('/');
   }
 };
 
