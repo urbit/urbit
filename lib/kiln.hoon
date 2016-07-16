@@ -157,31 +157,6 @@
   |=  {mez/tape tor/toro}
   abet:(emit:(spam leaf+mez ~) %info /kiln our tor)
 ::
-++  poke-cp
-  |=  {a/path b/path}
-  ?.  =(-:(flop a) -:(flop b))
-    =+  ~[leaf+"Can't copy to a different mark"]
-    abet:(spam -)
-  =+  c=.^(arch %cy a)
-  ?~  fil.c
-    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
-    abet:(spam -)
-  %+  poke-info  "copied"
-  (foal b -:(flop a) [%atom %t ~] .^(* %cx a))        ::  XX type
-::
-++  poke-mv
-  |=  {a/path b/path}
-  ?.  =(-:(flop a) -:(flop b))
-    =+  ~[leaf+"Can't move to a different mark"]
-    abet:(spam -)
-  =+  c=.^(arch %cy a)
-  ?~  fil.c
-    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
-    abet:(spam -)
-  %+  poke-info  "moved"
-  %+  furl  (fray a)
-  (foal b -:(flop a) [%noun .^(* %cx a)])
-::
 ++  poke-rm
   |=  a/path
   =+  b=.^(arch %cy a)
