@@ -934,9 +934,11 @@ ol > li:before {
   overflow: hidden;
   white-space: nowrap; }
 
+.ship span {
+  display: none; }
+
 .ship:before {
   content: attr(data-alias);
-  margin-right: 2rem;
   color: #000; }
 
 .ship:hover {
@@ -946,6 +948,9 @@ ol > li:before {
   white-space: normal; }
   .ship:hover:before {
     display: none; }
+
+.ship:hover span {
+  display: inline; }
 
 @media (max-width: 767px) {
   .iden,

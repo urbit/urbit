@@ -351,6 +351,9 @@ module.exports = recl({
       return;
     }
     user = $(e.target).closest('.iden').text();
+    if (user[0] === "~") {
+      user = user.slice(1);
+    }
     if (user.toLowerCase() === 'system') {
       return;
     }
@@ -1519,9 +1522,7 @@ module.exports = function(arg) {
         }
         if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
           ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
-          return setTimeout((function() {
-            return MessageActions.loadMessages(tele, num);
-          }), 5000);
+          return MessageActions.loadMessages(tele, num);
         }
       });
     },
