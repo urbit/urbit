@@ -4,6 +4,13 @@
 /?    310
 :-  %say
 |=  {^ {input/path output/path $~} $~}
+?.  =(-:(flop input) -:(flop output))
+  ~&  "Can't move to a different mark"
+  ~
+=+  dir=.^(arch %cy input)
+?~  fil.dir
+  ~&  "No such file:"
+  ~&  <input>
+  ~
 :+  %kiln-info  "copied"
-?>  =(-:(flop input) -:(flop output))
 (foal output -:(flop input) [%atom %t ~] .^(* %cx input))    ::  XX type

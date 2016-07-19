@@ -157,7 +157,14 @@
   |=  {mez/tape tor/toro}
   abet:(emit:(spam leaf+mez ~) %info /kiln our tor)
 ::
-++  poke-rm  |=(a/path (poke-info "removed" (fray a)))
+++  poke-rm
+  |=  a/path
+  =+  b=.^(arch %cy a)
+  ?~  fil.b
+    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
+    abet:(spam -)
+  (poke-info "removed" (fray a))
+::
 ++  poke-label
   |=  {syd/desk lab/@tas}
   =+  pax=/(scot %p our)/[syd]/[lab]
