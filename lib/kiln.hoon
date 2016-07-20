@@ -47,8 +47,6 @@
         cas/case                                        ::
         gim/?($auto germ)                               ::
     ==                                                  ::
-++  kiln-cp  {input/path output/path}                   ::
-++  kiln-mv  {input/path output/path}                   ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
