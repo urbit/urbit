@@ -737,7 +737,7 @@
 ++  reel                                                ::  right fold
   ~/  %reel
   |*  {a/(list) b/_|=({* *} +<+)}
-  |-  ^+  +<+.b
+  |-  ^+  ,.+<+.b
   ?~  a
     +<+.b
   (b i.a $(a t.a))
@@ -745,7 +745,7 @@
 ++  roll                                                ::  left fold
   ~/  %roll
   |*  {a/(list) b/_|=({* *} +<+)}
-  |-  ^+  +<+.b
+  |-  ^+  ,.+<+.b
   ?~  a
     +<+.b
   $(a t.a, b b(+<+ (b i.a +<+.b)))
@@ -9480,7 +9480,7 @@
         =-  [a (welp - ?~(c d [[[%rock %tas p.c] q.c] d]))]
         =-  (~(tap by -))
         %.  |=(e/(list tank) [%knit ~(ram re %rose [" " `~] e)])
-        =<  ~(run by f:(reel b .))
+        =<  ~(run by (reel b .))
         |=  {e/{p/term q/term} f/(jar twig tank)}
         (~(add ja f) [%rock %tas p.e] [%leaf (trip q.e)])
       ;~  plug

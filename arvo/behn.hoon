@@ -125,7 +125,7 @@
   ++  gas
     |=  b/(list {k/key n/val})
     ^+  a
-    q:(roll b |=({{k/key n/val} q/_a} (put(a q) k n)))
+    (roll b |=({{k/key n/val} q/_a} (put(a q) k n)))
   ::
   ++  tap
     ^-  (list {k/key n/val})
