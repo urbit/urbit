@@ -2860,11 +2860,20 @@
       [n.a l.a q.b]
     [n.q.b [n.a l.a l.q.b] r.q.b]
   ::
-  +-  nap                                               ::  removes head
+  +-  nap                                               ::  remove head
     ?>  ?=(^ a)
     ?:  =(~ l.a)  r.a
     =+  b=get(a l.a)
     bal(a ^+(a [p.b q.b r.a]))
+  ::
+  +-  nip                                               ::  remove root
+    |-  ^+  a
+    ?~  a  ~
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (vor n.l.a n.r.a)
+      [n.l.a l.l.a $(l.a r.l.a)]
+    [n.r.a $(r.a l.r.a) r.r.a]
   ::
   +-  put                                               ::  insert new tail
     |*  b/*
