@@ -825,6 +825,7 @@
       |=  buf/(list @c)
       ^-  (list sole-edit)
       ?~  buf  ~
+      =+  isa==(i.buf (turf '@'))
       =+  [[pre=*@c cur=i.buf buf=t.buf] inx=0 brk=0 len=0 new=|]
       =*  txt  -<
       |^  ^-  (list sole-edit)
@@ -837,11 +838,17 @@
           ?:  =(cur `@`' ')
             =.  brk  ?:(=(pre `@`' ') brk inx)
             ?.  =(64 len)  advance
-            [(fix(inx brk) (turf '•')) newline(new &)]
+            :-  (fix(inx brk) (turf '•'))
+            ?:  isa
+              [[%ins +(inx) (turf '@')] newline(new &)]
+            newline(new &)
           ?:  =(64 len)
             =+  dif=(sub inx brk)
             ?:  (lth dif 64)
-              [(fix(inx brk) (turf '•')) $(len dif, new &)]
+              :-  (fix(inx brk) (turf '•'))
+              ?:  isa
+                [[%ins (sub inx 3) (turf '@')] $(len dif, new &)]
+              $(len dif, new &)
             [[%ins inx (turf '•')] $(len 0, inx +(inx), new &)]
           ?:  |((lth cur 32) (gth cur 126))
             [(fix '?') advance]
