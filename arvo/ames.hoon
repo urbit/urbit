@@ -1642,7 +1642,7 @@
     ::
         $cake
       :_  fox
-      :~  [s.bon %give %woot q.p.bon r.bon]
+      :~  [s.bon %give %woot q.p.bon ~ r.bon]
       ==
     ::
         $coke

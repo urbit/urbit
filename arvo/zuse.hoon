@@ -2564,6 +2564,11 @@
 ++  rump  {p/care q/case r/@tas s/path}                 ::  relative path
 ++  saba  {p/ship q/@tas r/moar s/dome}                 ::  patch+merge
 ++  sack  {p/ship q/ship}                               ::  incoming [our his}
+++  scar                                                ::  opaque duct
+          $:  p/@ud                                     ::  bone sequence
+              q/(map duct bone)                         ::  by duct
+              r/(map bone duct)                         ::  by bone
+          ==                                            ::
 ++  sufi                                                ::  domestic host
           $:  hoy/(list ship)                           ::  hierarchy
               val/wund                                  ::  private keys
@@ -2651,7 +2656,7 @@
               {$waft p/sock q/*}                        ::  response message
               {$wart p/sock q/@tas r/path s/*}          ::  network request
               {$went p/ship q/cape}                     ::  reaction message
-              {$woot p/ship q/coop}                     ::  e2e reaction message
+              {$woot p/ship q/path r/coop}              ::  e2e reaction message
           ==                                            ::
 ++  kiss-ames                                           ::  in request ->$
           $%  {$barn $~}                                ::  new unix process
@@ -2668,6 +2673,10 @@
               {$wegh $~}                                ::  report memory
               {$west p/sack q/path r/*}                 ::  network request
               {$wont p/sock q/path r/*}                 ::  e2e send message
+          ==                                            ::
+++   card-ames                                          ::  out cards
+          $%  {$went p/sack q/path r/@ud s/coop}        ::  response confirm 
+              {$west p/sack q/path r/@ud s/*}           ::  network request
           ==                                            ::
 ::
 ::::    %behn
