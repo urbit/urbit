@@ -2649,7 +2649,8 @@
 ::::        ::::  this will become `%york`, vane structures.
   ::          ::
 ++  gift-ames                                           ::  out result <-$
-          $%  {$hear p/lane q/@}                        ::  receive packet
+          $%  {$drop $~}                                ::  drop packet
+              {$hear p/lane q/@}                        ::  receive packet
               {$east p/sock q/*}                        ::  network response
               {$init p/@p}                              ::  report install
               {$mass p/mass}                            ::  memory usage
@@ -2674,11 +2675,11 @@
               {$wegh $~}                                ::  report memory
               {$wont p/sock q/path r/*}                 ::  e2e send message
           ==                                            ::
-++   card-ames                                          ::  out cards
+++  card-ames                                           ::  out cards
           $%  {$went p/sack q/path r/@ud s/coop}        ::  response confirm 
               {$west p/sack q/path r/@ud s/*}           ::  network request
           ==                                            ::
-++   note-ames                                          ::  out request $->
+++  note-ames                                           ::  out request $->
           $%  {$c card-ames}                            ::  to %clay
               {$e card-ames}                            ::  to %eyre
               {$g card-ames}                            ::  to %gall
@@ -2727,7 +2728,8 @@
               {$ogre p/$@(@tas beam)}                   ::  delete mount point
               {$warp p/sock q/riff}                     ::  file request
               {$wegh $~}                                ::  report memory
-              {$west p/sack q/path r/*}                 ::  network request
+              {$went p/sack q/path r/@ud s/coop}        ::  response confirm 
+              {$west p/sack q/path r/@ud s/*}           ::  network request
           ==                                            ::
 ::
 ::::
@@ -2843,6 +2845,7 @@
               {$this p/? q/clip r/httq}                 ::  inbound request
               {$thud $~}                                ::  inbound cancel
               {$wegh $~}                                ::  report memory
+              {$went p/sack q/path r/@ud s/coop}        ::  response confirm 
               {$west p/sack q/fuz:gram}                 ::  network request
           ==                                            ::
 ++  gift-eyre                                           ::  out result <-$

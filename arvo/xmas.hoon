@@ -2189,9 +2189,9 @@
     =+  ^=  did
         ^-  move
         ?+  i.cha  ~|([%bad-vane i.cha] !!)
-          $c  !!  :: [hen %pass pax `note-arvo`[%c cad]]
-          $e  !!  :: [hen %pass pax `note-arvo`[%e cad]]
-          $g  !!  :: [hen %pass pax `note-arvo`[%g cad]]
+          ::  $c  [hen %pass pax `note-arvo`[%c cad]]
+          ::  $e  [hen %pass pax `note-arvo`[%e cad]]
+          $g  [hen %pass pax `note-arvo`[%g cad]]
         ==
     [[did ~] fox]
   ::
@@ -2247,19 +2247,18 @@
       ~&  [%knap-tea tea]
       !!
     =+  [soq kos]=[[(slav %p i.tea) (slav %p i.t.tea)] (slav %ud i.t.t.tea)]
-    !!
-    ::?+    sih  
-    ::  ~|([%ames-sign -.sih (@tas +<.sih)] !!)
+    ?+    sih  
+      ~|([%ames-sign -.sih (@tas +<.sih)] !!)
     ::
-    ::  [?($e $c $g) $rend *]
-    ::  =^  bin  fox  (~(wish am [now fox]) soq kos p.+>.sih q.+>.sih)
-    ::  (knit hen bin)
+        {?($e $c $g) $rend *}
+      =^  bin  fox  (~(wish am [now fox]) soq kos p.+>.sih q.+>.sih)
+      (knit hen bin)
     ::
-    ::    [?($e $c $g) $mack *]
-    ::  =^  bin  fox
-    ::      (~(rack am [now fox]) soq kos ?~(+>.sih ~ `[~ %lose u.p.+>.sih]))
-    :: (knit hen bin)
-    ::==
+        {?($e $c $g) $mack *}
+      =^  bin  fox
+          (~(rack am [now fox]) soq kos ?~(+>.sih ~ `[~ %lose u.p.+>.sih]))
+      (knit hen bin)
+    ==
   ::
   ++  knit
     |=  {hen/duct bin/(list boon)}

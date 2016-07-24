@@ -32,7 +32,7 @@
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}                     ::  ackgnowledgment
+          $%  {$woot p/ship q/path r/coop}              ::  acknowledgment
               {$went ship cape}                         ::  XX ignore
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
@@ -684,6 +684,10 @@
         (del-deps:$(p.lid t.p.lid) i.p.lid %& hen)
       ==
     ::
+        $went
+      ::  this won't happen until we send responses.
+      !!
+    ::
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
       =+  mez=((soft gram) q.kyz)
@@ -739,6 +743,7 @@
           :: XX eyre sends no wests, so should get no wents
           ::~&  e+unexpected+sih
           +>.$
+    ::
     ::
         $thou
       ?+    -.tee  !!

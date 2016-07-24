@@ -6742,8 +6742,14 @@
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     ?.  (~(nest ut sut) | ref)
-      ::  ~&  %nest-failed
-      [| +>+<]
+      ~&  %nest-failed
+      =+  foo=(skol ref)
+      =+  bar=(skol sut)
+      ~&  %nets-need
+      ~>  %slog.[0 bar]
+      ~&  %nest-have
+      ~>  %slog.[0 foo]
+      [| +>+<.$]
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
   ++  nets                                              ::  spanless nest
@@ -6752,16 +6758,16 @@
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     =+  gat=|=({a/span b/span} (~(nest ut a) | b))
     ?.  (? .*(gat(+< [sut ref]) -.gat))
-      ::  ~&  %nets-failed
-      ::  =+  tag=`*`skol
-      ::  =+  foo=(tank .*(tag(+< ref) -.tag))
-      ::  =+  bar=(skol sut)
-      ::  ~&  %nets-need
-      ::  ~>  %slog.[0 bar]
-      ::  ~&  %nets-have
-      ::  ~>  %slog.[0 foo]
+      ~&  %nets-failed
+      =+  tag=`*`skol
+      =+  foo=(tank .*(tag(+< ref) -.tag))
+      =+  bar=(tank .*(tag(+< sut) -.tag))
+      ~&  %nets-need
+      ~>  %slog.[0 bar]
+      ~&  %nets-have
+      ~>  %slog.[0 foo]
       [| +>+<.$]
-    [& +>+<.$(nes (~(put in nes) [sut ref]))]
+    [& +>+<.$(nes (~(put in nes) [sut ref]))]  
   ::
   ++  play                                              ::  play:ut
     |=  {sut/span gen/twig}
