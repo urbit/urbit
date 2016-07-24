@@ -2824,7 +2824,7 @@
 ::::    %eyre
   ::
 ++  gram                                                ::  inter-ship message
-  =+  fuz={path *}                                      ::  ames format
+  =+  fuz={path @ud *}                                  ::  ames format
   $?  {{$lon $~} p/hole}                                ::  login request
       {{$aut $~} p/hole}                                ::  login reply
       {{$hat $~} p/hole q/hart}                         ::  login redirect

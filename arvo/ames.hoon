@@ -2188,9 +2188,9 @@
     =+  pax=[(scot %p p.soq) (scot %p q.soq) (scot %ud kos) ~]
     =+  ^=  did
         ^-  move
-        ?+  i.cha  ~|([%bad-vane i.cha] !!)
-          ::  $c  [hen %pass pax `note-arvo`[%c cad]]
-          ::  $e  [hen %pass pax `note-arvo`[%e cad]]
+        ?+  i.cha  ~|([%bad-vane soq hen cha] !!)
+          $c  [hen %pass pax `note-arvo`[%c cad]]  
+          $e  [hen %pass pax `note-arvo`[%e cad]]
           $g  [hen %pass pax `note-arvo`[%g cad]]
         ==
     [[did ~] fox]
