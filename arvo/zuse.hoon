@@ -2650,10 +2650,11 @@
   ::          ::
 ++  gift-ames                                           ::  out result <-$
           $%  {$hear p/lane q/@}                        ::  receive packet
+              {$east p/sock q/*}                        ::  network response
               {$init p/@p}                              ::  report install
               {$mass p/mass}                            ::  memory usage
               {$send p/lane q/@}                        ::  transmit packet
-              {$waft p/sock q/*}                        ::  response message
+              {$waft p/ship q/path r/*}                 ::  response message
               {$wart p/sock q/@tas r/path s/*}          ::  network request
               {$went p/ship q/cape}                     ::  reaction message
               {$woot p/ship q/path r/coop}              ::  e2e reaction message
@@ -2671,13 +2672,17 @@
               {$wake $~}                                ::  timer activate
               {$want p/sock q/path r/*}                 ::  send message
               {$wegh $~}                                ::  report memory
-              {$west p/sack q/path r/*}                 ::  network request
               {$wont p/sock q/path r/*}                 ::  e2e send message
           ==                                            ::
 ++   card-ames                                          ::  out cards
           $%  {$went p/sack q/path r/@ud s/coop}        ::  response confirm 
               {$west p/sack q/path r/@ud s/*}           ::  network request
           ==                                            ::
+++   note-ames                                          ::  out request $->
+          $%  {$c card-ames}                            ::  to %clay
+              {$e card-ames}                            ::  to %eyre
+              {$g card-ames}                            ::  to %gall
+          ==                                            ::  
 ::
 ::::    %behn
   ::
@@ -2962,13 +2967,15 @@
   $%  {$conf p/dock q/culm}                             ::  configure app
       {$init p/ship}                                    ::  set owner
       {$deal p/sock q/cush}                             ::  full transmission
-      {$west p/sack q/path r/*}                         ::  network request
+      {$went p/sack q/path r/@ud s/coop}                ::  response confirm 
+      {$west p/sack q/path r/@ud s/*}                   ::  network request
       {$wegh $~}                                        ::  report memory
   ==                                                    ::
 ++  gift-gall                                           ::  outgoing result
   $%  {$mass p/mass}                                    ::  memory usage
       {$onto p/(each suss tang)}                        ::  about agent
-      {$unto p/cuft}                                    ::  within agent
+      {$rend p/path q/*}                                ::  network request
+      {$unto p/cuft}
       {$mack p/(unit tang)}                             ::  message ack
   ==                                                    ::
 ::

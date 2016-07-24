@@ -220,7 +220,6 @@
       ::  to this returning pump.
       ::
       +>
-    =^  num  +>.$  (mo-bale him)
     =+  ^=  roc  ^-  rook
         ?-  -.q.caz
           $peel  !!
@@ -232,13 +231,13 @@
         == 
     =+  ^=  dak
         ?+  -.q.caz  !!
-          $poke  %gk
-          $pull  %gl
-          $peer  %gr
+          $poke  %k
+          $pull  %l
+          $peer  %r
         ==
     %+  mo-pass  
       [%sys %way ~]
-    `note-arvo`[%a %wont [our him] [%g dak p.caz ~] [num roc]]
+    `note-arvo`[%a %wont [our him] [%g dak p.caz ~] [42 roc]]
   ::
   ++  mo-baal                                           ::  error convert a
     |=  art/(unit ares)
@@ -261,28 +260,6 @@
       $poke  (mo-give %unto %coup tug)
       $pull  +>.$
     ==
-  ::
-  ++  mo-bale                                           ::  assign outbone
-    |=  him/ship 
-    ^-  {@ud _+>}
-    =+  sad=(fall (~(get by sap) him) `scar`[1 ~ ~])
-    =+  nom=(~(get by q.sad) hen)
-    ?^  nom  [u.nom +>.$]
-    :-  p.sad
-    %_    +>.$
-        sap
-      %+  ~(put by sap)  him
-      %_  sad
-        p  +(p.sad)
-        q  (~(put by q.sad) hen p.sad)
-        r  (~(put by r.sad) p.sad hen)
-      ==
-    ==
-  ::
-  ++  mo-ball                                           ::  outbone by index
-    |=  {him/ship num/@ud}
-    ^-  duct
-    (~(got by r:(~(got by sap) him)) num)
   ::
   ++  mo-come                                           ::  handle locally
     |=  {her/ship caz/cush}
@@ -336,40 +313,30 @@
       ==
     ::
         $red                                            ::  diff ack
-      ?>  ?=({@ @ @ $~} t.pax)
-      ?.  ?=({$a $woot *} sih)
-        ~&  [%red-went pax]
-        +>.$
+      ?>  ?=({@ @ $~} t.pax)
+      ?>  ?=({$a ?($waft $woot) *} sih)
       =+  :*  him=(slav %p i.t.pax)
               dap=i.t.t.pax
-              num=(slav %ud i.t.t.t.pax)
           ==
       =>  .(pax `path`[%req t.pax])
-      ?~  r.+>.sih 
-        (mo-pass [%sys pax] %g %deal [him our] dap %pump ~)
-      ~&  [%diff-bad-ack q.+>.sih]                      ::  should not happen
-      =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
-      (mo-pass [%sys pax] %a %wont [our him] [%g %gh dap ~] [num %x ~])
-    ::
-        $rep                                            ::  reverse request
-      ?>  ?=({@ @ @ $~} t.pax)
-      ?>  ?=({$f $made *} sih)
-      =+  :*  him=(slav %p i.t.pax)
-              dap=i.t.t.pax
-              num=(slav %ud i.t.t.t.pax)
-          ==
-      ?-  -.q.+>.sih
-        $tabl  ~|(%made-tabl !!)
-        $|     (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
-        $&     =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
-               (mo-give(hen (mo-ball him num)) %unto %diff `cage`p.q.+>.sih)
+      ?-    +<.sih
+          $waft
+        ~&  %red-waft
+        =+  fay=((hard (unit (pair mark noun))) r.+>.sih)
+        (mo-give %unto ?~(fay [%quit ~] [%doff u.fay]))
+      ::
+          $woot
+        ?~  r.+>.sih 
+          (mo-pass [%sys pax] %g %deal [him our] dap %pump ~)
+        ~&  [%diff-bad-ack q.+>.sih]
+        =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
+        (mo-give %rend [%g %r dap ~] ~)
       ==
     ::
         $req                                            ::  inbound request
-      ?>  ?=({@ @ @ $~} t.pax)
+      ?>  ?=({@ @ $~} t.pax)
       =+  :*  him=(slav %p i.t.pax)
               dap=i.t.t.pax
-              num=(slav %ud i.t.t.t.pax)
           ==
       ?:  ?=({$f $made *} sih)
         ?-  -.q.+>.sih
@@ -382,13 +349,11 @@
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
         $coup  (mo-give %mack p.cuf)
-        $diff  %+  mo-pass  [%sys %red t.pax]
-               [%a %wont [our him] [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
-        $doff  !!
-        $quit  %+  mo-pass  [%sys pax]
-               [%a %wont [our him] [%g %gh dap ~] [num %x ~]]
         $reap  (mo-give %mack p.cuf)
-      ==
+        $diff  (mo-give %rend [%g %r dap ~] [~ p.p.cuf q.q.p.cuf])
+        $doff  (mo-give %rend [%g %r dap ~] [~ p.cuf q.cuf])
+        $quit  (mo-give %rend [%g %r dap ~] ~)
+      ==  
     ::
         $val                                            ::  inbound validate
       ?>  ?=({@ @ $~} t.pax)
@@ -401,24 +366,24 @@
       ==
     ::
         $way                                            ::  outbound request
-      ?:  ?=({$a $went *} sih)  ::  XX AWFUL
-        ~&  %way-went-bug
-        ?>  ?=({@ $~} t.pax)
+      ?>  ?=({$a ?($waft $woot) *} sih)
+      ?-    +<.sih
+          $waft
+        ?>  ?=({$g $r @ $~} q.+>.sih)
+        =+  fay=((hard (unit (pair mark noun))) r.+>.sih)
+        (mo-give %unto ?~(fay [%quit ~] [%doff u.fay]))
+      ::
+          $woot
+        ?>  ?=({$g @ @ $~} q.+>.sih)
         %-  mo-awed
         :*  p.+>.sih
-            (?($peer $poke $pull) i.t.pax)
-            ~
+            ?+  i.t.q.+>.sih  !!
+              $k  %poke
+              $r  %peer
+              $l  %pull
+            ==
+            r.+>.sih
         ==
-      ?>  ?=({$a $woot *} sih)
-      ?>  ?=({$g @ @ $~} q.+>.sih)
-      %-  mo-awed
-      :*  p.+>.sih
-          ?+  i.t.q.+>.sih  !!
-            $gk  %poke
-            $gr  %peer
-            $gl  %pull
-          ==
-          r.+>.sih
       ==
     ==
   ::
@@ -524,7 +489,7 @@
     |=  {him/@p dap/dude num/@ud rok/rook}
     =.  +>  ?.(?=($u -.rok) +> (mo-give %mack ~))
     %+  mo-pass  
-      [%sys %req (scot %p him) dap (scot %ud num) ~]
+      [%sys %req (scot %p him) dap ~]
     ^-  note-arvo
     ?-  -.rok
       ::  %m  [%f %exec our ~ (mo-beak dap) %vale p.rok q.rok]
@@ -533,14 +498,14 @@
       $u  [%g %deal [him our] dap %pull ~]
     ==
   ::
-  ++  mo-gawd                                           ::  ames backward
-    |=  {him/@p dap/dude num/@ud ron/roon}
-    =.  +>  (mo-give %mack ~)
-    =.  hen  (mo-ball him num)
-    ?-  -.ron
-      $d  (mo-give %unto %doff p.ron q.ron)
-      $x  (mo-give %unto %quit ~)
-    ==
+  ++  mo-gawp                                           ::  response ack
+    |=  {him/@p dap/dude cop/coop}
+    ^+  +>
+    %+  mo-pass  
+      [%sys %req (scot %p him) dap ~]
+    ?~  cop
+      [%g %deal [him our] dap %pump ~]
+    [%g %deal [him our] dap %pull ~]
   ::
   ++  ap                                                ::  agent engine
     ~%  %gall-ap  +>  ~
@@ -1256,21 +1221,28 @@
     ::  ~&  [%gall-init p.q.hic]
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic [hen ~ ~ ~]))]
   ::
+      $went 
+    ?.  (~(has by pol.all) p.p.q.hic)
+      ~&  [%gall-not-ours p.q.hic]
+      [~ ..^$]
+    ?>  ?=({?($k $l $r) @ $~} q.q.hic)
+    =+  dap=i.t.q.q.hic
+    =+  our=p.p.q.hic
+    =+  him=q.p.q.hic
+    =<  mo-abet
+    (mo-gawp:(mo-abed:mo our hen) him dap s.q.hic)
+  ::
       $west
     ?.  (~(has by pol.all) p.p.q.hic)
       ~&  [%gall-not-ours p.q.hic]
       [~ ..^$]
-    ?>  ?=({?($ge $gh) @ $~} q.q.hic)
+    ?>  ?=({?($k $l $r) @ $~} q.q.hic)
     =+  dap=i.t.q.q.hic
     =+  our=p.p.q.hic
     =+  him=q.p.q.hic
-    ?:  ?=($ge i.q.q.hic)
-      =+  mes=((hard {@ud rook}) r.q.hic)
-      =<  mo-abet
-      (mo-gawk:(mo-abed:mo our hen) him dap mes)
-    =+  mes=((hard {@ud roon}) r.q.hic)
+    =+  mes=((hard {@ud rook}) s.q.hic)
     =<  mo-abet
-    (mo-gawd:(mo-abed:mo our hen) him dap mes)
+    (mo-gawk:(mo-abed:mo our hen) him dap mes)
   ::
       $wegh
     :_  ..^$  :_  ~
