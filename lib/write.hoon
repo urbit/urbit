@@ -86,6 +86,24 @@
     ==
   (poke--data [`%md pax] %mime / (taco txt))
 ::
+++  poke-fora-post
+  |=  {sup/spur him/ship hed/@t txt/@t}  ^+  abet
+  =+  pax=(welp (flop sup) /posts/(scot %da now))
+  =.  txt
+    %-  crip
+    """
+    ---
+    type: post
+    date: {<now>}
+    title: {(trip hed)}
+    author: {<him>}
+    comments: true
+    ---
+
+    {(trip txt)}
+    """
+  (poke--data [`%md pax] %mime / (taco txt))
+::
 ++  ames-secret
   ^-  @t
   =-  (crip +:<.^(@p %a pax)>)
