@@ -15,7 +15,7 @@
   |%
   ++  json
     %-  jobe  :~
-      passcode+(jape +:<pas>)
+      passcode+(jape <pas>)
       status+[%s status]
     ==
   --
