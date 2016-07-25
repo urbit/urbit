@@ -7,13 +7,12 @@
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
 |%                                                      ::
-++  bait  {p/skin q/@ud r/dove}                        ::  fmt nrecvd spec
+++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
           $:  fon/(map bole lock)                       ::  inbound locks
               zam/scar                                  ::  outbound boles
               sal/(map bole colt)                       ::  outbound flows
               nup/(map bole pump)                       ::  outbound pumps
-              sop/shed                                  ::  packet pump XX
           ==                                            ::
 ++  bole  bone                                          ::  inbound opaque
 ++  boon                                                ::  internal effect
@@ -33,14 +32,27 @@
               heg/(map hand code)                       ::  proposed
               qim/(map hand code)                       ::  inbound
           ==                                            ::
-++  coal                                                ::  outbound flow
-          $:  cot/colt                                  ::  message state
-              neg/(set tick)                            ::  dedup negatives, XX
+++  coal                                                ::  live packet state
+          $:  vig/?                                     ::  true iff virgin
+              tiq/tick                                  ::  message number
+              far/@ud                                   ::  fragment number
+              wen/@da                                   ::  date when lost
           ==                                            ::
 ++  colt                                                ::  outbound state
-          $:  seq/@ud                                   ::  next tick to send
-              lac/@ud                                   ::  acked tick until
+          $:  seq/tick                                  ::  next tick to fill
+              lac/tick                                  ::  acked tick until
               mis/(map tick (pair path coop))           ::  nonsequential acks
+              pum/puma                                  ::  flow control
+              cob/(map tick comb)                       ::  live messages
+              liv/(qeu coal)                            ::  live packets
+          ==                                            ::
+++  comb                                                ::  live message
+          $:  num/frag                                  ::  number of fragments
+              sen/frag                                  ::  sent pointer
+              ded/(set frag)                            ::  sent but lost
+              ack/frag                                  ::  number received
+              cup/(unit coop)                           ::  ack if any
+              rox/(map frag rock)                       ::  raw fragments
           ==                                            ::
 ++  corn                                                ::  flow by server
           $:  hen/duct                                  ::  admin channel
@@ -56,6 +68,7 @@
 ++  dove  {p/@ud q/(map @ud @)}                         ::  count 13-blocks
 ++  flap  @uvH                                          ::  network packet id
 ++  flea  (pair bole tick)                              ::  message id
+++  frag  @ud                                           ::  fragment number
 ++  fort                                                ::  formal state
           $:  $0                                        ::  version
               gad/duct                                  ::  client interface
@@ -115,6 +128,12 @@
           $:  byt/@ud                                   ::  bytes received
               boz/@ud                                   ::  packets lost
               rut/(unit @dr)                            ::  round-trip update
+          ==                                            ::
+++  puma                                                ::  packet pump
+          $:  nex/(unit @da)                            ::  next wake; derived
+              win/@ud                                   ::  logical window bytes
+              old/plod                                  ::  long-running state
+              sac/plow                                  ::  current flow
           ==                                            ::
 ++  pump                                                ::  new packet pump
           $:  nex/(unit @da)                            ::  next wake; derived
@@ -965,212 +984,6 @@
     --                                                ::  --go
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  ::              section 4aF, packet pump             ::
-  |%
-  ++  pu                                                ::  packet pump
-    |_  shed
-    ++  abet  +<
-    ++  ahoy                                            ::    ahoy:pu
-      ^+  .                                             ::  initialize
-      %_    .
-          rtt  ~s1
-          rto  ~s4
-          rtn  ~
-          rue  ~
-          nus  0
-          nif  0
-          nep  0
-          caw  2
-          cag  64
-          diq  ~
-          pyz  ~
-          puq  ~
-      ==
-    ::
-    ++  bick                                            ::    bick:pu
-      |=  {now/@da fap/flap}                            ::  ack by hash
-      ^-  {{p/(unit (pair flea path)) q/(list rock)} _+>}
-      =+  sun=(~(get by diq) fap)
-      ?~  sun
-        [[~ ~] +>.$]                                    ::  duplicate ack
-      =.  diq  (~(del by diq) fap)
-      =^  gub  +>.$  (bock now u.sun)
-      ::  ~&  [%bick-good `@p`(mug fap) u.sun gub]
-      =^  yop  +>.$  (harv now)
-      [[gub yop] +>.$]
-    ::
-    ++  bilk                                            ::    bilk:pu
-      |=  now/@da                                       ::  inbound packet
-      ^+  +>
-      =+  trt=(mul 2 rtt)
-      %=  +>.$
-        rue  [~ now]
-        rto  trt
-        rtn  ?~(puq ~ [~ (add now trt)])
-      ==
-    ::
-    ++  boom                                            ::    boom:pu
-      |=  now/@da  ^-  ?                                ::  address timeout
-      |(?=($~ rue) (gte (sub now u.rue) ~m1))
-    ::
-    ++  bust                                            ::    bust:pu
-      ^-  ?                                             ::  not responding
-      &(?=(^ rtn) (gte rto ~s16))
-    ::
-    ++  bike                                            ::    bike:pu
-      ^+  .                                             ::  check stats
-      ?>  .=  nif
-          |-  ^-  @
-          ?~  puq  0
-          :(add !liv.q.n.puq $(puq l.puq) $(puq r.puq))
-      .
-    ::
-    ++  beet                                            ::    beet:pu
-      ^+  .                                             ::  advance unacked
-      =-  +(nep ?~(foh nus u.foh))
-      ^=  foh
-      |-  ^-  (unit @ud)
-      ?~  puq  ~
-      ?:  (lte p.n.puq nep)  $(puq l.puq)
-      =+  rig=$(puq r.puq)
-      ?^(rig rig [~ p.n.puq])
-    ::
-    ++  bine                                            ::    bine:pu
-      |=  {now/@da num/@ud}                             ::  apply ack
-      ^-  {(unit (pair flea path)) _+>}
-      ?~  puq  !!
-      ?.  =(num p.n.puq)
-        ?:  (gth num p.n.puq)
-          =+  lef=$(puq l.puq)
-          [-.lef +.lef(puq [n.puq puq.lef r.puq])]
-        =+  rig=$(puq r.puq)
-        [-.rig +.rig(puq [n.puq l.puq puq.rig])]
-      =:  rtt  ?.  &(liv.q.n.puq =(1 nux.q.n.puq))  rtt
-               =+  gap=(sub now lys.q.n.puq)
-               ::  ~&  [%bock-trip num (div gap (div ~s1 1.000))]
-               (div (add (mul 2 rtt) gap) 3)
-          nif  (sub nif !liv.q.n.puq)
-        ==
-      =+  lez=(dec (need (~(get by pyz) fel.q.n.puq)))
-      =^  gub  pyz
-          ?:  =(0 lez)
-            [[~ fel.q.n.puq cha.q.n.puq] (~(del by pyz) fel.q.n.puq)]
-          [~ (~(put by pyz) fel.q.n.puq lez)]
-      :-  gub
-      +>.$(puq ~(nap to puq))
-    ::
-    ++  bock                                            ::    bock:pu
-      |=  {now/@da num/@ud}                             ::  ack by sequence
-      ^-  {(unit (pair flea path)) _+>}
-      =^  gym  +>  (bine now num)
-      :-  gym
-      ?:  (gth num nep)
-        =+  cam=(max 2 (div caw 2))
-        ::  ~&  [%bock-hole num nep cam]
-        beet:(wept(nep num, cag cam, caw cam) nep num)
-      =.  caw  ?:  (lth caw cag)  +(caw)
-               (add caw !=(0 (mod (mug now) caw)))
-      ?:  =(num nep)
-        ::  ~&  [%bock-fine num nif caw cag]
-        beet
-      ::  ~&  [%bock-fill num nif caw cag]
-      +>.$
-    ::
-    ++  harv                                            ::    harv:pu
-      |=  now/@da                                       ::  harvest queue
-      ^-  {(list rock) _+>}
-      ?:  =(~ puq)  [~ +>(rtn ~)]
-      ?.  (gth caw nif)  [~ +>]
-      =+  wid=(sub caw nif)
-      =|  rub/(list rock)
-      =<  abet  =<  apse
-      |%
-      ++  abet
-        ?~  rub  [~ +>.$]
-        [(flop rub) +>.$(rtn [~ (add rto now)])]
-      ::
-      ++  apse
-        ^+  .
-        ?~  puq  .
-        ?:  =(0 wid)  .
-        =>  rigt  =<  left
-        ?>  ?=(^ puq)
-        ?:  =(0 wid)  .
-        ?.  =(| liv.q.n.puq)  .
-        ::  ~&  [%harv nux.q.n.puq p.n.puq]
-        %_    .
-          wid          (dec wid)
-          rub          [pac.q.n.puq rub]
-          nif          +(nif)
-          liv.q.n.puq  &
-          nux.q.n.puq  +(nux.q.n.puq)
-          lys.q.n.puq  now
-        ==
-      ::
-      ++  left
-        ?>  ?=(^ puq)
-        ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
-      ++  rigt
-        ?>  ?=(^ puq)
-        ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
-      --
-    ::
-    ++  wack                                            ::    wack:pu
-      |=  now/@da                                       ::  wakeup (timeout)
-      ^-  {(list rock) _+>}
-      ?.  &(!=(~ rtn) ?>(?=(^ rtn) (gte now u.rtn)))  [~ +>]
-      ::  ~&  [%slow (div rto (div ~s1 1.000))]
-      =.  +>  (wept 0 nus)
-      ?>  =(0 nif)
-      =+  oub=(gte rto ~s16)
-      =:  caw  2
-          rto  ;:  min
-                 (mul 2 rto)
-                 ~m2
-                 (mul ~s16 ?~(rue 1 +((div (sub now u.rue) ~d1))))
-               ==
-        ==
-      (harv now)
-    ::
-    ++  wept                                            ::    wept:pu
-      |=  {fip/@ud lap/@ud}                             ::  fip thru lap-1
-      =<  abet  =<  apse
-      |%
-      ++  abet  +>.$
-      ++  apse
-        ^+  .
-        ?~  puq  .
-        ?:  (lth p.n.puq fip)  ?~(l.puq . left)
-        ?:  (gte p.n.puq lap)  ?~(r.puq . rigt)
-        =>  rigt  =<  left
-        ?>  ?=(^ puq)
-        ?.(liv.q.n.puq . .(nif (dec nif), liv.q.n.puq |))
-      ::
-      ++  left
-        ?>  ?=(^ puq)
-        ^+(. =+(lef=apse(puq l.puq) lef(puq [n.puq puq.lef r.puq])))
-      ++  rigt
-        ?>  ?=(^ puq)
-        ^+(. =+(rig=apse(puq r.puq) rig(puq [n.puq l.puq puq.rig])))
-      --
-    ::
-    ++  whap                                            ::    whap:pu
-      |=  {now/@da fel/flea cha/path wyv/(list rock)}   ::  send a message
-      ^-  {(list rock) _+>}
-      =.  pyz  (~(put by pyz) fel (lent wyv))
-      =.  +>
-        |-  ^+  +>.^$
-        ?~  wyv  +>.^$
-        %=  $
-          wyv  t.wyv
-          nus  +(nus)
-          diq  (~(put by diq) (shaf %flap i.wyv) nus)
-          puq  (~(put to puq) [nus `soul`[fel cha 0 | ~2000.1.1 i.wyv]])
-        ==
-      (harv now)
-    --
-  --
-  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aG, protocol engine          ::
   ::
   |%
@@ -1309,15 +1122,15 @@
     ++  wise                                            ::    wise:am
       |=  {soq/sock hen/duct cha/path val/*}            ::  send request
       ^-  {p/(list boon) q/fort}
-      ::  zork:abet:(we-wool:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
       ::  XX oldpump
+      ::  zork:abet:(we-wool:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
       zork:abet:(we-woof:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
     ::
     ++  wish                                            ::    wise:am
       |=  {soq/sock kos/bole cha/path val/*}            ::  return response
       ^-  {p/(list boon) q/fort}
-      ::  zork:abet:(we-wool:(wand:(ho:(um p.soq) q.soq) kos) cha val)
       ::  XX oldpump
+      ::  zork:abet:(we-wool:(wand:(ho:(um p.soq) q.soq) kos) cha val)
       zork:abet:(we-woof:(wand:(ho:(um p.soq) q.soq) kos) cha val)
     ::
     ++  um                                              ::  per server
@@ -1354,13 +1167,12 @@
         |=  her/ship                                    ::  per friend
         =+  diz=(myx:gus her)
         =+  bah=(~(get by wab.weg) her)
-        =+  puz=?~(bah ahoy:pu %*(. pu +< sop.u.bah))
-        =>  .(bah `bath`?~(bah [~ [2 ~ ~] ~ ~ *shed] u.bah))
+        =>  .(bah `bath`?~(bah [~ [2 ~ ~] ~ ~] u.bah))
         |%
         ++  abet                                        ::    abet:ho:um:am
           %=  +>.$                                      ::  resolve
             gus      (nux:gus diz)
-            wab.weg  (~(put by wab.weg) her bah(sop abet:puz))
+            wab.weg  (~(put by wab.weg) her bah)
           ==
         ::
         ++  back                                        ::    back:ho:um:am
@@ -1370,8 +1182,9 @@
           ?.  (~(has by sal.bah) ost)
             ~&  [%back-lost ost (flam dam)]
             +>
+          ::  XX oldpump
           ::  ~&  [%back-took ost (flam dam)]
-          ::  (~(we-tock we ost (~(got by sal.bah) ost)) dam cop lag) :: oldpump
+          ::  (~(we-tock we ost (~(got by sal.bah) ost)) dam cop lag)
           abet:(back:(cave ost) dam cop lag)
         ::
         ++  balk                                        ::    balk:ho:um:am
@@ -1766,7 +1579,6 @@
           ::
           ::  ++chew 
           ::
-          =.  puz  (bilk:puz now)
           =^  fud  diz  (grok sin ryn msg)
           ::  ~&  [%chew sin -.fud `@p`(mug dam) ryn (met 3 msg)]
           ?-  -.fud
@@ -1975,26 +1787,11 @@
         ++  pong                                        ::    pong:ho:um:am
           |=  hen/duct                                  ::  test connection
           ^+  +>
-          ?.  ?&  =(~ puq.puz)
-                  ?|  bust:puz
-                      ?=($~ rue.puz)
-                      (gth now (add ~s32 u.rue.puz))
-                      (lth u.rue.puz hop.fox)
-                  ==
-              ==
-            +>.$
           (conk 0 `@`0 ~)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup
-          =+  oub=bust:puz
-          =^  yem  puz  (wack:puz now)
-          =+  bou=bust:puz
-          =.  bin
-              ?.  &(bou !oub)  bin
-              :_(bin [%wine [our her] " not responding still trying"])
-          =.  diz  ?:((boom:puz now) (pode:diz now) diz)
-          (busk xong:diz yem)
+          .
         ::
         ++  we                                          ::    we:ho:um:am
           |_  {kos/bole colt}                           ::  outgoing core
@@ -2025,38 +1822,36 @@
             ?:  (~(has by mis) liq)  +>.$
             we-tire(mis (~(put by mis) liq cha cop))
           ::
-          ++  we-tock                                   ::    tock:we:ho:um:am
-            |=  {fap/flap cop/coop lag/@dr}             ::  process ack
+          ++  we-wood                                   ::    wood:we:ho:um:am
+            |=  {cha/path val/*}
             =<  we-abet
             ^+  +>
-            =^  yoh  puz  (bick:puz now fap)
-            =.  +>+>.$  (busk xong:diz q.yoh)
-            ?~  p.yoh  +>.$
-            ?>  =(kos p.p.u.p.yoh)
-            (we-toad q.p.u.p.yoh q.u.p.yoh cop)
-          ::
-          ++  we-wind                                   ::    wind:we:ho:um:am
-            |=  {fel/flea cha/path ham/meal}            ::  queue outgoing
-            =<  we-abet
-            ^+  +>
-            =^  wyv  diz  (zuul:diz now ham)
-            =^  pex  puz  (whap:puz now fel cha wyv)
-            +>.$(+> (busk xong:diz pex))
+            =^  pex  diz  (zuul:diz now [%bond [(mix kos 1) seq] cha val])
+            %_    +>.$ 
+                seq  +(seq)
+                cob
+              %+  ~(put by cob)
+                seq
+              ^-  comb
+              :*  (lent pex)
+                  0
+                  ~
+                  0
+                  ~
+                  =|  {far/frag rox/(map frag rock)}
+                  |-  ^+  rox
+                  ?~  pex  rox
+                  $(far +(far), pex t.pex, rox (~(put by rox) far i.pex))
+              ==
+            ==
           ::
           ++  we-woof                                   ::    woof:we:ho:um:am
             |=  {cha/path val/*}                        ::  send message
             =<  we-abet
             ^+  +>
+            ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha]
             ::  ~&  [%we-woof seq cha (mug val)]
             +>(seq +(seq), +> abet:(send:(cave kos) seq cha val))
-          ::
-          ++  we-wool                                   ::    wool:we:ho:um:am
-            |=  {cha/path val/*}                        ::  send message
-            ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha]
-            %^    we-wind(seq +(seq))  
-                [kos seq] 
-              cha 
-            [%bond [(mix kos 1) seq] cha val]
           --
         ::
         ++  wand                                        ::    wend:ho:um:am
@@ -2095,11 +1890,8 @@
       ::
       ++  pals                                          ::    pals:um:am
         ^-  (list @p)                                   ::  active neighbors
-        %+  turn
-          %+  skim  (~(tap by wab.weg) ~)
-          |=  {a/ship b/bath}
-          !(~(boom pu sop.b) now)
-        |=({a/ship b/bath} a)
+        ::  XX
+        ~
       ::
       ++  pong                                          ::    pong:um:am
         |=  {her/ship hen/duct}                         ::  test neighbor
