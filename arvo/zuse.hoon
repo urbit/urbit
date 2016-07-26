@@ -2312,12 +2312,6 @@
               {$| p/(list @tas)}                        ::  alter
           ==                                            ::
 ++  coop  (unit ares)                                   ::  e2e ack
-++  corn                                                ::  flow by server
-          $:  hen/duct                                  ::  admin channel
-              nys/(map flap bait)                       ::  packets incoming
-              olz/(map flap cape)                       ::  packets completed
-              wab/(map ship bath)                       ::  relationship
-          ==                                            ::
 ++  cred                                                ::  credential
           $:  hut/hart                                  ::  client host
               aut/(jug @tas @t)                         ::  client identities
@@ -2349,13 +2343,6 @@
 ++  flow                                                ::  packet connection
           $:  rtt/@dr                                   ::  decaying avg rtt
               wid/@ud                                   ::  logical wdow msgs
-          ==                                            ::
-++  fort                                                ::  formal state
-          $:  $0                                        ::  version
-              gad/duct                                  ::  client interface
-              hop/@da                                   ::  network boot date
-              ton/town                                  ::  security
-              zac/(map ship corn)                       ::  flows by server
           ==                                            ::
 ++  gank  (each vase (list tank))                       ::  abstract result
 ++  gilt  {@tas *}                                      ::  presumed gift

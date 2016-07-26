@@ -1190,6 +1190,7 @@
         ++  balk                                        ::    balk:ho:um:am
           |=  kos/bole                                  ::  wakeup
           ^+  +>
+          ::  XX pumpstuff
           =+  vac=(cave kos)
           =^  pex  vac  wake:vac
           =.  +>.$  abet:vac
