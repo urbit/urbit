@@ -2230,11 +2230,6 @@
   ==                                                    ::
 ++  ball  @uw                                           ::  statement payload
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
-++  bath                                                ::  convo per client
-          $:  sop/shed                                  ::  not stalled
-              raz/(map path race)                       ::  statements inbound
-              ryl/(map path rill)                       ::  statements outbound
-          ==                                            ::
 ++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
 ++  beak  {p/ship q/desk r/case}                        ::  garnish with beak
 ++  bird                                                ::  packet in travel
