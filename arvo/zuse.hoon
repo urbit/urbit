@@ -2327,6 +2327,7 @@
               cip/(each @if @is)                        ::  client IP
               cum/(map @tas *)                          ::  custom dirt
           ==                                            ::
+++  deco  ?($~ $bl $br $un)                             ::  text decoration
 ++  deed  {p/@ q/step r/?}                              ::  sig stage fake?
 ++  dome                                                ::  project state
           $:  ank/ankh                                  ::  state
@@ -2609,9 +2610,15 @@
 ++  sock  {p/ship q/ship}                               ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  {p/bray q/gens r/pass}                        ::  identity stage
+++  stub  (list (pair styd (list @c)))                  ::  styled tuba
+++  styd  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
+++  styl                                                ::
+  (pair (unit deco) (pair (unit tint) (unit tint)))     ::  cascading styd
+++  styx  (list $@(@t (pair styl styx)))                ::  styled text
 ++  suba  (list {p/path q/misu})                        ::  delta
 ++  tako  @                                             ::  yaki ref
 ++  tick  @ud                                           ::  process id
+++  tint  ?($~ $r $g $b $c $m $y $k $w)                 ::  text color
 ++  toro  {p/@ta q/nori}                                ::  general change
 ++  town                                                ::  all security state
           $:  lit/@ud                                   ::  imperial modulus
@@ -2750,6 +2757,7 @@
 ++  dill-blit                                           ::  new blit
   $%  {$bel $~}                                         ::  make a noise
       {$clr $~}                                         ::  clear the screen
+      {$klr p/stub}                                     ::  styled text
       {$hop p/@ud}                                      ::  set cursor position
       {$mor p/(list dill-blit)}                         ::  multiple blits
       {$pro p/(list @c)}                                ::  show as cursor+line
