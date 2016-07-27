@@ -93,8 +93,8 @@ DEBUGFLAGS=-O3
 endif
 
 # libuv version
-LIBUV_VER=libuv_0.11
-#LIBUV_VER=libuv-v1.7.5
+#LIBUV_VER=libuv_0.11
+LIBUV_VER=libuv-v1.7.5
 
 ifeq ($(LIBUV_VER),libuv_0.11)
 LIBUV_CONFIGURE_OPTIONS=--disable-dtrace
@@ -118,6 +118,7 @@ CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-Ioutside/commonmark/build/src \
 	-Ioutside/scrypt \
 	-Ioutside/softfloat-3/source/include \
+	-Ioutside/murmur3 \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -323,7 +324,8 @@ J_OFILES=\
 BASE_OFILES=$(N_OFILES) $(J_OFILES)
 
 OUT_OFILES=\
-       outside/jhttp/http_parser.o
+       outside/jhttp/http_parser.o \
+       outside/murmur3/MurmurHash3.o
 
 V_OFILES=\
        vere/ames.o \
