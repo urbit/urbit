@@ -73,6 +73,7 @@
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
           {$write-comment spur ship cord}               ::
+          {$write-fora-post spur ship cord cord}        ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -1331,6 +1332,47 @@
     ?:(neu +>.$ ra-homes)
   ::
   ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
+  ++  ra-fora-post
+    |=  {pax/path sup/spur hed/@t txt/@t}
+    =.  ..ra-emit
+      %+  ra-emit  ost.hid
+      :*  %poke
+          /fora-post
+          [our.hid %hood]
+          [%write-fora-post sup src.hid hed txt]
+      ==
+    =+  man=%posts
+    ?:  (~(has by stories) man)
+      (ra-consume-fora-post man pax sup hed txt)
+    =;  new  (ra-consume-fora-post:new man pax sup hed txt)
+    =.  ..ra-apply
+      %+  ra-apply  our.hid
+      :+  %design  man
+      :-  ~  :-  ~
+      :-  'towards a community'
+      [%brown ~] 
+    %^  ra-consume  &  our.hid
+    :^    (shaf %init eny.hid)  
+        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+      now.hid
+    [~ %app %tree 'receiving forum posts, ;join %posts for details']
+  ::
+  ++  ra-consume-fora-post
+    |=  {man/knot pax/path sup/spur hed/@t txt/@t}  ^+  +>
+    =+  nam=?~(sup "" (trip i.sup))                     :: file name
+    =+  fra=(crip (time-to-id now.hid))                 :: url fragment
+    %^  ra-consume  &
+      src.hid
+    :*  (shaf %comt eny.hid)
+        (my [[%& our.hid man] *envelope %pending] ~)
+        now.hid
+        (sy /fora-post eyre+pax ~)
+      :-  %mor  :~
+        [%fat text+(lore txt) [%url [ra-base-hart `pax ~] `fra]]
+        [%app %tree (crip "forum post: '{(trip hed)}'")]
+      ==
+    ==
+  ::
   ++  ra-comment
     |=  {pax/path sup/spur txt/@t}
     =.  ..ra-emit
@@ -1343,19 +1385,18 @@
     =+  man=%comments
     ?:  (~(has by stories) man)
       (ra-consume-comment man pax sup txt)
+    =;  new  (ra-consume-comment:new man pax sup txt)
     =.  ..ra-apply
       %+  ra-apply  our.hid
       :+  %design  man
       :-  ~  :-  ~
       :-  'letters to the editor'
       [%brown ~] 
-    =.  ..ra-consume
-      %^  ra-consume  &  our.hid
-      :^    (shaf %init eny.hid)  
-          (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
-        now.hid
-      [~ %app %tree 'receiving comments, ;join %comments for details']
-    (ra-consume-comment man pax sup txt)
+    %^  ra-consume  &  our.hid
+    :^    (shaf %init eny.hid)  
+        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+      now.hid
+    [~ %app %tree 'receiving comments, ;join %comments for details']
   ::
   ++  ra-consume-comment
     |=  {man/knot pax/path sup/spur txt/@t}  ^+  +>
@@ -2258,6 +2299,10 @@
 ++  poke-talk-comment
   |=  {pax/path sup/spur txt/@t}  ^-  (quip move +>)
   ra-abet:(ra-comment:ra pax sup txt)
+::
+++  poke-talk-fora-post
+  |=  {pax/path sup/spur hed/@t txt/@t}  ^-  (quip move +>)
+  ra-abet:(ra-fora-post:ra pax sup hed txt)
 ::
 ++  poke-talk-save
   |=  man/knot
