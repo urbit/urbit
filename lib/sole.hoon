@@ -138,4 +138,15 @@
   =+  dat=(transmute [%mor leg] [%ins pos `@c`0])
   ?>  ?=($ins -.dat)
   p.dat
+::
+++  shortship
+  |=  ship/@p 
+  ^-  tape
+  =+  kind=(clan ship)
+  =+  name=(scow %p ship)
+  ?:  =(%earl kind)
+    :(weld "~" (swag [15 6] name) "^" (swag [22 6] name))
+  ?:  =(%pawn kind)
+    :(weld (swag [0 7] name) "_" (swag [51 6] name))
+  name
 --
