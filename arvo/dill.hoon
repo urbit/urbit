@@ -181,14 +181,8 @@
               [%hop pos]
           ==
         ?:  ?=($klr -.bit)
-          =/  out/(list @c)
-              %-  zing
-              %+  turn  p.bit
-              |=  a/_?>(?=(^ p.bit) i.p.bit)
-              ~&  [p.a (tufa q.a)]
-              q.a
           %+  done  %blit
-          :~  [%lin out]
+          :~  [%lin (cvrt:ansi p.bit)]
               [%mor ~]
               [%lin see]
               [%hop pos]
@@ -200,6 +194,40 @@
         ?:  ?=($qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
+      ::
+      ++  ansi
+        |%
+        ++  cvrt
+          |=  a/stub
+          %-  zing
+          %+  turn  a
+          |=  a/(pair styd (list @c))
+          ^-  (list @c)
+          %-  zing  %-  limo
+          :~  ?:  =(0 ~(wyt in p.p.a))
+                ~
+              `(list @c)`(zing (turn (~(tap in p.p.a)) ef))
+              ::  (bg p.q.p.a)                          ::  XX: colors disabled
+              ::  (fg q.q.p.a)
+              q.a
+              ?~(p.p.a ~ (ef ~))
+              :: (bg ~)                                 ::  XX: colors disabled
+              :: (fg ~)
+          ==
+        ::
+        ++  ef  |=(a/^deco (scap (deco a)))
+        ++  bg  |=(a/^tint (scap (add 10 (tint a))))
+        ++  fg  |=(a/^tint (scap (tint a)))
+        ++  scap  |=(a/@ ((list @c) (limo ~[27 91 a 109])))
+        ::
+        ++  deco
+          |=  a/^deco
+          ?-(a $~ 48, $br 49, $un 52, $bl 53)
+        ::
+        ++  tint
+          |=  a/^tint
+          ?-(a $k 30, $r 31, $g 32, $y 33, $b 34, $m 35, $c 36, $w 37, $~ 39)
+        --
       ::
       ++  heft
         %_    .
