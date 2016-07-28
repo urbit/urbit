@@ -408,9 +408,53 @@
   |=  lin/(pair @ud stub)
   ^+  +>
   =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
-  ::  XX: wrap q.lin??
-  ::  (se-show (sub p.lin off) (scag edg (slag off q.lin)))
-  (se-show (sub p.lin off) q.lin)
+  (se-show (sub p.lin off) (scag-stub edg (slag-stub off q.lin)))
+::
+++  lents-stub
+  |=  a/stub
+  %+  turn  a
+  |=  a/(pair styd (list @c))
+  %+  add
+    (lent (tail a))
+  =+  d=~(wyt in p.p.a)
+  (mul 4 ?:(=(0 d) 0 +(d)))
+::
+++  break-stub
+  |=  {a/(list @) b/@}
+  =|  {c/@ i/@}
+  |-  ^-  (unit (pair @ @))
+  ?~  a  ~
+  =.  c  (add i.a c)
+  ?:  (gte c b)
+    `[i c]
+  $(i +(i), a t.a)
+::
+++  slag-stub
+  |=  {a/@ b/stub}
+  ^-  stub
+  =+  c=(lents-stub b)
+  =+  i=(break-stub c a)
+  ?~  i  b
+  =+  r=(slag +(p.u.i) b)
+  ?:  =(a q.u.i)
+    r
+  =+  n=(snag p.u.i b)
+  :_  r  :-  p.n
+  (slag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+::
+++  scag-stub
+  |=  {a/@ b/stub}
+  ^-  stub
+  =+  c=(lents-stub b)
+  =+  i=(break-stub c a)
+  ?~  i  b
+  ?:  =(a q.u.i)
+    (scag +(p.u.i) b)
+  %+  welp
+    (scag p.u.i b)
+  =+  n=(snag p.u.i b)
+  :_  ~  :-  p.n
+  (scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
@@ -858,16 +902,8 @@
     ^-  (pair @ud stub)
     =;  vew/(pair (list @c) styx)
       =/  lin/stub
-        (flatten-styx q.vew)
-      =/  len
-        %-  (curr roll add)
-        %+  turn
-          lin
-        |=  a/(pair styd (list @c))
-        %+  add
-          (lent (tail a))
-        =+  d=~(wyt in p.p.a)
-        (mul 4 ?:(=(0 d) 0 +(d)))
+        (flatten-styx p.vew)
+      =+  len=((curr roll add) (lents-stub lin))
       [(add pos.inp len) (welp lin [*styd p.vew]~)]
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
