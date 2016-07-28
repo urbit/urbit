@@ -243,6 +243,7 @@
   ::
   ++  top  |=(t/@da =^(b a (tip t) [(flop p.b) a]))     ::  ordered behead
   --
+--
 ::  simple packet pump
 ::
 |%
@@ -276,20 +277,20 @@
               liv/(qeu coal)                            ::  live packets
               lop/(qeu clue)                            ::  pending packets
           ==                                            ::
-++  pump                                                ::
+++  pume                                                ::
   |_  $:  fex/(list flex)                               ::  effects
+          now/@da                                       ::  current time
           mini                                          ::  state
       ==                                                ::
   ::                                                    ::
   ++  abet                                              ::  resolve
     ^-  (pair (list flex) mini)
-    [(flop fex) +<+]
+    [(flop fex) +<+>]
   ::                                                    ::
   ++  back                                              ::  hear an ack
     |=  {dam/flap cop/coop lag/@dr}
     ^+  +>
-    =-  %-  good(+> (drop(liv r.leo) q.leo)) 
-        [p.leo dam cop lag]
+    =-  (good:(drop(liv r.leo) q.leo) p.leo dam cop lag)
     ^=  leo
     |-  ^-  (trel (unit coal) (list coal) (qeu coal))
     ?~  liv
@@ -301,11 +302,29 @@
       ::
       ::  everything in front of an acked packet is dead
       ::
-      [`.n.liv (~(tap to r.liv)) l.liv]
+      [`n.liv (~(tap to r.liv)) l.liv]
     =+  lef=$(liv l.liv)
     ?^  p.lef
       [p.lef (~(tap to r.liv) q.lef) [n.liv l.liv ~]]
     [~ ~ liv]
+  ::                                                    ::
+  ++  clap                                              ::  ordered enqueue
+    ::
+    ::  the `lop` queue isn't really a queue in case of 
+    ::  resent packets; packets from older messages
+    ::  need to be sent first.  unfortunately hoon.hoon 
+    ::  lacks a general sorted/balanced heap right now.
+    ::
+    |=  clu/clue
+    %_    +>
+        lop
+      |-  ^+  lop
+      ?~  lop  [clu ~ ~]
+      ?:  (lth tiq.clu tiq.n.lop)
+      
+    ?~  lop
+      [
+
   ::                                                    ::
   ++  drop                                              ::  write off packets
     |=  cud/(list coal)
@@ -319,7 +338,7 @@
       cud      t.cud
       cur.saw  (dec cur.saw)
       rey.saw  +(rey.saw)
-      lop      (~(put to lop) clu.i.cud))
+      lop      (~(put to lop) clu.i.cud)
     ==
   ::                                                    ::
   ++  fill                                              ::  queue packets
@@ -350,24 +369,24 @@
   ::
   ++  ship                                              ::  send 
     |-  ^+  +
-    ?:  |((gte cur.saw max.saw) =(0 rey.saw))  +>
-    =+  out=?:(=(las now) +(now) now)
+    ?:  |((gte cur.saw max.saw) =(0 rey.saw))  +
+    =+  out=?:(=(las.saw now) +(now) now)
     =+  lod=(add now (mul 2 rtt.saw))
     =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
-    =^  nex  lop  ~(nap to lop)
+    =^  nex  lop  [p q]:~(get to lop)
     %=  $
       fex      [[%send fap.nex dat.nex] fex]
       las.saw  out
       lad.saw  lod
       cur.saw  +(cur.saw)
-      rey.saw  -(rey.saw)
+      rey.saw  (dec rey.saw)
       liv      (~(put to liv) [out lod nex])
     ==
   ::                                                    ::
   ++  wait                                              ::  next wakeup
     ^-  (unit @da)  
-    =+  tup=`(unit coal)`(~(top to liv))
-    ?~(tup ~ `lox.u.tup)
+    =+  tup=`(unit coal)`~(top to liv)
+    ?~(tup ~ `lod.u.tup)
   ::                                                    ::
   ++  want                                              ::  window space
     ^-  @ud
@@ -375,6 +394,7 @@
     =+  gap=(sub max.saw cur.saw)
     ?:  (gte rey.saw gap)  0
     (sub gap rey.saw)
+  --
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aA, identity logic           ::
@@ -1950,6 +1970,7 @@
                 [%cola [our her] kos u.cup.u.zup]
               [%coke [our her] (~(got by r.zam.bah) kos) u.cup.u.zup]
             ==
+          --
         ::
         ++  we                                          ::    we:ho:um:am
           |_  {kos/bole colt}                           ::  outgoing core
