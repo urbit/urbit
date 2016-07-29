@@ -2,7 +2,6 @@
 ::::  /hoon/tree/lib
   ::
 /?    314
-/-  tree-include
 !:
 |%
 ++  getall                                              :: search in manx
