@@ -1875,7 +1875,7 @@
   ++  sn-curt                                           ::  render name in 14
     |=  mup/?
     ^-  tape
-    =+  raw=(shortship %p p.one)
+    =+  raw=(cite p.one)
     (runt [(sub 14 (lent raw)) ' '] raw)
   ::
   ++  sn-nick

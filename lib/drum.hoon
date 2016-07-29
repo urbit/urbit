@@ -968,7 +968,7 @@
   ::
   ++  ta-pro                                          ::  set prompt
     |=  pom/sole-prompt
-    +>(pom pom(cad :(welp (shortship:sole p.gyl) ":" (trip q.gyl) cad.pom)))
+    +>(pom pom(cad :(welp (cite p.gyl) ":" (trip q.gyl) cad.pom)))
   ::
   ++  ta-ret                                          ::  hear return
     (ta-act %ret ~)
