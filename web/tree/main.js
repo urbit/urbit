@@ -1026,7 +1026,9 @@ module.exports = query({
   kids: {
     snip: 'r',
     head: 'r',
-    meta: 'j'
+    meta: 'j',
+    bump: 't',
+    name: 't'
   }
 }, recl({
   displayName: "List",
@@ -1037,7 +1039,7 @@ module.exports = query({
     }, this.props.dataType, {
       "default": this.props['data-source'] === 'default'
     }, this.props.className);
-    kids = this.renderList();
+    kids = this.renderList(this.sortedKids());
     if (!(kids.length === 0 && (this.props.is404 != null))) {
       return ul({
         className: k
@@ -1049,8 +1051,15 @@ module.exports = query({
       className: 'red inverse block error'
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
-  renderList: function() {
-    var _date, _k, _keys, author, cont, date, elem, href, i, image, item, k, len, linked, node, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, results, sorted, title, v;
+  sortedKids: function() {
+    var _k, _keys, k, ref1, ref2, ref3, ref4, sorted, v;
+    if (this.props.sortBy === 'bump') {
+      return _.sortBy(this.props.kids, function(arg) {
+        var bump, name;
+        bump = arg.bump, name = arg.name;
+        return bump || name;
+      }).reverse();
+    }
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -1059,14 +1068,14 @@ module.exports = query({
       if (this.props.sortBy) {
         if (this.props.sortBy === 'date') {
           if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
-            sorted = false;
+            return _.keys(this.props.kids).sort();
           }
           _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
           _keys[_k] = k;
         }
       } else {
         if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
-          sorted = false;
+          return _.keys(this.props.kids).sort();
         }
         _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
       }
@@ -1074,15 +1083,15 @@ module.exports = query({
     if (this.props.sortBy === 'date') {
       _keys.reverse();
     }
-    if (sorted !== true) {
-      _keys = _.keys(this.props.kids).sort();
-    }
-    ref5 = _.values(_keys);
+    return _.values(_keys);
+  },
+  renderList: function(elems) {
+    var _date, author, cont, date, elem, href, i, image, item, len, linked, node, parts, path, preview, ref1, results, title;
     results = [];
-    for (i = 0, len = ref5.length; i < len; i++) {
-      item = ref5[i];
+    for (i = 0, len = elems.length; i < len; i++) {
+      elem = elems[i];
+      item = elem.name;
       path = this.props.path + "/" + item;
-      elem = this.props.kids[item];
       if (elem.meta.hide != null) {
         continue;
       }
@@ -1098,7 +1107,7 @@ module.exports = query({
       }
       parts = [];
       title = null;
-      if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
+      if ((ref1 = elem.meta) != null ? ref1.title : void 0) {
         if (this.props.dataType === 'post') {
           title = {
             gn: 'a',
@@ -2782,7 +2791,8 @@ QUERIES = {
   comt: 'j',
   plan: 'j',
   beak: 't',
-  spur: 't'
+  spur: 't',
+  bump: 't'
 };
 
 TreeStore = _.extend((new EventEmitter).setMaxListeners(50), {
