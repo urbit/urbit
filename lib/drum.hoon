@@ -848,9 +848,9 @@
       $dot  ?.  &(?=(^ old.hit) ?=(^ -.old.hit))
               ta-bel
             =+  old=`(list @c)`-.old.hit
-            =+  b=(bwrd (lent old) old nedg)
+            =+  b=(bwrd (lent old) old nace)
             %-  ta-hom(ris ~)
-            (ta-cat pos.inp (slag b old))
+            (ta-cat pos.inp (slag (add b =(0 b)) old))
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
