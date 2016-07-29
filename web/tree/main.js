@@ -588,7 +588,8 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Comment, DEFER_USER, Ship, TreeActions, a, clas, code, div, form, h2, img, input, load, p, query, reactify, recl, ref, rele, textarea, util;
+var Comment, DEFER_USER, Ship, TreeActions, a, clas, code, div, form, h2, img, input, load, p, query, reactify, recl, ref, rele, textarea, util,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 clas = require('classnames');
 
@@ -629,7 +630,8 @@ Comment = function(arg) {
 module.exports = query({
   comt: 'j',
   path: 't',
-  spur: 't'
+  spur: 't',
+  meta: 'j'
 }, recl({
   displayName: "Comments",
   getInitialState: function() {
@@ -687,7 +689,7 @@ module.exports = query({
     });
   },
   render: function() {
-    var _attr, inputAttr, textareaAttr;
+    var _attr, addComment, comments, inputAttr, ref1, ref2, textareaAttr;
     _attr = {};
     if (this.state.loading === true) {
       _attr.disabled = "true";
@@ -703,22 +705,41 @@ module.exports = query({
       value: "Add comment",
       className: "btn btn-primary"
     });
-    return div({}, div({
+    addComment = div({
+      key: 'add-comment',
       className: "add-comment"
     }, form({
       ref: "in",
       onSubmit: this.onSubmit
     }, rele(Ship, {
       ship: this.state.user
-    }), textarea(textareaAttr), input(inputAttr))), div({
-      className: "comments"
-    }, (this.state.loading != null ? rele(Comment, _.extend({}, this.state.loading, {
-      user: this.state.user
-    })) : void 0), this.props.comt.map(function(props, key) {
+    }), textarea(textareaAttr), input(inputAttr)));
+    comments = this.props.comt.map(function(props, key) {
       return rele(Comment, _.extend({
         key: key
       }, props));
-    })));
+    });
+    comments.unshift((this.state.loading != null ? rele(Comment, _.extend({
+      key: 'loading'
+    }, this.state.loading, {
+      user: this.state.user
+    })) : void 0));
+    if (indexOf.call((ref1 = (ref2 = this.props.meta.comments) != null ? ref2.split(" ") : void 0) != null ? ref1 : [], "reverse") >= 0) {
+      comments = comments.reverse();
+      return div({}, [
+        div({
+          key: 'comments',
+          className: "comments"
+        }, comments), addComment
+      ]);
+    } else {
+      return div({}, [
+        addComment, div({
+          key: 'comments',
+          className: "comments"
+        }, comments)
+      ]);
+    }
   }
 }));
 
@@ -1633,6 +1654,20 @@ rele = React.createElement;
 ref = React.DOM, nav = ref.nav, ul = ref.ul, li = ref.li, a = ref.a;
 
 module.exports = recl({
+  getInitialState: function() {
+    return {
+      loaded: urb.ship != null
+    };
+  },
+  componentDidMount: function() {
+    return urb.init((function(_this) {
+      return function() {
+        return _this.setState({
+          'loaded': 'loaded'
+        });
+      };
+    })(this));
+  },
   render: function() {
     if ((urb.user == null) || urb.user !== urb.ship) {
       return nav({

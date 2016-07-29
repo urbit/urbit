@@ -97,8 +97,8 @@
     date: {<now>}
     title: {(trip hed)}
     author: {<him>}
-    comments: true
     navuptwo: true
+    comments: reverse
     ---
 
     {(trip txt)}
