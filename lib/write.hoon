@@ -98,6 +98,7 @@
     title: {(trip hed)}
     author: {<him>}
     comments: true
+    navuptwo: true
     ---
 
     {(trip txt)}

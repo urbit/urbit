@@ -88,7 +88,7 @@ module.exports = {
       return function(err, res) {
         if (err == null) {
           _this.clearData();
-          history.pushState({}, "", pax);
+          history.pushState({}, "", "..");
           return _this.setCurr(pax);
         }
       };
@@ -754,7 +754,7 @@ module.exports = {
 
 
 },{"./CodeMirror.coffee":4,"./EmailComponent.coffee":8,"./ImagepanelComponent.coffee":9,"./KidsComponent.coffee":10,"./ListComponent.coffee":11,"./LoadComponent.coffee":12,"./ModuleComponent.coffee":13,"./PanelComponent.coffee":15,"./PlanComponent.coffee":16,"./PostComponent.coffee":17,"./ScriptComponent.coffee":19,"./SearchComponent.coffee":20,"./ShipComponent.coffee":21,"./TocComponent.coffee":23}],7:[function(require,module,exports){
-var a, div, recl, ref, util;
+var Arrow, Dpad, a, div, recl, ref, util;
 
 util = require('../utils/util.coffee');
 
@@ -762,53 +762,26 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, a = ref.a;
 
-module.exports = recl({
-  displayName: "Dpad",
-  renderUp: function() {
-    if (this.props.sein) {
-      return this.renderArrow("up", this.props.sein);
-    }
-  },
-  renderArrow: function(name, path) {
-    var href;
-    href = util.basepath(path);
-    return a({
-      href: href,
-      key: "" + name,
-      className: "" + name
-    }, "");
-  },
-  renderArrows: function() {
-    var index, keys, next, prev, sein;
-    keys = util.getKeys(this.props.kids);
-    if (keys.length > 1) {
-      index = keys.indexOf(this.props.curr);
-      prev = index - 1;
-      next = index + 1;
-      if (prev < 0) {
-        prev = keys.length - 1;
-      }
-      if (next === keys.length) {
-        next = 0;
-      }
-      prev = keys[prev];
-      next = keys[next];
-    }
-    if (this.props.sein) {
-      sein = this.props.sein;
-      if (sein === "/") {
-        sein = "";
-      }
-      return div({}, prev ? this.renderArrow("prev", sein + "/" + prev) : void 0, next ? this.renderArrow("next", sein + "/" + next) : void 0);
-    }
-  },
-  render: function() {
-    return div({
-      className: 'dpad',
-      key: 'dpad'
-    }, this.renderUp(), this.renderArrows());
-  }
-});
+Arrow = function(name, path) {
+  var href;
+  href = util.basepath(path);
+  return a({
+    href: href,
+    key: "" + name,
+    className: "" + name
+  }, "");
+};
+
+module.exports = Dpad = function(arg) {
+  var arrowSibs, arrowUp, curr, index, keys, kids, meta, next, prev, sein;
+  sein = arg.sein, curr = arg.curr, kids = arg.kids, meta = arg.meta;
+  arrowUp = sein ? meta.navuptwo ? Arrow("up", sein.replace(/\/[^\/]*$/, "")) : Arrow("up", sein) : void 0;
+  arrowSibs = (keys = util.getKeys(kids), keys.length > 1 ? (index = keys.indexOf(curr), prev = index - 1, next = index + 1, prev < 0 ? prev = keys.length - 1 : void 0, next === keys.length ? next = 0 : void 0, prev = keys[prev], next = keys[next]) : void 0, sein ? (sein === "/" ? sein = "" : void 0, div({}, prev ? Arrow("prev", sein + "/" + prev) : void 0, next ? Arrow("next", sein + "/" + next) : void 0)) : void 0);
+  return div({
+    className: 'dpad',
+    key: 'dpad'
+  }, arrowUp, arrowSibs);
+};
 
 
 },{"../utils/util.coffee":30}],8:[function(require,module,exports){
