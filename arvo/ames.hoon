@@ -32,22 +32,47 @@
               heg/(map hand code)                       ::  proposed
               qim/(map hand code)                       ::  inbound
           ==                                            ::
+++  clue                                                ::  live packet state
+          $:  vig/?                                     ::  true iff virgin
+              tel/part                                  ::  block identity
+              fap/flap                                  ::  fragment hash
+              dat/rock                                  ::  fragment data
+          ==                                            ::
+++  part  (pair frag tick)                              ::  fragment of packet
 ++  coal                                                ::  live packet state
-          $:  out/@da                                   ::  date sent
-              lox/@da                                   ::  date lost
-              tiq/tick                                  ::  message 
+          $:  out/@da                                   ::  sent date
+              lod/@da                                   ::  lost-by deadline
               clu/clue                                  ::  packet to send
+          ==                                            ::
+++  flex                                                ::  pump actions
+          $%  {$good p/part q/coop}                     ::  ack msg fragment
+              {$send p/flap q/rock}                     ::  send packet
+          ==                                            ::
+++  stat                                                ::  pump statistics
+          $:  $:  cur/@ud                               ::  window q length
+                  max/@ud                               ::  max pax out
+                  rey/@ud                               ::  retry q length
+              ==                                        ::
+              $:  rtt/@dr                               ::  roundtrip estimate
+                  las/@da                               ::  last sent
+                  lad/@da                               ::  last deadline
+              ==                                        ::
+          ==                                            ::
+++  mini                                                ::  pump data
+          $:  saw/stat                                  ::  statistics
+              liv/(qeu coal)                            ::  live packets
+              lop/(qeu clue)                            ::  lost packets
           ==                                            ::
 ++  colt                                                ::  outbound state
           $:  seq/tick                                  ::  next tick to fill
               lac/tick                                  ::  acked tick until
               mis/(map tick (pair path coop))           ::  nonsequential acks
-              pum/puma                                  ::  flow control
+              myn/mini                                  ::  packet pump
               cob/(map tick comb)                       ::  live messages
-              liv/(qeu coal)                            ::  live packets
           ==                                            ::
 ++  comb                                                ::  live message
           $:  cup/(unit coop)                           ::  final ack
+              cha/path                                  ::  channel
               num/frag                                  ::  number of fragments
               ack/frag                                  ::  number acked
               pex/(list clue)                           ::  left to send
@@ -247,66 +272,85 @@
 ::  simple packet pump
 ::
 |%
-++  clue                                                ::  live packet state
-          $:  vig/?                                     ::  true iff virgin
-              tiq/tick                                  ::  message number
-              fap/flap                                  ::  fragment hash
-              dat/rock                                  ::  fragment data
-          ==                                            ::
-++  coal                                                ::  live packet state
-          $:  out/@da                                   ::  sent date
-              lod/@da                                   ::  lost-by deadline
-              clu/clue                                  ::  packet to send
-          ==                                            ::
-++  flex                                                ::  pump actions
-          $%  {$good p/tick q/coop}                     ::  ack msg fragment
-              {$send p/flap q/rock}                     ::  send packet
-          ==                                            ::
-++  stat                                                ::  pump statistics
-          $:  $:  cur/@ud                               ::  window q length
-                  max/@ud                               ::  max pax out
-                  rey/@ud                               ::  retry q length
-              ==                                        ::
-              $:  rtt/@dr                               ::  roundtrip estimate
-                  las/@da                               ::  last sent
-                  lad/@da                               ::  last deadline
-              ==                                        ::
-          ==                                            ::
-++  mini                                                ::  pump data
-          $:  saw/stat                                  ::  statistics
-              liv/(qeu coal)                            ::  live packets
-              lop/(qeu clue)                            ::  pending packets
-          ==                                            ::
 ++  pume                                                ::
   |_  $:  fex/(list flex)                               ::  effects
-          now/@da                                       ::  current time
           mini                                          ::  state
-      ==                                                ::
+      ==
+  ::                                                    ::
+  ++  abba                                              ::  a older than b
+    |=  {a/part b/part}
+    |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
   ::                                                    ::
   ++  abet                                              ::  resolve
     ^-  (pair (list flex) mini)
-    [(flop fex) +<+>]
+    =.  .  aver
+    [(flop fex) +<+]
   ::                                                    ::
-  ++  back                                              ::  hear an ack
+  ++  aver                                              ::  verify
+    ?>  (lth cur.saw max.saw)
+    ?>  !=(0 max.saw)
+    ?>  =(cur.saw (lent (~(tap to liv))))
+    ?>  =(rey.saw (lent (~(tap to lop))))
+    ?>  =+  |=  {a/coal b/coal}
+            ?&  (lth out.a out.a)
+                (lth lod.a lod.b)
+                (abba tel.clu.a tel.clu.b)
+            ==
+        |-  ?|  ?=($~ liv)
+                ?&  ?|  ?=($~ r.liv) 
+                        ?&  (+< n.r.liv n.liv)
+                            $(liv r.liv)
+                    ==  ==
+                    ?|  ?=($~ l.liv)
+                        ?&  (+< n.liv n.l.liv)
+                            $(liv l.liv)
+                    ==  ==
+                ==
+            ==
+    ?>  |-  ?|  ?=($~ lop)
+                ?&  ?|  ?=($~ r.lop) 
+                        ?&  (abba tel.n.r.lop tel.n.lop)
+                            $(lop r.lop)
+                    ==  ==
+                    ?|  ?=($~ l.lop) 
+                        ?&  (abba tel.n.lop tel.n.l.lop)
+                            $(lop l.lop)
+                    ==  == 
+                ==
+            ==
+    .
+  ::                                                    ::
+  ++  back                                              ::  process raw ack
     |=  {dam/flap cop/coop lag/@dr}
     ^+  +>
-    =-  (good:(drop(liv r.leo) q.leo) p.leo dam cop lag)
-    ^=  leo
-    |-  ^-  (trel (unit coal) (list coal) (qeu coal))
-    ?~  liv
-      [~ ~ ~]
+    =-  (done:(lose(liv lov) ded) ack dam cop lag)
+    |-  ^-  $:  ack/(unit coal) 
+                ded/(list coal) 
+                lov/(qeu coal)
+            ==
+    ?~  liv  [~ ~ ~]
     =+  ryt=$(liv r.liv)
-    ?^  p.ryt
-      [p.ryt q.ryt [n.liv l.liv r.ryt]]
-    ?:  =(dam fap.clu.n.liv)
+    ?^  ack.ryt
       ::
-      ::  everything in front of an acked packet is dead
+      ::  found in front, no need to search back.
       ::
-      [`n.liv (~(tap to r.liv)) l.liv]
-    =+  lef=$(liv l.liv)
-    ?^  p.lef
-      [p.lef (~(tap to r.liv) q.lef) [n.liv l.liv ~]]
-    [~ ~ liv]
+      [ack.ryt ded.ryt [n.liv l.liv lov.ryt]]
+    ::
+    ::  lose unacked packets sent before an acked virgin.
+    ::
+    =+  ^-  $:  top/?
+                ack/(unit coal)
+                ded/(list coal)
+                lov/(qeu coal)
+            ==
+        ?:  =(dam fap.clu.n.liv)
+          [| `n.liv ~ l.liv]
+        [& $(liv l.liv)]
+    ?~  ack  [~ ~ liv]
+    =.  ded  ?:(top [n.liv ded] ded)
+    =.  ded  ?:(vig.clu.u.ack (~(tap to r.liv) ded) ded)
+    =.  lov  ?:(top [n.liv lov ~] lov)
+    [ack ded lov]
   ::                                                    ::
   ++  clap                                              ::  ordered enqueue
     ::
@@ -314,47 +358,46 @@
     ::  resent packets; packets from older messages
     ::  need to be sent first.  unfortunately hoon.hoon 
     ::  lacks a general sorted/balanced heap right now.
+    ::  so we implement a balanced queue insert by hand.
     ::
     |=  clu/clue
     %_    +>
         lop
       |-  ^+  lop
       ?~  lop  [clu ~ ~]
-      ?:  (lth tiq.clu tiq.n.lop)
-      
-    ?~  lop
-      [
-
-  ::                                                    ::
-  ++  drop                                              ::  write off packets
-    |=  cud/(list coal)
-    ^+  +>
-    ?~  cud  +>
-    ~&  :~  %pump-drop
-            `@dr`(sub now lod.i.cud)
-            [%clue [vig tiq `@p`fap]:clu.i.cud]
-        ==
-    %=    $
-      cud      t.cud
-      cur.saw  (dec cur.saw)
-      rey.saw  +(rey.saw)
-      lop      (~(put to lop) clu.i.cud)
+      ?:  ?|  (abba tel.clu tel.n.lop)
+              ?&  =(tel.clu tel.n.lop)
+                  (lth fap.clu fap.n.lop)
+          ==  ==
+        [n.lop l.lop $(lop r.lop)]
+      [n.lop $(lop l.lop) r.lop]
     ==
   ::                                                    ::
-  ++  fill                                              ::  queue packets
-      |=  (list clue) 
-      +>(rey.saw +(rey.saw), lop (~(gas to lop) +<))
-  ::                                                    ::
-  ++  good                                              ::  resolved ack
+  ++  done                                              ::  process cooked ack
     |=  {lyd/(unit coal) dam/flap cop/coop lag/@dr}
     ^+  +>
-    ?~  lyd
-      ~&([%pump-ack-late `@p`dam] +>)
-    +>(fex [[%good tiq.clu.u.lyd cop] fex])
+    ?~  lyd  +>
+    +>(fex [[%good tel.clu.u.lyd cop] fex])
   ::                                                    ::
-  ++  flay                                              ::  strip dead pax
-    ^+  .
-    =-  (drop(liv q.ole) p.ole)
+  ++  fire                                              ::  send a packet
+    |=  {now/@da clu/clue}
+    ^+  +>
+    ?>  (lth cur.saw max.saw)
+    =+  out=?:(=(las.saw now) +(now) now)
+    =+  lod=(add now (mul 2 rtt.saw))
+    =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
+    %=  +>.$
+      fex      [[%send fap.clu dat.clu] fex]
+      las.saw  out
+      lad.saw  lod
+      cur.saw  +(cur.saw)
+      liv      (~(put to liv) [out lod clu])
+    ==
+  ::                                                    ::
+  ++  flay                                              ::  time out packets
+    |=  now/@da
+    ^+  +>
+    =-  (lose(liv q.ole) p.ole)
     ^=  ole
     =|  ded/(list coal)
     |-  ^+  [p=ded q=liv]
@@ -366,22 +409,30 @@
       $(liv l.liv, ded (~(tap to r.liv) [n.liv ~]))
     =+  ryt=$(liv r.liv)
     [p.ryt [n.liv l.liv q.ryt]]
-  ::
-  ++  ship                                              ::  send 
-    |-  ^+  +
-    ?:  |((gte cur.saw max.saw) =(0 rey.saw))  +
-    =+  out=?:(=(las.saw now) +(now) now)
-    =+  lod=(add now (mul 2 rtt.saw))
-    =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
-    =^  nex  lop  [p q]:~(get to lop)
-    %=  $
-      fex      [[%send fap.nex dat.nex] fex]
-      las.saw  out
-      lad.saw  lod
-      cur.saw  +(cur.saw)
-      rey.saw  (dec rey.saw)
-      liv      (~(put to liv) [out lod nex])
+  ::                                                    ::
+  ++  lose                                              ::  abandon packets
+    |=  cud/(list coal)
+    ^+  +>
+    ?~  cud  +>
+    ~&  :~  %pump-drop
+            [%clue [vig tel `@p`fap]:clu.i.cud]
+        ==
+    %=    $
+      cud      t.cud
+      cur.saw  (dec cur.saw)
+      rey.saw  +(rey.saw)
+      +>       (clap clu.i.cud)
     ==
+  ::                                                    ::
+  ++  ship                                              ::  send packets
+    |=  {now/@da cly/(list clue)}
+    ^+  +>
+    ?:  (gte cur.saw max.saw)  +>
+    ?:  =(0 rey.saw)
+      ?~  cly  +>
+      $(cly t.cly, +> (fire now i.cly))
+    =^  clu  lop  ~(get to lop)
+    $(rey.saw (dec rey.saw), +> (fire now clu))
   ::                                                    ::
   ++  wait                                              ::  next wakeup
     ^-  (unit @da)  
@@ -1952,23 +2003,35 @@
           ::
           ++  ve-wait                                   ::  next wakeup
             ^-  (unit @da)
-            =+  tup=`(unit coal)`(~(top to liv))
-            ?~  tup  ~
-            `wen.u.tup
+            !!
+          ::                                            ::
+          ++  ve-wood                                   ::  send
+            |=  {cha/path val/*}
+            =<  ve-abet
+            ^+  +>
+            =^  pex  diz  (zuul:diz now [%bond [(mix kos 1) seq] cha val])
+            %_    +>.$ 
+                seq  +(seq)
+                cob
+              %+  ~(put by cob)
+                seq
+              ^-  comb
+              !!
+            ==
           ::
           ++  ve-tire                                   ::  report results
             |-  ^+  +
             =+  zup=(~(get by cob) lac)
-            ?~  zup  +>
-            ?~  cup.u.zup  +>
+            ?~  zup  +.$
+            ?~  cup.u.zup  +.$
             ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
             %=    $
                 lac  +(lac)
                 cob  (~(del by cob) lac)
                 bin  :_  bin
               ?:  =(1 (end 0 1 kos))
-                [%cola [our her] kos u.cup.u.zup]
-              [%coke [our her] (~(got by r.zam.bah) kos) u.cup.u.zup]
+                [%cola [our her] kos [cha u.cup]:u.zup]
+              [%coke [our her] (~(got by r.zam.bah) kos) [cha u.cup]:u.zup]
             ==
           --
         ::
@@ -2000,29 +2063,6 @@
             ?:  (lth liq lac)  +>.$
             ?:  (~(has by mis) liq)  +>.$
             we-tire(mis (~(put by mis) liq cha cop))
-          ::
-          ++  we-wood                                   ::    wood:we:ho:um:am
-            |=  {cha/path val/*}
-            =<  we-abet
-            ^+  +>
-            =^  pex  diz  (zuul:diz now [%bond [(mix kos 1) seq] cha val])
-            %_    +>.$ 
-                seq  +(seq)
-                cob
-              %+  ~(put by cob)
-                seq
-              ^-  comb
-              :*  (lent pex)
-                  0
-                  ~
-                  0
-                  ~
-                  =|  {far/frag rox/(map frag rock)}
-                  |-  ^+  rox
-                  ?~  pex  rox
-                  $(far +(far), pex t.pex, rox (~(put by rox) far i.pex))
-              ==
-            ==
           ::
           ++  we-woof                                   ::    woof:we:ho:um:am
             |=  {cha/path val/*}                        ::  send message
