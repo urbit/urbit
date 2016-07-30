@@ -1332,23 +1332,37 @@
       ?~  caz  [~ fox]
       =^  lef  fox  $(caz l.caz)
       =^  ryt  fox  $(caz r.caz)
-      ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)        ::  XX oldpump
+      ::  oldpump
+      ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)
+      ::
+      ::  newpump
       =^  bun  fox  zork:(walk:(um p.n.caz) hen)
+      ::
+      ::  nupump
+      ::  =^  bun  fox  zork:(walq:(um p.n.caz) hen)
       :_(fox :(weld p.lef p.ryt p.bun))
     ::
     ++  wise                                            ::    wise:am
       |=  {soq/sock hen/duct cha/path val/*}            ::  send request
       ^-  {p/(list boon) q/fort}
-      ::  XX oldpump
+      ::  oldpump
       ::  zork:abet:(we-wool:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
+      ::
+      ::  newpump
       zork:abet:(we-woof:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
+      ::
+      ::  nupump
+      ::  zork:abet:(ve-wood:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
     ::
     ++  wish                                            ::    wise:am
       |=  {soq/sock kos/bole cha/path val/*}            ::  return response
       ^-  {p/(list boon) q/fort}
-      ::  XX oldpump
+      ::  oldpump
       ::  zork:abet:(we-wool:(wand:(ho:(um p.soq) q.soq) kos) cha val)
+      ::  newpump
       zork:abet:(we-woof:(wand:(ho:(um p.soq) q.soq) kos) cha val)
+      ::  nupump
+      :: zork:abet:(ve-wood:(vand:(ho:(um p.soq) q.soq) kos) cha val)
     ::
     ++  um                                              ::  per server
       |=  our/ship
@@ -1364,7 +1378,7 @@
         :(hunt $(wab.weg l.wab.weg) $(wab.weg r.wab.weg) doze:(ho p.n.wab.weg))
       ::
       ++  wake                                          ::    wake:um:am
-        |=  hen/duct                                    ::  activate
+        |=  hen/duct                                    ::  activate (oldpump)
         =.  +>  (kick hen)
         =+  baw=wab.weg
         |-  ^+  +>.^$
@@ -1374,11 +1388,18 @@
         abet:thaw:(ho p.n.baw)
       ::
       ++  walk                                          ::    walk:um:am
-        |=  hen/duct                                    ::  activate
+        |=  hen/duct                                    ::  activate (newpump)
         =^  gup  pod.weg  (~(top se pod.weg) now)
         |-  ^+  +>.^$
         ?~  gup  +>.^$
         $(gup t.gup, +>.^$ abet:(balk:(ho p.i.gup) q.i.gup))
+      ::
+      ++  walq                                          ::    walk:um:am
+        |=  hen/duct                                    ::  activate (nupump)
+        =^  gup  pod.weg  (~(top se pod.weg) now)
+        |-  ^+  +>.^$
+        ?~  gup  +>.^$
+        $(gup t.gup, +>.^$ abet:(balq:(ho p.i.gup) q.i.gup))
       ::
       ++  ho                                            ::    ho:um:am
         |=  her/ship                                    ::  per friend
@@ -1399,19 +1420,29 @@
           ?.  (~(has by sal.bah) ost)
             ~&  [%back-lost ost (flam dam)]
             +>
-          ::  XX oldpump
+          ::  oldpump
           ::  ~&  [%back-took ost (flam dam)]
           ::  (~(we-tock we ost (~(got by sal.bah) ost)) dam cop lag)
+          ::
+          ::  newpump
           abet:(back:(cave ost) dam cop lag)
+          ::  
+          ::  nupump
+          ::  ve-abet:(ve-tock:(vand ost) dam cop lag)
         ::
         ++  balk                                        ::    balk:ho:um:am
-          |=  kos/bole                                  ::  wakeup
+          |=  kos/bole                                  ::  wakeup (newpump)
           ^+  +>
           ::  XX pumpstuff
           =+  vac=(cave kos)
           =^  pex  vac  wake:vac
           =.  +>.$  abet:vac
           (busk xong:diz pex)
+        ::
+        ++  balq
+          |=  kos/bole                                  ::  wakeup (nupump)
+          ^+  +>
+          ve-abet:ve-wake:(vand ost)
         ::
         ++  busk                                        ::    busk:ho:um:am
           |=  {waz/(list ship) pex/(list rock)}         ::  send packets
@@ -1828,11 +1859,24 @@
         ::
         ++  doze                                        ::    doze:ho:um:am
           ^-  (unit @da)                                ::  wait until
+          ::  oldpump
           ::  rtn.sop.bah                               ::  XX oldpump
+          ::
+          ::  newpump
           =+  doe=~(til se pod.weg)
           ?:  ?=($~ doe)
             ~
           doe
+          ::
+          ::  nupump
+          ::
+          ::  =|  wun/(unit @da)
+          ::  |-  ^-  (unit @da) 
+          ::  ?~  sal.bah  ~
+          ::  =.  wun  $(sal.bah l.sal.bah)
+          ::  =.  wun  $(sal.bah r.sal.bah)
+          ::  =+  nuw=ve-wait:(vond p.n.sal.bah q.n.sal.bah)
+          ::  ?~(wun nuw ?~(nuw wun `(min u.nuw u.wun)))
         ::
         ++  fore                                        ::    fore:ho:um:am
           |=  {ryn/lane who/ship via/(unit lane) msg/@} ::  forward packet
@@ -2009,7 +2053,7 @@
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup
-          .
+          
         ::
         ++  ve                                          ::  outbound core
           |_  $:  kos/bole                              ::
@@ -2114,6 +2158,10 @@
           ++  ve-wait                                   ::  next wakeup
             ^-  (unit @da)
             wait:mup
+          ::                                            ::
+          ++  ve-wake                                   ::  timeout
+            ^+  .
+            .(mup (flay:mup now))
           ::                                            ::
           ++  ve-wood                                   ::  send
             |=  {cha/path val/*}
