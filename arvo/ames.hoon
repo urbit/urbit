@@ -45,7 +45,7 @@
               clu/clue                                  ::  packet to send
           ==                                            ::
 ++  flex                                                ::  pump actions
-          $%  {$good p/part q/coop}                     ::  ack msg fragment
+          $%  {$good p/flap q/part r/coop}              ::  ack msg fragment
               {$send p/flap q/rock}                     ::  send packet
           ==                                            ::
 ++  stat                                                ::  pump statistics
@@ -395,7 +395,7 @@
     |=  {lyd/(unit coal) dam/flap cop/coop lag/@dr}
     ^+  +>
     ?~  lyd  +>
-    +>(fex [[%good tel.clu.u.lyd cop] fex])
+    +>(fex [[%good dam tel.clu.u.lyd cop] fex])
   ::                                                    ::
   ++  fire                                              ::  send a packet
     |=  {now/@da clu/clue}
@@ -1337,24 +1337,25 @@
       ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)
       ::
       ::  newpump
-      =^  bun  fox  zork:(walk:(um p.n.caz) hen)
+      ::  =^  bun  fox  zork:(walk:(um p.n.caz) hen)
       ::
       ::  nupump
-      ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)
+      =^  bun  fox  zork:(wake:(um p.n.caz) hen)
       ::
       :_(fox :(weld p.lef p.ryt p.bun))
     ::
     ++  wise                                            ::    wise:am
       |=  {soq/sock hen/duct cha/path val/*}            ::  send request
       ^-  {p/(list boon) q/fort}
+      ::
       ::  oldpump
       ::  zork:abet:(we-wool:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
       ::
       ::  newpump
-      zork:abet:(we-woof:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
+      ::  zork:abet:(we-woof:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
       ::
       ::  nupump
-      ::  zork:abet:(ve-wood:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
+      zork:abet:(ve-wood:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
     ::
     ++  wish                                            ::    wise:am
       |=  {soq/sock kos/bole cha/path val/*}            ::  return response
@@ -1363,10 +1364,10 @@
       ::  zork:abet:(we-wool:(wand:(ho:(um p.soq) q.soq) kos) cha val)
       ::
       ::  newpump
-      zork:abet:(we-woof:(wand:(ho:(um p.soq) q.soq) kos) cha val)
+      ::  zork:abet:(we-woof:(wand:(ho:(um p.soq) q.soq) kos) cha val)
       ::
       ::  nupump
-      :: zork:abet:(ve-wood:(vand:(ho:(um p.soq) q.soq) kos) cha val)
+      zork:abet:ve-abet:(ve-wood:(vand:(ho:(um p.soq) q.soq) kos) cha val)
       ::
     ::
     ++  um                                              ::  per server
@@ -1424,10 +1425,10 @@
           ::  (~(we-tock we ost (~(got by sal.bah) ost)) dam cop lag)
           ::
           ::  newpump
-          abet:(back:(cave ost) dam cop lag)
+          ::  abet:(back:(cave ost) dam cop lag)
           ::  
           ::  nupump
-          ::  ve-abet:(ve-tock:(vand ost) dam cop lag)
+          ve-abet:(ve-back:(vand ost) dam cop lag)
           ::
         ::
         ++  balk                                        ::    balk:ho:um:am
@@ -1858,20 +1859,20 @@
           ::  rtn.sop.bah                               ::  XX oldpump
           ::
           ::  newpump
-          =+  doe=~(til se pod.weg)
-          ?:  ?=($~ doe)
-            ~
-          doe
+          ::  =+  doe=~(til se pod.weg)
+          ::  ?:  ?=($~ doe)
+          ::    ~
+          ::  doe
           ::
           ::  nupump
           ::
-          ::  =|  wun/(unit @da)
-          ::  |-  ^-  (unit @da) 
-          ::  ?~  sal.bah  ~
-          ::  =.  wun  $(sal.bah l.sal.bah)
-          ::  =.  wun  $(sal.bah r.sal.bah)
-          ::  =+  nuw=ve-wait:(vond p.n.sal.bah q.n.sal.bah)
-          ::  ?~(wun nuw ?~(nuw wun `(min u.nuw u.wun)))
+          =|  wun/(unit @da)
+          |-  ^-  (unit @da) 
+          ?~  sal.bah  ~
+          =.  wun  $(sal.bah l.sal.bah)
+          =.  wun  $(sal.bah r.sal.bah)
+          =+  nuw=ve-wait:(vond p.n.sal.bah q.n.sal.bah)
+          ?~(wun nuw ?~(nuw wun `(min u.nuw u.wun)))
         ::
         ++  fore                                        ::    fore:ho:um:am
           |=  {ryn/lane who/ship via/(unit lane) msg/@} ::  forward packet
@@ -2085,10 +2086,12 @@
               =.  +>.$  $(fex t.fex)
               ?-    -.i.fex
                   $send
+                ~&  [%send `@p`(mug p.i.fex)]
                 +>.$(+> (busk xong:diz [q.i.fex ~]))
               ::
                   $good
-                (ve-good p.i.fex q.i.fex)
+                ~&  [%good `@p`(mug p.i.fex)]
+                (ve-good q.i.fex r.i.fex)
               ==
             ==
           ::                                            ::
@@ -2171,6 +2174,7 @@
             |=  {cha/path val/*}
             ^+  +>
             =^  pex  diz  (zuul:diz now [%bond [(mix kos 1) seq] cha val])
+            ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
             %_    +>.$ 
                 seq  +(seq)
                 cob
