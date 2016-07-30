@@ -1332,6 +1332,7 @@
       ?~  caz  [~ fox]
       =^  lef  fox  $(caz l.caz)
       =^  ryt  fox  $(caz r.caz)
+      ::
       ::  oldpump
       ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)
       ::
@@ -1339,7 +1340,8 @@
       =^  bun  fox  zork:(walk:(um p.n.caz) hen)
       ::
       ::  nupump
-      ::  =^  bun  fox  zork:(walq:(um p.n.caz) hen)
+      ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)
+      ::
       :_(fox :(weld p.lef p.ryt p.bun))
     ::
     ++  wise                                            ::    wise:am
@@ -1359,10 +1361,13 @@
       ^-  {p/(list boon) q/fort}
       ::  oldpump
       ::  zork:abet:(we-wool:(wand:(ho:(um p.soq) q.soq) kos) cha val)
+      ::
       ::  newpump
       zork:abet:(we-woof:(wand:(ho:(um p.soq) q.soq) kos) cha val)
+      ::
       ::  nupump
       :: zork:abet:(ve-wood:(vand:(ho:(um p.soq) q.soq) kos) cha val)
+      ::
     ::
     ++  um                                              ::  per server
       |=  our/ship
@@ -1379,6 +1384,7 @@
       ::
       ++  wake                                          ::    wake:um:am
         |=  hen/duct                                    ::  activate (oldpump)
+                                                        ::  activate (nupump)
         =.  +>  (kick hen)
         =+  baw=wab.weg
         |-  ^+  +>.^$
@@ -1393,13 +1399,6 @@
         |-  ^+  +>.^$
         ?~  gup  +>.^$
         $(gup t.gup, +>.^$ abet:(balk:(ho p.i.gup) q.i.gup))
-      ::
-      ++  walq                                          ::    walk:um:am
-        |=  hen/duct                                    ::  activate (nupump)
-        =^  gup  pod.weg  (~(top se pod.weg) now)
-        |-  ^+  +>.^$
-        ?~  gup  +>.^$
-        $(gup t.gup, +>.^$ abet:(balq:(ho p.i.gup) q.i.gup))
       ::
       ++  ho                                            ::    ho:um:am
         |=  her/ship                                    ::  per friend
@@ -1429,6 +1428,7 @@
           ::  
           ::  nupump
           ::  ve-abet:(ve-tock:(vand ost) dam cop lag)
+          ::
         ::
         ++  balk                                        ::    balk:ho:um:am
           |=  kos/bole                                  ::  wakeup (newpump)
@@ -1438,11 +1438,6 @@
           =^  pex  vac  wake:vac
           =.  +>.$  abet:vac
           (busk xong:diz pex)
-        ::
-        ++  balq
-          |=  kos/bole                                  ::  wakeup (nupump)
-          ^+  +>
-          ve-abet:ve-wake:(vand ost)
         ::
         ++  busk                                        ::    busk:ho:um:am
           |=  {waz/(list ship) pex/(list rock)}         ::  send packets
@@ -2050,27 +2045,36 @@
           |=  hen/duct                                  ::  test connection
           ^+  +>
           (conk 0 `@`0 ~)
-        ::
-        ++  thaw                                        ::    thaw:ho:um:am
-          ^+  .                                         ::  wakeup
-          
+        ::                                              ::
+        ++  thaw                                        ::  activate by time
+          ^+  .
+          =+  lah=sal.bah
+          =^  sal  +
+              |-  ^+  [lah +>.$]
+              ?~  lah  [~ +>.$]
+              =^  lef  +>.$  $(lah l.lah) 
+              =^  ryt  +>.$  $(lah r.lah) 
+              =^  nod  +>.$  ve-abed:ve-wake:(vond n.lah)
+              [[nod lef ryt] +>.$]
+          +>(sal.bah sal)
         ::
         ++  ve                                          ::  outbound core
           |_  $:  kos/bole                              ::
                   mup/_pume                             ::
                   colt                                  ::
               ==                                        ::
+          ++  ve-abed  [[kos +<+>] +>]                  ::  raw resolve
           ++  ve-abet                                   ::  resolve core
-            =.  .  ve-able
-            =.  .  ve-feed
-            =.  .  ve-able
-            =.  .  ve-tire
+            =>  ve-able
             %=    +>
                 sal.bah
               (~(put by sal.bah) kos +<+>)
             ==
+          ::                                            ::  
+          ++  ve-able                                   ::  converge machine
+            ve-tire:ve-ably:ve-feed:ve-ably
           ::                                            ::
-          ++  ve-able                                   ::  apply pump effects
+          ++  ve-ably                                   ::  apply pump effects
             ^+  .
             =^  fex  myn  abet:mup
             =.  mup  ~(. pume ~ myn)
