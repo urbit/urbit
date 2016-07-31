@@ -1294,8 +1294,8 @@
         [~ fox]
       =<  zork
       =<  abet
-      ::  ~&  [%in p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      ::  ~&  [%in p.p.kec (flam (shaf %flap pac))]
+      ~&  [%in p.p.kec ryn `@p`(mug (shaf %flap pac))]
+      ~&  [%in p.p.kec (flam (shaf %flap pac))]
       %-  chew:(ho:(um q.p.kec) p.p.kec)
       [q.kec (shaf %flap pac) ryn r.kec]
     ::
@@ -1337,10 +1337,10 @@
       ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)
       ::
       ::  newpump
-      =^  bun  fox  zork:(walk:(um p.n.caz) hen)
+      ::  =^  bun  fox  zork:(walk:(um p.n.caz) hen)
       ::
       ::  nupump
-      ::  =^  bun  fox  zork:(wake:(um p.n.caz) hen)
+      =^  bun  fox  zork:(wake:(um p.n.caz) hen)
       ::
       :_(fox :(weld p.lef p.ryt p.bun))
     ::
@@ -1352,10 +1352,10 @@
       ::  zork:abet:(we-wool:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
       ::
       ::  newpump
-      zork:abet:(we-woof:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
+      ::  zork:abet:(we-woof:(wend:(ho:(um p.soq) q.soq) hen) cha val) 
       ::
       ::  nupump
-      ::  zork:abet:(ve-wood:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
+      zork:abet:ve-abet:(ve-wood:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
     ::
     ++  wish                                            ::    wise:am
       |=  {soq/sock kos/bole cha/path val/*}            ::  return response
@@ -1364,10 +1364,10 @@
       ::  zork:abet:(we-wool:(wand:(ho:(um p.soq) q.soq) kos) cha val)
       ::
       ::  newpump
-      zork:abet:(we-woof:(wand:(ho:(um p.soq) q.soq) kos) cha val)
+      ::  zork:abet:(we-woof:(wand:(ho:(um p.soq) q.soq) kos) cha val)
       ::
       ::  nupump
-      ::  zork:abet:ve-abet:(ve-wood:(vand:(ho:(um p.soq) q.soq) kos) cha val)
+      zork:abet:ve-abet:(ve-wood:(vand:(ho:(um p.soq) q.soq) kos) cha val)
       ::
     ::
     ++  um                                              ::  per server
@@ -1425,10 +1425,10 @@
           ::  (~(we-tock we ost (~(got by sal.bah) ost)) dam cop lag)
           ::
           ::  newpump
-          abet:(back:(cave ost) dam cop lag)
+          ::  abet:(back:(cave ost) dam cop lag)
           ::  
           ::  nupump
-          ::  ve-abet:(ve-back:(vand ost) dam cop lag)
+          ve-abet:(ve-back:(vand ost) dam cop lag)
           ::
         ::
         ++  balk                                        ::    balk:ho:um:am
@@ -1848,8 +1848,9 @@
           ^+  +>
           ?:  =(0 kos) 
             ::  don't ack an ack
-            ~&  [%conk-acak (flam dam)]
-            +>
+            ~&  [%conk-acaq (flam dam)]
+            ::  +>
+            !!
           =^  pex  diz  (zuul:diz now [%back (mix 1 kos) dam cop ~s0])
           (busk xong:diz pex)
         ::
@@ -1859,20 +1860,20 @@
           ::  rtn.sop.bah                               ::  XX oldpump
           ::
           ::  newpump
-          =+  doe=~(til se pod.weg)
-          ?:  ?=($~ doe)
-            ~
-          doe
+          ::  =+  doe=~(til se pod.weg)
+          ::  ?:  ?=($~ doe)
+          ::    ~
+          ::  doe
           ::
           ::  nupump
           ::
-          ::  =|  wun/(unit @da)
-          ::  |-  ^-  (unit @da) 
-          ::  ?~  sal.bah  ~
-          ::  =.  wun  $(sal.bah l.sal.bah)
-          ::  =.  wun  $(sal.bah r.sal.bah)
-          ::  =+  nuw=ve-wait:(vond p.n.sal.bah q.n.sal.bah)
-          ::  ?~(wun nuw ?~(nuw wun `(min u.nuw u.wun)))
+          =|  wun/(unit @da)
+          |-  ^-  (unit @da) 
+          ?~  sal.bah  ~
+          =.  wun  $(sal.bah l.sal.bah)
+          =.  wun  $(sal.bah r.sal.bah)
+          =+  nuw=ve-wait:(vond p.n.sal.bah q.n.sal.bah)
+          ?~(wun nuw ?~(nuw wun `(min u.nuw u.wun)))
         ::
         ++  fore                                        ::    fore:ho:um:am
           |=  {ryn/lane who/ship via/(unit lane) msg/@} ::  forward packet
@@ -2073,6 +2074,7 @@
             ==
           ::                                            ::  
           ++  ve-able                                   ::  converge machine
+            ~&  %ve-able
             ve-tire:ve-ably:ve-feed:ve-ably
           ::                                            ::
           ++  ve-ably                                   ::  apply pump effects
@@ -2082,8 +2084,8 @@
             |-  ^+  +>.$
             ?~  fex  +>.$
             %=    $
-                +>.$ 
-              =.  +>.$  $(fex t.fex)
+                fex  t.fex
+                +>.$
               ?-    -.i.fex
                   $send
                 ~&  [%send `@p`(mug p.i.fex)]
@@ -2097,11 +2099,13 @@
           ::                                            ::
           ++  ve-back                                   ::  hear an ack
             |=  {dam/flap cop/coop lag/@dr}
+            ~&  [%ve-back (flam dam) cop lag]
             +>(mup (back:mup dam cop lag))
           ::                                            ::
           ++  ve-feed                                   ::  feed pump
             ^+  .
             =^  cly  .  (ve-find want.mup)
+            ~&  [%ve-feed want.mup (lent cly)]
             +(mup (ship:mup now cly))
           ::                                            ::
           ++  ve-find                                   ::  collect packets
@@ -2225,6 +2229,7 @@
           |=  hen/duct
           ^+  ve
           =+  ust=(~(get by q.zam.bah) hen)
+          ~&  [%vend ust hen]
           ?~  ust
             %.  [p.zam.bah vind]
             %_  vond
@@ -2428,7 +2433,7 @@
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         $milk  (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
-      ::  ~&  [%to now p.bon `@p`(mug (shaf %flap q.bon))] 
+      ~&  [%to now p.bon `@p`(mug (shaf %flap q.bon))] 
       ::  ~&  [%to (flam (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
