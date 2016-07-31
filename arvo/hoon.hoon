@@ -2695,6 +2695,15 @@
       a
     $(b t.b, a (put p.i.b q.i.b))
   ::
+  +-  gaf                                               ::  concat, fail on dupe
+    ~/  %gaf
+    |=  b/(list _?>(?=(^ a) n.a))
+    |-  ^+  a
+    ?~  b
+      a
+    ?<  (has p.i.b)
+    $(b t.b, a (put p.i.b q.i.b))
+  ::
   +-  get                                               ::  grab value by key
     ~/  %get
     |=  b/*
