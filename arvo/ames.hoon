@@ -287,7 +287,7 @@
     [(flop fex) +<+]
   ::                                                    ::
   ++  aver                                              ::  verify
-    ?>  (lth cur.saw max.saw)
+    ?>  (lte cur.saw max.saw)
     ?>  !=(0 max.saw)
     ?>  =(cur.saw (lent (~(tap to liv))))
     ?>  =(rey.saw (lent (~(tap to lop))))
@@ -323,8 +323,8 @@
   ++  back                                              ::  process raw ack
     |=  {dam/flap cop/coop lag/@dr}
     ^+  +>
-    ~&  [%lose (flam dam) cop lag]
-    =-  (done:(lose(liv lov) ded) ack dam cop lag)
+    =-  ~&  [%lose (flam dam) cop lag]
+        (done:(lose(liv lov) ded) ack dam cop lag)
     |-  ^-  $:  ack/(unit coal) 
                 ded/(list coal) 
                 lov/(qeu coal)
@@ -405,6 +405,7 @@
     =+  out=?:(=(las.saw now) +(now) now)
     =+  lod=(add now (mul 2 rtt.saw))
     =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
+    ~&  [%fire (flam fap.clu) out lod]
     %=  +>.$
       fex      [[%send fap.clu dat.clu] fex]
       las.saw  out
@@ -1850,8 +1851,7 @@
           ?:  =(0 kos) 
             ::  don't ack an ack
             ~&  [%conk-acaq (flam dam)]
-            ::  +>
-            !!
+            +>
           =^  pex  diz  (zuul:diz now [%back (mix 1 kos) dam cop ~s0])
           (busk xong:diz pex)
         ::
@@ -2066,7 +2066,9 @@
                   mup/_pume                             ::
                   colt                                  ::
               ==                                        ::
-          ++  ve-abed  [[kos +<+>] +>]                  ::  raw resolve
+          ++  ve-abed  
+            ~&  [%abed-live (lent (~(tap to liv.mup)))]
+            [[kos +<+>] +>]                             ::  raw resolve
           ++  ve-abet                                   ::  resolve core
             =>  ve-able
             %=    +>
@@ -2169,10 +2171,12 @@
           ::                                            ::
           ++  ve-wait                                   ::  next wakeup
             ^-  (unit @da)
+            ~&  [%ve-wait wait:mup]
             wait:mup
           ::                                            ::
           ++  ve-wake                                   ::  timeout
             ^+  .
+            ~&  [%ve-wake now]
             .(mup (flay:mup now))
           ::                                            ::
           ++  ve-wood                                   ::  send
@@ -2210,7 +2214,7 @@
                           4               :: max/@ud
                           0               :: rey/@ud
                       ==
-                      :*  (div ~s1 30)    :: rtt/@dr
+                      :*  (div ~s1 3)     :: rtt/@dr
                           ~2010.1.1       :: las/@da
                           ~2010.1.1       :: lad/@da
                   ==  ==
