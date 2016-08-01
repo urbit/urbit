@@ -323,6 +323,7 @@
   ++  back                                              ::  process raw ack
     |=  {dam/flap cop/coop lag/@dr}
     ^+  +>
+    ~&  [%lose (flam dam) cop lag]
     =-  (done:(lose(liv lov) ded) ack dam cop lag)
     |-  ^-  $:  ack/(unit coal) 
                 ded/(list coal) 
@@ -433,7 +434,7 @@
     ^+  +>
     ?~  cud  +>
     ~&  :~  %pump-drop
-            [%clue [vig tel (flam fap)]:clu.i.cud]
+            [%clue [vig tel `@p`fap]:clu.i.cud]
         ==
     %=    $
       cud      t.cud
@@ -1294,7 +1295,7 @@
         [~ fox]
       =<  zork
       =<  abet
-      ::  ~&  [%in p.p.kec ryn `@p`(mug (shaf %flap pac))]
+      ~&  [%in p.p.kec ryn `@p`(mug (shaf %flap pac))]
       ~&  [%in p.p.kec (flam (shaf %flap pac))]
       %-  chew:(ho:(um q.p.kec) p.p.kec)
       [q.kec (shaf %flap pac) ryn r.kec]
@@ -1849,7 +1850,8 @@
           ?:  =(0 kos) 
             ::  don't ack an ack
             ~&  [%conk-acaq (flam dam)]
-            +>
+            ::  +>
+            !!
           =^  pex  diz  (zuul:diz now [%back (mix 1 kos) dam cop ~s0])
           (busk xong:diz pex)
         ::
@@ -2044,9 +2046,8 @@
         ::
         ++  pong                                        ::    pong:ho:um:am
           |=  hen/duct                                  ::  test connection
-          ::  ^+  +>
-          +>
-          ::  (conk 0 `@`0 ~)
+          ^+  +>
+          (conk 0 `@`0 ~)
         ::                                              ::
         ++  thaw                                        ::  activate by time
           ^+  .
