@@ -2701,6 +2701,7 @@
     |-  ^+  a
     ?~  b
       a
+    ~|  duplicate-key+p.i.b
     ?<  (has p.i.b)
     $(b t.b, a (put p.i.b q.i.b))
   ::
