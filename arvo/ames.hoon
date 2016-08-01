@@ -289,10 +289,12 @@
   ++  aver                                              ::  verify
     ?>  (lte cur.saw max.saw)
     ?>  !=(0 max.saw)
-    ?>  =(cur.saw (lent (~(tap to liv))))
+    ?.  =(cur.saw (lent (~(tap to liv))))
+      ~&  [%aver-cur cur.saw (lent (~(tap to liv)))]
+      !!
     ?>  =(rey.saw (lent (~(tap to lop))))
     ?>  =+  |=  {a/coal b/coal}
-            ?&  (lth out.a out.a)
+            ?&  (lth out.a out.b)  
                 (lth lod.a lod.b)
                 (abba tel.clu.a tel.clu.b)
             ==
@@ -405,7 +407,7 @@
     =+  out=?:(=(las.saw now) +(now) now)
     =+  lod=(add now (mul 2 rtt.saw))
     =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
-    ~&  [%fire (flam fap.clu) out lod]
+    ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
     %=  +>.$
       fex      [[%send fap.clu dat.clu] fex]
       las.saw  out
@@ -417,7 +419,11 @@
   ++  flay                                              ::  time out packets
     |=  now/@da
     ^+  +>
-    =-  (lose(liv q.ole) p.ole)
+    =-  ~&  [%lose liv+(lent (~(tap to q.ole))) did+(lent p.ole)]
+        ~&  [%cursaw cur.saw]
+        =.  +>.$  (lose(liv q.ole) p.ole)
+        ~&  [%after-lose cur.saw (lent (~(tap to liv)))]
+        +>.$
     ^=  ole
     =|  ded/(list coal)
     |-  ^+  [p=ded q=liv]
@@ -435,13 +441,13 @@
     ^+  +>
     ?~  cud  +>
     ~&  :~  %pump-drop
-            [%clue [vig tel `@p`fap]:clu.i.cud]
+            [%clue vig.clu.i.cud tel.clu.i.cud (flam fap.clu.i.cud)]
         ==
+    =.  +>  (clap clu.i.cud)
     %=    $
       cud      t.cud
       cur.saw  (dec cur.saw)
       rey.saw  +(rey.saw)
-      +>       (clap clu.i.cud)
     ==
   ::                                                    ::
   ++  ship                                              ::  send packets
@@ -452,7 +458,7 @@
       ?~  cly  +>
       $(cly t.cly, +> (fire now i.cly))
     =^  clu  lop  ~(get to lop)
-    $(rey.saw (dec rey.saw), +> (fire now clu))
+    $(+> (fire(rey.saw (dec rey.saw)) now clu))
   ::                                                    ::
   ++  wait                                              ::  next wakeup
     ^-  (unit @da)  
@@ -2047,7 +2053,8 @@
         ++  pong                                        ::    pong:ho:um:am
           |=  hen/duct                                  ::  test connection
           ^+  +>
-          (conk 0 `@`0 ~)
+          +>
+          ::  (conk 0 `@`0 ~)
         ::                                              ::
         ++  thaw                                        ::  activate by time
           ^+  .
@@ -2066,9 +2073,11 @@
                   mup/_pume                             ::
                   colt                                  ::
               ==                                        ::
-          ++  ve-abed  
+          ++  ve-abed 
+            =>  ve-able
             ~&  [%abed-live (lent (~(tap to liv.mup)))]
             [[kos +<+>] +>]                             ::  raw resolve
+          ::
           ++  ve-abet                                   ::  resolve core
             =>  ve-able
             %=    +>
@@ -2077,7 +2086,7 @@
             ==
           ::                                            ::  
           ++  ve-able                                   ::  converge machine
-            ~&  %ve-able
+            ~&  [%ve-able cur.saw.mup (lent (~(tap to liv.mup)))]
             ve-tire:ve-ably:ve-feed:ve-ably
           ::                                            ::
           ++  ve-ably                                   ::  apply pump effects
