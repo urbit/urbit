@@ -404,7 +404,7 @@
     |=  {now/@da clu/clue}
     ^+  +>
     ?>  (lth cur.saw max.saw)
-    =+  out=?:(=(las.saw now) +(now) now)
+    =+  out=?:((lte now las.saw) +(las.saw) now)
     =+  lod=(add now (mul 2 rtt.saw))
     =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
     ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
