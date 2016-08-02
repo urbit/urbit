@@ -54,6 +54,7 @@ static u3j_harm _mood__hoon_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
 static u3j_harm _mood__hoon_met_a[] = {{".2", u3wc_met, c3y}, {}};
 static u3j_harm _mood__hoon_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
 static u3j_harm _mood__hoon_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
+static u3j_harm _mood__hoon_muk_a[] = {{".2", u3wc_muk, c3y}, {}};
 static u3j_harm _mood__hoon_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
 static u3j_harm _mood__hoon_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
 static u3j_harm _mood__hoon_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
@@ -464,6 +465,7 @@ static u3j_core _mood__hoon_d[] =
     { "met", _mood__hoon_met_a },
     { "mix", _mood__hoon_mix_a },
     { "mug", _mood__hoon_mug_a },
+    { "muk", _mood__hoon_muk_a },
     { "peg", _mood__hoon_peg_a },
     { "pow", _mood__hoon_pow_a },
     { "rap", _mood__hoon_rap_a },

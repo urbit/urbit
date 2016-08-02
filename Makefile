@@ -213,6 +213,7 @@ J_C_OFILES=\
        jets/c/met.o \
        jets/c/mix.o \
        jets/c/mug.o \
+       jets/c/muk.o \
        jets/c/peg.o \
        jets/c/po.o  \
        jets/c/pow.o \
