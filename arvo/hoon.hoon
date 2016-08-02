@@ -1090,34 +1090,64 @@
 ++  fnv  |=(a/@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
 ::
 ++  muk                                                 ::  standard murmur3
-  ~/  %muk
-  |=  {syd/@ key/@}
-  ?>  (lte (met 5 syd) 1)
-  =+  ^=  row
-      |=  {a/@ b/@}
-      (con (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
-  =+  mow=|=({a/@ b/@} (end 5 1 (mul a b)))
-  =+  len=(met 5 key)
-  =-  =.  goc  (mix goc len)
-      =.  goc  (mix goc (rsh 4 1 goc))
-      =.  goc  (mow goc 0x85eb.ca6b)
-      =.  goc  (mix goc (rsh 0 13 goc))
-      =.  goc  (mow goc 0xc2b2.ae35)
-      (mix goc (rsh 4 1 goc))
-  ^=  goc
-  =+  [inx=0 goc=syd]
-  |-  ^-  @
-  ?:  =(inx len)  goc
-  =+  kop=(cut 5 [inx 1] key)
-  =.  kop  (mow kop 0xcc9e.2d51)
-  =.  kop  (row 15 kop)
-  =.  kop  (mow kop 0x1b87.3593)
-  =.  goc  (mix kop goc)
-  =.  goc  (row 13 goc)
-  =.  goc  (end 5 1 (add 0xe654.6b64 (mul 5 goc)))
-  $(inx +(inx))
-::
-++  mum                                                 ::  mug with murmur3
+  ~%  %muk  ..muk  ~
+  =+  ~(. fe 5)
+  |=  {syd/@ len/@ key/@}
+  ?>  &((lte (met 5 syd) 1) (lte (met 0 len) 31))
+  =/  pad      (sub len (met 3 key))
+  =/  data     (weld (rip 3 key) (reap pad 0))
+  =/  nblocks  (div len 4)  ::  intentionally off-by-one
+  =/  h1  syd
+  =+  [c1=0xcc9e.2d51 c2=0x1b87.3593]
+  =/  blocks  (rip 5 key)
+  =/  i  nblocks
+  =.  h1  =/  hi  h1  |-
+    ?:  =(0 i)  hi
+    =/  k1  (snag (sub nblocks i) blocks)  ::  negative array index
+    =.  k1  (sit (mul k1 c1))
+    =.  k1  (rol 0 15 k1)
+    =.  k1  (sit (mul k1 c2))
+    =.  hi  (mix hi k1)
+    =.  hi  (rol 0 13 hi)
+    =.  hi  (sum (sit (mul hi 5)) 0xe654.6b64)
+    $(i (dec i))
+  =/  tail  (slag (mul 4 nblocks) data)
+  =/  k1    0
+  =/  tlen  (dis len 3)
+  =.  h1
+    ?+  tlen  h1  ::  fallthrough switch
+      $3  =.  k1  (mix k1 (lsh 0 16 (snag 2 tail)))
+          =.  k1  (mix k1 (lsh 0 8 (snag 1 tail)))
+          =.  k1  (mix k1 (snag 0 tail))
+          =.  k1  (sit (mul k1 c1))
+          =.  k1  (rol 0 15 k1)
+          =.  k1  (sit (mul k1 c2))
+          (mix h1 k1)
+      $2  =.  k1  (mix k1 (lsh 0 8 (snag 1 tail)))
+          =.  k1  (mix k1 (snag 0 tail))
+          =.  k1  (sit (mul k1 c1))
+          =.  k1  (rol 0 15 k1)
+          =.  k1  (sit (mul k1 c2))
+          (mix h1 k1)
+      $1  =.  k1  (mix k1 (snag 0 tail))
+          =.  k1  (sit (mul k1 c1))
+          =.  k1  (rol 0 15 k1)
+          =.  k1  (sit (mul k1 c2))
+          (mix h1 k1)
+    ==
+  =.  h1  (mix h1 len)
+  |^  (fmix32 h1)
+  ++  fmix32
+    |=  h/@
+    =.  h  (mix h (rsh 0 16 h))
+    =.  h  (sit (mul h 0x85eb.ca6b))
+    =.  h  (mix h (rsh 0 13 h))
+    =.  h  (sit (mul h 0xc2b2.ae35))
+    =.  h  (mix h (rsh 0 16 h))
+    h
+  --
+  ::
+  ++  mum                                                 ::  mug with murmur3
   ~/  %mum
   |=  a/*
   |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
@@ -1125,7 +1155,7 @@
     |=  key/@
     =+  syd=0xcafe.babe
     |-  ^-  @
-    =+  haz=(muk syd key)
+    =+  haz=(muk syd (met 3 key) key)
     =+  ham=(mix (rsh 0 31 haz) (end 0 31 haz))
     ?.(=(0 ham) ham $(syd +(syd)))
   --
@@ -4572,16 +4602,16 @@
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(sum fo 65.535) l (muk (snag n raku) r))
-    (~(sum fo 65.536) l (muk (snag n raku) r))
+      (~(sum fo 65.535) l (muk (snag n raku) 4 r))
+    (~(sum fo 65.536) l (muk (snag n raku) 4 r))
   ::
   ++  rund                                              ::  reverse round
     |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(dif fo 65.535) l (muk (snag n raku) r))
-    (~(dif fo 65.536) l (muk (snag n raku) r))
+      (~(dif fo 65.535) l (muk (snag n raku) 4 r))
+    (~(dif fo 65.536) l (muk (snag n raku) 4 r))
   ::
   ++  raku
     ^-  (list @ux)
