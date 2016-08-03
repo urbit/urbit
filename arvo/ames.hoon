@@ -325,8 +325,7 @@
   ++  back                                              ::  process raw ack
     |=  {dam/flap cop/coop lag/@dr}
     ^+  +>
-    =-  ~&  [%lose (flam dam) cop lag]
-        (done:(lose(liv lov) ded) ack dam cop lag)
+    =-  (done:(lose(liv lov) ded) ack dam cop lag)
     |-  ^-  $:  ack/(unit coal) 
                 ded/(list coal) 
                 lov/(qeu coal)
@@ -398,13 +397,16 @@
     |=  {lyd/(unit coal) dam/flap cop/coop lag/@dr}
     ^+  +>
     ?~  lyd  +>
-    +>(fex [[%good dam tel.clu.u.lyd cop] fex])
+    %_  +>
+      cur.saw  (dec cur.saw)
+      fex      [[%good dam tel.clu.u.lyd cop] fex]
+    ==
   ::                                                    ::
   ++  fire                                              ::  send a packet
     |=  {now/@da clu/clue}
     ^+  +>
     ?>  (lth cur.saw max.saw)
-    =+  out=?:(=(las.saw now) +(now) now)
+    =+  out=?:((lte now las.saw) +(las.saw) now)
     =+  lod=(add now (mul 2 rtt.saw))
     =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
     ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
@@ -419,11 +421,7 @@
   ++  flay                                              ::  time out packets
     |=  now/@da
     ^+  +>
-    =-  ~&  [%lose liv+(lent (~(tap to q.ole))) did+(lent p.ole)]
-        ~&  [%cursaw cur.saw]
-        =.  +>.$  (lose(liv q.ole) p.ole)
-        ~&  [%after-lose cur.saw (lent (~(tap to liv)))]
-        +>.$
+    =-  (lose(liv q.ole) p.ole)
     ^=  ole
     =|  ded/(list coal)
     |-  ^+  [p=ded q=liv]
@@ -432,7 +430,8 @@
       ::
       ::  everything in front of a dead packet is dead
       ::
-      $(liv l.liv, ded (~(tap to r.liv) [n.liv ~]))
+      =+  foo=(~(tap to r.liv) [n.liv ~])
+      $(liv l.liv, ded (~(tap to r.liv) [n.liv ded]))
     =+  ryt=$(liv r.liv)
     [p.ryt [n.liv l.liv q.ryt]]
   ::                                                    ::
@@ -440,9 +439,6 @@
     |=  cud/(list coal)
     ^+  +>
     ?~  cud  +>
-    ~&  :~  %pump-drop
-            [%clue vig.clu.i.cud tel.clu.i.cud (flam fap.clu.i.cud)]
-        ==
     =.  +>  (clap clu.i.cud)
     %=    $
       cud      t.cud
@@ -1302,8 +1298,8 @@
         [~ fox]
       =<  zork
       =<  abet
-      ~&  [%in p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      ~&  [%in p.p.kec (flam (shaf %flap pac))]
+      ::  ~&  [%in p.p.kec ryn `@p`(mug (shaf %flap pac))]
+      ::  ~&  [%in p.p.kec (flam (shaf %flap pac))]
       %-  chew:(ho:(um q.p.kec) p.p.kec)
       [q.kec (shaf %flap pac) ryn r.kec]
     ::
@@ -2073,11 +2069,7 @@
                   mup/_pume                             ::
                   colt                                  ::
               ==                                        ::
-          ++  ve-abed 
-            =>  ve-able
-            ~&  [%abed-live (lent (~(tap to liv.mup)))]
-            [[kos +<+>] +>]                             ::  raw resolve
-          ::
+          ++  ve-abed  [[kos +<+>] +>]:ve-able          ::  raw resolve
           ++  ve-abet                                   ::  resolve core
             =>  ve-able
             %=    +>
@@ -2111,13 +2103,13 @@
           ::                                            ::
           ++  ve-back                                   ::  hear an ack
             |=  {dam/flap cop/coop lag/@dr}
-            ~&  [%ve-back (flam dam) cop lag]
+            ::  ~&  [%ve-back (flam dam) cop lag]
             +>(mup (back:mup dam cop lag))
           ::                                            ::
           ++  ve-feed                                   ::  feed pump
             ^+  .
             =^  cly  .  (ve-find want.mup)
-            ~&  [%ve-feed want.mup (lent cly)]
+            ::  ~&  [%ve-feed want.mup (lent cly)]
             +(mup (ship:mup now cly))
           ::                                            ::
           ++  ve-find                                   ::  collect packets
@@ -2147,7 +2139,7 @@
             ^+  +>
             =+  bum=(~(get by cob) q.paz)
             ?:  |(?=($~ bum) =(~ cly.u.bum))  
-              ~&  [%ve-good-ignore paz ?=($~ cop)]
+              ::  ~&  [%ve-good-ignore paz ?=($~ cop)]
               +>.$
             ?^  cop
               ::
@@ -2180,7 +2172,6 @@
           ::                                            ::
           ++  ve-wait                                   ::  next wakeup
             ^-  (unit @da)
-            ~&  [%ve-wait wait:mup]
             wait:mup
           ::                                            ::
           ++  ve-wake                                   ::  timeout
@@ -2223,7 +2214,7 @@
                           4               :: max/@ud
                           0               :: rey/@ud
                       ==
-                      :*  (div ~s1 3)     :: rtt/@dr
+                      :*  ~s5             :: rtt/@dr
                           ~2010.1.1       :: las/@da
                           ~2010.1.1       :: lad/@da
                   ==  ==
