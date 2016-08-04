@@ -1017,9 +1017,8 @@ _sist_rest()
       end_d = (tar_d - (c3_d)lar_u.len_w);
 
       if ( ent_d < old_d ) {
-        //  XX this could be a break if we didn't want to see the sequence
-        //  number of the first event.
-        continue;
+        /*  change to continue to check all events  */
+        break;
       }
 
       img_w = c3_malloc(4 * lar_u.len_w);
