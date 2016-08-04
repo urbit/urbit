@@ -1566,11 +1566,6 @@ _raft_punk(u3_noun ovo)
 #ifdef GHETTO
   struct timeval b4, f2, d0;
   gettimeofday(&b4, 0);
-#if 0
-  if( c3__belt != u3h(u3t(ovo)) ){
-    uL(fprintf(uH, ":%s\n", txt_c));
-  }
-#endif
 #endif
 
   gon = u3m_soft(sec_w, u3v_poke, u3k(ovo));
@@ -1662,7 +1657,26 @@ _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
   if ( 1 == raf_u->pop_w ) {
     c3_assert(u3_raty_lead == raf_u->typ_e);
+
+#ifdef GHETTO
+  struct timeval b4, f2, d0;
+  gettimeofday(&b4, 0);
+#endif
+
     raf_u->ent_d = u3_sist_pack(raf_u->tem_w, c3__ov, bob_w, len_w);
+
+#ifdef GHETTO
+  c3_w ms_w;
+  c3_w clr_w;
+
+  gettimeofday(&f2, 0);
+  timersub(&f2, &b4, &d0);
+  ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+  clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
+    uL(fprintf(uH, "\x1b[3%dm %4d.%02dms\x1b[0m\n",
+                       clr_w, ms_w, (int) (d0.tv_usec % 1000) / 10));
+#endif
+
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
     if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
