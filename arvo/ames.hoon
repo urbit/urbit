@@ -45,8 +45,8 @@
               clu/clue                                  ::  packet to send
           ==                                            ::
 ++  flex                                                ::  pump actions
-          $%  {$good p/flap q/part r/coop}              ::  ack msg fragment
-              {$send p/flap q/rock}                     ::  send packet
+          $%  {$good p/flap q/part r/@dr s/coop}        ::  fragment ack
+              {$send p/flap q/part r/rock}              ::  fragment send
           ==                                            ::
 ++  stat                                                ::  pump statistics
           $:  $:  cur/@ud                               ::  window q length
@@ -294,10 +294,7 @@
       !!
     ?>  =(rey.saw (lent (~(tap to lop))))
     ?>  =+  |=  {a/coal b/coal}
-            ?&  (lth out.a out.b)  
-                (lth lod.a lod.b)
-                (abba tel.clu.a tel.clu.b)
-            ==
+            &((lth out.a out.b) (lth lod.a lod.b))
         |-  ?|  ?=($~ liv)
                 ?&  ?|  ?=($~ r.liv) 
                         ?&  (+< n.r.liv n.liv)
@@ -309,13 +306,15 @@
                     ==  ==
                 ==
             ==
-    ?>  |-  ?|  ?=($~ lop)
+    ?>  =+  |=  {a/part b/part}
+            |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
+        |-  ?|  ?=($~ lop)
                 ?&  ?|  ?=($~ r.lop) 
-                        ?&  (abba tel.n.r.lop tel.n.lop)
+                        ?&  (+< tel.n.r.lop tel.n.lop)
                             $(lop r.lop)
                     ==  ==
                     ?|  ?=($~ l.lop) 
-                        ?&  (abba tel.n.lop tel.n.l.lop)
+                        ?&  (+< tel.n.lop tel.n.l.lop)
                             $(lop l.lop)
                     ==  == 
                 ==
@@ -323,9 +322,11 @@
     .
   ::                                                    ::
   ++  back                                              ::  process raw ack
-    |=  {dam/flap cop/coop lag/@dr}
+    |=  {now/@da dam/flap cop/coop lag/@dr}
     ^+  +>
-    =-  (done:(lose(liv lov) ded) ack dam cop lag)
+    =-  =/  rtt  ?~(ack ~s0 (sub now out.u.ack))
+        =.  rtt  ?:((gth rtt lag) (sub rtt lag) rtt)
+        (done:(lose(liv lov) ded) ack dam cop rtt)
     |-  ^-  $:  ack/(unit coal) 
                 ded/(list coal) 
                 lov/(qeu coal)
@@ -394,12 +395,12 @@
     ==
   ::                                                    ::
   ++  done                                              ::  process cooked ack
-    |=  {lyd/(unit coal) dam/flap cop/coop lag/@dr}
+    |=  {lyd/(unit coal) dam/flap cop/coop rtt/@dr}
     ^+  +>
     ?~  lyd  +>
     %_  +>
       cur.saw  (dec cur.saw)
-      fex      [[%good dam tel.clu.u.lyd cop] fex]
+      fex      [[%good dam tel.clu.u.lyd rtt cop] fex]
     ==
   ::                                                    ::
   ++  fire                                              ::  send a packet
@@ -411,7 +412,7 @@
     =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
     ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
     %=  +>.$
-      fex      [[%send fap.clu dat.clu] fex]
+      fex      [[%send fap.clu tel.clu dat.clu] fex]
       las.saw  out
       lad.saw  lod
       cur.saw  +(cur.saw)
@@ -1690,7 +1691,6 @@
             ^+  +>
             =.  +>  wade
             =^  pex  diz  (zuul:diz now [%bond [(mix kos 1) liq] cha val])
-            ::  ~&  [%send (turn pex |=(a/@ (flam (shaf %flap a))))]
             =.  nem  (~(put by nem) liq [(lent pex) cha])
             |-  ^+  +>.^$
             ?~  pex  +>.^$
@@ -2078,7 +2078,6 @@
             ==
           ::                                            ::  
           ++  ve-able                                   ::  converge machine
-            ~&  [%ve-able cur.saw.mup (lent (~(tap to liv.mup)))]
             ve-tire:ve-ably:ve-feed:ve-ably
           ::                                            ::
           ++  ve-ably                                   ::  apply pump effects
@@ -2092,19 +2091,19 @@
                 +>.$
               ?-    -.i.fex
                   $send
-                ~&  [%send `@p`(mug p.i.fex)]
-                +>.$(+> (busk xong:diz [q.i.fex ~]))
+                ~&  [%go `@p`(mug p.i.fex) q.i.fex her]
+                +>.$(+> (busk xong:diz [r.i.fex ~]))
               ::
                   $good
-                ~&  [%good `@p`(mug p.i.fex)]
-                (ve-good q.i.fex r.i.fex)
+                ~&  [%ok `@p`(mug p.i.fex) her]
+                (ve-good q.i.fex s.i.fex)
               ==
             ==
           ::                                            ::
           ++  ve-back                                   ::  hear an ack
             |=  {dam/flap cop/coop lag/@dr}
             ::  ~&  [%ve-back (flam dam) cop lag]
-            +>(mup (back:mup dam cop lag))
+            +>(mup (back:mup now dam cop lag))
           ::                                            ::
           ++  ve-feed                                   ::  feed pump
             ^+  .
@@ -2176,7 +2175,6 @@
           ::                                            ::
           ++  ve-wake                                   ::  timeout
             ^+  .
-            ~&  [%ve-wake now]
             .(mup (flay:mup now))
           ::                                            ::
           ++  ve-wood                                   ::  send
