@@ -410,7 +410,7 @@
     =+  out=?:((lte now las.saw) +(las.saw) now)
     =+  lod=(add now (mul 2 rtt.saw))
     =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
-    ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
+    ::  ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
     %=  +>.$
       fex      [[%send fap.clu tel.clu dat.clu] fex]
       las.saw  out
@@ -2091,11 +2091,11 @@
                 +>.$
               ?-    -.i.fex
                   $send
-                ~&  [%go `@p`(mug p.i.fex) q.i.fex her]
+                ::  ~&  [%go her `@p`(mug p.i.fex) q.i.fex]
                 +>.$(+> (busk xong:diz [r.i.fex ~]))
               ::
                   $good
-                ~&  [%ok `@p`(mug p.i.fex) her]
+                ::  ~&  [%ok her `@p`(mug p.i.fex) r.i.fex]
                 (ve-good q.i.fex s.i.fex)
               ==
             ==
@@ -2209,7 +2209,7 @@
               ^-  mini
               :*  ^-  stat
                   :*  :*  0               :: cur/@ud
-                          4               :: max/@ud
+                          8               :: max/@ud
                           0               :: rey/@ud
                       ==
                       :*  ~s5             :: rtt/@dr
@@ -2436,7 +2436,7 @@
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         $milk  (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
-      ~&  [%to now p.bon `@p`(mug (shaf %flap q.bon))] 
+      ::  ~&  [%to now p.bon `@p`(mug (shaf %flap q.bon))] 
       ::  ~&  [%to (flam (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
