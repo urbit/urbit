@@ -963,6 +963,7 @@
 #   define c3__sgts   c3_s4('s','g','t','s')
 #   define c3__sgwt   c3_s4('s','g','w','t')
 #   define c3__sgzp   c3_s4('s','g','z','p')
+#   define c3__shiv   c3_s4('s','h','i','v')
 #   define c3__show   c3_s4('s','h','o','w')
 #   define c3__shud   c3_s4('s','h','u','d')
 #   define c3__shut   c3_s4('s','h','u','t')

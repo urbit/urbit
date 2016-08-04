@@ -69,6 +69,11 @@
       void
       u3t_slog(u3_noun hod);
 
+    /* u3t_shiv(): atom-only print.
+    */
+      void
+      u3t_shiv(u3_noun hod);
+
     /* u3t_heck(): profile point.
     */
       void

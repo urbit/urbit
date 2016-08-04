@@ -1566,9 +1566,11 @@ _raft_punk(u3_noun ovo)
 #ifdef GHETTO
   struct timeval b4, f2, d0;
   gettimeofday(&b4, 0);
+#if 0
   if( c3__belt != u3h(u3t(ovo)) ){
-    uL(fprintf(uH, "%%soft %s\n", txt_c));
+    uL(fprintf(uH, ":%s\n", txt_c));
   }
+#endif
 #endif
 
   gon = u3m_soft(sec_w, u3v_poke, u3k(ovo));
@@ -1582,7 +1584,7 @@ _raft_punk(u3_noun ovo)
   ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
   clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
   if(c3__belt != u3h(u3t(ovo)) || clr_w != 2){
-    uL(fprintf(uH, "\x1b[3%dm%%punk %s %4d.%02dms\x1b[0m\n",
+    uL(fprintf(uH, "\x1b[3%dm%%%s %4d.%02dms\x1b[0m\n",
                        clr_w, txt_c, ms_w, (int) (d0.tv_usec % 1000) / 10));
   }
   free(txt_c);
