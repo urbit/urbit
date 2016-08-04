@@ -553,6 +553,7 @@
 ++  peg                                                 ::  tree connect
   ~/  %peg
   |=  {a/@ b/@}
+  ?<  =(0 a)
   ^-  @
   ?-  b
     $1  a
