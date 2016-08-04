@@ -2264,8 +2264,8 @@
 ::                section 2cI, almost macros            ::
 ::
 ++  same  |*(* +<)                                      ::  identity
-++  head  |*(^ +<-)                                     ::  get head
-++  tail  |*(^ +<+)                                     ::  get head
+++  head  |*(^ ,:+<-)                                   ::  get head
+++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  fore  |*(a/mold |*(b/mold (pair a b)))              ::  pair before
 ++  aftr  |*(a/mold |*(b/mold (pair b a)))              ::  pair after
 ++  test  |=(^ =(+<- +<+))                              ::  equality
