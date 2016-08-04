@@ -219,8 +219,8 @@
     u3_noun u3qfu_nest(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_nost(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_orth(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_park(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_peek(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qfu_perk(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_play(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_repo(u3_noun, u3_noun);
     u3_noun u3qfu_rest(u3_noun, u3_noun, u3_noun);

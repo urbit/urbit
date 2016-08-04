@@ -232,8 +232,8 @@
     u3_noun u3wfu_mint(u3_noun);
     u3_noun u3wfu_mull(u3_noun);
     u3_noun u3wfu_nest(u3_noun);
-    u3_noun u3wfu_park(u3_noun);
     u3_noun u3wfu_peek(u3_noun);
+    u3_noun u3wfu_perk(u3_noun);
     u3_noun u3wfu_play(u3_noun);
     u3_noun u3wfu_repo(u3_noun);
     u3_noun u3wfu_rest(u3_noun);
