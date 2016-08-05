@@ -102,7 +102,7 @@
   ~&  [%oauth-warning "Make sure this urbit ".
                       "is running on {(earn our-host `~ ~)}"]
   %-    crip    %-  earn
-  %^  interpolate  'https://our-host/~/ac/:domain/:user/in'
+  %^  into-url:interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
   :~  domain+(join '.' (flop dom))
       user+(scot %ta usr)
@@ -251,7 +251,7 @@
     ?:  (bad-response p.a)
       [%give a]  :: [%redo ~]  ::  handle 4xx?
     ?.  (check-screen-name a)
-      [[%redo ~] (handle `token`~)]
+      [[%redo ~] (save `token`~)]
     =+  access-token=(grab-token-response a)
     [[%redo ~] (save `token`[%access-token access-token])]
   --

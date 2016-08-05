@@ -288,9 +288,6 @@ module.exports = recl({
   render: function() {
     var k, ship;
     ship = this.props.ship;
-    if (ship[0] === "~") {
-      this.props.ship = ship.slice(1);
-    }
     k = "ship";
     if (this.props.presence) {
       k += " " + this.props.presence;
@@ -351,6 +348,9 @@ module.exports = recl({
       return;
     }
     user = $(e.target).closest('.iden').text();
+    if (user[0] === "~") {
+      user = user.slice(1);
+    }
     if (user.toLowerCase() === 'system') {
       return;
     }
@@ -445,7 +445,7 @@ module.exports = recl({
     audi = util.clipAudi(aude).map(function(_audi) {
       return div({
         key: _audi
-      }, _audi.slice(1));
+      }, _audi);
     });
     mainStation = util.mainStationPath(window.urb.user);
     type = indexOf.call(aude, mainStation) >= 0 ? 'private' : 'public';
@@ -968,7 +968,7 @@ module.exports = recl({
             className: (this.state.open === source ? "selected" : ""),
             onClick: this._openStation,
             "data-station": source
-          }, source.slice(1)), div({
+          }, source), div({
             className: "close",
             onClick: this._remove,
             "data-station": source
@@ -1053,6 +1053,62 @@ Audience = recl({
         }), 0);
         return false;
       }
+    }
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      this._autoCompleteAudience();
+      return false;
+    } else if ((this.tabAudList != null) && e.keyCode !== 16) {
+      this.tabAudList = null;
+      return this.tabAudIndex = null;
+    }
+  },
+  _autoCompleteAudience: function() {
+    var aud, g, i, j, len, len1, ref1, ref2, s, stations, txt;
+    txt = $('#audience .input').text().trim();
+    if (this.tabAudList == null) {
+      this.tabAudList = [];
+      if (txt.length === 1 && StationStore.getGlyphs()[txt[0]]) {
+        ref1 = this._getGlyphExpansions(txt[0]);
+        for (i = 0, len = ref1.length; i < len; i++) {
+          s = ref1[i];
+          this.tabAudList.push(s[0]);
+        }
+      } else {
+        if (!(txt[0] === '~')) {
+          txt = '~' + txt;
+        }
+        ref2 = StationStore.getGlyphs();
+        for (g in ref2) {
+          stations = ref2[g];
+          for (j = 0, len1 = stations.length; j < len1; j++) {
+            aud = stations[j];
+            if (aud[0].indexOf(txt) === 0 && this.tabAudList.indexOf(aud[0]) < 0) {
+              this.tabAudList.push(aud[0]);
+            }
+          }
+        }
+      }
+    }
+    if ((this.tabAudList != null) && this.tabAudList.length > 0) {
+      if (this.tabAudIndex != null) {
+        if (event.shiftKey) {
+          this.tabAudIndex--;
+        } else {
+          this.tabAudIndex++;
+        }
+        this.tabAudIndex = (this.tabAudIndex % this.tabAudList.length + this.tabAudList.length) % this.tabAudList.length;
+      } else {
+        this.tabAudIndex = 0;
+      }
+      return StationActions.setAudience(this.tabAudList[this.tabAudIndex].split(/\ +/));
+    }
+  },
+  _getGlyphExpansions: function(g) {
+    var glyphs;
+    glyphs = StationStore.getGlyphs();
+    if (glyphs[g]) {
+      return glyphs[g];
     }
   },
   render: function() {
@@ -1351,7 +1407,9 @@ module.exports = recl({
     audi = util.clipAudi(audi);
     for (k in audi) {
       v = audi[k];
-      audi[k] = v.slice(1);
+      if (audi[k].indexOf('~~') === 0) {
+        audi[k] = v.slice(1);
+      }
     }
     return div({
       className: 'writing',
@@ -1519,9 +1577,7 @@ module.exports = function(arg) {
         }
         if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
           ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
-          return setTimeout((function() {
-            return MessageActions.loadMessages(tele, num);
-          }), 5000);
+          return MessageActions.loadMessages(tele, num);
         }
       });
     },
@@ -1961,6 +2017,9 @@ StationStore = _.merge(new EventEmitter, {
       })());
     }
     return results;
+  },
+  getGlyphs: function() {
+    return _glyphs;
   },
   getStations: function() {
     return _stations;

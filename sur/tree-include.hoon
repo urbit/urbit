@@ -11,4 +11,5 @@ $:  mime/mime
     sect/json
     comt/json
     plan/json
+    bump/knot
 ==

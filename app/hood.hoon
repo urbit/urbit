@@ -149,6 +149,7 @@
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-write-comment        (wrap poke-comment):from-write
+++  poke-write-fora-post      (wrap poke-fora-post):from-write
 ++  poke-write-plan-info      (wrap poke-plan-info):from-write
 ++  poke-write-plan-account   (wrap poke-plan-account):from-write
 ++  poke-write-tree           (wrap poke-tree):from-write

@@ -3,8 +3,8 @@
   font-family: 'scp'; }
 
 div.input.valid-false {
-  color: #FF0808;
-  border-color: #FF0808; }
+  color: #E20B0B;
+  border-color: #E20B0B; }
 
 .grams {
   list-style-type: none;
@@ -14,7 +14,8 @@ div.input.valid-false {
 
 .grams .meta {
   max-height: 1.6rem;
-  overflow: hidden; }
+  overflow: hidden;
+  width: 100%; }
   .grams .meta label {
     margin-right: 0.9375rem;
     height: 0.9375rem;
@@ -31,7 +32,8 @@ div.input.valid-false {
   .grams .meta label,
   .grams .meta h2,
   .grams .meta h3 {
-    display: inline-block; }
+    display: inline-block;
+    vertical-align: top; }
   .grams .meta h2,
   .grams .meta h3 {
     font-family: 'scp';
@@ -43,11 +45,11 @@ div.input.valid-false {
     margin-left: 2rem;
     line-height: 1rem; }
   .grams .meta .time {
-    padding-right: 2rem; }
+    padding-right: 2rem;
+    float: right; }
 
-div.gram.same .meta {
-  max-height: none;
-  overflow: auto; }
+.grams .meta:hover {
+  overflow: visible; }
 
 div.gram.first:first-of-type {
   margin-top: 0; }
@@ -61,12 +63,17 @@ div.gram.same div.meta {
 div.gram.same:hover div.meta {
   display: block;
   position: absolute;
-  background-color: #fff;
-  margin-top: -2.5rem;
-  padding-top: 1rem;
-  white-space: nowrap; }
+  z-index: 0; }
+  div.gram.same:hover div.meta label, div.gram.same:hover div.meta h2, div.gram.same:hover div.meta h3 {
+    display: none; }
+  div.gram.same:hover div.meta h3.time {
+    display: block;
+    opacity: .6;
+    padding-right: 3.8rem; }
 
 .speech {
+  position: absolute;
+  z-index: 1;
   margin-left: 1.875rem; }
 
 .exp {
@@ -108,7 +115,7 @@ div.gram.same:hover div.meta {
   background-color: transparent; }
 
 div.gram label {
-  background-color: #0500F0; }
+  background-color: #000; }
 
 div.gram.say .speech {
   font-style: italic; }
@@ -127,7 +134,7 @@ input.action {
   font-size: .8rem; }
 
 input.action.valid-false {
-  color: #FF0808; }
+  color: #E20B0B; }
 
 input.action::-webkit-input-placeholder {
   color: #000;
@@ -185,7 +192,7 @@ input.action:focus:-ms-input-placeholder {
     margin-left: .6rem;
     font-weight: 600;
     font-size: .8rem;
-    color: #FF0808; }
+    color: #E20B0B; }
   .menu .room:hover .close {
     display: inline; }
   .menu .room.disabled {

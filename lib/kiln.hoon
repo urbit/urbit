@@ -47,8 +47,6 @@
         cas/case                                        ::
         gim/?($auto germ)                               ::
     ==                                                  ::
-++  kiln-cp  {input/path output/path}                   ::
-++  kiln-mv  {input/path output/path}                   ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -154,8 +152,10 @@
   abet:(emit %drop /cancel our syd)
 ::
 ++  poke-info
-  |=  {mez/tape tor/toro}
-  abet:(emit:(spam leaf+mez ~) %info /kiln our tor)
+  |=  {mez/tape tor/(unit toro)}
+  ?~  tor
+    abet:(spam leaf+mez ~)
+  abet:(emit:(spam leaf+mez ~) %info /kiln our u.tor)
 ::
 ++  poke-rm
   |=  a/path
@@ -163,19 +163,19 @@
   ?~  fil.b
     =+  ~[leaf+"No such file:" leaf+"{<a>}"]
     abet:(spam -)
-  (poke-info "removed" (fray a))
+  (poke-info "removed" `(fray a))
 ::
 ++  poke-label
   |=  {syd/desk lab/@tas}
   =+  pax=/(scot %p our)/[syd]/[lab]
-  (poke-info "labeled {(spud pax)}" [syd %| lab])
+  (poke-info "labeled {(spud pax)}" `[syd %| lab])
 ::
 ++  poke-schedule
   |=  {where/path tym/@da eve/@t}
   =.  where  (welp where /sched)
   %+  poke-info  "scheduled"
   =+  old=;;((map @da cord) (fall (file where) ~))
-  (foal where %sched !>((~(put by old) tym eve)))
+  `(foal where %sched !>((~(put by old) tym eve)))
 ::
 ++  poke-autoload
   |=  lod/(unit ?)
