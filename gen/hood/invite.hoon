@@ -12,4 +12,5 @@
     ==
 :-  %womb-invite
 ^-  {cord reference invite}:womb
-[(scot %uv (end 7 1 eny)) ref [who 10 sta "You have been invited to Urbit" "This is an invite of 10 planets"]]
+=+  inv=(scot %uv (end 7 1 eny))
+[inv ref [who 10 sta "You have been invited to Urbit: {(trip inv)}" "This is an invite of 10 planets"]]
