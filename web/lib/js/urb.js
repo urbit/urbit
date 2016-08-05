@@ -1,6 +1,23 @@
 window.urb = window.urb || {}
 window.urb.appl = window.urb.appl || null
 
+window.urb.init = function(onload){ // XX proper class?
+  onload = onload || function(){}
+  var $init = this.init
+  if($init.loaded) return onload()
+  if($init.loading) return $init.loading.push(onload)
+  $init.loading = [onload]
+  var s = document.createElement('script')
+  s.src = "/~/at/~/auth.js" // XX nop.js? auth.json?
+  s.onload = function(){
+    $init.loading.map(function(f){f()})
+    delete $init.loading
+    $init.loaded = true
+  }
+  document.body.appendChild(s)
+}
+window.urb.init.loaded = window.urb.oryx
+
 window.urb.req = function(method,url,params,json,cb) {
   var xhr = new XMLHttpRequest()
   method = method.toUpperCase()
@@ -10,6 +27,8 @@ window.urb.req = function(method,url,params,json,cb) {
   
   if(json)
     xhr.setRequestHeader("content-type", "text/json")
+
+  xhr.timeout = 60000
 
   if(!window.urb.oryx) throw "No CSRF token" // XX fetch auth.json
   _data = {oryx: window.urb.oryx}
@@ -41,6 +60,12 @@ window.urb.req = function(method,url,params,json,cb) {
       finally {
        cb(err,res)
       }
+    }
+    xhr.ontimeout = function() {
+      cb({
+        status:408,
+        data:null
+      })
     }
     xhr.onerror = function() {
       cb({
@@ -148,8 +173,10 @@ window.urb.poll = function(params) {
   this.req("get",url,params,true,function(err,res) {
     $this.poll.dely = params.dely || $this.poll.dely
     if(res){
-      if(res.data.beat)
+      if(res.data.beat) {
+        $this.poll.dely = params.dely || 250
         return $this.poll(params)
+      }
       switch(res.data.type){
           case "news":
         return document.location.reload()  // XX check autoreload
@@ -283,28 +310,16 @@ window.urb.util = {
     spur = spur || ''
     if(spur === '/') spur = ''
     pathname = pathname || window.location.pathname
-    if(pathname[0] == '/') pathname = pathname.slice(1)
-    pathname = pathname.split("/")
+
+    base = ""
+
+    if(pathname.indexOf("/~~") == 0)
+      base = "/~~"
+    if(pathname.indexOf("/~/as/") == 0)
+      base = "/~/as/"+pathname.split("/")[3]
+    if(pathname.indexOf("/~/away") == 0)
+      base = "/~/away"
     
-    var pref, pred, prec, base = "" 
-    while(pref = pathname.shift(), pathname.length>0){
-      if(pref[0] != '~' && pref[0] != '=') break;
-      base += "/"+pref;
-      if(pref === "~~") continue;
-      base += "/"+(pred = pathname.shift())
-      if(/[a-z\-]+/.test(pref.slice(1))){
-        base += "/"+(prec = pathname.shift())
-        if(prec == null) throw "Bad basepath."
-        break;
-      }
-      if(pref !== "~") throw "Bad basepath /"+pref
-      if(pred === "as"){
-        base += "/"+(prec = pathname.shift())
-        if(prec == null) throw "Bad basepath."        
-        continue;
-      }
-      throw "Bad basepath /~/"+pred
-    }
     return base+spur
   }
 }

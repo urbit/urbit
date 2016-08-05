@@ -2,6 +2,7 @@
 ::::  /hoon/json/tree/ren
   ::
 /?    310
+/-    tree-include
 /+    tree
 /=    gas    /$    fuel
 /=    dat    /^    tree-include    /tree-include/
@@ -20,7 +21,10 @@
       {$path $t}
       {$spur $t}
   ::
+      {$bump $t}
+      {$beak $t}
       {$comt $j}
+      {$plan $j}
       {$head $r}
       {$sect $j}
       {$snip $r}
@@ -40,7 +44,7 @@
   |=  a/$%({$t p/cord} {$r p/json} {$j p/json} {$m mime})
   ?-  -.a
     $t  [%s p.a]
-    $m  (jobe mite+[%s (moon p.a)] octs+[%s q.q.a] ~)
+    $m  (jobe mite+[%s (moon p.a)] octs+(jape (sifo q.q.a)) ~)
     $r  p.a
     $j  p.a
   ==
@@ -51,8 +55,11 @@
   :-  -.a
   ?-  -.a
     $name  (from-type +.a ?^(s.bem i.s.bem q.bem))
+    $beak  (from-type +.a (crip (spud (tope bem(s /)))))
     $path  (from-type +.a (crip (spud (flop s.bem))))
     $spur  (from-type +.a (crip (spud s.bem)))
+    $bump  (from-type +.a bump.dat)
+    $plan  (from-type +.a plan.dat)
     $comt  (from-type +.a comt.dat)
     $head  (from-type +.a head.dat)
     $snip  (from-type +.a snip.dat)
@@ -71,10 +78,10 @@
   ::
 [tree .]
 ^-  json
-=+  default='spur.t_mime.m_body.r_comt.j_kids.name.t'
+=+  default='spur.t_body.r_comt.j_plan.j_beak.t_meta.j_kids_meta.j_head.r_bump.t'
 =+  ^=  schem
     =+  seh=(fall (~(get by qix.gas) 'q') default)
     ~|(bad-noun+seh ;;(schema (rash seh read-schem)))
-%+  from-queries  bem.gas(s but.gas)
+%+  from-queries  bem.gas
 ~|  invalid-query+schem
 ;;((list query) (schema-to-plist schem))

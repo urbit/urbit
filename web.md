@@ -1,17 +1,17 @@
 ---
+container: false
+layout: plan
 anchor: none
+title: Home
 ---
 
-# Hello.
-
-<h2 class="even">
-    <a class="blue inverse block" href="/~~/talk">Talk</a>
-</h2>
-<h2 class="even">
-    <a class="blue inverse block" href="/~~/dojo">Dojo</a>
-</h2>
-
-<h2 class="even">
-    <a class="blue inverse block" href="/static">Static files</a>
-</h2>
-
+<div class="above">
+  <div class="container panel stack">
+    <panel></panel>
+  </div>
+  <div class="container plan stack">
+    <div class="col-md-9">
+      <plan></plan>
+    </div>
+  </div>
+</div>

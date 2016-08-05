@@ -91,6 +91,16 @@
         $app  (jobe txt+[%s q.a] src+[%s p.a] ~)  
         $fat  (jobe tor+(tors p.a) taf+$(a q.a) ~)
         $mor  a+(turn p.a spec)
+        $api
+          %-  jobe  :~
+            service+s+service.a
+            id+s+id.a
+            id-url+s+(crip (earf id-url.a))
+            summary+s+summary.a
+            body+s+body.a
+            url+s+(crip (earf url.a))
+            meta+meta.a
+          ==
         ::  %inv  (jobe ship+(jope p.a) party+[%s q.a] ~)
       ==
     ::

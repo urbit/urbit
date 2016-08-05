@@ -3,6 +3,7 @@
 ::::  /hoon/write/lib
   ::
 /?    310
+/-    plan-diff, plan-acct
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
@@ -16,7 +17,7 @@
               {$info wire @p toro}
           ==
 --
-::
+!:
 ::::
   ::
 |=  {bowl part}
@@ -37,18 +38,71 @@
   |=  {sup/spur mim/mime}  ^+  abet     ::  XX determine extension, beak
   (poke--data [`%md (flop sup)] %mime mim)
 ::
+++  poke-plan-account
+  |=  {sev/knot usr/plan-acct}  ^+  abet
+  (poke-plan-diff [~ ~ [[sev usr] ~ ~]])
+::
+++  poke-plan-info
+  |=  {who/@t loc/@t}
+  (poke-plan-diff [[~ who loc] ~ ~])
+::
+++  poke-plan-diff
+  |=  dif/plan-diff  ^+  abet
+  ?.  =(our src)
+    ~|(foreign-write+[our=our src=src] !!)
+  =;  sob/soba
+    ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
+  =+  pax=`path`/web/plan
+  =+  paf=(tope beak-now (flop pax))
+  ?~  [fil:.^(arch %cy paf)]
+    =+  ins=(pact-plan [['' ''] ~] dif)
+    [pax %ins plan+!>(ins)]~
+  =+  ole=.^({{@t @t} (map iden plan-acct)} %cx paf)
+  =+  neu=(pact-plan ole dif)
+  ?:  =(ole neu)  ~
+  [pax %dif plan-diff+!>(dif)]~
+::
+++  pact-plan                         :: XX clay should handle fused insert+diff
+  |=  {all/{{who/@t loc/@t} acc/(map iden plan-acct)} dif/plan-diff}
+  ^+  all
+  :-  (fall inf.dif -.all)
+  =;  neu  (~(uni by neu) put.dif)
+  =+  del=(~(tap by del.dif))                           :: XXX map functions
+  |-  ^+  acc.all
+  ?~  del  acc.all
+  $(del t.del, acc.all (~(del by acc.all) p.i.del))
+::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
   (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco txt))
 ::
 ++  poke-comment
-  |=  {pax/path him/ship txt/@t}  ^+  abet
-  =.  pax  [%web (welp pax /comments/(scot %da now))]
+  |=  {sup/spur him/ship txt/@t}  ^+  abet
+  =+  pax=(welp (flop sup) /comments/(scot %da now))
   =.  txt  
     %+  rap  3  :~
       '## `'  (scot %p him)  '`'
       '\0a'  txt
     ==
+  (poke--data [`%md pax] %mime / (taco txt))
+::
+++  poke-fora-post
+  |=  {sup/spur him/ship hed/@t txt/@t}  ^+  abet
+  =+  pax=(welp (flop sup) /posts/(cat 3 (scot %da now) '~'))
+  =.  txt
+    %-  crip
+    """
+    ---
+    type: post
+    date: {<now>}
+    title: {(trip hed)}
+    author: {<him>}
+    navuptwo: true
+    comments: reverse
+    ---
+
+    {(trip txt)}
+    """
   (poke--data [`%md pax] %mime / (taco txt))
 ::
 ++  ames-secret

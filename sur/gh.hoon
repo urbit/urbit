@@ -1,4 +1,4 @@
-::  https:==developer.github.com/v3/
+::  https://developer.github.com/v3/
 ::
 ::  These types correspond to the types that Github's API
 ::  produces, so please check Github's documentation for
@@ -97,7 +97,8 @@
       site-admin/?
   ==
 ++  issue
-  $:  url/@t
+  $:  raw/json
+      url/@t
       labels-url/@t
       comments-url/@t
       events-url/@t

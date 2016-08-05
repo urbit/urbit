@@ -72,7 +72,8 @@
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
-          {$write-comment path ship cord}               ::
+          {$write-comment spur ship cord}               ::
+          {$write-fora-post spur ship cord cord}        ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -122,6 +123,20 @@
         (runt [(sub len lez) '-'] nez)
       :(welp pre (scag (dec len) nez) "+")  
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool
+    ++  peer-type                                       ::  stream requests
+      =<  apex
+      |%
+      ++  apex  ?($a-group $f-grams $v-glyph $x-cabal)  ::  options
+      ++  encode  |=(a/apex ^-(char (end 3 1 a)))       ::  by first char
+      ++  decode                                        ::  discriminate
+        |=  a/char  ^-  apex
+        ?+  a  ~|(bad-subscription-designator+a !!)
+          $a  %a-group
+          $f  %f-grams
+          $v  %v-glyph
+          $x  %x-cabal
+        ==
+      --
     --
 |_  {hid/bowl house}
 ++  ra                                                  ::  per transaction
@@ -313,7 +328,10 @@
       =<  sh-prod
       %_    .
           +>
-        (ra-subscribe:(ra-subscribe her.she ~) her.she [%afx man.she ~])
+        =/  typ
+          =+  (ly ~[%a-group %f-grams %x-cabal])
+          (rap 3 (turn - encode:peer-type))
+        (ra-subscribe:(ra-subscribe her.she ~) her.she [typ man.she ~])
       ==
     ::
     ++  sh-prod                                         ::  show prompt
@@ -808,63 +826,80 @@
       |=  buf/(list @c)
       ^-  (list sole-edit)
       ?~  buf  ~
-      =+  [inx=0 sap=0 con=0]
+      =+  isa==(i.buf (turf '@'))
+      =+  [[pre=*@c cur=i.buf buf=t.buf] inx=0 brk=0 len=0 new=|]
+      =*  txt  -<
       |^  ^-  (list sole-edit)
-          ?:  =(i.buf (turf '•'))
-            ?.  =(0 con)  newline
-            [[%del inx] ?~(t.buf ~ $(buf t.buf))]
-          ?:  =(i.buf `@`' ')
-            ?.  =(64 con)  advance(sap inx)
-            [(fix (turf '•')) newline]
-          ?:  =(64 con)
-            =+  dif=(sub inx sap)
+          ?:  =(cur (turf '•'))
+            ?:  =(pre (turf '•'))
+              [[%del inx] ?~(buf ~ $(txt +.txt))]
+            ?:  new
+              [(fix ' ') $(cur `@c`' ')] 
+            newline
+          ?:  =(cur `@`' ')
+            =.  brk  ?:(=(pre `@`' ') brk inx)
+            ?.  =(64 len)  advance
+            :-  (fix(inx brk) (turf '•'))
+            ?:  isa
+              [[%ins +(brk) (turf '@')] newline(new &)]
+            newline(new &)
+          ?:  =(64 len)
+            =+  dif=(sub inx brk)
             ?:  (lth dif 64)
-              [(fix(inx sap) (turf '•')) $(con dif)]
-            [[%ins inx (turf '•')] $(con 0, inx +(inx))]
-          ?:  |((lth i.buf 32) (gth i.buf 126))
+              :-  (fix(inx brk) (turf '•'))
+              ?:  isa
+                [[%ins +(brk) (turf '@')] $(len dif, new &)]
+              $(len dif, new &)
+            [[%ins inx (turf '•')] $(len 0, inx +(inx), new &)]
+          ?:  |((lth cur 32) (gth cur 126))
             [(fix '?') advance]
-          ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
-            [(fix (add 32 i.buf)) advance]
+          ?:  &((gte cur 'A') (lte cur 'Z'))
+            [(fix (add 32 cur)) advance]
           advance
       ::
-      ++  advance  ?~(t.buf ~ $(con +(con), inx +(inx), buf t.buf))
-      ++  newline  ?~(t.buf ~ $(con 0, inx +(inx), buf t.buf))
+      ++  advance  ?~(buf ~ $(len +(len), inx +(inx), txt +.txt))
+      ++  newline  ?~(buf ~ $(len 0, inx +(inx), txt +.txt))
       ++  fix  |=(cha/@ [%mor [%del inx] [%ins inx `@c`cha] ~])  
       --
     ::
     ++  sh-sane                                         ::  sanitize input
       |=  {inv/sole-edit buf/(list @c)}
-      ^-  (list sole-edit)
+      ^-  {lit/(list sole-edit) err/(unit @u)}
       =+  res=(rose (tufa buf) sh-scad)
-      ?:  ?=($| -.res)  [inv ~]
-      =+  wok=`(unit work)`p.res
+      ?:  ?=($| -.res)  [[inv]~ `p.res]
+      :_  ~
+      ?~  p.res  ~
+      =+  wok=u.p.res
       |-  ^-  (list sole-edit)
-      ?~  wok  ~
-      ?+  -.u.wok  ~
-        $target  $(wok q.u.wok)
+      ?+  -.wok  ~
+        $target  ?~(q.wok ~ $(wok u.q.wok))
         $say  |-  ::  XX per line
-              ?~  p.u.wok  ~
-              ?:  ?=($lin -.i.p.u.wok)
+              ?~  p.wok  ~
+              ?:  ?=($lin -.i.p.wok)
                 (sh-sane-chat buf)
-              $(p.u.wok t.p.u.wok)
+              $(p.wok t.p.wok)
       ==
     ::
     ++  sh-slug                                         ::  edit to sanity
-      |=  lit/(list sole-edit)
+      |=  {lit/(list sole-edit) err/(unit @u)}
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
           (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
-      (sh-fact [%mor [%det lic] ~])
+      (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-stir                                         ::  apply edit
       |=  cal/sole-change
       ^+  +>
       =^  inv  say.she  (~(transceive sole say.she) cal)
-      =+  lit=(sh-sane inv buf.say.she)
-      ?~  lit
+      =+  fix=(sh-sane inv buf.say.she)
+      ?~  lit.fix
         +>.$
-      (sh-slug lit)
+      ?~  err.fix
+        (sh-slug fix)                 :: just capital correction
+      ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.say.she)))
+        +>.$                          :: allow interior edits, deletes
+      (sh-slug fix)
     ::
     ++  sh-lame                                         ::  send error
       |=  txt/tape
@@ -920,7 +955,7 @@
         sh-prod(active.she `tr-pals:tay)
       ::
       ++  help  
-        (sh-fact %txt "see http://urbit.org/docs/user/talk")
+        (sh-fact %txt "see http://urbit.org/docs/using/messaging/")
       ::
       ++  glyph
         |=  idx/@
@@ -1133,19 +1168,17 @@
       ++  say                                           ::  publish
         |=  sep/(list speech)
         ^+  ..sh-work
-        ?~  sep    ..sh-work
+        =-  ..sh-work(coz ?~(tot coz :_(coz [%publish tot])))
+        |-  ^-  tot/(list thought)
+        ?~  sep  ~
         =^  sir  ..sh-work  sh-uniq
-        %_    $
-            sep  t.sep
-            coz  :_  coz
-          [%publish [[sir sh-whom [now.hid ~ i.sep]] ~]]
-        ==
+        [[sir sh-whom [now.hid ~ i.sep]] $(sep t.sep)]
       --
     ::
     ++  sh-done                                         ::  apply result
-      =+  lit=(sh-sane [%nop ~] buf.say.she)
-      ?^  lit
-        (sh-slug lit)
+      =+  fix=(sh-sane [%nop ~] buf.say.she)
+      ?^  lit.fix
+        (sh-slug fix)
       =+  jub=(rust (tufa buf.say.she) sh-scad)
       ?~  jub  (sh-fact %bel ~)
       %.  u.jub
@@ -1262,11 +1295,16 @@
     (ra-house n.gel)
   ::
   ++  ra-init                                           ::  initialize talk
+    %+  roll
+      ^-  (list {posture knot cord})
+      :~  [%brown (main our.hid) 'default home']
+          [%green ~.public 'visible activity']
+      ==
+    |:  [[typ=*posture man=*knot des=*cord] ..ra-init]  ^+  ..ra-init
     %+  ra-apply  our.hid
-    :+  %design  (main our.hid)
+    :+  %design  man
     :-  ~  :-  ~
-    :-  'default home'
-    [%brown ~] 
+    [des [typ ~]]
   ::
   ++  ra-apply                                          ::  apply command
     |=  {her/ship cod/command}
@@ -1294,35 +1332,75 @@
     ?:(neu +>.$ ra-homes)
   ::
   ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
+  ++  ra-fora-post
+    |=  {pax/path sup/spur hed/@t txt/@t}
+    =.  ..ra-emit
+      %+  ra-emit  ost.hid
+      :*  %poke
+          /fora-post
+          [our.hid %hood]
+          [%write-fora-post sup src.hid hed txt]
+      ==
+    =+  man=%posts
+    ?:  (~(has by stories) man)
+      (ra-consume-fora-post man pax sup hed txt)
+    =;  new  (ra-consume-fora-post:new man pax sup hed txt)
+    =.  ..ra-apply
+      %+  ra-apply  our.hid
+      :+  %design  man
+      :-  ~  :-  ~
+      :-  'towards a community'
+      [%brown ~] 
+    %^  ra-consume  &  our.hid
+    :^    (shaf %init eny.hid)  
+        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+      now.hid
+    [~ %app %tree 'receiving forum posts, ;join %posts for details']
+  ::
+  ++  ra-consume-fora-post
+    |=  {man/knot pax/path sup/spur hed/@t txt/@t}  ^+  +>
+    =+  nam=?~(sup "" (trip i.sup))                     :: file name
+    =+  fra=(crip (time-to-id now.hid))                 :: url fragment
+    %^  ra-consume  &
+      src.hid
+    :*  (shaf %comt eny.hid)
+        (my [[%& our.hid man] *envelope %pending] ~)
+        now.hid
+        (sy /fora-post eyre+pax ~)
+      :-  %mor  :~
+        [%fat text+(lore txt) [%url [ra-base-hart `pax ~] `fra]]
+        [%app %tree (crip "forum post: '{(trip hed)}'")]
+      ==
+    ==
+  ::
   ++  ra-comment
-    |=  {pax/path txt/@t}
+    |=  {pax/path sup/spur txt/@t}
     =.  ..ra-emit
       %+  ra-emit  ost.hid
       :*  %poke
           /comment
           [our.hid %hood]
-          [%write-comment pax src.hid txt]
+          [%write-comment sup src.hid txt]
       ==
     =+  man=%comments
     ?:  (~(has by stories) man)
-      (ra-consume-comment man pax txt)
+      (ra-consume-comment man pax sup txt)
+    =;  new  (ra-consume-comment:new man pax sup txt)
     =.  ..ra-apply
       %+  ra-apply  our.hid
       :+  %design  man
       :-  ~  :-  ~
       :-  'letters to the editor'
       [%brown ~] 
-    =.  ..ra-consume
-      %^  ra-consume  &  our.hid
-      :^    (shaf %init eny.hid)  
-          (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
-        now.hid
-      [~ %app %tree 'receiving comments, ;join %comments for details']
-    (ra-consume-comment man pax txt)
+    %^  ra-consume  &  our.hid
+    :^    (shaf %init eny.hid)  
+        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+      now.hid
+    [~ %app %tree 'receiving comments, ;join %comments for details']
   ::
   ++  ra-consume-comment
-    |=  {man/knot pax/path txt/@t}  ^+  +>
-    =+  nam==+(xap=(flop pax) ?~(xap "" (trip i.xap)))  :: file name
+    |=  {man/knot pax/path sup/spur txt/@t}  ^+  +>
+    =+  nam=?~(sup "" (trip i.sup))                     :: file name
     =+  fra=(crip (time-to-id now.hid))                 :: url fragment
     %^  ra-consume  &
       src.hid
@@ -1413,7 +1491,7 @@
       (ra-house(general (~(put in general) ost.hid)) ost.hid)
     ?.  ?=({@ @ *} pax)
       (ra-evil %talk-bad-path)
-    =+  vab=(~(gas in *(set @tas)) (rip 3 i.pax))
+    =+  vab=(~(gas in *(set peer-type)) (turn (rip 3 i.pax) decode:peer-type))
     =+  pur=(~(get by stories) i.t.pax)
     ?~  pur
       ~&  [%bad-subscribe-story-c i.t.pax]
@@ -1422,10 +1500,10 @@
     ?.  (pa-visible:soy her)
       (ra-evil %talk-no-story)
     =^  who  +>.$  (ra-human her)
-    =.  soy  ?.((~(has in vab) %a) soy (pa-watch-group:soy her))
-    =.  soy  ?.((~(has in vab) %v) soy (pa-watch-glyph:soy her))
-    =.  soy  ?.((~(has in vab) %x) soy (pa-watch-cabal:soy her))
-    =.  soy  ?.((~(has in vab) %f) soy (pa-watch-grams:soy her t.t.pax))
+    =.  soy  ?.((~(has in vab) %a-group) soy (pa-watch-group:soy her))
+    =.  soy  ?.((~(has in vab) %v-glyph) soy (pa-watch-glyph:soy her))
+    =.  soy  ?.((~(has in vab) %x-cabal) soy (pa-watch-cabal:soy her))
+    =.  soy  ?.((~(has in vab) %f-grams) soy (pa-watch-grams:soy her t.t.pax))
     =.  soy  (pa-notify:soy her %hear who)
     pa-abet:soy
   ::
@@ -1625,8 +1703,12 @@
       %+  turn  tal
       |=  tay/partner
       ^-  (list card)
-      :: =+  num=(fall (~(get by sequence) tay) 0) :: XX unused
-      =+  old=(sub now.hid ~d1)
+      =+  num=(~(get by sequence) tay)
+      =+  old=(sub now.hid ~d1)                         :: XX full backlog
+      =+  ini=?^(num (scot %ud u.num) (scot %da old))
+      =/  typ
+        =+  (ly ~[%a-group %f-grams %x-cabal])
+        (rap 3 (turn - encode:peer-type))
       ?-  -.tay
         $|  !!
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
@@ -1634,7 +1716,7 @@
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk] 
-                /afx/[q.p.tay]/(scot %da old)
+                /[typ]/[q.p.tay]/[ini]
             ==
       ==
     ::
@@ -1806,6 +1888,8 @@
     ++  pa-revise                                       ::  revise existing
       |=  {num/@ud gam/telegram}
       =+  way=(sub count num)
+      ?:  =(gam (snag (dec way) grams))
+        +>.$                                            ::  no change    
       =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
       (pa-refresh num gam)
     --
@@ -2018,6 +2102,15 @@
       $url  url+(crip (earf p.sep))
       $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
       $fat  [%mor $(sep q.sep) tan+(tr-rend-tors p.sep) ~]
+      $api
+        :-  %tan
+        :_  ~
+        :+  %rose
+          [": " ~ ~]
+        :~  leaf+"[{(trip id.sep)} on {(trip service.sep)}]"
+            leaf+(trip body.sep)
+            leaf+(earf url.sep)
+        ==
     ==
   ::
   ++  tr-rend-tors
@@ -2090,6 +2183,9 @@
     ::
         $app
       (tr-chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
+    ::
+        $api
+      (tr-chow 64 "[{(trip id.sep)}@{(trip service.sep)}]: {(trip summary.sep)}")
     ==
   -- 
 ::
@@ -2201,8 +2297,12 @@
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-talk-comment
-  |=  {pax/path txt/@t}  ^-  (quip move +>)
-  ra-abet:(ra-comment:ra pax txt)
+  |=  {pax/path sup/spur txt/@t}  ^-  (quip move +>)
+  ra-abet:(ra-comment:ra pax sup txt)
+::
+++  poke-talk-fora-post
+  |=  {pax/path sup/spur hed/@t txt/@t}  ^-  (quip move +>)
+  ra-abet:(ra-fora-post:ra pax sup hed txt)
 ::
 ++  poke-talk-save
   |=  man/knot

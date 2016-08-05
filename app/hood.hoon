@@ -1,14 +1,14 @@
 ::                                                      ::  ::
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
-/?    310                                                 ::  zuse version
+/?    310                                               ::  zuse version
 /+  sole, talk, helm, kiln, drum, write                 ::  libraries
 [. helm kiln drum]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
-    ++  hood-0                                          :: 
+    ++  hood-0                                          ::
       {$0 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
       |*  hed/hood-head                                 ::
@@ -19,17 +19,27 @@
         $kiln  ?>(?=($kiln -.paw) `kiln-part`paw)       ::
         $write  ?>(?=($write -.paw) `part:write`paw)    ::
       ==                                                ::
-    ++  hood-head  _-:*hood-part                     ::
+    ++  hood-head  _-:*hood-part                        ::
     ++  hood-make                                       ::
       |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
-        $drum  (drum-port our)                          ::
+        $drum  (drum-make our)                          ::
         $helm  *helm-part                               ::
         $kiln  *kiln-part                               ::
-         $write  *part:write                             ::
+        $write  *part:write                             ::
       ==                                                ::
+    ++  hood-part-old                                   ::
+      $?  hood-part                                     ::
+          {$drum $0 drum-pith-0}                        ::
+      ==                                                ::
+    ++  hood-port                                       ::
+      |=  paw/hood-part-old  ^-  hood-part              ::
+      ?+  -.paw  paw                                    ::
+        $drum    (drum-port paw)                        ::
+      ==                                                ::
+    ::                                                  ::
     ++  hood-part                                       ::
-      $%  {$drum $0 drum-pith}                          ::
+      $%  {$drum $1 drum-pith}                          ::
           {$helm $0 helm-pith}                          ::
           {$kiln $0 kiln-pith}                          ::
           {$write $0 pith:write}                        ::
@@ -53,6 +63,12 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+++  prep                                                ::
+  |=  old/(unit hood-0)  ^-  (quip _!! +>)
+  :-  ~
+  ?~  old  +>
+  +>(lac (~(run by lac.u.old) hood-port))
+::
 ++  coup-kiln-fancy  (wrap take-coup-fancy):from-kiln
 ++  coup-kiln-spam                                      ::
   |=  {way/wire saw/(unit tang)}
@@ -116,16 +132,16 @@
 ++  poke-helm-spawn           (wrap poke-spawn):from-helm
 ++  poke-hood-sync            (wrap poke-sync):from-kiln
 ++  poke-hood-init-sync       (wrap poke-init-sync):from-kiln
-++  poke-kiln-cp              (wrap poke-cp):from-kiln
+++  poke-kiln-info            (wrap poke-info):from-kiln
 ++  poke-kiln-label           (wrap poke-label):from-kiln
 ++  poke-kiln-merge           (wrap poke-merge):from-kiln
 ++  poke-kiln-cancel          (wrap poke-cancel):from-kiln
 ++  poke-kiln-mount           (wrap poke-mount):from-kiln
-++  poke-kiln-mv              (wrap poke-mv):from-kiln
 ++  poke-kiln-rm              (wrap poke-rm):from-kiln
 ++  poke-kiln-schedule        (wrap poke-schedule):from-kiln
 ++  poke-kiln-track           (wrap poke-track):from-kiln
 ++  poke-kiln-sync            (wrap poke-sync):from-kiln
+++  poke-kiln-syncs           (wrap poke-syncs):from-kiln
 ++  poke-kiln-start-autoload  (wrap poke-start-autoload):from-kiln
 ++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
@@ -134,7 +150,9 @@
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-write-comment        (wrap poke-comment):from-write
-++  poke-write-paste          (wrap poke-paste):from-write
+++  poke-write-fora-post      (wrap poke-fora-post):from-write
+++  poke-write-plan-info      (wrap poke-plan-info):from-write
+++  poke-write-plan-account   (wrap poke-plan-account):from-write
 ++  poke-write-tree           (wrap poke-tree):from-write
 ++  poke-write-wipe           (wrap poke-wipe):from-write
 ++  poke-will                 (wrap poke-will):from-helm

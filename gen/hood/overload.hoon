@@ -7,7 +7,7 @@
   !:
 :-  %say
 |=  $:  {now/@da eny/@uvI bec/beak}
-        {arg/$@($~ {tym/@dr} $~) $~}
+        {arg/$@($~ {tym/@dr $~}) $~}
     ==
-?~  arg  $(arg [~60m ~])
+?~  arg  $(arg [~h4 ~])
 [%kiln-overload tym.arg]

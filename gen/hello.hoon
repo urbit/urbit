@@ -6,6 +6,6 @@
 ::::
   !:
 :-  %say
-|=  {* {{txt/@tas $~} $~}}
+|=  {^ {{txt/@tas $~} $~}}
 :-  %noun
-`tape`[2 (trip txt)]
+(crip (weld "hello, " (trip txt)))

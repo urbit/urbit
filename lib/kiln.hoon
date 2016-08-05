@@ -47,8 +47,6 @@
         cas/case                                        ::
         gim/?($auto germ)                               ::
     ==                                                  ::
-++  kiln-cp  {input/path output/path}                   ::
-++  kiln-mv  {input/path output/path}                   ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -121,6 +119,16 @@
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:(start-sync:(auto hos) |)
 ::
+++  poke-syncs                                        ::
+  |=  $~
+  =<  abet  %-  spam
+  =+  a=(~(tap by syn))
+  ?:  =(0 (lent a))
+    [%leaf "no syncs configured"]~
+  %-  flop  %+  turn  a
+  |=  a/(pair kiln-sync *)
+  (render "sync configured" [sud her syd]:p.a)
+::
 ++  poke-init-sync
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
@@ -143,35 +151,31 @@
   |=  syd/desk
   abet:(emit %drop /cancel our syd)
 ::
-++  do-info
-  |=  {mez/tape tor/toro}
-  abet:(emit:(spam leaf+mez ~) %info /kiln our tor)
+++  poke-info
+  |=  {mez/tape tor/(unit toro)}
+  ?~  tor
+    abet:(spam leaf+mez ~)
+  abet:(emit:(spam leaf+mez ~) %info /kiln our u.tor)
 ::
-++  poke-rm  |=(a/path (do-info "removed" (fray a)))
-++  poke-cp
-  |=  {input/path output/path}
-  %+  do-info  "copied"
-  ?>  =(-:(flop input) -:(flop output))
-  (foal output -:(flop input) [%atom %t ~] .^(* %cx input))    ::  XX type
-::
-++  poke-mv
-  |=  {input/path output/path} 
-  %+  do-info  "moved"
-  ?>  =(-:(flop input) -:(flop output))
-  %+  furl  (fray input)
-  (foal output -:(flop input) %noun .^(* %cx input))
+++  poke-rm
+  |=  a/path
+  =+  b=.^(arch %cy a)
+  ?~  fil.b
+    =+  ~[leaf+"No such file:" leaf+"{<a>}"]
+    abet:(spam -)
+  (poke-info "removed" `(fray a))
 ::
 ++  poke-label
   |=  {syd/desk lab/@tas}
   =+  pax=/(scot %p our)/[syd]/[lab]
-  (do-info "labeled {(spud pax)}" [syd %| lab])
+  (poke-info "labeled {(spud pax)}" `[syd %| lab])
 ::
 ++  poke-schedule
   |=  {where/path tym/@da eve/@t}
   =.  where  (welp where /sched)
-  %+  do-info  "scheduled"
+  %+  poke-info  "scheduled"
   =+  old=;;((map @da cord) (fall (file where) ~))
-  (foal where %sched !>((~(put by old) tym eve)))
+  `(foal where %sched !>((~(put by old) tym eve)))
 ::
 ++  poke-autoload
   |=  lod/(unit ?)

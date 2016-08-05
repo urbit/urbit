@@ -421,6 +421,24 @@
   ^+  t.a
   [i.a $(a (skim t.a |=(c/_i.a !(b c i.a))))]
 ::
+++  spin
+  |*  {a/(list) b/_|=({* *} [** +<+]) c/*}
+  ::  ?<  ?=($-([_?<(?=($~ a) i.a) _c] [* _c]) b)
+  |-
+  ?~  a
+    ~
+  =+  v=(b i.a c)
+  [i=-.v t=$(a t.a, c +.v)]
+::
+++  spun
+  |*  {a/(list) b/_|=({* *} [** +<+])}
+  =|  c/_+<+.b
+  |-
+  ?~  a
+    ~
+  =+  v=(b i.a c)
+  [i=-.v t=$(a t.a, c +.v)]
+::
 ++  swag                                                ::  slice
   |*  {{a/@ b/@} c/(list)}
   (scag +<-> (slag +<-< c))
@@ -606,42 +624,44 @@
   ::                                                    ::
   ::
 ++  fnv  |=(a/@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
+::
+++  muk                                                 ::  standard murmur3
+  ~/  %muk
+  |=  {syd/@ key/@}
+  ?>  (lte (met 5 syd) 1)
+  =+  ^=  row
+      |=  {a/@ b/@}
+      (con (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
+  =+  mow=|=({a/@ b/@} (end 5 1 (mul a b)))
+  =+  len=(met 5 key)
+  =-  =.  goc  (mix goc len)
+      =.  goc  (mix goc (rsh 4 1 goc))
+      =.  goc  (mow goc 0x85eb.ca6b)
+      =.  goc  (mix goc (rsh 0 13 goc))
+      =.  goc  (mow goc 0xc2b2.ae35)
+      (mix goc (rsh 4 1 goc))
+  ^=  goc
+  =+  [inx=0 goc=syd]
+  |-  ^-  @
+  ?:  =(inx len)  goc
+  =+  kop=(cut 5 [inx 1] key)
+  =.  kop  (mow kop 0xcc9e.2d51)
+  =.  kop  (row 15 kop)
+  =.  kop  (mow kop 0x1b87.3593)
+  =.  goc  (mix kop goc)
+  =.  goc  (row 13 goc)
+  =.  goc  (end 5 1 (add 0xe654.6b64 (mul 5 goc)))
+  $(inx +(inx))
+::
 ++  mum                                                 ::  mug with murmur3
   ~/  %mum
   |=  a/*
   |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
-  ++  spec                                              ::  standard murmur3
-    |=  {syd/@ key/@}
-    ?>  (lte (met 5 syd) 1)
-    =+  ^=  row
-        |=  {a/@ b/@}
-        (con (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
-    =+  mow=|=({a/@ b/@} (end 5 1 (mul a b)))
-    =+  len=(met 5 key)
-    =-  =.  goc  (mix goc len)
-        =.  goc  (mix goc (rsh 4 1 goc))
-        =.  goc  (mow goc 0x85eb.ca6b)
-        =.  goc  (mix goc (rsh 0 13 goc))
-        =.  goc  (mow goc 0xc2b2.ae35)
-        (mix goc (rsh 4 1 goc))
-    ^=  goc
-    =+  [inx=0 goc=syd]
-    |-  ^-  @
-    ?:  =(inx len)  goc
-    =+  kop=(cut 5 [inx 1] key)
-    =.  kop  (mow kop 0xcc9e.2d51)
-    =.  kop  (row 15 kop)
-    =.  kop  (mow kop 0x1b87.3593)
-    =.  goc  (mix kop goc)
-    =.  goc  (row 13 goc)
-    =.  goc  (end 5 1 (add 0xe654.6b64 (mul 5 goc)))
-    $(inx +(inx))
-  ::
   ++  trim                                              ::  31-bit nonzero
     |=  key/@
     =+  syd=0xcafe.babe
     |-  ^-  @
-    =+  haz=(spec syd key)
+    =+  haz=(muk syd key)
     =+  ham=(mix (rsh 0 31 haz) (end 0 31 haz))
     ?.(=(0 ham) ham $(syd +(syd)))
   --
@@ -928,10 +948,13 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  run                                               ::  apply gate to values
-    |*  {b/$-(* *) c/*}
-    |-
-    ?~  a  c
-    $(a r.a, c [(b n.a) $(a l.a)])
+    ~/  %run
+    |*  b/gate
+    =|  c/(set _?>(?=(^ a) (b n.a)))
+    |-  ?~  a  c
+    =.  c  (~(put in c) (b n.a))
+    =.  c  $(a l.a, c c)
+    $(a r.a, c c)
   ::
   +-  tap                                               ::  convert to list
     ~/  %tap
@@ -1159,6 +1182,12 @@
     |-
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::
+  +-  rut                                               ::  apply gate to nodes
+    |*  b/gate
+    |-
+    ?~  a  a
+    [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  tap                                               ::  listify pairs
     ~/  %tap
@@ -2976,7 +3005,7 @@
   ++  rads                                              ::  random continuation
     |=  b/@
     =+  r=(rad b)
-    [r +>.$(a (shas %og-s r))]
+    [r +>.$(a (shas %og-s (mix a r)))]
   ::
   ++  raw                                               ::  random bits
     ~/  %raw
@@ -2995,293 +3024,12 @@
   ++  raws                                              ::  random bits
     |=  b/@                                             ::  continuation
     =+  r=(raw b)
-    [r +>.$(a (shas %og-s r))]
+    [r +>.$(a (shas %og-s (mix a r)))]
   --
 ::                                                      ::
-::::  3e: AES encryption                                ::
+::::  3e: AES encryption  (XX removed)                  ::
   ::                                                    ::
-  ::    aesc, ga                                        ::
   ::
-++  aesc                                                ::  AES-256
-  ~%  %aesc  +  ~
-  |%
-  ++  en                                                ::  ECB enc
-    ~/  %en
-    |=  {a/@I b/@H}  ^-  @uxH
-    =+  ahem
-    (be & (ex a) b)
-  ++  de                                                ::  ECB dec
-    ~/  %de
-    |=  {a/@I b/@H}  ^-  @uxH
-    =+  ahem
-    (be | (ix (ex a)) b)
-  --
-++  ahem                                                ::  AES helpers
-::  XX should be in aesc, isn't for performance reasons
-  =>
-    =+  =+  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
-        =+  [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
-        [pro=pro dif=dif pow=pow ror=ror nnk=8 nnb=4 nnr=14]
-    =>  |%
-        ++  cipa                                        ::  AES params
-          $_  ^?  |%
-          ++  co  *{p/@ q/@ r/@ s/@}                    ::  col coefs
-          ++  ix  |~(a/@ *@)                            ::  key index
-          ++  ro  *{p/@ q/@ r/@ s/@}                    ::  row shifts
-          ++  su  *@                                    ::  s-box
-          --
-        --
-    |%
-    ++  pen                                             ::  encrypt
-      ^-  cipa
-      |%
-      ++  co  [0x2 0x3 1 1]
-      ++  ix  |~(a/@ a)
-      ++  ro  [0 1 2 3]
-      ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
-                df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
-                9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
-                8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
-                08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
-                79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
-                db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
-                7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
-                d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
-                a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
-                cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
-                842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
-                75b2.27eb.e280.1207.9a05.9618.c323.c704.
-                1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
-                c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
-                76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
-      --
-    ::
-    ++  pin                                             :: decrypt
-      ^-  cipa
-      |%
-      ++  co  [0xe 0xb 0xd 0x9]
-      ++  ix  |~(a/@ (sub nnr a))
-      ++  ro  [0 3 2 1]
-      ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
-                6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
-                ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
-                5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
-                f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
-                1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
-                6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
-                73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
-                6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
-                0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
-                849d.8da7.5746.155e.dab9.edfd.5048.706c.
-                92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
-                25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
-                4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
-                cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
-                fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
-      --
-    ::
-    ++  mcol
-      |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  ^-  (list @)
-      =+  c=[p=*@ q=*@ r=*@ s=*@]
-      |-  ^-  (list @)
-      ?~  a  ~
-      =>  .(p.c (cut 3 [0 1] i.a))
-      =>  .(q.c (cut 3 [1 1] i.a))
-      =>  .(r.c (cut 3 [2 1] i.a))
-      =>  .(s.c (cut 3 [3 1] i.a))
-      :_  $(a t.a)
-      %+  rep  3
-      %+  turn
-        %-  limo
-        :~  [[p.c p.b] [q.c q.b] [r.c r.b] [s.c s.b]]
-            [[p.c s.b] [q.c p.b] [r.c q.b] [s.c r.b]]
-            [[p.c r.b] [q.c s.b] [r.c p.b] [s.c q.b]]
-            [[p.c q.b] [q.c r.b] [r.c s.b] [s.c p.b]]
-        ==
-      |=  {a/{@ @} b/{@ @} c/{@ @} d/{@ @}}
-      :(dif (pro a) (pro b) (pro c) (pro d))
-    ::
-    ++  pode                                            ::  explode to block
-      |=  {a/bloq b/@ c/@}  ^-  (list @)
-      =+  d=(rip a c)
-      =+  m=(met a c)
-      |-
-      ?:  =(m b)
-        d
-      $(m +(m), d (weld d (limo [0 ~])))
-    ++  sube                                            ::  s-box word
-      |=  {a/@ b/@}  ^-  @
-      (rep 3 (turn (pode 3 4 a) |=(c/@ (cut 3 [c 1] b))))
-    --
-  |%
-  ++  be                                                ::  block cipher
-    |=  {a/? b/@ c/@H}  ^-  @uxH
-    =>  %=    .
-            +
-          =>  +
-          |%
-          ++  ankh
-            |=  {a/cipa b/@ c/@}
-            (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
-          ++  sark
-            |=  {c/(list @) d/(list @)}  ^-  (list @)
-            ?~  c  ~
-            ?~  d  !!
-            [(mix i.c i.d) $(c t.c, d t.d)]
-          ++  srow
-            |=  {a/cipa b/(list @)}  ^-  (list @)
-            =+  [c=0 d=~ e=ro.a]
-            |-
-            ?:  =(c nnb)
-              d
-            :_  $(c +(c))
-            %+  rep  3
-            %+  turn
-              (limo [0 p.e] [1 q.e] [2 r.e] [3 s.e] ~)
-            |=  {f/@ g/@}
-            (cut 3 [f 1] (snag (mod (add g c) nnb) b))
-          ++  subs
-            |=  {a/cipa b/(list @)}  ^-  (list @)
-            ?~  b  ~
-            [(sube i.b su.a) $(b t.b)]
-          --
-        ==
-    =+  [d=?:(a pen pin) e=(pode 5 nnb c) f=1]
-    =>  .(e (sark e (ankh d 0 b)))
-    |-
-    ?.  =(nnr f)
-      =>  .(e (subs d e))
-      =>  .(e (srow d e))
-      =>  .(e (mcol e co.d))
-      =>  .(e (sark e (ankh d f b)))
-      $(f +(f))
-    =>  .(e (subs d e))
-    =>  .(e (srow d e))
-    =>  .(e (sark e (ankh d nnr b)))
-    (rep 5 e)
-  ::
-  ++  ex                                                ::  key expand
-    |=  a/@I  ^-  @
-    =+  [b=a c=0 d=su:pen i=nnk]
-    |-
-    ?:  =(i (mul nnb +(nnr)))
-      b
-    =>  .(c (cut 5 [(dec i) 1] b))
-    =>  ?:  =(0 (mod i nnk))
-          =>  .(c (ror 3 1 c))
-          =>  .(c (sube c d))
-          .(c (mix c (pow (dec (div i nnk)) 2)))
-        ?:  &((gth nnk 6) =(4 (mod i nnk)))
-          .(c (sube c d))
-        .
-    =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
-    =>  .(b (can 5 [i b] [1 c] ~))
-    $(i +(i))
-  ::
-  ++  ix                                                ::  key expand, inv
-    |=  a/@  ^-  @
-    =+  [i=1 j=*@ b=*@ c=co:pin]
-    |-
-    ?:  =(nnr i)
-      a
-    =>  .(b (cut 7 [i 1] a))
-    =>  .(b (rep 5 (mcol (pode 5 4 b) c)))
-    =>  .(j (sub nnr i))
-    %=    $
-        i  +(i)
-        a
-      %+  can  7
-      :~  [i (cut 7 [0 i] a)]
-          [1 b]
-          [j (cut 7 [+(i) j] a)]
-      ==
-    ==
-  --
-++  ga                                                  ::  GF (bex p.a)
-  |=  a/{p/@ q/@ r/@}                                   ::  dim poly gen
-  =+  si=(bex p.a)
-  =+  ma=(dec si)
-  =>  |%
-      ++  dif                                           ::  add and sub
-        |=  {b/@ c/@}
-        ?>  &((lth b si) (lth c si))
-        (mix b c)
-      ::
-      ++  dub                                           ::  mul by x
-        |=  b/@
-        ?>  (lth b si)
-        ?:  =(1 (cut 0 [(dec p.a) 1] b))
-          (dif (sit q.a) (sit (lsh 0 1 b)))
-        (lsh 0 1 b)
-      ::
-      ++  pro                                           ::  slow multiply
-        |=  {b/@ c/@}
-        ?:  =(0 b)
-          0
-        ?:  =(1 (dis 1 b))
-          (dif c $(b (rsh 0 1 b), c (dub c)))
-        $(b (rsh 0 1 b), c (dub c))
-      ::
-      ++  toe                                           ::  exp+log tables
-        =+  ^=  nu
-            |=  {b/@ c/@}
-            ^-  (map @ @)
-            =+  d=*(map @ @)
-            |-
-            ?:  =(0 c)
-              d
-            %=  $
-              c  (dec c)
-              d  (~(put by d) c b)
-            ==
-        =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
-        =+  [b=1 c=0]
-        |-  ^-  {p/(map @ @) q/(map @ @)}
-        ?:  =(ma c)
-          [(~(put by p) c b) q]
-        %=  $
-          b  (pro r.a b)
-          c  +(c)
-          p  (~(put by p) c b)
-          q  (~(put by q) b c)
-        ==
-      ::
-      ++  sit                                           ::  reduce
-        |=  b/@
-        (mod b (bex p.a))
-      --
-  =+  toe
-  |%
-  ++  fra                                               ::  divide
-    |=  {b/@ c/@}
-    (pro b (inv c))
-  ::
-  ++  inv                                               ::  invert
-    |=  b/@
-    =+  c=(~(get by q) b)
-    ?~  c  !!
-    =+  d=(~(get by p) (sub ma u.c))
-    (need d)
-  ::
-  ++  pow                                               ::  exponent
-    |=  {b/@ c/@}
-    =+  [d=1 e=c f=0]
-    |-
-    ?:  =(p.a f)
-      d
-    ?:  =(1 (cut 0 [f 1] b))
-      $(d (pro d e), e (pro e e), f +(f))
-    $(e (pro e e), f +(f))
-  ::
-  ++  pro                                               ::  multiply
-    |=  {b/@ c/@}
-    =+  d=(~(get by q) b)
-    ?~  d  0
-    =+  e=(~(get by q) c)
-    ?~  e  0
-    =+  f=(~(get by p) (mod (add u.d u.e) ma))
-    (need f)
-  --
 ::                                                      ::
 ::::  3f: scrambling                                    ::
   ::                                                    ::
@@ -3403,7 +3151,7 @@
       =+  lo=(dis pyn 0xffff.ffff)
       =+  hi=(dis pyn 0xffff.ffff.0000.0000)
       %+  con  hi
-      (add 0x1.0000 (fice (sub lo 0x1.0000)))
+      $(pyn lo)
     pyn
   ::
   ++  fend                                              ::  restore structure v2
@@ -3414,14 +3162,15 @@
       =+  lo=(dis cry 0xffff.ffff)
       =+  hi=(dis cry 0xffff.ffff.0000.0000)
       %+  con  hi
-      (add 0x1.0000 (teil (sub lo 0x1.0000)))
+      $(cry lo)
     cry
   ::
   ++  fice                                              ::  adapted from
     |=  nor/@                                           ::  black and rogaway
     ^-  @                                               ::  "ciphers with
     =+  ^=  sel                                         ::   arbitrary finite
-    %+  rynd  2                                         ::   domains", 2002
+    %+  rynd  3                                         ::   domains", 2002
+    %+  rynd  2
     %+  rynd  1
     %+  rynd  0
     [(mod nor 65.535) (div nor 65.535)]
@@ -3434,6 +3183,7 @@
     %+  rund  0
     %+  rund  1
     %+  rund  2
+    %+  rund  3
     [(mod vip 65.535) (div vip 65.535)]
     (add (mul 65.535 -.sel) +.sel)
   ::
@@ -3442,25 +3192,23 @@
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(sum fo 65.535) l (en:aesc (snag n raku) r))
-    (~(sum fo 65.536) l (en:aesc (snag n raku) r))
+      (~(sum fo 65.535) l (muk (snag n raku) r))
+    (~(sum fo 65.536) l (muk (snag n raku) r))
   ::
   ++  rund                                              ::  reverse round
     |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(dif fo 65.535) l (en:aesc (snag n raku) r))
-    (~(dif fo 65.536) l (en:aesc (snag n raku) r))
+      (~(dif fo 65.535) l (muk (snag n raku) r))
+    (~(dif fo 65.536) l (muk (snag n raku) r))
   ::
   ++  raku
     ^-  (list @ux)
-    :~  0x15f6.25e3.083a.eb3e.7a55.d4db.fb99.32a3.
-          43af.2750.219e.8a24.e5f8.fac3.6c36.f968
-        0xf2ff.24fe.54d0.1abd.4b2a.d8aa.4402.8e88.
-          e82f.19ec.948d.b1bb.ed2e.f791.83a3.8133
-        0xa3d8.6a7b.400e.9e91.187d.91a7.6942.f34a.
-          6f5f.ab8e.88b9.c089.b2dc.95a6.aed5.e3a4
+    :~  0xb76d.5eed
+        0xee28.1300
+        0x85bc.ae01
+        0x4b38.7af7
     ==
   --
 ::
@@ -4735,7 +4483,8 @@
   ++  bip  =+  tod=(ape qex:ab)
            (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
   ++  dem  (ape (bass 1.000 ;~(plug ted:ab (star ;~(pfix dog tid:ab)))))
-  ++  dim  (ape (bass 10 ;~(plug sed:ab (star sid:ab))))
+  ++  dim  (ape dip)
+  ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
   ++  dum  (bass 10 (plus sid:ab))
   ++  fed  ;~  pose
              %+  bass  0x1.0000.0000.0000.0000
@@ -4750,6 +4499,13 @@
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
   ++  lip  =+  tod=(ape ted:ab)
            (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dog tod))))
+  ++  mot  ;~  pose
+             ;~  pfix
+               (just '1')
+               (cook |=(a/@ (add 10 (sub a '0'))) (shim '0' '2'))
+             ==
+             sed:ab
+           ==
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
   ++  vum  (bass 32 (plus siv:ab))
   ++  wiz  (ape (bass 0x4000.0000 ;~(plug pew:ab (star ;~(pfix dog piw:ab)))))
@@ -4926,6 +4682,7 @@
       ::
       ++  s-co
         |=  esc/(list @)  ^-  tape
+        ~|  [%so-co esc]
         ?~  esc
           rep
         :-  '.'
@@ -5020,8 +4777,8 @@
         %+  cook
           |=({a/@ b/?} [b a])
         ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
-        ;~(pfix dot dim:ag)   ::  month
-        ;~(pfix dot dim:ag)   ::  day
+        ;~(pfix dot mot:ag)   ::  month
+        ;~(pfix dot dip:ag)   ::  day
         ;~  pose
           ;~  pfix
             ;~(plug dot dot)
@@ -5468,6 +5225,7 @@
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
+    {$bunt p/twig}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
     {$hand p/span q/nock}                               ::  premade result
@@ -7908,6 +7666,7 @@
                         $path                           ::
                         $span                           ::
                         $void                           ::
+                        $wall                           ::
                         $wool                           ::
                         $yarn                           ::
                     ==                                  ::
@@ -7956,6 +7715,7 @@
           $span      :_(gid [%leaf '#' 't' ~]) 
           $void      :_(gid [%leaf '#' '!' ~])
           $wool      :_(gid [%leaf '*' '"' '"' ~])
+          $wall      :_(gid [%leaf '*' '\'' '\'' ~])
           $yarn      :_(gid [%leaf '"' '"' ~])
           {$mato *}  :_(gid [%leaf '@' (trip p.q.ham)])
           {$core *}
@@ -8043,6 +7803,15 @@
       :^  ~   %palm
         [~ ~ ~ ~]
       [[%leaf '#' 't' '/' ~] cis ~]
+    ::
+        $wall
+      :-  ~
+      :+  %rose
+        [[' ' ~] ['<' '|' ~] ['|' '>' ~]]
+      |-  ^-  (list tank)
+      ?~  lum  ~
+      ?@  lum  !!
+      [[%leaf (trip ((hard @) -.lum))] $(lum +.lum)]
     ::
         $wool
       :-  ~
@@ -8188,7 +7957,7 @@
     |=  ham/cape
     =-  ?+  woz  woz
           {$list * {$mato $'ta'}}  %path
-          ::  {$list * {$mato $'t'}}   %wall
+          {$list * {$mato $'t'}}   %wall
           {$list * {$mato $'tD'}}  %yarn
           {$list * $yarn}          %wool
         ==
@@ -9068,6 +8837,7 @@
                   (word %gate expb)
                   (word %tray expa)
                 ::
+                  (word %bunt expa)
                   (word %claw expb)
                   (word %shoe expa)
                   (word %bank exps)
@@ -9586,8 +9356,14 @@
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     ?.  (~(nest ut sut) | ref)
-      ::  ~&  %nest-failed
-      [| +>+<]
+      ~&  %nest-failed
+      =+  foo=(skol ref)
+      =+  bar=(skol sut)
+      ~&  %nets-need
+      ~>  %slog.[0 bar]
+      ~&  %nest-have
+      ~>  %slog.[0 foo]
+      [| +>+<.$]
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
   ++  nets                                              ::  spanless nest
@@ -9596,16 +9372,16 @@
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     =+  gat=|=({a/span b/span} (~(nest ut a) | b))
     ?.  (? .*(gat(+< [sut ref]) -.gat))
-      ::  ~&  %nets-failed
-      ::  =+  tag=`*`skol
-      ::  =+  foo=(tank .*(tag(+< ref) -.tag))
-      ::  =+  bar=(skol sut)
-      ::  ~&  %nets-need
-      ::  ~>  %slog.[0 bar]
-      ::  ~&  %nets-have
-      ::  ~>  %slog.[0 foo]
+      ~&  %nets-failed
+      =+  tag=`*`skol
+      =+  foo=(tank .*(tag(+< ref) -.tag))
+      =+  bar=(tank .*(tag(+< sut) -.tag))
+      ~&  %nets-need
+      ~>  %slog.[0 bar]
+      ~&  %nets-have
+      ~>  %slog.[0 foo]
       [| +>+<.$]
-    [& +>+<.$(nes (~(put in nes) [sut ref]))]
+    [& +>+<.$(nes (~(put in nes) [sut ref]))]  
   ::
   ++  play                                              ::  play:ut
     |=  {sut/span gen/twig}

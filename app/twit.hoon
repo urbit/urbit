@@ -1,73 +1,89 @@
 ::  Twitter daemon
 ::
-::::  /hook/core/twit/app
+::::  /hoon/twit/app
   ::
+/-    plan-acct
 /+    twitter, talk
 ::
 ::::  ~fyr
   ::
 |%
 ++  twit-path                                           ::  valid peer path
-  $%  ::  [%home ~]                                         ::  home timeline
-      [%user p=@t ~]                                    ::  user's tweets
-      [%post p=span:,@uv ~]                             ::  status of status
+  $%  {$cred $~}                                        ::  credential info
+      {$home p/@t $~}                                   ::  home timeline
+      {$user p/@t $~}                                   ::  user's tweets
+      {$post p/@taxuv $~}                               ::  status of status
   ==
 ::
 ++  axle                                                ::  app state
-  $:  %0
-      kes=(map span keys:twittter)                      ::  auth
-      out=(map ,@uvI (each ,[span cord] stat))          ::  sent tweets
-      ran=(map path ,[p=@ud q=@da])                     ::  polls active
-      fed=(jar path stat)                               ::  feed cache
+  $:  $0
+      out/(map @uvI (each {knot cord} stat))            ::  sent tweets
+      ran/(map path {p/@ud q/@da})                      ::  polls active
+      fed/(jar path stat)                               ::  feed cache
+      ced/(unit (pair @da json))                        ::  credentials
   ==
 ::
 ++  gift                                                ::  subscription action
-  $%  [%quit ~]                                         ::  terminate
-      [%diff gilt]                                      ::  send data
+  $%  {$quit $~}                                         ::  terminate
+      {$diff gilt}                                      ::  send data
   ==
 ++  gilt  
-  $%  [%twit-feed p=(list stat)]                        ::  posts in feed
-      [%twit-stat p=stat]                               ::  tweet accepted
-      [%ares term (list tank)]
+  $%  {$twit-feed p/(list stat)}                        ::  posts in feed
+      {$twit-post p/stat}                               ::  tweet accepted
+      {$ares term (list tank)}                          ::  error
+      {$json json}                                      ::  unspecialized
   ==
 ::
-++  move  ,[bone card]
+++  move  {bone card}
 ++  card                                                ::  arvo request
   $?  gift
-  $%  [%them path ~ u=hiss]                             ::  HTTP request
-      [%poke wire dock %talk-command command:talk]      ::
-      [%wait path p=@da]                                ::  timeout
+  $%  {$hiss wire (unit iden) api-call}                 ::  api request
+      {$poke wire app-message}                          ::
+      {$wait wire p/@da}                                ::  timeout
   ==  ==
 ::
+++  api-call  {response-mark $twit-req {endpoint quay}} :: full hiss payload
+++  response-mark  ?($twit-post $twit-feed $twit-cred)  :: sigh options
+++  app-message
+  $?  {{ship $talk} $talk-command command:talk}         ::  chat message
+      {{ship $hood} $write-plan-account iden plan-acct} :: registration
+  ==                                                    ::
 ++  sign                                                ::  arvo response
-  $%  [%e %thou p=httr]                                 ::  HTTP result
-      [%t %wake ~]                                      ::  timeout ping
+  $%  {$e $thou p/httr}                                 ::  HTTP result
+      {$t $wake $~}                                      ::  timeout ping
   ==
 ::
-++  stat  stat:twitter                                  ::  recieved tweet
-++  twit  main:twitter                                  ::  api interface
-++  twir  parse:twitter                                 ::  reparsers
-++  twip  render:twitter                                ::  printers
+::  XX =*
+++  stat      post:twitter                              ::  recieved tweet
+++  command   command:twitter                           ::  incoming command
+++  endpoint  endpoint:reqs:twitter                     ::  outgoing target
+++  param  param:reqs:twitter                           ::  twit-req paramters
+++  print  print:twitter                                ::  their serialization
+++  parse  parse:twitter                                ::  and deserialization
+::
+:: ++  twit  args:reqs:twitter                             ::  arugment types
+:: ++  twir  parse:twitter                                 ::  reparsers
+:: ++  twip  print:twitter                                 ::  printers
 --
 !:
 ::::
   ::
-|_  [bowl axle]
-++  any-auth  ?~(kes (auth) (auth p.n.kes))             ::  use any keys
-++  auth                                                ::  build API door
-  |=  a=span
-  ~|  [%no-auth a] 
-  ~(. twit (~(got by kes) a) now `@`eny)
+|_  {bowl axle}
+::
+++  prep
+  |=  a/(unit axle)  ^-  (quip move +>)
+  ?^  a  [~ +>(+<+ u.a)]
+  (peer-scry-x /cred)
 ::
 ++  cull                                                ::  remove seen tweets
-  |=  [pax=path rep=(list stat)]  ^+  rep
-  =+  pev=(sa (turn (~(get ja fed) pax) |=(stat id)))
+  |=  {pax/path rep/(list stat)}  ^+  rep
+  =+  pev=(silt (turn (~(get ja fed) pax) |=(stat id)))
   (skip rep |=(stat (~(has in pev) id)))
 ::
 ++  done  [*(list move) .]
 ++  dely                                                ::  next polling timeout
-  |=  pax=path
-  ^-  [(unit time) _ran]
+  |=  pax/path
+  ^-  {(unit time) _ran}
   =+  cur=(~(get by ran) pax)
   =+  tym=(add now (mul ~s8 (bex ?~(cur 0 p.u.cur))))
   :: ~&  dely/`@dr`(sub tym now)
@@ -75,8 +91,12 @@
     [~ ran]
   [`tym (~(put by ran) pax ?~(cur 0 (min 5 +(p.u.cur))) tym)]
 ::
+++  wait-new                                            ::  poll with min delay
+  |=  {pax/path mof/(list move)}
+  (wait(ran (~(del by ran) pax)) pax mof)
+::
 ++  wait                                                ::  ensure poll by path
-  |=  [pax=path mof=(list move)]
+  |=  {pax/path mof/(list move)}  ^+  done
   =^  tym  ran  (dely pax)
   :_  +>.$
   ?~  tym  
@@ -87,117 +107,192 @@
   mof
 ::
 ++  poke-twit-do                                        ::  recieve request
-  |=  [usr=span act=command:twitter]
-  ^+  [*(list move) +>]
+  |=  {usr/iden act/command}  ^+  done
   ?-    -.act
-      %auth
-    :-  [(print "authed @{(trip usr)}")]~
-    +>.$(kes (~(put by kes) usr p.act))             ::  XX verify key
-      %post
-    =:  out  (~(put by out) p.act %& usr q.act)
-        ran  (~(del by ran) /peer/home)
-      ==
-    %+  wait  /peer/home
-    =+  mez=(stat-upda:(auth usr) [%status q.act]~ ~)
-    [ost %them /post/(scot %uv p.act) ~ mez]~
+      $post
+    =.  out  (~(put by out) p.act %& usr q.act)
+    %+  wait-new  /peer/home/[usr]
+    =+  req=[%twit-req `endpoint`update+[%status q.act]~ ~]
+    [ost %hiss post+(dray ~[%uv] p.act) `usr %twit-post req]~
   ==
 ::
 ++  wake-peer
-  |=  [pax=path ~]  ^+  done
-  ~&  twit-wake/peer/pax
+  |=  {pax/path $~}  ^+  done
+  ~&  twit-wake+peer+pax
   :_  +>.$
-  ?.  (~(has by ran) peer/pax)                           ::  ignore if retracted
+  ?.  (~(has by ran) peer+pax)                           ::  ignore if retracted
     ~
-  =+  =>  |=([a=bone @ b=path] [b a]) 
+  =+  =>  |=({a/bone @ b/path} [b a])
       pus=(~(gas ju *(jug path bone)) (turn (~(tap by sup)) .))
   ?~  (~(get ju pus) pax)
     ~
-  ~&  peer-again/[pax ran]
-  (pear | our pax)
+  ~&  peer-again+[pax ran]  
+  (pear | `~. pax) ::(user-from-path pax))
 ::
-++  thou
-  |=  [pax=path hit=httr]  ^+  done
-  ?+    p.hit  ~|([%unknown-code p.hit] !!)
-      429                           ::  Rate-limit
-    =.  ran  (~(put by ran) pax 6 now)
-    =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.hit)) poja ni:jo))
-    =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
-    ~&  retrying-in/`@dr`(sub tym now)
-    :_(+>.$ [ost %wait pax tym]~)
-  ::
-      200                           ::  OK
-    =+  jon=(need (poja q:(need r.hit)))
-    :: ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
-    ?+    pax  ~|([%http-missed pax] !!)
-        [%post @ ~]                                   ::  post acknowledged
-      =+  ^=  rep
-          ~|  [%bad-post jon]
-          (need %.(jon stat:twir))
-      =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
-      :_  +>.$
-      =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
-      :-  (print (earn [& ~ `/com/twitter] `pax ~))
-      (spam pax (tweet-good rep))
-        [%peer *]                                     ::  feed data
-      =+  ^=  rep
-          ~|  [%bad-feed jon]
-          (need %.(jon (ar:jo stat:twir)))
-      :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
-      =+  ren=(cull t.pax rep)                       ::  new messages
-      ?~  ren
-        (wait pax ~)                              ::  pump polling
-      :: ~&  spam-feed/ren
-      =:  ran  (~(del by ran) pax)                    ::  clear poll delay
-          fed  (~(put by fed) t.pax rep)              ::  saw last message
-        ==
-      (wait pax (spam t.pax [%diff twit-feed/(flop ren)] ~))
-    ==
-  ::
-      ?(400 401 403 404)            ::  Err
-    =+  ^-  git=gift
-        =+  err=%.(q:(need r.hit) ;~(biff poja mean:twir))
-        :^  %diff  %ares  %bad-http
-        [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:twip)]
-    ?+    pax  [[ost git]~ +>.$]
-      [%post @ ~]
-        [(spam pax git ~) +>.$]
-    ==
+++  sigh-recoverable-error                              ::  Rate-limit
+  |=  {pax/path $429 $rate-limit lim/(unit @da)}
+  =.  ran  (~(put by ran) pax 6 now)
+  =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
+  ~&  retrying-in+`@dr`(sub tym now)
+  :_(+>.$ [ost %wait pax tym]~)
+::
+++  sigh-twit-cred-scry-cred  sigh-twit-cred-cred       :: alias
+++  sigh-twit-cred-cred
+  |=  {wir/wire acc/plan-acct raw/json}  ^+  done
+  ?>  ?=($~ wir)
+  =+  pax=`twit-path`cred+wir
+  :_  +>.$(ced `[now raw])
+  :-  [ost %poke pax [our %hood] %write-plan-account ~.twitter acc]
+  (spam-with-scry-x pax json+raw)
+::
+++  sigh-twit-post-post                                ::  status acknowledged
+  |=  {wir/wire rep/stat}  ^+  done
+  =+  (raid wir mez=%uv ~)
+  =.  out  (~(put by out) mez %| rep)
+  :_  +>.$
+  =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
+  :-  (show-url [& ~ &+/com/twitter] `pax ~)
+  (spam-with-scry-x post+wir twit-post+rep)
+::
+++  sigh-twit-feed                                      ::  feed data
+  |=  {wir/wire rep/(list stat)}  ^+  done
+  ?>  ?=({?($peer $scry) *} wir)
+  =*  pax  t.wir
+  :: ~&  got-feed+[(scag 5 (turn rep |=(stat id))) fed]
+  =+  ren=(cull pax rep)                       ::  new messages
+  =.  rep  (weld ren (~(get ja fed) pax))
+  =.  fed  (~(put by fed) pax rep)             ::  save full list
+  ?:  ?=($scry -.wir)
+    [(spam scry+x+pax [%diff twit-feed+(flop rep)] [%quit ~] ~) +>.$]
+  ?~  ren
+    (wait wir ~)                              ::  pump polling
+  :: ~&  spam-feed+ren
+  (wait-new wir (spam pax [%diff twit-feed+(flop ren)] ~))
+::
+++  sigh-tang                       ::  Err
+  |=  {pax/path tan/tang}  ^+  done
+  ~&  sigh-tang+pax
+  %-  (slog (flop tan))
+  =+  ^-  git/gift
+      =+  err='' ::%.(q:(need r.hit) ;~(biff poja mean:twir))  :: XX parse?
+      :^  %diff  %ares  %bad-http
+      tan
+      :: [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:render:twit)]
+  ?+    pax  [[ost git]~ +>.$]
+    {$post @ $~}
+      [(spam pax git ~) +>.$]
   ==
-++  tweet-good  |=(rep=stat `(list gift)`~[[%diff %twit-stat rep] [%quit ~]]) 
-++  peer  |=(pax=path :_(+> (pear & src pax)))       ::  accept subscription
+::
+:: ++  user-to-path  |=(a/(unit iden) ?~(a '~' (scot %ta u.a)))
+:: ++  user-from-path
+::   |=  pax/path  ^-  {(unit iden) path}
+::   ~|  %bad-user
+::   ?~  pax  ~|(%empty-path !!)
+::   ~|  i.pax
+::   ?:  =('~' i.pax)  [~ t.pax]
+::   [`(slav %ta i.pax) t.pax]
+::
+::
+++  compat  |=({usr/(unit iden) req/(unit iden)} ?~(req & =(usr req)))
+::
+::  .^(twit-feed %gx /=twit=/~/home/urbit_test)
+::  .^(twit-stat %gx /=twit=/~./post/0vv0old.0post.hash0.0000)
+++  peek
+  |=  {ren/care pax/path}  ^-  (unit (unit gilt))
+  ?>  ?=($x ren)  ::  others unsupported
+  =+  usr=`~.  ::   =^  usr  pax  (user-from-path pax)
+  ?.  ?=(twit-path pax)
+    ~|([%missed-path pax] !!)
+  =+  gil=(pear-scry pax)
+  ?-  -.gil
+    $none  ~
+    $part  ~      ::  stale data
+    $full  ``p.gil
+  ==
+::
+++  peer-scry-x
+  |=  pax/path  ^+  done
+  :_  +>
+  =+  pek=(peek %x pax)
+  ?^  pek
+    ?~  u.pek  ~|(bad-scry+x+pax !!)
+    ~[[ost %diff u.u.pek] [ost %quit ~]]
+  =+  usr=`~.  ::   =^  usr  pax  (user-from-path pax)
+  ?.  ?=(twit-path pax)
+    ~|([%missed-path pax] !!)
+  =+  hiz=(pear-hiss pax)
+  ?~  hiz  ~                          :: already in flight
+  ::?>  (compat usr -.u.hiz)                  ::  XX better auth
+  [ost %hiss scry+pax usr +.u.hiz]~  
+::
+++  peer  |=(pax/path :_(+> (pear & `~. pax)))       ::  accept subscription
 ++  pear                              ::  poll, possibly returning current data
-  |=  [ver=? @ pax=path]
+  |=  {ver/? usr/(unit iden) pax/path}
   ^-  (list move)
   ?.  ?=(twit-path pax)
     ~|([%missed-path pax] !!)
-  =>  .(pax `twit-path`pax)
-  ?:  ?=(%post -.pax)
-    ?.  ver  ~
-    =+  sta=(~(get by out) (slav %uv p.pax))
-    ?.  ?=([~ %| ^] sta)                                ::  post not received
-      ~
-    ~[[ost %diff %twit-stat p.u.sta] [ost %quit ~]]
-  =+  ole=(~(get ja fed) pax)
-  :_  ^-  (list move)
-      ?.  ver  ~
-      ?~  ole  ~
-      [ost %diff %twit-feed (flop ole)]~
-  =-  `move`[ost %them peer/pax ~ `hiss`-]
-  =+  opt=?~(ole ~ ['since_id' (lutt:twit id.i.ole)]~)
-  =+  aut=any-auth
+  =+  gil=(pear-scry pax)
+  %+  welp
+    ^-  (list move)
+    ?:  ?=($full -.gil)  ~       :: permanent result
+    =+  hiz=(pear-hiss pax)
+    ?~  hiz  ~
+    ::?>  (compat usr -.u.hiz)                  ::  XX better auth
+    [ost %hiss peer+pax usr +.u.hiz]~
+  ^-  (list move)
+  ?.  ver  ~
+  ?-  -.gil
+    $none  ~
+    $part  [ost %diff p.gil]~
+    $full  ~[[ost %diff p.gil] [ost %quit ~]]
+  ==
+::
+++  pear-scry
+  |=  pax/twit-path  ^-  $%({$none $~} {$part p/gilt} {$full p/gilt})
   ?-    -.pax
-    %user  (stat-user:aut [(to-sd p.pax)]~ opt)
-::     %home  (stat-home:auth ~ opt)
+      $post
+    =+  (raid +.pax mez=%uv ~)
+    =+  sta=(~(get by out) mez)
+    ?.  ?=({$~ $| *} sta)
+      [%none ~]
+    [%full twit-post+p.u.sta]
+  ::
+      ?($user $home)
+    [%part twit-feed+(flop (~(get ja fed) pax))]
+  ::
+      $cred
+    ?~  ced  [%none ~]
+    ?:  (gth now (add p.u.ced ~m1))   ::  stale
+      [%none ~]
+    [%full %json q.u.ced]
+  ==
+::
+++  pear-hiss
+  |=  pax/twit-path  ^-  (unit {(unit iden) api-call})
+  ?-    -.pax
+      $post  ~                        :: future/unacked
+      $cred
+    `[`~. %twit-cred twit-req+[test-login+~ ['skip_status'^%t]~]]
+  ::
+      $user
+    =+  ole=(~(get ja fed) pax)
+    =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
+    `[`~. [%twit-feed twit-req+[posts-by+[(to-sd p.pax)]~ opt]]]
+  ::
+      $home
+    =+  ole=(~(get ja fed) pax)
+    =+  opt=?~(ole ~ ['since_id' (tid:print id.i.ole)]~)
+    `[`p.pax [%twit-feed twit-req+[timeline+~ opt]]]
   ==
 ::
 ++  to-sd                                               ::  parse user name/numb
-  |=  a=span  ^-  sd:twit
+  |=  a/knot  ^-  sd:param
   ~|  [%not-user a]
   %+  rash  a
-  ;~(pose (stag %user-id dem) (stag %screen-name user:twir))
+  ;~(pose (stag %user-id dem) (stag %screen-name user:parse))
 ::
 :: ++  pull                                                ::  release subscription
-::   |=  ost=bone
+::   |=  ost/bone
 ::   ?.  (~(has by sup) ost)  `+>.$      ::  XX should not occur
 ::   =+  [his pax]=(~(got by sup) ost)
 ::   ?:  (lth 1 ~(wyt in (~(get ju pus) pax)))
@@ -207,14 +302,18 @@
 ::     ==
 ::   `+>.$
 ::
+++  spam-with-scry-x                                    :: recieve final
+  |=  {a/path b/gilt}  ^-  (list move)
+  =+  mof=~[[%diff b] [%quit ~]]
+  (weld (spam a mof) (spam scry+x+a mof))
+::
 ++  spam                                                ::  send by path
-  |=  [a=path b=(list gift)]  ^-  (list move)
+  |=  {a/path b/(list gift)}  ^-  (list move)
   %-  zing  ^-  (list (list move))
   %+  turn  (~(tap by sup))
-  |=  [ost=bone @ pax=path]
+  |=  {ost/bone @ pax/path}
   ?.  =(pax a)  ~
-  (turn b |=(c=gift [ost c]))
+  (turn b |=(c/gift [ost c]))
 ::
-++  print
-  |=(mes=tape [ost %poke / [our %talk] (said our %twit now eny leaf/mes ~)])
+++  show-url  ~(said-url talk `bowl`+<-)
 --
