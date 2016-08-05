@@ -623,7 +623,6 @@ static u3j_core _hex_d[] =
     static u3j_harm _pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
     static u3j_harm _pen__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
     static u3j_harm _pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
-    static u3j_harm _pen__ut_park_a[] = {{".2", u3wfu_park}, {}};
     static u3j_harm _pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
     static u3j_harm _pen__ut_play_a[] = {{".2", u3wfu_play}, {}};
     static u3j_harm _pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
@@ -641,7 +640,6 @@ static u3j_core _hex_d[] =
       { "mint", _pen__ut_mint_a },
       { "mull", _pen__ut_mull_a },
       { "nest", _pen__ut_nest_a },
-      { "park", _pen__ut_park_a },
       { "peek", _pen__ut_peek_a },
       { "play", _pen__ut_play_a },
       { "rest", _pen__ut_rest_a },
