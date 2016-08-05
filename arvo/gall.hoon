@@ -1075,17 +1075,17 @@
     ++  ap-prop                                         ::  install
       |=  vux/(unit vase)
       ^-  {(unit tang) _+>}
-      ?.  (ap-fond %prep) 
+      =+  old=+>.$(hav ?~(vux hav u.vux))
+      ?.  (ap-fond %prep)
         ?~  vux
           `+>.$
-        =+  [new=p:(slot 13 hav) old=p:(slot 13 u.vux)]
         ?.  (~(nest ut p:(slot 13 hav)) %| p:(slot 13 u.vux))
-          :_(+>.$ `(ap-suck "prep mismatch"))
+          :_(old `(ap-suck "prep mismatch"))
         `+>.$(+13.q.hav +13.q.u.vux)
       =^  tur  +>.$
           %+  ap-call  %prep
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
-      ?~(tur `+>.$ :_(+>.$ `u.tur))
+      ?~(tur `+>.$ :_(old `u.tur))
     ::
     ++  ap-pule                                         ::  silent delete
       =+  wim=(~(get by sup.ged) ost)
