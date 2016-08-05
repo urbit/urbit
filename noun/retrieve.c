@@ -261,54 +261,6 @@ _mug_bytes(c3_w off_w, c3_w nby_w, const c3_y* byt_y)
 }
 
 static __inline__ c3_w
-_mug_words_in_buf(c3_w off_w, c3_w nwd_w, u3_noun veb)
-{
-  u3a_atom* veb_u = u3a_to_ptr(veb);
-
-  if ( 0 == nwd_w ) {
-    return off_w;
-  } else {
-    c3_w i_w, x_w;
-
-    for ( i_w = 0; i_w < (nwd_w - 1); i_w++ ) {
-      x_w = veb_u->buf_w[i_w];
-      {
-        c3_y a_y = (x_w & 0xff);
-        c3_y b_y = ((x_w >> 8) & 0xff);
-        c3_y c_y = ((x_w >> 16) & 0xff);
-        c3_y d_y = ((x_w >> 24) & 0xff);
-
-        off_w = _mug_fnv(off_w ^ a_y);
-        off_w = _mug_fnv(off_w ^ b_y);
-        off_w = _mug_fnv(off_w ^ c_y);
-        off_w = _mug_fnv(off_w ^ d_y);
-      }
-    }
-    x_w = veb_u->buf_w[nwd_w - 1];
-
-    if ( x_w ) {
-      off_w = _mug_fnv(off_w ^ (x_w & 0xff));
-      x_w >>= 8;
-
-      if ( x_w ) {
-        off_w = _mug_fnv(off_w ^ (x_w & 0xff));
-        x_w >>= 8;
-
-        if ( x_w ) {
-          off_w = _mug_fnv(off_w ^ (x_w & 0xff));
-          x_w >>= 8;
-
-          if ( x_w ) {
-            off_w = _mug_fnv(off_w ^ (x_w & 0xff));
-          }
-        }
-      }
-    }
-  }
-  return off_w;
-}
-
-static __inline__ c3_w
 _mug_words_in(c3_w off_w, c3_w nwd_w, const c3_w* wod_w)
 {
   if ( 0 == nwd_w ) {
@@ -368,20 +320,6 @@ _mug_words(c3_w off_w, c3_w nwd_w, const c3_w* wod_w)
   }
 }
 
-static c3_w
-_mug_words_buf(c3_w off_w, c3_w nwd_w, u3_noun veb)
-{
-  c3_w has_w = _mug_words_in_buf(off_w, nwd_w, veb);
-  c3_w out_w = _mug_out(has_w);
-
-  if ( 0 != out_w ) {
-    return out_w;
-  }
-  else {
-    return _mug_words_buf(++off_w, nwd_w, veb);
-  }
-}
-
 /* u3r_mug():
 **
 **   Compute and/or recall the mug (31-bit FNV1a hash) of (a).
@@ -414,7 +352,7 @@ u3r_mug(u3_noun veb)
         u3a_atom* veb_u = u3a_to_ptr(veb);
         c3_w        len_w = veb_u->len_w;
 
-        veb_u->mug_w = _mug_words_buf(2166136261U, len_w, veb);
+        veb_u->mug_w = _mug_words(2166136261U, len_w, veb_u->buf_w);
         return veb_u->mug_w;
       }
     }

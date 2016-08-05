@@ -55,6 +55,7 @@ static u3j_harm _mood__hoon_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
 static u3j_harm _mood__hoon_met_a[] = {{".2", u3wc_met, c3y}, {}};
 static u3j_harm _mood__hoon_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
 static u3j_harm _mood__hoon_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
+static u3j_harm _mood__hoon_muk_a[] = {{".2", u3wc_muk, c3y}, {}};
 static u3j_harm _mood__hoon_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
 static u3j_harm _mood__hoon_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
 static u3j_harm _mood__hoon_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
@@ -128,8 +129,6 @@ static u3j_harm _mood__hoon_loss_a[] = {{".2", u3we_loss}, {}};
 static u3j_harm _mood__hoon_lune_a[] = {{".2", u3we_lune}, {}};
 static u3j_harm _mood__hoon_mink_a[] = {{".2", u3we_mink}, {}};
 static u3j_harm _mood__hoon_mule_a[] = {{".2", u3we_mule}, {}};
-static u3j_harm _mood__hoon_repg_a[] = {{".2", u3we_repg}, {}};
-static u3j_harm _mood__hoon_rexp_a[] = {{".2", u3we_rexp}, {}};
 static u3j_harm _mood__hoon_trip_a[] = {{".2", u3we_trip}, {}};
 
 static u3j_harm _mood__hoon__aesc_en_a[] = {{".2", u3wea_en}, {}};
@@ -356,8 +355,8 @@ static u3j_harm _mood__hoon__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
 static u3j_harm _mood__hoon__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
 static u3j_harm _mood__hoon__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
 static u3j_harm _mood__hoon__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
-static u3j_harm _mood__hoon__ut_park_a[] = {{".2", u3wfu_park}, {}};
 static u3j_harm _mood__hoon__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
+static u3j_harm _mood__hoon__ut_perk_a[] = {{".2", u3wfu_perk}, {}};
 static u3j_harm _mood__hoon__ut_play_a[] = {{".2", u3wfu_play}, {}};
 static u3j_harm _mood__hoon__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
 static u3j_harm _mood__hoon__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
@@ -375,8 +374,8 @@ static u3j_core _mood__hoon__ut_d[] =
     { "mint", _mood__hoon__ut_mint_a },
     { "mull", _mood__hoon__ut_mull_a },
     { "nest", _mood__hoon__ut_nest_a },
-    { "park", _mood__hoon__ut_park_a },
     { "peek", _mood__hoon__ut_peek_a },
+    { "perk", _mood__hoon__ut_perk_a },
     { "play", _mood__hoon__ut_play_a },
     { "rest", _mood__hoon__ut_rest_a },
     { "toss", _mood__hoon__ut_toss_a },
@@ -490,6 +489,7 @@ static u3j_core _mood__hoon_d[] =
     { "met", _mood__hoon_met_a },
     { "mix", _mood__hoon_mix_a },
     { "mug", _mood__hoon_mug_a },
+    { "muk", _mood__hoon_muk_a },
     { "peg", _mood__hoon_peg_a },
     { "pow", _mood__hoon_pow_a },
     { "rap", _mood__hoon_rap_a },
@@ -512,8 +512,6 @@ static u3j_core _mood__hoon_d[] =
     { "lune", _mood__hoon_lune_a },
     { "mink", _mood__hoon_mink_a },
     { "mule", _mood__hoon_mule_a },
-    { "repg", _mood__hoon_repg_a },
-    { "rexp", _mood__hoon_rexp_a },
     { "trip", _mood__hoon_trip_a },
 
     { "aesc", 0, _mood__hoon__aesc_d },

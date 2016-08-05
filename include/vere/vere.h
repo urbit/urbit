@@ -69,7 +69,6 @@
         c3_w             seq_l;             //  sequence within connection
         u3_hmet          met_e;             //  method
         u3_hrat          rat_e;             //  parser state
-        void*            par_u;             //  struct http_parser *
         c3_c*            url_c;             //  url
         c3_w             ipf_w;             //  ipv4
         c3_o             liv;               //  keepalive
@@ -104,6 +103,7 @@
         struct _u3_hreq* ruc_u;             //  request under construction
         struct _u3_hreq* req_u;             //  exit of request queue
         struct _u3_hreq* qer_u;             //  entry of request queue
+        void*            par_u;             //  struct http_parser *
       } u3_hcon;
 
     /* u3_http: http server.
@@ -114,6 +114,7 @@
         c3_w             coq_l;             //  next connection number
         c3_w             por_w;             //  running port
         c3_o             sec;               //  logically secure
+        c3_o             lop;               //  loopback-only
         struct _u3_hcon* hon_u;             //  connection list
         struct _u3_http* nex_u;             //  next in list
       } u3_http;

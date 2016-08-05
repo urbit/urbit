@@ -838,6 +838,14 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
         tat_u->esc.ape = c3n;
         _term_io_belt(uty_u, u3nc(c3__met, cay_y));
       }
+      else if ( '.' == cay_y ) {
+        tat_u->esc.ape = c3n;
+        _term_io_belt(uty_u, u3nc(c3__met, c3__dot));
+      }
+      else if ( 8 == cay_y || 127 == cay_y ) {
+        tat_u->esc.ape = c3n;
+        _term_io_belt(uty_u, u3nc(c3__met, c3__bac));
+      }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
         tat_u->esc.bra = c3y;
       }

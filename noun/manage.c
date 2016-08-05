@@ -1477,18 +1477,18 @@ _cm_init(c3_o chk_o)
                  -1, 0);
 
     if ( -1 == (c3_ps)map_v ) {
-      map_v = mmap((void *)0,
-                   len_w,
-                   PROT_READ,
-                   MAP_ANON | MAP_PRIVATE,
-                   -1, 0);
+      void* dyn_v = mmap((void *)0,
+                         len_w,
+                         PROT_READ,
+                         MAP_ANON | MAP_PRIVATE,
+                         -1, 0);
 
       fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      fprintf(stderr, "see urbit.org/docs/user/install for adding swap space\r\n");
+      fprintf(stderr, "see urbit.org/docs/using/install for adding swap space\r\n");
       if ( -1 != (c3_ps)map_v ) {
         fprintf(stderr, 
                 "if porting to a new platform, try U3_OS_LoomBase %p\r\n", 
-                map_v);
+                dyn_v);
       }
       exit(1);
     }

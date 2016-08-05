@@ -966,7 +966,7 @@ _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
   u3_lo_shut(c3n);
 }
 
-/* _cttp_ccon_kick_write()
+/* _cttp_ccon_kick_write_cryp()
 */
 static void
 _cttp_ccon_kick_write_cryp(u3_ccon* coc_u)
@@ -1171,9 +1171,11 @@ _cttp_ccon_cryp_pull(u3_ccon* coc_u)
   _cttp_ccon_kick_write_cryp(coc_u);
 }
 
+/* _cttp_ccon_kick_read_cryp_cb()
+*/
 /*
- * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
- * now, or < 0 on error.
+ * `nread` (siz_w) is > 0 if there is data available, UV_EOF if libuv is
+ * done reading for now, or < 0 on error.
  *
  * The callee is responsible for closing the stream when an error happens
  * by calling uv_close(). Trying to read from the stream again is undefined.
@@ -1193,7 +1195,8 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
   u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
-      _cttp_ccon_fail(coc_u, c3n);
+      // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
+      uv_close((uv_handle_t*) tcp_u, NULL);    // https://github.com/urbit/urbit/issues/254
     } else if ( siz_w < 0 ) {
       uL(fprintf(uH, "cttp: read 2: %s\n", uv_strerror(siz_w)));
       _cttp_ccon_fail(coc_u, c3y);
@@ -1220,8 +1223,8 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
 /* _cttp_ccon_read_clyr_cb()
 */
 /*
- * `nread` (siz_w) is > 0 if there is data available, 0 if libuv is done reading for
- * now, or < 0 on error.
+ * `nread` (siz_w) is > 0 if there is data available, UV_EOF if libuv is
+ * done reading for now, or < 0 on error.
  *
  * The callee is responsible for closing the stream when an error happens
  * by calling uv_close(). Trying to read from the stream again is undefined.
@@ -1240,7 +1243,8 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
   u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
-      _cttp_ccon_fail(coc_u, c3n);
+      // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
+      uv_close((uv_handle_t*) tcp_u, NULL);    // https://github.com/urbit/urbit/issues/254
     } else if ( siz_w < 0 ) {
       uL(fprintf(uH, "cttp: read 1: %s\n", uv_strerror(siz_w)));
       _cttp_ccon_fail(coc_u, c3y);
@@ -1420,7 +1424,7 @@ _cttp_ccon(u3_noun sec, c3_s por_s, c3_c* hot_c)
   return _cttp_ccon_new(sec, por_s, hot_c);
 }
 
-/* _cttp_creq(): cttp request from noun.
+/* _cttp_creq_new(): cttp request from noun.
 */
 static u3_creq*
 _cttp_creq_new(c3_l num_l, u3_noun hes)

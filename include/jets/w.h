@@ -59,6 +59,7 @@
     u3_noun u3wc_met(u3_noun);
     u3_noun u3wc_mix(u3_noun);
     u3_noun u3wc_mug(u3_noun);
+    u3_noun u3wc_muk(u3_noun);
     u3_noun u3wc_peg(u3_noun);
     u3_noun u3wc_pow(u3_noun);
     u3_noun u3wc_rap(u3_noun);
@@ -232,8 +233,8 @@
     u3_noun u3wfu_mint(u3_noun);
     u3_noun u3wfu_mull(u3_noun);
     u3_noun u3wfu_nest(u3_noun);
-    u3_noun u3wfu_park(u3_noun);
     u3_noun u3wfu_peek(u3_noun);
+    u3_noun u3wfu_perk(u3_noun);
     u3_noun u3wfu_play(u3_noun);
     u3_noun u3wfu_repo(u3_noun);
     u3_noun u3wfu_rest(u3_noun);
