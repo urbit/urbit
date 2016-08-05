@@ -1001,21 +1001,27 @@
     --
   --
 ::
-++  trub                                                ::  test ed
-  |=  msg/@tas
-  ^-  @
-  =+  ali=(brew 1.024 (cat 8 (shax 'ali') (shad 'ali')))
-  =+  bob=(brew 1.024 (cat 8 (shax 'bob') (shad 'bob')))
-  =+  tef=(sign:as.ali [0 msg])
-  =+  lov=(sure:as.ali [0 tef])
-  ?.  &(?=(^ lov) =(msg u.lov))
-    ~|(%test-fail-sign !!)
-  =+  key=(shax (shax (shax msg)))
-  =+  sax=(seal:as.ali pub:ex.bob key msg)
-  =+  tin=(tear:as.bob pub:ex.ali sax)
-  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
-    ~|(%test-fail-seal !!)
-  msg
+++  trub                                                ::  test crub
+  |=  msg/@t
+  ::  make acru cores
+  =/  ali      (pit:nu:crub 512 (shaz 'Alice'))
+  =/  ali-pub  (com:nu:crub pub:ex.ali)
+  =/  bob      (pit:nu:crub 512 (shaz 'Robert'))
+  =/  bob-pub  (com:nu:crub pub:ex.bob)
+  ::  alice signs and encrypts a symmetric key to bob
+  =/  secret-key  %-  shaz
+      'Let there be no duplicity when taking a stand against him.'
+  =/  signed-key   (sign:as.ali ~ secret-key)
+  =/  crypted-key  (seal:as.ali pub:ex.bob-pub ~ signed-key)
+  ::  bob decrypts and verifies
+  =/  decrypt-key-attempt  (tear:as.bob pub:ex.ali-pub crypted-key)
+  =/  decrypted-key    ~|  %decrypt-fail  (need decrypt-key-attempt)
+  =/  verify-key-attempt   (sure:as.ali-pub ~ q.decrypted-key)
+  =/  verified-key     ~|  %verify-fail  (need verify-key-attempt)
+  ::  bob encrypts with symmetric key
+  =/  crypted-msg  (en.bob verified-key msg)
+  ::  alice decrypts with same key
+  `@t`(dy.ali secret-key crypted-msg)
 ::
 ++  hmac                                                ::  HMAC-SHA1
   |=  {key/@ mes/@}
