@@ -15,6 +15,9 @@
 
       return u3i_words(1, &c);
     }
+    else if ( 0 == a ) {
+      return u3k(b);
+    }
     else {
       mpz_t a_mp, b_mp;
 
@@ -34,7 +37,7 @@
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
          (c3n == u3ud(a)) ||
-         (c3n == u3ud(b)) )
+         (c3n == u3ud(b) && a != 0) )
     {
       return u3m_bail(c3__exit);
     } else {

@@ -10,6 +10,10 @@
   u3qc_peg(u3_atom a,
            u3_atom b)
   {
+    if ( 1 == b ) {
+      return u3k(a);
+    }
+
     u3_atom c, d, e, f, g, h;
 
     c = u3r_met(0, b);
@@ -33,10 +37,10 @@
     u3_noun a, b;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
-         (c3n == u3ud(a)) ||
-         (c3n == u3ud(b)) ||
          (0 == a) ||
-         (0 == b) )
+         (0 == b) ||
+         (c3n == u3ud(b)) ||
+         (c3n == u3ud(a) && b != 1) )
     {
       return u3m_bail(c3__exit);
     } else {
