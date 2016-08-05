@@ -150,7 +150,6 @@
         $tabl  ~|(%made-tabl !!)
         $|  (mo-give %onto %| p.gux)
         $&
-      ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
         (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
       =.  +>  (mo-born dap byk q.p.gux)
@@ -189,8 +188,7 @@
     ?-  -.gux
       $tabl  ~|(%made-tabl !!)
       $|     (mo-give %onto %| p.gux)
-      $&     ?>  ?=(@ p.p.gux)
-             ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
+      $&     ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
     ==
   ::
   ++  mo-bold                                           ::  wait for dep
