@@ -662,7 +662,7 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  {@uxH @ux}
+      ^-  (pair @uxH @ux)
       =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
       =+  iv=(s2va k1 (weld vec (limo ~[txt])))
       :-
@@ -686,7 +686,7 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  {@uxH @ux}
+      ^-  (pair @uxH @ux)
       =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
       =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
       :-
@@ -710,7 +710,7 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  {@uxH @ux}
+      ^-  (pair @uxH @ux)
       =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
       =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
       :-
@@ -950,7 +950,7 @@
       (jam [nonc (~(en siva:aes shar ~[nonc]) msg)])
     ++  tear
       |=  {bpk/pass txt/@}
-      ^-  (unit {@ux @ux})
+      ^-  (unit (pair @ux @ux))
       ?~  sek  ~|  %pubkey-only  !!
       ?>  =('b' (end 3 1 bpk))
       =+  pk=(rsh 8 1 (rsh 3 1 bpk))
