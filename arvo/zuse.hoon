@@ -989,32 +989,17 @@
       ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
     ++  nol
       |=  a/ring
-      =+  [c=(rsh 8 1 a) s=(end 8 1 a)]
+      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+      ~|  %not-crub-seckey  ?>  =('B' mag)
+      =+  [c=(rsh 8 1 bod) s=(end 8 1 bod)]
       ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
     ++  com
       |=  a/pass
-      ..nu(pub [cry=(rsh 8 1 a) sgn=(end 8 1 a)], sek ~)
+      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+      ~|  %not-crub-pubkey  ?>  =('b' mag)
+      ..nu(pub [cry=(rsh 8 1 bod) sgn=(end 8 1 bod)], sek ~)
     --
   --
-::
-++  brew                                                ::  create keypair
-  |=  {a/@ b/@}                                         ::  width seed
-  ^-  acru
-  (pit:nu:crub a b)
-::
-++  hail                                                ::  activate public key
-  |=  a/pass
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('b' mag)
-  (com:nu:crub bod)
-::
-++  wear                                                ::  activate secret key
-  |=  a/ring
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('B' mag)
-  (nol:nu:crub bod)
 ::
 ++  trub                                                ::  test ed
   |=  msg/@tas
