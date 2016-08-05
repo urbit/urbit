@@ -145,22 +145,17 @@
   ++  mo-boom                                           ::  complete new boot
     |=  {dap/dude byk/beak dep/@uvH gux/gage}
     ^+  +>
+    =.  +>  (mo-bold byk dap dep)
     ?-    -.gux
         $tabl  ~|(%made-tabl !!)
-        $|
-      =.  +>  (mo-bold byk dap dep)
-      =.  +>  (mo-give %onto %| p.gux)
-      +>
+        $|  (mo-give %onto %| p.gux)
         $&
       ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
         (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
-      =.  +>  (mo-bold byk dap dep)
       =.  +>  (mo-born dap byk q.p.gux)
-      =+  old=+>.$
       =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
       ?^  -.wag
-        =.  +>.$  old
         (mo-give %onto %| u.-.wag)
       =.  +>.$  ap-abet:+.wag
       (mo-give:(mo-claw dap) %onto %& dap %boot now)
