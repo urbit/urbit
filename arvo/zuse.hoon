@@ -960,16 +960,16 @@
       (~(de siva:aes shar ~[nonc]) iv cph)
     --
   ++  de
-    |=  {key/@I cph/@}
+    |=  {key/@J cph/@}
     ^-  (unit @ux)
-    %+  ~(de siva:aes key ~)
+    %+  ~(de sivc:aes (shaz key) ~)
       (end 7 1 cph)
       (rsh 7 1 cph)
   ++  dy  |=({key/@I cph/@} (need (de key cph)))
   ++  en
-    |=  {key/@I msg/@}
+    |=  {key/@J msg/@}
     ^-  @ux
-    (cat 7 (~(en siva:aes key ~) msg))
+    (cat 7 (~(en sivc:aes (shaz key) ~) msg))
   ++  ex
     |%
     ++  fig  ^-  @uvH  (shaf %bfig sgn.^pub)
