@@ -983,8 +983,9 @@
     |%
     ++  pit
       |=  {w/@ seed/@}
-      =+  bits=(shaz seed)  ::  need 512 bits
-      =+  [c=(rsh 8 1 seed) s=(end 8 1 seed)]
+      =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
+      =+  bits=(shal wid seed)
+      =+  [c=(rsh 8 1 bits) s=(end 8 1 bits)]
       ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
     ++  nol
       |=  a/ring
