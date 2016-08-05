@@ -693,7 +693,7 @@
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   =+  tik=.^(@p %a /(scot %p our)/tick/(scot %da now)/(scot %p her))
   :: =.  emit  (emit /tick %tick tik her)
-  (emit %poke /tick [src %hood] [%womb-do-claim her tik])
+  (emit %poke /tick [src %hood] [%womb-do-claim her tik]) :: XX peek result
 ::
 ++  needy
   |*  a/(each * tang)
@@ -708,9 +708,15 @@
   ^+  +>
   ?>  =(src (sein her))               ::  from the parent which could ticket
   =+  sta=(stats-ship her)
-  ?>  ?=({$cold $owned @} sta)        ::  a ship issued but not yet started,
-  =+  who=p.q.sta                     ::  send ticket to the issuee.
-  (email /ticket who "Ticket for {<her>}: {<`@pG`tik>}")
+  ?>  ?=($cold p.sta)                 ::  a ship not yet started
+  ?-    -.q.sta
+      $free  !!                         ::  but allocated
+      $owned                            ::  to an email
+    (email /ticket p.q.sta "Ticket for {<her>}: {<`@pG`tik>}")
+  ::
+      $split                            ::  or ship distribution
+    %.(+>.$ (slog leaf+"Ticket for {<her>}: {<`@pG`tik>}" ~))  ::  XX emit via console formally?
+  ==
 ::
 ++  poke-recycle                                      ::  save ticket as balance
   |=  {who/mail him-t/knot tik-t/knot}
@@ -807,6 +813,7 @@
 ++  release-star                                      ::  subdivide %king
   =+  [who=*@p res=.]
   |.  ^+  res
+  =.  res  (emit.res %poke /tick [(sein who) %hood] [%womb-do-ticket who])
   %+  mod-managed-star:res  who
   |=  sta/star  ^-  star
   ~&  release+who
