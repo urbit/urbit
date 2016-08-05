@@ -15,6 +15,9 @@
 
       return u3i_chubs(1, &c);
     }
+    else if ( 0 == a ) {
+      return 0;
+    }
     else {
       mpz_t a_mp, b_mp;
 
@@ -34,7 +37,7 @@
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
          (c3n == u3ud(a)) ||
-         (c3n == u3ud(b)) )
+         (c3n == u3ud(b) && a != 0) )
     {
       return u3m_bail(c3__exit);
     } else {
@@ -42,7 +45,7 @@
     }
   }
   u3_noun
-  u3ka_mul(u3_noun a, 
+  u3ka_mul(u3_noun a,
            u3_noun b)
   {
     u3_noun c = u3qa_mul(a, b);

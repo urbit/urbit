@@ -213,6 +213,7 @@ J_C_OFILES=\
        jets/c/met.o \
        jets/c/mix.o \
        jets/c/mug.o \
+       jets/c/muk.o \
        jets/c/peg.o \
        jets/c/po.o  \
        jets/c/pow.o \
@@ -297,8 +298,8 @@ J_F_OFILES_UT=\
        jets/f/ut_mint.o \
        jets/f/ut_mull.o \
        jets/f/ut_nest.o \
-       jets/f/ut_park.o \
        jets/f/ut_peek.o \
+       jets/f/ut_perk.o \
        jets/f/ut_play.o \
        jets/f/ut_repo.o \
        jets/f/ut_rest.o \
