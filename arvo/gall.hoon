@@ -640,7 +640,7 @@
         ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
       =^  arm  +>.$  (ap-farm q.u.cug)
       ?:  ?=($| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
-      =^  zem  +>.$  (ap-slam q.u.cug p.arm !>([ren (slag p.u.cug tyl)]))
+      =^  zem  +>.$  (ap-slam q.u.cug p.arm !>((slag p.u.cug `path`[ren tyl]))) 
       ?:  ?=($| -.zem)  ((slog leaf+"peek slam fail" p.zem) [~ ~])
       ?+  q.p.zem  ((slog leaf+"peek bad result" ~) [~ ~])
         $~              ~
@@ -1172,10 +1172,11 @@
       |=  {cog/term gat/vase arg/vase}
       ^-  {(each vase tang) _+>}
       =+  ^=  wyz  %-  mule  |.
+          ?>  (~(nest ut p:(slot 6 gat)) %& p.arg)
           (~(play wa vel) [%cell p.gat p.arg] [%open [%$ ~] [%$ 2] [%$ 3] ~])
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
-            (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
+            (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) p.wyz)
         :_(+>.$ [%| (ap-suck "call: {<cog>}: type mismatch")])
       :_  +>.$(vel +>.wyz)
       =+  ton=(mong [q.gat q.arg] ap-sled)
