@@ -4,6 +4,7 @@
 # - -h text
 # - output to clay
 
+import os
 import sys
 import logging
 import json
@@ -11,7 +12,7 @@ import requests
 import argparse
 import base64
 
-PORT = 12321
+PORT = os.environ.get('LENS_PORT', 12321)
 
 logging.basicConfig(level=logging.WARNING,
                     format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
