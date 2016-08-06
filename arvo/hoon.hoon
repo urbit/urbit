@@ -10114,6 +10114,9 @@
 =+  pit=`vase`!>(.)                                     ::
 !:
 =+  bud=pit                                             ::  becomes tang
+=+  ^=  bud                                             ::  becomes tang
+    :_  [0 q.pit]
+    [%cell [%face %orb [%atom %p ~]] p.pit]
 =+  vil=(viol p.bud)                                    ::  cached reflexives
 =|  $:  lac/?                                           ::  laconic bit
         eny/@                                           ::  entropy
