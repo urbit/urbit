@@ -1268,20 +1268,27 @@
       ==
     ::
     ++  czar  !:                                        ::    czar:am
-      |=  {our/ship ger/@uw fak/?}                      ::  instantiate emperor
+      |=  {her/ship ger/@uw fak/?}                      ::  instantiate emperor
       ^-  {p/(list boon) q/fort}
-      =+  loy=?:(fak (bruw 2.048 our) (bruw 2.048 ger)) ::  fake uses carrier #
-      =+  fim==(fig:ex:loy (zeno our))
+      =+  loy=?:(fak (bruw 2.048 her) (bruw 2.048 ger)) ::  fake uses carrier #
+      =+  fim==(fig:ex:loy (zeno her))
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]
-      =+  syp=`step`[`bray`[0 ~ our now] [%en %czar ~] pub:ex:loy]
+      =+  syp=`step`[`bray`[0 ~ her now] [%en %czar ~] pub:ex:loy]
       =+  ded=`deed`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
-      =:  ton.fox  (~(ha go ton.fox) our buq)
-          zac.fox  (~(put by zac.fox) our *corn)
+      =:  ton.fox  (~(ha go ton.fox) her buq)
+          zac.fox  (~(put by zac.fox) her *corn)
           fak.ton.fox  fak
         ==
-      [[[%beer our pac:ex:loy] ~] fox]
+      [[[%beer her pac:ex:loy] ~] fox]
+    ::
+    ++  user 
+      |=  {her/ship ger/@uw fak/?}                      ::  instantiate emperor
+      ^-  {p/(list boon) q/fort}
+      ?:  (lth her 256)  
+        (czar her ger fak)
+      !!
     ::
     ++  doze
       %+  hunt  `(add now ~s32)
@@ -2523,7 +2530,10 @@
           [[[%beer p.vun] ~] q.vun]
         ::
             $sith
-          (~(czar am [now fox]) p.kyz q.kyz r.kyz)
+          (~(user am [now fox]) p.kyz q.kyz r.kyz)
+        ::
+            $luke
+          (~(user am [now fox]) p.k
         ::
             $wake
           (~(wake am [now fox]) hen)

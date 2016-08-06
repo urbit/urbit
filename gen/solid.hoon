@@ -14,8 +14,6 @@
 =+  pax=`path`(weld top `path`[%hoon ~])
 ~&  %solid-start
 =+  gen=(reck pax)
-:: =+  nig=(rick pax)
-:: ~&  [%mugs gen+(mug gen) nig+(mug nig)]
 ~&  %solid-parsed
 =+  ken=q:(~(mint ut %noun) %noun gen)
 ~&  %solid-compiled

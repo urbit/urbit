@@ -10113,12 +10113,10 @@
   ::
 =+  pit=`vase`!>(.)                                     ::
 !:
-=+  bud=pit                                             ::  becomes tang
-=+  ^=  bud                                             ::  becomes tang
-    :_  [0 q.pit]
-    [%cell [%face %orb [%atom %p ~]] p.pit]
-=+  vil=(viol p.bud)                                    ::  cached reflexives
+=+  vil=(viol p.pit)                                    ::  cached reflexives
 =|  $:  lac/?                                           ::  laconic bit
+        bod/(unit vase)                                 ::  standard library
+        urb/(unit ship)                                 ::  identity
         eny/@                                           ::  entropy
         niz/(pair worm (list {p/@tas q/vase}))          ::  modules
     ==                                                  ::
@@ -10138,10 +10136,6 @@
     ++  poke  |=  *                                     ::  42
               ^-  {(list ovum) *}
               =>  .(+< ((hard {now/@da ovo/ovum}) +<))
-              ?:  =(%verb -.q.ovo)
-                [~ +>.$(lac !lac)]
-              ?:  ?=($veer -.q.ovo)
-                [~ +>.$(+ (veer now q.ovo))]
               =^  ova  +>+  (^poke now ovo)
               |-  ^-  {(list ovum) *}
               ?~  ova
@@ -10152,6 +10146,9 @@
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=($vega -.q.i.ova)
                 (fall (vega now t.ova (path +.q.i.ova)) [~ +>.^$])
+              ?:  ?=(?($init $veal) -.q.i.ova)
+                =+  avo=$(ova t.ova, +>+.^$ (boot (@ +.q.i.ova)))
+                [[i.ova -.avo] +.avo]
               ?:  ?=($mass -.q.i.ova)
                 =+  avo=$(ova t.ova)
                 :_  +.avo
@@ -10161,7 +10158,7 @@
                   :-  %userspace
                   :-  %|
                   :~  hoon+`pit
-                      zuse+`bud
+                      zuse+`mast
                       hoon-cache+`p.niz
                       q.q.i.ova
                       dot+`.
@@ -10171,6 +10168,12 @@
     ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  20
     --
 |%
+++  boot                                                ::  set singlehome
+  |=  {who/@p}
+  ^+  +>
+  ?:  &(?=(^ urb) (lth u.urb who))  +>
+  +>(urb `who, bod ?~(bod ~ bod(-.q.u who)))
+::
 ++  come                                                ::  load incompatible
   |=  {yen/@ ova/(list ovum) nyf/pone}
   ^+  [ova +>]
@@ -10179,7 +10182,7 @@
 ++  keep                                                ::  wakeup delay
   |=  {now/@da hap/path}
   =>  .(+< ((hard {now/@da hap/path}) +<))
-  (~(doos (is vil eny bud niz) now) hap)
+  (~(doos (is vil eny mast niz) now) hap)
 ::
 ++  load                                                ::  load compatible
   |=  {yen/@ ova/(list ovum) nyf/pane}
@@ -10196,22 +10199,29 @@
     $(ova t.ova, +>.^$ (veer *@da q.i.ova))
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
+++  mast  ?~(bod pit u.bod)                             ::  stdlib if installed
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon]
-  =+  rob=((sloy ~(beck (is vil eny bud niz) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is vil eny mast niz) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
 ::
 ++  poke                                                ::  external apply
   |=  {now/@da ovo/ovum}
+  ^-  {(list ovum) _+>}
   =.  eny  (mix eny (shax now))
   ::  ~&  [%poke -.q.ovo]
-  ^-  {(list ovum) _+>}
+  ?:  ?=(?($veer $vega $verb $veal) -.q.ovo)
+    ::
+    ::  these effects on arvo proper fall through and
+    ::  are handled in post.
+    ::
+    [[ovo ~] +>.$]
   =^  zef  niz
-    (~(hurl (is vil eny bud niz) now) lac ovo)
+    (~(hurl (is vil eny mast niz) now) lac ovo)
   [zef +>.$]
 ::
 ++  vega                                                ::  reboot kernel
@@ -10245,13 +10255,14 @@
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    +>.^$(bud vax)
+    =+  orb=`@p`?~(urb 0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff u.urb)
+    +>.^$(bod `[[%cell [%face %our [%atom %p ~]] p.vax] [orb q.vax]])
   %_    +>.^$
       q.niz
     |-  ^+  q.niz
     ?~  q.niz
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
+      =+  vin=(vint lal.fav vil mast pax.fav txt.fav)
       ?~  vin
         q.niz
       [[lal.fav q.sew:u.vin] q.niz]
@@ -10260,10 +10271,10 @@
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.q.niz
     :-  p.i.q.niz
-    q.sew:(ruck:(vent lal.fav vil bud [p.niz q.i.q.niz]) pax.fav txt.fav)
+    q.sew:(ruck:(vent lal.fav vil mast [p.niz q.i.q.niz]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute
  |=  txt/@
-  q:(slap bud (ream txt))
+  q:(slap mast (ream txt))
 --
