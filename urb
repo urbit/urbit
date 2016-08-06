@@ -11,7 +11,7 @@ import requests
 import argparse
 import base64
 
-PORT = 12322
+PORT = 12321
 
 logging.basicConfig(level=logging.WARNING,
                     format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
