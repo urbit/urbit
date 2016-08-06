@@ -646,6 +646,96 @@
   ::
   --
 ::
+++  ga                                                  ::  GF (bex p.a)
+  |=  a/{p/@ q/@ r/@}                                   ::  dim poly gen
+  =+  si=(bex p.a)
+  =+  ma=(dec si)
+  =>  |%
+      ++  dif                                           ::  add and sub
+        |=  {b/@ c/@}
+        ~|  [%dif-ga a]
+        ?>  &((lth b si) (lth c si))
+        (mix b c)
+      ::
+      ++  dub                                           ::  mul by x
+        |=  b/@
+        ~|  [%dub-ga a]
+        ?>  (lth b si)
+        ?:  =(1 (cut 0 [(dec p.a) 1] b))
+          (dif (sit q.a) (sit (lsh 0 1 b)))
+        (lsh 0 1 b)
+      ::
+      ++  pro                                           ::  slow multiply
+        |=  {b/@ c/@}
+        ?:  =(0 b)
+          0
+        ?:  =(1 (dis 1 b))
+          (dif c $(b (rsh 0 1 b), c (dub c)))
+        $(b (rsh 0 1 b), c (dub c))
+      ::
+      ++  toe                                           ::  exp+log tables
+        =+  ^=  nu
+            |=  {b/@ c/@}
+            ^-  (map @ @)
+            =+  d=*(map @ @)
+            |-
+            ?:  =(0 c)
+              d
+            %=  $
+              c  (dec c)
+              d  (~(put by d) c b)
+            ==
+        =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
+        =+  [b=1 c=0]
+        |-  ^-  {p/(map @ @) q/(map @ @)}
+        ?:  =(ma c)
+          [(~(put by p) c b) q]
+        %=  $
+          b  (pro r.a b)
+          c  +(c)
+          p  (~(put by p) c b)
+          q  (~(put by q) b c)
+        ==
+      ::
+      ++  sit                                           ::  reduce
+        |=  b/@
+        (mod b (bex p.a))
+      --
+  =+  toe
+  |%
+  ++  fra                                               ::  divide
+    |=  {b/@ c/@}
+    (pro b (inv c))
+  ::
+  ++  inv                                               ::  invert
+    |=  b/@
+    ~|  [%inv-ga a]
+    =+  c=(~(get by q) b)
+    ?~  c  !!
+    =+  d=(~(get by p) (sub ma u.c))
+    (need d)
+  ::
+  ++  pow                                               ::  exponent
+    |=  {b/@ c/@}
+    =+  [d=1 e=c f=0]
+    |-
+    ?:  =(p.a f)
+      d
+    ?:  =(1 (cut 0 [f 1] b))
+      $(d (pro d e), e (pro e e), f +(f))
+    $(e (pro e e), f +(f))
+  ::
+  ++  pro                                               ::  multiply
+    |=  {b/@ c/@}
+    ~|  [%pro-ga a]
+    =+  d=(~(get by q) b)
+    ?~  d  0
+    =+  e=(~(get by q) c)
+    ?~  e  0
+    =+  f=(~(get by p) (mod (add u.d u.e) ma))
+    (need f)
+  --
+::
 ++  scr                                                 ::  scrypt
   ~%  %scr  +  ~
   |%
@@ -3431,11 +3521,11 @@
               {$woot p/ship q/path r/coop}              ::  e2e reaction message
           ==                                            ::
 ++  kiss-ames                                           ::  in request ->$
-          $%  {$born p/@p q/@pG r/?}                    ::  ticket birth
+          $%  ::  {$born p/@p q/@pG r/?}                ::  ticket birth
               {$barn $~}                                ::  new unix process
               {$crud p/@tas q/(list tank)}              ::  error with trace
               {$cash p/@p q/buck}                       ::  civil license
-              {$funk p/@p q/@p r/@}                     ::  symtix from/to/key
+              ::  {$funk p/@p q/@p r/@}                 ::  symtix from/to/key
               {$hear p/lane q/@}                        ::  receive packet
               {$hole p/lane q/@}                        ::  packet failed
               {$junk p/@}                               ::  entropy

@@ -274,6 +274,38 @@
 ::::  2b: list logic                                    ::
   ::                                                    ::
   ::                                                    ::
+::
+++  fand                                                ::  all indices
+  ~/  %fand
+  |=  {nedl/(list) hstk/(list)}
+  =|  i/@ud
+  =|  fnd/(list @ud)
+  |-  ^+  fnd
+  =+  [n=nedl h=hstk]
+  |-
+  ?:  |(?=($~ n) ?=($~ h))
+    (flop fnd)
+  ?:  =(i.n i.h)
+    ?~  t.n
+      ^$(i +(i), hstk +.hstk, fnd [i fnd])
+    $(n t.n, h t.h)
+  ^$(i +(i), hstk +.hstk)
+::
+++  find                                                ::  first index
+  ~/  %find
+  |=  {nedl/(list) hstk/(list)}
+  =|  i/@ud
+  |-   ^-  (unit @ud)
+  =+  [n=nedl h=hstk]
+  |-
+  ?:  |(?=($~ n) ?=($~ h))
+     ~
+  ?:  =(i.n i.h)
+    ?~  t.n
+      `i
+    $(n t.n, h t.h)
+  ^$(i +(i), hstk +.hstk)
+::
 ++  flop                                                ::  reverse
   ~/  %flop
   |*  a/(list)
@@ -1314,6 +1346,15 @@
     ?:  |(?=($~ q.b) (vor n.a n.q.b))
       [n.a l.a q.b]
     [n.q.b [n.a l.a l.q.b] r.q.b]
+  ::
+  +-  nip                                               ::  remove root
+    |-  ^+  a
+    ?~  a  ~
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (vor n.l.a n.r.a)
+      [n.l.a l.l.a $(l.a r.l.a)]
+    [n.r.a $(r.a l.r.a) r.r.a]
   ::
   +-  nap                                               ::  removes head
     ?>  ?=(^ a)
@@ -4682,7 +4723,6 @@
       ::
       ++  s-co
         |=  esc/(list @)  ^-  tape
-        ~|  [%so-co esc]
         ?~  esc
           rep
         :-  '.'
