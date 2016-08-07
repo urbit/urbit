@@ -3,92 +3,83 @@
 ::::  /hoon/jael
   ::
 !?  164
-::::
-|=  pit=vase   
+!:  ::
+|=  pit/vase   
 =>  =~
 ::  private structures                                  ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|%                                                      ::
-++  bitx  $~                                            ::  any crypto wallet
-++  prof                                                ::  per service profile
-  $:  oat/(map user (safe @))                           ::  auth tokens
-      pax/(unit @t)                                     ::  actual password
-  ==                                                    ::
-++  safe  |*(gate {exp/@da nub/+<})                     ::  secret w/expiration
-++  tlsy  $~                                            ::  HTTPS secrets
-++  whom  @t                                            ::  foreign identity
-++  wapi                                                ::  per api service
-  $:  app/(map @tas (safe @))                           ::  per appname
-      use/(map whom prof)                               ::  user secrets
-  ==                                                    ::
-++  land                                                ::  urbit secrets
-  $:  lyf/@ud                                           ::  life number
-      sym/(map @p (map @uvH (safe @uvI)))               ::  shared keys
-      own/(map @ud (safe ring))                         ::  private key per life
-  ==                                                    ::  
-++  user  @ta                                           ::  user id per service
---
-::  system structures
 |%
-++  axle                                                ::  %jael state
-  $:  $0                                                ::  %jael version
-      pri/land                                          ::  local crypto state
-      pub/(map @p will)                                 ::  will system
-      api/(map @tas wapi)                               ::  web services
-      tix/(map @pG @p)                                  ::  old style tickets
-      tls/tlsy                                          ::  tls keys
-      bix/(map @tas bitx)                               ::  bitcoin etc
-      sud/(map path (set duct))                         ::  subscribers
+++  jael-state                                          ::  all crypto state
+  $:  ver/$0                                            ::  %jael version 
+      own/jael-private                                  ::  urbit private keys
+      urb/jael-public                                   ::  urbit public state
+      cap/jael-bearer                                   ::  urbit symmetric keys
+      for/jael-embassy                                  ::  foreign secrets
+      sec/jael-vault                                    ::  actual secret data
+      hut/jael-service                                  ::  waiting ducts
   ==                                                    ::
-++  gift                                                ::  out result <-$
-  $%  {$dead p/path}                                    ::  key expired
-      {$save p/(each * *)}                              ::  backup
+++  jael-private  (map ship wyll)                       ::  private keys
+++  jael-public                                         ::  whole pki
+  $:  pki/(map ship jael-urbit)                         ::  
+      net/(map ship life)                               ::  reverse version
   ==                                                    ::
-++  kiss                                                ::  in request ->$
-  $%  {$kill p/ship q/path}                             ::  cancel path
-      {$know p/visa}                                    ::  learn will (new pki)
-      {$knew p/ship q/will}                             ::  learn will (old pki)
-      {$next p/ship q/(unit ring)}                      ::  update private key
-      {$tell p/path q/@da r/@}                          ::  save atomic secret
-      {$tick p/@pG q/@p}                                ::  save old ticket
-  ==
---
-=|  axle$:  $0                                              ::
-        tym/{p/clok q/clok}                             ::  positive+negative
-    ==                                                  ::
+++  jael-bearer                                         ::  bearer codes
+  $:  orp/(map ship hand)                               ::  reverse index
+      por/(map hand fist)                               ::  forward index
+      ::                                                ::  priority queue?
+  ==                                                    ::
+++  jael-public   (map ship gyft)                       ::  public keys
+++  jael-embassy  (map term jael-partner)               ::
+++  jael-partner                                        ::  api apps
+  $:  api/(map term hand)                               ::  apps by name
+      tok/(map @t (map term hand))                      ::  shortlived tokens
+  ==                                                    ::
+++  jael-secret                                         ::  secret by hash
+  $:  key/code                                          ::  secret itself
+      exp/(unit @da)                                    ::  expiration date
+  ==                                                    ::
+::                                                      ::
+++  jael-service  (map path duct)                       ::
+++  jael-vault                                          ::  secret store
+  $:  saf/(map hand jael-secret)                        ::
+  ==                                                    ::
+--                                                      ::
+.  ==                                                   ::
+=|  lex/jael-state                                      ::  kernel state
 |=  {now/@da eny/@ ski/sley}                            ::  current invocation
-|%                                                      ::
-++  call                                                ::  request
-  |=  {hen/duct hic/(hypo (hobo kiss))}
-  ^-  [p=(list move) q=_..^$]
-  !!
-::
-++  doze
-  |=  [now=@da hen=duct]
-  ^-  (unit @da)
-  ~
-::
-++  load                                                ::  highly forgiving
-  |=  old=*
-  =+  lox=((soft axle) old)
-  ^+  ..^$
-  ?~  lox
-    ~&  %jael-reset
-    ..^$
-  ..^$(+>- u.lox)
-::
-++  scry
-  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
-  ^-  (unit (unit (pair mark *)))
-  ::  actually scry
-  ~
-::
-++  stay                                                ::  save w/o cache
-  `axle`+>-.$
-::
-++  take                                                ::  response
-  |=  {tea/wire hen/duct hin/(hypo noun)}
-  !!
+=<  |%                                                  ::  vane interface
+    ++  call                                            ::  request
+      |=  $:  hen/duct
+              hic/(hypo (hobo kiss-jael))
+          ==
+      =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard kiss-jael) p.q.hic)))
+      ^-  {p/(list move) q/_..^$}
+      !!
+    ::
+    ++  doze                                            ::  sleep
+      |=  {now/@da hen/duct}
+      ^-  (unit @da)
+      ~
+    ::
+    ++  load                                            ::  upgrade
+      |=  old/jael-state
+      ^+  ..^$
+      ~&  %jael-reload
+      ..^$(lex old)
+    ::
+    ++  scry
+      |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+      ^-  (unit (unit cage))
+      ?.  ?=($$ ren)  [~ ~]
+      !!
+    ::
+    ++  stay  lex
+    ++  take                                            ::  accept response
+      |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
+      ^-  {p/(list move) q/_..^$}
+      [~ ..^$]
+    --
+|%
+++  foo  %bar
 --
-

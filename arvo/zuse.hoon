@@ -3594,6 +3594,39 @@
               {$west p/sack q/path r/@ud s/*}           ::  network request
           ==                                            ::
 ::
+::::    %jael
+  ::
+++  deod  {myn/mind syg/@uw}                            ::  signature
+++  lama                                                ::  
+  $:  dob/?                                             ::  & clean, | rough
+      exp/@da                                           ::  expiration date
+      pub/pass                                          ::  public key
+  ==                                                    ::
+++  fist                                                ::  capability record
+  $:  who/@p                                            ::  identity
+      exp/(unit @da)                                    ::  expiration date
+  ==                                                    ::
+++  gyft  (map ship (map life (tale lama)))             ::  pki dump set
+++  mind  {lyf/@ud who/@p}                              ::  key identifier
+++  tale                                                ::  urbit-signed atom
+  |*  typ/mold                                          ::
+  $:  dat/typ                                           ::  data
+      syg/(set deod)                                    ::  signatures
+  ==                                                    ::
+++  wynd  (map @ud ring)                                ::  secret keys
+++  wyll                                                ::  linear will 
+  $:  len/@ud                                           ::
+      log/(list (tale lama))                            ::
+  ==                                                    ::
+++  kiss-jael                                           ::  secret operation
+  $:  {$auth p/(unit @dr) q/ship r/@uvI}                ::  save capability
+      {$nigh p/ship q/life}                             ::  track neighbor
+      {$ring p/life q/ring}                             ::  save private key
+      {$wait p/path}                                    ::  wait on desk/spur
+      {$west p/sack q/path r/@ud s/*}                   ::  remote request
+      {$will p/gyft}                                    ::  adopt will
+  ==                                                    ::
+::
 ::::
   ::
 ++  blew  {p/@ud q/@ud}                                 ::  columns rows
@@ -3825,7 +3858,6 @@
 ++  cush  (pair term club)                              ::  internal kiss
 ++  dude  term                                          ::  server identity
 ++  scup  (pair ship desk)                              ::  autoupdate
-++  well  (pair desk term)                              ::
 ++  suss  (trel dude @tas @da)                          ::  config report
 ::::                                                    ::
 ++  kiss-gall                                           ::  incoming request
