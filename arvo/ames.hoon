@@ -12,7 +12,6 @@
           $:  fon/(map bole lock)                       ::  inbound locks
               zam/scar                                  ::  outbound boles
               sal/(map bole colt)                       ::  outbound flows
-              nup/(map bole pump)                       ::  outbound pumps
           ==                                            ::
 ++  bole  bone                                          ::  inbound opaque
 ++  boon                                                ::  internal effect
@@ -156,39 +155,7 @@
           $:  max/@ud                                   ::  maximum window
               cur/@ud                                   ::  current window
           ==                                            ::
-++  pump                                                ::  new packet pump
-          $:  nex/(unit @da)                            ::  next wake; derived
-              win/@ud                                   ::  logical window bytes
-              old/plod                                  ::  long-running state
-              sac/plow                                  ::  current flow
-              plan                                      ::  data 
-          ==                                            ::
-++  shed                                                ::  packet sender
-          $:  $:  rtt/@dr                               ::  smoothed rtt
-                  rto/@dr                               ::  retransmit timeout
-                  rtn/(unit @da)                        ::  next timeout
-                  rue/(unit @da)                        ::  last heard from
-              ==                                        ::
-              $:  nus/@ud                               ::  number sent
-                  nif/@ud                               ::  number live
-                  nep/@ud                               ::  next expected
-                  caw/@ud                               ::  logical window
-                  cag/@ud                               ::  congest thresh
-              ==                                        ::
-              $:  diq/(map flap @ud)                    ::  packets sent
-                  pyz/(map flea @ud)                    ::  message/unacked
-                  puq/(qeu {p/@ud q/soul})             ::  packet queue
-              ==                                        ::
-          ==                                            ::
 ++  skin  ?($none $open $fast $full)                    ::  encoding stem
-++  soul                                                ::  packet in travel
-          $:  fel/flea                                  ::  message identity
-              cha/path                                  ::  channel
-              nux/@ud                                   ::  xmission count
-              liv/?                                     ::  deemed live
-              lys/@da                                   ::  last sent
-              pac/rock                                  ::  packet data
-          ==                                            ::
 ++  sufi                                                ::  domestic host
           $:  hoy/(list ship)                           ::  hierarchy
               val/wund                                  ::  private keys
@@ -212,62 +179,6 @@
 ++  flam  |=(a/flap `@p`(mug a))                        ::  debug flap
 ++  msec  |=(a/@dr `@ud`(div a (div ~s1 1.000)))        ::  debug @dr
 ++  move  {p/duct q/(wind note-arvo gift-ames)}         ::  local move
-++  se                                                  ::  simple scheduler
-  |_  a/pond                                            ::  l.n.a < n.a < r.n.a
-  ++  cor                                               ::  schedule order
-    |=  {t/@da v/pipe}
-    |=  {t/@da v/pipe}
-    |((lth ^t t) &(=(^t t) (gor ^v v)))
-  ::
-  ++  dal                                               ::  delete match
-    |=  {t/@da v/pipe}
-    ^+  a
-    ?~  a  ~
-    ?.  =([t v] n.a)
-      ?:  ((cor [t v]) n.a)
-        [n.a $(a l.a) r.a]
-      [n.a l.a $(a r.a)]
-    |-  ^-  ?($~ _a)
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (vor n.l.a n.r.a)
-      [n.l.a l.l.a $(l.a r.l.a)]
-    [n.r.a $(r.a l.r.a) r.r.a]
-  ::
-  ++  put                                               ::  insert
-    |=  {t/@da v/pipe}                                  ::  XX duplicates ++by
-    ^+  a
-    ?~  a  [[t v] ~ ~]
-    ?<  =([t v] n.a)
-    ?:  ((cor [t v]) n.a)
-      =+  d=$(a l.a)
-      ?>  ?=(^ d)
-      ?:  (vor n.a n.d)
-        [n.a d r.a]
-      [n.d l.d [n.a r.d r.a]]
-    =+  d=$(a r.a)
-    ?>  ?=(^ d)
-    ?:  (vor n.a n.d)
-      [n.a l.a d]
-    [n.d [n.a l.a l.d] r.d]
-  ::
-  ++  til                                               ::  next wake
-    |-  ^-  (unit @da)
-    ?~(a ~ ?~(l.a `p.n.a $(a l.a)))
-  ::
-  ++  tip                                               ::  raw behead
-    |=  t/@da
-    ^-  (pair (list pipe) pond)
-    ?~  a  [~ ~]
-    =+  l=$(a l.a)
-    ?.  (lte p.n.a t)
-      [p.l [n.a q.l r.a]]
-    ?>  =(~ q.l)
-    =+  r=$(a r.a)
-    :_(q.r (weld p.l `(list pipe)`[q.n.a p.r]))
-  ::
-  ++  top  |=(t/@da =^(b a (tip t) [(flop p.b) a]))     ::  ordered behead
-  --
 --
 ::  simple packet pump
 ::
@@ -948,7 +859,7 @@
               wey
             =+  tiq=(end 6 1 (shaf %tick (mix her (shax sec:ex:q:sen))))
             =+  key=(shax tiq)
-            ~&  [%kuch-ticket her `@p`tiq `@p`(mug key)]
+            ::  ~&  [%kuch-ticket her `@p`tiq `@p`(mug key)]
             ?.  =(had (shaf %hand key))  ~
             [~ key]
           ?^  wey
@@ -1327,7 +1238,6 @@
         [~ fox]
       =<  zork
       =<  abet
-      ::  ~&  [%in p.p.kec ryn `@p`(mug (shaf %flap pac))]
       ::  ~&  [%in p.p.kec (flam (shaf %flap pac))]
       %-  chew:(ho:(um q.p.kec) p.p.kec)
       [q.kec (shaf %flap pac) ryn r.kec]
@@ -1406,7 +1316,7 @@
         |=  her/ship                                    ::  per friend
         =+  diz=(myx:gus her)
         =+  bah=(~(get by wab.weg) her)
-        =>  .(bah `bath`?~(bah [~ [2 ~ ~] ~ ~] u.bah))
+        =>  .(bah `bath`?~(bah [~ [2 ~ ~] ~] u.bah))
         |%
         ++  zest  ~
         ++  abet                                        ::    abet:ho:um:am
@@ -1974,7 +1884,6 @@
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         $milk  (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
-      ::  ~&  [%to now p.bon `@p`(mug (shaf %flap q.bon))] 
       ::  ~&  [%to (flam (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
