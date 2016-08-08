@@ -26,6 +26,7 @@
               {$wine p/sock q/tape}                     ::  notify user
           ==                                            ::
 ++  cake  {p/sock q/skin r/@}                           ::  top level packet
+++  chan  path                                          ::  channel
 ++  clot                                                ::  symmetric key state
           $:  yed/(unit {p/hand q/code})                ::  outbound
               heg/(map hand code)                       ::  proposed
@@ -42,10 +43,6 @@
           $:  out/@da                                   ::  sent date
               lod/@da                                   ::  lost-by deadline
               clu/clue                                  ::  packet to send
-          ==                                            ::
-++  flex                                                ::  pump actions
-          $%  {$good p/flap q/part r/@dr s/coop}        ::  fragment ack
-              {$send p/flap q/part r/rock}              ::  fragment send
           ==                                            ::
 ++  stat                                                ::  pump statistics
           $:  $:  cur/@ud                               ::  window q length
@@ -65,7 +62,6 @@
 ++  colt                                                ::  outbound state
           $:  seq/tick                                  ::  next tick to fill
               lac/tick                                  ::  acked tick until
-              mis/(map tick (pair path coop))           ::  nonsequential acks
               cob/(map tick comb)                       ::  live messages
               myn/mini                                  ::  packet pump
           ==                                            ::
@@ -79,9 +75,7 @@
 ++  corn                                                ::  flow by server
           $:  hen/duct                                  ::  admin channel
               wab/(map ship bath)                       ::  relationship
-              pod/pond                                  ::  scheduling pond
           ==                                            ::
-++  corp  (unit (each cape coop))                       ::  ack record
 ++  door                                                ::  foreign contact
           $:  wod/road                                  ::  connection to
               wyl/will                                  ::  inferred mirror
@@ -120,41 +114,6 @@
               lun/(unit lane)                           ::  route to friend
               lew/will                                  ::  will of friend
           ==                                            ::
-++  pipe  (pair ship bole)                              ::  session identity
-++  pith                                                ::  ack effect
-          $:  byt/@ud                                   ::  packet bytes
-              lop/@ud                                   ::  num out-of-order
-              rut/(unit @dr)                            ::  roundtrip update
-          ==                                            ::
-++  plan                                                ::  session state
-          $:  unc/(map flap tick)                       ::  packet to message
-              nem/(map tick (pair @ud path))            ::  number unacked /msg
-              chu/(qeu pony)                            ::  queued packets
-          ==                                            ::
-++  plod                                                ::  burst statistics
-          $:  byt/@ud                                   ::  bytes moved
-              ::  bys/@ud                               ::  bandwidth/second
-              rtm/@dr                                   ::  minimum rtt
-              rtg/@dr                                   ::  average rtt
-              rts/@dr                                   ::  smoothed rtt
-          ==                                            ::
-++  plow                                                ::  burst state
-          $:  fax/@da                                   ::  start of burst
-              lax/@da                                   ::  last ack
-              pad/plod                                  ::  statistics
-          ==                                            ::
-++  pond  (tree (pair @da pipe))                        ::  scheduler
-++  pole  (pair flap rock)                              ::  hashed packet
-++  pony  (qual (unit @da) ? tick pole)                 ::  sent/virgin/seq/pack
-++  pomp                                                ::  traverse update
-          $:  byt/@ud                                   ::  bytes received
-              boz/@ud                                   ::  packets lost
-              rut/(unit @dr)                            ::  round-trip update
-          ==                                            ::
-++  puma                                                ::  packet pump
-          $:  max/@ud                                   ::  maximum window
-              cur/@ud                                   ::  current window
-          ==                                            ::
 ++  skin  ?($none $open $fast $full)                    ::  encoding stem
 ++  sufi                                                ::  domestic host
           $:  hoy/(list ship)                           ::  hierarchy
@@ -180,205 +139,424 @@
 ++  msec  |=(a/@dr `@ud`(div a (div ~s1 1.000)))        ::  debug @dr
 ++  move  {p/duct q/(wind note-arvo gift-ames)}         ::  local move
 --
-::  simple packet pump
-::
+::                                                      ::
+::::  outbound cores                                    ::
+  ::                                                    ::
 |%
-++  pume                                                ::
-  |_  $:  fex/(list flex)                               ::  effects
-          mini                                          ::  state
-      ==
-  ::                                                    ::
-  ++  abba                                              ::  a older than b
-    |=  {a/part b/part}
-    |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
-  ::                                                    ::
+++  rail                                                ::  message rail
+  =>  |%                                                ::
+      ++  gift                                          ::
+        $%  {$hear p/chan q/coop}                       ::  message ack
+            {$send p/flap q/rock}                       ::  release packet
+        ==                                              ::
+      ++  note                                          ::
+        $%  {$back p/flap q/coop r/@dr}                 ::  raw ack
+            {$tell p/chan q/*}                          ::  send message
+            {$wake $~}                                  ::  random wakeup
+        ==                                              ::
+      ++  rend  $-({now/@da ham/meal} (list rock))      ::  render message
+      --                                                ::
+  |=  $:  our/@p                                        ::  XX redundant
+          her/@p                                        ::  outgoing peer
+          red/rend                                      ::  message encoder
+      ==                                                ::
+  |=  $:  kos/bole                                      ::  this flow
+          sal/(map bole colt)                           ::  flow table
+      ==                                                ::
+  =|  fex/(list gift)                                   ::  effects
+  =+  ^-  colt                                          ::  state
+      =+  (~(get by sal) kos)
+      ?^  -  u.-
+      :*  0     ::  seq/tick
+          0     ::  lac/tick
+          ~     ::  cob/(map tick comb)
+          ^-  mini
+          :*  ^-  stat
+              :*  :*  0               :: cur/@ud
+                      2               :: max/@ud
+                      0               :: rey/@ud
+                  ==
+                  :*  ~s5             :: rtt/@dr
+                      ~2010.1.1       :: las/@da
+                      ~2010.1.1       :: lad/@da
+              ==  ==
+            ~
+            ~
+      ==  ==
+  =*  cot  -
+  =+  mup=(yawn:pump myn)
+  |%                                                    ::
+  ++  abed  [fex cot]                                   ::  reveal
   ++  abet                                              ::  resolve
-    ^-  {(list flex) mini}
-    =.  .  aver
-    [(flop fex) +<+]
+    ^+  [fex sal]
+    [(flop fex) (~(put by sal) kos `colt`cot)]
   ::                                                    ::
-  ++  aver                                              ::  verify
-    ?>  (lte cur.saw max.saw)
-    ?>  !=(0 max.saw)
-    ?.  =(cur.saw (lent (~(tap to liv))))
-      ~&  [%aver-cur cur.saw (lent (~(tap to liv)))]
-      !!
-    ?>  =(rey.saw (lent (~(tap to lop))))
-    ?>  =+  |=  {a/coal b/coal}
-            &((lth out.a out.b) (lth lod.a lod.b))
-        |-  ?|  ?=($~ liv)
-                ?&  ?|  ?=($~ r.liv) 
-                        ?&  (+< n.r.liv n.liv)
-                            $(liv r.liv)
-                    ==  ==
-                    ?|  ?=($~ l.liv)
-                        ?&  (+< n.liv n.l.liv)
-                            $(liv l.liv)
-                    ==  ==
-                ==
-            ==
-    ?>  =+  |=  {a/part b/part}
-            |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
-        |-  ?|  ?=($~ lop)
-                ?&  ?|  ?=($~ r.lop) 
-                        ?&  (+< tel.n.r.lop tel.n.lop)
-                            $(lop r.lop)
-                    ==  ==
-                    ?|  ?=($~ l.lop) 
-                        ?&  (+< tel.n.lop tel.n.l.lop)
-                            $(lop l.lop)
-                    ==  == 
-                ==
-            ==
-    .
+  ++  view                                              ::  inspect
+    |%                                                  ::
+    ++  bulk                                            ::  queue count
+      ^-  @ud
+      |-(?~(cob 0 :(add 1 $(cob l.cob) $(cob r.cob))))
+    ::                                                  ::
+    ++  wait                                            ::  next wakeup
+      ^-  (unit @da)
+      wait:mup
+    --
   ::                                                    ::
-  ++  back                                              ::  process raw ack
-    |=  {now/@da dam/flap cop/coop lag/@dr}
+  ++  wish                                              ::  operate list
+    |=  {now/@da day/(list note)}
     ^+  +>
-    =-  =/  rtt  ?~(ack ~s0 (sub now out.u.ack))
-        =.  rtt  ?:((gth rtt lag) (sub rtt lag) rtt)
-        (done:(lose(liv lov) ded) ack dam cop rtt)
-    |-  ^-  $:  ack/(unit coal) 
-                ded/(list coal) 
-                lov/(qeu coal)
-            ==
-    ?~  liv  [~ ~ ~]
-    =+  ryt=$(liv r.liv)
-    ?^  ack.ryt
+    ?~(day +> $(day t.day, +> (work now i.day)))
+  ::
+  ++  work                                              ::
+    |=  {now/@da job/note}                              ::  compute
+    ^+  +>
+    =<  +>:wy-abet
+    |%                                                  ::
+    ++  wy-abet  +:wy-able                              ::  resolve
+    ++  wy-able  wy-tire:wy-ably:wy-feed:wy-ably        ::  converge
+    ++  wy-ably                                         ::  drain
+      ^+  .
+      =^  fix  myn  abet:mup
+      =.  mup  (yawn:pump myn)
+      |-  ^+  +>.$
+      ?~  fix  +>.$
+      $(fix t.fix, +>.$ (wy-abut i.fix))
+    ::                                                  ::
+    ++  wy-abut                                         ::  pump effect
+      |=  fic/gift:pump
+      ^+  +>
+      ?-    -.fic
+          $good
+        ::  ~&  [%ok her `@p`(mug p.fic) r.fic]
+        (wy-good q.fic s.fic)
       ::
-      ::  found in front, no need to search back.
+          $send
+        ::  ~&  [%go her `@p`(mug p.fic) q.fic]
+        +>(fex [[%send p.fic r.fic] fex])
+      ==                                                
+    ::                                                  ::
+    ++  wy-back                                         ::  hear an ack
+      |=  {dam/flap cop/coop lag/@dr}
+      ::  ~&  [%wy-back (flam dam) cop lag]
+      +>(mup (work:mup now %back dam cop lag))
+    ::
+    ++  wy-emit
+      |=  fec/gift
+      +>(fex [fec fex])
+    ::                                                  ::
+    ++  wy-feed                                         ::  feed pump
+      ^+  .
+      =^  cly  .  (wy-find want.mup)
+      ::  ~&  [%wy-feed want.mup (lent cly)]
+      +(mup (work:mup now %pack cly))
+    ::                                                  ::
+    ++  wy-find                                         ::  collect packets
+      |=  may/@ud
+      ^-  {(list clue) _+>}
+      =-  [(flop -<) ->]
+      =+  [inx=lac hav=*(list clue)]
+      |-  ^-  {(list clue) _+>.^$}
+      ?:  |(=(0 may) =(inx seq))  [hav +>.^$]
+      =^  hey  +>.^$  (wy-flow inx may hav)
+      $(inx +(inx), may p.hey, hav q.hey)
+    ::                                                  ::
+    ++  wy-flow                                         ::  collect by message
+      |=  {tiq/tick may/@ud hav/(list clue)}
+      =+  mob=(~(got by cob) tiq)
+      |-  ^-  {(pair @ud (list clue)) _+>.^$}
+      ?:  |(=(0 may) ?=($~ cly.mob))
+        [[may hav] +>.^$(cob (~(put by cob) tiq mob))]
+      %=  $
+        may      (dec may)
+        hav      [i.cly.mob hav]
+        cly.mob  t.cly.mob
+      ==
+    ::                                                  ::
+    ++  wy-good                                         ::  handle ack
+      |=  {paz/part cop/coop}
+      ^+  +>
+      =+  bum=(~(get by cob) q.paz)
+      ?:  |(?=($~ bum) =(~ cly.u.bum))  
+        ::  ~&  [%wy-good-ignore paz ?=($~ cop)]
+        +>.$
+      ?^  cop
+        ::
+        ::  a failure; save this nack, clear the message
+        ::
+        ~&  [%wy-good-fail q.paz]
+        %_  +>.$
+          mup  (work:mup now %cull q.paz)
+          cob  (~(put by cob) q.paz u.bum(cly ~, cup `cop))
+        ==
+      ?>  (lth ack.u.bum num.u.bum)
+      =.  ack.u.bum  +(ack.u.bum)
+      =.  cup.u.bum  ?.(=(ack.u.bum num.u.bum) ~ [~ ~])
+      +>.$(cob (~(put by cob) q.paz u.bum))
+    ::                                                  ::
+    ++  wy-tire                                         ::  report results
+      |-  ^+  +
+      =+  zup=(~(get by cob) lac)
+      ?~  zup  +.$
+      ?~  cup.u.zup  +.$
+      ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
+      %=  $
+        lac  +(lac)
+        cob  (~(del by cob) lac)
+        fex  :_(fex [%hear [cha u.cup]:u.zup])
+      ==
+    ::                                                  ::
+    ++  wy-wake                                         ::  timeout
+      ^+  .
+      .(mup (work:mup now %wake ~))
+    ::                                                  ::
+    ++  wy-tell                                         ::  send
+      |=  {cha/chan val/*}
+      ^+  +>
+      =+  pex=(red now [%bond [(mix kos 1) seq] cha val])
+      ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
+      %_    +>.$ 
+          seq  +(seq)
+          cob
+        %+  ~(put by cob)
+          seq
+        ^-  comb
+        :*  ~
+            cha
+            (lent pex)
+            0
+            =+  inx=0
+            |-  ?~  pex  ~
+                :_  $(pex +.pex, inx +(inx))
+                [& [inx seq] (shaf %flap i.pex) i.pex]
+        ==
+      ==
+    --
+  --
+++  pump                                                ::  packet pump
+  =>  |%                                                ::
+      ++  gift                                          ::  effect
+        $%  {$good p/flap q/part r/@dr s/coop}          ::  logical ack
+            {$send p/flap q/part r/rock}                ::  release packet
+        ==                                              ::
+      ++  note                                          ::  event
+        $%  {$back p/flap q/coop r/@dr}                 ::  raw ack
+            {$cull p/tick}                              ::  cancel message
+            {$pack p/(list clue)}                       ::  submit packets
+            {$wake $~}                                  ::  random wakeup
+        ==                                              ::
+      --
+  |%
+  ++  yawn                                              ::
+    |=  myn/mini                                        ::
+    ^+  zu
+    ~(. zu ~ myn)                                       ::
+  ::
+  ++  zu                                                ::  state machine
+    |_  $:  fex/(list gift)                             ::  effects
+            mini                                        ::  state
+        ==
+    ::                                                  ::
+    ++  abba                                            ::  a older than b
+      |=  {a/part b/part}
+      |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
+    ::                                                  ::
+    ++  abet                                            ::  resolve
+      ^-  {(list gift:pump) mini}
+      ::  =.  .  aver
+      [(flop fex) +<+]
+    ::                                                  ::
+    ++  aver                                            ::  verify
+      ?>  (lte cur.saw max.saw)
+      ?>  !=(0 max.saw)
+      ?.  =(cur.saw (lent (~(tap to liv))))
+        ~&  [%aver-cur cur.saw (lent (~(tap to liv)))]
+        !!
+      ?>  =(rey.saw (lent (~(tap to lop))))
+      ?>  =+  |=  {a/coal b/coal}
+              &((lth out.a out.b) (lth lod.a lod.b))
+          |-  ?|  ?=($~ liv)
+                  ?&  ?|  ?=($~ r.liv) 
+                          ?&  (+< n.r.liv n.liv)
+                              $(liv r.liv)
+                      ==  ==
+                      ?|  ?=($~ l.liv)
+                          ?&  (+< n.liv n.l.liv)
+                              $(liv l.liv)
+                      ==  ==
+                  ==
+              ==
+      ?>  =+  |=  {a/part b/part}
+              |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
+          |-  ?|  ?=($~ lop)
+                  ?&  ?|  ?=($~ r.lop) 
+                          ?&  (+< tel.n.r.lop tel.n.lop)
+                              $(lop r.lop)
+                      ==  ==
+                      ?|  ?=($~ l.lop) 
+                          ?&  (+< tel.n.lop tel.n.l.lop)
+                              $(lop l.lop)
+                      ==  == 
+                  ==
+              ==
+      .
+    ::                                                  ::
+    ++  back                                            ::  process raw ack
+      |=  {now/@da dam/flap cop/coop lag/@dr}
+      ^+  +>
+      =-  =/  rtt  ?~(ack ~s0 (sub now out.u.ack))
+          =.  rtt  ?:((gth rtt lag) (sub rtt lag) rtt)
+          (done:(lose(liv lov) ded) ack dam cop rtt)
+      |-  ^-  $:  ack/(unit coal) 
+                  ded/(list coal) 
+                  lov/(qeu coal)
+              ==
+      ?~  liv  [~ ~ ~]
+      =+  ryt=$(liv r.liv)
+      ?^  ack.ryt
+        ::
+        ::  found in front, no need to search back.
+        ::
+        [ack.ryt ded.ryt [n.liv l.liv lov.ryt]]
       ::
-      [ack.ryt ded.ryt [n.liv l.liv lov.ryt]]
-    ::
-    ::  lose unacked packets sent before an acked virgin.
-    ::
-    =+  ^-  $:  top/?
-                ack/(unit coal)
-                ded/(list coal)
-                lov/(qeu coal)
-            ==
-        ?:  =(dam fap.clu.n.liv)
-          [| `n.liv ~ l.liv]
-        [& $(liv l.liv)]
-    ?~  ack  [~ ~ liv]
-    =.  ded  ?:(top [n.liv ded] ded)
-    =.  ded  ?:(vig.clu.u.ack (~(tap to r.liv) ded) ded)
-    =.  lov  ?:(top [n.liv lov ~] lov)
-    [ack ded lov]
-  ::                                                    ::
-  ++  clap                                              ::  ordered enqueue
-    ::
-    ::  the `lop` queue isn't really a queue in case of 
-    ::  resent packets; packets from older messages
-    ::  need to be sent first.  unfortunately hoon.hoon 
-    ::  lacks a general sorted/balanced heap right now.
-    ::  so we implement a balanced queue insert by hand.
-    ::
-    |=  clu/clue
-    %_    +>
-        lop
-      |-  ^+  lop
-      ?~  lop  [clu ~ ~]
-      ?:  ?|  (abba tel.clu tel.n.lop)
-              ?&  =(tel.clu tel.n.lop)
-                  (lth fap.clu fap.n.lop)
-          ==  ==
-        [n.lop l.lop $(lop r.lop)]
-      [n.lop $(lop l.lop) r.lop]
-    ==
-  ::                                                    ::
-  ++  cull                                              ::  clear message
-    |=  tiq/tick
-    %_    +>
-        liv
-      |-  ^+  liv
-      ?~  liv  ~
-      =+  vil=[n.liv $(liv l.liv) $(liv r.liv)]
-      ?.  =(tiq q.tel.clu.n.liv)  vil 
-      ~(nip to `(qeu coal)`vil)
-    ::
-        lop
-      |-  ^+  lop
-      ?~  lop  ~
-      =+  pol=[n.lop $(lop l.lop) $(lop r.lop)]
-      ?:  =(tiq q.tel.n.lop)  pol
-      ~(nip to `(qeu clue)`pol)
-    ==
-  ::                                                    ::
-  ++  done                                              ::  process cooked ack
-    |=  {lyd/(unit coal) dam/flap cop/coop rtt/@dr}
-    ^+  +>
-    ?~  lyd  +>
-    %_  +>
-      cur.saw  (dec cur.saw)
-      fex      [[%good dam tel.clu.u.lyd rtt cop] fex]
-    ==
-  ::                                                    ::
-  ++  fire                                              ::  send a packet
-    |=  {now/@da clu/clue}
-    ^+  +>
-    ?>  (lth cur.saw max.saw)
-    =+  out=?:((lte now las.saw) +(las.saw) now)
-    =+  lod=(add now (mul 2 rtt.saw))
-    =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
-    ::  ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
-    %=  +>.$
-      fex      [[%send fap.clu tel.clu dat.clu] fex]
-      las.saw  out
-      lad.saw  lod
-      cur.saw  +(cur.saw)
-      liv      (~(put to liv) [out lod clu])
-    ==
-  ::                                                    ::
-  ++  flay                                              ::  time out packets
-    |=  now/@da
-    ^+  +>
-    =-  (lose(liv q.ole) p.ole)
-    ^=  ole
-    =|  ded/(list coal)
-    |-  ^+  [p=ded q=liv]
-    ?~  liv  [ded ~]
-    ?:  (gte now lod.n.liv)
+      ::  lose unacked packets sent before an acked virgin.
       ::
-      ::  everything in front of a dead packet is dead
+      =+  ^-  $:  top/?
+                  ack/(unit coal)
+                  ded/(list coal)
+                  lov/(qeu coal)
+              ==
+          ?:  =(dam fap.clu.n.liv)
+            [| `n.liv ~ l.liv]
+          [& $(liv l.liv)]
+      ?~  ack  [~ ~ liv]
+      =.  ded  ?:(top [n.liv ded] ded)
+      =.  ded  ?:(vig.clu.u.ack (~(tap to r.liv) ded) ded)
+      =.  lov  ?:(top [n.liv lov ~] lov)
+      [ack ded lov]
+    ::                                                  ::
+    ++  clap                                            ::  ordered enqueue
       ::
-      =+  foo=(~(tap to r.liv) [n.liv ~])
-      $(liv l.liv, ded (~(tap to r.liv) [n.liv ded]))
-    =+  ryt=$(liv r.liv)
-    [p.ryt [n.liv l.liv q.ryt]]
-  ::                                                    ::
-  ++  lose                                              ::  abandon packets
-    |=  cud/(list coal)
-    ^+  +>
-    ?~  cud  +>
-    =.  +>  (clap clu.i.cud)
-    %=    $
-      cud      t.cud
-      cur.saw  (dec cur.saw)
-      rey.saw  +(rey.saw)
-    ==
-  ::                                                    ::
-  ++  ship                                              ::  send packets
-    |=  {now/@da cly/(list clue)}
-    ^+  +>
-    ?:  (gte cur.saw max.saw)  +>
-    ?:  =(0 rey.saw)
-      ?~  cly  +>
-      $(cly t.cly, +> (fire now i.cly))
-    =^  clu  lop  ~(get to lop)
-    $(+> (fire(rey.saw (dec rey.saw)) now clu))
-  ::                                                    ::
-  ++  wait                                              ::  next wakeup
-    ^-  (unit @da)  
-    =+  tup=`(unit coal)`~(top to liv)
-    ?~(tup ~ `lod.u.tup)
-  ::                                                    ::
-  ++  want                                              ::  window space
-    ^-  @ud
-    ?:  (gte cur.saw max.saw)  0
-    =+  gap=(sub max.saw cur.saw)
-    ?:  (gte rey.saw gap)  0
-    (sub gap rey.saw)
+      ::  the `lop` queue isn't really a queue in case of 
+      ::  resent packets; packets from older messages
+      ::  need to be sent first.  unfortunately hoon.hoon 
+      ::  lacks a general sorted/balanced heap right now.
+      ::  so we implement a balanced queue insert by hand.
+      ::
+      |=  clu/clue
+      %_    +>
+          lop
+        |-  ^+  lop
+        ?~  lop  [clu ~ ~]
+        ?:  ?|  (abba tel.clu tel.n.lop)
+                ?&  =(tel.clu tel.n.lop)
+                    (lth fap.clu fap.n.lop)
+            ==  ==
+          [n.lop l.lop $(lop r.lop)]
+        [n.lop $(lop l.lop) r.lop]
+      ==
+    ::                                                  ::
+    ++  cull                                            ::  clear message
+      |=  tiq/tick
+      %_    +>
+          liv
+        |-  ^+  liv
+        ?~  liv  ~
+        =+  vil=[n.liv $(liv l.liv) $(liv r.liv)]
+        ?.  =(tiq q.tel.clu.n.liv)  vil 
+        ~(nip to `(qeu coal)`vil)
+      ::
+          lop
+        |-  ^+  lop
+        ?~  lop  ~
+        =+  pol=[n.lop $(lop l.lop) $(lop r.lop)]
+        ?:  =(tiq q.tel.n.lop)  pol
+        ~(nip to `(qeu clue)`pol)
+      ==
+    ::                                                  ::
+    ++  done                                            ::  process cooked ack
+      |=  {lyd/(unit coal) dam/flap cop/coop rtt/@dr}
+      ^+  +>
+      ?~  lyd  +>
+      %_  +>
+        cur.saw  (dec cur.saw)
+        fex      [[%good dam tel.clu.u.lyd rtt cop] fex]
+      ==
+    ::                                                  ::
+    ++  fire                                            ::  send a packet
+      |=  {now/@da clu/clue}
+      ^+  +>
+      ?>  (lth cur.saw max.saw)
+      =+  out=?:((lte now las.saw) +(las.saw) now)
+      =+  lod=(add now (mul 2 rtt.saw))
+      =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
+      ::  ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
+      %=  +>.$
+        fex      [[%send fap.clu tel.clu dat.clu] fex]
+        las.saw  out
+        lad.saw  lod
+        cur.saw  +(cur.saw)
+        liv      (~(put to liv) [out lod clu])
+      ==
+    ::                                                  ::
+    ++  flay                                            ::  time out packets
+      |=  now/@da
+      ^+  +>
+      =-  (lose(liv q.ole) p.ole)
+      ^=  ole
+      =|  ded/(list coal)
+      |-  ^+  [p=ded q=liv]
+      ?~  liv  [ded ~]
+      ?:  (gte now lod.n.liv)
+        ::
+        ::  everything in front of a dead packet is dead
+        ::
+        $(liv l.liv, ded (~(tap to r.liv) [n.liv ded]))
+      =+  ryt=$(liv r.liv)
+      [p.ryt [n.liv l.liv q.ryt]]
+    ::                                                  ::
+    ++  lose                                            ::  abandon packets
+      |=  cud/(list coal)
+      ^+  +>
+      ?~  cud  +>
+      =.  +>  (clap clu.i.cud)
+      %=    $
+        cud      t.cud
+        cur.saw  (dec cur.saw)
+        rey.saw  +(rey.saw)
+      ==
+    ::                                                  ::
+    ++  ship                                            ::  send packets
+      |=  {now/@da cly/(list clue)}
+      ^+  +>
+      ?:  (gte cur.saw max.saw)  +>
+      ?:  =(0 rey.saw)
+        ?~  cly  +>
+        $(cly t.cly, +> (fire now i.cly))
+      =^  clu  lop  ~(get to lop)
+      $(+> (fire(rey.saw (dec rey.saw)) now clu))
+    ::                                                  ::
+    ++  wait                                            ::  next wakeup
+      ^-  (unit @da)  
+      =+  tup=`(unit coal)`~(top to liv)
+      ?~(tup ~ `lod.u.tup)
+    ::                                                  ::
+    ++  want                                            ::  window space
+      ^-  @ud
+      ?:  (gte cur.saw max.saw)  0
+      =+  gap=(sub max.saw cur.saw)
+      ?:  (gte rey.saw gap)  0
+      (sub gap rey.saw)
+    ::
+    ++  work                                            ::
+      |=  {now/@da job/note}                            ::  perform 
+      ^+  +>
+      ?-  -.job
+        $back  (back now [p q r]:job)
+        $cull  (cull p.job)
+        $pack  (ship now p.job)
+        $wake  (flay now)
+      ==
+    --
   --
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -854,14 +1032,6 @@
           |=  had/hand                                  ::  hear key tag
           ^-  (unit {code _+>})
           =+  wey=(~(get by heg.caq.dur) had)
-          =.  wey  
-            ?:  |(?=(^ wey) !=(our (sein her)))
-              wey
-            =+  tiq=(end 6 1 (shaf %tick (mix her (shax sec:ex:q:sen))))
-            =+  key=(shax tiq)
-            ::  ~&  [%kuch-ticket her `@p`tiq `@p`(mug key)]
-            ?.  =(had (shaf %hand key))  ~
-            [~ key]
           ?^  wey
             =+  key=u.wey
             :+  ~  key
@@ -949,7 +1119,7 @@
         ::
         ++  zuul                                        ::    zuul:lax:as:go
           |=  {now/@da ham/meal}                        ::  encode message
-          ^-  {(list rock) _+>}
+          ^-  (list rock)
           =<  weft
           |%
           ++  wain                                      ::  message identity
@@ -963,20 +1133,8 @@
             ^-({p/skin q/@} [%none (jam ham)])
           ::
           ++  weft                                      ::  fragment message
-            ^-  {p/(list rock) q/_+>.$}
-            =^  gim  ..weft  wisp
-            :_  +>.$
-            ::  =-  ~&  :~  %zuul-wisp
-            ::              (met 3 q.gim) 
-            ::              (lent pex) 
-            ::              (turn pex |=(a/@ (flam (shaf %flap a))))
-            ::          ==
-            ::      pex
-            =-  ~?  (gth (lent pex) 1)
-                    [%wisp (lent pex)]
-                pex
-            ^=  pex
             ^-  (list rock)
+            =+  gim=wisp
             =+  wit=(met ?:(fak.ton 13 13) q.gim)
             ?<  =(0 wit)
             ?:  |(?=($back -.ham) =(1 wit))
@@ -994,21 +1152,19 @@
             $(ruv t.ruv, inx +(inx))
           ::
           ++  wisp                                      ::  generate message
-            ^-  {{p/skin q/@} q/_..wisp}
+            ^-  {p/skin q/@}
             ?:  =(%carp -.ham)
-              [wasp ..wisp]
+              wasp
             ?:  !=(~ yed.caq.dur)
               ?>  ?=(^ yed.caq.dur)
-              :_  ..wisp
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dur
               (en:r:cluy q.u.yed.caq.dur (jam ham))
             ?:  &(=(~ lew.wod.dur) |(=(%back -.ham)))
-              [wasp ..wisp]
+              wasp
             =^  tuy  +>.$
               ?:(=(~ lew.wod.dur) [*code +>.$] (griz now))
-            :_  ..wisp
             =+  yig=sen
             ::  =+  bil=`will`(pare wyl.dur law.saf)    ::  XX not set
             =+  bil=law.saf                             ::  XX send whole will
@@ -1281,12 +1437,12 @@
     ++  wise                                            ::    wise:am
       |=  {soq/sock hen/duct cha/path val/*}            ::  send request
       ^-  {p/(list boon) q/fort}
-      zork:abet:ve-abet:(ve-wood:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
+      zork:abet:ve-abet:(ve-tell:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
     ::
     ++  wish                                            ::    wise:am
       |=  {soq/sock kos/bole cha/path val/*}            ::  return response
       ^-  {p/(list boon) q/fort}
-      zork:abet:ve-abet:(ve-wood:(vand:(ho:(um p.soq) q.soq) kos) cha val)
+      zork:abet:ve-abet:(ve-tell:(vand:(ho:(um p.soq) q.soq) kos) cha val)
       ::
     ::
     ++  um                                              ::  per server
@@ -1375,7 +1531,7 @@
             ::  don't ack an ack
             ~&  [%conk-acaq (flam dam)]
             +>
-          =^  pex  diz  (zuul:diz now [%back (mix 1 kos) dam cop ~s0])
+          =+  pex=(zuul:diz now [%back (mix 1 kos) dam cop ~s0])
           (busk xong:diz pex)
         ::
         ++  doze                                        ::    doze:ho:um:am
@@ -1576,7 +1732,7 @@
         ::
         ++  ve                                          ::  outbound core
           |_  $:  kos/bole                              ::
-                  mup/_pume                             ::
+                  mup/_zu:pump                          ::
                   colt                                  ::
               ==                                        ::
           ++  ve-abed  [[kos +<+>] +>]:ve-able          ::  raw resolve
@@ -1593,7 +1749,7 @@
           ++  ve-ably                                   ::  apply pump effects
             ^+  .
             =^  fex  myn  abet:mup
-            =.  mup  ~(. pume ~ myn)
+            =.  mup  (yawn:pump myn)
             |-  ^+  +>.$
             ?~  fex  +>.$
             %=    $
@@ -1613,13 +1769,13 @@
           ++  ve-back                                   ::  hear an ack
             |=  {dam/flap cop/coop lag/@dr}
             ::  ~&  [%ve-back (flam dam) cop lag]
-            +>(mup (back:mup now dam cop lag))
+            +>(mup (work:mup now %back dam cop lag))
           ::                                            ::
           ++  ve-feed                                   ::  feed pump
             ^+  .
             =^  cly  .  (ve-find want.mup)
             ::  ~&  [%ve-feed want.mup (lent cly)]
-            +(mup (ship:mup now cly))
+            +(mup (work:mup now %pack cly))
           ::                                            ::
           ++  ve-find                                   ::  collect packets
             |=  may/@ud
@@ -1656,7 +1812,7 @@
               ::
               ~&  [%ve-good-fail q.paz]
               %_  +>.$
-                mup  (cull:mup q.paz)
+                mup  (work:mup now %cull q.paz)
                 cob  (~(put by cob) q.paz u.bum(cly ~, cup `cop))
               ==
             ?>  (lth ack.u.bum num.u.bum)
@@ -1687,10 +1843,10 @@
             ^+  .
             .(mup (flay:mup now))
           ::                                            ::
-          ++  ve-wood                                   ::  send
+          ++  ve-tell                                   ::  send
             |=  {cha/path val/*}
             ^+  +>
-            =^  pex  diz  (zuul:diz now [%bond [(mix kos 1) seq] cha val])
+            =+  pex=(zuul:diz now [%bond [(mix kos 1) seq] cha val])
             ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
             %_    +>.$ 
                 seq  +(seq)
@@ -1714,12 +1870,11 @@
           ^-  colt
           :*  0     ::  seq/tick
               0     ::  lac/tick
-              ~     ::  mis/(map tick (pair path coop))
               ~     ::  cob/(map tick comb)
               ^-  mini
               :*  ^-  stat
                   :*  :*  0               :: cur/@ud
-                          8               :: max/@ud
+                          2               :: max/@ud
                           0               :: rey/@ud
                       ==
                       :*  ~s5             :: rtt/@dr
@@ -1732,7 +1887,7 @@
         ::                                              ::
         ++  vond                                        ::  outgoing core
           |=  {kos/bole cot/colt}
-          ~(. ve kos ~(. pume ~ myn.cot) cot)
+          ~(. ve kos (yawn:pump myn.cot) cot)
         ::                                              ::
         ++  vand                                        ::  response core
           |=  kos/bole
@@ -1867,7 +2022,7 @@
     ?-    -.bon
         $acid  :_(fox [[hen [%give %drop ~]] ~])
         $beer
-      :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~]))
+      :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~]))
       ~&  [%beer p.bon]
       :*  [hen [%slip %c %init p.bon]]
           [hen [%give %init p.bon]]
