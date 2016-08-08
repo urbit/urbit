@@ -1,11 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var TreeDispatcher, TreePersistence, _initialLoad;
+var TreeDispatcher, TreePersistence, _initialLoad, _initialLoadDedup;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
 
 TreePersistence = require('../persistence/TreePersistence.coffee');
 
 _initialLoad = true;
+
+_initialLoadDedup = {};
 
 module.exports = {
   loadPath: function(path, data) {
@@ -24,17 +26,23 @@ module.exports = {
   },
   clearData: function() {
     _initialLoad = false;
+    _initialLoadDedup = {};
     TreePersistence.refresh();
     return TreeDispatcher.handleServerAction({
       type: "clearData"
     });
   },
   sendQuery: function(path, query) {
+    var key;
     if (query == null) {
       return;
     }
     if (_initialLoad) {
-      console.warn("Requesting data druing initial page load", JSON.stringify(path), query);
+      key = path + (JSON.stringify(query));
+      if (!_initialLoadDedup[key]) {
+        _initialLoadDedup[key] = true;
+        console.warn("Requesting data during initial page load", JSON.stringify(path), query);
+      }
     }
     if (path.slice(-1) === "/") {
       path = path.slice(0, -1);
@@ -104,7 +112,7 @@ module.exports = {
   },
   setCurr: function(path, init) {
     if (init == null) {
-      init = true;
+      init = false;
     }
     _initialLoad &= init;
     return TreeDispatcher.handleViewAction({
@@ -915,9 +923,11 @@ module.exports = name("ImagePanel", function(arg) {
 
 
 },{}],10:[function(require,module,exports){
-var a, clas, div, hr, li, query, reactify, recl, ref, ul;
+var a, clas, div, hr, li, query, reactify, recl, ref, ul, util;
 
 clas = require('classnames');
+
+util = require('../utils/util.coffee');
 
 reactify = require('./Reactify.coffee');
 
@@ -929,6 +939,8 @@ ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, hr = ref.hr
 
 module.exports = query({
   kids: {
+    name: 't',
+    bump: 't',
     body: 'r',
     meta: 'j',
     path: 't'
@@ -936,44 +948,8 @@ module.exports = query({
 }, recl({
   displayName: "Kids",
   render: function() {
-    var _k, body, d, elem, k, keyed, keys, kidClas, kidsClas, ref1, ref2, ref3, ref4, sorted, str, v;
-    sorted = true;
-    keyed = {};
-    ref1 = this.props.kids;
-    for (k in ref1) {
-      v = ref1[k];
-      if (this.props.sortBy) {
-        if (this.props.sortBy === 'date') {
-          if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
-            sorted = false;
-            continue;
-          }
-          d = v.meta.date.slice(1).split(".");
-          if (d.length < 3) {
-            sorted = false;
-            continue;
-          }
-          str = d[0] + "-" + d[1] + "-" + d[2];
-          if (d.length > 3) {
-            str += " " + d[3] + ":" + d[4] + ":" + d[5];
-          }
-          _k = Number(new Date(str));
-          keyed[_k] = k;
-        }
-      } else {
-        if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
-          sorted = false;
-        }
-        keyed[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
-      }
-    }
-    if (sorted === false) {
-      keyed = _.keys(this.props.kids);
-    }
-    keys = _.keys(keyed).sort();
-    if (this.props.sortBy === 'date') {
-      keys.reverse();
-    }
+    var body, elem, kidClas, kids, kidsClas;
+    kids = util.sortKids(this.props.kids, this.props.sortBy);
     kidsClas = clas({
       kids: true
     }, this.props.className);
@@ -984,29 +960,28 @@ module.exports = query({
       className: kidsClas,
       key: "kids"
     }, (function() {
-      var i, len, ref5, results;
+      var i, len, results;
       results = [];
-      for (i = 0, len = keys.length; i < len; i++) {
-        k = keys[i];
-        elem = (ref5 = this.props.kids[keyed[k]]) != null ? ref5 : "";
-        body = reactify(elem.body, k, {
+      for (i = 0, len = kids.length; i < len; i++) {
+        elem = kids[i];
+        body = reactify(elem.body, null, {
           basePath: elem.path
         });
         results.push([
           div({
-            key: keyed[k],
-            id: keyed[k],
+            key: elem.name,
+            id: elem.name,
             className: kidClas
           }, body), hr({})
         ]);
       }
       return results;
-    }).call(this));
+    })());
   }
 }));
 
 
-},{"./Async.coffee":2,"./Reactify.coffee":18,"classnames":31}],11:[function(require,module,exports){
+},{"../utils/util.coffee":30,"./Async.coffee":2,"./Reactify.coffee":18,"classnames":31}],11:[function(require,module,exports){
 var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul, util;
 
 clas = require('classnames');
@@ -1039,7 +1014,7 @@ module.exports = query({
     }, this.props.dataType, {
       "default": this.props['data-source'] === 'default'
     }, this.props.className);
-    kids = this.renderList(this.sortedKids());
+    kids = this.renderList(util.sortKids(this.props.kids, this.props.sortBy));
     if (!(kids.length === 0 && (this.props.is404 != null))) {
       return ul({
         className: k
@@ -1051,48 +1026,15 @@ module.exports = query({
       className: 'red inverse block error'
     }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
-  sortedKids: function() {
-    var _k, _keys, k, ref1, ref2, ref3, ref4, sorted, v;
-    if (this.props.sortBy === 'bump') {
-      return _.sortBy(this.props.kids, function(arg) {
-        var bump, name;
-        bump = arg.bump, name = arg.name;
-        return bump || name;
-      }).reverse();
-    }
-    sorted = true;
-    _keys = [];
-    ref1 = this.props.kids;
-    for (k in ref1) {
-      v = ref1[k];
-      if (this.props.sortBy) {
-        if (this.props.sortBy === 'date') {
-          if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
-            return _.keys(this.props.kids).sort();
-          }
-          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
-          _keys[_k] = k;
-        }
-      } else {
-        if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
-          return _.keys(this.props.kids).sort();
-        }
-        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
-      }
-    }
-    if (this.props.sortBy === 'date') {
-      _keys.reverse();
-    }
-    return _.values(_keys);
-  },
   renderList: function(elems) {
-    var _date, author, cont, date, elem, href, i, image, item, len, linked, node, parts, path, preview, ref1, results, title;
+    var _date, author, cont, date, elem, href, i, image, item, len, linked, meta, node, parts, path, preview, ref1, results, title;
     results = [];
     for (i = 0, len = elems.length; i < len; i++) {
       elem = elems[i];
       item = elem.name;
+      meta = (ref1 = elem.meta) != null ? ref1 : {};
       path = this.props.path + "/" + item;
-      if (elem.meta.hide != null) {
+      if (meta.hide != null) {
         continue;
       }
       href = util.basepath(path);
@@ -1102,12 +1044,12 @@ module.exports = query({
       if (this.props.childIsFragment != null) {
         href = (util.basepath(this.props.path)) + "#" + item;
       }
-      if (elem.meta.link) {
-        href = elem.meta.link;
+      if (meta.link) {
+        href = meta.link;
       }
       parts = [];
       title = null;
-      if ((ref1 = elem.meta) != null ? ref1.title : void 0) {
+      if (meta.title) {
         if (this.props.dataType === 'post') {
           title = {
             gn: 'a',
@@ -1120,7 +1062,7 @@ module.exports = query({
                 ga: {
                   className: 'title'
                 },
-                c: [elem.meta.title]
+                c: [meta.title]
               }
             ]
           };
@@ -1130,7 +1072,7 @@ module.exports = query({
             ga: {
               className: 'title'
             },
-            c: [elem.meta.title]
+            c: [meta.title]
           };
         }
       }
@@ -1147,7 +1089,7 @@ module.exports = query({
         };
       }
       if (!this.props.titlesOnly) {
-        _date = elem.meta.date;
+        _date = meta.date;
         if (!_date || _date.length === 0) {
           _date = "";
         }
@@ -1163,7 +1105,7 @@ module.exports = query({
       parts.push(title);
       if (!this.props.titlesOnly) {
         if (this.props.dataType === 'post') {
-          if (elem.meta.image) {
+          if (meta.image) {
             image = {
               gn: 'a',
               ga: {
@@ -1173,7 +1115,7 @@ module.exports = query({
                 {
                   gn: 'img',
                   ga: {
-                    src: elem.meta.image
+                    src: meta.image
                   }
                 }
               ]
@@ -1182,16 +1124,16 @@ module.exports = query({
           }
         }
         if (this.props.dataPreview) {
-          if (!elem.meta.preview) {
+          if (!meta.preview) {
             parts.push.apply(parts, elem.snip.c.slice(0, 2));
           } else {
-            if (elem.meta.preview) {
+            if (meta.preview) {
               preview = {
                 gn: 'p',
                 ga: {
                   className: 'preview'
                 },
-                c: [elem.meta.preview]
+                c: [meta.preview]
               };
             } else {
               preview = elem.snip;
@@ -1200,13 +1142,13 @@ module.exports = query({
           }
         }
         if (this.props.dataType === 'post') {
-          if (elem.meta.author) {
+          if (meta.author) {
             author = {
               gn: 'h3',
               ga: {
                 className: 'author'
               },
-              c: [elem.meta.author]
+              c: [meta.author]
             };
             parts.push(author);
           }
@@ -2370,10 +2312,11 @@ recl = React.createClass;
 ref = React.DOM, ul = ref.ul, li = ref.li, a = ref.a;
 
 module.exports = query({
-  path: 't',
   kids: {
     head: 'r',
-    meta: 'j'
+    meta: 'j',
+    name: 't',
+    path: 't'
   }
 }, recl({
   displayName: "Siblings",
@@ -2389,8 +2332,8 @@ module.exports = query({
     });
   },
   render: function() {
-    var keys, navClas;
-    keys = util.getKeys(this.props.kids);
+    var kids, navClas;
+    kids = util.sortKids(this.props.kids);
     navClas = {
       nav: true,
       'col-md-12': this.props.meta.navmode === 'navbar'
@@ -2401,32 +2344,30 @@ module.exports = query({
     navClas = clas(navClas);
     return ul({
       className: navClas
-    }, keys.map((function(_this) {
-      return function(key) {
-        var className, data, head, href, selected;
-        selected = key === _this.props.curr;
+    }, kids.map((function(_this) {
+      return function(arg) {
+        var className, head, href, meta, name, path, ref1, selected;
+        head = arg.head, meta = (ref1 = arg.meta) != null ? ref1 : {}, name = arg.name, path = arg.path;
+        selected = name === _this.props.curr;
         if (_this.props.meta.navselect) {
-          selected = key === _this.props.meta.navselect;
+          selected = name === _this.props.meta.navselect;
         }
-        href = util.basepath(_this.props.path + "/" + key);
-        data = _this.props.kids[key];
-        if (data.meta) {
-          head = data.meta.title;
-        }
+        href = util.basepath(path);
+        head = meta.title;
         if (head == null) {
-          head = _this.toText(data.head);
+          head = _this.toText(head);
         }
-        head || (head = key);
+        head || (head = name);
         className = clas({
           "nav-item": true,
           selected: selected
         });
-        if (data.meta.sibsclass) {
-          className += " " + clas(data.meta.sibsclass.split(","));
+        if (meta.sibsclass) {
+          className += " " + clas(meta.sibsclass.split(","));
         }
         return li({
           className: className,
-          key: key
+          key: name
         }, a({
           className: "nav-link",
           href: href,
@@ -3092,11 +3033,6 @@ scroll = {
     }
     this.cs = $(window).scrollTop();
     this.cwh = window.innerHeight;
-    if ((this.ls - this.cs) < 0 && this.cwh !== this.lwh) {
-      console.log('current scroll: ' + this.cs);
-      console.log('last scroll: ' + this.ls);
-      console.log('window.innerHeight: ' + window.innerHeight);
-    }
     if (this.w > 767) {
       this.clearNav();
     }
@@ -3208,24 +3144,64 @@ module.exports = {
       return ship.slice(0, 6) + "_" + ship.slice(-6);
     }
   },
-  getKeys: function(kids) {
-    var k, keys, ref, ref1, ref2, sorted, v;
-    sorted = true;
-    keys = [];
-    for (k in kids) {
-      v = kids[k];
-      if ((ref = v.meta) != null ? ref.hide : void 0) {
-        continue;
+  dateFromAtom: function(date) {
+    var __, day, hor, min, mon, ref, sec, str, yer;
+    ref = date.slice(1).split("."), yer = ref[0], mon = ref[1], day = ref[2], __ = ref[3], hor = ref[4], min = ref[5], sec = ref[6];
+    if (day != null) {
+      str = yer + "-" + mon + "-" + day;
+      if (hor != null) {
+        str += " " + hor + ":" + min + ":" + sec;
       }
-      if (((ref1 = v.meta) != null ? ref1.sort : void 0) == null) {
-        sorted = false;
-      }
-      keys[Number((ref2 = v.meta) != null ? ref2.sort : void 0)] = k;
+      return new Date(str);
     }
-    if (sorted !== true) {
-      return keys = _.keys(kids).sort();
-    } else {
-      return keys = _.values(keys);
+  },
+  getKeys: function(kids) {
+    return _.map(this.sortKids(kids), 'name');
+  },
+  sortKids: function(kids, sortBy) {
+    var _k, _kids, date, k, ref, ref1, v;
+    if (sortBy == null) {
+      sortBy = null;
+    }
+    kids = _.filter(kids, function(arg) {
+      var meta;
+      meta = arg.meta;
+      return !(meta != null ? meta.hide : void 0);
+    });
+    switch (sortBy) {
+      case 'bump':
+        return _.sortBy(kids, function(arg) {
+          var bump, name;
+          bump = arg.bump, name = arg.name;
+          return bump || name;
+        }).reverse();
+      case 'date':
+        _kids = [];
+        for (k in kids) {
+          v = kids[k];
+          if (((ref = v.meta) != null ? ref.date : void 0) == null) {
+            return _.sortBy(kids, 'name');
+          }
+          date = this.dateFromAtom(v.meta.date);
+          if (date == null) {
+            return _.sortBy(kids, 'name');
+          }
+          _k = Number(new Date(date));
+          _kids[_k] = v;
+        }
+        return _.values(_kids).reverse();
+      case null:
+        _kids = [];
+        for (k in kids) {
+          v = kids[k];
+          if (((ref1 = v.meta) != null ? ref1.sort : void 0) == null) {
+            return _.sortBy(kids, 'name');
+          }
+          _kids[Number(v.meta.sort)] = v;
+        }
+        return _.values(_kids);
+      default:
+        throw new Error("Unknown sort: " + sortBy);
     }
   }
 };
@@ -3341,12 +3317,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
       }
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 

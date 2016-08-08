@@ -1319,6 +1319,11 @@ ol > li:before {
   line-height: 1rem;
   margin-bottom: 1rem; }
 
+@media (max-width: 767px) {
+  .urbit .post h1.title,
+  .urbit .post img {
+    max-width: 100%; } }
+
 .urbit.post .person {
   margin-bottom: 2rem; }
   .urbit.post .person:first-of-type {
@@ -1340,6 +1345,11 @@ ol > li:before {
 
 .urbit .post img {
   max-width: 32rem; }
+
+@media (max-width: 767px) {
+  .urbit .post img {
+    max-width: 100%;
+    border-width: 6px; } }
 
 .urbit.post .preview {
   display: none; }
