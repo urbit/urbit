@@ -617,8 +617,10 @@
         ta-bel
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
-      (ta-act %clr ~)
-      :: .(+> (se-blit %bel ~))
+      ?:  =(0 (lent buf.say.inp))
+        (ta-act %clr ~)
+        :: .(+> (se-blit %bel ~))
+      ta-bel
     =+  pre=(dec pos.inp)
     (ta-hom %del pre)
   ::
