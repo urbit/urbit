@@ -80,7 +80,7 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  $5                                                ::  version
+  $:  $6                                                ::  version
       gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
@@ -99,8 +99,9 @@
       sec/(map {iden (list @t)} driv)                   ::  security drivers
   ==                                                    ::
 ::
-++  driv  %+  pair  (unit $@($~ vase))                  ::  driver state
-          (qeu (trel duct mark vase:hiss))              ::  waiting requests
+++  driv                                                ::  driver state
+  %+  pair  (unit $@($~ vase))                          ::  main core
+  {liv/? req/(qeu (trel duct mark vase:hiss))}          ::  waiting requests
 ::
 ++  live                                                ::  in flight
   $%  {$exec p/whir}                                    ::  ford build
@@ -1700,7 +1701,7 @@
     ~%  %eyre-v  ..is  ~
     |_  $:  {usr/iden dom/path}
             cor/(unit $@($~ vase))
-            req/(qeu {p/duct q/mark r/vase:hiss})
+            {liv/? req/(qeu {p/duct q/mark r/vase:hiss})}
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
@@ -1756,6 +1757,7 @@
       ^+  abet
       ?~  cor
         build
+      ?.  liv  abet
       =+  ole=~(top to req)
       ?~  ole  abet
       ::  process hiss
@@ -1780,6 +1782,7 @@
       ?+  wir  !!
         ?($receive-auth-query-string $in)  (call %receive-auth-response httr+!>(hit))
         ?($filter-request $out)
+          =.  liv  &
           ?.  (has-arm %filter-response)  (fin-httr !>(hit))
           (call %filter-response httr+!>(hit))
       ==
@@ -1848,6 +1851,7 @@
     ++  do-send
       |=  wir/whir-se  ^-  $-(vase _abet)
       |=  res/vase
+      =.  liv  |  :: block requests until a reponse is given
       (eyre-them wir (slam !>(|=({$send a/hiss} a)) res))
     ::
     ++  handle-moves
@@ -1938,10 +1942,13 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  =+  bolo-4={$4 _%*(+ *bolo lyv *(map duct ^))}
-  |=  old/?(bolo bolo-4)
+  =+  driv-5=_=>(*driv [cor=p req=req.q])
+  =+  bolo-5={$5 _=+(*bolo +.-(sec (~(run by sec.-) driv-5)))}
+  =+  bolo-4={$4 _%*(+ *bolo-5 lyv *(map duct ^))}
+  |=  old/?(bolo bolo-5 bolo-4)
   ?-  -.old
-    $5  ..^$(+>- old)
+    $6  ..^$(+>- old)
+    $5  $(old [%6 +.old(sec (~(run by sec.old) |=(driv-5 [cor & req])))])
     $4  $(old [%5 +.old(lyv ~)])          :: minor leak
   ==
 ::
