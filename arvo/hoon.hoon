@@ -7933,11 +7933,9 @@
   |%
   ++  burn
     =+  gil=*(set span)
-    ~|  %burn
-    %-  need
     |-  ^-  (unit)
     ?-    sut
-        {$atom *}   `?~(q.sut 0 u.q.sut)
+        {$atom *}   q.sut
         {$cell *}   %+  biff  $(sut p.sut) 
                     |=(* (biff ^$(sut q.sut) |=(* `[+>+< +<])))
         {$core *}   (biff $(sut p.sut) |=(* `[p.r.q.sut +<]))
@@ -7954,7 +7952,7 @@
         {$hold *}   ?:  (~(has in gil) sut)
                       ~
                     $(sut repo, gil (~(put in gil) sut))
-        $noun       `0
+        $noun       ~
         $void       ~
     ==
   ::
@@ -8688,8 +8686,11 @@
         {$zinc *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
         {$burn *}
       =+  nef=$(gen p.gen)
-      =+  moc=(mink [burn q.nef] |=({* *} ~))
-      [p.nef ?:(?=($0 -.moc) [%1 p.moc] q.nef)]
+      :-  p.nef
+      =+  cag=burn
+      ?~  cag  q.nef
+      =+  moc=(mink [u.cag q.nef] |=({* *} ~))
+      ?:(?=($0 -.moc) [%1 p.moc] q.nef)
     ::
         {$name *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         {$lead *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
