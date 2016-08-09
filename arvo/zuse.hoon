@@ -430,24 +430,21 @@
     |_  {key/@H mod/bloq ctr/@H}
     ++  en
       ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
-      =|  cts/(list @)
-      =+  str=(flop (rip 3 (~(en ecba key) ctr)))
-      %+  rep  3
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      ?~  str
-        =+  nctr=(inc mod ctr)
-        $(str (flop (rip 3 (~(en ecba key) nctr))), ctr nctr)
-      %=  $
-        cts  :_  cts
-             (mix i.str i.pts)
-        str  t.str
-        pts  t.pts
-      ==
+      |=  txt/@
+      ^-  @ux
+      =/  encrypt  ~(en ecba key)
+      =/  blocks  (met 7 txt)
+      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  bytes   (met 3 txt)
+      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      %+  mix  txt
+      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %+  rep  7
+      %-  flop  ::  stupid backwards AES
+      |-  ^-  (list @ux)
+      ?:  =(blocks 0)  ~
+      :-  (encrypt ctr)
+          $(ctr (inc mod ctr), blocks (dec blocks))
     ++  de  en
     --
   ::
@@ -456,24 +453,21 @@
     |_  {key/@I mod/bloq ctr/@H}
     ++  en
       ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
-      =|  cts/(list @)
-      =+  str=(flop (rip 3 (~(en ecbb key) ctr)))
-      %+  rep  3
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      ?~  str
-        =+  nctr=(inc mod ctr)
-        $(str (flop (rip 3 (~(en ecbb key) nctr))), ctr nctr)
-      %=  $
-        cts  :_  cts
-             (mix i.str i.pts)
-        str  t.str
-        pts  t.pts
-      ==
+      |=  txt/@
+      ^-  @ux
+      =/  encrypt  ~(en ecbb key)
+      =/  blocks  (met 7 txt)
+      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  bytes   (met 3 txt)
+      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      %+  mix  txt
+      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %+  rep  7
+      %-  flop  ::  stupid backwards AES
+      |-  ^-  (list @ux)
+      ?:  =(blocks 0)  ~
+      :-  (encrypt ctr)
+          $(ctr (inc mod ctr), blocks (dec blocks))
     ++  de  en
     --
   ::
@@ -482,24 +476,21 @@
     |_  {key/@I mod/bloq ctr/@H}
     ++  en
       ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
-      =|  cts/(list @)
-      =+  str=(flop (rip 3 (~(en ecbc key) ctr)))
-      %+  rep  3
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      ?~  str
-        =+  nctr=(inc mod ctr)
-        $(str (flop (rip 3 (~(en ecbc key) nctr))), ctr nctr)
-      %=  $
-        cts  :_  cts
-             (mix i.str i.pts)
-        str  t.str
-        pts  t.pts
-      ==
+      |=  txt/@
+      ^-  @ux
+      =/  encrypt  ~(en ecbc key)
+      =/  blocks  (met 7 txt)
+      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  bytes   (met 3 txt)
+      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      %+  mix  txt
+      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %+  rep  7
+      %-  flop  ::  stupid backwards AES
+      |-  ^-  (list @ux)
+      ?:  =(blocks 0)  ~
+      :-  (encrypt ctr)
+          $(ctr (inc mod ctr), blocks (dec blocks))
     ++  de  en
     --
   ::
