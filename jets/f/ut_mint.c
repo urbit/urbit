@@ -615,7 +615,12 @@
 
         {
           u3_noun cag = u3qfu_burn(van, sut);
-          u3_noun wim = u3n_nock_an(cag, u3k(q_nef));
+          u3_noun wim;
+          if ( 0 == cag ) {
+            wim = u3nc(2, 0);
+          } else {
+            wim = u3n_nock_an(u3k(u3t(cag)), u3k(q_nef));
+          }
 
           if ( 0 == u3h(wim) ) {
             fom = u3nc(1, u3k(u3t(wim)));
