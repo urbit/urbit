@@ -302,12 +302,11 @@
   %+  ames-grab  %rue
   .^(ames-tell %a /(scot %p our)/tell/(scot %da now)/(scot %p a))
 ::
-++  responsive                                        ::  filter for connectivity
+++  neighboured                                        ::  filter for connectivity
   |*  a/(list {ship *})  ^+  a
   %+  skim  a
   |=  {b/ship *}
-  =+  rue=(fall (ames-last-seen b) *@da)
-  (gth ~m2 (sub now rue))
+  ?=(^ (ames-last-seen b))
 ::
 ++  shop-galaxies  (available galaxies.office)        ::  unassigned %czar
 ::
@@ -317,7 +316,7 @@
   =^  out  nth  %.(nth (available stars.office))
   ?^  out  [out nth]
   %+  shop-star   nth
-  (responsive (issuing galaxies.office))
+  (neighboured (issuing galaxies.office))
 ::
 ++  shop-star                                         ::  star from galaxies
   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
@@ -331,7 +330,7 @@
   ?^  out  [out nth]
   =^  out  nth
     %+  shop-planet   nth
-    (responsive (issuing stars.office))
+    (neighboured (issuing stars.office))
   ?^  out  [out nth]
   (shop-planet-gal nth (issuing galaxies.office))
 ::
@@ -346,7 +345,7 @@
   ?:  =(~ lax)  [~ nth]
   =^  sel  nth  (in-list lax nth)
   %+  shop-planet   nth
-  (responsive (issuing-under 3 who.sel box.r.sel))
+  (neighboured (issuing-under 3 who.sel box.r.sel))
 ::
 ++  peek-x-shop                                       ::  available ships
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
