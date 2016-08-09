@@ -1706,7 +1706,7 @@
     ++  abet  +>(sec (~(put by sec) +<- +<+))
     ++  execute  |=({a/whir-se b/{beak silk}} (execute:abet se+[a usr dom] b))
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
-    ++  dead-hiss  |=(a/tang (give-sigh:abet(req ~(nap to req)) %| a))
+    ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
     ++  pass-note  |=({a/whir-se b/note} (pass-note:abet se+[a usr dom] b))
     ::  XX block reqs until correct core checked in?
