@@ -1786,16 +1786,16 @@
     ::
     ++  get-made
       |=  {wir/whir-se dep/@uvH res/(each cage tang)}  ^+  abet
-      ?:  ?=($core wir)  (update dep res)
+      ?:  ?=($core wir)  (made-core dep res)
       %.  res
       ?-  wir
-        ?($filter-request $out)             res-out
-        ?($filter-response $res)            res-res
-        ?($receive-auth-response $bak)      res-bak
-        ?($receive-auth-query-string $in)   res-in
+        ?($filter-request $out)             made-filter-request
+        ?($filter-response $res)            made-filter-response
+        ?($receive-auth-response $bak)      made-receive-auth-response
+        ?($receive-auth-query-string $in)   made-receive-auth-query-string
       ==
     ::
-    ++  update
+    ++  made-core
       |=  {dep/@uvH gag/(each cage tang)}
       :: ~&  got-update/dep
       =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
@@ -1804,6 +1804,35 @@
         =.  cor  `~
         pump ::(cor `~)  :: userless %hiss defaults to "nop" driver
       (warn p.gag)
+    ::
+    ++  made-filter-request
+      %+  on-ford-fail  dead-hiss
+      %+  on-error  warn  |.
+      %-  handle-moves  :~
+        give+do-give
+        send+(do-send %filter-request)
+        show+do-show
+      ==
+    ::
+    ++  made-filter-response
+      %+  on-error  dead-hiss  |.
+      %-  handle-moves  :~
+        give+do-give
+        send+(do-send %filter-request)
+        redo+_pump
+      ==
+    ::
+    ++  made-receive-auth-query-string
+      %+  on-error  dead-this  |.
+      (handle-moves send+(do-send %receive-auth-query-string) ~)
+    ::
+    ++  made-receive-auth-response
+      %+  on-error  dead-this  |.
+      %-  handle-moves  :~
+        give+do-give
+        send+(do-send %receive-auth-query-string)
+        redo+_pump(..vi (give-html 200 ~ exit:xml))
+      ==
     ::
     ::  Result handling
     ::
@@ -1861,36 +1890,6 @@
       =+  typ=cor-type
       ~|  %core-mismatch
       ?>((~(nest ut typ) & p.roc) ~)
-    ::
-    ::
-    ++  res-in
-      %+  on-error  dead-this  |.
-      (handle-moves send+(do-send %receive-auth-query-string) ~)
-    ::
-    ++  res-res
-      %+  on-error  dead-hiss  |.
-      %-  handle-moves  :~
-        give+do-give
-        send+(do-send %filter-request)
-        redo+_pump
-      ==
-    ::
-    ++  res-bak
-      %+  on-error  dead-this  |.
-      %-  handle-moves  :~
-        give+do-give
-        send+(do-send %receive-auth-query-string)
-        redo+_pump(..vi (give-html 200 ~ exit:xml))
-      ==
-    ::
-    ++  res-out
-      %+  on-ford-fail  dead-hiss
-      %+  on-error  warn  |.
-      %-  handle-moves  :~
-        give+do-give
-        send+(do-send %filter-request)
-        show+do-show
-      ==
 --  --
 --
 .   ==
