@@ -80,6 +80,7 @@
 ::
 ++  poke-email
   |=  {adr/@ta tyl/tape mez/wall}  ^-  (quip move +>)
+  ?>  =(our.hid src.hid)
   %-  poke-gmail-req  :*
     %post
     /messages/send
@@ -222,7 +223,7 @@
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==
 ::
-++  sigh-tang  |=(a/tang (mean a))
+++  sigh-tang  |=({a/wire b/tang} (mean >gmail+a< b))
 ++  sigh
   |=  a/*
   ~&  a+a
