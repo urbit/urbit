@@ -918,27 +918,26 @@
   ++  as
     |%
     ++  sign
-      |=  {nonc/@ msg/@}
+      |=  {@ msg/@}
       ^-  @ux
       ?~  sek  ~|  %pubkey-only  !!
-      =+  nms=(jam [nonc msg])
-      (jam [(sign:ed nms sgn.u.sek) nms])
+      (jam [(sign:ed msg sgn.u.sek) msg])
     ++  sure
-      |=  {nonc/@ txt/@}
+      |=  {@ txt/@}
       ^-  (unit @ux)
-      =+  ((hard {sig/@ nms/@}) (cue txt))
-      ?.  (veri:ed sig nms sgn.pub)  ~
-      =+  ((hard {n/@ msg/@}) (cue nms))
-      ?.  =(nonc n)  ~
+      =+  ((hard {sig/@ msg/@}) (cue txt))
+      ?.  (veri:ed sig msg sgn.pub)  ~
       (some msg)
     ++  seal
-      |=  {bpk/pass nonc/@ msg/@}
+      |=  {bpk/pass m1/@ m2/@}
       ^-  @ux
       ?~  sek  ~|  %pubkey-only  !!
       ?>  =('b' (end 3 1 bpk))
       =+  pk=(rsh 8 1 (rsh 3 1 bpk))
       =+  shar=(shax (shar:ed pk cry.u.sek))
-      (jam [nonc (~(en siva:aes shar ~[nonc]) msg)])
+      =+  msg=(jam m1 m2)
+      =+  smsg=(sign ~ msg)
+      (jam (~(en siva:aes shar ~) smsg))
     ++  tear
       |=  {bpk/pass txt/@}
       ^-  (unit (pair @ux @ux))
@@ -946,9 +945,12 @@
       ?>  =('b' (end 3 1 bpk))
       =+  pk=(rsh 8 1 (rsh 3 1 bpk))
       =+  shar=(shax (shar:ed pk cry.u.sek))
-      =+  ((hard {nonc/@ iv/@ cph/@}) (cue txt))
-      %+  both  (some nonc)
-      (~(de siva:aes shar ~[nonc]) iv cph)
+      =+  ((hard {iv/@ cph/@}) (cue txt))
+      =+  try=(~(de siva:aes shar ~) iv cph)
+      ?~  try  ~
+      =+  veri=(sure:as:(com:nu:crub bpk) ~ u.try)
+      ?~  veri  ~
+      (some ((hard (pair @ux @ux)) (cue u.veri)))
     --
   ++  de
     |=  {key/@J cph/@}
