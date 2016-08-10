@@ -565,13 +565,13 @@
   ?~  a  .
   ?+      (clan i.a)  ~|(bad-size+(clan i.a) !!)
         $duke
-    ?.  (~(has by stars.office) i.a)
-      $(a t.a, stars.office (~(put by stars.office) i.a ~))
+    ?.  (~(has by planets.office) i.a)
+      $(a t.a, planets.office (~(put by planets.office) i.a ~))
     ~|(already-managing+i.a !!)
   ::
         $king
-    ?.  (~(has by planets.office) i.a)
-      $(a t.a, planets.office (~(put by planets.office) i.a ~))
+    ?.  (~(has by stars.office) i.a)
+      $(a t.a, stars.office (~(put by stars.office) i.a ~))
     ~|(already-managing+i.a !!)
   ::
         $czar
