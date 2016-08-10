@@ -1841,7 +1841,8 @@
     ^-  (unit @ux)
     %+  ~(de siva:aes key ~)
       (end 7 1 cph)
-      (rsh 7 1 cph)
+    (rsh 7 1 cph)
+  ::
   ++  dy  |=({key/@I cph/@} (need (de key cph)))
   ++  en
     |=  {key/@I msg/@}
@@ -3613,18 +3614,18 @@
   $:  dat/typ                                           ::  data
       syg/(set deod)                                    ::  signatures
   ==                                                    ::
-++  wynd  (map @ud ring)                                ::  secret keys
+++  doom  (map @ud ring)                                ::  secret keys
 ++  wyll                                                ::  linear will 
   $:  len/@ud                                           ::
       log/(list (tale lama))                            ::
   ==                                                    ::
 ++  kiss-jael                                           ::  secret operation
   $:  {$auth p/(unit @dr) q/ship r/@uvI}                ::  save capability
+      {$meet p/gyft}                                    ::  adopt will
       {$nigh p/ship q/life}                             ::  track neighbor
       {$ring p/life q/ring}                             ::  save private key
       {$wait p/path}                                    ::  wait on desk/spur
       {$west p/sack q/path r/@ud s/*}                   ::  remote request
-      {$will p/gyft}                                    ::  adopt will
   ==                                                    ::
 ::
 ::::

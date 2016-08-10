@@ -19,7 +19,7 @@
       sec/jael-vault                                    ::  actual secret data
       hut/jael-service                                  ::  waiting ducts
   ==                                                    ::
-++  jael-private  (map ship wyll)                       ::  private keys
+++  jael-private  (map ship doom)                       ::  private keys
 ++  jael-public                                         ::  whole pki
   $:  pki/(map ship jael-urbit)                         ::  
       net/(map ship life)                               ::  reverse version
