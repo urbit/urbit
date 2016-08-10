@@ -617,8 +617,10 @@
         ta-bel
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
-      (ta-act %clr ~)
-      :: .(+> (se-blit %bel ~))
+      ?:  =(0 (lent buf.say.inp))
+        (ta-act %clr ~)
+        :: .(+> (se-blit %bel ~))
+      ta-bel
     =+  pre=(dec pos.inp)
     (ta-hom %del pre)
   ::
@@ -848,9 +850,9 @@
       $dot  ?.  &(?=(^ old.hit) ?=(^ -.old.hit))
               ta-bel
             =+  old=`(list @c)`-.old.hit
-            =+  b=(bwrd (lent old) old nedg)
+            =+  b=(bwrd (lent old) old nace)
             %-  ta-hom(ris ~)
-            (ta-cat pos.inp (slag b old))
+            (ta-cat pos.inp (slag (add b =(0 b)) old))
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel

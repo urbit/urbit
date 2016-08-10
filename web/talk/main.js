@@ -286,8 +286,8 @@ ref = React.DOM, div = ref.div, input = ref.input, textarea = ref.textarea;
 module.exports = recl({
   displayName: "Member",
   render: function() {
-    var k, ship;
-    ship = this.props.ship;
+    var k, ref1, ship;
+    ship = (ref1 = this.props.ship) != null ? ref1 : "";
     k = "ship";
     if (this.props.presence) {
       k += " " + this.props.presence;

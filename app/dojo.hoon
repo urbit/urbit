@@ -1000,7 +1000,10 @@
         :-  num
         ?-    -.source.com
             $data        [%ex %sand %t data.source.com]
-            $dojo        (rash command.source.com dp-build:dp)
+            $dojo
+          %+  rash  command.source.com 
+          (ifix [(punt gap) (punt gap)] dp-build:dp)
+        ::
             $clay
           :-  %ex
           :*  %wish
