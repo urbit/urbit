@@ -219,6 +219,7 @@ J_C_OFILES=\
        jets/c/po.o  \
        jets/c/pow.o \
        jets/c/rap.o \
+       jets/c/rep.o \
        jets/c/rip.o \
        jets/c/rsh.o \
        jets/c/sqt.o \

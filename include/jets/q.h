@@ -62,6 +62,7 @@
     u3_noun u3qc_peg(u3_atom, u3_atom);
     u3_noun u3qc_pow(u3_atom, u3_atom);
     u3_noun u3qc_rap(u3_atom, u3_noun);
+    u3_noun u3qc_rep(u3_atom, u3_noun);
     u3_noun u3qc_rip(u3_atom, u3_atom);
     u3_noun u3qc_rsh(u3_atom, u3_atom, u3_atom);
     u3_noun u3qc_sqt(u3_atom);
