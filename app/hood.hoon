@@ -169,6 +169,7 @@
 ++  poke-womb-recycle         (wrap poke-recycle):from-womb
 ++  poke-womb-manage-old-key  (wrap poke-manage-old-key):from-womb
 ++  poke-womb-release         (wrap poke-release):from-womb
+++  poke-womb-release-ships   (wrap poke-release-ships):from-womb
 ++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
 ++  poke-womb-replay-log      (wrap poke-replay-log):from-womb
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write

@@ -139,6 +139,7 @@
 ++  transaction                                         ::  logged poke
   $%  {$report her/@p wyl/will}
       {$release gal/@ud sta/@ud}
+      {$release-ships (list ship)}
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
       {$invite tid/cord ref/reference inv/invite}
@@ -608,6 +609,7 @@
       $release   (teba (poke-release +.pok.i.a))
       $recycle   (teba (poke-recycle +.pok.i.a))
       $reinvite  (teba (poke-reinvite +.pok.i.a))
+      $release-ships  (teba (poke-release-ships +.pok.i.a))
     ==
   ==
 ::
@@ -778,6 +780,19 @@
   |=  a/planet  ^-  planet
   ?^  a  ~|(impure-planet+[her a] !!)
   (some %| who)
+::
+++  poke-release-ships                                ::  release specific
+  |=  a/(list ship)
+  =<  abet  ^+  +>
+  =.  log-transaction  (log-transaction %release-ships +<)
+  ?>  =(our src)                                      ::  privileged
+  %+  roll  a
+  =+  [who=*@p res=+>.$]
+  |.  ^+  res
+  ?+  (clan who)  ~|(bad-size+(clan who) !!)
+    $king  (release-star who res)
+    $czar  (release-galaxy who res)
+  ==
 ::
 ++  poke-release                                      ::  release to subdivide
   |=  {gal/@ud sta/@ud}                               ::
