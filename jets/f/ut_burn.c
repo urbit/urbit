@@ -58,7 +58,7 @@
     if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3m_bail(c3__fail);
 
-      case c3__noun: return u3nc(u3_nul, 0);
+      case c3__noun: return 0;
       case c3__void: {
         return u3_nul;
       }
@@ -68,11 +68,7 @@
 
       case c3__atom: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        if ( c3y == u3du(q_sut) ) {
-          return u3nc(u3_nul, u3k(u3t(q_sut)));
-        } else {
-          return u3nc(u3_nul, 0);
-        }
+        return u3k(q_sut);
       }
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
@@ -148,17 +144,7 @@
   _cqfu_burn(u3_noun van,
              u3_noun sut)
   {
-    u3_noun unt = _burn_in(van, sut, u3_nul);
-
-    if ( u3_nul == unt ) {
-      return u3m_error("burn");
-    } 
-    else {
-      u3_noun ret = u3k(u3t(unt));
-
-      u3z(unt);
-      return ret;
-    }
+    return _burn_in(van, sut, u3_nul);
   }
 
   u3_noun

@@ -218,6 +218,7 @@ J_C_OFILES=\
        jets/c/po.o  \
        jets/c/pow.o \
        jets/c/rap.o \
+       jets/c/rep.o \
        jets/c/rip.o \
        jets/c/rsh.o \
        jets/c/sqt.o \
@@ -243,6 +244,8 @@ J_D_OFILES=\
        jets/d/by_dif.o
 
 J_E_OFILES=\
+       jets/e/aes_ecb.o \
+       jets/e/aes_cbc.o \
        jets/e/aesc.o \
        jets/e/cue.o \
        jets/e/fl.o \
@@ -265,7 +268,8 @@ J_E_OFILES=\
 J_E_OFILES_ED=\
        jets/e/ed_puck.o \
        jets/e/ed_sign.o \
-       jets/e/ed_veri.o
+       jets/e/ed_veri.o \
+       jets/e/ed_shar.o
 
 J_F_OFILES=\
        jets/f/al.o \
