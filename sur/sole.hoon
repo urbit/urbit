@@ -82,7 +82,7 @@
   ==                                                    ::
 ++  sole-args                                           ::  generator arguments
   |*  _[* *]                                         ::
-  {{now/@da eny/@uvI bek/beak} {+<- +<+}}               ::
+  {{now/@da eny/@uvJ bek/beak} {+<- +<+}}               ::
 ::                                                      ::
 ::                                                      ::
 ++  sole-so                                             ::  construct result

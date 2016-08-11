@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/{desk (list term)} $~}
     ==
 :-  %helm-reload-desk

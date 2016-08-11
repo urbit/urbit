@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/{syd/@tas her/@p sud/@tas $~} $~}
     ==
 :-  %kiln-track

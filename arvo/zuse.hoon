@@ -2208,7 +2208,7 @@
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  bale                                                ::  driver state
   |*  a/_*                                              ::  %jael keys type
-  $:  {our/ship now/@da eny/@uvI byk/beak}              ::  base info
+  $:  {our/ship now/@da eny/@uvJ byk/beak}              ::  base info
       {usr/iden dom/(list @t)}                          ::  req user, domain
       key/a                                             ::  secrets from %jael
   ==                                                    ::
@@ -2261,7 +2261,7 @@
             ==                                          ::
             $:  ost/bone                                ::  opaque cause
                 act/@ud                                 ::  change number
-                eny/@uvI                                ::  entropy
+                eny/@uvJ                                ::  entropy
                 now/@da                                 ::  current time
                 byk/beak                                ::  load source
         ==  ==                                          ::

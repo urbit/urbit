@@ -11162,7 +11162,7 @@
 ::
 ++  poke                                                ::  external apply
   |=  {now/@da ovo/ovum}
-  =.  eny  (mix eny (shax now))
+  =.  eny  (mix eny (shaz now))
   ::  ~&  [%poke -.q.ovo]
   ^-  {(list ovum) _+>}
   =^  zef  niz
