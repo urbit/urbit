@@ -468,14 +468,14 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 }
 #endif
 
-/* u3_sist_rand(): fill a 256-bit (8-word) buffer.
+/* u3_sist_rand(): fill a 512-bit (16-word) buffer.
 */
 void
 u3_sist_rand(c3_w* rad_w)
 {
   c3_i fid_i = open(DEVRANDOM, O_RDONLY);
 
-  if ( 32 != read(fid_i, (c3_y*) rad_w, 32) ) {
+  if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
     c3_assert(!"lo_rand");
   }
   close(fid_i);
@@ -611,7 +611,7 @@ _sist_zest()
   //  Generate a 31-bit salt.
   //
   {
-    c3_w rad_w[8];
+    c3_w rad_w[16];
 
     c3_rand(rad_w);
     sal_l = (0x7fffffff & rad_w[0]);
@@ -620,7 +620,7 @@ _sist_zest()
   //  Create and save a passcode.
   //
   {
-    c3_w rad_w[8];
+    c3_w rad_w[16];
     u3_noun pas;
 
     c3_rand(rad_w);
@@ -1222,10 +1222,10 @@ _sist_rest()
 static u3_noun
 _sist_zen()
 {
-  c3_w rad_w[8];
+  c3_w rad_w[16];
 
   c3_rand(rad_w);
-  return u3i_words(8, rad_w);
+  return u3i_words(16, rad_w);
 }
 
 /* u3_sist_boot(): restore or create.
