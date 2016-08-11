@@ -142,6 +142,7 @@
       {$release-ships (list ship)}
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
+      {$bonus tid/cord pla/@ud sta/@ud}
       {$invite tid/cord ref/reference inv/invite}
       {$reinvite aut/passcode inv/invite}
   ==
@@ -604,6 +605,7 @@
       +>
     ?-  -.pok.i.a
       $claim     (teba (poke-claim +.pok.i.a))
+      $bonus    (teba (poke-bonus +.pok.i.a))
       $invite    (teba (poke-invite +.pok.i.a))
       $report    (teba (poke-report +.pok.i.a))
       $release   (teba (poke-release +.pok.i.a))
@@ -611,6 +613,19 @@
       $reinvite  (teba (poke-reinvite +.pok.i.a))
       $release-ships  (teba (poke-release-ships +.pok.i.a))
     ==
+  ==
+::
+++  poke-bonus                                        ::  expand invitation
+  |=  {tid/cord pla/@ud sta/@ud}
+  =<  abet
+  =.  log-transaction  (log-transaction %bonus +<)
+  ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
+  =/  pas  ~|(bad-invite+tid `passcode`(slav %uv tid))
+  %_    .
+      bureau
+    %+  ~(put by bureau)  (shaf %pass pas)
+    =/  bal  ~|(%bad-passcode (~(got by bureau) (shaf %pass pas)))
+    bal(planets (add pla planets.bal), stars (add sta stars.bal))
   ==
 ::
 ++  poke-invite                                       ::  create invitation
