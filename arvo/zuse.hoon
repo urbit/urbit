@@ -430,24 +430,21 @@
     |_  {key/@H mod/bloq ctr/@H}
     ++  en
       ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
-      =|  cts/(list @)
-      =+  str=(flop (rip 3 (~(en ecba key) ctr)))
-      %+  rep  3
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      ?~  str
-        =+  nctr=(inc mod ctr)
-        $(str (flop (rip 3 (~(en ecba key) nctr))), ctr nctr)
-      %=  $
-        cts  :_  cts
-             (mix i.str i.pts)
-        str  t.str
-        pts  t.pts
-      ==
+      |=  txt/@
+      ^-  @ux
+      =/  encrypt  ~(en ecba key)
+      =/  blocks  (met 7 txt)
+      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  bytes   (met 3 txt)
+      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      %+  mix  txt
+      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %+  rep  7
+      %-  flop  ::  stupid backwards AES
+      |-  ^-  (list @ux)
+      ?:  =(blocks 0)  ~
+      :-  (encrypt ctr)
+          $(ctr (inc mod ctr), blocks (dec blocks))
     ++  de  en
     --
   ::
@@ -456,24 +453,21 @@
     |_  {key/@I mod/bloq ctr/@H}
     ++  en
       ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
-      =|  cts/(list @)
-      =+  str=(flop (rip 3 (~(en ecbb key) ctr)))
-      %+  rep  3
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      ?~  str
-        =+  nctr=(inc mod ctr)
-        $(str (flop (rip 3 (~(en ecbb key) nctr))), ctr nctr)
-      %=  $
-        cts  :_  cts
-             (mix i.str i.pts)
-        str  t.str
-        pts  t.pts
-      ==
+      |=  txt/@
+      ^-  @ux
+      =/  encrypt  ~(en ecbb key)
+      =/  blocks  (met 7 txt)
+      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  bytes   (met 3 txt)
+      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      %+  mix  txt
+      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %+  rep  7
+      %-  flop  ::  stupid backwards AES
+      |-  ^-  (list @ux)
+      ?:  =(blocks 0)  ~
+      :-  (encrypt ctr)
+          $(ctr (inc mod ctr), blocks (dec blocks))
     ++  de  en
     --
   ::
@@ -482,24 +476,21 @@
     |_  {key/@I mod/bloq ctr/@H}
     ++  en
       ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 3 txt)))
-      =|  cts/(list @)
-      =+  str=(flop (rip 3 (~(en ecbc key) ctr)))
-      %+  rep  3
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      ?~  str
-        =+  nctr=(inc mod ctr)
-        $(str (flop (rip 3 (~(en ecbc key) nctr))), ctr nctr)
-      %=  $
-        cts  :_  cts
-             (mix i.str i.pts)
-        str  t.str
-        pts  t.pts
-      ==
+      |=  txt/@
+      ^-  @ux
+      =/  encrypt  ~(en ecbc key)
+      =/  blocks  (met 7 txt)
+      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  bytes   (met 3 txt)
+      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      %+  mix  txt
+      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %+  rep  7
+      %-  flop  ::  stupid backwards AES
+      |-  ^-  (list @ux)
+      ?:  =(blocks 0)  ~
+      :-  (encrypt ctr)
+          $(ctr (inc mod ctr), blocks (dec blocks))
     ++  de  en
     --
   ::
@@ -662,7 +653,7 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  {@uxH @ux}
+      ^-  (pair @uxH @ux)
       =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
       =+  iv=(s2va k1 (weld vec (limo ~[txt])))
       :-
@@ -686,7 +677,7 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  {@uxH @ux}
+      ^-  (pair @uxH @ux)
       =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
       =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
       :-
@@ -710,7 +701,7 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  {@uxH @ux}
+      ^-  (pair @uxH @ux)
       =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
       =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
       :-
@@ -927,49 +918,51 @@
   ++  as
     |%
     ++  sign
-      |=  {nonc/@ msg/@}
+      |=  {@ msg/@}
       ^-  @ux
       ?~  sek  ~|  %pubkey-only  !!
-      =+  nms=(jam [nonc msg])
-      (jam [(sign:ed nms sgn.u.sek) nms])
+      (jam [(sign:ed msg sgn.u.sek) msg])
     ++  sure
-      |=  {nonc/@ txt/@}
+      |=  {@ txt/@}
       ^-  (unit @ux)
-      =+  ((hard {sig/@ nms/@}) (cue txt))
-      ?.  (veri:ed sig nms sgn.pub)  ~
-      =+  ((hard {n/@ msg/@}) (cue nms))
-      ?.  =(nonc n)  ~
+      =+  ((hard {sig/@ msg/@}) (cue txt))
+      ?.  (veri:ed sig msg sgn.pub)  ~
       (some msg)
     ++  seal
-      |=  {bpk/pass nonc/@ msg/@}
+      |=  {bpk/pass m1/@ m2/@}
       ^-  @ux
       ?~  sek  ~|  %pubkey-only  !!
       ?>  =('b' (end 3 1 bpk))
       =+  pk=(rsh 8 1 (rsh 3 1 bpk))
       =+  shar=(shax (shar:ed pk cry.u.sek))
-      (jam [nonc (~(en siva:aes shar ~[nonc]) msg)])
+      =+  msg=(jam m1 m2)
+      =+  smsg=(sign ~ msg)
+      (jam (~(en siva:aes shar ~) smsg))
     ++  tear
       |=  {bpk/pass txt/@}
-      ^-  (unit {@ux @ux})
+      ^-  (unit (pair @ux @ux))
       ?~  sek  ~|  %pubkey-only  !!
       ?>  =('b' (end 3 1 bpk))
       =+  pk=(rsh 8 1 (rsh 3 1 bpk))
       =+  shar=(shax (shar:ed pk cry.u.sek))
-      =+  ((hard {nonc/@ iv/@ cph/@}) (cue txt))
-      %+  both  (some nonc)
-      (~(de siva:aes shar ~[nonc]) iv cph)
+      =+  ((hard {iv/@ cph/@}) (cue txt))
+      =+  try=(~(de siva:aes shar ~) iv cph)
+      ?~  try  ~
+      =+  veri=(sure:as:(com:nu:crub bpk) ~ u.try)
+      ?~  veri  ~
+      (some ((hard (pair @ux @ux)) (cue u.veri)))
     --
   ++  de
-    |=  {key/@I cph/@}
+    |=  {key/@J cph/@}
     ^-  (unit @ux)
-    %+  ~(de siva:aes key ~)
+    %+  ~(de sivc:aes (shaz key) ~)
       (end 7 1 cph)
       (rsh 7 1 cph)
   ++  dy  |=({key/@I cph/@} (need (de key cph)))
   ++  en
-    |=  {key/@I msg/@}
+    |=  {key/@J msg/@}
     ^-  @ux
-    (cat 7 (~(en siva:aes key ~) msg))
+    (cat 7 (~(en sivc:aes (shaz key) ~) msg))
   ++  ex
     |%
     ++  fig  ^-  @uvH  (shaf %bfig sgn.^pub)
@@ -983,53 +976,45 @@
     |%
     ++  pit
       |=  {w/@ seed/@}
-      =+  bits=(shaz seed)  ::  need 512 bits
-      =+  [c=(rsh 8 1 seed) s=(end 8 1 seed)]
+      =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
+      =+  bits=(shal wid seed)
+      =+  [c=(rsh 8 1 bits) s=(end 8 1 bits)]
       ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
     ++  nol
       |=  a/ring
-      =+  [c=(rsh 8 1 a) s=(end 8 1 a)]
+      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+      ~|  %not-crub-seckey  ?>  =('B' mag)
+      =+  [c=(rsh 8 1 bod) s=(end 8 1 bod)]
       ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
     ++  com
       |=  a/pass
-      ..nu(pub [cry=(rsh 8 1 a) sgn=(end 8 1 a)], sek ~)
+      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+      ~|  %not-crub-pubkey  ?>  =('b' mag)
+      ..nu(pub [cry=(rsh 8 1 bod) sgn=(end 8 1 bod)], sek ~)
     --
   --
 ::
-++  brew                                                ::  create keypair
-  |=  {a/@ b/@}                                         ::  width seed
-  ^-  acru
-  (pit:nu:crub a b)
-::
-++  hail                                                ::  activate public key
-  |=  a/pass
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('b' mag)
-  (com:nu:crub bod)
-::
-++  wear                                                ::  activate secret key
-  |=  a/ring
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('B' mag)
-  (nol:nu:crub bod)
-::
-++  trub                                                ::  test ed
-  |=  msg/@tas
-  ^-  @
-  =+  ali=(brew 1.024 (cat 8 (shax 'ali') (shad 'ali')))
-  =+  bob=(brew 1.024 (cat 8 (shax 'bob') (shad 'bob')))
-  =+  tef=(sign:as.ali [0 msg])
-  =+  lov=(sure:as.ali [0 tef])
-  ?.  &(?=(^ lov) =(msg u.lov))
-    ~|(%test-fail-sign !!)
-  =+  key=(shax (shax (shax msg)))
-  =+  sax=(seal:as.ali pub:ex.bob key msg)
-  =+  tin=(tear:as.bob pub:ex.ali sax)
-  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
-    ~|(%test-fail-seal !!)
-  msg
+++  trub                                                ::  test crub
+  |=  msg/@t
+  ::  make acru cores
+  =/  ali      (pit:nu:crub 512 (shaz 'Alice'))
+  =/  ali-pub  (com:nu:crub pub:ex.ali)
+  =/  bob      (pit:nu:crub 512 (shaz 'Robert'))
+  =/  bob-pub  (com:nu:crub pub:ex.bob)
+  ::  alice signs and encrypts a symmetric key to bob
+  =/  secret-key  %-  shaz
+      'Let there be no duplicity when taking a stand against him.'
+  =/  signed-key   (sign:as.ali ~ secret-key)
+  =/  crypted-key  (seal:as.ali pub:ex.bob-pub ~ signed-key)
+  ::  bob decrypts and verifies
+  =/  decrypt-key-attempt  (tear:as.bob pub:ex.ali-pub crypted-key)
+  =/  decrypted-key    ~|  %decrypt-fail  (need decrypt-key-attempt)
+  =/  verify-key-attempt   (sure:as.ali-pub ~ q.decrypted-key)
+  =/  verified-key     ~|  %verify-fail  (need verify-key-attempt)
+  ::  bob encrypts with symmetric key
+  =/  crypted-msg  (en.bob verified-key msg)
+  ::  alice decrypts with same key
+  `@t`(dy.ali secret-key crypted-msg)
 ::
 ++  hmac                                                ::  HMAC-SHA1
   |=  {key/@ mes/@}
@@ -2179,6 +2164,12 @@
     $duke  (end 4 1 who)
     $earl  (end 5 1 who)
     $pawn  `@p`0
+  ==
+::
+++  team                                                ::  our / our moon
+  |=  {our/@p him/@p}
+  ?|  =(our him)
+      &(?=($earl (clan him)) =(our (sein him)))
   ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bI, Arvo structures          ::
