@@ -727,6 +727,11 @@
     $(a t.a)
   [i=u.c t=$(a t.a)]
 ::
+++  oust                                                ::  remove
+  ~/  %oust
+  |*  {{a/@ b/@} c/(list)}
+  (weld (scag a c) (slag (add a b) c))
+::
 ++  reap                                                ::  replicate
   ~/  %reap
   |*  {a/@ b/*}
