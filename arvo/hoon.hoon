@@ -1192,7 +1192,7 @@
       /holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\
       /losdilforpilramtirwintadbicdifrocwidbisdasmidlop\
       /rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\
-      /ritpodmottamtolsavposnapnopsomfinfonbandorworsip\
+      /ritpodmottamtolsavposnapnopsomfinfonbanmorworsip\
       /ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\
       /sivtagpadsaldivdactansidfabtarmonranniswolmispal\
       /lasdismaprabtobrollatlonnodnavfignomnibpagsopral\
@@ -4620,16 +4620,16 @@
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(sum fo 65.535) l (muk (snag n raku) 4 r))
-    (~(sum fo 65.536) l (muk (snag n raku) 4 r))
+      (~(sum fo 65.535) l (muk (snag n raku) 2 r))
+    (~(sum fo 65.536) l (muk (snag n raku) 2 r))
   ::
   ++  rund                                              ::  reverse round
     |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(dif fo 65.535) l (muk (snag n raku) 4 r))
-    (~(dif fo 65.536) l (muk (snag n raku) 4 r))
+      (~(dif fo 65.535) l (muk (snag n raku) 2 r))
+    (~(dif fo 65.536) l (muk (snag n raku) 2 r))
   ::
   ++  raku
     ^-  (list @ux)
