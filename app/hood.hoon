@@ -161,6 +161,7 @@
 ++  poke-womb-invite          (wrap poke-invite):from-womb
 ++  poke-womb-save            (wrap poke-save):from-womb
 ++  poke-womb-obey            (wrap poke-obey):from-womb
+++  poke-womb-bonus           (wrap poke-bonus):from-womb
 ++  poke-womb-claim           (wrap poke-claim):from-womb
 ++  poke-womb-do-ticket       (wrap poke-do-ticket):from-womb
 ++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
