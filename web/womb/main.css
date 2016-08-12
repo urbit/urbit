@@ -1,0 +1,28 @@
+.first-a {
+  padding-top: 0;
+  margin-top: -.7rem;
+}
+
+.recycling div.label {
+  color: #000;
+  padding: 0;
+  min-width: 4rem;
+  text-align: left;
+  vertical-align: bottom;
+  line-height: 1rem;
+  display: block;
+  margin-top: 1rem;
+  padding-bottom: .3rem;
+}
+
+.recycling span.label {
+  margin-left: 1rem;
+}
+
+.recycling div.label-warning {
+  margin-top: 1rem;
+}
+
+.recycling input {
+  width: 60%;
+}

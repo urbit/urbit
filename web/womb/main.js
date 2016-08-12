@@ -287,7 +287,7 @@ module.exports = name("Claim", FromStore("pass", function(arg) {
     onInputPass: Actions.setPasscode
   }), pass ? rele(Balance, {
     pass: pass
-  }) : rele(InfoBox, {}, "What if I have an old ticket?", "Old tickets can be converted to a balance:", rele(Recycling, {})));
+  }) : p({}, h3({}, "Convert an old ticket"), rele(Recycling, {})));
 }));
 
 
@@ -441,17 +441,14 @@ Ships = require('./Ships.coffee');
 
 rele = React.createElement;
 
-NET = true;
+NET = false;
 
 ref = React.DOM, div = ref.div, h3 = ref.h3, h4 = ref.h4;
 
 module.exports = function() {
   return div({}, h3({
-    className: 'first',
-    style: {
-      lineHeight: '1.5rem'
-    }
-  }, "Check your balance"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0);
+    className: 'first-a'
+  }, "Claim an invite"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0);
 };
 
 
@@ -569,6 +566,7 @@ Recycling = recl({
   render: function() {
     var getMail, getShip, getTick, mail, ref1, ship, tick;
     getShip = rele(ShipInput, {
+      placeholder: 'some-ship',
       length: 14,
       oldFormat: true,
       onInputShip: (function(_this) {
@@ -580,6 +578,7 @@ Recycling = recl({
       })(this)
     });
     getTick = rele(ShipInput, {
+      placeholder: 'some-sample-ticket-code',
       length: 28,
       oldFormat: true,
       onInputShip: (function(_this) {
@@ -600,7 +599,15 @@ Recycling = recl({
       })(this)
     });
     ref1 = this.state, ship = ref1.ship, tick = ref1.tick, mail = ref1.mail;
-    return div({}, div({}, "Planet", getShip, (ship ? Label("✓", "success") : void 0)), div({}, "Ticket", getTick, (tick ? Label("✓", "success") : void 0)), div({}, "Email", getMail, (mail ? Label("✓", "success") : void 0)), ship && tick ? rele(RecycleTicket, {
+    return div({
+      className: "recycling"
+    }, "To convert an old ship and ticket, input your information here.", div({}, div({
+      className: 'label'
+    }, "Planet"), getShip, (ship ? Label("✓", "success") : void 0)), div({}, div({
+      className: 'label'
+    }, "Ticket"), getTick, (tick ? Label("✓", "success") : void 0)), div({}, div({
+      className: 'label'
+    }, "Email"), getMail, (mail ? Label("✓", "success") : void 0)), ship && tick ? rele(RecycleTicket, {
       ship: ship,
       tick: tick,
       mail: mail
@@ -728,10 +735,12 @@ name = function(displayName, component) {
 };
 
 module.exports = name("ShipInput", function(arg) {
-  var defaultValue, length, oldFormat, onInputShip;
-  onInputShip = arg.onInputShip, length = arg.length, defaultValue = arg.defaultValue, oldFormat = arg.oldFormat;
+  var defaultValue, length, oldFormat, onInputShip, placeholder;
+  onInputShip = arg.onInputShip, length = arg.length, defaultValue = arg.defaultValue, oldFormat = arg.oldFormat, placeholder = arg.placeholder;
   return input({
     defaultValue: defaultValue,
+    placeholder: placeholder,
+    className: 'mono',
     onChange: function(arg1) {
       var ship, target;
       target = arg1.target;

@@ -4,7 +4,7 @@
 /?    310
 ;module(nav_title "Hello", nav_no-dpad "", nav_no-sibs "")
   ;script@"/~/at/=home=/web/lib/js/urb.js";
-  ;link/"/womb/main.css"(rel "stylesheet");
+  ;link/"./main.css"(rel "stylesheet");
   ;script@"./main.js";
 ::   ;h3: Warning: planet and star names not final.
 ::   ;p
