@@ -1775,10 +1775,10 @@
     ++  get-req   |=(a/{mark vase:hiss} pump(req (~(put to req) hen a)))
     ++  get-thou
       |=  {wir/whir-se hit/httr}
+      =.  liv  &
       ?+  wir  !!
         ?($receive-auth-query-string $in)  (call %receive-auth-response httr+!>(hit))
         ?($filter-request $out)
-          =.  liv  &
           ?.  (has-arm %filter-response)  (fin-httr !>(hit))
           (call %filter-response httr+!>(hit))
       ==
