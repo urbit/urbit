@@ -4,7 +4,7 @@
 /?    310
 /+    womb
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         $~
         who/(unit @p)
     ==
