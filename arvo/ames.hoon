@@ -54,6 +54,10 @@
                   lad/@da                               ::  last deadline
               ==                                        ::
           ==                                            ::
+++  mind                                                ::
+          $:  pol/(map ship pipe)                       ::  cached cryptostate
+              
+          ==                                            ::
 ++  mini                                                ::  pump data
           $:  saw/stat                                  ::  statistics
               liv/(qeu coal)                            ::  live packets
@@ -72,6 +76,9 @@
               ack/frag                                  ::  number acked
               cly/(list clue)                           ::  left to send
           ==                                            ::
+++  silo                                                ::  network state
+          $:  hen/duct                                  ::  
+          ==
 ++  corn                                                ::  flow by server
           $:  hen/duct                                  ::  admin channel
               wab/(map ship bath)                       ::  relationship
@@ -136,15 +143,52 @@
               fak/?                                     ::
           ==                                            ::
 ++  wund  (list {p/life q/ring r/acru})                 ::  mace in action
---
-::                                                      ::  ::
-::::                                                    ::::::  arvo structures
-  ::                                                    ::  ::
+--                                                      ::
+::                                                      ::  
+::::                                                    ::::  arvo structures
+  ::                                                    ::
 |%                                                      ::
 ++  flam  |=(a/flap `@p`(mug a))                        ::  debug flap
 ++  msec  |=(a/@dr `@ud`(div a (div ~s1 1.000)))        ::  debug @dr
 ++  move  {p/duct q/(wind note-arvo gift-ames)}         ::  local move
 --
+::
+::::  loft
+  ::
+++  loft                                                ::  packet transceiver
+  =>  |%
+      ++  gift                                          ::
+        $%  {$drop $~}                                  ::  drop w/o penalty
+            {$home p/lane q/@}                          ::  route to self
+            {$east p/*}                                 ::  network response
+            {$mass p/mass}                              ::  memory usage
+            {$rest p/coop}                              ::  message result
+            {$send p/lane q/@}                          ::  transmit packet
+        ==                                              ::
+      ++  card                                          ::
+        $%  {%west p/ship q/chan r/*}
+        ==
+      ++  note
+        $%  $:  %g
+                $%  {$west p/ship q/chan q/
+                $%  {$c card-ames}                            ::  to %clay
+              {$e card-ames}                            ::  to %eyre
+              {$g card-ames}                            ::  to %gall
+          ==                                            ::  
+                ==
+            ==
+        ==
+      ++  kiss
+        $%  {$
+        ==
+      --
+  =|  $:  our/@p
+          see/$+(ship pipe)
+      == 
+  $:  fab/(map ship bath)
+              
+          fex/(list ames-gift)
+      ==
   ::
   ::::  inbound cores
     ::
@@ -156,7 +200,7 @@
   =>  |%
       ++  gift                                          ::  side effect
         $%  {$link key/code}                            ::  learn symmetric key
-            {$meet doy/gyft}                            ::  learn public key
+            {$meet doy/gyft}                            ::  learn public key(s)
         ==                                              ::
       --
   |=  {our/@p him/@p det/pipe}
@@ -204,7 +248,7 @@
             {$meet doy/gyft}                            ::  learn public key
             {$sack kos/bole dam/flap cop/coop}          ::  send ack
         ==                                              ::
-      ++  note                                          ::  event
+      ++  kiss                                          ::  event
         $%  {$done kos/bole cop/coop}                   ::  commit message
             {$hear dam/flap syn/skin msg/@}             ::  raw packet
         ==                                              ::
@@ -222,7 +266,7 @@
     |=  {fel/flea dam/flap}                             :::
     
   ++  work
-    |=  job/note
+    |=  job/kiss
     ?-    -.job
         $done
     ==
@@ -255,7 +299,7 @@
     |=(fog/(list gift) +>(fex (weld (flop fog) fex)))
   ::
   ++  hy-work
-    |=  job/note
+    |=  job/kiss
     ^+  +>
     ?-  -.job
       %done  (hy-done +.job)
@@ -396,7 +440,7 @@
         $%  {$hear p/chan q/coop}                       ::  message ack
             {$send p/flap q/rock}                       ::  release packet
         ==                                              ::
-      ++  note                                          ::
+      ++  kiss                                          ::
         $%  {$back p/flap q/coop r/@dr}                 ::  raw ack
             {$tell p/chan q/*}                          ::  send message
             {$wake $~}                                  ::  random wakeup
@@ -424,12 +468,12 @@
     --
   ::                                                    ::
   ++  wish                                              ::  operate list
-    |=  {now/@da day/(list note)}
+    |=  {now/@da day/(list kiss)}
     ^+  +>
     ?~(day +> $(day t.day, +> (work now i.day)))
   ::
   ++  work                                              ::
-    |=  {now/@da job/note}                              ::  compute
+    |=  {now/@da job/kiss}                              ::  compute
     ^+  +>
     =<  +>:wy-abet
     |%                                                  ::
@@ -580,7 +624,7 @@
         $%  {$good p/flap q/part r/@dr s/coop}          ::  logical ack
             {$send p/flap q/part r/rock}                ::  release packet
         ==                                              ::
-      ++  note                                          ::  event
+      ++  kiss                                          ::  event
         $%  {$back p/flap q/coop r/@dr}                 ::  raw ack
             {$cull p/tick}                              ::  cancel message
             {$pack p/(list clue)}                       ::  submit packets
@@ -790,7 +834,7 @@
       (sub gap rey.saw)
     ::
     ++  work                                            ::
-      |=  {now/@da job/note}                            ::  perform 
+      |=  {now/@da job/kiss}                            ::  perform 
       ^+  +>
       ?-  -.job
         $back  (back now [p q r]:job)
@@ -1067,13 +1111,13 @@
         0w0                           ::  157, ~nem, Tlon
         0w0                           ::  158, ~fer, Tlon
         0w0                           ::  159, ~mer, Tlon
-        0w0                           ::  160, ~ten, Tlon
+        0w0                           ::  160, ~ten, Tlon   ten
         0w0                           ::  161, ~lus, Tlon
         0w0                           ::  162, ~nus, Tlon
         0w0                           ::  163, ~syl, Tlon
         0w0                           ::  164, ~tec, Tlon
         0w0                           ::  165, ~mex, Tlon
-        0w0                           ::  166, ~pub, Tlon
+        0w0                           ::  166, ~pub, Tlon   pub
         0w0                           ::  167, ~rym, Tlon
         0w0                           ::  168, ~tuc, Tlon
         0w0                           ::  169, ~fyl, Tlon
@@ -1086,10 +1130,10 @@
         0w0                           ::  176, ~byl, Tlon
         0w0                           ::  177, ~sud, Tlon
         0w0                           ::  178, ~pem, Tlon
-        0w0                           ::  179, ~dev, Tlon
+        0w0                           ::  179, ~dev, Tlon   dev
         0w0                           ::  180, ~lur, Tlon
         0w0                           ::  181, ~def, Tlon
-        0w0                           ::  182, ~bus, Tlon
+        0w0                           ::  182, ~bus, Tlon   bus
         0w0                           ::  183, ~bep, Tlon
         0w0                           ::  184, ~run, Tlon
         0w0                           ::  185, ~mel, Tlon
