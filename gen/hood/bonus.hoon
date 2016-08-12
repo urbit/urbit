@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {{pas/@uvG opt/$@($~ {planets/@u $@($~ {stars/@u $~})})} $~}
     ==
 ?~  opt  $(opt [planets=1]~)

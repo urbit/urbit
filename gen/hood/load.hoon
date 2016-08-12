@@ -7,7 +7,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI byk/beak}
+|=  $:  {now/@da eny/@uvJ byk/beak}
         {{dap/term pas/@uw $~} $~}
     ==
 ^-  {$hood-load ?(part:womb)}

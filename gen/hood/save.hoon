@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI byk/beak}
+|=  $:  {now/@da eny/@uvJ byk/beak}
         {{dap/term $~} $~}
     ==
 ?+  dap  ~|(unknown-backup+dap !!)

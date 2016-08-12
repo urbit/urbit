@@ -7,7 +7,7 @@
   ::
 /+  womb
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {{who/@t $~} ref/(unit (each ship mail:womb)) sta/@}
     ==
 :-  %womb-invite

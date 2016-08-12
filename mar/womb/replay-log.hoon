@@ -3,8 +3,8 @@
   ::
 /?    310
 /+    womb
-|_  log/(list {@uvI transaction:womb})
+|_  log/(list {@uvJ transaction:womb})
 ++  grab  |%
-          ++  noun  (list {@uvI transaction:womb})
+          ++  noun  (list {@uvJ transaction:womb})
           --
 --

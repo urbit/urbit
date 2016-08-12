@@ -7,7 +7,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
-        {log/(list {@uvI transaction:womb}) $~}
+|=  $:  {now/@da eny/@uvJ bec/beak}
+        {log/(list {@uvJ transaction:womb}) $~}
     ==
 [%womb-replay-log log]

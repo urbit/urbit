@@ -595,7 +595,7 @@
   (emit %poke /log [our %hood] %drum-put /womb-events/(scot %da now)/hoon (crip <eny a>))
 ::
 ++  poke-replay-log                                   ::  rerun transactions
-  |=  a/(list {eny/@uvI pok/transaction})
+  |=  a/(list {eny/@uvJ pok/transaction})
   ?~  a  abet
   ~&  womb-replay+-.pok.i.a
   =.  eny  eny.i.a
