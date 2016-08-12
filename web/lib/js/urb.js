@@ -134,7 +134,7 @@ window.urb.send = function(data,params,cb) { // or send(data, cb)
 
   this.qreq('post',url,params,true,function(err,data) {
     /* if(err) { $send.seqn--; }
-    else */ if(data && data.data.fail && urb.wall !== false) {
+    else */ if(data && data.data.fail && urb.wall !== false && params.wall !== false) {
       document.location = "#ERROR"
       document.write("<pre>"+JSON.stringify(params.xyro)+"\n"
                             +data.data.mess+"</pre>") // XX
@@ -189,6 +189,9 @@ window.urb.poll = function(params) {
         if($this.cabs[fn])
           $this.cabs[fn].call(this,err2,
             {status: res.status, data: res.data.data.json}) // XX non-json
+        break;
+          case "quit":
+        //  XX necessary behaviour?
         break;
           default:
         throw new Error("Lost event %"+res.data.type)

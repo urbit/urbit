@@ -63,7 +63,7 @@
     |=  {new/deed old/deed}
     ^-  $&
     ?>  (melt new old)
-    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(haul r.q.old) *code p.new)))
+    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub r.q.old) *code p.new)))
     %&
   ::
   ++  melt                                              ::  proper connect
@@ -99,7 +99,7 @@
     |=  wed/deed
     ^-  $&
     ?>  =+  rac=(clan r.p.q.wed)
-        =+  loy=(haul r.q.wed)
+        =+  loy=(com:nu:crub r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
         ?>  =(fig:ex:loy ?+(rac !! $czar (zeno r.p.q.wed), $pawn r.p.q.wed))
@@ -114,7 +114,7 @@
             ?>  ?&  ?=(^ law)
                     (lth p.p.q.i.law 9)                 ::  9-lives rule
                     =(p.p.q.i.law p.i.mac)
-                    =(r.q.i.law pub:ex:(weur q.i.mac))
+                    =(r.q.i.law pub:ex:(nol:nu:crub q.i.mac))
                 ==
             $(mac t.mac, law t.law)
         ==
@@ -479,7 +479,7 @@
           ?.  =(fak.ton r.i.lew.wod.dur)  ~|([%client-wrong-fake her] !!)
           :+  p.p.q.i.lew.wod.dur
             q.q.i.lew.wod.dur
-          (haul r.q.i.lew.wod.dur)
+          (com:nu:crub r.q.i.lew.wod.dur)
         ::
         ++  clon
           ^-  life
@@ -574,7 +574,7 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dyr
-              (en:crua q.u.yed.caq.dyr mal)
+              (en:crub q.u.yed.caq.dyr mal)
           ==
         ::
         ++  xeno                                        ::    xeno:lax:as:go
@@ -729,7 +729,7 @@
             |-  ^-  (list ship)
             ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
         ::
-            (turn mac |=({p/life q/ring} [p q (weur q)]))
+            (turn mac |=({p/life q/ring} [p q (nol:nu:crub q)]))
             wil
             ~
             ~
@@ -978,13 +978,13 @@
         :-  p
         %=    q
             val
-          (turn val.q |=({p/life q/ring r/acru} [p q (weur q)]))
+          (turn val.q |=({p/life q/ring r/acru} [p q (nol:nu:crub q)]))
         ==
       ==
     ++  come                                            ::    come:am
       |=  {ges/(unit @t) wid/@ bur/@ fak/?}            ::  instantiate pawn
       ^-  {p/{p/ship q/@uvG} q/fort}
-      =+  loy=(bruw wid bur)
+      =+  loy=(pit:nu:crub wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
       =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
@@ -1002,7 +1002,7 @@
     ++  czar  !:                                        ::    czar:am
       |=  {our/ship ger/@uw fak/?}                      ::  instantiate emperor
       ^-  {p/(list boon) q/fort}
-      =+  loy=?:(fak (bruw 2.048 our) (bruw 2.048 ger)) ::  fake uses carrier /
+      =+  loy=?:(fak (pit:nu:crub 512 our) (pit:nu:crub 512 ger)) ::  fake uses carrier /
       =+  fim==(fig:ex:loy (zeno our))
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]

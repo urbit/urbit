@@ -78,8 +78,8 @@
 ++  poke-begin                                        ::  make/send keypair
   |=  hood-begin  =<  abet
   ?>  ?=($~ bur)
-  =+  buz=(shax :(mix (jam ges) eny))
-  =+  loy=(bruw 2.048 buz)
+  =+  buz=(shaz :(mix (jam ges) eny))
+  =+  loy=(pit:nu:crub 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
   [%wont /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
 ::
@@ -98,8 +98,8 @@
 ::
 ++  poke-send-ask
   |=  mel/cord  =<  abet
-  %^  emit  %poke  /helm/ask/(scot %p ~doznec)
-  [[~doznec %ask] %ask-mail mel]
+  %^  emit  %poke  /helm/ask/(scot %p ~marzod)
+  [[~marzod %ask] %ask-mail mel]
 ::
 ++  poke-serve
   |=  top/?(desk beam)  =<  abet

@@ -31,7 +31,7 @@
   [now.bol *bouquet [%app dap.bol (crip (earn url))]]   :: XX
 ::
 ++  said                                                ::  app message
-  |=  {our/@p dap/term now/@da eny/@uvI mes/(list tank)}
+  |=  {our/@p dap/term now/@da eny/@uvJ mes/(list tank)}
   :-  %talk-command
   ^-  command
   :-  %publish

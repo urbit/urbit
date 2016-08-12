@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI byk/beak}
+|=  $:  {now/@da eny/@uvJ byk/beak}
         {arg/$?({dap/term $~} {who/ship dap/term $~}) $~}
     ==
 :-  %drum-link

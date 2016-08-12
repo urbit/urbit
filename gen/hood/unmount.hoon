@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {{mon/$@(term {knot path}) $~} $~}
     ==
 :-  %kiln-unmount
