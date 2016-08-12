@@ -7,8 +7,11 @@ Persistence = require('./Persistence.coffee');
 
 module.exports = {
   setPasscode: function(pass) {
-    return Dispatcher.dispatch({
+    Dispatcher.dispatch({
       setPasscode: pass
+    });
+    return $('.womb-pass-input').each(function() {
+      return this.value || (this.value = pass);
     });
   },
   recycleTicket: function(arg, pass) {
@@ -288,7 +291,7 @@ module.exports = name("Claim", FromStore("pass", function(arg) {
   }), pass ? rele(Balance, {
     key: "balance",
     pass: pass
-  }) : p({
+  }) : div({
     key: "recycle"
   }, h3({}, "Convert an old ticket"), rele(Recycling, {})));
 }));
@@ -475,7 +478,7 @@ module.exports = name("PassInput", function(arg) {
   onInputPass = arg.onInputPass, minLength = arg.minLength, defaultValue = arg.defaultValue;
   return input({
     defaultValue: defaultValue,
-    className: 'mono',
+    className: 'mono womb-pass-input',
     style: {
       width: '100%'
     },
