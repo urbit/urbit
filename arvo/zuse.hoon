@@ -235,12 +235,12 @@
     --
   ::
   ++  ecba                                              ::  AES-128 ECB
-    ~%  %ecba  +>+  ~
-    =+  (ahem 4 4 10)
+    ~%  %ecba  +>  ~
     |_  key/@H
     ++  en
       ~/  %en
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 4 4 10)
       =:
         key  (~(net fe 7) key)
         blk  (~(net fe 7) blk)
@@ -250,6 +250,7 @@
     ++  de
       ~/  %de
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 4 4 10)
       =:
         key  (~(net fe 7) key)
         blk  (~(net fe 7) blk)
@@ -259,12 +260,12 @@
     --
   ::
   ++  ecbb                                              ::  AES-192 ECB
-    ~%  %ecbb  +>+  ~
-    =+  (ahem 6 4 12)
+    ~%  %ecbb  +>  ~
     |_  key/@I
     ++  en
       ~/  %en
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 6 4 12)
       =:
         key  (rsh 6 1 (~(net fe 8) key))
         blk  (~(net fe 7) blk)
@@ -274,6 +275,7 @@
     ++  de
       ~/  %de
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 6 4 12)
       =:
         key  (rsh 6 1 (~(net fe 8) key))
         blk  (~(net fe 7) blk)
@@ -283,12 +285,12 @@
     --
   ::
   ++  ecbc                                              ::  AES-256 ECB
-    ~%  %ecbc  +>+  ~
-    =+  (ahem 8 4 14)
+    ~%  %ecbc  +>  ~
     |_  key/@I
     ++  en
       ~/  %en
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 8 4 14)
       =:
         key  (~(net fe 8) key)
         blk  (~(net fe 7) blk)
@@ -298,6 +300,7 @@
     ++  de
       ~/  %de
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 8 4 14)
       =:
         key  (~(net fe 8) key)
         blk  (~(net fe 7) blk)
