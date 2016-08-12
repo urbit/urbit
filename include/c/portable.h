@@ -184,7 +184,7 @@
 /* Entropy
  */
 #      if defined(U3_OS_bsd) && defined(__OpenBSD__)
-#        define c3_rand(rd) (getentropy((void*)rd, 32) == 0 ? \
+#        define c3_rand(rd) (getentropy((void*)rd, 64) == 0 ? \
                              (void)0 : c3_assert(!"ent"))
 #      else
 #        define c3_rand u3_sist_rand
