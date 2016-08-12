@@ -683,8 +683,8 @@
   |=  $~
   =<  abet
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
-  ::  (emit /rekey %next sec:ex:(brew 128 (shas %next eny)))
-  ~&(rekey-stub+sec:ex:(brew 128 (shas %next eny)) .)
+  ::  (emit /rekey %next sec:ex:(pit:nu:crub 512 (shaz (mix %next (shaz eny)))))
+  ~&  %rekey-stub  .
 ::
 ++  poke-report                                       ::  report will
   |=  {her/@p wyl/will}                               ::
