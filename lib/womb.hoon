@@ -587,12 +587,12 @@
   ?:  replay  +>                      ::  dont's send email in replay mode
   ~&  do-email+[adr msg]
   ::~&([%email-stub adr msg] +>)
-  (emit %poke [%mail wir] [our %gmail] %email adr "Your Urbit Invitation" [msg]~)
+  (emit %poke womb+[%mail wir] [our %gmail] %email adr "Your Urbit Invitation" [msg]~)
 ::
 ++  log-transaction                                   ::  logged poke
   |=  a/transaction  ^+  +>
   ?:  replay  +>
-  (emit %poke /log [our %hood] %drum-put /womb-events/(scot %da now)/hoon (crip <eny a>))
+  (emit %poke /womb/log [our %hood] %drum-put /womb-events/(scot %da now)/hoon (crip <eny a>))
 ::
 ++  poke-replay-log                                   ::  rerun transactions
   |=  a/(list {eny/@uvJ pok/transaction})
@@ -709,7 +709,7 @@
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   =+  tik=.^(@p %a /(scot %p our)/tick/(scot %da now)/(scot %p her))
   :: =.  emit  (emit /tick %tick tik her)
-  (emit %poke /tick [src %hood] [%womb-do-claim her tik]) :: XX peek result
+  (emit %poke /womb/tick [src %hood] [%womb-do-claim her tik]) :: XX peek result
 ::
 ++  needy
   |*  a/(each * tang)
@@ -760,7 +760,7 @@
   |=  {aut/passcode her/@p}
   =;  claimed
     :: =.  claimed  (emit.claimed %wait $~)          :: XX delay ack
-    (emit.claimed %poke /tick [(sein her) %hood] [%womb-do-ticket her])
+    (emit.claimed %poke /womb/tick [(sein her) %hood] [%womb-do-ticket her])
   =+  ~|(%bad-passcode bal=(~(got by bureau) (shaf %pass aut)))
   ?+    (clan her)  ~|(bad-size+(clan her) !!)
       $king
@@ -842,7 +842,7 @@
 ++  release-star                                      ::  subdivide %king
   =+  [who=*@p res=.]
   |.  ^+  res
-  =.  res  (emit.res %poke /tick [(sein who) %hood] [%womb-do-ticket who])
+  =.  res  (emit.res %poke /womb/tick [(sein who) %hood] [%womb-do-ticket who])
   %+  mod-managed-star:res  who
   |=  sta/star  ^-  star
   ~&  release+who
