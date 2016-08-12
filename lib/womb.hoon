@@ -847,5 +847,5 @@
   |=  sta/star  ^-  star
   ~&  release+who
   ?^  sta  ~|(already-used+[who u.sta] !!)
-  (some %& (fo-init 4) (fo-init 3))
+  (some %& (fo-init 5) (fo-init 4))
 --
