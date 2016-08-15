@@ -49,7 +49,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bB, crypto                   ::
 ::
-++  aes
+++  aes  !.
   ~%  %aes  ..is  ~
   |%
   ++  ahem                                              ::  AES engine
@@ -436,8 +436,7 @@
       |=  txt/@
       ^-  @ux
       =/  encrypt  ~(en ecba key)
-      =/  blocks  (add (div len 16) ?:(=((mod len 16) 0) 0 1))
-      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
       ?>  (gte len (met 3 txt))
       %+  mix  txt
       %^  rsh  3  (sub (mul 16 blocks) len)
@@ -458,8 +457,7 @@
       |=  txt/@
       ^-  @ux
       =/  encrypt  ~(en ecbb key)
-      =/  blocks  (add (div len 16) ?:(=((mod len 16) 0) 0 1))
-      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
       ?>  (gte len (met 3 txt))
       %+  mix  txt
       %^  rsh  3  (sub (mul 16 blocks) len)
@@ -480,8 +478,7 @@
       |=  txt/@
       ^-  @ux
       =/  encrypt  ~(en ecbc key)
-      =/  blocks  (add (div len 16) ?:(=((mod len 16) 0) 0 1))
-      =.  blocks  ?:(=(0 blocks) 1 blocks)
+      =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
       ?>  (gte len (met 3 txt))
       %+  mix  txt
       %^  rsh  3  (sub (mul 16 blocks) len)
