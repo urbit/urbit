@@ -1192,7 +1192,7 @@
       /holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\
       /losdilforpilramtirwintadbicdifrocwidbisdasmidlop\
       /rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\
-      /ritpodmottamtolsavposnapnopsomfinfonbanporworsip\
+      /ritpodmottamtolsavposnapnopsomfinfonbanmorworsip\
       /ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\
       /sivtagpadsaldivdactansidfabtarmonranniswolmispal\
       /lasdismaprabtobrollatlonnodnavfignomnibpagsopral\
@@ -1202,7 +1202,7 @@
       /tomdigfilfasmithobharmighinradmashalraglagfadtop\
       /mophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\
       /nimlarfitwalrapsarnalmoslandondanladdovrivbacpol\
-      /laptalpitnambonrostonfodponsovnocsorlavmatmipfap'
+      /laptalpitnambonrostonfodponsovnocsorlavmatmipfip'
       ^=  dex                                           ::  suffix syllables
       'zodnecbudwessevpersutletfulpensytdurwepserwylsun\
       /rypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\
@@ -3931,11 +3931,14 @@
   |%
   ++  bix  (bass 16 (stun [2 2] six))
   ++  fem  (sear |=(a/@ (cha:fa a)) aln)
-  ++  hif  (boss 256 ;~(plug tip tiq (easy ~)))
-  ++  huf  %+  cook
-             |=({a/@ b/@} (wred:un ~(zug mu ~(zag mu [a b]))))
-           ;~(plug hif ;~(pfix hep hif))
-  ++  hyf  (bass 0x1.0000.0000 ;~(plug huf ;~(pfix hep huf) (easy ~)))
+  ++  haf  (bass 256 ;~(plug tep tiq (easy ~)))
+  ++  hef  %+  sear  |=(a/@ ?:(=(a 0) ~ (some a)))
+           %+  bass  256
+           ;~(plug tip tiq (easy ~))
+  ++  hif  (bass 256 ;~(plug tip tiq (easy ~)))
+  ++  hof  (bass 0x1.0000 ;~(plug hef (stun [1 3] ;~(pfix hep hif))))
+  ++  huf  (bass 0x1.0000 ;~(plug hef (stun [0 3] ;~(pfix hep hif))))
+  ++  hyf  (bass 0x1.0000 ;~(plug hif (stun [3 3] ;~(pfix hep hif))))
   ++  pev  (bass 32 ;~(plug sev (stun [0 4] siv)))
   ++  pew  (bass 64 ;~(plug sew (stun [0 4] siw)))
   ++  piv  (bass 32 (stun [5 5] siv))
@@ -3963,6 +3966,7 @@
            ==
   ++  sox  (cook |=(a/@ (sub a 87)) (shim 'a' 'f'))
   ++  ted  (bass 10 ;~(plug sed (stun [0 2] sid)))
+  ++  tep  (sear |=(a/@ ?:(=(a 'doz') ~ (ins:po a))) til)
   ++  tip  (sear |=(a/@ (ins:po a)) til)
   ++  tiq  (sear |=(a/@ (ind:po a)) til)
   ++  tid  (bass 10 (stun [3 3] sid))
@@ -3997,14 +4001,16 @@
   ++  dim  (ape dip)
   ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
   ++  dum  (bass 10 (plus sid:ab))
-  ++  fed  ;~  pose
-             %+  bass  0x1.0000.0000.0000.0000
-             ;~((glue doh) ;~(pose hyf:ab huf:ab) (more doh hyf:ab))
-           ::
-             hyf:ab
-             huf:ab
-             hif:ab
-             tiq:ab
+  ++  fed  %+  cook  fend:ob
+           ;~  pose
+             %+  bass  0x1.0000.0000.0000.0000          ::  oversized
+               ;~  plug
+                 huf:ab
+                 (plus ;~(pfix doh hyf:ab))
+               ==
+             hof:ab                                     ::  planet or moon
+             haf:ab                                     ::  star
+             tiq:ab                                     ::  galaxy
            ==
   ++  fim  (sear den:fa (bass 58 (plus fem:ab)))
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
@@ -4086,37 +4092,27 @@
           ==
         ::
             $p
-          =+  dyx=(met 3 q.p.lot)
+          =+  sxz=(feen:ob q.p.lot)
+          =+  dyx=(met 3 sxz)
           :-  '~'
           ?:  (lte dyx 1)
-            (weld (trip (tod:po q.p.lot)) rep)
-          ?:  =(2 dyx)
-            ;:  weld
-              (trip (tos:po (end 3 1 q.p.lot)))
-              (trip (tod:po (rsh 3 1 q.p.lot)))
-              rep
-            ==
-          =+  [dyz=(met 5 q.p.lot) fin=| dub=&]
+            (weld (trip (tod:po sxz)) rep)
+          =+  dyy=(met 4 sxz)
+          =+  imp=*@
           |-  ^-  tape
-          ?:  =(0 dyz)
+          ?:  =(imp dyy)
             rep
-          %=    $
-              fin      &
-              dub      !dub
-              dyz      (dec dyz)
-              q.p.lot  (rsh 5 1 q.p.lot)
-              rep
-            =+  syb=(wren:un (end 5 1 q.p.lot))
-            =+  cog=~(zig mu [(rsh 4 1 syb) (end 4 1 syb)])
-            ;:  weld
-              (trip (tos:po (end 3 1 p.cog)))
-              (trip (tod:po (rsh 3 1 p.cog)))
-              `tape`['-' ~]
-              (trip (tos:po (end 3 1 q.cog)))
-              (trip (tod:po (rsh 3 1 q.cog)))
-              `tape`?.(fin ~ ['-' ?.(dub ~ ['-' ~])])
-              rep
-            ==
+          %=  $
+            sxz  (rsh 4 1 sxz)
+            imp      +(imp)
+            rep
+              =+  log=(end 4 1 sxz)
+              ;:  weld
+                (trip (tos:po (rsh 3 1 log)))
+                (trip (tod:po (end 3 1 log)))
+                ?:(=((mod imp 4) 0) ?:(=(imp 0) "" "--") "-")
+                rep
+             ==
           ==
         ::
             $r
@@ -4624,16 +4620,16 @@
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(sum fo 65.535) l (muk (snag n raku) 4 r))
-    (~(sum fo 65.536) l (muk (snag n raku) 4 r))
+      (~(sum fo 65.535) l (muk (snag n raku) 2 r))
+    (~(sum fo 65.536) l (muk (snag n raku) 2 r))
   ::
   ++  rund                                              ::  reverse round
     |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
-      (~(dif fo 65.535) l (muk (snag n raku) 4 r))
-    (~(dif fo 65.536) l (muk (snag n raku) 4 r))
+      (~(dif fo 65.535) l (muk (snag n raku) 2 r))
+    (~(dif fo 65.536) l (muk (snag n raku) 2 r))
   ::
   ++  raku
     ^-  (list @ux)
@@ -11166,7 +11162,7 @@
 ::
 ++  poke                                                ::  external apply
   |=  {now/@da ovo/ovum}
-  =.  eny  (mix eny (shax now))
+  =.  eny  (mix eny (shaz now))
   ::  ~&  [%poke -.q.ovo]
   ^-  {(list ovum) _+>}
   =^  zef  niz

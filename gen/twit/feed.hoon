@@ -7,7 +7,7 @@
 ::::  ~fyr
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvI bek/beak}
+|=  $:  {now/@da eny/@uvJ bek/beak}
         {{who/iden $~} typ/?($home $user)}
     ==
 =+  pax=/(scot %p p.bek)/twit/(scot %da now)/[typ]/[who]

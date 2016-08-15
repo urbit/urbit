@@ -235,12 +235,12 @@
     --
   ::
   ++  ecba                                              ::  AES-128 ECB
-    ~%  %ecba  +>+  ~
-    =+  (ahem 4 4 10)
+    ~%  %ecba  +>  ~
     |_  key/@H
     ++  en
       ~/  %en
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 4 4 10)
       =:
         key  (~(net fe 7) key)
         blk  (~(net fe 7) blk)
@@ -250,6 +250,7 @@
     ++  de
       ~/  %de
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 4 4 10)
       =:
         key  (~(net fe 7) key)
         blk  (~(net fe 7) blk)
@@ -259,12 +260,12 @@
     --
   ::
   ++  ecbb                                              ::  AES-192 ECB
-    ~%  %ecbb  +>+  ~
-    =+  (ahem 6 4 12)
+    ~%  %ecbb  +>  ~
     |_  key/@I
     ++  en
       ~/  %en
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 6 4 12)
       =:
         key  (rsh 6 1 (~(net fe 8) key))
         blk  (~(net fe 7) blk)
@@ -274,6 +275,7 @@
     ++  de
       ~/  %de
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 6 4 12)
       =:
         key  (rsh 6 1 (~(net fe 8) key))
         blk  (~(net fe 7) blk)
@@ -283,12 +285,12 @@
     --
   ::
   ++  ecbc                                              ::  AES-256 ECB
-    ~%  %ecbc  +>+  ~
-    =+  (ahem 8 4 14)
+    ~%  %ecbc  +>  ~
     |_  key/@I
     ++  en
       ~/  %en
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 8 4 14)
       =:
         key  (~(net fe 8) key)
         blk  (~(net fe 7) blk)
@@ -298,6 +300,7 @@
     ++  de
       ~/  %de
       |=  blk/@H  ^-  @uxH
+      =+  (ahem 8 4 14)
       =:
         key  (~(net fe 8) key)
         blk  (~(net fe 7) blk)
@@ -427,7 +430,7 @@
   ::
   ++  ctra                                              ::  AES-128 CTR
     ~%  %ctra  +>  ~
-    |_  {key/@H mod/bloq ctr/@H}
+    |_  {key/@H mod/bloq len/@ ctr/@H}
     ++  en
       ~/  %en
       |=  txt/@
@@ -435,10 +438,9 @@
       =/  encrypt  ~(en ecba key)
       =/  blocks  (met 7 txt)
       =.  blocks  ?:(=(0 blocks) 1 blocks)
-      =/  bytes   (met 3 txt)
-      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      ?>  (gte len (met 3 txt))
       %+  mix  txt
-      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %^  rsh  3  (sub (mul 16 blocks) len)
       %+  rep  7
       %-  flop  ::  stupid backwards AES
       |-  ^-  (list @ux)
@@ -450,7 +452,7 @@
   ::
   ++  ctrb                                              ::  AES-192 CTR
     ~%  %ctrb  +>  ~
-    |_  {key/@I mod/bloq ctr/@H}
+    |_  {key/@I mod/bloq len/@ ctr/@H}
     ++  en
       ~/  %en
       |=  txt/@
@@ -458,10 +460,9 @@
       =/  encrypt  ~(en ecbb key)
       =/  blocks  (met 7 txt)
       =.  blocks  ?:(=(0 blocks) 1 blocks)
-      =/  bytes   (met 3 txt)
-      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      ?>  (gte len (met 3 txt))
       %+  mix  txt
-      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %^  rsh  3  (sub (mul 16 blocks) len)
       %+  rep  7
       %-  flop  ::  stupid backwards AES
       |-  ^-  (list @ux)
@@ -473,7 +474,7 @@
   ::
   ++  ctrc                                              ::  AES-256 CTR
     ~%  %ctrc  +>  ~
-    |_  {key/@I mod/bloq ctr/@H}
+    |_  {key/@I mod/bloq len/@ ctr/@H}
     ++  en
       ~/  %en
       |=  txt/@
@@ -481,10 +482,9 @@
       =/  encrypt  ~(en ecbc key)
       =/  blocks  (met 7 txt)
       =.  blocks  ?:(=(0 blocks) 1 blocks)
-      =/  bytes   (met 3 txt)
-      =.  bytes   ?:(=(0 bytes) 1 bytes)
+      ?>  (gte len (met 3 txt))
       %+  mix  txt
-      %^  rsh  3  (sub (mul 16 blocks) bytes)
+      %^  rsh  3  (sub (mul 16 blocks) len)
       %+  rep  7
       %-  flop  ::  stupid backwards AES
       |-  ^-  (list @ux)
@@ -653,19 +653,21 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  (pair @uxH @ux)
+      ^-  (trel @uxH @ud @ux)
       =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
       =+  iv=(s2va k1 (weld vec (limo ~[txt])))
-      :-
+      =+  len=(met 3 txt)
+      :+
         iv
-      (~(en ctra k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+        len
+      (~(en ctra k2 7 len (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
     ++  de
       ~/  %de
-      |=  {iv/@H txt/@}
+      |=  {iv/@H len/@ txt/@}
       ^-  (unit @ux)
       =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
       =+  ^=  pln
-        (~(de ctra k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+        (~(de ctra k2 7 len (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
       ?.  =((s2va k1 (weld vec (limo ~[pln]))) iv)
         ~
       `pln
@@ -677,19 +679,21 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  (pair @uxH @ux)
+      ^-  (trel @uxH @ud @ux)
       =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
       =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
-      :-
+      =+  len=(met 3 txt)
+      :+
         iv
-      (~(en ctrb k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+        len
+      (~(en ctrb k2 7 len (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
     ++  de
       ~/  %de
-      |=  {iv/@H txt/@}
+      |=  {iv/@H len/@ txt/@}
       ^-  (unit @ux)
       =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
       =+  ^=  pln
-        (~(de ctrb k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+        (~(de ctrb k2 7 len (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
       ?.  =((s2vb k1 (weld vec (limo ~[pln]))) iv)
         ~
       `pln
@@ -701,19 +705,21 @@
     ++  en
       ~/  %en
       |=  txt/@
-      ^-  (pair @uxH @ux)
+      ^-  (trel @uxH @ud @ux)
       =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
       =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
-      :-
+      =+  len=(met 3 txt)
+      :+
         iv
-      (~(en ctrc k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+        len
+      (~(en ctrc k2 7 len (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
     ++  de
       ~/  %de
-      |=  {iv/@H txt/@}
+      |=  {iv/@H len/@ txt/@}
       ^-  (unit @ux)
       =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
       =+  ^=  pln
-        (~(de ctrc k2 7 (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
+        (~(de ctrc k2 7 len (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)) txt)
       ?.  =((s2vc k1 (weld vec (limo ~[pln]))) iv)
         ~
       `pln
@@ -945,24 +951,26 @@
       ?>  =('b' (end 3 1 bpk))
       =+  pk=(rsh 8 1 (rsh 3 1 bpk))
       =+  shar=(shax (shar:ed pk cry.u.sek))
-      =+  ((hard {iv/@ cph/@}) (cue txt))
-      =+  try=(~(de siva:aes shar ~) iv cph)
+      =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+      =+  try=(~(de siva:aes shar ~) iv len cph)
       ?~  try  ~
       =+  veri=(sure:as:(com:nu:crub bpk) ~ u.try)
       ?~  veri  ~
       (some ((hard (pair @ux @ux)) (cue u.veri)))
     --
   ++  de
-    |=  {key/@J cph/@}
+    |=  {key/@J txt/@}
     ^-  (unit @ux)
-    %+  ~(de sivc:aes (shaz key) ~)
-      (end 7 1 cph)
-      (rsh 7 1 cph)
+    =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+    %^  ~(de sivc:aes (shaz key) ~)
+      iv
+      len
+      cph
   ++  dy  |=({key/@I cph/@} (need (de key cph)))
   ++  en
     |=  {key/@J msg/@}
     ^-  @ux
-    (cat 7 (~(en sivc:aes (shaz key) ~) msg))
+    (jam (~(en sivc:aes (shaz key) ~) msg))
   ++  ex
     |%
     ++  fig  ^-  @uvH  (shaf %bfig sgn.^pub)
@@ -2208,7 +2216,7 @@
 ++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  bale                                                ::  driver state
   |*  a/_*                                              ::  %jael keys type
-  $:  {our/ship now/@da eny/@uvI byk/beak}              ::  base info
+  $:  {our/ship now/@da eny/@uvJ byk/beak}              ::  base info
       {usr/iden dom/(list @t)}                          ::  req user, domain
       key/a                                             ::  secrets from %jael
   ==                                                    ::
@@ -2261,7 +2269,7 @@
             ==                                          ::
             $:  ost/bone                                ::  opaque cause
                 act/@ud                                 ::  change number
-                eny/@uvI                                ::  entropy
+                eny/@uvJ                                ::  entropy
                 now/@da                                 ::  current time
                 byk/beak                                ::  load source
         ==  ==                                          ::

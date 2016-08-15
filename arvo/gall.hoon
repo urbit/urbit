@@ -82,7 +82,7 @@
   ==                                                    ::
 ++  stic                                                ::  statistics
   $:  act/@ud                                           ::  change number
-      eny/@uvI                                          ::  entropy
+      eny/@uvJ                                          ::  entropy
       lat/@da                                           ::  time
   ==                                                    ::
 --                                                      ::
@@ -91,7 +91,7 @@
 .  ==
 =|  all/axle                                            ::  all vane state
 |=  $:  now/@da                                         ::  urban time
-        eny/@uvI                                        ::  entropy
+        eny/@uvJ                                        ::  entropy
         ska/sley                                        ::  activate
     ==                                                  ::  opaque core
 ~%  %gall-top  ..is  ~
@@ -557,7 +557,7 @@
         ==
       =+  unt=(~(get by q.zam) hen)
       =:  act.tyc  +(act.tyc)
-          eny.tyc  (shax (mix (add dap act.tyc) eny))
+          eny.tyc  (shaz (mix (add dap act.tyc) eny))
           lat.tyc  now
         ==
       ?^  unt
@@ -647,7 +647,7 @@
         ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
       =^  arm  +>.$  (ap-farm q.u.cug)
       ?:  ?=($| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
-      =^  zem  +>.$  (ap-slam q.u.cug p.arm !>([ren (slag p.u.cug tyl)]))
+      =^  zem  +>.$  (ap-slam q.u.cug p.arm !>((slag p.u.cug `path`[ren tyl]))) 
       ?:  ?=($| -.zem)  ((slog leaf+"peek slam fail" p.zem) [~ ~])
       ?+  q.p.zem  ((slog leaf+"peek bad result" ~) [~ ~])
         $~              ~
@@ -1046,7 +1046,6 @@
     ++  ap-purr                                         ::  unwrap take
       |=  {wha/term pax/path cag/cage}
       ^+  +>
-      =.  q.cag  (spec q.cag)
       =+  cug=(ap-find [wha p.cag pax])
       ?~  cug
         (ap-lame wha (ap-suck "{(trip wha)}: no {<`path`[p.cag pax]>}"))

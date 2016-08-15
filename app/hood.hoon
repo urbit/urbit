@@ -2,14 +2,16 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
-/+  sole, talk, helm, kiln, drum, write                 ::  libraries
-[. helm kiln drum]
+/+  sole, talk, helm, kiln, drum, write, womb           ::  libraries
+[. helm kiln drum]                                      
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
-    ++  hood-0                                          ::
-      {$0 lac/(map @tas hood-part)}                     ::
+    ++  hood-old                                        :: 
+      {?($0 $1) lac/(map @tas hood-part-old)}           :: 
+    ++  hood-1                                          ::
+      {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
       |*  hed/hood-head                                 ::
       |=  paw/hood-part                                 ::
@@ -17,6 +19,7 @@
         $drum  ?>(?=($drum -.paw) `drum-part`paw)       ::
         $helm  ?>(?=($helm -.paw) `helm-part`paw)       ::
         $kiln  ?>(?=($kiln -.paw) `kiln-part`paw)       ::
+        $womb  ?>(?=($womb -.paw) `part:womb`paw)       ::
         $write  ?>(?=($write -.paw) `part:write`paw)    ::
       ==                                                ::
     ++  hood-head  _-:*hood-part                        ::
@@ -26,22 +29,21 @@
         $drum  (drum-make our)                          ::
         $helm  *helm-part                               ::
         $kiln  *kiln-part                               ::
+        $womb  *part:womb                               ::
         $write  *part:write                             ::
       ==                                                ::
-    ++  hood-part-old                                   ::
-      $?  hood-part                                     ::
-          {$drum $0 drum-pith-0}                        ::
-      ==                                                ::
+    ++  hood-part-old  ?(hood-part)  :: drum-part-old   ::
     ++  hood-port                                       ::
       |=  paw/hood-part-old  ^-  hood-part              ::
       ?+  -.paw  paw                                    ::
-        $drum    (drum-port paw)                        ::
+        $drum    (drum-port paw)                        ::         
       ==                                                ::
     ::                                                  ::
     ++  hood-part                                       ::
-      $%  {$drum $1 drum-pith}                          ::
+      $%  {$drum $1 drum-pith-1}                        ::
           {$helm $0 helm-pith}                          ::
           {$kiln $0 kiln-pith}                          ::
+          {$womb $1 pith:womb}                          ::
           {$write $0 pith:write}                        ::
       ==                                                ::
     --                                                  ::
@@ -49,7 +51,7 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |_  $:  hid/bowl                                        ::  system state
-        hood-0                                          ::  server state
+        hood-1                                          ::  server state
     ==                                                  ::
 ++  able                                                ::  find+make part
   |*  hed/hood-head
@@ -63,8 +65,8 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  prep                                                ::
-  |=  old/(unit hood-0)  ^-  (quip _!! +>)
+++  prep
+  |=  old/(unit hood-old)  ^-  (quip _!! +>)            ::
   :-  ~
   ?~  old  +>
   +>(lac (~(run by lac.u.old) hood-port))
@@ -85,6 +87,12 @@
   ~?  ?=(^ saw)  [%kiln-overload-lame u.saw]
   [~ +>]
 ::
+++  poke-hood-load
+  |=  dat/hood-part
+  ?>  =(our src)
+  ~&  loaded+-.dat
+  [~ %_(+> lac (~(put by lac) -.dat dat))]
+::
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
@@ -100,6 +108,7 @@
 ++  from-drum  (from-lib %drum [..$ _se-abet]:(drum))
 ++  from-helm  (from-lib %helm [..$ _abet]:(helm))
 ++  from-kiln  (from-lib %kiln [..$ _abet]:(kiln))
+++  from-womb  (from-lib %womb [..$ _abet]:(womb))
 ++  from-write  (from-lib %write [..$ _abet]:(write))
 ::
 ++  init-helm                 |=({way/wire *} [~ +>])
@@ -111,14 +120,17 @@
 ++  note-helm                 (wrap take-note):from-helm
 ++  onto-drum                 (wrap take-onto):from-drum
 ++  peer-drum                 (wrap peer):from-drum
+++  peek-x-womb               peek-x:(womb hid (able %womb))
+++  peer-scry-x-womb          (wrap peer-scry-x):from-womb
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
+++  poke-drum-put             (wrap poke-put):from-drum
 ++  poke-drum-link            (wrap poke-link):from-drum
 ++  poke-drum-unlink          (wrap poke-unlink):from-drum
-:: ++  poke-drum-exit            (wrap poke-exit):from-drum
+++  poke-drum-exit            (wrap poke-exit):from-drum
 ++  poke-drum-start           (wrap poke-start):from-drum
 ++  poke-helm-hi              (wrap poke-hi):from-helm
 ++  poke-helm-init            (wrap poke-init):from-helm   :: XX used?
-++  poke-helm-invite          (wrap poke-invite):from-helm
+::++  poke-helm-invite          (wrap poke-invite):from-helm
 ++  poke-helm-mass            (wrap poke-mass):from-helm
 ++  poke-helm-reload          (wrap poke-reload):from-helm
 ++  poke-helm-reload-desk     (wrap poke-reload-desk):from-helm
@@ -146,6 +158,22 @@
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
+++  poke-womb-invite          (wrap poke-invite):from-womb
+++  poke-womb-save            (wrap poke-save):from-womb
+++  poke-womb-obey            (wrap poke-obey):from-womb
+++  poke-womb-bonus           (wrap poke-bonus):from-womb
+++  poke-womb-claim           (wrap poke-claim):from-womb
+++  poke-womb-do-ticket       (wrap poke-do-ticket):from-womb
+++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
+++  poke-womb-rekey           (wrap poke-rekey):from-womb
+++  poke-womb-report          (wrap poke-report):from-womb
+++  poke-womb-manage          (wrap poke-manage):from-womb
+++  poke-womb-recycle         (wrap poke-recycle):from-womb
+++  poke-womb-manage-old-key  (wrap poke-manage-old-key):from-womb
+++  poke-womb-release         (wrap poke-release):from-womb
+++  poke-womb-release-ships   (wrap poke-release-ships):from-womb
+++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
+++  poke-womb-replay-log      (wrap poke-replay-log):from-womb
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-write-comment        (wrap poke-comment):from-write

@@ -63,7 +63,7 @@
     |=  {new/deed old/deed}
     ^-  $&
     ?>  (melt new old)
-    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(haul r.q.old) *code p.new)))
+    ?>  =((shaf %meld (sham q.new)) (need (sure:as:(com:nu:crub r.q.old) *code p.new)))
     %&
   ::
   ++  melt                                              ::  proper connect
@@ -99,7 +99,7 @@
     |=  wed/deed
     ^-  $&
     ?>  =+  rac=(clan r.p.q.wed)
-        =+  loy=(haul r.q.wed)
+        =+  loy=(com:nu:crub r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
         ?>  =(fig:ex:loy ?+(rac !! $czar (zeno r.p.q.wed), $pawn r.p.q.wed))
@@ -114,7 +114,7 @@
             ?>  ?&  ?=(^ law)
                     (lth p.p.q.i.law 9)                 ::  9-lives rule
                     =(p.p.q.i.law p.i.mac)
-                    =(r.q.i.law pub:ex:(weur q.i.mac))
+                    =(r.q.i.law pub:ex:(nol:nu:crub q.i.mac))
                 ==
             $(mac t.mac, law t.law)
         ==
@@ -142,12 +142,12 @@
     ^-  @uvH  ^-  @
     %+  snag  zar
     ^-  (list @uw)
-    :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::    0, ~zod, urbit.org
+    :~  0wN.ymbEn.wyNdE.RFNRb.SnEQH   ::    0, ~zod, urbit.org
         0w0                           ::    1, ~nec, Curtis Yarvin
         0w0                           ::    2, ~bud, Tlon Investor 1
         0w0                           ::    3, ~wes, Tlon Investor 2
         0w0                           ::    4, ~sev, Tlon Investor 2
-        0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::    5, ~per, Tlon Investor 3 
+        0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::    5, ~per, Tlon Investor 3  (oldkey)
         0w0                           ::    6, ~sut, Tlon Investor 4
         0w0                           ::    7, ~let, Tlon Investor 4
         0w0                           ::    8, ~ful, Tlon Investor 4
@@ -156,8 +156,8 @@
         0w0                           ::   11, ~dur, Tlon Investor 4
         0w0                           ::   12, ~wep, Sam Putman
         0w0                           ::   13, ~ser, Tlon Investor 5
-        0w3j.H0sty.jHa3F.JlD26.4LPwV  ::   14, ~wyl, Zimran Ahmed
-        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::   15, ~sun, Colin Smith 
+        0w3j.H0sty.jHa3F.JlD26.4LPwV  ::   14, ~wyl, Zimran Ahmed (oldkey)
+        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::   15, ~sun, Colin Smith  (oldkey)
         0w0                           ::   16, ~ryp, Tlon Investor 6
         0w0                           ::   17, ~syx, Tlon Investor 6
         0w0                           ::   18, ~dyr, Tlon Investor 6
@@ -173,16 +173,16 @@
         0w0                           ::   28, ~ryt, Tlon Investor 8
         0w0                           ::   29, ~tyv, Tlon Investor 8
         0w0                           ::   30, ~syd, Jennifer Kollmer
-        0wp.BgRGJ.kslnv.PLAqb.TRKbr   ::   31, ~nex, Prakhar Goel
+        0wp.BgRGJ.kslnv.PLAqb.TRKbr   ::   31, ~nex, Prakhar Goel (oldkey)
         0w0                           ::   32, ~lun, Tlon Investor 9
         0w0                           ::   33, ~mep, Tlon Investor 9
         0w0                           ::   34, ~lut, Tlon Investor 9
         0w0                           ::   35, ~sep, Tlon Investor 9
         0w0                           ::   36, ~pes, Jennifer Kollmer
-        0w2J.WSHlR.t5VHN.X8GKE.DB-yz  ::   37, ~del, Kingdon Barrett
-        0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham
-        0w3x.XaJbE.xaOn3.zXbaG.5xUiY  ::   39, ~ped, Jeremy Wall
-        0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Tlon Investor 10
+        0w2J.WSHlR.t5VHN.X8GKE.DB-yz  ::   37, ~del, Kingdon Barrett (oldkey)
+        0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham (oldkey)
+        0w3x.XaJbE.xaOn3.zXbaG.5xUiY  ::   39, ~ped, Jeremy Wall (oldkey)
+        0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Tlon Investor 10 (oldkey)
         0w0                           ::   41, ~led, Nick Caruso
         0w0                           ::   42, ~tul, Susan Yarvin
         0w0                           ::   43, ~met, Susan Yarvin
@@ -190,12 +190,12 @@
         0w0                           ::   45, ~byn, Susan Yarvin 
         0w0                           ::   46, ~hex, James Torre
         0w0                           ::   47, ~feb, urbit.org
-        0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl
+        0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl (oldkey)
         0w0                           ::   49, ~dul, Jennifer Kollmer
         0w0                           ::   50, ~het, Jennifer Kollmer
         0w0                           ::   51, ~mev, Herbert Yarvin
         0w0                           ::   52, ~rut, Herbert Yarvin
-        0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Tlon Investor 11
+        0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Tlon Investor 11 (oldkey)
         0w0                           ::   54, ~wyd, Curtis Yarvin
         0w0                           ::   55, ~tep, Sibyl Kollmer
         0w0                           ::   56, ~bes, Sibyl Kollmer
@@ -206,9 +206,9 @@
         0w0                           ::   61, ~der, Galen Wolfe-Pauly
         0w0                           ::   62, ~nep, Galen Wolfe-Pauly
         0w0                           ::   63, ~pur, Herbert Yarvin
-        0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings
+        0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings (oldkey)
         0w0                           ::   65, ~reb, Herbert Yarvin
-        0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl
+        0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl (oldkey)
         0w0                           ::   67, ~nut, Henry Yarvin
         0w0                           ::   68, ~sub, Henry Yarvin
         0w0                           ::   69, ~pet, Henry Yarvin
@@ -221,16 +221,16 @@
         0w0                           ::   76, ~wyn, Anton Dyudin
         0w0                           ::   77, ~rec, Anton Dyudin
         0w0                           ::   78, ~meg, Anton Dyudin
-        0w2L.tavpW.Lk4R-.elm7E.4KEqZ  ::   79, ~net, Anthony Martinez
+        0w2L.tavpW.Lk4R-.elm7E.4KEqZ  ::   79, ~net, Anthony Martinez (oldkey)
         0w0                           ::   80, ~sec, Curtis Yarvin
         0w0                           ::   81, ~mul, Curtis Yarvin
-        0w1F.Tqroo.wyq2m.cBaTM.9MbG-  ::   82, ~nym, Max Greer
+        0w1F.Tqroo.wyq2m.cBaTM.9MbG-  ::   82, ~nym, Max Greer (oldkey)
         0w0                           ::   83, ~tev, Sibyl Kollmer
-        0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::   84, ~web, Ar Vicco
+        0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::   84, ~web, Ar Vicco (oldkey)
         0w0                           ::   85, ~sum, Philip Monk
         0w0                           ::   86, ~mut, Philip Monk
         0w0                           ::   87, ~nyx, Philip Monk
-        0w30.UUr19.iBPlD.wfyJD.2CWPv  ::   88, ~rex, Tlon Investor 12
+        0w30.UUr19.iBPlD.wfyJD.2CWPv  ::   88, ~rex, Tlon Investor 12 (oldkey)
         0w0                           ::   89, ~teb, Sibyl Kollmer
         0w0                           ::   90, ~fus, Tlon Corporation
         0w0                           ::   91, ~hep, urbit.org
@@ -241,7 +241,7 @@
         0w0                           ::   96, ~sel, urbit.org
         0w0                           ::   97, ~ruc, urbit.org
         0w0                           ::   98, ~dec, urbit.org
-        0w1L.NQ-5f.ABF9R.kVwVJ.zRfn2  ::   99, ~wex, Pax Dickinson
+        0w1L.NQ-5f.ABF9R.kVwVJ.zRfn2  ::   99, ~wex, Pax Dickinson (oldkey)
         0w0                           ::  100, ~syr, urbit.org
         0w0                           ::  101, ~wet, urbit.org
         0w0                           ::  102, ~dyl, urbit.org
@@ -251,7 +251,7 @@
         0w0                           ::  106, ~bet, urbit.org
         0w0                           ::  107, ~bel, urbit.org
         0w0                           ::  108, ~tux, Tlon Investor 13
-        0w1D.JV9n0.9z~YK.yAWyi.c9~Lu  ::  109, ~tug, Philip Monk
+        0w1D.JV9n0.9z~YK.yAWyi.c9~Lu  ::  109, ~tug, Philip Monk (oldkey)
         0w0                           ::  110, ~myr, urbit.org
         0w0                           ::  111, ~pel, urbit.org
         0w0                           ::  112, ~syp, urbit.org
@@ -270,7 +270,7 @@
         0w0                           ::  125, ~wyt, urbit.org
         0w0                           ::  126, ~nub, urbit.org
         0w0                           ::  127, ~med, urbit.org
-        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Arthur Breitman
+        0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Arthur Breitman (oldkey)
         0w0                           ::  129, ~dus, urbit.org
         0w0                           ::  130, ~neb, urbit.org
         0w0                           ::  131, ~rum, urbit.org
@@ -280,35 +280,35 @@
         0w0                           ::  135, ~pun, urbit.org
         0w0                           ::  136, ~res, urbit.org
         0w0                           ::  137, ~red, Alex Kravets
-        0w3J.15iJA.0pbNk.mZXyh.A~uKb  ::  138, ~fun, Aaron Beckerman
+        0w3J.15iJA.0pbNk.mZXyh.A~uKb  ::  138, ~fun, Aaron Beckerman (oldkey)
         0w0                           ::  139, ~rev, urbit.org
-        0w3m.Cqumo.ZC7-e.794A4.Bqhh8  ::  140, ~ref, Matt Brubeck
+        0w3m.Cqumo.ZC7-e.794A4.Bqhh8  ::  140, ~ref, Matt Brubeck (oldkey)
         0w0                           ::  141, ~mec, urbit.org
         0w0                           ::  142, ~ted, urbit.org
-        0w2d.GLlYg.-MwtO.ZCPBE.OqGB9  ::  143, ~rus, Stephen Burnham
+        0w2d.GLlYg.-MwtO.ZCPBE.OqGB9  ::  143, ~rus, Stephen Burnham (oldkey)
         0w0                           ::  144, ~bex, urbit.org
         0w0                           ::  145, ~leb, Justin LeBlanc
         0w0                           ::  146, ~dux, urbit.org
         0w0                           ::  147, ~ryn, urbit.org
         0w0                           ::  148, ~num, Tlon
         0w0                           ::  149, ~pyx, Katherine McFall
-        0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey
+        0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (oldkey)
         0w0                           ::  151, ~ryx, Tlon
         0w0                           ::  152, ~fep, Tlon
-        0w2j.T1u2s.BfXjV.ldOGR.aiZrQ  ::  153, ~tyr, Steve Dee
+        0w2j.T1u2s.BfXjV.ldOGR.aiZrQ  ::  153, ~tyr, Steve Dee (oldkey)
         0w0                           ::  154, ~tus, Tlon
         0w0                           ::  155, ~tyc, Tlon
         0w0                           ::  156, ~leg, Tlon
         0w0                           ::  157, ~nem, Tlon
         0w0                           ::  158, ~fer, Tlon
         0w0                           ::  159, ~mer, Tlon
-        0w0                           ::  160, ~ten, Tlon
+        0w1E.bDeR7.cuQmt.Uc5CS.OSyMx  ::  160, ~ten, Tlon
         0w0                           ::  161, ~lus, Tlon
         0w0                           ::  162, ~nus, Tlon
         0w0                           ::  163, ~syl, Tlon
         0w0                           ::  164, ~tec, Tlon
         0w0                           ::  165, ~mex, Tlon
-        0w0                           ::  166, ~pub, Tlon
+        0w24.TfzCX.qmRm9.ukapQ.It6tG  ::  166, ~pub, Tlon
         0w0                           ::  167, ~rym, Tlon
         0w0                           ::  168, ~tuc, Tlon
         0w0                           ::  169, ~fyl, Tlon
@@ -321,10 +321,10 @@
         0w0                           ::  176, ~byl, Tlon
         0w0                           ::  177, ~sud, Tlon
         0w0                           ::  178, ~pem, Tlon
-        0w0                           ::  179, ~dev, Tlon
+        0wQ.uJzGo.M94yL.L7yw6.nGyfW   ::  179, ~dev, Tlon
         0w0                           ::  180, ~lur, Tlon
         0w0                           ::  181, ~def, Tlon
-        0w0                           ::  182, ~bus, Tlon
+        0w1m.CxbiW.SKF5E.11JQ6.yW~T4  ::  182, ~bus, Tlon
         0w0                           ::  183, ~bep, Tlon
         0w0                           ::  184, ~run, Tlon
         0w0                           ::  185, ~mel, Tlon
@@ -342,12 +342,12 @@
         0w0                           ::  197, ~luc, Tlon
         0w0                           ::  198, ~len, Tlon
         0w0                           ::  199, ~ner, Tlon
-        0wv.aixe9.7gG2w.7cJiy.i3Mg8   ::  200, ~lex, Michael Hartl
+        0wv.aixe9.7gG2w.7cJiy.i3Mg8   ::  200, ~lex, Michael Hartl (oldkey)
         0w0                           ::  201, ~rup, Owen Rescher
         0w0                           ::  202, ~ned, Tlon
         0w0                           ::  203, ~lec, Tlon
         0w0                           ::  204, ~ryd, Tlon
-        0w1U.n361n.FC3jj.9cX26.V1Wif  ::  205, ~lyd, Adam Bliss
+        0w1U.n361n.FC3jj.9cX26.V1Wif  ::  205, ~lyd, Adam Bliss (oldkey)
         0w0                           ::  206, ~fen, Tlon
         0w0                           ::  207, ~wel, Tlon
         0w0                           ::  208, ~nyd, Tlon
@@ -355,20 +355,20 @@
         0w0                           ::  210, ~rel, Tlon
         0w0                           ::  211, ~rud, Tlon
         0w0                           ::  212, ~nes, Tlon
-        0w16.~8NZV.VyMmf.4toMO.pui1R  ::  213, ~hes, Tlon Investor 14
+        0w16.~8NZV.VyMmf.4toMO.pui1R  ::  213, ~hes, Tlon Investor 14 (oldkey)
         0w0                           ::  214, ~fet, Tlon
         0w0                           ::  215, ~des, Tlon
         0w0                           ::  216, ~ret, Tlon
         0w0                           ::  217, ~dun, Tlon
         0w0                           ::  218, ~ler, Tlon
-        0w10.w0AUz.QVdks.HCNvf.ja~TO  ::  219, ~nyr, Ivan Matosevic
+        0w10.w0AUz.QVdks.HCNvf.ja~TO  ::  219, ~nyr, Ivan Matosevic (oldkey)
         0w0                           ::  220, ~seb, Tlon
         0w0                           ::  221, ~hul, Tlon
         0w0                           ::  222, ~ryl, Tlon
         0w0                           ::  223, ~lud, Tlon
         0w0                           ::  224, ~rem, Tlon
         0w0                           ::  225, ~lys, Tlon
-        0w3C.YXlEl.pFbYV.9pYWI.d7cla  ::  226, ~fyn, Stephen Burnham
+        0w3C.YXlEl.pFbYV.9pYWI.d7cla  ::  226, ~fyn, Stephen Burnham (oldkey)
         0w0                           ::  227, ~wer, Tlon
         0w0                           ::  228, ~ryc, Tlon
         0w0                           ::  229, ~sug, Tlon
@@ -385,19 +385,19 @@
         0w0                           ::  240, ~lyr, Tlon
         0w0                           ::  241, ~tes, Tlon
         0w0                           ::  242, ~mud, Ian Rowan
-        0w4.yybWD.F1BgE.ynzlF.47neH   ::  243, ~nyt, Byrne Hobart
+        0w4.yybWD.F1BgE.ynzlF.47neH   ::  243, ~nyt, Byrne Hobart (oldkey)
         0w0                           ::  244, ~byr, Tlon
         0w0                           ::  245, ~sen, Tlon
         0w0                           ::  246, ~weg, Tlon
-        0w28.bRVMq.Oi3tM.zOCNV.j00Yq  ::  247, ~fyr, Anton Dyudin
+        0w28.bRVMq.Oi3tM.zOCNV.j00Yq  ::  247, ~fyr, Anton Dyudin (oldkey)
         0w0                           ::  248, ~mur, Tlon
         0w0                           ::  249, ~tel, Tlon
-        0w3D.onYhb.3wvaz.62Ct8.nt3iJ  ::  250, ~rep, Raymond Pasco
+        0w3D.onYhb.3wvaz.62Ct8.nt3iJ  ::  250, ~rep, Raymond Pasco (oldkey)
         0w0                           ::  251, ~teg, Tlon
         0w0                           ::  252, ~pec, Tlon
         0w0                           ::  253, ~nel, Tlon
         0w0                           ::  254, ~nev, Tlon
-        0wY.a0HAU.7Lbkf.6V514.OsJBv   ::  255, ~fes, John Burnham
+        0wY.a0HAU.7Lbkf.6V514.OsJBv   ::  255, ~fes, John Burnham (oldkey)
     ==
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -413,7 +413,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(3 vez)
+    ?>  =(4 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -433,7 +433,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 3]
+      :~  [3 4]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -479,7 +479,7 @@
           ?.  =(fak.ton r.i.lew.wod.dur)  ~|([%client-wrong-fake her] !!)
           :+  p.p.q.i.lew.wod.dur
             q.q.i.lew.wod.dur
-          (haul r.q.i.lew.wod.dur)
+          (com:nu:crub r.q.i.lew.wod.dur)
         ::
         ++  clon
           ^-  life
@@ -574,7 +574,7 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dyr
-              (en:crua q.u.yed.caq.dyr mal)
+              (en:crub q.u.yed.caq.dyr mal)
           ==
         ::
         ++  xeno                                        ::    xeno:lax:as:go
@@ -729,7 +729,7 @@
             |-  ^-  (list ship)
             ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
         ::
-            (turn mac |=({p/life q/ring} [p q (weur q)]))
+            (turn mac |=({p/life q/ring} [p q (nol:nu:crub q)]))
             wil
             ~
             ~
@@ -978,13 +978,13 @@
         :-  p
         %=    q
             val
-          (turn val.q |=({p/life q/ring r/acru} [p q (weur q)]))
+          (turn val.q |=({p/life q/ring r/acru} [p q (nol:nu:crub q)]))
         ==
       ==
     ++  come                                            ::    come:am
       |=  {ges/(unit @t) wid/@ bur/@ fak/?}            ::  instantiate pawn
       ^-  {p/{p/ship q/@uvG} q/fort}
-      =+  loy=(bruw wid bur)
+      =+  loy=(pit:nu:crub wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
       =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
@@ -1002,7 +1002,7 @@
     ++  czar  !:                                        ::    czar:am
       |=  {our/ship ger/@uw fak/?}                      ::  instantiate emperor
       ^-  {p/(list boon) q/fort}
-      =+  loy=?:(fak (bruw 2.048 our) (bruw 2.048 ger)) ::  fake uses carrier /
+      =+  loy=?:(fak (pit:nu:crub 512 our) (pit:nu:crub 512 ger)) ::  fake uses carrier /
       =+  fim==(fig:ex:loy (zeno our))
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]
@@ -1018,7 +1018,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  {kay/cape ryn/lane pac/rock}                  ::  process packet
       ^-  {p/(list boon) q/fort}
-      ?.  =(3 (end 0 3 pac))  [~ fox]
+      ?.  =(4 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
