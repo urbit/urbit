@@ -436,7 +436,7 @@
       |=  txt/@
       ^-  @ux
       =/  encrypt  ~(en ecba key)
-      =/  blocks  (met 7 txt)
+      =/  blocks  (add (div len 16) ?:(=((mod len 16) 0) 0 1))
       =.  blocks  ?:(=(0 blocks) 1 blocks)
       ?>  (gte len (met 3 txt))
       %+  mix  txt
@@ -458,7 +458,7 @@
       |=  txt/@
       ^-  @ux
       =/  encrypt  ~(en ecbb key)
-      =/  blocks  (met 7 txt)
+      =/  blocks  (add (div len 16) ?:(=((mod len 16) 0) 0 1))
       =.  blocks  ?:(=(0 blocks) 1 blocks)
       ?>  (gte len (met 3 txt))
       %+  mix  txt
@@ -480,7 +480,7 @@
       |=  txt/@
       ^-  @ux
       =/  encrypt  ~(en ecbc key)
-      =/  blocks  (met 7 txt)
+      =/  blocks  (add (div len 16) ?:(=((mod len 16) 0) 0 1))
       =.  blocks  ?:(=(0 blocks) 1 blocks)
       ?>  (gte len (met 3 txt))
       %+  mix  txt
