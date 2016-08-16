@@ -287,7 +287,11 @@ module.exports = name("Claim", FromStore("pass", function(arg) {
     onInputPass: Actions.setPasscode
   }), pass ? rele(Balance, {
     pass: pass
-  }) : p({}, h3({}, "Convert an old ticket"), rele(Recycling, {})));
+  }) : div({
+    style: {
+      marginTop: "1rem"
+    }
+  }, h3({}, "Convert an old ticket"), rele(Recycling, {})));
 }));
 
 
