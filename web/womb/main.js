@@ -275,7 +275,9 @@ Balance = Scry("/balance/:pass", function(arg) {
     }, Label("Invalid passcode", "warning"));
   }
   planets = balance.planets, stars = balance.stars, owner = balance.owner, history = balance.history;
-  return div({}, h3({}, "Balance"), p({}, "Hello ", Mail(owner), ", "), p({}, "This balance was ", History(history)), p({}, "You currently hold ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
+  return div({}, h3({}, "Balance"), p({}, "Hello ", Mail(owner), ", "), p({}, "This balance was ", History(history)), p({}, "You currently hold ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), p({
+    className: 'red'
+  }, b({}, "Warning: "), "When you click 'Claim' we will send the relevant tickets to the email address above.  This can only be done once!"), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
 });
 
 module.exports = name("Claim", FromStore("pass", function(arg) {
@@ -323,7 +325,8 @@ ClaimButton = FromStore("pass", function(arg) {
   pass = arg.pass, ship = arg.ship;
   if (!ship) {
     return button({
-      disabled: true
+      disabled: true,
+      className: 'claim'
     }, "Claim (invalid)");
   }
   return rele(_ClaimButton, {
@@ -437,26 +440,32 @@ module.exports = name("MailInput", function(arg) {
 
 
 },{"../util.coffee":18}],10:[function(require,module,exports){
-var Claim, NET, Ships, div, h3, h4, ref, rele;
+var Claim, NET, Recycling, Ships, a, div, h3, h4, ref, rele;
 
 Claim = require('./Claim.coffee');
 
 Ships = require('./Ships.coffee');
 
+Recycling = require('./Recycling.coffee');
+
 rele = React.createElement;
 
-NET = false;
+NET = true;
 
-ref = React.DOM, div = ref.div, h3 = ref.h3, h4 = ref.h4;
+ref = React.DOM, div = ref.div, h3 = ref.h3, h4 = ref.h4, a = ref.a;
 
 module.exports = function() {
   return div({}, h3({
     className: 'first-a'
-  }, "Claim an invite"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0);
+  }, "Claim an invite"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0, div({
+    className: 'footer'
+  }, "Questions?  Email us:", a({
+    href: "mailto:urbit@urbit.org"
+  }, "urbit@urbit.org"), "."));
 };
 
 
-},{"./Claim.coffee":5,"./Ships.coffee":15}],11:[function(require,module,exports){
+},{"./Claim.coffee":5,"./Recycling.coffee":12,"./Ships.coffee":15}],11:[function(require,module,exports){
 var input, name, recl, uvShape;
 
 uvShape = require('../util.coffee').uvShape;
@@ -792,7 +801,9 @@ labels = {
 Stat = name("Stat", function(arg) {
   var className, dist, free, live, owned, ship, split, stats;
   stats = arg.stats;
-  return ul({}, (function() {
+  return ul({
+    className: 'network'
+  }, (function() {
     var ref1, results;
     results = [];
     for (ship in stats) {
@@ -924,9 +935,9 @@ var PO, PO_old, SHIPSHAPE,
 
 SHIPSHAPE = /^~?([a-z]{3}|[a-z]{6}(-[a-z]{6}){0,3}|[a-z]{6}(-[a-z]{6}){3}(--[a-z]{6}(-[a-z]{6}){3})+)$/;
 
-PO_old = 'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\nrigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\nholpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\nlosdilforpilramtirwintadbicdifrocwidbisdasmidlop\nrilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\nritpodmottamtolsavposnapnopsomfinfonbanporworsip\nronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\nsivtagpadsaldivdactansidfabtarmonranniswolmispal\nlasdismaprabtobrollatlonnodnavfignomnibpagsopral\nbilhaddocridmocpacravripfaltodtiltinhapmicfanpat\ntaclabmogsimsonpinlomrictapfirhasbosbatpochactid\nhavsaplindibhosdabbitbarracparloddosbortochilmac\ntomdigfilfasmithobharmighinradmashalraglagfadtop\nmophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\nnimlarfitwalrapsarnalmoslandondanladdovrivbacpol\nlaptalpitnambonrostonfodponsovnocsorlavmatmipfap\n\nzodnecbudwessevpersutletfulpensytdurwepserwylsun\nrypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\nlunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\npyldulhetmevruttylwydtepbesdexsefwycburderneppur\nrysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\nsecmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\nselrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\nsyptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\nlytdusnebrumtynseglyxpunresredfunrevrefmectedrus\nbexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\ntenlusnussyltecmexpubrymtucfyllepdebbermughuttun\nbylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\nwedducfurfexnulluclennerlexrupnedlecrydlydfenwel\nnydhusrelrudneshesfetdesretdunlernyrsebhulryllud\nremlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\nlyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes';
+PO_old = 'doz mar bin wan sam lit sig hid fid lis sog dir wac sab wis sib\nrig sol dop mod fog lid hop dar dor lor hod fol rin tog sil mir\nhol pas lac rov liv dal sat lib tab han tic pid tor bol fos dot\nlos dil for pil ram tir win tad bic dif roc wid bis das mid lop\nril nar dap mol san loc nov sit nid tip sic rop wit nat pan min\nrit pod mot tam tol sav pos nap nop som fin fon ban por wor sip\nron nor bot wic soc wat dol mag pic dav bid bal tim tas mal lig\nsiv tag pad sal div dac tan sid fab tar mon ran nis wol mis pal\nlas dis map rab tob rol lat lon nod nav fig nom nib pag sop ral\nbil had doc rid moc pac rav rip fal tod til tin hap mic fan pat\ntac lab mog sim son pin lom ric tap fir has bos bat poc hac tid\nhav sap lin dib hos dab bit bar rac par lod dos bor toc hil mac\ntom dig fil fas mit hob har mig hin rad mas hal rag lag fad top\nmop hab nil nos mil fop fam dat nol din hat nac ris fot rib hoc\nnim lar fit wal rap sar nal mos lan don dan lad dov riv bac pol\nlap tal pit nam bon ros ton fod pon sov noc sor lav mat mip fap\n\n/  /  /  /  /  /  /  /  /  /  /  /  /  /  /  \nzod nec bud wes sev per sut let ful pen syt dur wep ser wyl sun\nryp syx dyr nup heb peg lup dep dys put lug hec ryt tyv syd nex\nlun mep lut sep pes del sul ped tem led tul met wen byn hex feb\npyl dul het mev rut tyl wyd tep bes dex sef wyc bur der nep pur\nrys reb den nut sub pet rul syn reg tyd sup sem wyn rec meg net\nsec mul nym tev web sum mut nyx rex teb fus hep ben mus wyx sym\nsel ruc dec wex syr wet dyl myn mes det bet bel tux tug myr pel\nsyp ter meb set dut deg tex sur fel tud nux rux ren wyt nub med\nlyt dus neb rum tyn seg lyx pun res red fun rev ref mec ted rus\nbex leb dux ryn num pyx ryg ryx fep tyr tus tyc leg nem fer mer\nten lus nus syl tec mex pub rym tuc fyl lep deb ber mug hut tun\nbyl sud pem dev lur def bus bep run mel pex dyt byt typ lev myl\nwed duc fur fex nul luc len ner lex rup ned lec ryd lyd fen wel\nnyd hus rel rud nes hes fet des ret dun ler nyr seb hul ryl lud\nrem lys fyn wer ryc sug nys nyl lyn dyn dem lux fed sed bec mun\nlyr tes mud nyt byr sen weg fyr mur tel rep teg pec nel nev fes';
 
-PO = 'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\nrigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\nholpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\nlosdilforpilramtirwintadbicdifrocwidbisdasmidlop\nrilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\nritpodmottamtolsavposnapnopsomfinfonbandorworsip\nronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\nsivtagpadsaldivdactansidfabtarmonranniswolmispal\nlasdismaprabtobrollatlonnodnavfignomnibpagsopral\nbilhaddocridmocpacravripfaltodtiltinhapmicfanpat\ntaclabmogsimsonpinlomrictapfirhasbosbatpochactid\nhavsaplindibhosdabbitbarracparloddosbortochilmac\ntomdigfilfasmithobharmighinradmashalraglagfadtop\nmophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\nnimlarfitwalrapsarnalmoslandondanladdovrivbacpol\nlaptalpitnambonrostonfodponsovnocsorlavmatmipfip\n\nzodnecbudwessevpersutletfulpensytdurwepserwylsun\nrypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\nlunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\npyldulhetmevruttylwydtepbesdexsefwycburderneppur\nrysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\nsecmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\nselrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\nsyptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\nlytdusnebrumtynseglyxpunresredfunrevrefmectedrus\nbexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\ntenlusnussyltecmexpubrymtucfyllepdebbermughuttun\nbylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\nwedducfurfexnulluclennerlexrupnedlecrydlydfenwel\nnydhusrelrudneshesfetdesretdunlernyrsebhulryllud\nremlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\nlyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes';
+PO = 'doz mar bin wan sam lit sig hid fid lis sog dir wac sab wis sib\nrig sol dop mod fog lid hop dar dor lor hod fol rin tog sil mir\nhol pas lac rov liv dal sat lib tab han tic pid tor bol fos dot\nlos dil for pil ram tir win tad bic dif roc wid bis das mid lop\nril nar dap mol san loc nov sit nid tip sic rop wit nat pan min\nrit pod mot tam tol sav pos nap nop som fin fon ban dor wor sip\nron nor bot wic soc wat dol mag pic dav bid bal tim tas mal lig\nsiv tag pad sal div dac tan sid fab tar mon ran nis wol mis pal\nlas dis map rab tob rol lat lon nod nav fig nom nib pag sop ral\nbil had doc rid moc pac rav rip fal tod til tin hap mic fan pat\ntac lab mog sim son pin lom ric tap fir has bos bat poc hac tid\nhav sap lin dib hos dab bit bar rac par lod dos bor toc hil mac\ntom dig fil fas mit hob har mig hin rad mas hal rag lag fad top\nmop hab nil nos mil fop fam dat nol din hat nac ris fot rib hoc\nnim lar fit wal rap sar nal mos lan don dan lad dov riv bac pol\nlap tal pit nam bon ros ton fod pon sov noc sor lav mat mip fip\n\nzod nec bud wes sev per sut let ful pen syt dur wep ser wyl sun\nryp syx dyr nup heb peg lup dep dys put lug hec ryt tyv syd nex\nlun mep lut sep pes del sul ped tem led tul met wen byn hex feb\npyl dul het mev rut tyl wyd tep bes dex sef wyc bur der nep pur\nrys reb den nut sub pet rul syn reg tyd sup sem wyn rec meg net\nsec mul nym tev web sum mut nyx rex teb fus hep ben mus wyx sym\nsel ruc dec wex syr wet dyl myn mes det bet bel tux tug myr pel\nsyp ter meb set dut deg tex sur fel tud nux rux ren wyt nub med\nlyt dus neb rum tyn seg lyx pun res red fun rev ref mec ted rus\nbex leb dux ryn num pyx ryg ryx fep tyr tus tyc leg nem fer mer\nten lus nus syl tec mex pub rym tuc fyl lep deb ber mug hut tun\nbyl sud pem dev lur def bus bep run mel pex dyt byt typ lev myl\nwed duc fur fex nul luc len ner lex rup ned lec ryd lyd fen wel\nnyd hus rel rud nes hes fet des ret dun ler nyr seb hul ryl lud\nrem lys fyn wer ryc sug nys nyl lyn dyn dem lux fed sed bec mun\nlyr tes mud nyt byr sen weg fyr mur tel rep teg pec nel nev fes';
 
 module.exports = {
   unpackFrond: function(a) {
