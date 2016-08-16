@@ -26,3 +26,17 @@
 .recycling input {
   width: 60%;
 }
+
+.recycleTicket {
+  margin-top: 1rem;
+}
+
+button {
+  font-weight: 500;
+  background-color: transparent;
+  border: 2px solid #000;
+}
+
+ul.shop li {
+  margin-top: 1rem;
+}

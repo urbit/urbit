@@ -7,11 +7,8 @@ Persistence = require('./Persistence.coffee');
 
 module.exports = {
   setPasscode: function(pass) {
-    Dispatcher.dispatch({
+    return Dispatcher.dispatch({
       setPasscode: pass
-    });
-    return $('.womb-pass-input').each(function() {
-      return this.value || (this.value = pass);
     });
   },
   recycleTicket: function(arg, pass) {
@@ -289,11 +286,8 @@ module.exports = name("Claim", FromStore("pass", function(arg) {
     defaultValue: pass,
     onInputPass: Actions.setPasscode
   }), pass ? rele(Balance, {
-    key: "balance",
     pass: pass
-  }) : div({
-    key: "recycle"
-  }, h3({}, "Convert an old ticket"), rele(Recycling, {})));
+  }) : p({}, h3({}, "Convert an old ticket"), rele(Recycling, {})));
 }));
 
 
@@ -478,7 +472,7 @@ module.exports = name("PassInput", function(arg) {
   onInputPass = arg.onInputPass, minLength = arg.minLength, defaultValue = arg.defaultValue;
   return input({
     defaultValue: defaultValue,
-    className: 'mono womb-pass-input',
+    className: 'mono',
     style: {
       width: '100%'
     },
@@ -542,23 +536,27 @@ RecycleTicket = name("RecycleTicket", Scry("/ticket/~:ship/~:tick", function(arg
       mail: mail
     }, passcode);
   };
-  switch (status != null ? status : "fail") {
-    case "fail":
-      return Label("Bad ticket", "warning");
-    case "good":
-      return rele(RecycleButton, {
-        disabled: !mail,
-        onClick: doRecycle
-      });
-    case "used":
-      return span({}, a({
-        onClick: function() {
-          return Actions.setPasscode(passcode);
-        }
-      }, passcode), Label("Ticket exchanged", "info"));
-    default:
-      throw new Error("Bad ticket status: " + status);
-  }
+  return div({
+    className: 'recycleTicket'
+  }, (function() {
+    switch (status != null ? status : "fail") {
+      case "fail":
+        return Label("Bad ticket", "warning");
+      case "good":
+        return rele(RecycleButton, {
+          disabled: !mail,
+          onClick: doRecycle
+        });
+      case "used":
+        return span({}, a({
+          onClick: function() {
+            return Actions.setPasscode(passcode);
+          }
+        }, passcode), Label("Ticket exchanged", "info"));
+      default:
+        throw new Error("Bad ticket status: " + status);
+    }
+  })());
 }));
 
 Recycling = recl({
@@ -1063,8 +1061,12 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
