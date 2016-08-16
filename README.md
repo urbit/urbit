@@ -56,11 +56,11 @@ fine.
 
 ## Install as a package
 
-<!-- 
+<!--
 waiting on makefile changes.
 ### OS X - Homebrew
 
-    brew install --HEAD homebrew/head-only/urbit 
+    brew install --HEAD homebrew/head-only/urbit
 -->
 
 ### Ubuntu or Debian
@@ -220,7 +220,7 @@ We use Urbit to talk to each other and coordinate about building the
 system. To join the main Urbit talk station use `^x` to switch to the
 `talk()` prompt, then run:
 
-    ;join ~dozbud/urbit-meta
+    ;join ~binzod/urbit-meta
 
 # Learn more
 
