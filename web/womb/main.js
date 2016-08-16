@@ -30,6 +30,14 @@ module.exports = {
       };
     })(this));
   },
+  confirmShip: function(pass, ship) {
+    return Dispatcher.dispatch({
+      confirmClaim: {
+        pass: pass,
+        ship: ship
+      }
+    });
+  },
   claimShip: function(pass, ship) {
     Dispatcher.dispatch({
       putClaim: {
@@ -165,6 +173,17 @@ WombStore = _.extend((new EventEmitter).setMaxListeners(50), {
     path = arg1.path, data = arg1.data;
     return _data[path] = data;
   },
+  confirmClaim: function(arg1) {
+    var k, ship, v;
+    ship = arg1.ship;
+    for (k in _data) {
+      v = _data[k];
+      if (k.indexOf('claim/') !== -1 && v === "confirm") {
+        _data[k] = "none";
+      }
+    }
+    return _data["claim/" + ship] = "confirm";
+  },
   putClaim: function(arg1) {
     var ship;
     ship = arg1.ship;
@@ -277,23 +296,19 @@ Balance = Scry("/balance/:pass", function(arg) {
   planets = balance.planets, stars = balance.stars, owner = balance.owner, history = balance.history;
   return div({}, h3({}, "Balance"), p({}, "Hello ", Mail(owner), ", "), p({}, "This balance was ", History(history)), p({}, "You currently hold ", b({}, planets || "no"), " Planets ", "and ", b({}, stars || "no"), " Stars."), p({
     className: 'red'
-  }, b({}, "Warning: "), "When you click 'Claim' we will send the relevant tickets to the email address above.  This can only be done once!"), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
+  }, b({}, "Warning: "), "When you click 'Claim' we will send the ticket to the email address above.  This can only be done once!"), stars ? rele(Stars) : void 0, planets ? rele(Planets) : void 0);
 });
 
 module.exports = name("Claim", FromStore("pass", function(arg) {
   var pass;
   pass = arg.pass;
   return div({}, p({}, "To view your ships, input your passcode."), PassInput({
-    minLength: 32,
+    minLength: 28,
     defaultValue: pass,
     onInputPass: Actions.setPasscode
   }), pass ? rele(Balance, {
     pass: pass
-  }) : div({
-    style: {
-      marginTop: "1rem"
-    }
-  }, h3({}, "Convert an old ticket"), rele(Recycling, {})));
+  }) : div({}, h3({}, "Convert an old ticket"), rele(Recycling, {})));
 }));
 
 
@@ -326,31 +341,37 @@ ClaimButton = FromStore("pass", function(arg) {
   if (!ship) {
     return button({
       disabled: true,
-      className: 'claim'
-    }, "Claim (invalid)");
+      className: 'claim invalid'
+    }, "Invalid");
   }
   return rele(_ClaimButton, {
-    ship: ship,
-    onClick: function() {
-      return Actions.claimShip(pass, ship);
-    }
+    pass: pass,
+    ship: ship
   });
 });
 
 _ClaimButton = FromStore("claim/:ship", function(arg) {
-  var claim, onClick;
-  claim = arg.claim, onClick = arg.onClick;
+  var claim, pass, ship;
+  claim = arg.claim, pass = arg.pass, ship = arg.ship;
   switch (claim) {
     case "own":
       return Label("Claimed!", "success");
     case "wait":
       return Label("Claiming...");
     case "xeno":
-      return Label("Taken", "warning");
+      return Label("Not available", "warning");
     case "none":
       return button({
-        onClick: onClick
+        onClick: function() {
+          return Actions.confirmShip(pass, ship);
+        }
       }, "Claim");
+    case "confirm":
+      return button({
+        onClick: function() {
+          return Actions.claimShip(pass, ship);
+        }
+      }, "Click again to confirm.");
     default:
       throw new Error("Bad claim type: " + claim);
   }
@@ -457,7 +478,7 @@ ref = React.DOM, div = ref.div, h3 = ref.h3, h4 = ref.h4, a = ref.a;
 module.exports = function() {
   return div({}, h3({
     className: 'first-a'
-  }, "Claim an invite"), rele(Claim, {}), NET ? div({}, h4({}, "Network"), rele(Ships, {})) : void 0, div({
+  }, "Claim an invite"), rele(Claim, {}), NET ? div({}, h3({}, "Network"), rele(Ships, {})) : void 0, div({
     className: 'footer'
   }, "Questions?  Email us:", a({
     href: "mailto:urbit@urbit.org"
@@ -757,7 +778,7 @@ module.exports = name("ShipInput", function(arg) {
   return input({
     defaultValue: defaultValue,
     placeholder: placeholder,
-    className: 'mono',
+    className: 'mono pick',
     onChange: function(arg1) {
       var ship, target;
       target = arg1.target;
@@ -815,7 +836,7 @@ Stat = name("Stat", function(arg) {
         key: ship
       }, span({
         className: "mono"
-      }, "~" + ship), " (", live, "): ", (function() {
+      }, "~" + ship), (function() {
         switch (false) {
           case free == null:
             return Label(labels.free);
@@ -839,11 +860,552 @@ Stat = name("Stat", function(arg) {
   })());
 });
 
-module.exports = Scry("/stats", Stat);
+module.exports = function() {
+  return Stat({
+    stats: {
+      "binzod": {
+        "dist": {
+          "split": {
+            "pacnym-disber": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "natmeb-rapdux": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "donlyt-pidhec": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "malnus-nidfes": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "fontyd-rovsyx": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "rovtev-nompyx": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "tonrex-balsur": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "donryg-ribwyt": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "dalrys-pocnyx": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "dandel-rovbur": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sicdyt-lidwed": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "danren-tidren": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "seen"
+      },
+      "bus": {
+        "dist": {
+          "split": {
+            "rocbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "hidbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "nimbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "lisbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sambus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "litbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sigbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "fidbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "wacbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "wanbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "dirbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "binbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sabbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "marbus": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "live"
+      },
+      "samzod": {
+        "dist": {
+          "split": {
+            "wannes-sopsyx": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "winsyx-wicsyl": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "live"
+      },
+      "pub": {
+        "dist": {
+          "split": {
+            "dirpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "lispub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sampub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "wanpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sigpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "marpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "wacpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "binpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "lanpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "litpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sogpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "hidpub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "live"
+      },
+      "dev": {
+        "dist": {
+          "split": {
+            "wandev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "litdev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "bindev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sigdev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "samdev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "mardev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "hiddev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "dirdev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "lisdev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "seen"
+      },
+      "marzod": {
+        "dist": {
+          "split": {
+            "wicdev-wisryt": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "tomfur-figpur": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "panret-tocsel": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "pittyp-datfyn": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "tocbel-habnyx": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "locnyl-dacdel": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "seen"
+      },
+      "wanzod": {
+        "dist": {
+          "split": {
+            "maldeb-hapben": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "modlep-fosreg": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "dalnut-dovtux": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "dirwex-dosrev": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "lanrus-rinfep": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "novlud-padtyv": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "rostex-fossyl": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "rossec-nordys": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "balhul-polsub": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "hapryx-hopner": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "seen"
+      },
+      "ten": {
+        "dist": {
+          "split": {
+            "wisten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "molten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "marten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "binten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sigten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "wacten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "wanten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "mitten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "dirten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sabten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "samten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "listen": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "sogten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "tarten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            },
+            "litten": {
+              "dist": {
+                "owned": ""
+              },
+              "live": "cold"
+            }
+          }
+        },
+        "live": "live"
+      }
+    }
+  });
+};
 
 
 },{"./Label.coffee":8,"./Scry.coffee":13,"classnames":19}],16:[function(require,module,exports){
-var ClaimButton, Scry, ShipInput, Shop, ShopShips, button, div, h6, li, recl, ref, rele, span, ul;
+var ClaimButton, Scry, ShipInput, Shop, ShopShips, button, code, div, h6, li, recl, ref, rele, span, ul;
 
 Scry = require('./Scry.coffee');
 
@@ -851,7 +1413,7 @@ ShipInput = require('./ShipInput.coffee');
 
 ClaimButton = require('./ClaimButton.coffee');
 
-ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, h6 = ref.h6, button = ref.button, span = ref.span;
+ref = React.DOM, ul = ref.ul, li = ref.li, div = ref.div, h6 = ref.h6, button = ref.button, span = ref.span, code = ref.code;
 
 recl = React.createClass;
 
@@ -901,17 +1463,26 @@ Shop = function(type, length) {
     },
     render: function() {
       var ref1;
-      return div({}, h6({}, "Avaliable " + type + " (random). ", button({
-        onClick: this.reroll
-      }, "Reroll")), rele(ShopShips, _.extend({}, this.props, {
+      return div({}, h6({}, "Avaliable " + type + " — "), rele(ShopShips, _.extend({}, this.props, {
         type: type,
         nth: this.state.shipSelector
-      })), h6({}, "Custom"), div({}, "Specific " + type + ": ", rele(ShipInput, {
+      })), button({
+        onClick: this.reroll,
+        className: 'reroll'
+      }, "Get a new set"), h6({}, "Custom " + type + " — "), div({}, div({
+        style: {
+          marginBottom: ".3rem"
+        }
+      }, "If you understand how to pick a ", code({}, "@p"), " for " + type + ", feel free:"), div({
+        style: {
+          marginBottom: "1rem"
+        }
+      }, rele(ShipInput, {
         length: length,
         onInputShip: this.onInputShip
       }), rele(ClaimButton, {
         ship: (ref1 = this.state.customShip) != null ? ref1 : ""
-      })));
+      }))));
     }
   });
 };
