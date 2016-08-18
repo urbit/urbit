@@ -252,7 +252,7 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   !:                                                  ::  ::
-=+  cfg=[can-claim=| can-recycle=|]                   ::  temporarily disabled
+=+  cfg=[can-claim=& can-recycle=&]                   ::  temporarily disabled
 =+  [replay=| stat-no-email=|]                              ::  XX globals
 |=  {bowl part}                                       ::  main womb work
 |_  moz/(list move)
