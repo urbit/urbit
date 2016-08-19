@@ -14,8 +14,11 @@
 !:
 |_  {bow/bowl adr/(map email {time invited}) sos/(map bone sole-share) wom/(unit ship)}
 ++  prompt
+  ^-  sole-prompt
   ?~  wom  [& %ask-ship ":womb-ship? ~"]
-  [& %$ "<listening> [l,a,w,?]"]
+  =/  new  new-adrs
+  ?~  new  [& %$ "<listening> (0) [l,a,w,?]"]
+  [& %$ ": approve {<ask.i.new>}? ({<(lent new)>}) [y,n,l,a,w,?]"]
 ::
 ++  peer-sole
   |=  path
@@ -27,7 +30,12 @@
   =+  all=adrs
   [tan+(turn all message) (turn all put-mail)]
 ::
-++  adrs  (sort (turn (~(tap by adr)) |=({a/email b/time c/invited} [b a c])) lor)
+++  adrs
+  =-  (sort - lor)
+  %+  turn  (~(tap by adr))
+  |=({a/email b/time c/invited} [tym=b ask=a inv=c])
+::
+++  new-adrs  (skim adrs |=({@ @ inv/invited} =(%new inv)))
 ++  effect  |=(fec/sole-effect [ost.bow %diff %sole-effect fec])
 ++  message
   |=  {now/time ask/@t inv/invited}  ^-  tank
@@ -46,11 +54,12 @@
   ^-  (quip {bone card} +>)
   ~|  have-mail+ask
   ?<  (~(has by adr) ask)
-  :_  +>.$(adr (~(put by adr) ask now.bow %new)) :: XX electroplating
+  =.  adr  (~(put by adr) ask now.bow %new) :: XX electroplating
+  :_  +>.$
   =/  new  [now.bow ask %new]
-  =+  [mez=[(message new)]~ sav=(put-mail new)]
+  =+  [mez=[(message new)]~ pro=prompt sav=(put-mail new)]
   %+  turn  (prey /sole bow)
-  |=({ost/bone ^} (effect(ost.bow ost) %mor tan+mez sav ~))
+  |=({ost/bone ^} (effect(ost.bow ost) %mor tan+mez pro+prompt sav ~))
 ::
 ++  poke-sole-action
   |=  act/sole-action
@@ -76,13 +85,11 @@
       (transmit inv bel+~ ~)
     ?:  =(`*`"?" buf.som)  (transmit inv help)
     ?:  =(`*`"a" buf.som)  (transmit inv tan+(turn adrs message) ~)
-    ?:  =(`*`"l" buf.som)
-      =;  new  (transmit inv tan+(turn new message) ~)
-      (skim adrs |=({@ @ inv/invited} =(%new inv)))
+    ?:  =(`*`"l" buf.som)  (transmit inv tan+(turn new-adrs message) ~)
     ?:  =(`*`"w" buf.som)
       =>  .(wom ~)  :: XX TMI
       (transmit inv pro+prompt ~)
-    (transmit inv ~)
+    (transmit inv bel+~ ~)
   ==
 ++  transmit
   |=  {inv/sole-edit mor/(list sole-effect)}
@@ -94,6 +101,13 @@
 ++  help
   ^-  (list sole-effect)
   =-  (scan - (more (just '\0a') (stag %txt (star prn))))
+  %+  welp
+    ?~  [new-adrs]  ""
+    """
+    y - invite current ask
+    n - ignore current ask
+    
+    """
   """
   l - list new asks
   a - list all asks
@@ -102,9 +116,9 @@
   """
 ::
 ++  invite
-  |=  who/email
+  |=  ask/email
   :-  %womb-invite
   ^-  {cord reference invite}:womb
   =+  inv=(scot %uv (end 7 1 eny.bow))
-  [inv `&+our.bow [who 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
+  [inv `&+our.bow [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
 --
