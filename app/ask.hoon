@@ -60,32 +60,33 @@
       $clr  `+>.$
       $ret
     ?^  wom  [[(effect mor+help)]~ +>.$]    :: show help
-    ?~  buf.som  [[(effect txt+"Please enter womb ship")]~ +>.$]
+    ?:  =(~ buf.som)  [[(effect txt+"Please enter womb ship")]~ +>.$]
     =/  try  (rose (tufa buf.som) fed:ag)
     ?.  ?=({$& ^} try)
       [[(effect bel+~)]~ +>.$]
     =>  .(wom p.try)  :: XX TMI
-    [[(effect pro+prompt)]~ +>.$]  :: XX handle multiple links?
+    (transmit set+~ pro+prompt ~)   :: XX handle multiple links?
   ::
       $det                              :: reject all input
     =^  inv  som  (~(transceive sole som) +.act)
+    =.  sos  (~(put by sos) ost.bow som)
     ?~  wom
       =/  try  (rose (tufa buf.som) fed:ag)
-      ?:  -.try  `+>.$(sos (~(put by sos) ost.bow som))
-      =^  det  som  (~(transmit sole som) inv)
-      =.  sos  (~(put by sos) ost.bow som)
-      [[(effect mor+~[det+det bel+~])]~ +>.$]
-    =/  mor/(list sole-effect)
-      ?:  =(`*`"?" buf.som)  help
-      ?:  =(`*`"a" buf.som)  [tan+(turn adrs message)]~
-      ?:  =(`*`"l" buf.som)
-        =;  new  [tan+(turn new message)]~
-        (skim adrs |=({@ @ inv/invited} =(%new inv)))
-      ~
-    =^  det  som  (~(transmit sole som) inv)
-    =.  sos  (~(put by sos) ost.bow som)
-    [[(effect mor+[det+det mor])]~ +>.$]
+      ?:  -.try  `+>.$
+      (transmit inv bel+~ ~)
+    ?:  =(`*`"?" buf.som)  (transmit inv help)
+    ?:  =(`*`"a" buf.som)  (transmit inv tan+(turn adrs message) ~)
+    ?:  =(`*`"l" buf.som)
+      =;  new  (transmit inv tan+(turn new message) ~)
+      (skim adrs |=({@ @ inv/invited} =(%new inv)))
+    (transmit inv ~)
   ==
+++  transmit
+  |=  {inv/sole-edit mor/(list sole-effect)}
+  =/  som  (~(got by sos) ost.bow)
+  =^  det  som  (~(transmit sole som) inv)
+  =.  sos  (~(put by sos) ost.bow som)
+  [[(effect mor+[det+det mor])]~ +>.$]
 ::
 ++  help
   ^-  (list sole-effect)
