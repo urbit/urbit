@@ -23,7 +23,7 @@
   **/
     /* u3a_bits: number of bits in word-addressed pointer.  29 == 2GB.
     */
-#     define u3a_bits  29
+#     define u3a_bits  U3_OS_LoomBits
 
     /* u3a_page: number of bits in word-addressed page.  12 == 16Kbyte page.
     */
