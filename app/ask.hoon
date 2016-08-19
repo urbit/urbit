@@ -7,6 +7,7 @@
 |%
   ++  card
     $%  {$diff $sole-effect sole-effect}
+        {$poke wire {ship $hood} $womb-invite {cord reference invite}:womb}
     ==
   ++  invited  ?($new $sent $ignored)
   ++  email  @t
@@ -92,6 +93,13 @@
       =.  inv.i.new  %ignored
       =.  adr  (~(put by adr) ask.i.new [tym inv]:i.new)
       (transmit inv tan+[(message i.new)]~ pro+prompt ~)
+    ?:  =(`*`"y" buf.som)
+      =/  new  new-adrs
+      ?~  new  (transmit inv bel+~ ~)
+      =.  inv.i.new  %sent  :: XX pending
+      =-  [[(invite ask.i.new) -<] ->]
+      =.  adr  (~(put by adr) ask.i.new [tym inv]:i.new)
+      (transmit inv tan+[(message i.new)]~ pro+prompt ~)
     ?:  =(`*`"w" buf.som)
       =>  .(wom ~)  :: XX TMI
       (transmit inv pro+prompt ~)
@@ -123,6 +131,9 @@
 ::
 ++  invite
   |=  ask/email
+  :-  ost.bow
+  ^-  card
+  :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]  
   :-  %womb-invite
   ^-  {cord reference invite}:womb
   =+  inv=(scot %uv (end 7 1 eny.bow))
