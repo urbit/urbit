@@ -1753,7 +1753,9 @@
       ^+  abet
       ?~  cor
         build
-      ?.  liv  abet
+      ?.  liv
+        ~&  e+vi+pump-blocked+[dom ~(wyt in req)]
+        abet
       =+  ole=~(top to req)
       ?~  ole  abet
       ::  process hiss
