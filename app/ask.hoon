@@ -15,7 +15,7 @@
 |_  {bow/bowl adr/(map email {time invited}) sos/(map bone sole-share) wom/(unit ship)}
 ++  prompt
   ?~  wom  [& %ask-ship ":womb-ship? ~"]
-  [& %$ "<listening> [l,a,?]"]
+  [& %$ "<listening> [l,a,w,?]"]
 ::
 ++  peer-sole
   |=  path
@@ -79,6 +79,9 @@
     ?:  =(`*`"l" buf.som)
       =;  new  (transmit inv tan+(turn new message) ~)
       (skim adrs |=({@ @ inv/invited} =(%new inv)))
+    ?:  =(`*`"w" buf.som)
+      =>  .(wom ~)  :: XX TMI
+      (transmit inv pro+prompt ~)
     (transmit inv ~)
   ==
 ++  transmit
@@ -94,6 +97,7 @@
   """
   l - list new asks
   a - list all asks
+  w - reset womb ship
   ? - print help
   """
 ::
