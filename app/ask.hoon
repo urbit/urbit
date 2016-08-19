@@ -28,7 +28,7 @@
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
   =-  [(effect %mor pro+prompt -)]~
   =+  all=adrs
-  [tan+(turn all message) (turn all put-mail)]
+  [tan+(turn (flop all) message) (turn all put-mail)]
 ::
 ++  adrs
   =-  (sort - lor)
@@ -84,8 +84,14 @@
       ?:  -.try  `+>.$
       (transmit inv bel+~ ~)
     ?:  =(`*`"?" buf.som)  (transmit inv help)
-    ?:  =(`*`"a" buf.som)  (transmit inv tan+(turn adrs message) ~)
-    ?:  =(`*`"l" buf.som)  (transmit inv tan+(turn new-adrs message) ~)
+    ?:  =(`*`"a" buf.som)  (transmit inv tan+(turn (flop adrs) message) ~)
+    ?:  =(`*`"l" buf.som)  (transmit inv tan+(turn (flop new-adrs) message) ~)
+    ?:  =(`*`"n" buf.som)
+      =/  new  new-adrs
+      ?~  new  (transmit inv bel+~ ~)
+      =.  inv.i.new  %ignored
+      =.  adr  (~(put by adr) ask.i.new [tym inv]:i.new)
+      (transmit inv tan+[(message i.new)]~ pro+prompt ~)
     ?:  =(`*`"w" buf.som)
       =>  .(wom ~)  :: XX TMI
       (transmit inv pro+prompt ~)
