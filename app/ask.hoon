@@ -8,9 +8,11 @@
   ++  card
     $%  {$diff $sole-effect sole-effect}
     ==
+  ++  invited  ?($new $sent $ignored)
+  ++  email  @t
 --
 !:
-|_  {bow/bowl adr/(set cord) sos/(map bone sole-share)}
+|_  {bow/bowl adr/(map email {time invited}) sos/(map bone sole-share)}
 ++  peer-sole
   |=  path
   ^-  (quip {bone card} +>)
@@ -21,10 +23,14 @@
   =+  all=adrs
   [tan+(turn all message) (turn all put-mail)]
 ::
-++  adrs  (sort (~(tap by adr)) aor)
+++  adrs  (sort (turn (~(tap by adr)) |=({a/email b/time c/invited} [b a c])) lor)
 ++  effect  |=(fec/sole-effect [ost.bow %diff %sole-effect fec])
-++  message  |=(ask/@t leaf+"ask: {(trip ask)}")
-++  put-mail   |=(ask/@t =+(pax=(rash ask unix-path) [%sav pax '']))
+++  message
+  |=  {now/time ask/@t inv/invited}  ^-  tank
+  =.  now  (sub now (mod now ~s1))
+  leaf+"ask: {<inv>} {<now>} {(trip ask)}"
+::
+++  put-mail   |=({@ ask/@t inv/invited} =+(pax=(rash ask unix-path) [%sav pax `@t`inv]))
 ++  unix-path  ::  split into path of "name" and "extension"
   ;~  (glue dot)
     (cook crip (star ;~(less dot next)))
@@ -35,9 +41,10 @@
   |=  ask/@t
   ^-  (quip {bone card} +>)
   ~|  have-mail+ask
-  ?<  (~(has in adr) ask)
-  :_  +>.$(adr (~(put in adr) ask))
-  =+  [mez=[(message ask)]~ sav=(put-mail ask)]
+  ?<  (~(has by adr) ask)
+  :_  +>.$(adr (~(put by adr) ask now.bow %new)) :: XX electroplating
+  =/  new  [now.bow ask %new]
+  =+  [mez=[(message new)]~ sav=(put-mail new)]
   %+  turn  (prey /sole bow)
   |=({ost/bone ^} (effect(ost.bow ost) %mor tan+mez sav ~))
 ::
@@ -50,8 +57,21 @@
     $det                              :: reject all input
       =+  som=(~(got by sos) ost.bow) ::  XX this code belongs in a library
       =^  inv  som  (~(transceive sole som) +.act)
+      =/  buf  buf.som
       =^  det  som  (~(transmit sole som) inv)
       =.  sos  (~(put by sos) ost.bow som)
-      [[(effect det+det)]~ +>.$]
+      =+  mor=`(list sole-effect)`[det+det]~
+      =.  mor
+        ?+  buf  mor
+          {$'?' $~}  (welp mor help)
+        ==
+      [[(effect mor+mor)]~ +>.$]
   ==
+++  help
+  ^-  (list sole-effect)
+  =-  (scan - (more (just '\0a') (stag %txt (star prn))))
+  """
+  ? - list comands
+  ⏎ - print all received asks
+  """
 --
