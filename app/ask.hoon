@@ -19,7 +19,7 @@
   ~|  [%not-in-whitelist src.bow]
   ?>  (~(has in (sy ~zod our.bow ~talsur-todres ~)) src.bow)
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
-  =-  [(effect %mor pro+[& %$ "<listening> [n,a,?]"] -)]~
+  =-  [(effect %mor pro+[& %$ "<listening> [l,a,?]"] -)]~
   =+  all=adrs
   [tan+(turn all message) (turn all put-mail)]
 ::
@@ -64,17 +64,18 @@
       =.  mor
         ?:  =(`*`"?" buf)  (welp mor help)
         ?:  =(`*`"a" buf)  (welp mor tan+(turn adrs message) ~)
-        ?:  =(`*`"n" buf)
+        ?:  =(`*`"l" buf)
           =;  new  (welp mor tan+(turn new message) ~)
           (skim adrs |=({@ @ inv/invited} =(%new inv)))
         mor
       [[(effect mor+mor)]~ +>.$]
   ==
+::
 ++  help
   ^-  (list sole-effect)
   =-  (scan - (more (just '\0a') (stag %txt (star prn))))
   """
-  n - list new asks
+  l - list new asks
   a - list all asks
   ? - print help
   """
