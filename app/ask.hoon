@@ -2,7 +2,7 @@
 ::::  /hoon/ask/app
   ::
 /?    310
-/+    sole
+/+    sole, womb
 [. sole]
 |%
   ++  card
@@ -12,14 +12,18 @@
   ++  email  @t
 --
 !:
-|_  {bow/bowl adr/(map email {time invited}) sos/(map bone sole-share)}
+|_  {bow/bowl adr/(map email {time invited}) sos/(map bone sole-share) wom/(unit ship)}
+++  prompt
+  ?~  wom  [& %ask-ship ":womb-ship? ~"]
+  [& %$ "<listening> [l,a,?]"]
+::
 ++  peer-sole
   |=  path
   ^-  (quip {bone card} +>)
   ~|  [%not-in-whitelist src.bow]
-  ?>  (~(has in (sy ~zod our.bow ~talsur-todres ~)) src.bow)
+  ?>  (~(has in (sy ~zod our.bow ~wisdyr-holpeg ~)) src.bow)
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
-  =-  [(effect %mor pro+[& %$ "<listening> [l,a,?]"] -)]~
+  =-  [(effect %mor pro+prompt -)]~
   =+  all=adrs
   [tan+(turn all message) (turn all put-mail)]
 ::
@@ -50,25 +54,37 @@
 ::
 ++  poke-sole-action
   |=  act/sole-action
-  ^-  (quip {bone card} +>)  
-  ?-  -.act
-    $clr  `+>.$
-    $ret  [[(effect mor+help)]~ +>.$]    :: re-print list
-    $det                              :: reject all input
-      =+  som=(~(got by sos) ost.bow) ::  XX this code belongs in a library
-      =^  inv  som  (~(transceive sole som) +.act)
-      =/  buf  buf.som
+  ^-  (quip {bone card} +>)
+  =/  som  (~(got by sos) ost.bow)
+  ?-    -.act
+      $clr  `+>.$
+      $ret
+    ?^  wom  [[(effect mor+help)]~ +>.$]    :: show help
+    ?~  buf.som  [[(effect txt+"Please enter womb ship")]~ +>.$]
+    =/  try  (rose (tufa buf.som) fed:ag)
+    ?.  ?=({$& ^} try)
+      [[(effect bel+~)]~ +>.$]
+    =>  .(wom p.try)  :: XX TMI
+    [[(effect pro+prompt)]~ +>.$]  :: XX handle multiple links?
+  ::
+      $det                              :: reject all input
+    =^  inv  som  (~(transceive sole som) +.act)
+    ?~  wom
+      =/  try  (rose (tufa buf.som) fed:ag)
+      ?:  -.try  `+>.$(sos (~(put by sos) ost.bow som))
       =^  det  som  (~(transmit sole som) inv)
       =.  sos  (~(put by sos) ost.bow som)
-      =+  mor=`(list sole-effect)`[det+det]~
-      =.  mor
-        ?:  =(`*`"?" buf)  (welp mor help)
-        ?:  =(`*`"a" buf)  (welp mor tan+(turn adrs message) ~)
-        ?:  =(`*`"l" buf)
-          =;  new  (welp mor tan+(turn new message) ~)
-          (skim adrs |=({@ @ inv/invited} =(%new inv)))
-        mor
-      [[(effect mor+mor)]~ +>.$]
+      [[(effect mor+~[det+det bel+~])]~ +>.$]
+    =/  mor/(list sole-effect)
+      ?:  =(`*`"?" buf.som)  help
+      ?:  =(`*`"a" buf.som)  [tan+(turn adrs message)]~
+      ?:  =(`*`"l" buf.som)
+        =;  new  [tan+(turn new message)]~
+        (skim adrs |=({@ @ inv/invited} =(%new inv)))
+      ~
+    =^  det  som  (~(transmit sole som) inv)
+    =.  sos  (~(put by sos) ost.bow som)
+    [[(effect mor+[det+det mor])]~ +>.$]
   ==
 ::
 ++  help
@@ -79,4 +95,11 @@
   a - list all asks
   ? - print help
   """
+::
+++  invite
+  |=  who/email
+  :-  %womb-invite
+  ^-  {cord reference invite}:womb
+  =+  inv=(scot %uv (end 7 1 eny.bow))
+  [inv `&+our.bow [who 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
 --
