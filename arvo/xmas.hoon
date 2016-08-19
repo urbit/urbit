@@ -10,6 +10,7 @@
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
           $:  det/pipe                                  ::  secure channel
+              lun/(unit lane)                           ::  latest route
               zam/scar                                  ::  outbound boles
               fon/(map bole lock)                       ::  inbound locks
               sal/(map bole colt)                       ::  outbound flows
@@ -23,29 +24,10 @@
               fap/flap                                  ::  fragment hash
               dat/rock                                  ::  fragment data
           ==                                            ::
-++  part  (pair frag tick)                              ::  fragment of packet
 ++  coal                                                ::  live packet state
           $:  out/@da                                   ::  sent date
               lod/@da                                   ::  lost-by deadline
               clu/clue                                  ::  packet to send
-          ==                                            ::
-++  stat                                                ::  pump statistics
-          $:  $:  cur/@ud                               ::  window q length
-                  max/@ud                               ::  max pax out
-                  rey/@ud                               ::  retry q length
-              ==                                        ::
-              $:  rtt/@dr                               ::  roundtrip estimate
-                  las/@da                               ::  last sent
-                  lad/@da                               ::  last deadline
-              ==                                        ::
-          ==                                            ::
-++  mind                                                ::
-          $:  pol/(map ship bath)                       ::  cached cryptostate
-          ==                                            ::
-++  mini                                                ::  pump data
-          $:  saw/stat                                  ::  statistics
-              liv/(qeu coal)                            ::  live packets
-              lop/(qeu clue)                            ::  lost packets
           ==                                            ::
 ++  colt                                                ::  outbound state
           $:  seq/tick                                  ::  next tick to fill
@@ -60,9 +42,6 @@
               ack/frag                                  ::  number acked
               cly/(list clue)                           ::  left to send
           ==                                            ::
-++  silo                                                ::  network state
-          $:  hen/duct                                  ::  
-          ==
 ++  dove  {p/@ud q/(map @ud @)}                         ::  count 13-blocks
 ++  flap  @uvH                                          ::  network packet id
 ++  flea  (pair bole tick)                              ::  message id
@@ -79,11 +58,17 @@
               {$carp p/moan q/(pair @ud @)}             ::  fragment
               {$fore p/ship q/(unit lane) r/@}          ::  forwarded packet
           ==                                            ::
+++  mini                                                ::  pump data
+          $:  saw/stat                                  ::  statistics
+              liv/(qeu coal)                            ::  live packets
+              lop/(qeu clue)                            ::  lost packets
+          ==                                            ::
 ++  moan                                                ::  message invariant
           $:  {kos/bole liq/tick}                       ::  flow identity
               syn/@                                     ::  skin number
               cnt/@                                     ::  number of packets
           ==                                            ::
+++  part  (pair frag tick)                              ::  fragment of packet
 ++  pipe                                                ::  secure channel
           $:  out/(unit (pair hand code))               ::  outbound key
               inn/(map hand code)                       ::  inbound keys
@@ -92,7 +77,20 @@
               pub/(map life pass)                       ::  their public keys
               war/(map life ring)                       ::  our private keys
           ==                                            ::
+++  silo                                                ::
+          $:  pol/(map ship bath)                       ::  network state
+          ==                                            ::
 ++  skin  ?($none $open $fast $full)                    ::  encoding stem
+++  stat                                                ::  pump statistics
+          $:  $:  cur/@ud                               ::  window q length
+                  max/@ud                               ::  max pax out
+                  rey/@ud                               ::  retry q length
+              ==                                        ::
+              $:  rtt/@dr                               ::  roundtrip estimate
+                  las/@da                               ::  last sent
+                  lad/@da                               ::  last deadline
+              ==                                        ::
+          ==                                            ::
 ++  tick  @ud                                           ::  message sequence no
 --                                                      ::
 ::                                                      ::  
@@ -107,39 +105,103 @@
   ::                                                    ::
 ++  loft                                                ::  
   =>  |%                                                ::
-      ++  gift                                          ::  result
-        $%  {$west p/ship q/chan r/bole s/*}            ::  outbound message
-            {$east p/ship q/chan r/bole s/*}            ::  network response
-            {$home p/lane q/@}                          ::  route to self
-            {$rest p/coop}                              ::  message result
+      ++  gift                                          ::  output
+        $%  {$east p/duct q/ship r/chan s/*}            ::  network response
+            {$home p/lane q/@}                          ::  resend to self
+            {$know p/ship}                              ::  cache channel
+            {$rest p/duct q/coop}                       ::  message result
             {$send p/lane q/@}                          ::  transmit packet
             {$west p/ship q/chan r/bole s/*}            ::  outbound message
         ==                                              ::
-      ++  kiss
-        $%  {$clue p/ship q/pipe}                       ::  security change
+      ++  kiss                                          ::  input
+        $%  {$clue p/ship q/pipe}                       ::  purge channel
             {$done p/ship q/bole r/coop}                ::  completion
-            {$mess p/ship q/chan r/*}                   ::  transmission
+            {$hear p/lane q/@}                          ::  incoming packet
+            {$mess p/duct q/ship r/chan s/*}            ::  transmission
         ==
       --
   =|  $:  $:  our/@p                                    ::  XX multihome
+              now/@da
+              eny/@
               see/$-(ship pipe)
           ==
-          mind
-          fex/(list gift-ames)
+          silo
+          fex/(list gift)
       == 
-  |%
-  ++  apex
+  =*  syl  ->-
+  |%                                                    ::
+  ++  abet  [(flop fex) syl]                            ::  resolve
+  ++  apex                                              ::  compute
     |=  job/kiss
-    !!
+    ^+  +>
+    ?-    -.job
+        $clue  abet:(clue:(etre p.job) q.job)
+        $done  abet:(done:(etre p.job) q.job r.job)
+        $hear
+      =+  kec=(bite q.job)
+      ?>  =(our q.p.kec)
+      =^  etc  +>.$  (etch p.p.kec)
+      abet:(hear:etc p.job q.kec r.kec)
+    ::
+        $mess
+      =^  etc  +>.$  (etch q.job)
+      =^  kos  etc  (blow:etc p.job)
+      abet:(mess:etc r.job s.job)
+    ==
+  ++  etch                                              ::  new neighbor
+      |=  who/@p 
+      =+  buh=(~(get by pol) who)
+      ?^  buh  
+        ::  old neighbor; channel already registered
+        [~(. et who u.buh) +>.$]
+      ::  new neighbor; register secure channel view
+      :_  +>.$(fex [[%know who] fex])
+      ~(. et who `bath`[(see who) ~ [2 ~ ~] ~ ~])
+  ::
+  ++  etre                                              ::  old neighbor
+      |=  who/@p 
+      ~(. et who (~(got by pol) who))
+  ::
+  ++  et
+    |_  $:  who/ship
+            bah/bath
+        ==
+    ++  abet  +>(pol (~(put by pol) who bah))           ::  resolve
+    ++  blow                                            ::  register duct
+      |=  hen/duct
+      ^-  {bole _+>}
+      =+  kus=(~(get by q.zam.bah) hen)
+      ?^  kus  [u.kus +>.$]
+      :-  p.zam.bah
+      %=  +>.$
+        p.zam.bah  (add 2 p.zam.bah)
+        q.zam.bah  (~(put by q.zam.bah) hen p.zam.bah)
+        r.zam.bah  (~(put by r.zam.bah) p.zam.bah hen)
+      ==
+    ::
+    ++  clue  |=(det/pipe +>(det.bah det))              ::  purge security
+    ++  done
+      |=  {kos/bole cop/coop}
+      ^+  +>
+      !!
+    ::
+    ++  hear
+      |=  {lyn/lane syn/skin msg/@}
+      ^+  +>
+      !!
+    ::
+    ++  mess
+      |=  {cha/chan val/*}
+      ^+  +>
+      !!
+    --
   --
---
   ::
   ::::  inbound cores
     ::
 ::                                                      ::
 ::::  bite                                              ::::  packet format
   ::                                                    ::
-|%
 ++  bite                                                ::  packet to cake
   |=  pac/rock  ^-  cake
   =+  [mag=(end 5 1 pac) bod=(rsh 5 1 pac)]
@@ -176,11 +238,9 @@
         [5 tay]
     ==
   (lsh 5 1 bod)
---
 ::                                                      ::
 ::::  nose                                              ::::  packet decoder
   ::                                                    ::
-|%
 ++  nose  !:
   =>  |%
       ++  gift                                          ::  side effect
@@ -239,11 +299,12 @@
             {$have kos/bole cha/chan val/*}             ::  report message
             {$link key/code}                            ::  learn symmetric key
             {$meet doy/gyft}                            ::  learn public key
+            {$rout lyn/lane}                            ::  learn route
             {$sack kos/bole dam/flap cop/coop}          ::  send ack
         ==                                              ::
       ++  kiss                                          ::  event
         $%  {$done kos/bole cop/coop}                   ::  commit message
-            {$hear dam/flap syn/skin msg/@}             ::  raw packet
+            {$hear lyn/lane dam/flap syn/skin msg/@}    ::  raw packet
         ==                                              ::
       --                                                ::
   =|  $:  $:  our/ship                                  ::  XX singlehome
@@ -272,6 +333,8 @@
         $hear
       =+  pet=((nose our him det) syn.job msg.job)
       =.  +>.$  (acts p.pet)
+      ::  if packet is authenticated, use its routing info
+      =.  +>.$  ?.(aut.q.pet +>.$ (acme %rout lyn.job))
       ?-    -.ham.q.pet
           $back
         ~|  %unsecured-back 
@@ -394,14 +457,12 @@
       $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
     --
   --
---
 ::                                                      ::
 ::::  outbound cores                                    ::::
   ::                                                    ::
 ::
 ::::  packet pump
   ::
-|%
 ++  pump                                                ::  packet pump
   =>  |%                                                ::
       ++  gift                                          ::  effect
@@ -694,15 +755,13 @@
       gyt.det
     (seal:as:cry (~(got by pub.det) u.q.cur.det) key hom)
   --
-
-
 ::                                                      ::
 ::::  rail                                              ::::  message manager
   ::                                                    ::
 ++  rail                                                ::  message rail
   =>  |%                                                ::
       ++  gift                                          ::
-        $%  {$hear p/chan q/coop}                       ::  message ack
+        $%  {$echo p/chan q/coop}                       ::  message ack
             {$link p/code}                              ::  sent key
             {$send p/flap q/rock}                       ::  release packet
         ==                                              ::
@@ -835,7 +894,7 @@
       %=  $
         lac  +(lac)
         cob  (~(del by cob) lac)
-        fex  :_(fex [%hear [cha u.cup]:u.zup])
+        fex  :_(fex [%echo [cha u.cup]:u.zup])
       ==
     ::                                                  ::
     ++  wy-wake                                         ::  timeout
@@ -897,11 +956,11 @@
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aH, protocol vane            ::
   ::
-  =|  $:  fox/fort                                      ::  kernel state
+  =|  $:  syl/silo                                      ::  kernel state
       ==                                                ::
   |=  {now/@da eny/@ ski/sley}                          ::  current invocation
-  |%                                                  ::  vane interface
-  ++  call                                            ::  handle request
+  |%                                                    ::  vane interface
+  ++  call                                              ::  handle request
     |=  $:  hen/duct
             hic/(hypo (hobo kiss-ames))
         ==
@@ -914,7 +973,7 @@
     !!
   ::
   ++  load
-    |=  old/fort
+    |=  old/silo
     ^+  ..^$
     !!
   ::
