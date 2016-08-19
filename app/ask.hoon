@@ -18,8 +18,8 @@
   ^-  sole-prompt
   ?~  wom  [& %ask-ship ":womb-ship? ~"]
   =/  new  new-adrs
-  ?~  new  [& %$ "<listening> (0) [l,a,w,?]"]
-  [& %$ ": approve {<ask.i.new>}? ({<(lent new)>}) [y,n,l,a,w,?]"]
+  ?~  new  [& %$ "<listening> (0) [l,a,i,w,?]"]
+  [& %$ ": approve {<ask.i.new>}? ({<(lent new)>}) [y,n,l,a,i,w,?]"]
 ::
 ++  peer-sole
   |=  path
@@ -29,7 +29,12 @@
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
   =-  [(effect %mor pro+prompt -)]~
   =+  all=adrs
-  [tan+(turn (flop all) message) (turn all put-mail)]
+  [(render all) (turn all put-mail)]
+::
+++  render                            :: show list of invites
+  |=  a/(list {time email invited})  ^-  sole-effect
+  ?:  =(~ a)  txt+"~"
+  tan+(flop (turn a message))
 ::
 ++  adrs
   =-  (sort - lor)
@@ -37,6 +42,7 @@
   |=({a/email b/time c/invited} [tym=b ask=a inv=c])
 ::
 ++  new-adrs  (skim adrs |=({@ @ inv/invited} =(%new inv)))
+++  ignored-adrs  (skim adrs |=({@ @ inv/invited} =(%ignored inv)))
 ++  effect  |=(fec/sole-effect [ost.bow %diff %sole-effect fec])
 ++  message
   |=  {now/time ask/@t inv/invited}  ^-  tank
@@ -85,8 +91,9 @@
       ?:  -.try  `+>.$
       (transmit inv bel+~ ~)
     ?:  =(`*`"?" buf.som)  (transmit inv help)
-    ?:  =(`*`"a" buf.som)  (transmit inv tan+(turn (flop adrs) message) ~)
-    ?:  =(`*`"l" buf.som)  (transmit inv tan+(turn (flop new-adrs) message) ~)
+    ?:  =(`*`"a" buf.som)  (transmit inv (render adrs) ~)
+    ?:  =(`*`"l" buf.som)  (transmit inv (render new-adrs) ~)
+    ?:  =(`*`"i" buf.som)  (transmit inv (render ignored-adrs) ~)
     ?:  =(`*`"n" buf.som)
       =/  new  new-adrs
       ?~  new  (transmit inv bel+~ ~)
@@ -124,6 +131,7 @@
     """
   """
   l - list new asks
+  i - list ignored asks
   a - list all asks
   w - reset womb ship
   ? - print help
