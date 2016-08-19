@@ -19,7 +19,7 @@
   ~|  [%not-in-whitelist src.bow]
   ?>  (~(has in (sy ~zod our.bow ~talsur-todres ~)) src.bow)
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
-  =-  [(effect %mor pro+[& %$ "<listening>"] -)]~
+  =-  [(effect %mor pro+[& %$ "<listening> [n,a,?]"] -)]~
   =+  all=adrs
   [tan+(turn all message) (turn all put-mail)]
 ::
@@ -53,7 +53,7 @@
   ^-  (quip {bone card} +>)  
   ?-  -.act
     $clr  `+>.$
-    $ret  [[(effect tan+(turn adrs message))]~ +>.$]    :: re-print list
+    $ret  [[(effect mor+help)]~ +>.$]    :: re-print list
     $det                              :: reject all input
       =+  som=(~(got by sos) ost.bow) ::  XX this code belongs in a library
       =^  inv  som  (~(transceive sole som) +.act)
@@ -62,16 +62,20 @@
       =.  sos  (~(put by sos) ost.bow som)
       =+  mor=`(list sole-effect)`[det+det]~
       =.  mor
-        ?+  buf  mor
-          {$'?' $~}  (welp mor help)
-        ==
+        ?:  =(`*`"?" buf)  (welp mor help)
+        ?:  =(`*`"a" buf)  (welp mor tan+(turn adrs message) ~)
+        ?:  =(`*`"n" buf)
+          =;  new  (welp mor tan+(turn new message) ~)
+          (skim adrs |=({@ @ inv/invited} =(%new inv)))
+        mor
       [[(effect mor+mor)]~ +>.$]
   ==
 ++  help
   ^-  (list sole-effect)
   =-  (scan - (more (just '\0a') (stag %txt (star prn))))
   """
-  ? - list comands
-  ⏎ - print all received asks
+  n - list new asks
+  a - list all asks
+  ? - print help
   """
 --
