@@ -12,4 +12,4 @@
 ?~  opt  $(opt [planets=1]~)
 ?~  +.opt  $(+.opt [stars=0]~)
 :-  %womb-bonus
-[(scot %uv pas) 1 0]
+[(scot %uv pas) planets stars]

@@ -252,7 +252,7 @@
 ::                                                    ::  ::
 ::::                                                  ::  ::
   !:                                                  ::  ::
-=+  cfg=[can-claim=| can-recycle=|]                   ::  temporarily disabled
+=+  cfg=[can-claim=& can-recycle=&]                   ::  temporarily disabled
 =+  [replay=| stat-no-email=|]                              ::  XX globals
 |=  {bowl part}                                       ::  main womb work
 |_  moz/(list move)
@@ -782,7 +782,7 @@
   |=  {who/mail her/@p}  ^+  +>
   %+  mod-managed-star  her
   |=  a/star  ^-  star
-  ?^  a  ~|(impure-star+[her a] !!)
+  ?^  a  ~|(impure-star+[her ?:(-.u.a %owned %split)] !!)
   (some %| who)
 ::
 ++  claim-planet                                      ::  register
@@ -793,7 +793,7 @@
     cli(has (~(put in has.cli) her))
   %+  mod-managed-planet  her
   |=  a/planet  ^-  planet
-  ?^  a  ~|(impure-planet+[her a] !!)
+  ?^  a  ~|(impure-planet+[her ?:(-.u.a %owned %split)] !!)
   (some %| who)
 ::
 ++  poke-release-ships                                ::  release specific

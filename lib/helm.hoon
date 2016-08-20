@@ -111,6 +111,11 @@
   ?>  ?=({@t $~} pax)
   (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
 ::
+++  coup-ask
+  |=  {pax/path cop/(unit tang)}  =<  abet
+  ?>  ?=({@t $~} pax)
+  (emit %flog ~ %text "ask {<src.bow>} {?~(cop "" "un")}successful")
+::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes
   |=  {syd/desk all/(list term)}  =<  abet
