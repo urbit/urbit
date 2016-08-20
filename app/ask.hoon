@@ -13,7 +13,12 @@
   ++  email  @t
 --
 !:
-|_  {bow/bowl adr/(map email {time invited}) sos/(map bone sole-share) wom/(unit ship)}
+|_  $:  bow/bowl
+        adr/(map email {time invited})
+        sos/(map bone sole-share)
+        wom/(unit ship)
+        admins/(set ship)
+    ==
 ++  prompt
   ^-  sole-prompt
   ?~  wom  [& %ask-ship ":womb-ship? ~"]
@@ -25,7 +30,7 @@
   |=  path
   ^-  (quip {bone card} +>)
   ~|  [%not-in-whitelist src.bow]
-  ?>  (~(has in (sy ~zod our.bow ~wisdyr-holpeg ~)) src.bow)
+  ?>  |((~(has in admins) src.bow) =(our.bow src.bow))
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
   =-  [(effect %mor pro+prompt -)]~
   =+  all=adrs
@@ -55,6 +60,11 @@
     (cook crip (star ;~(less dot next)))
     ;~(plug (cook crip (star next)) (easy ~))
   ==
+::
+++  poke-ask-admins
+  |=  a/(set ship)
+  ?>  =(our.bow src.bow)
+  `+>.$(admins a)
 ::
 ++  poke-ask-mail
   |=  ask/@t
