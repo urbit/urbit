@@ -1107,7 +1107,7 @@
             hic/(hypo (hobo kiss-ames))
         ==
     ^-  {p/(list move) q/_..^$}
-    !!
+    ?-  -.hic 
   ::
   ++  doze
     |=  {now/@da hen/duct}

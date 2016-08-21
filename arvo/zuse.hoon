@@ -3547,6 +3547,11 @@
               {$e card-ames}                            ::  to %eyre
               {$g card-ames}                            ::  to %gall
           ==                                            ::  
+++  gift-xmas
+          $%  {$east p/*}                               ::  response message
+              {$hear p/lane q/@}                        ::  process forward
+              {$rest p/coop}                            ::  
+          ==
 ::
 ::::    %behn
   ::
