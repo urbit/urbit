@@ -1595,7 +1595,7 @@
       ?-  p.cordon.shape
         $black  &
         $green  &
-        $brown  =(her our.hid)
+        $brown  (team our.hid her)
         $white  (~(has in q.cordon.shape) her)
       ==
     ::
@@ -2195,7 +2195,7 @@
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
   :: ~&   [%talk-peer src.hid ost.hid pax]
   ?:  ?=({$sole *} pax)
-    ?>  =(our.hid src.hid)
+    ?>  (team our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
     ra-abet:(ra-console:ra src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
