@@ -10,6 +10,7 @@
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
           $:  det/pipe                                  ::  secure channel
+              waz/(list ship)                           ::  path to
               lun/(unit lane)                           ::  latest route
               zam/scar                                  ::  outbound boles
               fon/(map bole lock)                       ::  inbound locks
@@ -49,7 +50,7 @@
 ++  lock                                                ::  inbound sequencer
           $:  laq/tick                                  ::  acknowledged until
               nys/(map tick bait)                       ::  inbound partials
-              laz/(unit (pair tick flap))               ::  awaiting app
+              laz/(unit (trel tick flap lane))          ::  awaiting app
               exc/(map tick ares)                       ::  negative acks
           ==                                            ::  
 ++  meal                                                ::  payload
@@ -109,12 +110,14 @@
         $%  {$east p/duct q/ship r/chan s/*}            ::  network response
             {$home p/lane q/@}                          ::  resend to self
             {$know p/ship}                              ::  cache channel
+            {$link p/ship q/code}                       ::  add symmetric key
+            {$meet p/gyft}                              ::  add public key(s)
             {$rest p/duct q/coop}                       ::  message result
             {$send p/lane q/@}                          ::  transmit packet
-            {$west p/ship q/chan r/bole s/*}            ::  outbound message
+            {$west p/duct q/ship r/chan s/*}            ::  outbound message
         ==                                              ::
       ++  kiss                                          ::  input
-        $%  {$clue p/ship q/pipe}                       ::  purge channel
+        $%  {$clue p/ship q/pipe}                       ::  update channel
             {$done p/ship q/bole r/coop}                ::  completion
             {$hear p/lane q/@}                          ::  incoming packet
             {$mess p/duct q/ship r/chan s/*}            ::  transmission
@@ -141,12 +144,12 @@
       =+  kec=(bite q.job)
       ?>  =(our q.p.kec)
       =^  etc  +>.$  (etch p.p.kec)
-      abet:(hear:etc p.job q.kec r.kec)
+      abet:(hear:etc p.job (shaf %flap q.job) q.kec r.kec)
     ::
         $mess
       =^  etc  +>.$  (etch q.job)
       =^  kos  etc  (blow:etc p.job)
-      abet:(mess:etc r.job s.job)
+      abet:(mess:etc kos r.job s.job)
     ==
   ++  etch                                              ::  new neighbor
       |=  who/@p 
@@ -156,7 +159,7 @@
         [~(. et who u.buh) +>.$]
       ::  new neighbor; register secure channel view
       :_  +>.$(fex [[%know who] fex])
-      ~(. et who `bath`[(see who) ~ [2 ~ ~] ~ ~])
+      ~(. et who `bath`[(see who) (seek our who) ~ [2 ~ ~] ~ ~])
   ::
   ++  etre                                              ::  old neighbor
       |=  who/@p 
@@ -167,6 +170,7 @@
             bah/bath
         ==
     ++  abet  +>(pol (~(put by pol) who bah))           ::  resolve
+    ++  acme  |=(fic/gift +>(fex [fic fex]))            ::  effect
     ++  blow                                            ::  register duct
       |=  hen/duct
       ^-  {bole _+>}
@@ -183,17 +187,127 @@
     ++  done
       |=  {kos/bole cop/coop}
       ^+  +>
-      !!
-    ::
-    ++  hear
-      |=  {lyn/lane syn/skin msg/@}
+      (in-kiss %done +<)
+    ::                                                  ::
+    ++  have                                            ::  receive message
+      |=  {kos/bole cha/chan val/*}
       ^+  +>
-      !!
+      =+  hen=(~(got by r.zam.bah) kos)
+      ?:  =(1 (end 0 1 kos))
+        ::
+        ::  if the bole is odd, this is a backward flow,
+        ::  like a subscription update; ack automatically.
+        ::
+        (acme:(in-kiss %done kos ~) %east hen who cha val)
+      ::
+      ::  if the bole is even, it's a forward flow.  we
+      ::  need to wait for the target to actively ack it.
+      ::
+      (acme %west [[%a (scot %p who) (scot %ud kos) ~] hen] who cha val)
     ::
-    ++  mess
-      |=  {cha/chan val/*}
+    ++  hear                                            ::
+      |=  {lyn/lane dam/flap syn/skin msg/@}            ::  hear packet
       ^+  +>
-      !!
+      (in-kiss %hear +<)
+    ::                                                  ::
+    ++  mess                                            ::  send message
+      |=  {kos/bole cha/chan val/*}
+      ^+  +>
+      (to-kiss kos %tell cha val)
+    ::                                                  ::
+    ++  sack                                            ::  send acknowledgment
+      |=  {kos/bole dam/flap cop/coop}
+      =+  yex=((knit our who det.bah) now eny [%back (mix kos 1) dam cop ~s0])
+      =.  +>.$  (in-gifs p.yex)
+      |-  ^+  +>.^$
+      ?~  q.yex  +>.^$
+      $(q.yex t.q.yex, +>.^$ (send ~ i.q.yex))
+    ::                                                  ::
+    ++  send                                            ::  send packet
+      |=  {urg/(unit lane) pac/rock}
+      ^+  +>
+      ?:  =(our who)  (acme [%send *lane pac])
+      =+  zaw=waz.bah
+      |-  ^+  +>.^$
+      ?~  zaw  +>.^$
+      =+  ^=  lun  ^-  (unit lane)
+          ?:  (lth i.zaw 256)
+            ::
+            ::  galaxies are mapped into reserved IP space,
+            ::  which the interpreter maps into a DNS request.
+            ::
+            [~ %if ~2000.1.1 31.337 (mix i.zaw .0.0.1.0)]
+          ?:  =(who i.zaw)  lun.bah
+          =+  hab=(~(get by pol) i.zaw)
+          ?~(hab ~ lun.u.hab)
+      ?~  lun
+        $(zaw t.zaw)
+      =.  pac  ?:  &(=(i.zaw who) =(~ urg))
+                 pac
+                ::
+               ::  forwarded packets are not signed/encrypted,
+               ::  because (a) we don't need to; (b) we don't
+               ::  want to turn one packet into two.  the wrapped
+               ::  packet may exceed 8192 bits, but it's unlikely
+               ::  to blow the MTU (IP MTU == 1500).
+               ::
+               (spit [our i.zaw] %none (jam `meal`[%fore who urg pac]))
+      =.  +>.^$  (acme %send u.lun pac)
+      ::
+      ::  stop if we have an %if (direct) address;
+      ::  continue if we only have %ix (forwarded).
+      ::
+      ?:(?=($if -.u.lun) +>.^$ $(zaw t.zaw))
+    ::
+    ++  in-gift
+      |=  hox/gift:hose
+      ^+  +>
+      ?-    -.hox
+          $fore
+        ?:  =(our her.hox) 
+          (acme %home org.hox pac.hox)
+        (send(who her.hox) [~ org.hox] pac.hox)
+      ::
+          $have  (have +.hox)
+          $link  (acme %link who key.hox)
+          $meet  (acme hox)
+          $rack  (to-kiss kos.hox %back dam.hox cop.hox ~s0)
+          $rout  +>(lun.bah `lyn.hox)
+          $sack  (sack +.hox)
+      ==
+    ::
+    ++  in-gifs
+      |=  hoz/(list gift:hose)
+      ?~  hoz  +>
+      $(hoz t.hoz, +> (in-gift i.hoz))
+    ::
+    ++  to-gift
+      |=  rax/gift:rail
+      ?-  -.rax
+        $link  (acme %link who p.rax)
+        $mack  (acme %rest (~(got by r.zam.bah) p.rax) q.rax)
+        $send  (send ~ q.rax)
+      ==
+    ::
+    ++  to-gifs
+      |=  raz/(list gift:rail)
+      ?~  raz  +>
+      $(raz t.raz, +> (to-gift i.raz))
+    ::
+    ++  in-kiss
+      |=  kyz/kiss:hose
+      ^+  +>
+      =^  hoz  fon.bah  abet:(~(apex hose [our who det.bah] ~ fon.bah) kyz)
+      (in-gifs hoz)
+    ::
+    ++  to-kiss
+      |=  {kos/bole kyz/kiss:rail}
+      =+  cot=`colt`((bond |.(`colt`zeal:rail)) `(unit colt)`(~(get by sal.bah) kos))
+      =+  mup=(yawn:pump myn.cot)
+      =^  raz  cot  
+        =<  abet
+        (~(work rail [[our who det.bah] [now eny] kos mup ~] cot) kyz)
+      (to-gifs raz) 
     --
   --
   ::
@@ -219,6 +333,29 @@
 ::
 ++  kins  |=(tay/@ (snag tay `(list skin)`[%none %open %fast %full ~]))
 ++  ksin  |=(sin/skin `@`?-(sin $none 0, $open 1, $fast 2, $full 3))
+++  seek                                                ::  path to
+  |=  {our/ship her/ship}
+  ^-  (list ship)
+  ::
+  ::  in order of routing desirability, from `our`
+  ::  to `who`, up their hierarchy to the least
+  ::  common ancestor, then up ours to the root.
+  ::
+  =+  [fro=t.+:(saxo our) too=(saxo her)]
+  |-  ^-  (list ship)
+  ?~  too  fro
+  ?:  =(our i.too)  
+    ::  the target is one of our children.
+    ~
+  ?:  (lien fro |=(a/ship =(a i.too)))
+    ::  a parent of the target is in our own hierarchy.
+    ::  clip the target hierarchy here and add our own
+    ::  hierarchy, from bottom to top.
+    |-  ^-  (list ship)
+    ?~  fro  !!
+    ?:(=(i.fro i.too) [i.too ~] [i.fro $(fro t.fro)])
+  [i.too $(too t.too)]
+::
 ++  spit                                                ::  cake to packet
   |=  kec/cake  ^-  @
   =+  wim=(met 3 p.p.kec)
@@ -294,11 +431,11 @@
 ++  hose                                                ::  input decoder
   =>  |%                                                ::
       ++  gift                                          ::  action
-        $%  {$back kos/bole dam/flap cop/coop}          ::  report ack
-            {$fore her/ship lun/(unit lane) pac/rock}   ::  send forward
+        $%  {$fore her/ship org/lane pac/rock}          ::  send forward
             {$have kos/bole cha/chan val/*}             ::  report message
             {$link key/code}                            ::  learn symmetric key
             {$meet doy/gyft}                            ::  learn public key
+            {$rack kos/bole dam/flap cop/coop}          ::  report ack
             {$rout lyn/lane}                            ::  learn route
             {$sack kos/bole dam/flap cop/coop}          ::  send ack
         ==                                              ::
@@ -328,7 +465,7 @@
       =+  loc=(~(got by fon) kos.job)
       ?>  ?=(^ laz.loc)
       =<  hy-abet
-      (~(hy-done hy [kos.job p.u.laz.loc] [& q.u.laz.loc] loc) cop.job)
+      (~(hy-done hy [kos.job p.u.laz.loc] [& [q r]:u.laz.loc] loc) cop.job)
     ::
         $hear
       =+  pet=((nose our him det) syn.job msg.job)
@@ -338,23 +475,39 @@
       ?-    -.ham.q.pet
           $back
         ~|  %unsecured-back 
-        ?>(aut.q.pet (acme %back [p q r]:ham.q.pet))
+        ?>(aut.q.pet (acme %rack [p q r]:ham.q.pet))
       ::
           $bond
         =+  loc=((bond |.(*lock)) (~(get by fon) p.p.ham.q.pet))
         =<  hy-abet
         %.  [q r]:ham.q.pet
-        ~(hy-bond hy p.ham.q.pet [aut.q.pet dam.job] loc)
+        ~(hy-bond hy p.ham.q.pet [aut.q.pet [dam lyn]:job] loc)
       ::
           $carp
         =+  loc=((bond |.(*lock)) (~(get by fon) kos.p.ham.q.pet))
         =<  hy-abet
         %.  [(kins syn.p.ham.q.pet) cnt.p.ham.q.pet q.ham.q.pet]
-        ~(hy-carp hy [kos liq]:p.ham.q.pet [aut.q.pet dam.job] loc)
+        ~(hy-carp hy [kos liq]:p.ham.q.pet [aut.q.pet [dam lyn]:job] loc)
       ::
-          $fore  (acme %fore +.ham.q.pet)
+          $fore  
+        (acme %fore p.ham.q.pet (born lyn.job q.ham.q.pet) r.ham.q.pet)
       ==
     ==
+  ::                                                    ::  
+  ++  born                                              ::  set forward origin
+    |=  {lyn/lane urg/(unit lane)}
+    ^-  lane
+    ::  a forwarded packet contains its origin address,
+    ::  but only after the first hop.  if the address
+    ::  field is empty, we fill it in with the address
+    ::  we received the packet from.  but we replace
+    ::  %if with %ix, to show that the ultimate receiver
+    ::  may not be able to send back to the origin
+    ::  (due to non-full-cone NAT).
+    ?~  urg  lyn
+    ?.  ?=($if -.u.urg)  
+      u.urg
+    [%ix +.u.urg]
   ::
   ++  hy                                                ::  message assembler
     =|  $:  $:  kos/bole                                ::  sender 
@@ -362,6 +515,7 @@
             ==
             $:  aut/?                                   ::  authenticated
                 dam/flap                                ::  critical flap
+                lyn/lane                                ::  origin address
             ==
             lock
         ==
@@ -391,7 +545,7 @@
         ::  delete partial message
         nys  (~(del by nys) liq)
         ::  record message in application processing
-        laz  `[liq dam]
+        laz  `[liq dam lyn]
       ==
     ::                                                  ::
     ++  hy-done                                         ::  message completed
@@ -432,9 +586,9 @@
       =.  +>.$  (hy-acts p.pet)
       =.  aut  |(aut aut.q.pet)
       ?-  -.ham.q.pet
-        $back  ~|(%unsecured-back ?>(aut (hy-acme %back kos [q r]:ham.q.pet)))
+        $back  ~|(%unsecured-back ?>(aut (hy-acme %rack kos [q r]:ham.q.pet)))
         $carp  ~|(%meta-carp !!)
-        $fore  (hy-acme %fore +.ham.q.pet) 
+        $fore  (hy-acme %fore p.ham.q.pet (born lyn q.ham.q.pet) r.ham.q.pet)
         $bond  ~|  %bogus-assembly
                ?>  &(aut =([kos liq] p.ham.q.pet))
                (hy-bond [q r]:ham.q.pet)
@@ -442,14 +596,14 @@
     ::
     ++  hy-cong  (hy-conk (~(get by exc) liq))          ::  duplicate ack
     ++  hy-conk                                         ::  ack current
-      |=(cop/coop (hy-acme %back kos dam cop))
+      |=(cop/coop (hy-acme %sack kos dam cop))
     ++  hy-cone                                         ::  record ack
       |=  cop/coop
       =>  ?~(cop . .(exc (~(put by exc) liq u.cop)))
       (hy-conk cop)
     ::                                                  ::
-    ++  hy-golf
-      |=  duv/dove                                ::  assemble fragments
+    ++  hy-golf                                         ::  assemble fragments
+      |=  duv/dove
       =+  [nix=0 rax=*(list @)]
       |-  ^-  @
       ?:  =(p.duv nix)
@@ -758,11 +912,11 @@
 ::                                                      ::
 ::::  rail                                              ::::  message manager
   ::                                                    ::
-++  rail                                                ::  message rail
+++  rail                                                ::
   =>  |%                                                ::
       ++  gift                                          ::
-        $%  {$echo p/chan q/coop}                       ::  message ack
-            {$link p/code}                              ::  sent key
+        $%  {$link p/code}                              ::  sent key
+            {$mack p/bole q/coop}                       ::  message ack
             {$send p/flap q/rock}                       ::  release packet
         ==                                              ::
       ++  kiss                                          ::
@@ -797,14 +951,9 @@
       ^-  (unit @da)
       wait:mup
     --
-  ::                                                    ::
-  ++  wish                                              ::  operate list
-    |=  {now/@da day/(list kiss)}
-    ^+  +>
-    ?~(day +> $(day t.day, +> (work now i.day)))
   ::
   ++  work                                              ::
-    |=  {now/@da job/kiss}                              ::  compute
+    |=  job/kiss                                        ::  compute
     ^+  +>
     =<  +>:wy-abet
     |%                                                  ::
@@ -894,7 +1043,7 @@
       %=  $
         lac  +(lac)
         cob  (~(del by cob) lac)
-        fex  :_(fex [%echo [cha u.cup]:u.zup])
+        fex  :_(fex [%mack kos `coop`u.cup.u.zup])
       ==
     ::                                                  ::
     ++  wy-wake                                         ::  timeout
@@ -926,30 +1075,23 @@
     --                                                  
   ::                                                    ::
   ++  zeal                                              ::  default state
-    |=  {kos/bole tuc/(unit colt)}
-    ^+  +>
-    ?^  tuc   
-      +>(cot u.tuc, mup (yawn:pump myn.u.tuc))
-    %_    +>
-        cot
-      ^-  colt
-      :*  0     ::  seq/tick
-          0     ::  lac/tick
-          ~     ::  cob/(map tick comb)
-          ^-  mini
-          :*  ^-  stat
-              :*  :*  0               :: cur/@ud
-                      2               :: max/@ud
-                      0               :: rey/@ud
-                  ==
-                  :*  ~s5             :: rtt/@dr
-                      ~2010.1.1       :: las/@da
-                      ~2010.1.1       :: lad/@da
-              ==  ==
-            ~
-            ~
-      ==  ==
-    ==
+    ^-  colt
+    :*  0     ::  seq/tick
+        0     ::  lac/tick
+        ~     ::  cob/(map tick comb)
+        ^-  mini
+        :*  ^-  stat
+            :*  :*  0               :: cur/@ud
+                    2               :: max/@ud
+                    0               :: rey/@ud
+                ==
+                :*  ~s5             :: rtt/@dr
+                    ~2010.1.1       :: las/@da
+                    ~2010.1.1       :: lad/@da
+            ==  ==
+          ~
+          ~
+    ==  ==
   --
 --
   .  ==
