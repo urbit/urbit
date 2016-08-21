@@ -2081,15 +2081,23 @@
   ?:  (lte wid 8)   %earl
   ?>  (lte wid 16)  %pawn
 ::
-++  cite
-  |=  who/@p 
+++  cite                                                ::  ship short name
+  |=  who/@p
   ^-  tape
   =+  kind=(clan who)
   =+  name=(scow %p who)
   ?:  =(%earl kind)
-    :(weld "~" (swag [15 6] name) "^" (swag [22 6] name))
+    =+  park=(clan (sein who))
+    ;:  weld
+      "~"
+      ?:  =(park %duke)
+        (swag [(sub (lent name) 13) 6] name)
+      ~
+      "^"
+      (swag [(sub (lent name) 6) 6] name)
+    ==
   ?:  =(%pawn kind)
-    :(weld (swag [0 7] name) "_" (swag [51 6] name))
+    :(weld (swag [0 7] name) "_" (swag [(sub (lent name) 6) 6] name))
   name
 ::
 ++  glam                                                ::  carrier names
