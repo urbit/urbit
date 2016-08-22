@@ -148,11 +148,23 @@
       abet:(mess:(etre p.job) q.job r.job s.job)
     ::
         $wake
-      !!
+      |-  ^+  +>.^$
+      ?~  pol  +>.^$
+      =+  lef=$(pol l.pol)
+      =+  ryt=$(pol r.pol, fex fex.lef)
+      =+  top=~(to-wake et(fex fex.ryt) n.pol)
+      +>.^$(fex fex.top, pol [+<.top pol.lef pol.ryt])
+    ==                                                  ::
+  ::
+  ++  doze                                              ::  sleep until
+    |-  ^-  (unit @da)
+    ?~  pol  ~
+    ;:  hunt
+      $(pol l.pol)
+      $(pol r.pol)
+      ~(to-wait et p.n.pol q.n.pol)
     ==
-  ++  doze
-    ^-  (unit @da)
-    !! 
+  ::                                                    ::
   ++  etch                                              ::  new neighbor
       |=  who/@p 
       =+  buh=(~(get by pol) who)
@@ -162,13 +174,13 @@
       ::  new neighbor; register secure channel view
       :_  +>.$(fex [[%know who] fex])
       ~(. et who `bath`[(see who) (seek our who) ~ [2 ~ ~] ~ ~])
-  ::
+  ::                                                    ::
   ++  etre                                              ::  old neighbor
       |=  who/@p 
       ~(. et who (~(got by pol) who))
-  ::
-  ++  et
-    |_  $:  who/ship
+  ::                                                    ::
+  ++  et                                                ::  per neighbor
+    |_  $:  who/ship  
             bah/bath
         ==
     ++  abet  +>(pol (~(put by pol) who bah))           ::  resolve
@@ -304,12 +316,31 @@
     ::
     ++  to-kiss
       |=  {kos/bole kyz/kiss:rail}
-      =+  cot=`colt`((bond |.(`colt`zeal:rail)) `(unit colt)`(~(get by sal.bah) kos))
-      =+  mup=(yawn:pump myn.cot)
-      =^  raz  cot  
-        =<  abet
-        (~(work rail [[who det.bah] [now eny] kos mup ~] cot) kyz)
-      (to-gifs raz) 
+      ^+  +>
+      =+  cot=((bond |.(zeal:rail)) (~(get by sal.bah) kos))
+      =^  raz  cot  abet:(work:(to-rail kos cot) kyz)
+      (to-gifs raz)
+    ::
+    ++  to-rail
+      |=  {kos/bole cot/colt}
+      ~(. rail [[who det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
+    ::
+    ++  to-wait
+      |-  ^-  (unit @da)
+      ?~  sal.bah  ~
+      ;:  hunt
+        $(sal.bah l.sal.bah)
+        $(sal.bah r.sal.bah)
+        wait:(to-rail p.n.sal.bah q.n.sal.bah)
+      ==
+    ::
+    ++  to-wake
+      |-  ^+  +.$
+      ?~  sal.bah  +.$
+      =+  lef=$(sal.bah l.sal.bah)
+      =+  ryt=$(sal.bah r.sal.bah, fex fex.lef)
+      =+  top=(work:(to-rail(fex fex.ryt) p.n.sal.bah q.n.sal.bah) %wake ~)
+      +.$(fex fex.ryt, sal.bah [[kos cot]:top sal.bah.lef sal.bah.ryt])
     --
   --
   ::
@@ -955,7 +986,7 @@
   ++  work                                              ::
     |=  job/kiss                                        ::  compute
     ^+  +>
-    =<  +>:wy-abet
+    =<  +>:wy-abet:wy-work
     |%                                                  ::
     ++  wy-abet  +:wy-able                              ::  resolve
     ++  wy-able  wy-tire:wy-ably:wy-feed:wy-ably        ::  converge
@@ -1072,6 +1103,14 @@
     ++  wy-wake                                         ::  timeout
       ^+  .
       .(mup (work:mup now %wake ~))
+    ::
+    ++  wy-work
+      ^+  .
+      ?-  -.job
+        $back  (wy-back +.job)
+        $mess  (wy-mess +.job)
+        $wake  wy-wake
+      ==
     --                                                  
   ::                                                    ::
   ++  zeal                                              ::  default state
