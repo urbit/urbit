@@ -3362,6 +3362,14 @@
 ++  oryx  @t                                            ::  CSRF secret
 ++  page  (cask *)                                      ::  untyped cage
 ++  pail  ?($none $warm $cold)                          ::  connection status
+++  pipe                                                ::  secure channel
+          $:  out/(unit (pair hand code))               ::  outbound key
+              inn/(map hand code)                       ::  inbound keys
+              cur/(pair life (unit life))               ::  versions: our their
+              gyt/gyft                                  ::  our unshared cert
+              pub/(map life pass)                       ::  their public keys
+              war/(map life ring)                       ::  our private keys
+          ==                                            ::
 ++  plan  (trel view (pair @da (unit @dr)) path)        ::  subscription
 ++  plea  {p/@ud q/{p/? q/@t}}                          ::  live prompt
 ++  plop  blob                                          ::  unvalidated blob
@@ -3547,11 +3555,29 @@
               {$e card-ames}                            ::  to %eyre
               {$g card-ames}                            ::  to %gall
           ==                                            ::  
-++  gift-xmas
+++  gift-xmas                                           ::  
           $%  {$east p/*}                               ::  response message
-              {$hear p/lane q/@}                        ::  process forward
-              {$rest p/coop}                            ::  
+              {$home p/lane q/@}                        ::  process forward
+              {$send p/lane q/@}                        ::  send packet
+              {$rest p/coop}                            ::  acknowledgment
           ==
+++  kiss-xmas                                           ::  in request ->$
+          $%  {$hear p/lane q/@}                        ::
+              {$mess p/ship q/path r/*}                 ::
+              {$wake $~}                                ::
+          ==                                            ::
+++  card-xmas                                           ::  out cards
+          $%  {$west p/ship q/path r/*}                 ::  network request
+          ==                                            ::
+++  note-xmas                                           ::  out request $->
+          $%  {$c $west p/ship q/path r/*}              ::  to %clay
+              {$e $west p/ship q/path r/*}              ::  to %eyre
+              {$g $west p/ship q/path r/*}              ::  to %gall
+              $:  $j                                    ::  to %jael
+                  $%  {$know p/ship}                    ::
+                      {$link p/ship q/code}             ::
+                      {$meet p/gyft}                    ::
+          ==  ==  ==                                    ::
 ::
 ::::    %behn
   ::
@@ -3879,9 +3905,12 @@
   $%  {$mass p/mass}                                    ::  memory usage
       {$onto p/(each suss tang)}                        ::  about agent
       {$rend p/path q/*}                                ::  network request
-      {$unto p/cuft}
+      {$unto p/cuft}                                    ::
       {$mack p/(unit tang)}                             ::  message ack
   ==                                                    ::
+++  gift-jael                                           ::
+  $%  {$clue p/ship q/pipe}                             ::
+  ==
 ::
 ::::    %arvo
   ::
@@ -3921,5 +3950,6 @@
       {$e gift-eyre}
       {$f gift-ford}
       {$g gift-gall}
+      {$j gift-jael}
   ==
 --

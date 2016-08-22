@@ -70,14 +70,6 @@
               cnt/@                                     ::  number of packets
           ==                                            ::
 ++  part  (pair frag tick)                              ::  fragment of packet
-++  pipe                                                ::  secure channel
-          $:  out/(unit (pair hand code))               ::  outbound key
-              inn/(map hand code)                       ::  inbound keys
-              cur/(pair life (unit life))               ::  versions: our their
-              gyt/gyft                                  ::  our unshared cert
-              pub/(map life pass)                       ::  their public keys
-              war/(map life ring)                       ::  our private keys
-          ==                                            ::
 ++  silo                                                ::
           $:  pol/(map ship bath)                       ::  network state
           ==                                            ::
@@ -100,7 +92,7 @@
 |%                                                      ::
 ++  flam  |=(a/flap `@p`(mug a))                        ::  debug flap
 ++  msec  |=(a/@dr `@ud`(div a (div ~s1 1.000)))        ::  debug @dr
-++  move  {p/duct q/(wind note-arvo gift-ames)}         ::  local move
+++  move  {p/duct q/(wind note-xmas gift-xmas)}         ::  local move
 ::                                                      ::
 ::::  loft                                              ::::  main transceiver
   ::                                                    ::
@@ -114,17 +106,18 @@
             {$meet p/gyft}                              ::  add public key(s)
             {$rest p/duct q/coop}                       ::  message result
             {$send p/lane q/@}                          ::  transmit packet
-            {$west p/duct q/ship r/chan s/*}            ::  outbound message
+            {$west p/ship q/bole r/chan s/*}            ::  outbound message
         ==                                              ::
       ++  kiss                                          ::  input
         $%  {$clue p/ship q/pipe}                       ::  update channel
             {$done p/ship q/bole r/coop}                ::  completion
             {$hear p/lane q/@}                          ::  incoming packet
-            {$mess p/duct q/ship r/chan s/*}            ::  transmission
+            {$mess p/ship q/duct r/chan s/*}            ::  forward message 
+            {$rend p/ship q/bole r/chan s/*}            ::  backward message
+            {$wake $~}                                  ::  wakeup
         ==
       --
-  =|  $:  $:  our/@p                                    ::  XX multihome
-              now/@da
+  =|  $:  $:  now/@da
               eny/@
               see/$-(ship pipe)
           ==
@@ -147,10 +140,19 @@
       abet:(hear:etc p.job (shaf %flap q.job) q.kec r.kec)
     ::
         $mess
-      =^  etc  +>.$  (etch q.job)
-      =^  kos  etc  (blow:etc p.job)
+      =^  etc  +>.$  (etch p.job)
+      =^  kos  etc  (blow:etc q.job)
       abet:(mess:etc kos r.job s.job)
+    ::
+        $rend
+      abet:(mess:(etre p.job) q.job r.job s.job)
+    ::
+        $wake
+      !!
     ==
+  ++  doze
+    ^-  (unit @da)
+    !! 
   ++  etch                                              ::  new neighbor
       |=  who/@p 
       =+  buh=(~(get by pol) who)
@@ -192,18 +194,18 @@
     ++  have                                            ::  receive message
       |=  {kos/bole cha/chan val/*}
       ^+  +>
-      =+  hen=(~(got by r.zam.bah) kos)
-      ?:  =(1 (end 0 1 kos))
+      ?:  =(0 (end 0 1 kos))
+        =+  hen=(~(got by r.zam.bah) kos)
         ::
-        ::  if the bole is odd, this is a backward flow,
+        ::  if the bole is even, this is a backward flow,
         ::  like a subscription update; ack automatically.
         ::
         (acme:(in-kiss %done kos ~) %east hen who cha val)
       ::
-      ::  if the bole is even, it's a forward flow.  we
+      ::  if the bole is odd, it's a forward flow.  we
       ::  need to wait for the target to actively ack it.
       ::
-      (acme %west [[%a (scot %p who) (scot %ud kos) ~] hen] who cha val)
+      (acme %west who kos cha val)
     ::
     ++  hear                                            ::
       |=  {lyn/lane dam/flap syn/skin msg/@}            ::  hear packet
@@ -213,11 +215,11 @@
     ++  mess                                            ::  send message
       |=  {kos/bole cha/chan val/*}
       ^+  +>
-      (to-kiss kos %tell cha val)
+      (to-kiss kos %mess cha val)
     ::                                                  ::
     ++  sack                                            ::  send acknowledgment
       |=  {kos/bole dam/flap cop/coop}
-      =+  yex=((knit our who det.bah) now eny [%back (mix kos 1) dam cop ~s0])
+      =+  yex=((knit who det.bah) now eny [%back (mix kos 1) dam cop ~s0])
       =.  +>.$  (in-gifs p.yex)
       |-  ^+  +>.^$
       ?~  q.yex  +>.^$
@@ -297,7 +299,7 @@
     ++  in-kiss
       |=  kyz/kiss:hose
       ^+  +>
-      =^  hoz  fon.bah  abet:(~(apex hose [our who det.bah] ~ fon.bah) kyz)
+      =^  hoz  fon.bah  abet:(~(apex hose [who det.bah] ~ fon.bah) kyz)
       (in-gifs hoz)
     ::
     ++  to-kiss
@@ -306,7 +308,7 @@
       =+  mup=(yawn:pump myn.cot)
       =^  raz  cot  
         =<  abet
-        (~(work rail [[our who det.bah] [now eny] kos mup ~] cot) kyz)
+        (~(work rail [[who det.bah] [now eny] kos mup ~] cot) kyz)
       (to-gifs raz) 
     --
   --
@@ -385,7 +387,7 @@
             {$meet doy/gyft}                            ::  learn public key(s)
         ==                                              ::
       --
-  |=  {our/@p him/@p det/pipe}
+  |=  {him/@p det/pipe}
   |=  {syn/skin msg/@}
   ^-  (pair (list gift) {aut/? ham/meal})
   |^  ?-    syn
@@ -444,8 +446,7 @@
             {$hear lyn/lane dam/flap syn/skin msg/@}    ::  raw packet
         ==                                              ::
       --                                                ::
-  =|  $:  $:  our/ship                                  ::  XX singlehome
-              him/ship                                  ::
+  =|  $:  $:  him/ship                                  ::
               det/pipe                                  ::
           ==                                            ::
           fex/(list gift)                               ::
@@ -468,7 +469,7 @@
       (~(hy-done hy [kos.job p.u.laz.loc] [& [q r]:u.laz.loc] loc) cop.job)
     ::
         $hear
-      =+  pet=((nose our him det) syn.job msg.job)
+      =+  pet=((nose him det) syn.job msg.job)
       =.  +>.$  (acts p.pet)
       ::  if packet is authenticated, use its routing info
       =.  +>.$  ?.(aut.q.pet +>.$ (acme %rout lyn.job))
@@ -581,7 +582,7 @@
         ::  message not yet complete, reinstall incomplete 
         (hy-conk(nys (~(put by nys) liq neb)) ~)
       ::  decode complete message
-      =+  pet=((nose our him det) syn (hy-golf r.neb))
+      =+  pet=((nose him det) syn (hy-golf r.neb))
       ::  record decoder effects
       =.  +>.$  (hy-acts p.pet)
       =.  aut  |(aut aut.q.pet)
@@ -852,7 +853,7 @@
         $%  {$link key/code}                            ::  set symmetric key
         ==                                              ::
       --
-  |=  {our/@p her/@p det/pipe}
+  |=  {her/@p det/pipe}
   |=  {now/@da eny/@ ham/meal}
   =+  hom=(jam ham)
   ^-  (pair (list gift) (list rock))
@@ -921,12 +922,11 @@
         ==                                              ::
       ++  kiss                                          ::
         $%  {$back p/flap q/coop r/@dr}                 ::  raw ack
-            {$tell p/chan q/*}                          ::  send message
+            {$mess p/chan q/*}                          ::  send message
             {$wake $~}                                  ::  random wakeup
         ==                                              ::
       --                                                ::
-  =|  $:  $:  $:  our/ship
-                  her/ship
+  =|  $:  $:  $:  her/ship
                   det/pipe
               ==
               $:  now/@da
@@ -1034,26 +1034,10 @@
       =.  cup.u.bum  ?.(=(ack.u.bum num.u.bum) ~ [~ ~])
       +>.$(cob (~(put by cob) q.paz u.bum))
     ::                                                  ::
-    ++  wy-tire                                         ::  report results
-      |-  ^+  +
-      =+  zup=(~(get by cob) lac)
-      ?~  zup  +.$
-      ?~  cup.u.zup  +.$
-      ::  ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
-      %=  $
-        lac  +(lac)
-        cob  (~(del by cob) lac)
-        fex  :_(fex [%mack kos `coop`u.cup.u.zup])
-      ==
-    ::                                                  ::
-    ++  wy-wake                                         ::  timeout
-      ^+  .
-      .(mup (work:mup now %wake ~))
-    ::                                                  ::
-    ++  wy-tell                                         ::  send
+    ++  wy-mess                                         ::  send
       |=  {cha/chan val/*}
       ^+  +>
-      =+  yex=((knit our her det) now eny [%bond [(mix kos 1) seq] cha val])
+      =+  yex=((knit her det) now eny [%bond [(mix kos 1) seq] cha val])
       =.  fex  (weld (flop p.yex) fex)
       ::  ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
       %_    +>.$ 
@@ -1072,6 +1056,22 @@
                 [& [inx seq] (shaf %flap i.q.yex) i.q.yex]
         ==
       ==
+    ::                                                  ::
+    ++  wy-tire                                         ::  report results
+      |-  ^+  +
+      =+  zup=(~(get by cob) lac)
+      ?~  zup  +.$
+      ?~  cup.u.zup  +.$
+      ::  ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
+      %=  $
+        lac  +(lac)
+        cob  (~(del by cob) lac)
+        fex  :_(fex [%mack kos `coop`u.cup.u.zup])
+      ==
+    ::                                                  ::
+    ++  wy-wake                                         ::  timeout
+      ^+  .
+      .(mup (work:mup now %wake ~))
     --                                                  
   ::                                                    ::
   ++  zeal                                              ::  default state
@@ -1101,33 +1101,83 @@
   =|  $:  syl/silo                                      ::  kernel state
       ==                                                ::
   |=  {now/@da eny/@ ski/sley}                          ::  current invocation
+  =>  |%
+      ++  look                                          ::  get secure channel
+        |=  who/ship
+        ^-  pipe
+        !!
+      ::
+      ++  love  ~(. loft [now eny look] syl ~)          ::  create loft
+      ++  lung                                          ::  gift to move
+        |=  gax/gift:loft
+        ^-  move
+        ?-    -.gax
+            $east  [p.gax %give [%east s.gax]]
+            $home  [~ %give gax]
+            $know  [~ %pass /sec %j gax]
+            $link  [~ %pass /sec %j gax]
+            $meet  [~ %pass /sec %j gax]
+            $rest  [p.gax %give %rest q.gax]
+            $send  [~ %give gax]
+            $west
+          =+  pax=/msg/(scot %p p.gax)/(scot %ud q.gax)
+          =+  cad=[%west p.gax +.r.gax s.gax]
+          =+  dat=?+(-.r.gax !! $c [%c cad], $e [%e cad], $g [%g cad])
+          [~ %pass pax dat]
+        ==
+      ::
+      ++  work
+        |=  job/kiss:loft
+        ^-  {(list move) q/_..^$}
+        =^  fex  syl  abet:(apex:love job)
+        [(turn fex lung) ..^$]
+      --
   |%                                                    ::  vane interface
   ++  call                                              ::  handle request
     |=  $:  hen/duct
-            hic/(hypo (hobo kiss-ames))
+            hic/(hypo kiss-xmas)
         ==
     ^-  {p/(list move) q/_..^$}
-    ?-  -.hic 
+    %-  work
+    ^-  kiss:loft
+    ?-  -.q.hic 
+      $hear  q.hic
+      $mess  [%mess p.q.hic hen q.q.hic r.q.hic]
+      $wake  q.hic
+    ==
   ::
   ++  doze
     |=  {now/@da hen/duct}
     ^-  (unit @da)
-    !!
+    !! 
   ::
   ++  load
     |=  old/silo
     ^+  ..^$
-    !!
+    ..^$(syl old)
   ::
   ++  scry
     |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
     ^-  (unit (unit cage))
-    !!
+    ~
   ::
-  ++  stay  
-    !!
+  ++  stay  syl
   ++  take                                            ::  accept response
     |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
     ^-  {p/(list move) q/_..^$}
-    !!
+    %-  work
+    ?+    -.tea  !!
+        $msg
+      ?>  ?=({@ @ $~} +.tea)
+      =+  [who kos]=[(slav %p i.t.tea) (slav %ud i.t.t.tea)]
+      ?>  ?=(?($rend $mack) +<.q.hin)
+      ?-  +<.q.hin
+        $rend  [%rend who kos p.+.q.hin q.+.q.hin]
+        $mack  [%done who kos ?~(p.+.q.hin ~ `coop`[~ `[%fail u.p.+.q.hin]])]
+      ==
+    ::
+        $sec
+      ?>  ?=($clue +<.q.hin)
+      +.q.hin 
+    ==
   --
