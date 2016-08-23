@@ -134,6 +134,20 @@ ifneq ($(OS),bsd)
   CWFLAGS+=-Wno-error=unused-result
 endif
 
+# glibc 2.24 deprecates readdir_r; iff glibc >=2.24,
+# don't upgrade 'deprecated declarations' warnings to errors
+# dependency: `getconf`, which comes w/glibc
+GLIBC := $(lastword $(shell getconf GNU_LIBC_VERSION))
+# dependency: none, uses make's native functions
+GLIBC_MAJ := $(word 1, $(subst ., ,$(GLIBC))) 
+GLIBC_MIN := $(word 2, $(subst ., ,$(GLIBC)))
+# dependency: `expr` shell built-in
+GLIBC_GE_2_24 := $(shell expr $(GLIBC_MAJ) ">" 2 "|" \
+        $(GLIBC_MAJ) "=" 2 "&" $(GLIBC_MIN) ">=" 24)
+ifeq (1,$(GLIBC_GE_2_24))
+  CWFLAGS+=-Wno-error=deprecated-declarations
+endif
+
 ifdef NO_SILENT_RULES
 %.o: %.c $(CORE)
 	$(CC) -c $(CWFLAGS) $(CFLAGS) -o $@ $<
