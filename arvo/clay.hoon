@@ -125,7 +125,7 @@
           ==                                            ::
 ++  rung  $:  rus/(map desk rede)                       ::  neighbor desks
           ==                                            ::
-++  tage  {{$tabl p/(list (pair marc marc))} q/vase}    ::  %tabl gage
+++  tage  (each (list (pair cage cage)) tang)           ::  result or error
 ++  dork                                                ::  diff work
           $:  del/(list path)                           ::  deletes
               ink/(list (pair path cage))               ::  hoo{nk}
@@ -238,13 +238,25 @@
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
   ++  ford-fail  |=(tan/tang ~|(%ford-fail (mean tan)))
+  ::
+  ::  Takes either a result or a stack trace.  If it's a stack trace, we crash;
+  ::  else, we produce the result.
+  ::
   ++  unwrap-tang
     |*  res/(each * tang)
     ?:(?=($& -.res) p.res (mean p.res))
   ::
+  ::  Parse a gage to a list of pairs of cages, crashing on error.
+  ::
+  ::  Composition of ++gage-to-cages-or-error and ++unwrap-tang.  Maybe same as
+  ::  ++gage-to-success-cages?
+  ::
   ++  gage-to-cages
     |=  gag/gage  ^-  (list (pair cage cage))
-    (unwrap-tang (gage-to-tage gag))
+    (unwrap-tang (gage-to-cages-or-error gag))
+  ::
+  ::  Same as ++gage-to-cages-or-error except crashes on error.  Maybe same as
+  ::  ++gage-to-cages?
   ::
   ++  gage-to-success-cages
     |=  gag/gage
@@ -263,7 +275,12 @@
              ~
     ==
   ::
-  ++  gage-to-tage
+  ::  Expects a single-level gage (i.e. a list of pairs of cages).  If the
+  ::  result is of a different form, or if some of the computations in the gage
+  ::  failed, we produce a stack trace.  Otherwise, we produce the list of pairs
+  ::  of cages.
+  ::
+  ++  gage-to-cages-or-error
     |=  gag/gage
     ^-  (each (list (pair cage cage)) tang)
     ?:  ?=($| -.gag)  (mule |.(`$~`(ford-fail p.gag)))
@@ -283,6 +300,9 @@
                ?+(- [[p.p p.q]:i.p.gag -] {@ *} -)
     ==       ==
   ::
+  ::  Assumes the list of pairs of cages is actually a listified map of paths
+  ::  to cages, and converts it to (map path cage) or a stack trace on error.
+  ::
   ++  cages-to-map
     |=  tay/(list (pair cage cage))
     =|  can/(map path cage)
@@ -293,29 +313,46 @@
       (mule |.(`$~`~|([%expected-path got=p.pax] !!)))
     $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
   ::
+  ::  Queue a move.
+  ::
   ++  emit
     |=  mof/move
     %_(+> mow [mof mow])
+  ::
+  ::  Queue a list of moves
   ::
   ++  emil
     |=  mof/(list move)
     %_(+> mow (weld mof mow))
   ::
-  ++  balk                                              ::  read and send
+  ::  Produce either null or a result along a subscription.
+  ::
+  ::  Producing null means subscription has been completed or cancelled.
+  ::
+  ++  balk
     |=  {hen/duct cay/(unit (each cage lobe)) mun/mood}
     ^+  +>
     ?~  cay  (blub hen)
     (blab hen mun u.cay)
   ::
+  ::  Set timer.
+  ::
   ++  bait
     |=  {hen/duct tym/@da}
     (emit hen %pass /tyme %t %wait tym)
+  ::
+  ::  Cancel timer.
   ::
   ++  best
     |=  {hen/duct tym/@da}
     (emit hen %pass /tyme %t %rest tym)
   ::
-  ++  blab                                              ::  ship result
+  ::  Give subscription result.
+  ::
+  ::  Result can be either a direct result (cage) or a lobe of a result.  In
+  ::  the latter case we fetch the data at the lobe and produce that.
+  ::
+  ++  blab
     |=  {hen/duct mun/mood dat/(each cage lobe)}
     ^+  +>
     ?:  ?=($& -.dat)
@@ -325,7 +362,9 @@
         %f  %exec  our  ~  [her syd q.mun]  (lobe-to-silk:ze r.mun p.dat)
     ==
   ::
-  ++  bleb                                              ::  ship sequence
+  ::  Give next step in a subscription.
+  ::
+  ++  bleb
     |=  {hen/duct ins/@ud hip/(unit (pair aeon aeon))}
     ^+  +>
     %^  blab  hen  [%w [%ud ins] ~]
@@ -334,11 +373,19 @@
       [%null [%atom %n ~] ~]
     [%nako !>((make-nako:ze u.hip))]
   ::
-  ++  blub                                              ::  ship stop
+  ::  Tell subscriber that subscription is done.
+  ::
+  ++  blub
     |=  hen/duct
     (emit hen %give %writ ~)
   ::
-  ++  duct-lift                                         ::  for each duct
+  ::  Lifts a function so that a single result can be fanned out over a set of
+  ::  subscriber ducts.
+  ::
+  ::  Thus, `((duct-lift func) subs arg)` runs `(func sub arg)` for each `sub`
+  ::  in `subs`.
+  ::
+  ++  duct-lift
     |*  send/_|=({duct *} ..duct-lift)
     |=  {a/(set duct) arg/_+<+.send}  ^+  ..duct-lift
     =+  all=(~(tap by a))
@@ -347,10 +394,12 @@
     =.  +>.send  ..duct-lift
     $(all t.all, duct-lift (send i.all arg))
   ::
-  ++  blub-all  (duct-lift |=({a/duct $~} (blub a)))    ::  ship stop
-  ++  blab-all  (duct-lift blab)                        ::  ship result
-  ++  balk-all  (duct-lift balk)                        ::  read and send
-  ++  bleb-all  (duct-lift bleb)                        ::  ship sequence
+  ++  blub-all  (duct-lift |=({a/duct $~} (blub a)))    ::  lifted ++blub
+  ++  blab-all  (duct-lift blab)                        ::  lifted ++blab
+  ++  balk-all  (duct-lift balk)                        ::  lifted ++balk
+  ++  bleb-all  (duct-lift bleb)                        ::  lifted ++bleb
+  ::
+  ::  Sends a tank straight to dill for printing
   ::
   ++  print-to-dill
     |=  {car/@tD tan/tank}
@@ -359,14 +408,18 @@
     =+  moo=,.+26.bar
     (emit (need hun) %give %note car tan)
   ::
+  ::  Transfer a request to another ship's clay
+  ::
   ++  send-over-ames
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
     (emit a %pass b %a %wont [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
-  ++  foon
-    |=  @da
-    ^+  +>
-    ((cury bait hen) +<)
+  ::  Create a request that cannot be filled immediately.
+  ::
+  ::  If it's a local request, we just put in in `qyx`, setting a timer if it's
+  ::  waiting for a particular time.  If it's a foreign request, we add it to
+  ::  our request manager (ref, which is a ++rind) and make the request to the
+  ::  foreign ship.
   ::
   ++  duce                                              ::  produce request
     |=  rov/rove
@@ -389,6 +442,13 @@
       bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
+  ::
+  ::  If a similar request exists, switch to the existing request.
+  ::
+  ::  "Similar" requests are those %next and %many requests which are the same
+  ::  up to starting case, but we're already after the starting case.  This
+  ::  stacks later requests for something onto the same request so that they
+  ::  all get filled at once.
   ::
   ++  dedupe                                            ::  find existing alias
     |=  rov/rove  ^-  rove
@@ -415,6 +475,11 @@
           ?=(^ (case-to-aeon:ze p.q.a))
       ==
     ==
+  ::
+  ::  Takes a list of changed paths and finds those paths that are inside a
+  ::  mount point (listed in `mon`).
+  ::
+  ::  Output is a map of mount points to {length-of-mounted-path set-of-paths}.
   ::
   ++  must-ergo
     |=  can/(list path)
@@ -2188,7 +2253,7 @@
       ++  diffed-ali
         |=  res/gage
         ^+  +>
-        =+  tay=(gage-to-tage res)
+        =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %diff-ali-bad-made leaf+"merge diff ali failed" p.tay)
         =+  can=(cages-to-map p.tay)
@@ -2231,7 +2296,7 @@
       ++  diffed-bob
         |=  res/gage
         ^+  +>
-        =+  tay=(gage-to-tage res)
+        =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %diff-bob-bad-made leaf+"merge diff bob failed" p.tay)
         =+  can=(cages-to-map p.tay)
@@ -2292,7 +2357,7 @@
       ::
       ++  merged
         |=  res/gage
-        =+  tay=(gage-to-tage res)
+        =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %merge-bad-made leaf+"merging failed" p.tay)
         =+  can=(cages-to-map p.tay)
@@ -2328,7 +2393,7 @@
       ++  built
         |=  res/gage
         ^+  +>
-        =+  tay=(gage-to-tage res)
+        =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %build-bad-made leaf+"delta building failed" p.tay)
         =+  bop=(cages-to-map p.tay)
@@ -2456,7 +2521,7 @@
       ++  checked-out
         |=  res/gage
         ^+  +>
-        =+  tay=(gage-to-tage res)
+        =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %checkout-bad-made leaf+"merge checkout failed" p.tay)
         =+  can=(cages-to-map p.tay)
@@ -2509,7 +2574,7 @@
       ++  ergoed
         |=  res/gage
         ^+  +>
-        =+  tay=(gage-to-tage res)
+        =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %ergo-bad-made leaf+"merge ergo failed" p.tay)
         =+  =|  nac/mode
