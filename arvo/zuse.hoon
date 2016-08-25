@@ -3366,7 +3366,7 @@
           $:  out/(unit (pair hand code))               ::  outbound key
               inn/(map hand code)                       ::  inbound keys
               cur/(pair life (unit life))               ::  versions: our their
-              gyt/gyft                                  ::  our unshared cert
+              gyt/gree                                  ::  our unshared cert
               pub/(map life pass)                       ::  their public keys
               war/(map life ring)                       ::  our private keys
           ==                                            ::
@@ -3576,7 +3576,7 @@
               $:  $j                                    ::  to %jael
                   $%  {$know p/ship}                    ::
                       {$link p/ship q/code}             ::
-                      {$meet p/gyft}                    ::
+                      {$meet p/gree}                    ::
           ==  ==  ==                                    ::
 ::
 ::::    %behn
@@ -3630,7 +3630,7 @@
   ::
 ++  deod  {myn/mind syg/@uw}                            ::  signature
 ++  lama                                                ::  
-  $:  dob/?                                             ::  & clean, | rough
+  $:  dob/?                                             ::  & clean, | dirty
       exp/@da                                           ::  expiration date
       pub/pass                                          ::  public key
   ==                                                    ::
@@ -3638,7 +3638,7 @@
   $:  who/@p                                            ::  identity
       exp/(unit @da)                                    ::  expiration date
   ==                                                    ::
-++  gyft  (map ship (map life (tale lama)))             ::  pki dump set
+++  gree  (map ship (map life (tale lama)))             ::  pki dump set
 ++  mind  {lyf/@ud who/@p}                              ::  key identifier
 ++  tale                                                ::  urbit-signed atom
   |*  typ/mold                                          ::
@@ -3649,14 +3649,6 @@
 ++  wyll                                                ::  linear will 
   $:  len/@ud                                           ::
       log/(list (tale lama))                            ::
-  ==                                                    ::
-++  kiss-jael                                           ::  secret operation
-  $:  {$auth p/(unit @dr) q/ship r/@uvI}                ::  save capability
-      {$meet p/gyft}                                    ::  adopt will
-      {$nigh p/ship q/life}                             ::  track neighbor
-      {$ring p/life q/ring}                             ::  save private key
-      {$wait p/path}                                    ::  wait on desk/spur
-      {$west p/sack q/path r/@ud s/*}                   ::  remote request
   ==                                                    ::
 ::
 ::::

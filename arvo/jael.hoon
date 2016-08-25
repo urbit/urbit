@@ -29,11 +29,22 @@
       por/(map hand fist)                               ::  forward index
       ::                                                ::  priority queue?
   ==                                                    ::
+++  jael-role                                           ::  token 
+  $%  %e
 ++  jael-public   (map ship gyft)                       ::  public keys
-++  jael-embassy  (map term jael-partner)               ::
+++  jael-embassy  (map term jael-partner)               ::  
 ++  jael-partner                                        ::  api apps
   $:  api/(map term hand)                               ::  apps by name
       tok/(map @t (map term hand))                      ::  shortlived tokens
+  ==                                                    ::
+++  jael-task                                           ::  secret operation
+  $:  {$auth p/(unit @dr) q/ship r/@uvI}                ::  save capability
+      {$link p/
+      {$meet p/gree}                                    ::  adopt will
+      {$nigh p/ship q/life}                             ::  track neighbor
+      {$ring p/life q/ring}                             ::  save private key
+      {$wait p/path}                                    ::  wait on desk/spur
+      {$west p/sack q/path r/@ud s/*}                   ::  remote request
   ==                                                    ::
 ++  jael-secret                                         ::  secret by hash
   $:  key/code                                          ::  secret itself
