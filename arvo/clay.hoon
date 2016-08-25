@@ -217,7 +217,7 @@
   =*  red  ->
   =|  mow/(list move)
   |%
-  ++  abet
+  ++  abet                                              ::  resolve
     ^-  {(list move) raft}
     :_  =+  rom=(~(get by fat.ruf) her)
         ?~  rom
@@ -227,7 +227,9 @@
         ruf(fat (~(put by fat.ruf) her [(need hun) dos]))
     (flop mow)
   ::
-  ++  aver                                              ::  read
+  ::  Handle `%sing` requests
+  ::
+  ++  aver
     |=  mun/mood
     ^-  (unit (unit (each cage lobe)))
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
@@ -399,7 +401,7 @@
   ++  balk-all  (duct-lift balk)                        ::  lifted ++balk
   ++  bleb-all  (duct-lift bleb)                        ::  lifted ++bleb
   ::
-  ::  Sends a tank straight to dill for printing
+  ::  Sends a tank straight to dill for printing.
   ::
   ++  print-to-dill
     |=  {car/@tD tan/tank}
@@ -408,7 +410,7 @@
     =+  moo=,.+26.bar
     (emit (need hun) %give %note car tan)
   ::
-  ::  Transfer a request to another ship's clay
+  ::  Transfer a request to another ship's clay.
   ::
   ++  send-over-ames
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
@@ -493,6 +495,8 @@
     |=  pax/path
     &(=(p.bem her) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
   ::
+  ::  Initializes a new mount point.
+  ::
   ++  mont
     |=  {pot/term pax/path}
     ^+  +>
@@ -515,7 +519,12 @@
         (lobe-to-silk:ze a p.-)
     ==
   ::
-  ++  ease                                              ::  release request
+  ::  Cancel a request.
+  ::
+  ::  For local requests, we just remove it from `qyx`.  For foreign requests,
+  ::  we remove it from `ref` and tell the foreign ship to cancel as well.
+  ::
+  ++  cancel-request                                    ::  release request
     ^+  .
     =^  ros/(list rove)  qyx
       :_  (~(run by qyx) |=(a/(set duct) (~(del in a) hen)))
@@ -528,15 +537,23 @@
       |-  ^+  +>
       ?~  ros  +>
       $(ros t.ros, +> (mabe i.ros |=(@da (best hen +<))))
-    ^+  ..ease
+    ^+  ..cancel-request
     =+  nux=(~(get by fod.u.ref) hen)
-    ?~  nux  ..ease
+    ?~  nux  ..cancel-request
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
     (send-over-ames hen [(scot %ud u.nux) ~] her u.nux syd ~)
   ::
-  ++  eave                                              ::  subscribe
+  ::  Handles a request.
+  ::
+  ::  `%sing` requests are handled by ++aver.  `%next` requests are handled by
+  ::  running ++aver at the given case, and then subsequent cases until we find
+  ::  a case where the two results aren't equivalent.  If it hasn't happened
+  ::  yet, we wait.  `%many` requests are handled by producing as much as we can
+  ::  and then waiting if the subscription range extends into the future.
+  ::
+  ++  start-request
     |=  rav/rave
     ^+  +>
     ?-    -.rav
@@ -577,7 +594,6 @@
       ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
         (blub hen)
       =+  top=?~(huy let.dom u.huy)
-      =+  sar=(lobes-at-path:ze u.nab r.q.rav)
       =+  ear=(lobes-at-path:ze top r.q.rav)
       =.  +>.$
         (bleb hen u.nab ?:(p.rav ~ `[u.nab top]))
@@ -588,7 +604,9 @@
       (duce `rove`[%many p.rav ptr q.q.rav r.q.rav ear])
     ==
   ::
-  ++  echo                                              ::  announce changes
+  ::  Print a summary of changes to dill.
+  ::
+  ++  print-changes
     |=  {wen/@da lem/nuri}
     ^+  +>
     =+  pre=`path`~[(scot %p her) syd (scot %ud let.dom)]
@@ -613,16 +631,16 @@
   ::
   ::  We take a `++nori`, which is either a label-add request or a `++soba`,
   ::  which is a list of changes.  If it's a label, it's easy and we just pass
-  ::  it to `++edit:ze`.
+  ::  it to `++execute-changes:ze`.
   ::
   ::  If the given `++nori` is a list of file changes, then we our goal is to
   ::  convert the list of `++miso` changes to `++misu` changes.  In other
   ::  words, turn the `++nori` into a `++nuri`.  Then, we pass it to
-  ::  `++edit:ze`, which applies the changes to our state, and then we
-  ::  check out the new revision.  XX  reword
+  ::  `++execute-changes:ze`, which applies the changes to our state, and then
+  ::  we check out the new revision.  XX  reword
   ::
-  ::  Anyhow, enough of high-level wishy-washy talk.  It's time to get down to
-  ::  the nitty-gritty.
+  ::  Anyhow, enough of high-level talk.  It's time to get down to the
+  ::  nitty-gritty.
   ::
   ::  When we get a list of `++miso` changes, we split them into four types:
   ::  deletions, insertions, diffs (i.e. change from diff), and mutations
@@ -668,10 +686,10 @@
     ^+  +>
     ?:  ?=($| -.lem)
       =^  hat  +>.$
-        (edit:ze wen lem)
+        (execute-changes:ze wen lem)
       ?~  hat
         +>.$
-      wake:(echo:(checkout-ankh u.hat) wen lem)
+      wake:(print-changes:(checkout-ankh u.hat) wen lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
     =+  del=(skim p.lem :(corl (cury test %del) head tail))
@@ -806,10 +824,10 @@
           ^-  (list (pair path misu))
           (turn u.mut.u.dok |=({pax/path cal/{lobe cage}} [pax %dif cal]))
         ==
-    =+  hat=(edit:ze wen %& sim)
+    =+  hat=(execute-changes:ze wen %& sim)
     ?~  dok  ~&  %no-changes  !!
     ?~  -.hat
-      ([echo(dok ~)]:.(+>.$ +.hat) wen %& sim)
+      ([print-changes(dok ~)]:.(+>.$ +.hat) wen %& sim)
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
   ++  take-inserting
@@ -938,13 +956,14 @@
           ^-  (list (pair path misu))
           (turn u.mut.u.dok |=({pax/path cal/{lobe cage}} [pax %dif cal]))
         ==
-    =^  hat  +>.$  (edit:ze now %& sim)  ::  XX  do same in ++apply-edit
+    =^  hat  +>.$  (execute-changes:ze now %& sim)
+                                      ::  XX  do same in ++apply-edit
     ?~  dok  ~&  %no-dok  +>.$
     =>
       %=    .
           +>.$
         ?<  ?=($~ hat)                                   ::  XX  whut?
-        (echo now %& sim)
+        (print-changes now %& sim)
       ==
     ?~  dok  ~&  %no-dok  +>.$
     =+  ^-  cat/(list (trel path lobe cage))
@@ -955,7 +974,7 @@
         [-< -> +]:[((hard {path lobe}) q.q.pax) cay]
     ::  ~&  %canned
     ::  ~&  %checking-out
-    =.  ank.dom  (checkout-ankh:ze (malt cat))
+    =.  ank.dom  (map-to-ankh:ze (malt cat))
     ::  ~&  %checked-out
     ::  ~&  %waking
     =.  +>.$  =>(wake ?>(?=(^ dok) .))
@@ -1090,12 +1109,7 @@
       lat.ran   lat
     ==
   ::
-  ++  exec                                            ::  change and update
-    |=  {wen/@da lem/nori}
-    ^+  +>
-    (edit wen lem)
-  ::
-  ::  Be careful to call ++wake if+when necessary.  Every case
+  ::  Be careful to call ++wake if/when necessary.  Every case
   ::  must call it individually.
   ::
   ++  take-foreign-update                              ::  external change
@@ -1402,6 +1416,8 @@
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  ze
     |%
+    ::  These convert between aeon (version number), tako (commit hash), yaki
+    ::  (commit data structure), lobe (content hash), and blob (content).
     ++  aeon-to-tako  ~(got by hit.dom)
     ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
     ++  lobe-to-blob  ~(got by lat.ran)
@@ -1413,10 +1429,15 @@
         $delta      p.q
         $direct     p.q
       ==
+    ::
+    ::  Creates a silk to put a type on a page (which is a {mark noun}).
+    ::
     ++  page-to-silk                                    :: %hoon bootstrapping
       |=  a/page
       ?.  ?=($hoon p.a)  [%volt a]
       [%$ p.a [%atom %t ~] q.a]
+    ::
+    ::  Creates a silk out of a lobe (content hash).
     ::
     ++  lobe-to-silk
       |=  {pax/path lob/lobe}
@@ -1438,7 +1459,12 @@
                     [%pact $(lob q.q.bol) (page-to-silk r.bol)]
       ==
     ::
+    ::  Hashes a page to get a lobe.
+    ::
     ++  page-to-lobe  |=(page (shax (jam +<)))
+    ::
+    ::  Checks whether two pieces of data (either cages or lobes) are the same.
+    ::
     ++  equivalent-data
       |=  {one/(each cage lobe) two/(each cage lobe)}
       ^-  ?
@@ -1450,23 +1476,119 @@
         =(p.one (page-to-lobe [p q.q]:p.two))
       =(p.one p.two)
     ::
-    ++  make-direct                                     ::  make blob
+    ::  Make a direct blob out of a page.
+    ::
+    ++  make-direct-blob
       |=  p/page
       ^-  blob
       [%direct (page-to-lobe p) p]
     ::
-    ++  make-delta                                      ::  make blob delta
+    ::  Make a delta blob out of a lobe, mark, lobe of parent, and page of diff.
+    ::
+    ++  make-delta-blob
       |=  {p/lobe q/{p/mark q/lobe} r/page}
       ^-  blob
       [%delta p q r]
     ::
-    ++  make-yaki                                       ::  make yaki
+    ::  Make a commit out of a list of parents, content, and date.
+    ::
+    ++  make-yaki
       |=  {p/(list tako) q/(map path lobe) t/@da}
       ^-  yaki
       =+  ^=  has
           %^  cat  7  (sham [%yaki (roll p add) q t])
           (sham [%tako (roll p add) q t])
       [p q has t]
+    ::
+    ::  Reduce a case to an aeon (version number)
+    ::
+    ::  We produce null if we can't yet reduce the case for whatever resaon
+    ::  (usually either the time or aeon hasn't happened yet or the label hasn't
+    ::  been created), we produce null.
+    ::
+    ++  case-to-aeon
+      |=  lok/case                                      ::  act count through
+      ^-  (unit aeon)
+      ?-    -.lok
+          $da
+        ?:  (gth p.lok lim)  ~
+        |-  ^-  (unit aeon)
+        ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
+        ?:  %+  gte  p.lok
+            =<  t
+            ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) $~)]
+            ~|  [%getdom (~(get by hit.dom) let.dom)]
+            %-  aeon-to-yaki
+            let.dom
+          [~ let.dom]
+        $(let.dom (dec let.dom))
+      ::
+          $tas  (~(get by lab.dom) p.lok)
+          $ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
+      ==
+    ::
+    ::  Convert a map of paths to data into an ankh.
+    ::
+    ++  map-to-ankh
+      |=  hat/(map path (pair lobe cage))
+      ^-  ankh
+      ::  %-  cosh
+      %+  roll  (~(tap by hat) ~)
+      |=  {{pat/path lob/lobe zar/cage} ank/ankh}
+      ^-  ankh
+      ::  %-  cosh
+      ?~  pat
+        ank(fil [~ lob zar])
+      =+  nak=(~(get by dir.ank) i.pat)
+      %=  ank
+        dir  %+  ~(put by dir.ank)  i.pat
+             $(pat t.pat, ank (fall nak *ankh))
+      ==
+    ::
+    ::  Applies a change list, creating the commit and applying it to the
+    ::  current state.
+    ::
+    ::  Also produces the new data from the commit for convenience.
+    ::
+    ++  execute-changes
+      |=  {wen/@da lem/nuri}
+      ^-  {(unit (map path lobe)) _..ze}
+      ?-  -.lem
+        $&
+           =^  yak  lat.ran  (forge-yaki wen p.lem)     ::  create new commit
+           ?.  ?|  =(0 let.dom)
+                   !=((lent p.yak) 1)
+                   !=(q.yak q:(aeon-to-yaki let.dom))
+               ==
+             `..ze                                      ::  silently ignore
+           =:  let.dom  +(let.dom)
+               hit.dom  (~(put by hit.dom) +(let.dom) r.yak)
+               hut.ran  (~(put by hut.ran) r.yak yak)
+           ==
+           [`q.yak ..ze]
+           ::  +>.$(ank (map-to-ankh q.yak))
+        $|
+           ?<  (~(has by lab.dom) p.lem)
+           [~ ..ze(lab.dom (~(put by lab.dom) p.lem let.dom))]
+      ==
+    ::
+    ::  Create a commit out of a list of changes against the current state.
+    ::
+    ::  First call ++apply-changes to apply the list of changes and get the new
+    ::  state of the content.  Then, call ++update-lat to add any new content to
+    ::  the blob store.  Finally, create the new yaki (commit) and produce both
+    ::  it and the new lat (blob store).
+    ::
+    ++  forge-yaki
+      |=  {wen/@da lem/suba}
+      =+  par=?:(=(0 let.dom) ~ [(aeon-to-tako let.dom) ~])
+      =+  new=(apply-changes lem)
+      =+  gar=(update-lat new lat.ran)
+      :-  (make-yaki par +.gar wen)                     ::  from existing diff
+      -.gar                                             ::  fix lat
+    ::
+    ::  Apply a list of changes against the current state and produce the new
+    ::  state.
     ::
     ++  apply-changes                                   ::   apply-changes:ze
       |=  lar/(list {p/path q/misu})                    ::  store changes
@@ -1495,7 +1617,7 @@
         ?:  (~(has by bar) pax)  !!                     ::
         ?:  (~(has by hat) pax)  !!                     ::
         %+  ~(put by bar)  pax
-        %-  make-direct
+        %-  make-direct-blob
         ?:  &(?=($mime -.p.mys) =([%hoon ~] (slag (dec (lent pax)) pax)))
           `page`[%hoon +.+.q.q.p.mys]
         [p q.q]:p.mys
@@ -1511,106 +1633,39 @@
           =+  har=(~(get by hat) pax)
           ?~  har  !!
           %+  ~(put by bar)  pax
-          (make-delta p.mys [(lobe-to-mark u.har) u.har] [p q.q]:q.mys)
+          (make-delta-blob p.mys [(lobe-to-mark u.har) u.har] [p q.q]:q.mys)
                                                         :: XX check vase !evil
         ::  XX of course that's a problem, p.u.ber isn't in rang since it
         ::     was just created.  We shouldn't be sending multiple
         ::     diffs
         ::  %+  ~(put by bar)  pax
-        ::  (make-delta p.mys [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys)
+        ::  %^  make-delta-blob  p.mys
+        ::    [(lobe-to-mark p.u.ber) p.u.ber]
+        ::  [p q.q]:q.mys
         ::                                              :: XX check vase !evil
         ~|([%two-diffs-for-same-file syd pax] !!)
       ==
     ::
-    ++  case-to-aeon                                    ::    case-to-aeon:ze
-      |=  lok/case                                      ::  act count through
-      ^-  (unit aeon)
-      ?-    -.lok
-          $da
-        ?:  (gth p.lok lim)  ~
-        |-  ^-  (unit aeon)
-        ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
-        ?:  %+  gte  p.lok
-            =<  t
-            ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) $~)]
-            ~|  [%getdom (~(get by hit.dom) let.dom)]
-            %-  aeon-to-yaki
-            let.dom
-          [~ let.dom]
-        $(let.dom (dec let.dom))
-      ::
-          $tas  (~(get by lab.dom) p.lok)
-          $ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
-      ==
+    ::  Update the object store with new blobs.
     ::
-    ++  checkout-ankh
-      |=  hat/(map path (pair lobe cage))
-      ^-  ankh
-      ::  %-  cosh
-      %+  roll  (~(tap by hat) ~)
-      |=  {{pat/path lob/lobe zar/cage} ank/ankh}
-      ^-  ankh
-      ::  %-  cosh
-      ?~  pat
-        ank(fil [~ lob zar])
-      =+  nak=(~(get by dir.ank) i.pat)
-      %=  ank
-        dir  %+  ~(put by dir.ank)  i.pat
-             $(pat t.pat, ank (fall nak *ankh))
-      ==
+    ::  Besides new object store, converts the given (map path blob) to
+    ::  (map path lobe).
     ::
-    ++  edit                                            ::    edit:ze
-      |=  {wen/@da lem/nuri}                            ::  edit
-      ^-  {(unit (map path lobe)) _..ze}
-      ?-  -.lem
-        $&
-           =^  yak  lat.ran                             ::  merge objects
-               %+  forge-yaki  wen
-               ?:  =(let.dom 0)                         ::  initial import
-                 [~ p.lem]
-               [(some r:(aeon-to-yaki let.dom)) p.lem]
-           ?.  ?|  =(0 let.dom)
-                   !=((lent p.yak) 1)
-                   !(equiv q.yak q:(aeon-to-yaki let.dom))
-               ==
-             `..ze                                      ::  silently ignore
-           =:  let.dom  +(let.dom)
-               hit.dom  (~(put by hit.dom) +(let.dom) r.yak)
-               hut.ran  (~(put by hut.ran) r.yak yak)
-           ==
-           [`q.yak ..ze]
-           ::  +>.$(ank (checkout-ankh q.yak))
-        $|
-           ?<  (~(has by lab.dom) p.lem)
-           [~ ..ze(lab.dom (~(put by lab.dom) p.lem let.dom))]
-      ==
+    ++  update-lat                                      ::   update-lat:ze
+      |=  {lag/(map path blob) sta/(map lobe blob)}     ::  fix lat
+      ^-  {(map lobe blob) (map path lobe)}
+      %+  roll  (~(tap by lag) ~)
+      =<  .(lut sta)
+      |=  {{pat/path bar/blob} {lut/(map lobe blob) gar/(map path lobe)}}
+      ?~  (~(has by lut) p.bar)
+        [lut (~(put by gar) pat p.bar)]
+      :-  (~(put by lut) p.bar bar)
+      (~(put by gar) pat p.bar)
     ::
-    ++  equiv                                           ::  test paths
-      |=  {p/(map path lobe) q/(map path lobe)}
-      ^-  ?
-      =-  ?.  qat  %.n
-          %+  levy  (~(tap by q) ~)
-          |=  {pat/path lob/lobe}
-          (~(has by p) pat)
-      ^=  qat
-      %+  levy  (~(tap by p) ~)
-      |=  {pat/path lob/lobe}
-      =+  zat=(~(get by q) pat)
-      ?~  zat  %.n
-      =(u.zat lob)
-      ::  =((lobe-to-cage u.zat) (lobe-to-cage lob))
+    ::  Gets a map of the data at the given path and all children of it.
     ::
-    ++  forge-yaki                                      ::    forge-yaki:ze
-      |=  {wen/@da par/(unit tako) lem/suba}            ::  forge yaki
-      =+  ^=  per
-          ?~  par  ~
-          ~[u.par]
-      =+  gar=(update-lat (apply-changes lem) lat.ran)
-      :-  (make-yaki per +.gar wen)                     ::  from existing diff
-      -.gar                                             ::  fix lat
-    ::
-    ++  lobes-at-path                                   ::    lobes-at-path:ze
-      |=  {yon/aeon pax/path}                           ::  data at path
+    ++  lobes-at-path
+      |=  {yon/aeon pax/path}
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
       %-  malt
@@ -1628,6 +1683,8 @@
               $(p +.p, pax +.pax)
       ==  ==
     ::
+    ::  Creates a nako of all the changes between a and b.
+    ::
     ++  make-nako
       |=  {a/aeon b/aeon}
       ^-  nako
@@ -1641,16 +1698,40 @@
         [~ ~]
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
     ::
-    ++  query                                           ::    query:ze
-      |=  ren/$?($u $v $x $y $z)                        ::  endpoint query
-      ^-  (unit cage)
-      ?-  ren
-        $u  !!  ::  [~ %null [%atom %n] ~]
-        $v  [~ %dome !>(dom)]
-        $x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
-        $y  !!  ::  [~ %arch !>(as-arch)]
-        $z  !!  ::  [~ %ankh !>(ank.dom)]
-      ==
+    ::  Gets the data between two commit hashes, assuming the first is an
+    ::  ancestor of the second.
+    ::
+    ::  Get all the takos before `a`, then get all takos before `b` except the
+    ::  ones we found before `a`.  Then convert the takos to yakis and also get
+    ::  all the data in all the yakis.
+    ::
+    ++  data-twixt-takos
+      |=  {a/(unit tako) b/tako}
+      ^-  {(set yaki) (set plop)}
+      =+  old=?~(a ~ (reachable-takos u.a))
+      =+  ^-  yal/(set tako)
+          %-  silt
+          %+  skip
+            (~(tap in (reachable-takos b)))
+          |=(tak/tako (~(has in old) tak))
+      :-  (silt (turn (~(tap in yal)) tako-to-yaki))
+      (silt (turn (~(tap in (new-lobes (new-lobes ~ old) yal))) lobe-to-blob))
+    ::
+    ::  Traverses parentage and finds all ancestor hashes
+    ::
+    ++  reachable-takos                                 ::  reachable
+      |=  p/tako
+      ^-  (set tako)
+      =+  y=(tako-to-yaki p)
+      %+  roll  p.y
+      =<  .(s (~(put in *(set tako)) p))
+      |=  {q/tako s/(set tako)}
+      ?:  (~(has in s) q)                               ::  already done
+        s                                               ::  hence skip
+      (~(uni in s) ^$(p q))                             ::  otherwise traverse
+    ::
+    ::  Get all the lobes that are referenced in `a` except those that are
+    ::  already in `b`.
     ::
     ++  new-lobes                                       ::  object hash set
       |=  {b/(set lobe) a/(set tako)}                   ::  that aren't in b
@@ -1671,42 +1752,38 @@
         $delta     (~(put in $(lob q.q.gar)) lob)
       ==
     ::
-    ++  data-twixt-takos
-      |=  {a/(unit tako) b/tako}
-      ^-  {(set yaki) (set plop)}
-      =+  old=?~(a ~ (reachable-takos u.a))
-      =+  ^-  yal/(set tako)
-          %-  silt
-          %+  skip
-            (~(tap in (reachable-takos b)))
-          |=(tak/tako (~(has in old) tak))
-      :-  (silt (turn (~(tap in yal)) tako-to-yaki))
-      (silt (turn (~(tap in (new-lobes (new-lobes ~ old) yal))) lobe-to-blob))
+    ::  Should be refactored, is only called form `++read`, and even then it
+    ::  can't be called with `$v` as the care, so it's really just a crash.
     ::
-    ++  reachable-takos                                 ::  reachable
-      |=  p/tako                                        ::  XX slow
-      ^-  (set tako)
-      =+  y=(tako-to-yaki p)
-      %+  roll  p.y
-      =<  .(s (~(put in *(set tako)) p))
-      |=  {q/tako s/(set tako)}
-      ?:  (~(has in s) q)                               ::  already done
-        s                                               ::  hence skip
-      (~(uni in s) ^$(p q))                             ::  otherwise traverse
+    ::  To be clear the refactoring should start at ++read-at-aeon and probably
+    ::  eliminate ++read and ++query
+    ::
+    ++  query                                           ::    query:ze
+      |=  ren/$?($u $v $x $y $z)                        ::  endpoint query
+      ^-  (unit cage)
+      ?-  ren
+        $u  !!  ::  [~ %null [%atom %n] ~]
+        $v  [~ %dome !>(dom)]
+        $x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
+        $y  !!  ::  [~ %arch !>(as-arch)]
+        $z  !!  ::  [~ %ankh !>(ank.dom)]
+      ==
+    ::
+    ::  See ++query.
     ::
     ++  read                                            ::    read:ze
       |=  mun/mood                                      ::  read at point
       ^-  (unit cage)
       ?:  ?=($v p.mun)
-        [~ %dome !>(dom)]
+        [~ %dome !>(dom)]                               ::  dead code
       ?:  &(?=($w p.mun) !?=($ud -.q.mun))
-        ?^(r.mun ~ [~ %aeon !>(let.dom)])
+        ?^(r.mun ~ [~ %aeon !>(let.dom)])               ::  dead code
       ?:  ?=($w p.mun)
         =+  ^=  yak
             %-  aeon-to-yaki
             let.dom
         ?^(r.mun ~ !!) :: [~ %w !>([t.yak (forge-nori yak)])])-all
-      (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun)
+      (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun) ::  dead code
     ::
     ++  read-u
       |=  {yon/aeon pax/path}
@@ -1822,6 +1899,15 @@
         [[~ ?~(us *lobe u.us)] descendants]
       |=({{path lobe} @uvI} (shax (jam +<)))
     ::
+    ::  Get a value at an aeon.
+    ::
+    ::  Value can be either null, meaning we don't have it yet, {null null},
+    ::  meaning we know it doesn't exist, or {null null (each cage lobe)},
+    ::  meaning we either have the value directly or a content hash of the
+    ::  value.
+    ::
+    ::  Should change last few lines to an explicit ++read-w.
+    ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  {yon/aeon mun/mood}                           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
@@ -1868,18 +1954,7 @@
       ::    |=  a=lobe
       ::    =+  (lobe-to-blob a)
       ::    ?-(-.- %direct q.-, %delta !!)
-      ::`+>.$(ank.dom (checkout-ankh -), let.dom yon)
-    ::
-    ++  update-lat                                      ::   update-lat:ze
-      |=  {lag/(map path blob) sta/(map lobe blob)}     ::  fix lat
-      ^-  {(map lobe blob) (map path lobe)}
-      %+  roll  (~(tap by lag) ~)
-      =<  .(lut sta)
-      |=  {{pat/path bar/blob} {lut/(map lobe blob) gar/(map path lobe)}}
-      ?~  (~(has by lut) p.bar)
-        [lut (~(put by gar) pat p.bar)]
-      :-  (~(put by lut) p.bar bar)
-      (~(put by gar) pat p.bar)
+      ::`+>.$(ank.dom (map-to-ankh -), let.dom yon)
     ::
     ++  zu                                              ::  filesystem
       |=  ank/ankh                                      ::  filesystem state
@@ -2461,7 +2536,7 @@
               ?~  -
                 ~|  %mate-strange-diff-no-base
                 !!
-              %^    make-delta
+              %^    make-delta-blob
                   (page-to-lobe [p q.q]:(~(got by bop.dat) pax))
                 [(lobe-to-mark u.-) u.-]
               [p q.q]:cay
@@ -2532,7 +2607,7 @@
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
         =.  ank.dat
-          %-  checkout-ankh:ze
+          %-  map-to-ankh:ze
           %-  ~(run by (~(uni by bop.dat) p.can))
           |=(cage [(page-to-lobe p q.q) +<])
         =.  ank.dom  ank.dat
@@ -2732,7 +2807,7 @@
       [~ ..^$]
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
-      abet:(exec:den now r.q.hic)
+      abet:(edit:den now r.q.hic)
     [mos ..^$]
   ::
       $init
@@ -2840,8 +2915,8 @@
       ::      -
       =<  abet
       ?~  q.q.q.hic
-        ease:den
-      (eave:den u.q.q.q.hic)
+        cancel-request:den
+      (start-request:den u.q.q.q.hic)
     [mos ..^$]
   ::
       $west
