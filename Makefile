@@ -137,13 +137,13 @@ endif
 # glibc 2.24 deprecates readdir_r; iff glibc >=2.24,
 # don't upgrade 'deprecated declarations' warnings to errors
 # dependency: `getconf`, which comes w/glibc
-GLIBC := $(lastword $(shell getconf GNU_LIBC_VERSION))
+GLIBC := $(lastword $(shell getconf GNU_LIBC_VERSION 2>/dev/null))
 # dependency: none, uses make's native functions
 GLIBC_MAJ := $(word 1, $(subst ., ,$(GLIBC))) 
 GLIBC_MIN := $(word 2, $(subst ., ,$(GLIBC)))
 # dependency: `expr` shell built-in
 GLIBC_GE_2_24 := $(shell expr $(GLIBC_MAJ) ">" 2 "|" \
-        $(GLIBC_MAJ) "=" 2 "&" $(GLIBC_MIN) ">=" 24)
+        $(GLIBC_MAJ) "=" 2 "&" $(GLIBC_MIN) ">=" 24 2>/dev/null)
 ifeq (1,$(GLIBC_GE_2_24))
   CWFLAGS+=-Wno-error=deprecated-declarations
 endif
