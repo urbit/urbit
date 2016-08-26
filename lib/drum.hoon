@@ -174,11 +174,8 @@
 ++  peer                                              ::
   |=   pax/path  =<  se-abet
   ^+  +>
-  ?.  ?|  =(our src)                                  ::  ourself
-          &(=(%duke (clan our)) =(our (sein src)))    ::  or our own yacht
-      ==                                              ::
-    ~|  [%drum-unauthorized our+our src+src]          ::  very simplistic
-    !!
+  ~|  [%drum-unauthorized our+our src+src]            ::  ourself
+  ?>  (team our src)                                  ::  or our own moon
   se-view:(se-text "[{<src>}, driving {<our>}]")
 ::
 ++  poke-dill-belt                                    ::

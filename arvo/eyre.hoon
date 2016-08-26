@@ -553,8 +553,8 @@
         ;title:"{(trip a)}"
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/lib/css/fonts.css");
-        ;link(rel "stylesheet", href "/lib/css/bootstrap.css");
+        ;link(rel "stylesheet", href "/=home=/web/lib/css/fonts.css");
+        ;link(rel "stylesheet", href "/=home=/web/lib/css/bootstrap.css");
       ==
       ;body:"*{b}"
     ==
@@ -1104,7 +1104,13 @@
           %^  resp  200  image+/png
           favi
         ::
-          ::  {$txt $robots $~}  !!
+            {$txt $robots $~}
+          :-  ~
+          %^  resp  200  text+/plain
+          %-  role
+          :~  'User-agent: *'
+              'Disallow: '
+          ==
         ==
       ::
       ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
@@ -1753,7 +1759,9 @@
       ^+  abet
       ?~  cor
         build
-      ?.  liv  abet
+      ?.  liv
+        ~&  e+vi+pump-blocked+[dom ~(wyt in req)]
+        abet
       =+  ole=~(top to req)
       ?~  ole  abet
       ::  process hiss

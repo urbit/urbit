@@ -179,7 +179,7 @@
         0w0                           ::   34, ~lut, Tlon Investor 9
         0w0                           ::   35, ~sep, Tlon Investor 9
         0w0                           ::   36, ~pes, Jennifer Kollmer
-        0w2J.WSHlR.t5VHN.X8GKE.DB-yz  ::   37, ~del, Kingdon Barrett (oldkey)
+        0w10.5s1K0.dv9NT.02fPe.PyDYa  ::   37, ~del, Kingdon Barrett
         0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham (oldkey)
         0w3x.XaJbE.xaOn3.zXbaG.5xUiY  ::   39, ~ped, Jeremy Wall (oldkey)
         0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Tlon Investor 10 (oldkey)
@@ -392,7 +392,7 @@
         0w28.bRVMq.Oi3tM.zOCNV.j00Yq  ::  247, ~fyr, Anton Dyudin (oldkey)
         0w0                           ::  248, ~mur, Tlon
         0w0                           ::  249, ~tel, Tlon
-        0w3D.onYhb.3wvaz.62Ct8.nt3iJ  ::  250, ~rep, Raymond Pasco (oldkey)
+        0w3w.V54nF.e9eNv.1fLkl.PiUo-  ::  250, ~rep, Raymond Pasco
         0w0                           ::  251, ~teg, Tlon
         0w0                           ::  252, ~pec, Tlon
         0w0                           ::  253, ~nel, Tlon
