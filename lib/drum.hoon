@@ -19,7 +19,6 @@
       fur/(map dude (unit server))                      ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
-++  drum-start  well                                    ::  start (local) server
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
