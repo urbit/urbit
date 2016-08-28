@@ -62,11 +62,6 @@
       pom/sole-prompt                                   ::  static prompt
       inp/sole-command                                  ::  input state
   ==                                                    ::
-++  ukase                                               ::  master command
-  $%  {$add p/(list gill)}                              ::  attach to
-      {$del p/(list gill)}                              ::  detach from
-      {$new p/(list well)}                              ::  create
-  ==                                                    ::
 --
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -410,25 +405,6 @@
   |=  gyl/gill
   ^+  +>
   (se-drop:(se-pull gyl) & gyl)
-::
-++  se-like                                           ::  act in master
-  |=  kus/ukase
-  ?-    -.kus
-      $add
-    |-  ^+  +>.^$
-    ?~  p.kus  +>.^$
-    $(p.kus t.p.kus, +>.^$ (se-link i.p.kus))
-  ::
-      $del
-    |-  ^+  +>.^$
-    ?~  p.kus  +>.^$
-    $(p.kus t.p.kus, +>.^$ (se-nuke i.p.kus))
-  ::
-      $new
-    |-  ^+  +>.^$
-    ?~  p.kus  +>.^$
-    $(p.kus t.p.kus, +>.^$ (se-born i.p.kus))
-  ==
 ::
 ++  se-plot                                           ::  status line
   ^-  tape
