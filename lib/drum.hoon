@@ -516,31 +516,6 @@
     =+  pre=(dec pos.inp)
     (ta-hom %del pre)
   ::
-  ++  ta-kil                                          ::  build kil
-    |=  {a/?($l $r) b/(list @c)}
-    ^-  kill
-    =+  max=|=(a/(list (list @c)) (scag max.kil a))
-    ?.  ?&  ?=(^ p.blt)
-            ?|  ?=({$ctl p/?($k $u $w)} u.p.blt)
-                ?=({$met p/?($d $bac)} u.p.blt)
-        ==  ==
-      %=  kil
-        num  +(num.kil)
-        pos  +(num.kil)
-        old  (max [b old.kil])
-      ==
-    %=  kil
-      pos  num.kil
-      old  ?~  old.kil
-             [b]~
-           %-  max
-           :_  t.old.kil
-           ?-  a
-             $l  (welp b i.old.kil)
-             $r  (welp i.old.kil b)
-           ==
-    ==
-  ::
   ++  ta-ctl                                          ::  hear control
     |=  key/@ud
     ^+  +>
@@ -558,10 +533,7 @@
         $k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
               ta-bel
-            %-  %=  ta-hom
-                  ris  ~
-                  kil  (ta-kil %r (slag pos.inp buf.say.inp))
-                ==
+            %-  (ta-kil %r (slag pos.inp buf.say.inp))
             (cut:edit pos.inp (sub len pos.inp))
         $l  +>(+> (se-blit %clr ~))
         $n  (ta-aro %d)
@@ -579,19 +551,13 @@
             (rep:edit [sop 2] (flop (swag [sop 2] buf.say.inp)))
         $u  ?:  =(0 pos.inp)
               ta-bel
-            %-  %=  ta-hom
-                  ris  ~
-                  kil  (ta-kil %l (scag pos.inp buf.say.inp))
-                ==
+            %-  (ta-kil %l (scag pos.inp buf.say.inp))
             (cut:edit 0 pos.inp)
         $v  ta-bel
         $w  ?:  =(0 pos.inp)
               ta-bel
             =+  b=(bwrd pos.inp buf.say.inp nace)
-            %-  %=  ta-hom
-                  ris  ~
-                  kil  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
-                ==
+            %-  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
             (cut:edit b (sub pos.inp b))
         $x  +>(+> se-anon)
         $y  ?:  =(0 num.kil)
@@ -670,6 +636,30 @@
     =.  +>  (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
     +>
   ::
+  ++  ta-kil                                          ::  update kill ring
+    |=  {a/?($l $r) b/(list @c)}
+    ^+  ta-hom
+    =;  lik/(pair @ud (list (list @c)))
+      %=  ta-hom
+        ris  ~
+        kil  %=  kil
+               num  p.lik
+               pos  p.lik
+               old  (scag max.kil q.lik)
+      ==     ==
+    ?.  ?&  ?=(^ old.kil)
+            ?=(^ p.blt)
+            ?|  ?=({$ctl ?($k $u $w)} u.p.blt)
+                ?=({$met ?($d $bac)} u.p.blt)
+        ==  ==
+      [+(num.kil) b old.kil]
+    :+  num.kil
+    ?-  a
+      $l  (welp b i.old.kil)
+      $r  (welp i.old.kil b)
+    ==
+    t.old.kil
+  ::
   ++  lcas                                            ::  lowercase
     |*  a/(list @)
     ^+  a
@@ -744,10 +734,7 @@
       $bac  ?:  =(0 pos.inp)
               ta-bel
             =+  b=(bwrd pos.inp buf.say.inp nedg)
-            %-  %=  ta-hom
-                  ris  ~
-                  kil  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
-                ==
+            %-  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
             (cut:edit b (sub pos.inp b))
             ::
       $b    ?:  =(0 pos.inp)
@@ -763,10 +750,7 @@
       $d    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             =+  f=(fwrd pos.inp buf.say.inp nedg)
-            %-  %=  ta-hom
-                  ris  ~
-                  kil  (ta-kil %r (slag pos.inp (scag f buf.say.inp)))
-                ==
+            %-  (ta-kil %r (slag pos.inp (scag f buf.say.inp)))
             (cut:edit pos.inp (sub f pos.inp))
             ::
       $f    ?:  =(pos.inp (lent buf.say.inp))
