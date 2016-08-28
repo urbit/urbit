@@ -204,10 +204,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     struct stat s;
     if ( stat("urbit.pill", &s) == 0 ) {
       u3_Host.ops_u.pil_c = strdup("urbit.pill");
-#ifdef U3_LIB
-    } else if ( stat(U3_LIB"/urbit.pill", &s) == 0 ) {
-      u3_Host.ops_u.pil_c = strdup(U3_LIB"/urbit.pill");
-#endif
     } else {
       fprintf(stderr, "Could not find urbit.pill\n");
       return c3n;
