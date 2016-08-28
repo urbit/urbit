@@ -1499,7 +1499,7 @@ _cm_init(c3_o chk_o)
 /* u3m_boot(): start the u3 system.
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
 {
   /* Activate the loom.
   */
@@ -1524,15 +1524,8 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
   /* Install or reactivate the kernel.
   */
   if ( _(nuu_o) ) {
-    c3_c pas_c[2049];
-    struct stat buf_u;
-
-    snprintf(pas_c, 2048, "%s/.urb/urbit.pill", dir_c);
-    if ( -1 == stat(pas_c, &buf_u) ) {
-      snprintf(pas_c, 2048, "%s/urbit.pill", U3_LIB);
-    }
-    printf("boot: loading %s\r\n", pas_c);
-    u3v_make(pas_c);
+    printf("boot: loading %s\r\n", pil_c);
+    u3v_make(pil_c);
 
     u3v_jack();
   }
