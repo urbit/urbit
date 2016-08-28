@@ -406,30 +406,6 @@
   ^+  +>
   (se-drop:(se-pull gyl) & gyl)
 ::
-++  se-plot                                           ::  status line
-  ^-  tape
-  =+  lag=se-agon
-  =+  ^=  pry
-      |=  gill  ^-  tape
-      =+((trip q.+<) ?:(=(our p.+>-) - :(welp (scow %p p.+>-) "/" -)))
-  =+  ^=  yey
-      |=  gill  ^-  tape
-      =+((pry +<) ?:(=(lag `+>-) ['*' -] -))
-  =+  ^=  yal  ^-  (list tape)
-      %+  weld
-        ^-  (list tape)
-        %+  turn  (~(tap by fug))
-        |=  {a/gill b/(unit target)}
-        =+  c=(yey a)
-        ?~(b ['?' c] c)
-      ^-  (list tape)
-      %+  turn  (skip (~(tap by fur)) |=({term *} (~(has by fug) [our +<-])))
-      |=({term *} ['-' (pry our +<-)])
-  |-  ^-  tape
-  ?~  yal  ~
-  ?~  t.yal  i.yal
-  :(welp i.yal ", " $(yal t.yal))
-::
 ++  se-klin                                           ::  disconnect app
   |=  gyl/gill
   +>(eel (~(del in eel) gyl))
