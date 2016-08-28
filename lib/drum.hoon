@@ -41,10 +41,6 @@
       fug/(map gill (unit target))                      ::  connections
       mir/(pair @ud (list @c))                          ::  mirrored terminal
   ==                                                    ::
-++  master                                              ::  master buffer
-  $:  liv/?                                             ::  master is live
-      tar/target                                        ::  master target
-  ==                                                    ::
 ++  history                                             ::  past input
   $:  pos/@ud                                           ::  input position
       num/@ud                                           ::  number of entries
@@ -85,17 +81,6 @@
   ?:  =(%earl myr)
     [[(sein our) %talk] [our %dojo] ~]
   [[our %talk] [our %dojo] ~]
-::
-++  deft-mast                                           ::  default master
-  |=  our/ship
-  ^-  master
-  :*  %&
-      [~ ~]
-      *(unit search)
-      *history
-      [%& %sole "{(scow %p our)}/ "]
-      *sole-command
-  ==
 ::
 ++  deft-pipe                                           ::  default source
   |=  our/ship                                          ::
