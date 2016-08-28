@@ -386,14 +386,6 @@
   ?~  wol  +>.^$
   $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
 ::
-++  se-joke                                           ::  prepare connection
-  |=  gyl/gill
-  ^+  +>
-  =+  lag=se-agon
-  ?~  lag  +>.$
-  ?:  =(~ fug)  +>.$
-  (se-alas(fug (~(put by fug) gyl ~)) u.lag)
-::
 ++  se-join                                           ::  confirm connection
   |=  gyl/gill
   ^+  +>
