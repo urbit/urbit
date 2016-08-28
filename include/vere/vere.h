@@ -587,7 +587,6 @@
     c3_global  u3_host  u3_Host;
     c3_global  u3_raft  u3_Raft;
     c3_global  c3_c*    u3_Local;
-    c3_global  c3_c*    u3_System;
 
   /** Functions.
   **/

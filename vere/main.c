@@ -311,7 +311,6 @@ static void
 u3_ve_sysopt()
 {
   u3_Local = strdup(u3_Host.dir_c);
-  u3_System = U3_LIB;
 }
 
 #if 0
