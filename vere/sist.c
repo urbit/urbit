@@ -311,8 +311,8 @@ _sist_home()
   //  Copy urbit.pill.
   //
   {
-    snprintf(ful_c, 2048, "cp %s/urbit.pill %s/.urb",
-                    U3_LIB, u3_Host.dir_c);
+    snprintf(ful_c, 2048, "cp %s %s/.urb",
+                    u3_Host.ops_u.pil_c, u3_Host.dir_c);
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
