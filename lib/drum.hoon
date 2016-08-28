@@ -82,18 +82,6 @@
     [[(sein our) %talk] [our %dojo] ~]
   [[our %talk] [our %dojo] ~]
 ::
-++  deft-pipe                                           ::  default source
-  |=  our/ship                                          ::
-  ^-  source                                            ::
-  :*  80                                                ::  edg
-      0                                                 ::  off
-      [0 0 60 ~]                                        ::  kil
-      0                                                 ::  inx
-      ~                                                 ::  fug
-      [0 ~]                                             ::  mir
-  ==
-::
-++  deft-tart  *target                                  ::  default target
 ++  drum-make                                           ::  initial part
   |=  our/ship
   ^-  drum-part
@@ -124,7 +112,7 @@
 ::::
   ::
 |=  {bowl drum-part}                                  ::  main drum work
-=+  (fall (~(get by bin) ost) (deft-pipe our))
+=+  (fall (~(get by bin) ost) *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
