@@ -1496,6 +1496,50 @@ _cm_init(c3_o chk_o)
   }
 }
 
+/* _boot_home(): create ship directory. */
+static void
+_boot_home(c3_c *dir_c, c3_c *pil_c)
+{
+  c3_c    ful_c[2048];
+
+  /* Create subdirectories. */
+  {
+    mkdir(dir_c, 0700);
+
+    snprintf(ful_c, 2048, "%s/.urb", dir_c);
+    mkdir(ful_c, 0700);
+
+    snprintf(ful_c, 2048, "%s/.urb/get", dir_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      exit(1);
+    }
+
+    snprintf(ful_c, 2048, "%s/.urb/put", dir_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      exit(1);
+    }
+
+    snprintf(ful_c, 2048, "%s/.urb/sis", dir_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      exit(1);
+    }
+  }
+
+  /* Copy urbit.pill. */
+  {
+    snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
+                    pil_c, dir_c);
+    printf("%s\r\n", ful_c);
+    if ( 0 != system(ful_c) ) {
+      fprintf(stderr, "could not %s\n", ful_c);
+      exit(1);
+    }
+  }
+}
+
 /* u3m_boot(): start the u3 system.
 */
 void
@@ -1524,8 +1568,14 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
   /* Install or reactivate the kernel.
   */
   if ( _(nuu_o) ) {
-    printf("boot: loading %s\r\n", pil_c);
-    u3v_make(pil_c);
+    c3_c ful_c[2048];
+
+    _boot_home(dir_c, pil_c);
+
+    snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+
+    printf("boot: loading %s\r\n", ful_c);
+    u3v_make(ful_c);
 
     u3v_jack();
   }
