@@ -218,16 +218,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  if ( u3_Host.ops_u.nuu == c3y && u3_Host.ops_u.pil_c == 0) {
-    struct stat s;
-    if ( stat("urbit.pill", &s) == 0 ) {
-      u3_Host.ops_u.pil_c = strdup("urbit.pill");
-    } else {
-      fprintf(stderr, "Could not find urbit.pill\n");
-      return c3n;
-    }
-  }
-
   if ( u3_Host.ops_u.nam_c == 0 ) {
     u3_Host.ops_u.nam_c = getenv("HOSTNAME");
     if ( u3_Host.ops_u.nam_c == 0 ) {

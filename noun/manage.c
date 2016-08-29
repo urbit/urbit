@@ -1531,12 +1531,40 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
 
   /* Copy urbit.pill. */
   {
-    snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
-                    pil_c, dir_c);
-    printf("%s\r\n", ful_c);
-    if ( 0 != system(ful_c) ) {
-      fprintf(stderr, "could not %s\n", ful_c);
-      exit(1);
+    if ( pil_c != 0 ) {
+      snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
+                      pil_c, dir_c);
+      printf("%s\r\n", ful_c);
+      if ( 0 != system(ful_c) ) {
+        fprintf(stderr, "could not %s\n", ful_c);
+        exit(1);
+      }
+    } else {
+      c3_c *url_c = "https://bootstrap.urbit.org/latest.pill";
+      CURL *curl;
+      CURLcode result;
+      FILE *file;
+
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+      printf("fetching %s to %s\r\n", url_c, ful_c);
+      if ( !(curl = curl_easy_init()) ) {
+        fprintf(stderr, "failed to initialize libcurl\n");
+        exit(1);
+      }
+      if ( !(file = fopen(ful_c, "w")) ) {
+        fprintf(stderr, "failed to open %s\n", ful_c);
+        exit(1);
+      }
+      curl_easy_setopt(curl, CURLOPT_URL, url_c);
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+      result = curl_easy_perform(curl);
+      fclose(file);
+      if ( result != CURLE_OK ) {
+        fprintf(stderr, "failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
+        fprintf(stderr, "please fetch it manually and specify the location with -B\n");
+        exit(1);
+      }
+      curl_easy_cleanup(curl);
     }
   }
 }
