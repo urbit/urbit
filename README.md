@@ -69,8 +69,8 @@ Third-party packages are available, at:
 
     https://github.com/yebyen/urbit-deb
 
-Urbit is only supported on Jessie onward (but outbound HTTPS requests
-only work on Stretch; I wish we knew why; help us!)
+Urbit is only supported on Jessie onward, but outbound SSL only works
+on Stretch onward, probably because of the OpenSSL version.
 
 ## Hand-build from source
 
@@ -90,20 +90,21 @@ Urbit depends on:
     cmake
     re2c
     libtool
+    libcurl
     libssl-dev (Linux only)
     ncurses (Linux only)
 
 #### Ubuntu or Debian
 
-    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
+    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c libcurl4-gnutls-dev
 
 #### Fedora
 
-    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c
+    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c libcurl-devel
 
 #### AWS
 
-    sudo yum --enablerepo epel install gcc gcc-c++ git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
+    sudo yum --enablerepo epel install gcc gcc-c++ git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c libcurl-devel
 
 #### OS X - Homebrew
 
@@ -119,11 +120,11 @@ three packages, at least with Homebrew. Your mileage may vary.
 
 #### FreeBSD
 
-    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
+    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool curl
 
 #### Archlinux
 
-    pacman -S gcc gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool ncurses
+    pacman -S gcc gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool ncurses curl
 
 ### Download and make
 
@@ -142,15 +143,6 @@ Run `make`:
 (On FreeBSD, use `gmake` instead.)
 
 The executable is `bin/urbit`.
-
-Fetch the latest bootstrapping pill:
-
-    curl -o urbit.pill http://bootstrap.urbit.org/latest.pill
-
-You can use your preferred way to fetch things from the web here. Urbit
-looks for a pill named `urbit.pill` in the current directory by default,
-so if you have anything different, you'll need to tell Urbit where it is
-(on first launch only) with the `-B` command-line option.
 
 # Start
 
