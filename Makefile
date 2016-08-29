@@ -33,8 +33,6 @@ ENDIAN=little
 #
 BIN=bin
 
-LIB=.
-
 # Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
 ifneq (,$(wildcard /opt/local/.))
@@ -48,6 +46,9 @@ ifneq (,$(wildcard /usr/local/opt/openssl/.))
   OPENSSLINC=-I/usr/local/opt/openssl/include
   OPENSSLLIB=-L/usr/local/opt/openssl/lib
 endif
+
+CURLINC=$(shell curl-config --cflags)
+CURLLIB=$(shell curl-config --libs)
 
 RM=rm -f
 ifneq ($(UNAME),FreeBSD)
@@ -76,13 +77,13 @@ ifeq ($(OS),bsd)
 endif
 
 ifeq ($(STATIC),yes)
-LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(OSLIBS)
+LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(CURLLIB) $(OSLIBS)
 else
-LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
+LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(CURLLIB) $(OSLIBS)
 endif
 
 INCLUDE=include
-MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
+MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN)
 
 DEBUG=no
 
@@ -110,6 +111,7 @@ CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-I/usr/local/include \
 	$(OPTLOCALINC) \
 	$(OPENSSLINC) \
+	$(CURLINC) \
 	-I$(INCLUDE) \
 	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \

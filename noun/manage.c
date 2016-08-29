@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <sigsegv.h>
+#include <curl/curl.h>
 
 #include "all.h"
 
@@ -1496,10 +1497,82 @@ _cm_init(c3_o chk_o)
   }
 }
 
+/* _boot_home(): create ship directory. */
+static void
+_boot_home(c3_c *dir_c, c3_c *pil_c)
+{
+  c3_c    ful_c[2048];
+
+  /* Create subdirectories. */
+  {
+    mkdir(dir_c, 0700);
+
+    snprintf(ful_c, 2048, "%s/.urb", dir_c);
+    mkdir(ful_c, 0700);
+
+    snprintf(ful_c, 2048, "%s/.urb/get", dir_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      exit(1);
+    }
+
+    snprintf(ful_c, 2048, "%s/.urb/put", dir_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      exit(1);
+    }
+
+    snprintf(ful_c, 2048, "%s/.urb/sis", dir_c);
+    if ( 0 != mkdir(ful_c, 0700) ) {
+      perror(ful_c);
+      exit(1);
+    }
+  }
+
+  /* Copy urbit.pill. */
+  {
+    if ( pil_c != 0 ) {
+      snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
+                      pil_c, dir_c);
+      printf("%s\r\n", ful_c);
+      if ( 0 != system(ful_c) ) {
+        fprintf(stderr, "could not %s\n", ful_c);
+        exit(1);
+      }
+    } else {
+      c3_c *url_c = "https://bootstrap.urbit.org/latest.pill";
+      CURL *curl;
+      CURLcode result;
+      FILE *file;
+
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+      printf("fetching %s to %s\r\n", url_c, ful_c);
+      if ( !(curl = curl_easy_init()) ) {
+        fprintf(stderr, "failed to initialize libcurl\n");
+        exit(1);
+      }
+      if ( !(file = fopen(ful_c, "w")) ) {
+        fprintf(stderr, "failed to open %s\n", ful_c);
+        exit(1);
+      }
+      curl_easy_setopt(curl, CURLOPT_URL, url_c);
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+      result = curl_easy_perform(curl);
+      fclose(file);
+      if ( result != CURLE_OK ) {
+        fprintf(stderr, "failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
+        fprintf(stderr, "please fetch it manually and specify the location with -B\n");
+        exit(1);
+      }
+      curl_easy_cleanup(curl);
+    }
+  }
+}
+
 /* u3m_boot(): start the u3 system.
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
 {
   /* Activate the loom.
   */
@@ -1524,15 +1597,14 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
   /* Install or reactivate the kernel.
   */
   if ( _(nuu_o) ) {
-    c3_c pas_c[2049];
-    struct stat buf_u;
+    c3_c ful_c[2048];
 
-    snprintf(pas_c, 2048, "%s/.urb/urbit.pill", dir_c);
-    if ( -1 == stat(pas_c, &buf_u) ) {
-      snprintf(pas_c, 2048, "%s/urbit.pill", U3_LIB);
-    }
-    printf("boot: loading %s\r\n", pas_c);
-    u3v_make(pas_c);
+    _boot_home(dir_c, pil_c);
+
+    snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+
+    printf("boot: loading %s\r\n", ful_c);
+    u3v_make(ful_c);
 
     u3v_jack();
   }

@@ -82,7 +82,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"B:I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"B:A:I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -90,6 +90,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
+        break;
+      }
+      case 'A': {
+        u3_Host.ops_u.arv_c = strdup(optarg);
         break;
       }
       case 'I': {
@@ -170,6 +174,20 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
+  if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
+                                     u3_Host.ops_u.nuu   == c3n ) ) {
+    fprintf(stderr, "-A only makes sense when creating a new galaxy");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.imp_c != 0 &&
+       u3_Host.ops_u.arv_c == 0 &&
+       u3_Host.ops_u.nuu   == c3y ) {
+    fprintf(stderr, "can't create a new galaxy without specifying "
+                    "the initial sync path with -A\n");
+    return c3n;
+  }
+
   if ( u3_Host.ops_u.rop_s == 0 && u3_Host.ops_u.raf_c != 0 ) {
     fprintf(stderr, "The -r flag requires -l.\n");
     return c3n;
@@ -196,20 +214,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     struct stat s;
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
       fprintf(stderr, "pill %s not found\n", u3_Host.ops_u.pil_c);
-      return c3n;
-    }
-  }
-
-  if ( u3_Host.ops_u.nuu == c3y && u3_Host.ops_u.pil_c == 0) {
-    struct stat s;
-    if ( stat("urbit.pill", &s) == 0 ) {
-      u3_Host.ops_u.pil_c = strdup("urbit.pill");
-#ifdef U3_LIB
-    } else if ( stat(U3_LIB"/urbit.pill", &s) == 0 ) {
-      u3_Host.ops_u.pil_c = strdup(U3_LIB"/urbit.pill");
-#endif
-    } else {
-      fprintf(stderr, "Could not find urbit.pill\n");
       return c3n;
     }
   }
@@ -258,8 +262,10 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-w name       Immediately upgrade to ~name\n",
     "-t ticket     Use ~ticket automatically\n",
     "-I galaxy     Start as ~galaxy\n",
+    "-A dir        Use dir for initial galaxy sync\n",
     "-F            Fake keys\n",
     "-L            Local-only network\n",
+    "-B pill       Bootstrap from this pill\n",
     "-n host       Set unix hostname\n",
     "-p ames_port  Set the HTTP port to bind to\n",
     "-v            Verbose\n",
@@ -311,7 +317,6 @@ static void
 u3_ve_sysopt()
 {
   u3_Local = strdup(u3_Host.dir_c);
-  u3_System = U3_LIB;
 }
 
 #if 0
@@ -516,7 +521,10 @@ main(c3_i   argc,
         u3C.wag_w |= u3o_dryrun;
       }
     }
-    u3m_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.dir_c);
+    u3m_boot(u3_Host.ops_u.nuu,
+             u3_Host.ops_u.gab,
+             u3_Host.dir_c,
+             u3_Host.ops_u.pil_c);
 
     /*  Start Arvo.
     */

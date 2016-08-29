@@ -274,83 +274,16 @@ _sist_sing(u3_noun ovo)
 }
 
 
-/* _sist_home(): create ship directory.
+/* _sist_home(): remains of "create ship directory" after refactor to u3m_boot().
 */
 static void
 _sist_home()
 {
-  c3_c    ful_c[2048];
-
-  //  Create subdirectories.
-  //
-  {
-    mkdir(u3_Host.dir_c, 0700);
-
-    snprintf(ful_c, 2048, "%s/.urb", u3_Host.dir_c);
-    mkdir(ful_c, 0700);
-
-    snprintf(ful_c, 2048, "%s/.urb/get", u3_Host.dir_c);
-    if ( 0 != mkdir(ful_c, 0700) ) {
-      perror(ful_c);
-      u3_lo_bail();
-    }
-
-    snprintf(ful_c, 2048, "%s/.urb/put", u3_Host.dir_c);
-    if ( 0 != mkdir(ful_c, 0700) ) {
-      perror(ful_c);
-      u3_lo_bail();
-    }
-
-    snprintf(ful_c, 2048, "%s/.urb/sis", u3_Host.dir_c);
-    if ( 0 != mkdir(ful_c, 0700) ) {
-      perror(ful_c);
-      u3_lo_bail();
-    }
-  }
-
-  //  Copy urbit.pill.
-  //
-  {
-    snprintf(ful_c, 2048, "cp %s/urbit.pill %s/.urb",
-                    U3_LIB, u3_Host.dir_c);
-    printf("%s\r\n", ful_c);
-    if ( 0 != system(ful_c) ) {
-      uL(fprintf(uH, "could not %s\n", ful_c));
-      u3_lo_bail();
-    }
-  }
-
 #if 1
   //  Copy zod files, if we're generating a carrier.
   //
   if ( u3_Host.ops_u.imp_c ) {
     u3_unix_ef_initial_into();
-
-    //  snprintf(ful_c, 2048, "mkdir %s/%s",
-    //                  u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
-    //  printf("%s\r\n", ful_c);
-    //  if ( 0 != system(ful_c) ) {
-    //    uL(fprintf(uH, "could not %s\n", ful_c));
-    //    u3_lo_bail();
-    //  }
-
-    //  snprintf(ful_c, 2048, "cp -r %s/zod %s/%s/in",
-    //                  U3_LIB, u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
-    //  printf("%s\r\n", ful_c);
-    //  if ( 0 != system(ful_c) ) {
-    //    uL(fprintf(uH, "could not %s\n", ful_c));
-    //    u3_lo_bail();
-    //  }
-
-
-
-    //  snprintf(ful_c, 2048, "cp -r %s/zod %s/%s/out",
-    //                  U3_LIB, u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
-    //  printf("%s\r\n", ful_c);
-    //  if ( 0 != system(ful_c) ) {
-    //    uL(fprintf(uH, "could not %s\n", ful_c));
-    //    u3_lo_bail();
-    //  }
   }
 #endif
 }
