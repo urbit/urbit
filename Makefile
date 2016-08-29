@@ -33,8 +33,6 @@ ENDIAN=little
 #
 BIN=bin
 
-LIB=.
-
 # Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
 ifneq (,$(wildcard /opt/local/.))
@@ -82,7 +80,7 @@ LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 endif
 
 INCLUDE=include
-MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
+MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN)
 
 DEBUG=no
 
