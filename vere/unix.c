@@ -1010,7 +1010,9 @@ _unix_initial_update_file(c3_c* pax_c)
     return u3_nul;
   }
   else {
-    u3_noun pax = _unix_string_to_path_helper(pax_c + strlen(U3_LIB) + 6); /* XX VERY BAD */
+    u3_noun pax = _unix_string_to_path_helper(pax_c
+                   + strlen(u3_Host.ops_u.arv_c)
+                   + 1); /* XX slightly less VERY BAD than before*/
     u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
     u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
@@ -1445,9 +1447,7 @@ u3_unix_ef_move(void)
 void
 u3_unix_ef_initial_into()
 {
-  c3_c* pax_c = _unix_down(U3_LIB, "arvo");
-  u3_noun can = _unix_initial_update_dir(pax_c);
-  free(pax_c);
+  u3_noun can = _unix_initial_update_dir(u3_Host.ops_u.arv_c);
 
   u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
            u3nq(c3__into, u3_nul, c3y, can));

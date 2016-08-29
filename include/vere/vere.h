@@ -535,6 +535,7 @@
         c3_c*   who_c;                      //  -T, begin with ticket
         c3_c*   tic_c;                      //  -T, ticket value
         c3_c*   pil_c;                      //  -B, bootstrap from
+        c3_c*   arv_c;                      //  -A, initial sync from
         c3_w    kno_w;                      //  -k, kernel version
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
