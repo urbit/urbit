@@ -34,6 +34,13 @@ ENDIAN=little
 BIN=bin
 
 # Only include/link with this if it exists.
+# For the Nix package manager
+ifneq ($(NIX_PROFILE), undefined)
+  NIXINC=-I$(NIX_PROFILE)/include
+  NIXLIB=-L$(NIX_PROFILE)/lib
+endif
+
+# Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
 ifneq (,$(wildcard /opt/local/.))
   OPTLOCALINC=-I/opt/local/include
@@ -55,12 +62,12 @@ ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
+CLD=g++ -O3 -L/usr/local/lib $(NIXLIB) $(OPTLOCALLIB) $(OPENSSLLIB)
 else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
+CLD=c++ -O3 -L/usr/local/lib $(NIXLIB) $(OPTLOCALLIB) $(OPENSSLLIB)
 endif
 
 ifeq ($(OS),osx)
@@ -109,6 +116,7 @@ endif
 CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
+	$(NIXINC) \
 	$(OPTLOCALINC) \
 	$(OPENSSLINC) \
 	$(CURLINC) \
