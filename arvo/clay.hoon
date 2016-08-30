@@ -1229,6 +1229,48 @@
       !!
     ==
   ::
+  ::  Check that given data is actually of the mark it claims to be.
+  ::
+  ::  Result is handled in ++take-foreign-x
+  ::
+  ++  validate-x
+    |=  {car/care cas/case pax/path peg/page}
+    ^+  +>
+    %-  emit
+    :*  hen  %pass
+        [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
+        %f  %exec  our  ~  [her syd cas]
+        (vale-page peg)
+    ==
+  ::
+  ::  Create a silk to validate a page.
+  ::
+  ::  If the mark is %hoon, we short-circuit the validation for bootstrapping
+  ::  purposes.
+  ::
+  ++  vale-page
+    |=  a/page
+    ^-  silk
+    ?.  ?=($hoon p.a)  [%vale a]
+    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%fail ~] %$ *cage]
+    [%$ p.a [%atom %t ~] q.a]
+  ::
+  ::  Verify the foreign data is of the the mark it claims to be.
+  ::
+  ::  This completes the receiving of %x foreign data.
+  ::
+  ++  take-foreign-x
+    |=  {car/care cas/case pax/path res/gage}
+    ^+  +>
+    ?>  ?=(^ ref)
+    ?.  ?=($& -.res)
+      ~|  "validate foreign x failed"
+      =+  why=?-(-.res $| p.res, $tabl ~[>%bad-marc<])
+      ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
+      !!
+    ?>  ?=(@ p.p.res)
+    wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
+  ::
   ::  When we get a %w foreign update, store this in our state.
   ::
   ::  We get the commits and blobs from the nako and add them to our object
@@ -1316,17 +1358,8 @@
         ==
     ==
   ::
-  ::  Create a silk to validate a page.
-  ::
-  ::  If the mark is %hoon, we short-circuit the validation for bootstrapping
-  ::  purposes.
-  ::
-  ++  vale-page
-    |=  a/page
-    ^-  silk
-    ?.  ?=($hoon p.a)  [%vale a]
-    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%fail ~] %$ *cage]
-    [%$ p.a [%atom %t ~] q.a]
+  ::  Verify that foreign plops validated correctly.  If so, apply them to our
+  ::  state.
   ::
   ++  take-foreign-plops
     |=  {lem/(unit @da) res/gage}
@@ -1350,28 +1383,6 @@
     :+  let.u.nak.u.ref
       lar.u.nak.u.ref
     (silt lat)
-  ::
-  ++  validate-x
-    |=  {car/care cas/case pax/path peg/page}
-    ^+  +>
-    %-  emit
-    :*  hen  %pass
-        [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
-        %f  %exec  our  ~  [her syd cas]
-        (vale-page peg)
-    ==
-  ::
-  ++  take-foreign-x
-    |=  {car/care cas/case pax/path res/gage}
-    ^+  +>
-    ?>  ?=(^ ref)
-    ?.  ?=($& -.res)
-      ~|  "validate foreign x failed"
-      =+  why=?-(-.res $| p.res, $tabl ~[>%bad-marc<])
-      ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
-      !!
-    ?>  ?=(@ p.p.res)
-    wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
   ::
   ++  mabe                                            ::  maybe fire function
     |=  {rov/rove fun/$-(@da _.)}
@@ -1408,6 +1419,8 @@
     |=  rav/{$many p/? q/moat}
     ^-  rove
     [%many p.rav p.q.rav q.q.rav r.q.rav ~]
+  ::
+  ::  Loop through open subscriptions and check if we can fill any of them.
   ::
   ++  wake                                            ::  update subscribers
     ^+  .
@@ -2107,7 +2120,7 @@
     ::
     ::  This core is specific to any currently running merge.  This is
     ::  basically a simple (DAG-shaped) state machine.  We always say we're
-    ::  merging from 'ali' to 'bob.  The basic steps, not all of which are
+    ::  merging from 'ali' to 'bob'.  The basic steps, not all of which are
     ::  always needed, are:
     ::
     ::  --  fetch ali's desk
@@ -2192,6 +2205,9 @@
       =+  dat=p.dat
       =|  don/?                                         ::  keep going
       |%
+      ::
+      ::  Resolve.  If we're done, produce a result.
+      ::
       ++  abet
         ^+  ..me
         ?:  don
@@ -2200,13 +2216,22 @@
         =>  (emit hen.dat %give %mere gon.dat)
         ..me
       ::
+      ::  Send a move.
+      ::
       ++  emit
         |=  move
         %_(+> ..ze (^emit +<))
       ::
+      ::  Send a list of moves.
+      ::
       ++  emil
         |=  (list move)
         %_(+> ..ze (^emil +<))
+      ::
+      ::  Route responses from clay or ford.
+      ::
+      ::  Check that the stage of the response is the same as the stage we think
+      ::  we're in, and call the appropriate function for that stage.
       ::
       ++  route
         |=  {sat/term res/(each riot gage)}
@@ -2230,6 +2255,11 @@
           {$ergo $| *}      %.(p.res ergoed)
         ==
       ::
+      ::  Start a merge.
+      ::
+      ::  Sets cas.dat, gem.dat, and bob.dat.  Unless there's an error, leads
+      ::  to ++fetch-ali.
+      ::
       ++  start
         |=  {cas/case gem/germ}
         ^+  +>
@@ -2247,6 +2277,8 @@
           (error:he %no-bob-commit ~)
         fetch-ali(bob.dat u.-)
       ::
+      ::  Tell clay to get the state at the requested case for ali's desk.
+      ::
       ++  fetch-ali
         ^+  .
         %-  emit(wat.dat %ali)
@@ -2255,6 +2287,10 @@
             %c  %warp  [p.bob p.ali]  q.ali
             `[%sing %v cas.dat /]
         ==
+      ::
+      ::  Parse the state of ali's desk, and get the most recent commit.
+      ::
+      ::  Sets ali.dat.
       ::
       ++  fetched-ali
         |=  rot/riot
@@ -2275,11 +2311,21 @@
         =.  ali.dat  u.-
         |-
         ?-    gem.dat
+        ::
+        ::  If this is an %init merge, we set the ali's commit to be bob's, and
+        ::  we checkout the new state.
+        ::
             $init
           =.  new.dat  ali.dat
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))
           checkout
+        ::
+        ::  If this is a %this merge, we check to see if ali's and bob's commits
+        ::  are the same, in which case we're done.  Otherwise, we check to see
+        ::  if ali's commit is in the ancestry of bob's, in which case we're
+        ::  done.  Otherwise, we create a new commit with bob's data plus ali
+        ::  and bob as parents.  Then we checkout the new state.
         ::
             $this
           ?:  =(r.ali.dat r.bob.dat)  done:he
@@ -2288,6 +2334,11 @@
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  ~
           checkout
+        ::
+        ::  If this is a %that merge, we check to see if ali's and bob's commits
+        ::  are the same, in which case we're done.  Otherwise, we create a new
+        ::  commit with ali's data plus ali and bob as parents.  Then we
+        ::  checkout the new state.
         ::
             $that
           ?:  =(r.ali.dat r.bob.dat)  done:he
@@ -2304,6 +2355,13 @@
               ~
             `[pax !=(~ a)]
           checkout
+        ::
+        ::  If this is a %fine merge, we check to see if ali's and bob's commits
+        ::  are the same, in which case we're done.  Otherwise, we check to see
+        ::  if ali's commit is in the ancestry of bob's, in which case we're
+        ::  done.  Otherwise, we check to see if bob's commit is in the ancestry
+        ::  of ali's.  If not, this is not a fast-forward merge, so we error
+        ::  out.  If it is, we add ali's commit to bob's desk and checkout.
         ::
             $fine
           ?:  =(r.ali.dat r.bob.dat)
@@ -2328,6 +2386,32 @@
               ~
             `[pax !=(~ a)]
           checkout
+        ::
+        ::  If this is a %meet, %mate, or %meld merge, we may need to fetch
+        ::  more data.  If this merge is either trivial or a fast-forward, we
+        ::  short-circuit to either ++done or the %fine case.
+        ::
+        ::  Otherwise, we find the best common ancestor(s) with
+        ::  ++find-merge-points.  If there's no common ancestor, we error out.
+        ::  Additionally, if there's more than one common ancestor (i.e. this
+        ::  is a criss-cross merge), we error out.  Something akin to git's
+        ::  recursive merge should probably be used here, but it isn't.
+        ::
+        ::  Once we have our single best common ancestor (merge base), we store
+        ::  it in bas.dat.  If this is a %mate or %meld merge, we need to diff
+        ::  ali's commit against the merge base, so we pass control over to
+        ::  ++diff-ali.
+        ::
+        ::  Otherwise (i.e. this is a %meet merge), we create a list of all the
+        ::  changes between the mege base and ali's commit and store it in
+        ::  dal.dat, and we put a similar list for bob's commit in dob.dat.
+        ::  Then we create bof, which is the a set of changes in both ali and
+        ::  bob's commits.  If this has any members, we have conflicts, which is
+        ::  an error in a %meet merge, so we error out.
+        ::
+        ::  Otherwise, we merge the merge base data with ali's data and bob's
+        ::  data, which produces the data for the new commit, which we put in
+        ::  new.dat.  Then we checkout the new data.
         ::
             ?($meet $mate $meld)
           ?:  =(r.ali.dat r.bob.dat)
@@ -2425,6 +2509,11 @@
           checkout
         ==
       ::
+      ::  Common code for ++diff-ali and ++diff-bob.
+      ::
+      ::  Diffs a commit against a the mergebase.  Result comes back in either
+      ::  ++diffed-ali or ++diffed-ali.
+      ::
       ++  diff-bas
         |=  {nam/term yak/yaki oth/(trel ship desk case) yuk/yaki}
         ^+  +>
@@ -2452,10 +2541,15 @@
             [%diff (lobe-to-silk pax lob) (lobe-to-silk pax u.a)]
         ==
       ::
+      ::  Diff ali's commit against the mergebase.
+      ::
       ++  diff-ali
         ^+  .
         (diff-bas(wat.dat %diff-ali) %ali ali.dat [p.ali q.ali cas.dat] bob.dat)
       ::
+      ::  Store the diff of ali's commit versus the mergebase in dal.dat and
+      ::  call ++diff-bob.
+      ::  
       ++  diffed-ali
         |=  res/gage
         ^+  +>
@@ -2495,9 +2589,14 @@
           (some pax ~)
         diff-bob
       ::
+      ::  Diff bob's commit against the mergebase.
+      ::
       ++  diff-bob
         ^+  .
         (diff-bas(wat.dat %diff-bob) %bob bob.dat [p.bob q.bob da+now] ali.dat)
+      ::
+      ::  Store the diff of bob's commit versus the mergebase in dob.dat and
+      ::  call ++merge.
       ::
       ++  diffed-bob
         |=  res/gage
@@ -2538,6 +2637,10 @@
           (some pax ~)
         merge
       ::
+      ::  Merge the conflicting diffs in can.dat.dat and can.dob.dat.
+      ::
+      ::  Result is handled in ++merged.
+      ::
       ++  merge
         ^+  .
         |-  ^+  +.$
@@ -2561,6 +2664,8 @@
           ==
         ==
       ::
+      ::  Put merged changes in bof.dat and call ++build.
+      ::
       ++  merged
         |=  res/gage
         =+  tay=(gage-to-cages-or-error res)
@@ -2574,6 +2679,10 @@
           +>.$
         =.  bof.dat  bof
         build
+      ::
+      ::  Apply the patches in bof.dat to get the new merged content.
+      ::
+      ::  Result is handled in ++built
       ::
       ++  build
         ^+  .
@@ -2595,6 +2704,15 @@
               !!
             [%pact (lobe-to-silk pax u.-) [%$ u.cay]]
         ==
+      ::
+      ::  Create new commit.
+      ::
+      ::  Gather all the changes between ali's and bob's commits and the
+      ::  mergebase.  This is similar to the %meet of ++fetched-ali, except
+      ::  where they touch the same file, we use the merged versions we created
+      ::  earlier (bop.dat).
+      ::
+      ::  Sum all the changes into a new commit (new.dat), and checkout.
       ::
       ++  built
         |=  res/gage
@@ -2705,6 +2823,10 @@
                      ==
         checkout
       ::
+      ::  Convert new commit into actual data (i.e. blobs rather than lobes).
+      ::
+      ::  Result is handled in ++checked-out.
+      ::
       ++  checkout
         ^+  .
         =+  ^-  val/beak
@@ -2723,6 +2845,9 @@
               ~
             `[[%$ %path !>(pax)] (merge-lobe-to-silk:he pax lob)]
         ==
+      ::
+      ::  Apply the new commit to our state and, if we need to tell unix about
+      ::  some of the changes, call ++ergo.
       ::
       ++  checked-out
         |=  res/gage
@@ -2747,6 +2872,10 @@
         =+  mus=(must-ergo (turn (~(tap by erg.dat)) head))
         ?:  =(~ mus)  done:he
         ergo
+      ::
+      ::  Cast all the content that we're going to tell unix about to %mime.
+      ::
+      ::  Result is handled in ++ergoed.
       ::
       ++  ergo
         ^+  .
@@ -2776,6 +2905,8 @@
             :+  %cast  %mime
             (lobe-to-silk:zez a (~(got by q.new.dat) a))
         ==
+      ::
+      ::  Tell unix about the changes made by the merge.
       ::
       ++  ergoed
         |=  res/gage
@@ -2816,28 +2947,25 @@
       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       ++  he
         |%
+        ::
+        ::  Assert that we're goig to be returning something, and set don to
+        ::  true, so that ++abet knows we're done.
+        ::
         ++  done
           ^+  ..he
           ?<  ?=($| -.gon.dat)
           ..he(don |)
+        ::
+        ::  Cancel the merge gracefully and produce an error.
         ::
         ++  error
           |=  {err/term tan/(list tank)}
           ^+  ..he
           ..he(don |, gon.dat [%| err >ali< >bob< >cas.dat< >gem.dat< tan])
         ::
-        ++  find-merge-points
-          |=  {p/yaki q/yaki}                           ::  maybe need jet
-          ^-  (set yaki)
-          %-  reduce-merge-points
-          =+  r=(reachable-takos r.p)
-          |-  ^-  (set yaki)
-          ?:  (~(has in r) r.q)  (~(put in *(set yaki)) q)
-          %+  roll  p.q
-          |=  {t/tako s/(set yaki)}
-          ?:  (~(has in r) t)
-            (~(put in s) (tako-to-yaki t))              ::  found
-          (~(uni in s) ^$(q (tako-to-yaki t)))          ::  traverse
+        ::  Create a silk to turn a lobe into a blob.
+        ::
+        ::  We short-circuit if we already have the content somewhere.
         ::
         ++  merge-lobe-to-silk
           |=  {pax/path lob/lobe}
@@ -2861,6 +2989,23 @@
             $direct     (page-to-silk q.bol)
             $delta      [%pact $(lob q.q.bol) (page-to-silk r.bol)]
           ==
+        ::
+        ::  Find the most recent common ancestor(s).
+        ::
+        ++  find-merge-points
+          |=  {p/yaki q/yaki}                           ::  maybe need jet
+          ^-  (set yaki)
+          %-  reduce-merge-points
+          =+  r=(reachable-takos r.p)
+          |-  ^-  (set yaki)
+          ?:  (~(has in r) r.q)  (~(put in *(set yaki)) q)
+          %+  roll  p.q
+          |=  {t/tako s/(set yaki)}
+          ?:  (~(has in r) t)
+            (~(put in s) (tako-to-yaki t))              ::  found
+          (~(uni in s) ^$(q (tako-to-yaki t)))          ::  traverse
+        ::
+        ::  Helper for ++find-merge-points.
         ::
         ++  reduce-merge-points
           |=  unk/(set yaki)                            ::  maybe need jet
