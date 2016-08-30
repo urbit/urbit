@@ -3362,11 +3362,12 @@
 ++  oryx  @t                                            ::  CSRF secret
 ++  page  (cask *)                                      ::  untyped cage
 ++  pail  ?($none $warm $cold)                          ::  connection status
+++  pile  (tree (pair ship ship))                       ::  efficient ship set
 ++  pipe                                                ::  secure channel
           $:  out/(unit (pair hand code))               ::  outbound key
               inn/(map hand code)                       ::  inbound keys
               cur/(pair life (unit life))               ::  versions: our their
-              gyt/gree                                  ::  our unshared cert
+              gyr/gree                                  ::  pedigree to share
               pub/(map life pass)                       ::  their public keys
               war/(map life ring)                       ::  our private keys
           ==                                            ::
@@ -3574,9 +3575,11 @@
               {$e $west p/ship q/path r/*}              ::  to %eyre
               {$g $west p/ship q/path r/*}              ::  to %gall
               $:  $j                                    ::  to %jael
-                  $%  {$know p/ship}                    ::
-                      {$link p/ship q/code}             ::
+                  $%  {$line p/ship q/@da r/code}       ::
+                      {$link p/ship q/@da r/code}       ::
                       {$meet p/gree}                    ::
+                      {$view p/ship}                    ::  
+                      {$west p/ship q/path r/*}         ::  to %gall
           ==  ==  ==                                    ::
 ::
 ::::    %behn
@@ -3632,20 +3635,31 @@
 ++  lama                                                ::  
   $:  dob/?                                             ::  & clean, | dirty
       exp/@da                                           ::  expiration date
+      own/(nap chip)                                    ::  identities
       pub/pass                                          ::  public key
   ==                                                    ::
+++  chip                                                ::  identity
+  $%  {$sur asc/@ta uni/@t}                             ::  surname
+      {$giv asc/@ta uni/@t}                             ::  given name
+      {$mid asc/@ta uni/@t}                             ::  middle name 
+      {$nic asc/@ta uni/@t}                             ::  email address
+      ::  btc identity
+      ::  keybase identity
+      ::  ipfs identity
+      ::  fb/twitter/G+ identity
+  ==
 ++  fist                                                ::  capability record
   $:  who/@p                                            ::  identity
       exp/(unit @da)                                    ::  expiration date
   ==                                                    ::
-++  gree  (map ship (map life (tale lama)))             ::  pki dump set
+++  gree  (map ship grue)                               ::  pki dump set
+++  grue  (pair life (map life (tale lama)))            ::
 ++  mind  {lyf/@ud who/@p}                              ::  key identifier
 ++  tale                                                ::  urbit-signed atom
   |*  typ/mold                                          ::
   $:  dat/typ                                           ::  data
       syg/(set deod)                                    ::  signatures
   ==                                                    ::
-++  doom  (map @ud ring)                                ::  secret keys
 ++  wyll                                                ::  linear will 
   $:  len/@ud                                           ::
       log/(list (tale lama))                            ::

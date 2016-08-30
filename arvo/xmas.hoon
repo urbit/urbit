@@ -101,11 +101,12 @@
       ++  gift                                          ::  output
         $%  {$east p/duct q/ship r/chan s/*}            ::  network response
             {$home p/lane q/@}                          ::  resend to self
-            {$mine p/ship}                              ::  cache channel
-            {$link p/ship q/code}                       ::  add symmetric key
-            {$meet p/gyft}                              ::  add public key(s)
+            {$line p/ship q/@da r/code}                 ::  add outbound key
+            {$link p/ship q/@da r/code}                 ::  add inbound key
+            {$meet p/gree}                              ::  add public key(s)
             {$rest p/duct q/coop}                       ::  message result
             {$send p/lane q/@}                          ::  transmit packet
+            {$view p/ship}                              ::  cache channel
             {$west p/ship q/bole r/chan s/*}            ::  outbound message
         ==                                              ::
       ++  task                                          ::  input
@@ -172,7 +173,7 @@
         ::  old neighbor; channel already registered
         [~(. et who u.buh) +>.$]
       ::  new neighbor; register secure channel view
-      :_  +>.$(fex [[%know who] fex])
+      :_  +>.$(fex [[%view who] fex])
       ~(. et who `bath`[(see who) (seek our who) ~ [2 ~ ~] ~ ~])
   ::                                                    ::
   ++  etre                                              ::  old neighbor
@@ -232,7 +233,7 @@
     ++  sack                                            ::  send acknowledgment
       |=  {kos/bole dam/flap cop/coop}
       =+  yex=((knit who det.bah) now eny [%back (mix kos 1) dam cop ~s0])
-      =.  +>.$  (in-gifs p.yex)
+      =.  +>.$  (to-gifs p.yex)
       |-  ^+  +>.^$
       ?~  q.yex  +>.^$
       $(q.yex t.q.yex, +>.^$ (send ~ i.q.yex))
@@ -283,7 +284,7 @@
         (send(who her.hox) [~ org.hox] pac.hox)
       ::
           $have  (have +.hox)
-          $link  (acme %link who key.hox)
+          $link  (acme %link who exp.hox key.hox)
           $meet  (acme hox)
           $rack  (to-task kos.hox %back dam.hox cop.hox ~s0)
           $rout  +>(lun.bah `lyn.hox)
@@ -298,7 +299,7 @@
     ++  to-gift
       |=  rax/gift:rail
       ?-  -.rax
-        $link  (acme %link who p.rax)
+        $line  (acme %line who ~2018.1.1 q.rax)
         $mack  (acme %rest (~(got by r.zam.bah) p.rax) q.rax)
         $send  (send ~ q.rax)
       ==
@@ -414,8 +415,8 @@
 ++  nose  !:
   =>  |%
       ++  gift                                          ::  side effect
-        $%  {$link key/code}                            ::  learn symmetric key
-            {$meet doy/gyft}                            ::  learn public key(s)
+        $%  {$link exp/@da key/code}                    ::  learn symmetric key
+            {$meet doy/gree}                            ::  learn public key(s)
         ==                                              ::
       --
   |=  {him/@p det/pipe}
@@ -430,24 +431,24 @@
         [~ & (maul clr)] 
       ::
           $full
-        =+  mex=((hard {p/{p/life q/life} q/gyft r/@}) (cue msg))
+        =+  mex=((hard {p/{p/life q/life} q/gree r/@}) (cue msg))
         =+  rig=(~(got by war.det) p.p.mex)
         =+  pas=(whom q.p.mex q.mex)
         =+  [key out]=(need (tear:as:(nol:nu:crub rig) pas r.mex))
-        :-  :~  [%link key]
+        :-  :~  [%link ~2018.1.1 key]
                 [%meet q.mex]
             ==
         [& (maul out)]
       ::
           $open
-        =+  mex=((hard {p/{$~ q/life} q/gyft r/@}) (cue msg))
+        =+  mex=((hard {p/{$~ q/life} q/gree r/@}) (cue msg))
         =+  pas=(whom q.p.mex q.mex)
         =+  out=(need (sure:as:(com:nu:crub pas) *code r.mex))
         [[%meet q.mex]~ & (maul r.mex)]
       ==
   ++  maul  |=(@ `meal`((hard meal) (cue +<)))          ::  unpack message
   ++  whom                                              ::  select public key
-    |=  {lyf/life gyt/gyft}
+    |=  {lyf/life gyr/gree}
     ^-  pass
     ::
     ::  if we have the public key for this life, use it.
@@ -455,7 +456,7 @@
     ::  without checking its validity.  invalid public-key
     ::  data will crash the packet when we install it.
     ::
-    %-  (bond |.(pub.dat:(~(got by (~(got by gyt) lyf)) him)))
+    %-  (bond |.(pub.dat:(~(got by q:(~(got by gyr) lyf)) him)))
     (~(get by pub.det) lyf)
   --
 ::                                                      ::
@@ -466,8 +467,8 @@
       ++  gift                                          ::  action
         $%  {$fore her/ship org/lane pac/rock}          ::  send forward
             {$have kos/bole cha/chan val/*}             ::  report message
-            {$link key/code}                            ::  learn symmetric key
-            {$meet doy/gyft}                            ::  learn public key
+            {$link exp/@da key/code}                    ::  learn symmetric key
+            {$meet doy/gree}                            ::  learn public key
             {$rack kos/bole dam/flap cop/coop}          ::  report ack
             {$rout lyn/lane}                            ::  learn route
             {$sack kos/bole dam/flap cop/coop}          ::  send ack
@@ -881,7 +882,7 @@
 ++  knit
   =>  |%
       ++  gift                                          ::  side effect
-        $%  {$link key/code}                            ::  set symmetric key
+        $%  {$line exp/@da key/code}                    ::  set symmetric key
         ==                                              ::
       --
   |=  {her/@p det/pipe}
@@ -931,14 +932,14 @@
       :-  %open
       %^    jam
           [~ p.cur.det]
-        gyt.det
+        gyr.det
       (sign:as:cry *code hom)
     =+  key=(shaz :(mix (mug ham) now eny))
-    :-  [%link key]~
+    :-  [%line ~2018.1.1 key]~
     :-  %full
     %^    jam
         [u.q.cur.det p.cur.det]
-      gyt.det
+      gyr.det
     (seal:as:cry (~(got by pub.det) u.q.cur.det) key hom)
   --
 ::                                                      ::
@@ -947,7 +948,7 @@
 ++  rail                                                ::
   =>  |%                                                ::
       ++  gift                                          ::
-        $%  {$link p/code}                              ::  sent key
+        $%  {$line p/@da q/code}                        ::  sent key
             {$mack p/bole q/coop}                       ::  message ack
             {$send p/flap q/rock}                       ::  release packet
         ==                                              ::
@@ -1154,10 +1155,11 @@
           $east  [p.gax %give [%east s.gax]]
           $home  [~ %give gax]
           $link  [~ %pass /sec %j gax]
+          $line  [~ %pass /sec %j gax]
           $meet  [~ %pass /sec %j gax]
-          $mine  [~ %pass /sec %j gax]
           $rest  [p.gax %give %rest q.gax]
           $send  [~ %give gax]
+          $view  [~ %pass /sec %j gax]
           $west
         =+  pax=/msg/(scot %p p.gax)/(scot %ud q.gax)
         =+  cad=[%west p.gax +.r.gax s.gax]
