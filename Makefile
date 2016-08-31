@@ -47,6 +47,20 @@ ifneq (,$(wildcard /usr/local/opt/openssl/.))
   OPENSSLLIB?=/usr/local/opt/openssl/lib
 endif
 
+# can't have empty -I or -L options due to whitespace sensitivity
+ifdef OPTLOCALINC
+  OPTLOCALIFLAGS=-I$(OPTLOCALINC)
+endif
+ifdef OPTLOCALLIB
+  OPTLOCALLFLAGS=-L$(OPTLOCALLIB}
+endif
+ifdef OPENSSLINC
+  OPENSSLIFLAGS=-I$(OPENSSLINC)
+endif
+ifdef OPENSSLLIB
+  OPENSSLLFLAGS=-L$(OPENSSLLIB}
+endif
+
 CURLINC=$(shell curl-config --cflags)
 CURLLIB=$(shell curl-config --libs)
 
@@ -55,12 +69,12 @@ ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLIB) -L$(OPENSSLLIB)
+CLD=g++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLFLAGS) -L$(OPENSSLLFLAGS)
 else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLIB) -L$(OPENSSLLIB)
+CLD=c++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLFLAGS) -L$(OPENSSLLFLAGS)
 endif
 
 ifeq ($(OS),osx)
@@ -109,8 +123,8 @@ endif
 CFLAGS+= $(COSFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
-	-I$(OPTLOCALINC) \
-	-I$(OPENSSLINC) \
+	$(OPTLOCALIFLAGS) \
+	$(OPENSSLIFLAGS) \
 	$(CURLINC) \
 	-I$(INCLUDE) \
 	-Ioutside/$(LIBUV_VER)/include \
