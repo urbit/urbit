@@ -12,92 +12,94 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
 =>  |%
+++  aeon  @ud                                           ::  version number
+++  ankh                                                ::  expanded node
+  $:  fil/(unit {p/lobe q/cage})                        ::  file
+      dir/(map @ta ankh)                                ::  folders
+  ==                                                    ::
 ++  cane                                                ::  change set
-          $:  new/(map path lobe)                       ::  new files
-              cal/(map path lobe)                       ::  old diffs
-              can/(map path cage)                       ::  new diffs
-              old/(map path $~)                         ::  deleted files
-          ==                                            ::
+  $:  new/(map path lobe)                               ::  new files
+      cal/(map path lobe)                               ::  old diffs
+      can/(map path cage)                               ::  new diffs
+      old/(map path $~)                                 ::  deleted files
+  ==                                                    ::
+++  care  ?($u $v $w $x $y $z)                          ::  clay submode
 ++  cult  (jug rove duct)                               ::  subscriptions
 ++  dojo                                                ::  domestic desk state
-          $:  qyx/cult                                  ::  subscribers
-              dom/dome                                  ::  desk data
-              dok/(unit dork)                           ::  outstanding diffs
-              mer/(unit mery)                           ::  outstanding merge
-          ==                                            ::
+  $:  qyx/cult                                          ::  subscribers
+      dom/dome                                          ::  desk data
+      dok/(unit dork)                                   ::  outstanding diffs
+      mer/(unit mery)                                   ::  outstanding merge
+  ==                                                    ::
+++  dome                                                ::  project state
+  $:  ank/ankh                                          ::  state
+      let/@ud                                           ::  top id
+      hit/(map @ud tako)                                ::  versions by id
+      lab/(map @tas @ud)                                ::  labels
+  ==                                                    ::
+++  dork                                                ::  diff work
+  $:  del/(list path)                                   ::  deletes
+      ink/(list (pair path cage))                       ::  hoo{nk}
+      ins/(unit (list (pair path cage)))                ::  inserts
+      dig/(map path cage)                               ::  store diffs
+      dif/(unit (list (trel path lobe cage)))           ::  changes
+      muc/(map path cage)                               ::  store mutations
+      muh/(map path lobe)                               ::  store hashes
+      mut/(unit (list (trel path lobe cage)))           ::  mutations
+      mim/(map path mime)                               ::  mime cache
+  ==                                                    ::
 ++  gift  gift-clay                                     ::  out result <-$
-++  kiss  kiss-clay                                     ::  in request ->$
+++  lobe  @uvI                                          ::  blob ref
 ++  mery                                                ::  merge state
-          $:  sor/(pair ship desk)                      ::  merge source
-              hen/duct                                  ::  formal source
-              gem/germ                                  ::  strategy
-              wat/wait                                  ::  waiting on
-              cas/case                                  ::  ali's case
-              ali/yaki                                  ::  ali's commit
-              bob/yaki                                  ::  bob's commit
-              bas/yaki                                  ::  mergebase
-              dal/cane                                  ::  diff(bas,ali)
-              dob/cane                                  ::  diff(bas,bob)
-              bof/(map path (unit cage))                ::  conflict diffs
-              bop/(map path cage)                       ::  conflict patches
-              new/yaki                                  ::  merge(dal,dob)
-              ank/ankh                                  ::  new state
-              erg/(map path ?)                          ::  ergoable changes
-              gon/(each (set path) (pair term (list tank))) ::  return value
-          ==                                            ::
-++  wait  $?  $null   $ali    $diff-ali   $diff-bob     ::  what are we
-              $merge  $build  $checkout   $ergo         ::  waiting for?
-          ==                                            ::
+  $:  sor/(pair ship desk)                              ::  merge source
+      hen/duct                                          ::  formal source
+      gem/germ                                          ::  strategy
+      wat/wait                                          ::  waiting on
+      cas/case                                          ::  ali's case
+      ali/yaki                                          ::  ali's commit
+      bob/yaki                                          ::  bob's commit
+      bas/yaki                                          ::  mergebase
+      dal/cane                                          ::  diff(bas,ali)
+      dob/cane                                          ::  diff(bas,bob)
+      bof/(map path (unit cage))                        ::  conflict diffs
+      bop/(map path cage)                               ::  conflict patches
+      new/yaki                                          ::  merge(dal,dob)
+      ank/ankh                                          ::  new state
+      erg/(map path ?)                                  ::  ergoable changes
+      gon/(each (set path) (pair term (list tank)))     ::  return value
+  ==                                                    ::
 ++  moot  {p/case q/case r/path s/(map path lobe)}      ::  stored change range
-++  move  {p/duct q/(wind note gift)}                   ::  local move
-++  nako  $:  gar/(map aeon tako)                       ::  new ids
-              let/aeon                                  ::  next id
-              lar/(set yaki)                            ::  new commits
-              bar/(set plop)                            ::  new content
-          ==                                            ::
-++  note                                                ::  out request $->
-          $%  $:  $a                                    ::  to %ames
-          $%  {$wont p/sock q/path r/*}                 ::
-          ==  ==                                        ::
-              $:  $c                                    ::  to %clay
-          $%  {$info p/@p q/@tas r/nori}                ::  internal edit
-              {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}  ::  merge desks
-              {$warp p/sock q/riff}                     ::
-          ==  ==                                        ::
-              $:  $d                                    ::
-          $%  {$flog p/{$crud p/@tas q/(list tank)}}    ::  to %dill
-          ==  ==                                        ::
-              $:  $f                                    ::
-          $%  {$exec p/@p q/(unit {beak silk})}         ::
-          ==  ==                                        ::
-              $:  $t                                    ::
-          $%  {$wait p/@da}                             ::
-              {$rest p/@da}                             ::
-          ==  ==  ==                                    ::
-++  sign                                                ::  in result $<-
-          $?  $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}                     ::
-          ==  ==                                        ::
-              $:  $c                                    ::  by %clay
-          $%  {$note p/@tD q/tank}                      ::
-              {$mere p/(each (set path) (pair term tang))}
-              {$writ p/riot}                            ::
-          ==  ==                                        ::
-              $:  $f                                    ::
-          $%  {$made p/@uvH q/gage}                     ::
-          ==  ==                                        ::
-              $:  $t                                    ::
-          $%  {$wake $~}                                ::  timer activate
-          ==  ==                                        ::
-              $:  @tas                                  ::  by any
-          $%  {$crud p/@tas q/(list tank)}              ::
-          ==  ==  ==                                    ::
+++  nako                                                ::  subscription state 
+  $:  gar/(map aeon tako)                               ::  new ids
+      let/aeon                                          ::  next id
+      lar/(set yaki)                                    ::  new commits
+      bar/(set plop)                                    ::  new content
+  ==                                                    ::
 ++  raft                                                ::  filesystem
-          $:  fat/(map ship room)                       ::  domestic
-              hoy/(map ship rung)                       ::  foreign
-              ran/rang                                  ::  hashes
-              mon/(map term beam)                       ::  mount points
-              hez/(unit duct)                           ::  sync duct
+  $:  fat/(map ship room)                               ::  domestic
+      hoy/(map ship rung)                               ::  foreign
+      ran/rang                                          ::  hashes
+      mon/(map term beam)                               ::  mount points
+      hez/(unit duct)                                   ::  sync duct
+  ==                                                    ::
+++  rang                                                ::  
+  $:  hut/(map tako yaki)                               ::
+      lat/(map lobe blob)                               ::
+  ==                                                    ::
+++  rand                                                ::  unvalidated rant
+          $:  p/{p/care q/case r/@tas}                  ::  clade release book
+              q/path                                    ::  spur
+              r/page                                    ::  data
+          ==                                            ::
+++  rant                                                ::  namespace binding
+          $:  p/{p/care q/case r/@tas}                  ::  clade release book
+              q/path                                    ::  spur
+              r/cage                                    ::  data
+          ==                                            ::
+++  rave                                                ::  general request
+          $%  {$sing p/mood}                            ::  single request
+              {$next p/mood}                            ::  next version
+              {$many p/? q/moat}                        ::  change range
           ==                                            ::
 ++  rede                                                ::  universal project
           $:  lim/@da                                   ::  complete to
@@ -126,17 +128,82 @@
 ++  rung  $:  rus/(map desk rede)                       ::  neighbor desks
           ==                                            ::
 ++  tage  (each (list (pair cage cage)) tang)           ::  result or error
-++  dork                                                ::  diff work
-          $:  del/(list path)                           ::  deletes
-              ink/(list (pair path cage))               ::  hoo{nk}
-              ins/(unit (list (pair path cage)))        ::  inserts
-              dig/(map path cage)                       ::  store diffs
-              dif/(unit (list (trel path lobe cage)))   ::  changes
-              muc/(map path cage)                       ::  store mutations
-              muh/(map path lobe)                       ::  store hashes
-              mut/(unit (list (trel path lobe cage)))   ::  mutations
-              mim/(map path mime)                       ::  mime cache
+++  tako  @                                             ::  yaki ref
+++  wait  $?  $null   $ali    $diff-ali   $diff-bob     ::  what are we
+              $merge  $build  $checkout   $ergo         ::  waiting for?
           ==                                            ::
+++  yaki                                                ::  snapshot
+          $:  p/(list tako)                             ::  parents
+              q/(map path lobe)                         ::  fileset
+              r/tako                                    ::  
+          ::                                            ::  XX s?
+              t/@da                                     ::  date
+          ==                                            ::
+++  plop  blob                                          ::  unvalidated blob
+--  =>
+|%
+++  move  {p/duct q/(wind note gift)}                   ::  local move
+++  gift                                                ::  out result <-$
+      $%  {$ergo p/@tas q/mode}                         ::  version update
+          {$hill p/(list @tas)}                         ::  mount points
+          {$mack p/(unit tang)}                         ::  ack
+          {$mass p/mass}                                ::  memory usage
+          {$mere p/(each (set path) (pair term tang))}  ::  merge result
+          {$note p/@tD q/tank}                          ::  debug message
+          {$ogre p/@tas}                                ::  delete mount point
+          {$writ p/riot}                                ::  response
+      ==                                                ::
+++  note                                                ::  out request $->
+  $%  $:  $a                                            ::  to %ames
+  $%  {$wont p/sock q/path r/*}                         ::
+  ==  ==                                                ::
+      $:  $c                                            ::  to %clay
+  $%  {$info p/@p q/@tas r/nori}                        ::  internal edit
+      {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
+      {$warp p/sock q/riff}                             ::
+  ==  ==                                                ::
+      $:  $d                                            ::
+  $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
+  ==  ==                                                ::
+      $:  $f                                            ::
+  $%  {$exec p/@p q/(unit {beak silk})}                 ::
+  ==  ==                                                ::
+      $:  $t                                            ::
+  $%  {$wait p/@da}                                     ::
+      {$rest p/@da}                                     ::
+  ==  ==  ==                                            ::
+++  riot  (unit rant)                                   ::  response+complete
+++  task                                                ::  in request ->$
+      $%  {$boat $~}                                    ::  pier rebooted
+          {$drop p/@p q/@tas}                           ::  cancel pending merge
+          {$info p/@p q/@tas r/nori}                    ::  internal edit
+          {$init p/@p}                                  ::  report install
+          {$into p/@tas q/? r/mode}                     ::  external edit
+          {$merg p/@p q/@tas r/@p s/@tas t/case u/germ} ::  merge desks
+          {$mont p/@tas q/@p r/@tas s/path}             ::  mount to unix
+          {$ogre p/$@(@tas beam)}                       ::  delete mount point
+          {$warp p/sock q/riff}                         ::  file request
+          {$wegh $~}                                    ::  report memory
+          {$west p/sack q/path r/*}                     ::  network request
+      ==                                                ::
+++  sign                                                ::  in result $<-
+          $?  $:  $a                                    ::  by %ames
+          $%  {$woot p/ship q/coop}                     ::
+          ==  ==                                        ::
+              $:  $c                                    ::  by %clay
+          $%  {$note p/@tD q/tank}                      ::
+              {$mere p/(each (set path) (pair term tang))}
+              {$writ p/riot}                            ::
+          ==  ==                                        ::
+              $:  $f                                    ::
+          $%  {$made p/@uvH q/gage}                     ::
+          ==  ==                                        ::
+              $:  $t                                    ::
+          $%  {$wake $~}                                ::  timer activate
+          ==  ==                                        ::
+              $:  @tas                                  ::  by any
+          $%  {$crud p/@tas q/(list tank)}              ::
+          ==  ==  ==                                    ::
 --  =>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  section 4cA, filesystem logic
@@ -3051,20 +3118,20 @@
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen/duct
-          hic/(hypo (hobo kiss))
+          hic/(hypo (hobo task))
       ==
   =>  %=    .                                         ::  XX temporary
           q.hic
-        ^-  kiss
+        ^-  task
         ?:  ?=($soft -.q.hic)
           =+
-          ~|([%bad-soft (@t -.p.q.hic)] ((soft kiss) p.q.hic))
+          ~|([%bad-soft (@t -.p.q.hic)] ((soft task) p.q.hic))
           ?~  -
             ~&  [%bad-softing (@t -.p.q.hic)]  !!
           u.-
-        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+        ?:  (~(nest ut -:!>(*task)) | p.hic)  q.hic
         ~&  [%clay-call-flub (@tas `*`-.q.hic)]
-        ((hard kiss) q.hic)
+        ((hard task) q.hic)
       ==
   ^+  [p=*(list move) q=..^$]
   ?-    -.q.hic

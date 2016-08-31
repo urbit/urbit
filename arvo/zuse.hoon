@@ -2203,7 +2203,7 @@
                  ++  com  |~(a/@ ^?(..nu))              ::  from naked pass
              --                                         ::
           --                                            ::
-++  aeon  @ud                                          ::
+++  aeon  @ud                                           ::
 ++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})    ::  mergepts
 ++  ankh                                                ::  fs node (new)
           $:  fil/(unit {p/lobe q/cage})                ::  file
@@ -2529,21 +2529,6 @@
 ++  rank  ?($czar $king $duke $earl $pawn)              ::  ship width class
 ++  rang  $:  hut/(map tako yaki)                       ::
               lat/(map lobe blob)                       ::
-          ==                                            ::
-++  rand                                                ::  unvalidated rant
-          $:  p/{p/care q/case r/@tas}                  ::  clade release book
-              q/path                                    ::  spur
-              r/page                                    ::  data
-          ==                                            ::
-++  rant                                                ::  namespace binding
-          $:  p/{p/care q/case r/@tas}                  ::  clade release book
-              q/path                                    ::  spur
-              r/cage                                    ::  data
-          ==                                            ::
-++  rave                                                ::  general request
-          $%  {$sing p/mood}                            ::  single request
-              {$next p/mood}                            ::  next version
-              {$many p/? q/moat}                        ::  change range
           ==                                            ::
 ++  rill                                                ::  outbound stream
           $:  sed/@ud                                   ::  sent
