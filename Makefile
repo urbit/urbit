@@ -55,12 +55,12 @@ ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
+CLD=g++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
 else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
+CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
 endif
 
 ifeq ($(OS),osx)
@@ -88,9 +88,9 @@ MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN)
 DEBUG=no
 
 ifeq ($(DEBUG),yes)
-DEBUGFLAGS=-g
+CFLAGS=-g
 else
-DEBUGFLAGS=-O3
+CFLAGS?=-O3
 endif
 
 # libuv version
@@ -106,7 +106,7 @@ endif
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
 #   -DHUSH
-CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
+CFLAGS+= $(COSFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	$(OPTLOCALINC) \

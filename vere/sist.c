@@ -1172,12 +1172,6 @@ u3_sist_boot(void)
     u3_noun pig = u3_none;
 
     if ( 0 == u3_Host.ops_u.imp_c ) {
-      c3_c get_c[2049];
-      snprintf(get_c, 2048, "%s/.urb/get", u3_Host.dir_c);
-      if ( 0 == access(get_c, 0) ) {
-          uL(fprintf(uH, "pier: already built\n"));
-          u3_lo_bail();
-      }
       u3_noun ten = _sist_zen();
       uL(fprintf(uH, "generating 2048-bit RSA pair...\n"));
 
