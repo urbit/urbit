@@ -107,15 +107,9 @@ else
 CFLAGS?=-O3
 endif
 
-# libuv version
-#LIBUV_VER=libuv_0.11
 LIBUV_VER=libuv-v1.7.5
 
-ifeq ($(LIBUV_VER),libuv_0.11)
-LIBUV_CONFIGURE_OPTIONS=--disable-dtrace
-else
 LIBUV_CONFIGURE_OPTIONS=
-endif
 
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
