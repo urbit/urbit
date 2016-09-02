@@ -232,7 +232,7 @@
     ^-  (unit (unit (each cage lobe)))
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
-      `(bind u.ezy (cury same %&))
+      `(bind u.ezy |=(a/cage [%& a]))
     =+  nao=(case-to-aeon:ze q.mun)
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
@@ -1677,7 +1677,7 @@
         :-  ~
         %+  bind
           fil.ank:(descend-path:(zu ank.dom) pax)
-        (corl (cury same %&) tail)
+        |=(a/{p/lobe q/cage} [%& q.a])
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
@@ -1765,7 +1765,7 @@
       ?:  ?=($u p.mun)
         (read-u yon r.mun)
       ?:  ?=($v p.mun)
-        (bind (read-v yon r.mun) (curr bind (cury same %&)))
+        (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
       ?:  ?=($x p.mun)
         (read-x yon r.mun)
       ?:  ?=($y p.mun)
@@ -1778,16 +1778,16 @@
         ::              hep=-
         ::          ==
         ::      -
-        (bind (read-y yon r.mun) (curr bind (cury same %&)))
+        (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
       ?:  ?=($z p.mun)
-        (bind (read-z yon r.mun) (curr bind (cury same %&)))
+        (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
       %+  bind
         (rewind yon)
       |=  a/(unit _+>.$)
       ^-  (unit (each cage lobe))
       ?~  a
         ~
-      `(unit (each cage lobe))`(bind (read:u.a mun) (cury same %&))
+      `(unit (each cage lobe))`(bind (read:u.a mun) |=(a/cage [%& a]))
     ::
     ++  rewind                                          ::    rewind:ze
       |=  yon/aeon                                      ::  rewind to aeon
