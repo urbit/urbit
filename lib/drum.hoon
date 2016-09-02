@@ -65,10 +65,11 @@
 ++  deft-apes                                           ::  default servers
   |=  our/ship
   %-  ~(gas in *(set well))
+  ^-  (list well)
   =+  myr=(clan our)
-  ?:  =(%pawn myr)
+  ?:  ?=($pawn myr)
     [[%base %talk] [%base %dojo] ~]
-  ?:  =(%earl myr)
+  ?:  ?=($earl myr)
     [[%home %dojo] ~]
   [[%home %talk] [%home %dojo] ~]
 ::
@@ -76,8 +77,7 @@
   |=  our/ship
   %-  ~(gas in *(set gill))
   ^-  (list gill)
-  =+  myr=(clan our)
-  ?:  =(%earl myr)
+  ?:  ?=($earl (clan our))
     [[(sein our) %talk] [our %dojo] ~]
   [[our %talk] [our %dojo] ~]
 ::
@@ -100,7 +100,7 @@
   ==
 ::
 ++  drum-path                                           ::  encode path
-  |=  gyl/gill
+  |=  gyl/gill  ^-  wire
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
 ++  drum-phat                                           ::  decode path
@@ -273,7 +273,7 @@
   ^-  ?
   ?.  (~(has by bin) ost)  &
   =+  gyr=(~(get by fug) gyl)
-  |(?=($~ gyr) ?=({$~ $~} gyr))
+  |(?=($~ gyr) ?=($~ u.gyr))
 ::
 ++  se-alas                                           ::  recalculate index
   |=  gyl/gill
@@ -309,9 +309,10 @@
     ~&  [%no-yow -.bet]
     +>
   =+  gul=se-agon
-  =+  tur=`(unit (unit target))`?~(gul ~ (~(get by fug) u.gul))
-  ?:  |(=(~ gul) =(~ tur) =([~ ~] tur))  (se-blit %bel ~)
-  =+  taz=~(. ta [& (need gul)] `target`(need (need tur)))
+  =+  tur=?~(gul ~ (~(get by fug) u.gul))
+  ?:  |(?=($~ gul) ?=($~ tur) ?=($~ u.tur))
+    (se-blit %bel ~)
+  =+  taz=~(. ta [& u.gul] u.u.tur)
   =.  blt.taz  [q.blt.taz `bet]
   =<  ta-abet
   ?-  -.bet
@@ -361,7 +362,7 @@
   |=  gyl/gill
   ^+  +>
   =.  +>  (se-text "[linked to {<gyl>}]")
-  ?>  =(~ (~(got by fug) gyl))
+  ?>  ?=($~ (~(got by fug) gyl))
   (se-alas(fug (~(put by fug) gyl `*target)) gyl)
 ::
 ++  se-nuke                                           ::  teardown
