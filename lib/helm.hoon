@@ -104,8 +104,8 @@
 ::
 ++  poke-send-ask
   |=  mel/cord  =<  abet
-  %^  emit  %poke  /helm/ask/(scot %p ~doznec)
-  [[~doznec %ask] %ask-mail mel]
+  %^  emit  %poke  /helm/ask/(scot %p ~marzod)
+  [[~marzod %ask] %ask-mail mel]
 ::
 ++  poke-serve
   |=  top/?(desk beam)  =<  abet
