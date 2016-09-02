@@ -959,7 +959,7 @@
       ::
       ++  glyph
         |=  idx/@
-        =<  cha.ole
+        =<  cha
         %+  reel  glyphs
         |=  {all/tape ole/{cha/char num/@}}
         =+  new=(snag (mod idx (lent all)) all)
