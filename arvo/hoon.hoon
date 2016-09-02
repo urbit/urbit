@@ -1124,6 +1124,15 @@
       a
     $(b t.b, a (put p.i.b q.i.b))
   ::
+  +-  gaf                                               ::  concat, fail on dup
+    ~/  %gaf
+    |=  b/(list _?>(?=(^ a) n.a))
+    |-  ^+  a
+    ?~  b
+      a
+    ?<  (has p.i.b)
+    $(b t.b, a (put p.i.b q.i.b))
+  ::
   +-  get                                               ::  grab value by key
     ~/  %get
     |=  b/*
@@ -1258,6 +1267,17 @@
   +-  wyt                                               ::  depth of map
     |-  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
+  ::
+  +-  key                                               ::  set of keys
+    |-  ^-  (set _?>(?=(^ a) p.n.a))
+    ?~  a  ~
+    [n=p.n.a l=$(a l.a) r=$(a r.a)]
+  ::
+  +-  val                                               ::  list of vals
+    =|  b/(list _?>(?=(^ a) q.n.a))
+    |-  ^+  b
+    ?~  a   b
+    $(a r.a, b [q.n.a $(a l.a)])
   --
 ::                                                      ::
 ::::  2j: jar and jug logic                             ::
