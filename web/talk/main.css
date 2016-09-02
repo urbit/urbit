@@ -51,6 +51,10 @@ div.input.valid-false {
 .grams .meta:hover {
   overflow: visible; }
 
+.gram:hover {
+  z-index: 2;
+  position: relative; }
+
 div.gram.first:first-of-type {
   margin-top: 0; }
 
@@ -242,6 +246,7 @@ input.action:focus:-ms-input-placeholder {
 
 .length {
   display: inline-block;
+  width: 120px;
   margin-left: 2rem;
   line-height: 2rem;
   font-family: 'bau';
