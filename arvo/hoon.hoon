@@ -151,6 +151,7 @@
 ++  peg                                                 ::  fragment compose
   ~/  %peg
   |=  {a/@ b/@}
+  ?<  =(0 a)
   ^-  @
   ?-  b
     $1  a
