@@ -4498,6 +4498,7 @@
            ==
   ++  sox  (cook |=(a/@ (sub a 87)) (shim 'a' 'f'))
   ++  ted  (bass 10 ;~(plug sed (stun [0 2] sid)))
+  ++  tep  (sear |=(a/@ ?:(=(a 'doz') ~ (ins:po a))) til)
   ++  tip  (sear |=(a/@ (ins:po a)) til)
   ++  tiq  (sear |=(a/@ (ind:po a)) til)
   ++  tid  (bass 10 (stun [3 3] sid))
