@@ -2205,6 +2205,7 @@
   |=  cod/command
   ^+  [*(list move) +>]
   ::  ~&  [%talk-poke-command src.hid cod]
+  ?>  (team our.hid src.hid)
   =^  mos  +>.$
       ra-abet:(ra-apply:ra src.hid cod)
   =^  mow  +>.$  log-all-to-file

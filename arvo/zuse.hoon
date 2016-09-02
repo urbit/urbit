@@ -3043,6 +3043,12 @@
     $earl  (end 5 1 who)
     $pawn  `@p`0
   ==
+::
+++  team                                                ::  our / our moon
+  |=  {our/@p him/@p}
+  ?|  =(our him)
+      &(?=($earl (clan him)) =(our (sein him)))
+  ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bI, Arvo structures          ::
 ::
