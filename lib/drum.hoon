@@ -793,20 +793,15 @@
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
     ^+  +>
-    ?:  |(?=($~ ris) =(0 pos.u.ris))  ta-bel
+    ?:  |(?=($~ ris) =(0 pos.u.ris))
+      ta-bel
     =+  sop=?~(ext (dec pos.u.ris) pos.u.ris)
     =+  tot=(weld str.u.ris ext)
     =+  dol=(slag (sub num.hit sop) old.hit)
-    =+  ^=  ser
-        =+  ^=  beg
-            |=  {a/(list @c) b/(list @c)}  ^-  ?
-            ?~(a & ?~(b | &(=(i.a i.b) $(a t.a, b t.b))))
-        |=  {a/(list @c) b/(list @c)}  ^-  ?
-        ?~(a & ?~(b | |((beg a b) $(b t.b))))
-    =+  ^=  sup
+    =/  sup
         |-  ^-  (unit @ud)
         ?~  dol  ~
-        ?:  (ser tot i.dol)
+        ?^  (find tot i.dol)
           `sop
         $(sop (dec sop), dol t.dol)
     ?~  sup  ta-bel
