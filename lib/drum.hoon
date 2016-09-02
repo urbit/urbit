@@ -213,17 +213,18 @@
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
   ^-  (quip move *drum-part)
+  =*  pith  +>+>+<+
   ?.  se-ably
     =.  .  se-adit
-    [(flop moz) +>+>+<+]
+    [(flop moz) pith]
   =.  sys  ?^(sys sys `ost)
   =.  .  se-subze:se-adze:se-adit
-  :_  %_(+>+>+<+ bin (~(put by bin) ost `source`+>+<))
+  :_  pith(bin (~(put by bin) ost dev))
+  %-  flop
   ^-  (list move)
-  %+  welp  (flop moz)
-  ^-  (list move)
-  ?~  biz  ~
-  [ost %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]~
+  ?~  biz  moz
+  :_  moz
+  [ost %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]
 ::
 ++  se-ably  (~(has by sup) ost)                      ::  caused by console
 ++  se-adit                                           ::  update servers
