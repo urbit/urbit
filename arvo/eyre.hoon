@@ -205,7 +205,7 @@
   |=  {wid/@u tan/tang}
   ^-  tape
   =+  rolt=|=(a/wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-  (rolt (turn tan |=(a/tank (rolt (wash 0^wid a)))))
+  (rolt (zing (turn tan |=(a/tank (wash 0^wid a)))))
 ::
 ::
 ++  add-cookies
