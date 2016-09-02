@@ -598,6 +598,34 @@
   |=  a/@
   ^-  @
   (met 0 a)
+::
+++  fe                                                  ::  modulo bloq
+  |_  a/bloq
+  ++  dif                                               ::  difference
+    |=({b/@ c/@} (sit (sub (add out (sit b)) (sit c))))
+  ++  inv  |=(b/@ (sub (dec out) (sit b)))              ::  inverse
+  ++  net  |=  b/@  ^-  @                               ::  flip byte endianness
+           =>  .(b (sit b))
+           ?:  (lte a 3)
+             b
+           =+  c=(dec a)
+           %+  con
+             (lsh c 1 $(a c, b (cut c [0 1] b)))
+           $(a c, b (cut c [1 1] b))
+  ++  out  (bex (bex a))                                ::  mod value
+  ++  rol  |=  {b/bloq c/@ d/@}  ^-  @                  ::  roll left
+           =+  e=(sit d)
+           =+  f=(bex (sub a b))
+           =+  g=(mod c f)
+           (sit (con (lsh b g e) (rsh b (sub f g) e)))
+  ++  ror  |=  {b/bloq c/@ d/@}  ^-  @                  ::  roll right
+           =+  e=(sit d)
+           =+  f=(bex (sub a b))
+           =+  g=(mod c f)
+           (sit (con (rsh b g e) (lsh b (sub f g) e)))
+  ++  sum  |=({b/@ c/@} (sit (add b c)))                ::  wrapping add
+  ++  sit  |=(b/@ (end a 1 b))                          ::  enforce modulo
+  --
 ::                                                      ::
 ::::  2d: bit logic                                     ::
   ::                                                    ::
@@ -1495,7 +1523,7 @@
   ?>(=(gol fud) gol)
 ::
 ::
-++  head  |*(^ +<-)                                     ::  get head
+++  head  |*(^ ,:+<-)                                   ::  get head
 ++  same  |*(* +<)                                      ::  identity
 ++  soft                                                ::  maybe remold
   |*  han/$-(* *)
@@ -1503,7 +1531,7 @@
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
 ::
-++  tail  |*(^ +<+)                                     ::  get tail
+++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
 ::                                                      ::
@@ -1659,33 +1687,6 @@
     u  [(dif d.u (pro q c.u)) c.u]
     v  [(dif d.v (pro q c.v)) c.v]
   ==
-::
-++  fe                                                  ::  modulo bloq
-  |_  a/bloq
-  ++  dif  |=({b/@ c/@} (sit (sub (add out (sit b)) (sit c))))  ::  difference
-  ++  inv  |=(b/@ (sub (dec out) (sit b)))              ::  inverse
-  ++  net  |=  b/@  ^-  @                               ::  flip byte endianness
-           =>  .(b (sit b))
-           ?:  (lte a 3)
-             b
-           =+  c=(dec a)
-           %+  con
-             (lsh c 1 $(a c, b (cut c [0 1] b)))
-           $(a c, b (cut c [1 1] b))
-  ++  out  (bex (bex a))                                ::  mod value
-  ++  rol  |=  {b/bloq c/@ d/@}  ^-  @                  ::  roll left
-           =+  e=(sit d)
-           =+  f=(bex (sub a b))
-           =+  g=(mod c f)
-           (sit (con (lsh b g e) (rsh b (sub f g) e)))
-  ++  ror  |=  {b/bloq c/@ d/@}  ^-  @                  ::  roll right
-           =+  e=(sit d)
-           =+  f=(bex (sub a b))
-           =+  g=(mod c f)
-           (sit (con (rsh b g e) (lsh b (sub f g) e)))
-  ++  sum  |=({b/@ c/@} (sit (add b c)))                ::  wrapping add
-  ++  sit  |=(b/@ (end a 1 b))                          ::  enforce modulo
-  --
 ::
 ++  fo                                                  ::  modulo prime
   |_  a/@
