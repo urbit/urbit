@@ -556,9 +556,10 @@
         $v  ta-bel
         $w  ?:  =(0 pos.inp)
               ta-bel
-            =+  b=(bwrd pos.inp buf.say.inp nace)
-            %-  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
-            (cut:edit b (sub pos.inp b))
+            =+  b=(ta-jump %l %ace pos.inp)
+            =+  sel=[(sub pos.inp b) b]
+            %-  (ta-kil %l (swag sel buf.say.inp))
+            (cut:edit sel)
         $x  +>(+> se-anon)
         $y  ?:  =(0 num.kil)
               ta-bel
@@ -636,6 +637,12 @@
     =.  +>  (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
     +>
   ::
+  ++  ta-jump                                         ::  buffer pos
+    |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
+    ^-  @ud
+    %-  ?:(?=($l dir) sub add)
+    [pos (ta-off dir til pos)]
+  ::
   ++  ta-kil                                          ::  update kill ring
     |=  {a/?($l $r) b/(list @c)}
     ^+  ta-hom
@@ -672,103 +679,55 @@
     %+  turn  a
     |=(a/@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32)))
   ::
-  ++  alnm                                            ::  alpha-numeric
-    |=  a/@  ^-  ?
-    ?|  &((gte a '0') (lte a '9'))
-        &((gte a 'A') (lte a 'Z'))
-        &((gte a 'a') (lte a 'z'))
-    ==
-  ::
-  ++  nace                                            ::  next ace offset
-    |=  a/(list @)
-    =|  i/@ud
-    =+  b=|
-    |-  ^+  i
-    ?~  a  i
-    =+  c=.=(32 i.a)
-    =.  b  |(b c)
-    ?:  &(b !|(=(0 i) c))
-      i
-    $(i +(i), a t.a)
-  ::
-  ++  nedg                                            ::  next boundary offset
-    |=  a/(list @)
-    =|  i/@ud
-    =+  b=|
-    |-  ^+  i
-    ?~  a  i
-    =+  c=(alnm i.a)
-    =.  b  |(b c)
-    ?:  &(b !|(=(0 i) c))
-      i
-    $(i +(i), a t.a)
-  ::
-  ++  nwrd                                            ::  word-offset
-    |=  a/(list @)
-    =|  i/@ud
-    |-  ^+  i
-    ?:  |(?=($~ a) (alnm i.a))
-      i
-    $(i +(i), a t.a)
-  ::
-  ++  bwrd                                            :: prev pos by offset
-    |=  {a/@ud b/(list @) c/$-((list @) @)}
-    ^-  @ud
-    (sub a (c (flop (scag a b))))
-  ::
-  ++  fwrd                                            :: next pos by offset
-    |=  {a/@ud b/(list @) c/$-((list @) @)}
-    ^-  @ud
-    (add a (c (slag a b)))
-  ::
   ++  ta-met                                          ::  meta key
     |=  key/@ud
     ?+    key    ta-bel
       $dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))
               ta-bel
             =+  old=`(list @c)`i.old.hit
-            =+  b=(bwrd (lent old) old nedg)
+            =+  b=(ta-jump(buf.say.inp old) %l %edg (lent old))
             %-  ta-hom(ris ~)
             (cat:edit pos.inp (slag b old))
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
-            =+  b=(bwrd pos.inp buf.say.inp nedg)
-            %-  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
-            (cut:edit b (sub pos.inp b))
+            =+  b=(ta-off %l %edg pos.inp)
+            =+  sel=[(sub pos.inp b) b]
+            %-  (ta-kil %l (swag sel buf.say.inp))
+            (cut:edit sel)
             ::
       $b    ?:  =(0 pos.inp)
               ta-bel
-            +>(pos.inp (bwrd pos.inp buf.say.inp nedg))
+            +>(pos.inp (ta-jump %l %edg pos.inp))
             ::
       $c    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  sop=(fwrd pos.inp buf.say.inp nwrd)
-            %-  ta-hom(pos.inp (fwrd sop buf.say.inp nedg))
+            =+  sop=(ta-jump %r %wrd pos.inp)
+            %-  ta-hom(pos.inp (ta-jump %r %edg sop))
             (rep:edit [sop 1] (ucas (swag [sop 1] buf.say.inp)))
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  f=(fwrd pos.inp buf.say.inp nedg)
-            %-  (ta-kil %r (slag pos.inp (scag f buf.say.inp)))
-            (cut:edit pos.inp (sub f pos.inp))
+            =+  sel=[pos.inp (ta-off %r %edg pos.inp)]
+            %-  (ta-kil %r (swag sel buf.say.inp))
+            (cut:edit sel)
             ::
       $f    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            +>(pos.inp (fwrd pos.inp buf.say.inp nedg))
+            +>(pos.inp (ta-jump %r %edg pos.inp))
             ::
       $r    %-  ta-hom(lay.hit (~(put by lay.hit) pos.hit ~))
             :-  %set
             ?:  =(pos.hit num.hit)  ~
             (snag (sub num.hit +(pos.hit)) old.hit)
             ::
-      $t    =+  a=(fwrd pos.inp buf.say.inp nedg)
-            =+  b=(bwrd a buf.say.inp nedg)
-            =+  c=(bwrd b buf.say.inp nedg)
+      $t    =+  a=(ta-jump %r %edg pos.inp)
+            =+  b=(ta-jump %l %edg a)
+            =+  c=(ta-jump %l %edg b)
             ?:  =(b c)
               ta-bel
-            =/  prev/(pair @ud @ud)  [c (sub (fwrd c buf.say.inp nedg) c)]
-            =/  next/(pair @ud @ud)  [b (sub a b)]
+            =+  next=[b (sub a b)]
+            =+  prev=[c (ta-off %r %edg c)]
             %-  ta-hom(pos.inp a)
             :~  %mor
                 (rep:edit next (swag prev buf.say.inp))
@@ -779,12 +738,10 @@
             ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             =+  case=?:(?=($u key) ucas lcas)
-            =+  sop=(fwrd pos.inp buf.say.inp nwrd)
-            =+  f=(fwrd sop buf.say.inp nedg)
+            =+  sop=(ta-jump %r %wrd pos.inp)
+            =+  sel=[sop (ta-off %r %edg sop)]
             %-  ta-hom
-            %+  rep:edit
-              [sop (sub f pos.inp)]
-            (case (slag sop (scag f buf.say.inp)))
+            (rep:edit sel (case (swag sel buf.say.inp)))
             ::
       $y    ?.  ?&  (gth num.kil 0)
                     ?=(^ p.blt)
@@ -825,6 +782,17 @@
       ris  ~
       lay.hit  ~
       old.hit  [buf.say.inp old.hit]
+    ==
+  ::
+  ++  ta-off                                          ::  buffer pos offset
+    |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
+    ^-  @ud
+    %-  ?-  til  $ace  ace:offset
+                 $edg  edg:offset
+                 $wrd  wrd:offset
+        ==
+    ?-  dir  $l  (flop (scag pos buf.say.inp))
+             $r  (slag pos buf.say.inp)
     ==
   ::
   ++  ta-pro                                          ::  set prompt
@@ -919,5 +887,41 @@
         (cut pos num)
         (cat pos txt)
     ==
+  --
+++  offset                                            ::  calculate offsets
+  |%
+  ++  alnm                                            ::  alpha-numeric
+    |=  a/@  ^-  ?
+    ?|  &((gte a '0') (lte a '9'))
+        &((gte a 'A') (lte a 'Z'))
+        &((gte a 'a') (lte a 'z'))
+    ==
+  ::
+  ++  ace                                             ::  next whitespace
+    |=  a/(list @)
+    =|  {b/_| i/@ud}
+    |-  ^-  @ud
+    ?~  a  i
+    =/  c  =(32 i.a)
+    =.  b  |(b c)
+    ?:  &(b !|(=(0 i) c))  i
+    $(i +(i), a t.a)
+  ::
+  ++  edg                                             ::  next word boundary
+    |=  a/(list @)
+    =|  {b/_| i/@ud}
+    |-  ^-  @ud
+    ?~  a  i
+    =/  c  (alnm i.a)
+    =.  b  |(b c)
+    ?:  &(b !|(=(0 i) c))  i
+    $(i +(i), a t.a)
+  ::
+  ++  wrd                                             ::  next or current word
+    |=  a/(list @)
+    =|  i/@ud
+    |-  ^-  @ud
+    ?:  |(?=($~ a) (alnm i.a))  i
+    $(i +(i), a t.a)
   --
 --
