@@ -533,8 +533,7 @@
         $k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
               ta-bel
-            %-  (ta-kil %r (slag pos.inp buf.say.inp))
-            (cut:edit pos.inp (sub len pos.inp))
+            (ta-kil %r [pos.inp (sub len pos.inp)])
         $l  +>(+> (se-blit %clr ~))
         $n  (ta-aro %d)
         $p  (ta-aro %u)
@@ -551,15 +550,12 @@
             (rep:edit [sop 2] (flop (swag [sop 2] buf.say.inp)))
         $u  ?:  =(0 pos.inp)
               ta-bel
-            %-  (ta-kil %l (scag pos.inp buf.say.inp))
-            (cut:edit 0 pos.inp)
+            (ta-kil %l [0 pos.inp])
         $v  ta-bel
         $w  ?:  =(0 pos.inp)
               ta-bel
-            =+  b=(ta-jump %l %ace pos.inp)
-            =+  sel=[(sub pos.inp b) b]
-            %-  (ta-kil %l (swag sel buf.say.inp))
-            (cut:edit sel)
+            =+  sop=(ta-off %l %ace pos.inp)
+            (ta-kil %l [(sub pos.inp sop) sop])
         $x  +>(+> se-anon)
         $y  ?:  =(0 num.kil)
               ta-bel
@@ -643,29 +639,32 @@
     %-  ?:(?=($l dir) sub add)
     [pos (ta-off dir til pos)]
   ::
-  ++  ta-kil                                          ::  update kill ring
-    |=  {a/?($l $r) b/(list @c)}
-    ^+  ta-hom
-    =;  lik/(pair @ud (list (list @c)))
-      %=  ta-hom
+  ++  ta-kil                                          ::  kill selection
+    |=  {dir/?($l $r) sel/{@ @}}
+    ^+  +>
+    =+  buf=(swag sel buf.say.inp)
+    %.  (cut:edit sel)
+    %=  ta-hom
         ris  ~
-        kil  %=  kil
-               num  p.lik
-               pos  p.lik
-               old  (scag max.kil q.lik)
+        kil
+      ?.  ?&  ?=(^ old.kil)
+              ?=(^ p.blt)
+              ?|  ?=({$ctl ?($k $u $w)} u.p.blt)
+                  ?=({$met ?($d $bac)} u.p.blt)
+          ==  ==
+        %=  kil                                       ::  prepend
+          num  +(num.kil)
+          pos  +(num.kil)
+          old  (scag max.kil `(list (list @c))`[buf old.kil])
+        ==
+      %=  kil                                         ::  cumulative yanks
+        pos  num.kil
+        old  :_  t.old.kil
+             ?-  dir
+               $l  (welp buf i.old.kil)
+               $r  (welp i.old.kil buf)
       ==     ==
-    ?.  ?&  ?=(^ old.kil)
-            ?=(^ p.blt)
-            ?|  ?=({$ctl ?($k $u $w)} u.p.blt)
-                ?=({$met ?($d $bac)} u.p.blt)
-        ==  ==
-      [+(num.kil) b old.kil]
-    :+  num.kil
-    ?-  a
-      $l  (welp b i.old.kil)
-      $r  (welp i.old.kil b)
     ==
-    t.old.kil
   ::
   ++  lcas                                            ::  lowercase
     |*  a/(list @)
@@ -691,10 +690,8 @@
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
-            =+  b=(ta-off %l %edg pos.inp)
-            =+  sel=[(sub pos.inp b) b]
-            %-  (ta-kil %l (swag sel buf.say.inp))
-            (cut:edit sel)
+            =+  sop=(ta-off %l %edg pos.inp)
+            (ta-kil %l [(sub pos.inp sop) sop])
             ::
       $b    ?:  =(0 pos.inp)
               ta-bel
@@ -708,9 +705,7 @@
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  sel=[pos.inp (ta-off %r %edg pos.inp)]
-            %-  (ta-kil %r (swag sel buf.say.inp))
-            (cut:edit sel)
+            (ta-kil %r [pos.inp (ta-off %r %edg pos.inp)])
             ::
       $f    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
