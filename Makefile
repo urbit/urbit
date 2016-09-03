@@ -69,12 +69,12 @@ ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLFLAGS) -L$(OPENSSLLFLAGS)
+CLD=g++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLFLAGS) -L$(OPENSSLLFLAGS)
+CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 endif
 
 ifeq ($(OS),osx)
