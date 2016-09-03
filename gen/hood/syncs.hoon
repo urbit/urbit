@@ -6,5 +6,5 @@
 ::::
   !:
 :-  %say
-|=  {{now/@da eny/@uvI bec/beak} $~ $~}
+|=  {{now/@da eny/@uvJ bec/beak} $~ $~}
 [%kiln-syncs ~]

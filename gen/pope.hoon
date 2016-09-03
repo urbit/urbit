@@ -5,10 +5,10 @@
 ::  Input twitter keys
 /-    sole
 !:
-=+  cryp=bruw                         ::  XX  change to ec2 ++brew eventually
+=+  cryp=crub
 =+  [sole]
 :-  %ask
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {{who/ship $~} $~}
     ==
 ^-  (sole-result (cask tang))
@@ -19,9 +19,9 @@
 %+  sole-lo  [%| %pope-none "[press enter to compute]"]  :: XX oy
 %+  sole-go  (easy ~)
 |=  $~
-=+  bur=(shax (add who (shax fra)))
+=+  bur=(shaz (add who (shaz fra)))
 ~&  %computing-fingerprint
-=+  arc=(cryp 2.048 bur)
+=+  arc=(pit:nu:cryp 512 bur)
 %+  sole-so  %tang
 :~  leaf+"generator: {(scow %uw bur)}"
     leaf+"fingerprint: {(scow %uw fig:ex:arc)}"

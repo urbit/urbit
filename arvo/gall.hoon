@@ -77,7 +77,7 @@
   ==                                                    ::
 ++  stic                                                ::  statistics
   $:  act/@ud                                           ::  change number
-      eny/@uvI                                          ::  entropy
+      eny/@uvJ                                          ::  entropy
       lat/@da                                           ::  time
   ==                                                    ::
 --                                                      ::
@@ -86,7 +86,7 @@
 .  ==
 =|  all/axle                                            ::  all vane state
 |=  $:  now/@da                                         ::  urban time
-        eny/@uvI                                        ::  entropy
+        eny/@uvJ                                        ::  entropy
         ska/sley                                        ::  activate
     ==                                                  ::  opaque core
 ~%  %gall-top  ..is  ~
@@ -520,7 +520,7 @@
         ==
       =+  unt=(~(get by q.zam) hen)
       =:  act.tyc  +(act.tyc)
-          eny.tyc  (shax (mix (add dap act.tyc) eny))
+          eny.tyc  (shaz (mix (add dap act.tyc) eny))
           lat.tyc  now
         ==
       ?^  unt

@@ -11,7 +11,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvI bek/beak}
+|=  $:  {now/@da eny/@uvJ bek/beak}
         {arg/{?(sorc {syd/$@(desk beaky) sorc})} cas/case gem/?($auto germ)}
     ==
 =*  our  p.bek

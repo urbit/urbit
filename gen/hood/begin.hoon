@@ -12,7 +12,7 @@
     --
 [sole .]
 :-  %ask
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/_(scug *@ *{his/@p tic/@p $~})}
         safety/?($on $off)
     ==

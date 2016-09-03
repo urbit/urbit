@@ -10279,7 +10279,7 @@
 ++  poke                                                ::  external apply
   |=  {now/@da ovo/ovum}
   ^-  {(list ovum) _+>}
-  =.  eny  (mix eny (shax now))
+  =.  eny  (mix eny (shaz now))
   ::  ~&  [%poke -.q.ovo]
   ?:  ?=(?($veer $vega $verb $veal) -.q.ovo)
     ::
