@@ -1109,7 +1109,13 @@
           %^  resp  200  image+/png
           favi
         ::
-          ::  {$txt $robots $~}  !!
+            {$txt $robots $~}
+          :-  ~
+          %^  resp  200  text+/plain
+          %-  role
+          :~  'User-agent: *'
+              'Disallow: '
+          ==
         ==
       ::
       ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
