@@ -33,33 +33,48 @@ ENDIAN=little
 #
 BIN=bin
 
-LIB=.
-
 # Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
 ifneq (,$(wildcard /opt/local/.))
-  OPTLOCALINC=-I/opt/local/include
-  OPTLOCALLIB=-L/opt/local/lib
+  OPTLOCALINC?=/opt/local/include
+  OPTLOCALLIB?=/opt/local/lib
 endif
 
 # Only include/link with this if it exists.
 # (`brew install openssl` on Mac OS X El Capitan puts openssl here)
 ifneq (,$(wildcard /usr/local/opt/openssl/.))
-  OPENSSLINC=-I/usr/local/opt/openssl/include
-  OPENSSLLIB=-L/usr/local/opt/openssl/lib
+  OPENSSLINC?=/usr/local/opt/openssl/include
+  OPENSSLLIB?=/usr/local/opt/openssl/lib
 endif
+
+# can't have empty -I or -L options due to whitespace sensitivity
+ifdef OPTLOCALINC
+  OPTLOCALIFLAGS=-I$(OPTLOCALINC)
+endif
+ifdef OPTLOCALLIB
+  OPTLOCALLFLAGS=-L$(OPTLOCALLIB)
+endif
+ifdef OPENSSLINC
+  OPENSSLIFLAGS=-I$(OPENSSLINC)
+endif
+ifdef OPENSSLLIB
+  OPENSSLLFLAGS=-L$(OPENSSLLIB)
+endif
+
+CURLINC=$(shell curl-config --cflags)
+CURLLIB=$(shell curl-config --libs)
 
 RM=rm -f
 ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
+CLD=g++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLFLAGS) -L$(OPENSSLLFLAGS)
 else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
+CLD=c++ $(CFLAGS) -L/usr/local/lib -L$(OPTLOCALLFLAGS) -L$(OPENSSLLFLAGS)
 endif
 
 ifeq ($(OS),osx)
@@ -76,20 +91,20 @@ ifeq ($(OS),bsd)
 endif
 
 ifeq ($(STATIC),yes)
-LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(OSLIBS)
+LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(CURLLIB) $(OSLIBS)
 else
-LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
+LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(CURLLIB) $(OSLIBS)
 endif
 
 INCLUDE=include
-MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
+MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN)
 
 DEBUG=no
 
 ifeq ($(DEBUG),yes)
-DEBUGFLAGS=-g
+CFLAGS=-g
 else
-DEBUGFLAGS=-O3
+CFLAGS?=-O3
 endif
 
 # libuv version
@@ -105,11 +120,12 @@ endif
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
 #   -DHUSH
-CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
+CFLAGS+= $(COSFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
-	$(OPTLOCALINC) \
-	$(OPENSSLINC) \
+	$(OPTLOCALIFLAGS) \
+	$(OPENSSLIFLAGS) \
+	$(CURLINC) \
 	-I$(INCLUDE) \
 	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \
@@ -132,6 +148,20 @@ CWFLAGS=-Wall \
         -Werror
 ifneq ($(OS),bsd)
   CWFLAGS+=-Wno-error=unused-result
+endif
+
+# glibc 2.24 deprecates readdir_r; iff glibc >=2.24,
+# don't upgrade 'deprecated declarations' warnings to errors
+# dependency: `getconf`, which comes w/glibc
+GLIBC := $(lastword $(shell getconf GNU_LIBC_VERSION 2>/dev/null))
+# dependency: none, uses make's native functions
+GLIBC_MAJ := $(word 1, $(subst ., ,$(GLIBC))) 
+GLIBC_MIN := $(word 2, $(subst ., ,$(GLIBC)))
+# dependency: `expr` shell built-in
+GLIBC_GE_2_24 := $(shell expr $(GLIBC_MAJ) ">" 2 "|" \
+        $(GLIBC_MAJ) "=" 2 "&" $(GLIBC_MIN) ">=" 24 2>/dev/null)
+ifeq (1,$(GLIBC_GE_2_24))
+  CWFLAGS+=-Wno-error=deprecated-declarations
 endif
 
 ifdef NO_SILENT_RULES
@@ -218,6 +248,7 @@ J_C_OFILES=\
        jets/c/po.o  \
        jets/c/pow.o \
        jets/c/rap.o \
+       jets/c/rep.o \
        jets/c/rip.o \
        jets/c/rsh.o \
        jets/c/sqt.o \
@@ -243,6 +274,8 @@ J_D_OFILES=\
        jets/d/by_dif.o
 
 J_E_OFILES=\
+       jets/e/aes_ecb.o \
+       jets/e/aes_cbc.o \
        jets/e/aesc.o \
        jets/e/cue.o \
        jets/e/fl.o \
@@ -265,7 +298,8 @@ J_E_OFILES=\
 J_E_OFILES_ED=\
        jets/e/ed_puck.o \
        jets/e/ed_sign.o \
-       jets/e/ed_veri.o
+       jets/e/ed_veri.o \
+       jets/e/ed_shar.o
 
 J_F_OFILES=\
        jets/f/al.o \

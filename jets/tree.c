@@ -59,6 +59,7 @@ static u3j_harm _mood__hoon_muk_a[] = {{".2", u3wc_muk, c3y}, {}};
 static u3j_harm _mood__hoon_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
 static u3j_harm _mood__hoon_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
 static u3j_harm _mood__hoon_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
+static u3j_harm _mood__hoon_rep_a[] = {{".2", u3wc_rep, c3y}, {}};
 static u3j_harm _mood__hoon_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
 static u3j_harm _mood__hoon_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
 static u3j_harm _mood__hoon_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
@@ -300,10 +301,13 @@ static u3j_core _mood__hoon__rq_d[] =
 static u3j_harm _mood__hoon__coed__ed_puck_a[] = {{".2", u3wee_puck}, {}};
 static u3j_harm _mood__hoon__coed__ed_sign_a[] = {{".2", u3wee_sign}, {}};
 static u3j_harm _mood__hoon__coed__ed_veri_a[] = {{".2", u3wee_veri}, {}};
+static u3j_harm _mood__hoon__coed__ed_shar_a[] = {{".2", u3wee_shar}, {}};
+
 static u3j_core _mood__hoon__coed__ed_d[] =
   { { "sign", _mood__hoon__coed__ed_sign_a },
     { "puck", _mood__hoon__coed__ed_puck_a },
     { "veri", _mood__hoon__coed__ed_veri_a },
+    { "shar", _mood__hoon__coed__ed_shar_a },
     {}
   };
 static u3j_core _mood__hoon__coed_d[] =
@@ -409,11 +413,79 @@ static u3j_core _down_d[] =
     {}
   };
 
+static u3j_harm _zuse__aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
+static u3j_harm _zuse__aes_ecba_de_a[] = {{".2", u3wea_ecba_de}, {}};
+static u3j_harm _zuse__aes_ecbb_en_a[] = {{".2", u3wea_ecbb_en}, {}};
+static u3j_harm _zuse__aes_ecbb_de_a[] = {{".2", u3wea_ecbb_de}, {}};
+static u3j_harm _zuse__aes_ecbc_en_a[] = {{".2", u3wea_ecbc_en}, {}};
+static u3j_harm _zuse__aes_ecbc_de_a[] = {{".2", u3wea_ecbc_de}, {}};
+
+static u3j_harm _zuse__aes_cbca_en_a[] = {{".2", u3wea_cbca_en}, {}};
+static u3j_harm _zuse__aes_cbca_de_a[] = {{".2", u3wea_cbca_de}, {}};
+static u3j_harm _zuse__aes_cbcb_en_a[] = {{".2", u3wea_cbcb_en}, {}};
+static u3j_harm _zuse__aes_cbcb_de_a[] = {{".2", u3wea_cbcb_de}, {}};
+static u3j_harm _zuse__aes_cbcc_en_a[] = {{".2", u3wea_cbcc_en}, {}};
+static u3j_harm _zuse__aes_cbcc_de_a[] = {{".2", u3wea_cbcc_de}, {}};
+
+static u3j_core _zuse__aes_ecba_d[] =
+  { { "en", _zuse__aes_ecba_en_a },
+    { "de", _zuse__aes_ecba_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_ecbb_d[] =
+  { { "en", _zuse__aes_ecbb_en_a },
+    { "de", _zuse__aes_ecbb_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_ecbc_d[] =
+  { { "en", _zuse__aes_ecbc_en_a },
+    { "de", _zuse__aes_ecbc_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_cbca_d[] =
+  { { "en", _zuse__aes_cbca_en_a },
+    { "de", _zuse__aes_cbca_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_cbcb_d[] =
+  { { "en", _zuse__aes_cbcb_en_a },
+    { "de", _zuse__aes_cbcb_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_cbcc_d[] =
+  { { "en", _zuse__aes_cbcc_en_a },
+    { "de", _zuse__aes_cbcc_de_a },
+    {}
+  };
+
+static u3j_core _zuse__aes_d[] =
+  { { "ecba", 0, _zuse__aes_ecba_d },
+    { "ecbb", 0, _zuse__aes_ecbb_d },
+    { "ecbc", 0, _zuse__aes_ecbc_d },
+    { "cbca", 0, _zuse__aes_cbca_d },
+    { "cbcb", 0, _zuse__aes_cbcb_d },
+    { "cbcc", 0, _zuse__aes_cbcc_d },
+    {}
+  };
+
+/*
+static u3j_core _zuse_d[] =
+  { { "aes", 0, _zuse__aes_d },
+    {}
+  };
+*/
+
 static u3j_core _arvo_d[] =
   { { "down", 0, _down_d },
     { "lore", _mood__hoon_lore_a },
     { "loss", _mood__hoon_loss_a },
     { "lune", _mood__hoon_lune_a },
+    { "aes", 0, _zuse__aes_d },
     {}
   };
 
@@ -493,6 +565,7 @@ static u3j_core _mood__hoon_d[] =
     { "peg", _mood__hoon_peg_a },
     { "pow", _mood__hoon_pow_a },
     { "rap", _mood__hoon_rap_a },
+    { "rep", _mood__hoon_rep_a },
     { "rip", _mood__hoon_rip_a },
     { "rsh", _mood__hoon_rsh_a },
     { "sqt", _mood__hoon_sqt_a },
