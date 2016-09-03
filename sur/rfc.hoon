@@ -9,7 +9,6 @@
 ++  email-adr-to-text  |=({name/@t domain/@t} (trip (rap 3 name '@' domain ~)))
 ++  message-to-rfc822
   |=  a/message  ^-  cord
-  %-  crip  ^-  tape  %-  sifo
   %-  crip
   """
   From: {(email-adr-to-text from.a)}

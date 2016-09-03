@@ -1,5 +1,5 @@
 ::
-::::  /hoon/jam/mar
+::::  /hoon/jam-crub/mar
   ::
 /?    310
 !:
@@ -8,10 +8,10 @@
   |%
   ++  mime  [/application/octet-stream (taco mud)]
   --
-++  garb  /womb-part
 ++  grab
   |%                                                    ::  convert from
   ++  noun  @                                           ::  clam from %noun
+  ++  mime  |=({* octs} q)
   --
 ++  grad  %mime
 --

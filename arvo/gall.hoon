@@ -140,16 +140,22 @@
   ++  mo-boom                                           ::  complete new boot
     |=  {dap/dude byk/beak dep/@uvH gux/gage}
     ^+  +>
-    =.  +>  (mo-bold byk dap dep)
     ?-    -.gux
         $tabl  ~|(%made-tabl !!)
-        $|  (mo-give %onto %| p.gux)
+        $|
+      =.  +>  (mo-bold byk dap dep)
+      =.  +>  (mo-give %onto %| p.gux)
+      +>
         $&
+      ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
         (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
+      =.  +>  (mo-bold byk dap dep)
       =.  +>  (mo-born dap byk q.p.gux)
+      =+  old=+>.$
       =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
       ?^  -.wag
+        =.  +>.$  old
         (mo-give %onto %| u.-.wag)
       =.  +>.$  ap-abet:+.wag
       (mo-give:(mo-claw dap) %onto %& dap %boot now)
@@ -183,7 +189,8 @@
     ?-  -.gux
       $tabl  ~|(%made-tabl !!)
       $|     (mo-give %onto %| p.gux)
-      $&     ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
+      $&     ?>  ?=(@ p.p.gux)
+             ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
     ==
   ::
   ++  mo-bold                                           ::  wait for dep
@@ -1009,7 +1016,6 @@
     ++  ap-purr                                         ::  unwrap take
       |=  {wha/term pax/path cag/cage}
       ^+  +>
-      =.  q.cag  (spec q.cag)
       =+  cug=(ap-find [wha p.cag pax])
       ?~  cug
         (ap-lame wha (ap-suck "{(trip wha)}: no {<`path`[p.cag pax]>}"))
@@ -1045,17 +1051,17 @@
     ++  ap-prop                                         ::  install
       |=  vux/(unit vase)
       ^-  {(unit tang) _+>}
-      =+  old=+>.$(hav ?~(vux hav u.vux))
-      ?.  (ap-fond %prep)
+      ?.  (ap-fond %prep) 
         ?~  vux
           `+>.$
+        =+  [new=p:(slot 13 hav) old=p:(slot 13 u.vux)]
         ?.  (~(nest ut p:(slot 13 hav)) %| p:(slot 13 u.vux))
-          :_(old `(ap-suck "prep mismatch"))
+          :_(+>.$ `(ap-suck "prep mismatch"))
         `+>.$(+13.q.hav +13.q.u.vux)
       =^  tur  +>.$
           %+  ap-call  %prep
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
-      ?~(tur `+>.$ :_(old `u.tur))
+      ?~(tur `+>.$ :_(+>.$ `u.tur))
     ::
     ++  ap-pule                                         ::  silent delete
       =+  wim=(~(get by sup.ged) ost)
@@ -1142,11 +1148,10 @@
       |=  {cog/term gat/vase arg/vase}
       ^-  {(each vase tang) _+>}
       =+  ^=  wyz  %-  mule  |.
-          ?>  (~(nest ut p:(slot 6 gat)) %& p.arg)
           (~(play wa vel) [%cell p.gat p.arg] [%open [%$ ~] [%$ 2] [%$ 3] ~])
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
-            (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) p.wyz)
+            (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
         :_(+>.$ [%| (ap-suck "call: {<cog>}: type mismatch")])
       :_  +>.$(vel +>.wyz)
       =+  ton=(mong [q.gat q.arg] ap-sled)

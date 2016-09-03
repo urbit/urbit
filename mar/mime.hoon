@@ -4,6 +4,11 @@
 /?    310
 !:
 |_  own/mime
+++  grow
+  |%
+  ++  jam  `@`q.q.own
+  --
+::
 ++  grab                                                ::  convert from
   |% 
   ++  noun  mime                                        ::  clam from %noun

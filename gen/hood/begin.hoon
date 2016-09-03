@@ -49,7 +49,7 @@
       $czar  [%czar ~]
       $duke  [%duke %anon ~]
       $earl  [%earl (scot %p his)]
-      $king  [%king ?:(=(~doznec his) 'Urban Republic' (scot %p his))]
+      $king  [%king (scot %p his)]
       $pawn  [%pawn ~]
     ==
 ==

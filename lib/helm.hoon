@@ -79,8 +79,8 @@
 ++  poke-begin                                        ::  make/send keypair
   |=  hood-begin  =<  abet
   ?>  ?=($~ bur)
-  =+  buz=(shax :(mix (jam ges) eny))
-  =+  loy=(bruw 2.048 buz)
+  =+  buz=(shaz :(mix (jam ges) eny))
+  =+  loy=(pit:nu:crub 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
   [%wont /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
 ::
@@ -116,6 +116,11 @@
   |=  {pax/path cop/(unit tang)}  =<  abet
   ?>  ?=({@t $~} pax)
   (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
+::
+++  coup-ask
+  |=  {pax/path cop/(unit tang)}  =<  abet
+  ?>  ?=({@t $~} pax)
+  (emit %flog ~ %text "ask {<src>} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes

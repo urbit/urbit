@@ -71,7 +71,7 @@
 ++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  redirect-uri
   %-    crip    %-  earn
-  %^  interpolate  'https://our-host/~/ac/:domain/:user/in'
+  %^  into-url:interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
   :~  domain+(join '.' (flop dom))
       user+?:(state-usr '_state' (scot %ta usr))
