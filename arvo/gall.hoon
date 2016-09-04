@@ -1274,8 +1274,10 @@
   ==
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
+  ?.  ?=($& -.why)  ~
+  =*  who  p.why
   ?:  ?&  =(%u ren)
           =(~ tyl)
           =([%$ %da now] lot)

@@ -442,8 +442,10 @@
   ::  ..^$(ore.all `~zod)
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas his/ship syd/desk lot/coin tyl/path}
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
+  ?.  ?=($& -.why)  ~
+  =*  his  p.why
   [~ ~]
 ::
 ++  stay  all 

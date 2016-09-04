@@ -2852,8 +2852,10 @@
   ==
 ::
 ++  scry                                              ::  inspect
-  |=  {fur/(unit (set monk)) ren/@tas his/ship syd/desk lot/coin tyl/path}
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
+  ?.  ?=($& -.why)  ~
+  =*  his  p.why
   ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
   =+  got=(~(has by fat.ruf) his)

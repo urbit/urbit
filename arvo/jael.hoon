@@ -57,9 +57,9 @@
       {$take p/ship q/(nap jael-right)}                 ::  revoke rights to
       {$view p/ship}                                    ::  watch urbit
       {$west p/ship q/path r/*}                         ::  remote request
-      {$wkey p/@ta q/@t r/(unit (pair @da @))}          ::  set API key
-      {$wtok p/@ta q/@t r/@t s/(unit (pair @da @))}     ::  set API token
-      {$wvue p/@ta}                                     ::  watch website
+      {$wink p/@ta q/@t r/(unit (pair @da @))}          ::  set API key
+      {$woke p/@ta q/@t r/@t s/(unit (pair @da @))}     ::  set API token
+      {$wove p/@ta}                                     ::  watch website
   ==                                                    ::
 ++  jael-gift                                           ::  output
   $%  {$clue p/pipe}                                    ::  secure channel
@@ -103,7 +103,7 @@
       ..^$(lex old)
     ::
     ++  scry
-      |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+      |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
       ^-  (unit (unit cage))
       !!
     ::

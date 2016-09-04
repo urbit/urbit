@@ -1962,8 +1962,10 @@
   ==
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
+  ?.  ?=($& -.why)  ~
+  =*  who  p.why
   =+  our=(need hov)                  :: XX single home
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))

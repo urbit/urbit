@@ -9604,6 +9604,7 @@
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 ++  ring  @                                             ::  private key
 ++  ship  @p                                            ::  network identity
+++  shop  (each ship (list @ta))                        ::  urbit/dns identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
           (unit (unit cage))                            ::
@@ -9989,7 +9990,7 @@
       =+  ^=  old
           :*  fur
               ren
-              p.bed
+              [%& p.bed]
               q.bed
               `coin`[%$ r.bed]
               (flop s.bed)

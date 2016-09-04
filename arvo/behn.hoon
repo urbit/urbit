@@ -1,4 +1,4 @@
-::  ::  %behn, just a timer
+!:  ::  %behn, just a timer
 !?  164
 ::::
 |=  pit/vase
@@ -212,14 +212,16 @@
   ..^$(tym tym.old)
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas his/ship syd/desk lot/coin tyl/path}
-  ^-  (unit (unit (pair mark *)))
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  ^-  (unit (unit cage))
+  ?.  ?=($& -.why)  ~
+  =*  who  p.why
   =+  ^=  liz
       |-  ^-  (list {@da duct})
       =.  tym  (raze tym)
       ?~  p.tym  ~
       [~(get up p.tym) $(p.tym ~(pop up p.tym))]
-  [~ ~ [%tank >liz<]]
+  [~ ~ %tank !>(>liz<)]
 ::
 ++  stay  [%0 tym]
 ++  take                                                ::  process move
