@@ -1708,11 +1708,7 @@
     ~%  %eyre-v  ..is  ~
     |_  $:  {usr/iden dom/path}
             cor/(unit $@($~ vase))
-<<<<<<< HEAD
-            req/(qeu {p/duct q/mark r/vase})  
-=======
             {liv/? req/(qeu {p/duct q/mark r/vase:hiss})}
->>>>>>> 4c8e014
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
