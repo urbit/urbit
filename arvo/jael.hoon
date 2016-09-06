@@ -157,6 +157,8 @@
     =<  abet
     =<  abet
     (give:(unto:(from p.tac) our) `(nap jael-right)`[ryt ~ ~])
+  ::
+      $
   ==
 ::
 ++  from
