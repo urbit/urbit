@@ -421,13 +421,14 @@ extras = {
     kids: {
       name: 't',
       head: 'r',
-      meta: 'j'
+      meta: 'j',
+      bump: 't'
     }
   }, name("Next", function(arg) {
-    var curr, index, keys, kids, next, path, ref1, ref2;
-    curr = arg.curr, path = arg.path, kids = arg.kids;
+    var curr, index, keys, kids, meta, next, path, ref1, ref2;
+    curr = arg.curr, meta = arg.meta, path = arg.path, kids = arg.kids;
     if ((ref1 = kids[curr]) != null ? (ref2 = ref1.meta) != null ? ref2.next : void 0 : void 0) {
-      keys = util.getKeys(kids);
+      keys = util.getKeys(kids, meta.navsort);
       if (keys.length > 1) {
         index = keys.indexOf(curr);
         next = index + 1;
@@ -537,7 +538,8 @@ module.exports = query({
         color: this.props.meta.logo
       }), reactify(this.props.body, 'body'), extra('next', {
         dataPath: this.props.sein,
-        curr: this.props.name
+        curr: this.props.name,
+        meta: this.props.meta
       }), extra('comments'), extra('footer', {
         container: this.props.meta.container
       })
@@ -805,7 +807,7 @@ module.exports = Dpad = function(arg) {
   var arrowSibs, arrowUp, curr, index, keys, kids, meta, next, prev, sein;
   sein = arg.sein, curr = arg.curr, kids = arg.kids, meta = arg.meta;
   arrowUp = sein ? meta.navuptwo ? Arrow("up", sein.replace(/\/[^\/]*$/, "")) : Arrow("up", sein) : void 0;
-  arrowSibs = (keys = util.getKeys(kids), keys.length > 1 ? (index = keys.indexOf(curr), prev = index - 1, next = index + 1, prev < 0 ? prev = keys.length - 1 : void 0, next === keys.length ? next = 0 : void 0, prev = keys[prev], next = keys[next]) : void 0, sein ? (sein === "/" ? sein = "" : void 0, div({}, prev ? Arrow("prev", sein + "/" + prev) : void 0, next ? Arrow("next", sein + "/" + next) : void 0)) : void 0);
+  arrowSibs = (keys = util.getKeys(kids, meta.navsort), keys.length > 1 ? (index = keys.indexOf(curr), prev = index - 1, next = index + 1, prev < 0 ? prev = keys.length - 1 : void 0, next === keys.length ? next = 0 : void 0, prev = keys[prev], next = keys[next]) : void 0, sein ? (sein === "/" ? sein = "" : void 0, div({}, prev ? Arrow("prev", sein + "/" + prev) : void 0, next ? Arrow("next", sein + "/" + next) : void 0)) : void 0);
   return div({
     className: 'dpad',
     key: 'dpad'
@@ -1832,7 +1834,11 @@ module.exports = query({
       className: "mono"
     }, "~" + urb.ship), (who != null) || this.state.edit ? h6({}, editable('who', who, "Sun Tzu")) : void 0, Grid({
       className: "grid"
-    }, ["Location:", editable('loc', loc, "Unknown")], ["Issued by:", issuedBy], [
+    }, ["Location:", editable('loc', loc, "Unknown")], [
+      "Issued by:", a({
+        href: "//" + urb.sein + ".urbit.org"
+      }, issuedBy)
+    ], [
       "Immutable link:", a({
         href: beak + "/web" + path
       }, beak)
@@ -2316,7 +2322,8 @@ module.exports = query({
     head: 'r',
     meta: 'j',
     name: 't',
-    path: 't'
+    path: 't',
+    bump: 't'
   }
 }, recl({
   displayName: "Siblings",
@@ -2333,7 +2340,7 @@ module.exports = query({
   },
   render: function() {
     var kids, navClas;
-    kids = util.sortKids(this.props.kids);
+    kids = util.sortKids(this.props.kids, this.props.meta.navsort);
     navClas = {
       nav: true,
       'col-md-12': this.props.meta.navmode === 'navbar'
@@ -3155,8 +3162,8 @@ module.exports = {
       return new Date(str);
     }
   },
-  getKeys: function(kids) {
-    return _.map(this.sortKids(kids), 'name');
+  getKeys: function(kids, sortBy) {
+    return _.map(this.sortKids(kids, sortBy), 'name');
   },
   sortKids: function(kids, sortBy) {
     var _k, _kids, date, k, ref, ref1, v;
@@ -3170,11 +3177,13 @@ module.exports = {
     });
     switch (sortBy) {
       case 'bump':
-        return _.sortBy(kids, function(arg) {
-          var bump, name;
-          bump = arg.bump, name = arg.name;
-          return bump || name;
-        }).reverse();
+        return _.sortBy(kids, (function(_this) {
+          return function(arg) {
+            var bump, meta, name;
+            bump = arg.bump, meta = arg.meta, name = arg.name;
+            return _this.dateFromAtom(bump || (meta != null ? meta.date : void 0) || name);
+          };
+        })(this)).reverse();
       case 'date':
         _kids = [];
         for (k in kids) {
