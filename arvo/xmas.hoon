@@ -70,8 +70,11 @@
               cnt/@                                     ::  number of packets
           ==                                            ::
 ++  part  (pair frag tick)                              ::  fragment of packet
-++  silo                                                ::
-          $:  pol/(map ship bath)                       ::  network state
+++  silo                                                ::  global state
+          $:  $:  gur/grue                              ::  our certificates
+                  war/(map life ring)                   ::  our private keys
+              ==                                        ::
+              pol/(map ship bath)                       ::  network state
           ==                                            ::
 ++  skin  ?($none $open $fast $full)                    ::  encoding stem
 ++  stat                                                ::  pump statistics
@@ -1198,7 +1201,7 @@
   ..^$(syl old)
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
   ~
 ::

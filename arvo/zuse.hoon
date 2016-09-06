@@ -3362,7 +3362,7 @@
           $:  out/(unit (pair hand code))               ::  outbound key
               inn/(map hand code)                       ::  inbound keys
               cur/(pair life (unit life))               ::  versions: our their
-              gyr/gree                                  ::  pedigree to share
+              gez/gree                                  ::  pedigree to share
               pub/(map life pass)                       ::  their public keys
               war/(map life ring)                       ::  our private keys
           ==                                            ::
@@ -3559,7 +3559,8 @@
           ==
 ++  kiss-xmas                                           ::  in request ->$
           $%  {$hear p/lane q/@}                        ::
-              {$mess p/ship q/path r/*}                 ::
+              {$mess p/ship q/path r/*}                 ::  send message
+              {$gear p/gree q/(map life ring)}          ::  general update
               {$wake $~}                                ::
           ==                                            ::
 ++  card-xmas                                           ::  out cards
@@ -3630,25 +3631,18 @@
 ++  lama                                                ::  
   $:  dob/?                                             ::  & clean, | dirty
       exp/@da                                           ::  expiration date
-      own/(nap chip)                                    ::  identities
+      own/(map chip (pair @ta @t))                      ::  identity strings
       pub/pass                                          ::  public key
   ==                                                    ::
-++  chip                                                ::  identity
-  $%  {$sur asc/@ta uni/@t}                             ::  surname
-      {$giv asc/@ta uni/@t}                             ::  given name
-      {$mid asc/@ta uni/@t}                             ::  middle name 
-      {$nic asc/@ta uni/@t}                             ::  email address
-      ::  btc identity
-      ::  keybase identity
-      ::  ipfs identity
-      ::  fb/twitter/G+ identity
-  ==
-++  fist                                                ::  capability record
-  $:  who/@p                                            ::  identity
-      exp/(unit @da)                                    ::  expiration date
+++  chip                                                ::  identity field
+  $?  $bus                                              ::  business name
+      $giv                                              ::  given name
+      $sur                                              ::  surname
+      $had                                              ::  handle
+      $mid                                              ::  middle name 
   ==                                                    ::
 ++  gree  (map ship grue)                               ::  pki dump set
-++  grue  (pair life (map life (tale lama)))            ::
+++  grue  (pair life (map life (tale lama)))            ::  certificate
 ++  mind  {lyf/@ud who/@p}                              ::  key identifier
 ++  tale                                                ::  urbit-signed atom
   |*  typ/mold                                          ::
