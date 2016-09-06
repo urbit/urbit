@@ -154,7 +154,9 @@
   ::
       $line
     =*  ryt  `jael-right`[%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
-    !!
+    =<  abet
+    =<  abet
+    (give:(unto:(from p.tac) our) `(nap jael-right)`[ryt ~ ~])
   ==
 ::
 ++  from
