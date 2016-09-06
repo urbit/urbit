@@ -305,8 +305,9 @@
 ++  se-belt                                           ::  handle input
   |=  bet/dill-belt
   ^+  +>
-  ?:  ?=({?($hey $rez $yow) *} bet)                   ::  target-agnostic
+  ?:  ?=({?($cru $hey $rez $yow) *} bet)              ::  target-agnostic
     ?-  bet
+      {$cru *}  (se-dump:(se-text (trip p.bet)) q.bet)
       {$hey *}  +>(mir [0 ~])                         ::  refresh
       {$rez *}  +>(edg (dec p.bet))                   ::  resize window
       {$yow *}  ~&([%no-yow -.bet] +>)
@@ -487,12 +488,11 @@
   ++  ta-belt                                         ::  handle input
     |=  bet/dill-belt
     ^+  +>
-    ?<  ?=({?($hey $rez $yow) *} bet)                 ::  target-specific
+    ?<  ?=({?($cru $hey $rez $yow) *} bet)            ::  target-specific
     =.  blt  [q.blt `bet]                             ::  remember belt
     ?-  bet
       {$aro *}  (ta-aro p.bet)
       {$bac *}  ta-bac
-      {$cru *}  (ta-cru p.bet q.bet)
       {$ctl *}  (ta-ctl p.bet)
       {$del *}  ta-del
       {$met *}  (ta-met p.bet)
@@ -563,10 +563,6 @@
             %-  ta-hom(ris ~)
             (cat:edit pos.inp (snag (sub num.kil pos.kil) old.kil))
     ==
-  ::
-  ++  ta-cru                                          ::  hear crud
-    |=  {lab/@tas tac/(list tank)}
-    +>(+> (se-dump:(se-text (trip lab)) tac))
   ::
   ++  ta-del                                          ::  hear delete
     ^+  .
