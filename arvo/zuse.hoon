@@ -3627,14 +3627,17 @@
 ::
 ::::    %jael
   ::
-++  deod  {myn/mind syg/@uw}                            ::  signature
-++  lama                                                ::  
-  $:  dob/?                                             ::  & clean, | dirty
+++  lace  (tale lama)                                   ::  signed deed
+++  lama                                                ::  certificate deed
+  $:  dad/@p                                            ::  parent
+      dob/?                                             ::  & clean, | dirty
       exp/@da                                           ::  expiration date
-      own/(map chip (pair @ta @t))                      ::  identity strings
+      nym/(map chip (pair @ta @t))                      ::  identity strings
+      own/@p                                            ::  declared owner
       pub/pass                                          ::  public key
   ==                                                    ::
-++  chip                                                ::  identity field
++
+++  chip                                                ::  standard identity
   $?  $bus                                              ::  business name
       $giv                                              ::  given name
       $sur                                              ::  surname
@@ -3642,12 +3645,13 @@
       $mid                                              ::  middle name 
   ==                                                    ::
 ++  gree  (map ship grue)                               ::  pki dump set
-++  grue  (pair life (map life (tale lama)))            ::  certificate
+++  grue  (pair life (map life lace))                   ::  certificate
 ++  mind  {lyf/@ud who/@p}                              ::  key identifier
+++  safe  {myn/mind val/@uw}                            ::  signature
 ++  tale                                                ::  urbit-signed atom
   |*  typ/mold                                          ::
   $:  dat/typ                                           ::  data
-      syg/(set deod)                                    ::  signatures
+      syg/(set safe)                                    ::  signatures
   ==                                                    ::
 ++  wyll                                                ::  linear will 
   $:  len/@ud                                           ::

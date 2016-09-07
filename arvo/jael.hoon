@@ -51,18 +51,19 @@
       {$entry p/(map hand (pair @da code))}             ::  symmetric keys
       {$final p/(map ship @uvG)}                        ::  tickets
       {$fungi p/(map term @ud)}                         ::  fungibles
+      {$funny p/(map term *)}                           ::  extended 
       {$hello p/(set term)}                             ::  usernames
-      {$vague p/(map term *)}                           ::  extended 
+      {$lived p/life}                                   ::  PKI commitment
   ==                                                    ::
 ++  jael-task                                           ::  operations on
-  $%  {$give p/ship q/(nap jael-right)}                 ::  issue rights to
+  $%  {$give p/ship q/(nap jael-right)}                 ::  add rights
       {$line p/ship q/@da r/code}                       ::  outbound symkey
       {$link p/ship q/@da r/code}                       ::  inbound symkey
       {$meet p/gree}                                    ::  integrate truth
       {$over p/ship q/jael-task}                        ::  mirror operation
       {$pall p/ship q/life}                             ::  our life acked
       {$ring p/? q/(map chip (pair @ta @t)) r/ring}     ::  update private key
-      {$take p/ship q/(nap jael-right)}                 ::  revoke rights to
+      {$take p/ship q/(nap jael-right)}                 ::  subtract rights
       {$vain $~}                                        ::  watch self
       {$vest $~}                                        ::  watch assets
       {$view p/ship}                                    ::  watch urbit
@@ -99,6 +100,82 @@
       {$ping $~}                                        ::  ping
       {$seed p/gree}                                    ::  propagate
   ==                                                    ::
+++  jael-effect                                         ::  propagation effect
+  $%  {$cold p/ship q/life}                             ::  breach to life
+      {$helo p/ship}                                    ::  intro neighbor
+      {$sign p/ship q/life}                             ::  added signature
+      {$sure p/ship q/life}                             ::  signature confirmed
+      {$warm p/ship q/life}                             ::  advance to life
+      {$yell p/gree}                                    ::  propagate
+  ==                                                    ::
+++  meet                                                ::  merge pkis
+  |=  {via/@p new/gree old/gree}
+  =+  wen=(~(tap by new))
+  |^  ^-  (pair (list jael-effect) gree)
+      ?~  wen  [~ old]
+      =+  mor=$(wen t.wen)
+      =+  dis=(boat(old p.mor) i.wen)
+      [(weld p.dis p.mor) q.dis]
+  ::                                                    ::
+  ++  boat                                              ::  merge per ship
+    |=  {who/ship gur/grue}
+    =+  [num=1 rug=((bond |.(*grue)) (~(get by old) who))]
+    =|  pre/(unit lama)
+    |-  ^-  (pair (list jael-effect) gree)
+    ::
+    ::  lives in gur/grue are 1 through n
+    ::
+    ?:  (gth num p.gur)  [~ old]
+    ::
+    ::  lod is the old deed, wyn is the new deed
+    ::
+    =+  [lod=(~(get by q.rug) num) wyn=(~(get by q.gur) num)]
+    ::
+    ::  if no new deed, or new deed matches old deed
+    ::
+    ?:  |(?=($~ wyn) =(wyn lod))
+      ::
+      ::  there's nothing to learn, move forward
+      ::
+      $(num +(num), pre lod)
+    ::
+    ::  check all signatures in 
+    ::
+    ::
+    ::  if there is an old deed
+    ::
+    ?^  lod
+      ::
+      ::  merge old and new 
+      ::
+    =^  wax  ^-  lama
+
+    ?^  lod
+      
+    ::
+
+  ::                                                    ::
+  ++  look                                              ::  get public key
+    |=  myn/mind 
+    ^-  (unit @)
+    |^  ((bond |.((find(old new) myn))) (find myn))
+    ++  find
+      ^-  (unit @)
+      %+  biff  (~(get by old) who.myn)
+      |=  gur/grue
+      %+  biff  (~(get by q.gur) lyf.myn)
+      |=(lama `pub)
+    --
+  ::
+  ++  good                                              ::  check signature
+    |=  {myn/mind ash/@ val/@}
+    ^-  %&
+    =*  pub
+
+    =*  pub  
+      %.  (~(get by 
+  --
+
 ++  move  {p/duct q/{$gift jael-gift}}                  ::  local move
 --                                                      ::
 .  ==                                                   ::
