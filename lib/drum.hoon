@@ -92,6 +92,7 @@
       ~                                                 ::  fur
       ~                                                 ::  bin
   ==                                                    ::
+::
 ++  drum-port
   |=  old/?(drum-part drum-part-old)  ^-  drum-part
   ?-  &2.old
@@ -131,7 +132,7 @@
     ++  move  (pair bone card)                        ::  user-level move
     --
 |_  {moz/(list move) biz/(list dill-blit)}
-++  diff-sole-effect-phat                             ::
+++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
   =+  gyl=(drum-phat way)
@@ -145,34 +146,34 @@
   =<  se-abet  =<  se-view
   (se-text "[{<src>}, driving {<our>}]")
 ::
-++  poke-dill-belt                                    ::
+++  poke-dill-belt                                    ::  terminal event
   |=  bet/dill-belt
   =<  se-abet  =<  se-view
   (se-belt bet)
 ::
-++  poke-start                                        ::
+++  poke-start                                        ::  start app
   |=  wel/well
   =<  se-abet  =<  se-view
   (se-born wel)
 ::
-++  poke-link                                         ::
+++  poke-link                                         ::  connect app
   |=  gyl/gill
   =<  se-abet  =<  se-view
   (se-link gyl)
 ::
-++  poke-unlink                                       ::
+++  poke-unlink                                       ::  disconnect app
   |=  gyl/gill
   =<  se-abet  =<  se-view
   (se-klin gyl)
 ::
-++  poke-exit                                         ::
+++  poke-exit                                         ::  shutdown
   |=($~ se-abet:(se-blit-sys `dill-blit`[%qit ~]))    ::
 ::
-++  poke-put                                          ::
+++  poke-put                                          ::  write file
   |=  {pax/path txt/@}
   se-abet:(se-blit-sys [%sav pax txt])                ::
 ::
-++  reap-phat                                         ::
+++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
   =+  gyl=(drum-phat way)
@@ -180,7 +181,7 @@
     (se-join gyl)
   (se-dump:(se-drop & gyl) u.saw)
 ::
-++  take-coup-phat                                    ::
+++  take-coup-phat                                    ::  ack poke
   |=  {way/wire saw/(unit tang)}
   =<  se-abet  =<  se-view
   ?~  saw  +>
@@ -190,7 +191,7 @@
   :_  u.saw
   >[%drum-coup-fail src ost gyl]<
 ::
-++  take-onto                                         ::
+++  take-onto                                         ::  ack start
   |=  {way/wire saw/(each suss tang)}
   =<  se-abet  =<  se-view
   ?>  ?=({@ @ $~} way)
@@ -228,6 +229,7 @@
   [ost %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]
 ::
 ++  se-ably  (~(has by sup) ost)                      ::  caused by console
+::
 ++  se-adit                                           ::  update servers
   ^+  .
   %+  roll  (~(tap in ray))
@@ -359,7 +361,7 @@
   ?>  ?=($~ (~(got by fug) gyl))
   (se-alas(fug (~(put by fug) gyl `*target)) gyl)
 ::
-++  se-nuke                                           ::  teardown
+++  se-nuke                                           ::  teardown connection
   |=  gyl/gill
   ^+  +>
   (se-drop:(se-pull gyl) & gyl)
@@ -675,41 +677,41 @@
     ^+  +>
     =.  ris  ~
     ?+    key    ta-bel
-      $dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))
+      $dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))      ::  last "arg" from hist
               ta-bel
             =+  old=`(list @c)`i.old.hit
             =+  sop=(ta-jump(buf.say.inp old) %l %ace (lent old))
             (ta-hom (cat:edit pos.inp (slag sop old)))
             ::
-      $bac  ?:  =(0 pos.inp)
+      $bac  ?:  =(0 pos.inp)                          ::  kill left-word
               ta-bel
             =+  sop=(ta-off %l %edg pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
             ::
-      $b    ?:  =(0 pos.inp)
+      $b    ?:  =(0 pos.inp)                          ::  jump left-word
               ta-bel
             +>(pos.inp (ta-jump %l %edg pos.inp))
             ::
-      $c    ?:  =(pos.inp (lent buf.say.inp))
+      $c    ?:  =(pos.inp (lent buf.say.inp))         ::  capitalize
               ta-bel
             =+  sop=(ta-jump %r %wrd pos.inp)
             %-  ta-hom(pos.inp (ta-jump %r %edg sop))
             (rep:edit [sop 1] (ucas (swag [sop 1] buf.say.inp)))
             ::
-      $d    ?:  =(pos.inp (lent buf.say.inp))
+      $d    ?:  =(pos.inp (lent buf.say.inp))         ::  kill right-word
               ta-bel
             (ta-kil %r [pos.inp (ta-off %r %edg pos.inp)])
             ::
-      $f    ?:  =(pos.inp (lent buf.say.inp))
+      $f    ?:  =(pos.inp (lent buf.say.inp))         ::  jump right-word
               ta-bel
             +>(pos.inp (ta-jump %r %edg pos.inp))
             ::
       $r    %-  ta-hom(lay.hit (~(put by lay.hit) pos.hit ~))
-            :-  %set
+            :-  %set                                  ::  revert hist edit
             ?:  =(pos.hit num.hit)  ~
             (snag (sub num.hit +(pos.hit)) old.hit)
             ::
-      $t    =+  a=(ta-jump %r %edg pos.inp)
+      $t    =+  a=(ta-jump %r %edg pos.inp)           ::  transpose words
             =+  b=(ta-jump %l %edg a)
             =+  c=(ta-jump %l %edg b)
             ?:  =(b c)
@@ -722,7 +724,7 @@
                 (rep:edit prev (swag next buf.say.inp))
             ==
             ::
-      ?($u $l)
+      ?($u $l)                                        ::  upper/lower case
             ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             =+  case=?:(?=($u key) ucas lcas)
@@ -730,7 +732,7 @@
             =+  sel=[sop (ta-off %r %edg sop)]
             (ta-hom (rep:edit sel (case (swag sel buf.say.inp))))
             ::
-      $y    ?.  ?&  (gth num.kil 0)
+      $y    ?.  ?&  (gth num.kil 0)                   ::  rotate & yank
                     ?=(^ p.blt)
                     ?|  ?=({$ctl $y} u.p.blt)
                         ?=({$met $y} u.p.blt)
