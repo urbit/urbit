@@ -751,15 +751,13 @@
     |=  sop/@ud
     ^+  +>
     ?:  =(sop pos.hit)  +>
-    %+  %=  ta-hom
+    %-  %=  ta-hom
           pos.hit  sop
-          lay.hit  %+  ~(put by lay.hit)
-                     pos.hit
-                   buf.say.inp
+          lay.hit  (~(put by lay.hit) pos.hit buf.say.inp)
         ==
-      %set
-    %-  (bond |.((snag (sub num.hit +(sop)) old.hit)))
-    (~(get by lay.hit) sop)
+    :-  %set
+    %.  (~(get by lay.hit) sop)
+    (bond |.((snag (sub num.hit +(sop)) old.hit)))
   ::
   ++  ta-nex                                          ::  advance history
     ?:  ?|  ?=($~ buf.say.inp)
