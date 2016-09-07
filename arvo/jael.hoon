@@ -41,10 +41,16 @@
       vew/(set duct)                                    ::  watchers
   ==                                                    ::
 ++  jael-friend                                         ::  relationship 
-  $:  luf/(unit life)                                   ::  life known
+  $:  luf/(unit life)                                   ::  life as known to
       lab/(nap jael-right)                              ::  promises to
       vow/(set duct)                                    ::  watchers
   ==                                                    ::
+++  jael-inference                                      ::  learning result
+  $%  {$hard p/ship}                                    ::  rough update to
+      {$meet p/ship}                                    ::  first contact with
+      {$soft p/ship}                                    ::  soft update to
+      {$sign p/ship q/gree}                             ::  return signature
+  ==
 ++  jael-right                                          ::  urbit commitment
   $%  {$block p/pile}                                   ::  address block
       {$email p/(set @ta)}                              ::  email addresses
@@ -158,8 +164,49 @@
     =<  abet
     (give:(unto:(from p.tac) our) `(nap jael-right)`[ryt ~ ~])
   ::
-      $
+      $meet
+    =^  fur  pub.urb.nav.lex  (~(meet da pub.urb.nav.lex) p.tac)
+    [~ lex]
+  ::
+      $over
+    $(our p.tac, tac q.tac)
+  ::
+      $pall
+    =<  abet
+    =<  abet
+    (pall:(unto:(from our) p.tac) q.tac)
   ==
+::
+++  meld                                      
+  |=  {new/gree old/gree}
+  =+  
+  =<  work
+  |%  ++  abet
+        
+      ++  work
+        =+  wen=(~(tap by new))
+        |-  ^-  {(list jael-inference
+  ++  
+  =+  wen=(~(tap by new))
+  |-  ^-  {gree gree}
+  ?~  wen  [~ old]
+
+  =+  mor=$(wen t.wen)
+   
+
+
+++  da                                                  ::  pedigree core
+  |_  {via/ship ped/gree}
+  ++  meet
+    |=  new/gree
+    =+  wen=(~(tap by new))
+    |-  ^-  {(list jael-inference) gree}
+    ?~  wen  [~ ped]
+    =+  mor=$(wen t.wen)
+
+
+     
+  --
 ::
 ++  from
   |=  rex/ship
@@ -183,6 +230,16 @@
       |=  lab/(nap jael-right)
       ^+  +>
       !!
+    ::
+    ++  pall
+      |=  lyf/life
+      ?>  |(?=($~ luf) =(u.luf lyf) =(
+      +>(luf `lyf)
+      %=    +>
+          luf
+        ?~  luf  `lyf
+        ?:  =(u.luf 
+      ==
     --
   --
 --

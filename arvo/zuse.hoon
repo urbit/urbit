@@ -3630,6 +3630,7 @@
 ++  deod  {myn/mind syg/@uw}                            ::  signature
 ++  lama                                                ::  
   $:  dob/?                                             ::  & clean, | dirty
+      dad/ship                                          ::  parent
       exp/@da                                           ::  expiration date
       own/(map chip (pair @ta @t))                      ::  identity strings
       pub/pass                                          ::  public key
