@@ -4698,37 +4698,27 @@
           ==
         ::
             $p
-          =+  dyx=(met 3 q.p.lot)
+          =+  sxz=(feen:ob q.p.lot)
+          =+  dyx=(met 3 sxz)
           :-  '~'
           ?:  (lte dyx 1)
-            (weld (trip (tod:po q.p.lot)) rep)
-          ?:  =(2 dyx)
-            ;:  weld
-              (trip (tos:po (end 3 1 q.p.lot)))
-              (trip (tod:po (rsh 3 1 q.p.lot)))
-              rep
-            ==
-          =+  [dyz=(met 5 q.p.lot) fin=| dub=&]
+            (weld (trip (tod:po sxz)) rep)
+          =+  dyy=(met 4 sxz)
+          =+  imp=*@
           |-  ^-  tape
-          ?:  =(0 dyz)
+          ?:  =(imp dyy)
             rep
-          %=    $
-              fin      &
-              dub      !dub
-              dyz      (dec dyz)
-              q.p.lot  (rsh 5 1 q.p.lot)
-              rep
-            =+  syb=(wren:un (end 5 1 q.p.lot))
-            =+  cog=~(zig mu [(rsh 4 1 syb) (end 4 1 syb)])
-            ;:  weld
-              (trip (tos:po (end 3 1 p.cog)))
-              (trip (tod:po (rsh 3 1 p.cog)))
-              `tape`['-' ~]
-              (trip (tos:po (end 3 1 q.cog)))
-              (trip (tod:po (rsh 3 1 q.cog)))
-              `tape`?.(fin ~ ['-' ?.(dub ~ ['-' ~])])
-              rep
-            ==
+          %=  $
+            sxz  (rsh 4 1 sxz)
+            imp      +(imp)
+            rep
+              =+  log=(end 4 1 sxz)
+              ;:  weld
+                (trip (tos:po (rsh 3 1 log)))
+                (trip (tod:po (end 3 1 log)))
+                ?:(=((mod imp 4) 0) ?:(=(imp 0) "" "--") "-")
+                rep
+             ==
           ==
         ::
             $r
