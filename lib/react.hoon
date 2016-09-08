@@ -25,7 +25,7 @@
   ~+  ^-  (map term cord)
   %-  molt  ^-  (list (pair term cord))  
   :-  [%class 'className']
-  =-  (rash - (more next (cook |=(a/tape [(cass a) (crip a)]) (star alf))))  
+  =-  (rash - (more next (cook |=(a/tape [(crip (cass a)) (crip a)]) (star alf))))
   '''
   accept acceptCharset accessKey action allowFullScreen allowTransparency alt
   async autoComplete autoFocus autoPlay cellPadding cellSpacing charSet checked

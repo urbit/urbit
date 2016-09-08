@@ -3589,13 +3589,12 @@
 ::
 ++  cass                                                ::  lowercase
   |=  vib/tape
-  %+  rap  3
+  ^-  tape
   (turn vib |=(a/@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
 ::
 ++  cuss                                                ::  uppercase
   |=  vib/tape
-  ^-  @t
-  %+  rap  3
+  ^-  tape
   (turn vib |=(a/@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
 ::
 ++  crip  |=(a/tape `@t`(rap 3 a))                      ::  tape to cord

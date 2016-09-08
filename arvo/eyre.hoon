@@ -173,7 +173,7 @@
   |=  hed/(list {p/@t q/@t})  ^-  math
   %+  roll  hed
   |=  {a/{p/cord q/cord} b/math}
-  =.  p.a  (cass (trip p.a))
+  =.  p.a  (crip (cass (trip p.a)))
   (~(add ja b) p.a q.a)
 ::
 ++  fcgi                                                ::  credential caboose
@@ -1129,7 +1129,7 @@
         ^-  (unit perk)
         =.  mef
           ?.  ?=($post mef)  mef
-          ?+    (skim quy |=({a/@t b/@t} &(=('' b) =(a (cuss (trip a))))))
+          ?+    (skim quy |=({a/@t b/@t} &(=('' b) =(a (crip (cuss (trip a)))))))
               ~|(bad-quy+[req='"?PUT" or "?DELETE"' quy] !!)
             $~   mef
             {{$'DELETE' $~} $~}  %delt

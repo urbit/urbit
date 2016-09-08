@@ -177,7 +177,7 @@
     |=  {med/meth url/purl qen/quay-enc}  ^-  tape
     =.  qen  (sort qen aor)
     %-  join-urle
-    :~  (trip (cuss (trip `@t`med)))
+    :~  (cuss (trip `@t`med))
         (earn url)
         (joint "&" qen)
     ==
