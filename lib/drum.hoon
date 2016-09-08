@@ -139,11 +139,11 @@
   (se-diff gyl fec)
 ::
 ++  peer                                              ::
-  |=   pax/path  =<  se-abet
-  ^+  +>
+  |=  pax/path
   ~|  [%drum-unauthorized our+our src+src]            ::  ourself
   ?>  (team our src)                                  ::  or our own moon
-  se-view:(se-text "[{<src>}, driving {<our>}]")
+  =<  se-abet  =<  se-view
+  (se-text "[{<src>}, driving {<our>}]")
 ::
 ++  poke-dill-belt                                    ::
   |=  bet/dill-belt
@@ -186,8 +186,9 @@
   ?~  saw  +>
   =+  gyl=(drum-phat way)
   ?:  (se-aint gyl)  +>.$
-  =.  u.saw  :_(u.saw >[%drum-coup-fail src ost gyl]<)
-  (se-dump:(se-drop & gyl) u.saw)
+  %-  se-dump:(se-drop & gyl)
+  :_  u.saw
+  >[%drum-coup-fail src ost gyl]<
 ::
 ++  take-onto                                         ::
   |=  {way/wire saw/(each suss tang)}
