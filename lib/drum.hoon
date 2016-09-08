@@ -466,20 +466,19 @@
   ++  ta-aro                                          ::  hear arrow
     |=  key/?($d $l $r $u)
     ^+  +>
+    =.  ris  ~
     ?-  key
-      $d  =.  ris  ~
-          ?.  =(num.hit pos.hit)
+      $d  ?.  =(num.hit pos.hit)
             (ta-mov +(pos.hit))
           ?:  =(0 (lent buf.say.inp))
             ta-bel
           (ta-hom:ta-nex %set ~)
       $l  ?:  =(0 pos.inp)  ta-bel
-          +>(pos.inp (dec pos.inp), ris ~)
+          +>(pos.inp (dec pos.inp))
       $r  ?:  =((lent buf.say.inp) pos.inp)
             ta-bel
-          +>(pos.inp +(pos.inp), ris ~)
-      $u  =.  ris  ~
-          ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
+          +>(pos.inp +(pos.inp))
+      $u  ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
     ==
   ::
   ++  ta-bel                                          ::  beep
@@ -520,10 +519,11 @@
   ++  ta-ctl                                          ::  hear control
     |=  key/@ud
     ^+  +>
-    ?+    key  ta-bel
-        $a  +>(pos.inp 0, ris ~)
+    =.  ris  ?.(?=(?($g $r) key) ~ ris)
+    ?+    key    ta-bel
+        $a  +>(pos.inp 0)
         $b  (ta-aro %l)
-        $c  ta-bel(ris ~)
+        $c  ta-bel
         $d  ?:  &(=(0 pos.inp) =(0 (lent buf.say.inp)))
               +>(liv |)
             ta-del
@@ -547,8 +547,7 @@
             ?:  |(=(0 pos.inp) (lth len 2))
               ta-bel
             =+  sop=(sub pos.inp ?:(=(len pos.inp) 2 1))
-            %-  ta-hom(ris ~)
-            (rep:edit [sop 2] (flop (swag [sop 2] buf.say.inp)))
+            (ta-hom (rep:edit [sop 2] (flop (swag [sop 2] buf.say.inp))))
         $u  ?:  =(0 pos.inp)
               ta-bel
             (ta-kil %l [0 pos.inp])
@@ -560,8 +559,7 @@
         $x  +>(+> se-anon)
         $y  ?:  =(0 num.kil)
               ta-bel
-            %-  ta-hom(ris ~)
-            (cat:edit pos.inp (snag (sub num.kil pos.kil) old.kil))
+            (ta-hom (cat:edit pos.inp (snag (sub num.kil pos.kil) old.kil)))
     ==
   ::
   ++  ta-del                                          ::  hear delete
@@ -640,7 +638,6 @@
     =+  buf=(swag sel buf.say.inp)
     %.  (cut:edit sel)
     %=  ta-hom
-        ris  ~
         kil
       ?.  ?&  ?=(^ old.kil)
               ?=(^ p.blt)
@@ -675,13 +672,14 @@
   ::
   ++  ta-met                                          ::  meta key
     |=  key/@ud
+    ^+  +>
+    =.  ris  ~
     ?+    key    ta-bel
       $dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))
               ta-bel
             =+  old=`(list @c)`i.old.hit
             =+  sop=(ta-jump(buf.say.inp old) %l %ace (lent old))
-            %-  ta-hom(ris ~)
-            (cat:edit pos.inp (slag sop old))
+            (ta-hom (cat:edit pos.inp (slag sop old)))
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
@@ -730,8 +728,7 @@
             =+  case=?:(?=($u key) ucas lcas)
             =+  sop=(ta-jump %r %wrd pos.inp)
             =+  sel=[sop (ta-off %r %edg sop)]
-            %-  ta-hom
-            (rep:edit sel (case (swag sel buf.say.inp)))
+            (ta-hom (rep:edit sel (case (swag sel buf.say.inp))))
             ::
       $y    ?.  ?&  (gth num.kil 0)
                     ?=(^ p.blt)
@@ -741,7 +738,7 @@
               ta-bel
             =+  las=(lent (snag (sub num.kil pos.kil) old.kil))
             =+  pos=?:(=(1 pos.kil) num.kil (dec pos.kil))
-            %-  ta-hom(pos.kil pos, ris ~)
+            %-  ta-hom(pos.kil pos)
             %+  rep:edit
               [(sub pos.inp las) las]
             (snag (sub num.kil pos) old.kil)
@@ -760,15 +757,16 @@
     (bond |.((snag (sub num.hit +(sop)) old.hit)))
   ::
   ++  ta-nex                                          ::  advance history
+    ^+  .
+    =.  ris  ~
+    =.  lay.hit  ~
     ?:  ?|  ?=($~ buf.say.inp)
             &(?=(^ old.hit) =(buf.say.inp i.old.hit))
         ==
-      %_(. pos.hit num.hit, ris ~, lay.hit ~)
+      .(pos.hit num.hit)
     %_  .
       num.hit  +(num.hit)
       pos.hit  +(num.hit)
-      ris  ~
-      lay.hit  ~
       old.hit  [buf.say.inp old.hit]
     ==
   ::
