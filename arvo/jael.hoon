@@ -57,8 +57,6 @@
       {$entry p/(map hand (pair @da code))}             ::  symmetric keys
       {$final p/(map ship @uvG)}                        ::  tickets
       {$fungi p/(map term @ud)}                         ::  fungibles
-      {$funny p/(map term *)}                           ::  extended 
-      {$hello p/(set term)}                             ::  usernames
       {$lived p/life}                                   ::  PKI commitment
   ==                                                    ::
 ++  jael-task                                           ::  operations on
@@ -110,44 +108,131 @@
   $%  {$cold p/ship q/life}                             ::  breach to life
       {$helo p/ship}                                    ::  intro neighbor
       {$sign p/ship q/life}                             ::  added signature
+      {$stir p/ship q/life}                             ::  updated signature
       {$sure p/ship q/life}                             ::  signature confirmed
       {$warm p/ship q/life}                             ::  advance to life
       {$yell p/gree}                                    ::  propagate
   ==                                                    ::
-++  meet                                                ::  merge pkis
+++  meet                                                ::  merge worlds
   |=  {via/@p new/gree old/gree}
+  ^-  (pair (list jael-effect) gree)
   =+  wen=(~(tap by new))
   |^  ^-  (pair (list jael-effect) gree)
       ?~  wen  [~ old]
       =+  mor=$(wen t.wen)
-      =+  dis=(boat(old p.mor) i.wen)
-      [(weld p.dis p.mor) q.dis]
+      =+  dis=(boat i.wen)
+      [(weld p.dis p.mor) (~(put by q.mor) p.i.wen q.dis)]
   ::                                                    ::
   ++  boat                                              ::  merge per ship
     |=  {who/ship gur/grue}
-    =+  [num=1 rug=((bond |.(*grue)) (~(get by old) who))]
-    =|  pre/(unit lama)
-    |-  ^-  (pair (list jael-effect) gree)
+    ^-  (pair (list jael-effect) grue)
+    =+  rug=((bond |.(*grue)) (~(get by old) who))
+    ?:  =(gur rug)  [~ rug]
+    =+  :*  num=1
+            end=(max p.gur p.rug)
+        ==
+    =|  $:  pre/(unit lace)
+            fex/(list jael-effect)
+            gum/(list (pair life lace))
+        ==
+    =-  [(flop p) `grue`[end (~(gas by *(map life lace)) q]]
+    |-  ^+  [p=fex q=gum]
     ::
-    ::  lives in gur/grue are 1 through n
+    ::  lives are 1 through n
     ::
-    ?:  (gth num p.gur)  [~ old]
+    ?:  (gth num end)  [fex gum]
     ::
-    ::  lod is the old deed, wyn is the new deed
+    ::  `lod` is the old deed, `wan` the new deed
     ::
-    =+  [lod=(~(get by q.rug) num) wyn=(~(get by q.gur) num)]
+    =+  :-  lod=(~(get by q.rug) num)
+            wan=(~(get by q.gur) num)
     ::
-    ::  if no new deed, or new deed matches old deed
+    ::  build a new deed and continue with it
     ::
-    ?:  |(?=($~ wyn) =(wyn lod))
+    =-  $(num +(num), fex p, pre `q, gum :_(gum [num q]))
+    ^-  (pair (list jael-effect) lace)
+    ::
+    ::  if no new information, do nothing
+    ::
+    ?:  |(?=($~ wan) =(wan lod))
+      ?>  ?=(^ lod) 
+      [fex u.lod]]
+    ::
+    ::  if we have an old deed at this life, merge them
+    ::
+    =+  ash=(sham dat.u.wan)
+    ?:  ?=(^ lod)
       ::
-      ::  there's nothing to learn, move forward
+      ::  deed data must be identical
       ::
-      $(num +(num), pre lod)
+      ?>  =(dat.u.wan dat.u.lod)
+      ::
+      ::  replace fresher signatures, add new ones
+      ::
+      =+  sow=`(list (trel ship life @))`(~(tap by syg.u.wan))
+      |-  ^-  (pair (list jael-effect) lace)
+      ?~  sow  [fex u.lod]
+      =+  ect=(~(get by u.lod) p.i.sow)
+      ::
+      ::  ignore obsolete or equal signature
+      ::
+      ?.  |(?=(~ ect) (gth q.i.sow p.u.ect))
+        $(sow t.sow)
+      ::
+      ::  merge new, or newer, signature
+      ::
+      ?>  (good [p.i.sow q.i.sow] ash r.i.sow)
+      %=  $
+        sow    t.sow
+        fex    [stir+who fex]
+        u.lod  (~(put by u.lod) p.i.sow [q r]:i.sow)
+      ==
     ::
-    ::  check all signatures in 
+    ::  new deed, if for an existing ship
     ::
+    ?.  =(1 num)
+      ?>  ?=(^ pre)
+      ::
+      ::  check that the previous deed has signed this one
+      ::
+      =+  laz=(~(got by syg.u.wan) who)
+      ?>  =(p.laz (dec num))
+      ?>  =(ash (need (sure:as:(com:nu:crub pub.dat.u.pre) *code q.laz)))
+      ::
+      ::  check the parent has signed, if necessary
+      ::
+      ?>  ?|  ::
+              ::  no parent signature if parent is unchanged, not a moon
+              ::
+              ?&  (=(dad.dat.u.pre dad.dat.u.wan)
+                  !=(%earl (clan who))
+              ==
+              ::
+              ::  no parent signature if we got this deed from the parent
+              ::
+              =(via dad.dat.u.wan)
+              ::
+              ::  valid parent signature required
+              ::
+              =+  par=(~(got by syg.u.wan) dad.dat.u.wan)
+              (good [dad.dat.u.wan p.par] ash q.par)
+          ==
+      u.wan 
     ::
+    ::  new deed for new ship
+    ::
+    ?:  (lth who 256)
+      ::
+      ::  initial galaxy public key must match hardcode
+      ::
+      ?>  =(pub.dat.u.wan (zeno who))
+    ::
+    ::  initial parent is predefined
+    ::
+    ?>  =(dad.dat.u.wan (sein who))
+    ?>  ?|  =(via dad.dat.u.wan)
+            
+        ==
     ::  if there is an old deed
     ::
     ?^  lod
@@ -163,23 +248,32 @@
   ::                                                    ::
   ++  look                                              ::  get public key
     |=  myn/mind 
-    ^-  (unit @)
-    |^  ((bond |.((find(old new) myn))) (find myn))
+    ^-  @
+    ::
+    ::  first galaxy key is hardcoded
+    ::
+    ?:  &((lth who.myn 256) =(1 lyf.myn))
+      (zeno who.myn) 
+    ::
+    ::  cascade search over old and new, new first
+    ::
+    |^  (need ((bond |.((find myn))) (find(old new) myn)))
     ++  find
       ^-  (unit @)
       %+  biff  (~(get by old) who.myn)
       |=  gur/grue
+      ::
+      ::  crash if this life is revoked
+      ::
+      ?>  =(p.gur lyf.myn)
       %+  biff  (~(get by q.gur) lyf.myn)
-      |=(lama `pub)
+      |=(lace `pub.dat)
     --
-  ::
-  ++  good                                              ::  check signature
+  ::                                                    ::
+  ++  good                                              ::  verify signature
     |=  {myn/mind ash/@ val/@}
-    ^-  %&
-    =*  pub
-
-    =*  pub  
-      %.  (~(get by 
+    ^-  ?
+    ?>(=(ash (need (sure:as:(com:nu:crub (look myn)) *code val))) &)
   --
 
 ++  move  {p/duct q/{$gift jael-gift}}                  ::  local move

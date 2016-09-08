@@ -3629,14 +3629,16 @@
   ::
 ++  lace  (tale lama)                                   ::  signed deed
 ++  lama                                                ::  certificate deed
+      doc/lamp                                          ::  metadata
+      pub/pass                                          ::  public key
+  ==                                                    ::
+++  lamp                                                ::  cert metadata
   $:  dad/@p                                            ::  parent
       dob/?                                             ::  & clean, | dirty
       exp/@da                                           ::  expiration date
       nym/(map chip (pair @ta @t))                      ::  identity strings
       own/@p                                            ::  declared owner
-      pub/pass                                          ::  public key
-  ==                                                    ::
-+
+  ==
 ++  chip                                                ::  standard identity
   $?  $bus                                              ::  business name
       $giv                                              ::  given name
@@ -3651,7 +3653,7 @@
 ++  tale                                                ::  urbit-signed atom
   |*  typ/mold                                          ::
   $:  dat/typ                                           ::  data
-      syg/(set safe)                                    ::  signatures
+      syg/(map ship (pair life @))                      ::  signatures
   ==                                                    ::
 ++  wyll                                                ::  linear will 
   $:  len/@ud                                           ::
