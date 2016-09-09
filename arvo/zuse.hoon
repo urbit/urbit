@@ -3629,7 +3629,7 @@
   ::
 ++  lace  (tale lama)                                   ::  signed deed
 ++  lama                                                ::  certificate deed
-      doc/lamp                                          ::  metadata
+  $:  doc/lamp                                          ::  metadata
       pub/pass                                          ::  public key
   ==                                                    ::
 ++  lamp                                                ::  cert metadata
@@ -3638,7 +3638,7 @@
       exp/@da                                           ::  expiration date
       nym/(map chip (pair @ta @t))                      ::  identity strings
       own/@p                                            ::  declared owner
-  ==
+  ==                                                    ::
 ++  chip                                                ::  standard identity
   $?  $bus                                              ::  business name
       $giv                                              ::  given name
@@ -3646,19 +3646,13 @@
       $had                                              ::  handle
       $mid                                              ::  middle name 
   ==                                                    ::
-++  grit                                                ::  
 ++  gree  (map ship grue)                               ::  pki dump set
 ++  grue  (pair life (map life lace))                   ::  certificate
-++  mind  {lyf/@ud who/@p}                              ::  key identifier
-++  safe  {myn/mind val/@uw}                            ::  signature
-++  tale                                                ::  urbit-signed atom
+++  mind  {who/@p lyf/@ud}                              ::  key identifier
+++  tale                                                ::  urbit-signed *
   |*  typ/mold                                          ::
   $:  dat/typ                                           ::  data
       syg/(map ship (pair life @))                      ::  signatures
-  ==                                                    ::
-++  wyll                                                ::  linear will 
-  $:  len/@ud                                           ::
-      log/(list (tale lama))                            ::
   ==                                                    ::
 ::
 ::::
