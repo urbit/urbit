@@ -195,12 +195,12 @@
   =<  se-abet  =<  se-view
   ?>  ?=({@ @ $~} way)
   ?>  (~(has by fur) i.t.way)
-  =+  wel=`well`[i.way i.t.way]
-  ?-  -.saw
-    $|  (se-dump p.saw)
-    $&  ?>  =(q.wel p.p.saw)
-        ::  =.  +>.$  (se-text "live {<p.saw>}")
-        +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
+  =/  wel/well  [i.way i.t.way]
+  ?-  saw
+    {$| *}  (se-dump p.saw)
+    {$& *}  ?>  =(q.wel p.p.saw)
+            ::  =.  +>.$  (se-text "live {<p.saw>}")
+            +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
   ==
 ::
 ++  quit-phat                                         ::
@@ -641,22 +641,22 @@
   ++  ta-fec                                          ::  apply effect
     |=  fec/sole-effect
     ^+  +>
-    ?-    -.fec
-      $bel  ta-bel
-      $blk  +>
-      $clr  +>(+> (se-blit fec))
-      $det  (ta-got +.fec)
-      $err  (ta-err +.fec)
-      $mor  |-  ^+  +>.^$
-            ?~  p.fec  +>.^$
-            $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
-      $nex  ta-nex
-      $pro  (ta-pro +.fec)
-      $tan  (ta-tan p.fec)
-      $sag  +>(+> (se-blit fec))
-      $sav  +>(+> (se-blit fec))
-      $txt  $(fec [%tan [%leaf p.fec]~])
-      $url  +>(+> (se-blit fec))
+    ?-  fec
+      {$bel *}  ta-bel
+      {$blk *}  +>
+      {$clr *}  +>(+> (se-blit fec))
+      {$det *}  (ta-got +.fec)
+      {$err *}  (ta-err p.fec)
+      {$mor *}  |-  ^+  +>.^$
+                ?~  p.fec  +>.^$
+                $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
+      {$nex *}  ta-nex
+      {$pro *}  (ta-pro +.fec)
+      {$tan *}  (ta-tan p.fec)
+      {$sag *}  +>(+> (se-blit fec))
+      {$sav *}  +>(+> (se-blit fec))
+      {$txt *}  (ta-tan [[%leaf p.fec] ~])
+      {$url *}  +>(+> (se-blit fec))
     ==
   ::
   ++  ta-dog                                          ::  change cursor
@@ -666,14 +666,14 @@
       =+  len=(lent buf.say.inp)
       %+  min  len
       |-  ^-  @ud
-      ?-  -.ted
-        $del  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
-        $ins  ?:((gte pos.inp p.ted) +(pos.inp) pos.inp)
-        $mor  |-  ^-  @ud
-              ?~  p.ted  pos.inp
-              $(p.ted t.p.ted, pos.inp ^$(ted i.p.ted))
-        $nop  pos.inp
-        $set  len
+      ?-  ted
+        {$del *}  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
+        {$ins *}  ?:((gte pos.inp p.ted) +(pos.inp) pos.inp)
+        {$mor *}  |-  ^-  @ud
+                  ?~  p.ted  pos.inp
+                  $(p.ted t.p.ted, pos.inp ^$(ted i.p.ted))
+        {$nop *}  pos.inp
+        {$set *}  len
       ==
     ==
   ::
@@ -753,9 +753,9 @@
   ++  ta-met                                          ::  meta key
     |=  key/@ud
     ?+    key    ta-bel
-      $dot  ?.  &(?=(^ old.hit) ?=(^ -.old.hit))
+      $dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))
               ta-bel
-            =+  old=`(list @c)`-.old.hit
+            =+  old=`(list @c)`i.old.hit
             =+  b=(bwrd (lent old) old nedg)
             %-  ta-hom(ris ~)
             (ta-cat pos.inp (slag b old))
@@ -862,8 +862,8 @@
     (~(get by lay.hit) sop)
   ::
   ++  ta-nex                                          ::  advance history
-    ?:  ?|  =(0 (lent buf.say.inp))
-            &(?=(^ old.hit) =(-.old.hit buf.say.inp))
+    ?:  ?|  ?=($~ buf.say.inp)
+            &(?=(^ old.hit) =(buf.say.inp i.old.hit))
         ==
       %_(. pos.hit num.hit, ris ~, lay.hit ~)
     %_  .
