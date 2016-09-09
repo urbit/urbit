@@ -111,7 +111,7 @@
   ==
 ++  cyst                                                ::  client session
   $:  ced/cred                                          ::  credential
-      {him/ship aut/(set ship)}                         ::  authenticated
+      him/ship                                          ::  authenticated
       cug/(list @t)                                     ::  unacked cookies
       lax/@da                                           ::  last used
       :: vew/(set oryx)                                 ::  open views index
@@ -432,7 +432,7 @@
           '/~/as/~' + urb.ship) +
         document.location.search
     }
-    if(urb.foreign && urb.auth.indexOf(urb.ship) !== -1){
+    if(urb.foreign && urb.user !== urb.ship){
       req("/~/auth.json?PUT",
           {ship:urb.ship,code:null},
           function(){urb.redir()})
@@ -1521,7 +1521,6 @@
         sein+(jape +:<(sein our)>)
         ship+(jape +:<our>)
         user+(jape +:<him>)
-        auth+a+(turn (~(tap in aut)) |=(a/@p (jape +:<a>)))
       ==
     --
   ::
