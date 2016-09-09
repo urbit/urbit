@@ -1432,31 +1432,16 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       ~(. ya u.lig u.cyz(cug ~))
     ::
-    ++  new-ya  |=(ses/hole ~(. ya ses (new-cyst ses)))
-    ++  new-cyst
-      |=  ses/hole
-      =*  sec  p.hat
-      ^-  cyst
-      :*  ^-  cred
-          :*  hat(p sec)
-              ~
-              'not-yet-implemented'
-              ::(rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
-          ::
-              =+  lag=(~(get by maf) %accept-language)
-              ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
-          ::
-              cip
-              ~
-          ==
-          [`@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses)))) ~]
+    ++  new-ya  |=(ses/hole (new:ya ses new-cred))
+    ++  new-cred
+      %*  .  *cred
+        hut  hat
+        orx  'not-yet-implemented'
+        acl
+          =+  lag=(~(get by maf) %accept-language)
+          ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
       ::
-          [(set-cookie cookie-prefix ses)]~
-      ::
-          now
-          ~
-          ~
-        ::  [1 ~]
+        cip  cip
       ==
     --
   ::
@@ -1466,8 +1451,16 @@
     =|  {ses/hole cyst}
     =*  cyz  ->
     |%
+    ++  new  |=({a/hole b/cred} init(ses a, ced b))
     ++  abet  ..ya(wup (~(put by wup) ses cyz))
     ++  abut  ..ya(wup (~(del by wup) ses))
+    ++  init
+      %_  .
+        him  `@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses))))
+        cug  [(set-cookie cookie-prefix ses)]~
+        lax  now
+      ==
+    ::
     ++  foreign-auth
       |=  {him/ship pul/purl}  ^+  ..ya
       =.  way  (~(put by way) him pul hen)
