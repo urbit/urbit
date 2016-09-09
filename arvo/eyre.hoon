@@ -118,7 +118,8 @@
   ==                                                    ::
 ::
 ++  stem                                                ::  client view
-  $:  him/ship                                          ::  static identity
+  $:  ses/hole                                          ::  associated session
+      him/ship                                          ::  static identity
       ude/(unit {p/duct q/?})                           ::  stream long-poll?
       era/@da                                           ::  next wake
       die/@da                                           ::  collection date
@@ -1074,9 +1075,13 @@
       ?.  &(?=({$~ $json} p.pok) ?=($post mef) ?=(^ bod) !is-anon)  &
       =+  oxe=grab-oryx
       ?~  oxe  |
-      ?:  (~(has in vew.cyz:for-client) u.oxe)
-        &
-      ~&(bad-oryx+[u.oxe vew.cyz:for-client] &)         ::  XX security
+      =/  ses  (session-from-cookies cookie-prefix maf)
+      ?~  ses  ~&(%oryx-no-cookie &)  :: XX security
+      =/  cyz  (~(get by wix) u.oxe)
+      ?~  cyz  ~&(%bad-oryx+u.oxe &)  :: XX security?
+      ?.  =(u.ses ses.u.cyz)  
+        ~&(oryx-ses-mismatch+[orx=u.oxe u.ses ses.u.cyz] &)  :: XX security
+      &
     ::
     ++  grab-json
       ?.  ?=(?($post $put $delt) mef)
@@ -1098,7 +1103,7 @@
           =+  hem=as-aux-request
           ?^  hem
             ?.  check-oryx
-              ~|(%bad-oryx ~|([grab-oryx vew.cyz:for-client] !!))
+              ~|(%bad-oryx ~|([grab-oryx ses:for-client] !!))
             [%& u.hem]
           =+  bem=as-beam
           ?^  bem  [%& %beam u.bem]
@@ -1506,7 +1511,7 @@
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
       =.  vew  (~(put in vew) orx)
       =+  ire=(oryx-to-ixor orx)
-      =.  ..ix  ~(init ix ire %*(. *stem him him, p.eve 1))
+      =.  ..ix  ~(init ix ire %*(. *stem ses ses, him him, p.eve 1))
       ::  ~&  stat-ire+`@t`ire
       [orx abet]
     ::
