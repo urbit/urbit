@@ -3041,11 +3041,11 @@
   |=  who/ship  ^-  ship
   =+  mir=(clan who)
   ?-  mir
-    $czar  who
+    $czar  ~zod
     $king  (end 3 1 who)
     $duke  (end 4 1 who)
     $earl  (end 5 1 who)
-    $pawn  `@p`0
+    $pawn  (end 4 1 who)
   ==
 ::
 ++  team                                                ::  our / our moon
@@ -3646,6 +3646,7 @@
       $had                                              ::  handle
       $mid                                              ::  middle name 
   ==                                                    ::
+++  grit                                                ::  
 ++  gree  (map ship grue)                               ::  pki dump set
 ++  grue  (pair life (map life lace))                   ::  certificate
 ++  mind  {lyf/@ud who/@p}                              ::  key identifier

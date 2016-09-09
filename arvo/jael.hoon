@@ -104,6 +104,14 @@
       {$ping $~}                                        ::  ping
       {$seed p/gree}                                    ::  propagate
   ==                                                    ::
+++  jael-action                                         ::  pki change
+  $:  why/?($hear $make)                                ::  &=import, |=export
+      gut/(list jael-change)                            ::  new information
+  ==                                                    ::
+++  jael-change                                         ::  pki delta
+  $%  {$step p/ship q/life r/lace}                      ::  new deed
+      {$sure p/ship q/life r/mind s/@}                  ::  new signature
+  ==                                                    ::
 ++  jael-effect                                         ::  propagation effect
   $%  {$cold p/ship q/life}                             ::  breach to life
       {$helo p/ship}                                    ::  intro neighbor
@@ -113,19 +121,19 @@
       {$warm p/ship q/life}                             ::  advance to life
       {$yell p/gree}                                    ::  propagate
   ==                                                    ::
+++  mile
+  $
 ++  meet                                                ::  merge worlds
   |=  {via/@p new/gree old/gree}
-  ^-  (pair (list jael-effect) gree)
-  =+  wen=(~(tap by new))
-  |^  ^-  (pair (list jael-effect) gree)
-      ?~  wen  [~ old]
-      =+  mor=$(wen t.wen)
-      =+  dis=(boat i.wen)
-      [(weld p.dis p.mor) (~(put by q.mor) p.i.wen q.dis)]
+  ^-  (list jael-action)
+  |^  =+  wen=(~(tap by new))
+      |-  ^-  (list jael-action)
+      ?~  wen  ~
+      (weld (boat i.wen) $(wen t.wen))
   ::                                                    ::
   ++  boat                                              ::  merge per ship
     |=  {who/ship gur/grue}
-    ^-  (pair (list jael-effect) grue)
+    ^-  (list jael-action)
     =+  rug=((bond |.(*grue)) (~(get by old) who))
     ?:  =(gur rug)  [~ rug]
     =+  :*  num=1
@@ -158,9 +166,23 @@
       ?>  ?=(^ lod) 
       [fex u.lod]]
     ::
-    ::  if we have an old deed at this life, merge them
+    ::  hash new data and check parent validity
     ::
     =+  ash=(sham dat.u.wan)
+    =+  def=(sein who)
+    =+  mir=(clan who)
+    ?>  ?:  |(=(num 1) =(%earl mir) =(%pawn mir))
+          ::
+          ::  comets and moons must stay with default parent
+          ::
+          =(def dad.dat.u.wan)
+        ::
+        ::  other ships may migrate to parent of same rank
+        ::
+        =((clan def) (clan dad.dat.u.wan))
+    ::
+    ::  if we have an old deed at this life, merge them
+    ::
     ?:  ?=(^ lod)
       ::
       ::  deed data must be identical
@@ -188,38 +210,47 @@
         u.lod  (~(put by u.lod) p.i.sow [q r]:i.sow)
       ==
     ::
-    ::  new deed, if for an existing ship
+    ::  non-initial deeds must be signed by previous
     ::
-    ?.  =(1 num)
-      ?>  ?=(^ pre)
-      ::
-      ::  check that the previous deed has signed this one
-      ::
-      =+  laz=(~(got by syg.u.wan) who)
-      ?>  =(p.laz (dec num))
-      ?>  =(ash (need (sure:as:(com:nu:crub pub.dat.u.pre) *code q.laz)))
-      ::
-      ::  check the parent has signed, if necessary
-      ::
-      ?>  ?|  ::
-              ::  no parent signature if parent is unchanged, not a moon
-              ::
-              ?&  (=(dad.dat.u.pre dad.dat.u.wan)
-                  !=(%earl (clan who))
-              ==
-              ::
-              ::  no parent signature if we got this deed from the parent
-              ::
-              =(via dad.dat.u.wan)
-              ::
-              ::  valid parent signature required
-              ::
-              =+  par=(~(got by syg.u.wan) dad.dat.u.wan)
-              (good [dad.dat.u.wan p.par] ash q.par)
-          ==
-      u.wan 
+    ?>  ?|  ?=($~ pre)
+            =+  laz=(~(got by syg.u.wan) who)
+            ?>  =(p.laz (dec num))
+            =(ash (need (sure:as:(com:nu:crub pub.dat.u.pre) *code q.laz)))
+        ==
     ::
-    ::  new deed for new ship
+    ::  check the parent has signed, if necessary
+    ::
+    ?>  ?|  ::
+            ::  no parent signature for existing, non-moon urbits
+            ::
+            ?&  ?=(^ pre)
+                =(dad.dat.u.pre dad.dat.u.wan)
+                !=(%earl mir)
+            ==
+            ::
+            ::  public keys for galaxies are hardcoded
+            ::
+            ?&  =(%czar mir)
+                ?=(~ pre)
+                =(pub.dat.u.wan (zeno who))
+            ==
+            ::
+            ::  no parent signature if we got this deed from the parent
+            ::
+            =(via dad.dat.u.wan)
+            ::
+            ::  valid parent signature required
+            ::
+            =+  par=(~(got by syg.u.wan) dad.dat.u.wan)
+            (good [dad.dat.u.wan p.par] ash q.par)
+        ==
+    ::
+    ::  if we don't need to add a signature, report the new deed
+    ::
+    ?.  =(~ (~(get by syg.u.wan) dad.dat.u.wan))
+      [
+    ::
+    ::  new deed for a new ship
     ::
     ?:  (lth who 256)
       ::
@@ -231,19 +262,8 @@
     ::
     ?>  =(dad.dat.u.wan (sein who))
     ?>  ?|  =(via dad.dat.u.wan)
-            
+            =+  par=   
         ==
-    ::  if there is an old deed
-    ::
-    ?^  lod
-      ::
-      ::  merge old and new 
-      ::
-    =^  wax  ^-  lama
-
-    ?^  lod
-      
-    ::
 
   ::                                                    ::
   ++  look                                              ::  get public key
