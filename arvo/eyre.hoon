@@ -114,8 +114,7 @@
       {him/ship aut/(set ship)}                         ::  authenticated
       cug/(list @t)                                     ::  unacked cookies
       lax/@da                                           ::  last used
-      way/(map ship {purl duct})                        ::  waiting auth
-      vew/(set oryx)                                    ::  open views XX expire
+      :: vew/(set oryx)                                 ::  open views index
   ==                                                    ::
 ::
 ++  stem                                                ::  client view
@@ -687,7 +686,13 @@
     ::
         $went
       ::  this won't happen until we send responses.
-      !!
+      =+  [him=*ship wir=*wire]  :: XX from ames
+      =/  mez/$%({$hat {ses/hole pul/purl} hat/hart}
+        (parse-went-wire=_!! wir wen=!!)
+      ?-  -<.mez
+        $hat
+          (foreign-hat:(ses-ya ses.mez) pul.mez him hat.mez)
+      ==
     ::
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
@@ -697,7 +702,7 @@
         ~|(%strange-west !!)
       ?-  -<.u.mez
         $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
-        $hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
+::         $hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
         $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
         $get  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %this q.u.mez])
         $got
@@ -1470,13 +1475,11 @@
       (ames-gram:abet him [lon+~ ses])
     ::
     ++  foreign-hat
-      |=  {him/ship hat/hart}  ^+  ..ya
+      |=  {pul/purl him/ship hat/hart}  ^+  ..ya
       ~|  way
       ?.  (~(has by way) him)  :: XX crashes should be handled by ames
         ~&(strange-auth+[way him hat] ..ya)
-      =^  pul  hen  (~(got by way) him)
-      =:  way       (~(del by way) him)
-          dop       (~(put by dop) r.hat him)
+      =:  dop  (~(put by dop) r.hat him)
           q.q.pul   ['~' %am ses q.q.pul]
         ==
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
