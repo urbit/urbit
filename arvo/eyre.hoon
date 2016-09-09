@@ -153,7 +153,7 @@
       {$js $~}
       {$json $~}
       {$try him/ship paz/(unit cord)}
-      {$xen ses/hole rem/pork}
+      {$xen ses/hole $~}
   ==
 ::
 ++  pest                                                ::  result
@@ -1169,7 +1169,7 @@
           p:(need (puck src))  ::  allow state=usr_other-data
         ::
             $at  [%auth %at pok(q but)]
-            $am  ?~(but !! [%auth %xen i.but pok(q t.but)])
+            $am  ?~(but !! [%auth %xen i.but ~])
             $as
           :+  %auth  %get
           ~|  bad-ship+?~(but ~ i.but)
