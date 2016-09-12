@@ -32,7 +32,7 @@
       dey/(unit @t)                                     ::  display name
   ==                                                    ::
 ++  jael-urbit                                          ::  objective urbit
-  $:  pub/gree                                          ::  all public state
+  $:  pug/gree                                          ::  all public state
       pry/(map ship jael-ship)                          ::  all private state
   ==                                                    ::
 ++  jael-ship                                           ::  objective by ship
@@ -45,28 +45,23 @@
       lab/(nap jael-right)                              ::  promises to
       vow/(set duct)                                    ::  watchers
   ==                                                    ::
-++  jael-inference                                      ::  learning result
-  $%  {$hard p/ship}                                    ::  rough update to
-      {$meet p/ship}                                    ::  first contact with
-      {$soft p/ship}                                    ::  soft update to
-      {$sign p/ship q/gree}                             ::  return signature
-  ==                                                    ::
 ++  jael-right                                          ::  urbit commitment
-  $%  {$block p/pile}                                   ::  address block
+  $%  {$block p/pile}                                   ::  reserved block
       {$email p/(set @ta)}                              ::  email addresses
       {$entry p/(map hand (pair @da code))}             ::  symmetric keys
-      {$final p/(map ship @uvG)}                        ::  tickets
+      {$final p/(map ship @uvG)}                        ::  ticketed ships
       {$fungi p/(map term @ud)}                         ::  fungibles
+      {$guest $~}                                       ::  refugee visa
       {$lived p/life}                                   ::  PKI commitment
   ==                                                    ::
 ++  jael-task                                           ::  operations on
   $%  {$give p/ship q/(nap jael-right)}                 ::  add rights
       {$line p/ship q/@da r/code}                       ::  outbound symkey
       {$link p/ship q/@da r/code}                       ::  inbound symkey
-      {$meet p/gree}                                    ::  integrate truth
+      {$meet p/ship q/gree}                             ::  integrate pki from
       {$over p/ship q/jael-task}                        ::  mirror operation
       {$pall p/ship q/life}                             ::  our life acked
-      {$ring p/? q/(map chip (pair @ta @t)) r/ring}     ::  update private key
+      {$step p/lamp}                                    ::  update private key
       {$take p/ship q/(nap jael-right)}                 ::  subtract rights
       {$vain $~}                                        ::  watch self
       {$vest $~}                                        ::  watch assets
@@ -92,6 +87,9 @@
   $:  dif/(list (trel ship ? (nap jael-right)))         ::  who, +/-, what
   ==                                                    ::
 ::                                                      ::
+++  jael-note                                           ::  out request $->
+  $%  {$x $mess p/ship q/path r/*}                      ::  send message
+  ==                                                    ::
 ++  jael-gift                                           ::  output
   $?  {$cash jael-report-cash}                          ::  asset dump
       {$clue jael-report-them}                          ::  channel dump
@@ -101,91 +99,195 @@
   ==                                                    ::
 ++  jael-message                                        ::  p2p message
   $%  {$hail p/(nap jael-right)}                        ::  re/set rights
-      {$ping $~}                                        ::  ping
-      {$seed p/gree}                                    ::  propagate
+      {$ping p/gree}                                    ::  propagate
   ==                                                    ::
-++  jael-action                                         ::  pki change
+++  jael-edit                                         ::  pki change
   $:  why/?($hear $make)                                ::  import or create
       gut/jael-change                                   ::  new information
+  ==                                                    ::
+++  jael-effect                                         ::  objective effect
+  $%  {$kick p/ship}                                    ::  major update
+      {$site p/(list @ta)}                              ::  
+      {$slap p/ship q/ship}                             ::  relationship update
+      {$ping p/ship q/gree}                             ::  propagate pki to
   ==                                                    ::
 ++  jael-change                                         ::  pki delta
   $%  {$step p/ship q/life r/lace}                      ::  new deed
       {$sure p/ship q/life r/mind s/@}                  ::  new signature
   ==                                                    ::
-++  move  {p/duct q/{$gift jael-gift}}                  ::  local move
+++  move  {p/duct q/(wind jael-note jael-gift)}         ::  local move
 --                                                      ::
 .  ==                                                   ::
 =|  lex/jael-state                                      ::  kernel state
-|=  {now/@da eny/@ ski/sley}                            ::  current invocation
-=<  |%                                                  ::  vane interface
+|=  $:  now/@da                                         ::  current time
+        eny/@                                           ::  unique entropy
+        ski/sley                                        ::  current invocation
+    ==
+::                                                      ::  ::
+::::                                                    ::::::  interface
+  ::                                                    ::  ::
+=<  |%
+    ::                                                  ::
     ++  call                                            ::  request
-      |=  $:  hen/duct
+      |=  $:  ::  hen: cause of this event
+              ::  hic: event data
+              ::
+              hen/duct
               hic/(hypo (hobo jael-task))
           ==
       =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard jael-task) p.q.hic)))
       ^-  {p/(list move) q/_..^$}
-      =^  did  lex  (^call hen q.hic)
+      =^  did  lex  abet:(^call hen q.hic)
       [did ..^$]
-    ::
-    ++  doze                                            ::  sleep
-      |=  {now/@da hen/duct}
+    ::                                                  ::
+    ++  doze                                            ::  await
+      |=  $:  ::  now: current time
+              ::  hen: cause (XX why we need this?)
+              ::
+              now/@da 
+              hen/duct
+          ==
       ^-  (unit @da)
       ~
-    ::
+    ::                                                  ::
     ++  load                                            ::  upgrade
-      |=  old/jael-state
+      |=  $:  ::  old: previous state
+              ::
+              old/jael-state
+          ==
       ^+  ..^$
-      ~&  %jael-reload
       ..^$(lex old)
-    ::
-    ++  scry
-      |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+    ::                                                  ::
+    ++  scry                                            ::  inspect
+      |=  $:  ::  fur: event security
+              ::  ren: access mode
+              ::  why: owner
+              ::  syd: desk (branch)
+              ::  lot: case (version)
+              ::  tyl: rest of path
+              ::
+              fur/(unit (set monk))
+              ren/@tas 
+              why/shop 
+              syd/desk 
+              lot/coin 
+              tyl/spur
+          ==
       ^-  (unit (unit cage))
       !!
-    ::
-    ++  stay  lex
-    ++  take                                            ::  accept response
-      |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
+    ::                                                  ::
+    ++  stay                                            ::  preserve
+      lex
+    ::                                                  ::
+    ++  take                                            ::  accept
+      |=  $:  ::  tea: order
+              ::  hen: cause
+              ::  hin: result
+              ::
+              tea/wire 
+              hen/duct 
+              hin/(hypo sign-arvo)
+          ==
       ^-  {p/(list move) q/_..^$}
       [~ ..^$]
     --
+::                                                      ::  ::
+::::                                                    ::::::  control
+  ::                                                    ::  ::
+=<  =+  moz/(list move)
+    |%
+    ::                                                  ::
+    ++  abet                                            ::  resolve
+      [(flop moz) lex]
+    ::                                                  ::
+    ++  emil                                            ::  effects
+      |=  moz/(list move)
+      ^+(moz (weld (flop moz) ^moz))
+    ::                                                  ::
+    ++  emit                                            ::  effect
+      |=  mov/move
+      ^+(moz [mov moz])  
+    ::                                                  ::
+    ++  call                                            ::  invoke
+      |=  {hen/duct tac/jael-task}
+      ^+  +>
+      ?+    -.tac  !!
+          $give
+        =<  abet
+        =<  abet
+        (give:(unto:(from our) p.tac) q.tac)
+      ::
+          $link
+        =*  ryt  [%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
+        =<  abet
+        =<  abet
+        (give:(unto:(from our) p.tac) [ryt ~ ~])
+      ::
+          $line
+        =*  ryt  [%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
+        =<  abet
+        =<  abet
+        (give:(unto:(from p.tac) our) [ryt ~ ~])
+      ::
+          $meet
+        =/  rod  urb  (~(meet ur urb) p.tac q.tac)
+        |-  ^+  ..call
+        ?~  rod  ..call
+        =.  ..call  (join i.rod)
+
+        $(rod t.rod, ..call (make:(join i.rod) i.rod))
+      ::
+          $over
+        $(our p.tac, tac q.tac)
+      ::
+          $pall
+        !!
+        ::  =<  abet
+        ::  =<  abet
+        ::  (pall:(unto:(from our) p.tac) q.tac)
+      ==
+    --
+::                                                      ::
+::::                                                    ::  system
+  ::                                                    ::::::
 |%
-++  call
-  |=  {hen/duct tac/jael-task}
-  ^-  {(list move) jael-state}
-  ?+    -.tac  !!
-      $give
-    =<  abet
-    =<  abet
-    (give:(unto:(from our) p.tac) q.tac)
+::                                                      ::  ur
+++  ur                                                  ::  urbit core
+  =|  $:  ::  now: current time
+          ::  eny: unique entropy
+          ::  +>+: all urbit state
+          ::
+          now/@da
+          eny/@e
+          jael-urbit
+      ==
+  =*  urb  +>+
   ::
-      $link
-    =*  ryt  `jael-right`[%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
-    =<  abet
-    =<  abet
-    (give:(unto:(from our) p.tac) `(nap jael-right)`[ryt ~ ~])
+  ::  rod: output from this core
   ::
-      $line
-    =*  ryt  `jael-right`[%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
-    =<  abet
-    =<  abet
-    (give:(unto:(from p.tac) our) `(nap jael-right)`[ryt ~ ~])
+  =|  rod/(list jael-effect)
+  |%
+  ::                                                    ::  abet:ur
+  ++  abet                                              ::  resolve
+    [(flop rod) urb]
   ::
-      $meet
-    ::  ::  =^  fur  pub.urb.nav.lex  (~(meet da pub.urb.nav.lex) p.tac)
-    :: [~ lex]
-    !!
-  ::
-      $over
-    $(our p.tac, tac q.tac)
-  ::
-      $pall
-    !!
-    ::  =<  abet
-    ::  =<  abet
-    ::  (pall:(unto:(from our) p.tac) q.tac)
-  ==
-::
+  ++  join                                              ::  join:ur
+    |=  $:  ::  fex: literal changes to pki
+            ::
+            fex/(list jael-edit)
+    ^+  +>
+    |=  fex/(list jael-edit)
+
+  ::                                                    ::  make:ur
+  ++  make                                              ::  propagate edits
+    |=  $:  ::  fex: literal changes to pki
+            ::
+            fex/(list jael-edit)
+        ==
+    ^-  (list jael-effect)
+
+  --
+::                                                      ::  meet:ur
 ++  meet                                                ::  merge worlds
   |=  $:  ::  via: source of new info
           ::  new: new pki info
@@ -194,50 +296,57 @@
           via/@p
           new/gree 
       ==
-  ^-  (list jael-action)
+  ^-  (list jael-edit)
   |^  ::
       ::  check new info ship by ship
       ::
       =+  (~(tap by new))
-      |-  ^-  (list jael-action)
+      |-  ^-  (list jael-edit)
       ?~  +<  ~
       (weld (boat i.+<) $(+< t.+<))
   ::                                                    ::
-  ++  boat                                              ::  merge per ship
+  ++  boat                                              ::  merge ships
     |=  $:  ::  who: this ship
             ::  gur: new will for this ship
             ::
             who/ship 
             gur/grue
         ==
-    ^-  (list jael-action)
+    ^-  (list jael-edit)
     ::
     ::  rug: old will for this ship
     ::
-    =+  rug=(fall (~(get by pub.urb.nav.lex) who) *grue)
+    =+  rug=(fall (~(get by pug.urb.nav.lex) who) *grue)
     ?:  =(gur rug)  ~
     =+  :*  ::
-            ::  num: counter
+            ::  num: life counter
             ::  end: last life in old or new ship
             ::
-            num=1
+            num=`life`1
             end=(max p.gur p.rug)
         ==
     =|  $:  ::  pre: previous deed
-            ::  fex: actions in reverse order
+            ::  fex: edits in reverse order
             ::
             pre/(unit lama)
-            fex/(list jael-action)
+            fex/(list jael-edit)
         ==
     |-  ^+  fex
+    ::
+    ::  merge all lives in :%
+    ::
     ?:  (gth num end)  
       (flop fex)
-    =+  lub=(bolo who num pre (~(get by q.rug) num) (~(get by q.gur) num))
-    $(num +(num), pre `p.lub, fex (weld (flop q.lub) fex))
+    =+  lub=(bonk who num pre (~(get by q.rug) num) (~(get by q.gur) num))
+    %=  $
+      num  +(num)
+      pre  `p.lub
+      fex  (weld (flop q.lub) fex)
+    ==
   ::                                                    ::
-  ++  bolo                                              ::  merge per life
-    |=  $:  ::  who: ship we're integrating
-            ::  num: life we're integrating
+  ++  bonk                                              ::  merge lives
+    |=  $:  ::  who: ship we're merging
+            ::  num: life we're merging
             ::  pre: previous deed 
             ::  lod: old deed
             ::  wan: new deed
@@ -249,10 +358,10 @@
             wan/(unit lace)
         ==
     ^-  $:  ::  p: next previous deed
-            ::  q: actions in order
+            ::  q: edits in order
             ::
             p/lama
-            q/(list jael-action)
+            q/(list jael-edit)
         ==
     ::
     ::  if no new information, do nothing
@@ -295,10 +404,10 @@
       ::  sow: all new signatures
       ::
       =+  sow=`(list (trel ship life @))`(~(tap by syg.u.wan))
-      |-  ^-  (list jael-action)
+      |-  ^-  (list jael-edit)
       ?~  sow  ~
       ::
-      ::  mor: all further actions
+      ::  mor: all further edits
       ::  och: old signature for this signer
       ::
       =+  mor=$(sow t.sow)
@@ -365,7 +474,7 @@
     ::  rig: secret key of parent
     ::  val: new signature
     ::
-    =*  lyf  p:(~(got by pub.urb.nav.lex) dad)
+    =*  lyf  p:(~(got by pug.urb.nav.lex) dad)
     =*  rig  (~(got by own:(~(got by pry.urb.nav.lex) dad)) lyf)
     =*  val  (sign:as:(nol:nu:crub rig) *@ ash)
     [tep [%make %sure who num [dad lyf] val] ~]
@@ -381,10 +490,10 @@
     ::
     ::  cascade search over old and new, new first
     ::
-    |^  ((bond |.((need find))) find(pub.urb.nav.lex new))
+    |^  ((bond |.((need find))) find(pug.urb.nav.lex new))
     ++  find
       ^-  (unit @)
-      %+  biff  (~(get by pub.urb.nav.lex) who.myn)
+      %+  biff  (~(get by pug.urb.nav.lex) who.myn)
       |=  gur/grue
       ::
       ::  crash if this life is revoked
@@ -400,22 +509,24 @@
     ?>(=(ash (need (sure:as:(com:nu:crub (look myn)) *code val))) &)
   --
 ::
+++  
+::                                                      ::
+++  etch                                                :: 
+  |=  
 ++  from
   |=  rex/ship
-  =+  :*  nex=*(list move)
-          ((bond |.(*jael-ship)) (~(get by pry.urb.nav.lex) rex))
-      ==
+  =+  ((bond |.(*jael-ship)) (~(get by pry.urb.nav.lex) rex))
   |%
   ++  abet  
-    ^-  {(list move) jael-state}
-    :-  (flop nex)
-    lex(pry.urb.nav (~(put by pry.urb.nav.lex) rex `jael-ship`+<+))
+    ^+  ..from
+    ..from(pry.urb.nav (~(put by pry.urb.nav.lex) rex `jael-ship`+<))
   ::
   ++  unto
     |=  pal/ship
     =+  ((bond |.(*jael-friend)) (~(get by rel) pal))
     |%
     ++  abet                                            ::  resolve
+      ^+  ..unto
       ..unto(rel (~(put by rel) pal `jael-friend`+<))
     ::
     ++  give

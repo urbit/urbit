@@ -3635,9 +3635,8 @@
 ++  lamp                                                ::  cert metadata
   $:  dad/@p                                            ::  parent
       dob/?                                             ::  & clean, | dirty
-      exp/@da                                           ::  expiration date
       nym/(map chip (pair @ta @t))                      ::  identity strings
-      own/@p                                            ::  declared owner
+      urn/(unit @p)                                     ::  declared owner
   ==                                                    ::
 ++  chip                                                ::  standard identity
   $?  $bus                                              ::  business name
