@@ -109,7 +109,7 @@
       {$poll p/ixor}                                    ::  session state
   ==
 ++  cyst                                                ::  client session
-  $:  ced/cred                                          ::  credential
+  $:  :: ced/cred                                          ::  credential :: per ship or sth
       him/ship                                          ::  authenticated
       cug/(list @t)                                     ::  unacked cookies
       lax/@da                                           ::  last used
@@ -1505,7 +1505,7 @@
       ::  ~&  stat-ire+`@t`ire
       [orx abet]
     ::
-    ++  fcgi-cred  %_(ced aut (~(put ju aut.ced) %$ (scot %p him)))
+    ++  fcgi-cred  *cred :: XXX %_(ced aut (~(put ju aut.ced) %$ (scot %p him)))
     ++  stat-json
       ^+  [*json ..ya]
       =^  orx  ..ya  new-view
