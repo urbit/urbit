@@ -3754,7 +3754,7 @@
   ::
 ++  gram                                                ::  inter-ship message
   =+  fuz={path @ud *}                                  ::  ames format
-  $?  {{$lon $~} p/hole}                                ::  login request
+  $?  {{$lon p/hole q/@t:purl $~} $~}                   ::  login request
       {{$aut $~} p/hole}                                ::  login reply
       {{$hat $~} p/hole q/hart}                         ::  login redirect
       {{$get $~} p/@uvH q/{? clip httq}}                ::  remote request

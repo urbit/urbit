@@ -688,10 +688,10 @@
         $went
       ::  this won't happen until we send responses.
       =+  [him=*ship wir=*wire]  :: XX from ames
-      =/  mez/$%({$hat {ses/hole pul/purl} hat/hart})
-        (parse-went-wire=_!! wir wen=!!)
+      =/  mez/?({{$lon ses/hole pul/purl} hat/hart})
+        !! ::(parse-went-wire wir +.kyz)
       ?-  -<.mez
-        $hat
+        $lon
           (foreign-hat:(ses-ya ses.mez) pul.mez him hat.mez)
       ==
     ::
@@ -703,7 +703,7 @@
         ~|(%strange-west !!)
       ?-  -<.u.mez
         $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
-::         $hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
+        $hat  !! ::  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
         $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
         $get  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %this q.u.mez])
         $got
@@ -1434,7 +1434,7 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       ~(. ya u.lig u.cyz(cug ~))
     ::
-    ++  new-ya  |=(ses/hole (new:ya ses new-cred))
+    ++  new-ya  |=(ses/hole (new:ya ses new-cred [(set-cookie cookie-prefix ses)]~))
     ++  new-cred
       %*  .  *cred
         hut  hat
@@ -1453,27 +1453,23 @@
     =|  {ses/hole cyst}
     =*  cyz  ->
     |%
-    ++  new  |=({a/hole b/cred} init(ses a, ced b))
+    ++  new  |=({a/hole b/cred c/(list @t)} init(ses a, ced b, cug c))
     ++  abet  ..ya(wup (~(put by wup) ses cyz))
     ++  abut  ..ya(wup (~(del by wup) ses))
     ++  init
       %_  .
         him  `@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses))))
-        cug  [(set-cookie cookie-prefix ses)]~
         lax  now
       ==
     ::
     ++  foreign-auth
       |=  {him/ship pul/purl}  ^+  ..ya
-      =.  way  (~(put by way) him pul hen)
       ~&  asking-foreign+him
-      (ames-gram:abet him [lon+~ ses])
+      !!
+::      (ames-gram:abet him [lon+[ses (crip (earn pul)) ~] ~])
     ::
     ++  foreign-hat
       |=  {pul/purl him/ship hat/hart}  ^+  ..ya
-      ~|  way
-      ?.  (~(has by way) him)  :: XX crashes should be handled by ames
-        ~&(strange-auth+[way him hat] ..ya)
       =:  dop  (~(put by dop) r.hat him)
           q.q.pul   ['~' %am ses q.q.pul]
         ==
@@ -1499,7 +1495,6 @@
     ++  new-view
       ^+  [*oryx ..ya]
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
-      =.  vew  (~(put in vew) orx)
       =+  ire=(oryx-to-ixor orx)
       =.  ..ix  ~(init ix ire %*(. *stem ses ses, him him, p.eve 1))
       ::  ~&  stat-ire+`@t`ire
