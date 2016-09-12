@@ -109,8 +109,7 @@
       {$poll p/ixor}                                    ::  session state
   ==
 ++  cyst                                                ::  client session
-  $:  :: ced/cred                                          ::  credential :: per ship or sth
-      him/ship                                          ::  authenticated
+  $:  him/ship                                          ::  authenticated
       cug/(list @t)                                     ::  unacked cookies
       lax/@da                                           ::  last used
       :: vew/(set oryx)                                 ::  open views index
@@ -1027,8 +1026,17 @@
     ::
     ++  fcgi-cred
       ^-  cred
-      ?:  aut  fcgi-cred:for-client
-      %*(fcgi-cred for-client him anon)
+      =/  him  ?:(aut him:for-client anon)
+      %*  .  *cred
+        hut  hat
+        orx  'not-yet-implemented'
+        acl
+          =+  lag=(~(get by maf) %accept-language)
+          ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
+      ::
+        :: cip  cip :: XX performance
+        aut  (~(put ju ^+(aut:*cred ~)) %$ (scot %p him))
+      ==
     ::
     ++  apex
       =<  abet
@@ -1439,17 +1447,7 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       ~(. ya u.lig u.cyz(cug ~))
     ::
-    ++  new-ya  |=(ses/hole (new:ya ses new-cred [(set-cookie cookie-prefix ses)]~))
-    ++  new-cred
-      %*  .  *cred
-        hut  hat
-        orx  'not-yet-implemented'
-        acl
-          =+  lag=(~(get by maf) %accept-language)
-          ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
-      ::
-        cip  cip
-      ==
+    ++  new-ya  |=(ses/hole (new:ya ses [(set-cookie cookie-prefix ses)]~))
     --
   ::
   ++  oryx-to-ixor  |=(a/oryx (rsh 3 1 (scot %p (end 6 1 (shas %ire a)))))
@@ -1458,7 +1456,7 @@
     =|  {ses/hole cyst}
     =*  cyz  ->
     |%
-    ++  new  |=({a/hole b/cred c/(list @t)} init(ses a, ced b, cug c))
+    ++  new  |=({a/hole b/(list @t)} init(ses a, cug b))
     ++  abet  ..ya(wup (~(put by wup) ses cyz))
     ++  abut  ..ya(wup (~(del by wup) ses))
     ++  init
@@ -1505,7 +1503,6 @@
       ::  ~&  stat-ire+`@t`ire
       [orx abet]
     ::
-    ++  fcgi-cred  *cred :: XXX %_(ced aut (~(put ju aut.ced) %$ (scot %p him)))
     ++  stat-json
       ^+  [*json ..ya]
       =^  orx  ..ya  new-view
