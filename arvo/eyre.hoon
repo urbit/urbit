@@ -54,8 +54,8 @@
 ++  ixor  @t                                            ::  oryx hash
 ++  mend  ?($get $head)                                 ::  amend after building
 ++  whir  $@  $~                                        ::  wire subset
-          $%  {$ac p/?($$ hole) q/mend $~}              ::  auth? finish request
-              {$at p/?($$ hole) q/mend r/path:beak}     ::  auth? build request
+          $%  {$ac p/whir-ac}                           ::  finish request
+              {$at p/cord:beak q/whir-ac}               ::  build request
               {$ay p/knot:ship q/knot:@uvH $~}          ::  remote duct
               {$hi p/knot q/mark $~}                    ::  outbound HTTP
               {$se p/whir-se q/{iden (list @t)}}        ::  outbound to domain
@@ -64,6 +64,7 @@
               {$ow p/ixor $~}                           ::  dying view
               {$on $~}                                  ::  dependency
           ==                                            ::
+++  whir-ac  {p/?($$ hole) q/mend r/$@($~ {p/@t $~})}   ::  auth? filter cookie?
 ++  whir-of  {p/knot:ship q/term r/?($mess $lens) s/wire} ::  path in dock
 ++  whir-se  ?($core vi-arm)                            ::  build/call
 ++  vi-arm
@@ -838,16 +839,15 @@
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         =^  cay  ..ya  ::  inject stat-json
-          ?~  p.tee  [cay ..ya]
-          (add-auth p.tee cay)
+          ?~  p.q.tee  [cay ..ya]
+          (add-auth p.q.tee cay)
         ?:  ?=($red-quri p.cay)
           =+  url=((hard quri) q.q.cay)
           (give-thou 307 [location+(crip (apex:earn url))]~ ~)
         ?.  ?=($mime p.cay)
-          =+  bek=(norm-beak -:(need (tome r.tee)))
-          =+  wir=[%ac p.tee q.tee ~]
-          (exec-live wir bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
-        (give-mime p.tee q.tee p.sih cay)
+          =+  bek=(norm-beak -:(need (tome (need (puck p.tee)))))
+          (exec-live ac+q.tee bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+        (give-mime q.tee p.sih cay)
       ::
           {$ac ^}
         %-  emule  |.  ^+  ..apex
@@ -855,15 +855,16 @@
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         ?>  ?=($mime p.cay)
-        (give-mime p.tee q.tee p.sih cay)
+        (give-mime p.tee p.sih cay)
       ==
     ==
   ::
   ++  give-mime
-    |=  {ses/?($~ hole) men/mend dep/@uvH cay/cage}  ^+  +>.$
+    |=  {{ses/?($~ hole) men/mend dom/?($~ {p/@t $~})} dep/@uvH cay/cage}
+    ^+  +>.$
     ?>  ?=($mime -.cay)
     ~|  q.q.cay
-    =+  cug=?~(ses ~ cug:(~(got by wup) ses))
+    =+  cug=?~(dom ~ ?~(ses !! [(set-cookie p.dom cookie-prefix ses)]~))
     =+  ((hard {mit/mite rez/octs}) q.q.cay)
     =+  dep=(crip "W/{(pojo %s (scot %uv dep))}")
     =+  bod=?-(men $get `rez, $head ~)
@@ -1006,23 +1007,12 @@
     (scot %p (@ (need (sky [151 %noun] %a pax))))
   ::
   ++  cookie-prefix  (rsh 3 1 (scot %p our))
-  ++  cookie-domain
-    |=  hat/hart
-    ^-  cord
-    ?-  r.hat
-      {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
-      {$& $org $urbit *}  '; Domain=.urbit.org'
-      {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
-                  (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
-      {$& *}  ''  ::  XX security?
-    ==
-  ::
   ++  set-cookie
-    |=  {hat/hart key/@t val/@t}
+    |=  {domain/@t key/@t val/@t}
     %+  rap  3  :~
       key  '='  val
       ::  '; HttpOnly'  ?.(sec '' '; Secure')  ::  XX security
-      (cookie-domain hat)
+      domain
       '; Path=/; HttpOnly'
     ==
   ::
@@ -1098,7 +1088,8 @@
     ::
     ++  resolve-bake
       |=  {ses/(unit hole) men/mend mar/mark arg/coin bem/beam}
-      =+  wir=[%at (fall ses %$) men (tope -.bem ~)]
+      =+  wir=[%at (pack [- +]:(tope -.bem ~)) (fall ses %$) men ~]
+      =.  -.bem  (norm-beak -.bem)
       =+  req=[%bake mar arg bem]
       =+  red=[%bake %red-quri arg bem]
       (exec-live wir -.bem `silk`[%alts ~[req red]])
@@ -1315,7 +1306,6 @@
         ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky [151 %noun] %cw (tope bem(+ ~, r [%da now]))))
         =+  men=?+(mef !! $get mef, $head mef)  :: redact result
-        =.  -.bem  (norm-beak -.bem)
         =+  arg=(fcgi payload fcgi-cred)
         =+  [%bake men ext arg bem]
         ?.(aut [%& `pest`-] [%| `_done`(resolve ~ -)])
@@ -1394,7 +1384,7 @@
       ::
           $del
         =.  ..ya  abut:yac
-        =+  cug=[(set-cookie hat cookie-prefix '~')]~
+        =+  cug=[(set-cookie cookie-domain cookie-prefix '~')]~
         [%| (give-json 200 cug (joba %ok %b &))]
       ::
           $get
@@ -1418,7 +1408,7 @@
             ==
           ~|(%auth-fail !!)
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
-        =.  cug.yac  :_(cug.yac (set-cookie hat %ship (scot %p him.ham)))
+        =.  cug.yac  :_(cug.yac (set-cookie cookie-domain %ship (scot %p him.ham)))
         (give-json 200 cug.yac jon)
       ==
     ::
@@ -1448,7 +1438,17 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       ~(. ya u.lig u.cyz(cug ~))
     ::
-    ++  new-ya  |=(ses/hole (new:ya ses hat))
+    ++  cookie-domain
+      ^-  cord
+      ?-  r.hat
+        {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
+        {$& $org $urbit *}  '; Domain=.urbit.org'
+        {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
+                    (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
+        {$& *}  ''  ::  XX security?
+      ==
+    ::
+    ++  new-ya  |=(ses/hole (new:ya ses cookie-domain))
     --
   ::
   ++  oryx-to-ixor  |=(a/oryx (rsh 3 1 (scot %p (end 6 1 (shas %ire a)))))
@@ -1457,15 +1457,15 @@
     =|  {ses/hole cyst}
     =*  cyz  ->
     |%
-    ++  new  |=({a/hole b/hart} (init(ses a) b))
+    ++  new  |=({a/hole b/@t} (init(ses a) b))
     ++  abet  ..ya(wup (~(put by wup) ses cyz))
     ++  abut  ..ya(wup (~(del by wup) ses))
     ++  init
-      |=  hat/hart
+      |=  domain/@t
       %_  +>.$
         him  `@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses))))
         lax  now
-        cug  [(set-cookie hat cookie-prefix ses)]~
+        cug  [(set-cookie domain cookie-prefix ses)]~
       ==
     ::
     ++  foreign-auth
