@@ -688,7 +688,7 @@
         $went
       ::  this won't happen until we send responses.
       =+  [him=*ship wir=*wire]  :: XX from ames
-      =/  mez/$%({$hat {ses/hole pul/purl} hat/hart}
+      =/  mez/$%({$hat {ses/hole pul/purl} hat/hart})
         (parse-went-wire=_!! wir wen=!!)
       ?-  -<.mez
         $hat
@@ -1078,7 +1078,7 @@
       =/  ses  (session-from-cookies cookie-prefix maf)
       ?~  ses  ~&(%oryx-no-cookie &)  :: XX security
       =/  cyz  (~(get by wix) u.oxe)
-      ?~  cyz  ~&(%bad-oryx+u.oxe &)  :: XX security?
+      ?~  cyz  ~&(bad-oryx+u.oxe &)  :: XX security?
       ?.  =(u.ses ses.u.cyz)  
         ~&(oryx-ses-mismatch+[orx=u.oxe u.ses ses.u.cyz] &)  :: XX security
       &
