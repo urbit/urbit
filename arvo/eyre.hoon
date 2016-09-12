@@ -120,7 +120,7 @@
 ++  stem                                                ::  client view
   $:  ses/hole                                          ::  associated session
       him/ship                                          ::  static identity
-      ude/(unit {p/duct q/?})                           ::  stream long-poll?
+      ude/(unit duct)                                   ::  long-poll
       era/@da                                           ::  next wake
       die/@da                                           ::  collection date
       sus/(set {dock $json wire path})                  ::  subscriptions
@@ -1625,15 +1625,14 @@
       =.  eve  (add-even ven)
       =<  abet
       ?~  ude  done
-      =.  hen  p.u.ude
-      (give-even:pass-rest(ude ~) q.u.ude num ven)
+      =.  hen  u.ude
+      (give-even:pass-rest(ude ~) num ven)
     ::
     ++  give-even
-      |=  {pol/? num/@u ven/even}  ^+  done
+      |=  {num/@u ven/even}  ^+  done
       =:  q.eve  (~(del by q.eve) (dec num))              ::  TODO ponder a-2
           mow    ?.(?=($rush -.ven) mow mow:(pass-took [- %mess +]:p.ven))
         ==
-      ?>  pol                         ::  XX eventstream
       %^  give-json  200  ~
       %^  jobe  id+(jone num)  type+[%s -.ven]
       ?-  -.ven
@@ -1662,19 +1661,19 @@
         =.  ..poll  poll-rest
         =.  era  (add ~s30 now)
         =.  lyv  (~(put by lyv) hen [%poll ire])
-        pass-wait(ude [~ hen &])
+        pass-wait(ude `hen)
       ?:  (gth a p.eve)  ~|(seq-high+cur=p.eve !!)
       =+  ven=~|(seq-low+cur=p.eve (~(got by q.eve) a))
-      (give-even & a ven)
+      (give-even a ven)
     ::
     ++  poll-rest
       ?~  ude  done
-      %*(. pass-rest(hen p.u.ude) hen hen)
+      %*(. pass-rest(hen u.ude) hen hen)
     ::
     ++  poll-dead
       ^+  ..ix
       =<  abet
-      ?.  =(ude [~ hen &])
+      ?.  =(ude `hen)
         done  :: old long poll
       pass-rest(ude ~)
     ::
