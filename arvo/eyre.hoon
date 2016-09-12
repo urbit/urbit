@@ -54,8 +54,8 @@
 ++  ixor  @t                                            ::  oryx hash
 ++  mend  ?($get $head)                                 ::  amend after building
 ++  whir  $@  $~                                        ::  wire subset
-          $%  {$ac p/?($~ hole) q/mend $~}              ::  auth? finish request
-              {$at p/?($~ hole) q/mend r/path:beak}     ::  auth? build request
+          $%  {$ac p/?($$ hole) q/mend $~}              ::  auth? finish request
+              {$at p/?($$ hole) q/mend r/path:beak}     ::  auth? build request
               {$ay p/knot:ship q/knot:@uvH $~}          ::  remote duct
               {$hi p/knot q/mark $~}                    ::  outbound HTTP
               {$se p/whir-se q/{iden (list @t)}}        ::  outbound to domain
@@ -828,7 +828,7 @@
       ::
           {$of @ ^}
         ?:  ?=($| -.q.sih)
-          ((slog p.q.sih) +>.^$)             ::  XX get-even %mean
+          ((slog p.q.sih) +>.$)             ::  XX get-even %mean
         %+  get-rush:(ire-ix p.tee)  q.tee
         ?>  ?=($json p.p.q.sih)                    ::  XX others
         ((hard json) q.q.p.q.sih)
@@ -846,7 +846,8 @@
           (give-thou 307 [location+(crip (apex:earn url))]~ ~)
         ?.  ?=($mime p.cay)
           =+  bek=(norm-beak -:(need (tome r.tee)))
-          (exec-live tee(- %ac) bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          =+  wir=[%ac p.tee q.tee ~]
+          (exec-live wir bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
         (give-mime p.tee q.tee p.sih cay)
       ::
           {$ac ^}
@@ -988,7 +989,7 @@
   ++  mean-json  |=({sas/@uG err/ares} (give-json sas ~ (ares-to-json err)))
   ++  nice-json  |=(* (give-json 200 ~ (joba %ok %b &)))
   ::
-  ++  pass-note  |=(noe/{whir note} +>(mow :_(mow [hen %pass noe])))
+  ++  pass-note  |=(noe/{whir note} %_(+> mow :_(mow [hen %pass noe])))
   ++  host-to-ship                                              ::  host to ship
     |=  hot/host
     ^-  (unit ship)
@@ -1068,10 +1069,10 @@
     ::
     ++  resolve-bake
       |=  {ses/(unit hole) men/mend mar/mark arg/coin bem/beam}
+      =+  wir=[%at (fall ses %$) men (tope -.bem ~)]
       =+  req=[%bake mar arg bem]
       =+  red=[%bake %red-quri arg bem]
-      =+  wir=[%at ses men (tope -.bem ~)]
-      (exec-live wir -.s.pez `silk`[%alts ~[req red]])
+      (exec-live wir -.bem `silk`[%alts ~[req red]])
     ::
     ::
     ++  is-anon  =([~ ''] (~(get by (molt quy)) 'anon'))
