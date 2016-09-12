@@ -899,7 +899,7 @@
     ?:  ?=({$~ @ $&} sap)  &
     =+  cyz=(~(get by wup) ses)
     ?~  cyz  |
-    (~(has in aut.u.cyz) our)
+    =(our him.u.cyz)
   ::
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host  `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
@@ -1359,14 +1359,14 @@
         ==
       ::
           $del
-        =.  ..ya  (logoff:yac p.ham)
+        =.  ..ya  abut:yac
         =+  cug=[(set-cookie cookie-prefix '~')]~
         [%| (give-json 200 cug (joba %ok %b &))]
       ::
           $get
         |-
         ~|  aute+ham
-        ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
+        ?:  |(=(anon him.ham) =(him.yac him.ham))
           =.  ..ya  abet.yac(him him.ham)
           =+  pez=process(pok rem.ham, aut &)
           ?:  ?=($| -.pez)  pez
@@ -1379,7 +1379,7 @@
         :-  %|
         ?.  =(our him.ham)
           ~|(stub-foreign+him.ham !!)
-        ?.  ?|  (~(has in aut.yac) him.ham)
+        ?.  ?|  =(him.yac him.ham)
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
           ~|(%auth-fail !!)
@@ -1397,9 +1397,6 @@
       ?:  (~(has by wup) u.ses)
         [%& %htme login-page:xml]
       =+  yac=(new-ya u.ses)
-      =+  =-  lon=?~(- | (~(has in aut.u.-) our))
-          (biff (session-from-cookies cookie-prefix maf) ~(get by wup))
-      =.  yac  ?.(lon yac (logon.yac our))
       [%| (give-html(..ya abet.yac) 401 cug.yac login-page:xml)]
     ::
     ++  cookie-prefix  (rsh 3 1 (scot %p our))
@@ -1488,7 +1485,6 @@
       |=  her/ship
       %_  +>
         him   her
-        aut   (~(put in aut) her)
         ..ya
           ::  ~&  logon+[our her ses]
           ?.  =(our her)
@@ -1499,12 +1495,6 @@
             ..ya
           (ames-gram -.u.sap aut+~ ses)
       ==
-    ++  logoff
-      |=  her/(unit ship)  ^+  ..ya
-      ?~  her  abut
-      =.  aut  (~(del in aut) u.her)
-      ?~  aut  abut
-      abet(him ?.(=(u.her him) him n.aut))
     ::
     ++  new-view
       ^+  [*oryx ..ya]
