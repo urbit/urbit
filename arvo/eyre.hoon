@@ -52,12 +52,11 @@
           $%  {$crud p/@tas q/(list tank)}              ::
           ==  ==  ==                                    ::
 ++  ixor  @t                                            ::  oryx hash
+++  mend  ?($get $head)                                 ::  amend after building
 ++  whir  $@  $~                                        ::  wire subset
-          $%  {$ac p/hole q/whir}                       ::  cookied
-              {$at p/hole q/whir}                       ::  authenticated
+          $%  {$ac p/?($~ hole) q/mend $~}              ::  auth? finish request
+              {$at p/?($~ hole) q/mend r/path:beak}     ::  auth? build request
               {$ay p/knot:ship q/knot:@uvH $~}          ::  remote duct
-              {$ha p/path:beak}                         ::  GET request
-              {$he p/whir}                              ::  HEAD request
               {$hi p/knot q/mark $~}                    ::  outbound HTTP
               {$se p/whir-se q/{iden (list @t)}}        ::  outbound to domain
               {$si $~}                                  ::  response done
@@ -161,7 +160,7 @@
   $@  $~
   $%  {$$ p/httr}                                       ::  direct response
       {$red $~}                                         ::  parent redirect
-      {$bake p/whir q/mark r/coin s/beam}               ::  ford request
+      {$bake p/mend q/mark r/coin s/beam}               ::  ford request
       {$js p/@t}                                        ::  script
       {$json p/json}                                    ::  data
       {$html p/manx}                                    ::  successful page
@@ -801,8 +800,6 @@
         $made
       ?<  ?=($tabl -.q.sih)
       =.  our  (need hov)                             ::  XX
-      =|  ses/(unit hole)
-      |-  ^+  ..axon
       ?-    tee
           $@($~ {?($on $ay $ow) *})  ~|(e+ford+lost+tee !!)
           {$of @ $~}  ~|(e+ford+lost+tee !!)
@@ -829,16 +826,6 @@
 ::         ?>  ?=($hiss p.cay)
 ::         (eyre-them p.tee q.cay)
       ::
-          {$he *}                     ::  XX hack
-        =.  ..axon  $(tee p.tee)
-        %_  ..axon
-          mow  %+  turn  mow
-               |=  a/move
-               ?+  q.a  a
-                 {$give $thou *}  a(r.p.p.q ~)
-                 {$pass ^}        ?.(=(p.tee p.q.a) a a(p.q tee))
-        ==     ==
-      ::
           {$of @ ^}
         ?:  ?=($| -.q.sih)
           ((slog p.q.sih) +>.^$)             ::  XX get-even %mean
@@ -847,37 +834,51 @@
         ((hard json) q.q.p.q.sih)
       ::
           {$at ^}
-        ?:  ?=($| -.q.sih)  $(tee q.tee)
-        ?.  ?=($js -.p.q.sih)
-          ~&  e+at-lost+[-.p.q.sih q.tee]
-          $(tee q.tee)
-        ?>  ?=(@ q.q.p.q.sih)
-        =.  ses  (some p.tee)
-        =+  cyz=(~(got by wup) p.tee)
-        =^  jon  ..ya  ~(stat-json ya p.tee cyz)
-        $(tee q.tee, q.q.p.q.sih (add-json jon q.q.p.q.sih))
-      ::
-          {$ac ^}  ?>((~(has by wup) p.tee) $(ses `p.tee, tee q.tee))
-          {$ha *}
         %-  emule  |.  ^+  ..apex
         ?.  ?=($& -.q.sih)
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
+        =^  cay  ..ya  ::  inject stat-json
+          ?~  p.tee  [cay ..ya]
+          (add-auth p.tee cay)
         ?:  ?=($red-quri p.cay)
           =+  url=((hard quri) q.q.cay)
           (give-thou 307 [location+(crip (apex:earn url))]~ ~)
         ?.  ?=($mime p.cay)
-          =+  bek=(norm-beak -:(need (tome p.tee)))
-          =+  tee-ses=?~(ses tee [%ac u.ses tee])
-          (exec-live tee-ses bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
-        ~|  q.q.cay
-        =+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
-        =+  ((hard {mit/mite rez/octs}) q.q.cay)
-        =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
-        =+  hit=[200 ~[etag+dep content-type+(moon mit)] ~ rez]
-        (give-thou (add-cookies cug hit))
+          =+  bek=(norm-beak -:(need (tome r.tee)))
+          (exec-live tee(- %ac) bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+        (give-mime p.tee q.tee p.sih cay)
+      ::
+          {$ac ^}
+        %-  emule  |.  ^+  ..apex
+        ?.  ?=($& -.q.sih)
+          (fail 404 p.sih p.q.sih)
+        =*  cay  p.q.sih
+        ?>  ?=($mime p.cay)
+        (give-mime p.tee q.tee p.sih cay)
       ==
     ==
+  ::
+  ++  give-mime
+    |=  {ses/?($~ hole) men/mend dep/@uvH cay/cage}  ^+  +>.$
+    ?>  ?=($mime -.cay)
+    ~|  q.q.cay
+    =+  cug=?~(ses ~ cug:(~(got by wup) ses))
+    =+  ((hard {mit/mite rez/octs}) q.q.cay)
+    =+  dep=(crip "W/{(pojo %s (scot %uv dep))}")
+    =+  bod=?-(men $get `rez, $head ~)
+    =+  hit=[200 ~[etag+dep content-type+(moon mit)] bod]
+    (give-thou (add-cookies cug hit))
+  ::
+  ++  add-auth
+    |=  {ses/hole cay/cage}  ^-  {cage _..ya}
+    ?.  ?=($js -.cay)
+      ~&  e+at-lost+-.cay
+      [cay ..ya]
+    ?>  ?=(@ q.q.cay)
+    =+  cyz=(~(got by wup) ses)
+    =^  jon  ..ya  ~(stat-json ya ses cyz)
+    [cay(q.q (add-json jon q.q.cay)) ..ya]
   ::
   ++  norm-beak  |=(bek/beak ?+(r.bek bek {$ud $0} bek(r da+now)))
   ++  emule
@@ -1053,10 +1054,7 @@
           $json  (give-json 200 cug p.pez)
           $html  (give-html 200 cug p.pez)
           $htme  (give-html 401 cug p.pez)
-          $bake
-        =+  req=[%bake mar=q.pez [r s]:pez]
-        =+  red=req(mar %red-quri)
-        (exec-live p.pez -.s.pez `silk`[%alts ~[req red]])
+          $bake  (resolve-bake ~ +.pez)
       ::
           $red
         =+  url=(earn hat pok(p [~ %html]) quy)
@@ -1067,6 +1065,13 @@
           $(pez [%json (jobe ok+b+| red+(jape url) ~)])
         ==
       ==
+    ::
+    ++  resolve-bake
+      |=  {ses/(unit hole) men/mend mar/mark arg/coin bem/beam}
+      =+  req=[%bake mar arg bem]
+      =+  red=[%bake %red-quri arg bem]
+      =+  wir=[%at ses men (tope -.bem ~)]
+      (exec-live wir -.s.pez `silk`[%alts ~[req red]])
     ::
     ::
     ++  is-anon  =([~ ''] (~(get by (molt quy)) 'anon'))
@@ -1279,11 +1284,10 @@
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
         ?<  =([~ 0] (sky [151 %noun] %cw (tope bem(+ ~, r [%da now]))))
-        =+  wir=`whir`[%ha (tope -.bem ~)]
-        =.  wir  ?+(mef !! $get wir, $head [%he wir])
-        =.  r.bem  ?+(r.bem r.bem {$ud $0} da+now)
+        =+  men=?+(mef !! $get mef, $head mef)  :: redact result
+        =.  -.bem  (norm-beak -.bem)
         =+  arg=(fcgi payload fcgi-cred)
-        =+  [%bake wir ext arg bem]
+        =+  [%bake men ext arg bem]
         ?.(aut [%& `pest`-] [%| `_done`(resolve ~ -)])
       ::
           $bugs
@@ -1351,7 +1355,7 @@
             $red  pez
             $bake
           =.  ya  abet.yac
-          [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
+          [%| (resolve-bake `ses.yac +.p.pez)]
         ::
             $js
           =^  jon  ..ya  stat-json.yac  
