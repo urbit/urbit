@@ -1005,6 +1005,27 @@
     %^  rsh  3  1
     (scot %p (@ (need (sky [151 %noun] %a pax))))
   ::
+  ++  cookie-prefix  (rsh 3 1 (scot %p our))
+  ++  cookie-domain
+    |=  hat/hart
+    ^-  cord
+    ?-  r.hat
+      {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
+      {$& $org $urbit *}  '; Domain=.urbit.org'
+      {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
+                  (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
+      {$& *}  ''  ::  XX security?
+    ==
+  ::
+  ++  set-cookie
+    |=  {hat/hart key/@t val/@t}
+    %+  rap  3  :~
+      key  '='  val
+      ::  '; HttpOnly'  ?.(sec '' '; Secure')  ::  XX security
+      (cookie-domain hat)
+      '; Path=/; HttpOnly'
+    ==
+  ::
   ::
   ++  handle
     ~%  %eyre-h  ..is  ~
@@ -1373,7 +1394,7 @@
       ::
           $del
         =.  ..ya  abut:yac
-        =+  cug=[(set-cookie cookie-prefix '~')]~
+        =+  cug=[(set-cookie hat cookie-prefix '~')]~
         [%| (give-json 200 cug (joba %ok %b &))]
       ::
           $get
@@ -1397,7 +1418,7 @@
             ==
           ~|(%auth-fail !!)
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
-        =.  cug.yac  :_(cug.yac (set-cookie %ship (scot %p him.ham)))
+        =.  cug.yac  :_(cug.yac (set-cookie hat %ship (scot %p him.ham)))
         (give-json 200 cug.yac jon)
       ==
     ::
@@ -1412,26 +1433,6 @@
       =+  yac=(new-ya u.ses)
       [%| (give-html(..ya abet.yac) 401 cug.yac login-page:xml)]
     ::
-    ++  cookie-prefix  (rsh 3 1 (scot %p our))
-    ++  cookie-domain
-      ^-  cord
-      ?-  r.hat
-        {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
-        {$& $org $urbit *}  '; Domain=.urbit.org'
-        {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
-                    (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
-
-        {$& *}  ''  ::  XX security?
-      ==
-    ::
-    ++  set-cookie
-      |=  {key/@t val/@t}
-      %+  rap  3  :~
-        key  '='  val
-        ::  '; HttpOnly'  ?.(sec '' '; Secure')  ::  XX security
-        cookie-domain
-        '; Path=/; HttpOnly'
-      ==
     ++  need-ixor  (oryx-to-ixor (need grab-oryx))
     ++  for-view  ^+(ix (ire-ix need-ixor))
     ::
@@ -1447,7 +1448,7 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       ~(. ya u.lig u.cyz(cug ~))
     ::
-    ++  new-ya  |=(ses/hole (new:ya ses [(set-cookie cookie-prefix ses)]~))
+    ++  new-ya  |=(ses/hole (new:ya ses hat))
     --
   ::
   ++  oryx-to-ixor  |=(a/oryx (rsh 3 1 (scot %p (end 6 1 (shas %ire a)))))
@@ -1456,13 +1457,15 @@
     =|  {ses/hole cyst}
     =*  cyz  ->
     |%
-    ++  new  |=({a/hole b/(list @t)} init(ses a, cug b))
+    ++  new  |=({a/hole b/hart} (init(ses a) b))
     ++  abet  ..ya(wup (~(put by wup) ses cyz))
     ++  abut  ..ya(wup (~(del by wup) ses))
     ++  init
-      %_  .
+      |=  hat/hart
+      %_  +>.$
         him  `@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses))))
         lax  now
+        cug  [(set-cookie hat cookie-prefix ses)]~
       ==
     ::
     ++  foreign-auth
