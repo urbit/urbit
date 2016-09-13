@@ -79,7 +79,7 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  $6                                                ::  version
+  $:  $7                                                ::  version
       gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
@@ -386,7 +386,7 @@
       setTimeout(urb.call,1000*urb.tries)
       urb.tries++
     }
-    urb.onupdate = function(){document.location.reload()}
+    urb.onupdate = function(){console.log('document.location.reload()')}
     urb.call()
     urb.wasp = function(deh){
       if (!deh) return;
@@ -1940,12 +1940,14 @@
   ~
 ::
 ++  load                                                ::  take previous state
+  =+  bolo-6={$6 _%*(+ *bolo lyv *(map duct ^), wup *(map), wix *(map))}
   =+  driv-5=_=>(*driv [cor=p req=req.q])
-  =+  bolo-5={$5 _=+(*bolo +.-(sec (~(run by sec.-) driv-5)))}
+  =+  bolo-5={$5 _=+(*bolo-6 +.-(sec (~(run by sec.-) driv-5)))}
   =+  bolo-4={$4 _%*(+ *bolo-5 lyv *(map duct ^))}
-  |=  old/?(bolo bolo-5 bolo-4)
+  |=  old/?(bolo bolo-6 bolo-5 bolo-4)
   ?-  -.old
-    $6  ..^$(+>- old)
+    $7  ..^$(+>- old)
+    $6  $(old [%7 +.old(lyv ~, wup ~, wix ~)])
     $5  $(old [%6 +.old(sec (~(run by sec.old) |=(driv-5 [cor & req])))])
     $4  $(old [%5 +.old(lyv ~)])          :: minor leak
   ==
