@@ -167,54 +167,40 @@
     ::  add rights
     ::    {$give p/ship q/(nap jael-right))}
     ::
-        $give
-      =^  rod  urb
-        =<  abet
-        =<  abet
-        =<  abet
-        (give:(unto:(~(from ur urb.nav) our) p.tac) q.tac)
-      (fear rod)
+        $give  
+      abet:(give:~(call ur urb.nav) our [p q]:tac)
     ::
     ::  outbound symmetric key
     ::    {$link p/ship q/@da r/code}
     ::
         $link
       =*  ryt  [%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
-      =^  rod  urb
-        =<  abet
-        =<  abet
-        =<  abet
-        (give:(unto:(~(from ur urb.nav) our) p.tac) [ryt ~ ~])
-      (fear rod)
+      abet:(give:~(call ur urb.nav) our p.tac ryt)
     ::
     ::  inbound symmetric key
     ::    {$line p/ship q/@da r/code}
     ::
         $line
-      =^  rod  urb
-        =*  ryt  [%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
-        =<  abet
-        =<  abet
-        (give:(unto:(~(from ur urb.nav) p.tac) our) [ryt ~ ~])
-      (fear rod)
-    ::
+      =*  ryt  [%entry [[(shaf %hand r.tac) q.tac r.tac] ~ ~]]
+      abet:(give:~(call ur urb.nav) p.tac our ryt)
+    :
     ::  public-key update
     ::    {$meet p/ship q/gree}
     ::
         $meet
-      abet:(~(meet ur urb.nav) p.tac q.tac)
+      abet:(meet:~(call ur urb.nav) p.tac q.tac)
     ::
-    ::  install someone else's keys
+    ::  learn as other ship
     ::    {$over p/ship q/jael-task}
     ::
         $over
       $(our p.tac, tac q.tac)
     ::
-    ::  remote certificate acknowledgment
+    ::  remote version acknowledgment
     ::    {$pall p/ship q/life}
     ::
         $pall
-      !!
+      abet:(pall:~(call ur urb.urb.nav) 
     ::
     ::  extend our certificate with a new private key
     ::    {$step p/lamp}
