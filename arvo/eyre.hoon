@@ -837,8 +837,8 @@
         %-  emule  |.  ^+  ..apex
         ?.  ?=($& -.q.sih)
           (fail 404 p.sih p.q.sih)
-        =*  cay  p.q.sih
         =^  cay  ..ya  ::  inject stat-json
+          =*  cay  p.q.sih
           ?~  p.q.tee  [cay ..ya]
           (add-auth p.q.tee cay)
         ?:  ?=($red-quri p.cay)
@@ -846,7 +846,7 @@
           (give-thou 307 [location+(crip (apex:earn url))]~ ~)
         ?.  ?=($mime p.cay)
           =+  bek=(norm-beak -:(need (tome (need (puck p.tee)))))
-          (exec-live ac+q.tee bek [%flag [p.sih `~] %cast %mime [%$ p.q.sih]])
+          (exec-live ac+q.tee bek [%flag [p.sih `~] %cast %mime [%$ cay]])
         (give-mime q.tee p.sih cay)
       ::
           {$ac ^}
@@ -1480,6 +1480,8 @@
           q.q.pul   ['~' %am ses q.q.pul]
         ==
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
+      =+  domain=%*(cookie-domain handle hat p.pul)
+      =+  cug=[(set-cookie domain cookie-prefix ses)]~
       %-  give-thou:abet
       (add-cookies cug [307 [location+(crip url)]~ ~])
     ::
