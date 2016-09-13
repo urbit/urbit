@@ -3627,6 +3627,7 @@
 ::
 ::::    %jael
   ::
+++  bill  (pair @da @)                                  ::  expiring value
 ++  lace  (tale lama)                                   ::  signed deed
 ++  lama                                                ::  certificate deed
   $:  doc/lamp                                          ::  metadata
@@ -3648,6 +3649,7 @@
 ++  gree  (map ship grue)                               ::  pki dump set
 ++  grue  (pair life (map life lace))                   ::  certificate
 ++  mind  {who/@p lyf/@ud}                              ::  key identifier
+++  site  (list @ta)                                    ::  [%com %yahoo %www ~]
 ++  tale                                                ::  urbit-signed *
   |*  typ/mold                                          ::
   $:  dat/typ                                           ::  data
