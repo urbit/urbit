@@ -699,9 +699,7 @@
       ?~  mez
         ~&  e+[%strange-west p.kyz]
         ~|(%strange-west !!)
-      ?-  -<.u.mez
-        $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
-        $hat  !! ::  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
+      ?-  -<.u.mez        
         $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
         $get  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %this q.u.mez])
         $got
@@ -713,6 +711,9 @@
             ==
           (give-thou q.u.mez)
       ::
+      ::  SSO, deprecated
+        $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
+        $hat  !! ::  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)      
         $lon
           ~&  ses-ask+[p.u.mez sop (~(run by wup) $~)]
           ?:  (ses-authed p.u.mez)
