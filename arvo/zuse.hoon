@@ -3773,6 +3773,7 @@
               {$wegh $~}                                ::  report memory
               {$went p/sack q/path r/@ud s/coop}        ::  response confirm 
               {$west p/sack q/fuz:gram}                 ::  network request
+              {$mini-jael-kiss *}
           ==                                            ::
 ++  gift-eyre                                           ::  out result <-$
           $%  {$mass p/mass}                            ::  memory usage
@@ -3782,6 +3783,7 @@
               {$thus p/@ud q/(unit hiss)}               ::  http request+cancel
               {$veer p/@ta q/path r/@t}                 ::  drop-through
               {$vega p/path}                            ::  drop-through
+              {$mini-jael-gift *}
           ==                                            ::
 ::
 ::::    %ford

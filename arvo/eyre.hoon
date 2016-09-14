@@ -22,6 +22,7 @@
           $%  {$thud $~}                                ::  proxied death
               {$this p/? q/clip r/httq}                 ::  proxied request
               {$meta vase}                              ::  type check
+              {$mini-jael-kiss *}                       :: XX types
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
           $%  {$exec p/@p q/(unit {beak silk})}         ::
@@ -43,6 +44,7 @@
           ==  ==                                        ::
               $:  $e                                    ::  by self
           $%  {$thou p/httr}                            ::  response for proxy
+              {$mini-jael-gift *}                       :: XX types
           ==  ==                                        ::
               $:  $f                                    ::  by %ford
           $%  {$made p/@uvH q/gage}                     ::
@@ -51,6 +53,23 @@
               $:  @tas                                  ::  by any
           $%  {$crud p/@tas q/(list tank)}              ::
           ==  ==  ==                                    ::
+++  mini-jael-kiss
+  $%  {$save-cookie ses/hole own/?}
+      {$kill-cookie ses/hole}
+      {$save-token ses/hole tok/oryx}
+      {$live-token ses/hole tok/oryx}
+  ==
+++  mini-jael-gift
+  $%  {$cookie-ack him/@p}
+      {$token-ack $~}
+      {$token-beat $~}
+      {$token-dead $~}
+  ==
+++  mini-jael-scry
+  $%  {$pass him/ship pas/@t}       :: ?
+      {$cook ses/hole}              :: (unit ship)
+      {$oryx ses/hole tok/oryx}     :: ?
+  ==
 ++  ixor  @t                                            ::  oryx hash
 ++  mend  ?($get $head)                                 ::  amend after building
 ++  whir  $@  $~                                        ::  wire subset
@@ -95,8 +114,17 @@
       wup/(map hole cyst)                               ::  secure sessions
       wix/(map ixor stem)                               ::  open views
       sec/(map {iden (list @t)} driv)                   ::  security drivers
+      jel/mini-jael-state
   ==                                                    ::
 ::
+++  je-per-ship
+  $:  cok/(map hole die/@da)
+      tok/(map oryx {hen/duct ses/hole die/@da liv/(unit @da)})
+  ==
+++  mini-jael-state
+  $:  primary/(map ship je-per-ship)
+      secondary/(map hole ship)
+  ==
 ++  driv                                                ::  driver state
   %+  pair  (unit $@($~ vase))                          ::  main core
   {liv/? req/(qeu (trel duct mark vase:hiss))}          ::  waiting requests
@@ -570,6 +598,7 @@
     =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
+        $mini-jael-kiss  !!
         $born  +>.$(ged hen)                            ::  register external
         $serv
       =<  ~&([%serving (tope top)] .)
@@ -707,6 +736,7 @@
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
       ~&(dead-ire+[`whir`tee ({term term $~} +.sih)] +>)
     ?-    &2.sih
+        $mini-jael-gift  !!
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb
     ::    =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
