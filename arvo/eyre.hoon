@@ -1361,8 +1361,9 @@
       =+  yac=for-client
       ?-    -.ham
           $js    [%& %js auth:js]
-          $json  =^  jon  ..ya  stat-json.yac
-                 [%| (give-json 200 (set-cookie -):yac jon)]
+          $json  =^  jon  ya.yac  stat-json.yac
+                 =^  cug  ya  (set-cookie -):yac
+                 [%| (give-json 200 cug jon)]
           $xen   (show-login-page ~ ses.ham)
       ::
           $at
@@ -1377,8 +1378,9 @@
           [%| (resolve-bake `ses.yac dom.yac +.p.pez)]
         ::
             $js
-          =^  jon  ..ya  stat-json.yac  
-          [%| (resolve (set-cookie -):yac p.pez(p (add-json jon p.p.pez)))]
+          =^  jon  ya.yac  stat-json.yac  
+          =^  cug  ya  (set-cookie -):yac
+          [%| (resolve cug p.pez(p (add-json jon p.p.pez)))]
         ==
       ::
           $del
@@ -1406,9 +1408,9 @@
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
           ~|(%auth-fail !!)
-        =^  jon  ..ya  stat-json:(logon:yac him.ham)
-        =/  ship-cookie  (set-cookie cookie-domain %ship (scot %p him.ham))
-        =/  cug  [ship-cookie (set-cookie -):yac]
+        =^  jon  ya.yac  stat-json:(logon:yac him.ham)
+        =^  cug  ya  (set-cookie -):yac
+        =.  cug  :_(cug (set-cookie cookie-domain %ship (scot %p him.ham)))
         (give-json 200 cug jon)
       ==
     ::
@@ -1419,10 +1421,9 @@
       ?~  ses
         [%& %htme login-page:xml]
       ?:  (~(has by wup) u.ses)
-        [%& %htme login-page:xml]
-      =+  yac=(new-ya u.ses)
-      =/  cug  (set-cookie -):yac
-      [%| (give-html(..ya abet.yac) 401 cug login-page:xml)]
+        [%& %htme login-page:xml] :: XX
+      =^  cug  ..ya  (set-cookie -):(new-ya u.ses)
+      [%| (give-html 401 cug login-page:xml)]
     ::
     ++  need-ixor  (oryx-to-ixor (need grab-oryx))
     ++  for-view  ^+(ix (ire-ix need-ixor))
@@ -1439,6 +1440,7 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       [~ ~(. ya u.lig u.cyz)]
     ::
+
     ++  cookie-domain
       ^-  cord
       ?-  r.hat
@@ -1473,9 +1475,9 @@
 ::      (ames-gram:abet him [lon+[ses (crip (earn pul)) ~] ~])
     ::
     ++  set-cookie
-      |=  domain/(unit @t)  ^-  (list @t)
-      ?~  domain  ~
-      [(^set-cookie u.domain cookie-prefix ses)]~
+      |=  domain/(unit @t)  ^+  [*(list @t) ..ya]
+      ?~  domain  [~ ..ya]
+      [[(^set-cookie u.domain cookie-prefix ses)]~ abet]
     ::
     ++  foreign-hat
       |=  {pul/purl him/ship hat/hart}  ^+  ..ya
@@ -1483,7 +1485,7 @@
           q.q.pul   ['~' %am ses q.q.pul]
         ==
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
-      =+  cug=(set-cookie ~ %*(cookie-domain handle hat p.pul))
+      =+  cug=-:(set-cookie ~ %*(cookie-domain handle hat p.pul))
       %-  give-thou:abet
       (add-cookies cug [307 [location+(crip url)]~ ~])
     ::
