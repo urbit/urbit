@@ -91,10 +91,8 @@
       ask/{p/@ud q/(map @ud {p/duct q/hiss})}           ::  outgoing by number
       kes/(map duct @ud)                                ::  outgoing by duct
       ney/@uvI                                          ::  rolling entropy
-      dop/(map host ship)                               ::  host aliasing
       liz/(jug @uvH (each duct ixor))                   ::  ford depsets
       wup/(map hole cyst)                               ::  secure sessions
-      sop/(map hole {ship ?})                           ::  foreign sess names
       wix/(map ixor stem)                               ::  open views
       sec/(map {iden (list @t)} driv)                   ::  security drivers
   ==                                                    ::
@@ -152,7 +150,6 @@
       {$js $~}
       {$json $~}
       {$try him/ship paz/(unit cord)}
-      {$xen ses/hole $~}
   ==
 ::
 ++  pest                                                ::  result
@@ -420,21 +417,9 @@
       })
     }
 
-    urb.foreign = /^\/~\/am/.test(window.location.pathname)
     urb.redir = function(ship){
-      if(ship) document.location.pathname =
+      document.location.pathname =
         document.location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
-      else document.location =
-        document.location.hash.match(/#[^?]+/)[0].slice(1) +
-        document.location.pathname.replace(
-          /^\/~\/am\/[^/]+/,
-          '/~/as/~' + urb.ship) +
-        document.location.search
-    }
-    if(urb.foreign && urb.user !== urb.ship){
-      req("/~/auth.json?PUT",
-          {ship:urb.ship,code:null},
-          function(){urb.redir()})
     }
     urb.is_me = function(ship) {
       return (urb.ship === ship)
@@ -446,8 +431,7 @@
         "/~/auth.json?PUT",
         {ship:ship, code:pass},
         function(){
-          if(urb.foreign) urb.redir()
-          else document.location.reload()
+          document.location.reload()
       })
     }
     urb.away = function(){req("/~/auth.json?DELETE", {},
@@ -685,13 +669,7 @@
     ::
         $went
       ::  this won't happen until we send responses.
-      =+  [him=*ship wir=*wire]  :: XX from ames
-      =/  mez/?({{$lon ses/hole pul/purl} hat/hart})
-        !! ::(parse-went-wire wir +.kyz)
-      ?-  -<.mez
-        $lon
-          (foreign-hat:(ses-ya ses.mez) pul.mez him hat.mez)
-      ==
+      !!
     ::
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
@@ -710,16 +688,6 @@
               pox  (~(del by pox) p.u.mez)
             ==
           (give-thou q.u.mez)
-      ::
-      ::  SSO, deprecated
-        $aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
-        $hat  !! ::  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)      
-        $lon
-          ~&  ses-ask+[p.u.mez sop (~(run by wup) $~)]
-          ?:  (ses-authed p.u.mez)
-            (ames-gram q.p.kyz aut+~ p.u.mez)
-          =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
-          (ames-gram q.p.kyz hat+~ p.u.mez our-host)
       ==
     ::
       $wegh  !!                                         ::  handled elsewhere
@@ -894,14 +862,6 @@
   ++  dom-vi
     |=  {usr/knot dom/path}  ^+  vi    :: XX default to initialized user?
     ~(. vi [usr dom] (fall (~(get by sec) usr dom) *driv))
-  ::
-  ++  ses-authed
-    |=  ses/hole
-    =+  sap=(~(get by sop) ses)
-    ?:  ?=({$~ @ $&} sap)  &
-    =+  cyz=(~(get by wup) ses)
-    ?~  cyz  |
-    =(our him.u.cyz)
   ::
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host  `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
@@ -1200,7 +1160,6 @@
           p:(need (puck src))  ::  allow state=usr_other-data
         ::
             $at  [%auth %at pok(q but)]
-            $am  ?~(but !! [%auth %xen i.but ~])
             $as
           :+  %auth  %get
           ~|  bad-ship+?~(but ~ i.but)
@@ -1365,7 +1324,6 @@
           $json  =^  jon  ya.yac  stat-json.yac
                  =^  cug  ya  (set-cookie -):yac
                  [%| (give-json 200 cug jon)]
-          $xen   (show-login-page ~ ses.ham)
       ::
           $at
         =.  ..ya  abet.yac
@@ -1398,7 +1356,7 @@
           ?:  ?=($| -.pez)  pez
           [%| (resolve ~ p.pez)]
         ?.  =(our him.ham)
-          [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
+          ~|(sso-disabled+[our him.ham] !!)
         (show-login-page ~)
       ::
           $try
@@ -1469,40 +1427,15 @@
         lax  now
       ==
     ::
-    ++  foreign-auth
-      |=  {him/ship pul/purl}  ^+  ..ya
-      ~&  asking-foreign+him
-      !!
-::      (ames-gram:abet him [lon+[ses (crip (earn pul)) ~] ~])
-    ::
     ++  set-cookie
       |=  domain/(unit @t)  ^+  [*(list @t) ..ya]
       ?~  domain  [~ ..ya]
       [[(^set-cookie u.domain cookie-prefix ses)]~ abet]
     ::
-    ++  foreign-hat
-      |=  {pul/purl him/ship hat/hart}  ^+  ..ya
-      =:  dop  (~(put by dop) r.hat him)
-          q.q.pul   ['~' %am ses q.q.pul]
-        ==
-      =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
-      =+  cug=-:(set-cookie ~ %*(cookie-domain handle hat p.pul))
-      %-  give-thou:abet
-      (add-cookies cug [307 [location+(crip url)]~ ~])
-    ::
     ++  logon
       |=  her/ship
       %_  +>
         him   her
-        ..ya
-          ::  ~&  logon+[our her ses]
-          ?.  =(our her)
-            ..ya
-          =+  sap=(~(get by sop) ses)
-          ::  ~&  sap+sap
-          ?.  ?=({$~ @ $|} sap)
-            ..ya
-          (ames-gram -.u.sap aut+~ ses)
       ==
     ::
     ++  new-view
@@ -1928,7 +1861,6 @@
     :-  %|
     :~  dependencies+[%& liz]  sessions+[%& wup]  views+[%& wix]
         ducts+[%| ~[dead+[%& ded] proxy+[%& pox] outgoing+[%& ask]]]
-        hosts+[%& dop]
         misc+[%& bol]
     ==
   =+  our=`@p`0x100  ::  XX  sentinel

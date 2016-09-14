@@ -3629,6 +3629,7 @@
   ::
 ++  lace  (tale lama)                                   ::  signed deed
 ++  lama                                                ::  certificate deed
+  $:
       doc/lamp                                          ::  metadata
       pub/pass                                          ::  public key
   ==                                                    ::
@@ -3646,7 +3647,6 @@
       $had                                              ::  handle
       $mid                                              ::  middle name 
   ==                                                    ::
-++  grit                                                ::  
 ++  gree  (map ship grue)                               ::  pki dump set
 ++  grue  (pair life (map life lace))                   ::  certificate
 ++  mind  {lyf/@ud who/@p}                              ::  key identifier
@@ -3754,10 +3754,7 @@
   ::
 ++  gram                                                ::  inter-ship message
   =+  fuz={path @ud *}                                  ::  ames format
-  $?  {{$lon p/hole q/@t:purl $~} $~}                   ::  login request
-      {{$aut $~} p/hole}                                ::  login reply
-      {{$hat $~} p/hole q/hart}                         ::  login redirect
-      {{$get $~} p/@uvH q/{? clip httq}}                ::  remote request
+  $?  {{$get $~} p/@uvH q/{? clip httq}}                ::  remote request
       {{$got $~} p/@uvH q/httr}                         ::  remote response
       {{$gib $~} p/@uvH}                                ::  remote cancel
   ==                                                    ::
