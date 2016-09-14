@@ -3,7 +3,7 @@
 !?  150
   |=  pit/vase  ::  XX remove from arvo api
 ::                                                      ::::
-::::  ## 1                                              ::  structures
+::::                        # 1                         ::  structures
   ::                                                    ::::
 =>  |%
 ++  jael-state                                          ::  all crypto state
@@ -38,7 +38,7 @@
   ==                                                    ::
 ++  jael-friend                                         ::  relationship 
   $:  luf/(unit life)                                   ::  life as known to
-      lab/(nap jael-right)                              ::  promises to
+      lab/jael-purse                                    ::  promises to
       vow/(set duct)                                    ::  watchers
   ==                                                    ::
 ++  jael-gift                                           ::  output
@@ -57,8 +57,15 @@
       {$guest $~}                                       ::  refugee visa
       {$lived p/life}                                   ::  PKI commitment
   ==                                                    ::
+++  jael-purse                                          ::  rights set
+  (nap jael-right)                                      ::
+::                                                      ::
+++  jael-delta                                          ::  rights change
+  $:  mor/jael-purse                                    ::  gain rights
+      les/jael-purse                                    ::  lose rights
+  ==                                                    ::
 ++  jael-task                                           ::  operations on
-  $%  {$give p/ship q/(nap jael-right)}                 ::  add rights
+  $%  {$give p/ship q/jael-purse}                       ::  add rights
       {$line p/ship q/@da r/code}                       ::  outbound symkey
       {$link p/ship q/@da r/code}                       ::  inbound symkey
       {$meet p/ship q/gree}                             ::  integrate pki from
@@ -66,7 +73,7 @@
       {$pall p/ship q/life}                             ::  our life acked
       {$ping p/ship}                                    ::  empty contact
       {$step p/lamp q/ring}                             ::  update private key
-      {$take p/ship q/(nap jael-right)}                 ::  subtract rights
+      {$take p/ship q/jael-purse}                       ::  subtract rights
       {$vain $~}                                        ::  watch self
       {$vest $~}                                        ::  watch assets
       {$view p/ship}                                    ::  watch urbit
@@ -78,28 +85,28 @@
   ==                                                    ::
 ++  jael-report-them                                    ::  report on neighbor
   $:  gur/grue                                          ::  certificate
-      lab/(nap jael-right)                              ::  our promises to
-      own/(nap jael-right)                              ::  our promises from
+      lab/jael-purse                                    ::  our promises to
+      own/jael-purse                                    ::  our promises from
   ==                                                    ::
 ++  jael-report-self                                    ::  report on self
   $:  gur/grue                                          ::  certificate
       war/(map life ring)                               ::  private keys
   ==                                                    ::
 ++  jael-report-cash                                    ::  neighbors/assets
-  $:  has/(map ship (nap jael-right))                   ::
+  $:  has/(map ship jael-purse)                         ::
   ==                                                    ::
 ++  jael-report-paid                                    ::  asset diff
-  $:  dif/(list (trel ship ? (nap jael-right)))         ::  who, +/-, what
+  $:  dif/(list (trel ship ? jael-purse))               ::  who, +/-, what
   ==                                                    ::
 ++  jael-note                                           ::  out request $->
   $%  {$x $mess p/ship q/path r/*}                      ::  send message
   ==                                                    ::
 ++  jael-message                                        ::  p2p message
-  $%  {$hail p/(nap jael-right)}                        ::  re/set rights
+  $%  {$hail p/jael-purse}                              ::  reset rights
       {$ping p/gree}                                    ::  propagate
   ==                                                    ::
 ++  jael-edit                                           ::  pki change
-  $:  why/?($hear $make)                                ::  import or create
+  $:  why/?($hear $make)                                ::  import or originate
       gut/jael-change                                   ::  new information
   ==                                                    ::
 ++  jael-effect                                         ::  objective effect
@@ -107,22 +114,20 @@
       {$kids p/ship q/gree}                             ::  propagate to kids of
       {$lord p/ship q/gree}                             ::  to parent of
       {$pals p/ship q/gree}                             ::  to peers of
-      {$seat p/site q/@ta}                              ::  webapp key update
-      {$site p/site}                                    ::  website key update
-      {$slap p/ship q/ship}                             ::  channel key update
   ==                                                    ::
-++  jael-change                                         ::  pki delta
-  $%  {$step p/ship q/life r/lace}                      ::  new deed
-      {$sure p/ship q/life r/mind s/@}                  ::  new signature
+++  jael-change                                         ::  pki change
+  $%  {$paid p/ship q/ship r/jael-delta)}               ::  rights from/to
+      {$step p/ship q/gree}                             ::  new deed
+      {$sure p/ship q/gree}                             ::  new signature
   ==                                                    ::
 ++  jael-move                                           ::  output
   {p/duct q/(wind jael-note jael-gift)}
 --
 ::                                                      ::::
-::::  ## 2                                              ::  static data
+::::                        # 2                         ::  static data
   ::                                                    ::::
 =>  |%
-::                                                      ::  zeno
+::                          ## 2.a                      ::  zeno
 ++  zeno                                                ::  boot signatures
   |=  ::  who: galaxy (0-255)
       ::
@@ -131,13 +136,12 @@
   !!
 --
 ::                                                      ::::
-::::   ## 3                                             ::  reactors
+::::                        # 3                         ::  reactors
   ::                                                    ::::
 =>  |%
-=>  |%
-::                                                      ::  of
+::                          ## 3.a                      ::  of
 ++  of                                                  ::  general reactor
-  =|  $:  ::  sys: system context                       ::::  #3.a
+  =|  $:  ::  sys: system context                       ::::
           ::
           ^=  sys
           $:  ::  now: current time
@@ -171,7 +175,7 @@
     ?-    -.tac
     ::
     ::  add rights
-    ::    {$give p/ship q/(nap jael-right))}
+    ::    {$give p/ship q/jael-purse)}
     ::
         $give  
       (curd abet:(~(give ur urb.nav) our [p q]:tac))
@@ -223,7 +227,7 @@
       (curd abet:(~(step ur urb.nav) our p.tac))
     ::
     ::  remove rights
-    ::    {$take p/ship q/(nap jael-right)}
+    ::    {$take p/ship q/jael-purse}
     ::  
         $take
       (curd abet:(~(give ur urb.nav) our [p q]:tac))
@@ -255,7 +259,7 @@
       ?-    -.mes
       ::
       ::  reset remote rights
-      ::    {$hail p/(nap jael-right)}
+      ::    {$hail p/jael-purse}
       ::
           $hail
         (curd (~(hail ur urb.nav) p.tac our p.mes))
@@ -358,22 +362,25 @@
   ++  mean                                            ::  apply merge
     |=  {why/?($hear $make) gut/jael-change}
     ^+  +>
+    =.  +>  (
     ?-    -.gut
       ::  
       ::  learn new signature on existing deed
       ::    {$sure p/ship q/life r/mind s/@}
       ::
         $sure
-      !!
+      ?:  =($hear why)
+        (emit %kick p.gut)
+      (emil [%kick p.gut] [%kids p.gut] ~)
       ::
       ::  learn new deed
       ::    {$step p/ship q/life r/lace}
       ::
         $step
       ?:  =($hear why)
-        ?: : 
+        (emit %kick p.gut)
+      (emil [%kick p.gut] 
     ==
-
   ==                                                    ::
 
 
@@ -446,11 +453,10 @@
         |=(lace `pub.dat)
       --
     ::
-    
-
     ++  boat
       ?>  mer
       =+  gur=((~(get by cod.u.mer) *grue)
+    ::
     ++  bonk
 
 
@@ -488,7 +494,7 @@
         ..unto(rel (~(put by rel) pal cly))
       ::                                              ::  give:unto:from:ur:
       ++  give                                        ::  credit
-        |=  lab/(nap jael-right)
+        |=  lab/jael-purse
         ^+  +>
         !!
       --
