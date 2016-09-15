@@ -100,7 +100,6 @@
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
   $:  $7                                                ::  version
-      gub/@t                                            ::  random identity
       hov/(unit ship)                                   ::  master for remote
       top/beam                                          ::  ford serve prefix
       ged/duct                                          ::  client interface
@@ -1898,7 +1897,6 @@
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]
-  =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
     abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) q.hic)
   [mos ..^$]
@@ -1956,7 +1954,6 @@
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]
-  =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =+  tee=((soft whir) tea)
   ?~  tee  ~&  [%e %lost -.q.hin hen]  [~ ..^$]
   =^  mos  bol
