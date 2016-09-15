@@ -82,7 +82,13 @@
               {$of p/ixor q/$@($~ whir-of)}             ::  associated view
               {$ow p/ixor $~}                           ::  dying view
               {$on $~}                                  ::  dependency
-          ==                                            ::
+              {$je p/whir-je}
+          ==
+++  whir-je
+  $%  {$ses p/hole $~}
+      {$orx p/hole q/oryx $~}
+      {$liv p/hole q/oryx $~}
+  ==
 ++  whir-ac  {p/?($$ hole) q/mend r/$@($~ {p/@t $~})}   ::  auth? filter cookie?
 ++  whir-of  {p/knot:ship q/term r/?($mess $lens) s/wire} ::  path in dock
 ++  whir-se  ?($core vi-arm)                            ::  build/call
@@ -591,13 +597,150 @@
   ++  adit  .(ney (mix eny ney))                        ::  flip entropy
   ::
   ++  anon  `@p`(add our ^~((bex 64)))                  ::  pseudo-sub
+  ::
+  ::
+  ++  je
+    |=  him/ship
+    =+  (fall (~(get by primary.jel) him) *je-per-ship)
+    |%
+    ++  abet  +>.$(primary.jel (~(put by primary.jel) him +<.abet))
+    ++  wake
+      |=  wir/whir-je  ^+  ..je
+      =<  abet
+      ?-  -.wir
+        $ses  (kill-cookie p.wir)
+        $orx  (kill-token q.wir)
+        $liv  (beat-token q.wir)
+      ==
+    ::
+    ++  apex
+      |=  kyz/mini-jael-kiss  ^+  ..je
+      =<  abet
+      ?-    -.kyz
+        $save-cookie  (save-cookie ses.kyz)
+        $kill-cookie  (kill-cookie ses.kyz)
+        $save-token  (save-token ses.kyz tok.kyz)
+        $live-token  (live-token ses.kyz tok.kyz)
+      ==
+    ::
+    ++  save-cookie
+      |=  ses/hole
+      =/  die  (add now ~d7)
+      =.  +>.$  (reset-timer je+ses+/[ses] ~ `die)
+      %_  +>.$
+        cok   (~(put by cok) ses die)
+        ..je  (jael-give [%cookie-ack him])
+        secondary.jel  (~(put by secondary.jel) ses him)
+      ==
+    ::
+    ++  live-cookie
+      |=  ses/hole
+      =/  ole  (~(got by cok) ses)
+      =/  die  (add now ~d7)
+      =.  +>.$  (reset-timer je+ses+/[ses] `die.ole `die)
+      %_  +>.$
+        cok  (~(put by cok) ses die)
+        secondary.jel  (~(put by secondary.jel) ses him)
+      ==
+    ::
+    ++  kill-cookie
+      |=  ses/hole
+      =/  ole  (~(got by cok) ses)      
+      =.  +>.$  (reset-timer je+ses+/[ses] `die.ole ~)
+      %_  +>.$
+        cok  (~(del by cok) ses)
+        secondary.jel  (~(del by secondary.jel) ses)
+      ==
+    ::
+    ++  save-token
+      |=  {ses/hole orx/oryx}
+      =/  die  (add now ~d7)
+      =.  +>.$  (reset-timer je+orx+/[ses]/[orx] ~ `die)
+      %_  +>.$
+        tok   (~(put by tok) orx [hen ses die ~])
+        ..je  (jael-give [%token-ack ~])
+      ==
+    ::
+    ++  live-token
+      |=  {ses/hole orx/oryx}
+      =/  ole  (~(got by tok) orx)
+      ?.  (~(has by cok) ses)  ~&(expired-session+ses +>.$) :: XX
+      ?>  =(ses ses.ole) :: XX caught beforehand?
+      =.  +>.$  (live-cookie ses)
+      =+  [liv=`(add ~s30 now) die=(add ~d1 now)]
+      =.  +>.$  (reset-timer je+liv+/[ses]/[orx] liv.ole liv)
+      =.  +>.$  (reset-timer je+orx+/[ses]/[orx] `die.ole `die)
+      %_  +>.$
+        tok   (~(put by tok) orx [hen ses die liv])
+      ==
+    ::
+    ++  kill-token
+      |=  orx/oryx
+      =/  ole  (~(got by tok) orx) 
+      =.  +>.$  (reset-timer je+liv+/[ses.ole]/[orx] liv.ole ~)
+      =.  +>.$  (reset-timer je+orx+/[ses.ole]/[orx] `die.ole ~)
+      %_  +>.$
+        tok   (~(del by tok) orx)
+        ..je  (jael-give [%token-dead ~])
+      ==
+    ::
+    ++  beat-token
+      |=  orx/oryx
+      %_  +>.$
+        tok   (~(put by tok) orx %*(. (~(got by tok) orx) liv ~))
+        ..je  (jael-give [%token-beat ~])
+      ==
+    ::
+    ::
+    ++  jael-give
+      |=(mini-jael-gift %_(..je mow :_(mow [hen %give %mini-jael-gift +<])))
+    ::
+    ++  reset-timer
+      |=  {wir/whir ole/(unit time) new/(unit time)}
+      =.  mow  ?~(ole mow :_(mow [`/ %pass wir [%b %rest u.ole]]))
+      =.  mow  ?~(new mow :_(mow [`/ %pass wir [%b %wait u.new]]))
+      +>.$
+    --
+  ::
+  ++  scry-jael
+    |=  a/mini-jael-scry
+    ^-  $%({$bean ?} {$u-ship (unit ship)})
+    ?-    -.a
+        $pass
+      :-  %bean
+      ?>  =(our him.a)  :: only own password known
+      =(|2.a load-secret)
+    ::
+        $cook
+      :-  %u-ship
+      (~(get by secondary.jel) ses.a)
+    ::
+        $oryx
+      :-  %bean
+      =/  loc  (~(got by primary.jel) (~(got by secondary.jel) ses.a))
+      =(ses.a ses:(~(got by tok.loc) tok.a))
+    ==
+  ::
+  ::
   ++  apex                                              ::  accept request
     |=  kyz/kiss
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
-        $mini-jael-kiss  !!
+        $mini-jael-kiss
+      =/  kyz-je  ;;(mini-jael-kiss +.kyz)
+      =;  him  (apex:(je him) kyz-je)
+      ?-    -.kyz-je
+          $save-cookie
+        ?:  own.kyz-je  our
+        `@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses.kyz-je))))
+      ::
+          $kill-cookie  (~(got by secondary.jel) ses.kyz-je)
+          $save-token   (~(got by secondary.jel) ses.kyz-je)
+          $live-token   (~(got by secondary.jel) ses.kyz-je)
+      ==
+    ::
         $born  +>.$(ged hen)                            ::  register external
         $serv
       =<  ~&([%serving (tope top)] .)
@@ -774,6 +917,8 @@
       ==
     ::
         $wake
+      ?:  ?=($je -.tee)
+        %.(p.tee wake:(je (~(got by secondary.jel) p.p.tee)))
       ?>  ?=({?($of $ow) @ $~} tee)
       ?:  ?=($ow -.tee)
         abut:(ire-ix p.tee)
@@ -798,7 +943,7 @@
       ?<  ?=($tabl -.q.sih)
       =.  our  (need hov)                             ::  XX
       ?-    tee
-          $@($~ {?($on $ay $ow) *})  ~|(e+ford+lost+tee !!)
+          $@($~ {?($on $ay $ow $je) *})  ~|(e+ford+lost+tee !!)
           {$of @ $~}  ~|(e+ford+lost+tee !!)
           {$si $~}  (give-sigh q.sih)
           {$se ^}   (get-made:(dom-vi q.tee) p.tee [p q]:sih)
