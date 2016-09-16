@@ -68,7 +68,7 @@
 ++  mini-jael-scry
   $%  {$pass him/ship pas/@t}       :: ?
       {$cook ses/hole}              :: (unit ship)
-      {$oryx ses/hole tok/oryx}     :: ?
+      {$ixor ses/hole tok/ixor}     :: ?
   ==
 ++  ixor  @t                                            ::  oryx hash
 ++  mend  ?($get $head)                                 ::  amend after building
@@ -141,8 +141,7 @@
   ==
 ::
 ++  stem                                                ::  client view
-  $:  ses/hole                                          ::  associated session
-      him/ship                                          ::  static identity
+  $:  him/ship                                          ::  static identity
       pol/(unit duct)                                   ::  long-poll
       sus/(set {dock $json wire path})                  ::  subscriptions
       eve/{p/@u q/(map @u even)}                        ::  queued events
@@ -637,8 +636,8 @@
       ==
     ::
     ++  kill-cookie
-      |=  ses/hole
-      =/  ole  (~(got by cok) ses)      
+      |=  ses/hole                    :: XX actively kill tokens?
+      =/  ole  (~(got by cok) ses)
       =.  +>.$  (reset-timer je+ses+/[ses] `die.ole ~)
       %_  +>.$
         cok  (~(del by cok) ses)
@@ -708,7 +707,7 @@
       :-  %u-ship
       (~(get by secondary.jel) ses.a)
     ::
-        $oryx
+        $ixor
       :-  %bean
       =/  loc  (~(got by primary.jel) (~(got by secondary.jel) ses.a))
       =(ses.a ses:(~(got by tok.loc) tok.a))
@@ -1235,9 +1234,12 @@
       ?~  oxe  |
       =/  ses  (session-from-cookies cookie-prefix maf)
       ?~  ses  ~&(%oryx-no-cookie &)  :: XX security
-      =/  cyz  (~(get by wix) (oryx-to-ixor u.oxe))
-      ?~  cyz  ~&(bad-oryx+u.oxe &)  :: XX security?
-      ?.  =(u.ses ses.u.cyz)  
+      ?~  ~(get-user ya u.ses)  ~&(%oryx-bad-cookie |)
+      =/  ire  (oryx-to-ixor u.oxe)
+      ?~  (~(get by wix) ire)  ~&(bad-oryx+u.oxe &)  :: XX security?
+      =+  (scry-jael %ixor u.ses ire)
+      ?>  ?=($bean -<)
+      ?.  ->
         ~&(oryx-ses-mismatch+[orx=u.oxe u.ses] &)  :: XX security
       &
     ::
@@ -1485,7 +1487,7 @@
       ::
           $view
         ~|  lost-ixor+p.hem
-        [%| ((teba poll:(ire-ix p.hem)) u.q.hem)]
+        [%| ((teba poll:(ire-ix p.hem)) u.q.hem ses:for-client)]
       ==
     ::
     ++  process-auth
@@ -1535,7 +1537,7 @@
         ?.  =(our him.ham)
           ~|(stub-foreign+him.ham !!)
         ?.  ?|  =(get-user.yac `him.ham)
-                ?~(paz.ham | =(u.paz.ham load-secret))
+                ?~(paz.ham | (check-password him.ham u.paz.ham))
             ==
           ~|(%auth-fail !!)
         =.  yac  (for-authed-client him.ham)
@@ -1543,6 +1545,12 @@
         =^  jon  ya  stat-json.yac
         (give-json 200 cug jon) :: XX wait for session save?
       ==
+    ::
+    ++  check-password
+      |=  pas/{ship @t}  ^-  ?
+      =+  (scry-jael %pass pas)
+      ?>  ?=($bean -<)
+      ->
     ::
     ++  show-login-page
       ^-  (each pest _done)
@@ -1601,7 +1609,7 @@
       ^+  [*oryx ..ya]
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
       =+  ire=(oryx-to-ixor orx)
-      [orx ~(init ix ire %*(. *stem ses ses, him anon, p.eve 1))] :: XX fix him on ack?
+      [orx %.(ses ~(init ix ire %*(. *stem him anon, p.eve 1)))] :: XX fix him on ack?
     ::
     ++  stat-json
       ^+  [*json ..ya]
@@ -1646,7 +1654,9 @@
       :: ~&  >  hurl+[&2.b ire a]
       (pass-note:abet [%of ire (gsig a)] b)
     ::
-    ++  init  (jael-note:abet of+/[ire] %save-token ses ire)
+    ++  init
+      |=  ses/hole  ^+  ..ix
+      (jael-note:abet of+/[ire] %save-token ses ire)
     ::
     ++  add-even
       |=  a/even  ^+  eve
@@ -1749,7 +1759,7 @@
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
-      |=  seq/@u  ^+  ..ix
+      |=  {seq/@u ses/hole}  ^+  ..ix
       =<  abet
       =.  ..ix  (jael-note of+/[ire] %live-token ses ire)
       ?:  =(seq p.eve)
