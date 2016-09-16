@@ -56,8 +56,8 @@
 ++  mini-jael-kiss
   $%  {$save-cookie ses/hole own/?}
       {$kill-cookie ses/hole}
-      {$save-token ses/hole tok/oryx}
-      {$live-token ses/hole tok/oryx}
+      {$save-token ses/hole tok/ixor}
+      {$live-token ses/hole tok/ixor}
   ==
 ++  mini-jael-gift
   $%  {$cookie-ack him/@p}
@@ -86,8 +86,8 @@
           ==
 ++  whir-je
   $%  {$ses p/hole $~}
-      {$orx p/hole q/oryx $~}
-      {$liv p/hole q/oryx $~}
+      {$ire p/hole q/ixor $~}
+      {$liv p/hole q/ixor $~}
   ==
 ++  whir-ac  {p/?($$ hole) q/mend r/$@($~ {p/@t $~})}   ::  auth? filter cookie?
 ++  whir-of  {p/knot:ship q/term r/?($mess $lens) s/wire} ::  path in dock
@@ -143,7 +143,7 @@
 ++  stem                                                ::  client view
   $:  ses/hole                                          ::  associated session
       him/ship                                          ::  static identity
-      ude/(unit duct)                                   ::  long-poll
+      pol/(unit duct)                                   ::  long-poll
       era/@da                                           ::  next wake
       die/@da                                           ::  collection date
       sus/(set {dock $json wire path})                  ::  subscriptions
@@ -603,7 +603,7 @@
       =<  abet
       ?-  -.wir
         $ses  (kill-cookie p.wir)
-        $orx  (kill-token q.wir)
+        $ire  (kill-token q.wir)
         $liv  (beat-token q.wir)
       ==
     ::
@@ -648,41 +648,41 @@
       ==
     ::
     ++  save-token
-      |=  {ses/hole orx/oryx}
+      |=  {ses/hole ire/ixor}
       =/  die  (add now ~d7)
-      =.  +>.$  (reset-timer je+orx+/[ses]/[orx] ~ `die)
+      =.  +>.$  (reset-timer je+ire+/[ses]/[ire] ~ `die)
       %_  +>.$
-        tok   (~(put by tok) orx [hen ses die ~])
+        tok   (~(put by tok) ire [hen ses die ~])
         ..je  (jael-give [%token-ack ~])
       ==
     ::
     ++  live-token
-      |=  {ses/hole orx/oryx}
-      =/  ole  (~(got by tok) orx)
+      |=  {ses/hole ire/ixor}
+      =/  ole  (~(got by tok) ire)
       ?.  (~(has by cok) ses)  ~&(expired-session+ses +>.$) :: XX
       ?>  =(ses ses.ole) :: XX caught beforehand?
       =.  +>.$  (live-cookie ses)
       =+  [liv=`(add ~s30 now) die=(add ~d1 now)]
-      =.  +>.$  (reset-timer je+liv+/[ses]/[orx] liv.ole liv)
-      =.  +>.$  (reset-timer je+orx+/[ses]/[orx] `die.ole `die)
+      =.  +>.$  (reset-timer je+liv+/[ses]/[ire] liv.ole liv)
+      =.  +>.$  (reset-timer je+ire+/[ses]/[ire] `die.ole `die)
       %_  +>.$
-        tok   (~(put by tok) orx [hen ses die liv])
+        tok   (~(put by tok) ire [hen ses die liv])
       ==
     ::
     ++  kill-token
-      |=  orx/oryx
-      =/  ole  (~(got by tok) orx) 
-      =.  +>.$  (reset-timer je+liv+/[ses.ole]/[orx] liv.ole ~)
-      =.  +>.$  (reset-timer je+orx+/[ses.ole]/[orx] `die.ole ~)
+      |=  ire/ixor
+      =/  ole  (~(got by tok) ire) 
+      =.  +>.$  (reset-timer je+liv+/[ses.ole]/[ire] liv.ole ~)
+      =.  +>.$  (reset-timer je+ire+/[ses.ole]/[ire] `die.ole ~)
       %_  +>.$
-        tok   (~(del by tok) orx)
+        tok   (~(del by tok) ire)
         ..je  (jael-give [%token-dead ~])
       ==
     ::
     ++  beat-token
-      |=  orx/oryx
+      |=  ire/ixor
       %_  +>.$
-        tok   (~(put by tok) orx %*(. (~(got by tok) orx) liv ~))
+        tok   (~(put by tok) ire %*(. (~(got by tok) ire) liv ~))
         ..je  (jael-give [%token-beat ~])
       ==
     ::
@@ -1242,10 +1242,10 @@
       ?~  oxe  |
       =/  ses  (session-from-cookies cookie-prefix maf)
       ?~  ses  ~&(%oryx-no-cookie &)  :: XX security
-      =/  cyz  (~(get by wix) u.oxe)
+      =/  cyz  (~(get by wix) (oryx-to-ixor u.oxe))
       ?~  cyz  ~&(bad-oryx+u.oxe &)  :: XX security?
       ?.  =(u.ses ses.u.cyz)  
-        ~&(oryx-ses-mismatch+[orx=u.oxe u.ses ses.u.cyz] &)  :: XX security
+        ~&(oryx-ses-mismatch+[orx=u.oxe u.ses] &)  :: XX security
       &
     ::
     ++  grab-json
@@ -1640,7 +1640,6 @@
       =+  sub=(~(tap in sus))
       |-  ^+  ..ix
       ?^  sub  $(sub t.sub, ..ix (pul-subs i.sub))
-      =.  +>  poll-rest
       ..ix(wix (~(del by wix) ire))
     ::
     ++  teba  |*(a/$-(* ..ix) |*(b/* %_(done ..ix (a b))))
@@ -1739,9 +1738,9 @@
       =+  num=p.eve
       =.  eve  (add-even ven)
       =<  abet
-      ?~  ude  done
-      =.  hen  u.ude
-      (give-even:pass-rest(ude ~) num ven)
+      ?~  pol  done
+      =.  hen  u.pol
+      (give-even(pol ~) num ven)
     ::
     ++  give-even
       |=  {num/@u ven/even}  ^+  done
@@ -1769,28 +1768,22 @@
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
-      |=  a/@u  ^+  ..ix
+      |=  seq/@u  ^+  ..ix
       =<  abet
-      =.  ..poll  refresh
-      ?:  =(a p.eve)
-        =.  ..poll  poll-rest
-        =.  era  (add ~s30 now)
+      =.  ..ix  (jael-note of+/[ire] %live-token ses ire)
+      ?:  =(seq p.eve)
         =.  lyv  (~(put by lyv) hen [%poll ire])
-        pass-wait(ude `hen)
-      ?:  (gth a p.eve)  ~|(seq-high+cur=p.eve !!)
-      =+  ven=~|(seq-low+cur=p.eve (~(got by q.eve) a))
-      (give-even a ven)
-    ::
-    ++  poll-rest
-      ?~  ude  done
-      %*(. pass-rest(hen u.ude) hen hen)
+        done(pol `hen)
+      ?:  (gth seq p.eve)  ~|(seq-high+cur=p.eve !!)
+      =+  ven=~|(seq-low+cur=p.eve (~(got by q.eve) seq))
+      (give-even seq ven)
     ::
     ++  poll-dead
       ^+  ..ix
       =<  abet
-      ?.  =(ude `hen)
+      ?.  =(pol `hen)
         done  :: old long poll
-      pass-rest(ude ~)
+      done(pol ~)
     ::
     ++  subs-to-json
       |=  {a/dock b/path}
