@@ -13,21 +13,22 @@
   ==                                                    ::
 ++  jael-subjective                                     ::  indexes / observers
   $:  sub/jael-subjective-urbit                         ::  urbit subjective
-      web/jael-subjective-web                           ::  web subjective
+      sew/jael-subjective-web                           ::  web subjective
   ==                                                    ::
-++  jael-subjective-urbit                               ::  metadata
+++  jael-subjective-urbit                               ::  urbit metadata
   $:  $=  dev                                           ::  indexes
         $:  dad/ship                                    ::  our parent
+            pal/(set ship)                              ::  peers
+            kid/(set ship)                              ::  children
             ast/(map ship jael-purse)                   ::  assets from
-            gax/(set ship)                              ::  neighbor galaxies
-            sar/(set ship)                              ::  neighbor stars
-            pal/(set ship)                              ::  neighbor planets 
         ==                                              ::
       $=  vew                                           ::  all trackers
         $:  lat/(set duct)                              ::  rights
             hin/(set duct)                              ::  channel, all
             yon/(map ship (set duct))                   ::  channel by ship
   ==    ==                                              ::
+++  jael-subjective-web                                 ::  web metadata
+  $~                                                    ::
 ++  jael-objective                                      ::  all universal state
   $:  urb/jael-urbit                                    ::  all urbit state
       web/(map site jael-web-domain)                    ::  all web state
@@ -60,13 +61,13 @@
   ==                                                    ::
 ++  jael-right                                          ::  urbit commitment
   $%  {$email p/(set @ta)}                              ::  email addresses
-      {$entry p/(map hand (pair @da code))}             ::  symmetric keys
       {$final p/(map ship @uvG)}                        ::  ticketed ships
       {$fungi p/(map term @ud)}                         ::  fungibles
       {$guest $~}                                       ::  refugee visa
       {$hotel p/pile}                                   ::  reserved block
-      {$lived p/life}                                   ::  PKI knowledge
       {$jewel p/(map life ring)}                        ::  private keyring
+      {$lived p/life}                                   ::  PKI knowledge
+      {$noble p/(map hand (pair @da code))}             ::  symmetric keys
   ==                                                    ::
 ++  jael-purse                                          ::  rights set
   (nap jael-right)                                      ::
@@ -80,7 +81,7 @@
       {$line p/ship q/@da r/code}                       ::  outbound symkey
       {$link p/ship q/@da r/code}                       ::  inbound symkey
       {$meet p/ship q/gree}                             ::  integrate pki from
-      {$nuke ~}                                         ::  cancel all subs
+      {$nuke ~}                                         ::  cancel as tracker
       {$over p/ship q/jael-task}                        ::  mirror operation
       {$pall p/ship q/life}                             ::  our life acked
       {$ping p/ship}                                    ::  empty contact
@@ -117,6 +118,22 @@
   $%  {$hail p/jael-purse}                              ::  reset rights
       {$ping p/gree}                                    ::  propagate
   ==                                                    ::
+++  jael-edit-fact                                      ::  certificate change
+  $:  rex/ship                                          ::  owner
+      via/ship                                          ::  propagated from
+      lyf/life                                          ::  deed modified
+      way/?($new $old)                                  ::  new/existing deed
+      gur/gree                                          ::  pedigree
+  ==                                                    ::
+++  jael-edit-rite                                      ::  rights change
+  $:  rex/ship                                          ::  server
+      pal/ship                                          ::  client
+      del/jael-delta                                    ::  change
+  ==                                                    ::
+++  jael-edit                                           ::  urbit change
+  $:  {$fact jael-edit-fact}                            ::  pki change
+      {$rite p/ship q/ship r/jael-delta}                ::  rights change
+  ==                                                    ::
 ++  jael-edit                                           ::  pki change
   $:  $=  why                                           ::  cause of change
         $?  $hear                                       ::  external source
@@ -126,8 +143,8 @@
   ==                                                    ::
 ++  jael-change                                         ::  pki change
   $%  {$sent p/ship q/ship r/jael-delta)}               ::  rights from/to
-      {$step p/ship q/life r/lace}                      ::  new deed
-      {$sure p/ship q/life r/mind s/@}                  ::  new signature
+      {$step p/ship q/life r/gree}                      ::  new deed
+      {$sure p/ship q/life r/gree}                      ::  new signature
   ==                                                    ::
 ++  jael-move                                           ::  output
   {p/duct q/(wind jael-note jael-gift)}
@@ -330,19 +347,28 @@
   ++  cure                                              ::  objective edits
     |=  {hab/(list jael-edit) urb/jael-urbit}
     ^+  +>
-    (curd(urb urb.nav) abet:(~(apis su urb.nix) hab))
+    (curd(urb urb.nav) abet:(~(apex su sys urb.nav urb.nix) hab))
   --
 ::                          ## 4.b                      ::  su
 ++  su                                                  ::  subjective reactor
-  =|  ::  moz: output actions                           ::::
-      ::  urb: all subjective state
-      ::
-      $:  
+  =|  $:  ::  sys: system context                       ::::
+          ::
+          ^=  sys
+          $:  ::  now: current time
+              ::  eny: unique entropy
+              ::
+              now/@da
+              eny/@e
+          ==
           urb/jael-urbit
           jael-subjective-urbit
       ==
-  =*  urb  ->
-   
+  ::  urb: objective urbit state
+  ::  sub: subjective urbit state
+  ::  moz: moves in reverse order
+  ::
+  =*  sub  ->+
+  =|  moz/(list move)
   |%
   ::                                                    ::  abet:su
   ++  abet                                              ::  resolve
@@ -358,48 +384,111 @@
     ^+  +>
     +>(moz :_(moz [%pass %x ~ %mess /x %ping gur]))
   ::                                                    ::  carp:su
-  ++  carp                                              ::  ping ships
+  ++  carp                                              ::  ping all in set
     |=  {all/(set ship) gur/gree}
     =+  lal/(~(tap by all))
     |-  ^+  +>.^$
     ?~  lal  +>.^$
     $(lal t.lal, +>.^$ (cart i.lal gur))
-  ::
-  ++  
-  ::                                                    ::  repo:su
-  ++  repo                                              ::  react to change
-    |=  {why/?($hear $make) gut/jael-change}
+  ::                                                    ::  echo:su
+  ++  echo                                              ::  
+    |=  led/jael-edit
     ^+  +>
-    ?:  ?=($sent -.gut)
-      ?:  =(our p.gut)
-        ?>  ?=($make why)
-        ::  update liability listeners; track 
-        !!
-      ?:  =(our q.gut)
-        ?>  ?=($hear why)
-        ::  update asset listeners
-      +>
-    ::  mir: rank of changed ship
+    ?-    -.led
     ::
-    =+  mir=(rank p.gut)
+    ::  new certificate state
+    ::    {$fact rex/ship via/ship lyf/life way/?($new $old) gur/gree}
     ::
-    ::  update 
     ::
-
-    ?-    -.gut
-        $sent
-      !!
-    
-        $step
-      !!
+    ::  new certificate state
+    ::    {$fact p/ship q/life r/?($new old) s/gree}
+    ::    {$make p/ship q/life r/?($new old) s/gree}
     ::
-        $sure
-      ?.  =(our p.gut)
+        ?($hear $make)
+      ::
+      ::  ignore changes to existing deeds
+      ::
+      ?.  =(%new r.led)  +>
+      =+  dad=dad.doc.dat:(~(got by q:(~(got by s.led) p.led)) q.led)
+      ::
+      ::  if self update, update cached parent state
+      ::
+      ?:  =(our p.led)
+        +>.$(dad dad)
+      ::
+      ::  if first meeting, add to child/peer sets
+      ::
+      ?:  =(1 q.led)  +>
+      ?:  =(our dad)
+        +>.$(kid (~(put in kid) p.led))
+      ?.  =((clan p.led) (clan our))
+        +>.$
+      +>.$(pal (~(put in pal) p.led))
+    ::
+    ::  new rights
+    ::    {$send p/ship q/jael-delta}
+    ::
+        $send
+      ::
+      ::  record promises made to us
+      ::
+      ?.  =(our q.led)  +>.$
+      =*  haz  (fall (~(get by ast) p.led) *jael-purse)
+      +>.$(ast (~(put by ast) (come r.led haz)))
     ==
+  ::                                                    ::  repo:su
+  ++  repo                                              ::  report change
+    |=  led/jael-edit
+    ^+  +>
+    ?-    -.led
+    ::
+    ::  new certificate state
+    ::    {$fact rex/ship via/ship lyf/life way/?($new $old) gur/gree}
+    ::
+        $fact
+      !!
+    ::
+    ::  new rights
+    ::    {$paid p/ship q/jael-delta}
+    ::
+        $paid
+      +>
+    ==
+  ::                                                    ::  prop:su
+  ++  prop                                              ::  propagate pki change
+    |=  led/jael-edit
+    ^+  +>
+    ?.  ?=(?($hear $make) -.led)  +>
+    ?-    -.led
+    ::
+    ::  new certificate state
+    ::    {$made p/ship q/life r/?($new old) s/gree}
+    ::
+        ?($hear $make)
+      ::
+      ::  if we made a cert for someone else, send it back
+      ::
+      =.  +>  ?.  &(=($make -.led) !=(our p.led))  +>
+              (cart p.led s.led)
+      ::
+      ::  if this is a new child we just met, feed it 
+      ::
+    == 
 
-
-          $:  ::  sys: system context                       ::::
-          ::
+    ::    {$hear p/ship q/life r/?($new old) s/gree}
+    ::    {$make p/ship q/life r/?($new old) s/gree}
+    ::
+      ?:  (lth 
+      ?:  =(%old r.led) 
+        
+    ::
+    ::  new rights
+    ::    {$paid p/ship q/jael-delta}
+    ::
+        $paid
+      +>
+    ==
+    
 ::                          ## 4.c                      ::  ur
 ++  ur                                                  ::  urbit reactor
   =|  $:  ::  sys: system context                       ::::
