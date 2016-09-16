@@ -620,12 +620,12 @@
     ++  save-cookie
       |=  ses/hole
       ?<  (~(has by secondary.jel) ses)
+      =.  secondary.jel  (~(put by secondary.jel) ses him)
       =/  die  (add now ~d7)
       =.  +>.$  (reset-timer je+ses+/[ses] ~ `die)
       %_  +>.$
         cok   (~(put by cok) ses die)
         ..je  (jael-give [%cookie-ack him])
-        secondary.jel  (~(put by secondary.jel) ses him)
       ==
     ::
     ++  live-cookie
