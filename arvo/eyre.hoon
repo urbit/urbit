@@ -141,7 +141,7 @@
   ==
 ::
 ++  stem                                                ::  client view
-  $:  him/ship                                          ::  static identity
+  $:  him/ship                                          ::  user
       pol/(unit duct)                                   ::  long-poll
       sus/(set {dock $json wire path})                  ::  subscriptions
       eve/{p/@u q/(map @u even)}                        ::  queued events
@@ -160,7 +160,7 @@
       {$bugs p/?($as $to) $~}
       {$beam p/beam}
       {$deps p/?($put $delt) q/@uvH}
-      {$mess p/dock q/mark r/wire s/json}
+      {$mess p/{dock mark wire s/json}}
       {$poll p/{i/@uvH t/(list @uvH)}}
       {$spur p/spur}
       {$subs p/?($put $delt) q/{dock $json wire path}}
@@ -1460,9 +1460,11 @@
       ::
           $mess
         :-  %|
-        =^  orx  ..ya  ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
+        ?.  is-anon
+          ((teba new-mess:for-view) p.hem(s [%json !>(`json`s.p.hem)]))
+        =^  orx  ..ya  new-view:for-client
         =+  vew=(ire-ix (oryx-to-ixor orx))
-        ((teba new-mess.vew) p.hem r.hem q.hem %json !>(`json`s.hem))
+        ((teba new-mess.vew) p.hem(s [%json !>(`json`s.p.hem)]))
       ::
           $oath
         ?.  (~(has by sec) [p q]:hem)
@@ -1559,7 +1561,7 @@
       [%& %htme login-page:xml]
     ::
     ++  need-ixor  (oryx-to-ixor (need grab-oryx))
-    ++  for-view  ^+(ix (ire-ix need-ixor))
+    ++  for-view  ^+(ix (fix-user:(ire-ix need-ixor) ses:for-client))
     ::
     ++  random-session  (rsh 3 1 (scot %p (end 6 1 ney)))
     ++  for-authed-client
@@ -1658,6 +1660,11 @@
       |=  ses/hole  ^+  ..ix
       (jael-note:abet of+/[ire] %save-token ses ire)
     ::
+    ++  fix-user
+      |=  ses/hole  ^+  +>
+      ?.  =(anon him)  +>
+      +>(him (need ~(get-user ya ses)))  :: XX set correct value on session create
+    ::
     ++  add-even
       |=  a/even  ^+  eve
       [+(p.eve) (~(put by q.eve) p.eve a)]
@@ -1667,16 +1674,16 @@
       =.  +>.$
         %+  pass-note
           [%of ire (gsig [our %dojo] lens+/)]
-        [%g %deal [him our] %dojo %peel %lens-json /sole]
+        [%g %deal [our our] %dojo %peel %lens-json /sole]
       =.  +>.$
         %+  pass-note
           [%of ire (gsig [our %dojo] lens+/)]
-        [%g %deal [him our] %dojo %punk %lens-command %json !>(`json`jon)]
+        [%g %deal [our our] %dojo %punk %lens-command %json !>(`json`jon)]
       abet
     ::
     ++  new-mess
-      |=  {a/dock b/wire c/mark d/cage}  ^+  ..ix
-      (hurl-note [a mess+b] [%g %deal [him -.a] +.a %punk c d])
+      |=  {a/dock b/mark c/wire d/cage}  ^+  ..ix
+      (hurl-note [a mess+c] [%g %deal [him -.a] +.a %punk b d])
     ::
     ++  add-subs
       |=  {a/dock $json b/wire c/path}  ^+  ..ix
@@ -1700,7 +1707,7 @@
       =.  +>.$
         %+  pass-note
           `whir`[%of ire (gsig [our %dojo] lens+/)]
-        `note`[%g %deal [him our] %dojo %pull ~]
+        `note`[%g %deal [our our] %dojo %pull ~]
       abet:(give-json 200 ~ fec)
     ::
     ++  get-rush
