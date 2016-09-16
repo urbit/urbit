@@ -144,8 +144,6 @@
   $:  ses/hole                                          ::  associated session
       him/ship                                          ::  static identity
       pol/(unit duct)                                   ::  long-poll
-      era/@da                                           ::  next wake
-      die/@da                                           ::  collection date
       sus/(set {dock $json wire path})                  ::  subscriptions
       eve/{p/@u q/(map @u even)}                        ::  queued events
       med/(qeu duct)                                    ::  waiting /~/to/
@@ -919,13 +917,8 @@
       ==
     ::
         $wake
-      ?:  ?=($je -.tee)
-        %.(p.tee wake:(je (~(got by secondary.jel) p.p.tee)))
-      ?>  ?=({?($of $ow) @ $~} tee)
-      ?:  ?=($ow -.tee)
-        abut:(ire-ix p.tee)
-      =>  wake:(ire-ix p.tee)
-      (give-json 200 ~ (joba %beat %b &))
+      ?>  ?=($je -.tee)
+      %.(p.tee wake:(je (~(got by secondary.jel) p.p.tee)))
     ::
         $news                                         ::  dependency updated
       ?:  ?=({$se *} tee)
@@ -1653,14 +1646,7 @@
       :: ~&  >  hurl+[&2.b ire a]
       (pass-note:abet [%of ire (gsig a)] b)
     ::
-    ++  init
-      =.  die  (add ~d1 now)
-      abet(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
-    ::
-    ++  refresh
-      =.  mow  :_(mow [`/ %pass ow+/[ire] [%b %rest die]])
-      =.  die  (add ~d1 now)
-      done(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
+    ++  init  (jael-note:abet of+/[ire] %save-token ses ire)
     ::
     ++  add-even
       |=  a/even  ^+  eve
@@ -1755,11 +1741,6 @@
         $rush  ~[from+(subs-to-json p.ven) data+q.ven]
       ==
     ::
-    ++  pass-wait  (pass-note of+/[ire] [%b %wait era])
-    ++  pass-rest
-      =.  lyv  (~(del by lyv) hen)
-      (pass-note of+/[ire] [%b %rest era])
-    ::
     ++  pass-took
       |=  a/{p/dock ?($mess $lens) wire}
       %+  pass-note(hen `~)
@@ -1792,9 +1773,20 @@
         appl+[%s q.a]
         path+(jape (spud b))
       ==
-    ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
     ::
-    ++  get-jael  _!!
+    ++  get-jael
+      =*  jael-gift-token  :: XX types
+        =>  (mini-jael-gift /token-ack)
+        ?>(?=(?($token-ack $token-dead $token-beat) -) _.)
+      |=  a/jael-gift-token  ^+  ..ix
+      ?-  -.a
+        $token-ack  abet
+        $token-dead  abut :: notify?
+        $token-beat
+          ?~  pol  abet  :: recieved other response
+          ~?  !=(hen u.pol)  [%oryx-beat-weird-duct hen]
+          (give-json:abet(pol ~, hen u.pol) 200 ~ (joba %beat %b &))
+      ==
     --
   ++  vi                                                ::  auth engine
     ~%  %eyre-v  ..is  ~
