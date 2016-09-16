@@ -116,7 +116,6 @@
       kes/(map duct @ud)                                ::  outgoing by duct
       ney/@uvI                                          ::  rolling entropy
       liz/(jug @uvH (each duct ixor))                   ::  ford depsets
-      wup/(map hole cyst)                               ::  secure sessions
       wix/(map ixor stem)                               ::  open views
       sec/(map {iden (list @t)} driv)                   ::  security drivers
       jel/mini-jael-state
@@ -140,11 +139,6 @@
       {$xeno p/ship}                                    ::  proxied request
       {$poll p/ixor}                                    ::  session state
   ==
-++  cyst                                                ::  client session
-  $:  him/ship                                          ::  authenticated
-      lax/@da                                           ::  last used
-      :: vew/(set oryx)                                 ::  open views index
-  ==                                                    ::
 ::
 ++  stem                                                ::  client view
   $:  ses/hole                                          ::  associated session
@@ -625,6 +619,7 @@
     ::
     ++  save-cookie
       |=  ses/hole
+      ?<  (~(has by secondary.jel) ses)
       =/  die  (add now ~d7)
       =.  +>.$  (reset-timer je+ses+/[ses] ~ `die)
       %_  +>.$
@@ -878,7 +873,14 @@
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
       ~&(dead-ire+[`whir`tee ({term term $~} +.sih)] +>)
     ?-    &2.sih
-        $mini-jael-gift  !!
+        $mini-jael-gift
+      =/  gif  ;;(mini-jael-gift |2.sih)
+      ?:  ?=($cookie-ack -.gif)
+        :: XX probably should wait for this instead of pulling ship out via scry
+        +>.$
+      ?>  ?=({$of @ $~} tee)
+      (get-jael:(ire-ix p.tee) gif)
+    ::
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb
     ::    =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
@@ -982,7 +984,7 @@
         =^  cay  ..ya  ::  inject stat-json
           =*  cay  p.q.sih
           ?~  p.q.tee  [cay ..ya]
-          (add-auth p.q.tee cay)
+          (add-auth p.q.tee cay)  :: XX block on session save?
         ?:  ?=($red-quri p.cay)
           =+  url=((hard quri) q.q.cay)
           (give-thou 307 [location+(crip (apex:earn url))]~ ~)
@@ -1019,8 +1021,7 @@
       ~&  e+at-lost+-.cay
       [cay ..ya]
     ?>  ?=(@ q.q.cay)
-    =+  cyz=(~(got by wup) ses)
-    =^  jon  ..ya  ~(stat-json ya ses cyz)
+    =^  jon  ..ya  ~(stat-json ya ses)
     [cay(q.q (add-json jon q.q.cay)) ..ya]
   ::
   ++  norm-beak  |=(bek/beak ?+(r.bek bek {$ud $0} bek(r da+now)))
@@ -1037,7 +1038,6 @@
     |=  {usr/knot dom/path}  ^+  vi    :: XX default to initialized user?
     ~(. vi [usr dom] (fall (~(get by sec) usr dom) *driv))
   ::
-  ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host  `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
   ::                  [| [~ 8.443] `/localhost]       :: XX testing
   ::
@@ -1047,6 +1047,9 @@
   ::
   ++  ames-gram
     |=({him/ship gam/gram} (pass-note ~ %a %wont [our him] [%e -.gam] +.gam))
+  ::
+  ++  jael-note
+    |=({tea/whir kyz/mini-jael-kiss} (pass-note tea %e %mini-jael-kiss kyz))
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
@@ -1171,7 +1174,9 @@
     ::
     ++  fcgi-cred
       ^-  cred
-      =/  him  ?:(aut him:for-client anon)
+      =/  him  
+        ?.  aut  anon
+        (need get-user:for-client)
       %*  .  *cred
         hut  hat
         orx  'not-yet-implemented'
@@ -1195,7 +1200,7 @@
     ++  lens
       =<  abet
       ::  (process-parsed [%mess [our %dojo] %lens-command /lens (need grab-json)])
-      =^  orx  ..ya  new-view:(logon:for-client our)
+      =^  orx  ..ya  new-view:(for-authed-client our)
       =+  vew=(ire-ix (oryx-to-ixor orx))
       ((teba new-lens.vew) (need grab-json))
     ::
@@ -1445,7 +1450,7 @@
       ::
           $bugs
         ?-  p.hem
-          $as  (show-login-page)
+          $as  show-login-page
           $to  [%& %html poke-test:xml]
         ==
       ::
@@ -1495,8 +1500,8 @@
       =+  yac=for-client
       ?-    -.ham
           $js    [%& %js auth:js]
-          $json  =^  jon  ya.yac  stat-json.yac
-                 =^  cug  ya  (set-cookie -):yac
+          $json  =/  cug  (set-cookie -):yac
+                 =^  jon  ya  stat-json.yac  :: XX block on session save?
                  [%| (give-json 200 cug jon)]
       ::
           $at
@@ -1511,8 +1516,8 @@
           [%| (resolve-bake `ses.yac dom.yac +.p.pez)]
         ::
             $js
-          =^  jon  ya.yac  stat-json.yac  
-          =^  cug  ya  (set-cookie -):yac
+          =/  cug  (set-cookie -):yac
+          =^  jon  ya  stat-json.yac  :: XX block on session save?
           [%| (resolve cug p.pez(p (add-json jon p.p.pez)))]
         ==
       ::
@@ -1524,54 +1529,53 @@
           $get
         |-
         ~|  aute+ham
-        ?:  |(=(anon him.ham) =(him.yac him.ham))
-          =.  ..ya  abet.yac(him him.ham)
+        ?:  |(=(anon him.ham) =(get-user.yac `him.ham))
           =+  pez=process(pok rem.ham, aut &)
           ?:  ?=($| -.pez)  pez
           [%| (resolve ~ p.pez)]
         ?.  =(our him.ham)
           ~|(sso-disabled+[our him.ham] !!)
-        (show-login-page ~)
+        show-login-page
       ::
           $try
         :-  %|
         ?.  =(our him.ham)
           ~|(stub-foreign+him.ham !!)
-        ?.  ?|  =(him.yac him.ham)
+        ?.  ?|  =(get-user.yac `him.ham)
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
           ~|(%auth-fail !!)
-        =^  jon  ya.yac  stat-json:(logon:yac him.ham)
-        =^  cug  ya  (set-cookie -):yac
-        =.  cug  :_(cug (set-cookie cookie-domain %ship (scot %p him.ham)))
-        (give-json 200 cug jon)
+        =.  yac  (for-authed-client him.ham)
+        =/  cug  (set-cookie -):yac
+        =^  jon  ya  stat-json.yac
+        (give-json 200 cug jon) :: XX wait for session save?
       ==
     ::
     ++  show-login-page
-      |=  ses/(unit hole)  ^-  (each pest _done)
+      ^-  (each pest _done)
       ?.  ?=($@($~ {$~ $html}) p.pok)
         [%& %red ~]
-      ?~  ses
-        [%& %htme login-page:xml]
-      ?:  (~(has by wup) u.ses)
-        [%& %htme login-page:xml] :: XX
-      =^  cug  ..ya  (set-cookie -):(new-ya u.ses)
-      [%| (give-html 401 cug login-page:xml)]
+      [%& %htme login-page:xml]
     ::
     ++  need-ixor  (oryx-to-ixor (need grab-oryx))
     ++  for-view  ^+(ix (ire-ix need-ixor))
+    ::
+    ++  random-session  (rsh 3 1 (scot %p (end 6 1 ney)))
+    ++  for-authed-client
+      |=  him/ship  ^+  [dom=*(unit @t) ya]
+      ?>  =(him our)  :: XX SSO
+      (new-ya &)
     ::
     ++  for-client                        ::  stateful per-session engine
       ^+  [dom=*(unit @t) ya]
       =+  pef=cookie-prefix
       =+  lig=(session-from-cookies pef maf)
       ?~  lig
-        (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
-      =+  cyz=(~(get by wup) u.lig)
-      ?~  cyz
+        (new-ya |)
+      ?~  ~(get-user ya u.lig)
         ~&  bad-cookie+u.lig
-        (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
-      [~ ~(. ya u.lig u.cyz)]
+        (new-ya |)
+      [~ ~(. ya u.lig)]
     ::
 
     ++  cookie-domain
@@ -1584,41 +1588,27 @@
         {$& *}  ''  ::  XX security?
       ==
     ::
-    ++  new-ya  |=(ses/hole [`cookie-domain ~(new ya ses *cyst)])
+    ++  new-ya  |=(own/? [`cookie-domain %.(own ~(new ya random-session))])
     --
   ::
   ++  oryx-to-ixor  |=(a/oryx (rsh 3 1 (scot %p (end 6 1 (shas %ire a)))))
   ++  ya                                                ::  session engine
     ~%  %eyre-y  ..is  ~
-    =|  {ses/hole cyst}
-    =*  cyz  ->
-    |%
-    ++  abet  ..ya(wup (~(put by wup) ses cyz))
-    ++  abut  ..ya(wup (~(del by wup) ses))
-    ++  new
-      %_  ..new
-        him  `@p`(mix anon (lsh 5 1 (rsh 5 1 (shaf %ship ses))))
-        lax  now
-      ==
+    |_  ses/hole
+    ++  abet  ..ya
+    ++  abut  (jael-note / %kill-cookie ses)
+    ++  new  |=(own/? +>(..ya (jael-note / %save-cookie ses own)))
     ::
     ++  set-cookie
-      |=  domain/(unit @t)  ^+  [*(list @t) ..ya]
-      ?~  domain  [~ ..ya]
-      [[(^set-cookie u.domain cookie-prefix ses)]~ abet]
-    ::
-    ++  logon
-      |=  her/ship
-      %_  +>
-        him   her
-      ==
+      |=  domain/(unit @t)  ^-  (list @t)
+      ?~  domain  ~
+      [(^set-cookie u.domain cookie-prefix ses)]~
     ::
     ++  new-view
       ^+  [*oryx ..ya]
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
       =+  ire=(oryx-to-ixor orx)
-      =.  ..ix  ~(init ix ire %*(. *stem ses ses, him him, p.eve 1))
-      ::  ~&  stat-ire+`@t`ire
-      [orx abet]
+      [orx ~(init ix ire %*(. *stem ses ses, him anon, p.eve 1))] :: XX fix him on ack?
     ::
     ++  stat-json
       ^+  [*json ..ya]
@@ -1629,8 +1619,14 @@
         ixor+s+(oryx-to-ixor orx)
         sein+(jape +:<(sein our)>)
         ship+(jape +:<our>)
-        user+(jape +:<him>)
+        user+(jape +:<(fall get-user anon)>) :: XX crash on unsaved session?
       ==
+    ::
+    ++  get-user
+      ^-  (unit ship)
+      =+  (scry-jael %cook ses)
+      ?>  ?=($u-ship -<)
+      ->
     --
   ::
   ++  ix
@@ -1804,8 +1800,8 @@
         path+(jape (spud b))
       ==
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
-    ::  XX unused
-    ++  print-subs  |=({a/dock b/path} "{<p.a>}/{(trip q.a)}{(spud b)}")
+    ::
+    ++  get-jael  _!!
     --
   ++  vi                                                ::  auth engine
     ~%  %eyre-v  ..is  ~
@@ -2033,7 +2029,7 @@
     :^  hen  %give  %mass
     :-  %eyre
     :-  %|
-    :~  dependencies+[%& liz]  sessions+[%& wup]  views+[%& wix]
+    :~  dependencies+[%& liz]  views+[%& wix]
         ducts+[%| ~[dead+[%& ded] proxy+[%& pox] outgoing+[%& ask]]]
         misc+[%& bol]
     ==
@@ -2052,14 +2048,14 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  =+  bolo-6={$6 _%*(+ *bolo lyv *(map duct ^), wup *(map), wix *(map))}
+  =+  bolo-6={$6 _%*(+ *bolo lyv *(map duct ^), wix [*(map) *(map)])}
   =+  driv-5=_=>(*driv [cor=p req=req.q])
   =+  bolo-5={$5 _=+(*bolo-6 +.-(sec (~(run by sec.-) driv-5)))}
   =+  bolo-4={$4 _%*(+ *bolo-5 lyv *(map duct ^))}
   |=  old/?(bolo bolo-6 bolo-5 bolo-4)
   ?-  -.old
     $7  ..^$(+>- old)
-    $6  $(old [%7 +.old(lyv ~, wup ~, wix ~)])
+    $6  $(old [%7 +.old(lyv ~, wix ~)])
     $5  $(old [%6 +.old(sec (~(run by sec.old) |=(driv-5 [cor & req])))])
     $4  $(old [%5 +.old(lyv ~)])          :: minor leak
   ==
