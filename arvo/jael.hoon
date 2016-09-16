@@ -18,7 +18,7 @@
 ++  jael-subjective-urbit                               ::  urbit metadata
   $:  $=  dev                                           ::  indexes
         $:  dad/ship                                    ::  our parent
-            pal/(set ship)                              ::  peers
+            pyr/(set ship)                              ::  peers
             kid/(set ship)                              ::  children
             ast/(map ship jael-purse)                   ::  assets from
         ==                                              ::
@@ -131,8 +131,18 @@
       del/jael-delta                                    ::  change
   ==                                                    ::
 ++  jael-edit                                           ::  urbit change
-  $:  {$fact jael-edit-fact}                            ::  pki change
-      {$rite p/ship q/ship r/jael-delta}                ::  rights change
+  $%  $:  $fact                                         ::  certificate change
+          rex/ship                                      ::  owner
+          via/ship                                      ::  propagated from
+          lyf/life                                      ::  deed modified
+          way/?($new $old)                              ::  extend/improve
+          gur/gree                                      ::  pedigree
+      ==                                                ::
+      $:  $rite                                         ::  rights change
+          rex/ship                                      ::  issuer
+          pal/ship                                      ::  issued to
+          del/jael-delta                                ::  change
+      ==                                                ::
   ==                                                    ::
 ++  jael-edit                                           ::  pki change
   $:  $=  why                                           ::  cause of change
@@ -399,42 +409,37 @@
     ::  new certificate state
     ::    {$fact rex/ship via/ship lyf/life way/?($new $old) gur/gree}
     ::
-    ::
-    ::  new certificate state
-    ::    {$fact p/ship q/life r/?($new old) s/gree}
-    ::    {$make p/ship q/life r/?($new old) s/gree}
-    ::
-        ?($hear $make)
+        $fact
       ::
       ::  ignore changes to existing deeds
       ::
-      ?.  =(%new r.led)  +>
-      =+  dad=dad.doc.dat:(~(got by q:(~(got by s.led) p.led)) q.led)
+      ?.  =(%new way.led)  +>
+      =+  dad=dad.doc.dat:(~(got by q:(~(got by gur.led) rex.led)) lyf.led)
       ::
       ::  if self update, update cached parent state
       ::
-      ?:  =(our p.led)
+      ?:  =(our rex.led)
         +>.$(dad dad)
       ::
       ::  if first meeting, add to child/peer sets
       ::
-      ?:  =(1 q.led)  +>
+      ?:  =(1 lyf.led)  +>
       ?:  =(our dad)
-        +>.$(kid (~(put in kid) p.led))
-      ?.  =((clan p.led) (clan our))
+        +>.$(kid (~(put in kid) rex.led))
+      ?.  =((clan rex.led) (clan our))
         +>.$
-      +>.$(pal (~(put in pal) p.led))
+      +>.$(pyr (~(put in pyr) rex.led))
     ::
     ::  new rights
-    ::    {$send p/ship q/jael-delta}
+    ::    {$rite rex/ship pal/ship del/jael-delta}
     ::
         $send
       ::
       ::  record promises made to us
       ::
-      ?.  =(our q.led)  +>.$
-      =*  haz  (fall (~(get by ast) p.led) *jael-purse)
-      +>.$(ast (~(put by ast) (come r.led haz)))
+      ?.  =(our pal.led)  +>.$
+      =*  haz  (fall (~(get by ast) rex.led) *jael-purse)
+      +>.$(ast (~(put by ast) (come del.led haz)))
     ==
   ::                                                    ::  repo:su
   ++  repo                                              ::  report change
@@ -458,29 +463,13 @@
   ++  prop                                              ::  propagate pki change
     |=  led/jael-edit
     ^+  +>
-    ?.  ?=(?($hear $make) -.led)  +>
-    ?-    -.led
+    ?.  ?=($fact -.led)  +>
     ::
-    ::  new certificate state
-    ::    {$made p/ship q/life r/?($new old) s/gree}
+    ::  if we made a cert for someone else, send it back
     ::
-        ?($hear $make)
-      ::
-      ::  if we made a cert for someone else, send it back
-      ::
-      =.  +>  ?.  &(=($make -.led) !=(our p.led))  +>
-              (cart p.led s.led)
-      ::
-      ::  if this is a new child we just met, feed it 
-      ::
-    == 
-
-    ::    {$hear p/ship q/life r/?($new old) s/gree}
-    ::    {$make p/ship q/life r/?($new old) s/gree}
-    ::
-      ?:  (lth 
-      ?:  =(%old r.led) 
-        
+    ?:  &(=(our via.led) !=(our rex.led)) 
+      (cart rex.led gur.led)
+    +>
     ::
     ::  new rights
     ::    {$paid p/ship q/jael-delta}
@@ -488,7 +477,7 @@
         $paid
       +>
     ==
-    
+  -- 
 ::                          ## 4.c                      ::  ur
 ++  ur                                                  ::  urbit reactor
   =|  $:  ::  sys: system context                       ::::
