@@ -673,14 +673,15 @@
       =.  +>.$  (reset-timer je+ire+/[ses.ole]/[ire] `die.ole ~)
       %_  +>.$
         tok   (~(del by tok) ire)
-        ..je  (jael-give [%token-dead ~])
+        ..je  (jael-give(hen hen.ole) [%token-dead ~])
       ==
     ::
     ++  beat-token
       |=  ire/ixor
+      =/  ole  (~(got by tok) ire)
       %_  +>.$
-        tok   (~(put by tok) ire %*(. (~(got by tok) ire) liv ~))
-        ..je  (jael-give [%token-beat ~])
+        tok   (~(put by tok) ire ole(liv ~))
+        ..je  (jael-give(hen hen.ole) [%token-beat ~])
       ==
     ::
     ::
