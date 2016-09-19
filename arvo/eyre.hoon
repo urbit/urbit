@@ -79,7 +79,7 @@
               {$hi p/knot q/mark $~}                    ::  outbound HTTP
               {$se p/whir-se q/{iden (list @t)}}        ::  outbound to domain
               {$si $~}                                  ::  response done
-              {$of p/ixor q/$@($~ whir-of)}             ::  associated view
+              {$of p/ixor q/$@($~ ?(whir-of whir-off))}             ::  associated view
               {$ow p/ixor $~}                           ::  dying view
               {$on $~}                                  ::  dependency
               {$je p/whir-je}
@@ -90,7 +90,8 @@
       {$liv p/hole q/ixor $~}
   ==
 ++  whir-ac  {p/?($$ hole) q/mend r/$@($~ {p/@t $~})}   ::  auth? filter cookie?
-++  whir-of  {p/knot:ship q/term r/?($mess $lens) s/wire} ::  path in dock
+++  whir-of  {p/knot:ship q/term $mess s/wire} ::  path in dock
+++  whir-off  {p/knot:ship q/term $lens s/wire} ::  path in dock
 ++  whir-se  ?($core vi-arm)                            ::  build/call
 ++  vi-arm
   $?  $filter-request                                   ::  ++out mod request
@@ -203,7 +204,8 @@
   ?~  quy  [%$ %n ~]~
   [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
 ::
-++  gsig  |=({a/dock b/?($mess $lens) c/path} [(scot %p p.a) q.a b c])
+++  gsig  |=({a/dock b/$mess c/path} [(scot %p p.a) q.a b c])
+++  gsig-lens  |=({a/dock b/$lens c/path} [(scot %p p.a) q.a b c])
 ++  session-from-cookies
   |=  {nam/@t maf/math}
   ^-  (unit hole)
@@ -903,7 +905,8 @@
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
           ?($coup $reap)
-        ::  ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
+        ?:  ?=($lens &3.q.tee)
+          (ack-lens:(ire-ix p.tee) ?~(p.cuf ~ `[-.cuf u.p.cuf]))
         (get-ack:(ire-ix p.tee) q.tee ?~(p.cuf ~ `[-.cuf u.p.cuf]))
       ::
           $doff  !!
@@ -911,9 +914,13 @@
         ?.  ?=($json p.p.cuf)
           :: ~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
           (back tee %json p.cuf)
+        ?:  ?=($lens &3.q.tee)
+          (get-lens:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
-          $quit  ~&(quit+tee (get-quit:(ire-ix p.tee) q.tee))
+          $quit
+        ?:  ?=($lens &3.q.tee)  (give-json 500 ~ (joba %quit b+&))
+        ~&(quit+tee (get-quit:(ire-ix p.tee) q.tee))
       ==
     ::
         $wake
@@ -966,6 +973,10 @@
           {$of @ ^}
         ?:  ?=($| -.q.sih)
           ((slog p.q.sih) +>.$)             ::  XX get-even %mean
+        ?:  ?=($lens &3.q.tee)
+          %+  get-lens:(ire-ix p.tee)  q.tee
+          ?>  ?=($json p.p.q.sih)                    ::  XX others
+          ((hard json) q.q.p.q.sih)
         %+  get-rush:(ire-ix p.tee)  q.tee
         ?>  ?=($json p.p.q.sih)                    ::  XX others
         ((hard json) q.q.p.q.sih)
@@ -1650,7 +1661,7 @@
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
     ++  hurl-note
-      |=  {a/{dock ?($mess $lens) path} b/note}  ^+  ..ix
+      |=  {a/{dock $mess path} b/note}  ^+  ..ix
       =:  med  (~(put to med) hen)
           hen  `~
         ==
@@ -1674,11 +1685,11 @@
       |=  jon/json  ^+  ..ix
       =.  +>.$
         %+  pass-note
-          [%of ire (gsig [our %dojo] lens+/)]
+          [%of ire (gsig-lens [our %dojo] lens+/)]
         [%g %deal [our our] %dojo %peel %lens-json /sole]
       =.  +>.$
         %+  pass-note
-          [%of ire (gsig [our %dojo] lens+/)]
+          [%of ire (gsig-lens [our %dojo] lens+/)]
         [%g %deal [our our] %dojo %punk %lens-command %json !>(`json`jon)]
       abet
     ::
@@ -1703,18 +1714,16 @@
       (nice-json:pop-duct:(ire-ix ire))          ::  XX gall ack
     ::
     ++  get-lens
-      |=  {a/whir-of fec/json}  ^+  ..ix
+      |=  {a/whir-off fec/json}  ^+  ..ix
       ?~  fec  ..ix                   ::  nulled event we don't care about
       =.  +>.$
         %+  pass-note
-          `whir`[%of ire (gsig [our %dojo] lens+/)]
+          `whir`[%of ire (gsig-lens [our %dojo] lens+/)]
         `note`[%g %deal [our our] %dojo %pull ~]
       abet:(give-json 200 ~ fec)
     ::
     ++  get-rush
       |=  {a/whir-of b/json}  ^+  ..ix
-      ?:  ?=($lens r.a)
-        (get-lens a b)
       (get-even [%rush [[(slav %p p.a) q.a] s.a] (joba %json b)])
     ::
     ++  get-quit
@@ -1723,8 +1732,6 @@
     ::
     ++  get-ack
       |=  {a/whir-of b/(unit {term tang})}  ^+  ..ix
-      ?:  ?=($lens r.a)
-        (ack-lens b)
       ?:  =(~ med)  ~&  resp-lost+ire  ..ix
       ?~  b  (nice-json:pop-duct)
       (mean-json:pop-duct 500 b)
@@ -1760,7 +1767,7 @@
       ==
     ::
     ++  pass-took
-      |=  a/{p/dock ?($mess $lens) wire}
+      |=  a/{p/dock $mess wire}
       %+  pass-note(hen `~)
         [%of ire (gsig a)]
       [%g %deal [him -.p.a] +.p.a %pump ~]
