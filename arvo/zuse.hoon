@@ -3364,7 +3364,7 @@
               cur/(pair life (unit life))               ::  versions: our their
               gez/gree                                  ::  pedigree to share
               pub/(map life pass)                       ::  their public keys
-              war/(map life ring)                       ::  our private keys
+              sax/(list ship)                           ::  parent hierarchy
           ==                                            ::
 ++  plan  (trel view (pair @da (unit @dr)) path)        ::  subscription
 ++  plea  {p/@ud q/{p/? q/@t}}                          ::  live prompt

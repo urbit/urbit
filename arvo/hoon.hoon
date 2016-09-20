@@ -1548,8 +1548,8 @@
 ++  jug  |*({a/mold b/mold} (map a (set b)))            ::  map of sets
 ++  map  |*  {a/mold b/mold}                            ::  table
          $@($~ {n/{p/a q/b} l/(map a b) r/(map a b)})   ::
-++  nap  |*  a/mold                                     ::  unified map
-         $@($~ {n/a l/(set a) r/(set a)})               ::
+++  nap  |*  a/mold                                     ::  head-sorted set
+         $@($~ {n/a l/(nap a) r/(nap a)}                ::
 ++  qeu  |*  a/mold                                     ::  queue
          $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
 ++  set  |*  a/mold                                     ::  set
