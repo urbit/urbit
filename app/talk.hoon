@@ -1868,6 +1868,9 @@
       =.  q.q.gam  
         =+  ole=(~(get by q.q.gam) [%& our.hid man])
         ?^  ole  (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
+        ::  for fedearted stations, pretend station src/foo is also our/foo
+        ::  XX pass src through explicitly instead of relying on implicit
+        ::     value in hid from the subscription to src/foo 
         =+  ole=(~(get by q.q.gam) [%& src.hid man])
         ?~  ole  q.q.gam
         =.  q.q.gam  (~(del by q.q.gam) [%& src.hid man])
