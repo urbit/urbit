@@ -1,6 +1,7 @@
-# arvo and pills
+# subrepositories, downloaded pills
 /arvo/
-urbit.pill
+/debian/
+*.pill
 # autoconf
 /.MAKEFILE-VERSION
 /make.conf

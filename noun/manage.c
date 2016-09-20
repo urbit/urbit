@@ -1503,6 +1503,16 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
 {
   c3_c    ful_c[2048];
 
+  /* have we done this before? */
+  {
+    struct stat s;
+    snprintf(ful_c, 2048, "%s/.urb", dir_c);
+    if ( stat(ful_c, &s) == 0 ) {
+      printf("home: already exists\r\n");
+      return;
+    }
+  }
+
   /* Create subdirectories. */
   {
     mkdir(dir_c, 0700);
