@@ -1637,9 +1637,8 @@
       |=  vew/(set bone)
       %^  pa-report  vew  %group
       :_  remotes
-      |-  ^-  atlas
-      ?~  locals  ~
-      [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
+      %-  ~(run by locals)
+      |=({@ a/status} a)
     ::
     ++  pa-report-cabal                                 ::  update config
       (pa-report cabalers %cabal shape mirrors)
