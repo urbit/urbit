@@ -2,9 +2,12 @@
 ::                                                      ::  %orthodox
 !?  150
 ::                                                      ::::
-::::                        #  1                        ::  structures
+::::                        #  0                        ::  public structures
   ::                                                    ::::
 |=  pit/vase
+::                                                      ::::
+::::                        #  1                        ::  private structures
+  ::                                                    ::::
 =>  |%
 ++  jael-state                                          ::  all crypto state
   $:  ver/$0                                            ::  %jael version 
@@ -174,7 +177,7 @@
       ::  
       ::  more rights: reputation stuff, foreign accounts...
       ::
-      ::  blocked on hoon: if constant equality informed
+      ::  blocked on hoon: if equality to constant informed
       ::  typed inference, ++expose could specialize.
       ::
 =>  |%
@@ -610,7 +613,6 @@
     ==
   ::                                                    ::  ex:ur
   ++  ex                                                ::  server reactor
-    ::
     ::  shy: private state
     ::  rug: domestic will
     ::
@@ -643,27 +645,39 @@
               cod/gree
               gur/grue
           ==
-      ?:  |(=(0 p.gur) =(gur rug))  ..grow
+      ?:  |(=(~ q.gur) =(gur rug))  ..grow
       |^  ^+  ..grow
-          =+  :*  ::
-                  ::  num: life counter
-                  ::  end: last life in will
-                  ::  pre: preceding deed
-                  ::
-                  num=`life`1
-                  end=(max p.gur p.rug)
-                  pre=*(unit lama)
-              ==
+          ::
+          ::  wap: ascending list of new certs
+          ::  nem: previous life
+          ::  pre: previous deed
+          ::
+          =/  wap
+            ^-  (list (pair life lace))
+            %+  sort  (~(tap by q.gur))
+            |=  {a/{life *} b/{life *}}
+            (lth -.a -.b)
+          =/  nem  
+            ^-  (unit life)  
+            ?~(wap ~ ?:(=(1 p.i.wap) ~ `(dec p.i.wap)))
+          =/  pre
+            ^-  (unit lama)
+            (bind nem |=(life dat:(~(got by q.rug) +<))) 
+          ::
+          ::  merge each life
+          ::
           |-  ^+  ..grow
-          ?:  (gth num end)  ..grow
+          ?~  wap  ..grow
+          ?>  |(?=($~ nem) =(p.i.wap +(u.nem)))
           ::
           ::  lub: merged deed and changes
           ::
-          =+  lub=(grow-mate num pre)
+          =+  lub=(grow-mate p.i.wap q.i.wap pre)
           %=  $
-            num    +(num)
+            wap    t.wap
+            nem    `p.i.wap
             pre    `dat.q.lub
-            q.rug  (~(put by q.rug) num q.lub)
+            q.rug  (~(put by q.rug) p.i.wap q.lub)
             hab    (weld (flop p.lub) hab)
           ==
       ::                                                ::  grow-leak/ex:ur
@@ -672,7 +686,7 @@
         |=  {who/ship lyf/life}
         ^-  @
         ::  lab: promises by who
-        ::  par: promises to self
+        ::  par: promises by who, to who
         ::  jel: private key by life
         ::
         =*  lab  lab:(~(got by pry) who)
@@ -700,11 +714,6 @@
         |=  lyf/life 
         ^-  @
         ::
-        ::  first galaxy key is hardcoded
-        ::
-        ?:  &((lth rex 256) =(1 lyf))
-          (zeno rex)
-        ::
         ::  cascade search over old and new, new first
         ::
         |^  %-  (bond |.((need grow-look-find))) 
@@ -722,32 +731,36 @@
       ::                                                ::  grow-mate/ex:ur
       ++  grow-mate                                     ::  merge lives
         |=  $:  ::  num: life we're merging
+                ::  new: new deed
                 ::  pre: previous deed 
-                ::  lod: old deed
-                ::  wan: new deed
+                ::  eld: old deed
                 ::
                 num/@ud
+                new/lace
                 pre/(unit lama)
             ==
-        =+  :*  lod=`(unit lace)`(~(get by q.rug) num) 
-                wan=`(unit lace)`(~(get by q.gur) num)
+        =+  :*  eld=`(unit lace)`(~(get by q.rug) num) 
             ==
         ^-  (pair (list jael-edit) lace)
         ::
+        ::  enforce artificial scarcity in lives
+        ::
+        ?>  (lte num 9)
+        ::
         ::  if no new information, do nothing
         ::
-        ?:  |(?=($~ wan) =(wan lod))
-          ?>  ?=(^ lod) 
-          [~ u.lod]
+        ?:  |(=(eld `new))
+          ?>  ?=(^ eld) 
+          [~ u.eld]
         ::
         ::  ash: hash of deed content
         ::  def: our default parent
         ::  dad: our declared parent
         ::  mir: our rank
         ::
-        =/  ash  (sham dat.u.wan)
+        =/  ash  (sham %urbit rex num dat.new)
         =/  def  (sein rex)
-        =*  dad  dad.doc.dat.u.wan
+        =*  dad  dad.doc.dat.new
         =/  mir  (clan rex)
         ?>  ?:  |(=(num 1) =(%earl mir) =(%pawn mir))
               ::
@@ -762,17 +775,17 @@
         ::
         ::  if we have an old deed at this life, merge new signatures
         ::
-        ?:  ?=(^ lod)
+        ?:  ?=(^ eld)
           ::
           ::  deed data must be identical
           ::
-          ?>  =(dat.u.wan dat.u.lod)
+          ?>  =(dat.new dat.u.eld)
           ::
           ::  sow: all new signatures
           ::
-          =+  sow=`(list (trel ship life @))`(~(tap by syg.u.wan))
+          =+  sow=`(list (trel ship life @))`(~(tap by syg.new))
           |-  ^-  (pair (list jael-edit) lace)
-          ?~  sow  [~ u.lod]
+          ?~  sow  [~ u.eld]
           ::
           ::  mor: all further edits
           ::  och: old signature for this signer
@@ -780,7 +793,7 @@
           =+  mor=$(sow t.sow)
           =+  och=(~(get by syg.q.mor) p.i.sow)
           ::
-          ::  ignore obsolete or equivalent signature
+          ::  ignore obsolete/equivalent signature
           ::
           ?.  |(?=($~ och) (gth q.i.sow p.u.och))
             mor
@@ -795,7 +808,7 @@
         ::  non-initial deeds must be signed by previous
         ::
         ?>  ?|  ?=($~ pre)
-                =+  laz=(~(got by syg.u.wan) rex)
+                =+  laz=(~(got by syg.new) rex)
                 ?>  =(p.laz (dec num))
                 (grow-lick pub.u.pre ash q.laz)
             ==
@@ -810,20 +823,20 @@
                     !=(%earl mir)
                 ==
                 ::
-                ::  public keys for galaxies are hardcoded
+                ::  initial fingerprint for galaxy is hardcoded
                 ::
                 ?&  =(%czar mir)
                     ?=($~ pre)
-                    =(pub.dat.u.wan (zeno rex))
+                    =((shaf %zeno pub.dat.new) (zeno rex))
                 ==
                 ::
-                ::  the deed's origin authenticates it
+                ::  the deed is made by us or sent by owner
                 ::
                 |(?=($~ via) =(u.via rex))
                 ::
                 ::  check valid parent signature
                 ::
-                =+  par=(~(got by syg.u.wan) dad)
+                =+  par=(~(got by syg.new) dad)
                 (grow-like [dad p.par] ash q.par)
             ==
         =-  [[%fact rex p.- num %step q.-]~ q.-]
@@ -831,8 +844,8 @@
         ::
         ::  the new deed is complete; report it
         ::
-        ?:  (~(has by syg.u.wan) dad)
-          [via u.wan]
+        ?:  (~(has by syg.new) dad)
+          [via new]
         ::
         ::  the new deed needs a signature; try to add it
         ::
@@ -845,7 +858,7 @@
         =*  lyf  p:(~(got by pug) dad)
         =*  rig  (grow-leak dad lyf)
         =*  val  (sign:as:(nol:nu:crub rig) *@ ash)
-        u.wan(syg (~(put by syg.u.wan) dad [lyf val]))
+        new(syg (~(put by syg.new) dad [lyf val]))
     --
     ::                                                ::  unto:ex:ur:of
     ++  unto                                          ::  client reactor

@@ -3637,7 +3637,7 @@
   $:  dad/@p                                            ::  parent
       dob/?                                             ::  & clean, | dirty
       nym/(map chip (pair @ta @t))                      ::  identity strings
-      urn/(unit @p)                                     ::  declared owner
+      urn/(unit @p)                                     ::  owner of record
   ==                                                    ::
 ++  chip                                                ::  standard identity
   $?  $bus                                              ::  business name
@@ -3647,7 +3647,8 @@
       $mid                                              ::  middle name 
   ==                                                    ::
 ++  gree  (map ship grue)                               ::  pki dump set
-++  grue  (pair life (map life lace))                   ::  certificate
+++  grue  (pair life wyll)                              ::  certificate
+++  wyll  (map life lace)                               ::  certificate
 ++  mind  {who/@p lyf/@ud}                              ::  key identifier
 ++  site  (list @ta)                                    ::  [%com %yahoo %www ~]
 ++  tale                                                ::  urbit-signed *
