@@ -1010,9 +1010,15 @@
         |=(a/(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
       ::
       ++  who                                          ::  %who  
-        |=  pan/(set partner)  ^+  ..sh-work  
+        |=  pan/(set partner)  ^+  ..sh-work
+        =.  pan
+          ?^  pan  pan
+          :: default to all named channels
+          %-  ~(rep by nik)
+          |=  {{a/(set partner) @} b/(set partner)}
+          (~(uni by a) b)
         =+  foo=`(list (pair partner atlas))`(~(tap by q.owners.she))
-        =+  bar=`(list (pair partner atlas))`(sort foo aor)
+        =+  bar=`(list (pair partner atlas))`(sort foo aor)        
         =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
