@@ -3034,8 +3034,8 @@
 ++  saxo                                                ::  autocanon
   |=  who/ship
   ^-  (list ship)
-  ?:  (lth who 256)  [who ~]
-  [who $(who (sein who))]
+  =+  dad=(sein who)
+  [who ?:(=(who dad) ~ $(who dad))]
 ::
 ++  sein                                                ::  autoboss
   |=  who/ship  ^-  ship
@@ -3359,12 +3359,11 @@
 ++  pail  ?($none $warm $cold)                          ::  connection status
 ++  pile  (tree (pair ship ship))                       ::  efficient ship set
 ++  pipe                                                ::  secure channel
-          $:  out/(unit (pair hand code))               ::  outbound key
-              inn/(map hand code)                       ::  inbound keys
-              cur/(pair life (unit life))               ::  versions: our their
-              gez/gree                                  ::  pedigree to share
-              pub/(map life pass)                       ::  their public keys
-              sax/(list ship)                           ::  parent hierarchy
+          $:  out/(unit (pair hand bill))               ::  outbound key
+              inn/(map hand bill)                       ::  inbound keys
+              cur/(unit life)                           ::  their version
+              sax/(list ship)                           ::  their ancestry
+              pub/wyll                                  ::  their public keys
           ==                                            ::
 ++  plan  (trel view (pair @da (unit @dr)) path)        ::  subscription
 ++  plea  {p/@ud q/{p/? q/@t}}                          ::  live prompt
@@ -3560,7 +3559,7 @@
 ++  kiss-xmas                                           ::  in request ->$
           $%  {$hear p/lane q/@}                        ::
               {$mess p/ship q/path r/*}                 ::  send message
-              {$gear p/gree q/(map life ring)}          ::  general update
+              {$gear p/farm q/(map life ring)}          ::  general update
               {$wake $~}                                ::
           ==                                            ::
 ++  card-xmas                                           ::  out cards
@@ -3573,7 +3572,7 @@
               $:  $j                                    ::  to %jael
                   $%  {$line p/ship q/@da r/code}       ::
                       {$link p/ship q/@da r/code}       ::
-                      {$meet p/gree}                    ::
+                      {$meet p/farm}                    ::
                       {$view p/ship}                    ::  
                       {$west p/ship q/path r/*}         ::  to %gall
           ==  ==  ==                                    ::
@@ -3628,17 +3627,12 @@
 ::::    %jael
   ::
 ++  bill  (pair @da @)                                  ::  expiring value
-++  lace  (tale lama)                                   ::  signed deed
-++  lama                                                ::  certificate deed
-  $:  doc/lamp                                          ::  metadata
-      pub/pass                                          ::  public key
-  ==                                                    ::
-++  lamp                                                ::  cert metadata
+++  bull                                                ::  cert metadata
   $:  dad/@p                                            ::  parent
       dob/?                                             ::  & clean, | dirty
       nym/(map chip (pair @ta @t))                      ::  identity strings
-      urn/(unit @p)                                     ::  owner of record
   ==                                                    ::
+++  cert  (tale deyd)                                   ::  signed deed
 ++  chip                                                ::  standard identity
   $?  $bus                                              ::  business name
       $giv                                              ::  given name
@@ -3646,9 +3640,12 @@
       $had                                              ::  handle
       $mid                                              ::  middle name 
   ==                                                    ::
-++  gree  (map ship grue)                               ::  pki dump set
-++  grue  (pair life wyll)                              ::  certificate
-++  wyll  (map life lace)                               ::  certificate
+++  deyd                                                ::  certificate deed
+  $:  doc/bull                                          ::  metadata
+      pub/pass                                          ::  public key
+  ==                                                    ::
+++  farm  (map ship wyll)                               ::  pki dump set
+++  wyll  (map life cert)                               ::  certificate
 ++  mind  {who/@p lyf/@ud}                              ::  key identifier
 ++  site  (list @ta)                                    ::  [%com %yahoo %www ~]
 ++  tale                                                ::  urbit-signed *
