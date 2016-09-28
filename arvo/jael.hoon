@@ -16,14 +16,14 @@
       sub/jael-subjective                               ::  all subjective state
   ==                                                    ::
 ++  jael-subjective                                     ::  urbit metadata
-  $:  cod/farm                                          ::  our + dependencies
-      $=  car                                           ::  secure channels
+  $:  $=  car                                           ::  secure channels
         %+  map  ship                                   ::  partner
         $:  yen/(set duct)                              ::  trackers
-            dut/(unit pipe)                             ::  channel state
+            det/pipe                                    ::  channel state
         ==                                              ::
-      $=  neb                                           ::  neighborhood
-        $:  dad/ship                                    ::  parent 
+      $=  rel                                           ::  neighborhood
+        $:  dad/_our                                    ::  parent
+            cod/farm                                    ::  cousins
             pyr/(set ship)                              ::  peers
             kyz/(set ship)                              ::  children
         ==                                              ::
@@ -59,7 +59,7 @@
   jael-delta                                            ::  %|/asset change
 ::                                                      ::
 ++  jael-gift                                           ::  report
-  $?  {$veil p/(unit pipe)}                             ::  secure channel
+  $?  {$veil p/pipe}                                    ::  secure channel
       {$vest p/jael-tally}                              ::  balance update
       {$vein p/life q/(map life ring)}                  ::  private keys
       {$vine p/(list jael-edit)}                        ::  raw actions
@@ -92,7 +92,6 @@
       {$mint p/ship q/jael-purse}                       ::  create rights
       {$move p/ship q/ship r/jael-purse}                ::  transfer from/to
       {$nuke $~}                                        ::  cancel tracker
-      {$open p/ship}                                    ::  make secret channel
       {$step p/bull q/ring}                             ::  update private key
       {$veil p/ship}                                    ::  view secret channel
       {$vein $~}                                        ::  view signing keys
@@ -359,12 +358,6 @@
         $nuke
       !!
     ::
-    ::  open secure channel
-    ::    {$open p/ship}
-    ::
-        $open
-      !!
-    ::
     ::  extend our certificate with a new private key
     ::    {$step p/bull}
     ::
@@ -375,7 +368,7 @@
     ::    {$veil p/ship}
     ::
         $veil
-      (curd abet:(~(veil ~(feed su urb sub) hen) p.tac eny.sys))
+      (curd abet:(~(veil ~(feed su urb sub) hen) p.tac))
     ::
     ::  watch private keys
     ::    {$vein $~}
@@ -469,15 +462,19 @@
         hen/duct
     ::                                                  ::  ++veil:feed:su
     ++  veil                                            ::  secure channel
-      |=  {who/ship eny/@e}
+      |=  who/ship
       ^+  ..feed
+      ::
+      ::  send initial pki sync as needed
+      ::
+      =.  ..feed  (open hen who)
       =/  ruc  (~(get by car) who)
-      =/  rec  ?~  ruc 
-                 :-  `yen/(set duct)`[hen ~ ~] 
-                 `dut/(unit pipe)`~
-               u.ruc(yen (~(put in yen.u.ruc) hen))
+      =/  rec  
+        ?~  ruc 
+           [`yen/(set duct)`[hen ~ ~] det=(veil:form who)]
+         u.ruc(yen (~(put in yen.u.ruc) hen))
       %_  ..feed
-        moz  [[hen %give %veil dut.rec] moz]
+        moz  [[hen %give %veil det.rec] moz]
         car  (~(put by car) who rec)
       ==
     ::                                                  ::  ++vein:feed:su
@@ -500,7 +497,7 @@
     ++  veal                                            ::  kick subfarm
       ^+  ..feel
       =/  cod  veal:form
-      ?:(=(^cod cod) ..feel ..feel(cod cod))
+      ?:(=(cod.rel cod) ..feel ..feel(cod.rel cod))
     ::                                                  ::  ++veil:feel:su
     ++  veil                                            ::  kick secure channel
       |=  who/ship
@@ -508,9 +505,9 @@
       =/  ruc  (~(get by car) who)
       ?~  ruc  ..feel
       =/  det  (veil:form who)
-      ?:  =(`det dut.u.ruc)  ..feel 
-      =.  car  (~(put by car) who [yen.u.ruc `det])
-      (exec yen.u.ruc [%give %veil `det])
+      ?:  =(det det.u.ruc)  ..feel 
+      =.  car  (~(put by car) who [yen.u.ruc det])
+      (exec yen.u.ruc [%give %veil det])
     ::                                                  ::  ++vein:feel:su
     ++  vein                                            ::  kick private keys
       ^+  ..feel
@@ -650,35 +647,29 @@
       ::
       (~(gas by *(map ship jael-purse)) veg)
     --
-  ::
-  ++  open
-    |=  $:  eny/@e
-            hen/duct
+  ::                                                    ::  ++open:su
+  ++  open                                              ::  make secure channel
+    |=  $:  hen/duct
             who/ship
         ==
     ^+  +>
-    !!
-      ::
-      ::  if first meeting, add to child/peer sets.  children
-      ::  have us as a parent; peers have the same rank as us
-      ::
-::
-::      ?.  =(1 lyf.led)  +>.$
-::      ?:  =(our dad)
-::        +>.$(kyz.neb (~(put in kyz.neb) rex.led))
-::      ?.  =((clan rex.led) (clan our))
-::        +>.$
-::      +>.$(pyr.neb (~(put in pyr.neb) rex.led))
-::
-::      =.  moz
-::        ?.  &(=(1 lyf.led) (~(has in kyz.neb) rex.led))
-::          moz
-::        :_  moz
-::        =*  rug  ^-  farm
-::            %-  ~(gas by *farm)
-::            %+  skim  (~(tap by pug.urb))
-::            |=({who/ship *} (lth who 65.536))
-::        [%pass %x ~ %mess rex.led /x %meet rug]
+    ::
+    ::  a one-time operation to create a secure channel
+    ::
+    ?:  (~(has by car) who)  +>
+    ::
+    ::  initial propagation: ourself and dependencies, plus
+    ::  all capital ships if meeting a child.
+    ::
+    =*  hec  ^-  farm
+      ?.  (~(has in kyz.rel) who)  cod.rel
+      =-  (~(uni by cod.rel) -)
+      %-  ~(gas by *farm)
+      %+  skim  (~(tap by pug.urb))
+      |=({who/ship *} (lth who 65.536))
+    ::
+    (~(home fire hec) who)
+  ::                                                    ::  ++paid:su
   ++  paid                                              ::  track asset change
     |=  $:  ::  rex: promise from
             ::  pal: promise to
@@ -757,10 +748,16 @@
         [who.p.gan lyf.p.gan q.gan]
       ==
     ::
-    ::  if our subfarm may have changed, reset it.
+    ::  if our subfarm may have changed, reset it
     ::
-    =.  +>.$  ?.  |(=(our rex) (~(has by cod) rex))  +>.$
-        veal:feel
+    =.  +>.$  ?.  |(=(our rex) (~(has by cod.rel) rex))  +>.$
+      veal:feel
+    ::
+    ::  if a new deed, reset parent
+    ::
+    =.  dad.rel  ?.  &(=(our rex) ?=($step -.gan))  
+        dad.rel
+      dad.doc.dat.p.gan
     ::
     ::  kick secure channels
     ::
@@ -770,6 +767,15 @@
     ::
     ?:  &(=([~ ~] vie) !=(our rex))
       (~(home fire lip) rex)
+    ::
+    ::  if first certificate, add to neighbor lists
+    ::
+    =.  +>.$  ?.  &(?=($step -.gan) =(1 lyf))  +>.$
+      =.  kyz.rel  ?.  =(our dad.doc.dat.p.gan)  kyz.rel
+        (~(put in kyz.rel) rex)
+      =.  pyr.rel  ?.  =((clan rex) (clan our))  pyr.rel
+        (~(put in pyr.rel) rex)
+      +>.$
     ::
     ::  propagate new data as appropriate
     ::
@@ -781,17 +787,17 @@
     ::  if a new deed has been added, also to pals
     ::
     ?:  =(our rex)
-      :*  [dad.neb ~ ~]
-          kyz.neb
-          ?.(=(%step -.gan) ~ [pyr.neb ~])
+      :*  [dad.rel ~ ~]
+          kyz.rel
+          ?.(=(%step -.gan) ~ [pyr.rel ~])
       ==
     :: 
     ::  forward star and galaxy updates to parents and kids
     ::
     ?.  (lth rex 65.536)
       ~
-    :*  [dad.neb ~ ~]
-        kyz.neb
+    :*  [dad.rel ~ ~]
+        kyz.rel
         ~
     ==
   --
@@ -808,6 +814,11 @@
   ::                                                    ::  ++abet:ur
   ++  abet                                              ::  resolve
     [(flop hab) `jael-objective`urb]
+  ::                                                    ::  ++boss:ur
+  ++  boss                                              ::  parent
+    |=  who/ship                        
+    ^-  ship
+    -:(dads who)
   ::
   ++  dads                                              ::  ++dads:ur
     |=  who/ship                                        ::  lineage
