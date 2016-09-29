@@ -68,11 +68,12 @@
   $%  {$apple p/(map site @)}                           ::  web api key
       {$block $~}                                       ::  banned
       {$email p/(set @ta)}                              ::  email addresses
-      {$final p/(map ship @uvG)}                        ::  ticketed ships
+      {$final p/(map ship @pG)}                         ::  ticketed ships
       {$fungi p/(map term @ud)}                         ::  fungibles
       {$guest $~}                                       ::  refugee visa
       {$hotel p/pile}                                   ::  reserved block
       {$jewel p/(map life ring)}                        ::  private keyring
+      {$login p/@pG}                                    ::  login secret
       {$pword p/(map site (map @ta @t))}                ::  web passwd by user
       {$token p/(map site (map @ta @))}                 ::  app tokens by user
       {$urban p/(map hand (pair @da code))}             ::  urbit symmetric keys
@@ -87,12 +88,12 @@
 ++  jael-task                                           ::  operations on
   $%  {$burn p/ship q/jael-purse}                       ::  destroy rights
       {$hail p/ship q/jael-remote}                      ::  remote update
-      {$init p/@e}                                      ::  initialize
+      {$init p/@pG q/arms}                              ::  initialize urbit
       {$meet p/(unit (unit ship)) q/farm}               ::  integrate pki from
       {$mint p/ship q/jael-purse}                       ::  create rights
       {$move p/ship q/ship r/jael-purse}                ::  transfer from/to
+      {$next p/bull}                                    ::  update private key
       {$nuke $~}                                        ::  cancel tracker
-      {$step p/bull q/ring}                             ::  update private key
       {$veil p/ship}                                    ::  view secret channel
       {$vein $~}                                        ::  view signing keys
       {$vest $~}                                        ::  view public balance
@@ -160,8 +161,51 @@
 ::::                        #  3                        ::  stateless functions
   ::                                                    ::::
 =>  |%
+::                                                      ::  ++ry
+++  ry                                                  ::  rights algebra
+  |_  {lef/jael-right ryt/jael-right}
+  ::                                                    ::  ++add:ry
+  ++  add                                               ::  lef new, ryt old
+    ^-  jael-right
+    ?-    -.lef
+        $apple  ?>  ?=($apple -.ryt)  :-  %apple
+      %-  (~(uno by p.lef) p.ryt)
+      |=({new/@ old/@} new)
+    ::
+        $block
+      !!
+        $email
+      !!
+        $final
+      !!
+        $fungi
+      !!
+        $guest
+      !!
+        $hotel
+      !!
+        $jewel
+      !!
+        $login
+      !!
+        $pword
+      !!
+        $token
+      !!
+        $urban
+      !!
+    ==
+  ::                                                    ::  ++dif:ry
+  ++  dif                                               ::  {add remove}
+    ^-  (pair (unit jael-right) (unit jael-right))
+    !!
+  ::                                                    ::  ++sub:ry
+  ++  sub                                               ::  subtract lef - ryt
+    ^-  (unit jael-right)
+    !!
+  --
 ::                                                      ::  ++up
-++  up                                                  ::  rights algebra
+++  up                                                  ::  rights wallet
   |_  pig/jael-purse
       ::
       ::    +up: rights algebra
@@ -174,7 +218,7 @@
       ::
       ::  this design is pretty generalized and should
       ::  probably be promoted deeper in the stack.  its
-      ::  goal is to make it extremely easy to add new
+      ::  goal is to make it super easy to add new
       ::  forms of ++jael-right, without invalidating
       ::  existing purse nouns.
       ::
@@ -204,10 +248,23 @@
       [~ u=n.pig]
     ?:((gor tag -.n.pig) $(pig l.pig) $(pig r.pig))
   ::                                                    ::  ++insert:up
-  ++  insert                                            ::  pig plus gob
-    |=  gob/jael-purse
-    ^-  jael-purse
+  ++  insert                                            ::  insert item
+    |=  ryt/jael-right
+    ^-  jael-purse 
     !!
+  ::                                                    ::  ++intern:up
+  ++  intern                                            ::  insert list
+    |=  lin/(list jael-right)
+    ^-  jael-purse
+    ?~  lin  pig
+    =.  pig  $(lin t.lin)
+    (insert i.lin)
+  ::                                                    ::  ++linear:up
+  ++  linear                                            ::  convert to list
+    =|  lin/(list jael-right)
+    |-  ^+  lin
+    ?~  pig  ~
+    $(pig r.pig, lin [n.pig $(pig l.pig)])
   ::                                                    ::  ++redact:up
   ++  redact                                            ::  conceal secrets
     |-  ^-  jael-purse
@@ -221,6 +278,9 @@
     ::
         $final
       [%final (~(run by p.rys) |=(@ (mug +<)))]
+    ::
+        $login
+      [%login *@p]
     ::
         $pword
       :-  %pword 
@@ -244,11 +304,16 @@
     |=  gob/jael-purse
     ^-  jael-purse
     !!   
+  ::                                                    ::  ++splice:up
+  ++  splice                                            ::  pig plus gob
+    |=  gob/jael-purse
+    ^-  jael-purse
+    !!
   ::                                                    ::  ++update:up
   ++  update                                            ::  arbitrary change
     |=  del/jael-delta
     ^-  jael-purse
-    (remove(pig (insert mor.del)) les.del)
+    (remove(pig (splice mor.del)) les.del)
   --   
 ::                                                      ::  ++we
 ++  we                                                  ::  wyll tool
@@ -303,6 +368,10 @@
   ::                                                    ::  abet:of
   ++  abet                                              ::  resolve
     [(flop moz) lex]
+  ::                                                    ::  burb:of
+  ++  burb                                              ::  per ship
+    |=  who/ship
+    ~(able ~(ex ur urb) who)
   ::                                                    ::  call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause
@@ -318,36 +387,37 @@
     ::    {$burn p/ship q/jael-purse)}
     ::
         $burn
-      (cure abet:(~(deal ur urb) our p.tac [~ q.tac]))
+      (cure abet:abet:(deal:(burb our) p.tac [~ q.tac]))
     ::
     ::  remote update
     ::    {$hail p/ship q/jael-remote}
     ::
         $hail
-      !!
+      (cure abet:abet:(hail:(burb p.tac) our q.tac))
     ::
     ::  initialize vane
-    ::    {$init p/@e}
+    ::    {$init p/code q/arms}
     ::
         $init
-      !!
+      (cure abet:(~(make ur urb) now.sys eny.sys p.tac q.tac))
     ::
     ::  create promises
     ::    {$mint p/ship q/jael-purse}
     ::
         $mint
-      (cure abet:(~(deal ur urb) our p.tac [q.tac ~]))
+      (cure abet:abet:(deal:(burb our) p.tac [q.tac ~]))
+      
     ::
     ::  move promises
     ::    {$move p/ship q/ship r/jael-purse}
     ::
         $move
-      =.  +>  (cure abet:(~(deal ur urb) our p.tac [~ r.tac]))
-      =.  +>  (cure abet:(~(deal ur urb) our q.tac [r.tac ~]))
+      =.  +>  (cure abet:abet:(deal:(burb our) p.tac [~ r.tac]))
+      =.  +>  (cure abet:abet:(deal:(burb our) q.tac [r.tac ~]))
       +>
     ::
     ::  public-key update
-    ::    {$meet p/ship q/farm}
+    ::    {$meet p/(unit (unit ship)) q/farm}
     ::
         $meet
       (cure abet:(~(meet ur urb) p.tac q.tac))
@@ -356,13 +426,20 @@
     ::    {$nuke $~}
     ::
         $nuke
-      !!
+      %_  +>
+        yen          (~(del in yen) hen)
+        yen.bal.sub  (~(del in yen.bal.sub) hen)
+        yen.own.sub  (~(del in yen.own.sub) hen)
+        car.sub      %-  ~(run by car.sub)
+                     |=  {yen/(set duct) det/pipe}
+                     [(~(del in yen) hen) det]
+      ==
     ::
     ::  extend our certificate with a new private key
-    ::    {$step p/bull}
+    ::    {$next p/bull}
     ::
-        $step 
-      !!
+        $next
+      (cure abet:abet:(next:(burb our) eny.sys p.tac))
     ::
     ::  open secure channel
     ::    {$veil p/ship}
@@ -388,7 +465,7 @@
         $vine
       +>(yen (~(put in yen) hen))
     ::
-    ::  execute remote request
+    ::  authenticated remote request
     ::    {$west p/ship q/path r/*}
     ::
         $west
@@ -400,26 +477,26 @@
       ::    {$hail p/jael-purse}
       ::
           $hail
-        !!
+        (cure abet:abet:(hail:(burb p.tac) our [%| p.mes]))
       ::
       ::  share certificates
       ::    {$meet p/farm}
       ::
           $meet
-        !!
+        (cure abet:(~(meet ur urb) ``p.tac p.mes))
       ==
     ==
-  ::                                                    ::  curd:of
+  ::                                                    ::  ++curd:of
   ++  curd                                              ::  subjective moves
     |=  {moz/(list jael-move) sub/jael-subjective}
     +>(sub sub, moz (weld (flop moz) ^moz))
-  ::                                                    ::  cure:of
+  ::                                                    ::  ++cure:of
   ++  cure                                              ::  objective edits
     |=  {hab/(list jael-edit) urb/jael-objective}
     ^+  +>
     (curd(urb urb) abet:(~(apex su urb sub) hab))
   --
-::                          ## 4.b                      ::  su
+::                          ## 4.b                      ::  ++su
 ++  su                                                  ::  subjective engine
   =|  moz/(list jael-move)                              ::::
   =|  $:  jael-objective
@@ -432,10 +509,10 @@
   =*  urb  -<
   =*  sub  ->
   |%
-  ::                                                    ::  abet:su
+  ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
     [(flop moz) sub]
-  ::                                                    ::  apex:su
+  ::                                                    ::  ++apex:su
   ++  apex                                              ::  apply changes
     |=  hab/(list jael-edit)
     ^+  +>
@@ -827,12 +904,6 @@
     ?~  ryg  (saxo who)
     =/  dad  dad.doc.dat.q:(need ~(instant we u.ryg))
     [who ?:(=(who dad) ~ $(who dad))]
-  ::                                                    ::  ++deal:ur
-  ++  deal                                              ::  change rights
-    |=  {rex/ship pal/ship del/jael-delta}
-    ^+  +>
-    =.  hab  [[%rite rex pal del] hab]
-    abet:(deal:~(able ex rex) pal del)
   ::
   ++  lawn                                              ::  ++lawn:ur
     |=  {rex/ship pal/ship}                             ::  debts, rex to pal
@@ -849,6 +920,48 @@
     |=  rex/ship
     ^-  (pair life (map life ring))
     lean:~(able ex rex)
+  ::                                                    ::  ++make:ur
+  ++  make                                              ::  initialize urbit
+    |=  $:  ::  now: date
+            ::  eny: entropy
+            ::  gen: bootstrap ticket
+            ::  nym: self-description
+            ::
+            now/@da
+            eny/@e 
+            gen/@pG
+            nym/arms
+        ==
+    ^+  +>
+    ::  key: generated key
+    ::  bul: initial bull
+    ::
+    =/  key  (ypt:scr (mix our %jael-make) gen)  
+    =*  doc  `bull`[(sein our) & nym]
+    ::
+    ::  register generator as login secret
+    ::
+    =.  +>.$  abet:(deal:~(able ex our) our [[[%login gen] ~ ~] ~])
+    ::
+    ::  create galaxy with generator as seed
+    ::
+    ?:  (lth our 256)
+      abet:(next:~(able ex our) key doc)
+    ::
+    ::  had: key handle
+    ::  ryt: initial right
+    ::
+    =/  key  (ypt:scr (mix our %jael-make) gen)  
+    =*  had  (shaf %hand key)
+    =*  ryt  `jael-right`[%urban [had (add ~m1 now) key] ~ ~]
+    ::
+    ::  register initial symmetric key from ticket
+    ::
+    =.  +>.$  abet:(hail:~(able ex (sein our)) our %& [ryt ~ ~])
+    ::
+    ::  create initial private key and certificate
+    ::
+    abet:(next:~(able ex our) (mix eny key) doc)
   ::                                                    ::  ++meet:ur
   ++  meet                                              ::  calculate merge
     |=  $:  ::  vie: authenticated source
@@ -895,7 +1008,24 @@
       ^+  +>
       =/  gob  (fall (~(get by shy) pal) *jael-purse)
       =*  hep  (~(update up gob) del)
-      +>.$(shy (~(put by shy) pal hep))
+      %_  +>.$
+        shy  (~(put by shy) pal hep)
+        hab  [[%rite rex pal del] hab]
+      ==
+    ::
+    ++  hail                                            ::  ++hail:ex:ur
+      |=  {pal/ship rem/jael-remote}                    ::  report rights
+      ^+  +>
+      =/  gob  (fall (~(get by shy) pal) *jael-purse)
+      =/  yer  ^-  (pair jael-delta jael-purse)
+        ?-  -.rem
+          $&  [[p.rem ~] (~(splice up gob) p.rem)]
+          $|  [(~(differ up gob) p.rem) p.rem]
+        ==
+      %_  +>.$
+        shy  (~(put by shy) pal q.yer)
+        hab  [[%rite rex pal p.yer] hab]
+      ==
     ::                                                  ::  ++lean:ex:ur
     ++  lean                                            ::  private keys
       ^-  (pair life (map life ring))
@@ -916,9 +1046,31 @@
       |=  pal/ship
       ^-  jael-purse
       =-(?~(- ~ u.-) (~(get by shy) pal))
+    ::                                                  ::  ++next:ex:ur
+    ++  next                                            ::  advance private key
+      |=  {eny/@e doc/bull}
+      ^+  +>
+      ::  loy: live keypair
+      ::  rig: private key
+      ::  ryt: private key as right
+      ::  pub: public key
+      ::  cet: unsigned certificate
+      ::  wyl: initial will
+      ::  hec: initial will as farm
+      ::
+      =/  loy  (pit:nu:crub 512 eny)
+      =*  rig  sec:ex:loy
+      =*  ryt  `jael-right`[%jewel [1 rig] ~ ~]
+      =*  pub  pub:ex:loy
+      =*  cet  `cert`[[doc pub] ~]
+      =*  wyl  `wyll`[[1 cet] ~ ~]
+      =*  hec  `farm`[[rex wyl] ~ ~]
+      =.  +>.$  (deal rex [[ryt ~ ~] ~])
+      =.  ..ex  (meet [~ ~] hec)
+      +>.$
     ::                                                  ::  grow:ex:ur
     ++  grow                                            ::  merge wills
-      |=  $:  ::  via: data source
+      |=  $:  ::  vie: data source
               ::  cod: merge context
               ::  gur: input will
               ::  
@@ -1193,7 +1345,7 @@
           tyl/spur
       ==
   ^-  (unit (unit cage))
-  !!
+  ~
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
   lex

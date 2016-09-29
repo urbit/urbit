@@ -922,6 +922,11 @@
       %+  turn  `(list (list @))`-
       |=(a/(list @) (rpp 3 (mul 128 r) (rep 9 a)))
     (pbl p pl (rep 3 (slb q)) u 1 d)
+  ::
+  ++  ypt                                               ::  256bit {salt pass}
+    |=  {s/@ p/@}
+    ^-  @
+    (hsh p s 16.384 8 1 256)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bB, crypto                   ::
@@ -3626,16 +3631,16 @@
 ::
 ::::    %jael
   ::
+++  arms  (map chip (pair @ta @t))                      ::  stated identity
 ++  bill  (pair @da @)                                  ::  expiring value
 ++  bull                                                ::  cert metadata
   $:  dad/@p                                            ::  parent
       dob/?                                             ::  & clean, | dirty
-      nym/(map chip (pair @ta @t))                      ::  identity strings
+      nym/arms                                          ::  identity strings
   ==                                                    ::
 ++  cert  (tale deyd)                                   ::  signed deed
 ++  chip                                                ::  standard identity
-  $?  $bus                                              ::  business name
-      $giv                                              ::  given name
+  $?  $giv                                              ::  given name
       $sur                                              ::  surname
       $had                                              ::  handle
       $mid                                              ::  middle name 
