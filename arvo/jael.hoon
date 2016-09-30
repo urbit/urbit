@@ -73,10 +73,10 @@
       {$guest $~}                                       ::  refugee visa
       {$hotel p/pile}                                   ::  reserved block
       {$jewel p/(map life ring)}                        ::  private keyring
-      {$login p/@pG}                                    ::  login secret
-      {$pword p/(map site (map @ta @t))}                ::  web passwd by user
-      {$token p/(map site (map @ta @))}                 ::  app tokens by user
-      {$urban p/(map hand (pair @da code))}             ::  urbit symmetric keys
+      {$login p/(set @pG)}                              ::  login secret
+      {$pword p/(map site (map @t @t))}                 ::  web passwd by user
+      {$token p/(map site (map @t @t))}                 ::  app tokens by user
+      {$urban p/(map hand bill)}                        ::  urbit symmetric keys
   ==                                                    ::
 ++  jael-purse                                          ::  rights set
   (tree jael-right)                                     ::
@@ -161,54 +161,207 @@
 ::::                        #  3                        ::  stateless functions
   ::                                                    ::::
 =>  |%
+::                                                      ::  ++py
+++  py                                                  ::  sparse ship set
+  |_  pyl/pile
+  ::                                                    ::  ++dif:py
+  ++  dif                                               ::  lyp - pyl, add rem
+    |=  lyp/pile                                        
+    ^-  (pair pile pile)
+    !!
+  ::                                                    ::  ++uni:py
+  ++  uni                                               ::  unify ship sets
+    |=  lyp/pile
+    ^-  pile
+    !!
+  --
 ::                                                      ::  ++ry
 ++  ry                                                  ::  rights algebra
   |_  {lef/jael-right ryt/jael-right}
+      ::
+      ::    ++ry: rights algebra
+      ::
+      ::  internal issues: some of these semantics need
+      ::  more thought after we actually try using them.
+      ::  $pword and $token are certainly wrong.
+      ::
+      ::  external issues: our map difference and union 
+      ::  operators need some work.  the type system can't
+      ::  enforce that 
+      ::
+      ::  compromises: the type system can't enforce that
+      ::  
+      ::
   ::                                                    ::  ++add:ry
   ++  add                                               ::  lef new, ryt old
     ^-  jael-right
     ?-    -.lef
-        $apple  ?>  ?=($apple -.ryt)  :-  %apple
-      %-  (~(uno by p.lef) p.ryt)
-      |=({new/@ old/@} new)
     ::
-        $block
-      !!
-        $email
-      !!
-        $final
-      !!
-        $fungi
-      !!
-        $guest
-      !!
+    ::  web api key
+    ::    {$apple p/(map site @)}
+    ::
+        $apple  ?>  ?=($apple -.ryt)
+      :-  %apple
+      (~(uni by p.ryt) p.lef)
+    ::
+    ::  banned
+    ::    {$block $~}
+    ::
+        $block  ?>  ?=($block -.ryt)
+      :-  %block
+      ~
+    ::
+    ::  verified email address
+    ::    {$email p/(set @ta)}
+    ::
+        $email  ?>  ?=($email -.ryt)
+      :-  %email
+      (~(uni in p.ryt) p.lef)
+    ::
+    ::  final ticket
+    ::    {$final p/(map ship @pG)}
+    ::
+        $final  ?>  ?=($final -.ryt)
+      :-  %final
+      (~(uni by p.ryt) p.lef)
+    ::
+    ::  fungible resources
+    ::    {$fungi p/(map term @ud)}
+    ::
+        $fungi  ?>  ?=($fungi -.ryt)
+      :-  %fungi
+      =/  wam  (~(tap by p.ryt) ~)
+      |-  ^+  lef
+      ?~  wam  lef
+      =.  lef  $(wam t.wam)
+      =/  zis  (~(get by lef) p.i.wam)
+      ?~  zis  lef
+      (~(put by lef) p.i.wam (add q.u.zis q.i.wam))
+    ::
+    ::  reserved block
+    ::    {$hotel p/pile}
+    ::
+        $hotel  ?>  ?=($hotel -.ryt)  
+      :-  %hotel
         $hotel
-      !!
-        $jewel
-      !!
-        $login
-      !!
-        $pword
-      !!
-        $token
-      !!
-        $urban
-      !!
+      [%hotel (~(uni py p.ryt) p.lef)]
+    ::
+    ::  private keys
+    ::    {$jewel p/(map life ring)}
+    ::
+        $jewel  ?>  ?=($jewel -.ryt)  
+      :-  %jewel
+      [%jewel (~(uni by p.ryt) p.lef)]
+    ::
+    ::  login passcodes
+    ::    {$login p/(set @pG)}
+    ::
+        $login  ?>  ?=($login -.ryt)  
+      :-  %login
+      (~(uni in p.ryt) p.lef)
+    ::
+    ::  web service passwords
+    ::    {$pword p/(map site (map @t @t))
+    ::
+        $pword  ?>  ?=($pword -.ryt)  
+      :-  %pword
+      (~(uni by p.ryt) p.lef)
+    ::
+    ::  app tokens
+    ::    {$token p/(map site (map @t @t))}
+    ::
+        $token  ?>  ?=($token -.ryt)  
+      :-  %token
+      (~(uni by p.ryt) p.lef)
+    ::
+    ::  urbit symmetric keys
+    ::    {$urban p/(map hand bill)}
+    ::
+        $urban  ?>  ?=($urban -.ryt)  
+      :-  %urban
+      (~(uni by p.ryt) p.lef)
     ==
   ::                                                    ::  ++dif:ry
-  ++  dif                                               ::  {add remove}
+  ++  dif                                               ::  l - r: {add remove}
     ^-  (pair (unit jael-right) (unit jael-right))
-    !!
-  ::                                                    ::  ++sub:ry
-  ++  sub                                               ::  subtract lef - ryt
-    ^-  (unit jael-right)
+    ^-  jael-right
+    ?-    -.lef
+    ::
+    ::  web api key
+    ::    {$apple p/(map site @)}
+    ::
+        $apple  ?>  ?=($apple -.ryt)
+      !!
+    ::
+    ::  banned
+    ::    {$block $~}
+    ::
+        $block  ?>  ?=($block -.ryt)
+      !!
+    ::
+    ::  verified email address
+    ::    {$email p/(set @ta)}
+    ::
+        $email  ?>  ?=($email -.ryt)
+      !!
+    ::
+    ::  final ticket
+    ::    {$final p/(map ship @pG)}
+    ::
+        $final  ?>  ?=($final -.ryt)
+      !!
+    ::
+    ::  fungible resources
+    ::    {$fungi p/(map term @ud)}
+    ::
+        $fungi  ?>  ?=($fungi -.ryt)
+      !!
+    ::
+    ::  reserved block
+    ::    {$hotel p/pile}
+    ::
+        $hotel  ?>  ?=($hotel -.ryt)  
+      !!
+    ::
+    ::  private keys
+    ::    {$jewel p/(map life ring)}
+    ::
+        $jewel  ?>  ?=($jewel -.ryt)  
+      !!
+    ::
+    ::  login passcodes
+    ::    {$login p/(set @pG)}
+    ::
+        $login  ?>  ?=($login -.ryt)  
+      !!
+    ::
+    ::  web service passwords
+    ::    {$pword p/(map site (map @t @t))
+    ::
+        $pword  ?>  ?=($pword -.ryt)  
+      !!
+    ::
+    ::  app tokens
+    ::    {$token p/(map site (map @t @t))}
+    ::
+        $token  ?>  ?=($token -.ryt)  
+      :-  %token
+      (~(uni by p.ryt) p.lef)
+    ::
+    ::  urbit symmetric keys
+    ::    {$urban p/(map hand bill)}
+    ::
+        $urban  ?>  ?=($urban -.ryt)  
+      :-  %urban
+      (~(uni by p.ryt) p.lef)
+    ==
     !!
   --
 ::                                                      ::  ++up
 ++  up                                                  ::  rights wallet
   |_  pig/jael-purse
       ::
-      ::    +up: rights algebra
+      ::    ++up: wallet algebra
       ::
       ::  we store the various kinds of ++jael-right in
       ::  a binary tree, sorted by ++gor on the tag,
@@ -224,6 +377,9 @@
       ::
       ::  rights operations always crash if impossible;
       ::  the algebra has no concept of negative rights.
+      ::
+      ::  external issues: our map difference and union 
+      ::  operators need some work.
       ::
   ::                                                    ::  ++differ:up
   ++  differ                                            ::  delta pig->gob
@@ -303,7 +459,7 @@
   ++  remove                                            ::  pig minus gob
     |=  gob/jael-purse
     ^-  jael-purse
-    !!   
+    ?:
   ::                                                    ::  ++splice:up
   ++  splice                                            ::  pig plus gob
     |=  gob/jael-purse

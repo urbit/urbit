@@ -1325,26 +1325,6 @@
       $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
-  +-  uno                                               ::  general union
-    |=  b/_a
-    |=  meg/$-({_q:node _q:node} _q:node)
-    |-  ^+  a
-    ?~  b
-      a
-    ?~  a
-      b
-    ?:  (vor p.n.a p.n.b)
-      ?:  =(p.n.b p.n.a)
-        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (gor p.n.b p.n.a)
-        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
-      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
-    ?:  =(p.n.a p.n.b)
-      [[p.n.a (meg q.n.a q.n.b)] $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (gor p.n.a p.n.b)
-      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
-    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
-  ::
   +-  urn                                               ::  apply gate to nodes
     |*  b/$-({* *} *)
     |-
