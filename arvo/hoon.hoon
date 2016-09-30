@@ -1117,6 +1117,7 @@
     ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a) $(a l.a)))
         ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a) $(a l.a)))
     ==
+  ::
   +-  bif                                               ::  splits a by b
     ~/  %bif
     |*  {b/* c/*}
@@ -1136,6 +1137,24 @@
     =+  d=$(a r.a)
     ?>  ?=(^ d)
     [n.d [n.a l.a l.d] r.d]
+  ::
+  +-  dep                                               ::  difference as patch
+    |*  b/_a
+    ^+  [p=a q=a]
+    =+  c=(~(tap by (def b)))
+    =+  [d e]=[`_a`~ `_a`~]
+    |-  ^+  [d e]
+    ?~  c  [d e] 
+    %=  $
+      c  t.c
+      d  ?~(q.q.i.c d (~(put by d) p.i.c u.q.q.i.c))
+      e  ?~(p.q.i.c e (~(put by e) p.i.c u.p.q.i.c))
+    ==
+  ::
+  +-  def                                               ::  difference
+    |*  b/_a
+    ^-  (map _p:node (pair (unit _q:node) (unit _q:node)))
+    !!
   ::
   +-  del                                               ::  delete at key b
     ~/  %del
@@ -1324,6 +1343,27 @@
     ?:  (gor p.n.a p.n.b)
       $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+  ::
+  +-  uno                                               ::  general union
+    |=  b/_a
+    |=  meg/$-({_p:node _q:node _q:node} _q:node)
+    |-  ^+  a 
+    ?~  b
+      a
+    ?~  a
+      b
+    ?:  (vor p.n.a p.n.b)
+      ?:  =(p.n.b p.n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ?:  (gor p.n.b p.n.a)
+        $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
+      $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
+    ?:  =(p.n.a p.n.b)
+      [[p.n.a (meg q.n.a q.n.b)] $(b l.b, a l.a) $(b r.b, a r.a)]
+    ?:  (gor p.n.a p.n.b)
+      $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
+    $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
+  ::
   ::
   +-  urn                                               ::  apply gate to nodes
     |*  b/$-({* *} *)
