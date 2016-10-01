@@ -1138,6 +1138,11 @@
     ?>  ?=(^ d)
     [n.d [n.a l.a l.d] r.d]
   ::
+  +-  def                                               ::  difference
+    |*  b/_a
+    ^-  (map _p:node (pair (unit _q:node) (unit _q:node)))
+    !!
+  ::
   +-  dep                                               ::  difference as patch
     |*  b/_a
     ^+  [p=a q=a]
@@ -1150,11 +1155,6 @@
       d  ?~(q.q.i.c d (~(put by d) p.i.c u.q.q.i.c))
       e  ?~(p.q.i.c e (~(put by e) p.i.c u.p.q.i.c))
     ==
-  ::
-  +-  def                                               ::  difference
-    |*  b/_a
-    ^-  (map _p:node (pair (unit _q:node) (unit _q:node)))
-    !!
   ::
   +-  del                                               ::  delete at key b
     ~/  %del

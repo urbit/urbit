@@ -188,189 +188,166 @@
       ::  that lef and ryt match, hence the asserts.
       ::
   ::                                                    ::  ++add:ry
-  ++  add                                               ::  lef new, ryt old
+  ++  uni                                               ::  lef new, ryt old
     ^-  jael-right
-    ?-    -.lef
-    ::
-    ::  web api key
-    ::    {$apple p/(map site @)}
-    ::
-        $apple  ?>  ?=($apple -.ryt)
-      :-  %apple
-      %-  (~(uno by p.ryt) p.lef)
-      |=  (trel site @ @)
-      ?>(=(q r) r)
-    ::
-    ::  banned
-    ::    {$block $~}
-    ::
-        $block  ?>  ?=($block -.ryt)
-      :-  %block
-      ~
-    ::
-    ::  verified email address
-    ::    {$email p/(set @ta)}
-    ::
-        $email  ?>  ?=($email -.ryt)
-      :-  %email
-      (~(uni in p.ryt) p.lef)
-    ::
-    ::  final ticket
-    ::    {$final p/(map ship @pG)}
-    ::
-        $final  ?>  ?=($final -.ryt)
-      :-  %final
-      %-  (~(uno by p.ryt) p.lef)
-      |=  (trel ship @pG @pG)
-      ?>(=(q r) r)
-    ::
-    ::  fungible resources
-    ::    {$fungi p/(map term @ud)}
-    ::
-        $fungi  ?>  ?=($fungi -.ryt)
-      :-  %fungi
-      %-  (~(uno by p.ryt) p.lef)
+    |^  ?-  -.lef
+          $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
+          $block  ?>(?=($block -.ryt) [%block ~])
+          $email  ?>(?=($email -.ryt) [%email (sable p.lef p.ryt)])
+          $final  ?>(?=($final -.ryt) [%final (table p.lef p.ryt)])
+          $fungi  ?>(?=($fungi -.ryt) [%fungi (noble p.lef p.ryt)])
+          $guest  ?>(?=($guest -.ryt) [%guest ~])
+          $hotel  ?>(?=($hotel -.ryt) [%hotel (bible p.lef p.ryt)])
+          $jewel  ?>(?=($jewel -.ryt) [%jewel (table p.lef p.ryt)])
+          $login  ?>(?=($login -.ryt) [%login (sable p.lef p.ryt)])
+          $pword  ?>(?=($pword -.ryt) [%pword (ruble p.lef p.ryt)])
+          $token  ?>(?=($token -.ryt) [%token (ruble p.lef p.ryt)])
+          $urban  ?>(?=($urban -.ryt) [%urban (table p.lef p.ryt)])
+        ==
+    ::                                                  ::  ++bible:uni:ry
+    ++  bible                                           ::  union pile
+      |=  {new/pile old/pile}
+      ^+  new
+      (~(uni py old) new)
+    ::                                                  ::  ++noble:uni:ry
+    ++  noble                                           ::  union map of @ud
+      |=  {new/(map term @ud) old/(map term @ud)}
+      ^+  new
+      %-  (~(uno by old) new)
       |=  (trel term @ud @ud)
-      (^add q r)
-    ::
-    ::  invited refugee
-    ::    {$guest $~}
-    ::
-        $guest  ?>  ?=($guest -.ryt)
-      :-  %guest
-      ~
-    ::
-    ::  reserved block
-    ::    {$hotel p/pile}
-    ::
-        $hotel  ?>  ?=($hotel -.ryt)  
-      :-  %hotel
-      (~(uni py p.ryt) p.lef)
-    ::
-    ::  private keys
-    ::    {$jewel p/(map life ring)}
-    ::
-        $jewel  ?>  ?=($jewel -.ryt)  
-      :-  %jewel
-      %-  (~(uno by p.ryt) p.lef)
-      |=  (trel life @ @)
-      ?>(=(q r) r)
-    ::
-    ::  login passcodes
-    ::    {$login p/(set @pG)}
-    ::
-        $login  ?>  ?=($login -.ryt)  
-      :-  %login
-      (~(uni in p.ryt) p.lef)
-    ::
-    ::  web service passwords
-    ::    {$pword p/(map site (map @t @t))
-    ::
-        $pword  ?>  ?=($pword -.ryt)  
-      :-  %pword
-      %-  (~(uno by p.ryt) p.lef)
+      (add q r)
+    ::                                                  ::  ++ruble:uni:ry
+    ++  ruble                                           ::  union map of maps
+      |=  {new/(map site (map @t @t)) old/(map site (map @t @t))}
+      ^+  new
+      %-  (~(uno by old) new)
       |=  (trel site (map @t @t) (map @t @t))
       %-  (~(uno by q) r)
       |=  (trel @t @t @t)
       ?>(=(q r) r)
-    ::
-    ::  app tokens
-    ::    {$token p/(map site (map @t @t))}
-    ::
-        $token  ?>  ?=($token -.ryt)  
-      :-  %token
-      %-  (~(uno by p.ryt) p.lef)
-      |=  (trel site (map @t @t) (map @t @t))
-      %-  (~(uno by q) r)
-      |=  (trel @t @t @t)
+    ::                                                  ::  ++sable:uni:ry
+    ++  sable                                           ::  union set
+      |*  {new/(set) old/(set)}
+      ^+  new
+      (~(uni in old) new)
+    ::                                                  ::  ++table:uni:ry
+    ++  table                                           ::  union map
+      |*  {new/(map) old/(map)}
+      ^+  new
+      %-  (~(uno by old) new)
+      |=  (trel _p.-<.new _q.->.new _q.->.new)
       ?>(=(q r) r)
-    ::
-    ::  urbit symmetric keys
-    ::    {$urban p/(map hand bill)}
-    ::
-        $urban  ?>  ?=($urban -.ryt)  
-      :-  %urban
-      %-  (~(uno by p.ryt) p.lef)
-      |=  (trel hand bill bill)
-      ?>(=(q r) r)
-    ==
+    --
   ::                                                    ::  ++dif:ry
   ++  dif                                               ::  r->l: {add remove}
     ^-  (pair (unit jael-right) (unit jael-right))
-    ?-    -.lef
-    ::
-    ::  web api key
-    ::    {$apple p/(map site @)}
-    ::
-        $apple  ?>  ?=($apple -.ryt)
-      !!
-    ::
-    ::  banned
-    ::    {$block $~}
-    ::
-        $block  ?>  ?=($block -.ryt)
-      !!
-    ::
-    ::  verified email address
-    ::    {$email p/(set @ta)}
-    ::
-        $email  ?>  ?=($email -.ryt)
-      !!
-    ::
-    ::  final ticket
-    ::    {$final p/(map ship @pG)}
-    ::
-        $final  ?>  ?=($final -.ryt)
-      !!
-    ::
-    ::  fungible resources
-    ::    {$fungi p/(map term @ud)}
-    ::
-        $fungi  ?>  ?=($fungi -.ryt)
-      !!
-    ::
-    ::  invited refugee
-    ::    {$guest $~}
-    ::
-        $guest  ?>  ?=($guest -.ryt)
-      !!
-    ::
-    ::  reserved block
-    ::    {$hotel p/pile}
-    ::
-        $hotel  ?>  ?=($hotel -.ryt)  
-      !!
-    ::
-    ::  private keys
-    ::    {$jewel p/(map life ring)}
-    ::
-        $jewel  ?>  ?=($jewel -.ryt)  
-      !!
-    ::
-    ::  login passcodes
-    ::    {$login p/(set @pG)}
-    ::
-        $login  ?>  ?=($login -.ryt)  
-      !!
-    ::
-    ::  web service passwords
-    ::    {$pword p/(map site (map @t @t))
-    ::
-        $pword  ?>  ?=($pword -.ryt)  
-      !!
-    ::
-    ::  app tokens
-    ::    {$token p/(map site (map @t @t))}
-    ::
-        $token  ?>  ?=($token -.ryt)  
-      !!
-    ::
-    ::  urbit symmetric keys
-    ::    {$urban p/(map hand bill)}
-    ::
-        $urban  ?>  ?=($urban -.ryt)  
-      !!
-    ==
+    |^  ?-  -.lef
+          $apple  ?>(?=($apple -.ryt) (table %apple p.lef p.ryt))
+          $block  ?>(?=($block -.ryt) [~ ~])
+          $email  ?>(?=($email -.ryt) (sable %email p.lef p.ryt))
+          $final  ?>(?=($final -.ryt) (table %final p.lef p.ryt))
+          $fungi  ?>(?=($fungi -.ryt) (noble %fungi p.lef p.ryt))
+          $guest  ?>(?=($guest -.ryt) [~ ~])
+          $hotel  ?>(?=($hotel -.ryt) (bible %hotel p.lef p.ryt))
+          $jewel  ?>(?=($jewel -.ryt) (table %jewel p.lef p.ryt))
+          $login  ?>(?=($login -.ryt) (sable %login p.lef p.ryt))
+          $pword  ?>(?=($pword -.ryt) (ruble %pword p.lef p.ryt))
+          $token  ?>(?=($token -.ryt) (ruble %token p.lef p.ryt))
+          $urban  ?>(?=($urban -.ryt) (table %urban p.lef p.ryt))
+        ==
+    ::                                                  ::  ++bible:dif:ry
+    ++  bible                                           ::  diff pile
+      |*  {nut/@tas new/pile old/pile}
+      =/  hep  (~(dep by old) new)
+      :-  ?~(p.hep ~ `[nut p.hep])
+          ?~(q.hep ~ `[nut q.hep])
+    ::                                                  ::  ++noble:dif:ry
+    ++  noble                                           ::  diff map of @ud
+      |*  {nut/@tas new/(map * @ud) old/(map * @ud)}
+      ^-  (pair (unit jael-right) (unit jael-right))
+      =/  fop  (~(tap by (~(def by old) new)))
+      =/  mor
+        |-  ^+  new
+        ?~  fop  ~
+        =/  nex  $(fop t.fop)
+        =*  cur  p.i.fop
+        =*  fid  q.i.fop
+        ?~  p.fid
+          ?>  ?=(^ q.fid)
+          (~(put by nex) cur u.q.fid)
+        ?~  q.fid  nex
+        ?:  (gth u.p.fid u.q.fid)  ~
+        (~(put by nex) cur (^sub u.q.fid u.p.fid))
+      ::
+      =/  les
+        |-  ^+  old
+        ?~  fop  ~
+        =/  nex  $(fop t.fop)
+        =*  cur  p.i.fop
+        =*  fid  q.i.fop
+        ?~  q.fid
+          ?>  ?=(^ p.fid)
+          (~(put by nex) cur u.p.fid)
+        ?~  p.fid  nex
+        ?:  (gth u.q.fid u.p.fid)  ~
+        (~(put by nex) cur (^sub u.p.fid u.q.fid))
+      ::
+      :-  ?~(mor ~ `[nut mor])
+          ?~(les ~ `[nut les])
+    ::                                                  ::  ++ruble:dif:ry
+    ++  ruble                                           ::  diff map of maps
+      |*  {nut/@tas new/(map * (map)) old/(map * (map))}
+      =/  fop  (~(tap by (~(def by old) new)))
+      =/  mor
+        |-  ^+  new
+        ?~  fop  ~
+        =/  nex  $(fop t.fop)
+        =*  cur  p.i.fop
+        =*  fid  q.i.fop
+        ?~  p.fid
+          ?>  ?=(^ q.fid)
+          (~(put by nex) cur u.q.fid)
+        ?~  q.fid  nex
+        =/  nib  p:(~(dep by u.p.fid) u.q.fid)
+        ?~  nib  nex
+        (~(put by nex) cur nib)
+      ::
+      =/  les
+        |-  ^+  old
+        ?~  fop  ~
+        =/  nex  $(fop t.fop)
+        =*  cur  p.i.fop
+        =*  fid  q.i.fop
+        ?~  q.fid
+          ?>  ?=(^ p.fid)
+          (~(put by nex) cur u.p.fid)
+        ?~  p.fid  nex
+        =/  nib  q:(~(dep by u.p.fid) u.q.fid)
+        ?~  nib  nex
+        (~(put by nex) cur nib)
+      ::
+      :-  ?~(mor ~ `[nut mor])
+          ?~(les ~ `[nut les])
+    ::                                                  ::  ++sable:dif:ry
+    ++  sable                                           ::  diff set
+      |*  {nut/@tas new/(set) old/(set)}
+      =/  mor  (~(dif in new) old)
+      =/  les  (~(dif in old) new) 
+      :-  ?~(mor ~ `[nut mor])
+          ?~(les ~ `[nut les])
+    ::                                                  ::  ++table:dif:ry
+    ++  table                                           ::  diff map
+      |*  {nut/@tas new/(map) old/(map)}
+      ^-  (pair (unit jael-right) (unit jael-right))
+      =/  ped  (~(dep by old) new)
+      :-  ?~(p.ped ~ `[nut p.ped])
+          ?~(q.ped ~ `[nut q.ped])
+    --
+  ::                                                    ::  ++sub:ry
+  ++  sub                                               ::  l - r
+    ^-  (unit jael-right)
+    =/  vid  dif
+    ?>(?=($~ q.vid) p.vid)
   --
 ::                                                      ::  ++up
 ++  up                                                  ::  rights wallet
