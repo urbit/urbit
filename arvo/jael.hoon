@@ -165,7 +165,7 @@
 ++  py                                                  ::  sparse ship set
   |_  pyl/pile
   ::                                                    ::  ++dif:py
-  ++  dif                                               ::  lyp - pyl, add rem
+  ++  dif                                               ::  pyl->lyp, add rem
     |=  lyp/pile                                        
     ^-  (pair pile pile)
     !!
@@ -181,16 +181,11 @@
       ::
       ::    ++ry: rights algebra
       ::
-      ::  internal issues: some of these semantics need
-      ::  more thought after we actually try using them.
-      ::  $pword and $token are certainly wrong.
+      ::  ++ry must always crash when you try to make it
+      ::  do something that makes no sense.
       ::
-      ::  external issues: our map difference and union 
-      ::  operators need some work.  the type system can't
-      ::  enforce that 
-      ::
-      ::  compromises: the type system can't enforce that
-      ::  
+      ::  language compromises: the type system can't enforce 
+      ::  that lef and ryt match, hence the asserts.
       ::
   ::                                                    ::  ++add:ry
   ++  add                                               ::  lef new, ryt old
@@ -202,7 +197,9 @@
     ::
         $apple  ?>  ?=($apple -.ryt)
       :-  %apple
-      (~(uni by p.ryt) p.lef)
+      %-  (~(uno by p.ryt) p.lef)
+      |=  (trel site @ @)
+      ?>(=(q r) r)
     ::
     ::  banned
     ::    {$block $~}
@@ -223,35 +220,41 @@
     ::
         $final  ?>  ?=($final -.ryt)
       :-  %final
-      (~(uni by p.ryt) p.lef)
+      %-  (~(uno by p.ryt) p.lef)
+      |=  (trel ship @pG @pG)
+      ?>(=(q r) r)
     ::
     ::  fungible resources
     ::    {$fungi p/(map term @ud)}
     ::
         $fungi  ?>  ?=($fungi -.ryt)
       :-  %fungi
-      =/  wam  (~(tap by p.ryt) ~)
-      |-  ^+  lef
-      ?~  wam  lef
-      =.  lef  $(wam t.wam)
-      =/  zis  (~(get by lef) p.i.wam)
-      ?~  zis  lef
-      (~(put by lef) p.i.wam (add q.u.zis q.i.wam))
+      %-  (~(uno by p.ryt) p.lef)
+      |=  (trel term @ud @ud)
+      (^add q r)
+    ::
+    ::  invited refugee
+    ::    {$guest $~}
+    ::
+        $guest  ?>  ?=($guest -.ryt)
+      :-  %guest
+      ~
     ::
     ::  reserved block
     ::    {$hotel p/pile}
     ::
         $hotel  ?>  ?=($hotel -.ryt)  
       :-  %hotel
-        $hotel
-      [%hotel (~(uni py p.ryt) p.lef)]
+      (~(uni py p.ryt) p.lef)
     ::
     ::  private keys
     ::    {$jewel p/(map life ring)}
     ::
         $jewel  ?>  ?=($jewel -.ryt)  
       :-  %jewel
-      [%jewel (~(uni by p.ryt) p.lef)]
+      %-  (~(uno by p.ryt) p.lef)
+      |=  (trel life @ @)
+      ?>(=(q r) r)
     ::
     ::  login passcodes
     ::    {$login p/(set @pG)}
@@ -265,26 +268,35 @@
     ::
         $pword  ?>  ?=($pword -.ryt)  
       :-  %pword
-      (~(uni by p.ryt) p.lef)
+      %-  (~(uno by p.ryt) p.lef)
+      |=  (trel site (map @t @t) (map @t @t))
+      %-  (~(uno by q) r)
+      |=  (trel @t @t @t)
+      ?>(=(q r) r)
     ::
     ::  app tokens
     ::    {$token p/(map site (map @t @t))}
     ::
         $token  ?>  ?=($token -.ryt)  
       :-  %token
-      (~(uni by p.ryt) p.lef)
+      %-  (~(uno by p.ryt) p.lef)
+      |=  (trel site (map @t @t) (map @t @t))
+      %-  (~(uno by q) r)
+      |=  (trel @t @t @t)
+      ?>(=(q r) r)
     ::
     ::  urbit symmetric keys
     ::    {$urban p/(map hand bill)}
     ::
         $urban  ?>  ?=($urban -.ryt)  
       :-  %urban
-      (~(uni by p.ryt) p.lef)
+      %-  (~(uno by p.ryt) p.lef)
+      |=  (trel hand bill bill)
+      ?>(=(q r) r)
     ==
   ::                                                    ::  ++dif:ry
-  ++  dif                                               ::  l - r: {add remove}
+  ++  dif                                               ::  r->l: {add remove}
     ^-  (pair (unit jael-right) (unit jael-right))
-    ^-  jael-right
     ?-    -.lef
     ::
     ::  web api key
@@ -317,6 +329,12 @@
         $fungi  ?>  ?=($fungi -.ryt)
       !!
     ::
+    ::  invited refugee
+    ::    {$guest $~}
+    ::
+        $guest  ?>  ?=($guest -.ryt)
+      !!
+    ::
     ::  reserved block
     ::    {$hotel p/pile}
     ::
@@ -345,17 +363,14 @@
     ::    {$token p/(map site (map @t @t))}
     ::
         $token  ?>  ?=($token -.ryt)  
-      :-  %token
-      (~(uni by p.ryt) p.lef)
+      !!
     ::
     ::  urbit symmetric keys
     ::    {$urban p/(map hand bill)}
     ::
         $urban  ?>  ?=($urban -.ryt)  
-      :-  %urban
-      (~(uni by p.ryt) p.lef)
+      !!
     ==
-    !!
   --
 ::                                                      ::  ++up
 ++  up                                                  ::  rights wallet
@@ -436,7 +451,7 @@
       [%final (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $login
-      [%login *@p]
+      [%login ~]
     ::
         $pword
       :-  %pword 
@@ -459,7 +474,7 @@
   ++  remove                                            ::  pig minus gob
     |=  gob/jael-purse
     ^-  jael-purse
-    ?:
+    !!
   ::                                                    ::  ++splice:up
   ++  splice                                            ::  pig plus gob
     |=  gob/jael-purse
@@ -1097,7 +1112,7 @@
     ::
     ::  register generator as login secret
     ::
-    =.  +>.$  abet:(deal:~(able ex our) our [[[%login gen] ~ ~] ~])
+    =.  +>.$  abet:(deal:~(able ex our) our [[[%login [gen ~ ~]] ~ ~] ~])
     ::
     ::  create galaxy with generator as seed
     ::
