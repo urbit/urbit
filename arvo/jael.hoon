@@ -1,5 +1,5 @@
 !:                                                      ::  /van/jael
-::                                                      ::  %reference
+::                                                      ::  %reference/0
 !?  150
 ::                                                      ::::
 ::::                        #  0                        ::  public structures
@@ -187,57 +187,6 @@
       ::  language compromises: the type system can't enforce 
       ::  that lef and ryt match, hence the asserts.
       ::
-  ::                                                    ::  ++add:ry
-  ++  uni                                               ::  lef new, ryt old
-    ^-  jael-right
-    |^  ?-  -.lef
-          $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
-          $block  ?>(?=($block -.ryt) [%block ~])
-          $email  ?>(?=($email -.ryt) [%email (sable p.lef p.ryt)])
-          $final  ?>(?=($final -.ryt) [%final (table p.lef p.ryt)])
-          $fungi  ?>(?=($fungi -.ryt) [%fungi (noble p.lef p.ryt)])
-          $guest  ?>(?=($guest -.ryt) [%guest ~])
-          $hotel  ?>(?=($hotel -.ryt) [%hotel (bible p.lef p.ryt)])
-          $jewel  ?>(?=($jewel -.ryt) [%jewel (table p.lef p.ryt)])
-          $login  ?>(?=($login -.ryt) [%login (sable p.lef p.ryt)])
-          $pword  ?>(?=($pword -.ryt) [%pword (ruble p.lef p.ryt)])
-          $token  ?>(?=($token -.ryt) [%token (ruble p.lef p.ryt)])
-          $urban  ?>(?=($urban -.ryt) [%urban (table p.lef p.ryt)])
-        ==
-    ::                                                  ::  ++bible:uni:ry
-    ++  bible                                           ::  union pile
-      |=  {new/pile old/pile}
-      ^+  new
-      (~(uni py old) new)
-    ::                                                  ::  ++noble:uni:ry
-    ++  noble                                           ::  union map of @ud
-      |=  {new/(map term @ud) old/(map term @ud)}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel term @ud @ud)
-      (add q r)
-    ::                                                  ::  ++ruble:uni:ry
-    ++  ruble                                           ::  union map of maps
-      |=  {new/(map site (map @t @t)) old/(map site (map @t @t))}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel site (map @t @t) (map @t @t))
-      %-  (~(uno by q) r)
-      |=  (trel @t @t @t)
-      ?>(=(q r) r)
-    ::                                                  ::  ++sable:uni:ry
-    ++  sable                                           ::  union set
-      |*  {new/(set) old/(set)}
-      ^+  new
-      (~(uni in old) new)
-    ::                                                  ::  ++table:uni:ry
-    ++  table                                           ::  union map
-      |*  {new/(map) old/(map)}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel _p.-<.new _q.->.new _q.->.new)
-      ?>(=(q r) r)
-    --
   ::                                                    ::  ++dif:ry
   ++  dif                                               ::  r->l: {add remove}
     ^-  (pair (unit jael-right) (unit jael-right))
@@ -348,36 +297,114 @@
     ^-  (unit jael-right)
     =/  vid  dif
     ?>(?=($~ q.vid) p.vid)
+  ::                                                    ::  ++add:ry
+  ++  uni                                               ::  lef new, ryt old
+    ^-  jael-right
+    |^  ?-  -.lef
+          $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
+          $block  ?>(?=($block -.ryt) [%block ~])
+          $email  ?>(?=($email -.ryt) [%email (sable p.lef p.ryt)])
+          $final  ?>(?=($final -.ryt) [%final (table p.lef p.ryt)])
+          $fungi  ?>(?=($fungi -.ryt) [%fungi (noble p.lef p.ryt)])
+          $guest  ?>(?=($guest -.ryt) [%guest ~])
+          $hotel  ?>(?=($hotel -.ryt) [%hotel (bible p.lef p.ryt)])
+          $jewel  ?>(?=($jewel -.ryt) [%jewel (table p.lef p.ryt)])
+          $login  ?>(?=($login -.ryt) [%login (sable p.lef p.ryt)])
+          $pword  ?>(?=($pword -.ryt) [%pword (ruble p.lef p.ryt)])
+          $token  ?>(?=($token -.ryt) [%token (ruble p.lef p.ryt)])
+          $urban  ?>(?=($urban -.ryt) [%urban (table p.lef p.ryt)])
+        ==
+    ::                                                  ::  ++bible:uni:ry
+    ++  bible                                           ::  union pile
+      |=  {new/pile old/pile}
+      ^+  new
+      (~(uni py old) new)
+    ::                                                  ::  ++noble:uni:ry
+    ++  noble                                           ::  union map of @ud
+      |=  {new/(map term @ud) old/(map term @ud)}
+      ^+  new
+      %-  (~(uno by old) new)
+      |=  (trel term @ud @ud)
+      (add q r)
+    ::                                                  ::  ++ruble:uni:ry
+    ++  ruble                                           ::  union map of maps
+      |=  {new/(map site (map @t @t)) old/(map site (map @t @t))}
+      ^+  new
+      %-  (~(uno by old) new)
+      |=  (trel site (map @t @t) (map @t @t))
+      %-  (~(uno by q) r)
+      |=  (trel @t @t @t)
+      ?>(=(q r) r)
+    ::                                                  ::  ++sable:uni:ry
+    ++  sable                                           ::  union set
+      |*  {new/(set) old/(set)}
+      ^+  new
+      (~(uni in old) new)
+    ::                                                  ::  ++table:uni:ry
+    ++  table                                           ::  union map
+      |*  {new/(map) old/(map)}
+      ^+  new
+      %-  (~(uno by old) new)
+      |=  (trel _p.-<.new _q.->.new _q.->.new)
+      ?>(=(q r) r)
+    --
   --
+::
+::    ++up: wallet algebra
+::
+::  we store the various kinds of ++jael-right in
+::  a binary tree, sorted by ++gor on the tag,
+::  balanced by ++vor on the tag.  this tree, a
+::  ++jael-purse, is also a valid ++map.  but
+::  unlike a ++map, it has heterogeneous type.
+::
+::  this design is pretty generalized and should
+::  probably be promoted deeper in the stack.  its
+::  goal is to make it super easy to add new
+::  forms of ++jael-right, without invalidating
+::  existing purse nouns.
+::
+::  rights operations always crash if impossible;
+::  the algebra has no concept of negative rights.
+::
+::  performance issues: ++differ and ++splice, naive.
+:: 
+::  external issues: much copy and paste from ++by.
+::
+::  language issues: if hoon had an equality test 
+::  that informed inference, ++expose could be 
+::  properly inferred, eliminating the ?>.
 ::                                                      ::  ++up
 ++  up                                                  ::  rights wallet
   |_  pig/jael-purse
-      ::
-      ::    ++up: wallet algebra
-      ::
-      ::  we store the various kinds of ++jael-right in
-      ::  a binary tree, sorted by ++gor on the tag,
-      ::  balanced by ++vor on the tag.  this tree, a
-      ::  ++jael-purse, is also a valid ++map.  but
-      ::  unlike a ++map, it has heterogeneous type.
-      ::
-      ::  this design is pretty generalized and should
-      ::  probably be promoted deeper in the stack.  its
-      ::  goal is to make it super easy to add new
-      ::  forms of ++jael-right, without invalidating
-      ::  existing purse nouns.
-      ::
-      ::  rights operations always crash if impossible;
-      ::  the algebra has no concept of negative rights.
-      ::
-      ::  external issues: our map difference and union 
-      ::  operators need some work.
-      ::
+  ::                                                    ::  ++delete:up
+  ++  delete                                            ::  delete right
+    |=  ryt/jael-right
+    ^-  jael-purse
+    ?~  pig
+      ~
+    ?.  =(-.ryt -.n.pig)
+      ?:  (gor -.ryt -.n.pig)
+        [n.pig $(pig l.pig) r.pig]
+      [n.pig l.pig $(pig r.pig)]
+    =/  dub  ~(sub ry n.pig ryt)
+    ?^  dub  [u.dub l.pig r.pig]
+    |-  ^-  jael-purse
+    ?~  l.pig  r.pig
+    ?~  r.pig  l.pig
+    ?:  (vor -.n.l.pig -.n.r.pig)
+      [n.l.pig l.l.pig $(l.pig r.l.pig)]
+    [n.r.pig $(r.pig l.r.pig) r.r.pig]
   ::                                                    ::  ++differ:up
   ++  differ                                            ::  delta pig->gob
     |=  gob/jael-purse
     ^-  jael-delta
-    !!
+    |^  [way way(pig gob, gob pig)]
+    ++  way
+      %-  intern(pig ~) 
+      %+  skip  linear(pig gob) 
+      |=(jael-right (~(has in pig) +<))
+    --
   ::                                                    ::  ++exists:up
   ++  exists                                            ::  test presence
     |=  tag/@tas
@@ -385,11 +412,6 @@
   ::                                                    ::  ++expose:up
   ++  expose                                            ::  typed extract
     |=  tag/@tas
-    ::
-    ::  if hoon had an equality test that informed
-    ::  inference, this could be a |*, and its
-    ::  product would be properly inferred.
-    ::
     ^-  (unit jael-right)
     ?~  pig  ~
     ?:  =(tag -.n.pig)
@@ -398,8 +420,24 @@
   ::                                                    ::  ++insert:up
   ++  insert                                            ::  insert item
     |=  ryt/jael-right
-    ^-  jael-purse 
-    !!
+    ^-  jael-purse
+    ?~  pig
+      [ryt ~ ~]
+    ?:  =(-.ryt -.n.pig)
+      ?:  =(+.ryt +.n.pig)
+        pig
+      [~(uni ry ryt n.pig) l.pig r.pig]
+    ?:  (gor -.ryt -.n.pig)
+      =+  nex=$(pig l.pig)
+      ?>  ?=(^ nex)
+      ?:  (vor -.n.pig -.n.nex)
+        [n.pig nex r.pig]
+      [n.nex l.nex [n.pig r.nex r.pig]]
+    =+  nex=$(pig r.pig)
+    ?>  ?=(^ nex)
+    ?:  (vor -.n.pig -.n.nex)
+      [n.pig l.pig nex]
+    [n.nex [n.pig l.pig l.nex] r.nex]
   ::                                                    ::  ++intern:up
   ++  intern                                            ::  insert list
     |=  lin/(list jael-right)
@@ -451,17 +489,21 @@
   ++  remove                                            ::  pig minus gob
     |=  gob/jael-purse
     ^-  jael-purse
-    !!
+    =/  buv  (~(tap by gob))
+    |-  ?~  buv  pig
+        $(buv t.buv, pig (delete i.buv))
   ::                                                    ::  ++splice:up
   ++  splice                                            ::  pig plus gob
     |=  gob/jael-purse
     ^-  jael-purse
-    !!
+    =/  buv  (~(tap by gob))
+    |-  ?~  buv  pig
+        $(buv t.buv, pig (insert i.buv))
   ::                                                    ::  ++update:up
   ++  update                                            ::  arbitrary change
     |=  del/jael-delta
     ^-  jael-purse
-    (remove(pig (splice mor.del)) les.del)
+    (splice(pig (remove les.del)) mor.del)
   --   
 ::                                                      ::  ++we
 ++  we                                                  ::  wyll tool
@@ -1091,9 +1133,34 @@
     ::
     =.  +>.$  abet:(deal:~(able ex our) our [[[%login [gen ~ ~]] ~ ~] ~])
     ::
-    ::  create galaxy with generator as seed
+    ::  initialize hierarchical property
+    ::
+    =.  +>.$  
+      =-  abet:(deal:~(able ex our) our - ~)
+      ^-  jael-purse
+      %-  intern:up
+      ^-  (list jael-right)
+      =/  mir  (clan our)
+      ?+    mir  ~
+          $czar
+        :~  [%fungi [%usr 255] ~ ~]
+            [%hotel [1 255] ~ ~]
+        ==
+          $king
+        :~  [%fungi [%upl 65.535] ~ ~]
+            [%hotel [1 65.535] ~ ~]
+        ==
+          $duke
+        :~  [%hotel [1 0xffff.ffff] ~ ~]
+        ==
+      ==
+    ::
+    ::  create initial communication secrets
     ::
     ?:  (lth our 256)
+      ::
+      ::  create galaxy with generator as seed
+      ::
       abet:(next:~(able ex our) key doc)
     ::
     ::  had: key handle
