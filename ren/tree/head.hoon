@@ -15,6 +15,8 @@
       |=  gas/epic  ^-  {? ?}                           :: check if the query
       :-  (~(has by qix.gas) 'dbg.nopack')              :: dictates separate files
       (~(has by qix.gas) 'dbg.nomin')                   :: and/or unminified assets
+/=    extras    /:  /===/ren/tree/head/extras           :: additional scripts
+                /^  (map knot cord)    /_  /js/
 ::
 |%
 ++  cdnjs
@@ -45,6 +47,7 @@
     ;script(type "text/javascript", src "{(cdnjs "react/0.14.6/react")}");
     ;script(type "text/javascript", src "{(cdnjs "react/0.14.6/react-dom")}");
     ;script(type "text/javascript", src "{(cdnjs "flux/2.1.1/Flux")}");
+    ;*  (turn (~(tap by extras)) |=({@ a/@t} ;script(type "text/javascript"):"{(trip a)}"))
 ::     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js");
 ::     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/".
 ::       "codemirror/4.3.0/mode/markdown/markdown.min.js");
