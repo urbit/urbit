@@ -5460,6 +5460,7 @@
     {$pin p/twig q/twig}                                ::  =+  q w/[p subject]
     {$tow p/(list twig)}                                ::  =~  twig stack
     {$aka p/term q/twig r/twig}                         ::  =*  r w/alias p/q
+    {$use p/wing q/twig}                                ::  =,  overlap  
   ::                                            ::::::  conditionals
     {$or p/(list twig)}                                 ::  ?|  loobean or
     {$case p/wing q/(list (pair twig twig))}            ::  ?-  pick case in q

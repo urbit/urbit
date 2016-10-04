@@ -1,70 +1,113 @@
 !:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
 !?  150
+      ::
+      ::  %jael: secrets and promises.
+      ::
+      ::  todo: 
+      ::  
+      ::    - communication with other vanes:
+      ::      - actually use %behn for expiring secrets
+      ::      - report %ames propagation errors to user
+      ::
+      ::    - nice features:
+      ::      - scry namespace
+      ::      - task for converting invites to tickets
+      ::
+      ::    - restructuring
+      ::      - move section 0 to %zuse/%york once ready
+      ::
 ::                                                      ::::
 ::::                        #  0                        ::  public structures
   ::                                                    ::::
 |=  pit/vase
-::                                                      ::::
-::::                        #  1                        ::  private structures
-  ::                                                    ::::
 =>  |%
-++  jael-state                                          ::  all crypto state
-  $:  ver/$0                                            ::  %jael version 
-      yen/(set duct)                                    ::  raw observers
-      urb/jael-objective                                ::  all objective state
-      sub/jael-subjective                               ::  all subjective state
+::                                                      ::
+::::                        ## 0.a                      ::  certificates
+  ::                                                    ::::
+      ::
+      ::  the urbit meta-certificate (++will) is a sequence
+      ::  of certificates (++cert).  each cert in a will
+      ::  revokes and replaces the previous cert.  the
+      ::  version number of a ship is a ++life.  a ++farm
+      ::  is a set of (possibly interdependent) wills.
+      ::
+      ::  the deed contains an ++arms, an optional definition
+      ::  of cosmetic identity; a semi-trusted parent, 
+      ::  which signs the initial certificate and provides
+      ::  routing services; and a dirty bit.  if the dirty
+      ::  bit is set, the new life of this ship may have
+      ::  lost information that the old life had.
+      ::
+++  arms  (map chip (pair @ta @t))                      ::  stated identity
+++  bull                                                ::  cert metadata
+  $:  dad/ship                                          ::  parent
+      dob/?                                             ::  & clean, | dirty
+      nym/arms                                          ::  identity strings
   ==                                                    ::
-++  jael-subjective                                     ::  urbit metadata
-  $:  $=  car                                           ::  secure channels
-        %+  map  ship                                   ::  partner
-        $:  yen/(set duct)                              ::  trackers
-            det/pipe                                    ::  channel state
-        ==                                              ::
-      $=  rel                                           ::  neighborhood
-        $:  dad/_our                                    ::  parent
-            cod/farm                                    ::  cousins
-            pyr/(set ship)                              ::  peers
-            kyz/(set ship)                              ::  children
-        ==                                              ::
-      $=  bal                                           ::  balance sheet
-        $:  yen/(set duct)                              ::  trackers
-        ==                                              ::  
-      $=  own                                           ::  vault
-        $:  yen/(set duct)                              ::  trackers
-            lyf/life                                    ::  version
-            jaw/(map life ring)                         ::  private keys
-        ==                                              ::
-  ==                                                    ::  
-++  jael-objective                                      ::  objective urbit
-  $:  pug/farm                                          ::  keys
-      pry/(map ship (map ship jael-purse))              ::  promises
+++  cert  (tale deed)                                   ::  signed deed
+++  chip                                                ::  standard identity
+  $?  $giv                                              ::  given name
+      $sur                                              ::  surname
+      $had                                              ::  fictitious name
+      $mid                                              ::  middle name 
   ==                                                    ::
-++  jael-remote                                         ::  remote notification
-  %+  each  jael-purse                                  ::  addition
-  jael-purse                                            ::  replacement
-::                                                      ::
-++  jael-balance                                        ::  balance sheet
-  %+  pair                                              ::  
-    (map ship jael-purse)                               ::  liabilities
-  (map ship jael-purse)                                 ::  assets
-::                                                      ::
-++  jael-tally                                          ::  balance update
-  %+  each  jael-balance                                ::  complete
-  jael-action                                           ::  change
-::                                                      ::
-++  jael-action                                         ::  balance change
-  %+  pair  ship                                        ::  partner
-  %+  each  jael-delta                                  ::  %&/liability change
-  jael-delta                                            ::  %|/asset change
-::                                                      ::
-++  jael-gift                                           ::  report
-  $?  {$veil p/pipe}                                    ::  secure channel
-      {$vest p/jael-tally}                              ::  balance update
-      {$vein p/life q/(map life ring)}                  ::  private keys
-      {$vine p/(list jael-edit)}                        ::  raw actions
+++  deed                                                ::  certificate deed
+  $:  doc/bull                                          ::  metadata
+      pub/pass                                          ::  public key
   ==                                                    ::
-++  jael-right                                          ::  urbit commitment
+++  farm  (map ship will)                               ::  pki dump set
+++  life  @ud                                           ::  ship version
+++  mind  {who/ship lyf/life}                           ::  key identifier
+++  name  (pair @ta @t)                                 ::  ascii / unicode
+++  oath  @                                             ::  signature
+++  tale                                                ::  urbit-signed *
+  |*  typ/mold                                          ::  payload mold
+  $:  dat/typ                                           ::  data
+      syg/(map ship (pair life oath))                   ::  signatures
+  ==                                                    ::
+++  will  (map life cert)                               ::  meta-certificate
+::                                                    ::::
+::::                        ## 0.b                      ::  rights and promises
+  ::                                                    ::::
+      ::
+      ::  %jael tracks promises (++rite) from ship to ship.
+      ::  a rite may be any right, badge, asset, secret, etc.
+      ::  un-shared secret or private asset is stored as a 
+      ::  rite from self to self.
+      ::  
+      ::  a set of rites is stored as a tree (++safe), sorted
+      ::  by ++gor on the stem, balanced by ++vor on the stem.
+      ::  (this is the same structure as a ++map, but we can't
+      ::  use ++map because it's not designed for mixed type.)
+      ::  the goal of the design is to make it easy to add new
+      ::  kinds of rite without a state adapter.
+      ::
+      ::  present kinds of rite:
+      ::
+      ::    %apple: application secret for a web api.
+      ::    %block: the promisee is banned.
+      ::    %email: email tied to promissee's ship.
+      ::    %final: ship/ticket pair, ready to launch.
+      ::    %fungi: fungible, countable asset.
+      ::    %guest: permission to adopt foreign child.
+      ::    %hotel: block of unissued children.
+      ::    %jewel: urbit private keys.
+      ::    %login: user's login passcode.
+      ::    %pword: password for a website/api.
+      ::    %token: user access token for a web api.
+      ::    %urban: symmetric key for urbit networking. 
+      ::
+      ::  %fungi keys can be anything, but don't reuse 
+      ::  currency codes.  codes for urbit invitations:
+      ::  %ugl == galaxy, %usr == star, %upl == planet
+      ::
+++  bill  (pair @da @)                                  ::  expiring value
+++  bump                                                ::  rights change
+  $:  mor/safe                                          ::  add rights
+      les/safe                                          ::  lose rights
+  ==                                                    ::
+++  rite                                                ::  urbit commitment
   $%  {$apple p/(map site @)}                           ::  web api key
       {$block $~}                                       ::  banned
       {$email p/(set @ta)}                              ::  email addresses
@@ -78,72 +121,159 @@
       {$token p/(map site (map @t @t))}                 ::  app tokens by user
       {$urban p/(map hand bill)}                        ::  urbit symmetric keys
   ==                                                    ::
-++  jael-purse                                          ::  rights set
-  (tree jael-right)                                     ::
+++  site  (list @ta)                                    ::  [%com %yahoo %www ~]
+++  safe  (tree rite)                                   ::  rights set
+::                                                    ::::
+::::                        ## 0.c                      ::  i/o
+  ::                                                    ::::
+      ::
+      ::  %jael has two general kinds of task: changes
+      ::  and change subscriptions.
+      ::
+      ::  change tasks are designed to match high-level
+      ::  operations - for instance, we have %burn, %mint,
+      ::  and %move, not just a single delta operation.
+      ::  more of these operations will probably be added,
+      ::  and invariants enforced at transaction end.
+      ::
+      ::  subscriptions are also user-focused - for instance,
+      ::  %vein sends all the information needed to maintain
+      ::  the secure channel, both rights and certificates.
+      ::  the security-critical tasks (%veil, %vein, %vine)
+      ::  should probably be bound to a whitelisted duct set.
+      ::  (all secrets are redacted from %vest gifts.)
+      ::
+      ::  %jael only talks to %ames and %behn.  we send messages
+      ::  through %ames and use %behn timers.
+      ::
+++  action                                              ::  balance change
+  %+  pair  ship                                        ::  partner
+  %+  each  bump                                        ::  %&/liability change
+  bump                                                  ::  %|/asset change
 ::                                                      ::
-++  jael-delta                                          ::  rights change
-  $:  mor/jael-purse                                    ::  grow rights
-      les/jael-purse                                    ::  lose rights
+++  balance                                             ::  balance sheet
+  %+  pair                                              ::  
+    (map ship safe)                                     ::  liabilities
+  (map ship safe)                                       ::  assets
+::                                                      ::
+++  change                                              ::  urbit change
+  $%  $:  $fact                                         ::  certificate change
+          rex/ship                                      ::  owner
+          vie/(unit (unit ship))                        ::  made/heard from
+          lyf/life                                      ::  deed added/modified
+          gan/growth                                    ::  info gained
+      ==                                                ::
+      $:  $rite                                         ::  rights change
+          rex/ship                                      ::  issuer
+          pal/ship                                      ::  issued to
+          del/bump                                      ::  change
+  ==  ==                                                ::
+::                                                      ::
+++  channel                                             ::  secure channel
+  $:  out/(unit (pair hand bill))                       ::  outbound key
+      inn/(map hand bill)                               ::  inbound keys
+      cur/(unit life)                                   ::  their version
+      sax/(list ship)                                   ::  their ancestry
+      pub/will                                          ::  their public keys
+   ==                                                   ::
+++  gift                                                ::  out result <-$
+  $?  {$veil p/channel}                                 ::  secure channel
+      {$vest p/tally}                                   ::  balance update
+      {$vein p/life q/(map life ring)}                  ::  private keys
+      {$vine p/(list change)}                           ::  all raw changes
   ==                                                    ::
-++  jael-task                                           ::  operations on
-  $%  {$burn p/ship q/jael-purse}                       ::  destroy rights
-      {$hail p/ship q/jael-remote}                      ::  remote update
+++  growth                                              ::  unit of learning
+  $%  {$sign p/mind q/@}                                ::  add/update signature
+      {$step p/cert}                                    ::  add whole deed
+  ==                                                    ::
+++  note                                                ::  out request $->
+  $%  {$b $wait p/@da}                                  ::  wait until
+      {$x $mess p/ship q/path r/*}                      ::  send message
+  ==                                                    ::
+++  remote                                              ::  remote notification
+  %+  each  safe                                        ::  addition
+  safe                                                  ::  replacement
+::                                                      ::
+++  sign                                                ::  in result $<-
+  $%  {$b $wake $~}                                     ::  wakeup
+      {$x $rest p/coop}                                 ::  message result
+  ==                                                    ::
+++  tally                                               ::  balance update
+  %+  each  balance                                     ::  complete
+  action                                                ::  change
+::
+++  task                                                ::  in request ->$
+  $%  {$burn p/ship q/safe}                             ::  destroy rights
+      {$hail p/ship q/remote}                           ::  remote update
       {$init p/@pG q/arms}                              ::  initialize urbit
       {$meet p/(unit (unit ship)) q/farm}               ::  integrate pki from
-      {$mint p/ship q/jael-purse}                       ::  create rights
-      {$move p/ship q/ship r/jael-purse}                ::  transfer from/to
+      {$mint p/ship q/safe}                             ::  create rights
+      {$move p/ship q/ship r/safe}                      ::  transfer from/to
       {$next p/bull}                                    ::  update private key
-      {$nuke $~}                                        ::  cancel tracker
+      {$nuke $~}                                        ::  cancel tracker from
       {$veil p/ship}                                    ::  view secret channel
       {$vein $~}                                        ::  view signing keys
       {$vest $~}                                        ::  view public balance
       {$vine $~}                                        ::  view secret history
       {$west p/ship q/path r/*}                         ::  remote request
   ==                                                    ::
-++  jael-report-them                                    ::  report on neighbor
-  $:  gur/wyll                                          ::  certificate
-      lab/jael-purse                                    ::  our promises to
-      own/jael-purse                                    ::  our promises from
+--
+::                                                      ::::
+::::                        #  1                        ::  private structures
+  ::                                                    ::::
+      ::  
+      ::  the %jael state comes in two parts: absolute
+      ::  and relative.
+      ::
+      ::  ++state-absolute is objective -- defined without
+      ::  reference to our ship.  if you steal someone else's
+      ::  private keys, we have a place to put them.  when
+      ::  others make promises to us, we store them in the
+      ::  same structures we use to make promises to others.
+      ::
+      ::
+=>  |%
+++  state                                               ::  all vane state
+  $:  ver/$0                                            ::  vane version 
+      yen/(set duct)                                    ::  raw observers
+      urb/state-absolute                                ::  all absolute state
+      sub/state-relative                                ::  all relative state
   ==                                                    ::
-++  jael-report-self                                    ::  report on self
-  $:  gur/wyll                                          ::  certificate
-      war/(map life ring)                               ::  private keys
+++  state-relative                                      ::  urbit metadata
+  $:  $=  car                                           ::  secure channels
+        %+  map  ship                                   ::  partner
+        $:  yen/(set duct)                              ::  trackers
+            det/channel                                 ::  channel state
+        ==                                              ::
+      $=  rel                                           ::  neighborhood
+        $:  dad/_our                                    ::  parent
+            cod/farm                                    ::  dependencies
+            pyr/(set ship)                              ::  peers
+            kyz/(set ship)                              ::  children
+        ==                                              ::
+      $=  bal                                           ::  balance sheet
+        $:  yen/(set duct)                              ::  trackers
+        ==                                              ::  
+      $=  own                                           ::  vault
+        $:  yen/(set duct)                              ::  trackers
+            lyf/life                                    ::  version
+            jaw/(map life ring)                         ::  private keys
+        ==                                              ::
+  ==                                                    ::  
+++  state-absolute                                      ::  absolute urbit
+  $:  pug/farm                                          ::  keys
+      pry/(map ship (map ship safe))                    ::  promises
   ==                                                    ::
-++  jael-report-cash                                    ::  neighbors/assets
-  $:  has/(map ship jael-purse)                         ::
-  ==                                                    ::
-++  jael-report-paid                                    ::  asset diff
-  $:  dif/(list (trel ship ? jael-purse))               ::  who, +/-, what
-  ==                                                    ::
-++  jael-note                                           ::  out request $->
-  $%  {$x $mess p/ship q/path r/*}                      ::  send message
-  ==                                                    ::
-++  jael-message                                        ::  p2p message
-  $%  {$hail p/jael-purse}                              ::  reset rights
+::                                                      ::
+++  message                                             ::  p2p message
+  $%  {$hail p/safe}                                    ::  reset rights
       {$meet p/farm}                                    ::  propagate pki
   ==                                                    ::
-++  jael-grow                                           ::  unit of learning
-  $%  {$sign p/mind q/@}                                ::  add/update signature
-      {$step p/cert}                                    ::  add whole deed
-  ==                                                    ::
-++  jael-edit                                           ::  urbit change
-  $%  $:  $fact                                         ::  certificate change
-          rex/ship                                      ::  owner
-          vie/(unit (unit ship))                        ::  made/heard from
-          lyf/life                                      ::  deed added/modified
-          gan/jael-grow                                 ::  info gained
-      ==                                                ::
-      $:  $rite                                         ::  rights change
-          rex/ship                                      ::  issuer
-          pal/ship                                      ::  issued to
-          del/jael-delta                                ::  change
-      ==                                                ::
-  ==                                                    ::
-++  jael-card                                           ::  i/o action
-  (wind jael-note jael-gift)                            ::
+++  card                                                ::  i/o action
+  (wind note gift)                                      ::
 ::                                                      ::
-++  jael-move                                           ::  output
-  {p/duct q/jael-card}
+++  move                                                ::  output
+  {p/duct q/card}                                       ::
 --
 ::                                                      ::::
 ::::                        #  2                        ::  static data
@@ -435,7 +565,7 @@
   --
 ::                                                      ::  ++ry
 ++  ry                                                  ::  rights algebra
-  |_  {lef/jael-right ryt/jael-right}
+  |_  {lef/rite ryt/rite}
       ::
       ::    ++ry: rights algebra
       ::
@@ -447,7 +577,7 @@
       ::
   ::                                                    ::  ++dif:ry
   ++  dif                                               ::  r->l: {add remove}
-    ^-  (pair (unit jael-right) (unit jael-right))
+    ^-  (pair (unit rite) (unit rite))
     |^  ?-  -.lef
           $apple  ?>(?=($apple -.ryt) (table %apple p.lef p.ryt))
           $block  ?>(?=($block -.ryt) [~ ~])
@@ -471,7 +601,7 @@
     ::                                                  ::  ++noble:dif:ry
     ++  noble                                           ::  diff map of @ud
       |*  {nut/@tas new/(map * @ud) old/(map * @ud)}
-      ^-  (pair (unit jael-right) (unit jael-right))
+      ^-  (pair (unit rite) (unit rite))
       =/  fop  (~(tap by (~(def by old) new)))
       =/  mor
         |-  ^+  new
@@ -545,19 +675,19 @@
     ::                                                  ::  ++table:dif:ry
     ++  table                                           ::  diff map
       |*  {nut/@tas new/(map) old/(map)}
-      ^-  (pair (unit jael-right) (unit jael-right))
+      ^-  (pair (unit rite) (unit rite))
       =/  ped  (~(dep by old) new)
       :-  ?~(p.ped ~ `[nut p.ped])
           ?~(q.ped ~ `[nut q.ped])
     --
   ::                                                    ::  ++sub:ry
   ++  sub                                               ::  l - r
-    ^-  (unit jael-right)
+    ^-  (unit rite)
     =/  vid  dif
     ?>(?=($~ q.vid) p.vid)
   ::                                                    ::  ++add:ry
   ++  uni                                               ::  lef new, ryt old
-    ^-  jael-right
+    ^-  rite
     |^  ?-  -.lef
           $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
           $block  ?>(?=($block -.ryt) [%block ~])
@@ -610,18 +740,6 @@
 ::
 ::    ++up: wallet algebra
 ::
-::  we store the various kinds of ++jael-right in
-::  a binary tree, sorted by ++gor on the tag,
-::  balanced by ++vor on the tag.  this tree, a
-::  ++jael-purse, is also a valid ++map.  but
-::  unlike a ++map, it has heterogeneous type.
-::
-::  this design is pretty generalized and should
-::  probably be promoted deeper in the stack.  its
-::  goal is to make it super easy to add new
-::  forms of ++jael-right, without invalidating
-::  existing purse nouns.
-::
 ::  rights operations always crash if impossible;
 ::  the algebra has no concept of negative rights.
 ::
@@ -634,11 +752,11 @@
 ::  properly inferred, eliminating the ?>.
 ::                                                      ::  ++up
 ++  up                                                  ::  rights wallet
-  |_  pig/jael-purse
+  |_  pig/safe
   ::                                                    ::  ++delete:up
   ++  delete                                            ::  delete right
-    |=  ryt/jael-right
-    ^-  jael-purse
+    |=  ryt/rite
+    ^-  safe
     ?~  pig
       ~
     ?.  =(-.ryt -.n.pig)
@@ -647,7 +765,7 @@
       [n.pig l.pig $(pig r.pig)]
     =/  dub  ~(sub ry n.pig ryt)
     ?^  dub  [u.dub l.pig r.pig]
-    |-  ^-  jael-purse
+    |-  ^-  safe
     ?~  l.pig  r.pig
     ?~  r.pig  l.pig
     ?:  (vor -.n.l.pig -.n.r.pig)
@@ -655,13 +773,13 @@
     [n.r.pig $(r.pig l.r.pig) r.r.pig]
   ::                                                    ::  ++differ:up
   ++  differ                                            ::  delta pig->gob
-    |=  gob/jael-purse
-    ^-  jael-delta
+    |=  gob/safe
+    ^-  bump
     |^  [way way(pig gob, gob pig)]
     ++  way
       %-  intern(pig ~) 
       %+  skip  linear(pig gob) 
-      |=(jael-right (~(has in pig) +<))
+      |=(rite (~(has in pig) +<))
     --
   ::                                                    ::  ++exists:up
   ++  exists                                            ::  test presence
@@ -670,15 +788,15 @@
   ::                                                    ::  ++expose:up
   ++  expose                                            ::  typed extract
     |=  tag/@tas
-    ^-  (unit jael-right)
+    ^-  (unit rite)
     ?~  pig  ~
     ?:  =(tag -.n.pig)
       [~ u=n.pig]
     ?:((gor tag -.n.pig) $(pig l.pig) $(pig r.pig))
   ::                                                    ::  ++insert:up
   ++  insert                                            ::  insert item
-    |=  ryt/jael-right
-    ^-  jael-purse
+    |=  ryt/rite
+    ^-  safe
     ?~  pig
       [ryt ~ ~]
     ?:  =(-.ryt -.n.pig)
@@ -698,24 +816,24 @@
     [n.nex [n.pig l.pig l.nex] r.nex]
   ::                                                    ::  ++intern:up
   ++  intern                                            ::  insert list
-    |=  lin/(list jael-right)
-    ^-  jael-purse
+    |=  lin/(list rite)
+    ^-  safe
     ?~  lin  pig
     =.  pig  $(lin t.lin)
     (insert i.lin)
   ::                                                    ::  ++linear:up
   ++  linear                                            ::  convert to list
-    =|  lin/(list jael-right)
+    =|  lin/(list rite)
     |-  ^+  lin
     ?~  pig  ~
     $(pig r.pig, lin [n.pig $(pig l.pig)])
   ::                                                    ::  ++redact:up
   ++  redact                                            ::  conceal secrets
-    |-  ^-  jael-purse
+    |-  ^-  safe
     ?~  pig  ~
     :_  [$(pig l.pig) $(pig r.pig)]
     =*  rys  n.pig
-    ^-  jael-right
+    ^-  rite
     ?+    -.rys  rys
         $apple
       [%apple (~(run by p.rys) |=(@ (mug +<)))]
@@ -745,27 +863,27 @@
     ==
   ::                                                    ::  ++remove:up
   ++  remove                                            ::  pig minus gob
-    |=  gob/jael-purse
-    ^-  jael-purse
+    |=  gob/safe
+    ^-  safe
     =/  buv  (~(tap by gob))
     |-  ?~  buv  pig
         $(buv t.buv, pig (delete i.buv))
   ::                                                    ::  ++splice:up
   ++  splice                                            ::  pig plus gob
-    |=  gob/jael-purse
-    ^-  jael-purse
+    |=  gob/safe
+    ^-  safe
     =/  buv  (~(tap by gob))
     |-  ?~  buv  pig
         $(buv t.buv, pig (insert i.buv))
   ::                                                    ::  ++update:up
   ++  update                                            ::  arbitrary change
-    |=  del/jael-delta
-    ^-  jael-purse
+    |=  del/bump
+    ^-  safe
     (splice(pig (remove les.del)) mor.del)
   --   
 ::                                                      ::  ++we
-++  we                                                  ::  wyll tool
-  |_  pub/wyll
+++  we                                                  ::  will tool
+  |_  pub/will
   ::                                                    ::  ++collate:we 
   ++  collate                                           ::  sort by version
     |=  com/$-({{life cert} {life cert}} ?)
@@ -794,7 +912,7 @@
 =>  |%
 ::                          ## 4.a                      ::  of
 ++  of                                                  ::  main engine
-  =|  moz/(list jael-move)                              ::::
+  =|  moz/(list move)                              ::::
   =|  $:  ::  sys: system context
           ::
           $=  sys
@@ -806,7 +924,7 @@
           ==
           ::  all vane state
           ::
-          jael-state
+          state
       ==
   ::  lex: all durable state
   ::  moz: pending actions
@@ -826,19 +944,19 @@
             ::  tac: event data
             ::
             hen/duct
-            tac/jael-task
+            tac/task
         ==
     ^+  +>
     ?-    -.tac
     ::
     ::  destroy promises
-    ::    {$burn p/ship q/jael-purse)}
+    ::    {$burn p/ship q/safe)}
     ::
         $burn
       (cure abet:abet:(deal:(burb our) p.tac [~ q.tac]))
     ::
     ::  remote update
-    ::    {$hail p/ship q/jael-remote}
+    ::    {$hail p/ship q/remote}
     ::
         $hail
       (cure abet:abet:(hail:(burb p.tac) our q.tac))
@@ -850,14 +968,14 @@
       (cure abet:(~(make ur urb) now.sys eny.sys p.tac q.tac))
     ::
     ::  create promises
-    ::    {$mint p/ship q/jael-purse}
+    ::    {$mint p/ship q/safe}
     ::
         $mint
       (cure abet:abet:(deal:(burb our) p.tac [q.tac ~]))
       
     ::
     ::  move promises
-    ::    {$move p/ship q/ship r/jael-purse}
+    ::    {$move p/ship q/ship r/safe}
     ::
         $move
       =.  +>  (cure abet:abet:(deal:(burb our) p.tac [~ r.tac]))
@@ -879,7 +997,7 @@
         yen.bal.sub  (~(del in yen.bal.sub) hen)
         yen.own.sub  (~(del in yen.own.sub) hen)
         car.sub      %-  ~(run by car.sub)
-                     |=  {yen/(set duct) det/pipe}
+                     |=  {yen/(set duct) det/channel}
                      [(~(del in yen) hen) det]
       ==
     ::
@@ -918,11 +1036,11 @@
     ::
         $west
       ?>  =(~ q.tac)
-      =+  mes=((hard jael-message) r.tac)
+      =+  mes=((hard message) r.tac)
       ?-    -.mes
       ::
       ::  reset remote rights
-      ::    {$hail p/jael-purse}
+      ::    {$hail p/safe}
       ::
           $hail
         (cure abet:abet:(hail:(burb p.tac) our [%| p.mes]))
@@ -935,24 +1053,24 @@
       ==
     ==
   ::                                                    ::  ++curd:of
-  ++  curd                                              ::  subjective moves
-    |=  {moz/(list jael-move) sub/jael-subjective}
+  ++  curd                                              ::  relative moves
+    |=  {moz/(list move) sub/state-relative}
     +>(sub sub, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++cure:of
-  ++  cure                                              ::  objective edits
-    |=  {hab/(list jael-edit) urb/jael-objective}
+  ++  cure                                              ::  absolute edits
+    |=  {hab/(list change) urb/state-absolute}
     ^+  +>
     (curd(urb urb) abet:(~(apex su urb sub) hab))
   --
 ::                          ## 4.b                      ::  ++su
-++  su                                                  ::  subjective engine
-  =|  moz/(list jael-move)                              ::::
-  =|  $:  jael-objective
-          jael-subjective
+++  su                                                  ::  relative engine
+  =|  moz/(list move)                              ::::
+  =|  $:  state-absolute
+          state-relative
       ==
   ::  moz: moves in reverse order
-  ::  urb: objective urbit state
-  ::  sub: subjective urbit state
+  ::  urb: absolute urbit state
+  ::  sub: relative urbit state
   ::
   =*  urb  -<
   =*  sub  ->
@@ -962,7 +1080,7 @@
     [(flop moz) sub]
   ::                                                    ::  ++apex:su
   ++  apex                                              ::  apply changes
-    |=  hab/(list jael-edit)
+    |=  hab/(list change)
     ^+  +>
     ?~  hab  +>
     %=    $
@@ -975,7 +1093,7 @@
     ==
   ::                                                    ::  ++exec:su
   ++  exec                                              ::  mass gift
-    |=  {yen/(set duct) cad/jael-card}
+    |=  {yen/(set duct) cad/card}
     =/  noy  (~(tap in yen))
     |-  ^+  ..exec
     ?~  noy  ..exec
@@ -1041,7 +1159,7 @@
       (exec(+.own yam) yen.own [%give %vein +.own])
     ::                                                  ::  ++vest:feel:su
     ++  vest                                            ::  kick balance
-      |=  hug/jael-action
+      |=  hug/action
       ^+  ..feel
       ?:  =([~ ~] +.q.hug)  ..feel
       ::
@@ -1127,7 +1245,7 @@
     ::                                                  ::  ++veil:form:su
     ++  veil                                            ::  channel report
       |=  who/ship
-      ^-  pipe
+      ^-  channel
       ::
       ::  pub: will of who
       ::  exp: promises from our to who
@@ -1136,20 +1254,20 @@
       ::  inn: symmetric keys from who to our
       ::
       =/  pub  
-        ^-  wyll
+        ^-  will
         =-  ?~(- ~ u.-)
         (~(get by pug.urb) who)
       ::
       =/  exp  
-        ^-  jael-purse
+        ^-  safe
         =-  ?~(- ~ u.-)
         (~(get by (~(got by pry.urb) our)) who)
       ::
       =/  imp  
-        ^-  jael-purse
+        ^-  safe
         =-  ?~(- ~ u.-)
         %.  our
-        ~(get by (fall (~(get by pry.urb) who) *(map ship jael-purse)))
+        ~(get by (fall (~(get by pry.urb) who) *(map ship safe)))
       ::
       =*  out
         ^-  (unit (pair hand bill))
@@ -1169,7 +1287,7 @@
           ?>  ?=($urban -.u.-)
           p.u.-
       ::
-      ^-  pipe
+      ^-  channel
       [out inn ~(current we pub) (~(dads ur urb) who) pub]
     ::                                                  ::  ++vein:form:su
     ++  vein                                            ::  private key report
@@ -1177,7 +1295,7 @@
       (~(lean ur urb) our)
     ::                                                  ::  ++vest:form:su
     ++  vest                                            ::  balance report
-      ^-  jael-balance
+      ^-  balance
       :-  ::
           ::  raw: all our liabilities by ship
           ::  dud: delete liabilities to self
@@ -1185,25 +1303,25 @@
           ::
           =*  raw  =-(?~(- ~ u.-) (~(get by pry.urb) our))
           =*  dud  (~(del by raw) our)
-          =*  cul  (~(run by dud) |=(jael-purse ~(redact up +<)))
+          =*  cul  (~(run by dud) |=(safe ~(redact up +<)))
           cul
       ::
       ::  fub: all assets by ship
       ::  veg: all nontrivial assets, secrets masked
       ::
       =/  fub  
-        ^-  (list (pair ship (unit jael-purse)))
+        ^-  (list (pair ship (unit safe)))
         %+  turn
           (~(tap by pry.urb))
-        |=  (pair ship (map ship jael-purse))
+        |=  (pair ship (map ship safe))
         [p (~(get by q) our)]
       =*  veg
-        |-  ^-  (list (pair ship jael-purse))
+        |-  ^-  (list (pair ship safe))
         ?~  fub  ~
         =+  $(fub t.fub)
         ?~(q.i.fub - [[p.i.fub ~(redact up u.q.i.fub)] -])
       ::
-      (~(gas by *(map ship jael-purse)) veg)
+      (~(gas by *(map ship safe)) veg)
     --
   ::                                                    ::  ++open:su
   ++  open                                              ::  make secure channel
@@ -1236,7 +1354,7 @@
             ::
             rex/ship
             pal/ship
-            del/jael-delta
+            del/bump
         ==
     ^+  +>
     =*  bur  ?|  (~(exists up mor.del) %urban) 
@@ -1281,13 +1399,13 @@
             rex/ship
             vie/(unit (unit ship))
             lyf/life
-            gan/jael-grow
+            gan/growth
         ==
     ::  lip: this change as its own farm
     ::
     =/  lip  ^-  farm 
       =-  [[rex -] ~ ~]
-      ^-  wyll
+      ^-  will
       =-  [[lyf -] ~ ~]
       ^-  cert
       ?-    -.gan
@@ -1361,8 +1479,8 @@
   --
 ::                          ## 4.c                      ::  ++ur
 ++  ur                                                  ::  urbit engine
-  =|  hab/(list jael-edit)                              ::::
-  =|  jael-objective 
+  =|  hab/(list change)                              ::::
+  =|  state-absolute 
   ::
   ::  hab: side effects, reversed
   ::  urb: all urbit state
@@ -1371,7 +1489,7 @@
   |%
   ::                                                    ::  ++abet:ur
   ++  abet                                              ::  resolve
-    [(flop hab) `jael-objective`urb]
+    [(flop hab) `state-absolute`urb]
   ::                                                    ::  ++boss:ur
   ++  boss                                              ::  parent
     |=  who/ship                        
@@ -1388,7 +1506,7 @@
   ::
   ++  lawn                                              ::  ++lawn:ur
     |=  {rex/ship pal/ship}                             ::  debts, rex to pal
-    ^-  jael-purse
+    ^-  safe
     (lawn:~(able ex rex) pal)
   ::                                                    ::  ++leak:ur
   ++  leak                                              ::  private key
@@ -1428,9 +1546,9 @@
     ::
     =.  +>.$  
       =-  abet:(deal:~(able ex our) our - ~)
-      ^-  jael-purse
+      ^-  safe
       %-  intern:up
-      ^-  (list jael-right)
+      ^-  (list rite)
       =/  mir  (clan our)
       ?+    mir  ~
           $czar
@@ -1459,7 +1577,7 @@
     ::
     =/  key  (ypt:scr (mix our %jael-make) gen)  
     =*  had  (shaf %hand key)
-    =*  ryt  `jael-right`[%urban [had (add ~m1 now) key] ~ ~]
+    =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
     ::
     ::  register initial symmetric key from ticket
     ::
@@ -1489,8 +1607,8 @@
     ::  shy: private state
     ::  rug: domestic will
     ::
-    =|  $:  shy/(map ship jael-purse)
-            rug/wyll
+    =|  $:  shy/(map ship safe)
+            rug/will
         ==
     =|  ::  rex: server ship
         ::
@@ -1505,14 +1623,14 @@
     ::                                                  ::  ++able:ex:ur
     ++  able                                            ::  initialize
       %_  .
-        shy  (fall (~(get by pry) rex) *(map ship jael-purse))
-        rug  (fall (~(get by pug) rex) *wyll)
+        shy  (fall (~(get by pry) rex) *(map ship safe))
+        rug  (fall (~(get by pug) rex) *will)
       ==
     ::                                                  ::  ++deal:ex:ur
     ++  deal                                            ::  alter rights
-      |=  {pal/ship del/jael-delta}
+      |=  {pal/ship del/bump}
       ^+  +>
-      =/  gob  (fall (~(get by shy) pal) *jael-purse)
+      =/  gob  (fall (~(get by shy) pal) *safe)
       =*  hep  (~(update up gob) del)
       %_  +>.$
         shy  (~(put by shy) pal hep)
@@ -1520,10 +1638,10 @@
       ==
     ::
     ++  hail                                            ::  ++hail:ex:ur
-      |=  {pal/ship rem/jael-remote}                    ::  report rights
+      |=  {pal/ship rem/remote}                         ::  report rights
       ^+  +>
-      =/  gob  (fall (~(get by shy) pal) *jael-purse)
-      =/  yer  ^-  (pair jael-delta jael-purse)
+      =/  gob  (fall (~(get by shy) pal) *safe)
+      =/  yer  ^-  (pair bump safe)
         ?-  -.rem
           $&  [[p.rem ~] (~(splice up gob) p.rem)]
           $|  [(~(differ up gob) p.rem) p.rem]
@@ -1544,13 +1662,13 @@
       =/  lyf  `life`(need ~(current we (~(got by pug) rex)))
       =*  lab  (~(got by pry) rex)
       =*  par  (~(got by lab) rex)
-      =/  jel  `jael-right`(need (~(expose up par) %jewel))
+      =/  jel  `rite`(need (~(expose up par) %jewel))
       ?>  ?=($jewel -.jel)
       [lyf p.jel]
     ::                                                  ::  ++lawn:ex:ur
     ++  lawn                                            ::  liabilities to pal
       |=  pal/ship
-      ^-  jael-purse
+      ^-  safe
       =-(?~(- ~ u.-) (~(get by shy) pal))
     ::                                                  ::  ++next:ex:ur
     ++  next                                            ::  advance private key
@@ -1566,10 +1684,10 @@
       ::
       =/  loy  (pit:nu:crub 512 eny)
       =*  rig  sec:ex:loy
-      =*  ryt  `jael-right`[%jewel [1 rig] ~ ~]
+      =*  ryt  `rite`[%jewel [1 rig] ~ ~]
       =*  pub  pub:ex:loy
       =*  cet  `cert`[[doc pub] ~]
-      =*  wyl  `wyll`[[1 cet] ~ ~]
+      =*  wyl  `will`[[1 cet] ~ ~]
       =*  hec  `farm`[[rex wyl] ~ ~]
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
       =.  ..ex  (meet [~ ~] hec)
@@ -1582,7 +1700,7 @@
               ::  
               vie/(unit (unit ship))
               cod/farm
-              gur/wyll
+              gur/will
           ==
       ?:  |(=(~ gur) =(gur rug))  ..grow
       |^  ^+  ..grow
@@ -1600,7 +1718,7 @@
             ^-  (unit life)  
             ?~(wap ~ ?:(=(1 p.i.wap) ~ `(dec p.i.wap)))
           =/  pre
-            ^-  (unit deyd)
+            ^-  (unit deed)
             (bind nem |=(life dat:(~(got by rug) +<))) 
           ::
           ::  merge each life
@@ -1631,7 +1749,7 @@
         |=  {myn/mind ash/@ val/@}
         ^-  ?
         =:  ..able  able(rex who.myn)
-            gur     (fall (~(get by cod) who.myn) *wyll)
+            gur     (fall (~(get by cod) who.myn) *will)
           ==
         (grow-lick (grow-look lyf.myn) ash val)
       ::                                                ::  grow-look/ex:ur
@@ -1662,11 +1780,11 @@
                 ::
                 num/@ud
                 new/cert
-                pre/(unit deyd)
+                pre/(unit deed)
             ==
         =+  :*  eld=`(unit cert)`(~(get by rug) num) 
             ==
-        ^-  (pair (list jael-edit) cert)
+        ^-  (pair (list change) cert)
         ::
         ::  enforce artificial scarcity in lives
         ::
@@ -1709,7 +1827,7 @@
           ::  sow: all new signatures
           ::
           =+  sow=`(list (trel ship life @))`(~(tap by syg.new))
-          |-  ^-  (pair (list jael-edit) cert)
+          |-  ^-  (pair (list change) cert)
           ?~  sow  [~ u.eld]
           ::
           ::  mor: all further edits
@@ -1728,7 +1846,7 @@
           ?>  (grow-like [p q]:i.sow ash r.i.sow)
           :_  q.mor(syg (~(put by syg.q.mor) p.i.sow [q r]:i.sow))
           :_  p.mor
-          `jael-edit`[%fact rex vie num `jael-grow`[%sign [[p q] r]:i.sow]]
+          `change`[%fact rex vie num `growth`[%sign [[p q] r]:i.sow]]
         ::
         ::  non-initial deeds must be signed by previous
         ::
@@ -1797,7 +1915,7 @@
 ::
 ::  lex: all durable %jael state
 ::
-=|  lex/jael-state
+=|  lex/state
 |=  $:  :: 
         ::  now: current time
         ::  eny: unique entropy
@@ -1817,10 +1935,10 @@
           ::  hic: event data
           ::
           hen/duct
-          hic/(hypo (hobo jael-task))
+          hic/(hypo (hobo task))
       ==
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard jael-task) p.q.hic)))
-  ^-  {p/(list jael-move) q/_..^$}
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task) p.q.hic)))
+  ^-  {p/(list move) q/_..^$}
   =^  did  lex  abet:~(call of [now eny] lex)
   [did ..^$]
 ::                                                      ::  ++doze
@@ -1837,7 +1955,7 @@
 ++  load                                                ::  upgrade
   |=  $:  ::  old: previous state
           ::
-          old/jael-state
+          old/state
       ==
   ^+  ..^$
   ..^$(lex old)
@@ -1872,6 +1990,6 @@
           hen/duct 
           hin/(hypo sign-arvo)
       ==
-  ^-  {p/(list jael-move) q/_..^$}
+  ^-  {p/(list move) q/_..^$}
   [~ ..^$]
 --
