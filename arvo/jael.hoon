@@ -16,7 +16,7 @@
       ::
       ::    - restructuring
       ::      - move section 0 to %zuse/%york once ready
-      ::
+    ::::
 ::                                                      ::::
 ::::                        #  0                        ::  public structures
   ::                                                    ::::
@@ -29,8 +29,7 @@
       ::  the urbit meta-certificate (++will) is a sequence
       ::  of certificates (++cert).  each cert in a will
       ::  revokes and replaces the previous cert.  the
-      ::  version number of a ship is a ++life.  a ++farm
-      ::  is a set of (possibly interdependent) wills.
+      ::  version number of a ship is a ++life.
       ::
       ::  the deed contains an ++arms, an optional definition
       ::  of cosmetic identity; a semi-trusted parent, 
@@ -38,7 +37,7 @@
       ::  routing services; and a dirty bit.  if the dirty
       ::  bit is set, the new life of this ship may have
       ::  lost information that the old life had.
-      ::
+    ::::
 ++  arms  (map chip (pair @ta @t))                      ::  stated identity
 ++  bull                                                ::  cert metadata
   $:  dad/ship                                          ::  parent
@@ -75,7 +74,10 @@
       ::  a rite may be any right, badge, asset, secret, etc.
       ::  un-shared secret or private asset is stored as a 
       ::  rite from self to self.
-      ::  
+      ::
+      ::  each rite is really a class of rights, and often
+      ::  has its own internal set or map structure.
+      ::
       ::  a set of rites is stored as a tree (++safe), sorted
       ::  by ++gor on the stem, balanced by ++vor on the stem.
       ::  (this is the same structure as a ++map, but we can't
@@ -101,7 +103,7 @@
       ::  %fungi keys can be anything, but don't reuse 
       ::  currency codes.  codes for urbit invitations:
       ::  %ugl == galaxy, %usr == star, %upl == planet
-      ::
+    ::::
 ++  bill  (pair @da @)                                  ::  expiring value
 ++  bump                                                ::  rights change
   $:  mor/safe                                          ::  add rights
@@ -145,11 +147,11 @@
       ::
       ::  %jael only talks to %ames and %behn.  we send messages
       ::  through %ames and use %behn timers.
-      ::
+    ::::
 ++  action                                              ::  balance change
   %+  pair  ship                                        ::  partner
-  %+  each  bump                                        ::  %&/liability change
-  bump                                                  ::  %|/asset change
+  %+  each  bump                                        ::  &/liability change
+  bump                                                  ::  |/asset change
 ::                                                      ::
 ++  balance                                             ::  balance sheet
   %+  pair                                              ::  
@@ -191,8 +193,8 @@
       {$x $mess p/ship q/path r/*}                      ::  send message
   ==                                                    ::
 ++  remote                                              ::  remote notification
-  %+  each  safe                                        ::  addition
-  safe                                                  ::  replacement
+  %+  each  safe                                        ::  &/addition
+  safe                                                  ::  |/replacement
 ::                                                      ::
 ++  sign                                                ::  in result $<-
   $%  {$b $wake $~}                                     ::  wakeup
@@ -231,7 +233,10 @@
       ::  others make promises to us, we store them in the
       ::  same structures we use to make promises to others.
       ::
-      ::
+      ::  ++state-relative is subjective, denormalized and
+      ::  derived.  it consists of all the state we need to
+      ::  manage subscriptions efficiently.
+    ::::
 =>  |%
 ++  state                                               ::  all vane state
   $:  ver/$0                                            ::  vane version 
@@ -279,11 +284,18 @@
 ::::                        #  2                        ::  static data
   ::                                                    ::::
 =>  |%
-::                                                      ::  zeno
+::                                                      ::  ++zeno
 ++  zeno                                                ::  boot fingerprints
-  |=  ::  who: galaxy (0-255)
       ::
-      who/ship
+      ::  in ++zeno we hardcode the fingerprints of galaxies
+      ::  and the identities of their owners.  if the 
+      ::  fingerprint is 0, the galaxy can't be created.
+      ::
+      ::  we'll probably move at least the identity data
+      ::  into urbit as it becomes more stable, but keeping
+      ::  it in the source makes it very resilient.
+    ::::
+  |=  who/ship
   ^-  @
   %+  snag  who
   ^-  (list @uw)
@@ -550,7 +562,13 @@
   ::                                                    ::::
 =>  |%
 ::                                                      ::  ++py
-++  py                                                  ::  sparse ship set
+::::                        ## 3.a                      ::  sparse ship set
+  ::                                                    ::::
+++  py        
+      ::
+      ::  because when you're a star with 2^16 unissued
+      ::  planets, a (set) is kind of lame...
+    ::::
   |_  pyl/pile
   ::                                                    ::  ++dif:py
   ++  dif                                               ::  pyl->lyp, add rem
@@ -564,17 +582,25 @@
     !!
   --
 ::                                                      ::  ++ry
-++  ry                                                  ::  rights algebra
-  |_  {lef/rite ryt/rite}
+::::                        ## 3.b                      ::  rights algebra
+  ::                                                    ::::
+++  ry
       ::
-      ::    ++ry: rights algebra
-      ::
+      ::  we need to be able to combine rites, and 
+      ::  track changes by taking differences between them.  
+      :: 
       ::  ++ry must always crash when you try to make it
-      ::  do something that makes no sense.
+      ::  do something that makes no sense.  
       ::
       ::  language compromises: the type system can't enforce 
       ::  that lef and ryt match, hence the asserts.
-      ::
+    ::::
+  |_  $:  ::  lef: old right
+          ::  ryt: new right
+          ::
+          lef/rite 
+          ryt/rite
+      ==
   ::                                                    ::  ++dif:ry
   ++  dif                                               ::  r->l: {add remove}
     ^-  (pair (unit rite) (unit rite))
@@ -737,21 +763,22 @@
       ?>(=(q r) r)
     --
   --
-::
-::    ++up: wallet algebra
-::
-::  rights operations always crash if impossible;
-::  the algebra has no concept of negative rights.
-::
-::  performance issues: ++differ and ++splice, naive.
-:: 
-::  external issues: much copy and paste from ++by.
-::
-::  language issues: if hoon had an equality test 
-::  that informed inference, ++expose could be 
-::  properly inferred, eliminating the ?>.
 ::                                                      ::  ++up
-++  up                                                  ::  rights wallet
+::::                        ## 3.c                      ::  wallet algebra
+  ::                                                    ::::
+++  up
+    ::
+    ::  wallet operations always crash if impossible;
+    ::  %jael has no concept of negative rights.
+    ::
+    ::  performance issues: ++differ and ++splice, naive.
+    :: 
+    ::  external issues: much copy and paste from ++by.
+    ::
+    ::  language issues: if hoon had an equality test 
+    ::  that informed inference, ++expose could be 
+    ::  properly inferred, eliminating the ?>.
+  ::::
   |_  pig/safe
   ::                                                    ::  ++delete:up
   ++  delete                                            ::  delete right
@@ -882,7 +909,9 @@
     (splice(pig (remove les.del)) mor.del)
   --   
 ::                                                      ::  ++we
-++  we                                                  ::  will tool
+::::                        ## 3.d                      ::  will functions
+  ::                                                    ::::
+++  we
   |_  pub/will
   ::                                                    ::  ++collate:we 
   ++  collate                                           ::  sort by version
@@ -910,9 +939,14 @@
 ::::                        #  4                        ::  engines
   ::                                                    ::::
 =>  |%
-::                          ## 4.a                      ::  of
-++  of                                                  ::  main engine
-  =|  moz/(list move)                              ::::
+::                                                      ::  ++of
+::::                        ## 4.a                      ::  main engine
+  ::                                                    ::::
+++  of
+      ::
+      ::
+    ::::
+  =|  moz/(list move)
   =|  $:  ::  sys: system context
           ::
           $=  sys
@@ -931,14 +965,14 @@
   ::
   =*  lex  ->
   |%
-  ::                                                    ::  abet:of
+  ::                                                    ::  ++abet:of
   ++  abet                                              ::  resolve
     [(flop moz) lex]
-  ::                                                    ::  burb:of
+  ::                                                    ::  ++burb:of
   ++  burb                                              ::  per ship
     |=  who/ship
     ~(able ~(ex ur urb) who)
-  ::                                                    ::  call:of
+  ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause
             ::  tac: event data
@@ -1064,7 +1098,7 @@
   --
 ::                          ## 4.b                      ::  ++su
 ++  su                                                  ::  relative engine
-  =|  moz/(list move)                              ::::
+  =|  moz/(list move)                                   ::::
   =|  $:  state-absolute
           state-relative
       ==
