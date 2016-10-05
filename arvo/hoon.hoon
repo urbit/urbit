@@ -2586,11 +2586,14 @@
 ::                section 2dB, maps                     ::
 ::
 ++  ept                                                 ::  map invariant
-  |=  a/(tree {p/* q/*})
-  ?~  a
-    &
-  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a) $(a l.a)))
-      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a) $(a l.a)))
+  |=  a/(tree (pair))
+  =|  {l/(unit) r/(unit)}
+  |-  ^-  ?
+  ?~  a   &
+  ?&  ?~(l & (gor p.n.a u.l))
+      ?~(r & (gor u.r p.n.a))
+      ?~(l.a & ?&((vor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
+      ?~(r.a & ?&((vor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
   ==
 ::
 ++  ja                                                  ::  jar engine
