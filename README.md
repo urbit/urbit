@@ -14,12 +14,13 @@ https://urbit.org/docs/using/ instead.
 - automake, autoconf, and libtool
 - [OpenSSL](https://www.openssl.org)
 - [libsigsegv](https://www.gnu.org/software/libsigsegv/)
+- [libcurl](https://curl.haxx.se/libcurl/)
 - curses implementation (ncurses on Linux distributions, OS curses otherwise)
 - [Ragel](https://www.colm.net/open-source/ragel/)
 - [re2c](http://re2c.org)
 
 Most of these dependencies are unfortunate; we aim to drastically shrink the
-list in upcoming versions. `vere` proper makes use of GMP, OpenSSL, and
+list in upcoming versions. `vere` proper makes use of GMP, OpenSSL, libcurl, and
 libsigsegv. The multiple build tools are a result of bundled libraries, slated
 for future unbundling or removal wherever possible.
 
