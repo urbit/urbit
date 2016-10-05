@@ -3362,7 +3362,6 @@
 ++  oryx  @t                                            ::  CSRF secret
 ++  page  (cask *)                                      ::  untyped cage
 ++  pail  ?($none $warm $cold)                          ::  connection status
-++  pile  (tree (pair @ @))                             ::  efficient ship set
 ++  pipe                                                ::  secure channel
           $:  out/(unit (pair hand bill))               ::  outbound key
               inn/(map hand bill)                       ::  inbound keys

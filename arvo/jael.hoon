@@ -25,7 +25,6 @@
 ::                                                      ::
 ::::                        ## 0.a                      ::  certificates
   ::                                                    ::::
-      ::
       ::  the urbit meta-certificate (++will) is a sequence
       ::  of certificates (++cert).  each cert in a will
       ::  revokes and replaces the previous cert.  the
@@ -69,7 +68,6 @@
 ::                                                    ::::
 ::::                        ## 0.b                      ::  rights and promises
   ::                                                    ::::
-      ::
       ::  %jael tracks promises (++rite) from ship to ship.
       ::  a rite may be any right, badge, asset, secret, etc.
       ::  un-shared secret or private asset is stored as a 
@@ -77,13 +75,6 @@
       ::
       ::  each rite is really a class of rights, and often
       ::  has its own internal set or map structure.
-      ::
-      ::  a set of rites is stored as a tree (++safe), sorted
-      ::  by ++gor on the stem, balanced by ++vor on the stem.
-      ::  (this is the same structure as a ++map, but we can't
-      ::  use ++map because it's not designed for mixed type.)
-      ::  the goal of the design is to make it easy to add new
-      ::  kinds of rite without a state adapter.
       ::
       ::  present kinds of rite:
       ::
@@ -109,6 +100,7 @@
   $:  mor/safe                                          ::  add rights
       les/safe                                          ::  lose rights
   ==                                                    ::
+++  pile  (tree (pair @ @))                             ::  efficient ship set
 ++  rite                                                ::  urbit commitment
   $%  {$apple p/(map site @)}                           ::  web api key
       {$block $~}                                       ::  banned
@@ -128,7 +120,6 @@
 ::                                                    ::::
 ::::                        ## 0.c                      ::  i/o
   ::                                                    ::::
-      ::
       ::  %jael has two general kinds of task: changes
       ::  and change subscriptions.
       ::
@@ -223,7 +214,6 @@
 ::                                                      ::::
 ::::                        #  1                        ::  private structures
   ::                                                    ::::
-      ::  
       ::  the %jael state comes in two parts: absolute
       ::  and relative.
       ::
@@ -286,7 +276,6 @@
 =>  |%
 ::                                                      ::  ++zeno
 ++  zeno                                                ::  boot fingerprints
-      ::
       ::  in ++zeno we hardcode the fingerprints of galaxies
       ::  and the identities of their owners.  if the 
       ::  fingerprint is 0, the galaxy can't be created.
@@ -565,7 +554,6 @@
 ::::                        ## 3.a                      ::  sparse ship set
   ::                                                    ::::
 ++  py        
-      ::
       ::  because when you're a star with 2^16 unissued
       ::  planets, a (set) is kind of lame...
     ::::
@@ -767,18 +755,25 @@
 ::::                        ## 3.c                      ::  wallet algebra
   ::                                                    ::::
 ++  up
-    ::
-    ::  wallet operations always crash if impossible;
-    ::  %jael has no concept of negative rights.
-    ::
-    ::  performance issues: ++differ and ++splice, naive.
-    :: 
-    ::  external issues: much copy and paste from ++by.
-    ::
-    ::  language issues: if hoon had an equality test 
-    ::  that informed inference, ++expose could be 
-    ::  properly inferred, eliminating the ?>.
-  ::::
+      ::  a set of rites is stored as a tree (++safe), sorted
+      ::  by ++gor on the stem, balanced by ++vor on the stem.
+      ::  (this is essentially a ++map with stem as key, but
+      ::  ++map doesn't know how to link stem and bulb types.)
+      ::  the goal of the design is to make it easy to add new
+      ::  kinds of rite without a state adapter.
+      ::
+      ::  wallet operations always crash if impossible;
+      ::  %jael has no concept of negative rights.
+      ::
+      ::  performance issues: ++differ and ++splice, naive.
+      :: 
+      ::  external issues: much copy and paste from ++by.  it
+      ::  would be nice to resolve this somehow, but not urgent.
+      ::
+      ::  language issues: if hoon had an equality test 
+      ::  that informed inference, ++expose could be 
+      ::  properly inferred, eliminating the ?>.
+    ::::
   |_  pig/safe
   ::                                                    ::  ++delete:up
   ++  delete                                            ::  delete right
@@ -943,8 +938,20 @@
 ::::                        ## 4.a                      ::  main engine
   ::                                                    ::::
 ++  of
+      ::  this core handles all top-level %jael semantics,
+      ::  changing state and recording moves.
       ::
+      ::  logically we could nest the ++su and ++ur cores
+      ::  within it, but we keep them separated for clarity.
+      ::  the ++curd and ++cure arms complete relative and
+      ::  absolute effects, respectively, at the top level.
       ::
+      ::  a general pattern here is that we use the ++ur core
+      ::  to generate absolute effects (++change), then invoke 
+      ::  ++su to calculate the derived effect of these changes.
+      ::
+      ::  arvo issues: should be merged with the top-level
+      ::  vane interface when that gets cleaned up a bit.
     ::::
   =|  moz/(list move)
   =|  $:  ::  sys: system context
@@ -1096,9 +1103,25 @@
     ^+  +>
     (curd(urb urb) abet:(~(apex su urb sub) hab))
   --
-::                          ## 4.b                      ::  ++su
-++  su                                                  ::  relative engine
-  =|  moz/(list move)                                   ::::
+::                                                      ::  ++su
+::::                        ## 4.b                      ::  relative engine
+  ::                                                    ::::
+++  su
+      ::  the ++su core handles all derived state, 
+      ::  subscriptions, and actions.
+      ::
+      ::  ++feed:su registers subscriptions, and also 
+      ::  drives certificate propagation when a %veil
+      ::  (secure channel) subscription is created.
+      ::
+      ::  ++feel:su checks if a ++change should notify
+      ::  any subscribers.
+      ::
+      ::  ++fire:su generates outgoing network messages.
+      ::
+      ::  ++form:su generates the actual report data.
+      ::
+  =|  moz/(list move)           
   =|  $:  state-absolute
           state-relative
       ==
@@ -1424,7 +1447,7 @@
     ?.  bur  +>
     (veil:feel rex)
   ::                                                    ::  ++said:su
-  ++  said                                              ::  track certificates
+  ++  said                                              ::  track cert change
     |=  $:  ::  rex: ship whose will has changed
             ::  vie: change authorized by
             ::  lyf: modified/created version 
@@ -1511,9 +1534,17 @@
         ~
     ==
   --
-::                          ## 4.c                      ::  ++ur
-++  ur                                                  ::  urbit engine
-  =|  hab/(list change)                              ::::
+::                                                      ::  ++ur
+::::                        ## 4.c                      ::  absolute engine
+  ::                                                    ::::
+++  ur
+      ::  the ++ur core handles primary, absolute state.
+      ::  it is the best reference for the semantics of
+      ::  the urbit pki.
+      ::
+      ::  it is absolutely verboten to use [our] in ++ur.
+      ::
+  =|  hab/(list change)
   =|  state-absolute 
   ::
   ::  hab: side effects, reversed
@@ -1944,7 +1975,7 @@
   --  --
 --  --  
 ::                                                      ::::
-::::                                                    ::  preamble
+::::                        #  5                        ::  interface
   ::                                                    ::::
 ::
 ::  lex: all durable %jael state
@@ -1959,9 +1990,6 @@
         eny/@e                                        
         ski/sley
     ==
-::                                                      ::::
-::::                                                    ::  interface
-  ::                                                    ::::
 |%
 ::                                                      ::  ++call
 ++  call                                                ::  request
