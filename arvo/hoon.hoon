@@ -2388,10 +2388,13 @@
 ::
 ++  apt                                                 ::  set invariant
   |=  a/(tree)
-  ?~  a
-    &
-  ?&  ?~(l.a & ?&((vor n.a n.l.a) (hor n.l.a n.a) $(a l.a)))
-      ?~(r.a & ?&((vor n.a n.r.a) (hor n.a n.r.a) $(a r.a)))
+  =|  {l/(unit) r/(unit)}
+  |-  ^-  ?
+  ?~  a   &
+  ?&  ?~(l & (hor n.a u.l))
+      ?~(r & (hor u.r n.a))
+      ?~(l.a & ?&((vor n.a n.l.a) $(a l.a, l `n.a)))
+      ?~(r.a & ?&((vor n.a n.r.a) $(a r.a, r `n.a)))
   ==
 ::
 ++  in                                                  ::  set engine
