@@ -918,15 +918,17 @@
       [~(uni ry ryt n.pig) l.pig r.pig]
     ?:  (gor -.ryt -.n.pig)
       =+  nex=$(pig l.pig)
-      ?>  ?=(^ nex)
-      ?:  (vor -.n.pig -.n.nex)
-        [n.pig nex r.pig]
-      [n.nex l.nex [n.pig r.nex r.pig]]
+      =.  l.pig  nex
+      ?>  ?=(^ l.pig)
+      ?:  (vor -.n.pig -.n.l.pig)
+        [n.pig l.pig r.pig]
+      [n.l.pig l.l.pig [n.pig r.l.pig r.pig]]
     =+  nex=$(pig r.pig)
-    ?>  ?=(^ nex)
-    ?:  (vor -.n.pig -.n.nex)
-      [n.pig l.pig nex]
-    [n.nex [n.pig l.pig l.nex] r.nex]
+    =.  r.pig  nex
+    ?>  ?=(^ r.pig)
+    ?:  (vor -.n.pig -.n.r.pig)
+      [n.pig l.pig r.pig]
+    [n.r.pig [n.pig l.pig l.r.pig] r.r.pig]
   ::                                                    ::  ++intern:up
   ++  intern                                            ::  insert list
     |=  lin/(list rite)
@@ -961,7 +963,7 @@
       :-  %pword 
       %-  ~(run by p.rys) 
       |=  (map @ta @t) 
-      (~(run by +<) |=(@t (crip (runt [(met 3 +<) '*'] ~))))
+      (~(run by +<) |=(@t (fil 3 (met 3 +<) '*')))
     ::
         $jewel
       [%jewel (~(run by p.rys) |=(@ (mug +<)))]
