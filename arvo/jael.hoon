@@ -100,6 +100,7 @@
   $:  mor/safe                                          ::  add rights
       les/safe                                          ::  lose rights
   ==                                                    ::
+++  dorm  (pair ship bloq)                              ::  issuing group
 ++  pile  (tree (pair @ @))                             ::  efficient ship set
 ++  rite                                                ::  urbit commitment
   $%  {$apple p/(map site @)}                           ::  web api key
@@ -108,7 +109,7 @@
       {$final p/(map ship @pG)}                         ::  ticketed ships
       {$fungi p/(map term @ud)}                         ::  fungibles
       {$guest $~}                                       ::  refugee visa
-      {$hotel p/pile}                                   ::  reserved block
+      {$hotel p/(map dorm pile)}                        ::  reserved block
       {$jewel p/(map life ring)}                        ::  private keyring
       {$login p/(set @pG)}                              ::  login secret
       {$pword p/(map site (map @t @t))}                 ::  web passwd by user
@@ -719,10 +720,25 @@
         ==
     ::                                                  ::  ++bible:dif:ry
     ++  bible                                           ::  diff pile
-      |*  {nut/@tas new/pile old/pile}
-      =/  hep  (~(dif py old) new)
-      :-  ?~(p.hep ~ `[nut p.hep])
-          ?~(q.hep ~ `[nut q.hep])
+      |*  {nut/@tas new/(map dorm pile) old/(map dorm pile)}
+      =/  mor/_old
+        %-  ~(rep by old)
+        |=  {{cur/dorm fid/pile} acc/_^+(old ~)}
+        =.  fid
+          (~(sub py fid) (fall (~(get by new) cur) ~))
+        ?~  fid  acc
+        (~(put by acc) cur fid)
+      ::
+      =/  les/_new
+        %-  ~(rep by new)
+        |=  {{cur/dorm fid/pile} acc/_^+(new ~)}
+        =.  fid
+          (~(sub py fid) (fall (~(get by old) cur) ~))
+        ?~  fid  acc
+        (~(put by acc) cur fid)
+      ::
+      :-  ?~(mor ~ `[nut mor])
+          ?~(les ~ `[nut les])
     ::                                                  ::  ++noble:dif:ry
     ++  noble                                           ::  diff map of @ud
       |*  {nut/@tas new/(map * @ud) old/(map * @ud)}
@@ -809,9 +825,11 @@
         ==
     ::                                                  ::  ++bible:uni:ry
     ++  bible                                           ::  union pile
-      |=  {new/pile old/pile}
+      |=  {new/(map dorm pile) old/(map dorm pile)}
       ^+  new
-      (~(uni py old) new)
+      %-  (~(uno by old) new)
+      |=  (trel dorm pile pile)
+      (~(uni py q) r)
     ::                                                  ::  ++noble:uni:ry
     ++  noble                                           ::  union map of @ud
       |=  {new/(map term @ud) old/(map term @ud)}
@@ -1711,14 +1729,14 @@
       ?+    mir  ~
           $czar
         :~  [%fungi [%usr 255] ~ ~]
-            [%hotel [1 255] ~ ~]
+            [%hotel [[our 3] [1 255] ~ ~] ~ ~]
         ==
           $king
         :~  [%fungi [%upl 65.535] ~ ~]
-            [%hotel [1 65.535] ~ ~]
+            [%hotel [[our 4] [1 65.535] ~ ~] ~ ~]
         ==
           $duke
-        :~  [%hotel [1 0xffff.ffff] ~ ~]
+        :~  [%hotel [[our 5] [1 0xffff.ffff] ~ ~] ~ ~]
         ==
       ==
     ::
