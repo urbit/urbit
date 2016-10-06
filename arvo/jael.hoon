@@ -727,66 +727,46 @@
     ++  noble                                           ::  diff map of @ud
       |*  {nut/@tas new/(map * @ud) old/(map * @ud)}
       ^-  (pair (unit rite) (unit rite))
-      =/  fop  (~(tap by (~(def by old) new)))
-      =/  mor
-        |-  ^+  new
-        ?~  fop  ~
-        =/  nex  $(fop t.fop)
-        =*  cur  p.i.fop
-        =*  fid  q.i.fop
-        ?~  p.fid
-          ?>  ?=(^ q.fid)
-          (~(put by nex) cur u.q.fid)
-        ?~  q.fid  nex
-        ?:  (gth u.p.fid u.q.fid)  ~
-        (~(put by nex) cur (^sub u.q.fid u.p.fid))
+      =/  mor/_old
+        %-  ~(rep by old)
+        |*  {{cur/* fid/@ud} acc/_^+(old ~)}
+        =>  .(+< `_[[cur fid]=-.new acc=old]`+<)
+        =.  fid  
+          (^sub fid (max fid (fall (~(get by new) cur) 0)))
+        ?~  fid  acc
+        (~(put by acc) cur fid)
       ::
-      =/  les
-        |-  ^+  old
-        ?~  fop  ~
-        =/  nex  $(fop t.fop)
-        =*  cur  p.i.fop
-        =*  fid  q.i.fop
-        ?~  q.fid
-          ?>  ?=(^ p.fid)
-          (~(put by nex) cur u.p.fid)
-        ?~  p.fid  nex
-        ?:  (gth u.q.fid u.p.fid)  ~
-        (~(put by nex) cur (^sub u.p.fid u.q.fid))
+      =/  les/_new
+        %-  ~(rep by new)
+        |*  {{cur/* fid/@ud} acc/_^+(new ~)}
+        =>  .(+< `_[[cur fid]=-.old acc=new]`+<)
+        =.  fid  
+          (^sub fid (max fid (fall (~(get by old) cur) 0)))
+        ?~  fid  acc
+        (~(put by acc) cur fid)
       ::
       :-  ?~(mor ~ `[nut mor])
           ?~(les ~ `[nut les])
     ::                                                  ::  ++ruble:dif:ry
     ++  ruble                                           ::  diff map of maps
       |*  {nut/@tas new/(map * (map)) old/(map * (map))}
-      =/  fop  (~(tap by (~(def by old) new)))
-      =/  mor
-        |-  ^+  new
-        ?~  fop  ~
-        =/  nex  $(fop t.fop)
-        =*  cur  p.i.fop
-        =*  fid  q.i.fop
-        ?~  p.fid
-          ?>  ?=(^ q.fid)
-          (~(put by nex) cur u.q.fid)
-        ?~  q.fid  nex
-        =/  nib  p:(~(dep by u.p.fid) u.q.fid)
-        ?~  nib  nex
-        (~(put by nex) cur nib)
+      =/  mor/_old
+        %-  ~(rep by old)
+        |*  {{cur/* fid/(map)} acc/_^+(old ~)}
+        =>  .(+< `_[[cur fid]=n.-.new acc=old]`+<)
+        =.  fid
+          (~(dif by ,.fid) (fall (~(get by new) cur) ~))
+        ?~  fid  acc
+        (~(put by acc) cur fid)
       ::
-      =/  les
-        |-  ^+  old
-        ?~  fop  ~
-        =/  nex  $(fop t.fop)
-        =*  cur  p.i.fop
-        =*  fid  q.i.fop
-        ?~  q.fid
-          ?>  ?=(^ p.fid)
-          (~(put by nex) cur u.p.fid)
-        ?~  p.fid  nex
-        =/  nib  q:(~(dep by u.p.fid) u.q.fid)
-        ?~  nib  nex
-        (~(put by nex) cur nib)
+      =/  les/_new
+        %-  ~(rep by new)
+        |*  {{cur/* fid/(map)} acc/_^+(new ~)}
+        =>  .(+< `_[[cur fid]=n.-.old acc=new]`+<)
+        =.  fid
+          (~(dif by ,.fid) (fall (~(get by old) cur) ~))
+        ?~  fid  acc
+        (~(put by acc) cur fid)
       ::
       :-  ?~(mor ~ `[nut mor])
           ?~(les ~ `[nut les])
@@ -1102,7 +1082,7 @@
     ?-    -.tac
     ::
     ::  destroy promises
-    ::    {$burn p/ship q/safe)}
+    ::    {$burn p/ship q/safe}
     ::
         $burn
       (cure abet:abet:(deal:(burb our) p.tac [~ q.tac]))
@@ -1882,36 +1862,30 @@
       |^  ^+  ..grow
           ::
           ::  wap: ascending list of new certs
-          ::  nem: previous life
           ::  pre: previous deed
           ::
-          =/  wap
-            ^-  (list (pair life cert))
-            %+  sort  (~(tap by gur))
-            |=  {a/{life *} b/{life *}}
-            (lth -.a -.b)
-          =/  nem  
-            ^-  (unit life)  
-            ?~(wap ~ ?:(=(1 p.i.wap) ~ `(dec p.i.wap)))
+          =/  wap  ~(forward we gur)
+          ?~  wap  ..grow
           =/  pre
             ^-  (unit deed)
-            (bind nem |=(life dat:(~(got by rug) +<))) 
+            ?~  (dec p.i.wap)  ~
+            `dat:(~(got by rug) (dec p.i.wap))
           ::
           ::  merge each life
           ::
           |-  ^+  ..grow
-          ?~  wap  ..grow
-          ?>  |(?=($~ nem) =(p.i.wap +(u.nem)))
           ::
-          ::  lub: merged deed and changes
+          ::  hub: changes
+          ::  lub: merged deed
           ::
-          =+  lub=(grow-mate p.i.wap q.i.wap pre)
+          =+  [hub lub]=[p q]:(grow-mate p.i.wap q.i.wap pre)
+          ?~  t.wap  ..grow
+          ?>  =(p.i.t.wap +(p.i.wap))
           %=  $
             wap  t.wap
-            nem  `p.i.wap
-            pre  `dat.q.lub
-            rug  (~(put by rug) p.i.wap q.lub)
-            hab  (weld (flop p.lub) hab)
+            pre  `dat.lub
+            rug  (~(put by rug) p.i.wap lub)
+            hab  (weld (flop hub) hab)
           ==
       ::                                                ::  grow-lick/ex:ur
       ++  grow-lick                                     ::  check signature
