@@ -1179,7 +1179,7 @@
     |-  ^+  a
     ?~  b
       a
-    =+  c=(bif n.b)
+    =+  c=(bif p.n.b q.n.b)
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
