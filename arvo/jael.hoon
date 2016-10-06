@@ -559,25 +559,11 @@
       ::  planets, a (set) is kind of lame...
     ::::
   |_  a/pile
-  ::                                                    ::  ++uni:py
-  ++  uni                                               ::  merge two piles
-    |=  b/pile  
-    ^-  pile
-    ?~  b  a
-    ?~  a  b
-    ?.  (vor p.n.a p.n.b)  $(a b, b a)
-    ?:  (lth +(q.n.b) p.n.a)
-      $(b r.b, l.a $(a l.a, r.b ~))
-    ?:  (lth +(q.n.a) p.n.b)
-      $(b l.b, r.a $(a r.a, l.b ~))
-    ?:  =(n.a n.b)  [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
-    ?:  (lth p.n.a p.n.b)
-      ?:  (gth q.n.a q.n.b)
-        $(b l.b, a $(b r.b))
-      $(b l.b, a $(b r.b, a $(b r.a, r.a ~, q.n.a q.n.b)))
-    ?:  (gth q.n.a q.n.b)
-      $(a l.a, b $(a r.a, b $(a r.b, r.b ~, q.n.b q.n.a)))
-    $(a l.a, b $(a r.a))
+  ::                                                    ::  ++dif:py
+  ++  dif                                               ::  add/remove a->b
+    |=  b/pile                                          
+    ^-  (pair pile pile)
+    [(sub(a b) a) (sub b)]
   ::                                                    ::  ++div:py
   ++  div                                               ::  allocate
     |=  b/@ud
@@ -605,30 +591,26 @@
           $|  [%| :(add top p.al p.ar)]
       ==
     ==
-  ::                                                    ::  ++dif:py
-  ++  dif                                               ::  add/remove a->b
-    |=  b/pile                                          
-    ^-  (pair pile pile)
-    [(sub(a b) a) (sub b)]
-  ::  
-  ++  sub
-    |=  b/pile  ^-  pile
+  ::
+  ++  gas                                               ::  ++gas:py
+    |=  b/(list ship)  ^-  pile                         ::  insert list
     ?~  b  a
-    ?~  a  a
-    ?:  (gth p.n.a q.n.b)
-      $(b r.b, l.a $(a l.a, r.b ~))
-    ?:  (lth q.n.a p.n.b)
-      $(b l.b, r.a $(a r.a, l.b ~))
-    %-  uni(a $(a l.a, r.b ~))
-    %-  uni(a $(a r.a, l.b ~))
-    ?:  (gte p.n.a p.n.b)
-      ?:  (lte q.n.a q.n.b)
-        ~
-      $(b r.b, a [[+(q.n.b) q.n.a] ~ ~])
-    ?:  (lte q.n.a q.n.b)
-      $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
-    %-  uni(a $(b r.b, a [[+(q.n.b) q.n.a] ~ ~]))
-    $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
+    $(b t.b, a (put i.b))
+  ::                                                    ::  ++gud:py
+  ++  gud                                               ::  validate
+    =|  {bot/(unit ship) top/(unit ship)}
+    |-  ^-  ?
+    ?~  a  &
+    ?&  (lte p.n.a q.n.a)
+        ?~(top & (lth +(q.n.a) u.top))
+        ?~(bot & (gth p.n.a +(u.bot)))
+    ::
+        ?~(l.a & (vor p.n.a p.n.l.a))
+        $(a l.a, top `p.n.a)
+    ::
+        ?~(l.a & (vor p.n.a p.n.l.a))
+        $(a r.a, bot `q.n.a)
+    ==
   ::                                                    ::  ++int:py
   ++  int                                               ::  intersection
     |=  b/pile  ^-  pile
@@ -649,37 +631,54 @@
       [n.b(q q.n.a) ~ ~]
     %-  uni(a $(l.a ~, b r.b))
     [n.b ~ ~]
-  ::
-  ::
-  ++  put
+  ::                                                    ::  ++put:py
+  ++  put                                               ::  insert
     |=  b/ship  ^-  pile
     (uni [b b] ~ ~)
-  ::
-  ++  gas
-    |=  b/(list ship)  ^-  pile
+  ::                                                    ::  ++sub:py
+  ++  sub                                               ::  subtract
+    |=  b/pile  ^-  pile
     ?~  b  a
-    $(b t.b, a (put i.b))
+    ?~  a  a
+    ?:  (gth p.n.a q.n.b)
+      $(b r.b, l.a $(a l.a, r.b ~))
+    ?:  (lth q.n.a p.n.b)
+      $(b l.b, r.a $(a r.a, l.b ~))
+    %-  uni(a $(a l.a, r.b ~))
+    %-  uni(a $(a r.a, l.b ~))
+    ?:  (gte p.n.a p.n.b)
+      ?:  (lte q.n.a q.n.b)
+        ~
+      $(b r.b, a [[+(q.n.b) q.n.a] ~ ~])
+    ?:  (lte q.n.a q.n.b)
+      $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
+    %-  uni(a $(b r.b, a [[+(q.n.b) q.n.a] ~ ~]))
+    $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
   ::                                              
   ++  tap
     =|  out/(list (pair ship ship))
     |-  ^+  out
     ?~  a  out
     $(a l.a, out [n.a $(a r.a)])
-  ::                                                    ::  ++gud:py
-  ++  gud                                               ::  validate
-    =|  {bot/(unit ship) top/(unit ship)}
-    |-  ^-  ?
-    ?~  a  &
-    ?&  (lte p.n.a q.n.a)
-        ?~(top & (lth +(q.n.a) u.top))
-        ?~(bot & (gth p.n.a +(u.bot)))
-    ::
-        ?~(l.a & (vor p.n.a p.n.l.a))
-        $(a l.a, top `p.n.a)
-    ::
-        ?~(l.a & (vor p.n.a p.n.l.a))
-        $(a r.a, bot `q.n.a)
-    ==
+  ::                                                    ::  ++uni:py
+  ++  uni                                               ::  merge two piles
+    |=  b/pile  
+    ^-  pile
+    ?~  b  a
+    ?~  a  b
+    ?.  (vor p.n.a p.n.b)  $(a b, b a)
+    ?:  (lth +(q.n.b) p.n.a)
+      $(b r.b, l.a $(a l.a, r.b ~))
+    ?:  (lth +(q.n.a) p.n.b)
+      $(b l.b, r.a $(a r.a, l.b ~))
+    ?:  =(n.a n.b)  [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
+    ?:  (lth p.n.a p.n.b)
+      ?:  (gth q.n.a q.n.b)
+        $(b l.b, a $(b r.b))
+      $(b l.b, a $(b r.b, a $(b r.a, r.a ~, q.n.a q.n.b)))
+    ?:  (gth q.n.a q.n.b)
+      $(a l.a, b $(a r.a, b $(a r.b, r.b ~, q.n.b q.n.a)))
+    $(a l.a, b $(a r.a))
   --
 ::                                                      ::  ++ry
 ::::                        ## 3.b                      ::  rights algebra
