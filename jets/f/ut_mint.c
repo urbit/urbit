@@ -676,6 +676,16 @@
         return ret;
       }
 
+      case c3__use: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mint_used();
+      {
+        u3_noun boc = u3qfu_busk(van, sut, p_gen);
+        u3_noun ret = _mint_in(van, boc, gol, q_gen);
+
+        u3z(boc);
+        return ret;
+      }
+
       case c3__make: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
