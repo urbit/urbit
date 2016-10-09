@@ -3104,7 +3104,7 @@
   $%  {$send p/hiss}                                    ::  http out
       {$show p/purl}                                    ::  direct user to url
       {$give p/httr}                                    ::  respond immediately
-      {$redo $~}                                         ::  restart request qeu
+      {$redo $~}                                        ::  restart request qeu
   ==                                                    ::
 ++  ball  @uw                                           ::  statement payload
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec

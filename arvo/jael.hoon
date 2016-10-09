@@ -22,6 +22,14 @@
   ::                                                    ::::
 |=  pit/vase
 =>  |%
+++  funky
+  ^?
+  |%
+  ++  monkey
+    (mul 6 70)
+  --
+--
+=>  |%
 ::                                                      ::
 ::::                        ## 0.a                      ::  certificates
   ::                                                    ::::
@@ -228,7 +236,9 @@
       ::  derived.  it consists of all the state we need to
       ::  manage subscriptions efficiently.
     ::::
+=,  funky
 =>  |%
+++  ape  monkey:funky
 ++  state                                               ::  all vane state
   $:  ver/$0                                            ::  vane version 
       yen/(set duct)                                    ::  raw observers

@@ -5460,7 +5460,7 @@
     {$pin p/twig q/twig}                                ::  =+  q w/[p subject]
     {$tow p/(list twig)}                                ::  =~  twig stack
     {$aka p/term q/twig r/twig}                         ::  =*  r w/alias p/q
-    {$use p/wing q/twig}                                ::  =,  overlap  
+    {$use p/twig q/twig}                                ::  =,  overload p in q
   ::                                            ::::::  conditionals
     {$or p/(list twig)}                                 ::  ?|  loobean or
     {$case p/wing q/(list (pair twig twig))}            ::  ?-  pick case in q
@@ -6424,6 +6424,7 @@
       %vet    vet
       %fab    fab
       %burn   burn
+      %busk   busk
       %buss   buss
       %crop   crop
       %duck   duck
@@ -6485,6 +6486,14 @@
         $noun       ~
         $void       ~
     ==
+  ::
+  ++  busk
+    ~/  %busk
+    |=  gen/twig
+    ^-  span
+    ?:  ?=({$face ^ *} sut)
+      [%face [p.p.sut [gen q.p.sut]] q.sut]
+    [%face [~ [gen ~]] sut]
   ::
   ++  buss
     ~/  %buss
@@ -7243,6 +7252,9 @@
     ::
         {$aka *}
       $(gen r.gen, sut (buss p.gen q.gen))
+    ::
+        {$use *}
+      $(gen q.gen, sut (busk p.gen))
     ::
         {$if *}
       =+  nor=$(gen p.gen, gol bool)
@@ -9049,6 +9061,7 @@
                   (word %aka expl)
                   (word %pin expb)
                   (word %tow expi)
+                  (word %use expb)
                 ::
                   (word %or exps)
                   (word %if expc)
@@ -9139,6 +9152,7 @@
                     ['>' (rune gar %per expb)]
                     ['-' (rune hep %nip expb)]
                     ['*' (rune tar %aka expl)]
+                    [',' (rune com %use expb)]
                     ['+' (rune lus %pin expb)]
                     ['~' (rune sig %tow expi)]
                 ==
