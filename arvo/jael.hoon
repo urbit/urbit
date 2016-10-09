@@ -22,10 +22,10 @@
   ::                                                    ::::
 |=  pit/vase
 =>  |%
-++  funky
+++  funq
   ^?
   |%
-  ++  monkey
+  ++  mook
     (mul 6 70)
   --
 --
@@ -236,9 +236,9 @@
       ::  derived.  it consists of all the state we need to
       ::  manage subscriptions efficiently.
     ::::
-=,  funky
+=,  funq
 =>  |%
-++  ape  monkey:funky
+++  ape  mook
 ++  state                                               ::  all vane state
   $:  ver/$0                                            ::  vane version 
       yen/(set duct)                                    ::  raw observers

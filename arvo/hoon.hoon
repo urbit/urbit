@@ -6434,9 +6434,10 @@
       %emin   emin
       %emul   emul
       %felt   felt
-      %fond   fond
+      %fine   fine
       %fire   fire
       %fish   fish
+      %fond   fond
       %fund   fund
       %funk   funk
       %fuse   fuse
@@ -6988,7 +6989,7 @@
                 |-  ^-  pony
                 ?~  q.p.sut
                   ^$(sut q.sut, lon [~ lon])
-                =+  tiv=(mint %noun i.q.p.sut)
+                =+  tiv=(mint(sut q.sut) %noun i.q.p.sut)
                 =+  fid=^$(sut p.tiv, lon ~, axe 1, gil ~)
                 ?~  fid  ~
                 ?:  ?=({$| $& *} fid)
@@ -7036,6 +7037,7 @@
     (find way u.hup)
   ::
   ++  fine
+    ~/  %fine
     |=  tor/port
     ^-  (pair span nock)
     ?-  -.tor

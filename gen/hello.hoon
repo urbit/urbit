@@ -7,5 +7,17 @@
   !:
 :-  %say
 |=  {^ {{txt/@tas $~} $~}}
-:-  %noun
-(crip (weld "hello, " (trip txt)))
+=+  bar=32
+=>  |%
+    ++  funq
+      |%
+      ++  monkey  99
+      --
+    --
+=+  foo=23
+=<  $
+|%
+++  $
+  :-  %noun
+  (crip (weld "hello, " (trip txt)))
+--
