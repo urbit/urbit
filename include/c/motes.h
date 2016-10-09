@@ -702,6 +702,7 @@
 #   define c3__mold   c3_s4('m','o','l','d')
 #   define c3__mong   c3_s4('m','o','n','g')
 #   define c3__mono   c3_s4('m','o','n','o')
+#   define c3__mook   c3_s4('m','o','o','k')
 #   define c3__moot   c3_s4('m','o','o','t')
 #   define c3__mor    c3_s3('m','o','r')
 #   define c3__moze   c3_s4('m','o','z','e')
