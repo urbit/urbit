@@ -410,16 +410,14 @@
                        u3_noun lon,
                        u3_noun gil)
   {
-    // if ( u3_nul == qp_sut ) {
-    if ( 1 ) {
+    if ( u3_nul == qp_sut ) {
+    // if ( 1 ) {
       u3_noun nol = u3nc(u3_nul, u3k(lon));
       u3_noun ret = _find_buck(van, q_sut, way, p_heg, q_heg, axe, nol, gil);
       u3z(nol);
       return ret;
     }
     else {
-      fprintf(stderr, "fbfun\r\n");
-
       u3_noun iqp_sut = u3h(qp_sut);      //  twig
       u3_noun tiv = u3qfu_mint            //  (pair span nock)
         (van, q_sut, c3__noun, iqp_sut);
@@ -435,8 +433,6 @@
       }
       else if ( (c3n == u3h(fid)) && (c3y == u3h(u3t(fid))) ) {
         u3_noun ret;
-
-        fprintf(stderr, "fbout\r\n");
 
         ret = _find_buck_face_next
          (van, sut, q_sut, tqp_sut, way, u3t(u3t(fid)), q_heg, axe, lon, gil);
@@ -464,7 +460,7 @@
           (c3n, 
            c3n, 
            u3k(u3h(vat)), 
-           u3qf_comb(u3t(vat), u3qf_comb(dog, q_tiv)));
+           u3qf_comb(u3qf_comb(dog, q_tiv), u3t(vat)));
 
         u3z(vat);
         u3z(dog);
