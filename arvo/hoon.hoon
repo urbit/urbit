@@ -6703,8 +6703,8 @@
       |%  +-  $
       =>  +<
       |%
-      ++  pord  |*(* (form +< *nock))                 ::  wrap mint formula
-      ++  rosh  |*(* (form +< *(list pock)))          ::  wrap mint changes
+      ++  pord  |*(* (form +< *nock))                   ::  wrap mint formula
+      ++  rosh  |*(* (form +< *(list pock)))            ::  wrap mint changes
       ++  fleg  _(pord *bath)                           ::  legmatch + code
       ++  fram  _(pord *claw)                           ::  armmatch + 
       ++  foat  _(rosh *bath)                           ::  leg with changes
@@ -6995,7 +6995,7 @@
                 ?:  ?=({$| $& *} fid)
                   $(q.p.sut t.q.p.sut, p.heg p.p.fid)
                 =+  vat=(fine `port`?-(-.fid $& fid, $| [%| p.p.fid]))
-                [%| %| p.vat (comb q.vat (comb [%0 axe] q.tiv))]
+                [%| %| p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
               --
             ::
                 {$fork *}
