@@ -7,13 +7,15 @@
   !:
 :-  %say
 |=  {^ {{txt/@tas $~} $~}}
+~&  %foobar
 =+  bar=32
 =>  |%
     ++  funq
       |%
-      ++  monkey  99
+      ++  mook  32
       --
     --
+=,  funq
 =+  foo=23
 =<  $
 |%
