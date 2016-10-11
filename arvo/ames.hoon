@@ -502,7 +502,7 @@
         ++  pode                                        ::    pode:lax:as:go
           |=  now/@da                                   ::  timeout route
           ^+  +>
-          ?:  (lth her 256)  +>
+          ?:  (lth her 256)  +>(lun.wod.dur [~ %if ~2000.1.1 0 (mix her .0.0.1.0)])
           +>(lun.wod.dur ~)
         ::
         ++  kuch                                        ::    kuch:lax:as:go
