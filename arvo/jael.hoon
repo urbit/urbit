@@ -672,10 +672,10 @@
     $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
   ::                                              
   ++  tap
-    =|  out/(list (pair ship ship))
+    =|  out/(list ship)
     |-  ^+  out
     ?~  a  out
-    $(a l.a, out [n.a $(a r.a)])
+    $(a l.a, out (welp (gulf n.a) $(a r.a)))
   ::                                                    ::  ++uni:py
   ++  uni                                               ::  merge two piles
     |=  b/pile  
