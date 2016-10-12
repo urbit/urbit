@@ -209,8 +209,24 @@
       {$vein $~}                                        ::  view signing keys
       {$vest $~}                                        ::  view public balance
       {$vine $~}                                        ::  view secret history
+      {$womb p/womb-task}
       {$west p/ship q/path r/*}                         ::  remote request
   ==                                                    ::
+++  ticket  @G                                          ::  old 64-bit ticket
+++  passcode  @uvH                                      ::  128-bit passcode
+++  passhash  @uwH                                      ::  passocde hash
+++  mail  @t                                            ::  email address
+++  invite                                              ::
+  $:  who/mail                                          ::  owner email
+      pla/@ud                                           ::  planets to send
+      sta/@ud                                           ::  stars to send
+  ==                                                    ::
+++  womb-task                                           ::  manage ship %fungi
+  $%  {$claim aut/passcode her/@p tik/ticket}           ::  convert to %final
+      {$bonus tid/passcode pla/@ud sta/@ud}             ::  supplement passcode
+      {$invite tid/passcode ref/mail inv/invite}        ::  alloc to passcode
+      {$reinvite aut/passcode tid/passcode inv/invite}  ::  move to another
+  ==
 --
 ::                                                      ::::
 ::::                        #  1                        ::  private structures
@@ -633,7 +649,7 @@
     [n.b ~ ~]
   ::                                                    ::  ++put:py
   ++  put                                               ::  insert
-    |=  b/ship  ^-  pile
+    |=  b/@  ^-  pile
     (uni [b b] ~ ~)
   ::                                                    ::  ++sub:py
   ++  sub                                               ::  subtract
@@ -1167,6 +1183,13 @@
     ::
         $next
       (cure abet:abet:(next:(burb our) eny.sys p.tac))
+    ::
+    ::
+    ::  extend our certificate with a new private key
+    ::    {$womb p/womb-task}
+    ::
+        $womb
+      (cure abet:abet:(womb:(burb our) p.tac))
     ::
     ::  open secure channel
     ::    {$veil p/ship}
@@ -1877,6 +1900,72 @@
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
       =.  ..ex  (meet [~ ~] hec)
       +>.$
+    ::
+    ++  as-hotel                    :: XX moveme        
+      |=  a/ship  ^-  (map {ship bloq} pile)
+      =/  b  (xeb (xeb a))
+      =-  (my - ~)
+      :-  [(sein a) b]
+      (put:py (rsh (dec b) 1 a))
+    ::
+    ++  add-rite  _!!                 :: STUB
+    ++  mov-rite  _!!                 :: STUB
+    ++  del-rite  _!!                 :: STUB
+    ++  womb                                            ::  manage ship %fungi
+      |=  taz/womb-task
+      ^+  +>
+      ?-    -.taz
+      ::
+      ::  create passcode balance
+      ::    {$invite tid/passcode inv/{who/mail pla/@ud sta/@ud}}
+      ::
+          $invite
+        =/  pas/@p  (shaf %pass tid.taz)
+        =*  inv  inv.taz
+        ?<  (~(has by shy) pas)
+        =.  ur  (add-rite pas [%email who.inv])
+        =.  ur
+          (mov-rite [rex pas] [%duke pla.inv] [%king sta.inv] ~)
+        +>.$
+      ::
+      ::  increase existing balance
+      ::    {$reinvite aut/passcode pla/@ud sta/@ud}
+      ::
+          $bonus
+        =/  pas/@p  (shaf %pass tid.taz)
+        ?>  (~(has by shy) pas)
+        =.  ur
+          (mov-rite [rex pas] [%duke pla.taz] [%king sta.taz] ~)
+        +>.$
+      ::
+      ::  split passcode balance
+      ::    {$reinvite aut/passcode tid/passcode inv/{who/mail pla/@ud sta/@ud}}
+      ::
+          $reinvite
+        =/  pas/@p  (shaf %pass tid.taz)
+        =*  inv  inv.taz
+        ?<  (~(has by shy) pas)
+        =.  ur  (add-rite pas [%email who.inv])
+        ::  XX history
+        =/  ole/@p  (shaf %pass aut.taz)
+        =.  ur
+          (mov-rite [ole pas] [%duke pla.inv] [%king sta.inv] ~)
+        +>.$
+      ::
+      ::  redeem ship invitation
+      ::    {$claim aut/passcode her/@p tik/ticket}
+      ::
+          $claim
+        =/  pas/@p  (shaf %pass aut.taz)
+        ?>  =(our (sein her.taz))
+        =/  len  (xeb (xeb her.taz))
+        =.  ur
+          (del-rite pas [%fungi (my [?+(len !! $4 $king, $5 $earl) 1] ~)])
+        =.  ur
+          (del-rite our [%hotel (as-hotel her.taz)])
+        =.  ur  (add-rite her.taz [%final tik.taz])
+        +>.$
+      ==
     ::                                                  ::  grow:ex:ur
     ++  grow                                            ::  merge wills
       |=  $:  ::  vie: data source
