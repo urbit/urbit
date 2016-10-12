@@ -92,7 +92,7 @@
 ++  part  {$womb $1 pith}                               ::  womb state
 ++  pith                                                ::  womb content
   $:  boss/(unit ship)                                  ::  outside master
-      bureau/(map passhash balance)                     ::  active invitations
+::       bureau/(map passhash balance)                     ::  active invitations
 ::       office/property                                   ::  properties managed
       recycling/(map ship @)                            ::  old ticket keys
   ==                                                    ::
@@ -355,7 +355,7 @@
   =;  res/(list ship)  (some (some [%ships res]))
   =+  [typ nth]=~|(bad-path+tyl (raid tyl typ=%tas nth=%ud ~))
   :: =.  nth  (mul 3 nth)
-  !! :: XX scry jael
+  !! :: XX scry jael /=shop=/[typ]/[nth]
 ::   ?+  typ  ~|(bad-type+typ !!)
 ::     $galaxies  (take-n [nth 3] shop-galaxies)
 ::     $planets   (take-n [nth 3] shop-planets)
@@ -470,7 +470,7 @@
 ++  stats-ship                                        ::  inspect ship
   |=  who/@p  ^-  stat
   :-  (get-live who)
-  !!  :: XX scry jael
+  !!  :: XX scry jael /=stats=/[who]
 ::   ?-  (clan who)
 ::     $pawn  !!
 ::     $earl  !!
@@ -494,14 +494,15 @@
 ::
 ++  peek-x-balance                                     ::  inspect invitation
   |=  tyl/path
-  ?~  tyl
-    ?>  |(=(our src) =([~ src] boss))                  ::  priveledged
-    ``[%womb-balance-all (~(run by bureau) |=(balance owner))]
-  ^-  (unit (unit {$womb-balance balance}))
-  =+  pas=~|(bad-path+tyl (raid tyl pas=%uv ~))
-  %-  some
-  %+  bind  (~(get by bureau) (shaf %pass pas))
-  |=(bal/balance [%womb-balance bal])
+  !!  ::  XX scry jael /=balance=
+::   ?~  tyl
+::     ?>  |(=(our src) =([~ src] boss))                  ::  priveledged
+::     ``[%womb-balance-all (~(run by bureau) |=(balance owner))]
+::   ^-  (unit (unit {$womb-balance balance}))
+::   =+  pas=~|(bad-path+tyl (raid tyl pas=%uv ~))
+::   %-  some
+::   %+  bind  (~(get by bureau) (shaf %pass pas))
+::   |=(bal/balance [%womb-balance bal])
 ::
 ++  parse-ticket
   |=  {a/knot b/knot}  ^-  {him/@ tik/@}
@@ -525,8 +526,9 @@
   =+  pas=`passcode`(end 7 1 (sham %tick him tik))
   :-  pas
   ?.  gud  %fail
-  ?:  (~(has by bureau) (shaf %pass pas))  %used
-  %good
+  !!  ::  XX scry jael /=balance=/(shaf %pass pas)
+::   ?:  (~(has by bureau) (shaf %pass pas))  %used
+::   %good
 ::
 ++  peer-scry-x                                        ::  subscription like .^
   |=  tyl/path
@@ -640,7 +642,6 @@
   =<  abet
   =.  log-transaction  (log-transaction %reinvite +<)
   ?>  =(src src)                                      ::  self-authenticated
-  =+  ~|(%bad-passcode bal=(~(got by bureau) (shaf %pass aut)))
   =/  pas/@uv  (end 7 1 (shaf %pass eny))
   =.  emit  (emit %jaelwomb / %reinvite aut pas [who pla sta]:inv)
   (email /invite who.inv intro.wel.inv)
@@ -702,7 +703,7 @@
   =/  tik/ticket  (end 6 1 (shas %tick eny))
   =.  emit  (emit %jaelwomb / %claim aut her tik)
   :: XX event crashes work properly yes?
-  =/  adr/mail  !!  :: XX scry jael
+  =/  adr/mail  !!  :: XX scry jael /=balance=/[aut]
   (email /ticket adr "Ticket for {<her>}: {<`@pG`tik>}")
 ::
 ::
