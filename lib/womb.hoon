@@ -102,6 +102,13 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  arvo structures
+++  invite-j  {who/mail pla/@ud sta/@ud}                ::  invite data
+++  womb-task                                           ::  manage ship %fungi
+  $%  {$claim aut/passcode her/@p tik/ticket}           ::  convert to %final
+      {$bonus tid/passcode pla/@ud sta/@ud}             ::  supplement passcode
+      {$invite tid/passcode inv/invite-j}               ::  alloc to passcode
+      {$reinvite aut/passcode tid/passcode inv/invite-j}::  move to another
+  ==
 ++  card                                                ::
   $%  {$flog wire flog}                                 ::
       {$info wire @p @tas nori}                         ::  fs write (backup)
@@ -111,6 +118,7 @@
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
       {$knew wire p/ship q/will}                        ::  learn will (old pki)
+      {$jaelwomb wire womb-task}                        ::  manage rights
   ==                                                    ::
 ++  pear                                                ::
   $%  {$email mail tape wall}                           ::  send email
@@ -613,7 +621,7 @@
   =.  log-transaction  (log-transaction %bonus +<)
   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
   =/  pas  ~|(bad-invite+tid `passcode`(slav %uv tid))
-  (emit / %jaelwomb %bonus pas pla sta)
+  (emit %jaelwomb / %bonus pas pla sta)
 ::
 ++  poke-invite                                       ::  create invitation
   |=  {tid/cord inv/invite}
@@ -621,7 +629,7 @@
   =.  log-transaction  (log-transaction %invite +<)
   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
   =+  pas=~|(bad-invite+tid `passcode`(slav %uv tid))
-  =.  emit  (emit / %jaelwomb %invite pas [who pla sta]:inv)
+  =.  emit  (emit %jaelwomb / %invite pas [who pla sta]:inv)
   (email /invite who.inv intro.wel.inv)
 :: ::
 :: ++  invite-from                                       ::  traced invitation
@@ -645,7 +653,7 @@
 ::   =.  planets.bal  (sub planets.bal pla.inv)
 ::   =.  bureau  (~(put by bureau) (shaf %pass aut) bal)
   =/  pas/@uv  (end 7 1 (shaf %pass eny))
-  =.  emit  (emit / %jaelwomb %reinvite aut pas [who pla sta]:inv)
+  =.  emit  (emit %jaelwomb / %reinvite aut pas [who pla sta]:inv)
   (email /invite who.inv intro.wel.inv)
 ::
 ++  poke-obey                                         ::  set/reset boss
@@ -678,9 +686,11 @@
   ?>  =(src src)                                      ::  self-authenticated
   (emit %knew /report her wyl)
 ::
-:: ++  poke-do-ticket                                       ::  issue child ticket
-::   |=  her/ship
-::   =<  abet
+++  poke-do-ticket                                      ::  issue child ticket
+  |=  her/ship
+  =<  abet
+  ^+  +>
+  !!
 ::   ?>  =(our (sein her))
 ::   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
 ::   =+  tik=.^(@p %a /(scot %p our)/tick/(scot %da now)/(scot %p her))
@@ -694,10 +704,11 @@
     $|  ((slog (flop p.a)) (mean p.a))
   ==
 ::
-:: ++  poke-do-claim                                     ::  deliver ticket
-::   |=  {her/ship tik/@p}
-::   =<  abet
-::   ^+  +>
+++  poke-do-claim                                     ::  deliver ticket
+  |=  {her/ship tik/@p}
+  =<  abet
+  ^+  +>
+  !!
 ::   ?>  =(src (sein her))               ::  from the parent which could ticket
 ::   =+  sta=(stats-ship her)
 ::   ?>  ?=($cold p.sta)                 ::  a ship not yet started
@@ -721,7 +732,7 @@
   =+  pas=`passcode`(end 7 1 (sham %tick him tik))
   =/  inv/{pla/@ud sta/@ud}
     ?+((clan him) !! $duke [0 1], $king [1 0])
-  (emit / %jaelwomb %invite pas who inv)
+  (emit %jaelwomb / %invite pas who inv)
 ::   ?:  (~(has by bureau) (shaf %pass pas))
 ::     ~|(already-recycled+[him-t tik-t] !!)
 ::   =+  bal=`balance`?+((clan him) !! $duke [1 0 who ~], $king [0 1 who ~])
@@ -737,9 +748,10 @@
   =.  log-transaction  (log-transaction %claim +<)
   ?>  =(src src)
   =/  tik/ticket  (end 6 1 (shas %tick eny))
-  =.  emit  (emit / %jaelwomb %claim aut her tik)
+  =.  emit  (emit %jaelwomb / %claim aut her tik)
   :: XX event crashes work properly yes?
-  (email /ticket p.q.sta "Ticket for {<her>}: {<`@pG`tik>}")
+  =/  adr/mail  !!  :: XX scry jael
+  (email /ticket adr "Ticket for {<her>}: {<`@pG`tik>}")
 ::   (claim-any aut her)
 :: ::
 :: ++  claim-any                                        ::  register

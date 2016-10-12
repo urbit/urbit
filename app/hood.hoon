@@ -61,7 +61,8 @@
 ::
 ++  ably                                                ::  save part
   |*  {(list) hood-part}
-  [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
+  =/  par/hood-part  +<+
+  [(flop +<-) %_(+> lac (~(put by lac) -.par par))]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::

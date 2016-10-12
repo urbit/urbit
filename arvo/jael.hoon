@@ -224,7 +224,7 @@
 ++  womb-task                                           ::  manage ship %fungi
   $%  {$claim aut/passcode her/@p tik/ticket}           ::  convert to %final
       {$bonus tid/passcode pla/@ud sta/@ud}             ::  supplement passcode
-      {$invite tid/passcode ref/mail inv/invite}        ::  alloc to passcode
+      {$invite tid/passcode inv/invite}                 ::  alloc to passcode
       {$reinvite aut/passcode tid/passcode inv/invite}  ::  move to another
   ==
 --
