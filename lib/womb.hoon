@@ -6,46 +6,46 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|%
-++  foil                                                ::  ship allocation map
-  |*  mold                                              ::  entry mold
-  $:  min/@u                                            ::  minimum entry
-      ctr/@u                                            ::  next allocated
-      und/(set @u)                                      ::  free under counter
-      ove/(set @u)                                      ::  alloc over counter
-      max/@u                                            ::  maximum entry
-      box/(map @u +<)                                   ::  entries
-  ==                                                    ::
---                                                      ::
+:: |%
+:: ++  foil                                                ::  ship allocation map
+::   |*  mold                                              ::  entry mold
+::   $:  min/@u                                            ::  minimum entry
+::       ctr/@u                                            ::  next allocated
+::       und/(set @u)                                      ::  free under counter
+::       ove/(set @u)                                      ::  alloc over counter
+::       max/@u                                            ::  maximum entry
+::       box/(map @u +<)                                   ::  entries
+::   ==                                                    ::
+:: --                                                      ::
 ::                                                      ::
 ::::                                                    ::
   ::                                                    ::
 |%                                                      ::
-++  managed                                             ::  managed plot
-  |*  mold                                              ::
-  %-  unit                                              ::  unsplit
-  %+  each  +<                                          ::  subdivided
-  mail                                                  ::  delivered
-::                                                      ::
-++  divided                                             ::  get division state
-  |*  (managed)                                         ::
-  ?-  +<                                                ::
-    $~      ~                                           ::  unsplit
-    {$~ $| *}  ~                                        ::  delivered
-    {$~ $& *}  (some p.u.+<)                            ::  subdivided
-  ==                                                    ::
-::                                                      ::
-++  moon  (managed _!!)                                 ::  undivided moon
-::
-++  planet                                              ::  subdivided planet
-  (managed (lone (foil moon)))                          ::
-::                                                      ::
-++  star                                                ::  subdivided star
-  (managed (pair (foil moon) (foil planet)))            ::
-::                                                      ::
-++  galaxy                                              ::  subdivided galaxy
-  (managed (trel (foil moon) (foil planet) (foil star)))::
-::                                                      ::
+:: ++  managed                                             ::  managed plot
+::   |*  mold                                              ::
+::   %-  unit                                              ::  unsplit
+::   %+  each  +<                                          ::  subdivided
+::   mail                                                  ::  delivered
+:: ::                                                      ::
+:: ++  divided                                             ::  get division state
+::   |*  (managed)                                         ::
+::   ?-  +<                                                ::
+::     $~      ~                                           ::  unsplit
+::     {$~ $| *}  ~                                        ::  delivered
+::     {$~ $& *}  (some p.u.+<)                            ::  subdivided
+::   ==                                                    ::
+:: ::                                                      ::
+:: ++  moon  (managed _!!)                                 ::  undivided moon
+:: ::
+:: ++  planet                                              ::  subdivided planet
+::   (managed (lone (foil moon)))                          ::
+:: ::                                                      ::
+:: ++  star                                                ::  subdivided star
+::   (managed (pair (foil moon) (foil planet)))            ::
+:: ::                                                      ::
+:: ++  galaxy                                              ::  subdivided galaxy
+::   (managed (trel (foil moon) (foil planet) (foil star)))::
+:: ::                                                      ::
 ++  ticket  @G                                          ::  old 64-bit ticket
 ++  passcode  @uvH                                      ::  128-bit passcode
 ++  passhash  @uwH                                      ::  passocde hash
@@ -56,11 +56,11 @@
       owner/mail                                        ::  owner's email
       history/(list mail)                               ::  transfer history
   ==                                                    ::
-++  property                                            ::  subdivided plots
-  $:  galaxies/(map @p galaxy)                          ::  galaxy
-      planets/(map @p planet)                           ::  star
-      stars/(map @p star)                               ::  planet
-  ==                                                    ::
+:: ++  property                                            ::  subdivided plots
+::   $:  galaxies/(map @p galaxy)                          ::  galaxy
+::       planets/(map @p planet)                           ::  star
+::       stars/(map @p star)                               ::  planet
+::   ==                                                    ::
 ++  invite                                              ::
   $:  who/mail                                          ::  who to send to
       pla/@ud                                           ::  planets to send
@@ -93,8 +93,7 @@
 ++  pith                                                ::  womb content
   $:  boss/(unit ship)                                  ::  outside master
       bureau/(map passhash balance)                     ::  active invitations
-      office/property                                   ::  properties managed
-      hotel/(jug mail ship)                             ::  everyone we know
+::       office/property                                   ::  properties managed
       recycling/(map ship @)                            ::  old ticket keys
   ==                                                    ::
 --                                                      ::
@@ -131,7 +130,7 @@
       {$womb-balance balance}                           ::
       {$womb-balance-all (map passhash mail)}           ::
       {$womb-stat stat}                                 ::
-      {$womb-stat-all (map ship stat)}                  ::
+::       {$womb-stat-all (map ship stat)}                  ::
       {$womb-ticket-info passcode ?($fail $good $used)} ::
   ==
 ++  move  (pair bone card)                              ::  user-level move
@@ -168,86 +167,86 @@
   =+  d=(b q.c)
   ?~(d ~ (some [p.c u.d]))
 ::
-++  unsplit
-  |=  a/(map ship (managed))  ^-  (list {ship *})
-  %+  skim  (~(tap by a))
-  |=({@ a/(managed)} ?=($~ a))
-::
-++  issuing
-  |*  a/(map ship (managed))
-  ^-  (list {ship _(need (divided *~(got by a)))})
-  (sort (~(tap by (murn-by a divided))) lor)
-::
-++  issuing-under
-  |*  {a/bloq b/ship c/(map @u (managed))}
-  ^-  (list {ship _(need (divided *~(got by c)))})
-  %+  turn  (sort (~(tap by (murn-by c divided))) lor)
-  |*(d/{@u *} [(rep a b -.d ~) +.d])
-++  cursor  (pair (unit ship) @u)
+:: ++  unsplit
+::   |=  a/(map ship (managed))  ^-  (list {ship *})
+::   %+  skim  (~(tap by a))
+::   |=({@ a/(managed)} ?=($~ a))
+:: ::
+:: ++  issuing
+::   |*  a/(map ship (managed))
+::   ^-  (list {ship _(need (divided *~(got by a)))})
+::   (sort (~(tap by (murn-by a divided))) lor)
+:: ::
+:: ++  issuing-under
+::   |*  {a/bloq b/ship c/(map @u (managed))}
+::   ^-  (list {ship _(need (divided *~(got by c)))})
+::   %+  turn  (sort (~(tap by (murn-by c divided))) lor)
+::   |*(d/{@u *} [(rep a b -.d ~) +.d])
+:: ++  cursor  (pair (unit ship) @u)
 ++  neis  |=(a/ship ^-(@u (rsh (dec (xeb (dec (xeb a)))) 1 a)))  ::  postfix
 ::
 ::  Create new foil of size
-++  fo-init
-  |=  a/bloq  ::  ^-  (foil *)
-  [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
+:: ++  fo-init
+::   |=  a/bloq  ::  ^-  (foil *)
+::   [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
 ::
-++  fo
-  |_  (foil $@($~ *))
-  ++  nth                                             ::  index
-    |=  a/@u  ^-  (pair (unit @u) @u)
-    ?:  (lth a ~(wyt in und))
-      =+  out=(snag a (sort (~(tap in und)) lth))
-      [(some out) 0]
-    =.  a  (sub a ~(wyt in und))
-    |-  ^-  {(unit @u) @u}
-    ?:  =(ctr +(max))  [~ a]
-    ?:  =(0 a)  [(some ctr) a]
-    $(a (dec a), +<.nth new)
-  ::
-  +-  fin  +<                                         ::  abet
-  ++  new                                             ::  alloc
-    ?:  =(ctr +(max))  +<
-    =.  ctr  +(ctr)
-    ?.  (~(has in ove) ctr)  +<
-    new(ove (~(del in ove) ctr))
-  ::
-  +-  get                                             ::  nullable
-    |=  a/@p  ^+  ?~(box ~ q.n.box)
-    (fall (~(get by box) (neis a)) ~)
-  ::
-  +-  put
-    |*  {a/@u b/*}  ^+  fin           ::  b/_(~(got by box))
-    ~|  put+[a fin]
-    ?>  (fit a)
-    =;  adj  adj(box (~(put by box) a b))
-    ?:  (~(has in box) a)  fin
-    ?:  =(ctr a)  new
-    ?:  (lth a ctr)
-      ?.  (~(has in und) a)  fin
-      fin(und (~(del in und) a))
-    ?.  =(a ctr:new)    :: heuristic
-      fin(ove (~(put in ove) a))
-    =+  n=new(+< new)
-    n(und (~(put in und.n) ctr))
-  ::
-  ++  fit  |=(a/@u &((lte min a) (lte a max)))        ::  in range
-  ++  gud                                             ::  invariant
-    ?&  (fit(max +(max)) ctr)
-        (~(all in und) fit(max ctr))
-        (~(all in ove) fit(min ctr))
-        (~(all in box) |=({a/@u *} (fit a)))
-        |-  ^-  ?
-        ?:  =(min max)  &
-        =-  &(- $(min +(min)))
-        %+  gte  1              ::  at most one of
-        ;:  add
-          ?:(=(min ctr) 1 0)
-          ?:((~(has in und) min) 1 0)
-          ?:((~(has in ove) min) 1 0)
-          ?:((~(has by box) min) 1 0)
-        ==
-    ==
-  --
+:: ++  fo
+::   |_  (foil $@($~ *))
+::   ++  nth                                             ::  index
+::     |=  a/@u  ^-  (pair (unit @u) @u)
+::     ?:  (lth a ~(wyt in und))
+::       =+  out=(snag a (sort (~(tap in und)) lth))
+::       [(some out) 0]
+::     =.  a  (sub a ~(wyt in und))
+::     |-  ^-  {(unit @u) @u}
+::     ?:  =(ctr +(max))  [~ a]
+::     ?:  =(0 a)  [(some ctr) a]
+::     $(a (dec a), +<.nth new)
+::   ::
+::   +-  fin  +<                                         ::  abet
+::   ++  new                                             ::  alloc
+::     ?:  =(ctr +(max))  +<
+::     =.  ctr  +(ctr)
+::     ?.  (~(has in ove) ctr)  +<
+::     new(ove (~(del in ove) ctr))
+::   ::
+::   +-  get                                             ::  nullable
+::     |=  a/@p  ^+  ?~(box ~ q.n.box)
+::     (fall (~(get by box) (neis a)) ~)
+::   ::
+::   +-  put
+::     |*  {a/@u b/*}  ^+  fin           ::  b/_(~(got by box))
+::     ~|  put+[a fin]
+::     ?>  (fit a)
+::     =;  adj  adj(box (~(put by box) a b))
+::     ?:  (~(has in box) a)  fin
+::     ?:  =(ctr a)  new
+::     ?:  (lth a ctr)
+::       ?.  (~(has in und) a)  fin
+::       fin(und (~(del in und) a))
+::     ?.  =(a ctr:new)    :: heuristic
+::       fin(ove (~(put in ove) a))
+::     =+  n=new(+< new)
+::     n(und (~(put in und.n) ctr))
+::   ::
+::   ++  fit  |=(a/@u &((lte min a) (lte a max)))        ::  in range
+::   ++  gud                                             ::  invariant
+::     ?&  (fit(max +(max)) ctr)
+::         (~(all in und) fit(max ctr))
+::         (~(all in ove) fit(min ctr))
+::         (~(all in box) |=({a/@u *} (fit a)))
+::         |-  ^-  ?
+::         ?:  =(min max)  &
+::         =-  &(- $(min +(min)))
+::         %+  gte  1              ::  at most one of
+::         ;:  add
+::           ?:(=(min ctr) 1 0)
+::           ?:((~(has in und) min) 1 0)
+::           ?:((~(has in ove) min) 1 0)
+::           ?:((~(has by box) min) 1 0)
+::         ==
+::     ==
+::   --
 --
 ::                                                    ::  ::
 ::::                                                  ::  ::
@@ -271,31 +270,31 @@
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
 ::
-++  take-n                                            ::  compute range
-  |=  {{index/@u count/@u} get/$-(@u cursor)}
-  ^-  (list ship)
-  ?~  count  ~
-  %+  biff  p:(get index)
-  |=  a/ship  ^-  (list ship)
-  [a ^$(index +(index), count (dec count))]
-::
-++  available                                         ::  enumerate free ships
-  |=  all/(map ship (managed))  ^-  $-(@u cursor)
-  =+  pur=(sort (turn (unsplit all) head) lth)
-  =+  len=(lent pur)
-  |=(a/@u ?:((gte a len) [~ (sub a len)] [(some (snag a pur)) a]))
+:: ++  take-n                                            ::  compute range
+::   |=  {{index/@u count/@u} get/$-(@u cursor)}
+::   ^-  (list ship)
+::   ?~  count  ~
+::   %+  biff  p:(get index)
+::   |=  a/ship  ^-  (list ship)
+::   [a ^$(index +(index), count (dec count))]
+:: ::
+:: ++  available                                         ::  enumerate free ships
+::   |=  all/(map ship (managed))  ^-  $-(@u cursor)
+::   =+  pur=(sort (turn (unsplit all) head) lth)
+::   =+  len=(lent pur)
+::   |=(a/@u ?:((gte a len) [~ (sub a len)] [(some (snag a pur)) a]))
 ::
 :: foil cursor to ship cursor, using sized parent
-++  prefix
-  |=  {a/bloq b/@p {c/(unit @u) d/@u}}  ^-  cursor
-  ?~  c  [c d]
-  [(some (rep a b u.c ~)) d]
+:: ++  prefix
+::   |=  {a/bloq b/@p {c/(unit @u) d/@u}}  ^-  cursor
+::   ?~  c  [c d]
+::   [(some (rep a b u.c ~)) d]
 ::
-++  in-list                                           ::  distribute among options
-  |*  {a/(list) b/@u}  ^+  [(snag *@ a) b]
-  =+  c=(lent a)
-  [(snag (mod b c) a) (div b c)]
-::
+:: ++  in-list                                           ::  distribute among options
+::   |*  {a/(list) b/@u}  ^+  [(snag *@ a) b]
+::   =+  c=(lent a)
+::   [(snag (mod b c) a) (div b c)]
+:: ::
 ++  ames-last-seen                                    ::  last succesful ping
   |=  a/ship  ~+  ^-  (unit time)
   ?:  =(a our)  (some now)
@@ -310,107 +309,109 @@
   |=  {b/ship *}
   ?=(^ (ames-last-seen b))
 ::
-++  shop-galaxies  (available galaxies.office)        ::  unassigned %czar
 ::
-::  Stars can be either whole or children of galaxies
-++  shop-stars                                        ::  unassigned %king
-  |=  nth/@u  ^-  cursor
-  =^  out  nth  %.(nth (available stars.office))
-  ?^  out  [out nth]
-  %+  shop-star   nth
-  (neighboured (issuing galaxies.office))
-::
-++  shop-star                                         ::  star from galaxies
-  |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
-  ?:  =(~ lax)  [~ nth]
-  =^  sel  nth  (in-list lax nth)
-  (prefix 3 who.sel (~(nth fo r.sel) nth))
-::
-++  shop-planets                                      ::  unassigned %duke
-  |=  nth/@u  ^-  cursor
-  =^  out  nth  %.(nth (available planets.office))
-  ?^  out  [out nth]
-  =^  out  nth
-    %+  shop-planet   nth
-    (neighboured (issuing stars.office))
-  ?^  out  [out nth]
-  (shop-planet-gal nth (issuing galaxies.office))
-::
-++  shop-planet                                       ::  planet from stars
-  |=  {nth/@u sta/(list {who/@p * q/(foil planet)})}  ^-  cursor
-  ?:  =(~ sta)  [~ nth]
-  =^  sel  nth  (in-list sta nth)
-  (prefix 4 who.sel (~(nth fo q.sel) nth))
-::
-++  shop-planet-gal                                   ::  planet from galaxies
-  |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
-  ?:  =(~ lax)  [~ nth]
-  =^  sel  nth  (in-list lax nth)
-  %+  shop-planet   nth
-  (neighboured (issuing-under 3 who.sel box.r.sel))
-::
+:: ++  shop-galaxies  (available galaxies.office)        ::  unassigned %czar
+:: ::
+:: ::  Stars can be either whole or children of galaxies
+:: ++  shop-stars                                        ::  unassigned %king
+::   |=  nth/@u  ^-  cursor
+::   =^  out  nth  %.(nth (available stars.office))
+::   ?^  out  [out nth]
+::   %+  shop-star   nth
+::   (neighboured (issuing galaxies.office))
+:: ::
+:: ++  shop-star                                         ::  star from galaxies
+::   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
+::   ?:  =(~ lax)  [~ nth]
+::   =^  sel  nth  (in-list lax nth)
+::   (prefix 3 who.sel (~(nth fo r.sel) nth))
+:: ::
+:: ++  shop-planets                                      ::  unassigned %duke
+::   |=  nth/@u  ^-  cursor
+::   =^  out  nth  %.(nth (available planets.office))
+::   ?^  out  [out nth]
+::   =^  out  nth
+::     %+  shop-planet   nth
+::     (neighboured (issuing stars.office))
+::   ?^  out  [out nth]
+::   (shop-planet-gal nth (issuing galaxies.office))
+:: ::
+:: ++  shop-planet                                       ::  planet from stars
+::   |=  {nth/@u sta/(list {who/@p * q/(foil planet)})}  ^-  cursor
+::   ?:  =(~ sta)  [~ nth]
+::   =^  sel  nth  (in-list sta nth)
+::   (prefix 4 who.sel (~(nth fo q.sel) nth))
+:: ::
+:: ++  shop-planet-gal                                   ::  planet from galaxies
+::   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
+::   ?:  =(~ lax)  [~ nth]
+::   =^  sel  nth  (in-list lax nth)
+::   %+  shop-planet   nth
+::   (neighboured (issuing-under 3 who.sel box.r.sel))
+:: ::
 ++  peek-x-shop                                       ::  available ships
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
   =;  a   ~&  peek-x-shop+[tyl a]  a
-  =;  res  (some (some [%ships res]))
+  =;  res/(list ship)  (some (some [%ships res]))
   =+  [typ nth]=~|(bad-path+tyl (raid tyl typ=%tas nth=%ud ~))
   :: =.  nth  (mul 3 nth)
-  ?+  typ  ~|(bad-type+typ !!)
-    $galaxies  (take-n [nth 3] shop-galaxies)
-    $planets   (take-n [nth 3] shop-planets)
-    $stars     (take-n [nth 3] shop-stars)
-  ==
+  !! :: XX scry jael
+::   ?+  typ  ~|(bad-type+typ !!)
+::     $galaxies  (take-n [nth 3] shop-galaxies)
+::     $planets   (take-n [nth 3] shop-planets)
+::     $stars     (take-n [nth 3] shop-stars)
+::   ==
 ::
-++  get-managed-galaxy  ~(got by galaxies.office)     ::  office read
-++  mod-managed-galaxy                                ::  office write
-  |=  {who/@p mod/$-(galaxy galaxy)}  ^+  +>
-  =+  gal=(mod (get-managed-galaxy who))
-  +>.$(galaxies.office (~(put by galaxies.office) who gal))
-::
-++  get-managed-star                                  ::  office read
-  |=  who/@p  ^-  star
-  =+  (~(get by stars.office) who)
-  ?^  -  u
-  =+  gal=(get-managed-galaxy (sein who))
-  ?.  ?=({$~ $& *} gal)  ~|(unavailable-star+(sein who) !!)
-  (fall (~(get by box.r.p.u.gal) (neis who)) ~)
-::
-++  mod-managed-star                                  ::  office write
-  |=  {who/@p mod/$-(star star)}  ^+  +>
-  =+  sta=(mod (get-managed-star who))                ::  XX double traverse
-  ?:  (~(has by stars.office) who)
-    +>.$(stars.office (~(put by stars.office) who sta))
-  %+  mod-managed-galaxy  (sein who)
-  |=  gal/galaxy  ^-  galaxy
-  ?>  ?=({$~ $& *} gal)
-  gal(r.p.u (~(put fo r.p.u.gal) (neis who) sta))
-::
-++  get-managed-planet                                ::  office read
-  |=  who/@p  ^-  planet
-  =+  (~(get by planets.office) who)
-  ?^  -  u
-  ?:  (~(has by galaxies.office) (sein who))
-    =+  gal=(get-managed-galaxy (sein who))
-    ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
-    (~(get fo q.p.u.gal) who)
-  =+  sta=(get-managed-star (sein who))
-  ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
-  (~(get fo q.p.u.sta) who)
-::
-++  mod-managed-planet                                ::  office write
-  |=  {who/@p mod/$-(planet planet)}  ^+  +>
-  =+  pla=(mod (get-managed-planet who))              ::  XX double traverse
-  ?:  (~(has by planets.office) who)
-    +>.$(planets.office (~(put by planets.office) who pla))
-  ?:  (~(has by galaxies.office) (sein who))
-    %+  mod-managed-galaxy  (sein who)
-    |=  gal/galaxy  ^-  galaxy
-    ?>  ?=({$~ $& *} gal)
-    gal(q.p.u (~(put fo q.p.u.gal) (neis who) pla))
-  %+  mod-managed-star  (sein who)
-  |=  sta/star  ^-  star
-  ?>  ?=({$~ $& *} sta)
-  sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
+:: ++  get-managed-galaxy  ~(got by galaxies.office)     ::  office read
+:: ++  mod-managed-galaxy                                ::  office write
+::   |=  {who/@p mod/$-(galaxy galaxy)}  ^+  +>
+::   =+  gal=(mod (get-managed-galaxy who))
+::   +>.$(galaxies.office (~(put by galaxies.office) who gal))
+:: ::
+:: ++  get-managed-star                                  ::  office read
+::   |=  who/@p  ^-  star
+::   =+  (~(get by stars.office) who)
+::   ?^  -  u
+::   =+  gal=(get-managed-galaxy (sein who))
+::   ?.  ?=({$~ $& *} gal)  ~|(unavailable-star+(sein who) !!)
+::   (fall (~(get by box.r.p.u.gal) (neis who)) ~)
+:: ::
+:: ++  mod-managed-star                                  ::  office write
+::   |=  {who/@p mod/$-(star star)}  ^+  +>
+::   =+  sta=(mod (get-managed-star who))                ::  XX double traverse
+::   ?:  (~(has by stars.office) who)
+::     +>.$(stars.office (~(put by stars.office) who sta))
+::   %+  mod-managed-galaxy  (sein who)
+::   |=  gal/galaxy  ^-  galaxy
+::   ?>  ?=({$~ $& *} gal)
+::   gal(r.p.u (~(put fo r.p.u.gal) (neis who) sta))
+:: ::
+:: ++  get-managed-planet                                ::  office read
+::   |=  who/@p  ^-  planet
+::   =+  (~(get by planets.office) who)
+::   ?^  -  u
+::   ?:  (~(has by galaxies.office) (sein who))
+::     =+  gal=(get-managed-galaxy (sein who))
+::     ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
+::     (~(get fo q.p.u.gal) who)
+::   =+  sta=(get-managed-star (sein who))
+::   ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
+::   (~(get fo q.p.u.sta) who)
+:: ::
+:: ++  mod-managed-planet                                ::  office write
+::   |=  {who/@p mod/$-(planet planet)}  ^+  +>
+::   =+  pla=(mod (get-managed-planet who))              ::  XX double traverse
+::   ?:  (~(has by planets.office) who)
+::     +>.$(planets.office (~(put by planets.office) who pla))
+::   ?:  (~(has by galaxies.office) (sein who))
+::     %+  mod-managed-galaxy  (sein who)
+::     |=  gal/galaxy  ^-  galaxy
+::     ?>  ?=({$~ $& *} gal)
+::     gal(q.p.u (~(put fo q.p.u.gal) (neis who) pla))
+::   %+  mod-managed-star  (sein who)
+::   |=  sta/star  ^-  star
+::   ?>  ?=({$~ $& *} sta)
+::   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
 ++  get-live                                          ::  last-heard time ++live
   |=  a/ship  ^-  live
@@ -418,75 +419,78 @@
   ?~  rue  %cold
   ?:((gth (sub now u.rue) ~m5) %seen %live)
 ::
-++  stat-any                                          ::  unsplit status
-  |=  {who/@p man/(managed _!!)}  ^-  stat
-  :-  (get-live who)
-  ?~  man  [%free ~]
-  ?:  stat-no-email  [%owned '']
-  [%owned p.u.man]
-::
-++  stat-planet                                       ::  stat of planet
-  |=  {who/@p man/planet}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any who man)
-  :-  (get-live who)
-  =+  pla=u:(divided man)
-  :-  %split
-  %-  malt
-  %+  turn  (~(tap by box.p.pla))
-  |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
-::
-++  stat-star                                         ::  stat of star
-  |=  {who/@p man/star}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any who man)
-  :-  (get-live who)
-  =+  sta=u:(divided man)
-  :-  %split
-  %-  malt
-  %+  welp
-    %+  turn  (~(tap by box.p.sta))
-    |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
-  %+  turn  (~(tap by box.q.sta))
-  |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
-::
-++  stat-galaxy                                       :: stat of galaxy
-  |=  {who/@p man/galaxy}  ^-  stat
-  ?.  ?=({$~ $& ^} man)  (stat-any who man)
-  =+  gal=u:(divided man)
-  :-  (get-live who)
-  :-  %split
-  %-  malt
-  ;:  welp
-    %+  turn  (~(tap by box.p.gal))
-    |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
-  ::
-    %+  turn  (~(tap by box.q.gal))
-    |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
-  ::
-    %+  turn  (~(tap by box.r.gal))
-    |=({a/@u b/star} =+((rep 3 who a ~) [- (stat-star - b)]))
-  ==
+:: ++  stat-any                                          ::  unsplit status
+::   |=  {who/@p man/(managed _!!)}  ^-  stat
+::   :-  (get-live who)
+::   ?~  man  [%free ~]
+::   ?:  stat-no-email  [%owned '']
+::   [%owned p.u.man]
+:: ::
+:: ++  stat-planet                                       ::  stat of planet
+::   |=  {who/@p man/planet}  ^-  stat
+::   ?.  ?=({$~ $& ^} man)  (stat-any who man)
+::   :-  (get-live who)
+::   =+  pla=u:(divided man)
+::   :-  %split
+::   %-  malt
+::   %+  turn  (~(tap by box.p.pla))
+::   |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
+:: ::
+:: ++  stat-star                                         ::  stat of star
+::   |=  {who/@p man/star}  ^-  stat
+::   ?.  ?=({$~ $& ^} man)  (stat-any who man)
+::   :-  (get-live who)
+::   =+  sta=u:(divided man)
+::   :-  %split
+::   %-  malt
+::   %+  welp
+::     %+  turn  (~(tap by box.p.sta))
+::     |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
+::   %+  turn  (~(tap by box.q.sta))
+::   |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
+:: ::
+:: ++  stat-galaxy                                       :: stat of galaxy
+::   |=  {who/@p man/galaxy}  ^-  stat
+::   ?.  ?=({$~ $& ^} man)  (stat-any who man)
+::   =+  gal=u:(divided man)
+::   :-  (get-live who)
+::   :-  %split
+::   %-  malt
+::   ;:  welp
+::     %+  turn  (~(tap by box.p.gal))
+::     |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
+::   ::
+::     %+  turn  (~(tap by box.q.gal))
+::     |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
+::   ::
+::     %+  turn  (~(tap by box.r.gal))
+::     |=({a/@u b/star} =+((rep 3 who a ~) [- (stat-star - b)]))
+::   ==
 ::
 ++  stats-ship                                        ::  inspect ship
   |=  who/@p  ^-  stat
-  ?-  (clan who)
-    $pawn  !!
-    $earl  !!
-    $duke  (stat-planet who (get-managed-planet who))
-    $king  (stat-star who (get-managed-star who))
-    $czar  (stat-galaxy who (get-managed-galaxy who))
-  ==
+  :-  (get-live who)
+  !!  :: XX scry jael
+::   ?-  (clan who)
+::     $pawn  !!
+::     $earl  !!
+::     $duke  (stat-planet who (get-managed-planet who))
+::     $king  (stat-star who (get-managed-star who))
+::     $czar  (stat-galaxy who (get-managed-galaxy who))
+::   ==
 ::
 ++  peek-x-stats                                      ::  inspect ship/system
   |=  tyl/path
   ?^  tyl
     ?>  |(=(our src) =([~ src] boss))                   ::  privileged info
     ``womb-stat+(stats-ship ~|(bad-path+tyl (raid tyl who=%p ~)))
-  ^-  (unit (unit {$womb-stat-all (map ship stat)}))
-  =.  stat-no-email  &                      ::  censor adresses
-  :^  ~  ~  %womb-stat-all
-  %-  ~(uni by (~(urn by planets.office) stat-planet))
-  %-  ~(uni by (~(urn by stars.office) stat-star))
-  (~(urn by galaxies.office) stat-galaxy)
+  !!  ::  XX meaningful and/or useful in sein-jael model?
+::   ^-  (unit (unit {$womb-stat-all (map ship stat)}))
+::   =.  stat-no-email  &                      ::  censor adresses
+::   :^  ~  ~  %womb-stat-all
+::   %-  ~(uni by (~(urn by planets.office) stat-planet))
+::   %-  ~(uni by (~(urn by stars.office) stat-star))
+::   (~(urn by galaxies.office) stat-galaxy)
 ::
 ++  peek-x-balance                                     ::  inspect invitation
   |=  tyl/path
@@ -558,28 +562,28 @@
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   .(recycling (~(put by recycling) a b))
 ::
-++  poke-manage                                       ::  add to property
-  |=  a/(list ship)
-  =<  abet
-  ?>  |(=(our src) =([~ src] boss))                   ::  privileged
-  |-
-  ?~  a  .
-  ?+      (clan i.a)  ~|(bad-size+(clan i.a) !!)
-        $duke
-    ?.  (~(has by planets.office) i.a)
-      $(a t.a, planets.office (~(put by planets.office) i.a ~))
-    ~|(already-managing+i.a !!)
-  ::
-        $king
-    ?.  (~(has by stars.office) i.a)
-      $(a t.a, stars.office (~(put by stars.office) i.a ~))
-    ~|(already-managing+i.a !!)
-  ::
-        $czar
-    ?.  (~(has by galaxies.office) i.a)
-      $(a t.a, galaxies.office (~(put by galaxies.office) i.a ~))
-    ~|(already-managing+i.a !!)
-  ==
+:: ++  poke-manage                                       ::  add to property
+::   |=  a/(list ship)
+::   =<  abet
+::   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
+::   |-
+::   ?~  a  .
+::   ?+      (clan i.a)  ~|(bad-size+(clan i.a) !!)
+::         $duke
+::     ?.  (~(has by planets.office) i.a)
+::       $(a t.a, planets.office (~(put by planets.office) i.a ~))
+::     ~|(already-managing+i.a !!)
+::   ::
+::         $king
+::     ?.  (~(has by stars.office) i.a)
+::       $(a t.a, stars.office (~(put by stars.office) i.a ~))
+::     ~|(already-managing+i.a !!)
+::   ::
+::         $czar
+::     ?.  (~(has by galaxies.office) i.a)
+::       $(a t.a, galaxies.office (~(put by galaxies.office) i.a ~))
+::     ~|(already-managing+i.a !!)
+::   ==
 ::
 ++  email                                             ::  send email
   |=  {wir/wire adr/mail msg/tape}  ^+  +>
@@ -697,7 +701,6 @@
   ?>  =(src src)
   =/  tik/ticket  (end 6 1 (shas %tick eny))
   =.  emit  (emit %jaelwomb / %claim aut her tik)
-  :: =.  hotel  (~(put ju hotel) who her) :: XX derived state?
   :: XX event crashes work properly yes?
   =/  adr/mail  !!  :: XX scry jael
   (email /ticket adr "Ticket for {<her>}: {<`@pG`tik>}")
