@@ -106,7 +106,7 @@
   $%  {$apple p/(map site @)}                           ::  web api key
       {$block $~}                                       ::  banned
       {$email p/(set @ta)}                              ::  email addresses
-      {$final p/(map ship @pG)}                         ::  ticketed ships
+      {$final p/@pG}                                    ::  recognize by ticket
       {$fungi p/(map term @ud)}                         ::  fungibles
       {$guest $~}                                       ::  refugee visa
       {$hotel p/(map dorm pile)}                        ::  reserved block
@@ -707,7 +707,7 @@
           $apple  ?>(?=($apple -.ryt) (table %apple p.lef p.ryt))
           $block  ?>(?=($block -.ryt) [~ ~])
           $email  ?>(?=($email -.ryt) (sable %email p.lef p.ryt))
-          $final  ?>(?=($final -.ryt) (table %final p.lef p.ryt))
+          $final  ?>(?=($final -.ryt) (cable %final p.lef p.ryt))
           $fungi  ?>(?=($fungi -.ryt) (noble %fungi p.lef p.ryt))
           $guest  ?>(?=($guest -.ryt) [~ ~])
           $hotel  ?>(?=($hotel -.ryt) (bible %hotel p.lef p.ryt))
@@ -717,6 +717,11 @@
           $token  ?>(?=($token -.ryt) (ruble %token p.lef p.ryt))
           $urban  ?>(?=($urban -.ryt) (table %urban p.lef p.ryt))
         ==
+    ::                                                  ::  ++cable:dif:ry
+    ++  cable                                           ::  diff atom
+      |*  {nut/@tas new/@ old/@}
+      ?:  =(new old)  [~ ~]
+      [`[nut new] `[nut old]]
     ::                                                  ::  ++bible:dif:ry
     ++  bible                                           ::  diff pile
       |*  {nut/@tas new/(map dorm pile) old/(map dorm pile)}
@@ -812,7 +817,7 @@
           $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
           $block  ?>(?=($block -.ryt) [%block ~])
           $email  ?>(?=($email -.ryt) [%email (sable p.lef p.ryt)])
-          $final  ?>(?=($final -.ryt) [%final (table p.lef p.ryt)])
+          $final  ?>(?=($final -.ryt) [%final (cable p.lef p.ryt)])
           $fungi  ?>(?=($fungi -.ryt) [%fungi (noble p.lef p.ryt)])
           $guest  ?>(?=($guest -.ryt) [%guest ~])
           $hotel  ?>(?=($hotel -.ryt) [%hotel (bible p.lef p.ryt)])
@@ -822,6 +827,11 @@
           $token  ?>(?=($token -.ryt) [%token (ruble p.lef p.ryt)])
           $urban  ?>(?=($urban -.ryt) [%urban (table p.lef p.ryt)])
         ==
+    ::                                                  ::  ++cable:uni:ry
+    ++  cable                                           ::  union atom
+      |=  {new/@ old/@}
+      ?>  =(new old)
+      new
     ::                                                  ::  ++bible:uni:ry
     ++  bible                                           ::  union pile
       |=  {new/(map dorm pile) old/(map dorm pile)}
@@ -971,7 +981,7 @@
       [%apple (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $final
-      [%final (~(run by p.rys) |=(@ (mug +<)))]
+      [%final (mug p.rys)]
     ::
         $login
       [%login ~]
