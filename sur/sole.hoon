@@ -28,6 +28,7 @@
       {$clr $~}                                         ::  clear screen
       {$det sole-change}                                ::  edit command
       {$err p/@ud}                                      ::  error point
+      {$klr p/styx}                                     ::  styled text line
       {$mor p/(list sole-effect)}                       ::  multiple effects
       {$nex $~}                                         ::  save clear command
       {$pro sole-prompt}                                ::  set prompt
