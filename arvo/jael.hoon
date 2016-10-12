@@ -1908,9 +1908,18 @@
       :-  [(sein a) b]
       (put:py (rsh (dec b) 1 a))
     ::
-    ++  add-rite  _!!                 :: STUB
-    ++  mov-rite  _!!                 :: STUB
-    ++  del-rite  _!!                 :: STUB
+    ++  add-rite                                        ::  new promise
+      |=({pal/ship ryt/rite} (deal pal [ryt ~ ~] ~))
+    ::
+    ++  mov-rite                                        ::  transfer promise
+      |=  {{pal/ship par/ship} ryt/rite}
+      ^+  +>
+      =.  deal  (deal pal ~ [ryt ~ ~])
+      (deal par [ryt ~ ~] ~)
+    ::
+    ++  del-rite                                        ::  dead promise
+      |=({pal/ship ryt/rite} (deal pal ~ [ryt ~ ~]))
+    ::
     ++  womb                                            ::  manage ship %fungi
       |=  taz/womb-task
       ^+  +>
@@ -1923,10 +1932,9 @@
         =/  pas/@p  (shaf %pass tid.taz)
         =*  inv  inv.taz
         ?<  (~(has by shy) pas)
-        =.  ur  (add-rite pas [%email who.inv])
-        =.  ur
-          (mov-rite [rex pas] [%duke pla.inv] [%king sta.inv] ~)
-        +>.$
+        =.  +>.$  (add-rite pas [%email (sy who.inv ~)])
+        %+  mov-rite  [rex pas]
+        [%fungi (my [%duke pla.inv] [%king sta.inv] ~)]
       ::
       ::  increase existing balance
       ::    {$reinvite aut/passcode pla/@ud sta/@ud}
@@ -1934,9 +1942,8 @@
           $bonus
         =/  pas/@p  (shaf %pass tid.taz)
         ?>  (~(has by shy) pas)
-        =.  ur
-          (mov-rite [rex pas] [%duke pla.taz] [%king sta.taz] ~)
-        +>.$
+        %+  mov-rite  [rex pas]
+        [%fungi (my [%duke pla.taz] [%king sta.taz] ~)]
       ::
       ::  split passcode balance
       ::    {$reinvite aut/passcode tid/passcode inv/{who/mail pla/@ud sta/@ud}}
@@ -1945,26 +1952,24 @@
         =/  pas/@p  (shaf %pass tid.taz)
         =*  inv  inv.taz
         ?<  (~(has by shy) pas)
-        =.  ur  (add-rite pas [%email who.inv])
+        =.  +>.$  (add-rite pas [%email (sy who.inv ~)])
         ::  XX history
         =/  ole/@p  (shaf %pass aut.taz)
-        =.  ur
-          (mov-rite [ole pas] [%duke pla.inv] [%king sta.inv] ~)
-        +>.$
+        %+  mov-rite  [ole pas]
+        [%fungi (my [%duke pla.inv] [%king sta.inv] ~)]
       ::
       ::  redeem ship invitation
       ::    {$claim aut/passcode her/@p tik/ticket}
       ::
           $claim
         =/  pas/@p  (shaf %pass aut.taz)
-        ?>  =(our (sein her.taz))
+        ?>  =(rex (sein her.taz))  :: XX deal with foreign ships?
         =/  len  (xeb (xeb her.taz))
-        =.  ur
-          (del-rite pas [%fungi (my [?+(len !! $4 $king, $5 $earl) 1] ~)])
-        =.  ur
+        =.  +>.$
+          (del-rite pas [%fungi (my [(clan her.taz) 1] ~)])
+        =.  +>.$
           (del-rite our [%hotel (as-hotel her.taz)])
-        =.  ur  (add-rite her.taz [%final tik.taz])
-        +>.$
+        (add-rite her.taz [%final tik.taz])
       ==
     ::                                                  ::  grow:ex:ur
     ++  grow                                            ::  merge wills
