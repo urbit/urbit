@@ -138,8 +138,8 @@
 ::
 ++  transaction                                         ::  logged poke
   $%  {$report her/@p wyl/will}
-      {$release gal/@ud sta/@ud}
-      {$release-ships (list ship)}
+::       {$release gal/@ud sta/@ud}
+::       {$release-ships (list ship)}
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
       {$bonus tid/cord pla/@ud sta/@ud}
@@ -607,10 +607,10 @@
       $bonus    (teba (poke-bonus +.pok.i.a))
       $invite    (teba (poke-invite +.pok.i.a))
       $report    (teba (poke-report +.pok.i.a))
-      $release   (teba (poke-release +.pok.i.a))
+::       $release   (teba (poke-release +.pok.i.a))
       $recycle   (teba (poke-recycle +.pok.i.a))
       $reinvite  (teba (poke-reinvite +.pok.i.a))
-      $release-ships  (teba (poke-release-ships +.pok.i.a))
+::       $release-ships  (teba (poke-release-ships +.pok.i.a))
     ==
   ==
 ::
@@ -703,56 +703,56 @@
   (email /ticket adr "Ticket for {<her>}: {<`@pG`tik>}")
 ::
 ::
-++  poke-release-ships                                ::  release specific
-  |=  a/(list ship)
-  =<  abet  ^+  +>
-  =.  log-transaction  (log-transaction %release-ships +<)
-  ?>  =(our src)                                      ::  privileged
-  %+  roll  a
-  =+  [who=*@p res=+>.$]
-  |.  ^+  res
-  ?+  (clan who)  ~|(bad-size+(clan who) !!)
-    $king  (release-star who res)
-    $czar  (release-galaxy who res)
-  ==
-::
-++  poke-release                                      ::  release to subdivide
-  |=  {gal/@ud sta/@ud}                               ::
-  =<  abet  ^+  +>
-  =.  log-transaction  (log-transaction %release +<)
-  ?>  =(our src)                                      ::  privileged
-  =.  +>
-    ?~  gal  +>
-    =+  all=(take-n [0 gal] shop-galaxies)
-    ?.  (gth gal (lent all))
-      (roll all release-galaxy)
-    ~|(too-few-galaxies+[want=gal has=(lent all)] !!)
-  ^+  +>
-  ?~  sta  +>
-  =+  all=(take-n [0 sta] shop-stars)
-  ~&  got-stars+all
-  %-  (slog leaf+"For issuing to proceed smoothly, immediately upon boot, ".
-                 "each should |obey {<our>} to honor ticket requests." ~)
-  ?.  (gth sta (lent all))
-    (roll all release-star)
-  ~|(too-few-stars+[want=sta has=(lent all)] !!)
-::
-++  release-galaxy                                    ::  subdivide %czar
-  =+  [who=*@p res=.]
-  |.  ^+  res
-  %+  mod-managed-galaxy:res  who
-  |=  gal/galaxy  ^-  galaxy
-  ~&  release+who
-  ?^  gal  ~|(already-used+who !!)
-  (some %& (fo-init 5) (fo-init 4) (fo-init 3))
-::
-++  release-star                                      ::  subdivide %king
-  =+  [who=*@p res=.]
-  |.  ^+  res
-  =.  res  (emit.res %poke /womb/tick [(sein who) %hood] [%womb-do-ticket who])
-  %+  mod-managed-star:res  who
-  |=  sta/star  ^-  star
-  ~&  release+who
-  ?^  sta  ~|(already-used+[who u.sta] !!)
-  (some %& (fo-init 5) (fo-init 4))
+:: ++  poke-release-ships                                ::  release specific
+::   |=  a/(list ship)
+::   =<  abet  ^+  +>
+::   =.  log-transaction  (log-transaction %release-ships +<)
+::   ?>  =(our src)                                      ::  privileged
+::   %+  roll  a
+::   =+  [who=*@p res=+>.$]
+::   |.  ^+  res
+::   ?+  (clan who)  ~|(bad-size+(clan who) !!)
+::     $king  (release-star who res)
+::     $czar  (release-galaxy who res)
+::   ==
+:: ::
+:: ++  poke-release                                      ::  release to subdivide
+::   |=  {gal/@ud sta/@ud}                               ::
+::   =<  abet  ^+  +>
+::   =.  log-transaction  (log-transaction %release +<)
+::   ?>  =(our src)                                      ::  privileged
+::   =.  +>
+::     ?~  gal  +>
+::     =+  all=(take-n [0 gal] shop-galaxies)
+::     ?.  (gth gal (lent all))
+::       (roll all release-galaxy)
+::     ~|(too-few-galaxies+[want=gal has=(lent all)] !!)
+::   ^+  +>
+::   ?~  sta  +>
+::   =+  all=(take-n [0 sta] shop-stars)
+::   ~&  got-stars+all
+::   %-  (slog leaf+"For issuing to proceed smoothly, immediately upon boot, ".
+::                  "each should |obey {<our>} to honor ticket requests." ~)
+::   ?.  (gth sta (lent all))
+::     (roll all release-star)
+::   ~|(too-few-stars+[want=sta has=(lent all)] !!)
+:: ::
+:: ++  release-galaxy                                    ::  subdivide %czar
+::   =+  [who=*@p res=.]
+::   |.  ^+  res
+::   %+  mod-managed-galaxy:res  who
+::   |=  gal/galaxy  ^-  galaxy
+::   ~&  release+who
+::   ?^  gal  ~|(already-used+who !!)
+::   (some %& (fo-init 5) (fo-init 4) (fo-init 3))
+:: ::
+:: ++  release-star                                      ::  subdivide %king
+::   =+  [who=*@p res=.]
+::   |.  ^+  res
+::   =.  res  (emit.res %poke /womb/tick [(sein who) %hood] [%womb-do-ticket who])
+::   %+  mod-managed-star:res  who
+::   |=  sta/star  ^-  star
+::   ~&  release+who
+::   ?^  sta  ~|(already-used+[who u.sta] !!)
+::   (some %& (fo-init 5) (fo-init 4))
 --
