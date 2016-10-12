@@ -56,10 +56,6 @@
       owner/mail                                        ::  owner's email
       history/(list mail)                               ::  transfer history
   ==                                                    ::
-++  client                                              ::  per email
-  $:  sta/@ud                                           ::  unused star refs
-      has/(set @p)                                      ::  planets owned
-  ==                                                    ::
 ++  property                                            ::  subdivided plots
   $:  galaxies/(map @p galaxy)                          ::  galaxy
       planets/(map @p planet)                           ::  star
@@ -75,10 +71,6 @@
   $:  intro/tape                                        ::  in invite email
       hello/tape                                        ::  as talk message
   ==                                                    ::
-++  reference                                           ::  affiliate credit
-  (unit (each @p mail))                                 ::  ship or email
-::                                                      ::
-++  reference-rate  2                                   ::  star refs per star
 ++  stat  (pair live dist)                              ::  external info
 ++  live  ?($cold $seen $live)                          ::  online status
 ++  dist                                                ::  allocation
@@ -102,7 +94,7 @@
   $:  boss/(unit ship)                                  ::  outside master
       bureau/(map passhash balance)                     ::  active invitations
       office/property                                   ::  properties managed
-      hotel/(map (each ship mail) client)               ::  everyone we know
+      hotel/(jug mail ship)                             ::  everyone we know
       recycling/(map ship @)                            ::  old ticket keys
   ==                                                    ::
 --                                                      ::
@@ -143,7 +135,7 @@
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
       {$bonus tid/cord pla/@ud sta/@ud}
-      {$invite tid/cord ref/reference inv/invite}
+      {$invite tid/cord inv/invite}
       {$reinvite aut/passcode inv/invite}
   ==
 --
@@ -629,15 +621,9 @@
   ==
 ::
 ++  poke-invite                                       ::  create invitation
-  |=  {tid/cord ref/reference inv/invite}
+  |=  {tid/cord inv/invite}
   =<  abet
   =.  log-transaction  (log-transaction %invite +<)
-  =.  hotel
-    ?~  ref  hotel
-    ?~  sta.inv  hotel
-    %+  ~(put by hotel)  u.ref
-    =+  cli=(fall (~(get by hotel) u.ref) *client)
-    cli(sta +(sta.cli))
   (invite-from ~ tid inv)
 ::
 ++  invite-from                                       ::  traced invitation
@@ -692,15 +678,6 @@
   =.  log-transaction  (log-transaction %report +<)
   ?>  =(src src)                                      ::  self-authenticated
   (emit %knew /report her wyl)
-::
-++  use-reference                                     ::  bonus stars
-  |=  a/(each @p mail)  ^-  (unit _+>)
-  ?.  (~(has by hotel) a)  ~
-  =+  cli=(~(get by hotel) a)
-  ?~  cli  ~
-  ?.  (gte sta.u.cli reference-rate)  ~
-  =.  sta.u.cli  (sub sta.u.cli reference-rate)
-  `+>.$(hotel (~(put by hotel) a u.cli))
 ::
 ++  poke-do-ticket                                       ::  issue child ticket
   |=  her/ship
@@ -765,10 +742,6 @@
   ?+    (clan her)  ~|(bad-size+(clan her) !!)
       $king
     =;  all  (claim-star.all owner.bal her)
-    =+  (use-reference &+src)
-    ?^  -  u   :: prefer using references
-    =+  (use-reference |+owner.bal)
-    ?^  -  u
     =.  stars.bal  ~|(%no-stars (dec stars.bal))
     +>.$(bureau (~(put by bureau) (shaf %pass aut) bal))
   ::
@@ -787,10 +760,7 @@
 ::
 ++  claim-planet                                      ::  register
   |=  {who/mail her/@p}  ^+  +>
-  =.  hotel
-    %+  ~(put by hotel)  |+who
-    =+  cli=(fall (~(get by hotel) |+who) *client)
-    cli(has (~(put in has.cli) her))
+  =.  hotel  (~(put ju hotel) who her)
   %+  mod-managed-planet  her
   |=  a/planet  ^-  planet
   ?^  a  ~|(impure-planet+[her ?:(-.u.a %owned %split)] !!)
