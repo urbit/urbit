@@ -499,7 +499,6 @@
   %+  bind  (~(get by bureau) (shaf %pass pas))
   |=(bal/balance [%womb-balance bal])
 ::
-:: ++  old-phon    ;~(pfix sig fed:ag:hoon151)  :: library
 ++  parse-ticket
   |=  {a/knot b/knot}  ^-  {him/@ tik/@}
   [him=(rash a old-phon) tik=(rash b old-phon)]
@@ -631,17 +630,6 @@
   =+  pas=~|(bad-invite+tid `passcode`(slav %uv tid))
   =.  emit  (emit %jaelwomb / %invite pas [who pla sta]:inv)
   (email /invite who.inv intro.wel.inv)
-:: ::
-:: ++  invite-from                                       ::  traced invitation
-::   |=  {hiz/(list mail) tid/cord inv/invite}  ^+  +>
-::   ?>  |(=(our src) =([~ src] boss))                   ::  priveledged
-::   =+  pas=~|(bad-invite+tid `passcode`(slav %uv tid))
-::   ?:  (~(has by bureau) (shaf %pass pas))
-::     ~|([%duplicate-passcode pas who.inv replay=replay] !!)
-::   =.  bureau  (~(put by bureau) (shaf %pass pas) [pla.inv sta.inv who.inv hiz])
-::   (email /invite who.inv intro.wel.inv)
-::
-:: ++  coup-invite                                      ::  invite sent
 ::
 ++  poke-reinvite                                     ::  split invitation
   |=  {aut/passcode inv/invite}                       ::  further invite
@@ -649,9 +637,6 @@
   =.  log-transaction  (log-transaction %reinvite +<)
   ?>  =(src src)                                      ::  self-authenticated
   =+  ~|(%bad-passcode bal=(~(got by bureau) (shaf %pass aut)))
-::   =.  stars.bal  (sub stars.bal sta.inv)
-::   =.  planets.bal  (sub planets.bal pla.inv)
-::   =.  bureau  (~(put by bureau) (shaf %pass aut) bal)
   =/  pas/@uv  (end 7 1 (shaf %pass eny))
   =.  emit  (emit %jaelwomb / %reinvite aut pas [who pla sta]:inv)
   (email /invite who.inv intro.wel.inv)
@@ -686,41 +671,6 @@
   ?>  =(src src)                                      ::  self-authenticated
   (emit %knew /report her wyl)
 ::
-++  poke-do-ticket                                      ::  issue child ticket
-  |=  her/ship
-  =<  abet
-  ^+  +>
-  !!
-::   ?>  =(our (sein her))
-::   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
-::   =+  tik=.^(@p %a /(scot %p our)/tick/(scot %da now)/(scot %p her))
-::   :: =.  emit  (emit /tick %tick tik her)
-::   (emit %poke /womb/tick [src %hood] [%womb-do-claim her tik]) :: XX peek result
-::
-++  needy
-  |*  a/(each * tang)
-  ?-  -.a
-    $&  p.a
-    $|  ((slog (flop p.a)) (mean p.a))
-  ==
-::
-++  poke-do-claim                                     ::  deliver ticket
-  |=  {her/ship tik/@p}
-  =<  abet
-  ^+  +>
-  !!
-::   ?>  =(src (sein her))               ::  from the parent which could ticket
-::   =+  sta=(stats-ship her)
-::   ?>  ?=($cold p.sta)                 ::  a ship not yet started
-::   ?-    -.q.sta
-::       $free  !!                         ::  but allocated
-::       $owned                            ::  to an email
-::     (email /ticket p.q.sta "Ticket for {<her>}: {<`@pG`tik>}")
-::   ::
-::       $split                            ::  or ship distribution
-::     %.(+>.$ (slog leaf+"Ticket for {<her>}: {<`@pG`tik>}" ~))  ::  XX emit via console formally?
-::   ==
-::
 ++  poke-recycle                                      ::  save ticket as balance
   |=  {who/mail him-t/knot tik-t/knot}
   ?.  can-recycle.cfg  ~|(%ticket-recycling-offline !!)
@@ -730,13 +680,11 @@
   =+  [him tik]=(parse-ticket him-t tik-t)
   ?>  (need (check-old-ticket him tik))
   =+  pas=`passcode`(end 7 1 (sham %tick him tik))
+::   ?^  (scry-womb-invite (shaf %pass pas))
+::     ~|(already-recycled+[him-t tik-t] !!)
   =/  inv/{pla/@ud sta/@ud}
     ?+((clan him) !! $duke [0 1], $king [1 0])
   (emit %jaelwomb / %invite pas who inv)
-::   ?:  (~(has by bureau) (shaf %pass pas))
-::     ~|(already-recycled+[him-t tik-t] !!)
-::   =+  bal=`balance`?+((clan him) !! $duke [1 0 who ~], $king [0 1 who ~])
-::   .(bureau (~(put by bureau) (shaf %pass pas) bal))
 ::
 ::
 :: ++  jael-claimed  'Move email here if an ack is necessary'
@@ -749,44 +697,12 @@
   ?>  =(src src)
   =/  tik/ticket  (end 6 1 (shas %tick eny))
   =.  emit  (emit %jaelwomb / %claim aut her tik)
+  :: =.  hotel  (~(put ju hotel) who her) :: XX derived state?
   :: XX event crashes work properly yes?
   =/  adr/mail  !!  :: XX scry jael
   (email /ticket adr "Ticket for {<her>}: {<`@pG`tik>}")
-::   (claim-any aut her)
-:: ::
-:: ++  claim-any                                        ::  register
-::   |=  {aut/passcode her/@p}
-::   =;  claimed
-::     :: =.  claimed  (emit.claimed %wait $~)          :: XX delay ack
-::     (emit.claimed %poke /womb/tick [(sein her) %hood] [%womb-do-ticket her])
-::   =+  ~|(%bad-passcode bal=(~(got by bureau) (shaf %pass aut)))
-::   ?+    (clan her)  ~|(bad-size+(clan her) !!)
-::       $king
-::     =;  all  (claim-star.all owner.bal her)
-::     =.  stars.bal  ~|(%no-stars (dec stars.bal))
-::     +>.$(bureau (~(put by bureau) (shaf %pass aut) bal))
-::   ::
-::       $duke
-::     =.  planets.bal  ~|(%no-planets (dec planets.bal))
-::     =.  bureau  (~(put by bureau) (shaf %pass aut) bal)
-::     (claim-planet owner.bal her)
-::   ==
-:: ::
-:: ++  claim-star                                        ::  register
-::   |=  {who/mail her/@p}  ^+  +>
-::   %+  mod-managed-star  her
-::   |=  a/star  ^-  star
-::   ?^  a  ~|(impure-star+[her ?:(-.u.a %owned %split)] !!)
-::   (some %| who)
-:: ::
-:: ++  claim-planet                                      ::  register
-::   |=  {who/mail her/@p}  ^+  +>
-::   =.  hotel  (~(put ju hotel) who her)
-::   %+  mod-managed-planet  her
-::   |=  a/planet  ^-  planet
-::   ?^  a  ~|(impure-planet+[her ?:(-.u.a %owned %split)] !!)
-::   (some %| who)
-:: ::
+::
+::
 ++  poke-release-ships                                ::  release specific
   |=  a/(list ship)
   =<  abet  ^+  +>
