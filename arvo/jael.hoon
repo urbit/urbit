@@ -105,7 +105,7 @@
 ++  rite                                                ::  urbit commitment
   $%  {$apple p/(map site @)}                           ::  web api key
       {$block $~}                                       ::  banned
-      {$email p/(set @ta)}                              ::  email addresses
+      {$email p/(set @t)}                               ::  email addresses
       {$final p/@pG}                                    ::  recognize by ticket
       {$fungi p/(map term @ud)}                         ::  fungibles
       {$guest $~}                                       ::  refugee visa
@@ -926,7 +926,7 @@
     |=  ryt/rite
     ^-  safe
     ?~  pig
-      ~
+      !!                              :: not found
     ?.  =(-.ryt -.n.pig)
       ?:  (gor -.ryt -.n.pig)
         [n.pig $(pig l.pig) r.pig]
@@ -1972,7 +1972,7 @@
         ?<  (~(has by shy) pas)
         =.  +>.$  (add-rite pas [%email (sy who.inv ~)])
         %+  mov-rite  [rex pas]
-        [%fungi (my [%duke pla.inv] [%king sta.inv] ~)]
+        [%fungi (my [%upl pla.inv] [%usr sta.inv] ~)]
       ::
       ::  increase existing balance
       ::    {$reinvite aut/passcode pla/@ud sta/@ud}
@@ -1981,7 +1981,7 @@
         =/  pas/@p  (shaf %pass tid.taz)
         ?>  (~(has by shy) pas)
         %+  mov-rite  [rex pas]
-        [%fungi (my [%duke pla.taz] [%king sta.taz] ~)]
+        [%fungi (my [%upl pla.taz] [%usr sta.taz] ~)]
       ::
       ::  split passcode balance
       ::    {$reinvite aut/passcode tid/passcode inv/{who/mail pla/@ud sta/@ud}}
@@ -1994,7 +1994,7 @@
         ::  XX history
         =/  ole/@p  (shaf %pass aut.taz)
         %+  mov-rite  [ole pas]
-        [%fungi (my [%duke pla.inv] [%king sta.inv] ~)]
+        [%fungi (my [%upl pla.inv] [%usr sta.inv] ~)]
       ::
       ::  redeem ship invitation
       ::    {$claim aut/passcode her/@p tik/ticket}
@@ -2003,8 +2003,9 @@
         =/  pas/@p  (shaf %pass aut.taz)
         ?>  =(rex (sein her.taz))  :: XX deal with foreign ships?
         =/  len  (xeb (xeb her.taz))
+        =/  fun  ?+((clan her.taz) !! $duke %upl, $king %usr)
         =.  +>.$
-          (del-rite pas [%fungi (my [(clan her.taz) 1] ~)])
+          (del-rite pas [%fungi (my [fun 1] ~)])
         =.  +>.$
           (del-rite rex [%hotel (as-hotel her.taz)])
         =/  who  (need %.(%email ~(expose up (lawn pas))))
