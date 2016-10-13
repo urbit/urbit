@@ -400,8 +400,8 @@
   |=  lin/(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
+  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop (add p.lin (lent-stye:klr q.lin))))
   =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pom q.lin))
-  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
   +>(mir lin)
 ::
 ++  se-just                                           ::  adjusted buffer
@@ -824,7 +824,7 @@
     =;  vew/(pair (list @c) styx)
       =+  lin=(make:klr q.vew)
       :_  (welp lin [*stye p.vew]~)
-      (add pos.inp (roll (lnts:klr lin) add))
+      (add pos.inp (lent-char:klr lin))
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
       ?~  ris
@@ -929,14 +929,30 @@
       [a b]
     [[p.a (weld q.a q.i.b)] t.b]
   ::
-  ++  lnts                                            ::  stub pair lengths
-    |=  a/stub
+  ++  lent-stye
+    |=  a/stub  ^-  @
+    (roll (lnts-stye a) add)
+  ::
+  ++  lent-char
+    |=  a/stub  ^-  @
+    (roll (lnts-char a) add)
+  ::
+  ++  lnts-stye                                       ::  stub pair head lengths
+    |=  a/stub  ^-  (list @)
     %+  turn  a
     |=  a/(pair stye (list @c))
-    %+  add
-      (lent q.a)
-    =+  d=~(wyt in p.p.a)
-    (mul 4 ?:(=(0 d) 0 +(d)))
+    ;:  add                        ::  presumes impl of cvrt:ansi in %dill
+        (mul 5 2)                  ::  bg
+        (mul 5 2)                  ::  fg
+        =+  b=~(wyt in p.p.a)      ::  effect
+        ?:(=(0 b) 0 (mul 4 +(b)))
+    ==
+  ::
+  ++  lnts-char                                       ::  stub pair tail lengths
+    |=  a/stub  ^-  (list @)
+    %+  turn  a
+    |=  a/(pair stye (list @c))
+    (lent q.a)
   ::
   ++  brek                                            ::  index + incl-len of
     |=  {a/@ b/(list @)}                              ::  stub pair w/ idx a
@@ -951,7 +967,7 @@
   ++  slag                                            ::  slag stub, keep stye
     |=  {a/@ b/stub}
     ^-  stub
-    =+  c=(lnts b)
+    =+  c=(lnts-char b)
     =+  i=(brek a c)
     ?~  i  b
     =+  r=(^slag +(p.u.i) b)
@@ -964,7 +980,7 @@
   ++  scag                                            ::  scag stub, keep stye
     |=  {a/@ b/stub}
     ^-  stub
-    =+  c=(lnts b)
+    =+  c=(lnts-char b)
     =+  i=(brek a c)
     ?~  i  b
     ?:  =(a q.u.i)
