@@ -1176,7 +1176,7 @@
     ::    {$init p/code q/arms}
     ::
         $init
-      (cure abet:(~(make ur urb) now.sys eny.sys p.tac q.tac))
+      (cure abet:abet:(make:(burb our) now.sys eny.sys p.tac q.tac))
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -1719,6 +1719,8 @@
       ::  it is the best reference for the semantics of
       ::  the urbit pki.
       ::
+  =*  our  !!
+      ::
       ::  it is absolutely verboten to use [our] in ++ur.
       ::
   =|  hab/(list change)
@@ -1761,73 +1763,6 @@
     |=  rex/ship
     ^-  (pair life (map life ring))
     lean:~(able ex rex)
-  ::                                                    ::  ++make:ur
-  ++  make                                              ::  initialize urbit
-    |=  $:  ::  now: date
-            ::  eny: entropy
-            ::  gen: bootstrap ticket
-            ::  nym: self-description
-            ::
-            now/@da
-            eny/@e 
-            gen/@pG
-            nym/arms
-        ==
-    ^+  +>
-    ::  key: generated key
-    ::  bul: initial bull
-    ::
-    =/  key  (ypt:scr (mix our %jael-make) gen)  
-    =*  doc  `bull`[(sein our) & nym]
-    ::
-    ::  register generator as login secret
-    ::
-    =.  +>.$  abet:(deal:~(able ex our) our [[[%login [gen ~ ~]] ~ ~] ~])
-    ::
-    ::  initialize hierarchical property
-    ::
-    =.  +>.$  
-      =-  abet:(deal:~(able ex our) our - ~)
-      ^-  safe
-      %-  intern:up
-      ^-  (list rite)
-      =/  mir  (clan our)
-      ?+    mir  ~
-          $czar
-        :~  [%fungi [%usr 255] ~ ~]
-            [%hotel [[our 3] [1 255] ~ ~] ~ ~]
-        ==
-          $king
-        :~  [%fungi [%upl 65.535] ~ ~]
-            [%hotel [[our 4] [1 65.535] ~ ~] ~ ~]
-        ==
-          $duke
-        :~  [%hotel [[our 5] [1 0xffff.ffff] ~ ~] ~ ~]
-        ==
-      ==
-    ::
-    ::  create initial communication secrets
-    ::
-    ?:  (lth our 256)
-      ::
-      ::  create galaxy with generator as seed
-      ::
-      abet:(next:~(able ex our) key doc)
-    ::
-    ::  had: key handle
-    ::  ryt: initial right
-    ::
-    =/  key  (ypt:scr (mix our %jael-make) gen)  
-    =*  had  (shaf %hand key)
-    =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
-    ::
-    ::  register initial symmetric key from ticket
-    ::
-    =.  +>.$  abet:(hail:~(able ex (sein our)) our %& [ryt ~ ~])
-    ::
-    ::  create initial private key and certificate
-    ::
-    abet:(next:~(able ex our) (mix eny key) doc)
   ::                                                    ::  ++meet:ur
   ++  meet                                              ::  calculate merge
     |=  $:  ::  vie: authenticated source
@@ -1912,6 +1847,72 @@
       |=  pal/ship
       ^-  safe
       =-(?~(- ~ u.-) (~(get by shy) pal))
+    ::                                                  ::  ++make:ex:ur
+    ++  make                                            ::  initialize urbit
+      |=  $:  ::  now: date
+              ::  eny: entropy
+              ::  gen: bootstrap ticket
+              ::  nym: self-description
+              ::
+              now/@da
+              eny/@e 
+              gen/@pG
+              nym/arms
+          ==
+      ^+  +>
+      ::
+      ::  register generator as login secret
+      ::
+      =.  +>.$  (deal rex [[[%login [gen ~ ~]] ~ ~] ~])
+      ::
+      ::  initialize hierarchical property
+      ::
+      =.  +>.$  
+        =-  (deal rex - ~)
+        ^-  safe
+        %-  intern:up
+        ^-  (list rite)
+        =/  mir  (clan rex)
+        ?+    mir  ~
+            $czar
+          :~  [%fungi [%usr 255] ~ ~]
+              [%hotel [[rex 3] [1 255] ~ ~] ~ ~]
+          ==
+            $king
+          :~  [%fungi [%upl 65.535] ~ ~]
+              [%hotel [[rex 4] [1 65.535] ~ ~] ~ ~]
+          ==
+            $duke
+          :~  [%hotel [[rex 5] [1 0xffff.ffff] ~ ~] ~ ~]
+          ==
+        ==
+      ::
+      ::  create initial communication secrets
+      ::
+      ::  key: generated key
+      ::  bul: initial bull
+      ::
+      =/  key  (ypt:scr (mix rex %jael-make) gen)  
+      =*  doc  `bull`[(sein rex) & nym]
+      ?:  (lth rex 256)
+        ::
+        ::  create galaxy with generator as seed
+        ::
+        (next key doc)
+      ::
+      ::  had: key handle
+      ::  ryt: initial right
+      ::
+      =*  had  (shaf %hand key)
+      =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
+      ::
+      ::  register initial symmetric key from ticket
+      ::
+      =.  ..ex  abet:(hail:~(able ex (sein rex)) rex %& [ryt ~ ~])
+      ::
+      ::  create initial private key and certificate
+      ::
+      (next (mix eny key) doc)      
     ::                                                  ::  ++next:ex:ur
     ++  next                                            ::  advance private key
       |=  {eny/@e doc/bull}
@@ -2002,7 +2003,7 @@
         =.  +>.$
           (del-rite pas [%fungi (my [(clan her.taz) 1] ~)])
         =.  +>.$
-          (del-rite our [%hotel (as-hotel her.taz)])
+          (del-rite rex [%hotel (as-hotel her.taz)])
         (add-rite her.taz [%final tik.taz])
       ==
     ::                                                  ::  div-at-most:ex:ur
