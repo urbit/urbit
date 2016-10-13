@@ -227,6 +227,18 @@
       {$invite tid/passcode inv/invite}                 ::  alloc to passcode
       {$reinvite aut/passcode tid/passcode inv/invite}  ::  move to another
   ==
+++  womb-scry
+  $%  {$shop typ/?($star $planet) nth/@u}               ::  available ships
+      {$balance aut/passcode}                           ::  invite details
+      {$balance-all $~}                                 ::  all invites
+  ==
+++  womb-balance  {who/mail pla/@ud sta/@ud}  ::  equivalent to invite?
+++  womb-gilt
+  $%  {$ships (list ship)}                              ::
+      {$womb-balance (unit womb-balance)}               ::
+      {$womb-balance-all (map passhash mail)}           ::
+  ==
+++  gilt  ?(womb-gilt)
 --
 ::                                                      ::::
 ::::                        #  1                        ::  private structures
@@ -1115,6 +1127,12 @@
   ++  burb                                              ::  per ship
     |=  who/ship
     ~(able ~(ex ur urb) who)
+  ::                                                    ::  ++scry:of
+  ++  scry                                              ::  read
+    |=  {syd/@tas pax/path}  ^-  (unit (unit gilt))
+    ?+  syd  [~ ~]
+      $womb  ``[%ships ~]
+    ==
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause
@@ -2246,7 +2264,13 @@
           tyl/spur
       ==
   ^-  (unit (unit cage))
-  ~
+  :: XX security
+  ?.  =(lot [%$ %da now])  ~
+  ?.  =(%x ren)  ~
+  %+  bind  (~(scry of [now eny] lex) syd (flop tyl))
+  |=  a/(unit gilt)
+  %+  bind   a
+  |=(b/gilt [-.b (slot 3 (spec !>(b)))])
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
   lex
