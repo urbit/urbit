@@ -102,12 +102,13 @@
   ::                                                    ::  ::
 |%                                                      ::  arvo structures
 ++  invite-j  {who/mail pla/@ud sta/@ud}                ::  invite data
+++  balance-j  {who/mail pla/@ud sta/@ud}               ::  balance data
 ++  womb-task                                           ::  manage ship %fungi
   $%  {$claim aut/passcode her/@p tik/ticket}           ::  convert to %final
       {$bonus tid/passcode pla/@ud sta/@ud}             ::  supplement passcode
       {$invite tid/passcode inv/invite-j}               ::  alloc to passcode
       {$reinvite aut/passcode tid/passcode inv/invite-j}::  move to another
-  ==
+  ==                                                    ::
 ++  card                                                ::
   $%  {$flog wire flog}                                 ::
       {$info wire @p @tas nori}                         ::  fs write (backup)
@@ -197,86 +198,25 @@
   %+  ames-grab  %rue
   .^(ames-tell %a /(scot %p our)/tell/(scot %da now)/(scot %p a))
 ::
-++  neighboured                                        ::  filter for connectivity
-  |*  a/(list {ship *})  ^+  a
-  %+  skim  a
-  |=  {b/ship *}
-  ?=(^ (ames-last-seen b))
+++  jael-scry
+  |*  {typ/mold pax/path}  ^-  typ
+  .^(typ %j (welp /(scot %p our)/womb/(scot %da now) pax))
+::
+++  jael-pas-balance
+  |=  pas/passcode  ^-  (unit balance)
+  %+  bind  (jael-scry (unit balance-j) /balance/(scot %uv pas)/womb-balance)
+  |=  a/balance-j  ^-  balance
+  =/  hiz/(list mail)  ~  :: XX track history in jael
+  [pla.a sta.a who.a hiz]
 ::
 ::
-:: ++  shop-galaxies  (available galaxies.office)        ::  unassigned %czar
-:: ::
-:: ::  Stars can be either whole or children of galaxies
-:: ++  shop-stars                                        ::  unassigned %king
-::   |=  nth/@u  ^-  cursor
-::   =^  out  nth  %.(nth (available stars.office))
-::   ?^  out  [out nth]
-::   %+  shop-star   nth
-::   (neighboured (issuing galaxies.office))
-:: ::
-:: ++  shop-star                                         ::  star from galaxies
-::   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
-::   ?:  =(~ lax)  [~ nth]
-::   =^  sel  nth  (in-list lax nth)
-::   (prefix 3 who.sel (~(nth fo r.sel) nth))
-:: ::
-:: ++  shop-planets                                      ::  unassigned %duke
-::   |=  nth/@u  ^-  cursor
-::   =^  out  nth  %.(nth (available planets.office))
-::   ?^  out  [out nth]
-::   =^  out  nth
-::     %+  shop-planet   nth
-::     (neighboured (issuing stars.office))
-::   ?^  out  [out nth]
-::   (shop-planet-gal nth (issuing galaxies.office))
-:: ::
-:: ++  shop-planet                                       ::  planet from stars
-::   |=  {nth/@u sta/(list {who/@p * q/(foil planet)})}  ^-  cursor
-::   ?:  =(~ sta)  [~ nth]
-::   =^  sel  nth  (in-list sta nth)
-::   (prefix 4 who.sel (~(nth fo q.sel) nth))
-:: ::
-:: ++  shop-planet-gal                                   ::  planet from galaxies
-::   |=  {nth/@u lax/(list {who/@p * * r/(foil star)})}  ^-  cursor
-::   ?:  =(~ lax)  [~ nth]
-::   =^  sel  nth  (in-list lax nth)
-::   %+  shop-planet   nth
-::   (neighboured (issuing-under 3 who.sel box.r.sel))
-:: ::
 ++  peek-x-shop                                       ::  available ships
   |=  tyl/path  ^-  (unit (unit {$ships (list @p)}))
   =;  a   ~&  peek-x-shop+[tyl a]  a
   =;  res/(list ship)  (some (some [%ships res]))
-  =+  [typ nth]=~|(bad-path+tyl (raid tyl typ=%tas nth=%ud ~))
-  :: =.  nth  (mul 3 nth)
-  !! :: XX scry jael /=shop=/[typ]/[nth]
-::   ?+  typ  ~|(bad-type+typ !!)
-::     $galaxies  (take-n [nth 3] shop-galaxies)
-::     $planets   (take-n [nth 3] shop-planets)
-::     $stars     (take-n [nth 3] shop-stars)
-::   ==
-::
-:: ++  get-managed-galaxy  ~(got by galaxies.office)     ::  office read
-:: ++  get-managed-star                                  ::  office read
-::   |=  who/@p  ^-  star
-::   =+  (~(get by stars.office) who)
-::   ?^  -  u
-::   =+  gal=(get-managed-galaxy (sein who))
-::   ?.  ?=({$~ $& *} gal)  ~|(unavailable-star+(sein who) !!)
-::   (fall (~(get by box.r.p.u.gal) (neis who)) ~)
-:: ::
-:: ++  get-managed-planet                                ::  office read
-::   |=  who/@p  ^-  planet
-::   =+  (~(get by planets.office) who)
-::   ?^  -  u
-::   ?:  (~(has by galaxies.office) (sein who))
-::     =+  gal=(get-managed-galaxy (sein who))
-::     ?.  ?=({$~ $& *} gal)  ~|(unavailable-galaxy+(sein who) !!)
-::     (~(get fo q.p.u.gal) who)
-::   =+  sta=(get-managed-star (sein who))
-::   ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
-::   (~(get fo q.p.u.sta) who)
-:: ::
+  :: XX redundant parse?
+  =+  [typ nth]=~|(bad-path+tyl (raid tyl /[typ=%tas]/[nth=%ud]))
+  (jael-scry (list ship) /shop/[typ]/(scot %ud nth)/ships)
 ::
 ++  get-live                                          ::  last-heard time ++live
   |=  a/ship  ^-  live
@@ -284,71 +224,22 @@
   ?~  rue  %cold
   ?:((gth (sub now u.rue) ~m5) %seen %live)
 ::
-:: ++  stat-any                                          ::  unsplit status
-::   |=  {who/@p man/(managed _!!)}  ^-  stat
-::   :-  (get-live who)
-::   ?~  man  [%free ~]
-::   ?:  stat-no-email  [%owned '']
-::   [%owned p.u.man]
-:: ::
-:: ++  stat-planet                                       ::  stat of planet
-::   |=  {who/@p man/planet}  ^-  stat
-::   ?.  ?=({$~ $& ^} man)  (stat-any who man)
-::   :-  (get-live who)
-::   =+  pla=u:(divided man)
-::   :-  %split
-::   %-  malt
-::   %+  turn  (~(tap by box.p.pla))
-::   |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
-:: ::
-:: ++  stat-star                                         ::  stat of star
-::   |=  {who/@p man/star}  ^-  stat
-::   ?.  ?=({$~ $& ^} man)  (stat-any who man)
-::   :-  (get-live who)
-::   =+  sta=u:(divided man)
-::   :-  %split
-::   %-  malt
-::   %+  welp
-::     %+  turn  (~(tap by box.p.sta))
-::     |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
-::   %+  turn  (~(tap by box.q.sta))
-::   |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
-:: ::
-:: ++  stat-galaxy                                       :: stat of galaxy
-::   |=  {who/@p man/galaxy}  ^-  stat
-::   ?.  ?=({$~ $& ^} man)  (stat-any who man)
-::   =+  gal=u:(divided man)
-::   :-  (get-live who)
-::   :-  %split
-::   %-  malt
-::   ;:  welp
-::     %+  turn  (~(tap by box.p.gal))
-::     |=({a/@u b/moon} =+((rep 5 who a ~) [- (stat-any - b)]))
-::   ::
-::     %+  turn  (~(tap by box.q.gal))
-::     |=({a/@u b/planet} =+((rep 4 who a ~) [- (stat-planet - b)]))
-::   ::
-::     %+  turn  (~(tap by box.r.gal))
-::     |=({a/@u b/star} =+((rep 3 who a ~) [- (stat-star - b)]))
-::   ==
 ::
 ++  stats-ship                                        ::  inspect ship
   |=  who/@p  ^-  stat
   :-  (get-live who)
-  !!  :: XX scry jael /=stats=/[who]
-::   ?-  (clan who)
-::     $pawn  !!
-::     $earl  !!
-::     $duke  (stat-planet who (get-managed-planet who))
-::     $king  (stat-star who (get-managed-star who))
-::     $czar  (stat-galaxy who (get-managed-galaxy who))
-::   ==
+  =/  man  (jael-scry (unit mail) /stats/(scot %p who)/womb-owner)
+  ?~  man  [%free ~]
+  ?:  stat-no-email  [%owned '']
+  [%owned u.man]
 ::
 ++  peek-x-stats                                      ::  inspect ship/system
   |=  tyl/path
   ?^  tyl
     ?>  |(=(our src) =([~ src] boss))                   ::  privileged info
-    ``womb-stat+(stats-ship ~|(bad-path+tyl (raid tyl who=%p ~)))
+    :: XX redundant parse?
+    =+  who=~|(bad-path+tyl (raid tyl /[who=%p]))
+    ``womb-stat+(stats-ship who)
   !!  ::  XX meaningful and/or useful in sein-jael model?
 ::   ^-  (unit (unit {$womb-stat-all (map ship stat)}))
 ::   =.  stat-no-email  &                      ::  censor adresses
@@ -359,12 +250,12 @@
 ::
 ++  peek-x-balance                                     ::  inspect invitation
   |=  tyl/path
-  !!  ::  XX scry jael /=balance=/[pas]
-::   ^-  (unit (unit {$womb-balance balance}))
-::   =+  pas=~|(bad-path+tyl (raid tyl pas=%uv ~))
-::   %-  some
-::   %+  bind  (~(get by bureau) (shaf %pass pas))
-::   |=(bal/balance [%womb-balance bal])
+  ^-  (unit (unit {$womb-balance balance}))
+  :: XX redundant parse?
+  =+  pas=~|(bad-path+tyl (raid tyl /[pas=%uv]))
+  %-  some
+  %+  bind  (jael-pas-balance pas)
+  |=(a/balance [%womb-balance a])
 ::
 ++  parse-ticket
   |=  {a/knot b/knot}  ^-  {him/@ tik/@}
@@ -388,9 +279,8 @@
   =+  pas=`passcode`(end 7 1 (sham %tick him tik))
   :-  pas
   ?.  gud  %fail
-  !!  ::  XX scry jael /=balance=/(shaf %pass pas)
-::   ?:  (~(has by bureau) (shaf %pass pas))  %used
-::   %good
+  ?^  (jael-pas-balance pas)  %used
+  %good
 ::
 ++  peer-scry-x                                        ::  subscription like .^
   |=  tyl/path
@@ -536,10 +426,9 @@
   =<  abet
   =.  log-transaction  (log-transaction %claim +<)
   ?>  =(src src)
+  =/  bal  ~|(%bad-invite (need (jael-pas-balance aut)))
   =/  tik/ticket  (end 6 1 (shas %tick eny))
   =.  emit  (emit %jaelwomb / %claim aut her tik)
   :: XX event crashes work properly yes?
-  =/  adr/mail  !!  :: XX scry jael /=balance=/[aut]
-  (email /ticket adr "Ticket for {<her>}: {<`@pG`tik>}")
-::
+  (email /ticket owner.bal "Ticket for {<her>}: {<`@pG`tik>}")
 --
