@@ -190,7 +190,7 @@
   =.  cur-zuse  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon)
   =.  cur-vanes
     %-  malt
-    %+  turn  `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
+    %+  turn  `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
     |=  syd/@tas
     :-  syd
     .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
@@ -242,7 +242,7 @@
   |=  {way/wire rot/riot}
   ?>  ?=($~ way)
   ?>  ?=(^ rot)
-  =+  vanes=`(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
+  =+  vanes=`(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
   =.  +>.$
     ?.  autoload
       +>.$
