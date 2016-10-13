@@ -229,14 +229,14 @@
   ==
 ++  womb-scry
   $%  {$shop typ/?($star $planet) nth/@u}               ::  available ships
+      {$stats who/ship}                                 ::  ship details
       {$balance aut/passcode}                           ::  invite details
-      {$balance-all $~}                                 ::  all invites
   ==
 ++  womb-balance  {who/mail pla/@ud sta/@ud}  ::  equivalent to invite?
 ++  womb-gilt
   $%  {$ships (list ship)}                              ::
+      {$womb-owner (unit mail)}                         ::
       {$womb-balance (unit womb-balance)}               ::
-      {$womb-balance-all (map passhash mail)}           ::
   ==
 ++  gilt  ?(womb-gilt)
 --
@@ -1132,13 +1132,16 @@
     |=  pax/path  ^-  (unit womb-scry)
     ?~  pax  ~
     ?+    i.pax  ~
-        $balance-all  ?^(t.pax ~ `[%balance-all ~])
         $balance
-      %+  bind  (read t.pax %uv ~)
+      %+  bind  (read t.pax /[%uv])
       |=(a/passcode [%balance a])
     ::
+        $stats
+      %+  bind  (read t.pax /[%p])
+      |=(a/ship [%stats a])
+    ::
         $shop
-      %+  biff  (read t.pax %tas %ud ~)
+      %+  biff  (read t.pax /[%tas]/[%ud])
       |=  {typ/term nth/@u}
       ?.  ?=(?($star $planet) typ)  ~
       `[%shop typ nth]
@@ -2004,6 +2007,8 @@
           (del-rite pas [%fungi (my [(clan her.taz) 1] ~)])
         =.  +>.$
           (del-rite rex [%hotel (as-hotel her.taz)])
+        =/  who  (need %.(%email ~(expose up (lawn pas))))
+        =.  +>.$  (add-rite her.taz who)
         (add-rite her.taz [%final tik.taz])
       ==
     ::                                                  ::  div-at-most:ex:ur
@@ -2015,11 +2020,17 @@
       |=  req/womb-scry  ^-  (unit womb-gilt)
       ?-    -.req
       ::
-      ::  all invites
-      ::    {$balance-all $~}
+      ::  ship details
+      ::    {$stats who/ship}
       ::
-          $balance-all
-        !!  ::  XX index which fakesubs are invites
+          $stats
+        %+  some  %womb-owner
+        %+  bind  (~(get by shy) who.req)
+        |=  a/safe  ^-  mail
+        :: XX deal with multiple emails?
+        =+  (need (~(expose up a) %email))
+        ?>  ?=({$email {@ $~ $~}} -)
+        n.p.-
       ::
       ::  invite details
       ::    {$balance aut/passcode}
@@ -2337,8 +2348,8 @@
   :: XX security
   ?.  =(lot [%$ %da now])  ~
   %-  some
-  ?.  =(%x ren)  ~
-  %+  bind  (~(scry of [now eny] lex) syd (flop tyl))
+  ?.  =(%$ ren)  ~
+  %+  bind  (~(scry of [now eny] lex) syd tyl)
   |=(a/gilt [-.a (slot 3 (spec !>(a)))])
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve

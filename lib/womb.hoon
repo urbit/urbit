@@ -359,10 +359,7 @@
 ::
 ++  peek-x-balance                                     ::  inspect invitation
   |=  tyl/path
-  !!  ::  XX scry jael /=balance=
-::   ?~  tyl
-::     ?>  |(=(our src) =([~ src] boss))                  ::  priveledged
-::     ``[%womb-balance-all (~(run by bureau) |=(balance owner))]
+  !!  ::  XX scry jael /=balance=/[pas]
 ::   ^-  (unit (unit {$womb-balance balance}))
 ::   =+  pas=~|(bad-path+tyl (raid tyl pas=%uv ~))
 ::   %-  some
@@ -416,7 +413,6 @@
   ::  /stats                          general stats dump
   ::  /stats/@p                       what we know about @p
     $stats  (peek-x-stats +.tyl)
-  ::  /balance                         all invitations
   ::  /balance/passcode                invitation status
     $balance  (peek-x-balance +.tyl)
   ::  /ticket/ship/ticket              check ticket usability
