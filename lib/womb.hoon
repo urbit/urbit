@@ -137,8 +137,6 @@
 ::
 ++  transaction                                         ::  logged poke
   $%  {$report her/@p wyl/will}
-::       {$release gal/@ud sta/@ud}
-::       {$release-ships (list ship)}
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
       {$bonus tid/cord pla/@ud sta/@ud}
@@ -167,86 +165,8 @@
   =+  d=(b q.c)
   ?~(d ~ (some [p.c u.d]))
 ::
-:: ++  unsplit
-::   |=  a/(map ship (managed))  ^-  (list {ship *})
-::   %+  skim  (~(tap by a))
-::   |=({@ a/(managed)} ?=($~ a))
-:: ::
-:: ++  issuing
-::   |*  a/(map ship (managed))
-::   ^-  (list {ship _(need (divided *~(got by a)))})
-::   (sort (~(tap by (murn-by a divided))) lor)
-:: ::
-:: ++  issuing-under
-::   |*  {a/bloq b/ship c/(map @u (managed))}
-::   ^-  (list {ship _(need (divided *~(got by c)))})
-::   %+  turn  (sort (~(tap by (murn-by c divided))) lor)
-::   |*(d/{@u *} [(rep a b -.d ~) +.d])
-:: ++  cursor  (pair (unit ship) @u)
 ++  neis  |=(a/ship ^-(@u (rsh (dec (xeb (dec (xeb a)))) 1 a)))  ::  postfix
 ::
-::  Create new foil of size
-:: ++  fo-init
-::   |=  a/bloq  ::  ^-  (foil *)
-::   [min=1 ctr=1 und=~ ove=~ max=(dec (bex (bex a))) box=~]
-::
-:: ++  fo
-::   |_  (foil $@($~ *))
-::   ++  nth                                             ::  index
-::     |=  a/@u  ^-  (pair (unit @u) @u)
-::     ?:  (lth a ~(wyt in und))
-::       =+  out=(snag a (sort (~(tap in und)) lth))
-::       [(some out) 0]
-::     =.  a  (sub a ~(wyt in und))
-::     |-  ^-  {(unit @u) @u}
-::     ?:  =(ctr +(max))  [~ a]
-::     ?:  =(0 a)  [(some ctr) a]
-::     $(a (dec a), +<.nth new)
-::   ::
-::   +-  fin  +<                                         ::  abet
-::   ++  new                                             ::  alloc
-::     ?:  =(ctr +(max))  +<
-::     =.  ctr  +(ctr)
-::     ?.  (~(has in ove) ctr)  +<
-::     new(ove (~(del in ove) ctr))
-::   ::
-::   +-  get                                             ::  nullable
-::     |=  a/@p  ^+  ?~(box ~ q.n.box)
-::     (fall (~(get by box) (neis a)) ~)
-::   ::
-::   +-  put
-::     |*  {a/@u b/*}  ^+  fin           ::  b/_(~(got by box))
-::     ~|  put+[a fin]
-::     ?>  (fit a)
-::     =;  adj  adj(box (~(put by box) a b))
-::     ?:  (~(has in box) a)  fin
-::     ?:  =(ctr a)  new
-::     ?:  (lth a ctr)
-::       ?.  (~(has in und) a)  fin
-::       fin(und (~(del in und) a))
-::     ?.  =(a ctr:new)    :: heuristic
-::       fin(ove (~(put in ove) a))
-::     =+  n=new(+< new)
-::     n(und (~(put in und.n) ctr))
-::   ::
-::   ++  fit  |=(a/@u &((lte min a) (lte a max)))        ::  in range
-::   ++  gud                                             ::  invariant
-::     ?&  (fit(max +(max)) ctr)
-::         (~(all in und) fit(max ctr))
-::         (~(all in ove) fit(min ctr))
-::         (~(all in box) |=({a/@u *} (fit a)))
-::         |-  ^-  ?
-::         ?:  =(min max)  &
-::         =-  &(- $(min +(min)))
-::         %+  gte  1              ::  at most one of
-::         ;:  add
-::           ?:(=(min ctr) 1 0)
-::           ?:((~(has in und) min) 1 0)
-::           ?:((~(has in ove) min) 1 0)
-::           ?:((~(has by box) min) 1 0)
-::         ==
-::     ==
-::   --
 --
 ::                                                    ::  ::
 ::::                                                  ::  ::
@@ -269,32 +189,6 @@
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
-::
-:: ++  take-n                                            ::  compute range
-::   |=  {{index/@u count/@u} get/$-(@u cursor)}
-::   ^-  (list ship)
-::   ?~  count  ~
-::   %+  biff  p:(get index)
-::   |=  a/ship  ^-  (list ship)
-::   [a ^$(index +(index), count (dec count))]
-:: ::
-:: ++  available                                         ::  enumerate free ships
-::   |=  all/(map ship (managed))  ^-  $-(@u cursor)
-::   =+  pur=(sort (turn (unsplit all) head) lth)
-::   =+  len=(lent pur)
-::   |=(a/@u ?:((gte a len) [~ (sub a len)] [(some (snag a pur)) a]))
-::
-:: foil cursor to ship cursor, using sized parent
-:: ++  prefix
-::   |=  {a/bloq b/@p {c/(unit @u) d/@u}}  ^-  cursor
-::   ?~  c  [c d]
-::   [(some (rep a b u.c ~)) d]
-::
-:: ++  in-list                                           ::  distribute among options
-::   |*  {a/(list) b/@u}  ^+  [(snag *@ a) b]
-::   =+  c=(lent a)
-::   [(snag (mod b c) a) (div b c)]
-:: ::
 ++  ames-last-seen                                    ::  last succesful ping
   |=  a/ship  ~+  ^-  (unit time)
   ?:  =(a our)  (some now)
@@ -363,11 +257,6 @@
 ::   ==
 ::
 :: ++  get-managed-galaxy  ~(got by galaxies.office)     ::  office read
-:: ++  mod-managed-galaxy                                ::  office write
-::   |=  {who/@p mod/$-(galaxy galaxy)}  ^+  +>
-::   =+  gal=(mod (get-managed-galaxy who))
-::   +>.$(galaxies.office (~(put by galaxies.office) who gal))
-:: ::
 :: ++  get-managed-star                                  ::  office read
 ::   |=  who/@p  ^-  star
 ::   =+  (~(get by stars.office) who)
@@ -375,16 +264,6 @@
 ::   =+  gal=(get-managed-galaxy (sein who))
 ::   ?.  ?=({$~ $& *} gal)  ~|(unavailable-star+(sein who) !!)
 ::   (fall (~(get by box.r.p.u.gal) (neis who)) ~)
-:: ::
-:: ++  mod-managed-star                                  ::  office write
-::   |=  {who/@p mod/$-(star star)}  ^+  +>
-::   =+  sta=(mod (get-managed-star who))                ::  XX double traverse
-::   ?:  (~(has by stars.office) who)
-::     +>.$(stars.office (~(put by stars.office) who sta))
-::   %+  mod-managed-galaxy  (sein who)
-::   |=  gal/galaxy  ^-  galaxy
-::   ?>  ?=({$~ $& *} gal)
-::   gal(r.p.u (~(put fo r.p.u.gal) (neis who) sta))
 :: ::
 :: ++  get-managed-planet                                ::  office read
 ::   |=  who/@p  ^-  planet
@@ -398,20 +277,6 @@
 ::   ?.  ?=({$~ $& *} sta)  ~|(unavailable-star+(sein who) !!)
 ::   (~(get fo q.p.u.sta) who)
 :: ::
-:: ++  mod-managed-planet                                ::  office write
-::   |=  {who/@p mod/$-(planet planet)}  ^+  +>
-::   =+  pla=(mod (get-managed-planet who))              ::  XX double traverse
-::   ?:  (~(has by planets.office) who)
-::     +>.$(planets.office (~(put by planets.office) who pla))
-::   ?:  (~(has by galaxies.office) (sein who))
-::     %+  mod-managed-galaxy  (sein who)
-::     |=  gal/galaxy  ^-  galaxy
-::     ?>  ?=({$~ $& *} gal)
-::     gal(q.p.u (~(put fo q.p.u.gal) (neis who) pla))
-::   %+  mod-managed-star  (sein who)
-::   |=  sta/star  ^-  star
-::   ?>  ?=({$~ $& *} sta)
-::   sta(q.p.u (~(put fo q.p.u.sta) (neis who) pla))
 ::
 ++  get-live                                          ::  last-heard time ++live
   |=  a/ship  ^-  live
@@ -564,29 +429,6 @@
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   .(recycling (~(put by recycling) a b))
 ::
-:: ++  poke-manage                                       ::  add to property
-::   |=  a/(list ship)
-::   =<  abet
-::   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
-::   |-
-::   ?~  a  .
-::   ?+      (clan i.a)  ~|(bad-size+(clan i.a) !!)
-::         $duke
-::     ?.  (~(has by planets.office) i.a)
-::       $(a t.a, planets.office (~(put by planets.office) i.a ~))
-::     ~|(already-managing+i.a !!)
-::   ::
-::         $king
-::     ?.  (~(has by stars.office) i.a)
-::       $(a t.a, stars.office (~(put by stars.office) i.a ~))
-::     ~|(already-managing+i.a !!)
-::   ::
-::         $czar
-::     ?.  (~(has by galaxies.office) i.a)
-::       $(a t.a, galaxies.office (~(put by galaxies.office) i.a ~))
-::     ~|(already-managing+i.a !!)
-::   ==
-::
 ++  email                                             ::  send email
   |=  {wir/wire adr/mail msg/tape}  ^+  +>
   ?:  replay  +>                      ::  dont's send email in replay mode
@@ -613,10 +455,8 @@
       $bonus    (teba (poke-bonus +.pok.i.a))
       $invite    (teba (poke-invite +.pok.i.a))
       $report    (teba (poke-report +.pok.i.a))
-::       $release   (teba (poke-release +.pok.i.a))
       $recycle   (teba (poke-recycle +.pok.i.a))
       $reinvite  (teba (poke-reinvite +.pok.i.a))
-::       $release-ships  (teba (poke-release-ships +.pok.i.a))
     ==
   ==
 ::
@@ -706,57 +546,4 @@
   =/  adr/mail  !!  :: XX scry jael /=balance=/[aut]
   (email /ticket adr "Ticket for {<her>}: {<`@pG`tik>}")
 ::
-::
-:: ++  poke-release-ships                                ::  release specific
-::   |=  a/(list ship)
-::   =<  abet  ^+  +>
-::   =.  log-transaction  (log-transaction %release-ships +<)
-::   ?>  =(our src)                                      ::  privileged
-::   %+  roll  a
-::   =+  [who=*@p res=+>.$]
-::   |.  ^+  res
-::   ?+  (clan who)  ~|(bad-size+(clan who) !!)
-::     $king  (release-star who res)
-::     $czar  (release-galaxy who res)
-::   ==
-:: ::
-:: ++  poke-release                                      ::  release to subdivide
-::   |=  {gal/@ud sta/@ud}                               ::
-::   =<  abet  ^+  +>
-::   =.  log-transaction  (log-transaction %release +<)
-::   ?>  =(our src)                                      ::  privileged
-::   =.  +>
-::     ?~  gal  +>
-::     =+  all=(take-n [0 gal] shop-galaxies)
-::     ?.  (gth gal (lent all))
-::       (roll all release-galaxy)
-::     ~|(too-few-galaxies+[want=gal has=(lent all)] !!)
-::   ^+  +>
-::   ?~  sta  +>
-::   =+  all=(take-n [0 sta] shop-stars)
-::   ~&  got-stars+all
-::   %-  (slog leaf+"For issuing to proceed smoothly, immediately upon boot, ".
-::                  "each should |obey {<our>} to honor ticket requests." ~)
-::   ?.  (gth sta (lent all))
-::     (roll all release-star)
-::   ~|(too-few-stars+[want=sta has=(lent all)] !!)
-:: ::
-:: ++  release-galaxy                                    ::  subdivide %czar
-::   =+  [who=*@p res=.]
-::   |.  ^+  res
-::   %+  mod-managed-galaxy:res  who
-::   |=  gal/galaxy  ^-  galaxy
-::   ~&  release+who
-::   ?^  gal  ~|(already-used+who !!)
-::   (some %& (fo-init 5) (fo-init 4) (fo-init 3))
-:: ::
-:: ++  release-star                                      ::  subdivide %king
-::   =+  [who=*@p res=.]
-::   |.  ^+  res
-::   =.  res  (emit.res %poke /womb/tick [(sein who) %hood] [%womb-do-ticket who])
-::   %+  mod-managed-star:res  who
-::   |=  sta/star  ^-  star
-::   ~&  release+who
-::   ?^  sta  ~|(already-used+[who u.sta] !!)
-::   (some %& (fo-init 5) (fo-init 4))
 --
