@@ -684,7 +684,7 @@
     $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
   ::                                              
   ++  tap
-    =|  out/(list ship)
+    =|  out/(list @u)
     |-  ^+  out
     ?~  a  out
     $(a l.a, out (welp (gulf n.a) $(a r.a)))
@@ -1127,11 +1127,27 @@
   ++  burb                                              ::  per ship
     |=  who/ship
     ~(able ~(ex ur urb) who)
+  ::
+  ++  read-womb
+    |=  pax/path  ^-  (unit womb-scry)
+    ?~  pax  ~
+    ?+    i.pax  ~
+        $balance-all  ?^(t.pax ~ `[%balance-all ~])
+        $balance
+      %+  bind  (read t.pax %uv ~)
+      |=(a/passcode [%balance a])
+    ::
+        $shop
+      %+  biff  (read t.pax %tas %ud ~)
+      |=  {typ/term nth/@u}
+      ?.  ?=(?($star $planet) typ)  ~
+      `[%shop typ nth]
+    ==
   ::                                                    ::  ++scry:of
   ++  scry                                              ::  read
-    |=  {syd/@tas pax/path}  ^-  (unit (unit gilt))
-    ?+  syd  [~ ~]
-      $womb  ``[%ships ~]
+    |=  {syd/@tas pax/path}  ^-  (unit gilt)
+    ?+    syd  ~
+        $womb  (biff (read-womb pax) scry-womb:(burb our))
     ==
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
@@ -1989,6 +2005,59 @@
           (del-rite our [%hotel (as-hotel her.taz)])
         (add-rite her.taz [%final tik.taz])
       ==
+    ::                                                  ::  div-at-most:ex:ur
+    ++  div-at-most                                     ::  skip n ships
+      |=  {a/pile b/@u}  ^-  (pair pile pile)
+      (fall (~(div py a) b) [a *pile])
+    ::                                                  ::  scry-womb:ex:ur
+    ++  scry-womb                                       ::  read data
+      |=  req/womb-scry  ^-  (unit womb-gilt)
+      ?-    -.req
+      ::
+      ::  all invites
+      ::    {$balance-all $~}
+      ::
+          $balance-all
+        !!  ::  XX index which fakesubs are invites
+      ::
+      ::  invite details
+      ::    {$balance aut/passcode}
+      ::
+          $balance
+        %+  some  %womb-balance
+        %+  bind  (~(get by shy) (shaf %pass aut.req))
+        |=  a/safe  ^-  womb-balance
+        =/  who  :: XX deal with multiple emails?
+          =+  (need (~(expose up a) %email))
+          ?>  ?=({$email {@ $~ $~}} -)
+          n.p.-
+        =/  fun
+          =+  (fall (~(expose up a) %fungi) [%fungi p=~])
+          ?>  ?=($fungi -.-)
+          p.-
+        :+  who=who
+          pla=(fall (~(get by fun) %earl) 0)
+        sta=(fall (~(get by fun) %king) 0)
+      ::
+      ::  available ships
+      ::    {$shop typ/?($star $planet) nth/@u}
+      ::
+          $shop
+        =*  ships-per-shop  3
+        =*  skip-ships  (mul nth.req ships-per-shop)
+        ::
+        %+  some  %ships  ^-  (list ship)
+        =/  hot
+          =+  (fall (~(expose up (lawn rex)) %hotel) [%hotel p=~])
+          ?>  ?=($hotel -.-)
+          p.-
+        =/  syz/bloq  ?-(typ.req $star 3, $planet 4)
+        =/  pyl/pile  (fall (~(get by hot) [rex syz]) ~)
+        =.  pyl  q:(div-at-most pyl skip-ships)
+        =/  got  p:(div-at-most pyl ships-per-shop)
+        %+  turn  ~(tap py got)
+        |=(a/@u `ship`(rep syz ~[rex a]))
+      ==
     ::                                                  ::  grow:ex:ur
     ++  grow                                            ::  merge wills
       |=  $:  ::  vie: data source
@@ -2266,11 +2335,10 @@
   ^-  (unit (unit cage))
   :: XX security
   ?.  =(lot [%$ %da now])  ~
+  %-  some
   ?.  =(%x ren)  ~
   %+  bind  (~(scry of [now eny] lex) syd (flop tyl))
-  |=  a/(unit gilt)
-  %+  bind   a
-  |=(b/gilt [-.b (slot 3 (spec !>(b)))])
+  |=(a/gilt [-.a (slot 3 (spec !>(a)))])
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
   lex
