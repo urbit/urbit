@@ -1058,16 +1058,16 @@
   |_  pub/will
   ::                                                    ::  ++collate:we 
   ++  collate                                           ::  sort by version
-    |=  com/$-({{life cert} {life cert}} ?)
+    |=  ord/$-({{life cert} {life cert}} ?)
     ^-  (list (pair life cert))
-    (sort (~(tap by pub)) com)
+    (sort (~(tap by pub)) ord)
   ::                                                    ::  ++current:we
   ++  current                                           ::  current number
     ^-  (unit life)
     (bind instant |=((pair life cert) p))
   ::                                                    ::  ++forward:we
   ++  forward                                           ::  sort oldest first
-    (collate |=({a/{life *} b/{life *}} (lth -.a -.b)))
+    (collate |=({{a/life *} {b/life *}} (lth a b)))
   ::                                                    ::  ++instant:we
   ++  instant                                           ::  current cert
     ^-  (unit (pair life cert))
@@ -1075,7 +1075,7 @@
     ?~(- ~ `i)
   ::                                                    ::  ++reverse:we
   ++  reverse                                           ::  sort latest first
-    (collate |=({a/{life *} b/{life *}} (gth -.a -.b)))
+    (collate |=({{a/life *} {b/life *}} (gth a b)))
   --
 --
 ::                                                      ::::
