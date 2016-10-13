@@ -3864,52 +3864,247 @@
 ::
 ::::    %gall
   ::
-++  club                                                ::  agent action
-  $%  {$peel p/mark q/path}                             ::  translated peer
-      {$peer p/path}                                    ::  subscribe
-      {$poke p/cage}                                    ::  apply
-      {$puff p/mark q/noun}                             ::  unchecked poke
-      {$pull $~}                                        ::  unsubscribe
-      {$punk p/mark q/cage}                             ::  translated poke
-      {$pump $~}                                        ::  pump yes+no
-  ==                                                    ::
-++  cuft                                                ::  internal gift
-  $%  {$coup p/(unit tang)}                             ::  poke result
-      {$diff p/cage}                                    ::  subscription output
-      {$doff p/mark q/noun}                             ::  untyped diff
-      {$quit $~}                                        ::  close subscription
-      {$reap p/(unit tang)}                             ::  peer result
-  ==                                                    ::
-++  culm                                                ::  config action
-  $%  {$load p/scup}                                    ::  load+reload
-  ::  {$kick $~}                                        ::  restart everything
-  ::  {$stop $~}                                        ::  toggle suspend
-  ::  {$wipe $~}                                        ::  destroy all state
-  ==                                                    ::
-++  cush  (pair term club)                              ::  internal kiss
-++  dude  term                                          ::  server identity
-++  scup  (pair ship desk)                              ::  autoupdate
-++  well  (pair desk term)                              ::
-++  suss  (trel dude @tas @da)                          ::  config report
-::::                                                    ::
-++  kiss-gall                                           ::  incoming request
-  $%  {$conf p/dock q/culm}                             ::  configure app
-      {$init p/ship}                                    ::  set owner
-      {$deal p/sock q/cush}                             ::  full transmission
-      {$went p/sack q/path r/@ud s/coop}                ::  response confirm 
-      {$west p/sack q/path r/@ud s/*}                   ::  network request
-      {$wegh $~}                                        ::  report memory
-  ==                                                    ::
-++  gift-gall                                           ::  outgoing result
-  $%  {$mass p/mass}                                    ::  memory usage
-      {$onto p/(each suss tang)}                        ::  about agent
-      {$rend p/path q/*}                                ::  network request
-      {$unto p/cuft}                                    ::
-      {$mack p/(unit tang)}                             ::  message ack
-  ==                                                    ::
-++  gift-jael                                           ::
-  $%  {$clue p/ship q/pipe}                             ::
-  ==
+++  gall
+  ^?  |%
+  ++  club                                              ::  agent action
+    $%  {$peel p/mark q/path}                           ::  translated peer
+        {$peer p/path}                                  ::  subscribe
+        {$poke p/cage}                                  ::  apply
+        {$puff p/mark q/noun}                           ::  unchecked poke
+        {$pull $~}                                      ::  unsubscribe
+        {$punk p/mark q/cage}                           ::  translated poke
+        {$pump $~}                                      ::  pump yes+no
+    ==                                                  ::
+  ++  cuft                                              ::  internal gift
+    $%  {$coup p/(unit tang)}                           ::  poke result
+        {$diff p/cage}                                  ::  subscription output
+        {$doff p/mark q/noun}                           ::  untyped diff
+        {$quit $~}                                      ::  close subscription
+        {$reap p/(unit tang)}                           ::  peer result
+    ==                                                  ::
+  ++  culm                                              ::  config action
+    $%  {$load p/scup}                                  ::  load+reload
+    ::  {$kick $~}                                      ::  restart everything
+    ::  {$stop $~}                                      ::  toggle suspend
+    ::  {$wipe $~}                                      ::  destroy all state
+    ==                                                  ::
+  ++  cush  (pair term club)                            ::  internal kiss
+  ++  dude  term                                        ::  server identity
+  ++  scup  (pair ship desk)                            ::  autoupdate
+  ++  well  (pair desk term)                            ::
+  ++  suss  (trel dude @tas @da)                        ::  config report
+  ::::                                                  ::
+  ++  kiss                                              ::  incoming request
+    $%  {$conf p/dock q/culm}                           ::  configure app
+        {$init p/ship}                                  ::  set owner
+        {$deal p/sock q/cush}                           ::  full transmission
+        {$went p/sack q/path r/@ud s/coop}              ::  response confirm 
+        {$west p/sack q/path r/@ud s/*}                 ::  network request
+        {$wegh $~}                                      ::  report memory
+    ==                                                  ::
+  ++  gift                                              ::  outgoing result
+    $%  {$mass p/mass}                                  ::  memory usage
+        {$onto p/(each suss tang)}                      ::  about agent
+        {$rend p/path q/*}                              ::  network request
+        {$unto p/cuft}                                  ::
+        {$mack p/(unit tang)}                           ::  message ack
+    ==                                                  ::
+  --
+::
+::::
+  ::
+++  jael
+::                                                      ::
+::::                        ## jael.public              ::  certificates
+  ::                                                    ::::
+  ^?  |%
+      ::  the urbit meta-certificate (++will) is a sequence
+      ::  of certificates (++cert).  each cert in a will
+      ::  revokes and replaces the previous cert.  the
+      ::  version number of a ship is a ++life.
+      ::
+      ::  the deed contains an ++arms, a definition
+      ::  of cosmetic identity; a semi-trusted parent, 
+      ::  which signs the initial certificate and provides
+      ::  routing services; and a dirty bit.  if the dirty
+      ::  bit is set, the new life of this ship may have
+      ::  lost information that the old life had.
+    ::::
+  ++  arms  (map chip (pair @ta @t))                    ::  stated identity
+  ++  bull                                              ::  cert metadata
+    $:  dad/ship                                        ::  parent
+        dob/?                                           ::  & clean, | dirty
+        nym/arms                                        ::  identity strings
+    ==                                                  ::
+  ++  cert  (tale deed)                                 ::  signed deed
+  ++  chip                                              ::  standard identity
+    $?  $giv                                            ::  given name
+        $sur                                            ::  surname
+        $had                                            ::  fictitious name
+        $mid                                            ::  middle name 
+    ==                                                  ::
+  ++  deed                                              ::  certificate deed
+    $:  doc/bull                                        ::  metadata
+        pub/pass                                        ::  public key
+    ==                                                  ::
+  ++  farm  (map ship will)                             ::  pki dump set
+  ++  life  @ud                                         ::  ship version
+  ++  mind  {who/ship lyf/life}                         ::  key identifier
+  ++  name  (pair @ta @t)                               ::  ascii / unicode
+  ++  oath  @                                           ::  signature
+  ++  tale                                              ::  urbit-signed *
+    |*  typ/mold                                        ::  payload mold
+    $:  dat/typ                                         ::  data
+        syg/(map ship (pair life oath))                 ::  signatures
+    ==                                                  ::
+  ++  will  (map life cert)                             ::  meta-certificate
+::                                                    ::::
+::::                        ## jael.promise             ::  rights and promises
+  ::                                                    ::::
+      ::  %jael tracks promises (++rite) from ship to ship.
+      ::  a rite may be any right, badge, asset, secret, etc.
+      ::  un-shared secret or private asset is stored as a 
+      ::  rite from self to self.
+      ::
+      ::  each rite is really a class of rights, and often
+      ::  has its own internal set or map structure.
+      ::
+      ::  present kinds of rite:
+      ::
+      ::    %apple: application secret for a web api.
+      ::    %block: the promisee is banned.
+      ::    %email: email tied to promissee's ship.
+      ::    %final: ship/ticket pair, ready to launch.
+      ::    %fungi: fungible, countable asset.
+      ::    %guest: permission to adopt foreign child.
+      ::    %hotel: block of unissued children.
+      ::    %jewel: urbit private keys.
+      ::    %login: user's login passcode.
+      ::    %pword: password for a website/api.
+      ::    %token: user access token for a web api.
+      ::    %urban: symmetric key for urbit networking. 
+      ::
+      ::  %fungi keys can be anything, but don't reuse 
+      ::  currency codes.  codes for urbit invitations:
+      ::  %ugl == galaxy, %usr == star, %upl == planet
+    ::::
+  ++  bill  (pair @da @)                                ::  expiring value
+  ++  bump                                              ::  rights change
+    $:  mor/safe                                        ::  add rights
+        les/safe                                        ::  lose rights
+    ==                                                  ::
+  ++  dorm  (pair ship bloq)                            ::  issuing group
+  ++  pile  (tree (pair @ @))                           ::  efficient ship set
+  ++  rite                                              ::  urbit commitment
+    $%  {$apple p/(map site @)}                         ::  web api key
+        {$block $~}                                     ::  banned
+        {$email p/(set @ta)}                            ::  email addresses
+        {$final p/(map ship @pG)}                       ::  ticketed ships
+        {$fungi p/(map term @ud)}                       ::  fungibles
+        {$guest $~}                                     ::  refugee visa
+        {$hotel p/(map dorm pile)}                      ::  reserved block
+        {$jewel p/(map life ring)}                      ::  private keyring
+        {$login p/(set @pG)}                            ::  login secret
+        {$pword p/(map site (map @t @t))}               ::  web passwd by user
+        {$token p/(map site (map @t @t))}               ::  app tokens by user
+        {$urban p/(map hand bill)}                      ::  urbit symmetric keys
+    ==                                                  ::
+  ++  site  (list @ta)                                  ::  [%com %yahoo %www ~]
+  ++  safe  (tree rite)                                 ::  rights set
+::                                                    ::::
+::::                        ## 0.c                      ::  i/o
+  ::                                                    ::::
+      ::  %jael has two general kinds of task: changes
+      ::  and change subscriptions.
+      ::
+      ::  change tasks are designed to match high-level
+      ::  operations - for instance, we have %burn, %mint,
+      ::  and %move, not just a single delta operation.
+      ::  more of these operations will probably be added,
+      ::  and invariants enforced at transaction end.
+      ::
+      ::  subscriptions are also user-focused - for instance,
+      ::  %vein sends all the information needed to maintain
+      ::  the secure channel, both rights and certificates.
+      ::  the security-critical tasks (%veil, %vein, %vine)
+      ::  should probably be bound to a whitelisted duct set.
+      ::  (all secrets are redacted from %vest gifts.)
+      ::
+      ::  %jael only talks to %ames and %behn.  we send messages
+      ::  through %ames and use %behn timers.
+    ::::
+  ++  action                                            ::  balance change
+    %+  pair  ship                                      ::  partner
+    %+  each  bump                                      ::  &/liability change
+    bump                                                ::  |/asset change
+  ::                                                    ::
+  ++  balance                                           ::  balance sheet
+    %+  pair                                            ::  
+      (map ship safe)                                   ::  liabilities
+    (map ship safe)                                     ::  assets
+  ::                                                    ::
+  ++  change                                            ::  urbit change
+    $%  $:  $fact                                       ::  certificate change
+            rex/ship                                    ::  owner
+            vie/(unit (unit ship))                      ::  made/heard from
+            lyf/life                                    ::  deed added/modified
+            gan/growth                                  ::  info gained
+        ==                                              ::
+        $:  $rite                                       ::  rights change
+            rex/ship                                    ::  issuer
+            pal/ship                                    ::  issued to
+            del/bump                                    ::  change
+    ==  ==                                              ::
+  ::                                                    ::
+  ++  channel                                           ::  secure channel
+    $:  out/(unit (pair hand bill))                     ::  outbound key
+        inn/(map hand bill)                             ::  inbound keys
+        cur/(unit life)                                 ::  their version
+        sax/(list ship)                                 ::  their ancestry
+        pub/will                                        ::  their public keys
+     ==                                                 ::
+  ++  gift                                              ::  out result <-$
+    $?  {$veil p/channel}                               ::  secure channel
+        {$vest p/tally}                                 ::  balance update
+        {$vein p/life q/(map life ring)}                ::  private keys
+        {$vine p/(list change)}                         ::  all raw changes
+    ==                                                  ::
+  ++  growth                                            ::  unit of learning
+    $%  {$sign p/mind q/@}                              ::  add/update signature
+        {$step p/cert}                                  ::  add whole deed
+    ==                                                  ::
+  ++  note                                              ::  out request $->
+    $%  {$b $wait p/@da}                                ::  wait until
+        {$x $mess p/ship q/path r/*}                    ::  send message
+    ==                                                  ::
+  ++  remote                                            ::  remote notification
+    %+  each  safe                                      ::  &/addition
+    safe                                                ::  |/replacement
+  ::                                                    ::
+  ++  sign                                              ::  in result $<-
+    $%  {$b $wake $~}                                   ::  wakeup
+        {$x $rest p/coop}                               ::  message result
+    ==                                                  ::
+  ++  tally                                             ::  balance update
+    %+  each  balance                                   ::  complete
+    action                                              ::  change
+  ::
+  ++  task                                              ::  in request ->$
+    $%  {$burn p/ship q/safe}                           ::  destroy rights
+        {$hail p/ship q/remote}                         ::  remote update
+        {$init p/@pG q/arms}                            ::  initialize urbit
+        {$meet p/(unit (unit ship)) q/farm}             ::  integrate pki from
+        {$mint p/ship q/safe}                           ::  create rights
+        {$move p/ship q/ship r/safe}                    ::  transfer from/to
+        {$next p/bull}                                  ::  update private key
+        {$nuke $~}                                      ::  cancel tracker from
+        {$veil p/ship}                                  ::  view secret channel
+        {$vein $~}                                      ::  view signing keys
+        {$vest $~}                                      ::  view public balance
+        {$vine $~}                                      ::  view secret history
+        {$west p/ship q/path r/*}                       ::  remote request
+    ==                                                  ::
+  --
 ::
 ::::    %arvo
   ::
@@ -3919,7 +4114,7 @@
       gift-dill
       gift-eyre
       gift-ford
-      gift-gall
+      gift:gall
       gift-behn
   ==
 ++  kiss-arvo                                           ::  in request ->$
@@ -3928,7 +4123,7 @@
       kiss-dill
       kiss-eyre
       kiss-ford
-      kiss-gall
+      kiss:gall
       kiss-behn
   ==
 ++  note-arvo                                           ::  out request $->
@@ -3939,7 +4134,7 @@
       {$d kiss-dill}
       {$e kiss-eyre}
       {$f kiss-ford}
-      {$g kiss-gall}
+      {$g kiss:gall}
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift-ames}
@@ -3948,7 +4143,7 @@
       {$d gift-dill}
       {$e gift-eyre}
       {$f gift-ford}
-      {$g gift-gall}
-      {$j gift-jael}
+      {$g gift:gall}
+      {$j gift:jael}
   ==
 --
