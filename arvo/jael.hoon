@@ -209,7 +209,7 @@
       {$vein $~}                                        ::  view signing keys
       {$vest $~}                                        ::  view public balance
       {$vine $~}                                        ::  view secret history
-      {$womb p/womb-task}
+      {$jaelwomb p/womb-task}
       {$west p/ship q/path r/*}                         ::  remote request
   ==                                                    ::
 ++  ticket  @G                                          ::  old 64-bit ticket
@@ -1223,9 +1223,9 @@
     ::
     ::
     ::  extend our certificate with a new private key
-    ::    {$womb p/womb-task}
+    ::    {$jaelwomb p/womb-task}
     ::
-        $womb
+        $jaelwomb
       (cure abet:abet:(womb:(burb our) p.tac))
     ::
     ::  open secure channel
@@ -2308,7 +2308,7 @@
       ==
   =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task) p.q.hic)))
   ^-  {p/(list move) q/_..^$}
-  =^  did  lex  abet:~(call of [now eny] lex)
+  =^  did  lex  abet:(~(call of [now eny] lex) hen q.hic)
   [did ..^$]
 ::                                                      ::  ++doze
 ++  doze                                                ::  await
