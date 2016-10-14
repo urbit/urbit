@@ -11,6 +11,8 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
+=,  ^differ
+=,  differ
 =>  |%
 ++  cane                                                ::  change set
           $:  new/(map path lobe)                       ::  new files

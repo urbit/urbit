@@ -1113,7 +1113,7 @@
             {$txt $robots $~}
           :-  ~
           %^  resp  200  text+/plain
-          %-  role
+          %-  role:differ
           :~  'User-agent: *'
               'Disallow: '
           ==
