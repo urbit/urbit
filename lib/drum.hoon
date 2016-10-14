@@ -352,6 +352,9 @@
     (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
   ?~  wol  +>.^$
+  ?.  ((sane %t) (crip i.wol))  :: XX upstream validation
+    ~&  bad-text+<`*`i.wol>
+    $(wol t.wol)
   $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
 ::
 ++  se-join                                           ::  confirm connection
@@ -418,6 +421,9 @@
 ++  se-text                                           ::  return text
   |=  txt/tape
   ^+  +>
+  ?.  ((sane %t) (crip txt))  :: XX upstream validation
+    ~&  bad-text+<`*`txt>
+    +>
   ?.  se-ably  (se-talk [%leaf txt]~)
   (se-blit %out (tuba txt))
 ::
