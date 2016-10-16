@@ -2610,10 +2610,10 @@
 ++  sock  {p/ship q/ship}                               ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  {p/bray q/gens r/pass}                        ::  identity stage
-++  stub  (list (pair styd (list @c)))                  ::  styled tuba
-++  styd  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
+++  stub  (list (pair stye (list @c)))                  ::  styled tuba
+++  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
 ++  styl                                                ::
-  (pair (unit deco) (pair (unit tint) (unit tint)))     ::  cascading styd
+  (pair (unit deco) (pair (unit tint) (unit tint)))     ::  cascading stye
 ++  styx  (list $@(@t (pair styl styx)))                ::  styled text
 ++  suba  (list {p/path q/misu})                        ::  delta
 ++  tako  @                                             ::  yaki ref

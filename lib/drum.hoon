@@ -823,7 +823,7 @@
     ^-  (pair @ud stub)
     =;  vew/(pair (list @c) styx)
       =+  lin=(make:klr q.vew)
-      :_  (welp lin [*styd p.vew]~)
+      :_  (welp lin [*stye p.vew]~)
       (add pos.inp (roll (lnts:klr lin) add))
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
@@ -906,7 +906,7 @@
   |%
   ++  make                                            ::  stub from styx
     |=  a/styx
-    =|  b/styd
+    =|  b/stye
     %+  reel
     |-  ^-  stub
     %-  zing
@@ -922,7 +922,7 @@
              ?~(q.q.p.a q.q.b u.q.q.p.a)
     ==
     ::
-    |=  {a/(pair styd (list @c)) b/stub}
+    |=  {a/(pair stye (list @c)) b/stub}
     ?~  b
       [a]~
     ?.  =(p.a p.i.b)
@@ -932,7 +932,7 @@
   ++  lnts                                            ::  stub pair lengths
     |=  a/stub
     %+  turn  a
-    |=  a/(pair styd (list @c))
+    |=  a/(pair stye (list @c))
     %+  add
       (lent q.a)
     =+  d=~(wyt in p.p.a)
@@ -948,7 +948,7 @@
       `[i c]
     $(i +(i), b t.b)
   ::
-  ++  slag                                            ::  slag stub, keep styd
+  ++  slag                                            ::  slag stub, keep stye
     |=  {a/@ b/stub}
     ^-  stub
     =+  c=(lnts b)
@@ -961,7 +961,7 @@
     :_  r  :-  p.n
     (^slag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
   ::
-  ++  scag                                            ::  scag stub, keep styd
+  ++  scag                                            ::  scag stub, keep stye
     |=  {a/@ b/stub}
     ^-  stub
     =+  c=(lnts b)

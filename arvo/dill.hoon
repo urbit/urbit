@@ -204,7 +204,7 @@
           |=  a/stub
           %-  zing
           %+  turn  a
-          |=  a/(pair styd (list @c))
+          |=  a/(pair stye (list @c))
           ^-  (list @c)
           %-  zing  %-  limo
           :~  ?:  =(0 ~(wyt in p.p.a))
