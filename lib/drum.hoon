@@ -905,29 +905,27 @@
 ++  klr                                               ::  styx/stub engine
   |%
   ++  make                                            ::  stub from styx
-    |=  a/styx
+    |=  a/styx  ^-  stub
     =|  b/stye
     %+  reel
     |-  ^-  stub
-    %-  zing
-    %+  turn  a
+    %-  zing  %+  turn  a
     |=  a/$@(@t (pair styl styx))
-    ?@  a
-      [b (tuba (trip a))]~
-    %=  ^$
-      a  q.a
-      b  :+  ?~  p.p.a  p.b
-               ?~(u.p.p.a ~ (~(put in p.b) u.p.p.a))
-             ?~(p.q.p.a p.q.b u.p.q.p.a)
-             ?~(q.q.p.a q.q.b u.q.q.p.a)
-    ==
+    ?@  a  [b (tuba (trip a))]~
+    ^$(a q.a, b (styd p.a b))
     ::
     |=  {a/(pair stye (list @c)) b/stub}
-    ?~  b
-      [a]~
-    ?.  =(p.a p.i.b)
-      [a b]
+    ?~  b  [a ~]
+    ?.  =(p.a p.i.b)  [a b]
     [[p.a (weld q.a q.i.b)] t.b]
+  ::
+  ++  styd                                            ::  stye from styl
+    |=  {a/styl b/stye}  ^+  b                        ::  with inheritance
+    :+  ?~  p.a  p.b
+        ?~  u.p.a  ~
+        (~(put in p.b) u.p.a)
+     (fall p.q.a p.q.b)
+     (fall q.q.a q.q.b)
   ::
   ++  lent-stye
     |=  a/stub  ^-  @
