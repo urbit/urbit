@@ -12,8 +12,6 @@ import requests
 import argparse
 import base64
 
-PORT = os.environ.get('LENS_PORT', 12321)
-
 logging.basicConfig(level=logging.WARNING,
                     format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
                     stream=sys.stderr)
@@ -249,7 +247,31 @@ class sinkAction(argparse.Action):
         else:
             return {self.which: new_value}
 
+class FullPaths(argparse.Action):
+    """Expand user- and relative-paths"""
+    def __call__(self, parser, namespace, values, option_string=None):
+        if values != None:
+          setattr(namespace, self.dest, os.path.abspath(os.path.expanduser(values)))
+
+def is_dir(dirname):
+    """Checks if a path is an actual directory"""
+    if not os.path.isdir(dirname):
+        msg = "{0} is not a directory".format(dirname)
+        raise argparse.ArgumentTypeError(msg)
+    else:
+        return dirname
+
+def get_args():
+    """Get CLI arguments and options"""
+    parser = argparse.ArgumentParser(description="""do something""")
+
+    parser.add_argument('alignments', help="The folder of alignments",
+        action=FullPaths, type=is_dir)
+          
 parser = argparse.ArgumentParser(description='headless urbit')
+parser.add_argument('pier', nargs='?',
+                    help='target urbit directory',
+                    action=FullPaths, type=is_dir)
 parser.add_argument('-d', '--dojo', which='dojo',
                     metavar='command-line',
                     help='run dojo command',
@@ -333,6 +355,13 @@ if args.source is None:
 payload = {"source": args.source, "sink": args.sink}
 logging.debug(['payload', json.dumps(payload)])
 
+if args.pier is None:
+  PORT = os.environ.get('LENS_PORT', 12321)
+  logging.warn("No pier specified, looking on port " + str(PORT))
+else:
+  with open(args.pier + "/.urb/ports.json") as ports:
+    PORT = json.load(ports)["loopback"]
+               
 url = "http://localhost:%s" % PORT
 r = requests.post(url, data=json.dumps(payload))
 if r.text[0] == '"':
