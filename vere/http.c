@@ -1088,6 +1088,28 @@ _http_start(u3_http* htp_u)
   }
 }
 
+/* _http_write_ports_file(): update .urb/ports.json
+*/
+void
+_http_write_ports_file()
+{
+  c3_c jon_c[2048];
+  c3_i len_i;
+  u3_http* htp_u;
+
+  strcpy(jon_c,"{");
+  len_i = 1;
+  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+    len_i += sprintf(jon_c + len_i, "\"%s\":%d,",
+                     _(htp_u->lop) ? "loopback" :
+                     _(htp_u->sec) ? "\\\"secure\\\"" : "insecure",
+                     htp_u->por_w);
+  }
+  jon_c[len_i-1] = '}';
+  uL(fprintf(uH,"Interfaces: %s\n", jon_c));
+
+}
+
 /* u3_http_io_init(): initialize http I/O.
 */
 void
@@ -1159,6 +1181,8 @@ u3_http_io_talk()
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     _http_start(htp_u);
   }
+  
+  _http_write_ports_file();
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
