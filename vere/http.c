@@ -1094,19 +1094,45 @@ void
 _http_write_ports_file()
 {
   c3_c jon_c[2048];
-  c3_i len_i;
+  c3_i siz_i;
   u3_http* htp_u;
+  c3_c ful_c[2048];
+  c3_i ret_i;
+  c3_i fid_i;
 
   strcpy(jon_c,"{");
-  len_i = 1;
+  siz_i = 1;
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    len_i += sprintf(jon_c + len_i, "\"%s\":%d,",
+    siz_i += sprintf(jon_c + siz_i, "\"%s\":%d,",
                      _(htp_u->lop) ? "loopback" :
                      _(htp_u->sec) ? "\\\"secure\\\"" : "insecure",
                      htp_u->por_w);
   }
-  jon_c[len_i-1] = '}';
-  uL(fprintf(uH,"Interfaces: %s\n", jon_c));
+  jon_c[siz_i-1] = '}';
+
+  ret_i = snprintf(ful_c, 2048, "%s/.urb/ports.json", u3_Host.dir_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (fid_i = open(ful_c, O_CREAT | O_TRUNC | O_WRONLY, 0600)) < 0 ) {
+    uL(fprintf(uH, "http: could not open ports.json\n"));
+    perror("open");
+    u3_lo_bail();
+  }
+  if ( (ret_i = write(fid_i, jon_c, siz_i)) != siz_i ) {
+    uL(fprintf(uH, "http: could not write ports.json\n"));
+    if ( ret_i < 0 ) {
+      perror("write");
+    }
+    u3_lo_bail();
+  }
+  ret_i = c3_sync(fid_i);
+  if ( ret_i < 0 ) {
+    perror("sync");
+  }
+  ret_i = close(fid_i);
+  c3_assert(0 == ret_i);
+
+  uL(fprintf(uH,"http: written to %s\n", ful_c));
 
 }
 
