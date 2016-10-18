@@ -1109,6 +1109,7 @@ _http_write_ports_file()
                      htp_u->por_w);
   }
   jon_c[siz_i-1] = '}';
+  jon_c[siz_i] = 0; // probably unnecessary
 
   ret_i = snprintf(ful_c, 2048, "%s/.urb/ports.json", u3_Host.dir_c);
   c3_assert(ret_i < 2048);
