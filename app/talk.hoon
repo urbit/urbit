@@ -2183,8 +2183,6 @@
         =.  pal  ?:  =(who our.hid)  pal
                  (~(del in pal) [%& who (main who)])
         (weld ~(te-pref te man pal) txt)
-      ?:  oug
-        (weld "@ " txt)
       (weld " " txt)
     ::
         $app
