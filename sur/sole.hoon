@@ -46,7 +46,7 @@
 ++  sole-prompt                                         ::  prompt definition
   $:  vis/?                                             ::  command visible
       tag/term                                          ::  history mode
-      cad/tape                                          ::  caption
+      cad/styx                                          ::  caption
   ==                                                    ::
 ++  sole-share                                          ::  symmetric state
   $:  ven/sole-clock                                    ::  our vector clock

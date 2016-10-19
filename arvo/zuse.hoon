@@ -2761,6 +2761,7 @@
       {$hop p/@ud}                                      ::  set cursor position
       {$mor p/(list dill-blit)}                         ::  multiple blits
       {$pro p/(list @c)}                                ::  show as cursor+line
+      {$pom p/stub}                                     ::  styled prompt
       {$qit $~}                                         ::  close console
       {$out p/(list @c)}                                ::  send output line
       {$sag p/path q/*}                                 ::  save to jamfile
