@@ -572,7 +572,7 @@ _term_it_show_clear(u3_utty* uty_u)
 {
   if ( uty_u->tat_u.siz.col_l ) {
     _term_it_write_str(uty_u, "\r");
-    _term_it_write_txt(uty_u, uty_u->ufo_u.out.ed_y);
+    _term_it_write_txt(uty_u, uty_u->ufo_u.out.el_y);
 
     uty_u->tat_u.mir.len_w = 0;
     uty_u->tat_u.mir.cus_w = 0;
