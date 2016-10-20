@@ -1011,8 +1011,6 @@
       ::
       ++  who                                          ::  %who  
         |=  pan/(set partner)  ^+  ..sh-work  
-        =+  foo=`(list (pair partner atlas))`(~(tap by q.owners.she))
-        =+  bar=`(list (pair partner atlas))`(sort foo aor)
         =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
