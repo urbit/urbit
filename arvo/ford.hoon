@@ -3,7 +3,7 @@
 !?  164
 ::::
 |=  pit/vase   
-=,  differ-data
+=,  ^differ
 =,  differ
 =,  gall
 =>  =~

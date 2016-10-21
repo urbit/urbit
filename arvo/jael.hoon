@@ -13,17 +13,12 @@
       ::    - nice features:
       ::      - scry namespace
       ::      - task for converting invites to tickets
-      ::
-      ::    - restructuring
-      ::      - move section 0 to %zuse/%york once ready
     ::::
-::                                                      ::::
-::::                        #  0                        ::  public structures
-  ::                                                    ::::
 |=  pit/vase
+=,  crypto
 =,  jael
 ::                                                      ::::
-::::                        #  1                        ::  private structures
+::::                        #  1                        ::  models
   ::                                                    ::::
       ::  the %jael state comes in two parts: absolute
       ::  and relative.

@@ -3,6 +3,7 @@
 ::::
 |=  pit/vase
 =,  gall
+=,  crypto
 =>  =~
 |%                                                      ::  interfaces
 ++  gift  gift-eyre                                     ::  out result <-$

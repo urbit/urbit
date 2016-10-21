@@ -37,7 +37,7 @@
       ==
     ==
   ++  txt
-    (lore own)
+    (lore:differ own)
   --
 ++  grab
   |%                                            ::  convert from

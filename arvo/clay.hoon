@@ -31,7 +31,7 @@
 ++  kiss  kiss-clay                                     ::  in request ->$
 ++  mery                                                ::  merge state
           $:  sor/(pair ship desk)                      ::  merge source
-              hen/duct                                  ::  formal source
+              hen/duct                                  ::  formal cause
               gem/germ                                  ::  strategy
               wat/wait                                  ::  waiting on
               cas/case                                  ::  ali's case

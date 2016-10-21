@@ -2,26 +2,17 @@
 ::                                                      ::  !%reference
       ::
       ::  %zuse: standard library.
-      ::
-      ::  todo: 
       ::  
-      ::    - communication with other vanes:
-      ::      - actually use %behn for expiring secrets
-      ::      - report %ames propagation errors to user
-      ::
-      ::    - nice features:
-      ::      - scry namespace
-      ::      - task for converting invites to tickets
-      ::
-      ::    - restructuring
-      ::      - move section 0 to %zuse/%york once ready
     ::::
-::                                                      ::::
-::::                        #  0                        ::  public structures
-  ::                                                    ::::
 ~%  %zuse  +>  ~
 =>  
+::                                                      ::::
+::::                        #  1                        ::  models
+  ::                                                    ::::
 |%
+::                                                      ::
+::::                        ## 1.differ                 ::  hunt-mcilroy diff
+  ::                                                    ::::
 ++  differ
   ^?  |%
   ++  udal                                              ::  atomic change (%b)
@@ -57,10 +48,17 @@
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
   --
 --
+::                                                      ::::
+::::                        #  2                        ::  engines
+  ::                                                    ::::
 |%
+::                                                      ::
+::::                        ## 2.differ                 ::  hunt-mcilroy diff
+  ::                                                    ::::
 ++  differ
   =,  ^differ
   ^?  |%
+  ::                                                    ::  ++berk:differ
   ++  berk                                              ::  invert diff patch
     |*  bur/(urge)
     |-  ^+  bur
@@ -70,7 +68,7 @@
       $&  i.bur
       $|  [%| q.i.bur p.i.bur]
     ==
-  ::
+  ::                                                    ::  ++diff:differ
   ++  diff                                              ::  generate patch
     |=  pum/umph
     |=  {old/* new/*}  ^-  udon
@@ -82,7 +80,7 @@
       $c  =+  [hel=(lore ((hard @) old)) hev=(lore ((hard @) new))]
           [%c (lusk hel hev (loss hel hev))]
     ==
-  ::
+  ::                                                    ::  ++loss:differ
   ++  loss                                              ::  longest subsequence
     ~%  %loss  ..is  ~
     |*  {hel/(list) hev/(list)}
@@ -101,19 +99,24 @@
     =<  abet
     =<  main
     |%
+    ::                                                  ::  ++abet:loss:differ
     ++  abet                                            ::  subsequence
       ^+  hev
       ?:  =(0 p.gox)  ~
       (flop q:(need (~(get by q.gox) (dec p.gox))))
-    ::
+    ::                                                  ::  ++hink:loss:differ
     ++  hink                                            ::  extend fits top
       |=  {inx/@ud goy/@ud}  ^-  ?
-      |(=(p.gox inx) (lth goy p:(need (~(get by q.gox) inx))))
-    ::
+      ?|  =(p.gox inx) 
+          (lth goy p:(need (~(get by q.gox) inx)))
+      ==
+    ::                                                  ::  ++lonk:loss:differ
     ++  lonk                                            ::  extend fits bottom
       |=  {inx/@ud goy/@ud}  ^-  ?
-      |(=(0 inx) (gth goy p:(need (~(get by q.gox) (dec inx)))))
-    ::
+      ?|  =(0 inx) 
+          (gth goy p:(need (~(get by q.gox) (dec inx))))
+      ==
+    ::                                                  ::  ++luna:loss:differ
     ++  luna                                            ::  extend
       |=  {inx/@ud goy/@ud}
       ^+  +>
@@ -123,7 +126,7 @@
         %+  ~(put by q.gox)  inx
         [goy (snag goy hev) ?:(=(0 inx) ~ q:(need (~(get by q.gox) (dec inx))))]
       ==
-    ::
+    ::                                                  ::  ++merg:loss:differ
     ++  merg                                            ::  merge all matches
       |=  gay/(list @ud)
       ^+  +>
@@ -136,15 +139,15 @@
           $(inx +(inx), gay t.gay, zes [[inx i.gay] zes])
       |-  ^+  +>.^$
       ?~(zes +>.^$ $(zes t.zes, +>.^$ (luna i.zes)))
-    ::
-    ++  main
+    ::                                                  ::  ++main:loss:differ
+    ++  main                                            ::
       =+  hol=hel
       |-  ^+  +>
       ?~  hol  +>
       =+  guy=(~(get by sev) i.hol)
       $(hol t.hol, +> (merg (flop `(list @ud)`?~(guy ~ u.guy))))
     --
-  ::
+  ::                                                    ::  ++lore:differ
   ++  lore                                              ::  atom to line list
     ~%  %lore  ..is  ~
     |=  lub/@
@@ -163,7 +166,7 @@
       (flop ^+(tez [meg.wor tez]))
     ?:  =(0 lub)  (flop tez)
     $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
-  ::
+  ::                                                    ::  ++role:differ
   ++  role                                              ::  line list to atom
     |=  tez/(list @t)
     =|  {our/@ i/@ud}
@@ -175,7 +178,7 @@
       ?:  =(0 i)
         $(i +(i), tez t.tez, our i.tez)
       $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
-  ::
+  ::                                                    ::  ++lune:differ
   ++  lune                                              ::  cord by unix line
     ~%  %lune  ..is  ~
     |=  txt/@t
@@ -198,7 +201,7 @@
         off  0
       ==
     $(off +(off))
-  ::
+  ::                                                    ::  ++nule:differ
   ++  nule                                              ::  lines to unix cord
     ~%  %nule  ..is  ~
     |=  lin/(list @t)
@@ -207,7 +210,7 @@
     %+  turn  lin
     |=  t/@t
     [+((met 3 t)) (cat 3 t 10)]
-  ::
+  ::                                                    ::  ++lump:differ
   ++  lump                                              ::  apply patch
     |=  {don/udon src/*}
     ^-  *
@@ -224,13 +227,14 @@
       %-  role
       ?+  -.q.don  ~|(%unsupported !!)
         ::
-        ::  XX  these hards should not be needed; udon needs parameterized
+        ::  XX  these hards should not be needed; udon 
+        ::      should be parameterized
         ::
         $a  ((hard (list @t)) q.q.don)
         $c  ((hard (list @t)) (lurk `(list *)`dst p.q.don))
       ==
     ==
-  ::
+  ::                                                    ::  ++lure:differ
   ++  lure                                              ::  apply tree diff
     |=  {a/* b/upas}
     ^-  *
@@ -240,6 +244,7 @@
       $0  .*(a [0 p.b])
       $1  .*(a [1 p.b])
     ==
+  ::                                                    ::  ++limp:differ
   ++  limp                                              ::  invert patch
     |=  don/udon  ^-  udon
     :-  p.don
@@ -248,7 +253,7 @@
       $c  [%c (berk p.q.don)]
       $d  [%d q.q.don p.q.don]
     ==
-  ::
+  ::                                                    ::  ++hump:differ
   ++  hump                                              ::  general prepatch
     |=  {pum/umph src/*}  ^-  *
     ?+  pum  ~|(%unsupported !!)
@@ -256,7 +261,7 @@
       $b  (cue ((hard @) src))
       $c  (lore ((hard @) src))
     ==
-  ::
+  ::                                                    ::  ++husk:differ
   ++  husk                                              ::  unprepatch
     |=  {pum/umph dst/*}  ^-  *
     ?+  pum  ~|(%unsupported !!)
@@ -264,7 +269,7 @@
       $b  (jam dst)
       $c  (role ((hard (list @)) dst))
     ==
-  ::
+  ::                                                    ::  ++lurk:differ
   ++  lurk                                              ::  apply list patch
     |*  {hel/(list) rug/(urge)}
     ^+  hel
@@ -289,17 +294,21 @@
         war  (weld q.i.rug war)
       ==
     ==
-  ::
+  ::                                                    ::  ++lusk:differ
   ++  lusk                                              ::  lcs to list patch
     |*  {hel/(list) hev/(list) lcs/(list)}
     =+  ^=  rag
-        ^-  {$%({$& p/@ud} {$| p/_lcs q/_lcs})}      ::  XX translation
+        ^-  {$%({$& p/@ud} {$| p/_lcs q/_lcs})}
         [%& 0]
     =>  .(rag [p=rag q=*(list _rag)])
     =<  abet  =<  main
     |%
-    ++  abet  =.(q.rag ?:(=([& 0] p.rag) q.rag [p.rag q.rag]) (flop q.rag))
-    ++  done
+    ::                                                  ::  ++abet:lusk:differ
+    ++  abet                                            ::
+      =.  q.rag  ?:(=([& 0] p.rag) q.rag [p.rag q.rag])
+      (flop q.rag)
+    ::                                                  ::  ++done:lusk:differ
+    ++  done                                            ::
       |=  new/_p.rag
       ^+  rag
       ?-  -.p.rag
@@ -312,8 +321,8 @@
               $&  [[%& (add p.p.rag p.new)] q.rag]
             ==
       ==
-    ::
-    ++  main
+    ::                                                  ::  ++main:lusk:differ
+    ++  main                                            ::
       |-  ^+  +
       ?~  hel
         ?~  hev
@@ -331,10 +340,12 @@
         $(hel t.hel, rag (done %| [i.hel ~] ~))
       $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
     --
+  ::                                                    ::  ++nude:differ
   ++  nude                                              ::  tree change
     =<  |=  {a/* b/*}  ^-  {p/upas q/upas}
         [p=(tred a b) q=(tred b a)]
     |%
+    ::                                                  ::  ++axes:nude:differ
     ++  axes                                            ::  locs of nouns
       |=  {a/@ b/*}  ^-  (map * axis)
       =+  c=*(map * axis)
@@ -345,7 +356,7 @@
       %-  ~(uni by c)
       %-  ~(uni by $(a (mul 2 a), b -.b))
       $(a +((mul 2 a)), b +.b)
-    ::
+    ::                                                  ::  ++tred:nude:differ
     ++  tred                                            ::  diff a->b
       |=  {a/* b/*}  ^-  upas
       =|  c/(unit *)
@@ -363,1584 +374,1683 @@
       [%0 u.c]
     --
   --
-  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
-::::              chapter 3b, Arvo libraries            ::::
-::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bA, lite number theory       ::
-::
-++  fu                                                  ::  modulo (mul p q)
-  |=  a/{p/@ q/@}
-  =+  b=?:(=([0 0] a) 0 (~(inv fo p.a) (~(sit fo p.a) q.a)))
+::                                                      ::
+::::                        ## 2.number                 ::  misc number theory
+  ::                                                    ::::
+++  number
   |%
-  ++  dif
-    |=  {c/{@ @} d/{@ @}}
-    [(~(dif fo p.a) -.c -.d) (~(dif fo q.a) +.c +.d)]
-  ::
-  ++  exp
-    |=  {c/@ d/{@ @}}
-    :-  (~(exp fo p.a) (mod c (dec p.a)) -.d)
-    (~(exp fo q.a) (mod c (dec q.a)) +.d)
-  ::
-  ++  out                                               ::  garner's formula
-    |=  c/{@ @}
-    %+  add
-      +.c
-    (mul q.a (~(pro fo p.a) b (~(dif fo p.a) -.c (~(sit fo p.a) +.c))))
-  ::
-  ++  pro
-    |=  {c/{@ @} d/{@ @}}
-    [(~(pro fo p.a) -.c -.d) (~(pro fo q.a) +.c +.d)]
-  ::
-  ++  sum
-    |=  {c/{@ @} d/{@ @}}
-    [(~(sum fo p.a) -.c -.d) (~(sum fo q.a) +.c +.d)]
-  ::
-  ++  sit
-    |=  c/@
-    [(mod c p.a) (mod c q.a)]
-  --
-::
-++  pram                                                ::  rabin-miller
-  |=  a/@  ^-  ?
-  ?:  ?|  =(0 (end 0 1 a))
-          =(1 a)
-          =+  b=1
-          |-  ^-  ?
-          ?:  =(512 b)
-            |
-          ?|(=+(c=+((mul 2 b)) &(!=(a c) =(a (mul c (div a c))))) $(b +(b)))
-      ==
-    |
-  =+  ^=  b
-      =+  [s=(dec a) t=0]
-      |-  ^-  {s/@ t/@}
-      ?:  =(0 (end 0 1 s))
-        $(s (rsh 0 1 s), t +(t))
-      [s t]
-  ?>  =((mul s.b (bex t.b)) (dec a))
-  =+  c=0
-  |-  ^-  ?
-  ?:  =(c 64)
-    &
-  =+  d=(~(raw og (add c a)) (met 0 a))
-  =+  e=(~(exp fo a) s.b d)
-  ?&  ?|  =(1 e)
-          =+  f=0
-          |-  ^-  ?
-          ?:  =(e (dec a))
-            &
-          ?:  =(f (dec t.b))
-            |
-          $(e (~(pro fo a) e e), f +(f))
-      ==
-      $(c +(c))
-  ==
-::
-++  ramp                                                ::  make r-m prime
-  |=  {a/@ b/(list @) c/@}  ^-  @ux                     ::  {bits snags seed}
-  =>  .(c (shas %ramp c))
-  =+  d=*@
-  |-
-  ?:  =((mul 100 a) d)
-    ~|(%ar-ramp !!)
-  =+  e=(~(raw og c) a)
-  ?:  &((levy b |=(f/@ !=(1 (mod e f)))) (pram e))
-    e
-  $(c +(c), d (shax d))
-::
-++  curt                                                ::  curve25519
-  |=  {a/@ b/@}
-  =>  %=    .
-          +
-        =>  +
-        =+  =+  [p=486.662 q=(sub (bex 255) 19)]
-            =+  fq=~(. fo q)
-            [p=p q=q fq=fq]
-        |%
-        ++  cla
-          |=  raw/@
-          =+  low=(dis 248 (cut 3 [0 1] raw))
-          =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
-          =+  mid=(cut 3 [1 30] raw)
-          (can 3 [[1 low] [30 mid] [1 hih] ~])
-        ++  sqr  |=(a/@ (mul a a))
-        ++  inv  |=(a/@ (~(exp fo q) (sub q 2) a))
-        ++  cad
-          |=  {n/{x/@ z/@} m/{x/@ z/@} d/{x/@ z/@}}
-          =+  ^=  xx
-              ;:  mul  4  z.d
-                %-  sqr  %-  abs:si
-                %+  dif:si
-                  (sun:si (mul x.m x.n))
-                (sun:si (mul z.m z.n))
-              ==
-          =+  ^=  zz
-              ;:  mul  4  x.d
-                %-  sqr  %-  abs:si
-                %+  dif:si
-                  (sun:si (mul x.m z.n))
-                (sun:si (mul z.m x.n))
-              ==
-          [(sit.fq xx) (sit.fq zz)]
-        ++  cub
-          |=  {x/@ z/@}
-          =+  ^=  xx
-              %+  mul
-                %-  sqr  %-  abs:si
-                (dif:si (sun:si x) (sun:si z))
-              (sqr (add x z))
-          =+  ^=  zz
-              ;:  mul  4  x  z
-                :(add (sqr x) :(mul p x z) (sqr z))
-              ==
-          [(sit.fq xx) (sit.fq zz)]
-        --
-      ==
-  =+  one=[b 1]
-  =+  i=253
-  =+  r=one
-  =+  s=(cub one)
-  |-
-  ?:  =(i 0)
-    =+  x=(cub r)
-    (sit.fq (mul -.x (inv +.x)))
-  =+  m=(rsh 0 i a)
-  ?:  =(0 (mod m 2))
-     $(i (dec i), s (cad r s one), r (cub r))
-  $(i (dec i), r (cad r s one), s (cub s))
-::
-++  ed                                                  ::  ed25519
-  =>
-    =+  =+  [b=256 q=(sub (bex 255) 19)]
-        =+  fq=~(. fo q)
-        =+  ^=  l
-             %+  add
-               (bex 252)
-             27.742.317.777.372.353.535.851.937.790.883.648.493
-        =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
-        =+  ii=(exp.fq (div (dec q) 4) 2)
-        [b=b q=q fq=fq l=l d=d ii=ii]
-    ~%  %coed  +>  ~
+  ::                                                    ::  ++fu:number
+  ++  fu                                                ::  modulo (mul p q)
+    |=  a/{p/@ q/@}
+    =+  b=?:(=([0 0] a) 0 (~(inv fo p.a) (~(sit fo p.a) q.a)))
     |%
-    ++  norm  |=(x/@ ?:(=(0 (mod x 2)) x (sub q x)))
-    ::
-    ++  xrec                                            ::  recover x-coord
-      |=  y/@  ^-  @
-      =+  ^=  xx
-          %+  mul  (dif.fq (mul y y) 1)
-                   (inv.fq +(:(mul d y y)))
-      =+  x=(exp.fq (div (add 3 q) 8) xx)
-      ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
-        (norm (pro.fq x ii))
-      (norm x)
-    ::
-    ++  ward                                            ::  edwards multiply
-      |=  {pp/{@ @} qq/{@ @}}  ^-  {@ @}
-      =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
-      =+  ^=  xt
-          %+  pro.fq
-            %+  sum.fq
-              (pro.fq -.pp +.qq)
-            (pro.fq -.qq +.pp)
-          (inv.fq (sum.fq 1 dp))
-      =+  ^=  yt
-          %+  pro.fq
-            %+  sum.fq
-              (pro.fq +.pp +.qq)
-            (pro.fq -.pp -.qq)
-          (inv.fq (dif.fq 1 dp))
-      [xt yt]
-    ::
-    ++  scam                                            ::  scalar multiply
-      |=  {pp/{@ @} e/@}  ^-  {@ @}
-      ?:  =(0 e)
-        [0 1]
-      =+  qq=$(e (div e 2))
-      =>  .(qq (ward qq qq))
-      ?:  =(1 (dis 1 e))
-        (ward qq pp)
-      qq
-    ::
-    ++  etch                                            ::  encode point
-      |=  pp/{@ @}  ^-  @
-      (can 0 ~[[(sub b 1) +.pp] [1 (dis 1 -.pp)]])
-    ::
-    ++  curv                                            ::  point on curve?
-      |=  {x/@ y/@}  ^-  ?
-      .=  0
-          %+  dif.fq
-            %+  sum.fq
-              (pro.fq (sub q (sit.fq x)) x)
-            (pro.fq y y)
-          (sum.fq 1 :(pro.fq d x x y y))
-    ::
-    ++  deco                                            ::  decode point
-      |=  s/@  ^-  (unit {@ @})
-      =+  y=(cut 0 [0 (dec b)] s)
-      =+  si=(cut 0 [(dec b) 1] s)
-      =+  x=(xrec y)
-      =>  .(x ?:(!=(si (dis 1 x)) (sub q x) x))
-      =+  pp=[x y]
-      ?.  (curv pp)
-        ~
-      [~ pp]
-    ::
-    ++  bb
-      =+  bby=(pro.fq 4 (inv.fq 5))
-      [(xrec bby) bby]
+    ::                                                  ::  ++dif:fu:number
+    ++  dif                                             ::  subtract
+      |=  {c/{@ @} d/{@ @}}
+      [(~(dif fo p.a) -.c -.d) (~(dif fo q.a) +.c +.d)]
+    ::                                                  ::  ++exp:fu:number
+    ++  exp                                             ::  exponent
+      |=  {c/@ d/{@ @}}
+      :-  (~(exp fo p.a) (mod c (dec p.a)) -.d)
+      (~(exp fo q.a) (mod c (dec q.a)) +.d)
+    ::                                                  ::  ++out:fu:number
+    ++  out                                             ::  garner's formula
+      |=  c/{@ @}
+      %+  add  +.c
+      %+  mul  q.a
+      %+  ~(pro fo p.a)  b
+      (~(dif fo p.a) -.c (~(sit fo p.a) +.c))
+    ::                                                  ::  ++pro:fu:number   
+    ++  pro                                             ::  multiply
+      |=  {c/{@ @} d/{@ @}}
+      [(~(pro fo p.a) -.c -.d) (~(pro fo q.a) +.c +.d)]
+    ::                                                  ::  ++sum:fu:number
+    ++  sum                                             ::  add
+      |=  {c/{@ @} d/{@ @}}
+      [(~(sum fo p.a) -.c -.d) (~(sum fo q.a) +.c +.d)]
+    ::                                                  ::  ++sit:fu:number
+    ++  sit                                             ::  represent
+      |=  c/@
+      [(mod c p.a) (mod c q.a)]
+    --
+  ::                                                    ::  ++pram:number
+  ++  pram                                              ::  rabin-miller
+    |=  a/@  ^-  ?
+    ?:  ?|  =(0 (end 0 1 a))
+            =(1 a)
+            =+  b=1
+            |-  ^-  ?
+            ?:  =(512 b)
+              |
+            ?|(=+(c=+((mul 2 b)) &(!=(a c) =(a (mul c (div a c))))) $(b +(b)))
+        ==
+      |
+    =+  ^=  b
+        =+  [s=(dec a) t=0]
+        |-  ^-  {s/@ t/@}
+        ?:  =(0 (end 0 1 s))
+          $(s (rsh 0 1 s), t +(t))
+        [s t]
+    ?>  =((mul s.b (bex t.b)) (dec a))
+    =+  c=0
+    |-  ^-  ?
+    ?:  =(c 64)
+      &
+    =+  d=(~(raw og (add c a)) (met 0 a))
+    =+  e=(~(exp fo a) s.b d)
+    ?&  ?|  =(1 e)
+            =+  f=0
+            |-  ^-  ?
+            ?:  =(e (dec a))
+              &
+            ?:  =(f (dec t.b))
+              |
+            $(e (~(pro fo a) e e), f +(f))
+        ==
+        $(c +(c))
+    ==
+  ::                                                    ::  ++ramp:number
+  ++  ramp                                              ::  make r-m prime
+    |=  {a/@ b/(list @) c/@}  ^-  @ux                   ::  {bits snags seed}
+    =>  .(c (shas %ramp c))
+    =+  d=*@
+    |-
+    ?:  =((mul 100 a) d)
+      ~|(%ar-ramp !!)
+    =+  e=(~(raw og c) a)
+    ?:  &((levy b |=(f/@ !=(1 (mod e f)))) (pram e))
+      e
+    $(c +(c), d (shax d))
+  ::                                                    ::  ++curt:number
+  ++  curt                                              ::  curve25519
+    |=  {a/@ b/@}
+    =>  %=    .
+            +
+          =>  +
+          =+  =+  [p=486.662 q=(sub (bex 255) 19)]
+              =+  fq=~(. fo q)
+              [p=p q=q fq=fq]
+          |%
+          ++  cla
+            |=  raw/@
+            =+  low=(dis 248 (cut 3 [0 1] raw))
+            =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
+            =+  mid=(cut 3 [1 30] raw)
+            (can 3 [[1 low] [30 mid] [1 hih] ~])
+          ++  sqr  |=(a/@ (mul a a))
+          ++  inv  |=(a/@ (~(exp fo q) (sub q 2) a))
+          ++  cad
+            |=  {n/{x/@ z/@} m/{x/@ z/@} d/{x/@ z/@}}
+            =+  ^=  xx
+                ;:  mul  4  z.d
+                  %-  sqr  %-  abs:si
+                  %+  dif:si
+                    (sun:si (mul x.m x.n))
+                  (sun:si (mul z.m z.n))
+                ==
+            =+  ^=  zz
+                ;:  mul  4  x.d
+                  %-  sqr  %-  abs:si
+                  %+  dif:si
+                    (sun:si (mul x.m z.n))
+                  (sun:si (mul z.m x.n))
+                ==
+            [(sit.fq xx) (sit.fq zz)]
+          ++  cub
+            |=  {x/@ z/@}
+            =+  ^=  xx
+                %+  mul
+                  %-  sqr  %-  abs:si
+                  (dif:si (sun:si x) (sun:si z))
+                (sqr (add x z))
+            =+  ^=  zz
+                ;:  mul  4  x  z
+                  :(add (sqr x) :(mul p x z) (sqr z))
+                ==
+            [(sit.fq xx) (sit.fq zz)]
+          --
+        ==
+    =+  one=[b 1]
+    =+  i=253
+    =+  r=one
+    =+  s=(cub one)
+    |-
+    ?:  =(i 0)
+      =+  x=(cub r)
+      (sit.fq (mul -.x (inv +.x)))
+    =+  m=(rsh 0 i a)
+    ?:  =(0 (mod m 2))
+       $(i (dec i), s (cad r s one), r (cub r))
+    $(i (dec i), r (cad r s one), s (cub s))
+  ::                                                    ::  ++ed:number
+  ++  ed                                                ::  ed25519
+    =>
+      =+  =+  [b=256 q=(sub (bex 255) 19)]
+          =+  fq=~(. fo q)
+          =+  ^=  l
+               %+  add
+                 (bex 252)
+               27.742.317.777.372.353.535.851.937.790.883.648.493
+          =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
+          =+  ii=(exp.fq (div (dec q) 4) 2)
+          [b=b q=q fq=fq l=l d=d ii=ii]
+      ~%  %coed  +>  ~
+      |%
+      ::                                                ::  ++norm:ed:number
+      ++  norm                                          ::
+        |=(x/@ ?:(=(0 (mod x 2)) x (sub q x)))
+      ::                                                ::  ++xrec:ed:number
+      ++  xrec                                          ::  recover x-coord
+        |=  y/@  ^-  @
+        =+  ^=  xx
+            %+  mul  (dif.fq (mul y y) 1)
+                     (inv.fq +(:(mul d y y)))
+        =+  x=(exp.fq (div (add 3 q) 8) xx)
+        ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
+          (norm (pro.fq x ii))
+        (norm x)
+      ::                                                ::  ++ward:ed:number
+      ++  ward                                          ::  edwards multiply
+        |=  {pp/{@ @} qq/{@ @}}  ^-  {@ @}
+        =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
+        =+  ^=  xt
+            %+  pro.fq
+              %+  sum.fq
+                (pro.fq -.pp +.qq)
+              (pro.fq -.qq +.pp)
+            (inv.fq (sum.fq 1 dp))
+        =+  ^=  yt
+            %+  pro.fq
+              %+  sum.fq
+                (pro.fq +.pp +.qq)
+              (pro.fq -.pp -.qq)
+            (inv.fq (dif.fq 1 dp))
+        [xt yt]
+      ::                                                ::  ++scam:ed:number
+      ++  scam                                          ::  scalar multiply
+        |=  {pp/{@ @} e/@}  ^-  {@ @}
+        ?:  =(0 e)
+          [0 1]
+        =+  qq=$(e (div e 2))
+        =>  .(qq (ward qq qq))
+        ?:  =(1 (dis 1 e))
+          (ward qq pp)
+        qq
+      ::                                                ::  ++etch:ed:number
+      ++  etch                                          ::  encode point
+        |=  pp/{@ @}  ^-  @
+        (can 0 ~[[(sub b 1) +.pp] [1 (dis 1 -.pp)]])
+      ::                                                ::  ++curv:ed:number
+      ++  curv                                          ::  point on curve?
+        |=  {x/@ y/@}  ^-  ?
+        .=  0
+            %+  dif.fq
+              %+  sum.fq
+                (pro.fq (sub q (sit.fq x)) x)
+              (pro.fq y y)
+            (sum.fq 1 :(pro.fq d x x y y))
+      ::                                                ::  ++deco:ed:number
+      ++  deco                                          ::  decode point
+        |=  s/@  ^-  (unit {@ @})
+        =+  y=(cut 0 [0 (dec b)] s)
+        =+  si=(cut 0 [(dec b) 1] s)
+        =+  x=(xrec y)
+        =>  .(x ?:(!=(si (dis 1 x)) (sub q x) x))
+        =+  pp=[x y]
+        ?.  (curv pp)
+          ~
+        [~ pp]
+      ::                                                ::  ++bb:ed:number
+      ++  bb                                            ::
+        =+  bby=(pro.fq 4 (inv.fq 5))
+        [(xrec bby) bby]
+      ::
+      --
+    ~%  %ed  +>  ~
+    |%
+    ::                                                  ::  ++puck:ed:number
+    ++  puck                                            ::  public key
+      ~/  %puck
+      |=  sk/@I  ^-  @
+      ?:  (gth (met 3 sk) 32)  !!
+      =+  h=(shal (rsh 0 3 b) sk)
+      =+  ^=  a
+          %+  add
+            (bex (sub b 2))
+          (lsh 0 3 (cut 0 [3 (sub b 5)] h))
+      =+  aa=(scam bb a)
+      (etch aa)
+    ::                                                  ::  ++suck:ed:number
+    ++  suck                                            ::  keypair from seed
+      |=  se/@I  ^-  @uJ
+      =+  pu=(puck se)
+      (can 0 ~[[b se] [b pu]])
+    ::                                                  ::  ++shar:ed:number
+    ++  shar                                            ::  curve25519 secret
+      ~/  %shar
+      |=  {pub/@ sek/@}
+      ^-  @ux
+      =+  exp=(shal (rsh 0 3 b) (suck sek))
+      =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
+      =.  exp  (con exp (lsh 3 31 0b100.0000))
+      =+  prv=(end 8 1 exp)
+      =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
+      (curt prv crv)
+    ::                                                  ::  ++sign:ed:number
+    ++  sign                                            ::  certify
+      ~/  %sign
+      |=  {m/@ se/@}  ^-  @
+      =+  sk=(suck se)
+      =+  pk=(cut 0 [b b] sk)
+      =+  h=(shal (rsh 0 3 b) sk)
+      =+  ^=  a
+          %+  add
+            (bex (sub b 2))
+          (lsh 0 3 (cut 0 [3 (sub b 5)] h))
+      =+  ^=  r
+          =+  hm=(cut 0 [b b] h)
+          =+  ^=  i
+              %+  can  0
+              :~  [b hm]
+                  [(met 0 m) m]
+              ==
+          (shaz i)
+      =+  rr=(scam bb r)
+      =+  ^=  ss
+          =+  er=(etch rr)
+          =+  ^=  ha
+              %+  can  0
+              :~  [b er]
+                  [b pk]
+                  [(met 0 m) m]
+              ==
+          (~(sit fo l) (add r (mul (shaz ha) a)))
+      (can 0 ~[[b (etch rr)] [b ss]])
+    ::                                                  ::  ++veri:ed:number
+    ++  veri                                            ::  validate
+      ~/  %veri
+      |=  {s/@ m/@ pk/@}  ^-  ?
+      ?:  (gth (div b 4) (met 3 s))  |
+      ?:  (gth (div b 8) (met 3 pk))  |
+      =+  cb=(rsh 0 3 b)
+      =+  rr=(deco (cut 0 [0 b] s))
+      ?~  rr  |
+      =+  aa=(deco pk)
+      ?~  aa  |
+      =+  ss=(cut 0 [b b] s)
+      =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] [(met 3 m) m]])
+      =+  h=(shaz ha)
+      =((scam bb ss) (ward u.rr (scam u.aa h)))
     ::
     --
-  ~%  %ed  +  ~
-  |%
-  ++  puck                                              ::  public key
-    ~/  %puck
-    |=  sk/@I  ^-  @
-    ?:  (gth (met 3 sk) 32)  !!
-    =+  h=(shal (rsh 0 3 b) sk)
-    =+  ^=  a
-        %+  add
-          (bex (sub b 2))
-        (lsh 0 3 (cut 0 [3 (sub b 5)] h))
-    =+  aa=(scam bb a)
-    (etch aa)
-  ++  suck                                              ::  keypair from seed
-    |=  se/@I  ^-  @uJ
-    =+  pu=(puck se)
-    (can 0 ~[[b se] [b pu]])
-  ::
-  ++  shar                                              ::  curve25519 secret
-    ~/  %shar
-    |=  {pub/@ sek/@}
-    ^-  @ux
-    =+  exp=(shal (rsh 0 3 b) (suck sek))
-    =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
-    =.  exp  (con exp (lsh 3 31 0b100.0000))
-    =+  prv=(end 8 1 exp)
-    =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
-    (curt prv crv)
-  ::
-  ++  sign                                              ::  certify
-    ~/  %sign
-    |=  {m/@ se/@}  ^-  @
-    =+  sk=(suck se)
-    =+  pk=(cut 0 [b b] sk)
-    =+  h=(shal (rsh 0 3 b) sk)
-    =+  ^=  a
-        %+  add
-          (bex (sub b 2))
-        (lsh 0 3 (cut 0 [3 (sub b 5)] h))
-    =+  ^=  r
-        =+  hm=(cut 0 [b b] h)
-        =+  ^=  i
-            %+  can  0
-            :~  [b hm]
-                [(met 0 m) m]
-            ==
-        (shaz i)
-    =+  rr=(scam bb r)
-    =+  ^=  ss
-        =+  er=(etch rr)
-        =+  ^=  ha
-            %+  can  0
-            :~  [b er]
-                [b pk]
-                [(met 0 m) m]
-            ==
-        (~(sit fo l) (add r (mul (shaz ha) a)))
-    (can 0 ~[[b (etch rr)] [b ss]])
-  ::
-  ++  veri                                              ::  validate
-    ~/  %veri
-    |=  {s/@ m/@ pk/@}  ^-  ?
-    ?:  (gth (div b 4) (met 3 s))  |
-    ?:  (gth (div b 8) (met 3 pk))  |
-    =+  cb=(rsh 0 3 b)
-    =+  rr=(deco (cut 0 [0 b] s))
-    ?~  rr  |
-    =+  aa=(deco pk)
-    ?~  aa  |
-    =+  ss=(cut 0 [b b] s)
-    =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] [(met 3 m) m]])
-    =+  h=(shaz ha)
-    =((scam bb ss) (ward u.rr (scam u.aa h)))
-  ::
-  --
-::
-++  ga                                                  ::  GF (bex p.a)
-  |=  a/{p/@ q/@ r/@}                                   ::  dim poly gen
-  =+  si=(bex p.a)
-  =+  ma=(dec si)
-  =>  |%
-      ++  dif                                           ::  add and sub
-        |=  {b/@ c/@}
-        ~|  [%dif-ga a]
-        ?>  &((lth b si) (lth c si))
-        (mix b c)
-      ::
-      ++  dub                                           ::  mul by x
-        |=  b/@
-        ~|  [%dub-ga a]
-        ?>  (lth b si)
-        ?:  =(1 (cut 0 [(dec p.a) 1] b))
-          (dif (sit q.a) (sit (lsh 0 1 b)))
-        (lsh 0 1 b)
-      ::
-      ++  pro                                           ::  slow multiply
-        |=  {b/@ c/@}
-        ?:  =(0 b)
-          0
-        ?:  =(1 (dis 1 b))
-          (dif c $(b (rsh 0 1 b), c (dub c)))
-        $(b (rsh 0 1 b), c (dub c))
-      ::
-      ++  toe                                           ::  exp+log tables
-        =+  ^=  nu
-            |=  {b/@ c/@}
-            ^-  (map @ @)
-            =+  d=*(map @ @)
-            |-
-            ?:  =(0 c)
-              d
-            %=  $
-              c  (dec c)
-              d  (~(put by d) c b)
-            ==
-        =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
-        =+  [b=1 c=0]
-        |-  ^-  {p/(map @ @) q/(map @ @)}
-        ?:  =(ma c)
-          [(~(put by p) c b) q]
-        %=  $
-          b  (pro r.a b)
-          c  +(c)
-          p  (~(put by p) c b)
-          q  (~(put by q) b c)
-        ==
-      ::
-      ++  sit                                           ::  reduce
-        |=  b/@
-        (mod b (bex p.a))
-      --
-  =+  toe
-  |%
-  ++  fra                                               ::  divide
-    |=  {b/@ c/@}
-    (pro b (inv c))
-  ::
-  ++  inv                                               ::  invert
-    |=  b/@
-    ~|  [%inv-ga a]
-    =+  c=(~(get by q) b)
-    ?~  c  !!
-    =+  d=(~(get by p) (sub ma u.c))
-    (need d)
-  ::
-  ++  pow                                               ::  exponent
-    |=  {b/@ c/@}
-    =+  [d=1 e=c f=0]
-    |-
-    ?:  =(p.a f)
-      d
-    ?:  =(1 (cut 0 [f 1] b))
-      $(d (pro d e), e (pro e e), f +(f))
-    $(e (pro e e), f +(f))
-  ::
-  ++  pro                                               ::  multiply
-    |=  {b/@ c/@}
-    ~|  [%pro-ga a]
-    =+  d=(~(get by q) b)
-    ?~  d  0
-    =+  e=(~(get by q) c)
-    ?~  e  0
-    =+  f=(~(get by p) (mod (add u.d u.e) ma))
-    (need f)
-  --
-::
-++  scr                                                 ::  scrypt
-  ~%  %scr  +  ~
-  |%
-  ++  sal
-    |=  {x/@ r/@}                                       ::  salsa20 hash
-    ?>  =((mod r 2) 0)                                  ::  with r rounds
-    =+  few==>(fe .(a 5))
-    =+  ^=  rot
-      |=  {a/@ b/@}
-      (mix (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
-    =+  ^=  lea
-      |=  {a/@ b/@}
-      (net:few (sum:few (net:few a) (net:few b)))
+  ::                                                    ::  ++ga:number
+  ++  ga                                                ::  GF (bex p.a)
+    |=  a/{p/@ q/@ r/@}                                 ::  dim poly gen
+    =+  si=(bex p.a)
+    =+  ma=(dec si)
     =>  |%
-        ++  qr                                          ::  quarterround
-          |=  y/{@ @ @ @ $~}
-          =+  zb=(mix &2.y (rot 7 (sum:few &1.y &4.y)))
-          =+  zc=(mix &3.y (rot 9 (sum:few zb &1.y)))
-          =+  zd=(mix &4.y (rot 13 (sum:few zc zb)))
-          =+  za=(mix &1.y (rot 18 (sum:few zd zc)))
-          ~[za zb zc zd]
-        ++  rr                                          ::  rowround
-          |=  {y/(list @)}
-          =+  za=(qr ~[&1.y &2.y &3.y &4.y])
-          =+  zb=(qr ~[&6.y &7.y &8.y &5.y])
-          =+  zc=(qr ~[&11.y &12.y &9.y &10.y])
-          =+  zd=(qr ~[&16.y &13.y &14.y &15.y])
-          ^-  (list @)  :~
-            &1.za  &2.za  &3.za  &4.za
-            &4.zb  &1.zb  &2.zb  &3.zb 
-            &3.zc  &4.zc  &1.zc  &2.zc
-            &2.zd  &3.zd  &4.zd  &1.zd  ==
-        ++  cr                                          ::  columnround
-          |=  {x/(list @)}
-          =+  ya=(qr ~[&1.x &5.x &9.x &13.x])
-          =+  yb=(qr ~[&6.x &10.x &14.x &2.x])
-          =+  yc=(qr ~[&11.x &15.x &3.x &7.x])
-          =+  yd=(qr ~[&16.x &4.x &8.x &12.x])
-          ^-  (list @)  :~
-            &1.ya  &4.yb  &3.yc  &2.yd
-            &2.ya  &1.yb  &4.yc  &3.yd
-            &3.ya  &2.yb  &1.yc  &4.yd
-            &4.ya  &3.yb  &2.yc  &1.yd  ==
-        ++  dr                                          ::  doubleround
-          |=  {x/(list @)}
-          (rr (cr x))
-        ++  al                                          ::  add two lists
-          |=  {a/(list @) b/(list @)}
-          |-  ^-  (list @)
-          ?~  a  ~  ?~  b  ~
-          [i=(sum:few -.a -.b) t=$(a +.a, b +.b)]
-        --
-    =+  xw=(rpp 5 16 x)
-    =+  ^=  ow  |-  ^-  (list @)
-                ?~  r  xw
-                $(xw (dr xw), r (sub r 2))
-    (rep 5 (al xw ow))
-  ::
-  ++  rpp
-    |=  {a/bloq b/@ c/@}                                ::  rip w+filler blocks
-    =+  q=(rip a c)
-    =+  w=(lent q)
-    ?.  =(w b)
-      ?.  (lth w b)  (slag (sub w b) q)
-      ^+  q  (weld q (reap (sub b (lent q)) 0))
-    q
-  ::
-  ++  bls
-    |=  {a/@ b/(list @)}                                ::  split to sublists
-    ?>  =((mod (lent b) a) 0)
-    |-  ^-  (list (list @))
-    ?~  b  ~
-    [i=(scag a `(list @)`b) t=$(b (slag a `(list @)`b))]
-  ::
-  ++  slb
-    |=  {a/(list (list @))}
-    |-  ^-  (list @)
-    ?~  a  ~
-    (weld `(list @)`-.a $(a +.a))
-  ::
-  ++  sbm
-    |=  {r/@ b/(list @)}                                ::  scryptBlockMix
-    ?>  =((lent b) (mul 2 r))
-    =+  [x=(snag (dec (mul 2 r)) b) c=0]
-    =|  {ya/(list @) yb/(list @)}
-    |-  ^-  (list @)
-    ?~  b  (flop (weld yb ya))
-    =.  x  (sal (mix x -.b) 8)
-    ?~  (mod c 2)
-      $(c +(c), b +.b, ya [i=x t=ya])
-    $(c +(c), b +.b, yb [i=x t=yb])
-  ::
-  ++  srm
-    |=  {r/@ b/(list @) n/@}                            ::  scryptROMix
-    ?>  ?&  =((lent b) (mul 2 r))
-            =(n (bex (dec (xeb n))))
-            (lth n (bex (mul r 16)))
-        ==
-    =+  [v=*(list (list @)) c=0]
-    =.  v
-      |-  ^-  (list (list @))
-      =+  w=(sbm r b)
-      ?:  =(c n)  (flop v)
-      $(c +(c), v [i=[b] t=v], b w)
-    =+  x=(sbm r (snag (dec n) v))
-    |-  ^-  (list @)
-    ?:  =(c n)  x
-    =+  q=(snag (dec (mul r 2)) x)
-    =+  z=`(list @)`(snag (mod q n) v)
-    =+  ^=  w  |-  ^-  (list @)
-               ?~  x  ~  ?~  z  ~
-               [i=(mix -.x -.z) t=$(x +.x, z +.z)]
-    $(x (sbm r w), c +(c))
-  ::
-  ++  hmc
-    |=  {k/@ t/@}                                       ::  HMAC-SHA-256
-    (hml k (met 3 k) t (met 3 t))
-  ::
-  ++  hml
-    |=  {k/@ kl/@ t/@ tl/@}                             ::  w+length
-    =>  .(k (end 3 kl k), t (end 3 tl t))
-    =+  b=64
-    =.  k  ?.  (gth kl b)  k  (shay kl k)
-    =+  ^=  q  %+  shay  (add b tl)
-     (add (lsh 3 b t) (mix k (fil 3 b 0x36)))
-    %+  shay  (add b 32)
-    (add (lsh 3 b q) (mix k (fil 3 b 0x5c)))
-  ::
-  ++  pbk                                               :: PBKDF2-HMAC-SHA256
-    ~/  %pbk
-    |=  {p/@ s/@ c/@ d/@}
-    (pbl p (met 3 p) s (met 3 s) c d)
-  ::
-  ++  pbl                                               :: w+length
-    ~/  %pbl
-    |=  {p/@ pl/@ s/@ sl/@ c/@ d/@}
-    =>  .(p (end 3 pl p), s (end 3 sl s))
-    =+  h=32
-    ?>  ?&  (lte d (bex 30))                            :: max key length 1GB
-            (lte c (bex 28))                            :: max iterations 2^28
-            !=(c 0)
-        ==
-    =+  ^=  l  ?~  (mod d h)
-        (div d h)
-      +((div d h))
-    =+  r=(sub d (mul h (dec l)))
-    =+  [t=0 j=1 k=1]
-    =.  t  |-  ^-  @
-      ?:  (gth j l)  t
-      =+  u=(add s (lsh 3 sl (rep 3 (flop (rpp 3 4 j)))))
-      =+  f=0  =.  f  |-  ^-  @
-        ?:  (gth k c)  f
-        =+  q=(hml p pl u ?:(=(k 1) (add sl 4) h))
-        $(u q, f (mix f q), k +(k))
-      $(t (add t (lsh 3 (mul (dec j) h) f)), j +(j))
-    (end 3 d t)
-  ::
-  ++  hsh                                               ::  scrypt
-    ~/  %hsh
-    |=  {p/@ s/@ n/@ r/@ z/@ d/@}
-    (hsl p (met 3 p) s (met 3 s) n r z d)
-  ::
-  ++  hsl                                               ::  w+length
-    ~/  %hsl
-    |=  {p/@ pl/@ s/@ sl/@ n/@ r/@ z/@ d/@}
-    =|  v/(list (list @))
-    =>  .(p (end 3 pl p), s (end 3 sl s))
-    =+  u=(mul (mul 128 r) z)
-    ?>  ?&  =(n (bex (dec (xeb n))))                    ::  n is power of 2
-            !=(r 0)  !=(z 0)
-            %+  lte                                     ::  max 1GB memory
-                (mul (mul 128 r) (dec (add n z)))
-              (bex 30)
-            (lth pl (bex 31))
-            (lth sl (bex 31))
-        ==
-    =+  ^=  b  =+  (rpp 3 u (pbl p pl s sl 1 u))
-      %+  turn  (bls (mul 128 r) -)
-      |=(a/(list @) (rpp 9 (mul 2 r) (rep 3 a)))
-    ?>  =((lent b) z)
-    =+  ^=  q
-      =+  |-  ?~  b  (flop v)
-          $(b +.b, v [i=(srm r -.b n) t=v])
-      %+  turn  `(list (list @))`-
-      |=(a/(list @) (rpp 3 (mul 128 r) (rep 9 a)))
-    (pbl p pl (rep 3 (slb q)) u 1 d)
-  ::
-  ++  ypt                                               ::  256bit {salt pass}
-    |=  {s/@ p/@}
-    ^-  @
-    (hsh p s 16.384 8 1 256)
-  --
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bB, crypto                   ::
-::
-++  aes  !.
-  ~%  %aes  ..is  ~
-  |%
-  ++  ahem                                              ::  AES engine
-    |=  {nnk/@ nnb/@ nnr/@}
-    =>
-      =+  =>  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
-          [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
-      =>  |%
-          ++  cipa                                      ::  AES params
-            $_  ^?  |%
-            ++  co  *{p/@ q/@ r/@ s/@}                  ::  col coefs
-            ++  ix  |~(a/@ *@)                          ::  key index
-            ++  ro  *{p/@ q/@ r/@ s/@}                  ::  row shifts
-            ++  su  *@                                  ::  s-box
-            --
-          --
-      |%
-      ++  pen                                           ::  encrypt
-        ^-  cipa
-        |%
-        ++  co  [0x2 0x3 1 1]
-        ++  ix  |~(a/@ a)
-        ++  ro  [0 1 2 3]
-        ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
-                  df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
-                  9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
-                  8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
-                  08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
-                  79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
-                  db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
-                  7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
-                  d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
-                  a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
-                  cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
-                  842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
-                  75b2.27eb.e280.1207.9a05.9618.c323.c704.
-                  1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
-                  c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
-                  76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
-        --
-      ::
-      ++  pin                                           :: decrypt
-        ^-  cipa
-        |%
-        ++  co  [0xe 0xb 0xd 0x9]
-        ++  ix  |~(a/@ (sub nnr a))
-        ++  ro  [0 3 2 1]
-        ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
-                  6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
-                  ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
-                  5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
-                  f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
-                  1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
-                  6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
-                  73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
-                  6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
-                  0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
-                  849d.8da7.5746.155e.dab9.edfd.5048.706c.
-                  92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
-                  25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
-                  4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
-                  cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
-                  fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
-        --
-      ::
-      ++  mcol
-        |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  ^-  (list @)
-        =+  c=[p=*@ q=*@ r=*@ s=*@]
-        |-  ^-  (list @)
-        ?~  a  ~
-        =>  .(p.c (cut 3 [0 1] i.a))
-        =>  .(q.c (cut 3 [1 1] i.a))
-        =>  .(r.c (cut 3 [2 1] i.a))
-        =>  .(s.c (cut 3 [3 1] i.a))
-        :_  $(a t.a)
-        %+  rep  3
-        %+  turn
-          %-  limo
-          :~  [[p.c p.b] [q.c q.b] [r.c r.b] [s.c s.b]]
-              [[p.c s.b] [q.c p.b] [r.c q.b] [s.c r.b]]
-              [[p.c r.b] [q.c s.b] [r.c p.b] [s.c q.b]]
-              [[p.c q.b] [q.c r.b] [r.c s.b] [s.c p.b]]
-          ==
-        |=  {a/{@ @} b/{@ @} c/{@ @} d/{@ @}}
-        :(dif (pro a) (pro b) (pro c) (pro d))
-      ::
-      ++  pode                                          ::  explode to block
-        |=  {a/bloq b/@ c/@}  ^-  (list @)
-        =+  d=(rip a c)
-        =+  m=(met a c)
-        |-
-        ?:  =(m b)
-          d
-        $(m +(m), d (weld d (limo [0 ~])))
-      ++  sube                                          ::  s-box word
-        |=  {a/@ b/@}  ^-  @
-        (rep 3 (turn (pode 3 4 a) |=(c/@ (cut 3 [c 1] b))))
-      --
-    |%
-    ++  be                                              ::  block cipher
-      |=  {a/? b/@ c/@H}  ^-  @uxH
-      ~|  %be-aesc
-      =>  %=    .
-              +
-            =>  +
-            |%
-            ++  ankh
-              |=  {a/cipa b/@ c/@}
-              (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
-            ++  sark
-              |=  {c/(list @) d/(list @)}  ^-  (list @)
-              ?~  c  ~
-              ?~  d  !!
-              [(mix i.c i.d) $(c t.c, d t.d)]
-            ++  srow
-              |=  {a/cipa b/(list @)}  ^-  (list @)
-              =+  [c=0 d=~ e=ro.a]
+        ::                                              ::  ++dif:ga:number
+        ++  dif                                         ::  add and sub
+          |=  {b/@ c/@}
+          ~|  [%dif-ga a]
+          ?>  &((lth b si) (lth c si))
+          (mix b c)
+        ::                                              ::  ++dub:ga:number
+        ++  dub                                         ::  mul by x
+          |=  b/@
+          ~|  [%dub-ga a]
+          ?>  (lth b si)
+          ?:  =(1 (cut 0 [(dec p.a) 1] b))
+            (dif (sit q.a) (sit (lsh 0 1 b)))
+          (lsh 0 1 b)
+        ::                                              ::  ++pro:ga:number
+        ++  pro                                         ::  slow multiply
+          |=  {b/@ c/@}
+          ?:  =(0 b)
+            0
+          ?:  =(1 (dis 1 b))
+            (dif c $(b (rsh 0 1 b), c (dub c)))
+          $(b (rsh 0 1 b), c (dub c))
+        ::                                              ::  ++toe:ga:number
+        ++  toe                                         ::  exp+log tables
+          =+  ^=  nu
+              |=  {b/@ c/@}
+              ^-  (map @ @)
+              =+  d=*(map @ @)
               |-
-              ?:  =(c nnb)
+              ?:  =(0 c)
                 d
-              :_  $(c +(c))
-              %+  rep  3
-              %+  turn
-                (limo [0 p.e] [1 q.e] [2 r.e] [3 s.e] ~)
-              |=  {f/@ g/@}
-              (cut 3 [f 1] (snag (mod (add g c) nnb) b))
-            ++  subs
-              |=  {a/cipa b/(list @)}  ^-  (list @)
-              ?~  b  ~
-              [(sube i.b su.a) $(b t.b)]
-            --
+              %=  $
+                c  (dec c)
+                d  (~(put by d) c b)
+              ==
+          =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
+          =+  [b=1 c=0]
+          |-  ^-  {p/(map @ @) q/(map @ @)}
+          ?:  =(ma c)
+            [(~(put by p) c b) q]
+          %=  $
+            b  (pro r.a b)
+            c  +(c)
+            p  (~(put by p) c b)
+            q  (~(put by q) b c)
           ==
-      =+  [d=?:(a pen pin) e=(pode 5 nnb c) f=1]
-      =>  .(e (sark e (ankh d 0 b)))
+        ::                                              ::  ++sit:ga:number
+        ++  sit                                         ::  reduce
+          |=  b/@
+          (mod b (bex p.a))
+        --
+    =+  toe
+    |%
+    ::                                                  ::  ++fra:ga:number
+    ++  fra                                             ::  divide
+      |=  {b/@ c/@}
+      (pro b (inv c))
+    ::                                                  ::  ++inv:ga:number
+    ++  inv                                             ::  invert
+      |=  b/@
+      ~|  [%inv-ga a]
+      =+  c=(~(get by q) b)
+      ?~  c  !!
+      =+  d=(~(get by p) (sub ma u.c))
+      (need d)
+    ::                                                  ::  ++pow:ga:number
+    ++  pow                                             ::  exponent
+      |=  {b/@ c/@}
+      =+  [d=1 e=c f=0]
       |-
-      ?.  =(nnr f)
+      ?:  =(p.a f)
+        d
+      ?:  =(1 (cut 0 [f 1] b))
+        $(d (pro d e), e (pro e e), f +(f))
+      $(e (pro e e), f +(f))
+    ::                                                  ::  ++pro:ga:number
+    ++  pro                                             ::  multiply
+      |=  {b/@ c/@}
+      ~|  [%pro-ga a]
+      =+  d=(~(get by q) b)
+      ?~  d  0
+      =+  e=(~(get by q) c)
+      ?~  e  0
+      =+  f=(~(get by p) (mod (add u.d u.e) ma))
+      (need f)
+    --
+  ::                                                    ::  ++scr:number
+  ++  scr                                               ::  scrypt
+    ~%  %scr  +>  ~
+    |%
+    ::                                                  ::  ++sal:scr:number
+    ++  sal                                             ::  salsa20 hash
+      |=  {x/@ r/@}                                     ::  with r rounds
+      ?>  =((mod r 2) 0)                                ::
+      =+  few==>(fe .(a 5))
+      =+  ^=  rot
+        |=  {a/@ b/@}
+        (mix (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
+      =+  ^=  lea
+        |=  {a/@ b/@}
+        (net:few (sum:few (net:few a) (net:few b)))
+      =>  |%
+          ::                                            ::  ++qr:sal:scr:number
+          ++  qr                                        ::  quarterround
+            |=  y/{@ @ @ @ $~}
+            =+  zb=(mix &2.y (rot 7 (sum:few &1.y &4.y)))
+            =+  zc=(mix &3.y (rot 9 (sum:few zb &1.y)))
+            =+  zd=(mix &4.y (rot 13 (sum:few zc zb)))
+            =+  za=(mix &1.y (rot 18 (sum:few zd zc)))
+            ~[za zb zc zd]
+          ::                                            ::  ++rr:sal:scr:number
+          ++  rr                                        ::  rowround
+            |=  {y/(list @)}
+            =+  za=(qr ~[&1.y &2.y &3.y &4.y])
+            =+  zb=(qr ~[&6.y &7.y &8.y &5.y])
+            =+  zc=(qr ~[&11.y &12.y &9.y &10.y])
+            =+  zd=(qr ~[&16.y &13.y &14.y &15.y])
+            ^-  (list @)  :~
+              &1.za  &2.za  &3.za  &4.za
+              &4.zb  &1.zb  &2.zb  &3.zb 
+              &3.zc  &4.zc  &1.zc  &2.zc
+              &2.zd  &3.zd  &4.zd  &1.zd  ==
+          ::                                            ::  ++cr:sal:scr:number
+          ++  cr                                        ::  columnround
+            |=  {x/(list @)}
+            =+  ya=(qr ~[&1.x &5.x &9.x &13.x])
+            =+  yb=(qr ~[&6.x &10.x &14.x &2.x])
+            =+  yc=(qr ~[&11.x &15.x &3.x &7.x])
+            =+  yd=(qr ~[&16.x &4.x &8.x &12.x])
+            ^-  (list @)  :~
+              &1.ya  &4.yb  &3.yc  &2.yd
+              &2.ya  &1.yb  &4.yc  &3.yd
+              &3.ya  &2.yb  &1.yc  &4.yd
+              &4.ya  &3.yb  &2.yc  &1.yd  ==
+          ::                                            ::  ++dr:sal:scr:number
+          ++  dr                                        ::  doubleround
+            |=  {x/(list @)}
+            (rr (cr x))
+          ::                                            ::  ++al:sal:scr:number
+          ++  al                                        ::  add two lists
+            |=  {a/(list @) b/(list @)}
+            |-  ^-  (list @)
+            ?~  a  ~  ?~  b  ~
+            [i=(sum:few -.a -.b) t=$(a +.a, b +.b)]
+          --
+      =+  xw=(rpp 5 16 x)
+      =+  ^=  ow  |-  ^-  (list @)
+                  ?~  r  xw
+                  $(xw (dr xw), r (sub r 2))
+      (rep 5 (al xw ow))
+    ::
+    ++  rpp                                             ::  ++rpp:scr:number
+      |=  {a/bloq b/@ c/@}                              ::  rip+filler blocks
+      =+  q=(rip a c)
+      =+  w=(lent q)
+      ?.  =(w b)
+        ?.  (lth w b)  (slag (sub w b) q)
+        ^+  q  (weld q (reap (sub b (lent q)) 0))
+      q
+    ::                                                  ::  ++bls:scr:number
+    ++  bls                                             ::  split to sublists
+      |=  {a/@ b/(list @)}                                
+      ?>  =((mod (lent b) a) 0)
+      |-  ^-  (list (list @))
+      ?~  b  ~
+      [i=(scag a `(list @)`b) t=$(b (slag a `(list @)`b))]
+    ::                                                  ::  ++slb:scr:number
+    ++  slb                                             ::
+      |=  {a/(list (list @))} 
+      |-  ^-  (list @)
+      ?~  a  ~
+      (weld `(list @)`-.a $(a +.a))
+    ::                                                  ::  ++sbm:scr:number
+    ++  sbm                                             ::  scryptBlockMix
+      |=  {r/@ b/(list @)}
+      ?>  =((lent b) (mul 2 r))
+      =+  [x=(snag (dec (mul 2 r)) b) c=0]
+      =|  {ya/(list @) yb/(list @)}
+      |-  ^-  (list @)
+      ?~  b  (flop (weld yb ya))
+      =.  x  (sal (mix x -.b) 8)
+      ?~  (mod c 2)
+        $(c +(c), b +.b, ya [i=x t=ya])
+      $(c +(c), b +.b, yb [i=x t=yb])
+    ::                                                  ::  ++srm:scr:number
+    ++  srm                                             ::  scryptROMix
+      |=  {r/@ b/(list @) n/@}                            
+      ?>  ?&  =((lent b) (mul 2 r))
+              =(n (bex (dec (xeb n))))
+              (lth n (bex (mul r 16)))
+          ==
+      =+  [v=*(list (list @)) c=0]
+      =.  v
+        |-  ^-  (list (list @))
+        =+  w=(sbm r b)
+        ?:  =(c n)  (flop v)
+        $(c +(c), v [i=[b] t=v], b w)
+      =+  x=(sbm r (snag (dec n) v))
+      |-  ^-  (list @)
+      ?:  =(c n)  x
+      =+  q=(snag (dec (mul r 2)) x)
+      =+  z=`(list @)`(snag (mod q n) v)
+      =+  ^=  w  |-  ^-  (list @)
+                 ?~  x  ~  ?~  z  ~
+                 [i=(mix -.x -.z) t=$(x +.x, z +.z)]
+      $(x (sbm r w), c +(c))
+    ::                                                  ::  ++hmc:scr:number
+    ++  hmc                                             ::  HMAC-SHA-256
+      |=  {k/@ t/@}
+      (hml k (met 3 k) t (met 3 t))
+    ::                                                  ::  ++hml:scr:number
+    ++  hml                                             ::  w+length 
+      |=  {k/@ kl/@ t/@ tl/@}
+      =>  .(k (end 3 kl k), t (end 3 tl t))
+      =+  b=64
+      =.  k  ?.  (gth kl b)  k  (shay kl k)
+      =+  ^=  q  %+  shay  (add b tl)
+       (add (lsh 3 b t) (mix k (fil 3 b 0x36)))
+      %+  shay  (add b 32)
+      (add (lsh 3 b q) (mix k (fil 3 b 0x5c)))
+    ::                                                  ::  ++pbk:scr:number
+    ++  pbk                                             :: PBKDF2-HMAC-SHA256
+      ~/  %pbk
+      |=  {p/@ s/@ c/@ d/@}
+      (pbl p (met 3 p) s (met 3 s) c d)
+    ::                                                  ::  ++pbl:scr:number
+    ++  pbl                                             ::  w+length
+      ~/  %pbl
+      |=  {p/@ pl/@ s/@ sl/@ c/@ d/@}
+      =>  .(p (end 3 pl p), s (end 3 sl s))
+      =+  h=32
+      ::
+      ::  max key length 1GB
+      ::  max iterations 2^28
+      ::
+      ?>  ?&  (lte d (bex 30))
+              (lte c (bex 28))
+              !=(c 0)
+          ==
+      =+  ^=  l  ?~  (mod d h)
+          (div d h)
+        +((div d h))
+      =+  r=(sub d (mul h (dec l)))
+      =+  [t=0 j=1 k=1]
+      =.  t  |-  ^-  @
+        ?:  (gth j l)  t
+        =+  u=(add s (lsh 3 sl (rep 3 (flop (rpp 3 4 j)))))
+        =+  f=0  =.  f  |-  ^-  @
+          ?:  (gth k c)  f
+          =+  q=(hml p pl u ?:(=(k 1) (add sl 4) h))
+          $(u q, f (mix f q), k +(k))
+        $(t (add t (lsh 3 (mul (dec j) h) f)), j +(j))
+      (end 3 d t)
+    ::                                                  ::  ++hsh:scr:number
+    ++  hsh                                             ::  scrypt
+      ~/  %hsh
+      |=  {p/@ s/@ n/@ r/@ z/@ d/@}
+      (hsl p (met 3 p) s (met 3 s) n r z d)
+    ::                                                  ::  ++hsl:scr:number
+    ++  hsl                                             ::  w+length
+      ~/  %hsl
+      |=  {p/@ pl/@ s/@ sl/@ n/@ r/@ z/@ d/@}
+      =|  v/(list (list @))
+      =>  .(p (end 3 pl p), s (end 3 sl s))
+      =+  u=(mul (mul 128 r) z)
+      ::
+      ::  n is power of 2; max 1GB memory
+      ::
+      ?>  ?&  =(n (bex (dec (xeb n))))
+              !=(r 0)  !=(z 0)
+              %+  lte
+                  (mul (mul 128 r) (dec (add n z)))
+                (bex 30)
+              (lth pl (bex 31))
+              (lth sl (bex 31))
+          ==
+      =+  ^=  b  =+  (rpp 3 u (pbl p pl s sl 1 u))
+        %+  turn  (bls (mul 128 r) -)
+        |=(a/(list @) (rpp 9 (mul 2 r) (rep 3 a)))
+      ?>  =((lent b) z)
+      =+  ^=  q
+        =+  |-  ?~  b  (flop v)
+            $(b +.b, v [i=(srm r -.b n) t=v])
+        %+  turn  `(list (list @))`-
+        |=(a/(list @) (rpp 3 (mul 128 r) (rep 9 a)))
+      (pbl p pl (rep 3 (slb q)) u 1 d)
+    ::                                                  ::  ypt:scr:number
+    ++  ypt                                             ::  256bit {salt pass}
+      |=  {s/@ p/@}
+      ^-  @
+      (hsh p s 16.384 8 1 256)
+    --
+  --
+::                                                      ::
+::::                        ## 2.crypto                 ::  crypto standards
+  ::                                                    ::::
+++  crypto
+  =,  number
+  ^?  |%
+  ++  aes  !.
+    ~%  %aes  ..is  ~
+    |%
+    ::                                                  ::  ++ahem:aes:crypto
+    ++  ahem                                            ::  AES engine
+      |=  {nnk/@ nnb/@ nnr/@}
+      =>
+        =+  =>  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
+            [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
+        =>  |%
+            ++  cipa                                    ::  AES params
+              $_  ^?  |%
+              ++  co  *{p/@ q/@ r/@ s/@}                ::  col coefs
+              ++  ix  |~(a/@ *@)                        ::  key index
+              ++  ro  *{p/@ q/@ r/@ s/@}                ::  row shifts
+              ++  su  *@                                ::  s-box
+              --
+            --
+        |%
+        ::                                              ::  ++pen:aes:crypto
+        ++  pen                                         ::  encrypt
+          ^-  cipa
+          |%
+          ++  co  [0x2 0x3 1 1]
+          ++  ix  |~(a/@ a)
+          ++  ro  [0 1 2 3]
+          ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
+                    df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
+                    9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
+                    8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
+                    08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
+                    79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
+                    db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
+                    7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
+                    d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
+                    a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
+                    cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
+                    842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
+                    75b2.27eb.e280.1207.9a05.9618.c323.c704.
+                    1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
+                    c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
+                    76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
+          --
+        ::                                              ::  ++pin:aes:crypto
+        ++  pin                                         :: decrypt
+          ^-  cipa
+          |%
+          ++  co  [0xe 0xb 0xd 0x9]
+          ++  ix  |~(a/@ (sub nnr a))
+          ++  ro  [0 3 2 1]
+          ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
+                    6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
+                    ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
+                    5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
+                    f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
+                    1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
+                    6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
+                    73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
+                    6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
+                    0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
+                    849d.8da7.5746.155e.dab9.edfd.5048.706c.
+                    92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
+                    25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
+                    4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
+                    cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
+                    fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
+          --
+        ::                                              ::  ++mcol:aes:crypto
+        ++  mcol
+          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  ^-  (list @)
+          =+  c=[p=*@ q=*@ r=*@ s=*@]
+          |-  ^-  (list @)
+          ?~  a  ~
+          =>  .(p.c (cut 3 [0 1] i.a))
+          =>  .(q.c (cut 3 [1 1] i.a))
+          =>  .(r.c (cut 3 [2 1] i.a))
+          =>  .(s.c (cut 3 [3 1] i.a))
+          :_  $(a t.a)
+          %+  rep  3
+          %+  turn
+            %-  limo
+            :~  [[p.c p.b] [q.c q.b] [r.c r.b] [s.c s.b]]
+                [[p.c s.b] [q.c p.b] [r.c q.b] [s.c r.b]]
+                [[p.c r.b] [q.c s.b] [r.c p.b] [s.c q.b]]
+                [[p.c q.b] [q.c r.b] [r.c s.b] [s.c p.b]]
+            ==
+          |=  {a/{@ @} b/{@ @} c/{@ @} d/{@ @}}
+          :(dif (pro a) (pro b) (pro c) (pro d))
+        ::                                              ::  ++pode:aes:crypto
+        ++  pode                                        ::  explode to block
+          |=  {a/bloq b/@ c/@}  ^-  (list @)
+          =+  d=(rip a c)
+          =+  m=(met a c)
+          |-
+          ?:  =(m b)
+            d
+          $(m +(m), d (weld d (limo [0 ~])))
+        ::                                              ::  ++sube:aes:crypto
+        ++  sube                                        ::  s-box word
+          |=  {a/@ b/@}  ^-  @
+          (rep 3 (turn (pode 3 4 a) |=(c/@ (cut 3 [c 1] b))))
+        --
+      |%
+      ::                                                ::  ++be:aes:crypto
+      ++  be                                            ::  block cipher
+        |=  {a/? b/@ c/@H}  ^-  @uxH
+        ~|  %be-aesc
+        =>  %=    .
+                +
+              =>  +
+              |%
+              ++  ankh
+                |=  {a/cipa b/@ c/@}
+                (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
+              ++  sark
+                |=  {c/(list @) d/(list @)}  ^-  (list @)
+                ?~  c  ~
+                ?~  d  !!
+                [(mix i.c i.d) $(c t.c, d t.d)]
+              ++  srow
+                |=  {a/cipa b/(list @)}  ^-  (list @)
+                =+  [c=0 d=~ e=ro.a]
+                |-
+                ?:  =(c nnb)
+                  d
+                :_  $(c +(c))
+                %+  rep  3
+                %+  turn
+                  (limo [0 p.e] [1 q.e] [2 r.e] [3 s.e] ~)
+                |=  {f/@ g/@}
+                (cut 3 [f 1] (snag (mod (add g c) nnb) b))
+              ++  subs
+                |=  {a/cipa b/(list @)}  ^-  (list @)
+                ?~  b  ~
+                [(sube i.b su.a) $(b t.b)]
+              --
+            ==
+        =+  [d=?:(a pen pin) e=(pode 5 nnb c) f=1]
+        =>  .(e (sark e (ankh d 0 b)))
+        |-
+        ?.  =(nnr f)
+          =>  .(e (subs d e))
+          =>  .(e (srow d e))
+          =>  .(e (mcol e co.d))
+          =>  .(e (sark e (ankh d f b)))
+          $(f +(f))
         =>  .(e (subs d e))
         =>  .(e (srow d e))
-        =>  .(e (mcol e co.d))
-        =>  .(e (sark e (ankh d f b)))
-        $(f +(f))
-      =>  .(e (subs d e))
-      =>  .(e (srow d e))
-      =>  .(e (sark e (ankh d nnr b)))
-      (rep 5 e)
-    ::
-    ++  ex                                              ::  key expand
-      |=  a/@I  ^-  @
-      =+  [b=a c=0 d=su:pen i=nnk]
-      |-
-      ?:  =(i (mul nnb +(nnr)))
-        b
-      =>  .(c (cut 5 [(dec i) 1] b))
-      =>  ?:  =(0 (mod i nnk))
-            =>  .(c (ror 3 1 c))
-            =>  .(c (sube c d))
-            .(c (mix c (pow (dec (div i nnk)) 2)))
-          ?:  &((gth nnk 6) =(4 (mod i nnk)))
-            .(c (sube c d))
-          .
-      =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
-      =>  .(b (can 5 [i b] [1 c] ~))
-      $(i +(i))
-    ::
-    ++  ix                                              ::  key expand, inv
-      |=  a/@  ^-  @
-      =+  [i=1 j=*@ b=*@ c=co:pin]
-      |-
-      ?:  =(nnr i)
-        a
-      =>  .(b (cut 7 [i 1] a))
-      =>  .(b (rep 5 (mcol (pode 5 4 b) c)))
-      =>  .(j (sub nnr i))
-      %=    $
-          i  +(i)
+        =>  .(e (sark e (ankh d nnr b)))
+        (rep 5 e)
+      ::                                                ::  ++ex:aes:crypto
+      ++  ex                                            ::  key expand
+        |=  a/@I  ^-  @
+        =+  [b=a c=0 d=su:pen i=nnk]
+        |-
+        ?:  =(i (mul nnb +(nnr)))
+          b
+        =>  .(c (cut 5 [(dec i) 1] b))
+        =>  ?:  =(0 (mod i nnk))
+              =>  .(c (ror 3 1 c))
+              =>  .(c (sube c d))
+              .(c (mix c (pow (dec (div i nnk)) 2)))
+            ?:  &((gth nnk 6) =(4 (mod i nnk)))
+              .(c (sube c d))
+            .
+        =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
+        =>  .(b (can 5 [i b] [1 c] ~))
+        $(i +(i))
+      ::                                                ::  ++ix:aes:crypto
+      ++  ix                                            ::  key expand, inv
+        |=  a/@  ^-  @
+        =+  [i=1 j=*@ b=*@ c=co:pin]
+        |-
+        ?:  =(nnr i)
           a
-        %+  can  7
-        :~  [i (cut 7 [0 i] a)]
-            [1 b]
-            [j (cut 7 [+(i) j] a)]
+        =>  .(b (cut 7 [i 1] a))
+        =>  .(b (rep 5 (mcol (pode 5 4 b) c)))
+        =>  .(j (sub nnr i))
+        %=    $
+            i  +(i)
+            a
+          %+  can  7
+          :~  [i (cut 7 [0 i] a)]
+              [1 b]
+              [j (cut 7 [+(i) j] a)]
+          ==
         ==
-      ==
-    --
-  ::
-  ++  ecba                                              ::  AES-128 ECB
-    ~%  %ecba  +>  ~
-    |_  key/@H
-    ++  en
-      ~/  %en
-      |=  blk/@H  ^-  @uxH
-      =+  (ahem 4 4 10)
-      =:
-        key  (~(net fe 7) key)
-        blk  (~(net fe 7) blk)
-      ==
-      %-  ~(net fe 7)
-      (be & (ex key) blk)
-    ++  de
-      ~/  %de
-      |=  blk/@H  ^-  @uxH
-      =+  (ahem 4 4 10)
-      =:
-        key  (~(net fe 7) key)
-        blk  (~(net fe 7) blk)
-      ==
-      %-  ~(net fe 7)
-      (be | (ix (ex key)) blk)
-    --
-  ::
-  ++  ecbb                                              ::  AES-192 ECB
-    ~%  %ecbb  +>  ~
-    |_  key/@I
-    ++  en
-      ~/  %en
-      |=  blk/@H  ^-  @uxH
-      =+  (ahem 6 4 12)
-      =:
-        key  (rsh 6 1 (~(net fe 8) key))
-        blk  (~(net fe 7) blk)
-      ==
-      %-  ~(net fe 7)
-      (be & (ex key) blk)
-    ++  de
-      ~/  %de
-      |=  blk/@H  ^-  @uxH
-      =+  (ahem 6 4 12)
-      =:
-        key  (rsh 6 1 (~(net fe 8) key))
-        blk  (~(net fe 7) blk)
-      ==
-      %-  ~(net fe 7)
-      (be | (ix (ex key)) blk)
-    --
-  ::
-  ++  ecbc                                              ::  AES-256 ECB
-    ~%  %ecbc  +>  ~
-    |_  key/@I
-    ++  en
-      ~/  %en
-      |=  blk/@H  ^-  @uxH
-      =+  (ahem 8 4 14)
-      =:
-        key  (~(net fe 8) key)
-        blk  (~(net fe 7) blk)
-      ==
-      %-  ~(net fe 7)
-      (be & (ex key) blk)
-    ++  de
-      ~/  %de
-      |=  blk/@H  ^-  @uxH
-      =+  (ahem 8 4 14)
-      =:
-        key  (~(net fe 8) key)
-        blk  (~(net fe 7) blk)
-      ==
-      %-  ~(net fe 7)
-      (be | (ix (ex key)) blk)
-    --
-  ::
-  ++  cbca                                              ::  AES-128 CBC
-    ~%  %cbca  +>  ~
-    |_  {key/@H prv/@H}
-    ++  en
-      ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
-      =|  cts/(list @)
-      %+  rep  7
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      =+  cph=(~(en ecba key) (mix prv i.pts))
-      %=  $
-        cts  [cph cts]
-        pts  t.pts
-        prv  cph
-      ==
-    ++  de
-      ~/  %de
-      |=  txt/@  ^-  @ux
-      =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
-      =|  pts/(list @)
-      %+  rep  7
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  cts
-        pts
-      =+  pln=(mix prv (~(de ecba key) i.cts))
-      %=  $
-        pts  [pln pts]
-        cts  t.cts
-        prv  i.cts
-      ==
-    --
-  ::
-  ++  cbcb                                              ::  AES-192 CBC
-    ~%  %cbcb  +>  ~
-    |_  {key/@I prv/@H}
-    ++  en
-      ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
-      =|  cts/(list @)
-      %+  rep  7
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      =+  cph=(~(en ecbb key) (mix prv i.pts))
-      %=  $
-        cts  [cph cts]
-        pts  t.pts
-        prv  cph
-      ==
-    ++  de
-      ~/  %de
-      |=  txt/@  ^-  @ux
-      =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
-      =|  pts/(list @)
-      %+  rep  7
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  cts
-        pts
-      =+  pln=(mix prv (~(de ecbb key) i.cts))
-      %=  $
-        pts  [pln pts]
-        cts  t.cts
-        prv  i.cts
-      ==
-    --
-  ::
-  ++  cbcc                                              ::  AES-256 CBC
-    ~%  %cbcc  +>  ~
-    |_  {key/@I prv/@H}
-    ++  en
-      ~/  %en
-      |=  txt/@  ^-  @ux
-      =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
-      =|  cts/(list @)
-      %+  rep  7
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  pts
-        cts
-      =+  cph=(~(en ecbc key) (mix prv i.pts))
-      %=  $
-        cts  [cph cts]
-        pts  t.pts
-        prv  cph
-      ==
-    ++  de
-      ~/  %de
-      |=  txt/@  ^-  @ux
-      =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
-      =|  pts/(list @)
-      %+  rep  7
-      ::  logically, flop twice here
-      |-  ^-  (list @)
-      ?~  cts
-        pts
-      =+  pln=(mix prv (~(de ecbc key) i.cts))
-      %=  $
-        pts  [pln pts]
-        cts  t.cts
-        prv  i.cts
-      ==
-    --
-  ::
-  ++  inc                                               ::  inc. low bloq
-    |=  {mod/bloq ctr/@H}
-    ^-  @uxH
-    =+  bqs=(rip mod ctr)
-    ?~  bqs  0x1
-    %+  rep  mod
-    [(~(sum fe mod) i.bqs 1) t.bqs]
-  ::
-  ++  ctra                                              ::  AES-128 CTR
-    ~%  %ctra  +>  ~
-    |_  {key/@H mod/bloq len/@ ctr/@H}
-    ++  en
-      ~/  %en
-      |=  txt/@
-      ^-  @ux
-      =/  encrypt  ~(en ecba key)
-      =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
-      ?>  (gte len (met 3 txt))
-      %+  mix  txt
-      %^  rsh  3  (sub (mul 16 blocks) len)
-      %+  rep  7
-      %-  flop  ::  stupid backwards AES
-      |-  ^-  (list @ux)
-      ?:  =(blocks 0)  ~
-      :-  (encrypt ctr)
-          $(ctr (inc mod ctr), blocks (dec blocks))
-    ++  de  en
-    --
-  ::
-  ++  ctrb                                              ::  AES-192 CTR
-    ~%  %ctrb  +>  ~
-    |_  {key/@I mod/bloq len/@ ctr/@H}
-    ++  en
-      ~/  %en
-      |=  txt/@
-      ^-  @ux
-      =/  encrypt  ~(en ecbb key)
-      =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
-      ?>  (gte len (met 3 txt))
-      %+  mix  txt
-      %^  rsh  3  (sub (mul 16 blocks) len)
-      %+  rep  7
-      %-  flop  ::  stupid backwards AES
-      |-  ^-  (list @ux)
-      ?:  =(blocks 0)  ~
-      :-  (encrypt ctr)
-          $(ctr (inc mod ctr), blocks (dec blocks))
-    ++  de  en
-    --
-  ::
-  ++  ctrc                                              ::  AES-256 CTR
-    ~%  %ctrc  +>  ~
-    |_  {key/@I mod/bloq len/@ ctr/@H}
-    ++  en
-      ~/  %en
-      |=  txt/@
-      ^-  @ux
-      =/  encrypt  ~(en ecbc key)
-      =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
-      ?>  (gte len (met 3 txt))
-      %+  mix  txt
-      %^  rsh  3  (sub (mul 16 blocks) len)
-      %+  rep  7
-      %-  flop  ::  stupid backwards AES
-      |-  ^-  (list @ux)
-      ?:  =(blocks 0)  ~
-      :-  (encrypt ctr)
-          $(ctr (inc mod ctr), blocks (dec blocks))
-    ++  de  en
-    --
-  ::
-  ++  doub                                              ::  double 128-bit
-    |=  str/@H                                          ::  string mod finite
-    ^-  @uxH                                            ::  field (see spec)
-    %-  ~(sit fe 7)
-    ?.  =((xeb str) 128)
-      (lsh 0 1 str)
-    (mix 0x87 (lsh 0 1 str))
-  ::
-  ++  mpad                ::  pad message to multiple of 128 bits
-    |=  {oct/@ txt/@}     ::  by appending 1, then 0s
-    ^-  @ux               ::  the spec is unclear, but it must be octet based
-    =+  pad=(mod oct 16)  ::  to match the test vectors
-    ?:  =(pad 0)  0x8000.0000.0000.0000.0000.0000.0000.0000
-    (lsh 3 (sub 15 pad) (mix 0x80 (lsh 3 1 txt)))
-  ::
-  ++  suba                                              ::  AES-128 subkeys
-    |=  key/@H
-    =+  l=(~(en ecba key) 0)
-    =+  k1=(doub l)
-    =+  k2=(doub k1)
-    ^-  {@ux @ux}
-    [k1 k2]
-  ::
-  ++  subb                                              ::  AES-192 subkeys
-    |=  key/@I
-    =+  l=(~(en ecbb key) 0)
-    =+  k1=(doub l)
-    =+  k2=(doub k1)
-    ^-  {@ux @ux}
-    [k1 k2]
-  ::
-  ++  subc                                              ::  AES-256 subkeys
-    |=  key/@I
-    =+  l=(~(en ecbc key) 0)
-    =+  k1=(doub l)
-    =+  k2=(doub k1)
-    ^-  {@ux @ux}
-    [k1 k2]
-  ::
-  ++  maca                                              :: AES-128 CMAC
-    ~/  %maca
-    |=  {key/@H oct/(unit @) txt/@}
-    ^-  @ux
-    =+  [sub=(suba key) len=?~(oct (met 3 txt) u.oct)]
-    =+  ^=  pdt
-      ?:  &(=((mod len 16) 0) !=(len 0))
-        [& txt]
-      [| (mpad len txt)]
-    =+  ^=  mac
-      %-  ~(en cbca key 0)
-      %+  mix  +.pdt
-      ?-  -.pdt
-        $&  -.sub
-        $|  +.sub
-      ==
-    (~(sit fe 7) mac)  ::  spec says MSBs, LSBs match test vectors
-  ::
-  ++  macb                                              :: AES-192 CMAC
-    ~/  %macb
-    |=  {key/@I oct/(unit @) txt/@}
-    ^-  @ux
-    =+  [sub=(subb key) len=?~(oct (met 3 txt) u.oct)]
-    =+  ^=  pdt
-      ?:  &(=((mod len 16) 0) !=(len 0))
-        [& txt]
-      [| (mpad len txt)]
-    =+  ^=  mac
-      %-  ~(en cbcb key 0)
-      %+  mix  +.pdt
-      ?-  -.pdt
-        $&  -.sub
-        $|  +.sub
-      ==
-    (~(sit fe 7) mac)  ::  spec says MSBs, LSBs match test vectors
-  ::
-  ++  macc                                              :: AES-256 CMAC
-    ~/  %macc
-    |=  {key/@I oct/(unit @) txt/@}
-    ^-  @ux
-    =+  [sub=(subc key) len=?~(oct (met 3 txt) u.oct)]
-    =+  ^=  pdt
-      ?:  &(=((mod len 16) 0) !=(len 0))
-        [& txt]
-      [| (mpad len txt)]
-    =+  ^=  mac
-      %-  ~(en cbcc key 0)
-      %+  mix  +.pdt
-      ?-  -.pdt
-        $&  -.sub
-        $|  +.sub
-      ==
-    (~(sit fe 7) mac)  ::  spec says MSBs, LSBs match test vectors
-  ::
-  ++  s2va                                              ::  AES-128 S2V
-    ~/  %s2va
-    |=  {key/@H ads/(list @)}
-    =+  res=(maca key `16 0x0)
-    %^  maca  key  ~
-    |-  ^-  @uxH
-    ?~  ads  (maca key `16 0x1)
-    ?~  t.ads
-      ?:  (gte (xeb i.ads) 128)
-        (mix i.ads res)
-      %+  mix
-        (doub res)
-        (mpad (met 3 i.ads) i.ads)
-    %=  $
-      res  %+  mix
-             (doub res)
-             (maca key ~ i.ads)
-      ads  t.ads
-    ==
-  ::
-  ++  s2vb                                              ::  AES-192 S2V
-    ~/  %s2vb
-    |=  {key/@I ads/(list @)}
-    =+  res=(macb key `16 0x0)
-    %^  macb  key  ~
-    |-  ^-  @uxH
-    ?~  ads  (macb key `16 0x1)
-    ?~  t.ads
-      ?:  (gte (xeb i.ads) 128)
-        (mix i.ads res)
-      %+  mix
-        (doub res)
-        (mpad (met 3 i.ads) i.ads)
-    %=  $
-      res  %+  mix
-             (doub res)
-             (macb key ~ i.ads)
-      ads  t.ads
-    ==
-  ::
-  ++  s2vc                                              ::  AES-256 S2V
-    ~/  %s2vc
-    |=  {key/@I ads/(list @)}
-    =+  res=(macc key `16 0x0)
-    %^  macc  key  ~
-    |-  ^-  @uxH
-    ?~  ads  (macc key `16 0x1)
-    ?~  t.ads
-      ?:  (gte (xeb i.ads) 128)
-        (mix i.ads res)
-      %+  mix
-        (doub res)
-        (mpad (met 3 i.ads) i.ads)
-    %=  $
-      res  %+  mix
-             (doub res)
-             (macc key ~ i.ads)
-      ads  t.ads
-    ==
-  ::
-  ++  siva                                              ::  AES-128 SIV
-    ~%  %siva  +>  ~
-    |_  {key/@I vec/(list @)}
-    ++  en
-      ~/  %en
-      |=  txt/@
-      ^-  (trel @uxH @ud @ux)
-      =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
-      =+  iv=(s2va k1 (weld vec (limo ~[txt])))
-      =+  len=(met 3 txt)
-      =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
-      :+
-        iv
-        len
-      (~(en ctra k2 7 len hib) txt)
-    ::
-    ++  de
-      ~/  %de
-      |=  {iv/@H len/@ txt/@}
-      ^-  (unit @ux)
-      =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
-      =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
-      =+  ^=  pln
-        (~(de ctra k2 7 len hib) txt)
-      ?.  =((s2va k1 (weld vec (limo ~[pln]))) iv)
-        ~
-      `pln
-    --
-  ::
-  ++  sivb                                              ::  AES-192 SIV
-    ~%  %sivb  +>  ~
-    |_  {key/@J vec/(list @)}
-    ++  en
-      ~/  %en
-      |=  txt/@
-      ^-  (trel @uxH @ud @ux)
-      =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
-      =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
-      =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
-      =+  len=(met 3 txt)
-      :+  iv
-        len
-      (~(en ctrb k2 7 len hib) txt) 
-    ::
-    ++  de
-      ~/  %de
-      |=  {iv/@H len/@ txt/@}
-      ^-  (unit @ux)
-      =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
-      =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
-      =+  ^=  pln
-        (~(de ctrb k2 7 len hib) txt)
-      ?.  =((s2vb k1 (weld vec (limo ~[pln]))) iv)
-        ~
-      `pln
-    --
-  ::
-  ++  sivc                                              ::  AES-256 SIV
-    ~%  %sivc  +>  ~
-    |_  {key/@J vec/(list @)}
-    ++  en
-      ~/  %en
-      |=  txt/@
-      ^-  (trel @uxH @ud @ux)
-      =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
-      =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
-      =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
-      =+  len=(met 3 txt)
-      :+
-        iv
-        len
-      (~(en ctrc k2 7 len hib) txt)
-    ::
-    ++  de
-      ~/  %de
-      |=  {iv/@H len/@ txt/@}
-      ^-  (unit @ux)
-      =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
-      =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
-      =+  ^=  pln
-        (~(de ctrc k2 7 len hib) txt)
-      ?.  =((s2vc k1 (weld vec (limo ~[pln]))) iv)
-        ~
-      `pln
-    --
-  --
-++  crua  !:                                            ::  cryptosuite A (RSA)
-  ^-  acru
-  =|  {mos/@ pon/(unit {p/@ q/@ r/{p/@ q/@} s/_*fu})}
-  =>  |%
-      ++  mx  (dec (met 0 mos))                         ::  bit length
-      ++  dap                                           ::  OEAP decode
-        |=  {wid/@ xar/@ dog/@}  ^-  {p/@ q/@}
-        =+  pav=(sub wid xar)
-        =+  qoy=(cut 0 [xar pav] dog)
-        =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
-        [dez (mix qoy (shaw %pad-a pav dez))]
-      ::
-      ++  pad                                           ::  OEAP encode
-        |=  {wid/@ rax/{p/@ q/@} meg/@}  ^-  @
-        =+  pav=(sub wid p.rax)
-        ?>  (gte pav (met 0 meg))
-        ^-  @
-        =+  qoy=(mix meg (shaw %pad-a pav q.rax))
-        =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
-        (can 0 [p.rax dez] [pav qoy] ~)
-      ::
-      ++  pull  |=(a/@ (~(exp fo mos) 3 a))
-      ++  push  |=(a/@ (~(exp fo mos) 5 a))
-      ++  pump
-        |=  a/@  ^-  @
-        ?~  pon  !!
-        (out.s.u.pon (exp.s.u.pon p.r.u.pon (sit.s.u.pon a)))
-      ::
-      ++  punt
-        |=  a/@  ^-  @
-        ?~  pon  !!
-        (out.s.u.pon (exp.s.u.pon q.r.u.pon (sit.s.u.pon a)))
       --
-  |%                                                    ::  opaque object
-  ++  as
+    ::                                                  ::  ++ecba:aes:crypto
+    ++  ecba                                            ::  AES-128 ECB
+      ~%  %ecba  +>  ~
+      |_  key/@H
+      ::                                                ::  ++en:ecba:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  blk/@H  ^-  @uxH
+        =+  (ahem 4 4 10)
+        =:
+          key  (~(net fe 7) key)
+          blk  (~(net fe 7) blk)
+        ==
+        %-  ~(net fe 7)
+        (be & (ex key) blk)
+      ::                                                ::  ++de:ecba:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  blk/@H  ^-  @uxH
+        =+  (ahem 4 4 10)
+        =:
+          key  (~(net fe 7) key)
+          blk  (~(net fe 7) blk)
+        ==
+        %-  ~(net fe 7)
+        (be | (ix (ex key)) blk)
+      --
+    ::                                                  ::  ++ecbb:aes:crypto
+    ++  ecbb                                            ::  AES-192 ECB
+      ~%  %ecbb  +>  ~
+      |_  key/@I
+      ::                                                ::  ++en:ecbb:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  blk/@H  ^-  @uxH
+        =+  (ahem 6 4 12)
+        =:
+          key  (rsh 6 1 (~(net fe 8) key))
+          blk  (~(net fe 7) blk)
+        ==
+        %-  ~(net fe 7)
+        (be & (ex key) blk)
+      ::                                                ::  ++de:ecbb:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  blk/@H  ^-  @uxH
+        =+  (ahem 6 4 12)
+        =:
+          key  (rsh 6 1 (~(net fe 8) key))
+          blk  (~(net fe 7) blk)
+        ==
+        %-  ~(net fe 7)
+        (be | (ix (ex key)) blk)
+      --
+    ::                                                  ::  ++ecbc:aes:crypto
+    ++  ecbc                                            ::  AES-256 ECB
+      ~%  %ecbc  +>  ~
+      |_  key/@I
+      ::                                                ::  ++en:ecbc:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  blk/@H  ^-  @uxH
+        =+  (ahem 8 4 14)
+        =:
+          key  (~(net fe 8) key)
+          blk  (~(net fe 7) blk)
+        ==
+        %-  ~(net fe 7)
+        (be & (ex key) blk)
+      ::                                                ::  ++de:ecbc:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  blk/@H  ^-  @uxH
+        =+  (ahem 8 4 14)
+        =:
+          key  (~(net fe 8) key)
+          blk  (~(net fe 7) blk)
+        ==
+        %-  ~(net fe 7)
+        (be | (ix (ex key)) blk)
+      --
+    ::                                                  ::  ++cbca:aes:crypto
+    ++  cbca                                            ::  AES-128 CBC
+      ~%  %cbca  +>  ~
+      |_  {key/@H prv/@H}
+      ::                                                ::  ++en:cbca:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  txt/@  ^-  @ux
+        =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+        =|  cts/(list @)
+        %+  rep  7
+        ::  logically, flop twice here
+        |-  ^-  (list @)
+        ?~  pts
+          cts
+        =+  cph=(~(en ecba key) (mix prv i.pts))
+        %=  $
+          cts  [cph cts]
+          pts  t.pts
+          prv  cph
+        ==
+      ::                                                ::  ++de:cbca:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  txt/@  ^-  @ux
+        =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+        =|  pts/(list @)
+        %+  rep  7
+        ::  logically, flop twice here
+        |-  ^-  (list @)
+        ?~  cts
+          pts
+        =+  pln=(mix prv (~(de ecba key) i.cts))
+        %=  $
+          pts  [pln pts]
+          cts  t.cts
+          prv  i.cts
+        ==
+      --
+    ::                                                  ::  ++cbcb:aes:crypto
+    ++  cbcb                                            ::  AES-192 CBC
+      ~%  %cbcb  +>  ~
+      |_  {key/@I prv/@H}
+      ::                                                ::  ++en:cbcb:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  txt/@  ^-  @ux
+        =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+        =|  cts/(list @)
+        %+  rep  7
+        ::  logically, flop twice here
+        |-  ^-  (list @)
+        ?~  pts
+          cts
+        =+  cph=(~(en ecbb key) (mix prv i.pts))
+        %=  $
+          cts  [cph cts]
+          pts  t.pts
+          prv  cph
+        ==
+      ::                                                ::  ++de:cbcb:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  txt/@  ^-  @ux
+        =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+        =|  pts/(list @)
+        %+  rep  7
+        ::  logically, flop twice here
+        |-  ^-  (list @)
+        ?~  cts
+          pts
+        =+  pln=(mix prv (~(de ecbb key) i.cts))
+        %=  $
+          pts  [pln pts]
+          cts  t.cts
+          prv  i.cts
+        ==
+      --
+    ::                                                  ::  ++cbcc:aes:crypto
+    ++  cbcc                                            ::  AES-256 CBC
+      ~%  %cbcc  +>  ~
+      |_  {key/@I prv/@H}
+      ::                                                ::  ++en:cbcc:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  txt/@  ^-  @ux
+        =+  pts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+        =|  cts/(list @)
+        %+  rep  7
+        ::  logically, flop twice here
+        |-  ^-  (list @)
+        ?~  pts
+          cts
+        =+  cph=(~(en ecbc key) (mix prv i.pts))
+        %=  $
+          cts  [cph cts]
+          pts  t.pts
+          prv  cph
+        ==
+      ::                                                ::  ++de:cbcc:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  txt/@  ^-  @ux
+        =+  cts=?:(=(txt 0) `(list @)`~[0] (flop (rip 7 txt)))
+        =|  pts/(list @)
+        %+  rep  7
+        ::  logically, flop twice here
+        |-  ^-  (list @)
+        ?~  cts
+          pts
+        =+  pln=(mix prv (~(de ecbc key) i.cts))
+        %=  $
+          pts  [pln pts]
+          cts  t.cts
+          prv  i.cts
+        ==
+      --
+    ::                                                  ::  ++inc:aes:crypto
+    ++  inc                                             ::  inc. low bloq
+      |=  {mod/bloq ctr/@H}
+      ^-  @uxH
+      =+  bqs=(rip mod ctr)
+      ?~  bqs  0x1
+      %+  rep  mod
+      [(~(sum fe mod) i.bqs 1) t.bqs]
+    ::                                                  ::  ++ctra:aes:crypto
+    ++  ctra                                            ::  AES-128 CTR
+      ~%  %ctra  +>  ~
+      |_  {key/@H mod/bloq len/@ ctr/@H}
+      ::                                                ::  ++en:ctra:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  txt/@
+        ^-  @ux
+        =/  encrypt  ~(en ecba key)
+        =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
+        ?>  (gte len (met 3 txt))
+        %+  mix  txt
+        %^  rsh  3  (sub (mul 16 blocks) len)
+        %+  rep  7
+        %-  flop  ::  stupid backwards AES
+        |-  ^-  (list @ux)
+        ?:  =(blocks 0)  ~
+        :-  (encrypt ctr)
+            $(ctr (inc mod ctr), blocks (dec blocks))
+      ::                                                ::  ++de:ctra:aes:crypto
+      ++  de                                            ::  decrypt
+        en
+      --
+    ::                                                  ::  ++ctrb:aes:crypto
+    ++  ctrb                                            ::  AES-192 CTR
+      ~%  %ctrb  +>  ~
+      |_  {key/@I mod/bloq len/@ ctr/@H}
+      ++  en
+        ~/  %en
+        |=  txt/@
+        ^-  @ux
+        =/  encrypt  ~(en ecbb key)
+        =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
+        ?>  (gte len (met 3 txt))
+        %+  mix  txt
+        %^  rsh  3  (sub (mul 16 blocks) len)
+        %+  rep  7
+        %-  flop  ::  stupid backwards AES
+        |-  ^-  (list @ux)
+        ?:  =(blocks 0)  ~
+        :-  (encrypt ctr)
+            $(ctr (inc mod ctr), blocks (dec blocks))
+      ::                                                ::  ++de:ctrb:aes:crypto
+      ++  de                                            ::  decrypt
+        en
+      --
+    ::                                                  ::  ++ctrc:aes:crypto
+    ++  ctrc                                            ::  AES-256 CTR
+      ~%  %ctrc  +>  ~
+      |_  {key/@I mod/bloq len/@ ctr/@H}
+      ::                                                ::  ++en:ctrc:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  txt/@
+        ^-  @ux
+        =/  encrypt  ~(en ecbc key)
+        =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
+        ?>  (gte len (met 3 txt))
+        %+  mix  txt
+        %^  rsh  3  (sub (mul 16 blocks) len)
+        %+  rep  7
+        %-  flop  ::  stupid backwards AES
+        |-  ^-  (list @ux)
+        ?:  =(blocks 0)  ~
+        :-  (encrypt ctr)
+            $(ctr (inc mod ctr), blocks (dec blocks))
+      ::                                                ::  ++de:ctrc:aes:crypto
+      ++  de                                            ::  decrypt
+        en
+      --
+    ::                                                  ::  ++doub:aes:crypto
+    ++  doub                                            ::  double 128-bit
+      |=  str/@H                                        ::  string mod finite
+      ^-  @uxH                                          ::  field (see spec)
+      %-  ~(sit fe 7)
+      ?.  =((xeb str) 128)
+        (lsh 0 1 str)
+      (mix 0x87 (lsh 0 1 str))
+    ::                                                  ::  ++mpad:aes:crypto
+    ++  mpad                                            ::
+      |=  {oct/@ txt/@}     
+      ::
+      ::  pad message to multiple of 128 bits
+      ::  by appending 1, then 0s
+      ::  the spec is unclear, but it must be octet based
+      ::  to match the test vectors
+      ^-  @ux               
+      =+  pad=(mod oct 16)
+      ?:  =(pad 0)  0x8000.0000.0000.0000.0000.0000.0000.0000
+      (lsh 3 (sub 15 pad) (mix 0x80 (lsh 3 1 txt)))
+    ::                                                  ::  ++suba:aes:crypto
+    ++  suba                                            ::  AES-128 subkeys
+      |=  key/@H
+      =+  l=(~(en ecba key) 0)
+      =+  k1=(doub l)
+      =+  k2=(doub k1)
+      ^-  {@ux @ux}
+      [k1 k2]
+    ::                                                  ::  ++subb:aes:crypto
+    ++  subb                                            ::  AES-192 subkeys
+      |=  key/@I
+      =+  l=(~(en ecbb key) 0)
+      =+  k1=(doub l)
+      =+  k2=(doub k1)
+      ^-  {@ux @ux}
+      [k1 k2]
+    ::                                                  ::  ++subc:aes:crypto
+    ++  subc                                            ::  AES-256 subkeys
+      |=  key/@I
+      =+  l=(~(en ecbc key) 0)
+      =+  k1=(doub l)
+      =+  k2=(doub k1)
+      ^-  {@ux @ux}
+      [k1 k2]
+    ::                                                  ::  ++maca:aes:crypto
+    ++  maca                                            ::  AES-128 CMAC
+      ~/  %maca
+      |=  {key/@H oct/(unit @) txt/@}
+      ^-  @ux
+      =+  [sub=(suba key) len=?~(oct (met 3 txt) u.oct)]
+      =+  ^=  pdt
+        ?:  &(=((mod len 16) 0) !=(len 0))
+          [& txt]
+        [| (mpad len txt)]
+      =+  ^=  mac
+        %-  ~(en cbca key 0)
+        %+  mix  +.pdt
+        ?-  -.pdt
+          $&  -.sub
+          $|  +.sub
+        ==
+      ::  spec says MSBs, LSBs match test vectors
+      ::
+      (~(sit fe 7) mac)
+    ::                                                  ::  ++macb:aes:crypto
+    ++  macb                                            ::  AES-192 CMAC
+      ~/  %macb
+      |=  {key/@I oct/(unit @) txt/@}
+      ^-  @ux
+      =+  [sub=(subb key) len=?~(oct (met 3 txt) u.oct)]
+      =+  ^=  pdt
+        ?:  &(=((mod len 16) 0) !=(len 0))
+          [& txt]
+        [| (mpad len txt)]
+      =+  ^=  mac
+        %-  ~(en cbcb key 0)
+        %+  mix  +.pdt
+        ?-  -.pdt
+          $&  -.sub
+          $|  +.sub
+        ==
+      ::  spec says MSBs, LSBs match test vectors
+      ::
+      (~(sit fe 7) mac)
+    ::                                                  ::  ++macc:aes:crypto
+    ++  macc                                            :: AES-256 CMAC
+      ~/  %macc
+      |=  {key/@I oct/(unit @) txt/@}
+      ^-  @ux
+      =+  [sub=(subc key) len=?~(oct (met 3 txt) u.oct)]
+      =+  ^=  pdt
+        ?:  &(=((mod len 16) 0) !=(len 0))
+          [& txt]
+        [| (mpad len txt)]
+      =+  ^=  mac
+        %-  ~(en cbcc key 0)
+        %+  mix  +.pdt
+        ?-  -.pdt
+          $&  -.sub
+          $|  +.sub
+        ==
+      ::  spec says MSBs, LSBs match test vectors
+      ::
+      (~(sit fe 7) mac)
+    ::                                                  ::  ++s2va:aes:crypto
+    ++  s2va                                            ::  AES-128 S2V
+      ~/  %s2va
+      |=  {key/@H ads/(list @)}
+      =+  res=(maca key `16 0x0)
+      %^  maca  key  ~
+      |-  ^-  @uxH
+      ?~  ads  (maca key `16 0x1)
+      ?~  t.ads
+        ?:  (gte (xeb i.ads) 128)
+          (mix i.ads res)
+        %+  mix
+          (doub res)
+          (mpad (met 3 i.ads) i.ads)
+      %=  $
+        res  %+  mix
+               (doub res)
+               (maca key ~ i.ads)
+        ads  t.ads
+      ==
+    ::                                                  ::  ++s2vb:aes:crypto
+    ++  s2vb                                            ::  AES-192 S2V
+      ~/  %s2vb
+      |=  {key/@I ads/(list @)}
+      =+  res=(macb key `16 0x0)
+      %^  macb  key  ~
+      |-  ^-  @uxH
+      ?~  ads  (macb key `16 0x1)
+      ?~  t.ads
+        ?:  (gte (xeb i.ads) 128)
+          (mix i.ads res)
+        %+  mix
+          (doub res)
+          (mpad (met 3 i.ads) i.ads)
+      %=  $
+        res  %+  mix
+               (doub res)
+               (macb key ~ i.ads)
+        ads  t.ads
+      ==
+    ::                                                  ::  ++s2vc:aes:crypto
+    ++  s2vc                                            ::  AES-256 S2V
+      ~/  %s2vc
+      |=  {key/@I ads/(list @)}
+      =+  res=(macc key `16 0x0)
+      %^  macc  key  ~
+      |-  ^-  @uxH
+      ?~  ads  (macc key `16 0x1)
+      ?~  t.ads
+        ?:  (gte (xeb i.ads) 128)
+          (mix i.ads res)
+        %+  mix
+          (doub res)
+          (mpad (met 3 i.ads) i.ads)
+      %=  $
+        res  %+  mix
+               (doub res)
+               (macc key ~ i.ads)
+        ads  t.ads
+      ==
+    ::                                                  ::  ++siva:aes:crypto
+    ++  siva                                            ::  AES-128 SIV
+      ~%  %siva  +>  ~
+      |_  {key/@I vec/(list @)}
+      ::                                                ::  ++en:siva:aes:crypto
+      ++  en                                            ::  encrypt 
+        ~/  %en
+        |=  txt/@
+        ^-  (trel @uxH @ud @ux)
+        =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
+        =+  iv=(s2va k1 (weld vec (limo ~[txt])))
+        =+  len=(met 3 txt)
+        =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
+        :+
+          iv
+          len
+        (~(en ctra k2 7 len hib) txt)
+      ::                                                ::  ++de:siva:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  {iv/@H len/@ txt/@}
+        ^-  (unit @ux)
+        =+  [k1=(rsh 7 1 key) k2=(end 7 1 key)]
+        =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
+        =+  ^=  pln
+          (~(de ctra k2 7 len hib) txt)
+        ?.  =((s2va k1 (weld vec (limo ~[pln]))) iv)
+          ~
+        `pln
+      --
+    ::                                                  ::  ++sivb:aes:crypto
+    ++  sivb                                            ::  AES-192 SIV
+      ~%  %sivb  +>  ~
+      |_  {key/@J vec/(list @)}
+      ::                                                ::  ++en:sivb:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en
+        |=  txt/@
+        ^-  (trel @uxH @ud @ux)
+        =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+        =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
+        =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
+        =+  len=(met 3 txt)
+        :+  iv
+          len
+        (~(en ctrb k2 7 len hib) txt) 
+      ::                                                ::  ++de:sivb:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  {iv/@H len/@ txt/@}
+        ^-  (unit @ux)
+        =+  [k1=(rsh 5 3 key) k2=(end 5 3 key)]
+        =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
+        =+  ^=  pln
+          (~(de ctrb k2 7 len hib) txt)
+        ?.  =((s2vb k1 (weld vec (limo ~[pln]))) iv)
+          ~
+        `pln
+      --
+    ::                                                  ::  ++sivc:aes:crypto
+    ++  sivc                                            ::  AES-256 SIV
+      ~%  %sivc  +>  ~
+      |_  {key/@J vec/(list @)}
+      ::                                                ::  ++en:sivc:aes:crypto
+      ++  en                                            ::  encrypt
+        ~/  %en                                     
+        |=  txt/@
+        ^-  (trel @uxH @ud @ux)
+        =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
+        =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
+        =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
+        =+  len=(met 3 txt)
+        :+
+          iv
+          len
+        (~(en ctrc k2 7 len hib) txt)
+      ::                                                ::  ++de:sivc:aes:crypto
+      ++  de                                            ::  decrypt
+        ~/  %de
+        |=  {iv/@H len/@ txt/@}
+        ^-  (unit @ux)
+        =+  [k1=(rsh 8 1 key) k2=(end 8 1 key)]
+        =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
+        =+  ^=  pln
+          (~(de ctrc k2 7 len hib) txt)
+        ?.  =((s2vc k1 (weld vec (limo ~[pln]))) iv)
+          ~
+        `pln
+      --
+    --
+  ::                                                    ::  ++crua:crypto
+  ++  crua  !:                                          ::  cryptosuite A (RSA)
+    ^-  acru
+    =|  {mos/@ pon/(unit {p/@ q/@ r/{p/@ q/@} s/_*fu})}
     =>  |%
-        ++  haul                                        ::  revealing haul
-          |=  a/pass
-          =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-          ?>  =('a' mag)
-          ..as(mos bod, pon ~)
-        --
-    ^?
-    |%  ++  seal
-          |=  {a/pass b/@ c/@}
+        ::                                              ::  ++mx:crua:crypto
+        ++  mx                                          ::  bit length
+          (dec (met 0 mos))                         
+        ::                                              ::  ++dap:crua:crypto
+        ++  dap                                         ::  OEAP decode
+          |=  {wid/@ xar/@ dog/@}  ^-  {p/@ q/@}
+          =+  pav=(sub wid xar)
+          =+  qoy=(cut 0 [xar pav] dog)
+          =+  dez=(mix (end 0 xar dog) (shaw %pad-b xar qoy))
+          [dez (mix qoy (shaw %pad-a pav dez))]
+        ::                                              ::  ++pad:crua:crypto
+        ++  pad                                         ::  OEAP encode
+          |=  {wid/@ rax/{p/@ q/@} meg/@}  ^-  @
+          =+  pav=(sub wid p.rax)
+          ?>  (gte pav (met 0 meg))
           ^-  @
-          =>  .(c (sign b c))
-          =+  her=(haul a)
-          =+  det=(lte (add 256 (met 0 c)) mx.her)
-          =+  lip=?:(det c 0)
-          =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-          ^=  mav  ^-  {p/? q/@}
-          :-  det
-          =+  dog=(pad mx.her [256 b] lip)
-          =+  hog=(push.her dog)
-          =+  ben=(en b c)
-          ?:(det hog (jam hog ben))
-        ++  sign
-          |=  {a/@ b/@}  ^-  @
-          =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-          ^=  mav  ^-  {p/? q/@}
-          =+  det=(lte (add 128 (met 0 b)) mx)
-          :-  det
-          =+  hec=(shaf (mix %agis a) b)
-          =+  dog=(pad mx [128 hec] ?:(det b 0))
-          =+  hog=(pump dog)
-          ?:(det hog (jam hog b))
-        ++  sure
-          |=  {a/@ b/@}
-          ^-  (unit @)
-          =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
-          =+  gox=?:(det [p=bod q=0] ((hard {p/@ q/@}) (cue bod)))
-          =+  dog=(pull p.gox)
-          =+  pig=(dap mx 128 dog)
-          =+  log=?:(det q.pig q.gox)
-          ?.(=(p.pig (shaf (mix %agis a) log)) ~ [~ log])
-        ++  tear
-          |=  {a/pass b/@}
-          ^-  (unit {p/@ q/@})
-          =+  her=(haul a)
-          =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
-          =+  gox=?:(det [p=bod q=0] ((hard {p/@ q/@}) (cue bod)))
-          =+  dog=(punt p.gox)
-          =+  pig=(dap mx 256 dog)
-          =+  ^=  cow
-              ^-  (unit @)
-              ?:  det
-                [~ q.pig]
-              (de p.pig q.gox)
-          ?~  cow  ~
-          =>  .(cow (sure:as.her p.pig u.cow))
-          ?~  cow  ~
-          [~ p.pig u.cow]
-    --
-  ::
-  ++  de
-    |~  {key/@ cep/@}  ^-  (unit @)
-    =+  toh=(met 8 cep)
-    ?:  (lth toh 2)
-      ~
-    =+  adj=(dec toh)
-    =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
-    =+  msg=(mix (~(raw og (mix hax key)) (mul 256 adj)) bod)
-    ?.  =(hax (shax (mix key (shax (mix adj msg)))))
-      ~
-    [~ msg]
-  ::
-  ++  dy  |~({a/@ b/@} (need (de a b)))
-  ++  en
-    |~  {key/@ msg/@}  ^-  @ux
-    =+  len=(met 8 msg)
-    =+  adj=?:(=(0 len) 1 len)
-    =+  hax=(shax (mix key (shax (mix adj msg))))
-    (rap 8 hax (mix msg (~(raw og (mix hax key)) (mul 256 adj))) ~)
-  ::
-  ++  ex  ^?
-    |%  ++  fig  ^-  @uvH  (shaf %afig mos)
-        ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sec))
-        ++  pub  ^-  pass  (cat 3 'a' mos)
-        ++  sec  ^-  ring  ?~(pon !! (cat 3 'A' (jam p.u.pon q.u.pon)))
-    --
-  ::
-  ++  nu
-    =>  |%
-        ++  elcm
-          |=  {a/@ b/@}
-          (div (mul a b) d:(egcd a b))
-        ::
-        ++  eldm
-          |=  {a/@ b/@ c/@}
-          (~(inv fo (elcm (dec b) (dec c))) a)
-        ::
-        ++  ersa
-          |=  {a/@ b/@}
-          [a b [(eldm 3 a b) (eldm 5 a b)] (fu a b)]
+          =+  qoy=(mix meg (shaw %pad-a pav q.rax))
+          =+  dez=(mix q.rax (shaw %pad-b p.rax qoy))
+          (can 0 [p.rax dez] [pav qoy] ~)
+        ::                                              ::  ++pull:crua:crypto
+        ++  pull                                        ::
+          |=(a/@ (~(exp fo mos) 3 a))
+        ::                                              ::  ++push:crua:crypto
+        ++  push                                        :: 
+          |=(a/@ (~(exp fo mos) 5 a))
+        ::                                              ::  ++pump:crua:crypto
+        ++  pump                                        ::
+          |=  a/@  ^-  @
+          ?~  pon  !!
+          (out.s.u.pon (exp.s.u.pon p.r.u.pon (sit.s.u.pon a)))
+        ::                                              ::  ++punt:crua:crypto
+        ++  punt                                        ::
+          |=  a/@  ^-  @
+          ?~  pon  !!
+          (out.s.u.pon (exp.s.u.pon q.r.u.pon (sit.s.u.pon a)))
         --
-    ^?
-    |%  ++  com
-          |=  a/@
-          ^+  ^?(..nu)
-          ..nu(mos a, pon ~)
-        ::
-        ++  pit
-          |=  {a/@ b/@}
-          =+  c=(rsh 0 1 a)
-          =+  [d=(ramp c [3 5 ~] b) e=(ramp c [3 5 ~] +(b))]
-          ^+  ^?(..nu)
-          ..nu(mos (mul d e), pon [~ (ersa d e)])
-        ::
-        ++  nol
-          |=  a/@
-          ^+  ^?(..nu)
-          =+  b=((hard {p/@ q/@}) (cue a))
-          ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
-    --
-  --                                                    ::
-:: 
-++  bruw                                                ::  create keypair
-  |=  {a/@ b/@}                                         ::  width seed
-  ^-  acru
-  (pit:nu:crua a b)
-::
-++  haul                                                ::  activate public key
-  |=  a/pass
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('a' mag)
-  (com:nu:crua bod)
-::
-++  weur                                                ::  activate secret key
-  |=  a/ring
-  ^-  acru
-  =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-  ?>  =('A' mag)
-  (nol:nu:crua bod)
-::
-++  trua                                                ::  test rsa
-  |=  msg/@tas
-  ^-  @
-  =+  ali=(bruw 1.024 (shax 'ali'))
-  =+  bob=(bruw 1.024 (shax 'bob'))
-  =+  tef=(sign:as.ali [0 msg])
-  =+  lov=(sure:as.ali [0 tef])
-  ?.  &(?=(^ lov) =(msg u.lov))
-    ~|(%test-fail-sign !!)
-  =+  key=(shax (shax (shax msg)))
-  =+  sax=(seal:as.ali pub:ex.bob key msg)
-  =+  tin=(tear:as.bob pub:ex.ali sax)
-  ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
-    ~|(%test-fail-seal !!)
-  msg
-::
-++  crub                                                ::  cryptosuite B (Ed)
-  ^-  acru
-  =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
-  |%
-  ++  as
     |%
-    ++  sign
-      |=  {@ msg/@}
-      ^-  @ux
-      ?~  sek  ~|  %pubkey-only  !!
-      (jam [(sign:ed msg sgn.u.sek) msg])
-    ++  sure
-      |=  {@ txt/@}
+    ::                                                  ::  ++as:crua:crypto
+    ++  as                                              ::
+      =>  |%
+          ++  haul                                      ::  ++haul:as:crua
+            |=  a/pass                                  ::
+            =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+            ?>  =('a' mag)
+            ..as(mos bod, pon ~)
+          --
+      ^?
+      |%  ::                                            ::  ++seal:as:crua
+          ++  seal                                      ::
+            |=  {a/pass b/@ c/@}
+            ^-  @
+            =>  .(c (sign b c))
+            =+  her=(haul a)
+            =+  det=(lte (add 256 (met 0 c)) mx.her)
+            =+  lip=?:(det c 0)
+            =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
+            ^=  mav  ^-  {p/? q/@}
+            :-  det
+            =+  dog=(pad mx.her [256 b] lip)
+            =+  hog=(push.her dog)
+            =+  ben=(en b c)
+            ?:(det hog (jam hog ben))
+          ::                                            ::  ++sign:as:crua
+          ++  sign                                      ::
+            |=  {a/@ b/@}  ^-  @
+            =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
+            ^=  mav  ^-  {p/? q/@}
+            =+  det=(lte (add 128 (met 0 b)) mx)
+            :-  det
+            =+  hec=(shaf (mix %agis a) b)
+            =+  dog=(pad mx [128 hec] ?:(det b 0))
+            =+  hog=(pump dog)
+            ?:(det hog (jam hog b))
+          ::                                            ::  ++sure:as:crua
+          ++  sure                                      ::
+            |=  {a/@ b/@}
+            ^-  (unit @)
+            =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
+            =+  gox=?:(det [p=bod q=0] ((hard {p/@ q/@}) (cue bod)))
+            =+  dog=(pull p.gox)
+            =+  pig=(dap mx 128 dog)
+            =+  log=?:(det q.pig q.gox)
+            ?.(=(p.pig (shaf (mix %agis a) log)) ~ [~ log])
+          ::                                            ::  ++tear:as:crua
+          ++  tear                                      ::
+            |=  {a/pass b/@}                            
+            ^-  (unit {p/@ q/@})
+            =+  her=(haul a)
+            =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
+            =+  gox=?:(det [p=bod q=0] ((hard {p/@ q/@}) (cue bod)))
+            =+  dog=(punt p.gox)
+            =+  pig=(dap mx 256 dog)
+            =+  ^=  cow
+                ^-  (unit @)
+                ?:  det
+                  [~ q.pig]
+                (de p.pig q.gox)
+            ?~  cow  ~
+            =>  .(cow (sure:as.her p.pig u.cow))
+            ?~  cow  ~
+            [~ p.pig u.cow]
+      --
+    ::                                                  ::  ++de:crua:crypto
+    ++  de                                              ::  decrypt
+      |~  {key/@ cep/@}  ^-  (unit @)
+      =+  toh=(met 8 cep)
+      ?:  (lth toh 2)
+        ~
+      =+  adj=(dec toh)
+      =+  [hax=(end 8 1 cep) bod=(rsh 8 1 cep)]
+      =+  msg=(mix (~(raw og (mix hax key)) (mul 256 adj)) bod)
+      ?.  =(hax (shax (mix key (shax (mix adj msg)))))
+        ~
+      [~ msg]
+    ::                                                  ::  ++dy:crua:crypto
+    ++  dy                                              ::  need decrypt
+      |~({a/@ b/@} (need (de a b)))
+    ::
+    ++  en                                              ::  ++en:crua:crypto
+      |~  {key/@ msg/@}  ^-  @ux                        ::  encrypt
+      =+  len=(met 8 msg)
+      =+  adj=?:(=(0 len) 1 len)
+      =+  hax=(shax (mix key (shax (mix adj msg))))
+      (rap 8 hax (mix msg (~(raw og (mix hax key)) (mul 256 adj))) ~)
+    ::                                                  ::  ++ex:crua
+    ++  ex                                              ::  extract
+      ^?
+      |%  ::                                            ::  ++fig:ex:crua
+      ++  fig                                           ::  fingerprint 
+        `@uvH`(shaf %afig mos)
+      ::                                                ::  ++pac:ex:crua
+      ++  pac                                           ::  private fingerprint
+        `@uvG`(end 6 1 (shaf %acod sec))
+      ::                                                ::  ++pub:ex:crua
+      ++  pub                                           ::  public fingerprint
+        `pass`(cat 3 'a' mos)
+      ::                                                ::  ++sec:ex:crua
+      ++  sec                                           ::  private key
+        `ring`?~(pon !! (cat 3 'A' (jam p.u.pon q.u.pon)))
+      --
+    ::                                                  ::  ++nu:crua
+    ++  nu                                              ::
+      =>  |%
+          ::                                            ::  ++elcm:nu:crua
+          ++  elcm                                      ::
+            |=  {a/@ b/@}
+            (div (mul a b) d:(egcd a b))
+          ::                                            ::  ++eldm:nu:crua
+          ++  eldm                                      ::
+            |=  {a/@ b/@ c/@}
+            (~(inv fo (elcm (dec b) (dec c))) a)
+          ::                                            ::  ++ersa:nu:crua
+          ++  ersa                                      ::
+            |=  {a/@ b/@}
+            [a b [(eldm 3 a b) (eldm 5 a b)] (fu a b)]
+          --
+      ^?
+      |%                                                ::  ++com:nu:crua
+          ++  com                                       ::
+            |=  a/@
+            ^+  ^?(..nu)
+            ..nu(mos a, pon ~)
+          ::                                            ::  ++pit:nu:crua
+          ++  pit                                       ::
+            |=  {a/@ b/@}
+            =+  c=(rsh 0 1 a)
+            =+  [d=(ramp c [3 5 ~] b) e=(ramp c [3 5 ~] +(b))]
+            ^+  ^?(..nu)
+            ..nu(mos (mul d e), pon [~ (ersa d e)])
+          ::                                            ::  ++nol:nu:crua
+          ++  nol                                       ::
+            |=  a/@
+            ^+  ^?(..nu)
+            =+  b=((hard {p/@ q/@}) (cue a))
+            ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
+      --
+    --                                                
+  ::                                                    ::  ++bruw:crypto
+  ++  bruw                                              ::  create keypair
+    |=  ::  {width seed}
+        ::
+        {a/@ b/@}
+    ^-  acru
+    (pit:nu:crua a b)
+  ::                                                    ::  ++haul:crypto
+  ++  haul                                              ::  activate public key
+    |=  a/pass
+    ^-  acru
+    =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+    ?>  =('a' mag)
+    (com:nu:crua bod)
+  ::                                                    ::  ++weur:crypto
+  ++  weur                                              ::  activate secret key
+    |=  a/ring
+    ^-  acru
+    =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+    ?>  =('A' mag)
+    (nol:nu:crua bod)
+  ::                                                    ::  ++trsa:crypto
+  ++  trua                                              ::  test rsa
+    |=  msg/@tas
+    ^-  @
+    =+  ali=(bruw 1.024 (shax 'ali'))
+    =+  bob=(bruw 1.024 (shax 'bob'))
+    =+  tef=(sign:as.ali [0 msg])
+    =+  lov=(sure:as.ali [0 tef])
+    ?.  &(?=(^ lov) =(msg u.lov))
+      ~|(%test-fail-sign !!)
+    =+  key=(shax (shax (shax msg)))
+    =+  sax=(seal:as.ali pub:ex.bob key msg)
+    =+  tin=(tear:as.bob pub:ex.ali sax)
+    ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
+      ~|(%test-fail-seal !!)
+    msg
+  ::
+  ++  crub                                                ::  cryptosuite B (Ed)
+    ^-  acru
+    =,  number
+    =,  crypto
+    =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
+    |%
+    ++  as
+      |%
+      ++  sign
+        |=  {@ msg/@}
+        ^-  @ux
+        ?~  sek  ~|  %pubkey-only  !!
+        (jam [(sign:ed msg sgn.u.sek) msg])
+      ++  sure
+        |=  {@ txt/@}
+        ^-  (unit @ux)
+        =+  ((hard {sig/@ msg/@}) (cue txt))
+        ?.  (veri:ed sig msg sgn.pub)  ~
+        (some msg)
+      ++  seal
+        |=  {bpk/pass m1/@ m2/@}
+        ^-  @ux
+        ?~  sek  ~|  %pubkey-only  !!
+        ?>  =('b' (end 3 1 bpk))
+        =+  pk=(rsh 8 1 (rsh 3 1 bpk))
+        =+  shar=(shax (shar:ed pk cry.u.sek))
+        =+  msg=(jam m1 m2)
+        =+  smsg=(sign ~ msg)
+        (jam (~(en siva:aes shar ~) smsg))
+      ++  tear
+        |=  {bpk/pass txt/@}
+        ^-  (unit (pair @ux @ux))
+        ?~  sek  ~|  %pubkey-only  !!
+        ?>  =('b' (end 3 1 bpk))
+        =+  pk=(rsh 8 1 (rsh 3 1 bpk))
+        =+  shar=(shax (shar:ed pk cry.u.sek))
+        =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+        =+  try=(~(de siva:aes shar ~) iv len cph)
+        ?~  try  ~
+        =+  veri=(sure:as:(com:nu:crub bpk) ~ u.try)
+        ?~  veri  ~
+        (some ((hard (pair @ux @ux)) (cue u.veri)))
+      --
+    ++  de
+      |=  {key/@J txt/@}
       ^-  (unit @ux)
-      =+  ((hard {sig/@ msg/@}) (cue txt))
-      ?.  (veri:ed sig msg sgn.pub)  ~
-      (some msg)
-    ++  seal
-      |=  {bpk/pass m1/@ m2/@}
-      ^-  @ux
-      ?~  sek  ~|  %pubkey-only  !!
-      ?>  =('b' (end 3 1 bpk))
-      =+  pk=(rsh 8 1 (rsh 3 1 bpk))
-      =+  shar=(shax (shar:ed pk cry.u.sek))
-      =+  msg=(jam m1 m2)
-      =+  smsg=(sign ~ msg)
-      (jam (~(en siva:aes shar ~) smsg))
-    ++  tear
-      |=  {bpk/pass txt/@}
-      ^-  (unit (pair @ux @ux))
-      ?~  sek  ~|  %pubkey-only  !!
-      ?>  =('b' (end 3 1 bpk))
-      =+  pk=(rsh 8 1 (rsh 3 1 bpk))
-      =+  shar=(shax (shar:ed pk cry.u.sek))
       =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
-      =+  try=(~(de siva:aes shar ~) iv len cph)
-      ?~  try  ~
-      =+  veri=(sure:as:(com:nu:crub bpk) ~ u.try)
-      ?~  veri  ~
-      (some ((hard (pair @ux @ux)) (cue u.veri)))
+      %^    ~(de sivc:aes (shaz key) ~)
+          iv
+        len
+      cph
+    ++  dy  |=({key/@I cph/@} (need (de key cph)))
+    ++  en
+      |=  {key/@J msg/@}
+      ^-  @ux
+      (jam (~(en sivc:aes (shaz key) ~) msg))
+    ++  ex
+      |%
+      ++  fig  ^-  @uvH  (shaf %bfig sgn.^pub)
+      ++  pac  ^-  @uvG  ?~  sek  ~|  %pubkey-only  !!
+                         (end 6 1 (shaf %bcod sgn.u.sek))
+      ++  pub  ^-  pass  (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
+      ++  sec  ^-  ring  ?~  sek  ~|  %pubkey-only  !!
+                         (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
+      --
+    ++  nu
+      |%
+      ++  pit
+        |=  {w/@ seed/@}
+        =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
+        =+  bits=(shal wid seed)
+        =+  [c=(rsh 8 1 bits) s=(end 8 1 bits)]
+        ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
+      ++  nol
+        |=  a/ring
+        =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+        ~|  %not-crub-seckey  ?>  =('B' mag)
+        =+  [c=(rsh 8 1 bod) s=(end 8 1 bod)]
+        ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
+      ++  com
+        |=  a/pass
+        =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+        ~|  %not-crub-pubkey  ?>  =('b' mag)
+        ..nu(pub [cry=(rsh 8 1 bod) sgn=(end 8 1 bod)], sek ~)
+      --
     --
-  ++  de
-    |=  {key/@J txt/@}
-    ^-  (unit @ux)
-    =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
-    %^    ~(de sivc:aes (shaz key) ~)
-        iv
-      len
-    cph
-  ++  dy  |=({key/@I cph/@} (need (de key cph)))
-  ++  en
-    |=  {key/@J msg/@}
-    ^-  @ux
-    (jam (~(en sivc:aes (shaz key) ~) msg))
-  ++  ex
-    |%
-    ++  fig  ^-  @uvH  (shaf %bfig sgn.^pub)
-    ++  pac  ^-  @uvG  ?~  sek  ~|  %pubkey-only  !!
-                       (end 6 1 (shaf %bcod sgn.u.sek))
-    ++  pub  ^-  pass  (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
-    ++  sec  ^-  ring  ?~  sek  ~|  %pubkey-only  !!
-                       (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
-    --
-  ++  nu
-    |%
-    ++  pit
-      |=  {w/@ seed/@}
-      =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
-      =+  bits=(shal wid seed)
-      =+  [c=(rsh 8 1 bits) s=(end 8 1 bits)]
-      ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
-    ++  nol
-      |=  a/ring
-      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-      ~|  %not-crub-seckey  ?>  =('B' mag)
-      =+  [c=(rsh 8 1 bod) s=(end 8 1 bod)]
-      ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
-    ++  com
-      |=  a/pass
-      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-      ~|  %not-crub-pubkey  ?>  =('b' mag)
-      ..nu(pub [cry=(rsh 8 1 bod) sgn=(end 8 1 bod)], sek ~)
-    --
+  ::
+  ++  trub                                                ::  test crub
+    |=  msg/@t
+    ::
+    ::  make acru cores
+    ::
+    =/  ali      (pit:nu:crub 512 (shaz 'Alice'))
+    =/  ali-pub  (com:nu:crub pub:ex.ali)
+    =/  bob      (pit:nu:crub 512 (shaz 'Robert'))
+    =/  bob-pub  (com:nu:crub pub:ex.bob)
+    ::
+    ::  alice signs and encrypts a symmetric key to bob
+    ::
+    =/  secret-key  %-  shaz
+        'Let there be no duplicity when taking a stand against him.'
+    =/  signed-key   (sign:as.ali ~ secret-key)
+    =/  crypted-key  (seal:as.ali pub:ex.bob-pub ~ signed-key)
+    ::  bob decrypts and verifies
+    =/  decrypt-key-attempt  (tear:as.bob pub:ex.ali-pub crypted-key)
+    =/  decrypted-key    ~|  %decrypt-fail  (need decrypt-key-attempt)
+    =/  verify-key-attempt   (sure:as.ali-pub ~ q.decrypted-key)
+    =/  verified-key     ~|  %verify-fail  (need verify-key-attempt)
+    ::  bob encrypts with symmetric key
+    =/  crypted-msg  (en.bob verified-key msg)
+    ::  alice decrypts with same key
+    `@t`(dy.ali secret-key crypted-msg)
+  ::
+  ++  hmac                                                ::  HMAC-SHA1
+    |=  {key/@ mes/@}
+    =+  ip=(fil 3 64 0x36)
+    =+  op=(fil 3 64 0x5c)
+    =+  ^=  kex
+        ?:  (gth (met 3 key) 64)
+          (lsh 3 44 (shan key))
+        (lsh 3 (sub 64 (met 3 key)) (swp 3 key))
+    =+  inn=(shan (swp 3 (cat 3 (swp 3 mes) (mix ip kex))))
+    (shan (swp 3 (cat 3 inn (mix op kex))))
   --
-::
-++  trub                                                ::  test crub
-  |=  msg/@t
-  ::  make acru cores
-  =/  ali      (pit:nu:crub 512 (shaz 'Alice'))
-  =/  ali-pub  (com:nu:crub pub:ex.ali)
-  =/  bob      (pit:nu:crub 512 (shaz 'Robert'))
-  =/  bob-pub  (com:nu:crub pub:ex.bob)
-  ::  alice signs and encrypts a symmetric key to bob
-  =/  secret-key  %-  shaz
-      'Let there be no duplicity when taking a stand against him.'
-  =/  signed-key   (sign:as.ali ~ secret-key)
-  =/  crypted-key  (seal:as.ali pub:ex.bob-pub ~ signed-key)
-  ::  bob decrypts and verifies
-  =/  decrypt-key-attempt  (tear:as.bob pub:ex.ali-pub crypted-key)
-  =/  decrypted-key    ~|  %decrypt-fail  (need decrypt-key-attempt)
-  =/  verify-key-attempt   (sure:as.ali-pub ~ q.decrypted-key)
-  =/  verified-key     ~|  %verify-fail  (need verify-key-attempt)
-  ::  bob encrypts with symmetric key
-  =/  crypted-msg  (en.bob verified-key msg)
-  ::  alice decrypts with same key
-  `@t`(dy.ali secret-key crypted-msg)
-::
-++  hmac                                                ::  HMAC-SHA1
-  |=  {key/@ mes/@}
-  =+  ip=(fil 3 64 0x36)
-  =+  op=(fil 3 64 0x5c)
-  =+  ^=  kex
-      ?:  (gth (met 3 key) 64)
-        (lsh 3 44 (shan key))
-      (lsh 3 (sub 64 (met 3 key)) (swp 3 key))
-  =+  inn=(shan (swp 3 (cat 3 (swp 3 mes) (mix ip kex))))
-  (shan (swp 3 (cat 3 inn (mix op kex))))
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bC, UTC                      ::  Gregorian only
@@ -2039,7 +2149,7 @@
   ++  z  [;~(plug (mask "-+") . .)]:(bass 10 (stun 2^2 dit))
   --
 ::
-++  unt                                                 ::  UGT to UTC time
+++  unt                                                 ::  Urbit to Unix time
   |=  a/@
   (div (sub a ~1970.1.1) ~s1)
 ::
@@ -2097,11 +2207,16 @@
     (cold -.a (jest -.a))
     $(a +.a)
   ==
-::
+::                                                      ::  ++poja:markup
 ++  poja                                                ::  parse JSON
   =<  |=(a/cord `(unit json)`(rush a apex))
   |%
-  ++  apex                                              ::  JSON value
+  ::                                                    ::  ++abox:poja:markup
+  ++  abox                                              ::  array
+    %+  stag  %a
+    (ifix [sel (wish ser)] (more (wish com) apex))
+  ::                                                    ::  ++apex:poja:markup
+  ++  apex                                              ::  any value
     %+  knee  *json  |.  ~+
     %+  ifix  [spac spac]
     ;~  pose
@@ -2112,28 +2227,45 @@
       abox
       obox
     ==
-  ++  tops  ;~(pose abox obox)                          ::  JSON strict
-  ::  JSON arrays
-  ++  abox  (stag %a (ifix [sel (ws ser)] (more (ws com) apex)))
-  ::  JSON objects
-  ++  pear  ;~(plug ;~(sfix (ws stri) (ws col)) apex)
-  ++  obje  (ifix [(ws kel) (ws ker)] (more (ws com) pear))
-  ++  obox  (stag %o (cook malt obje))
-  ::  JSON booleans
-  ++  bool  ;~(pose (cold & (jest 'true')) (cold | (jest 'false')))
-  ::  JSON strings
-  ++  stri  (cook crip (ifix [doq doq] (star jcha)))
-  ++  jcha  ;~(pose ;~(less doq bas prn) esca)           :: character in string
-  ++  esca                                               :: Escaped character
-    ;~  pfix  bas
-      ;~  pose
-        doq  fas  soq  bas
-        (sear ~(get by `(map @t @)`(malt `(list (pair @t @))`[b+8 t+9 n+10 f+12 r+13 ~])) low)
-        ;~(pfix (just 'u') (cook tuft qix:ab))           :: 4-digit hex to UTF-8
-      ==
+  ::                                                    ::  ++bool:poja:markup
+  ++  bool                                              ::  boolean
+    ;~  pose 
+      (cold & (jest 'true'))
+      (cold | (jest 'false'))
     ==
-  ::  JSON numbers
-  ++  numb
+  ::                                                    ::  ++digs:poja:markup
+  ++  digs                                              ::  digits
+    (star (shim '0' '9'))
+  ::                                                    ::  ++esca:poja:markup
+  ++  esca                                              ::  escaped character
+    ;~  pfix  bas
+      =*  loo
+        =*  lip  
+          ^-  (list (pair @t @))
+          [b+8 t+9 n+10 f+12 r+13 ~]
+        =*  wow  `(map @t @)`(malt lip)
+        (sear ~(get by wow) low)
+      =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
+      ;~(pose doq fas soq bas loo tuf)
+    ==
+  ::                                                    ::  ++expo:poja:markup
+  ++  expo                                              ::  exponent
+    ;~  (comp twel)
+      (piec (mask "eE"))
+      (mayb (piec (mask "+-")))
+      digs
+    ==                                                  
+  ::                                                    ::  ++frac:poja:markup
+  ++  frac                                              ::  fraction
+    ;~(plug dot digs)
+  ::                                                    ::  ++jcha:poja:markup
+  ++  jcha                                              ::  string character
+    ;~(pose ;~(less doq bas prn) esca)
+  ::                                                    ::  ++mayb:poja:markup
+  ++  mayb                                              ::  optional
+    |*(bus/rule ;~(pose bus (easy ~)))
+  ::                                                    ::  ++numb:poja:markup
+  ++  numb                                              ::  number
     ;~  (comp twel)
       (mayb (piec hep))
       ;~  pose
@@ -2143,23 +2275,35 @@
       (mayb frac)
       (mayb expo)
     ==
-  ++  digs  (star (shim '0' '9'))
-  ++  expo                                              :: Exponent part
-    ;~  (comp twel)
-      (piec (mask "eE"))
-      (mayb (piec (mask "+-")))
-      digs
-    ==
-  ++  frac   ;~(plug dot digs)                          :: Fractional part
-  ::  whitespace
-  ++  spac  (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-  ++  ws  |*(sef/rule ;~(pfix spac sef))
-  ::  plumbing
-  ++  mayb  |*(bus/rule ;~(pose bus (easy "")))
-  ++  twel  |=({a/tape b/tape} (weld a b))
-  ++  piec
-    |*  bus/rule
+  ::                                                    ::  ++obje:poja:markup
+  ++  obje                                              ::  object list
+    %+  ifix  [(wish kel) (wish ker)] 
+    (more (wish com) pear)
+  ::                                                    ::  ++obox:poja:markup
+  ++  obox                                              ::  object
+    (stag %o (cook malt obje))
+  ::                                                    ::  ++pear:poja:markup
+  ++  pear                                              ::  key-value
+    ;~(plug ;~(sfix (wish stri) (wish col)) apex)
+  ::
+  ++  piec                                              ::  ++piec:poja:markup
+    |*  bus/rule                                        ::  listify
     (cook |=(a/@ [a ~]) bus)
+  ::                                                    ::  ++stri:poja:markup
+  ++  stri                                              ::  string
+    (cook crip (ifix [doq doq] (star jcha)))
+  ::                                                    ::  ++tops:poja:markup
+  ++  tops                                              ::  strict value
+    ;~(pose abox obox)
+  ::                                                    ::  ++spac:poja:markup
+  ++  spac                                              ::  whitespace
+    (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
+  ::                                                    ::  ++twel:poja:markup
+  ++  twel                                              ::  tape weld
+    |=({a/tape b/tape} (weld a b))
+  ::                                                    ::  ++wish:poja:markup
+  ++  wish                                              ::  with whitespace
+    |*(sef/rule ;~(pfix spac sef))
   --
 ::
 ++  pojo                                                ::  print json
@@ -2205,7 +2349,7 @@
 ::
 ++  poxo                                                ::  node to tape
   =<  |=(a/manx `tape`(apex a ~))
-  |_  _[unq=`?`| cot=`?`|]                           ::  self-close all tags
+  |_  _[unq=`?`| cot=`?`|]                              ::  self-close all tags
   ++  apex                                              ::  top level
     |=  {mex/manx rez/tape}
     ^-  tape
@@ -2274,8 +2418,6 @@
     ==  ==
   --
 ::
-++  foo
-    ;~(plug fas fas fas)
 ++  poxa                                                ::  xml parser
   =<  |=(a/cord (rush a apex))
   |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]
