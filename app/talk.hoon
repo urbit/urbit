@@ -138,6 +138,46 @@
         ==
       --
     --
+|%
+::  old protocol workaround door
+++  timed
+  |_  a/(map partner atlas) :: XX (map partner (pair @da atlas))
+  ++  strip
+    (~(run by a) |=(b/atlas (~(del by b) `@p`%timed-sub)))
+  ::
+  ++  put  ::  XX put:by
+    |=  {b/partner c/@da d/atlas}
+    =/  sta/status  [%gone [~ (some (scot %da c))]]
+    (~(put by a) b (~(put by d) `@p`%timed-sub sta))
+  ::
+  ++  decode-status
+    |=  a/status  ^-  (unit @da)
+    ?.  ?=({$gone $~ $~ tym/@t} a)  ~
+    =>  .(a `{$gone $~ $~ tym/@t}`a)
+    (slaw %da tym.a)
+  ::
+  ++  uni
+    |=  b/_a  ^+  a
+    :: XX efficiency
+    %-  ~(uni by a)
+    %-  ~(urn by b)
+    |=  nb/{p/partner q/atlas}
+    ?.  (~(has by a) p.nb)  q.nb
+    =/  qna  (~(got by a) p.nb)
+    :: XX p.qna p.q.nb
+    =/  pqna  (biff (~(get by qna) `@p`%timed-sub) decode-status)
+    ?~  pqna  q.nb
+    =/  pqnb  (biff (~(get by q.nb) `@p`%timed-sub) decode-status)
+    ?~  pqnb  qna
+    ?:  (gth u.pqna u.pqnb)  qna
+    ?:  (gth u.pqnb u.pqna)  q.nb
+    ::  unfortunately, multiple reports on the same channel can
+    ::  be sent on the same event, necessitating last-wins
+    :: ~|  uni-timed+[n.a n.b]
+    :: ?>  =(n.a n.b)
+    q.nb
+  --
+--
 |_  {hid/bowl house}
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
@@ -508,6 +548,8 @@
               new/(list (pair partner atlas))
               cha/(list (pair partner atlas))
           ==
+      =.  one  ~(strip timed one)
+      =.  two  ~(strip timed two)
       ^+  ret
       =.  ret
         =+  eno=(~(tap by one))
@@ -1757,9 +1799,9 @@
     ++  pa-remind                                       ::  remote presence
       |=  {tay/partner loc/atlas rem/(map partner atlas)}
       =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
-      =/  buk  (~(uni by remotes) rem)  ::  XX drop?
-      =.  buk  (~(put by buk) tay loc)
-      ?:  =(buk remotes)  +>.$
+      =/  buk  (~(uni timed remotes) rem)  ::  XX drop?
+      =.  buk  (~(put timed buk) tay now.hid loc)
+      ?:  =(~(strip timed buk) ~(strip timed remotes))  +>.$
       (pa-report-group(remotes buk) groupers)
     ::
     ++  pa-start                                        ::  start stream
