@@ -43,7 +43,7 @@
   |%                                            ::  convert from
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t                                  ::  clam from %noun
-  ++  txt   role
+  ++  txt   role:differ
   --
 ++  grad  %txt
 --

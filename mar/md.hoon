@@ -8,13 +8,13 @@
   |%
   ++  mime  [/text/x-markdown (taco mud)]
   ++  txt
-    (lore mud)
+    (lore:differ mud)
   --
 ++  grab
   |%
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t
-  ++  txt   role
+  ++  txt   role:differ
   --
 ++  grad  %txt
 ++  garb  /down

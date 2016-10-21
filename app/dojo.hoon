@@ -515,7 +515,7 @@
           %+  weld
             (turn q.hit |=({a/@t b/@t} "{(trip a)}: {(trip b)}"))
           :-  i=""
-          t=(turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
+          t=(turn `wain`?~(r.hit ~ (lore:differ q.u.r.hit)) trip)
       ==
     ::
     ++  dy-show-span-noun

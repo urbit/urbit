@@ -677,7 +677,7 @@
   ~&  [%backing-up pas=pas]
   =;  dif  (emit %info /backup [our dif])
   %+  foal  (welp pax /jam-crub)
-  [%jam-crub !>((en:crub pas (jam `part`+:abet)))]
+  [%jam-crub !>((en:crub:crypto pas (jam `part`+:abet)))]
 ::
 ++  poke-rekey                                        ::  extend will
   |=  $~

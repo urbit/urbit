@@ -1926,27 +1926,31 @@
     ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
       ~|(%test-fail-seal !!)
     msg
-  ::
-  ++  crub                                                ::  cryptosuite B (Ed)
+  ::                                                    ::  ++crub:crypto
+  ++  crub                                              ::  cryptosuite B (Ed)
     ^-  acru
     =,  number
     =,  crypto
     =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
     |%
-    ++  as
+    ::                                                  ::  ++as:crub:crypto
+    ++  as                                              ::  
       |%
-      ++  sign
+      ::                                                ::  ++sign:as:crub
+      ++  sign                                          ::
         |=  {@ msg/@}
         ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
         (jam [(sign:ed msg sgn.u.sek) msg])
-      ++  sure
+      ::                                                ::  ++sure:as:crub
+      ++  sure                                          ::
         |=  {@ txt/@}
         ^-  (unit @ux)
         =+  ((hard {sig/@ msg/@}) (cue txt))
         ?.  (veri:ed sig msg sgn.pub)  ~
         (some msg)
-      ++  seal
+      ::                                                ::  ++seal:as:crub
+      ++  seal                                          ::
         |=  {bpk/pass m1/@ m2/@}
         ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
@@ -1956,7 +1960,8 @@
         =+  msg=(jam m1 m2)
         =+  smsg=(sign ~ msg)
         (jam (~(en siva:aes shar ~) smsg))
-      ++  tear
+      ::                                                ::  ++tear:as:crub
+      ++  tear                                          ::
         |=  {bpk/pass txt/@}
         ^-  (unit (pair @ux @ux))
         ?~  sek  ~|  %pubkey-only  !!
@@ -1970,7 +1975,8 @@
         ?~  veri  ~
         (some ((hard (pair @ux @ux)) (cue u.veri)))
       --
-    ++  de
+    ::                                                  ::  ++de:crub:crypto
+    ++  de                                              ::  decrypt
       |=  {key/@J txt/@}
       ^-  (unit @ux)
       =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
@@ -1978,19 +1984,36 @@
           iv
         len
       cph
-    ++  dy  |=({key/@I cph/@} (need (de key cph)))
-    ++  en
+    ::                                                  ::  ++dy:crub:crypto
+    ++  dy                                              ::  need decrypt
+      |=  {key/@I cph/@} 
+      (need (de key cph))
+    ::                                                  ::  ++en:crub:crypto
+    ++  en                                              ::  encrypt
       |=  {key/@J msg/@}
       ^-  @ux
       (jam (~(en sivc:aes (shaz key) ~) msg))
-    ++  ex
+    ::                                                  ::  ++ex:crub:crypto
+    ++  ex                                              ::  extract
       |%
-      ++  fig  ^-  @uvH  (shaf %bfig sgn.^pub)
-      ++  pac  ^-  @uvG  ?~  sek  ~|  %pubkey-only  !!
-                         (end 6 1 (shaf %bcod sgn.u.sek))
-      ++  pub  ^-  pass  (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
-      ++  sec  ^-  ring  ?~  sek  ~|  %pubkey-only  !!
-                         (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
+      ::                                                ::  ++fig:ex:crub
+      ++  fig                                           ::  fingerprint
+        ^-  @uvH  
+        (shaf %bfig sgn.^pub)
+      ::                                                ::  ++pac:ex:crub
+      ++  pac                                           ::  private fingerprint
+        ^-  @uvG  
+        ?~  sek  ~|  %pubkey-only  !!
+        (end 6 1 (shaf %bcod sgn.u.sek))
+      ::                                                ::  ++pub:ex:crub
+      ++  pub                                           ::  public key
+        ^-  pass  
+        (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
+      ::                                                ::  ++sec:ex:crub
+      ++  sec                                           ::  private key
+        ^-  ring  
+        ?~  sek  ~|  %pubkey-only  !!
+        (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
       --
     ++  nu
       |%
@@ -2013,8 +2036,8 @@
         ..nu(pub [cry=(rsh 8 1 bod) sgn=(end 8 1 bod)], sek ~)
       --
     --
-  ::
-  ++  trub                                                ::  test crub
+  ::                                                    ::  ++trub:crypto
+  ++  trub                                              ::  test crub
     |=  msg/@t
     ::
     ::  make acru cores

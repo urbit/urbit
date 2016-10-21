@@ -114,7 +114,7 @@
   |=  {hot/host dat/@}
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
-  =.  dat  (scot %uw (en:crua ames-secret dat))  ::  XX clay permissions
+  =.  dat  (scot %uw (en:crua:crypto ames-secret dat))  ::  XX clay permissions
   (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
 ::
 ++  poke--data

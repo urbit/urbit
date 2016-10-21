@@ -80,7 +80,7 @@
   |=  hood-begin  =<  abet
   ?>  ?=($~ bur)
   =+  buz=(shaz :(mix (jam ges) eny))
-  =+  loy=(pit:nu:crub 512 buz)
+  =+  loy=(pit:nu:crub:crypto 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
   [%wont /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
 ::

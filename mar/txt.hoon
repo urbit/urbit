@@ -3,6 +3,8 @@
   ::
 /?    310
 !:
+=,  ^differ
+=,  differ
 |_  txt/wain
 ::
 ++  grab                                                ::  convert from
