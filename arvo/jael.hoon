@@ -199,7 +199,8 @@
 ++  task                                                ::  in request ->$
   $%  {$burn p/ship q/safe}                             ::  destroy rights
       {$hail p/ship q/remote}                           ::  remote update
-      {$init p/@pG q/arms}                              ::  initialize urbit
+      {$init p/@p}
+::       {$init p/@pG q/arms}                              ::  initialize urbit
       {$meet p/(unit (unit ship)) q/farm}               ::  integrate pki from
       {$mint p/ship q/safe}                             ::  create rights
       {$move p/ship q/ship r/safe}                      ::  transfer from/to
@@ -1179,7 +1180,9 @@
     ::    {$init p/code q/arms}
     ::
         $init
-      (cure abet:abet:(make:(burb our) now.sys eny.sys p.tac q.tac))
+      =.  our  p.tac
+      (cure abet:abet:(make:(burb our) now.sys eny.sys (shaf %genr eny.sys) *arms))
+::       (cure abet:abet:(make:(burb our) now.sys eny.sys p.tac q.tac))
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -1961,6 +1964,7 @@
     ++  womb                                            ::  manage ship %fungi
       |=  taz/womb-task
       ^+  +>
+      ~&  [taz shy]
       ?-    -.taz
       ::
       ::  create passcode balance
