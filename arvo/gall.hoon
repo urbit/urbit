@@ -3,6 +3,7 @@
 ::::
 |=  pit/vase
 =>  =~
+=,  gall
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    rest of arvo
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  volt  ?($low $high)                                 ::  voltage
@@ -42,7 +43,7 @@
 ++  gest                                                ::  subscriber data
   $:  sup/bitt                                          ::  incoming subscribers
       neb/boat                                          ::  outgoing subscribers
-      qel/(map bone @ud)                               ::  queue meter
+      qel/(map bone @ud)                                ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
   $:  sys/duct                                          ::  system duct
@@ -127,7 +128,7 @@
     %_(+> moz :_(moz [hen %pass pax noh]))
   ::
   ++  mo-give
-    |=  git/gift-gall
+    |=  git/gift
     %_(+> moz :_(moz [hen %give git]))
   ::
   ++  mo-okay                                           ::  valid agent core
@@ -1201,9 +1202,9 @@
   --
 ++  call                                                ::  request
   ~%  %gall-call  +>   ~
-  |=  {hen/duct hic/(hypo (hobo kiss-gall))}
+  |=  {hen/duct hic/(hypo (hobo kiss))}
   ^+  [p=*(list move) q=..^$]
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard kiss-gall) p.q.hic)))
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
   ?-    -.q.hic
       $conf
     ?.  (~(has by pol.all) p.p.q.hic)

@@ -15,11 +15,11 @@
 ++  drum-pith-1                                         ::
   $:  sys/(unit bone)                                   ::  local console
       eel/(set gill)                                    ::  connect to 
-      ray/(set well)                                    ::  
-      fur/(map dude (unit server))                      ::  servers
+      ray/(set well:gall)                               ::  
+      fur/(map dude:gall (unit server))                 ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
-++  drum-start  well                                    ::  start (local) server
+++  drum-start  well:gall                               ::  start (local) server
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -65,7 +65,7 @@
 ++  ukase                                               ::  master command
   $%  {$add p/(list gill)}                              ::  attach to
       {$del p/(list gill)}                              ::  detach from
-      {$new p/(list well)}                              ::  create
+      {$new p/(list well:gall)}                         ::  create
   ==                                                    ::
 --
 ::                                                      ::  ::
@@ -74,7 +74,7 @@
 |%
 ++  deft-apes                                           ::  default servers
   |=  our/ship
-  %-  ~(gas in *(set well))
+  %-  ~(gas in *(set well:gall))
   =+  myr=(clan our)
   ?:  =(%pawn myr)
     [[%base %talk] [%base %dojo] ~]
@@ -184,7 +184,7 @@
   (se-belt bet)
 ::
 ++  poke-start                                        ::
-  |=  wel/well
+  |=  wel/well:gall
   =<  se-abet  =<  se-view
   (se-born wel)
 ::
@@ -223,11 +223,11 @@
   (se-dump:(se-drop & gyl) u.saw)
 ::
 ++  take-onto                                         ::
-  |=  {way/wire saw/(each suss tang)}
+  |=  {way/wire saw/(each suss:gall tang)}
   =<  se-abet  =<  se-view
   ?>  ?=({@ @ $~} way)
   ?>  (~(has by fur) i.t.way)
-  =+  wel=`well`[i.way i.t.way]
+  =+  wel=`well:gall`[i.way i.t.way]
   ?-  -.saw
     $|  (se-dump p.saw)
     $&  ?>  =(q.wel p.p.saw)
@@ -263,7 +263,7 @@
   ^+  .
   %+  roll  (~(tap in ray))
   =<  .(con +>)
-  |=  {wel/well con/_..se-adit}  ^+  con
+  |=  {wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con
   =+  hig=(~(get by fur) q.wel)
   ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
@@ -361,7 +361,7 @@
   ==
 ::
 ++  se-born                                           ::  new server
-  |=  wel/well
+  |=  wel/well:gall
   ^+  +>
   ?:  (~(has in ray) wel)
     (se-text "[already running {<p.wel>}/{<q.wel>}]")

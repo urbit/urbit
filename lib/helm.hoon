@@ -212,7 +212,7 @@
   (emit %flog /helm %verb ~)
 ::
 ++  take-onto                                         ::  result of %conf
-  |=  saw/(each suss tang)  =<  abet
+  |=  saw/(each suss:gall tang)  =<  abet
   %-  emit
   ?-   -.saw
     $|  [%flog ~ %crud %onto `tang`p.saw]

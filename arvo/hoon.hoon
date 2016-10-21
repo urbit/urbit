@@ -5460,7 +5460,7 @@
     {$pin p/twig q/twig}                                ::  =+  q w/[p subject]
     {$tow p/(list twig)}                                ::  =~  twig stack
     {$aka p/term q/twig r/twig}                         ::  =*  r w/alias p/q
-    {$use p/wing q/twig}                                ::  =,  overlap  
+    {$use p/twig q/twig}                                ::  =,  overload p in q
   ::                                            ::::::  conditionals
     {$or p/(list twig)}                                 ::  ?|  loobean or
     {$case p/wing q/(list (pair twig twig))}            ::  ?-  pick case in q
@@ -6424,6 +6424,7 @@
       %vet    vet
       %fab    fab
       %burn   burn
+      %busk   busk
       %buss   buss
       %crop   crop
       %duck   duck
@@ -6433,9 +6434,10 @@
       %emin   emin
       %emul   emul
       %felt   felt
-      %fond   fond
+      %fine   fine
       %fire   fire
       %fish   fish
+      %fond   fond
       %fund   fund
       %funk   funk
       %fuse   fuse
@@ -6485,6 +6487,14 @@
         $noun       ~
         $void       ~
     ==
+  ::
+  ++  busk
+    ~/  %busk
+    |=  gen/twig
+    ^-  span
+    ?:  ?=({$face ^ *} sut)  
+      [%face [p.p.sut [gen q.p.sut]] q.sut]
+    [%face [~ [gen ~]] sut]
   ::
   ++  buss
     ~/  %buss
@@ -6693,8 +6703,8 @@
       |%  +-  $
       =>  +<
       |%
-      ++  pord  |*(* (form +< *nock))                 ::  wrap mint formula
-      ++  rosh  |*(* (form +< *(list pock)))          ::  wrap mint changes
+      ++  pord  |*(* (form +< *nock))                   ::  wrap mint formula
+      ++  rosh  |*(* (form +< *(list pock)))            ::  wrap mint changes
       ++  fleg  _(pord *bath)                           ::  legmatch + code
       ++  fram  _(pord *claw)                           ::  armmatch + 
       ++  foat  _(rosh *bath)                           ::  leg with changes
@@ -6979,13 +6989,13 @@
                 |-  ^-  pony
                 ?~  q.p.sut
                   ^$(sut q.sut, lon [~ lon])
-                =+  tiv=(mint %noun i.q.p.sut)
+                =+  tiv=(mint(sut q.sut) %noun i.q.p.sut)
                 =+  fid=^$(sut p.tiv, lon ~, axe 1, gil ~)
                 ?~  fid  ~
                 ?:  ?=({$| $& *} fid)
                   $(q.p.sut t.q.p.sut, p.heg p.p.fid)
                 =+  vat=(fine `port`?-(-.fid $& fid, $| [%| p.p.fid]))
-                [%| %| p.vat (comb q.vat (comb [%0 axe] q.tiv))]
+                [%| %| p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
               --
             ::
                 {$fork *}
@@ -7027,6 +7037,7 @@
     (find way u.hup)
   ::
   ++  fine
+    ~/  %fine
     |=  tor/port
     ^-  (pair span nock)
     ?-  -.tor
@@ -7243,6 +7254,9 @@
     ::
         {$aka *}
       $(gen r.gen, sut (buss p.gen q.gen))
+    ::
+        {$use *}
+      $(gen q.gen, sut (busk p.gen))
     ::
         {$if *}
       =+  nor=$(gen p.gen, gol bool)
@@ -9049,6 +9063,7 @@
                   (word %aka expl)
                   (word %pin expb)
                   (word %tow expi)
+                  (word %use expb)
                 ::
                   (word %or exps)
                   (word %if expc)
@@ -9139,6 +9154,7 @@
                     ['>' (rune gar %per expb)]
                     ['-' (rune hep %nip expb)]
                     ['*' (rune tar %aka expl)]
+                    [',' (rune com %use expb)]
                     ['+' (rune lus %pin expb)]
                     ['~' (rune sig %tow expi)]
                 ==

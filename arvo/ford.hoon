@@ -3,6 +3,9 @@
 !?  164
 ::::
 |=  pit/vase   
+=,  ^differ
+=,  differ
+=,  gall
 =>  =~
 ::  structures
 |%

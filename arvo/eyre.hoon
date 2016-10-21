@@ -2,6 +2,8 @@
 !?  164
 ::::
 |=  pit/vase
+=,  gall
+=,  crypto
 =>  =~
 |%                                                      ::  interfaces
 ++  gift  gift-eyre                                     ::  out result <-$
@@ -1112,7 +1114,7 @@
             {$txt $robots $~}
           :-  ~
           %^  resp  200  text+/plain
-          %-  role
+          %-  role:differ
           :~  'User-agent: *'
               'Disallow: '
           ==
