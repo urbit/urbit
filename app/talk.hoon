@@ -1795,10 +1795,7 @@
     ++  pa-notify                                       ::  local presence
       |=  {her/ship saz/status}
       ^+  +>
-      =+  ^=  nol
-          ?:  =(%gone p.saz) 
-            (~(del by locals) her)
-          (~(put by locals) her now.hid saz)
+      =/  nol  (~(put by locals) her now.hid saz)
       ?:  =(nol locals)  +>.$
       (pa-report-group(locals nol) groupers)
     ::
