@@ -1,3 +1,4 @@
+::  API: input basic auth credentials for domain
 ::
 ::::  /hoon/init-auth-basic/hood/gen
   ::

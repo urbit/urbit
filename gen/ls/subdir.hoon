@@ -1,3 +1,4 @@
+::  Filesystem iterator XX move to lib/
 ::
 ::::  /hoon/subdir/ls/gen
   ::

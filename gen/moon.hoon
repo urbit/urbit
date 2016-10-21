@@ -1,3 +1,4 @@
+::  Generate random moon and corresponding ticket
 ::
 ::::  /hoon/moon/gen
   ::

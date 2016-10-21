@@ -1,3 +1,4 @@
+::  Womb: use old-@p private key to distribute recycled invites
 ::
 ::::  /hoon/manage-old-key/hood/gen
   ::

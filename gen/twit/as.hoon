@@ -1,3 +1,7 @@
+::  Send tweet from an account
+::
+::::  /hoon/as/twit/gen
+  ::
 /-    twitter
 ::
 ::::

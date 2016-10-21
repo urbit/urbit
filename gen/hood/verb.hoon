@@ -1,3 +1,4 @@
+::  Arvo: toggle "verbose mode" internal event tracing
 ::
 ::::  /hoon/verb/hood/gen
   ::

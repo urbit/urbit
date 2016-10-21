@@ -1,3 +1,4 @@
+::  Login code for web UI
 ::
 ::::  /hoon/code/gen
   ::

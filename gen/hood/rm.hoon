@@ -1,3 +1,4 @@
+::  Kiln: Remove file from clay
 ::
 ::::  /hoon/rm/hood/gen
   ::

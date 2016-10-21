@@ -1,5 +1,6 @@
+::  Womb: replay events from a future lost XX move to jael
 ::
-::::  /hoon/reinvite/hood/gen
+::::  /hoon/replay-womb-log/hood/gen
   ::
 /?    310
 /+    womb

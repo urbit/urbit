@@ -1,3 +1,4 @@
+::  Kiln: regularly clear %ford cache  XX find relevant leak
 ::
 ::::  /hoon/overload/hood/gen
   ::

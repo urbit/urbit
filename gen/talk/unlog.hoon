@@ -1,3 +1,4 @@
+::  Disable channel logging to clay
 ::
 ::::  /hoon/unlog/talk/gen
   ::

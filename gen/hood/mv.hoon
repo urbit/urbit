@@ -1,3 +1,4 @@
+::  Kiln: Move file in clay
 ::
 ::::  /hoon/mv/hood/gen
   ::

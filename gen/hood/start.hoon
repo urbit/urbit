@@ -1,3 +1,4 @@
+::  Drum: boot unstarted app
 ::
 ::::  /hoon/start/hood/gen
   ::

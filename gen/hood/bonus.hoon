@@ -1,5 +1,6 @@
+::  Womb: add planets/stars to balance
 ::
-::::  /hoon/reinvite/hood/gen
+::::  /hoon/bonus/hood/gen
   ::
 /?    310
 ::
