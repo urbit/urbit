@@ -1515,7 +1515,7 @@
     ::  key: generated key
     ::  bul: initial bull
     ::
-    =/  key  (ypt:scr:number (mix our %jael-make) gen)
+    =/  key  (ypt:scr:crypto (mix our %jael-make) gen)
     =*  doc  `bull`[(sein our) & nym]
     ::
     ::  register generator as login secret
@@ -1555,7 +1555,7 @@
     ::  had: key handle
     ::  ryt: initial right
     ::
-    =/  key  (ypt:scr:number (mix our %jael-make) gen)  
+    =/  key  (ypt:scr:crypto (mix our %jael-make) gen)  
     =*  had  (shaf %hand key)
     =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
     ::
