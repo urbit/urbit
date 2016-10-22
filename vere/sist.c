@@ -985,7 +985,7 @@ _sist_rest()
       if ( u3A->key ) {
         u3_noun dep;
 
-        dep = u3dc("de:crua", u3k(u3A->key), ron);
+        dep = u3dc("de:crua:crypto", u3k(u3A->key), ron);
         if ( c3n == u3du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u3_lo_bail();
