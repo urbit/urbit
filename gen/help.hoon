@@ -30,6 +30,14 @@
   ?.  =('::  ' (end 3 4 i.c))
     "<undocumented>"
   (trip i.c)
+::
+++  read-at
+  |=  {len/@u pax/path}
+  |=  {nam/@t ark/arch}  ^-  (unit {@t path})
+  ?.  (~(has by dir.ark) %hoon)  ~
+  %+  bind  (file (welp pax /[nam]/hoon))
+  |=  a/*  ^-  {cord path}
+  [;;(@t a) (welp (slag len pax) /[nam])]  
 --
 ::
 :-  %say
@@ -37,21 +45,20 @@
 =/  pax/path  /(scot %p our)/home/(scot %da now)/gen  :: XX hardcoded
 =+  len=(lent pax)
 =.  pax  ?~(typ pax (welp pax /[p.typ]))
-:-  %tang  %-  flop
+:-  %tang  %-  flop  ^-  tang
 =+  ark=.^(arch cy+pax)
+%+  welp
+  ?~  typ  ~
+  =/  red  ((read-at len (scag len pax)) p.typ ark) :: XX ugly
+  (drop (bind red rend))
 |-  ^-  tang
 =+  =<  arl=(~(tap by (~(urn by dir.ark) .)))
     |=({a/@t $~} .^(arch cy+(welp pax /[a])))
-=-  %+  welp  -
-    %-  zing  ^-  (list tang)
-    %+  turn  (sort arl aor)
-    |=  {a/@t b/arch}
-    ^$(pax (welp pax /[a]), ark b)
-=;  res/(list {cord path})
-  (turn (sort res aor) rend)
-%+  murn  arl
+%+  welp
+  =/  dir/(list {@ path})
+    (murn arl (read-at len pax))
+  `tang`(turn (sort dir aor) rend)
+%-  zing  ^-  (list tang)
+%+  turn  (sort arl aor)
 |=  {a/@t b/arch}
-?.  (~(has by dir.b) %hoon)  ~
-%+  bind  (file (welp pax /[a]/hoon))
-|=  c/*  ^-  {cord path}
-[;;(@t c) (welp (slag len pax) /[a])]
+^$(pax (welp pax /[a]), ark b)
