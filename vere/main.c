@@ -82,7 +82,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"B:A:I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -90,6 +90,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
+        break;
+      }
+      case 'G': {
+        u3_Host.ops_u.gen_c = strdup(optarg);
         break;
       }
       case 'A': {
@@ -185,6 +189,18 @@ _main_getopt(c3_i argc, c3_c** argv)
        u3_Host.ops_u.nuu   == c3y ) {
     fprintf(stderr, "can't create a new galaxy without specifying "
                     "the initial sync path with -A\n");
+    return c3n;
+  }
+   
+  if ( u3_Host.ops_u.gen_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
+                                     u3_Host.ops_u.nuu   == c3n ) ) {
+    fprintf(stderr, "-G only makes sense when creating a new galaxy");
+    return c3n;
+  }
+  
+  if ( u3_Host.ops_u.tic_c != 0 && ( u3_Host.ops_u.imp_c != 0 ||
+                                     u3_Host.ops_u.nuu   == c3y ) ) {
+    fprintf(stderr, "-t only makes sense when creating a new non-galaxy");
     return c3n;
   }
 
