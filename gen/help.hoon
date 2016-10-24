@@ -1,4 +1,4 @@
-::  List available comands
+::  Describe available comands: +help, +help %tree, +help %hood
 ::  
 ::::  /hoon/help/gen
   ::
