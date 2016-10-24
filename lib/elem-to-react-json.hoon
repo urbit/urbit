@@ -1,9 +1,10 @@
+::  Serialize &elem as &json, with special handling for urb:* attributes
 ::
 ::::  /hoon/elem-to-react-json/lib
   ::
 /?    310
 |%
-++  react-attrs
+++  react-attrs                                         ::  uppercase mapping
   ~+  ^-  (map term cord)
   %-  molt  ^-  (list (pair term cord))  
   :-  [%class 'className']
@@ -23,14 +24,16 @@
   width wmode
   '''
 ::
-++  urb-codemirror                    ::  reactify <pre urb:codemirror>foo</pre>
+::  special handling for <pre urb:codemirror>foo</pre>
+++  urb-codemirror                                      ::  render code blocks
   |=  src/manx  ^-  manx
   ?>  ?=({{$pre *} _;/(**) $~} src)
   ;codemirror(value "{v.i.a.g.i.c.src}");
 ::
-++  urb-exec                          ::  reactify <pre urb:exec>foo</pre>
+::  special handling for <pre urb:exec>foo</pre>
+++  urb-exec                                            ::  eval inline hoon
   |=  src/manx
-  ?>  ?=({{$pre *} _;/(**) $~} src)      ::  verify its only a text node
+  ?>  ?=({{$pre *} _;/(**) $~} src)      ::  verify it's only a text node
   =*  code  v.i.a.g.i.c.src
   =+  =<  result=(mule .)
       !.(|.((slap !>(.) (ream (crip code)))))     ::  compile and run safely
@@ -47,7 +50,7 @@
                     ;div:"{~(ram re a)}"
   ==    ==    ==
 ::
-++  elem-to-react-json
+++  elem-to-react-json                                  ::  serialize DOM as json
   |=  src/manx  ^-  json
   ?:  ?=(_;/(**) src)
     (jape v.i.a.g.src)
@@ -66,9 +69,10 @@
     (fall (~(get by react-attrs) a) a)
   ==
 ::
-++  mane-to-cord  |=(a/mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
+++  mane-to-cord                                        ::  namespaced xml names
+  |=(a/mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
 --
 ::
 ::::
   ::
-elem-to-react-json
+elem-to-react-json                                      ::  export conversion gate
