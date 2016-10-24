@@ -1,7 +1,7 @@
 !:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
 !?  150
-      ::
+    ::::
       ::  %jael: secrets and promises.
       ::
       ::  todo: 
@@ -20,19 +20,19 @@
 ::                                                      ::::
 ::::                        #  1                        ::  models
   ::                                                    ::::
-      ::  the %jael state comes in two parts: absolute
-      ::  and relative.
-      ::
-      ::  ++state-absolute is objective -- defined without
-      ::  reference to our ship.  if you steal someone else's
-      ::  private keys, we have a place to put them.  when
-      ::  others make promises to us, we store them in the
-      ::  same structures we use to make promises to others.
-      ::
-      ::  ++state-relative is subjective, denormalized and
-      ::  derived.  it consists of all the state we need to
-      ::  manage subscriptions efficiently.
-    ::::
+::::  the %jael state comes in two parts: absolute
+  ::  and relative.
+  ::
+  ::  ++state-absolute is objective -- defined without
+  ::  reference to our ship.  if you steal someone else's
+  ::  private keys, we have a place to put them.  when
+  ::  others make promises to us, we store them in the
+  ::  same structures we use to make promises to others.
+  ::
+  ::  ++state-relative is subjective, denormalized and
+  ::  derived.  it consists of all the state we need to
+  ::  manage subscriptions efficiently.
+::::
 =>  |%
 ++  state                                               ::  all vane state
   $:  ver/$0                                            ::  vane version 
@@ -82,14 +82,14 @@
 =>  |%
 ::                                                      ::  ++zeno
 ++  zeno                                                ::  boot fingerprints
-      ::  in ++zeno we hardcode the fingerprints of galaxies
-      ::  and the identities of their owners.  if the 
-      ::  fingerprint is 0, the galaxy can't be created.
-      ::
-      ::  we'll probably move at least the identity data
-      ::  into urbit as it becomes more stable, but keeping
-      ::  it in the source makes it very resilient.
-    ::::
+  ::::  in ++zeno we hardcode the fingerprints of galaxies
+    ::  and the identities of their owners.  if the 
+    ::  fingerprint is 0, the galaxy can't be created.
+    ::
+    ::  we'll probably move at least the identity data
+    ::  into urbit as it becomes more stable, but keeping
+    ::  it in the source makes it very resilient.
+  ::::
   |=  who/ship
   ^-  @
   %+  snag  who
@@ -360,9 +360,9 @@
 ::::                        ## 3.a                      ::  sparse range
   ::                                                    ::::
 ++  py        
-      ::  because when you're a star with 2^16 unissued
-      ::  planets, a (set) is kind of lame...
-    ::::
+  ::::  because when you're a star with 2^16 unissued
+    ::  planets, a (set) is kind of lame...
+  ::::
   |_  a/pile
   ::                                                    ::  ++dif:py
   ++  dif                                               ::  add/remove a->b
@@ -1515,7 +1515,7 @@
     ::  key: generated key
     ::  bul: initial bull
     ::
-    =/  key  (ypt:scr:number (mix our %jael-make) gen)
+    =/  key  (ypt:scr:crypto (mix our %jael-make) gen)
     =*  doc  `bull`[(sein our) & nym]
     ::
     ::  register generator as login secret
@@ -1555,7 +1555,7 @@
     ::  had: key handle
     ::  ryt: initial right
     ::
-    =/  key  (ypt:scr:number (mix our %jael-make) gen)  
+    =/  key  (ypt:scr:crypto (mix our %jael-make) gen)  
     =*  had  (shaf %hand key)
     =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
     ::
