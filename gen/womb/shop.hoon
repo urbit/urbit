@@ -1,3 +1,4 @@
+::  Browse random claimable ships
 ::
 ::::  /hoon/shop/womb/gen
   ::

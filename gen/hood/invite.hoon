@@ -1,3 +1,4 @@
+::  Womb: allocate urbits to the holder of an email
 ::
 ::::  /hoon/invite/hood/gen
   ::

@@ -1,3 +1,4 @@
+::  Redeem ticket to replace current urbit with full one  XX DEPRECATED
 ::
 ::::  /hoon/begin/hood/gen
   ::

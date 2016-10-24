@@ -1,3 +1,4 @@
+::  Pretty-printing util, should be in lib/
 ::
 ::::  /hoon/pretty/cat/gen
   ::

@@ -1,3 +1,4 @@
+::  Set upstream sources for channel
 ::
 ::::  /hoon/federate/talk/gen
   ::

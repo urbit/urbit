@@ -1,3 +1,4 @@
+::  Helm: Reload hoon/hoon and all vanes
 ::
 ::::  /hoon/reset/hood/gen
   ::

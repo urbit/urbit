@@ -1,3 +1,4 @@
+::  Enable channel logging to clay
 ::
 ::::  /hoon/log/talk/gen
   ::

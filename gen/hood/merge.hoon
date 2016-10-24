@@ -1,3 +1,4 @@
+::  Kiln: Merge local desk from (optionally-)foreign one
 ::
 ::::  /hoon/merge/hood/gen
   ::

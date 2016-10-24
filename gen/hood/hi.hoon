@@ -1,3 +1,4 @@
+::  Helm: send message to an urbit
 ::
 ::::  /hoon/hi/hood/gen
   ::

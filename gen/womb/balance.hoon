@@ -1,3 +1,4 @@
+::  Inspect invite contents
 ::
 ::::  /hoon/balance/womb/gen
   ::

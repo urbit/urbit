@@ -1,3 +1,4 @@
+::  Compile arvo as a pill noun, usage .urbit/pill +solid
 ::
 ::::  /hoon/solid/gen
   ::

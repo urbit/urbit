@@ -1,3 +1,4 @@
+::  Womb: release a nuber of ships for public claiming
 ::
 ::::  /hoon/release/hood/gen
   ::

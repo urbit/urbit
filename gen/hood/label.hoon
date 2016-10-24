@@ -1,3 +1,4 @@
+::  Kiln: add label to current revision of desk
 ::
 ::::  /hoon/label/hood/gen
   ::

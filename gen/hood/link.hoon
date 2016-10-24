@@ -1,3 +1,4 @@
+::  Drum: Connect to a console-enabled app
 ::
 ::::  /hoon/link/hood/gen
   ::

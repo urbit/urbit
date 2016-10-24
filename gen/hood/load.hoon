@@ -1,3 +1,4 @@
+::  Hood, generic: load named hood component's state from backup
 ::
 ::::  /hoon/load/hood/gen
   ::

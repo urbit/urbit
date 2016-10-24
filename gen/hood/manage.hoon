@@ -1,3 +1,4 @@
+::  Womb: claim other ships' children  XX remove in cc-release
 ::
 ::::  /hoon/manage/hood/gen
   ::
