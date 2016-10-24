@@ -6,6 +6,7 @@
 /-    twitter
 /+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
+=,  markup
 !:
 ::::  functions
   ::
@@ -66,7 +67,7 @@
 ++  parse                                                ::  json reparsers
   |%
   ++  ce  |*({a/_* b/fist:jo} (cu:jo |=(c/a c) b))       ::  output type
-  ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])        ::  XX usable electroplating
+  ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])
   ++  user  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
   ++  post

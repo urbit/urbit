@@ -2575,7 +2575,7 @@
     ++  da                                              ::  UTC date
       |=  jon/json
       ?.  ?=({$s *} jon)  ~
-      (bind (stud p.jon) |=(a/date (year a)))
+      (bind (stud:chrono p.jon) |=(a/date (year a)))
     ::
     ++  di                                              ::  millisecond date
       %+  cu
@@ -3294,7 +3294,7 @@
                  ++  com  |~(a/@ ^?(..nu))              ::  from naked pass
              --                                         ::
           --                                            ::
-++  aeon  @ud                                          ::
+++  aeon  @ud                                           ::
 ++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})    ::  mergepts
 ++  ankh                                                ::  fs node (new)
           $:  fil/(unit {p/lobe q/cage})                ::  file
@@ -3611,21 +3611,6 @@
 ++  rang  $:  hut/(map tako yaki)                       ::
               lat/(map lobe blob)                       ::
           ==                                            ::
-++  rand                                                ::  unvalidated rant
-          $:  p/{p/care q/case r/@tas}                  ::  clade release book
-              q/path                                    ::  spur
-              r/page                                    ::  data
-          ==                                            ::
-++  rant                                                ::  namespace binding
-          $:  p/{p/care q/case r/@tas}                  ::  clade release book
-              q/path                                    ::  spur
-              r/cage                                    ::  data
-          ==                                            ::
-++  rave                                                ::  general request
-          $%  {$sing p/mood}                            ::  single request
-              {$next p/mood}                            ::  next version
-              {$many p/? q/moat}                        ::  change range
-          ==                                            ::
 ++  rill                                                ::  outbound stream
           $:  sed/@ud                                   ::  sent
               san/(map @ud duct)                        ::  outstanding
@@ -3811,6 +3796,28 @@
           ==                                            ::
 ++  mode  (list {path (unit mime)})                     ::
 ++  riff  {p/desk q/(unit rave)}                        ::  request+desist
+::
+::  Response to a request.
+::
+::  Includes {case case desk} of original request, plus the path of the request,
+::  and the data there.
+::
+++  rant                                                ::  namespace binding
+          $:  p/{p/care q/case r/@tas}                  ::  clade release book
+              q/path                                    ::  spur
+              r/cage                                    ::  data
+          ==                                            ::
+::
+::  A request.
+::
+::  %sing requests a single piece of data, %next requests to be notified when
+::  something changes, and %many starts a subscription to a range of versions.
+::
+++  rave                                                ::  general request
+          $%  {$sing p/mood}                            ::  single request
+              {$next p/mood}                            ::  next version
+              {$many p/? q/moat}                        ::  change range
+          ==                                            ::
 ::::                                                    ::
 ++  gift-clay                                           ::  out result <-$
           $%  {$ergo p/@tas q/mode}                     ::  version update
