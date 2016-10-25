@@ -2038,8 +2038,8 @@
       =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
       ?>  =('A' mag)
       (nol:nu:crua bod)
-      ::                                                    ::  ++trsa:crypto
-    ++  trua                                              ::  test rsa
+    ::                                                  ::  ++trsa:crypto
+    ++  trua                                            ::  test rsa
       |=  msg/@tas
       ^-  @
       =+  ali=(bruw 1.024 (shax 'ali'))
