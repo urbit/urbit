@@ -180,7 +180,7 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-A only makes sense when creating a new galaxy");
+    fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
     return c3n;
   }
 
@@ -194,13 +194,13 @@ _main_getopt(c3_i argc, c3_c** argv)
    
   if ( u3_Host.ops_u.gen_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-G only makes sense when creating a new galaxy");
+    fprintf(stderr, "-G only makes sense when creating a new galaxy\n");
     return c3n;
   }
   
   if ( u3_Host.ops_u.tic_c != 0 && ( u3_Host.ops_u.imp_c != 0 ||
-                                     u3_Host.ops_u.nuu   == c3y ) ) {
-    fprintf(stderr, "-t only makes sense when creating a new non-galaxy");
+                                     u3_Host.ops_u.nuu   == c3n ) ) {
+    fprintf(stderr, "-t only makes sense when creating a new non-galaxy\n");
     return c3n;
   }
 
