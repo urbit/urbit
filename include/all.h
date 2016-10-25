@@ -2,6 +2,7 @@
 **
 ** This file is in the public domain.
 */
+#   include "version.h"
   /** c3: C environment.
   **/
 #   include "c/portable.h"  //  C and OS portability
