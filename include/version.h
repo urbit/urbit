@@ -1,1 +1,1 @@
-#define URBIT_VERSION "is currently unversioned"
+#define URBIT_VERSION "0.4"
