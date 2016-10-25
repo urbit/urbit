@@ -471,6 +471,7 @@ main(c3_i   argc,
 
   printf("~\n");
   //  printf("welcome.\n");
+  printf("urbit %s\n", URBIT_VERSION);
   printf("urbit: home is %s\n", u3_Host.dir_c);
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
