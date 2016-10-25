@@ -1,38 +1,39 @@
 !:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
 !?  150
-    ::::
-      ::  %jael: secrets and promises.
-      ::
-      ::  todo: 
-      ::  
-      ::    - communication with other vanes:
-      ::      - actually use %behn for expiring secrets
-      ::      - report %ames propagation errors to user
-      ::
-      ::    - nice features:
-      ::      - scry namespace
-      ::      - task for converting invites to tickets
-    ::::
+::
+::
+::  %jael: secrets and promises.
+::
+::  todo: 
+::  
+::    - communication with other vanes:
+::      - actually use %behn for expiring secrets
+::      - report %ames propagation errors to user
+::
+::    - nice features:
+::      - scry namespace
+::      - task for converting invites to tickets
+::
 |=  pit/vase
 =,  crypto
 =,  jael
 ::                                                      ::::
-::::                        #  1                        ::  models
+::::                    # models                        ::  data structures
   ::                                                    ::::
-::::  the %jael state comes in two parts: absolute
-  ::  and relative.
-  ::
-  ::  ++state-absolute is objective -- defined without
-  ::  reference to our ship.  if you steal someone else's
-  ::  private keys, we have a place to put them.  when
-  ::  others make promises to us, we store them in the
-  ::  same structures we use to make promises to others.
-  ::
-  ::  ++state-relative is subjective, denormalized and
-  ::  derived.  it consists of all the state we need to
-  ::  manage subscriptions efficiently.
-::::
+::  the %jael state comes in two parts: absolute
+::  and relative.
+::
+::  ++state-absolute is objective -- defined without
+::  reference to our ship.  if you steal someone else's
+::  private keys, we have a place to put them.  when
+::  others make promises to us, we store them in the
+::  same structures we use to make promises to others.
+::
+::  ++state-relative is subjective, denormalized and
+::  derived.  it consists of all the state we need to
+::  manage subscriptions efficiently.
+::
 =>  |%
 ++  state                                               ::  all vane state
   $:  ver/$0                                            ::  vane version 
@@ -77,19 +78,20 @@
   {p/duct q/card}                                       ::
 --
 ::                                                      ::::
-::::                        #  2                        ::  static data
+::::                    # data                          ::  static data
   ::                                                    ::::
 =>  |%
 ::                                                      ::  ++zeno
 ++  zeno                                                ::  boot fingerprints
-  ::::  in ++zeno we hardcode the fingerprints of galaxies
-    ::  and the identities of their owners.  if the 
-    ::  fingerprint is 0, the galaxy can't be created.
-    ::
-    ::  we'll probably move at least the identity data
-    ::  into urbit as it becomes more stable, but keeping
-    ::  it in the source makes it very resilient.
-  ::::
+  ::
+  ::  in ++zeno we hardcode the fingerprints of galaxies
+  ::  and the identities of their owners.  if the 
+  ::  fingerprint is 0, the galaxy can't be created.
+  ::
+  ::  we'll probably move at least the identity data
+  ::  into urbit as it becomes more stable, but keeping
+  ::  it in the source makes it very resilient.
+  ::
   |=  who/ship
   ^-  @
   %+  snag  who
@@ -353,16 +355,16 @@
   ==
 --
 ::                                                      ::::
-::::                        #  3                        ::  stateless functions
+::::                    # light                         ::  light cores
   ::                                                    ::::
 =>  |%
 ::                                                      ::  ++py
-::::                        ## 3.a                      ::  sparse range
+::::                    ## sparse^light                 ::  sparse range
   ::                                                    ::::
 ++  py        
-  ::::  because when you're a star with 2^16 unissued
-    ::  planets, a (set) is kind of lame...
-  ::::
+  ::  because when you're a star with 2^16 unissued
+  ::  planets, a (set) is kind of lame...
+  ::
   |_  a/pile
   ::                                                    ::  ++dif:py
   ++  dif                                               ::  add/remove a->b
@@ -486,19 +488,19 @@
     $(a l.a, b $(a r.a))
   --
 ::                                                      ::  ++ry
-::::                        ## 3.b                      ::  rights algebra
+::::                    ## rights^light                 ::  rights algebra
   ::                                                    ::::
 ++  ry
-      ::
-      ::  we need to be able to combine rites, and 
-      ::  track changes by taking differences between them.  
-      :: 
-      ::  ++ry must always crash when you try to make it
-      ::  do something that makes no sense.  
-      ::
-      ::  language compromises: the type system can't enforce 
-      ::  that lef and ryt match, hence the asserts.
-    ::::
+  ::
+  ::  we need to be able to combine rights, and 
+  ::  track changes by taking differences between them.  
+  :: 
+  ::  ++ry must always crash when you try to make it
+  ::  do something that makes no sense.  
+  ::
+  ::  language compromises: the type system can't enforce 
+  ::  that lef and ryt match, hence the asserts.
+  ::
   |_  $:  ::  lef: old right
           ::  ryt: new right
           ::
@@ -665,28 +667,28 @@
     --
   --
 ::                                                      ::  ++up
-::::                        ## 3.c                      ::  wallet algebra
+::::                    ## wallet^light                 ::  wallet algebra
   ::                                                    ::::
 ++  up
-      ::  a set of rites is stored as a tree (++safe), sorted
-      ::  by ++gor on the stem, balanced by ++vor on the stem.
-      ::  (this is essentially a ++map with stem as key, but
-      ::  ++map doesn't know how to link stem and bulb types.)
-      ::  the goal of the design is to make it easy to add new
-      ::  kinds of rite without a state adapter.
-      ::
-      ::  wallet operations always crash if impossible;
-      ::  %jael has no concept of negative rights.
-      ::
-      ::  performance issues: ++differ and ++splice, naive.
-      :: 
-      ::  external issues: much copy and paste from ++by.  it
-      ::  would be nice to resolve this somehow, but not urgent.
-      ::
-      ::  language issues: if hoon had an equality test 
-      ::  that informed inference, ++expose could be 
-      ::  properly inferred, eliminating the ?>.
-    ::::
+  ::  a set of rites is stored as a tree (++safe), sorted
+  ::  by ++gor on the stem, balanced by ++vor on the stem.
+  ::  (this is essentially a ++map with stem as key, but
+  ::  ++map doesn't know how to link stem and bulb types.)
+  ::  the goal of the design is to make it easy to add new
+  ::  kinds of rite without a state adapter.
+  ::
+  ::  wallet operations always crash if impossible;
+  ::  %jael has no concept of negative rights.
+  ::
+  ::  performance issues: ++differ and ++splice, naive.
+  :: 
+  ::  external issues: much copy and paste from ++by.  it
+  ::  would be nice to resolve this somehow, but not urgent.
+  ::
+  ::  language issues: if hoon had an equality test 
+  ::  that informed inference, ++expose could be 
+  ::  properly inferred, eliminating the ?>.
+  ::
   |_  pig/safe
   ::                                                    ::  ++delete:up
   ++  delete                                            ::  delete right
@@ -819,7 +821,7 @@
     (splice(pig (remove les.del)) mor.del)
   --   
 ::                                                      ::  ++we
-::::                        ## 3.d                      ::  will functions
+::::                    ## will^light                   ::  will functions
   ::                                                    ::::
 ++  we
   |_  pub/will
@@ -846,28 +848,28 @@
   --
 --
 ::                                                      ::::
-::::                        #  4                        ::  engines
+::::                    #  heavy                        ::  heavy engines
   ::                                                    ::::
 =>  |%
 ::                                                      ::  ++of
-::::                        ## 4.a                      ::  main engine
+::::                    ## main^heavy                   ::  main engine
   ::                                                    ::::
 ++  of
-      ::  this core handles all top-level %jael semantics,
-      ::  changing state and recording moves.
-      ::
-      ::  logically we could nest the ++su and ++ur cores
-      ::  within it, but we keep them separated for clarity.
-      ::  the ++curd and ++cure arms complete relative and
-      ::  absolute effects, respectively, at the top level.
-      ::
-      ::  a general pattern here is that we use the ++ur core
-      ::  to generate absolute effects (++change), then invoke 
-      ::  ++su to calculate the derived effect of these changes.
-      ::
-      ::  arvo issues: should be merged with the top-level
-      ::  vane interface when that gets cleaned up a bit.
-    ::::
+  ::  this core handles all top-level %jael semantics,
+  ::  changing state and recording moves.
+  ::
+  ::  logically we could nest the ++su and ++ur cores
+  ::  within it, but we keep them separated for clarity.
+  ::  the ++curd and ++cure arms complete relative and
+  ::  absolute effects, respectively, at the top level.
+  ::
+  ::  a general pattern here is that we use the ++ur core
+  ::  to generate absolute effects (++change), then invoke 
+  ::  ++su to calculate the derived effect of these changes.
+  ::
+  ::  arvo issues: should be merged with the top-level
+  ::  vane interface when that gets cleaned up a bit.
+  ::
   =|  moz/(list move)
   =|  $:  ::  sys: system context
           ::
@@ -1019,7 +1021,7 @@
     (curd(urb urb) abet:(~(apex su urb sub) hab))
   --
 ::                                                      ::  ++su
-::::                        ## 4.b                      ::  relative engine
+::::                    ## relative^heavy               ::  subjective engine
   ::                                                    ::::
 ++  su
       ::  the ++su core handles all derived state, 
@@ -1450,7 +1452,7 @@
     ==
   --
 ::                                                      ::  ++ur
-::::                        ## 4.c                      ::  absolute engine
+::::                    ## absolute^heavy               ::  objective engine
   ::                                                    ::::
 ++  ur
       ::  the ++ur core handles primary, absolute state.
@@ -1884,7 +1886,7 @@
   --  --
 --  --  
 ::                                                      ::::
-::::                        #  5                        ::  interface
+::::                    #  vane                         ::  interface
   ::                                                    ::::
 ::
 ::  lex: all durable %jael state

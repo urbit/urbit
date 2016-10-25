@@ -1,17 +1,17 @@
 !:                                                      ::  /van/zuse
 ::                                                      ::  !%reference
-      ::
-      ::  %zuse: standard library.
-      ::  
-    ::::
+::
+::  %zuse: standard library.
+::  
+::
 ~%  %zuse  +>  ~
 =>  
 ::                                                      ::::
-::::                        #  1                        ::  models
+::::                    #  models                       ::  data structures
   ::                                                    ::::
 |%
 ::                                                      ::
-::::                        ## 1.differ                 ::  hunt-mcilroy diff
+::::                    ## differ^models                ::  hunt-mcilroy diff
   ::                                                    ::::
 ++  differ
   ^?  |%
@@ -49,11 +49,11 @@
   --
 --
 ::                                                      ::::
-::::                        #  2                        ::  engines
+::::                    #  engines                      ::  engines
   ::                                                    ::::
 |%
 ::                                                      ::
-::::                        ## 2.differ                 ::  hunt-mcilroy diff
+::::                    ## differ^engines               ::  hunt-mcilroy diff
   ::                                                    ::::
 ++  differ
   =,  ^differ
@@ -375,7 +375,7 @@
     --
   --
 ::                                                      ::
-::::                        ## 2.number                 ::  misc number theory
+::::                    ## number^engines               ::  misc number theory
   ::                                                    ::::
 ++  number
   |%
@@ -616,7 +616,7 @@
     --
   --
 ::                                                      ::
-::::                        ## 2.crypto                 ::  crypto standards
+::::                    ## crypto^engines               ::  crypto standards
   ::                                                    ::::
 ++  crypto
   =,  number
@@ -2083,7 +2083,7 @@
     --
   --
 ::                                                      ::
-::::                        ## 2.chrono                 ::  time
+::::                    ## chrono^engines               ::  time
   ::                                                    ::::
 ++  chrono
   ^?  |%
@@ -2248,7 +2248,7 @@
     --
   --
 ::                                                      ::
-::::                        ## 2.markup                 ::  JSON and XML
+::::                    ## markup^engines               ::  JSON and XML
   ::                                                    ::::
 ++  markup
   ^?  |%
@@ -2563,7 +2563,7 @@
     =>  |%  ++  grub  (unit *) 
             ++  fist  $-(json grub)
         --
-    ^?  |%
+    |%
     ::                                                  ::  ++ar:jo:markup
     ++  ar                                              ::  array as list
       |*  wit/fist
@@ -2751,7 +2751,7 @@
     %-  crip
     %-  flop
     |-  ^-  tape 
-    ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10)))
+    ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
   ::                                                    ::  ++jode:markup
   ++  jode                                              ::  ms timestamp
     |=  a/time 
