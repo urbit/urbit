@@ -28,6 +28,7 @@
       {$clr $~}                                         ::  clear screen
       {$det sole-change}                                ::  edit command
       {$err p/@ud}                                      ::  error point
+      {$klr p/styx}                                     ::  styled text line
       {$mor p/(list sole-effect)}                       ::  multiple effects
       {$nex $~}                                         ::  save clear command
       {$pro sole-prompt}                                ::  set prompt
@@ -45,7 +46,7 @@
 ++  sole-prompt                                         ::  prompt definition
   $:  vis/?                                             ::  command visible
       tag/term                                          ::  history mode
-      cad/tape                                          ::  caption
+      cad/styx                                          ::  caption
   ==                                                    ::
 ++  sole-share                                          ::  symmetric state
   $:  ven/sole-clock                                    ::  our vector clock

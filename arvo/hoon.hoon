@@ -798,7 +798,7 @@
 ++  snag                                                ::  index
   ~/  %snag
   |*  {a/@ b/(list)}
-  |-
+  |-  ^+  ?>(?=(^ b) i.b)
   ?~  b
     ~|('snag-fail' !!)
   ?:  =(0 a)  i.b
@@ -2388,10 +2388,13 @@
 ::
 ++  apt                                                 ::  set invariant
   |=  a/(tree)
-  ?~  a
-    &
-  ?&  ?~(l.a & ?&((vor n.a n.l.a) (hor n.l.a n.a) $(a l.a)))
-      ?~(r.a & ?&((vor n.a n.r.a) (hor n.a n.r.a) $(a r.a)))
+  =|  {l/(unit) r/(unit)}
+  |-  ^-  ?
+  ?~  a   &
+  ?&  ?~(l & (hor n.a u.l))
+      ?~(r & (hor u.r n.a))
+      ?~(l.a & ?&((vor n.a n.l.a) $(a l.a, l `n.a)))
+      ?~(r.a & ?&((vor n.a n.r.a) $(a r.a, r `n.a)))
   ==
 ::
 ++  in                                                  ::  set engine
@@ -2583,11 +2586,14 @@
 ::                section 2dB, maps                     ::
 ::
 ++  ept                                                 ::  map invariant
-  |=  a/(tree {p/* q/*})
-  ?~  a
-    &
-  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a) $(a l.a)))
-      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a) $(a l.a)))
+  |=  a/(tree (pair))
+  =|  {l/(unit) r/(unit)}
+  |-  ^-  ?
+  ?~  a   &
+  ?&  ?~(l & (gor p.n.a u.l))
+      ?~(r & (gor u.r p.n.a))
+      ?~(l.a & ?&((vor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
+      ?~(r.a & ?&((vor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
   ==
 ::
 ++  ja                                                  ::  jar engine
@@ -2731,16 +2737,6 @@
       a
     $(b t.b, a (put p.i.b q.i.b))
   ::
-  +-  gaf                                               ::  concat, fail on dupe
-    ~/  %gaf
-    |=  b/(list _?>(?=(^ a) n.a))
-    |-  ^+  a
-    ?~  b
-      a
-    ~|  duplicate-key+p.i.b
-    ?<  (has p.i.b)
-    $(b t.b, a (put p.i.b q.i.b))
-  ::
   +-  get                                               ::  grab value by key
     ~/  %get
     |=  b/*
@@ -2871,9 +2867,10 @@
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   ::
   +-  key                                               ::  set of keys
-    |-  ^-  (set _?>(?=(^ a) p.n.a))
-    ?~  a  ~
-    [n=p.n.a l=$(a l.a) r=$(a r.a)]
+    =|  b/(set _?>(?=(^ a) p.n.a))
+    |-  ^+  b
+    ?~  a   b
+    $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
   +-  val                                               ::  list of vals
     =|  b/(list _?>(?=(^ a) q.n.a))
@@ -3589,13 +3586,12 @@
 ::
 ++  cass                                                ::  lowercase
   |=  vib/tape
-  %+  rap  3
+  ^-  tape
   (turn vib |=(a/@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
 ::
 ++  cuss                                                ::  uppercase
   |=  vib/tape
-  ^-  @t
-  %+  rap  3
+  ^-  tape
   (turn vib |=(a/@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
 ::
 ++  crip  |=(a/tape `@t`(rap 3 a))                      ::  tape to cord
@@ -5009,7 +5005,7 @@
     $d  [%d q.q.don p.q.don]
   ==
 ::
-++  hump                                                ::  general prepatch
+++  hemp                                                ::  general prepatch
   |=  {pum/umph src/*}  ^-  *
   ?+  pum  ~|(%unsupported !!)
     $a  src

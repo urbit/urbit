@@ -2,8 +2,8 @@
 ::::  /hoon/index/tree/mar
   ::
 /?    310
-/+    tree,react,map-to-json
-[. tree react]
+/+    tree,map-to-json,elem-to-react-json
+[. tree]
 !:
 ::::
   ::
@@ -15,7 +15,7 @@
     %.  all
     %+  map-to-json
       |=(a/path (crip (spud a)))
-    |=(a/marl [%a (turn a react-to-json)])
+    |=(a/marl [%a (turn a elem-to-react-json)])
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  (map path marl)                     ::  clam from %noun

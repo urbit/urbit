@@ -76,9 +76,6 @@
   $%  {$nice $~}                                        ::
       {$init p/ship}                                    ::
   ==                                                    ::
-++  sign-gall                                           ::  see %gall
-  $%  {$onto p/(unit tang)}                             ::
-  ==                                                    ::
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
@@ -180,13 +177,83 @@
               [%lin see]
               [%hop pos]
           ==
+        ?:  ?=($klr -.bit)
+          %+  done  %blit
+          :~  [%lin (cvrt:ansi p.bit)]
+              [%mor ~]
+              [%lin see]
+              [%hop pos]
+          ==
         ?:  ?=($pro -.bit)
           (done(see p.bit) %blit [[%lin p.bit] [%hop pos] ~])
+        ?:  ?=($pom -.bit)
+          =.  see  (cvrt:ansi p.bit)
+          (done %blit [[%lin see] [%hop pos] ~])
         ?:  ?=($hop -.bit)
           (done(pos p.bit) %blit [bit ~])
         ?:  ?=($qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
+      ::
+      ++  ansi
+        |%
+        ++  cvrt                                        ::  stub to (list @c)
+          |=  a/stub                                    ::  with ANSI codes
+          ^-  (list @c)
+          %-  zing  %+  turn  a
+          |=  a/(pair stye (list @c))
+          ^-  (list @c)
+          ;:  weld
+              ?:  =(0 ~(wyt in p.p.a))  ~
+              `(list @c)`(zing (turn (~(tap in p.p.a)) ef))
+              (bg p.q.p.a)
+              (fg q.q.p.a)
+              q.a
+              ?~(p.p.a ~ (ef ~))
+              (bg ~)
+              (fg ~)
+          ==
+        ::
+        ++  ef  |=(a/^deco (scap (deco a)))             ::  ANSI effect
+        ::
+        ++  fg  |=(a/^tint (scap (tint a)))             ::  ANSI foreground
+        ::
+        ++  bg                                          ::  ANSI background
+          |=  a/^tint
+          %-  scap
+          =>((tint a) [+(p) q])                         ::  (add 10 fg)
+        ::
+        ++  scap                                        ::  ANSI escape seq
+          |=  a/$^((pair @ @) @)
+          %-  (list @c)
+          :+  27  '['                                   ::  "\033[{a}m"
+          ?@(a :~(a 'm') :~(p.a q.a 'm'))
+        ::
+        ++  deco                                        ::  ANSI effects
+          |=  a/^deco  ^-  @
+          ?-  a
+            $~   '0'
+            $br  '1'
+            $un  '4'
+            $bl  '5'
+          ==
+        ::
+        ++  tint                                        ::  ANSI colors (fg)
+          |=  a/^tint
+          ^-  (pair @ @)
+          :-  '3'
+          ?-  a
+            $k  '0'
+            $r  '1'
+            $g  '2'
+            $y  '3'
+            $b  '4'
+            $m  '5'
+            $c  '6'
+            $w  '7'
+            $~  '9'
+          ==
+        --
       ::
       ++  heft
         %_    .

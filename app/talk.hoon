@@ -138,6 +138,46 @@
         ==
       --
     --
+|%
+::  old protocol workaround door
+++  timed
+  |_  a/(map partner atlas) :: XX (map partner (pair @da atlas))
+  ++  strip
+    (~(run by a) |=(b/atlas (~(del by b) `@p`%timed-sub)))
+  ::
+  ++  put  ::  XX put:by
+    |=  {b/partner c/@da d/atlas}
+    =/  sta/status  [%gone [~ (some (scot %da c))]]
+    (~(put by a) b (~(put by d) `@p`%timed-sub sta))
+  ::
+  ++  decode-status
+    |=  a/status  ^-  (unit @da)
+    ?.  ?=({$gone $~ $~ tym/@t} a)  ~
+    =>  .(a `{$gone $~ $~ tym/@t}`a)
+    (slaw %da tym.a)
+  ::
+  ++  uni
+    |=  b/_a  ^+  a
+    :: XX efficiency
+    %-  ~(uni by a)
+    %-  ~(urn by b)
+    |=  nb/{p/partner q/atlas}
+    ?.  (~(has by a) p.nb)  q.nb
+    =/  qna  (~(got by a) p.nb)
+    :: XX p.qna p.q.nb
+    =/  pqna  (biff (~(get by qna) `@p`%timed-sub) decode-status)
+    ?~  pqna  q.nb
+    =/  pqnb  (biff (~(get by q.nb) `@p`%timed-sub) decode-status)
+    ?~  pqnb  qna
+    ?:  (gth u.pqna u.pqnb)  qna
+    ?:  (gth u.pqnb u.pqna)  q.nb
+    ::  unfortunately, multiple reports on the same channel can
+    ::  be sent on the same event, necessitating last-wins
+    :: ~|  uni-timed+[n.a n.b]
+    :: ?>  =(n.a n.b)
+    q.nb
+  --
+--
 |_  {hid/bowl house}
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
@@ -458,19 +498,25 @@
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
+        ?:  =(%gone p.q.i.eno)  ret
         =+  unt=(~(get by two) p.i.eno)
         ?~  unt
           ret(old [i.eno old.ret])
-        ?:  =(q.i.eno u.unt)  ret 
+        ?:  =(%gone p.u.unt)
+          ret(old [i.eno old.ret])
+        ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
         =+  owt=(~(tap by two))
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
-        ?:  (~(has by one) p.i.owt)
-          ret
-        ret(new [i.owt new.ret])
+        ?:  =(%gone p.q.i.owt)  ret
+        ?.  (~(has by one) p.i.owt)
+          ret(new [i.owt new.ret])
+        ?:  =(%gone p:(~(got by one) p.i.owt))
+          ret(new [i.owt new.ret])
+        ret
       ret 
     ::
     ++  sh-repo-cabal-diff
@@ -508,6 +554,8 @@
               new/(list (pair partner atlas))
               cha/(list (pair partner atlas))
           ==
+      =.  one  ~(strip timed one)
+      =.  two  ~(strip timed two)
       ^+  ret
       =.  ret
         =+  eno=(~(tap by one))
@@ -1011,8 +1059,6 @@
       ::
       ++  who                                          ::  %who  
         |=  pan/(set partner)  ^+  ..sh-work  
-        =+  foo=`(list (pair partner atlas))`(~(tap by q.owners.she))
-        =+  bar=`(list (pair partner atlas))`(sort foo aor)
         =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
@@ -1636,10 +1682,15 @@
     ++  pa-report-group                                  ::  update presence
       |=  vew/(set bone)
       %^  pa-report  vew  %group
-      :_  remotes
-      |-  ^-  atlas
-      ?~  locals  ~
-      [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
+      :-  %-  ~(run by locals)
+          |=({@ a/status} a)
+      %-  ~(urn by remotes)           ::  XX preformance
+      |=  {pan/partner atl/atlas}  ^-  atlas
+      ?.  &(?=($& -.pan) =(our.hid p.p.pan))  atl
+      =+  (~(get by stories) q.p.pan)
+      ?~  -  atl
+      %-  ~(run by locals.u)
+      |=({@ a/status} a)
     ::
     ++  pa-report-cabal                                 ::  update config
       (pa-report cabalers %cabal shape mirrors)
@@ -1744,39 +1795,17 @@
     ++  pa-notify                                       ::  local presence
       |=  {her/ship saz/status}
       ^+  +>
-      =+  ^=  nol
-          ?:  =(%gone p.saz) 
-            (~(del by locals) her)
-          (~(put by locals) her now.hid saz)
+      =/  nol  (~(put by locals) her now.hid saz)
       ?:  =(nol locals)  +>.$
       (pa-report-group(locals nol) groupers)
     ::
     ++  pa-remind                                       ::  remote presence
       |=  {tay/partner loc/atlas rem/(map partner atlas)}
-      =+  ^=  buk
-          =+  mer=(turn (~(tap by rem) ~) |=({* a/atlas} a))
-          |-  ^-  atlas
-          ?~  mer  loc
-          =.  loc  $(mer t.mer)
-          =+  dur=`(list (pair ship status))`(~(tap by i.mer) ~)
-          |-  ^-  atlas
-          ?~  dur  loc
-          =.  loc  $(dur t.dur)
-          =+  fuy=(~(get by loc) p.i.dur)
-          ?~  fuy  (~(put by loc) p.i.dur q.i.dur)
-          ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
-            loc
-          ?-  p.u.fuy
-            $gone  (~(del by loc) p.i.dur q.i.dur)
-            $talk  loc
-            $hear  (~(put by loc) p.i.dur q.i.dur)
-          ==
-      =+  gub=(~(get by remotes) tay)
-      ::  ~&  [%pa-remind tay gub buk]
-      ?.  |(?=($~ gub) !=(buk u.gub))
-        +>.$
-      =.  remotes  (~(put by remotes) tay buk)
-      (pa-report-group groupers)
+      =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
+      =/  buk  (~(uni timed remotes) rem)  ::  XX drop?
+      =.  buk  (~(put timed buk) tay now.hid loc)
+      ?:  =(~(strip timed buk) ~(strip timed remotes))  +>.$
+      (pa-report-group(remotes buk) groupers)
     ::
     ++  pa-start                                        ::  start stream
       |=  riv/river
@@ -1922,21 +1951,8 @@
   ++  sn-curt                                           ::  render name in 14
     |=  mup/?
     ^-  tape
-    =+  rac=(clan p.one) 
-    =+  raw=(scow %p p.one)
-    =.  raw  ?.(mup raw ['*' (slag 2 raw)])
-    ?-    rac
-        $czar  (weld "          " raw)
-        $king  (weld "       " raw)
-        $duke  raw
-        $earl  ;:  welp
-                 (scag 1 raw)
-                 (scag 6 (slag 15 raw))
-                 "^"
-                 (scag 6 (slag 22 raw))
-               ==
-        $pawn  :(welp (scag 7 raw) "_" (scag 6 (slag 51 raw)))
-    ==
+    =+  raw=(cite p.one)
+    (runt [(sub 14 (lent raw)) ' '] raw)
   ::
   ++  sn-nick
     |.  ^-  tape

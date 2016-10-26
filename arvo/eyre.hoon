@@ -173,7 +173,7 @@
   |=  hed/(list {p/@t q/@t})  ^-  math
   %+  roll  hed
   |=  {a/{p/cord q/cord} b/math}
-  =.  p.a  (cass (trip p.a))
+  =.  p.a  (crip (cass (trip p.a)))
   (~(add ja b) p.a q.a)
 ::
 ++  fcgi                                                ::  credential caboose
@@ -423,15 +423,25 @@
     }
 
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
-    urb.redir = function(ship){
-      if(ship) document.location.pathname =
-        document.location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
-      else document.location =
+    urb.redirTo = function(url){
+      document.title = "Redirecting"
+      var mount = document.getElementById("pass") || document.body
+      mount.outerHTML = "Redirecting to <a href=\""+url+"\">"+url+"</a>"
+      document.location = url
+    }
+    urb.redir = function(ship){ 
+      if(ship){
+        var location = new URL(document.location)
+        location.pathname = location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
+        urb.redirTo(location)
+      }
+      else urb.redirTo(
         document.location.hash.match(/#[^?]+/)[0].slice(1) +
         document.location.pathname.replace(
           /^\/~\/am\/[^/]+/,
           '/~/as/~' + urb.ship) +
         document.location.search
+      )
     }
     if(urb.foreign && urb.auth.indexOf(urb.ship) !== -1){
       req("/~/auth.json?PUT",
@@ -463,6 +473,16 @@
     ;html
       ;head:title:"Accepted"
       ;body:"You may now close this window."
+    ==
+  ::
+  ++  redir
+    |=  url/tape
+    ;html
+      ;head:title:"Redirecting..."
+      ;body
+        ;p: Redirecting to ;{a/"{url}" "{url}"}
+        ;script: setTimeout(function()\{document.location = {(pojo (jape url))}}, 3000)
+      ==
     ==
   ::
   ++  login-page
@@ -553,8 +573,8 @@
         ;title:"{(trip a)}"
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/=home=/web/lib/css/fonts.css");
-        ;link(rel "stylesheet", href "/=home=/web/lib/css/bootstrap.css");
+        ;link(rel "stylesheet", href "/===/web/lib/css/fonts.css");
+        ;link(rel "stylesheet", href "/===/web/lib/css/bootstrap.css");
       ==
       ;body:"*{b}"
     ==
@@ -853,8 +873,9 @@
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         ?:  ?=($red-quri p.cay)
-          =+  url=((hard quri) q.q.cay)
-          (give-thou 307 [location+(crip (apex:earn url))]~ ~)
+          =+  url=(apex:earn ((hard quri) q.q.cay))
+          (give-thou 307 [location+(crip url)]~ ~)
+          :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
           =+  bek=(norm-beak -:(need (tome p.tee)))
           =+  tee-ses=?~(ses tee [%ac u.ses tee])
@@ -1129,7 +1150,7 @@
         ^-  (unit perk)
         =.  mef
           ?.  ?=($post mef)  mef
-          ?+    (skim quy |=({a/@t b/@t} &(=('' b) =(a (cuss (trip a))))))
+          ?+    (skim quy |=({a/@t b/@t} &(=('' b) =(a (crip (cuss (trip a)))))))
               ~|(bad-quy+[req='"?PUT" or "?DELETE"' quy] !!)
             $~   mef
             {{$'DELETE' $~} $~}  %delt
@@ -1339,13 +1360,13 @@
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
             $js
-          =^  jon  ..ya  stat-json.yac  
+          =^  jon  ..ya  stat-json.yac
           [%| (resolve cug.yac p.pez(p (add-json jon p.p.pez)))]
         ==
       ::
           $del
         =.  ..ya  (logoff:yac p.ham)
-        =+  cug=[(set-cookie cookie-prefix '~')]~
+        =+  cug=~[(set-cookie cookie-prefix '~') (set-cookie %ship '~')]
         [%| (give-json 200 cug (joba %ok %b &))]
       ::
           $get
@@ -1475,8 +1496,7 @@
           q.q.pul   ['~' %am ses q.q.pul]
         ==
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
-      %-  give-thou:abet
-      (add-cookies cug [307 [location+(crip url)]~ ~])
+      (give-html:abet 200 cug (redir:xml url))
     ::
     ++  logon
       |=  her/ship

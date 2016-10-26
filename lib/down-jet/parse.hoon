@@ -41,11 +41,11 @@
   view-source webcal wtai wyciwyg xfire xri ymsgr
   '''
 ::
-++  uri-skem   (sear (flit |=(a/tape (~(has in skem-set) (cass a)))) skem-symb)
+++  uri-skem   (sear (flit |=(a/tape (~(has in skem-set) (crip (cass a))))) skem-symb)
 --
 ::
 ::::
-  :: 
+  ::
 |%
 ++  nal  (just `@`10)
 ++  end  (full (easy ~))
@@ -273,8 +273,8 @@
         ;~(plug pel (cook welp ;~(plug (star chu) per ^$)))
         (easy ~)
       ==
-    ++  text  
-      =-  (ifix sel^ser (cook cass (star -)))
+    ++  text
+      =-  (ifix sel^ser (cook |=(a/tape (crip (cass a))) (star -)))
       ;~  pose
         (cook |=(a/char (cat 3 '\\' a)) esc)
         (cold ' ' (plus gah))
@@ -494,8 +494,8 @@
         %script  %section  %style    %table   %tbody   %td  %textarea    %tfoot
         %th   %thead  %tr  %ul  %video  
     ==
-  ++  htm-head  =+  blu=(flit ~(has in (silt `wain`blok)))   
-                =+  blo=(sear blu (cook cass (star aln)))
+  ++  htm-head  =+  blu=(flit ~(has in (silt `wain`blok)))
+                =+  blo=(sear blu (cook |=(a/tape (crip (cass a))) (star aln)))
                 %+  stag  %html
                 ;~  plug  gal
                   ;~  pose

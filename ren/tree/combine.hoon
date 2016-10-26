@@ -3,7 +3,7 @@
   ::
 /?    310
 /-    tree-include
-/+    react
+/+    elem-to-react-json
 /=    mime    /mime/
 /=    body    /tree-elem/
 /=    sect    /&json&/tree-index/
@@ -15,7 +15,7 @@
               /tree-comments/
 !:
 ^-    tree-include
-=+  rj=react-to-json:react
+=*  rj  elem-to-react-json
 :*  mime
     (rj body)
     (rj /h1 hed.snip)   :: head

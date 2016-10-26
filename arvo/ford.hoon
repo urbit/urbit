@@ -450,10 +450,10 @@
             ?~  pax  (err "blocking empty")
             =+  ren=((soft care) (rsh 3 1 i.pax))
             ?~  ren
-              (err "blocking not care")
+              (err "blocking not care: {<i.pax>}")
             =+  zis=(tome t.pax)
             ?~  zis
-              (err "blocking not beam")
+              (err "blocking not beam: {<t.pax>}")
             ?:  ?=($g (end 3 1 i.pax))
               ?-  -.nex
                 $&  [%& [%g u.ren u.zis] p.nex]

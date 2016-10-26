@@ -9,10 +9,18 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  drum-part  {$drum $1 drum-pith-1}                   ::
-++  drum-part-old  {$drum $0 drum-pith-0}               ::
-++  drum-pith-0  _!!                                    ::  forgotten
-++  drum-pith-1                                         ::
+++  drum-part      {$drum $2 drum-pith-2}               ::
+++  drum-part-old  {$drum $1 drum-pith-1}               ::
+::                                                      ::
+++  drum-pith-1                                         ::  pre-style
+  %+  cork  drum-pith-2                                 ::
+  |=(drum-pith-2 +<(bin *(map bone source-1)))          ::
+::                                                      ::
+++  source-1                                            ::
+  %+  cork  source                                      ::
+  |=(source +<(mir *(pair @ud (list @c))))              ::  style-less mir
+::                                                      ::
+++  drum-pith-2                                         ::
   $:  sys/(unit bone)                                   ::  local console
       eel/(set gill)                                    ::  connect to
       ray/(set well)                                    ::
@@ -38,7 +46,7 @@
       kil/kill                                          ::  kill buffer
       inx/@ud                                           ::  ring index
       fug/(map gill (unit target))                      ::  connections
-      mir/(pair @ud (list @c))                          ::  mirrored terminal
+      mir/(pair @ud stub)                               ::  mirrored terminal
   ==                                                    ::
 ++  history                                             ::  past input
   $:  pos/@ud                                           ::  input position
@@ -85,7 +93,7 @@
   |=  our/ship
   ^-  drum-part
   :*  %drum
-      %1
+      %2
       ~                                                 ::  sys
       (deft-fish our)                                   ::  eel
       (deft-apes our)                                   ::  ray
@@ -96,8 +104,13 @@
 ++  drum-port
   |=  old/?(drum-part drum-part-old)  ^-  drum-part
   ?-  &2.old
-    $1  old
-    $0  !!  :: XX unreachable, see issue #242
+    $2  old
+    $1  %=  old
+          &2   %2
+          bin  %-  ~(run by bin.old)
+               |=  source-1  ^-  source
+               +<(mir [(add 20 p.mir) [[*stye q.mir] ~]])
+        ==
   ==
 ::
 ++  drum-path                                           ::  encode path
@@ -387,18 +400,18 @@
   (se-emit [u.sys %diff %dill-blit bil])
 ::
 ++  se-show                                           ::  show buffer, raw
-  |=  lin/(pair @ud (list @c))
+  |=  lin/(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
-  =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pro q.lin))
-  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
+  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop (add p.lin (lent-stye:klr q.lin))))
+  =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pom q.lin))
   +>(mir lin)
 ::
 ++  se-just                                           ::  adjusted buffer
-  |=  lin/(pair @ud (list @c))
+  |=  lin/(pair @ud stub)
   ^+  +>
   =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
-  (se-show (sub p.lin off) (scag edg (slag off q.lin)))
+  (se-show (sub p.lin off) (scag:klr edg (slag:klr off q.lin)))
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
@@ -587,6 +600,7 @@
       {$clr *}  +>(..ta (se-blit fec))
       {$det *}  (ta-got +.fec)
       {$err *}  (ta-err p.fec)
+      {$klr *}  +>(..ta (se-blit %klr (make:klr p.fec)))
       {$mor *}  |-  ^+  +>.^$
                 ?~  p.fec  +>.^$
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
@@ -782,7 +796,7 @@
   ::
   ++  ta-pro                                          ::  set prompt
     |=  pom/sole-prompt
-    +>(pom pom(cad :(welp (scow %p p.gyl) ":" (trip q.gyl) cad.pom)))
+    +>(pom pom(cad :(welp ?.(?=($earl (clan p.gyl)) (cite p.gyl) (scow %p p.gyl)) ":" (trip q.gyl) cad.pom)))
   ::
   ++  ta-ret                                          ::  hear return
     (ta-act %ret ~)
@@ -812,9 +826,11 @@
     (ta-hom (cat:edit pos.inp txt))
   ::
   ++  ta-vew                                          ::  computed prompt
-    |-  ^-  (pair @ud (list @c))
-    =;  vew/(pair (list @c) tape)
-      [(add pos.inp (lent q.vew)) (weld (tuba q.vew) p.vew)]
+    ^-  (pair @ud stub)
+    =;  vew/(pair (list @c) styx)
+      =+  lin=(make:klr q.vew)
+      :_  (welp lin [*stye p.vew]~)
+      (add pos.inp (lent-char:klr lin))
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
       ?~  ris
@@ -890,5 +906,93 @@
     |-  ^-  @ud
     ?:  |(?=($~ a) (alnm i.a))  i
     $(i +(i), a t.a)
+  --
+::
+++  klr                                               ::  styx/stub engine
+  |%
+  ++  make                                            ::  stub from styx
+    |=  a/styx  ^-  stub
+    =|  b/stye
+    %+  reel
+    |-  ^-  stub
+    %-  zing  %+  turn  a
+    |=  a/$@(@t (pair styl styx))
+    ?@  a  [b (tuba (trip a))]~
+    ^$(a q.a, b (styd p.a b))
+    ::
+    |=  {a/(pair stye (list @c)) b/stub}
+    ?~  b  [a ~]
+    ?.  =(p.a p.i.b)  [a b]
+    [[p.a (weld q.a q.i.b)] t.b]
+  ::
+  ++  styd                                            ::  stye from styl
+    |=  {a/styl b/stye}  ^+  b                        ::  with inheritance
+    :+  ?~  p.a  p.b
+        ?~  u.p.a  ~
+        (~(put in p.b) u.p.a)
+     (fall p.q.a p.q.b)
+     (fall q.q.a q.q.b)
+  ::
+  ++  lent-stye
+    |=  a/stub  ^-  @
+    (roll (lnts-stye a) add)
+  ::
+  ++  lent-char
+    |=  a/stub  ^-  @
+    (roll (lnts-char a) add)
+  ::
+  ++  lnts-stye                                       ::  stub pair head lengths
+    |=  a/stub  ^-  (list @)
+    %+  turn  a
+    |=  a/(pair stye (list @c))
+    ;:  add                        ::  presumes impl of cvrt:ansi in %dill
+        (mul 5 2)                  ::  bg
+        (mul 5 2)                  ::  fg
+        =+  b=~(wyt in p.p.a)      ::  effect
+        ?:(=(0 b) 0 (mul 4 +(b)))
+    ==
+  ::
+  ++  lnts-char                                       ::  stub pair tail lengths
+    |=  a/stub  ^-  (list @)
+    %+  turn  a
+    |=  a/(pair stye (list @c))
+    (lent q.a)
+  ::
+  ++  brek                                            ::  index + incl-len of
+    |=  {a/@ b/(list @)}                              ::  stub pair w/ idx a
+    =|  {c/@ i/@}
+    |-  ^-  (unit (pair @ @))
+    ?~  b  ~
+    =.  c  (add c i.b)
+    ?:  (gte c a)
+      `[i c]
+    $(i +(i), b t.b)
+  ::
+  ++  slag                                            ::  slag stub, keep stye
+    |=  {a/@ b/stub}
+    ^-  stub
+    =+  c=(lnts-char b)
+    =+  i=(brek a c)
+    ?~  i  b
+    =+  r=(^slag +(p.u.i) b)
+    ?:  =(a q.u.i)
+      r
+    =+  n=(snag p.u.i b)
+    :_  r  :-  p.n
+    (^slag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+  ::
+  ++  scag                                            ::  scag stub, keep stye
+    |=  {a/@ b/stub}
+    ^-  stub
+    =+  c=(lnts-char b)
+    =+  i=(brek a c)
+    ?~  i  b
+    ?:  =(a q.u.i)
+      (^scag +(p.u.i) b)
+    %+  welp
+      (^scag p.u.i b)
+    =+  n=(snag p.u.i b)
+    :_  ~  :-  p.n
+    (^scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
   --
 --

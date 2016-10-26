@@ -1983,7 +1983,7 @@
     %+  sear
       |=  a/@ta
       ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
-    %+  cook  cass
+    %+  cook  |=(a/tape (crip (cass a)))
     ;~(plug aln (star alp))
   ::
   ++  fque  (cook crip (plus pquo))                     ::  normal query field
@@ -2004,7 +2004,7 @@
               hep  dot  ket  cab  tec  bar  sig
             ==
   ++  scem                                              ::  2396 scheme
-    %+  cook  cass
+    %+  cook  |=(a/tape (crip (cass a)))
     ;~(plug alf (star ;~(pose aln lus hep dot)))
   ::
   ++  smeg  (cook crip (plus pcar))                     ::  2396 segment
@@ -2070,6 +2070,25 @@
   ?:  (lte wid 4)   %duke
   ?:  (lte wid 8)   %earl
   ?>  (lte wid 16)  %pawn
+::
+++  cite                                                ::  ship short name
+  |=  who/@p
+  ^-  tape
+  =+  kind=(clan who)
+  =+  name=(scow %p who)
+  ?:  =(%earl kind)
+    =+  park=(clan (sein who))
+    ;:  weld
+      "~"
+      ?:  =(park %duke)
+        (swag [(sub (lent name) 13) 6] name)
+      ~
+      "^"
+      (swag [(sub (lent name) 6) 6] name)
+    ==
+  ?:  =(%pawn kind)
+    :(weld (swag [0 7] name) "_" (swag [(sub (lent name) 6) 6] name))
+  name
 ::
 ++  glam                                                ::  carrier names
   |=  zar/@pD  ^-  tape
@@ -2290,13 +2309,6 @@
               heg/(map hand code)                       ::  proposed
               qim/(map hand code)                       ::  inbound
           ==                                            ::
-++  coal  *                                             ::  untyped vase
-++  code  @uvI                                          ::  symmetric key
-++  cone                                                ::  reconfiguration
-          $%  {$& p/twig}                               ::  transform
-              {$| p/(list @tas)}                        ::  alter
-          ==                                            ::
-++  chum  @uvI                                          ::  hashed passcode
 ++  claw                                                ::  startup chain
           $:  joy/(unit coal)                           ::  local context
               ran/(unit coal)                           ::  arguments
@@ -2309,7 +2321,7 @@
 ++  coal  *                                             ::  untyped vase
 ++  code  @uvI                                          ::  symmetric key
 ++  cone                                                ::  reconfiguration
-          $%  {$& p/twig}                                ::  transform
+          $%  {$& p/twig}                               ::  transform
               {$| p/(list @tas)}                        ::  alter
           ==                                            ::
 ++  coop  (unit ares)                                   ::  e2e ack
@@ -2327,6 +2339,7 @@
               cip/(each @if @is)                        ::  client IP
               cum/(map @tas *)                          ::  custom dirt
           ==                                            ::
+++  deco  ?($~ $bl $br $un)                             ::  text decoration
 ++  deed  {p/@ q/step r/?}                              ::  sig stage fake?
 ++  dome                                                ::  project state
           $:  ank/ankh                                  ::  state
@@ -2609,9 +2622,15 @@
 ++  sock  {p/ship q/ship}                               ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  {p/bray q/gens r/pass}                        ::  identity stage
+++  stub  (list (pair stye (list @c)))                  ::  styled tuba
+++  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
+++  styl                                                ::
+  (pair (unit deco) (pair (unit tint) (unit tint)))     ::  cascading stye
+++  styx  (list $@(@t (pair styl styx)))                ::  styled text
 ++  suba  (list {p/path q/misu})                        ::  delta
 ++  tako  @                                             ::  yaki ref
 ++  tick  @ud                                           ::  process id
+++  tint  ?($~ $r $g $b $c $m $y $k $w)                 ::  text color
 ++  toro  {p/@ta q/nori}                                ::  general change
 ++  town                                                ::  all security state
           $:  lit/@ud                                   ::  imperial modulus
@@ -2750,9 +2769,11 @@
 ++  dill-blit                                           ::  new blit
   $%  {$bel $~}                                         ::  make a noise
       {$clr $~}                                         ::  clear the screen
+      {$klr p/stub}                                     ::  styled text
       {$hop p/@ud}                                      ::  set cursor position
       {$mor p/(list dill-blit)}                         ::  multiple blits
       {$pro p/(list @c)}                                ::  show as cursor+line
+      {$pom p/stub}                                     ::  styled prompt
       {$qit $~}                                         ::  close console
       {$out p/(list @c)}                                ::  send output line
       {$sag p/path q/*}                                 ::  save to jamfile

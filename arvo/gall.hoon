@@ -1178,15 +1178,16 @@
       |=  {cog/term gat/vase arg/vase}
       ^-  {(each vase tang) _+>}
       =+  ^=  wyz  %-  mule  |.
-          (~(play wa vel) [%cell p.gat p.arg] [%open [%$ ~] [%$ 2] [%$ 3] ~])
+          (~(mint wa vel) [%cell p.gat p.arg] [%open [%$ ~] [%$ 2] [%$ 3] ~])
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
             (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
         :_(+>.$ [%| (ap-suck "call: {<cog>}: type mismatch")])
       :_  +>.$(vel +>.wyz)
-      =+  ton=(mong [q.gat q.arg] ap-sled)
+      =+  [typ nok]=+<.wyz
+      =+  ton=(mock [[q.gat q.arg] nok] ap-sled)
       ?-  -.ton
-        $0  [%& +<.wyz p.ton]
+        $0  [%& typ p.ton]
         $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
         $2  [%| p.ton]
       ==
