@@ -3,8 +3,9 @@
   ::
 /?    310
 !:
-=,  ^differ
-=,  differ
+=,  differ:^clay
+=,  differ:clay
+=,  lines:clay
 =,  markup
 |_  txt/wain
 ::  

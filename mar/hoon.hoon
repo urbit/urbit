@@ -37,13 +37,13 @@
       ==
     ==
   ++  txt
-    (lore:differ own)
+    (lore:lines:clay own)
   --
 ++  grab
   |%                                            ::  convert from
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t                                  ::  clam from %noun
-  ++  txt   role:differ
+  ++  txt   role:lines:clay
   --
 ++  grad  %txt
 --

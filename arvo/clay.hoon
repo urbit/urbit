@@ -11,8 +11,11 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
-=,  ^differ
-=,  differ
+=,  ^clay
+=,  clay
+=,  differ:^clay
+=,  differ:clay
+=,  lines:clay
 =>  |%
 ++  aeon  @ud                                           ::  version number
 ::
@@ -52,7 +55,7 @@
 ::
 ++  care  ?($u $v $w $x $y $z)
 ::
-::  Keeps track of subscibers.
+::  Keeps track of subscribers.
 ::
 ::  A map of requests to a set of all the subscribers who should be notified
 ::  when the request is filled/updated.

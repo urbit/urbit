@@ -44,7 +44,43 @@
   ::                                                    ::::
 ++  clay
   |%
-  ++  foo  %bar
+::                                                      ::
+::::                    ### differ^clay^models          ::  hunt-mcilroy diff
+  ::                                                    ::::
+  ++  differ  ^?
+    |%
+    ++  udal                                            ::  atomic change (%b)
+      $:  p/@ud                                         ::  blockwidth
+          q/(list {p/@ud q/(unit {p/@ q/@})})           ::  indels
+      ==                                                ::
+    ++  udon                                            ::  abstract delta
+      $:  p/umph                                        ::  preprocessor
+          $=  q                                         ::  patch
+          $%  {$a p/* q/*}                              ::  trivial replace
+              {$b p/udal}                               ::  atomic indel
+              {$c p/(urge)}                             ::  list indel
+              {$d p/upas q/upas}                        ::  tree edit
+      ==  ==                                            ::
+    ++  umph                                            ::  change filter
+      $@  $?  $a                                        ::  no filter
+              $b                                        ::  jamfile
+              $c                                        ::  LF text
+          ==                                            ::
+      $%  {$d p/@ud}                                    ::  blocklist
+      ==                                                ::
+    ++  unce                                            ::  change part
+      |*  a/mold                                        ::
+      $%  {$& p/@ud}                                    ::  skip[copy]
+          {$| p/(list a) q/(list a)}                    ::  p -> q[chunk]
+      ==                                                ::
+    ++  upas                                            ::  tree change (%d)
+      $^  {p/upas q/upas}                               ::  cell
+      $%  {$0 p/axis}                                   ::  copy old
+          {$1 p/*}                                      ::  insert new
+          {$2 p/axis q/udon}                            ::  mutate!
+      ==                                                ::
+    ++  urge  |*(a/mold (list (unce a)))                ::  list change
+    --
   --
 ::                                                      ::
 ::::                    ## dill^models                  ::  console
@@ -94,6 +130,7 @@
   ::  bit is set, the new life of this ship may have
   ::  lost information that the old life had.
   ::
+  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  arms  (map chip (pair @ta @t))                    ::  stated identity
   ++  bull                                              ::  cert metadata
     $:  dad/ship                                        ::  parent
@@ -107,11 +144,13 @@
         $had                                            ::  fictitious name
         $mid                                            ::  middle name 
     ==                                                  ::
+  ++  coop  (unit ares)                                 ::  e2e ack
   ++  deed                                              ::  certificate deed
     $:  doc/bull                                        ::  metadata
         pub/pass                                        ::  public key
     ==                                                  ::
   ++  farm  (map ship will)                             ::  pki dump set
+  ++  hand  @uvH                                        ::  128-bit hash
   ++  life  @ud                                         ::  ship version
   ++  mind  {who/ship lyf/life}                         ::  key identifier
   ++  name  (pair @ta @t)                               ::  ascii / unicode
@@ -269,43 +308,6 @@
         {$west p/ship q/path r/*}                       ::  remote request
     ==                                                  ::
   --
-::                                                      ::
-::::                    ## differ^models                ::  hunt-mcilroy diff
-  ::                                                    ::::
-++  differ
-  ^?  |%
-  ++  udal                                              ::  atomic change (%b)
-    $:  p/@ud                                           ::  blockwidth
-        q/(list {p/@ud q/(unit {p/@ q/@})})             ::  indels
-    ==                                                  ::
-  ++  udon                                              ::  abstract delta
-    $:  p/umph                                          ::  preprocessor
-        $=  q                                           ::  patch
-        $%  {$a p/* q/*}                                ::  trivial replace
-            {$b p/udal}                                 ::  atomic indel
-            {$c p/(urge)}                               ::  list indel
-            {$d p/upas q/upas}                          ::  tree edit
-    ==  ==                                              ::
-  ++  umph                                              ::  change filter
-    $@  $?  $a                                          ::  no filter
-            $b                                          ::  jamfile
-            $c                                          ::  LF text
-        ==                                              ::
-    $%  {$d p/@ud}                                      ::  blocklist
-    ==                                                  ::
-  ++  unce                                              ::  change part
-    |*  a/mold                                          ::
-    $%  {$& p/@ud}                                      ::  skip[copy]
-        {$| p/(list a) q/(list a)}                      ::  p -> q[chunk]
-    ==                                                  ::
-  ++  upas                                              ::  tree change (%d)
-    $^  {p/upas q/upas}                                 ::  cell
-    $%  {$0 p/axis}                                     ::  copy old
-        {$1 p/*}                                        ::  insert new
-        {$2 p/axis q/udon}                              ::  mutate!
-    ==                                                  ::
-  ++  urge  |*(a/mold (list (unce a)))                  ::  list change
-  --
 --
 ::                                                      ::::
 ::::                    # engines                       ::  engines
@@ -330,7 +332,337 @@
   ::                                                    ::::
 ++  clay
   |%
-  ++  foo  %bar
+::                                                      ::
+::::                    ### differ^clay^engines         ::  hunt-mcilroy diff
+  ::                                                    ::::
+  ++  differ  ^?
+    =,  differ:^clay
+    =,  lines
+    |%
+    ::                                                  ::  ++berk:differ:clay
+    ++  berk                                            ::  invert diff patch
+      |*  bur/(urge)
+      |-  ^+  bur
+      ?~  bur  ~
+      :_  $(bur t.bur)
+      ?-  -.i.bur
+        $&  i.bur
+        $|  [%| q.i.bur p.i.bur]
+      ==
+    ::                                                  ::  ++diff:differ:clay
+    ++  diff                                            ::  generate patch
+      |=  pum/umph
+      |=  {old/* new/*}  ^-  udon
+      :-  pum
+      ?+  pum  ~|(%unsupported !!)
+        $a  [%d (nude old new)]
+        $b  =+  [hel=(cue ((hard @) old)) hev=(cue ((hard @) new))]
+            [%d (nude hel hev)]
+        $c  =+  [hel=(lore ((hard @) old)) hev=(lore ((hard @) new))]
+            [%c (lusk hel hev (loss hel hev))]
+      ==
+    ::                                                  ::  ++loss:differ:clay
+    ++  loss                                            ::  longest subsequence
+      ~%  %loss  ..is  ~
+      |*  {hel/(list) hev/(list)}
+      |-  ^+  hev
+      =+  ^=  sev
+          =+  [inx=0 sev=*(map _i.-.hev (list @ud))]
+          |-  ^+  sev
+          ?~  hev  sev
+          =+  guy=(~(get by sev) i.hev)
+          %=  $
+            hev  t.hev
+            inx  +(inx)
+            sev  (~(put by sev) i.hev [inx ?~(guy ~ u.guy)])
+          ==
+      =|  gox/{p/@ud q/(map @ud {p/@ud q/_hev})}
+      =<  abet
+      =<  main
+      |%
+      ::                                                ::  ++abet:loss:differ:
+      ++  abet                                          ::  subsequence
+        ^+  hev
+        ?:  =(0 p.gox)  ~
+        (flop q:(need (~(get by q.gox) (dec p.gox))))
+      ::                                                ::  ++hink:loss:differ:
+      ++  hink                                          ::  extend fits top
+        |=  {inx/@ud goy/@ud}  ^-  ?
+        ?|  =(p.gox inx) 
+            (lth goy p:(need (~(get by q.gox) inx)))
+        ==
+      ::                                                ::  ++lonk:loss:differ:
+      ++  lonk                                          ::  extend fits bottom
+        |=  {inx/@ud goy/@ud}  ^-  ?
+        ?|  =(0 inx) 
+            (gth goy p:(need (~(get by q.gox) (dec inx))))
+        ==
+      ::                                                ::  ++luna:loss:differ:
+      ++  luna                                          ::  extend
+        |=  {inx/@ud goy/@ud}
+        ^+  +>
+        %_    +>.$
+            gox
+          :-  ?:(=(inx p.gox) +(p.gox) p.gox)
+          %+  ~(put by q.gox)  inx
+          :+  goy
+            (snag goy hev) 
+          ?:(=(0 inx) ~ q:(need (~(get by q.gox) (dec inx))))
+        ==
+      ::                                                ::  ++merg:loss:differ:
+      ++  merg                                          ::  merge all matches
+        |=  gay/(list @ud)
+        ^+  +>
+        =+  ^=  zes
+            =+  [inx=0 zes=*(list {p/@ud q/@ud})]
+            |-  ^+  zes
+            ?:  |(?=($~ gay) (gth inx p.gox))  zes
+            ?.  (lonk inx i.gay)  $(gay t.gay)
+            ?.  (hink inx i.gay)  $(inx +(inx))
+            $(inx +(inx), gay t.gay, zes [[inx i.gay] zes])
+        |-  ^+  +>.^$
+        ?~(zes +>.^$ $(zes t.zes, +>.^$ (luna i.zes)))
+      ::                                                ::  ++main:loss:differ:
+      ++  main                                          ::
+        =+  hol=hel
+        |-  ^+  +>
+        ?~  hol  +>
+        =+  guy=(~(get by sev) i.hol)
+        $(hol t.hol, +> (merg (flop `(list @ud)`?~(guy ~ u.guy))))
+      --
+    ::                                                  ::  ++lump:differ:clay
+    ++  lump                                            ::  apply patch
+      |=  {don/udon src/*}
+      ^-  *
+      ?+    p.don  ~|(%unsupported !!)
+          $a
+        ?+  -.q.don  ~|(%unsupported !!)
+          $a  q.q.don
+          $c  (lurk ((hard (list)) src) p.q.don)
+          $d  (lure src p.q.don)
+        ==
+      ::
+          $c
+        =+  dst=(lore ((hard @) src))
+        %-  role
+        ?+  -.q.don  ~|(%unsupported !!)
+          ::
+          ::  XX  these hards should not be needed; udon 
+          ::      should be parameterized
+          ::
+          $a  ((hard (list @t)) q.q.don)
+          $c  ((hard (list @t)) (lurk `(list *)`dst p.q.don))
+        ==
+      ==
+    ::                                                  ::  ++lure:differ:clay
+    ++  lure                                            ::  apply tree diff
+      |=  {a/* b/upas}
+      ^-  *
+      ?^  -.b
+        [$(b -.b) $(b +.b)]
+      ?+  -.b  ~|(%unsupported !!)
+        $0  .*(a [0 p.b])
+        $1  .*(a [1 p.b])
+      ==
+    ::                                                  ::  ++limp:differ:clay
+    ++  limp                                            ::  invert patch
+      |=  don/udon  ^-  udon
+      :-  p.don
+      ?+  -.q.don  ~|(%unsupported !!)
+        $a  [%a q.q.don p.q.don]
+        $c  [%c (berk p.q.don)]
+        $d  [%d q.q.don p.q.don]
+      ==
+    ::                                                  ::  ++hump:differ:clay
+    ++  hump                                            ::  general prepatch
+      |=  {pum/umph src/*}  ^-  *
+      ?+  pum  ~|(%unsupported !!)
+        $a  src
+        $b  (cue ((hard @) src))
+        $c  (lore ((hard @) src))
+      ==
+    ::                                                  ::  ++husk:differ:clay
+    ++  husk                                            ::  unprepatch
+      |=  {pum/umph dst/*}  ^-  *
+      ?+  pum  ~|(%unsupported !!)
+        $a  dst
+        $b  (jam dst)
+        $c  (role ((hard (list @)) dst))
+      ==
+    ::                                                  ::  ++lurk:differ:clay
+    ++  lurk                                            ::  apply list patch
+      |*  {hel/(list) rug/(urge)}
+      ^+  hel
+      =+  war=`_hel`~
+      |-  ^+  hel
+      ?~  rug  (flop war)
+      ?-    -.i.rug
+          $&
+        %=   $
+          rug  t.rug
+          hel  (slag p.i.rug hel)
+          war  (weld (flop (scag p.i.rug hel)) war)
+        ==
+      ::
+          $|
+        %=  $
+          rug  t.rug
+          hel  =+  gur=(flop p.i.rug)
+               |-  ^+  hel
+               ?~  gur  hel
+               ?>(&(?=(^ hel) =(i.gur i.hel)) $(hel t.hel, gur t.gur))
+          war  (weld q.i.rug war)
+        ==
+      ==
+    ::                                                  ::  ++lusk:differ:clay
+    ++  lusk                                            ::  lcs to list patch
+      |*  {hel/(list) hev/(list) lcs/(list)}
+      =+  ^=  rag
+          ^-  {$%({$& p/@ud} {$| p/_lcs q/_lcs})}
+          [%& 0]
+      =>  .(rag [p=rag q=*(list _rag)])
+      =<  abet  =<  main
+      |%
+      ::                                                ::  ++abet:lusk:differ:
+      ++  abet                                          ::
+        =.  q.rag  ?:(=([& 0] p.rag) q.rag [p.rag q.rag])
+        (flop q.rag)
+      ::                                                ::  ++done:lusk:differ:
+      ++  done                                          ::
+        |=  new/_p.rag
+        ^+  rag
+        ?-  -.p.rag
+          $|   ?-  -.new
+                $|  [[%| (weld p.new p.p.rag) (weld q.new q.p.rag)] q.rag]
+                $&  [new [p.rag q.rag]]
+              ==
+          $&   ?-  -.new
+                $|  [new ?:(=(0 p.p.rag) q.rag [p.rag q.rag])]
+                $&  [[%& (add p.p.rag p.new)] q.rag]
+              ==
+        ==
+      ::                                                ::  ++main:lusk:differ:
+      ++  main                                          ::
+        |-  ^+  +
+        ?~  hel
+          ?~  hev
+            ?>(?=($~ lcs) +)
+          $(hev t.hev, rag (done %| ~ [i.hev ~]))
+        ?~  hev
+          $(hel t.hel, rag (done %| [i.hel ~] ~))
+        ?~  lcs
+          +(rag (done %| (flop hel) (flop hev)))
+        ?:  =(i.hel i.lcs)
+          ?:  =(i.hev i.lcs)
+            $(lcs t.lcs, hel t.hel, hev t.hev, rag (done %& 1))
+          $(hev t.hev, rag (done %| ~ [i.hev ~]))
+        ?:  =(i.hev i.lcs)
+          $(hel t.hel, rag (done %| [i.hel ~] ~))
+        $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
+      --
+    ::                                                  ::  ++nude:differ:clay
+    ++  nude                                            ::  tree change
+      =<  |=  {a/* b/*}  ^-  {p/upas q/upas}
+          [p=(tred a b) q=(tred b a)]
+      |%
+      ::                                                ::  ++axes:nude:differ:
+      ++  axes                                          ::  locs of nouns
+        |=  {a/@ b/*}  ^-  (map * axis)
+        =+  c=*(map * axis)
+        |-  ^-  (map * axis)
+        =>  .(c (~(put by c) b a))
+        ?@  b
+          c
+        %-  ~(uni by c)
+        %-  ~(uni by $(a (mul 2 a), b -.b))
+        $(a +((mul 2 a)), b +.b)
+      ::                                                ::  ++tred:nude:differ:
+      ++  tred                                          ::  diff a->b
+        |=  {a/* b/*}  ^-  upas
+        =|  c/(unit *)
+        =+  d=(axes 1 a)
+        |-  ^-  upas
+        =>  .(c (~(get by d) b))
+        ?~  c
+          ?@  b
+            [%1 b]
+          =+  e=^-(upas [$(b -.b) $(b +.b)])
+          ?-  e
+            {{$1 *} {$1 *}}  [%1 [p.p.e p.q.e]]
+            *  e
+          ==
+        [%0 u.c]
+      --
+    --
+::                                                      ::
+::::                    ### lines^clay^engines          ::  unix line files
+  ::                                                    ::::
+  ++  lines  ^?
+    |%
+    ::                                                  ::  ++lore:lines:clay
+    ++  lore                                            ::  atom to line list
+      ~%  %lore  ..is  ~
+      |=  lub/@
+      =|  tez/(list @t)
+      |-  ^+  tez
+      =+  ^=  wor
+        =+  [meg=0 i=0]
+        |-  ^-  {meg/@ i/@ end/@f}
+        =+  gam=(cut 3 [i 1] lub)
+        ?:  =(0 gam)
+          [meg i %.y]
+        ?:  =(10 gam)
+          [meg i %.n]
+        $(meg (cat 3 meg gam), i +(i))
+      ?:  end.wor
+        (flop ^+(tez [meg.wor tez]))
+      ?:  =(0 lub)  (flop tez)
+      $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
+    ::                                                  ::  ++lune:lines:clay
+    ++  lune                                            ::  cord by unix line
+      ~%  %lune  ..is  ~
+      |=  txt/@t
+      ?~  txt
+        ^-  (list @t)  ~
+      =+  [byt=(rip 3 txt) len=(met 3 txt)]
+      =|  {lin/(list @t) off/@}
+      ^-  (list @t)
+      %-  flop
+      |-  ^+  lin
+      ?:  =(off len)
+        ~|  %noeol  !!
+      ?:  =((snag off byt) 10)
+        ?:  =(+(off) len)
+          [(rep 3 (scag off byt)) lin]
+        %=  $
+          lin  [(rep 3 (scag off byt)) lin]
+          byt  (slag +(off) byt)
+          len  (sub len +(off))
+          off  0
+        ==
+      $(off +(off))
+    ::                                                ::  ++nule:lines:clay
+    ++  nule                                          ::  lines to unix cord
+      ~%  %nule  ..is  ~
+      |=  lin/(list @t)
+      ^-  @t
+      %+  can  3
+      %+  turn  lin
+      |=  t/@t
+      [+((met 3 t)) (cat 3 t 10)]
+    ::                                                ::  ++role:differ:clay
+    ++  role                                          ::  line list to atom
+      |=  tez/(list @t)
+      =|  {our/@ i/@ud}
+      |-  ^-  @
+      ?~  tez
+        our
+      ?:  =(%$ i.tez)
+        $(i +(i), tez t.tez, our (cat 3 our 10))
+      ?:  =(0 i)
+        $(i +(i), tez t.tez, our i.tez)
+      $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
+    --
   --
 ::                                                      ::
 ::::                    # dill^engines                  ::  console
@@ -366,328 +698,6 @@
 ++  jaelooo
   |%
   ++  foo  %bar
-  --
-::                                                      ::
-::::                    ## differ^engines               ::  hunt-mcilroy diff
-  ::                                                    ::::
-++  differ
-  =,  ^differ
-  ^?  |%
-  ::                                                    ::  ++berk:differ
-  ++  berk                                              ::  invert diff patch
-    |*  bur/(urge)
-    |-  ^+  bur
-    ?~  bur  ~
-    :_  $(bur t.bur)
-    ?-  -.i.bur
-      $&  i.bur
-      $|  [%| q.i.bur p.i.bur]
-    ==
-  ::                                                    ::  ++diff:differ
-  ++  diff                                              ::  generate patch
-    |=  pum/umph
-    |=  {old/* new/*}  ^-  udon
-    :-  pum
-    ?+  pum  ~|(%unsupported !!)
-      $a  [%d (nude old new)]
-      $b  =+  [hel=(cue ((hard @) old)) hev=(cue ((hard @) new))]
-          [%d (nude hel hev)]
-      $c  =+  [hel=(lore ((hard @) old)) hev=(lore ((hard @) new))]
-          [%c (lusk hel hev (loss hel hev))]
-    ==
-  ::                                                    ::  ++loss:differ
-  ++  loss                                              ::  longest subsequence
-    ~%  %loss  ..is  ~
-    |*  {hel/(list) hev/(list)}
-    |-  ^+  hev
-    =+  ^=  sev
-        =+  [inx=0 sev=*(map _i.-.hev (list @ud))]
-        |-  ^+  sev
-        ?~  hev  sev
-        =+  guy=(~(get by sev) i.hev)
-        %=  $
-          hev  t.hev
-          inx  +(inx)
-          sev  (~(put by sev) i.hev [inx ?~(guy ~ u.guy)])
-        ==
-    =|  gox/{p/@ud q/(map @ud {p/@ud q/_hev})}
-    =<  abet
-    =<  main
-    |%
-    ::                                                  ::  ++abet:loss:differ
-    ++  abet                                            ::  subsequence
-      ^+  hev
-      ?:  =(0 p.gox)  ~
-      (flop q:(need (~(get by q.gox) (dec p.gox))))
-    ::                                                  ::  ++hink:loss:differ
-    ++  hink                                            ::  extend fits top
-      |=  {inx/@ud goy/@ud}  ^-  ?
-      ?|  =(p.gox inx) 
-          (lth goy p:(need (~(get by q.gox) inx)))
-      ==
-    ::                                                  ::  ++lonk:loss:differ
-    ++  lonk                                            ::  extend fits bottom
-      |=  {inx/@ud goy/@ud}  ^-  ?
-      ?|  =(0 inx) 
-          (gth goy p:(need (~(get by q.gox) (dec inx))))
-      ==
-    ::                                                  ::  ++luna:loss:differ
-    ++  luna                                            ::  extend
-      |=  {inx/@ud goy/@ud}
-      ^+  +>
-      %_    +>.$
-          gox
-        :-  ?:(=(inx p.gox) +(p.gox) p.gox)
-        %+  ~(put by q.gox)  inx
-        [goy (snag goy hev) ?:(=(0 inx) ~ q:(need (~(get by q.gox) (dec inx))))]
-      ==
-    ::                                                  ::  ++merg:loss:differ
-    ++  merg                                            ::  merge all matches
-      |=  gay/(list @ud)
-      ^+  +>
-      =+  ^=  zes
-          =+  [inx=0 zes=*(list {p/@ud q/@ud})]
-          |-  ^+  zes
-          ?:  |(?=($~ gay) (gth inx p.gox))  zes
-          ?.  (lonk inx i.gay)  $(gay t.gay)
-          ?.  (hink inx i.gay)  $(inx +(inx))
-          $(inx +(inx), gay t.gay, zes [[inx i.gay] zes])
-      |-  ^+  +>.^$
-      ?~(zes +>.^$ $(zes t.zes, +>.^$ (luna i.zes)))
-    ::                                                  ::  ++main:loss:differ
-    ++  main                                            ::
-      =+  hol=hel
-      |-  ^+  +>
-      ?~  hol  +>
-      =+  guy=(~(get by sev) i.hol)
-      $(hol t.hol, +> (merg (flop `(list @ud)`?~(guy ~ u.guy))))
-    --
-  ::                                                    ::  ++lore:differ
-  ++  lore                                              ::  atom to line list
-    ~%  %lore  ..is  ~
-    |=  lub/@
-    =|  tez/(list @t)
-    |-  ^+  tez
-    =+  ^=  wor
-      =+  [meg=0 i=0]
-      |-  ^-  {meg/@ i/@ end/@f}
-      =+  gam=(cut 3 [i 1] lub)
-      ?:  =(0 gam)
-        [meg i %.y]
-      ?:  =(10 gam)
-        [meg i %.n]
-      $(meg (cat 3 meg gam), i +(i))
-    ?:  end.wor
-      (flop ^+(tez [meg.wor tez]))
-    ?:  =(0 lub)  (flop tez)
-    $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
-  ::                                                    ::  ++role:differ
-  ++  role                                              ::  line list to atom
-    |=  tez/(list @t)
-    =|  {our/@ i/@ud}
-    |-  ^-  @
-      ?~  tez
-        our
-      ?:  =(%$ i.tez)
-        $(i +(i), tez t.tez, our (cat 3 our 10))
-      ?:  =(0 i)
-        $(i +(i), tez t.tez, our i.tez)
-      $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
-  ::                                                    ::  ++lune:differ
-  ++  lune                                              ::  cord by unix line
-    ~%  %lune  ..is  ~
-    |=  txt/@t
-    ?~  txt
-      ^-  (list @t)  ~
-    =+  [byt=(rip 3 txt) len=(met 3 txt)]
-    =|  {lin/(list @t) off/@}
-    ^-  (list @t)
-    %-  flop
-    |-  ^+  lin
-    ?:  =(off len)
-      ~|  %noeol  !!
-    ?:  =((snag off byt) 10)
-      ?:  =(+(off) len)
-        [(rep 3 (scag off byt)) lin]
-      %=  $
-        lin  [(rep 3 (scag off byt)) lin]
-        byt  (slag +(off) byt)
-        len  (sub len +(off))
-        off  0
-      ==
-    $(off +(off))
-  ::                                                    ::  ++nule:differ
-  ++  nule                                              ::  lines to unix cord
-    ~%  %nule  ..is  ~
-    |=  lin/(list @t)
-    ^-  @t
-    %+  can  3
-    %+  turn  lin
-    |=  t/@t
-    [+((met 3 t)) (cat 3 t 10)]
-  ::                                                    ::  ++lump:differ
-  ++  lump                                              ::  apply patch
-    |=  {don/udon src/*}
-    ^-  *
-    ?+    p.don  ~|(%unsupported !!)
-        $a
-      ?+  -.q.don  ~|(%unsupported !!)
-        $a  q.q.don
-        $c  (lurk ((hard (list)) src) p.q.don)
-        $d  (lure src p.q.don)
-      ==
-    ::
-        $c
-      =+  dst=(lore ((hard @) src))
-      %-  role
-      ?+  -.q.don  ~|(%unsupported !!)
-        ::
-        ::  XX  these hards should not be needed; udon 
-        ::      should be parameterized
-        ::
-        $a  ((hard (list @t)) q.q.don)
-        $c  ((hard (list @t)) (lurk `(list *)`dst p.q.don))
-      ==
-    ==
-  ::                                                    ::  ++lure:differ
-  ++  lure                                              ::  apply tree diff
-    |=  {a/* b/upas}
-    ^-  *
-    ?^  -.b
-      [$(b -.b) $(b +.b)]
-    ?+  -.b  ~|(%unsupported !!)
-      $0  .*(a [0 p.b])
-      $1  .*(a [1 p.b])
-    ==
-  ::                                                    ::  ++limp:differ
-  ++  limp                                              ::  invert patch
-    |=  don/udon  ^-  udon
-    :-  p.don
-    ?+  -.q.don  ~|(%unsupported !!)
-      $a  [%a q.q.don p.q.don]
-      $c  [%c (berk p.q.don)]
-      $d  [%d q.q.don p.q.don]
-    ==
-  ::                                                    ::  ++hump:differ
-  ++  hump                                              ::  general prepatch
-    |=  {pum/umph src/*}  ^-  *
-    ?+  pum  ~|(%unsupported !!)
-      $a  src
-      $b  (cue ((hard @) src))
-      $c  (lore ((hard @) src))
-    ==
-  ::                                                    ::  ++husk:differ
-  ++  husk                                              ::  unprepatch
-    |=  {pum/umph dst/*}  ^-  *
-    ?+  pum  ~|(%unsupported !!)
-      $a  dst
-      $b  (jam dst)
-      $c  (role ((hard (list @)) dst))
-    ==
-  ::                                                    ::  ++lurk:differ
-  ++  lurk                                              ::  apply list patch
-    |*  {hel/(list) rug/(urge)}
-    ^+  hel
-    =+  war=`_hel`~
-    |-  ^+  hel
-    ?~  rug  (flop war)
-    ?-    -.i.rug
-        $&
-      %=   $
-        rug  t.rug
-        hel  (slag p.i.rug hel)
-        war  (weld (flop (scag p.i.rug hel)) war)
-      ==
-    ::
-        $|
-      %=  $
-        rug  t.rug
-        hel  =+  gur=(flop p.i.rug)
-             |-  ^+  hel
-             ?~  gur  hel
-             ?>(&(?=(^ hel) =(i.gur i.hel)) $(hel t.hel, gur t.gur))
-        war  (weld q.i.rug war)
-      ==
-    ==
-  ::                                                    ::  ++lusk:differ
-  ++  lusk                                              ::  lcs to list patch
-    |*  {hel/(list) hev/(list) lcs/(list)}
-    =+  ^=  rag
-        ^-  {$%({$& p/@ud} {$| p/_lcs q/_lcs})}
-        [%& 0]
-    =>  .(rag [p=rag q=*(list _rag)])
-    =<  abet  =<  main
-    |%
-    ::                                                  ::  ++abet:lusk:differ
-    ++  abet                                            ::
-      =.  q.rag  ?:(=([& 0] p.rag) q.rag [p.rag q.rag])
-      (flop q.rag)
-    ::                                                  ::  ++done:lusk:differ
-    ++  done                                            ::
-      |=  new/_p.rag
-      ^+  rag
-      ?-  -.p.rag
-        $|   ?-  -.new
-              $|  [[%| (weld p.new p.p.rag) (weld q.new q.p.rag)] q.rag]
-              $&  [new [p.rag q.rag]]
-            ==
-        $&   ?-  -.new
-              $|  [new ?:(=(0 p.p.rag) q.rag [p.rag q.rag])]
-              $&  [[%& (add p.p.rag p.new)] q.rag]
-            ==
-      ==
-    ::                                                  ::  ++main:lusk:differ
-    ++  main                                            ::
-      |-  ^+  +
-      ?~  hel
-        ?~  hev
-          ?>(?=($~ lcs) +)
-        $(hev t.hev, rag (done %| ~ [i.hev ~]))
-      ?~  hev
-        $(hel t.hel, rag (done %| [i.hel ~] ~))
-      ?~  lcs
-        +(rag (done %| (flop hel) (flop hev)))
-      ?:  =(i.hel i.lcs)
-        ?:  =(i.hev i.lcs)
-          $(lcs t.lcs, hel t.hel, hev t.hev, rag (done %& 1))
-        $(hev t.hev, rag (done %| ~ [i.hev ~]))
-      ?:  =(i.hev i.lcs)
-        $(hel t.hel, rag (done %| [i.hel ~] ~))
-      $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
-    --
-  ::                                                    ::  ++nude:differ
-  ++  nude                                              ::  tree change
-    =<  |=  {a/* b/*}  ^-  {p/upas q/upas}
-        [p=(tred a b) q=(tred b a)]
-    |%
-    ::                                                  ::  ++axes:nude:differ
-    ++  axes                                            ::  locs of nouns
-      |=  {a/@ b/*}  ^-  (map * axis)
-      =+  c=*(map * axis)
-      |-  ^-  (map * axis)
-      =>  .(c (~(put by c) b a))
-      ?@  b
-        c
-      %-  ~(uni by c)
-      %-  ~(uni by $(a (mul 2 a), b -.b))
-      $(a +((mul 2 a)), b +.b)
-    ::                                                  ::  ++tred:nude:differ
-    ++  tred                                            ::  diff a->b
-      |=  {a/* b/*}  ^-  upas
-      =|  c/(unit *)
-      =+  d=(axes 1 a)
-      |-  ^-  upas
-      =>  .(c (~(get by d) b))
-      ?~  c
-        ?@  b
-          [%1 b]
-        =+  e=^-(upas [$(b -.b) $(b +.b)])
-        ?-  e
-          {{$1 *} {$1 *}}  [%1 [p.p.e p.q.e]]
-          *  e
-        ==
-      [%0 u.c]
-    --
   --
 ::                                                      ::
 ::::                    ## number^engines               ::  misc number theory
@@ -3804,7 +3814,7 @@
               {$pawn p/(unit @t)}                       ::  128-bit ship
           ==                                            ::
 ++  govt  path                                          ::  country+postcode
-++  hand  @uvH                                          ::  hash of code
+++  hand  @uvH                                          ::  128-bit hash
 ++  hart  {p/? q/(unit @ud) r/host}                     ::  http sec+port+host
 ++  hate  {p/purl q/@p r/moth}                          ::  semi-cooked request
 ++  heir  {p/@ud q/mess r/(unit love)}                  ::  status+headers+data
@@ -4477,11 +4487,6 @@
         {$unto p/cuft}                                  ::
         {$mack p/(unit tang)}                           ::  message ack
     ==                                                  ::
-  --
-::
-::::
-  ::
-++  jael
   --
 ::
 ::::    %arvo
