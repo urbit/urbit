@@ -3167,7 +3167,7 @@ module.exports = {
     return _.map(this.sortKids(kids, sortBy), 'name');
   },
   sortKids: function(kids, sortBy) {
-    var _k, _kids, date, k, ref, ref1, v;
+    var _k, _kids, date, i, j, k, len, len1, ref, ref1, ref2, ref3, results, results1, v;
     if (sortBy == null) {
       sortBy = null;
     }
@@ -3199,17 +3199,31 @@ module.exports = {
           _k = Number(new Date(date));
           _kids[_k] = v;
         }
-        return _.values(_kids).reverse();
+        ref1 = _.keys(_kids).sort().reverse();
+        results = [];
+        for (i = 0, len = ref1.length; i < len; i++) {
+          k = ref1[i];
+          results.push(_kids[k]);
+        }
+        return results;
+        break;
       case null:
         _kids = [];
         for (k in kids) {
           v = kids[k];
-          if (((ref1 = v.meta) != null ? ref1.sort : void 0) == null) {
+          if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
             return _.sortBy(kids, 'name');
           }
           _kids[Number(v.meta.sort)] = v;
         }
-        return _.values(_kids);
+        ref3 = _.keys(_kids).sort();
+        results1 = [];
+        for (j = 0, len1 = ref3.length; j < len1; j++) {
+          k = ref3[j];
+          results1.push(_kids[k]);
+        }
+        return results1;
+        break;
       default:
         throw new Error("Unknown sort: " + sortBy);
     }
