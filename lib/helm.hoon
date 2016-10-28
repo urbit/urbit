@@ -197,8 +197,8 @@
   :-  [%flog /deset %vega (weld top `path`/two)]
   ~
 ::
-++  poke-will                                         ::  hear certificate
-  |=  wil/(unit will)
+++  poke-wyll                                         ::  hear certificate
+  |=  wil/(unit wyll)
   ?>  ?=(^ bur)
   ?>  ?=(^ wil)  
   =<  abet
