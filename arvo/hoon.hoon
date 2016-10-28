@@ -4253,6 +4253,14 @@
   =+  zac=(lust i.q.tub p.tub)
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
+++  perk                                                ::  parse cube fork 
+  |*  a/(pole @tas)
+  ?~  a  fail
+  ;~  pose 
+    (cold -.a (jest -.a))
+    $(a +.a)
+  ==
+::
 ++  pick                                                ::  rule for ++each
   |*  {a/rule b/rule}
   ;~  pose
@@ -6447,7 +6455,7 @@
       %moot   moot
       %mull   mull
       %nest   nest
-      %perk   perk
+      %peel   peel
       %play   play
       %peek   peek
       %repo   repo
@@ -6960,7 +6968,7 @@
               ?^  zem
                 :+  %&  [`axe lon] 
                 [%| (peg 2 p.u.zem) [[sut(p.q %gold) q.u.zem] ~ ~]]
-              =+  pec=(perk way p.q.sut)
+              =+  pec=(peel way p.q.sut)
               ?.  sam.pec  lose
               ?:  con.pec  $(sut p.sut, axe (peg axe 3))
               $(sut (peek(sut p.sut) way 2), axe (peg axe 6))
@@ -7611,17 +7619,6 @@
       ==            ==
     --
   ::
-  ++  perk
-    |=  {way/vial met/?($gold $iron $lead $zinc)}
-    ^-  {sam/? con/?}
-    ?:  ?=($gold met)  [& &]
-    ?-  way
-      $both  [| |]
-      $free  [& &]
-      $read  [?=($zinc met) |]
-      $rite  [?=($iron met) |]
-    ==
-  ::
   ++  peek
     ~/  %peek
     |=  {way/?($read $rite $both $free) axe/axis}
@@ -7636,7 +7633,7 @@
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
         {$core *}
       ?.  =(3 now)  %noun
-      =+  pec=(perk way p.q.sut)
+      =+  pec=(peel way p.q.sut)
       %=    ^$
           axe  lat
           sut
@@ -7655,6 +7652,17 @@
         $void       %void
         $noun       %noun
         *           $(sut repo)
+    ==
+  ::
+  ++  peel
+    |=  {way/vial met/?($gold $iron $lead $zinc)}
+    ^-  {sam/? con/?}
+    ?:  ?=($gold met)  [& &]
+    ?-  way
+      $both  [| |]
+      $free  [& &]
+      $read  [?=($zinc met) |]
+      $rite  [?=($iron met) |]
     ==
   ::
   ++  play

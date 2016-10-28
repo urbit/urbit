@@ -2585,14 +2585,6 @@
     ?~  myn  ~
     ?:  =(~ t.myn)  (trip i.myn)
     (weld (trip i.myn) `tape`['/' $(myn t.myn)])
-  ::                                                    ::  ++perk:markup
-  ++  perk                                              ::  parse cube fork 
-    |*  a/(pole @tas)
-    ?~  a  fail
-    ;~  pose 
-      (cold -.a (jest -.a))
-      $(a +.a)
-    ==
   ::                                                    ::  ++poja:markup
   ++  poja                                              ::  parse JSON
     =<  |=(a/cord `(unit json)`(rush a apex))
