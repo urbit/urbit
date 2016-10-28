@@ -123,7 +123,7 @@
   ::  revokes and replaces the previous cert.  the
   ::  version number of a ship is a ++life.
   ::
-  ::  the deed contains an ++arms, a definition
+  ::  the deyd contains an ++arms, a definition
   ::  of cosmetic identity; a semi-trusted parent, 
   ::  which signs the initial certificate and provides
   ::  routing services; and a dirty bit.  if the dirty
@@ -137,7 +137,7 @@
         dob/?                                           ::  & clean, | dirty
         nym/arms                                        ::  identity strings
     ==                                                  ::
-  ++  cert  (tale deed)                                 ::  signed deed
+  ++  cert  (tale deyd)                                 ::  signed deyd
   ++  chip                                              ::  standard identity
     $?  $giv                                            ::  given name
         $sur                                            ::  surname
@@ -145,11 +145,11 @@
         $mid                                            ::  middle name 
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
-  ++  deed                                              ::  certificate deed
+  ++  deyd                                              ::  certificate deyd
     $:  doc/bull                                        ::  metadata
         pub/pass                                        ::  public key
     ==                                                  ::
-  ++  farm  (map ship will)                             ::  pki dump set
+  ++  farm  (map ship wyll)                             ::  pki dump set
   ++  hand  @uvH                                        ::  128-bit hash
   ++  life  @ud                                         ::  ship version
   ++  mind  {who/ship lyf/life}                         ::  key identifier
@@ -160,7 +160,7 @@
     $:  dat/typ                                         ::  data
         syg/(map ship (pair life oath))                 ::  signatures
     ==                                                  ::
-  ++  will  (map life cert)                             ::  meta-certificate
+  ++  wyll  (map life cert)                             ::  meta-certificate
 ::                                                      ::
 ::::                    ### promise^jael^models         ::  rights and promises
   ::                                                    ::::
@@ -250,7 +250,7 @@
     $%  $:  $fact                                       ::  certificate change
             rex/ship                                    ::  owner
             vie/(unit (unit ship))                      ::  made/heard from
-            lyf/life                                    ::  deed added/modified
+            lyf/life                                    ::  deyd added/modified
             gan/growth                                  ::  info gained
         ==                                              ::
         $:  $rite                                       ::  rights change
@@ -264,7 +264,7 @@
         inn/(map hand bill)                             ::  inbound keys
         cur/(unit life)                                 ::  their version
         sax/(list ship)                                 ::  their ancestry
-        pub/will                                        ::  their public keys
+        pub/wyll                                        ::  their public keys
      ==                                                 ::
   ++  gift                                              ::  out result <-$
     $?  {$veil p/channel}                               ::  secure channel
@@ -274,7 +274,7 @@
     ==                                                  ::
   ++  growth                                            ::  unit of learning
     $%  {$sign p/mind q/@}                              ::  add/update signature
-        {$step p/cert}                                  ::  add whole deed
+        {$step p/cert}                                  ::  add whole deyd
     ==                                                  ::
   ++  note                                              ::  out request $->
     $%  {$b $wait p/@da}                                ::  wait until
@@ -695,7 +695,7 @@
 ::                                                      ::
 ::::                    # jael^engines                  ::  security
   ::                                                    ::::
-++  jaelooo
+++  jael
   |%
   ++  foo  %bar
   --
@@ -3092,13 +3092,24 @@
 ::
 ++  parsf                                              ::  make parser from:
   |^  |*  a/(pole _;/(*{$^(rule tape)}))            ::  ;"chars{rule}chars"
-      =-  (cook - (bill (norm a)))
+      =-  (cook - (boil (norm a)))
       |*  (list)
       ?~  +<  ~
       ?~  t  i
       [i $(+< t)]
   ::
+  ::  .=  (boil ~[[& dim] [| ", "] [& dim]]:ag)
+  ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
+  ::
+  ++  boil
+    |*  (list (each rule tape))
+    ?~  +<  (easy ~)
+    ?:  ?=($| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
+    %+  cook  |*({* *} [i t]=+<)
+    ;~(plug p.i $(+< t))
+  ::
   ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
+  ::
   ++  norm                                             
     |*  (pole _;/(*{$^(rule tape)}))
     ?~  +<  ~
@@ -3110,15 +3121,6 @@
     ?~  +.rul   [%| p=rul]
     ?@  &2.rul  [%| p=;;(tape rul)]
     [%& p=rul]
-  ::
-  ::  .=  (bill ~[[& dim] [| ", "] [& dim]]:ag)
-  ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
-  ++  bill
-    |*  (list (each rule tape))
-    ?~  +<  (easy ~)
-    ?:  ?=($| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
-    %+  cook  |*({* *} [i t]=+<)
-    ;~(plug p.i $(+< t))
   --
 ::
 ++  taco                                                ::  atom to octstream
@@ -3926,11 +3928,11 @@
 ++  page  (cask *)                                      ::  untyped cage
 ++  pail  ?($none $warm $cold)                          ::  connection status
 ++  pipe                                                ::  secure channel
-          $:  out/(unit (pair hand bill))               ::  outbound key
-              inn/(map hand bill)                       ::  inbound keys
+          $:  out/(unit (pair hand bill:^jael))         ::  outbound key
+              inn/(map hand bill:^jael)                 ::  inbound keys
               cur/(unit life)                           ::  their version
               sax/(list ship)                           ::  their ancestry
-              pub/wyll                                  ::  their public keys
+              pub/wyll:^jael                            ::  their public keys
           ==                                            ::
 ++  plan  (trel view (pair @da (unit @dr)) path)        ::  subscription
 ++  plea  {p/@ud q/{p/? q/@t}}                          ::  live prompt
@@ -4111,7 +4113,7 @@
 ++  kiss-xmas                                           ::  in request ->$
           $%  {$hear p/lane q/@}                        ::
               {$mess p/ship q/path r/*}                 ::  send message
-              {$gear p/farm q/(map life ring)}          ::  general update
+              {$gear p/farm:^jael q/(map life ring)}    ::  general update
               {$wake $~}                                ::
           ==                                            ::
 ++  card-xmas                                           ::  out cards
@@ -4124,7 +4126,7 @@
               $:  $j                                    ::  to %jael
                   $%  {$line p/ship q/@da r/code}       ::
                       {$link p/ship q/@da r/code}       ::
-                      {$meet p/farm}                    ::
+                      {$meet p/farm:^jael}              ::
                       {$view p/ship}                    ::  
                       {$west p/ship q/path r/*}         ::  to %gall
           ==  ==  ==                                    ::
@@ -4197,36 +4199,6 @@
               {$went p/sack q/path r/@ud s/coop}        ::  response confirm 
               {$west p/sack q/path r/@ud s/*}           ::  network request
           ==                                            ::
-::
-::::    %jael
-  ::
-++  arms  (map chip (pair @ta @t))                      ::  stated identity
-++  bill  (pair @da @)                                  ::  expiring value
-++  bull                                                ::  cert metadata
-  $:  dad/@p                                            ::  parent
-      dob/?                                             ::  & clean, | dirty
-      nym/arms                                          ::  identity strings
-  ==                                                    ::
-++  cert  (tale deyd)                                   ::  signed deed
-++  chip                                                ::  standard identity
-  $?  $giv                                              ::  given name
-      $sur                                              ::  surname
-      $had                                              ::  handle
-      $mid                                              ::  middle name 
-  ==                                                    ::
-++  deyd                                                ::  certificate deed
-  $:  doc/bull                                          ::  metadata
-      pub/pass                                          ::  public key
-  ==                                                    ::
-++  farm  (map ship wyll)                               ::  pki dump set
-++  wyll  (map life cert)                               ::  certificate
-++  mind  {who/@p lyf/@ud}                              ::  key identifier
-++  site  (list @ta)                                    ::  [%com %yahoo %www ~]
-++  tale                                                ::  urbit-signed *
-  |*  typ/mold                                          ::
-  $:  dat/typ                                           ::  data
-      syg/(map ship (pair life @))                      ::  signatures
-  ==                                                    ::
 ::
 ::::
   ::
@@ -4519,6 +4491,6 @@
       {$e gift-eyre}
       {$f gift-ford}
       {$g gift:gall}
-      {$j gift:jael}
+      {$j gift:^jael}
   ==
 --

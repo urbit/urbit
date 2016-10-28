@@ -17,6 +17,7 @@
 ::
 |=  pit/vase
 =,  crypto
+=,  ^jael
 =,  jael
 ::                                                      ::::
 ::::                    # models                        ::  data structures
@@ -821,10 +822,10 @@
     (splice(pig (remove les.del)) mor.del)
   --   
 ::                                                      ::  ++we
-::::                    ## will^light                   ::  will functions
+::::                    ## wyll^light                   ::  wyll functions
   ::                                                    ::::
 ++  we
-  |_  pub/will
+  |_  pub/wyll
   ::                                                    ::  ++collate:we 
   ++  collate                                           ::  sort by version
     |=  com/$-({{life cert} {life cert}} ?)
@@ -1186,7 +1187,7 @@
       |-  ^-  farm
       ?:  =(~ mor)  out
       ::
-      ::  nex: all wills to add
+      ::  nex: all wylls to add
       ::
       =/  nex
         =/  rom  (~(tap in mor))
@@ -1196,7 +1197,7 @@
           i.rom 
         (~(got by pug.urb) i.rom)
       ::
-      ::  wit: all new ships in these wills
+      ::  wit: all new ships in these wylls
       ::
       =.  sea  (~(uni in sea) mor)
       =/  wit
@@ -1221,14 +1222,14 @@
       |=  who/ship
       ^-  channel
       ::
-      ::  pub: will of who
+      ::  pub: wyll of who
       ::  exp: promises from our to who
       ::  imp: promises from who to our
       ::  out: symmetric key from our to who
       ::  inn: symmetric keys from who to our
       ::
       =/  pub  
-        ^-  will
+        ^-  wyll
         =-  ?~(- ~ u.-)
         (~(get by pug.urb) who)
       ::
@@ -1365,7 +1366,7 @@
     (veil:feel rex)
   ::                                                    ::  ++said:su
   ++  said                                              ::  track cert change
-    |=  $:  ::  rex: ship whose will has changed
+    |=  $:  ::  rex: ship whose wyll has changed
             ::  vie: change authorized by
             ::  lyf: modified/created version 
             ::  gan: modification
@@ -1379,12 +1380,12 @@
     ::
     =/  lip  ^-  farm 
       =-  [[rex -] ~ ~]
-      ^-  will
+      ^-  wyll
       =-  [[lyf -] ~ ~]
       ^-  cert
       ?-    -.gan
       ::
-      ::  add a new certificate to this will
+      ::  add a new certificate to this wyll
       ::    {$step p/cert}
       ::
           $step  p.gan
@@ -1403,7 +1404,7 @@
     =.  +>.$  ?.  |(=(our rex) (~(has by cod.rel) rex))  +>.$
       veal:feel
     ::
-    ::  if a new deed, reset parent
+    ::  if a new deyd, reset parent
     ::
     =.  dad.rel  ?.  &(=(our rex) ?=($step -.gan))  
         dad.rel
@@ -1413,7 +1414,7 @@
     ::
     =.  +>.$  (veil:feel rex)
     ::
-    ::  if we signed a will for someone else, send it home
+    ::  if we signed a wyll for someone else, send it home
     ::
     ?:  &(=([~ ~] vie) !=(our rex))
       (~(home fire lip) rex)
@@ -1433,8 +1434,8 @@
       ?~(vie ~ ?~(u.vie ~ `u.u.vie))
     ^-  (list (set ship))
     ::
-    ::  if our will has changed, send to parents and kids;
-    ::  if a new deed has been added, also to pals
+    ::  if our wyll has changed, send to parents and kids;
+    ::  if a new deyd has been added, also to pals
     ::
     ?:  =(our rex)
       :*  [dad.rel ~ ~]
@@ -1587,10 +1588,10 @@
   ::                                                    ::  ++ex:ur
   ++  ex                                                ::  server engine
     ::  shy: private state
-    ::  rug: domestic will
+    ::  rug: domestic wyll
     ::
     =|  $:  shy/(map ship safe)
-            rug/will
+            rug/wyll
         ==
     =|  ::  rex: server ship
         ::
@@ -1606,7 +1607,7 @@
     ++  able                                            ::  initialize
       %_  .
         shy  (fall (~(get by pry) rex) *(map ship safe))
-        rug  (fall (~(get by pug) rex) *will)
+        rug  (fall (~(get by pug) rex) *wyll)
       ==
     ::                                                  ::  ++deal:ex:ur
     ++  deal                                            ::  alter rights
@@ -1661,39 +1662,39 @@
       ::  ryt: private key as right
       ::  pub: public key
       ::  cet: unsigned certificate
-      ::  wyl: initial will
-      ::  hec: initial will as farm
+      ::  wyl: initial wyll
+      ::  hec: initial wyll as farm
       ::
       =/  loy  (pit:nu:crub 512 eny)
       =*  rig  sec:ex:loy
       =*  ryt  `rite`[%jewel [1 rig] ~ ~]
       =*  pub  pub:ex:loy
       =*  cet  `cert`[[doc pub] ~]
-      =*  wyl  `will`[[1 cet] ~ ~]
+      =*  wyl  `wyll`[[1 cet] ~ ~]
       =*  hec  `farm`[[rex wyl] ~ ~]
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
       =.  ..ex  (meet [~ ~] hec)
       +>.$
     ::                                                  ::  grow:ex:ur
-    ++  grow                                            ::  merge wills
+    ++  grow                                            ::  merge wylls
       |=  $:  ::  vie: data source
               ::  cod: merge context
-              ::  gur: input will
+              ::  gur: input wyll
               ::  
               vie/(unit (unit ship))
               cod/farm
-              gur/will
+              gur/wyll
           ==
       ?:  |(=(~ gur) =(gur rug))  ..grow
       |^  ^+  ..grow
           ::
           ::  wap: ascending list of new certs
-          ::  pre: previous deed
+          ::  pre: previous deyd
           ::
           =/  wap  ~(forward we gur)
           ?~  wap  ..grow
           =/  pre
-            ^-  (unit deed)
+            ^-  (unit deyd)
             ?~  (dec p.i.wap)  ~
             `dat:(~(got by rug) (dec p.i.wap))
           ::
@@ -1702,7 +1703,7 @@
           |-  ^+  ..grow
           ::
           ::  hub: changes
-          ::  lub: merged deed
+          ::  lub: merged deyd
           ::
           =+  [hub lub]=[p q]:(grow-mate p.i.wap q.i.wap pre)
           ?~  t.wap  ..grow
@@ -1725,7 +1726,7 @@
         |=  {myn/mind ash/@ val/@}
         ^-  ?
         =:  ..able  able(rex who.myn)
-            gur     (fall (~(get by cod) who.myn) *will)
+            gur     (fall (~(get by cod) who.myn) *wyll)
           ==
         (grow-lick (grow-look lyf.myn) ash val)
       ::                                                ::  grow-look/ex:ur
@@ -1750,13 +1751,13 @@
       ::                                                ::  grow-mate/ex:ur
       ++  grow-mate                                     ::  merge lives
         |=  $:  ::  num: life we're merging
-                ::  new: new deed
-                ::  pre: previous deed 
-                ::  eld: old deed
+                ::  new: new deyd
+                ::  pre: previous deyd 
+                ::  eld: old deyd
                 ::
                 num/@ud
                 new/cert
-                pre/(unit deed)
+                pre/(unit deyd)
             ==
         =+  :*  eld=`(unit cert)`(~(get by rug) num) 
             ==
@@ -1772,7 +1773,7 @@
           ?>  ?=(^ eld) 
           [~ u.eld]
         ::
-        ::  ash: hash of deed content
+        ::  ash: hash of deyd content
         ::  def: our default parent
         ::  dad: our declared parent
         ::  mir: our rank
@@ -1792,11 +1793,11 @@
             ::
             =((clan def) (clan dad))
         ::
-        ::  if we have an old deed at this life, merge new signatures
+        ::  if we have an old deyd at this life, merge new signatures
         ::
         ?:  ?=(^ eld)
           ::
-          ::  deed data must be identical
+          ::  deyd data must be identical
           ::
           ?>  =(dat.new dat.u.eld)
           ::
@@ -1824,7 +1825,7 @@
           :_  p.mor
           `change`[%fact rex vie num `growth`[%sign [[p q] r]:i.sow]]
         ::
-        ::  non-initial deeds must be signed by previous
+        ::  non-initial deyds must be signed by previous
         ::
         ?>  ?|  ?=($~ pre)
                 =+  laz=(~(got by syg.new) rex)
@@ -1856,7 +1857,7 @@
                     =(~ pre)
                 ==
                 ::
-                ::  the deed is homemade or sent by owner
+                ::  the deyd is homemade or sent by owner
                 ::
                 &(?=(^ vie) |(?=($~ u.vie) =(u.u.vie rex)))
                 ::
@@ -1868,12 +1869,12 @@
         =-  [[%fact rex p.- num %step q.-]~ q.-]
         ^-  (pair (unit (unit ship)) cert)
         ::
-        ::  the new deed is complete; report it
+        ::  the new deyd is complete; report it
         ::
         ?:  (~(has by syg.new) dad)
           [vie new]
         ::
-        ::  the new deed needs a parent signature; try to add it
+        ::  the new deyd needs a parent signature; try to add it
         ::
         :-  [~ ~]
         ::
