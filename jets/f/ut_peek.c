@@ -83,7 +83,7 @@
           u3_atom lat = u3qc_mas(axe);
 
           if ( 3 == now ) {
-            u3_noun pec = u3qfu_perk(van, sut, way, pq_sut);
+            u3_noun pec = u3qfu_peel(van, sut, way, pq_sut);
             u3_noun sam = u3h(pec);
             u3_noun con = u3t(pec);
 

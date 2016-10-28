@@ -207,7 +207,7 @@
           return pro;
         }
         else {
-          u3_noun pec = u3qfu_perk(van, sut, way, pq_sut);
+          u3_noun pec = u3qfu_peel(van, sut, way, pq_sut);
           u3_noun pro;
 
           if ( c3n == u3h(pec) ) {
