@@ -118,12 +118,12 @@
 ::                                                      ::
 ::::                    ### public^jael^models          ::  certificates
   ::                                                    ::::
-  ::  the urbit meta-certificate (++will) is a sequence
-  ::  of certificates (++cert).  each cert in a will
+  ::  the urbit meta-certificate (++wyll) is a sequence
+  ::  of certificates (++cert).  each cert in a wyll
   ::  revokes and replaces the previous cert.  the
   ::  version number of a ship is a ++life.
   ::
-  ::  the deyd contains an ++arms, a definition
+  ::  the deed contains an ++arms, a definition
   ::  of cosmetic identity; a semi-trusted parent, 
   ::  which signs the initial certificate and provides
   ::  routing services; and a dirty bit.  if the dirty
@@ -137,7 +137,7 @@
         dob/?                                           ::  & clean, | dirty
         nym/arms                                        ::  identity strings
     ==                                                  ::
-  ++  cert  (tale deyd)                                 ::  signed deyd
+  ++  cert  (tale deed)                                 ::  signed deed
   ++  chip                                              ::  standard identity
     $?  $giv                                            ::  given name
         $sur                                            ::  surname
@@ -145,11 +145,11 @@
         $mid                                            ::  middle name 
     ==                                                  ::
   ++  coop  (unit ares)                                 ::  e2e ack
-  ++  deyd                                              ::  certificate deyd
+  ++  deed                                              ::  certificate deed
     $:  doc/bull                                        ::  metadata
         pub/pass                                        ::  public key
     ==                                                  ::
-  ++  farm  (map ship wyll)                             ::  pki dump set
+  ++  farm  (map ship will)                             ::  pki dump set
   ++  hand  @uvH                                        ::  128-bit hash
   ++  life  @ud                                         ::  ship version
   ++  mind  {who/ship lyf/life}                         ::  key identifier
@@ -160,7 +160,7 @@
     $:  dat/typ                                         ::  data
         syg/(map ship (pair life oath))                 ::  signatures
     ==                                                  ::
-  ++  wyll  (map life cert)                             ::  meta-certificate
+  ++  will  (map life cert)                             ::  meta-certificate
 ::                                                      ::
 ::::                    ### promise^jael^models         ::  rights and promises
   ::                                                    ::::
@@ -223,7 +223,7 @@
   ::  change tasks are designed to match high-level
   ::  operations - for instance, we have %burn, %mint,
   ::  and %move, not just a single delta operation.
-  ::  more of these operations will probably be added,
+  ::  more of these operations wyll probably be added,
   ::  and invariants enforced at transaction end.
   ::
   ::  subscriptions are also user-focused - for instance,
@@ -250,7 +250,7 @@
     $%  $:  $fact                                       ::  certificate change
             rex/ship                                    ::  owner
             vie/(unit (unit ship))                      ::  made/heard from
-            lyf/life                                    ::  deyd added/modified
+            lyf/life                                    ::  deed added/modified
             gan/growth                                  ::  info gained
         ==                                              ::
         $:  $rite                                       ::  rights change
@@ -264,7 +264,7 @@
         inn/(map hand bill)                             ::  inbound keys
         cur/(unit life)                                 ::  their version
         sax/(list ship)                                 ::  their ancestry
-        pub/wyll                                        ::  their public keys
+        pub/will                                        ::  their public keys
      ==                                                 ::
   ++  gift                                              ::  out result <-$
     $?  {$veil p/channel}                               ::  secure channel
@@ -274,7 +274,7 @@
     ==                                                  ::
   ++  growth                                            ::  unit of learning
     $%  {$sign p/mind q/@}                              ::  add/update signature
-        {$step p/cert}                                  ::  add whole deyd
+        {$step p/cert}                                  ::  add whole deed
     ==                                                  ::
   ++  note                                              ::  out request $->
     $%  {$b $wait p/@da}                                ::  wait until
@@ -3690,7 +3690,7 @@
 ++  boat  (map (pair bone wire) (trel bean ship path))  ::  outgoing subs
 ++  boon                                                ::  fort output
           $%  {$beer p/ship}                            ::  gained ownership
-              {$bier p/ship q/deed}                     ::  unsigned deed
+              {$bier p/ship q/deyd}                     ::  unsigned deyd
               {$cake p/sock q/soap r/coop s/duct}       ::  e2e message result
               {$coke p/sock q/soap r/cape s/duct}       ::  message result
               {$mead p/lane q/rock}                     ::  accept packet
@@ -3715,7 +3715,7 @@
         ==  ==                                          ::
 ++  bray  {p/life q/(unit life) r/ship s/@da}           ::  our parent us now
 ++  brow  {p/@da q/@tas}                                ::  browser version
-++  buck  {p/mace q/will}                               ::  all security data
+++  buck  {p/mace q/wyll}                               ::  all security data
 ++  cake  {p/sock q/skin r/@}                           ::  top level packet
 ++  cape                                                ::  end-to-end result
           $?  $good                                     ::  delivered
@@ -3764,7 +3764,7 @@
               cip/(each @if @is)                        ::  client IP
               cum/(map @tas *)                          ::  custom dirt
           ==                                            ::
-++  deed  {p/@ q/step r/?}                              ::  sig stage fake?
+++  deyd  {p/@ q/step r/?}                              ::  sig stage fake?
 ++  dome                                                ::  project state
           $:  ank/ankh                                  ::  state
               let/@ud                                   ::  top id
@@ -3773,7 +3773,7 @@
           ==                                            ::
 ++  dore                                                ::  foreign contact
           $:  wod/road                                  ::  connection to
-              wyl/will                                  ::  inferred mirror
+              wyl/wyll                                  ::  inferred mirror
               caq/clot                                  ::  symmetric key state
           ==                                            ::
 ++  dove  {p/@ud q/(map @ud @)}                         ::  count hash 13-blocks
@@ -3932,7 +3932,7 @@
               inn/(map hand bill:^jael)                 ::  inbound keys
               cur/(unit life)                           ::  their version
               sax/(list ship)                           ::  their ancestry
-              pub/wyll:^jael                            ::  their public keys
+              pub/will:^jael                            ::  their public keys
           ==                                            ::
 ++  plan  (trel view (pair @da (unit @dr)) path)        ::  subscription
 ++  plea  {p/@ud q/{p/? q/@t}}                          ::  live prompt
@@ -3975,7 +3975,7 @@
 ++  road                                                ::  secured oneway route
           $:  exp/@da                                   ::  expiration date
               lun/(unit lane)                           ::  route to friend
-              lew/will                                  ::  will of friend
+              lew/wyll                                  ::  wyll of friend
           ==                                            ::
 ++  rock  @uvO                                          ::  packet
 ++  rout  {p/(list host) q/path r/oryx s/path}          ::  http route (new)
@@ -3990,7 +3990,7 @@
 ++  sufi                                                ::  domestic host
           $:  hoy/(list ship)                           ::  hierarchy
               val/wund                                  ::  private keys
-              law/will                                  ::  server will
+              law/wyll                                  ::  server wyll
               seh/(map hand {p/ship q/@da})             ::  key cache
               hoc/(map ship dore)                       ::  neighborhood
           ==                                            ::
@@ -4061,10 +4061,10 @@
 ++  woof  $@  $know                                     ::  udon transform
               {$chan (list {$@(@ud {p/@ud q/@ud})})}    ::
 ++  wund  (list {p/life q/ring r/acru})                 ::  mace in action
-++  will  (list deed)                                   ::  certificate
+++  wyll  (list deyd)                                   ::  certificate
 ++  zuse  %310                                          ::  hoon+zuse kelvin
 ::          ::
-::::        ::::  this will become `%york`, vane structures.
+::::        ::::  this wyll become `%york`, vane structures.
   ::          ::
 ++  gift-ames                                           ::  out result <-$
           $%  {$drop $~}                                ::  drop packet

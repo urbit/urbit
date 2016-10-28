@@ -79,7 +79,7 @@
           ==                                            ::
 ++  door                                                ::  foreign contact
           $:  wod/road                                  ::  connection to
-              wyl/will                                  ::  inferred mirror
+              wyl/wyll                                  ::  inferred mirror
               caq/clot                                  ::  symmetric key state
           ==                                            ::
 ++  dove  {p/@ud q/(map @ud @)}                         ::  count 13-blocks
@@ -113,13 +113,13 @@
 ++  road                                                ::  secured oneway route
           $:  exp/@da                                   ::  expiration date
               lun/(unit lane)                           ::  route to friend
-              lew/will                                  ::  will of friend
+              lew/wyll                                  ::  wyll of friend
           ==                                            ::
 ++  skin  ?($none $open $fast $full)                    ::  encoding stem
 ++  sufi                                                ::  domestic host
           $:  hoy/(list ship)                           ::  hierarchy
               val/wund                                  ::  private keys
-              law/will                                  ::  server will
+              law/wyll                                  ::  server wyll
               seh/(map hand {p/ship q/@da})             ::  key cache
               hoc/(map ship door)                       ::  neighborhood
           ==                                            ::
@@ -564,9 +564,9 @@
   ::              section 4aA, identity logic           ::
   ::
   |%
-  ++  grip                                              ::  extend will
-    |=  {wet/will law/will}
-    ^-  will
+  ++  grip                                              ::  extend wyll
+    |=  {wet/wyll law/wyll}
+    ^-  wyll
     ?~  wet  law
     ?:  =(wet law)  law
     ?^  t.wet
@@ -576,7 +576,7 @@
     ?~  q.p.q.i.wet
       ?>((meld i.wet i.law) [i.wet law])
     =+  rul=(sein r.p.q.i.wet)
-    |-  ^-  will
+    |-  ^-  wyll
     ?:  ?&  =(rul r.p.q.i.law)
             =(p.p.q.i.law u.q.p.q.i.wet)
         ==
@@ -584,7 +584,7 @@
     ?>(?=(^ t.law) $(law t.law))
   ::
   ++  meld                                              ::  verify connect
-    |=  {new/deed old/deed}
+    |=  {new/deyd old/deyd}
     ^-  $&
     ?>  (melt new old)
     ?>  .=  (shaf %meld (sham q.new)) 
@@ -592,7 +592,7 @@
     %&
   ::
   ++  melt                                              ::  proper connect
-    |=  {new/deed old/deed}
+    |=  {new/deyd old/deyd}
     ^-  ?
     =+  rac=(clan r.p.q.new)
     ?&  =(r.new r.old)                                  ::  match fake
@@ -608,20 +608,20 @@
     ==
   ::
   ++  pare                                              ::  shorten against
-    |=  {fou/will law/will}
+    |=  {fou/wyll law/wyll}
     ::  ~&  [%pare-fou fou]
     ::  ~&  [%pare-law law]
-    ^-  will
+    ^-  wyll
     =+  [ouf=(flop fou) wal=(flop law)]
     %-  flop
-    |-  ^-  will
+    |-  ^-  wyll
     ?~  ouf  wal
     ?~  wal  ~
     ?.  =(i.wal i.ouf)  ouf
     $(wal t.wal, ouf t.ouf)
   ::
-  ++  pier  !:                                          ::  initial deed
-    |=  wed/deed
+  ++  pier  !:                                          ::  initial deyd
+    |=  wed/deyd
     ^-  $&
     ?>  =+  rac=(clan r.p.q.wed)
         =+  loy=(haul:test r.q.wed)
@@ -633,7 +633,7 @@
     %&
   ::
   ++  real                                              ::  validate
-    |=  {mac/mace law/will}
+    |=  {mac/mace law/wyll}
     ?>  ?&  |-  ^-  ?
             ?~  mac  &
             ?>  ?&  ?=(^ law)
@@ -653,9 +653,9 @@
     ?:  (gth mar p.i.mac)  ~
     $(mac t.mac)
   ::
-  ++  rick                                              ::  will at life
-    |=  {mar/life lag/ship law/will}
-    ^-  (unit will)
+  ++  rick                                              ::  wyll at life
+    |=  {mar/life lag/ship law/wyll}
+    ^-  (unit wyll)
     ?~  law  ~
     ?:  =(mar p.p.q.i.law)  [~ law]
     ?:  (gth mar p.p.q.i.law)  ~
@@ -976,7 +976,7 @@
       |_  {our/ship saf/sufi}                           ::  per server
       ++  born                                          ::    born:as:go
         |=  {now/@da her/@p tic/@pG ges/gens pub/pass}  ::  register user
-        ^-  {(unit will) _+>}
+        ^-  {(unit wyll) _+>}
         ?.  =(our (sein her))  [~ +>.$]
         =+  nes=sen
         =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
@@ -1011,7 +1011,7 @@
           ?~(lew.wod.dur 0 p.p.q.i.lew.wod.dur)
         ::
         ++  deng
-          |=  law/will
+          |=  law/wyll
           %_(+> lew.wod.dur (grip law lew.wod.dur))
         ::
         ++  griz                                        ::    griz:lax:as:go
@@ -1168,8 +1168,8 @@
             =^  tuy  +>.$
               ?:(=(~ lew.wod.dur) [*code +>.$] (griz now))
             =+  yig=sen
-            ::  =+  bil=`will`(pare wyl.dur law.saf)    ::  XX not set
-            =+  bil=law.saf                             ::  XX send whole will
+            ::  =+  bil=`wyll`(pare wyl.dur law.saf)    ::  XX not set
+            =+  bil=law.saf                             ::  XX send whole wyll
             =+  hom=(jam ham)
             ?:  =(~ lew.wod.dur)
               :-  %open
@@ -1231,9 +1231,9 @@
         |-  ^-  (list ship)
         (saxo our)
       ::
-      ++  yew                                           ::  best will for
+      ++  yew                                           ::  best wyll for
         |=  her/ship
-        ^-  will
+        ^-  wyll
         =+  gel=(~(get by hoc.saf) her)
         ?^  gel
           lew.wod.u.gel
@@ -1241,7 +1241,7 @@
       --                                                ::  --as:go
     ::
     ++  ha  !:                                          ::  adopt new license
-      |=  {our/ship mac/mace wil/will}
+      |=  {our/ship mac/mace wil/wyll}
       ^-  town
       ?>  !=(~ mac)
       ?>  ?=(^ wil)
@@ -1339,7 +1339,7 @@
         %^    ~(ha go ton.fox)
             our
           `mace`[[0 rig] ~]
-        `will`[[(sign:as:loy *@ (shaf %self (sham syp))) syp fak] ~]
+        `wyll`[[(sign:as:loy *@ (shaf %self (sham syp))) syp fak] ~]
           fak.ton
         fak
       ==
@@ -1356,7 +1356,7 @@
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ her now] [%en %czar ~] pub:ex:loy]
-      =+  ded=`deed`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
+      =+  ded=`deyd`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) her buq)
           zac.fox  (~(put by zac.fox) her *corn)
@@ -1588,7 +1588,7 @@
           ::
               $full
             ::  ~&  %chew-full
-            =+  mex=((hard {p/{p/life q/life} q/will r/@}) (cue msg))
+            =+  mex=((hard {p/{p/life q/life} q/wyll r/@}) (cue msg))
             =.  diz  (deng:diz q.mex)
             =+  wug=cluy:diz
             ?>  =(q.p.mex p.wug)
@@ -1599,7 +1599,7 @@
           ::
               $open
             ::  ~&  %chew-open
-            =+  mex=((hard {p/{$~ q/life} q/will r/@}) (cue msg))
+            =+  mex=((hard {p/{$~ q/life} q/wyll r/@}) (cue msg))
             =.  diz  (deng:diz q.mex)
             =+  wug=cluy:diz
             ?>  =(q.p.mex p.wug)
@@ -2151,19 +2151,19 @@
     ^-  (unit (unit cage))
     ?~  tyl  ~
     ?:  ?=({$name $~} tyl)
-      =+  wul=$(tyl [%will ~])
-      ``[%noun !>(?~(wul (scot %p his) (gnow his q.q.q:((hard deed) -.u.wul))))]
+      =+  wul=$(tyl [%wyll ~])
+      ``[%noun !>(?~(wul (scot %p his) (gnow his q.q.q:((hard deyd) -.u.wul))))]
     ?:  ?=({$gcos $~} tyl)
-      =+  wul=$(tyl [%will ~])
-      ?~(wul ~ ``[%noun !>(`gcos`q.q.q:((hard deed) -.u.wul))])
+      =+  wul=$(tyl [%wyll ~])
+      ?~(wul ~ ``[%noun !>(`gcos`q.q.q:((hard deyd) -.u.wul))])
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
-      ?:  ?=({$will $~} tyl)
+      ?:  ?=({$wyll $~} tyl)
         =+  fod=(~(get by hoc.saf.u.gys) his)
         ?~  fod  ~
         %+  bind  (rick mar his lew.wod.u.fod)
-        |=(a/will `[%noun !>(a)])
+        |=(a/wyll `[%noun !>(a)])
       ?:  ?=({$tick $~} tyl)
         ?.  =(our (sein his))  ~
         ``[%noun !>((end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys)))))]
@@ -2175,8 +2175,8 @@
       ``[%noun !>(`buck`[u.muc u.luw])]
     ?:  ?=({$code $~} tyl)
       ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:q:sen:u.gys))))]
-    ?:  ?=({$will $~} tyl)
-      (bind (rick mar our law.saf.u.gys) |=(a/will `[%noun !>(a)]))
+    ?:  ?=({$wyll $~} tyl)
+      (bind (rick mar our law.saf.u.gys) |=(a/wyll `[%noun !>(a)]))
     ~
   ::
   ++  temp
