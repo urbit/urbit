@@ -118,7 +118,7 @@
       {$poke wire dock pear}                            ::  app RPC
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
-      {$knew wire p/ship q/will}                        ::  learn will (old pki)
+      {$knew wire p/ship q/wyll}                        ::  learn wyll (old pki)
   ==                                                    ::
 ++  pear                                                ::
   $%  {$email mail tape wall}                           ::  send email
@@ -137,7 +137,7 @@
 ++  move  (pair bone card)                              ::  user-level move
 ::
 ++  transaction                                         ::  logged poke
-  $%  {$report her/@p wyl/will}
+  $%  {$report her/@p wyl/wyll}
       {$release gal/@ud sta/@ud}
       {$release-ships (list ship)}
       {$claim aut/passcode her/@p}
@@ -679,15 +679,15 @@
   %+  foal  (welp pax /jam-crub)
   [%jam-crub !>((en:crub:crypto pas (jam `part`+:abet)))]
 ::
-++  poke-rekey                                        ::  extend will
+++  poke-rekey                                        ::  extend wyll
   |=  $~
   =<  abet
   ?>  |(=(our src) =([~ src] boss))                   ::  privileged
   ::  (emit /rekey %next sec:ex:(pit:nu:crub 512 (shaz (mix %next (shaz eny)))))
   ~&  %rekey-stub  .
 ::
-++  poke-report                                       ::  report will
-  |=  {her/@p wyl/will}                               ::
+++  poke-report                                       ::  report wyll
+  |=  {her/@p wyl/wyll}                               ::
   =<  abet
   =.  log-transaction  (log-transaction %report +<)
   ?>  =(src src)                                      ::  self-authenticated

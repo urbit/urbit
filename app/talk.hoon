@@ -1369,7 +1369,7 @@
         now.hid
         (sy /fora-post eyre+pax ~)
       :-  %mor  :~
-        [%fat text+(lore:differ txt) [%url [ra-base-hart `pax ~] `fra]]
+        [%fat text+(lore:lines:clay txt) [%url [ra-base-hart `pax ~] `fra]]
         [%app %tree (crip "forum post: '{(trip hed)}'")]
       ==
     ==
@@ -1410,7 +1410,7 @@
         now.hid
         (sy /comment eyre+pax ~)
       :-  %mor  :~
-        [%fat text+(lore:differ txt) [%url [ra-base-hart `pax ~] `fra]]
+        [%fat text+(lore:lines:clay txt) [%url [ra-base-hart `pax ~] `fra]]
         [%app %tree (crip "comment on /{nam}")]
       ==
     ==

@@ -17,6 +17,7 @@
 ::
 |=  pit/vase
 =,  crypto
+=,  ^jael
 =,  jael
 ::                                                      ::::
 ::::                    # models                        ::  data structures

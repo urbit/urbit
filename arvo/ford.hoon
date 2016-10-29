@@ -3,8 +3,6 @@
 !?  164
 ::::
 |=  pit/vase   
-=,  ^differ
-=,  differ
 =,  gall
 =>  =~
 ::  structures
@@ -1748,9 +1746,9 @@
       --
     ::
     ++  pact-hoon                                       ::  .hoon special case
-      |=  {a/@t b/(urge cord)}  ^-  @t
+      |=  {a/@t b/(urge:differ:^clay cord)}  ^-  @t
       ~|  %lurk-hoon
-      (role (lurk (lore a) b))
+      (role:lines:clay (lurk:differ:clay (lore:lines:clay a) b))
     ::
     ++  pact                                            ::  patch
       |=  {cof/cafe kas/silk kos/silk}
