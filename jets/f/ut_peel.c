@@ -1,4 +1,4 @@
-/* j/6/ut_perk.c
+/* j/6/ut_peel.c
 **
 */
 #include "all.h"
@@ -7,7 +7,7 @@
 /* logic
 */
   u3_noun
-  _cqfu_perk(u3_noun van,
+  _cqfu_peel(u3_noun van,
              u3_noun sut,
              u3_noun way,
              u3_noun met)
@@ -28,7 +28,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_perk(u3_noun cor)
+  u3wfu_peel(u3_noun cor)
   {
     u3_noun sut, way, met, van;
 
@@ -40,16 +40,16 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return _cqfu_perk(van, sut, way, met);
+      return _cqfu_peel(van, sut, way, met);
     }
   }
 
   u3_noun
-  u3qfu_perk(u3_noun van,
+  u3qfu_peel(u3_noun van,
              u3_noun sut,
              u3_noun way,
              u3_noun met)
   {
-    return _cqfu_perk(van, sut, way, met);
+    return _cqfu_peel(van, sut, way, met);
   }
 

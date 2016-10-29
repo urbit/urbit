@@ -360,7 +360,7 @@ static u3j_harm _mood__hoon__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
 static u3j_harm _mood__hoon__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
 static u3j_harm _mood__hoon__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
 static u3j_harm _mood__hoon__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
-static u3j_harm _mood__hoon__ut_perk_a[] = {{".2", u3wfu_perk}, {}};
+static u3j_harm _mood__hoon__ut_peel_a[] = {{".2", u3wfu_peel}, {}};
 static u3j_harm _mood__hoon__ut_play_a[] = {{".2", u3wfu_play}, {}};
 static u3j_harm _mood__hoon__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
 static u3j_harm _mood__hoon__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
@@ -379,7 +379,7 @@ static u3j_core _mood__hoon__ut_d[] =
     { "mull", _mood__hoon__ut_mull_a },
     { "nest", _mood__hoon__ut_nest_a },
     { "peek", _mood__hoon__ut_peek_a },
-    { "perk", _mood__hoon__ut_perk_a },
+    { "peel", _mood__hoon__ut_peel_a },
     { "play", _mood__hoon__ut_play_a },
     { "rest", _mood__hoon__ut_rest_a },
     { "toss", _mood__hoon__ut_toss_a },
