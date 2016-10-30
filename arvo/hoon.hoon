@@ -6500,8 +6500,6 @@
     ~/  %busk
     |=  gen/twig
     ^-  span
-    ?:  ?=({$face ^ *} sut)  
-      [%face [p.p.sut [gen q.p.sut]] q.sut]
     [%face [~ [gen ~]] sut]
   ::
   ++  buss

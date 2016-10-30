@@ -17,7 +17,9 @@
 ::
 |=  pit/vase
 =,  crypto
-=,  ^jael
+=,  pki:^jael
+=,  rights:^jael
+=,  moves:^jael 
 =,  jael
 ::                                                      ::::
 ::::                    # models                        ::  data structures
@@ -77,7 +79,7 @@
 ::                                                      ::
 ++  move                                                ::  output
   {p/duct q/card}                                       ::
---
+--  ::
 ::                                                      ::::
 ::::                    # data                          ::  static data
   ::                                                    ::::
@@ -354,13 +356,13 @@
       0w0                           ::  254, ~nev, Tlon
       0w0                           ::  255, ~fes, John Burnham 
   ==
---
+--  ::
 ::                                                      ::::
 ::::                    # light                         ::  light cores
   ::                                                    ::::
 =>  |%
 ::                                                      ::  ++py
-::::                    ## sparse^light                 ::  sparse range
+::::                    ## sparse/light                 ::  sparse range
   ::                                                    ::::
 ++  py        
   ::  because when you're a star with 2^16 unissued
@@ -487,9 +489,9 @@
     ?:  (gth q.n.a q.n.b)
       $(a l.a, b $(a r.a, b $(a r.b, r.b ~, q.n.b q.n.a)))
     $(a l.a, b $(a r.a))
-  --
+  --  ::py
 ::                                                      ::  ++ry
-::::                    ## rights^light                 ::  rights algebra
+::::                    ## rights/light                 ::  rights algebra
   ::                                                    ::::
 ++  ry
   ::
@@ -607,7 +609,7 @@
       =/  ped  (~(dep by old) new)
       :-  ?~(p.ped ~ `[nut p.ped])
           ?~(q.ped ~ `[nut q.ped])
-    --
+    --  ::dif
   ::                                                    ::  ++sub:ry
   ++  sub                                               ::  l - r
     ^-  (unit rite)
@@ -665,8 +667,8 @@
       %-  (~(uno by old) new)
       |=  (trel _p.-<.new _q.->.new _q.->.new)
       ?>(=(q r) r)
-    --
-  --
+    --  ::uni
+  --  ::ry
 ::                                                      ::  ++up
 ::::                    ## wallet^light                 ::  wallet algebra
   ::                                                    ::::
