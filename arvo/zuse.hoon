@@ -328,26 +328,189 @@
   ::                                                    ::::
 |%
 ::                                                      ::
-::::                    # ames^engines                  ::  networking
+::::                    ## ames/engines                 ::  networking
   ::                                                    ::::
 ++  ames
   |%
   ++  $  %$
   --
 ::                                                      ::
-::::                    # behn^engines                  ::  scheduling
+::::                    ## behn/engines                 ::  scheduling
   ::                                                    ::::
 ++  behn
   |%
-  ++  $  %$
-  --
 ::                                                      ::
-::::                    # clay^engines                  ::  storage
+::::                    ### chrono/engines/behn         ::  time
+  ::                                                    ::::
+  ++  chrono  ^?
+    |%
+    ::                                                  ::  ++dawn:chrono:behn
+    ++  dawn                                            ::  Jan 1 weekday
+      |=  yer/@ud
+      =+  yet=(sub yer 1)
+      %-  mod  :_  7
+      ;:  add
+        1 
+        (mul 5 (mod yet 4)) 
+        (mul 4 (mod yet 100)) 
+        (mul 6 (mod yet 400))
+      ==
+    ::                                                  ::  ++daws:chrono:behn
+    ++  daws                                            ::  date weekday
+      |=  yed/date
+      %-  mod  :_  7
+      %+  add
+        (dawn y.yed) 
+      (sub (yawn [y.yed m.yed d.t.yed]) (yawn y.yed 1 1))
+    ::                                                  ::  ++deal:chrono:behn
+    ++  deal                                            ::  to leap sec time
+      |=  yer/@da
+      =+  n=0
+      =+  yud=(yore yer)
+      |-  ^-  date
+      ?:  (gte yer (add (snag n lef:yu) ~s1))
+        (yore (year yud(s.t (add n s.t.yud))))
+      ?:  &((gte yer (snag n lef:yu)) (lth yer (add (snag n lef:yu) ~s1)))
+        yud(s.t (add +(n) s.t.yud))
+      ?:  =(+(n) (lent lef:yu))
+        (yore (year yud(s.t (add +(n) s.t.yud))))
+      $(n +(n))
+    ::                                                  ::  ++lead:chrono:behn
+    ++  lead                                            ::  from leap sec time
+      |=  ley/date
+      =+  ler=(year ley)
+      =+  n=0
+      |-  ^-  @da
+      =+  led=(sub ler (mul n ~s1))
+      ?:  (gte ler (add (snag n les:yu) ~s1))
+        led
+      ?:  &((gte ler (snag n les:yu)) (lth ler (add (snag n les:yu) ~s1)))
+        ?:  =(s.t.ley 60)
+          (sub led ~s1)
+        led
+      ?:  =(+(n) (lent les:yu))
+        (sub led ~s1)
+      $(n +(n))
+    ::                                                  ::  ++dust:chrono:behn
+    ++  dust                                            ::  print UTC format
+      |=  yed/date
+      ^-  tape
+      =+  wey=(daws yed)
+      ;:  weld
+          `tape`(snag wey (turn wik:yu |=(a/tape (scag 3 a))))
+          ", "  ~(rud at d.t.yed)  " "
+          `tape`(snag (dec m.yed) (turn mon:yu |=(a/tape (scag 3 a))))
+          " "  (scag 1 ~(rud at y.yed))  (slag 2 ~(rud at y.yed))  " "
+          ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
+          " "  "+0000"
+      ==
+    ::                                                  ::  ++stud:chrono:behn
+    ++  stud                                            ::  parse UTC format
+      =<  |=  a/cord
+          %+  biff  (rush a (more sepa elem))
+          |=  b/(list _(wonk *elem))  ^-  (unit date)
+          =-  ?.((za:jo:markup -) ~ (some (zp:jo:markup -)))
+          ^+  =+  [*date u=unit]
+              *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
+          :~
+              |-(?~(b ~ ?.(?=($y -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=($m -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=($d -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=($t -.i.b) $(b t.b) `+.i.b)))
+          ==
+      |%
+      ++  snug                                          ::  position in list
+        |=  a/(list tape)
+        |=  b/tape
+        =+  [pos=1 len=(lent b)]
+        |-  ^-  (unit @u)
+        ?~  a  ~
+        ?:  =(b (scag len i.a))
+          `pos
+        $(pos +(pos), a t.a)
+      ::
+      ++  sepa                                          ::  separator
+        ;~(pose ;~(plug com (star ace)) (plus ace))
+      ::
+      ++  elem                                          ::  date element
+        ;~  pose 
+          (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
+          (stag %w w)  (stag %z z)
+        == 
+      ::
+      ++  y                                             ::  year
+        (stag %& (bass 10 (stun 3^4 dit)))
+      ::
+      ++  m                                             ::  month
+        (sear (snug mon:yu) (plus alf))
+      ::
+      ++  d                                             ::  day
+        (bass 10 (stun 1^2 dit))
+      ::
+      ++  t                                             ::
+        [;~(plug - - + (easy ~))]:[;~(sfix d col) d]
+      ::
+      ++  w                                             ::  week
+        (sear (snug wik:yu) (plus alf))
+      ::
+      ++  z                                             ::
+        [;~(plug (mask "-+") . .)]:(bass 10 (stun 2^2 dit))
+      --
+    ::                                                  ::  ++unt:chrono:behn
+    ++  unt                                             ::  Urbit to Unix time
+      |=  a/@
+      (div (sub a ~1970.1.1) ~s1)
+    ::                                                  ::  ++yu:chrono:behn
+    ++  yu                                              ::  UTC format constants
+      |%
+      ::                                                ::  ++mon:yu:chrono:
+      ++  mon                                           ::  months
+        ^-  (list tape)
+        :~  "January"  "February"  "March"  "April"  "May"  "June"  "July"
+            "August"  "September"  "October"  "November"  "December"
+        ==
+      ::                                                ::  ++wik:yu:chrono:
+      ++  wik                                           ::  weeks
+        ^-  (list tape)
+        :~  "Sunday"  "Monday"  "Tuesday"  "Wednesday"  "Thursday"
+            "Friday"  "Saturday"
+        ==
+      ::                                                ::  ++lef:yu:chrono:
+      ++  lef                                           ::  leapsecond dates
+        ^-  (list @da)
+        :~  ~2015.6.30..23.59.59   ~2012.6.30..23.59.59
+            ~2008.12.31..23.59.58  ~2005.12.31..23.59.57
+            ~1998.12.31..23.59.56  ~1997.6.30..23.59.55
+            ~1995.12.31..23.59.54  ~1994.6.30..23.59.53
+            ~1993.6.30..23.59.52   ~1992.6.30..23.59.51
+            ~1990.12.31..23.59.50  ~1989.12.31..23.59.49
+            ~1987.12.31..23.59.48  ~1985.6.30..23.59.47
+            ~1983.6.30..23.59.46   ~1982.6.30..23.59.45
+            ~1981.6.30..23.59.44   ~1979.12.31..23.59.43
+            ~1978.12.31..23.59.42  ~1977.12.31..23.59.41
+            ~1976.12.31..23.59.40  ~1975.12.31..23.59.39
+            ~1974.12.31..23.59.38  ~1973.12.31..23.59.37
+            ~1972.12.31..23.59.36  ~1972.6.30..23.59.35
+        ==
+      ::                                                ::  ++les:yu:chrono:
+      ++  les                                           ::  leapsecond days
+        ^-  (list @da)
+        :~  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1  ~1997.7.1
+            ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1  ~1990.1.1
+            ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1  ~1980.1.1
+            ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1  ~1974.1.1
+            ~1973.1.1  ~1972.7.1
+        ==
+      --  ::yu
+    --  ::chrono
+  --  ::behn
+::                                                      ::
+::::                    ## clay/engines                 ::  storage
   ::                                                    ::::
 ++  clay
   |%
 ::                                                      ::
-::::                    ### differ^clay^engines         ::  hunt-mcilroy diff
+::::                    ### differ/clay/engines         ::  hunt-mcilroy diff
   ::                                                    ::::
   ++  differ  ^?
     =,  differ:^clay
@@ -609,7 +772,7 @@
       --  ::nude
     --  ::differ
 ::                                                      ::
-::::                    ### lines^clay^engines          ::  unix line files
+::::                    ### lines^clay/engines          ::  unix line files
   ::                                                    ::::
   ++  lines  ^?
     |%
@@ -676,45 +839,45 @@
       ?:  =(0 i)
         $(i +(i), tez t.tez, our i.tez)
       $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
-    --
-  --
+    --  ::lines
+  --  ::clay
 ::                                                      ::
-::::                    # dill^engines                  ::  console
+::::                    # dill/engines                  ::  console
   ::                                                    ::::
 ++  dill
   |%
   ++  $  %$
   --
 ::                                                      ::
-::::                    # eyre^engines                  ::  web
+::::                    # eyre/engines                  ::  web
   ::                                                    ::::
 ++  eyre
   |%
   ++  $  %$
   --
 ::                                                      ::
-::::                    # ford^engines                  ::  build
+::::                    # ford/engines                  ::  build
   ::                                                    ::::
 ++  ford
   |%
   ++  $  %$
   --
 ::                                                      ::
-::::                    # gall^engines                  ::  application
+::::                    # gall/engines                  ::  application
   ::                                                    ::::
 ++  gall
   |%
   ++  $  %$
   --
 ::                                                      ::
-::::                    # jael^engines                  ::  security
+::::                    # jael/engines                  ::  security
   ::                                                    ::::
 ++  jael
   |%
   ++  $  %$
   --
 ::                                                      ::
-::::                    ## number^engines               ::  misc number theory
+::::                    ## number/engines               ::  misc number theory
   ::                                                    ::::
 ++  number
   |%
@@ -955,7 +1118,7 @@
     --
   --
 ::                                                      ::
-::::                    ## crypto^engines               ::  crypto standards
+::::                    ## crypto/engines               ::  crypto standards
   ::                                                    ::::
 ++  crypto
   =,  number
@@ -2422,172 +2585,7 @@
     --
   --
 ::                                                      ::
-::::                    ## chrono^engines               ::  time
-  ::                                                    ::::
-++  chrono
-  ^?  |%
-  ::                                                    ::  ++dawn:chrono
-  ++  dawn                                              ::  Jan 1 weekday
-    |=  yer/@ud
-    =+  yet=(sub yer 1)
-    %-  mod  :_  7
-    ;:  add
-      1 
-      (mul 5 (mod yet 4)) 
-      (mul 4 (mod yet 100)) 
-      (mul 6 (mod yet 400))
-    ==
-  ::                                                    ::  ++daws:crhono
-  ++  daws                                              ::  date weekday
-    |=  yed/date
-    %-  mod  :_  7
-    %+  add
-      (dawn y.yed) 
-    (sub (yawn [y.yed m.yed d.t.yed]) (yawn y.yed 1 1))
-  ::                                                    ::  ++deal:chrono
-  ++  deal                                              ::  to leap sec time
-    |=  yer/@da
-    =+  n=0
-    =+  yud=(yore yer)
-    |-  ^-  date
-    ?:  (gte yer (add (snag n lef:yu) ~s1))
-      (yore (year yud(s.t (add n s.t.yud))))
-    ?:  &((gte yer (snag n lef:yu)) (lth yer (add (snag n lef:yu) ~s1)))
-      yud(s.t (add +(n) s.t.yud))
-    ?:  =(+(n) (lent lef:yu))
-      (yore (year yud(s.t (add +(n) s.t.yud))))
-    $(n +(n))
-  ::                                                    ::  ++lead:chrono
-  ++  lead                                              ::  from leap sec time
-    |=  ley/date
-    =+  ler=(year ley)
-    =+  n=0
-    |-  ^-  @da
-    =+  led=(sub ler (mul n ~s1))
-    ?:  (gte ler (add (snag n les:yu) ~s1))
-      led
-    ?:  &((gte ler (snag n les:yu)) (lth ler (add (snag n les:yu) ~s1)))
-      ?:  =(s.t.ley 60)
-        (sub led ~s1)
-      led
-    ?:  =(+(n) (lent les:yu))
-      (sub led ~s1)
-    $(n +(n))
-  ::                                                    ::  ++dust:chrono
-  ++  dust                                              ::  print UTC format
-    |=  yed/date
-    ^-  tape
-    =+  wey=(daws yed)
-    ;:  weld
-        `tape`(snag wey (turn wik:yu |=(a/tape (scag 3 a))))
-        ", "  ~(rud at d.t.yed)  " "
-        `tape`(snag (dec m.yed) (turn mon:yu |=(a/tape (scag 3 a))))
-        " "  (scag 1 ~(rud at y.yed))  (slag 2 ~(rud at y.yed))  " "
-        ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
-        " "  "+0000"
-    ==
-  ::                                                    ::  ++stud:chrono
-  ++  stud                                              ::  parse UTC format
-    =<  |=  a/cord
-        %+  biff  (rush a (more sepa elem))
-        |=  b/(list _(wonk *elem))  ^-  (unit date)
-        =-  ?.((za:jo:markup -) ~ (some (zp:jo:markup -)))
-        ^+  =+  [*date u=unit]
-            *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
-        :~
-            |-(?~(b ~ ?.(?=($y -.i.b) $(b t.b) `+.i.b)))
-            |-(?~(b ~ ?.(?=($m -.i.b) $(b t.b) `+.i.b)))
-            |-(?~(b ~ ?.(?=($d -.i.b) $(b t.b) `+.i.b)))
-            |-(?~(b ~ ?.(?=($t -.i.b) $(b t.b) `+.i.b)))
-        ==
-    |%
-    ::                                                  ::  ++snug:stud:chrono
-    ++  snug                                            ::  position in list
-      |=  a/(list tape)
-      |=  b/tape
-      =+  [pos=1 len=(lent b)]
-      |-  ^-  (unit @u)
-      ?~  a  ~
-      ?:  =(b (scag len i.a))
-        `pos
-      $(pos +(pos), a t.a)
-    ::                                                  ::  ++sepa:stud:chrono
-    ++  sepa                                            ::  separator
-      ;~(pose ;~(plug com (star ace)) (plus ace))
-    ::                                                  ::  ++elem:stud:chrono
-    ++  elem                                            ::  date element
-      ;~  pose 
-        (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
-        (stag %w w)  (stag %z z)
-      == 
-    ::                                                  ::  ++y:stud:chrono
-    ++  y                                               ::  year
-      (stag %& (bass 10 (stun 3^4 dit)))
-    ::                                                  ::  ++m:stud:chrono
-    ++  m                                               ::  month
-      (sear (snug mon:yu) (plus alf))
-    ::                                                  ::  ++d:stud:chrono
-    ++  d                                               ::  day
-      (bass 10 (stun 1^2 dit))
-    ::                                                  ::  ++t:stud:chrono
-    ++  t                                               ::
-      [;~(plug - - + (easy ~))]:[;~(sfix d col) d]
-    ::                                                  ::  ++w:stud:chrono
-    ++  w  
-      (sear (snug wik:yu) (plus alf))
-    ::                                                  ::  ++z:stud:chrono
-    ++  z                                               ::
-      [;~(plug (mask "-+") . .)]:(bass 10 (stun 2^2 dit))
-    --
-  ::                                                    ::  ++unt:chrono
-  ++  unt                                               ::  Urbit to Unix time
-    |=  a/@
-    (div (sub a ~1970.1.1) ~s1)
-  ::                                                    ::  ++yu:chrono
-  ++  yu                                                ::  UTC format constants
-    |%
-    ::                                                  ::  ++mon:yu:chrono
-    ++  mon                                             ::  months
-      ^-  (list tape)
-      :~  "January"  "February"  "March"  "April"  "May"  "June"  "July"
-          "August"  "September"  "October"  "November"  "December"
-      ==
-    ::                                                  ::  ++wik:yu:chrono
-    ++  wik                                             ::  weeks
-      ^-  (list tape)
-      :~  "Sunday"  "Monday"  "Tuesday"  "Wednesday"  "Thursday"
-          "Friday"  "Saturday"
-      ==
-    ::                                                  ::  ++les:yu:chrono
-    ++  les                                             ::  leapsecond days
-      ^-  (list @da)
-      :~  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1  ~1997.7.1
-          ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1  ~1990.1.1
-          ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1  ~1980.1.1
-          ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1  ~1974.1.1
-          ~1973.1.1  ~1972.7.1
-      ==
-    ::                                                  ::  ++lef:yu:chrono
-    ++  lef                                             ::  leapsecond dates
-      ^-  (list @da)
-      :~  ~2015.6.30..23.59.59   ~2012.6.30..23.59.59
-          ~2008.12.31..23.59.58  ~2005.12.31..23.59.57
-          ~1998.12.31..23.59.56  ~1997.6.30..23.59.55
-          ~1995.12.31..23.59.54  ~1994.6.30..23.59.53
-          ~1993.6.30..23.59.52   ~1992.6.30..23.59.51
-          ~1990.12.31..23.59.50  ~1989.12.31..23.59.49
-          ~1987.12.31..23.59.48  ~1985.6.30..23.59.47
-          ~1983.6.30..23.59.46   ~1982.6.30..23.59.45
-          ~1981.6.30..23.59.44   ~1979.12.31..23.59.43
-          ~1978.12.31..23.59.42  ~1977.12.31..23.59.41
-          ~1976.12.31..23.59.40  ~1975.12.31..23.59.39
-          ~1974.12.31..23.59.38  ~1973.12.31..23.59.37
-          ~1972.12.31..23.59.36  ~1972.6.30..23.59.35
-      ==
-    --
-  --
-::                                                      ::
-::::                    ## markup^engines               ::  JSON and XML
+::::                    ## markup/engines               ::  JSON and XML
   ::                                                    ::::
 ++  markup
   ^?  |%
