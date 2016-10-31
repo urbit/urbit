@@ -95,11 +95,12 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
             }
             if ( (AF_INET == rai_u->ai_family) ) {
               struct sockaddr_in* add_u = (struct sockaddr_in *)rai_u->ai_addr;
+              c3_w old_w = sam_u->imp_w[imp_y];
 
               sam_u->imp_w[imp_y] = ntohl(add_u->sin_addr.s_addr);
               sam_u->imp_t[imp_y] = now;
 #if 1
-              {
+              if ( sam_u->imp_w[imp_y] != old_w ) {
                 u3_noun wad = u3i_words(1, &sam_u->imp_w[imp_y]);
                 u3_noun nam = u3dc("scot", c3__if, wad);
                 c3_c*   nam_c = u3r_string(nam);
