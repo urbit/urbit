@@ -2,7 +2,7 @@
 ::  dill (4d), terminal handling   
 ::
 |=  pit/vase
-=,  gall
+=,  ^gall
 =>  |%                                                  ::  interface tiles
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::

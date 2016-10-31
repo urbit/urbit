@@ -3,7 +3,7 @@
 !?  164
 ::::
 |=  pit/vase   
-=,  gall
+=,  ^gall
 =>  =~
 ::  structures
 |%

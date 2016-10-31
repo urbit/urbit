@@ -95,7 +95,7 @@
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
       $%  {$made p/@uvH q/gage}                         ::
-          {$unto p/cuft:gall}                           ::  
+          {$unto p/cuft:^gall}                           ::  
       ==                                                ::
     --                                                  ::
 !:                                                      ::
@@ -908,7 +908,7 @@
     ==
   ::
   ++  he-unto                                           ::  result from behn
-    |=  {way/wire cit/cuft:gall}
+    |=  {way/wire cit/cuft:^gall}
     ^+  +>
     ?.  ?=($coup -.cit)
       ~&  [%strange-unto cit]
