@@ -2045,7 +2045,7 @@ u3_raft_work(void)
 
           ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
           c3_assert(u3A->key);
-          ron = u3dc("en:crua:crypto", u3k(u3A->key), ron);
+          ron = u3dc("en:crua:crypto:ames", u3k(u3A->key), ron);
 
           len_w = u3r_met(5, ron);
           bob_w = c3_malloc(len_w * 4L);
