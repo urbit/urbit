@@ -6,7 +6,7 @@
 ::                                                      ::  ::
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
-=,  crypto
+=,  crypto:ames
 |%                                                      ::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend

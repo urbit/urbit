@@ -2,8 +2,8 @@
 !?  164
 ::::
 |=  pit/vase
-=,  gall
-=,  crypto
+=,  ^gall
+=,  crypto:ames
 =,  markup
 =>  =~
 |%                                                      ::  interfaces

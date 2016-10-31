@@ -4,13 +4,13 @@
 |=  pit/vase
 =>  =~
 |%
-++  sqeu  |*  {a/_* b/_*}                         ::  binary skew queno
+++  sqeu  |*  {a/_* b/_*}                               ::  binary skew queno
           $:  r/@u                                      ::  rank+depth
               k/a                                       ::  priority
               n/b                                       ::  value
               c/(broq a b)                              ::  children
           ==                                            ::
-++  broq  |*  {a/_* b/_*}                         ::  brodal skew qeu
+++  broq  |*  {a/_* b/_*}                               ::  brodal skew qeu
           (list (sqeu a b))                             ::
 ++  gift  gift-behn                                     ::  out result <-$
 ++  kiss                                                ::  in request ->$
