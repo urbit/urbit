@@ -10183,8 +10183,14 @@
     ::
     ++  wisp                                            ::  core tail
       %-  ulva
-      %+  cook
-        |=(a/(list {p/term q/foot}) (~(gas by *(map term foot)) a))
+      %+  sear
+        |=  a/(list (pair term foot))
+        =|  b/(map term foot)
+        |-  ^-  (unit _b)
+        ?~  a  `b
+        ?:  (~(has by b) p.i.a)
+          ~&(duplicate-arm+p.i.a ~)
+        $(a t.a, b (~(put by b) p.i.a q.i.a))
       (most muck boog)
     ::
     ++  toad                                            ::  untrap parser exp
