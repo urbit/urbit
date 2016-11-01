@@ -6,7 +6,9 @@
 /-    twitter
 /+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
-=,  markup
+=,  bytes:eyre
+=,  js:eyre
+=,  xml:eyre
 !:
 ::::  functions
   ::

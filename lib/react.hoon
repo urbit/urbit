@@ -2,7 +2,7 @@
 ::::  /hoon/react/lib
   ::
 /?    310
-=,    markup
+=,  xml:eyre
 |%
 ++  react-elems ::  XX /~
   ~+  %-  silt  ^-  (list term)

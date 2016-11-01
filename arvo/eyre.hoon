@@ -4,7 +4,9 @@
 |=  pit/vase
 =,  ^gall
 =,  crypto:ames
-=,  markup
+=,  bytes:eyre
+=,  js:eyre
+=,  xml:eyre  
 =>  =~
 |%                                                      ::  interfaces
 ++  gift  gift-eyre                                     ::  out result <-$

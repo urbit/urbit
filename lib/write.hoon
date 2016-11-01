@@ -74,7 +74,7 @@
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
-  (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco txt))
+  (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco:bytes:eyre txt))
 ::
 ++  poke-comment
   |=  {sup/spur him/ship txt/@t}  ^+  abet
@@ -84,7 +84,7 @@
       '## `'  (scot %p him)  '`'
       '\0a'  txt
     ==
-  (poke--data [`%md pax] %mime / (taco txt))
+  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
 ::
 ++  poke-fora-post
   |=  {sup/spur him/ship hed/@t txt/@t}  ^+  abet
@@ -103,7 +103,7 @@
 
     {(trip txt)}
     """
-  (poke--data [`%md pax] %mime / (taco txt))
+  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
 ::
 ++  ames-secret
   ^-  @t
@@ -115,7 +115,7 @@
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crua:crypto:ames ames-secret dat))
-  (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
+  (poke--data [`%atom [%sec p.hot]] %mime / (taco:bytes:eyre dat))
 ::
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet

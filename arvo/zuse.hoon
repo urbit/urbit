@@ -1793,12 +1793,12 @@
       ::  XX: ++bruw, ++haul and ++weur are obsolete crua interfaces;
       ::  delete or restructure
       |%
-      ::                                                ::  ++trsa:test:crypto
-      ++  trua                                          ::  test rsa
+      ::                                                ::  ++trua:test:crypto
+      ++  trua                                          ::  test crua
         |=  msg/@tas
         ^-  @
-        =+  ali=(bruw 1.024 (shax 'ali'))
-        =+  bob=(bruw 1.024 (shax 'bob'))
+        =+  ali=(bruw:suite 1.024 (shax 'ali'))
+        =+  bob=(bruw:suite 1.024 (shax 'bob'))
         =+  tef=(sign:as.ali [0 msg])
         =+  lov=(sure:as.ali [0 tef])
         ?.  &(?=(^ lov) =(msg u.lov))
@@ -1863,7 +1863,8 @@
         =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
         ?>  =('A' mag)
         (nol:nu:crua bod)
-    --
+      --  ::  suite
+    --  ::  crypto
   ::                                                    ::
   ::::                  ## number:ames                  ::  misc number theory
     ::                                                  ::::
@@ -2181,7 +2182,7 @@
       =<  |=  a/cord
           %+  biff  (rush a (more sepa elem))
           |=  b/(list _(wonk *elem))  ^-  (unit date)
-          =-  ?.((za:jo:markup -) ~ (some (zp:jo:markup -)))
+          =-  ?.((za:jo:js:eyre -) ~ (some (zp:jo:js:eyre -)))
           ^+  =+  [*date u=unit]
               *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
           :~

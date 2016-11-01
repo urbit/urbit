@@ -6,7 +6,7 @@
 =,  differ:^clay
 =,  differ:clay
 =,  lines:clay
-=,  markup
+=,  bytes:eyre
 |_  txt/wain
 ::  
 ++  grab                                                ::  convert from

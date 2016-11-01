@@ -588,7 +588,7 @@
     ^-  $&
     ?>  (melt new old)
     ?>  .=  (shaf %meld (sham q.new)) 
-            (need (sure:as:(haul:test r.q.old) *code p.new))
+            (need (sure:as:(haul:suite r.q.old) *code p.new))
     %&
   ::
   ++  melt                                              ::  proper connect
@@ -624,7 +624,7 @@
     |=  wed/deyd
     ^-  $&
     ?>  =+  rac=(clan r.p.q.wed)
-        =+  loy=(haul:test r.q.wed)
+        =+  loy=(haul:suite r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
         ?>  =(fig:ex:loy ?+(rac !! $czar (zeno r.p.q.wed), $pawn r.p.q.wed))
@@ -639,7 +639,7 @@
             ?>  ?&  ?=(^ law)
                     (lth p.p.q.i.law 9)                 ::  9-lives rule
                     =(p.p.q.i.law p.i.mac)
-                    =(r.q.i.law pub:ex:(weur:test q.i.mac))
+                    =(r.q.i.law pub:ex:(weur:suite q.i.mac))
                 ==
             $(mac t.mac, law t.law)
         ==
@@ -1004,7 +1004,7 @@
           ?.  =(fak.ton r.i.lew.wod.dur)  ~|([%client-wrong-fake her] !!)
           :+  p.p.q.i.lew.wod.dur
             q.q.i.lew.wod.dur
-          (haul:test r.q.i.lew.wod.dur)
+          (haul:suite r.q.i.lew.wod.dur)
         ::
         ++  clon
           ^-  life
@@ -1257,7 +1257,7 @@
             |-  ^-  (list ship)
             ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
         ::
-            (turn mac |=({p/life q/ring} [p q (weur:test q)]))
+            (turn mac |=({p/life q/ring} [p q (weur:suite q)]))
             wil
             ~
             ~
@@ -1323,13 +1323,13 @@
         :-  p
         %=    q
             val
-          (turn val.q |=({p/life q/ring r/acru} [p q (weur:test q)]))
+          (turn val.q |=({p/life q/ring r/acru} [p q (weur:suite q)]))
         ==
       ==
     ++  come                                            ::    come:am
       |=  {ges/(unit @t) wid/@ bur/@ fak/?}             ::  instantiate pawn
       ^-  {p/{p/ship q/@uvG} q/fort}
-      =+  loy=(bruw:test wid bur)
+      =+  loy=(bruw:suite wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
       =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
@@ -1351,7 +1351,7 @@
       ::
       ::  fake uses carrier #
       ::
-      =+  loy=?:(fak (bruw:test 2.048 her) (bruw:test 2.048 ger))
+      =+  loy=?:(fak (bruw:suite 2.048 her) (bruw:suite 2.048 ger))
       =+  fim==(fig:ex:loy (zeno her))
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]

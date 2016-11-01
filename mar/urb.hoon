@@ -3,7 +3,7 @@
   ::
 /?    310
 /=  urb-wasp-data-js    /:    /%/wasp-data    /js/
-=,  markup
+=,  xml:eyre
 !:
 |_  {{dep/@uvH hed/marl} {dep-bod/@uvH bod/marl}}
 ++  grow                                                ::  convert to

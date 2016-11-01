@@ -488,7 +488,7 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math) %content-type (moon:markup p.mim))
+        =+  maf=(~(add ja *math) %content-type (moon:bytes:eyre p.mim))
         (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
       ::
           $show

@@ -3,7 +3,7 @@
 ::::  /hoon/parse/down-jet/lib
   ::
 /?    310
-=,  markup
+=,  xml:eyre
 =+  =~
 |%
 ++  loca  |*(a/_* {p/@u q/a})  

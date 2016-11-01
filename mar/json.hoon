@@ -5,7 +5,7 @@
   ::
 ::::  compute
   ::
-=,  markup
+=,  js:eyre
 |_  jon/json
 ::
 ++  grow                                                ::  convert to
