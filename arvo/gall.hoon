@@ -46,6 +46,7 @@
   ==                                                    ::
 ++  mast                                                ::  ship state
   $:  sys/duct                                          ::  system duct
+      mak/(unit duct)                                   ::  ames awaiting crash
       sap/(map ship scad)                               ::  foreign contacts
       bum/(map dude seat)                               ::  running agents
       wub/(map dude sofa)                               ::  waiting queue
@@ -438,7 +439,8 @@
       $out  ?:  ?=({$f $made *} q.hin)
               ?-  -.q.+>.q.hin  
                 $tabl  ~|(%made-tabl !!)
-                $&     ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
+                $&     =.  ap.pap  (mo-resume-mack:pap ~)
+                       ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
                 $|
                     =+  why=p.q.+>.q.hin
                     =.  why  (turn why |=(a/tank rose+[~ "! " ~]^[a]~))
@@ -456,7 +458,7 @@
                     ::  %+  mo-pass
                     ::    [%use pax]
                     ::  [%g %deal [q.q.pry our] XXX %pull ~]
-                    !!
+                    (mo-resume-mack ~ >%mo-cook-fail< p.q.+>.q.hin)
               ==
             ?.  ?=({$g $unto *} q.hin)
               ~&  [%mo-cook-weird q.hin]
@@ -466,6 +468,9 @@
               %+  mo-pass
                 [%use pax]
               [%f %exec our ~ byk.pap %vale +.p.q.hin]
+            ?:  ?=($quit +>-.q.hin)
+              =.  ap.pap  (mo-resume-mack:pap ~)
+              ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
             ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
     ==
   ::
@@ -530,12 +535,26 @@
   ::
   ++  mo-gawd                                           ::  ames backward
     |=  {him/@p dap/dude num/@ud ron/roon}
-    =.  +>  (mo-give %mack ~)
+    =.  mak  (mo-defer-mack hen)
     =.  hen  (mo-ball him num)
     ?-  -.ron
       $d  (mo-give %unto %doff p.ron q.ron)
       $x  (mo-give %unto %quit ~)
     ==
+  ::
+  ++  mo-defer-mack                                     ::  future %mack
+    |=  hon/duct  ^+  mak
+    ~&  mo-defer+hon
+    ?~  mak  `hon
+    ~|(double-mak+[u.mak hon] !!)
+  ::
+  ++  mo-resume-mack                                    ::  route %mack
+    |=  a/(unit tang)  ^+  +>.$
+    ~&  mo-resume+[mak ?=($~ a)]
+    ?^  mak
+      +>.$(mak ~, moz :_(moz [u.mak %give %mack a]))
+    ?~  a  +>.$
+    (mean >%gall-mack< u.a)  ::  XX unnecessary?
   ::
   ++  ap                                                ::  agent engine
     ~%  %gall-ap  +>  ~
