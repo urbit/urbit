@@ -996,7 +996,7 @@
     ++  ap-peer                                         ::  apply %peer
       |=  pax/path
       ^+  +>
-      =.  +>  (ap-peon pax)
+      =.  sup.ged  (~(put by sup.ged) ost [q.q.pry pax])
       =+  cug=(ap-find %peer pax)
       ?~  cug  +>.$
       =+  old=zip
@@ -1006,12 +1006,6 @@
           !>(`path`(slag p.u.cug pax))
       =.  zip  (weld zip `(list cove)`[[ost %give %reap cam] old])
       ?^(cam ap-pule +>.$)
-    ::
-    ++  ap-peon                                         ::  add subscriber
-      |=  pax/path
-      %_  +>.$
-        sup.ged  (~(put by sup.ged) ost [q.q.pry pax])
-      ==
     ::
     ++  ap-poke                                         ::  apply %poke
       |=  cag/cage
@@ -1268,7 +1262,7 @@
   ::
       $init 
     ::  ~&  [%gall-init p.q.hic]
-    [~ ..^$(pol.all (~(put by pol.all) p.q.hic [hen ~ ~ ~]))]
+    [~ ..^$(pol.all (~(put by pol.all) p.q.hic %*(. *mast sys hen)))]
   ::
       $west
     ?.  (~(has by pol.all) p.p.q.hic)
