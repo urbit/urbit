@@ -13,7 +13,7 @@
   |%
   ++  mime  |=({p/mite q/octs} (lore q.q))
   ++  noun  wain                                        ::  clam from %noun
-  ++  json  :(corl lore need so:jo)
+  ++  json  :(corl lore need so:jo:js:eyre)
   --
 ++  grow
   =>  v=.

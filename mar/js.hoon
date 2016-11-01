@@ -6,7 +6,7 @@
 |_  mud/@
 ++  grow
   |%
-  ++  mime  [/application/javascript (taco (@t mud))]
+  ++  mime  [/application/javascript (taco:bytes:eyre (@t mud))]
   ++  elem  ;script
               ;-  (trip (@t mud))
             ==

@@ -5458,13 +5458,13 @@
   ::                                            ::::::  compositions
     {$new p/twig q/twig}                                ::  =|  push bunt
     {$fix p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
-    {$var p/taco q/twig r/twig}                         ::  =/  typed variable
-    {$rev p/taco q/twig r/twig}                         ::  =;  =/(q p r)
+    {$var p/taro q/twig r/twig}                         ::  =/  typed variable
+    {$rev p/taro q/twig r/twig}                         ::  =;  =/(q p r)
     {$set p/wing q/twig r/twig}                         ::  =.  r with p as q
     {$rap p/twig q/twig}                                ::  =<  =>(q p)
     {$nip p/twig q/twig}                                ::  =-  =+(q p)
     {$per p/twig q/twig}                                ::  =>  q w/subject p 
-    {$sip p/taco q/wing r/twig s/twig}                  ::  =^  state machine
+    {$sip p/taro q/wing r/twig s/twig}                  ::  =^  state machine
     {$pin p/twig q/twig}                                ::  =+  q w/[p subject]
     {$tow p/(list twig)}                                ::  =~  twig stack
     {$aka p/term q/twig r/twig}                         ::  =*  r w/alias p/q
@@ -5492,7 +5492,7 @@
     {$need p/$@(p/@ {p/@ q/@}) q/twig}                  ::  !?
     {$fail $~}                                          ::  !!
   ==                                                    ::
-++  taco  $@(term (pair term twig))                     ::
+++  taro  $@(term (pair term twig))                     ::
 ++  tyre  (list {p/term q/twig})                        ::
 ++  tyke  (list (unit twig))                            ::
 ::                                                      ::::::  virtual nock
