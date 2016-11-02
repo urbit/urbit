@@ -50,7 +50,7 @@
   ::                                                    ::::
 ++  clay  ^?
   |%
-  ::                                                    ::::
+  ::                                                    ::
   ::::                  ## differ:^clay                 ::  hunt-mcilroy diff
     ::                                                  ::::
   ++  differ  ^?
@@ -213,7 +213,7 @@
           syg/(map ship (pair life oath))               ::  signatures
       ==                                                ::
     ++  will  (map life cert)                           ::  meta-certificate
-    --  ::pki
+    --  ::  pki
   ::                                                    ::
   ::::                  ## rights:^jael                 ::  rights or promises
     ::                                                  ::::
@@ -2545,7 +2545,7 @@
       --  ::nude
     --  ::differ
   ::                                                    ::
-  ::::                  ### lines^clay                  ::  unix line files
+  ::::                  ## lines:clay                   ::  unix line text
     ::                                                  ::::
   ++  lines  ^?
     |%
@@ -2591,8 +2591,8 @@
           off  0
         ==
       $(off +(off))
-    ::                                                ::  ++nule:lines:clay
-    ++  nule                                          ::  lines to unix cord
+    ::                                                  ::  ++nule:lines:clay
+    ++  nule                                            ::  lines to unix cord
       ~%  %nule  ..is  ~
       |=  lin/(list @t)
       ^-  @t
@@ -2600,8 +2600,8 @@
       %+  turn  lin
       |=  t/@t
       [+((met 3 t)) (cat 3 t 10)]
-    ::                                                ::  ++role:differ:clay
-    ++  role                                          ::  line list to atom
+    ::                                                  ::  ++role:differ:clay
+    ++  role                                            ::  line list to atom
       |=  tez/(list @t)
       =|  {our/@ i/@ud}
       |-  ^-  @
@@ -2613,6 +2613,86 @@
         $(i +(i), tez t.tez, our i.tez)
       $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
     --  ::lines
+  ::                                                    ::
+  ::::                  ## space:clay                   ::  namespace utils
+    ::                                                  ::::
+  ++  space  ^?
+    |%
+    ::                                                  ::  ++feel:space:clay
+    ++  feel                                            ::  simple file write
+      |=  {pax/path val/cage}
+      ^-  miso
+      =+  dir=.^(arch %cy pax)
+      ?~  fil.dir  [%ins val]
+      [%mut val]
+    ::                                                  ::  ++file:space:clay
+    ++  file                                            ::  simple file load
+      |=  pax/path
+      ^-  (unit)
+      =+  dir=.^(arch %cy pax)
+      ?~(fil.dir ~ [~ .^(* %cx pax)])
+    ::                                                  ::  ++foal:space:clay
+    ++  foal                                            ::  high-level write
+      |=  {pax/path val/cage}
+      ^-  toro
+      ?>  ?=({* * * *} pax)
+      [i.t.pax [%& [[[t.t.t.pax (feel pax val)] ~]]]]
+    ::                                                  ::  ++fray:space:clay
+    ++  fray                                            ::  high-level delete
+      |=  pax/path
+      ^-  toro
+      ?>  ?=({* * * *} pax)
+      [i.t.pax [%& [[[t.t.t.pax [%del ~]] ~]]]]
+    ::                                                  ::  ++furl:space:clay
+    ++  furl                                            ::  unify changes
+      |=  {one/toro two/toro}
+      ^-  toro
+      ~|  %furl
+      ?>  ?&  =(p.one p.two)                            ::  same path
+              &(?=($& -.q.one) ?=($& -.q.two))          ::  both deltas
+          ==
+      [p.one [%& (weld p.q.one p.q.two)]]
+    ::                                                  ::  ++tame:space:clay
+    ++  tame                                            ::  parse kite path
+      |=  hap/path
+      ^-  (unit kite)
+      ?.  ?=({@ @ @ @ *} hap)  ~
+      =+  :*  hyr=(slay i.hap)
+              fal=(slay i.t.hap)
+              dyc=(slay i.t.t.hap)
+              ved=(slay i.t.t.t.hap)
+              ::  ved=(slay i.t.hap)
+              ::  fal=(slay i.t.t.hap)
+              ::  dyc=(slay i.t.t.t.hap)
+              tyl=t.t.t.t.hap
+          ==
+      ?.  ?=({$~ $$ $tas @} hyr)  ~
+      ?.  ?=({$~ $$ $p @} fal)  ~
+      ?.  ?=({$~ $$ $tas @} dyc)  ~
+      ?.  ?=({$~ $$ case} ved)  ~
+      =+  his=`@p`q.p.u.fal
+      =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
+      ?.  ?&(?=($c dis) ?=(?($v $w $x $y $z) rem))  ~
+      [~ rem p.u.ved q.p.u.fal q.p.u.dyc tyl]
+    ::                                                  ::  ++tome:space:clay
+    ++  tome                                            ::  parse path to beam
+      |=  pax/path
+      ^-  (unit beam)
+      ?.  ?=({* * * *} pax)  ~
+      %+  biff  (slaw %p i.pax)
+      |=  who/ship
+      %+  biff  (slaw %tas i.t.pax)
+      |=  dex/desk
+      %+  biff  (slay i.t.t.pax)
+      |=  cis/coin
+      ?.  ?=({$$ case} cis)  ~
+      `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+    ::                                                  ::  ++tope:space:clay
+    ++  tope                                            ::  beam to path
+      |=  bem/beam
+      ^-  path
+      [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
+    --  ::  space
   --  ::clay
 ::                                                      ::::
 ::::                    # dill                          ::  console
@@ -2626,8 +2706,10 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
-  ::                                                    ::  ++bytes
-  ++  bytes  ^?                                         ::  bytestream tools
+  ::                                                    ::
+  ::::                  ## bytes:eyre                   ::  bytestream tools
+    ::                                                  ::::
+  ++  bytes  ^?
     |%
     ::                                                  ::  ++moon:bytes:eyre
     ++  moon                                            ::  mime type to text
@@ -2689,8 +2771,10 @@
       =+  buf=(rap 3 (turn wol |=(a/tape (crip (weld a `tape`[`@`10 ~])))))
       [(met 3 buf) buf]
     --  ::  bytes
-  ::                                                    ::  ++js:eyre
-  ++  js  ^?                                            ::  json processing
+  ::                                                    ::
+  ::::                  ## js:eyre                      ::  json processing
+    ::                                                  ::::
+  ++  js  ^?
     |%
     ::                                                  ::  ++jo:js:eyre
     ++  jo                                              ::  json reparser
@@ -3041,11 +3125,13 @@
         ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
       ==
     --  ::  js
-  ::                                                    ::  xml:eyre
-  ++  xml  ^?                                           ::  xml print/parse
+  ::                                                    ::
+  ::::                  ## xml:eyre                     ::  xml processing
+    ::                                                  ::::
+  ++  xml  ^?
     |%
-    ::                                                  ::  ++poxo:xml
-    ++  poxo                                            ::  xml printer
+    ::                                                  ::  ++print:xml
+    ++  print                                           ::  xml printer
       =<  |=(a/manx `tape`(apex a ~))
       |_  _[unq=`?`| cot=`?`|]
       ::
@@ -3116,8 +3202,8 @@
               %keygen  %link  %meta  %param     %source   %track  %wbr 
         ==  ==
       --  ::
-    ::                                                  ::  ++poxa:xml
-    ++  poxa                                            ::  xml parser
+    ::                                                  ::  ++parse:xml
+    ++  parse                                           ::  xml parser
       =<  |=(a/cord (rush a apex))
       |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]
       ::
@@ -3196,6 +3282,58 @@
         (mask ~[' ' `@`0x9 `@`0xa])
       --  ::
     --  ::  xml
+  ::                                                    ::
+  ::::                                                  ::  anton's wire spells
+    ::                                                  ::::
+  ++  wired  ^?
+    |%
+    ::                                                  ::  ++dray:wired:eyre
+    ++  dray                                            ::  load tuple into pat
+      ::
+      ::  .=  ~[p=~.ack q=~.~sarnel r=~..y]
+      ::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
+      ::
+      =-  |*  {a/{@tas (pole @tas)} b/*}  ^-  (paf a)
+          =>  .(b `(tup -.a +.a)`b)
+          ?~  +.a  [(scot -.a b) ~]
+          [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
+      :-  paf=|*(a/(pole) ?~(a $~ {(odo:raid -.a(. %ta)) (..$ +.a)}))
+      ^=  tup
+      |*  {a/@tas b/(pole @tas)} 
+      =+  c=(odo:raid a) 
+      ?~(b c {c (..$ -.b +.b)})
+    ::                                                  ::  ++raid:wired:eyre 
+    ++  raid                                            ::  demand path odors
+      ::
+      ::  .=  [p=%ack q=~sarnel r=&]
+      ::  (raid /ack/~sarnel+.y p=%tas q=%p r=%f ~)
+      ::
+      =-  |*  {a/path b/{@tas (pole @tas)}}
+          ?~  +.b  `(odo -.b)`(slav -.b -.a)
+          [`(odo -.b)`(slav -.b -.a) (..$ +.a +.b)]
+      ^=  odo
+      |*  a/@tas
+      |=  b/*
+      =<  a(, (. b))                  ::  preserve face
+      ?+  a   @
+        $c  @c  $da  @da  $dr  @dr  $f   @f   $if  @if  $is  @is  $p   @p
+        $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw
+        $s  @s  $t   @t   $ta  @ta  $tas  @tas
+      ==
+    ::                                                  ::  ++read:wired:eyre
+    ++  read                                            ::  parse odored path
+
+      =<  |*({a/path b/{@tas (pole @tas)}} ((+> b) a))
+      |*  b/{@tas (pole @tas)}
+      |=  a/path
+      ?~  a  ~
+      =+  hed=(slaw -.b i.a)
+      ?~  +.b
+        ^-  (unit (odo:raid -.b))
+        ?^(+.a ~ hed)
+      ^-  (unit {(odo:raid -.b) _(need *(..^$ +.b))})
+      (both hed ((..^$ +.b) +.a))
+    --  ::  wired
   --  ::  eyre
 ::                                                      ::
 ::::                    # ford                          ::  build
@@ -3218,85 +3356,6 @@
   |%
   ++  $  %$
   --
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bF, filesystem interface     ::
-::
-++  feel                                                ::  simple file write
-  |=  {pax/path val/cage}
-  ^-  miso
-  =+  dir=.^(arch %cy pax)
-  ?~  fil.dir  [%ins val]
-  [%mut val]
-::
-++  file                                                ::  simple file load
-  |=  pax/path
-  ^-  (unit)
-  =+  dir=.^(arch %cy pax)
-  ?~(fil.dir ~ [~ .^(* %cx pax)])
-::
-++  foal                                                ::  high-level write
-  |=  {pax/path val/cage}
-  ^-  toro
-  ?>  ?=({* * * *} pax)
-  [i.t.pax [%& [[[t.t.t.pax (feel pax val)] ~]]]]
-::
-++  fray                                                ::  high-level delete
-  |=  pax/path
-  ^-  toro
-  ?>  ?=({* * * *} pax)
-  [i.t.pax [%& [[[t.t.t.pax [%del ~]] ~]]]]
-::
-++  furl                                                ::  unify changes
-  |=  {one/toro two/toro}
-  ^-  toro
-  ~|  %furl
-  ?>  ?&  =(p.one p.two)                                ::  same path
-          &(?=($& -.q.one) ?=($& -.q.two))              ::  both deltas
-      ==
-  [p.one [%& (weld p.q.one p.q.two)]]
-::
-++  tame                                                ::  parse kite path
-  |=  hap/path
-  ^-  (unit kite)
-  ?.  ?=({@ @ @ @ *} hap)  ~
-  =+  :*  hyr=(slay i.hap)
-          fal=(slay i.t.hap)
-          dyc=(slay i.t.t.hap)
-          ved=(slay i.t.t.t.hap)
-          ::  ved=(slay i.t.hap)
-          ::  fal=(slay i.t.t.hap)
-          ::  dyc=(slay i.t.t.t.hap)
-          tyl=t.t.t.t.hap
-      ==
-  ?.  ?=({$~ $$ $tas @} hyr)  ~
-  ?.  ?=({$~ $$ $p @} fal)  ~
-  ?.  ?=({$~ $$ $tas @} dyc)  ~
-  ?.  ?=({$~ $$ case} ved)  ~
-  =+  his=`@p`q.p.u.fal
-  =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
-  ?.  ?&(?=($c dis) ?=(?($v $w $x $y $z) rem))  ~
-  [~ rem p.u.ved q.p.u.fal q.p.u.dyc tyl]
-::
-++  tome                                                ::  parse path to beam
-  |=  pax/path
-  ^-  (unit beam)
-  ?.  ?=({* * * *} pax)  ~
-  %+  biff  (slaw %p i.pax)
-  |=  who/ship
-  %+  biff  (slaw %tas i.t.pax)
-  |=  dex/desk
-  %+  biff  (slay i.t.t.pax)
-  |=  cis/coin
-  ?.  ?=({$$ case} cis)  ~
-  `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
-::
-++  tope                                                ::  beam to path
-  |=  bem/beam
-  ^-  path
-  [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bG, URL handling             ::
-::
 ++  deft                                                ::  parse url extension
   |=  rax/(list @t)
   |-  ^-  pork
@@ -3312,14 +3371,14 @@
   =+  `{ext/term {@ @} fyl/tape}`u.q.raf
   :-  `ext
   ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
-::
+::                                                      ::  ++fuel:
 ++  fuel                                                ::  parse fcgi
   |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
   ^-  epic
   =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
   [(malt qix) ((hard cred) ced) bem /]
-::
-++  sifo                                                ::  64-bit encode
+::                                                      ::  
+++  sifo                                                ::  
   |=  tig/@
   ^-  tape
   =+  poc=(~(dif fo 3) 0 (met 3 tig))
@@ -3334,7 +3393,7 @@
       [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
   (weld (flop (slag poc sif)) (reap poc '='))
 ::
-++  ofis  ::  XX broken
+++  ofis
   =-  |=(a/cord (rash a fel))
   =<  fel=(cook |~(a/@ `@t`(swp 3 a)) (bass 64 .))
   =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
@@ -3346,44 +3405,6 @@
      (cold 62 (just '+'))
      (cold 63 (just '/'))
    ==
-::
-::  .=  ~[p=~.ack q=~.~sarnel r=~..y]
-::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
-++  dray                                                ::  load tuple into path
-  =-  |*  {a/{@tas (pole @tas)} b/*}  ^-  (paf a)
-      =>  .(b `(tup -.a +.a)`b)
-      ?~  +.a  [(scot -.a b) ~]
-      [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
-  :-  paf=|*(a/(pole) ?~(a $~ {(odo:raid -.a(. %ta)) (..$ +.a)}))
-  tup=|*({a/@tas b/(pole @tas)} =+(c=(odo:raid a) ?~(b c {c (..$ -.b +.b)})))
-::
-::  .=  [p=%ack q=~sarnel r=&]
-::  (raid /ack/~sarnel+.y p=%tas q=%p r=%f ~)
-++  raid                                                ::  demand path odors
-  =-  |*  {a/path b/{@tas (pole @tas)}}
-      ?~  +.b  `(odo -.b)`(slav -.b -.a)
-      [`(odo -.b)`(slav -.b -.a) (..$ +.a +.b)]
-  ^=  odo
-  |*  a/@tas
-  |=  b/*
-  =<  a(, (. b))                  ::  preserve face
-  ?+  a   @
-    $c  @c  $da  @da  $dr  @dr  $f   @f   $if  @if  $is  @is  $p   @p
-    $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw
-    $s  @s  $t   @t   $ta  @ta  $tas  @tas
-  ==
-::
-++  read                                                ::  parse odored path
-  =<  |*({a/path b/{@tas (pole @tas)}} ((+> b) a))
-  |*  b/{@tas (pole @tas)}
-  |=  a/path
-  ?~  a  ~
-  =+  hed=(slaw -.b i.a)
-  ?~  +.b
-    ^-  (unit (odo:raid -.b))
-    ?^(+.a ~ hed)
-  ^-  (unit {(odo:raid -.b) _(need *(..^$ +.b))})
-  (both hed ((..^$ +.b) +.a))
 ::
 ++  urle                                                ::  URL encode
   |=  tep/tape

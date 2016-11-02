@@ -4,6 +4,7 @@
 ::::
 |=  pit/vase   
 =,  ^gall
+=,  space:clay
 =>  =~
 ::  structures
 |%

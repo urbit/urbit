@@ -4,9 +4,11 @@
 |=  pit/vase
 =,  ^gall
 =,  crypto:ames
+=,  space:clay
 =,  bytes:eyre
 =,  js:eyre
-=,  xml:eyre  
+=,  xml:eyre
+=,  wired:eyre
 =>  =~
 |%                                                      ::  interfaces
 ++  gift  gift-eyre                                     ::  out result <-$
@@ -962,7 +964,7 @@
     |=  {sas/@ud cug/(list @t) max/manx}
     %-  give-thou
     %+  add-cookies  cug
-    (resp sas text+/html (crip (poxo max)))
+    (resp sas text+/html (crip (print max)))
   ::
   ++  give-json
     |=  {sas/@uG cug/(list @t) jon/json}
