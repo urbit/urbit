@@ -5,6 +5,7 @@
 /-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
 [. sole]
+=,  space:clay
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   !:                                                    ::    ::

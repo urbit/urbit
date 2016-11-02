@@ -5,6 +5,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=,  space:clay
 |%                                                      ::  ::
 ++  kiln-part  {$kiln $0 kiln-pith}                     ::  kiln state
 ++  kiln-pith                                           ::

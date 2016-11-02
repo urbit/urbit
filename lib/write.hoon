@@ -4,6 +4,7 @@
   ::
 /?    310
 /-    plan-diff, plan-acct
+=,  space:clay
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~

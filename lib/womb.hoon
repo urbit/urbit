@@ -3,6 +3,7 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /+    talk, old-phon
+=,  wired:eyre
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -676,7 +677,8 @@
   =+  pas=`@uw`(shas %back eny)
   ~&  [%backing-up pas=pas]
   =;  dif  (emit %info /backup [our dif])
-  %+  foal  (welp pax /jam-crub)
+  %+  foal:space:clay 
+    (welp pax /jam-crub)
   [%jam-crub !>((en:crub:crypto:ames pas (jam `part`+:abet)))]
 ::
 ++  poke-rekey                                        ::  extend wyll
