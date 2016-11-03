@@ -1707,7 +1707,7 @@
   ::    3b: floating point                              ::
   ::    3c: urbit time                                  ::
   ::    3d: SHA hash family                             ::
-  ::    3e: AES encryption                              ::
+  ::    3e: (reserved)                                  ::
   ::    3f: scrambling                                  ::
   ::    3g: molds and mold builders                     ::
   ::                                                    ::
@@ -4465,7 +4465,7 @@
 ++  dit  (cook |=(a/@ (sub a '0')) (shim '0' '9'))      ::  decimal digit
 ++  dog  ;~(plug dot gay)                               ::  .  number separator
 ++  doh  ;~(plug ;~(plug hep hep) gay)                  ::  --  phon separator
-++  dun  (cold ~ ;~(plug hep hep))                      ::  -- (phep) to ~
+++  dun  (cold ~ ;~(plug hep hep))                      ::  -- (stop) to ~
 ++  duz  (cold ~ ;~(plug tis tis))                      ::  == (stet) to ~
 ++  gah  (mask [`@`10 ' ' ~])                           ::  newline or ace
 ++  gap  (cold ~ ;~(plug gaq (star ;~(pose vul gah))))  ::  plural space
@@ -9599,6 +9599,7 @@
 ::::  5f: molds and mold builders
   ::
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
+++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
 ++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
 ++  beak  {p/ship q/desk r/case}                        ::  path prefix

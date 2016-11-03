@@ -36,6 +36,35 @@
   ::                                                    ::::
 ++  ames  ^?
   |%
+
+
+++  acru                                                ::  asym cryptosuite
+          $_  ^?  |%                                    ::  opaque object
+          ++  as  ^?                                    ::  asym ops
+            |%  ++  seal  |~({a/pass b/@ c/@} *@)       ::  encrypt to a
+                ++  sign  |~({a/@ b/@} *@)              ::  certify as us
+                ++  sure  |~({a/@ b/@} *(unit @))       ::  authenticate from us
+                ++  tear  |~  {a/pass b/@}              ::  accept from a 
+                          *(unit {p/@ q/@})             ::
+            --                                          ::
+          ++  de  |~({a/@ b/@} *(unit @))               ::  symmetric de, soft
+          ++  dy  |~({a/@ b/@} *@)                      ::  symmetric de, hard
+          ++  en  |~({a/@ b/@} *@)                      ::  symmetric en
+          ++  ex  ^?                                    ::  export
+            |%  ++  fig  *@uvH                          ::  fingerprint
+                ++  pac  *@uvG                          ::  default passcode
+                ++  pub  *pass                          ::  public key
+                ++  sec  *ring                          ::  private key
+            --                                          ::
+          ++  nu  ^?                                    ::  reconstructors
+             |%  ++  pit  |~({a/@ b/@} ^?(..nu))        ::  from [width seed]
+                 ++  nol  |~(a/@ ^?(..nu))              ::  from naked ring
+                 ++  com  |~(a/@ ^?(..nu))              ::  from naked pass
+             --                                         ::
+          --                                            ::
+
+
+
   ++  $  %$
   --
 ::                                                      ::::
@@ -43,6 +72,10 @@
   ::                                                    ::::
 ++  behn  ^?
   |%
+
+
+
+
   ++  $  %$
   --
 ::                                                      ::::
@@ -50,6 +83,16 @@
   ::                                                    ::::
 ++  clay  ^?
   |%
+
+++  aeon  @ud                                           ::
+++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})    ::  mergepts
+++  ankh                                                ::  fs node (new)
+          $:  fil/(unit {p/lobe q/cage})                ::  file
+              dir/(map @ta ankh)                        ::  folders
+          ==                                            ::
+
+
+
   ::                                                    ::
   ::::                  ## differ:^clay                 ::  hunt-mcilroy diff
     ::                                                  ::::
@@ -92,6 +135,10 @@
 ::::                    # ^dill                         ::  console
   ::                                                    ::::
 ++  dill  ^?
+
+
+
+
   |%
   ++  $  %$                                             ::  placeholder
   --  ::  dill
@@ -99,6 +146,11 @@
 ::::                    # ^eyre                         ::  web
   ::                                                    ::::
 ++  eyre  ^?
+
+
+
+
+
   |%
   ++  $  %$
   --  ::  eyre
@@ -106,6 +158,10 @@
 ::::                    # ^ford                         ::  build
   ::                                                    ::::
 ++  ford  ^?
+
+
+
+
   |%
   ++  $  %$
   --  ::  ford
@@ -113,6 +169,10 @@
 ::::                    # ^gall                         ::  application
   ::                                                    ::::
 ++  gall  ^?
+
+
+
+
   |%
   ++  club                                              ::  agent action
     $%  {$peel p/mark q/path}                           ::  translated peer
@@ -2177,6 +2237,13 @@
           ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
           " "  "+0000"
       ==
+    ::                                                  ::  ++hunt:chrono:behn
+    ++  hunt                                            ::  first of unit dates
+      |=  {one/(unit @da) two/(unit @da)}
+      ^-  (unit @da)
+      ?~  one  two
+      ?~  two  one
+      ?:((lth u.one u.two) one two)
     ::                                                  ::  ++stud:chrono:behn
     ++  stud                                            ::  parse UTC format
       =<  |=  a/cord
@@ -2706,6 +2773,40 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
+  ::                                                    ::
+  ::::                  ## base64:eyre                  ::  standard base64
+    ::                                                  ::::
+  ++  base64  ^?
+    |%
+    ::                                                  ::  ++sifo:base64:eyre
+    ++  sifo                                            ::  encode base64
+      |=  tig/@
+      ^-  tape
+      =+  poc=(~(dif fo 3) 0 (met 3 tig))
+      =+  pad=(lsh 3 poc (swp 3 tig))
+      =+  ^=  cha
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+      =+  ^=  sif
+          |-  ^-  tape
+          ?~  pad
+            ~
+          =+  d=(end 0 6 pad)
+          [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
+      (weld (flop (slag poc sif)) (reap poc '='))
+    ::                                                  ::  ++ofis:base64:eyre
+    ++  ofis                                            ::  decode base64
+      =-  |=(a/cord (rash a fel))
+      =<  fel=(cook |~(a/@ `@t`(swp 3 a)) (bass 64 .))
+      =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
+      ^=  siw
+      ;~  pose
+         (cook |=(a/@ (sub a 'A')) (shim 'A' 'Z'))
+         (cook |=(a/@ (sub a 'G')) (shim 'a' 'z'))
+         (cook |=(a/@ (add a 4)) (shim '0' '9'))
+         (cold 62 (just '+'))
+         (cold 63 (just '/'))
+       ==
+    --
   ::                                                    ::
   ::::                  ## bytes:eyre                   ::  bytestream tools
     ::                                                  ::::
@@ -3283,12 +3384,291 @@
       --  ::
     --  ::  xml
   ::                                                    ::
-  ::::                                                  ::  anton's wire spells
+  ::::                  ## url:eyre                     ::  url processing
+    ::                                                  ::::
+  ++  url  ^?
+    |%
+    ::                                                  ::  ++deft:url:eyre
+    ++  deft                                            ::  parse url extension
+      |=  rax/(list @t)
+      |-  ^-  pork
+      ?~  rax
+        [~ ~]
+      ?^  t.rax
+        [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
+      =+  ^-  raf/(like term)
+          =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
+          (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
+      ?~  q.raf
+        [~ [i.rax ~]]
+      =+  `{ext/term {@ @} fyl/tape}`u.q.raf
+      :-  `ext
+      ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
+    ::                                                  ::  ++earf:url:eyre
+    ++  earf                                            ::  purf to tape
+      |=  purf
+      (weld (earn p) ?~(q "" `tape`['#' (trip u.q)]))
+    ::                                                  ::  ++earl:url:eyre
+    ++  earl                                            ::  localize purl
+      |=  {who/@p pul/purl}
+      ^-  purl
+      pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
+    ::                                                  ::  ++earn:url:eyre
+    ++  earn                                            ::  print purl
+      =<  |=(pul/purl `tape`(apex %& pul))
+      |%
+      ++  apex                                          ::
+        |=  qur/quri  ^-  tape
+        ?-  -.qur
+          $&  (weld (head p.p.qur) `tape`$(qur [%| +.p.qur]))
+          $|  ['/' (weld (body p.qur) (tail q.qur))]
+        ==
+      ::
+      ++  body                                          ::
+        |=  pok/pork  ^-  tape
+        ?~  q.pok  ~
+        |-
+        =+  seg=(urle (trip i.q.pok))
+        ?~  t.q.pok
+          ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
+        (welp seg '/' $(q.pok t.q.pok))
+      ::
+      ++  head                                          ::
+        |=  har/hart
+        ^-  tape
+        ;:  weld
+          ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
+        ::
+          ?-  -.r.har
+            $|  (trip (rsh 3 1 (scot %if p.r.har)))
+            $&  =+  rit=(flop p.r.har)
+                |-  ^-  tape
+                ?~  rit  ~ 
+                (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)]))
+          ==
+        ::
+          ?~(q.har ~ `tape`[':' ((d-co:co 1) u.q.har)])
+        ==
+      ::
+      ++  tail                                          ::
+        |=  kay/quay
+        ^-  tape
+        ?:  =(~ kay)  ~
+        :-  '?'
+        |-  ^-  tape
+        ?~  kay  ~
+        ;:  welp
+          (urle (trip p.i.kay))
+          ?~(q.i.kay ~ ['=' (urle (trip q.i.kay))])
+          ?~(t.kay ~ `tape`['&' $(kay t.kay)])
+        ==
+      --  ::
+    ::                                                  ::  ++epur:url:eyre
+    ++  epur                                            ::  url+header parser
+      =>(urlp |=(a/cord `(unit purl)`(rush a auri)))
+    ::                                                  ::  ++fuel:url:eyre
+    ++  fuel                                            ::  parse urbit fcgi
+      |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
+      ^-  epic
+      =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
+      [(malt qix) ((hard cred) ced) bem /]
+    ::                                                  ::  ++urle:url:eyre
+    ++  urle                                            ::  URL encode
+      |=  tep/tape
+      ^-  tape
+      %-  zing
+      %+  turn  tep
+      |=  tap/char
+      =+  xen=|=(tig/@ ?:((gte tig 10) (add tig 55) (add tig '0')))
+      ?:  ?|  &((gte tap 'a') (lte tap 'z'))
+              &((gte tap 'A') (lte tap 'Z'))
+              &((gte tap '0') (lte tap '9'))
+              =('.' tap)
+              =('-' tap)
+              =('~' tap)
+              =('_' tap)
+          ==
+        [tap ~]
+      ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
+    ::                                                  ::  ++urld:url:eyre
+    ++  urld                                            ::  URL decode
+      |=  tep/tape
+      ^-  (unit tape)
+      ?~  tep  [~ ~]
+      ?:  =('%' i.tep)
+        ?.  ?=({@ @ *} t.tep)  ~
+        =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
+        =+  val=(rush nag hex:ag)
+        ?~  val  ~
+        =+  nex=$(tep t.t.t.tep)
+        ?~(nex ~ [~ [`@`u.val u.nex]])
+      =+  nex=$(tep t.tep)
+      ?~(nex ~ [~ i.tep u.nex])
+    ::                                                  ::  ++urlp:url:eyre
+    ++  urlp                                            ::  url+header parser
+      |%
+      ::                                                ::  ++apat:urlp:url:
+      ++  apat                                          ::  2396 abs_path
+        %+  cook  deft
+        (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
+      ::                                                ::  ++aurf:urlp:url:
+      ++  aurf                                          ::  2396 with fragment
+        %+  cook  |~(a/purf a)
+        ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
+      ::                                                ::  ++auri:urlp:url:
+      ++  auri                                          ::  2396 URL
+        %+  cook
+          |=  a/purl
+          ?.(?=(hoke r.p.a) a a(p.p &))
+        ;~  plug
+          ;~(plug htts thor)
+          ;~(plug ;~(pose apat (easy *pork)) yque)
+        ==
+      ::                                                ::  ++auru:urlp:url:
+      ++  auru                                          ::  2396 with maybe user
+        %+  cook
+          |=  $:  a/{p/? q/(unit iden) r/{(unit @ud) host}}
+                  b/{pork quay}
+              ==
+          ^-  (pair (unit iden) purl)
+          [q.a [[p.a r.a] b]]
+        ::
+        ;~  plug
+          ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
+          ;~(plug ;~(pose apat (easy *pork)) yque)
+        ==
+      ::                                                ::  ++htts:urlp:url:
+      ++  htts                                          ::  scheme 
+        %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
+        ;~(sfix scem ;~(plug col fas fas))
+      ::                                                ::  ++cock:urlp:url:
+      ++  cock                                          ::  cookie
+        %+  most  ;~(plug sem ace) 
+        ;~(plug toke ;~(pfix tis tosk))
+      ::                                                ::  ++dlab:urlp:url:
+      ++  dlab                                          ::  2396 domainlabel
+        %+  sear
+          |=  a/@ta
+          ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
+        %+  cook  cass
+        ;~(plug aln (star alp))
+      ::                                                ::  ++fque:urlp:url:
+      ++  fque                                          ::  normal query field
+        (cook crip (plus pquo))
+      ::                                                ::  ++fquu:urlp:url:
+      ++  fquu                                          ::  optional query field
+        (cook crip (star pquo))
+      ::                                                ::  ++pcar:urlp:url:
+      ++  pcar                                          ::  2396 path char
+        ;~(pose pure pesc psub col pat)
+      ::                                                ::  ++pcok:urlp:url:
+      ++  pcok                                          ::  cookie char
+        ;~(less bas sem com doq prn)
+      ::                                                ::  ++pesc:urlp:url:
+      ++  pesc                                          ::  2396 escaped
+        ;~(pfix cen mes)
+      ::                                                ::  ++pold:urlp:url:
+      ++  pold                                          ::  
+        (cold ' ' (just '+'))
+      ::                                                ::  ++pque:urlp:url:
+      ++  pque                                          ::  3986 query char
+        ;~(pose pcar fas wut)
+      ::                                                ::  ++pquo:urlp:url:
+      ++  pquo                                          ::  normal query char
+        ;~(pose pure pesc pold fas wut)
+      ::                                                ::  ++pure:urlp:url:
+      ++  pure                                          ::  2396 unreserved
+        ;~(pose aln hep dot cab sig)
+      ::                                                ::  ++psub:urlp:url:
+      ++  psub                                          ::  3986 sub-delims
+        ;~  pose
+          zap  buc  pam  soq  pel  per
+          tar  lus  com  sem  tis
+        ==
+      ::                                                ::  ++ptok:urlp:url:
+      ++  ptok                                          ::  2616 token
+        ;~  pose
+          aln  zap  hax  buc  cen  pam  soq  tar  lus
+          hep  dot  ket  cab  tec  bar  sig
+        ==
+      ::                                                ::  ++scem:urlp:url:
+      ++  scem                                          ::  2396 scheme
+        %+  cook  cass
+        ;~(plug alf (star ;~(pose aln lus hep dot)))
+      ::                                                ::  ++smeg:urlp:url:
+      ++  smeg                                          ::  2396 segment
+        (cook crip (plus pcar))
+      ::                                                ::  ++tock:urlp:url:
+      ++  tock                                          ::  6265 raw value
+        (cook crip (plus pcok))
+      ::                                                ::  ++tosk:urlp:url:
+      ++  tosk                                          ::  6265 quoted value
+        ;~(pose tock (ifix [doq doq] tock))
+      ::                                                ::  ++toke:urlp:url:
+      ++  toke                                          ::  2616 token
+        (cook crip (plus ptok))
+      ::                                                ::  ++thor:urlp:url:
+      ++  thor                                          ::  2396 host+port
+        %+  cook  |*({* *} [+<+ +<-])
+        ;~  plug
+          thos
+          ;~((bend) (easy ~) ;~(pfix col dim:ag))
+        ==
+      ::                                                ::  ++thos:urlp:url:
+      ++  thos                                          ::  2396 host, no local
+        ;~  plug
+          ;~  pose
+            %+  stag  %&
+            %+  sear                                    ::  LL parser weak here
+              |=  a/(list @t)
+              =+  b=(flop a)
+              ?>  ?=(^ b)
+              =+  c=(end 3 1 i.b)
+              ?.(&((gte c 'a') (lte c 'z')) ~ [~ u=b])
+            (most dot dlab)
+          ::
+            %+  stag  %|
+            =+  tod=(ape:ag ted:ab)
+            %+  bass  256
+            ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
+          ==
+        ==
+      ::                                                ::  ++yque:urlp:url:
+      ++  yque                                          ::  query ending
+        ;~  pose
+          ;~(pfix wut yquy)
+          (easy ~)
+        ==
+      ::                                                ::  ++yquy:urlp:url:
+      ++  yquy                                          ::  query
+        ;~  pose  
+          ::  proper query
+          ::
+          %+  more
+            ;~(pose pam sem)
+          ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
+          ::
+          ::  funky query
+          ::
+          %+  cook
+            |=(a/tape [[%$ (crip a)] ~])
+          (star pque)
+        ==
+      ::                                                ::  ++zest:urlp:url:
+      ++  zest                                          ::  2616 request-uri
+        ;~  pose
+          (stag %& (cook |=(a/purl a) auri))
+          (stag %| ;~(plug apat yque))
+        ==
+      --
+    --  ::  url
+  ::                                                    ::
+  ::::                  ++wired:eyre                    ::  anton's wire toys
     ::                                                  ::::
   ++  wired  ^?
     |%
     ::                                                  ::  ++dray:wired:eyre
-    ++  dray                                            ::  load tuple into pat
+    ++  dray                                            ::  load tuple in path
       ::
       ::  .=  ~[p=~.ack q=~.~sarnel r=~..y]
       ::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
@@ -3322,7 +3702,6 @@
       ==
     ::                                                  ::  ++read:wired:eyre
     ++  read                                            ::  parse odored path
-
       =<  |*({a/path b/{@tas (pole @tas)}} ((+> b) a))
       |*  b/{@tas (pole @tas)}
       |=  a/path
@@ -3336,432 +3715,116 @@
     --  ::  wired
   --  ::  eyre
 ::                                                      ::
-::::                    # ford                          ::  build
+::::                    ++ford                          ::  build
   ::                                                    ::::
 ++  ford
   |%
   ++  $  %$
   --
 ::                                                      ::
-::::                    # gall                          ::  application
+::::                    ++gall                          ::  application
   ::                                                    ::::
 ++  gall
   |%
-  ++  $  %$
+  ++  pale                                              ::  filter peers
+    |=  {hid/bowl fun/$-(sink ?)}
+    (skim (~(tap by sup.hid)) fun)
+  ::                                                    ::  ++prix:gall
+  ++  prix                                              ::  filter gate
+    |=  pax/path  |=  sink  ^-  ?
+    ?~  pax  &  ?~  r.+<  | 
+    &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
+  ::                                                    ::  ++
+  ++  prey                                              ::  prefix 
+    |=({pax/path hid/bowl} (pale hid (prix pax)))
   --
 ::                                                      ::
-::::                    # jael                          ::  security
+::::                    ++jael                          ::  security
   ::                                                    ::::
 ++  jael
   |%
-  ++  $  %$
-  --
-++  deft                                                ::  parse url extension
-  |=  rax/(list @t)
-  |-  ^-  pork
-  ?~  rax
-    [~ ~]
-  ?^  t.rax
-    [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
-  =+  ^-  raf/(like term)
-      =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
-      (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
-  ?~  q.raf
-    [~ [i.rax ~]]
-  =+  `{ext/term {@ @} fyl/tape}`u.q.raf
-  :-  `ext
-  ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
-::                                                      ::  ++fuel:
-++  fuel                                                ::  parse fcgi
-  |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
-  ^-  epic
-  =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
-  [(malt qix) ((hard cred) ced) bem /]
-::                                                      ::  
-++  sifo                                                ::  
-  |=  tig/@
-  ^-  tape
-  =+  poc=(~(dif fo 3) 0 (met 3 tig))
-  =+  pad=(lsh 3 poc (swp 3 tig))
-  =+  ^=  cha
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-  =+  ^=  sif
-      |-  ^-  tape
-      ?~  pad
-        ~
-      =+  d=(end 0 6 pad)
-      [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
-  (weld (flop (slag poc sif)) (reap poc '='))
-::
-++  ofis
-  =-  |=(a/cord (rash a fel))
-  =<  fel=(cook |~(a/@ `@t`(swp 3 a)) (bass 64 .))
-  =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
-  ^=  siw
-  ;~  pose
-     (cook |=(a/@ (sub a 'A')) (shim 'A' 'Z'))
-     (cook |=(a/@ (sub a 'G')) (shim 'a' 'z'))
-     (cook |=(a/@ (add a 4)) (shim '0' '9'))
-     (cold 62 (just '+'))
-     (cold 63 (just '/'))
-   ==
-::
-++  urle                                                ::  URL encode
-  |=  tep/tape
-  ^-  tape
-  %-  zing
-  %+  turn  tep
-  |=  tap/char
-  =+  xen=|=(tig/@ ?:((gte tig 10) (add tig 55) (add tig '0')))
-  ?:  ?|  &((gte tap 'a') (lte tap 'z'))
-          &((gte tap 'A') (lte tap 'Z'))
-          &((gte tap '0') (lte tap '9'))
-          =('.' tap)
-          =('-' tap)
-          =('~' tap)
-          =('_' tap)
+  ::                                                    ::
+  ::::                  ++title:jael                    ::  namespace
+    ::                                                  ::::
+  ++  title  ^?
+    |%
+    ::                                                  ::  ++clan:title:jael
+    ++  clan                                            ::  ship to rank
+      |=  who/ship  ^-  rank
+      =+  wid=(met 3 who)
+      ?:  (lte wid 1)   %czar
+      ?:  =(2 wid)      %king
+      ?:  (lte wid 4)   %duke
+      ?:  (lte wid 8)   %earl
+      ?>  (lte wid 16)  %pawn
+    ::                                                  ::  ++glam:title:jael
+    ++  glam                                            ::  galaxy name
+      |=  zar/@pD  ^-  tape
+      (weld "galaxy " (scow %p zar))
+    ::                                                  ::  ++gnom:title:jael
+    ++  gnom                                            ::  ship display name
+      |=  {{our/@p now/@da} him/@p}  ^-  @t
+      =+  yow=(scot %p him)
+      =+  pax=[(scot %p our) %name (scot %da now) yow ~]
+      =+  woy=.^(@t %a pax)
+      ?:  =(%$ woy)  yow
+      (rap 3 yow ' ' woy ~)
+    ::                                                  ::  ++gnow:title:jael
+    ++  gnow                                            ::  full display name
+      |=  {who/@p gos/gcos}  ^-  @t
+      ?-    -.gos
+          $czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
+          $king                 (rap 3 '_' p.gos '_' ~)
+          $earl                 (rap 3 ':' p.gos ':' ~)
+          $pawn                 ?~(p.gos %$ (rap 3 '.' u.p.gos '.' ~))
+          $duke
+        ?:  ?=($anon -.p.gos)  %$
+        %+  rap  3
+        ^-  (list @)
+        ?-    -.p.gos
+            $punk  ~['"' q.p.gos '"']
+            ?($lord $lady)
+          =+  ^=  nad
+              =+  nam=`name`s.p.p.gos
+              %+  rap  3
+              :~  p.nam
+                  ?~(q.nam 0 (cat 3 ' ' u.q.nam))
+                  ?~(r.nam 0 (rap 3 ' (' u.r.nam ')' ~))
+                  ' '
+                  s.nam
+              ==
+          ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
+        ==
       ==
-    [tap ~]
-  ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
-::
-++  urld                                                ::  URL decode
-  |=  tep/tape
-  ^-  (unit tape)
-  ?~  tep  [~ ~]
-  ?:  =('%' i.tep)
-    ?.  ?=({@ @ *} t.tep)  ~
-    =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
-    =+  val=(rush nag hex:ag)
-    ?~  val  ~
-    =+  nex=$(tep t.t.t.tep)
-    ?~(nex ~ [~ [`@`u.val u.nex]])
-  =+  nex=$(tep t.tep)
-  ?~(nex ~ [~ i.tep u.nex])
-::
-++  earf                                                ::  purf to tape
-  |=  purf
-  (weld (earn p) ?~(q "" `tape`['#' (trip u.q)]))
-::
-++  earl                                                ::  localize purl
-  |=  {who/@p pul/purl}
-  ^-  purl
-  pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
-::
-++  earn                                                ::  purl to tape
-  =<  |=(pul/purl `tape`(apex %& pul))
-  |%
-  ++  apex
-    |=  qur/quri  ^-  tape
-    ?-  -.qur
-      $&  (weld (head p.p.qur) `tape`$(qur [%| +.p.qur]))
-      $|  ['/' (weld (body p.qur) (tail q.qur))]
-    ==
-  ::
-  ++  body
-    |=  pok/pork  ^-  tape
-    ?~  q.pok  ~
-    |-
-    =+  seg=(urle (trip i.q.pok))
-    ?~  t.q.pok
-      ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
-    (welp seg '/' $(q.pok t.q.pok))
-  ::
-  ++  head
-    |=  har/hart
-    ^-  tape
-    ;:  weld
-      ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
-    ::
-      ?-  -.r.har
-        $|  (trip (rsh 3 1 (scot %if p.r.har)))
-        $&  =+  rit=(flop p.r.har)
-            |-  ^-  tape
-            ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
+    ::                                                  ::  ++saxo:title:jael
+    ++  saxo                                            ::  autocanon
+      |=  who/ship
+      ^-  (list ship)
+      =+  dad=(sein who)
+      [who ?:(=(who dad) ~ $(who dad))]
+    ::                                                  ::  ++sein:title:jael
+    ++  sein                                            ::  autoboss
+      |=  who/ship  ^-  ship
+      =+  mir=(clan who)
+      ?-  mir
+        $czar  ~zod
+        $king  (end 3 1 who)
+        $duke  (end 4 1 who)
+        $earl  (end 5 1 who)
+        $pawn  (end 4 1 who)
       ==
-    ::
-      ?~(q.har ~ `tape`[':' ((d-co:co 1) u.q.har)])
-    ==
-  ::
-  ++  tail
-    |=  kay/quay
-    ^-  tape
-    ?:  =(~ kay)  ~
-    :-  '?'
-    |-  ^-  tape
-    ?~  kay  ~
-    ;:  welp
-      (urle (trip p.i.kay))
-      ?~(q.i.kay ~ ['=' (urle (trip q.i.kay))])
-      ?~(t.kay ~ `tape`['&' $(kay t.kay)])
-    ==
-  --
-::
-++  urlp                                                ::  url+header parser
-  |%
-  ++  apat                                              ::  2396 abs_path
-    %+  cook  deft
-    (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
-  ++  aurf                                              ::  2396 with fragment
-    %+  cook  |~(a/purf a)
-    ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
-  ++  auru                                              ::  2396 with maybe user
-    %+  cook
-      |=  $:  a/{p/? q/(unit iden) r/{(unit @ud) host}}
-              b/{pork quay}
-          ==
-      ^-  (pair (unit iden) purl)
-      [q.a [[p.a r.a] b]]
-    ::
-    ;~  plug
-      ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
-      ;~(plug ;~(pose apat (easy *pork)) yque)
-    ==
-  ++  auri                                              ::  2396 URL
-    %+  cook
-      |=  a/purl
-      ?.(?=(hoke r.p.a) a a(p.p &))
-    ;~  plug
-      ;~(plug htts thor)
-      ;~(plug ;~(pose apat (easy *pork)) yque)
-    ==
-  ++  htts  
-    %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
-    ;~(sfix scem ;~(plug col fas fas))
-  ::
-  ++  cock                                              ::  cookie
-    (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
-  ++  dlab                                              ::  2396 domainlabel
-    %+  sear
-      |=  a/@ta
-      ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
-    %+  cook  cass
-    ;~(plug aln (star alp))
-  ::
-  ++  fque  (cook crip (plus pquo))                     ::  normal query field
-  ++  fquu  (cook crip (star pquo))                     ::  optional field
-  ++  pcar  ;~(pose pure pesc psub col pat)             ::  2396 path char
-  ++  pcok  ;~(less bas sem com doq prn)                ::  cookie char
-  ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
-  ++  pold  (cold ' ' (just '+'))                       ::  old space code
-  ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
-  ++  pquo  ;~(pose pure pesc pold fas wut)             ::  normal query char
-  ++  pure  ;~(pose aln hep dot cab sig)                ::  2396 unreserved
-  ++  psub  ;~  pose                                    ::  3986 sub-delims
-              zap  buc  pam  soq  pel  per
-              tar  lus  com  sem  tis
-            ==
-  ++  ptok  ;~  pose                                    ::  2616 token
-              aln  zap  hax  buc  cen  pam  soq  tar  lus
-              hep  dot  ket  cab  tec  bar  sig
-            ==
-  ++  scem                                              ::  2396 scheme
-    %+  cook  cass
-    ;~(plug alf (star ;~(pose aln lus hep dot)))
-  ::
-  ++  smeg  (cook crip (plus pcar))                     ::  2396 segment
-  ++  tock  (cook crip (plus pcok))                     ::  6265 cookie-value
-  ++  tosk  ;~(pose tock (ifix [doq doq] tock))         ::  6265 cookie-value
-  ++  toke  (cook crip (plus ptok))                     ::  2616 token
-  ++  thor                                              ::  2396 host+port
-    %+  cook  |*({* *} [+<+ +<-])
-    ;~  plug
-      thos
-      ;~((bend) (easy ~) ;~(pfix col dim:ag))
-    ==
-  ++  thos                                              ::  2396 host, no local
-    ;~  plug
-      ;~  pose
-        %+  stag  %&
-        %+  sear                                        ::  LL parser weak here
-          |=  a/(list @t)
-          =+  b=(flop a)
-          ?>  ?=(^ b)
-          =+  c=(end 3 1 i.b)
-          ?.(&((gte c 'a') (lte c 'z')) ~ [~ u=b])
-        (most dot dlab)
-      ::
-        %+  stag  %|
-        =+  tod=(ape:ag ted:ab)
-        %+  bass  256
-        ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
+    ::                                                  ::  ++team:title:jael
+    ++  team                                            ::  our / our moon
+      |=  {our/@p him/@p}
+      ?|  =(our him)
+          &(?=($earl (clan him)) =(our (sein him)))
       ==
-    ==
-  ++  yque                                              ::  query ending
-    ;~  pose
-      ;~(pfix wut yquy)
-      (easy ~)
-    ==
-  ++  yquy                                              ::  query
-    ;~  pose                                            ::  proper query
-      %+  more
-        ;~(pose pam sem)
-      ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
-    ::
-      %+  cook                                          ::  funky query
-        |=(a/tape [[%$ (crip a)] ~])
-      (star pque)
-    ==
-  ++  zest                                              ::  2616 request-uri
-    ;~  pose
-      (stag %& (cook |=(a/purl a) auri))
-      (stag %| ;~(plug apat yque))
-    ==
-  --
-++  epur                                                ::  url+header parser
-  =>(urlp |=(a/cord `(unit purl)`(rush a auri)))
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bH, names etc                ::
-::
-++  clan                                                ::  ship to rank
-  |=  who/ship  ^-  rank
-  =+  wid=(met 3 who)
-  ?:  (lte wid 1)   %czar
-  ?:  =(2 wid)      %king
-  ?:  (lte wid 4)   %duke
-  ?:  (lte wid 8)   %earl
-  ?>  (lte wid 16)  %pawn
-::
-++  glam                                                ::  carrier names
-  |=  zar/@pD  ^-  tape
-  (weld "galaxy " (scow %p zar))
-::
-++  gnom                                                ::  ship display name
-  |=  {{our/@p now/@da} him/@p}  ^-  @t
-  =+  yow=(scot %p him)
-  =+  pax=[(scot %p our) %name (scot %da now) yow ~]
-  =+  woy=.^(@t %a pax)
-  ?:  =(%$ woy)  yow
-  (rap 3 yow ' ' woy ~)
-::
-++  gnow
-  |=  {who/@p gos/gcos}  ^-  @t
-  ?-    -.gos
-      $czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
-      $king                 (rap 3 '_' p.gos '_' ~)
-      $earl                 (rap 3 ':' p.gos ':' ~)
-      $pawn                 ?~(p.gos %$ (rap 3 '.' u.p.gos '.' ~))
-      $duke
-    ?:  ?=($anon -.p.gos)  %$
-    %+  rap  3
-    ^-  (list @)
-    ?-    -.p.gos
-        $punk  ~['"' q.p.gos '"']
-        ?($lord $lady)
-      =+  ^=  nad
-          =+  nam=`name`s.p.p.gos
-          %+  rap  3
-          :~  p.nam
-              ?~(q.nam 0 (cat 3 ' ' u.q.nam))
-              ?~(r.nam 0 (rap 3 ' (' u.r.nam ')' ~))
-              ' '
-              s.nam
-          ==
-      ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
-    ==
-  ==
-++  pale                                                ::  filter peers
-  |=  {hid/bowl fun/$-(sink ?)}
-  (skim (~(tap by sup.hid)) fun)
-::
-++  prix                                                ::  filter gate
-  |=  pax/path  |=  sink  ^-  ?
-  ?~  pax  &  ?~  r.+<  | 
-  &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
-::
-++  prey  |=({pax/path hid/bowl} (pale hid (prix pax))) ::  prefix 
-++  hunt                                                ::  first of unit dates
-  |=  {one/(unit @da) two/(unit @da)}
-  ^-  (unit @da)
-  ?~  one  two
-  ?~  two  one
-  ?:((lth u.one u.two) one two)
-::
-++  mole                                                ::  new to old sky
-  |=  ska/$-(* (unit (unit)))
-  |=  a/*
-  ^-  (unit)
-  =+  b=(ska a)
-  ?~  b  ~
-  ?~  u.b  ~
-  [~ u.u.b]
-::
-++  myle                                                ::  new to old sky
-  |=  ska/$-({* *} (unit (unit)))
-  ^-  $-({* *} (unit))
-  |=  a/{* *}
-  ^-  (unit)
-  =+  b=(ska a)
-  ?~  b  ~
-  ?~  u.b  ~
-  [~ u.u.b]
-::
-++  pack                                                ::  light path encoding
-  |=  {a/term b/path}  ^-  knot
-  %+  rap  3  :-  (wack a)
-  (turn b |=(c/knot (cat 3 '_' (wack c))))
-::
-++  puck                                                ::  light path decoding
-  =+  fel=(most cab (sear wick urt:ab))
-  |=(a/knot `(unit {p/term q/path})`(rush a fel))
-::
-++  saxo                                                ::  autocanon
-  |=  who/ship
-  ^-  (list ship)
-  =+  dad=(sein who)
-  [who ?:(=(who dad) ~ $(who dad))]
-::
-++  sein                                                ::  autoboss
-  |=  who/ship  ^-  ship
-  =+  mir=(clan who)
-  ?-  mir
-    $czar  ~zod
-    $king  (end 3 1 who)
-    $duke  (end 4 1 who)
-    $earl  (end 5 1 who)
-    $pawn  (end 4 1 who)
-  ==
-::
-++  team                                                ::  our / our moon
-  |=  {our/@p him/@p}
-  ?|  =(our him)
-      &(?=($earl (clan him)) =(our (sein him)))
-  ==
+    --  ::  title
+  --  ::  jael
+--  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bI, Arvo structures          ::
 ::
-++  acru                                                ::  asym cryptosuite
-          $_  ^?  |%                                    ::  opaque object
-          ++  as  ^?                                    ::  asym ops
-            |%  ++  seal  |~({a/pass b/@ c/@} *@)       ::  encrypt to a
-                ++  sign  |~({a/@ b/@} *@)              ::  certify as us
-                ++  sure  |~({a/@ b/@} *(unit @))       ::  authenticate from us
-                ++  tear  |~  {a/pass b/@}              ::  accept from a 
-                          *(unit {p/@ q/@})             ::
-            --                                          ::
-          ++  de  |~({a/@ b/@} *(unit @))               ::  symmetric de, soft
-          ++  dy  |~({a/@ b/@} *@)                      ::  symmetric de, hard
-          ++  en  |~({a/@ b/@} *@)                      ::  symmetric en
-          ++  ex  ^?                                    ::  export
-            |%  ++  fig  *@uvH                          ::  fingerprint
-                ++  pac  *@uvG                          ::  default passcode
-                ++  pub  *pass                          ::  public key
-                ++  sec  *ring                          ::  private key
-            --                                          ::
-          ++  nu  ^?                                    ::  reconstructors
-             |%  ++  pit  |~({a/@ b/@} ^?(..nu))        ::  from [width seed]
-                 ++  nol  |~(a/@ ^?(..nu))              ::  from naked ring
-                 ++  com  |~(a/@ ^?(..nu))              ::  from naked pass
-             --                                         ::
-          --                                            ::
-++  aeon  @ud                                           ::
-++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})    ::  mergepts
-++  ankh                                                ::  fs node (new)
-          $:  fil/(unit {p/lobe q/cage})                ::  file
-              dir/(map @ta ankh)                        ::  folders
-          ==                                            ::
-++  apex  {p/@uvI q/(map @ta @uvI) r/(map @ta $~)}      ::  node report (old)
-++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ++  bale                                                ::  driver state
   |*  a/_*                                              ::  %jael keys type
   $:  {our/ship now/@da eny/@uvJ byk/beak}              ::  base info

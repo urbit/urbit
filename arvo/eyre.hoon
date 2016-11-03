@@ -209,6 +209,15 @@
   ?~  cok  ~
   ?:((fil i.cok) [~ q.i.cok] $(cok t.cok))
 ::
+++  pack                                                ::  light path encoding
+  |=  {a/term b/path}  ^-  knot
+  %+  rap  3  :-  (wack a)
+  (turn b |=(c/knot (cat 3 '_' (wack c))))
+::
+++  puck                                                ::  light path decoding
+  =+  fel=(most cab (sear wick urt:ab))
+  |=(a/knot `(unit {p/term q/path})`(rush a fel))
+::
 ++  wush
   |=  {wid/@u tan/tang}
   ^-  tape
