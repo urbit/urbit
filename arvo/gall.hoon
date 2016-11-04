@@ -454,7 +454,7 @@
     ::
       $out-misvale
         ?>  ?=({$f $news @} q.hin)
-        ap-abet:(ap-misvale-drop:pap t.t.t.pax)
+        ap-abet:(ap-misvale-drop:pap t.pax)
     ::
       $out  ?:  ?=({$f $made *} q.hin)
               ?-  -.q.+>.q.hin  
@@ -463,7 +463,7 @@
                        ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
                 $|
                     =+  why=p.q.+>.q.hin
-                    =.  ..ap  ap-abet:(ap-misvale:pap t.t.t.pax)
+                    =.  ..ap  ap-abet:(ap-misvale:pap t.pax)
                     =.  ..ap  
                       %+  mo-pass  [%use pax(i.t.t %out-misvale)]
                       [%f %wasp our p.+>.q.hin &]
@@ -1380,8 +1380,8 @@
   ?>  ?=({@ ?($sys $use) *} tea) 
   =+  our=(need (slaw %p i.tea))
   =+  mow=(mo-abed:mo our hen)
-  ?:  ?=($sys i.t.tea)
-    mo-abet:(mo-cyst:mow t.t.tea q.hin)
-  ?>  ?=($use i.t.tea)
-  mo-abet:(mo-cook:mow t.t.tea hin)
+  ?-  i.t.tea
+    $sys  mo-abet:(mo-cyst:mow t.t.tea q.hin)
+    $use  mo-abet:(mo-cook:mow t.t.tea hin)
+  ==
 --
