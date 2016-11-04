@@ -7,11 +7,10 @@
 /=    seed  /~  !>(.)
 =,  space:clay
 =,  js:eyre
-=,  talk
-=,  sole
 ::
 ::::
   ::
+[. talk sole]
 =>  |%                                                  ::  data structures
     ++  house  {$5 house-5}                             ::  full state
     ++  house-any                                       ::  app history

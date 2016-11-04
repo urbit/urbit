@@ -106,6 +106,21 @@
       sec/(map {iden (list @t)} driv)                   ::  security drivers
   ==                                                    ::
 ::
+++  sec-move                                            ::  driver effect
+  $%  {$send p/hiss}                                    ::  http out
+      {$show p/purl}                                    ::  direct user to url
+      {$give p/httr}                                    ::  respond immediately
+      {$redo $~}                                        ::  restart request qeu
+  ==                                                    ::
+::
+++  bale                                                ::  driver state
+  |*  a/_*                                              ::  %jael keys type
+  $:  {our/ship now/@da eny/@uvJ byk/beak}              ::  base info
+      {usr/iden dom/(list @t)}                          ::  req user, domain
+      key/a                                             ::  secrets from %jael
+  ==                                                    ::
+++  iden  knot:?($~ @ta)                                ::  username
+::
 ++  driv                                                ::  driver state
   %+  pair  (unit $@($~ vase))                          ::  main core
   {liv/? req/(qeu (trel duct mark vase:hiss))}          ::  waiting requests
