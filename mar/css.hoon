@@ -2,6 +2,7 @@
 ::::  /hoon/css/mar
   ::
 /?    310
+=,  ^eyre
 |_  mud/@t
 ++  grow                                                ::  convert to
   |%  ++  mime  [/text/css (taco:bytes:eyre mud)]       ::  convert to %mime

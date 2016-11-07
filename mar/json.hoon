@@ -5,6 +5,7 @@
   ::
 ::::  compute
   ::
+=,  ^eyre
 =,  js:eyre
 |_  jon/json
 ::

@@ -12,7 +12,7 @@
   --
 ++  grab
   |%
-  ++  mime  |=({p/mite q/octs} q.q)
+  ++  mime  |=({p/mite:^eyre q/octs:^eyre} q.q)
   ++  noun  @t
   ++  txt   role:lines:clay
   --  

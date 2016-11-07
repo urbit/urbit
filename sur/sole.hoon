@@ -73,7 +73,11 @@
   |*  out/$-(* *)                                       ::  output structure
   %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
-  (trel (unit iden) hiss $-(httr (sole-request out)))   ::  fetch and continue
+  %^    trel                                            ::  fetch and continue
+      (unit knot)
+    hiss:^eyre
+  $-(httr:^eyre (sole-request out))
+  
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   $%  {$say $-((sole-args) (cask))}                     ::  direct noun
@@ -99,8 +103,8 @@
   [p=*(list tank) q=[%| p=pom q=mor]]                   ::
 ::                                                      ::
 ++  sole-at                                             ::  fetch url
-  =|  usr/iden                                          ::
-  |*  {pul/_purl fun/$-(httr *)}                        ::
+  =|  usr/knot                                          ::
+  |*  {pul/_purl:^eyre fun/$-(httr:^eyre *)}            ::
   :-  p=*(list tank)                                    ::
   q=[%| p=`usr q=[pul %get ~ ~] r=fun]                  ::
 ::                                                      ::

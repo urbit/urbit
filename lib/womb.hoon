@@ -4,6 +4,7 @@
 /?    310                                               ::  version
 /+    talk, old-phon
 =,  wired:eyre
+=,  title:jael
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -91,7 +92,7 @@
 ++  ames-tell                                           ::  .^ a+/=tell= type
   |^  {p/(list elem) q/(list elem)}                     ::
   ++  elem  $^  {p/elem q/elem}                         ::
-            {term p/*}                                  ::  somewhat underspecified
+            {term p/*}                                  ::  underspecified
   --                                                    ::
 --                                                      ::
 ::                                                      ::  ::
@@ -112,14 +113,14 @@
   ::                                                    ::  ::
 |%                                                      ::  arvo structures
 ++  card                                                ::
-  $%  {$flog wire flog}                                 ::
-      {$info wire @p @tas nori}                         ::  fs write (backup)
-      :: {$wait $~}                                        :: delay acknowledgment
+  $%  {$flog wire flog:^dill}                           ::
+      {$info wire @p @tas nori:^clay}                   ::  fs write (backup)
+      :: {$wait $~}                                     :: delay acknowledgment
       {$diff gilt}                                      :: subscription response
       {$poke wire dock pear}                            ::  app RPC
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
-      {$knew wire p/ship q/wyll}                        ::  learn wyll (old pki)
+      {$knew wire p/ship q/wyll:^ames}                  ::  learn wyll (old pki)
   ==                                                    ::
 ++  pear                                                ::
   $%  {$email mail tape wall}                           ::  send email
@@ -138,7 +139,7 @@
 ++  move  (pair bone card)                              ::  user-level move
 ::
 ++  transaction                                         ::  logged poke
-  $%  {$report her/@p wyl/wyll}
+  $%  {$report her/@p wyl/wyll:^ames}
       {$release gal/@ud sta/@ud}
       {$release-ships (list ship)}
       {$claim aut/passcode her/@p}
@@ -254,8 +255,8 @@
 ::::                                                  ::  ::
   !:                                                  ::  ::
 =+  cfg=[can-claim=& can-recycle=&]                   ::  temporarily disabled
-=+  [replay=| stat-no-email=|]                              ::  XX globals
-|=  {bowl part}                                       ::  main womb work
+=+  [replay=| stat-no-email=|]                        ::  XX globals
+|=  {bowl:^gall part}                                 ::  main womb work
 |_  moz/(list move)
 ++  abet                                              ::  resolve
   ^-  (quip move *part)
@@ -844,7 +845,9 @@
 ++  release-star                                      ::  subdivide %king
   =+  [who=*@p res=.]
   |.  ^+  res
-  =.  res  (emit.res %poke /womb/tick [(sein who) %hood] [%womb-do-ticket who])
+  =.  res  
+      %-  emit.res
+      [%poke /womb/tick [(sein who) %hood] [%womb-do-ticket who]]
   %+  mod-managed-star:res  who
   |=  sta/star  ^-  star
   ~&  release+who

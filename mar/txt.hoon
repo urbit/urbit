@@ -3,7 +3,7 @@
   ::
 /?    310
 !:
-=,  differ:^clay
+=,  ^clay
 =,  differ:clay
 =,  lines:clay
 =,  bytes:eyre
@@ -11,7 +11,7 @@
 ::  
 ++  grab                                                ::  convert from
   |%
-  ++  mime  |=({p/mite q/octs} (lore q.q))
+  ++  mime  |=({p/mite:^eyre q/octs:^eyre} (lore q.q))
   ++  noun  wain                                        ::  clam from %noun
   ++  json  :(corl lore need so:jo:js:eyre)
   --
