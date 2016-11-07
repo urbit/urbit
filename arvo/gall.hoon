@@ -242,6 +242,9 @@
       ::  to this returning pump.
       ::
       +>
+    ?:  ?=($peer-not -.q.caz)
+      ::  short circuit error
+      (mo-give %unto %reap (some p.q.caz))
     =^  num  +>.$  (mo-bale him)
     =+  ^=  roc  ^-  rook
         ?-  -.q.caz
@@ -532,6 +535,8 @@
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
       [%f %exec our ~ (mo-beak dap) %cast p.cub %$ q.cub]
+    ?:  ?=($peer-not -.cub)
+      (mo-give %unto %reap (some p.cub))
     ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
   ::
   ++  mo-club                                           ::  local action
@@ -713,6 +718,7 @@
         $peer   (ap-peer +.cub)
         $puff   !!
         $punk   !!
+        $peer-not   !!
         $pull   ap-pull
         $pump   ap-fall
       ==
