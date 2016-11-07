@@ -944,6 +944,11 @@
       =+  pux=((soft path) +>+.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peel: malformed path")]
+      ?:  (~(has in misvale) p.p.yep)
+        =/  err  [leaf+"peel: misvalidaton encountered"]~
+        :^  %&  sto  %pass
+        :-  p.p.yep
+        [%send q.p.yep r.p.yep %peer-not err]
       :^  %&  sto  %pass
       :-  p.p.yep
       [%send q.p.yep r.p.yep %peel u.mar u.pux]
@@ -957,6 +962,11 @@
       =+  pux=((soft path) +>.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peer: malformed path")]
+      ?:  (~(has in misvale) p.p.yep)
+        =/  err  [leaf+"peer: misvalidaton encountered"]~
+        :^  %&  sto  %pass
+        :-  p.p.yep
+        [%send q.p.yep r.p.yep %peer-not err]
       :^  %&  sto  %pass
       :-  p.p.yep
       [%send q.p.yep r.p.yep %peer u.pux]
@@ -1069,11 +1079,13 @@
     ::
     ++  ap-misvale                                      ::  broken vale
       |=  wir/wire
-      ~&  [%ap-blocking wir]
+      ~&  [%ap-blocking-misvale wir]
       +>(misvale (~(put in misvale) wir))
     ::
     ++  ap-misvale-drop
       |=  wir/wire
+      ?.  (~(has in misvale) wir)  +>
+      ~&  [%ap-unblock-misvale wir]
       +>(misvale (~(del in misvale) wir))
     ::
     ++  ap-pour                                         ::  generic take
