@@ -457,7 +457,7 @@
     ::
       $out-misvale
         ?>  ?=({$f $news @} q.hin)
-        ap-abet:(ap-misvale-drop:pap t.pax)
+        ap-abet:(ap-misvale-drop:pap t.pax(i.t %out))
     ::
       $out  ?:  ?=({$f $made *} q.hin)
               ?-  -.q.+>.q.hin  
