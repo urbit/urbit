@@ -3,34 +3,32 @@
 !?  164
 ::::
 |=  pit/vase   
-=,  ^gall
+=,  ^ford
 =,  space:clay
 =>  =~
 ::  structures
 |%
-++  gift  gift-ford                                     ::  out result <-$
 ++  heel  path                                          ::  functional ending
-++  kiss  kiss-ford                                     ::  in request ->$
-++  move  {p/duct q/(wind note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $c                                    ::  to %clay
-          $%  {$warp p/sock q/riff}                     ::
+          $%  {$warp p/sock:^clay q/riff:^clay}         ::
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
-          $%  {$exec p/@p q/(unit bilk)}                ::
+          $%  {$exec p/@p q/(unit bilk:^ford)}          ::
           ==  ==                                        ::
               $:  $g                                    ::  to %gall
-          $%  {$deal p/sock q/cush}                     ::
+          $%  {$deal p/sock:^gall q/cush:^gall}         ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $c                                    ::  by %clay
-          $%  {$writ p/riot}                            ::
+          $%  {$writ p/riot:^clay}                      ::
           ==  ==                                        ::
               $:  $f                                    ::  by %ford
-          $%  {$made p/@uvH q/gage}                     ::
+          $%  {$made p/@uvH q/gage:^ford}               ::
           ==  ==                                        ::
               $:  $g                                    ::  by %gall
-          $%  {$unto p/cuft}                            ::
+          $%  {$unto p/cuft:^gall}                      ::
           ==  ==  ==                                    ::
 --                                                      ::
 |%                                                      ::  structures
@@ -49,7 +47,7 @@
   $:  p/cafe                                            ::  cache
     $=  q                                               ::
       $%  {$0 p/(set beam) q/a}                         ::  depends+product
-          {$1 p/(set {van/vane ren/care bem/beam tan/tang})}  ::  blocks
+          {$1 p/(set {van/vane ren/care:^clay bem/beam tan/tang})}  ::  blocks
           {$2 p/(set beam) q/tang}                      ::  depends+error
       ==                                                ::
   ==                                                    ::
@@ -87,7 +85,7 @@
   $:  nah/duct                                          ::  cause
       {bek/beak kas/silk}                               ::  problem
       keg/(map (pair term beam) cage)                   ::  block results
-      kig/(set (trel vane care beam))                   ::  blocks
+      kig/(set (trel vane care:^clay beam))             ::  blocks
   ==                                                    ::
 ++  gagl  (list (pair gage gage))                       ::
 ++  vane  ?($a $b $c $d $e $f $g)                       ::
@@ -205,7 +203,7 @@
     ~(exec zo [num `task`[hen kub ~ ~]])
   ::
   ++  axon                                              ::  take
-    |=  {num/@ud {van/vane ren/care bem/beam} sih/sign}
+    |=  {num/@ud {van/vane ren/care:^clay bem/beam} sih/sign}
     ^+  +>
     ?:  ?=({$unto $quit *} +.sih)
       +>.$
@@ -304,17 +302,18 @@
       $(kiz t.kiz, mow :_(mow [hen (cancel i.kiz)]))
     ::
     ++  cancel                                          ::  stop a request
-      |=  {van/vane ren/care bem/beam}  ^-  (wind note gift)
+      |=  {van/vane ren/care:^clay bem/beam}  
+      ^-  (wind note gift:able)
       ?+  van  ~|(stub-cancel+van !!)
         $c  [%pass (camp-wire +<) van [%warp [our p.bem] q.bem ~]]
         $g  [%pass (camp-wire +<) van [%deal [our p.bem] q.bem [%pull ~]]]
       ==
     ++  camp-wire                                       ::  encode block
-      |=  {van/vane ren/care bem/beam}  ^-  wire
+      |=  {van/vane ren/care:^clay bem/beam}  ^-  wire
       [(scot %p our) (scot %ud num) van ren (tope bem)]
     ::
     ++  camp                                            ::  request a file
-      |=  {van/vane ren/care bem/beam}
+      |=  {van/vane ren/care:^clay bem/beam}
       ^+  +>
       ~&  >>  [%camping van ren bem]
       %_    +>.$
@@ -440,17 +439,17 @@
                       ^=  p
                       %-  silt
                       %+  turn  p.faw
-                      |=(a/{vane care beam} [-.a +<.a +>.a *tang])
+                      |=(a/{vane care:^clay beam} [-.a +<.a +>.a *tang])
                   $|  [%2 p=*(set beam) q=p.faw]
                 ==
             ^=  faw
-            |-  ^-  (each (list (trel vane care beam)) tang)
+            |-  ^-  (each (list (trel vane care:^clay beam)) tang)
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  err=|=(a/tape [%| leaf+a ?:(?=($& -.nex) ~ p.nex)])
             =+  pax=(path i.p.ton)
             ?~  pax  (err "blocking empty")
-            =+  ren=((soft care) (rsh 3 1 i.pax))
+            =+  ren=((soft care:^clay) (rsh 3 1 i.pax))
             ?~  ren
               (err "blocking not care")
             =+  zis=(tome t.pax)
@@ -598,7 +597,7 @@
       ==
     ::
     ++  expo                                            ::  return gift
-      |=  gef/gift
+      |=  gef/gift:able
       %_(+> mow :_(mow [hen %give gef]))
     ::
     ++  fade                                            ::  compile to hood
@@ -1747,7 +1746,7 @@
       --
     ::
     ++  pact-hoon                                       ::  .hoon special case
-      |=  {a/@t b/(urge:differ:^clay cord)}  ^-  @t
+      |=  {a/@t b/(urge:^clay cord)}  ^-  @t
       ~|  %lurk-hoon
       (role:lines:clay (lurk:differ:clay (lore:lines:clay a) b))
     ::
@@ -1791,7 +1790,7 @@
       ==
     ::
     ++  resp
-      |=  {{van/vane ren/care bem/beam} rot/riot}
+      |=  {{van/vane ren/care:^clay bem/beam} rot/riot:^clay}
       ^+  ..zo
       ?>  ?=($c van)
       =.  kig  (~(del in kig) +<-.$)
@@ -1802,7 +1801,7 @@
       exec(keg (~(put by keg) [- bem] r.u.rot))
     ::
     ++  resd                                            ::  take %diff
-      |=  {{van/vane ren/care bem/beam} cag/cage}
+      |=  {{van/vane ren/care:^clay bem/beam} cag/cage}
       ^+  ..zo
       ?>  ?=($g van)
       ?:  |(!?=($x ren) =(-.s.bem p.cag))
@@ -1817,7 +1816,7 @@
       ..zo
     ::
     ++  resm                                            ::  take %made
-      |=  {{van/vane ren/care bem/beam} dep/@uvH gag/gage}  ::  XX  depends?
+      |=  {{van/vane ren/care:^clay bem/beam} dep/@uvH gag/gage}
       ^+  ..zo
       ?>  ?=($g van)
       =.  kig  (~(del in kig) +<-.$)
@@ -1860,9 +1859,9 @@
 ~%  %ford-d  ..is  ~
 |%                                                      ::
 ++  call                                                ::  request
-  |=  {hen/duct hic/(hypo (hobo kiss))}
+  |=  {hen/duct hic/(hypo (hobo task:able))}
   ^+  [p=*(list move) q=..^$]
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
   ?:  ?=($wegh -.q.hic)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
@@ -1952,7 +1951,7 @@
     ?>  ?=({@ @ ^} t.t.tea)
     =+  :*  num=(slav %ud i.t.tea)
             van=((hard vane) i.t.t.tea)
-            ren=((hard care) i.t.t.t.tea)
+            ren=((hard care:^clay) i.t.t.t.tea)
             bem=(need (tome t.t.t.t.tea))
         ==
     abet:(~(axon za [our hen [now eny ski] ~] bay) num [van ren bem] q.hin)

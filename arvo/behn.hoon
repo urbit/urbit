@@ -1,6 +1,7 @@
 !:  ::  %behn, just a timer
 !?  164
 ::::
+=,  ^behn
 |=  pit/vase
 =>  =~
 |%
@@ -12,14 +13,7 @@
           ==                                            ::
 ++  broq  |*  {a/_* b/_*}                               ::  brodal skew qeu
           (list (sqeu a b))                             ::
-++  gift  gift-behn                                     ::  out result <-$
-++  kiss                                                ::  in request ->$
-          $%  {$rest p/@da}                             ::  cancel alarm
-              {$wait p/@da}                             ::  set alarm
-              {$wake $~}                                ::  timer activate
-              {$wegh $~}                                ::  report memory
-          ==                                            ::
-++  move  {p/duct q/(wind note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note  $~                                            ::  out request $->
 ++  sign  $~                                            ::  in result $<-
 ++  clok  (broq @da duct)                               ::  stored timers
@@ -154,18 +148,18 @@
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
   |=  $:  hen/duct
-          hic/(hypo (hobo kiss))
+          hic/(hypo (hobo task:able))
       ==
   ^-  {p/(list move) q/_..^$}
   =>  %=    .                                           ::  XX temporary
           q.hic
-        ^-  kiss
+        ^-  task:able
         ?:  ?=($soft -.q.hic)
           ::  ~&  [%behn-call-soft (,@tas `*`-.p.q.hic)]
-          ((hard kiss) p.q.hic)
-        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+          ((hard task:able) p.q.hic)
+        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
         ~&  [%behn-call-flub (@tas `*`-.q.hic)]
-        ((hard kiss) q.hic)
+        ((hard task:able) q.hic)
       ==
   =^  mof  tym
     ?-    -.q.hic

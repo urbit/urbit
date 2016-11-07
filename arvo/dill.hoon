@@ -2,7 +2,7 @@
 ::  dill (4d), terminal handling   
 ::
 |=  pit/vase
-=,  ^gall
+=,  ^dill
 =>  |%                                                  ::  interface tiles
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
@@ -31,27 +31,23 @@
 ++  axon                                                ::  dill per duct
   $:  ram/term                                          ::  console program
       tem/(unit (list dill-belt))                       ::  pending, reverse
-      wid/_80                                        ::  terminal width
+      wid/_80                                           ::  terminal width
       pos/@ud                                           ::  cursor position
       see/(list @c)                                     ::  current line
   ==                                                    ::
---  =>                                                  ::
-|%                                                      ::  protocol below
-++  gift  gift-dill                                     ::  out result <-$
-++  kiss  kiss-dill                                     ::  in request ->$
 --  =>                                                  ::
 |%                                                      ::  protocol outward
 ++  mess                                                ::
   $%  {$dill-belt p/(hypo dill-belt)}                   ::
   ==                                                    ::
-++  move  {p/duct q/(wind note gift)}                   ::  local move   
+++  move  {p/duct q/(wind note gift:able)}                   ::  local move   
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
       {$sith p/@p q/@uw r/?}                            ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
-      {$warp p/sock q/riff}                             ::  wait for clay hack
+  $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:^clay}::  merge desks
+      {$warp p/sock:^clay q/riff:^clay}                 ::  wait for clay hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -64,7 +60,7 @@
   ==                                                    ::
 ++  note-gall                                           ::
   $%  {$conf dock $load ship desk}                      ::
-      {$deal p/sock q/cush}                             ::
+      {$deal p/sock:^gall q/cush:^gall}                 ::
   ==                                                    ::
 ++  note                                                ::  out request $->
   $?  {?($a $b $c $e $f $g) $wegh $~}                   ::
@@ -83,14 +79,14 @@
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
-      {$writ p/riot}                                    ::
+      {$writ p/riot:^clay}                              ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
 ++  sign-gall                                           ::
-  $%  {$onto p/(each suss tang)}                        ::
-      {$unto p/cuft}                                    ::
+  $%  {$onto p/(each suss:^gall tang)}                  ::
+      {$unto p/cuft:^gall}                              ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
@@ -113,7 +109,7 @@
         [(flop moz) all(dug (~(put by dug.all) hen +<+))]
       ::
       ++  call                                          ::  receive input
-        |=  kyz/kiss
+        |=  kyz/task:able
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           $flow  +>
@@ -125,10 +121,9 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
-          $tick  =+  ^=  ges  ^-  gens
-                     ^-  gens
+          $tick  =+  ^=  ges  ^-  gens:^ames
                      :-  %en
-                     =+  can=(clan p.kyz)
+                     =+  can=(clan:title:jael p.kyz)
                      ?-  can
                        $czar  [%czar ~]
                        $duke  [%duke %anon ~]
@@ -137,7 +132,7 @@
                        $pawn  [%pawn ~]
                      ==
                  =+  yen=(scot %p (shax :(mix %ticket eny now)))
-                 =+  ^=  beg  ^-  {his/@p tic/@p yen/@t ges/gens}
+                 =+  ^=  beg  ^-  {his/@p tic/@p yen/@t ges/gens:^ames}
                      [p.kyz q.kyz yen ges]
                  =+  cmd=[%hood %poke `cage`[%helm-begin !>(beg)]]
                  %=    +>.$
@@ -159,12 +154,12 @@
         $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
       ::
       ++  dump                                          ::  pass down to hey
-        |=  git/gift
+        |=  git/gift:able
         ?>  ?=(^ hey.all)
         +>(moz [[u.hey.all %give git] moz])
       ::
       ++  done                                          ::  return gift
-        |=  git/gift
+        |=  git/gift:able
         +>(moz :_(moz [hen %give git])) 
       ::
       ++  from                                          ::  receive belt
@@ -205,12 +200,12 @@
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
         =+  myt=(flop (need tem))
-        =+  can=(clan our)
+        =+  can=(clan:title:jael our)
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
-                (sync %base (sein our) %kids)
+                (sync %base (sein:title:jael our) %kids)
         =.  +>  ?:  ?=(?($czar $pawn) can)
                   (sync %home our %base)
                 (init-sync %home our %base)
@@ -368,7 +363,7 @@
       --
     ::
     ++  ax                                              ::  make ++as
-      |=  {hen/duct kyz/kiss}                           ::
+      |=  {hen/duct kyz/task:able}                           ::
       ?~  ore.all  ~
       =+  nux=(~(get by dug.all) hen)
       ?^  nux  
@@ -388,18 +383,18 @@
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
   |=  $:  hen/duct
-          hic/(hypo (hobo kiss))
+          hic/(hypo (hobo task:able))
       ==
   ^+  [p=*(list move) q=..^$]
   =>  %=    .                                           ::  XX temporary
           q.hic
-        ^-  kiss
+        ^-  task:able
         ?:  ?=($soft -.q.hic)
           ::  ~&  [%dill-call-soft (@tas `*`-.p.q.hic)]
-          ((hard kiss) p.q.hic)
-        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+          ((hard task:able) p.q.hic)
+        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
         ~&  [%dill-call-flub (@tas `*`-.q.hic)]
-        ((hard kiss) q.hic)
+        ((hard task:able) q.hic)
       ==
   ?:  ?=($boot -.q.hic)
     :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)

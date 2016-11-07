@@ -11,7 +11,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
-=,  differ:^clay
+=,  ^clay
 =,  differ:clay
 =,  lines:clay
 =>  |%
@@ -110,9 +110,8 @@
       muc/(map path cage)                               ::  store mutations
       muh/(map path lobe)                               ::  store hashes
       mut/(unit (list (trel path lobe cage)))           ::  mutations
-      mim/(map path mime)                               ::  mime cache
+      mim/(map path mime:^eyre)                         ::  mime cache
   ==                                                    ::
-++  gift  gift-clay                                     ::  out result <-$
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
 ::
@@ -314,7 +313,7 @@
 ++  plop  blob                                          ::  unvalidated blob
 --  =>
 |%
-++  move  {p/duct q/(wind note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  gift                                                ::  out result <-$
       $%  {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
@@ -338,26 +337,13 @@
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
   ==  ==                                                ::
       $:  $f                                            ::
-  $%  {$exec p/@p q/(unit {beak silk})}                 ::
+  $%  {$exec p/@p q/(unit {beak silk:^ford})}                 ::
   ==  ==                                                ::
       $:  $t                                            ::
   $%  {$wait p/@da}                                     ::
       {$rest p/@da}                                     ::
   ==  ==  ==                                            ::
 ++  riot  (unit rant)                                   ::  response+complete
-++  task                                                ::  in request ->$
-      $%  {$boat $~}                                    ::  pier rebooted
-          {$drop p/@p q/@tas}                           ::  cancel pending merge
-          {$info p/@p q/@tas r/nori}                    ::  internal edit
-          {$init p/@p}                                  ::  report install
-          {$into p/@tas q/? r/mode}                     ::  external edit
-          {$merg p/@p q/@tas r/@p s/@tas t/case u/germ} ::  merge desks
-          {$mont p/@tas q/@p r/@tas s/path}             ::  mount to unix
-          {$ogre p/$@(@tas beam)}                       ::  delete mount point
-          {$warp p/sock q/riff}                         ::  file request
-          {$wegh $~}                                    ::  report memory
-          {$west p/sack q/path r/*}                     ::  network request
-      ==                                                ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
           $%  {$woot p/ship q/coop}                     ::
@@ -368,7 +354,7 @@
               {$writ p/riot}                            ::
           ==  ==                                        ::
               $:  $f                                    ::
-          $%  {$made p/@uvH q/gage}                     ::
+          $%  {$made p/@uvH q/gage:^ford}                     ::
           ==  ==                                        ::
               $:  $t                                    ::
           $%  {$wake $~}                                ::  timer activate
@@ -493,19 +479,21 @@
   ::  ++gage-to-success-cages?
   ::
   ++  gage-to-cages
-    |=  gag/gage  ^-  (list (pair cage cage))
+    |=  gag/gage:^ford
+    ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-cages-or-error gag))
   ::
   ::  Same as ++gage-to-cages-or-error except crashes on error.  Maybe same as
   ::  ++gage-to-cages?
   ::
   ++  gage-to-success-cages
-    |=  gag/gage
+    |=  gag/gage:^ford
     ^-  (list (pair cage cage))
     ?.  ?=($tabl -.gag)
       (ford-fail ?-(-.gag $| p.gag, $& [>%strange-gage p.p.gag<]~))
     %+  murn  p.gag
-    |=  {key/gage val/gage}  ^-  (unit {cage cage})
+    |=  {key/gage:^ford val/gage:^ford}  
+    ^-  (unit {cage cage})
     ?.  ?=($& -.key)
       (ford-fail ?-(-.key $| p.key, $tabl [>%strange-gage<]~))
     ?-  -.val
@@ -522,7 +510,7 @@
   ::  of cages.
   ::
   ++  gage-to-cages-or-error
-    |=  gag/gage
+    |=  gag/gage:^ford
     ^-  (each (list (pair cage cage)) tang)
     ?:  ?=($| -.gag)  (mule |.(`$~`(ford-fail p.gag)))
     ?.  ?=($tabl -.gag)
@@ -746,10 +734,10 @@
     %-  emit
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %exec  our  ~  [her syd %da now]  %tabl
-        ^-  (list (pair silk silk))
+        ^-  (list (pair silk:^ford silk:^ford))
         %+  turn  `(list path)`mus
         |=  a/path
-        ^-  (pair silk silk)
+        ^-  (pair silk:^ford silk:^ford)
         :-  [%$ %path !>(a)]
         :+  %cast  %mime
         =+  (need (need (read-x:ze let.dom a)))
@@ -956,7 +944,7 @@
       :~  :*  hen  %pass
               [%inserting (scot %p her) syd (scot %da wen) ~]
               %f  %exec  our  ~  [her syd %da wen]  %tabl
-              ^-  (list (pair silk silk))
+              ^-  (list (pair silk:^ford silk:^ford))
               %+  turn  ins
               |=  {pax/path mis/miso}
               ?>  ?=($ins -.mis)
@@ -967,7 +955,7 @@
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
               %f  %exec  our  ~  [her syd %da wen]  %tabl
-              ^-  (list (pair silk silk))
+              ^-  (list (pair silk:^ford silk:^ford))
               %+  turn  dif
               |=  {pax/path mis/miso}
               ?>  ?=($dif -.mis)
@@ -979,7 +967,7 @@
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
               %f  %exec  our  ~  [her syd %da wen]  %tabl
-              ^-  (list (pair silk silk))
+              ^-  (list (pair silk:^ford silk:^ford))
               %+  turn  mut
               |=  {pax/path mis/miso}
               ?>  ?=($mut -.mis)
@@ -1014,33 +1002,33 @@
       ::
           ~
       ::
-          %-  molt  ^-  (list (pair path mime))
+          %-  molt  ^-  (list (pair path mime:^eyre))
           ;:  weld
-            ^-  (list (pair path mime))
+            ^-  (list (pair path mime:^eyre))
             %+  murn  ins
             |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime))
+            ^-  (unit (pair path mime:^eyre))
             ?>  ?=($ins -.mis)
             ?.  ?=($mime p.p.mis)
               ~
-            `[pax ((hard mime) q.q.p.mis)]
+            `[pax ((hard mime:^eyre) q.q.p.mis)]
           ::
-            ^-  (list (pair path mime))
+            ^-  (list (pair path mime:^eyre))
             %+  murn  ink
             |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime))
+            ^-  (unit (pair path mime:^eyre))
             ?>  ?=($ins -.mis)
             ?>  ?=($mime p.p.mis)
-            `[pax ((hard mime) q.q.p.mis)]
+            `[pax ((hard mime:^eyre) q.q.p.mis)]
           ::
-            ^-  (list (pair path mime))
+            ^-  (list (pair path mime:^eyre))
             %+  murn  mut
             |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime))
+            ^-  (unit (pair path mime:^eyre))
             ?>  ?=($mut -.mis)
             ?.  ?=($mime p.p.mis)
               ~
-            `[pax ((hard mime) q.q.p.mis)]
+            `[pax ((hard mime:^eyre) q.q.p.mis)]
           ==
       ==
     ==
@@ -1054,7 +1042,7 @@
   ::  diffs and mutations), then we go ahead and run ++apply-edit.
   ::
   ++  take-inserting
-    |=  {wen/@da res/gage}
+    |=  {wen/@da res/gage:^ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-inserting-unexpected-made  +>.$
@@ -1082,7 +1070,7 @@
   ::  insertions and mutations), then we go ahead and run ++apply-edit.
   ::
   ++  take-diffing
-    |=  {wen/@da res/gage}
+    |=  {wen/@da res/gage:^ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-diffing-unexpected-made  +>.$
@@ -1113,7 +1101,7 @@
   ::  this is handled in ++take-mutating.
   ::
   ++  take-castify
-    |=  {wen/@da res/gage}
+    |=  {wen/@da res/gage:^ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-castifying-unexpected-made  +>.$
@@ -1134,7 +1122,7 @@
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
         %f  %exec  our  ~  [her syd %da wen]  %tabl
-        ^-  (list (pair silk silk))
+        ^-  (list (pair silk:^ford silk:^ford))
         %+  turn  cat
         |=  {pax/path cay/cage}
         :-  [%$ %path -:!>(*path) pax]
@@ -1152,7 +1140,7 @@
   ::  ++apply-edit.
   ::
   ++  take-mutating
-    |=  {wen/@da res/gage}
+    |=  {wen/@da res/gage:^ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-mutating-unexpected-made  +>.$
@@ -1231,10 +1219,10 @@
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %exec  our  :^  ~  [her syd %da now]  %tabl
-        ^-  (list (pair silk silk))
+        ^-  (list (pair silk:^ford silk:^ford))
         %+  turn  (~(tap by hat))
         |=  {a/path b/lobe}
-        ^-  (pair silk silk)
+        ^-  (pair silk:^ford silk:^ford)
         :-  [%$ %path-hash !>([a b])]
         (lobe-to-silk:ze a b)
     ==
@@ -1250,7 +1238,7 @@
   ::  mim in dok).  The result is handled in ++take-ergo.
   ::
   ++  take-patch
-    |=  res/gage
+    |=  res/gage:^ford
     ^+  +>
     ::  ~&  %taking-patch
     ?:  ?=($| -.res)
@@ -1317,10 +1305,10 @@
     %-  emit(dok ~)
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %exec  our  ~  [her syd %da now]  %tabl
-        ^-  (list (pair silk silk))
+        ^-  (list (pair silk:^ford silk:^ford))
         %+  turn  (~(tap in sum))
         |=  a/path
-        ^-  (pair silk silk)
+        ^-  (pair silk:^ford silk:^ford)
         :-  [%$ %path !>(a)]
         =+  b=(~(got by can) a)
         ?:  ?=($del -.b)
@@ -1341,12 +1329,12 @@
   ::  an %ergo card) to keep unix up-to-date.  Send this to unix.
   ::
   ++  take-ergo
-    |=  res/gage
+    |=  res/gage:^ford
     ^+  +>
     ?:  ?=($| -.res)
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" p.res)
     ?~  hez  ~|(%no-sync-duct !!)
-    =+  ^-  can/(map path (unit mime))
+    =+  ^-  can/(map path (unit mime:^eyre))
         %-  malt  ^-  mode
         %+  turn  (gage-to-cages res)
         |=  {pax/cage mim/cage}
@@ -1355,7 +1343,7 @@
         :-  ((hard path) q.q.pax)
         ?.  ?=($mime p.mim)
           ~
-        `((hard mime) q.q.mim)
+        `((hard mime:^eyre) q.q.mim)
     =+  mus=(must-ergo (turn (~(tap by can)) head))
     %-  emil
     %+  turn  (~(tap by mus))
@@ -1489,7 +1477,7 @@
   ::
   ++  vale-page
     |=  a/page
-    ^-  silk
+    ^-  silk:^ford
     ?.  ?=($hoon p.a)  [%vale a]
     ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%fail ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
@@ -1499,7 +1487,7 @@
   ::  This completes the receiving of %x foreign data.
   ::
   ++  take-foreign-x
-    |=  {car/care cas/case pax/path res/gage}
+    |=  {car/care cas/case pax/path res/gage:^ford}
     ^+  +>
     ?>  ?=(^ ref)
     ?.  ?=($& -.res)
@@ -1587,7 +1575,7 @@
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
         %f  %exec  our  ~  [her syd cas]  %tabl
-        ^-  (list (pair silk silk))
+        ^-  (list (pair silk:^ford silk:^ford))
         %+  turn  (~(tap in pop))
         |=  a/plop
         ?-  -.a
@@ -1601,7 +1589,7 @@
   ::  state.
   ::
   ++  take-foreign-plops
-    |=  {lem/(unit @da) res/gage}
+    |=  {lem/(unit @da) res/gage:^ford}
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
@@ -1636,7 +1624,7 @@
         ::
             $next  ~
             $many
-          %+  hunt
+          %+  hunt:chrono:behn
             ?.  ?=($da -.p.q.rov)  ~
             ?.((lth now p.p.q.rov) ~ [~ p.p.q.rov])
           ?.  ?=($da -.q.q.rov)  ~
@@ -1799,13 +1787,13 @@
     ::
     ++  lobe-to-silk
       |=  {pax/path lob/lobe}
-      ^-  silk
+      ^-  silk:^ford
       =+  ^-  hat/(map path lobe)
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
       =+  lol=`(unit lobe)`?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
-      |-  ^-  silk
+      |-  ^-  silk:^ford
       ?:  =([~ lob] lol)
         =+  (need (need (read-x let.dom pax)))
         ?>  ?=($& -<)
@@ -2441,7 +2429,7 @@
       ::  we're in, and call the appropriate function for that stage.
       ::
       ++  route
-        |=  {sat/term res/(each riot gage)}
+        |=  {sat/term res/(each riot gage:^ford)}
         ^+  +>.$
         ?.  =(sat wat.dat)
           ~|  :*  %hold-your-horses-merge-out-of-order
@@ -2729,10 +2717,10 @@
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
             %f  %exec  p.bob  ~  [p.oth q.oth r.oth]  %tabl
-            ^-  (list (pair silk silk))
+            ^-  (list (pair silk:^ford silk:^ford))
             %+  murn  (~(tap by q.bas.dat))
             |=  {pax/path lob/lobe}
-            ^-  (unit (pair silk silk))
+            ^-  (unit (pair silk:^ford silk:^ford))
             =+  a=(~(get by q.yak) pax)
             ?~  a
               ~
@@ -2758,7 +2746,7 @@
       ::  call ++diff-bob.
       ::  
       ++  diffed-ali
-        |=  res/gage
+        |=  res/gage:^ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -2806,7 +2794,7 @@
       ::  call ++merge.
       ::
       ++  diffed-bob
-        |=  res/gage
+        |=  res/gage:^ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -2857,10 +2845,10 @@
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
               %f  %exec  p.bob  ~  [p.bob q.bob da+now]  %tabl
-              ^-  (list (pair silk silk))
+              ^-  (list (pair silk:^ford silk:^ford))
               %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
               |=  {pax/path *}
-              ^-  (pair silk silk)
+              ^-  (pair silk:^ford silk:^ford)
               =+  cal=(~(got by can.dal.dat) pax)
               =+  cob=(~(got by can.dob.dat) pax)
               =+  ^=  her
@@ -2874,7 +2862,7 @@
       ::  Put merged changes in bof.dat and call ++build.
       ::
       ++  merged
-        |=  res/gage
+        |=  res/gage:^ford
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %merge-bad-made leaf+"merging failed" p.tay)
@@ -2897,10 +2885,10 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
             %f  %exec  p.bob  ~  [p.bob q.bob da+now]  %tabl
-            ^-  (list (pair silk silk))
+            ^-  (list (pair silk:^ford silk:^ford))
             %+  murn  (~(tap by bof.dat))
             |=  {pax/path cay/(unit cage)}
-            ^-  (unit (pair silk silk))
+            ^-  (unit (pair silk:^ford silk:^ford))
             ?~  cay
               ~
             :-  ~
@@ -2922,7 +2910,7 @@
       ::  Sum all the changes into a new commit (new.dat), and checkout.
       ::
       ++  built
-        |=  res/gage
+        |=  res/gage:^ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3044,10 +3032,10 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
             %f  %exec  p.bob  ~  val  %tabl
-            ^-  (list (pair silk silk))
+            ^-  (list (pair silk:^ford silk:^ford))
             %+  murn  (~(tap by q.new.dat))
             |=  {pax/path lob/lobe}
-            ^-  (unit (pair silk silk))
+            ^-  (unit (pair silk:^ford silk:^ford))
             ?:  (~(has by bop.dat) pax)
               ~
             `[[%$ %path !>(pax)] (merge-lobe-to-silk:he pax lob)]
@@ -3057,7 +3045,7 @@
       ::  some of the changes, call ++ergo.
       ::
       ++  checked-out
-        |=  res/gage
+        |=  res/gage:^ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3101,10 +3089,10 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
             %f  %exec  p.bob  ~  val  %tabl
-            ^-  (list (pair silk silk))
+            ^-  (list (pair silk:^ford silk:^ford))
             %+  turn  (~(tap in sum))
             |=  a/path
-            ^-  (pair silk silk)
+            ^-  (pair silk:^ford silk:^ford)
             :-  [%$ %path !>(a)]
             =+  b=(~(got by erg.dat) a)
             ?.  b
@@ -3116,7 +3104,7 @@
       ::  Tell unix about the changes made by the merge.
       ::
       ++  ergoed
-        |=  res/gage
+        |=  res/gage:^ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3128,10 +3116,10 @@
             ?.  ?=($path p.pax)
               [%ergo >[%expected-path got=p.pax]< ~]
             =*  mim  q.i.p.tay
-            =+  mit=?.(?=($mime p.mim) ~ `((hard mime) q.q.mim))
+            =+  mit=?.(?=($mime p.mim) ~ `((hard mime:^eyre) q.q.mim))
             $(p.tay t.p.tay, nac :_(nac [((hard path) q.q.pax) mit]))
         ?:  ?=({@ *} tan)  (error:he tan)
-        =+  `can/(map path (unit mime))`(malt tan)
+        =+  `can/(map path (unit mime:^eyre))`(malt tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
         ?:  ?=($| -.gon.dat)
@@ -3176,7 +3164,7 @@
         ::
         ++  merge-lobe-to-silk
           |=  {pax/path lob/lobe}
-          ^-  silk
+          ^-  silk:^ford
           =+  hat=q.ali.dat
           =+  hot=q.bob.dat
           =+  ^=  lal
@@ -3184,7 +3172,7 @@
               |=  had/dome
               (~(get by q:(tako-to-yaki (~(got by hit.had) let.had))) pax)
           =+  lol=(~(get by hot) pax)
-          |-  ^-  silk
+          |-  ^-  silk:^ford
           ?:  =([~ lob] lol)
             =+  (need (need (read-x let.dom pax)))
             ?>  ?=($& -<)
@@ -3258,20 +3246,20 @@
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen/duct
-          hic/(hypo (hobo task))
+          hic/(hypo (hobo task:able))
       ==
   =>  %=    .                                         ::  XX temporary
           q.hic
-        ^-  task
+        ^-  task:able
         ?:  ?=($soft -.q.hic)
           =+
-          ~|([%bad-soft (@t -.p.q.hic)] ((soft task) p.q.hic))
+          ~|([%bad-soft (@t -.p.q.hic)] ((soft task:able) p.q.hic))
           ?~  -
             ~&  [%bad-softing (@t -.p.q.hic)]  !!
           u.-
-        ?:  (~(nest ut -:!>(*task)) | p.hic)  q.hic
+        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
         ~&  [%clay-call-flub (@tas `*`-.q.hic)]
-        ((hard task) q.hic)
+        ((hard task:able) q.hic)
       ==
   ^+  [p=*(list move) q=..^$]
   ?-    -.q.hic
@@ -3299,7 +3287,7 @@
           ?<  (~(has by fat.ruf) p.q.hic)
           (~(put by fat.ruf) p.q.hic [-(hun hen)]:[*room .])
         ==
-    =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
+    =+  [bos=(sein:title:jael p.q.hic) can=(clan:title:jael p.q.hic)]
     %-  zing  ^-  (list (list move))
     :~  ?:  =(bos p.q.hic)  ~
         [hen %pass /init-merge %c %merg p.q.hic %base bos %kids da+now %init]~
@@ -3697,7 +3685,7 @@
     `[(weld pax pat) %del ~]
   ^-  (list (pair path miso))
   %+  murn  mod
-  |=  {pat/path mim/(unit mime)}
+  |=  {pat/path mim/(unit mime:^eyre)}
   ^-  (unit (pair path miso))
   =+  paf=(weld pax pat)
   ?~  mim
@@ -3708,6 +3696,6 @@
     `[paf %del ~]
   =+  (~(get by hat) paf)
   ?~  -
-    `[paf %ins %mime -:!>(*mime) u.mim]
-  `[paf %mut %mime -:!>(*mime) u.mim]
+    `[paf %ins %mime -:!>(*mime:^eyre) u.mim]
+  `[paf %mut %mime -:!>(*mime:^eyre) u.mim]
 --

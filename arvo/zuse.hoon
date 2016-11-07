@@ -37,8 +37,6 @@
   ::                                                    ::::
 ++  ames  ^?
   |%
-  ::
-  ::                                                    ::  ++able:^ames
   ++  able  ^?                                          ::  arvo moves
     |%
     ++  card                                            ::  out cards
@@ -62,6 +60,23 @@
           {$e card}                                     ::  to %eyre
           {$g card}                                     ::  to %gall
       ==                                                ::  
+    ++  task                                            ::  in request ->$
+      $%  ::  {$born p/@p q/@pG r/?}                    ::  ticket birth
+          {$barn $~}                                    ::  new unix process
+          {$crud p/@tas q/(list tank)}                  ::  error with trace
+          {$cash p/@p q/buck}                           ::  civil license
+          ::  {$funk p/@p q/@p r/@}                     ::  symtix from/to/key
+          {$hear p/lane q/@}                            ::  receive packet
+          {$hole p/lane q/@}                            ::  packet failed
+          {$junk p/@}                                   ::  entropy
+          {$kick p/@da}                                 ::  wake up
+          {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
+          {$sith p/@p q/@uw r/?}                        ::  imperial generator
+          {$wake $~}                                    ::  timer activate
+          {$want p/sock q/path r/*}                     ::  send message
+          {$wegh $~}                                    ::  report memory
+          {$wont p/sock q/path r/*}                     ::  e2e send message
+      ==                                                ::
     --  ::  able                                        ::
   ++  acru                                              ::  asym cryptosuite
     $_  ^?  |%                                          ::  opaque object
@@ -87,6 +102,7 @@
            ++  com  |~(a/@ ^?(..nu))                    ::  from naked pass
        --                                               ::
     --                                                  ::
+  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  bait  {p/skin q/@ud r/dove}                       ::  fmt nrecvd spec
   ++  boon                                              ::  fort output
     $%  {$beer p/ship}                                  ::  gained ownership
@@ -112,6 +128,7 @@
         qim/(map hand code)                             ::  inbound
     ==                                                  ::
   ++  code  @uvI                                        ::  symmetric key
+  ++  coop  (unit ares)                                 ::  e2e ack
   ++  deyd  {p/@ q/step r/?}                            ::  sig stage fake?
   ++  dore                                              ::  foreign contact
     $:  wod/road                                        ::  connection to
@@ -151,6 +168,7 @@
         {$carp p/@ q/@ud r/@ud s/flap t/@}              ::  skin+inx+cnt+hash
         {$fore p/ship q/(unit lane) r/@}                ::  forwarded packet
     ==                                                  ::
+  ++  name  {p/@t q/(unit @t) r/(unit @t) s/@t}         ::  first mid+nick last
   ++  putt                                              ::  outgoing message
     $:  ski/snow                                        ::  sequence acked+sent
         wyv/(list rock)                                 ::  packet list XX gear
@@ -198,6 +216,7 @@
   ++  skin  ?($none $open $fast $full)                  ::  encoding stem
   ++  snow  {p/@ud q/@ud r/(set @ud)}                   ::  window exceptions
   ++  soap  {p/{p/life q/life} q/path r/@ud}            ::  statement id
+  ++  sack  {p/ship q/ship}                             ::  incoming [our him]
   ++  sock  {p/ship q/ship}                             ::  outgoing [from to]
   ++  soup  {p/path q/@ud}                              ::  new statement id
   ++  soul                                              ::  packet in travel
@@ -214,23 +233,6 @@
         law/wyll                                        ::  server wyll
         seh/(map hand {p/ship q/@da})                   ::  key cache
         hoc/(map ship dore)                             ::  neighborhood
-    ==                                                  ::
-  ++  task                                              ::  in request ->$
-    $%  ::  {$born p/@p q/@pG r/?}                      ::  ticket birth
-        {$barn $~}                                      ::  new unix process
-        {$crud p/@tas q/(list tank)}                    ::  error with trace
-        {$cash p/@p q/buck}                             ::  civil license
-        ::  {$funk p/@p q/@p r/@}                       ::  symtix from/to/key
-        {$hear p/lane q/@}                              ::  receive packet
-        {$hole p/lane q/@}                              ::  packet failed
-        {$junk p/@}                                     ::  entropy
-        {$kick p/@da}                                   ::  wake up
-        {$make p/(unit @t) q/@ud r/@ s/?}               ::  wild license
-        {$sith p/@p q/@uw r/?}                          ::  imperial generator
-        {$wake $~}                                      ::  timer activate
-        {$want p/sock q/path r/*}                       ::  send message
-        {$wegh $~}                                      ::  report memory
-        {$wont p/sock q/path r/*}                       ::  e2e send message
     ==                                                  ::
   ++  tick  @ud                                         ::  process id
   ++  town                                              ::  all security state
@@ -254,30 +256,62 @@
   ::                                                    ::::
 ++  behn  ^?
   |%
-  ++  gift                                              ::  out result <-$
-    $%  {$mass p/mass}                                  ::  memory usage
-        {$wake $~}                                      ::  wakey-wakey
-    ==                                                  ::
-  ++  task                                              ::  in request ->$
-    $%  {$rest p/@da}                                   ::  cancel alarm
-        {$wait p/@da}                                   ::  set alarm
-        {$wake $~}                                      ::  timer activate
-        {$wegh $~}                                      ::  report memory
-    ==                                                  ::
-  --
+  ++  able  ^?                                          ::  arvo moves
+    |%
+    ++  gift                                            ::  out result <-$
+      $%  {$mass p/mass}                                ::  memory usage
+          {$wake $~}                                    ::  wakeup
+      ==                                                ::
+    ++  task                                            ::  in request ->$
+      $%  {$rest p/@da}                                 ::  cancel alarm
+          {$wait p/@da}                                 ::  set alarm
+          {$wake $~}                                    ::  timer activate
+          {$wegh $~}                                    ::  report memory
+      ==                                                ::
+    --  ::  able
+  --  ::  behn
 ::                                                      ::::
 ::::                    # ^clay                         ::  storage
   ::                                                    ::::
 ++  clay  ^?
   |%
+  ::                                                  
+  ++  able  ^?                                          ::  arvo moves
+    |%
+    ++  gift                                            ::  out result <-$
+      $%  {$ergo p/@tas q/mode}                         ::  version update
+          {$hill p/(list @tas)}                         ::  mount points
+          {$mack p/(unit tang)}                         ::  ack
+          {$mass p/mass}                                ::  memory usage
+          {$mere p/(each (set path) (pair term tang))}  ::  merge result
+          {$note p/@tD q/tank}                          ::  debug message
+          {$ogre p/@tas}                                ::  delete mount point
+          {$writ p/riot}                                ::  response
+      ==                                                ::
+    ++  task                                            ::  in request ->$
+      $%  {$boat $~}                                    ::  pier rebooted
+          {$drop p/@p q/@tas}                           ::  cancel pending merge
+          {$info p/@p q/@tas r/nori}                    ::  internal edit
+          {$init p/@p}                                  ::  report install
+          {$into p/@tas q/? r/mode}                     ::  external edit
+          {$merg p/@p q/@tas r/@p s/@tas t/case u/germ} ::  merge desks
+          {$mont p/@tas q/@p r/@tas s/path}             ::  mount to unix
+          {$ogre p/$@(@tas beam)}                       ::  delete mount point
+          {$warp p/sock q/riff}                         ::  file request
+          {$wegh $~}                                    ::  report memory
+          {$went p/sack q/path r/@ud s/coop}            ::  response confirm 
+          {$west p/sack q/path r/@ud s/*}               ::  network request
+      ==                                                ::
+    --  ::  able
   ++  aeon  @ud                                         ::  version number
   ++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})  ::  mergepts
   ++  ankh                                              ::  fs node (new)
     $:  fil/(unit {p/lobe q/cage})                      ::  file
         dir/(map @ta ankh)                              ::  folders
     ==                                                  ::
+  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  beam  {{p/ship q/desk r/case} s/path}             ::  global name
-  ++  beak  {p/ship q/desk r/case}                      ::  garnish with beak
+  ++  beak  {p/ship q/desk r/case}                      ::  path prefix
   ++  blob                                              ::  fs blob
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
@@ -288,6 +322,7 @@
         {$tas p/@tas}                                   ::  label
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
+  ++  coop  (unit ares)                                 ::  e2e ack
   ++  dome                                              ::  project state
     $:  ank/ankh                                        ::  state
         let/@ud                                         ::  top id
@@ -302,16 +337,6 @@
         $meet                                           ::  orthogonal files
         $mate                                           ::  orthogonal changes
         $meld                                           ::  force merge
-    ==                                                  ::
-  ++  gift                                              ::  out result <-$
-    $%  {$ergo p/@tas q/mode}                           ::  version update
-        {$hill p/(list @tas)}                           ::  mount points
-        {$mack p/(unit tang)}                           ::  ack
-        {$mass p/mass}                                  ::  memory usage
-        {$mere p/(each (set path) (pair term tang))}    ::  merge result
-        {$note p/@tD q/tank}                            ::  debug message
-        {$ogre p/@tas}                                  ::  delete mount point
-        {$writ p/riot}                                  ::  response
     ==                                                  ::
   ++  khan                                              ::
     $:  fil/(unit (unit cage))                          ::  see ++khan-to-soba
@@ -334,7 +359,7 @@
   ++  mizu  {p/@u q/(map @ud tako) r/rang}              ::  new state
   ++  moar  {p/@ud q/@ud}                               ::  normal change range
   ++  moat  {p/case q/case r/path}                      ::  change range
-  ++  mode  (list {path (unit mime)})                   ::
+  ++  mode  (list {path (unit mime:eyre)})              ::
   ++  mood  {p/care q/case r/path}                      ::  request in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta
@@ -360,6 +385,7 @@
         {$next p/mood}                                  ::  await next version
         {$many p/? q/moat}                              ::  track range
     ==                                                  ::
+  ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
   ++  riot  (unit rant)                                 ::  response+complete
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
   ++  saba  {p/ship q/@tas r/moar s/dome}               ::  patch+merge
@@ -370,31 +396,6 @@
   ++  suba  (list {p/path q/misu})                      ::  delta
   ++  tako  @                                           ::  yaki ref
   ++  toro  {p/@ta q/nori}                              ::  general change
-  ++  yaki                                              ::  commit
-    $:  p/(list tako)                                   ::  parents
-        q/(map path lobe)                               ::  namespace
-        r/tako                                          ::  self-reference
-        t/@da                                           ::  date
-    ==                                                  ::
-  ++  view  ?($u $v $w $x $y $z)                        ::  view mode
-  ++  waks  (map path woof)                             ::  list file states
-  ++  woof  $@  $know                                   ::  udon transform
-                {$chan (list {$@(@ud {p/@ud q/@ud})})}  ::
-  ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
-  ++  task                                                ::  in request ->$
-    $%  {$boat $~}                                      ::  pier rebooted
-        {$drop p/@p q/@tas}                             ::  cancel pending merge
-        {$info p/@p q/@tas r/nori}                      ::  internal edit
-        {$init p/@p}                                    ::  report install
-        {$into p/@tas q/? r/mode}                       ::  external edit
-        {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}  ::  merge desks
-        {$mont p/@tas q/@p r/@tas s/path}               ::  mount to unix
-        {$ogre p/$@(@tas beam)}                         ::  delete mount point
-        {$warp p/sock q/riff}                           ::  file request
-        {$wegh $~}                                      ::  report memory
-        {$went p/sack q/path r/@ud s/coop}              ::  response confirm 
-        {$west p/sack q/path r/@ud s/*}                 ::  network request
-    ==                                                  ::
   ++  udal                                              ::  atomic change (%b)
     $:  p/@ud                                           ::  blockwidth
         q/(list {p/@ud q/(unit {p/@ q/@})})             ::  indels
@@ -426,12 +427,57 @@
         {$2 p/axis q/udon}                              ::  mutate!
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
+  ++  view  ?($u $v $w $x $y $z)                        ::  view mode
+  ++  waks  (map path woof)                             ::  list file states
+  ++  woof  $@  $know                                   ::  udon transform
+                {$chan (list {$@(@ud {p/@ud q/@ud})})}  ::
+  ++  yaki                                              ::  commit
+    $:  p/(list tako)                                   ::  parents
+        q/(map path lobe)                               ::  namespace
+        r/tako                                          ::  self-reference
+        t/@da                                           ::  date
+    ==                                                  ::
   --  ::  clay
 ::                                                      ::::
 ::::                    ++ ^dill                        ::  console
   ::                                                    ::::
 ++  dill  ^?
   |%
+  ::                                    
+  ++  able  ^?                                          ::  arvo moves
+    |%
+    ++  gift                                            ::  out result <-$
+      $%  {$bbye $~}                                    ::  reset prompt
+          {$blit p/(list blit)}                         ::  terminal output
+          {$burl p/@t}                                  ::  activate url
+          {$init p/@p}                                  ::  set owner
+          {$logo $~}                                    ::  logout
+          {$mass p/mass}                                ::  memory usage
+          {$veer p/@ta q/path r/@t}                     ::  install vane
+          {$vega p/path}                                ::  reboot by path
+          {$verb $~}                                    ::  verbose mode
+      ==                                                ::
+    ++  task                                            ::  in request ->$
+      $%  {$belt p/belt}                                ::  terminal input
+          {$blew p/blew}                                ::  terminal config
+          {$boot p/*}                                   ::  weird %dill boot
+          {$crud p/@tas q/(list tank)}                  ::  error with trace
+          {$flog p/flog}                                ::  wrapped error
+          {$flow p/@tas q/(list gill:gall)}                  ::  terminal config
+          {$hail $~}                                    ::  terminal refresh
+          {$heft $~}                                    ::  memory report
+          {$hook $~}                                    ::  this term hung up
+          {$harm $~}                                    ::  all terms hung up
+          {$init p/ship}                                ::  after gall ready
+          {$tick p/@p q/@p}                             ::  initial ticket
+          {$noop $~}                                    ::  no operation
+          {$talk p/tank}                                ::
+          {$text p/tape}                                ::
+          {$veer p/@ta q/path r/@t}                     ::  install vane
+          {$vega p/path}                                ::  reboot by path
+          {$verb $~}                                    ::  verbose mode
+      ==                                                ::
+    --  ::  able
   ++  blew  {p/@ud q/@ud}                               ::  columns rows
   ++  belt                                              ::  old belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
@@ -463,7 +509,7 @@
         {$ret $~}                                       ::  return
         {$rez p/@ud q/@ud}                              ::  resize, cols, rows
         {$txt p/(list @c)}                              ::  utf32 text
-        {$yow p/gill}                                   ::  connect to app
+        {$yow p/gill:gall}                              ::  connect to app
     ==                                                  ::
   ++  dill-blit                                         ::  new blit
     $%  {$bel $~}                                       ::  make a noise
@@ -485,44 +531,42 @@
         {$vega p/path}                                  ::  reboot by path
         {$verb $~}                                      ::  verbose mode
     ==                                                  ::
-  ++  gift                                              ::  out result <-$
-    $%  {$bbye $~}                                      ::  reset prompt
-        {$blit p/(list blit)}                           ::  terminal output
-        {$burl p/@t}                                    ::  activate url
-        {$init p/@p}                                    ::  set owner
-        {$logo $~}                                      ::  logout
-        {$mass p/mass}                                  ::  memory usage
-        {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$vega p/path}                                  ::  reboot by path
-        {$verb $~}                                      ::  verbose mode
-    ==                                                  ::
-  ++  task                                              ::  in request ->$
-    $%  {$belt p/belt}                                  ::  terminal input
-        {$blew p/blew}                                  ::  terminal config
-        {$boot p/*}                                     ::  weird %dill boot
-        {$crud p/@tas q/(list tank)}                    ::  error with trace
-        {$flog p/flog}                                  ::  wrapped error
-        {$flow p/@tas q/(list gill)}                    ::  terminal config
-        {$hail $~}                                      ::  terminal refresh
-        {$heft $~}                                      ::  memory report
-        {$hook $~}                                      ::  this term hung up
-        {$harm $~}                                      ::  all terms hung up
-        {$init p/ship}                                  ::  after gall ready
-        {$tick p/@p q/@p}                               ::  initial ticket
-        {$noop $~}                                      ::  no operation
-        {$talk p/tank}                                  ::
-        {$text p/tape}                                  ::
-        {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$vega p/path}                                  ::  reboot by path
-        {$verb $~}                                      ::  verbose mode
-    ==                                                  ::
   --  ::  dill
 ::                                                      ::::
 ::::                    # ^eyre                         ::  web
   ::                                                    ::::
 ++  eyre  ^?
   |%
+  ++  able  ^?                                          ::  arvo moves
+    |%
+    ++  gift                                            ::  out result <-$
+      $%  {$mass p/mass}                                ::  memory usage
+          {$mack p/(unit tang)}                         ::  message ack
+          {$sigh p/cage}                                ::  marked http response
+          {$thou p/httr}                                ::  raw http response
+          {$thus p/@ud q/(unit hiss)}                   ::  http request+cancel
+          {$veer p/@ta q/path r/@t}                     ::  drop-through
+          {$vega p/path}                                ::  drop-through
+      ==                                                ::
+    ++  task                                            ::  in request ->$
+      $%  {$born $~}                                    ::  new unix process
+          {$crud p/@tas q/(list tank)}                  ::  XX rethink
+          {$hiss p/(unit iden) q/mark r/cage}           ::  outbound user req
+          {$init p/@p}                                  ::  report install
+          {$serv p/$@(desk beam)}                       ::  set serving root
+          {$them p/(unit hiss)}                         ::  outbound request
+          {$they p/@ud q/httr}                          ::  inbound response
+          {$chis p/? q/clip r/httq}                     ::  IPC inbound request
+          {$this p/? q/clip r/httq}                     ::  inbound request
+          {$thud $~}                                    ::  inbound cancel
+          {$wegh $~}                                    ::  report memory
+          {$went p/sack q/path r/@ud s/coop}            ::  response confirm 
+          {$west p/sack q/{path @ud *}}                 ::  network request
+      ==                                                ::
+    --  ::  able
+  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  clip  (each @if @is)                              ::  client IP
+  ++  coop  (unit ares)                                 ::  e2e ack
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
         aut/(jug @tas @t)                               ::  client identities
@@ -566,6 +610,7 @@
         q/clip                                          ::  source IP
         r/httq                                          ::
     ==                                                  ::
+  ++  iden  knot                                        ::  username
   ++  json                                              ::  normal json value
     $@  $~                                              ::  null
     $%  {$a p/(list json)}                              ::  array
@@ -607,37 +652,33 @@
         {$| p/pork q/quay}                              ::  relative
     ==                                                  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
-  ++  task                                              ::  in request ->$
-    $%  {$born $~}                                      ::  new unix process
-        {$crud p/@tas q/(list tank)}                    ::  XX rethink
-        {$hiss p/(unit iden) q/mark r/cage}             ::  outbound user req
-        {$init p/@p}                                    ::  report install
-        {$serv p/$@(desk beam)}                         ::  set serving root
-        {$them p/(unit hiss)}                           ::  outbound request
-        {$they p/@ud q/httr}                            ::  inbound response
-        {$chis p/? q/clip r/httq}                       ::  IPC inbound request
-        {$this p/? q/clip r/httq}                       ::  inbound request
-        {$thud $~}                                      ::  inbound cancel
-        {$wegh $~}                                      ::  report memory
-        {$went p/sack q/path r/@ud s/coop}              ::  response confirm 
-        {$west p/sack q/{path @ud *}}                   ::  network request
-    ==                                                  ::
-  ++  gift                                              ::  out result <-$
-    $%  {$mass p/mass}                                  ::  memory usage
-        {$mack p/(unit tang)}                           ::  message ack
-        {$sigh p/cage}                                  ::  marked http response
-        {$thou p/httr}                                  ::  raw http response
-        {$thus p/@ud q/(unit hiss)}                     ::  http request+cancel
-        {$veer p/@ta q/path r/@t}                       ::  drop-through
-        {$vega p/path}                                  ::  drop-through
-    ==                                                  ::
+  ++  sack  {p/ship q/ship}                             ::  incoming [our him]
   --  ::  eyre
 ::                                                      ::::
 ::::                    # ^ford                         ::  build
   ::                                                    ::::
 ++  ford  ^?
   |%
+  ++  able  ^?                                          ::  arvo moves
+    |%
+    ++  gift                                            ::  out result <-$
+      $%  {$made p/@uvH q/gage}                         ::  computed result
+          {$mass p/mass}                                ::  memory usage
+          {$news p/@uvH}                                ::  fresh depends
+      ==                                                ::
+    ++  task                                            ::  in request ->$
+      $%  {$exec p/@p q/(unit bilk)}                    ::  make / kill
+          {$wasp p/@p q/{@uvH ?}}                       ::  depends ask / kill
+          {$wegh $~}                                    ::  report memory
+          {$wipe p/@p $~}                               ::  clear cache
+      ==                                                ::
+    --  ::  able
   ++  bilk  (pair beak silk)                            ::  sourced request
+  ++  gage                                              ::  recursive cage+tang
+    $%  {$& p/cage}                                     ::  success
+        {$| p/tang}                                     ::  error
+        {$tabl p/(list (pair gage gage))}               ::  table of results
+    ==                                                  ::
   ++  hood                                              ::  assembly plan
     $:  zus/@ud                                         ::  zuse kelvin
         sur/(list hoof)                                 ::  structures
@@ -695,29 +736,32 @@
         {$vale p/mark q/*}                              ::  validate
         {$volt p/(cask *)}                              ::  unsafe add type
     ==                                                  ::
-  ++  gage                                              ::  recursive cage+tang
-    $%  {$& p/cage}                                     ::  success
-        {$| p/tang}                                     ::  error
-        {$tabl p/(list (pair gage gage))}               ::  table of results
-    ==                                                  ::
-  ++  gift                                              ::  out result <-$
-    $%  {$made p/@uvH q/gage}                           ::  computed result
-        {$mass p/mass}                                  ::  memory usage
-        {$news p/@uvH}                                  ::  fresh depends
-    ==                                                  ::
-  ++  task                                              ::  in request ->$
-    $%  {$exec p/@p q/(unit bilk)}                      ::  make / kill
-        {$wasp p/@p q/{@uvH ?}}                         ::  depends ask / kill
-        {$wegh $~}                                      ::  report memory
-        {$wipe p/@p $~}                                 ::  clear cache
-    ==                                                  ::
+  ++  spur  path                                        ::  ship desk case spur
   --  ::  ford
 ::                                                      ::::
 ::::                    # ^gall                         ::  application
   ::                                                    ::::
 ++  gall  ^?
   |%
-  ++  gill  (pair ship term)                            ::  general contact
+  ++  able  ^?
+    |%
+    ++  gift                                            ::  outgoing result
+      $%  {$mass p/mass}                                ::  memory usage
+          {$onto p/(each suss tang)}                    ::  about agent
+          {$rend p/path q/*}                            ::  network request
+          {$unto p/cuft}                                ::
+          {$mack p/(unit tang)}                         ::  message ack
+      ==                                                ::
+    ++  task                                            ::  incoming request
+      $%  {$conf p/dock q/culm}                         ::  configure app
+          {$init p/ship}                                ::  set owner
+          {$deal p/sock q/cush}                         ::  full transmission
+          {$went p/sack q/path r/@ud s/coop:pki:jael}   ::  response confirm 
+          {$west p/sack q/path r/@ud s/*}               ::  network request
+          {$wegh $~}                                    ::  report memory
+      ==                                                ::
+    --  ::  able
+  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  bowl                                              ::  standard app state
           $:  $:  our/ship                              ::  host
                   src/ship                              ::  guest
@@ -734,6 +778,8 @@
           ==  ==                                        ::
   ++  bitt  (map bone (pair ship path))                 ::  incoming subs
   ++  boat  (map (pair bone wire) (trel bean ship path))::  outgoing subs
+  ++  coop  (unit ares)                                 ::  e2e ack
+  ++  gill  (pair ship term)                            ::  general contact
   ++  scar                                              ::  opaque duct
     $:  p/@ud                                           ::  bone sequence
         q/(map duct bone)                               ::  by duct
@@ -768,32 +814,118 @@
   ++  sack  {p/ship q/ship}                             ::  incoming [our his}
   ++  sock  {p/ship q/ship}                             ::  outgoing [from to]
   ++  suss  (trel dude @tas @da)                        ::  config report
-  ::::                                                  ::
-  ++  task                                              ::  incoming request
-    $%  {$conf p/dock q/culm}                           ::  configure app
-        {$init p/ship}                                  ::  set owner
-        {$deal p/sock q/cush}                           ::  full transmission
-        {$went p/sack q/path r/@ud s/coop:pki:jael}     ::  response confirm 
-        {$west p/sack q/path r/@ud s/*}                 ::  network request
-        {$wegh $~}                                      ::  report memory
-    ==                                                  ::
-  ++  gift                                              ::  outgoing result
-    $%  {$mass p/mass}                                  ::  memory usage
-        {$onto p/(each suss tang)}                      ::  about agent
-        {$rend p/path q/*}                              ::  network request
-        {$unto p/cuft}                                  ::
-        {$mack p/(unit tang)}                           ::  message ack
-    ==                                                  ::
-  --
+  --  ::  gall
 ::                                                      ::::
 ::::                    # ^jael                         ::  security
   ::                                                    ::::
 ++  jael  ^?
   |%
+  ++  able  ^?
+    =,  pki
+    =,  rights
+    |%
+    ::  %jael has two general kinds of task: changes
+    ::  and change subscriptions.
+    ::
+    ::  change tasks are designed to match high-level
+    ::  operations - for instance, we have %burn, %mint,
+    ::  and %move, not just a single delta operation.
+    ::  more of these operations will probably be added,
+    ::  and invariants enforced at transaction end.
+    ::
+    ::  subscriptions are also user-focused - for instance,
+    ::  %vein sends all the information needed to maintain
+    ::  the secure channel, both rights and certificates.
+    ::  the security-critical tasks (%veil, %vein, %vine)
+    ::  should probably be bound to a whitelisted duct set.
+    ::  (all secrets are redacted from %vest gifts.)
+    ::
+    ::  %jael only talks to %ames and %behn.  we send messages
+    ::  through %ames and use %behn timers.
+    ::
+    ++  action                                          ::  balance change
+      %+  pair  ship                                    ::  partner
+      %+  each  bump                                    ::  &/liability change
+      bump                                              ::  |/asset change
+    ::                                                  ::
+    ++  balance                                         ::  balance sheet
+      %+  pair                                          ::  
+        (map ship safe)                                 ::  liabilities
+      (map ship safe)                                   ::  assets
+    ::                                                  ::
+    ++  change                                          ::  urbit change
+      $%  $:  $fact                                     ::  certificate change
+              rex/ship                                  ::  owner
+              vie/(unit (unit ship))                    ::  made/heard from
+              lyf/life                                  ::  deed added/modified
+              gan/growth                                ::  info gained
+          ==                                            ::
+          $:  $rite                                     ::  rights change
+              rex/ship                                  ::  issuer
+              pal/ship                                  ::  issued to
+              del/bump                                  ::  change
+      ==  ==                                            ::
+    ::                                                  ::
+    ++  channel                                         ::  secure channel
+      $:  out/(unit (pair hand bill))                   ::  outbound key
+          inn/(map hand bill)                           ::  inbound keys
+          cur/(unit life)                               ::  their version
+          sax/(list ship)                               ::  their ancestry
+          pub/will                                      ::  their public keys
+       ==                                               ::
+    ++  pipe                                            ::  secure channel
+      $:  out/(unit (pair hand bill:rights))            ::  outbound key
+          inn/(map hand bill:rights)                    ::  inbound keys
+          cur/(unit life)                               ::  their version
+          sax/(list ship)                               ::  their ancestry
+          pub/will:pki                                  ::  their public keys
+      ==                                                ::
+    ++  gift                                            ::  out result <-$
+      $?  {$veil p/channel}                             ::  secure channel
+          {$vest p/tally}                               ::  balance update
+          {$vein p/life q/(map life ring)}              ::  private keys
+          {$vine p/(list change)}                       ::  all raw changes
+      ==                                                ::
+    ++  growth                                          ::  unit of learning
+      $%  {$sign p/mind q/@}                            ::  add/update signature
+          {$step p/cert}                                ::  add whole deed
+      ==                                                ::
+    ++  note                                            ::  out request $->
+      $%  {$b $wait p/@da}                              ::  wait until
+          {$x $mess p/ship q/path r/*}                  ::  send message
+      ==                                                ::
+    ++  remote                                          ::  remote notification
+      %+  each  safe                                    ::  &/addition
+      safe                                              ::  |/replacement
+    ::                                                  ::
+    ++  sign                                            ::  in result $<-
+      $%  {$b $wake $~}                                 ::  wakeup
+          {$x $rest p/coop}                             ::  message result
+      ==                                                ::
+    ++  tally                                           ::  balance update
+      %+  each  balance                                 ::  complete
+      action                                            ::  change
+    ::
+    ++  task                                            ::  in request ->$
+      $%  {$burn p/ship q/safe}                         ::  destroy rights
+          {$hail p/ship q/remote}                       ::  remote update
+          {$init p/@pG q/arms}                          ::  initialize urbit
+          {$meet p/(unit (unit ship)) q/farm}           ::  integrate pki from
+          {$mint p/ship q/safe}                         ::  create rights
+          {$move p/ship q/ship r/safe}                  ::  transfer from/to
+          {$next p/bull}                                ::  update private key
+          {$nuke $~}                                    ::  cancel tracker from
+          {$veil p/ship}                                ::  view secret channel
+          {$vein $~}                                    ::  view signing keys
+          {$vest $~}                                    ::  view public balance
+          {$vine $~}                                    ::  view secret history
+          {$west p/ship q/path r/*}                     ::  remote request
+      ==                                                ::
+    --  ::  moves
   ::                                                    ::
   ::::                  ## pki:^jael                    ::  certificates
     ::                                                  ::::
-  ++  pki  ^?
+  ++  pki  ^?                                           ::
     |%
     ::  the urbit meta-certificate (++will) is a sequence
     ::  of certificates (++cert).  each cert in a will
@@ -897,144 +1029,51 @@
       ==                                                ::
     ++  site  (list @ta)                                ::  [%com %yahoo %www ~]
     ++  safe  (tree rite)                               ::  rights set
-    --  ::rights
-  ::                                                    ::
-  ::::                  ## moves:^jael                  ::  i/o
-    ::                                                  ::::
-  ++  moves  ^?
-    =,  pki
-    =,  rights
-    |%
-    ::  %jael has two general kinds of task: changes
-    ::  and change subscriptions.
-    ::
-    ::  change tasks are designed to match high-level
-    ::  operations - for instance, we have %burn, %mint,
-    ::  and %move, not just a single delta operation.
-    ::  more of these operations will probably be added,
-    ::  and invariants enforced at transaction end.
-    ::
-    ::  subscriptions are also user-focused - for instance,
-    ::  %vein sends all the information needed to maintain
-    ::  the secure channel, both rights and certificates.
-    ::  the security-critical tasks (%veil, %vein, %vine)
-    ::  should probably be bound to a whitelisted duct set.
-    ::  (all secrets are redacted from %vest gifts.)
-    ::
-    ::  %jael only talks to %ames and %behn.  we send messages
-    ::  through %ames and use %behn timers.
-    ::
-    ++  action                                          ::  balance change
-      %+  pair  ship                                    ::  partner
-      %+  each  bump                                    ::  &/liability change
-      bump                                              ::  |/asset change
-    ::                                                  ::
-    ++  balance                                         ::  balance sheet
-      %+  pair                                          ::  
-        (map ship safe)                                 ::  liabilities
-      (map ship safe)                                   ::  assets
-    ::                                                  ::
-    ++  change                                          ::  urbit change
-      $%  $:  $fact                                     ::  certificate change
-              rex/ship                                  ::  owner
-              vie/(unit (unit ship))                    ::  made/heard from
-              lyf/life                                  ::  deed added/modified
-              gan/growth                                ::  info gained
-          ==                                            ::
-          $:  $rite                                     ::  rights change
-              rex/ship                                  ::  issuer
-              pal/ship                                  ::  issued to
-              del/bump                                  ::  change
-      ==  ==                                            ::
-    ::                                                  ::
-    ++  channel                                         ::  secure channel
-      $:  out/(unit (pair hand bill))                   ::  outbound key
-          inn/(map hand bill)                           ::  inbound keys
-          cur/(unit life)                               ::  their version
-          sax/(list ship)                               ::  their ancestry
-          pub/will                                      ::  their public keys
-       ==                                               ::
-    ++  pipe                                            ::  secure channel
-      $:  out/(unit (pair hand bill:rights:^jael))      ::  outbound key
-          inn/(map hand bill:rights:^jael)              ::  inbound keys
-          cur/(unit life)                               ::  their version
-          sax/(list ship)                               ::  their ancestry
-          pub/will:pki:^jael                            ::  their public keys
-      ==                                                ::
-    ++  gift                                            ::  out result <-$
-      $?  {$veil p/channel}                             ::  secure channel
-          {$vest p/tally}                               ::  balance update
-          {$vein p/life q/(map life ring)}              ::  private keys
-          {$vine p/(list change)}                       ::  all raw changes
-      ==                                                ::
-    ++  growth                                          ::  unit of learning
-      $%  {$sign p/mind q/@}                            ::  add/update signature
-          {$step p/cert}                                ::  add whole deed
-      ==                                                ::
-    ++  note                                            ::  out request $->
-      $%  {$b $wait p/@da}                              ::  wait until
-          {$x $mess p/ship q/path r/*}                  ::  send message
-      ==                                                ::
-    ++  remote                                          ::  remote notification
-      %+  each  safe                                    ::  &/addition
-      safe                                              ::  |/replacement
-    ::                                                  ::
-    ++  sign                                            ::  in result $<-
-      $%  {$b $wake $~}                                 ::  wakeup
-          {$x $rest p/coop}                             ::  message result
-      ==                                                ::
-    ++  tally                                           ::  balance update
-      %+  each  balance                                 ::  complete
-      action                                            ::  change
-    ::
-    ++  task                                            ::  in request ->$
-      $%  {$burn p/ship q/safe}                         ::  destroy rights
-          {$hail p/ship q/remote}                       ::  remote update
-          {$init p/@pG q/arms}                          ::  initialize urbit
-          {$meet p/(unit (unit ship)) q/farm}           ::  integrate pki from
-          {$mint p/ship q/safe}                         ::  create rights
-          {$move p/ship q/ship r/safe}                  ::  transfer from/to
-          {$next p/bull}                                ::  update private key
-          {$nuke $~}                                    ::  cancel tracker from
-          {$veil p/ship}                                ::  view secret channel
-          {$vein $~}                                    ::  view signing keys
-          {$vest $~}                                    ::  view public balance
-          {$vine $~}                                    ::  view secret history
-          {$west p/ship q/path r/*}                     ::  remote request
-      ==                                                ::
-    --  ::moves
-  --  ::jael
+    --  ::  rights
+  --  ::  jael
 ::                                                      ::::
 ::::                    ++ ^xmas                        ::  networking (new)
   ::                                                    ::::
 ++  xmas  ^?
   |%
-  ++  gift                                                ::  
-    $%  {$east p/*}                               ::  response message
-        {$home p/lane q/@}                        ::  process forward
-        {$send p/lane q/@}                        ::  send packet
-        {$rest p/coop}                            ::  acknowledgment
-    ==
-  ++  task                                           ::  in request ->$
-    $%  {$hear p/lane q/@}                        ::
-        {$mess p/ship q/path r/*}                 ::  send message
-        {$gear p/farm:pki:^jael q/(map life ring)}::  general update
-        {$wake $~}                                ::
-    ==                                            ::
-  ++  card                                           ::  out cards
-    $%  {$west p/ship q/path r/*}                 ::  network request
-    ==                                            ::
-  ++  note                                           ::  out request $->
-    $%  {$c $west p/ship q/path r/*}              ::  to %clay
-        {$e $west p/ship q/path r/*}              ::  to %eyre
-        {$g $west p/ship q/path r/*}              ::  to %gall
-        $:  $j                                    ::  to %jael
-            $%  {$line p/ship q/@da r/code}       ::
-                {$link p/ship q/@da r/code}       ::
-                {$meet p/farm:pki:^jael}          ::
-                {$view p/ship}                    ::  
-                {$west p/ship q/path r/*}         ::  to %gall
-    ==  ==  ==                                    ::
+  ++  able  ^?                                          ::  arvo moves
+    |%
+    ++  gift                                            ::  
+      $%  {$east p/*}                                   ::  response message
+          {$home p/lane q/@}                            ::  process forward
+          {$send p/lane q/@}                            ::  send packet
+          {$rest p/coop}                                ::  acknowledgment
+      ==                                                ::
+    ++  task                                            ::  in request ->$
+      $%  {$hear p/lane q/@}                            ::
+          {$mess p/ship q/path r/*}                     ::  send message
+          {$gear p/farm:pki:jael q/(map life ring)}     ::  general update
+          {$wake $~}                                    ::
+      ==                                                ::
+    ++  card                                            ::  out cards
+      $%  {$west p/ship q/path r/*}                     ::  network request
+      ==                                                ::
+    ++  note                                            ::  out request $->
+      $%  {$c $west p/ship q/path r/*}                  ::  to %clay
+          {$e $west p/ship q/path r/*}                  ::  to %eyre
+          {$g $west p/ship q/path r/*}                  ::  to %gall
+          $:  $j                                        ::  to %jael
+              $%  {$line p/ship q/@da r/code}           ::
+                  {$link p/ship q/@da r/code}           ::
+                  {$meet p/farm:pki:jael}               ::
+                  {$view p/ship}                        ::  
+                  {$west p/ship q/path r/*}             ::  to %gall
+      ==  ==  ==                                        ::
+    --  ::  able
+  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
+  ++  code  @uvI                                        ::  symmetric key
+  ++  coop  (unit ares)                                 ::  e2e ack
+  ++  lane                                              ::  packet route
+    $%  {$if p/@da q/@ud r/@if}                         ::  IP4/public UDP/addr
+        {$is p/@ud q/(unit lane) r/@is}                 ::  IPv6 w+alternates
+        {$ix p/@da q/@ud r/@if}                         ::  IPv4 provisional
+    ==                                                  ::
+  ++  life  @ud                                         ::  regime number
   --  ::  xmas
 --  ::
 ::
@@ -1045,6 +1084,7 @@
 ::::                    # ames                          ::  networking
   ::                                                    ::::
 ++  ames  ^?
+  =,  ^ames
   |%
   ::                                                    ::
   ::::                  ## crypto:ames                  ::  crypto standards
@@ -2953,12 +2993,12 @@
 ::::                    # clay                          ::  storage
   ::                                                    ::::
 ++  clay
+  =,  ^clay
   |%
   ::                                                    ::
   ::::                  ## differ:clay                  ::  hunt-mcilroy diff
     ::                                                  ::::
   ++  differ  ^?
-    =,  differ:^clay
     =,  lines
     |%
     ::                                                  ::  ++berk:differ:clay
@@ -3377,6 +3417,7 @@
 ::::                    # eyre                          ::  web
   ::                                                    ::::
 ++  eyre  ^?
+  =,  ^eyre
   |%
   ::                                                    ::
   ::::                  ## base64:eyre                  ::  standard base64
@@ -4330,6 +4371,7 @@
 ::::                    ++gall                          ::  application
   ::                                                    ::::
 ++  gall
+  =,  ^gall
   |%
   ++  pale                                              ::  filter peers
     |=  {hid/bowl fun/$-(sink ?)}
@@ -4355,7 +4397,7 @@
     |%
     ::                                                  ::  ++clan:title:jael
     ++  clan                                            ::  ship to rank
-      |=  who/ship  ^-  rank
+      |=  who/ship  ^-  rank:^ames
       =+  wid=(met 3 who)
       ?:  (lte wid 1)   %czar
       ?:  =(2 wid)      %king
@@ -4376,7 +4418,7 @@
       (rap 3 yow ' ' woy ~)
     ::                                                  ::  ++gnow:title:jael
     ++  gnow                                            ::  full display name
-      |=  {who/@p gos/gcos}  ^-  @t
+      |=  {who/@p gos/gcos:^ames}  ^-  @t
       ?-    -.gos
           $czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
           $king                 (rap 3 '_' p.gos '_' ~)
@@ -4390,7 +4432,7 @@
             $punk  ~['"' q.p.gos '"']
             ?($lord $lady)
           =+  ^=  nad
-              =+  nam=`name`s.p.p.gos
+              =+  nam=`name:^ames`s.p.p.gos
               %+  rap  3
               :~  p.nam
                   ?~(q.nam 0 (cat 3 ' ' u.q.nam))
@@ -4426,60 +4468,43 @@
       ==
     --  ::  title
   --  ::  jael
---  ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bI, Arvo structures          ::
-::
 ++  zuse  %310                                          ::  hoon+zuse kelvin
-::          ::
-::::        ::::  this will become `%york`, vane structures.
-  ::          ::
-::
-::::    %eyre
-  ::
-::::                                                    ::
-::
-::::    %ford
-  ::
-::
-::::    %arvo
-  ::
 ++  gift-arvo                                           ::  out result <-$
-  $?  gift-ames
-      gift-clay
-      gift-dill
-      gift-eyre
-      gift-ford
-      gift:^gall
-      gift-behn
+  $?  gift:able:^ames
+      gift:able:^behn
+      gift:able:^clay
+      gift:able:^dill
+      gift:able:^eyre
+      gift:able:^ford
+      gift:able:^gall
   ==
 ++  task-arvo                                           ::  in request ->$
-  $?  task-ames
-      task-clay
-      task-dill
-      task-eyre
-      task-ford
-      task:^gall
-      task-behn
+  $?  task:able:^ames
+      task:able:^clay
+      task:able:^behn
+      task:able:^dill
+      task:able:^eyre
+      task:able:^ford
+      task:able:^gall
   ==
 ++  note-arvo                                           ::  out request $->
   $?  {@tas $meta vase}
-  $%  {$a task-ames}
-      {$b task-behn}
-      {$c task-clay}
-      {$d task-dill}
-      {$e task-eyre}
-      {$f task-ford}
-      {$g task:^gall}
+  $%  {$a task:able:^ames}
+      {$b task:able:^behn}
+      {$c task:able:^clay}
+      {$d task:able:^dill}
+      {$e task:able:^eyre}
+      {$f task:able:^ford}
+      {$g task:able:^gall}
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
-  $%  {$a gift-ames}
-      {$b gift-behn}
-      {$c gift-clay}
-      {$d gift-dill}
-      {$e gift-eyre}
-      {$f gift-ford}
-      {$g gift:^gall}
-      {$j gift:moves:^jael}
+  $%  {$a gift:able:^ames}
+      {$b gift:able:^behn}
+      {$c gift:able:^clay}
+      {$d gift:able:^dill}
+      {$e gift:able:^eyre}
+      {$f gift:able:^ford}
+      {$g gift:able:^gall}
+      {$j gift:able:^jael}
   ==
---
+--  ::

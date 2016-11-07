@@ -6,6 +6,7 @@
 ::                                                      ::  ::
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
+=,  ^ames
 =,  crypto:ames
 |%                                                      ::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
@@ -138,7 +139,7 @@
 |%                                                      ::
 ++  flam  |=(a/flap `@p`(mug a))                        ::  debug flap
 ++  msec  |=(a/@dr `@ud`(div a (div ~s1 1.000)))        ::  debug @dr
-++  move  {p/duct q/(wind note-arvo gift-ames)}         ::  local move
+++  move  {p/duct q/(wind note-arvo gift:able)}         ::  local move
 --
 ::                                                      ::
 ::::  outbound cores                                    ::
@@ -575,7 +576,7 @@
       ?>((pier i.wet) [i.wet ~])
     ?~  q.p.q.i.wet
       ?>((meld i.wet i.law) [i.wet law])
-    =+  rul=(sein r.p.q.i.wet)
+    =+  rul=(sein:title:jael r.p.q.i.wet)
     |-  ^-  wyll
     ?:  ?&  =(rul r.p.q.i.law)
             =(p.p.q.i.law u.q.p.q.i.wet)
@@ -594,7 +595,7 @@
   ++  melt                                              ::  proper connect
     |=  {new/deyd old/deyd}
     ^-  ?
-    =+  rac=(clan r.p.q.new)
+    =+  rac=(clan:title:jael r.p.q.new)
     ?&  =(r.new r.old)                                  ::  match fake
         ?~  q.p.q.new
           ?&  =(r.p.q.old r.p.q.new)
@@ -602,7 +603,7 @@
           ==
         ?&  &(!=(%pawn rac) !=(%czar rac))
             |(=(0 p.p.q.new) =(%earl rac))
-            =(r.p.q.old (sein r.p.q.new))
+            =(r.p.q.old (sein:title:jael r.p.q.new))
             =(p.p.q.old u.q.p.q.new)
         ==
     ==
@@ -623,7 +624,7 @@
   ++  pier  !:                                          ::  initial deyd
     |=  wed/deyd
     ^-  $&
-    ?>  =+  rac=(clan r.p.q.wed)
+    ?>  =+  rac=(clan:title:jael r.p.q.wed)
         =+  loy=(haul:suite r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
@@ -977,7 +978,7 @@
       ++  born                                          ::    born:as:go
         |=  {now/@da her/@p tic/@pG ges/gens pub/pass}  ::  register user
         ^-  {(unit wyll) _+>}
-        ?.  =(our (sein her))  [~ +>.$]
+        ?.  =(our (sein:title:jael her))  [~ +>.$]
         =+  nes=sen
         =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
         ?.  =(tic ryt)
@@ -1105,7 +1106,7 @@
         ::
         ++  xeno                                        ::    xeno:lax:as:go
           ^-  (list ship)                               ::  foreign canon
-          (saxo her)
+          (saxo:title:jael her)
         ::
         ++  xong                                        ::    xong:lax:as:go
           ^-  (list ship)                               ::  route unto
@@ -1229,7 +1230,7 @@
       ::
       ++  xen                                           ::  canon
         |-  ^-  (list ship)
-        (saxo our)
+        (saxo:title:jael our)
       ::
       ++  yew                                           ::  best wyll for
         |=  her/ship
@@ -1237,7 +1238,7 @@
         =+  gel=(~(get by hoc.saf) her)
         ?^  gel
           lew.wod.u.gel
-        ?:((lth her 256) ~ $(her (sein her)))
+        ?:((lth her 256) ~ $(her (sein:title:jael her)))
       --                                                ::  --as:go
     ::
     ++  ha  !:                                          ::  adopt new license
@@ -1255,7 +1256,7 @@
           our
         :*  %-  flop
             |-  ^-  (list ship)
-            ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
+            ?:((lth our 256) ~ =+(seg=(sein:title:jael our) [seg $(our seg)]))
         ::
             (turn mac |=({p/life q/ring} [p q (weur:suite q)]))
             wil
@@ -1375,7 +1376,7 @@
       ::  install it as a symmetric key.
       ::
       =+  key=(shax ger)
-      =+  dad=(sein her)
+      =+  dad=(sein:title:jael her)
       ~&  [%user-auth her `@p`ger `@p`(mug key)]
       =+  gus=(need (~(us go ton.fox) her))
       =+  diz=(wasc:(myx:gus dad) key)
@@ -1384,10 +1385,14 @@
       [out fox]
     ::
     ++  doze
-      %+  hunt  `(add now ~s32)
+      %+  hunt:chrono:behn  `(add now ~s32)
       |-  ^-  (unit @da)
       ?~  zac.fox  ~
-      :(hunt $(zac.fox l.zac.fox) $(zac.fox r.zac.fox) doze:(um p.n.zac.fox))
+      ;:  hunt:chrono:behn
+          $(zac.fox l.zac.fox) 
+          $(zac.fox r.zac.fox) 
+          doze:(um p.n.zac.fox)
+      ==
     ::
     ++  gnaw                                            ::    gnaw:am
       |=  {ryn/lane pac/rock}                           ::  process packet
@@ -1461,7 +1466,11 @@
       ++  doze                                          ::    doze:um:am
         |-  ^-  (unit @da)                              ::  wakeup time
         ?~  wab.weg  ~
-        :(hunt $(wab.weg l.wab.weg) $(wab.weg r.wab.weg) doze:(ho p.n.wab.weg))
+        ;:  hunt:chrono:behn 
+            $(wab.weg l.wab.weg) 
+            $(wab.weg r.wab.weg) 
+            doze:(ho p.n.wab.weg)
+        ==
       ::
       ++  wake                                          ::    wake:um:am
         |=  hen/duct                                    ::  activate
@@ -1954,16 +1963,16 @@
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
       |=  $:  hen/duct
-              hic/(hypo (hobo kiss-ames))
+              hic/(hypo (hobo task:able))
           ==
       =>  %=    .                                       ::  XX temporary
               q.hic
-            ^-  kiss-ames
+            ^-  task:able
             ?:  ?=($soft -.q.hic)
-              ((hard kiss-ames) p.q.hic)
-            ?:  (~(nest ut -:!>(*kiss-ames)) | p.hic)  q.hic
+              ((hard task:able) p.q.hic)
+            ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
             ~&  [%ames-call-flub (@tas `*`-.q.hic)]
-            ((hard kiss-ames) q.hic)
+            ((hard task:able) q.hic)
           ==
       ^-  {p/(list move) q/_..^$}
       =^  duy  ..knob
@@ -2010,7 +2019,7 @@
   |%
   ++  claw  |=(our/ship ^-(duct hen:(need (~(get by zac.fox) our))))
   ++  clod
-    |=  {soq/sock kos/bole cha/path hen/duct cad/card-ames}
+    |=  {soq/sock kos/bole cha/path hen/duct cad/card:able}
     ^-  {(list move) fort}
     ?>  ?=({@ *} cha)
     =+  pax=[(scot %p p.soq) (scot %p q.soq) (scot %ud kos) ~]
@@ -2099,7 +2108,7 @@
     $(bin t.bin, out (weld (flop toe) out))
   ::
   ++  knob
-    |=  {hen/duct kyz/kiss-ames}
+    |=  {hen/duct kyz/task:able}
     ^-  {(list move) _+>}
     ?:  ?=($crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
@@ -2152,7 +2161,13 @@
     ?~  tyl  ~
     ?:  ?=({$name $~} tyl)
       =+  wul=$(tyl [%wyll ~])
-      ``[%noun !>(?~(wul (scot %p his) (gnow his q.q.q:((hard deyd) -.u.wul))))]
+      :-  ~
+      :-  ~
+      :-  %noun
+      !>  
+      ?~  wul 
+        (scot %p his) 
+      (gnow:title:jael his q.q.q:((hard deyd) -.u.wul))
     ?:  ?=({$gcos $~} tyl)
       =+  wul=$(tyl [%wyll ~])
       ?~(wul ~ ``[%noun !>(`gcos`q.q.q:((hard deyd) -.u.wul))])
@@ -2165,7 +2180,7 @@
         %+  bind  (rick mar his lew.wod.u.fod)
         |=(a/wyll `[%noun !>(a)])
       ?:  ?=({$tick $~} tyl)
-        ?.  =(our (sein his))  ~
+        ?.  =(our (sein:title:jael his))  ~
         ``[%noun !>((end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys)))))]
       ~
     ?:  ?=({$buck $~} tyl)

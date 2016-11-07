@@ -26,7 +26,7 @@
       {$hiss p/(unit knot) q/mark r/cage}               ::
   ==                                                    ::
 ++  cove  (pair bone (wind cote cuft))                  ::  internal move
-++  move  {p/duct q/(wind note-arvo gift-arvo)}         ::  typed move
+++  move  {p/duct q/(wind note-arvo gift:able)}         ::  typed move
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -74,7 +74,7 @@
       zam/scar                                          ::  opaque ducts
   ==                                                    ::
 ++  sofa                                                ::  queue for blocked
-  $:  kys/(qeu (trel duct prey club))                   ::  queued kisses
+  $:  kys/(qeu (trel duct prey club))                   ::  queued tasks
   ==                                                    ::
 ++  stic                                                ::  statistics
   $:  act/@ud                                           ::  change number
@@ -128,7 +128,7 @@
     %_(+> moz :_(moz [hen %pass pax noh]))
   ::
   ++  mo-give
-    |=  git/gift
+    |=  git/gift:able
     %_(+> moz :_(moz [hen %give git]))
   ::
   ++  mo-okay                                           ::  valid agent core
@@ -139,7 +139,7 @@
     (~(nest ut p.u.bol) %| -:!>(*bowl))
   ::
   ++  mo-boom                                           ::  complete new boot
-    |=  {dap/dude byk/beak dep/@uvH gux/gage}
+    |=  {dap/dude byk/beak dep/@uvH gux/gage:^ford}
     ^+  +>
     ?-    -.gux
         $tabl  ~|(%made-tabl !!)
@@ -179,7 +179,7 @@
     ==
   ::
   ++  mo-boon                                           ::  complete old boot
-    |=  {dap/dude byk/beak dep/@uvH gux/gage}
+    |=  {dap/dude byk/beak dep/@uvH gux/gage:^ford}
     ^+  +>
     =+  sut=(~(get by bum) dap)
     ?~  sut
@@ -1201,9 +1201,9 @@
   --
 ++  call                                                ::  request
   ~%  %gall-call  +>   ~
-  |=  {hen/duct hic/(hypo (hobo kiss))}
+  |=  {hen/duct hic/(hypo (hobo task:able))}
   ^+  [p=*(list move) q=..^$]
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
   ?-    -.q.hic
       $conf
     ?.  (~(has by pol.all) p.p.q.hic)

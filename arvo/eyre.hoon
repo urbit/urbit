@@ -2,21 +2,20 @@
 !?  164
 ::::
 |=  pit/vase
-=,  ^gall
+=,  ^eyre
 =,  crypto:ames
 =,  space:clay
 =,  bytes:eyre
 =,  js:eyre
-=,  xml:eyre
+=,  url:eyre
 =,  wired:eyre
+=,  xml:eyre
 =>  =~
 |%                                                      ::  interfaces
-++  gift  gift-eyre                                     ::  out result <-$
-++  kiss  kiss-eyre                                     ::  in request ->$
-++  move  {p/duct q/(wind note gift)}                   ::  local move
+++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
-          $%  {$wont p/sock q/{path *}}                 ::
+          $%  {$wont p/sock:^ames q/{path *}}           ::
           ==  ==                                        ::
               $:  $b                                    ::  to  %behn
           $%  {$wait p/@da}                             ::
@@ -31,28 +30,28 @@
               {$meta vase}                              ::  type check
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
-          $%  {$exec p/@p q/(unit {beak silk})}         ::
+          $%  {$exec p/@p q/(unit {beak silk:^ford})}         ::
               {$wasp p/@p q/@uvH r/?}                   ::
           ==  ==                                        ::
               $:  $g                                    ::  to %gall
-          $%  {$deal p/sock q/cush}                     ::  full transmission
+          $%  {$deal p/sock:^gall q/cush:^gall}         ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
           $%  {$woot p/ship q/path r/coop}              ::  acknowledgment
-              {$went ship cape}                         ::  XX ignore
+              {$went ship cape:^ames}                   ::  XX ignore
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
           $%  {$wake $~}                                ::  timer activate
           ==  ==                                        ::
               $:  $g                                    ::  by %gall
-          $%  {$unto p/cuft}                            ::  within agent
+          $%  {$unto p/cuft:^gall}                      ::  within agent
           ==  ==                                        ::
               $:  $e                                    ::  by self
           $%  {$thou p/httr}                            ::  response for proxy
           ==  ==                                        ::
               $:  $f                                    ::  by %ford
-          $%  {$made p/@uvH q/gage}                     ::
+          $%  {$made p/@uvH q/gage:^ford}                     ::
               {$news p/@uvH}                            ::
           ==  ==                                        ::
               $:  @tas                                  ::  by any
@@ -119,7 +118,6 @@
       {usr/iden dom/(list @t)}                          ::  req user, domain
       key/a                                             ::  secrets from %jael
   ==                                                    ::
-++  iden  knot:?($~ @ta)                                ::  username
 ::
 ++  driv                                                ::  driver state
   %+  pair  (unit $@($~ vase))                          ::  main core
@@ -164,7 +162,7 @@
       {$deps p/?($put $delt) q/@uvH}
       {$mess p/dock q/mark r/wire s/json}
       {$poll p/{i/@uvH t/(list @uvH)}}
-      {$spur p/spur}
+      {$spur p/spur:^clay}
       {$subs p/?($put $delt) q/{dock $json wire path}}
       {$view p/ixor q/{$~ u/@ud}}
   ==
@@ -614,7 +612,7 @@
   ::
   ++  anon  `@p`(add our ^~((bex 64)))                  ::  pseudo-sub
   ++  apex                                              ::  accept request
-    |=  kyz/kiss
+    |=  kyz/task:able
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     =.  p.top  our              ::  XX necessary?
@@ -786,7 +784,7 @@
     ::
         $unto                                           ::  app response
       ?>  ?=({$of @ ^} tee)
-      =+  cuf=`cuft`+>.sih
+      =+  cuf=`cuft:^gall`+>.sih
       ?-    -.cuf
           ?($coup $reap)
         ::  ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
@@ -966,14 +964,14 @@
     =-  -(hen hen.+)
     (pass-note(hen `~) on+~ %f [%wasp our a &])
   ::
-  ++  ford-req  |=({bek/beak kas/silk} [%f [%exec our `[bek kas]]])
+  ++  ford-req  |=({bek/beak kas/silk:^ford} [%f [%exec our `[bek kas]]])
   ++  exec-live
-    |=  {tea/whir req/{beak silk}}
+    |=  {tea/whir req/{beak silk:^ford}}
     =.  lyv  (~(put by lyv) hen [%exec tea])
     (execute tea req)
   ::
   ++  execute
-    |=  {tea/whir bek/beak sil/silk}
+    |=  {tea/whir bek/beak sil/silk:^ford}
     %+  pass-note  tea
     :^  %f  %exec  our
     `[bek [%dude |.(leaf+"eyre: execute {<tea>}") sil]]
@@ -1081,7 +1079,7 @@
           $bake
         =+  req=[%bake mar=q.pez [r s]:pez]
         =+  red=req(mar %red-quri)
-        (exec-live p.pez -.s.pez `silk`[%alts ~[req red]])
+        (exec-live p.pez -.s.pez `silk:^ford`[%alts ~[req red]])
       ::
           $red
         =+  url=(earn hat pok(p [~ %html]) quy)
@@ -1553,7 +1551,7 @@
       %-  jobe  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
-        sein+(jape +:<(sein our)>)
+        sein+(jape +:<(sein:title:jael our)>)
         ship+(jape +:<our>)
         user+(jape +:<him>)
         auth+a+(turn (~(tap in aut)) |=(a/@p (jape +:<a>)))
@@ -1743,7 +1741,8 @@
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
-    ++  execute  |=({a/whir-se b/{beak silk}} (execute:abet se+[a usr dom] b))
+    ++  execute  
+      |=({a/whir-se b/{beak silk:^ford}} (execute:abet se+[a usr dom] b))
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
@@ -1760,7 +1759,7 @@
     ++  build
       %^  execute  %core  root-beak
       :::+  %dude  [|.(+)]:>%mod-samp<
-      ^-  silk
+      ^-  silk:^ford
       :^  %mute  core+[root-beak (flop %_(dom . sec+dom))]
         [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
       ?~  cor  ~
@@ -1775,13 +1774,15 @@
       %^  execute  arm  root-beak
       call+[ride+[limb+arm prep-cor] [%$ sam]]
     ::
-    ++  prep-cor  ^-  silk
+    ++  prep-cor  ^-  silk:^ford
       ?~  cor  ~|(%no-core !!)
       ?~  u.cor  ~|(%nil-driver !!)
       :+  %$  %core
       %_    u.cor
           +12.q
-        =+  ato=(sky [151 %noun] %cx (tope root-beak [%atom (flop %_(dom . sec+dom))]))
+        =+  ^=  ato
+            %-  sky 
+            [[151 %noun] %cx (tope root-beak [%atom (flop %_(dom . sec+dom))])]
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         =.  key
           ?~  key  ''
@@ -1944,16 +1945,16 @@
 |%                                                      ::
 ++  call                                                ::  handle request
   |=  $:  hen/duct
-          hic/(hypo (hobo kiss))
+          hic/(hypo (hobo task:able))
       ==
   =>  %=    .                                           ::  XX temporary
           q.hic
-        ^-  kiss
+        ^-  task:able
         ?:  ?=($soft -.q.hic)
-          ((hard kiss) p.q.hic)
-        ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+          ((hard task:able) p.q.hic)
+        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
         ~&  [%eyre-call-flub (@tas `*`-.q.hic)]
-        ((hard kiss) q.hic)
+        ((hard task:able) q.hic)
       ==
   ^+  [p=*(list move) q=..^$]
   ?:  ?=($wegh -.q.hic)

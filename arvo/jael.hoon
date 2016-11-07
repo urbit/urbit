@@ -18,7 +18,8 @@
 |=  pit/vase
 =,  pki:^jael
 =,  rights:^jael
-=,  moves:^jael 
+=,  able:^jael 
+=,  title:jael
 =,  crypto:ames
 =,  jael
 ::                                                      ::::
@@ -801,7 +802,7 @@
       |=((map @ta @) (~(run by +<) |=(@ (mug +<))))
     ::
         $urban
-      [%urban (~(run by p.rys) |=({@da code} [+<- (mug +<+)]))]
+      [%urban (~(run by p.rys) |=({@da code:^ames} [+<- (mug +<+)]))]
     ==
   ::                                                    ::  ++remove:up
   ++  remove                                            ::  pig minus gob
@@ -1520,7 +1521,7 @@
     ::  key: generated key
     ::  bul: initial bull
     ::
-    =/  key  (ypt:scr:crypto (mix our %jael-make) gen)
+    =/  key  (ypt:scr (mix our %jael-make) gen)
     =*  doc  `bull`[(sein our) & nym]
     ::
     ::  register generator as login secret
@@ -1560,7 +1561,7 @@
     ::  had: key handle
     ::  ryt: initial right
     ::
-    =/  key  (ypt:scr:crypto (mix our %jael-make) gen)  
+    =/  key  (ypt:scr (mix our %jael-make) gen)  
     =*  had  (shaf %hand key)
     =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
     ::
@@ -1720,7 +1721,7 @@
       ++  grow-lick                                     ::  check signature
         |=  {pub/pass ash/@ val/@}
         ^-  ?
-        =+  ver=(sure:as:(com:nu:crub pub) *code val)
+        =+  ver=(sure:as:(com:nu:crub pub) *code:^ames val)
         ?~  ver  |
         =(ash u.ver)
       ::                                                ::  grow-like/ex:ur
@@ -1949,7 +1950,7 @@
           why/shop 
           syd/desk 
           lot/coin 
-          tyl/spur
+          tyl/spur:^clay
       ==
   ^-  (unit (unit cage))
   ~
