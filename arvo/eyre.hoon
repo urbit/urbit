@@ -15,7 +15,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
-          $%  {$wont p/sock:^ames q/{path *}}           ::
+          $%  {$wont p/sock q/{path *}}                 ::
           ==  ==                                        ::
               $:  $b                                    ::  to  %behn
           $%  {$wait p/@da}                             ::
@@ -30,11 +30,11 @@
               {$meta vase}                              ::  type check
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
-          $%  {$exec p/@p q/(unit {beak silk:^ford})}         ::
+          $%  {$exec p/@p q/(unit {beak silk:^ford})}   ::
               {$wasp p/@p q/@uvH r/?}                   ::
           ==  ==                                        ::
               $:  $g                                    ::  to %gall
-          $%  {$deal p/sock:^gall q/cush:^gall}         ::  full transmission
+          $%  {$deal p/sock q/cush:^gall}               ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
@@ -162,7 +162,7 @@
       {$deps p/?($put $delt) q/@uvH}
       {$mess p/dock q/mark r/wire s/json}
       {$poll p/{i/@uvH t/(list @uvH)}}
-      {$spur p/spur:^clay}
+      {$spur p/spur}
       {$subs p/?($put $delt) q/{dock $json wire path}}
       {$view p/ixor q/{$~ u/@ud}}
   ==

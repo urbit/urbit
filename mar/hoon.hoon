@@ -3,6 +3,7 @@
   ::
 /?    310
 !:
+=,  ^eyre
 |_  own/@t
 ::
 ++  grow                                                ::  convert to

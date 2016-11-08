@@ -40,14 +40,14 @@
 ++  mess                                                ::
   $%  {$dill-belt p/(hypo dill-belt)}                   ::
   ==                                                    ::
-++  move  {p/duct q/(wind note gift:able)}                   ::  local move   
+++  move  {p/duct q/(wind note gift:able)}              ::  local move   
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
       {$sith p/@p q/@uw r/?}                            ::
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:^clay}::  merge desks
-      {$warp p/sock:^clay q/riff:^clay}                 ::  wait for clay hack
+      {$warp p/sock q/riff:^clay}                       ::  wait for clay hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -60,7 +60,7 @@
   ==                                                    ::
 ++  note-gall                                           ::
   $%  {$conf dock $load ship desk}                      ::
-      {$deal p/sock:^gall q/cush:^gall}                 ::
+      {$deal p/sock q/cush:^gall}                       ::
   ==                                                    ::
 ++  note                                                ::  out request $->
   $?  {?($a $b $c $e $f $g) $wegh $~}                   ::

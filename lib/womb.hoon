@@ -690,7 +690,7 @@
   ~&  %rekey-stub  .
 ::
 ++  poke-report                                       ::  report wyll
-  |=  {her/@p wyl/wyll}                               ::
+  |=  {her/@p wyl/wyll:^ames}                               ::
   =<  abet
   =.  log-transaction  (log-transaction %report +<)
   ?>  =(src src)                                      ::  self-authenticated

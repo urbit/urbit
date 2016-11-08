@@ -74,12 +74,12 @@
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
-          {$write-comment spur ship cord}               ::
-          {$write-fora-post spur ship cord cord}        ::
+          {$write-comment path ship cord}               ::
+          {$write-fora-post path ship cord cord}        ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
-          {$info wire @p @tas nori}                     ::
+          {$info wire @p @tas nori:^clay}               ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
           {$pull wire dock $~}                          ::
@@ -140,7 +140,7 @@
         ==
       --
     --
-|_  {hid/bowl house}
+|_  {hid/bowl:^gall house}
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
   ++  sh                                                ::  per console
@@ -179,7 +179,7 @@
         ;~  pose
           (cold [our.hid man.she] col)
           ;~(pfix cen (stag our.hid sym))
-          ;~(pfix fas (stag (sein our.hid) sym))
+          ;~(pfix fas (stag (sein:title:jael our.hid) sym))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -238,7 +238,7 @@
           %+  stag  %say
           %+  most  (jest '•')
           ;~  pose
-            (stag %url aurf:urlp)
+            (stag %url aurf:urlp:url:eyre)
             :(stag %lin | ;~(pfix pat text))
             :(stag %lin & ;~(less sem hax text))
           ==
@@ -1333,9 +1333,9 @@
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
     ?:(neu +>.$ ra-homes)
   ::
-  ++  ra-base-hart  .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
+  ++  ra-base-hart  .^(hart:^eyre %e /(scot %p our.hid)/host/(scot %da now.hid))
   ++  ra-fora-post
-    |=  {pax/path sup/spur hed/@t txt/@t}
+    |=  {pax/path sup/path hed/@t txt/@t}
     =.  ..ra-emit
       %+  ra-emit  ost.hid
       :*  %poke
@@ -1360,7 +1360,7 @@
     [~ %app %tree 'receiving forum posts, ;join %posts for details']
   ::
   ++  ra-consume-fora-post
-    |=  {man/knot pax/path sup/spur hed/@t txt/@t}  ^+  +>
+    |=  {man/knot pax/path sup/path hed/@t txt/@t}  ^+  +>
     =+  nam=?~(sup "" (trip i.sup))                     :: file name
     =+  fra=(crip (time-to-id now.hid))                 :: url fragment
     %^  ra-consume  &
@@ -1376,7 +1376,7 @@
     ==
   ::
   ++  ra-comment
-    |=  {pax/path sup/spur txt/@t}
+    |=  {pax/path sup/path txt/@t}
     =.  ..ra-emit
       %+  ra-emit  ost.hid
       :*  %poke
@@ -1401,7 +1401,7 @@
     [~ %app %tree 'receiving comments, ;join %comments for details']
   ::
   ++  ra-consume-comment
-    |=  {man/knot pax/path sup/spur txt/@t}  ^+  +>
+    |=  {man/knot pax/path sup/path txt/@t}  ^+  +>
     =+  nam=?~(sup "" (trip i.sup))                     :: file name
     =+  fra=(crip (time-to-id now.hid))                 :: url fragment
     %^  ra-consume  &
@@ -1597,7 +1597,7 @@
       ?-  p.cordon.shape
         $black  &
         $green  &
-        $brown  (team our.hid her)
+        $brown  (team:title:jael our.hid her)
         $white  (~(has in q.cordon.shape) her)
       ==
     ::
@@ -1918,7 +1918,7 @@
   ++  sn-curt                                           ::  render name in 14
     |=  mup/?
     ^-  tape
-    =+  rac=(clan p.one) 
+    =+  rac=(clan:title:jael p.one) 
     =+  raw=(scow %p p.one)
     =.  raw  ?.(mup raw ['*' (slag 2 raw)])
     ?-    rac
@@ -1951,7 +1951,7 @@
       ?:  =(q.one man)
         ":"
       ['%' (trip q.one)]
-    ?:  =(p.one (sein our.hid))
+    ?:  =(p.one (sein:title:jael our.hid))
       ['/' (trip q.one)]
     =+  wun=(scow %p p.one)
     ?:  =(q.one (main p.one))
@@ -2101,7 +2101,7 @@
       $lin  tan+~[leaf+"{?:(p.sep "" "@ ")}{(trip q.sep)}"]
       $non  tan+~
       $app  tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip p.sep)}]" leaf+(trip q.sep)]]
-      $url  url+(crip (earf p.sep))
+      $url  url+(crip (earf:url:eyre p.sep))
       $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
       $fat  [%mor $(sep q.sep) tan+(tr-rend-tors p.sep) ~]
       $api
@@ -2111,7 +2111,7 @@
           [": " ~ ~]
         :~  leaf+"[{(trip id.sep)} on {(trip service.sep)}]"
             leaf+(trip body.sep)
-            leaf+(earf url.sep)
+            leaf+(earf:url:eyre url.sep)
         ==
     ==
   ::
@@ -2162,7 +2162,7 @@
       ==
     ::
         $exp  (tr-chow 66 '#' ' ' (trip p.sep))
-        $url  =+  ful=(earf p.sep)
+        $url  =+  ful=(earf:url:eyre p.sep)
               ?:  (gth 64 (lent ful))  ['/' ' ' ful]
               :+  '/'  '_' 
               =+  hok=r.p.p.p.sep
@@ -2197,7 +2197,7 @@
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
   :: ~&   [%talk-peer src.hid ost.hid pax]
   ?:  ?=({$sole *} pax)
-    ?>  (team our.hid src.hid)
+    ?>  (team:title:jael our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
     ra-abet:(ra-console:ra src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
@@ -2299,11 +2299,11 @@
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-talk-comment
-  |=  {pax/path sup/spur txt/@t}  ^-  (quip move +>)
+  |=  {pax/path sup/path txt/@t}  ^-  (quip move +>)
   ra-abet:(ra-comment:ra pax sup txt)
 ::
 ++  poke-talk-fora-post
-  |=  {pax/path sup/spur hed/@t txt/@t}  ^-  (quip move +>)
+  |=  {pax/path sup/path hed/@t txt/@t}  ^-  (quip move +>)
   ra-abet:(ra-fora-post:ra pax sup hed txt)
 ::
 ++  poke-talk-save

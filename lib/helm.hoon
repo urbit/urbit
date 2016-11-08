@@ -11,7 +11,7 @@
 |%                                                      ::  ::
 ++  helm-part  {$helm $0 helm-pith}                     ::  helm state
 ++  helm-pith                                           ::  helm content
-  $:  bur/(unit (pair ship mace))                       ::  requesting ticket
+  $:  bur/(unit (pair ship mace:^ames))                 ::  requesting ticket
       hoc/(map bone helm-session)                       ::  consoles
   ==                                                    ::  
 ++  helm-session                                        ::
@@ -25,7 +25,7 @@
   $:  his/@p                                            ::  identity
       tic/@p                                            ::  ticket
       eny/@t                                            ::  entropy
-      ges/gens                                          ::  description
+      ges/gens:^ames                                    ::  description
   ==                                                    ::
 ++  hood-init                                           ::  report init
   $:  him/ship                                          ::
@@ -46,25 +46,25 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
-|=  {bowl helm-part}                                  ::  main helm work
+|=  {bowl:^gall helm-part}                              ::  main helm work
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
-=>  |%                                                ::  arvo structures
-    ++  card                                          ::
-      $%  {$cash wire p/@p q/buck}                    ::
-          {$conf wire dock $load ship term}           ::
-          {$flog wire flog}                           ::
-          {$funk wire @p @p @}                        ::   
-          {$serv wire ?(desk beam)}                   ::
-          {$poke wire dock pear}                      ::
-          {$wont wire sock path *}                    ::  send message
-      ==                                              ::
-    ++  move  (pair bone card)                        ::  user-level move
-    ++  pear                                          ::  poke fruit
-      $%  {$hood-unsync desk ship desk}               ::
-          {$talk-command command:talk}                ::
-          {$ask-mail cord}                            ::
-          {$helm-hi cord}                             ::
-      ==                                              ::
+=>  |%                                                  ::  arvo structures
+    ++  card                                            ::
+      $%  {$cash wire p/@p q/buck:^ames}                ::
+          {$conf wire dock $load ship term}             ::
+          {$flog wire flog:^dill}                       ::
+          {$funk wire @p @p @}                          ::   
+          {$serv wire ?(desk beam)}                     ::
+          {$poke wire dock pear}                        ::
+          {$wont wire sock path *}                      ::  send message
+      ==                                                ::
+    ++  move  (pair bone card)                          ::  user-level move
+    ++  pear                                            ::  poke fruit
+      $%  {$hood-unsync desk ship desk}                 ::
+          {$talk-command command:talk}                  ::
+          {$ask-mail cord}                              ::
+          {$helm-hi cord}                               ::
+      ==                                                ::
     --
 |_  moz/(list move)
 ++  abet                                              ::  resolve
@@ -82,7 +82,7 @@
   =+  buz=(shaz :(mix (jam ges) eny))
   =+  loy=(pit:nu:crub:crypto:ames 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%wont /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
+  [%wont /helm/ticket [our (sein:title:jael his)] /a/ta his tic ges pub:ex:loy]
 ::
 ++  poke-spawn
   |=  {him/ship key/@pG}  =<  abet
@@ -198,13 +198,13 @@
   ~
 ::
 ++  poke-wyll                                         ::  hear certificate
-  |=  wil/(unit wyll)
+  |=  wil/(unit wyll:^ames)
   ?>  ?=(^ bur)
   ?>  ?=(^ wil)  
   =<  abet
   %-  emil(bur ~)
   :~  [%cash /helm p.u.bur q.u.bur u.wil]
-      [%poke /helm [our %hood] %hood-unsync %base (sein our) %kids]
+      [%poke /helm [our %hood] %hood-unsync %base (sein:title:jael our) %kids]
   ==
 ::
 ++  poke-verb                                         ::  toggle verbose

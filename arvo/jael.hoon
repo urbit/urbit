@@ -1950,7 +1950,7 @@
           why/shop 
           syd/desk 
           lot/coin 
-          tyl/spur:^clay
+          tyl/spur
       ==
   ^-  (unit (unit cage))
   ~

@@ -1,5 +1,5 @@
 !:                                                      ::  /van/zuse    
-::                                                      ::  !%reference
+::                                                      ::  !%reference/1
 ::  %zuse: arvo library.
 ::
 ::  %zuse is two nested cores: the first for models 
@@ -18,6 +18,8 @@
 ::      - %gall: application        ("ball")
 ::      - %jael: security           ("jail")
 ::  
+::  with %zuse in your core, 
+::
 ::  every model or engine in %zuse is attached to some 
 ::  vane, but any vane can use it (in its namespace),
 ::  as can any normal user-level code.
@@ -33,7 +35,7 @@
 ::
 |%
 ::                                                      ::::
-::::                    ++ ^ames                        ::  networking
+::::                    ++^ames                         ::  networking
   ::                                                    ::::
 ++  ames  ^?
   |%
@@ -77,16 +79,16 @@
           {$wegh $~}                                    ::  report memory
           {$wont p/sock q/path r/*}                     ::  e2e send message
       ==                                                ::
-    --  ::  able                                        ::
-  ++  acru                                              ::  asym cryptosuite
-    $_  ^?  |%                                          ::  opaque object
+    --  ::able                                          ::
+  ++  acru  $_  ^?                                      ::  asym cryptosuite
+    |%                                                  ::  opaque object
     ++  as  ^?                                          ::  asym ops
       |%  ++  seal  |~({a/pass b/@ c/@} *@)             ::  encrypt to a
           ++  sign  |~({a/@ b/@} *@)                    ::  certify as us
           ++  sure  |~({a/@ b/@} *(unit @))             ::  authenticate from us
           ++  tear  |~  {a/pass b/@}                    ::  accept from a 
                     *(unit {p/@ q/@})                   ::
-      --                                                ::
+      --  ::as                                          ::
     ++  de  |~({a/@ b/@} *(unit @))                     ::  symmetric de, soft
     ++  dy  |~({a/@ b/@} *@)                            ::  symmetric de, hard
     ++  en  |~({a/@ b/@} *@)                            ::  symmetric en
@@ -95,14 +97,13 @@
           ++  pac  *@uvG                                ::  default passcode
           ++  pub  *pass                                ::  public key
           ++  sec  *ring                                ::  private key
-      --                                                ::
+      --  ::ex                                          ::
     ++  nu  ^?                                          ::  reconstructors
-       |%  ++  pit  |~({a/@ b/@} ^?(..nu))              ::  from [width seed]
-           ++  nol  |~(a/@ ^?(..nu))                    ::  from naked ring
-           ++  com  |~(a/@ ^?(..nu))                    ::  from naked pass
-       --                                               ::
-    --                                                  ::
-  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
+      |%  ++  pit  |~({a/@ b/@} ^?(..nu))               ::  from [width seed]
+          ++  nol  |~(a/@ ^?(..nu))                     ::  from naked ring
+          ++  com  |~(a/@ ^?(..nu))                     ::  from naked pass
+      --  ::nu                                          ::
+    --  ::acru                                          ::
   ++  bait  {p/skin q/@ud r/dove}                       ::  fmt nrecvd spec
   ++  boon                                              ::  fort output
     $%  {$beer p/ship}                                  ::  gained ownership
@@ -128,7 +129,6 @@
         qim/(map hand code)                             ::  inbound
     ==                                                  ::
   ++  code  @uvI                                        ::  symmetric key
-  ++  coop  (unit ares)                                 ::  e2e ack
   ++  deyd  {p/@ q/step r/?}                            ::  sig stage fake?
   ++  dore                                              ::  foreign contact
     $:  wod/road                                        ::  connection to
@@ -208,16 +208,9 @@
             puq/(qeu {p/@ud q/soul})                    ::  packet queue
         ==                                              ::
     ==                                                  ::
-  ++  scar                                              ::  opaque duct
-    $:  p/@ud                                           ::  bone sequence
-        q/(map duct bone)                               ::  by duct
-        r/(map bone duct)                               ::  by bone
-    ==                                                  ::
   ++  skin  ?($none $open $fast $full)                  ::  encoding stem
   ++  snow  {p/@ud q/@ud r/(set @ud)}                   ::  window exceptions
   ++  soap  {p/{p/life q/life} q/path r/@ud}            ::  statement id
-  ++  sack  {p/ship q/ship}                             ::  incoming [our him]
-  ++  sock  {p/ship q/ship}                             ::  outgoing [from to]
   ++  soup  {p/path q/@ud}                              ::  new statement id
   ++  soul                                              ::  packet in travel
     $:  gom/soup                                        ::  message identity
@@ -252,7 +245,7 @@
   ++  wyll  (list deyd)                                 ::  certificate
   --  ::  ames
 ::                                                      ::::
-::::                    ++ ^behn                        ::  scheduling
+::::                    ++^behn                         ::  scheduling
   ::                                                    ::::
 ++  behn  ^?
   |%
@@ -271,7 +264,7 @@
     --  ::  able
   --  ::  behn
 ::                                                      ::::
-::::                    # ^clay                         ::  storage
+::::                    ++^clay                         ::  storage
   ::                                                    ::::
 ++  clay  ^?
   |%
@@ -309,7 +302,6 @@
     $:  fil/(unit {p/lobe q/cage})                      ::  file
         dir/(map @ta ankh)                              ::  folders
     ==                                                  ::
-  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  beam  {{p/ship q/desk r/case} s/path}             ::  global name
   ++  beak  {p/ship q/desk r/case}                      ::  path prefix
   ++  blob                                              ::  fs blob
@@ -389,10 +381,7 @@
   ++  riot  (unit rant)                                 ::  response+complete
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
   ++  saba  {p/ship q/@tas r/moar s/dome}               ::  patch+merge
-  ++  sack  {p/ship q/ship}                             ::  incoming [our him]
-  ++  sock  {p/ship q/ship}                             ::  outgoing [our him]
   ++  soba  (list {p/path q/miso})                      ::  delta
-  ++  spur  path                                        ::  ship desk case spur
   ++  suba  (list {p/path q/misu})                      ::  delta
   ++  tako  @                                           ::  yaki ref
   ++  toro  {p/@ta q/nori}                              ::  general change
@@ -437,9 +426,9 @@
         r/tako                                          ::  self-reference
         t/@da                                           ::  date
     ==                                                  ::
-  --  ::  clay
+  --  ::clay
 ::                                                      ::::
-::::                    ++ ^dill                        ::  console
+::::                    ++^dill                         ::  console
   ::                                                    ::::
 ++  dill  ^?
   |%
@@ -463,7 +452,7 @@
           {$boot p/*}                                   ::  weird %dill boot
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$flog p/flog}                                ::  wrapped error
-          {$flow p/@tas q/(list gill:gall)}                  ::  terminal config
+          {$flow p/@tas q/(list gill:gall)}             ::  terminal config
           {$hail $~}                                    ::  terminal refresh
           {$heft $~}                                    ::  memory report
           {$hook $~}                                    ::  this term hung up
@@ -477,7 +466,7 @@
           {$vega p/path}                                ::  reboot by path
           {$verb $~}                                    ::  verbose mode
       ==                                                ::
-    --  ::  able
+    --  ::able
   ++  blew  {p/@ud q/@ud}                               ::  columns rows
   ++  belt                                              ::  old belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
@@ -564,9 +553,7 @@
           {$west p/sack q/{path @ud *}}                 ::  network request
       ==                                                ::
     --  ::  able
-  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  clip  (each @if @is)                              ::  client IP
-  ++  coop  (unit ares)                                 ::  e2e ack
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
         aut/(jug @tas @t)                               ::  client identities
@@ -611,14 +598,6 @@
         r/httq                                          ::
     ==                                                  ::
   ++  iden  knot                                        ::  username
-  ++  json                                              ::  normal json value
-    $@  $~                                              ::  null
-    $%  {$a p/(list json)}                              ::  array
-        {$b p/?}                                        ::  boolean
-        {$o p/(map @t json)}                            ::  object
-        {$n p/@ta}                                      ::  number
-        {$s p/@t}                                       ::  string
-    ==                                                  ::
   ++  love                                              ::  http response
     $%  {$ham p/manx}                                   ::  html node
         {$mid p/mite q/octs}                            ::  mime-typed data
@@ -638,7 +617,6 @@
         $put                                            ::  PUT
         $trac                                           ::  TRACE
     ==                                                  ::
-  ++  mime  {p/mite q/octs}                             ::  mimetyped data
   ++  mite  (list @ta)                                  ::  mime type
   ++  moth  {p/meth q/math r/(unit octs)}               ::  http operation
   ++  octs  {p/@ud q/@t}                                ::  octet-stream
@@ -652,7 +630,6 @@
         {$| p/pork q/quay}                              ::  relative
     ==                                                  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
-  ++  sack  {p/ship q/ship}                             ::  incoming [our him]
   --  ::  eyre
 ::                                                      ::::
 ::::                    # ^ford                         ::  build
@@ -736,7 +713,6 @@
         {$vale p/mark q/*}                              ::  validate
         {$volt p/(cask *)}                              ::  unsafe add type
     ==                                                  ::
-  ++  spur  path                                        ::  ship desk case spur
   --  ::  ford
 ::                                                      ::::
 ::::                    # ^gall                         ::  application
@@ -756,12 +732,13 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          {$went p/sack q/path r/@ud s/coop:pki:jael}   ::  response confirm 
+          {$went p/sack q/path r/@ud s/coop}            ::  response confirm 
           {$west p/sack q/path r/@ud s/*}               ::  network request
           {$wegh $~}                                    ::  report memory
       ==                                                ::
     --  ::  able
-  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
+  ++  bitt  (map bone (pair ship path))                 ::  incoming subs
+  ++  boat  (map (pair bone wire) (trel bean ship path))::  outgoing subs
   ++  bowl                                              ::  standard app state
           $:  $:  our/ship                              ::  host
                   src/ship                              ::  guest
@@ -776,15 +753,6 @@
                   now/@da                               ::  current time
                   byk/beak                              ::  load source
           ==  ==                                        ::
-  ++  bitt  (map bone (pair ship path))                 ::  incoming subs
-  ++  boat  (map (pair bone wire) (trel bean ship path))::  outgoing subs
-  ++  coop  (unit ares)                                 ::  e2e ack
-  ++  gill  (pair ship term)                            ::  general contact
-  ++  scar                                              ::  opaque duct
-    $:  p/@ud                                           ::  bone sequence
-        q/(map duct bone)                               ::  by duct
-        r/(map bone duct)                               ::  by bone
-    ==                                            ::
   ++  club                                              ::  agent action
     $%  {$peel p/mark q/path}                           ::  translated peer
         {$peer p/path}                                  ::  subscribe
@@ -809,11 +777,10 @@
     ==                                                  ::
   ++  cush  (pair term club)                            ::  internal task
   ++  dude  term                                        ::  server identity
+  ++  gill  (pair ship term)                            ::  general contact
   ++  scup  (pair ship desk)                            ::  autoupdate
-  ++  well  (pair desk term)                            ::
-  ++  sack  {p/ship q/ship}                             ::  incoming [our his}
-  ++  sock  {p/ship q/ship}                             ::  outgoing [from to]
   ++  suss  (trel dude @tas @da)                        ::  config report
+  ++  well  (pair desk term)                            ::
   --  ::  gall
 ::                                                      ::::
 ::::                    # ^jael                         ::  security
@@ -939,7 +906,6 @@
     ::  bit is set, the new life of this ship may have
     ::  lost information that the old life had.
     ::
-    ++  ares  (unit {p/term q/(list tank)})             ::  possible error
     ++  arms  (map chip (pair @ta @t))                  ::  stated identity
     ++  bull                                            ::  cert metadata
       $:  dad/ship                                      ::  parent
@@ -953,7 +919,6 @@
           $had                                          ::  fictitious name
           $mid                                          ::  middle name 
       ==                                                ::
-    ++  coop  (unit ares)                               ::  e2e ack
     ++  deed                                            ::  certificate deed
       $:  doc/bull                                      ::  metadata
           pub/pass                                      ::  public key
@@ -1065,9 +1030,7 @@
                   {$west p/ship q/path r/*}             ::  to %gall
       ==  ==  ==                                        ::
     --  ::  able
-  ++  ares  (unit {p/term q/(list tank)})               ::  possible error
   ++  code  @uvI                                        ::  symmetric key
-  ++  coop  (unit ares)                                 ::  e2e ack
   ++  lane                                              ::  packet route
     $%  {$if p/@da q/@ud r/@if}                         ::  IP4/public UDP/addr
         {$is p/@ud q/(unit lane) r/@is}                 ::  IPv6 w+alternates

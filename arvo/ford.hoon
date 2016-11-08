@@ -12,13 +12,13 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $c                                    ::  to %clay
-          $%  {$warp p/sock:^clay q/riff:^clay}         ::
+          $%  {$warp p/sock q/riff:^clay}               ::
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
           $%  {$exec p/@p q/(unit bilk:^ford)}          ::
           ==  ==                                        ::
               $:  $g                                    ::  to %gall
-          $%  {$deal p/sock:^gall q/cush:^gall}         ::
+          $%  {$deal p/sock q/cush:^gall}               ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $c                                    ::  by %clay

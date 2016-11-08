@@ -72,7 +72,7 @@
           summary/@t                                    ::  summary of event
           body/@t                                       ::  body of event
           url/purf:^eyre                                ::  link to event
-          meta/json:^eyre                               ::  other data for web
+          meta/json                                     ::  other data for web
       ==                                                ::
   ==                                                    ::
 ++  serial     @uvH                                     ::  unique identity
