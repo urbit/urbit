@@ -13,7 +13,7 @@
 ::::
   ::
 |%
-++  data  $%({$json json} {$mime mime:^eyre})
+++  data  $%({$json json} {$mime mime})
 ++  card  $%  {$exec wire @p $~ {beak silk:^ford}}
               {$info wire @p toro:^clay}
           ==
@@ -36,7 +36,7 @@
   (fray (tope beak-now [ext sup]))
 ::
 ++  poke-tree
-  |=  {sup/path mim/mime:^eyre}  ^+  abet     ::  XX determine extension, beak
+  |=  {sup/path mim/mime}  ^+  abet     ::  XX determine extension, beak
   (poke--data [`%md (flop sup)] %mime mim)
 ::
 ++  poke-plan-account

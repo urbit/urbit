@@ -351,7 +351,7 @@
   ++  mizu  {p/@u q/(map @ud tako) r/rang}              ::  new state
   ++  moar  {p/@ud q/@ud}                               ::  normal change range
   ++  moat  {p/case q/case r/path}                      ::  change range
-  ++  mode  (list {path (unit mime:eyre)})              ::
+  ++  mode  (list {path (unit mime)})                   ::
   ++  mood  {p/care q/case r/path}                      ::  request in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta

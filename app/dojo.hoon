@@ -503,7 +503,7 @@
       ::
           $http
         ?>  ?=($mime p.cay)
-        =+  mim=;;(mime:^eyre q.q.cay)
+        =+  mim=;;(mime q.q.cay)
         =+  maf=(~(add ja *math:^eyre) %content-type (moon:bytes:eyre p.mim))
         (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
       ::

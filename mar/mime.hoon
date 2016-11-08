@@ -3,7 +3,7 @@
   ::
 /?    310
 !:
-|_  own/mime:^eyre
+|_  own/mime
 ++  grow
   |%
   ++  jam  `@`q.q.own
@@ -11,15 +11,15 @@
 ::
 ++  grab                                                ::  convert from
   |% 
-  ++  noun  mime:^eyre                                  ::  clam from %noun
+  ++  noun  mime                                  ::  clam from %noun
   ++  tape  
     |=(a/_"" [/application/x-urb-unknown (tact:bytes:eyre a)])
   --
 ++  grad
   |%
   ++  form  %mime
-  ++  diff  |=(mime:^eyre +<)
-  ++  pact  |=(mime:^eyre +<)
-  ++  join  |=({mime:^eyre mime:^eyre} `(unit mime:^eyre)`~)
+  ++  diff  |=(mime +<)
+  ++  pact  |=(mime +<)
+  ++  join  |=({mime mime} `(unit mime)`~)
   --
 --

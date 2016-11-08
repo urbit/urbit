@@ -110,7 +110,7 @@
       muc/(map path cage)                               ::  store mutations
       muh/(map path lobe)                               ::  store hashes
       mut/(unit (list (trel path lobe cage)))           ::  mutations
-      mim/(map path mime:^eyre)                         ::  mime cache
+      mim/(map path mime)                               ::  mime cache
   ==                                                    ::
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
@@ -1002,33 +1002,33 @@
       ::
           ~
       ::
-          %-  molt  ^-  (list (pair path mime:^eyre))
+          %-  molt  ^-  (list (pair path mime))
           ;:  weld
-            ^-  (list (pair path mime:^eyre))
+            ^-  (list (pair path mime))
             %+  murn  ins
             |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime:^eyre))
+            ^-  (unit (pair path mime))
             ?>  ?=($ins -.mis)
             ?.  ?=($mime p.p.mis)
               ~
-            `[pax ((hard mime:^eyre) q.q.p.mis)]
+            `[pax ((hard mime) q.q.p.mis)]
           ::
-            ^-  (list (pair path mime:^eyre))
+            ^-  (list (pair path mime))
             %+  murn  ink
             |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime:^eyre))
+            ^-  (unit (pair path mime))
             ?>  ?=($ins -.mis)
             ?>  ?=($mime p.p.mis)
-            `[pax ((hard mime:^eyre) q.q.p.mis)]
+            `[pax ((hard mime) q.q.p.mis)]
           ::
-            ^-  (list (pair path mime:^eyre))
+            ^-  (list (pair path mime))
             %+  murn  mut
             |=  {pax/path mis/miso}
-            ^-  (unit (pair path mime:^eyre))
+            ^-  (unit (pair path mime))
             ?>  ?=($mut -.mis)
             ?.  ?=($mime p.p.mis)
               ~
-            `[pax ((hard mime:^eyre) q.q.p.mis)]
+            `[pax ((hard mime) q.q.p.mis)]
           ==
       ==
     ==
@@ -1334,7 +1334,7 @@
     ?:  ?=($| -.res)
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" p.res)
     ?~  hez  ~|(%no-sync-duct !!)
-    =+  ^-  can/(map path (unit mime:^eyre))
+    =+  ^-  can/(map path (unit mime))
         %-  malt  ^-  mode
         %+  turn  (gage-to-cages res)
         |=  {pax/cage mim/cage}
@@ -1343,7 +1343,7 @@
         :-  ((hard path) q.q.pax)
         ?.  ?=($mime p.mim)
           ~
-        `((hard mime:^eyre) q.q.mim)
+        `((hard mime) q.q.mim)
     =+  mus=(must-ergo (turn (~(tap by can)) head))
     %-  emil
     %+  turn  (~(tap by mus))
@@ -3116,10 +3116,10 @@
             ?.  ?=($path p.pax)
               [%ergo >[%expected-path got=p.pax]< ~]
             =*  mim  q.i.p.tay
-            =+  mit=?.(?=($mime p.mim) ~ `((hard mime:^eyre) q.q.mim))
+            =+  mit=?.(?=($mime p.mim) ~ `((hard mime) q.q.mim))
             $(p.tay t.p.tay, nac :_(nac [((hard path) q.q.pax) mit]))
         ?:  ?=({@ *} tan)  (error:he tan)
-        =+  `can/(map path (unit mime:^eyre))`(malt tan)
+        =+  `can/(map path (unit mime))`(malt tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
         ?:  ?=($| -.gon.dat)
@@ -3685,7 +3685,7 @@
     `[(weld pax pat) %del ~]
   ^-  (list (pair path miso))
   %+  murn  mod
-  |=  {pat/path mim/(unit mime:^eyre)}
+  |=  {pat/path mim/(unit mime)}
   ^-  (unit (pair path miso))
   =+  paf=(weld pax pat)
   ?~  mim
@@ -3696,6 +3696,6 @@
     `[paf %del ~]
   =+  (~(get by hat) paf)
   ?~  -
-    `[paf %ins %mime -:!>(*mime:^eyre) u.mim]
-  `[paf %mut %mime -:!>(*mime:^eyre) u.mim]
+    `[paf %ins %mime -:!>(*mime) u.mim]
+  `[paf %mut %mime -:!>(*mime) u.mim]
 --
