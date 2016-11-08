@@ -1126,6 +1126,7 @@
       =^  gac  +>.$  (ap-prop vux)
       %=    +>.$
           misvale
+        ~?  !=(misvale *misvale-data)  misvale-drop+misvale
         *misvale-data                 ::  new app might mean new marks
       ::
           dub
