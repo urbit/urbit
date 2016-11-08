@@ -29,24 +29,27 @@
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  axle-n  ?(axle axle-1 axle-2)                       ::  upgrade path
+++  axle-n  ?(axle-1 axle-2 axle-3 axle-4)              ::  upgrade path
 ++  axle-1  {$1 pol/(map ship mast-1)}                  ::
 ++  mast-1                                              ::
   (cork mast-2 |=(mast-2 +<(bum (~(run by bum) seat-1)))) ::
 ++  seat-1                                              ::
   (cork seat-2 |=(seat-2 +<+))                          ::
 ++  axle-2  {$2 pol/(map ship mast-2)}                  ::
-++  mast-2                                              ::
-  (cork mast-3 |=(mast-3 +<(bum (~(run by bum) seat-2)))) ::
-++  seat-2                                              ::
-  (cork seat-3 |=(seat-3 +<+))                          ::
-++  axle-3  axle                                        ::
-++  mast-3  mast                                        ::
-++  seat-3  seat                                        ::  
+++  mast-2  (cork mast-3 |=(mast-3 +<+))                ::
+++  seat-2  seat-3                                      ::
+++  axle-3  {$3 pol/(map ship mast-3)}                  ::
+++  mast-3                                              ::
+  (cork mast-4 |=(mast-4 +<(bum (~(run by bum) seat-3)))) ::
+++  seat-3                                              ::
+  (cork seat-4 |=(seat-4 +<+))                          ::
+++  axle-4  axle                                        ::
+++  mast-4  mast                                        ::
+++  seat-4  seat                                        ::  
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state proper
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  axle                                                ::  all state
-  $:  $3                                                ::  state version
+  $:  $4                                                ::  state version
       pol/(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
@@ -55,8 +58,8 @@
       qel/(map bone @ud)                                ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
-  $:  sys/duct                                          ::  system duct
-      mak/(unit duct)                                   ::  ames awaiting crash
+  $:  mak/(unit duct)                                   ::  ames awaiting crash
+      sys/duct                                          ::  system duct
       sap/(map ship scad)                               ::  foreign contacts
       bum/(map dude seat)                               ::  running agents
       wub/(map dude sofa)                               ::  waiting queue
@@ -1344,19 +1347,30 @@
 ++  load                                                ::  recreate vane
   |=  old/axle-n
   ^+  ..^$
-  ?:  ?=($3 -.old)  ..^$(all old)
-  ?:  ?=($2 -.old)
+  ?-  -.old
+      $4  ..^$(all old)
+      $3
+    %=  $
+      old  ^-  axle-4
+           =>  |=(seat-3 `seat-4`[*misvale-data +<])
+           =>  |=(mast-3 +<(bum (~(run by bum) +>)))
+           old(- %4, pol (~(run by pol.old) .))
+    ==
+  ::
+      $2
     %=  $
       old  ^-  axle-3
-           =>  |=(seat-2 `seat-3`[*misvale-data +<])
-           =>  |=(mast-2 +<(bum (~(run by bum) +>)))
+           =>  |=(mast-2 [*(unit duct) +<])
            old(- %3, pol (~(run by pol.old) .))
     ==
-  %=  $
-    old  ^-  axle-2
-         =>  |=(seat-1 `seat-2`[*worm +<])
-         =>  |=(mast-1 +<(bum (~(run by bum) +>)))
-         old(- %2, pol (~(run by pol.old) .))
+  ::
+      $1
+    %=  $
+      old  ^-  axle-2
+           =>  |=(seat-1 `seat-2`[*worm +<])
+           =>  |=(mast-1 +<(bum (~(run by bum) +>)))
+           old(- %2, pol (~(run by pol.old) .))
+    ==
   ==
 ::
 ++  scry
