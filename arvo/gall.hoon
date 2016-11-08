@@ -440,7 +440,7 @@
   ++  mo-cook                                           ::  take in /use
     |=  {pax/path hin/(hypo sign-arvo)}
     ^+  +>
-    ?.  ?=({@ @ $?($inn $out $out-misvale $cay) *} pax)
+    ?.  ?=({@ @ $?($inn $out $cay) *} pax)
       ~&  [%mo-cook-bad-pax pax]
       !!
     =+  dap=`@tas`i.pax
@@ -455,10 +455,6 @@
               +>.$
             ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
     ::
-      $out-misvale
-        ?>  ?=({$f $news @} q.hin)
-        ap-abet:(ap-misvale-drop:pap t.pax(i.t %out))
-    ::
       $out  ?:  ?=({$f $made *} q.hin)
               ?-  -.q.+>.q.hin  
                 $tabl  ~|(%made-tabl !!)
@@ -467,9 +463,6 @@
                 $|
                     =+  why=p.q.+>.q.hin
                     =.  ..ap  ap-abet:(ap-misvale:pap t.pax)
-                    =.  ..ap  
-                      %+  mo-pass  [%use pax(i.t.t %out-misvale)]
-                      [%f %wasp our p.+>.q.hin &]
                     =.  why  (turn why |=(a/tank rose+[~ "! " ~]^[a]~))
                     ~>  %slog.`rose+["  " "[" "]"]^[>%mo-cook-fail< (flop why)]
                     ~&  [him=q.q.pry our=our pax=pax]
@@ -1082,12 +1075,6 @@
       ~&  [%ap-blocking-misvale wir]
       +>(misvale (~(put in misvale) wir))
     ::
-    ++  ap-misvale-drop
-      |=  wir/wire
-      ?.  (~(has in misvale) wir)  +>
-      ~&  [%ap-unblock-misvale wir]
-      +>(misvale (~(del in misvale) wir))
-    ::
     ++  ap-pour                                         ::  generic take
       |=  {pax/path vax/vase}
       ^+  +>
@@ -1138,6 +1125,9 @@
       ^+  +>
       =^  gac  +>.$  (ap-prop vux)
       %=    +>.$
+          misvale
+        *misvale-data                 ::  new app might mean new marks
+      ::
           dub
         :_(dub ?~(gac [%& dap ?~(vux %boot %bump) now] [%| u.gac]))
       ==
