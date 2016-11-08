@@ -1316,6 +1316,8 @@
       ::
           $core
         %+  cool  |.(leaf+"ford: core {<(tope p.kas)>}")
+        %+  flag  [bek /mar]
+        %+  flag  [bek /arvo]
         (cope (lear cof p.kas) (flux |=(a/vase [%& %core a])))
       ::
           $diff
