@@ -1323,8 +1323,12 @@
       ::
           $core
         %+  cool  |.(leaf+"ford: core {<(en-beam p.kas)>}")
+        ::  code runtime behaviour is frequently affected by marks
+        ::  TODO: track this more formally
         %+  flag  [bek /mar]
-        %+  flag  [bek /arvo]
+        ::  until /? is in use, any hoon may implicitly depend on arvo types
+        %+  flag  [bek /arvo/hoon]
+        %+  flag  [bek /arvo/zuse]
         (cope (lear cof p.kas) (flux |=(a/vase [%& %core a])))
       ::
           $diff
