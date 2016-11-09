@@ -256,6 +256,7 @@ J_D_OFILES=\
        jets/d/in_put.o \
        jets/d/in_tap.o \
        jets/d/in_uni.o \
+       jets/d/in_wyt.o \
        jets/d/in_bif.o \
        jets/d/in_dif.o \
        jets/d/by_gas.o \
