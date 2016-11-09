@@ -107,6 +107,7 @@ static u3j_harm _mood__hoon__in_mer_a[] = {{".2", u3wdi_mer}, {}};
 static u3j_harm _mood__hoon__in_put_a[] = {{".2", u3wdi_put}, {}};
 static u3j_harm _mood__hoon__in_tap_a[] = {{".2", u3wdi_tap}, {}};
 // static u3j_harm _mood__hoon__in_uni_a[] = {{".2", u3wdi_uni}, {}};
+static u3j_harm _mood__hoon__in_wyt_a[] = {{".2", u3wdi_wyt}, {}};
 static u3j_core _mood__hoon__in_d[] =
   { { "bif", _mood__hoon__in_bif_a },
     { "dif", _mood__hoon__in_dif_a },
@@ -116,6 +117,7 @@ static u3j_core _mood__hoon__in_d[] =
     // { "int", _mood__hoon__in_int_a },
     { "put", _mood__hoon__in_put_a },
     { "tap", _mood__hoon__in_tap_a },
+    { "wyt", _mood__hoon__in_wyt_a },
     // { "uni", _mood__hoon__in_uni_a },
     {}
   };
