@@ -65,7 +65,7 @@
               {$ha p/path:beak}                         ::  GET request
               {$he p/whir}                              ::  HEAD request
               {$hi p/knot q/mark $~}                    ::  outbound HTTP
-              {$se p/whir-se q/{iden (list @t)}}        ::  outbound to domain
+              {$se p/whir-se q/{user (list @t)}}        ::  outbound to domain
               {$si $~}                                  ::  response done
               {$of p/ixor q/$@($~ whir-of)}             ::  associated view
               {$ow p/ixor $~}                           ::  dying view
@@ -102,7 +102,7 @@
       wup/(map hole cyst)                               ::  secure sessions
       sop/(map hole {ship ?})                           ::  foreign sess names
       wix/(map ixor stem)                               ::  open views
-      sec/(map {iden (list @t)} driv)                   ::  security drivers
+      sec/(map {user (list @t)} driv)                   ::  security drivers
   ==                                                    ::
 ::
 ++  sec-move                                            ::  driver effect
@@ -115,7 +115,7 @@
 ++  bale                                                ::  driver state
   |*  a/_*                                              ::  %jael keys type
   $:  {our/ship now/@da eny/@uvJ byk/beak}              ::  base info
-      {usr/iden dom/(list @t)}                          ::  req user, domain
+      {usr/user dom/(list @t)}                          ::  req user, domain
       key/a                                             ::  secrets from %jael
   ==                                                    ::
 ::
@@ -1735,7 +1735,7 @@
     --
   ++  vi                                                ::  auth engine
     ~%  %eyre-v  ..is  ~
-    |_  $:  {usr/iden dom/path}
+    |_  $:  {usr/user dom/path}
             cor/(unit $@($~ vase))
             {liv/? req/(qeu {p/duct q/mark r/vase:hiss})}
         ==

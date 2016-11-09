@@ -18,7 +18,9 @@
 ::      - %gall: application        ("ball")
 ::      - %jael: security           ("jail")
 ::  
-::  with %zuse in your core, 
+::  with %zuse in your core, the engines of any vane are
+::  available at `engine:vane`.  the models (molds) are
+::  available at `mold:^vane`.
 ::
 ::  every model or engine in %zuse is attached to some 
 ::  vane, but any vane can use it (in its namespace),
@@ -30,14 +32,15 @@
 ::
 ~%  %zuse  +>  ~
 =>  
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  models
-::
+::                                                      ::  ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (1) models
+::                                                      ::  ::
 |%
-::                                                      ::::
-::::                    ++^ames                         ::  networking
-  ::                                                    ::::
+::
 ++  ames  ^?
+  ::                                                    ::::
+  ::::                  (1a)  ++^ames                   ::  network
+    ::                                                  ::::
   |%
   ++  able  ^?                                          ::  arvo moves
     |%
@@ -243,11 +246,12 @@
   ++  whom  {p/@ud q/govt r/sect s/name}                ::  year+govt+id
   ++  wund  (list {p/life q/ring r/acru})               ::  mace in action
   ++  wyll  (list deyd)                                 ::  certificate
-  --  ::  ames
-::                                                      ::::
-::::                    ++^behn                         ::  scheduling
-  ::                                                    ::::
+  --  ::ames
+::
 ++  behn  ^?
+  ::                                                    ::::
+  ::::                  (1b)  ++^behn                   ::  timekeeping
+    ::                                                  ::::
   |%
   ++  able  ^?                                          ::  arvo moves
     |%
@@ -261,12 +265,13 @@
           {$wake $~}                                    ::  timer activate
           {$wegh $~}                                    ::  report memory
       ==                                                ::
-    --  ::  able
-  --  ::  behn
-::                                                      ::::
-::::                    ++^clay                         ::  storage
-  ::                                                    ::::
+    --  ::able
+  --  ::behn
+::
 ++  clay  ^?
+  ::                                                    ::::
+  ::::                  (1c)  ++^clay                   ::  revision control
+    ::                                                  ::::
   |%
   ::                                                  
   ++  able  ^?                                          ::  arvo moves
@@ -295,7 +300,7 @@
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm 
           {$west p/sack q/path r/@ud s/*}               ::  network request
       ==                                                ::
-    --  ::  able
+    --  ::able
   ++  aeon  @ud                                         ::  version number
   ++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})  ::  mergepts
   ++  ankh                                              ::  fs node (new)
@@ -427,10 +432,11 @@
         t/@da                                           ::  date
     ==                                                  ::
   --  ::clay
-::                                                      ::::
-::::                    ++^dill                         ::  console
-  ::                                                    ::::
+::
 ++  dill  ^?
+  ::                                                    ::::
+  ::::                  (1d)  ++^dill                   ::  console
+    ::                                                  ::::
   |%
   ::                                    
   ++  able  ^?                                          ::  arvo moves
@@ -520,11 +526,12 @@
         {$vega p/path}                                  ::  reboot by path
         {$verb $~}                                      ::  verbose mode
     ==                                                  ::
-  --  ::  dill
-::                                                      ::::
-::::                    # ^eyre                         ::  web
-  ::                                                    ::::
+  --  ::dill
+::
 ++  eyre  ^?
+  ::                                                    ::::
+  ::::                  (1e)  ++^eyre                   ::  web/internet
+    ::                                                  ::::
   |%
   ++  able  ^?                                          ::  arvo moves
     |%
@@ -540,7 +547,7 @@
     ++  task                                            ::  in request ->$
       $%  {$born $~}                                    ::  new unix process
           {$crud p/@tas q/(list tank)}                  ::  XX rethink
-          {$hiss p/(unit iden) q/mark r/cage}           ::  outbound user req
+          {$hiss p/(unit user) q/mark r/cage}           ::  outbound user req
           {$init p/@p}                                  ::  report install
           {$serv p/$@(desk beam)}                       ::  set serving root
           {$them p/(unit hiss)}                         ::  outbound request
@@ -552,7 +559,7 @@
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm 
           {$west p/sack q/{path @ud *}}                 ::  network request
       ==                                                ::
-    --  ::  able
+    --  ::able
   ++  clip  (each @if @is)                              ::  client IP
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
@@ -597,7 +604,7 @@
         q/clip                                          ::  source IP
         r/httq                                          ::
     ==                                                  ::
-  ++  iden  knot                                        ::  username
+  ++  user  knot                                        ::  username
   ++  love                                              ::  http response
     $%  {$ham p/manx}                                   ::  html node
         {$mid p/mite q/octs}                            ::  mime-typed data
@@ -630,7 +637,7 @@
         {$| p/pork q/quay}                              ::  relative
     ==                                                  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
-  --  ::  eyre
+  --  ::eyre
 ::                                                      ::::
 ::::                    # ^ford                         ::  build
   ::                                                    ::::
@@ -1039,18 +1046,18 @@
   ++  life  @ud                                         ::  regime number
   --  ::  xmas
 --  ::
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  engines
-::
+::                                                      ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  engines
+::                                                      ::
 |%
 ::                                                      ::::
-::::                    # ames                          ::  networking
+::::                    ++ames                          ::  networking
   ::                                                    ::::
 ++  ames  ^?
   =,  ^ames
   |%
   ::                                                    ::
-  ::::                  ## crypto:ames                  ::  crypto standards
+  ::::                  ++crypto:ames                   ::  crypto standards
     ::                                                  ::::
   ++  crypto  ^?
     =,  number
@@ -4136,10 +4143,10 @@
       ::                                                ::  ++auru:urlp:url:
       ++  auru                                          ::  2396 with maybe user
         %+  cook
-          |=  $:  a/{p/? q/(unit iden) r/{(unit @ud) host}}
+          |=  $:  a/{p/? q/(unit user) r/{(unit @ud) host}}
                   b/{pork quay}
               ==
-          ^-  (pair (unit iden) purl)
+          ^-  (pair (unit user) purl)
           [q.a [[p.a r.a] b]]
         ::
         ;~  plug

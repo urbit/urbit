@@ -19,7 +19,7 @@
 ~%  %one  +  ~
 |%
 ::                                                      ::
-::::    1a: unsigned arithmetic and tree addressing     ::
+::::    1a: unsigned arithmetic                         ::
   ::
 ++  add                                                 ::  unsigned addition
   ~/  %add
