@@ -95,6 +95,7 @@
     u3_noun u3wdi_put(u3_noun);
     u3_noun u3wdi_tap(u3_noun);
     u3_noun u3wdi_uni(u3_noun);
+    u3_noun u3wdi_wyt(u3_noun);
 
   /** Tier 5.
   **/
