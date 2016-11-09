@@ -1096,7 +1096,9 @@
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  wyt                                               ::  size of set
-    |-  ^-  @
+    =<  $
+    ~%  %wyt  +  ~
+    |.  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   --
 ::                                                      ::
