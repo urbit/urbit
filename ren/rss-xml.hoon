@@ -51,7 +51,7 @@
           ;*  %-  drop
               %+  bind  (slaw %da date.a)
               |=  b/@da  ^-  manx
-              ;date:"{(dust (yore b))}"
+              [/'pubDate' ;/((dust (yore b))) ~]
         ==
   ==
 ==
