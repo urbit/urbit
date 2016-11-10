@@ -3,40 +3,48 @@
 ::::  /hoon/rss-xml/ren
   ::
 /?    310
-/=  sum  /%  /&front&/|(/front/ /~[~])
+/=  our  /$  |=({bem/beam *} p.bem)
+/=  top
+  /.  /=  pax  /$  |=({bem/beam *} (slag 1 (flop s.bem)))
+      /=  inf  /%  /&front&/|(/front/ /~[~])
+  ==
 /=  kid  /^  :(map knot knot cord)
          /%  /_  /front/
-/$    |=({bem/beam *} [our=p.bem tub=(slag 1 (flop s.bem))])
 !:
 ::::  ~fyr, ~tasfyn-partyv
   ::
-::~&  [sum=sum kid=kid]
-::  Link from relative path
-=+  hok=.^(hart %e /(scot %p our)/host/real)
-=+  ref=|=(a/path (earn hok `(weld tub a) ~))
-=/  atrs
+|%
+++  relative-link
+  =/  external-host
+    ~+(.^(hart %e /(scot %p our)/host/real))
+  |=  a/path  ^-  tape
+  (earn external-host `(weld pax.top a) ~)
+::
+++  parse-front
   |=  a/(map cord cord)
   :*  title=(fall (~(get by a) %title) '')
       preview=(fall (~(get by a) %preview) '')
       author=(fall (~(get by a) %author) '')
       date=(fall (~(get by a) %date) '')
   ==
+--
 ::
+::::
+  ::
 %-  crip  %-  poxo
 ;rss(version "2.0")
-::   ;raw: *{(turn (wash 0^80 >% .<) |=(a/tape ;l:"{a}"))}
   ;channel
-    ;*  =/  a  (atrs sum)
+    ;*  =/  a  (parse-front inf.top)
         ;=
           ;title: {(trip title.a)}
-          ;link: {(ref /)}
+          ;link: {(relative-link /)}
           ;description: {(trip preview.a)}
         ==
     ;*  %+  turn  (~(tap by kid))
-        |=  {nom/@t som/(map knot cord)}
-        =/  a  (atrs som)
+        |=  {fyl/@t inf/(map knot cord)}
+        =/  a  (parse-front inf)
         ;item
-          ;link: {(ref /[nom])}
+          ;link: {(relative-link /[fyl])}
           ;title: {(trip title.a)}
           ;author: {(trip author.a)}
           ;description: {(trip preview.a)}
