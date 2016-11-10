@@ -3,9 +3,9 @@
 ::::  /hoon/rss-xml/ren
   ::
 /?    310
-/=  sum  /&snip&elem&/|(/elem/ /~[;div;])
+/=  sum  /%  /&snip&elem&/|(/elem/ /~[;div;])
 /=  kid  /^  (map knot {marl marl})
-         /_  /&snip&/elem/
+         /%  /_  /&snip&/elem/
 /$    |=({bem/beam *} [our=p.bem tub=(slag 1 (flop s.bem))])
 !:
 ::::  ~fyr, ~tasfyn-partyv
