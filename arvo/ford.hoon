@@ -1136,6 +1136,7 @@
           &((slob %grow p.pro) (slob too p:(slap pro [%limb %grow])))
         :: ~$  link-grow
         :: =<  $  ~%  %grow  link-jet  ~  |.
+        %+  cool  |.(leaf+"ford: grow {<for>} to {<too>}")
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
         (maim cof pox [%per [%limb %grow] [%limb too]])
