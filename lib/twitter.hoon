@@ -72,14 +72,14 @@
   |%
   ++  ce  |*({a/_* b/fist:jo} (cu:jo |=(c/a c) b))       ::  output type
   ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])
-  ++  user  (cook crip (plus ;~(pose aln cab)))
+  ++  usor  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
   ++  post
     =+  jo
     %+  ce  post:sur-twit
     %-  ot
     :~  id+ni
-        user+(ot (fasp screen-name+(su user)) ~)
+        user+(ot (fasp screen-name+(su usor)) ~)
         (fasp created-at+da)
         text+(cu crip (su (star escp:^parse)))  :: parse html escapes
     ==
@@ -87,7 +87,7 @@
     =+  jo
     %+  ce  (list who/@ta)
     =-  (ot users+(ar -) ~)
-    (ot (fasp screen-name+(su user)) ~)
+    (ot (fasp screen-name+(su usor)) ~)
   --
 ++  print
   =+  args:reqs
