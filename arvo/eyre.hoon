@@ -452,15 +452,25 @@
     }
 
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
-    urb.redir = function(ship){
-      if(ship) document.location.pathname =
-        document.location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
-      else document.location =
+    urb.redirTo = function(url){
+      document.title = "Redirecting"
+      var mount = document.getElementById("pass") || document.body
+      mount.outerHTML = "Redirecting to <a href=\""+url+"\">"+url+"</a>"
+      document.location = url
+    }
+    urb.redir = function(ship){ 
+      if(ship){
+        var location = new URL(document.location)
+        location.pathname = location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
+        urb.redirTo(location)
+      }
+      else urb.redirTo(
         document.location.hash.match(/#[^?]+/)[0].slice(1) +
         document.location.pathname.replace(
           /^\/~\/am\/[^/]+/,
           '/~/as/~' + urb.ship) +
         document.location.search
+      )
     }
     if(urb.foreign && urb.auth.indexOf(urb.ship) !== -1){
       req("/~/auth.json?PUT",
@@ -492,6 +502,16 @@
     ;html
       ;head:title:"Accepted"
       ;body:"You may now close this window."
+    ==
+  ::
+  ++  redir
+    |=  url/tape
+    ;html
+      ;head:title:"Redirecting..."
+      ;body
+        ;p: Redirecting to ;{a/"{url}" "{url}"}
+        ;script: setTimeout(function()\{document.location = {(pojo (jape url))}}, 3000)
+      ==
     ==
   ::
   ++  login-page
@@ -887,8 +907,9 @@
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         ?:  ?=($red-quri p.cay)
-          =+  url=((hard quri) q.q.cay)
-          (give-thou 307 [location+(crip (apex:earn url))]~ ~)
+          =+  url=(apex:earn ((hard quri) q.q.cay))
+          (give-thou 307 [location+(crip url)]~ ~)
+          :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
           =+  bek=(norm-beak -:(need (tome p.tee)))
           =+  tee-ses=?~(ses tee [%ac u.ses tee])
@@ -1509,8 +1530,7 @@
           q.q.pul   ['~' %am ses q.q.pul]
         ==
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
-      %-  give-thou:abet
-      (add-cookies cug [307 [location+(crip url)]~ ~])
+      (give-html:abet 200 cug (redir:xml url))
     ::
     ++  logon
       |=  her/ship
