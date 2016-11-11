@@ -582,8 +582,8 @@
         ;title:"{(trip a)}"
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/=home=/web/lib/css/fonts.css");
-        ;link(rel "stylesheet", href "/=home=/web/lib/css/bootstrap.css");
+        ;link(rel "stylesheet", href "/===/web/lib/css/fonts.css");
+        ;link(rel "stylesheet", href "/===/web/lib/css/bootstrap.css");
       ==
       ;body:"*{b}"
     ==
@@ -1373,7 +1373,7 @@
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
             $js
-          =^  jon  ..ya  stat-json.yac  
+          =^  jon  ..ya  stat-json.yac
           [%| (resolve cug.yac p.pez(p (add-json jon p.p.pez)))]
         ==
       ::
