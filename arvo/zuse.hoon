@@ -4203,7 +4203,7 @@
         %+  sear
           |=  a/@ta
           ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
-        %+  cook  cass
+        %+  cook  |=(a/tape (crip (cass a)))
         ;~(plug aln (star alp))
       ::                                                ::  ++fque:urlp:url:
       ++  fque                                          ::  normal query field
@@ -4246,7 +4246,7 @@
         ==
       ::                                                ::  ++scem:urlp:url:
       ++  scem                                          ::  2396 scheme
-        %+  cook  cass
+        %+  cook  |=(a/tape (crip (cass a)))
         ;~(plug alf (star ;~(pose aln lus hep dot)))
       ::                                                ::  ++smeg:urlp:url:
       ++  smeg                                          ::  2396 segment

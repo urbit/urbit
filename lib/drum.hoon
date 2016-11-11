@@ -113,7 +113,7 @@
 !:
 ::::
   ::
-|=  {bowl:^gall drum-part}                                  ::  main drum work
+|=  {bowl:^gall drum-part}                              ::  main drum work
 =+  (fall (~(get by bin) ost) *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
