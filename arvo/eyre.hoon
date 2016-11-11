@@ -1379,7 +1379,7 @@
       ::
           $del
         =.  ..ya  (logoff:yac p.ham)
-        =+  cug=[(set-cookie cookie-prefix '~')]~
+        =+  cug=~[(set-cookie cookie-prefix '~') (set-cookie %ship '~')]
         [%| (give-json 200 cug (joba %ok %b &))]
       ::
           $get
