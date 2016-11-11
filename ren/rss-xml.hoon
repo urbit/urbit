@@ -5,7 +5,7 @@
 /?    310
 /=  our  /$  |=({bem/beam *} p.bem)
 /=  top
-  /.  /=  pax  /$  |=({bem/beam *} (slag 1 (flop s.bem)))
+  /.  /=  pax  /$  |=({bem/beam *} (slag (lent /web) (flop s.bem)))
       /=  inf  /%  /&front&/|(/front/ /~[~])
   ==
 /=  kid  /^  :(map knot knot cord)
