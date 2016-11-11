@@ -585,6 +585,13 @@
   ::
   ::::                                                  ::  (1e2)
     ::
+  ++  bale                                              ::  driver state
+    |*  a/_*                                            ::  %jael keys type
+    $:  {our/ship now/@da eny/@uvJ byk/beak}            ::  base info
+        {usr/user dom/(list @t)}                        ::  req user, domain
+        key/a                                           ::  secrets from %jael
+    ==                                                  ::
+  ::
   ++  clip  (each @if @is)                              ::  client IP
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
@@ -662,6 +669,12 @@
         {$| p/pork q/quay}                              ::  relative
     ==                                                  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
+  ++  sec-move                                          ::  driver effect
+    $%  {$send p/hiss}                                  ::  http out
+        {$show p/purl}                                  ::  direct user to url
+        {$give p/httr}                                  ::  respond immediately
+        {$redo $~}                                      ::  restart request qeu
+    ==                                                  ::
   --  ::eyre
 ::
 ++  ford  ^?

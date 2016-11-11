@@ -3,6 +3,7 @@
 ::::  /hoon/oauth2/lib
   ::
 /+    hep-to-cab, interpolate
+=,  ^eyre
 |%
 ++  parse-url  parse-url:interpolate
 ++  join
