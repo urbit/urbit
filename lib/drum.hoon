@@ -19,7 +19,6 @@
       fur/(map dude:^gall (unit server))                ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
-++  drum-start  well:^gall                              ::  start (local) server
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -41,10 +40,6 @@
       fug/(map gill:^gall (unit target))                      ::  connections
       mir/(pair @ud (list @c))                          ::  mirrored terminal
   ==                                                    ::
-++  master                                              ::  master buffer
-  $:  liv/?                                             ::  master is live
-      tar/target                                        ::  master target
-  ==                                                    ::
 ++  history                                             ::  past input
   $:  pos/@ud                                           ::  input position
       num/@ud                                           ::  number of entries
@@ -64,11 +59,6 @@
       hit/history                                       ::  all past input
       pom/sole-prompt                                   ::  static prompt
       inp/sole-command                                  ::  input state
-  ==                                                    ::
-++  ukase                                               ::  master command
-  $%  {$add p/(list gill:^gall)}                              ::  attach to
-      {$del p/(list gill:^gall)}                              ::  detach from
-      {$new p/(list well:^gall)}                        ::  create
   ==                                                    ::
 --
 ::                                                      ::  ::
@@ -94,29 +84,6 @@
     [[(sein:title:jael our) %talk] [our %dojo] ~]
   [[our %talk] [our %dojo] ~]
 ::
-++  deft-mast                                           ::  default master
-  |=  our/ship
-  ^-  master
-  :*  %&
-      [~ ~]
-      *(unit search)
-      *history
-      [%& %sole "{(scow %p our)}/ "]
-      *sole-command
-  ==
-::
-++  deft-pipe                                           ::  default source
-  |=  our/ship                                          ::
-  ^-  source                                            ::
-  :*  80                                                ::  edg
-      0                                                 ::  off
-      [0 0 60 ~]                                        ::  kil
-      0                                                 ::  inx
-      ~                                                 ::  fug
-      [0 ~]                                             ::  mir
-  ==
-::
-++  deft-tart  *target                                  ::  default target
 ++  drum-make                                           ::  initial part
   |=  our/ship
   ^-  drum-part
@@ -146,8 +113,8 @@
 !:
 ::::
   ::
-|=  {bowl:^gall drum-part}                              ::  main drum work
-=+  (fall (~(get by bin) ost) (deft-pipe our))
+|=  {bowl:^gall drum-part}                                  ::  main drum work
+=+  (fall (~(get by bin) ost) *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
@@ -395,14 +362,6 @@
   ?~  wol  +>.^$
   $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
 ::
-++  se-joke                                           ::  prepare connection
-  |=  gyl/gill:^gall
-  ^+  +>
-  =+  lag=se-agon
-  ?~  lag  +>.$
-  ?:  =(~ fug)  +>.$
-  (se-alas(fug (~(put by fug) gyl ~)) u.lag)
-::
 ++  se-join                                           ::  confirm connection
   |=  gyl/gill:^gall
   ^+  +>
@@ -414,49 +373,6 @@
   |=  gyl/gill:^gall
   ^+  +>
   (se-drop:(se-pull gyl) & gyl)
-::
-++  se-like                                           ::  act in master
-  |=  kus/ukase
-  ?-    -.kus
-      $add
-    |-  ^+  +>.^$
-    ?~  p.kus  +>.^$
-    $(p.kus t.p.kus, +>.^$ (se-link i.p.kus))
-  ::
-      $del
-    |-  ^+  +>.^$
-    ?~  p.kus  +>.^$
-    $(p.kus t.p.kus, +>.^$ (se-nuke i.p.kus))
-  ::
-      $new
-    |-  ^+  +>.^$
-    ?~  p.kus  +>.^$
-    $(p.kus t.p.kus, +>.^$ (se-born i.p.kus))
-  ==
-::
-++  se-plot                                           ::  status line
-  ^-  tape
-  =+  lag=se-agon
-  =+  ^=  pry
-      |=  gill:^gall  ^-  tape
-      =+((trip q.+<) ?:(=(our p.+>-) - :(welp (scow %p p.+>-) "/" -)))
-  =+  ^=  yey
-      |=  gill:^gall  ^-  tape
-      =+((pry +<) ?:(=(lag `+>-) ['*' -] -))
-  =+  ^=  yal  ^-  (list tape)
-      %+  weld
-        ^-  (list tape)
-        %+  turn  (~(tap by fug))
-        |=  {a/gill:^gall b/(unit target)}
-        =+  c=(yey a)
-        ?~(b ['?' c] c)
-      ^-  (list tape)
-      %+  turn  (skip (~(tap by fur)) |=({term *} (~(has by fug) [our +<-])))
-      |=({term *} ['-' (pry our +<-)])
-  |-  ^-  tape
-  ?~  yal  ~
-  ?~  t.yal  i.yal
-  :(welp i.yal ", " $(yal t.yal))
 ::
 ++  se-klin                                           ::  disconnect app
   |=  gyl/gill:^gall
@@ -470,7 +386,7 @@
   |=  bil/dill-blit:^dill
   +>(biz [bil biz])
 ::
-++  se-blit-sys                                       ::  output to system console
+++  se-blit-sys                                       ::  output to system 
   |=  bil/dill-blit:^dill  ^+  +>
   ?~  sys  ~&(%se-blit-no-sys +>)
   (se-emit [u.sys %diff %dill-blit bil])
