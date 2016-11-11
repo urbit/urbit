@@ -98,6 +98,7 @@
     date: {<now>}
     title: {(trip hed)}
     author: {<him>}
+    navsort: bump
     navuptwo: true
     comments: reverse
     ---
