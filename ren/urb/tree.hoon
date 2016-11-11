@@ -3,7 +3,7 @@
 ::::  /hoon/tree/urb/ren
   ::
 /?    310
-/=   hed    /#    /%   /:  /===/ren   /tree-head/  :: XX static
+/=   hed    /#    /%   /tree-head/
 /=   bod    /#    /%   /tree-body/
 ^-  {hed/{@uvH marl} bod/{@uvH marl}}
 [hed bod]
