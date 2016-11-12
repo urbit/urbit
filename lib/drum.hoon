@@ -14,8 +14,8 @@
 ++  drum-pith-0  _!!                                    ::  forgotten
 ++  drum-pith-1                                         ::
   $:  sys/(unit bone)                                   ::  local console
-      eel/(set gill:^gall)                                    ::  connect to 
-      ray/(set well:^gall)                              ::  
+      eel/(set gill:^gall)                              ::  connect to
+      ray/(set well:^gall)                              ::
       fur/(map dude:^gall (unit server))                ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
@@ -418,12 +418,7 @@
   |=  mov/move
   %_(+> moz [mov moz])
 ::
-++  se-emil                                           ::  emit moves
-  |=  mov/(list move)
-  ?~  mov  +>
-  $(mov t.mov, +> (se-emit i.mov))
-::
-++  se-talk  
+++  se-talk
   |=  tac/(list tank)
   ^+  +>
   :: XX talk should be usable for stack traces, see urbit#584 which this change
