@@ -281,9 +281,7 @@
 ::
 ++  se-alas                                           ::  recalculate index
   |=  gyl/gill:^gall
-  ^+  +>
   =+  [xin=0 wag=se-amor]
-  ?:  =(~ wag)  +>.$(inx 0)
   |-  ^+  +>.^$
   ?~  wag  +>.^$(inx 0)
   ?:  =(i.wag gyl)  +>.^$(inx xin)
@@ -291,19 +289,20 @@
 ::
 ++  se-amor                                           ::  live targets
   ^-  (list gill:^gall)
-  (skim (~(tap in eel)) |=(gill:^gall ?=({$~ $~ *} (~(get by fug) +<))))
+  %+  skim  (~(tap in eel))
+  |=(a/gill:^gall ?=({$~ $~ *} (~(get by fug) a)))
 ::
 ++  se-anon                                           ::  rotate index
   =+  wag=se-amor
   ?~  wag  +
   ::  ~&  [%se-anon inx+inx wag+wag nex+(mod +(inx) (lent se-amor))]
-  +(inx (mod +(inx) (lent se-amor)))
+  +(inx (mod +(inx) (lent wag)))
 ::
 ++  se-agon                                           ::  current gill
   ^-  (unit gill:^gall)
   =+  wag=se-amor
   ?~  wag  ~
-  `(snag inx se-amor)
+  `(snag inx `(list gill:^gall)`wag)
 ::
 ++  se-belt                                           ::  handle input
   |=  bet/dill-belt:^dill
