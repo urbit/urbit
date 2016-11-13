@@ -504,20 +504,6 @@
       {$txt *}  (ta-txt p.bet)
     ==
   ::
-  ++  ta-cat                                          ::  mass insert
-    |=  {pos/@ud txt/(list @c)}
-    ^-  sole-edit
-    :-  %mor
-    |-  ^-  (list sole-edit)
-    ?~  txt  ~
-    [[%ins pos i.txt] $(pos +(pos), txt t.txt)]
-  ::
-  ++  ta-cut                                          ::  mass delete
-    |=  {pos/@ud num/@ud}
-    ^-  sole-edit
-    :-  %mor
-    |-(?:(=(0 num) ~ [[%del pos] $(num (dec num))]))
-  ::
   ++  ta-det                                          ::  send edit
     |=  ted/sole-edit
     ^+  +>
@@ -581,7 +567,7 @@
                   ris  ~
                   kil  (ta-kil %r (slag pos.inp buf.say.inp))
                 ==
-            (ta-cut pos.inp (sub len pos.inp))
+            (cut:edit pos.inp (sub len pos.inp))
         $l  +>(+> (se-blit %clr ~))
         $n  (ta-aro %d)
         $p  (ta-aro %u)
@@ -593,21 +579,16 @@
         $t  =+  len=(lent buf.say.inp)
             ?:  |(=(0 pos.inp) (lth len 2))
               ta-bel
-            =+  sop=?:(=(len pos.inp) (dec pos.inp) pos.inp)
-            =.  pos.inp  +(sop)
-            =.  ris  ~
-            %-  ta-hom
-            :~  %mor
-                [%del sop]
-                [%ins (dec sop) (snag sop buf.say.inp)]
-            ==
+            =+  sop=(sub pos.inp ?:(=(len pos.inp) 2 1))
+            %-  ta-hom(ris ~)
+            (rep:edit [sop 2] (flop (swag [sop 2] buf.say.inp)))
         $u  ?:  =(0 pos.inp)
               ta-bel
             %-  %=  ta-hom
                   ris  ~
                   kil  (ta-kil %l (scag pos.inp buf.say.inp))
                 ==
-            (ta-cut 0 pos.inp)
+            (cut:edit 0 pos.inp)
         $v  ta-bel
         $w  ?:  =(0 pos.inp)
               ta-bel
@@ -616,12 +597,12 @@
                   ris  ~
                   kil  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
                 ==
-            (ta-cut b (sub pos.inp b))
+            (cut:edit b (sub pos.inp b))
         $x  +>(+> se-anon)
         $y  ?:  =(0 num.kil)
               ta-bel
             %-  ta-hom(ris ~)
-            (ta-cat pos.inp (snag (sub num.kil pos.kil) old.kil))
+            (cat:edit pos.inp (snag (sub num.kil pos.kil) old.kil))
     ==
   ::
   ++  ta-cru                                          ::  hear crud
@@ -763,7 +744,7 @@
             =+  old=`(list @c)`i.old.hit
             =+  b=(bwrd (lent old) old nedg)
             %-  ta-hom(ris ~)
-            (ta-cat pos.inp (slag b old))
+            (cat:edit pos.inp (slag b old))
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
@@ -772,7 +753,7 @@
                   ris  ~
                   kil  (ta-kil %l (slag b (scag pos.inp buf.say.inp)))
                 ==
-            (ta-cut b (sub pos.inp b))
+            (cut:edit b (sub pos.inp b))
             ::
       $b    ?:  =(0 pos.inp)
               ta-bel
@@ -782,11 +763,7 @@
               ta-bel
             =+  sop=(fwrd pos.inp buf.say.inp nwrd)
             %-  ta-hom(pos.inp (fwrd sop buf.say.inp nedg))
-            :~  %mor
-              [%del sop]
-              :+  %ins  sop
-              (head (ucas (limo [(snag sop buf.say.inp)]~)))
-            ==
+            (rep:edit [sop 1] (ucas (swag [sop 1] buf.say.inp)))
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
@@ -795,33 +772,28 @@
                   ris  ~
                   kil  (ta-kil %r (slag pos.inp (scag f buf.say.inp)))
                 ==
-            (ta-cut pos.inp (sub f pos.inp))
+            (cut:edit pos.inp (sub f pos.inp))
             ::
       $f    ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
             +>(pos.inp (fwrd pos.inp buf.say.inp nedg))
             ::
       $r    %-  ta-hom(lay.hit (~(put by lay.hit) pos.hit ~))
-            :~  %mor
-              (ta-cut 0 (lent buf.say.inp))
-              %+  ta-cat  0
-              ?:  =(pos.hit num.hit)  ~
-              (snag (sub num.hit +(pos.hit)) old.hit)
-            ==
+            :-  %set
+            ?:  =(pos.hit num.hit)  ~
+            (snag (sub num.hit +(pos.hit)) old.hit)
             ::
       $t    =+  a=(fwrd pos.inp buf.say.inp nedg)
             =+  b=(bwrd a buf.say.inp nedg)
             =+  c=(bwrd b buf.say.inp nedg)
             ?:  =(b c)
               ta-bel
-            =+  prev=`(pair @ud @ud)`[c (fwrd c buf.say.inp nedg)]
-            =+  next=`(pair @ud @ud)`[b a]
-            %-  ta-hom(pos.inp q.next)
+            =/  prev/(pair @ud @ud)  [c (sub (fwrd c buf.say.inp nedg) c)]
+            =/  next/(pair @ud @ud)  [b (sub a b)]
+            %-  ta-hom(pos.inp a)
             :~  %mor
-              (ta-cut p.next (sub q.next p.next))
-              (ta-cat p.next (slag p.prev (scag q.prev buf.say.inp)))
-              (ta-cut p.prev (sub q.prev p.prev))
-              (ta-cat p.prev (slag p.next (scag q.next buf.say.inp)))
+                (rep:edit next (swag prev buf.say.inp))
+                (rep:edit prev (swag next buf.say.inp))
             ==
             ::
       ?($u $l)
@@ -831,25 +803,22 @@
             =+  sop=(fwrd pos.inp buf.say.inp nwrd)
             =+  f=(fwrd sop buf.say.inp nedg)
             %-  ta-hom
-            :~  %mor
-              (ta-cut sop (sub f pos.inp))
-              (ta-cat sop (case (slag sop (scag f buf.say.inp))))
-            ==
+            %+  rep:edit
+              [sop (sub f pos.inp)]
+            (case (slag sop (scag f buf.say.inp)))
             ::
       $y    ?.  ?&  (gth num.kil 0)
                     ?=(^ p.blt)
-                    ?|  ?=({$ctl p/$y} u.p.blt)
-                        ?=({$met p/$y} u.p.blt)
+                    ?|  ?=({$ctl $y} u.p.blt)
+                        ?=({$met $y} u.p.blt)
                 ==  ==
               ta-bel
             =+  las=(lent (snag (sub num.kil pos.kil) old.kil))
-            =+  sop=(sub pos.inp las)
             =+  pos=?:(=(1 pos.kil) num.kil (dec pos.kil))
             %-  ta-hom(pos.kil pos, ris ~)
-            :~  %mor
-              (ta-cut sop las)
-              (ta-cat sop (snag (sub num.kil pos) old.kil))
-            ==
+            %+  rep:edit
+              [(sub pos.inp las) las]
+            (snag (sub num.kil pos) old.kil)
     ==
   ::
   ++  ta-mov                                          ::  move in history
@@ -920,11 +889,7 @@
     ^+  +>
     ?^  ris
       (ta-ser txt)
-    %-  ta-hom
-    :-  %mor
-    |-  ^-  (list sole-edit)
-    ?~  txt  ~
-    [[%ins pos.inp i.txt] $(pos.inp +(pos.inp), txt t.txt)]
+    (ta-hom (cat:edit pos.inp txt))
   ::
   ++  ta-vew                                          ::  computed prompt
     |-  ^-  (pair @ud (list @c))
@@ -949,5 +914,31 @@
     =+  len=(lent buf.say.inp)
     |-  ^-  (list @c)
     ?:(=(0 len) ~ [`@c`'*' $(len (dec len))])
+  --
+++  edit                                              ::  produce sole-edits
+  |%
+  ++  cat                                             ::  mass insert
+    |=  {pos/@ud txt/(list @c)}
+    ^-  sole-edit
+    :-  %mor
+    |-  ^-  (list sole-edit)
+    ?~  txt  ~
+    [[%ins pos i.txt] $(pos +(pos), txt t.txt)]
+  ::
+  ++  cut                                             ::  mass delete
+    |=  {pos/@ud num/@ud}
+    ^-  sole-edit
+    :-  %mor
+    |-  ^-  (list sole-edit)
+    ?:  =(0 num)  ~
+    [[%del pos] $(num (dec num))]
+  ::
+  ++  rep                                             ::  mass replace
+    |=  {{pos/@ud num/@ud} txt/(list @c)}
+    ^-  sole-edit
+    :~  %mor
+        (cut pos num)
+        (cat pos txt)
+    ==
   --
 --
