@@ -685,7 +685,7 @@
           {$wegh $~}                                    ::  report memory
           {$wipe p/@p $~}                               ::  clear cache
       ==                                                ::
-    --  ::  able
+    --  ::able
   ++  bilk  (pair beak silk)                            ::  sourced request
   ++  gage                                              ::  recursive cage+tang
     $%  {$& p/cage}                                     ::  success
