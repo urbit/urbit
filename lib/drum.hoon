@@ -412,13 +412,12 @@
   (se-show (sub p.lin off) (scag edg (slag off q.lin)))
 ::
 ++  se-view                                           ::  flush buffer
+  ^+  .
   =+  gul=se-agon
-  ?~  gul  +
-  =+  gyr=(~(get by fug) u.gul)
-  ?~  gyr  +>
-  ?~  u.gyr  +>
-  %-  se-just
-  ~(ta-vew ta [& u.gul] u.u.gyr)
+  =+  tur=?~(gul ~ (~(get by fug) u.gul))    ::  XX se-aint
+  ?:  |(?=($~ gul) ?=($~ tur) ?=($~ u.tur))
+    +>
+  (se-just ta-vew:(se-tame u.gul))
 ::
 ++  se-emit                                           ::  emit move
   |=  mov/move
