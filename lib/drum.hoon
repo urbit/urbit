@@ -317,11 +317,9 @@
       {$yow *}  ~&([%no-yow -.bet] +>)
     ==
   =+  gul=se-agon
-  =+  tur=?~(gul ~ (~(get by fug) u.gul))    ::  XX se-aint
-  ?:  |(?=($~ gul) ?=($~ tur) ?=($~ u.tur))
+  ?:  |(?=($~ gul) (se-aint u.gul))
     (se-blit %bel ~)
-  =<  ta-abet
-  (ta-belt:(se-tame u.gul) bet)
+  ta-abet:(ta-belt:(se-tame u.gul) bet)
 ::
 ++  se-born                                           ::  new server
   |=  wel/well:^gall
@@ -403,9 +401,7 @@
 ++  se-view                                           ::  flush buffer
   ^+  .
   =+  gul=se-agon
-  =+  tur=?~(gul ~ (~(get by fug) u.gul))    ::  XX se-aint
-  ?:  |(?=($~ gul) ?=($~ tur) ?=($~ u.tur))
-    +>
+  ?:  |(?=($~ gul) (se-aint u.gul))  +
   (se-just ta-vew:(se-tame u.gul))
 ::
 ++  se-emit                                           ::  emit move
