@@ -493,7 +493,7 @@
     .(+> (se-blit %bel ~), q.blt ~)                   ::  forget belt
   ::
   ++  ta-belt                                         ::  handle input
-    |=  bet/dill-belt
+    |=  bet/dill-belt:^dill
     ^+  +>
     ?<  ?=({?($hey $rez $yow) *} bet)                 ::  target-specific
     =.  blt  [q.blt `bet]                             ::  remember belt
