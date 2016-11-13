@@ -310,29 +310,18 @@
 ++  se-belt                                           ::  handle input
   |=  bet/dill-belt:^dill
   ^+  +>
-  ?:  ?=($rez -.bet)
-    +>(edg (dec p.bet))
-  ?:  ?=($yow -.bet)
-    ~&  [%no-yow -.bet]
-    +>
+  ?:  ?=({?($hey $rez $yow) *} bet)                   ::  target-agnostic
+    ?-  bet
+      {$hey *}  +>(mir [0 ~])                         ::  refresh
+      {$rez *}  +>(edg (dec p.bet))                   ::  resize window
+      {$yow *}  ~&([%no-yow -.bet] +>)
+    ==
   =+  gul=se-agon
-  =+  tur=?~(gul ~ (~(get by fug) u.gul))
+  =+  tur=?~(gul ~ (~(get by fug) u.gul))    ::  XX se-aint
   ?:  |(?=($~ gul) ?=($~ tur) ?=($~ u.tur))
     (se-blit %bel ~)
-  =+  taz=~(. ta [& u.gul] u.u.tur)
-  =.  blt.taz  [q.blt.taz `bet]
   =<  ta-abet
-  ?-  -.bet
-    $aro  (ta-aro:taz p.bet)
-    $bac  ta-bac:taz
-    $cru  (ta-cru:taz p.bet q.bet)
-    $ctl  (ta-ctl:taz p.bet)
-    $del  ta-del:taz
-    $hey  taz(mir [0 ~])
-    $met  (ta-met:taz p.bet)
-    $ret  ta-ret:taz
-    $txt  (ta-txt:taz p.bet)
-  ==
+  (ta-belt:(se-tame u.gul) bet)
 ::
 ++  se-born                                           ::  new server
   |=  wel/well:^gall
@@ -501,7 +490,24 @@
     ==
   ::
   ++  ta-bel                                          ::  beep
-    .(+> (se-blit %bel ~), q.blt ~)
+    .(+> (se-blit %bel ~), q.blt ~)                   ::  forget belt
+  ::
+  ++  ta-belt                                         ::  handle input
+    |=  bet/dill-belt
+    ^+  +>
+    ?<  ?=({?($hey $rez $yow) *} bet)                 ::  target-specific
+    =.  blt  [q.blt `bet]                             ::  remember belt
+    ?-  bet
+      {$aro *}  (ta-aro p.bet)
+      {$bac *}  ta-bac
+      {$cru *}  (ta-cru p.bet q.bet)
+      {$ctl *}  (ta-ctl p.bet)
+      {$del *}  ta-del
+      {$met *}  (ta-met p.bet)
+      {$ret *}  ta-ret
+      {$txt *}  (ta-txt p.bet)
+    ==
+  ::
   ++  ta-cat                                          ::  mass insert
     |=  {pos/@ud txt/(list @c)}
     ^-  sole-edit
