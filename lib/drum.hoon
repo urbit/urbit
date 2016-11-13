@@ -440,15 +440,16 @@
 ::
 ++  se-poke                                           ::  send a poke
   |=  {gyl/gill:^gall par/pear}
-  (se-emit ost %poke (drum-path gyl) gyl par)
+  (se-emit [ost %poke (drum-path gyl) gyl par])
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:^gall
-  (se-emit(fug (~(put by fug) gyl ~)) ost %peer (drum-path gyl) gyl /sole)
+  %-  se-emit(fug (~(put by fug) gyl ~))
+  [ost %peer (drum-path gyl) gyl /sole]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:^gall
-  (se-emit ost %pull (drum-path gyl) gyl ~)
+  (se-emit [ost %pull (drum-path gyl) gyl ~])
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:^gall
