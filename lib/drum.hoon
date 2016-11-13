@@ -339,7 +339,10 @@
   ^+  +>
   ?:  (~(has in ray) wel)
     (se-text "[already running {<p.wel>}/{<q.wel>}]")
-  +>(ray (~(put in ray) wel), eel (~(put in eel) [our q.wel]))
+  %=  +>
+    ray  (~(put in ray) wel)
+    eel  (~(put in eel) [our q.wel])
+  ==
 ::
 ++  se-drop                                           ::  disconnect
   |=  {pej/? gyl/gill:^gall}
