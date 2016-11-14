@@ -441,7 +441,7 @@
 ++  snag                                                ::  index
   ~/  %snag
   |*  {a/@ b/(list)}
-  |-
+  |-  ^+  ?>(?=(^ b) i.b)
   ?~  b
     ~_  leaf+"snag-fail"
     !!
