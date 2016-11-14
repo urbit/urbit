@@ -1,4 +1,4 @@
-!:                                                      ::  /van/zuse    
+!:                                                      ::  /van/zuse
 ::                                                      ::  !%reference/1
 ::  %zuse: arvo library.
 ::
@@ -548,9 +548,9 @@
         {$vega p/path}                                  ::  reboot by path
         {$verb $~}                                      ::  verbose mode
     ==                                                  ::
-  ++  stub  (list (pair styd (list @c)))                ::  styled tuba
-  ++  styd  (pair (set deco) (pair tint tint))          ::  decos/bg/fg
-  ++  styl                                              ::  cascading styd
+  ++  stub  (list (pair stye (list @c)))                ::  styled tuba
+  ++  stye  (pair (set deco) (pair tint tint))          ::  decos/bg/fg
+  ++  styl                                              ::  cascading stye
     %+  pair  (unit deco)                               ::
     (pair (unit tint) (unit tint))                      ::
   ::                                                    ::

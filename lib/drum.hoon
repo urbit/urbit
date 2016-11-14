@@ -404,53 +404,7 @@
   |=  lin/(pair @ud stub:^dill)
   ^+  +>
   =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
-  (se-show (sub p.lin off) (scag-stub edg (slag-stub off q.lin)))
-::
-++  lents-stub
-  |=  a/stub:^dill
-  %+  turn  a
-  |=  a/(pair styd:^dill (list @c))
-  %+  add
-    (lent (tail a))
-  =+  d=~(wyt in p.p.a)
-  (mul 4 ?:(=(0 d) 0 +(d)))
-::
-++  break-stub
-  |=  {a/(list @) b/@}
-  =|  {c/@ i/@}
-  |-  ^-  (unit (pair @ @))
-  ?~  a  ~
-  =.  c  (add i.a c)
-  ?:  (gte c b)
-    `[i c]
-  $(i +(i), a t.a)
-::
-++  slag-stub
-  |=  {a/@ b/stub:^dill}
-  ^-  stub:^dill
-  =+  c=(lents-stub b)
-  =+  i=(break-stub c a)
-  ?~  i  b
-  =+  r=(slag +(p.u.i) b)
-  ?:  =(a q.u.i)
-    r
-  =+  n=(snag p.u.i b)
-  :_  r  :-  p.n
-  (slag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
-::
-++  scag-stub
-  |=  {a/@ b/stub:^dill}
-  ^-  stub:^dill
-  =+  c=(lents-stub b)
-  =+  i=(break-stub c a)
-  ?~  i  b
-  ?:  =(a q.u.i)
-    (scag +(p.u.i) b)
-  %+  welp
-    (scag p.u.i b)
-  =+  n=(snag p.u.i b)
-  :_  ~  :-  p.n
-  (scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+  (se-show (sub p.lin off) (scag:klr edg (slag:klr off q.lin)))
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
@@ -478,10 +432,6 @@
     +>
   ?.  se-ably  (se-talk [%leaf txt]~)
   (se-blit %out (tuba txt))
-::
-++  se-klr                                            ::  return styled text
-  |=  a/stub:^dill
-  ^+(+> (se-blit %klr a))
 ::
 ++  se-poke                                           ::  send a poke
   |=  {gyl/gill:^gall par/pear}
@@ -634,36 +584,6 @@
     |=  pos/@ud
     (ta-erl (~(transpose sole say.inp) pos))
   ::
-  ++  flatten-styx
-    |=  a/styx:^dill
-    ^-  stub:^dill
-    =|  b/styd:^dill
-    %+  reel
-    |-  ^-  stub:^dill
-    %-  zing
-    %+  turn  a
-    |=  a/$@(@t (pair styl:^dill styx:^dill))
-    ?@  a
-      [b (tuba (trip a))]~
-    %=  ^$
-      a  q.a
-      b  :+  ?~  p.p.a  p.b
-               ?~(u.p.p.a ~ (~(put in p.b) u.p.p.a))
-             ?~(p.q.p.a p.q.b u.p.q.p.a)
-             ?~(q.q.p.a q.q.b u.q.q.p.a)
-    ==
-    ::
-    |=  {a/(pair styd:^dill (list @c)) b/stub:^dill}
-    ?~  b
-      [a]~
-    ?.  =(p.a p.i.b)
-      [a b]
-    [[p.a (weld q.a q.i.b)] t.b]
-  ::
-  ++  ta-klr                                          ::  render styled text
-    |=  a/styx:^dill
-    +>(..ta (se-klr (flatten-styx a)))
-  ::
   ++  ta-fec                                          ::  apply effect
     |=  fec/sole-effect
     ^+  +>
@@ -673,7 +593,7 @@
       {$clr *}  +>(..ta (se-blit fec))
       {$det *}  (ta-got +.fec)
       {$err *}  (ta-err p.fec)
-      {$klr *}  (ta-klr p.fec)
+      {$klr *}  +>(..ta (se-blit %klr (make:klr p.fec)))
       {$mor *}  |-  ^+  +>.^$
                 ?~  p.fec  +>.^$
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
@@ -915,10 +835,9 @@
   ++  ta-vew                                          ::  computed prompt
     ^-  (pair @ud stub:^dill)
     =;  vew/(pair (list @c) styx:^dill)
-      =/  lin/stub:^dill
-        (flatten-styx q.vew)
-      =+  len=((curr roll add) (lents-stub lin))
-      [(add pos.inp len) (welp lin [*styd:^dill p.vew]~)]
+      =+  lin=(make:klr q.vew)
+      :_  (welp lin [*stye:^dill p.vew]~)
+      (add pos.inp (roll (lnts:klr lin) add))
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
       ?~  ris
@@ -994,5 +913,80 @@
     |-  ^-  @ud
     ?:  |(?=($~ a) (alnm i.a))  i
     $(i +(i), a t.a)
+  --
+::
+++  klr                                               ::  styx/stub engine
+  =,  ^dill
+  |%
+  ++  make                                            ::  stub from styx
+    |=  a/styx
+    =|  b/stye
+    %+  reel
+    |-  ^-  stub
+    %-  zing
+    %+  turn  a
+    |=  a/$@(@t (pair styl styx))
+    ?@  a
+      [b (tuba (trip a))]~
+    %=  ^$
+      a  q.a
+      b  :+  ?~  p.p.a  p.b
+               ?~(u.p.p.a ~ (~(put in p.b) u.p.p.a))
+             ?~(p.q.p.a p.q.b u.p.q.p.a)
+             ?~(q.q.p.a q.q.b u.q.q.p.a)
+    ==
+    ::
+    |=  {a/(pair stye (list @c)) b/stub}
+    ?~  b
+      [a]~
+    ?.  =(p.a p.i.b)
+      [a b]
+    [[p.a (weld q.a q.i.b)] t.b]
+  ::
+  ++  lnts                                            ::  stub pair lengths
+    |=  a/stub
+    %+  turn  a
+    |=  a/(pair stye (list @c))
+    %+  add
+      (lent q.a)
+    =+  d=~(wyt in p.p.a)
+    (mul 4 ?:(=(0 d) 0 +(d)))
+  ::
+  ++  brek                                            ::  index + incl-len of
+    |=  {a/@ b/(list @)}                              ::  stub pair w/ idx a
+    =|  {c/@ i/@}
+    |-  ^-  (unit (pair @ @))
+    ?~  b  ~
+    =.  c  (add c i.b)
+    ?:  (gte c a)
+      `[i c]
+    $(i +(i), b t.b)
+  ::
+  ++  slag                                            ::  slag stub, keep stye
+    |=  {a/@ b/stub}
+    ^-  stub
+    =+  c=(lnts b)
+    =+  i=(brek a c)
+    ?~  i  b
+    =+  r=(^slag +(p.u.i) b)
+    ?:  =(a q.u.i)
+      r
+    =+  n=(snag p.u.i b)
+    :_  r  :-  p.n
+    (^slag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+  ::
+  ++  scag                                            ::  scag stub, keep stye
+    |=  {a/@ b/stub}
+    ^-  stub
+    =+  c=(lnts b)
+    =+  i=(brek a c)
+    ?~  i  b
+    ?:  =(a q.u.i)
+      (^scag +(p.u.i) b)
+    %+  welp
+      (^scag p.u.i b)
+    =+  n=(snag p.u.i b)
+    :_  ~  :-  p.n
+    (^scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
   --
 --
