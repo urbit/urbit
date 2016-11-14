@@ -516,10 +516,10 @@
         ta-bel
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
-      (ta-act %clr ~)
-      :: .(+> (se-blit %bel ~))
-    =+  pre=(dec pos.inp)
-    (ta-hom %del pre)
+      ?~  buf.say.inp
+        (ta-act %clr ~)
+      ta-bel
+    (ta-hom %del (dec pos.inp))
   ::
   ++  ta-ctl                                          ::  hear control
     |=  key/@ud
