@@ -6,11 +6,11 @@
 ::
 ::::  ~fyr
   ::
-|_  {cord reference invite}:womb
+|_  {cord invite}:womb
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  {cord reference invite}:womb                ::  clam from %noun
+  ++  noun  {cord invite}:womb                ::  clam from %noun
   ++  json
     %+  corl  need
     =>  jo
@@ -21,7 +21,6 @@
         ==
     %-  ot  :~
       tid+so
-      ref+(mu (su (pick ;~(pfix (jest '0v') viz:ag) mail)))
       inv+(ot who+(su mail) pla+ni sta+ni wel+(ot intro+sa hello+sa ~) ~)
     ==
   --

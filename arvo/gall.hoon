@@ -1197,6 +1197,7 @@
         $wont  `%a                                      ::  XX for begin; remove
         $warp  `%c
         $wipe  `%f                                      ::  XX cache clear
+        $jaelwomb  `%j                ::  XX name/unpack
       ==
     --
   --

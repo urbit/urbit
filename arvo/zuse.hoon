@@ -576,6 +576,7 @@
           {$thus p/@ud q/(unit hiss)}                   ::  http request+cancel
           {$veer p/@ta q/path r/@t}                     ::  drop-through
           {$vega p/path}                                ::  drop-through
+          {$mini-jael-gift *}
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$born $~}                                    ::  new unix process
@@ -591,11 +592,19 @@
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm 
           {$west p/sack q/{path @ud *}}                 ::  network request
+          {$mini-jael-task *}
       ==                                                ::
     --  ::able
   ::
   ::::                                                  ::  (1e2)
     ::
+  ++  bale                                              ::  driver state
+    |*  a/_*                                            ::  %jael keys type
+    $:  {our/ship now/@da eny/@uvJ byk/beak}            ::  base info
+        {usr/user dom/(list @t)}                        ::  req user, domain
+        key/a                                           ::  secrets from %jael
+    ==                                                  ::
+  ::
   ++  clip  (each @if @is)                              ::  client IP
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
@@ -612,10 +621,7 @@
         but/path                                        ::  ending
     ==                                                  ::
   ++  gram                                              ::  inter-ship message
-    $?  {{$lon $~} p/hole}                              ::  login request
-        {{$aut $~} p/hole}                              ::  login reply
-        {{$hat $~} p/hole q/hart}                       ::  login redirect
-        {{$get $~} p/@uvH q/{? clip httq}}              ::  remote request
+    $?  {{$get $~} p/@uvH q/{? clip httq}}              ::  remote request
         {{$got $~} p/@uvH q/httr}                       ::  remote response
         {{$gib $~} p/@uvH}                              ::  remote cancel
     ==                                                  ::
@@ -673,6 +679,12 @@
         {$| p/pork q/quay}                              ::  relative
     ==                                                  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
+  ++  sec-move                                          ::  driver effect
+    $%  {$send p/hiss}                                  ::  http out
+        {$show p/purl}                                  ::  direct user to url
+        {$give p/httr}                                  ::  respond immediately
+        {$redo $~}                                      ::  restart request qeu
+    ==                                                  ::
   --  ::eyre
 ::
 ++  ford  ^?
@@ -921,22 +933,57 @@
       %+  each  balance                                 ::  complete
       action                                            ::  change
     ::
-    ++  task                                            ::  in request ->$
-      $%  {$burn p/ship q/safe}                         ::  destroy rights
-          {$hail p/ship q/remote}                       ::  remote update
-          {$init p/@pG q/arms}                          ::  initialize urbit
-          {$meet p/(unit (unit ship)) q/farm}           ::  integrate pki from
-          {$mint p/ship q/safe}                         ::  create rights
-          {$move p/ship q/ship r/safe}                  ::  transfer from/to
-          {$next p/bull}                                ::  update private key
-          {$nuke $~}                                    ::  cancel tracker from
-          {$veil p/ship}                                ::  view secret channel
-          {$vein $~}                                    ::  view signing keys
-          {$vest $~}                                    ::  view public balance
-          {$vine $~}                                    ::  view secret history
-          {$west p/ship q/path r/*}                     ::  remote request
-      ==                                                ::
-    --  ::  moves
+    ++  task                                              ::  in request ->$
+      $%  {$burn p/ship q/safe}                           ::  destroy rights
+          {$hail p/ship q/remote}                         ::  remote update
+          {$init p/@p}
+::         {$init p/@pG q/arms}                            ::  initialize urbit
+          {$meet p/(unit (unit ship)) q/farm}             ::  integrate pki from
+          {$mint p/ship q/safe}                           ::  create rights
+          {$move p/ship q/ship r/safe}                    ::  transfer from/to
+          {$next p/bull}                                  ::  update private key
+          {$nuke $~}                                      ::  cancel tracker from
+          {$veil p/ship}                                  ::  view secret channel
+          {$vein $~}                                      ::  view signing keys
+          {$vest $~}                                      ::  view public balance
+          {$vine $~}                                      ::  view secret history
+          {$jaelwomb p/task:womb}
+          {$west p/ship q/path r/*}                       ::  remote request
+      ==                                                  ::
+    ++  gilt  gilt:womb
+    --
+  ::
+  ++  womb  ^?
+    ::  types used to serve the lib/womb invite controller
+    |%
+    ++  ticket  @G                                        ::  old 64-bit ticket
+    ++  passcode  @uvH                                    ::  128-bit passcode
+    ++  passhash  @uwH                                    ::  passocde hash
+    ++  mail  @t                                          ::  email address
+    ++  invite                                            ::
+      $:  who/mail                                        ::  owner email
+          pla/@ud                                         ::  planets to send
+          sta/@ud                                         ::  stars to send
+      ==                                                  ::
+    ::                                                    ::
+    ++  task                                         ::  manage ship %fungi
+      $%  {$claim aut/passcode her/@p tik/ticket}         ::  convert to %final
+          {$bonus tid/passcode pla/@ud sta/@ud}           ::  supplement passcode
+          {$invite tid/passcode inv/invite}               ::  alloc to passcode
+          {$reinvite aut/passcode tid/passcode inv/invite}::  move to another
+      ==
+    ++  scry
+      $%  {$shop typ/?($star $planet) nth/@u}             ::  available ships
+          {$stats who/ship}                               ::  ship details
+          {$balance aut/passcode}                         ::  invite details
+      ==
+    ++  balance  {who/mail pla/@ud sta/@ud} ::  equivalent to invite?
+    ++  gilt
+      $%  {$ships (list ship)}                            ::
+          {$womb-owner (unit mail)}                       ::
+          {$womb-balance (unit balance)}             ::
+      ==
+    --
   ::                                                    ::
   ::::                    ++pki:^jael                   ::  (1h2) certificates
     ::                                                  ::::
@@ -1029,8 +1076,8 @@
     ++  rite                                            ::  urbit commitment
       $%  {$apple p/(map site @)}                       ::  web api key
           {$block $~}                                   ::  banned
-          {$email p/(set @ta)}                          ::  email addresses
-          {$final p/(map ship @pG)}                     ::  ticketed ships
+          {$email p/(set @t)}                             ::  email addresses
+          {$final p/@pG}                                  ::  recognize by ticket
           {$fungi p/(map term @ud)}                     ::  fungibles
           {$guest $~}                                   ::  refugee visa
           {$hotel p/(map dorm pile)}                    ::  reserved block
@@ -4526,6 +4573,7 @@
       {$e task:able:^eyre}
       {$f task:able:^ford}
       {$g task:able:^gall}
+      {$j $init ship} :: XX actual jael tasks
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:^ames}

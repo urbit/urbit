@@ -3,6 +3,7 @@
 ::::  /hoon/oauth1/lib
   ::
 /+    interpolate, hep-to-cab
+=,  ^eyre
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
 ++  token                                               ::  user keys
