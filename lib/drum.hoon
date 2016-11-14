@@ -350,7 +350,8 @@
   |=  tac/(list tank)
   ^+  +>
   ?.  se-ably  (se-talk tac)
-  =+  wol=`wall`(zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
+  =/  wol/wall
+    (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
   ?~  wol  +>.^$
   $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
@@ -570,8 +571,7 @@
   ::
   ++  ta-cru                                          ::  hear crud
     |=  {lab/@tas tac/(list tank)}
-    =.  +>+>  (se-text (trip lab))
-    (ta-tan tac)
+    +>(+> (se-dump:(se-text (trip lab)) tac))
   ::
   ++  ta-del                                          ::  hear delete
     ^+  .
@@ -601,10 +601,10 @@
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
       {$nex *}  ta-nex
       {$pro *}  (ta-pro +.fec)
-      {$tan *}  (ta-tan p.fec)
+      {$tan *}  +>(+> (se-dump p.fec))
       {$sag *}  +>(+> (se-blit fec))
       {$sav *}  +>(+> (se-blit fec))
-      {$txt *}  (ta-tan [[%leaf p.fec] ~])
+      {$txt *}  +>(+> (se-text p.fec))
       {$url *}  +>(+> (se-blit fec))
     ==
   ::
@@ -823,13 +823,6 @@
         $(sop (dec sop), dol t.dol)
     ?~  sup  ta-bel
     (ta-mov(str.u.ris tot, pos.u.ris u.sup) (dec u.sup))
-  ::
-  ++  ta-tan                                          ::  print tanks
-    |=  tac/(list tank)
-    =+  wol=`wall`(zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
-    |-  ^+  +>.^$
-    ?~  wol  +>.^$
-    $(wol t.wol, +>+>.^$ (se-text i.wol))
   ::
   ++  ta-txt                                          ::  hear text
     |=  txt/(list @c)
