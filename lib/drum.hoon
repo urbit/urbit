@@ -667,18 +667,6 @@
       ==     ==
     ==
   ::
-  ++  lcas                                            ::  lowercase
-    |*  a/(list @)
-    ^+  a
-    %+  turn  a
-    |=(a/@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a)))
-  ::
-  ++  ucas                                            ::  uppercase
-    |*  a/(list @)
-    ^+  a
-    %+  turn  a
-    |=(a/@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32)))
-  ::
   ++  ta-met                                          ::  meta key
     |=  key/@ud
     ^+  +>
@@ -703,7 +691,9 @@
               ta-bel
             =+  sop=(ta-jump %r %wrd pos.inp)
             %-  ta-hom(pos.inp (ta-jump %r %edg sop))
-            (rep:edit [sop 1] (ucas (swag [sop 1] buf.say.inp)))
+            %+  rep:edit  [sop 1]
+            ^-  (list @c)  ^-  (list @)               :: XX unicode
+            (cuss `tape``(list @)`(swag [sop 1] buf.say.inp))
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))         ::  kill right-word
               ta-bel
@@ -734,10 +724,13 @@
       ?($u $l)                                        ::  upper/lower case
             ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  case=?:(?=($u key) ucas lcas)
+            =+  case=?:(?=($u key) cuss cass)
             =+  sop=(ta-jump %r %wrd pos.inp)
             =+  sel=[sop (ta-off %r %edg sop)]
-            (ta-hom (rep:edit sel (case (swag sel buf.say.inp))))
+            %-  ta-hom
+            %+  rep:edit  sel
+            ^-  (list @c)  ^-  (list @)               :: XX unicode
+            (case `tape``(list @)`(swag sel buf.say.inp))
             ::
       $y    ?.  ?&  ?=(^ old.kil)                     ::  rotate & yank
                     ?=(^ p.blt)
