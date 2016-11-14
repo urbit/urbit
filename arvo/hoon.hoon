@@ -1112,14 +1112,6 @@
       |
     ?|((b q.n.a) $(a l.a) $(a r.a))
   ::
-  +-  apt                                               ::  map invariant
-    |-  ^-  ?
-    ?~  a
-      &
-    ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a) $(a l.a)))
-        ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a) $(a l.a)))
-    ==
-  ::
   +-  bif                                               ::  splits a by b
     ~/  %bif
     |*  {b/* c/*}
@@ -1201,6 +1193,16 @@
     ?:  (gor b p.n.a)
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
+  ::
+  +-  ept                                               ::  check correctness
+    =|  {l/(unit) r/(unit)}
+    |-  ^-  ?
+    ?~  a   &
+    ?&  ?~(l & (gor p.n.a u.l))
+        ?~(r & (gor u.r p.n.a))
+        ?~(l.a & ?&((vor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
+        ?~(r.a & ?&((vor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
+    ==
   ::
   +-  gas                                               ::  concatenate
     ~/  %gas
