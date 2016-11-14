@@ -442,7 +442,7 @@
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:^gall
   ^+  ta
-  ~(. ta [& gyl] (need (~(got by fug) gyl)))
+  ~(. ta gyl (need (~(got by fug) gyl)))
 ::
 ++  se-diff                                           ::  receive results
   |=  {gyl/gill:^gall fec/sole-effect}
@@ -450,17 +450,9 @@
   ta-abet:(ta-fec:(se-tame gyl) fec)
 ::
 ++  ta                                                ::  per target
-  |_  $:  $:  liv/?                                   ::  don't delete
-              gyl/gill:^gall                          ::  target app
-          ==                                          ::
-          target                                      ::  target state
-      ==                                              ::
-  ++  ta-abet                                         ::  resolve
+  |_  {gyl/gill:^gall target}                         ::  app and state
+  ++  ta-abet                                         ::  resolve  
     ^+  ..ta
-    ?.  liv
-      ?:   (~(has in (deft-fish our.hid)) gyl)
-        (se-blit qit+~)
-      (se-nuke gyl)
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
   ++  ta-poke  |=(a/pear +>(..ta (se-poke gyl a)))    ::  poke gyl
@@ -531,9 +523,11 @@
         $a  +>(pos.inp 0)
         $b  (ta-aro %l)
         $c  ta-bel
-        $d  ?:  &(=(0 pos.inp) =(0 (lent buf.say.inp)))
-              +>(liv |)
-            ta-del
+        $d  ?^  buf.say.inp
+              ta-del
+            ?:  (~(has in (deft-fish our.hid)) gyl)
+              +>(..ta (se-blit qit+~))                ::  quit pier
+            +>(..ta (se-klin gyl))                    ::  unlink app
         $e  +>(pos.inp (lent buf.say.inp))
         $f  (ta-aro %r)
         $g  ?~  ris  ta-bel
@@ -572,7 +566,7 @@
   ++  ta-del                                          ::  hear delete
     ^+  .
     ?:  =((lent buf.say.inp) pos.inp)
-      .(..ta (se-blit %bel ~))
+      ta-bel
     (ta-hom %del pos.inp)
   ::
   ++  ta-erl                                          ::  hear local error
