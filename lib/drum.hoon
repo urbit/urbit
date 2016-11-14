@@ -115,8 +115,8 @@
 !:
 ::::
   ::
-|=  {bowl:^gall drum-part}                              ::  main drum work
-=+  (fall (~(get by bin) ost) *source)
+|=  {hid/bowl:^gall drum-part}                          ::  main drum work
+=+  (fall (~(get by bin) ost.hid) *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
@@ -145,10 +145,10 @@
 ::
 ++  peer                                              ::
   |=  pax/path
-  ~|  [%drum-unauthorized our+our src+src]            ::  ourself
-  ?>  (team:title:jael our src)                       ::  or our own moon
+  ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
+  ?>  (team:title:jael our.hid src.hid)               ::  or our own moon
   =<  se-abet  =<  se-view
-  (se-text "[{<src>}, driving {<our>}]")
+  (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet/dill-belt:^dill
@@ -194,7 +194,7 @@
   ?:  (se-aint gyl)  +>.$
   %-  se-dump:(se-drop & gyl)
   :_  u.saw
-  >[%drum-coup-fail src ost gyl]<
+  >[%drum-coup-fail src.hid ost.hid gyl]<
 ::
 ++  take-onto                                         ::  ack start
   |=  {way/wire saw/(each suss:^gall tang)}
@@ -213,7 +213,7 @@
   |=  way/wire
   =<  se-abet  =<  se-view
   =+  gyl=(drum-phat way)
-  ~&  [%drum-quit src ost gyl]
+  ~&  [%drum-quit src.hid ost.hid gyl]
   (se-drop %| gyl)
 ::                                                    ::  ::
 ::::                                                  ::  ::
@@ -224,16 +224,16 @@
   ?.  se-ably
     =.  .  se-adit
     [(flop moz) pith]
-  =.  sys  ?^(sys sys `ost)
+  =.  sys  ?^(sys sys `ost.hid)
   =.  .  se-subze:se-adze:se-adit
-  :_  pith(bin (~(put by bin) ost dev))
+  :_  pith(bin (~(put by bin) ost.hid dev))
   %-  flop
   ^-  (list move)
   ?~  biz  moz
   :_  moz
-  [ost %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]
+  [ost.hid %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]
 ::
-++  se-ably  (~(has by sup) ost)                      ::  caused by console
+++  se-ably  (~(has by sup.hid) ost.hid)              ::  caused by console
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
@@ -245,7 +245,7 @@
   ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
-  [ost %conf [%drum p.wel q.wel ~] [our q.wel] %load our p.wel]
+  [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] %load our.hid p.wel]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -258,14 +258,14 @@
   (se-peer gil)
 ::
 ++  se-subze                                          ::  downdate connections
-  =<  .(dev (~(got by bin) ost))
-  =.  bin  (~(put by bin) ost dev)
+  =<  .(dev (~(got by bin) ost.hid))
+  =.  bin  (~(put by bin) ost.hid dev)
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
   |=  {{ost/bone dev/source} con/_.}  ^+  con
-  =+  xeno=se-subze-local:%_(con ost ost, dev dev)
-  xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
+  =+  xeno=se-subze-local:%_(con ost.hid ost, dev dev)
+  xeno(ost.hid ost.hid.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
 ::
 ++  se-subze-local
   ^+  .
@@ -280,7 +280,7 @@
 ++  se-aint                                           ::  ignore result
   |=  gyl/gill:^gall
   ^-  ?
-  ?.  (~(has by bin) ost)  &
+  ?.  (~(has by bin) ost.hid)  &
   =+  gyr=(~(get by fug) gyl)
   |(?=($~ gyr) ?=($~ u.gyr))
 ::
@@ -331,7 +331,7 @@
     (se-text "[already running {<p.wel>}/{<q.wel>}]")
   %=  +>
     ray  (~(put in ray) wel)
-    eel  (~(put in eel) [our q.wel])
+    eel  (~(put in eel) [our.hid q.wel])
   ==
 ::
 ++  se-drop                                           ::  disconnect
@@ -345,7 +345,7 @@
               +>.$(inx 0)
             (se-alas u.lag)
   =.  +>.$  (se-text "[unlinked from {<gyl>}]")
-  ?:  =(gyl [our %dojo])                              ::  undead dojo
+  ?:  =(gyl [our.hid %dojo])                          ::  undead dojo
     (se-link gyl)
   +>.$
 ::
@@ -418,7 +418,7 @@
   :: XX talk should be usable for stack traces, see urbit#584 which this change
   :: closed for the problems there
   ((slog (flop tac)) +>)
-  ::(se-emit 0 %poke /drum/talk [our %talk] (said:talk our %drum now eny tac))
+  ::(se-emit 0 %poke /drum/talk [our.hid %talk] (said:talk our.hid %drum now.hid eny.hid tac))
 ::
 ++  se-text                                           ::  return text
   |=  txt/tape
@@ -428,16 +428,16 @@
 ::
 ++  se-poke                                           ::  send a poke
   |=  {gyl/gill:^gall par/pear}
-  (se-emit [ost %poke (drum-path gyl) gyl par])
+  (se-emit [ost.hid %poke (drum-path gyl) gyl par])
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:^gall
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [ost %peer (drum-path gyl) gyl /sole]
+  [ost.hid %peer (drum-path gyl) gyl /sole]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:^gall
-  (se-emit [ost %pull (drum-path gyl) gyl ~])
+  (se-emit [ost.hid %pull (drum-path gyl) gyl ~])
 ::
 ++  se-tame                                           ::  switch connection
   |=  gyl/gill:^gall
@@ -458,7 +458,7 @@
   ++  ta-abet                                         ::  resolve
     ^+  ..ta
     ?.  liv
-      ?:   (~(has in (deft-fish our)) gyl)
+      ?:   (~(has in (deft-fish our.hid)) gyl)
         (se-blit qit+~)
       (se-nuke gyl)
     ..ta(fug (~(put by fug) gyl ``target`+<+))
