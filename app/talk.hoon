@@ -1638,8 +1638,14 @@
     ++  pa-report-group                                  ::  update presence
       |=  vew/(set bone)
       %^  pa-report  vew  %group
-      :_  remotes
-      %-  ~(run by locals)
+      :-  %-  ~(run by locals)
+          |=({@ a/status} a)
+      %-  ~(urn by remotes)           ::  XX preformance
+      |=  {pan/partner atl/atlas}  ^-  atlas
+      ?.  &(?=($& -.pan) =(our.hid p.p.pan))  atl
+      =+  (~(get by stories) q.p.pan)
+      ?~  -  atl
+      %-  ~(run by locals.u)
       |=({@ a/status} a)
     ::
     ++  pa-report-cabal                                 ::  update config
