@@ -173,6 +173,19 @@
               [%lin see]
               [%hop pos]
           ==
+        ?:  ?=($klr -.bit)
+          =/  out/(list @c)
+              %-  zing
+              %+  turn  p.bit
+              |=  a/_?>(?=(^ p.bit) i.p.bit)
+              ~&  [p.a (tufa q.a)]
+              q.a
+          %+  done  %blit
+          :~  [%lin out]
+              [%mor ~]
+              [%lin see]
+              [%hop pos]
+          ==
         ?:  ?=($pro -.bit)
           (done(see p.bit) %blit [[%lin p.bit] [%hop pos] ~])
         ?:  ?=($hop -.bit)

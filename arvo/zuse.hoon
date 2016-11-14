@@ -512,6 +512,7 @@
         {$sav p/path q/@}                               ::  save to file
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
+  ++  deco  ?($~ $bl $br $un)                           ::  text decoration
   ++  dill-belt                                         ::  new belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
         {$bac $~}                                       ::  true backspace
@@ -529,6 +530,7 @@
     $%  {$bel $~}                                       ::  make a noise
         {$clr $~}                                       ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
+        {$klr p/stub}                                   ::  styled text
         {$mor p/(list dill-blit)}                       ::  multiple blits
         {$pro p/(list @c)}                              ::  show as cursor+line
         {$qit $~}                                       ::  close console
@@ -545,6 +547,14 @@
         {$vega p/path}                                  ::  reboot by path
         {$verb $~}                                      ::  verbose mode
     ==                                                  ::
+  ++  stub  (list (pair styd (list @c)))                ::  styled tuba
+  ++  styd  (pair (set deco) (pair tint tint))          ::  decos/bg/fg
+  ++  styl                                              ::  cascading styd
+    %+  pair  (unit deco)                               ::
+    (pair (unit tint) (unit tint))                      ::
+  ::                                                    ::
+  ++  styx  (list $@(@t (pair styl styx)))              ::  styled text
+  ++  tint  ?($~ $r $g $b $c $m $y $k $w)               ::  text color
   --  ::dill
 ::
 ++  eyre  ^?
