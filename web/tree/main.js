@@ -3140,8 +3140,9 @@ module.exports = {
     return path.replace(/\/$/, '').replace(_basepath, "");
   },
   shortShip: function(ship) {
+    var ref;
     if (ship == null) {
-      ship = urb.user;
+      ship = (ref = urb.user) != null ? ref : "";
     }
     if (ship.length <= 13) {
       return ship;
