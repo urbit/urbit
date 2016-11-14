@@ -941,7 +941,7 @@
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peel: malformed path")]
       ?:  (~(has in misvale) p.p.yep)
-        =/  err  [leaf+"peel: misvalidaton encountered"]~
+        =/  err  [leaf+"peel: misvalidation encountered"]~
         :^  %&  sto  %pass
         :-  p.p.yep
         [%send q.p.yep r.p.yep %peer-not err]
@@ -959,7 +959,7 @@
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peer: malformed path")]
       ?:  (~(has in misvale) p.p.yep)
-        =/  err  [leaf+"peer: misvalidaton encountered"]~
+        =/  err  [leaf+"peer: misvalidation encountered"]~
         :^  %&  sto  %pass
         :-  p.p.yep
         [%send q.p.yep r.p.yep %peer-not err]
