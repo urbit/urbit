@@ -829,27 +829,18 @@
   ::
   ++  ta-vew                                          ::  computed prompt
     |-  ^-  (pair @ud (list @c))
-    ?^  ris
-      %=    $
-          ris  ~
-          cad.pom
-        :(welp "(reverse-i-search)'" (tufa str.u.ris) "': ")
-      ==
-    =-  [(add pos.inp (lent p.vew)) (weld (tuba p.vew) q.vew)]
-    ^=  vew  ^-  (pair tape (list @c))
-    ?:  vis.pom  [cad.pom buf.say.inp]
-    :-  ;:  welp
-          cad.pom
-          ?~  buf.say.inp  ~
-          ;:  welp
-            "<"
-            (scow %p (end 4 1 (sham buf.say.inp)))
-            "> "
-          ==
-        ==
-    =+  len=(lent buf.say.inp)
-    |-  ^-  (list @c)
-    ?:(=(0 len) ~ [`@c`'*' $(len (dec len))])
+    =;  vew/(pair (list @c) tape)
+      [(add pos.inp (lent q.vew)) (weld (tuba q.vew) p.vew)]
+    ?:  vis.pom
+      :-  buf.say.inp                                 ::  default prompt
+      ?~  ris
+        cad.pom
+      :(welp "(reverse-i-search)'" (tufa str.u.ris) "': ")
+    :-  (reap (lent buf.say.inp) `@c`'*')             ::  hidden input
+    %+  welp
+      cad.pom
+    ?~  buf.say.inp  ~
+    :(welp "<" (scow %p (end 4 1 (sham buf.say.inp))) "> ")
   --
 ++  edit                                              ::  produce sole-edits
   |%
