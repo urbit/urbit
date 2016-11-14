@@ -1511,26 +1511,26 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
     mkdir(ful_c, 0700);
 
     snprintf(ful_c, 2048, "%s/.urb/get", dir_c);
-    if ( 0 != mkdir(ful_c, 0700) ) {
-      perror(ful_c);
-      exit(1);
-    }
+    mkdir(ful_c, 0700);
 
     snprintf(ful_c, 2048, "%s/.urb/put", dir_c);
-    if ( 0 != mkdir(ful_c, 0700) ) {
-      perror(ful_c);
-      exit(1);
-    }
+    mkdir(ful_c, 0700);
 
     snprintf(ful_c, 2048, "%s/.urb/sis", dir_c);
-    if ( 0 != mkdir(ful_c, 0700) ) {
-      perror(ful_c);
-      exit(1);
-    }
+    mkdir(ful_c, 0700);
   }
 
   /* Copy urbit.pill. */
   {
+    {
+      struct stat s;
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+      if ( stat(ful_c, &s) == 0 ) {
+        /* we're in a "logical boot". awful hack, but bail here */
+        printf("%s confirmed to exist\r\n", ful_c);
+        return;
+      }
+    }
     if ( pil_c != 0 ) {
       snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
                       pil_c, dir_c);

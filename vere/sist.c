@@ -1189,7 +1189,12 @@ u3_sist_boot(void)
         u3_noun gen = u3_nul;
         u3_noun gun = u3_nul;
         if (c3n == u3_Host.ops_u.fak) {
-          gen = _sist_text("generator");
+          if ( 0 != u3_Host.ops_u.gen_c) {
+            gen = u3i_string(u3_Host.ops_u.gen_c);
+          }
+          else {
+            gen = _sist_text("generator"); // XX move to main.c
+          }
           gun = u3dc("slaw", c3__uw, gen);
 
           if ( u3_nul == gun ) {

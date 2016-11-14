@@ -2,36 +2,34 @@
 
 Thank you for your interest in contributing to urbit.
 
-## Development practice
+## Fake `~zod`s
 
 You may have an identity on the live network, but doing all your
 development on the live network would be cumbersome and unnecessary.
 Standard practice in urbit development is to work on a fake `~zod`. A
-fake `~zod` will get its initial files from the `arvo/` directory rather
-than trying to sync them over the network, which is invaluable for
-working in Hoon. Also, a fake `~zod` or any fake urbit instances you
+fake `~zod` will get its initial files from a directory you specify
+rather than trying to sync them over the network, which is invaluable
+for working in Hoon. Also, a fake `~zod` or any fake urbit instances you
 start do not talk to the live network, but to a fake network that exists
 only on your computer.
 
-First, you'll want to get an `arvo/` directory. Arvo is kept in its own
-repository, and changes more rapidly than the main C project does.
-
-From inside your `urbit` directory, do:
+First, you'll want to check out the Arvo repository. Arvo is kept in its
+own repository, and changes more rapidly than the main C project does.
 
     git clone https://github.com/urbit/arvo
 
-The arvo repository can live safely inside the main urbit repository,
-since it's listed in .gitignore. However, vere will try to find the
-arvo directory in the current directory when starting a fake `~zod`.
+The arvo repository can live safely inside the main urbit repository if
+you want, since it's listed in .gitignore. However, vere will use the
+path you specify on the command line with the `-A` option.
 
 To start a fake `~zod`, the command is:
 
-    bin/urbit -F -I zod -c [pier directory]
+    $ urbit -c -F -I zod -A [arvo checkout] [pier directory]
 
 To resume one that was already created, just as on the live network,
-remove `-c` (but leave the rest of the options there). `-F` uses the
-fake network, and `-I` starts an "imperial" instance - that is, an 8-bit
-galaxy.
+remove `-c` and `-A [arvo checkout]` (but leave the rest of the options
+there). `-F` uses the fake network, and `-I` starts an "imperial"
+instance - that is, an 8-bit galaxy.
 
 ## Kernel development
 
@@ -72,16 +70,16 @@ This is good practice for any project that uses git. You will pull
 upstream branches from urbit/urbit and push to your personal urbit fork
 by default.
 
-Next, check out `master`, which is the mainline development branch, and
-base a new branch on it to do your work on:
+Next, start a new branch to do your work on. For `urbit`, please use the
+latest tagged release as your starting point. For other repositories,
+anywhere pointed to by `master` is alright to start from.
 
-    git checkout master
-    git checkout -b [branch name]
+    git checkout -b [branch name] [starting point]
 
 Now you are free to do your work on this branch. When finished, you may
 want to clean up your commits:
 
-    git rebase -i master
+    git rebase -i [starting point]
 
 Then you can push to your public fork with `git push` and make a pull
 request via the GitHub UI.
@@ -119,10 +117,10 @@ less obvious stylistic rules are:
 ## The kernel and pills
 
 urbit bootstraps itself using a binary blob called `urbit.pill`. You
-probably remember fetching it from `bootstrap.urbit.org` before your
-first boot. This is just the compiled version of the kernel, which you
-can find in the `arvo/arvo/` directory - `hoon.hoon`, `zuse.hoon`, and
-so on.
+probably remember it being fetched from `bootstrap.urbit.org` before
+your first boot. This is just the compiled version of the kernel, which
+you can find in the `arvo/arvo/` directory - `hoon.hoon`, `zuse.hoon`,
+and so on.
 
 The procedure for creating `urbit.pill` is often called "soliding". It
 is somewhat similar to `|reset`, but instead of replacing your running
@@ -183,9 +181,10 @@ eager to have outside contributions on. Check here first!
 ## Staying in touch
 
 The urbit developers communicate on urbit itself. Joining the
-`~dozbud/urbit-meta` channel on `talk` is highly recommended.
-Subscribing to `urbit-dev` on Google Groups is also recommended, since
-this is where continuity breach notifications are sent.
+`urbit-meta` channel on `talk` is highly recommended, as is reading the
+forums at [http://urbit.org/fora](http://urbit.org/fora). Subscribing to
+`urbit-dev` on Google Groups is also recommended, since this is where
+continuity breach notifications are sent.
 
 Pull requests in non-GitHub forms can go to Raymond Pasco
 ([ray@the.ug](mailto:ray@the.ug)). Questions or other communications

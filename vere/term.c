@@ -570,26 +570,12 @@ _term_it_show_wide(u3_utty* uty_u, c3_w len_w, c3_w* txt_w)
 static void
 _term_it_show_clear(u3_utty* uty_u)
 {
-  u3_utat* tat_u = &uty_u->tat_u;
-
-  if ( tat_u->siz.col_l ) {
-    c3_w     ful_w = tat_u->mir.cus_w / tat_u->siz.col_l;
-
-    if ( 0 != tat_u->mir.cus_w &&
-         ful_w * tat_u->siz.col_l == tat_u->mir.cus_w )
-    {
-      ful_w--;
-    }
-
-    while ( ful_w-- ) {
-      _term_it_write_txt(uty_u, uty_u->ufo_u.out.cuu1_y);
-    }
-
+  if ( uty_u->tat_u.siz.col_l ) {
     _term_it_write_str(uty_u, "\r");
-    _term_it_write_txt(uty_u, uty_u->ufo_u.out.ed_y);
+    _term_it_write_txt(uty_u, uty_u->ufo_u.out.el_y);
 
-    tat_u->mir.len_w = 0;
-    tat_u->mir.cus_w = 0;
+    uty_u->tat_u.mir.len_w = 0;
+    uty_u->tat_u.mir.cus_w = 0;
   }
 }
 

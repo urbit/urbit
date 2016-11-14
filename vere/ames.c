@@ -55,12 +55,14 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
     return 0x7f000001;
   }
   else {
+    time_t now = time(0);
     *por_s = 13337 + imp_y;
 
     if ( 0xffffffff == sam_u->imp_w[imp_y] ) {
       return 0;
     }
-    else if ( 0 == sam_u->imp_w[imp_y] ) {
+    else if ( 0 == sam_u->imp_w[imp_y] 
+           || (now - sam_u->imp_t[imp_y]) > 300 ) { /* 5 minute TTL */
       u3_noun nam   = u3dc("scot", 'p', imp_y);
       c3_c*   nam_c = u3r_string(nam);
       c3_c    dns_c[64];
@@ -77,6 +79,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
         if ( 0 != getaddrinfo(dns_c, 0, 0, &air_u) ) {
           uL(fprintf(uH, "ames: czar at %s: not found (a)\n", dns_c));
           sam_u->imp_w[imp_y] = 0xffffffff;
+          sam_u->imp_t[imp_y] = 0;
           return 0;
         }
 
@@ -87,14 +90,17 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
             if ( !rai_u ) {
               uL(fprintf(uH, "ames: czar at %s: not found (b)\n", dns_c));
               sam_u->imp_w[imp_y] = 0xffffffff;
+              sam_u->imp_t[imp_y] = 0;
               return 0;
             }
             if ( (AF_INET == rai_u->ai_family) ) {
               struct sockaddr_in* add_u = (struct sockaddr_in *)rai_u->ai_addr;
+              c3_w old_w = sam_u->imp_w[imp_y];
 
               sam_u->imp_w[imp_y] = ntohl(add_u->sin_addr.s_addr);
+              sam_u->imp_t[imp_y] = now;
 #if 1
-              {
+              if ( sam_u->imp_w[imp_y] != old_w ) {
                 u3_noun wad = u3i_words(1, &sam_u->imp_w[imp_y]);
                 u3_noun nam = u3dc("scot", c3__if, wad);
                 c3_c*   nam_c = u3r_string(nam);
