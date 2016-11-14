@@ -338,7 +338,7 @@ module.exports = recl({
   _handleAudi: function(e) {
     var audi;
     audi = _.map($(e.target).closest('.path').find('div'), function(div) {
-      return "~" + $(div).text();
+      return $(div).text();
     });
     return this.props._handleAudi(audi);
   },
