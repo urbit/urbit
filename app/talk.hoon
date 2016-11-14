@@ -1924,21 +1924,8 @@
   ++  sn-curt                                           ::  render name in 14
     |=  mup/?
     ^-  tape
-    =+  rac=(clan:title:jael p.one) 
-    =+  raw=(scow %p p.one)
-    =.  raw  ?.(mup raw ['*' (slag 2 raw)])
-    ?-    rac
-        $czar  (weld "          " raw)
-        $king  (weld "       " raw)
-        $duke  raw
-        $earl  ;:  welp
-                 (scag 1 raw)
-                 (scag 6 (slag 15 raw))
-                 "^"
-                 (scag 6 (slag 22 raw))
-               ==
-        $pawn  :(welp (scag 7 raw) "_" (scag 6 (slag 51 raw)))
-    ==
+    =+  raw=(cite:title:jael p.one)
+    (runt [(sub 14 (lent raw)) ' '] raw)
   ::
   ++  sn-nick
     |.  ^-  tape

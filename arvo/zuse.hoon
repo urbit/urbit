@@ -4402,6 +4402,17 @@
     ::                                                  ::::
   ++  title  ^?
     |%
+    ::                                                  ::  ++cite:title:jael
+    ++  cite                                            ::  render ship
+      |=  who/@p 
+      ^-  tape
+      =+  kind=(clan who)
+      =+  name=(scow %p who)
+      ?:  =(%earl kind)
+        :(weld "~" (swag [15 6] name) "^" (swag [22 6] name))
+      ?:  =(%pawn kind)
+        :(weld (swag [0 7] name) "_" (swag [51 6] name))
+      name
     ::                                                  ::  ++clan:title:jael
     ++  clan                                            ::  ship to rank
       |=  who/ship  ^-  rank:^ames

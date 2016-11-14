@@ -781,7 +781,7 @@
   ::
   ++  ta-pro                                          ::  set prompt
     |=  pom/sole-prompt
-    +>(pom pom(cad :(welp (scow %p p.gyl) ":" (trip q.gyl) cad.pom)))
+    +>(pom pom(cad :(welp ?.(?=($earl (clan p.gyl)) (cite p.gyl) (scow %p p.gyl)) ":" (trip q.gyl) cad.pom)))
   ::
   ++  ta-ret                                          ::  hear return
     (ta-act %ret ~)
