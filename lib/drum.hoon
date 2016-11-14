@@ -489,7 +489,7 @@
     ==
   ::
   ++  ta-bel                                          ::  beep
-    .(+> (se-blit %bel ~), q.blt ~)                   ::  forget belt
+    .(..ta (se-blit %bel ~), q.blt ~)                 ::  forget belt
   ::
   ++  ta-belt                                         ::  handle input
     |=  bet/dill-belt:^dill
@@ -542,7 +542,7 @@
             ?:  =(pos.inp len)
               ta-bel
             (ta-kil %r [pos.inp (sub len pos.inp)])
-        $l  +>(+> (se-blit %clr ~))
+        $l  +>(..ta (se-blit %clr ~))
         $n  (ta-aro %d)
         $p  (ta-aro %u)
         $r  ?~  ris
@@ -563,7 +563,7 @@
               ta-bel
             =+  sop=(ta-off %l %ace pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
-        $x  +>(+> se-anon)
+        $x  +>(..ta se-anon)
         $y  ?:  =(0 num.kil)
               ta-bel
             (ta-hom (cat:edit pos.inp (snag (sub num.kil pos.kil) old.kil)))
@@ -572,7 +572,7 @@
   ++  ta-del                                          ::  hear delete
     ^+  .
     ?:  =((lent buf.say.inp) pos.inp)
-      .(+> (se-blit %bel ~))
+      .(..ta (se-blit %bel ~))
     (ta-hom %del pos.inp)
   ::
   ++  ta-erl                                          ::  hear local error
@@ -589,7 +589,7 @@
     ?-  fec
       {$bel *}  ta-bel
       {$blk *}  +>
-      {$clr *}  +>(+> (se-blit fec))
+      {$clr *}  +>(..ta (se-blit fec))
       {$det *}  (ta-got +.fec)
       {$err *}  (ta-err p.fec)
       {$mor *}  |-  ^+  +>.^$
@@ -597,11 +597,11 @@
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
       {$nex *}  ta-nex
       {$pro *}  (ta-pro +.fec)
-      {$tan *}  +>(+> (se-dump p.fec))
-      {$sag *}  +>(+> (se-blit fec))
-      {$sav *}  +>(+> (se-blit fec))
-      {$txt *}  +>(+> (se-text p.fec))
-      {$url *}  +>(+> (se-blit fec))
+      {$tan *}  +>(..ta (se-dump p.fec))
+      {$sag *}  +>(..ta (se-blit fec))
+      {$sav *}  +>(..ta (se-blit fec))
+      {$txt *}  +>(..ta (se-text p.fec))
+      {$url *}  +>(..ta (se-blit fec))
     ==
   ::
   ++  ta-dog                                          ::  change cursor
