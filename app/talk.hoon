@@ -290,6 +290,7 @@
       ++  setting
         %-  perk  :~
           %noob
+          %mutegroup
         ==
       ++  work
         %+  knee  *^work  |.  ~+
@@ -771,6 +772,8 @@
                 cha/(list (pair ship status))
             ==
           ==
+      ?:  (~(has in settings.she) %mutegroup)
+        +>.$
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old.cul  +>.^$
@@ -801,6 +804,8 @@
       =+  day=(sh-repo-rogue-diff q.owners.she yid)
       =+  dun=q.owners.she
       =.  q.owners.she  yid
+      ?:  (~(has in settings.she) %mutegroup)
+        +>.$
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old.day  +>.^$
