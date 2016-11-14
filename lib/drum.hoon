@@ -566,7 +566,7 @@
         $x  +>(..ta se-anon)
         $y  ?:  =(0 num.kil)
               ta-bel
-            (ta-hom (cat:edit pos.inp (snag (sub num.kil pos.kil) old.kil)))
+            (ta-hom (cat:edit pos.inp ta-yan))
     ==
   ::
   ++  ta-del                                          ::  hear delete
@@ -737,18 +737,15 @@
             =+  sel=[sop (ta-off %r %edg sop)]
             (ta-hom (rep:edit sel (case (swag sel buf.say.inp))))
             ::
-      $y    ?.  ?&  (gth num.kil 0)                   ::  rotate & yank
+      $y    ?.  ?&  ?=(^ old.kil)                     ::  rotate & yank
                     ?=(^ p.blt)
                     ?|  ?=({$ctl $y} u.p.blt)
                         ?=({$met $y} u.p.blt)
                 ==  ==
               ta-bel
-            =+  las=(lent (snag (sub num.kil pos.kil) old.kil))
-            =+  pos=?:(=(1 pos.kil) num.kil (dec pos.kil))
-            %-  ta-hom(pos.kil pos)
-            %+  rep:edit
-              [(sub pos.inp las) las]
-            (snag (sub num.kil pos) old.kil)
+            =+  las=(lent ta-yan)
+            =.  pos.kil  ?:(=(1 pos.kil) num.kil (dec pos.kil))
+            (ta-hom (rep:edit [(sub pos.inp las) las] ta-yan))
     ==
   ::
   ++  ta-mov                                          ::  move in history
@@ -833,6 +830,9 @@
       cad.pom
     ?~  buf.say.inp  ~
     :(welp "<" (scow %p (end 4 1 (sham buf.say.inp))) "> ")
+  ::
+  ++  ta-yan                                          ::  yank
+    (snag (sub num.kil pos.kil) old.kil)
   --
 ++  edit                                              ::  produce sole-edits
   |%
