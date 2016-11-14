@@ -9,10 +9,18 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  drum-part  {$drum $1 drum-pith-1}                   ::
-++  drum-part-old  {$drum $0 drum-pith-0}               ::
-++  drum-pith-0  _!!                                    ::  forgotten
-++  drum-pith-1                                         ::
+++  drum-part      {$drum $2 drum-pith-2}               ::
+++  drum-part-old  {$drum $1 drum-pith-1}               ::
+::                                                      ::
+++  drum-pith-1                                         ::  pre-style
+  %+  cork  drum-pith-2                                 ::
+  |=(drum-pith-2 +<(bin *(map bone source-1)))          ::
+::                                                      ::
+++  source-1                                            ::
+  %+  cork  source                                      ::
+  |=(source +<(mir *(pair @ud (list @c))))              ::  style-less mir
+::                                                      ::
+++  drum-pith-2                                         ::
   $:  sys/(unit bone)                                   ::  local console
       eel/(set gill:^gall)                              ::  connect to
       ray/(set well:^gall)                              ::
@@ -37,8 +45,8 @@
       off/@ud                                           ::  window offset
       kil/kill                                          ::  kill buffer
       inx/@ud                                           ::  ring index
-      fug/(map gill:^gall (unit target))                      ::  connections
-      mir/(pair @ud (list @c))                          ::  mirrored terminal
+      fug/(map gill:^gall (unit target))                ::  connections
+      mir/(pair @ud stub:^dill)                         ::  mirrored terminal
   ==                                                    ::
 ++  history                                             ::  past input
   $:  pos/@ud                                           ::  input position
@@ -88,20 +96,13 @@
   |=  our/ship
   ^-  drum-part
   :*  %drum
-      %1
+      %2
       ~                                                 ::  sys
       (deft-fish our)                                   ::  eel
       (deft-apes our)                                   ::  ray
       ~                                                 ::  fur
       ~                                                 ::  bin
   ==                                                    ::
-::
-++  drum-port
-  |=  old/?(drum-part drum-part-old)  ^-  drum-part
-  ?-  &2.old
-    $1  old
-    $0  !!  :: XX unreachable, see issue #242
-  ==
 ::
 ++  drum-path                                           ::  encode path
   |=  gyl/gill:^gall  
@@ -392,18 +393,20 @@
   (se-emit [u.sys %diff %dill-blit bil])
 ::
 ++  se-show                                           ::  show buffer, raw
-  |=  lin/(pair @ud (list @c))
+  |=  lin/(pair @ud stub:^dill)
   ^+  +>
   ?:  =(mir lin)  +>
-  =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pro q.lin))
+  =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pom q.lin))
   =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
   +>(mir lin)
 ::
 ++  se-just                                           ::  adjusted buffer
-  |=  lin/(pair @ud (list @c))
+  |=  lin/(pair @ud stub:^dill)
   ^+  +>
   =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
-  (se-show (sub p.lin off) (scag edg (slag off q.lin)))
+  ::  XX: wrap q.lin??
+  ::  (se-show (sub p.lin off) (scag edg (slag off q.lin)))
+  (se-show (sub p.lin off) q.lin)
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
@@ -433,7 +436,7 @@
   (se-blit %out (tuba txt))
 ::
 ++  se-klr                                            ::  return styled text
-  |=  a/stub
+  |=  a/stub:^dill
   ^+(+> (se-blit %klr a))
 ::
 ++  se-poke                                           ::  send a poke
@@ -587,36 +590,35 @@
     |=  pos/@ud
     (ta-erl (~(transpose sole say.inp) pos))
   ::
+  ++  flatten-styx
+    |=  a/styx:^dill
+    ^-  stub:^dill
+    =|  b/styd:^dill
+    %+  reel
+    |-  ^-  stub:^dill
+    %-  zing
+    %+  turn  a
+    |=  a/$@(@t (pair styl:^dill styx:^dill))
+    ?@  a
+      [b (tuba (trip a))]~
+    %=  ^$
+      a  q.a
+      b  :+  ?~  p.p.a  p.b
+               ?~(u.p.p.a ~ (~(put in p.b) u.p.p.a))
+             ?~(p.q.p.a p.q.b u.p.q.p.a)
+             ?~(q.q.p.a q.q.b u.q.q.p.a)
+    ==
+    ::
+    |=  {a/(pair styd:^dill (list @c)) b/stub:^dill}
+    ?~  b
+      [a]~
+    ?.  =(p.a p.i.b)
+      [a b]
+    [[p.a (weld q.a q.i.b)] t.b]
+  ::
   ++  ta-klr                                          ::  render styled text
-    |=  a/styx
-    =<  =.  +>+>.$  (se-klr (flatten a))
-        +>.$
-    |%
-    ++  flatten
-      |=  a/styx
-      =|  b/styd
-      %+  reel
-      |-  ^-  stub
-      %-  zing
-      %+  turn  a
-      |=  a/_?>(?=(^ a) i.a)
-      ?@  a
-        [b (tuba (trip a))]~
-      %=  ^$
-        a  q.a
-        b  :+  ?~  p.p.a  p.b
-                 ?~(u.p.p.a ~ (~(put in p.b) u.p.p.a))
-               ?~(p.q.p.a p.q.b u.p.q.p.a)
-               ?~(q.q.p.a q.q.b u.q.q.p.a)
-      ==
-      ::
-      |=  {a/(pair styd (list @c)) b/stub}
-      ?~  b
-        [a]~
-      ?.  =(p.a p.i.b)
-        [a b]
-      [[p.a (weld q.a q.i.b)] t.b]
-    --
+    |=  a/styx:^dill
+    +>(..ta (se-klr (flatten-styx a)))
   ::
   ++  ta-fec                                          ::  apply effect
     |=  fec/sole-effect
@@ -867,9 +869,20 @@
     (ta-hom (cat:edit pos.inp txt))
   ::
   ++  ta-vew                                          ::  computed prompt
-    |-  ^-  (pair @ud (list @c))
-    =;  vew/(pair (list @c) tape)
-      [(add pos.inp (lent q.vew)) (weld (tuba q.vew) p.vew)]
+    ^-  (pair @ud stub:^dill)
+    =;  vew/(pair (list @c) styx:^dill)
+      =/  lin/stub:^dill
+        (flatten-styx q.vew)
+      =/  len
+        %-  (curr roll add)
+        %+  turn
+          lin
+        |=  a/(pair styd:^dill (list @c))
+        %+  add
+          (lent (tail a))
+        =+  d=~(wyt in p.p.a)
+        (mul 4 ?:(=(0 d) 0 +(d)))
+      [(add pos.inp len) (welp lin [*styd:^dill p.vew]~)]
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
       ?~  ris

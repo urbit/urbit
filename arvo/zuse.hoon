@@ -532,6 +532,7 @@
         {$hop p/@ud}                                    ::  set cursor position
         {$klr p/stub}                                   ::  styled text
         {$mor p/(list dill-blit)}                       ::  multiple blits
+        {$pom p/stub}                                   ::  styled prompt
         {$pro p/(list @c)}                              ::  show as cursor+line
         {$qit $~}                                       ::  close console
         {$out p/(list @c)}                              ::  send output line

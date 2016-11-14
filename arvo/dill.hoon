@@ -182,6 +182,9 @@
           ==
         ?:  ?=($pro -.bit)
           (done(see p.bit) %blit [[%lin p.bit] [%hop pos] ~])
+        ?:  ?=($pom -.bit)
+          =.  see  (cvrt:ansi p.bit)
+          (done %blit [[%lin see] [%hop pos] ~])
         ?:  ?=($hop -.bit)
           (done(pos p.bit) %blit [bit ~])
         ?:  ?=($qit -.bit)
