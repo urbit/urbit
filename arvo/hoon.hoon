@@ -1378,10 +1378,11 @@
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   ::
   +-  key                                               ::  set of keys
-    |-  ^-  (set _?>(?=(^ a) p.n.a))
-    ?~  a  ~
-    [n=p.n.a l=$(a l.a) r=$(a r.a)]
-  ::
+    =|  b/(set _?>(?=(^ a) p.n.a))
+    |-  ^+  b
+    ?~  a   b
+    $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
+  ::  
   +-  val                                               ::  list of vals
     =|  b/(list _?>(?=(^ a) q.n.a))
     |-  ^+  b
