@@ -3143,7 +3143,7 @@
         $d  [%d q.q.don p.q.don]
       ==
     ::                                                  ::  ++hump:differ:clay
-    ++  hump                                            ::  general prepatch
+    ++  hemp                                            ::  general prepatch
       |=  {pum/umph src/*}  ^-  *
       ?+  pum  ~|(%unsupported !!)
         $a  src
