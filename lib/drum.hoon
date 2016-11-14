@@ -689,9 +689,9 @@
       $dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))
               ta-bel
             =+  old=`(list @c)`i.old.hit
-            =+  b=(ta-jump(buf.say.inp old) %l %edg (lent old))
+            =+  sop=(ta-jump(buf.say.inp old) %l %ace (lent old))
             %-  ta-hom(ris ~)
-            (cat:edit pos.inp (slag b old))
+            (cat:edit pos.inp (slag sop old))
             ::
       $bac  ?:  =(0 pos.inp)
               ta-bel
@@ -902,7 +902,7 @@
     =|  {b/_| i/@ud}
     |-  ^-  @ud
     ?~  a  i
-    =/  c  =(32 i.a)
+    =/  c  !=(32 i.a)
     =.  b  |(b c)
     ?:  &(b !|(=(0 i) c))  i
     $(i +(i), a t.a)
