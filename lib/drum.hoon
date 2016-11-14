@@ -631,8 +631,7 @@
     |=  ted/sole-edit
     ^+  +>
     =.  +>  (ta-det ted)
-    =.  +>  (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
-    +>
+    (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
   ::
   ++  ta-jump                                         ::  buffer pos
     |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
