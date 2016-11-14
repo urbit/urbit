@@ -193,15 +193,14 @@
       ::
       ++  ansi
         |%
-        ++  cvrt
-          |=  a/stub
-          %-  zing
-          %+  turn  a
+        ++  cvrt                                        ::  stub to (list @c)
+          |=  a/stub                                    ::  with ANSI codes
+          ^-  (list @c)
+          %-  zing  %+  turn  a
           |=  a/(pair stye (list @c))
           ^-  (list @c)
-          %-  zing  %-  limo
-          :~  ?:  =(0 ~(wyt in p.p.a))
-                ~
+          ;:  weld
+              ?:  =(0 ~(wyt in p.p.a))  ~
               `(list @c)`(zing (turn (~(tap in p.p.a)) ef))
               (bg p.q.p.a)
               (fg q.q.p.a)
@@ -211,40 +210,44 @@
               (fg ~)
           ==
         ::
-        ++  ef  |=(a/^deco (scap (deco a)))
-        ++  bg  |=(a/^tint (scap =<([+(p) q] (tint a))))
-        ++  fg  |=(a/^tint (scap (tint a)))
+        ++  ef  |=(a/^deco (scap (deco a)))             ::  ANSI effect
         ::
-        ++  scap
+        ++  fg  |=(a/^tint (scap (tint a)))             ::  ANSI foreground
+        ::
+        ++  bg                                          ::  ANSI background
+          |=  a/^tint
+          %-  scap
+          =>((tint a) [+(p) q])                         ::  (add 10 fg)
+        ::
+        ++  scap                                        ::  ANSI escape seq
           |=  a/$^((pair @ @) @)
-          %-  (list @c)                ::  XX: hard?
-          ?@  a
-            [27 91 a 109 ~]            ::  "\033[{a}m"
-          [27 91 p.a q.a 109 ~]
+          %-  (list @c)
+          :+  27  '['                                   ::  "\033[{a}m"
+          ?@(a :~(a 'm') :~(p.a q.a 'm'))
         ::
-        ++  deco
-          |=  a/^deco
-          ^-  @
+        ++  deco                                        ::  ANSI effects
+          |=  a/^deco  ^-  @
           ?-  a
-            $~   48  ::  0
-            $br  49  ::  1
-            $un  52  ::  4
-            $bl  53  ::  5
+            $~   '0'
+            $br  '1'
+            $un  '4'
+            $bl  '5'
           ==
         ::
-        ++  tint
+        ++  tint                                        ::  ANSI colors (fg)
           |=  a/^tint
           ^-  (pair @ @)
+          :-  '3'
           ?-  a
-            $k  [51 48]  ::  30
-            $r  [51 49]  ::  31
-            $g  [51 50]  ::  32
-            $y  [51 51]  ::  33
-            $b  [51 52]  ::  34
-            $m  [51 53]  ::  35
-            $c  [51 54]  ::  36
-            $w  [51 55]  ::  37
-            $~  [51 57]  ::  39
+            $k  '0'
+            $r  '1'
+            $g  '2'
+            $y  '3'
+            $b  '4'
+            $m  '5'
+            $c  '6'
+            $w  '7'
+            $~  '9'
           ==
         --
       ::
