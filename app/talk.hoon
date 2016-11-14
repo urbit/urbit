@@ -1869,7 +1869,10 @@
         +>.$
       =.  q.q.gam  
         =+  ole=(~(get by q.q.gam) [%& our.hid man])
+        ?^  ole  (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
+        =+  ole=(~(get by q.q.gam) [%& src.hid man])
         ?~  ole  q.q.gam
+        =.  q.q.gam  (~(del by q.q.gam) [%& src.hid man])
         (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
       =+  old=(~(get by known) p.q.gam)
       ?~  old
