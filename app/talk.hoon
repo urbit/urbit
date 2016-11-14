@@ -1261,9 +1261,9 @@
     ^+  +>
     =+  shu=(~(get by shells) ost.hid)
     ?~  shu
-      ~&  :+  %ra-console-broken  ost.hid 
+      ~|  :+  %ra-console-broken  ost.hid 
           ?:((~(has by sup.hid) ost.hid) %lost %unknown)
-      +>.$
+      !!
     sh-abet:(~(sh-sole sh ~ u.shu) act)
   ::  
   ++  ra-emil                                           ::  ra-emit move list
