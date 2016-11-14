@@ -432,6 +432,10 @@
   ?.  se-ably  (se-talk [%leaf txt]~)
   (se-blit %out (tuba txt))
 ::
+++  se-klr                                            ::  return styled text
+  |=  a/stub
+  ^+(+> (se-blit %klr a))
+::
 ++  se-poke                                           ::  send a poke
   |=  {gyl/gill:^gall par/pear}
   (se-emit [ost.hid %poke (drum-path gyl) gyl par])
@@ -583,6 +587,37 @@
     |=  pos/@ud
     (ta-erl (~(transpose sole say.inp) pos))
   ::
+  ++  ta-klr                                          ::  render styled text
+    |=  a/styx
+    =<  =.  +>+>.$  (se-klr (flatten a))
+        +>.$
+    |%
+    ++  flatten
+      |=  a/styx
+      =|  b/styd
+      %+  reel
+      |-  ^-  stub
+      %-  zing
+      %+  turn  a
+      |=  a/_?>(?=(^ a) i.a)
+      ?@  a
+        [b (tuba (trip a))]~
+      %=  ^$
+        a  q.a
+        b  :+  ?~  p.p.a  p.b
+                 ?~(u.p.p.a ~ (~(put in p.b) u.p.p.a))
+               ?~(p.q.p.a p.q.b u.p.q.p.a)
+               ?~(q.q.p.a q.q.b u.q.q.p.a)
+      ==
+      ::
+      |=  {a/(pair styd (list @c)) b/stub}
+      ?~  b
+        [a]~
+      ?.  =(p.a p.i.b)
+        [a b]
+      [[p.a (weld q.a q.i.b)] t.b]
+    --
+  ::
   ++  ta-fec                                          ::  apply effect
     |=  fec/sole-effect
     ^+  +>
@@ -592,6 +627,7 @@
       {$clr *}  +>(..ta (se-blit fec))
       {$det *}  (ta-got +.fec)
       {$err *}  (ta-err p.fec)
+      {$klr *}  (ta-klr p.fec)
       {$mor *}  |-  ^+  +>.^$
                 ?~  p.fec  +>.^$
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
