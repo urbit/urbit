@@ -500,19 +500,25 @@
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
+        ?:  =(%gone p.q.i.eno)  ret
         =+  unt=(~(get by two) p.i.eno)
         ?~  unt
           ret(old [i.eno old.ret])
-        ?:  =(q.i.eno u.unt)  ret 
+        ?:  =(%gone p.u.unt)
+          ret(old [i.eno old.ret])
+        ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
         =+  owt=(~(tap by two))
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
-        ?:  (~(has by one) p.i.owt)
-          ret
-        ret(new [i.owt new.ret])
+        ?:  =(%gone p.q.i.owt)  ret
+        ?.  (~(has by one) p.i.owt)
+          ret(new [i.owt new.ret])
+        ?:  =(%gone p:(~(got by one) p.i.owt))
+          ret(new [i.owt new.ret])
+        ret
       ret 
     ::
     ++  sh-repo-cabal-diff
