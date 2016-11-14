@@ -203,26 +203,49 @@
           :~  ?:  =(0 ~(wyt in p.p.a))
                 ~
               `(list @c)`(zing (turn (~(tap in p.p.a)) ef))
-              ::  (bg p.q.p.a)                          ::  XX: colors disabled
-              ::  (fg q.q.p.a)
+              (bg p.q.p.a)
+              (fg q.q.p.a)
               q.a
               ?~(p.p.a ~ (ef ~))
-              :: (bg ~)                                 ::  XX: colors disabled
-              :: (fg ~)
+              (bg ~)
+              (fg ~)
           ==
         ::
         ++  ef  |=(a/^deco (scap (deco a)))
-        ++  bg  |=(a/^tint (scap (add 10 (tint a))))
+        ++  bg  |=(a/^tint (scap =<([+(p) q] (tint a))))
         ++  fg  |=(a/^tint (scap (tint a)))
-        ++  scap  |=(a/@ ((list @c) (limo ~[27 91 a 109])))
+        ::
+        ++  scap
+          |=  a/$^((pair @ @) @)
+          %-  (list @c)                ::  XX: hard?
+          ?@  a
+            [27 91 a 109 ~]            ::  "\033[{a}m"
+          [27 91 p.a q.a 109 ~]
         ::
         ++  deco
           |=  a/^deco
-          ?-(a $~ 48, $br 49, $un 52, $bl 53)
+          ^-  @
+          ?-  a
+            $~   48  ::  0
+            $br  49  ::  1
+            $un  52  ::  4
+            $bl  53  ::  5
+          ==
         ::
         ++  tint
           |=  a/^tint
-          ?-(a $k 30, $r 31, $g 32, $y 33, $b 34, $m 35, $c 36, $w 37, $~ 39)
+          ^-  (pair @ @)
+          ?-  a
+            $k  [51 48]  ::  30
+            $r  [51 49]  ::  31
+            $g  [51 50]  ::  32
+            $y  [51 51]  ::  33
+            $b  [51 52]  ::  34
+            $m  [51 53]  ::  35
+            $c  [51 54]  ::  36
+            $w  [51 55]  ::  37
+            $~  [51 57]  ::  39
+          ==
         --
       ::
       ++  heft
