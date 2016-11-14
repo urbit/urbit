@@ -1638,10 +1638,15 @@
     ++  pa-report-group                                  ::  update presence
       |=  vew/(set bone)
       %^  pa-report  vew  %group
-      :_  remotes
-      |-  ^-  atlas
-      ?~  locals  ~
-      [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
+      :-  %-  ~(run by locals)
+          |=({@ a/status} a)
+      %-  ~(urn by remotes)           ::  XX preformance
+      |=  {pan/partner atl/atlas}  ^-  atlas
+      ?.  &(?=($& -.pan) =(our.hid p.p.pan))  atl
+      =+  (~(get by stories) q.p.pan)
+      ?~  -  atl
+      %-  ~(run by locals.u)
+      |=({@ a/status} a)
     ::
     ++  pa-report-cabal                                 ::  update config
       (pa-report cabalers %cabal shape mirrors)
@@ -1755,30 +1760,11 @@
     ::
     ++  pa-remind                                       ::  remote presence
       |=  {tay/partner loc/atlas rem/(map partner atlas)}
-      =+  ^=  buk
-          =+  mer=(turn (~(tap by rem) ~) |=({* a/atlas} a))
-          |-  ^-  atlas
-          ?~  mer  loc
-          =.  loc  $(mer t.mer)
-          =+  dur=`(list (pair ship status))`(~(tap by i.mer) ~)
-          |-  ^-  atlas
-          ?~  dur  loc
-          =.  loc  $(dur t.dur)
-          =+  fuy=(~(get by loc) p.i.dur)
-          ?~  fuy  (~(put by loc) p.i.dur q.i.dur)
-          ?:  =(`presence`p.q.i.dur `presence`p.u.fuy)
-            loc
-          ?-  p.u.fuy
-            $gone  (~(del by loc) p.i.dur q.i.dur)
-            $talk  loc
-            $hear  (~(put by loc) p.i.dur q.i.dur)
-          ==
-      =+  gub=(~(get by remotes) tay)
-      ::  ~&  [%pa-remind tay gub buk]
-      ?.  |(?=($~ gub) !=(buk u.gub))
-        +>.$
-      =.  remotes  (~(put by remotes) tay buk)
-      (pa-report-group groupers)
+      =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
+      =/  buk  (~(uni by remotes) rem)  ::  XX drop?
+      =.  buk  (~(put by buk) tay loc)
+      ?:  =(buk remotes)  +>.$
+      (pa-report-group(remotes buk) groupers)
     ::
     ++  pa-start                                        ::  start stream
       |=  riv/river
