@@ -1,3 +1,4 @@
+::  Womb: cycle private key XX unimplemented
 ::
 ::::  /hoon/rekey/hood/gen
   ::

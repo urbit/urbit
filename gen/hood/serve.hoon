@@ -1,3 +1,4 @@
+::  Eyre: set web root
 ::
 ::::  /hoon/serve/hood/gen
   ::

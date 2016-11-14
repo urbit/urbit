@@ -1,3 +1,4 @@
+::  generate secret for starting a ship XX |ticket in cc-release
 ::
 ::::  /hoon/ticket/gen
   ::

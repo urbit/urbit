@@ -1,3 +1,4 @@
+::  API: input oauth1 application credentials for domain
 ::
 ::::  /hoon/init-oauth1/hood/gen
   ::

@@ -1,3 +1,4 @@
+::  Create a galactic generator and ames-ready fingerprint
 ::
 ::::  /hoon/pope/gen
   ::

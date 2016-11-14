@@ -1,3 +1,4 @@
+::  Drum: ^D, quit urbit process
 ::
 ::::  /hoon/exit/hood/gen
   ::

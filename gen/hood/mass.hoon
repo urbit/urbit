@@ -1,3 +1,4 @@
+::  Helm: show memory usage by vane
 ::
 ::::  /hoon/mass/hood/gen
   ::

@@ -1,3 +1,4 @@
+::  Drum: disconnect from console app
 ::
 ::::  /hoon/unlink/hood/gen
   ::

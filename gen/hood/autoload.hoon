@@ -1,3 +1,4 @@
+::  Helm: Disable/enable/toggle auto-reload of kernel components
 ::
 ::::  /hoon/autoload/hood/gen
   ::

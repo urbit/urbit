@@ -1,3 +1,4 @@
+::  Helm: Reload %clay
 ::
 ::::  /hoon/rc/hood/gen
   ::

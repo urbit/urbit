@@ -1,3 +1,4 @@
+::  Helm: Reload vane/s from desk
 ::
 ::::  /hoon/reload-desk/hood/gen
   ::

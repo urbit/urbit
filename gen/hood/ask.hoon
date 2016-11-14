@@ -1,3 +1,4 @@
+::  Request a planet from Tlon Inc.
 ::
 ::::  /hoon/ask/hood/gen
   ::

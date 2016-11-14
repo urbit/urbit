@@ -1,3 +1,4 @@
+::  "Hello world" sample generator
 ::
 ::::  /hoon/hello/gen
   ::

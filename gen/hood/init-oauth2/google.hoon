@@ -1,3 +1,4 @@
+::  API: input auth2 client_secret_*.json for .googleapis.com
 ::
 ::::  /hoon/google/init-oauth2/hood/gen
   ::

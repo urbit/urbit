@@ -1,3 +1,4 @@
+::  Kiln: copy file in clay
 ::
 ::::  /hoon/cp/hood/gen
   ::

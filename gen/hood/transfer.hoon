@@ -1,3 +1,4 @@
+::  Womb: move all contents of invite to new email
 ::
 ::::  /hoon/transfer/hood/gen
   ::

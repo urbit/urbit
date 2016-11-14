@@ -1,3 +1,4 @@
+::  Helm: Reload %zuse and all vanes
 ::
 ::::  /hoon/reboot/hood/gen
   ::

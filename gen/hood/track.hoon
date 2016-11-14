@@ -1,3 +1,4 @@
+::  Kiln: merge each version of remote desk? XX clarify
 ::
 ::::  /hoon/track/hood/gen
   ::

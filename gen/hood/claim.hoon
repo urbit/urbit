@@ -1,3 +1,4 @@
+::  Womb: use passcode to claim ship
 ::
 ::::  /hoon/claim/hood/gen
   ::

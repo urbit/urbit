@@ -1,3 +1,4 @@
+::  Kiln: Remove a sync
 ::
 ::::  /hoon/unsync/hood/gen
   ::

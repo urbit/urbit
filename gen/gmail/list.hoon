@@ -1,3 +1,4 @@
+::  List [number] inbox messages  XX may be broken
 ::
 ::::  /hoon/list/gmail/gen
   ::

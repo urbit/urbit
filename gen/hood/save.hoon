@@ -1,3 +1,4 @@
+::  Hood, generic: save named hood component's state
 ::
 ::::  /hoon/save/hood/gen
   ::

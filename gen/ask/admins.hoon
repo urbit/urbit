@@ -1,5 +1,6 @@
+::  Set admin users
 ::
-::::  /hoon/release/hood/gen
+::::  /hoon/admins/ask/gen
   ::
 /?    310
 ::

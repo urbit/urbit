@@ -1,3 +1,4 @@
+::  Kiln: Mount path to unix
 ::
 ::::  /hoon/mount/hood/gen
   ::

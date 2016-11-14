@@ -1,3 +1,4 @@
+::  Kiln: Remove unix mount
 ::
 ::::  /hoon/unmount/hood/gen
   ::
