@@ -2041,7 +2041,6 @@
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~]))
       ~&  [%beer p.bon]
       :*  [hen [%slip %c %init p.bon]]
-          [hen [%slip %j %init p.bon]]
           [hen [%give %init p.bon]]
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]

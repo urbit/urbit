@@ -29,7 +29,6 @@
         [%b %behn]
         [%d %dill]
         [%e %eyre]
-        [%j %jael]
     ==
 |-  ^+  all
 ?~  vay  all

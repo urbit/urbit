@@ -965,9 +965,7 @@
     ::    {$init p/code q/arms}
     ::
         $init
-      =.  our  p.tac
-      (cure abet:abet:(make:(burb our) now.sys eny.sys (shaf %genr eny.sys) *arms))
-::       (cure abet:abet:(make:(burb our) now.sys eny.sys p.tac q.tac))
+      (cure abet:abet:(make:(burb our) now.sys eny.sys p.tac q.tac))
     ::
     ::  create promises
     ::    {$mint p/ship q/safe}
@@ -1749,7 +1747,6 @@
     ++  jaelwomb                                        ::  manage ship %fungi
       |=  taz/task:womb
       ^+  +>
-      ~&  [taz shy]
       ?-    -.taz
       ::
       ::  create passcode balance
