@@ -237,11 +237,11 @@
   =+  fel=(most cab (sear wick urt:ab))
   |=(a/knot `(unit {p/term q/path})`(rush a fel))
 ::
+++  rolt  |=(a/wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
 ++  wush
   |=  {wid/@u tan/tang}
-  ^-  tape
-  =+  rolt=|=(a/wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-  (rolt (zing (turn tan |=(a/tank (wash 0^wid a)))))
+  ^-  wall
+  (zing (turn tan |=(a/tank (wash 0^wid a))))
 ::
 ::
 ++  add-cookies
@@ -264,12 +264,26 @@
   =-  (jobe fail+s+typ mess+(jape mez) ~)
   ^-  {typ/term mez/tape}
   ?~  err  [%fail "Unknown Error"]
-  [p.u.err (wush 160 q.u.err)]
+  [p.u.err (rolt (wush 160 q.u.err))]
 ::
 ++  resp                                                ::  mimed response
   |=  {sas/@uG mit/mite rez/@}  ^-  httr
   ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
   [sas ~[content-type+(moon mit)] [~ (taco rez)]]
+::
+++  add-links                                           :: x-urbit:// urls
+  |=  a/wall  ^-  marl
+  ?.  [x-urbit-links=&]  [;/((rolt a))]~                :: default disable
+  |-  ^-  marl
+  ?~  a  ~
+  =^  pax  i.a  ::  parse path if any
+    ^-  {(unit path) tape}
+    =/  vex  (fel:stab [1 1] i.a)
+    ?~  q.vex  [~ i.a]
+    [`p q.q]:u.q.vex
+  ?~  pax  [;/("{i.a}\0a") $(a t.a)]
+  :-  ;a/"x-urbit:{(spud u.pax)}":"{(spud u.pax)}"
+  [;/("{i.a}\0a") $(a t.a)]
 ::
 ++  render-tang                                         ::  tanks to manx
   |=  {dep/@uvH tan/tang}
@@ -278,7 +292,7 @@
       ;link(rel "stylesheet", href "/lib/base.css");
       ;title: server error
     ==
-    ;body:div#c.err:pre:code:"{(wush 80 tan)}"
+    ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
     ;script@"/~/on/{<dep>}.js";
   ==
 ::
@@ -1847,7 +1861,7 @@
         ..lens  :: (give-json 200 ~ (joba %okey-dokey %b &))
       =+  tag=(flop `tang`[>[%eyre-lens-fail p.u.a]< q.u.a])
       %-  (slog tag)
-      (give-json:abet 500 ~ (jape (wush 160 tag)))
+      (give-json:abet 500 ~ (jape (rolt (wush 160 tag))))
     ::
     ++  get-diff
       |=  fec/json  ^+  ..lens
