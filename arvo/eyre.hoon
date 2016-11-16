@@ -436,7 +436,7 @@
       setTimeout(urb.call,1000*urb.tries)
       urb.tries++
     }
-    urb.onupdate = function(){console.log('document.location.reload()')}
+    urb.onupdate = function(){document.location.reload()}
     urb.call()
     urb.wasp = function(deh){
       if (!deh) return;
