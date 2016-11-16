@@ -271,6 +271,20 @@
   ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
   [sas ~[content-type+(moon mit)] [~ (taco rez)]]
 ::
+++  add-links                                           :: x-urbit:// urls
+  |=  a/wall  ^-  marl
+  ?.  [x-urbit-links=&]  [;/((rolt a))]~                :: default disable
+  |-  ^-  marl
+  ?~  a  ~
+  =^  pax  i.a  ::  parse path if any
+    ^-  {(unit path) tape}
+    =/  vex  (fel:stab [1 1] i.a)
+    ?~  q.vex  [~ i.a]
+    [`p q.q]:u.q.vex
+  ?~  pax  [;/("{i.a}\0a") $(a t.a)]
+  :-  ;a/"x-urbit:{(spud u.pax)}":"{(spud u.pax)}"
+  [;/("{i.a}\0a") $(a t.a)]
+::
 ++  render-tang                                         ::  tanks to manx
   |=  {dep/@uvH tan/tang}
   ;html
@@ -278,7 +292,7 @@
       ;link(rel "stylesheet", href "/lib/base.css");
       ;title: server error
     ==
-    ;body:div#c.err:pre:code:"{(rolt (wush 80 tan))}"
+    ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
     ;script@"/~/on/{<dep>}.js";
   ==
 ::
