@@ -72,7 +72,7 @@
   ?@  b  ~|(b (~(got by all) b))
   [(..$ -.b) (..$ +.b)]
 --
-!:
+::
 ::::
   ::
 |_  {(bale keys) tok/token}

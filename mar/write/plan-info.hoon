@@ -2,7 +2,7 @@
 ::::  /hoon/paste/write/mar
   ::
 /?    310
-!:
+::
 |_  {who/@txname loc/@txloc}
 ++  grab
   |%

@@ -3,7 +3,9 @@
 ::::  /hoon/parse/down-jet/lib
   ::
 /?    310
-=,  xml:eyre
+=*  xml  xml:eyre
+=,  js:eyre
+=,  lines:clay
 =+  =~
 |%
 ++  loca  |*(a/_* {p/@u q/a})  
@@ -11,11 +13,12 @@
 --
 |%
 ++  htm-enty                                            ::  XX belongs in zuse
+  =,  space:clay
   ~+  
   =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context
-      =+(poxa enty(ent mapping))
+      =+(parse:xml enty(ent mapping))
   ^-  mapping/(map knot @tF)
-  =+  pax=/==5%%/html5-entities/json                    ::  XX  %%/
+  =+  pax=/==2%%/html5-entities/json                    ::  XX  %%/
   =+  maf=%.(pax ;~(biff file (soft json) (om so):jo))
   ?^  maf  u.maf
   ~&  no-enty+pax
@@ -165,7 +168,7 @@
           $&  (madn n.a) 
           $|  (madn p.a)
         ==
-      ;~(pose empt:poxa (pech [head tail]:poxa))
+      ;~(pose empt:parse:xml (pech [head tail]:parse:xml))
     ::
     ++  line 
       %+  cold  [%line ~]

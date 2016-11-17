@@ -17,7 +17,7 @@
 /-  gh, plan-acct
 /+  gh-parse, connector
 ::
-!:
+::
 =>  |%
     ++  move  (pair bone card)
     ++  card  

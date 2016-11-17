@@ -12,7 +12,7 @@
   ++  invited  ?($new $sent $ignored)
   ++  email  @t
 --
-!:
+::
 |_  $:  bow/bowl
         adr/(map email {time invited})
         sos/(map bone sole-share)

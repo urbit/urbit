@@ -1,5 +1,6 @@
 /-  gh
 /+  gh-parse
+=,  bytes:eyre
 |_  issues/(list issue:gh)
 ++  grab
   |%

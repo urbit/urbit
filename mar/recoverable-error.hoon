@@ -3,9 +3,11 @@
 ::::  /hoon/recoverable-error/mar
   ::
 /-    recoverable-error
-!:
+::
 ::::  ~fyr
   ::
+=,  ^eyre
+=,  js:eyre
 |_   recoverable-error
 ++  grab
   |%

@@ -4,7 +4,7 @@
 /?    310
 /-  talk
 /+  talk,map-to-json
-!:
+::
 =+  talk
 |_  gam/(list speech)
 ::

@@ -11,7 +11,7 @@
 =,  js:eyre
 =,  url:eyre
 =,  xml:eyre
-!:
+::
 ::::  functions
   ::
 |%
@@ -43,7 +43,7 @@
     +.i.all
   $(all t.all)
 --
-!:
+::
 ::::  library
   ::
 |%

@@ -6,8 +6,8 @@
 /-  sole
 ::
 ::::
-  !:
-[sole .]
+  ::
+=,  sole
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@($~ {jon/json $~})}

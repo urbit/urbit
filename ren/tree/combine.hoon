@@ -13,7 +13,7 @@
 /=    comt    /&json&/tree-comments/
 /=    bump    /;  |=(a/(list {p/time *}) =.(a (flop a) ?~(a '' (scot %da p.i.a))))
               /tree-comments/
-!:
+::
 ^-    tree-include
 =*  rj  elem-to-react-json
 :*  mime

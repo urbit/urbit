@@ -4,12 +4,15 @@
 /?    310
 /-    tree-include
 /+    tree
-/=    gas    /$    fuel
+/=    gas    /$    fuel:url:eyre
 /=    dat    /^    tree-include    /tree-include/
 /=    kid    /^    (map knot tree-include)
              /_    /tree-include/
 =,  js:eyre
-!:
+=,  bytes:eyre
+=,  base64:eyre
+=,  space:clay
+::
 ::::
   ::
 |%
@@ -74,10 +77,10 @@
            ^^$(quy p.a, s.bem [dir s.bem], dat dak, kid ~)
   ==
 --
-!:
+::
 ::::
   ::
-[tree .]
+=,  tree
 ^-  json
 =+  default='spur.t_body.r_comt.j_plan.j_beak.t_meta.j_kids_meta.j_head.r_bump.t'
 =+  ^=  schem

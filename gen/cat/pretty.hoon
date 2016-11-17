@@ -3,7 +3,7 @@
 ::::  /hoon/pretty/cat/gen
   ::
 /?    310
-!:
+::
 |%
 ++  pretty-noun
   |=  pri/*  ^-  tank

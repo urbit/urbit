@@ -45,7 +45,7 @@
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
-  !:                                                    ::  ::
+  ::                                                    ::  ::
 |=  {bowl:^gall helm-part}                              ::  main helm work
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
 =>  |%                                                  ::  arvo structures
