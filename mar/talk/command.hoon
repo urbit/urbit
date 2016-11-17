@@ -4,7 +4,7 @@
 /?    310
 /-    talk
 !:
-[talk .]
+=,  talk
 |_  cod/command
 ::
 ++  grab                                                ::  convert from

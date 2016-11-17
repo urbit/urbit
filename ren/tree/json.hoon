@@ -80,7 +80,7 @@
 !:
 ::::
   ::
-[tree .]
+=,  tree
 ^-  json
 =+  default='spur.t_body.r_comt.j_plan.j_beak.t_meta.j_kids_meta.j_head.r_bump.t'
 =+  ^=  schem

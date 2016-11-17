@@ -6,7 +6,7 @@
 !:
 ::::
   ::
-[sole .]
+=,  sole
 |_  dill-belt
 ::
 ++  grab                                                ::  convert from

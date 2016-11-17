@@ -4,7 +4,7 @@
   ::
 /?    310
 /-  sole
-[sole]
+=,  sole
 :-  %get  |=  {^ {a/tape $~} $~}
 ^-  (sole-request (cask httr))
 %+  sole-at  (scan a auri:epur)

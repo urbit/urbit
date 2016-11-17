@@ -8,7 +8,7 @@
 ::::
   ::
 =,  lines:clay
-[markdown .]
+=,  markdown
 |_  don/down
 ++  grab                                                ::  convert from
   |%

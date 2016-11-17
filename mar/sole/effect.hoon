@@ -6,7 +6,7 @@
 !:
 ::::
   ::
-[sole .]
+=,  sole
 |%
 ++  mar-sole-change                       ::  XX  dependency
   |_  cha/sole-change

@@ -6,7 +6,7 @@
 !:
 ::::
   ::
-[sole .]
+=,  sole
 |_  sole-action
 ::
 ++  grab                                                ::  convert from
