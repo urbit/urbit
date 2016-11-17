@@ -616,6 +616,7 @@
       =+  cug=(ap-find %peek ren tyl)
       ?~  cug
         ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
+      =.  ..ap-bowl  ap-bowl 
       =^  arm  +>.$  (ap-farm q.u.cug)
       ?:  ?=($| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
       =^  zem  +>.$  (ap-slam q.u.cug p.arm !>((slag p.u.cug `path`[ren tyl]))) 
