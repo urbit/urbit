@@ -6,6 +6,8 @@
 !:
 ::::  ~fyr
   ::
+=,  ^eyre
+=,  js:eyre
 |_   recoverable-error
 ++  grab
   |%

@@ -3,6 +3,7 @@
   ::
 /?    310
 !:
+=,  bytes:eyre
 |_  mud/@
 ++  grow
   |%

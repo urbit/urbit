@@ -4,11 +4,14 @@
 /?    310
 /-    tree-include
 /+    tree
-/=    gas    /$    fuel
+/=    gas    /$    fuel:url:eyre
 /=    dat    /^    tree-include    /tree-include/
 /=    kid    /^    (map knot tree-include)
              /_    /tree-include/
 =,  js:eyre
+=,  bytes:eyre
+=,  base64:eyre
+=,  space:clay
 !:
 ::::
   ::

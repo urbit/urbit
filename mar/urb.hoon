@@ -3,13 +3,15 @@
   ::
 /?    310
 /=  urb-wasp-data-js    /:    /%/wasp-data    /js/
+=,  js:eyre
 =,  xml:eyre
+=,  bytes:eyre
 !:
 |_  {{dep/@uvH hed/marl} {dep-bod/@uvH bod/marl}}
 ++  grow                                                ::  convert to
   |%
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
-  ++  html  (crip (poxo hymn))                          ::  convert to %html
+  ++  html  (crip (print hymn))                         ::  convert to %html
   ++  hymn                                              ::  inject dependencies
     ^-  manx
     ;html

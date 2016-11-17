@@ -3,6 +3,7 @@
   ::
 /?    310
 !:
+=,  bytes:eyre
 |_  {sup/spur mim/mime}
 ++  grab
   |%

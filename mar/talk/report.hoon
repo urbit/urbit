@@ -6,6 +6,7 @@
 /+    talk
 !:
 [talk .]
+=,  bytes:eyre
 |_  rep/report
 ::
 ++  grab                                                ::  convert from
