@@ -2,7 +2,7 @@
 ::::  /hoon/tree/write/mar
   ::
 /?    310
-!:
+::
 =,  bytes:eyre
 |_  {sup/spur mim/mime}
 ++  grab

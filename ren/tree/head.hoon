@@ -23,7 +23,7 @@
 ++  maxcdn
   |=(a/tape "//maxcdn.bootstrapcdn.com/{a}{?:(nomin.dbg "" ".min")}.js")
 --
-!:
+::
 ::::
   ::
 ^-  marl

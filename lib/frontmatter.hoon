@@ -2,7 +2,7 @@
 ::::  /hoon/frontmatter/lib
   ::
 /?    310
-!:
+::
 =,  lines:clay
 |%
 ++  atr-lines

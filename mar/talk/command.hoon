@@ -3,7 +3,7 @@
   ::
 /?    310
 /-    talk
-!:
+::
 =,  talk
 |_  cod/command
 ::

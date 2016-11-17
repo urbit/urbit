@@ -2,7 +2,7 @@
 ::::  /hoon/tang/mar
   ::
 /?    310
-!:
+::
 =,  lines:clay
 |_  tan/(list tank)
 ::

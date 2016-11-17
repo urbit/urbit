@@ -3,14 +3,14 @@
 ::::  /hoon/merge/hood/gen
   ::
 /?    310
-!:
+::
 |%
 ++  beaky  {knot knot knot $~}
 ++  sorc  ?({bek/beaky $~} {her/@p sud/@tas $~})
 --
 ::
 ::::
-  !:
+  ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bek/beak}
         {arg/{?(sorc {syd/$@(desk beaky) sorc})} cas/case gem/?($auto germ)}

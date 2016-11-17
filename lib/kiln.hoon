@@ -52,7 +52,7 @@
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
-  !:                                                    ::  ::
+  ::                                                    ::  ::
 |=  {bowl:^gall kiln-part}                              ::  main kiln work
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures

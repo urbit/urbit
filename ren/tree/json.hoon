@@ -12,7 +12,7 @@
 =,  bytes:eyre
 =,  base64:eyre
 =,  space:clay
-!:
+::
 ::::
   ::
 |%
@@ -77,7 +77,7 @@
            ^^$(quy p.a, s.bem [dir s.bem], dat dak, kid ~)
   ==
 --
-!:
+::
 ::::
   ::
 =,  tree

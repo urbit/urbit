@@ -6,7 +6,7 @@
 /-  sole
 ::
 ::::
-  !:
+  ::
 =,  sole
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}

@@ -1,5 +1,5 @@
 /+  talk
-!:
+::
 =>  |%
     ++  move  (pair bone card)
     ++  card

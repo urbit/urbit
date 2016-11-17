@@ -4,7 +4,7 @@
   ::
   ::
 /?    310
-!:
+::
 |%
 ++  request
   $:  domain/(list cord)  

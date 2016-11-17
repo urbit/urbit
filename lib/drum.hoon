@@ -5,7 +5,7 @@
 /-    sole
 /+    sole
 [. ^sole]
-!:                                                      ::  ::
+::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
@@ -113,7 +113,7 @@
   |=  way/wire  ^-  gill:^gall
   ?>(?=({@ @ $~} way) [(slav %p i.way) i.t.way])
 --
-!:
+::
 ::::
   ::
 |=  {hid/bowl:^gall drum-part}                          ::  main drum work

@@ -41,7 +41,7 @@
     [-.nex [(wonk wer) +.nex]]
 --
 ::
-!:
+::
 |_  {hed/marl tal/marl}
 ::
 ++  grow                                                ::  convert to

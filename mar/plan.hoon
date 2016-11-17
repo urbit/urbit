@@ -3,7 +3,7 @@
   ::
 /?    310
 /-    plan-acct, plan-diff
-!:
+::
 ::::  ~fyr
   ::
 =,  ^eyre

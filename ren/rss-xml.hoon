@@ -7,7 +7,7 @@
 /=  kid  /^  (map knot {marl marl})
          /_  /&snip&/elem/
 /$    |=({bem/beam *} [our=p.bem tub=(slag 1 (flop s.bem))])
-!:
+::
 ::::  ~fyr, ~tasfyn-partyv
   ::
 ::~&  [sum=sum kid=kid]

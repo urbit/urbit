@@ -5,7 +5,7 @@
 /?    310
 =*  xml  xml:eyre
 =,  url:eyre
-!:
+::
 |%
 ++  into-inner
   |=  {a/marl b/manx}

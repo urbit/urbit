@@ -18,7 +18,7 @@
               {$info wire @p toro:^clay}
           ==
 --
-!:
+::
 ::::
   ::
 |=  {bowl:^gall part}

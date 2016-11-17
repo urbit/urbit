@@ -3,7 +3,7 @@
 ::::  /hoon/time-to-id/lib
   ::
 /?    310
-!:
+::
 ::::  ~fyr
   ::
 |=  a/time  ^-  tape

@@ -1,6 +1,6 @@
 ::  
 ::::  /hoon/talk/sur
-  !:
+  ::
 |%
 ++  audience  (map partner (pair envelope delivery))    ::  destination+state
 ++  atlas  (map ship status)                            ::  presence map

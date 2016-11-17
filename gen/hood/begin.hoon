@@ -6,7 +6,7 @@
 /-  sole
 ::
 ::::
-  !:
+  ::
 =>  |%
     ++  begs  {his/@p tic/@p yen/@t ges/gens}
     ++  scug  |*({a/@ b/(pole)} ?~(b ~ ?~(a ~ [-.b $(b +.b, a (dec a))])))

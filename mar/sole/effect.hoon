@@ -3,7 +3,7 @@
   ::
 /?    310
 /-    sole
-!:
+::
 ::::
   ::
 =,  sole
@@ -37,7 +37,7 @@
   |=  a/_?>(?=(^ a) i.a)
   ?@(a (trip a) ^$(a q.a))
 --
-!:
+::
 |_  sef/sole-effect
 ::
 ++  grab                                                ::  convert from

@@ -3,7 +3,7 @@
 ::::  /hoon/recoverable-error/mar
   ::
 /-    recoverable-error
-!:
+::
 ::::  ~fyr
   ::
 =,  ^eyre
