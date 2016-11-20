@@ -9508,6 +9508,11 @@
   |=  bon/path
   (rain bon .^(@t %cx (weld bon `path`[%hoon ~])))
 ::
+++  ride                                                ::  end-to-end compiler
+  |=  {typ/span txt/@}
+  ^-  (pair span nock)
+  
+::
 ::::  5e: caching compiler
   ::
 ++  wa  !:                                              ::  cached compile
