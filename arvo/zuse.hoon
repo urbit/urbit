@@ -3013,19 +3013,19 @@
     ::                                                  ::  ++yu:chrono:behn
     ++  yu                                              ::  UTC format constants
       |%
-      ::                                                ::  ++mon:yu:chrono:
+      ::                                                ::  ++mon:yu:chrono:behn
       ++  mon                                           ::  months
         ^-  (list tape)
         :~  "January"  "February"  "March"  "April"  "May"  "June"  "July"
             "August"  "September"  "October"  "November"  "December"
         ==
-      ::                                                ::  ++wik:yu:chrono:
+      ::                                                ::  ++wik:yu:chrono:behn
       ++  wik                                           ::  weeks
         ^-  (list tape)
         :~  "Sunday"  "Monday"  "Tuesday"  "Wednesday"  "Thursday"
             "Friday"  "Saturday"
         ==
-      ::                                                ::  ++lef:yu:chrono:
+      ::                                                ::  ++lef:yu:chrono:behn
       ++  lef                                           ::  leapsecond dates
         ^-  (list @da)
         :~  ~2015.6.30..23.59.59   ~2012.6.30..23.59.59
@@ -3042,7 +3042,7 @@
             ~1974.12.31..23.59.38  ~1973.12.31..23.59.37
             ~1972.12.31..23.59.36  ~1972.6.30..23.59.35
         ==
-      ::                                                ::  ++les:yu:chrono:
+      ::                                                ::  ++les:yu:chrono:behn
       ++  les                                           ::  leapsecond days
         ^-  (list @da)
         :~  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1  ~1997.7.1
@@ -3942,7 +3942,7 @@
     ::                                                  ::::
   ++  xml  ^?
     |%
-    ::                                                  ::  ++print:xml
+    ::                                                  ::  ++print:xml:eyre
     ++  print                                           ::  xml printer
       =<  |=(a/manx `tape`(apex a ~))
       |_  _[unq=`?`| cot=`?`|]
@@ -4014,7 +4014,7 @@
               %keygen  %link  %meta  %param     %source   %track  %wbr 
         ==  ==
       --  ::
-    ::                                                  ::  ++parse:xml
+    ::                                                  ::  ++parse:xml:eyre
     ++  parse                                           ::  xml parser
       =<  |=(a/cord (rush a apex))
       |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]
@@ -4218,15 +4218,15 @@
     ::                                                  ::  ++urlp:url:eyre
     ++  urlp                                            ::  url+header parser
       |%
-      ::                                                ::  ++apat:urlp:url:
+      ::                                                ::  ++apat:urlp:url:eyre
       ++  apat                                          ::  2396 abs_path
         %+  cook  deft
         (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
-      ::                                                ::  ++aurf:urlp:url:
+      ::                                                ::  ++aurf:urlp:url:eyre
       ++  aurf                                          ::  2396 with fragment
         %+  cook  |~(a/purf a)
         ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
-      ::                                                ::  ++auri:urlp:url:
+      ::                                                ::  ++auri:urlp:url:eyre
       ++  auri                                          ::  2396 URL
         %+  cook
           |=  a/purl
@@ -4235,7 +4235,7 @@
           ;~(plug htts thor)
           ;~(plug ;~(pose apat (easy *pork)) yque)
         ==
-      ::                                                ::  ++auru:urlp:url:
+      ::                                                ::  ++auru:urlp:url:eyre
       ++  auru                                          ::  2396 with maybe user
         %+  cook
           |=  $:  a/{p/? q/(unit user) r/{(unit @ud) host}}
@@ -4248,84 +4248,84 @@
           ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
           ;~(plug ;~(pose apat (easy *pork)) yque)
         ==
-      ::                                                ::  ++htts:urlp:url:
+      ::                                                ::  ++htts:urlp:url:eyre
       ++  htts                                          ::  scheme 
         %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
         ;~(sfix scem ;~(plug col fas fas))
-      ::                                                ::  ++cock:urlp:url:
+      ::                                                ::  ++cock:urlp:url:eyre
       ++  cock                                          ::  cookie
         %+  most  ;~(plug sem ace) 
         ;~(plug toke ;~(pfix tis tosk))
-      ::                                                ::  ++dlab:urlp:url:
+      ::                                                ::  ++dlab:urlp:url:eyre
       ++  dlab                                          ::  2396 domainlabel
         %+  sear
           |=  a/@ta
           ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
         %+  cook  |=(a/tape (crip (cass a)))
         ;~(plug aln (star alp))
-      ::                                                ::  ++fque:urlp:url:
+      ::                                                ::  ++fque:urlp:url:eyre
       ++  fque                                          ::  normal query field
         (cook crip (plus pquo))
-      ::                                                ::  ++fquu:urlp:url:
+      ::                                                ::  ++fquu:urlp:url:eyre
       ++  fquu                                          ::  optional query field
         (cook crip (star pquo))
-      ::                                                ::  ++pcar:urlp:url:
+      ::                                                ::  ++pcar:urlp:url:eyre
       ++  pcar                                          ::  2396 path char
         ;~(pose pure pesc psub col pat)
-      ::                                                ::  ++pcok:urlp:url:
+      ::                                                ::  ++pcok:urlp:url:eyre
       ++  pcok                                          ::  cookie char
         ;~(less bas sem com doq prn)
-      ::                                                ::  ++pesc:urlp:url:
+      ::                                                ::  ++pesc:urlp:url:eyre
       ++  pesc                                          ::  2396 escaped
         ;~(pfix cen mes)
-      ::                                                ::  ++pold:urlp:url:
+      ::                                                ::  ++pold:urlp:url:eyre
       ++  pold                                          ::  
         (cold ' ' (just '+'))
-      ::                                                ::  ++pque:urlp:url:
+      ::                                                ::  ++pque:urlp:url:eyre
       ++  pque                                          ::  3986 query char
         ;~(pose pcar fas wut)
-      ::                                                ::  ++pquo:urlp:url:
+      ::                                                ::  ++pquo:urlp:url:eyre
       ++  pquo                                          ::  normal query char
         ;~(pose pure pesc pold fas wut)
-      ::                                                ::  ++pure:urlp:url:
+      ::                                                ::  ++pure:urlp:url:eyre
       ++  pure                                          ::  2396 unreserved
         ;~(pose aln hep dot cab sig)
-      ::                                                ::  ++psub:urlp:url:
+      ::                                                ::  ++psub:urlp:url:eyre
       ++  psub                                          ::  3986 sub-delims
         ;~  pose
           zap  buc  pam  soq  pel  per
           tar  lus  com  sem  tis
         ==
-      ::                                                ::  ++ptok:urlp:url:
+      ::                                                ::  ++ptok:urlp:url:eyre
       ++  ptok                                          ::  2616 token
         ;~  pose
           aln  zap  hax  buc  cen  pam  soq  tar  lus
           hep  dot  ket  cab  tec  bar  sig
         ==
-      ::                                                ::  ++scem:urlp:url:
+      ::                                                ::  ++scem:urlp:url:eyre
       ++  scem                                          ::  2396 scheme
         %+  cook  |=(a/tape (crip (cass a)))
         ;~(plug alf (star ;~(pose aln lus hep dot)))
-      ::                                                ::  ++smeg:urlp:url:
+      ::                                                ::  ++smeg:urlp:url:eyre
       ++  smeg                                          ::  2396 segment
         (cook crip (plus pcar))
-      ::                                                ::  ++tock:urlp:url:
+      ::                                                ::  ++tock:urlp:url:eyre
       ++  tock                                          ::  6265 raw value
         (cook crip (plus pcok))
-      ::                                                ::  ++tosk:urlp:url:
+      ::                                                ::  ++tosk:urlp:url:eyre
       ++  tosk                                          ::  6265 quoted value
         ;~(pose tock (ifix [doq doq] tock))
-      ::                                                ::  ++toke:urlp:url:
+      ::                                                ::  ++toke:urlp:url:eyre
       ++  toke                                          ::  2616 token
         (cook crip (plus ptok))
-      ::                                                ::  ++thor:urlp:url:
+      ::                                                ::  ++thor:urlp:url:eyre
       ++  thor                                          ::  2396 host+port
         %+  cook  |*({* *} [+<+ +<-])
         ;~  plug
           thos
           ;~((bend) (easy ~) ;~(pfix col dim:ag))
         ==
-      ::                                                ::  ++thos:urlp:url:
+      ::                                                ::  ++thos:urlp:url:eyre
       ++  thos                                          ::  2396 host, no local
         ;~  plug
           ;~  pose
@@ -4344,13 +4344,13 @@
             ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
           ==
         ==
-      ::                                                ::  ++yque:urlp:url:
+      ::                                                ::  ++yque:urlp:url:eyre
       ++  yque                                          ::  query ending
         ;~  pose
           ;~(pfix wut yquy)
           (easy ~)
         ==
-      ::                                                ::  ++yquy:urlp:url:
+      ::                                                ::  ++yquy:urlp:url:eyre
       ++  yquy                                          ::  query
         ;~  pose  
           ::  proper query
@@ -4365,7 +4365,7 @@
             |=(a/tape [[%$ (crip a)] ~])
           (star pque)
         ==
-      ::                                                ::  ++zest:urlp:url:
+      ::                                                ::  ++zest:urlp:url:eyre
       ++  zest                                          ::  2616 request-uri
         ;~  pose
           (stag %& (cook |=(a/purl a) auri))
