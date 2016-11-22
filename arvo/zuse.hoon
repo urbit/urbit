@@ -1176,7 +1176,7 @@
                 --  ::cipa
               --  ::
           |%
-          ::                                            ::  ++pen:aes:crypto:
+          ::                                            ::  ++pen:ahem:aes:
           ++  pen                                       ::  encrypt
             ^-  cipa
             |%
@@ -1200,7 +1200,7 @@
                       c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
                       76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
             --
-          ::                                            ::  ++pin:aes:crypto:
+          ::                                            ::  ++pin:ahem:aes:
           ++  pin                                       :: decrypt
             ^-  cipa
             |%
@@ -1224,7 +1224,7 @@
                       cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
                       fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
             --
-          ::                                            ::  ++mcol:aes:crypto:
+          ::                                            ::  ++mcol:ahem:aes:
           ++  mcol                                      ::
             |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  ^-  (list @)
             =+  c=[p=*@ q=*@ r=*@ s=*@]
@@ -1245,7 +1245,7 @@
               ==
             |=  {a/{@ @} b/{@ @} c/{@ @} d/{@ @}}
             :(dif (pro a) (pro b) (pro c) (pro d))
-          ::                                            ::  ++pode:aes:crypto:
+          ::                                            ::  ++pode:ahem:aes:
           ++  pode                                      ::  explode to block
             |=  {a/bloq b/@ c/@}  ^-  (list @)
             =+  d=(rip a c)
@@ -1254,13 +1254,13 @@
             ?:  =(m b)
               d
             $(m +(m), d (weld d (limo [0 ~])))
-          ::                                            ::  ++sube:aes:crypto:
+          ::                                            ::  ++sube:ahem:aes:
           ++  sube                                      ::  s-box word
             |=  {a/@ b/@}  ^-  @
             (rep 3 (turn (pode 3 4 a) |=(c/@ (cut 3 [c 1] b))))
           --  ::
         |%
-        ::                                              ::  ++be:aes:crypto:
+        ::                                              ::  ++be:ahem:aes:
         ++  be                                          ::  block cipher
           |=  {a/? b/@ c/@H}  ^-  @uxH
           ~|  %be-aesc
@@ -1307,7 +1307,7 @@
           =>  .(e (srow d e))
           =>  .(e (sark e (ankh d nnr b)))
           (rep 5 e)
-        ::                                              ::  ++ex:aes:crypto:
+        ::                                              ::  ++ex:ahem:aes:
         ++  ex                                          ::  key expand
           |=  a/@I  ^-  @
           =+  [b=a c=0 d=su:pen i=nnk]
@@ -1325,7 +1325,7 @@
           =>  .(c (mix c (cut 5 [(sub i nnk) 1] b)))
           =>  .(b (can 5 [i b] [1 c] ~))
           $(i +(i))
-        ::                                              ::  ++ix:aes:crypto:
+        ::                                              ::  ++ix:ahem:aes:
         ++  ix                                          ::  key expand, inv
           |=  a/@  ^-  @
           =+  [i=1 j=*@ b=*@ c=co:pin]
@@ -1508,7 +1508,7 @@
       ++  cbcc                                          ::  AES-256 CBC
         ~%  %cbcc  +>  ~
         |_  {key/@I prv/@H}
-        ::                                              ::  ++en:cbcc:aes:crypto
+        ::                                              ::  ++en:cbcc:aes:
         ++  en                                          ::  encrypt
           ~/  %en
           |=  txt/@  ^-  @ux
@@ -1821,7 +1821,7 @@
             ~
           `pln
         --  ::siva
-      ::                                                ::  ++sivb:aes:
+      ::                                                ::  ++sivb:aes:crypto:
       ++  sivb                                          ::  AES-192 SIV
         ~%  %sivb  +>  ~
         |_  {key/@J vec/(list @)}
@@ -2005,9 +2005,9 @@
       ::                                                ::  ++dy:crua:crypto:
       ++  dy                                            ::  need decrypt
         |~({a/@ b/@} (need (de a b)))
-      ::
-      ++  en                                            ::  ++en:crua:crypto:
-        |~  {key/@ msg/@}  ^-  @ux                      ::  encrypt
+      ::                                                ::  ++en:crua:crypto:
+      ++  en                                            ::  encrypt
+        |~  {key/@ msg/@}  ^-  @ux
         =+  len=(met 8 msg)
         =+  adj=?:(=(0 len) 1 len)
         =+  hax=(shax (mix key (shax (mix adj msg))))
@@ -2563,7 +2563,7 @@
       ::  XX: ++bruw, ++haul and ++weur are obsolete crua interfaces;
       ::  delete or restructure
       |%
-      ::                                                ::  ++trua:test:crypto
+      ::                                                ::  ++trua:test:crypto:
       ++  trua                                          ::  test crua
         |=  msg/@tas
         ^-  @
@@ -2579,7 +2579,7 @@
         ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
           ~|(%test-fail-seal !!)
         msg
-      ::                                                ::  ++trub:crypto
+      ::                                                ::  ++trub:test:crypto:
       ++  trub                                          ::  test crub
         |=  msg/@t
         ::
@@ -2645,31 +2645,31 @@
       |=  a/{p/@ q/@}
       =+  b=?:(=([0 0] a) 0 (~(inv fo p.a) (~(sit fo p.a) q.a)))
       |%
-      ::                                                ::  ++dif:fu:number:
+      ::                                                ::  ++dif:fu:number:ames
       ++  dif                                           ::  subtract
         |=  {c/{@ @} d/{@ @}}
         [(~(dif fo p.a) -.c -.d) (~(dif fo q.a) +.c +.d)]
-      ::                                                ::  ++exp:fu:number:
+      ::                                                ::  ++exp:fu:number:ames
       ++  exp                                           ::  exponent
         |=  {c/@ d/{@ @}}
         :-  (~(exp fo p.a) (mod c (dec p.a)) -.d)
         (~(exp fo q.a) (mod c (dec q.a)) +.d)
-      ::                                                ::  ++out:fu:number:
+      ::                                                ::  ++out:fu:number:ames
       ++  out                                           ::  garner's formula
         |=  c/{@ @}
         %+  add  +.c
         %+  mul  q.a
         %+  ~(pro fo p.a)  b
         (~(dif fo p.a) -.c (~(sit fo p.a) +.c))
-      ::                                                ::  ++pro:fu:number:
+      ::                                                ::  ++pro:fu:number:ames
       ++  pro                                           ::  multiply
         |=  {c/{@ @} d/{@ @}}
         [(~(pro fo p.a) -.c -.d) (~(pro fo q.a) +.c +.d)]
-      ::                                                ::  ++sum:fu:number:
+      ::                                                ::  ++sum:fu:number:ames
       ++  sum                                           ::  add
         |=  {c/{@ @} d/{@ @}}
         [(~(sum fo p.a) -.c -.d) (~(sum fo q.a) +.c +.d)]
-      ::                                                ::  ++sit:fu:number:
+      ::                                                ::  ++sit:fu:number:ames
       ++  sit                                           ::  represent
         |=  c/@
         [(mod c p.a) (mod c q.a)]
@@ -2789,13 +2789,13 @@
       =+  si=(bex p.a)
       =+  ma=(dec si)
       =>  |%
-          ::                                            ::  ++dif:ga:number:
+          ::                                            ::  ++dif:ga:number:ames
           ++  dif                                       ::  add and sub
             |=  {b/@ c/@}
             ~|  [%dif-ga a]
             ?>  &((lth b si) (lth c si))
             (mix b c)
-          ::                                            ::  ++dub:ga:number:
+          ::                                            ::  ++dub:ga:number:ames
           ++  dub                                       ::  mul by x
             |=  b/@
             ~|  [%dub-ga a]
@@ -2803,7 +2803,7 @@
             ?:  =(1 (cut 0 [(dec p.a) 1] b))
               (dif (sit q.a) (sit (lsh 0 1 b)))
             (lsh 0 1 b)
-          ::                                            ::  ++pro:ga:number:
+          ::                                            ::  ++pro:ga:number:ames
           ++  pro                                       ::  slow multiply
             |=  {b/@ c/@}
             ?:  =(0 b)
@@ -2811,7 +2811,7 @@
             ?:  =(1 (dis 1 b))
               (dif c $(b (rsh 0 1 b), c (dub c)))
             $(b (rsh 0 1 b), c (dub c))
-          ::                                            ::  ++toe:ga:number:
+          ::                                            ::  ++toe:ga:number:ames
           ++  toe                                       ::  exp+log tables
             =+  ^=  nu
                 |=  {b/@ c/@}
@@ -2835,18 +2835,18 @@
               p  (~(put by p) c b)
               q  (~(put by q) b c)
             ==
-          ::                                            ::  ++sit:ga:number:
+          ::                                            ::  ++sit:ga:number:ames
           ++  sit                                       ::  reduce
             |=  b/@
             (mod b (bex p.a))
           --  ::
       =+  toe
       |%
-      ::                                                ::  ++fra:ga:number:
+      ::                                                ::  ++fra:ga:number:ames
       ++  fra                                           ::  divide
         |=  {b/@ c/@}
         (pro b (inv c))
-      ::                                                ::  ++inv:ga:number:
+      ::                                                ::  ++inv:ga:number:ames
       ++  inv                                           ::  invert
         |=  b/@
         ~|  [%inv-ga a]
@@ -2854,7 +2854,7 @@
         ?~  c  !!
         =+  d=(~(get by p) (sub ma u.c))
         (need d)
-      ::                                                ::  ++pow:ga:number:
+      ::                                                ::  ++pow:ga:number:ames
       ++  pow                                           ::  exponent
         |=  {b/@ c/@}
         =+  [d=1 e=c f=0]
@@ -2864,7 +2864,7 @@
         ?:  =(1 (cut 0 [f 1] b))
           $(d (pro d e), e (pro e e), f +(f))
         $(e (pro e e), f +(f))
-      ::                                                ::  ++pro:ga:number:
+      ::                                                ::  ++pro:ga:number:ames
       ++  pro                                           ::  multiply
         |=  {b/@ c/@}
         ~|  [%pro-ga a]
@@ -3377,7 +3377,7 @@
       %+  turn  lin
       |=  t/@t
       [+((met 3 t)) (cat 3 t 10)]
-    ::                                                  ::  ++role:differ:clay
+    ::                                                  ::  ++role:lines:clay
     ++  role                                            ::  line list to atom
       |=  tez/(list @t)
       =|  {our/@ i/@ud}
@@ -4438,6 +4438,7 @@
 ++  gall
   =,  ^gall
   |%
+  ::                                                    ::  ++pale:gall
   ++  pale                                              ::  filter peers
     |=  {hid/bowl fun/$-(sink ?)}
     (skim (~(tap by sup.hid)) fun)
@@ -4446,7 +4447,7 @@
     |=  pax/path  |=  sink  ^-  ?
     ?~  pax  &  ?~  r.+<  | 
     &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
-  ::                                                    ::  ++
+  ::                                                    ::  ++prey:gall
   ++  prey                                              ::  prefix 
     |=({pax/path hid/bowl} (pale hid (prix pax)))
   --  ::gall
