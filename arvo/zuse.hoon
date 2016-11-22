@@ -1268,14 +1268,17 @@
                   +
                 =>  +
                 |%
+                ::                                      ::  ++ankh:be:ahem:aes:
                 ++  ankh
                   |=  {a/cipa b/@ c/@}
                   (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
+                ::                                      ::  ++sark:be:ahem:aes:
                 ++  sark
                   |=  {c/(list @) d/(list @)}  ^-  (list @)
                   ?~  c  ~
                   ?~  d  !!
                   [(mix i.c i.d) $(c t.c, d t.d)]
+                ::                                      ::  ++srow:be:ahem:aes:
                 ++  srow
                   |=  {a/cipa b/(list @)}  ^-  (list @)
                   =+  [c=0 d=~ e=ro.a]
@@ -1288,6 +1291,7 @@
                     (limo [0 p.e] [1 q.e] [2 r.e] [3 s.e] ~)
                   |=  {f/@ g/@}
                   (cut 3 [f 1] (snag (mod (add g c) nnb) b))
+                ::                                      ::  ++subs:be:ahem:aes:
                 ++  subs
                   |=  {a/cipa b/(list @)}  ^-  (list @)
                   ?~  b  ~
@@ -1579,6 +1583,7 @@
       ++  ctrb                                          ::  AES-192 CTR
         ~%  %ctrb  +>  ~
         |_  {key/@I mod/bloq len/@ ctr/@H}
+        ::                                              ::  ++en:ctrb:aes:
         ++  en
           ~/  %en
           |=  txt/@
@@ -2367,7 +2372,7 @@
           |=  {a/@ b/@}
           (net:few (sum:few (net:few a) (net:few b)))
         =>  |%
-            ::
+            ::                                          ::  ++qr:sal:scr:crypto:
             ++  qr                                      ::  quarterround
               |=  y/{@ @ @ @ $~}
               =+  zb=(mix &2.y (rot 7 (sum:few &1.y &4.y)))
@@ -2375,7 +2380,7 @@
               =+  zd=(mix &4.y (rot 13 (sum:few zc zb)))
               =+  za=(mix &1.y (rot 18 (sum:few zd zc)))
               ~[za zb zc zd]
-            ::
+            ::                                          ::  ++rr:sal:scr:crypto:
             ++  rr                                      ::  rowround
               |=  {y/(list @)}
               =+  za=(qr ~[&1.y &2.y &3.y &4.y])
@@ -2387,7 +2392,7 @@
                 &4.zb  &1.zb  &2.zb  &3.zb 
                 &3.zc  &4.zc  &1.zc  &2.zc
                 &2.zd  &3.zd  &4.zd  &1.zd  ==
-            ::
+            ::                                          ::  ++cr:sal:scr:crypto:
             ++  cr                                      ::  columnround
               |=  {x/(list @)}
               =+  ya=(qr ~[&1.x &5.x &9.x &13.x])
@@ -2399,11 +2404,11 @@
                 &2.ya  &1.yb  &4.yc  &3.yd
                 &3.ya  &2.yb  &1.yc  &4.yd
                 &4.ya  &3.yb  &2.yc  &1.yd  ==
-            ::
+            ::                                          ::  ++dr:sal:scr:crypto:
             ++  dr                                      ::  doubleround
               |=  {x/(list @)}
               (rr (cr x))
-            ::
+            ::                                          ::  ++al:sal:scr:crypto:
             ++  al                                      ::  add two lists
               |=  {a/(list @) b/(list @)}
               |-  ^-  (list @)
@@ -2415,9 +2420,9 @@
                     ?~  r  xw
                     $(xw (dr xw), r (sub r 2))
         (rep 5 (al xw ow))
-      ::
-      ++  rpp                                           ::  ++rpp:scr:crypto:
-        |=  {a/bloq b/@ c/@}                            ::  rip+filler blocks
+      ::                                                ::  ++rpp:scr:crypto:
+      ++  rpp                                           ::  rip+filler blocks
+        |=  {a/bloq b/@ c/@}
         =+  q=(rip a c)
         =+  w=(lent q)
         ?.  =(w b)
@@ -2732,14 +2737,18 @@
                 =+  fq=~(. fo q)
                 [p=p q=q fq=fq]
             |%
+            ::                                          ::  ++cla:curt:number:
             ++  cla
               |=  raw/@
               =+  low=(dis 248 (cut 3 [0 1] raw))
               =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
               =+  mid=(cut 3 [1 30] raw)
               (can 3 [[1 low] [30 mid] [1 hih] ~])
+            ::                                          ::  ++sqr:curt:number:
             ++  sqr  |=(a/@ (mul a a))
+            ::                                          ::  ++inv:curt:number:
             ++  inv  |=(a/@ (~(exp fo q) (sub q 2) a))
+            ::                                          ::  ++cad:curt:number:
             ++  cad
               |=  {n/{x/@ z/@} m/{x/@ z/@} d/{x/@ z/@}}
               =+  ^=  xx
@@ -2757,6 +2766,7 @@
                     (sun:si (mul z.m x.n))
                   ==
               [(sit.fq xx) (sit.fq zz)]
+            ::                                          ::  ++cub:curt:number:
             ++  cub
               |=  {x/@ z/@}
               =+  ^=  xx
@@ -2969,6 +2979,7 @@
               |-(?~(b ~ ?.(?=($t -.i.b) $(b t.b) `+.i.b)))
           ==
       |%
+      ::                                                ::  ++snug:stud:chrono:
       ++  snug                                          ::  position in list
         |=  a/(list tape)
         |=  b/tape
@@ -2978,32 +2989,32 @@
         ?:  =(b (scag len i.a))
           `pos
         $(pos +(pos), a t.a)
-      ::
+      ::                                                ::  ++sepa:stud:chrono:
       ++  sepa                                          ::  separator
         ;~(pose ;~(plug com (star ace)) (plus ace))
-      ::
+      ::                                                ::  ++elem:stud:chrono:
       ++  elem                                          ::  date element
         ;~  pose 
           (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
           (stag %w w)  (stag %z z)
         == 
-      ::
+      ::                                                ::  ++y:stud:chrono:behn
       ++  y                                             ::  year
         (stag %& (bass 10 (stun 3^4 dit)))
-      ::
+      ::                                                ::  ++m:stud:chrono:behn
       ++  m                                             ::  month
         (sear (snug mon:yu) (plus alf))
-      ::
+      ::                                                ::  ++d:stud:chrono:behn
       ++  d                                             ::  day
         (bass 10 (stun 1^2 dit))
-      ::
+      ::                                                ::  ++t:stud:chrono:behn
       ++  t                                             ::
         [;~(plug - - + (easy ~))]:[;~(sfix d col) d]
-      ::
+      ::                                                ::  ++w:stud:chrono:behn
       ++  w                                             ::  week
         (sear (snug wik:yu) (plus alf))
-      ::
-      ++  z                                             ::
+      ::                                                ::  ++z:stud:chrono:behn
+      ++  z                                             ::  time zone
         [;~(plug (mask "-+") . .)]:(bass 10 (stun 2^2 dit))
       --  ::
     ::                                                  ::  ++unt:chrono:behn
@@ -3543,6 +3554,7 @@
       ::  .=  (boil ~[[& dim] [| ", "] [& dim]]:ag)
       ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
       ::
+      ::                                                ::  ++boil:parsf:bytes:
       ++  boil                                          ::
         |*  (list (each rule tape))
         ?~  +<  (easy ~)
@@ -3552,6 +3564,7 @@
       ::
       ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
       ::
+      ::                                                ::  ++norm:parsf:bytes:
       ++  norm                                          ::
         |*  (pole _;/(*{$^(rule tape)}))
         ?~  +<  ~
@@ -3946,7 +3959,7 @@
     ++  print                                           ::  xml printer
       =<  |=(a/manx `tape`(apex a ~))
       |_  _[unq=`?`| cot=`?`|]
-      ::
+      ::                                                ::  ++apex:print:xml:
       ++  apex                                          ::  top level
         |=  {mex/manx rez/tape}
         ^-  tape
@@ -3964,7 +3977,7 @@
           [' ' '/' '>' rez]
         :-  '>'
         (many c.mex :(weld "</" tam ">" rez))
-      ::
+      ::                                                ::  ++attr:print:xml:
       ++  attr                                          ::  attributes to tape
         |=  {tat/mart rez/tape}
         ^-  tape
@@ -3975,7 +3988,7 @@
           "=\"" 
           (escp(unq |) v.i.tat '"' ?~(t.tat rez [' ' rez]))
         ==
-      ::
+      ::                                                ::  ++escp:print:xml:
       ++  escp                                          ::  escape for xml
         |=  {tex/tape rez/tape}
         ?:  unq
@@ -3995,18 +4008,18 @@
                  *    [i.xet rez]
                ==
         ==
-      ::
+      ::                                                ::  ++many:print:xml:
       ++  many                                          ::  nodelist to tape
         |=  {lix/(list manx) rez/tape}
         |-  ^-  tape
         ?~  lix  rez
         (apex i.lix $(lix t.lix))
-      ::
+      ::                                                ::  ++name:print:xml:
       ++  name                                          ::  name to tape
         |=  man/mane  ^-  tape
         ?@  man  (trip man)
         (weld (trip -.man) `tape`[':' (trip +.man)])
-      ::
+      ::                                                ::  ++clot:print:xml:
       ++  clot  ~+                                      ::  self-closing tags
         %~  has  in
             %-  silt  ^-  (list term)  :~
@@ -4018,7 +4031,7 @@
     ++  parse                                           ::  xml parser
       =<  |=(a/cord (rush a apex))
       |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]
-      ::
+      ::                                                ::  ++apex:parse:xml:
       ++  apex                                          ::  top level
         =+  spa=;~(pose comt whit)
         %+  knee  *manx  |.  ~+
@@ -4028,7 +4041,7 @@
             ;~(plug head many tail)
           empt
         == 
-      ::
+      ::                                                ::  ++attr:parse:xml:
       ++  attr                                          ::  attributes
         %+  knee  *mart  |.  ~+ 
         %-  star
@@ -4040,11 +4053,11 @@
             (easy ~)
           ==
         ==
-      ::
+      ::                                                ::  ++chrd:parse:xml:
       ++  chrd                                          ::  character data
         %+  cook  |=(a/tape ^-(mars ;/(a)))
         (plus ;~(less doq ;~(pose (just `@`10) escp)))
-      ::
+      ::                                                ::  ++comt:parse:xml:
       ++  comt                                          ::  comments 
         =-  (ifix [(jest '<!--') (jest '-->')] (star -))
         ;~  pose
@@ -4052,10 +4065,10 @@
           whit
           ;~(less (jest '-->') hep)
         ==
-      ::
+      ::                                                ::  ++escp:parse:xml:
       ++  escp                                          ::
         ;~(pose ;~(less gal gar pam prn) enty)
-      ::
+      ::                                                ::  ++enty:parse:xml:
       ++  enty                                          ::  entity
         %+  ifix  pam^sem
         ;~  pose
@@ -4067,17 +4080,17 @@
           :-  (bass 10 (stun 1^8 dit))
           (bass 16 ;~(pfix (mask "xX") (stun 1^8 hit)))
         ==
-      ::
+      ::                                                ::  ++empt:parse:xml:
       ++  empt                                          ::  self-closing tag
         %+  ifix  [gal (jest '/>')]
         ;~(plug ;~(plug name attr) (cold ~ (star whit)))
-      ::
+      ::                                                ::  ++head:parse:xml:
       ++  head                                          ::  opening tag
         (ifix [gal gar] ;~(plug name attr))
-      ::
+      ::                                                ::  ++many:parse:xml:
       ++  many                                          ::  contents
         (more (star comt) ;~(pose apex chrd))
-      ::
+      ::                                                ::  ++name:parse:xml:
       ++  name                                          ::  tag name 
         =+  ^=  chx
             %+  cook  crip 
@@ -4086,10 +4099,10 @@
                 (star ;~(pose cab dot alp))
             ==
         ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
-      ::
+      ::                                                ::  ++tail:parse:xml:
       ++  tail                                          ::  closing tag
         (ifix [(jest '</') gar] name)             
-      ::
+      ::                                                ::  ++whit:parse:xml:
       ++  whit                                          ::  whitespace
         (mask ~[' ' `@`0x9 `@`0xa])
       --  ::
@@ -4128,13 +4141,14 @@
     ++  earn                                            ::  print purl
       =<  |=(pul/purl `tape`(apex %& pul))
       |%
+      ::                                                ::  ++apex:earn:url:eyre
       ++  apex                                          ::
         |=  qur/quri  ^-  tape
         ?-  -.qur
           $&  (weld (head p.p.qur) `tape`$(qur [%| +.p.qur]))
           $|  ['/' (weld (body p.qur) (tail q.qur))]
         ==
-      ::
+      ::                                                ::  ++body:earn:url:eyre
       ++  body                                          ::
         |=  pok/pork  ^-  tape
         ?~  q.pok  ~
@@ -4143,7 +4157,7 @@
         ?~  t.q.pok
           ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
         (welp seg '/' $(q.pok t.q.pok))
-      ::
+      ::                                                ::  ++head:earn:url:eyre
       ++  head                                          ::
         |=  har/hart
         ^-  tape
@@ -4160,7 +4174,7 @@
         ::
           ?~(q.har ~ `tape`[':' ((d-co:co 1) u.q.har)])
         ==
-      ::
+      ::                                                ::  ++tail:earn:url:eyre
       ++  tail                                          ::
         |=  kay/quay
         ^-  tape
