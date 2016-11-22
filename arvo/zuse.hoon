@@ -352,7 +352,6 @@
     $:  fil/(unit (unit cage))                          ::  see ++khan-to-soba
         dir/(unit (map @ta (unit khan)))                ::
     ==                                                  ::
-  ++  kite  {p/care q/case r/ship s/desk t/spur}        ::  parsed global name
   ++  lobe  @uvI                                        ::  blob ref
   ++  maki  {p/@ta q/@ta r/@ta s/path}                  ::
   ++  miso                                              ::  ankh delta
@@ -3307,28 +3306,6 @@
               &(?=($& -.q.one) ?=($& -.q.two))          ::  both deltas
           ==
       [p.one [%& (weld p.q.one p.q.two)]]
-    ::                                                  ::  ++tame:space:clay
-    ++  tame                                            ::  parse kite path
-      |=  hap/path
-      ^-  (unit kite)
-      ?.  ?=({@ @ @ @ *} hap)  ~
-      =+  :*  hyr=(slay i.hap)
-              fal=(slay i.t.hap)
-              dyc=(slay i.t.t.hap)
-              ved=(slay i.t.t.t.hap)
-              ::  ved=(slay i.t.hap)
-              ::  fal=(slay i.t.t.hap)
-              ::  dyc=(slay i.t.t.t.hap)
-              tyl=t.t.t.t.hap
-          ==
-      ?.  ?=({$~ $$ $tas @} hyr)  ~
-      ?.  ?=({$~ $$ $p @} fal)  ~
-      ?.  ?=({$~ $$ $tas @} dyc)  ~
-      ?.  ?=({$~ $$ case} ved)  ~
-      =+  his=`@p`q.p.u.fal
-      =+  [dis=(end 3 1 q.p.u.hyr) rem=(rsh 3 1 q.p.u.hyr)]
-      ?.  ?&(?=($c dis) ?=(?($v $w $x $y $z) rem))  ~
-      [~ rem p.u.ved q.p.u.fal q.p.u.dyc tyl]
     ::                                                  ::  ++tome:space:clay
     ++  tome                                            ::  parse path to beam
       |=  pax/path
