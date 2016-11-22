@@ -316,7 +316,6 @@
   ::::                                                  ::  (1c2)
     ::
   ++  aeon  @ud                                         ::  version number
-  ++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})  ::  mergepts
   ++  ankh                                              ::  fs node (new)
     $:  fil/(unit {p/lobe q/cage})                      ::  file
         dir/(map @ta ankh)                              ::  folders
@@ -404,41 +403,13 @@
   ++  suba  (list {p/path q/misu})                      ::  delta
   ++  tako  @                                           ::  yaki ref
   ++  toro  {p/@ta q/nori}                              ::  general change
-  ++  udal                                              ::  atomic change (%b)
-    $:  p/@ud                                           ::  blockwidth
-        q/(list {p/@ud q/(unit {p/@ q/@})})             ::  indels
-    ==                                                  ::
-  ++  udon                                              ::  abstract delta
-    $:  p/umph                                          ::  preprocessor
-        $=  q                                           ::  patch
-        $%  {$a p/* q/*}                                ::  trivial replace
-            {$b p/udal}                                 ::  atomic indel
-            {$c p/(urge)}                               ::  list indel
-            {$d p/upas q/upas}                          ::  tree edit
-    ==  ==                                              ::
-  ++  umph                                              ::  change filter
-    $@  $?  $a                                          ::  no filter
-            $b                                          ::  jamfile
-            $c                                          ::  LF text
-        ==                                              ::
-    $%  {$d p/@ud}                                      ::  blocklist
-    ==                                                  ::
   ++  unce                                              ::  change part
     |*  a/mold                                          ::
     $%  {$& p/@ud}                                      ::  skip[copy]
         {$| p/(list a) q/(list a)}                      ::  p -> q[chunk]
     ==                                                  ::
-  ++  upas                                              ::  tree change (%d)
-    $^  {p/upas q/upas}                                 ::  cell
-    $%  {$0 p/axis}                                     ::  copy old
-        {$1 p/*}                                        ::  insert new
-        {$2 p/axis q/udon}                              ::  mutate!
-    ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
   ++  view  ?($u $v $w $x $y $z)                        ::  view mode
-  ++  waks  (map path woof)                             ::  list file states
-  ++  woof  $@  $know                                   ::  udon transform
-                {$chan (list {$@(@ud {p/@ud q/@ud})})}  ::
   ++  yaki                                              ::  commit
     $:  p/(list tako)                                   ::  parents
         q/(map path lobe)                               ::  namespace
@@ -3088,18 +3059,6 @@
         $|  [%| q.i.bur p.i.bur]
       ==
     ::                                                  ::  ++diff:differ:clay
-    ++  diff                                            ::  generate patch
-      |=  pum/umph
-      |=  {old/* new/*}  ^-  udon
-      :-  pum
-      ?+  pum  ~|(%unsupported !!)
-        $a  [%d (nude old new)]
-        $b  =+  [hel=(cue ((hard @) old)) hev=(cue ((hard @) new))]
-            [%d (nude hel hev)]
-        $c  =+  [hel=(lore ((hard @) old)) hev=(lore ((hard @) new))]
-            [%c (lusk hel hev (loss hel hev))]
-      ==
-    ::                                                  ::  ++loss:differ:clay
     ++  loss                                            ::  longest subsequence
       ~%  %loss  ..is  ~
       |*  {hel/(list) hev/(list)}
@@ -3168,65 +3127,6 @@
         =+  guy=(~(get by sev) i.hol)
         $(hol t.hol, +> (merg (flop `(list @ud)`?~(guy ~ u.guy))))
       --  ::
-    ::                                                  ::  ++lump:differ:clay
-    ++  lump                                            ::  apply patch
-      |=  {don/udon src/*}
-      ^-  *
-      ?+    p.don  ~|(%unsupported !!)
-          $a
-        ?+  -.q.don  ~|(%unsupported !!)
-          $a  q.q.don
-          $c  (lurk ((hard (list)) src) p.q.don)
-          $d  (lure src p.q.don)
-        ==
-      ::
-          $c
-        =+  dst=(lore ((hard @) src))
-        %-  role
-        ?+  -.q.don  ~|(%unsupported !!)
-          ::
-          ::  XX  these hards should not be needed; udon 
-          ::      should be parameterized
-          ::
-          $a  ((hard (list @t)) q.q.don)
-          $c  ((hard (list @t)) (lurk `(list *)`dst p.q.don))
-        ==
-      ==
-    ::                                                  ::  ++lure:differ:clay
-    ++  lure                                            ::  apply tree diff
-      |=  {a/* b/upas}
-      ^-  *
-      ?^  -.b
-        [$(b -.b) $(b +.b)]
-      ?+  -.b  ~|(%unsupported !!)
-        $0  .*(a [0 p.b])
-        $1  .*(a [1 p.b])
-      ==
-    ::                                                  ::  ++limp:differ:clay
-    ++  limp                                            ::  invert patch
-      |=  don/udon  ^-  udon
-      :-  p.don
-      ?+  -.q.don  ~|(%unsupported !!)
-        $a  [%a q.q.don p.q.don]
-        $c  [%c (berk p.q.don)]
-        $d  [%d q.q.don p.q.don]
-      ==
-    ::                                                  ::  ++hemp:differ:clay
-    ++  hemp                                            ::  general prepatch
-      |=  {pum/umph src/*}  ^-  *
-      ?+  pum  ~|(%unsupported !!)
-        $a  src
-        $b  (cue ((hard @) src))
-        $c  (lore ((hard @) src))
-      ==
-    ::                                                  ::  ++husk:differ:clay
-    ++  husk                                            ::  unprepatch
-      |=  {pum/umph dst/*}  ^-  *
-      ?+  pum  ~|(%unsupported !!)
-        $a  dst
-        $b  (jam dst)
-        $c  (role ((hard (list @)) dst))
-      ==
     ::                                                  ::  ++lurk:differ:clay
     ++  lurk                                            ::  apply list patch
       |*  {hel/(list) rug/(urge)}
@@ -3297,39 +3197,6 @@
         ?:  =(i.hev i.lcs)
           $(hel t.hel, rag (done %| [i.hel ~] ~))
         $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
-      --  ::
-    ::                                                  ::  ++nude:differ:clay
-    ++  nude                                            ::  tree change
-      =<  |=  {a/* b/*}  ^-  {p/upas q/upas}
-          [p=(tred a b) q=(tred b a)]
-      |%
-      ::                                                ::  ++axes:nude:differ:
-      ++  axes                                          ::  locs of nouns
-        |=  {a/@ b/*}  ^-  (map * axis)
-        =+  c=*(map * axis)
-        |-  ^-  (map * axis)
-        =>  .(c (~(put by c) b a))
-        ?@  b
-          c
-        %-  ~(uni by c)
-        %-  ~(uni by $(a (mul 2 a), b -.b))
-        $(a +((mul 2 a)), b +.b)
-      ::                                                ::  ++tred:nude:differ:
-      ++  tred                                          ::  diff a->b
-        |=  {a/* b/*}  ^-  upas
-        =|  c/(unit *)
-        =+  d=(axes 1 a)
-        |-  ^-  upas
-        =>  .(c (~(get by d) b))
-        ?~  c
-          ?@  b
-            [%1 b]
-          =+  e=^-(upas [$(b -.b) $(b +.b)])
-          ?-  e
-            {{$1 *} {$1 *}}  [%1 [p.p.e p.q.e]]
-            *  e
-          ==
-        [%0 u.c]
       --  ::
     --  ::differ
   ::                                                    ::
