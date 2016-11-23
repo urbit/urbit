@@ -2978,14 +2978,21 @@
       ++  d                                             ::  day
         (bass 10 (stun 1^2 dit))
       ::                                                ::  ++t:stud:chrono:behn
-      ++  t                                             ::
-        [;~(plug - - + (easy ~))]:[;~(sfix d col) d]
+      ++  t                                             ::  hours:minutes:secs
+        %+  cook  |=({h/@u @ m/@u @ s/@u} ~[h m s])
+        ;~(plug d col d col d)
+      ::
+      ::  XX day of week is currently unchecked, and 
+      ::  timezone outright ignored.
       ::                                                ::  ++w:stud:chrono:behn
-      ++  w                                             ::  week
+      ++  w                                             ::  day of week
         (sear (snug wik:yu) (plus alf))
       ::                                                ::  ++z:stud:chrono:behn
       ++  z                                             ::  time zone
-        [;~(plug (mask "-+") . .)]:(bass 10 (stun 2^2 dit))
+        ;~(plug (mask "-+") dd dd)
+      ::                                                ::  ++dd:stud:chrono:
+      ++  dd                                            ::  two digits
+        (bass 10 (stun 2^2 dit))
       --  ::
     ::                                                  ::  ++unt:chrono:behn
     ++  unt                                             ::  Urbit to Unix time
