@@ -25,8 +25,7 @@
         ::  formula peels off the first n (currently 3) events
         ::  to set up the lifecycle loop.
         ::
-        =+  ^=  [state-gate main-sequence]
-            .*(full-sequence boot-formula)
+        =+  [state-gate main-sequence]=.*(full-sequence boot-formula)
         ::
         ::  in this lifecycle loop, we replace the state function
         ::  with its product, called on the next event, until
@@ -51,19 +50,19 @@
     ::
     =>  :*  ::  event 2: a trap (hoon |.), producing the hoon compiler
             ::
-            compiler-trap/*
+            compiler-trap=**
             ::
             ::  event 3: hoon compiler source, compiling to event 2
             ::
-            compiler-source/@
+            compiler-source=*@
             ::
             ::  event 4: arvo kernel source
             ::
-            kernel-source/@
+            kernel-source=*@
             ::
             ::  events 5..n: main sequence with normal semantics
             ::
-            main-sequence/*
+            main-sequence=**
         ==
     !=  :_  main-sequence
         ::
@@ -87,7 +86,7 @@
         ::  run the nock to produce a new copy of the compiler trap;
         ::  check that it equals the old one.
         ::
-        ?>  =(compiler-trap -:*(0 +:compiler-tool))
+        ?>  =(compiler-trap -:.*(0 +:compiler-tool))
         ::
         ::  get the span (type) of the context of the compiler gate,
         ::  which is the compiler core.  this is at tree address 15
@@ -105,52 +104,54 @@
         ::  pass the compiler core to the arvo kernel, and we done
         ::
         .*(+>:compiler-gate +:kernel-tool)
-::  
-::  load files.  ship and desk are in generator beak.  case is now.
-::  source files:
-::
-::        sys/hoon        compiler
-::        sys/arvo        kernel
-::        sys/zuse        standard library
-::        sys/vane/ames   network vane
-::        sys/vane/behn   timer vane
-::        sys/vane/clay   revision-control vane
-::        sys/vane/dill   console vane
-::        sys/vane/eyre   web/internet vane
-::        sys/vane/ford   build vane
-::        sys/vane/gall   app vane
-::        sys/vane/jael   security vane
-::
-=+  top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/arvo
-=+  ^=  com
-=+  pax=`path`(weld top `path`[%hoon ~])
-~&  %plastic-start
-=+  gen=(reck (weld 
-~&  %plastic-parsed
-=+  ken=q:(~(mint ut %noun) %noun gen)
-~&  %plastic-compiled
-:-  ken
-=+  all=.*(0 ken)
-=+  ^=  vent
-    |=  {abr/term den/path}
-    =+  pax=(weld top den)
-    =+  txt=.^(@ %cx (weld pax `path`[%hoon ~]))
-    `ovum`[[%vane den] [%veer abr pax txt]]
-=+  ^=  evo  
-    ^-  (list ovum)
-    :~  (vent %$ /zuse)
-        [[%name (scot %p who) ~] [%veal who]]
-        (vent %c /vane/clay)
-        (vent %g /vane/gall)
-        (vent %f /vane/ford)
-        (vent %a /vane/ames)
-        (vent %b /vane/behn)
-        (vent %d /vane/dill)
-        (vent %e /vane/eyre)
-    ==
-|-  ^+  all
-?~  evo  all
-~&  [%plastic-step p.i.evo]
-=+  gat=.*(all .*(all [0 42]))
-=+  nex=+:.*([-.gat [[now i.evo] +>.gat]] -.gat)
-$(evo t.evo, all nex)
+42
+::=+  ^=  
+::::  
+::::  load files.  ship and desk are in generator beak.  case is now.
+::::  source files:
+::::
+::::        sys/hoon        compiler
+::::        sys/arvo        kernel
+::::        sys/zuse        standard library
+::::        sys/vane/ames   network vane
+::::        sys/vane/behn   timer vane
+::::        sys/vane/clay   revision-control vane
+::::        sys/vane/dill   console vane
+::::        sys/vane/eyre   web/internet vane
+::::        sys/vane/ford   build vane
+::::        sys/vane/gall   app vane
+::::        sys/vane/jael   security vane
+::::
+::=+  top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/arvo
+::=+  ^=  com
+::=+  pax=`path`(weld top `path`[%hoon ~])
+::~&  %plastic-start
+::=+  gen=(reck (weld 
+::~&  %plastic-parsed
+::=+  ken=q:(~(mint ut %noun) %noun gen)
+::~&  %plastic-compiled
+:::-  ken
+::=+  all=.*(0 ken)
+::=+  ^=  vent
+::    |=  {abr/term den/path}
+::    =+  pax=(weld top den)
+::    =+  txt=.^(@ %cx (weld pax `path`[%hoon ~]))
+::    `ovum`[[%vane den] [%veer abr pax txt]]
+::=+  ^=  evo  
+::    ^-  (list ovum)
+::    :~  (vent %$ /zuse)
+::        [[%name (scot %p who) ~] [%veal who]]
+::        (vent %c /vane/clay)
+::        (vent %g /vane/gall)
+::        (vent %f /vane/ford)
+::        (vent %a /vane/ames)
+::        (vent %b /vane/behn)
+::        (vent %d /vane/dill)
+::        (vent %e /vane/eyre)
+::    ==
+::|-  ^+  all
+::?~  evo  all
+::~&  [%plastic-step p.i.evo]
+::=+  gat=.*(all .*(all [0 42]))
+::=+  nex=+:.*([-.gat [[now i.evo] +>.gat]] -.gat)
+::$(evo t.evo, all nex)
