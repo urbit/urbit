@@ -4040,9 +4040,6 @@
         ==
       --  ::
     ::                                                  ::  ++epur:url:eyre
-    ++  epur                                            ::  url+header parser
-      =>(urlp |=(a/cord `(unit purl)`(rush a auri)))
-    ::                                                  ::  ++fuel:url:eyre
     ++  fuel                                            ::  parse urbit fcgi
       |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
       ^-  epic

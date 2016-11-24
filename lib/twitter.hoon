@@ -24,7 +24,7 @@
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
   ^-  hiss
-  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:epur)  :: base path
+  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:urlp)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
   ^-  hiss

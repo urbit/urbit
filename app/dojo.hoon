@@ -233,7 +233,7 @@
     ++  dp-iden-url
       %+  cook
         |=({a/(unit knot) b/purl:^eyre} [`(fall a *knot) b])
-      auru:epur:url:eyre
+      auru:urlp:url:eyre
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (tope he-beam)                       ::  ++path

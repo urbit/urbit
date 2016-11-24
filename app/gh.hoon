@@ -276,7 +276,7 @@
     :*  %+  scan
           =+  [(trip i.pax) (trip i.t.pax)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
-        auri:epur
+        auri:urlp
         %post  ~  ~
         %-  taco  %-  crip  %-  pojo  %-  jobe  :~
           name+s+%web
