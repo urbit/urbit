@@ -1117,7 +1117,7 @@
 ::                                                      ::::
 ::::                    ++ames                          ::  (2a) networking
   ::                                                    ::::
-++  ames  ^?
+++  old-ames  ^?
   =,  ^ames
   |%
   ::                                                    ::
@@ -2860,7 +2860,7 @@
 ::                                                      ::::
 ::::                    ++behn                          ::  (2b) timekeeping
   ::                                                    ::::
-++  behn
+++  old-behn
   |%
   ::                                                    ::
   ::::                  ++chrono:behn                   ::  (2b1) time
@@ -3045,7 +3045,7 @@
 ::                                                      ::::
 ::::                    ++clay                          ::  (2c) storage
   ::                                                    ::::
-++  clay
+++  old-clay
   =,  ^clay
   |%
   ::                                                    ::
@@ -3336,14 +3336,14 @@
 ::                                                      ::::
 ::::                      ++dill                        ::  (2d) console
   ::                                                    ::::
-++  dill
+++  old-dill
   |%
   ++  $  %$
   --  ::dill
 ::                                                      ::::
 ::::                      ++eyre                        ::  (2e) oldweb
   ::                                                    ::::
-++  eyre  ^?
+++  old-eyre  ^?
   =,  ^eyre
   |%
   ::                                                    ::
@@ -4293,14 +4293,14 @@
 ::                                                      ::
 ::::                      ++ford                        ::  (2f) build
   ::                                                    ::::
-++  ford
+++  old-ford
   |%
   ++  $  %$
   --  ::ford
 ::                                                      ::
 ::::                      ++gall                        ::  (2g) application
   ::                                                    ::::
-++  gall
+++  old-gall
   =,  ^gall
   |%
   ::                                                    ::  ++pale:gall
@@ -4319,7 +4319,7 @@
 ::                                                      ::
 ::::                      ++jael                        ::  (2h) security
   ::                                                    ::::
-++  jael
+++  old-jael
   |%
   ::                                                    ::
   ::::                    ++title:jael                  ::  (2h1) namespace
@@ -4450,4 +4450,43 @@
       {$g gift:able:^gall}
       {$j gift:able:^jael}
   ==
+::
+::
+::  XX transitional alias layer
+++  ames  ^?
+  |%
+  ++  crypto  crypto:old-ames
+  ++  number  number:old-ames
+  --
+++  behn  ^?
+  |%
+  ++  chrono  chrono:old-behn
+  --
+++  clay  ^?
+  |%
+  ++  differ  differ:old-clay
+  ++  lines  lines:old-clay
+  ++  space  space:old-clay
+  --
+++  dill  !!
+++  eyre  ^?
+  |%
+  ++  base64  base64:old-eyre
+  ++  bytes  bytes:old-eyre
+  ++  js  js:old-eyre
+  ++  xml  xml:old-eyre
+  ++  url  url:old-eyre
+  ++  wired  wired:old-eyre
+  --
+++  ford  !!
+++  gall  ^?
+  |%
+  ++  pale  pale:old-gall
+  ++  prix  prix:old-gall
+  ++  prey  prey:old-gall
+  --
+++  jael  ^?
+  |%
+  ++  title  title:old-jael
+  --
 --  ::
