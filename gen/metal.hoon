@@ -6,8 +6,8 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da *}
-        *
+|=  $:  {now/@da eny/@uvJ bec/beak}
+        {{who/@p $~} $~}
     ==
 :-  %noun
 =+  ^=  event-zero
@@ -25,19 +25,22 @@
         ::  formula peels off the first n (currently 3) events
         ::  to set up the lifecycle loop.
         ::
+        ~>  %slog.[0 leaf+"0-a"]
         =+  [state-gate main-sequence]=.*(full-sequence boot-formula)
+        ~>  %slog.[0 leaf+"0-b"]
         ::
         ::  in this lifecycle loop, we replace the state function
         ::  with its product, called on the next event, until
         ::  we run out of events.
         ::
-        ::  we have to use raw nock to "call" the function,
-        ::  since these are untyped nouns.
-        ::
         ::  in real life we don't actually run the lifecycle loop,
-        ::  since 
+        ::  since real life is updated incrementally and also cares
+        ::  about things like output.  we couple to the internal
+        ::  structure of the state machine and work directly with
+        ::  the underlying arvo engine.
         ::
-        |-  ?@  main-sequence
+        |-  ~>  %slog.[0 leaf+"0-c"]
+            ?@  main-sequence
               state-gate
             %=  $
               main-sequence  +.main-sequence
@@ -48,17 +51,17 @@
     ::  event 1 is the boot formula, which verifies the compiler
     ::  and starts the main lifecycle.
     ::
-    =>  :*  ::  event 2: a trap (hoon |.), producing the hoon compiler
+    =>  :*  ::  event 2: a formula producing the hoon compiler
             ::
-            compiler-trap=**
+            compiler-formula=**
             ::
             ::  event 3: hoon compiler source, compiling to event 2
             ::
-            compiler-source=*@
+            compiler-source=*@t
             ::
             ::  event 4: arvo kernel source
             ::
-            kernel-source=*@
+            kernel-source=*@t
             ::
             ::  events 5..n: main sequence with normal semantics
             ::
@@ -66,92 +69,102 @@
         ==
     !=  :_  main-sequence
         ::
-        ::  activate the compiler gate.  the reason we use a trap
-        ::  here is to actually compose the gate live, activating
-        ::  any jets as we build the cores.  the compiler trap is
-        ::  the only true binary used in the boot sequence.
+        ::  activate the compiler gate.  the product of this formula
+        ::  is smaller than the formula.  so you might think we should
+        ::  save the gate itself rather than the formula producing it.
+        ::  but we have to run the formula at runtime, to register jets.
         ::
         ::  as always, we have to use raw nock as we have no type.
         ::  the gate is in fact ++ride.
         ::
-        =+  ^=  compiler-gate
-            .*(compiler-trap -:compiler-trap)
+        ~>  %slog.[0 leaf+"1-a"]
+        =+  ^=  compiler-gate 
+            .*(compiler-formula 0)
         ::
         ::  compile the compiler source, producing (pair span nock).
         ::  the compiler ignores its input so we use a trivial span.
         ::
+        ~>  %slog.[0 leaf+"1-b"]
         =+  ^=  compiler-tool
             .*(compiler-gate(+< [%noun compiler-source]) -.compiler-gate)
         ::
-        ::  run the nock to produce a new copy of the compiler trap;
-        ::  check that it equals the old one.
+        ::  check that the new compiler formula equals the old formula.
         ::
-        ?>  =(compiler-trap -:.*(0 +:compiler-tool))
+        ~>  %slog.[0 leaf+"1-c"]
+        ?>  =(compiler-formula -:.*(0 +:compiler-tool))
         ::
-        ::  get the span (type) of the context of the compiler gate,
-        ::  which is the compiler core.  this is at tree address 15
-        ::  from the span produced by compiling the compiler source,
-        ::  which is the span of the compiler trap.
+        ::  get the span (type) of the kernel, which is the context
+        ::  of the compiler gate.  we just compiled the compiler,
+        ::  so we know the span (type) of the compiler gate.  its
+        ::  context is at tree address `+>` (ie, `+7` or Lisp `cddr`).
+        ::  we use the compiler again to infer this trivial program.
         ::
+        ~>  %slog.[0 leaf+"1-d"]
         =+  ^=  compiler-span
-            .*(compiler-gate(+< [-.compiler-gate '+15']) -.compiler-gate)
+            -:.*(compiler-gate(+< [-.compiler-tool '+>']) -.compiler-gate)
         ::
         ::  compile the arvo source against the compiler core.
         ::
+        ~>  %slog.[0 leaf+"1-e"]
         =+  ^=  kernel-tool
             .*(compiler-gate(+< [compiler-span kernel-source]) -.compiler-gate)
         ::
-        ::  pass the compiler core to the arvo kernel, and we done
+        ::  arvo kernel, and we done
         ::
+        ~>  %slog.[0 leaf+"1-f"]
         .*(+>:compiler-gate +:kernel-tool)
-42
-::=+  ^=  
-::::  
-::::  load files.  ship and desk are in generator beak.  case is now.
-::::  source files:
-::::
-::::        sys/hoon        compiler
-::::        sys/arvo        kernel
-::::        sys/zuse        standard library
-::::        sys/vane/ames   network vane
-::::        sys/vane/behn   timer vane
-::::        sys/vane/clay   revision-control vane
-::::        sys/vane/dill   console vane
-::::        sys/vane/eyre   web/internet vane
-::::        sys/vane/ford   build vane
-::::        sys/vane/gall   app vane
-::::        sys/vane/jael   security vane
-::::
-::=+  top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/arvo
-::=+  ^=  com
-::=+  pax=`path`(weld top `path`[%hoon ~])
-::~&  %plastic-start
-::=+  gen=(reck (weld 
-::~&  %plastic-parsed
-::=+  ken=q:(~(mint ut %noun) %noun gen)
-::~&  %plastic-compiled
-:::-  ken
-::=+  all=.*(0 ken)
-::=+  ^=  vent
-::    |=  {abr/term den/path}
-::    =+  pax=(weld top den)
-::    =+  txt=.^(@ %cx (weld pax `path`[%hoon ~]))
-::    `ovum`[[%vane den] [%veer abr pax txt]]
-::=+  ^=  evo  
-::    ^-  (list ovum)
-::    :~  (vent %$ /zuse)
-::        [[%name (scot %p who) ~] [%veal who]]
-::        (vent %c /vane/clay)
-::        (vent %g /vane/gall)
-::        (vent %f /vane/ford)
-::        (vent %a /vane/ames)
-::        (vent %b /vane/behn)
-::        (vent %d /vane/dill)
-::        (vent %e /vane/eyre)
-::    ==
-::|-  ^+  all
-::?~  evo  all
-::~&  [%plastic-step p.i.evo]
-::=+  gat=.*(all .*(all [0 42]))
-::=+  nex=+:.*([-.gat [[now i.evo] +>.gat]] -.gat)
-::$(evo t.evo, all nex)
+::  
+::  load files.  ship and desk are in generator beak.  case is now.
+::  source files:
+::
+::        sys/hoon        compiler
+::        sys/arvo        kernel
+::        sys/zuse        standard library
+::        sys/vane/ames   network vane
+::        sys/vane/behn   timer vane
+::        sys/vane/clay   revision-control vane
+::        sys/vane/dill   console vane
+::        sys/vane/eyre   web/internet vane
+::        sys/vane/ford   build vane
+::        sys/vane/gall   app vane
+::        sys/vane/jael   security vane
+::
+=+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
+=+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
+~&  %metal-parsing
+=+  compiler-twig=(ream compiler-source)
+~&  %metal-parsed
+=+  compiler-trap=q:(~(mint ut %noun) %noun compiler-twig)
+~&  %metal-compiled
+=+  kernel-source=.^(@t %cx (welp sys /arvo/hoon))
+=+  ^=  vane-sequence
+    |^  ^-  (list ovum)
+        :~  (vent %$ /zuse)
+            [[%name (scot %p who) ~] [%veal who]]
+            (vent %c /vane/clay)
+            (vent %g /vane/gall)
+            (vent %f /vane/ford)
+            (vent %a /vane/ames)
+            (vent %b /vane/behn)
+            (vent %d /vane/dill)
+            (vent %e /vane/eyre)
+            (vent %j /vane/jael)
+        ==
+    ::
+    ++  vent
+      |=  {abr/term den/path}
+      =+  pax=(weld sys den)
+      =+  txt=.^(@ %cx (welp pax /hoon))
+      `ovum`[[%vane den] [%veer abr pax txt]]
+    --
+~&  %metal-firing
+^-  @p
+%-  mug
+.*  :*  event-zero
+        event-one
+        compiler-trap
+        compiler-source
+        kernel-source
+        vane-sequence
+    ==
+[2 [0 3] [0 2]]
