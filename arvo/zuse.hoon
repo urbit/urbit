@@ -1061,10 +1061,11 @@
     ++  safe  (tree rite)                               ::  rights set
     --  ::  rights
   --  ::  jael
-::                                                      ::::
-::::                    ++^xmas                         ::  (1i) networking
-  ::                                                    ::::
+::
 ++  xmas  ^?
+  ::                                                    ::::
+  ::::                  ++^xmas                         ::  (1i) networking
+    ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
@@ -3441,11 +3442,6 @@
     ++  tact                                            ::  tape to octstream
       |=  tep/tape  ^-  octs
       (taco (rap 3 tep))
-    ::                                                  ::  ++tell:bytes:eyre
-    ++  tell                                            ::  wall to octstream
-      |=  wol/wall  ^-  octs
-      =+  buf=(rap 3 (turn wol |=(a/tape (crip (weld a `tape`[`@`10 ~])))))
-      [(met 3 buf) buf]
     --  ::bytes
   ::                                                    ::
   ::::                    ++js:eyre                     ::  (2e3) json
@@ -3978,11 +3974,6 @@
     ++  earf                                            ::  purf to tape
       |=  purf
       (weld (earn p) ?~(q "" `tape`['#' (trip u.q)]))
-    ::                                                  ::  ++earl:url:eyre
-    ++  earl                                            ::  localize purl
-      |=  {who/@p pul/purl}
-      ^-  purl
-      pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
     ::                                                  ::  ++earn:url:eyre
     ++  earn                                            ::  print purl
       =<  |=(pul/purl `tape`(apex %& pul))
