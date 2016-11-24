@@ -1115,16 +1115,11 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) engines
 ::                                                      ::  ::
 |%
-::                                                      ::::
-::::                    ++ames                          ::  (2a) networking
+::                                                      ::
+::::                  ++crypto                          ::  (2a1) cryptography
   ::                                                    ::::
-++  old-ames  ^?
-  =,  ^ames
-  |%
-  ::                                                    ::
-  ::::                  ++crypto:ames                   ::  (2a1) cryptography
-    ::                                                  ::::
   ++  crypto  ^?
+    =,  ^ames
     =,  number
     |%
     ::                                                  ::  ++aes:crypto:ames
@@ -2046,8 +2041,6 @@
     ::                                                  ::  ++crub:crypto:ames
     ++  crub                                            ::  cryptosuite B (Ed)
       ^-  acru
-      =,  number
-      =,  crypto
       =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
       |%
       ::                                                ::  ++as:crub:crypto:
@@ -2611,10 +2604,10 @@
         (nol:nu:crua bod)
       --  ::suite
     --  ::crypto
-  ::                                                    ::
-  ::::                  ++number:ames                   ::  (2a2) number theory
-    ::                                                  ::::
-  ++  number
+::                                                      ::
+::::                  ++number                          ::  (2a2) number theory
+  ::                                                    ::::
+++  number
     |%
     ::                                                  ::  ++fu:number:ames
     ++  fu                                              ::  modulo (mul p q)
@@ -2857,16 +2850,10 @@
         (need f)
       --  ::
     --  ::ga
-  --
-::                                                      ::::
-::::                    ++behn                          ::  (2b) timekeeping
+::                                                      ::
+::::                  ++chrono                          ::  (2b) time
   ::                                                    ::::
-++  old-behn
-  |%
-  ::                                                    ::
-  ::::                  ++chrono:behn                   ::  (2b1) time
-    ::                                                  ::::
-  ++  chrono  ^?
+++  chrono  ^?
     |%
     ::                                                  ::  ++dawn:chrono:behn
     ++  dawn                                            ::  Jan 1 weekday
@@ -3042,7 +3029,6 @@
         ==
       --  ::yu
     --  ::chrono
-  --  ::behn
 ::                                                      ::::
 ::::                    ++clay                          ::  (2c) storage
   ::                                                    ::::
@@ -3334,13 +3320,6 @@
       [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
     --  ::space
   --  ::clay
-::                                                      ::::
-::::                      ++dill                        ::  (2d) console
-  ::                                                    ::::
-++  old-dill
-  |%
-  ++  $  %$
-  --  ::dill
 ::                                                      ::::
 ::::                      ++eyre                        ::  (2e) oldweb
   ::                                                    ::::
@@ -4274,12 +4253,6 @@
     --  ::wired
   --  ::eyre
 ::                                                      ::
-::::                      ++ford                        ::  (2f) build
-  ::                                                    ::::
-++  old-ford
-  |%
-  ++  $  %$
-  --  ::ford
 ::                                                      ::
 ::::                      ++gall                        ::  (2g) application
   ::                                                    ::::
@@ -4300,14 +4273,9 @@
     |=({pax/path hid/bowl} (pale hid (prix pax)))
   --  ::gall
 ::                                                      ::
-::::                      ++jael                        ::  (2h) security
+::::                    ++title                         ::  (2j) namespace
   ::                                                    ::::
-++  old-jael
-  |%
-  ::                                                    ::
-  ::::                    ++title:jael                  ::  (2h1) namespace
-    ::                                                  ::::
-  ++  title  ^?
+++  title  ^?
     |%
     ::                                                  ::  ++cite:title:jael
     ++  cite                                            ::  render ship
@@ -4392,7 +4360,6 @@
           &(?=($earl (clan him)) =(our (sein him)))
       ==
     --  ::title
-  --  ::jael
 ::
 ++  zuse  %310                                          ::  hoon+zuse kelvin
 ++  gift-arvo                                           ::  out result <-$
@@ -4438,12 +4405,12 @@
 ::  XX transitional alias layer
 ++  ames  ^?
   |%
-  ++  crypto  crypto:old-ames
-  ++  number  number:old-ames
+  ++  crypto  crypto:+
+  ++  number  number:+
   --
 ++  behn  ^?
   |%
-  ++  chrono  chrono:old-behn
+  ++  chrono  chrono:+
   --
 ++  clay  ^?
   |%
@@ -4470,6 +4437,6 @@
   --
 ++  jael  ^?
   |%
-  ++  title  title:old-jael
+  ++  title  title:+
   --
 --  ::
