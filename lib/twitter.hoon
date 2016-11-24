@@ -11,6 +11,7 @@
 =,  js:eyre
 =,  url:eyre
 =,  xml:eyre
+=,  chrono:behn
 ::
 ::::  functions
   ::
@@ -80,7 +81,7 @@
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su usor)) ~)
-        (fasp created-at+da)
+        (fasp created-at+(cu year (ci stud so)))
         text+(cu crip (su (star escp:^parse)))  :: parse html escapes
     ==
   ++  usel 

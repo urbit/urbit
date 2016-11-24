@@ -3498,11 +3498,6 @@
         |=  jon/json
         (bind (wit jon) poq)
       ::                                                ::  ++da:jo:js:eyre
-      ++  da                                            ::  UTC date
-        |=  jon/json
-        ?.  ?=({$s *} jon)  ~
-        (bind (stud:chrono:behn p.jon) |=(a/date (year a)))
-      ::                                                ::  ++di:jo:js:eyre
       ++  di                                            ::  millisecond date
         %+  cu
           |=  a/@u  ^-  @da
