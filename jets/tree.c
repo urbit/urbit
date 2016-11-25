@@ -3,1221 +3,1135 @@
 */
 #include "all.h"
 
-/**************************************************************old (151) */
-static u3j_harm _mood__hoon_add_a[] = {{".2", u3wa_add, c3y}, {}};
-static u3j_harm _mood__hoon_dec_a[] = {{".2", u3wa_dec, c3y}, {}};
-static u3j_harm _mood__hoon_div_a[] = {{".2", u3wa_div, c3y}, {}};
-static u3j_harm _mood__hoon_gte_a[] = {{".2", u3wa_gte, c3y}, {}};
-static u3j_harm _mood__hoon_gth_a[] = {{".2", u3wa_gth, c3y}, {}};
-static u3j_harm _mood__hoon_lte_a[] = {{".2", u3wa_lte, c3y}, {}};
-static u3j_harm _mood__hoon_lth_a[] = {{".2", u3wa_lth, c3y}, {}};
-static u3j_harm _mood__hoon_mod_a[] = {{".2", u3wa_mod, c3y}, {}};
-static u3j_harm _mood__hoon_mul_a[] = {{".2", u3wa_mul, c3y}, {}};
-static u3j_harm _mood__hoon_sub_a[] = {{".2", u3wa_sub, c3y}, {}};
-
-static u3j_harm _mood__hoon_bind_a[] = {{".2", u3wb_bind, c3y}, {}};
-static u3j_harm _mood__hoon_clap_a[] = {{".2", u3wb_clap, c3y}, {}};
-static u3j_harm _mood__hoon_drop_a[] = {{".2", u3wb_drop, c3y}, {}};
-static u3j_harm _mood__hoon_flop_a[] = {{".2", u3wb_flop, c3y}, {}};
-static u3j_harm _mood__hoon_lent_a[] = {{".2", u3wb_lent, c3y}, {}};
-static u3j_harm _mood__hoon_levy_a[] = {{".2", u3wb_levy, c3y}, {}};
-static u3j_harm _mood__hoon_lien_a[] = {{".2", u3wb_lien, c3y}, {}};
-static u3j_harm _mood__hoon_murn_a[] = {{".2", u3wb_murn, c3y}, {}};
-static u3j_harm _mood__hoon_need_a[] = {{".2", u3wb_need, c3y}, {}};
-static u3j_harm _mood__hoon_reap_a[] = {{".2", u3wb_reap, c3y}, {}};
-static u3j_harm _mood__hoon_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
-static u3j_harm _mood__hoon_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
-static u3j_harm _mood__hoon_skid_a[] = {{".2", u3wb_skid, c3y}, {}};
-static u3j_harm _mood__hoon_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
-static u3j_harm _mood__hoon_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
-static u3j_harm _mood__hoon_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
-static u3j_harm _mood__hoon_slag_a[] = {{".2", u3wb_slag, c3y}, {}};
-static u3j_harm _mood__hoon_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
-// static u3j_harm _mood__hoon_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
-static u3j_harm _mood__hoon_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
-static u3j_harm _mood__hoon_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
-
-static u3j_harm _mood__hoon_bex_a[] = {{".2", u3wc_bex, c3y}, {}};
-static u3j_harm _mood__hoon_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
-static u3j_harm _mood__hoon_can_a[] = {{".2", u3wc_can, c3y}, {}};
-static u3j_harm _mood__hoon_cap_a[] = {{".2", u3wc_cap, c3y}, {}};
-static u3j_harm _mood__hoon_cat_a[] = {{".2", u3wc_cat, c3y}, {}};
-static u3j_harm _mood__hoon_con_a[] = {{".2", u3wc_con, c3y}, {}};
-static u3j_harm _mood__hoon_cut_a[] = {{".2", u3wc_cut, c3y}, {}};
-static u3j_harm _mood__hoon_dis_a[] = {{".2", u3wc_dis, c3y}, {}};
-static u3j_harm _mood__hoon_dor_a[] = {{".2", u3wc_dor, c3y}, {}};
-static u3j_harm _mood__hoon_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
-static u3j_harm _mood__hoon_end_a[] = {{".2", u3wc_end, c3y}, {}};
-static u3j_harm _mood__hoon_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
-static u3j_harm _mood__hoon_hor_a[] = {{".2", u3wc_hor, c3y}, {}};
-static u3j_harm _mood__hoon_lsh_a[] = {{".2", u3wc_lsh, c3y}, {}};
-static u3j_harm _mood__hoon_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
-static u3j_harm _mood__hoon_met_a[] = {{".2", u3wc_met, c3y}, {}};
-static u3j_harm _mood__hoon_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
-static u3j_harm _mood__hoon_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
-static u3j_harm _mood__hoon_muk_a[] = {{".2", u3wc_muk, c3y}, {}};
-static u3j_harm _mood__hoon_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
-static u3j_harm _mood__hoon_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
-static u3j_harm _mood__hoon_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
-static u3j_harm _mood__hoon_rep_a[] = {{".2", u3wc_rep, c3y}, {}};
-static u3j_harm _mood__hoon_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
-static u3j_harm _mood__hoon_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
-static u3j_harm _mood__hoon_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
-static u3j_harm _mood__hoon_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
-
-static u3j_harm _mood__hoon__po_ind_a[] = {{".2", u3wcp_ind}, {}};
-static u3j_harm _mood__hoon__po_ins_a[] = {{".2", u3wcp_ins}, {}};
-static u3j_harm _mood__hoon__po_tod_a[] = {{".2", u3wcp_tod}, {}};
-static u3j_harm _mood__hoon__po_tos_a[] = {{".2", u3wcp_tos}, {}};
-static u3j_core _mood__hoon__po_d[] =
-  { { "ind", _mood__hoon__po_ind_a },
-    { "ins", _mood__hoon__po_ins_a },
-    { "tod", _mood__hoon__po_tod_a },
-    { "tos", _mood__hoon__po_tos_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__by_bif_a[] = {{".2", u3wdb_bif, c3y}, {}};
-static u3j_harm _mood__hoon__by_dif_a[] = {{".2", u3wdb_dif, c3y}, {}};
-static u3j_harm _mood__hoon__by_gas_a[] = {{".2", u3wdb_gas, c3y}, {}};
-static u3j_harm _mood__hoon__by_get_a[] = {{".2", u3wdb_get, c3y}, {}};
-static u3j_harm _mood__hoon__by_has_a[] = {{".2", u3wdb_has, c3y}, {}};
-// static u3j_harm _mood__hoon__by_int_a[] = {{".2", u3wdb_int, c3y}, {}};
-static u3j_harm _mood__hoon__by_put_a[] = {{".2", u3wdb_put, c3y}, {}};
-static u3j_harm _mood__hoon__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
-// static u3j_harm _mood__hoon__by_uni_a[] = {{".2", u3wdb_uni, c3y}, {}};
-static u3j_core _mood__hoon__by_d[] =
-  { { "bif", _mood__hoon__by_bif_a },
-    { "dif", _mood__hoon__by_dif_a },
-    { "gas", _mood__hoon__by_gas_a },
-    { "get", _mood__hoon__by_get_a },
-    { "has", _mood__hoon__by_has_a },
-    // { "int", _mood__hoon__by_int_a },
-    { "put", _mood__hoon__by_put_a },
-    { "tap", _mood__hoon__by_tap_a },
-    // { "uni", _mood__hoon__by_uni_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__in_bif_a[] = {{".2", u3wdi_bif}, {}};
-static u3j_harm _mood__hoon__in_dif_a[] = {{".2", u3wdi_dif}, {}};
-static u3j_harm _mood__hoon__in_gas_a[] = {{".2", u3wdi_gas}, {}};
-static u3j_harm _mood__hoon__in_has_a[] = {{".2", u3wdi_has}, {}};
-static u3j_harm _mood__hoon__in_mer_a[] = {{".2", u3wdi_mer}, {}};
-// static u3j_harm _mood__hoon__in_int_a[] = {{".2", u3wdi_int}, {}};
-static u3j_harm _mood__hoon__in_put_a[] = {{".2", u3wdi_put}, {}};
-static u3j_harm _mood__hoon__in_tap_a[] = {{".2", u3wdi_tap}, {}};
-// static u3j_harm _mood__hoon__in_uni_a[] = {{".2", u3wdi_uni}, {}};
-static u3j_core _mood__hoon__in_d[] =
-  { { "bif", _mood__hoon__in_bif_a },
-    { "dif", _mood__hoon__in_dif_a },
-    { "gas", _mood__hoon__in_gas_a },
-    { "has", _mood__hoon__in_has_a },
-    { "mer", _mood__hoon__in_mer_a },
-    // { "int", _mood__hoon__in_int_a },
-    { "put", _mood__hoon__in_put_a },
-    { "tap", _mood__hoon__in_tap_a },
-    // { "uni", _mood__hoon__in_uni_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon_cue_a[] = {{".2", u3we_cue}, {}};
-static u3j_harm _mood__hoon_jam_a[] = {{".2", u3we_jam}, {}};
-static u3j_harm _mood__hoon_mat_a[] = {{".2", u3we_mat}, {}};
-static u3j_harm _mood__hoon_rub_a[] = {{".2", u3we_rub}, {}};
-static u3j_harm _mood__hoon_lore_a[] = {{".2", u3we_lore}, {}};
-static u3j_harm _mood__hoon_loss_a[] = {{".2", u3we_loss}, {}};
-static u3j_harm _mood__hoon_lune_a[] = {{".2", u3we_lune}, {}};
-static u3j_harm _mood__hoon_mink_a[] = {{".2", u3we_mink}, {}};
-static u3j_harm _mood__hoon_mule_a[] = {{".2", u3we_mule}, {}};
-static u3j_harm _mood__hoon_trip_a[] = {{".2", u3we_trip}, {}};
-
-static u3j_harm _mood__hoon__aesc_en_a[] = {{".2", u3wea_en}, {}};
-static u3j_harm _mood__hoon__aesc_de_a[] = {{".2", u3wea_de}, {}};
-static u3j_core _mood__hoon__aesc_d[] =
-  { { "en", _mood__hoon__aesc_en_a },
-    { "de", _mood__hoon__aesc_de_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__bend_fun_a[] = {{".2", u3we_bend_fun}, {}};
-static u3j_core _mood__hoon__bend_d[] =
-  { { "fun", _mood__hoon__bend_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__cold_fun_a[] = {{".2", u3we_cold_fun}, {}};
-static u3j_core _mood__hoon__cold_d[] =
-  { { "fun", _mood__hoon__cold_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__cook_fun_a[] = {{".2", u3we_cook_fun}, {}};
-static u3j_core _mood__hoon__cook_d[] =
-  { { "fun", _mood__hoon__cook_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__comp_fun_a[] = {{".2", u3we_comp_fun}, {}};
-static u3j_core _mood__hoon__comp_d[] =
-  { { "fun", _mood__hoon__comp_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__easy_fun_a[] = {{".2", u3we_easy_fun}, {}};
-static u3j_core _mood__hoon__easy_d[] =
-  { { "fun", _mood__hoon__easy_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__glue_fun_a[] = {{".2", u3we_glue_fun}, {}};
-static u3j_core _mood__hoon__glue_d[] =
-  { { "fun", _mood__hoon__glue_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__here_fun_a[] = {{".2", u3we_here_fun}, {}};
-static u3j_core _mood__hoon__here_d[] =
-  { { "fun", _mood__hoon__here_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__just_fun_a[] = {{".2", u3we_just_fun}, {}};
-static u3j_core _mood__hoon__just_d[] =
-  { { "fun", _mood__hoon__just_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__mask_fun_a[] = {{".2", u3we_mask_fun}, {}};
-static u3j_core _mood__hoon__mask_d[] =
-  { { "fun", _mood__hoon__mask_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__shim_fun_a[] = {{".2", u3we_shim_fun}, {}};
-static u3j_core _mood__hoon__shim_d[] =
-  { { "fun", _mood__hoon__shim_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__stag_fun_a[] = {{".2", u3we_stag_fun}, {}};
-static u3j_core _mood__hoon__stag_d[] =
-  { { "fun", _mood__hoon__stag_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__stew_fun_a[] = {{".2", u3we_stew_fun}, {}};
-static u3j_core _mood__hoon__stew_d[] =
-  { { "fun", _mood__hoon__stew_fun_a },
-    {}
-  };
-static u3j_harm _mood__hoon__stir_fun_a[] = {{".2", u3we_stir_fun}, {}};
-static u3j_core _mood__hoon__stir_d[] =
-  { { "fun", _mood__hoon__stir_fun_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__og_raw_a[] = {{".2", u3weo_raw}, {}};
-static u3j_core _mood__hoon__og_d[] =
-  { { "raw", _mood__hoon__og_raw_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
-static u3j_harm _mood__hoon__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
-static u3j_core _mood__hoon__cofl_d[] =
-  { { "drg", _mood__hoon__cofl__drg_a },
-    { "lug", _mood__hoon__cofl__lug_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__rd_add_a[] = {{".2", u3wer_add}, {}};
-static u3j_harm _mood__hoon__rd_sub_a[] = {{".2", u3wer_sub}, {}};
-static u3j_harm _mood__hoon__rd_mul_a[] = {{".2", u3wer_mul}, {}};
-static u3j_harm _mood__hoon__rd_div_a[] = {{".2", u3wer_div}, {}};
-static u3j_harm _mood__hoon__rd_sqt_a[] = {{".2", u3wer_sqt}, {}};
-static u3j_harm _mood__hoon__rd_fma_a[] = {{".2", u3wer_fma}, {}};
-static u3j_harm _mood__hoon__rd_lth_a[] = {{".2", u3wer_lth}, {}};
-static u3j_harm _mood__hoon__rd_lte_a[] = {{".2", u3wer_lte}, {}};
-static u3j_harm _mood__hoon__rd_equ_a[] = {{".2", u3wer_equ}, {}};
-static u3j_harm _mood__hoon__rd_gte_a[] = {{".2", u3wer_gte}, {}};
-static u3j_harm _mood__hoon__rd_gth_a[] = {{".2", u3wer_gth}, {}};
-static u3j_core _mood__hoon__rd_d[] =
-  { { "add", _mood__hoon__rd_add_a },
-    { "sub", _mood__hoon__rd_sub_a },
-    { "mul", _mood__hoon__rd_mul_a },
-    { "div", _mood__hoon__rd_div_a },
-    { "sqt", _mood__hoon__rd_sqt_a },
-    { "fma", _mood__hoon__rd_fma_a },
-    { "lth", _mood__hoon__rd_lth_a },
-    { "lte", _mood__hoon__rd_lte_a },
-    { "equ", _mood__hoon__rd_equ_a },
-    { "gte", _mood__hoon__rd_gte_a },
-    { "gth", _mood__hoon__rd_gth_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__rs_add_a[] = {{".2", u3wet_add}, {}};
-static u3j_harm _mood__hoon__rs_sub_a[] = {{".2", u3wet_sub}, {}};
-static u3j_harm _mood__hoon__rs_mul_a[] = {{".2", u3wet_mul}, {}};
-static u3j_harm _mood__hoon__rs_div_a[] = {{".2", u3wet_div}, {}};
-static u3j_harm _mood__hoon__rs_sqt_a[] = {{".2", u3wet_sqt}, {}};
-static u3j_harm _mood__hoon__rs_fma_a[] = {{".2", u3wet_fma}, {}};
-static u3j_harm _mood__hoon__rs_lth_a[] = {{".2", u3wet_lth}, {}};
-static u3j_harm _mood__hoon__rs_lte_a[] = {{".2", u3wet_lte}, {}};
-static u3j_harm _mood__hoon__rs_equ_a[] = {{".2", u3wet_equ}, {}};
-static u3j_harm _mood__hoon__rs_gte_a[] = {{".2", u3wet_gte}, {}};
-static u3j_harm _mood__hoon__rs_gth_a[] = {{".2", u3wet_gth}, {}};
-static u3j_core _mood__hoon__rs_d[] =
-  { { "add", _mood__hoon__rs_add_a },
-    { "sub", _mood__hoon__rs_sub_a },
-    { "mul", _mood__hoon__rs_mul_a },
-    { "div", _mood__hoon__rs_div_a },
-    { "sqt", _mood__hoon__rs_sqt_a },
-    { "fma", _mood__hoon__rs_fma_a },
-    { "lth", _mood__hoon__rs_lth_a },
-    { "lte", _mood__hoon__rs_lte_a },
-    { "equ", _mood__hoon__rs_equ_a },
-    { "gte", _mood__hoon__rs_gte_a },
-    { "gth", _mood__hoon__rs_gth_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__rq_add_a[] = {{".2", u3weq_add}, {}};
-static u3j_harm _mood__hoon__rq_sub_a[] = {{".2", u3weq_sub}, {}};
-static u3j_harm _mood__hoon__rq_mul_a[] = {{".2", u3weq_mul}, {}};
-static u3j_harm _mood__hoon__rq_div_a[] = {{".2", u3weq_div}, {}};
-static u3j_harm _mood__hoon__rq_sqt_a[] = {{".2", u3weq_sqt}, {}};
-static u3j_harm _mood__hoon__rq_fma_a[] = {{".2", u3weq_fma}, {}};
-static u3j_harm _mood__hoon__rq_lth_a[] = {{".2", u3weq_lth}, {}};
-static u3j_harm _mood__hoon__rq_lte_a[] = {{".2", u3weq_lte}, {}};
-static u3j_harm _mood__hoon__rq_equ_a[] = {{".2", u3weq_equ}, {}};
-static u3j_harm _mood__hoon__rq_gte_a[] = {{".2", u3weq_gte}, {}};
-static u3j_harm _mood__hoon__rq_gth_a[] = {{".2", u3weq_gth}, {}};
-static u3j_core _mood__hoon__rq_d[] =
-  { { "add", _mood__hoon__rq_add_a },
-    { "sub", _mood__hoon__rq_sub_a },
-    { "mul", _mood__hoon__rq_mul_a },
-    { "div", _mood__hoon__rq_div_a },
-    { "sqt", _mood__hoon__rq_sqt_a },
-    { "fma", _mood__hoon__rq_fma_a },
-    { "lth", _mood__hoon__rq_lth_a },
-    { "lte", _mood__hoon__rq_lte_a },
-    { "equ", _mood__hoon__rq_equ_a },
-    { "gte", _mood__hoon__rq_gte_a },
-    { "gth", _mood__hoon__rq_gth_a },
-    {}
-  };
-
-static u3j_harm _mood__hoon__coed__ed_puck_a[] = {{".2", u3wee_puck}, {}};
-static u3j_harm _mood__hoon__coed__ed_sign_a[] = {{".2", u3wee_sign}, {}};
-static u3j_harm _mood__hoon__coed__ed_veri_a[] = {{".2", u3wee_veri}, {}};
-static u3j_harm _mood__hoon__coed__ed_shar_a[] = {{".2", u3wee_shar}, {}};
-
-static u3j_core _mood__hoon__coed__ed_d[] =
-  { { "sign", _mood__hoon__coed__ed_sign_a },
-    { "puck", _mood__hoon__coed__ed_puck_a },
-    { "veri", _mood__hoon__coed__ed_veri_a },
-    { "shar", _mood__hoon__coed__ed_shar_a },
-    {}
-  };
-static u3j_core _mood__hoon__coed_d[] =
-  { { "ed", 0, _mood__hoon__coed__ed_d },
-    {}
-  };
-
-static u3j_harm _mood__hoon__scr_hsh_a[] = {{".2", u3wes_hsh}, {}};
-static u3j_harm _mood__hoon__scr_hsl_a[] = {{".2", u3wes_hsl}, {}};
-static u3j_harm _mood__hoon__scr_pbk_a[] = {{".2", u3wes_pbk}, {}};
-static u3j_harm _mood__hoon__scr_pbl_a[] = {{".2", u3wes_pbl}, {}};
-static u3j_core _mood__hoon__scr_d[] =
-  {  { "hsh", _mood__hoon__scr_hsh_a },
-     { "hsl", _mood__hoon__scr_hsl_a },
-     { "pbk", _mood__hoon__scr_pbk_a },
-     { "pbl", _mood__hoon__scr_pbl_a },
-     {}
-  };
-
-static u3j_harm _mood__hoon_pfix_a[] = {{".2", u3we_pfix}, {}};
-static u3j_harm _mood__hoon_plug_a[] = {{".2", u3we_plug}, {}};
-static u3j_harm _mood__hoon_pose_a[] = {{".2", u3we_pose}, {}};
-static u3j_harm _mood__hoon_sfix_a[] = {{".2", u3we_sfix}, {}};
-static u3j_harm _mood__hoon_shax_a[] = {{".2", u3we_shax}, {}};
-static u3j_harm _mood__hoon_shay_a[] = {{".2", u3we_shay}, {}};
-static u3j_harm _mood__hoon_shas_a[] = {{".2", u3we_shas}, {}};
-static u3j_harm _mood__hoon_shal_a[] = {{".2", u3we_shal}, {}};
-
-static u3j_harm _mood__hoon_cell_a[] = {{".2", u3wf_cell}, {}};
-static u3j_harm _mood__hoon_comb_a[] = {{".2", u3wf_comb}, {}};
-static u3j_harm _mood__hoon_cons_a[] = {{".2", u3wf_cons}, {}};
-static u3j_harm _mood__hoon_core_a[] = {{".2", u3wf_core}, {}};
-static u3j_harm _mood__hoon_face_a[] = {{".2", u3wf_face}, {}};
-static u3j_harm _mood__hoon_fitz_a[] = {{".2", u3wf_fitz}, {}};
-static u3j_harm _mood__hoon_flan_a[] = {{".2", u3wf_flan}, {}};
-static u3j_harm _mood__hoon_flip_a[] = {{".2", u3wf_flip}, {}};
-static u3j_harm _mood__hoon_flor_a[] = {{".2", u3wf_flor}, {}};
-static u3j_harm _mood__hoon_fork_a[] = {{".2", u3wf_fork}, {}};
-static u3j_harm _mood__hoon_hike_a[] = {{".2", u3wf_hike}, {}};
-static u3j_harm _mood__hoon_look_a[] = {{".2", u3wf_look}, {}};
-
-static u3j_harm _mood__hoon__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
-static u3j_harm _mood__hoon__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
-static u3j_harm _mood__hoon__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
-// static u3j_harm _mood__hoon__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
-static u3j_harm _mood__hoon__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
-static u3j_harm _mood__hoon__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
-static u3j_harm _mood__hoon__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
-static u3j_harm _mood__hoon__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
-static u3j_harm _mood__hoon__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
-static u3j_harm _mood__hoon__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
-static u3j_harm _mood__hoon__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
-static u3j_harm _mood__hoon__ut_peel_a[] = {{".2", u3wfu_peel}, {}};
-static u3j_harm _mood__hoon__ut_play_a[] = {{".2", u3wfu_play}, {}};
-static u3j_harm _mood__hoon__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
-static u3j_harm _mood__hoon__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
-static u3j_harm _mood__hoon__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
-
-static u3j_core _mood__hoon__ut_d[] =
-  { 
-    { "burn", _mood__hoon__ut_burn_a },
-    { "conk", _mood__hoon__ut_conk_a },
-    { "crop", _mood__hoon__ut_crop_a },
-    { "fond", _mood__hoon__ut_fond_a },
-  //  { "fire", _mood__hoon__ut_fire_a },
-    { "fish", _mood__hoon__ut_fish_a },
-    { "fuse", _mood__hoon__ut_fuse_a },
-    { "mint", _mood__hoon__ut_mint_a },
-    { "mull", _mood__hoon__ut_mull_a },
-    { "nest", _mood__hoon__ut_nest_a },
-    { "peek", _mood__hoon__ut_peek_a },
-    { "peel", _mood__hoon__ut_peel_a },
-    { "play", _mood__hoon__ut_play_a },
-    { "rest", _mood__hoon__ut_rest_a },
-    { "toss", _mood__hoon__ut_toss_a },
-    { "wrap", _mood__hoon__ut_wrap_a },
-    {}
-  };
-static u3j_harm _mood__hoon__ut_a[] = 
-  { {"burn", u3wfu_burn},
-    {"repo", u3wfu_repo},
-    {}
-  };
-
-#if 0
-static u3j_harm _mood__hoon__ap_a[] = 
-  { // {"hack", u3wfp_open},
-    // {"late", u3wfp_open},
-    {"open", u3wfp_open},
-    {"rake", u3wfp_rake},
-    {}
-  };
-static u3j_harm _mood__hoon__al_a[] = 
-  { {"bunt", u3wfl_bunt},
-    {"whip", u3wfl_whip},
-    {}
-  };
-#endif
-
-static u3j_harm _down_mark_a[] = {{".2", u3wg_down, c3y}, {}};
-static u3j_core _down_d[] =
-  { { "mark", _down_mark_a },
-    {}
-  };
-
-static u3j_harm _zuse__aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
-static u3j_harm _zuse__aes_ecba_de_a[] = {{".2", u3wea_ecba_de}, {}};
-static u3j_harm _zuse__aes_ecbb_en_a[] = {{".2", u3wea_ecbb_en}, {}};
-static u3j_harm _zuse__aes_ecbb_de_a[] = {{".2", u3wea_ecbb_de}, {}};
-static u3j_harm _zuse__aes_ecbc_en_a[] = {{".2", u3wea_ecbc_en}, {}};
-static u3j_harm _zuse__aes_ecbc_de_a[] = {{".2", u3wea_ecbc_de}, {}};
-
-static u3j_harm _zuse__aes_cbca_en_a[] = {{".2", u3wea_cbca_en}, {}};
-static u3j_harm _zuse__aes_cbca_de_a[] = {{".2", u3wea_cbca_de}, {}};
-static u3j_harm _zuse__aes_cbcb_en_a[] = {{".2", u3wea_cbcb_en}, {}};
-static u3j_harm _zuse__aes_cbcb_de_a[] = {{".2", u3wea_cbcb_de}, {}};
-static u3j_harm _zuse__aes_cbcc_en_a[] = {{".2", u3wea_cbcc_en}, {}};
-static u3j_harm _zuse__aes_cbcc_de_a[] = {{".2", u3wea_cbcc_de}, {}};
-
-static u3j_core _zuse__aes_ecba_d[] =
-  { { "en", _zuse__aes_ecba_en_a },
-    { "de", _zuse__aes_ecba_de_a },
-    {}
-  };
-
-static u3j_core _zuse__aes_ecbb_d[] =
-  { { "en", _zuse__aes_ecbb_en_a },
-    { "de", _zuse__aes_ecbb_de_a },
-    {}
-  };
-
-static u3j_core _zuse__aes_ecbc_d[] =
-  { { "en", _zuse__aes_ecbc_en_a },
-    { "de", _zuse__aes_ecbc_de_a },
-    {}
-  };
-
-static u3j_core _zuse__aes_cbca_d[] =
-  { { "en", _zuse__aes_cbca_en_a },
-    { "de", _zuse__aes_cbca_de_a },
-    {}
-  };
-
-static u3j_core _zuse__aes_cbcb_d[] =
-  { { "en", _zuse__aes_cbcb_en_a },
-    { "de", _zuse__aes_cbcb_de_a },
-    {}
-  };
-
-static u3j_core _zuse__aes_cbcc_d[] =
-  { { "en", _zuse__aes_cbcc_en_a },
-    { "de", _zuse__aes_cbcc_de_a },
-    {}
-  };
-
-static u3j_core _zuse__aes_d[] =
-  { { "ecba", 0, _zuse__aes_ecba_d },
-    { "ecbb", 0, _zuse__aes_ecbb_d },
-    { "ecbc", 0, _zuse__aes_ecbc_d },
-    { "cbca", 0, _zuse__aes_cbca_d },
-    { "cbcb", 0, _zuse__aes_cbcb_d },
-    { "cbcc", 0, _zuse__aes_cbcc_d },
-    {}
-  };
-
-/*
-static u3j_core _zuse_d[] =
-  { { "aes", 0, _zuse__aes_d },
-    {}
-  };
-*/
-
-static u3j_core _arvo_d[] =
-  { { "down", 0, _down_d },
-    { "lore", _mood__hoon_lore_a },
-    { "loss", _mood__hoon_loss_a },
-    { "lune", _mood__hoon_lune_a },
-    { "aes", 0, _zuse__aes_d },
-    {}
-  };
-
-  u3_noun
-  u3qa_dope(u3_atom a)
-  {
-    fprintf(stderr, "c dope %x\r\n", a);
-    return (a * a * a);
-  }
-  u3_noun
-  u3wa_dope(u3_noun cor)
-  {
-    u3_noun a;
-
-    if ( (c3n == u3r_mean(cor, u3x_sam, &a, 0)) ||
-         (c3n == u3ud(a)) )
-    {
-      return u3m_bail(c3__exit);
-    } else {
-      return u3wa_dope(a);
-    }
-  }
-
-static u3j_core _mood__hoon_d[] = 
-  { { "add", _mood__hoon_add_a },
-    { "dec", _mood__hoon_dec_a },
-    { "div", _mood__hoon_div_a },
-    { "gte", _mood__hoon_gte_a },
-    { "gth", _mood__hoon_gth_a },
-    { "lte", _mood__hoon_lte_a },
-    { "lth", _mood__hoon_lth_a },
-    { "mod", _mood__hoon_mod_a },
-    { "mul", _mood__hoon_mul_a },
-    { "sub", _mood__hoon_sub_a },
-#if 1
-    { "bind", _mood__hoon_bind_a },
-    { "clap", _mood__hoon_clap_a },
-    { "drop", _mood__hoon_drop_a },
-    { "flop", _mood__hoon_flop_a },
-    { "lent", _mood__hoon_lent_a },
-    { "levy", _mood__hoon_levy_a },
-    { "lien", _mood__hoon_lien_a },
-    { "murn", _mood__hoon_murn_a },
-    { "need", _mood__hoon_need_a },
-    { "reap", _mood__hoon_reap_a },
-    { "reel", _mood__hoon_reel_a },
-    { "roll", _mood__hoon_roll_a },
-    { "skid", _mood__hoon_skid_a },
-    { "skim", _mood__hoon_skim_a },
-    { "skip", _mood__hoon_skip_a },
-    { "scag", _mood__hoon_scag_a },
-    { "slag", _mood__hoon_slag_a },
-    { "snag", _mood__hoon_snag_a },
-//  { "sort", _mood__hoon_sort_a },
-    { "turn", _mood__hoon_turn_a },
-    { "weld", _mood__hoon_weld_a },
-
-    { "bex", _mood__hoon_bex_a },
-    { "xeb", _mood__hoon_xeb_a },
-    { "can", _mood__hoon_can_a },
-    { "cap", _mood__hoon_cap_a },
-    { "cat", _mood__hoon_cat_a },
-    { "con", _mood__hoon_con_a },
-    { "cut", _mood__hoon_cut_a },
-    { "dis", _mood__hoon_dis_a },
-    { "dor", _mood__hoon_dor_a },
-    { "dvr", _mood__hoon_dvr_a },
-    { "end", _mood__hoon_end_a },
-    { "gor", _mood__hoon_gor_a },
-    { "hor", _mood__hoon_hor_a },
-    { "lsh", _mood__hoon_lsh_a },
-    { "mas", _mood__hoon_mas_a },
-    { "met", _mood__hoon_met_a },
-    { "mix", _mood__hoon_mix_a },
-    { "mug", _mood__hoon_mug_a },
-    { "muk", _mood__hoon_muk_a },
-    { "peg", _mood__hoon_peg_a },
-    { "pow", _mood__hoon_pow_a },
-    { "rap", _mood__hoon_rap_a },
-    { "rep", _mood__hoon_rep_a },
-    { "rip", _mood__hoon_rip_a },
-    { "rsh", _mood__hoon_rsh_a },
-    { "sqt", _mood__hoon_sqt_a },
-    { "vor", _mood__hoon_vor_a },
-
-    { "po", 0, _mood__hoon__po_d },
-
-    { "by", 0, _mood__hoon__by_d },
-    { "in", 0, _mood__hoon__in_d },
-
-    { "cue", _mood__hoon_cue_a },
-    { "jam", _mood__hoon_jam_a },
-    { "mat", _mood__hoon_mat_a },
-    { "rub", _mood__hoon_rub_a },
-    { "lore", _mood__hoon_lore_a },
-    { "loss", _mood__hoon_loss_a },
-    { "lune", _mood__hoon_lune_a },
-    { "mink", _mood__hoon_mink_a },
-    { "mule", _mood__hoon_mule_a },
-    { "trip", _mood__hoon_trip_a },
-
-    { "aesc", 0, _mood__hoon__aesc_d },
-    { "bend", 0, _mood__hoon__bend_d },
-    { "cold", 0, _mood__hoon__cold_d },
-    { "comp", 0, _mood__hoon__comp_d },
-    { "cook", 0, _mood__hoon__cook_d },
-    { "easy", 0, _mood__hoon__easy_d },
-    { "coed", 0, _mood__hoon__coed_d },
-    { "glue", 0, _mood__hoon__glue_d },
-    { "here", 0, _mood__hoon__here_d },
-    { "just", 0, _mood__hoon__just_d },
-    { "mask", 0, _mood__hoon__mask_d },
-    { "shim", 0, _mood__hoon__shim_d },
-    { "stag", 0, _mood__hoon__stag_d },
-    { "stew", 0, _mood__hoon__stew_d },
-    { "stir", 0, _mood__hoon__stir_d },
-
-    { "cofl", 0, _mood__hoon__cofl_d },
-    { "rd", 0, _mood__hoon__rd_d },
-    { "rs", 0, _mood__hoon__rs_d },
-    { "rq", 0, _mood__hoon__rq_d },
-    { "og", 0, _mood__hoon__og_d },
-    { "coed", 0, _mood__hoon__coed_d },
-    { "scr", 0, _mood__hoon__scr_d },
-
-    { "pfix", _mood__hoon_pfix_a },
-    { "plug", _mood__hoon_plug_a },
-    { "pose", _mood__hoon_pose_a },
-    { "sfix", _mood__hoon_sfix_a },
-
-    { "shax", _mood__hoon_shax_a },
-    { "shay", _mood__hoon_shay_a },
-    { "shas", _mood__hoon_shas_a },
-    { "shal", _mood__hoon_shal_a },
-
-    { "cell", _mood__hoon_cell_a },
-    { "comb", _mood__hoon_comb_a },
-    { "cons", _mood__hoon_cons_a },
-    { "core", _mood__hoon_core_a },
-    { "face", _mood__hoon_face_a },
-    { "fitz", _mood__hoon_fitz_a },
-    { "flan", _mood__hoon_flan_a },
-    { "flip", _mood__hoon_flip_a },
-    { "flor", _mood__hoon_flor_a },
-    { "fork", _mood__hoon_fork_a },
-    { "hike", _mood__hoon_hike_a },
-    { "look", _mood__hoon_look_a },
-
-    // { "ap", _mood__hoon__ap_a },
-    // { "al", _mood__hoon__al_a },
-    { "ut", _mood__hoon__ut_a, _mood__hoon__ut_d },
-    { "arvo", 0, _arvo_d },
-#endif
-    {}
-  };
-
-static u3j_core _mood_d[] =
-  { { "hoon", 0, _mood__hoon_d },
-    {}
-  };
-static u3j_core _k151_d[] =
-  { { "mood", 0, _mood_d },
-    {}
-  };
-
-/************************************************************** new (150)*/
-
-  static u3j_harm _hex_down_mark_a[] = {{".2", u3wg_down, c3y}, {}};
-    static u3j_core _hex_down_d[] =
-      { { "mark", _hex_down_mark_a },
+  static u3j_harm _149_hex_down_mark_a[] = {{".2", u3wg_down, c3y}, {}};
+    static u3j_core _149_hex_down_d[] =
+      { { "mark", _149_hex_down_mark_a },
         {}
       };
 
-  static u3j_harm _hex_lore_a[] = {{".2", u3we_lore}, {}};
-  static u3j_harm _hex_loss_a[] = {{".2", u3we_loss}, {}};
-  static u3j_harm _hex_lune_a[] = {{".2", u3we_lune}, {}};
+  static u3j_harm _149_hex_lore_a[] = {{".2", u3we_lore}, {}};
+  static u3j_harm _149_hex_loss_a[] = {{".2", u3we_loss}, {}};
+  static u3j_harm _149_hex_lune_a[] = {{".2", u3we_lune}, {}};
 
-static u3j_core _hex_d[] =
-  { { "down", 0, _hex_down_d },
-    { "lore", _hex_lore_a },
-    { "loss", _hex_loss_a },
-    { "lune", _hex_lune_a },
+static u3j_core _149_hex_d[] =
+  { { "down", 0, _149_hex_down_d },
+    { "lore", _149_hex_lore_a },
+    { "loss", _149_hex_loss_a },
+    { "lune", _149_hex_lune_a },
     {}
   };
 
 /* layer five
 */
-  static u3j_harm _pen_cell_a[] = {{".2", u3wf_cell}, {}};
-  static u3j_harm _pen_comb_a[] = {{".2", u3wf_comb}, {}};
-  static u3j_harm _pen_cons_a[] = {{".2", u3wf_cons}, {}};
-  static u3j_harm _pen_core_a[] = {{".2", u3wf_core}, {}};
-  static u3j_harm _pen_face_a[] = {{".2", u3wf_face}, {}};
-  static u3j_harm _pen_fitz_a[] = {{".2", u3wf_fitz}, {}};
-  static u3j_harm _pen_flan_a[] = {{".2", u3wf_flan}, {}};
-  static u3j_harm _pen_flip_a[] = {{".2", u3wf_flip}, {}};
-  static u3j_harm _pen_flor_a[] = {{".2", u3wf_flor}, {}};
-  static u3j_harm _pen_fork_a[] = {{".2", u3wf_fork}, {}};
-  static u3j_harm _pen_hike_a[] = {{".2", u3wf_hike}, {}};
-  static u3j_harm _pen_look_a[] = {{".2", u3wf_look}, {}};
+  static u3j_harm _149_pen_cell_a[] = {{".2", u3wf_cell}, {}};
+  static u3j_harm _149_pen_comb_a[] = {{".2", u3wf_comb}, {}};
+  static u3j_harm _149_pen_cons_a[] = {{".2", u3wf_cons}, {}};
+  static u3j_harm _149_pen_core_a[] = {{".2", u3wf_core}, {}};
+  static u3j_harm _149_pen_face_a[] = {{".2", u3wf_face}, {}};
+  static u3j_harm _149_pen_fitz_a[] = {{".2", u3wf_fitz}, {}};
+  static u3j_harm _149_pen_flan_a[] = {{".2", u3wf_flan}, {}};
+  static u3j_harm _149_pen_flip_a[] = {{".2", u3wf_flip}, {}};
+  static u3j_harm _149_pen_flor_a[] = {{".2", u3wf_flor}, {}};
+  static u3j_harm _149_pen_fork_a[] = {{".2", u3wf_fork}, {}};
+  static u3j_harm _149_pen_hike_a[] = {{".2", u3wf_hike}, {}};
+  static u3j_harm _149_pen_look_a[] = {{".2", u3wf_look}, {}};
 
-    static u3j_harm _pen__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
-    static u3j_harm _pen__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
-    static u3j_harm _pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
-    // static u3j_harm _pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
-    static u3j_harm _pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
-    static u3j_harm _pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
-    static u3j_harm _pen__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
-    static u3j_harm _pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
-    static u3j_harm _pen__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
-    static u3j_harm _pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
-    static u3j_harm _pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
-    static u3j_harm _pen__ut_play_a[] = {{".2", u3wfu_play}, {}};
-    static u3j_harm _pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
-    static u3j_harm _pen__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
-    static u3j_harm _pen__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
-  static u3j_core _pen__ut_d[] =
+    static u3j_harm _149_pen__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
+    static u3j_harm _149_pen__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
+    static u3j_harm _149_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
+    // static u3j_harm _149_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
+    static u3j_harm _149_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
+    static u3j_harm _149_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
+    static u3j_harm _149_pen__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
+    static u3j_harm _149_pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
+    static u3j_harm _149_pen__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
+    static u3j_harm _149_pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
+    static u3j_harm _149_pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
+    static u3j_harm _149_pen__ut_play_a[] = {{".2", u3wfu_play}, {}};
+    static u3j_harm _149_pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
+    static u3j_harm _149_pen__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
+    static u3j_harm _149_pen__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
+  static u3j_core _149_pen__ut_d[] =
     { 
-      { "burn", _pen__ut_burn_a },
-      { "conk", _pen__ut_conk_a },
-      { "crop", _pen__ut_crop_a },
-      { "fond", _pen__ut_fond_a },
-    //  { "fire", _pen__ut_fire_a },
-      { "fish", _pen__ut_fish_a },
-      { "fuse", _pen__ut_fuse_a },
-      { "mint", _pen__ut_mint_a },
-      { "mull", _pen__ut_mull_a },
-      { "nest", _pen__ut_nest_a },
-      { "peek", _pen__ut_peek_a },
-      { "play", _pen__ut_play_a },
-      { "rest", _pen__ut_rest_a },
-      { "toss", _pen__ut_toss_a },
-      { "wrap", _pen__ut_wrap_a },
+      { "burn", _149_pen__ut_burn_a },
+      { "conk", _149_pen__ut_conk_a },
+      { "crop", _149_pen__ut_crop_a },
+      { "fond", _149_pen__ut_fond_a },
+    //  { "fire", _149_pen__ut_fire_a },
+      { "fish", _149_pen__ut_fish_a },
+      { "fuse", _149_pen__ut_fuse_a },
+      { "mint", _149_pen__ut_mint_a },
+      { "mull", _149_pen__ut_mull_a },
+      { "nest", _149_pen__ut_nest_a },
+      { "peek", _149_pen__ut_peek_a },
+      { "play", _149_pen__ut_play_a },
+      { "rest", _149_pen__ut_rest_a },
+      { "toss", _149_pen__ut_toss_a },
+      { "wrap", _149_pen__ut_wrap_a },
       {}
     };
-  static u3j_harm _pen__ut_a[] = 
+  static u3j_harm _149_pen__ut_a[] = 
     { {"burn", u3wfu_burn},
       {"repo", u3wfu_repo},
       {}
     };
 
 #if 0
-  static u3j_harm _pen__ap_a[] = 
+  static u3j_harm _149_pen__ap_a[] = 
     { {"open", u3wfp_open},
       {"rake", u3wfp_rake},
       {}
     };
-  static u3j_harm _pen__al_a[] = 
+  static u3j_harm _149_pen__al_a[] = 
     { {"bunt", u3wfl_bunt},
       {"whip", u3wfl_whip},
       {}
     };
 #endif
 
-static u3j_core _pen_d[] =
-  { { "hex", 0, _hex_d },
+static u3j_core _149_pen_d[] =
+  { { "hex", 0, _149_hex_d },
 
-    { "cell", _pen_cell_a },
-    { "comb", _pen_comb_a },
-    { "cons", _pen_cons_a },
-    { "core", _pen_core_a },
-    { "face", _pen_face_a },
-    { "fitz", _pen_fitz_a },
-    { "flan", _pen_flan_a },
-    { "flip", _pen_flip_a },
-    { "flor", _pen_flor_a },
-    { "fork", _pen_fork_a },
-    { "hike", _pen_hike_a },
-    { "look", _pen_look_a },
+    { "cell", _149_pen_cell_a },
+    { "comb", _149_pen_comb_a },
+    { "cons", _149_pen_cons_a },
+    { "core", _149_pen_core_a },
+    { "face", _149_pen_face_a },
+    { "fitz", _149_pen_fitz_a },
+    { "flan", _149_pen_flan_a },
+    { "flip", _149_pen_flip_a },
+    { "flor", _149_pen_flor_a },
+    { "fork", _149_pen_fork_a },
+    { "hike", _149_pen_hike_a },
+    { "look", _149_pen_look_a },
 
-    // { "ap", _pen__ap_a },
-    // { "al", _pen__al_a },
-    { "ut", _pen__ut_a, _pen__ut_d },
+    // { "ap", _149_pen__ap_a },
+    // { "al", _149_pen__al_a },
+    { "ut", _149_pen__ut_a, _149_pen__ut_d },
 
     {}
   };
 
 /* layer four
 */
-  static u3j_harm _qua_trip_a[] = {{".2", u3we_trip}, {}};
+  static u3j_harm _149_qua_trip_a[] = {{".2", u3we_trip}, {}};
 
-  static u3j_harm _qua__po_ind_a[] = {{".2", u3wcp_ind}, {}};
-  static u3j_harm _qua__po_ins_a[] = {{".2", u3wcp_ins}, {}};
-  static u3j_harm _qua__po_tod_a[] = {{".2", u3wcp_tod}, {}};
-  static u3j_harm _qua__po_tos_a[] = {{".2", u3wcp_tos}, {}};
-    static u3j_core _qua__po_d[] =
-      { { "ind", _qua__po_ind_a },
-        { "ins", _qua__po_ins_a },
-        { "tod", _qua__po_tod_a },
-        { "tos", _qua__po_tos_a },
+  static u3j_harm _149_qua__po_ind_a[] = {{".2", u3wcp_ind}, {}};
+  static u3j_harm _149_qua__po_ins_a[] = {{".2", u3wcp_ins}, {}};
+  static u3j_harm _149_qua__po_tod_a[] = {{".2", u3wcp_tod}, {}};
+  static u3j_harm _149_qua__po_tos_a[] = {{".2", u3wcp_tos}, {}};
+    static u3j_core _149_qua__po_d[] =
+      { { "ind", _149_qua__po_ind_a },
+        { "ins", _149_qua__po_ins_a },
+        { "tod", _149_qua__po_tod_a },
+        { "tos", _149_qua__po_tos_a },
         {}
       };
 
-  static u3j_harm _qua__bend_fun_a[] = {{".2", u3we_bend_fun}, {}};
-    static u3j_core _qua__bend_d[] =
-      { { "fun", _qua__bend_fun_a },
+  static u3j_harm _149_qua__bend_fun_a[] = {{".2", u3we_bend_fun}, {}};
+    static u3j_core _149_qua__bend_d[] =
+      { { "fun", _149_qua__bend_fun_a },
         {}
       };
 
-  static u3j_harm _qua__cold_fun_a[] = {{".2", u3we_cold_fun}, {}};
-    static u3j_core _qua__cold_d[] =
-      { { "fun", _qua__cold_fun_a },
+  static u3j_harm _149_qua__cold_fun_a[] = {{".2", u3we_cold_fun}, {}};
+    static u3j_core _149_qua__cold_d[] =
+      { { "fun", _149_qua__cold_fun_a },
         {}
       };
 
-  static u3j_harm _qua__cook_fun_a[] = {{".2", u3we_cook_fun}, {}};
-    static u3j_core _qua__cook_d[] =
-      { { "fun", _qua__cook_fun_a },
+  static u3j_harm _149_qua__cook_fun_a[] = {{".2", u3we_cook_fun}, {}};
+    static u3j_core _149_qua__cook_d[] =
+      { { "fun", _149_qua__cook_fun_a },
         {}
       };
 
-  static u3j_harm _qua__comp_fun_a[] = {{".2", u3we_comp_fun}, {}};
-    static u3j_core _qua__comp_d[] =
-      { { "fun", _qua__comp_fun_a },
+  static u3j_harm _149_qua__comp_fun_a[] = {{".2", u3we_comp_fun}, {}};
+    static u3j_core _149_qua__comp_d[] =
+      { { "fun", _149_qua__comp_fun_a },
         {}
       };
 
-  static u3j_harm _qua__easy_fun_a[] = {{".2", u3we_easy_fun}, {}};
-    static u3j_core _qua__easy_d[] =
-      { { "fun", _qua__easy_fun_a },
+  static u3j_harm _149_qua__easy_fun_a[] = {{".2", u3we_easy_fun}, {}};
+    static u3j_core _149_qua__easy_d[] =
+      { { "fun", _149_qua__easy_fun_a },
         {}
       };
 
-  static u3j_harm _qua__glue_fun_a[] = {{".2", u3we_glue_fun}, {}};
-    static u3j_core _qua__glue_d[] =
-      { { "fun", _qua__glue_fun_a },
+  static u3j_harm _149_qua__glue_fun_a[] = {{".2", u3we_glue_fun}, {}};
+    static u3j_core _149_qua__glue_d[] =
+      { { "fun", _149_qua__glue_fun_a },
         {}
       };
 
-  static u3j_harm _qua__here_fun_a[] = {{".2", u3we_here_fun}, {}};
-    static u3j_core _qua__here_d[] =
-      { { "fun", _qua__here_fun_a },
+  static u3j_harm _149_qua__here_fun_a[] = {{".2", u3we_here_fun}, {}};
+    static u3j_core _149_qua__here_d[] =
+      { { "fun", _149_qua__here_fun_a },
         {}
       };
 
-  static u3j_harm _qua__just_fun_a[] = {{".2", u3we_just_fun}, {}};
-    static u3j_core _qua__just_d[] =
-      { { "fun", _qua__just_fun_a },
+  static u3j_harm _149_qua__just_fun_a[] = {{".2", u3we_just_fun}, {}};
+    static u3j_core _149_qua__just_d[] =
+      { { "fun", _149_qua__just_fun_a },
         {}
       };
 
-  static u3j_harm _qua__mask_fun_a[] = {{".2", u3we_mask_fun}, {}};
-    static u3j_core _qua__mask_d[] =
-      { { "fun", _qua__mask_fun_a },
+  static u3j_harm _149_qua__mask_fun_a[] = {{".2", u3we_mask_fun}, {}};
+    static u3j_core _149_qua__mask_d[] =
+      { { "fun", _149_qua__mask_fun_a },
         {}
       };
 
-  static u3j_harm _qua__shim_fun_a[] = {{".2", u3we_shim_fun}, {}};
-    static u3j_core _qua__shim_d[] =
-      { { "fun", _qua__shim_fun_a },
+  static u3j_harm _149_qua__shim_fun_a[] = {{".2", u3we_shim_fun}, {}};
+    static u3j_core _149_qua__shim_d[] =
+      { { "fun", _149_qua__shim_fun_a },
         {}
       };
 
-  static u3j_harm _qua__stag_fun_a[] = {{".2", u3we_stag_fun}, {}};
-    static u3j_core _qua__stag_d[] =
-      { { "fun", _qua__stag_fun_a },
+  static u3j_harm _149_qua__stag_fun_a[] = {{".2", u3we_stag_fun}, {}};
+    static u3j_core _149_qua__stag_d[] =
+      { { "fun", _149_qua__stag_fun_a },
         {}
       };
 
-  static u3j_harm _qua__stew_fun_a[] = {{".2", u3we_stew_fun}, {}};
-    static u3j_core _qua__stew_d[] =
-      { { "fun", _qua__stew_fun_a },
+  static u3j_harm _149_qua__stew_fun_a[] = {{".2", u3we_stew_fun}, {}};
+    static u3j_core _149_qua__stew_d[] =
+      { { "fun", _149_qua__stew_fun_a },
         {}
       };
  
-  static u3j_harm _qua__stir_fun_a[] = {{".2", u3we_stir_fun}, {}};
-    static u3j_core _qua__stir_d[] =
-      { { "fun", _qua__stir_fun_a },
+  static u3j_harm _149_qua__stir_fun_a[] = {{".2", u3we_stir_fun}, {}};
+    static u3j_core _149_qua__stir_d[] =
+      { { "fun", _149_qua__stir_fun_a },
         {}
       };
 
-  static u3j_harm _qua_pfix_a[] = {{".2", u3we_pfix}, {}};
-  static u3j_harm _qua_plug_a[] = {{".2", u3we_plug}, {}};
-  static u3j_harm _qua_pose_a[] = {{".2", u3we_pose}, {}};
-  static u3j_harm _qua_sfix_a[] = {{".2", u3we_sfix}, {}};
+  static u3j_harm _149_qua_pfix_a[] = {{".2", u3we_pfix}, {}};
+  static u3j_harm _149_qua_plug_a[] = {{".2", u3we_plug}, {}};
+  static u3j_harm _149_qua_pose_a[] = {{".2", u3we_pose}, {}};
+  static u3j_harm _149_qua_sfix_a[] = {{".2", u3we_sfix}, {}};
 
-  static u3j_harm _qua_mink_a[] = {{".2", u3we_mink}, {}};
-  static u3j_harm _qua_mule_a[] = {{".2", u3we_mule}, {}};
+  static u3j_harm _149_qua_mink_a[] = {{".2", u3we_mink}, {}};
+  static u3j_harm _149_qua_mule_a[] = {{".2", u3we_mule}, {}};
 
-static u3j_core _qua_d[] =
-  { { "pen", 0, _pen_d },
+static u3j_core _149_qua_d[] =
+  { { "pen", 0, _149_pen_d },
 
-    { "po", 0, _qua__po_d },
+    { "po", 0, _149_qua__po_d },
 
-    { "trip", _qua_trip_a },
+    { "trip", _149_qua_trip_a },
 
-    { "bend", 0, _qua__bend_d },
-    { "cold", 0, _qua__cold_d },
-    { "comp", 0, _qua__comp_d },
-    { "cook", 0, _qua__cook_d },
-    { "easy", 0, _qua__easy_d },
-    { "glue", 0, _qua__glue_d },
-    { "here", 0, _qua__here_d },
-    { "just", 0, _qua__just_d },
-    { "mask", 0, _qua__mask_d },
-    { "shim", 0, _qua__shim_d },
-    { "stag", 0, _qua__stag_d },
-    { "stew", 0, _qua__stew_d },
-    { "stir", 0, _qua__stir_d },
+    { "bend", 0, _149_qua__bend_d },
+    { "cold", 0, _149_qua__cold_d },
+    { "comp", 0, _149_qua__comp_d },
+    { "cook", 0, _149_qua__cook_d },
+    { "easy", 0, _149_qua__easy_d },
+    { "glue", 0, _149_qua__glue_d },
+    { "here", 0, _149_qua__here_d },
+    { "just", 0, _149_qua__just_d },
+    { "mask", 0, _149_qua__mask_d },
+    { "shim", 0, _149_qua__shim_d },
+    { "stag", 0, _149_qua__stag_d },
+    { "stew", 0, _149_qua__stew_d },
+    { "stir", 0, _149_qua__stir_d },
 
-    { "pfix", _qua_pfix_a },
-    { "plug", _qua_plug_a },
-    { "pose", _qua_pose_a },
-    { "sfix", _qua_sfix_a },
+    { "pfix", _149_qua_pfix_a },
+    { "plug", _149_qua_plug_a },
+    { "pose", _149_qua_pose_a },
+    { "sfix", _149_qua_sfix_a },
 
-    { "mink", _qua_mink_a },
-    { "mule", _qua_mule_a },
+    { "mink", _149_qua_mink_a },
+    { "mule", _149_qua_mule_a },
     {}
   };
 
 /* layer three
 */
-    static u3j_harm _tri__rd_add_a[] = {{".2", u3wer_add}, {}};
-    static u3j_harm _tri__rd_sub_a[] = {{".2", u3wer_sub}, {}};
-    static u3j_harm _tri__rd_mul_a[] = {{".2", u3wer_mul}, {}};
-    static u3j_harm _tri__rd_div_a[] = {{".2", u3wer_div}, {}};
-    static u3j_harm _tri__rd_sqt_a[] = {{".2", u3wer_sqt}, {}};
-    static u3j_harm _tri__rd_fma_a[] = {{".2", u3wer_fma}, {}};
-    static u3j_harm _tri__rd_lth_a[] = {{".2", u3wer_lth}, {}};
-    static u3j_harm _tri__rd_lte_a[] = {{".2", u3wer_lte}, {}};
-    static u3j_harm _tri__rd_equ_a[] = {{".2", u3wer_equ}, {}};
-    static u3j_harm _tri__rd_gte_a[] = {{".2", u3wer_gte}, {}};
-    static u3j_harm _tri__rd_gth_a[] = {{".2", u3wer_gth}, {}};
-  static u3j_core _tri__rd_d[] =
-    { { "add", _tri__rd_add_a },
-      { "sub", _tri__rd_sub_a },
-      { "mul", _tri__rd_mul_a },
-      { "div", _tri__rd_div_a },
-      { "sqt", _tri__rd_sqt_a },
-      { "fma", _tri__rd_fma_a },
-      { "lth", _tri__rd_lth_a },
-      { "lte", _tri__rd_lte_a },
-      { "equ", _tri__rd_equ_a },
-      { "gte", _tri__rd_gte_a },
-      { "gth", _tri__rd_gth_a },
+    static u3j_harm _149_tri__rd_add_a[] = {{".2", u3wer_add}, {}};
+    static u3j_harm _149_tri__rd_sub_a[] = {{".2", u3wer_sub}, {}};
+    static u3j_harm _149_tri__rd_mul_a[] = {{".2", u3wer_mul}, {}};
+    static u3j_harm _149_tri__rd_div_a[] = {{".2", u3wer_div}, {}};
+    static u3j_harm _149_tri__rd_sqt_a[] = {{".2", u3wer_sqt}, {}};
+    static u3j_harm _149_tri__rd_fma_a[] = {{".2", u3wer_fma}, {}};
+    static u3j_harm _149_tri__rd_lth_a[] = {{".2", u3wer_lth}, {}};
+    static u3j_harm _149_tri__rd_lte_a[] = {{".2", u3wer_lte}, {}};
+    static u3j_harm _149_tri__rd_equ_a[] = {{".2", u3wer_equ}, {}};
+    static u3j_harm _149_tri__rd_gte_a[] = {{".2", u3wer_gte}, {}};
+    static u3j_harm _149_tri__rd_gth_a[] = {{".2", u3wer_gth}, {}};
+  static u3j_core _149_tri__rd_d[] =
+    { { "add", _149_tri__rd_add_a },
+      { "sub", _149_tri__rd_sub_a },
+      { "mul", _149_tri__rd_mul_a },
+      { "div", _149_tri__rd_div_a },
+      { "sqt", _149_tri__rd_sqt_a },
+      { "fma", _149_tri__rd_fma_a },
+      { "lth", _149_tri__rd_lth_a },
+      { "lte", _149_tri__rd_lte_a },
+      { "equ", _149_tri__rd_equ_a },
+      { "gte", _149_tri__rd_gte_a },
+      { "gth", _149_tri__rd_gth_a },
       {}
     };
 
-    static u3j_harm _tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
-    static u3j_harm _tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
-  static u3j_core _tri__cofl_d[] =
-    { { "drg", _tri__cofl__drg_a },
-      { "lug", _tri__cofl__lug_a },
+    static u3j_harm _149_tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
+    static u3j_harm _149_tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
+  static u3j_core _149_tri__cofl_d[] =
+    { { "drg", _149_tri__cofl__drg_a },
+      { "lug", _149_tri__cofl__lug_a },
       {}
     };
 
-    static u3j_harm _tri__rs_add_a[] = {{".2", u3wet_add}, {}};
-    static u3j_harm _tri__rs_sub_a[] = {{".2", u3wet_sub}, {}};
-    static u3j_harm _tri__rs_mul_a[] = {{".2", u3wet_mul}, {}};
-    static u3j_harm _tri__rs_div_a[] = {{".2", u3wet_div}, {}};
-    static u3j_harm _tri__rs_sqt_a[] = {{".2", u3wet_sqt}, {}};
-    static u3j_harm _tri__rs_fma_a[] = {{".2", u3wet_fma}, {}};
-    static u3j_harm _tri__rs_lth_a[] = {{".2", u3wet_lth}, {}};
-    static u3j_harm _tri__rs_lte_a[] = {{".2", u3wet_lte}, {}};
-    static u3j_harm _tri__rs_equ_a[] = {{".2", u3wet_equ}, {}};
-    static u3j_harm _tri__rs_gte_a[] = {{".2", u3wet_gte}, {}};
-    static u3j_harm _tri__rs_gth_a[] = {{".2", u3wet_gth}, {}};
-  static u3j_core _tri__rs_d[] =
-    { { "add", _tri__rs_add_a },
-      { "sub", _tri__rs_sub_a },
-      { "mul", _tri__rs_mul_a },
-      { "div", _tri__rs_div_a },
-      { "sqt", _tri__rs_sqt_a },
-      { "fma", _tri__rs_fma_a },
-      { "lth", _tri__rs_lth_a },
-      { "lte", _tri__rs_lte_a },
-      { "equ", _tri__rs_equ_a },
-      { "gte", _tri__rs_gte_a },
-      { "gth", _tri__rs_gth_a },
+    static u3j_harm _149_tri__rs_add_a[] = {{".2", u3wet_add}, {}};
+    static u3j_harm _149_tri__rs_sub_a[] = {{".2", u3wet_sub}, {}};
+    static u3j_harm _149_tri__rs_mul_a[] = {{".2", u3wet_mul}, {}};
+    static u3j_harm _149_tri__rs_div_a[] = {{".2", u3wet_div}, {}};
+    static u3j_harm _149_tri__rs_sqt_a[] = {{".2", u3wet_sqt}, {}};
+    static u3j_harm _149_tri__rs_fma_a[] = {{".2", u3wet_fma}, {}};
+    static u3j_harm _149_tri__rs_lth_a[] = {{".2", u3wet_lth}, {}};
+    static u3j_harm _149_tri__rs_lte_a[] = {{".2", u3wet_lte}, {}};
+    static u3j_harm _149_tri__rs_equ_a[] = {{".2", u3wet_equ}, {}};
+    static u3j_harm _149_tri__rs_gte_a[] = {{".2", u3wet_gte}, {}};
+    static u3j_harm _149_tri__rs_gth_a[] = {{".2", u3wet_gth}, {}};
+  static u3j_core _149_tri__rs_d[] =
+    { { "add", _149_tri__rs_add_a },
+      { "sub", _149_tri__rs_sub_a },
+      { "mul", _149_tri__rs_mul_a },
+      { "div", _149_tri__rs_div_a },
+      { "sqt", _149_tri__rs_sqt_a },
+      { "fma", _149_tri__rs_fma_a },
+      { "lth", _149_tri__rs_lth_a },
+      { "lte", _149_tri__rs_lte_a },
+      { "equ", _149_tri__rs_equ_a },
+      { "gte", _149_tri__rs_gte_a },
+      { "gth", _149_tri__rs_gth_a },
       {}
     };
 
-    static u3j_harm _tri__rq_add_a[] = {{".2", u3weq_add}, {}};
-    static u3j_harm _tri__rq_sub_a[] = {{".2", u3weq_sub}, {}};
-    static u3j_harm _tri__rq_mul_a[] = {{".2", u3weq_mul}, {}};
-    static u3j_harm _tri__rq_div_a[] = {{".2", u3weq_div}, {}};
-    static u3j_harm _tri__rq_sqt_a[] = {{".2", u3weq_sqt}, {}};
-    static u3j_harm _tri__rq_fma_a[] = {{".2", u3weq_fma}, {}};
-    static u3j_harm _tri__rq_lth_a[] = {{".2", u3weq_lth}, {}};
-    static u3j_harm _tri__rq_lte_a[] = {{".2", u3weq_lte}, {}};
-    static u3j_harm _tri__rq_equ_a[] = {{".2", u3weq_equ}, {}};
-    static u3j_harm _tri__rq_gte_a[] = {{".2", u3weq_gte}, {}};
-    static u3j_harm _tri__rq_gth_a[] = {{".2", u3weq_gth}, {}};
-  static u3j_core _tri__rq_d[] =
-    { { "add", _tri__rq_add_a },
-      { "sub", _tri__rq_sub_a },
-      { "mul", _tri__rq_mul_a },
-      { "div", _tri__rq_div_a },
-      { "sqt", _tri__rq_sqt_a },
-      { "fma", _tri__rq_fma_a },
-      { "lth", _tri__rq_lth_a },
-      { "lte", _tri__rq_lte_a },
-      { "equ", _tri__rq_equ_a },
-      { "gte", _tri__rq_gte_a },
-      { "gth", _tri__rq_gth_a },
+    static u3j_harm _149_tri__rq_add_a[] = {{".2", u3weq_add}, {}};
+    static u3j_harm _149_tri__rq_sub_a[] = {{".2", u3weq_sub}, {}};
+    static u3j_harm _149_tri__rq_mul_a[] = {{".2", u3weq_mul}, {}};
+    static u3j_harm _149_tri__rq_div_a[] = {{".2", u3weq_div}, {}};
+    static u3j_harm _149_tri__rq_sqt_a[] = {{".2", u3weq_sqt}, {}};
+    static u3j_harm _149_tri__rq_fma_a[] = {{".2", u3weq_fma}, {}};
+    static u3j_harm _149_tri__rq_lth_a[] = {{".2", u3weq_lth}, {}};
+    static u3j_harm _149_tri__rq_lte_a[] = {{".2", u3weq_lte}, {}};
+    static u3j_harm _149_tri__rq_equ_a[] = {{".2", u3weq_equ}, {}};
+    static u3j_harm _149_tri__rq_gte_a[] = {{".2", u3weq_gte}, {}};
+    static u3j_harm _149_tri__rq_gth_a[] = {{".2", u3weq_gth}, {}};
+  static u3j_core _149_tri__rq_d[] =
+    { { "add", _149_tri__rq_add_a },
+      { "sub", _149_tri__rq_sub_a },
+      { "mul", _149_tri__rq_mul_a },
+      { "div", _149_tri__rq_div_a },
+      { "sqt", _149_tri__rq_sqt_a },
+      { "fma", _149_tri__rq_fma_a },
+      { "lth", _149_tri__rq_lth_a },
+      { "lte", _149_tri__rq_lte_a },
+      { "equ", _149_tri__rq_equ_a },
+      { "gte", _149_tri__rq_gte_a },
+      { "gth", _149_tri__rq_gth_a },
       {}
     };
 
-    static u3j_harm _tri__aesc_en_a[] = {{".2", u3wea_en}, {}};
-    static u3j_harm _tri__aesc_de_a[] = {{".2", u3wea_de}, {}};
-  static u3j_core _tri__aesc_d[] =
-    { { "en", _tri__aesc_en_a },
-      { "de", _tri__aesc_de_a },
+    static u3j_harm _149_tri__aesc_en_a[] = {{".2", u3wea_en}, {}};
+    static u3j_harm _149_tri__aesc_de_a[] = {{".2", u3wea_de}, {}};
+  static u3j_core _149_tri__aesc_d[] =
+    { { "en", _149_tri__aesc_en_a },
+      { "de", _149_tri__aesc_de_a },
       {}
     };
 
-    static u3j_harm _tri__og_raw_a[] = {{".2", u3weo_raw}, {}};
-  static u3j_core _tri__og_d[] =
-    { { "raw", _tri__og_raw_a },
+    static u3j_harm _149_tri__og_raw_a[] = {{".2", u3weo_raw}, {}};
+  static u3j_core _149_tri__og_d[] =
+    { { "raw", _149_tri__og_raw_a },
       {}
     };
 
-  static u3j_harm _tri_shax_a[] = {{".2", u3we_shax}, {}};
-  static u3j_harm _tri_shay_a[] = {{".2", u3we_shay}, {}};
-  static u3j_harm _tri_shas_a[] = {{".2", u3we_shas}, {}};
-  static u3j_harm _tri_shal_a[] = {{".2", u3we_shal}, {}};
+  static u3j_harm _149_tri_shax_a[] = {{".2", u3we_shax}, {}};
+  static u3j_harm _149_tri_shay_a[] = {{".2", u3we_shay}, {}};
+  static u3j_harm _149_tri_shas_a[] = {{".2", u3we_shas}, {}};
+  static u3j_harm _149_tri_shal_a[] = {{".2", u3we_shal}, {}};
 
-static u3j_core _tri_d[] =
-  { { "qua", 0, _qua_d },
+static u3j_core _149_tri_d[] =
+  { { "qua", 0, _149_qua_d },
 
-    { "cofl", 0, _tri__cofl_d },
-    { "rd", 0, _tri__rd_d },
-    { "rs", 0, _tri__rs_d },
-    { "rq", 0, _tri__rq_d },
-    { "og", 0, _tri__og_d },
-    { "shax", _tri_shax_a },
-    { "shay", _tri_shay_a },
-    { "shas", _tri_shas_a },
-    { "shal", _tri_shal_a },
-    { "aesc", 0, _tri__aesc_d },
+    { "cofl", 0, _149_tri__cofl_d },
+    { "rd", 0, _149_tri__rd_d },
+    { "rs", 0, _149_tri__rs_d },
+    { "rq", 0, _149_tri__rq_d },
+    { "og", 0, _149_tri__og_d },
+    { "shax", _149_tri_shax_a },
+    { "shay", _149_tri_shay_a },
+    { "shas", _149_tri_shas_a },
+    { "shal", _149_tri_shal_a },
+    { "aesc", 0, _149_tri__aesc_d },
 
     {}
   };
 
 /* layer two
 */
-  static u3j_harm _two_flop_a[] = {{".2", u3wb_flop, c3y}, {}};
-  static u3j_harm _two_lent_a[] = {{".2", u3wb_lent, c3y}, {}};
-  static u3j_harm _two_levy_a[] = {{".2", u3wb_levy, c3y}, {}};
-  static u3j_harm _two_lien_a[] = {{".2", u3wb_lien, c3y}, {}};
-  static u3j_harm _two_murn_a[] = {{".2", u3wb_murn, c3y}, {}};
-  static u3j_harm _two_need_a[] = {{".2", u3wb_need, c3y}, {}};
-  static u3j_harm _two_reap_a[] = {{".2", u3wb_reap, c3y}, {}};
-  static u3j_harm _two_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
-  static u3j_harm _two_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
-  static u3j_harm _two_skid_a[] = {{".2", u3wb_skid, c3y}, {}};
-  static u3j_harm _two_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
-  static u3j_harm _two_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
-  static u3j_harm _two_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
-  static u3j_harm _two_slag_a[] = {{".2", u3wb_slag, c3y}, {}};
-  static u3j_harm _two_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
-  // static u3j_harm _two_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
-  static u3j_harm _two_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
-  static u3j_harm _two_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
+  static u3j_harm _149_two_flop_a[] = {{".2", u3wb_flop, c3y}, {}};
+  static u3j_harm _149_two_lent_a[] = {{".2", u3wb_lent, c3y}, {}};
+  static u3j_harm _149_two_levy_a[] = {{".2", u3wb_levy, c3y}, {}};
+  static u3j_harm _149_two_lien_a[] = {{".2", u3wb_lien, c3y}, {}};
+  static u3j_harm _149_two_murn_a[] = {{".2", u3wb_murn, c3y}, {}};
+  static u3j_harm _149_two_need_a[] = {{".2", u3wb_need, c3y}, {}};
+  static u3j_harm _149_two_reap_a[] = {{".2", u3wb_reap, c3y}, {}};
+  static u3j_harm _149_two_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
+  static u3j_harm _149_two_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
+  static u3j_harm _149_two_skid_a[] = {{".2", u3wb_skid, c3y}, {}};
+  static u3j_harm _149_two_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
+  static u3j_harm _149_two_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
+  static u3j_harm _149_two_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
+  static u3j_harm _149_two_slag_a[] = {{".2", u3wb_slag, c3y}, {}};
+  static u3j_harm _149_two_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
+  // static u3j_harm _149_two_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
+  static u3j_harm _149_two_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
+  static u3j_harm _149_two_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
 
-  static u3j_harm _two_bex_a[] = {{".2", u3wc_bex, c3y}, {}};
-  static u3j_harm _two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
-  static u3j_harm _two_can_a[] = {{".2", u3wc_can, c3y}, {}};
-  static u3j_harm _two_cat_a[] = {{".2", u3wc_cat, c3y}, {}};
-  static u3j_harm _two_cut_a[] = {{".2", u3wc_cut, c3y}, {}};
-  static u3j_harm _two_end_a[] = {{".2", u3wc_end, c3y}, {}};
-  static u3j_harm _two_lsh_a[] = {{".2", u3wc_lsh, c3y}, {}};
-  static u3j_harm _two_met_a[] = {{".2", u3wc_met, c3y}, {}};
-  static u3j_harm _two_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
-  static u3j_harm _two_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
-  static u3j_harm _two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
+  static u3j_harm _149_two_bex_a[] = {{".2", u3wc_bex, c3y}, {}};
+  static u3j_harm _149_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
+  static u3j_harm _149_two_can_a[] = {{".2", u3wc_can, c3y}, {}};
+  static u3j_harm _149_two_cat_a[] = {{".2", u3wc_cat, c3y}, {}};
+  static u3j_harm _149_two_cut_a[] = {{".2", u3wc_cut, c3y}, {}};
+  static u3j_harm _149_two_end_a[] = {{".2", u3wc_end, c3y}, {}};
+  static u3j_harm _149_two_lsh_a[] = {{".2", u3wc_lsh, c3y}, {}};
+  static u3j_harm _149_two_met_a[] = {{".2", u3wc_met, c3y}, {}};
+  static u3j_harm _149_two_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
+  static u3j_harm _149_two_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
+  static u3j_harm _149_two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
 
-  static u3j_harm _two_con_a[] = {{".2", u3wc_con, c3y}, {}};
-  static u3j_harm _two_dis_a[] = {{".2", u3wc_dis, c3y}, {}};
-  static u3j_harm _two_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
+  static u3j_harm _149_two_con_a[] = {{".2", u3wc_con, c3y}, {}};
+  static u3j_harm _149_two_dis_a[] = {{".2", u3wc_dis, c3y}, {}};
+  static u3j_harm _149_two_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
 
-  static u3j_harm _two_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
+  static u3j_harm _149_two_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
 
-  static u3j_harm _two_dor_a[] = {{".2", u3wc_dor, c3y}, {}};
-  static u3j_harm _two_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
-  static u3j_harm _two_hor_a[] = {{".2", u3wc_hor, c3y}, {}};
-  static u3j_harm _two_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
+  static u3j_harm _149_two_dor_a[] = {{".2", u3wc_dor, c3y}, {}};
+  static u3j_harm _149_two_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
+  static u3j_harm _149_two_hor_a[] = {{".2", u3wc_hor, c3y}, {}};
+  static u3j_harm _149_two_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
 
-  static u3j_harm _two_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
-  static u3j_harm _two_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
+  static u3j_harm _149_two_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
+  static u3j_harm _149_two_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
 
-    static u3j_harm _two__in_bif_a[] = {{".2", u3wdi_bif}, {}};
-    static u3j_harm _two__in_dif_a[] = {{".2", u3wdi_dif}, {}};
-    static u3j_harm _two__in_gas_a[] = {{".2", u3wdi_gas}, {}};
-    static u3j_harm _two__in_has_a[] = {{".2", u3wdi_has}, {}};
-    static u3j_harm _two__in_mer_a[] = {{".2", u3wdi_mer}, {}};
-    // static u3j_harm _two__in_int_a[] = {{".2", u3wdi_int}, {}};
-    static u3j_harm _two__in_put_a[] = {{".2", u3wdi_put}, {}};
-    static u3j_harm _two__in_tap_a[] = {{".2", u3wdi_tap}, {}};
-    // static u3j_harm _two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
-  static u3j_core _two__in_d[] =
-    { { "bif", _two__in_bif_a },
-      { "dif", _two__in_dif_a },
-      { "gas", _two__in_gas_a },
-      { "has", _two__in_has_a },
-      { "mer", _two__in_mer_a },
-      // { "int", _two__in_int_a },
-      { "put", _two__in_put_a },
-      { "tap", _two__in_tap_a },
-      // { "uni", _two__in_uni_a },
+    static u3j_harm _149_two__in_bif_a[] = {{".2", u3wdi_bif}, {}};
+    static u3j_harm _149_two__in_dif_a[] = {{".2", u3wdi_dif}, {}};
+    static u3j_harm _149_two__in_gas_a[] = {{".2", u3wdi_gas}, {}};
+    static u3j_harm _149_two__in_has_a[] = {{".2", u3wdi_has}, {}};
+    static u3j_harm _149_two__in_mer_a[] = {{".2", u3wdi_mer}, {}};
+    // static u3j_harm _149_two__in_int_a[] = {{".2", u3wdi_int}, {}};
+    static u3j_harm _149_two__in_put_a[] = {{".2", u3wdi_put}, {}};
+    static u3j_harm _149_two__in_tap_a[] = {{".2", u3wdi_tap}, {}};
+    // static u3j_harm _149_two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
+  static u3j_core _149_two__in_d[] =
+    { { "bif", _149_two__in_bif_a },
+      { "dif", _149_two__in_dif_a },
+      { "gas", _149_two__in_gas_a },
+      { "has", _149_two__in_has_a },
+      { "mer", _149_two__in_mer_a },
+      // { "int", _149_two__in_int_a },
+      { "put", _149_two__in_put_a },
+      { "tap", _149_two__in_tap_a },
+      // { "uni", _149_two__in_uni_a },
       {}
     };
 
-    static u3j_harm _two__by_bif_a[] = {{".2", u3wdb_bif, c3y}, {}};
-    static u3j_harm _two__by_dif_a[] = {{".2", u3wdb_dif, c3y}, {}};
-    static u3j_harm _two__by_gas_a[] = {{".2", u3wdb_gas, c3y}, {}};
-    static u3j_harm _two__by_get_a[] = {{".2", u3wdb_get, c3y}, {}};
-    static u3j_harm _two__by_has_a[] = {{".2", u3wdb_has, c3y}, {}};
-    // static u3j_harm _two__by_int_a[] = {{".2", u3wdb_int, c3y}, {}};
-    static u3j_harm _two__by_put_a[] = {{".2", u3wdb_put, c3y}, {}};
-    static u3j_harm _two__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
-    // static u3j_harm _two__by_uni_a[] = {{".2", u3wdb_uni, c3y}, {}};
-  static u3j_core _two__by_d[] =
-    { { "bif", _two__by_bif_a },
-      { "dif", _two__by_dif_a },
-      { "gas", _two__by_gas_a },
-      { "get", _two__by_get_a },
-      { "has", _two__by_has_a },
-      // { "int", _two__by_int_a },
-      { "put", _two__by_put_a },
-      { "tap", _two__by_tap_a },
-      // { "uni", _two__by_uni_a },
+    static u3j_harm _149_two__by_bif_a[] = {{".2", u3wdb_bif, c3y}, {}};
+    static u3j_harm _149_two__by_dif_a[] = {{".2", u3wdb_dif, c3y}, {}};
+    static u3j_harm _149_two__by_gas_a[] = {{".2", u3wdb_gas, c3y}, {}};
+    static u3j_harm _149_two__by_get_a[] = {{".2", u3wdb_get, c3y}, {}};
+    static u3j_harm _149_two__by_has_a[] = {{".2", u3wdb_has, c3y}, {}};
+    // static u3j_harm _149_two__by_int_a[] = {{".2", u3wdb_int, c3y}, {}};
+    static u3j_harm _149_two__by_put_a[] = {{".2", u3wdb_put, c3y}, {}};
+    static u3j_harm _149_two__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
+    // static u3j_harm _149_two__by_uni_a[] = {{".2", u3wdb_uni, c3y}, {}};
+  static u3j_core _149_two__by_d[] =
+    { { "bif", _149_two__by_bif_a },
+      { "dif", _149_two__by_dif_a },
+      { "gas", _149_two__by_gas_a },
+      { "get", _149_two__by_get_a },
+      { "has", _149_two__by_has_a },
+      // { "int", _149_two__by_int_a },
+      { "put", _149_two__by_put_a },
+      { "tap", _149_two__by_tap_a },
+      // { "uni", _149_two__by_uni_a },
       {}
     };
 
-  static u3j_harm _two_cue_a[] = {{".2", u3we_cue}, {}};
-  static u3j_harm _two_jam_a[] = {{".2", u3we_jam}, {}};
-  static u3j_harm _two_mat_a[] = {{".2", u3we_mat}, {}};
-  static u3j_harm _two_rub_a[] = {{".2", u3we_rub}, {}};
+  static u3j_harm _149_two_cue_a[] = {{".2", u3we_cue}, {}};
+  static u3j_harm _149_two_jam_a[] = {{".2", u3we_jam}, {}};
+  static u3j_harm _149_two_mat_a[] = {{".2", u3we_mat}, {}};
+  static u3j_harm _149_two_rub_a[] = {{".2", u3we_rub}, {}};
 
-static u3j_core _two_d[] =
-  { { "tri", 0, _tri_d },
-    { "flop", _two_flop_a },
-    { "lent", _two_lent_a },
-    { "levy", _two_levy_a },
-    { "lien", _two_lien_a },
-    { "murn", _two_murn_a },
-    { "need", _two_need_a },
-    { "reap", _two_reap_a },
-    { "reel", _two_reel_a },
-    { "roll", _two_roll_a },
-    { "skid", _two_skid_a },
-    { "skim", _two_skim_a },
-    { "skip", _two_skip_a },
-    { "scag", _two_scag_a },
-    { "slag", _two_slag_a },
-    { "snag", _two_snag_a },
-//  { "sort", _two_sort_a },
-    { "turn", _two_turn_a },
-    { "weld", _two_weld_a },
+static u3j_core _149_two_d[] =
+  { { "tri", 0, _149_tri_d },
+    { "flop", _149_two_flop_a },
+    { "lent", _149_two_lent_a },
+    { "levy", _149_two_levy_a },
+    { "lien", _149_two_lien_a },
+    { "murn", _149_two_murn_a },
+    { "need", _149_two_need_a },
+    { "reap", _149_two_reap_a },
+    { "reel", _149_two_reel_a },
+    { "roll", _149_two_roll_a },
+    { "skid", _149_two_skid_a },
+    { "skim", _149_two_skim_a },
+    { "skip", _149_two_skip_a },
+    { "scag", _149_two_scag_a },
+    { "slag", _149_two_slag_a },
+    { "snag", _149_two_snag_a },
+//  { "sort", _149_two_sort_a },
+    { "turn", _149_two_turn_a },
+    { "weld", _149_two_weld_a },
 
-    { "bex", _two_bex_a },
-    { "xeb", _two_xeb_a },
-    { "can", _two_can_a },
-    { "cat", _two_cat_a },
-    { "cut", _two_cut_a },
-    { "end", _two_end_a },
-    { "lsh", _two_lsh_a },
-    { "met", _two_met_a },
-    { "rap", _two_rap_a },
-    { "rip", _two_rip_a },
-    { "rsh", _two_rsh_a },
+    { "bex", _149_two_bex_a },
+    { "xeb", _149_two_xeb_a },
+    { "can", _149_two_can_a },
+    { "cat", _149_two_cat_a },
+    { "cut", _149_two_cut_a },
+    { "end", _149_two_end_a },
+    { "lsh", _149_two_lsh_a },
+    { "met", _149_two_met_a },
+    { "rap", _149_two_rap_a },
+    { "rip", _149_two_rip_a },
+    { "rsh", _149_two_rsh_a },
 
-    { "con", _two_con_a },
-    { "dis", _two_dis_a },
-    { "mix", _two_mix_a },
+    { "con", _149_two_con_a },
+    { "dis", _149_two_dis_a },
+    { "mix", _149_two_mix_a },
 
-    { "mug", _two_mug_a },
+    { "mug", _149_two_mug_a },
 
-    { "dor", _two_dor_a },
-    { "gor", _two_gor_a },
-    { "hor", _two_hor_a },
-    { "vor", _two_vor_a },
+    { "dor", _149_two_dor_a },
+    { "gor", _149_two_gor_a },
+    { "hor", _149_two_hor_a },
+    { "vor", _149_two_vor_a },
 
-    { "pow", _two_pow_a },
-    { "sqt", _two_sqt_a },
+    { "pow", _149_two_pow_a },
+    { "sqt", _149_two_sqt_a },
 
-    { "by", 0, _two__by_d },
-    { "in", 0, _two__in_d },
+    { "by", 0, _149_two__by_d },
+    { "in", 0, _149_two__in_d },
 
-    { "cue", _two_cue_a },
-    { "jam", _two_jam_a },
-    { "mat", _two_mat_a },
-    { "rub", _two_rub_a },
+    { "cue", _149_two_cue_a },
+    { "jam", _149_two_jam_a },
+    { "mat", _149_two_mat_a },
+    { "rub", _149_two_rub_a },
   };
 
 
 /* layer one
 */
-  static u3j_harm _one_add_a[] = {{".2", u3wa_add, c3y}, {}};
-  static u3j_harm _one_dec_a[] = {{".2", u3wa_dec, c3y}, {}};
-  static u3j_harm _one_div_a[] = {{".2", u3wa_div, c3y}, {}};
-  static u3j_harm _one_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
-  static u3j_harm _one_gte_a[] = {{".2", u3wa_gte, c3y}, {}};
-  static u3j_harm _one_gth_a[] = {{".2", u3wa_gth, c3y}, {}};
-  static u3j_harm _one_lte_a[] = {{".2", u3wa_lte, c3y}, {}};
-  static u3j_harm _one_lth_a[] = {{".2", u3wa_lth, c3y}, {}};
-  static u3j_harm _one_mod_a[] = {{".2", u3wa_mod, c3y}, {}};
-  static u3j_harm _one_mul_a[] = {{".2", u3wa_mul, c3y}, {}};
-  static u3j_harm _one_sub_a[] = {{".2", u3wa_sub, c3y}, {}};
+  static u3j_harm _149_one_add_a[] = {{".2", u3wa_add, c3y}, {}};
+  static u3j_harm _149_one_dec_a[] = {{".2", u3wa_dec, c3y}, {}};
+  static u3j_harm _149_one_div_a[] = {{".2", u3wa_div, c3y}, {}};
+  static u3j_harm _149_one_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
+  static u3j_harm _149_one_gte_a[] = {{".2", u3wa_gte, c3y}, {}};
+  static u3j_harm _149_one_gth_a[] = {{".2", u3wa_gth, c3y}, {}};
+  static u3j_harm _149_one_lte_a[] = {{".2", u3wa_lte, c3y}, {}};
+  static u3j_harm _149_one_lth_a[] = {{".2", u3wa_lth, c3y}, {}};
+  static u3j_harm _149_one_mod_a[] = {{".2", u3wa_mod, c3y}, {}};
+  static u3j_harm _149_one_mul_a[] = {{".2", u3wa_mul, c3y}, {}};
+  static u3j_harm _149_one_sub_a[] = {{".2", u3wa_sub, c3y}, {}};
 
-  static u3j_harm _one_cap_a[] = {{".2", u3wc_cap, c3y}, {}};
-  static u3j_harm _one_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
-  static u3j_harm _one_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
+  static u3j_harm _149_one_cap_a[] = {{".2", u3wc_cap, c3y}, {}};
+  static u3j_harm _149_one_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
+  static u3j_harm _149_one_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
 
-static u3j_core _one_d[] =
-  { { "two", 0, _two_d },
-    { "add", _one_add_a },
-    { "dec", _one_dec_a },
-    { "div", _one_div_a },
-    { "dvr", _one_dvr_a },
-    { "gte", _one_gte_a },
-    { "gth", _one_gth_a },
-    { "lte", _one_lte_a },
-    { "lth", _one_lth_a },
-    { "mod", _one_mod_a },
-    { "mul", _one_mul_a },
-    { "sub", _one_sub_a },
+static u3j_core _149_one_d[] =
+  { { "two", 0, _149_two_d },
+    { "add", _149_one_add_a },
+    { "dec", _149_one_dec_a },
+    { "div", _149_one_div_a },
+    { "dvr", _149_one_dvr_a },
+    { "gte", _149_one_gte_a },
+    { "gth", _149_one_gth_a },
+    { "lte", _149_one_lte_a },
+    { "lth", _149_one_lth_a },
+    { "mod", _149_one_mod_a },
+    { "mul", _149_one_mul_a },
+    { "sub", _149_one_sub_a },
 
-    { "cap", _one_cap_a },
-    { "mas", _one_mas_a },
-    { "peg", _one_peg_a },
+    { "cap", _149_one_cap_a },
+    { "mas", _149_one_mas_a },
+    { "peg", _149_one_peg_a },
+
+    {}
+  };
+static u3j_core _k149_d[] =
+  { { "one", 0, _149_one_d },
+    {}
+  };
+
+/*************** 150*/
+
+  static u3j_harm _150_hex_down_mark_a[] = {{".2", u3wg_down, c3y}, {}};
+    static u3j_core _150_hex_down_d[] =
+      { { "mark", _150_hex_down_mark_a },
+        {}
+      };
+
+  static u3j_harm _150_hex_lore_a[] = {{".2", u3we_lore}, {}};
+  static u3j_harm _150_hex_loss_a[] = {{".2", u3we_loss}, {}};
+  static u3j_harm _150_hex_lune_a[] = {{".2", u3we_lune}, {}};
+
+static u3j_core _150_hex_d[] =
+  { { "down", 0, _150_hex_down_d },
+    { "lore", _150_hex_lore_a },
+    { "loss", _150_hex_loss_a },
+    { "lune", _150_hex_lune_a },
+    {}
+  };
+
+/* layer five
+*/
+  static u3j_harm _150_pen_cell_a[] = {{".2", u3wf_cell}, {}};
+  static u3j_harm _150_pen_comb_a[] = {{".2", u3wf_comb}, {}};
+  static u3j_harm _150_pen_cons_a[] = {{".2", u3wf_cons}, {}};
+  static u3j_harm _150_pen_core_a[] = {{".2", u3wf_core}, {}};
+  static u3j_harm _150_pen_face_a[] = {{".2", u3wf_face}, {}};
+  static u3j_harm _150_pen_fitz_a[] = {{".2", u3wf_fitz}, {}};
+  static u3j_harm _150_pen_flan_a[] = {{".2", u3wf_flan}, {}};
+  static u3j_harm _150_pen_flip_a[] = {{".2", u3wf_flip}, {}};
+  static u3j_harm _150_pen_flor_a[] = {{".2", u3wf_flor}, {}};
+  static u3j_harm _150_pen_fork_a[] = {{".2", u3wf_fork}, {}};
+  static u3j_harm _150_pen_hike_a[] = {{".2", u3wf_hike}, {}};
+  static u3j_harm _150_pen_look_a[] = {{".2", u3wf_look}, {}};
+
+    static u3j_harm _150_pen__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
+    static u3j_harm _150_pen__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
+    static u3j_harm _150_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
+    // static u3j_harm _150_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
+    static u3j_harm _150_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
+    static u3j_harm _150_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
+    static u3j_harm _150_pen__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
+    static u3j_harm _150_pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
+    static u3j_harm _150_pen__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
+    static u3j_harm _150_pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
+    static u3j_harm _150_pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
+    static u3j_harm _150_pen__ut_play_a[] = {{".2", u3wfu_play}, {}};
+    static u3j_harm _150_pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
+    static u3j_harm _150_pen__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
+    static u3j_harm _150_pen__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
+  static u3j_core _150_pen__ut_d[] =
+    { 
+      { "burn", _150_pen__ut_burn_a },
+      { "conk", _150_pen__ut_conk_a },
+      { "crop", _150_pen__ut_crop_a },
+      { "fond", _150_pen__ut_fond_a },
+    //  { "fire", _150_pen__ut_fire_a },
+      { "fish", _150_pen__ut_fish_a },
+      { "fuse", _150_pen__ut_fuse_a },
+      { "mint", _150_pen__ut_mint_a },
+      { "mull", _150_pen__ut_mull_a },
+      { "nest", _150_pen__ut_nest_a },
+      { "peek", _150_pen__ut_peek_a },
+      { "play", _150_pen__ut_play_a },
+      { "rest", _150_pen__ut_rest_a },
+      { "toss", _150_pen__ut_toss_a },
+      { "wrap", _150_pen__ut_wrap_a },
+      {}
+    };
+  static u3j_harm _150_pen__ut_a[] = 
+    { {"burn", u3wfu_burn},
+      {"repo", u3wfu_repo},
+      {}
+    };
+
+#if 0
+  static u3j_harm _150_pen__ap_a[] = 
+    { {"open", u3wfp_open},
+      {"rake", u3wfp_rake},
+      {}
+    };
+  static u3j_harm _150_pen__al_a[] = 
+    { {"bunt", u3wfl_bunt},
+      {"whip", u3wfl_whip},
+      {}
+    };
+#endif
+
+static u3j_core _150_pen_d[] =
+  { { "hex", 0, _150_hex_d },
+
+    { "cell", _150_pen_cell_a },
+    { "comb", _150_pen_comb_a },
+    { "cons", _150_pen_cons_a },
+    { "core", _150_pen_core_a },
+    { "face", _150_pen_face_a },
+    { "fitz", _150_pen_fitz_a },
+    { "flan", _150_pen_flan_a },
+    { "flip", _150_pen_flip_a },
+    { "flor", _150_pen_flor_a },
+    { "fork", _150_pen_fork_a },
+    { "hike", _150_pen_hike_a },
+    { "look", _150_pen_look_a },
+
+    // { "ap", _150_pen__ap_a },
+    // { "al", _150_pen__al_a },
+    { "ut", _150_pen__ut_a, _150_pen__ut_d },
+
+    {}
+  };
+
+/* layer four
+*/
+  static u3j_harm _150_qua_trip_a[] = {{".2", u3we_trip}, {}};
+
+  static u3j_harm _150_qua__po_ind_a[] = {{".2", u3wcp_ind}, {}};
+  static u3j_harm _150_qua__po_ins_a[] = {{".2", u3wcp_ins}, {}};
+  static u3j_harm _150_qua__po_tod_a[] = {{".2", u3wcp_tod}, {}};
+  static u3j_harm _150_qua__po_tos_a[] = {{".2", u3wcp_tos}, {}};
+    static u3j_core _150_qua__po_d[] =
+      { { "ind", _150_qua__po_ind_a },
+        { "ins", _150_qua__po_ins_a },
+        { "tod", _150_qua__po_tod_a },
+        { "tos", _150_qua__po_tos_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__bend_fun_a[] = {{".2", u3we_bend_fun}, {}};
+    static u3j_core _150_qua__bend_d[] =
+      { { "fun", _150_qua__bend_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__cold_fun_a[] = {{".2", u3we_cold_fun}, {}};
+    static u3j_core _150_qua__cold_d[] =
+      { { "fun", _150_qua__cold_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__cook_fun_a[] = {{".2", u3we_cook_fun}, {}};
+    static u3j_core _150_qua__cook_d[] =
+      { { "fun", _150_qua__cook_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__comp_fun_a[] = {{".2", u3we_comp_fun}, {}};
+    static u3j_core _150_qua__comp_d[] =
+      { { "fun", _150_qua__comp_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__easy_fun_a[] = {{".2", u3we_easy_fun}, {}};
+    static u3j_core _150_qua__easy_d[] =
+      { { "fun", _150_qua__easy_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__glue_fun_a[] = {{".2", u3we_glue_fun}, {}};
+    static u3j_core _150_qua__glue_d[] =
+      { { "fun", _150_qua__glue_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__here_fun_a[] = {{".2", u3we_here_fun}, {}};
+    static u3j_core _150_qua__here_d[] =
+      { { "fun", _150_qua__here_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__just_fun_a[] = {{".2", u3we_just_fun}, {}};
+    static u3j_core _150_qua__just_d[] =
+      { { "fun", _150_qua__just_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__mask_fun_a[] = {{".2", u3we_mask_fun}, {}};
+    static u3j_core _150_qua__mask_d[] =
+      { { "fun", _150_qua__mask_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__shim_fun_a[] = {{".2", u3we_shim_fun}, {}};
+    static u3j_core _150_qua__shim_d[] =
+      { { "fun", _150_qua__shim_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__stag_fun_a[] = {{".2", u3we_stag_fun}, {}};
+    static u3j_core _150_qua__stag_d[] =
+      { { "fun", _150_qua__stag_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua__stew_fun_a[] = {{".2", u3we_stew_fun}, {}};
+    static u3j_core _150_qua__stew_d[] =
+      { { "fun", _150_qua__stew_fun_a },
+        {}
+      };
+ 
+  static u3j_harm _150_qua__stir_fun_a[] = {{".2", u3we_stir_fun}, {}};
+    static u3j_core _150_qua__stir_d[] =
+      { { "fun", _150_qua__stir_fun_a },
+        {}
+      };
+
+  static u3j_harm _150_qua_pfix_a[] = {{".2", u3we_pfix}, {}};
+  static u3j_harm _150_qua_plug_a[] = {{".2", u3we_plug}, {}};
+  static u3j_harm _150_qua_pose_a[] = {{".2", u3we_pose}, {}};
+  static u3j_harm _150_qua_sfix_a[] = {{".2", u3we_sfix}, {}};
+
+  static u3j_harm _150_qua_mink_a[] = {{".2", u3we_mink}, {}};
+  static u3j_harm _150_qua_mule_a[] = {{".2", u3we_mule}, {}};
+
+static u3j_core _150_qua_d[] =
+  { { "pen", 0, _150_pen_d },
+
+    { "po", 0, _150_qua__po_d },
+
+    { "trip", _150_qua_trip_a },
+
+    { "bend", 0, _150_qua__bend_d },
+    { "cold", 0, _150_qua__cold_d },
+    { "comp", 0, _150_qua__comp_d },
+    { "cook", 0, _150_qua__cook_d },
+    { "easy", 0, _150_qua__easy_d },
+    { "glue", 0, _150_qua__glue_d },
+    { "here", 0, _150_qua__here_d },
+    { "just", 0, _150_qua__just_d },
+    { "mask", 0, _150_qua__mask_d },
+    { "shim", 0, _150_qua__shim_d },
+    { "stag", 0, _150_qua__stag_d },
+    { "stew", 0, _150_qua__stew_d },
+    { "stir", 0, _150_qua__stir_d },
+
+    { "pfix", _150_qua_pfix_a },
+    { "plug", _150_qua_plug_a },
+    { "pose", _150_qua_pose_a },
+    { "sfix", _150_qua_sfix_a },
+
+    { "mink", _150_qua_mink_a },
+    { "mule", _150_qua_mule_a },
+    {}
+  };
+
+/* layer three
+*/
+    static u3j_harm _150_tri__rd_add_a[] = {{".2", u3wer_add}, {}};
+    static u3j_harm _150_tri__rd_sub_a[] = {{".2", u3wer_sub}, {}};
+    static u3j_harm _150_tri__rd_mul_a[] = {{".2", u3wer_mul}, {}};
+    static u3j_harm _150_tri__rd_div_a[] = {{".2", u3wer_div}, {}};
+    static u3j_harm _150_tri__rd_sqt_a[] = {{".2", u3wer_sqt}, {}};
+    static u3j_harm _150_tri__rd_fma_a[] = {{".2", u3wer_fma}, {}};
+    static u3j_harm _150_tri__rd_lth_a[] = {{".2", u3wer_lth}, {}};
+    static u3j_harm _150_tri__rd_lte_a[] = {{".2", u3wer_lte}, {}};
+    static u3j_harm _150_tri__rd_equ_a[] = {{".2", u3wer_equ}, {}};
+    static u3j_harm _150_tri__rd_gte_a[] = {{".2", u3wer_gte}, {}};
+    static u3j_harm _150_tri__rd_gth_a[] = {{".2", u3wer_gth}, {}};
+  static u3j_core _150_tri__rd_d[] =
+    { { "add", _150_tri__rd_add_a },
+      { "sub", _150_tri__rd_sub_a },
+      { "mul", _150_tri__rd_mul_a },
+      { "div", _150_tri__rd_div_a },
+      { "sqt", _150_tri__rd_sqt_a },
+      { "fma", _150_tri__rd_fma_a },
+      { "lth", _150_tri__rd_lth_a },
+      { "lte", _150_tri__rd_lte_a },
+      { "equ", _150_tri__rd_equ_a },
+      { "gte", _150_tri__rd_gte_a },
+      { "gth", _150_tri__rd_gth_a },
+      {}
+    };
+
+    static u3j_harm _150_tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
+    static u3j_harm _150_tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
+  static u3j_core _150_tri__cofl_d[] =
+    { { "drg", _150_tri__cofl__drg_a },
+      { "lug", _150_tri__cofl__lug_a },
+      {}
+    };
+
+    static u3j_harm _150_tri__rs_add_a[] = {{".2", u3wet_add}, {}};
+    static u3j_harm _150_tri__rs_sub_a[] = {{".2", u3wet_sub}, {}};
+    static u3j_harm _150_tri__rs_mul_a[] = {{".2", u3wet_mul}, {}};
+    static u3j_harm _150_tri__rs_div_a[] = {{".2", u3wet_div}, {}};
+    static u3j_harm _150_tri__rs_sqt_a[] = {{".2", u3wet_sqt}, {}};
+    static u3j_harm _150_tri__rs_fma_a[] = {{".2", u3wet_fma}, {}};
+    static u3j_harm _150_tri__rs_lth_a[] = {{".2", u3wet_lth}, {}};
+    static u3j_harm _150_tri__rs_lte_a[] = {{".2", u3wet_lte}, {}};
+    static u3j_harm _150_tri__rs_equ_a[] = {{".2", u3wet_equ}, {}};
+    static u3j_harm _150_tri__rs_gte_a[] = {{".2", u3wet_gte}, {}};
+    static u3j_harm _150_tri__rs_gth_a[] = {{".2", u3wet_gth}, {}};
+  static u3j_core _150_tri__rs_d[] =
+    { { "add", _150_tri__rs_add_a },
+      { "sub", _150_tri__rs_sub_a },
+      { "mul", _150_tri__rs_mul_a },
+      { "div", _150_tri__rs_div_a },
+      { "sqt", _150_tri__rs_sqt_a },
+      { "fma", _150_tri__rs_fma_a },
+      { "lth", _150_tri__rs_lth_a },
+      { "lte", _150_tri__rs_lte_a },
+      { "equ", _150_tri__rs_equ_a },
+      { "gte", _150_tri__rs_gte_a },
+      { "gth", _150_tri__rs_gth_a },
+      {}
+    };
+
+    static u3j_harm _150_tri__rq_add_a[] = {{".2", u3weq_add}, {}};
+    static u3j_harm _150_tri__rq_sub_a[] = {{".2", u3weq_sub}, {}};
+    static u3j_harm _150_tri__rq_mul_a[] = {{".2", u3weq_mul}, {}};
+    static u3j_harm _150_tri__rq_div_a[] = {{".2", u3weq_div}, {}};
+    static u3j_harm _150_tri__rq_sqt_a[] = {{".2", u3weq_sqt}, {}};
+    static u3j_harm _150_tri__rq_fma_a[] = {{".2", u3weq_fma}, {}};
+    static u3j_harm _150_tri__rq_lth_a[] = {{".2", u3weq_lth}, {}};
+    static u3j_harm _150_tri__rq_lte_a[] = {{".2", u3weq_lte}, {}};
+    static u3j_harm _150_tri__rq_equ_a[] = {{".2", u3weq_equ}, {}};
+    static u3j_harm _150_tri__rq_gte_a[] = {{".2", u3weq_gte}, {}};
+    static u3j_harm _150_tri__rq_gth_a[] = {{".2", u3weq_gth}, {}};
+  static u3j_core _150_tri__rq_d[] =
+    { { "add", _150_tri__rq_add_a },
+      { "sub", _150_tri__rq_sub_a },
+      { "mul", _150_tri__rq_mul_a },
+      { "div", _150_tri__rq_div_a },
+      { "sqt", _150_tri__rq_sqt_a },
+      { "fma", _150_tri__rq_fma_a },
+      { "lth", _150_tri__rq_lth_a },
+      { "lte", _150_tri__rq_lte_a },
+      { "equ", _150_tri__rq_equ_a },
+      { "gte", _150_tri__rq_gte_a },
+      { "gth", _150_tri__rq_gth_a },
+      {}
+    };
+
+    static u3j_harm _150_tri__aesc_en_a[] = {{".2", u3wea_en}, {}};
+    static u3j_harm _150_tri__aesc_de_a[] = {{".2", u3wea_de}, {}};
+  static u3j_core _150_tri__aesc_d[] =
+    { { "en", _150_tri__aesc_en_a },
+      { "de", _150_tri__aesc_de_a },
+      {}
+    };
+
+    static u3j_harm _150_tri__og_raw_a[] = {{".2", u3weo_raw}, {}};
+  static u3j_core _150_tri__og_d[] =
+    { { "raw", _150_tri__og_raw_a },
+      {}
+    };
+
+  static u3j_harm _150_tri_shax_a[] = {{".2", u3we_shax}, {}};
+  static u3j_harm _150_tri_shay_a[] = {{".2", u3we_shay}, {}};
+  static u3j_harm _150_tri_shas_a[] = {{".2", u3we_shas}, {}};
+  static u3j_harm _150_tri_shal_a[] = {{".2", u3we_shal}, {}};
+
+static u3j_core _150_tri_d[] =
+  { { "qua", 0, _150_qua_d },
+
+    { "cofl", 0, _150_tri__cofl_d },
+    { "rd", 0, _150_tri__rd_d },
+    { "rs", 0, _150_tri__rs_d },
+    { "rq", 0, _150_tri__rq_d },
+    { "og", 0, _150_tri__og_d },
+    { "shax", _150_tri_shax_a },
+    { "shay", _150_tri_shay_a },
+    { "shas", _150_tri_shas_a },
+    { "shal", _150_tri_shal_a },
+    { "aesc", 0, _150_tri__aesc_d },
+
+    {}
+  };
+
+/* layer two
+*/
+  static u3j_harm _150_two_flop_a[] = {{".2", u3wb_flop, c3y}, {}};
+  static u3j_harm _150_two_lent_a[] = {{".2", u3wb_lent, c3y}, {}};
+  static u3j_harm _150_two_levy_a[] = {{".2", u3wb_levy, c3y}, {}};
+  static u3j_harm _150_two_lien_a[] = {{".2", u3wb_lien, c3y}, {}};
+  static u3j_harm _150_two_murn_a[] = {{".2", u3wb_murn, c3y}, {}};
+  static u3j_harm _150_two_need_a[] = {{".2", u3wb_need, c3y}, {}};
+  static u3j_harm _150_two_reap_a[] = {{".2", u3wb_reap, c3y}, {}};
+  static u3j_harm _150_two_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
+  static u3j_harm _150_two_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
+  static u3j_harm _150_two_skid_a[] = {{".2", u3wb_skid, c3y}, {}};
+  static u3j_harm _150_two_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
+  static u3j_harm _150_two_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
+  static u3j_harm _150_two_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
+  static u3j_harm _150_two_slag_a[] = {{".2", u3wb_slag, c3y}, {}};
+  static u3j_harm _150_two_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
+  // static u3j_harm _150_two_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
+  static u3j_harm _150_two_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
+  static u3j_harm _150_two_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
+
+  static u3j_harm _150_two_bex_a[] = {{".2", u3wc_bex, c3y}, {}};
+  static u3j_harm _150_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
+  static u3j_harm _150_two_can_a[] = {{".2", u3wc_can, c3y}, {}};
+  static u3j_harm _150_two_cat_a[] = {{".2", u3wc_cat, c3y}, {}};
+  static u3j_harm _150_two_cut_a[] = {{".2", u3wc_cut, c3y}, {}};
+  static u3j_harm _150_two_end_a[] = {{".2", u3wc_end, c3y}, {}};
+  static u3j_harm _150_two_lsh_a[] = {{".2", u3wc_lsh, c3y}, {}};
+  static u3j_harm _150_two_met_a[] = {{".2", u3wc_met, c3y}, {}};
+  static u3j_harm _150_two_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
+  static u3j_harm _150_two_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
+  static u3j_harm _150_two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
+
+  static u3j_harm _150_two_con_a[] = {{".2", u3wc_con, c3y}, {}};
+  static u3j_harm _150_two_dis_a[] = {{".2", u3wc_dis, c3y}, {}};
+  static u3j_harm _150_two_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
+
+  static u3j_harm _150_two_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
+
+  static u3j_harm _150_two_dor_a[] = {{".2", u3wc_dor, c3y}, {}};
+  static u3j_harm _150_two_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
+  static u3j_harm _150_two_hor_a[] = {{".2", u3wc_hor, c3y}, {}};
+  static u3j_harm _150_two_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
+
+  static u3j_harm _150_two_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
+  static u3j_harm _150_two_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
+
+    static u3j_harm _150_two__in_bif_a[] = {{".2", u3wdi_bif}, {}};
+    static u3j_harm _150_two__in_dif_a[] = {{".2", u3wdi_dif}, {}};
+    static u3j_harm _150_two__in_gas_a[] = {{".2", u3wdi_gas}, {}};
+    static u3j_harm _150_two__in_has_a[] = {{".2", u3wdi_has}, {}};
+    static u3j_harm _150_two__in_mer_a[] = {{".2", u3wdi_mer}, {}};
+    // static u3j_harm _150_two__in_int_a[] = {{".2", u3wdi_int}, {}};
+    static u3j_harm _150_two__in_put_a[] = {{".2", u3wdi_put}, {}};
+    static u3j_harm _150_two__in_tap_a[] = {{".2", u3wdi_tap}, {}};
+    // static u3j_harm _150_two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
+  static u3j_core _150_two__in_d[] =
+    { { "bif", _150_two__in_bif_a },
+      { "dif", _150_two__in_dif_a },
+      { "gas", _150_two__in_gas_a },
+      { "has", _150_two__in_has_a },
+      { "mer", _150_two__in_mer_a },
+      // { "int", _150_two__in_int_a },
+      { "put", _150_two__in_put_a },
+      { "tap", _150_two__in_tap_a },
+      // { "uni", _150_two__in_uni_a },
+      {}
+    };
+
+    static u3j_harm _150_two__by_bif_a[] = {{".2", u3wdb_bif, c3y}, {}};
+    static u3j_harm _150_two__by_dif_a[] = {{".2", u3wdb_dif, c3y}, {}};
+    static u3j_harm _150_two__by_gas_a[] = {{".2", u3wdb_gas, c3y}, {}};
+    static u3j_harm _150_two__by_get_a[] = {{".2", u3wdb_get, c3y}, {}};
+    static u3j_harm _150_two__by_has_a[] = {{".2", u3wdb_has, c3y}, {}};
+    // static u3j_harm _150_two__by_int_a[] = {{".2", u3wdb_int, c3y}, {}};
+    static u3j_harm _150_two__by_put_a[] = {{".2", u3wdb_put, c3y}, {}};
+    static u3j_harm _150_two__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
+    // static u3j_harm _150_two__by_uni_a[] = {{".2", u3wdb_uni, c3y}, {}};
+  static u3j_core _150_two__by_d[] =
+    { { "bif", _150_two__by_bif_a },
+      { "dif", _150_two__by_dif_a },
+      { "gas", _150_two__by_gas_a },
+      { "get", _150_two__by_get_a },
+      { "has", _150_two__by_has_a },
+      // { "int", _150_two__by_int_a },
+      { "put", _150_two__by_put_a },
+      { "tap", _150_two__by_tap_a },
+      // { "uni", _150_two__by_uni_a },
+      {}
+    };
+
+  static u3j_harm _150_two_cue_a[] = {{".2", u3we_cue}, {}};
+  static u3j_harm _150_two_jam_a[] = {{".2", u3we_jam}, {}};
+  static u3j_harm _150_two_mat_a[] = {{".2", u3we_mat}, {}};
+  static u3j_harm _150_two_rub_a[] = {{".2", u3we_rub}, {}};
+
+static u3j_core _150_two_d[] =
+  { { "tri", 0, _150_tri_d },
+    { "flop", _150_two_flop_a },
+    { "lent", _150_two_lent_a },
+    { "levy", _150_two_levy_a },
+    { "lien", _150_two_lien_a },
+    { "murn", _150_two_murn_a },
+    { "need", _150_two_need_a },
+    { "reap", _150_two_reap_a },
+    { "reel", _150_two_reel_a },
+    { "roll", _150_two_roll_a },
+    { "skid", _150_two_skid_a },
+    { "skim", _150_two_skim_a },
+    { "skip", _150_two_skip_a },
+    { "scag", _150_two_scag_a },
+    { "slag", _150_two_slag_a },
+    { "snag", _150_two_snag_a },
+//  { "sort", _150_two_sort_a },
+    { "turn", _150_two_turn_a },
+    { "weld", _150_two_weld_a },
+
+    { "bex", _150_two_bex_a },
+    { "xeb", _150_two_xeb_a },
+    { "can", _150_two_can_a },
+    { "cat", _150_two_cat_a },
+    { "cut", _150_two_cut_a },
+    { "end", _150_two_end_a },
+    { "lsh", _150_two_lsh_a },
+    { "met", _150_two_met_a },
+    { "rap", _150_two_rap_a },
+    { "rip", _150_two_rip_a },
+    { "rsh", _150_two_rsh_a },
+
+    { "con", _150_two_con_a },
+    { "dis", _150_two_dis_a },
+    { "mix", _150_two_mix_a },
+
+    { "mug", _150_two_mug_a },
+
+    { "dor", _150_two_dor_a },
+    { "gor", _150_two_gor_a },
+    { "hor", _150_two_hor_a },
+    { "vor", _150_two_vor_a },
+
+    { "pow", _150_two_pow_a },
+    { "sqt", _150_two_sqt_a },
+
+    { "by", 0, _150_two__by_d },
+    { "in", 0, _150_two__in_d },
+
+    { "cue", _150_two_cue_a },
+    { "jam", _150_two_jam_a },
+    { "mat", _150_two_mat_a },
+    { "rub", _150_two_rub_a },
+  };
+
+
+/* layer one
+*/
+  static u3j_harm _150_one_add_a[] = {{".2", u3wa_add, c3y}, {}};
+  static u3j_harm _150_one_dec_a[] = {{".2", u3wa_dec, c3y}, {}};
+  static u3j_harm _150_one_div_a[] = {{".2", u3wa_div, c3y}, {}};
+  static u3j_harm _150_one_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
+  static u3j_harm _150_one_gte_a[] = {{".2", u3wa_gte, c3y}, {}};
+  static u3j_harm _150_one_gth_a[] = {{".2", u3wa_gth, c3y}, {}};
+  static u3j_harm _150_one_lte_a[] = {{".2", u3wa_lte, c3y}, {}};
+  static u3j_harm _150_one_lth_a[] = {{".2", u3wa_lth, c3y}, {}};
+  static u3j_harm _150_one_mod_a[] = {{".2", u3wa_mod, c3y}, {}};
+  static u3j_harm _150_one_mul_a[] = {{".2", u3wa_mul, c3y}, {}};
+  static u3j_harm _150_one_sub_a[] = {{".2", u3wa_sub, c3y}, {}};
+
+  static u3j_harm _150_one_cap_a[] = {{".2", u3wc_cap, c3y}, {}};
+  static u3j_harm _150_one_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
+  static u3j_harm _150_one_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
+
+static u3j_core _150_one_d[] =
+  { { "two", 0, _150_two_d },
+    { "add", _150_one_add_a },
+    { "dec", _150_one_dec_a },
+    { "div", _150_one_div_a },
+    { "dvr", _150_one_dvr_a },
+    { "gte", _150_one_gte_a },
+    { "gth", _150_one_gth_a },
+    { "lte", _150_one_lte_a },
+    { "lth", _150_one_lth_a },
+    { "mod", _150_one_mod_a },
+    { "mul", _150_one_mul_a },
+    { "sub", _150_one_sub_a },
+
+    { "cap", _150_one_cap_a },
+    { "mas", _150_one_mas_a },
+    { "peg", _150_one_peg_a },
 
     {}
   };
 static u3j_core _k150_d[] =
-  { { "one", 0, _one_d },
+  { { "one", 0, _150_one_d },
     {}
   };
 
 
 static u3j_core _d[] = {
-  { "k151", 0, _k151_d},
+  { "k149", 0, _k149_d},
   { "k150", 0, _k150_d},
   {}
 };
