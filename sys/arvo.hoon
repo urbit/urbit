@@ -1,10 +1,12 @@
 ::                                                      ::
 ::::  6: layer six
-  ::
+  !:
+~>  %slog.[0 
 =<  |=  ovo/*
-    ~>  %slog.[0 leaf/"arvo-event"]
-    .(+> 
-    +:(poke *@da ovo)
+    ^-  *
+    ~>  %slog.[0 leaf+"arvo-event"]
+    .(+> +:(poke *@da ovo))
+=>
 ~%  %hex  +  ~
 |%
 ::
@@ -404,12 +406,11 @@
   --
 --
 ::
-::::  Arvo interface
+::::  arvo interface
   ::
 =+  pit=`vase`!>(.)                                     ::
-!:
 =+  vil=(viol p.pit)                                    ::  cached reflexives
-=|  $:  lac/?                                           ::  laconic bit
+=|  $:  lac/?                                           ::  not verbose
         bod/(unit vase)                                 ::  standard library
         urb/(unit ship)                                 ::  identity
         eny/@                                           ::  entropy
@@ -429,10 +430,10 @@
               [rey +>.$]
     ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  87
     ++  poke  |=  *                                     ::  42
-              ^-  {(list ovum) _+>}
+              ^-  {(list ovum) *}
               =>  .(+< ((hard {now/@da ovo/ovum}) +<))
               =^  ova  +>+  (^poke now ovo)
-              |-  ^-  {(list ovum) _+>}
+              |-  ^-  {(list ovum) *}
               ?~  ova
                 [~ +>.^$]
               ?:  ?=($verb -.q.i.ova)
@@ -527,7 +528,6 @@
   =+  pax=(weld hap `path`[%hoon ~])
   ~&  [%vega-start hap]
   =+  src=((hard @t) (need (peek now cx+pax)))
-  =+  saz=(shax src)
   =+  gen=(rain hap src)
   ~&  %vega-parsed
   =+  ken=.*(0 q:(~(mint ut %noun) %noun gen))

@@ -1,16 +1,15 @@
 ::                                                      ::  
 ::::    /sys/hoon                                       ::
   ::                                                    ::
-~>  %slog.[0 leaf+"hoon assembled"]
-|.
-~>  %slog.[0 leaf+"hoon expanded"]
+~>  %slog.[0 leaf+"hoon-assembly"]
 =<  ride
-=>  %150  =>  
+=>  %149  =>  
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.150  ~  ~                                        ::
+~%  %k.149  ~  ~                                        ::
 |%
+++  foo  %bar
 ++  hoon  +
 --  =>
 ::                                                      ::
@@ -25,6 +24,7 @@
 ::                                                      ::
 ::::    1a: unsigned arithmetic                         ::
   ::
+++  foo  %bar
 ++  add                                                 ::  unsigned addition
   ~/  %add
   |=  {a/@ b/@}
@@ -208,6 +208,7 @@
   ::
 ~%  %two  +  ~
 |%
+++  foo  %bar
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -1712,6 +1713,7 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
+++  foo  %bar
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3411,6 +3413,7 @@
     %show  show
   ==
 |%
+++  foo  %bar
 ::
 ::::  4a: exotic bases
   ::
@@ -5564,6 +5567,7 @@
     %ut    ut
   ==
 |%
+++  foo  %bar
 ::
 ::::  5a: compiler utilities
   ::
@@ -9514,7 +9518,6 @@
 ::
 ++  ride                                                ::  end-to-end compiler
   |=  {typ/span txt/@}
-  ~&  %ride
   ^-  (pair span nock)
   (~(mint ut typ) %noun (ream txt))  
 ::

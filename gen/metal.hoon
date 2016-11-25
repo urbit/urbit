@@ -61,7 +61,7 @@
             ::
             ::  event 4: arvo kernel source
             ::
-            kernel-source=*@t
+            arvo-source=*@t
             ::
             ::  events 5..n: main sequence with normal semantics
             ::
@@ -79,7 +79,7 @@
         ::
         ~>  %slog.[0 leaf+"1-a"]
         =+  ^=  compiler-gate 
-            .*(compiler-formula 0)
+            .*(0 compiler-formula)
         ::
         ::  compile the compiler source, producing (pair span nock).
         ::  the compiler ignores its input so we use a trivial span.
@@ -91,25 +91,25 @@
         ::  check that the new compiler formula equals the old formula.
         ::
         ~>  %slog.[0 leaf+"1-c"]
-        ?>  =(compiler-formula -:.*(0 +:compiler-tool))
+        ?>  =(compiler-formula +:compiler-tool)
         ::
-        ::  get the span (type) of the kernel, which is the context
+        ::  get the span (type) of the kernel core, which is the context
         ::  of the compiler gate.  we just compiled the compiler,
         ::  so we know the span (type) of the compiler gate.  its
         ::  context is at tree address `+>` (ie, `+7` or Lisp `cddr`).
         ::  we use the compiler again to infer this trivial program.
         ::
         ~>  %slog.[0 leaf+"1-d"]
-        =+  ^=  compiler-span
+        =+  ^=  kernel-span
             -:.*(compiler-gate(+< [-.compiler-tool '+>']) -.compiler-gate)
         ::
-        ::  compile the arvo source against the compiler core.
+        ::  compile the arvo source against the kernel core.
         ::
         ~>  %slog.[0 leaf+"1-e"]
         =+  ^=  kernel-tool
-            .*(compiler-gate(+< [compiler-span kernel-source]) -.compiler-gate)
+            .*(compiler-gate(+< [kernel-span arvo-source]) -.compiler-gate)
         ::
-        ::  arvo kernel, and we done
+        ::  create the arvo kernel, whose subject is the comp
         ::
         ~>  %slog.[0 leaf+"1-f"]
         .*(+>:compiler-gate +:kernel-tool)
@@ -134,9 +134,9 @@
 ~&  %metal-parsing
 =+  compiler-twig=(ream compiler-source)
 ~&  %metal-parsed
-=+  compiler-trap=q:(~(mint ut %noun) %noun compiler-twig)
+=+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
 ~&  %metal-compiled
-=+  kernel-source=.^(@t %cx (welp sys /arvo/hoon))
+=+  arvo-source=.^(@t %cx (welp sys /arvo/hoon))
 =+  ^=  vane-sequence
     |^  ^-  (list ovum)
         :~  (vent %$ /zuse)
@@ -162,9 +162,9 @@
 %-  mug
 .*  :*  event-zero
         event-one
-        compiler-trap
+        compiler-formula
         compiler-source
-        kernel-source
+        arvo-source
         vane-sequence
     ==
 [2 [0 3] [0 2]]
