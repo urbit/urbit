@@ -300,7 +300,7 @@
             qut
           ==
         ::
-          ;~(plug (perk %who ~) ;~(pose para (easy ~)))
+          ;~(plug (perk %who ~) ;~(pose ;~(pfix ace para) (easy ~)))
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
           ;~((glue ace) (perk %join ~) para)
           ;~((glue ace) (perk %leave ~) para)
