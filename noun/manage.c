@@ -1560,8 +1560,10 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
       result = curl_easy_perform(curl);
       fclose(file);
       if ( result != CURLE_OK ) {
-        fprintf(stderr, "failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
-        fprintf(stderr, "please fetch it manually and specify the location with -B\n");
+        fprintf(stderr, "failed to fetch %s: %s\n", 
+                        url_c, 
+                        curl_easy_strerror(result));
+        fprintf(stderr, "please fetch it by hand, then run -B $filename\n");
         exit(1);
       }
       curl_easy_cleanup(curl);

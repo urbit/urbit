@@ -33,6 +33,33 @@ u3v_make(c3_c* pas_c)
   u3z(sys);
 }
 
+/* u3v_boot(): correct bootstrap sequence.
+*/
+void
+u3v_remake(c3_c* pas_c, 
+           c3_c* who_c, 
+           c3_c* why_c)
+{
+  u3_noun sys = u3ke_cue(u3m_file(pas_c));
+  u3_noun eva;                              //  event-one
+  u3_noun evb;                              //  event-two
+  u3_noun evc;                              //  compiler-formula
+  u3_noun evd;                              //  compiler-source
+  u3_noun eve;                              //  arvo-source
+  u3_noun evf;                              //  main-sequence
+
+  u3r_mean(sys, 2, &eva,
+                6, &evb,
+                14, &evc,
+                30, &evd,
+
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &gol,
+                               u3x_sam_3, &gen,
+                               u3x_con, &van,
+                               0)) ||
+  
+}
+
 /* u3v_jack(): execute kernel formula to bind jets.
 */
 void
