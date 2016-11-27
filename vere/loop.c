@@ -327,7 +327,7 @@ _lo_tape(FILE* fil_u, u3_noun tep)
 {
   u3_noun tap = tep;
 
-  while ( u3_nul != tap ) {
+  while ( c3y == u3du(tap) ) {
     c3_c car_c;
 
     if ( u3h(tap) >= 127 ) {
@@ -380,9 +380,24 @@ u3_lo_punt(c3_l tab_l, u3_noun tac)
   //  We are calling nock here, but hopefully need no protection.
   //
   while ( c3y == u3r_du(cat) ) {
-    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+    if ( 0 == u3A->roc ) {
+      u3_noun act = u3h(cat);
 
-    _lo_wall(wol);
+      if ( c3__leaf == u3h(act) ) {
+        FILE* fil_u = u3_term_io_hija();
+
+        _lo_tape(fil_u, u3k(u3t(act)));
+        putc(13, fil_u);
+        putc(10, fil_u);
+
+        u3_term_io_loja(0);
+      }
+    }
+    else {      
+      u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+
+      _lo_wall(wol);
+    }
     cat = u3t(cat);
   }
   u3z(tac);

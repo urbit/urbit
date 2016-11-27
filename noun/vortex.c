@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "all.h"
 
-int WISH;
 /* _cv_nock_wish(): call wish through hardcoded interface.
 */
 static u3_noun
@@ -12,10 +11,8 @@ _cv_nock_wish(u3_noun txt)
 {
   u3_noun fun, pro;
 
-  WISH = 1;
   fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(20, u3A->roc)));
   pro = u3n_slam_on(fun, txt);
-  WISH = 0;
 
   return pro;
 }
@@ -33,31 +30,50 @@ u3v_make(c3_c* pas_c)
   u3z(sys);
 }
 
+/* u3v_fire(): execute initial lifecycle.
+*/
+u3_noun
+u3v_fire(u3_noun sys)
+{
+  u3_noun fol = u3nt(2, u3nc(0, 3), u3nc(0, 2));
+
+  return u3n_nock_on(sys, fol);
+}
+
+/* u3v_load(): loading sequence.
+*/
+u3_noun
+u3v_load(u3_noun pil)
+{
+  u3_noun sys = u3ke_cue(pil);
+  u3_noun cor = u3v_fire(sys);
+  u3_noun pro;
+
+  pro = u3k(u3r_at(7, cor));
+
+  u3z(cor);
+  return pro;
+}
+
 /* u3v_boot(): correct bootstrap sequence.
 */
 void
-u3v_remake(c3_c* pas_c, 
-           c3_c* who_c, 
-           c3_c* why_c)
+u3v_boot(c3_c* pas_c)
 {
-  u3_noun sys = u3ke_cue(u3m_file(pas_c));
-  u3_noun eva;                              //  event-one
-  u3_noun evb;                              //  event-two
-  u3_noun evc;                              //  compiler-formula
-  u3_noun evd;                              //  compiler-source
-  u3_noun eve;                              //  arvo-source
-  u3_noun evf;                              //  main-sequence
+  u3_noun pil = u3m_file(pas_c);
+  u3_noun pru = u3m_soft(0, u3v_load, pil);
 
-  u3r_mean(sys, 2, &eva,
-                6, &evb,
-                14, &evc,
-                30, &evd,
+  if ( u3h(pru) != 0 ) {
+    fprintf(stderr, "boot failed\r\n");
+    exit(1);
+  }
 
-    if ( (c3n == u3r_mean(cor, u3x_sam_2, &gol,
-                               u3x_sam_3, &gen,
-                               u3x_con, &van,
-                               0)) ||
-  
+  fprintf(stderr, "final state %x\r\n", u3r_mug(u3t(pru)));
+ 
+  u3A->ken = 0;
+  u3A->roc = u3k(u3t(pru));
+
+  u3z(pru);
 }
 
 /* u3v_jack(): execute kernel formula to bind jets.
