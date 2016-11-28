@@ -4435,8 +4435,8 @@
 ++  clay  ^?
   |%
   ++  differ  differ:old-clay
-  ++  lines  =,(lines:old-clay =,(unix:userlib .))
-  ++  space  =,(beams:old-clay =,(space:userlib .))
+  ++  lines  [lines:old-clay unix:userlib]
+  ++  space  [beams:old-clay space:userlib]
   --
 ++  dill  !!
 ++  eyre  ^?
