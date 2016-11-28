@@ -10,6 +10,18 @@
         {{who/@p $~} $~}
     ==
 :-  %noun
+::
+::  we're creating an event series E whose lifecycle can be computed
+::  with the standard lifecycle formula L, [2 [0 3] [0 2]].  that is:
+::  if E is the list of events processed by a computer in its life,
+::  its final state is S, where S is nock(E L).
+::
+::  in practice, the first five nouns in E are: two boot loaders,
+::  a hoon compiler as a nock formula, the same compiler as source,
+::  and the arvo kernel as source.  after the first five events,
+::  we enter an iterative form in which the state is a function
+::  that, passed the next event, produces the next state.
+::
 =+  ^=  event-zero
     ::
     ::  event 0 is the lifecycle formula which computes the final
@@ -25,9 +37,7 @@
         ::  formula peels off the first n (currently 3) events
         ::  to set up the lifecycle loop.
         ::
-        ~>  %slog.[0 leaf+"0-a"]
         =+  [state-gate main-sequence]=.*(full-sequence boot-formula)
-        ~>  %slog.[0 leaf+"0-b"]
         ::
         ::  in this lifecycle loop, we replace the state function
         ::  with its product, called on the next event, until
@@ -39,8 +49,7 @@
         ::  structure of the state machine and work directly with
         ::  the underlying arvo engine.
         ::
-        |-  ~>  %slog.[0 leaf+"0-c"]
-            ?@  main-sequence
+        |-  ?@  main-sequence
               state-gate
             %=  $
               main-sequence  +.main-sequence
@@ -77,20 +86,21 @@
         ::  as always, we have to use raw nock as we have no type.
         ::  the gate is in fact ++ride.
         ::
-        ~>  %slog.[0 leaf+"1-a"]
+        ~>  %slog.[0 leaf+"1-b"]
         =+  ^=  compiler-gate 
             .*(0 compiler-formula)
         ::
         ::  compile the compiler source, producing (pair span nock).
         ::  the compiler ignores its input so we use a trivial span.
         ::
-        ~>  %slog.[0 leaf+"1-b"]
+        ~>  %slog.[0 leaf+"1-c"]
         =+  ^=  compiler-tool
             .*(compiler-gate(+< [%noun compiler-source]) -.compiler-gate)
         ::
         ::  check that the new compiler formula equals the old formula.
+        ::  this is not proof against thompson attacks but it doesn't hurt.
         ::
-        ~>  %slog.[0 leaf+"1-c"]
+        ~>  %slog.[0 leaf+"1-d"]
         ?>  =(compiler-formula +:compiler-tool)
         ::
         ::  get the span (type) of the kernel core, which is the context
@@ -99,19 +109,19 @@
         ::  context is at tree address `+>` (ie, `+7` or Lisp `cddr`).
         ::  we use the compiler again to infer this trivial program.
         ::
-        ~>  %slog.[0 leaf+"1-d"]
+        ~>  %slog.[0 leaf+"1-e"]
         =+  ^=  kernel-span
             -:.*(compiler-gate(+< [-.compiler-tool '+>']) -.compiler-gate)
         ::
         ::  compile the arvo source against the kernel core.
         ::
-        ~>  %slog.[0 leaf+"1-e"]
+        ~>  %slog.[0 leaf+"1-f"]
         =+  ^=  kernel-tool
             .*(compiler-gate(+< [kernel-span arvo-source]) -.compiler-gate)
         ::
-        ::  create the arvo kernel, whose subject is the comp
+        ::  create the arvo kernel, whose subject is the kernel core.
         ::
-        ~>  %slog.[0 leaf+"1-f"]
+        ~>  %slog.[0 leaf+"1-g"]
         .*(+>:compiler-gate +:kernel-tool)
 ::  
 ::  load files.  ship and desk are in generator beak.  case is now.
@@ -157,14 +167,25 @@
       =+  txt=.^(@ %cx (welp pax /hoon))
       `ovum`[[%vane den] [%veer abr pax txt]]
     --
-~&  %metal-firing
-^-  @p
-%-  mug
-.*  :*  event-zero
-        event-one
-        compiler-formula
-        compiler-source
-        arvo-source
-        vane-sequence
-    ==
-[2 [0 3] [0 2]]
+::
+::  ~&  %metal-testing
+::  =+  ^=  yop
+::      ^-  @p
+::      %-  mug
+::      .*  :*  event-zero
+::              event-one
+::              compiler-formula
+::              compiler-source
+::              arvo-source
+::              vane-sequence
+::          ==
+::      [2 [0 3] [0 2]]
+::  ~&  [%metal-tested yop]
+::
+:*  event-zero
+    event-one
+    compiler-formula
+    compiler-source
+    arvo-source
+    vane-sequence
+==

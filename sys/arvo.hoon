@@ -1,7 +1,7 @@
 ::                                                      ::
 ::::  6: layer six
   !:
-~>  %slog.[0 
+~>  %slog.[0 leaf+"arvo-boot"]
 =<  |=  ovo/*
     ^-  *
     ~>  %slog.[0 leaf+"arvo-event"]
