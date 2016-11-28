@@ -2850,185 +2850,6 @@
         (need f)
       --  ::
     --  ::ga
-::                                                      ::
-::::                  ++chrono                          ::  (2b) time
-  ::                                                    ::::
-++  chrono  ^?
-    |%
-    ::                                                  ::  ++dawn:chrono:behn
-    ++  dawn                                            ::  Jan 1 weekday
-      |=  yer/@ud
-      =+  yet=(sub yer 1)
-      %-  mod  :_  7
-      ;:  add
-        1 
-        (mul 5 (mod yet 4)) 
-        (mul 4 (mod yet 100)) 
-        (mul 6 (mod yet 400))
-      ==
-    ::                                                  ::  ++daws:chrono:behn
-    ++  daws                                            ::  date weekday
-      |=  yed/date
-      %-  mod  :_  7
-      %+  add
-        (dawn y.yed) 
-      (sub (yawn [y.yed m.yed d.t.yed]) (yawn y.yed 1 1))
-    ::                                                  ::  ++deal:chrono:behn
-    ++  deal                                            ::  to leap sec time
-      |=  yer/@da
-      =+  n=0
-      =+  yud=(yore yer)
-      |-  ^-  date
-      ?:  (gte yer (add (snag n lef:yu) ~s1))
-        (yore (year yud(s.t (add n s.t.yud))))
-      ?:  &((gte yer (snag n lef:yu)) (lth yer (add (snag n lef:yu) ~s1)))
-        yud(s.t (add +(n) s.t.yud))
-      ?:  =(+(n) (lent lef:yu))
-        (yore (year yud(s.t (add +(n) s.t.yud))))
-      $(n +(n))
-    ::                                                  ::  ++lead:chrono:behn
-    ++  lead                                            ::  from leap sec time
-      |=  ley/date
-      =+  ler=(year ley)
-      =+  n=0
-      |-  ^-  @da
-      =+  led=(sub ler (mul n ~s1))
-      ?:  (gte ler (add (snag n les:yu) ~s1))
-        led
-      ?:  &((gte ler (snag n les:yu)) (lth ler (add (snag n les:yu) ~s1)))
-        ?:  =(s.t.ley 60)
-          (sub led ~s1)
-        led
-      ?:  =(+(n) (lent les:yu))
-        (sub led ~s1)
-      $(n +(n))
-    ::                                                  ::  ++dust:chrono:behn
-    ++  dust                                            ::  print UTC format
-      |=  yed/date
-      ^-  tape
-      =+  wey=(daws yed)
-      ;:  weld
-          `tape`(snag wey (turn wik:yu |=(a/tape (scag 3 a))))
-          ", "  ~(rud at d.t.yed)  " "
-          `tape`(snag (dec m.yed) (turn mon:yu |=(a/tape (scag 3 a))))
-          " "  (scag 1 ~(rud at y.yed))  (slag 2 ~(rud at y.yed))  " "
-          ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
-          " "  "+0000"
-      ==
-    ::                                                  ::  ++hunt:chrono:behn
-    ++  hunt                                            ::  first of unit dates
-      |=  {one/(unit @da) two/(unit @da)}
-      ^-  (unit @da)
-      ?~  one  two
-      ?~  two  one
-      ?:((lth u.one u.two) one two)
-    ::                                                  ::  ++stud:chrono:behn
-    ++  stud                                            ::  parse UTC format
-      =<  |=  a/cord
-          %+  biff  (rush a (more sepa elem))
-          |=  b/(list _(wonk *elem))  ^-  (unit date)
-          =-  ?.((za:jo:js:eyre -) ~ (some (zp:jo:js:eyre -)))
-          ^+  =+  [*date u=unit]
-              *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
-          :~
-              |-(?~(b ~ ?.(?=($y -.i.b) $(b t.b) `+.i.b)))
-              |-(?~(b ~ ?.(?=($m -.i.b) $(b t.b) `+.i.b)))
-              |-(?~(b ~ ?.(?=($d -.i.b) $(b t.b) `+.i.b)))
-              |-(?~(b ~ ?.(?=($t -.i.b) $(b t.b) `+.i.b)))
-          ==
-      |%
-      ::                                                ::  ++snug:stud:chrono:
-      ++  snug                                          ::  position in list
-        |=  a/(list tape)
-        |=  b/tape
-        =+  [pos=1 len=(lent b)]
-        |-  ^-  (unit @u)
-        ?~  a  ~
-        ?:  =(b (scag len i.a))
-          `pos
-        $(pos +(pos), a t.a)
-      ::                                                ::  ++sepa:stud:chrono:
-      ++  sepa                                          ::  separator
-        ;~(pose ;~(plug com (star ace)) (plus ace))
-      ::                                                ::  ++elem:stud:chrono:
-      ++  elem                                          ::  date element
-        ;~  pose 
-          (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
-          (stag %w w)  (stag %z z)
-        == 
-      ::                                                ::  ++y:stud:chrono:behn
-      ++  y                                             ::  year
-        (stag %& (bass 10 (stun 3^4 dit)))
-      ::                                                ::  ++m:stud:chrono:behn
-      ++  m                                             ::  month
-        (sear (snug mon:yu) (plus alf))
-      ::                                                ::  ++d:stud:chrono:behn
-      ++  d                                             ::  day
-        (bass 10 (stun 1^2 dit))
-      ::                                                ::  ++t:stud:chrono:behn
-      ++  t                                             ::  hours:minutes:secs
-        %+  cook  |=({h/@u @ m/@u @ s/@u} ~[h m s])
-        ;~(plug d col d col d)
-      ::
-      ::  XX day of week is currently unchecked, and 
-      ::  timezone outright ignored.
-      ::                                                ::  ++w:stud:chrono:behn
-      ++  w                                             ::  day of week
-        (sear (snug wik:yu) (plus alf))
-      ::                                                ::  ++z:stud:chrono:behn
-      ++  z                                             ::  time zone
-        ;~(plug (mask "-+") dd dd)
-      ::                                                ::  ++dd:stud:chrono:
-      ++  dd                                            ::  two digits
-        (bass 10 (stun 2^2 dit))
-      --  ::
-    ::                                                  ::  ++unt:chrono:behn
-    ++  unt                                             ::  Urbit to Unix time
-      |=  a/@
-      (div (sub a ~1970.1.1) ~s1)
-    ::                                                  ::  ++yu:chrono:behn
-    ++  yu                                              ::  UTC format constants
-      |%
-      ::                                                ::  ++mon:yu:chrono:behn
-      ++  mon                                           ::  months
-        ^-  (list tape)
-        :~  "January"  "February"  "March"  "April"  "May"  "June"  "July"
-            "August"  "September"  "October"  "November"  "December"
-        ==
-      ::                                                ::  ++wik:yu:chrono:behn
-      ++  wik                                           ::  weeks
-        ^-  (list tape)
-        :~  "Sunday"  "Monday"  "Tuesday"  "Wednesday"  "Thursday"
-            "Friday"  "Saturday"
-        ==
-      ::                                                ::  ++lef:yu:chrono:behn
-      ++  lef                                           ::  leapsecond dates
-        ^-  (list @da)
-        :~  ~2015.6.30..23.59.59   ~2012.6.30..23.59.59
-            ~2008.12.31..23.59.58  ~2005.12.31..23.59.57
-            ~1998.12.31..23.59.56  ~1997.6.30..23.59.55
-            ~1995.12.31..23.59.54  ~1994.6.30..23.59.53
-            ~1993.6.30..23.59.52   ~1992.6.30..23.59.51
-            ~1990.12.31..23.59.50  ~1989.12.31..23.59.49
-            ~1987.12.31..23.59.48  ~1985.6.30..23.59.47
-            ~1983.6.30..23.59.46   ~1982.6.30..23.59.45
-            ~1981.6.30..23.59.44   ~1979.12.31..23.59.43
-            ~1978.12.31..23.59.42  ~1977.12.31..23.59.41
-            ~1976.12.31..23.59.40  ~1975.12.31..23.59.39
-            ~1974.12.31..23.59.38  ~1973.12.31..23.59.37
-            ~1972.12.31..23.59.36  ~1972.6.30..23.59.35
-        ==
-      ::                                                ::  ++les:yu:chrono:behn
-      ++  les                                           ::  leapsecond days
-        ^-  (list @da)
-        :~  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1  ~1997.7.1
-            ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1  ~1990.1.1
-            ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1  ~1980.1.1
-            ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1  ~1974.1.1
-            ~1973.1.1  ~1972.7.1
-        ==
-      --  ::yu
-    --  ::chrono
 ::                                                      ::::
 ::::                    ++clay                          ::  (2c) storage
   ::                                                    ::::
@@ -3216,38 +3037,6 @@
         (flop ^+(tez [meg.wor tez]))
       ?:  =(0 lub)  (flop tez)
       $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
-    ::                                                  ::  ++lune:lines:clay
-    ++  lune                                            ::  cord by unix line
-      ~%  %lune  ..is  ~
-      |=  txt/@t
-      ?~  txt
-        ^-  (list @t)  ~
-      =+  [byt=(rip 3 txt) len=(met 3 txt)]
-      =|  {lin/(list @t) off/@}
-      ^-  (list @t)
-      %-  flop
-      |-  ^+  lin
-      ?:  =(off len)
-        ~|  %noeol  !!
-      ?:  =((snag off byt) 10)
-        ?:  =(+(off) len)
-          [(rep 3 (scag off byt)) lin]
-        %=  $
-          lin  [(rep 3 (scag off byt)) lin]
-          byt  (slag +(off) byt)
-          len  (sub len +(off))
-          off  0
-        ==
-      $(off +(off))
-    ::                                                  ::  ++nule:lines:clay
-    ++  nule                                            ::  lines to unix cord
-      ~%  %nule  ..is  ~
-      |=  lin/(list @t)
-      ^-  @t
-      %+  can  3
-      %+  turn  lin
-      |=  t/@t
-      [+((met 3 t)) (cat 3 t 10)]
     ::                                                  ::  ++role:lines:clay
     ++  role                                            ::  line list to atom
       |=  tez/(list @t)
@@ -3262,45 +3051,10 @@
       $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
     --  ::lines
   ::                                                    ::
-  ::::                  ++space:clay                    ::  (2c3) name utils
+  ::::                  ++beams:clay                    ::  (2c3) beam utils
     ::                                                  ::::
-  ++  space  ^?
+  ++  beams  ^?
     |%
-    ::                                                  ::  ++feel:space:clay
-    ++  feel                                            ::  simple file write
-      |=  {pax/path val/cage}
-      ^-  miso
-      =+  dir=.^(arch %cy pax)
-      ?~  fil.dir  [%ins val]
-      [%mut val]
-    ::                                                  ::  ++file:space:clay
-    ++  file                                            ::  simple file load
-      |=  pax/path
-      ^-  (unit)
-      =+  dir=.^(arch %cy pax)
-      ?~(fil.dir ~ [~ .^(* %cx pax)])
-    ::                                                  ::  ++foal:space:clay
-    ++  foal                                            ::  high-level write
-      |=  {pax/path val/cage}
-      ^-  toro
-      ?>  ?=({* * * *} pax)
-      [i.t.pax [%& [[[t.t.t.pax (feel pax val)] ~]]]]
-    ::                                                  ::  ++fray:space:clay
-    ++  fray                                            ::  high-level delete
-      |=  pax/path
-      ^-  toro
-      ?>  ?=({* * * *} pax)
-      [i.t.pax [%& [[[t.t.t.pax [%del ~]] ~]]]]
-    ::                                                  ::  ++furl:space:clay
-    ++  furl                                            ::  unify changes
-      |=  {one/toro two/toro}
-      ^-  toro
-      ~|  %furl
-      ?>  ?&  =(p.one p.two)                            ::  same path
-              &(?=($& -.q.one) ?=($& -.q.two))          ::  both deltas
-          ==
-      [p.one [%& (weld p.q.one p.q.two)]]
-    ::                                                  ::  ++tome:space:clay
     ++  tome                                            ::  parse path to beam
       |=  pax/path
       ^-  (unit beam)
@@ -3373,46 +3127,6 @@
       ?~  myn  ~
       ?:  =(~ t.myn)  (trip i.myn)
       (weld (trip i.myn) `tape`['/' $(myn t.myn)])
-    ::                                                  ::  ++parsf:bytes:eyre
-    ++  parsf                                           ::  make parser from:
-      |^  |*  a/(pole _;/(*{$^(rule tape)}))            ::  ;"chars{rule}chars"
-          =-  (cook - (boil (norm a)))
-          |*  (list)
-          ?~  +<  ~
-          ?~  t  i
-          [i $(+< t)]
-      ::
-      ::  .=  (boil ~[[& dim] [| ", "] [& dim]]:ag)
-      ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
-      ::
-      ::                                                ::  ++boil:parsf:bytes:
-      ++  boil                                          ::
-        |*  (list (each rule tape))
-        ?~  +<  (easy ~)
-        ?:  ?=($| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
-        %+  cook  |*({* *} [i t]=+<)
-        ;~(plug p.i $(+< t))
-      ::
-      ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
-      ::
-      ::                                                ::  ++norm:parsf:bytes:
-      ++  norm                                          ::
-        |*  (pole _;/(*{$^(rule tape)}))
-        ?~  +<  ~
-        =>  .(+< [i=+<- t=+<+])
-        :_  t=$(+< t)
-        =+  rul=->->.i
-        ^=  i
-        ?~  rul     [%| p=rul]
-        ?~  +.rul   [%| p=rul]
-        ?@  &2.rul  [%| p=;;(tape rul)]
-        [%& p=rul]
-      --  ::
-    ::                                                  ::  ++scanf:bytes:eyre
-    ++  scanf                                           ::  formatted scan
-      |*  {tape (pole _;/(*{$^(rule tape)}))}
-      =>  .(+< [a b]=+<)
-      (scan a (parsf b))
     ::                                                  ::  ++taco:bytes:eyre
     ++  taco                                            ::  atom to octstream
       |=  tam/@  ^-  octs
@@ -4253,26 +3967,6 @@
     --  ::wired
   --  ::eyre
 ::                                                      ::
-::                                                      ::
-::::                      ++gall                        ::  (2g) application
-  ::                                                    ::::
-++  old-gall
-  =,  ^gall
-  |%
-  ::                                                    ::  ++pale:gall
-  ++  pale                                              ::  filter peers
-    |=  {hid/bowl fun/$-(sink ?)}
-    (skim (~(tap by sup.hid)) fun)
-  ::                                                    ::  ++prix:gall
-  ++  prix                                              ::  filter gate
-    |=  pax/path  |=  sink  ^-  ?
-    ?~  pax  &  ?~  r.+<  | 
-    &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
-  ::                                                    ::  ++prey:gall
-  ++  prey                                              ::  prefix 
-    |=({pax/path hid/bowl} (pale hid (prix pax)))
-  --  ::gall
-::                                                      ::
 ::::                    ++title                         ::  (2j) namespace
   ::                                                    ::::
 ++  title  ^?
@@ -4360,6 +4054,332 @@
           &(?=($earl (clan him)) =(our (sein him)))
       ==
     --  ::title
+::                                                      ::
+::::                    ++userlib                       ::  (2u) non-vane utils
+  ::                                                    ::::
+++  userlib  ^?
+  |%
+  ::                                                    ::
+  ::::                  ++chrono:userlib                ::  (2uB) time
+    ::                                                  ::::
+  ++  chrono  ^?
+    |%
+    ::                                                  ::  ++dawn:chrono:behn
+    ++  dawn                                            ::  Jan 1 weekday
+      |=  yer/@ud
+      =+  yet=(sub yer 1)
+      %-  mod  :_  7
+      ;:  add
+        1 
+        (mul 5 (mod yet 4)) 
+        (mul 4 (mod yet 100)) 
+        (mul 6 (mod yet 400))
+      ==
+    ::                                                  ::  ++daws:chrono:behn
+    ++  daws                                            ::  date weekday
+      |=  yed/date
+      %-  mod  :_  7
+      %+  add
+        (dawn y.yed) 
+      (sub (yawn [y.yed m.yed d.t.yed]) (yawn y.yed 1 1))
+    ::                                                  ::  ++deal:chrono:behn
+    ++  deal                                            ::  to leap sec time
+      |=  yer/@da
+      =+  n=0
+      =+  yud=(yore yer)
+      |-  ^-  date
+      ?:  (gte yer (add (snag n lef:yu) ~s1))
+        (yore (year yud(s.t (add n s.t.yud))))
+      ?:  &((gte yer (snag n lef:yu)) (lth yer (add (snag n lef:yu) ~s1)))
+        yud(s.t (add +(n) s.t.yud))
+      ?:  =(+(n) (lent lef:yu))
+        (yore (year yud(s.t (add +(n) s.t.yud))))
+      $(n +(n))
+    ::                                                  ::  ++lead:chrono:behn
+    ++  lead                                            ::  from leap sec time
+      |=  ley/date
+      =+  ler=(year ley)
+      =+  n=0
+      |-  ^-  @da
+      =+  led=(sub ler (mul n ~s1))
+      ?:  (gte ler (add (snag n les:yu) ~s1))
+        led
+      ?:  &((gte ler (snag n les:yu)) (lth ler (add (snag n les:yu) ~s1)))
+        ?:  =(s.t.ley 60)
+          (sub led ~s1)
+        led
+      ?:  =(+(n) (lent les:yu))
+        (sub led ~s1)
+      $(n +(n))
+    ::                                                  ::  ++dust:chrono:behn
+    ++  dust                                            ::  print UTC format
+      |=  yed/date
+      ^-  tape
+      =+  wey=(daws yed)
+      ;:  weld
+          `tape`(snag wey (turn wik:yu |=(a/tape (scag 3 a))))
+          ", "  ~(rud at d.t.yed)  " "
+          `tape`(snag (dec m.yed) (turn mon:yu |=(a/tape (scag 3 a))))
+          " "  (scag 1 ~(rud at y.yed))  (slag 2 ~(rud at y.yed))  " "
+          ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
+          " "  "+0000"
+      ==
+    ::                                                  ::  ++hunt:chrono:behn
+    ++  hunt                                            ::  first of unit dates
+      |=  {one/(unit @da) two/(unit @da)}
+      ^-  (unit @da)
+      ?~  one  two
+      ?~  two  one
+      ?:((lth u.one u.two) one two)
+    ::                                                  ::  ++stud:chrono:behn
+    ++  stud                                            ::  parse UTC format
+      =<  |=  a/cord
+          %+  biff  (rush a (more sepa elem))
+          |=  b/(list _(wonk *elem))  ^-  (unit date)
+          =-  ?.((za:jo:js:eyre -) ~ (some (zp:jo:js:eyre -)))
+          ^+  =+  [*date u=unit]
+              *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
+          :~
+              |-(?~(b ~ ?.(?=($y -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=($m -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=($d -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=($t -.i.b) $(b t.b) `+.i.b)))
+          ==
+      |%
+      ::                                                ::  ++snug:stud:chrono:
+      ++  snug                                          ::  position in list
+        |=  a/(list tape)
+        |=  b/tape
+        =+  [pos=1 len=(lent b)]
+        |-  ^-  (unit @u)
+        ?~  a  ~
+        ?:  =(b (scag len i.a))
+          `pos
+        $(pos +(pos), a t.a)
+      ::                                                ::  ++sepa:stud:chrono:
+      ++  sepa                                          ::  separator
+        ;~(pose ;~(plug com (star ace)) (plus ace))
+      ::                                                ::  ++elem:stud:chrono:
+      ++  elem                                          ::  date element
+        ;~  pose 
+          (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
+          (stag %w w)  (stag %z z)
+        == 
+      ::                                                ::  ++y:stud:chrono:behn
+      ++  y                                             ::  year
+        (stag %& (bass 10 (stun 3^4 dit)))
+      ::                                                ::  ++m:stud:chrono:behn
+      ++  m                                             ::  month
+        (sear (snug mon:yu) (plus alf))
+      ::                                                ::  ++d:stud:chrono:behn
+      ++  d                                             ::  day
+        (bass 10 (stun 1^2 dit))
+      ::                                                ::  ++t:stud:chrono:behn
+      ++  t                                             ::  hours:minutes:secs
+        %+  cook  |=({h/@u @ m/@u @ s/@u} ~[h m s])
+        ;~(plug d col d col d)
+      ::
+      ::  XX day of week is currently unchecked, and 
+      ::  timezone outright ignored.
+      ::                                                ::  ++w:stud:chrono:behn
+      ++  w                                             ::  day of week
+        (sear (snug wik:yu) (plus alf))
+      ::                                                ::  ++z:stud:chrono:behn
+      ++  z                                             ::  time zone
+        ;~(plug (mask "-+") dd dd)
+      ::                                                ::  ++dd:stud:chrono:
+      ++  dd                                            ::  two digits
+        (bass 10 (stun 2^2 dit))
+      --  ::
+    ::                                                  ::  ++unt:chrono:behn
+    ++  unt                                             ::  Urbit to Unix time
+      |=  a/@
+      (div (sub a ~1970.1.1) ~s1)
+    ::                                                  ::  ++yu:chrono:behn
+    ++  yu                                              ::  UTC format constants
+      |%
+      ::                                                  ::  ++mon:yu:chrono:behn
+      ++  mon                                             ::  months
+        ^-  (list tape)
+        :~  "January"  "February"  "March"  "April"  "May"  "June"  "July"
+            "August"  "September"  "October"  "November"  "December"
+        ==
+      ::                                                  ::  ++wik:yu:chrono:behn
+      ++  wik                                             ::  weeks
+        ^-  (list tape)
+        :~  "Sunday"  "Monday"  "Tuesday"  "Wednesday"  "Thursday"
+            "Friday"  "Saturday"
+        ==
+      ::                                                  ::  ++lef:yu:chrono:behn
+      ++  lef                                             ::  leapsecond dates
+        ^-  (list @da)
+        :~  ~2015.6.30..23.59.59   ~2012.6.30..23.59.59
+            ~2008.12.31..23.59.58  ~2005.12.31..23.59.57
+            ~1998.12.31..23.59.56  ~1997.6.30..23.59.55
+            ~1995.12.31..23.59.54  ~1994.6.30..23.59.53
+            ~1993.6.30..23.59.52   ~1992.6.30..23.59.51
+            ~1990.12.31..23.59.50  ~1989.12.31..23.59.49
+            ~1987.12.31..23.59.48  ~1985.6.30..23.59.47
+            ~1983.6.30..23.59.46   ~1982.6.30..23.59.45
+            ~1981.6.30..23.59.44   ~1979.12.31..23.59.43
+            ~1978.12.31..23.59.42  ~1977.12.31..23.59.41
+            ~1976.12.31..23.59.40  ~1975.12.31..23.59.39
+            ~1974.12.31..23.59.38  ~1973.12.31..23.59.37
+            ~1972.12.31..23.59.36  ~1972.6.30..23.59.35
+        ==
+      ::                                                  ::  ++les:yu:chrono:behn
+      ++  les                                             ::  leapsecond days
+        ^-  (list @da)
+        :~  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1  ~1997.7.1
+            ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1  ~1990.1.1
+            ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1  ~1980.1.1
+            ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1  ~1974.1.1
+            ~1973.1.1  ~1972.7.1
+        ==
+      --  ::yu
+    --  ::chrono
+  ::                                                    ::
+  ::::                  ++space:userlib                 ::  (2uC) file utils
+    ::                                                  ::::
+  ++  space  ^?
+    =,  ^clay
+    |%
+    ::                                                  ::  ++feel:space:clay
+    ++  feel                                            ::  simple file write
+      |=  {pax/path val/cage}
+      ^-  miso
+      =+  dir=.^(arch %cy pax)
+      ?~  fil.dir  [%ins val]
+      [%mut val]
+    ::                                                  ::  ++file:space:clay
+    ++  file                                            ::  simple file load
+      |=  pax/path
+      ^-  (unit)
+      =+  dir=.^(arch %cy pax)
+      ?~(fil.dir ~ [~ .^(* %cx pax)])
+    ::                                                  ::  ++foal:space:clay
+    ++  foal                                            ::  high-level write
+      |=  {pax/path val/cage}
+      ^-  toro
+      ?>  ?=({* * * *} pax)
+      [i.t.pax [%& [[[t.t.t.pax (feel pax val)] ~]]]]
+    ::                                                  ::  ++fray:space:clay
+    ++  fray                                            ::  high-level delete
+      |=  pax/path
+      ^-  toro
+      ?>  ?=({* * * *} pax)
+      [i.t.pax [%& [[[t.t.t.pax [%del ~]] ~]]]]
+    ::                                                  ::  ++furl:space:clay
+    ++  furl                                            ::  unify changes
+      |=  {one/toro two/toro}
+      ^-  toro
+      ~|  %furl
+      ?>  ?&  =(p.one p.two)                            ::  same path
+              &(?=($& -.q.one) ?=($& -.q.two))          ::  both deltas
+          ==
+      [p.one [%& (weld p.q.one p.q.two)]]
+    --  ::space
+  ::                                                    ::
+  ::::                  ++unix:userlib                  ::  (2uD) unix line-lists
+    ::                                                  ::::
+  ++  unix  ^?
+    |%
+    ::                                                  ::  ++lune:lines:clay
+    ++  lune                                            ::  cord by unix line
+      ~%  %lune  ..is  ~
+      |=  txt/@t
+      ?~  txt
+        ^-  (list @t)  ~
+      =+  [byt=(rip 3 txt) len=(met 3 txt)]
+      =|  {lin/(list @t) off/@}
+      ^-  (list @t)
+      %-  flop
+      |-  ^+  lin
+      ?:  =(off len)
+        ~|  %noeol  !!
+      ?:  =((snag off byt) 10)
+        ?:  =(+(off) len)
+          [(rep 3 (scag off byt)) lin]
+        %=  $
+          lin  [(rep 3 (scag off byt)) lin]
+          byt  (slag +(off) byt)
+          len  (sub len +(off))
+          off  0
+        ==
+      $(off +(off))
+    ::                                                  ::  ++nule:lines:clay
+    ++  nule                                            ::  lines to unix cord
+      ~%  %nule  ..is  ~
+      |=  lin/(list @t)
+      ^-  @t
+      %+  can  3
+      %+  turn  lin
+      |=  t/@t
+      [+((met 3 t)) (cat 3 t 10)]
+    --
+  ::                                                    ::
+  ::::                  ++scanf:userlib                 ::  (2uF) exterpolation
+    ::                                                  ::::
+  ++  scanf                                             ::  formatted scan
+    =<  |*  {tape (pole _;/(*{$^(rule tape)}))}
+        =>  .(+< [a b]=+<)
+        (scan a (parsf b))
+    |%
+    ::                                                  ::  ++parsf:bytes:eyre
+    ++  parsf                                           ::  make parser from:
+      |*  a/(pole _;/(*{$^(rule tape)}))                ::  ;"chars{rule}chars"
+      =-  (cook - (boil (norm a)))
+      |*  (list)
+      ?~  +<  ~
+      ?~  t  i
+      [i $(+< t)]
+    ::
+    ::  .=  (boil ~[[& dim] [| ", "] [& dim]]:ag)
+    ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
+    ::
+    ::                                                ::  ++boil:parsf:bytes:
+    ++  boil                                          ::
+      |*  (list (each rule tape))
+      ?~  +<  (easy ~)
+      ?:  ?=($| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
+      %+  cook  |*({* *} [i t]=+<)
+      ;~(plug p.i $(+< t))
+    ::
+    ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
+    ::
+    ::                                                ::  ++norm:parsf:bytes:
+    ++  norm                                          ::
+      |*  (pole _;/(*{$^(rule tape)}))
+      ?~  +<  ~
+      =>  .(+< [i=+<- t=+<+])
+      :_  t=$(+< t)
+      =+  rul=->->.i
+      ^=  i
+      ?~  rul     [%| p=rul]
+      ?~  +.rul   [%| p=rul]
+      ?@  &2.rul  [%| p=;;(tape rul)]
+      [%& p=rul]
+    --  ::exterpolate
+  ::                                                    ::
+  ::::                  ++pubsub:userlib                ::  (2uG) application
+    ::                                                  ::::
+  ++  pubsub  ^?
+    =,  ^gall
+    |%
+    ::                                                    ::  ++pale:gall
+    ++  pale                                              ::  filter peers
+      |=  {hid/bowl fun/$-(sink ?)}
+      (skim (~(tap by sup.hid)) fun)
+    ::                                                    ::  ++prix:gall
+    ++  prix                                              ::  filter gate
+      |=  pax/path  |=  sink  ^-  ?
+      ?~  pax  &  ?~  r.+<  | 
+      &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
+    ::                                                    ::  ++prey:gall
+    ++  prey                                              ::  prefix 
+      |=({pax/path hid/bowl} (pale hid (prix pax)))
+    --  ::pubsub
+  --
 ::
 ++  zuse  %310                                          ::  hoon+zuse kelvin
 ++  gift-arvo                                           ::  out result <-$
@@ -4410,13 +4430,13 @@
   --
 ++  behn  ^?
   |%
-  ++  chrono  chrono:+
+  ++  chrono  chrono:userlib
   --
 ++  clay  ^?
   |%
   ++  differ  differ:old-clay
-  ++  lines  lines:old-clay
-  ++  space  space:old-clay
+  ++  lines  =,(lines:old-clay =,(unix:userlib .))
+  ++  space  =,(beams:old-clay =,(space:userlib .))
   --
 ++  dill  !!
 ++  eyre  ^?
@@ -4429,12 +4449,7 @@
   ++  wired  wired:old-eyre
   --
 ++  ford  !!
-++  gall  ^?
-  |%
-  ++  pale  pale:old-gall
-  ++  prix  prix:old-gall
-  ++  prey  prey:old-gall
-  --
+++  gall  pubsub:userlib
 ++  jael  ^?
   |%
   ++  title  title:+
