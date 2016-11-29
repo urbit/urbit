@@ -2850,6 +2850,41 @@
         (need f)
       --  ::
     --  ::ga
+::                                                      ::
+::::                  ++unity                           ::  (2c1) unit promotion
+  ::                                                    ::::
+++  unity  ^?
+  |%
+      ::                                                ::  ++za:jo:js:eyre
+      ++  za                                            ::  full unit pole
+        |*  pod/(pole (unit))
+        ?~  pod  &
+        ?~  -.pod  |
+        (za +.pod)
+      ::                                                ::  ++zl:jo:js:eyre
+      ++  zl                                            ::  collapse unit list
+        |*  lut/(list (unit))
+        ?.  |-  ^-  ?
+            ?~(lut & ?~(i.lut | $(lut t.lut)))
+          ~
+        %-  some
+        |-
+        ?~  lut  ~
+        [i=u:+.i.lut t=$(lut t.lut)]
+      ::                                                ::  ++zm:jo:js:eyre
+      ++  zm                                            ::  collapse unit map
+        |*  lum/(map term (unit))
+        ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
+          ~
+        (some (~(run by lum) need))
+      ::                                                ::  ++zp:jo:js:eyre
+      ++  zp                                            ::  unit tuple
+        |*  but/(pole (unit))
+        ?~  but  !!
+        ?~  +.but  
+          u:->.but
+        [u:->.but (zp +.but)]
+  --
 ::                                                      ::::
 ::::                    ++clay                          ::  (2c) storage
   ::                                                    ::::
@@ -3143,6 +3178,7 @@
     |%
     ::                                                  ::  ++jo:js:eyre
     ++  jo                                              ::  json reparser
+      =,  unity
       =>  |%  ++  grub  (unit *) 
               ++  fist  $-(json grub)
           --  ::
@@ -3276,35 +3312,6 @@
       ::                                                ::  ++ul:jo:js:eyre
       ++  ul                                            ::  null
         |=(jon/json ?~(jon (some ~) ~))
-      ::                                                ::  ++za:jo:js:eyre
-      ++  za                                            ::  full unit pole
-        |*  pod/(pole (unit))
-        ?~  pod  &
-        ?~  -.pod  |
-        (za +.pod)
-      ::                                                ::  ++zl:jo:js:eyre
-      ++  zl                                            ::  collapse unit list
-        |*  lut/(list (unit))
-        ?.  |-  ^-  ?
-            ?~(lut & ?~(i.lut | $(lut t.lut)))
-          ~
-        %-  some
-        |-
-        ?~  lut  ~
-        [i=u:+.i.lut t=$(lut t.lut)]
-      ::                                                ::  ++zm:jo:js:eyre
-      ++  zm                                            ::  collapse unit map
-        |*  lum/(map term (unit))
-        ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
-          ~
-        (some (~(run by lum) need))
-      ::                                                ::  ++zp:jo:js:eyre
-      ++  zp                                            ::  unit tuple
-        |*  but/(pole (unit))
-        ?~  but  !!
-        ?~  +.but  
-          u:->.but
-        [u:->.but (zp +.but)]
       --  ::jo
     ::                                                  ::  ++joba:js:eyre
     ++  joba                                            ::  object from k-v pair
