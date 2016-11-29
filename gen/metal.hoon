@@ -6,25 +6,51 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
+|=  $:  {now/@da * bec/beak}
         {{who/@p $~} $~}
     ==
-:-  %noun
 ::
 ::  we're creating an event series E whose lifecycle can be computed
-::  with the standard lifecycle formula L, [2 [0 3] [0 2]].  that is:
+::  with the urbit lifecycle formula L, `[2 [0 3] [0 2]]`.  that is:
 ::  if E is the list of events processed by a computer in its life,
 ::  its final state is S, where S is nock(E L).
 ::
-::  in practice, the first five nouns in E are: two boot loaders,
+::  in practice, the first five nouns in E are: two boot formulas,
 ::  a hoon compiler as a nock formula, the same compiler as source,
-::  and the arvo kernel as source.  after the first five events,
-::  we enter an iterative form in which the state is a function
-::  that, passed the next event, produces the next state.
+::  and the arvo kernel as source.  
 ::
-=+  ^=  event-zero
+::  after the first five special events, we enter an iterative
+::  sequence of regular events which continues for the rest of the 
+::  computer's life.  during this sequence, each state is a function 
+::  that, passed the next event, produces the next state.  
+::
+::  each event is a `[date wire type data]` tuple, where `date` is a
+::  128-bit Urbit date; `wire` is an opaque path which output can
+::  match to track causality; `type` is a symbol describing the type
+::  of input; and `data` is input data specific to `type`.
+::
+::  in real life we don't actually run the lifecycle loop,
+::  since real life is updated incrementally and also cares
+::  about things like output.  we couple to the internal
+::  structure of the state machine and work directly with
+::  the underlying arvo engine.
+::
+::  this arvo core, which is at `+7` (Lisp `cddr`) of the state
+::  function (see its public interface in `sys/arvo`), gives us
+::  extra features, like output, which are relevant to running
+::  a real-life urbit vm, but don't affect the formal definition.
+::
+::  so a real-life urbit interpreter is coupled to the shape of
+::  the arvo core.  it becomes very hard to change this shape.
+::  fortunately, it is not a very complex interface.
+::
+:-  %noun
+::
+::  boot-one: lifecycle formula
+::
+=+  ^=  boot-one
     ::
-    ::  event 0 is the lifecycle formula which computes the final
+    ::  event 1 is the lifecycle formula which computes the final
     ::  state from the full event sequence.
     ::
     ::  the formal urbit state is always just a gate (function)
@@ -43,36 +69,33 @@
         ::  with its product, called on the next event, until
         ::  we run out of events.
         ::
-        ::  in real life we don't actually run the lifecycle loop,
-        ::  since real life is updated incrementally and also cares
-        ::  about things like output.  we couple to the internal
-        ::  structure of the state machine and work directly with
-        ::  the underlying arvo engine.
-        ::
         |-  ?@  main-sequence
               state-gate
             %=  $
               main-sequence  +.main-sequence
               state-gate     .*(state-gate(+< -.main-sequence) -.state-gate)
             ==
-=+  ^=  event-one
+::
+::  boot-two: startup formula
+::
+=+  ^=  boot-two
     ::
-    ::  event 1 is the boot formula, which verifies the compiler
+    ::  event 2 is the startup formula, which verifies the compiler
     ::  and starts the main lifecycle.
     ::
-    =>  :*  ::  event 2: a formula producing the hoon compiler
+    =>  :*  ::  event 3: a formula producing the hoon compiler
             ::
             compiler-formula=**
             ::
-            ::  event 3: hoon compiler source, compiling to event 2
+            ::  event 4: hoon compiler source, compiling to event 2
             ::
             compiler-source=*@t
             ::
-            ::  event 4: arvo kernel source
+            ::  event 5: arvo kernel source
             ::
             arvo-source=*@t
             ::
-            ::  events 5..n: main sequence with normal semantics
+            ::  events 6..n: main sequence with normal semantics
             ::
             main-sequence=**
         ==
@@ -124,40 +147,73 @@
         ~>  %slog.[0 leaf+"1-g"]
         .*(+>:compiler-gate +:kernel-tool)
 ::  
-::  load files.  ship and desk are in generator beak.  case is now.
-::  source files:
-::
-::        sys/hoon        compiler
-::        sys/arvo        kernel
-::        sys/zuse        standard library
-::        sys/vane/ames   network vane
-::        sys/vane/behn   timer vane
-::        sys/vane/clay   revision-control vane
-::        sys/vane/dill   console vane
-::        sys/vane/eyre   web/internet vane
-::        sys/vane/ford   build vane
-::        sys/vane/gall   app vane
-::        sys/vane/jael   security vane
+::  sys: root path to boot system, `/~me/[desk]/now/sys`
 ::
 =+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
+::
+::  compiler-source: hoon source file producing compiler, `sys/hoon`
+::
 =+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
+::
+::  compiler-twig: compiler as hoon expression
+::
 ~&  %metal-parsing
 =+  compiler-twig=(ream compiler-source)
 ~&  %metal-parsed
+::
+::  compiler-formula: compiler as nock formula 
+::
+~&  %metal-compiling
 =+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
 ~&  %metal-compiled
+::
+::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
+::
 =+  arvo-source=.^(@t %cx (welp sys /arvo/hoon))
-=+  ^=  vane-sequence
+::
+::  main-moves: installation actions
+::
+=+  ^=  main-moves
     |^  ^-  (list ovum)
-        :~  (vent %$ /zuse)
+        :~  ::
+            ::  configure identity
+            ::
             [[%name (scot %p who) ~] [%veal who]]
-            (vent %c /vane/clay)
-            (vent %g /vane/gall)
-            (vent %f /vane/ford)
+            ::
+            ::  sys/zuse: standard library
+            ::
+            (vent %$ /zuse)
+            ::
+            ::  sys/vane/ames: network
+            ::
             (vent %a /vane/ames)
+            ::
+            ::  sys/vane/behn: timer
+            ::
             (vent %b /vane/behn)
+            ::
+            ::  sys/vane/clay: revision control
+            ::
+            (vent %c /vane/clay)
+            ::
+            ::  sys/vane/dill: console
+            ::
             (vent %d /vane/dill)
+            ::
+            ::  sys/vane/eyre: web
+            ::
             (vent %e /vane/eyre)
+            ::
+            ::  sys/vane/ford: build
+            ::
+            (vent %f /vane/ford)
+            ::
+            ::  sys/vane/gall: applications
+            ::
+            (vent %g /vane/gall)
+            ::
+            ::  sys/vane/jael: security
+            ::
             (vent %j /vane/jael)
         ==
     ::
@@ -168,24 +224,32 @@
       `ovum`[[%vane den] [%veer abr pax txt]]
     --
 ::
+::  main-events: full events with advancing times
+::
+=+  ^=  main-events
+    |-  ^-  (list (pair @da ovum))
+    ?~  main-moves  ~
+    :-  [now i.main-moves]
+    $(main-moves t.main-moves, now (add now (bex 48)))
+::
 ::  ~&  %metal-testing
 ::  =+  ^=  yop
 ::      ^-  @p
 ::      %-  mug
-::      .*  :*  event-zero
-::              event-one
+::      .*  :*  boot-one
+::              boot-two
 ::              compiler-formula
 ::              compiler-source
 ::              arvo-source
-::              vane-sequence
+::              main-sequence
 ::          ==
 ::      [2 [0 3] [0 2]]
 ::  ~&  [%metal-tested yop]
 ::
-:*  event-zero
-    event-one
+:*  boot-one
+    boot-two
     compiler-formula
     compiler-source
     arvo-source
-    vane-sequence
+    main-events
 ==

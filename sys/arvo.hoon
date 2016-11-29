@@ -2,10 +2,10 @@
 ::::  6: layer six
   !:
 ~>  %slog.[0 leaf+"arvo-boot"]
-=<  |=  ovo/*
+=<  |=  {now/@da ovo/*}
     ^-  *
     ~>  %slog.[0 leaf+"arvo-event"]
-    .(+> +:(poke *@da ovo))
+    .(+> +:(poke now ovo))
 =>
 ~%  %hex  +  ~
 |%

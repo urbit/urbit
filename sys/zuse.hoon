@@ -10,7 +10,7 @@
 ::  arvo's eight major vanes (kernel modules).  these are:
 ::
 ::      - %ames: networking         (rhymes with "games")
-::      - %behn: scheduling         ("bane")
+::      - %behn: scheduling         ("fell")
 ::      - %clay: revision control   ("play")
 ::      - %dill: console            ("pill")
 ::      - %eyre: web                ("fair")
