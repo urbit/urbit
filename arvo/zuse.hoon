@@ -3273,15 +3273,15 @@
       --  ::
     --  ::differ
 ::                                                      ::::
-::::                      ++eyre                        ::  (2e) oldweb
+::::                      ++html                        ::  (2e) text encodings
   ::                                                    ::::
-++  old-eyre  ^?
+++  html  ^?
   =,  ^eyre
   |%
   ::                                                    ::
-  ::::                    ++base64:eyre                 ::  (2e1) base64
+  ::::                    ++mime:html                   ::  (2e1) MIME
     ::                                                  ::::
-  ++  base64  ^?
+  ++  mime  ^?
     |%
     ::                                                  ::  ++sifo:base64:eyre
     ++  sifo                                            ::  encode base64
@@ -3311,12 +3311,6 @@
          (cold 62 (just '+'))
          (cold 63 (just '/'))
        ==
-    --  ::base64
-  ::                                                    ::
-  ::::                    ++bytes:eyre                  ::  (2e2) bytestreams 
-    ::                                                  ::::
-  ++  bytes  ^?
-    |%
     ::                                                  ::  ++moon:bytes:eyre
     ++  moon                                            ::  mime type to text
       |=  myn/mite
@@ -3334,8 +3328,8 @@
       |=  tep/tape  ^-  octs
       (taco (rap 3 tep))
     --  ::bytes
-     ::                                                  ::  ++poja:js:eyre
-    ++  poja                                            ::  parse JSON
+  ::                                                    ::  ++poja:js:eyre
+  ++  poja                                              ::  parse JSON
       =<  |=(a/cord `(unit json)`(rush a apex))
       |%
       ::                                                ::  ++abox:poja:js:eyre
@@ -3432,8 +3426,8 @@
       ++  wish                                          ::  with whitespace
         |*(sef/rule ;~(pfix spac sef))
       --  ::poja
-    ::                                                  ::  ++pojo:js:eyre
-    ++  pojo                                            ::  print json
+  ::                                                    ::  ++pojo:js:eyre
+  ++  pojo                                              ::  print json
       |^  |=(val/json (apex val ""))
       ++  apex
         |=  {val/json rez/tape}
@@ -3484,13 +3478,8 @@
           $92  "\\\\"
         ==
       --  ::pojo
- ::                                                    ::
-  ::::                    ++xml:eyre                    ::  (2e4) xml
-    ::                                                  ::::
-  ++  xml  ^?
-    |%
-    ::                                                  ::  ++print:xml:eyre
-    ++  print                                           ::  xml printer
+  ::                                                    ::  ++print:xml:eyre
+  ++  en-xml                                            ::  xml printer
       =<  |=(a/manx `tape`(apex a ~))
       |_  _[unq=`?`| cot=`?`|]
       ::                                                ::  ++apex:print:xml:
@@ -3561,8 +3550,8 @@
               %keygen  %link  %meta  %param     %source   %track  %wbr 
         ==  ==
       --  ::
-    ::                                                  ::  ++parse:xml:eyre
-    ++  parse                                           ::  xml parser
+  ::                                                    ::  ++parse:xml:eyre
+  ++  de-xml                                            ::  xml parser
       =<  |=(a/cord (rush a apex))
       |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]
       ::                                                ::  ++apex:parse:xml:
@@ -3640,34 +3629,8 @@
       ++  whit                                          ::  whitespace
         (mask ~[' ' `@`0x9 `@`0xa])
       --  ::
-    --  ::xml
-  ::                                                    ::
-  ::::                   ++url:eyre                     ::  (2e5) urls
-    ::                                                  ::::
-  ++  url  ^?
-    |%
-    ::                                                  ::  ++deft:url:eyre
-    ++  deft                                            ::  parse url extension
-      |=  rax/(list @t)
-      |-  ^-  pork
-      ?~  rax
-        [~ ~]
-      ?^  t.rax
-        [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
-      =+  ^-  raf/(like term)
-          =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
-          (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
-      ?~  q.raf
-        [~ [i.rax ~]]
-      =+  `{ext/term {@ @} fyl/tape}`u.q.raf
-      :-  `ext
-      ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
-    ::                                                  ::  ++earf:url:eyre
-    ++  earf                                            ::  purf to tape
-      |=  purf
-      (weld (earn p) ?~(q "" `tape`['#' (trip u.q)]))
-    ::                                                  ::  ++earn:url:eyre
-    ++  earn                                            ::  print purl
+  ::                                                    ::  ++earn:url:eyre
+  ++  earn                                              ::  print purl
       =<  |=(pul/purl `tape`(apex %& pul))
       |%
       ::                                                ::  ++apex:earn:url:eyre
@@ -3677,6 +3640,10 @@
           $&  (weld (head p.p.qur) `tape`$(qur [%| +.p.qur]))
           $|  ['/' (weld (body p.qur) (tail q.qur))]
         ==
+      ::                                                ::  ++earf:url:eyre
+      ++  apix                                          ::  purf to tape
+        |=  purf
+        (weld (apex %& p) ?~(q "" `tape`['#' (trip u.q)]))
       ::                                                ::  ++body:earn:url:eyre
       ++  body                                          ::
         |=  pok/pork  ^-  tape
@@ -3717,14 +3684,14 @@
           ?~(t.kay ~ `tape`['&' $(kay t.kay)])
         ==
       --  ::
-    ::                                                  ::  ++epur:url:eyre
-    ++  fuel                                            ::  parse urbit fcgi
+  ::                                                    ::  ++epur:url:eyre
+  ++  fuel                                              ::  parse urbit fcgi
       |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
       [(malt qix) ((hard cred) ced) bem /]
-    ::                                                  ::  ++urle:url:eyre
-    ++  urle                                            ::  url encode
+  ::                                                    ::  ++urle:url:eyre
+  ++  urle                                              ::  url encode
       |=  tep/tape
       ^-  tape
       %-  zing
@@ -3741,8 +3708,8 @@
           ==
         [tap ~]
       ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
-    ::                                                  ::  ++urld:url:eyre
-    ++  urld                                            ::  url decode
+  ::                                                    ::  ++urld:url:eyre
+  ++  urld                                              ::  url decode
       |=  tep/tape
       ^-  (unit tape)
       ?~  tep  [~ ~]
@@ -3755,9 +3722,25 @@
         ?~(nex ~ [~ [`@`u.val u.nex]])
       =+  nex=$(tep t.tep)
       ?~(nex ~ [~ i.tep u.nex])
-    ::                                                  ::  ++urlp:url:eyre
-    ++  urlp                                            ::  url+header parser
+  ::                                                    ::  ++urlp:url:eyre
+  ++  urlp                                              ::  url+header parser
       |%
+      ::                                                  ::  ++deft:url:eyre
+      ++  deft                                            ::  parse url extension
+        |=  rax/(list @t)
+        |-  ^-  pork
+        ?~  rax
+          [~ ~]
+        ?^  t.rax
+          [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
+        =+  ^-  raf/(like term)
+            =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
+            (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
+        ?~  q.raf
+          [~ [i.rax ~]]
+        =+  `{ext/term {@ @} fyl/tape}`u.q.raf
+        :-  `ext
+        ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
       ::                                                ::  ++apat:urlp:url:eyre
       ++  apat                                          ::  2396 abs_path
         %+  cook  deft
@@ -3912,11 +3895,11 @@
           (stag %| ;~(plug apat yque))
         ==
       --
-    --  ::url
-  ::                                                    ::
-  ::::                  ++wired:eyre                    ::  anton's wire toys
-    ::                                                  ::::
-  ++  wired  ^?
+  --  ::eyre
+::                                                      ::
+::::                    ++wired:eyre                    ::  wire formatting
+  ::                                                    ::::
+++  wired  ^?
     |%
     ::                                                  ::  ++dray:wired:eyre
     ++  dray                                            ::  load tuple in path
@@ -3964,7 +3947,6 @@
       ^-  (unit {(odo:raid -.b) _(need *(..^$ +.b))})
       (both hed ((..^$ +.b) +.a))
     --  ::wired
-  --  ::eyre
 ::                                                      ::
 ::::                    ++title                         ::  (2j) namespace
   ::                                                    ::::
@@ -4440,12 +4422,16 @@
 ++  dill  !!
 ++  eyre  ^?
   |%
-  ++  base64  base64:old-eyre
-  ++  bytes  bytes:old-eyre
-  ++  js  [[jo=jo js]:format [poja=poja pojo=pojo]:old-eyre]
-  ++  xml  xml:old-eyre
-  ++  url  url:old-eyre
-  ++  wired  wired:old-eyre
+  ++  base64  [sifo=sifo ofis=ofis]:mime:html
+  ++  bytes  [moon=moon taco=taco tact=tact]:mime:html 
+  ++  js  [[jo=jo js]:format [poja=poja pojo=pojo]:html]
+  ++  xml  [print=en-xml parse=de-xml]:html
+  ++  url
+    =>  html
+    :*  urle=urle  urld=urld  earn=earn  earf=apix:earn
+        urlp=urlp  fuel=fuel 
+    ==
+  ++  wired  wired:+
   --
 ++  ford  !!
 ++  gall  pubsub:userlib
