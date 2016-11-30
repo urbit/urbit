@@ -11,6 +11,7 @@
 =,  js:eyre
 =,  url:eyre
 =,  xml:eyre
+=,  chrono:behn
 ::
 ::::  functions
   ::
@@ -24,7 +25,7 @@
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
   ^-  hiss
-  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:epur)  :: base path
+  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:urlp)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
   ^-  hiss
@@ -80,7 +81,7 @@
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su usor)) ~)
-        (fasp created-at+da)
+        (fasp created-at+(cu year (ci stud so)))
         text+(cu crip (su (star escp:^parse)))  :: parse html escapes
     ==
   ++  usel 

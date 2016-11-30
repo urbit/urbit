@@ -252,7 +252,7 @@
     ^-  purl
     %+  scan 
       "https://www.googleapis.com/gmail/v1/users/me{<`path`endpoint>}"
-    auri:epur
+    auri:urlp
     ::  Send an HTTP req
   ++  send-http
     |=  hiz/hiss

@@ -223,7 +223,7 @@
 ++  from-cookies
   |=  {maf/math fil/$-({@t @t} ?)}
   =+  `cot/(list @t)`(~(get ju maf) 'cookie')
-  =+  `cok/quay`(zing `(list quay)`(murn cot (curr rush cock:epur)))
+  =+  `cok/quay`(zing `(list quay)`(murn cot (curr rush cock:urlp)))
   |-  ^-  (unit cord)
   ?~  cok  ~
   ?:((fil i.cok) [~ q.i.cok] $(cok t.cok))
@@ -803,14 +803,14 @@
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
-      =+  ryp=`quri`(rash q.heq zest:epur)
+      =+  ryp=`quri`(rash q.heq zest:urlp)
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
             $&  ?>(=(sec p.p.p.ryp) p.ryp)
             $|  =+  hot=(~(get ja maf) %host)
                 ?>  ?=({@ $~} hot)
-                [[sec (rash i.hot thor:epur)] p.ryp q.ryp]
+                [[sec (rash i.hot thor:urlp)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       ?:  ?=($chis -.kyz)                               :: IPC escape hatch
