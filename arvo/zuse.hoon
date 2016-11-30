@@ -2856,7 +2856,7 @@
 ++  unity  ^?
   |%
       ::                                                ::  ++zl:jo:js:eyre
-      ++  zl                                            ::  collapse unit list
+      ++  drop-list                                            ::  collapse unit list
         |*  lut/(list (unit))
         ?.  |-  ^-  ?
             ?~(lut & ?~(i.lut | $(lut t.lut)))
@@ -2866,25 +2866,25 @@
         ?~  lut  ~
         [i=u:+.i.lut t=$(lut t.lut)]
       ::                                                ::  ++zm:jo:js:eyre
-      ++  zm                                            ::  collapse unit map
+      ++  drop-map                                            ::  collapse unit map
         |*  lum/(map term (unit))
         ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
           ~
         (some (~(run by lum) need))
       ::
       ::                                                ::  ++za:jo:js:eyre
-      ++  za                                            ::  full unit pole
+      ++  all-full                                            ::  full unit pole
         |*  pod/(pole (unit))
         ?~  pod  &
         ?~  -.pod  |
-        (za +.pod)
+        (all-full +.pod)
       ::                                                ::  ++zp:jo:js:eyre
-      ++  zp                                            ::  unit tuple
+      ++  need-tuple                                            ::  unit tuple
         |*  but/(pole (unit))
         ?~  but  !!
         ?~  +.but  
           u:->.but
-        [u:->.but (zp +.but)]
+        [u:->.but (need-tuple +.but)]
   --
 ::                                                      ::
 ::::                  ++format                          ::  (2c) noun conversion
@@ -2892,7 +2892,7 @@
 ++  format  ^?
   |%
     ::                                                  ::  ++lore:lines:clay
-    ++  lore                                            ::  atom to line list
+    ++  to-wain                                            ::  atom to line list
       ~%  %lore  ..is  ~
       |=  lub/@
       =|  tez/(list @t)
@@ -2911,7 +2911,7 @@
       ?:  =(0 lub)  (flop tez)
       $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
     ::                                                  ::  ++role:lines:clay
-    ++  role                                            ::  line list to atom
+    ++  of-wain                                            ::  line list to atom
       |=  tez/(list @t)
       =|  {our/@ i/@ud}
       |-  ^-  @
@@ -2922,8 +2922,13 @@
       ?:  =(0 i)
         $(i +(i), tez t.tez, our i.tez)
       $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
+    ::                                                  ::  ++tope:space:clay
+    ++  to-path                                            ::  beam to path
+      |=  bem/beam
+      ^-  path
+      [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
     ::                                                  ::  ++tome:space:clay
-    ++  tome                                            ::  parse path to beam
+    ++  of-path                                            ::  parse path to beam
       |=  pax/path
       ^-  (unit beam)
       ?.  ?=({* * * *} pax)  ~
@@ -2935,49 +2940,44 @@
       |=  cis/coin
       ?.  ?=({$$ case} cis)  ~
       `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
-    ::                                                  ::  ++tope:space:clay
-    ++  tope                                            ::  beam to path
-      |=  bem/beam
-      ^-  path
-      [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
   ::                                                    ::
   ::::                    ++js:eyre                     ::  (2e3) json
     ::                                                  ::::
-  ++  js  ^?
+  ++  enjs  ^?
     |%
     ::                                                  ::  ++joba:js:eyre
-    ++  joba                                            ::  object from k-v pair
+    ++  frond                                            ::  object from k-v pair
       |=  {p/@t q/json}
       ^-  json
       [%o [[p q] ~ ~]]
     ::                                                  ::  ++jobe:js:eyre
-    ++  jobe                                            ::  object from k-v list
+    ++  pairs                                            ::  object from k-v list
       |=  a/(list {p/@t q/json})
       ^-  json
       [%o (~(gas by *(map @t json)) a)]
     ::                                                  ::  ++jape:js:eyre
-    ++  jape                                            ::  string from tape
-      |=  a/tape
+    ++  tape                                            ::  string from tape
+      |=  a/^tape
       ^-  json
       [%s (crip a)]
     ::                                                  ::  ++jone:js:eyre
-    ++  jone                                            ::  number from unsigned
+    ++  numb                                            ::  number from unsigned
       |=  a/@u
       ^-  json
       :-  %n
       ?:  =(0 a)  '0'
       %-  crip
       %-  flop
-      |-  ^-  tape 
+      |-  ^-  ^tape 
       ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
     ::                                                  ::  ++jode:js:eyre
-    ++  jode                                            ::  ms timestamp
-      |=  a/time 
-      =-  (jone (div (mul - 1.000) ~s1))
+    ++  time                                            ::  ms timestamp
+      |=  a/^time 
+      =-  (numb (div (mul - 1.000) ~s1))
       (add (div ~s1 2.000) (sub a ~1970.1.1))
     --  ::js
   ::                                                    ::  ++jo:js:eyre
-  ++  jo                                                ::  json reparser
+  ++  dejs                                                ::  json reparser
       =,  unity
       =>  |%  ++  grub  (unit *) 
               ++  fist  $-(json grub)
@@ -2988,7 +2988,7 @@
         |*  wit/fist
         |=  jon/json
         ?.  ?=({$a *} jon)  ~
-        %-  zl
+        %-  drop-list
         |-  
         ?~  p.jon  ~
         [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
@@ -2998,7 +2998,7 @@
         |=  jon/json
         ?.  ?=({$a *} jon)  ~
         =+  raw=((at-raw wil) p.jon)
-        ?.((za raw) ~ (some (zp raw)))
+        ?.((all-full raw) ~ (some (need-tuple raw)))
       ::                                                ::  ++at-raw:jo:js:eyre
       ++  at-raw                                        ::  array as tuple
         |*  wil/(pole fist)
@@ -3065,7 +3065,7 @@
         |=  jon/json
         ?.  ?=({$o *} jon)  ~
         =+  raw=((ot-raw wer) p.jon)
-        ?.((za raw) ~ (some (zp raw)))
+        ?.((all-full raw) ~ (some (need-tuple raw)))
       ::                                                ::  ++ot-raw:jo:js:eyre
       ++  ot-raw                                        ::  object as tuple
         |*  wer/(pole {cord fist})
@@ -3078,7 +3078,7 @@
         |*  wit/fist
         |=  jon/json
         ?.  ?=({$o *} jon)  ~
-        (zm (~(run by p.jon) wit))
+        (drop-map (~(run by p.jon) wit))
       ::                                                ::  ++op:jo:js:eyre
       ++  op                                            ::  parse keys of map
         |*  {fel/rule wit/fist}
@@ -3086,7 +3086,7 @@
         %-  ci  :_  (om wit)
         |=  a/(map cord _(need *wit))
         ^-  (unit (list _[(wonk *fel) (need *wit)]))
-        =-  (zl (turn (~(tap by a)) -))
+        =-  (drop-list (turn (~(tap by a)) -))
         |*  {a/cord b/*}
         =+  nit=(rush a fel) 
         ?~  nit  ~
@@ -3285,14 +3285,14 @@
   ++  mime  ^?
     |%
     ::                                                  ::  ++taco:bytes:eyre
-    ++  taco                                            ::  atom to octstream
+    ++  as-octs                                            ::  atom to octstream
       |=  tam/@  ^-  octs
       [(met 3 tam) tam]
     ::                                                  ::  ++tact:bytes:eyre
-    ++  tact                                            ::  tape to octstream
+    ++  as-octt                                            ::  tape to octstream
       |=  tep/tape  ^-  octs
-      (taco (rap 3 tep))
-    ++  moon                                            ::  mime type to text
+      (as-octs (rap 3 tep))
+    ++  en-mite                                            ::  mime type to text
       |=  myn/mite
       %-  crip
       |-  ^-  tape
@@ -3300,7 +3300,7 @@
       ?:  =(~ t.myn)  (trip i.myn)
       (weld (trip i.myn) `tape`['/' $(myn t.myn)])
     ::                                                  ::  ++sifo:base64:eyre
-    ++  sifo                                            ::  encode base64
+    ++  en-base64                                            ::  encode base64
       |=  tig/@
       ^-  tape
       =+  poc=(~(dif fo 3) 0 (met 3 tig))
@@ -3315,7 +3315,7 @@
           [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
       (weld (flop (slag poc sif)) (reap poc '='))
     ::                                                  ::  ++ofis:base64:eyre
-    ++  ofis                                            ::  decode base64
+    ++  de-base64                                            ::  decode base64
       =-  |=(a/cord (rash a fel))
       =<  fel=(cook |~(a/@ `@t`(swp 3 a)) (bass 64 .))
       =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
@@ -3330,7 +3330,7 @@
     ::                                                  ::  ++moon:bytes:eyre
     --  ::bytes
   ::                                                    ::  ++pojo:js:eyre
-  ++  pojo                                              ::  print json
+  ++  en-json                                              ::  print json
       |^  |=(val/json (apex val ""))
       ++  apex
         |=  {val/json rez/tape}
@@ -3382,7 +3382,7 @@
         ==
       --  ::pojo
   ::                                                    ::  ++poja:js:eyre
-  ++  poja                                              ::  parse JSON
+  ++  de-json                                              ::  parse JSON
       =<  |=(a/cord `(unit json)`(rush a apex))
       |%
       ::                                                ::  ++abox:poja:js:eyre
@@ -3631,7 +3631,7 @@
         (mask ~[' ' `@`0x9 `@`0xa])
       --  ::
   ::                                                    ::  ++epur:url:eyre
-  ++  urle                                              ::  url encode
+  ++  en-urlt                                              ::  url encode
       |=  tep/tape
       ^-  tape
       %-  zing
@@ -3649,7 +3649,7 @@
         [tap ~]
       ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
   ::                                                    ::  ++urld:url:eyre
-  ++  urld                                              ::  url decode
+  ++  de-urlt                                              ::  url decode
       |=  tep/tape
       ^-  (unit tape)
       ?~  tep  [~ ~]
@@ -3663,7 +3663,7 @@
       =+  nex=$(tep t.tep)
       ?~(nex ~ [~ i.tep u.nex])
   ::                                                    ::  ++earn:url:eyre
-  ++  earn                                              ::  print purl
+  ++  en-purl                                              ::  print purl
       =<  |=(pul/purl `tape`(apex %& pul))
       |%
       ::                                                ::  ++apex:earn:url:eyre
@@ -3682,7 +3682,7 @@
         |=  pok/pork  ^-  tape
         ?~  q.pok  ~
         |-
-        =+  seg=(urle (trip i.q.pok))
+        =+  seg=(en-urlt (trip i.q.pok))
         ?~  t.q.pok
           ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
         (welp seg '/' $(q.pok t.q.pok))
@@ -3712,13 +3712,13 @@
         |-  ^-  tape
         ?~  kay  ~
         ;:  welp
-          (urle (trip p.i.kay))
-          ?~(q.i.kay ~ ['=' (urle (trip q.i.kay))])
+          (en-urlt (trip p.i.kay))
+          ?~(q.i.kay ~ ['=' (en-urlt (trip q.i.kay))])
           ?~(t.kay ~ `tape`['&' $(kay t.kay)])
         ==
       --  ::
   ::                                                    ::  ++urlp:url:eyre
-  ++  urlp                                              ::  url+header parser
+  ++  de-purl                                           ::  url+header parser
       |%
       ::                                                  ::  ++deft:url:eyre
       ++  deft                                            ::  parse url extension
@@ -4119,7 +4119,8 @@
       =<  |=  a/cord
           %+  biff  (rush a (more sepa elem))
           |=  b/(list _(wonk *elem))  ^-  (unit date)
-          =-  ?.((za:jo:js:eyre -) ~ (some (zp:jo:js:eyre -)))
+          =,  unity
+          =-  ?.((all-full -) ~ (some (need-tuple -)))
           ^+  =+  [*date u=unit]
               *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
           :~
@@ -4418,21 +4419,38 @@
 ++  clay  ^?
   |%
   ++  differ  differ:+
-  ++  lines  [[lore=lore role=role]:format unix:userlib]
-  ++  space  [[tome=tome tope=tope]:format space:userlib]
+  ++  lines  [[lore=to-wain role=of-wain]:format unix:userlib]
+  ++  space  [[tome=of-path tope=to-path]:format space:userlib]
   --
 ++  dill  !!
 ++  eyre  ^?
   |%
-  ++  base64  [sifo=sifo ofis=ofis]:mime:html
-  ++  bytes  [moon=moon taco=taco tact=tact]:mime:html 
-  ++  js  [[jo=jo js]:format [poja=poja pojo=pojo]:html]
+  ++  base64  [sifo=en-base64 ofis=de-base64]:mime:html
+  ++  bytes  [moon=en-mite taco=as-octs tact=as-octt]:mime:html 
+  ++  unity-old  [zl=drop-list zm=drop-map za=all-full zp=need-tuple]:unity
+  ++  js
+    :+  [pojo=en-json poja=de-json]:html
+      jo=[dejs:format unity-old]
+    =>  format  ^?
+    |%
+    ++  joba  frond:enjs
+    ++  jobe  pairs:enjs
+    ++  jape  tape:enjs
+    ++  jone  numb:enjs
+    ++  jode  time:enjs
+    --
+  ::
   ++  xml  [print=en-xml parse=de-xml]:html
   ++  url
-    =>  html
-    :*  urle=urle  urld=urld  earn=earn  earf=apix:earn
-        urlp=urlp  fuel=fuel 
-    ==
+    =>  html  ^?
+    |%
+    ++  urle  en-urlt
+    ++  urld  de-urlt
+    ++  earn  en-purl
+    ++  earf  apix:en-purl
+    ++  urlp  de-purl
+    ++  fuel  fuel:+
+    --
   ++  wired  wired:+
   --
 ++  ford  !!
