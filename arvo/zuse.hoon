@@ -4103,13 +4103,6 @@
           ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
           " "  "+0000"
       ==
-    ::                                                  ::  ++hunt:chrono:
-    ++  hunt                                            ::  first of unit dates
-      |=  {one/(unit @da) two/(unit @da)}
-      ^-  (unit @da)
-      ?~  one  two
-      ?~  two  one
-      ?:((lth u.one u.two) one two)
     ::                                                  ::  ++stud:chrono:
     ++  stud                                            ::  parse UTC format
       =<  |=  a/cord
@@ -4410,7 +4403,9 @@
   --
 ++  behn  ^?
   |%
-  ++  chrono  chrono:userlib
+  ++  chrono
+    :-  chrono:userlib
+    hunt=|=({a/(unit @da) b/(unit @da)} (hunt lth a b))
   --
 ++  clay  ^?
   |%

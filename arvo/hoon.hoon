@@ -252,6 +252,13 @@
   |*  b/*
   ?.((a b) ~ [~ u=b])
 ::
+++  hunt                                                ::  first of units
+  |*  {ord/$-({* *} ?) one/(unit) two/(unit)}
+  ^-  (unit ?(_(need one) _(need two)))
+  ?~  one  two
+  ?~  two  one
+  ?:((ord u.one u.two) one two)
+::
 ++  lift                                                ::  lift mold (fmap)
   |*  a/mold                                            ::  flipped
   |*  b/(unit)                                          ::  curried
