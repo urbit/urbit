@@ -3,7 +3,7 @@
 ::::  /hoon/feed/twit/gen
   ::
 /-    twitter
-!:
+::
 ::::  ~fyr
   ::
 :-  %say

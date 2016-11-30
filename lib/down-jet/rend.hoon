@@ -3,7 +3,9 @@
 ::::  /hoon/rend/down-jet/lib
   ::
 /?    310
-!:
+=*  xml  xml:eyre
+=,  url:eyre
+::
 |%
 ++  into-inner
   |=  {a/marl b/manx}
@@ -74,14 +76,14 @@
       (push (reso ele) ~)
     ::  begin reparsing of html that the spec jankily lets through  ::
     =+  tex=(trip (role p.ele))
-    =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:poxa))
+    =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:parse:xml))
     ?^  mar
       (push u.mar)
-    =^  hed  lum  (chomp tex head:poxa)
+    =^  hed  lum  (chomp tex head:parse:xml)
     ?^  hed
       =+  max=`marx`u.hed
       (push(lum q) [max p] ~):[apex(had `n.max) .]
-    =^  tal  lum  (chomp tex tail:poxa)
+    =^  tal  lum  (chomp tex tail:parse:xml)
     ?~  tal
       =^  cha  lum  (chomp tex prn)
       ?^  cha
@@ -138,9 +140,9 @@
              ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
   ::     %html  
              ::=+  tex=(role (turn p.a crip))
-             ::=+  (poxa tex)
+             ::=+  (parse:xml tex)
              ::?^  -  u.-
-             ::=+  (rush tex (star ;~(pose gah comt:poxa)))
+             ::=+  (rush tex (star ;~(pose gah comt:parse:xml)))
              ::?^  -  ;/(~)
              ::;lost: {<p.a>}
         :: ;/([(role (turn p.a crip))]~)                ::  XX  haaaaaaack
@@ -173,15 +175,15 @@
         apex(p.i.lim (weld p.ele p.i.lim))  
       (push (reso ele) ~)
     =+  tex=(trip p.ele)
-    =^  emo  lim  (chomp tex empt:poxa)
+    =^  emo  lim  (chomp tex empt:parse:xml)
     ?^  emo
       =+  man=`manx`u.emo
       (push man ~)
-    =^  hed  lim  (chomp tex head:poxa)
+    =^  hed  lim  (chomp tex head:parse:xml)
     ?^  hed
       =+  max=`marx`u.hed
       (push(lim q) [max p] ~):[apex(had `n.max) .]
-    =^  tal  lim  (chomp tex tail:poxa)
+    =^  tal  lim  (chomp tex tail:parse:xml)
     ?~  tal
       (push ;lost:"{tex}" ~)
     ?:  =(had tal)

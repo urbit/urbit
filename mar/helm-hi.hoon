@@ -2,6 +2,8 @@
 ::::  /hoon/helm-hi/mar
   ::
 /?    310
+=,  bytes:eyre
+=,  js:eyre
 |_  txt/cord
 ::
 ++  grab                                                ::  convert from

@@ -8,7 +8,7 @@
 =,  space:clay
 ::                                                      ::  ::
 ::::                                                    ::  ::::
-  !:                                                    ::    ::
+  ::                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
       $:  $4
@@ -108,7 +108,7 @@
           {$unto p/cuft:^gall}                          ::  
       ==                                                ::
     --                                                  ::
-!:                                                      ::
+::                                                      ::
 ::::                                                    ::
   ::                                                    ::
 |_  $:  hid/bowl:^gall                                  ::  system state

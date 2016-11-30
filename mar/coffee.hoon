@@ -2,6 +2,7 @@
 ::::  /hoon/coffee/mar
   ::
 /?    310
+=,  bytes:eyre
 |_  mud/@t
 ++  grow
   |%

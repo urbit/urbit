@@ -6,12 +6,12 @@
 /-  sole
 ::
 ::::
-  !:
+  ::
 =>  |%
     ++  begs  {his/@p tic/@p yen/@t ges/gens}
     ++  scug  |*({a/@ b/(pole)} ?~(b ~ ?~(a ~ [-.b $(b +.b, a (dec a))])))
     --
-[sole .]
+=,  sole
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/_(scug *@ *{his/@p tic/@p $~})}

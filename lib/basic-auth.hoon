@@ -2,6 +2,7 @@
 ::
 ::::  /hoon/basic-auth/lib
   ::
+=,  ^eyre
 |%
 ++  keys  @t
 --

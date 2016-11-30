@@ -2,7 +2,7 @@
 ::::  /hoon/wipe/write/mar
   ::
 /?    310
-!:
+::
 |_  spur
 ++  grab
   |%

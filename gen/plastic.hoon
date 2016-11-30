@@ -4,7 +4,7 @@
 /?    310
 ::
 ::::
-  !:
+  ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {{who/@p $~} $~}

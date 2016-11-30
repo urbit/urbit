@@ -2,6 +2,8 @@
 ::::  /hoon/ask-mail/mar
   ::
 /?    310
+=,  js:eyre
+=,  bytes:eyre
 |_  txt/cord
 ::
 ++  grab                                                ::  convert from

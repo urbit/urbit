@@ -3,10 +3,10 @@
   ::
 /?    310
 /-    sole
-!:
+::
 ::::
   ::
-[sole .]
+=,  sole
 |%
 ++  mar-sole-change                       ::  XX  dependency
   |_  cha/sole-change
@@ -37,7 +37,7 @@
   |=  a/_?>(?=(^ a) i.a)
   ?@(a (trip a) ^$(a q.a))
 --
-!:
+::
 |_  sef/sole-effect
 ::
 ++  grab                                                ::  convert from

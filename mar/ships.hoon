@@ -2,6 +2,7 @@
 ::::  /hoon/ships/mar
   ::
 /?    310
+=,  js:eyre
 |_  all/(list ship)
 ++  grab  |%
           ++  noun  (list ship)

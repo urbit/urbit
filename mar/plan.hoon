@@ -3,9 +3,13 @@
   ::
 /?    310
 /-    plan-acct, plan-diff
-!:
+::
 ::::  ~fyr
   ::
+=,  ^eyre
+=,  js:eyre
+=,  url:eyre
+=,  lines:clay
 |_  all/{{who/@txname loc/@txloc} acc/(map knot plan-acct)}
 ::
 ++  grow                                                ::  convert to

@@ -6,7 +6,7 @@
 /+    womb
 ::
 ::::
-  !:
+  ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {{pas/@uvH who/@t $~} $~}

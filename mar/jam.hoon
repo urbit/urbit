@@ -2,7 +2,8 @@
 ::::  /hoon/jam/mar
   ::
 /?    310
-!:
+::
+=,  bytes:eyre
 |_  mud/@
 ++  grow
   |%

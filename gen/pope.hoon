@@ -5,7 +5,7 @@
 /?    310
 ::  Input twitter keys
 /-    sole
-!:
+::
 =+  cryp=crub
 =+  [sole]
 :-  %ask
