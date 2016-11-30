@@ -1118,7 +1118,7 @@
 ::                                                      ::
 ::::                  ++crypto                          ::  (2a1) cryptography
   ::                                                    ::::
-  ++  crypto  ^?
+++  crypto  ^?
     =,  ^ames
     =,  number
     |%
@@ -2851,7 +2851,7 @@
       --  ::
     --  ::ga
 ::                                                      ::
-::::                  ++unity                           ::  (2c1) unit promotion
+::::                  ++unity                           ::  (2b) unit promotion
   ::                                                    ::::
 ++  unity  ^?
   |%
@@ -2885,17 +2885,241 @@
           u:->.but
         [u:->.but (zp +.but)]
   --
-::                                                      ::::
-::::                    ++clay                          ::  (2c) storage
+::                                                      ::
+::::                  ++format                          ::  (2c) noun conversion
   ::                                                    ::::
-++  old-clay
-  =,  ^clay
+++  format  ^?
   |%
+    ::                                                  ::  ++lore:lines:clay
+    ++  lore                                            ::  atom to line list
+      ~%  %lore  ..is  ~
+      |=  lub/@
+      =|  tez/(list @t)
+      |-  ^+  tez
+      =+  ^=  wor
+        =+  [meg=0 i=0]
+        |-  ^-  {meg/@ i/@ end/@f}
+        =+  gam=(cut 3 [i 1] lub)
+        ?:  =(0 gam)
+          [meg i %.y]
+        ?:  =(10 gam)
+          [meg i %.n]
+        $(meg (cat 3 meg gam), i +(i))
+      ?:  end.wor
+        (flop ^+(tez [meg.wor tez]))
+      ?:  =(0 lub)  (flop tez)
+      $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
+    ::                                                  ::  ++role:lines:clay
+    ++  role                                            ::  line list to atom
+      |=  tez/(list @t)
+      =|  {our/@ i/@ud}
+      |-  ^-  @
+      ?~  tez
+        our
+      ?:  =(%$ i.tez)
+        $(i +(i), tez t.tez, our (cat 3 our 10))
+      ?:  =(0 i)
+        $(i +(i), tez t.tez, our i.tez)
+      $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
+    ::                                                  ::  ++tome:space:clay
+    ++  tome                                            ::  parse path to beam
+      |=  pax/path
+      ^-  (unit beam)
+      ?.  ?=({* * * *} pax)  ~
+      %+  biff  (slaw %p i.pax)
+      |=  who/ship
+      %+  biff  (slaw %tas i.t.pax)
+      |=  dex/desk
+      %+  biff  (slay i.t.t.pax)
+      |=  cis/coin
+      ?.  ?=({$$ case} cis)  ~
+      `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+    ::                                                  ::  ++tope:space:clay
+    ++  tope                                            ::  beam to path
+      |=  bem/beam
+      ^-  path
+      [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
   ::                                                    ::
-  ::::                  ++differ:clay                   ::  (2c1) hunt-mcilroy
+  ::::                    ++js:eyre                     ::  (2e3) json
     ::                                                  ::::
-  ++  differ  ^?
-    =,  lines
+  ++  js  ^?
+    |%
+    ::                                                  ::  ++joba:js:eyre
+    ++  joba                                            ::  object from k-v pair
+      |=  {p/@t q/json}
+      ^-  json
+      [%o [[p q] ~ ~]]
+    ::                                                  ::  ++jobe:js:eyre
+    ++  jobe                                            ::  object from k-v list
+      |=  a/(list {p/@t q/json})
+      ^-  json
+      [%o (~(gas by *(map @t json)) a)]
+    ::                                                  ::  ++jape:js:eyre
+    ++  jape                                            ::  string from tape
+      |=  a/tape
+      ^-  json
+      [%s (crip a)]
+    ::                                                  ::  ++jone:js:eyre
+    ++  jone                                            ::  number from unsigned
+      |=  a/@u
+      ^-  json
+      :-  %n
+      ?:  =(0 a)  '0'
+      %-  crip
+      %-  flop
+      |-  ^-  tape 
+      ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
+    ::                                                  ::  ++jode:js:eyre
+    ++  jode                                            ::  ms timestamp
+      |=  a/time 
+      =-  (jone (div (mul - 1.000) ~s1))
+      (add (div ~s1 2.000) (sub a ~1970.1.1))
+    --  ::js
+  ::                                                    ::  ++jo:js:eyre
+  ++  jo                                                ::  json reparser
+      =,  unity
+      =>  |%  ++  grub  (unit *) 
+              ++  fist  $-(json grub)
+          --  ::
+      |%
+      ::                                                ::  ++ar:jo:js:eyre
+      ++  ar                                            ::  array as list
+        |*  wit/fist
+        |=  jon/json
+        ?.  ?=({$a *} jon)  ~
+        %-  zl
+        |-  
+        ?~  p.jon  ~
+        [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
+      ::                                                ::  ++at:jo:js:eyre
+      ++  at                                            ::  array as tuple
+        |*  wil/(pole fist)
+        |=  jon/json
+        ?.  ?=({$a *} jon)  ~
+        =+  raw=((at-raw wil) p.jon)
+        ?.((za raw) ~ (some (zp raw)))
+      ::                                                ::  ++at-raw:jo:js:eyre
+      ++  at-raw                                        ::  array as tuple
+        |*  wil/(pole fist)
+        |=  jol/(list json)
+        ?~  wil  ~
+        :-  ?~(jol ~ (-.wil i.jol))
+        ((at-raw +.wil) ?~(jol ~ t.jol))
+      ::                                                ::  ++bo:jo:js:eyre
+      ++  bo                                            ::  boolean
+        |=(jon/json ?.(?=({$b *} jon) ~ [~ u=p.jon]))
+      ::                                                ::  ++bu:jo:js:eyre
+      ++  bu                                            ::  boolean not
+        |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
+      ::                                                ::  ++ci:jo:js:eyre
+      ++  ci                                            ::  maybe transform
+        |*  {poq/gate wit/fist}
+        |=  jon/json
+        (biff (wit jon) poq)
+      ::                                                ::  ++cu:jo:js:eyre
+      ++  cu                                            ::  transform
+        |*  {poq/gate wit/fist}
+        |=  jon/json
+        (bind (wit jon) poq)
+      ::                                                ::  ++da:jo:js:eyre
+      ++  di                                            ::  millisecond date
+        %+  cu
+          |=  a/@u  ^-  @da
+          (add ~1970.1.1 (div (mul ~s1 a) 1.000))
+        ni
+      ::                                                ::  ++mu:jo:js:eyre
+      ++  mu                                            ::  true unit
+        |*  wit/fist
+        |=  jon/json
+        ?~(jon (some ~) (bind (wit jon) some))
+      ::                                                ::  ++ne:jo:js:eyre
+      ++  ne                                            ::  number as real
+        |=  jon/json
+        ^-  (unit @rd)
+        ::  please implement me, it's not that hard!
+        !!
+      ::                                                ::  ++ni:jo:js:eyre
+      ++  ni                                            ::  number as integer
+        |=  jon/json 
+        ?.  ?=({$n *} jon)  ~
+        (rush p.jon dem)
+      ::                                                ::  ++no:jo:js:eyre
+      ++  no                                            ::  number as cord
+        |=  jon/json
+        ?.  ?=({$n *} jon)  ~
+        (some p.jon)
+      ::                                                ::  ++of:jo:js:eyre
+      ++  of                                            ::  object as frond
+        |*  wer/(pole {cord fist})
+        |=  jon/json
+        ?.  ?=({$o {@ *} $~ $~} jon)  ~
+        |-
+        ?~  wer  ~
+        ?:  =(-.-.wer p.n.p.jon)  
+          ((pe -.-.wer +.-.wer) q.n.p.jon)
+        ((of +.wer) jon)
+      ::                                                ::  ++ot:jo:js:eyre
+      ++  ot                                            ::  object as tuple
+        |*  wer/(pole {cord fist})
+        |=  jon/json
+        ?.  ?=({$o *} jon)  ~
+        =+  raw=((ot-raw wer) p.jon)
+        ?.((za raw) ~ (some (zp raw)))
+      ::                                                ::  ++ot-raw:jo:js:eyre
+      ++  ot-raw                                        ::  object as tuple
+        |*  wer/(pole {cord fist})
+        |=  jom/(map @t json)
+        ?~  wer  ~
+        =+  ten=(~(get by jom) -.-.wer)
+        [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jom)]
+      ::                                                ::  ++om:jo:js:eyre
+      ++  om                                            ::  object as map
+        |*  wit/fist
+        |=  jon/json
+        ?.  ?=({$o *} jon)  ~
+        (zm (~(run by p.jon) wit))
+      ::                                                ::  ++op:jo:js:eyre
+      ++  op                                            ::  parse keys of map
+        |*  {fel/rule wit/fist}
+        %+  cu  my
+        %-  ci  :_  (om wit)
+        |=  a/(map cord _(need *wit))
+        ^-  (unit (list _[(wonk *fel) (need *wit)]))
+        =-  (zl (turn (~(tap by a)) -))
+        |*  {a/cord b/*}
+        =+  nit=(rush a fel) 
+        ?~  nit  ~
+        (some [u.nit b])
+      ::                                                ::  ++pe:jo:js:eyre
+      ++  pe                                            ::  prefix
+        |*  {pre/* wit/fist}
+        (cu |*(* [pre +<]) wit)
+      ::                                                ::  ++sa:jo:js:eyre
+      ++  sa                                            ::  string as tape
+        |=  jon/json
+        ?.(?=({$s *} jon) ~ (some (trip p.jon)))
+      ::                                                ::  ++so:jo:js:eyre
+      ++  so                                            ::  string as cord
+        |=  jon/json
+        ?.(?=({$s *} jon) ~ (some p.jon))
+      ::                                                ::  ++su:jo:js:eyre
+      ++  su                                            ::  parse string
+        |*  sab/rule
+        |=  jon/json
+        ?.  ?=({$s *} jon)  ~
+        (rush p.jon sab)
+      ::                                                ::  ++ul:jo:js:eyre
+      ++  ul                                            ::  null
+        |=(jon/json ?~(jon (some ~) ~))
+      --  ::jo
+  --
+
+::                                                      ::
+::::                    ++differ:clay                   ::  (2d) hunt-mcilroy
+  ::                                                    ::::
+++  differ  ^?
+    =,  ^clay
+    =,  format
     |%
     ::                                                  ::  ++berk:differ:clay
     ++  berk                                            ::  invert diff patch
@@ -3048,67 +3272,6 @@
         $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
       --  ::
     --  ::differ
-  ::                                                    ::
-  ::::                  ++lines:clay                    ::  (2c2) unix line text
-    ::                                                  ::::
-  ++  lines  ^?
-    |%
-    ::                                                  ::  ++lore:lines:clay
-    ++  lore                                            ::  atom to line list
-      ~%  %lore  ..is  ~
-      |=  lub/@
-      =|  tez/(list @t)
-      |-  ^+  tez
-      =+  ^=  wor
-        =+  [meg=0 i=0]
-        |-  ^-  {meg/@ i/@ end/@f}
-        =+  gam=(cut 3 [i 1] lub)
-        ?:  =(0 gam)
-          [meg i %.y]
-        ?:  =(10 gam)
-          [meg i %.n]
-        $(meg (cat 3 meg gam), i +(i))
-      ?:  end.wor
-        (flop ^+(tez [meg.wor tez]))
-      ?:  =(0 lub)  (flop tez)
-      $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
-    ::                                                  ::  ++role:lines:clay
-    ++  role                                            ::  line list to atom
-      |=  tez/(list @t)
-      =|  {our/@ i/@ud}
-      |-  ^-  @
-      ?~  tez
-        our
-      ?:  =(%$ i.tez)
-        $(i +(i), tez t.tez, our (cat 3 our 10))
-      ?:  =(0 i)
-        $(i +(i), tez t.tez, our i.tez)
-      $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
-    --  ::lines
-  ::                                                    ::
-  ::::                  ++beams:clay                    ::  (2c3) beam utils
-    ::                                                  ::::
-  ++  beams  ^?
-    |%
-    ++  tome                                            ::  parse path to beam
-      |=  pax/path
-      ^-  (unit beam)
-      ?.  ?=({* * * *} pax)  ~
-      %+  biff  (slaw %p i.pax)
-      |=  who/ship
-      %+  biff  (slaw %tas i.t.pax)
-      |=  dex/desk
-      %+  biff  (slay i.t.t.pax)
-      |=  cis/coin
-      ?.  ?=({$$ case} cis)  ~
-      `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
-    ::                                                  ::  ++tope:space:clay
-    ++  tope                                            ::  beam to path
-      |=  bem/beam
-      ^-  path
-      [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
-    --  ::space
-  --  ::clay
 ::                                                      ::::
 ::::                      ++eyre                        ::  (2e) oldweb
   ::                                                    ::::
@@ -3171,188 +3334,7 @@
       |=  tep/tape  ^-  octs
       (taco (rap 3 tep))
     --  ::bytes
-  ::                                                    ::
-  ::::                    ++js:eyre                     ::  (2e3) json
-    ::                                                  ::::
-  ++  js  ^?
-    |%
-    ::                                                  ::  ++jo:js:eyre
-    ++  jo                                              ::  json reparser
-      =,  unity
-      =>  |%  ++  grub  (unit *) 
-              ++  fist  $-(json grub)
-          --  ::
-      |%
-      ::                                                ::  ++ar:jo:js:eyre
-      ++  ar                                            ::  array as list
-        |*  wit/fist
-        |=  jon/json
-        ?.  ?=({$a *} jon)  ~
-        %-  zl
-        |-  
-        ?~  p.jon  ~
-        [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
-      ::                                                ::  ++at:jo:js:eyre
-      ++  at                                            ::  array as tuple
-        |*  wil/(pole fist)
-        |=  jon/json
-        ?.  ?=({$a *} jon)  ~
-        =+  raw=((at-raw wil) p.jon)
-        ?.((za raw) ~ (some (zp raw)))
-      ::                                                ::  ++at-raw:jo:js:eyre
-      ++  at-raw                                        ::  array as tuple
-        |*  wil/(pole fist)
-        |=  jol/(list json)
-        ?~  wil  ~
-        :-  ?~(jol ~ (-.wil i.jol))
-        ((at-raw +.wil) ?~(jol ~ t.jol))
-      ::                                                ::  ++bo:jo:js:eyre
-      ++  bo                                            ::  boolean
-        |=(jon/json ?.(?=({$b *} jon) ~ [~ u=p.jon]))
-      ::                                                ::  ++bu:jo:js:eyre
-      ++  bu                                            ::  boolean not
-        |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
-      ::                                                ::  ++ci:jo:js:eyre
-      ++  ci                                            ::  maybe transform
-        |*  {poq/gate wit/fist}
-        |=  jon/json
-        (biff (wit jon) poq)
-      ::                                                ::  ++cu:jo:js:eyre
-      ++  cu                                            ::  transform
-        |*  {poq/gate wit/fist}
-        |=  jon/json
-        (bind (wit jon) poq)
-      ::                                                ::  ++da:jo:js:eyre
-      ++  di                                            ::  millisecond date
-        %+  cu
-          |=  a/@u  ^-  @da
-          (add ~1970.1.1 (div (mul ~s1 a) 1.000))
-        ni
-      ::                                                ::  ++mu:jo:js:eyre
-      ++  mu                                            ::  true unit
-        |*  wit/fist
-        |=  jon/json
-        ?~(jon (some ~) (bind (wit jon) some))
-      ::                                                ::  ++ne:jo:js:eyre
-      ++  ne                                            ::  number as real
-        |=  jon/json
-        ^-  (unit @rd)
-        ::  please implement me, it's not that hard!
-        !!
-      ::                                                ::  ++ni:jo:js:eyre
-      ++  ni                                            ::  number as integer
-        |=  jon/json 
-        ?.  ?=({$n *} jon)  ~
-        (rush p.jon dem)
-      ::                                                ::  ++no:jo:js:eyre
-      ++  no                                            ::  number as cord
-        |=  jon/json
-        ?.  ?=({$n *} jon)  ~
-        (some p.jon)
-      ::                                                ::  ++of:jo:js:eyre
-      ++  of                                            ::  object as frond
-        |*  wer/(pole {cord fist})
-        |=  jon/json
-        ?.  ?=({$o {@ *} $~ $~} jon)  ~
-        |-
-        ?~  wer  ~
-        ?:  =(-.-.wer p.n.p.jon)  
-          ((pe -.-.wer +.-.wer) q.n.p.jon)
-        ((of +.wer) jon)
-      ::                                                ::  ++ot:jo:js:eyre
-      ++  ot                                            ::  object as tuple
-        |*  wer/(pole {cord fist})
-        |=  jon/json
-        ?.  ?=({$o *} jon)  ~
-        =+  raw=((ot-raw wer) p.jon)
-        ?.((za raw) ~ (some (zp raw)))
-      ::                                                ::  ++ot-raw:jo:js:eyre
-      ++  ot-raw                                        ::  object as tuple
-        |*  wer/(pole {cord fist})
-        |=  jom/(map @t json)
-        ?~  wer  ~
-        =+  ten=(~(get by jom) -.-.wer)
-        [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jom)]
-      ::                                                ::  ++om:jo:js:eyre
-      ++  om                                            ::  object as map
-        |*  wit/fist
-        |=  jon/json
-        ?.  ?=({$o *} jon)  ~
-        (zm (~(run by p.jon) wit))
-      ::                                                ::  ++op:jo:js:eyre
-      ++  op                                            ::  parse keys of map
-        |*  {fel/rule wit/fist}
-        %+  cu  my
-        %-  ci  :_  (om wit)
-        |=  a/(map cord _(need *wit))
-        ^-  (unit (list _[(wonk *fel) (need *wit)]))
-        =-  (zl (turn (~(tap by a)) -))
-        |*  {a/cord b/*}
-        =+  nit=(rush a fel) 
-        ?~  nit  ~
-        (some [u.nit b])
-      ::                                                ::  ++pe:jo:js:eyre
-      ++  pe                                            ::  prefix
-        |*  {pre/* wit/fist}
-        (cu |*(* [pre +<]) wit)
-      ::                                                ::  ++sa:jo:js:eyre
-      ++  sa                                            ::  string as tape
-        |=  jon/json
-        ?.(?=({$s *} jon) ~ (some (trip p.jon)))
-      ::                                                ::  ++so:jo:js:eyre
-      ++  so                                            ::  string as cord
-        |=  jon/json
-        ?.(?=({$s *} jon) ~ (some p.jon))
-      ::                                                ::  ++su:jo:js:eyre
-      ++  su                                            ::  parse string
-        |*  sab/rule
-        |=  jon/json
-        ?.  ?=({$s *} jon)  ~
-        (rush p.jon sab)
-      ::                                                ::  ++ul:jo:js:eyre
-      ++  ul                                            ::  null
-        |=(jon/json ?~(jon (some ~) ~))
-      --  ::jo
-    ::                                                  ::  ++joba:js:eyre
-    ++  joba                                            ::  object from k-v pair
-      |=  {p/@t q/json}
-      ^-  json
-      [%o [[p q] ~ ~]]
-    ::                                                  ::  ++jobe:js:eyre
-    ++  jobe                                            ::  object from k-v list
-      |=  a/(list {p/@t q/json})
-      ^-  json
-      [%o (~(gas by *(map @t json)) a)]
-    ::                                                  ::  ++jape:js:eyre
-    ++  jape                                            ::  string from tape
-      |=  a/tape
-      ^-  json
-      [%s (crip a)]
-    ::                                                  ::  ++jone:js:eyre
-    ++  jone                                            ::  number from unsigned
-      |=  a/@u
-      ^-  json
-      :-  %n
-      ?:  =(0 a)  '0'
-      %-  crip
-      %-  flop
-      |-  ^-  tape 
-      ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
-    ::                                                  ::  ++jode:js:eyre
-    ++  jode                                            ::  ms timestamp
-      |=  a/time 
-      =-  (jone (div (mul - 1.000) ~s1))
-      (add (div ~s1 2.000) (sub a ~1970.1.1))
-    ::                                                  ::  ++jesc:js:eyre
-    ++  jesc                                            ::  escaped
-      =+  utf=|=(a/@ ['\\' 'u' ((x-co 4):co a)]) 
-      |=  a/@  ^-  tape
-      ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
-        $10  "\\n"
-        $34  "\\\""
-        $92  "\\\\"
-      ==
-    ::                                                  ::  ++poja:js:eyre
+     ::                                                  ::  ++poja:js:eyre
     ++  poja                                            ::  parse JSON
       =<  |=(a/cord `(unit json)`(rush a apex))
       |%
@@ -3452,47 +3434,57 @@
       --  ::poja
     ::                                                  ::  ++pojo:js:eyre
     ++  pojo                                            ::  print json
-      =|  rez/tape
-      |=  val/json
-      ^-  tape
-      ?~  val  (weld "null" rez)
-      ?-    -.val
-          $a
-        :-  '['
-        =.  rez  [']' rez]
-        !.
-        ?~  p.val  rez
-        |-
-        ?~  t.p.val  ^$(val i.p.val)
-        ^$(val i.p.val, rez [',' $(p.val t.p.val)])
-     ::
-          $b  (weld ?:(p.val "true" "false") rez)
-          $n  (weld (trip p.val) rez)
-          $s
-        :-  '"'
-        =.  rez  ['"' rez]
-        =+  viz=(trip p.val)
-        !.
-        |-  ^-  tape
-        ?~  viz  rez
-        =+  hed=(jesc i.viz)
-        ?:  ?=({@ $~} hed)
-          [i.hed $(viz t.viz)]
-        (weld hed $(viz t.viz))
-     ::
-          $o
-        :-  '{'
-        =.  rez  ['}' rez]
-        =+  viz=(~(tap by p.val))
-        ?~  viz  rez
-        !.
-        |-  ^+  rez
-        ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-        =.  rez  [',' $(viz t.viz)]
-        ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-      ==
-    --  ::js
-  ::                                                    ::
+      |^  |=(val/json (apex val ""))
+      ++  apex
+        |=  {val/json rez/tape}
+        ^-  tape
+        ?~  val  (weld "null" rez)
+        ?-    -.val
+            $a
+          :-  '['
+          =.  rez  [']' rez]
+          !.
+          ?~  p.val  rez
+          |-
+          ?~  t.p.val  ^$(val i.p.val)
+          ^$(val i.p.val, rez [',' $(p.val t.p.val)])
+       ::
+            $b  (weld ?:(p.val "true" "false") rez)
+            $n  (weld (trip p.val) rez)
+            $s
+          :-  '"'
+          =.  rez  ['"' rez]
+          =+  viz=(trip p.val)
+          !.
+          |-  ^-  tape
+          ?~  viz  rez
+          =+  hed=(jesc i.viz)
+          ?:  ?=({@ $~} hed)
+            [i.hed $(viz t.viz)]
+          (weld hed $(viz t.viz))
+       ::
+            $o
+          :-  '{'
+          =.  rez  ['}' rez]
+          =+  viz=(~(tap by p.val))
+          ?~  viz  rez
+          !.
+          |-  ^+  rez
+          ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+          =.  rez  [',' $(viz t.viz)]
+          ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+        ==
+      ::                                                  ::  ++jesc:js:eyre
+      ++  jesc                                            ::  escaped
+        =+  utf=|=(a/@ ['\\' 'u' ((x-co 4):co a)]) 
+        |=  a/@  ^-  tape
+        ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
+          $10  "\\n"
+          $34  "\\\""
+          $92  "\\\\"
+        ==
+      --  ::pojo
+ ::                                                    ::
   ::::                    ++xml:eyre                    ::  (2e4) xml
     ::                                                  ::::
   ++  xml  ^?
@@ -4441,16 +4433,16 @@
   --
 ++  clay  ^?
   |%
-  ++  differ  differ:old-clay
-  ++  lines  [lines:old-clay unix:userlib]
-  ++  space  [beams:old-clay space:userlib]
+  ++  differ  differ:+
+  ++  lines  [[lore=lore role=role]:format unix:userlib]
+  ++  space  [[tome=tome tope=tope]:format space:userlib]
   --
 ++  dill  !!
 ++  eyre  ^?
   |%
   ++  base64  base64:old-eyre
   ++  bytes  bytes:old-eyre
-  ++  js  js:old-eyre
+  ++  js  [[jo=jo js]:format [poja=poja pojo=pojo]:old-eyre]
   ++  xml  xml:old-eyre
   ++  url  url:old-eyre
   ++  wired  wired:old-eyre
