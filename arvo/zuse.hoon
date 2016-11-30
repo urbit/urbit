@@ -1116,6 +1116,252 @@
 ::                                                      ::  ::
 |%
 ::                                                      ::
+::::                  ++number                          ::  (2a2) number theory
+  ::                                                    ::::
+++  number
+    |%
+    ::                                                  ::  ++fu:number:ames
+    ++  fu                                              ::  modulo (mul p q)
+      |=  a/{p/@ q/@}
+      =+  b=?:(=([0 0] a) 0 (~(inv fo p.a) (~(sit fo p.a) q.a)))
+      |%
+      ::                                                ::  ++dif:fu:number:ames
+      ++  dif                                           ::  subtract
+        |=  {c/{@ @} d/{@ @}}
+        [(~(dif fo p.a) -.c -.d) (~(dif fo q.a) +.c +.d)]
+      ::                                                ::  ++exp:fu:number:ames
+      ++  exp                                           ::  exponent
+        |=  {c/@ d/{@ @}}
+        :-  (~(exp fo p.a) (mod c (dec p.a)) -.d)
+        (~(exp fo q.a) (mod c (dec q.a)) +.d)
+      ::                                                ::  ++out:fu:number:ames
+      ++  out                                           ::  garner's formula
+        |=  c/{@ @}
+        %+  add  +.c
+        %+  mul  q.a
+        %+  ~(pro fo p.a)  b
+        (~(dif fo p.a) -.c (~(sit fo p.a) +.c))
+      ::                                                ::  ++pro:fu:number:ames
+      ++  pro                                           ::  multiply
+        |=  {c/{@ @} d/{@ @}}
+        [(~(pro fo p.a) -.c -.d) (~(pro fo q.a) +.c +.d)]
+      ::                                                ::  ++sum:fu:number:ames
+      ++  sum                                           ::  add
+        |=  {c/{@ @} d/{@ @}}
+        [(~(sum fo p.a) -.c -.d) (~(sum fo q.a) +.c +.d)]
+      ::                                                ::  ++sit:fu:number:ames
+      ++  sit                                           ::  represent
+        |=  c/@
+        [(mod c p.a) (mod c q.a)]
+      --  ::fu
+    ::                                                  ::  ++pram:number:ames
+    ++  pram                                            ::  rabin-miller
+      |=  a/@  ^-  ?
+      ?:  ?|  =(0 (end 0 1 a))
+              =(1 a)
+              =+  b=1
+              |-  ^-  ?
+              ?:  =(512 b)
+                |
+              ?|(=+(c=+((mul 2 b)) &(!=(a c) =(a (mul c (div a c))))) $(b +(b)))
+          ==
+        |
+      =+  ^=  b
+          =+  [s=(dec a) t=0]
+          |-  ^-  {s/@ t/@}
+          ?:  =(0 (end 0 1 s))
+            $(s (rsh 0 1 s), t +(t))
+          [s t]
+      ?>  =((mul s.b (bex t.b)) (dec a))
+      =+  c=0
+      |-  ^-  ?
+      ?:  =(c 64)
+        &
+      =+  d=(~(raw og (add c a)) (met 0 a))
+      =+  e=(~(exp fo a) s.b d)
+      ?&  ?|  =(1 e)
+              =+  f=0
+              |-  ^-  ?
+              ?:  =(e (dec a))
+                &
+              ?:  =(f (dec t.b))
+                |
+              $(e (~(pro fo a) e e), f +(f))
+          ==
+          $(c +(c))
+      ==
+    ::                                                  ::  ++ramp:number:ames
+    ++  ramp                                            ::  make r-m prime
+      |=  {a/@ b/(list @) c/@}  ^-  @ux                 ::  {bits snags seed}
+      =>  .(c (shas %ramp c))
+      =+  d=*@
+      |-
+      ?:  =((mul 100 a) d)
+        ~|(%ar-ramp !!)
+      =+  e=(~(raw og c) a)
+      ?:  &((levy b |=(f/@ !=(1 (mod e f)))) (pram e))
+        e
+      $(c +(c), d (shax d))
+    ::                                                  ::  ++curt:number:ames
+    ++  curt                                            ::  curve25519
+      |=  {a/@ b/@}
+      =>  %=    .
+              +
+            =>  +
+            =+  =+  [p=486.662 q=(sub (bex 255) 19)]
+                =+  fq=~(. fo q)
+                [p=p q=q fq=fq]
+            |%
+            ::                                          ::  ++cla:curt:number:
+            ++  cla
+              |=  raw/@
+              =+  low=(dis 248 (cut 3 [0 1] raw))
+              =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
+              =+  mid=(cut 3 [1 30] raw)
+              (can 3 [[1 low] [30 mid] [1 hih] ~])
+            ::                                          ::  ++sqr:curt:number:
+            ++  sqr  |=(a/@ (mul a a))
+            ::                                          ::  ++inv:curt:number:
+            ++  inv  |=(a/@ (~(exp fo q) (sub q 2) a))
+            ::                                          ::  ++cad:curt:number:
+            ++  cad
+              |=  {n/{x/@ z/@} m/{x/@ z/@} d/{x/@ z/@}}
+              =+  ^=  xx
+                  ;:  mul  4  z.d
+                    %-  sqr  %-  abs:si
+                    %+  dif:si
+                      (sun:si (mul x.m x.n))
+                    (sun:si (mul z.m z.n))
+                  ==
+              =+  ^=  zz
+                  ;:  mul  4  x.d
+                    %-  sqr  %-  abs:si
+                    %+  dif:si
+                      (sun:si (mul x.m z.n))
+                    (sun:si (mul z.m x.n))
+                  ==
+              [(sit.fq xx) (sit.fq zz)]
+            ::                                          ::  ++cub:curt:number:
+            ++  cub
+              |=  {x/@ z/@}
+              =+  ^=  xx
+                  %+  mul
+                    %-  sqr  %-  abs:si
+                    (dif:si (sun:si x) (sun:si z))
+                  (sqr (add x z))
+              =+  ^=  zz
+                  ;:  mul  4  x  z
+                    :(add (sqr x) :(mul p x z) (sqr z))
+                  ==
+              [(sit.fq xx) (sit.fq zz)]
+            --  ::
+          ==
+      =+  one=[b 1]
+      =+  i=253
+      =+  r=one
+      =+  s=(cub one)
+      |-
+      ?:  =(i 0)
+        =+  x=(cub r)
+        (sit.fq (mul -.x (inv +.x)))
+      =+  m=(rsh 0 i a)
+      ?:  =(0 (mod m 2))
+         $(i (dec i), s (cad r s one), r (cub r))
+      $(i (dec i), r (cad r s one), s (cub s))
+    ::                                                  ::  ++ga:number:ames
+    ++  ga                                              ::  GF (bex p.a)
+      |=  a/{p/@ q/@ r/@}                               ::  dim poly gen
+      =+  si=(bex p.a)
+      =+  ma=(dec si)
+      =>  |%
+          ::                                            ::  ++dif:ga:number:ames
+          ++  dif                                       ::  add and sub
+            |=  {b/@ c/@}
+            ~|  [%dif-ga a]
+            ?>  &((lth b si) (lth c si))
+            (mix b c)
+          ::                                            ::  ++dub:ga:number:ames
+          ++  dub                                       ::  mul by x
+            |=  b/@
+            ~|  [%dub-ga a]
+            ?>  (lth b si)
+            ?:  =(1 (cut 0 [(dec p.a) 1] b))
+              (dif (sit q.a) (sit (lsh 0 1 b)))
+            (lsh 0 1 b)
+          ::                                            ::  ++pro:ga:number:ames
+          ++  pro                                       ::  slow multiply
+            |=  {b/@ c/@}
+            ?:  =(0 b)
+              0
+            ?:  =(1 (dis 1 b))
+              (dif c $(b (rsh 0 1 b), c (dub c)))
+            $(b (rsh 0 1 b), c (dub c))
+          ::                                            ::  ++toe:ga:number:ames
+          ++  toe                                       ::  exp+log tables
+            =+  ^=  nu
+                |=  {b/@ c/@}
+                ^-  (map @ @)
+                =+  d=*(map @ @)
+                |-
+                ?:  =(0 c)
+                  d
+                %=  $
+                  c  (dec c)
+                  d  (~(put by d) c b)
+                ==
+            =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
+            =+  [b=1 c=0]
+            |-  ^-  {p/(map @ @) q/(map @ @)}
+            ?:  =(ma c)
+              [(~(put by p) c b) q]
+            %=  $
+              b  (pro r.a b)
+              c  +(c)
+              p  (~(put by p) c b)
+              q  (~(put by q) b c)
+            ==
+          ::                                            ::  ++sit:ga:number:ames
+          ++  sit                                       ::  reduce
+            |=  b/@
+            (mod b (bex p.a))
+          --  ::
+      =+  toe
+      |%
+      ::                                                ::  ++fra:ga:number:ames
+      ++  fra                                           ::  divide
+        |=  {b/@ c/@}
+        (pro b (inv c))
+      ::                                                ::  ++inv:ga:number:ames
+      ++  inv                                           ::  invert
+        |=  b/@
+        ~|  [%inv-ga a]
+        =+  c=(~(get by q) b)
+        ?~  c  !!
+        =+  d=(~(get by p) (sub ma u.c))
+        (need d)
+      ::                                                ::  ++pow:ga:number:ames
+      ++  pow                                           ::  exponent
+        |=  {b/@ c/@}
+        =+  [d=1 e=c f=0]
+        |-
+        ?:  =(p.a f)
+          d
+        ?:  =(1 (cut 0 [f 1] b))
+          $(d (pro d e), e (pro e e), f +(f))
+        $(e (pro e e), f +(f))
+      ::                                                ::  ++pro:ga:number:ames
+      ++  pro                                           ::  multiply
+        |=  {b/@ c/@}
+        ~|  [%pro-ga a]
+        =+  d=(~(get by q) b)
+        ?~  d  0
+        =+  e=(~(get by q) c)
+        ?~  e  0
+        =+  f=(~(get by p) (mod (add u.d u.e) ma))
+        (need f)
+      --  ::
+    --  ::ga
+::                                                      ::
 ::::                  ++crypto                          ::  (2a1) cryptography
   ::                                                    ::::
 ++  crypto  ^?
@@ -2605,262 +2851,10 @@
       --  ::suite
     --  ::crypto
 ::                                                      ::
-::::                  ++number                          ::  (2a2) number theory
-  ::                                                    ::::
-++  number
-    |%
-    ::                                                  ::  ++fu:number:ames
-    ++  fu                                              ::  modulo (mul p q)
-      |=  a/{p/@ q/@}
-      =+  b=?:(=([0 0] a) 0 (~(inv fo p.a) (~(sit fo p.a) q.a)))
-      |%
-      ::                                                ::  ++dif:fu:number:ames
-      ++  dif                                           ::  subtract
-        |=  {c/{@ @} d/{@ @}}
-        [(~(dif fo p.a) -.c -.d) (~(dif fo q.a) +.c +.d)]
-      ::                                                ::  ++exp:fu:number:ames
-      ++  exp                                           ::  exponent
-        |=  {c/@ d/{@ @}}
-        :-  (~(exp fo p.a) (mod c (dec p.a)) -.d)
-        (~(exp fo q.a) (mod c (dec q.a)) +.d)
-      ::                                                ::  ++out:fu:number:ames
-      ++  out                                           ::  garner's formula
-        |=  c/{@ @}
-        %+  add  +.c
-        %+  mul  q.a
-        %+  ~(pro fo p.a)  b
-        (~(dif fo p.a) -.c (~(sit fo p.a) +.c))
-      ::                                                ::  ++pro:fu:number:ames
-      ++  pro                                           ::  multiply
-        |=  {c/{@ @} d/{@ @}}
-        [(~(pro fo p.a) -.c -.d) (~(pro fo q.a) +.c +.d)]
-      ::                                                ::  ++sum:fu:number:ames
-      ++  sum                                           ::  add
-        |=  {c/{@ @} d/{@ @}}
-        [(~(sum fo p.a) -.c -.d) (~(sum fo q.a) +.c +.d)]
-      ::                                                ::  ++sit:fu:number:ames
-      ++  sit                                           ::  represent
-        |=  c/@
-        [(mod c p.a) (mod c q.a)]
-      --  ::fu
-    ::                                                  ::  ++pram:number:ames
-    ++  pram                                            ::  rabin-miller
-      |=  a/@  ^-  ?
-      ?:  ?|  =(0 (end 0 1 a))
-              =(1 a)
-              =+  b=1
-              |-  ^-  ?
-              ?:  =(512 b)
-                |
-              ?|(=+(c=+((mul 2 b)) &(!=(a c) =(a (mul c (div a c))))) $(b +(b)))
-          ==
-        |
-      =+  ^=  b
-          =+  [s=(dec a) t=0]
-          |-  ^-  {s/@ t/@}
-          ?:  =(0 (end 0 1 s))
-            $(s (rsh 0 1 s), t +(t))
-          [s t]
-      ?>  =((mul s.b (bex t.b)) (dec a))
-      =+  c=0
-      |-  ^-  ?
-      ?:  =(c 64)
-        &
-      =+  d=(~(raw og (add c a)) (met 0 a))
-      =+  e=(~(exp fo a) s.b d)
-      ?&  ?|  =(1 e)
-              =+  f=0
-              |-  ^-  ?
-              ?:  =(e (dec a))
-                &
-              ?:  =(f (dec t.b))
-                |
-              $(e (~(pro fo a) e e), f +(f))
-          ==
-          $(c +(c))
-      ==
-    ::                                                  ::  ++ramp:number:ames
-    ++  ramp                                            ::  make r-m prime
-      |=  {a/@ b/(list @) c/@}  ^-  @ux                 ::  {bits snags seed}
-      =>  .(c (shas %ramp c))
-      =+  d=*@
-      |-
-      ?:  =((mul 100 a) d)
-        ~|(%ar-ramp !!)
-      =+  e=(~(raw og c) a)
-      ?:  &((levy b |=(f/@ !=(1 (mod e f)))) (pram e))
-        e
-      $(c +(c), d (shax d))
-    ::                                                  ::  ++curt:number:ames
-    ++  curt                                            ::  curve25519
-      |=  {a/@ b/@}
-      =>  %=    .
-              +
-            =>  +
-            =+  =+  [p=486.662 q=(sub (bex 255) 19)]
-                =+  fq=~(. fo q)
-                [p=p q=q fq=fq]
-            |%
-            ::                                          ::  ++cla:curt:number:
-            ++  cla
-              |=  raw/@
-              =+  low=(dis 248 (cut 3 [0 1] raw))
-              =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
-              =+  mid=(cut 3 [1 30] raw)
-              (can 3 [[1 low] [30 mid] [1 hih] ~])
-            ::                                          ::  ++sqr:curt:number:
-            ++  sqr  |=(a/@ (mul a a))
-            ::                                          ::  ++inv:curt:number:
-            ++  inv  |=(a/@ (~(exp fo q) (sub q 2) a))
-            ::                                          ::  ++cad:curt:number:
-            ++  cad
-              |=  {n/{x/@ z/@} m/{x/@ z/@} d/{x/@ z/@}}
-              =+  ^=  xx
-                  ;:  mul  4  z.d
-                    %-  sqr  %-  abs:si
-                    %+  dif:si
-                      (sun:si (mul x.m x.n))
-                    (sun:si (mul z.m z.n))
-                  ==
-              =+  ^=  zz
-                  ;:  mul  4  x.d
-                    %-  sqr  %-  abs:si
-                    %+  dif:si
-                      (sun:si (mul x.m z.n))
-                    (sun:si (mul z.m x.n))
-                  ==
-              [(sit.fq xx) (sit.fq zz)]
-            ::                                          ::  ++cub:curt:number:
-            ++  cub
-              |=  {x/@ z/@}
-              =+  ^=  xx
-                  %+  mul
-                    %-  sqr  %-  abs:si
-                    (dif:si (sun:si x) (sun:si z))
-                  (sqr (add x z))
-              =+  ^=  zz
-                  ;:  mul  4  x  z
-                    :(add (sqr x) :(mul p x z) (sqr z))
-                  ==
-              [(sit.fq xx) (sit.fq zz)]
-            --  ::
-          ==
-      =+  one=[b 1]
-      =+  i=253
-      =+  r=one
-      =+  s=(cub one)
-      |-
-      ?:  =(i 0)
-        =+  x=(cub r)
-        (sit.fq (mul -.x (inv +.x)))
-      =+  m=(rsh 0 i a)
-      ?:  =(0 (mod m 2))
-         $(i (dec i), s (cad r s one), r (cub r))
-      $(i (dec i), r (cad r s one), s (cub s))
-    ::                                                  ::  ++ga:number:ames
-    ++  ga                                              ::  GF (bex p.a)
-      |=  a/{p/@ q/@ r/@}                               ::  dim poly gen
-      =+  si=(bex p.a)
-      =+  ma=(dec si)
-      =>  |%
-          ::                                            ::  ++dif:ga:number:ames
-          ++  dif                                       ::  add and sub
-            |=  {b/@ c/@}
-            ~|  [%dif-ga a]
-            ?>  &((lth b si) (lth c si))
-            (mix b c)
-          ::                                            ::  ++dub:ga:number:ames
-          ++  dub                                       ::  mul by x
-            |=  b/@
-            ~|  [%dub-ga a]
-            ?>  (lth b si)
-            ?:  =(1 (cut 0 [(dec p.a) 1] b))
-              (dif (sit q.a) (sit (lsh 0 1 b)))
-            (lsh 0 1 b)
-          ::                                            ::  ++pro:ga:number:ames
-          ++  pro                                       ::  slow multiply
-            |=  {b/@ c/@}
-            ?:  =(0 b)
-              0
-            ?:  =(1 (dis 1 b))
-              (dif c $(b (rsh 0 1 b), c (dub c)))
-            $(b (rsh 0 1 b), c (dub c))
-          ::                                            ::  ++toe:ga:number:ames
-          ++  toe                                       ::  exp+log tables
-            =+  ^=  nu
-                |=  {b/@ c/@}
-                ^-  (map @ @)
-                =+  d=*(map @ @)
-                |-
-                ?:  =(0 c)
-                  d
-                %=  $
-                  c  (dec c)
-                  d  (~(put by d) c b)
-                ==
-            =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
-            =+  [b=1 c=0]
-            |-  ^-  {p/(map @ @) q/(map @ @)}
-            ?:  =(ma c)
-              [(~(put by p) c b) q]
-            %=  $
-              b  (pro r.a b)
-              c  +(c)
-              p  (~(put by p) c b)
-              q  (~(put by q) b c)
-            ==
-          ::                                            ::  ++sit:ga:number:ames
-          ++  sit                                       ::  reduce
-            |=  b/@
-            (mod b (bex p.a))
-          --  ::
-      =+  toe
-      |%
-      ::                                                ::  ++fra:ga:number:ames
-      ++  fra                                           ::  divide
-        |=  {b/@ c/@}
-        (pro b (inv c))
-      ::                                                ::  ++inv:ga:number:ames
-      ++  inv                                           ::  invert
-        |=  b/@
-        ~|  [%inv-ga a]
-        =+  c=(~(get by q) b)
-        ?~  c  !!
-        =+  d=(~(get by p) (sub ma u.c))
-        (need d)
-      ::                                                ::  ++pow:ga:number:ames
-      ++  pow                                           ::  exponent
-        |=  {b/@ c/@}
-        =+  [d=1 e=c f=0]
-        |-
-        ?:  =(p.a f)
-          d
-        ?:  =(1 (cut 0 [f 1] b))
-          $(d (pro d e), e (pro e e), f +(f))
-        $(e (pro e e), f +(f))
-      ::                                                ::  ++pro:ga:number:ames
-      ++  pro                                           ::  multiply
-        |=  {b/@ c/@}
-        ~|  [%pro-ga a]
-        =+  d=(~(get by q) b)
-        ?~  d  0
-        =+  e=(~(get by q) c)
-        ?~  e  0
-        =+  f=(~(get by p) (mod (add u.d u.e) ma))
-        (need f)
-      --  ::
-    --  ::ga
-::                                                      ::
 ::::                  ++unity                           ::  (2b) unit promotion
   ::                                                    ::::
 ++  unity  ^?
   |%
-      ::                                                ::  ++za:jo:js:eyre
-      ++  za                                            ::  full unit pole
-        |*  pod/(pole (unit))
-        ?~  pod  &
-        ?~  -.pod  |
-        (za +.pod)
       ::                                                ::  ++zl:jo:js:eyre
       ++  zl                                            ::  collapse unit list
         |*  lut/(list (unit))
@@ -2877,6 +2871,13 @@
         ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
           ~
         (some (~(run by lum) need))
+      ::
+      ::                                                ::  ++za:jo:js:eyre
+      ++  za                                            ::  full unit pole
+        |*  pod/(pole (unit))
+        ?~  pod  &
+        ?~  -.pod  |
+        (za +.pod)
       ::                                                ::  ++zp:jo:js:eyre
       ++  zp                                            ::  unit tuple
         |*  but/(pole (unit))
@@ -3283,6 +3284,21 @@
     ::                                                  ::::
   ++  mime  ^?
     |%
+    ::                                                  ::  ++taco:bytes:eyre
+    ++  taco                                            ::  atom to octstream
+      |=  tam/@  ^-  octs
+      [(met 3 tam) tam]
+    ::                                                  ::  ++tact:bytes:eyre
+    ++  tact                                            ::  tape to octstream
+      |=  tep/tape  ^-  octs
+      (taco (rap 3 tep))
+    ++  moon                                            ::  mime type to text
+      |=  myn/mite
+      %-  crip
+      |-  ^-  tape
+      ?~  myn  ~
+      ?:  =(~ t.myn)  (trip i.myn)
+      (weld (trip i.myn) `tape`['/' $(myn t.myn)])
     ::                                                  ::  ++sifo:base64:eyre
     ++  sifo                                            ::  encode base64
       |=  tig/@
@@ -3312,22 +3328,59 @@
          (cold 63 (just '/'))
        ==
     ::                                                  ::  ++moon:bytes:eyre
-    ++  moon                                            ::  mime type to text
-      |=  myn/mite
-      %-  crip
-      |-  ^-  tape
-      ?~  myn  ~
-      ?:  =(~ t.myn)  (trip i.myn)
-      (weld (trip i.myn) `tape`['/' $(myn t.myn)])
-    ::                                                  ::  ++taco:bytes:eyre
-    ++  taco                                            ::  atom to octstream
-      |=  tam/@  ^-  octs
-      [(met 3 tam) tam]
-    ::                                                  ::  ++tact:bytes:eyre
-    ++  tact                                            ::  tape to octstream
-      |=  tep/tape  ^-  octs
-      (taco (rap 3 tep))
     --  ::bytes
+  ::                                                    ::  ++pojo:js:eyre
+  ++  pojo                                              ::  print json
+      |^  |=(val/json (apex val ""))
+      ++  apex
+        |=  {val/json rez/tape}
+        ^-  tape
+        ?~  val  (weld "null" rez)
+        ?-    -.val
+            $a
+          :-  '['
+          =.  rez  [']' rez]
+          !.
+          ?~  p.val  rez
+          |-
+          ?~  t.p.val  ^$(val i.p.val)
+          ^$(val i.p.val, rez [',' $(p.val t.p.val)])
+       ::
+            $b  (weld ?:(p.val "true" "false") rez)
+            $n  (weld (trip p.val) rez)
+            $s
+          :-  '"'
+          =.  rez  ['"' rez]
+          =+  viz=(trip p.val)
+          !.
+          |-  ^-  tape
+          ?~  viz  rez
+          =+  hed=(jesc i.viz)
+          ?:  ?=({@ $~} hed)
+            [i.hed $(viz t.viz)]
+          (weld hed $(viz t.viz))
+       ::
+            $o
+          :-  '{'
+          =.  rez  ['}' rez]
+          =+  viz=(~(tap by p.val))
+          ?~  viz  rez
+          !.
+          |-  ^+  rez
+          ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+          =.  rez  [',' $(viz t.viz)]
+          ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+        ==
+      ::                                                  ::  ++jesc:js:eyre
+      ++  jesc                                            ::  escaped
+        =+  utf=|=(a/@ ['\\' 'u' ((x-co 4):co a)]) 
+        |=  a/@  ^-  tape
+        ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
+          $10  "\\n"
+          $34  "\\\""
+          $92  "\\\\"
+        ==
+      --  ::pojo
   ::                                                    ::  ++poja:js:eyre
   ++  poja                                              ::  parse JSON
       =<  |=(a/cord `(unit json)`(rush a apex))
@@ -3426,58 +3479,6 @@
       ++  wish                                          ::  with whitespace
         |*(sef/rule ;~(pfix spac sef))
       --  ::poja
-  ::                                                    ::  ++pojo:js:eyre
-  ++  pojo                                              ::  print json
-      |^  |=(val/json (apex val ""))
-      ++  apex
-        |=  {val/json rez/tape}
-        ^-  tape
-        ?~  val  (weld "null" rez)
-        ?-    -.val
-            $a
-          :-  '['
-          =.  rez  [']' rez]
-          !.
-          ?~  p.val  rez
-          |-
-          ?~  t.p.val  ^$(val i.p.val)
-          ^$(val i.p.val, rez [',' $(p.val t.p.val)])
-       ::
-            $b  (weld ?:(p.val "true" "false") rez)
-            $n  (weld (trip p.val) rez)
-            $s
-          :-  '"'
-          =.  rez  ['"' rez]
-          =+  viz=(trip p.val)
-          !.
-          |-  ^-  tape
-          ?~  viz  rez
-          =+  hed=(jesc i.viz)
-          ?:  ?=({@ $~} hed)
-            [i.hed $(viz t.viz)]
-          (weld hed $(viz t.viz))
-       ::
-            $o
-          :-  '{'
-          =.  rez  ['}' rez]
-          =+  viz=(~(tap by p.val))
-          ?~  viz  rez
-          !.
-          |-  ^+  rez
-          ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-          =.  rez  [',' $(viz t.viz)]
-          ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
-        ==
-      ::                                                  ::  ++jesc:js:eyre
-      ++  jesc                                            ::  escaped
-        =+  utf=|=(a/@ ['\\' 'u' ((x-co 4):co a)]) 
-        |=  a/@  ^-  tape
-        ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
-          $10  "\\n"
-          $34  "\\\""
-          $92  "\\\\"
-        ==
-      --  ::pojo
   ::                                                    ::  ++print:xml:eyre
   ++  en-xml                                            ::  xml printer
       =<  |=(a/manx `tape`(apex a ~))
@@ -3629,6 +3630,38 @@
       ++  whit                                          ::  whitespace
         (mask ~[' ' `@`0x9 `@`0xa])
       --  ::
+  ::                                                    ::  ++epur:url:eyre
+  ++  urle                                              ::  url encode
+      |=  tep/tape
+      ^-  tape
+      %-  zing
+      %+  turn  tep
+      |=  tap/char
+      =+  xen=|=(tig/@ ?:((gte tig 10) (add tig 55) (add tig '0')))
+      ?:  ?|  &((gte tap 'a') (lte tap 'z'))
+              &((gte tap 'A') (lte tap 'Z'))
+              &((gte tap '0') (lte tap '9'))
+              =('.' tap)
+              =('-' tap)
+              =('~' tap)
+              =('_' tap)
+          ==
+        [tap ~]
+      ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
+  ::                                                    ::  ++urld:url:eyre
+  ++  urld                                              ::  url decode
+      |=  tep/tape
+      ^-  (unit tape)
+      ?~  tep  [~ ~]
+      ?:  =('%' i.tep)
+        ?.  ?=({@ @ *} t.tep)  ~
+        =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
+        =+  val=(rush nag hex:ag)
+        ?~  val  ~
+        =+  nex=$(tep t.t.t.tep)
+        ?~(nex ~ [~ [`@`u.val u.nex]])
+      =+  nex=$(tep t.tep)
+      ?~(nex ~ [~ i.tep u.nex])
   ::                                                    ::  ++earn:url:eyre
   ++  earn                                              ::  print purl
       =<  |=(pul/purl `tape`(apex %& pul))
@@ -3684,44 +3717,6 @@
           ?~(t.kay ~ `tape`['&' $(kay t.kay)])
         ==
       --  ::
-  ::                                                    ::  ++epur:url:eyre
-  ++  fuel                                              ::  parse urbit fcgi
-      |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
-      ^-  epic
-      =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
-      [(malt qix) ((hard cred) ced) bem /]
-  ::                                                    ::  ++urle:url:eyre
-  ++  urle                                              ::  url encode
-      |=  tep/tape
-      ^-  tape
-      %-  zing
-      %+  turn  tep
-      |=  tap/char
-      =+  xen=|=(tig/@ ?:((gte tig 10) (add tig 55) (add tig '0')))
-      ?:  ?|  &((gte tap 'a') (lte tap 'z'))
-              &((gte tap 'A') (lte tap 'Z'))
-              &((gte tap '0') (lte tap '9'))
-              =('.' tap)
-              =('-' tap)
-              =('~' tap)
-              =('_' tap)
-          ==
-        [tap ~]
-      ['%' (xen (rsh 0 4 tap)) (xen (end 0 4 tap)) ~]
-  ::                                                    ::  ++urld:url:eyre
-  ++  urld                                              ::  url decode
-      |=  tep/tape
-      ^-  (unit tape)
-      ?~  tep  [~ ~]
-      ?:  =('%' i.tep)
-        ?.  ?=({@ @ *} t.tep)  ~
-        =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
-        =+  val=(rush nag hex:ag)
-        ?~  val  ~
-        =+  nex=$(tep t.t.t.tep)
-        ?~(nex ~ [~ [`@`u.val u.nex]])
-      =+  nex=$(tep t.tep)
-      ?~(nex ~ [~ i.tep u.nex])
   ::                                                    ::  ++urlp:url:eyre
   ++  urlp                                              ::  url+header parser
       |%
@@ -3895,6 +3890,13 @@
           (stag %| ;~(plug apat yque))
         ==
       --
+  ::  MOVEME
+  ++  fuel                                              ::  parse urbit fcgi
+      |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
+      ^-  epic
+      =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
+      [(malt qix) ((hard cred) ced) bem /]
+  ::                                                    ::  ++urle:url:eyre
   --  ::eyre
 ::                                                      ::
 ::::                    ++wired:eyre                    ::  wire formatting
