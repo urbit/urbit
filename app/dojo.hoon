@@ -1,7 +1,7 @@
 ::                                                      ::  ::
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
-/?  314                                                 ::  arvo kelvin
+/?  309                                                 ::  arvo kelvin
 /-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
 [. sole]
@@ -11,7 +11,7 @@
   ::                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
-      $:  $4
+      $:  $5
           egg/@u                                        ::  command count
           hoc/(map bone session)                        ::  conversations
       ==                                                ::
@@ -186,6 +186,7 @@
     ::
     ++  dp-hoof                                         ::  ++ford-hoof twig
       ;~  plug
+        :(stag %sand %f ;~(pose (cold %| tar) (easy %&)))
         :(stag %sand %tas sym)
         %-  dp-twig-punt
         ;~  (glue fas) 
@@ -1090,19 +1091,22 @@
   --
 ::
 ++  prep
-  =+  session-1==+(*session _-(poy *(unit)))
+  =+  session-4==+(*session _-(lib *(list), sur *(list)))
+  =+  session-1==+(*session-4 _-(poy *(unit)))
   =+  session-0==+(*session-1 _[_say syd=desk * _|2.-])
   :: ,_`..prep
   =+  ^=  hoze
       $%  {$0 p/(map bone session-0)}
           {$1 p/(map bone session-1)}
           {$2 p/(map bone session-1)}
-          {$3 p/(map bone session)}
+          {$3 p/(map bone session-4)}
+          {$4 p/@ q/(map bone session-4)}
       ==
   |=  old/(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?+  -.u.old  !!
-    $4  `..prep(+<+ u.old)
+    $4  $(-.u.old %5, q.u.old (~(run by q.u.old) |=(session-4 +<(sur ~, lib ~))))
+    $5  `..prep(+<+ u.old)
   ==
 ::
 ::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))

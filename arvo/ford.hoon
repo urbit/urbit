@@ -720,8 +720,7 @@
           (most gap hoop)
         ==
       ::
-      ++  hoof
-        %+  cook  |=(a/^hoof a)
+      ++  hoot
         ;~  plug
           sym
           ;~  pose
@@ -729,6 +728,13 @@
             ;~(plug ;~(pfix fas case) ;~(pfix ;~(plug fas sig) fed:ag))
             (easy ~)
           ==
+        ==
+      ::
+      ++  hoof
+        %+  cook  |=(a/^hoof a)
+        ;~  pose
+          (stag %| ;~(pfix tar hoot))
+          (stag %& hoot)
         ==
       ::
       ++  hoop
@@ -1654,10 +1660,13 @@
         ^-  (bolt _..head)
         ?~  bir
           (fine cof ..head)
-        =+  byf=(~(get by rop) p.i.bir)
+        =.  boy
+          ?:  p.i.bir  boy
+          (welp boy [[%use [%limb q.i.bir] [%$ 1]] ~])
+        =+  byf=(~(get by rop) q.i.bir)
         ?^  byf
-          ?.  =(`hoof`i.bir `hoof`p.u.byf)
-            (flaw cof [%leaf "structure mismatch: {<~[p.u.byf i.bir]>}"]~)
+          ?.  =(+:`hoof`i.bir +:`hoof`p.u.byf)
+            (flaw cof [%leaf "structure mismatch: {<~[p.u.byf q.i.bir]>}"]~)
           $(bir t.bir)
         %+  cope  (fame cof (hone %sur i.bir))
         |=  {cof/cafe bem/beam}
@@ -1670,7 +1679,7 @@
               boy  boy
               how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
-                      p.i.bir 
+                      q.i.bir 
                    [i.bir [%tow (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)
@@ -1678,17 +1687,20 @@
       ++  hone                                          ::  plant hoof
         |=  {way/@tas huf/hoof}
         ^-  beam
-        ?~  q.huf
-          how(s ~[p.huf way])
-        [[q.u.q.huf q.how p.u.q.huf] ~[p.huf way]]
+        ?~  r.huf
+          how(s ~[q.huf way])
+        [[q.u.r.huf q.how p.u.r.huf] ~[q.huf way]]
       ::
       ++  neck                                          ::  consume libraries
         |=  {cof/cafe bir/(list hoof)}
         ^-  (bolt _..neck)
         ?~  bir  (fine cof ..neck)
-        =+  byf=(~(get by bil) p.i.bir)
+        =.  boy
+          ?:  p.i.bir  boy
+          (welp boy [[%use [%limb q.i.bir] [%$ 1]] ~])
+        =+  byf=(~(get by bil) q.i.bir)
         ?^  byf
-          ?.  =(`hoof`i.bir `hoof`p.u.byf)
+          ?.  =(+:`hoof`i.bir +:`hoof`p.u.byf)
             (flaw cof [%leaf "library mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
         %+  cope  (fame cof (hone %lib i.bir))
@@ -1701,7 +1713,7 @@
             %=  sel
               how  how
               bil  %+  ~(put by (~(uni by bil) bil.sel))
-                     p.i.bir
+                     q.i.bir
                    [i.bir [%tow (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)

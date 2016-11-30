@@ -299,13 +299,13 @@
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$boat $~}                                    ::  pier rebooted
-          {$drop p/@p q/@tas}                           ::  cancel pending merge
-          {$info p/@p q/@tas r/nori}                    ::  internal edit
+          {$drop p/@p q/desk}                           ::  cancel pending merge
+          {$info p/@p q/desk r/nori}                    ::  internal edit
           {$init p/@p}                                  ::  report install
-          {$into p/@tas q/? r/mode}                     ::  external edit
-          {$merg p/@p q/@tas r/@p s/@tas t/case u/germ} ::  merge desks
-          {$mont p/@tas q/@p r/@tas s/path}             ::  mount to unix
-          {$ogre p/$@(@tas beam)}                       ::  delete mount point
+          {$into p/desk q/? r/mode}                     ::  external edit
+          {$merg p/@p q/desk r/@p s/desk t/case u/germ} ::  merge desks
+          {$mont p/desk q/@p r/desk s/path}             ::  mount to unix
+          {$ogre p/$@(desk beam)}                       ::  delete mount point
           {$warp p/sock q/riff}                         ::  file request
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
@@ -692,7 +692,7 @@
         fan/(list horn)                                 ::  resources
         src/(list hoop)                                 ::  program
     ==                                                  ::
-  ++  hoof  (pair term (unit (pair case ship)))         ::  resource reference
+  ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
   ++  hoop                                              ::  source in hood
     $%  {$& p/twig}                                     ::  direct twig
         {$| p/beam}                                     ::  resource location
@@ -4354,7 +4354,7 @@
     --  ::pubsub
   --
 ::
-++  zuse  %310                                          ::  hoon+zuse kelvin
+++  zuse  %309                                          ::  hoon+zuse kelvin
 ++  gift-arvo                                           ::  out result <-$
   $?  gift:able:^ames
       gift:able:^behn
