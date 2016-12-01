@@ -7,7 +7,7 @@
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
 =,  ^ames
-=,  crypto:ames
+=,  crypto
 |%                                                      ::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
@@ -576,7 +576,7 @@
       ?>((pier i.wet) [i.wet ~])
     ?~  q.p.q.i.wet
       ?>((meld i.wet i.law) [i.wet law])
-    =+  rul=(sein:title:jael r.p.q.i.wet)
+    =+  rul=(sein:title r.p.q.i.wet)
     |-  ^-  wyll
     ?:  ?&  =(rul r.p.q.i.law)
             =(p.p.q.i.law u.q.p.q.i.wet)
@@ -595,7 +595,7 @@
   ++  melt                                              ::  proper connect
     |=  {new/deyd old/deyd}
     ^-  ?
-    =+  rac=(clan:title:jael r.p.q.new)
+    =+  rac=(clan:title r.p.q.new)
     ?&  =(r.new r.old)                                  ::  match fake
         ?~  q.p.q.new
           ?&  =(r.p.q.old r.p.q.new)
@@ -603,7 +603,7 @@
           ==
         ?&  &(!=(%pawn rac) !=(%czar rac))
             |(=(0 p.p.q.new) =(%earl rac))
-            =(r.p.q.old (sein:title:jael r.p.q.new))
+            =(r.p.q.old (sein:title r.p.q.new))
             =(p.p.q.old u.q.p.q.new)
         ==
     ==
@@ -624,7 +624,7 @@
   ++  pier  !:                                          ::  initial deyd
     |=  wed/deyd
     ^-  $&
-    ?>  =+  rac=(clan:title:jael r.p.q.wed)
+    ?>  =+  rac=(clan:title r.p.q.wed)
         =+  loy=(haul:suite r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
@@ -978,7 +978,7 @@
       ++  born                                          ::    born:as:go
         |=  {now/@da her/@p tic/@pG ges/gens pub/pass}  ::  register user
         ^-  {(unit wyll) _+>}
-        ?.  =(our (sein:title:jael her))  [~ +>.$]
+        ?.  =(our (sein:title her))  [~ +>.$]
         =+  nes=sen
         =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
         ?.  =(tic ryt)
@@ -1106,7 +1106,7 @@
         ::
         ++  xeno                                        ::    xeno:lax:as:go
           ^-  (list ship)                               ::  foreign canon
-          (saxo:title:jael her)
+          (saxo:title her)
         ::
         ++  xong                                        ::    xong:lax:as:go
           ^-  (list ship)                               ::  route unto
@@ -1230,7 +1230,7 @@
       ::
       ++  xen                                           ::  canon
         |-  ^-  (list ship)
-        (saxo:title:jael our)
+        (saxo:title our)
       ::
       ++  yew                                           ::  best wyll for
         |=  her/ship
@@ -1238,7 +1238,7 @@
         =+  gel=(~(get by hoc.saf) her)
         ?^  gel
           lew.wod.u.gel
-        ?:((lth her 256) ~ $(her (sein:title:jael her)))
+        ?:((lth her 256) ~ $(her (sein:title her)))
       --                                                ::  --as:go
     ::
     ++  ha  !:                                          ::  adopt new license
@@ -1256,7 +1256,7 @@
           our
         :*  %-  flop
             |-  ^-  (list ship)
-            ?:((lth our 256) ~ =+(seg=(sein:title:jael our) [seg $(our seg)]))
+            ?:((lth our 256) ~ =+(seg=(sein:title our) [seg $(our seg)]))
         ::
             (turn mac |=({p/life q/ring} [p q (weur:suite q)]))
             wil
@@ -1376,7 +1376,7 @@
       ::  install it as a symmetric key.
       ::
       =+  key=(shax ger)
-      =+  dad=(sein:title:jael her)
+      =+  dad=(sein:title her)
       ~&  [%user-auth her `@p`ger `@p`(mug key)]
       =+  gus=(need (~(us go ton.fox) her))
       =+  diz=(wasc:(myx:gus dad) key)
@@ -2167,7 +2167,7 @@
       !>  
       ?~  wul 
         (scot %p his) 
-      (gnow:title:jael his q.q.q:((hard deyd) -.u.wul))
+      (gnow:title his q.q.q:((hard deyd) -.u.wul))
     ?:  ?=({$gcos $~} tyl)
       =+  wul=$(tyl [%wyll ~])
       ?~(wul ~ ``[%noun !>(`gcos`q.q.q:((hard deyd) -.u.wul))])
@@ -2180,7 +2180,7 @@
         %+  bind  (rick mar his lew.wod.u.fod)
         |=(a/wyll `[%noun !>(a)])
       ?:  ?=({$tick $~} tyl)
-        ?.  =(our (sein:title:jael his))  ~
+        ?.  =(our (sein:title his))  ~
         ``[%noun !>((end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys)))))]
       ~
     ?:  ?=({$buck $~} tyl)

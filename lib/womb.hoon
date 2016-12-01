@@ -3,8 +3,8 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /+    talk, old-phon
-=,  wired:eyre
-=,  title:jael
+=,  wired
+=,  title
 =,  womb:^jael
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -390,7 +390,7 @@
   =;  dif  (emit %info /backup [our dif])
   %+  foal:space:clay 
     (welp pax /jam-crub)
-  [%jam-crub !>((en:crub:crypto:ames pas (jam `part`+:abet)))]
+  [%jam-crub !>((en:crub:crypto pas (jam `part`+:abet)))]
 ::
 ++  poke-rekey                                        ::  extend wyll
   |=  $~

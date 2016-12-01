@@ -4,7 +4,7 @@
 /?    310
 ::
 =,  ^clay
-=,  differ:clay
+=,  differ
 =,  lines:clay
 =,  bytes:eyre
 |_  txt/wain

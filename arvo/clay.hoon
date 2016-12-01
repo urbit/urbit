@@ -2188,7 +2188,6 @@
       =+  mar=(lobe-to-mark u.lob)
       ?.  ?=($hoon mar)
         [~ ~ %| u.lob]
-      =*  differ  differ:clay
       =*  lines  lines:clay
       :^  ~  ~  %&
       :+  mar  [%atom %t ~]
@@ -3287,7 +3286,7 @@
           ?<  (~(has by fat.ruf) p.q.hic)
           (~(put by fat.ruf) p.q.hic [-(hun hen)]:[*room .])
         ==
-    =+  [bos=(sein:title:jael p.q.hic) can=(clan:title:jael p.q.hic)]
+    =+  [bos=(sein:title p.q.hic) can=(clan:title p.q.hic)]
     %-  zing  ^-  (list (list move))
     :~  ?:  =(bos p.q.hic)  ~
         [hen %pass /init-merge %c %merg p.q.hic %base bos %kids da+now %init]~

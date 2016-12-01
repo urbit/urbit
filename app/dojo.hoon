@@ -818,7 +818,7 @@
     =.  egg  +(egg)
     =-  ?~(msg ..he-diff (he-diff %tan leaf+u.msg ~))
     ^-  msg/(unit tape)
-    ?+  (clan:title:jael our.hid)  ~
+    ?+  (clan:title our.hid)  ~
       $pawn  ?+  egg  ~
                 $5  `":: To request a planet, run  |ask 'your@email.co'"
     ==       ==  
@@ -1123,7 +1123,7 @@
 ::
 ++  peer-sole
   ~?  !=(our.hid src.hid)  [%dojo-peer-stranger ost.hid src.hid]
-  ?>  (team:title:jael our.hid src.hid)
+  ?>  (team:title our.hid src.hid)
   =^  moz  .
     ?.  (~(has by hoc) ost.hid)  [~ .]
     ~&  [%dojo-peer-replaced ost.hid]

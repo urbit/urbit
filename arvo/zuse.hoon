@@ -4396,18 +4396,10 @@
 ::
 ::
 ::  XX transitional alias layer
-++  ames  ^?
-  |%
-  ++  crypto  crypto:+
-  ++  number  number:+
-  --
-++  behn  ^?
-  |%
-  ++  chrono  chrono:userlib
-  --
+++  ames  !!
+++  behn  !!
 ++  clay  ^?
   |%
-  ++  differ  differ:+
   ++  lines  [[lore=to-wain role=of-wain]:format unix:userlib]
   ++  space  [[tome=of-path tope=to-path]:format space:userlib]
   --
@@ -4440,13 +4432,8 @@
     ++  urlp  de-purl
     ++  fuel  fuel:+
     --
-  ++  wired  wired:+
   --
 ++  ford  !!
 ++  gall  !!
-++  jael  ^?
-  |%
-  ++  title  title:+
-  --
+++  jael  !!
 --  ::
-

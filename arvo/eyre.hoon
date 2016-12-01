@@ -3,12 +3,12 @@
 ::::
 |=  pit/vase
 =,  ^eyre
-=,  crypto:ames
+=,  crypto
 =,  space:clay
 =,  bytes:eyre
 =,  js:eyre
 =,  url:eyre
-=,  wired:eyre
+=,  wired
 =,  xml:eyre
 =>  =~
 |%                                                      ::  interfaces
@@ -1689,7 +1689,7 @@
       %-  jobe  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
-        sein+(jape +:<(sein:title:jael our)>)
+        sein+(jape +:<(sein:title our)>)
         ship+(jape +:<our>)
         user+(jape +:<(fall get-user anon)>) :: XX crash on unsaved session?
       ==

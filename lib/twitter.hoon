@@ -11,7 +11,7 @@
 =,  js:eyre
 =,  url:eyre
 =,  xml:eyre
-=,  chrono:behn
+=,  chrono:userlib
 ::
 ::::  functions
   ::

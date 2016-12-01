@@ -116,7 +116,7 @@
   |=  {hot/host:^eyre dat/@}
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
-  =.  dat  (scot %uw (en:crua:crypto:ames ames-secret dat))
+  =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
   (poke--data [`%atom [%sec p.hot]] %mime / (taco:bytes:eyre dat))
 ::
 ++  poke--data

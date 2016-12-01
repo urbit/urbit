@@ -80,9 +80,9 @@
   |=  hood-begin  =<  abet
   ?>  ?=($~ bur)
   =+  buz=(shaz :(mix (jam ges) eny))
-  =+  loy=(pit:nu:crub:crypto:ames 512 buz)
+  =+  loy=(pit:nu:crub:crypto 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%wont /helm/ticket [our (sein:title:jael his)] /a/ta his tic ges pub:ex:loy]
+  [%wont /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
 ::
 ++  poke-spawn
   |=  {him/ship key/@pG}  =<  abet
@@ -204,7 +204,7 @@
   =<  abet
   %-  emil(bur ~)
   :~  [%cash /helm p.u.bur q.u.bur u.wil]
-      [%poke /helm [our %hood] %hood-unsync %base (sein:title:jael our) %kids]
+      [%poke /helm [our %hood] %hood-unsync %base (sein:title our) %kids]
   ==
 ::
 ++  poke-verb                                         ::  toggle verbose

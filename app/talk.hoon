@@ -220,7 +220,7 @@
         ;~  pose
           (cold [our.hid man.she] col)
           ;~(pfix cen (stag our.hid sym))
-          ;~(pfix fas (stag (sein:title:jael our.hid) sym))
+          ;~(pfix fas (stag (sein:title our.hid) sym))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -1649,7 +1649,7 @@
       ?-  p.cordon.shape
         $black  &
         $green  &
-        $brown  (team:title:jael our.hid her)
+        $brown  (team:title our.hid her)
         $white  (~(has in q.cordon.shape) her)
       ==
     ::
@@ -1959,7 +1959,7 @@
   ++  sn-curt                                           ::  render name in 14
     |=  mup/?
     ^-  tape
-    =+  raw=(cite:title:jael p.one)
+    =+  raw=(cite:title p.one)
     (runt [(sub 14 (lent raw)) ' '] raw)
   ::
   ++  sn-nick
@@ -1979,7 +1979,7 @@
       ?:  =(q.one man)
         ":"
       ['%' (trip q.one)]
-    ?:  =(p.one (sein:title:jael our.hid))
+    ?:  =(p.one (sein:title our.hid))
       ['/' (trip q.one)]
     =+  wun=(scow %p p.one)
     ?:  =(q.one (main p.one))
@@ -2223,7 +2223,7 @@
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
   :: ~&   [%talk-peer src.hid ost.hid pax]
   ?:  ?=({$sole *} pax)
-    ?>  (team:title:jael our.hid src.hid)
+    ?>  (team:title our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
     ra-abet:(ra-console:ra src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
