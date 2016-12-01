@@ -4445,7 +4445,7 @@
   ++  wired  wired:+
   --
 ++  ford  !!
-++  gall  pubsub:userlib
+++  gall  !!
 ++  jael  ^?
   |%
   ++  title  title:+
