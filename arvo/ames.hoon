@@ -1385,10 +1385,10 @@
       [out fox]
     ::
     ++  doze
-      %+  hunt:chrono:behn  `(add now ~s32)
+      %^  hunt  lth  `(add now ~s32)
       |-  ^-  (unit @da)
       ?~  zac.fox  ~
-      ;:  hunt:chrono:behn
+      ;:  (cury hunt lth)
           $(zac.fox l.zac.fox) 
           $(zac.fox r.zac.fox) 
           doze:(um p.n.zac.fox)
@@ -1466,7 +1466,7 @@
       ++  doze                                          ::    doze:um:am
         |-  ^-  (unit @da)                              ::  wakeup time
         ?~  wab.weg  ~
-        ;:  hunt:chrono:behn 
+        ;:  (cury hunt lth)
             $(wab.weg l.wab.weg) 
             $(wab.weg r.wab.weg) 
             doze:(ho p.n.wab.weg)

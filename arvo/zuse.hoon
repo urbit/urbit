@@ -4403,9 +4403,7 @@
   --
 ++  behn  ^?
   |%
-  ++  chrono
-    :-  chrono:userlib
-    hunt=|=({a/(unit @da) b/(unit @da)} (hunt lth a b))
+  ++  chrono  chrono:userlib
   --
 ++  clay  ^?
   |%

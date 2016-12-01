@@ -1622,11 +1622,11 @@
         ::
             $next  ~
             $many
-          %+  hunt:chrono:behn
+          %^  hunt  lth
             ?.  ?=($da -.p.q.rov)  ~
             ?.((lth now p.p.q.rov) ~ [~ p.p.q.rov])
           ?.  ?=($da -.q.q.rov)  ~
-          ?.((lth now p.q.q.rov) [~ now] [~ p.q.q.rov])
+          (hunt gth [~ now] [~ p.q.q.rov])
         ==
       fun
     +>.$
