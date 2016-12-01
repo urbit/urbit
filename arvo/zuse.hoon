@@ -2982,7 +2982,7 @@
     ::                                                  ::  ++ar:dejs:format
     ++  ar                                              ::  array as list
       |*  wit/fist
-      |=  jon/json
+      |=  jon/json  ^-  (unit (list _(need (wit *json))))
       ?.  ?=({$a *} jon)  ~
       %-  drop-list
       |-
@@ -2993,15 +2993,20 @@
       |*  wil/(pole fist)
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
-      =+  raw=((at-raw wil) p.jon)
-      ?.((all-full raw) ~ (some (need-tuple raw)))
+      ((at-raw wil) p.jon)
     ::                                                  ::  ++at-raw:dejs:format
     ++  at-raw                                          ::  array as tuple
       |*  wil/(pole fist)
       |=  jol/(list json)
-      ?~  wil  ~
-      :-  ?~(jol ~ (-.wil i.jol))
-      ((at-raw +.wil) ?~(jol ~ t.jol))
+      ?~  jol  ~
+      ?-    wil                                         :: mint-vain on empty
+          :: {wit/* t/*}
+          {* t/*}
+        =>  .(wil [wit ~]=wil)
+        ?~  t.wil  ?^(t.jol ~ (wit.wil i.jol))
+        %+  both  (wit.wil i.jol)
+        ((at-raw t.wil) t.jol)
+      ==
     ::                                                  ::  ++bo:dejs:format
     ++  bo                                              ::  boolean
       |=(jon/json ?.(?=({$b *} jon) ~ [~ u=p.jon]))
@@ -3051,24 +3056,33 @@
       |=  jon/json
       ?.  ?=({$o {@ *} $~ $~} jon)  ~
       |-
-      ?~  wer  ~
-      ?:  =(-.-.wer p.n.p.jon)
-        ((pe -.-.wer +.-.wer) q.n.p.jon)
-      ((of +.wer) jon)
+      ?-    wer                                         :: mint-vain on empty
+          :: {{key/@t wit/*} t/*}
+          {{key/@t *} t/*}
+        =>  .(wer [[~ wit] ~]=wer)
+        ?:  =(key.wer p.n.p.jon)
+          ((pe key.wer wit.wer) q.n.p.jon)
+        ?~  t.wer  ~
+        ((of t.wer) jon)
+      ==
     ::                                                  ::  ++ot:dejs:format
     ++  ot                                              ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?.  ?=({$o *} jon)  ~
-      =+  raw=((ot-raw wer) p.jon)
-      ?.((all-full raw) ~ (some (need-tuple raw)))
+      ((ot-raw wer) p.jon)
     ::                                                  ::  ++ot-raw:dejs:format
     ++  ot-raw                                          ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jom/(map @t json)
-      ?~  wer  ~
-      =+  ten=(~(get by jom) -.-.wer)
-      [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jom)]
+      ?-    wer                                         :: mint-vain on empty
+          :: {{key/@t wit/*} t/*}
+          {{key/@t *} t/*}
+        =>  .(wer [[~ wit] ~]=wer)
+        =/  ten  (biff (~(get by jom) key.wer) wit.wer)
+        ?~  t.wer  ten
+        (both ten ((ot-raw t.wer) jom))
+      ==
     ::                                                  ::  ++om:dejs:format
     ++  om                                              ::  object as map
       |*  wit/fist
@@ -3078,15 +3092,14 @@
     ::                                                  ::  ++op:dejs:format
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
-      %+  cu  my
-      %-  ci  :_  (om wit)
-      |=  a/(map cord _(need *wit))
-      ^-  (unit (list _[(wonk *fel) (need *wit)]))
-      =-  (drop-list (turn (~(tap by a)) -))
+      |=  jon/json  ^-  (unit (map _(wonk *fel) _*wit))
+      =/  jom  ((om wit) jon)
+      ?~  jom  ~
+      %-  drop-map
+      %-  malt
+      %+  turn  (~(tap by jom))
       |*  {a/cord b/*}
-      =+  nit=(rush a fel)
-      ?~  nit  ~
-      (some [u.nit b])
+      (both (rush a fel) (some b))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
