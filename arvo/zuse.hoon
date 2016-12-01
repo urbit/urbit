@@ -2890,7 +2890,7 @@
 ++  format  ^?
   |%
   ::                                                    ::  ++to-wain:format
-  ++  to-wain                                            ::  atom to line list
+  ++  to-wain                                           ::  atom to line list
     ~%  %lore  ..is  ~
     |=  lub/@
     =|  tez/(list @t)
@@ -2909,7 +2909,7 @@
     ?:  =(0 lub)  (flop tez)
     $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
   ::                                                    ::  ++of-wain:format
-  ++  of-wain                                            ::  line list to atom
+  ++  of-wain                                           ::  line list to atom
     |=  tez/(list @t)
     =|  {our/@ i/@ud}
     |-  ^-  @
@@ -2920,13 +2920,13 @@
     ?:  =(0 i)
       $(i +(i), tez t.tez, our i.tez)
     $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
-  ::                                                    ::  ++to-path:format
-  ++  to-path                                            ::  beam to path
+  ::                                                    ::  ++en-beam:format
+  ++  en-beam                                            ::  beam to path
     |=  bem/beam
     ^-  path
     [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
-  ::                                                    ::  ++of-path:format
-  ++  of-path                                            ::  parse path to beam
+  ::                                                    ::  ++de-beam:format
+  ++  de-beam                                           ::  parse path to beam
     |=  pax/path
     ^-  (unit beam)
     ?.  ?=({* * * *} pax)  ~
@@ -4553,7 +4553,6 @@
 ++  clay  ^?
   |%
   ++  lines  [[lore=to-wain role=of-wain]:format unix:userlib]
-  ++  space  [[tome=of-path tope=to-path]:format space:userlib]
   --
 ++  dill  !!
 ++  eyre  ^?

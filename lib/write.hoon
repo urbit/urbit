@@ -4,7 +4,8 @@
   ::
 /?    310
 /-    plan-diff, plan-acct
-=,  space:clay
+=,  format
+=,  space:userlib
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
@@ -30,10 +31,10 @@
 ++  poke-wipe
   |=  sup/path  ^+  abet                ::  XX determine extension, beak
   =+  ext=%md
-  ?~  (file (tope beak-now [ext sup]))
+  ?~  (file (en-beam beak-now [ext sup]))
     ~|(not-found+[ext `path`(flop sup)] !!)
   =-  abet:(emit %info write+~ our -)
-  (fray (tope beak-now [ext sup]))
+  (fray (en-beam beak-now [ext sup]))
 ::
 ++  poke-tree
   |=  {sup/path mim/mime}  ^+  abet     ::  XX determine extension, beak
@@ -54,7 +55,7 @@
   =;  sob/soba:^clay
     ?~(sob abet abet:(emit %info write+~ our `toro:^clay`[q.byk %& sob]))
   =+  pax=`path`/web/plan
-  =+  paf=(tope beak-now (flop pax))
+  =+  paf=(en-beam beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
     =+  ins=(pact-plan [['' ''] ~] dif)
     [pax %ins plan+!>(ins)]~
@@ -136,7 +137,7 @@
   ?+  -.res  ~|(gage+-.res !!)
     $|  (mean p.res)
     $&  =-  abet:(emit %info write+~ our -)
-        (foal :(welp (tope beak-now ~) pax /[-.p.res]) p.res)
+        (foal :(welp (en-beam beak-now ~) pax /[-.p.res]) p.res)
   ==
 --
  

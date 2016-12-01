@@ -7,6 +7,7 @@
 ::
 ::::  ~fyr
   ::
+=,  ^eyre
 |%
 ++  twit-path                                           ::  valid peer path
   $%  {$cred $~}                                        ::  credential info

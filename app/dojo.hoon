@@ -5,7 +5,8 @@
 /-  sole, lens                                          ::  console structures
 /+  sole                                                ::  console library
 [. sole]
-=,  space:clay
+=,  space:userlib
+=,  format
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -228,7 +229,7 @@
         ;~(pose sym (easy dp-default-app))
       ==
     ++  dp-beam                                         ::  ++beam
-      %+  cook  |=(a/path =+((tome a) ?^(- u [he-beak (flop a)])))
+      %+  cook  |=(a/path =+((de-beam a) ?^(- u [he-beak (flop a)])))
       =+  vez=(vang | dp-path)
       (sear plex:vez (stag %conl poor:vez))
     ::
@@ -238,11 +239,11 @@
       auru:urlp:url:eyre
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
-    ++  dp-path    (tope he-beam)                       ::  ++path
+    ++  dp-path    (en-beam he-beam)                       ::  ++path
     ++  dp-server  (stag 0 (most fas sym))              ::  ++dojo-server
     ++  dp-twig    tall:(vang | dp-path)                ::  ++twig
     ++  dp-rood                                         ::  'dir' twig
-      =>  (vang | (tope dir))
+      =>  (vang | (en-beam dir))
       ;~  pose
         rood
       ::
@@ -472,9 +473,9 @@
                       ?:  ?=({@ $~} pax)  ~[i.pax %home '0']
                       ?:  ?=({@ @ $~} pax)  ~[i.pax i.t.pax '0']
                       pax
-                  =.  dir  (need (tome pax))
+                  =.  dir  (need (de-beam pax))
                   =-  +>(..dy (he-diff %tan - ~))
-                  rose+[" " `~]^~[leaf+"=%" (smyt (tope he-beak s.dir))]
+                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
         ==
       ::
           $poke       
@@ -492,7 +493,7 @@
           %info
           /file
           our.hid
-          (foal (tope p.p.mad) cay)
+          (foal (en-beam p.p.mad) cay)
         ==
       ::
           $flat
@@ -1073,7 +1074,7 @@
         ?-  -.sink.com
           $stdout       [%show %0]
           $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
-          $output-clay  [%file (need (tome pax.sink.com))]
+          $output-clay  [%file (need (de-beam pax.sink.com))]
           $url          [%http %post `~. url.sink.com]
           $to-api       !!
           $send-api     [%poke our.hid api.sink.com]

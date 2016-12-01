@@ -12,7 +12,7 @@
 --
 |%
 ++  htm-enty                                            ::  XX belongs in zuse
-  =,  space:clay
+  =,  space:userlib
   =,  format
   ~+  
   =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context

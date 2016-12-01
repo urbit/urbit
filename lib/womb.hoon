@@ -388,7 +388,7 @@
   =+  pas=`@uw`(shas %back eny)
   ~&  [%backing-up pas=pas]
   =;  dif  (emit %info /backup [our dif])
-  %+  foal:space:clay 
+  %+  foal:space:userlib
     (welp pax /jam-crub)
   [%jam-crub !>((en:crub:crypto pas (jam `part`+:abet)))]
 ::

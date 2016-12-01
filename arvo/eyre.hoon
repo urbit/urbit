@@ -4,7 +4,6 @@
 |=  pit/vase
 =,  ^eyre
 =,  crypto
-=,  space:clay
 =,  bytes:eyre
 =,  js:eyre
 =,  url:eyre
@@ -791,7 +790,7 @@
     ::
         $born  +>.$(ged hen)                            ::  register external
         $serv
-      =<  ~&([%serving (tope top)] .)
+      =<  ~&([%serving (en-beam top)] .)
       ?^(p.kyz +>.$(top p.kyz) +>.$(q.top p.kyz))
     ::
         $crud
@@ -1051,7 +1050,7 @@
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
-          =+  bek=(norm-beak -:(need (tome (need (puck p.tee)))))
+          =+  bek=(norm-beak -:(need (de-beam (need (puck p.tee)))))
           (exec-live ac+q.tee bek [%flag [p.sih `~] %cast %mime [%$ cay]])
         (give-mime q.tee p.sih cay)
       ::
@@ -1287,7 +1286,7 @@
     ::
     ++  resolve-bake
       |=  {ses/(unit hole) dom/(unit @t) men/mend mar/mark arg/coin bem/beam}
-      =+  wir=[%at (pack [- +]:(tope -.bem ~)) (fall ses %$) men ?~(dom ~ [u.dom]~)]
+      =+  wir=[%at (pack [- +]:(en-beam -.bem ~)) (fall ses %$) men ?~(dom ~ [u.dom]~)]
       =.  -.bem  (norm-beak -.bem)
       =+  req=[%bake mar arg bem]
       =+  red=[%bake %red-quri arg bem]
@@ -1370,11 +1369,11 @@
         =+  =<  tyk=(drop-list (turn q.pok .))          :: a path whose elements
             |=(a/knot `(unit tyke)`(rush a gasp:vast))  :: are in /=foo==/=bar
         ?~  tyk  ~                                      :: syntax
-        =+  %-  posh:(vang & (tope top))                :: that the base path
+        =+  %-  posh:(vang & (en-beam top))             :: that the base path
             [[~ (zing u.tyk)] ~]                        :: can interpolate into
         ?~  -  ~                                        ::
         =+  (plex:vast %conl u)                         :: staticly, and make a
-        (biff - tome)                                   :: valid beam
+        (biff - de-beam)                                   :: valid beam
       ::
       ++  as-aux-request                                ::  /~/... req parser
         ^-  (unit perk)
@@ -1513,7 +1512,7 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
-        ?<  =([~ 0] (sky [151 %noun] %cw (tope bem(+ ~, r [%da now]))))
+        ?<  =([~ 0] (sky [151 %noun] %cw (en-beam bem(+ ~, r [%da now]))))
         =+  men=?+(mef !! $get mef, $head mef)  :: redact result
         =+  arg=(fcgi payload fcgi-cred)
         =+  [%bake men ext arg bem]
@@ -1932,7 +1931,7 @@
           +12.q
         =+  ^=  ato
             %-  sky 
-            [[151 %noun] %cx (tope root-beak [%atom (flop %_(dom . sec+dom))])]
+            [[151 %noun] %cx (en-beam root-beak [%atom (flop %_(dom . sec+dom))])]
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         =.  key
           ?~  key  ''

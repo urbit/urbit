@@ -11,7 +11,7 @@
         {{pax/path pot/$@($~ {v/@tas $~})} $~}
     ==
 ?~  pot
-  =+  bem=(need (tome:space:clay pax))
+  =+  bem=(need (de-beam:format pax))
   $(pot ~[?^(s.bem i.s.bem q.bem)])
 :-  %kiln-mount
 [pax v.pot]

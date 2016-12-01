@@ -5,7 +5,8 @@
 /-    talk, sole
 /+    talk, sole, time-to-id, twitter
 /=    seed  /~  !>(.)
-=,  space:clay
+=,  space:userlib
+=,  format
 =,  unity
 ::
 ::::
@@ -2320,7 +2321,7 @@
   ^-  move
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
-      %+  tope  [our.hid %home da+now.hid]
+      %+  en-beam  [our.hid %home da+now.hid]
       /talk-telegrams/(scot %da day)/[man]/talk
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]

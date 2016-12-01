@@ -8,10 +8,10 @@
 /=    dat    /^    tree-include    /tree-include/
 /=    kid    /^    (map knot tree-include)
              /_    /tree-include/
+=,  format
 =,  js:eyre
 =,  bytes:eyre
 =,  base64:eyre
-=,  space:clay
 ::
 ::::
   ::
@@ -59,7 +59,7 @@
   :-  -.a
   ?-  -.a
     $name  (from-type +.a ?^(s.bem i.s.bem q.bem))
-    $beak  (from-type +.a (crip (spud (tope bem(s /)))))
+    $beak  (from-type +.a (crip (spud (en-beam bem(s /)))))
     $path  (from-type +.a (crip (spud (flop s.bem))))
     $spur  (from-type +.a (crip (spud s.bem)))
     $bump  (from-type +.a bump.dat)
