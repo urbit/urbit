@@ -4,7 +4,6 @@
   ::
 /?    310
 =*  xml  xml:eyre
-=,  js:eyre
 =,  lines:clay
 =+  =~
 |%
@@ -14,20 +13,21 @@
 |%
 ++  htm-enty                                            ::  XX belongs in zuse
   =,  space:clay
+  =,  format
   ~+  
   =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context
       =+(parse:xml enty(ent mapping))
   ^-  mapping/(map knot @tF)
   =+  pax=/==2%%/html5-entities/json                    ::  XX  %%/
-  =+  maf=%.(pax ;~(biff file (soft json) (om so):jo))
+  =+  maf=%.(pax ;~(biff file (soft json) (om so):dejs-soft))
   ?^  maf  u.maf
   ~&  no-enty+pax
   (my amp+'&' quot+'"' apos+'\'' lt+'<' gt+'>' ~)       ::  fallback  
 ::
 ++  skem-symb  (star ;~(pose dot alp))
 ++  skem-set  ~+  ^-  (set cord)                        ::  URI schemes
-  ::     (sa `wain`/http/https/javascript)
-  =-  (silt `wain`(rash - (more gah (cook crip skem-symb))))  
+  ::     (silt `wain`/http/https/javascript)
+  =-  (silt `wain`(rash - (more gah (cook crip skem-symb))))
   '''
   coap doi javascript aaa aaas about acap cap cid crid data dav dict dns file
   ftp geo go gopher h323 http https iax icap im imap info ipp iris iris.beep

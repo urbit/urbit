@@ -11,6 +11,7 @@
 =,  wired
 =,  xml:eyre
 =,  unity
+=,  format
 =>  =~
 |%                                                      ::  interfaces
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
@@ -1260,8 +1261,8 @@
     ::
     ++  as-lens
       =<  abet
-      ::  (process-parsed [%mess [our %dojo] %lens-command /lens (need grab-json)])
-      ((teba ~(new lens ~)) (need grab-json))
+      ::  (process-parsed [%mess [our %dojo] %lens-command /lens grab-json])
+      ((teba ~(new lens ~)) grab-json)
     ::
     ++  resolve
       |=  {cug/(list @t) pez/pest}  ^+  done
@@ -1311,14 +1312,22 @@
       &
     ::
     ++  grab-json
+      ^-  json
+      ?.  ?=(?($post $put $delt) mef)
+        ~|(bad-method+mef !!)
+      ?~  bod
+        ~|(%no-body !!)
+      (need (poja q.u.bod))
+    ::
+    ++  grab-json-soft
+      ^-  (unit json)
       ?.  ?=(?($post $put $delt) mef)
         ~
       ?~(bod ~ (poja q.u.bod))
     ::
-    ++  need-body  |*(a/fist:jo (need (biff grab-json a)))
     ++  grab-oryx
       ^-  (unit oryx)
-      =+  oxe=(biff grab-json (ot oryx+so ~):jo)
+      =+  oxe=(biff grab-json-soft =>(dejs-soft (ot oryx+so ~)))
       ?^  oxe  oxe
       (~(get by (molt quy)) %oryx)
     ::
@@ -1430,10 +1439,11 @@
                 {@ @ $~}    [our (raid but %tas %tas ~)]
                 {@ @ @ $~}  (raid but %p %tas %tas ~)
               ==
-          :^  %mess  [p q]:dir  r.dir
+          =;  x/{wir/wire mez/json}
+            [%mess [p q]:dir r.dir wir.x mez.x]
           =+  wir=(~(get by (molt quy)) 'wire')
-          ?^  wir  [(stab u.wir) (need grab-json)]         ::  XX distinguish
-          (need-body (ot wire+(cu stab so) xyro+some ~):jo)
+          ?^  wir  [(stab u.wir) grab-json]          ::  XX distinguish
+          %.(grab-json =>(dejs (ot wire+(cu stab so) xyro+same ~)))
         ::
             $in
           ~|  expect+[%post 'application+json' /'@uv' '?PUT/DELETE']
@@ -1451,7 +1461,7 @@
             $(but [(scot %p our) but])
           ?>  ?=(?($delt $put) mef)
           =+  :-  hap=[(slav %p i.but) (slav %tas -.t.but)]
-              wir=(need-body (ot wire+(cu stab so) ~):jo)
+              wir=%.(grab-json =>(dejs (ot wire+(cu stab so) ~)))
           [%subs mef hap u.p.pok wir +.t.but]
         ::
             $auth
@@ -1465,14 +1475,13 @@
                 $get   [%json ~]
                 $put
               ~|  parsing+bod
-              [%try (need-body (ot ship+(su fed:ag) code+(mu so) ~):jo)]
+              :-  %try
+              %.(grab-json =>(dejs (ot ship+(su fed:ag) code+(mu so) ~)))
             ::
                 $delt
               ~|  parsing+bod
-              =+  jon=(need (poja q:(need bod)))
-              ?>  ?=($o -.jon)
-              =+  sip=(~(get by p.jon) %ship)
-              [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
+              :-  %del
+              %.(grab-json =>(dejs-soft (ot ship+(su fed:ag))))
         ==  ==
         ==
       --
