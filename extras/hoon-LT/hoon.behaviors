@@ -1,0 +1,6 @@
+[
+ [:app :lt.objs.plugins/load-js ["codemirror/hoon.js"]] ;; "hoon_compiled.js"]]
+ [:files :lt.objs.files/file-types [
+   {:name "Hoon" :exts [:hoon :hook] :tags [:editor.hoon] :mime "text/x-hoon"}
+ ] ]
+]
