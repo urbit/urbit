@@ -2974,6 +2974,145 @@
     --  ::enjs
   ::                                                    ::  ++dejs:format
   ++  dejs                                              ::  json reparser
+    =>  |%  ++  grub  *                                 ::  result
+            ++  fist  $-(json grub)                     ::  reparser instance
+        --  ::
+    |%
+    ::                                                  ::  ++ar:dejs:format
+    ++  ar                                              ::  array as list
+      |*  wit/fist
+      |=  jon/json  ^-  (list _(wit *json))
+      ?>  ?=({$a *} jon)
+      (turn p.jon wit)
+    ::                                                  ::  ++at:dejs:format
+    ++  at                                              ::  array as tuple
+      |*  wil/(pole fist)
+      |=  jon/json
+      ?>  ?=({$a *} jon)
+      ((at-raw wil) p.jon)
+    ::                                                  ::  ++at-raw:dejs:format
+    ++  at-raw                                          ::  array as tuple
+      |*  wil/(pole fist)
+      |=  jol/(list json)
+      ?~  jol  !!
+      ?-    wil                                         :: mint-vain on empty
+          :: {wit/* t/*}
+          {* t/*}
+        =>  .(wil [wit ~]=wil)
+        ?~  t.wil  ?^(t.jol !! (wit.wil i.jol))
+        [(wit.wil i.jol) ((at-raw t.wil) t.jol)]
+      ==
+    ::                                                  ::  ++bo:dejs:format
+    ++  bo                                              ::  boolean
+      |=(jon/json ?>(?=({$b *} jon) p.jon))
+    ::                                                  ::  ++bu:dejs:format
+    ++  bu                                              ::  boolean not
+      |=(jon/json ?>(?=({$b *} jon) !p.jon))
+    ::                                                  ::  ++ci:dejs:format
+    ++  ci                                              ::  maybe transform
+      |*  {poq/gate wit/fist}
+      |=  jon/json
+      (need (poq (wit jon)))
+    ::                                                  ::  ++cu:dejs:format
+    ++  cu                                              ::  transform
+      |*  {poq/gate wit/fist}
+      |=  jon/json
+      (poq (wit jon))
+    ::                                                  ::  ++di:dejs:format
+    ++  di                                              ::  millisecond date
+      %+  cu
+        |=  a/@u  ^-  @da
+        (add ~1970.1.1 (div (mul ~s1 a) 1.000))
+      ni
+    ::                                                  ::  ++mu:dejs:format
+    ++  mu                                              ::  true unit
+      |*  wit/fist
+      |=  jon/json
+      ?~(jon ~ (some (wit jon)))
+    ::                                                  ::  ++ne:dejs:format
+    ++  ne                                              ::  number as real
+      |=  jon/json
+      ^-  (unit @rd)
+      ::  please implement me, it's not that hard!
+      !!
+    ::                                                  ::  ++ni:dejs:format
+    ++  ni                                              ::  number as integer
+      |=  jon/json
+      ?>  ?=({$n *} jon)
+      (rash p.jon dem)
+    ::                                                  ::  ++no:dejs:format
+    ++  no                                              ::  number as cord
+      |=(jon/json ?>(?=({$n *} jon) p.jon))
+    ::                                                  ::  ++of:dejs:format
+    ++  of                                              ::  object as frond
+      |*  wer/(pole {cord fist})
+      |=  jon/json
+      ?>  ?=({$o {@ *} $~ $~} jon)
+      |-
+      ?-    wer                                         :: mint-vain on empty
+          :: {{key/@t wit/*} t/*}
+          {{key/@t *} t/*}
+        =>  .(wer [[~ wit] ~]=wer)
+        ?:  =(key.wer p.n.p.jon)
+          [key.wer ~|(key+key.wer (wit.wer q.n.p.jon))]
+        ?~  t.wer  ~|(bad-key+p.n.p.jon !!)
+        ((of t.wer) jon)
+      ==
+    ::                                                  ::  ++ot:dejs:format
+    ++  ot                                              ::  object as tuple
+      |*  wer/(pole {cord fist})
+      |=  jon/json
+      ?>  ?=({$o *} jon)
+      ((ot-raw wer) p.jon)
+    ::                                                  ::  ++ot-raw:dejs:format
+    ++  ot-raw                                          ::  object as tuple
+      |*  wer/(pole {cord fist})
+      |=  jom/(map @t json)
+      ?-    wer                                         :: mint-vain on empty
+          :: {{key/@t wit/*} t/*}
+          {{key/@t *} t/*}
+        =>  .(wer [[~ wit] ~]=wer)
+        =/  ten  ~|(key+key.wer (wit.wer (~(got by jom) key.wer)))
+        ?~(t.wer ten [ten ((ot-raw t.wer) jom)])
+      ==
+    ::                                                  ::  ++om:dejs:format
+    ++  om                                              ::  object as map
+      |*  wit/fist
+      |=  jon/json
+      ?>  ?=({$o *} jon)
+      (~(run by p.jon) wit)
+    ::                                                  ::  ++op:dejs:format
+    ++  op                                              ::  parse keys of map
+      |*  {fel/rule wit/fist}
+      |=  jon/json  ^-  (map _(wonk *fel) _*wit)
+      =/  jom  ((om wit) jon)
+      %-  malt
+      %+  turn  (~(tap by jom))
+      |*  {a/cord b/*}
+      =>  .(+< [a b]=+<)
+      [(rash a fel) b]
+    ::                                                  ::  ++pe:dejs:format
+    ++  pe                                              ::  prefix
+      |*  {pre/* wit/fist}
+      (cu |*(* [pre +<]) wit)
+    ::                                                  ::  ++sa:dejs:format
+    ++  sa                                              ::  string as tape
+      |=(jon/json ?>(?=({$s *} jon) (trip p.jon)))
+    ::                                                  ::  ++so:dejs:format
+    ++  so                                              ::  string as cord
+      |=(jon/json ?>(?=({$s *} jon) p.jon))
+    ::                                                  ::  ++su:dejs:format
+    ++  su                                              ::  parse string
+      |*  sab/rule
+      |=  jon/json  ^+  (wonk *sab)
+      ?>  ?=({$s *} jon)
+      (rash p.jon sab)
+    ::                                                  ::  ++ul:dejs:format
+    ++  ul                                              ::  null
+      |=(jon/json ?~(jon ~ !!))
+    --  ::dejs
+  ::                                                    ::  ++dejs-soft:format
+  ++  dejs-soft                                         ::  json reparse to unit
     =,  unity
     =>  |%  ++  grub  (unit *)                          ::  result
             ++  fist  $-(json grub)                     ::  reparser instance
@@ -3121,7 +3260,7 @@
     ::                                                  ::  ++ul:dejs:format
     ++  ul                                              ::  null
       |=(jon/json ?~(jon (some ~) ~))
-    --  ::dejs
+    --  ::dejs-soft
   --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy
@@ -4423,7 +4562,7 @@
   ++  bytes  [moon=en-mite taco=as-octs tact=as-octt]:mime:html
   ++  js
     :+  [pojo=en-json poja=de-json]:html
-      jo=dejs:format
+      jo=dejs-soft:format
     =>  format  ^?
     |%
     ++  joba  frond:enjs
