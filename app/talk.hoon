@@ -6,7 +6,7 @@
 /+    talk, sole, time-to-id, twitter
 /=    seed  /~  !>(.)
 =,  space:clay
-=,  js:eyre
+=,  unity
 ::
 ::::
   ::
@@ -1848,7 +1848,8 @@
         (pa-sauce ost.hid [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           %+  biff
-            (zl:jo (turn pax ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~)))))
+            %-  drop-list
+            (turn pax ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~))))
           |=  paf/(list dime)
           ?~  paf
             $(paf [%ud (sub (max 64 count) 64)]~)

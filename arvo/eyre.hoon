@@ -10,6 +10,7 @@
 =,  url:eyre
 =,  wired
 =,  xml:eyre
+=,  unity
 =>  =~
 |%                                                      ::  interfaces
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
@@ -1357,7 +1358,7 @@
       ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
       ++  as-beam                                       :: /~sipnym/desk/3/...
         ^-  (unit beam)
-        =+  =<  tyk=(zl:jo (turn q.pok .))              :: a path whose elements
+        =+  =<  tyk=(drop-list (turn q.pok .))          :: a path whose elements
             |=(a/knot `(unit tyke)`(rush a gasp:vast))  :: are in /=foo==/=bar
         ?~  tyk  ~                                      :: syntax
         =+  %-  posh:(vang & (tope top))                :: that the base path
