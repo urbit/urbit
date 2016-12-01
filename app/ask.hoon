@@ -7,12 +7,13 @@
 |%
   ++  card
     $%  {$diff $sole-effect sole-effect}
-        {$poke wire {ship $hood} $womb-invite {cord reference invite}:womb}
+        {$poke wire {ship $hood} $womb-invite {cord invite}:womb}
     ==
   ++  invited  ?($new $sent $ignored)
   ++  email  @t
 --
 ::
+=,  ^gall
 |_  $:  bow/bowl
         adr/(map email {time invited})
         sos/(map bone sole-share)
@@ -153,7 +154,7 @@
   ^-  card
   :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]  
   :-  %womb-invite
-  ^-  {cord reference invite}:womb
+  ^-  {cord invite}:womb
   =+  inv=(scot %uv (end 7 1 eny.bow))
-  [inv `&+our.bow [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
+  [inv [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
 --

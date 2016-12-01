@@ -48,7 +48,8 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|_  $:  hid/bowl:^gall                                  ::  system state
+=,  ^gall
+|_  $:  hid/bowl                                       ::  system state
         hood-1                                          ::  server state
     ==                                                  ::
 ++  able                                                ::  find+make part

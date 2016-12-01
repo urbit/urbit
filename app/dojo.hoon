@@ -111,7 +111,8 @@
 ::                                                      ::
 ::::                                                    ::
   ::                                                    ::
-|_  $:  hid/bowl:^gall                                  ::  system state
+=,  ^gall
+|_  $:  hid/bowl                                       ::  system state
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session

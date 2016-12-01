@@ -180,7 +180,8 @@
     q.nb
   --
 --
-|_  {hid/bowl:^gall house}
+=,  ^gall
+|_  {hid/bowl house}
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
   ++  sh                                                ::  per console
