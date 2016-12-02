@@ -3,7 +3,6 @@
 ::::
 |=  pit/vase
 =,  ^eyre
-=,  crypto
 =,  bytes:eyre
 =,  url:eyre
 =,  wired
@@ -1939,7 +1938,7 @@
           ?~  key  ''
           %-  (bond |.(~&(bad-key+[dom key] '')))
           =+  (slaw %uw key)
-          ?~(- ~ (de:crua load-secret u))  :: XX clay permissions
+          ?~(- ~ (de:crua:crypto load-secret u))  :: XX clay permissions
         `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
       ==
     ::
