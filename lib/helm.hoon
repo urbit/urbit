@@ -32,12 +32,6 @@
   ==                                                    ::
 ++  hood-reset                                          ::  reset command
   $~                                                    ::
-++  hood-deset                                          ::  reset command
-  $~                                                    ::
-++  hood-deone                                          ::  reset command
-  $~                                                    ::
-++  hood-detwo                                          ::  reset command
-  $~                                                    ::
 ++  helm-verb                                           ::  reset command
   $~                                                    ::
 ++  hood-reload                                         ::  reload command
@@ -128,19 +122,11 @@
   %-  emil
   %-  flop
   %+  turn  all
-  =+  top=`path`/(scot %p our)/[syd]/(scot %da now)/arvo
-  =+  ark=.^(arch %cy top)
-  =+  van=(~(tap by dir.ark))
+  =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
   |=  nam/@tas
-  =.  nam
-    ?.  =(1 (met 3 nam))
-      nam
-    =+  ^-  zaz/(list {p/knot $~})
-        (skim van |=({a/term $~} =(nam (end 3 1 a))))
-    ?>  ?=({{@ $~} $~} zaz)
-    `term`p.i.zaz
   =+  tip=(end 3 1 nam)
-  =+  way=(welp top /[nam])
+  =+  zus==('z' tip) 
+  =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
 ::
@@ -154,48 +140,27 @@
   |=  hood-reset  =<  abet
   %-  emil
   %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :-  [%flog /reset %vega (weld top `path`/hoon)]
+  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
+  =+  hun=.^(@ %cx (welp top /hoon/hoon))
+  =+  arv=.^(@ %cx (welp top /arvo/hoon))  
+  :-  [%flog /reset [%velo `@t`hun `@t`arv]]
+  :-  =+  way=(weld top `path`/zuse)
+      [%flog /reset %veer %$ way .^(@ %cx (welp way /hoon))]
   %+  turn
     ^-  (list {p/@tas q/@tas})
-    :~  [%$ %zuse]
-        [%a %ames]
+    :~  [%a %ames]
         [%b %behn]
         [%c %clay]
         [%d %dill]
         [%e %eyre]
         [%f %ford]
         [%g %gall]
+        [%j %jael]
     ==
   |=  {p/@tas q/@tas}
-  =+  way=`path`(welp top /[q])
+  =+  way=`path`(welp top /vane/[q])
   =+  txt=.^(@ %cx (welp way /hoon))
   [%flog /reset %veer p way txt]
-::
-++  poke-deset                                        ::  deset system
-  |=  hood-deset  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :-  [%flog /deset %vega (weld top `path`/hoon)]
-  ~
-::
-++  poke-deone                                        ::  deset system
-  |=  hood-deone  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :~  [%flog /deset %vega (weld top `path`/one)] 
-      [%flog /deset %vega (weld top `path`/two)] 
-  ==
-::
-++  poke-detwo                                        ::  deset system
-  |=  hood-detwo  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :-  [%flog /deset %vega (weld top `path`/two)]
-  ~
 ::
 ++  poke-wyll                                         ::  hear certificate
   |=  wil/(unit wyll:^ames)

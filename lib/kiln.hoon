@@ -186,14 +186,14 @@
 ::
 ++  poke-start-autoload
   |=  $~
-  =.  cur-hoon  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/hoon/hoon)
-  =.  cur-zuse  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon)
+  =.  cur-hoon  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/hoon/hoon)
+  =.  cur-zuse  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/zuse/hoon)
   =.  cur-vanes
     %-  malt
     %+  turn  `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
     |=  syd/@tas
     :-  syd
-    .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
+    .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/vane/[syd]/hoon)
   =<  abet
   %-  emit
   ^-  card

@@ -442,6 +442,8 @@
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=($vega -.q.i.ova)
                 (fall (vega now t.ova (path +.q.i.ova)) [~ +>.^$])
+              ?:  ?=($velo -.q.i.ova)
+                (fall (velo now t.ova ({@ @} +.q.i.ova)) [~ +>.^$])
               ?:  ?=(?($init $veal) -.q.i.ova)
                 =+  avo=$(ova t.ova, +>+.^$ (boot (@ +.q.i.ova)))
                 [[i.ova -.avo] +.avo]
@@ -540,6 +542,91 @@
   =+  sam=[eny ova q.niz]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
+::
+++  velo                                                ::  new full reboot
+  |=  $:  ::  now: current date
+          ::  ova: actions to process after reboot
+          ::  hun: hoon.hoon source
+          ::  arv: arvo.hoon source
+          ::
+          now/@da
+          ova/(list ovum) 
+          hun/@t 
+          van/@t
+      ==
+  ^-  (unit {p/(list ovum) q/*})
+  ::
+  ::  virtualize; dump error if we fail
+  ::
+  =-  ?:(?=($| -.-) ((slog p.-) ~) `p.-)
+  %-  mule  |.
+  ::
+  ::  produce a new kernel and an output list
+  ::
+  ^-  (pair (list ovum) *)
+  ::
+  ::  compile the hoon.hoon source with the current compiler
+  ::
+  ~&  [%hoon-compile `@p`(mug hun)]
+  =+  raw=(ride %noun hun)
+  ::
+  ::  activate the new compiler gate
+  ::
+  =+  cop=.*(0 +.raw)
+  ::
+  ::  find the hoon version number of the new kernel
+  ::
+  =+  nex=(@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon])))
+  ?>  |(=(nex hoon) =(+(nex) hoon))
+  ::
+  ::  if we're upgrading language versions, recompile the compiler
+  ::
+  =>  ?:  =(nex hoon)
+        [hot=`*`raw .]
+      ~&  [%hoon-compile-upgrade nex]
+      =+  hot=.*(cop(+< [%noun hun]) -.cop)
+      .(cop .*(0 +.hot))
+  ::  
+  ::  extract the hoon core from the outer gate
+  ::
+  =+  hoc=.*(cop [0 7])
+  ::
+  ::  compute the span of the hoon.hoon core
+  ::
+  =+  hyp=-:.*(cop(+< [-.hot '+>']) -.cop)
+  ::
+  ::  compile arvo
+  ::
+  ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug van)]
+  =+  rav=.*(cop(+< [hyp van]) -.cop)
+  ::
+  ::  create the arvo kernel
+  ::
+  =+  arv=.*(hoc +.rav)
+  ::
+  ::  extract the arvo core from the outer gate
+  ::
+  =+  voc=.*(arv [0 7])
+  ::
+  ::  compute the span of the arvo.hoon core
+  ::
+  =+  vip=-:.*(cop(+< [-.rav '+>']) -.cop)
+  ::
+  ::  entry gate: ++load for the normal case, ++come for upgrade
+  ::
+  =+  gat=.*(voc +:.*(cop(+< [vip ?:(=(nex hoon) 'load' 'come')]) -.cop))
+  ::
+  ::  sample: [entropy actions vases]
+  ::
+  =+  sam=[eny ova q.niz]
+  ::
+  ::  call into the new kernel
+  ::
+  =+  out=.*(gat(+< sam) -.gat)
+  ::
+  ::  tack a reset notification onto the product
+  ::
+  [[[~ %vega ~] ((list ovum) -.out)] +.out]
 ::
 ++  veer                                                ::  install vane/tang
   |=  {now/@da fav/curd}
