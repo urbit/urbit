@@ -7,7 +7,7 @@
   !:
 :-  %say
 |=  $:  {now/@da * bec/beak}
-        {{who/@p $~} $~}
+        {{who/@p $~} try/_| $~}
     ==
 ::
 ::  we're creating an event series E whose lifecycle can be computed
@@ -52,8 +52,6 @@
     ::
     ::  event 1 is the lifecycle formula which computes the final
     ::  state from the full event sequence.
-    ::
-    ::  (note the rare `!=` rune, which produces the formula f)
     ::
     ::  the formal urbit state is always just a gate (function)
     ::  which, passed the next event, produces the next state.
@@ -111,36 +109,42 @@
         ::  as always, we have to use raw nock as we have no type.
         ::  the gate is in fact ++ride.
         ::
+        ~>  %slog.[0 leaf+"1-b"]
         =+  ^=  compiler-gate 
             .*(0 compiler-formula)
         ::
         ::  compile the compiler source, producing (pair span nock).
         ::  the compiler ignores its input so we use a trivial span.
         ::
+        ~>  %slog.[0 leaf+"1-c"]
         =+  ^=  compiler-tool
             .*(compiler-gate(+< [%noun compiler-source]) -.compiler-gate)
         ::
         ::  check that the new compiler formula equals the old formula.
         ::  this is not proof against thompson attacks but it doesn't hurt.
         ::
+        ~>  %slog.[0 leaf+"1-d"]
         ?>  =(compiler-formula +:compiler-tool)
         ::
-        ::  get the span (type) of the hoon core, which is the context
+        ::  get the span (type) of the kernel core, which is the context
         ::  of the compiler gate.  we just compiled the compiler,
         ::  so we know the span (type) of the compiler gate.  its
         ::  context is at tree address `+>` (ie, `+7` or Lisp `cddr`).
         ::  we use the compiler again to infer this trivial program.
         ::
+        ~>  %slog.[0 leaf+"1-e"]
         =+  ^=  kernel-span
             -:.*(compiler-gate(+< [-.compiler-tool '+>']) -.compiler-gate)
         ::
-        ::  compile the arvo source against the hoon core.
+        ::  compile the arvo source against the kernel core.
         ::
+        ~>  %slog.[0 leaf+"1-f"]
         =+  ^=  kernel-tool
             .*(compiler-gate(+< [kernel-span arvo-source]) -.compiler-gate)
         ::
-        ::  create the arvo kernel, whose subject is the hoon core.
+        ::  create the arvo kernel, whose subject is the kernel core.
         ::
+        ~>  %slog.[0 leaf+"1-g"]
         .*(+>:compiler-gate +:kernel-tool)
 ::  
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
@@ -227,19 +231,21 @@
     ?~  main-moves  ~
     :-  [now i.main-moves]
     $(main-moves t.main-moves, now (add now (bex 48)))
-~&  %metal-testing
-=+  ^=  yop
-    ^-  @p
-    %-  mug
-    .*  :*  boot-one
-            boot-two
-            compiler-formula
-            compiler-source
-            arvo-source
-            main-events
-        ==
-    [2 [0 3] [0 2]]
-~&  [%metal-tested yop]
+::
+~?  try
+  ~&  %metal-testing
+  =+  ^=  yop
+      ^-  @p
+      %-  mug
+      .*  :*  boot-one
+              boot-two
+              compiler-formula
+              compiler-source
+              arvo-source
+              main-events
+          ==
+      [2 [0 3] [0 2]]
+  [%metal-tested yop]
 ::
 :*  boot-one
     boot-two
