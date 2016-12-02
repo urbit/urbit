@@ -2188,7 +2188,6 @@
       =+  mar=(lobe-to-mark u.lob)
       ?.  ?=($hoon mar)
         [~ ~ %| u.lob]
-      =*  lines  lines:clay
       :^  ~  ~  %&
       :+  mar  [%atom %t ~]
       |-  ^-  @t                      ::  (urge cord) would be faster
@@ -2199,7 +2198,8 @@
       =+  txt=$(u.lob q.q.bol)
       ?>  ?=($txt-diff p.r.bol)
       =+  dif=((hard (urge cord)) q.r.bol)
-      =+  pac=(role:lines (lurk:differ (lore:lines (cat 3 txt '\0a')) dif))
+      =,  format
+      =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
       (end 3 (dec (met 3 pac)) pac)
     ::
     ::  Gets an arch (directory listing) at a node.

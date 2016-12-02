@@ -38,13 +38,13 @@
       ==
     ==
   ++  txt
-    (lore:lines:clay own)
+    (to-wain:format own)
   --
 ++  grab
   |%                                            ::  convert from
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t                                  ::  clam from %noun
-  ++  txt   role:lines:clay
+  ++  txt   of-wain:format
   --
 ++  grad  %txt
 --

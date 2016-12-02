@@ -92,7 +92,7 @@
     [;~((glue pat) . .)]:(cook crip (plus ;~(less pat next)))  :: /[^@]+@[^@]+/
   ::
     (crip tyl)
-    (role (turn mez crip))
+    (of-wain (turn mez crip))
   ==
 ::
 ++  poke-gmail-req
@@ -178,7 +178,7 @@
             [(~(got by a) 'From') (~(got by a) 'Subject')]
         =+  ^=  text-body
             |=  a/(list {@t @t})  ^-  wain
-            %-  lore
+            %-  to-wain
             %-  ofis-google
             (~(got by (~(gas by *(map @t @t)) a)) 'text/plain')
         %+  easy-ot  %payload

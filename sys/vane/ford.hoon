@@ -1760,7 +1760,8 @@
     ++  pact-hoon                                       ::  .hoon special case
       |=  {a/@t b/(urge:^clay cord)}  ^-  @t
       ~|  %lurk-hoon
-      (role:lines:clay (lurk:differ (lore:lines:clay a) b))
+      =,  format  =,  differ
+      (of-wain (lurk (to-wain a) b))
     ::
     ++  pact                                            ::  patch
       |=  {cof/cafe kas/silk kos/silk}

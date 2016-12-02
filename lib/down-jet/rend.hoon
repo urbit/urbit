@@ -75,7 +75,7 @@
     ?.  ?=($html -.ele)
       (push (reso ele) ~)
     ::  begin reparsing of html that the spec jankily lets through  ::
-    =+  tex=(trip (role p.ele))
+    =+  tex=(trip (of-wain p.ele))
     =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:parse:xml))
     ?^  mar
       (push u.mar)
@@ -104,7 +104,7 @@
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
     :-  [~ (wonk vex)]
-    ?~(q.q.u.q.vex lum [[%html (lore (crip q.q.u.q.vex))] lum])
+    ?~(q.q.u.q.vex lum [[%html (to-wain (crip q.q.u.q.vex))] lum])
   ::
   ++  push
     |=  a/marl
@@ -139,16 +139,16 @@
              =+  jon=`json`o+(~(run by p.a) |=(cord s++<))
              ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
   ::     %html  
-             ::=+  tex=(role (turn p.a crip))
+             ::=+  tex=(of-wain (turn p.a crip))
              ::=+  (parse:xml tex)
              ::?^  -  u.-
              ::=+  (rush tex (star ;~(pose gah comt:parse:xml)))
              ::?^  -  ;/(~)
              ::;lost: {<p.a>}
-        :: ;/([(role (turn p.a crip))]~)                ::  XX  haaaaaaack
+        :: ;/([(of-wain (turn p.a crip))]~)                ::  XX  haaaaaaack
       $defn  ;/(~)
       $code  =+  lan=?~(p.a ~ (first-word r.u.p.a))
-             =+  tex=(trip (role q.a))
+             =+  tex=(trip (of-wain q.a))
              ?~  lan  ;pre:code:"{tex}"
              ;pre:code(class "language-{u.lan}"):"{tex}"
 

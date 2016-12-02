@@ -9,7 +9,7 @@
 =,  ^eyre
 =,  js:eyre
 =,  url:eyre
-=,  lines:clay
+=,  format
 |_  all/{{who/@txname loc/@txloc} acc/(map knot plan-acct)}
 ::
 ++  grow                                                ::  convert to
@@ -53,7 +53,7 @@
                 (punt ;~(pfix com ace aurf:urlp))
               ==
             --
-          ++  mime  |=({* a/octs} (txt (lore q.a)))     ::  XX mark translation
+          ++  mime  |=({* a/octs} (txt (to-wain q.a)))     ::  XX mark translation
           --
 ++  grad
   |%  

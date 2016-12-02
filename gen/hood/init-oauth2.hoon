@@ -31,4 +31,4 @@
 %+  sole-go  (boss 256 (star prn))
 |=  cis/@t
 %+  sole-so  %write-sec-atom    :: XX typed pair
-[hot (role cid cis ~)]
+[hot (of-wain cid cis ~)]

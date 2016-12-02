@@ -4,7 +4,7 @@
   ::
 /?    310
 =*  xml  xml:eyre
-=,  lines:clay
+=,  format
 =+  =~
 |%
 ++  loca  |*(a/_* {p/@u q/a})  
@@ -13,7 +13,6 @@
 |%
 ++  htm-enty                                            ::  XX belongs in zuse
   =,  space:userlib
-  =,  format
   ~+  
   =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context
       =+(parse:xml enty(ent mapping))
@@ -713,10 +712,10 @@
       ?~  p.nod  self(nod [%defn ~])
       =+  olt=tub
       =.  q.tub
-        =-  (trip (role -))
+        %-  of-wall
         %+  turn 
           ;;((list {$$ p/tape}) (flop p.nod))         ::  XX do type stuff  
-        |=({@ a/tape} (crip a))  
+        |=({@ a/tape} a)
       |-  ^+  self
       =^  ren  tub  (snack (leas href):inli)
       ?^  ren

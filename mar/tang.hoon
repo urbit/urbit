@@ -3,13 +3,13 @@
   ::
 /?    310
 ::
-=,  lines:clay
+=,  format
 |_  tan/(list tank)
 ::
 ++  grow
   |%
   ++  elem
-    =-  ;pre:code:"{(trip (role (turn - crip)))}"       ::  XX
+    =-  ;pre:code:"{(of-wall -)}"
     ^-  wall  %-  zing  ^-  (list wall)
     (turn (flop tan) |=(a/tank (wash 0^160 a)))
   --

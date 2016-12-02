@@ -5,8 +5,9 @@
 /-  talk
 /+  talk,map-to-json
 ::
-=+  talk
+=,  talk
 =,  bytes:eyre
+=,  format
 |_  gam/(list telegram)
 ::
 ++  grab  
@@ -99,7 +100,7 @@
       %+  ke  *torso  |.  ~+
       %-  of  :~
         name+(ot nom+so mon+tors ~) 
-        text+(cu lore so)
+        text+(cu to-wain so)
         tank+(ot dat+(cu (hard (list tank)) blob) ~)
       ==
     ::
@@ -126,7 +127,7 @@
       ==
     ::
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
-    ++  joke  |=(a/tank [%s (role (turn (wash 0^80 a) crip))])
+    ++  joke  |=(a/tank (jape (of-wall (wash 0^80 a)))])
     ++  jode  |=(a/time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ::
     ++  thot
@@ -174,7 +175,7 @@
       |=  a/torso
       %+  joba  -.a
       ?-  -.a
-        $text  [%s (role +.a)]
+        $text  [%s (of-wain +.a)]
         $tank  (jobe txt+[%a (turn +.a joke)] dat+(jape (sifo (jam +.a))) ~)
         $name  (jobe nom+s+p.a mon+$(a q.a) ~)
       ==

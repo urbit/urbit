@@ -5,21 +5,21 @@
 ::
 =,  ^clay
 =,  differ
-=,  lines:clay
+=,  format
 =,  bytes:eyre
 |_  txt/wain
 ::  
 ++  grab                                                ::  convert from
   |%
-  ++  mime  |=({p/mite:^eyre q/octs:^eyre} (lore q.q))
+  ++  mime  |=({p/mite:^eyre q/octs:^eyre} (to-wain q.q))
   ++  noun  wain                                        ::  clam from %noun
-  ++  json  (corl lore so:dejs:format)
+  ++  json  (corl to-wain so:dejs:format)
   --
 ++  grow
   =>  v=.
   |%
-  ++  mime  =>  v  [/text/plain (taco (role txt))]
-  ++  elem  =>  v  ;pre: {(trip (role txt))}
+  ++  mime  =>  v  [/text/plain (taco (of-wain txt))]
+  ++  elem  =>  v  ;pre: {(trip (of-wain txt))}
   --
 ++  grad
   |%

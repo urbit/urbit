@@ -57,7 +57,7 @@
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
   =-  (mean (flop `tang`[>a< -]))
-  (turn (lore (crip b)) |=(c/cord leaf+(trip c)))
+  (turn (to-wain (crip b)) |=(c/cord leaf+(trip c)))
 ::
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  quay-keys  |-($@(knot {$ $}))  :: improper tree
@@ -82,7 +82,7 @@
   ^-  {key/@t sec/@t $~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {key/@t sec/@t $~}) (lore key))
+    ((hard {key/@t sec/@t $~}) (to-wain key))
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth1 {<`path`dom>}

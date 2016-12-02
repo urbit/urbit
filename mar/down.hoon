@@ -7,7 +7,7 @@
 ::
 ::::
   ::
-=,  lines:clay
+=,  format
 =,  markdown
 |_  don/down
 ++  grab                                                ::  convert from
@@ -15,7 +15,7 @@
   ++  noun  down                                        ::  clam from %noun
   ++  md
     |=  src/@t
-    =+  [atr mud]=(parse:frontmatter (lore src))
+    =+  [atr mud]=(parse:frontmatter (to-wain src))
     [[%meta atr] (mark:down-jet mud)]
   --
 ::

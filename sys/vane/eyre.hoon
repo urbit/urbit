@@ -1356,7 +1356,7 @@
             {$txt $robots $~}
           :-  ~
           %^  resp  200  text+/plain
-          %-  role:lines:clay
+          %-  of-wain:format
           :~  'User-agent: *'
               'Disallow: '
           ==

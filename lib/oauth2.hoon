@@ -20,7 +20,7 @@
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
   =-  (mean (flop `tang`[>a< -]))
-  (turn (lore (crip b)) |=(c/cord leaf+(trip c)))
+  (turn (to-wain (crip b)) |=(c/cord leaf+(trip c)))
 ::
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  grab-json
@@ -49,7 +49,7 @@
   ^-  {cid/@t cis/@t $~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {cid/@t cis/@t $~}) (lore key))
+    ((hard {cid/@t cis/@t $~}) (to-wain key))
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth2 {<`path`dom>}

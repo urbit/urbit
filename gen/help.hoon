@@ -25,7 +25,7 @@
         {$hood ^}  "|{(path-heps t.b)}"
         ^          "+{(path-heps b)}"  :: XX deal with :talk|foo
       ==
-  =/  c  (lore a)
+  =/  c  (to-wain a)
   ?~  c  "~"
   ?.  =('::  ' (end 3 4 i.c))
     "<undocumented>"

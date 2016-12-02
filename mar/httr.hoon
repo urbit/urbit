@@ -5,10 +5,10 @@
 ::
 =,  ^eyre
 =,  js:eyre
-=,  lines:clay
+=,  format
 |_  hit/httr
 ++  grow  |%  ++  wall  (turn wain trip)
-              ++  wain  (lore cord)
+              ++  wain  (to-wain cord)
               ++  json  (need (poja cord))
               ++  cord  q:octs
               ++  octs

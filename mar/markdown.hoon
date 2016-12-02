@@ -4,21 +4,21 @@
 /?    310
 ::
 =,  bytes:eyre
-=,  lines:clay
+=,  format
 |_  mud/@t
 ++  grow
   |%
   ++  mime  [/text/x-markdown (taco mud)]
   ++  md  mud
   ++  txt
-    (lore mud)
+    (to-wain mud)
   --
 ++  grab
   |%
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t
   ++  md  |=(@t +<)
-  ++  txt  role
+  ++  txt  of-wain
   --
 ++  grad  %txt
 --

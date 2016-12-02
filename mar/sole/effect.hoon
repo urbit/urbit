@@ -37,6 +37,7 @@
   ?@(a (trip a) ^$(a q.a))
 --
 ::
+=,  js:eyre
 |_  sef/sole-effect
 ::
 ++  grab                                                ::  convert from
@@ -48,7 +49,7 @@
   ++  lens-json                       :: json for cli client
     ^-  ?($~ ^json)                   :: null = ignore
     ?+    -.sef  ~
-        $tan  s+(role (turn (flop p.sef) |=(a/tank (crip ~(ram re a)))))
+        $tan  (jape (of-wall (turn (flop p.sef) ~(ram re a))))
         $txt  s+(crip p.sef)
         $sav
       (jobe file+s+(crip <`path`p.sef>) data+s+(crip (sifo q.sef)) ~)

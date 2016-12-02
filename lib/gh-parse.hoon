@@ -167,7 +167,7 @@
       (c 'comments: ' (rsh 3 2 (scot %ui comments)))
       (c 'url: ' url)
       ''
-      %+  turn  (lore body)  ::  strip carriage returns
+      %+  turn  (to-wain body)  ::  strip carriage returns
       |=  l/@t
       ?:  =('' l)
         l
