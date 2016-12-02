@@ -6,6 +6,7 @@
 =,  js:eyre
 =,  xml:eyre
 =,  bytes:eyre
+=,  html
 ::
 |_  {{dep/@uvH hed/marl} {dep-bod/@uvH bod/marl}}
 ++  grow                                                ::  convert to
@@ -30,7 +31,7 @@
                   ;  urb.onDep = function()\{
                   ;    urb.waspWait.map(urb.wasp)
                   ;    urb.onLoadUrbJS()
-                  ;    urb.waspData({(pojo %s (scot %uv dep-bod))})
+                  ;    urb.waspData({(en-json %s (scot %uv dep-bod))})
                   ;  }
                 ==
             ==

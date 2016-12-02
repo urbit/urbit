@@ -5,13 +5,13 @@
   ::
 ::::  compute
   ::
-=,  js:eyre
 =,  bytes:eyre
+=,  html
 |_  jon/json
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/text/json (tact (pojo jon))]              ::  convert to %mime
+  ++  mime  [/text/json (tact (en-json jon))]              ::  convert to %mime
   --
 ++  grab
   |%                                                    ::  convert from

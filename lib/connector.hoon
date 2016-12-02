@@ -112,6 +112,7 @@
 ::  their handling, either `sigh-x` or `sigh-y`, in `places`.
 ::
 ++  sigh
+  =,  html
   |=  {places/(list place) ren/care pax/path res/httr}
   ^-  sub-result
   =<  ?+(ren ~|([%invalid-care ren] !!) $x sigh-x, $y sigh-y)
@@ -120,7 +121,7 @@
     ?~  r.res
       ~&  [err+%empty-response code+p.res]
       null+~
-    =+  jon=(rush q.u.r.res apex:poja)
+    =+  jon=(rush q.u.r.res apex:de-json)
     ?~  jon
       ~&  [err+%bad-json code+p.res body+q.u.r.res]
       null+~
@@ -143,7 +144,7 @@
     ?~  r.res
       ~&  [err+s+%empty-response code+(jone p.res)]
       arch+*arch
-    =+  jon=(rush q.u.r.res apex:poja)
+    =+  jon=(rush q.u.r.res apex:de-json)
     ?~  jon
       ~&  [err+s+%bad-json code+(jone p.res) body+s+q.u.r.res]
       arch+*arch

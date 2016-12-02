@@ -8,7 +8,8 @@
                ==
 =,  xml:eyre
 =,  js:eyre
+=,  html
 ^-  marl
-;=  ;script(type "text/javascript"): window.tree = {(pojo (jobe data+dat sein+dat-sen ~))}
+;=  ;script(type "text/javascript"): window.tree = {(en-json (jobe data+dat sein+dat-sen ~))}
     ;div#tree;
 ==

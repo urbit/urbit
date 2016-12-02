@@ -18,6 +18,7 @@
 /+  gh-parse, connector
 ::
 ::
+=,  html
 =>  |%
     ++  move  (pair bone card)
     ++  card  
@@ -279,7 +280,7 @@
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:urlp
         %post  ~  ~
-        %-  taco  %-  crip  %-  pojo  %-  jobe  :~
+        %-  taco  %-  crip  %-  en-json  %-  jobe  :~
           name+s+%web
           active+b+&
           events+a+~[s+event] ::(turn `(list ,@t)`t.t.pax |=(a=@t s/a))

@@ -8,12 +8,13 @@
 =,  talk
 =,  bytes:eyre
 =,  format
+=,  html
 |_  gam/(list telegram)
 ::
 ++  grab  
   |%  
   ++  noun  (list telegram)
-  ++  mime  |=(^mime (json (rash q.q apex:poja)))
+  ++  mime  |=(^mime (json (rash q.q apex:de-json)))
   ++  json
     =>  [jo ..telegram]
     |=  a/json  ^-  (list telegram)
@@ -110,7 +111,7 @@
 ::
 ++  grow
   |%
-  ++  mime  [/text/json (taco (crip (pojo json)))]
+  ++  mime  [/text/json (taco (crip (en-json json)))]
   ++  json
     =>  +
     |^

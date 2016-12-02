@@ -11,6 +11,7 @@
 =,  xml:eyre
 =,  unity
 =,  format
+=,  html
 =>  =~
 |%                                                      ::  interfaces
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
@@ -254,7 +255,7 @@
   |=  {urb/json jaz/cord}  ^-  cord
   =-  (cat 3 (crip -) jaz)
   """
-  var _urb = {(pojo urb)};
+  var _urb = {(en-json urb)};
   window.urb = window.urb || \{}; for(k in _urb) window.urb[k] = _urb[k];
 
   """
@@ -520,7 +521,7 @@
       ;head:title:"Redirecting..."
       ;body
         ;p: Redirecting to ;{a/"{url}" "{url}"}
-        ;script: setTimeout(function()\{document.location = {(pojo (jape url))}}, 3000)
+        ;script: setTimeout(function()\{document.location = {(en-json (jape url))}}, 3000)
       ==
     ==
   ::
@@ -1070,7 +1071,7 @@
     ~|  q.q.cay
     =+  cug=?~(dom ~ ?~(ses !! [(set-cookie p.dom cookie-prefix ses)]~))
     =+  ((hard {mit/mite rez/octs}) q.q.cay)
-    =+  dep=(crip "W/{(pojo %s (scot %uv dep))}")
+    =+  dep=(crip "W/{(en-json %s (scot %uv dep))}")
     =+  bod=?-(men $get `rez, $head ~)
     =+  hit=[200 ~[etag+dep content-type+(moon mit)] bod]
     (give-thou (add-cookies cug hit))
@@ -1168,7 +1169,7 @@
     |=  {sas/@uG cug/(list @t) jon/json}
     %-  give-thou
     %+  add-cookies  cug
-    (resp sas application+/json (crip (pojo jon)))
+    (resp sas application+/json (crip (en-json jon)))
   ::
   ++  give-thou                                       ::  done request
     |=  hit/httr
@@ -1315,13 +1316,13 @@
         ~|(bad-method+mef !!)
       ?~  bod
         ~|(%no-body !!)
-      (need (poja q.u.bod))
+      (need (de-json q.u.bod))
     ::
     ++  grab-json-soft
       ^-  (unit json)
       ?.  ?=(?($post $put $delt) mef)
         ~
-      ?~(bod ~ (poja q.u.bod))
+      ?~(bod ~ (de-json q.u.bod))
     ::
     ++  grab-oryx
       ^-  (unit oryx)

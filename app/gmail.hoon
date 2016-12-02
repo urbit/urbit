@@ -28,7 +28,7 @@
 ::  /ape/gh/split.hoon defines ++split, which splits a request
 ::  at the end of the longest possible endpoint.
 ::
-
+=,  html
 =>  |%                              :: => only used for indentation
     ++  move  (pair bone card)
     ++  subscription-result
@@ -113,9 +113,9 @@
   ::
       :+  method  `math`(malt ~[content-type+['application/json']~])
       =+  hoon-json-object=(joba %raw s+(sifo-google (message-to-rfc822:rfc mes)))
-      =+  request-body=(tact (pojo hoon-json-object))
+      =+  request-body=(tact (en-json hoon-json-object))
       (some request-body)
-      ::(some (pojo label-req-to-json:gmail-label label-req:gmail-label ~)) XX
+      ::(some (en-json label-req-to-json:gmail-label label-req:gmail-label ~)) XX
   ==
 ::
 ::  HTTP response.  We make sure the response is good, then
@@ -138,7 +138,7 @@
       $x
     ?~  r.res
       json+(jobe err+s+%empty-response code+(jone p.res) ~)
-    =+  jon=(rush q.u.r.res apex:poja)
+    =+  jon=(rush q.u.r.res apex:de-json)
     ?~  jon
       json+(jobe err+s+%bad-json code+(jone p.res) body+s+q.u.r.res ~)
     ?.  =(2 (div p.res 100))
@@ -203,7 +203,7 @@
   ?~  r.res 
     ~&  [err+s+%empty-response code+(jone p.res)]
       arch+*arch
-  =+  jon=(rush q.u.r.res apex:poja)
+  =+  jon=(rush q.u.r.res apex:de-json)
   ?~  jon
     ~&  [err+s+%bad-json code+(jone p.res) body+s+q.u.r.res]
     arch+*arch

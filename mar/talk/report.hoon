@@ -7,6 +7,7 @@
 ::
 =,  talk
 =,  bytes:eyre
+=,  html
 |_  rep/report
 ::
 ++  grab                                                ::  convert from
@@ -15,7 +16,7 @@
   --
 ++  grow
   |%
-  ++  mime  [/text/json (taco (crip (pojo json)))]
+  ++  mime  [/text/json (taco (crip (en-json json)))]
   ++  json
     =>  +
     |^  %+  joba  -.rep

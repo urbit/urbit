@@ -4563,7 +4563,6 @@
   ++  base64  [sifo=en-base64 ofis=de-base64]:mime:html
   ++  bytes  [moon=en-mite taco=as-octs tact=as-octt]:mime:html
   ++  js
-    :-  [pojo=en-json poja=de-json]:html
     =>  format  ^?
     |%
     ++  joba  frond:enjs

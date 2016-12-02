@@ -5,6 +5,7 @@
   ::
 /?    310
 ::
+=,  html
 |%
 ++  request
   $:  domain/(list cord)  
@@ -29,5 +30,5 @@
       q-strings=queries                               ::  ++quay
   ?@  req-type
     [%get headers ~]
-  [%post headers ~ (tact (pojo p.req-type))]
+  [%post headers ~ (tact (en-json p.req-type))]
 --

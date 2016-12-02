@@ -8,6 +8,7 @@
 ::::  ~fyr
   ::
 =,  ^eyre
+=,  html
 |%
 ++  twit-path                                           ::  valid peer path
   $%  {$cred $~}                                        ::  credential info
@@ -171,7 +172,7 @@
   ~&  sigh-tang+pax
   %-  (slog (flop tan))
   =+  ^-  git/gift
-      =+  err='' ::%.(q:(need r.hit) ;~(biff poja mean:reparse:twitter))  :: XX parse?
+      =+  err='' ::%.(q:(need r.hit) ;~(biff de-json mean:reparse:twitter))  :: XX parse?
       :^  %diff  %ares  %bad-http
       tan
       :: [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:render:twit)]

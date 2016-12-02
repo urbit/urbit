@@ -48,6 +48,7 @@
 ++  sing                                                ::  elem to manx
   =*  xml  xml:eyre
   =,  js:eyre
+  =,  html
   =>  |%
       ++  first-word
         |=  a/tape
@@ -124,7 +125,7 @@
         $item  ;li;
         $list  ?@  q.p.a  ;ul;
                ?:  =(1 p.q.p.a)  ;ol;
-               =+  num=(pojo (jone p.q.p.a))
+               =+  num=(en-json (jone p.q.p.a))
                ;ol(start num);
       ==
     ?-  -.a  ::  ;/("unimplemented {<p.a>}")
@@ -137,7 +138,7 @@
       $hrul  ;hr;
       $meta  ?:  =(~ p.a)  ;/(~)
              =+  jon=`json`o+(~(run by p.a) |=(cord s++<))
-             ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
+             ;meta(value "{(en-json jon)}", name "frontmatter", urb_front "");
   ::     %html  
              ::=+  tex=(of-wain (turn p.a crip))
              ::=+  (parse:xml tex)

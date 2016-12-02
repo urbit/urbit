@@ -8,6 +8,7 @@
 ::::
   ::
 =,  sole
+=,  html
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@($~ {jon/json $~})}
@@ -20,7 +21,7 @@
     (fun.q.q jon.arg)
 %+  sole-lo
   [%& %oauth-json "json credentials: "]
-%+  sole-go  apex:poja
+%+  sole-go  apex:de-json
 |=  jon/json
 =+  ~|  bad-json+jon
     =-  `{cid/@t cis/@t}`(need (rep jon))
