@@ -435,7 +435,8 @@
           {$logo $~}                                    ::  logout
           {$mass p/mass}                                ::  memory usage
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/path}                                ::  reboot by path
+          {$vega p/path}                                ::  old reboot
+          {$velo p/@t q/@t}                             ::  reboot
           {$verb $~}                                    ::  verbose mode
       ==                                                ::
     ++  task                                            ::  in request ->$
@@ -455,7 +456,8 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/path}                                ::  reboot by path
+          {$vega p/path}                                ::  old reboot
+          {$velo p/@t q/@t}                             ::  reboot
           {$verb $~}                                    ::  verbose mode
       ==                                                ::
     --  ::able
@@ -515,7 +517,8 @@
         {$heft $~}                                      ::
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$vega p/path}                                  ::  reboot by path
+        {$vega p/path}                                  ::  old reboot
+        {$velo p/@t q/@t}                               ::  reboot
         {$verb $~}                                      ::  verbose mode
     ==                                                  ::
   ++  stub  (list (pair stye (list @c)))                ::  styled tuba
@@ -546,6 +549,7 @@
           {$thus p/@ud q/(unit hiss)}                   ::  http request+cancel
           {$veer p/@ta q/path r/@t}                     ::  drop-through
           {$vega p/path}                                ::  drop-through
+          {$velo p/@t q/@t}                             ::  drop-through
           {$mini-jael-gift *}
       ==                                                ::
     ++  task                                            ::  in request ->$

@@ -56,6 +56,7 @@
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
       {$vega p/path}                                    ::  reboot by path
+      {$velo p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-gall                                           ::
@@ -138,6 +139,7 @@
                  ==
           $veer  (dump kyz)
           $vega  (dump kyz)
+          $velo  (dump kyz)
           $verb  (dump kyz)
         ==
       ::
