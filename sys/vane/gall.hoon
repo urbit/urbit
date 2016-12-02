@@ -571,6 +571,7 @@
       :-  (~(got by r.zam) p.cov)
       ?-    -.q.cov
           $slip  !!
+          $sick  !!
           $give  
         ?<  =(0 p.cov)
         ?.  ?=($diff -.p.q.cov)
