@@ -7,9 +7,10 @@
                     /~  ~
                ==
 =,  xml:eyre
-=,  js:eyre
+=,  format
 =,  html
 ^-  marl
-;=  ;script(type "text/javascript"): window.tree = {(en-json (jobe data+dat sein+dat-sen ~))}
+=/  tree  (en-json (pairs:enjs data+dat sein+dat-sen ~))
+;=  ;script(type "text/javascript"): window.tree = {tree}
     ;div#tree;
 ==

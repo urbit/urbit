@@ -47,7 +47,6 @@
 ::
 ++  sing                                                ::  elem to manx
   =*  xml  xml:eyre
-  =,  js:eyre
   =,  html
   =>  |%
       ++  first-word
@@ -125,7 +124,7 @@
         $item  ;li;
         $list  ?@  q.p.a  ;ul;
                ?:  =(1 p.q.p.a)  ;ol;
-               =+  num=(en-json (jone p.q.p.a))
+               =+  num=(en-json (numb:enjs p.q.p.a))
                ;ol(start num);
       ==
     ?-  -.a  ::  ;/("unimplemented {<p.a>}")

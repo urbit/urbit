@@ -2964,6 +2964,16 @@
       |=  a/^tape
       ^-  json
       [%s (crip a)]
+    ::                                                  ::  ++wall:enjs:format
+    ++  wall                                            ::  string from wall
+      |=  a/^wall
+      ^-  json
+      (tape (of-wall a))
+    ::                                                  ::  ++ship:enjs:format
+    ++  ship                                            ::  string from ship
+      |=  a/^ship
+      ^-  json
+      (tape (slag 1 (scow %p a))) 
     ::                                                  ::  ++numb:enjs:format
     ++  numb                                            ::  number from unsigned
       |=  a/@u
@@ -4562,16 +4572,6 @@
   |%
   ++  base64  [sifo=en-base64 ofis=de-base64]:mime:html
   ++  bytes  [moon=en-mite taco=as-octs tact=as-octt]:mime:html
-  ++  js
-    =>  format  ^?
-    |%
-    ++  joba  frond:enjs
-    ++  jobe  pairs:enjs
-    ++  jape  tape:enjs
-    ++  jone  numb:enjs
-    ++  jode  time:enjs
-    --
-  ::
   ++  xml  [print=en-xml parse=de-xml]:html
   ++  url
     =>  html  ^?

@@ -7,7 +7,6 @@
 ::::  ~fyr
   ::
 =,  ^eyre
-=,  js:eyre
 =,  url:eyre
 =,  format
 |_  all/{{who/@txname loc/@txloc} acc/(map knot plan-acct)}
@@ -26,14 +25,15 @@
     ?~(url.b ~ [', ' (earf u.url.b)])
   ::
   ++  plan-json
-    %-  jobe  :~
+    %-  pairs:enjs  :~
       who+?~(who ~ s+who)
       loc+?~(loc ~ s+loc)
       acc+o+(~(run by acc) json-acct)
     ==
   ++  json-acct                       ::  helper                     
     |=  a/plan-acct  ^-  json
-    (jobe usr+s+usr.a url+?~(url.a ~ (jape (earf u.url.a))) ~)
+    =/  url  ?~(url.a ~ (tape:enjs (earf u.url.a)))
+    (pairs:enjs usr+s+usr.a url+url ~)
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  {{cord cord} (map knot plan-acct)}  ::  clam from %noun

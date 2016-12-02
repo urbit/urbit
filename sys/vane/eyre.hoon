@@ -5,7 +5,6 @@
 =,  ^eyre
 =,  crypto
 =,  bytes:eyre
-=,  js:eyre
 =,  url:eyre
 =,  wired
 =,  xml:eyre
@@ -262,7 +261,7 @@
 ::
 ++  ares-to-json
   |=  err/ares  ^-  json
-  =-  (jobe fail+s+typ mess+(jape mez) ~)
+  =-  (pairs:enjs fail+s+typ mess+(tape:enjs mez) ~)
   ^-  {typ/term mez/tape}
   ?~  err  [%fail "Unknown Error"]
   [p.u.err (of-wall (wush 160 q.u.err))]
@@ -521,7 +520,7 @@
       ;head:title:"Redirecting..."
       ;body
         ;p: Redirecting to ;{a/"{url}" "{url}"}
-        ;script: setTimeout(function()\{document.location = {(en-json (jape url))}}, 3000)
+        ;script: setTimeout(function()\{document.location = {(en-json (tape:enjs url))}}, 3000)
       ==
     ==
   ::
@@ -1185,7 +1184,7 @@
     [%tang !>(p.res)]
   ::
   ++  mean-json  |=({sas/@uG err/ares} (give-json sas ~ (ares-to-json err)))
-  ++  nice-json  |=(* (give-json 200 ~ (joba %ok %b &)))
+  ++  nice-json  |=(* (give-json 200 ~ (frond:enjs %ok %b &)))
   ::
   ++  pass-note  |=(noe/{whir note} %_(+> mow :_(mow [hen %pass noe])))
   ++  host-to-ship                                              ::  host to ship
@@ -1280,7 +1279,9 @@
             {$~ $js}
           $(pez [%js auth-redir:js])
             {$~ $json}
-          $(pez [%json (jobe ok+b+| red+(jape url) ~)])
+          =/  red
+            (pairs:enjs ok+b+| red+(tape:enjs url) ~)
+          $(pez [%json red])
         ==
       ==
     ::
@@ -1549,7 +1550,7 @@
           $poll
         ?:  ?=({$~ $js} p.pok)  ::  XX treat non-json cases?
           =+  deps=[%a (turn `(list @uvH)`p.hem |=(a/@ s+(scot %uv a)))]
-          [%& %js (add-json (joba %deps deps) poll:js)]
+          [%& %js (add-json (frond:enjs %deps deps) poll:js)]
         =.  lyv  (~(put by lyv) hen %wasp p.hem)
         |-
           =.  done  (new-deps i.p.hem %& hen)
@@ -1599,7 +1600,7 @@
           :~  (set-cookie cookie-domain cookie-prefix '~')
               (set-cookie cookie-domain %ship '~')
           ==
-        [%| (give-json 200 cug (joba %ok %b &))]
+        [%| (give-json 200 cug (frond:enjs %ok %b &))]
       ::
           $get
         |-
@@ -1695,12 +1696,13 @@
       ^+  [*json ..ya]
       =^  orx  ..ya  new-view
       :_  ..ya
-      %-  jobe  :~
+      =,  enjs
+      %-  pairs  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
-        sein+(jape +:<(sein:title our)>)
-        ship+(jape +:<our>)
-        user+(jape +:<(fall get-user anon)>) :: XX crash on unsaved session?
+        sein+(ship (sein:title our))
+        ship+(ship our)
+        user+(ship (fall get-user anon)) :: XX crash on unsaved session?
       ==
     ::
     ++  get-user
@@ -1769,7 +1771,7 @@
     ::
     ++  get-rush
       |=  {a/whir-of b/json}  ^+  ..ix
-      (get-even [%rush [[(slav %p p.a) q.a] s.a] (joba %json b)])
+      (get-even [%rush [[(slav %p p.a) q.a] s.a] (frond:enjs %json b)])
     ::
     ++  get-quit
       |=  a/whir-of  ^+  ..ix
@@ -1796,7 +1798,7 @@
           mow    ?.(?=($rush -.ven) mow mow:(pass-took [- %mess +]:p.ven))
         ==
       %^  give-json  200  ~
-      %^  jobe  id+(jone num)  type+[%s -.ven]
+      %^  pairs:enjs  id+(numb:enjs num)  type+[%s -.ven]
       ?-  -.ven
         $news  ~[from+[%s (scot %uv p.ven)]]
         $quit  ~[from+(subs-to-json p.ven)]
@@ -1830,10 +1832,10 @@
     ::
     ++  subs-to-json
       |=  {a/dock b/path}
-      %-  jobe  :~
+      %-  pairs:enjs  :~
         ship+[%s (rsh 3 1 (scot %p p.a))]
         appl+[%s q.a]
-        path+(jape (spud b))
+        path+(tape:enjs (spud b))
       ==
     ::
     ++  get-jael
@@ -1847,7 +1849,7 @@
         $token-beat
           ?~  pol  abet  :: recieved other response
           ~?  !=(hen u.pol)  [%oryx-beat-weird-duct hen]
-          (give-json:abet(pol ~, hen u.pol) 200 ~ (joba %beat %b &))
+          (give-json:abet(pol ~, hen u.pol) 200 ~ (frond:enjs %beat %b &))
       ==
     --
   ++  lens                                              :: urb.py engine
@@ -1867,10 +1869,10 @@
     ++  get-ack
       |=  a/(unit (pair term tang))  ^+  ..lens
       ?~  a
-        ..lens  :: (give-json 200 ~ (joba %okey-dokey %b &))
+        ..lens  :: (give-json 200 ~ (frond:enjs %okey-dokey %b &))
       =+  tag=(flop `tang`[>[%eyre-lens-fail p.u.a]< q.u.a])
       %-  (slog tag)
-      (give-json:abet 500 ~ (jape (of-wall (wush 160 tag))))
+      (give-json:abet 500 ~ (wall:enjs (wush 160 tag)))
     ::
     ++  get-diff
       |=  fec/json  ^+  ..lens
@@ -1880,7 +1882,7 @@
         `note`[%g %deal [him our] %dojo %pull ~]
       (give-json:abet 200 ~ fec)
     ::
-    ++  get-quit  (give-json:abet 500 ~ (joba %quit b+&))
+    ++  get-quit  (give-json:abet 500 ~ (frond:enjs %quit b+&))
     --
   ++  vi                                                ::  auth engine
     ~%  %eyre-v  ..is  ~

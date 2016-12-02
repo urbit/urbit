@@ -2,7 +2,6 @@
 ::::  /hoon/elem/mar
   ::
 /?    310
-=,  js:eyre
 |_  own/manx
 ::
 ++  grow                                                ::  convert to

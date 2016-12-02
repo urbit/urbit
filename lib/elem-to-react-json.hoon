@@ -3,7 +3,7 @@
 ::::  /hoon/elem-to-react-json/lib
   ::
 /?    310
-=,  js:eyre
+=,  format
 |%
 ++  react-attrs                                         ::  uppercase mapping
   ~+  ^-  (map term cord)
@@ -54,18 +54,18 @@
 ++  elem-to-react-json                                  ::  serialize DOM as json
   |=  src/manx  ^-  json
   ?:  ?=(_;/(**) src)
-    (jape v.i.a.g.src)
+    (tape:enjs v.i.a.g.src)
   =+  atr=(molt `(list (pair mane tape))`a.g.src)  
   ?:  (~(has by atr) [%urb %codemirror])
     $(src (urb-codemirror src))
   ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag
     $(src (urb-exec src))
-  %-  jobe  :~
+  %-  pairs:enjs  :~
     c+a+(turn c.src ..$)
     gn+s+(mane-to-cord n.g.src)
-    =<  ga+(jobe (turn a.g.src .))
+    =<  ga+(pairs:enjs (turn a.g.src .))
     |=  {a/mane b/tape}  ^-  {cord json}
-    :_  (jape b)
+    :_  (tape:enjs b)
     ?^  a  (mane-to-cord a)
     (fall (~(get by react-attrs) a) a)
   ==

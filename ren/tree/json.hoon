@@ -9,7 +9,6 @@
 /=    kid    /^    (map knot tree-include)
              /_    /tree-include/
 =,  format
-=,  js:eyre
 =,  bytes:eyre
 =,  base64:eyre
 ::
@@ -48,13 +47,13 @@
   |=  a/$%({$t p/cord} {$r p/json} {$j p/json} {$m mime})
   ?-  -.a
     $t  [%s p.a]
-    $m  (jobe mite+[%s (moon p.a)] octs+(jape (sifo q.q.a)) ~)
+    $m  (pairs:enjs mite+[%s (moon p.a)] octs+(tape:enjs (sifo q.q.a)) ~)
     $r  p.a
     $j  p.a
   ==
 ++  from-queries
   |=  {bem/beam quy/(list query)}
-  =<  (jobe (turn quy .))
+  =<  (pairs:enjs (turn quy .))
   |=  a/query
   :-  -.a
   ?-  -.a

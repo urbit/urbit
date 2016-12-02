@@ -3,7 +3,7 @@
   ::
 /?    310
 /=  urb-wasp-data-js    /:    /%/wasp-data    /js/
-=,  js:eyre
+=,  format
 =,  xml:eyre
 =,  bytes:eyre
 =,  html
