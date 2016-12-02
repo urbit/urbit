@@ -4552,7 +4552,7 @@
 ::
 ::
 ::  XX transitional alias layer
-++  ames  [crypto=crua=en=en:crua:crypto]  :: hardcoded vere interface
+++  ames  [crypto=crua=[en=en de=de]:crua:crypto]  :: hardcoded vere interface
 ++  behn  !!
 ++  clay  ^?
   |%
