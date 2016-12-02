@@ -7,7 +7,7 @@
 ++  grab
   |%
   ++  noun  (list who/@ta)
-  ++  json  (corl need usel:parse:twitter)
+  ++  json  usel:reparse:twitter
   ++  httr  (cork httr-to-json json)  ::  XX mark translation
   --
 ++  grow

@@ -5,7 +5,7 @@
 /-    sole
 /+    sole
 [. ^sole]
-!:                                                      ::  ::
+::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
@@ -77,7 +77,7 @@
   |=  our/ship
   %-  ~(gas in *(set well:^gall))
   ^-  (list well:^gall)
-  =+  myr=(clan:title:jael our)
+  =+  myr=(clan:title our)
   ?:  ?=($pawn myr)
     [[%base %talk] [%base %dojo] ~]
   ?:  ?=($earl myr)
@@ -88,8 +88,8 @@
   |=  our/ship
   %-  ~(gas in *(set gill:^gall))
   ^-  (list gill:^gall)
-  ?:  ?=($earl (clan:title:jael our))
-    [[(sein:title:jael our) %talk] [our %dojo] ~]
+  ?:  ?=($earl (clan:title our))
+    [[(sein:title our) %talk] [our %dojo] ~]
   [[our %talk] [our %dojo] ~]
 ::
 ++  drum-make                                           ::  initial part
@@ -113,7 +113,7 @@
   |=  way/wire  ^-  gill:^gall
   ?>(?=({@ @ $~} way) [(slav %p i.way) i.t.way])
 --
-!:
+::
 ::::
   ::
 |=  {hid/bowl:^gall drum-part}                          ::  main drum work
@@ -147,7 +147,7 @@
 ++  peer                                              ::
   |=  pax/path
   ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
-  ?>  (team:title:jael our.hid src.hid)               ::  or our own moon
+  ?>  (team:title our.hid src.hid)               ::  or our own moon
   =<  se-abet  =<  se-view
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
@@ -787,8 +787,8 @@
       %_    pom
           cad
         ;:  welp
-          ?.  ?=($earl (clan:title:jael p.gyl)) 
-            (cite:title:jael p.gyl) 
+          ?.  ?=($earl (clan:title p.gyl)) 
+            (cite:title p.gyl) 
           (scow %p p.gyl)
         ::
           ":" 

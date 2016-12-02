@@ -3,7 +3,7 @@
 ::::  /hoon/github/com/sec
   ::
 /+    basic-auth
-!:
+::
 |_  {bal/(bale keys:basic-auth) $~}
 ++  aut  ~(standard basic-auth bal ~)
 ++  filter-request  out-adding-header:aut

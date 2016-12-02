@@ -4,12 +4,17 @@
 /?    310
 ::
 ::::
-  !:
+  ::
 :-  %say
-|=  $:  {now/@da eny/@uvI bec/beak}
+|=  $:  {now/@da eny/@uvJ bec/beak}
         {{who/@p $~} $~}
     ==
 :-  %noun
+=+  one
+    !=  =>  ~
+        
+  
+  
 =+  top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/arvo
 =+  pax=`path`(weld top `path`[%hoon ~])
 ~&  %plastic-start

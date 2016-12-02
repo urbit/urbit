@@ -5,8 +5,9 @@
 /-    talk, sole
 /+    talk, sole, time-to-id, twitter
 /=    seed  /~  !>(.)
-=,  space:clay
-=,  js:eyre
+=,  space:userlib
+=,  format
+=,  unity
 ::
 ::::
   ::
@@ -180,7 +181,8 @@
     q.nb
   --
 --
-|_  {hid/bowl:^gall house}
+=,  ^gall
+|_  {hid/bowl house}
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
   ++  sh                                                ::  per console
@@ -219,7 +221,7 @@
         ;~  pose
           (cold [our.hid man.she] col)
           ;~(pfix cen (stag our.hid sym))
-          ;~(pfix fas (stag (sein:title:jael our.hid) sym))
+          ;~(pfix fas (stag (sein:title our.hid) sym))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -1648,7 +1650,7 @@
       ?-  p.cordon.shape
         $black  &
         $green  &
-        $brown  (team:title:jael our.hid her)
+        $brown  (team:title our.hid her)
         $white  (~(has in q.cordon.shape) her)
       ==
     ::
@@ -1847,7 +1849,8 @@
         (pa-sauce ost.hid [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           %+  biff
-            (zl:jo (turn pax ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~)))))
+            %-  drop-list
+            (turn pax ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~))))
           |=  paf/(list dime)
           ?~  paf
             $(paf [%ud (sub (max 64 count) 64)]~)
@@ -1958,7 +1961,7 @@
   ++  sn-curt                                           ::  render name in 14
     |=  mup/?
     ^-  tape
-    =+  raw=(cite:title:jael p.one)
+    =+  raw=(cite:title p.one)
     (runt [(sub 14 (lent raw)) ' '] raw)
   ::
   ++  sn-nick
@@ -1978,7 +1981,7 @@
       ?:  =(q.one man)
         ":"
       ['%' (trip q.one)]
-    ?:  =(p.one (sein:title:jael our.hid))
+    ?:  =(p.one (sein:title our.hid))
       ['/' (trip q.one)]
     =+  wun=(scow %p p.one)
     ?:  =(q.one (main p.one))
@@ -2222,7 +2225,7 @@
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
   :: ~&   [%talk-peer src.hid ost.hid pax]
   ?:  ?=({$sole *} pax)
-    ?>  (team:title:jael our.hid src.hid)
+    ?>  (team:title our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
     ra-abet:(ra-console:ra src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
@@ -2318,7 +2321,7 @@
   ^-  move
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
-      %+  tope  [our.hid %home da+now.hid]
+      %+  en-beam  [our.hid %home da+now.hid]
       /talk-telegrams/(scot %da day)/[man]/talk
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]

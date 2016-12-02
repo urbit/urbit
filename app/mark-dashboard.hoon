@@ -8,9 +8,8 @@
   |=  b/(each vase tang)
   ?-  -.b
     $&  (jape (text p.b))
-    $|  (jape (rolt (wush 160 (flop p.b))))
+    $|  (jape (of-wall (wush 160 (flop p.b))))
   ==
-++  rolt  |=(a/wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
 ++  wush
   |=  {wid/@u tan/tang}  ^-  wall
   (zing (turn tan |=(a/tank (wash 0^wid a))))
@@ -18,7 +17,6 @@
 ::
 =,  ^gall
 =,  ^ford
-=,  space:clay
 |_  {bowl $~}
 ++  peek  _~
 ++  peer-scry-x
@@ -57,8 +55,10 @@
 ::
 ++  now-beak  %_(byk r [%da now])
 ++  list-marks
-  =+  .^(arch %cy (tope now-beak /mar))
+  =,  space:userlib
+  =,  format
+  =+  .^(arch %cy (en-beam now-beak /mar))
   %+  skim  (~(tap by dir))
   |=  {a/mark $~}
-  ?=(^ (file (tope now-beak /hoon/[a]/mar)))
+  ?=(^ (file (en-beam now-beak /hoon/[a]/mar)))
 --

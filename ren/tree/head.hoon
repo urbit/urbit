@@ -5,14 +5,15 @@
 /?    310
 /=    tub    /$  |=({bem/beam *} (flop s.bem))
 /=    aut
-  /$  %+  cork  fuel                                    :: after parsing params,
-      |=  gas/epic  ^-  ?                               :: check that the fcgi
+  /$  %+  cork  fuel:url:eyre                           :: after parsing params,
+      =,  title
+      |=  gas/epic:^eyre  ^-  ?                         :: check that the fcgi
       %+  lien  (~(tap in (~(get ju aut.ced.gas) %$)))  :: has an identity
       |=(a/knot !=(%pawn (clan (slav %p a))))           :: which isn't a comet
 /=    dbg
   /^  {nopack/? nomin/?}
-  /$  %+  cork  fuel                                    :: after parsing params,
-      |=  gas/epic  ^-  {? ?}                           :: check if the query
+  /$  %+  cork  fuel:url:eyre                           :: after parsing params,
+      |=  gas/epic:^eyre  ^-  {? ?}                     :: check if the query
       :-  (~(has by qix.gas) 'dbg.nopack')              :: dictates separate files
       (~(has by qix.gas) 'dbg.nomin')                   :: and/or unminified assets
 ::
@@ -22,7 +23,7 @@
 ++  maxcdn
   |=(a/tape "//maxcdn.bootstrapcdn.com/{a}{?:(nomin.dbg "" ".min")}.js")
 --
-!:
+::
 ::::
   ::
 ^-  marl

@@ -3,10 +3,10 @@
   ::
 /?    310
 /-    kyev, sole
-!:
+::
 ::::
   ::
-[sole .]
+=,  sole
 |_  dill-belt
 ::
 ++  grab                                                ::  convert from

@@ -1,4 +1,4 @@
-!:
+::
 |%
 ::  Splits a path into the endpoint prefix and the remainder,
 ::  which is assumed to be a path within the JSON object.  We

@@ -3,6 +3,8 @@
   ::
 /?    310
 ::
+=,  bytes:eyre
+=,  lines:clay
 |_  mud/@t
 ++  grow
   |%

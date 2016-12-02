@@ -5,14 +5,14 @@
   ::
 /?    310 
 /-    talk
-!:
+::
 ::::
   ::
 [. ^talk]
 |_  bol/bowl:^gall
 ++  main                                                ::  main story
   |=  our/ship  ^-  cord
-  =+  can=(clan:title:jael our)
+  =+  can=(clan:title our)
   ?+  can  %porch
     $czar  %court
     $king  %floor

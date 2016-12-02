@@ -3,10 +3,10 @@
   ::
 /?    310
 /-    sole
-!:
+::
 ::::
   ::
-[sole .]
+=,  sole
 |%
 ++  mar-sole-change                       ::  XX  dependency
   |_  cha/sole-change
@@ -28,8 +28,7 @@
 ++  wush
   |=  {wid/@u tan/tang}
   ^-  tape
-  =+  rolt=|=(a/wall `tape`?~(a ~ ?~(t.a i.a :(weld i.a "\0a" $(a t.a)))))
-  (rolt (turn (flop tan) |=(a/tank (rolt (wash 0^wid a)))))
+  (of-wall (turn (flop tan) |=(a/tank (of-wall (wash 0^wid a)))))
 ::
 ++  purge                                               ::  discard ++styx style
   |=  a/styx  ^-  tape
@@ -37,7 +36,7 @@
   |=  a/_?>(?=(^ a) i.a)
   ?@(a (trip a) ^$(a q.a))
 --
-!:
+::
 |_  sef/sole-effect
 ::
 ++  grab                                                ::  convert from

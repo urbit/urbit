@@ -2,7 +2,7 @@
 ::::  /hoon/paste/write/mar
   ::
 /?    310
-!:
+::
 |_  {typ/?($hoon $md $txt) txt/@t}
 ++  grab
   |%

@@ -2,7 +2,7 @@
 ::::  /hoon/comment/talk/mar
   ::
 /?    310
-!:
+::
 |_  {pax/path sup/spur txt/@t}
 ++  grab
   |%

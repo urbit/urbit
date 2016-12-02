@@ -4,8 +4,9 @@
 /?    310
 /-  talk
 /+  talk,map-to-json
-!:
+::
 =+  talk
+=,  bytes:eyre
 |_  gam/(list telegram)
 ::
 ++  grab  

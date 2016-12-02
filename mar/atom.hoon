@@ -2,7 +2,7 @@
 ::::  /hoon/atom/mar
   ::
 /?    310
-!:
+::
 ::::  A minimal atom mark
 |_  ato/@
 ++  grab  |%

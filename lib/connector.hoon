@@ -87,7 +87,7 @@
   ::
   ++  endpoint-to-purl
     |=  endpoint/path
-    (scan (weld api-url <`path`endpoint>) auri:epur)
+    (scan (weld api-url <`path`endpoint>) auri:urlp)
   ::
   ::  Return error.  Used when no http response is expected.
   ::

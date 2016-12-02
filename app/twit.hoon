@@ -7,6 +7,7 @@
 ::
 ::::  ~fyr
   ::
+=,  ^eyre
 |%
 ++  twit-path                                           ::  valid peer path
   $%  {$cred $~}                                        ::  credential info
@@ -59,13 +60,9 @@
 ++  endpoint  endpoint:reqs:twitter                     ::  outgoing target
 ++  param  param:reqs:twitter                           ::  twit-req paramters
 ++  print  print:twitter                                ::  their serialization
-++  parse  parse:twitter                                ::  and deserialization
 ::
-:: ++  twit  args:reqs:twitter                             ::  arugment types
-:: ++  twir  parse:twitter                                 ::  reparsers
-:: ++  twip  print:twitter                                 ::  printers
 --
-!:
+::
 ::::
   ::
 |_  {bowl axle}
@@ -174,7 +171,7 @@
   ~&  sigh-tang+pax
   %-  (slog (flop tan))
   =+  ^-  git/gift
-      =+  err='' ::%.(q:(need r.hit) ;~(biff poja mean:twir))  :: XX parse?
+      =+  err='' ::%.(q:(need r.hit) ;~(biff poja mean:reparse:twitter))  :: XX parse?
       :^  %diff  %ares  %bad-http
       tan
       :: [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:render:twit)]

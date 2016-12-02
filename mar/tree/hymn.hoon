@@ -2,6 +2,7 @@
 ::::  /hoon/hymn/tree/mar
   ::
 /?    310
+=,  bytes:eyre
 |_  own/manx
 ::
 ++  grow                                                ::  convert to

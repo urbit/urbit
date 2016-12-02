@@ -4,7 +4,7 @@
   ::
 /?    310
 /-  sole
-[sole]
+=,  sole
 :-  %get  |=  {^ {a/hiss $~} usr/iden}
 ^-  (sole-request (cask httr))
 ?.  ?=($get p.q.a)

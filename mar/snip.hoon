@@ -3,6 +3,7 @@
   ::
 /?    310
 =,  xml:eyre
+=,  bytes:eyre
 |%
   ++  words  1
   ++  hedtal
@@ -40,7 +41,7 @@
     [-.nex [(wonk wer) +.nex]]
 --
 ::
-!:
+::
 |_  {hed/marl tal/marl}
 ::
 ++  grow                                                ::  convert to
@@ -50,7 +51,7 @@
     |%
     ++  elem  ;div:(h1:"*{hed}" div:"*{tal}")           ::  convert to %elem
     ++  hymn  ;html:(head:title:"snip" body:"+{elem}")  ::  convert to %hymn
-    ++  html  (crip (poxo hymn))                        ::  convert to %html
+    ++  html  (crip (print hymn))                       ::  convert to %html
     ++  mime  [/text/html (taco html)]                  ::  convert to %mime
     --
   --

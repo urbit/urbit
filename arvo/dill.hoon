@@ -120,7 +120,7 @@
           $heft  heft
           $tick  =+  ^=  ges  ^-  gens:^ames
                      :-  %en
-                     =+  can=(clan:title:jael p.kyz)
+                     =+  can=(clan:title p.kyz)
                      ?-  can
                        $czar  [%czar ~]
                        $duke  [%duke %anon ~]
@@ -267,12 +267,12 @@
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
         =+  myt=(flop (need tem))
-        =+  can=(clan:title:jael our)
+        =+  can=(clan:title our)
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
-                (sync %base (sein:title:jael our) %kids)
+                (sync %base (sein:title our) %kids)
         =.  +>  ?:  ?=(?($czar $pawn) can)
                   (sync %home our %base)
                 (init-sync %home our %base)

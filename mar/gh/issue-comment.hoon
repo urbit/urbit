@@ -16,10 +16,10 @@
         ==
     :*  %api  %github
         login.sender.issue-comment
-        (rash html-url.sender.issue-comment aurf:epur)
+        (rash html-url.sender.issue-comment aurf:urlp)
         txt
         txt
-        (rash html-url.comment.issue-comment aurf:epur)
+        (rash html-url.comment.issue-comment aurf:urlp)
         %-  jobe  :~
           repository+s+name.repository.issue-comment
           number+(jone number.issue.issue-comment)

@@ -3,10 +3,10 @@
   ::
 /?    310
 /-    sole
-!:
+::
 ::::
   ::
-[sole .]
+=,  sole
 |_  sole-action
 ::
 ++  grab                                                ::  convert from

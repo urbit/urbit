@@ -6,7 +6,7 @@
 [. helm kiln drum]                                      
 ::                                                      ::  ::
 ::::                                                    ::  ::
-  !:                                                    ::  ::
+  ::                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
     ++  hood-old                                        :: 
       {?($0 $1) lac/(map @tas hood-part-old)}           :: 
@@ -48,7 +48,8 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|_  $:  hid/bowl:^gall                                  ::  system state
+=,  ^gall
+|_  $:  hid/bowl                                       ::  system state
         hood-1                                          ::  server state
     ==                                                  ::
 ++  able                                                ::  find+make part

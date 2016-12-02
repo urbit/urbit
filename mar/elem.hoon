@@ -2,14 +2,14 @@
 ::::  /hoon/elem/mar
   ::
 /?    310
-=,  js:e
+=,  js:eyre
 |_  own/manx
 ::
 ++  grow                                                ::  convert to
   |%
   ++  hymn  ;html:(head body:"+{own}")                  ::  convert to %hymn
-  ++  html  (crip (poxo:xml:eyre hymn))                 ::  convert to %html
-  ++  mime  [/text/html (taco:js:eyre html)]            ::  convert to %mime
+  ++  html  (crip (print:xml:eyre hymn))                ::  convert to %html
+  ++  mime  [/text/html (taco:bytes:eyre html)]         ::  convert to %mime
   --
 ++  garb  /snip                                         ::  grabbed by
 ++  grab  |%                                            ::  convert from

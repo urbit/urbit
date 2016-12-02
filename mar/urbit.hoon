@@ -3,7 +3,7 @@
   ::
 /?    310
 ::::  A minimal urbit mark
-!:
+::
 |_  her/@p
 ++  grab
   |%

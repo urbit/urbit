@@ -163,7 +163,7 @@
   ++  doze                                              ::  sleep until
     |-  ^-  (unit @da)
     ?~  pol  ~
-    ;:  hunt
+    ;:  (cury hunt lth)
       $(pol l.pol)
       $(pol r.pol)
       ~(to-wait et p.n.pol q.n.pol)
@@ -332,7 +332,7 @@
     ++  to-wait
       |-  ^-  (unit @da)
       ?~  sal.bah  ~
-      ;:  hunt
+      ;:  (cury hunt lth)
         $(sal.bah l.sal.bah)
         $(sal.bah r.sal.bah)
         wait:(to-rail p.n.sal.bah q.n.sal.bah)
