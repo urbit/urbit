@@ -238,7 +238,6 @@
   =+  fel=(most cab (sear wick urt:ab))
   |=(a/knot `(unit {p/term q/path})`(rush a fel))
 ::
-++  rolt  |=(a/wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
 ++  wush
   |=  {wid/@u tan/tang}
   ^-  wall
@@ -265,7 +264,7 @@
   =-  (jobe fail+s+typ mess+(jape mez) ~)
   ^-  {typ/term mez/tape}
   ?~  err  [%fail "Unknown Error"]
-  [p.u.err (rolt (wush 160 q.u.err))]
+  [p.u.err (of-wall (wush 160 q.u.err))]
 ::
 ++  resp                                                ::  mimed response
   |=  {sas/@uG mit/mite rez/@}  ^-  httr
@@ -274,7 +273,7 @@
 ::
 ++  add-links                                           :: x-urbit:// urls
   |=  a/wall  ^-  marl
-  ?.  [x-urbit-links=&]  [;/((rolt a))]~                :: default disable
+  ?.  [x-urbit-links=&]  [;/((of-wall a))]~             :: default disable
   |-  ^-  marl
   ?~  a  ~
   =^  pax  i.a  ::  parse path if any
@@ -1870,7 +1869,7 @@
         ..lens  :: (give-json 200 ~ (joba %okey-dokey %b &))
       =+  tag=(flop `tang`[>[%eyre-lens-fail p.u.a]< q.u.a])
       %-  (slog tag)
-      (give-json:abet 500 ~ (jape (rolt (wush 160 tag))))
+      (give-json:abet 500 ~ (jape (of-wall (wush 160 tag))))
     ::
     ++  get-diff
       |=  fec/json  ^+  ..lens

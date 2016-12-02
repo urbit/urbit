@@ -2920,8 +2920,12 @@
     ?:  =(0 i)
       $(i +(i), tez t.tez, our i.tez)
     $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
+  ::                                                    ::  ++of-wall:format
+  ++  of-wall                                           ::  line list to tape
+    |=  a/wall  ^-  tape
+    ?~(a ~ "{i.a}\0a{$(a t.a)}")
   ::                                                    ::  ++en-beam:format
-  ++  en-beam                                            ::  beam to path
+  ++  en-beam                                           ::  beam to path
     |=  bem/beam
     ^-  path
     [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
