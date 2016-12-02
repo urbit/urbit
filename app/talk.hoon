@@ -440,8 +440,8 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam/telegram
-      =+  lin=~(tr-line tr man.she (~(has in settings.she) %noob) gam)
-      (sh-pass:(sh-fact %txt lin) q.q.gam) 
+      =+  lin=~(tr-line tr man.she settings.she gam)
+      (sh-pass:(sh-fact %txt lin) q.q.gam)
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num/@ud
@@ -1007,7 +1007,7 @@
       ++  activate                                      ::  from %number
         |=  gam/telegram
         ^+  ..sh-work
-        =+  tay=~(. tr man.she (~(has in settings.she) %noob) gam)
+        =+  tay=~(. tr man.she settings.she gam)
         =.  ..sh-work  (sh-fact tr-fact:tay)
         sh-prod(active.she `tr-pals:tay)
       ::
@@ -2094,7 +2094,7 @@
 ::
 ++  tr                                                  ::  telegram renderer
   |_  $:  man/knot
-          nob/?
+          sef/(set knot)
           who/ship
           sen/serial
           aud/audience
@@ -2111,7 +2111,7 @@
     =+  ^=  baw
         ::  ?:  oug 
         ::  ~(te-whom te man tr-pals)
-        ?.  nob
+        ?.  (~(has in sef) %noob)
           (~(sn-curt sn man [who (main who)]) |)
         (~(sn-nick sn man [who (main who)]))
     (weld baw txt)
