@@ -123,7 +123,17 @@
   %-  flop
   %+  turn  all
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
+  =/  van/(list {term $~})
+    :-  zus=[%zuse ~]
+    (~(tap by dir:.^(arch %cy (welp top /sys/vane))))
   |=  nam/@tas
+    =.  nam
+    ?.  =(1 (met 3 nam))
+      nam
+    =+  ^-  zaz/(list {p/knot $~})
+        (skim van |=({a/term $~} =(nam (end 3 1 a))))
+    ?>  ?=({{@ $~} $~} zaz)
+    `term`p.i.zaz
   =+  tip=(end 3 1 nam)
   =+  zus==('z' tip) 
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))

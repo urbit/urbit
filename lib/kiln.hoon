@@ -13,7 +13,7 @@
 ++  kiln-pith                                           ::
     $:  rem/(map desk kiln-desk)                        ::
         syn/(map kiln-sync {let/@ud ust/bone})          ::
-        autoload/?                                      ::
+        autoload-on/?                                   ::
         cur-hoon/@uvI                                   ::
         cur-zuse/@uvI                                   ::
         cur-vanes/(map @tas @uvI)                       ::
@@ -178,29 +178,73 @@
   =+  old=;;((map @da cord) (fall (file where) ~))
   `(foal where %sched !>((~(put by old) tym eve)))
 ::
-++  poke-autoload
-  |=  lod/(unit ?)
-  ?^  lod
-    abet(autoload u.lod)
-  =<  abet(autoload !autoload)
-  (spam leaf+"turning autoload o{?:(autoload "ff" "n")}" ~)
+++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
+++  poke-start-autoload  |=($~ abet:start:autoload)
 ::
-++  poke-start-autoload
-  |=  $~
-  =.  cur-hoon  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/hoon/hoon)
-  =.  cur-zuse  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/zuse/hoon)
-  =.  cur-vanes
-    %-  malt
-    %+  turn  `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
-    |=  syd/@tas
-    :-  syd
-    .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/vane/[syd]/hoon)
-  =<  abet
-  %-  emit
-  ^-  card
-  :*  %warp  /kiln/autoload  [our our]  %home  ~
-      %next  %z  da+now  /arvo
-  ==
+++  autoload
+  |%
+  ++  emit  |=(a/card +>(..autoload (^emit a)))
+  ++  tracked-vanes
+    `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
+  ::
+  ++  our-home  /(scot %p our)/home/(scot %da now)
+  ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))
+  ++  hash-vane
+    |=  syd/@tas  ^-  (pair term @uvI)
+    [syd (sys-hash /vane/[syd]/hoon)]
+  ::
+  ++  rehash-vanes
+    ^+  cur-vanes
+    (malt (turn tracked-vanes hash-vane))
+  ::
+  ::
+  ++  poke
+    |=  lod/(unit ?)
+    ?^  lod
+      ..autoload(autoload-on u.lod)
+    =.  autoload-on  !autoload-on
+    (spam leaf+"turned autoload {?:(autoload-on "on" "off")}" ~)
+  ::
+  ++  start
+    =.  cur-hoon  (sys-hash /hoon/hoon)
+    =.  cur-zuse  (sys-hash /zuse/hoon)
+    =.  cur-vanes  rehash-vanes
+    subscribe-next
+  ::
+  ++  subscribe-next
+    %-  emit
+    ^-  card
+    :*  %warp  /kiln/autoload  [our our]  %home  ~
+        %next  %z  da+now  /sys
+    ==
+  ::
+  ++  writ  =>(check-new subscribe-next)
+  ++  check-new
+    ?.  autoload-on
+      ..check-new
+    =/  new-hoon  (sys-hash /hoon/hoon)
+    ?:  !=(new-hoon cur-hoon)
+      =.  cur-hoon  new-hoon
+      =.  cur-vanes  rehash-vanes
+      (emit %poke /kiln/reload/hoon [our %hood] %helm-reset ~)
+      ::  XX  updates cur-vanes?
+    =/  new-zuse  (sys-hash /zuse/hoon)
+    ?:  !=(new-zuse cur-zuse)
+      =.  cur-zuse  new-zuse
+      =.  cur-vanes  rehash-vanes
+      (emit %poke /kiln/reload/zuse [our %hood] %helm-reload [%zuse tracked-vanes])
+    (roll tracked-vanes load-vane)
+  ::
+  ++  load-vane
+    =<  %_(. con ..load-vane)
+    |=  {syd/@tas con/_.}
+    =.  +>.$  con
+    =/  new-vane  q:(hash-vane syd)
+    ?:  =(`new-vane (~(get by cur-vanes) syd))
+      +>.$
+    =.  cur-vanes  (~(put by cur-vanes) syd new-vane)
+    (emit [%poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd]])
+  --
 ::
 ++  poke-overload
   |=  tym/@dr
@@ -243,52 +287,7 @@
   |=  {way/wire rot/riot}
   ?>  ?=($~ way)
   ?>  ?=(^ rot)
-  =+  vanes=`(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
-  =.  +>.$
-    ?.  autoload
-      +>.$
-    =+  ^=  new-hoon
-        .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/hoon/hoon)
-    ?:  !=(new-hoon cur-hoon)
-      =.  cur-hoon  new-hoon
-      =.  cur-vanes
-        %-  malt
-        %+  turn  `(list @tas)`(turn (~(tap by cur-vanes)) head)
-        |=  syd/@tas
-        :-  syd
-        .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
-      (emit %poke /kiln/reload/hoon [our %hood] %helm-reset ~)
-      ::  XX  updates cur-vanes?
-    =+  ^=  new-zuse
-        .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon)
-    ?:  !=(new-zuse cur-zuse)
-      =.  cur-zuse  new-zuse
-      =.  cur-vanes
-        %-  malt
-        %+  turn  `(list @tas)`(turn (~(tap by cur-vanes)) head)
-        |=  syd/@tas
-        :-  syd
-        .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
-      (emit %poke /kiln/reload/zuse [our %hood] %helm-reload [%zuse vanes])
-      ::  XX  updates cur-vanes?
-    =-  =.  ^cur-vanes  cur-vanes
-        (emil cards)
-    %+  roll  `(list @tas)`vanes
-    =<  %_(. cur-vanes ^cur-vanes)
-    ::^-  $-([@tas _+>.^$] _+>.^$)
-    |=  {syd/@tas cur-vanes/(map @tas @uvI) cards/(list card)}
-    =+  ^=  new-vane
-        .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
-    ?:  =(`new-vane (~(get by cur-vanes) syd))
-      [cur-vanes cards]
-    :-  (~(put by cur-vanes) syd new-vane)
-    [[%poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd]] cards]
-  =.  +>.$
-    %-  emit  :*
-      %warp  /kiln/autoload  [our our]  %home  ~
-      %next  %z  da+now  /arvo
-    ==
-  abet
+  abet:writ:autoload
 ::
 ++  take-wake-overload
   |=  {way/wire $~}
