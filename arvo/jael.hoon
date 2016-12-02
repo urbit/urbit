@@ -19,8 +19,8 @@
 =,  pki:^jael
 =,  rights:^jael
 =,  able:^jael 
-=,  title:jael
-=,  crypto:ames
+=,  title
+=,  crypto
 =*  womb  womb:^jael
 =,  jael
 ::                                                      ::::
@@ -913,7 +913,7 @@
     ~(able ~(ex ur urb) who)
   ::
   ++  read-womb
-    =,  wired:eyre  :: XX ":eyre"
+    =,  wired  :: XX ":eyre"
     =,  womb
     |=  pax/path  ^-  (unit scry:womb)
     ?~  pax  ~

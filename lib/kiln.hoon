@@ -6,7 +6,8 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 =,  ^clay
-=,  space:clay
+=,  space:userlib
+=,  format
 |%                                                      ::  ::
 ++  kiln-part  {$kiln $0 kiln-pith}                     ::  kiln state
 ++  kiln-pith                                           ::
@@ -93,7 +94,7 @@
 ::
 ++  poke-mount
   |=  kiln-mount
-  =+  bem=(tome pax)
+  =+  bem=(de-beam pax)
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
@@ -102,7 +103,7 @@
 ++  poke-unmount
   |=  mon/kiln-unmount
   ?^  mon
-    =+  bem=(tome mon)
+    =+  bem=(de-beam mon)
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf+- ~)

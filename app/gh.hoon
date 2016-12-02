@@ -47,6 +47,7 @@
     --
 =+  connector=(connector move sub-result)  ::  Set up connector library
 ::
+=,  ^gall
 |_  $:  hid/bowl
         hook/(map @t {id/@t listeners/(set bone)})  ::  map events to listeners
     ==

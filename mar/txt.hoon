@@ -4,7 +4,7 @@
 /?    310
 ::
 =,  ^clay
-=,  differ:clay
+=,  differ
 =,  lines:clay
 =,  bytes:eyre
 |_  txt/wain
@@ -13,7 +13,7 @@
   |%
   ++  mime  |=({p/mite:^eyre q/octs:^eyre} (lore q.q))
   ++  noun  wain                                        ::  clam from %noun
-  ++  json  :(corl lore need so:jo:js:eyre)
+  ++  json  (corl lore so:dejs:format)
   --
 ++  grow
   =>  v=.

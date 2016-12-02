@@ -6,7 +6,7 @@
 /=    tub    /$  |=({bem/beam *} (flop s.bem))
 /=    aut
   /$  %+  cork  fuel:url:eyre                           :: after parsing params,
-      =,  title:jael
+      =,  title
       |=  gas/epic:^eyre  ^-  ?                         :: check that the fcgi
       %+  lien  (~(tap in (~(get ju aut.ced.gas) %$)))  :: has an identity
       |=(a/knot !=(%pawn (clan (slav %p a))))           :: which isn't a comet

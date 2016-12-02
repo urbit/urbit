@@ -2,14 +2,14 @@
 ::::  /hoon/ask-mail/mar
   ::
 /?    310
-=,  js:eyre
+=,  format
 =,  bytes:eyre
 |_  txt/cord
 ::
 ++  grab                                                ::  convert from
   |%
   ++  noun  @t                                          ::  clam from %noun
-  ++  json  (cork so:jo need)
+  ++  json  so:dejs
   --
 ++  grow
   |%

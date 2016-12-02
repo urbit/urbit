@@ -3,8 +3,6 @@
 ::::  /hoon/rend/down-jet/lib
   ::
 /?    310
-=*  xml  xml:eyre
-=,  url:eyre
 ::
 |%
 ++  into-inner
@@ -48,6 +46,8 @@
   $(a t.a)
 ::
 ++  sing                                                ::  elem to manx
+  =*  xml  xml:eyre
+  =,  js:eyre
   =>  |%
       ++  first-word
         |=  a/tape
@@ -156,6 +156,7 @@
   --
 ::  
 ++  sung
+  =,  url:eyre
   |=  lim/kids
   =+  had=*(unit mane)
   |^  ^-  marl

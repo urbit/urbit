@@ -3,13 +3,13 @@
   ::
 /?    310
 =,  bytes:eyre
-=,  js:eyre
+=,  format
 |_  txt/cord
 ::
 ++  grab                                                ::  convert from
   |%
   ++  noun  @t                                          ::  clam from %noun
-  ++  json  (cork so:jo need)
+  ++  json  so:dejs
   --
 ++  grow
   |%

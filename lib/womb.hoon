@@ -3,8 +3,8 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /+    talk, old-phon
-=,  wired:eyre
-=,  title:jael
+=,  wired
+=,  title
 =,  womb:^jael
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -388,9 +388,9 @@
   =+  pas=`@uw`(shas %back eny)
   ~&  [%backing-up pas=pas]
   =;  dif  (emit %info /backup [our dif])
-  %+  foal:space:clay 
+  %+  foal:space:userlib
     (welp pax /jam-crub)
-  [%jam-crub !>((en:crub:crypto:ames pas (jam `part`+:abet)))]
+  [%jam-crub !>((en:crub:crypto pas (jam `part`+:abet)))]
 ::
 ++  poke-rekey                                        ::  extend wyll
   |=  $~

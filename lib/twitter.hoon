@@ -8,10 +8,10 @@
 =+  sur-twit:^twitter  :: XX
 =,  ^eyre
 =,  bytes:eyre
-=,  js:eyre
+=,  format
 =,  url:eyre
 =,  xml:eyre
-=,  chrono:behn
+=,  chrono:userlib
 ::
 ::::  functions
   ::
@@ -69,26 +69,31 @@
       ~
     ~[scr+a tid+(tid:print b)]
   --
-++  parse                                                ::  json reparsers
+++  parse  ^?                                            ::  text parsers
   |%
-  ++  ce  |*({a/_* b/fist:jo} (cu:jo |=(c/a c) b))       ::  output type
+  ++  user  (cook crip (plus ;~(pose aln cab)))
+  --
+::
+++  reparse                                              ::  json reparsers
+  =,  parse
+  |%
+  ++  ce  =>(dejs |*({a/_* b/fist} (cu |=(c/a c) b))) ::  output type
   ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])
-  ++  usor  (cook crip (plus ;~(pose aln cab)))
-  ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
+  ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):dejs
   ++  post
-    =+  jo
+    =,  ^?(dejs)
     %+  ce  post:sur-twit
     %-  ot
     :~  id+ni
-        user+(ot (fasp screen-name+(su usor)) ~)
+        user+(ot (fasp screen-name+(su user)) ~)
         (fasp created-at+(cu year (ci stud so)))
         text+(cu crip (su (star escp:^parse)))  :: parse html escapes
     ==
   ++  usel 
-    =+  jo
+    =,  ^?(dejs)
     %+  ce  (list who/@ta)
     =-  (ot users+(ar -) ~)
-    (ot (fasp screen-name+(su usor)) ~)
+    (ot (fasp screen-name+(su user)) ~)
   --
 ++  print
   =+  args:reqs
