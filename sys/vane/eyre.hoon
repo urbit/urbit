@@ -3,13 +3,14 @@
 ::::
 |=  pit/vase
 =,  ^eyre
-=,  crypto:ames
-=,  space:clay
+=,  crypto
 =,  bytes:eyre
 =,  js:eyre
 =,  url:eyre
-=,  wired:eyre
+=,  wired
 =,  xml:eyre
+=,  unity
+=,  format
 =>  =~
 |%                                                      ::  interfaces
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
@@ -237,7 +238,6 @@
   =+  fel=(most cab (sear wick urt:ab))
   |=(a/knot `(unit {p/term q/path})`(rush a fel))
 ::
-++  rolt  |=(a/wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
 ++  wush
   |=  {wid/@u tan/tang}
   ^-  wall
@@ -264,7 +264,7 @@
   =-  (jobe fail+s+typ mess+(jape mez) ~)
   ^-  {typ/term mez/tape}
   ?~  err  [%fail "Unknown Error"]
-  [p.u.err (rolt (wush 160 q.u.err))]
+  [p.u.err (of-wall (wush 160 q.u.err))]
 ::
 ++  resp                                                ::  mimed response
   |=  {sas/@uG mit/mite rez/@}  ^-  httr
@@ -273,7 +273,7 @@
 ::
 ++  add-links                                           :: x-urbit:// urls
   |=  a/wall  ^-  marl
-  ?.  [x-urbit-links=&]  [;/((rolt a))]~                :: default disable
+  ?.  [x-urbit-links=&]  [;/((of-wall a))]~             :: default disable
   |-  ^-  marl
   ?~  a  ~
   =^  pax  i.a  ::  parse path if any
@@ -789,7 +789,7 @@
     ::
         $born  +>.$(ged hen)                            ::  register external
         $serv
-      =<  ~&([%serving (tope top)] .)
+      =<  ~&([%serving (en-beam top)] .)
       ?^(p.kyz +>.$(top p.kyz) +>.$(q.top p.kyz))
     ::
         $crud
@@ -1049,7 +1049,7 @@
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
-          =+  bek=(norm-beak -:(need (tome (need (puck p.tee)))))
+          =+  bek=(norm-beak -:(need (de-beam (need (puck p.tee)))))
           (exec-live ac+q.tee bek [%flag [p.sih `~] %cast %mime [%$ cay]])
         (give-mime q.tee p.sih cay)
       ::
@@ -1259,8 +1259,8 @@
     ::
     ++  as-lens
       =<  abet
-      ::  (process-parsed [%mess [our %dojo] %lens-command /lens (need grab-json)])
-      ((teba ~(new lens ~)) (need grab-json))
+      ::  (process-parsed [%mess [our %dojo] %lens-command /lens grab-json])
+      ((teba ~(new lens ~)) grab-json)
     ::
     ++  resolve
       |=  {cug/(list @t) pez/pest}  ^+  done
@@ -1285,7 +1285,7 @@
     ::
     ++  resolve-bake
       |=  {ses/(unit hole) dom/(unit @t) men/mend mar/mark arg/coin bem/beam}
-      =+  wir=[%at (pack [- +]:(tope -.bem ~)) (fall ses %$) men ?~(dom ~ [u.dom]~)]
+      =+  wir=[%at (pack [- +]:(en-beam -.bem ~)) (fall ses %$) men ?~(dom ~ [u.dom]~)]
       =.  -.bem  (norm-beak -.bem)
       =+  req=[%bake mar arg bem]
       =+  red=[%bake %red-quri arg bem]
@@ -1310,14 +1310,22 @@
       &
     ::
     ++  grab-json
+      ^-  json
+      ?.  ?=(?($post $put $delt) mef)
+        ~|(bad-method+mef !!)
+      ?~  bod
+        ~|(%no-body !!)
+      (need (poja q.u.bod))
+    ::
+    ++  grab-json-soft
+      ^-  (unit json)
       ?.  ?=(?($post $put $delt) mef)
         ~
       ?~(bod ~ (poja q.u.bod))
     ::
-    ++  need-body  |*(a/fist:jo (need (biff grab-json a)))
     ++  grab-oryx
       ^-  (unit oryx)
-      =+  oxe=(biff grab-json (ot oryx+so ~):jo)
+      =+  oxe=(biff grab-json-soft =>(dejs-soft (ot oryx+so ~)))
       ?^  oxe  oxe
       (~(get by (molt quy)) %oryx)
     ::
@@ -1357,14 +1365,14 @@
       ++  is-spur  |(?~(q.pok & ((sane %ta) i.q.pok)))
       ++  as-beam                                       :: /~sipnym/desk/3/...
         ^-  (unit beam)
-        =+  =<  tyk=(zl:jo (turn q.pok .))              :: a path whose elements
+        =+  =<  tyk=(drop-list (turn q.pok .))          :: a path whose elements
             |=(a/knot `(unit tyke)`(rush a gasp:vast))  :: are in /=foo==/=bar
         ?~  tyk  ~                                      :: syntax
-        =+  %-  posh:(vang & (tope top))                :: that the base path
+        =+  %-  posh:(vang & (en-beam top))             :: that the base path
             [[~ (zing u.tyk)] ~]                        :: can interpolate into
         ?~  -  ~                                        ::
         =+  (plex:vast %conl u)                         :: staticly, and make a
-        (biff - tome)                                   :: valid beam
+        (biff - de-beam)                                   :: valid beam
       ::
       ++  as-aux-request                                ::  /~/... req parser
         ^-  (unit perk)
@@ -1429,10 +1437,11 @@
                 {@ @ $~}    [our (raid but %tas %tas ~)]
                 {@ @ @ $~}  (raid but %p %tas %tas ~)
               ==
-          :^  %mess  [p q]:dir  r.dir
+          =;  x/{wir/wire mez/json}
+            [%mess [p q]:dir r.dir wir.x mez.x]
           =+  wir=(~(get by (molt quy)) 'wire')
-          ?^  wir  [(stab u.wir) (need grab-json)]         ::  XX distinguish
-          (need-body (ot wire+(cu stab so) xyro+some ~):jo)
+          ?^  wir  [(stab u.wir) grab-json]          ::  XX distinguish
+          %.(grab-json =>(dejs (ot wire+(cu stab so) xyro+same ~)))
         ::
             $in
           ~|  expect+[%post 'application+json' /'@uv' '?PUT/DELETE']
@@ -1450,7 +1459,7 @@
             $(but [(scot %p our) but])
           ?>  ?=(?($delt $put) mef)
           =+  :-  hap=[(slav %p i.but) (slav %tas -.t.but)]
-              wir=(need-body (ot wire+(cu stab so) ~):jo)
+              wir=%.(grab-json =>(dejs (ot wire+(cu stab so) ~)))
           [%subs mef hap u.p.pok wir +.t.but]
         ::
             $auth
@@ -1464,14 +1473,13 @@
                 $get   [%json ~]
                 $put
               ~|  parsing+bod
-              [%try (need-body (ot ship+(su fed:ag) code+(mu so) ~):jo)]
+              :-  %try
+              %.(grab-json =>(dejs (ot ship+(su fed:ag) code+(mu so) ~)))
             ::
                 $delt
               ~|  parsing+bod
-              =+  jon=(need (poja q:(need bod)))
-              ?>  ?=($o -.jon)
-              =+  sip=(~(get by p.jon) %ship)
-              [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
+              :-  %del
+              %.(grab-json =>(dejs-soft (ot ship+(su fed:ag))))
         ==  ==
         ==
       --
@@ -1503,7 +1511,7 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem $beam p.hem, $spur [-.top (weld p.hem s.top)])
         ~|  bad-beam+q.bem
-        ?<  =([~ 0] (sky [151 %noun] %cw (tope bem(+ ~, r [%da now]))))
+        ?<  =([~ 0] (sky [151 %noun] %cw (en-beam bem(+ ~, r [%da now]))))
         =+  men=?+(mef !! $get mef, $head mef)  :: redact result
         =+  arg=(fcgi payload fcgi-cred)
         =+  [%bake men ext arg bem]
@@ -1689,7 +1697,7 @@
       %-  jobe  :~
         oryx+s+orx
         ixor+s+(oryx-to-ixor orx)
-        sein+(jape +:<(sein:title:jael our)>)
+        sein+(jape +:<(sein:title our)>)
         ship+(jape +:<our>)
         user+(jape +:<(fall get-user anon)>) :: XX crash on unsaved session?
       ==
@@ -1861,7 +1869,7 @@
         ..lens  :: (give-json 200 ~ (joba %okey-dokey %b &))
       =+  tag=(flop `tang`[>[%eyre-lens-fail p.u.a]< q.u.a])
       %-  (slog tag)
-      (give-json:abet 500 ~ (jape (rolt (wush 160 tag))))
+      (give-json:abet 500 ~ (jape (of-wall (wush 160 tag))))
     ::
     ++  get-diff
       |=  fec/json  ^+  ..lens
@@ -1922,7 +1930,7 @@
           +12.q
         =+  ^=  ato
             %-  sky 
-            [[151 %noun] %cx (tope root-beak [%atom (flop %_(dom . sec+dom))])]
+            [[151 %noun] %cx (en-beam root-beak [%atom (flop %_(dom . sec+dom))])]
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         =.  key
           ?~  key  ''

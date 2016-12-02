@@ -570,7 +570,7 @@
       ^-  move 
       :-  (~(got by r.zam) p.cov)
       ?-    -.q.cov
-          ?($slip $sick)  !!
+          $slip  !!
           $give  
         ?<  =(0 p.cov)
         ?.  ?=($diff -.p.q.cov)
