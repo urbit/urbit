@@ -289,6 +289,7 @@
         %-  perk  :~
           %noob
           %quiet
+          %showtime
         ==
       ++  work
         %+  knee  *^work  |.  ~+
@@ -2109,6 +2110,15 @@
         ?.  (~(has in sef) %noob)
           (~(sn-curt sn man [who (main who)]) |)
         (~(sn-nick sn man [who (main who)]))
+    ?:  (~(has in sef) %showtime)
+      =+  dat=(yore now.hid)
+      =+  ^=  t
+        |=  a/@  ^-  tape
+        %+  weld
+          ?:  (lth a 10)  "0"  ~
+          (scow %ud a)
+      =+  ^=  time  :(weld "~" (t h.t.dat) "." (t m.t.dat) "." (t s.t.dat))
+      :(weld baw txt (reap (sub 67 (lent txt)) ' ') time)
     (weld baw txt)
   ::
   ++  tr-meta  ^-  tang
