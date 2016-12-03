@@ -46,7 +46,6 @@
   $(a t.a)
 ::
 ++  sing                                                ::  elem to manx
-  =*  xml  xml:eyre
   =,  html
   =>  |%
       ++  first-word
@@ -76,14 +75,14 @@
       (push (reso ele) ~)
     ::  begin reparsing of html that the spec jankily lets through  ::
     =+  tex=(trip (of-wain p.ele))
-    =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:parse:xml))
+    =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:de-xml))
     ?^  mar
       (push u.mar)
-    =^  hed  lum  (chomp tex head:parse:xml)
+    =^  hed  lum  (chomp tex head:de-xml)
     ?^  hed
       =+  max=`marx`u.hed
       (push(lum q) [max p] ~):[apex(had `n.max) .]
-    =^  tal  lum  (chomp tex tail:parse:xml)
+    =^  tal  lum  (chomp tex tail:de-xml)
     ?~  tal
       =^  cha  lum  (chomp tex prn)
       ?^  cha
@@ -140,9 +139,9 @@
              ;meta(value "{(en-json jon)}", name "frontmatter", urb_front "");
   ::     %html  
              ::=+  tex=(of-wain (turn p.a crip))
-             ::=+  (parse:xml tex)
+             ::=+  (de-xml tex)
              ::?^  -  u.-
-             ::=+  (rush tex (star ;~(pose gah comt:parse:xml)))
+             ::=+  (rush tex (star ;~(pose gah comt:de-xml)))
              ::?^  -  ;/(~)
              ::;lost: {<p.a>}
         :: ;/([(of-wain (turn p.a crip))]~)                ::  XX  haaaaaaack
@@ -176,15 +175,15 @@
         apex(p.i.lim (weld p.ele p.i.lim))  
       (push (reso ele) ~)
     =+  tex=(trip p.ele)
-    =^  emo  lim  (chomp tex empt:parse:xml)
+    =^  emo  lim  (chomp tex empt:de-xml)
     ?^  emo
       =+  man=`manx`u.emo
       (push man ~)
-    =^  hed  lim  (chomp tex head:parse:xml)
+    =^  hed  lim  (chomp tex head:de-xml)
     ?^  hed
       =+  max=`marx`u.hed
       (push(lim q) [max p] ~):[apex(had `n.max) .]
-    =^  tal  lim  (chomp tex tail:parse:xml)
+    =^  tal  lim  (chomp tex tail:de-xml)
     ?~  tal
       (push ;lost:"{tex}" ~)
     ?:  =(had tal)

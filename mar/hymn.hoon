@@ -3,12 +3,12 @@
   ::
 /?    310
 =,  bytes:eyre
-=,  xml:eyre
+=,  html
 |_  own/manx
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  html  (crip (print own))                          ::  convert to %html
+  ++  html  (crip (en-xml own))                          ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from

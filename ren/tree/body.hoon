@@ -6,7 +6,6 @@
 /=    dat-sen  /|   /:  /%%/  /%  /tree-json/ :: default include
                     /~  ~
                ==
-=,  xml:eyre
 =,  format
 =,  html
 ^-  marl

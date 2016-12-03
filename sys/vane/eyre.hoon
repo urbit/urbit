@@ -6,7 +6,6 @@
 =,  bytes:eyre
 =,  url:eyre
 =,  wired
-=,  xml:eyre
 =,  unity
 =,  format
 =,  html
@@ -1161,7 +1160,7 @@
     |=  {sas/@ud cug/(list @t) max/manx}
     %-  give-thou
     %+  add-cookies  cug
-    (resp sas text+/html (crip (print max)))
+    (resp sas text+/html (crip (en-xml max)))
   ::
   ++  give-json
     |=  {sas/@uG cug/(list @t) jon/json}

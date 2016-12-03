@@ -4,7 +4,6 @@
 /?    310
 /=  urb-wasp-data-js    /:    /%/wasp-data    /js/
 =,  format
-=,  xml:eyre
 =,  bytes:eyre
 =,  html
 ::
@@ -12,7 +11,7 @@
 ++  grow                                                ::  convert to
   |%
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
-  ++  html  (crip (print hymn))                         ::  convert to %html
+  ++  html  (crip (en-xml hymn))                         ::  convert to %html
   ++  hymn                                              ::  inject dependencies
     ^-  manx
     ;html

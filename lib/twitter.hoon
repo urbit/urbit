@@ -7,10 +7,10 @@
 /+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
 =,  ^eyre
+=,  html
 =,  bytes:eyre
 =,  format
 =,  url:eyre
-=,  xml:eyre
 =,  chrono:userlib
 ::
 ::::  functions
@@ -87,7 +87,7 @@
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
         (fasp created-at+(cu year (ci stud so)))
-        text+(cu crip (su (star escp:^parse)))  :: parse html escapes
+        text+(cu crip (su (star escp:de-xml)))  :: parse html escapes
     ==
   ++  usel 
     =,  ^?(dejs)

@@ -3,7 +3,7 @@
 ::::  /hoon/parse/down-jet/lib
   ::
 /?    310
-=*  xml  xml:eyre
+=,  html
 =,  format
 =+  =~
 |%
@@ -15,7 +15,7 @@
   =,  space:userlib
   ~+  
   =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context
-      =+(parse:xml enty(ent mapping))
+      =+(de-xml enty(ent mapping))
   ^-  mapping/(map knot @tF)
   =+  pax=/==2%%/html5-entities/json                    ::  XX  %%/
   =+  maf=%.(pax ;~(biff file (soft json) (om so):dejs-soft))
@@ -167,7 +167,7 @@
           $&  (madn n.a) 
           $|  (madn p.a)
         ==
-      ;~(pose empt:parse:xml (pech [head tail]:parse:xml))
+      ;~(pose empt:de-xml (pech [head tail]:de-xml))
     ::
     ++  line 
       %+  cold  [%line ~]

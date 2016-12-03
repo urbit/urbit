@@ -14,7 +14,6 @@
 ::  Link from relative path
 =,  ^eyre
 =,  url:eyre
-=,  xml:eyre
 =+  hok=.^(hart %e /(scot %p our)/host/real)
 =+  ref=|=(a/path (earn hok `(weld tub a) ~))
 ::  urb:front attrs confuse RSS validators, readers

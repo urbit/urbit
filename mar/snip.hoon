@@ -2,7 +2,7 @@
 ::::  /hoon/snip/mar
   ::
 /?    310
-=,  xml:eyre
+=,  html
 =,  bytes:eyre
 |%
   ++  words  1
@@ -51,7 +51,7 @@
     |%
     ++  elem  ;div:(h1:"*{hed}" div:"*{tal}")           ::  convert to %elem
     ++  hymn  ;html:(head:title:"snip" body:"+{elem}")  ::  convert to %hymn
-    ++  html  (crip (print hymn))                       ::  convert to %html
+    ++  html  (crip (en-xml hymn))                      ::  convert to %html
     ++  mime  [/text/html (taco html)]                  ::  convert to %mime
     --
   --
