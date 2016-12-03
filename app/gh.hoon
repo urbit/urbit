@@ -280,7 +280,7 @@
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:urlp
         %post  ~  ~
-        %-  taco  %-  crip  %-  en-json  %-  jobe  :~
+        %-  as-octt  %-  en-json  %-  pairs:enjs  :~
           name+s+%web
           active+b+&
           events+a+~[s+event] ::(turn `(list ,@t)`t.t.pax |=(a=@t s/a))

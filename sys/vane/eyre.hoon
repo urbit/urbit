@@ -3,7 +3,6 @@
 ::::
 |=  pit/vase
 =,  ^eyre
-=,  bytes:eyre
 =,  url:eyre
 =,  wired
 =,  unity
@@ -268,7 +267,7 @@
 ++  resp                                                ::  mimed response
   |=  {sas/@uG mit/mite rez/@}  ^-  httr
   ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
-  [sas ~[content-type+(en-mite mit)] [~ (taco rez)]]
+  [sas ~[content-type+(en-mite mit)] [~ (as-octs rez)]]
 ::
 ++  add-links                                           :: x-urbit:// urls
   |=  a/wall  ^-  marl

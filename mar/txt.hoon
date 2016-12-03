@@ -6,7 +6,7 @@
 =,  ^clay
 =,  differ
 =,  format
-=,  bytes:eyre
+=,  mimes:html
 |_  txt/wain
 ::  
 ++  grab                                                ::  convert from
@@ -18,7 +18,7 @@
 ++  grow
   =>  v=.
   |%
-  ++  mime  =>  v  [/text/plain (taco (of-wain txt))]
+  ++  mime  =>  v  [/text/plain (as-octs (of-wain txt))]
   ++  elem  =>  v  ;pre: {(trip (of-wain txt))}
   --
 ++  grad

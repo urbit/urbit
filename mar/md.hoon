@@ -6,7 +6,7 @@
 |_  mud/@t
 ++  grow
   |%
-  ++  mime  [/text/x-markdown (taco:bytes:eyre mud)]
+  ++  mime  [/text/x-markdown (as-octs:mimes:html mud)]
   ++  txt
     (to-wain:format mud)
   --

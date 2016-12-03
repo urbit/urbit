@@ -3,12 +3,12 @@
   ::
 /?    310
 ::
-=,  bytes:eyre
+=,  mimes:html
 =,  format
 |_  mud/@t
 ++  grow
   |%
-  ++  mime  [/text/x-markdown (taco mud)]
+  ++  mime  [/text/x-markdown (as-octs mud)]
   ++  md  mud
   ++  txt
     (to-wain mud)

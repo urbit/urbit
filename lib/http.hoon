@@ -5,6 +5,7 @@
   ::
 /?    310
 ::
+=,  mimes:html
 =,  html
 |%
 ++  request
@@ -30,5 +31,5 @@
       q-strings=queries                               ::  ++quay
   ?@  req-type
     [%get headers ~]
-  [%post headers ~ (tact (en-json p.req-type))]
+  [%post headers ~ (as-octt (en-json p.req-type))]
 --

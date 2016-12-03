@@ -28,6 +28,7 @@
 ::  /ape/gh/split.hoon defines ++split, which splits a request
 ::  at the end of the longest possible endpoint.
 ::
+=,  mimes:html
 =,  html
 =>  |%                              :: => only used for indentation
     ++  move  (pair bone card)
@@ -113,7 +114,7 @@
   ::
       :+  method  `math`(malt ~[content-type+['application/json']~])
       =+  hoon-json-object=(joba %raw s+(sifo-google (message-to-rfc822:rfc mes)))
-      =+  request-body=(tact (en-json hoon-json-object))
+      =+  request-body=(as-octt (en-json hoon-json-object))
       (some request-body)
       ::(some (en-json label-req-to-json:gmail-label label-req:gmail-label ~)) XX
   ==

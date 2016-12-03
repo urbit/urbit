@@ -1,6 +1,6 @@
 /-  gh
 /+  gh-parse
-=,  bytes:eyre
+=,  mimes:html
 |_  issue/issue:gh
 ++  grab
   |%
@@ -9,7 +9,7 @@
 ++  grow
   |%
   ++  json  raw.issue
-  ++  mime  [/txt/plain (taco (crip <issue>))]
+  ++  mime  [/txt/plain (as-octs (crip <issue>))]
   ++  txt   (print-issue:gh-parse issue)
   --
 --

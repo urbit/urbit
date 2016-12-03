@@ -3,9 +3,10 @@
   ::
 /?    310
 =,  ^eyre
+=,  mimes:html
 |_  mud/@t
 ++  grow                                                ::  convert to
-  |%  ++  mime  [/text/css (taco:bytes:eyre mud)]       ::  convert to %mime
+  |%  ++  mime  [/text/css (as-octs mud)]               ::  convert to %mime
       ++  elem  ;style                                  ::  convert to %hymn
                   ;-  (trip mud)
                 ==

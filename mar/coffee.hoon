@@ -2,11 +2,11 @@
 ::::  /hoon/coffee/mar
   ::
 /?    310
-=,  bytes:eyre
+=,  mimes:html
 |_  mud/@t
 ++  grow
   |%
-  ++  mime  [/text/coffeescript (taco mud)]
+  ++  mime  [/text/coffeescript (as-octs mud)]
   --
 ++  grab
   |%

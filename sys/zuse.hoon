@@ -4570,7 +4570,6 @@
 ++  dill  !!
 ++  eyre  ^?
   |%
-  ++  bytes  [taco=as-octs tact=as-octt]:mimes:html
   ++  url
     =>  html  ^?
     |%

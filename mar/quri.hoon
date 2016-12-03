@@ -4,10 +4,10 @@
 /?    310
 =,  ^eyre
 =,  url:eyre
-=,  bytes:eyre
+=,  mimes:html
 |_  url/quri
 ::
-++  grow  |%    ++  mime  [text+/x-uri (tact (apex:earn url))]
+++  grow  |%    ++  mime  [text+/x-uri (as-octt (apex:earn url))]
           --
 ++  grab                                                ::  convert from
   |%

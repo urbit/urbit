@@ -3,6 +3,7 @@
 ::::  /hoon/oauth1/lib
   ::
 /+    interpolate, hep-to-cab
+=,  mimes:html
 =,  ^eyre
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
@@ -50,7 +51,7 @@
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss
   =.  b  (quay:hep-to-cab b)
-  =-  [a %post - ?~(b ~ (some (tact +:(tail:earn b))))]
+  =-  [a %post - ?~(b ~ (some (as-octt +:(tail:earn b))))]
   (my content-type+['application/x-www-form-urlencoded']~ ~)
 ::
 ::

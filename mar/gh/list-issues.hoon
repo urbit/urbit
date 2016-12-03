@@ -1,6 +1,6 @@
 /-  gh
 /+  gh-parse
-=,  bytes:eyre
+=,  mimes:html
 |_  issues/(list issue:gh)
 ++  grab
   |%
@@ -9,7 +9,7 @@
 ++  grow
   |%
   ++  json  [%a (turn issues |=(issue:gh raw))]
-  ++  mime  [/txt/plain (taco (crip <issues>))]
+  ++  mime  [/txt/plain (as-octs (crip <issues>))]
   ++  txt   =-  ?~  -  -  ->
             %+  roll  (turn issues print-issue:gh-parse)
             |=  {a/wain b/wain}

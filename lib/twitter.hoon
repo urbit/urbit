@@ -7,8 +7,8 @@
 /+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
 =,  ^eyre
+=,  mimes:html
 =,  html
-=,  bytes:eyre
 =,  format
 =,  url:eyre
 =,  chrono:userlib
@@ -33,7 +33,7 @@
     $get  [url med *math ~]
     $post
       =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
-      [url(r ~) med hed ?~(r.url ~ (some (tact +:(tail:earn r.url))))]
+      [url(r ~) med hed ?~(r.url ~ (some (as-octt +:(tail:earn r.url))))]
   ==
 ::
 ++  find-req

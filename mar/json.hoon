@@ -12,7 +12,7 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/application/json (taco:bytes:eyre txt)]   ::  convert to %mime
+  ++  mime  [/application/json (as-octs:mimes txt)]   ::  convert to %mime
   ++  txt   (crip (en-json jon))
   --
 ++  grab

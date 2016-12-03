@@ -3,7 +3,6 @@
   ::
 /?    310
 =,  html
-=,  bytes:eyre
 |%
   ++  words  1
   ++  hedtal
@@ -42,6 +41,7 @@
 --
 ::
 ::
+=,  mimes:html
 |_  {hed/marl tal/marl}
 ::
 ++  grow                                                ::  convert to
@@ -52,7 +52,7 @@
     ++  elem  ;div:(h1:"*{hed}" div:"*{tal}")           ::  convert to %elem
     ++  hymn  ;html:(head:title:"snip" body:"+{elem}")  ::  convert to %hymn
     ++  html  (crip (en-xml hymn))                      ::  convert to %html
-    ++  mime  [/text/html (taco html)]                  ::  convert to %mime
+    ++  mime  [/text/html (as-octs html)]               ::  convert to %mime
     --
   --
 ++  grab  |%                                            ::  convert from

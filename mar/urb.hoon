@@ -4,14 +4,14 @@
 /?    310
 /=  urb-wasp-data-js    /:    /%/wasp-data    /js/
 =,  format
-=,  bytes:eyre
+=,  mimes:html
 =,  html
 ::
 |_  {{dep/@uvH hed/marl} {dep-bod/@uvH bod/marl}}
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/text/html (taco html)]                    ::  convert to %mime
-  ++  html  (crip (en-xml hymn))                         ::  convert to %html
+  ++  mime  [/text/html (as-octs html)]                 ::  convert to %mime
+  ++  html  (crip (en-xml hymn))                        ::  convert to %html
   ++  hymn                                              ::  inject dependencies
     ^-  manx
     ;html

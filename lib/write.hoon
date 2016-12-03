@@ -5,6 +5,7 @@
 /?    310
 /-    plan-diff, plan-acct
 =,  format
+=*  as-octs  as-octs:mimes:html
 =,  space:userlib
 |%
 ++  part  {$write $0 pith}           :: no state
@@ -76,7 +77,7 @@
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
-  (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco:bytes:eyre txt))
+  (poke--data [`typ /web/paste/(scot %da now)] %mime / (as-octs txt))
 ::
 ++  poke-comment
   |=  {sup/path him/ship txt/@t}  ^+  abet
@@ -86,7 +87,7 @@
       '## `'  (scot %p him)  '`'
       '\0a'  txt
     ==
-  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
+  (poke--data [`%md pax] %mime / (as-octs txt))
 ::
 ++  poke-fora-post
   |=  {sup/path him/ship hed/@t txt/@t}  ^+  abet
@@ -106,7 +107,7 @@
 
     {(trip txt)}
     """
-  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
+  (poke--data [`%md pax] %mime / (as-octs txt))
 ::
 ++  ames-secret
   ^-  @t
@@ -118,7 +119,7 @@
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
-  (poke--data [`%atom [%sec p.hot]] %mime / (taco:bytes:eyre dat))
+  (poke--data [`%atom [%sec p.hot]] %mime / (as-octs dat))
 ::
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet

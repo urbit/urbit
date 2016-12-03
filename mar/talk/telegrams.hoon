@@ -6,7 +6,7 @@
 /+  talk,map-to-json
 ::
 =,  talk
-=,  bytes:eyre
+=,  mimes:html
 =,  format
 =,  html
 |_  gam/(list telegram)
@@ -111,7 +111,7 @@
 ::
 ++  grow
   |%
-  ++  mime  [/text/json (taco (crip (en-json json)))]
+  ++  mime  [/text/json (as-octs (crip (en-json json)))]
   ++  json
     =>  +
     |^
