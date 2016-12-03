@@ -4,7 +4,7 @@
 /?    310
 /-    tree-include
 /+    tree
-/=    gas    /$    fuel:url:eyre
+/=    gas    /$    fuel:html
 /=    dat    /^    tree-include    /tree-include/
 /=    kid    /^    (map knot tree-include)
              /_    /tree-include/

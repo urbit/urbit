@@ -4579,7 +4579,6 @@
     ++  earn  en-purl
     ++  earf  apix:en-purl
     ++  urlp  de-purl
-    ++  fuel  fuel:+
     --
   --
 ++  ford  !!
