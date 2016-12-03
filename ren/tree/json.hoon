@@ -9,8 +9,7 @@
 /=    kid    /^    (map knot tree-include)
              /_    /tree-include/
 =,  format
-=,  bytes:eyre
-=,  base64:eyre
+=,  mimes:html
 ::
 ::::
   ::
@@ -47,7 +46,7 @@
   |=  a/$%({$t p/cord} {$r p/json} {$j p/json} {$m mime})
   ?-  -.a
     $t  [%s p.a]
-    $m  (pairs:enjs mite+[%s (moon p.a)] octs+(tape:enjs (sifo q.q.a)) ~)
+    $m  (pairs:enjs mite+[%s (en-mite p.a)] octs+(tape:enjs (en-base64 q.q.a)) ~)
     $r  p.a
     $j  p.a
   ==

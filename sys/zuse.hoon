@@ -3445,19 +3445,19 @@
   =,  ^eyre
   |%
   ::                                                    ::
-  ::::                    ++mime:html                   ::  (2e1) MIME
+  ::::                    ++mimes:html                  ::  (2e1) MIME
     ::                                                  ::::
-  ++  mime  ^?
+  ++  mimes  ^?
     |%
-    ::                                                  ::  ++as-octs:mime:html
+    ::                                                  ::  ++as-octs:mimes:html
     ++  as-octs                                         ::  atom to octstream
       |=  tam/@  ^-  octs
       [(met 3 tam) tam]
-    ::                                                  ::  ++as-octt:mime:html
+    ::                                                  ::  ++as-octt:mimes:html
     ++  as-octt                                         ::  tape to octstream
       |=  tep/tape  ^-  octs
       (as-octs (rap 3 tep))
-    ::                                                  ::  ++en-mite:mime:html
+    ::                                                  ::  ++en-mite:mimes:html
     ++  en-mite                                         ::  mime type to text
       |=  myn/mite
       %-  crip
@@ -3465,7 +3465,7 @@
       ?~  myn  ~
       ?:  =(~ t.myn)  (trip i.myn)
       (weld (trip i.myn) `tape`['/' $(myn t.myn)])
-    ::                                                  ::  ++en-base64:mime:
+    ::                                                  ::  ++en-base64:mimes:
     ++  en-base64                                       ::  encode base64
       |=  tig/@
       ^-  tape
@@ -3480,7 +3480,7 @@
           =+  d=(end 0 6 pad)
           [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
       (weld (flop (slag poc sif)) (reap poc '='))
-    ::                                                  ::  ++de-base64:mime:
+    ::                                                  ::  ++de-base64:mimes:
     ++  de-base64                                       ::  decode base64
       =-  |=(a/cord (rash a fel))
       =<  fel=(cook |~(a/@ `@t`(swp 3 a)) (bass 64 .))
@@ -3493,7 +3493,7 @@
          (cold 62 (just '+'))
          (cold 63 (just '/'))
        ==
-    --  ::bytes
+    --  ::mimes
   ::                                                    ::  ++en-json:html
   ++  en-json                                           ::  print json
     |^  |=(val/json (apex val ""))
@@ -4570,8 +4570,7 @@
 ++  dill  !!
 ++  eyre  ^?
   |%
-  ++  base64  [sifo=en-base64 ofis=de-base64]:mime:html
-  ++  bytes  [moon=en-mite taco=as-octs tact=as-octt]:mime:html
+  ++  bytes  [taco=as-octs tact=as-octt]:mimes:html
   ++  url
     =>  html  ^?
     |%

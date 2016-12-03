@@ -8,6 +8,7 @@
 =,  wired
 =,  unity
 =,  format
+=,  mimes:html
 =,  html
 =>  =~
 |%                                                      ::  interfaces
@@ -267,7 +268,7 @@
 ++  resp                                                ::  mimed response
   |=  {sas/@uG mit/mite rez/@}  ^-  httr
   ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
-  [sas ~[content-type+(moon mit)] [~ (taco rez)]]
+  [sas ~[content-type+(en-mite mit)] [~ (taco rez)]]
 ::
 ++  add-links                                           :: x-urbit:// urls
   |=  a/wall  ^-  marl
@@ -1070,7 +1071,7 @@
     =+  ((hard {mit/mite rez/octs}) q.q.cay)
     =+  dep=(crip "W/{(en-json %s (scot %uv dep))}")
     =+  bod=?-(men $get `rez, $head ~)
-    =+  hit=[200 ~[etag+dep content-type+(moon mit)] bod]
+    =+  hit=[200 ~[etag+dep content-type+(en-mite mit)] bod]
     (give-thou (add-cookies cug hit))
   ::
   ++  add-auth
