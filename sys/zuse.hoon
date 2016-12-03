@@ -4568,18 +4568,7 @@
 ++  behn  !!
 ++  clay  !!
 ++  dill  !!
-++  eyre  ^?
-  |%
-  ++  url
-    =>  html  ^?
-    |%
-    ++  urle  en-urlt
-    ++  urld  de-urlt
-    ++  earn  en-purl
-    ++  earf  apix:en-purl
-    ++  urlp  de-purl
-    --
-  --
+++  eyre  !!
 ++  ford  !!
 ++  gall  !!
 ++  jael  !!

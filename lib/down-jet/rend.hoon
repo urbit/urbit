@@ -155,7 +155,6 @@
   --
 ::  
 ++  sung
-  =,  url:eyre
   |=  lim/kids
   =+  had=*(unit mane)
   |^  ^-  marl
@@ -215,7 +214,7 @@
             (~(has in (silt "#!*'();:@&=+$,/?/%.~_")) i.a) ::  XX  reparse
         ==
       [i.a $(a t.a)]
-    (weld (urle (trip i.a)) $(a t.a))
+    (weld (en-urlt:html (trip i.a)) $(a t.a))
   ::
   ++  reso
     |=  b/inline

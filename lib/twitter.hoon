@@ -10,7 +10,7 @@
 =,  mimes:html
 =,  html
 =,  format
-=,  url:eyre
+=,  html
 =,  chrono:userlib
 ::
 ::::  functions
@@ -25,7 +25,7 @@
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
   ^-  hiss
-  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:urlp)  :: base path
+  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:de-purl)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
   ^-  hiss
@@ -33,7 +33,7 @@
     $get  [url med *math ~]
     $post
       =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
-      [url(r ~) med hed ?~(r.url ~ (some (as-octt +:(tail:earn r.url))))]
+      [url(r ~) med hed ?~(r.url ~ (some (as-octt +:(tail:en-purl r.url))))]
   ==
 ::
 ++  find-req

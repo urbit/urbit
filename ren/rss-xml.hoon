@@ -13,9 +13,9 @@
 ::~&  [sum=sum kid=kid]
 ::  Link from relative path
 =,  ^eyre
-=,  url:eyre
+=,  html
 =+  hok=.^(hart %e /(scot %p our)/host/real)
-=+  ref=|=(a/path (earn hok `(weld tub a) ~))
+=+  ref=|=(a/path (en-purl hok `(weld tub a) ~))
 ::  urb:front attrs confuse RSS validators, readers
 =+  no-meta=|=(a/marl ^+(a ?~(a ~ ?.(?=($meta n.g.i.a) a $(a t.a)))))
 ::

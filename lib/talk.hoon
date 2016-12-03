@@ -28,7 +28,7 @@
   ^-  thought
   :+  (shaf %thot eny.bol)
     [[[%& our.bol (main our.bol)] [*envelope %pending]] ~ ~]
-  [now.bol *bouquet [%app dap.bol (crip (earn:url:eyre url))]]   :: XX
+  [now.bol *bouquet [%app dap.bol (crip (en-purl:html url))]]   :: XX
 ::
 ++  said                                                ::  app message
   |=  {our/@p dap/term now/@da eny/@uvJ mes/(list tank)}

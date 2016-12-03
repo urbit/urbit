@@ -280,7 +280,7 @@
           %+  stag  %say
           %+  most  (jest '•')
           ;~  pose
-            (stag %url aurf:urlp:url:eyre)
+            (stag %url aurf:de-purl:html)
             :(stag %lin | ;~(pfix pat text))
             :(stag %lin & ;~(less sem hax text))
           ==
@@ -2093,6 +2093,7 @@
   --
 ::
 ++  tr                                                  ::  telegram renderer
+  =*  en-purf  apix:en-purl:html
   |_  $:  man/knot
           nob/?
           who/ship
@@ -2131,7 +2132,7 @@
       $lin  tan+~[leaf+"{?:(p.sep "" "@ ")}{(trip q.sep)}"]
       $non  tan+~
       $app  tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip p.sep)}]" leaf+(trip q.sep)]]
-      $url  url+(crip (earf:url:eyre p.sep))
+      $url  url+(crip (en-purf p.sep))
       $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
       $fat  [%mor $(sep q.sep) tan+(tr-rend-tors p.sep) ~]
       $api
@@ -2141,7 +2142,7 @@
           [": " ~ ~]
         :~  leaf+"[{(trip id.sep)} on {(trip service.sep)}]"
             leaf+(trip body.sep)
-            leaf+(earf:url:eyre url.sep)
+            leaf+(en-purf url.sep)
         ==
     ==
   ::
@@ -2192,7 +2193,7 @@
       ==
     ::
         $exp  (tr-chow 66 '#' ' ' (trip p.sep))
-        $url  =+  ful=(earf:url:eyre p.sep)
+        $url  =+  ful=(en-purf p.sep)
               ?:  (gth 64 (lent ful))  ['/' ' ' ful]
               :+  '/'  '_' 
               =+  hok=r.p.p.p.sep

@@ -236,7 +236,7 @@
     ++  dp-iden-url
       %+  cook
         |=({a/(unit knot) b/purl:^eyre} [`(fall a *knot) b])
-      auru:urlp:url:eyre
+      auru:de-purl:html
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (en-beam he-beam)                       ::  ++path
@@ -703,7 +703,7 @@
         =>  .(vax (slap vax !,(*twig ?>(?=($| -) .))))  :: XX working spec  #72
         =+  typ={$| (unit knot) hiss:^eyre *}
         =+  [~ usr hiz ~]=((dy-cast typ !>(*typ)) vax)
-        =.  ..dy  (he-diff %tan leaf+"< {(earn:url:eyre p.hiz)}" ~)
+        =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
         (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
       ==
     ::

@@ -3,7 +3,6 @@
 ::::
 |=  pit/vase
 =,  ^eyre
-=,  url:eyre
 =,  wired
 =,  unity
 =,  format
@@ -222,7 +221,7 @@
 ++  from-cookies
   |=  {maf/math fil/$-({@t @t} ?)}
   =+  `cot/(list @t)`(~(get ju maf) 'cookie')
-  =+  `cok/quay`(zing `(list quay)`(murn cot (curr rush cock:urlp)))
+  =+  `cok/quay`(zing `(list quay)`(murn cot (curr rush cock:de-purl)))
   |-  ^-  (unit cord)
   ?~  cok  ~
   ?:((fil i.cok) [~ q.i.cok] $(cok t.cok))
@@ -801,14 +800,14 @@
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
-      =+  ryp=`quri`(rash q.heq zest:urlp)
+      =+  ryp=`quri`(rash q.heq zest:de-purl)
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
             $&  ?>(=(sec p.p.p.ryp) p.ryp)
             $|  =+  hot=(~(get ja maf) %host)
                 ?>  ?=({@ $~} hot)
-                [[sec (rash i.hot thor:urlp)] p.ryp q.ryp]
+                [[sec (rash i.hot thor:de-purl)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       ?:  ?=($chis -.kyz)                               :: IPC escape hatch
@@ -828,7 +827,7 @@
           q.ask  (~(del by q.ask) sud)
           kes    (~(del by kes) hen)
         ==
-      ::  ~&  eyre-them+(earn p.u.p.kyz)
+      ::  ~&  eyre-them+(en-purl p.u.p.kyz)
       %=  +>.$
         mow    :_(mow [ged [%give %thus p.ask p.kyz]])
         p.ask  +(p.ask)
@@ -844,13 +843,13 @@
       ::    q.ask  (~(del by q.ask) sud)
       ::    kes    (~(del by kes) hen)
       ::  ==
-      ::  ~&  eyre-them+(earn p.u.p.kyz)
+      ::  ~&  eyre-them+(en-purl p.u.p.kyz)
       =+  usr=?~(p.kyz '~' (scot %ta u.p.kyz))
       (back hi+/[usr]/[q.kyz] %hiss r.kyz)
     ::
         $they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
-      ::  ~&  >  eyre-they+[p.q.kyz (earn p.q.kas)]
+      ::  ~&  >  eyre-they+[p.q.kyz (en-purl p.q.kas)]
       %=  +>.$
         mow    :_(mow [p.kas [%give %thou q.kyz]])
         q.ask  (~(del by q.ask) p.kas)
@@ -1009,7 +1008,7 @@
         =+  usr=(slav %ta p.tee)
         =+  ((hard {pul/purl ^}) q.q.cay)
         ?.  ?=($& -.r.p.pul)
-          ~&  [%auth-lost usr (head:earn p.pul)]
+          ~&  [%auth-lost usr (head:en-purl p.pul)]
           (eyre-them tee q.cay)
         (get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
       ::
@@ -1043,7 +1042,7 @@
           ?~  p.q.tee  [cay ..ya]
           (add-auth p.q.tee cay)  :: XX block on session save?
         ?:  ?=($red-quri p.cay)
-          =+  url=(apex:earn ((hard quri) q.q.cay))
+          =+  url=(apex:en-purl ((hard quri) q.q.cay))
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
@@ -1272,7 +1271,7 @@
           $bake  (resolve-bake ~ ~ +.pez)
       ::
           $red
-        =+  url=(earn hat pok(p [~ %html]) quy)
+        =+  url=(en-purl hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect+[p.pok url] !!)
             {$~ $js}
           $(pez [%js auth-redir:js])
@@ -1396,12 +1395,12 @@
             $away  [%away ~]
             $ac
           ?~  but  ~|(no-host+`path`/~/[pef] !!)
-          =+  `dom/host`~|(bad-host+i.but (rash i.but thos:urlp))
+          =+  `dom/host`~|(bad-host+i.but (rash i.but thos:de-purl))
           ?:  ?=($| -.dom)  ~|(auth-ip+dom !!)
           =-  [%oath - p.dom]
           ~|  bad-user+`path`t.but
           ?>  ?=({@ $in $~} t.but)
-          =+  in-quy=(rush i.t.but ;~(pfix cab fque:urlp))
+          =+  in-quy=(rush i.t.but ;~(pfix cab fque:de-purl))
           ?~  in-quy
             (slav %ta i.t.but)
           =+  src=~|(no+u.in-quy (~(got by (malt quy)) u.in-quy))
@@ -1492,7 +1491,7 @@
     ++  process-payload
       ^-  {quay meth}
       ?+  mef  [quy mef]
-        $post  [`quay`(weld quy `quay`(rash q:(need bod) yquy:urlp)) %get]
+        $post  [`quay`(weld quy `quay`(rash q:(need bod) yquy:de-purl)) %get]
       ==
     ++  process
       ^-  (each pest _done)
@@ -2030,7 +2029,7 @@
     ::  Result handling
     ::
     ::    XX formal dill-blit %url via hood
-    ++  auth-print  |=({$show a/purl} (slog auth-tank leaf+(earn a) ~))
+    ++  auth-print  |=({$show a/purl} (slog auth-tank leaf+(en-purl a) ~))
     ++  auth-tank
       =>  =-  ?~(usr - rose+["@" `~]^~[leaf+(trip usr) -])
           rose+["." `~]^(turn (flop dom) |=(a/cord leaf+(trip a)))
