@@ -227,20 +227,19 @@
     ?~  main-moves  ~
     :-  [now i.main-moves]
     $(main-moves t.main-moves, now (add now (bex 48)))
-::
-::  ~&  %metal-testing
-::  =+  ^=  yop
-::      ^-  @p
-::      %-  mug
-::      .*  :*  boot-one
-::              boot-two
-::              compiler-formula
-::              compiler-source
-::              arvo-source
-::              main-events
-::          ==
-::      [2 [0 3] [0 2]]
-::  ~&  [%metal-tested yop]
+~&  %metal-testing
+=+  ^=  yop
+    ^-  @p
+    %-  mug
+    .*  :*  boot-one
+            boot-two
+            compiler-formula
+            compiler-source
+            arvo-source
+            main-events
+        ==
+    [2 [0 3] [0 2]]
+~&  [%metal-tested yop]
 ::
 :*  boot-one
     boot-two

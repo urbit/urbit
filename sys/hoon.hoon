@@ -9717,7 +9717,6 @@
           |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
           $%  {$pass p/path q/a}                        ::  advance
               {$slip p/a}                               ::  lateral
-              {$sick p/b}                               ::  lame refactoring
               {$give p/b}                               ::  retreat
           ==                                            ::
 ++  wire  path                                          ::  event pretext

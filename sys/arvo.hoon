@@ -179,13 +179,6 @@
           |=  {hil/mill vel/worm}
           [%& [%give hil] vel]
         ::
-            {$sick p/{p/@tas q/*}}
-          %-  (bond |.([%| p.p.q.caq]))
-          =^  yav  p.sew  (~(spot wa p.sew) 3 caq)
-          %+  bind  (song yav)
-          |=  {hil/mill vel/worm}
-          [%& [%sick hil] vel]
-        ::
             {$slip p/@tas q/{p/@tas q/*}}
           %-  (bond |.([%| p.q.q.caq]))
           %+  biff  ((soft @) p.q.caq)
@@ -388,12 +381,6 @@
         $slip
       ~?  !lac  [%slip p.gum (@tas +>-.q.p.r.gum) q.gum]
       [p.p.r.gum ~ q.gum q.p.r.gum]
-    ::
-        $sick
-      ?>  ?=(^ q.gum)
-      ?>  ?=(^ i.q.gum)
-      ~?  !lac  [%sick p.gum (@tas +>-.p.r.gum) `duct`q.gum]
-      [i.i.q.gum ?~(t.i.q.gum ~ [~ t.i.q.gum]) t.q.gum p.r.gum]
     ==
   ::
   ++  kick                                              ::  new main loop
