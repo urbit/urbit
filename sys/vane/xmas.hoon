@@ -14,7 +14,6 @@
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
           $:  det/pipe                                  ::  secure channel
-              waz/(list ship)                           ::  path to
               lun/(unit lane)                           ::  latest route
               zam/scar                                  ::  outbound boles
               fon/(map bole lock)                       ::  inbound locks
@@ -51,6 +50,7 @@
 ++  flap  @uvH                                          ::  network packet id
 ++  flea  (pair bole tick)                              ::  message id
 ++  frag  @ud                                           ::  fragment number
+++  hand  @uvH                                          ::  128-bit hash
 ++  lock                                                ::  inbound sequencer
           $:  laq/tick                                  ::  acknowledged until
               nys/(map tick bait)                       ::  inbound partials
@@ -73,12 +73,17 @@
               syn/@                                     ::  skin number
               cnt/@                                     ::  number of packets
           ==                                            ::
+++  mute                                                ::  awaiting channel
+          $:  inn/(list (pair lane rock))               ::  inbound packets
+              out/(list (trel duct chan *))             ::  outbound messages
+          ==                                            ::
 ++  part  (pair frag tick)                              ::  fragment of packet
 ++  rock  @uvO                                          ::  packet
 ++  silo                                                ::  global state
           $:  lyf/life                                  ::  current version
               wyr/(map life ring)                       ::  private keys
-              pol/(map ship bath)                       ::  partners
+              ech/(map ship mute)                       ::  waiting partners
+              pol/(map ship bath)                       ::  open partners
           ==                                            ::
 ++  skin  ?($none $open $fast $full)                    ::  encoding stem
 ++  stat                                                ::  pump statistics
@@ -99,7 +104,9 @@
 |%                                                      ::
 ++  flam  |=(a/flap `@p`(mug a))                        ::  debug flap
 ++  msec  |=(a/@dr `@ud`(div a (div ~s1 1.000)))        ::  debug @dr
-++  move  {p/duct q/(wind note-xmas gift-xmas)}         ::  local move
+++  move  %+  pair                                      ::  local move
+            duct                                        ::
+          (wind note:able:xmas gift:able:xmas)          ::
 ::                                                      ::
 ::::  loft                                              ::::  main transceiver
   ::                                                    ::
@@ -110,10 +117,10 @@
             {$home p/lane q/@}                          ::  resend to self
             {$line p/ship q/@da r/code}                 ::  add outbound key
             {$link p/ship q/@da r/code}                 ::  add inbound key
-            {$meet p/farm}                              ::  add public key(s)
+            {$meet p/gree}                              ::  add public key(s)
             {$rest p/duct q/coop}                       ::  message result
             {$send p/lane q/@}                          ::  transmit packet
-            {$view p/ship}                              ::  cache channel
+            {$veil p/ship}                              ::  cache channel
             {$west p/ship q/bole r/chan s/*}            ::  outbound message
         ==                                              ::
       ++  task                                          ::  input
@@ -127,7 +134,6 @@
       --
   =|  $:  $:  now/@da
               eny/@
-              see/$-(ship pipe)
           ==
           silo
           fex/(list gift)
@@ -139,16 +145,31 @@
     |=  job/task
     ^+  +>
     ?-    -.job
-        $clue  abet:(clue:(etre p.job) q.job)
+        $clue  (dear p.job q.job)
         $done  abet:(done:(etre p.job) q.job r.job)
         $hear
       =+  kec=(bite q.job)
       ?>  =(our q.p.kec)
-      =^  etc  +>.$  (etch p.p.kec)
-      abet:(hear:etc p.job (shaf %flap q.job) q.kec r.kec)
+      =+  buh=(~(get by pol) p.p.kec)
+      ?~  buh
+        ~&  [%ames-from p.p.kec]
+        =+  nut=(fall (~(get by ech) p.p.kec) *mute)
+        %_  +>.$
+          fex  [[%veil p.p.kec] fex]
+          ech  (~(put by ech) p.p.kec nut(inn [+.job inn.nut]))
+        ==
+      abet:(~(hear et p.p.kec u.buh) p.job (shaf %flap q.job) q.kec r.kec)
     ::
         $mess
-      =^  etc  +>.$  (etch p.job)
+      =+  buh=(~(get by pol) p.job)
+      ?~  buh
+        ~&  [%ames-unto p.job]
+        =+  nut=(fall (~(get by ech) p.job) *mute)
+        %_  +>.$
+          fex  [[%veil p.job] fex]
+          ech  (~(put by ech) p.job nut(out [+>.job out.nut]))
+        ==
+      =/  etc  ~(. et p.job u.buh)
       =^  kos  etc  (blow:etc q.job)
       abet:(mess:etc kos r.job s.job)
     ::
@@ -162,7 +183,30 @@
       =+  ryt=$(pol r.pol, fex fex.lef)
       =+  top=~(to-wake et(fex fex.ryt) n.pol)
       +>.^$(fex fex.top, pol [+<.top pol.lef pol.ryt])
-    ==                                                  ::
+    ==
+  ::                                                    ::
+  ++  dear                                              ::  neighbor update
+    |=  {who/@p det/pipe}
+    ^+  +>
+    =+  noz=(~(get by ech) who)
+    ?~  noz
+      ::
+      ::  we're not waiting for this ship; we must have it
+      ::
+      =+  bah=(~(got by pol) who)
+      +>.$(pol (~(put by pol) who bah(det det)))
+    ::
+    ::  new neighbor; run all waiting i/o
+    ::
+    =.  pol  (~(put by pol) who [det ~ [2 ~ ~] ~ ~])
+    =+  [inn out]=[(flop inn.u.noz) (flop out.u.noz)]
+    =.  +>.$
+      |-  ^+  +>.^$
+      ?~  inn  +>.^$
+      $(inn t.inn, +>.^$ (apex `task`[%hear i.inn]))
+    |-  ^+  +>.^$
+    ?~  out  +>.^$
+    $(out t.out, +>.^$ (apex `task`[%mess who i.out]))
   ::
   ++  doze                                              ::  sleep until
     |-  ^-  (unit @da)
@@ -173,19 +217,9 @@
       ~(to-wait et p.n.pol q.n.pol)
     ==
   ::                                                    ::
-  ++  etch                                              ::  new neighbor
-      |=  who/@p 
-      =+  buh=(~(get by pol) who)
-      ?^  buh  
-        ::  old neighbor; channel already registered
-        [~(. et who u.buh) +>.$]
-      ::  new neighbor; register secure channel view
-      :_  +>.$(fex [[%view who] fex])
-      ~(. et who `bath`[(see who) (seek our who) ~ [2 ~ ~] ~ ~])
-  ::                                                    ::
   ++  etre                                              ::  old neighbor
-      |=  who/@p 
-      ~(. et who (~(got by pol) who))
+    |=  who/@p 
+    ~(. et who (~(got by pol) who))
   ::                                                    ::
   ++  et                                                ::  per neighbor
     |_  $:  who/ship  
@@ -205,7 +239,6 @@
         r.zam.bah  (~(put by r.zam.bah) p.zam.bah hen)
       ==
     ::
-    ++  clue  |=(det/pipe +>(det.bah det))              ::  purge security
     ++  done
       |=  {kos/bole cop/coop}
       ^+  +>
@@ -250,7 +283,7 @@
       |=  {urg/(unit lane) pac/rock}
       ^+  +>
       ?:  =(our who)  (acme [%send *lane pac])
-      =+  zaw=waz.bah
+      =+  zaw=sax.det.bah
       |-  ^+  +>.^$
       ?~  zaw  +>.^$
       =+  ^=  lun  ^-  (unit lane)
@@ -267,7 +300,7 @@
         $(zaw t.zaw)
       =.  pac  ?:  &(=(i.zaw who) =(~ urg))
                  pac
-                ::
+               ::
                ::  forwarded packets are not signed/encrypted,
                ::  because (a) we don't need to; (b) we don't
                ::  want to turn one packet into two.  the wrapped
@@ -332,7 +365,7 @@
     ::
     ++  to-rail
       |=  {kos/bole cot/colt}
-      ~(. rail [[who wyr det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
+      ~(. rail [[who lyf wyr det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
     ::
     ++  to-wait
       |-  ^-  (unit @da)
@@ -375,28 +408,6 @@
 ::
 ++  kins  |=(tay/@ (snag tay `(list skin)`[%none %open %fast %full ~]))
 ++  ksin  |=(sin/skin `@`?-(sin $none 0, $open 1, $fast 2, $full 3))
-++  seek                                                ::  path to
-  |=  {our/ship her/ship}
-  ^-  (list ship)
-  ::
-  ::  in order of routing desirability, from `our`
-  ::  to `who`, up their hierarchy to the least
-  ::  common ancestor, then up ours to the root.
-  ::
-  =+  [fro=t.+:(saxo our) too=(saxo her)]
-  |-  ^-  (list ship)
-  ?~  too  fro
-  ?:  =(our i.too)  
-    ::  the target is one of our children.
-    ~
-  ?:  (lien fro |=(a/ship =(a i.too)))
-    ::  a parent of the target is in our own hierarchy.
-    ::  clip the target hierarchy here and add our own
-    ::  hierarchy, from bottom to top.
-    |-  ^-  (list ship)
-    ?~  fro  !!
-    ?:(=(i.fro i.too) [i.too ~] [i.fro $(fro t.fro)])
-  [i.too $(too t.too)]
 ::
 ++  spit                                                ::  cake to packet
   |=  kec/cake  ^-  @
@@ -437,7 +448,7 @@
           $none  [~ | (maul msg)]
           $fast
         =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
-        =+  key=(~(got by inn.det) mag)
+        =+  key=q:(~(got by inn.det) mag)
         =+  clr=(need (de:crub:crypto key bod))
         [~ & (maul clr)] 
       ::
@@ -467,8 +478,8 @@
     ::  without checking its validity.  invalid public-key
     ::  data will crash the packet when we install it.
     ::
-    %-  (bond |.(pub.dat:(~(got by q:(~(got by gyr) lyf)) him)))
-    (~(get by pub.det) lyf)
+    %-  (bond |.(pub.dat:(~(got by (~(got by gyr) lyf)) him)))
+    (bind (~(get by pub.det) lyf) |=(cert:pki:^jael pub.dat))
   --
 ::                                                      ::
 ::::  hose                                              ::
@@ -937,22 +948,22 @@
       :-  %fast
       %^  cat  7
         p.u.out.det
-      (en:crub:crypto q.u.out.det hom)
+      (en:crub:crypto q.q.u.out.det hom)
     =+  cry=(nol:nu:crub:crypto (~(got by wyr) lyf))
     ?~  cur.det
       :-  ~
       :-  %open
       %^    jam
           [~ lyf]
-        gyr.det
+        `gree`!!
       (sign:as:cry *code hom)
     =+  key=(shaz :(mix (mug ham) now eny))
     :-  [%line ~2018.1.1 key]~
     :-  %full
     %^    jam
         [u.cur.det lyf]
-      gyr.det
-    (seal:as:cry (~(got by pub.det) u.cur.det) key hom)
+      `gree`!!
+    (seal:as:cry pub.dat:(~(got by pub.det) u.cur.det) key hom)
   --
 ::                                                      ::
 ::::  rail                                              ::::  message manager
@@ -971,6 +982,7 @@
         ==                                              ::
       --                                                ::
   =|  $:  $:  $:  her/ship
+                  lyf/life
                   wyr/(map life ring)
                   det/pipe
               ==
@@ -1155,24 +1167,19 @@
     ==                                                  ::
 |=  {now/@da eny/@ ski/sley}                            ::  current invocation
 =>  |%
-    ++  look                                            ::  get secure channel
-      |=  who/ship
-      ^-  pipe
-      !!
-    ::
-    ++  love  ~(. loft [now eny look] syl ~)            ::  create loft
+    ++  love  ~(. loft [now eny] syl ~)                 ::  create loft
     ++  lung                                            ::  gift to move
       |=  gax/gift:loft
       ^-  move
       ?-    -.gax
           $east  [p.gax %give [%east s.gax]]
           $home  [~ %give gax]
-          $link  [~ %pass /sec %j gax]
-          $line  [~ %pass /sec %j gax]
-          $meet  [~ %pass /sec %j gax]
+          $link  [~ %pass ~ %j gax]
+          $line  [~ %pass ~ %j gax]
+          $meet  [~ %pass ~ %j gax]
           $rest  [p.gax %give %rest q.gax]
           $send  [~ %give gax]
-          $view  [~ %pass /sec %j gax]
+          $veil  [~ %pass /det/(scot %p p.gax) %j gax]
           $west
         =+  pax=/msg/(scot %p p.gax)/(scot %ud q.gax)
         =+  cad=[%west p.gax +.r.gax s.gax]
@@ -1189,7 +1196,7 @@
 |%                                                    ::  vane interface
 ++  call                                              ::  handle request
   |=  $:  hen/duct
-          hic/(hypo kiss-xmas)
+          hic/(hypo task:able:xmas)
       ==
   ^-  {p/(list move) q/_..^$}
   %-  work
@@ -1230,8 +1237,10 @@
       $mack  [%done who kos ?~(p.+.q.hin ~ `coop`[~ `[%fail u.p.+.q.hin]])]
     ==
   ::
-      $sec
-    ?>  ?=($clue +<.q.hin)
-    +.q.hin 
+      $det
+    ?>  ?=({@ $~} +.tea)
+    =+  who=(slav %p i.t.tea)
+    ?>  ?=($veil +<.q.hin)
+    [%clue who p.+.q.hin]
   ==
 --

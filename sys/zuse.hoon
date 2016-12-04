@@ -1050,8 +1050,8 @@
     ++  rite                                            ::  urbit commitment
       $%  {$apple p/(map site @)}                       ::  web api key
           {$block $~}                                   ::  banned
-          {$email p/(set @t)}                            ::  email addresses
-          {$final p/@pG}                                 ::  recognize by ticket
+          {$email p/(set @t)}                           ::  email addresses
+          {$final p/@pG}                                ::  recognize by ticket
           {$fungi p/(map term @ud)}                     ::  fungibles
           {$guest $~}                                   ::  refugee visa
           {$hotel p/(map dorm pile)}                    ::  reserved block
@@ -1085,7 +1085,6 @@
     ++  task                                            ::  in request ->$
       $%  {$hear p/lane q/@}                            ::
           {$mess p/ship q/path r/*}                     ::  send message
-          {$gear p/farm:pki:jael q/(map life ring)}     ::  general update
           {$wake $~}                                    ::
       ==                                                ::
     ++  card                                            ::  out cards
@@ -1099,7 +1098,7 @@
               $%  {$line p/ship q/@da r/code}           ::
                   {$link p/ship q/@da r/code}           ::
                   {$meet p/farm:pki:jael}               ::
-                  {$view p/ship}                        ::
+                  {$veil p/ship}                        ::
                   {$west p/ship q/path r/*}             ::  to %gall
       ==  ==  ==                                        ::
     --  ::  able
@@ -2344,7 +2343,7 @@
       cph
     ::                                                  ::  ++dy:crub:crypto
     ++  dy                                              ::  need decrypt
-      |=  {key/@I cph/@}
+      |=  {key/@J cph/@}
       (need (de key cph))
     ::                                                  ::  ++en:crub:crypto
     ++  en                                              ::  encrypt

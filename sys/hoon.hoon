@@ -221,7 +221,7 @@
   (b u.a)
 ::
 ++  bind                                                ::  argue
-  |*  {a/(unit) b/mold}
+  |*  {a/(unit) b/$-(* *)}
   ?~  a  ~
   [~ u=(b u.a)]
 ::
