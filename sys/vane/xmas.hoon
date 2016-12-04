@@ -3,9 +3,13 @@
   !:                                                    ::  ::
 |=  pit/vase                                            ::  kernel vase
 =>  =~                                                  ::  
+=,  xmas
 ::                                                      ::  ::
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
+::
+=*  pipe  channel:able:^jael                            ::  secure channel
+=*  gree  farm:pki:^jael                                ::  pki information 
 |%                                                      ::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
@@ -70,11 +74,11 @@
               cnt/@                                     ::  number of packets
           ==                                            ::
 ++  part  (pair frag tick)                              ::  fragment of packet
+++  rock  @uvO                                          ::  packet
 ++  silo                                                ::  global state
-          $:  $:  gur/grue                              ::  our certificates
-                  war/(map life ring)                   ::  our private keys
-              ==                                        ::
-              pol/(map ship bath)                       ::  network state
+          $:  lyf/life                                  ::  current version
+              wyr/(map life ring)                       ::  private keys
+              pol/(map ship bath)                       ::  partners
           ==                                            ::
 ++  skin  ?($none $open $fast $full)                    ::  encoding stem
 ++  stat                                                ::  pump statistics
@@ -106,7 +110,7 @@
             {$home p/lane q/@}                          ::  resend to self
             {$line p/ship q/@da r/code}                 ::  add outbound key
             {$link p/ship q/@da r/code}                 ::  add inbound key
-            {$meet p/gree}                              ::  add public key(s)
+            {$meet p/farm}                              ::  add public key(s)
             {$rest p/duct q/coop}                       ::  message result
             {$send p/lane q/@}                          ::  transmit packet
             {$view p/ship}                              ::  cache channel
@@ -235,7 +239,8 @@
     ::                                                  ::
     ++  sack                                            ::  send acknowledgment
       |=  {kos/bole dam/flap cop/coop}
-      =+  yex=((knit who det.bah) now eny [%back (mix kos 1) dam cop ~s0])
+      =+  ^=  yex
+          ((knit who lyf wyr det.bah) now eny [%back (mix kos 1) dam cop ~s0])
       =.  +>.$  (to-gifs p.yex)
       |-  ^+  +>.^$
       ?~  q.yex  +>.^$
@@ -315,7 +320,7 @@
     ++  in-task
       |=  kyz/task:hose
       ^+  +>
-      =^  hoz  fon.bah  abet:(~(apex hose [who det.bah] ~ fon.bah) kyz)
+      =^  hoz  fon.bah  abet:(~(apex hose [who wyr det.bah] ~ fon.bah) kyz)
       (in-gifs hoz)
     ::
     ++  to-task
@@ -327,7 +332,7 @@
     ::
     ++  to-rail
       |=  {kos/bole cot/colt}
-      ~(. rail [[who det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
+      ~(. rail [[who wyr det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
     ::
     ++  to-wait
       |-  ^-  (unit @da)
@@ -422,7 +427,10 @@
             {$meet doy/gree}                            ::  learn public key(s)
         ==                                              ::
       --
-  |=  {him/@p det/pipe}
+  |=  $:  him/@p 
+          wyr/(map life ring) 
+          det/pipe
+      ==
   |=  {syn/skin msg/@}
   ^-  (pair (list gift) {aut/? ham/meal})
   |^  ?-    syn
@@ -430,14 +438,14 @@
           $fast
         =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
         =+  key=(~(got by inn.det) mag)
-        =+  clr=(need (de:crub key bod))
+        =+  clr=(need (de:crub:crypto key bod))
         [~ & (maul clr)] 
       ::
           $full
         =+  mex=((hard {p/{p/life q/life} q/gree r/@}) (cue msg))
-        =+  rig=(~(got by war.det) p.p.mex)
+        =+  rig=(~(got by wyr) p.p.mex)
         =+  pas=(whom q.p.mex q.mex)
-        =+  [key out]=(need (tear:as:(nol:nu:crub rig) pas r.mex))
+        =+  [key out]=(need (tear:as:(nol:nu:crub:crypto rig) pas r.mex))
         :-  :~  [%link ~2018.1.1 key]
                 [%meet q.mex]
             ==
@@ -446,7 +454,7 @@
           $open
         =+  mex=((hard {p/{$~ q/life} q/gree r/@}) (cue msg))
         =+  pas=(whom q.p.mex q.mex)
-        =+  out=(need (sure:as:(com:nu:crub pas) *code r.mex))
+        =+  out=(need (sure:as:(com:nu:crub:crypto pas) *code r.mex))
         [[%meet q.mex]~ & (maul r.mex)]
       ==
   ++  maul  |=(@ `meal`((hard meal) (cue +<)))          ::  unpack message
@@ -482,6 +490,7 @@
         ==                                              ::
       --                                                ::
   =|  $:  $:  him/ship                                  ::
+              wyr/(map life ring)                       ::
               det/pipe                                  ::
           ==                                            ::
           fex/(list gift)                               ::
@@ -504,7 +513,7 @@
       (~(hy-done hy [kos.job p.u.laz.loc] [& [q r]:u.laz.loc] loc) cop.job)
     ::
         $hear
-      =+  pet=((nose him det) syn.job msg.job)
+      =+  pet=((nose him wyr det) syn.job msg.job)
       =.  +>.$  (acts p.pet)
       ::  if packet is authenticated, use its routing info
       =.  +>.$  ?.(aut.q.pet +>.$ (acme %rout lyn.job))
@@ -617,7 +626,7 @@
         ::  message not yet complete, reinstall incomplete 
         (hy-conk(nys (~(put by nys) liq neb)) ~)
       ::  decode complete message
-      =+  pet=((nose him det) syn (hy-golf r.neb))
+      =+  pet=((nose him wyr det) syn (hy-golf r.neb))
       ::  record decoder effects
       =.  +>.$  (hy-acts p.pet)
       =.  aut  |(aut aut.q.pet)
@@ -888,7 +897,7 @@
         $%  {$line exp/@da key/code}                    ::  set symmetric key
         ==                                              ::
       --
-  |=  {her/@p det/pipe}
+  |=  {her/@p lyf/life wyr/(map life ring) det/pipe}
   |=  {now/@da eny/@ ham/meal}
   =+  hom=(jam ham)
   ^-  (pair (list gift) (list rock))
@@ -928,22 +937,22 @@
       :-  %fast
       %^  cat  7
         p.u.out.det
-      (en:crub q.u.out.det hom)
-    =+  cry=(nol:nu:crub (~(got by war.det) p.cur.det))
-    ?~  q.cur.det
+      (en:crub:crypto q.u.out.det hom)
+    =+  cry=(nol:nu:crub:crypto (~(got by wyr) lyf))
+    ?~  cur.det
       :-  ~
       :-  %open
       %^    jam
-          [~ p.cur.det]
+          [~ lyf]
         gyr.det
       (sign:as:cry *code hom)
     =+  key=(shaz :(mix (mug ham) now eny))
     :-  [%line ~2018.1.1 key]~
     :-  %full
     %^    jam
-        [u.q.cur.det p.cur.det]
+        [u.cur.det lyf]
       gyr.det
-    (seal:as:cry (~(got by pub.det) u.q.cur.det) key hom)
+    (seal:as:cry (~(got by pub.det) u.cur.det) key hom)
   --
 ::                                                      ::
 ::::  rail                                              ::::  message manager
@@ -962,6 +971,7 @@
         ==                                              ::
       --                                                ::
   =|  $:  $:  $:  her/ship
+                  wyr/(map life ring)
                   det/pipe
               ==
               $:  now/@da
@@ -1072,7 +1082,7 @@
     ++  wy-mess                                         ::  send
       |=  {cha/chan val/*}
       ^+  +>
-      =+  yex=((knit her det) now eny [%bond [(mix kos 1) seq] cha val])
+      =+  yex=((knit her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
       =.  fex  (weld (flop p.yex) fex)
       ::  ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
       %_    +>.$ 
