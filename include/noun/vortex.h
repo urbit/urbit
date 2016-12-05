@@ -64,6 +64,11 @@
       u3_noun
       u3v_do(const c3_c* txt_c, u3_noun arg);
 
+    /* u3v_boot(): make a new pier by loading a pill.
+    */
+      void
+      u3v_boot(c3_c* pas_c);
+
     /* u3v_make(): make a new pier by loading a pill.
     */
       void

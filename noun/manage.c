@@ -1144,8 +1144,8 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
 */
 u3_noun 
 u3m_soft(c3_w    sec_w,
-           u3_funk fun_f,
-           u3_noun arg)
+         u3_funk fun_f,
+         u3_noun arg)
 {
   u3_noun why;
  
@@ -1497,10 +1497,12 @@ _cm_init(c3_o chk_o)
   }
 }
 
-/* _boot_home(): create ship directory. */
+/* _boot_home(): create ship directory.
+*/
 static void
-_boot_home(c3_c *dir_c, c3_c *pil_c)
+_boot_home(c3_o mad_o, c3_c *dir_c, c3_c *pil_c)
 {
+  c3_c*   nam_c = _(mad_o) ? "events.pill" : "urbit.pill";
   c3_c    ful_c[2048];
 
   /* Create subdirectories. */
@@ -1524,7 +1526,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
   {
     {
       struct stat s;
-      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+      snprintf(ful_c, 2048, "%s/.urb/%s", dir_c, nam_c);
       if ( stat(ful_c, &s) == 0 ) {
         /* we're in a "logical boot". awful hack, but bail here */
         printf("%s confirmed to exist\r\n", ful_c);
@@ -1532,8 +1534,8 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
       }
     }
     if ( pil_c != 0 ) {
-      snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
-                      pil_c, dir_c);
+      snprintf(ful_c, 2048, "cp %s %s/.urb/%s",
+                      pil_c, dir_c, nam_c);
       printf("%s\r\n", ful_c);
       if ( 0 != system(ful_c) ) {
         fprintf(stderr, "could not %s\n", ful_c);
@@ -1545,7 +1547,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
       CURLcode result;
       FILE *file;
 
-      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+      snprintf(ful_c, 2048, "%s/.urb/%s", dir_c, nam_c);
       printf("fetching %s to %s\r\n", url_c, ful_c);
       if ( !(curl = curl_easy_init()) ) {
         fprintf(stderr, "failed to initialize libcurl\n");
@@ -1560,8 +1562,10 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
       result = curl_easy_perform(curl);
       fclose(file);
       if ( result != CURLE_OK ) {
-        fprintf(stderr, "failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
-        fprintf(stderr, "please fetch it manually and specify the location with -B\n");
+        fprintf(stderr, "failed to fetch %s: %s\n", 
+                        url_c, 
+                        curl_easy_strerror(result));
+        fprintf(stderr, "please fetch it by hand, then run -B $filename\n");
         exit(1);
       }
       curl_easy_cleanup(curl);
@@ -1572,7 +1576,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
 /* u3m_boot(): start the u3 system.
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_o mad_o, c3_c* dir_c, c3_c *pil_c)
 {
   /* Activate the loom.
   */
@@ -1599,14 +1603,23 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
   if ( _(nuu_o) ) {
     c3_c ful_c[2048];
 
-    _boot_home(dir_c, pil_c);
+    _boot_home(mad_o, dir_c, pil_c);
 
-    snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
+    if ( _(mad_o) ) {
+      snprintf(ful_c, 2048, "%s/.urb/events.pill", dir_c);
 
-    printf("boot: loading %s\r\n", ful_c);
-    u3v_make(ful_c);
+      printf("boot: loading %s\r\n", ful_c);
+      u3v_boot(ful_c);
+    } 
+    else {
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
 
-    u3v_jack();
+      printf("boot: loading %s\r\n", ful_c);
+      u3v_make(ful_c);
+
+      u3v_jack();
+    }
+
   }
   else {
     u3v_hose();

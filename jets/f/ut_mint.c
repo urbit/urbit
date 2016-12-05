@@ -605,6 +605,12 @@
         return ret;
       }
 
+      case c3__tune: p_gen = u3t(gen);
+      _mint_used();
+      {
+        return u3nc(u3qf_face(p_gen, sut), u3nc(0, 1));
+      }
+
       case c3__burn: p_gen = u3t(gen);
       _mint_used();
       {
@@ -665,6 +671,16 @@
       {
         u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
         u3_noun ret = _mint_in(van, boc, gol, r_gen);
+
+        u3z(boc);
+        return ret;
+      }
+
+      case c3__use: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mint_used();
+      {
+        u3_noun boc = u3qfu_busk(van, sut, p_gen);
+        u3_noun ret = _mint_in(van, boc, gol, q_gen);
 
         u3z(boc);
         return ret;

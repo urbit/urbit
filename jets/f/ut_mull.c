@@ -570,6 +570,12 @@
         u3z(vat);
         return ret;
       }
+      
+      case c3__tune: p_gen = u3t(gen);
+      _mull_used();
+      {
+        return u3nc(u3qf_face(p_gen, sut), u3qf_face(p_gen, sut));
+      }
 
       case c3__burn: p_gen = u3t(gen);
       _mull_used();
@@ -607,6 +613,19 @@
         u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
         u3_noun nuf = u3qfu_buss(van, dox, p_gen, q_gen);
         u3_noun ret = _mull_in(van, boc, gol, nuf, r_gen);
+
+        u3z(boc);
+        u3z(nuf);
+
+        return ret;
+      }
+
+      case c3__use: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mull_used();
+      {
+        u3_noun boc = u3qfu_busk(van, sut, p_gen);
+        u3_noun nuf = u3qfu_busk(van, dox, p_gen);
+        u3_noun ret = _mull_in(van, boc, gol, nuf, q_gen);
 
         u3z(boc);
         u3z(nuf);

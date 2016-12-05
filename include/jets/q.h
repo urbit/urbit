@@ -211,6 +211,7 @@
 #   define u3qfu_van_fab  119
 
     u3_noun u3qfu_burn(u3_noun, u3_noun);
+    u3_noun u3qfu_busk(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_buss(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_bust(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_conk(u3_noun, u3_noun, u3_noun);
@@ -236,7 +237,7 @@
     u3_noun u3qfu_nost(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_orth(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_peek(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_perk(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qfu_peel(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_play(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_repo(u3_noun, u3_noun);
     u3_noun u3qfu_rest(u3_noun, u3_noun, u3_noun);

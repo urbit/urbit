@@ -590,51 +590,66 @@ _sang_x(u3_noun a, u3_noun b)
 static void
 _sung_one(u3_noun* a, u3_noun* b)
 {
+
   if ( *a == *b ) {
     return;
-  } 
-  else {
-    c3_o asr_o = u3a_is_senior(u3R, *a);
-    c3_o bsr_o = u3a_is_senior(u3R, *b);
-
-    if ( _(asr_o) && _(bsr_o) ) {
-      // You shouldn't have let this happen.  We don't want to
-      // descend down to a lower road and free there, because
-      // synchronization - though this could be revisited under
-      // certain circumstances.
+  } else {
+    u3_road* rod_u = u3R;
+    while ( 1 ) {
       //
-      return;
-    }
-    if ( _(asr_o) && !_(bsr_o) ){
-      u3z(*b); 
-      *b = *a;
-    }
-    if ( _(bsr_o) && !_(asr_o) ) {
-      u3z(*a); 
-      *a = *b;
-    }
-    if ( u3a_is_north(u3R) ) {
-      if ( *a <= *b ) {
-        u3k(*a);
-        u3z(*b); 
-        *b = *a;
-      } else {
-        u3k(*b);
-        u3z(*a); 
-        *a = *b;
+      //  we can't perform this kind of butchery on the home road,
+      //  where asynchronous things can allocate.
+      //
+      if ( u3R == &u3H->rod_u ) {
+        break;
+      }
+      else {
+        c3_o asr_o = u3a_is_senior(u3R, *a);
+        c3_o bsr_o = u3a_is_senior(u3R, *b);
+
+        if ( _(asr_o) && _(bsr_o) ) {
+          //
+          //  both are senior, so we address them on a higher road
+          //  if possible.
+          //
+          u3R = u3to(u3_road, u3R->par_p);
+          continue;
+        }
+
+        if ( _(asr_o) && !_(bsr_o) ){
+          u3z(*b); 
+          *b = *a;
+        }
+        if ( _(bsr_o) && !_(asr_o) ) {
+          u3z(*a); 
+          *a = *b;
+        }
+        if ( u3a_is_north(u3R) ) {
+          if ( *a <= *b ) {
+            u3k(*a);
+            u3z(*b); 
+            *b = *a;
+          } else {
+            u3k(*b);
+            u3z(*a); 
+            *a = *b;
+          }
+        }
+        else {
+          if ( *a >= *b ) {
+            u3k(*a);
+            u3z(*b); 
+            *b = *a;
+          } else {
+            u3k(*b);
+            u3z(*a); 
+            *a = *b;
+          }
+        }
+        break;
       }
     }
-    else {
-      if ( *a >= *b ) {
-        u3k(*a);
-        u3z(*b); 
-        *b = *a;
-      } else {
-        u3k(*b);
-        u3z(*a); 
-        *a = *b;
-      }
-    }
+    u3R = rod_u;
   }
 }
 
@@ -838,6 +853,13 @@ u3r_sing(u3_noun a, u3_noun b)
 c3_o
 u3r_sung(u3_noun a, u3_noun b)
 {
+  if ( a == b ) { return c3y; }
+ 
+#if 0
+  if ( u3r_mug(a) == u3r_mug(b) ) {
+    fprintf(stderr, "collision on %x: %x/%x\r\n", u3r_mug(a), a, b);
+  }
+#endif
   return _sung_x(a, b);
 }
 
