@@ -17,7 +17,7 @@
 /-  gh, plan-acct
 /+  gh-parse, connector
 ::
-!:
+::
 =>  |%
     ++  move  (pair bone card)
     ++  card  
@@ -47,6 +47,7 @@
     --
 =+  connector=(connector move sub-result)  ::  Set up connector library
 ::
+=,  ^gall
 |_  $:  hid/bowl
         hook/(map @t {id/@t listeners/(set bone)})  ::  map events to listeners
     ==
@@ -276,7 +277,7 @@
     :*  %+  scan
           =+  [(trip i.pax) (trip i.t.pax)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
-        auri:epur
+        auri:urlp
         %post  ~  ~
         %-  taco  %-  crip  %-  pojo  %-  jobe  :~
           name+s+%web

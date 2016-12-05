@@ -2,15 +2,15 @@
 ::::  /hoon/atom/mar
   ::
 /?    310
-!:
+::
 ::::  A minimal atom mark
 |_  ato/@
 ++  grab  |%
           ++  noun  @
-          ++  mime  |=({* p/octs} q.p)
+          ++  mime  |=({* p/octs:^eyre} q.p)
           --
 ++  grow  |%
-          ++  mime  [/application/x-urb-unknown (taco ato)]
---        
+          ++  mime  [/application/x-urb-unknown (taco:bytes:eyre ato)]
+          --        
 ++  grad  %mime
 --

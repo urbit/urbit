@@ -2,7 +2,7 @@
 ::::  /hoon/tree/lib
   ::
 /?    314
-!:
+::
 |%
 ++  getall                                              :: search in manx
   |=  tag/(list mane)

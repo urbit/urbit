@@ -1,5 +1,5 @@
 /-  lens
-!:
+::
 |_  com/command:lens
 ++  grab
   |%

@@ -53,6 +53,7 @@
   (star ;~(pose (cold '+' (just '-')) (cold '/' (just '_')) next))
     --
 ::
+=,  ^gall
 |_  $:  hid/bowl  count/@  
         web-hooks/(map @t {id/@t listeners/(set bone)})
         received-ids/(list @t)
@@ -252,7 +253,7 @@
     ^-  purl
     %+  scan 
       "https://www.googleapis.com/gmail/v1/users/me{<`path`endpoint>}"
-    auri:epur
+    auri:urlp
     ::  Send an HTTP req
   ++  send-http
     |=  hiz/hiss

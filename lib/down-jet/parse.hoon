@@ -3,6 +3,8 @@
 ::::  /hoon/parse/down-jet/lib
   ::
 /?    310
+=*  xml  xml:eyre
+=,  lines:clay
 =+  =~
 |%
 ++  loca  |*(a/_* {p/@u q/a})  
@@ -10,20 +12,22 @@
 --
 |%
 ++  htm-enty                                            ::  XX belongs in zuse
+  =,  space:userlib
+  =,  format
   ~+  
   =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context
-      =+(poxa enty(ent mapping))
+      =+(parse:xml enty(ent mapping))
   ^-  mapping/(map knot @tF)
-  =+  pax=/==5%%/html5-entities/json                    ::  XX  %%/
-  =+  maf=%.(pax ;~(biff file (soft json) (om so):jo))
+  =+  pax=/==2%%/html5-entities/json                    ::  XX  %%/
+  =+  maf=%.(pax ;~(biff file (soft json) (om so):dejs-soft))
   ?^  maf  u.maf
   ~&  no-enty+pax
   (my amp+'&' quot+'"' apos+'\'' lt+'<' gt+'>' ~)       ::  fallback  
 ::
 ++  skem-symb  (star ;~(pose dot alp))
 ++  skem-set  ~+  ^-  (set cord)                        ::  URI schemes
-  ::     (sa `wain`/http/https/javascript)
-  =-  (silt `wain`(rash - (more gah (cook crip skem-symb))))  
+  ::     (silt `wain`/http/https/javascript)
+  =-  (silt `wain`(rash - (more gah (cook crip skem-symb))))
   '''
   coap doi javascript aaa aaas about acap cap cid crid data dav dict dns file
   ftp geo go gopher h323 http https iax icap im imap info ipp iris iris.beep
@@ -164,7 +168,7 @@
           $&  (madn n.a) 
           $|  (madn p.a)
         ==
-      ;~(pose empt:poxa (pech [head tail]:poxa))
+      ;~(pose empt:parse:xml (pech [head tail]:parse:xml))
     ::
     ++  line 
       %+  cold  [%line ~]

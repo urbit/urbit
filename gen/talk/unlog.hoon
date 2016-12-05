@@ -5,7 +5,7 @@
 /?    310
 ::
 ::::
-  !:
+  ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ byk/beak}
         {{man/knot $~} $~}

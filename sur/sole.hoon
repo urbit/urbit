@@ -1,6 +1,6 @@
 ::
 ::::  /hoon/sole/sur
-  !:
+  ::
 |%
 ++  sole-action                                         ::  sole to app
   $%  ::  {$abo ~}                                      ::  reset interaction
@@ -28,7 +28,7 @@
       {$clr $~}                                         ::  clear screen
       {$det sole-change}                                ::  edit command
       {$err p/@ud}                                      ::  error point
-      {$klr p/styx}                                     ::  styled text line
+      {$klr p/styx:^dill}                               ::  styled text line
       {$mor p/(list sole-effect)}                       ::  multiple effects
       {$nex $~}                                         ::  save clear command
       {$pro sole-prompt}                                ::  set prompt
@@ -46,7 +46,7 @@
 ++  sole-prompt                                         ::  prompt definition
   $:  vis/?                                             ::  command visible
       tag/term                                          ::  history mode
-      cad/styx                                          ::  caption
+      cad/styx:^dill                                    ::  caption
   ==                                                    ::
 ++  sole-share                                          ::  symmetric state
   $:  ven/sole-clock                                    ::  our vector clock
@@ -74,7 +74,11 @@
   |*  out/$-(* *)                                       ::  output structure
   %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
-  (trel (unit iden) hiss $-(httr (sole-request out)))   ::  fetch and continue
+  %^    trel                                            ::  fetch and continue
+      (unit knot)
+    hiss:^eyre
+  $-(httr:^eyre (sole-request out))
+  
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   $%  {$say $-((sole-args) (cask))}                     ::  direct noun
@@ -100,8 +104,8 @@
   [p=*(list tank) q=[%| p=pom q=mor]]                   ::
 ::                                                      ::
 ++  sole-at                                             ::  fetch url
-  =|  usr/iden                                          ::
-  |*  {pul/_purl fun/$-(httr *)}                        ::
+  =|  usr/knot                                          ::
+  |*  {pul/_purl:^eyre fun/$-(httr:^eyre *)}            ::
   :-  p=*(list tank)                                    ::
   q=[%| p=`usr q=[pul %get ~ ~] r=fun]                  ::
 ::                                                      ::

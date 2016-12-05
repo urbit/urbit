@@ -1,5 +1,5 @@
 /+  talk
-!:
+::
 =>  |%
     ++  move  (pair bone card)
     ++  card
@@ -8,6 +8,7 @@
       ==
     --
 ::
+=,  ^gall
 |_  {hid/bowl connections/(set {app/term source/path station/knot})}
 ++  poke-noun
   |=  arg/*

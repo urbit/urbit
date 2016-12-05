@@ -6,12 +6,14 @@
 ::
 ::::  ~fyr
   ::
+=,  ^eyre
+=,  url:eyre
 |%
 ++  parse-url
   |=  a/$@(cord:purl purl)  ^-  purl
   ?^  a  a
   ~|  bad-url+a
-  (rash a auri:epur)
+  (rash a auri:urlp)
 ::
 ++  add-query
   |=  {a/$@(@t purl) b/quay}  ^-  purl

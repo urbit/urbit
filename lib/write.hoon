@@ -4,6 +4,8 @@
   ::
 /?    310
 /-    plan-diff, plan-acct
+=,  format
+=,  space:userlib
 |%
 ++  part  {$write $0 pith}           :: no state
 ++  pith  $~
@@ -13,29 +15,29 @@
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$exec wire @p $~ {beak silk}}
-              {$info wire @p toro}
+++  card  $%  {$exec wire @p $~ {beak silk:^ford}}
+              {$info wire @p toro:^clay}
           ==
 --
-!:
+::
 ::::
   ::
-|=  {bowl part}
+|=  {bowl:^gall part}
 =*  par  +<+
 |_  moz/(list {bone card})
 ++  abet  [(flop moz) `part`par]
 ++  emit  |=(a/card %_(+> moz :_(moz [ost a])))
 ++  beak-now  byk(r [%da now])
 ++  poke-wipe
-  |=  sup/spur  ^+  abet                ::  XX determine extension, beak
+  |=  sup/path  ^+  abet                ::  XX determine extension, beak
   =+  ext=%md
-  ?~  (file (tope beak-now [ext sup]))
+  ?~  (file (en-beam beak-now [ext sup]))
     ~|(not-found+[ext `path`(flop sup)] !!)
   =-  abet:(emit %info write+~ our -)
-  (fray (tope beak-now [ext sup]))
+  (fray (en-beam beak-now [ext sup]))
 ::
 ++  poke-tree
-  |=  {sup/spur mim/mime}  ^+  abet     ::  XX determine extension, beak
+  |=  {sup/path mim/mime}  ^+  abet     ::  XX determine extension, beak
   (poke--data [`%md (flop sup)] %mime mim)
 ::
 ++  poke-plan-account
@@ -50,20 +52,20 @@
   |=  dif/plan-diff  ^+  abet
   ?.  =(our src)
     ~|(foreign-write+[our=our src=src] !!)
-  =;  sob/soba
-    ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
+  =;  sob/soba:^clay
+    ?~(sob abet abet:(emit %info write+~ our `toro:^clay`[q.byk %& sob]))
   =+  pax=`path`/web/plan
-  =+  paf=(tope beak-now (flop pax))
+  =+  paf=(en-beam beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
     =+  ins=(pact-plan [['' ''] ~] dif)
     [pax %ins plan+!>(ins)]~
-  =+  ole=.^({{@t @t} (map iden plan-acct)} %cx paf)
+  =+  ole=.^({{@t @t} (map knot plan-acct)} %cx paf)
   =+  neu=(pact-plan ole dif)
   ?:  =(ole neu)  ~
   [pax %dif plan-diff+!>(dif)]~
 ::
 ++  pact-plan                         :: XX clay should handle fused insert+diff
-  |=  {all/{{who/@t loc/@t} acc/(map iden plan-acct)} dif/plan-diff}
+  |=  {all/{{who/@t loc/@t} acc/(map knot plan-acct)} dif/plan-diff}
   ^+  all
   :-  (fall inf.dif -.all)
   =;  neu  (~(uni by neu) put.dif)
@@ -74,20 +76,20 @@
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
-  (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco txt))
+  (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco:bytes:eyre txt))
 ::
 ++  poke-comment
-  |=  {sup/spur him/ship txt/@t}  ^+  abet
+  |=  {sup/path him/ship txt/@t}  ^+  abet
   =+  pax=(welp (flop sup) /comments/(scot %da now))
   =.  txt  
     %+  rap  3  :~
       '## `'  (scot %p him)  '`'
       '\0a'  txt
     ==
-  (poke--data [`%md pax] %mime / (taco txt))
+  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
 ::
 ++  poke-fora-post
-  |=  {sup/spur him/ship hed/@t txt/@t}  ^+  abet
+  |=  {sup/path him/ship hed/@t txt/@t}  ^+  abet
   =+  pax=(welp (flop sup) /posts/(cat 3 (scot %da now) '~'))
   =.  txt
     %-  crip
@@ -104,7 +106,7 @@
 
     {(trip txt)}
     """
-  (poke--data [`%md pax] %mime / (taco txt))
+  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
 ::
 ++  ames-secret
   ^-  @t
@@ -112,11 +114,11 @@
   pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
 ::
 ++  poke-sec-atom
-  |=  {hot/host dat/@}
+  |=  {hot/host:^eyre dat/@}
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
-  =.  dat  (scot %uw (en:crua ames-secret dat))  ::  XX clay permissions
-  (poke--data [`%atom [%sec p.hot]] %mime / (taco dat))
+  =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
+  (poke--data [`%atom [%sec p.hot]] %mime / (taco:bytes:eyre dat))
 ::
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet
@@ -129,13 +131,13 @@
   [our ~ beak-now %cast u.ext $+cay]
 ::
 ++  made
-  |=  {pax/wire @ res/gage}  ^+  abet
+  |=  {pax/wire @ res/gage:^ford}  ^+  abet
   :: ?.  =(our src)
   ::   ~|(foreign-write/[our=our src=src] !!)
   ?+  -.res  ~|(gage+-.res !!)
     $|  (mean p.res)
     $&  =-  abet:(emit %info write+~ our -)
-        (foal :(welp (tope beak-now ~) pax /[-.p.res]) p.res)
+        (foal :(welp (en-beam beak-now ~) pax /[-.p.res]) p.res)
   ==
 --
  

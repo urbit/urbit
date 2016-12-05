@@ -5,6 +5,9 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=,  ^clay
+=,  space:userlib
+=,  format
 |%                                                      ::  ::
 ++  kiln-part  {$kiln $0 kiln-pith}                     ::  kiln state
 ++  kiln-pith                                           ::
@@ -50,12 +53,12 @@
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
-  !:                                                    ::  ::
-|=  {bowl kiln-part}                                    ::  main kiln work
+  ::                                                    ::  ::
+|=  {bowl:^gall kiln-part}                              ::  main kiln work
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$exec wire @p $~ {beak silk}}                ::
+      $%  {$exec wire @p $~ {beak silk:^ford}}                ::
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas @p @tas path}                ::
@@ -91,7 +94,7 @@
 ::
 ++  poke-mount
   |=  kiln-mount
-  =+  bem=(tome pax)
+  =+  bem=(de-beam pax)
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
@@ -100,7 +103,7 @@
 ++  poke-unmount
   |=  mon/kiln-unmount
   ?^  mon
-    =+  bem=(tome mon)
+    =+  bem=(de-beam mon)
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf+- ~)
@@ -184,14 +187,14 @@
 ::
 ++  poke-start-autoload
   |=  $~
-  =.  cur-hoon  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/hoon/hoon)
-  =.  cur-zuse  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon)
+  =.  cur-hoon  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/hoon/hoon)
+  =.  cur-zuse  .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/zuse/hoon)
   =.  cur-vanes
     %-  malt
-    %+  turn  `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
+    %+  turn  `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
     |=  syd/@tas
     :-  syd
-    .^(@uvI %cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
+    .^(@uvI %cz /(scot %p our)/home/(scot %da now)/sys/vane/[syd]/hoon)
   =<  abet
   %-  emit
   ^-  card
@@ -209,7 +212,7 @@
   abet:abet:(mere:(take way) are)
 ::
 ++  take-made                                         ::
-  |=  {way/wire dep/@uvH reg/gage}
+  |=  {way/wire dep/@uvH reg/gage:^ford}
   abet:abet:(made:(take way) dep reg) 
 ::
 ++  take-coup-fancy                                   ::
@@ -240,7 +243,7 @@
   |=  {way/wire rot/riot}
   ?>  ?=($~ way)
   ?>  ?=(^ rot)
-  =+  vanes=`(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
+  =+  vanes=`(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
   =.  +>.$
     ?.  autoload
       +>.$
@@ -421,11 +424,11 @@
     (ford-fail p.res)
   ::
   ++  gage-to-cages
-    |=  gag/gage  ^-  (list (pair cage cage))
+    |=  gag/gage:^ford  ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-tage gag))
   ::
   ++  gage-to-tage
-    |=  gag/gage
+    |=  gag/gage:^ford
     ^-  (each (list (pair cage cage)) tang)
     ?.  ?=($tabl -.gag)
       (mule |.(`$~`(ford-fail >%strange-gage< ~)))
@@ -492,11 +495,11 @@
         %-  blab  :_  ~
         :*  ost  %exec  /kiln/[syd]
             our  ~  [our tic %da now]  %tabl
-            ^-  (list (pair silk silk))
+            ^-  (list (pair silk:^ford silk:^ford))
             :: ~&  >  kiln-mashing+[p.are syd=syd +<.abet]
             %+  turn  (~(tap in p.are))
             |=  pax/path
-            ^-  (pair silk silk)
+            ^-  (pair silk:^ford silk:^ford)
             :-  [%$ %path -:!>(*path) pax]
             =+  base=[%file [our tic %da now] (flop pax)]
             =+  alis=[%file [her sud cas] (flop pax)]
@@ -560,7 +563,7 @@
     (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
   ::
   ++  made
-    |=  {dep/@uvH reg/gage}
+    |=  {dep/@uvH reg/gage:^ford}
     ^+  +>
     ?:  ?=($| -.reg)
       =+  "failed to mash"

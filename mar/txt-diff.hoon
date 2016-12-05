@@ -2,10 +2,10 @@
 ::::  /hoon/txt-diff/mar
   ::
 /?    310
-|_  txt-diff/(urge cord)
+|_  txt-diff/(urge:^clay cord)
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  (urge cord)                                 ::  clam from %noun
+  ++  noun  (urge:^clay cord)                           ::  make from %noun
   --
 --

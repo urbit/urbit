@@ -3,7 +3,8 @@
   ::
 /?    310
 /+    elem-to-react-json, time-to-id
-!:
+=,  js:eyre
+::
 ::::
   ::
 |_  all/(list (pair time {ship marl}))

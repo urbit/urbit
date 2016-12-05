@@ -7,7 +7,7 @@
 ++  grab
   |%
   ++  noun  post:twitter
-  ++  json  (corl need post:parse:twitter)
+  ++  json  post:reparse:twitter
   ++  httr  (cork httr-to-json json)  ::  XX mark translation
   --
 ++  grow

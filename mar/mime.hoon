@@ -2,7 +2,7 @@
 ::::  /hoon/mime/mar
   ::
 /?    310
-!:
+::
 |_  own/mime
 ++  grow
   |%
@@ -11,8 +11,9 @@
 ::
 ++  grab                                                ::  convert from
   |% 
-  ++  noun  mime                                        ::  clam from %noun
-  ++  tape  |=(a/_"" [/application/x-urb-unknown (tact a)])
+  ++  noun  mime                                  ::  clam from %noun
+  ++  tape  
+    |=(a/_"" [/application/x-urb-unknown (tact:bytes:eyre a)])
   --
 ++  grad
   |%

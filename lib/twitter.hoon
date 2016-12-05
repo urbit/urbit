@@ -6,7 +6,13 @@
 /-    twitter
 /+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
-!:
+=,  ^eyre
+=,  bytes:eyre
+=,  format
+=,  url:eyre
+=,  xml:eyre
+=,  chrono:userlib
+::
 ::::  functions
   ::
 |%
@@ -19,7 +25,7 @@
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
   ^-  hiss
-  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:epur)  :: base path
+  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:urlp)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
   ^-  hiss
@@ -38,7 +44,7 @@
     +.i.all
   $(all t.all)
 --
-!:
+::
 ::::  library
   ::
 |%
@@ -63,23 +69,28 @@
       ~
     ~[scr+a tid+(tid:print b)]
   --
-++  parse                                                ::  json reparsers
+++  parse  ^?                                            ::  text parsers
   |%
-  ++  ce  |*({a/_* b/fist:jo} (cu:jo |=(c/a c) b))       ::  output type
-  ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])        ::  XX usable electroplating
   ++  user  (cook crip (plus ;~(pose aln cab)))
-  ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):jo
+  --
+::
+++  reparse                                              ::  json reparsers
+  =,  parse
+  |%
+  ++  ce  =>(dejs |*({a/_* b/fist} (cu |=(c/a c) b))) ::  output type
+  ++  fasp  |*(a/{@tas *} [(hep-to-cab -.a) +.a])
+  ++  mean  (ot errors+(ar (ot message+so code+ni ~)) ~):dejs
   ++  post
-    =+  jo
+    =,  ^?(dejs)
     %+  ce  post:sur-twit
     %-  ot
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
-        (fasp created-at+da)
-        text+(cu crip (su (star escp:poxa)))  :: parse html escapes
+        (fasp created-at+(cu year (ci stud so)))
+        text+(cu crip (su (star escp:^parse)))  :: parse html escapes
     ==
   ++  usel 
-    =+  jo
+    =,  ^?(dejs)
     %+  ce  (list who/@ta)
     =-  (ot users+(ar -) ~)
     (ot (fasp screen-name+(su user)) ~)

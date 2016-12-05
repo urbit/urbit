@@ -5,13 +5,14 @@
 ::    :github &path /listen/{owner}/{repo}/{events...}
 ::
 /-  gh
-!:
+::
 =>  |%
     ++  diff-result
       $%  {$gh-issue issues:gh}
           {$gh-issue-comment issue-comment:gh}
       ==
     --
+=,  ^gall
 |_  {hid/bowl *}
 ++  poke-path
   |=  pax/path

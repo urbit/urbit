@@ -2,9 +2,10 @@
 ::::  /hoon/css/mar
   ::
 /?    310
+=,  ^eyre
 |_  mud/@t
 ++  grow                                                ::  convert to
-  |%  ++  mime  [/text/css (taco mud)]                  ::  convert to %mime
+  |%  ++  mime  [/text/css (taco:bytes:eyre mud)]       ::  convert to %mime
       ++  elem  ;style                                  ::  convert to %hymn
                   ;-  (trip mud)
                 ==

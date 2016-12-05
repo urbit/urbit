@@ -5,21 +5,21 @@
   ::
 /?    310 
 /-    talk
-!:
+::
 ::::
   ::
 [. ^talk]
-|_  bol/bowl
+|_  bol/bowl:^gall
 ++  main                                                ::  main story
   |=  our/ship  ^-  cord
-  =+  can=(clan our)
+  =+  can=(clan:title our)
   ?+  can  %porch
     $czar  %court
     $king  %floor
   == 
 ::
 ++  said-url                                            ::  app url
-  |=  url/purl
+  |=  url/purl:^eyre
   :^  ost.bol  %poke  /said-url
   :+  [our.bol %talk]  %talk-command
   ^-  command
@@ -28,7 +28,7 @@
   ^-  thought
   :+  (shaf %thot eny.bol)
     [[[%& our.bol (main our.bol)] [*envelope %pending]] ~ ~]
-  [now.bol *bouquet [%app dap.bol (crip (earn url))]]   :: XX
+  [now.bol *bouquet [%app dap.bol (crip (earn:url:eyre url))]]   :: XX
 ::
 ++  said                                                ::  app message
   |=  {our/@p dap/term now/@da eny/@uvJ mes/(list tank)}

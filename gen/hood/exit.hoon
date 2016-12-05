@@ -6,8 +6,8 @@
 /-  sole
 ::
 ::::
-  !:
-[sole .]
+  ::
+=,  sole
 :-  %say
 |=  $:  {now/@da eny/@ bec/beak}
         {$~ $~}

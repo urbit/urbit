@@ -3,7 +3,7 @@
 ::::  /hoon/twitter/com/sec
   ::
 /+    oauth1
-!:
+::
 ::::
   ::
 |_  {bal/(bale keys:oauth1) tok/token:oauth1}

@@ -80,9 +80,9 @@
     ^-  speech:talk
     :*  %api  %github
         login.sender.issues
-        (rash html-url.sender.issues aurf:epur)
+        (rash html-url.sender.issues aurf:urlp)
         txt  txt
-        (rash html-url.issue.issues aurf:epur)
+        (rash html-url.issue.issues aurf:urlp)
         %-  jobe
         %+  welp
           :~  repository+s+name.repository.issues

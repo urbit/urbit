@@ -5,11 +5,13 @@
   ::
 ::::  compute
   ::
+=,  ^eyre
+=,  js:eyre
 |_  jon/json
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/application/json (taco txt)]                     ::  convert to %mime
+  ++  mime  [/application/json (taco:bytes:eyre txt)]   ::  convert to %mime
   ++  txt   (crip (pojo jon))
   --
 ++  grab

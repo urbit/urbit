@@ -11,7 +11,7 @@
 |%                                                      ::  ::
 ++  helm-part  {$helm $0 helm-pith}                     ::  helm state
 ++  helm-pith                                           ::  helm content
-  $:  bur/(unit (pair ship mace))                       ::  requesting ticket
+  $:  bur/(unit (pair ship mace:^ames))                 ::  requesting ticket
       hoc/(map bone helm-session)                       ::  consoles
   ==                                                    ::  
 ++  helm-session                                        ::
@@ -25,18 +25,12 @@
   $:  his/@p                                            ::  identity
       tic/@p                                            ::  ticket
       eny/@t                                            ::  entropy
-      ges/gens                                          ::  description
+      ges/gens:^ames                                    ::  description
   ==                                                    ::
 ++  hood-init                                           ::  report init
   $:  him/ship                                          ::
   ==                                                    ::
 ++  hood-reset                                          ::  reset command
-  $~                                                    ::
-++  hood-deset                                          ::  reset command
-  $~                                                    ::
-++  hood-deone                                          ::  reset command
-  $~                                                    ::
-++  hood-detwo                                          ::  reset command
   $~                                                    ::
 ++  helm-verb                                           ::  reset command
   $~                                                    ::
@@ -45,25 +39,26 @@
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
-  !:                                                    ::  ::
-|=  {bowl helm-part}                                  ::  main helm work
+  ::                                                    ::  ::
+|=  {bowl:^gall helm-part}                              ::  main helm work
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
-=>  |%                                                ::  arvo structures
-    ++  card                                          ::
-      $%  {$cash wire p/@p q/buck}                    ::
-          {$conf wire dock $load ship term}           ::
-          {$flog wire flog}                           ::
-          {$serv wire ?(desk beam)}                   ::
-          {$poke wire dock pear}                      ::
-          {$wont wire sock path *}                    ::  send message
-      ==                                              ::
-    ++  move  (pair bone card)                        ::  user-level move
-    ++  pear                                          ::  poke fruit
-      $%  {$hood-unsync desk ship desk}               ::
-          {$talk-command command:talk}                ::
-          {$ask-mail cord}                            ::
-          {$helm-hi cord}                             ::
-      ==                                              ::
+=>  |%                                                  ::  arvo structures
+    ++  card                                            ::
+      $%  {$cash wire p/@p q/buck:^ames}                ::
+          {$conf wire dock $load ship term}             ::
+          {$flog wire flog:^dill}                       ::
+          {$funk wire @p @p @}                          ::   
+          {$serv wire ?(desk beam)}                     ::
+          {$poke wire dock pear}                        ::
+          {$wont wire sock path *}                      ::  send message
+      ==                                                ::
+    ++  move  (pair bone card)                          ::  user-level move
+    ++  pear                                            ::  poke fruit
+      $%  {$hood-unsync desk ship desk}                 ::
+          {$talk-command command:talk}                  ::
+          {$ask-mail cord}                              ::
+          {$helm-hi cord}                               ::
+      ==                                                ::
     --
 |_  moz/(list move)
 ++  abet                                              ::  resolve
@@ -79,9 +74,14 @@
   |=  hood-begin  =<  abet
   ?>  ?=($~ bur)
   =+  buz=(shaz :(mix (jam ges) eny))
-  =+  loy=(pit:nu:crub 512 buz)
+  =+  loy=(pit:nu:crub:crypto 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%wont /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
+  [%wont /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
+::
+++  poke-spawn
+  |=  {him/ship key/@pG}  =<  abet
+  %-  emit
+  [%funk ~ our him (shax key)]
 ::
 ++  poke-init                                         ::  initialize
   |=  him/ship  =<  abet
@@ -122,19 +122,11 @@
   %-  emil
   %-  flop
   %+  turn  all
-  =+  top=`path`/(scot %p our)/[syd]/(scot %da now)/arvo
-  =+  ark=.^(arch %cy top)
-  =+  van=(~(tap by dir.ark))
+  =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
   |=  nam/@tas
-  =.  nam
-    ?.  =(1 (met 3 nam))
-      nam
-    =+  ^-  zaz/(list {p/knot $~})
-        (skim van |=({a/term $~} =(nam (end 3 1 a))))
-    ?>  ?=({{@ $~} $~} zaz)
-    `term`p.i.zaz
   =+  tip=(end 3 1 nam)
-  =+  way=(welp top /[nam])
+  =+  zus==('z' tip) 
+  =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
 ::
@@ -148,57 +140,36 @@
   |=  hood-reset  =<  abet
   %-  emil
   %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :-  [%flog /reset %vega (weld top `path`/hoon)]
+  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
+  =+  hun=.^(@ %cx (welp top /hoon/hoon))
+  =+  arv=.^(@ %cx (welp top /arvo/hoon))  
+  :-  [%flog /reset [%velo `@t`hun `@t`arv]]
+  :-  =+  way=(weld top `path`/zuse)
+      [%flog /reset %veer %$ way .^(@ %cx (welp way /hoon))]
   %+  turn
     ^-  (list {p/@tas q/@tas})
-    :~  [%$ %zuse]
-        [%a %ames]
+    :~  [%a %ames]
         [%b %behn]
         [%c %clay]
         [%d %dill]
         [%e %eyre]
         [%f %ford]
         [%g %gall]
+        [%j %jael]
     ==
   |=  {p/@tas q/@tas}
-  =+  way=`path`(welp top /[q])
+  =+  way=`path`(welp top /vane/[q])
   =+  txt=.^(@ %cx (welp way /hoon))
   [%flog /reset %veer p way txt]
 ::
-++  poke-deset                                        ::  deset system
-  |=  hood-deset  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :-  [%flog /deset %vega (weld top `path`/hoon)]
-  ~
-::
-++  poke-deone                                        ::  deset system
-  |=  hood-deone  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :~  [%flog /deset %vega (weld top `path`/one)] 
-      [%flog /deset %vega (weld top `path`/two)] 
-  ==
-::
-++  poke-detwo                                        ::  deset system
-  |=  hood-detwo  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card) 
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :-  [%flog /deset %vega (weld top `path`/two)]
-  ~
-::
-++  poke-will                                         ::  hear certificate
-  |=  wil/(unit will)
+++  poke-wyll                                         ::  hear certificate
+  |=  wil/(unit wyll:^ames)
   ?>  ?=(^ bur)
   ?>  ?=(^ wil)  
   =<  abet
   %-  emil(bur ~)
   :~  [%cash /helm p.u.bur q.u.bur u.wil]
-      [%poke /helm [our %hood] %hood-unsync %base (sein our) %kids]
+      [%poke /helm [our %hood] %hood-unsync %base (sein:title our) %kids]
   ==
 ::
 ++  poke-verb                                         ::  toggle verbose
@@ -206,7 +177,7 @@
   (emit %flog /helm %verb ~)
 ::
 ++  take-onto                                         ::  result of %conf
-  |=  saw/(each suss tang)  =<  abet
+  |=  saw/(each suss:^gall tang)  =<  abet
   %-  emit
   ?-   -.saw
     $|  [%flog ~ %crud %onto `tang`p.saw]

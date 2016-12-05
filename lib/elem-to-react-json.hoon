@@ -3,6 +3,7 @@
 ::::  /hoon/elem-to-react-json/lib
   ::
 /?    310
+=,  js:eyre
 |%
 ++  react-attrs                                         ::  uppercase mapping
   ~+  ^-  (map term cord)

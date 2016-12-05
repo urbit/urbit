@@ -6,7 +6,7 @@
 [. helm kiln drum]                                      
 ::                                                      ::  ::
 ::::                                                    ::  ::
-  !:                                                    ::  ::
+  ::                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
     ++  hood-old                                        :: 
       {?($0 $1) lac/(map @tas hood-part-old)}           :: 
@@ -32,12 +32,10 @@
         $womb  *part:womb                               ::
         $write  *part:write                             ::
       ==                                                ::
-    ++  hood-part-old  ?(hood-part drum-part-old)       ::
+    ++  hood-part-old  hood-part                        ::
     ++  hood-port                                       ::
       |=  paw/hood-part-old  ^-  hood-part              ::
-      ?+  -.paw  paw                                    ::
-        $drum    (drum-port paw)                        ::         
-      ==                                                ::
+      paw                                               ::
     ::                                                  ::
     ++  hood-part                                       ::
       $%  {$drum $2 drum-pith-2}                        ::
@@ -50,7 +48,8 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|_  $:  hid/bowl                                        ::  system state
+=,  ^gall
+|_  $:  hid/bowl                                       ::  system state
         hood-1                                          ::  server state
     ==                                                  ::
 ++  able                                                ::  find+make part
@@ -61,7 +60,7 @@
 ::
 ++  ably                                                ::  save part
   |*  {(list) hood-part}
-  [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
+  [(flop +<-) %_(+> lac (~(put by lac) +<+< `hood-part`+<+))]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -136,12 +135,12 @@
 ++  poke-helm-reload          (wrap poke-reload):from-helm
 ++  poke-helm-reload-desk     (wrap poke-reload-desk):from-helm
 ++  poke-helm-reset           (wrap poke-reset):from-helm
-++  poke-helm-deset           (wrap poke-deset):from-helm
 ++  poke-helm-serve           (wrap poke-serve):from-helm
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
 ++  poke-helm-send-ask        (wrap poke-send-ask):from-helm
 ++  poke-helm-verb            (wrap poke-verb):from-helm
 ++  poke-helm-begin           (wrap poke-begin):from-helm
+++  poke-helm-spawn           (wrap poke-spawn):from-helm
 ++  poke-hood-sync            (wrap poke-sync):from-kiln
 ++  poke-hood-init-sync       (wrap poke-init-sync):from-kiln
 ++  poke-kiln-info            (wrap poke-info):from-kiln
@@ -164,15 +163,10 @@
 ++  poke-womb-obey            (wrap poke-obey):from-womb
 ++  poke-womb-bonus           (wrap poke-bonus):from-womb
 ++  poke-womb-claim           (wrap poke-claim):from-womb
-++  poke-womb-do-ticket       (wrap poke-do-ticket):from-womb
-++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
 ++  poke-womb-rekey           (wrap poke-rekey):from-womb
 ++  poke-womb-report          (wrap poke-report):from-womb
-++  poke-womb-manage          (wrap poke-manage):from-womb
 ++  poke-womb-recycle         (wrap poke-recycle):from-womb
 ++  poke-womb-manage-old-key  (wrap poke-manage-old-key):from-womb
-++  poke-womb-release         (wrap poke-release):from-womb
-++  poke-womb-release-ships   (wrap poke-release-ships):from-womb
 ++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
 ++  poke-womb-replay-log      (wrap poke-replay-log):from-womb
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
@@ -183,7 +177,7 @@
 ++  poke-write-plan-account   (wrap poke-plan-account):from-write
 ++  poke-write-tree           (wrap poke-tree):from-write
 ++  poke-write-wipe           (wrap poke-wipe):from-write
-++  poke-will                 (wrap poke-will):from-helm
+++  poke-wyll                 (wrap poke-wyll):from-helm
 ++  quit-drum-phat            (wrap quit-phat):from-drum
 ++  reap-drum-phat            (wrap reap-phat):from-drum
 ++  woot-helm                 (wrap take-woot):from-helm
