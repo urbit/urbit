@@ -68,7 +68,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.gab = c3n;
-  u3_Host.ops_u.mad = c3n;
   u3_Host.ops_u.loh = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.fog = c3n;
@@ -116,10 +115,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
-        break;
-      }
-      case 'm': {
-        u3_Host.ops_u.mad = c3y;
         break;
       }
       case 'X': {
@@ -545,7 +540,6 @@ main(c3_i   argc,
     }
     u3m_boot(u3_Host.ops_u.nuu,
              u3_Host.ops_u.gab,
-             u3_Host.ops_u.mad,
              u3_Host.dir_c,
              u3_Host.ops_u.pil_c);
 

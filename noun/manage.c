@@ -1500,9 +1500,9 @@ _cm_init(c3_o chk_o)
 /* _boot_home(): create ship directory.
 */
 static void
-_boot_home(c3_o mad_o, c3_c *dir_c, c3_c *pil_c)
+_boot_home(c3_c *dir_c, c3_c *pil_c)
 {
-  c3_c*   nam_c = _(mad_o) ? "events.pill" : "urbit.pill";
+  c3_c*   nam_c = "urbit.pill";
   c3_c    ful_c[2048];
 
   /* Create subdirectories. */
@@ -1576,7 +1576,7 @@ _boot_home(c3_o mad_o, c3_c *dir_c, c3_c *pil_c)
 /* u3m_boot(): start the u3 system.
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_o mad_o, c3_c* dir_c, c3_c *pil_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
 {
   /* Activate the loom.
   */
@@ -1603,22 +1603,14 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_o mad_o, c3_c* dir_c, c3_c *pil_c)
   if ( _(nuu_o) ) {
     c3_c ful_c[2048];
 
-    _boot_home(mad_o, dir_c, pil_c);
+    _boot_home(dir_c, pil_c);
 
-    if ( _(mad_o) ) {
-      snprintf(ful_c, 2048, "%s/.urb/events.pill", dir_c);
+    {
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
 
       printf("boot: loading %s\r\n", ful_c);
       u3v_boot(ful_c);
     } 
-    else {
-      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-
-      printf("boot: loading %s\r\n", ful_c);
-      u3v_make(ful_c);
-
-      u3v_jack();
-    }
 
   }
   else {

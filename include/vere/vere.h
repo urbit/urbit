@@ -553,7 +553,6 @@
         c3_o    loh;                        //  -L, local-only networking
         c3_o    pro;                        //  -P, profile
         c3_o    veb;                        //  -v, verbose (inverse of -q)
-        c3_o    mad;                        //  -m, mad pill
         c3_o    nuu;                        //  -c, new pier
         c3_o    qui;                        //  -q, quiet
         c3_o    vno;                        //  -V, turn on +verb
