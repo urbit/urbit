@@ -701,7 +701,10 @@
     $%  {$& p/twig}                                     ::  direct twig
         {$| p/beam}                                     ::  resource location
     ==                                                  ::
-  ++  hops   {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}::  XX late-bound path
+  ++  hops                                              ::  XX late-bound path
+    $:  pre/(unit tyke)                                 ::
+        pof/(unit {p/@ud q/tyke})                       ::
+    ==                                                  ::
   ++  horn                                              ::  resource tree
     $%  {$ape p/twig}                                   ::  /~  twig by hand
         {$arg p/twig}                                   ::  /$  argument
@@ -775,7 +778,9 @@
       ==                                                ::
     --  ::able
   ++  bitt  (map bone (pair ship path))                 ::  incoming subs
-  ++  boat  (map (pair bone wire) (trel bean ship path))::  outgoing subs
+  ++  boat                                              ::  outgoing subs
+    %+  map  (pair bone wire)                           ::
+    (trel bean ship path)                               ::
   ++  bowl                                              ::  standard app state
           $:  $:  our/ship                              ::  host
                   src/ship                              ::  guest
@@ -907,55 +912,55 @@
       %+  each  balance                                 ::  complete
       action                                            ::  change
     ::
-    ++  task                                             ::  in request ->$
-      $%  {$burn p/ship q/safe}                          ::  destroy rights
-          {$hail p/ship q/remote}                        ::  remote update
-          {$init p/@pG q/arms}                           ::  initialize urbit
-          {$meet p/(unit (unit ship)) q/farm}            ::  integrate pki from
-          {$mint p/ship q/safe}                          ::  create rights
-          {$move p/ship q/ship r/safe}                   ::  transfer from/to
-          {$next p/bull}                                 ::  update private key
-          {$nuke $~}                                     ::  cancel tracker from
-          {$veil p/ship}                                 ::  view secret channel
-          {$vein $~}                                     ::  view signing keys
-          {$vest $~}                                     ::  view public balance
-          {$vine $~}                                     ::  view secret history
-          {$jaelwomb p/task:womb}
-          {$west p/ship q/path r/*}                      ::  remote request
-      ==                                                 ::
+    ++  task                                            ::  in request ->$
+      $%  {$burn p/ship q/safe}                         ::  destroy rights
+          {$hail p/ship q/remote}                       ::  remote update
+          {$init p/@pG q/arms}                          ::  initialize urbit
+          {$meet p/(unit (unit ship)) q/farm}           ::  integrate pki from
+          {$mint p/ship q/safe}                         ::  create rights
+          {$move p/ship q/ship r/safe}                  ::  transfer from/to
+          {$next p/bull}                                ::  update private key
+          {$nuke $~}                                    ::  cancel tracker from
+          {$veil p/ship}                                ::  view secret channel
+          {$vein $~}                                    ::  view signing keys
+          {$vest $~}                                    ::  view public balance
+          {$vine $~}                                    ::  view secret history
+          {$jaelwomb p/task:womb}                       ::  lazy refactor
+          {$west p/ship q/path r/*}                     ::  remote request
+      ==                                                ::
     ++  gilt  gilt:womb
     --
   ::
   ++  womb  ^?
     ::  types used to serve the lib/womb invite controller
     |%
-    ++  ticket  @G                                       ::  old 64-bit ticket
-    ++  passcode  @uvH                                   ::  128-bit passcode
-    ++  passhash  @uwH                                   ::  passocde hash
-    ++  mail  @t                                         ::  email address
-    ++  invite                                           ::
-      $:  who/mail                                       ::  owner email
-          pla/@ud                                        ::  planets to send
-          sta/@ud                                        ::  stars to send
-      ==                                                 ::
-    ::                                                    ::
-    ++  reinvite  {tid/passcode inv/invite}              ::  new from old
-    ++  task                                         ::  manage ship %fungi
-      $%  {$claim aut/passcode her/@p tik/ticket}        ::  convert to %final
-          {$bonus tid/passcode pla/@ud sta/@ud}          ::  supplement passcode
-          {$invite tid/passcode inv/invite}              ::  alloc to passcode
-          {$reinvite aut/passcode reinvite}              ::  move to another
-      ==
-    ++  scry
-      $%  {$shop typ/?($star $planet) nth/@u}            ::  available ships
-          {$stats who/ship}                              ::  ship details
-          {$balance aut/passcode}                        ::  invite details
-      ==
-    ++  balance  {who/mail pla/@ud sta/@ud} ::  equivalent to invite?
-    ++  gilt
-      $%  {$ships (list ship)}                           ::
-          {$womb-owner (unit mail)}                      ::
-          {$womb-balance (unit balance)}             ::
+    ++  ticket  @G                                      ::  old 64-bit ticket
+    ++  passcode  @uvH                                  ::  128-bit passcode
+    ++  passhash  @uwH                                  ::  passocde hash
+    ++  mail  @t                                        ::  email address
+    ++  invite                                          ::
+      $:  who/mail                                      ::  owner email
+          pla/@ud                                       ::  planets to send
+          sta/@ud                                       ::  stars to send
+      ==                                                ::
+    ::                                                  ::
+    ++  reinvite  {tid/passcode inv/invite}             ::  new from old
+    ++  task                                            ::  manage ship %fungi
+      $%  {$claim aut/passcode her/@p tik/ticket}       ::  convert to %final
+          {$bonus tid/passcode pla/@ud sta/@ud}         ::  supplement passcode
+          {$invite tid/passcode inv/invite}             ::  alloc to passcode
+          {$reinvite aut/passcode reinvite}             ::  move to another
+      ==                                                ::
+    ++  scry                                            ::
+      $%  {$shop typ/?($star $planet) nth/@u}           ::  available ships
+          {$stats who/ship}                             ::  ship details
+          {$balance aut/passcode}                       ::  invite details
+      ==                                                ::
+    ++  balance  {who/mail pla/@ud sta/@ud}             ::  XX same as invite?
+    ++  gilt                                            ::
+      $%  {$ships (list ship)}                          ::
+          {$womb-owner (unit mail)}                     ::
+          {$womb-balance (unit balance)}                ::
       ==
     --
   ::                                                    ::
@@ -1050,8 +1055,8 @@
     ++  rite                                            ::  urbit commitment
       $%  {$apple p/(map site @)}                       ::  web api key
           {$block $~}                                   ::  banned
-          {$email p/(set @t)}                            ::  email addresses
-          {$final p/@pG}                                 ::  recognize by ticket
+          {$email p/(set @t)}                           ::  email addresses
+          {$final p/@pG}                                ::  recognize by ticket
           {$fungi p/(map term @ud)}                     ::  fungibles
           {$guest $~}                                   ::  refugee visa
           {$hotel p/(map dorm pile)}                    ::  reserved block
@@ -1120,7 +1125,7 @@
 ::                                                      ::  ::
 |%
 ::                                                      ::
-::::                  ++number                          ::  (2a1) number theory
+::::                      ++number                      ::  (2a1) number theory
   ::                                                    ::::
 ++  number
   |%
@@ -1366,7 +1371,7 @@
     --  ::ga
   --  ::number
 ::                                                      ::
-::::                    ++crypto                        ::  (2a2) cryptography
+::::                      ++crypto                      ::  (2a2) cryptography
   ::                                                    ::::
 ++  crypto  ^?
   =,  ames
@@ -3887,7 +3892,7 @@
   ++  de-purl                                           ::  url+header parser
     |%
     ::                                                  ::  ++deft:de-purl:html
-    ++  deft                                              ::  parse url extension
+    ++  deft                                            ::  parse url extension
       |=  rax/(list @t)
       |-  ^-  pork
       ?~  rax
@@ -4014,7 +4019,7 @@
       ;~  plug
         ;~  pose
           %+  stag  %&
-          %+  sear                                    ::  LL parser weak here
+          %+  sear                                      ::  LL parser weak here
             |=  a/(list @t)
             =+  b=(flop a)
             ?>  ?=(^ b)
@@ -4065,7 +4070,7 @@
       [(malt qix) ((hard cred) ced) bem /]
   --  ::eyre
 ::                                                      ::
-::::                    ++wired                         ::  wire formatting
+::::                      ++wired                       ::  wire formatting
   ::                                                    ::::
 ++  wired  ^?
   |%
@@ -4116,7 +4121,7 @@
     (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::
-::::                    ++title                         ::  (2j) namespace
+::::                      ++title                       ::  (2j) namespace
   ::                                                    ::::
 ++  title  ^?
   |%
@@ -4204,12 +4209,12 @@
     ==
   --  ::title
 ::                                                      ::
-::::                    ++userlib                       ::  (2u) non-vane utils
+::::                      ++userlib                     ::  (2u) non-vane utils
   ::                                                    ::::
 ++  userlib  ^?
   |%
   ::                                                    ::
-  ::::                  ++chrono:userlib                ::  (2uB) time
+  ::::                    ++chrono:userlib              ::  (2uB) time
     ::                                                  ::::
   ++  chrono  ^?
     |%
@@ -4380,7 +4385,7 @@
       --  ::yu
     --  ::chrono
   ::                                                    ::
-  ::::                  ++space:userlib                 ::  (2uC) file utils
+  ::::                    ++space:userlib               ::  (2uC) file utils
     ::                                                  ::::
   ++  space  ^?
     =,  clay
@@ -4421,7 +4426,7 @@
       [p.one [%& (weld p.q.one p.q.two)]]
     --  ::space
   ::                                                    ::
-  ::::                  ++unix:userlib                  ::  (2uD) unix line-lists
+  ::::                    ++unix:userlib                ::  (2uD) unix line-lists
     ::                                                  ::::
   ++  unix  ^?
     |%
@@ -4459,10 +4464,10 @@
       [+((met 3 t)) (cat 3 t 10)]
     --
   ::                                                    ::
-  ::::                  ++scanf:userlib                 ::  (2uF) exterpolation
+  ::::                    ++scanf:userlib               ::  (2uF) exterpolation
     ::                                                  ::::
-  ++  scanf                                             ::  formatted scan
-    =<  |*  {tape (pole _;/(*{$^(rule tape)}))}
+  ++  scanf
+    =<  |*  {tape (pole _;/(*{$^(rule tape)}))}         ::  formatted scan
         =>  .(+< [a b]=+<)
         (scan a (parsf b))
     |%
@@ -4502,7 +4507,7 @@
       [%& p=rul]
     --  ::scanf
   ::                                                    ::
-  ::::                  ++pubsub:userlib                ::  (2uG) application
+  ::::                    ++pubsub:userlib              ::  (2uG) application
     ::                                                  ::::
   ++  pubsub  ^?
     =,  gall
