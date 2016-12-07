@@ -925,7 +925,7 @@
           {$vein $~}                                    ::  view signing keys
           {$vest $~}                                    ::  view public balance
           {$vine $~}                                    ::  view secret history
-          {$jaelwomb p/task:womb}                       ::  lazy refactor
+          {$jaelwomb p/task:womb}                       ::  XX not factored in
           {$west p/ship q/path r/*}                     ::  remote request
       ==                                                ::
     ++  gilt  gilt:womb
@@ -1124,10 +1124,10 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) engines
 ::                                                      ::  ::
 |%
-::                                                      ::
-::::                      ++number                      ::  (2a1) number theory
+::                                                      ::::
+::::                      ++number                      ::  (2a) number theory
   ::                                                    ::::
-++  number
+++  number  ^?
   |%
   ::                                                    ::  ++fu:number
   ++  fu                                                ::  modulo (mul p q)
@@ -1222,18 +1222,20 @@
               [p=p q=q fq=fq]
           |%
           ::                                            ::  ++cla:curt:number
-          ++  cla
+          ++  cla                                       ::
             |=  raw/@
             =+  low=(dis 248 (cut 3 [0 1] raw))
             =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
             =+  mid=(cut 3 [1 30] raw)
             (can 3 [[1 low] [30 mid] [1 hih] ~])
           ::                                            ::  ++sqr:curt:number
-          ++  sqr    |=(a/@ (mul a a))
+          ++  sqr                                       ::
+            |=(a/@ (mul a a))
           ::                                            ::  ++inv:curt:number
-          ++  inv    |=(a/@ (~(exp fo q) (sub q 2) a))
+          ++  inv                                       ::
+            |=(a/@ (~(exp fo q) (sub q 2) a))
           ::                                            ::  ++cad:curt:number
-          ++  cad
+          ++  cad                                       ::
             |=  {n/{x/@ z/@} m/{x/@ z/@} d/{x/@ z/@}}
             =+  ^=  xx
                 ;:  mul  4  z.d
@@ -1251,7 +1253,7 @@
                 ==
             [(sit.fq xx) (sit.fq zz)]
           ::                                            ::  ++cub:curt:number
-          ++  cub
+          ++  cub                                       ::
             |=  {x/@ z/@}
             =+  ^=  xx
                 %+  mul
@@ -1370,8 +1372,8 @@
       (need f)
     --  ::ga
   --  ::number
-::                                                      ::
-::::                      ++crypto                      ::  (2a2) cryptography
+::                                                      ::::
+::::                      ++crypto                      ::  (2b) cryptography
   ::                                                    ::::
 ++  crypto  ^?
   =,  ames
@@ -1387,65 +1389,84 @@
       =>
         =+  =>  [gr=(ga 8 0x11b 3) few==>(fe .(a 5))]
             [pro=pro.gr dif=dif.gr pow=pow.gr ror=ror.few]
-        =>  |%
-            ++  cipa                                    ::  AES params
-              $_  ^?  |%
-              ++  co  *{p/@ q/@ r/@ s/@}                ::  col coefs
+        =>  |%                                          ::
+            ++  cipa  $_  ^?                            ::  AES params
+              |%
+              ++  co  *{p/@ q/@ r/@ s/@}                ::  column coefficients
               ++  ix  |~(a/@ *@)                        ::  key index
               ++  ro  *{p/@ q/@ r/@ s/@}                ::  row shifts
               ++  su  *@                                ::  s-box
               --  ::cipa
             --  ::
         |%
+        ::                                              ::  ++pen:ahem:aes:
         ++  pen                                         ::  encrypt
           ^-  cipa
           |%
-          ++  co  [0x2 0x3 1 1]
-          ++  ix  |~(a/@ a)
-          ++  ro  [0 1 2 3]
-          ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
-                    df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
-                    9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
-                    8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
-                    08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
-                    79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
-                    db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
-                    7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
-                    d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
-                    a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
-                    cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
-                    842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
-                    75b2.27eb.e280.1207.9a05.9618.c323.c704.
-                    1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
-                    c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
-                    76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
+          ::                                            ::  ++co:pen:ahem:aes: 
+          ++  co                                        ::  column coefficients
+            [0x2 0x3 1 1]
+          ::                                            ::  ++ix:pen:ahem:aes:
+          ++  ix                                        ::  key index
+            |~(a/@ a)
+          ::                                            ::  ++ro:pen:ahem:aes:
+          ++  ro                                        ::  row shifts
+            [0 1 2 3]
+          ::                                            ::  ++su:pen:ahem:aes:
+          ++  su                                        ::  s-box
+            0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
+              df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
+              9e1d.c186.b957.3561.0ef6.0348.66b5.3e70.
+              8a8b.bd4b.1f74.dde8.c6b4.a61c.2e25.78ba.
+              08ae.7a65.eaf4.566c.a94e.d58d.6d37.c8e7.
+              79e4.9591.62ac.d3c2.5c24.0649.0a3a.32e0.
+              db0b.5ede.14b8.ee46.8890.2a22.dc4f.8160.
+              7319.5d64.3d7e.a7c4.1744.975f.ec13.0ccd.
+              d2f3.ff10.21da.b6bc.f538.9d92.8f40.a351.
+              a89f.3c50.7f02.f945.8533.4d43.fbaa.efd0.
+              cf58.4c4a.39be.cb6a.5bb1.fc20.ed00.d153.
+              842f.e329.b3d6.3b52.a05a.6e1b.1a2c.8309.
+              75b2.27eb.e280.1207.9a05.9618.c323.c704.
+              1531.d871.f1e5.a534.ccf7.3f36.2693.fdb7.
+              c072.a49c.afa2.d4ad.f047.59fa.7dc9.82ca.
+              76ab.d7fe.2b67.0130.c56f.6bf2.7b77.7c63
           --
-        ++  pin                                         :: decrypt
+        ::                                              ::  ++pin:ahem:aes:
+        ++  pin                                         ::  decrypt
           ^-  cipa
           |%
-          ++  co  [0xe 0xb 0xd 0x9]
-          ++  ix  |~(a/@ (sub nnr a))
-          ++  ro  [0 3 2 1]
-          ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
-                    6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
-                    ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
-                    5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
-                    f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
-                    1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
-                    6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
-                    73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
-                    6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
-                    0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
-                    849d.8da7.5746.155e.dab9.edfd.5048.706c.
-                    92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
-                    25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
-                    4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
-                    cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
-                    fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
+          ::                                            ::  ++co:pin:ahem:aes:
+          ++  co                                        ::  column coefficients
+            [0xe 0xb 0xd 0x9]
+          ::                                            ::  ++ix:pin:ahem:aes:
+          ++  ix                                        ::  key index
+            |~(a/@ (sub nnr a))
+          ::                                            ::  ++ro:pin:ahem:aes:
+          ++  ro                                        ::  row shifts
+            [0 3 2 1]
+          ::                                            ::  ++su:pin:ahem:aes:
+          ++  su                                        ::  s-box
+            0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
+              6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
+              ef9c.c993.9f7a.e52d.0d4a.b519.a97f.5160.
+              5fec.8027.5910.12b1.31c7.0788.33a8.dd1f.
+              f45a.cd78.fec0.db9a.2079.d2c6.4b3e.56fc.
+              1bbe.18aa.0e62.b76f.89c5.291d.711a.f147.
+              6edf.751c.e837.f9e2.8535.ade7.2274.ac96.
+              73e6.b4f0.cecf.f297.eadc.674f.4111.913a.
+              6b8a.1301.03bd.afc1.020f.3fca.8f1e.2cd0.
+              0645.b3b8.0558.e4f7.0ad3.bc8c.00ab.d890.
+              849d.8da7.5746.155e.dab9.edfd.5048.706c.
+              92b6.655d.cc5c.a4d4.1698.6886.64f6.f872.
+              25d1.8b6d.49a2.5b76.b224.d928.66a1.2e08.
+              4ec3.fa42.0b95.4cee.3d23.c2a6.3294.7b54.
+              cbe9.dec4.4443.8e34.87ff.2f9b.8239.e37c.
+              fbd7.f381.9ea3.40bf.38a5.3630.d56a.0952
           --
         ::                                              ::  ++mcol:ahem:aes:
         ++  mcol                                        ::
-          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  ^-  (list @)
+          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  
+          ^-  (list @)
           =+  c=[p=*@ q=*@ r=*@ s=*@]
           |-  ^-  (list @)
           ?~  a  ~
@@ -1488,17 +1509,18 @@
               =>  +
               |%
               ::                                        ::  ++ankh:be:ahem:aes:
-              ++  ankh
+              ++  ankh                                  ::
                 |=  {a/cipa b/@ c/@}
                 (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
               ::                                        ::  ++sark:be:ahem:aes:
-              ++  sark
-                |=  {c/(list @) d/(list @)}  ^-  (list @)
+              ++  sark                                  ::
+                |=  {c/(list @) d/(list @)}  
+                ^-  (list @)
                 ?~  c  ~
                 ?~  d  !!
                 [(mix i.c i.d) $(c t.c, d t.d)]
               ::                                        ::  ++srow:be:ahem:aes:
-              ++  srow
+              ++  srow                                  ::
                 |=  {a/cipa b/(list @)}  ^-  (list @)
                 =+  [c=0 d=~ e=ro.a]
                 |-
@@ -1511,7 +1533,7 @@
                 |=  {f/@ g/@}
                 (cut 3 [f 1] (snag (mod (add g c) nnb) b))
               ::                                        ::  ++subs:be:ahem:aes:
-              ++  subs
+              ++  subs                                  ::
                 |=  {a/cipa b/(list @)}  ^-  (list @)
                 ?~  b  ~
                 [(sube i.b su.a) $(b t.b)]
@@ -1867,6 +1889,7 @@
       ::  by appending 1, then 0s
       ::  the spec is unclear, but it must be octet based
       ::  to match the test vectors
+      ::
       ^-  @ux
       =+  pad=(mod oct 16)
       ?:  =(pad 0)  0x8000.0000.0000.0000.0000.0000.0000.0000
