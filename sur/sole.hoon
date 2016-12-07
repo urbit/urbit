@@ -28,7 +28,7 @@
       {$clr $~}                                         ::  clear screen
       {$det sole-change}                                ::  edit command
       {$err p/@ud}                                      ::  error point
-      {$klr p/styx:^dill}                               ::  styled text line
+      {$klr p/styx:dill}                               ::  styled text line
       {$mor p/(list sole-effect)}                       ::  multiple effects
       {$nex $~}                                         ::  save clear command
       {$pro sole-prompt}                                ::  set prompt
@@ -46,7 +46,7 @@
 ++  sole-prompt                                         ::  prompt definition
   $:  vis/?                                             ::  command visible
       tag/term                                          ::  history mode
-      cad/styx:^dill                                    ::  caption
+      cad/styx:dill                                    ::  caption
   ==                                                    ::
 ++  sole-share                                          ::  symmetric state
   $:  ven/sole-clock                                    ::  our vector clock
@@ -76,8 +76,8 @@
   %+  each  (unit out)                                  ::  ~ is abort
   %^    trel                                            ::  fetch and continue
       (unit knot)
-    hiss:^eyre
-  $-(httr:^eyre (sole-request out))
+    hiss:eyre
+  $-(httr:eyre (sole-request out))
   
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
@@ -105,7 +105,7 @@
 ::                                                      ::
 ++  sole-at                                             ::  fetch url
   =|  usr/knot                                          ::
-  |*  {pul/_purl:^eyre fun/$-(httr:^eyre *)}            ::
+  |*  {pul/_purl:eyre fun/$-(httr:eyre *)}            ::
   :-  p=*(list tank)                                    ::
   q=[%| p=`usr q=[pul %get ~ ~] r=fun]                  ::
 ::                                                      ::

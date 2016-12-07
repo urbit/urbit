@@ -6,7 +6,7 @@
 ::
 ::::  ~fyr
   ::
-=,  ^eyre
+=,  eyre
 |%
 ++  parse-url
   |=  a/$@(cord:purl purl)  ^-  purl

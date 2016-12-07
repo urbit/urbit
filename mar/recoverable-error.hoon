@@ -6,7 +6,7 @@
 ::
 ::::  ~fyr
   ::
-=,  ^eyre
+=,  eyre
 =,  format
 =,  html
 |_   recoverable-error

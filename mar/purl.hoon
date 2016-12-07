@@ -2,7 +2,7 @@
 ::::  /hoon/purl/mar
   ::
 /?    310
-=,  ^eyre
+=,  eyre
 |_  url/purl
 ::
 ++  grow  |%    ++  hiss  [url %get ~ ~]

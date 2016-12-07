@@ -2,7 +2,7 @@
 !?  164
 ::::
 |=  pit/vase
-=,  ^eyre
+=,  eyre
 =,  wired
 =,  unity
 =,  format
@@ -29,29 +29,29 @@
               {$mini-jael-task *}                       :: XX types
           ==  ==                                        ::
               $:  $f                                    ::  to %ford
-          $%  {$exec p/@p q/(unit {beak silk:^ford})}   ::
+          $%  {$exec p/@p q/(unit {beak silk:ford})}   ::
               {$wasp p/@p q/@uvH r/?}                   ::
           ==  ==                                        ::
               $:  $g                                    ::  to %gall
-          $%  {$deal p/sock q/cush:^gall}               ::  full transmission
+          $%  {$deal p/sock q/cush:gall}               ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
           $%  {$woot p/ship q/path r/coop}              ::  acknowledgment
-              {$went ship cape:^ames}                   ::  XX ignore
+              {$went ship cape:ames}                   ::  XX ignore
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
           $%  {$wake $~}                                ::  timer activate
           ==  ==                                        ::
               $:  $g                                    ::  by %gall
-          $%  {$unto p/cuft:^gall}                      ::  within agent
+          $%  {$unto p/cuft:gall}                      ::  within agent
           ==  ==                                        ::
               $:  $e                                    ::  by self
           $%  {$thou p/httr}                            ::  response for proxy
               {$mini-jael-gift *}                       :: XX types
           ==  ==                                        ::
               $:  $f                                    ::  by %ford
-          $%  {$made p/@uvH q/gage:^ford}                     ::
+          $%  {$made p/@uvH q/gage:ford}                     ::
               {$news p/@uvH}                            ::
           ==  ==                                        ::
               $:  @tas                                  ::  by any
@@ -950,7 +950,7 @@
     ::
         $unto                                           ::  app response
       ?>  ?=($%({$le $~} {$of @ ^}) tee)
-      =+  cuf=`cuft:^gall`+>.sih
+      =+  cuf=`cuft:gall`+>.sih
       ?-    -.cuf
           ?($coup $reap)
         =/  ack  ?~(p.cuf ~ `[-.cuf u.p.cuf])
@@ -1137,14 +1137,14 @@
     =-  -(hen hen.+)
     (pass-note(hen `~) on+~ %f [%wasp our a &])
   ::
-  ++  ford-req  |=({bek/beak kas/silk:^ford} [%f [%exec our `[bek kas]]])
+  ++  ford-req  |=({bek/beak kas/silk:ford} [%f [%exec our `[bek kas]]])
   ++  exec-live
-    |=  {tea/whir req/{beak silk:^ford}}
+    |=  {tea/whir req/{beak silk:ford}}
     =.  lyv  (~(put by lyv) hen [%exec tea])
     (execute tea req)
   ::
   ++  execute
-    |=  {tea/whir bek/beak sil/silk:^ford}
+    |=  {tea/whir bek/beak sil/silk:ford}
     %+  pass-note  tea
     :^  %f  %exec  our
     `[bek [%dude |.(leaf+"eyre: execute {<tea>}") sil]]
@@ -1288,7 +1288,7 @@
       =.  -.bem  (norm-beak -.bem)
       =+  req=[%bake mar arg bem]
       =+  red=[%bake %red-quri arg bem]
-      (exec-live wir -.bem `silk:^ford`[%alts ~[req red]])
+      (exec-live wir -.bem `silk:ford`[%alts ~[req red]])
     ::
     ::
     ++  is-anon  =([~ ''] (~(get by (molt quy)) 'anon'))
@@ -1890,7 +1890,7 @@
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
     ++  execute  
-      |=({a/whir-se b/{beak silk:^ford}} (execute:abet se+[a usr dom] b))
+      |=({a/whir-se b/{beak silk:ford}} (execute:abet se+[a usr dom] b))
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
@@ -1907,7 +1907,7 @@
     ++  build
       %^  execute  %core  root-beak
       :::+  %dude  [|.(+)]:>%mod-samp<
-      ^-  silk:^ford
+      ^-  silk:ford
       :^  %mute  core+[root-beak (flop %_(dom . sec+dom))]
         [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
       ?~  cor  ~
@@ -1922,7 +1922,7 @@
       %^  execute  arm  root-beak
       call+[ride+[limb+arm prep-cor] [%$ sam]]
     ::
-    ++  prep-cor  ^-  silk:^ford
+    ++  prep-cor  ^-  silk:ford
       ?~  cor  ~|(%no-core !!)
       ?~  u.cor  ~|(%nil-driver !!)
       :+  %$  %core

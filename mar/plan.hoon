@@ -6,7 +6,7 @@
 ::
 ::::  ~fyr
   ::
-=,  ^eyre
+=,  eyre
 =,  html
 =,  format
 |_  all/{{who/@txname loc/@txloc} acc/(map knot plan-acct)}

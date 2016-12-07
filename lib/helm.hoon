@@ -11,7 +11,7 @@
 |%                                                      ::  ::
 ++  helm-part  {$helm $0 helm-pith}                     ::  helm state
 ++  helm-pith                                           ::  helm content
-  $:  bur/(unit (pair ship mace:^ames))                 ::  requesting ticket
+  $:  bur/(unit (pair ship mace:ames))                 ::  requesting ticket
       hoc/(map bone helm-session)                       ::  consoles
   ==                                                    ::  
 ++  helm-session                                        ::
@@ -25,7 +25,7 @@
   $:  his/@p                                            ::  identity
       tic/@p                                            ::  ticket
       eny/@t                                            ::  entropy
-      ges/gens:^ames                                    ::  description
+      ges/gens:ames                                    ::  description
   ==                                                    ::
 ++  hood-init                                           ::  report init
   $:  him/ship                                          ::
@@ -40,13 +40,13 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:^gall helm-part}                              ::  main helm work
+|=  {bowl:gall helm-part}                              ::  main helm work
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$cash wire p/@p q/buck:^ames}                ::
+      $%  {$cash wire p/@p q/buck:ames}                ::
           {$conf wire dock $load ship term}             ::
-          {$flog wire flog:^dill}                       ::
+          {$flog wire flog:dill}                       ::
           {$funk wire @p @p @}                          ::   
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
@@ -173,7 +173,7 @@
   [%flog /reset %veer p way txt]
 ::
 ++  poke-wyll                                         ::  hear certificate
-  |=  wil/(unit wyll:^ames)
+  |=  wil/(unit wyll:ames)
   ?>  ?=(^ bur)
   ?>  ?=(^ wil)  
   =<  abet
@@ -187,7 +187,7 @@
   (emit %flog /helm %verb ~)
 ::
 ++  take-onto                                         ::  result of %conf
-  |=  saw/(each suss:^gall tang)  =<  abet
+  |=  saw/(each suss:gall tang)  =<  abet
   %-  emit
   ?-   -.saw
     $|  [%flog ~ %crud %onto `tang`p.saw]

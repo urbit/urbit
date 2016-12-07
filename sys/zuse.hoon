@@ -39,12 +39,12 @@
 ::
 ++  ames  ^?
   ::                                                    ::::
-  ::::                    ++^ames                       ::  (1a) network
+  ::::                    ++ames                        ::  (1a) network
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^behn                  ::  (1a1) arvo moves
+    ::::                  ++able:behn                   ::  (1a1) arvo moves
       ::                                                ::::
     |%
     ++  card                                            ::  out cards
@@ -256,12 +256,12 @@
 ::
 ++  behn  ^?
   ::                                                    ::::
-  ::::                    ++^behn                       ::  (1b) timekeeping
+  ::::                    ++behn                        ::  (1b) timekeeping
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^behn                  ::  (1b1) arvo moves
+    ::::                  ++able:behn                   ::  (1b1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
@@ -279,12 +279,12 @@
 ::
 ++  clay  ^?
   ::                                                    ::::
-  ::::                    ++^clay                       ::  (1c) version control
+  ::::                    ++clay                        ::  (1c) version control
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^dill                  ::  (1c1) arvo moves
+    ::::                  ++able:dill                   ::  (1c1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
@@ -419,12 +419,12 @@
 ::
 ++  dill  ^?
   ::                                                    ::::
-  ::::                    ++^dill                       ::  (1d) console
+  ::::                    ++dill                        ::  (1d) console
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^dill                  ::  (1d1) arvo moves
+    ::::                  ++able:dill                   ::  (1d1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
@@ -533,12 +533,12 @@
 ::
 ++  eyre  ^?
   ::                                                    ::::
-  ::::                    ++^eyre                       ::  (1e) oldweb
+  ::::                    ++eyre                        ::  (1e) oldweb
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^eyre                  ::  (1e1) arvo moves
+    ::::                  ++able:eyre                   ::  (1e1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
@@ -663,12 +663,12 @@
 ::
 ++  ford  ^?
   ::                                                    ::::
-  ::::                    ++^ford                       ::  (1f) build
+  ::::                    ++ford                        ::  (1f) build
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^ford                  ::  (1f1) arvo moves
+    ::::                  ++able:ford                   ::  (1f1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
@@ -750,12 +750,12 @@
 ::
 ++  gall  ^?
   ::                                                    ::::
-  ::::                    ++^gall                       ::  (1g) applications
+  ::::                    ++gall                        ::  (1g) applications
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^gall                  ::  (1g1) arvo moves
+    ::::                  ++able:gall                   ::  (1g1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::  outgoing result
@@ -822,12 +822,12 @@
 ::
 ++  jael  ^?
   ::                                                    ::::
-  ::::                    ++^jael                       ::  (1h) security
+  ::::                    ++jael                        ::  (1h) security
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^jael                  ::  (1h1) arvo moves
+    ::::                  ++able:jael                   ::  (1h1) arvo moves
       ::                                                ::::
     =,  pki
     =,  rights
@@ -959,7 +959,7 @@
       ==
     --
   ::                                                    ::
-  ::::                    ++pki:^jael                   ::  (1h2) certificates
+  ::::                    ++pki:jael                    ::  (1h2) certificates
     ::                                                  ::::
   ++  pki  ^?
     |%
@@ -1006,7 +1006,7 @@
     ++  will  (map life cert)                           ::  meta-certificate
     --  ::  pki
   ::                                                    ::
-  ::::                    ++rights:^jael                ::  (1h3) claims
+  ::::                    ++rights:jael                 ::  (1h3) claims
     ::                                                  ::::
   ++  rights  ^?
     =,  pki
@@ -1068,12 +1068,12 @@
 ::
 ++  xmas  ^?
   ::                                                    ::::
-  ::::                  ++^xmas                         ::  (1i) networking
+  ::::                  ++xmas                          ::  (1i) networking
     ::                                                  ::::
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                ++able:^xmas                    ::  (1i1) arvo moves
+    ::::                ++able:xmas                     ::  (1i1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::
@@ -1369,7 +1369,7 @@
 ::::                    ++crypto                        ::  (2a2) cryptography
   ::                                                    ::::
 ++  crypto  ^?
-  =,  ^ames
+  =,  ames
   =,  number
   |%
   ::                                                    ::  ++aes:crypto
@@ -3284,7 +3284,7 @@
 ::::                      ++differ                      ::  (2d) hunt-mcilroy
   ::                                                    ::::
 ++  differ  ^?
-  =,  ^clay
+  =,  clay
   =,  format
   |%
   ::                                                    ::  ++berk:differ
@@ -3442,7 +3442,7 @@
 ::::                      ++html                        ::  (2e) text encodings
   ::                                                    ::::
 ++  html  ^?
-  =,  ^eyre
+  =,  eyre
   |%
   ::                                                    ::
   ::::                    ++mimes:html                  ::  (2e1) MIME
@@ -4133,7 +4133,7 @@
     name
   ::                                                    ::  ++clan:title
   ++  clan                                              ::  ship to rank
-    |=  who/ship  ^-  rank:^ames
+    |=  who/ship  ^-  rank:ames
     =+  wid=(met 3 who)
     ?:  (lte wid 1)   %czar
     ?:  =(2 wid)      %king
@@ -4154,7 +4154,7 @@
     (rap 3 yow ' ' woy ~)
   ::                                                    ::  ++gnow:title
   ++  gnow                                              ::  full display name
-    |=  {who/@p gos/gcos:^ames}  ^-  @t
+    |=  {who/@p gos/gcos:ames}  ^-  @t
     ?-    -.gos
         $czar                 (rap 3 '|' (rap 3 (glam who)) '|' ~)
         $king                 (rap 3 '_' p.gos '_' ~)
@@ -4168,7 +4168,7 @@
           $punk  ~['"' q.p.gos '"']
           ?($lord $lady)
         =+  ^=  nad
-            =+  nam=`name:^ames`s.p.p.gos
+            =+  nam=`name:ames`s.p.p.gos
             %+  rap  3
             :~  p.nam
                 ?~(q.nam 0 (cat 3 ' ' u.q.nam))
@@ -4383,7 +4383,7 @@
   ::::                  ++space:userlib                 ::  (2uC) file utils
     ::                                                  ::::
   ++  space  ^?
-    =,  ^clay
+    =,  clay
     |%
     ::                                                  ::  ++feel:space:userlib
     ++  feel                                            ::  simple file write
@@ -4505,7 +4505,7 @@
   ::::                  ++pubsub:userlib                ::  (2uG) application
     ::                                                  ::::
   ++  pubsub  ^?
-    =,  ^gall
+    =,  gall
     |%
     ::                                                  ::  ++pale:pubsub:
     ++  pale                                            ::  filter peers
@@ -4524,52 +4524,42 @@
 ::
 ++  zuse  %309                                          ::  hoon+zuse kelvin
 ++  gift-arvo                                           ::  out result <-$
-  $?  gift:able:^ames
-      gift:able:^behn
-      gift:able:^clay
-      gift:able:^dill
-      gift:able:^eyre
-      gift:able:^ford
-      gift:able:^gall
+  $?  gift:able:ames
+      gift:able:behn
+      gift:able:clay
+      gift:able:dill
+      gift:able:eyre
+      gift:able:ford
+      gift:able:gall
   ==
 ++  task-arvo                                           ::  in request ->$
-  $?  task:able:^ames
-      task:able:^clay
-      task:able:^behn
-      task:able:^dill
-      task:able:^eyre
-      task:able:^ford
-      task:able:^gall
+  $?  task:able:ames
+      task:able:clay
+      task:able:behn
+      task:able:dill
+      task:able:eyre
+      task:able:ford
+      task:able:gall
   ==
 ++  note-arvo                                           ::  out request $->
   $?  {@tas $meta vase}
-  $%  {$a task:able:^ames}
-      {$b task:able:^behn}
-      {$c task:able:^clay}
-      {$d task:able:^dill}
-      {$e task:able:^eyre}
-      {$f task:able:^ford}
-      {$g task:able:^gall}
+  $%  {$a task:able:ames}
+      {$b task:able:behn}
+      {$c task:able:clay}
+      {$d task:able:dill}
+      {$e task:able:eyre}
+      {$f task:able:ford}
+      {$g task:able:gall}
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
-  $%  {$a gift:able:^ames}
-      {$b gift:able:^behn}
-      {$c gift:able:^clay}
-      {$d gift:able:^dill}
-      {$e gift:able:^eyre}
-      {$f gift:able:^ford}
-      {$g gift:able:^gall}
-      {$j gift:able:^jael}
+  $%  {$a gift:able:ames}
+      {$b gift:able:behn}
+      {$c gift:able:clay}
+      {$d gift:able:dill}
+      {$e gift:able:eyre}
+      {$f gift:able:ford}
+      {$g gift:able:gall}
+      {$j gift:able:jael}
   ==
 ::
-::
-::  XX transitional alias layer
-++  ames  [crypto=crua=[en=en de=de]:crua:crypto]  :: hardcoded vere interface
-++  behn  !!
-++  clay  !!
-++  dill  !!
-++  eyre  !!
-++  ford  !!
-++  gall  !!
-++  jael  !!
 --  ::

@@ -54,7 +54,7 @@
   (star ;~(pose (cold '+' (just '-')) (cold '/' (just '_')) next))
     --
 ::
-=,  ^gall
+=,  gall
 |_  $:  hid/bowl  count/@  
         web-hooks/(map @t {id/@t listeners/(set bone)})
         received-ids/(list @t)

@@ -16,12 +16,12 @@
 ::      - task for converting invites to tickets
 ::
 |=  pit/vase
-=,  pki:^jael
-=,  rights:^jael
-=,  able:^jael 
+=,  pki:jael
+=,  rights:jael
+=,  able:jael 
 =,  title
 =,  crypto
-=*  womb  womb:^jael
+=*  womb  womb:jael
 =,  jael
 ::                                                      ::::
 ::::                    # models                        ::  data structures
@@ -813,7 +813,7 @@
       |=((map @ta @) (~(run by +<) |=(@ (mug +<))))
     ::
         $urban
-      [%urban (~(run by p.rys) |=({@da code:^ames} [+<- (mug +<+)]))]
+      [%urban (~(run by p.rys) |=({@da code:ames} [+<- (mug +<+)]))]
     ==
   ::                                                    ::  ++remove:up
   ++  remove                                            ::  pig minus gob
@@ -1900,7 +1900,7 @@
       ++  grow-lick                                     ::  check signature
         |=  {pub/pass ash/@ val/@}
         ^-  ?
-        =+  ver=(sure:as:(com:nu:crub pub) *code:^ames val)
+        =+  ver=(sure:as:(com:nu:crub pub) *code:ames val)
         ?~  ver  |
         =(ash u.ver)
       ::                                                ::  grow-like/ex:ur

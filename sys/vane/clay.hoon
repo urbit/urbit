@@ -11,7 +11,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
-=,  ^clay
+=,  clay
 =>  |%
 ++  aeon  @ud                                           ::  version number
 ::
@@ -335,7 +335,7 @@
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
   ==  ==                                                ::
       $:  $f                                            ::
-  $%  {$exec p/@p q/(unit {beak silk:^ford})}                 ::
+  $%  {$exec p/@p q/(unit {beak silk:ford})}                 ::
   ==  ==                                                ::
       $:  $t                                            ::
   $%  {$wait p/@da}                                     ::
@@ -352,7 +352,7 @@
               {$writ p/riot}                            ::
           ==  ==                                        ::
               $:  $f                                    ::
-          $%  {$made p/@uvH q/gage:^ford}                     ::
+          $%  {$made p/@uvH q/gage:ford}                     ::
           ==  ==                                        ::
               $:  $t                                    ::
           $%  {$wake $~}                                ::  timer activate
@@ -477,7 +477,7 @@
   ::  ++gage-to-success-cages?
   ::
   ++  gage-to-cages
-    |=  gag/gage:^ford
+    |=  gag/gage:ford
     ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-cages-or-error gag))
   ::
@@ -485,12 +485,12 @@
   ::  ++gage-to-cages?
   ::
   ++  gage-to-success-cages
-    |=  gag/gage:^ford
+    |=  gag/gage:ford
     ^-  (list (pair cage cage))
     ?.  ?=($tabl -.gag)
       (ford-fail ?-(-.gag $| p.gag, $& [>%strange-gage p.p.gag<]~))
     %+  murn  p.gag
-    |=  {key/gage:^ford val/gage:^ford}  
+    |=  {key/gage:ford val/gage:ford}  
     ^-  (unit {cage cage})
     ?.  ?=($& -.key)
       (ford-fail ?-(-.key $| p.key, $tabl [>%strange-gage<]~))
@@ -508,7 +508,7 @@
   ::  of cages.
   ::
   ++  gage-to-cages-or-error
-    |=  gag/gage:^ford
+    |=  gag/gage:ford
     ^-  (each (list (pair cage cage)) tang)
     ?:  ?=($| -.gag)  (mule |.(`$~`(ford-fail p.gag)))
     ?.  ?=($tabl -.gag)
@@ -732,10 +732,10 @@
     %-  emit
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %exec  our  ~  [her syd %da now]  %tabl
-        ^-  (list (pair silk:^ford silk:^ford))
+        ^-  (list (pair silk:ford silk:ford))
         %+  turn  `(list path)`mus
         |=  a/path
-        ^-  (pair silk:^ford silk:^ford)
+        ^-  (pair silk:ford silk:ford)
         :-  [%$ %path !>(a)]
         :+  %cast  %mime
         =+  (need (need (read-x:ze let.dom a)))
@@ -942,7 +942,7 @@
       :~  :*  hen  %pass
               [%inserting (scot %p her) syd (scot %da wen) ~]
               %f  %exec  our  ~  [her syd %da wen]  %tabl
-              ^-  (list (pair silk:^ford silk:^ford))
+              ^-  (list (pair silk:ford silk:ford))
               %+  turn  ins
               |=  {pax/path mis/miso}
               ?>  ?=($ins -.mis)
@@ -953,7 +953,7 @@
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
               %f  %exec  our  ~  [her syd %da wen]  %tabl
-              ^-  (list (pair silk:^ford silk:^ford))
+              ^-  (list (pair silk:ford silk:ford))
               %+  turn  dif
               |=  {pax/path mis/miso}
               ?>  ?=($dif -.mis)
@@ -965,7 +965,7 @@
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
               %f  %exec  our  ~  [her syd %da wen]  %tabl
-              ^-  (list (pair silk:^ford silk:^ford))
+              ^-  (list (pair silk:ford silk:ford))
               %+  turn  mut
               |=  {pax/path mis/miso}
               ?>  ?=($mut -.mis)
@@ -1040,7 +1040,7 @@
   ::  diffs and mutations), then we go ahead and run ++apply-edit.
   ::
   ++  take-inserting
-    |=  {wen/@da res/gage:^ford}
+    |=  {wen/@da res/gage:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-inserting-unexpected-made  +>.$
@@ -1068,7 +1068,7 @@
   ::  insertions and mutations), then we go ahead and run ++apply-edit.
   ::
   ++  take-diffing
-    |=  {wen/@da res/gage:^ford}
+    |=  {wen/@da res/gage:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-diffing-unexpected-made  +>.$
@@ -1099,7 +1099,7 @@
   ::  this is handled in ++take-mutating.
   ::
   ++  take-castify
-    |=  {wen/@da res/gage:^ford}
+    |=  {wen/@da res/gage:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-castifying-unexpected-made  +>.$
@@ -1120,7 +1120,7 @@
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
         %f  %exec  our  ~  [her syd %da wen]  %tabl
-        ^-  (list (pair silk:^ford silk:^ford))
+        ^-  (list (pair silk:ford silk:ford))
         %+  turn  cat
         |=  {pax/path cay/cage}
         :-  [%$ %path -:!>(*path) pax]
@@ -1138,7 +1138,7 @@
   ::  ++apply-edit.
   ::
   ++  take-mutating
-    |=  {wen/@da res/gage:^ford}
+    |=  {wen/@da res/gage:ford}
     ^+  +>
     ?~  dok
       ~&  %clay-take-mutating-unexpected-made  +>.$
@@ -1217,10 +1217,10 @@
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %exec  our  :^  ~  [her syd %da now]  %tabl
-        ^-  (list (pair silk:^ford silk:^ford))
+        ^-  (list (pair silk:ford silk:ford))
         %+  turn  (~(tap by hat))
         |=  {a/path b/lobe}
-        ^-  (pair silk:^ford silk:^ford)
+        ^-  (pair silk:ford silk:ford)
         :-  [%$ %path-hash !>([a b])]
         (lobe-to-silk:ze a b)
     ==
@@ -1236,7 +1236,7 @@
   ::  mim in dok).  The result is handled in ++take-ergo.
   ::
   ++  take-patch
-    |=  res/gage:^ford
+    |=  res/gage:ford
     ^+  +>
     ::  ~&  %taking-patch
     ?:  ?=($| -.res)
@@ -1303,10 +1303,10 @@
     %-  emit(dok ~)
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %exec  our  ~  [her syd %da now]  %tabl
-        ^-  (list (pair silk:^ford silk:^ford))
+        ^-  (list (pair silk:ford silk:ford))
         %+  turn  (~(tap in sum))
         |=  a/path
-        ^-  (pair silk:^ford silk:^ford)
+        ^-  (pair silk:ford silk:ford)
         :-  [%$ %path !>(a)]
         =+  b=(~(got by can) a)
         ?:  ?=($del -.b)
@@ -1327,7 +1327,7 @@
   ::  an %ergo card) to keep unix up-to-date.  Send this to unix.
   ::
   ++  take-ergo
-    |=  res/gage:^ford
+    |=  res/gage:ford
     ^+  +>
     ?:  ?=($| -.res)
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" p.res)
@@ -1475,7 +1475,7 @@
   ::
   ++  vale-page
     |=  a/page
-    ^-  silk:^ford
+    ^-  silk:ford
     ?.  ?=($hoon p.a)  [%vale a]
     ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%fail ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
@@ -1485,7 +1485,7 @@
   ::  This completes the receiving of %x foreign data.
   ::
   ++  take-foreign-x
-    |=  {car/care cas/case pax/path res/gage:^ford}
+    |=  {car/care cas/case pax/path res/gage:ford}
     ^+  +>
     ?>  ?=(^ ref)
     ?.  ?=($& -.res)
@@ -1573,7 +1573,7 @@
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
         %f  %exec  our  ~  [her syd cas]  %tabl
-        ^-  (list (pair silk:^ford silk:^ford))
+        ^-  (list (pair silk:ford silk:ford))
         %+  turn  (~(tap in pop))
         |=  a/plop
         ?-  -.a
@@ -1587,7 +1587,7 @@
   ::  state.
   ::
   ++  take-foreign-plops
-    |=  {lem/(unit @da) res/gage:^ford}
+    |=  {lem/(unit @da) res/gage:ford}
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
@@ -1785,13 +1785,13 @@
     ::
     ++  lobe-to-silk
       |=  {pax/path lob/lobe}
-      ^-  silk:^ford
+      ^-  silk:ford
       =+  ^-  hat/(map path lobe)
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
       =+  lol=`(unit lobe)`?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
-      |-  ^-  silk:^ford
+      |-  ^-  silk:ford
       ?:  =([~ lob] lol)
         =+  (need (need (read-x let.dom pax)))
         ?>  ?=($& -<)
@@ -2428,7 +2428,7 @@
       ::  we're in, and call the appropriate function for that stage.
       ::
       ++  route
-        |=  {sat/term res/(each riot gage:^ford)}
+        |=  {sat/term res/(each riot gage:ford)}
         ^+  +>.$
         ?.  =(sat wat.dat)
           ~|  :*  %hold-your-horses-merge-out-of-order
@@ -2716,10 +2716,10 @@
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
             %f  %exec  p.bob  ~  [p.oth q.oth r.oth]  %tabl
-            ^-  (list (pair silk:^ford silk:^ford))
+            ^-  (list (pair silk:ford silk:ford))
             %+  murn  (~(tap by q.bas.dat))
             |=  {pax/path lob/lobe}
-            ^-  (unit (pair silk:^ford silk:^ford))
+            ^-  (unit (pair silk:ford silk:ford))
             =+  a=(~(get by q.yak) pax)
             ?~  a
               ~
@@ -2745,7 +2745,7 @@
       ::  call ++diff-bob.
       ::  
       ++  diffed-ali
-        |=  res/gage:^ford
+        |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -2793,7 +2793,7 @@
       ::  call ++merge.
       ::
       ++  diffed-bob
-        |=  res/gage:^ford
+        |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -2844,10 +2844,10 @@
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
               %f  %exec  p.bob  ~  [p.bob q.bob da+now]  %tabl
-              ^-  (list (pair silk:^ford silk:^ford))
+              ^-  (list (pair silk:ford silk:ford))
               %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
               |=  {pax/path *}
-              ^-  (pair silk:^ford silk:^ford)
+              ^-  (pair silk:ford silk:ford)
               =+  cal=(~(got by can.dal.dat) pax)
               =+  cob=(~(got by can.dob.dat) pax)
               =+  ^=  her
@@ -2861,7 +2861,7 @@
       ::  Put merged changes in bof.dat and call ++build.
       ::
       ++  merged
-        |=  res/gage:^ford
+        |=  res/gage:ford
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
           (error:he %merge-bad-made leaf+"merging failed" p.tay)
@@ -2884,10 +2884,10 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
             %f  %exec  p.bob  ~  [p.bob q.bob da+now]  %tabl
-            ^-  (list (pair silk:^ford silk:^ford))
+            ^-  (list (pair silk:ford silk:ford))
             %+  murn  (~(tap by bof.dat))
             |=  {pax/path cay/(unit cage)}
-            ^-  (unit (pair silk:^ford silk:^ford))
+            ^-  (unit (pair silk:ford silk:ford))
             ?~  cay
               ~
             :-  ~
@@ -2909,7 +2909,7 @@
       ::  Sum all the changes into a new commit (new.dat), and checkout.
       ::
       ++  built
-        |=  res/gage:^ford
+        |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3031,10 +3031,10 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
             %f  %exec  p.bob  ~  val  %tabl
-            ^-  (list (pair silk:^ford silk:^ford))
+            ^-  (list (pair silk:ford silk:ford))
             %+  murn  (~(tap by q.new.dat))
             |=  {pax/path lob/lobe}
-            ^-  (unit (pair silk:^ford silk:^ford))
+            ^-  (unit (pair silk:ford silk:ford))
             ?:  (~(has by bop.dat) pax)
               ~
             `[[%$ %path !>(pax)] (merge-lobe-to-silk:he pax lob)]
@@ -3044,7 +3044,7 @@
       ::  some of the changes, call ++ergo.
       ::
       ++  checked-out
-        |=  res/gage:^ford
+        |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3088,10 +3088,10 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
             %f  %exec  p.bob  ~  val  %tabl
-            ^-  (list (pair silk:^ford silk:^ford))
+            ^-  (list (pair silk:ford silk:ford))
             %+  turn  (~(tap in sum))
             |=  a/path
-            ^-  (pair silk:^ford silk:^ford)
+            ^-  (pair silk:ford silk:ford)
             :-  [%$ %path !>(a)]
             =+  b=(~(got by erg.dat) a)
             ?.  b
@@ -3103,7 +3103,7 @@
       ::  Tell unix about the changes made by the merge.
       ::
       ++  ergoed
-        |=  res/gage:^ford
+        |=  res/gage:ford
         ^+  +>
         =+  tay=(gage-to-cages-or-error res)
         ?:  ?=($| -.tay)
@@ -3163,7 +3163,7 @@
         ::
         ++  merge-lobe-to-silk
           |=  {pax/path lob/lobe}
-          ^-  silk:^ford
+          ^-  silk:ford
           =+  hat=q.ali.dat
           =+  hot=q.bob.dat
           =+  ^=  lal
@@ -3171,7 +3171,7 @@
               |=  had/dome
               (~(get by q:(tako-to-yaki (~(got by hit.had) let.had))) pax)
           =+  lol=(~(get by hot) pax)
-          |-  ^-  silk:^ford
+          |-  ^-  silk:ford
           ?:  =([~ lob] lol)
             =+  (need (need (read-x let.dom pax)))
             ?>  ?=($& -<)

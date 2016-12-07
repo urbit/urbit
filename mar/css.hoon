@@ -2,7 +2,7 @@
 ::::  /hoon/css/mar
   ::
 /?    310
-=,  ^eyre
+=,  eyre
 =,  mimes:html
 |_  mud/@t
 ++  grow                                                ::  convert to

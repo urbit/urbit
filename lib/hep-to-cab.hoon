@@ -19,7 +19,7 @@
 ++  term  |=(a/^term (gsub '-' '_' a))              ::  single atom
 ++  path  |=(a/^path (turn a term))                 ::  path elements
 ++  quay                                            ::  query string keys
-  |=  a/quay:^eyre  ^+  a
+  |=  a/quay:eyre  ^+  a
   %+  turn  a
   |=({p/@t q/@t} [(term p) q])
 --

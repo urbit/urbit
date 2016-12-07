@@ -3,7 +3,7 @@
 ::::  /hoon/oauth2/lib
   ::
 /+    hep-to-cab, interpolate
-=,  ^eyre
+=,  eyre
 =,  mimes:html
 =,  html
 |%

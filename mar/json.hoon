@@ -5,7 +5,7 @@
   ::
 ::::  compute
   ::
-=,  ^eyre
+=,  eyre
 =,  format
 =,  html
 |_  jon/json

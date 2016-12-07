@@ -7,7 +7,7 @@
 ::
 ::::  ~fyr
   ::
-=,  ^eyre
+=,  eyre
 =,  html
 |%
 ++  twit-path                                           ::  valid peer path

@@ -7,7 +7,7 @@
   $%  {$data data/@}
       {$dojo command/@t}
       {$clay pax/@t}
-      {$url url/purl:^eyre}
+      {$url url/purl:eyre}
       {$api api/term command/@t}
       {$get-api api/term endpoint/(list @t)}
       {$as mar/mark next/source}          ::  can't be at the
@@ -19,7 +19,7 @@
   $%  {$stdout $~}
       {$output-file pax/@t}
       {$output-clay pax/path}
-      {$url url/purl:^eyre}
+      {$url url/purl:eyre}
       {$to-api api/term command/@t}
       {$send-api api/term endpoint/(list @t)}
       {$command command/@t}

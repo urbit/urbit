@@ -6,7 +6,7 @@
 /-    twitter
 /+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
-=,  ^eyre
+=,  eyre
 =,  mimes:html
 =,  html
 =,  format

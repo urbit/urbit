@@ -12,7 +12,7 @@
   ::
 ::~&  [sum=sum kid=kid]
 ::  Link from relative path
-=,  ^eyre
+=,  eyre
 =,  html
 =+  hok=.^(hart %e /(scot %p our)/host/real)
 =+  ref=|=(a/path (en-purl hok `(weld tub a) ~))

@@ -13,7 +13,7 @@
   ++  email  @t
 --
 ::
-=,  ^gall
+=,  gall
 |_  $:  bow/bowl
         adr/(map email {time invited})
         sos/(map bone sole-share)

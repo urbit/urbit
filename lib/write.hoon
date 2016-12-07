@@ -16,14 +16,14 @@
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$exec wire @p $~ {beak silk:^ford}}
-              {$info wire @p toro:^clay}
+++  card  $%  {$exec wire @p $~ {beak silk:ford}}
+              {$info wire @p toro:clay}
           ==
 --
 ::
 ::::
   ::
-|=  {bowl:^gall part}
+|=  {bowl:gall part}
 =*  par  +<+
 |_  moz/(list {bone card})
 ++  abet  [(flop moz) `part`par]
@@ -53,8 +53,8 @@
   |=  dif/plan-diff  ^+  abet
   ?.  =(our src)
     ~|(foreign-write+[our=our src=src] !!)
-  =;  sob/soba:^clay
-    ?~(sob abet abet:(emit %info write+~ our `toro:^clay`[q.byk %& sob]))
+  =;  sob/soba:clay
+    ?~(sob abet abet:(emit %info write+~ our `toro:clay`[q.byk %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(en-beam beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
@@ -115,7 +115,7 @@
   pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
 ::
 ++  poke-sec-atom
-  |=  {hot/host:^eyre dat/@}
+  |=  {hot/host:eyre dat/@}
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
@@ -132,7 +132,7 @@
   [our ~ beak-now %cast u.ext $+cay]
 ::
 ++  made
-  |=  {pax/wire @ res/gage:^ford}  ^+  abet
+  |=  {pax/wire @ res/gage:ford}  ^+  abet
   :: ?.  =(our src)
   ::   ~|(foreign-write/[our=our src=src] !!)
   ?+  -.res  ~|(gage+-.res !!)

@@ -3,7 +3,7 @@
   ::
 /?    310
 ::
-=,  ^eyre
+=,  eyre
 =,  format
 =,  html
 |_  hit/httr

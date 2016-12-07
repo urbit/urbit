@@ -48,7 +48,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-=,  ^gall
+=,  gall
 |_  $:  hid/bowl                                       ::  system state
         hood-1                                          ::  server state
     ==                                                  ::

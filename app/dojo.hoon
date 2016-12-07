@@ -20,7 +20,7 @@
       $:  say/sole-share                                ::  command-line state
           dir/beam                                      ::  active path
           poy/(unit dojo-project)                       ::  working
-          {lib/(list hoof:^ford) sur/(list hoof:^ford)}             ::  lib+sur
+          {lib/(list hoof:ford) sur/(list hoof:ford)}             ::  lib+sur
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
           buf/tape                                      ::  multiline buffer
@@ -37,7 +37,7 @@
           $:  $http                                     ::  http outbound
               p/?($post $put) 
               q/(unit knot) 
-              r/purl:^eyre
+              r/purl:eyre
           ==
           {$poke p/goal}                                ::  poke app
           {$show p/?($0 $1 $2 $3)}                      ::  print val+span+twig
@@ -48,7 +48,7 @@
           q/dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one arvo step
-      $%  {$ur p/(unit knot) q/purl:^eyre}              ::  http GET request
+      $%  {$ur p/(unit knot) q/purl:eyre}              ::  http GET request
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
           {$ex p/twig}                                  ::  hoon expression
@@ -97,22 +97,22 @@
               wire 
               (unit knot) 
               mark 
-              {$hiss hiss:^eyre}
+              {$hiss hiss:eyre}
           ==
-          {$exec wire @p (unit {beak silk:^ford})}      ::
+          {$exec wire @p (unit {beak silk:ford})}      ::
           {$deal wire sock term club}                   ::
-          {$info wire @p toro:^clay}                    ::
+          {$info wire @p toro:clay}                    ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
-      $%  {$made p/@uvH q/gage:^ford}                   ::
-          {$unto p/cuft:^gall}                          ::  
+      $%  {$made p/@uvH q/gage:ford}                   ::
+          {$unto p/cuft:gall}                          ::  
       ==                                                ::
     --                                                  ::
 ::                                                      ::
 ::::                                                    ::
   ::                                                    ::
-=,  ^gall
+=,  gall
 |_  $:  hid/bowl                                       ::  system state
         house                                           ::  program state
     ==                                                  ::
@@ -235,7 +235,7 @@
     ::
     ++  dp-iden-url
       %+  cook
-        |=({a/(unit knot) b/purl:^eyre} [`(fall a *knot) b])
+        |=({a/(unit knot) b/purl:eyre} [`(fall a *knot) b])
       auru:de-purl:html
     ::
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
@@ -278,13 +278,13 @@
     ++  dy-abet  +>(poy `+<)                            ::  resolve
     ++  dy-amok  +>(poy ~)                              ::  terminate
     ++  dy-ford                                         ::  send work to ford
-      |=  {way/wire kas/silk:^ford}
+      |=  {way/wire kas/silk:ford}
       ^+  +>+>
       ?>  ?=($~ pux)
       (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
     ++  dy-eyre                                         ::  send work to eyre
-      |=  {way/wire usr/(unit knot) req/hiss:^eyre}
+      |=  {way/wire usr/(unit knot) req/hiss:eyre}
       ^+  +>+>
       ?>  ?=($~ pux)
       (he-card(poy `+>+<(pux `way)) %hiss way usr %httr %hiss req)
@@ -299,7 +299,7 @@
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
       ^+  +>+>
-      (dy-ford way `silk:^ford`[%call [%$ %noun gat] [%$ %noun sam]])
+      (dy-ford way `silk:ford`[%call [%$ %noun gat] [%$ %noun sam]])
     ::
     ++  dy-errd                                         ::  reject change, abet
       |=  {rev/(unit sole-edit) err/@u}
@@ -462,10 +462,10 @@
             $now  ~|(%time-is-immutable !!)
             $our  ~|(%self-is-immutable !!)
             $lib  
-          .(lib ((dy-cast (list hoof:^ford) !>(*(list hoof:^ford))) q.cay))
+          .(lib ((dy-cast (list hoof:ford) !>(*(list hoof:ford))) q.cay))
         ::
             $sur  
-          .(sur ((dy-cast (list hoof:^ford) !>(*(list hoof:^ford))) q.cay))
+          .(sur ((dy-cast (list hoof:ford) !>(*(list hoof:ford))) q.cay))
         ::
             $dir  =+  ^=  pax  ^-  path
                       =+  pax=((dy-cast path !>(*path)) q.cay)
@@ -507,7 +507,7 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math:^eyre) %content-type (en-mite:mimes:html p.mim))
+        =+  maf=(~(add ja *math:eyre) %content-type (en-mite:mimes:html p.mim))
         (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
       ::
           $show
@@ -528,7 +528,7 @@
       ?+  p.cay  [(sell q.cay)]~
         $tang  ;;(tang q.q.cay)
         $httr
-          =+  hit=;;(httr:^eyre q.q.cay)
+          =+  hit=;;(httr:eyre q.q.cay)
           =-  (flop (turn `wall`- |=(a/tape leaf+(dash:us a ''))))
           :-  "HTTP {<p.hit>}"
           %+  weld
@@ -561,7 +561,7 @@
     ++  dy-shown
       $?  twig
           $^  {dy-shown dy-shown}
-          $%  {$ur (unit knot) purl:^eyre}
+          $%  {$ur (unit knot) purl:eyre}
               {$dv path}
               {$as mark dy-shown}
               {$do twig dy-shown}
@@ -613,7 +613,7 @@
     ++  dy-vase       |=(num/@ud q:(dy-cage num))       ::  known vase
     ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
     ++  dy-silk-sources                                 ::  arglist to silk
-      |=  src/(list dojo-source)  ^-  silk:^ford
+      |=  src/(list dojo-source)  ^-  silk:ford
       %-  dy-silk-vase
       |-
       ?~  src  !>(~)
@@ -621,7 +621,7 @@
     ::
     ++  dy-silk-config                                  ::  configure
       |=  {cay/cage cig/dojo-config}
-      ^-  {wire silk:^ford}
+      ^-  {wire silk:ford}
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
         ::  
         ::  naked gate
@@ -646,7 +646,7 @@
       :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
       %+  turn  (~(tap by q.cig))
       |=  {a/term b/(unit dojo-source)}
-      ^-  (pair wing silk:^ford)
+      ^-  (pair wing silk:ford)
       :-  [a ~]
       %-  dy-silk-vase
       ?~(b !>([~ ~]) (dy-vase p.u.b))
@@ -701,7 +701,7 @@
       ::
           $|
         =>  .(vax (slap vax !,(*twig ?>(?=($| -) .))))  :: XX working spec  #72
-        =+  typ={$| (unit knot) hiss:^eyre *}
+        =+  typ={$| (unit knot) hiss:eyre *}
         =+  [~ usr hiz ~]=((dy-cast typ !>(*typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
         (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
@@ -729,7 +729,7 @@
       ?:  ?=($ur -.bil)
         (dy-eyre /hand p.bil [q.bil %get ~ ~])
       %-  dy-ford
-      ^-  (pair path silk:^ford)
+      ^-  (pair path silk:ford)
       ?-  -.bil
         $ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
         $dv  [/hand [%core he-beak (flop p.bil)]]
@@ -775,7 +775,7 @@
     ::
     ++  dy-mare                                         ::  build expression
       |=  gen/twig
-      ^-  silk:^ford
+      ^-  silk:ford
       =+  too=(dy-twig-mark gen)
       =-  ?~(too - [%cast u.too -])
       :+  %ride  gen
@@ -894,7 +894,7 @@
     [& %$ (weld he-prow ?~(buf "> " "< "))]
   ::
   ++  he-made                                           ::  result from ford
-    |=  {way/wire dep/@uvH reg/gage:^ford}
+    |=  {way/wire dep/@uvH reg/gage:ford}
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
@@ -914,7 +914,7 @@
     ==
   ::
   ++  he-sigh                                           ::  result from eyre
-    |=  {way/wire hit/httr:^eyre}
+    |=  {way/wire hit/httr:eyre}
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
@@ -927,7 +927,7 @@
     ==
   ::
   ++  he-unto                                           ::  result from behn
-    |=  {way/wire cit/cuft:^gall}
+    |=  {way/wire cit/cuft:gall}
     ^+  +>
     ?.  ?=($coup -.cit)
       ~&  [%strange-unto cit]

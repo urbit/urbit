@@ -80,7 +80,7 @@
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
-          {$info wire @p @tas nori:^clay}               ::
+          {$info wire @p @tas nori:clay}               ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
           {$pull wire dock $~}                          ::
@@ -181,7 +181,7 @@
     q.nb
   --
 --
-=,  ^gall
+=,  gall
 |_  {hid/bowl house}
 ++  ra                                                  ::  per transaction
   |_  moves/(list move)
@@ -1386,7 +1386,7 @@
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
     ?:(neu +>.$ ra-homes)
   ::
-  ++  ra-base-hart  .^(hart:^eyre %e /(scot %p our.hid)/host/(scot %da now.hid))
+  ++  ra-base-hart  .^(hart:eyre %e /(scot %p our.hid)/host/(scot %da now.hid))
   ++  ra-fora-post
     |=  {pax/path sup/path hed/@t txt/@t}
     =.  ..ra-emit

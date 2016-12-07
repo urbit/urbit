@@ -9,7 +9,7 @@
 ::::
   ::
 [. ^talk]
-|_  bol/bowl:^gall
+|_  bol/bowl:gall
 ++  main                                                ::  main story
   |=  our/ship  ^-  cord
   =+  can=(clan:title our)
@@ -19,7 +19,7 @@
   == 
 ::
 ++  said-url                                            ::  app url
-  |=  url/purl:^eyre
+  |=  url/purl:eyre
   :^  ost.bol  %poke  /said-url
   :+  [our.bol %talk]  %talk-command
   ^-  command

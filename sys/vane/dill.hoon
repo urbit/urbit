@@ -2,7 +2,7 @@
 ::  dill (4d), terminal handling   
 ::
 |=  pit/vase
-=,  ^dill
+=,  dill
 =>  |%                                                  ::  interface tiles
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
@@ -46,8 +46,8 @@
       {$sith p/@p q/@uw r/?}                            ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:^clay}::  merge desks
-      {$warp p/sock q/riff:^clay}                       ::  wait for clay hack
+  $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
+      {$warp p/sock q/riff:clay}                       ::  wait for clay hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -61,7 +61,7 @@
   ==                                                    ::
 ++  note-gall                                           ::
   $%  {$conf dock $load ship desk}                      ::
-      {$deal p/sock q/cush:^gall}                       ::
+      {$deal p/sock q/cush:gall}                       ::
   ==                                                    ::
 ++  note                                                ::  out request $->
   $?  {?($a $b $c $e $f $g) $wegh $~}                   ::
@@ -77,14 +77,14 @@
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
-      {$writ p/riot:^clay}                              ::
+      {$writ p/riot:clay}                              ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
 ++  sign-gall                                           ::
-  $%  {$onto p/(each suss:^gall tang)}                  ::
-      {$unto p/cuft:^gall}                              ::
+  $%  {$onto p/(each suss:gall tang)}                  ::
+      {$unto p/cuft:gall}                              ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
@@ -119,7 +119,7 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
-          $tick  =+  ^=  ges  ^-  gens:^ames
+          $tick  =+  ^=  ges  ^-  gens:ames
                      :-  %en
                      =+  can=(clan:title p.kyz)
                      ?-  can
@@ -130,7 +130,7 @@
                        $pawn  [%pawn ~]
                      ==
                  =+  yen=(scot %p (shax :(mix %ticket eny now)))
-                 =+  ^=  beg  ^-  {his/@p tic/@p yen/@t ges/gens:^ames}
+                 =+  ^=  beg  ^-  {his/@p tic/@p yen/@t ges/gens:ames}
                      [p.kyz q.kyz yen ges]
                  =+  cmd=[%hood %poke `cage`[%helm-begin !>(beg)]]
                  %=    +>.$

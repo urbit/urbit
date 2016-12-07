@@ -5,7 +5,7 @@
 /+    talk, old-phon
 =,  wired
 =,  title
-=,  womb:^jael
+=,  womb:jael
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -113,14 +113,14 @@
       {$reinvite aut/passcode tid/passcode inv/invite-j}::  move to another
   ==                                                    ::
 ++  card                                                ::
-  $%  {$flog wire flog:^dill}                           ::
-      {$info wire @p @tas nori:^clay}                   ::  fs write (backup)
+  $%  {$flog wire flog:dill}                           ::
+      {$info wire @p @tas nori:clay}                   ::  fs write (backup)
       :: {$wait $~}                                     :: delay acknowledgment
       {$diff gilt}                                      :: subscription response
       {$poke wire dock pear}                            ::  app RPC
       {$next wire p/ring}                               ::  update private key
       {$tick wire p/@pG q/@p}                           ::  save ticket
-      {$knew wire p/ship q/wyll:^ames}                        ::  learn will (old pki)
+      {$knew wire p/ship q/wyll:ames}                        ::  learn will (old pki)
       {$jaelwomb wire task:womb}                        ::  manage rights
   ==                                                    ::
 ++  pear                                                ::
@@ -140,7 +140,7 @@
 ++  move  (pair bone card)                              ::  user-level move
 ::
 ++  transaction                                         ::  logged poke
-  $%  {$report her/@p wyl/wyll:^ames}
+  $%  {$report her/@p wyl/wyll:ames}
       {$claim aut/passcode her/@p}
       {$recycle who/mail him/knot tik/knot}
       {$bonus tid/cord pla/@ud sta/@ud}
@@ -177,7 +177,7 @@
   ::                                                  ::  ::
 =+  cfg=[can-claim=& can-recycle=&]                   ::  temporarily disabled
 =+  [replay=| stat-no-email=|]                        ::  XX globals
-|=  {bowl:^gall part}                                 ::  main womb work
+|=  {bowl:gall part}                                 ::  main womb work
 |_  moz/(list move)
 ++  abet                                              ::  resolve
   ^-  (quip move *part)
@@ -400,7 +400,7 @@
   ~&  %rekey-stub  .
 ::
 ++  poke-report                                       ::  report wyll
-  |=  {her/@p wyl/wyll:^ames}                               ::
+  |=  {her/@p wyl/wyll:ames}                               ::
   =<  abet
   =.  log-transaction  (log-transaction %report +<)
   ?>  =(src src)                                      ::  self-authenticated

@@ -4,7 +4,7 @@
   ::
 /+    interpolate, hep-to-cab
 =,  mimes:html
-=,  ^eyre
+=,  eyre
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
 ++  token                                               ::  user keys

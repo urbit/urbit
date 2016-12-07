@@ -2,7 +2,7 @@
 ::::  /hoon/quri/mar
   ::
 /?    310
-=,  ^eyre
+=,  eyre
 =,  mimes:html
 =,  html
 |_  url/quri
