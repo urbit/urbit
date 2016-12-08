@@ -1206,7 +1206,7 @@
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
   ::
-  +-  ept                                               ::  check correctness
+  +-  apt                                               ::  check correctness
     =|  {l/(unit) r/(unit)}
     |-  ^-  ?
     ?~  a   &
@@ -1600,7 +1600,7 @@
 ++  map  |*  {a/mold b/mold}                            ::  table
          %+  cork  (tree (pair a b))                    ::
          |=  c/(tree (pair a b))  ^+  c                 ::
-         ?.(~(ept by c) ~ c)                            ::
+         ?.(~(apt by c) ~ c)                            ::
 ++  qeu  |*  a/mold                                     ::  queue
          $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
 ++  set  |*  a/mold                                     ::  set
