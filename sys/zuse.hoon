@@ -2904,20 +2904,15 @@
     ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
       ~
     (some (~(run by lum) need))
-  ::
-  ::                                                    ::  ++all-full:unity
-  ++  all-full                                          ::  full unit pole
-    |*  pod/(pole (unit))
-    ?~  pod  &
-    ?~  -.pod  |
-    (all-full +.pod)
-  ::                                                    ::  ++need-tuple:unity
-  ++  need-tuple                                        ::  unit tuple
-    |*  but/(pole (unit))
-    ?~  but  !!
-    ?~  +.but
-      u:->.but
-    [u:->.but (need-tuple +.but)]
+  ::                                                    ::  ++drop-pole:unity
+  ++  drop-pole                                         ::  unit tuple
+    |*  a/(pole (unit))
+    ?-    a
+        {i/(unit) t/*}
+      ?~  t.a  i.a
+      %+  both  i.a
+      (drop-pole t.a)
+    ==
   --
 ::                                                      ::::
 ::::                      ++format                      ::  (2d) common formats
@@ -4307,8 +4302,7 @@
       =<  |=  a/cord
           %+  biff  (rush a (more sepa elem))
           |=  b/(list _(wonk *elem))  ^-  (unit date)
-          =,  unity
-          =-  ?.((all-full -) ~ (some (need-tuple -)))
+          %-  drop-pole:unity
           ^+  =+  [*date u=unit]
               *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
           :~
