@@ -83,7 +83,7 @@ _unix_string_to_path(c3_c* pax_c) {
   }
 }
 
-/* _unix_rm_r_cb(): callback to delete individiual files/directories
+/* _unix_rm_r_cb(): callback to delete individual files/directories
 */
 static c3_i
 _unix_rm_r_cb(const c3_c* pax_c,
@@ -861,7 +861,8 @@ _unix_update_dir(u3_udir* dir_u)
     else if ( !out_u ) {
       break;
     }
-    else if ( '.' == out_u->d_name[0] ) {
+    else if ( '.' == out_u->d_name[0] || 
+              !strcmp("LICENSE.txt", out_u->d_name) ) {
       continue;
     }
     else {
