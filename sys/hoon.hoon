@@ -1601,8 +1601,7 @@
          %+  cork  (tree (pair a b))                    ::
          |=  c/(tree (pair a b))  ^+  c                 ::
          ?.(~(apt by c) ~ c)                            ::
-++  qeu  |*  a/mold                                     ::  queue
-         $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
+++  qeu  |*(a/mold (tree a))                            ::  queue
 ++  set  |*  a/mold                                     ::  set
          %+  cork  (tree a)                             ::
          |=  b/(tree a)  ^+  b                          ::
