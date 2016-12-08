@@ -3467,7 +3467,7 @@
 ::                                                      ::
 ::::                      ++html                        ::  (2e) text encodings
   ::                                                    ::::
-++  html  ^?
+++  html  ^?  ::  XX rename to web-txt
   =,  eyre
   |%
   ::                                                    ::
