@@ -745,7 +745,7 @@
     ==                                                  ::
   --  ::ford
 ::                                                      ::::
-::::                      ++gall                          ::  (1g) extensions
+::::                    ++gall                            ::  (1g) extensions
   ::                                                    ::::
 ++  gall  ^?
   |%
@@ -818,7 +818,7 @@
   ++  well  (pair desk term)                            ::
   --  ::gall
 ::                                                      ::::
-::::                      ++jael                        ::  (1h) security
+::::                    ++jael                          ::  (1h) security
   ::                                                    ::::
 ++  jael  ^?
   |%
@@ -956,7 +956,7 @@
       ==
     --
   ::                                                    ::
-  ::::                    ++pki:jael                    ::  (1h2) certificates
+  ::::                  ++pki:jael                      ::  (1h2) certificates
     ::                                                  ::::
   ++  pki  ^?
     |%
@@ -1003,7 +1003,7 @@
     ++  will  (map life cert)                           ::  meta-certificate
     --  ::  pki
   ::                                                    ::
-  ::::                    ++rights:jael                 ::  (1h3) claims
+  ::::                  ++rights:jael                   ::  (1h3) claims
     ::                                                  ::::
   ++  rights  ^?
     =,  pki
@@ -1063,11 +1063,11 @@
     --  ::  rights
   --  ::  jael
 ::                                                      ::::
-::::                  ++xmas                              ::  (1i) new network
+::::                    ++xmas                            ::  (1i) new network
   ::                                                    ::::
 ++  xmas  ^?
   ::                                                    ::
-  ::::                ++able:xmas                       ::  (1i1) arvo moves
+  ::::                  ++able:xmas                     ::  (1i1) arvo moves
     ::                                                  ::::
   |%
   ++  able  ^?
@@ -1112,8 +1112,8 @@
   --  ::xmas
 --  ::
 ::                                                      ::  ::
-::                                                      ::  ::  (2) engines
-::                                                      ::  ::
+::::                                                    ::  ::  (2) engines
+  ::                                                    ::  ::
 |%
 ::                                                      ::::
 ::::                      ++number                      ::  (2a) number theory
@@ -2923,7 +2923,7 @@
 ::::                      ++format                      ::  (2d) common formats
   ::                                                    ::::
 ++  format  ^?
-  |%
+  |%               
   ::                                                    ::  ++to-wain:format
   ++  to-wain                                           ::  atom to line list
     ~%  %lore  ..is  ~
