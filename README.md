@@ -1,7 +1,12 @@
-# Build instructions
+# Install instructions
 
-If you're not doing development on Urbit, please read
-https://urbit.org/docs/using/ instead.
+To install and run Urbit please follow the instructions at
+[urbit.org/docs/using/install](http://urbit.org/docs/using/install).  You'll be
+on the live network in a few minutes.
+
+If you're doing development on Urbit, keep reading.
+
+# Build instructions
 
 ## External dependencies
 
@@ -40,5 +45,9 @@ The `vere` binary is produced in `bin/urbit`.
 ## Contact
 
 If you have any questions, problems, patches, or proposals for patches, please
-contact the maintainer, Raymond Pasco (`ray@the.ug`, `~rolsut-rospub` on Urbit)
-by any means available.
+feel free to get in touch in whatever way is most convenient:
+
+- Post to `/urbit-meta` on Urbit `:talk`.  (You can do this via
+[urbit.org/stream](https://urbit.org/stream) without a running Urbit).
+- Post to [urbit.org/fora](https://urbit.org/fora/).
+- Email us directly [questions@urbit.org](mailto:questions@urbit.org).  
