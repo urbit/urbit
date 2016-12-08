@@ -33,19 +33,18 @@
 ~%  %zuse  +>  ~
 =>
 ::                                                      ::  ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (1) models
-::                                                      ::  ::
+::::                                                    ::  ::  (1) models
+  ::                                                    ::  ::
 |%
-::
-++  ames  ^?
+::                                                      ::::
+::::                      ++ames                          ::  (1a) network
   ::                                                    ::::
-  ::::                    ++ames                        ::  (1a) network
-    ::                                                  ::::
+++  ames  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:behn                     ::  (1a1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:behn                   ::  (1a1) arvo moves
-      ::                                                ::::
     |%
     ++  card                                            ::  out cards
       $%  {$went p/sack q/path r/@ud s/coop}            ::  response confirm
@@ -85,7 +84,7 @@
           {$wegh $~}                                    ::  report memory
           {$wont p/sock q/path r/*}                     ::  e2e send message
       ==                                                ::
-    --  ::able                                          ::
+    --  ::able
   ::
   ::::                                                  ::  (1a2)
     ::
@@ -253,16 +252,15 @@
   ++  wund  (list {p/life q/ring r/acru})               ::  mace in action
   ++  wyll  (list deyd)                                 ::  certificate
   --  ::ames
-::
-++  behn  ^?
+::                                                      ::::
+::::                    ++behn                            ::  (1b) timekeeping
   ::                                                    ::::
-  ::::                    ++behn                        ::  (1b) timekeeping
-    ::                                                  ::::
+++  behn  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:behn                     ::  (1b1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:behn                   ::  (1b1) arvo moves
-      ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
       $%  {$mass p/mass}                                ::  memory usage
@@ -276,16 +274,15 @@
       ==                                                ::
     --  ::able
   --  ::behn
-::
-++  clay  ^?
+::                                                      ::::
+::::                    ++clay                            ::  (1c) versioning
   ::                                                    ::::
-  ::::                    ++clay                        ::  (1c) version control
-    ::                                                  ::::
+++  clay  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:clay                     ::  (1c1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:dill                   ::  (1c1) arvo moves
-      ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
       $%  {$ergo p/@tas q/mode}                         ::  version update
@@ -416,16 +413,15 @@
         t/@da                                           ::  date
     ==                                                  ::
   --  ::clay
-::
-++  dill  ^?
+::                                                      ::::
+::::                    ++dill                            ::  (1d) console
   ::                                                    ::::
-  ::::                    ++dill                        ::  (1d) console
-    ::                                                  ::::
+++  dill  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:dill                     ::  (1d1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:dill                   ::  (1d1) arvo moves
-      ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
       $%  {$bbye $~}                                    ::  reset prompt
@@ -530,16 +526,15 @@
   ++  styx  (list $@(@t (pair styl styx)))              ::  styled text
   ++  tint  ?($~ $r $g $b $c $m $y $k $w)               ::  text color
   --  ::dill
-::
-++  eyre  ^?
+::                                                      ::::
+::::                    ++eyre                            ::  (1e) oldweb
   ::                                                    ::::
-  ::::                    ++eyre                        ::  (1e) oldweb
-    ::                                                  ::::
+++  eyre  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:eyre                     ::  (1e1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:eyre                   ::  (1e1) arvo moves
-      ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
       $%  {$mass p/mass}                                ::  memory usage
@@ -660,16 +655,15 @@
         {$redo $~}                                      ::  restart request qeu
     ==                                                  ::
   --  ::eyre
-::
-++  ford  ^?
+::                                                      ::::
+::::                    ++ford                            ::  (1f) build
   ::                                                    ::::
-  ::::                    ++ford                        ::  (1f) build
-    ::                                                  ::::
+++  ford  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:ford                     ::  (1f1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:ford                   ::  (1f1) arvo moves
-      ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
       $%  {$made p/@uvH q/gage}                         ::  computed result
@@ -750,16 +744,15 @@
         {$volt p/(cask *)}                              ::  unsafe add type
     ==                                                  ::
   --  ::ford
-::
-++  gall  ^?
+::                                                      ::::
+::::                      ++gall                          ::  (1g) extensions
   ::                                                    ::::
-  ::::                    ++gall                        ::  (1g) applications
-    ::                                                  ::::
+++  gall  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:gall                     ::  (1g1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:gall                   ::  (1g1) arvo moves
-      ::                                                ::::
     |%
     ++  gift                                            ::  outgoing result
       $%  {$mass p/mass}                                ::  memory usage
@@ -824,16 +817,15 @@
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
   --  ::gall
-::
-++  jael  ^?
+::                                                      ::::
+::::                      ++jael                        ::  (1h) security
   ::                                                    ::::
-  ::::                    ++jael                        ::  (1h) security
-    ::                                                  ::::
+++  jael  ^?
   |%
+  ::                                                    ::
+  ::::                  ++able:jael                     ::  (1h1) arvo moves
+    ::                                                  ::::
   ++  able  ^?
-    ::                                                  ::
-    ::::                  ++able:jael                   ::  (1h1) arvo moves
-      ::                                                ::::
     =,  pki
     =,  rights
     |%
@@ -1070,16 +1062,15 @@
     ++  safe  (tree rite)                               ::  rights set
     --  ::  rights
   --  ::  jael
-::
-++  xmas  ^?
+::                                                      ::::
+::::                  ++xmas                              ::  (1i) new network
   ::                                                    ::::
-  ::::                  ++xmas                          ::  (1i) networking
+++  xmas  ^?
+  ::                                                    ::
+  ::::                ++able:xmas                       ::  (1i1) arvo moves
     ::                                                  ::::
   |%
   ++  able  ^?
-    ::                                                  ::
-    ::::                ++able:xmas                     ::  (1i1) arvo moves
-      ::                                                ::::
     |%
     ++  gift                                            ::
       $%  {$east p/*}                                   ::  response message
@@ -1121,7 +1112,7 @@
   --  ::xmas
 --  ::
 ::                                                      ::  ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) engines
+::                                                      ::  ::  (2) engines
 ::                                                      ::  ::
 |%
 ::                                                      ::::
