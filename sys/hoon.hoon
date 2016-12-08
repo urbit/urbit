@@ -1598,7 +1598,9 @@
 ++  jar  |*({a/mold b/mold} (map a (list b)))           ::  map of lists
 ++  jug  |*({a/mold b/mold} (map a (set b)))            ::  map of sets
 ++  map  |*  {a/mold b/mold}                            ::  table
-         $@($~ {n/{p/a q/b} l/(map a b) r/(map a b)})   ::
+         %+  cork  (tree (pair a b))                    ::
+         |=  c/(tree (pair a b))  ^+  c                 ::
+         ?.(~(ept by c) ~ c)                            ::
 ++  qeu  |*  a/mold                                     ::  queue
          $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
 ++  set  |*  a/mold                                     ::  set
