@@ -1206,7 +1206,7 @@
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
   ::
-  +-  ept                                               ::  check correctness
+  +-  apt                                               ::  check correctness
     =|  {l/(unit) r/(unit)}
     |-  ^-  ?
     ?~  a   &
@@ -1598,11 +1598,14 @@
 ++  jar  |*({a/mold b/mold} (map a (list b)))           ::  map of lists
 ++  jug  |*({a/mold b/mold} (map a (set b)))            ::  map of sets
 ++  map  |*  {a/mold b/mold}                            ::  table
-         $@($~ {n/{p/a q/b} l/(map a b) r/(map a b)})   ::
-++  qeu  |*  a/mold                                     ::  queue
-         $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
+         %+  cork  (tree (pair a b))                    ::
+         |=  c/(tree (pair a b))  ^+  c                 ::
+         ?.(~(apt by c) ~ c)                            ::
+++  qeu  |*(a/mold (tree a))                            ::  queue
 ++  set  |*  a/mold                                     ::  set
-         $@($~ {n/a l/(set a) r/(set a)})               ::
+         %+  cork  (tree a)                             ::
+         |=  b/(tree a)  ^+  b                          ::
+         ?.(~(apt in b) ~ b)                            ::
 ::
 ::::  2p: serialization                                 ::
   ::                                                    ::
