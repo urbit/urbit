@@ -53,7 +53,7 @@
   ==                                                    ::
 ::                                                      ::
 ++  burg                                                ::  gonadic rule
-  |*  {a/mold b/mold}                             ::  from and to
+  |*  {a/mold b/mold}                                   ::  from and to
   $-({c/cafe d/a} (bolt b))                             ::
 ::                                                      ::
 ++  cafe                                                ::  live cache
@@ -79,13 +79,13 @@
 ++  deps                                                ::  depend state
   $%  {$init p/(set beam)}                              ::  given out
       {$sent p/(set duct) q/(set beam)}                 ::  listener exists
-      {$done $~}                                         ::  change seen
+      {$done $~}                                        ::  change seen
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah/duct                                          ::  cause
       {bek/beak kas/silk}                               ::  problem
       keg/(map (pair term beam) cage)                   ::  block results
-      kig/(set (trel vane care:clay beam))             ::  blocks
+      kig/(set (trel vane care:clay beam))              ::  blocks
   ==                                                    ::
 ++  gagl  (list (pair gage gage))                       ::
 ++  vane  ?($a $b $c $d $e $f $g)                       ::
@@ -119,8 +119,7 @@
   a(q (~(put by q.a) [-.b q.b] b))                      ::
 ::                                                      ::
 ++  faun  (flux |=(a/vase [%& %noun a]))                ::  vase to gage
-++  feel  (flux |=(a/cage q.a))                         ::  cage to vase
-++  furl                                                ::  unwrap gage to cage
+++  flay                                                ::  unwrap gage to cage
   |=  {a/cafe b/gage}  ^-  (bolt cage)
   ?-  -.b
     $tabl  (flaw a >%bad-marc< ~)
@@ -483,7 +482,7 @@
       |=  {cof/cafe gag/gage}
       ^-  (bolt gage)
       ?.  ?=($tabl -.gag)
-        (cope (furl cof gag) fun)
+        (cope (flay cof gag) fun)
       %+  cope  
         |-  ^-  (bolt (list (pair gage gage)))
         ?~  p.gag  (fine cof ~)
@@ -527,8 +526,8 @@
       %.  [cof kas kos]
       ;~  cope
         ;~  coax
-          |=({cof/cafe p/silk q/silk} (cope (make cof p) furl))
-          |=({cof/cafe p/silk q/silk} (cope (make cof q) furl))
+          |=({cof/cafe p/silk q/silk} (cope (make cof p) flay))
+          |=({cof/cafe p/silk q/silk} (cope (make cof q) flay))
         ==
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
         ?.  =(p.cay p.coy)
@@ -848,8 +847,8 @@
       %.  [cof kas kos]
       ;~  cope
         ;~  coax
-          |=({cof/cafe p/silk q/silk} (cope (make cof p) furl))
-          |=({cof/cafe p/silk q/silk} (cope (make cof q) furl))
+          |=({cof/cafe p/silk q/silk} (cope (make cof p) flay))
+          |=({cof/cafe p/silk q/silk} (cope (make cof q) flay))
         ==
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
         ::
@@ -891,8 +890,8 @@
       %.  [cof r.mas r.mos]
       ;~  cope
         ;~  coax
-          |=({cof/cafe p/silk q/silk} (cope (make cof p) furl))
-          |=({cof/cafe p/silk q/silk} (cope (make cof q) furl))
+          |=({cof/cafe p/silk q/silk} (cope (make cof p) flay))
+          |=({cof/cafe p/silk q/silk} (cope (make cof q) flay))
         ==
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
         %+  cope  (fang cof for)
@@ -933,7 +932,7 @@
       %+  cope
         |-  ^-  (bolt (list (pair wing vase)))
         ?~  muy  (flue cof)
-        %+  cope  (cope (make cof q.i.muy) furl)
+        %+  cope  (cope (make cof q.i.muy) flay)
         |=  {cof/cafe cay/cage}
         %+  cope  ^$(muy t.muy)
         |=  {cof/cafe rex/(list (pair wing vase))}
@@ -1254,8 +1253,8 @@
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
-            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas p.kas) furl))
-            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas q.kas) furl)) 
+            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas p.kas) flay))
+            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas q.kas) flay)) 
           ==                          ::  XX merge %tabl
         ::
           |=  {cof/cafe bor/cage heg/cage}  ^-  (bolt gage)
@@ -1292,7 +1291,7 @@
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
-            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas p) furl))
+            |=({cof/cafe p/silk q/silk} (cope ^$(cof cof, kas p) flay))
             |=({cof/cafe p/silk q/silk} ^$(cof cof, kas q))
           ==
         ::
@@ -1587,7 +1586,7 @@
           ?~  p.hon  (fine cof cay)
           %+  cope  $(p.hon t.p.hon)
           |=  {cof/cafe cay/cage}
-          (cope (make cof %cast i.p.hon $+cay) furl)
+          (cope (make cof %cast i.p.hon $+cay) flay)
         ::
             $man
           %+  cope  
@@ -1647,7 +1646,7 @@
             $toy
           ?:  p.hon
             =.  arg  ?.(lit arg many+~)
-            (cope (make cof %bake q.hon arg how) furl)
+            (cope (make cof %bake q.hon arg how) flay)
           %+  cool  |.(leaf+"ford: hook {<q.hon>} {<(en-beam how)>}")
           %+  cope  (fade cof how)
           |=  {cof/cafe hyd/hood}
@@ -1769,8 +1768,8 @@
       %.  [cof kas kos]
       ;~  cope
         ;~  coax
-          |=({cof/cafe p/silk q/silk} (cope (make cof p) furl))
-          |=({cof/cafe p/silk q/silk} (cope (make cof q) furl))
+          |=({cof/cafe p/silk q/silk} (cope (make cof p) flay))
+          |=({cof/cafe p/silk q/silk} (cope (make cof q) flay))
         ==
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
         %+  cope  (fang cof p.cay)
