@@ -1396,7 +1396,7 @@
         ++  pen                                         ::  encrypt
           ^-  cipa
           |%
-          ::                                            ::  ++co:pen:ahem:aes: 
+          ::                                            ::  ++co:pen:ahem:aes:
           ++  co                                        ::  column coefficients
             [0x2 0x3 1 1]
           ::                                            ::  ++ix:pen:ahem:aes:
@@ -3162,7 +3162,7 @@
             ++  fist  $-(json grub)                     ::  reparser instance
         --  ::
     |%
-    ::                                                  ::  ++ar:dejs:format
+    ::                                                  ::  ++ar:dejs-soft:
     ++  ar                                              ::  array as list
       |*  wit/fist
       |=  jon/json  ^-  (unit (list _(need (wit *json))))
@@ -3171,13 +3171,13 @@
       |-
       ?~  p.jon  ~
       [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
-    ::                                                  ::  ++at:dejs:format
+    ::                                                  ::  ++at:dejs-soft:
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
       ((at-raw wil) p.jon)
-    ::                                                  ::  ++at-raw:dejs:format
+    ::                                                  ::  ++at-raw:dejs-soft:
     ++  at-raw                                          ::  array as tuple
       |*  wil/(pole fist)
       |=  jol/(list json)
@@ -3190,50 +3190,50 @@
         %+  both  (wit.wil i.jol)
         ((at-raw t.wil) t.jol)
       ==
-    ::                                                  ::  ++bo:dejs:format
+    ::                                                  ::  ++bo:dejs-soft:
     ++  bo                                              ::  boolean
       |=(jon/json ?.(?=({$b *} jon) ~ [~ u=p.jon]))
-    ::                                                  ::  ++bu:dejs:format
+    ::                                                  ::  ++bu:dejs-soft:
     ++  bu                                              ::  boolean not
       |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
-    ::                                                  ::  ++ci:dejs:format
+    ::                                                  ::  ++ci:dejs-soft:
     ++  ci                                              ::  maybe transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (biff (wit jon) poq)
-    ::                                                  ::  ++cu:dejs:format
+    ::                                                  ::  ++cu:dejs-soft:
     ++  cu                                              ::  transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (bind (wit jon) poq)
-    ::                                                  ::  ++di:dejs:format
+    ::                                                  ::  ++di:dejs-soft:
     ++  di                                              ::  millisecond date
       %+  cu
         |=  a/@u  ^-  @da
         (add ~1970.1.1 (div (mul ~s1 a) 1.000))
       ni
-    ::                                                  ::  ++mu:dejs:format
+    ::                                                  ::  ++mu:dejs-soft:
     ++  mu                                              ::  true unit
       |*  wit/fist
       |=  jon/json
       ?~(jon (some ~) (bind (wit jon) some))
-    ::                                                  ::  ++ne:dejs:format
+    ::                                                  ::  ++ne:dejs-soft:
     ++  ne                                              ::  number as real
       |=  jon/json
       ^-  (unit @rd)
       ::  please implement me, it's not that hard!
       !!
-    ::                                                  ::  ++ni:dejs:format
+    ::                                                  ::  ++ni:dejs-soft:
     ++  ni                                              ::  number as integer
       |=  jon/json
       ?.  ?=({$n *} jon)  ~
       (rush p.jon dem)
-    ::                                                  ::  ++no:dejs:format
+    ::                                                  ::  ++no:dejs-soft:
     ++  no                                              ::  number as cord
       |=  jon/json
       ?.  ?=({$n *} jon)  ~
       (some p.jon)
-    ::                                                  ::  ++of:dejs:format
+    ::                                                  ::  ++of:dejs-soft:
     ++  of                                              ::  object as frond
       |*  wer/(pole {cord fist})
       |=  jon/json
@@ -3248,13 +3248,13 @@
         ?~  t.wer  ~
         ((of t.wer) jon)
       ==
-    ::                                                  ::  ++ot:dejs:format
+    ::                                                  ::  ++ot:dejs-soft:
     ++  ot                                              ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?.  ?=({$o *} jon)  ~
       ((ot-raw wer) p.jon)
-    ::                                                  ::  ++ot-raw:dejs:format
+    ::                                                  ::  ++ot-raw:dejs-soft:
     ++  ot-raw                                          ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jom/(map @t json)
@@ -3266,13 +3266,13 @@
         ?~  t.wer  ten
         (both ten ((ot-raw t.wer) jom))
       ==
-    ::                                                  ::  ++om:dejs:format
+    ::                                                  ::  ++om:dejs-soft:
     ++  om                                              ::  object as map
       |*  wit/fist
       |=  jon/json
       ?.  ?=({$o *} jon)  ~
       (drop-map (~(run by p.jon) wit))
-    ::                                                  ::  ++op:dejs:format
+    ::                                                  ::  ++op:dejs-soft:
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
       |=  jon/json  ^-  (unit (map _(wonk *fel) _*wit))
@@ -3283,25 +3283,25 @@
       %+  turn  (~(tap by jom))
       |*  {a/cord b/*}
       (both (rush a fel) (some b))
-    ::                                                  ::  ++pe:dejs:format
+    ::                                                  ::  ++pe:dejs-soft:
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
       (cu |*(* [pre +<]) wit)
-    ::                                                  ::  ++sa:dejs:format
+    ::                                                  ::  ++sa:dejs-soft:
     ++  sa                                              ::  string as tape
       |=  jon/json
       ?.(?=({$s *} jon) ~ (some (trip p.jon)))
-    ::                                                  ::  ++so:dejs:format
+    ::                                                  ::  ++so:dejs-soft:
     ++  so                                              ::  string as cord
       |=  jon/json
       ?.(?=({$s *} jon) ~ (some p.jon))
-    ::                                                  ::  ++su:dejs:format
+    ::                                                  ::  ++su:dejs-soft:
     ++  su                                              ::  parse string
       |*  sab/rule
       |=  jon/json
       ?.  ?=({$s *} jon)  ~
       (rush p.jon sab)
-    ::                                                  ::  ++ul:dejs:format
+    ::                                                  ::  ++ul:dejs-soft:
     ++  ul                                              ::  null
       |=(jon/json ?~(jon (some ~) ~))
     --  ::dejs-soft
