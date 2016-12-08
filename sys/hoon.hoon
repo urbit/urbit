@@ -1602,7 +1602,9 @@
 ++  qeu  |*  a/mold                                     ::  queue
          $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
 ++  set  |*  a/mold                                     ::  set
-         $@($~ {n/a l/(set a) r/(set a)})               ::
+         %+  cork  (tree a)                             ::
+         |=  b/(tree a)  ^+  b                          ::
+         ?.(~(apt in b) ~ b)                            ::
 ::
 ::::  2p: serialization                                 ::
   ::                                                    ::
