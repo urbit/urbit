@@ -289,6 +289,7 @@
         %-  perk  :~
           %noob
           %quiet
+          %notify
         ==
       ++  work
         %+  knee  *^work  |.  ~+
@@ -437,7 +438,15 @@
     ++  sh-rend                                         ::  print on one line
       |=  gam/telegram
       =+  lin=~(tr-line tr man.she settings.she gam)
-      (sh-pass:(sh-fact %txt lin) q.q.gam)
+      =+  nom=(scag 7 (cite our.hid))
+      %.  q.q.gam
+      =<  sh-pass
+      %.  [%txt lin]
+      ?:  ?&  (~(has in settings.she) %notify)
+              (gth (fall (find nom lin) 0) 15)
+          ==
+        sh-fact:(sh-fact %bel ~)
+      sh-fact
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num/@ud
