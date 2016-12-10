@@ -1640,13 +1640,11 @@
       ^-  (pair life (map life ring))
       ::
       ::  lyf: latest life of
-      ::  lab: promises by rex
       ::  par: promises by rex, to rex
       ::  jel: %jewel rights
       ::
-      =/  lyf  `life`(need ~(current we (~(got by pug) rex)))
-      =*  lab  (~(got by pry) rex)
-      =*  par  (~(got by lab) rex)
+      =/  lyf  `life`?~(rug 1 (need ~(current we rug)))
+      =*  par  (~(got by shy) rex)
       =/  jel  `rite`(need (~(expose up par) %jewel))
       ?>  ?=($jewel -.jel)
       [lyf p.jel]
@@ -1673,15 +1671,8 @@
       =*  pub  pub:ex:loy
       =*  cet  `cert`[[doc pub] ~]
       =*  wyl  `will`[[1 cet] ~ ~]
-      =*  hec  `farm`[[rex wyl] ~ ~]
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
-      ::TODO  modifying outer core in non-abet arm is pretty bad style here...
-      =.  ..ex  (meet:abet [~ ~] hec)
-      ::
-      ::  because the above =. changed outer core state,
-      ::  we need to make shy and rug up-to-date again.
-      ::
-      able
+      (grow ``rex *farm wyl)
     ::                                                  ::  grow:ex:ur
     ++  grow                                            ::  merge wills
       |=  $:  ::  vie: data source
@@ -1888,9 +1879,11 @@
         ::  pev: life and ring of parent
         ::  val: new signature
         ::
-        ::TODO  are we good to use new here? only num matters it seems.
-        =/  pev  (leak:abet(rug (~(put by rug) num new)) dad)
-        =*  val  (sign:as:(nol:nu:crub q.pev) *@ ash)
+        ?.  =(rex dad)
+          ~|(%unimplemented !!)
+        =/  pev  lean
+        =/  key  (~(got by q.pev) p.pev)
+        =*  val  (sign:as:(nol:nu:crub key) *@ ash)
         new(syg (~(put by syg.new) dad [p.pev val]))
   --  --
     --
