@@ -18,7 +18,7 @@
 |=  pit/vase
 =,  pki:jael
 =,  rights:jael
-=,  able:jael 
+=,  able:jael
 =,  title
 =,  crypto
 =,  jael
@@ -505,22 +505,51 @@
   ::  language compromises: the type system can't enforce
   ::  that lef and ryt match, hence the asserts.
   ::
+  =<  |_  $:  ::  lef: old right
+              ::  ryt: new right
+              ::
+              lef/rite
+              ryt/rite
+          ==
+      ::                                                ::  ++uni:ry
+      ++  uni  ~(sum +> lef ryt)                        ::  add rights
+      ::                                                ::  ++dif:ry
+      ++  dif                                           ::  r->l: {add remove}
+        ^-  (pair (unit rite) (unit rite))
+        [~(dif +> ryt lef) ~(dif +> lef ryt)]
+      ::                                                ::  ++sub:ry
+      ++  sub                                           ::  l - r
+        ^-  (unit rite)
+        =/  vid  dif
+        ~|  vid
+        ?>(?=($~ q.vid) p.vid)
+      --
   |_  $:  ::  lef: old right
           ::  ryt: new right
           ::
           lef/rite
           ryt/rite
       ==
+  ::                                                    ::  ++sub-by:py
+  ++  sub-by                                            ::  subtract elements
+    |*  {new/(map) old/(map) sub/$-(^ *)}  ^+  new
+    %-  ~(rep by new)
+    |*  {{key/* val/*} acc/_^+(new ~)}
+    =>  .(+<- [key val]=+<-)
+    =/  var  (~(get by old) key)
+    =.  val  ?~(var val (sub val u.var))
+    ?~  val  acc
+    (~(put by ,.acc) key val)
   ::                                                    ::  ++dif:ry
-  ++  dif                                               ::  r->l: {add remove}
-    ^-  (pair (unit rite) (unit rite))
+  ++  dif                                               ::  in r and not l
+    ^-  (unit rite)
     |^  ?-  -.lef
           $apple  ?>(?=($apple -.ryt) (table %apple p.lef p.ryt))
-          $block  ?>(?=($block -.ryt) [~ ~])
+          $block  ?>(?=($block -.ryt) ~)
           $email  ?>(?=($email -.ryt) (sable %email p.lef p.ryt))
           $final  ?>(?=($final -.ryt) (table %final p.lef p.ryt))
           $fungi  ?>(?=($fungi -.ryt) (noble %fungi p.lef p.ryt))
-          $guest  ?>(?=($guest -.ryt) [~ ~])
+          $guest  ?>(?=($guest -.ryt) ~)
           $hotel  ?>(?=($hotel -.ryt) (bible %hotel p.lef p.ryt))
           $jewel  ?>(?=($jewel -.ryt) (table %jewel p.lef p.ryt))
           $login  ?>(?=($login -.ryt) (sable %login p.lef p.ryt))
@@ -528,97 +557,54 @@
           $token  ?>(?=($token -.ryt) (ruble %token p.lef p.ryt))
           $urban  ?>(?=($urban -.ryt) (table %urban p.lef p.ryt))
         ==
+    ::                                                  ::  ++cable:dif:ry
+    ++  cable                                           ::  diff atom
+      |*  {nut/@tas new/@ old/@}
+      ^-  (unit rite)
+      ?:  =(new old)  ~
+      `[nut new]
     ::                                                  ::  ++bible:dif:ry
     ++  bible                                           ::  diff pile
-      |*  {nut/@tas new/(map dorm pile) old/(map dorm pile)}
-      =/  mor/_old
-        %-  ~(rep by old)
-        |=  {{cur/dorm fid/pile} acc/_^+(old ~)}
-        =.  fid
-          (~(sub py fid) (fall (~(get by new) cur) ~))
-        ?~  fid  acc
-        (~(put by acc) cur fid)
-      ::
-      =/  les/_new
-        %-  ~(rep by new)
-        |=  {{cur/dorm fid/pile} acc/_^+(new ~)}
-        =.  fid
-          (~(sub py fid) (fall (~(get by old) cur) ~))
-        ?~  fid  acc
-        (~(put by acc) cur fid)
-      ::
-      :-  ?~(mor ~ `[nut mor])
-          ?~(les ~ `[nut les])
+      |*  {nut/@tas old/(map dorm pile) new/(map dorm pile)}
+      ^-  (unit rite)
+      =;  mor/_new
+        ?~(mor ~ `[nut mor])
+      %^  sub-by  new  old
+      |=({a/pile b/pile} (~(sub py a) b))
     ::                                                  ::  ++noble:dif:ry
     ++  noble                                           ::  diff map of @ud
-      |*  {nut/@tas new/(map * @ud) old/(map * @ud)}
-      ^-  (pair (unit rite) (unit rite))
-      =/  mor/_old
-        %-  ~(rep by old)
-        |*  {{cur/* fid/@ud} acc/_^+(old ~)}
-        =>  .(+< `_[[cur fid]=-.new acc=old]`+<)
-        =.  fid
-          (^sub fid (max fid (fall (~(get by new) cur) 0)))
-        ?~  fid  acc
-        (~(put by acc) cur fid)
-      ::
-      =/  les/_new
-        %-  ~(rep by new)
-        |*  {{cur/* fid/@ud} acc/_^+(new ~)}
-        =>  .(+< `_[[cur fid]=-.old acc=new]`+<)
-        =.  fid
-          (^sub fid (max fid (fall (~(get by old) cur) 0)))
-        ?~  fid  acc
-        (~(put by acc) cur fid)
-      ::
-      :-  ?~(mor ~ `[nut mor])
-          ?~(les ~ `[nut les])
+      |*  {nut/@tas old/(map * @ud) new/(map * @ud)}
+      ^-  (unit rite)
+      =;  mor/_new
+        ?~(mor ~ `[nut mor])
+      %^  sub-by  new  old
+      |=({a/@u b/@u} (sub a (min a b)))
     ::                                                  ::  ++ruble:dif:ry
     ++  ruble                                           ::  diff map of maps
-      |*  {nut/@tas new/(map * (map)) old/(map * (map))}
-      =/  mor/_old
-        %-  ~(rep by old)
-        |*  {{cur/* fid/(map)} acc/_^+(old ~)}
-        =>  .(+< `_[[cur fid]=n.-.new acc=old]`+<)
-        =.  fid
-          (~(dif by ,.fid) (fall (~(get by new) cur) ~))
-        ?~  fid  acc
-        (~(put by acc) cur fid)
-      ::
-      =/  les/_new
-        %-  ~(rep by new)
-        |*  {{cur/* fid/(map)} acc/_^+(new ~)}
-        =>  .(+< `_[[cur fid]=n.-.old acc=new]`+<)
-        =.  fid
-          (~(dif by ,.fid) (fall (~(get by old) cur) ~))
-        ?~  fid  acc
-        (~(put by acc) cur fid)
-      ::
-      :-  ?~(mor ~ `[nut mor])
-          ?~(les ~ `[nut les])
+      |*  {nut/@tas old/(map * (map)) new/(map * (map))}
+      ^-  (unit rite)
+      =;  mor/_new
+        ?~(mor ~ `[nut mor])
+      %^  sub-by  new  old
+      =*  valu  (~(got by new))
+      |=  {a/_^+(valu ~) b/_^+(valu ~)}  ^+  a
+      (sub-by a b |*({a2/* b2/*} a2))
     ::                                                  ::  ++sable:dif:ry
     ++  sable                                           ::  diff set
-      |*  {nut/@tas new/(set) old/(set)}
-      =/  mor  (~(dif in new) old)
-      =/  les  (~(dif in old) new)
-      :-  ?~(mor ~ `[nut mor])
-          ?~(les ~ `[nut les])
+      |*  {nut/@tas old/(set) new/(set)}
+      ^-  (unit rite)
+      =;  mor  ?~(mor ~ `[nut mor])
+      (~(dif in new) old)
     ::                                                  ::  ++table:dif:ry
     ++  table                                           ::  diff map
-      |*  {nut/@tas new/(map) old/(map)}
-      ::TODO  (~(dep by old) new)
-      =/  mor  (~(dif by new) old)
-      =/  les  (~(dif by old) new)
-      :-  ?~(mor ~ `[nut mor])
-          ?~(les ~ `[nut les])
+      |*  {nut/@tas old/(map) new/(map)}
+      ^-  (unit rite)
+      =;  mor  ?~(mor ~ `[nut mor])
+      ~!  [old new]
+      (sub-by new old |*({a/* b/*} a))
     --  ::dif
-  ::                                                    ::  ++sub:ry
-  ++  sub                                               ::  l - r
-    ^-  (unit rite)
-    =/  vid  dif
-    ?>(?=($~ q.vid) p.vid)
-  ::                                                    ::  ++add:ry
-  ++  uni                                               ::  lef new, ryt old
+  ::                                                    ::  ++sum:ry
+  ++  sum                                               ::  lef new, ryt old
     ^-  rite
     |^  ?-  -.lef
           $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
@@ -1526,7 +1512,7 @@
             ::
             our/ship  ::TODO  "absolutely verboten"
             now/@da
-            eny/@e 
+            eny/@e
             gen/@pG
             nym/arms
         ==
@@ -1543,7 +1529,7 @@
     ::
     ::  initialize hierarchical property
     ::
-    =.  +>.$  
+    =.  +>.$
       =-  abet:(deal:~(able ex our) our - ~)
       ^-  safe
       %-  intern:up
@@ -1574,7 +1560,7 @@
     ::  had: key handle
     ::  ryt: initial right
     ::
-    =/  key  (ypt:scr (mix our %jael-make) gen)  
+    =/  key  (ypt:scr (mix our %jael-make) gen)
     =*  had  (shaf %hand key)
     =*  ryt  `rite`[%urban [had (add ~m1 now) key] ~ ~]
     ::
