@@ -685,8 +685,7 @@
     ++  sh-repo-config-show
       |=  {pre/tape laz/config loc/config}
       ^+  +>
-      =.  +>.$
-        ?:  =(caption.loc caption.laz)  +>.$
+      =?  +>.$  !=(caption.loc caption.laz)
         (sh-note :(weld pre "cap " (trip caption.loc)))
       =.  +>.$
           %+  sh-repo-config-sources
@@ -852,7 +851,7 @@
       |=  {num/@ud gam/telegram}
       ^+  +>
       ?:  =(num count.she)
-        =.  +>  ?:(=(0 (mod num 5)) (sh-numb num) +>)
+        =?  +>  =(0 (mod num 5))  (sh-numb num)
         (sh-rend(count.she +(num)) gam)
       ?:  (gth num count.she)
         =.  +>  (sh-numb num)
@@ -904,7 +903,7 @@
               [(fix ' ') $(cur `@c`' ')] 
             newline
           ?:  =(cur `@`' ')
-            =.  brk  ?:(=(pre `@`' ') brk inx)
+            =?  brk  !=(pre `@`' ')  inx
             ?.  =(64 len)  advance
             :-  (fix(inx brk) (turf '•'))
             ?:  isa
@@ -1565,10 +1564,10 @@
     ?.  (pa-visible:soy her)
       (ra-evil %talk-no-story)
     =^  who  +>.$  (ra-human her)
-    =.  soy  ?.((~(has in vab) %a-group) soy (pa-watch-group:soy her))
-    =.  soy  ?.((~(has in vab) %v-glyph) soy (pa-watch-glyph:soy her))
-    =.  soy  ?.((~(has in vab) %x-cabal) soy (pa-watch-cabal:soy her))
-    =.  soy  ?.((~(has in vab) %f-grams) soy (pa-watch-grams:soy her t.t.pax))
+    =?  soy  (~(has in vab) %a-group)  (pa-watch-group:soy her)
+    =?  soy  (~(has in vab) %v-glyph)  (pa-watch-glyph:soy her)
+    =?  soy  (~(has in vab) %x-cabal)  (pa-watch-cabal:soy her)
+    =?  soy  (~(has in vab) %f-grams)  (pa-watch-grams:soy her t.t.pax)
     =.  soy  (pa-notify:soy her %hear who)
     pa-abet:soy
   ::
@@ -2040,7 +2039,7 @@
           ==
       ?~  moy
         (weld pre (trip p.p.one))
-      =.  pre  ?.(=(& u.moy) pre ['*' pre])
+      =?  pre  =(& u.moy)  ['*' pre]
       (sigh 14 pre p.p.one)
     ==
   --
@@ -2225,8 +2224,8 @@
       =+  txt=(trip q.sep)
       ?:  p.sep
         =+  pal=tr-pals
-        =.  pal  ?:  =(who our.hid)  pal
-                 (~(del in pal) [%& who (main who)])
+        =?  pal  !=(who our.hid)
+          (~(del in pal) [%& who (main who)])
         (weld ~(te-pref te man pal) txt)
       (weld " " txt)
     ::

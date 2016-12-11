@@ -5474,6 +5474,7 @@
     {$var p/taro q/twig r/twig}                         ::  =/  typed variable
     {$rev p/taro q/twig r/twig}                         ::  =;  =/(q p r)
     {$set p/wing q/twig r/twig}                         ::  =.  r with p as q
+    {$huh p/wing q/twig r/twig s/twig}                  ::  =?  conditional =.
     {$rap p/twig q/twig}                                ::  =<  =>(q p)
     {$nip p/twig q/twig}                                ::  =-  =+(q p)
     {$per p/twig q/twig}                                ::  =>  q w/subject p 
@@ -6351,6 +6352,8 @@
         {$rev *}  [%var p.gen r.gen q.gen]
         {$set *}
       [%per [%keep [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
+        {$huh *}                                        ::                  =?
+      [%set p.gen [%if q.gen r.gen [%wing p.gen]] s.gen]
     ::
         {$sip *}                                        ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                 ::
@@ -9073,6 +9076,7 @@
                 ::
                   (word %new expb)
                   (word %set expq)
+                  (word %huh expw)
                   (word %sip expt)
                   (word %fix expp)
                   (word %rap expb)
@@ -9166,6 +9170,7 @@
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %new expb)]
                     ['.' (rune dot %set expq)]
+                    ['?' (rune wut %huh expw)]
                     ['^' (rune ket %sip expt)]
                     [':' (rune col %fix expp)]
                     ['/' (rune fas %var expo)]
@@ -9335,6 +9340,7 @@
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
     ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
     ++  expv  |.((butt rick))                           ::  just changes
+    ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three twigs
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::
     ::    tiki expansion for %wt runes

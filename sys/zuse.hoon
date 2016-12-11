@@ -2696,7 +2696,7 @@
       |=  {k/@ kl/@ t/@ tl/@}
       =>  .(k (end 3 kl k), t (end 3 tl t))
       =+  b=64
-      =.  k  ?.  (gth kl b)  k  (shay kl k)
+      =?  k  (gth kl b)  (shay kl k)
       =+  ^=  q  %+  shay  (add b tl)
        (add (lsh 3 b t) (mix k (fil 3 b 0x36)))
       %+  shay  (add b 32)
@@ -3391,7 +3391,7 @@
     |%
     ::                                                  ::  ++abet:lusk:differ
     ++  abet                                            ::
-      =.  q.rag  ?:(=([& 0] p.rag) q.rag [p.rag q.rag])
+      =?  q.rag  !=([& 0] p.rag)  [p.rag q.rag]
       (flop q.rag)
     ::                                                  ::  ++done:lusk:differ
     ++  done                                            ::
