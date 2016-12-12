@@ -15,6 +15,7 @@
         syn/(map kiln-sync {let/@ud ust/bone})          ::
         autoload-on/?                                   ::
         cur-hoon/@uvI                                   ::
+        cur-arvo/@uvI                                   ::
         cur-zuse/@uvI                                   ::
         cur-vanes/(map @tas @uvI)                       ::
     ==                                                  ::
@@ -207,6 +208,7 @@
   ::
   ++  start
     =.  cur-hoon  (sys-hash /hoon/hoon)
+    =.  cur-arvo  (sys-hash /arvo/hoon)
     =.  cur-zuse  (sys-hash /zuse/hoon)
     =.  cur-vanes  rehash-vanes
     subscribe-next
@@ -223,8 +225,10 @@
     ?.  autoload-on
       ..check-new
     =/  new-hoon  (sys-hash /hoon/hoon)
-    ?:  !=(new-hoon cur-hoon)
+    =/  new-arvo  (sys-hash /arvo/hoon)
+    ?:  |(!=(new-hoon cur-hoon) !=(new-arvo cur-arvo))
       =.  cur-hoon  new-hoon
+      =.  cur-arvo  new-arvo
       =.  cur-vanes  rehash-vanes
       (emit %poke /kiln/reload/hoon [our %hood] %helm-reset ~)
       ::  XX  updates cur-vanes?
