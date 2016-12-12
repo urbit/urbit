@@ -1109,7 +1109,7 @@ _http_write_ports_file(c3_c *pax_c)
   por_u = fopen(paf_c, "w");
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     fprintf(por_u, "%u %s %s\n", htp_u->por_w,
-                   (c3y == htp_u->sec) ? "secure" : "insecure",
+                   (c3y == htp_u->sec) ? "assumed-secure" : "insecure",
                    (c3y == htp_u->lop) ? "loopback" : "public");
  }
 

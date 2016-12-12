@@ -8,6 +8,6 @@ http-ports-line = port-num SP secure-val SP loopback-val
 ; number of a port being listened on
 port-num = *DIGIT
 ; whether the http subsystem has the port marked as "secure"
-secure-val = ("secure" / "insecure")
+secure-val = ("assumed-secure" / "insecure")
 ; whether the port is bound only on loopback or on all interfaces
 loopback-val = ("loopback" / "public")
