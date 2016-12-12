@@ -1088,6 +1088,50 @@ _http_start(u3_http* htp_u)
   }
 }
 
+/* _http_write_ports_file(): update .http.ports
+*/
+void
+_http_write_ports_file(c3_c *pax_c)
+{
+  c3_c paf_c[2048];
+  FILE *por_u;
+  u3_http *htp_u;
+
+  snprintf(paf_c, 2048, "%s/%s", pax_c, ".http.ports");
+  fprintf(uH, "snprintfed\n");
+
+  if ( NULL != (por_u = fopen(paf_c, "r")) ) {
+    fprintf(uH, ".http.ports already existed - clearing it\n");
+  }
+
+  fclose(por_u);
+
+  por_u = fopen(paf_c, "w");
+  for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
+    fprintf(por_u, "%u %s %s\n", htp_u->por_w,
+                   (c3y == htp_u->sec) ? "assumed-secure" : "insecure",
+                   (c3y == htp_u->lop) ? "loopback" : "public");
+ }
+
+ {
+   c3_i fid_i = fileno(por_u);
+   c3_sync(fid_i);
+ }
+ fclose(por_u);
+}
+
+/* _http_release_ports_file(): update .http.ports
+*/
+void
+_http_release_ports_file(c3_c *pax_c)
+{
+  c3_c paf_c[2048];
+
+  snprintf(paf_c, 2048, "%s/%s", pax_c, ".http.ports");
+
+  unlink(paf_c);
+}
+
 /* u3_http_io_init(): initialize http I/O.
 */
 void
@@ -1159,6 +1203,8 @@ u3_http_io_talk()
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
     _http_start(htp_u);
   }
+
+  _http_write_ports_file(u3_Host.dir_c);
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
@@ -1173,4 +1219,5 @@ u3_http_io_poll(void)
 void
 u3_http_io_exit(void)
 {
+  _http_release_ports_file(u3_Host.dir_c);
 }
