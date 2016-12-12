@@ -424,7 +424,8 @@ static u3j_core _149_tri_d[] =
     // static u3j_harm _149_two__in_int_a[] = {{".2", u3wdi_int}, {}};
     static u3j_harm _149_two__in_put_a[] = {{".2", u3wdi_put}, {}};
     static u3j_harm _149_two__in_tap_a[] = {{".2", u3wdi_tap}, {}};
-    // static u3j_harm _149_two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
+    static u3j_harm _149_two__in_wyt_a[] = {{".2", u3wdi_wyt}, {}};
+    static u3j_harm _149_two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
   static u3j_core _149_two__in_d[] =
     { { "bif", _149_two__in_bif_a },
       { "dif", _149_two__in_dif_a },
@@ -434,7 +435,8 @@ static u3j_core _149_tri_d[] =
       // { "int", _149_two__in_int_a },
       { "put", _149_two__in_put_a },
       { "tap", _149_two__in_tap_a },
-      // { "uni", _149_two__in_uni_a },
+      { "wyt", _149_two__in_wyt_a },
+      { "uni", _149_two__in_uni_a },
       {}
     };
 
@@ -988,7 +990,8 @@ static u3j_core _150_tri_d[] =
     // static u3j_harm _150_two__in_int_a[] = {{".2", u3wdi_int}, {}};
     static u3j_harm _150_two__in_put_a[] = {{".2", u3wdi_put}, {}};
     static u3j_harm _150_two__in_tap_a[] = {{".2", u3wdi_tap}, {}};
-    // static u3j_harm _150_two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
+    static u3j_harm _150_two__in_wyt_a[] = {{".2", u3wdi_wyt}, {}};
+    static u3j_harm _150_two__in_uni_a[] = {{".2", u3wdi_uni}, {}};
   static u3j_core _150_two__in_d[] =
     { { "bif", _150_two__in_bif_a },
       { "dif", _150_two__in_dif_a },
@@ -998,7 +1001,8 @@ static u3j_core _150_tri_d[] =
       // { "int", _150_two__in_int_a },
       { "put", _150_two__in_put_a },
       { "tap", _150_two__in_tap_a },
-      // { "uni", _150_two__in_uni_a },
+      { "wyt", _150_two__in_wyt_a },
+      { "uni", _150_two__in_uni_a },
       {}
     };
 
