@@ -1,0 +1,13 @@
+.http.ports ABNF Format Specifiation
+Version 0.1, 12 December 2016
+
+http-ports-file = *(http-ports-line LF)
+
+http-ports-line = port-num SP secure-val SP loopback-val
+
+; number of a port being listened on
+port-num = *DIGIT
+; whether the http subsystem has the port marked as "secure"
+secure-val = ("assumed-secure" / "insecure")
+; whether the port is bound only on loopback or on all interfaces
+loopback-val = ("loopback" / "public")
