@@ -1050,8 +1050,8 @@
     ++  rite                                            ::  urbit commitment
       $%  {$apple p/(map site @)}                       ::  web api key
           {$block $~}                                   ::  banned
-          {$email p/(set @t)}                            ::  email addresses
-          {$final p/@pG}                                 ::  recognize by ticket
+          {$email p/(set @t)}                           ::  email addresses
+          {$final p/@pG}                                ::  recognize by ticket
           {$fungi p/(map term @ud)}                     ::  fungibles
           {$guest $~}                                   ::  refugee visa
           {$hotel p/(map dorm pile)}                    ::  reserved block
@@ -1085,7 +1085,6 @@
     ++  task                                            ::  in request ->$
       $%  {$hear p/lane q/@}                            ::
           {$mess p/ship q/path r/*}                     ::  send message
-          {$gear p/farm:pki:jael q/(map life ring)}     ::  general update
           {$wake $~}                                    ::
       ==                                                ::
     ++  card                                            ::  out cards
@@ -1099,7 +1098,7 @@
               $%  {$line p/ship q/@da r/code}           ::
                   {$link p/ship q/@da r/code}           ::
                   {$meet p/farm:pki:jael}               ::
-                  {$view p/ship}                        ::
+                  {$veil p/ship}                        ::
                   {$west p/ship q/path r/*}             ::  to %gall
       ==  ==  ==                                        ::
     --  ::  able
@@ -2344,7 +2343,7 @@
       cph
     ::                                                  ::  ++dy:crub:crypto
     ++  dy                                              ::  need decrypt
-      |=  {key/@I cph/@}
+      |=  {key/@J cph/@}
       (need (de key cph))
     ::                                                  ::  ++en:crub:crypto
     ++  en                                              ::  encrypt
@@ -4255,14 +4254,12 @@
       |=  yed/date
       ^-  tape
       =+  wey=(daws yed)
-      ;:  weld
-          `tape`(snag wey (turn wik:yu |=(a/tape (scag 3 a))))
-          ", "  ~(rud at d.t.yed)  " "
-          `tape`(snag (dec m.yed) (turn mon:yu |=(a/tape (scag 3 a))))
-          " "  (scag 1 ~(rud at y.yed))  (slag 2 ~(rud at y.yed))  " "
-          ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
-          " "  "+0000"
-      ==
+      =/  num  (d-co:co 1)  :: print as decimal without dots
+      =/  pik  |=({n/@u t/wall} `tape`(scag 3 (snag n t)))
+      ::
+      "{(pik wey wik:yu)}, ".
+      "{(num d.t.yed)} {(pik (dec m.yed) mon:yu)} {(num y.yed)} ".
+      "{(num h.t.yed)}:{(num m.t.yed)}:{(num s.t.yed)} +0000"
     ::                                                  ::  ++stud:chrono:
     ++  stud                                            ::  parse UTC format
       =<  |=  a/cord
