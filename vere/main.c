@@ -178,6 +178,14 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
+  if ( u3_Host.ops_u.fak != c3y ) {
+    fprintf(stderr, "this is the development build and cannot connect\r\n");
+    fprintf(stderr, "to the live network; always run this build with -F.\r\n");
+    fprintf(stderr, "to install a live client: %s\r\n",
+                    "http://urbit.org/docs/using/install/");
+    exit(1); /* (avoid simple usage msg) */
+  }
+
   if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
     fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
