@@ -1098,7 +1098,6 @@ _http_write_ports_file(c3_c *pax_c)
   u3_http *htp_u;
 
   snprintf(paf_c, 2048, "%s/%s", pax_c, ".http.ports");
-  fprintf(uH, "snprintfed\n");
 
   if ( NULL != (por_u = fopen(paf_c, "r")) ) {
     fprintf(uH, ".http.ports already existed - clearing it\n");
