@@ -1136,6 +1136,7 @@
           &((slob %grow p.pro) (slob too p:(slap pro [%limb %grow])))
         :: ~$  link-grow
         :: =<  $  ~%  %grow  link-jet  ~  |.
+        %+  cool  |.(leaf+"ford: grow {<for>} to {<too>}")
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
         (maim cof pox [%per [%limb %grow] [%limb too]])
@@ -1316,6 +1317,12 @@
       ::
           $core
         %+  cool  |.(leaf+"ford: core {<(tope p.kas)>}")
+        ::  code runtime behaviour is frequently affected by marks
+        ::  TODO: track this more formally
+        %+  flag  [bek /mar]
+        ::  until /? is in use, any hoon may implicitly depend on arvo types
+        %+  flag  [bek /arvo/hoon]
+        %+  flag  [bek /arvo/zuse]
         (cope (lear cof p.kas) (flux |=(a/vase [%& %core a])))
       ::
           $diff

@@ -289,6 +289,7 @@
         %-  perk  :~
           %noob
           %quiet
+          %showtime
         ==
       ++  work
         %+  knee  *^work  |.  ~+
@@ -300,7 +301,7 @@
             qut
           ==
         ::
-          ;~(plug (perk %who ~) ;~(pose para (easy ~)))
+          ;~(plug (perk %who ~) ;~(pose ;~(pfix ace para) (easy ~)))
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
           ;~((glue ace) (perk %join ~) para)
           ;~((glue ace) (perk %leave ~) para)
@@ -436,8 +437,8 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam/telegram
-      =+  lin=~(tr-line tr man.she (~(has in settings.she) %noob) gam)
-      (sh-pass:(sh-fact %txt lin) q.q.gam) 
+      =+  lin=~(tr-line tr man.she settings.she gam)
+      (sh-pass:(sh-fact %txt lin) q.q.gam)
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num/@ud
@@ -1003,7 +1004,7 @@
       ++  activate                                      ::  from %number
         |=  gam/telegram
         ^+  ..sh-work
-        =+  tay=~(. tr man.she (~(has in settings.she) %noob) gam)
+        =+  tay=~(. tr man.she settings.she gam)
         =.  ..sh-work  (sh-fact tr-fact:tay)
         sh-prod(active.she `tr-pals:tay)
       ::
@@ -2089,7 +2090,7 @@
 ::
 ++  tr                                                  ::  telegram renderer
   |_  $:  man/knot
-          nob/?
+          sef/(set knot)
           who/ship
           sen/serial
           aud/audience
@@ -2106,9 +2107,18 @@
     =+  ^=  baw
         ::  ?:  oug 
         ::  ~(te-whom te man tr-pals)
-        ?.  nob
+        ?.  (~(has in sef) %noob)
           (~(sn-curt sn man [who (main who)]) |)
         (~(sn-nick sn man [who (main who)]))
+    ?:  (~(has in sef) %showtime)
+      =+  dat=(yore now.hid)
+      =+  ^=  t
+        |=  a/@  ^-  tape
+        %+  weld
+          ?:  (lth a 10)  "0"  ~
+          (scow %ud a)
+      =+  ^=  time  :(weld "~" (t h.t.dat) "." (t m.t.dat) "." (t s.t.dat))
+      :(weld baw txt (reap (sub 67 (lent txt)) ' ') time)
     (weld baw txt)
   ::
   ++  tr-meta  ^-  tang

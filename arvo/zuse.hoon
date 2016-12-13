@@ -2946,6 +2946,7 @@
       {$pull $~}                                        ::  unsubscribe
       {$punk p/mark q/cage}                             ::  translated poke
       {$pump $~}                                        ::  pump yes+no
+      {$peer-not p/tang}                                ::  poison pill peer
   ==                                                    ::
 ++  cuft                                                ::  internal gift
   $%  {$coup p/(unit tang)}                             ::  poke result
