@@ -1,6 +1,7 @@
 /* v/http.c
 **
 */
+#define _WITH_DPRINTF
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -1093,30 +1094,26 @@ _http_start(u3_http* htp_u)
 void
 _http_write_ports_file(c3_c *pax_c)
 {
-  c3_c paf_c[2048];
-  FILE *por_u;
+  int     pal_i;
+  c3_c    *paf_c;
+  int     por_i;
   u3_http *htp_u;
 
-  snprintf(paf_c, 2048, "%s/%s", pax_c, ".http.ports");
+  pal_i = strlen(pax_c) + 13; /* includes NUL */
+  paf_c = u3a_malloc(pal_i);
+  snprintf(paf_c, pal_i, "%s/%s", pax_c, ".http.ports");
 
-  if ( NULL != (por_u = fopen(paf_c, "r")) ) {
-    fprintf(uH, ".http.ports already existed - clearing it\n");
-  }
+  por_i = open(paf_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  u3a_free(paf_c);
 
-  fclose(por_u);
-
-  por_u = fopen(paf_c, "w");
   for ( htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    fprintf(por_u, "%u %s %s\n", htp_u->por_w,
+    dprintf(por_i, "%u %s %s\n", htp_u->por_w,
                    (c3y == htp_u->sec) ? "assumed-secure" : "insecure",
                    (c3y == htp_u->lop) ? "loopback" : "public");
- }
+  }
 
- {
-   c3_i fid_i = fileno(por_u);
-   c3_sync(fid_i);
- }
- fclose(por_u);
+ c3_sync(por_i);
+ close(por_i);
 }
 
 /* _http_release_ports_file(): update .http.ports
@@ -1124,9 +1121,12 @@ _http_write_ports_file(c3_c *pax_c)
 void
 _http_release_ports_file(c3_c *pax_c)
 {
-  c3_c paf_c[2048];
+  int  pal_i;
+  c3_c *paf_c;
 
-  snprintf(paf_c, 2048, "%s/%s", pax_c, ".http.ports");
+  pal_i = strlen(pax_c) + 13; /* includes NUL */
+  paf_c = u3a_malloc(pal_i);
+  snprintf(paf_c, pal_i, "%s/%s", pax_c, ".http.ports");
 
   unlink(paf_c);
 }
