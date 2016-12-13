@@ -132,7 +132,7 @@ CWFLAGS=-Wall \
         -Wno-unused-parameter \
         -Wno-missing-field-initializers \
         -Wno-strict-aliasing \
-        -Werror
+        -Wno-error
 ifneq ($(OS),bsd)
   CWFLAGS+=-Wno-error=unused-result
 endif
