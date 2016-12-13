@@ -732,14 +732,12 @@
         pig
       [~(uni ry ryt n.pig) l.pig r.pig]
     ?:  (gor -.ryt -.n.pig)
-      =+  nex=$(pig l.pig)
-      =.  l.pig  nex
+      =.  l.pig  $(pig l.pig)
       ?>  ?=(^ l.pig)
       ?:  (vor -.n.pig -.n.l.pig)
         [n.pig l.pig r.pig]
       [n.l.pig l.l.pig [n.pig r.l.pig r.pig]]
-    =+  nex=$(pig r.pig)
-    =.  r.pig  nex
+    =.  r.pig  $(pig r.pig)
     ?>  ?=(^ r.pig)
     ?:  (vor -.n.pig -.n.r.pig)
       [n.pig l.pig r.pig]
