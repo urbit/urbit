@@ -569,13 +569,11 @@
   ::
   ++  mo-defer-mack                                     ::  future %mack
     |=  hon/duct  ^+  mak
-    ~&  mo-defer+hon
     ?~  mak  `hon
     ~|(double-mak+[u.mak hon] !!)
   ::
   ++  mo-resume-mack                                    ::  route %mack
     |=  a/(unit tang)  ^+  +>.$
-    ~&  mo-resume+[mak ?=($~ a)]
     ?^  mak
       +>.$(mak ~, moz :_(moz [u.mak %give %mack a]))
     ?~  a  +>.$
