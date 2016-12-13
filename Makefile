@@ -65,17 +65,10 @@ CURLINC=$(shell curl-config --cflags)
 CURLLIB=$(shell curl-config --libs)
 
 RM=rm -f
-ifneq ($(UNAME),FreeBSD)
-CC=gcc
-CXX=g++
-CXXFLAGS=$(CFLAGS)
-CLD=g++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
-else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
 CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
-endif
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
@@ -109,7 +102,7 @@ endif
 
 LIBUV_VER=libuv-v1.7.5
 
-LIBUV_CONFIGURE_OPTIONS=
+LIBUV_CONFIGURE_OPTIONS=CC=$(CC)
 
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
