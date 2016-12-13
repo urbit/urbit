@@ -91,9 +91,9 @@ ifeq ($(OS),bsd)
 endif
 
 ifeq ($(STATIC),yes)
-LIBS=-lssl -lcrypto -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(CURLLIB) $(OSLIBS)
+LIBS=-lssl -lcrypto -luv -lncurses /usr/local/lib/libsigsegv.a /usr/local/lib/libgmp.a $(CURLLIB) $(OSLIBS)
 else
-LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(CURLLIB) $(OSLIBS)
+LIBS=-lssl -lcrypto -luv -lgmp -lncurses -lsigsegv $(CURLLIB) $(OSLIBS)
 endif
 
 INCLUDE=include
@@ -107,10 +107,6 @@ else
 CFLAGS?=-O3
 endif
 
-LIBUV_VER=libuv-v1.7.5
-
-LIBUV_CONFIGURE_OPTIONS=
-
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
 #   -DHUSH
@@ -121,7 +117,6 @@ CFLAGS+= $(COSFLAGS) -ffast-math \
 	$(OPENSSLIFLAGS) \
 	$(CURLINC) \
 	-I$(INCLUDE) \
-	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \
 	-Ioutside/ed25519/src \
 	-Ioutside/commonmark/src \
@@ -384,25 +379,6 @@ VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
 
 -include $(VERE_DFILES)
 
-# This is a silly hack necessitated by the fact that libuv uses configure
-#
-#    * Making 'all' obviously requires outside/libuv,
-#      which requires the libuv Makefile to be created.
-#    * Making distclean on outside/libuv destroys the makefile.
-#    * ...so configuring outside/libuv is parodoxically required
-#      in order to distclean it!
-#    * But what if developer types 'make distclean all' ?
-#    * first target makes libuv Makefile, then destroys it...and
-#      second target knows that it was made.
-#    * ...so second target borks.
-#    * Solution: make libuv not only depend on its own Makefile,
-#      but on a side effect of creating its own makefile.
-#
-LIBUV_MAKEFILE=outside/$(LIBUV_VER)/Makefile
-LIBUV_MAKEFILE2=outside/$(LIBUV_VER)/config.log
-
-LIBUV=outside/$(LIBUV_VER)/.libs/libuv.a
-
 LIBED25519=outside/ed25519/ed25519.a
 
 LIBANACHRONISM=outside/anachronism/build/libanachronism.a
@@ -430,27 +406,6 @@ all: urbit
 
 urbit: $(BIN)/urbit
 
-$(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
-	cd outside/$(LIBUV_VER) ; sh autogen.sh ; ./configure $(LIBUV_CONFIGURE_OPTIONS)
-
-# [h]act II: the plot thickens
-#
-#     * Specifying two targets that each configure libuv works
-#       when the rules are executed sequentially,
-#     * but when attempting a parallel build, it is likely Make
-#       will try to configure libuv simultaneously.
-#     * We can specify a dependency between the two targets so
-#       that execution of their rule(s) is serialized.
-#     * Further, libuv does not seem to be friendly towards
-#       parallel builds either. A true fix is out of scope here
-#     * ...so we must instruct Make to only use one job when it
-#       attempts to build libuv.
-#
-$(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
-
-$(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
-	$(MAKE) -C outside/$(LIBUV_VER) all-am -j1
-
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
 
@@ -469,14 +424,14 @@ $(LIBSOFTFLOAT):
 $(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 else
-$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+$(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
 tags: ctags etags gtags cscope
@@ -516,8 +471,7 @@ clean:
 
 # 'make distclean all -jn' ∀ n>1 still does not work because it is possible
 # Make will attempt to build urbit while it is also cleaning urbit..
-distclean: clean $(LIBUV_MAKEFILE)
-	$(MAKE) -C outside/$(LIBUV_VER) distclean
+distclean: clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
 	$(MAKE) -C outside/scrypt clean
