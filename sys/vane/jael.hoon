@@ -887,6 +887,13 @@
   ++  burb                                              ::  per ship
     |=  who/ship
     ~(able ~(ex ur urb) who)
+  ::                                                    ::  ++scry:of
+  ++  scry                                              ::  read
+    |=  {syd/@tas pax/path}  ^-  (unit gilt)
+    =^  mar  pax  =/(a (flop pax) [-.a (flop t.+.a)])
+    ?>  ?=(_-:*gilt mar)
+    =-  (biff - (flit |=(a/gilt =(-.a mar))))
+    ~  ::TODO
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause
@@ -1952,7 +1959,13 @@
           tyl/spur
       ==
   ^-  (unit (unit cage))
-  ~
+  :: XX security
+  ?.  =(lot [%$ %da now])  ~
+  %-  some
+  ?.  =(%$ ren)  ~
+  %+  bind  (~(scry of [now eny] lex) syd tyl)
+  =-  ~!  -  -
+  |=(a/gilt [-.a (slot `@`3 !>(a))])
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
   lex
