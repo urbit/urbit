@@ -1,1 +1,1 @@
-#define URBIT_VERSION "0.4.2"
+#define URBIT_VERSION "0.4.3"
