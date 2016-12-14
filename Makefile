@@ -71,7 +71,6 @@ CXXFLAGS=$(CFLAGS)
 CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 
 ifeq ($(OS),osx)
-  COSFLAGS=-fno-diagnostics-fixit-info
   CLDOSFLAGS=-bind_at_load
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
