@@ -1404,8 +1404,7 @@
     ::
     ::  track private keys
     ::
-    =.  +>  ?.  (~(exists up mor.del) %jewel)  
-        +>
+    =?  +>  (~(exists up mor.del) %jewel)
       vein:feel
     ::
     ::  track changes in secure channels
@@ -1449,13 +1448,12 @@
     ::
     ::  if our subfarm may have changed, reset it
     ::
-    =.  +>.$  ?.  |(=(our rex) (~(has by cod.rel) rex))  +>.$
+    =?  +>.$  |(=(our rex) (~(has by cod.rel) rex))
       veal:feel
     ::
     ::  if a new deed, reset parent
     ::
-    =.  dad.rel  ?.  &(=(our rex) ?=($step -.gan))  
-        dad.rel
+    =?  dad.rel  &(=(our rex) ?=($step -.gan))
       dad.doc.dat.p.gan
     ::
     ::  kick secure channels
@@ -1469,10 +1467,10 @@
     ::
     ::  if first certificate, add to neighbor lists
     ::
-    =.  +>.$  ?.  &(?=($step -.gan) =(1 lyf))  +>.$
-      =.  kyz.rel  ?.  =(our dad.doc.dat.p.gan)  kyz.rel
+    =?  +>.$  &(?=($step -.gan) =(1 lyf))
+      =?  kyz.rel  =(our dad.doc.dat.p.gan)
         (~(put in kyz.rel) rex)
-      =.  pyr.rel  ?.  =((clan rex) (clan our))  pyr.rel
+      =?  pyr.rel  =((clan rex) (clan our))
         (~(put in pyr.rel) rex)
       +>.$
     ::

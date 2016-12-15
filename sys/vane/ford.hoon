@@ -1652,7 +1652,7 @@
         ::
             $toy
           ?:  p.hon
-            =.  arg  ?.(lit arg many+~)
+            =?  arg  lit  many+~
             (cope (make cof %bake q.hon arg how) furl)
           %+  cool  |.(leaf+"ford: hook {<q.hon>} {<(en-beam how)>}")
           %+  cope  (fade cof how)

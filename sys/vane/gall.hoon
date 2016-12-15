@@ -488,7 +488,7 @@
   ::
   ++  mo-gawk                                           ::  ames forward
     |=  {him/@p dap/dude num/@ud rok/rook}
-    =.  +>  ?.(?=($u -.rok) +> (mo-give %mack ~))
+    =?  +>  ?=($u -.rok)  (mo-give %mack ~)
     %+  mo-pass  
       [%sys %req (scot %p him) dap ~]
     ^-  note-arvo
