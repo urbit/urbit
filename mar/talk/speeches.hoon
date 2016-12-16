@@ -8,8 +8,8 @@
 =+  talk
 |_  gam/(list speech)
 ::
-++  grab  
-  |%  
+++  grab
+  |%
   ++  noun  (list speech)
   --
 ::

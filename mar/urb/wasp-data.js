@@ -2,8 +2,8 @@ window.urb = window.urb || {}
 
 urb.waspWait = []
 urb.wasp = urb.wasp || [].push.bind(urb.waspWait)
-  
-// debugging 
+
+// debugging
 urb.verb = false
 urb.sources = {}
 urb.waspDeps = function(){
@@ -49,7 +49,7 @@ urb.onLoadUrbJS = function(){
     else _onupdate(dep)
   }
   urb.waspDeps()
-  
+
   urb.waspAll = function(sel){
     [].map.call(document.querySelectorAll(sel), urb.waspElem)
   }

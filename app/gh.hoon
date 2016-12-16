@@ -20,7 +20,7 @@
 ::
 =>  |%
     ++  move  (pair bone card)
-    ++  card  
+    ++  card
       $%  {$diff sub-result}
           {$them wire (unit hiss)}
           {$hiss wire {$~ $~} $httr {$hiss hiss}}

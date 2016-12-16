@@ -28,7 +28,7 @@
   $%  {$quit $~}                                         ::  terminate
       {$diff gilt}                                      ::  send data
   ==
-++  gilt  
+++  gilt
   $%  {$twit-feed p/(list stat)}                        ::  posts in feed
       {$twit-post p/stat}                               ::  tweet accepted
       {$ares term (list tank)}                          ::  error
@@ -96,7 +96,7 @@
   |=  {pax/path mof/(list move)}  ^+  done
   =^  tym  ran  (dely pax)
   :_  +>.$
-  ?~  tym  
+  ?~  tym
     :: ~&  no-wait/ran
     mof
   :: ~&  will-wait/u.tym
@@ -123,7 +123,7 @@
       pus=(~(gas ju *(jug path bone)) (turn (~(tap by sup)) .))
   ?~  (~(get ju pus) pax)
     ~
-  ~&  peer-again+[pax ran]  
+  ~&  peer-again+[pax ran]
   (pear | `~. pax) ::(user-from-path pax))
 ::
 ++  sigh-recoverable-error                              ::  Rate-limit
@@ -220,7 +220,7 @@
   =+  hiz=(pear-hiss pax)
   ?~  hiz  ~                          :: already in flight
   ::?>  (compat usr -.u.hiz)                  ::  XX better auth
-  [ost %hiss scry+pax usr +.u.hiz]~  
+  [ost %hiss scry+pax usr +.u.hiz]~
 ::
 ++  peer  |=(pax/path :_(+> (pear & `~. pax)))       ::  accept subscription
 ++  pear                              ::  poll, possibly returning current data

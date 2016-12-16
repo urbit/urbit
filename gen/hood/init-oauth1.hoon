@@ -26,7 +26,7 @@
   [%& %oauth-client "consumer key: "]
 %+  sole-go  (boss 256 (star prn))
 |=  key/@t
-%+  sole-lo  
+%+  sole-lo
   [%& %oauth-secret "consumer secret: "]
 %+  sole-go  (boss 256 (star prn))
 |=  sec/@t

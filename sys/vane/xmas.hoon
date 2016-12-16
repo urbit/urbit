@@ -2,14 +2,14 @@
 ::::  /hoon/ames/arvo                                   ::::::  vane prelude
   !:                                                    ::  ::
 |=  pit/vase                                            ::  kernel vase
-=>  =~                                                  ::  
+=>  =~                                                  ::
 =,  xmas
 ::                                                      ::  ::
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
 ::
 =*  pipe  channel:able:^jael                            ::  secure channel
-=*  gree  farm:pki:^jael                                ::  pki information 
+=*  gree  farm:pki:^jael                                ::  pki information
 |%                                                      ::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
@@ -56,7 +56,7 @@
               nys/(map tick bait)                       ::  inbound partials
               laz/(unit (trel tick flap lane))          ::  awaiting app
               exc/(map tick ares)                       ::  negative acks
-          ==                                            ::  
+          ==                                            ::
 ++  meal                                                ::  payload
           $%  {$back p/bone q/flap r/coop s/@dr}        ::  acknowledgment
               {$bond p/flea q/chan r/*}                 ::  message
@@ -98,7 +98,7 @@
           ==                                            ::
 ++  tick  @ud                                           ::  message sequence no
 --                                                      ::
-::                                                      ::  
+::                                                      ::
 ::::                                                    ::::  arvo structures
   ::                                                    ::
 |%                                                      ::
@@ -110,7 +110,7 @@
 ::                                                      ::
 ::::  loft                                              ::::  main transceiver
   ::                                                    ::
-++  loft                                                ::  
+++  loft                                                ::
   =>  |%                                                ::
       ++  gift                                          ::  output
         $%  {$east p/duct q/ship r/chan s/*}            ::  network response
@@ -127,7 +127,7 @@
         $%  {$clue p/ship q/pipe}                       ::  update channel
             {$done p/ship q/bole r/coop}                ::  completion
             {$hear p/lane q/@}                          ::  incoming packet
-            {$mess p/ship q/duct r/chan s/*}            ::  forward message 
+            {$mess p/ship q/duct r/chan s/*}            ::  forward message
             {$rend p/ship q/bole r/chan s/*}            ::  backward message
             {$wake $~}                                  ::  wakeup
         ==
@@ -137,7 +137,7 @@
           ==
           silo
           fex/(list gift)
-      == 
+      ==
   =*  syl  ->-
   |%                                                    ::
   ++  abet  [(flop fex) syl]                            ::  resolve
@@ -218,11 +218,11 @@
     ==
   ::                                                    ::
   ++  etre                                              ::  old neighbor
-    |=  who/@p 
+    |=  who/@p
     ~(. et who (~(got by pol) who))
   ::                                                    ::
   ++  et                                                ::  per neighbor
-    |_  $:  who/ship  
+    |_  $:  who/ship
             bah/bath
         ==
     ++  abet  +>(pol (~(put by pol) who bah))           ::  resolve
@@ -320,7 +320,7 @@
       ^+  +>
       ?-    -.hox
           $fore
-        ?:  =(our her.hox) 
+        ?:  =(our her.hox)
           (acme %home org.hox pac.hox)
         (send(who her.hox) [~ org.hox] pac.hox)
       ::
@@ -438,8 +438,8 @@
             {$meet doy/gree}                            ::  learn public key(s)
         ==                                              ::
       --
-  |=  $:  him/@p 
-          wyr/(map life ring) 
+  |=  $:  him/@p
+          wyr/(map life ring)
           det/pipe
       ==
   |=  {syn/skin msg/@}
@@ -450,7 +450,7 @@
         =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
         =+  key=q:(~(got by inn.det) mag)
         =+  clr=(need (de:crub:crypto key bod))
-        [~ & (maul clr)] 
+        [~ & (maul clr)]
       ::
           $full
         =+  mex=((hard {p/{p/life q/life} q/gree r/@}) (cue msg))
@@ -530,7 +530,7 @@
       =.  +>.$  ?.(aut.q.pet +>.$ (acme %rout lyn.job))
       ?-    -.ham.q.pet
           $back
-        ~|  %unsecured-back 
+        ~|  %unsecured-back
         ?>(aut.q.pet (acme %rack [p q r]:ham.q.pet))
       ::
           $bond
@@ -545,11 +545,11 @@
         %.  [(kins syn.p.ham.q.pet) cnt.p.ham.q.pet q.ham.q.pet]
         ~(hy-carp hy [kos liq]:p.ham.q.pet [aut.q.pet [dam lyn]:job] loc)
       ::
-          $fore  
+          $fore
         (acme %fore p.ham.q.pet (born lyn.job q.ham.q.pet) r.ham.q.pet)
       ==
     ==
-  ::                                                    ::  
+  ::                                                    ::
   ++  born                                              ::  set forward origin
     |=  {lyn/lane urg/(unit lane)}
     ^-  lane
@@ -561,12 +561,12 @@
     ::  may not be able to send back to the origin
     ::  (due to non-full-cone NAT).
     ?~  urg  lyn
-    ?.  ?=($if -.u.urg)  
+    ?.  ?=($if -.u.urg)
       u.urg
     [%ix +.u.urg]
   ::
   ++  hy                                                ::  message assembler
-    =|  $:  $:  kos/bole                                ::  sender 
+    =|  $:  $:  kos/bole                                ::  sender
                 liq/tick                                ::  message number
             ==
             $:  aut/?                                   ::  authenticated
@@ -583,11 +583,11 @@
     ++  hy-bond                                         ::  full message
       |=   {cha/chan val/*}
       ^+  +>
-      ?:  (lth liq laq)  
+      ?:  (lth liq laq)
         ::  we already acked this msg; ack it again
         ::  ~&  [%hi-bond-low [kos liq] laq]
         hy-cong
-      ?:  (gth liq laq)  
+      ?:  (gth liq laq)
         ::  later than the next msg; ignore
         ~&  [%hy-bond-after [kos liq] laq]
         +>
@@ -617,7 +617,7 @@
         ::  fragment of a message we've already acknowledged - ack it again.
         ::  ~&  [%hy-carp-late liq laq]
         hy-cong
-      ?:  (gth liq laq)  
+      ?:  (gth liq laq)
         ::  fragment of a message after the next we expect - drop it.
         ::  ~&  [%hy-carp-early liq laq]
         +>
@@ -626,15 +626,15 @@
       ::  all fragments must agree on the message parameters
       ?>  &(=(p.neb syn) (gth p.r.neb p.far) =(p.r.neb cnt))
       =+  doy=(~(get by q.r.neb) p.far)
-      ?^  doy  
+      ?^  doy
         ::  we've already heard this fragment
         (hy-conk ~)
-      ::  install fragment 
+      ::  install fragment
       =:  q.r.neb  (~(put by q.r.neb) p.far q.far)
           q.neb    +(q.neb)
         ==
       ?.  =(q.neb p.r.neb)
-        ::  message not yet complete, reinstall incomplete 
+        ::  message not yet complete, reinstall incomplete
         (hy-conk(nys (~(put by nys) liq neb)) ~)
       ::  decode complete message
       =+  pet=((nose him wyr det) syn (hy-golf r.neb))
@@ -716,7 +716,7 @@
       ?>  =+  |=  {a/coal b/coal}
               &((lth out.a out.b) (lth lod.a lod.b))
           |-  ?|  ?=($~ liv)
-                  ?&  ?|  ?=($~ r.liv) 
+                  ?&  ?|  ?=($~ r.liv)
                           ?&  (+< n.r.liv n.liv)
                               $(liv r.liv)
                       ==  ==
@@ -729,14 +729,14 @@
       ?>  =+  |=  {a/part b/part}
               |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
           |-  ?|  ?=($~ lop)
-                  ?&  ?|  ?=($~ r.lop) 
+                  ?&  ?|  ?=($~ r.lop)
                           ?&  (+< tel.n.r.lop tel.n.lop)
                               $(lop r.lop)
                       ==  ==
-                      ?|  ?=($~ l.lop) 
+                      ?|  ?=($~ l.lop)
                           ?&  (+< tel.n.lop tel.n.l.lop)
                               $(lop l.lop)
-                      ==  == 
+                      ==  ==
                   ==
               ==
       .
@@ -747,8 +747,8 @@
       =-  =/  rtt  ?~(ack ~s0 (sub now out.u.ack))
           =.  rtt  ?:((gth rtt lag) (sub rtt lag) rtt)
           (done:(lose(liv lov) ded) ack dam cop rtt)
-      |-  ^-  $:  ack/(unit coal) 
-                  ded/(list coal) 
+      |-  ^-  $:  ack/(unit coal)
+                  ded/(list coal)
                   lov/(qeu coal)
               ==
       ?~  liv  [~ ~ ~]
@@ -777,9 +777,9 @@
     ::                                                  ::
     ++  clap                                            ::  ordered enqueue
       ::
-      ::  the `lop` queue isn't really a queue in case of 
+      ::  the `lop` queue isn't really a queue in case of
       ::  resent packets; packets from older messages
-      ::  need to be sent first.  unfortunately hoon.hoon 
+      ::  need to be sent first.  unfortunately hoon.hoon
       ::  lacks a general sorted/balanced heap right now.
       ::  so we implement a balanced queue insert by hand.
       ::
@@ -803,7 +803,7 @@
         |-  ^+  liv
         ?~  liv  ~
         =+  vil=[n.liv $(liv l.liv) $(liv r.liv)]
-        ?.  =(tiq q.tel.clu.n.liv)  vil 
+        ?.  =(tiq q.tel.clu.n.liv)  vil
         ~(nip to `(qeu coal)`vil)
       ::
           lop
@@ -877,7 +877,7 @@
       $(+> (fire(rey.saw (dec rey.saw)) now clu))
     ::                                                  ::
     ++  wait                                            ::  next wakeup
-      ^-  (unit @da)  
+      ^-  (unit @da)
       =+  tup=`(unit coal)`~(top to liv)
       ?~(tup ~ `lod.u.tup)
     ::                                                  ::
@@ -889,7 +889,7 @@
       (sub gap rey.saw)
     ::
     ++  work                                            ::
-      |=  {now/@da job/task}                            ::  perform 
+      |=  {now/@da job/task}                            ::  perform
       ^+  +>
       ?-  -.job
         $back  (back now [p q r]:job)
@@ -919,7 +919,7 @@
     ?+  -.ham  [0 0]
       $bond  p.ham
       $carp  [kos liq]:p.ham
-    == 
+    ==
   ::
   ++  wasp  ^-({p/skin q/@} [%none hom])                ::  null security
   ++  weft                                              ::  fragment message
@@ -997,7 +997,7 @@
       ==
   =*  cot  ->
   |%                                                    ::
-  ++  abet  [(flop fex) `colt`cot]                      ::  resolve 
+  ++  abet  [(flop fex) `colt`cot]                      ::  resolve
   ++  view                                              ::  inspect
     |%                                                  ::
     ++  bulk                                            ::  queue count
@@ -1035,7 +1035,7 @@
           $send
         ::  ~&  [%go her `@p`(mug p.fic) q.fic]
         +>(fex [[%send p.fic r.fic] fex])
-      ==                                                
+      ==
     ::                                                  ::
     ++  wy-back                                         ::  hear an ack
       |=  {dam/flap cop/coop lag/@dr}
@@ -1074,7 +1074,7 @@
       |=  {paz/part cop/coop}
       ^+  +>
       =+  bum=(~(get by cob) q.paz)
-      ?:  |(?=($~ bum) =(~ cly.u.bum))  
+      ?:  |(?=($~ bum) =(~ cly.u.bum))
         ::  ~&  [%wy-good-ignore paz ?=($~ cop)]
         +>.$
       ?^  cop
@@ -1097,7 +1097,7 @@
       =+  yex=((knit her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
       =.  fex  (weld (flop p.yex) fex)
       ::  ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
-      %_    +>.$ 
+      %_    +>.$
           seq  +(seq)
           cob
         %+  ~(put by cob)
@@ -1137,7 +1137,7 @@
         $mess  (wy-mess +.job)
         $wake  wy-wake
       ==
-    --                                                  
+    --
   ::                                                    ::
   ++  zeal                                              ::  default state
     ^-  colt
@@ -1201,7 +1201,7 @@
   ^-  {p/(list move) q/_..^$}
   %-  work
   ^-  task:loft
-  ?-  -.q.hic 
+  ?-  -.q.hic
     $hear  q.hic
     $mess  [%mess p.q.hic hen q.q.hic r.q.hic]
     $wake  q.hic
@@ -1210,7 +1210,7 @@
 ++  doze
   |=  {now/@da hen/duct}
   ^-  (unit @da)
-  doze:love  
+  doze:love
 ::
 ++  load
   |=  old/silo

@@ -2,7 +2,7 @@
 ::
 ::::  /hoon/interpolate/lib
   ::
-/?    310                        
+/?    310
 ::
 ::::  ~fyr
   ::

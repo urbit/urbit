@@ -12,9 +12,9 @@
 :-  %noun
 =+  one
     !=  =>  ~
-        
-  
-  
+
+
+
 =+  top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/arvo
 =+  pax=`path`(weld top `path`[%hoon ~])
 ~&  %plastic-start
@@ -29,7 +29,7 @@
     =+  pax=(weld top `path`[nam ~])
     =+  txt=.^(@ %cx (weld pax `path`[%hoon ~]))
     `ovum`[[%vane nam ~] [%veer abr pax txt]]
-=+  ^=  evo  
+=+  ^=  evo
     ^-  (list ovum)
     :~  (vent %$ %zuse)
         [[%name (scot %p who) ~] [%veal who]]

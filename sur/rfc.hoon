@@ -14,7 +14,7 @@
   From: {(email-adr-to-text from.a)}
   To: {(email-adr-to-text to.a)}
   Subject: {(trip subject.a)}
-  
+
   {(trip body.a)}
   """
 --

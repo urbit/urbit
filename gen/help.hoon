@@ -1,5 +1,5 @@
 ::  Describe available comands: +help, +help %tree, +help %hood
-::  
+::
 ::::  /hoon/help/gen
   ::
 /?    310
@@ -37,7 +37,7 @@
   ?.  (~(has by dir.ark) %hoon)  ~
   %+  bind  (file (welp pax /[nam]/hoon))
   |=  a/*  ^-  {cord path}
-  [;;(@t a) (welp (slag len pax) /[nam])]  
+  [;;(@t a) (welp (slag len pax) /[nam])]
 --
 ::
 :-  %say

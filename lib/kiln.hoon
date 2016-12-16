@@ -1,4 +1,4 @@
-::                                                      ::  ::  
+::                                                      ::  ::
 ::::  /hoon/kiln/lib                                    ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
@@ -84,7 +84,7 @@
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))            ::  return card
 ++  emil                                                ::  return cards
-  |=  (list card) 
+  |=  (list card)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -261,7 +261,7 @@
 ::
 ++  take-made                                         ::
   |=  {way/wire dep/@uvH reg/gage:^ford}
-  abet:abet:(made:(take way) dep reg) 
+  abet:abet:(made:(take way) dep reg)
 ::
 ++  take-coup-fancy                                   ::
   |=  {way/wire saw/(unit tang)}
@@ -382,7 +382,7 @@
         ==
       ::
           $no-ali-desk
-        :~  (render "sync activated" sud her syd)  
+        :~  (render "sync activated" sud her syd)
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
       ==
@@ -450,7 +450,7 @@
       ==
     ==
   ::
-  ++  perform                                         ::  
+  ++  perform                                         ::
     ^+  .
     (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
   ::
@@ -474,7 +474,7 @@
     .(auto &)
   ::
   ++  coup-fancy
-    |=  saw/(unit tang) 
+    |=  saw/(unit tang)
     ?~  saw
       =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
@@ -484,7 +484,7 @@
     lose:(spam leaf+-< leaf+-> u.saw)
   ::
   ++  mere
-    |=  are/(each (set path) (pair term tang)) 
+    |=  are/(each (set path) (pair term tang))
     ^+  +>
     ?:  =(%meld gem)
       ?:  ?=($& -.are)

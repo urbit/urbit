@@ -15,7 +15,7 @@
       (turn paf |=(a/knot leaf+(trip a)))
   |-  ^-  {dir/? paf/path}
   =+  arf=.^(arch (cat 3 vane %y) (weld pax paf))
-  ?^  fil.arf  
+  ?^  fil.arf
     [| paf]
   ?~  dir.arf
     [& paf]  ::  !!

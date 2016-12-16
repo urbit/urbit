@@ -9,8 +9,8 @@
 =,  bytes:eyre
 |_  gam/(list telegram)
 ::
-++  grab  
-  |%  
+++  grab
+  |%
   ++  noun  (list telegram)
   ++  mime  |=(^mime (json (rash q.q apex:poja)))
   ++  json
@@ -24,18 +24,18 @@
       %.  ((of:jo a) b)
       %-  slog
       ?+  b  ~
-          {$o *} 
+          {$o *}
         %+  murn  `(list {@tas fist})`a
         |=  {c/term d/fist}  ^-  (unit tank)
         =+  (~(get by p.b) c)
         ?~  -  ~
         =+  (d u)
         ?~  -  (some >[c u]<)
-        ~  
+        ~
       ==
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
-      %+  cu  malt  
+      %+  cu  malt
       %+  ci
         |=  a/(map cord _(need *wit))
         ^-  (unit (list _[(wonk *fel) (need *wit)]))
@@ -43,7 +43,7 @@
       (om wit)
     ::
     ++  as                                              ::  array as set
-      |*  a/fist 
+      |*  a/fist
       (cu ~(gas in *(set _(need *a))) (ar a))
     ::
     ++  ke                                              ::  callbacks
@@ -54,29 +54,29 @@
       ((sef) jon)
     ::
     ++  lake  |*(a/_* $-(json (unit a)))
-    ++  head-rush  
+    ++  head-rush
       |*  a/rule
       |*  {cord *}
-      =+  nit=(rush +<- a) 
+      =+  nit=(rush +<- a)
       ?~  nit  ~
       (some [u.nit +>->])
     ::
     ++  thot
       ^-  $-(json (unit thought))
       %-  ot  :~
-        serial+`$-(json (unit serial))`(ci (slat %uv) so)  
-        audience+`$-(json (unit audience))`audi 
-        statement+`$-(json (unit statement))`stam  
+        serial+`$-(json (unit serial))`(ci (slat %uv) so)
+        audience+`$-(json (unit audience))`audi
+        statement+`$-(json (unit statement))`stam
       ==
     ::
-    ++  audi  `$-(json (unit audience))`(op parn memb)  
-    ++  auri  (op parn (ci (soft presence) so))  
+    ++  audi  `$-(json (unit audience))`(op parn memb)
+    ++  auri  (op parn (ci (soft presence) so))
     ++  memb  ^-  $-(json (unit (pair envelope delivery)))
               (ot envelope+lope delivery+(ci (soft delivery) so) ~)
     ++  lope  (ot visible+bo sender+(mu (su parn)) ~)
     ::
     ++  parn
-      ^-  $-(nail (like partner))  
+      ^-  $-(nail (like partner))
       %+  pick
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
       %+  sear  (soft passport)
@@ -86,7 +86,7 @@
     ++  spec
       %+  ke  *speech  |.  ~+
       %-  of  :~
-        lin+(ot say+bo txt+so ~) 
+        lin+(ot say+bo txt+so ~)
         url+(ot txt+(su aurf:urlp) ~)
         exp+(ot txt+so ~)
         app+(ot txt+so src+so ~)
@@ -95,10 +95,10 @@
         non+ul
         ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
       ==
-    ++  tors  
+    ++  tors
       %+  ke  *torso  |.  ~+
       %-  of  :~
-        name+(ot nom+so mon+tors ~) 
+        name+(ot nom+so mon+tors ~)
         text+(cu lore so)
         tank+(ot dat+(cu (hard (list tank)) blob) ~)
       ==
@@ -136,7 +136,7 @@
     ++  audi  (map-to-json parn jove)
     ++  bouq
       |=  a/bouquet
-      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))  
+      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))
     ::
     ++  parn
       |=  a/partner  ^-  cord

@@ -2,7 +2,7 @@
 ::::  /hoon/ames/arvo                                   ::::::  vane prelude
   !:                                                    ::  ::
 |=  pit/vase                                            ::  kernel vase
-=>  =~                                                  ::  
+=>  =~                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
@@ -99,7 +99,7 @@
               nys/(map tick bait)                       ::  inbound partials
               laz/(unit (trel flea flap lane))          ::  awaiting app
               exc/(map tick ares)                       ::  negative acks
-          ==                                            ::  
+          ==                                            ::
 ++  meal                                                ::  payload
           $%  {$back p/bone q/flap r/coop s/@dr}        ::  acknowledgment
               {$bond p/flea q/path r/*}                 ::  message
@@ -235,7 +235,7 @@
           $send
         ::  ~&  [%go her `@p`(mug p.fic) q.fic]
         +>(fex [[%send p.fic r.fic] fex])
-      ==                                                
+      ==
     ::                                                  ::
     ++  wy-back                                         ::  hear an ack
       |=  {dam/flap cop/coop lag/@dr}
@@ -278,7 +278,7 @@
       |=  {paz/part cop/coop}
       ^+  +>
       =+  bum=(~(get by cob) q.paz)
-      ?:  |(?=($~ bum) =(~ cly.u.bum))  
+      ?:  |(?=($~ bum) =(~ cly.u.bum))
         ::  ~&  [%wy-good-ignore paz ?=($~ cop)]
         +>.$
       ?^  cop
@@ -316,7 +316,7 @@
       ^+  +>
       =+  pex=(red now [%bond [(mix kos 1) seq] cha val])
       ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
-      %_    +>.$ 
+      %_    +>.$
           seq  +(seq)
           cob
         %+  ~(put by cob)
@@ -377,7 +377,7 @@
       ?>  =+  |=  {a/coal b/coal}
               &((lth out.a out.b) (lth lod.a lod.b))
           |-  ?|  ?=($~ liv)
-                  ?&  ?|  ?=($~ r.liv) 
+                  ?&  ?|  ?=($~ r.liv)
                           ?&  (+< n.r.liv n.liv)
                               $(liv r.liv)
                       ==  ==
@@ -390,14 +390,14 @@
       ?>  =+  |=  {a/part b/part}
               |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
           |-  ?|  ?=($~ lop)
-                  ?&  ?|  ?=($~ r.lop) 
+                  ?&  ?|  ?=($~ r.lop)
                           ?&  (+< tel.n.r.lop tel.n.lop)
                               $(lop r.lop)
                       ==  ==
-                      ?|  ?=($~ l.lop) 
+                      ?|  ?=($~ l.lop)
                           ?&  (+< tel.n.lop tel.n.l.lop)
                               $(lop l.lop)
-                      ==  == 
+                      ==  ==
                   ==
               ==
       .
@@ -408,8 +408,8 @@
       =-  =/  rtt  ?~(ack ~s0 (sub now out.u.ack))
           =.  rtt  ?:((gth rtt lag) (sub rtt lag) rtt)
           (done:(lose(liv lov) ded) ack dam cop rtt)
-      |-  ^-  $:  ack/(unit coal) 
-                  ded/(list coal) 
+      |-  ^-  $:  ack/(unit coal)
+                  ded/(list coal)
                   lov/(qeu coal)
               ==
       ?~  liv  [~ ~ ~]
@@ -438,9 +438,9 @@
     ::                                                  ::
     ++  clap                                            ::  ordered enqueue
       ::
-      ::  the `lop` queue isn't really a queue in case of 
+      ::  the `lop` queue isn't really a queue in case of
       ::  resent packets; packets from older messages
-      ::  need to be sent first.  unfortunately hoon.hoon 
+      ::  need to be sent first.  unfortunately hoon.hoon
       ::  lacks a general sorted/balanced heap right now.
       ::  so we implement a balanced queue insert by hand.
       ::
@@ -464,7 +464,7 @@
         |-  ^+  liv
         ?~  liv  ~
         =+  vil=[n.liv $(liv l.liv) $(liv r.liv)]
-        ?.  =(tiq q.tel.clu.n.liv)  vil 
+        ?.  =(tiq q.tel.clu.n.liv)  vil
         ~(nip to `(qeu coal)`vil)
       ::
           lop
@@ -538,7 +538,7 @@
       $(+> (fire(rey.saw (dec rey.saw)) now clu))
     ::                                                  ::
     ++  wait                                            ::  next wakeup
-      ^-  (unit @da)  
+      ^-  (unit @da)
       =+  tup=`(unit coal)`~(top to liv)
       ?~(tup ~ `lod.u.tup)
     ::                                                  ::
@@ -550,7 +550,7 @@
       (sub gap rey.saw)
     ::
     ++  work                                            ::
-      |=  {now/@da job/note}                            ::  perform 
+      |=  {now/@da job/note}                            ::  perform
       ^+  +>
       ?-  -.job
         $back  (back now [p q r]:job)
@@ -588,7 +588,7 @@
     |=  {new/deyd old/deyd}
     ^-  $&
     ?>  (melt new old)
-    ?>  .=  (shaf %meld (sham q.new)) 
+    ?>  .=  (shaf %meld (sham q.new))
             (need (sure:as:(haul:suite r.q.old) *code p.new))
     %&
   ::
@@ -673,7 +673,7 @@
         0w0                           ::    2, ~bud, Tlon Investor 1
         0w0                           ::    3, ~wes, Tlon Investor 2
         0w0                           ::    4, ~sev, Tlon Investor 2
-        0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::    5, ~per, Tlon Investor 3 
+        0wt.cKYxs.Yb5VZ.boSwm.l0yYc   ::    5, ~per, Tlon Investor 3
         0w0                           ::    6, ~sut, Tlon Investor 4
         0w0                           ::    7, ~let, Tlon Investor 4
         0w0                           ::    8, ~ful, Tlon Investor 4
@@ -683,7 +683,7 @@
         0w0                           ::   12, ~wep, Sam Putman
         0w0                           ::   13, ~ser, Tlon Investor 5
         0w3j.H0sty.jHa3F.JlD26.4LPwV  ::   14, ~wyl, Zimran Ahmed
-        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::   15, ~sun, Colin Smith 
+        0w3F.QdvV-.toAsR.hvUNk.fHjW6  ::   15, ~sun, Colin Smith
         0w0                           ::   16, ~ryp, Tlon Investor 6
         0w0                           ::   17, ~syx, Tlon Investor 6
         0w0                           ::   18, ~dyr, Tlon Investor 6
@@ -713,7 +713,7 @@
         0w0                           ::   42, ~tul, Susan Yarvin
         0w0                           ::   43, ~met, Susan Yarvin
         0w0                           ::   44, ~wen, Susan Yarvin
-        0w0                           ::   45, ~byn, Susan Yarvin 
+        0w0                           ::   45, ~byn, Susan Yarvin
         0w0                           ::   46, ~hex, James Torre
         0w0                           ::   47, ~feb, urbit.org
         0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl
@@ -725,7 +725,7 @@
         0w0                           ::   54, ~wyd, Curtis Yarvin
         0w0                           ::   55, ~tep, Sibyl Kollmer
         0w0                           ::   56, ~bes, Sibyl Kollmer
-        0w0                           ::   57, ~dex, Jared Hance 
+        0w0                           ::   57, ~dex, Jared Hance
         0w0                           ::   58, ~sef, Owen Rescher
         0w0                           ::   59, ~wyc, Galen Wolfe-Pauly
         0w0                           ::   60, ~bur, Galen Wolfe-Pauly
@@ -1130,7 +1130,7 @@
             ?+  -.ham  [0 0]
               $bond  p.ham
               $carp  [kos liq]:p.ham
-            == 
+            ==
           ::
           ++  wasp                                      ::  null security
             ^-({p/skin q/@} [%none (jam ham)])
@@ -1369,7 +1369,7 @@
       |=  {her/ship ger/@uw fak/?}
       ^-  {p/(list boon) q/fort}
       =^  out  fox  (czar her ger fak)
-      ?:  (lth her 256)  
+      ?:  (lth her 256)
         [out fox]
       ::
       ::  `ger` is the ticket; make a key out of it (XX use scrypt);
@@ -1380,7 +1380,7 @@
       ~&  [%user-auth her `@p`ger `@p`(mug key)]
       =+  gus=(need (~(us go ton.fox) her))
       =+  diz=(wasc:(myx:gus dad) key)
-      =.  gus  (nux:gus diz)  
+      =.  gus  (nux:gus diz)
       =.  ton.fox  (~(su go ton.fox) gus)
       [out fox]
     ::
@@ -1389,8 +1389,8 @@
       |-  ^-  (unit @da)
       ?~  zac.fox  ~
       ;:  (cury hunt lth)
-          $(zac.fox l.zac.fox) 
-          $(zac.fox r.zac.fox) 
+          $(zac.fox l.zac.fox)
+          $(zac.fox r.zac.fox)
           doze:(um p.n.zac.fox)
       ==
     ::
@@ -1447,7 +1447,7 @@
     ++  wise                                            ::    wise:am
       |=  {soq/sock hen/duct cha/path val/*}            ::  send request
       ^-  {p/(list boon) q/fort}
-      zork:abet:ve-abet:(ve-tell:(vend:(ho:(um p.soq) q.soq) hen) cha val) 
+      zork:abet:ve-abet:(ve-tell:(vend:(ho:(um p.soq) q.soq) hen) cha val)
     ::
     ++  wish                                            ::    wise:am
       |=  {soq/sock kos/bole cha/path val/*}            ::  return response
@@ -1467,8 +1467,8 @@
         |-  ^-  (unit @da)                              ::  wakeup time
         ?~  wab.weg  ~
         ;:  (cury hunt lth)
-            $(wab.weg l.wab.weg) 
-            $(wab.weg r.wab.weg) 
+            $(wab.weg l.wab.weg)
+            $(wab.weg r.wab.weg)
             doze:(ho p.n.wab.weg)
         ==
       ::
@@ -1517,7 +1517,7 @@
           |=  {sin/skin dam/flap ryn/lane msg/@}        ::  handle anything
           ^+  +>
           ::
-          ::  ++chew 
+          ::  ++chew
           ::
           =^  fud  diz  (grok sin ryn msg)
           ::  ~&  [%chew sin -.fud `@p`(mug dam) ryn (met 3 msg)]
@@ -1530,7 +1530,7 @@
                        ::  (conk 0 `@`0 ~)
                        +>.$
                     ::  ~&  [%chew-back p.fud (flam dam) (flam q.fud)]
-                   (back +.fud) 
+                   (back +.fud)
             $bond  hi-abet:(hi-bond:(high p.fud dam ryn) q.fud r.fud)
             $carp  =<  hi-abet
                    %-  hi-carp:(high [kos liq]:p.fud dam ryn)
@@ -1541,7 +1541,7 @@
         ++  conk                                        ::    conk:ho:um:am
           |=  {kos/bole dam/flap cop/coop}              ::  send acknowledge
           ^+  +>
-          ?:  =(0 kos) 
+          ?:  =(0 kos)
             ::  don't ack an ack
             ~&  [%conk-acaq (flam dam)]
             +>
@@ -1551,7 +1551,7 @@
         ++  doze                                        ::    doze:ho:um:am
           ^-  (unit @da)                                ::  wait until
           =|  wun/(unit @da)
-          |-  ^-  (unit @da) 
+          |-  ^-  (unit @da)
           ?~  sal.bah  ~
           =.  wun  $(sal.bah l.sal.bah)
           =.  wun  $(sal.bah r.sal.bah)
@@ -1581,7 +1581,7 @@
           =+  maw=|=(@ ((hard meal) (cue +<)))
           =.  diz  ?:(=(%none sin) diz (wast:diz ryn))
           ?-  sin
-              $none  
+              $none
             ::  ~&  %chew-none
             [(maw msg) diz]
           ::
@@ -1633,7 +1633,7 @@
           ~(. hi fel [& dam ryn] (fall (~(get by fon.bah) p.fel) *lock))
         ::
         ++  hi                                          ::  receiving core
-          |_  $:  $:  kos/bole                          ::  sender 
+          |_  $:  $:  kos/bole                          ::  sender
                       liq/tick                          ::  index
                   ==
                   $:  tru/?                             ::  authenticated
@@ -1648,11 +1648,11 @@
           ++  hi-bond
             |=   {cha/path val/*}
             ^+  +>
-            ?:  (lth liq laq)  
+            ?:  (lth liq laq)
               ::  we already acked this msg; ack it again
               ::  ~&  [%hi-bond-low [kos liq] laq]
               hi-cong
-            ?:  (gth liq laq)  
+            ?:  (gth liq laq)
               ::  later than the next msg; ignore
               ~&  [%hi-bond-high [kos liq] laq]
               +>
@@ -1671,7 +1671,7 @@
             %=  +>.$
               bin  :_(bin [%milk [our her] kos cha val])
               laz  `[[kos liq] fap ryn]
-            == 
+            ==
           ::
           ++  hi-back                                   ::  app acknowledge
             |=  cop/coop
@@ -1685,7 +1685,7 @@
             ?:  (lth liq laq)
               ::  ~&  [%hi-card-low liq laq]
               hi-cong
-            ?:  (gth liq laq)  
+            ?:  (gth liq laq)
               ::  ~&  [%hi-card-high liq laq]
               +>
             =+  neb=`bait`(fall (~(get by nys) liq) [syn 0 [cnt ~]])
@@ -1738,8 +1738,8 @@
           =^  sal  +
               |-  ^+  [lah +>.$]
               ?~  lah  [~ +>.$]
-              =^  lef  +>.$  $(lah l.lah) 
-              =^  ryt  +>.$  $(lah r.lah) 
+              =^  lef  +>.$  $(lah l.lah)
+              =^  ryt  +>.$  $(lah r.lah)
               =^  nod  +>.$  ve-abed:ve-wake:(vond n.lah)
               [[nod lef ryt] +>.$]
           +>(sal.bah sal)
@@ -1756,7 +1756,7 @@
                 sal.bah
               (~(put by sal.bah) kos +<+>)
             ==
-          ::                                            ::  
+          ::                                            ::
           ++  ve-able                                   ::  converge machine
             ve-tire:ve-ably:ve-feed:ve-ably
           ::                                            ::
@@ -1817,7 +1817,7 @@
             |=  {paz/part cop/coop}
             ^+  +>
             =+  bum=(~(get by cob) q.paz)
-            ?:  |(?=($~ bum) =(~ cly.u.bum))  
+            ?:  |(?=($~ bum) =(~ cly.u.bum))
               ::  ~&  [%ve-good-ignore paz ?=($~ cop)]
               +>.$
             ?^  cop
@@ -1862,7 +1862,7 @@
             ^+  +>
             =+  pex=(zuul:diz now [%bond [(mix kos 1) seq] cha val])
             ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
-            %_    +>.$ 
+            %_    +>.$
                 seq  +(seq)
                 cob
               %+  ~(put by cob)
@@ -2026,7 +2026,7 @@
     =+  ^=  did
         ^-  move
         ?+  i.cha  ~|([%bad-vane soq hen cha] !!)
-          $c  [hen %pass pax `note-arvo`[%c cad]]  
+          $c  [hen %pass pax `note-arvo`[%c cad]]
           $e  [hen %pass pax `note-arvo`[%e cad]]
           $g  [hen %pass pax `note-arvo`[%g cad]]
         ==
@@ -2051,7 +2051,7 @@
     ::
         $cola  (clod p.bon q.bon r.bon hen [%went p.bon +.r.bon q.bon s.bon])
         $coke  :_(fox [[q.bon [%give %woot q.p.bon r.bon s.bon]] ~])
-        $malt  :_(fox [[q.bon [%give %waft q.p.bon r.bon s.bon]] ~])  
+        $malt  :_(fox [[q.bon [%give %waft q.p.bon r.bon s.bon]] ~])
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         $milk  (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
@@ -2084,7 +2084,7 @@
       ~&  [%knap-tea tea]
       !!
     =+  [soq kos]=[[(slav %p i.tea) (slav %p i.t.tea)] (slav %ud i.t.t.tea)]
-    ?+    sih  
+    ?+    sih
       ~|([%ames-sign -.sih (@tas +<.sih)] !!)
     ::
         {?($e $c $g) $rend *}
@@ -2164,9 +2164,9 @@
       :-  ~
       :-  ~
       :-  %noun
-      !>  
-      ?~  wul 
-        (scot %p his) 
+      !>
+      ?~  wul
+        (scot %p his)
       (gnow:title his q.q.q:((hard deyd) -.u.wul))
     ?:  ?=({$gcos $~} tyl)
       =+  wul=$(tyl [%wyll ~])

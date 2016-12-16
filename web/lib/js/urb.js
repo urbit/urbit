@@ -24,7 +24,7 @@ window.urb.req = function(method,url,params,json,cb) {
   if(method == "PUT" || method == "DELETE")
     xhr.open("POST", url+"?"+method)
   else xhr.open(method, url)
-  
+
   if(json)
     xhr.setRequestHeader("content-type", "text/json")
 
@@ -123,7 +123,7 @@ window.urb.send = function(data,params,cb) { // or send(data, cb)
   params.wire = params.wire || "/"
   params.xyro = (typeof(params.data) === 'undefined') ? null : params.data
 
-  
+
   if(!params.mark) throw new Error("You must specify a mark for urb.send.")
   if(!params.appl) throw new Error("You must specify an appl for urb.send.")
 
@@ -164,7 +164,7 @@ window.urb.poll = function(params) {
 
   seqn = this.poll.seqn
   if(params.seqn) seqn = params.seqn()
-  
+
   url = "/~/of/"+this.ixor+"?poll="+seqn
 
   this.puls = true
@@ -198,12 +198,12 @@ window.urb.poll = function(params) {
       }
       if(params.incs)
         params.incs()
-      else 
+      else
         $this.poll.seqn++
       $this.poll.dely = 250
       return $this.poll(params)
     }
-    
+
     else if(err){
       setTimeout(function() {
         $this.poll(params)
@@ -219,7 +219,7 @@ window.urb.poll.dely = 250
 window.urb.bind = function(path, params, cb, nicecb){ // or bind(path, cb)
   if(!params || typeof params === "function")
     {cb = params; params = {}}
-    
+
   params.path = path
   if(params.path[0] !== "/") params.path = "/"+params.path
   params.ship = params.ship || this.ship
@@ -231,13 +231,13 @@ window.urb.bind = function(path, params, cb, nicecb){ // or bind(path, cb)
     throw new Error("You must specify a string path for urb.bind.")
   if(!params.appl) throw new Error("You must specify an appl for urb.bind.")
   if(!cb) throw new Error("You must supply a callback to urb.bind.")
-  
+
   var method, perm, url, $this
 
   if(params.mark !== "json")
     throw new Error("Non-json subscriptions unimplemented.")  //  XX
   url = "/~/is/"+this.gsig(params)+"."+params.mark
-  
+
   params.path = params.wire
   this.cabs[this.gsig(params)] = cb
 
@@ -254,7 +254,7 @@ urb.bind.mark = "json"
 window.urb.drop = function(path, params, cb){  // or drop(path,cb)
   if(typeof params === "function")
     {cb = params; params = {}}
-    
+
   params.path = path
   if(params.path[0] !== "/") params.path = "/"+params.path
   params.ship = params.ship || this.ship
@@ -264,7 +264,7 @@ window.urb.drop = function(path, params, cb){  // or drop(path,cb)
   if(typeof path != "string")
     throw new Error("You must specify a string path for urb.drop.")
   if(!params.appl) throw new Error("You must specify an appl for urb.drop.")
-  
+
   url = "/~/is/"+this.gsig(params)+".json"
   method = "delete"
   this.req("delete",url,params,true,function(err,res) {
@@ -301,12 +301,12 @@ window.urb.util = {
     function pad(num, str){
       return ((new Array(num + 1)).join('0') + str).substr(-num,num)
     }
-    return  '~' + dat.getUTCFullYear() + 
-            '.' + (dat.getUTCMonth() + 1) + 
-            '.' + dat.getUTCDate() + 
-           '..' + pad(2, dat.getUTCHours()) + 
-            '.' + pad(2, dat.getUTCMinutes()) + 
-            '.' + pad(2, dat.getUTCSeconds()) + 
+    return  '~' + dat.getUTCFullYear() +
+            '.' + (dat.getUTCMonth() + 1) +
+            '.' + dat.getUTCDate() +
+           '..' + pad(2, dat.getUTCHours()) +
+            '.' + pad(2, dat.getUTCMinutes()) +
+            '.' + pad(2, dat.getUTCSeconds()) +
            '..' + pad(4, mils)
   },
   basepath: function(spur, pathname){
@@ -322,7 +322,7 @@ window.urb.util = {
       base = "/~/as/"+pathname.split("/")[3]
     if(pathname.indexOf("/~/away") == 0)
       base = "/~/away"
-    
+
     return base+spur
   }
 }

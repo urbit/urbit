@@ -171,7 +171,7 @@
 ::  of all new aeons to hashes of their commits, the most recent aeon, and sets
 ::  of all new commits and data.
 ::
-++  nako                                                ::  subscription state 
+++  nako                                                ::  subscription state
   $:  gar/(map aeon tako)                               ::  new ids
       let/aeon                                          ::  next id
       lar/(set yaki)                                    ::  new commits
@@ -200,7 +200,7 @@
 ::
 ::  Maps of commit hashes to commits and content hashes to content.
 ::
-++  rang                                                ::  
+++  rang                                                ::
   $:  hut/(map tako yaki)                               ::
       lat/(map lobe blob)                               ::
   ==                                                    ::
@@ -301,7 +301,7 @@
 ++  yaki                                                ::  snapshot
           $:  p/(list tako)                             ::  parents
               q/(map path lobe)                         ::  fileset
-              r/tako                                    ::  
+              r/tako                                    ::
           ::                                            ::  XX s?
               t/@da                                     ::  date
           ==                                            ::
@@ -490,7 +490,7 @@
     ?.  ?=($tabl -.gag)
       (ford-fail ?-(-.gag $| p.gag, $& [>%strange-gage p.p.gag<]~))
     %+  murn  p.gag
-    |=  {key/gage:^ford val/gage:^ford}  
+    |=  {key/gage:^ford val/gage:^ford}
     ^-  (unit {cage cage})
     ?.  ?=($& -.key)
       (ford-fail ?-(-.key $| p.key, $tabl [>%strange-gage<]~))
@@ -2743,7 +2743,7 @@
       ::
       ::  Store the diff of ali's commit versus the mergebase in dal.dat and
       ::  call ++diff-bob.
-      ::  
+      ::
       ++  diffed-ali
         |=  res/gage:^ford
         ^+  +>

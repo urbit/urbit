@@ -5,8 +5,8 @@
 ::
 ::  %jael: secrets and promises.
 ::
-::  todo: 
-::  
+::  todo:
+::
 ::    - communication with other vanes:
 ::      - actually use %behn for expiring secrets
 ::      - report %ames propagation errors to user
@@ -18,7 +18,7 @@
 |=  pit/vase
 =,  pki:^jael
 =,  rights:^jael
-=,  able:^jael 
+=,  able:^jael
 =,  title
 =,  crypto
 =*  womb  womb:^jael
@@ -41,7 +41,7 @@
 ::
 =>  |%
 ++  state                                               ::  all vane state
-  $:  ver/$0                                            ::  vane version 
+  $:  ver/$0                                            ::  vane version
       yen/(set duct)                                    ::  raw observers
       urb/state-absolute                                ::  all absolute state
       sub/state-relative                                ::  all relative state
@@ -60,13 +60,13 @@
         ==                                              ::
       $=  bal                                           ::  balance sheet
         $:  yen/(set duct)                              ::  trackers
-        ==                                              ::  
+        ==                                              ::
       $=  own                                           ::  vault
         $:  yen/(set duct)                              ::  trackers
             lyf/life                                    ::  version
             jaw/(map life ring)                         ::  private keys
         ==                                              ::
-  ==                                                    ::  
+  ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
   $:  pug/farm                                          ::  keys
       pry/(map ship (map ship safe))                    ::  promises
@@ -90,7 +90,7 @@
 ++  zeno                                                ::  boot fingerprints
   ::
   ::  in ++zeno we hardcode the fingerprints of galaxies
-  ::  and the identities of their owners.  if the 
+  ::  and the identities of their owners.  if the
   ::  fingerprint is 0, the galaxy can't be created.
   ::
   ::  we'll probably move at least the identity data
@@ -106,7 +106,7 @@
       0w0                           ::    2, ~bud, Tlon Investor 1
       0w0                           ::    3, ~wes, Tlon Investor 2
       0w0                           ::    4, ~sev, Tlon Investor 2
-      0w0                           ::    5, ~per, Tlon Investor 3  
+      0w0                           ::    5, ~per, Tlon Investor 3
       0w0                           ::    6, ~sut, Tlon Investor 4
       0w0                           ::    7, ~let, Tlon Investor 4
       0w0                           ::    8, ~ful, Tlon Investor 4
@@ -115,8 +115,8 @@
       0w0                           ::   11, ~dur, Tlon Investor 4
       0w0                           ::   12, ~wep, Sam Putman
       0w0                           ::   13, ~ser, Tlon Investor 5
-      0w0                           ::   14, ~wyl, Zimran Ahmed 
-      0w0                           ::   15, ~sun, Colin Smith  
+      0w0                           ::   14, ~wyl, Zimran Ahmed
+      0w0                           ::   15, ~sun, Colin Smith
       0w0                           ::   16, ~ryp, Tlon Investor 6
       0w0                           ::   17, ~syx, Tlon Investor 6
       0w0                           ::   18, ~dyr, Tlon Investor 6
@@ -132,42 +132,42 @@
       0w0                           ::   28, ~ryt, Tlon Investor 8
       0w0                           ::   29, ~tyv, Tlon Investor 8
       0w0                           ::   30, ~syd, Jennifer Kollmer
-      0w0                           ::   31, ~nex, Prakhar Goel 
+      0w0                           ::   31, ~nex, Prakhar Goel
       0w0                           ::   32, ~lun, Tlon Investor 9
       0w0                           ::   33, ~mep, Tlon Investor 9
       0w0                           ::   34, ~lut, Tlon Investor 9
       0w0                           ::   35, ~sep, Tlon Investor 9
       0w0                           ::   36, ~pes, Jennifer Kollmer
       0w0                           ::   37, ~del, Kingdon Barrett
-      0w0                           ::   38, ~sul, John Burnham 
-      0w0                           ::   39, ~ped, Jeremy Wall 
-      0w0                           ::   40, ~tem, Tlon Investor 10 
+      0w0                           ::   38, ~sul, John Burnham
+      0w0                           ::   39, ~ped, Jeremy Wall
+      0w0                           ::   40, ~tem, Tlon Investor 10
       0w0                           ::   41, ~led, Nick Caruso
       0w0                           ::   42, ~tul, Susan Yarvin
       0w0                           ::   43, ~met, Susan Yarvin
       0w0                           ::   44, ~wen, Susan Yarvin
-      0w0                           ::   45, ~byn, Susan Yarvin 
+      0w0                           ::   45, ~byn, Susan Yarvin
       0w0                           ::   46, ~hex, James Torre
       0w0                           ::   47, ~feb, urbit.org
-      0w0                           ::   48, ~pyl, Michael Hartl 
+      0w0                           ::   48, ~pyl, Michael Hartl
       0w0                           ::   49, ~dul, Jennifer Kollmer
       0w0                           ::   50, ~het, Jennifer Kollmer
       0w0                           ::   51, ~mev, Herbert Yarvin
       0w0                           ::   52, ~rut, Herbert Yarvin
-      0w0                           ::   53, ~tyl, Tlon Investor 11 
+      0w0                           ::   53, ~tyl, Tlon Investor 11
       0w0                           ::   54, ~wyd, Curtis Yarvin
       0w0                           ::   55, ~tep, Sibyl Kollmer
       0w0                           ::   56, ~bes, Sibyl Kollmer
-      0w0                           ::   57, ~dex, Jared Hance 
+      0w0                           ::   57, ~dex, Jared Hance
       0w0                           ::   58, ~sef, Owen Rescher
       0w0                           ::   59, ~wyc, Galen Wolfe-Pauly
       0w0                           ::   60, ~bur, Galen Wolfe-Pauly
       0w0                           ::   61, ~der, Galen Wolfe-Pauly
       0w0                           ::   62, ~nep, Galen Wolfe-Pauly
       0w0                           ::   63, ~pur, Herbert Yarvin
-      0w0                           ::   64, ~rys, Charlie Cummings 
+      0w0                           ::   64, ~rys, Charlie Cummings
       0w0                           ::   65, ~reb, Herbert Yarvin
-      0w0                           ::   66, ~den, Michael Hartl 
+      0w0                           ::   66, ~den, Michael Hartl
       0w0                           ::   67, ~nut, Henry Yarvin
       0w0                           ::   68, ~sub, Henry Yarvin
       0w0                           ::   69, ~pet, Henry Yarvin
@@ -180,16 +180,16 @@
       0w0                           ::   76, ~wyn, Anton Dyudin
       0w0                           ::   77, ~rec, Anton Dyudin
       0w0                           ::   78, ~meg, Anton Dyudin
-      0w0                           ::   79, ~net, Anthony Martinez 
+      0w0                           ::   79, ~net, Anthony Martinez
       0w0                           ::   80, ~sec, Curtis Yarvin
       0w0                           ::   81, ~mul, Curtis Yarvin
-      0w0                           ::   82, ~nym, Max Greer 
+      0w0                           ::   82, ~nym, Max Greer
       0w0                           ::   83, ~tev, Sibyl Kollmer
-      0w0                           ::   84, ~web, Ar Vicco 
+      0w0                           ::   84, ~web, Ar Vicco
       0w0                           ::   85, ~sum, Philip Monk
       0w0                           ::   86, ~mut, Philip Monk
       0w0                           ::   87, ~nyx, Philip Monk
-      0w0                           ::   88, ~rex, Tlon Investor 12 
+      0w0                           ::   88, ~rex, Tlon Investor 12
       0w0                           ::   89, ~teb, Sibyl Kollmer
       0w0                           ::   90, ~fus, Tlon Corporation
       0w0                           ::   91, ~hep, urbit.org
@@ -200,7 +200,7 @@
       0w0                           ::   96, ~sel, urbit.org
       0w0                           ::   97, ~ruc, urbit.org
       0w0                           ::   98, ~dec, urbit.org
-      0w0                           ::   99, ~wex, Pax Dickinson 
+      0w0                           ::   99, ~wex, Pax Dickinson
       0w0                           ::  100, ~syr, urbit.org
       0w0                           ::  101, ~wet, urbit.org
       0w0                           ::  102, ~dyl, urbit.org
@@ -210,7 +210,7 @@
       0w0                           ::  106, ~bet, urbit.org
       0w0                           ::  107, ~bel, urbit.org
       0w0                           ::  108, ~tux, Tlon Investor 13
-      0w0                           ::  109, ~tug, Philip Monk 
+      0w0                           ::  109, ~tug, Philip Monk
       0w0                           ::  110, ~myr, urbit.org
       0w0                           ::  111, ~pel, urbit.org
       0w0                           ::  112, ~syp, urbit.org
@@ -229,7 +229,7 @@
       0w0                           ::  125, ~wyt, urbit.org
       0w0                           ::  126, ~nub, urbit.org
       0w0                           ::  127, ~med, urbit.org
-      0w0                           ::  128, ~lyt, Arthur Breitman 
+      0w0                           ::  128, ~lyt, Arthur Breitman
       0w0                           ::  129, ~dus, urbit.org
       0w0                           ::  130, ~neb, urbit.org
       0w0                           ::  131, ~rum, urbit.org
@@ -239,22 +239,22 @@
       0w0                           ::  135, ~pun, urbit.org
       0w0                           ::  136, ~res, urbit.org
       0w0                           ::  137, ~red, Alex Kravets
-      0w0                           ::  138, ~fun, Aaron Beckerman 
+      0w0                           ::  138, ~fun, Aaron Beckerman
       0w0                           ::  139, ~rev, urbit.org
-      0w0                           ::  140, ~ref, Matt Brubeck 
+      0w0                           ::  140, ~ref, Matt Brubeck
       0w0                           ::  141, ~mec, urbit.org
       0w0                           ::  142, ~ted, urbit.org
-      0w0                           ::  143, ~rus, Stephen Burnham 
+      0w0                           ::  143, ~rus, Stephen Burnham
       0w0                           ::  144, ~bex, urbit.org
       0w0                           ::  145, ~leb, Justin LeBlanc
       0w0                           ::  146, ~dux, urbit.org
       0w0                           ::  147, ~ryn, urbit.org
       0w0                           ::  148, ~num, Tlon
       0w0                           ::  149, ~pyx, Katherine McFall
-      0w0                           ::  150, ~ryg, Dan Haffey 
+      0w0                           ::  150, ~ryg, Dan Haffey
       0w0                           ::  151, ~ryx, Tlon
       0w0                           ::  152, ~fep, Tlon
-      0w0                           ::  153, ~tyr, Steve Dee 
+      0w0                           ::  153, ~tyr, Steve Dee
       0w0                           ::  154, ~tus, Tlon
       0w0                           ::  155, ~tyc, Tlon
       0w0                           ::  156, ~leg, Tlon
@@ -301,12 +301,12 @@
       0w0                           ::  197, ~luc, Tlon
       0w0                           ::  198, ~len, Tlon
       0w0                           ::  199, ~ner, Tlon
-      0w0                           ::  200, ~lex, Michael Hartl 
+      0w0                           ::  200, ~lex, Michael Hartl
       0w0                           ::  201, ~rup, Owen Rescher
       0w0                           ::  202, ~ned, Tlon
       0w0                           ::  203, ~lec, Tlon
       0w0                           ::  204, ~ryd, Tlon
-      0w0                           ::  205, ~lyd, Adam Bliss 
+      0w0                           ::  205, ~lyd, Adam Bliss
       0w0                           ::  206, ~fen, Tlon
       0w0                           ::  207, ~wel, Tlon
       0w0                           ::  208, ~nyd, Tlon
@@ -314,20 +314,20 @@
       0w0                           ::  210, ~rel, Tlon
       0w0                           ::  211, ~rud, Tlon
       0w0                           ::  212, ~nes, Tlon
-      0w0                           ::  213, ~hes, Tlon Investor 14 
+      0w0                           ::  213, ~hes, Tlon Investor 14
       0w0                           ::  214, ~fet, Tlon
       0w0                           ::  215, ~des, Tlon
       0w0                           ::  216, ~ret, Tlon
       0w0                           ::  217, ~dun, Tlon
       0w0                           ::  218, ~ler, Tlon
-      0w0                           ::  219, ~nyr, Ivan Matosevic 
+      0w0                           ::  219, ~nyr, Ivan Matosevic
       0w0                           ::  220, ~seb, Tlon
       0w0                           ::  221, ~hul, Tlon
       0w0                           ::  222, ~ryl, Tlon
       0w0                           ::  223, ~lud, Tlon
       0w0                           ::  224, ~rem, Tlon
       0w0                           ::  225, ~lys, Tlon
-      0w0                           ::  226, ~fyn, Stephen Burnham 
+      0w0                           ::  226, ~fyn, Stephen Burnham
       0w0                           ::  227, ~wer, Tlon
       0w0                           ::  228, ~ryc, Tlon
       0w0                           ::  229, ~sug, Tlon
@@ -344,11 +344,11 @@
       0w0                           ::  240, ~lyr, Tlon
       0w0                           ::  241, ~tes, Tlon
       0w0                           ::  242, ~mud, Ian Rowan
-      0w0                           ::  243, ~nyt, Byrne Hobart 
+      0w0                           ::  243, ~nyt, Byrne Hobart
       0w0                           ::  244, ~byr, Tlon
       0w0                           ::  245, ~sen, Tlon
       0w0                           ::  246, ~weg, Tlon
-      0w0                           ::  247, ~fyr, Anton Dyudin 
+      0w0                           ::  247, ~fyr, Anton Dyudin
       0w0                           ::  248, ~mur, Tlon
       0w0                           ::  249, ~tel, Tlon
       0w0                           ::  250, ~rep, Raymond Pasco
@@ -356,7 +356,7 @@
       0w0                           ::  252, ~pec, Tlon
       0w0                           ::  253, ~nel, Tlon
       0w0                           ::  254, ~nev, Tlon
-      0w0                           ::  255, ~fes, John Burnham 
+      0w0                           ::  255, ~fes, John Burnham
   ==
 --  ::
 ::                                                      ::::
@@ -366,14 +366,14 @@
 ::                                                      ::  ++py
 ::::                    ## sparse/light                 ::  sparse range
   ::                                                    ::::
-++  py        
+++  py
   ::  because when you're a star with 2^16 unissued
   ::  planets, a (set) is kind of lame...
   ::
   |_  a/pile
   ::                                                    ::  ++dif:py
   ++  dif                                               ::  add/remove a->b
-    |=  b/pile                                          
+    |=  b/pile
     ^-  (pair pile pile)
     [(sub(a b) a) (sub b)]
   ::                                                    ::  ++div:py
@@ -382,14 +382,14 @@
     ^-  (unit (pair pile pile))
     =<  ?-(- $& [~ p], $| ~)
     |-  ^-  (each (pair pile pile) @u)
-    ?:  =(0 b)  
+    ?:  =(0 b)
       [%& ~ a]
     ?~  a  [%| 0]
     =/  al  $(a l.a)
     ?-    -.al
         $&  [%& p.p.al a(l q.p.al)]
         $|
-      =.  b  (^sub b p.al)    
+      =.  b  (^sub b p.al)
       =/  top  +((^sub q.n.a p.n.a))
       ?:  =(b top)
         [%& a(r ~) r.a]
@@ -429,7 +429,7 @@
     ?~  a  ~
     ?~  b  ~
     ?.  (vor p.n.a p.n.b)  $(a b, b a)
-    ?:  (gth p.n.a q.n.b)  
+    ?:  (gth p.n.a q.n.b)
       (uni(a $(b r.b)) $(a l.a, r.b ~))
     ?:  (lth q.n.a p.n.b)
       (uni(a $(b l.b)) $(a r.a, l.b ~))
@@ -466,7 +466,7 @@
       $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
     %-  uni(a $(b r.b, a [[+(q.n.b) q.n.a] ~ ~]))
     $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
-  ::                                              
+  ::
   ++  tap
     =|  out/(list @u)
     |-  ^+  out
@@ -474,7 +474,7 @@
     $(a l.a, out (welp (gulf n.a) $(a r.a)))
   ::                                                    ::  ++uni:py
   ++  uni                                               ::  merge two piles
-    |=  b/pile  
+    |=  b/pile
     ^-  pile
     ?~  b  a
     ?~  a  b
@@ -497,19 +497,19 @@
   ::                                                    ::::
 ++  ry
   ::
-  ::  we need to be able to combine rights, and 
-  ::  track changes by taking differences between them.  
-  :: 
-  ::  ++ry must always crash when you try to make it
-  ::  do something that makes no sense.  
+  ::  we need to be able to combine rights, and
+  ::  track changes by taking differences between them.
   ::
-  ::  language compromises: the type system can't enforce 
+  ::  ++ry must always crash when you try to make it
+  ::  do something that makes no sense.
+  ::
+  ::  language compromises: the type system can't enforce
   ::  that lef and ryt match, hence the asserts.
   ::
   |_  $:  ::  lef: old right
           ::  ryt: new right
           ::
-          lef/rite 
+          lef/rite
           ryt/rite
       ==
   ::                                                    ::  ++dif:ry
@@ -563,7 +563,7 @@
         %-  ~(rep by old)
         |*  {{cur/* fid/@ud} acc/_^+(old ~)}
         =>  .(+< `_[[cur fid]=-.new acc=old]`+<)
-        =.  fid  
+        =.  fid
           (^sub fid (max fid (fall (~(get by new) cur) 0)))
         ?~  fid  acc
         (~(put by acc) cur fid)
@@ -572,7 +572,7 @@
         %-  ~(rep by new)
         |*  {{cur/* fid/@ud} acc/_^+(new ~)}
         =>  .(+< `_[[cur fid]=-.old acc=new]`+<)
-        =.  fid  
+        =.  fid
           (^sub fid (max fid (fall (~(get by old) cur) 0)))
         ?~  fid  acc
         (~(put by acc) cur fid)
@@ -606,7 +606,7 @@
     ++  sable                                           ::  diff set
       |*  {nut/@tas new/(set) old/(set)}
       =/  mor  (~(dif in new) old)
-      =/  les  (~(dif in old) new) 
+      =/  les  (~(dif in old) new)
       :-  ?~(mor ~ `[nut mor])
           ?~(les ~ `[nut les])
     ::                                                  ::  ++table:dif:ry
@@ -696,12 +696,12 @@
   ::  %jael has no concept of negative rights.
   ::
   ::  performance issues: ++differ and ++splice, naive.
-  :: 
+  ::
   ::  external issues: much copy and paste from ++by.  it
   ::  would be nice to resolve this somehow, but not urgent.
   ::
-  ::  language issues: if hoon had an equality test 
-  ::  that informed inference, ++expose could be 
+  ::  language issues: if hoon had an equality test
+  ::  that informed inference, ++expose could be
   ::  properly inferred, eliminating the ?>.
   ::
   |_  pig/safe
@@ -729,8 +729,8 @@
     ^-  bump
     |^  [way way(pig gob, gob pig)]
     ++  way
-      %-  intern(pig ~) 
-      %+  skip  linear(pig gob) 
+      %-  intern(pig ~)
+      %+  skip  linear(pig gob)
       |=(rite (~(has in pig) +<))
     --
   ::                                                    ::  ++exists:up
@@ -799,17 +799,17 @@
       [%login ~]
     ::
         $pword
-      :-  %pword 
-      %-  ~(run by p.rys) 
-      |=  (map @ta @t) 
+      :-  %pword
+      %-  ~(run by p.rys)
+      |=  (map @ta @t)
       (~(run by +<) |=(@t (fil 3 (met 3 +<) '*')))
     ::
         $jewel
       [%jewel (~(run by p.rys) |=(@ (mug +<)))]
     ::
         $token
-      :-  %token 
-      %-  ~(run by p.rys) 
+      :-  %token
+      %-  ~(run by p.rys)
       |=((map @ta @) (~(run by +<) |=(@ (mug +<))))
     ::
         $urban
@@ -834,13 +834,13 @@
     |=  del/bump
     ^-  safe
     (splice(pig (remove les.del)) mor.del)
-  --   
+  --
 ::                                                      ::  ++we
 ::::                    ## will^light                   ::  will functions
   ::                                                    ::::
 ++  we
   |_  pub/will
-  ::                                                    ::  ++collate:we 
+  ::                                                    ::  ++collate:we
   ++  collate                                           ::  sort by version
     |=  ord/$-({{life cert} {life cert}} ?)
     ^-  (list (pair life cert))
@@ -879,7 +879,7 @@
   ::  absolute effects, respectively, at the top level.
   ::
   ::  a general pattern here is that we use the ++ur core
-  ::  to generate absolute effects (++change), then invoke 
+  ::  to generate absolute effects (++change), then invoke
   ::  ++su to calculate the derived effect of these changes.
   ::
   ::  arvo issues: should be merged with the top-level
@@ -972,7 +972,7 @@
     ::
         $mint
       (cure abet:abet:(deal:(burb our) p.tac [q.tac ~]))
-      
+
     ::
     ::  move promises
     ::    {$move p/ship q/ship r/safe}
@@ -1032,7 +1032,7 @@
         $vest
       (curd abet:~(vest ~(feed su urb sub) hen))
     ::
-    ::  monitor all 
+    ::  monitor all
     ::    {$vine $~}
     ::
         $vine
@@ -1073,10 +1073,10 @@
 ::::                    ## relative^heavy               ::  subjective engine
   ::                                                    ::::
 ++  su
-      ::  the ++su core handles all derived state, 
+      ::  the ++su core handles all derived state,
       ::  subscriptions, and actions.
       ::
-      ::  ++feed:su registers subscriptions, and also 
+      ::  ++feed:su registers subscriptions, and also
       ::  drives certificate propagation when a %veil
       ::  (secure channel) subscription is created.
       ::
@@ -1087,7 +1087,7 @@
       ::
       ::  ++form:su generates the actual report data.
       ::
-  =|  moz/(list move)           
+  =|  moz/(list move)
   =|  $:  state-absolute
           state-relative
       ==
@@ -1135,8 +1135,8 @@
       ::
       =.  ..feed  (open hen who)
       =/  ruc  (~(get by car) who)
-      =/  rec  
-        ?~  ruc 
+      =/  rec
+        ?~  ruc
            [`yen/(set duct)`[hen ~ ~] det=(veil:form who)]
          u.ruc(yen (~(put in yen.u.ruc) hen))
       %_  ..feed
@@ -1158,7 +1158,7 @@
     --
   ::                                                    ::  ++feel:su
   ++  feel                                              ::  update tracker
-    |% 
+    |%
     ::                                                  ::  ++veal:feel:su
     ++  veal                                            ::  kick subfarm
       ^+  ..feel
@@ -1171,7 +1171,7 @@
       =/  ruc  (~(get by car) who)
       ?~  ruc  ..feel
       =/  det  (veil:form who)
-      ?:  =(det det.u.ruc)  ..feel 
+      ?:  =(det det.u.ruc)  ..feel
       =.  car  (~(put by car) who [yen.u.ruc det])
       (exec yen.u.ruc [%give %veil det])
     ::                                                  ::  ++vein:feel:su
@@ -1208,7 +1208,7 @@
           moz
         :_  moz
         [*duct %pass /meet/(scot %p who) %x %mess who /j [%meet hec]]
-      == 
+      ==
     ::                                                  ::  ++flow:su
     ++  flow                                            ::  to set of ships
       |=  tar/(set ship)
@@ -1221,7 +1221,7 @@
       |=  {via/(unit ship) jax/(list (set ship))}
       ^+  ..fire
       =-  (flow ?~(via - (~(del in -) u.via)))
-      |-  ^-  (set ship)      
+      |-  ^-  (set ship)
       ?~(jax ~ (~(uni in i.jax) $(jax t.jax)))
     --
   ::                                                    ::  ++form:su
@@ -1241,8 +1241,8 @@
         =/  rom  (~(tap in mor))
         |-  ^-  farm
         ?~  rom  ~
-        %+  ~(put by $(rom t.rom)) 
-          i.rom 
+        %+  ~(put by $(rom t.rom))
+          i.rom
         (~(got by pug.urb) i.rom)
       ::
       ::  wit: all new ships in these wills
@@ -1276,17 +1276,17 @@
       ::  out: symmetric key from our to who
       ::  inn: symmetric keys from who to our
       ::
-      =/  pub  
+      =/  pub
         ^-  will
         =-  ?~(- ~ u.-)
         (~(get by pug.urb) who)
       ::
-      =/  exp  
+      =/  exp
         ^-  safe
         =-  ?~(- ~ u.-)
         (~(get by (~(got by pry.urb) our)) who)
       ::
-      =/  imp  
+      =/  imp
         ^-  safe
         =-  ?~(- ~ u.-)
         %.  our
@@ -1295,10 +1295,10 @@
       =*  out
         ^-  (unit (pair hand bill))
         =+  (~(expose up exp) %urban)
-        ?~  -  ~ 
+        ?~  -  ~
         ?>  ?=($urban -.u.-)
         =*  pam  p.u.-
-        ?~  pam  ~  
+        ?~  pam  ~
         ::  arbitrarily select root node of the map
         ::
         `n.pam
@@ -1332,7 +1332,7 @@
       ::  fub: all assets by ship
       ::  veg: all nontrivial assets, secrets masked
       ::
-      =/  fub  
+      =/  fub
         ^-  (list (pair ship (unit safe)))
         %+  turn
           (~(tap by pry.urb))
@@ -1380,7 +1380,7 @@
             del/bump
         ==
     ^+  +>
-    =*  bur  ?|  (~(exists up mor.del) %urban) 
+    =*  bur  ?|  (~(exists up mor.del) %urban)
                  (~(exists up les.del) %urban)
              ==
     ::  ignore empty delta; keep secrets out of metadata
@@ -1395,7 +1395,7 @@
       ::
       ::  track liabilities
       ::
-      =.  +>  (vest:feel pal %& del) 
+      =.  +>  (vest:feel pal %& del)
       ::
       ::  track secure channels
       ::
@@ -1415,7 +1415,7 @@
   ++  said                                              ::  track cert change
     |=  $:  ::  rex: ship whose will has changed
             ::  vie: change authorized by
-            ::  lyf: modified/created version 
+            ::  lyf: modified/created version
             ::  gan: modification
             ::
             rex/ship
@@ -1425,7 +1425,7 @@
         ==
     ::  lip: this change as its own farm
     ::
-    =/  lip  ^-  farm 
+    =/  lip  ^-  farm
       =-  [[rex -] ~ ~]
       ^-  will
       =-  [[lyf -] ~ ~]
@@ -1476,7 +1476,7 @@
     ::
     ::  propagate new data as appropriate
     ::
-    %+  ~(spam fire lip)  
+    %+  ~(spam fire lip)
       ?~(vie ~ ?~(u.vie ~ `u.u.vie))
     ^-  (list (set ship))
     ::
@@ -1488,7 +1488,7 @@
           kyz.rel
           ?.(=(%step -.gan) ~ [pyr.rel ~])
       ==
-    :: 
+    ::
     ::  forward star and galaxy updates to parents and kids
     ::
     ?.  (lth rex 65.536)
@@ -1511,7 +1511,7 @@
       ::  it is absolutely verboten to use [our] in ++ur.
       ::
   =|  hab/(list change)
-  =|  state-absolute 
+  =|  state-absolute
   ::
   ::  hab: side effects, reversed
   ::  urb: all urbit state
@@ -1523,7 +1523,7 @@
     [(flop hab) `state-absolute`urb]
   ::                                                    ::  ++boss:ur
   ++  boss                                              ::  parent
-    |=  who/ship                        
+    |=  who/ship
     ^-  ship
     -:(dads who)
   ::
@@ -1618,7 +1618,7 @@
     ++  lean                                            ::  private keys
       ^-  (pair life (map life ring))
       ::
-      ::  lyf: latest life of 
+      ::  lyf: latest life of
       ::  lab: promises by rex
       ::  par: promises by rex, to rex
       ::  jel: %jewel rights
@@ -1642,7 +1642,7 @@
               ::  nym: self-description
               ::
               now/@da
-              eny/@e 
+              eny/@e
               gen/@pG
               nym/arms
           ==
@@ -1654,7 +1654,7 @@
       ::
       ::  initialize hierarchical property
       ::
-      =.  +>.$  
+      =.  +>.$
         =-  (deal rex - ~)
         ^-  safe
         %-  intern:up
@@ -1679,7 +1679,7 @@
       ::  key: generated key
       ::  bul: initial bull
       ::
-      =/  key  (ypt:scr (mix rex %jael-make) gen)  
+      =/  key  (ypt:scr (mix rex %jael-make) gen)
       =*  doc  `bull`[(sein rex) & nym]
       ?:  (lth rex 256)
         ::
@@ -1699,7 +1699,7 @@
       ::
       ::  create initial private key and certificate
       ::
-      (next (mix eny key) doc)      
+      (next (mix eny key) doc)
     ::                                                  ::  ++next:ex:ur
     ++  next                                            ::  advance private key
       |=  {eny/@e doc/bull}
@@ -1723,7 +1723,7 @@
       =.  ..ex  (meet [~ ~] hec)
       +>.$
     ::
-    ++  as-hotel                    :: XX moveme        
+    ++  as-hotel                    :: XX moveme
       |=  a/ship  ^-  (map {ship bloq} pile)
       =/  b  (xeb (xeb a))
       =-  (my - ~)
@@ -1860,7 +1860,7 @@
       |=  $:  ::  vie: data source
               ::  cod: merge context
               ::  gur: input will
-              ::  
+              ::
               vie/(unit (unit ship))
               cod/farm
               gur/will
@@ -1911,15 +1911,15 @@
         (grow-lick (grow-look lyf.myn) ash val)
       ::                                                ::  grow-look/ex:ur
       ++  grow-look                                     ::  load public key
-        |=  lyf/life 
+        |=  lyf/life
         ^-  @
         ::
         ::  cascade search over old and new, new first
         ::
-        |^  %-  (bond |.((need grow-look-find))) 
+        |^  %-  (bond |.((need grow-look-find)))
             grow-look-find(rug gur)
         ::                                              ::  grow-look-find:ex:ur
-        ++  grow-look-find                              ::  
+        ++  grow-look-find                              ::
           ^-  (unit @)
           ::
           ::  crash if this life is revoked
@@ -1932,14 +1932,14 @@
       ++  grow-mate                                     ::  merge lives
         |=  $:  ::  num: life we're merging
                 ::  new: new deed
-                ::  pre: previous deed 
+                ::  pre: previous deed
                 ::  eld: old deed
                 ::
                 num/@ud
                 new/cert
                 pre/(unit deed)
             ==
-        =+  :*  eld=`(unit cert)`(~(get by rug) num) 
+        =+  :*  eld=`(unit cert)`(~(get by rug) num)
             ==
         ^-  (pair (list change) cert)
         ::
@@ -1950,7 +1950,7 @@
         ::  if no new information, do nothing
         ::
         ?:  |(=(eld `new))
-          ?>  ?=(^ eld) 
+          ?>  ?=(^ eld)
           [~ u.eld]
         ::
         ::  ash: hash of deed content
@@ -2065,7 +2065,7 @@
         =*  val  (sign:as:(nol:nu:crub q.pev) *@ ash)
         new(syg (~(put by syg.new) dad [p.pev val]))
   --  --
---  --  
+--  --
 ::                                                      ::::
 ::::                    #  vane                         ::  interface
   ::                                                    ::::
@@ -2073,13 +2073,13 @@
 ::  lex: all durable %jael state
 ::
 =|  lex/state
-|=  $:  :: 
+|=  $:  ::
         ::  now: current time
         ::  eny: unique entropy
         ::  ski: namespace resolver
         ::
         now/@da
-        eny/@e                                        
+        eny/@e
         ski/sley
     ==
 |%
@@ -2100,7 +2100,7 @@
   |=  $:  ::  now: current time
           ::  hen: cause (XX why we need this?)
           ::
-          now/@da 
+          now/@da
           hen/duct
       ==
   ^-  (unit @da)
@@ -2123,10 +2123,10 @@
           ::  tyl: rest of path
           ::
           fur/(unit (set monk))
-          ren/@tas 
-          why/shop 
-          syd/desk 
-          lot/coin 
+          ren/@tas
+          why/shop
+          syd/desk
+          lot/coin
           tyl/spur
       ==
   ^-  (unit (unit cage))
@@ -2145,8 +2145,8 @@
           ::  hen: cause
           ::  hin: result
           ::
-          tea/wire 
-          hen/duct 
+          tea/wire
+          hen/duct
           hin/(hypo sign-arvo)
       ==
   ^-  {p/(list move) q/_..^$}

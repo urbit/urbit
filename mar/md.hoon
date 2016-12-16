@@ -15,7 +15,7 @@
   ++  mime  |=({p/mite:^eyre q/octs:^eyre} q.q)
   ++  noun  @t
   ++  txt   role:lines:clay
-  --  
+  --
 ++  grad  %txt
 ++  garb  /down
 --

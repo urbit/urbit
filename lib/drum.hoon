@@ -60,8 +60,8 @@
   ==                                                    ::
 ++  target                                              ::  application target
   $:  $=  blt                                           ::  curr & prev belts
-        %+  pair       
-          (unit dill-belt:^dill) 
+        %+  pair
+          (unit dill-belt:^dill)
         (unit dill-belt:^dill)
       ris/(unit search)                                 ::  reverse-i-search
       hit/history                                       ::  all past input
@@ -105,7 +105,7 @@
   ==                                                    ::
 ::
 ++  drum-path                                           ::  encode path
-  |=  gyl/gill:^gall  
+  |=  gyl/gill:^gall
   ^-  wire
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
@@ -172,7 +172,7 @@
   (se-klin gyl)
 ::
 ++  poke-exit                                         ::  shutdown
-  |=  $~ 
+  |=  $~
   se-abet:(se-blit-sys `dill-blit:^dill`[%qit ~])
 ::
 ++  poke-put                                          ::  write file
@@ -387,7 +387,7 @@
   |=  bil/dill-blit:^dill
   +>(biz [bil biz])
 ::
-++  se-blit-sys                                       ::  output to system 
+++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:^dill  ^+  +>
   ?~  sys  ~&(%se-blit-no-sys +>)
   (se-emit [u.sys %diff %dill-blit bil])
@@ -458,7 +458,7 @@
 ::
 ++  ta                                                ::  per target
   |_  {gyl/gill:^gall target}                         ::  app and state
-  ++  ta-abet                                         ::  resolve  
+  ++  ta-abet                                         ::  resolve
     ^+  ..ta
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
@@ -787,12 +787,12 @@
       %_    pom
           cad
         ;:  welp
-          ?.  ?=($earl (clan:title p.gyl)) 
-            (cite:title p.gyl) 
+          ?.  ?=($earl (clan:title p.gyl))
+            (cite:title p.gyl)
           (scow %p p.gyl)
         ::
-          ":" 
-          (trip q.gyl) 
+          ":"
+          (trip q.gyl)
           cad.pom
         ==
       ==

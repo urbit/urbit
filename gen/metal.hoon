@@ -17,12 +17,12 @@
 ::
 ::  in practice, the first five nouns in E are: two boot formulas,
 ::  a hoon compiler as a nock formula, the same compiler as source,
-::  and the arvo kernel as source.  
+::  and the arvo kernel as source.
 ::
 ::  after the first five special events, we enter an iterative
-::  sequence of regular events which continues for the rest of the 
-::  computer's life.  during this sequence, each state is a function 
-::  that, passed the next event, produces the next state.  
+::  sequence of regular events which continues for the rest of the
+::  computer's life.  during this sequence, each state is a function
+::  that, passed the next event, produces the next state.
 ::
 ::  each event is a `[date wire type data]` tuple, where `date` is a
 ::  128-bit Urbit date; `wire` is an opaque path which output can
@@ -110,7 +110,7 @@
         ::  the gate is in fact ++ride.
         ::
         ~>  %slog.[0 leaf+"1-b"]
-        =+  ^=  compiler-gate 
+        =+  ^=  compiler-gate
             .*(0 compiler-formula)
         ::
         ::  compile the compiler source, producing (pair span nock).
@@ -146,7 +146,7 @@
         ::
         ~>  %slog.[0 leaf+"1-g"]
         .*(+>:compiler-gate +:kernel-tool)
-::  
+::
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
 ::
 =+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
@@ -161,7 +161,7 @@
 =+  compiler-twig=(ream compiler-source)
 ~&  %metal-parsed
 ::
-::  compiler-formula: compiler as nock formula 
+::  compiler-formula: compiler as nock formula
 ::
 ~&  %metal-compiling
 =+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)

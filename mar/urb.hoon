@@ -22,7 +22,7 @@
       ;body
         ;*  bod
         ;*  ?~  dep  ~
-            :~  ;script@"/~/on/{<dep>}.js"(urb_injected "", async "", onload "setTimeout(urb.onDep,2000)");  
+            :~  ;script@"/~/on/{<dep>}.js"(urb_injected "", async "", onload "setTimeout(urb.onDep,2000)");
                 ;script(urb_injected "")
                   ;-  (trip urb-wasp-data-js)
                   ;  urb.waspWait = []
@@ -37,7 +37,7 @@
       ==
     ==
   --
-++  grab  
+++  grab
   |%                                                    ::  convert from
   ++  noun  {@uvH manx}                                 ::  clam from %noun
   --

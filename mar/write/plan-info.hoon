@@ -7,7 +7,7 @@
 ++  grab
   |%
   ++  noun  {@txname @txloc}
-  ++  json  
+  ++  json
     (corl need =>(jo (ot who+so loc+so ~)))
   --
 --

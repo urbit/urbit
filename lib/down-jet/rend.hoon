@@ -21,25 +21,25 @@
     ?+    n.g.i.a  $(a c.i.a)
         $img
       %-  zing  ^-  wall
-      %+  murn  a.g.i.a   |=  {a/mane b/tape}  
+      %+  murn  a.g.i.a   |=  {a/mane b/tape}
       ^-  (unit tape)
       ?+  a  ~
         $alt  [~ b]
       ==
     ==
   $(a t.a)
-::  
+::
 ++  sanitize
  |=  a/marl  ^-  tape
  =-  (zing `wall`(scan (flat a) fel))
- =<  fel=;~(sfix (star ;~(plug (cold '-' -) (plus +))) (star next)) 
+ =<  fel=;~(sfix (star ;~(plug (cold '-' -) (plus +))) (star next))
  [(star ;~(less aln prn)) ;~(pose nud low (cook |=(a/@ (add a ' ')) hig))]
 ::
 ++  sang                                                ::  tight item children
   |=  a/(list elem)
   ^-  marl
   ?~  a  ~
-  %+  weld  
+  %+  weld
     ?.  ?=($para -.i.a)
       (sing i.a ~)
     (sung p.i.a)
@@ -67,8 +67,8 @@
       (weld p.a $(lum q.a))
   ::
   ++  apex
-    ^-  {p/marl q/_lum}  
-    ?~  lum  
+    ^-  {p/marl q/_lum}
+    ?~  lum
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
     =>  [ele=i.lum .(lum t.lum)]
@@ -100,7 +100,7 @@
   ++  lose  |=(a/tape [[;lost:"{a}"]~ lum])
   ++  chomp
     |*  {tap/tape fel/rule}
-    ^-  {(unit _(wonk *fel)) _lum}  
+    ^-  {(unit _(wonk *fel)) _lum}
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
     :-  [~ (wonk vex)]
@@ -130,7 +130,7 @@
     ?-  -.a  ::  ;/("unimplemented {<p.a>}")
       $html  !!                       ::  handled earlier   XX do type stuff
       $para  [/p (sung p.a)]
-      $head  
+      $head
         =+  [hed=(add %h0 (lsh 3 1 p.a)) kid=(sung q.a)]
         [[hed id+(sanitize kid) ~] kid]
     ::
@@ -138,7 +138,7 @@
       $meta  ?:  =(~ p.a)  ;/(~)
              =+  jon=`json`o+(~(run by p.a) |=(cord s++<))
              ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
-  ::     %html  
+  ::     %html
              ::=+  tex=(role (turn p.a crip))
              ::=+  (parse:xml tex)
              ::?^  -  u.-
@@ -154,7 +154,7 @@
 
     ==
   --
-::  
+::
 ++  sung
   =,  url:eyre
   |=  lim/kids
@@ -167,13 +167,13 @@
   ::
   ++  apex
     ^-  {p/marl q/_lim}
-    ?~  lim  
+    ?~  lim
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
     =>  [ele=i.lim .(lim t.lim)]
     ?.  ?=($htmt -.ele)
       ?:  &(?=($$ -.ele) ?=({{$$ *} *} lim))
-        apex(p.i.lim (weld p.ele p.i.lim))  
+        apex(p.i.lim (weld p.ele p.i.lim))
       (push (reso ele) ~)
     =+  tex=(trip p.ele)
     =^  emo  lim  (chomp tex empt:parse:xml)
@@ -223,7 +223,7 @@
     ^-  manx
     ?@  -.b
       ?-  -.b
-        $$     ;/(p.b)  
+        $$     ;/(p.b)
         $line  ;br;
         $code  ;code:"{p.b}"
         $htmt  !!  ::p.b              ::  handled earlier ::  XX  do type stuff

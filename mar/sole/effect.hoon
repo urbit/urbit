@@ -23,7 +23,7 @@
         $set  (joba %set (jape (tufa p.det)))
         $ins  (joba %ins (jobe at+(jone p.det) cha+s+(tuft q.det) ~))
       ==
-    --  
+    --
   --
 ++  wush
   |=  {wid/@u tan/tang}
@@ -63,7 +63,7 @@
   ::
   ++  json
     ^-  ^json
-    ?+    -.sef  
+    ?+    -.sef
               ~|(unsupported-effect+-.sef !!)
         $mor  [%a (turn p.sef |=(a/sole-effect json(sef a)))]
         $err  (joba %hop (jone p.sef))

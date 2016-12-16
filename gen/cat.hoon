@@ -1,5 +1,5 @@
 ::  ConCATenate file listings
-::  
+::
 ::::  /hoon/cat/gen
   ::
 /?    310
@@ -28,7 +28,7 @@
 ::
     *
   =-  [palm+[": " ``~]^-]~
-  :~  rose+[" " `~]^~[leaf+"*" (smyt pax)] 
+  :~  rose+[" " `~]^~[leaf+"*" (smyt pax)]
       `tank`(subdir vane pax dir.ark)
   ==
 ==

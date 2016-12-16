@@ -71,7 +71,7 @@
     $meta  (from-type +.a meta.dat)
     $mime  (from-type +.a mime.dat)
     $body  (from-type +.a body.dat)
-    $kids  ?<  (~(has by (malt p.a)) %kids)  ::  XX recursion? 
+    $kids  ?<  (~(has by (malt p.a)) %kids)  ::  XX recursion?
            =<  o+(~(urn by kid) .)
            |=  {dir/knot dak/tree-include}  ^-  json
            ^^$(quy p.a, s.bem [dir s.bem], dat dak, kid ~)

@@ -81,7 +81,7 @@
 ++  poke-comment
   |=  {sup/path him/ship txt/@t}  ^+  abet
   =+  pax=(welp (flop sup) /comments/(scot %da now))
-  =.  txt  
+  =.  txt
     %+  rap  3  :~
       '## `'  (scot %p him)  '`'
       '\0a'  txt
@@ -124,7 +124,7 @@
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet
   ?~  ext  $(ext [~ -.dat])
   =+  cay=?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
-  ?:  =(u.ext -.dat)  
+  ?:  =(u.ext -.dat)
     (made pax ~ &+cay)
   =<  abet
   %^  emit  %exec  write+pax                ::  XX defer %nice
@@ -140,4 +140,4 @@
         (foal :(welp (en-beam beak-now ~) pax /[-.p.res]) p.res)
   ==
 --
- 
+

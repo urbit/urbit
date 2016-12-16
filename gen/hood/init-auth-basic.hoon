@@ -26,7 +26,7 @@
   [%& %auth-user "username: "]
 %+  sole-go  (boss 256 (star ;~(less col prn)))
 |=  usr/@t
-%+  sole-lo  
+%+  sole-lo
   [%| %auth-passwd "password: "]
 %+  sole-go  (boss 256 (star prn))
 |=  pas/@t

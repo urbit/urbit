@@ -12,7 +12,7 @@
 ++  grow                                                ::  convert to
   |%
   ++  json
-    :-  %a 
+    :-  %a
     %+  turn
       (sort all |=({a/* b/*} (lor b a)))
     |=  {a/time b/ship c/marl}  ^-  ^json

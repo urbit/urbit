@@ -104,7 +104,7 @@ CodeMirror.defineMode("hoon", function() {
     if(state.space && stream.match('==')){
       return 'tag'
     }
-    
+
     if(stream.eat('~')){
       if(/[()]/.exec(stream.peek()))
         return 'builtin'

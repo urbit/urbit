@@ -7,7 +7,7 @@
 |%
 ++  react-attrs                                         ::  uppercase mapping
   ~+  ^-  (map term cord)
-  %-  molt  ^-  (list (pair term cord))  
+  %-  molt  ^-  (list (pair term cord))
   :-  [%class 'className']
   =-  (rash - (more next (cook |=(a/tape [(crip (cass a)) (crip a)]) (star alf))))
   '''
@@ -19,9 +19,9 @@
   headers height hidden high href hrefLang htmlFor httpEquiv icon id label lang
   list loop low manifest marginHeight marginWidth max maxLength media mediaGroup
   method min multiple muted name noValidate open optimum pattern placeholder
-  poster preload radioGroup readOnly rel required role rowSpan rows sandbox 
-  scope scoped scrolling seamless selected shape size sizes span spellCheck 
-  src srcDoc srcSet start step style tabIndex target title type useMap value 
+  poster preload radioGroup readOnly rel required role rowSpan rows sandbox
+  scope scoped scrolling seamless selected shape size sizes span spellCheck
+  src srcDoc srcSet start step style tabIndex target title type useMap value
   width wmode
   '''
 ::
@@ -55,7 +55,7 @@
   |=  src/manx  ^-  json
   ?:  ?=(_;/(**) src)
     (jape v.i.a.g.src)
-  =+  atr=(molt `(list (pair mane tape))`a.g.src)  
+  =+  atr=(molt `(list (pair mane tape))`a.g.src)
   ?:  (~(has by atr) [%urb %codemirror])
     $(src (urb-codemirror src))
   ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag

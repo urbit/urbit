@@ -8,7 +8,7 @@
 ++  command                                           ::  poke action
   $%  {$post p/@uvI q/cord}                           ::  post a tweet
   ==
-++  sur-twit  .  :: XX 
+++  sur-twit  .  :: XX
 ::
 ++  reqs
   |%
@@ -80,7 +80,7 @@
   ++  doc-data    :: scraped from api docs, used to create types and requests
     ::  ^-  (pole {_{term _(pole *param)} ?($get $post) path})
     =>  param
-    :~  
+    :~
       [  {$mentions $~}                %get   /statuses/mentions-timeline  ]
       [  {$posts-by sd $~}             %get   /statuses/user-timeline  ]
       [  {$timeline $~}                %get   /statuses/home-timeline  ]

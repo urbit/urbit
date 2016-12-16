@@ -2,7 +2,7 @@
 ::
 ::  The basic flow is as follows:
 ::  --  define a list of `++place`s, which specify the exported
-::      interface.  
+::      interface.
 ::  --  in `++peer-scry` in the connector app, call `++read` in
 ::      this library to match to the appropriate place and
 ::      produce a move (usually either an immediate response or
@@ -51,7 +51,7 @@
   |%
   ::  Produce null.  Used as `++read-x` in places which are pure
   ::  directories.  `++sigh-x` should be `++sigh-strange`.
-  ::  
+  ::
   ++  read-null  |=(pax/path [ost %diff %null ~])
   ::
   ::  Produce an arch with the given list of children.  Used as

@@ -1,5 +1,5 @@
 !:
-::  dill (4d), terminal handling   
+::  dill (4d), terminal handling
 ::
 |=  pit/vase
 =,  ^dill
@@ -27,7 +27,7 @@
           f/(unit mass)                                 ::
           g/(unit mass)                                 ::
       ==                                                ::
-  ==                                                    ::  
+  ==                                                    ::
 ++  axon                                                ::  dill per duct
   $:  ram/term                                          ::  console program
       tem/(unit (list dill-belt))                       ::  pending, reverse
@@ -40,7 +40,7 @@
 ++  mess                                                ::
   $%  {$dill-belt p/(hypo dill-belt)}                   ::
   ==                                                    ::
-++  move  {p/duct q/(wind note gift:able)}              ::  local move   
+++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
       {$sith p/@p q/@uw r/?}                            ::
@@ -90,7 +90,7 @@
   $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
   $%  {$a sign-ames}                                    ::
       {$c sign-clay}                                    ::
-      {$d sign-dill}                                    ::  
+      {$d sign-dill}                                    ::
       {$g sign-gall}                                    ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
@@ -134,7 +134,7 @@
                      [p.kyz q.kyz yen ges]
                  =+  cmd=[%hood %poke `cage`[%helm-begin !>(beg)]]
                  %=    +>.$
-                     moz 
+                     moz
                    :_(moz [hen %pass ~ %g %deal [our our] cmd])
                  ==
           $veer  (dump kyz)
@@ -159,7 +159,7 @@
       ::
       ++  done                                          ::  return gift
         |=  git/gift:able
-        +>(moz :_(moz [hen %give git])) 
+        +>(moz :_(moz [hen %give git]))
       ::
       ++  from                                          ::  receive belt
         |=  bit/dill-blit
@@ -311,8 +311,8 @@
         ==
       ++  peer
         %_    .
-            moz 
-          :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum]) 
+            moz
+          :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
         ==
       ::
       ++  sync
@@ -346,7 +346,7 @@
       ::
       ++  pump                                          ::  send diff ack
         %_    .
-            moz 
+            moz
           :_(moz [hen %pass ~ %g %deal [our our] ram %pump ~])
         ==
       ::
@@ -381,8 +381,8 @@
           ?-  -.+>.sih
             $coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
             $quit  peer
-            $reap  ?~  p.p.+>.sih 
-                     +>.$ 
+            $reap  ?~  p.p.+>.sih
+                     +>.$
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             $diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
             $doff  !!
@@ -435,7 +435,7 @@
       |=  {hen/duct kyz/task:able}                           ::
       ?~  ore.all  ~
       =+  nux=(~(get by dug.all) hen)
-      ?^  nux  
+      ?^  nux
         (some ~(. as [~ hen u.ore.all] u.nux))
       ?.  ?=($flow -.kyz)  ~
       %-  some
@@ -513,7 +513,7 @@
   =*  his  p.why
   [~ ~]
 ::
-++  stay  all 
+++  stay  all
 ::
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct hin/(hypo sign)}
@@ -531,7 +531,7 @@
     ~&  [%take-weird-hen hen]
     [~ ..^$]
   =+  our=?>(?=(^ ore.all) u.ore.all)
-  =^  moz  all  
+  =^  moz  all
     abet:(~(take as [~ hen our] (~(got by dug.all) hen)) q.hin)
   [moz ..^$]
 --

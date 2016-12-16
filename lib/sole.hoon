@@ -1,6 +1,6 @@
-::  
+::
 ::::  /hoon/sole/lib
-  ::  
+  ::
 /?    310
 /-    sole
 [. ^sole]
@@ -10,26 +10,26 @@
 |_  sole-share                                          ::  shared-state engine
 ++  abet  +<
 ++  apply
-  |=  ted/sole-edit 
+  |=  ted/sole-edit
   ^+  +>
   ?-    -.ted
     $del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
     $ins  +>.$(buf (weld (scag p.ted buf) `_buf`[q.ted (slag p.ted buf)]))
     $mor  |-  ^+  +>.^$
-          ?~  p.ted 
-            +>.^$ 
+          ?~  p.ted
+            +>.^$
           $(p.ted t.p.ted, +>.^$ ^$(ted i.p.ted))
     $nop  +>.$
     $set  +>.$(buf p.ted)
   ==
 ::
 ::::
-::  ++transmute: symmetric operational transformation.  
+::  ++transmute: symmetric operational transformation.
 ::
 ::  for any sole state +>, obeys
 ::
 ::      =+  [x=(transmute a b) y=(transmute b a)]
-::      .=  (apply:(apply a) x) 
+::      .=  (apply:(apply a) x)
 ::          (apply:(apply b) y)
 ::
 ++  transmute                                         ::  dex as after sin
@@ -58,15 +58,15 @@
             ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
       $ins  ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
     ==
-  ::  
+  ::
       $ins
     ?-  -.dex
       $del  ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
-      $ins  ?:  =(p.sin p.dex)     
+      $ins  ?:  =(p.sin p.dex)
               ?:((lth q.sin q.dex) dex dex(p +(p.dex)))
             ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
     ==
-  ==   
+  ==
 ::
 ++  commit                                            ::  local change
   |=  ted/sole-edit
@@ -77,7 +77,7 @@
 ::  ++inverse: inverse of change in context.
 ::
 ::  for any sole state +>, obeys
-::      
+::
 ::      =(+> (apply:(apply a) (inverse a)))
 ::
 ++  inverse                                           ::  relative inverse

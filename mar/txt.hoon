@@ -8,7 +8,7 @@
 =,  lines:clay
 =,  bytes:eyre
 |_  txt/wain
-::  
+::
 ++  grab                                                ::  convert from
   |%
   ++  mime  |=({p/mite:^eyre q/octs:^eyre} (lore q.q))
@@ -155,7 +155,7 @@
       %-  flop
       ^-  (list (list @t))
       :-  :_  ~
-          %^  cat  3  '<<<<<<<<<<<<' 
+          %^  cat  3  '<<<<<<<<<<<<'
           %^  cat  3  ' '
           %^  cat  3  `@t`(scot %p bos)
           %^  cat  3  '/'
@@ -167,7 +167,7 @@
       :-  ~['++++++++++++']
       :-  ali
       :-  :_  ~
-          %^  cat  3  '>>>>>>>>>>>>' 
+          %^  cat  3  '>>>>>>>>>>>>'
           %^  cat  3  ' '
           %^  cat  3  `@t`(scot %p als)
           %^  cat  3  '/'
@@ -213,7 +213,7 @@
           =+  wat=(scag (sub lob p.i.ali) p.i.bob)
           =+  ^=  res
               %=  $
-                ali  t.ali 
+                ali  t.ali
                 bob  [[%| (scag (sub lob p.i.ali) p.i.bob) ~] t.bob]
               ==
           :*  :*  (welp bac.res wat)

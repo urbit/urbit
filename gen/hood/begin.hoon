@@ -32,7 +32,7 @@
   [%& %helm-ticket "your ticket: ~"]
 %+  sole-go  fed:ag
 |=  tic/@p
-%+  sole-lo  
+%+  sole-lo
   [%& %helm-entropy "some entropy: "]
 %+  sole-go  (boss 256 (more gon qit))
 |=  yen/@t

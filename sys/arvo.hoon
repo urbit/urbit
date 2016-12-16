@@ -151,7 +151,7 @@
       ^-  (unit (pair move worm))
       %+  biff  ((soft duct) -.q.wec)
       |=  a/duct
-      %+  bind  
+      %+  bind
         =-  ?-  -.har
               $|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
               $&  (some p.har)
@@ -537,8 +537,8 @@
           ::  arv: arvo.hoon source
           ::
           now/@da
-          ova/(list ovum) 
-          hun/@t 
+          ova/(list ovum)
+          hun/@t
           van/@t
       ==
   ^-  (unit {p/(list ovum) q/*})
@@ -573,7 +573,7 @@
       ~&  [%hoon-compile-upgrade nex]
       =+  hot=.*(cop(+< [%noun hun]) -.cop)
       .(cop .*(0 +.hot))
-  ::  
+  ::
   ::  extract the hoon core from the outer gate
   ::
   =+  hoc=.*(cop [0 7])

@@ -62,7 +62,7 @@
     ++  audi  (jome parn jove)
     ++  bouq
       |=  a/bouquet
-      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))  
+      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))
     ::
     ++  parn
       |=  a/partner  ^-  cord
@@ -89,7 +89,7 @@
         $lin  (jobe txt+[%s q.a] say+[%b p.a] ~)
         $url  (joba txt+[%s (crip (earf p.a))])
         $exp  (joba txt+[%s p.a])
-        $app  (jobe txt+[%s q.a] src+[%s p.a] ~)  
+        $app  (jobe txt+[%s q.a] src+[%s p.a] ~)
         $fat  (jobe tor+(tors p.a) taf+$(a q.a) ~)
         $mor  a+(turn p.a spec)
         $api
@@ -131,7 +131,7 @@
         ham+((jome stat conf) ham)
       ==
     ::
-    ++  sorc  
+    ++  sorc
       |=  a/(set partner)  ^-  json
       [%a (turn (~(tap in a)) |=(b/partner s+(parn b)))]
     ::

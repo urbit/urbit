@@ -54,7 +54,7 @@
     --
 ::
 =,  ^gall
-|_  $:  hid/bowl  count/@  
+|_  $:  hid/bowl  count/@
         web-hooks/(map @t {id/@t listeners/(set bone)})
         received-ids/(list @t)
     ==
@@ -109,7 +109,7 @@
       ^-  purl
       :+  [& ~ [%& /com/googleapis/www]]
         [~ gmail+v1+users+me+`valid-get-endpoint`endpoint]
-      `quay`[[%alt %json] ~] 
+      `quay`[[%alt %json] ~]
   ::
       :+  method  `math`(malt ~[content-type+['application/json']~])
       =+  hoon-json-object=(joba %raw s+(sifo-google (message-to-rfc822:rfc mes)))
@@ -154,11 +154,11 @@
       {$messages $~}
     =+  new-mezes=((ot messages+(ar (ot id+so 'threadId'^so ~)) ~):jo u.jon)
     ::%+  turn  new-mezes
-    ::|=  id  
+    ::|=  id
     ::?<  ?=($~ new-mezes)
     ::=.  received-ids  [new-mezes received-ids]
     ::~&  received-ids
-    ::=.  received  
+    ::=.  received
     [%inbox (need new-mezes)]
       ::
       {$messages @t $~}
@@ -186,13 +186,13 @@
           headers+(cu from-and-subject (cu ~(gas by *(map @t @t)) (ar (ot name+so value+so ~))))
           :: parts+(cu text-body (ar (ot 'mimeType'^so body+(ot data+so ~) ~)))
         ==
-    :: =+  parsed-headers==+(jo ((ot payload+(easy-ot 'headers' (ar some)) ~) u.jon)) :: 
-    :: =+  parsed-message==+(jo ((ot payload+(easy-ot 'parts' (ar body-parser)) ~) u.jon)) :: 
+    :: =+  parsed-headers==+(jo ((ot payload+(easy-ot 'headers' (ar some)) ~) u.jon)) ::
+    :: =+  parsed-message==+(jo ((ot payload+(easy-ot 'parts' (ar body-parser)) ~) u.jon)) ::
     ::~&  [headers body-text]
     ::=+  body==+(jo ((ot body+(easy-ot 'body' (easy-ot 'data' so))) parsed-message))
     [%message headers]
     ==
-   
+
   =+  dir=((om:jo some) u.jon)
   ?~  dir  json+(jobe err+s+%no-children ~)
   =+  new-jon=(~(get by u.dir) i.arg)
@@ -200,7 +200,7 @@
            ::  redo with next argument
   ::
     $y
-  ?~  r.res 
+  ?~  r.res
     ~&  [err+s+%empty-response code+(jone p.res)]
       arch+*arch
   =+  jon=(rush q.u.r.res apex:poja)
@@ -251,7 +251,7 @@
   ++  endpoint-to-purl
     |=  endpoint/path
     ^-  purl
-    %+  scan 
+    %+  scan
       "https://www.googleapis.com/gmail/v1/users/me{<`path`endpoint>}"
     auri:urlp
     ::  Send an HTTP req
@@ -270,7 +270,7 @@
     ==
   :: Standard GET request
   ++  read  (send-http (endpoint-to-purl pax) %get ~ ~)
-  
+
   ::  Subscription request
 ::    ++  listen
 ::      ^+  .
@@ -279,18 +279,18 @@
 ::      ?~  events
 ::        +>.$
 ::      ?:  (~(has by web-hooks) i.events)                ::  if hook exists
-::        =.  +>.$  (update-hook i.events) 
+::        =.  +>.$  (update-hook i.events)
 ::        $(events t.events)
 ::      =.  +>.$  (create-hook i.events)
 ::      $(events t.events)
     ::
   --
---        
-  
+--
 
 
-  
-  
+
+
+
 
 
 

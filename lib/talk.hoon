@@ -1,9 +1,9 @@
 ::
 ::::  /hoon/talk/lib
-  ::  
+  ::
   ::  This file is in the public domain.
   ::
-/?    310 
+/?    310
 /-    talk
 ::
 ::::
@@ -16,7 +16,7 @@
   ?+  can  %porch
     $czar  %court
     $king  %floor
-  == 
+  ==
 ::
 ++  said-url                                            ::  app url
   |=  url/purl:^eyre

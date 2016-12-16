@@ -478,7 +478,7 @@
       mount.outerHTML = "Redirecting to <a href=\""+url+"\">"+url+"</a>"
       document.location = url
     }
-    urb.redir = function(ship){ 
+    urb.redir = function(ship){
       var location = new URL(document.location)
       location.pathname = location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
       urb.redirTo(location)
@@ -721,7 +721,7 @@
     ::
     ++  kill-token
       |=  ire/ixor
-      =/  ole  (~(got by tok) ire) 
+      =/  ole  (~(got by tok) ire)
       =.  +>.$  (reset-timer je+liv+/[ses.ole]/[ire] liv.ole ~)
       =.  +>.$  (reset-timer je+ire+/[ses.ole]/[ire] `die.ole ~)
       %_  +>.$
@@ -894,7 +894,7 @@
       ?~  mez
         ~&  e+[%strange-west p.kyz]
         ~|(%strange-west !!)
-      ?-  -<.u.mez        
+      ?-  -<.u.mez
         $gib  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %thud ~])
         $get  (pass-note ay+(dray p+uv+~ q.p.kyz p.u.mez) [%e %this q.u.mez])
         $got
@@ -970,7 +970,7 @@
         (get-rush:(ire-ix p.tee) q.tee jon)
       ::
           $quit
-        ~&  quit+tee 
+        ~&  quit+tee
         ?:  ?=($le -.tee)  ~(get-quit lens ~)
         (get-quit:(ire-ix p.tee) q.tee)
       ==
@@ -1234,7 +1234,7 @@
     ::
     ++  fcgi-cred
       ^-  cred
-      =/  him  
+      =/  him
         ?.  aut  anon
         (need get-user:for-client)
       %*  .  *cred
@@ -1889,7 +1889,7 @@
         ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<- +<+))
-    ++  execute  
+    ++  execute
       |=({a/whir-se b/{beak silk:^ford}} (execute:abet se+[a usr dom] b))
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
@@ -1929,7 +1929,7 @@
       %_    u.cor
           +12.q
         =+  ^=  ato
-            %-  sky 
+            %-  sky
             [[151 %noun] %cx (en-beam root-beak [%atom (flop %_(dom . sec+dom))])]
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
         =.  key
