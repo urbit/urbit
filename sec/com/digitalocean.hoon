@@ -36,5 +36,3 @@
 ::  +https://api.digitalocean.com/v2/account
 ::  Before you receive the response, you'll have to clink on the link.
 ::  If you successfully auth, you should receive the response in the dojo.
-
-

@@ -39,4 +39,3 @@
 
 ::  Before you receive the response, you'll have to clink on the link to
 ::  authenicate yourself. You should then receive the response.
-
