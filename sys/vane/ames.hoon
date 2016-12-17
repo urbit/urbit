@@ -799,7 +799,7 @@
         0w20.GGLXx.aqxaQ.w4Iob.wdmmr  ::  128, ~lyt, Arthur Breitman
         0w0                           ::  129, ~dus, urbit.org
         0w0                           ::  130, ~neb, urbit.org
-        0w0                           ::  131, ~rum, urbit.org
+        0w1U.uigq6.c~IqX.tKRX2.VrURf  ::  131, ~rum, Joseph Blowsky
         0w0                           ::  132, ~tyn, urbit.org
         0w0                           ::  133, ~seg, urbit.org
         0w0                           ::  134, ~lyx, urbit.org
