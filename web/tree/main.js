@@ -3153,14 +3153,18 @@ module.exports = {
     }
   },
   dateFromAtom: function(date) {
-    var __, day, hor, min, mon, ref, sec, str, yer;
+    var __, d, day, hor, min, mon, ref, sec, yer;
     ref = date.slice(1).split("."), yer = ref[0], mon = ref[1], day = ref[2], __ = ref[3], hor = ref[4], min = ref[5], sec = ref[6];
     if (day != null) {
-      str = yer + "-" + mon + "-" + day;
-      if (hor != null) {
-        str += " " + hor + ":" + min + ":" + sec;
-      }
-      return new Date(str);
+      d = new Date();
+      d.setYear(yer);
+      d.setMonth(mon - 1);
+      d.setDate(day);
+    }
+    if (hor != null) {
+      d.setHours(hor);
+      d.setMinutes(min);
+      return d.setSeconds(sec);
     }
   },
   getKeys: function(kids, sortBy) {
