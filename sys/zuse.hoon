@@ -4332,7 +4332,7 @@
     |=  who/ship  ^-  ship
     =+  mir=(clan who)
     ?-  mir
-      $czar  ~zod
+      $czar  who
       $king  (end 3 1 who)
       $duke  (end 4 1 who)
       $earl  (end 5 1 who)
