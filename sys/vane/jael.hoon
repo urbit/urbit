@@ -1668,12 +1668,19 @@
       ::  wyl: initial will
       ::  hec: initial will as farm
       ::
+      =/  lyf/(unit life)  ~(current we rug)
+      ~&  next+lyf
+      =/  lif/life  +((fall lyf 0))
       =/  loy  (pit:nu:crub 512 eny)
-      =*  rig  sec:ex:loy
-      =*  ryt  `rite`[%jewel [1 rig] ~ ~]
+      =/  rig  sec:ex:loy
+      =/  ryt/rite  [%jewel [lif rig] ~ ~]
       =*  pub  pub:ex:loy
-      =*  cet  `cert`[[doc pub] ~]
-      =*  wyl  `will`[[1 cet] ~ ~]
+      =/  cet/cert  [[doc pub] ~]
+      =.  syg.cet
+        ?~  lyf  syg.cet
+        =/  ash  (sham %urbit rex u.lyf dat.cet)  :: move maybe
+        [[rex u.lyf (sign:as:loy *@ ash)] ~ ~]
+      =/  wyl/will  [[lif cet] ~ ~]
       =.  +>.$  (deal rex [[ryt ~ ~] ~])
       (grow ``rex *farm wyl)
     ::                                                  ::  grow:ex:ur
