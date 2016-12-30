@@ -482,7 +482,7 @@ u3m_mark(void)
 /* _cm_pave(): instantiate or activate image.
 */
 static void
-_cm_pave(c3_o nuu_o, c3_o bug_o)
+_cm_pave(c3_o nuu_o)
 {
   if ( c3y == nuu_o ) {
     u3H = (void *)_pave_north(u3_Loom + 1, 
@@ -1497,6 +1497,50 @@ _cm_init(c3_o chk_o)
   }
 }
 
+/* _cm_init_new(): start the environment.
+*/
+void
+_cm_init_new(void)
+{
+  _cm_limits();
+  _cm_signals();
+
+  /* Make sure GMP uses our malloc.
+  */
+  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
+
+  /* Map at fixed address.
+  */
+  {
+    c3_w  len_w = u3a_bytes;
+    void* map_v;
+
+    map_v = mmap((void *)u3_Loom,
+                 len_w,
+                 (PROT_READ | PROT_WRITE),
+                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
+                 -1, 0);
+
+    if ( -1 == (c3_ps)map_v ) {
+      void* dyn_v = mmap((void *)0,
+                         len_w,
+                         PROT_READ,
+                         MAP_ANON | MAP_PRIVATE,
+                         -1, 0);
+
+      fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      fprintf(stderr, "see urbit.org/docs/using/install to add swap space\r\n");
+      if ( -1 != (c3_ps)map_v ) {
+        fprintf(stderr, 
+                "if porting to a new platform, try U3_OS_LoomBase %p\r\n", 
+                dyn_v);
+      }
+      exit(1);
+    }
+    printf("loom: mapped %dMB\r\n", len_w >> 20);
+  }
+}
+
 /* _boot_home(): create ship directory.
 */
 static void
@@ -1573,10 +1617,10 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
   }
 }
 
-/* u3m_boot(): start the u3 system.
+/* u3m_boot(): start the u3 system (old).
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
+u3m_boot(c3_o nuu_o, c3_c* dir_c, c3_c *pil_c)
 {
   /* Activate the loom.
   */
@@ -1592,7 +1636,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
 
   /* Construct or activate the allocator.
   */
-  _cm_pave(nuu_o, bug_o);
+  _cm_pave(nuu_o);
 
   /* Initialize the jet system.
   */
@@ -1611,10 +1655,82 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
       printf("boot: loading %s\r\n", ful_c);
       u3v_boot(ful_c);
     } 
-
   }
   else {
     u3v_hose();
     u3j_ream();
   }
+}
+
+/* u3m_boot_new(): start the u3 system (new).  return next event,
+** starting from 1.
+*/
+c3_d
+u3m_boot_new(c3_c* dir_c)
+{
+  c3_o nuu_o;
+
+  /* Activate the loom.
+  */
+  _cm_init_new();
+
+  /* Activate the storage system.
+  */
+  nuu_o = u3e_live(c3n, dir_c);
+
+  /* Activate tracing.
+  */
+  u3t_init();
+
+  /* Construct or activate the allocator.
+  */
+  _cm_pave(nuu_o);
+
+  /* Initialize the jet system.
+  */
+  u3j_boot();
+
+  /* Reactivate jets on old kernel.
+  */
+  if ( !_(nuu_o) ) {
+    u3v_hose();
+    u3j_ream();
+
+    return u3A->ent_d;
+  }
+  else {
+  /* Basic initialization.
+  */
+    memset(u3A, 0, sizeof(*u3A));
+
+    return 0;
+  }
+}
+
+/* u3m_boot_pier(): start without checkpointing.
+*/
+c3_d
+u3m_boot_pier(void)
+{
+  /* Activate the loom.
+  */
+  _cm_init_new();
+
+  /* Activate tracing.
+  */
+  u3t_init();
+
+  /* Construct or activate the allocator.
+  */
+  _cm_pave(c3y);
+
+  /* Initialize the jet system.
+  */
+  u3j_boot();
+
+  /* Basic initialization.
+  */
+  memset(u3A, 0, sizeof(*u3A));
+
+  return 0;
 }

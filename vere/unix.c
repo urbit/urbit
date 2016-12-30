@@ -962,7 +962,7 @@ _unix_update_mount(u3_umon* mon_u, u3_noun all)
       can = u3kb_weld(_unix_update_node(nod_u), can);
     }
 
-    u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
+    u3_pier_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, u3i_string(mon_u->nam_c), all, can));
   }
 }
@@ -1337,7 +1337,7 @@ u3_unix_io_init(void)
   unx_u->dyr = c3n;
 
   if ( c3n == u3_Host.ops_u.nuu ) {
-    u3v_plan(u3nt(u3_blip, c3__boat, u3_nul),
+    u3_pier_plan(u3nt(u3_blip, c3__boat, u3_nul),
              u3nc(c3__boat, u3_nul));
   }
 }
@@ -1450,7 +1450,7 @@ u3_unix_ef_initial_into()
 {
   u3_noun can = _unix_initial_update_dir(u3_Host.ops_u.arv_c);
 
-  u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
+  u3_pier_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
            u3nq(c3__into, u3_nul, c3y, can));
 }
 

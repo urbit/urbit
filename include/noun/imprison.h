@@ -10,7 +10,7 @@
         */
           u3_noun
           u3i_words(c3_w        a_w,
-                      const c3_w* b_w);
+                    const c3_w* b_w);
 
         /* u3i_bytes():
         **
@@ -18,7 +18,7 @@
         */
           u3_noun
           u3i_bytes(c3_w        a_w,
-                      const c3_y* b_y);
+                    const c3_y* b_y);
 
         /* u3i_mp():
         **
@@ -76,7 +76,7 @@
         */
           u3_atom
           u3i_chubs(c3_w        a_w,
-                      const c3_d* b_d);
+                    const c3_d* b_d);
 
         /* u3i_tape(): from a C string, to a list of bytes.
         */

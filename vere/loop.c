@@ -348,6 +348,7 @@ _lo_wall(u3_noun wol)
   FILE* fil_u = u3_term_io_hija();
   u3_noun wal = wol;
 
+  fil_u = stderr;  // XX
   while ( u3_nul != wal ) {
     _lo_tape(fil_u, u3k(u3h(wal)));
 
@@ -386,6 +387,7 @@ u3_lo_punt(c3_l tab_l, u3_noun tac)
       if ( c3__leaf == u3h(act) ) {
         FILE* fil_u = u3_term_io_hija();
 
+        fil_u = stderr;   // XX
         _lo_tape(fil_u, u3k(u3t(act)));
         putc(13, fil_u);
         putc(10, fil_u);
@@ -485,6 +487,8 @@ u3_lo_shut(c3_o inn)
   //  clean shutdown
   //
   if ( c3n == u3_Host.liv ) {
+    fprintf(stderr, "loop: shut: exit\r\n");
+
     //  direct save and die
     //
     // u3_lo_grab("lo_exit", u3_none);
@@ -493,8 +497,13 @@ u3_lo_shut(c3_o inn)
     u3t_damp();
     u3_lo_exit();
 
-    //  save a checkpoint before exiting
-    u3e_save();
+    if ( _(u3_Host.ops_u.mad) ) {
+      u3_pier_exit();
+    }
+    else {
+      //  save a checkpoint before exiting
+      u3e_save();
+    }
     exit(u3_Host.xit_i);
   }
   else {
@@ -651,16 +660,18 @@ _lo_slow()
 void
 u3_lo_loop()
 {
-  uv_loop_t* lup_u = uv_default_loop();
-
-  u3_Host.lup_u = lup_u;
+  if ( !u3_Host.lup_u ) {
+    u3_Host.lup_u = uv_default_loop();
+  }
 
   signal(SIGPIPE, SIG_IGN);     //  pipe, schmipe
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
   _lo_init();
 
-  u3_raft_init();
+  if ( !_(u3_Host.ops_u.mad) ) {
+    u3_raft_init();
+  }
 
   if ( _(u3_Host.ops_u.tex) ) {
     u3t_boff();
@@ -691,7 +702,7 @@ u3_lo_lead(void)
   _lo_talk();
   {
     u3_unix_ef_look(c3n);
-    u3v_plan(u3nt(u3_blip, c3__ames, u3_nul),
+    u3_pier_plan(u3nt(u3_blip, c3__ames, u3_nul),
                u3nc(c3__kick, u3k(u3A->now)));
   }
   _lo_poll();
@@ -706,6 +717,7 @@ u3_lo_lead(void)
     if ( u3_Host.ops_u.who_c ) {
       u3_term_ef_ticket(u3_Host.ops_u.who_c, u3_Host.ops_u.tic_c);
     }
+  } else {
     u3_term_ef_boil(1);
   }
 

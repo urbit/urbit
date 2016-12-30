@@ -344,7 +344,7 @@ u3j_boot(void)
   memset(u3D.ray_u, 0, (u3D.all_l * sizeof(u3j_core)));
 
   jax_l = _cj_install(u3D.ray_u, 1, u3D.dev_u);
-  fprintf(stderr, "boot: installed %d jets\n", jax_l);
+  fprintf(stderr, "boot: installed %d jets\r\n", jax_l);
 }
 
 /* _cj_soft(): kick softly by arm axis.

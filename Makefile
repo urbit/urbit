@@ -66,6 +66,7 @@ CURLLIB=$(shell curl-config --libs)
 
 RM=rm -f
 CC=cc
+LN=ln -f
 CXX=c++
 CXXFLAGS=$(CFLAGS)
 CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
@@ -355,6 +356,7 @@ V_OFILES=\
        vere/cttp.o \
        vere/http.o \
        vere/loop.o \
+       vere/newt.o \
        vere/raft.o \
        vere/reck.o \
        vere/sist.o \
@@ -362,7 +364,11 @@ V_OFILES=\
        vere/time.o \
        vere/unix.o \
        vere/save.o \
-       vere/walk.o
+       vere/serf.o \
+       vere/pier.o \
+       vere/foil.o \
+       vere/walk.o \
+       vere/ivory.o
 
 MAIN_FILE =\
        vere/main.o
@@ -412,7 +418,7 @@ TAGS=\
        GPATH GTAGS GRTAGS \
        cscope.in.out cscope.po.out cscope.out
 
-all: urbit
+all: urbit links
 
 .MAKEFILE-VERSION: Makefile .make.conf
 	@echo "Makefile update."
@@ -420,6 +426,9 @@ all: urbit
 
 .make.conf:
 	@echo "# Set custom configuration here, please!" > ".make.conf"
+
+links: urbit
+	$(LN) $(BIN)/urbit $(BIN)/urbit-worker
 
 urbit: $(BIN)/urbit
 

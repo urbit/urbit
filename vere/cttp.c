@@ -445,7 +445,7 @@ _cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
   u3_noun htr = u3nt(sas_w, mes, uct);
   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul);
 
-  u3v_plan(pox, u3nt(c3__they, num_l, htr));
+  u3_pier_plan(pox, u3nt(c3__they, num_l, htr));
 }
 
 /* _cttp_httr_cres(): deliver valid response.
@@ -1638,6 +1638,7 @@ u3_cttp_io_init()
   SSL_load_error_strings();
 
   u3_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
+
   SSL_CTX_set_options(u3S, SSL_OP_NO_SSLv2);
   SSL_CTX_set_verify(u3S, SSL_VERIFY_PEER, NULL);
   SSL_CTX_set_default_verify_paths(u3S);
@@ -1676,5 +1677,5 @@ u3_cttp_io_poll(void)
 void
 u3_cttp_io_exit(void)
 {
-    SSL_CTX_free(u3S);
+  SSL_CTX_free(u3S);
 }

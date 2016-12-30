@@ -379,7 +379,7 @@ u3_reck_kick(u3_noun ovo)
          (c3__init == u3h(u3t(ovo))) )
 #endif
     {
-      u3v_plan(u3nt(u3_blip, c3__term, u3_nul),
+      u3_pier_plan(u3nt(u3_blip, c3__term, u3_nul),
                  u3nc(c3__flog, u3k(u3t(ovo))));
     }
     else {
