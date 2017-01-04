@@ -326,7 +326,7 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($u $v $w $x $y $z)                        ::  clay submode
+  ++  care  ?($d $u $v $w $x $y $z)                     ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label

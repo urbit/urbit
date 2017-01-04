@@ -44,12 +44,13 @@
 ::
 ::  Type of request.
 ::
-::  %u checks for existence, %v produces a ++dome of all desk data, %w with a
-::  time or label case gets the aeon at that case, %w with a number case is not
-::  recommended, %x gets file contents, %y gets a directory listing, and %z gets
-::  a recursive hash of the file contents and children.
+::  %d produces a set of desks, %u checks for existence, %v produces a ++dome of
+::  all desk data, %w with a time or label case gets the aeon at that case, %w
+::  with a number case is not recommended, %x gets file contents, %y gets a
+::  directory listing, and %z gets a recursive hash of the file contents and
+::  children.
 ::
-++  care  ?($u $v $w $x $y $z)
+:: ++  care  ?($d $u $v $w $x $y $z)
 ::
 ::  Keeps track of subscribers.
 ::
@@ -1393,6 +1394,9 @@
         (~(put by haw.u.ref) p.rav ~)
       ==
     ?-    p.p.u.rut
+        $d
+      ~|  %totally-temporary-error-please-replace-me
+      !!
         $u
       ~|  %im-thinkin-its-prolly-a-bad-idea-to-request-rang-over-the-network
       !!
@@ -2118,6 +2122,8 @@
     ++  read                                            ::    read:ze
       |=  mun/mood                                      ::  read at point
       ^-  (unit cage)
+      ?:  ?=($d p.mun)
+        ~&  %dead-d  ~
       ?:  ?=($v p.mun)
         [~ %dome !>(dom)]                               ::  dead code
       ?:  &(?=($w p.mun) !?=($ud -.q.mun))
@@ -2279,6 +2285,13 @@
       ^-  (unit (unit (each cage lobe)))
       ?:  &(?=($w p.mun) !?=($ud -.q.mun))              ::  NB only her speed
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
+      ?:  ?=($d p.mun)
+        =+  rom=(~(get by fat.ruf) her)
+        ?~  rom
+          ~&(%null-rom-cd [~ ~])
+        ?^  r.mun
+          ~&(%no-cd-path [~ ~])
+        [~ ~ %& %noun !>(~(key by dos.u.rom))]
       ?:  ?=($u p.mun)
         (read-u yon r.mun)
       ?:  ?=($v p.mun)
