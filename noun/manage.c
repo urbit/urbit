@@ -1542,33 +1542,9 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
         exit(1);
       }
     } else {
-      c3_c *url_c = "https://bootstrap.urbit.org/latest.pill";
-      CURL *curl;
-      CURLcode result;
-      FILE *file;
-
-      snprintf(ful_c, 2048, "%s/.urb/%s", dir_c, nam_c);
-      printf("fetching %s to %s\r\n", url_c, ful_c);
-      if ( !(curl = curl_easy_init()) ) {
-        fprintf(stderr, "failed to initialize libcurl\n");
-        exit(1);
-      }
-      if ( !(file = fopen(ful_c, "w")) ) {
-        fprintf(stderr, "failed to open %s\n", ful_c);
-        exit(1);
-      }
-      curl_easy_setopt(curl, CURLOPT_URL, url_c);
-      curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
-      result = curl_easy_perform(curl);
-      fclose(file);
-      if ( result != CURLE_OK ) {
-        fprintf(stderr, "failed to fetch %s: %s\n", 
-                        url_c, 
-                        curl_easy_strerror(result));
-        fprintf(stderr, "please fetch it by hand, then run -B $filename\n");
-        exit(1);
-      }
-      curl_easy_cleanup(curl);
+      fprintf(stderr, "no pill - get one from bootstrap.urbit.org\n"
+                      "by arvo commit hash, then specify it with -B\n");
+      exit(1);
     }
   }
 }
