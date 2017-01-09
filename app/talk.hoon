@@ -10,11 +10,12 @@
   ::
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  {$5 house-5}                             ::  full state
+    ++  house  {$6 house-6}                             ::  full state
     ++  house-any                                       ::  app history
       $%  {$3 house-3}                                  ::  3: talk
           {$4 house-4}                                  ::  4: talk
           {$5 house-5}                                  ::  5: talk
+          {$6 house-6}                                  ::  5: talk
       ==                                                ::
     ++  house-3                                         ::
       %+  cork  house-4  |=  house-4                    ::  modern house with
@@ -23,6 +24,9 @@
       %+  cork  house-5  |=  house-5                    ::  modern house with
       +<(shells (~(run by shells) shell-4))             ::  no settings
     ++  house-5                                         ::
+      %+  cork  house-6  |=  house-6                    ::  modern house with
+      +<(shells (~(run by shells) shell-5))             ::  auto-audience
+    ++  house-6                                         ::
       $:  stories/(map knot story)                      ::  conversations
           general/(set bone)                            ::  meta-subscribe
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
@@ -52,14 +56,20 @@
           man/knot                                      ::  mailbox
           count/@ud                                     ::  messages shown
           say/sole-share                                ::  console state
-          active/(unit (set partner))                   ::  active targets
-          passive/(set partner)                         ::  passive targets
+          active/{$~ u/(set partner)}                   ::  active targets
+          $passive-deprecated                           ::  passive targets
           owners/register                               ::  presence mirror
           harbor/(map knot (pair posture cord))         ::  stations mirror
           system/cabal                                  ::  config mirror
           settings/(set knot)                           ::  frontend settings
       ==                                                ::
-    ++  shell-4  (cork shell |=(shell +<(|8 &9.+<)))    ::  missing settings
+    ++  shell-5                                         ::  has passive
+      %+  cork  shell  |=  shell                        ::
+      %=  +<                                            ::
+        &6      passive=*(set partner)                  ::
+        active  *(unit (set partner))                   ::
+      ==                                                ::
+    ++  shell-4  (cork shell-5 |=(shell-5 +<(|8 &9.+<)))::  missing settings
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
       $%  {$ud p/@ud}                                   ::  by number
@@ -2363,9 +2373,12 @@
     ra-abet:ra-init:ra
   |-
   ?-  -.u.old
-    $5  [~ ..prep(+<+ u.old)]
+    $6  [~ ..prep(+<+ u.old)]
+    $5  =<  ^$(-.u.old %6, shells.u.old (~(run by shells.u.old) .))
+        |=  shell-5  ^-  shell
+        +<(passive %passive-deprecated, active ?^(active active `passive))
     $4  =<  ^$(-.u.old %5, shells.u.old (~(run by shells.u.old) .))
-        |=(shell-4 `shell`+<(system [system settings=*(set knot)]))
+        |=(shell-4 `shell-5`+<(system [system settings=*(set knot)]))
     $3  =<  ^$(-.u.old %4, stories.u.old (~(run by stories.u.old) .))
         |=(story-3 `story`+<(cabalers [cabalers glyphers=*(set bone)]))
   ==
