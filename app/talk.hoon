@@ -1533,10 +1533,14 @@
   ++  ra-console                                        ::  console subscribe
     |=  {her/ship pax/path}
     ^+  +>
-    =+  man=`knot`?~(pax (main her) ?>(?=($~ t.pax) i.pax))
-    =+  ^=  she  ^-  shell
-        [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal ~]
-    sh-abet:~(sh-peer sh ~ she)
+    =/  man/knot
+      ?+  pax  !!
+        $~        (main her)
+        {@ta $~}  i.pax
+      ==
+    =/  she/shell
+      %*(. *shell her her, man man, passive (sy [%& our.hid man] ~))
+    sh-abet:~(sh-peer sh ~ `shell`she)
   ::
   ++  ra-subscribe                                      ::  listen to
     |=  {her/ship pax/path}
