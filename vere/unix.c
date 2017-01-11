@@ -537,7 +537,7 @@ _unix_time_cb(uv_timer_t* tim_u)
   {
     u3_pier *pir_u = tim_u->data;
     pir_u->unx_u->alm = c3n;
-    pir_u->unx_u->dyr = c3y;
+    pir_u->unx_u->dyr = c3n;
   }
 }
 
