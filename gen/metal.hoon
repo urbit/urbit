@@ -24,7 +24,7 @@
 ::  computer's life.  during this sequence, each state is a function
 ::  that, passed the next event, produces the next state.
 ::
-::  each event is a `[date wire type data]` tuple, where `date` is a
+::  a regular event is a `[date wire type data]` tuple, where `date` is a
 ::  128-bit Urbit date; `wire` is an opaque path which output can
 ::  match to track causality; `type` is a symbol describing the type
 ::  of input; and `data` is input data specific to `type`.
