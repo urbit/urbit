@@ -724,9 +724,11 @@
   ::  Initializes a new mount point.
   ::
   ++  mont
-    |=  {pot/term pax/path}
+    |=  {pot/term bem/beam}
     ^+  +>
-    =+  can=(turn (~(tap by q:(aeon-to-yaki:ze let.dom))) head)
+    =+  pax=s.bem
+    =+  cas=(need (case-to-aeon:ze r.bem))
+    =+  can=(turn (~(tap by q:(aeon-to-yaki:ze cas))) head)
     =+  mus=(skim can |=(paf/path =(pax (scag (lent pax) paf))))
     ?~  mus
       +>.$
@@ -739,7 +741,7 @@
         ^-  (pair silk:ford silk:ford)
         :-  [%$ %path !>(a)]
         :+  %cast  %mime
-        =+  (need (need (read-x:ze let.dom a)))
+        =+  (need (need (read-x:ze cas a)))
         ?:  ?=($& -<)
           [%$ p.-]
         (lobe-to-silk:ze a p.-)
@@ -3354,16 +3356,16 @@
       ~&  [%already-mounted pot]
       [~ ..^$]
     =.  mon.ruf
-      (~(put by mon.ruf) p.q.hic [q.q.hic r.q.hic %ud 0] (flop s.q.hic))
-    =+  yar=(~(get by fat.ruf) q.q.hic)
+      (~(put by mon.ruf) p.q.hic [p.q.q.hic q.q.q.hic r.q.q.hic] s.q.q.hic)
+    =+  yar=(~(get by fat.ruf) p.q.q.hic)
     ?~  yar
       [~ ..^$]
-    =+  dos=(~(get by dos.u.yar) r.q.hic)
+    =+  dos=(~(get by dos.u.yar) q.q.q.hic)
     ?~  dos
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:q.q.hic r.q.hic)
-      abet:(mont:den p.q.hic s.q.hic)
+      =+  den=((de now hen ruf) [. .]:p.q.q.hic q.q.q.hic)
+      abet:(mont:den p.q.hic q.q.hic)
     [mos ..^$]
   ::
       $ogre
