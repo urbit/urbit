@@ -29,6 +29,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+++  kiln-commit  term                                   ::
 ++  kiln-mount                                          ::
     $:  pax/path                                        ::
         pot/term                                        ::
@@ -63,6 +64,7 @@
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas beam}                        ::
+          {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
           {$poke wire dock pear}                        ::
@@ -92,6 +94,10 @@
   |=  {mez/tape sud/desk who/ship syd/desk}
   :^  %palm  [" " ~ ~ ~]  leaf+mez
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
+::
+++  poke-commit
+  |=  mon/kiln-commit
+  abet:(emit %dirk /commit mon)
 ::
 ++  poke-mount
   |=  kiln-mount

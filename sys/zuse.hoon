@@ -285,7 +285,8 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$ergo p/@tas q/mode}                         ::  version update
+      $%  {$dirk p/@tas}                                ::  mark mount dirty
+          {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           {$mack p/(unit tang)}                         ::  ack
           {$mass p/mass}                                ::  memory usage
@@ -302,6 +303,7 @@
           {$into p/desk q/? r/mode}                     ::  external edit
           {$merg p/@p q/desk r/@p s/desk t/case u/germ} ::  merge desks
           {$mont p/desk q/beam}                         ::  mount to unix
+          {$dirk p/desk}                                ::  mark mount dirty
           {$ogre p/$@(desk beam)}                       ::  delete mount point
           {$warp p/sock q/riff}                         ::  file request
           {$wegh $~}                                    ::  report memory

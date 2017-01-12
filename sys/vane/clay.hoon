@@ -314,7 +314,8 @@
 |%
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  gift                                                ::  out result <-$
-      $%  {$ergo p/@tas q/mode}                         ::  version update
+      $%  {$dirk p/@tas}                                ::  mark mount dirty
+          {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           {$mack p/(unit tang)}                         ::  ack
           {$mass p/mass}                                ::  memory usage
@@ -3367,6 +3368,16 @@
       =+  den=((de now hen ruf) [. .]:p.q.q.hic q.q.q.hic)
       abet:(mont:den p.q.hic q.q.hic)
     [mos ..^$]
+  ::
+      $dirk
+    ?~  hez.ruf
+      ~&  %no-sync-duct
+      [~ ..^$]
+    ?.  (~(has by mon.ruf) p.q.hic)
+      ~&  [%not-mounted p.q.hic]
+      [~ ..^$]
+    :-  ~[[u.hez.ruf %give %dirk p.q.hic]]
+        ..^$
   ::
       $ogre
     ?~  hez.ruf
