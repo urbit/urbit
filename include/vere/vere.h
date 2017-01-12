@@ -1213,6 +1213,11 @@
         void
         u3_unix_ef_ergo(u3_pier *pir_u, u3_noun mon, u3_noun can);
 
+      /* u3_unix_ef_dirk(): mark mount dirty
+      */
+        void
+        u3_unix_ef_dirk(u3_pier *pir_u, u3_noun mon);
+
       /* u3_unix_ef_ogre(): delete mount point
       */
         void

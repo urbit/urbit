@@ -162,6 +162,10 @@ _reck_kick_sync(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 {
   switch ( u3h(fav) ) {
     default: break;
+    case c3__dirk: {
+      u3_unix_ef_dirk(pir_u, u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    }
     case c3__ergo: {
       u3_noun mon = u3k(u3h(u3t(fav)));
       u3_noun can = u3k(u3t(u3t(fav)));

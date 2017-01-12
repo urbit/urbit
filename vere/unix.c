@@ -529,6 +529,16 @@ _delete_mount_point_out:
   u3z(mon);
 }
 
+/* _unix_commit_mount_point: commit from mount point
+*/
+static void
+_unix_commit_mount_point(u3_pier *pir_u, u3_noun mon)
+{
+  uL(fprintf(uH, "stub\r\n"));
+  u3z(mon);
+  return;
+}
+
 /* _unix_time_cb: timer callback
 */
 static void
@@ -1255,6 +1265,14 @@ _unix_sync_ergo(u3_pier *pir_u, u3_umon* mon_u, u3_noun can)
 
   u3z(nam);
   u3z(can);
+}
+
+/* u3_unix_ef_dirk(): commit mount point
+*/
+void
+u3_unix_ef_dirk(u3_pier *pir_u, u3_noun mon)
+{
+  _unix_commit_mount_point(pir_u, mon);
 }
 
 /* u3_unix_ef_ergo(): update filesystem from urbit
