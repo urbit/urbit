@@ -939,7 +939,10 @@
     ++  ap-peep                                         ::  reinstall
       |=  vax/vase
       ^+  +>
-      (ap-prep(hav vax) `hav)
+      =+  pep=(ap-prep(hav vax) `hav)
+      ?~  -.pep
+        +.pep
+      (ap-lame %prep-failed u.-.pep)
     ::
     ++  ap-peel
       |=  {mar/mark pax/path}
@@ -1043,8 +1046,9 @@
     ::
     ++  ap-prep                                         ::  install
       |=  vux/(unit vase)
-      ^+  +>
+      ^-  {(unit tang) _+>}
       =^  gac  +>.$  (ap-prop vux)
+      :-  gac
       %=    +>.$
           dub
         :_(dub ?~(gac [%& dap ?~(vux %boot %bump) now] [%| u.gac]))
@@ -1063,7 +1067,9 @@
       =^  tur  +>.$
           %+  ap-call  %prep
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
-      ?~(tur `+>.$ :_(+>.$ `u.tur))
+      ?~  tur 
+        `+>.$ 
+      :_(+>.$ `u.tur)
     ::
     ++  ap-pule                                         ::  silent delete
       =+  wim=(~(get by sup.ged) ost)
