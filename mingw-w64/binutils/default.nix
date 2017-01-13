@@ -10,7 +10,6 @@ nixpkgs.stdenv.mkDerivation rec {
   };
 
   patches = [
-    # Make binutils output deterministic by default.
     ./deterministic.patch
   ];
 

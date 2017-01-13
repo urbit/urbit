@@ -1,4 +1,4 @@
-diff -ur orig/binutils-2.23.1/ld/ldlang.c binutils-2.23.1/ld/ldlang.c
+Make binutils output deterministic by default.
 --- orig/ld/ldlang.c
 +++ new/ld/ldlang.c
 @@ -3095,6 +3095,8 @@
