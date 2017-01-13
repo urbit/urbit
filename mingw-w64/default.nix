@@ -17,7 +17,25 @@ let
     configureFlags = "--without-crt";
   };
 
+  gcc_stage_1 = import ./gcc {
+    stage = 1;
+    libc = mingw_w64_headers;
+    inherit nixpkgs arch binutils;
+  };
+
+  gcc_stage_2 = import ./gcc {
+    stage = 2;
+    libc = mingw_w64_headers;
+    inherit nixpkgs arch binutils;
+  };
+
+  gcc = import ./gcc {
+    libc = mingw_w64;
+    inherit nixpkgs arch binutils;
+  };
+
 in {
+  host = "${arch}-w64-mingw32";
   inherit binutils nixpkgs arch;
-  inherit mingw_w64 mingw_w64_headers;
+  inherit mingw_w64 mingw_w64_headers gcc_stage_1 gcc_stage_2 gcc;
 }
