@@ -22,6 +22,7 @@ stdenv.mkDerivation {
   };
 
   patches = [
+    ./format-security.patch
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
     ./no-sys-dirs.patch

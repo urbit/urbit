@@ -1,0 +1,115 @@
+diff -ur gcc-5.4.0/gcc/c/c-decl.c gcc-5.4.0-patched/gcc/c/c-decl.c
+--- gcc-5.4.0/gcc/c/c-decl.c	2016-04-18 08:21:52.000000000 -0700
++++ gcc-5.4.0-patched/gcc/c/c-decl.c	2017-01-13 22:12:29.734359331 -0800
+@@ -6110,7 +6110,7 @@
+ 	    errmsg = targetm.invalid_return_type (type);
+ 	    if (errmsg)
+ 	      {
+-		error (errmsg);
++		error ("%s", errmsg);
+ 		type = integer_type_node;
+ 	      }
+ 
+@@ -6918,7 +6918,7 @@
+ 	  errmsg = targetm.invalid_parameter_type (type);
+ 	  if (errmsg)
+ 	    {
+-	      error (errmsg);
++	      error ("%s", errmsg);
+ 	      TREE_VALUE (typelt) = error_mark_node;
+ 	      TREE_TYPE (parm) = error_mark_node;
+ 	      arg_types = NULL_TREE;
+diff -ur gcc-5.4.0/gcc/c/c-typeck.c gcc-5.4.0-patched/gcc/c/c-typeck.c
+--- gcc-5.4.0/gcc/c/c-typeck.c	2016-02-17 05:10:59.000000000 -0800
++++ gcc-5.4.0-patched/gcc/c/c-typeck.c	2017-01-13 22:20:24.697692665 -0800
+@@ -3364,7 +3364,7 @@
+       else if ((invalid_func_diag =
+ 		targetm.calls.invalid_arg_for_unprototyped_fn (typelist, fundecl, val)))
+ 	{
+-	  error (invalid_func_diag);
++	  error ("%s", invalid_func_diag);
+ 	  return -1;
+ 	}
+       else
+@@ -3848,7 +3848,7 @@
+   if ((invalid_op_diag
+        = targetm.invalid_unary_op (code, TREE_TYPE (xarg))))
+     {
+-      error_at (location, invalid_op_diag);
++      error_at (location, "%s", invalid_op_diag);
+       return error_mark_node;
+     }
+ 
+@@ -5620,7 +5620,7 @@
+   char *ofwhat;
+ 
+   /* The gmsgid may be a format string with %< and %>. */
+-  error_at (loc, gmsgid);
++  error_at (loc, "%s", gmsgid);
+   ofwhat = print_spelling ((char *) alloca (spelling_length () + 1));
+   if (*ofwhat)
+     inform (loc, "(near initialization for %qs)", ofwhat);
+@@ -5638,7 +5638,7 @@
+   bool warned;
+ 
+   /* The gmsgid may be a format string with %< and %>. */
+-  warned = pedwarn (location, opt, gmsgid);
++  warned = pedwarn (location, opt, "%s", gmsgid);
+   ofwhat = print_spelling ((char *) alloca (spelling_length () + 1));
+   if (*ofwhat && warned)
+     inform (location, "(near initialization for %qs)", ofwhat);
+@@ -5657,7 +5657,7 @@
+   bool warned;
+ 
+   /* The gmsgid may be a format string with %< and %>. */
+-  warned = warning_at (loc, opt, gmsgid);
++  warned = warning_at (loc, opt, "%s", gmsgid);
+   ofwhat = print_spelling ((char *) alloca (spelling_length () + 1));
+   if (*ofwhat && warned)
+     inform (loc, "(near initialization for %qs)", ofwhat);
+@@ -10373,7 +10373,7 @@
+   if ((invalid_op_diag
+        = targetm.invalid_binary_op (code, type0, type1)))
+     {
+-      error_at (location, invalid_op_diag);
++      error_at (location, "%s", invalid_op_diag);
+       return error_mark_node;
+     }
+ 
+diff -ur gcc-5.4.0/libcpp/expr.c gcc-5.4.0-patched/libcpp/expr.c
+--- gcc-5.4.0/libcpp/expr.c	2015-01-16 09:40:15.000000000 -0800
++++ gcc-5.4.0-patched/libcpp/expr.c	2017-01-13 21:53:32.137692664 -0800
+@@ -678,10 +678,10 @@
+ 
+ 	  if (CPP_OPTION (pfile, c99))
+             cpp_warning_with_line (pfile, CPP_W_LONG_LONG, virtual_location,
+-				   0, message);
++                                  0, "%s", message);
+           else
+             cpp_pedwarning_with_line (pfile, CPP_W_LONG_LONG,
+-				      virtual_location, 0, message);
++                                     virtual_location, 0, "%s", message);
+         }
+ 
+       result |= CPP_N_INTEGER;
+diff -ur gcc-5.4.0/libcpp/macro.c gcc-5.4.0-patched/libcpp/macro.c
+--- gcc-5.4.0/libcpp/macro.c	2016-03-30 05:43:44.000000000 -0700
++++ gcc-5.4.0-patched/libcpp/macro.c	2017-01-13 22:02:47.714359333 -0800
+@@ -3084,7 +3084,7 @@
+ 	     function-like macros, but not at the end.  */
+ 	  if (following_paste_op)
+ 	    {
+-	      cpp_error (pfile, CPP_DL_ERROR, paste_op_error_msg);
++              cpp_error (pfile, CPP_DL_ERROR, "%s", paste_op_error_msg);
+ 	      return false;
+ 	    }
+ 	  break;
+@@ -3097,7 +3097,7 @@
+ 	     function-like macros, but not at the beginning.  */
+ 	  if (macro->count == 1)
+ 	    {
+-	      cpp_error (pfile, CPP_DL_ERROR, paste_op_error_msg);
++              cpp_error (pfile, CPP_DL_ERROR, "%s", paste_op_error_msg);
+ 	      return false;
+ 	    }
+ 
