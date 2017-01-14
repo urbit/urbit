@@ -196,11 +196,6 @@ postConfigure() {
     sed -e '/TOPLEVEL_CONFIGURE_ARGUMENTS=/d' -i Makefile
 }
 
-
-preInstall() {
-}
-
-
 postInstall() {
     # Move runtime libraries to $lib.
     moveToOutput "lib/lib*.so*" "$lib"
