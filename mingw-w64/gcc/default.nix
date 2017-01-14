@@ -3,41 +3,20 @@
 let
   version = "5.4.0";
   sha256 = "0fihlcy5hnksdxk0sn6bvgnyq8gfrgs8m794b1jxwd1dxinzg3b0";
-
-  crossConfigureFlags =
-    " --with-arch=${arch}" +
-    " --target=${arch}-w64-mingw32" +
-    " --enable-threads=win32" +
-    " --disable-nls" +
-    " --disable-shared" +
-    " --enable-sjlj-exceptions" +
-    " --with-sysroot=${libc}/include --with-native-system-header-dir=/include" +
-    (if stage == 1 then
-      " --with-gcc" +
-      " --with-gnu-as" +
-      " --with-gnu-ld" +
-      " --with-gnu-ld" +
-      " --disable-debug" +
-      " --disable-win32-registry"
-    else
-      " --with-as=${binutils}/bin/${arch}-w64-mingw32-as" +
-      " --with-ld=${binutils}/bin/${arch}-w64-mingw32-ld" +
-      " --enable-__cxa_atexit" +
-      " --enable-long-long" +
-      " --enable-hash-synchronization" +
-      " --disable-libssp" +
-      " --with-dwarf2" +
-      " --enable-fully-dynamic-string"
-    );
-
+  isl = nixpkgs.isl_0_14;
+  inherit (nixpkgs) stdenv lib fetchurl;
+  inherit (nixpkgs) binutils gettext gmp libmpc libelf mpfr texinfo which zlib;
+  stageName = if stage == 1 then "-stage1"
+              else if stage == 2 then "-stage2"
+              else assert stage == 3; "";
 in
 
-nixpkgs.stdenv.mkDerivation {
-  name = "gcc-${version}-${arch}-w64-mingw32";
+stdenv.mkDerivation {
+  name = "gcc-${version}-${arch}-w64-mingw32${stageName}";
 
   builder = ./builder.sh;
 
-  src = nixpkgs.fetchurl {
+  src = fetchurl {
     url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
     inherit sha256;
   };
@@ -60,23 +39,54 @@ nixpkgs.stdenv.mkDerivation {
   libcCross = libc;
   crossMingw = true;
 
-  buildInputs = with nixpkgs; [
-    gmp mpfr libmpc libelf texinfo which gettext zlib binutils
+  buildInputs = [
+    binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
+
+  libc_dev = nixpkgs.stdenv.cc.libc_dev;  # TODO: this is dumb, get rid of this
 
   dontDisableStatic = true;
 
-  configureFlags = "
-    --enable-lto
-    --enable-plugin
-    --disable-libstdcxx-pch
-    --without-included-gettext
-    --with-system-zlib
-    --enable-static
-    --enable-languages=c,c++
-    ${crossConfigureFlags}
-    --disable-bootstrap
-  ";
+  configureFlags =
+    "--target=${arch}-w64-mingw32 " +
+    "--enable-lto " +
+    "--enable-plugin " +
+    "--with-isl=${isl} " +
+    "--with-gmp-include=${gmp.dev}/include " +
+    "--with-gmp-lib=${gmp.out}/lib " +
+    "--with-mpfr-include=${mpfr.dev}/include " +
+    "--with-mpfr-lib=${mpfr.out}/lib " +
+    "--with-mpc=${libmpc} " +
+    "--with-system-zlib " +
+    "--enable-static " +
+    "--enable-threads=win32 " +
+    "--enable-sjlj-exceptions " +
+    "--with-sysroot=${libc}/include --with-native-system-header-dir=/include " +
+    (if stage == 1 then
+      "--enable-languages=c " +
+      "--with-gcc " +
+      "--with-gnu-as " +
+      "--with-gnu-ld " +
+      "--with-gnu-ld " +
+      "--disable-debug " +
+      "--disable-win32-registry "
+    else
+      "--enable-languages=c,c++ " +
+      "--with-as=${binutils}/bin/${arch}-w64-mingw32-as " +
+      "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +
+      "--enable-__cxa_atexit " +
+      "--enable-long-long " +
+      "--enable-hash-synchronization " +
+      "--disable-libssp " +
+      "--with-dwarf2 " +
+      "--enable-fully-dynamic-string "
+    ) +
+    "--without-included-gettext " +
+    "--disable-libstdcxx-pch " +
+    "--disable-nls " +
+    "--disable-shared " +
+    "--disable-multilib " +
+    "--disable-bootstrap";
 
   targetConfig = "${arch}-w64-mingw32";
 
@@ -84,7 +94,7 @@ nixpkgs.stdenv.mkDerivation {
 
   makeFlags =
     if stage == 1 then
-      ["all-gcc" "all-target-libcc"]
+      ["all-gcc" "all-target-libgcc"]
     else
       [];
 
@@ -99,13 +109,13 @@ nixpkgs.stdenv.mkDerivation {
   CC = "gcc";
 
   # TODO: add libpthread here
-  CPATH = nixpkgs.lib.makeSearchPathOutput "dev" "include" [nixpkgs.zlib];
+  CPATH = lib.makeSearchPathOutput "dev" "include" [zlib];
 
   # TODO: add libpthread here?
-  LIBRARY_PATH = nixpkgs.lib.makeLibraryPath [nixpkgs.zlib];
+  LIBRARY_PATH = lib.makeLibraryPath [zlib];
 
   EXTRA_TARGET_CFLAGS = [ "-idirafter ${libc}/include" ]
-      ++ nixpkgs.lib.optionals (stage > 1) ["-B${libc}/lib"];
+      ++ lib.optionals (stage > 1) ["-B${libc}/lib"];
 
   EXTRA_TARGET_LDFLAGS =
     ["-Wl,-L${libc}/lib"]
@@ -120,11 +130,11 @@ nixpkgs.stdenv.mkDerivation {
     ;
 
   enableParallelBuilding = true;
-  enableMultiLib = false;
+  enableMultilib = false;
 
   meta = {
     homepage = http://gcc.gnu.org/;
-    license = nixpkgs.lib.licenses.gpl3Plus;
+    license = lib.licenses.gpl3Plus;
   };
 
   dontStrip = true;
