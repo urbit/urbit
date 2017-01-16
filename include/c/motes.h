@@ -501,6 +501,7 @@
 #   define c3__hear   c3_s4('h','e','a','r')
 #   define c3__helm   c3_s4('h','e','l','m')
 #   define c3__helo   c3_s4('h','e','l','o')
+#   define c3__help   c3_s4('h','e','l','p')
 #   define c3__hep    c3_s3('h','e','p')
 #   define c3__hept   c3_s4('h','e','p','t')
 #   define c3__herb   c3_s4('h','e','r','b')

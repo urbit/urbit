@@ -560,6 +560,17 @@
         return pro;
       }
 
+      case c3__help: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mull_used();
+      {
+        u3_noun vat = _mull_in(van, sut, gol, dox, q_gen);
+        u3_noun ret = u3nc(u3qf_help(p_gen, u3h(vat)),
+                           u3qf_help(p_gen, u3t(vat)));
+
+        u3z(vat);
+        return ret;
+      }
+
       case c3__name: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {

@@ -204,6 +204,7 @@
     u3_noun u3qf_forq(u3_noun, u3_noun);
     u3_noun u3qf_fork(u3_noun);
     u3_noun u3qf_grof(u3_noun);
+    u3_noun u3qf_help(u3_noun, u3_noun);
     u3_noun u3qf_hike(u3_noun, u3_noun);
     u3_noun u3qf_look(u3_noun, u3_noun);
     u3_noun u3qf_slot(u3_atom, u3_noun);

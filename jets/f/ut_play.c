@@ -341,6 +341,16 @@
         return pro;
       }
 
+      case c3__help: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        u3_noun boc = _play_x(van, sut, q_gen);
+        u3_noun ret = u3qf_help(p_gen, boc);
+
+        u3z(boc);
+        return ret;
+      }
+
       case c3__name: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
