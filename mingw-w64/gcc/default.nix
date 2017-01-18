@@ -5,7 +5,7 @@ let
   sha256 = "0fihlcy5hnksdxk0sn6bvgnyq8gfrgs8m794b1jxwd1dxinzg3b0";
   isl = nixpkgs.isl_0_14;
   inherit (nixpkgs) stdenv lib fetchurl;
-  inherit (nixpkgs) binutils gettext gmp libmpc libelf mpfr texinfo which zlib;
+  inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
   stageName = if stage == 1 then "-stage1"
               else if stage == 2 then "-stage2"
               else assert stage == 3; "";
@@ -62,7 +62,10 @@ stdenv.mkDerivation {
     "--enable-static " +
     "--enable-threads=win32 " +
     "--enable-sjlj-exceptions " +
-    "--with-sysroot=${libc}/include --with-native-system-header-dir=/include " +
+    # "--with-headers=${libc}/include " +  # TODO: stop using deprecated option --with-headers
+    "--with-sysroot=${libc} --with-native-system-header-dir=/include " +
+    "--with-as=${binutils}/bin/${arch}-w64-mingw32-as " +  # TODO: shouldn't be necessary
+    "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +  # TOOD: shouldn't be necessary
     (if stage == 1 then
       "--enable-languages=c " +
       "--with-gcc " +
@@ -73,8 +76,6 @@ stdenv.mkDerivation {
       "--disable-win32-registry "
     else
       "--enable-languages=c,c++ " +
-      "--with-as=${binutils}/bin/${arch}-w64-mingw32-as " +
-      "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +
       "--enable-__cxa_atexit " +
       "--enable-long-long " +
       "--enable-hash-synchronization " +
@@ -91,11 +92,9 @@ stdenv.mkDerivation {
 
   targetConfig = "${arch}-w64-mingw32";
 
-  buildFlags = "";
-
   makeFlags =
     if stage == 1 then
-      ["all-gcc" "all-target-libgcc"]
+      ["configure-target-libgcc"]# TODO: "all-gcc" "all-target-libgcc"]
     else
       [];
 
@@ -133,11 +132,14 @@ stdenv.mkDerivation {
   enableParallelBuilding = true;
   enableMultilib = false;
 
+  hardeningDisable = [ "format" ];  # TODO: remove this line some day and patch GCC
+
+  dontStrip = true;
+  NIX_STRIP_DEBUG = 0;
+
   meta = {
     homepage = http://gcc.gnu.org/;
     license = lib.licenses.gpl3Plus;
   };
 
-  dontStrip = true;
-  NIX_STRIP_DEBUG = 0;
 }
