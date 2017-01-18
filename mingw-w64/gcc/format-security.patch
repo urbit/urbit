@@ -1,3 +1,15 @@
+diff -ur gcc-5.4.0/gcc/c/c-convert.c gcc-5.4.0-patched/gcc/c/c-convert.c
+--- gcc-5.4.0/gcc/c/c-convert.c	2015-03-09 04:57:33.000000000 -0700
++++ gcc-5.4.0-patched/gcc/c/c-convert.c	2017-01-13 23:25:37.858012332 -0800
+@@ -87,7 +87,7 @@
+   if ((invalid_conv_diag
+        = targetm.invalid_conversion (TREE_TYPE (expr), type)))
+     {
+-      error (invalid_conv_diag);
++      error ("%s", invalid_conv_diag);
+       return error_mark_node;
+     }
+ 
 diff -ur gcc-5.4.0/gcc/c/c-decl.c gcc-5.4.0-patched/gcc/c/c-decl.c
 --- gcc-5.4.0/gcc/c/c-decl.c	2016-04-18 08:21:52.000000000 -0700
 +++ gcc-5.4.0-patched/gcc/c/c-decl.c	2017-01-13 22:12:29.734359331 -0800
@@ -76,6 +88,66 @@ diff -ur gcc-5.4.0/gcc/c/c-typeck.c gcc-5.4.0-patched/gcc/c/c-typeck.c
        return error_mark_node;
      }
  
+diff -ur gcc-5.4.0/gcc/c-family/c-common.c gcc-5.4.0-patched/gcc/c-family/c-common.c
+--- gcc-5.4.0/gcc/c-family/c-common.c	2016-03-30 05:29:47.000000000 -0700
++++ gcc-5.4.0-patched/gcc/c-family/c-common.c	2017-01-13 23:48:08.788012332 -0800
+@@ -9941,11 +9941,11 @@
+       message = NULL;
+     }
+   else
+-    error (gmsgid);
++    error ("%s", gmsgid);
+ 
+   if (message)
+     {
+-      error (message);
++      error ("%s", message);
+       free (message);
+     }
+ #undef catenate_messages
+diff -ur gcc-5.4.0/gcc/c-family/cilk.c gcc-5.4.0-patched/gcc/c-family/cilk.c
+--- gcc-5.4.0/gcc/c-family/cilk.c	2015-01-21 13:23:04.000000000 -0800
++++ gcc-5.4.0-patched/gcc/c-family/cilk.c	2017-01-13 23:57:14.061345666 -0800
+@@ -1395,13 +1395,13 @@
+   if (contains_array_notation_expr (expr))
+     {
+       loc = get_error_location (expr, loc);
+-      error_at (loc, array_msgid);
++      error_at (loc, "%s", array_msgid);
+       return true;
+     }
+   if (walk_tree (&expr, contains_cilk_spawn_stmt_walker, NULL, NULL))
+     {
+       loc = get_error_location (expr, loc);
+-      error_at (loc, spawn_msgid);
++      error_at (loc, "%s", spawn_msgid);
+       return true;
+     }
+   return false;
+diff -ur gcc-5.4.0/gcc/fold-const.c gcc-5.4.0-patched/gcc/fold-const.c
+--- gcc-5.4.0/gcc/fold-const.c	2016-05-23 05:51:29.000000000 -0700
++++ gcc-5.4.0-patched/gcc/fold-const.c	2017-01-14 00:06:34.841345666 -0800
+@@ -335,7 +335,7 @@
+ 	}
+     }
+   else if (issue_strict_overflow_warning (wc))
+-    warning (OPT_Wstrict_overflow, gmsgid);
++    warning (OPT_Wstrict_overflow, "%s", gmsgid);
+ }
+ 
+ /* Return true if the built-in mathematical function specified by CODE
+diff -ur gcc-5.4.0/gcc/gimple-ssa-isolate-paths.c gcc-5.4.0-patched/gcc/gimple-ssa-isolate-paths.c
+--- gcc-5.4.0/gcc/gimple-ssa-isolate-paths.c	2015-09-21 02:55:57.000000000 -0700
++++ gcc-5.4.0-patched/gcc/gimple-ssa-isolate-paths.c	2017-01-14 00:18:54.474678999 -0800
+@@ -451,7 +451,7 @@
+ 				 "local variable");
+ 
+ 		      if (warning_at (gimple_location (stmt),
+-				      OPT_Wreturn_local_addr, msg))
++			             OPT_Wreturn_local_addr, "%s", msg))
+ 			inform (DECL_SOURCE_LOCATION(valbase), "declared here");
+ 		      tree zero = build_zero_cst (TREE_TYPE (val));
+ 		      gimple_return_set_retval (return_stmt, zero);
 diff -ur gcc-5.4.0/libcpp/expr.c gcc-5.4.0-patched/libcpp/expr.c
 --- gcc-5.4.0/libcpp/expr.c	2015-01-16 09:40:15.000000000 -0800
 +++ gcc-5.4.0-patched/libcpp/expr.c	2017-01-13 21:53:32.137692664 -0800
