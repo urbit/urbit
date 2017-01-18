@@ -842,6 +842,7 @@ _http_request_to_noun(u3_hreq* req_u)
     case u3_hmet_get: { med = c3__get; break; }
     case u3_hmet_head: { med = c3__head; break; }
     case u3_hmet_post: { med = c3__post; break; }
+    case u3_hmet_delete: { med = c3__delt; break; }
   }
   url = u3i_string(req_u->url_c);
   hed = _http_heds_to_list(req_u->hed_u);
