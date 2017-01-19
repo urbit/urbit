@@ -534,7 +534,7 @@ _delete_mount_point_out:
 static void
 _unix_commit_mount_point(u3_pier *pir_u, u3_noun mon)
 {
-  uL(fprintf(uH, "stub\r\n"));
+  pir_u->unx_u->dyr = c3y;
   u3z(mon);
   return;
 }
