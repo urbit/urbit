@@ -904,7 +904,6 @@ _term_read_tn_cb(uv_stream_t* tcp_u,
 {
   u3_utel* pty_u = (u3_utel*)(void*) tcp_u;
 
-  u3_lo_open();
   {
     if ( siz_i == UV_EOF ) {
       // nothing
@@ -920,7 +919,6 @@ _term_read_tn_cb(uv_stream_t* tcp_u,
   err:
     free(buf_u->base);
   }
-  u3_lo_shut(c3y);
 }
 
 /* _term_suck(): process a chunk of input
@@ -941,7 +939,6 @@ _term_read_tn_cb(uv_stream_t* tcp_u,
 static inline void
 _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
 {
-  u3_lo_open();
   {
     if ( siz_i == UV_EOF ) {
       // nothing
@@ -956,7 +953,6 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       }
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _term_read_cb(): server read callback.
@@ -1292,6 +1288,17 @@ u3_term_ef_bake(u3_noun fav)
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
   u3_pier_plan(u3k(pax), u3nc(c3__boot, fav));
+  // u3_pier_plan(u3k(pax), u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
+  u3_pier_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
+  u3_pier_plan(u3k(pax), u3nc(c3__hail, u3_nul));
+
+  u3z(pax);
+}
+void
+u3_term_ef_bunk()
+{
+  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
+
   // u3_pier_plan(u3k(pax), u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
   u3_pier_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
   u3_pier_plan(u3k(pax), u3nc(c3__hail, u3_nul));

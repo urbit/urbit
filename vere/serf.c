@@ -70,7 +70,7 @@
 static void
 _serf_fail(void* vod_p, const c3_c* wut_c)
 {
-  fprintf(stderr, "serf: fail: %s\r\n", wut_c);
+  // fprintf(stderr, "serf: fail: %s\r\n", wut_c);
   exit(1);
 }
 
@@ -278,7 +278,6 @@ _serf_poke(void* vod_p, u3_noun mat)
   u3_noun jar = u3ke_cue(mat);
 
   if ( c3y != u3du(jar) ) {
-    fprintf(stderr, "1\r\n");
     goto error;
   }
   else {
@@ -292,7 +291,6 @@ _serf_poke(void* vod_p, u3_noun mat)
              (c3n == u3ud(q_jar)) ||
              (u3r_met(5, q_jar) > 1) )
         {
-          fprintf(stderr, "2\r\n");
           goto error;
         }
         _serf_poke_work(u3r_chub(0, p_jar),
@@ -320,7 +318,6 @@ _serf_poke(void* vod_p, u3_noun mat)
         break;
       }
       default: {
-        fprintf(stderr, "3\r\n");
         goto error;
       }
     }

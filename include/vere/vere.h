@@ -621,7 +621,6 @@
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute, no checkpoint  
         c3_o    tex;                        //  -x, exit after loading
-        c3_o    mad;                        //  -j, run manager
         c3_o    fog;                        //  -X, skip last event
         c3_o    fak;                        //  -F, fake carrier
         c3_o    loh;                        //  -L, local-only networking
@@ -1063,6 +1062,8 @@
       */
         void
         u3_term_ef_bake(u3_noun  fav);
+        void
+        u3_term_ef_bunk();
 
       /* u3_term_ef_blit(): send %blit effect to terminal.
       */
@@ -1464,3 +1465,17 @@
         u3_pier_boot(c3_c* pax_c,                   //  pier path
                      c3_c* sys_c);                  //  path to boot pill
 
+      /* u3_pier_tank(): dump single tank.
+      */
+        void
+        u3_pier_tank(c3_l tab_l, u3_noun tac);
+
+      /* u3_pier_punt(): dump tank list.
+      */
+        void
+        u3_pier_punt(c3_l tab_l, u3_noun tac);
+
+      /* u3_pier_sway(): print trace.
+      */
+        void
+        u3_pier_sway(c3_l tab_l, u3_noun tax);

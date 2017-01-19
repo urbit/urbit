@@ -584,7 +584,6 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
 {
   u3_hcon* hon_u = (u3_hcon*)(void*) tcp_u;
 
-  u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
       _http_conn_dead(hon_u);      
@@ -606,7 +605,6 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _http_conn_new(): create http connection.

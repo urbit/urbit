@@ -355,11 +355,8 @@ V_OFILES=\
        vere/behn.o \
        vere/cttp.o \
        vere/http.o \
-       vere/loop.o \
        vere/newt.o \
-       vere/raft.o \
        vere/reck.o \
-       vere/sist.o \
        vere/term.o \
        vere/time.o \
        vere/unix.o \

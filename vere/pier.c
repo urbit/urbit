@@ -1,4 +1,4 @@
-/* vere/lord.c
+/* vere/pier.c
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -196,7 +196,7 @@ _pier_disk_precommit_request(u3_writ* wit_u)
   {
     c3_c  buf_c[256];
 
-    sprintf(buf_c, "%llx-%x.urbit-log", wit_u->evt_d,
+    sprintf(buf_c, "%lld-%x.urbit-log", wit_u->evt_d,
                                         u3r_mug(wit_u->mat));
 
     nam_c = malloc(1 + strlen(buf_c));
@@ -589,7 +589,7 @@ _pier_disk_load_precommit_file(u3_pier* pir_u,
   c3_d*    buf_d;
   c3_d     len_d;
 
-  if ( 2 != sscanf(nam_c, "%llx-%x.urbit-log", &evt_d, &mug_l) ) {
+  if ( 2 != sscanf(nam_c, "%lld-%x.urbit-log", &evt_d, &mug_l) ) {
     //  fprintf(stderr, "pier: load: precommit: bad file: %s\r\n", nam_c);
     return 0;
   }
@@ -1030,7 +1030,7 @@ _pier_play(u3_pier* pir_u,
   */
   _pier_disk_create(pir_u, lav_d);
 }
-           
+     
 /* _pier_work_exit(): handle subprocess exit.
 */
 static void 
@@ -1319,34 +1319,43 @@ u3_pier_exit(void)
 
     fprintf(stderr, "pier: exit\r\n");
     _pier_work_save(pir_u);
+    uv_stop(u3L);
   }
 }
 
-/* u3_pier_plan(): 
+/* u3_pier_plan(): send event; fake pier pointer
 */
 void
 u3_pier_plan(u3_noun pax, u3_noun fav)
 {
-  if ( _(u3_Host.ops_u.mad) ) {
-    if ( 0 == u3K.len_w ) {
-      c3_assert(!"plan: no pier");
-    } 
-    else {
-      u3_pier* pir_u = u3K.tab_u[0];
-      {
-        u3_noun        now;
-        struct timeval tim_tv;
+  if ( 0 == u3K.len_w ) {
+    c3_assert(!"plan: no pier");
+  } 
+  else {
+    u3_pier* pir_u = u3K.tab_u[0];
+    {
+      u3_noun        now;
+      struct timeval tim_tv;
 
-        gettimeofday(&tim_tv, 0);
-        now = u3_time_in_tv(&tim_tv);
+      gettimeofday(&tim_tv, 0);
+      now = u3_time_in_tv(&tim_tv);
 
-        u3_pier_discover(pir_u, 0, u3nt(now, pax, fav));
-      }
+      u3_pier_discover(pir_u, 0, u3nt(now, pax, fav));
     }
   }
-  else {
-    u3v_plan(pax, fav);
+}
+
+/* u3_pier_rand(): fill a 512-bit (16-word) buffer.
+*/
+void
+u3_pier_rand(c3_w* rad_w)
+{
+  c3_i fid_i = open(DEVRANDOM, O_RDONLY);
+
+  if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
+    c3_assert(!"u3_pier_rand");
   }
+  close(fid_i);
 }
 
 /* _pier_zen(): get OS entropy.
@@ -1358,6 +1367,145 @@ _pier_zen()
 
   c3_rand(rad_w);
   return u3i_words(16, rad_w);
+}
+
+/* _pier_loop_init(): initialize loop handlers.
+*/
+static void
+_pier_loop_init(void)
+{
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__unix);
+  u3_unix_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__ames);
+  u3_ames_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__term);
+  u3_term_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
+  u3_http_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__cttp);
+  u3_cttp_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
+  u3_save_io_init();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_init();
+  u3a_lop(cod_l);
+}
+
+/* _pier_loop_talk(): initialize listeners.
+*/
+static void
+_pier_loop_talk(void)
+{
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__unix);
+  u3_unix_io_talk();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__ames);
+  u3_ames_io_talk();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
+  u3_http_io_talk();
+  u3a_lop(cod_l);
+   
+  cod_l = u3a_lush(c3__term);
+  u3_term_io_talk();
+  u3a_lop(cod_l);
+}
+
+/* _pier_loop_exit(): terminate I/O across the process.
+*/
+static void
+_pier_loop_exit(void)
+{
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__unix);
+  u3_unix_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__ames);
+  u3_ames_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__term); 
+  u3_term_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
+  u3_http_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__cttp);
+  u3_cttp_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
+  u3_save_io_exit();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_exit();
+  u3a_lop(cod_l);
+}
+
+/* _pier_loop_poll(): update listeners.
+*/
+static void
+_pier_loop_poll(void)
+{
+  c3_l cod_l;
+
+  cod_l = u3a_lush(c3__ames);
+  u3_ames_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__http);
+  u3_http_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__term);
+  u3_term_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
+  u3_save_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__unix);
+  u3_unix_io_poll();
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_poll();
+  u3a_lop(cod_l);
+}
+
+/* _pier_loop_time(): set time.
+*/
+static void
+_pier_loop_time(void)
+{
+  struct timeval tim_tv;
+
+  gettimeofday(&tim_tv, 0);
+  u3v_time(u3_time_in_tv(&tim_tv));
 }
 
 /* _pier_boot_legacy(): poorly organized legacy boot calls.
@@ -1386,7 +1534,7 @@ _pier_boot_legacy(u3_pier* pir_u,
 
       if ( (u3_nul == whu) ) {
         fprintf(stderr, "czar: incorrect format\r\n");
-        u3_lo_bail();
+        c3_assert(0);
       }
       else {
         u3_noun gun = u3_nul;
@@ -1405,18 +1553,51 @@ _pier_boot_legacy(u3_pier* pir_u,
       }
       u3z(imp);
     }
+    {
+      u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
+      u3_pier_plan(pax, u3nc(c3__boot, pig));
+    }
+
     u3_ames_ef_bake();
-    u3_term_ef_bake(pig);
+    u3_term_ef_bunk();
 
     if ( u3_Host.ops_u.imp_c ) {
       u3_unix_ef_initial_into();
     }
+    /* from unix.c
+    */
+    if ( c3n == nuu_o ) {
+      u3_pier_plan(u3nt(u3_blip, c3__boat, u3_nul),
+               u3nc(c3__boat, u3_nul));
+    }
   }
 
-  u3_lo_lead();
+  u3_http_ef_bake();
+
+  _pier_loop_talk();
+
+  u3_unix_ef_look(c3n);
+  u3_pier_plan(u3nt(u3_blip, c3__ames, u3_nul), u3nc(c3__kick, u3k(u3A->now)));
+
+  _pier_loop_poll();
+  u3_term_ef_boil(1);
+
+  if ( c3y == u3_Host.ops_u.veb ) {
+    u3_term_ef_verb();
+  }
 }
 
-/* _pier_boot_complete: start organic event flow on reboot.
+#if 0
+/* _pier_boot_device(): introduce execution devices.
+*/
+static void
+_pier_boot_device(u3_pier* pir_u,
+                  c3_o     nuu_o)
+{
+}
+#endif
+
+/* _pier_boot_complete(): start organic event flow on reboot.
 */
 static void
 _pier_boot_complete(u3_pier* pir_u,
@@ -1428,7 +1609,131 @@ _pier_boot_complete(u3_pier* pir_u,
 
   _pier_work_save(pir_u);
 
+#if 1
   _pier_boot_legacy(pir_u, nuu_o);
+#else
+  _pier_boot_device(pir_u, nuu_o);
+#endif
+}
+
+/* _pier_loop_prepare():
+*/
+static void
+_pier_loop_prepare(uv_prepare_t* pep_u)
+{
+  pep_u = 0;
+  {
+    _pier_loop_poll();
+    _pier_loop_time();
+  }
+}
+
+/* u3_pier_bail(): clean up all event state.
+*/
+void
+u3_pier_bail(void)
+{
+  fflush(stdout);
+  u3_pier_exit();
+
+  exit(1);
+}
+
+/* _pier_tape(): dump a tape, old style.  Don't do this.
+*/
+static void
+_pier_tape(FILE* fil_u, u3_noun tep)
+{
+  u3_noun tap = tep;
+
+  while ( c3y == u3du(tap) ) {
+    c3_c car_c;
+
+    if ( u3h(tap) >= 127 ) {
+      car_c = '?';
+    } else car_c = u3h(tap);
+
+    putc(car_c, fil_u);
+    tap = u3t(tap);
+  }
+  u3z(tep);
+}
+
+/* _pier_wall(): dump a wall, old style.  Don't do this.
+*/
+static void
+_pier_wall(u3_noun wol)
+{
+  FILE* fil_u = u3_term_io_hija();
+  u3_noun wal = wol;
+
+  fil_u = stderr;  // XX
+  while ( u3_nul != wal ) {
+    _pier_tape(fil_u, u3k(u3h(wal)));
+
+    putc(13, fil_u);
+    putc(10, fil_u);
+
+    wal = u3t(wal);
+  }
+  u3_term_io_loja(0);
+  u3z(wol);
+}
+
+/* u3_pier_tank(): dump single tank.
+*/
+void
+u3_pier_tank(c3_l tab_l, u3_noun tac)
+{
+  u3_pier_punt(tab_l, u3nc(tac, u3_nul));
+}
+
+/* u3_pier_punt(): dump tank list.
+*/
+void
+u3_pier_punt(c3_l tab_l, u3_noun tac)
+{
+  u3_noun blu   = u3_term_get_blew(0);
+  c3_l    col_l = u3h(blu);
+  u3_noun cat   = tac;
+
+  //  We are calling nock here, but hopefully need no protection.
+  //
+  while ( c3y == u3r_du(cat) ) {
+    if ( 0 == u3A->roc ) {
+      u3_noun act = u3h(cat);
+
+      if ( c3__leaf == u3h(act) ) {
+        FILE* fil_u = u3_term_io_hija();
+
+        fil_u = stderr;   // XX
+        _pier_tape(fil_u, u3k(u3t(act)));
+        putc(13, fil_u);
+        putc(10, fil_u);
+
+        u3_term_io_loja(0);
+      }
+    }
+    else {      
+      u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
+
+      _pier_wall(wol);
+    }
+    cat = u3t(cat);
+  }
+  u3z(tac);
+  u3z(blu);
+}
+
+/* u3_pier_sway(): print trace.
+*/
+void
+u3_pier_sway(c3_l tab_l, u3_noun tax)
+{
+  u3_noun mok = u3dc("mook", 2, tax);
+
+  u3_pier_punt(tab_l, u3k(u3t(mok)));
+  u3z(mok);
 }
 
 /* u3_pier_boot(): start the new pier system.
@@ -1437,6 +1742,8 @@ void
 u3_pier_boot(c3_c* pax_c,                   //  pier path
              c3_c* sys_c)                   //  path to boot pill
 {
+  uv_prepare_t pep_u;
+
   u3_Host.lup_u = uv_default_loop();
 
   /* start up a "fast-compile" pier
@@ -1455,9 +1762,16 @@ u3_pier_boot(c3_c* pax_c,                   //  pier path
   u3_pier_create(pax_c, sys_c);
   fprintf(stderr, "pier: boot: created\r\n");
 
-#if 0
+  /* initialize polling handle
+  */
+  uv_prepare_init(u3_Host.lup_u, &pep_u);
+  uv_prepare_start(&pep_u, _pier_loop_prepare);
+ 
+  /* initialize loop 
+  */
+  _pier_loop_init();
   uv_run(u3L, UV_RUN_DEFAULT);
-  fprintf(stderr, "pier: done\r\n");
+
+  _pier_loop_exit();
   exit(0);
-#endif
 }

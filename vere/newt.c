@@ -224,7 +224,7 @@ _newt_read_cb(uv_stream_t*    str_u,
   u3_moat* mot_u = (void *)str_u;
 
   if ( UV_EOF == len_i ) {
-    fprintf(stderr, "newt: %d: stream closed\r\n", getpid());
+    // fprintf(stderr, "newt: %d: stream closed\r\n", getpid());
     uv_read_stop(str_u);
     mot_u->bal_f(mot_u->vod_p, "stream closed");
   }
