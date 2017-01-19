@@ -46,9 +46,9 @@ _ames_free(void* ptr_v)
 /* _ames_czar(): quasi-static route to emperor.
 */
 static c3_w
-_ames_czar(c3_y imp_y, c3_s* por_s)
+_ames_czar(u3_pier* pir_u, c3_y imp_y, c3_s* por_s)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
+  u3_ames* sam_u = pir_u->sam_u;
 
   if ( c3y == u3_Host.ops_u.loh ) {
     *por_s = 31337 + imp_y;
@@ -183,19 +183,23 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 }
 
 void
-u3_ames_ef_bake(void)
+u3_ames_ef_bake(u3_pier* pir_u)
 {
   u3_noun pax = u3nq(u3_blip, c3__newt, u3k(u3A->sen), u3_nul);
 
-  u3_pier_plan(pax, u3nc(c3__barn, u3_nul));
+  u3_pier_work(pir_u, pax, u3nc(c3__barn, u3_nul));
+
+  u3_pier_work(pir_u,
+               u3nt(u3_blip, c3__ames, u3_nul), 
+               u3nc(c3__kick, u3k(u3A->now)));
 }
 
 /* u3_ames_ef_send(): send packet to network (v4).
 */
 void
-u3_ames_ef_send(u3_noun lan, u3_noun pac)
+u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
+  u3_ames* sam_u = pir_u->sam_u;
   c3_s     por_s;
   c3_w     pip_w;
 
@@ -212,7 +216,7 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
 
     if ( 0 == pip_w ) {
       pip_w = 0x7f000001;
-      por_s = u3_Host.sam_u.por_s;
+      por_s = pir_u->sam_u->por_s;
     }
     {
       struct sockaddr_in add_u;
@@ -220,7 +224,7 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
       if ( (0 == (pip_w >> 16)) && (1 == (pip_w >> 8)) ) {
         c3_y imp_y = (pip_w & 0xff);
 
-        pip_w = _ames_czar(imp_y, &por_s);
+        pip_w = _ames_czar(pir_u, imp_y, &por_s);
       }
 
       if ( 0 != pip_w ) {
@@ -238,7 +242,7 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
         if ( 0 != (ret = uv_udp_send(&ruq_u->snd_u,
                                      &sam_u->wax_u,
                                      &buf_u, 1,
-                                     (const struct sockaddr*) & add_u, // IS THIS RIGHT ?!?!?
+                                     (const struct sockaddr*) &add_u,
                                      _ames_send_cb)) ) {
           uL(fprintf(uH, "ames: send: %s\n", uv_strerror(ret)));
         }
@@ -252,18 +256,18 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
 /* _ames_time_cb(): timer callback.
 */
 static void
-_ames_time_cb(uv_timer_t* tim_uo)
+_ames_time_cb(uv_timer_t* tim_u)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
-  u3_lo_open();
+  u3_pier* pir_u = tim_u->data;
+  u3_ames* sam_u = pir_u->sam_u;
 
   sam_u->law_w = time(0);
   {
-    u3_pier_plan
-      (u3nt(u3_blip, c3__ames, u3_nul),
+    u3_pier_work
+      (pir_u,
+       u3nt(u3_blip, c3__ames, u3_nul),
        u3nc(c3__wake, u3_nul));
   }
-  u3_lo_shut(c3n);
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -275,13 +279,14 @@ _ames_recv_cb(uv_udp_t*        wax_u,
               const struct sockaddr* adr_u,
               unsigned         flg_i)
 {
+  u3_pier* pir_u = wax_u->data;
+
   // uL(fprintf(uH, "ames: rx %p\r\n", buf_u.base));
 
   if ( 0 == nrd_i ) {
     _ames_free(buf_u->base);
   }
   else {
-    u3_lo_open();
     {
       u3_noun             msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
 
@@ -293,25 +298,25 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       c3_s                por_s = ntohs(add_u->sin_port);
       c3_w                pip_w = ntohl(add_u->sin_addr.s_addr);
 
-      u3_pier_plan
-        (u3nt(u3_blip, c3__ames, u3_nul),
+      u3_pier_work
+        (pir_u,
+         u3nt(u3_blip, c3__ames, u3_nul),
          u3nt(c3__hear,
               u3nq(c3__if, u3k(u3A->now), por_s, u3i_words(1, &pip_w)),
               msg));
 #endif
     }
     _ames_free(buf_u->base);
-    u3_lo_shut(c3y);
   }
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
 */
 void
-u3_ames_io_init()
+u3_ames_io_init(u3_pier* pir_u)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
-  c3_s por_s;
+  u3_ames* sam_u = pir_u->sam_u;
+  c3_s     por_s;
 
   por_s = u3_Host.ops_u.por_s;
   if ( 0 != u3_Host.ops_u.imp_c ) {
@@ -325,16 +330,17 @@ u3_ames_io_init()
     }
     num_y = u3r_byte(0, u3t(num));
 
-    _ames_czar(num_y, &por_s);
+    _ames_czar(pir_u, num_y, &por_s);
     uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
     u3z(num);
   }
 
   int ret;
-  if ( 0 != (ret = uv_udp_init(u3L, &u3_Host.sam_u.wax_u)) ) {
+  if ( 0 != (ret = uv_udp_init(u3L, &(pir_u->sam_u->wax_u))) ) {
     uL(fprintf(uH, "ames: init: %s\n", uv_strerror(ret)));
     c3_assert(0);
   }
+  sam_u->wax_u.data = pir_u;
 
   //  Bind and stuff.
   {
@@ -366,26 +372,35 @@ u3_ames_io_init()
   //  Timer too.
   {
     uv_timer_init(u3L, &sam_u->tim_u);
+
+    sam_u->tim_u.data = pir_u;
   }
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
 */
 void
-u3_ames_io_talk()
+u3_ames_io_talk(u3_pier* pir_u)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
+  u3_ames* sam_u = pir_u->sam_u;
 
   uL(fprintf(uH, "ames: on localhost, UDP %d.\n", sam_u->por_s));
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 }
 
+/* u3_ames_io_bake(): send initial events.
+*/
+void 
+u3_ames_io_bake(u3_pier* pir_u)
+{
+}
+
 /* u3_ames_io_exit(): terminate ames I/O.
 */
 void
-u3_ames_io_exit()
+u3_ames_io_exit(u3_pier* pir_u)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
+  u3_ames* sam_u = pir_u->sam_u;
 
   uv_close(&sam_u->had_u, 0);
 }
@@ -393,9 +408,9 @@ u3_ames_io_exit()
 /* u3_ames_io_poll(): update ames IO state.
 */
 void
-u3_ames_io_poll()
+u3_ames_io_poll(u3_pier* pir_u)
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
+  u3_ames* sam_u = pir_u->sam_u;
   u3_noun  wen = u3v_keep(u3nt(u3_blip, c3__ames, u3_nul));
 
   if ( (u3_nul != wen) &&

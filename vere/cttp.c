@@ -953,7 +953,6 @@ _cttp_ccon_kick_connect(u3_ccon* coc_u)
 static void
 _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
-  u3_lo_open();
   {
     _u3_write_t* ruq_u = (void *)wri_u;
 
@@ -963,7 +962,6 @@ _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
     free(ruq_u->buf_y);
     free(ruq_u);
   }
-  u3_lo_shut(c3n);
 }
 
 /* _cttp_ccon_kick_write_cryp()
@@ -1192,7 +1190,6 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
 {
   u3_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
-  u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
       // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
@@ -1217,7 +1214,6 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _cttp_ccon_read_clyr_cb()
@@ -1240,7 +1236,6 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
 {
   u3_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
-  u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
       // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
@@ -1256,7 +1251,6 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _cttp_ccon_kick_read_clyr(): start reading on insecure socket.

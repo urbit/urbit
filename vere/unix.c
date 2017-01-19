@@ -534,12 +534,10 @@ _delete_mount_point_out:
 static void
 _unix_time_cb(uv_timer_t* tim_u)
 {
-  u3_lo_open();
   {
     u3_Host.unx_u.alm = c3n;
     u3_Host.unx_u.dyr = c3y;
   }
-  u3_lo_shut(c3y);
 }
 
 /* _unix_fs_event_cb(): filesystem event callback.
@@ -1088,7 +1086,6 @@ _unix_initial_update_dir(c3_c* pax_c)
 static void
 _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 {
-  u3_lo_open();
   {
     switch ( num_i ) {
       default: fprintf(stderr, "\r\nmysterious signal %d\r\n", num_i); break;
@@ -1103,7 +1100,6 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
       case SIGWINCH: u3_term_ef_winc(); break;
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _unix_ef_sync(): check for files to sync.
@@ -1111,8 +1107,6 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 static void
 _unix_ef_sync(uv_check_t* han_u)
 {
-  u3_lo_open();
-  u3_lo_shut(c3y);
 }
 
 /* _unix_sync_file(): sync file to unix
@@ -1335,11 +1329,6 @@ u3_unix_io_init(void)
   uv_timer_init(u3L, &unx_u->tim_u);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
-
-  if ( c3n == u3_Host.ops_u.nuu ) {
-    u3_pier_plan(u3nt(u3_blip, c3__boat, u3_nul),
-             u3nc(c3__boat, u3_nul));
-  }
 }
 
 /* u3_unix_acquire(): acquire a lockfile, killing anything that holds it.
@@ -1432,6 +1421,16 @@ u3_unix_ef_hold(void)
   }
 }
 
+/* u3_unix_ef_bake(): initial effects for new process.
+*/
+void
+u3_unix_ef_bake(void)
+{
+  u3_pier_plan(u3nt(u3_blip, c3__boat, u3_nul),
+               u3nc(c3__boat, u3_nul));
+
+}
+
 /* u3_unix_ef_move()
 */
 void
@@ -1445,15 +1444,19 @@ u3_unix_ef_move(void)
   }
 }
 
+/* u3_unix_ef_boot(): boot actions 
+*/
 void
-u3_unix_ef_initial_into()
+u3_unix_ef_boot(void)
 {
-  u3_noun can = _unix_initial_update_dir(u3_Host.ops_u.arv_c);
+  if ( u3_Host.ops_u.imp_c ) {
+    u3_noun can = _unix_initial_update_dir(u3_Host.ops_u.arv_c);
 
-  u3_pier_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
-           u3nq(c3__into, u3_nul, c3y, can));
+    u3_pier_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
+             u3nq(c3__into, u3_nul, c3y, can));
+  }
 }
-
+ 
 /* u3_unix_ef_look(): update the root.
 */
 void

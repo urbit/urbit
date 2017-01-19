@@ -621,7 +621,6 @@
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute, no checkpoint  
         c3_o    tex;                        //  -x, exit after loading
-        c3_o    mad;                        //  -j, run manager
         c3_o    fog;                        //  -X, skip last event
         c3_o    fak;                        //  -F, fake carrier
         c3_o    loh;                        //  -L, local-only networking
@@ -645,7 +644,6 @@
         u3_cttp    ctp_u;                   //  http clients
         u3_utel    tel_u;                   //  telnet listener
         u3_utty*   uty_u;                   //  linked terminal list
-        u3_ames    sam_u;                   //  packet interface
         u3_save    sav_u;                   //  autosave
         u3_opts    ops_u;                   //  commandline options
         u3_unix    unx_u;                   //  sync and clay
@@ -724,6 +722,7 @@
           c3_d             key_d[4];            //  save and passkey
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
+          u3_ames*         sam_u;              //  packet interface
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
         } u3_pier;
@@ -957,15 +956,10 @@
 
     /**  Output.
     **/
-      /* u3_ve_tank(): print a tank at `tab`.
-      */
-        void
-        u3_ve_tank(c3_l tab_l, u3_noun tac);
-
       /* u3_reck_kick(): handle effect.
       */
         void
-        u3_reck_kick(u3_noun ovo);
+        u3_reck_kick(u3_pier* pir_u, u3_noun ovo);
 
 
     /**  Main loop, new style.
@@ -1062,7 +1056,7 @@
       /* u3_term_ef_bake(): initial effects for new server.
       */
         void
-        u3_term_ef_bake(u3_noun  fav);
+        u3_term_ef_bake(void);
 
       /* u3_term_ef_blit(): send %blit effect to terminal.
       */
@@ -1113,33 +1107,39 @@
       /* u3_ames_ef_bake(): create ames duct.
       */
         void
-        u3_ames_ef_bake(void);
+        u3_ames_ef_bake(u3_pier* pir_u);
 
       /* u3_ames_ef_send(): send packet to network.
       */
         void
-        u3_ames_ef_send(u3_noun lan,
+        u3_ames_ef_send(u3_pier* pir_u,
+                        u3_noun lan,
                         u3_noun pac);
 
       /* u3_ames_io_init(): initialize ames I/O.
       */
         void
-        u3_ames_io_init(void);
+        u3_ames_io_init(u3_pier* pir_u);
 
       /* u3_ames_io_talk(): bring up listener.
       */
         void
-        u3_ames_io_talk(void);
+        u3_ames_io_talk(u3_pier* pir_u);
+
+      /* u3_ames_ef_bake(): send initial events.
+      */
+        void 
+        u3_ames_io_bake(u3_pier* pir_u);
 
       /* u3_ames_io_exit(): terminate ames I/O.
       */
         void
-        u3_ames_io_exit(void);
+        u3_ames_io_exit(u3_pier* pir_u);
 
       /* u3_ames_io_poll(): update ames IO state.
       */
         void
-        u3_ames_io_poll(void);
+        u3_ames_io_poll(u3_pier* pir_u);
 
     /**  Autosave.
     **/
@@ -1169,6 +1169,16 @@
       */
         void
         u3_unix_ef_hold();
+
+      /* u3_unix_ef_boot(): boot actions 
+      */
+        void
+        u3_unix_ef_boot(void);
+
+      /* u3_unix_ef_bake(): initial effects for new process.
+      */
+        void
+        u3_unix_ef_bake(void);
 
       /* u3_unix_ef_move():
       */
@@ -1453,7 +1463,17 @@
         void
         u3_pier_exit(void);
 
-      /* u3_pier_plan(): submit event.
+      /* u3_pier_work(): send event; real pier pointer.
+      */
+        void
+        u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav);
+
+      /* u3_pier_stub(): get the One Pier for unreconstructed code.
+      */
+        u3_pier*
+        u3_pier_stub(void);
+
+      /* u3_pier_plan(): submit event; fake pier 
       */
         void
         u3_pier_plan(u3_noun pax, u3_noun fav);
@@ -1464,3 +1484,17 @@
         u3_pier_boot(c3_c* pax_c,                   //  pier path
                      c3_c* sys_c);                  //  path to boot pill
 
+      /* u3_pier_tank(): dump single tank.
+      */
+        void
+        u3_pier_tank(c3_l tab_l, u3_noun tac);
+
+      /* u3_pier_punt(): dump tank list.
+      */
+        void
+        u3_pier_punt(c3_l tab_l, u3_noun tac);
+
+      /* u3_pier_sway(): print trace.
+      */
+        void
+        u3_pier_sway(c3_l tab_l, u3_noun tax);

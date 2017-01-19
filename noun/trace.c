@@ -36,7 +36,7 @@ u3t_drop(void)
 }
 
 extern void
-u3_lo_tank(c3_l tab_l, u3_noun tac);
+u3_pier_tank(c3_l tab_l, u3_noun tac);
 
 #ifdef GHETTO
 /* _t_ghetto(): ghetto timelapse.
@@ -94,7 +94,7 @@ u3t_slog(u3_noun hod)
       case 2: fprintf(stderr, ">> "); break;
       case 1: fprintf(stderr, "> "); break;
     }
-    u3_lo_tank(0, u3k(u3t(hod)));
+    u3_pier_tank(0, u3k(u3t(hod)));
   }
   u3z(hod);
 }
