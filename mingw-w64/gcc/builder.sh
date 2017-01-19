@@ -174,13 +174,6 @@ preConfigure() {
             gcc/configure
     fi
 
-    if test -n "$crossMingw" -a -n "$crossStageStatic"; then
-        mkdir -p ../mingw
-        # --with-build-sysroot expects that:
-        cp -R $libcCross/include ../mingw
-        configureFlags="$configureFlags --with-build-sysroot=`pwd`/.."
-    fi
-
     # Eval the preConfigure script from nix expression.
     eval "$providedPreConfigure"
 
@@ -267,3 +260,6 @@ postInstall() {
 }
 
 genericBuild
+
+# Make the lib output in case it does not exist
+mkdir -p $lib/lib
