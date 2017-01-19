@@ -1,0 +1,24 @@
+Command:
+  $(nix-build -A crossenvs.i686-w64-mingw32.gcc_stage_1)/bin/i686-w64-mingw32-cpp -v /dev/null -o /dev/null
+
+Expected output:
+  The include <...> search paths should include $(nix-build -A crossenvs.i686-w64-mingw32.mingw-w64_headers)
+
+Actual output:
+  #include <...> search starts here:
+   /nix/store/l0xngn5qjf81srv61cdl5idm38im4127-gcc-5.4.0-i686-w64-mingw32-stage1/lib/gcc/i686-w64-mingw32/5.4.0/include
+   /nix/store/l0xngn5qjf81srv61cdl5idm38im4127-gcc-5.4.0-i686-w64-mingw32-stage1/lib/gcc/i686-w64-mingw32/5.4.0/include-fixed
+  And those directories do not have a copy of the headers.
+
+It's weird, because the gcc and cpp executables actually do contain the string for the mingw-w64_headers in them, but for some
+reason they are not using it to search for header files.
+
+Verification of expected output:
+  nix-store -qR $(nix-instantiate nixpkgs-cross-test.nix)  | grep stage-static
+  Try the cpp in that version of GCC.
+  /nix/store/qf2fyf9yqrps30vmgzhivvxk42ggrnb5-gcc-5.4.0-i686-w64-mingw32-stage-static/bin/i686-w64-mingw32-cpp -v /dev/null -o /dev/null
+  Output:
+    /nix/store/qf2fyf9yqrps30vmgzhivvxk42ggrnb5-gcc-5.4.0-i686-w64-mingw32-stage-static/lib/gcc/i686-w64-mingw32/5.4.0/include
+    /nix/store/qf2fyf9yqrps30vmgzhivvxk42ggrnb5-gcc-5.4.0-i686-w64-mingw32-stage-static/lib/gcc/i686-w64-mingw32/5.4.0/include-fixed
+    /nix/store/qf2fyf9yqrps30vmgzhivvxk42ggrnb5-gcc-5.4.0-i686-w64-mingw32-stage-static/lib/gcc/i686-w64-mingw32/5.4.0/../../../../i686-w64-mingw32/sys-include
+  The third directory in there includes all the mingw-w64 headers, e.g. windows.h.

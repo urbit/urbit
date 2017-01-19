@@ -137,9 +137,6 @@ stdenv.mkDerivation rec {
   dontStrip = true;
   NIX_STRIP_DEBUG = 0;
 
-  tmphaxConfigure = ../../my_gcc_configure;
-  postPatch = "cp ${tmphaxConfigure} gcc/configure";
-
   meta = {
     homepage = http://gcc.gnu.org/;
     license = lib.licenses.gpl3Plus;
