@@ -26,6 +26,7 @@ stdenv.mkDerivation rec {
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
     ./no-sys-dirs.patch
+    ./cppdefault.patch
   ];
 
   outputs = [ "out" "lib" "man" "info" ];
