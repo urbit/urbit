@@ -70,7 +70,6 @@ stdenv.mkDerivation rec {
     "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +
     (if stage == 1 then
       "--enable-languages=c " +
-      "--disable-debug " +
       "--disable-win32-registry "
     else
       "--enable-languages=c,c++ " +
