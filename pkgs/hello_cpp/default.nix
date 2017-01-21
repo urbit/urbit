@@ -2,7 +2,7 @@
 
 # TODO: get rid of boilerplate, don't refer to nixpkgs
 crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "hello-${crossenv.host}";
+  name = "hello_cpp-${crossenv.host}";
 
   inherit (crossenv) host;
 
