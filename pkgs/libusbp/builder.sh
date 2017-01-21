@@ -13,8 +13,8 @@ tar -xf $src
 cd libusbp-$version
 for patch in $patches
 do
-    echo applying patch $patch
-    patch -p1 -i $patch
+  echo applying patch $patch
+  patch -p1 -i $patch
 done
 cd ..
 
@@ -28,8 +28,3 @@ cmake ../libusbp-$version \
 make
 
 make install
-
-# TODO: make this cross-platform and automatic
-$host-strip $out/bin/*.dll
-$host-strip $out/lib/*.a
-
