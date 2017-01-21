@@ -63,16 +63,13 @@ stdenv.mkDerivation rec {
     "--enable-static " +
     "--enable-threads=win32 " +
     "--enable-sjlj-exceptions " +
-    # "--with-headers=${libc}/include " +  # TODO: stop using deprecated option --with-headers
     "--with-sysroot=${libc} --with-native-system-header-dir=/include " +
-    "--with-as=${binutils}/bin/${arch}-w64-mingw32-as " +  # TODO: shouldn't be necessary
-    "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +  # TOOD: shouldn't be necessary
+    "--with-gnu-as " +
+    "--with-gnu-ld " +
+    "--with-as=${binutils}/bin/${arch}-w64-mingw32-as " +
+    "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +
     (if stage == 1 then
       "--enable-languages=c " +
-      "--with-gcc " +
-      "--with-gnu-as " +
-      "--with-gnu-ld " +
-      "--with-gnu-ld " +
       "--disable-debug " +
       "--disable-win32-registry "
     else
