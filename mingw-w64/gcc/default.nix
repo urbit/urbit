@@ -1,4 +1,4 @@
-{ nixpkgs, arch, stage ? 3, binutils, libc }:
+{ nixpkgs, arch, stage ? 2, binutils, libc }:
 
 let
   version = "5.4.0";
@@ -7,8 +7,7 @@ let
   inherit (nixpkgs) stdenv lib fetchurl;
   inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
   stageName = if stage == 1 then "-stage1"
-              else if stage == 2 then "-stage2"
-              else assert stage == 3; "";
+              else assert stage == 2; "";
 in
 
 stdenv.mkDerivation rec {
@@ -51,8 +50,12 @@ stdenv.mkDerivation rec {
 
   configureFlags =
     "--target=${arch}-w64-mingw32 " +
-    "--enable-lto " +
-    "--enable-plugin " +
+    "--with-sysroot=${libc} " +
+    "--with-native-system-header-dir=/include " +
+    "--with-gnu-as " +
+    "--with-gnu-ld " +
+    "--with-as=${binutils}/bin/${arch}-w64-mingw32-as " +
+    "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +
     "--with-isl=${isl} " +
     "--with-gmp-include=${gmp.dev}/include " +
     "--with-gmp-lib=${gmp.out}/lib " +
@@ -60,31 +63,27 @@ stdenv.mkDerivation rec {
     "--with-mpfr-lib=${mpfr.out}/lib " +
     "--with-mpc=${libmpc} " +
     "--with-system-zlib " +
+    "--enable-lto " +
+    "--enable-plugin " +
     "--enable-static " +
     "--enable-threads=win32 " +
     "--enable-sjlj-exceptions " +
-    "--with-sysroot=${libc} --with-native-system-header-dir=/include " +
-    "--with-gnu-as " +
-    "--with-gnu-ld " +
-    "--with-as=${binutils}/bin/${arch}-w64-mingw32-as " +
-    "--with-ld=${binutils}/bin/${arch}-w64-mingw32-ld " +
+    "--enable-__cxa_atexit " +
+    "--enable-long-long " +
+    "--with-dwarf2 " +
+    "--enable-fully-dynamic-string " +
     (if stage == 1 then
-      "--enable-languages=c " +
-      "--disable-win32-registry "
+      "--enable-languages=c "
     else
-      "--enable-languages=c,c++ " +
-      "--enable-__cxa_atexit " +
-      "--enable-long-long " +
-      "--enable-hash-synchronization " +
-      "--disable-libssp " +
-      "--with-dwarf2 " +
-      "--enable-fully-dynamic-string "
+      "--enable-languages=c,c++ "
     ) +
     "--without-included-gettext " +
     "--disable-libstdcxx-pch " +
     "--disable-nls " +
     "--disable-shared " +
     "--disable-multilib " +
+    "--disable-libssp " +
+    "--disable-win32-registry " +
     "--disable-bootstrap";
 
   targetConfig = "${arch}-w64-mingw32";
