@@ -1,15 +1,9 @@
 source $stdenv/setup
 
-
 export NIX_FIXINC_DUMMY=$NIX_BUILD_TOP/dummy
 mkdir $NIX_FIXINC_DUMMY
 
-
-if test "$staticCompiler" = "1"; then
-    EXTRA_LDFLAGS="-static"
-else
-    EXTRA_LDFLAGS="-Wl,-rpath,$lib/lib"
-fi
+EXTRA_LDFLAGS="-Wl,-rpath,$lib/lib"
 
 if test "$noSysDirs" = "1"; then
 

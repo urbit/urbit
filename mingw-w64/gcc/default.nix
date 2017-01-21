@@ -34,7 +34,6 @@ stdenv.mkDerivation rec {
 
   noSysDirs = true;
 
-  staticCompiler = false;
   langJava = false;
   crossStageStatic = (stage == 1);
   libcCross = libc;
