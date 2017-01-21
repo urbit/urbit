@@ -8,3 +8,4 @@ $host-strip hello$exec_suffix
 mkdir -p $out/bin/
 
 cp hello$exec_suffix $out/bin/
+
