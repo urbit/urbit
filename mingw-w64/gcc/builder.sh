@@ -11,13 +11,6 @@ else
     EXTRA_LDFLAGS="-Wl,-rpath,$lib/lib"
 fi
 
-
-# GCC interprets empty paths as ".", which we don't want.
-if test -z "$CPATH"; then unset CPATH; fi
-if test -z "$LIBRARY_PATH"; then unset LIBRARY_PATH; fi
-echo "\$CPATH is \`$CPATH'"
-echo "\$LIBRARY_PATH is \`$LIBRARY_PATH'"
-
 if test "$noSysDirs" = "1"; then
 
     if test -e $NIX_CC/nix-support/orig-libc; then

@@ -104,7 +104,7 @@ stdenv.mkDerivation rec {
   LD = "ld";
   CC = "gcc";
 
-  # TODO: add libpthread here
+  # TODO: add libpthread here?
   CPATH = lib.makeSearchPathOutput "dev" "include" [zlib];
 
   # TODO: add libpthread here?
