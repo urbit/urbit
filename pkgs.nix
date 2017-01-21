@@ -7,6 +7,10 @@ rec {
     inherit crossenv;
   };
 
+  hello_cpp = import ./pkgs/hello_cpp {
+    inherit crossenv;
+  };
+
   libusbp = import ./pkgs/libusbp {
     inherit crossenv;
   };
