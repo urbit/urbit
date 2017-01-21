@@ -13,6 +13,10 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     sha256 = "1fa86imgkzbhnldb534gm8r8rzanql3vz55m856pq011ymgnifah";
   };
 
+  patches = [
+    ./header-capitalization.patch  # TODO: get this upstreamed
+  ];
+
   buildInputs = [
     crossenv.gcc
     crossenv.binutils
