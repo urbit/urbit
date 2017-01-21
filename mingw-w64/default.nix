@@ -1,5 +1,7 @@
 { nixpkgs, arch }:
 let
+  host = "${arch}-w64-mingw32";
+
   binutils = import ./binutils { inherit nixpkgs arch; };
 
   mingw-w64 = rec {
@@ -42,8 +44,15 @@ let
     inherit nixpkgs arch binutils;
   };
 
+  cmake_system_name = "Windows";
+
+  cmake_toolchain = import ../cmake_toolchain {
+    inherit nixpkgs host cmake_system_name;
+  };
+
 in {
-  host = "${arch}-w64-mingw32";
-  inherit binutils nixpkgs arch;
+  inherit host arch;
+  inherit binutils nixpkgs;
   inherit mingw-w64 mingw-w64_headers mingw-w64_crt_and_headers gcc_stage_1 gcc;
+  inherit cmake_system_name cmake_toolchain;
 }

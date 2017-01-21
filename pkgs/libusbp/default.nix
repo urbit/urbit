@@ -7,6 +7,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   version = "1.0.1";
 
   host = crossenv.host;
+  cmake_toolchain = crossenv.cmake_toolchain;
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://github.com/pololu/libusbp/archive/${version}.tar.gz";
