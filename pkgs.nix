@@ -6,5 +6,7 @@ rec {
 
   hello = import ./pkgs/hello { inherit crossenv; };
 
+  libusbp = import ./pkgs/libusbp { inherit crossenv; };
+
 };
 in pkgs
