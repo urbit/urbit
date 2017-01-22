@@ -4,33 +4,13 @@ export NIX_FIXINC_DUMMY=$NIX_BUILD_TOP/dummy
 mkdir $NIX_FIXINC_DUMMY
 
 EXTRA_LDFLAGS="-Wl,-rpath,$lib/lib"
-
-extraFlags="-I$NIX_FIXINC_DUMMY $extraFlags"
-extraLDFlags="-L$glibc_libdir -rpath $glibc_libdir $extraLDFlags"
-
-# BOOT_CFLAGS defaults to `-g -O2'; since we override it below,
-# make sure to explictly add them so that files compiled with the
-# bootstrap compiler are optimized and (optionally) contain
-# debugging information (info "(gccinstall) Building").
-if test -n "$dontStrip"; then
-  extraFlags="-O2 -g $extraFlags"
-else
-  # Don't pass `-g' at all; this saves space while building.
-  extraFlags="-O2 $extraFlags"
-fi
-
-EXTRA_FLAGS="$extraFlags"
-for i in $extraLDFlags; do
-  EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,$i"
-done
+EXTRA_FLAGS="-O2 -g"
 
 # CFLAGS_FOR_TARGET are needed for the libstdc++ configure script to find
 # the startfiles.
 # FLAGS_FOR_TARGET are needed for the target libraries to receive the -Bxxx
 # for the startfiles.
 makeFlagsArray+=( \
-  NATIVE_SYSTEM_HEADER_DIR="$NIX_FIXINC_DUMMY" \
-  SYSTEM_HEADER_DIR="$NIX_FIXINC_DUMMY" \
   CFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
   CXXFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
   CFLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
