@@ -24,51 +24,6 @@ for i in $extraLDFlags; do
   EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,$i"
 done
 
-if test -n "$targetConfig"; then
-  # Cross-compiling, we need gcc not to read ./specs in order to build
-  # the g++ compiler (after the specs for the cross-gcc are created).
-  # Having LIBRARY_PATH= makes gcc read the specs from ., and the build
-  # breaks. Having this variable comes from the default.nix code to bring
-  # gcj in.
-  unset LIBRARY_PATH
-  unset CPATH
-else
-  if test -z "$NIX_CC_CROSS"; then
-    EXTRA_TARGET_CFLAGS="$EXTRA_FLAGS"
-    EXTRA_TARGET_CXXFLAGS="$EXTRA_FLAGS"
-    EXTRA_TARGET_LDFLAGS="$EXTRA_LDFLAGS"
-  else
-    # This the case of cross-building the gcc.
-    # We need special flags for the target, different than those of the build
-    # Assertion:
-    test -e $NIX_CC_CROSS/nix-support/orig-libc
-
-    # Figure out what extra flags to pass to the gcc compilers
-    # being generated to make sure that they use our glibc.
-    extraFlags="$(cat $NIX_CC_CROSS/nix-support/libc-cflags)"
-    extraLDFlags="$(cat $NIX_CC_CROSS/nix-support/libc-ldflags) $(cat $NIX_CC_CROSS/nix-support/libc-ldflags-before)"
-
-    # The path to the Glibc binaries such as `crti.o'.
-    glibc_dir="$(cat $NIX_CC_CROSS/nix-support/orig-libc)"
-    glibc_libdir="$glibc_dir/lib"
-    glibc_devdir="$(cat $NIX_CC_CROSS/nix-support/orig-libc-dev)"
-    configureFlags="$configureFlags --with-native-system-header-dir=$glibc_devdir/include"
-
-    # Use *real* header files, otherwise a limits.h is generated
-    # that does not include Glibc's limits.h (notably missing
-    # SSIZE_MAX, which breaks the build).
-    NIX_FIXINC_DUMMY_CROSS="$glibc_devdir/include"
-
-    extraFlags="-I$NIX_FIXINC_DUMMY_CROSS $extraFlags"
-    extraLDFlags="-L$glibc_libdir -rpath $glibc_libdir $extraLDFlags"
-
-    EXTRA_TARGET_CFLAGS="$extraFlags"
-    for i in $extraLDFlags; do
-      EXTRA_TARGET_LDFLAGS="$EXTRA_TARGET_LDFLAGS -Wl,$i"
-    done
-  fi
-fi
-
 # CFLAGS_FOR_TARGET are needed for the libstdc++ configure script to find
 # the startfiles.
 # FLAGS_FOR_TARGET are needed for the target libraries to receive the -Bxxx

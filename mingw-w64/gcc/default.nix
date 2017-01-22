@@ -103,12 +103,6 @@ stdenv.mkDerivation rec {
   LD = "ld";
   CC = "gcc";
 
-  # TODO: add libpthread here?
-  CPATH = lib.makeSearchPathOutput "dev" "include" [zlib];
-
-  # TODO: add libpthread here?
-  LIBRARY_PATH = lib.makeLibraryPath [zlib];
-
   EXTRA_TARGET_CFLAGS = [ "-idirafter ${libc}/include" ]
       ++ lib.optionals (stage > 1) ["-B${libc}/lib"];
 
