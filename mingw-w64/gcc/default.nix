@@ -28,7 +28,6 @@ stdenv.mkDerivation rec {
     ./cppdefault.patch
   ];
 
-  outputs = [ "out" "lib" "man" "info" ];
   setOutputFlags = false;
   NIX_NO_SELF_RPATH = true;
 

@@ -30,25 +30,9 @@ postConfigure() {
 }
 
 postInstall() {
-    # Move runtime libraries to $lib.
-    moveToOutput "lib/lib*.so*" "$lib"
-    moveToOutput "lib/lib*.la"  "$lib"
-    moveToOutput "share/gcc-*/python" "$lib"
+    find > $out/tmphax_file_list
 
-    for i in "$lib"/lib/*.{la,py}; do
-        substituteInPlace "$i" --replace "$out" "$lib"
-    done
-
-    if [ -n "$enableMultilib" ]; then
-        moveToOutput "lib64/lib*.so*" "$lib"
-        moveToOutput "lib64/lib*.la"  "$lib"
-
-        for i in "$lib"/lib64/*.{la,py}; do
-            substituteInPlace "$i" --replace "$out" "$lib"
-        done
-    fi
-
-    # Remove `fixincl' to prevent a retained dependency on the
+    # Remove "fixincl" to prevent a retained dependency on the
     # previous gcc.
     rm -rf $out/libexec/gcc/*/*/install-tools
     rm -rf $out/lib/gcc/*/*/install-tools
