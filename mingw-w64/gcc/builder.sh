@@ -40,18 +40,6 @@ makeFlagsArray+=( \
   LDFLAGS_FOR_TARGET="$EXTRA_TARGET_LDFLAGS $EXTRA_TARGET_LDFLAGS" \
   )
 
-if test "$stage" == 1; then
-  # We don't want the gcc build to assume there will be a libc providing
-  # limits.h in this stagae
-  makeFlagsArray+=( \
-    LIMITS_H_TEST=false \
-    )
-else
-  makeFlagsArray+=( \
-    LIMITS_H_TEST=true \
-  )
-fi
-
 providedPreConfigure="$preConfigure";
 preConfigure() {
     if test -n "$newlibSrc"; then
