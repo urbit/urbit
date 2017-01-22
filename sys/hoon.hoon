@@ -9709,7 +9709,7 @@
 ++  slyd  $-  {* (unit (set monk)) term beam}           ::  super advanced
           (unit (unit (cask)))                          ::
 ++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
-++  sack  {p/ship q/ship}                               ::  incoming [our his}
+++  sack  {p/ship q/ship}                               ::  incoming [our his]
 ++  scar                                                ::  opaque duct
   $:  p/@ud                                             ::  bone sequence
       q/(map duct bone)                                 ::  by duct

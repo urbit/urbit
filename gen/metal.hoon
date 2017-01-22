@@ -60,7 +60,7 @@
     !=  ::
         ::  first we use the boot formula (event 1) to set up
         ::  the pair of state function and main sequence.  the boot
-        ::  formula peels off the first n (currently 3) events
+        ::  formula peels off the first 5 events
         ::  to set up the lifecycle loop.
         ::
         =+  [state-gate main-sequence]=.*(full-sequence boot-formula)
