@@ -5,134 +5,108 @@ mkdir $NIX_FIXINC_DUMMY
 
 EXTRA_LDFLAGS="-Wl,-rpath,$lib/lib"
 
-if test "$noSysDirs" = "1"; then
+extraFlags="-I$NIX_FIXINC_DUMMY $extraFlags"
+extraLDFlags="-L$glibc_libdir -rpath $glibc_libdir $extraLDFlags"
 
-    if test -e $NIX_CC/nix-support/orig-libc; then
+# BOOT_CFLAGS defaults to `-g -O2'; since we override it below,
+# make sure to explictly add them so that files compiled with the
+# bootstrap compiler are optimized and (optionally) contain
+# debugging information (info "(gccinstall) Building").
+if test -n "$dontStrip"; then
+  extraFlags="-O2 -g $extraFlags"
+else
+  # Don't pass `-g' at all; this saves space while building.
+  extraFlags="-O2 $extraFlags"
+fi
 
-        # Figure out what extra flags to pass to the gcc compilers
-        # being generated to make sure that they use our glibc.
-        extraFlags="$(cat $NIX_CC/nix-support/libc-cflags)"
-        extraLDFlags="$(cat $NIX_CC/nix-support/libc-ldflags) $(cat $NIX_CC/nix-support/libc-ldflags-before || true)"
+EXTRA_FLAGS="$extraFlags"
+for i in $extraLDFlags; do
+  EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,$i"
+done
 
-        # Use *real* header files, otherwise a limits.h is generated
-        # that does not include Glibc's limits.h (notably missing
-        # SSIZE_MAX, which breaks the build).
-        export NIX_FIXINC_DUMMY=$libc_dev/include
+if test -n "$targetConfig"; then
+  # Cross-compiling, we need gcc not to read ./specs in order to build
+  # the g++ compiler (after the specs for the cross-gcc are created).
+  # Having LIBRARY_PATH= makes gcc read the specs from ., and the build
+  # breaks. Having this variable comes from the default.nix code to bring
+  # gcj in.
+  unset LIBRARY_PATH
+  unset CPATH
+else
+  if test -z "$NIX_CC_CROSS"; then
+    EXTRA_TARGET_CFLAGS="$EXTRA_FLAGS"
+    EXTRA_TARGET_CXXFLAGS="$EXTRA_FLAGS"
+    EXTRA_TARGET_LDFLAGS="$EXTRA_LDFLAGS"
+  else
+    # This the case of cross-building the gcc.
+    # We need special flags for the target, different than those of the build
+    # Assertion:
+    test -e $NIX_CC_CROSS/nix-support/orig-libc
 
-        # The path to the Glibc binaries such as `crti.o'.
-        glibc_libdir="$(cat $NIX_CC/nix-support/orig-libc)/lib"
+    # Figure out what extra flags to pass to the gcc compilers
+    # being generated to make sure that they use our glibc.
+    extraFlags="$(cat $NIX_CC_CROSS/nix-support/libc-cflags)"
+    extraLDFlags="$(cat $NIX_CC_CROSS/nix-support/libc-ldflags) $(cat $NIX_CC_CROSS/nix-support/libc-ldflags-before)"
 
-    else
-        # Hack: support impure environments.
-        extraFlags="-isystem /usr/include"
-        extraLDFlags="-L/usr/lib64 -L/usr/lib"
-        glibc_libdir="/usr/lib"
-        export NIX_FIXINC_DUMMY=/usr/include
-    fi
+    # The path to the Glibc binaries such as `crti.o'.
+    glibc_dir="$(cat $NIX_CC_CROSS/nix-support/orig-libc)"
+    glibc_libdir="$glibc_dir/lib"
+    glibc_devdir="$(cat $NIX_CC_CROSS/nix-support/orig-libc-dev)"
+    configureFlags="$configureFlags --with-native-system-header-dir=$glibc_devdir/include"
 
-    extraFlags="-I$NIX_FIXINC_DUMMY $extraFlags"
+    # Use *real* header files, otherwise a limits.h is generated
+    # that does not include Glibc's limits.h (notably missing
+    # SSIZE_MAX, which breaks the build).
+    NIX_FIXINC_DUMMY_CROSS="$glibc_devdir/include"
+
+    extraFlags="-I$NIX_FIXINC_DUMMY_CROSS $extraFlags"
     extraLDFlags="-L$glibc_libdir -rpath $glibc_libdir $extraLDFlags"
 
-    # BOOT_CFLAGS defaults to `-g -O2'; since we override it below,
-    # make sure to explictly add them so that files compiled with the
-    # bootstrap compiler are optimized and (optionally) contain
-    # debugging information (info "(gccinstall) Building").
-    if test -n "$dontStrip"; then
-        extraFlags="-O2 -g $extraFlags"
-    else
-        # Don't pass `-g' at all; this saves space while building.
-        extraFlags="-O2 $extraFlags"
-    fi
-
-    EXTRA_FLAGS="$extraFlags"
+    EXTRA_TARGET_CFLAGS="$extraFlags"
     for i in $extraLDFlags; do
-        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,$i"
+      EXTRA_TARGET_LDFLAGS="$EXTRA_TARGET_LDFLAGS -Wl,$i"
     done
+  fi
+fi
 
-    if test -n "$targetConfig"; then
-        # Cross-compiling, we need gcc not to read ./specs in order to build
-        # the g++ compiler (after the specs for the cross-gcc are created).
-        # Having LIBRARY_PATH= makes gcc read the specs from ., and the build
-        # breaks. Having this variable comes from the default.nix code to bring
-        # gcj in.
-        unset LIBRARY_PATH
-        unset CPATH
-    else
-        if test -z "$NIX_CC_CROSS"; then
-            EXTRA_TARGET_CFLAGS="$EXTRA_FLAGS"
-            EXTRA_TARGET_CXXFLAGS="$EXTRA_FLAGS"
-            EXTRA_TARGET_LDFLAGS="$EXTRA_LDFLAGS"
-        else
-            # This the case of cross-building the gcc.
-            # We need special flags for the target, different than those of the build
-            # Assertion:
-            test -e $NIX_CC_CROSS/nix-support/orig-libc
+# CFLAGS_FOR_TARGET are needed for the libstdc++ configure script to find
+# the startfiles.
+# FLAGS_FOR_TARGET are needed for the target libraries to receive the -Bxxx
+# for the startfiles.
+makeFlagsArray+=( \
+  NATIVE_SYSTEM_HEADER_DIR="$NIX_FIXINC_DUMMY" \
+  SYSTEM_HEADER_DIR="$NIX_FIXINC_DUMMY" \
+  CFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
+  CXXFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
+  CFLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
+  CXXFLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
+  FLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
+  LDFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
+  LDFLAGS_FOR_TARGET="$EXTRA_TARGET_LDFLAGS $EXTRA_TARGET_LDFLAGS" \
+  )
 
-            # Figure out what extra flags to pass to the gcc compilers
-            # being generated to make sure that they use our glibc.
-            extraFlags="$(cat $NIX_CC_CROSS/nix-support/libc-cflags)"
-            extraLDFlags="$(cat $NIX_CC_CROSS/nix-support/libc-ldflags) $(cat $NIX_CC_CROSS/nix-support/libc-ldflags-before)"
+if test -z "$targetConfig"; then
+  makeFlagsArray+=( \
+    BOOT_CFLAGS="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
+    BOOT_LDFLAGS="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
+    )
+fi
 
-            # The path to the Glibc binaries such as `crti.o'.
-            glibc_dir="$(cat $NIX_CC_CROSS/nix-support/orig-libc)"
-            glibc_libdir="$glibc_dir/lib"
-            glibc_devdir="$(cat $NIX_CC_CROSS/nix-support/orig-libc-dev)"
-            configureFlags="$configureFlags --with-native-system-header-dir=$glibc_devdir/include"
-
-            # Use *real* header files, otherwise a limits.h is generated
-            # that does not include Glibc's limits.h (notably missing
-            # SSIZE_MAX, which breaks the build).
-            NIX_FIXINC_DUMMY_CROSS="$glibc_devdir/include"
-
-            extraFlags="-I$NIX_FIXINC_DUMMY_CROSS $extraFlags"
-            extraLDFlags="-L$glibc_libdir -rpath $glibc_libdir $extraLDFlags"
-
-            EXTRA_TARGET_CFLAGS="$extraFlags"
-            for i in $extraLDFlags; do
-                EXTRA_TARGET_LDFLAGS="$EXTRA_TARGET_LDFLAGS -Wl,$i"
-            done
-        fi
-    fi
-
-    # CFLAGS_FOR_TARGET are needed for the libstdc++ configure script to find
-    # the startfiles.
-    # FLAGS_FOR_TARGET are needed for the target libraries to receive the -Bxxx
-    # for the startfiles.
-    makeFlagsArray+=( \
-        NATIVE_SYSTEM_HEADER_DIR="$NIX_FIXINC_DUMMY" \
-        SYSTEM_HEADER_DIR="$NIX_FIXINC_DUMMY" \
-        CFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-        CXXFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-        CFLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-        CXXFLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-        FLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-        LDFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-        LDFLAGS_FOR_TARGET="$EXTRA_TARGET_LDFLAGS $EXTRA_TARGET_LDFLAGS" \
-        )
-
-    if test -z "$targetConfig"; then
-        makeFlagsArray+=( \
-            BOOT_CFLAGS="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-            BOOT_LDFLAGS="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-            )
-    fi
-
-    if test -n "$targetConfig" -a "$crossStageStatic" == 1; then
-        # We don't want the gcc build to assume there will be a libc providing
-        # limits.h in this stagae
-        makeFlagsArray+=( \
-            LIMITS_H_TEST=false \
-            )
-    else
-        makeFlagsArray+=( \
-            LIMITS_H_TEST=true \
-            )
-    fi
+if test -n "$targetConfig" -a "$crossStageStatic" == 1; then
+  # We don't want the gcc build to assume there will be a libc providing
+  # limits.h in this stagae
+  makeFlagsArray+=( \
+    LIMITS_H_TEST=false \
+    )
+else
+  makeFlagsArray+=( \
+    LIMITS_H_TEST=true \
+  )
 fi
 
 if test -n "$targetConfig"; then
-    # The host strip will destroy some important details of the objects
-    dontStrip=1
+  # The host strip will destroy some important details of the objects
+  dontStrip=1
 fi
 
 providedPreConfigure="$preConfigure";
