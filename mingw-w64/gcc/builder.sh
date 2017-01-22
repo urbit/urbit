@@ -1,8 +1,5 @@
 source $stdenv/setup
 
-export NIX_FIXINC_DUMMY=$NIX_BUILD_TOP/dummy
-mkdir $NIX_FIXINC_DUMMY
-
 EXTRA_LDFLAGS="-Wl,-rpath,$lib/lib"
 EXTRA_FLAGS="-O2 -g"
 
@@ -22,43 +19,14 @@ makeFlagsArray+=( \
 
 providedPreConfigure="$preConfigure";
 preConfigure() {
-    if test -n "$newlibSrc"; then
-        tar xvf "$newlibSrc" -C ..
-        ln -s ../newlib-*/newlib newlib
-        # Patch to get armvt5el working:
-        sed -i -e 's/ arm)/ arm*)/' newlib/configure.host
-    fi
-
-    # Bug - they packaged zlib
-    if test -d "zlib"; then
-        # This breaks the build without-headers, which should build only
-        # the target libgcc as target libraries.
-        # See 'configure:5370'
-        rm -Rf zlib
-    fi
-
-    if test -f "$NIX_CC/nix-support/orig-libc"; then
-        # Patch the configure script so it finds glibc headers.  It's
-        # important for example in order not to get libssp built,
-        # because its functionality is in glibc already.
-        sed -i \
-            -e "s,glibc_header_dir=/usr/include,glibc_header_dir=$libc_dev/include", \
-            gcc/configure
-    fi
-
-    # Eval the preConfigure script from nix expression.
-    eval "$providedPreConfigure"
-
-    # Perform the build in a different directory.
-    mkdir ../build
-    cd ../build
-    configureScript=../$sourceRoot/configure
+  mkdir ../build
+  cd ../build
+  configureScript=../$sourceRoot/configure
 }
 
-
 postConfigure() {
-    # Don't store the configure flags in the resulting executables.
-    sed -e '/TOPLEVEL_CONFIGURE_ARGUMENTS=/d' -i Makefile
+  # Don't store the configure flags in the resulting executables.
+  sed -e '/TOPLEVEL_CONFIGURE_ARGUMENTS=/d' -i Makefile
 }
 
 postInstall() {
