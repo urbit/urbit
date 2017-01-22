@@ -40,14 +40,7 @@ makeFlagsArray+=( \
   LDFLAGS_FOR_TARGET="$EXTRA_TARGET_LDFLAGS $EXTRA_TARGET_LDFLAGS" \
   )
 
-if test -z "$targetConfig"; then
-  makeFlagsArray+=( \
-    BOOT_CFLAGS="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-    BOOT_LDFLAGS="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-    )
-fi
-
-if test -n "$targetConfig" -a "$crossStageStatic" == 1; then
+if test "$stage" == 1; then
   # We don't want the gcc build to assume there will be a libc providing
   # limits.h in this stagae
   makeFlagsArray+=( \
@@ -57,11 +50,6 @@ else
   makeFlagsArray+=( \
     LIMITS_H_TEST=true \
   )
-fi
-
-if test -n "$targetConfig"; then
-  # The host strip will destroy some important details of the objects
-  dontStrip=1
 fi
 
 providedPreConfigure="$preConfigure";
@@ -170,9 +158,6 @@ postInstall() {
     paxmark r $out/libexec/gcc/*/*/{cc1,cc1plus}
 
     eval "$postInstallGhdl"
-
-    # Two identical man pages are shipped (moving and compressing is done later)
-    ln -sf gcc.1 "$out"/share/man/man1/g++.1
 }
 
 genericBuild
