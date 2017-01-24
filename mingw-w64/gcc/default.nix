@@ -1,5 +1,7 @@
 { nixpkgs, arch, stage ? 2, binutils, libc }:
 
+# TODO: why is GCC providing a fixed limits.h?
+
 let
   version = "5.4.0";
   sha256 = "0fihlcy5hnksdxk0sn6bvgnyq8gfrgs8m794b1jxwd1dxinzg3b0";
@@ -11,7 +13,13 @@ let
 in
 
 stdenv.mkDerivation rec {
-  name = "gcc-${version}-${arch}-w64-mingw32${stageName}";
+  name = "gcc-${version}-${target}${stageName}";
+
+  inherit version;
+
+  target = "${arch}-w64-mingw32";
+
+  targetConfig = "${arch}-w64-mingw32";  # TODO: remove
 
   builder = ./builder.sh;
 
@@ -83,8 +91,6 @@ stdenv.mkDerivation rec {
     "--disable-libssp " +
     "--disable-win32-registry " +
     "--disable-bootstrap";
-
-  targetConfig = "${arch}-w64-mingw32";
 
   makeFlags =
     if stage == 1 then
