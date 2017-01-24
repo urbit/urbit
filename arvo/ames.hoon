@@ -219,8 +219,8 @@
         0w0                           ::   74, ~sup, Henry Ault
         0w0                           ::   75, ~sem, Michael Livshin
         0w0                           ::   76, ~wyn, Anton Dyudin
-        0w0                           ::   77, ~rec, Anton Dyudin
-        0w0                           ::   78, ~meg, Anton Dyudin
+        0w0                           ::   77, ~rec, urbit.org
+        0w0                           ::   78, ~meg, Tlon
         0w2L.tavpW.Lk4R-.elm7E.4KEqZ  ::   79, ~net, Anthony Martinez (oldkey)
         0w0                           ::   80, ~sec, Curtis Yarvin
         0w0                           ::   81, ~mul, Curtis Yarvin
@@ -277,7 +277,7 @@
         0w0                           ::  132, ~tyn, urbit.org
         0w0                           ::  133, ~seg, urbit.org
         0w0                           ::  134, ~lyx, urbit.org
-        0w0                           ::  135, ~pun, urbit.org
+        0w0                           ::  135, ~pun, Anton Dyudin
         0w0                           ::  136, ~res, urbit.org
         0w0                           ::  137, ~red, Alex Kravets
         0w3J.15iJA.0pbNk.mZXyh.A~uKb  ::  138, ~fun, Aaron Beckerman (oldkey)
@@ -331,7 +331,7 @@
         0w0                           ::  186, ~pex, Tlon
         0w0                           ::  187, ~dyt, Tlon
         0w0                           ::  188, ~byt, Tlon
-        0w0                           ::  189, ~typ, Tlon
+        0w0                           ::  189, ~typ, Anton Dyudin
         0w0                           ::  190, ~lev, Tlon
         0w0                           ::  191, ~myl, Tlon
         0w0                           ::  192, ~wed, Tlon
