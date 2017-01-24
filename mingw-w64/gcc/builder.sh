@@ -30,7 +30,7 @@ postConfigure() {
 
 postInstall() {
   # Remove "install-tools" so we don't have a reference to bash.
-  rm -r "$out/libexec/gcc/$target/$version/install-tools/
+  rm -r "$out/libexec/gcc/$target/$version/install-tools/"
 
     # Get rid of some "fixed" header files
     # rm -rfv $out/lib/gcc/*/*/include-fixed/{root,linux}
