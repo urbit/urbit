@@ -570,11 +570,11 @@
         u3z(vat);
         return ret;
       }
-      
+
       case c3__tune: p_gen = u3t(gen);
       _mull_used();
       {
-        return u3nc(u3qf_face(p_gen, sut), u3qf_face(p_gen, sut));
+        return u3nc(u3qf_face(p_gen, sut), u3qf_face(p_gen, dox));
       }
 
       case c3__burn: p_gen = u3t(gen);
