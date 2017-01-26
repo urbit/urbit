@@ -1,21 +1,5 @@
 source $stdenv/setup
 
-EXTRA_FLAGS="-O2 -g"
-
-# CFLAGS_FOR_TARGET are needed for the libstdc++ configure script to find
-# the startfiles.
-# FLAGS_FOR_TARGET are needed for the target libraries to receive the -Bxxx
-# for the startfiles.
-makeFlagsArray+=( \
-  CFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-  CXXFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-  CFLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-  CXXFLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-  FLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
-  LDFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
-  LDFLAGS_FOR_TARGET="$EXTRA_TARGET_LDFLAGS $EXTRA_TARGET_LDFLAGS" \
-  )
-
 providedPreConfigure="$preConfigure";
 preConfigure() {
   mkdir ../build
