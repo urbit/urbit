@@ -104,8 +104,8 @@ stdenv.mkDerivation rec {
     else
       ["install-strip"];
 
-  EXTRA_TARGET_CFLAGS = [ "-idirafter ${libc}/include" ]
-      ++ lib.optionals (stage > 1) ["-B${libc}/lib"];
+  #EXTRA_TARGET_CFLAGS = [ "-idirafter ${libc}/include" ]
+  #    ++ lib.optionals (stage > 1) ["-B${libc}/lib"];
 
   #EXTRA_TARGET_LDFLAGS =
   #  ["-Wl,-L${libc}/lib"]
