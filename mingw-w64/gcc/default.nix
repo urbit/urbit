@@ -39,18 +39,9 @@ stdenv.mkDerivation rec {
   setOutputFlags = false;
   NIX_NO_SELF_RPATH = true;
 
-  noSysDirs = true;
-
-  langJava = false;
-  crossStageStatic = (stage == 1);
-  libcCross = libc;
-  crossMingw = true;
-
   buildInputs = [
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
-
-  libc_dev = nixpkgs.stdenv.cc.libc_dev;  # TODO: this is dumb, get rid of this
 
   dontDisableStatic = true;
 
@@ -105,12 +96,10 @@ stdenv.mkDerivation rec {
       ["install-strip"];
 
   enableParallelBuilding = true;
-  enableMultilib = false;
 
   hardeningDisable = [ "format" ];  # TODO: remove this line some day and patch GCC
 
   dontStrip = true;
-  NIX_STRIP_DEBUG = 0;
 
   meta = {
     homepage = http://gcc.gnu.org/;
