@@ -34,8 +34,6 @@ stdenv.mkDerivation rec {
     ./cppdefault.patch
   ];
 
-  setOutputFlags = false;
-
   buildInputs = [
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
