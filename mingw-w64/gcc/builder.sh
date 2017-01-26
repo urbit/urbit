@@ -14,6 +14,7 @@ makeFlagsArray+=( \
   FLAGS_FOR_TARGET="$EXTRA_TARGET_CFLAGS $EXTRA_TARGET_LDFLAGS" \
   LDFLAGS_FOR_BUILD="$EXTRA_FLAGS $EXTRA_LDFLAGS" \
   LDFLAGS_FOR_TARGET="$EXTRA_TARGET_LDFLAGS $EXTRA_TARGET_LDFLAGS" \
+  TOPLEVEL_CONFIGURE_ARGUMENTS=
   )
 
 providedPreConfigure="$preConfigure";
@@ -21,11 +22,6 @@ preConfigure() {
   mkdir ../build
   cd ../build
   configureScript=../$sourceRoot/configure
-}
-
-postConfigure() {
-  # Don't store the configure flags in the resulting executables.
-  sed -e '/TOPLEVEL_CONFIGURE_ARGUMENTS=/d' -i Makefile
 }
 
 postInstall() {
