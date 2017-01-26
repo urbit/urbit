@@ -104,24 +104,20 @@ stdenv.mkDerivation rec {
     else
       ["install-strip"];
 
-  AR = "ar";
-  LD = "ld";
-  CC = "gcc";
-
   EXTRA_TARGET_CFLAGS = [ "-idirafter ${libc}/include" ]
       ++ lib.optionals (stage > 1) ["-B${libc}/lib"];
 
-  EXTRA_TARGET_LDFLAGS =
-    ["-Wl,-L${libc}/lib"]
-    ++
-    (
-      if stage == 1 then
-        ["-B${libc}/lib"]
-      else
-        ["-Wl,-rpath,${libc}/lib" "-Wl,-rpath-link,${libc}/lib"]
-    )
-    # TODO: add libpthread here?
-    ;
+  #EXTRA_TARGET_LDFLAGS =
+  #  ["-Wl,-L${libc}/lib"]
+  #  ++
+  #  (
+  #    if stage == 1 then
+  #      ["-B${libc}/lib"]
+  #    else
+  #      ["-Wl,-rpath,${libc}/lib" "-Wl,-rpath-link,${libc}/lib"]
+  #  )
+  #  # TODO: add libpthread here?
+  #  ;
 
   enableParallelBuilding = true;
   enableMultilib = false;
