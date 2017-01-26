@@ -3,11 +3,10 @@
 # TODO: why is GCC providing a fixed limits.h?
 
 let
-  version = "5.4.0";
-  sha256 = "0fihlcy5hnksdxk0sn6bvgnyq8gfrgs8m794b1jxwd1dxinzg3b0";
   isl = nixpkgs.isl_0_14;
   inherit (nixpkgs) stdenv lib fetchurl;
   inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
+
   stageName = if stage == 1 then "-stage1"
               else assert stage == 2; "";
 in
@@ -15,16 +14,16 @@ in
 stdenv.mkDerivation rec {
   name = "gcc-${version}-${target}${stageName}";
 
-  inherit version;
-
   target = "${arch}-w64-mingw32";
 
-  builder = ./builder.sh;
+  version = "5.4.0";
 
   src = fetchurl {
     url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
-    inherit sha256;
+    sha256 = "0fihlcy5hnksdxk0sn6bvgnyq8gfrgs8m794b1jxwd1dxinzg3b0";
   };
+
+  builder = ./builder.sh;
 
   patches = [
     ./format-security.patch
@@ -37,8 +36,6 @@ stdenv.mkDerivation rec {
   buildInputs = [
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
-
-  dontDisableStatic = true;
 
   configureFlags =
     "--target=${arch}-w64-mingw32 " +
@@ -94,11 +91,12 @@ stdenv.mkDerivation rec {
 
   hardeningDisable = [ "format" ];  # TODO: remove this line some day and patch GCC
 
+  dontDisableStatic = true;
+
   dontStrip = true;
 
   meta = {
     homepage = http://gcc.gnu.org/;
     license = lib.licenses.gpl3Plus;
   };
-
 }
