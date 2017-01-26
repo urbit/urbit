@@ -19,6 +19,8 @@ stdenv.mkDerivation rec {
 
   target = "${arch}-w64-mingw32";
 
+  targetConfig = "${arch}-w64-mingw32";  # TODO: remove
+
   builder = ./builder.sh;
 
   src = fetchurl {
@@ -34,9 +36,14 @@ stdenv.mkDerivation rec {
     ./cppdefault.patch
   ];
 
+  setOutputFlags = false;
+  NIX_NO_SELF_RPATH = true;
+
   buildInputs = [
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
+
+  dontDisableStatic = true;
 
   configureFlags =
     "--target=${arch}-w64-mingw32 " +
