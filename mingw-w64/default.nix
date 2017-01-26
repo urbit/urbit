@@ -2,14 +2,16 @@
 let
   host = "${arch}-w64-mingw32";
 
+  os = "windows";
+
   binutils = import ./binutils { inherit nixpkgs arch; };
 
   mingw-w64 = rec {
     name = "mingw-w64-${version}";
-    version = "4.0.6";
+    version = "5.0.0";
     src = nixpkgs.fetchurl {
       url = "mirror://sourceforge/mingw-w64/mingw-w64-v${version}.tar.bz2";
-      sha256 = "0p01vm5kx1ixc08402z94g1alip4vx66gjpvyi9maqyqn2a76h0c";
+      sha256 = "023d14dnd5638cqpz1vkmr67731rzk99xsgbr0al4az276kqq7g4";
     };
   };
 
@@ -31,7 +33,7 @@ let
     src = mingw-w64.src;
     buildInputs = [ binutils gcc_stage_1 ];
     preConfigure = "export CC=;";   # The stdenv sets CC=gcc and mingw-w64-crt tries to use that.
-    configureFlags = "--host=${arch}-w64-mingw32";
+    configureFlags = "--host=${host}";
 
     # For some reason, GCC expects a "mingw" directory in the sysroot when
     # looking for libraries (but not headers).
@@ -44,15 +46,25 @@ let
     inherit nixpkgs arch binutils;
   };
 
-  cmake_system_name = "Windows";
-
   cmake_toolchain = import ../cmake_toolchain {
-    inherit nixpkgs host cmake_system_name;
+    cmake_system_name = "Windows";
+    inherit nixpkgs host;
   };
 
-in {
-  inherit host arch;
-  inherit binutils nixpkgs;
-  inherit mingw-w64 mingw-w64_headers mingw-w64_crt_and_headers gcc_stage_1 gcc;
-  inherit cmake_system_name cmake_toolchain;
+in
+{
+  # Target info
+  inherit host arch os;
+
+  # Toolchain
+  inherit gcc binutils mingw-w64_crt_and_headers;
+
+  # CMake support
+  inherit cmake_toolchain;
+
+  # nixpkgs: a wide variety of programs and build tools
+  inherit nixpkgs;
+
+  # Expressions used to bootstrap the toolchain, not normally needed.
+  inherit mingw-w64 mingw-w64_headers gcc_stage_1;
 }
