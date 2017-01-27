@@ -1,6 +1,0 @@
-Fixes some errors like this:
-
-error: format not a string literal and no format arguments [-Werror=format-security]
-cc1plus: some warnings being treated as errors
-
-I am not sure why I need these patches while the GCC built by nixpkgs does not.

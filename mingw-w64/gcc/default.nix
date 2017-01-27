@@ -16,17 +16,16 @@ stdenv.mkDerivation rec {
 
   target = "${arch}-w64-mingw32";
 
-  version = "5.4.0";
+  version = "6.3.0";
 
   src = fetchurl {
     url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
-    sha256 = "0fihlcy5hnksdxk0sn6bvgnyq8gfrgs8m794b1jxwd1dxinzg3b0";
+    sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
   };
 
   builder = ./builder.sh;
 
   patches = [
-    ./format-security.patch
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
     ./no-sys-dirs.patch
@@ -89,7 +88,8 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
-  hardeningDisable = [ "format" ];  # TODO: remove this line some day and patch GCC
+  # TODO: some day submit patches to GCC, remove this line
+  hardeningDisable = [ "format" ];
 
   dontDisableStatic = true;
 
