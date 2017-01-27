@@ -34,6 +34,7 @@ let
     buildInputs = [ binutils gcc_stage_1 ];
     preConfigure = "export CC=;";   # The stdenv sets CC=gcc and mingw-w64-crt tries to use that.
     configureFlags = "--host=${host}";
+    postInstall = "ln -s $out $out/mingw";
     dontStrip = true;
   };
 

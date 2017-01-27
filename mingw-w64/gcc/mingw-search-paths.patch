@@ -11,7 +11,7 @@ This way, we don't need to make a "mingw" symbolic link.
 -  # however, use a symlink named 'mingw' in ${prefix} .
 -    FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L${prefix}/${target}/lib -L${prefix}/mingw/lib -isystem ${prefix}/${target}/include -isystem ${prefix}/mingw/include'
 +  # MinGW-w64 does not use newlib, nor does it use winsup.
-+    FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L${prefix}/lib -isystem ${prefix}/include'
++  #  FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L${prefix}/${target}/lib -L${prefix}/lib -isystem ${prefix}/${target}/include -isystem ${prefix}/include'
      ;;
    *-mingw*)
    # MinGW can't be handled as Cygwin above since it does not use newlib.
