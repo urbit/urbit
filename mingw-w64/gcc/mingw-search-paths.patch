@@ -1,8 +1,8 @@
 Make GCC look in the correct directories for include headers and libraries.
 This way, we don't need to make a "mingw" symbolic link.
 
---- gcc-6.3.0-patched/configure
-+++ gcc-6.3.0/configure
+--- gcc-6.3.0/configure
++++ gcc-6.3.0-patched/configure
 @@ -7617,9 +7617,8 @@
  
  case "$target" in
