@@ -1,0 +1,17 @@
+Make GCC look in the correct directories for include headers and libraries.
+This way, we don't need to make a "mingw" symbolic link.
+
+--- gcc-6.3.0-patched/configure
++++ gcc-6.3.0/configure
+@@ -7617,9 +7617,8 @@
+ 
+ case "$target" in
+   x86_64-*mingw* | *-w64-mingw*)
+-  # MinGW-w64 does not use newlib, nor does it use winsup. It may,
+-  # however, use a symlink named 'mingw' in ${prefix} .
+-    FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L${prefix}/${target}/lib -L${prefix}/mingw/lib -isystem ${prefix}/${target}/include -isystem ${prefix}/mingw/include'
++  # MinGW-w64 does not use newlib, nor does it use winsup.
++    FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L${prefix}/lib -isystem ${prefix}/include'
+     ;;
+   *-mingw*)
+   # MinGW can't be handled as Cygwin above since it does not use newlib.

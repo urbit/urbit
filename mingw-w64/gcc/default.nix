@@ -26,6 +26,7 @@ stdenv.mkDerivation rec {
   builder = ./builder.sh;
 
   patches = [
+    ./mingw-search-paths.patch
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
     ./no-sys-dirs.patch
