@@ -29,7 +29,7 @@ let
   };
 
   mingw-w64_crt_and_headers = nixpkgs.stdenv.mkDerivation {
-    name = mingw-w64.name;
+    name = "${mingw-w64.name}-${host}";
     src = mingw-w64.src;
     buildInputs = [ binutils gcc_stage_1 ];
     preConfigure = "export CC=;";   # The stdenv sets CC=gcc and mingw-w64-crt tries to use that.
