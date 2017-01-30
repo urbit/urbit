@@ -18,5 +18,9 @@ rec {
   p-load = import ./pkgs/p-load {
     inherit crossenv libusbp;
   };
+
+  qt58 = import ./pkgs/qt58 {
+    inherit crossenv;
+  };
 };
 in pkgs
