@@ -15,6 +15,8 @@ let
 
     inherit src;
 
+    inherit (crossenv) host;
+
     buildInputs = [ crossenv.gcc crossenv.binutils ];
 
     builder = ./builder.sh;

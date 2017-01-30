@@ -8,5 +8,8 @@ cd build
 ../qt-everywhere-opensource-src-$version/configure \
   -opensource \
   -confirm-license \
-  -release \
-  -nomake examples
+  -xplatform win32-g++ \
+  -device-option CROSS_COMPILE=${arch}- \
+  -nomake examples \
+  -release
+
