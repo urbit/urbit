@@ -395,13 +395,18 @@
 ::
 ::::  arvo interface
   ::
-=+  pit=`vase`!>(.)                                     ::
+=+  pit=`vase`!>(.)                                     ::  
 =+  vil=(viol p.pit)                                    ::  cached reflexives
-=|  $:  lac/?                                           ::  not verbose
+=|  $=  rep                                             ::  reptile brain
+    $:  orb/@p                                          ::  ship
+        key/@pG                                         ::  64-bit key
+        fat/(map path (pair mark noun))                 ::  boot files
+    ==                                                  ::
+=|                                                      ::  mammal brain
+    $:  eny/@                                           ::  512-bit entropy
+        lac/?                                           ::  not verbose
         bod/(unit vase)                                 ::  standard library
-        urb/(unit ship)                                 ::  identity
-        eny/@                                           ::  entropy
-        niz/(pair worm (list {p/@tas q/vase}))          ::  modules
+        niz/(pair worm (list {p/@tas q/vase}))          ::  vane system
     ==                                                  ::
 =<  |%
     ++  come  |=  {@ (list ovum) pone}                  ::  11
@@ -427,8 +432,6 @@
                 $(ova t.ova, lac !lac)
               ?:  ?=($veer -.q.i.ova)
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
-              ?:  ?=($vega -.q.i.ova)
-                (fall (vega now t.ova (path +.q.i.ova)) [~ +>.^$])
               ?:  ?=($velo -.q.i.ova)
                 (fall (velo now t.ova ({@ @} +.q.i.ova)) [~ +>.^$])
               ?:  ?=(?($init $veal) -.q.i.ova)
@@ -456,8 +459,7 @@
 ++  boot                                                ::  set singlehome
   |=  {who/@p}
   ^+  +>
-  ?:  &(?=(^ urb) (lth u.urb who))  +>
-  +>(urb `who, bod ?~(bod ~ bod(-.q.u who)))
+  +>(orb.rep who, bod ?~(bod ~ bod(-.q.u who)))
 ::
 ++  come                                                ::  load incompatible
   |=  {yen/@ ova/(list ovum) nyf/pone}
@@ -508,27 +510,6 @@
   =^  zef  niz
     (~(hurl (is vil eny mast niz) now) lac ovo)
   [zef +>.$]
-::
-++  vega                                                ::  reboot kernel
-  |=  {now/@da ova/(list ovum) hap/path}
-  ^-  (unit {p/(list ovum) q/*})
-  =-  ?:(?=($| -.res) ((slog p.res) ~) `p.res)
-  ^=  res  %-  mule  |.
-  =+  pax=(weld hap `path`[%hoon ~])
-  ~&  [%vega-start hap]
-  =+  src=((hard @t) (need (peek now cx+pax)))
-  =+  gen=(rain hap src)
-  ~&  %vega-parsed
-  =+  ken=.*(0 q:(~(mint ut %noun) %noun gen))
-  =+  ^=  nex
-      =+  gat=.*(ken .*(ken [0 87]))
-      (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
-  ~&  [%vega-compiled hoon nex]
-  ?>  (lte nex hoon)
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon) 86 11)]))
-  =+  sam=[eny ova q.niz]
-  =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
 ::
 ++  velo                                                ::  new full reboot
   |=  $:  ::  now: current date
@@ -624,8 +605,7 @@
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    =+  orb=`@p`?~(urb 0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff u.urb)
-    +>.^$(bod `[[%cell [%face %our [%atom %p ~]] p.vax] [orb q.vax]])
+    +>.^$(bod `[[%cell [%face %our [%atom %p ~]] p.vax] [orb.rep q.vax]])
   %_    +>.^$
       q.niz
     |-  ^+  q.niz
