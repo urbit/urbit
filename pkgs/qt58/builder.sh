@@ -17,4 +17,9 @@ cd build
   -nomake examples \
   -release
 
+# TODO: get it to use our zlib instead of compiling its own copy
+# TODO: get it to find angle above
+
+# TODO: make
+
 cd ..
