@@ -11,7 +11,7 @@ https://urbit.org/docs/using/ instead.
 - [GNU Make](https://www.gnu.org/software/make/)
 - [GMP](https://gmplib.org)
 - [CMake](https://cmake.org)
-- automake, autoconf, and libtool
+- [libuv](https://libuv.org)
 - [OpenSSL](https://www.openssl.org)
 - [libsigsegv](https://www.gnu.org/software/libsigsegv/)
 - [libcurl](https://curl.haxx.se/libcurl/)
