@@ -19,8 +19,12 @@ rec {
     inherit crossenv libusbp;
   };
 
-  qt58 = import ./pkgs/qt58 {
+  angle = import ./pkgs/angle {
     inherit crossenv;
+  };
+
+  qt58 = import ./pkgs/qt58 {
+    inherit crossenv angle;
   };
 };
 in pkgs
