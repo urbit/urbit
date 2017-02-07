@@ -445,7 +445,7 @@ _cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
   u3_noun htr = u3nt(sas_w, mes, uct);
   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul);
 
-  u3v_plan(pox, u3nt(c3__they, num_l, htr));
+  u3_pier_plan(pox, u3nt(c3__they, num_l, htr));
 }
 
 /* _cttp_httr_cres(): deliver valid response.
@@ -953,7 +953,6 @@ _cttp_ccon_kick_connect(u3_ccon* coc_u)
 static void
 _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
-  u3_lo_open();
   {
     _u3_write_t* ruq_u = (void *)wri_u;
 
@@ -963,7 +962,6 @@ _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
     free(ruq_u->buf_y);
     free(ruq_u);
   }
-  u3_lo_shut(c3n);
 }
 
 /* _cttp_ccon_kick_write_cryp()
@@ -1192,7 +1190,6 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
 {
   u3_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
-  u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
       // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
@@ -1217,7 +1214,6 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _cttp_ccon_read_clyr_cb()
@@ -1240,7 +1236,6 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
 {
   u3_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)tcp_u);
 
-  u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
       // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
@@ -1256,7 +1251,6 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _cttp_ccon_kick_read_clyr(): start reading on insecure socket.
@@ -1638,6 +1632,7 @@ u3_cttp_io_init()
   SSL_load_error_strings();
 
   u3_Host.ssl_u = SSL_CTX_new(TLSv1_client_method());
+
   SSL_CTX_set_options(u3S, SSL_OP_NO_SSLv2);
   SSL_CTX_set_verify(u3S, SSL_VERIFY_PEER, NULL);
   SSL_CTX_set_default_verify_paths(u3S);
@@ -1676,5 +1671,5 @@ u3_cttp_io_poll(void)
 void
 u3_cttp_io_exit(void)
 {
-    SSL_CTX_free(u3S);
+  SSL_CTX_free(u3S);
 }

@@ -49,13 +49,11 @@ _behn_time_cb(uv_timer_t* tim_u)
     teh_u->run_w++;
   }
 
-  u3_lo_open();
   {
-    u3v_plan
+    u3_pier_plan
       (u3nt(u3_blip, c3__behn, u3_nul),
        u3nc(c3__wake, u3_nul));
   }
-  u3_lo_shut(c3n);
 }
 
 /* u3_behn_io_poll(): update behn IO state.

@@ -69,7 +69,7 @@ _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 /* _reck_kick_term(): apply terminal outputs.
 */
 static u3_noun
-_reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
+_reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
 {
   u3_noun p_fav;
 
@@ -92,7 +92,7 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__logo:
     {
-      u3_Host.liv = c3n;
+      u3_pier_exit();
       u3_Host.xit_i = u3t(fav);
 
       u3z(pox); u3z(fav); return c3y;
@@ -122,7 +122,8 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 /* _reck_kick_http(): apply http effects.
 */
 static u3_noun
-_reck_kick_http(u3_noun  pox,
+_reck_kick_http(u3_pier* pir_u, 
+                u3_noun  pox,
                 c3_l     sev_l,
                 c3_l     coq_l,
                 c3_l     seq_l,
@@ -157,7 +158,7 @@ _reck_kick_http(u3_noun  pox,
 /* _reck_kick_sync(): apply sync outputs.
 */
 static u3_noun
-_reck_kick_sync(u3_noun pox, u3_noun fav)
+_reck_kick_sync(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 {
   switch ( u3h(fav) ) {
     default: break;
@@ -184,7 +185,7 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
 }
 
 static u3_noun
-_reck_kick_newt(u3_noun pox, u3_noun fav)
+_reck_kick_newt(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 {
   switch ( u3h(fav) ) {
     default: break;
@@ -192,7 +193,7 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
       u3_noun lan = u3k(u3h(u3t(fav)));
       u3_noun pac = u3k(u3t(u3t(fav)));
 
-      u3_ames_ef_send(lan, pac);
+      u3_ames_ef_send(pir_u, lan, pac);
       u3z(pox); u3z(fav); return c3y;
     } break;
   }
@@ -202,7 +203,7 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
 /* _reck_kick_ames(): apply packet network outputs.
 */
 static u3_noun
-_reck_kick_ames(u3_noun pox, u3_noun fav)
+_reck_kick_ames(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 {
   u3_noun p_fav;
 
@@ -222,7 +223,7 @@ _reck_kick_ames(u3_noun pox, u3_noun fav)
 /* _reck_kick_spec(): apply an effect, by path.
 */
 static u3_noun
-_reck_kick_spec(u3_noun pox, u3_noun fav)
+_reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 {
   u3_noun i_pox, t_pox;
   u3_noun p_fav;
@@ -275,17 +276,17 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
             }
           }
         }
-        return _reck_kick_http(pox, sev_l, coq_l, seq_l, fav);
+        return _reck_kick_http(pir_u, pox, sev_l, coq_l, seq_l, fav);
       } break;
 
       case c3__clay:
       case c3__boat:
       case c3__sync: {
-        return _reck_kick_sync(pox, fav);
+        return _reck_kick_sync(pir_u, pox, fav);
       } break;
 
       case c3__newt: {
-        return _reck_kick_newt(pox, fav);
+        return _reck_kick_newt(pir_u, pox, fav);
       } break;
 
       case c3__ames: {
@@ -293,7 +294,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
           u3z(pox); u3z(fav); return c3n;
         }
         else {
-          return _reck_kick_ames(pox, fav);
+          return _reck_kick_ames(pir_u, pox, fav);
         }
       } break;
 
@@ -317,7 +318,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
           uL(fprintf(uH, "term: bad tire\n"));
           u3z(pox); u3z(fav); return c3n;
         } else {
-          return _reck_kick_term(pox, tid_l, fav);
+          return _reck_kick_term(pir_u, pox, tid_l, fav);
         }
       } break;
     }
@@ -329,7 +330,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
 /* _reck_kick_norm(): non path-specific effect handling.
 */
 static u3_noun
-_reck_kick_norm(u3_noun pox, u3_noun fav)
+_reck_kick_norm(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 {
   if ( c3n == u3du(fav) ) {
     u3z(pox); u3z(fav); return c3n;
@@ -349,7 +350,7 @@ _reck_kick_norm(u3_noun pox, u3_noun fav)
     case c3__exit:
     {
       uL(fprintf(uH, "<<<goodbye>>>\n"));
-      u3_lo_bail();
+      u3_pier_exit();
 
       u3z(pox); u3z(fav); return c3y;
     } break;
@@ -361,10 +362,10 @@ _reck_kick_norm(u3_noun pox, u3_noun fav)
 /* u3_reck_kick(): handle effect.
 */
 void
-u3_reck_kick(u3_noun ovo)
+u3_reck_kick(u3_pier* pir_u, u3_noun ovo)
 {
-  if ( (c3n == _reck_kick_spec(u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
-       (c3n == _reck_kick_norm(u3k(u3h(ovo)), u3k(u3t(ovo)))) )
+  if ( (c3n == _reck_kick_spec(pir_u, u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
+       (c3n == _reck_kick_norm(pir_u, u3k(u3h(ovo)), u3k(u3t(ovo)))) )
   {
 #if 0
     if ( (c3__warn != u3h(u3t(ovo))) &&
@@ -379,8 +380,9 @@ u3_reck_kick(u3_noun ovo)
          (c3__init == u3h(u3t(ovo))) )
 #endif
     {
-      u3v_plan(u3nt(u3_blip, c3__term, u3_nul),
-                 u3nc(c3__flog, u3k(u3t(ovo))));
+      u3_pier_work(pir_u, 
+                   u3nt(u3_blip, c3__term, u3_nul),
+                   u3nc(c3__flog, u3k(u3t(ovo))));
     }
     else {
       u3_noun tox = u3do("spat", u3k(u3h(ovo)));

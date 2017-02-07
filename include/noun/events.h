@@ -73,6 +73,11 @@
       c3_o
       u3e_live(c3_o nuu_o, c3_c* dir_c);
 
+    /* u3e_live_new(): start the persistence system.
+    */
+      c3_o
+      u3e_live_new(c3_c* dir_c);
+
     /* u3e_dirty(): count dirty pages.
     */
       c3_w

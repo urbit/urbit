@@ -584,7 +584,6 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
 {
   u3_hcon* hon_u = (u3_hcon*)(void*) tcp_u;
 
-  u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
       _http_conn_dead(hon_u);      
@@ -606,7 +605,6 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
       free(buf_u->base);
     }
   }
-  u3_lo_shut(c3y);
 }
 
 /* _http_conn_new(): create http connection.
@@ -893,7 +891,7 @@ _http_request(u3_hreq* req_u)
         c3__chis :
       c3__this;
     
-    u3v_plan(pox,
+    u3_pier_plan(pox,
                u3nq(typ,
                     req_u->hon_u->htp_u->sec,
                     u3nc(c3y, u3i_words(1, &req_u->ipf_w)),
@@ -910,7 +908,7 @@ _http_request_dead(u3_hreq* req_u)
                                   req_u->hon_u->coq_l,
                                   req_u->seq_l);
 
-  u3v_plan(pox, u3nc(c3__thud, u3_nul));
+  u3_pier_plan(pox, u3nc(c3__thud, u3_nul));
 }
 
 /* _http_flush(): transmit any ready data.
@@ -1001,7 +999,7 @@ u3_http_ef_bake(void)
 {
   u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
 
-  u3v_plan(pax, u3nc(c3__born, u3_nul));
+  u3_pier_plan(pax, u3nc(c3__born, u3_nul));
 }
 
 /* u3_http_ef_thou(): send %thou effect (incoming response) to http.

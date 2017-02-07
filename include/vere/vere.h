@@ -199,6 +199,78 @@
         c3_y             hun_y[0];          //  data
       } u3_apac;
 
+    /* u3_poke: poke callback function.
+    */
+      typedef void (*u3_poke)(void*, u3_noun);
+
+    /* u3_bail: bailout callback function.
+    */
+      typedef void (*u3_bail)(void*, const c3_c* err_c);
+
+    /* u3_done: completion function.
+    */
+      typedef void (*u3_done)(void *);
+
+    /* u3_mess: blob message in process.
+    */
+      typedef struct _u3_mess {
+        c3_d             len_d;             //  blob length in bytes
+        c3_d             has_d;             //  currently held             
+        struct _u3_meat* meq_u;             //  exit of message queue
+        struct _u3_meat* qem_u;             //  entry of message queue
+      } u3_mess;
+
+    /* u3_meat: blob message block.
+    */
+      typedef struct _u3_meat {
+        struct _u3_meat* nex_u;
+        c3_d             len_d;
+        c3_y             hun_y[0];
+      } u3_meat;
+
+    /* u3_moat: inbound message stream.
+    */
+      typedef struct _u3_moat {
+        uv_pipe_t        pyp_u;             //  input stream
+        void*            vod_p;             //  callback pointer
+        u3_poke          pok_f;             //  action function
+        u3_bail          bal_f;             //  error response function
+        struct _u3_mess* mes_u;             //  message in progress
+        c3_d             len_d;             //  length of stray bytes
+        c3_y*            rag_y;             //  stray bytes
+      } u3_moat;
+
+    /* u3_mojo: outbound message stream.
+    */
+      typedef struct _u3_mojo {
+        uv_pipe_t pyp_u;                    //  output stream
+        u3_bail   bal_f;                    //  error response function
+      } u3_mojo;
+
+    /* u3_foil: abstract chub-addressed file.
+    */
+      typedef struct _u3_foil {
+        uv_file          fil_u;             //  libuv file handle
+        struct _u3_dire* dir_u;             //  parent directory
+        c3_c*            nam_c;             //  name within parent
+        c3_d             end_d;             //  end of file
+      } u3_foil;
+
+    /* u3_dent: directory entry.
+    */
+      typedef struct _u3_dent {
+        c3_c*            nam_c;
+        struct _u3_dent* nex_u;
+      } u3_dent;
+
+    /* u3_dire: simple directory state.
+    */
+      typedef struct _u3_dire {
+        c3_c*    pax_c;                     //  path of directory
+        uv_file  fil_u;                     //  file, opened read-only to fsync
+        u3_dent* all_u;                     //  file list 
+      } u3_dire;
+
     /* u3_ames: ames networking.
     */
       typedef struct _u3_ames {             //  packet network state
@@ -537,16 +609,17 @@
         c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   arv_c;                      //  -A, initial sync from
+        c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
         c3_c*   gen_c;                      //  -G, czar generator
         c3_w    kno_w;                      //  -k, kernel version
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
         c3_s    rop_s;                      //  -l, raft port
-        c3_o    abo;                        //  -a
+        c3_o    abo;                        //  -a, abort aggressively
         c3_o    bat;                        //  -b, batch create
-        c3_o    gab;                        //  -g
+        c3_o    gab;                        //  -g, test garbage collection
         c3_o    dem;                        //  -d, daemon
-        c3_o    dry;                        //  -D, dry compute  
+        c3_o    dry;                        //  -D, dry compute, no checkpoint  
         c3_o    tex;                        //  -x, exit after loading
         c3_o    fog;                        //  -X, skip last event
         c3_o    fak;                        //  -F, fake carrier
@@ -555,7 +628,7 @@
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_o    nuu;                        //  -c, new pier
         c3_o    qui;                        //  -q, quiet
-        c3_o    vno;                        //  -V, replay without reboots
+        c3_o    vno;                        //  -V, turn on +verb
         c3_o    mem;                        //  -M, memory madness
         c3_o    rep;                        //  -R, report build info
       } u3_opts;
@@ -571,7 +644,6 @@
         u3_cttp    ctp_u;                   //  http clients
         u3_utel    tel_u;                   //  telnet listener
         u3_utty*   uty_u;                   //  linked terminal list
-        u3_ames    sam_u;                   //  packet interface
         u3_save    sav_u;                   //  autosave
         u3_opts    ops_u;                   //  commandline options
         u3_unix    unx_u;                   //  sync and clay
@@ -581,15 +653,101 @@
         void*      ssl_u;                   //  struct SSL_CTX*
       } u3_host;                            //  host == computer == process
 
+    /**  New pier system.
+    **/
+      /* u3_writ: inbound event.
+      */
+        typedef struct _u3_writ {
+          struct _u3_pier* pir_u;               //  backpointer to pier
+          u3_noun          job;                 //  (pair date ovum)
+          c3_d             evt_d;               //  event number
+          u3_noun          now;                 //  event time
+          c3_l             msc_l;               //  ms to timeout
+          c3_l             mug_l;               //  hash before executing
+          u3_foil*         fol_u;               //  precommit file
+          u3_atom          mat;                 //  jammed $work, or 0
+          u3_noun          act;                 //  action list
+          struct _u3_writ* nex_u;               //  next in queue, or 0
+        } u3_writ;
+
+      /* u3_lord: working process controller.
+      */
+        typedef struct _u3_lord {
+          uv_process_t         cub_u;           //  process handle
+          uv_process_options_t ops_u;           //  process configuration
+          uv_stdio_container_t cod_u[3];        //  process options
+          time_t               wen_t;           //  process creation time
+          u3_mojo              inn_u;           //  client's stdin
+          u3_moat              out_u;           //  client's stdout
+          c3_d                 sen_d;           //  last event dispatched
+          c3_d                 dun_d;           //  last event completed
+          c3_d                 rel_d;           //  last event released
+          c3_l                 mug_l;           //  mug after last completion
+          struct _u3_pier*     pir_u;           //  pier backpointer
+        } u3_lord;
+
+      /* u3_disk: manage events on disk.
+      **
+      **    any event once discovered should be in one of these sets.
+      **    at present, all sets are ordered and can be defined by a
+      **    simple counter.  any events <= the counter is in the set.
+      */
+        typedef struct _u3_disk {               
+          u3_dire*         dir_u;               //  main pier directory
+          u3_dire*         urb_u;               //  urbit system data
+          u3_dire*         com_u;               //  log directory
+          u3_dire*         pre_u;               //  precommit directory
+          u3_foil*         fol_u;               //  logfile
+          c3_d             end_d;               //  byte end of file
+          c3_d             rep_d;               //  precommit requested
+          c3_d             pre_d;               //  precommitted
+          c3_d             moc_d;               //  commit requested
+          c3_d             com_d;               //  committed
+          struct _u3_pier* pir_u;               //  pier backpointer
+        } u3_disk;
+
+      /* u3_boot: startup controller.
+      */
+        typedef struct _u3_boot {
+          
+        } u3_boot;
+
+      /* u3_pier: ship controller.
+      */
+        typedef struct _u3_pier {
+          c3_c*            pax_c;               //  pier directory
+          c3_c*            sys_c;               //  pill directory
+          c3_d             gen_d;               //  last event discovered
+          c3_d             but_d;               //  boot barrier
+          c3_d             key_d[4];            //  save and passkey
+          u3_disk*         log_u;               //  event log
+          u3_lord*         god_u;               //  computer
+          u3_ames*         sam_u;              //  packet interface
+          u3_writ*         ent_u;               //  entry of queue
+          u3_writ*         ext_u;               //  exit of queue
+        } u3_pier;
+
+      /* u3_king: all executing piers.
+      */
+        typedef struct _u3_king {
+          c3_w      len_w;                       //  number of lords used
+          c3_w      all_w;                       //  number of lords allocated
+          u3_pier** tab_u;                       //  lord table
+        } u3_king;
+
+        static u3_king u3K;
+
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
 #     define u3S  u3_Host.ssl_u
+#     define u3K  u3_King
 
   /** Global variables.
   **/
     c3_global  u3_host  u3_Host;
     c3_global  u3_raft  u3_Raft;
     c3_global  c3_c*    u3_Local;
+    c3_global  u3_king  u3_King;
 
   /** Functions.
   **/
@@ -726,17 +884,82 @@
         u3_noun
         u3_ve_zeus(u3_noun hap);
 
-    /**  Output.
+    /**  Filesystem (async)
     **/
-      /* u3_ve_tank(): print a tank at `tab`.
+      /* u3_foil_folder(): load directory, blockingly.  create if nonexistent.
+      */
+        u3_dire*
+        u3_foil_folder(const c3_c* pax_c);         //  directory object, or 0
+
+      /* u3_foil_create(): create a new, empty file, not syncing.
       */
         void
-        u3_ve_tank(c3_l tab_l, u3_noun tac);
+        u3_foil_create(void      (*fun_f)(void*,    //  context pointer
+                                          u3_foil*),//  file object
+                       void*       vod_p,           //  context pointer
+                       u3_dire*    dir_u,           //  directory
+                       const c3_c* nam_c);          //  name of new file
 
+      /* u3_foil_absorb(): absorb logfile, truncating to last good frame; block.
+      */
+        u3_foil*
+        u3_foil_absorb(u3_dire* dir_u,              //  directory
+                       c3_c*    nam_c);             //  filename
+
+      /* u3_foil_delete(): delete a file; free descriptor.
+      */
+        void
+        u3_foil_delete(void   (*fun_f)(void*),      //  context pointer
+                       void*    vod_p,              //  context pointer
+                       u3_foil* fol_u);             //  file to delete
+
+      /* u3_foil_append(): write a frame at the end of a file, freeing buffer.
+      */
+        void
+        u3_foil_append(void   (*fun_f)(void*),      //  context pointer
+                       void*    vod_p,              //  context pointer
+                       u3_foil* fol_u,              //  file
+                       c3_d*    buf_d,              //  buffer to write from
+                       c3_d     len_d);             //  length in chubs
+
+      /* u3_foil_reveal(): read the frame before a position, blocking.
+      */
+        c3_d*
+        u3_foil_reveal(u3_foil* fol_u,              //  file from
+                       c3_d*    pos_d,              //  end position/prev end
+                       c3_d*    len_d);             //  length return
+
+      /* u3_foil_commit(): reveal from one file, append to another.
+      */
+        void
+        u3_foil_commit(void   (*fun_f)(void*,       //  context pointer
+                                       u3_foil*,    //  file from
+                                       c3_d,        //  previous from
+                                       u3_foil*,    //  file to
+                                       c3_d),       //  end of to
+                       void*    vod_p,              //  context pointer
+                       u3_foil* del_u,              //  file from
+                       c3_d     del_d,              //  end of from frame
+                       u3_foil* unt_u,              //  file to
+                       c3_d     unt_d);             //  end of to frame
+
+      /* u3_foil_invent(): make new file with one frame; free buffer, sync.
+      */
+        void
+        u3_foil_invent(void   (*fun_f)(void*,       //  context pointer
+                                       u3_foil*),   //  new file
+                       void*    vod_p,              //  context pointer
+                       u3_dire* dir_u,              //  directory
+                       c3_c*    nam_c,              //  filename
+                       c3_d*    buf_d,              //  buffer (to free)
+                       c3_d     len_d);             //  length
+
+    /**  Output.
+    **/
       /* u3_reck_kick(): handle effect.
       */
         void
-        u3_reck_kick(u3_noun ovo);
+        u3_reck_kick(u3_pier* pir_u, u3_noun ovo);
 
 
     /**  Main loop, new style.
@@ -833,7 +1056,7 @@
       /* u3_term_ef_bake(): initial effects for new server.
       */
         void
-        u3_term_ef_bake(u3_noun  fav);
+        u3_term_ef_bake(void);
 
       /* u3_term_ef_blit(): send %blit effect to terminal.
       */
@@ -884,33 +1107,39 @@
       /* u3_ames_ef_bake(): create ames duct.
       */
         void
-        u3_ames_ef_bake(void);
+        u3_ames_ef_bake(u3_pier* pir_u);
 
       /* u3_ames_ef_send(): send packet to network.
       */
         void
-        u3_ames_ef_send(u3_noun lan,
+        u3_ames_ef_send(u3_pier* pir_u,
+                        u3_noun lan,
                         u3_noun pac);
 
       /* u3_ames_io_init(): initialize ames I/O.
       */
         void
-        u3_ames_io_init(void);
+        u3_ames_io_init(u3_pier* pir_u);
 
       /* u3_ames_io_talk(): bring up listener.
       */
         void
-        u3_ames_io_talk(void);
+        u3_ames_io_talk(u3_pier* pir_u);
+
+      /* u3_ames_ef_bake(): send initial events.
+      */
+        void 
+        u3_ames_io_bake(u3_pier* pir_u);
 
       /* u3_ames_io_exit(): terminate ames I/O.
       */
         void
-        u3_ames_io_exit(void);
+        u3_ames_io_exit(u3_pier* pir_u);
 
       /* u3_ames_io_poll(): update ames IO state.
       */
         void
-        u3_ames_io_poll(void);
+        u3_ames_io_poll(u3_pier* pir_u);
 
     /**  Autosave.
     **/
@@ -940,6 +1169,16 @@
       */
         void
         u3_unix_ef_hold();
+
+      /* u3_unix_ef_boot(): boot actions 
+      */
+        void
+        u3_unix_ef_boot(void);
+
+      /* u3_unix_ef_bake(): initial effects for new process.
+      */
+        void
+        u3_unix_ef_bake(void);
 
       /* u3_unix_ef_move():
       */
@@ -1068,7 +1307,6 @@
         void
         u3_raft_work(void);
 
-
     /**  Disk persistence.
     **/
       /* u3_sist_boot(): restore or create pier from disk.
@@ -1139,6 +1377,7 @@
         void
         u3_sist_rand(c3_w* rad_w);
 
+
     /**  New timer system.
     **/
       /* u3_behn_io_init(): initialize time timer.
@@ -1179,3 +1418,83 @@
       */
         void
         u3_cttp_io_poll(void);
+
+    /**  Stream messages.
+    **/
+      /* u3_newt_write(): write atom to stream; free atom.
+      */
+        void
+        u3_newt_write(u3_mojo* moj_u,
+                      u3_atom  mat,
+                      void*    vod_p);
+
+      /* u3_newt_read(): activate reading on input stream.
+      */
+        void
+        u3_newt_read(u3_moat* mot_u);
+
+    /**  Main for worker process.
+    **/
+        c3_i
+        u3_serf_main(c3_i   arg_i,
+                     c3_c** arg_c);
+
+    /** Pier control.
+    **/
+      /* u3_pier_create(): create a pier, loading existing.
+      */
+        u3_pier*
+        u3_pier_create(c3_c* pax_c, c3_c* sys_c);
+
+      /* u3_pier_interrupt(): interrupt running process.
+      */
+        void
+        u3_pier_interrupt(u3_pier* pir_u);
+
+      /* u3_pier_discover(): insert task into process controller.
+      */
+        void
+        u3_pier_discover(u3_pier* pir_u,
+                         c3_l     msc_l,
+                         u3_noun  job);
+
+      /* u3_pier_exit(): trigger a gentle shutdown.
+      */
+        void
+        u3_pier_exit(void);
+
+      /* u3_pier_work(): send event; real pier pointer.
+      */
+        void
+        u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav);
+
+      /* u3_pier_stub(): get the One Pier for unreconstructed code.
+      */
+        u3_pier*
+        u3_pier_stub(void);
+
+      /* u3_pier_plan(): submit event; fake pier 
+      */
+        void
+        u3_pier_plan(u3_noun pax, u3_noun fav);
+
+      /* u3_pier_boot(): start the new pier system.
+      */
+        void
+        u3_pier_boot(c3_c* pax_c,                   //  pier path
+                     c3_c* sys_c);                  //  path to boot pill
+
+      /* u3_pier_tank(): dump single tank.
+      */
+        void
+        u3_pier_tank(c3_l tab_l, u3_noun tac);
+
+      /* u3_pier_punt(): dump tank list.
+      */
+        void
+        u3_pier_punt(c3_l tab_l, u3_noun tac);
+
+      /* u3_pier_sway(): print trace.
+      */
+        void
+        u3_pier_sway(c3_l tab_l, u3_noun tax);

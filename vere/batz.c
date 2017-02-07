@@ -51,7 +51,7 @@ _batz_time_cb(uv_timer_t* tim_u)
 
   u3_lo_open();
   {
-    u3v_plan
+    u3_pier_plan
       (u3nt(u3_blip, c3__batz, u3_nul),
        u3nc(c3__wake, u3_nul));
   }

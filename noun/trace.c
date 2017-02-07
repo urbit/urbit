@@ -36,7 +36,7 @@ u3t_drop(void)
 }
 
 extern void
-u3_lo_tank(c3_l tab_l, u3_noun tac);
+u3_pier_tank(c3_l tab_l, u3_noun tac);
 
 #ifdef GHETTO
 /* _t_ghetto(): ghetto timelapse.
@@ -55,11 +55,11 @@ _t_ghetto(void)
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     if (ms_w > 1) {
 #if 0
-      printf("%6d.%02dms: %9d ", 
+      fprintf(stderr, "%6d.%02dms: %9d ", 
               ms_w, (int) (d0.tv_usec % 1000) / 10,
               ((int) (u3R->pro.nox_d - b4_d)));
 #else
-      printf("%6d.%02dms ", 
+      fprintf(stderr, "%6d.%02dms ", 
               ms_w, (int) (d0.tv_usec % 1000) / 10);
 #endif
       gettimeofday(&b4, 0);
@@ -90,11 +90,11 @@ u3t_slog(u3_noun hod)
     u3_noun pri = u3h(hod);
 
     switch ( pri ) {
-      case 3: printf(">>> "); break;
-      case 2: printf(">> "); break;
-      case 1: printf("> "); break;
+      case 3: fprintf(stderr, ">>> "); break;
+      case 2: fprintf(stderr, ">> "); break;
+      case 1: fprintf(stderr, "> "); break;
     }
-    u3_lo_tank(0, u3k(u3t(hod)));
+    u3_pier_tank(0, u3k(u3t(hod)));
   }
   u3z(hod);
 }
@@ -112,7 +112,7 @@ u3t_shiv(u3_noun hod)
   }
   else {
     c3_c *str_c = u3r_string(hod);
-    printf("%s\r\n", str_c);
+    fprintf(stderr, "%s\r\n", str_c);
     free(str_c);
   }
 }
