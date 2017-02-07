@@ -11,6 +11,10 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     sha256 = "1vahwf33h2wspp2cr109b2ajvh8yv2cj40yb61y10mqz7v3h0x63";
   };
 
+  patches = [
+    ./find-numerics.patch
+  ];
+
   builder = ./builder.sh;
 
   buildInputs = [
@@ -22,7 +26,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   # MSYS2 options: -D MSVS_VERSION="" -D TARGET=${_target} --format make --depth . 
   gypFlags =
-      "-D OS=${crossenv.os} " +
+      "-D OS=${crossenv.os}gypd " +
       "-D TARGET=win32 " +  # TODO
       "-D use_ozone=0 " +
       "-I ../src/gyp/common.gypi " +
@@ -32,4 +36,6 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   CXX_target = "${crossenv.host}-g++";
 
   GYP_GENERATORS = "ninja";
+
+  patchTmphax = "";
 }
