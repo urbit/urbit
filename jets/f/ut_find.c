@@ -264,8 +264,8 @@
           u3_noun pp_yor = u3t(p_yor);              //  {span nock}
           u3_noun ppp_hax = u3h(pp_hax);            //  span
           u3_noun ppp_yor = u3h(pp_yor);            //  span
-          u3_noun qpp_hax = u3h(pp_hax);            //  nock
-          u3_noun qpp_yor = u3h(pp_yor);            //  nock
+          u3_noun qpp_hax = u3t(pp_hax);            //  nock
+          u3_noun qpp_yor = u3t(pp_yor);            //  nock
 
           if ( c3n == u3r_sing(qpp_hax, qpp_yor) ) {
             return u3m_error("find-fork-c");
@@ -695,7 +695,7 @@
         else {
           u3_noun pp_mor = u3t(p_mor);      //  {span nock}
           u3_noun ppp_mor = u3h(pp_mor);    //  span
-          u3_noun qpp_mor = u3h(pp_mor);    //  nock
+          u3_noun qpp_mor = u3t(pp_mor);    //  nock
           u3_noun gen = u3nt(c3__wing, u3k(i_hyp), u3_nul);
           u3_noun fex = u3qfu_mint(van, ppp_mor, c3__noun, gen);
           u3_noun ret = u3nq(c3n, 
