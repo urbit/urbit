@@ -1535,9 +1535,9 @@ u3r_chub(c3_w  a_w,
 */
 void
 u3r_words(c3_w    a_w,
-            c3_w    b_w,
-            c3_w*   c_w,
-            u3_atom d)
+          c3_w    b_w,
+          c3_w*   c_w,
+          u3_atom d)
 {
   c3_assert(u3_none != d);
   c3_assert(_(u3a_is_atom(d)));
@@ -1568,6 +1568,21 @@ u3r_words(c3_w    a_w,
       } 
     }
   }
+}
+
+/* u3r_chubs():
+**
+**  Copy double-words (a_w) through (a_w + b_w - 1) from (d) to (c).
+*/
+void
+u3r_chubs(c3_w    a_w,
+          c3_w    b_w,
+          c3_d*   c_d,
+          u3_atom d)
+{
+  /* XX: assumes little-endian
+  */
+  u3r_words(a_w * 2, b_w * 2, (c3_w *)c_d, d);
 }
 
 /* u3r_chop():

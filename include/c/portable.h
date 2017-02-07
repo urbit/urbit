@@ -187,5 +187,10 @@
 #        define c3_rand(rd) (getentropy((void*)rd, 64) == 0 ? \
                              (void)0 : c3_assert(!"ent"))
 #      else
-#        define c3_rand u3_sist_rand
+#        define c3_rand u3_pier_rand
+#      endif
+#      if defined(U3_OS_linux)
+#        define DEVRANDOM "/dev/urandom"
+#      else
+#        define DEVRANDOM "/dev/random"
 #      endif

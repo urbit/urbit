@@ -187,7 +187,7 @@ u3_ames_ef_bake(void)
 {
   u3_noun pax = u3nq(u3_blip, c3__newt, u3k(u3A->sen), u3_nul);
 
-  u3v_plan(pax, u3nc(c3__barn, u3_nul));
+  u3_pier_plan(pax, u3nc(c3__barn, u3_nul));
 }
 
 /* u3_ames_ef_send(): send packet to network (v4).
@@ -255,15 +255,13 @@ static void
 _ames_time_cb(uv_timer_t* tim_uo)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
-  u3_lo_open();
 
   sam_u->law_w = time(0);
   {
-    u3v_plan
+    u3_pier_plan
       (u3nt(u3_blip, c3__ames, u3_nul),
        u3nc(c3__wake, u3_nul));
   }
-  u3_lo_shut(c3n);
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -281,7 +279,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     _ames_free(buf_u->base);
   }
   else {
-    u3_lo_open();
     {
       u3_noun             msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
 
@@ -293,7 +290,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       c3_s                por_s = ntohs(add_u->sin_port);
       c3_w                pip_w = ntohl(add_u->sin_addr.s_addr);
 
-      u3v_plan
+      u3_pier_plan
         (u3nt(u3_blip, c3__ames, u3_nul),
          u3nt(c3__hear,
               u3nq(c3__if, u3k(u3A->now), por_s, u3i_words(1, &pip_w)),
@@ -301,7 +298,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 #endif
     }
     _ames_free(buf_u->base);
-    u3_lo_shut(c3y);
   }
 }
 

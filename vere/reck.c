@@ -92,7 +92,7 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__logo:
     {
-      u3_Host.liv = c3n;
+      u3_pier_exit();
       u3_Host.xit_i = u3t(fav);
 
       u3z(pox); u3z(fav); return c3y;
@@ -349,7 +349,7 @@ _reck_kick_norm(u3_noun pox, u3_noun fav)
     case c3__exit:
     {
       uL(fprintf(uH, "<<<goodbye>>>\n"));
-      u3_lo_bail();
+      u3_pier_exit();
 
       u3z(pox); u3z(fav); return c3y;
     } break;
@@ -379,7 +379,7 @@ u3_reck_kick(u3_noun ovo)
          (c3__init == u3h(u3t(ovo))) )
 #endif
     {
-      u3v_plan(u3nt(u3_blip, c3__term, u3_nul),
+      u3_pier_plan(u3nt(u3_blip, c3__term, u3_nul),
                  u3nc(c3__flog, u3k(u3t(ovo))));
     }
     else {

@@ -46,8 +46,30 @@ u3_noun
 u3v_load(u3_noun pil)
 {
   u3_noun sys = u3ke_cue(pil);
-  u3_noun cor = u3v_fire(sys);
-  u3_noun pro;
+
+  fprintf(stderr, "load: mug: %x\r\n", u3r_mug(sys));
+  {
+    u3_noun cor = u3v_fire(sys);
+    u3_noun pro;
+
+    pro = u3k(u3r_at(7, cor));
+
+    u3z(cor);
+    return pro;
+  }
+}
+
+/* u3v_lite(): load lightweight, core-only pill.
+*/
+u3_noun
+u3v_lite(u3_noun pil)
+{
+  u3_noun arv = u3ke_cue(pil);
+  u3_noun cor, pro;
+  
+  fprintf(stderr, "lite: arvo formula %x\r\n", u3r_mug(arv));
+  cor = u3n_nock_on(0, arv);
+  fprintf(stderr, "lite: core %x\r\n", u3r_mug(cor));
 
   pro = u3k(u3r_at(7, cor));
 
@@ -60,16 +82,41 @@ u3v_load(u3_noun pil)
 void
 u3v_boot(c3_c* pas_c)
 {
-  u3_noun pil = u3m_file(pas_c);
-  u3_noun pru = u3m_soft(0, u3v_load, pil);
+  u3_noun pru;
+
+  if ( !u3A->sys ) {
+    u3A->sys = u3m_file(pas_c);
+  }
+  
+  pru = u3m_soft(0, u3v_load, u3k(u3A->sys));
 
   if ( u3h(pru) != 0 ) {
     fprintf(stderr, "boot failed\r\n");
     exit(1);
   }
 
-  fprintf(stderr, "final state %x\r\n", u3r_mug(u3t(pru)));
- 
+  fprintf(stderr, "boot: final state %x\r\n", u3r_mug(u3t(pru)));
+
+  u3A->ken = 0;
+  u3A->roc = u3k(u3t(pru));
+
+  u3z(pru);
+}
+
+/* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
+*/
+void
+u3v_boot_lite(u3_atom lit)
+{
+  u3_noun pru = u3m_soft(0, u3v_lite, lit);
+
+  if ( u3h(pru) != 0 ) {
+    fprintf(stderr, "boot failed\r\n");
+    exit(1);
+  }
+
+  fprintf(stderr, "lite: final state %x\r\n", u3r_mug(u3t(pru)));
+
   u3A->ken = 0;
   u3A->roc = u3k(u3t(pru));
 
@@ -260,7 +307,7 @@ _cv_nock_poke(u3_noun ovo)
     u3_noun tox = u3do("spat", u3k(u3h(ovo)));
     c3_c*   tox_c = u3r_string(tox);
 
-    printf("poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
+    fprintf(stderr, "poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
     free(tox_c); free(ovi_c); u3z(tox);
   }
 #endif
@@ -273,8 +320,11 @@ _cv_nock_poke(u3_noun ovo)
   {
     c3_c*   ovi_c = u3r_string(u3h(u3t(ovo)));
 
-    printf("poked: %s\r\n", ovi_c);
-
+    if ( u3_nul == u3h(pro) ) {
+      fprintf(stderr, "  blank: %s\r\n", ovi_c);
+    } else {
+      fprintf(stderr, "  happy: %s: %d\r\n", ovi_c, u3kb_lent(u3k(u3h(pro))));
+    }
     free(ovi_c);
   }
 #endif
