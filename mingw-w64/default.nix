@@ -13,11 +13,12 @@ let
       url = "mirror://sourceforge/mingw-w64/mingw-w64-v${version}.tar.bz2";
       sha256 = "023d14dnd5638cqpz1vkmr67731rzk99xsgbr0al4az276kqq7g4";
     };
+    patches = [ ./popcnt.patch ];
   };
 
   mingw-w64_headers = nixpkgs.stdenv.mkDerivation {
     name = "${mingw-w64.name}-headers";
-    src = mingw-w64.src;
+    inherit (mingw-w64) src patches;
     preConfigure = "cd mingw-w64-headers";
     configureFlags = "--without-crt";
   };
@@ -30,7 +31,7 @@ let
 
   mingw-w64_crt_and_headers = nixpkgs.stdenv.mkDerivation {
     name = "${mingw-w64.name}-${host}";
-    src = mingw-w64.src;
+    inherit (mingw-w64) src patches;
     buildInputs = [ binutils gcc_stage_1 ];
     preConfigure = "export CC=;";   # The stdenv sets CC=gcc and mingw-w64-crt tries to use that.
     configureFlags = "--host=${host}";
