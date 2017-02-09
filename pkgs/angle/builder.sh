@@ -1,10 +1,10 @@
 source $stdenv/setup
 
-cp -R $src src
+cp -R $src asrc
 
-chmod -R u+rw src
+chmod -R u+rw asrc
 
-cd src
+cd asrc
 for patch in $patches
 do
   echo applying patch $patch
@@ -16,7 +16,7 @@ cd ..
 mkdir build
 cd build
 
-gyp $gypFlags ../src/src/angle.gyp
+gyp $gypFlags ../asrc/src/angle.gyp
 
-ninja -C out/Release -j1 src/src/common/angle_common.string_utils.o
+ninja -C out/Release -j1
 

@@ -29,7 +29,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
       "-D OS=${crossenv.gyp_os} " +
       "-D TARGET=win32 " +  # TODO
       "-D use_ozone=0 " +
-      "-I ../src/gyp/common.gypi " +
+      "-I ../asrc/gyp/common.gypi " +
       "--depth .";
 
   CC_target = "${crossenv.host}-gcc";
