@@ -4,6 +4,8 @@ let
 
   os = "windows";
 
+  gyp_os = "win";
+
   binutils = import ./binutils { inherit nixpkgs arch; };
 
   mingw-w64 = rec {
@@ -56,12 +58,12 @@ in
   # Toolchain
   inherit gcc binutils mingw-w64_crt_and_headers;
 
-  # CMake support
-  inherit cmake_toolchain;
-
   # nixpkgs: a wide variety of programs and build tools
   inherit nixpkgs;
 
   # Expressions used to bootstrap the toolchain, not normally needed.
   inherit mingw-w64 mingw-w64_headers gcc_stage_1;
+
+  # Support for various build tools
+  inherit cmake_toolchain gyp_os;
 }

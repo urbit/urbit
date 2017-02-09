@@ -13,10 +13,10 @@ done
 eval "$patchTmphax"
 cd ..
 
-mkdir builzd
-cd builzd
+mkdir build
+cd build
 
 gyp $gypFlags ../src/src/angle.gyp
 
-ninja -C out/Release -j1
+ninja -C out/Release -j1 src/src/common/angle_common.string_utils.o
 

@@ -12,7 +12,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   };
 
   patches = [
-    ./out-of-tree-builds.patch
+    ./megapatch.patch
   ];
 
   builder = ./builder.sh;
@@ -24,9 +24,9 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     crossenv.nixpkgs.ninja
   ];
 
-  # MSYS2 options: -D MSVS_VERSION="" -D TARGET=${_target} --format make --depth . 
+  # MSYS2 options: -D MSVS_VERSION="" -D TARGET=${_target} --format make --depth .
   gypFlags =
-      "-D OS=${crossenv.os}gypd " +
+      "-D OS=${crossenv.gyp_os} " +
       "-D TARGET=win32 " +  # TODO
       "-D use_ozone=0 " +
       "-I ../src/gyp/common.gypi " +
@@ -37,5 +37,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   GYP_GENERATORS = "ninja";
 
-  patchTmphax = "";
+  patchTmphax = "cp ${../../angle-src/src/common/string_utils.cpp} src/common/string_utils.cpp; " +
+                "cp ${../../angle-src/src/angle.gyp} src/angle.gyp; " +
+                "cp ${../../angle-src/gyp/common_defines.gypi} gyp/common_defines.gypi; ";
 }

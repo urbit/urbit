@@ -1,0 +1,43 @@
+diff -ur angle-src-orig/gyp/common_defines.gypi angle-src/gyp/common_defines.gypi
+--- angle-src-orig/gyp/common_defines.gypi	2017-02-07 07:42:35.087009999 -0800
++++ angle-src/gyp/common_defines.gypi	2017-02-09 07:29:32.245340333 -0800
+@@ -44,6 +44,9 @@
+     ],
+     'conditions':
+     [
++        ['OS=="win"', {
++            'defines': [ 'MINGW_HAS_SECURE_API=1', ],
++        }],
+         ['use_ozone==1',
+         {
+             'defines': [ 'USE_OZONE' ],
+diff -ur angle-src-orig/src/angle.gyp angle-src/src/angle.gyp
+--- angle-src-orig/src/angle.gyp	2017-02-07 07:42:35.090343332 -0800
++++ angle-src/src/angle.gyp	2017-02-09 07:34:06.308673665 -0800
+@@ -79,9 +79,9 @@
+             {
+                 'include_dirs':
+                 [
+-                    '<(angle_path)/include',
+-                    '<(angle_path)/src',
+-                    '<(angle_path)/src/common/third_party/numerics',
++                    './include',
++                    '.',
++                    'common/third_party/numerics',
+                 ],
+                 'conditions':
+                 [
+diff -ur angle-src-orig/src/common/string_utils.cpp angle-src/src/common/string_utils.cpp
+--- angle-src-orig/src/common/string_utils.cpp	2017-02-07 07:42:35.093676666 -0800
++++ angle-src/src/common/string_utils.cpp	2017-02-09 07:38:28.762006999 -0800
+@@ -11,7 +11,9 @@
+ 
+ #include <algorithm>
+ #include <stdlib.h>
+-#include <string.h>
++#ifndef __MINGW32__
++#include <sestring.h>
++#endif
+ #include <fstream>
+ #include <sstream>
+ 
