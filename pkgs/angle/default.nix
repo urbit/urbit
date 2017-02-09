@@ -29,6 +29,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
       "-D OS=${crossenv.gyp_os} " +
       "-D TARGET=win32 " +  # TODO
       "-D use_ozone=0 " +
+      "-D angle_enable_vulkan=0 " +
       "-I ../asrc/gyp/common.gypi " +
       "--depth .";
 
