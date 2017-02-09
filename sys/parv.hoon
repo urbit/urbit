@@ -37,7 +37,7 @@
 ::                                                      ::  ::
 |% 
 ++  evil                                                ::  hoon-dependent
-  |*  {span/_span twig/_twig vase/_vase}                ::  abstract hoon ver
+  |*  {span/_span twig/_twig vase/_vase}                ::  inject hoon version
   |%                                                    ::
   ++  hulk                                              ::  main stack move
     $%  {$unix p/@da q/@tas r/ovum}                     ::  unix input
@@ -78,10 +78,6 @@
 ++  vile  (evil typo twit vise)                         ::  old molds
 --  =>
 |%
-::
-::
-::
-
 ::                                                      ::  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) engines
 ::                                                      ::  ::
@@ -110,12 +106,12 @@
             ovo/ovum
         ==
     ^+  sys
-    ?+    -.ovo  ~&(le-bad++.ovo !!)
-    ::  sys(
-    ::  
+    ?+    -.ovo  ~&(le-bad-egg++.ovo !!)
         $helo
       =+  dat=((hard {@p arms (map @ud ruby)}) +.ovo)
-        $helo                                           ::  
+      sys(
+    ::
+        $hola                                           ::  
       =+  dat=((hard {@p arms (map @ud ruby)}) +.ovo)
     ==
   --
