@@ -1,0 +1,15 @@
+--- angle-src-orig/src/angle.gyp
++++ angle-src/src/angle.gyp
+@@ -79,9 +79,9 @@
+             {
+                 'include_dirs':
+                 [
+-                    '<(angle_path)/include',
+-                    '<(angle_path)/src',
+-                    '<(angle_path)/src/common/third_party/numerics',
++                    'include',
++                    '.',
++                    'common/third_party/numerics',
+                 ],
+                 'conditions':
+                 [

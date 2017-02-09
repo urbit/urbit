@@ -12,7 +12,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   };
 
   patches = [
-    ./find-numerics.patch
+    ./out-of-tree-builds.patch
   ];
 
   builder = ./builder.sh;
