@@ -1,5 +1,10 @@
 { nixpkgs, arch, stage ? 2, binutils, libc }:
 
+# TODO: to get ANGLE working, should make std::future work.  It is an incomplete
+# type now so this cannot compile:
+#     #include <future>
+#     class Foo { std::future<void> future; };
+
 # TODO: why is GCC providing a fixed limits.h?
 
 let
