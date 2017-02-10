@@ -29,12 +29,15 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
       "-D OS=${crossenv.gyp_os} " +
       "-D TARGET=win32 " +  # TODO
       "-D use_ozone=0 " +
-      "-D angle_enable_vulkan=0 " +
+      "-D angle_enable_vulkan=0 " +   # Vulkan support is in progress
       "-I ../asrc/gyp/common.gypi " +
       "--depth .";
 
   CC_target = "${crossenv.host}-gcc";
   CXX_target = "${crossenv.host}-g++";
+
+  # We can see from platform.h that ANGLE wants to use SSE instructions.
+  CXXFLAGS = "-msse2";
 
   GYP_GENERATORS = "ninja";
 
