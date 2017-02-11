@@ -31,26 +31,6 @@
   ?>  ?=({{$pre *} _;/(**) $~} src)
   ;codemirror(value "{v.i.a.g.i.c.src}");
 ::
-::  special handling for <pre urb:exec>foo</pre>
-++  urb-exec                                            ::  eval inline hoon
-  |=  src/manx
-  ?>  ?=({{$pre *} _;/(**) $~} src)      ::  verify it's only a text node
-  =*  code  v.i.a.g.i.c.src
-  =+  =<  result=(mule .)
-      !.(|.((slap !>(.) (ream (crip code)))))     ::  compile and run safely
-  =+  claz=?-(-.result $& "rancode", $| "failedcode")
-  ;div(class "{claz}")
-    ;pre:"{code}"
-    ;+  ?-  -.result
-          $&  ;code:"{~(ram re (sell p.result))}"
-          $|  ;pre
-                ;div:"error"
-                ;*  %+  turn  p.result
-                    |=  a/tank
-                    ^-  manx
-                    ;div:"{~(ram re a)}"
-  ==    ==    ==
-::
 ++  elem-to-react-json                                  ::  serialize DOM as json
   |=  src/manx  ^-  json
   ?:  ?=(_;/(**) src)
@@ -58,8 +38,6 @@
   =+  atr=(molt `(list (pair mane tape))`a.g.src)
   ?:  (~(has by atr) [%urb %codemirror])
     $(src (urb-codemirror src))
-  ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag
-    $(src (urb-exec src))
   %-  jobe  :~
     c+a+(turn c.src ..$)
     gn+s+(mane-to-cord n.g.src)
