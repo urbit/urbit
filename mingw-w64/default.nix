@@ -8,18 +8,18 @@ let
 
   binutils = import ./binutils { inherit nixpkgs arch; };
 
-  mingw-w64 = rec {
+  mingw-w64_info = rec {
     name = "mingw-w64-${version}";
-    version = "5.0.0";
-    src = nixpkgs.fetchurl {
-      url = "mirror://sourceforge/mingw-w64/mingw-w64-v${version}.tar.bz2";
-      sha256 = "023d14dnd5638cqpz1vkmr67731rzk99xsgbr0al4az276kqq7g4";
+    version = "2017-02-08";
+    src = nixpkgs.fetchgit {
+      url = "git://git.code.sf.net/p/mingw-w64/mingw-w64";
+      rev = "5aa73896a3313a354cf6550d99ecd652d0abd3b2";
+      sha256 = "160ha26gg5wgdb71x9i3gckxbl3yn11b0cqy86mvnfrraz2dhq6f";
     };
-    patches = [ ./popcnt.patch ];
   };
 
   mingw-w64_headers = nixpkgs.stdenv.mkDerivation {
-    name = "${mingw-w64.name}-headers";
+    name = "${mingw-w64_info.name}-headers";
     inherit (mingw-w64) src patches;
     preConfigure = "cd mingw-w64-headers";
     configureFlags = "--without-crt";
@@ -32,7 +32,7 @@ let
   };
 
   mingw-w64_full = nixpkgs.stdenv.mkDerivation {
-    name = "${mingw-w64.name}-${host}";
+    name = "${mingw-w64_info.name}-${host}";
     inherit host;
     inherit (mingw-w64) version src patches;
     buildInputs = [ binutils gcc_stage_1 ];
@@ -61,7 +61,7 @@ in
   inherit nixpkgs;
 
   # Expressions used to bootstrap the toolchain, not normally needed.
-  inherit mingw-w64 mingw-w64_headers gcc_stage_1;
+  inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
 
   # Support for various build tools
   inherit cmake_toolchain gyp_os;

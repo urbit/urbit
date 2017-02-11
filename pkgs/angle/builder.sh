@@ -18,6 +18,4 @@ cd build
 
 gyp $gypFlags ../asrc/src/angle.gyp
 
-ninja -C out/Release -j1 \
-      asrc/src/libANGLE/libANGLE.Device.o # tmphax (fail quickly)
-
+ninja -C out/Release -j1
