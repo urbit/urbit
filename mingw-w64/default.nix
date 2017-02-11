@@ -16,11 +16,12 @@ let
       rev = "5aa73896a3313a354cf6550d99ecd652d0abd3b2";
       sha256 = "160ha26gg5wgdb71x9i3gckxbl3yn11b0cqy86mvnfrraz2dhq6f";
     };
+    patches = [];
   };
 
   mingw-w64_headers = nixpkgs.stdenv.mkDerivation {
     name = "${mingw-w64_info.name}-headers";
-    inherit (mingw-w64) src patches;
+    inherit (mingw-w64_info) src patches;
     preConfigure = "cd mingw-w64-headers";
     configureFlags = "--without-crt";
   };
@@ -34,7 +35,7 @@ let
   mingw-w64_full = nixpkgs.stdenv.mkDerivation {
     name = "${mingw-w64_info.name}-${host}";
     inherit host;
-    inherit (mingw-w64) version src patches;
+    inherit (mingw-w64_info) version src patches;
     buildInputs = [ binutils gcc_stage_1 ];
     builder = ./builder.sh;
   };
