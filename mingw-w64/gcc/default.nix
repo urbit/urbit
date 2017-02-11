@@ -1,9 +1,6 @@
 { nixpkgs, arch, stage ? 2, binutils, libc }:
 
-# TODO: to get ANGLE working, should make std::future work.  It is an incomplete
-# type now so this cannot compile:
-#     #include <future>
-#     class Foo { std::future<void> future; };
+# TODO: does TLS work?
 
 # TODO: why is GCC providing a fixed limits.h?
 
@@ -60,16 +57,17 @@ stdenv.mkDerivation rec {
     "--enable-lto " +
     "--enable-plugin " +
     "--enable-static " +
-    "--enable-threads=win32 " +
     "--enable-sjlj-exceptions " +
     "--enable-__cxa_atexit " +
     "--enable-long-long " +
     "--with-dwarf2 " +
     "--enable-fully-dynamic-string " +
     (if stage == 1 then
-      "--enable-languages=c "
+      "--enable-languages=c " +
+      "--enable-threads=win32 "
     else
-      "--enable-languages=c,c++ "
+      "--enable-languages=c,c++ " +
+      "--enable-threads=posix "
     ) +
     "--without-included-gettext " +
     "--disable-libstdcxx-pch " +

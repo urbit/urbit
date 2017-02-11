@@ -31,17 +31,16 @@ let
     inherit nixpkgs arch binutils;
   };
 
-  mingw-w64_crt_and_headers = nixpkgs.stdenv.mkDerivation {
+  mingw-w64_full = nixpkgs.stdenv.mkDerivation {
     name = "${mingw-w64.name}-${host}";
-    inherit (mingw-w64) src patches;
+    inherit host;
+    inherit (mingw-w64) version src patches;
     buildInputs = [ binutils gcc_stage_1 ];
-    preConfigure = "export CC=;";   # The stdenv sets CC=gcc and mingw-w64-crt tries to use that.
-    configureFlags = "--host=${host}";
-    dontStrip = true;
+    builder = ./builder.sh;
   };
 
   gcc = import ./gcc {
-    libc = mingw-w64_crt_and_headers;
+    libc = mingw-w64_full;
     inherit nixpkgs arch binutils;
   };
 
@@ -56,7 +55,7 @@ in
   inherit host arch os;
 
   # Toolchain
-  inherit gcc binutils mingw-w64_crt_and_headers;
+  inherit gcc binutils mingw-w64_full;
 
   # nixpkgs: a wide variety of programs and build tools
   inherit nixpkgs;

@@ -9,5 +9,7 @@ rec {
     };
   };
 
+  gcc = winpkgs.gccCrossStageFinal;
+
   hello = winpkgs.hello.crossDrv;
 }
