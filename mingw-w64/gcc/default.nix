@@ -1,9 +1,5 @@
 { nixpkgs, arch, stage ? 2, binutils, libc }:
 
-# TODO: does TLS work?
-
-# TODO: why is GCC providing a fixed limits.h?
-
 let
   isl = nixpkgs.isl_0_14;
   inherit (nixpkgs) stdenv lib fetchurl;
@@ -104,3 +100,5 @@ stdenv.mkDerivation rec {
     license = lib.licenses.gpl3Plus;
   };
 }
+
+# TODO: why is GCC providing a fixed limits.h?
