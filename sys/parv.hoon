@@ -33,27 +33,55 @@
 ++  wire  path                                          ::  cause
 --  =>
 ::                                                      ::  ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) system molds
+::                                                      ::  ::
+|% 
+++  task                                                ::  action from unix
+  $%  {$belt $~}
+      {$blew $~}
+      {$blip $~}
+      {$born $~}
+      {$flow $~}
+      {$hail $~}
+      {$hook $~}
+      {$they $~}
+      {$thud $~}
+      {$tick $~}
+      {$sync $~}
+  ::
+      {$what $~}
+      {$whom $~}
+  == 
+++  gift
+  $%  {$sy
+      {$sy
+  ==  
+++  
+--  =>
+::                                                      ::  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) state molds
 ::                                                      ::  ::
 |% 
 ++  evil                                                ::  hoon-dependent
   |*  {span/_span twig/_twig vase/_vase}                ::  inject hoon version
   |%                                                    ::
-  ++  hulk                                              ::  main stack move
-    $%  {$unix p/@da q/@tas r/ovum}                     ::  unix input
-        {$vane p/move}                                  ::  vane action
-    ==                                                  ::
   ++  mall                                              ::  any arvo version
-    $?  {$1 mast}                                       ::  version 1, current
+    $?  {$293 mast}                                     ::  kelvin 293, current
     ==                                                  ::
   ++  mast                                              ::  system state
-    $:  $=  gut                                         ::
-        $:  run/(list hulk)                             ::  worklist
+    $:  $=  gut                                         ::  abdomen
+        $:  run/(list move)                             ::  worklist
             out/(list ovum)                             ::  output
         ==                                              ::
+        $=  bug                                         ::  insect brain
+        $:  noc/@ta                                     ::  process nonce
+            ver/(qual @tas @ud @ud @ud)                 ::  vendor/version
+        ==                                              ::
         $=  mal                                         ::  mammal brain
-        $:  sac/worm                                    ::  vane compiler cache
-            van/(list (pair term vase))                 ::
+        $:  lac/?                                       ::  laconic, !verbose
+            bud/vase                                    ::  compiled zuse
+            sac/worm                                    ::  vane compiler cache
+            van/(list (pair term vase))                 ::  vanes
         ==                                              ::
         $=  rep                                         ::  reptile brain
         $:  orb/@p                                      ::  ship
@@ -63,10 +91,10 @@
     ==  ==                                              ::
   ++  mill  (each vase milo)                            ::  vase or metavase
   ++  milo  {p/* q/*}                                   ::  untyped metavase
-  ++  move  (pair duct arvo)                            ::  vane move
+  ++  move  (pair duct part)                            ::  vane move
   ++  part                                              ::  arvo vane move
     $%  {$give p/mill}                                  ::  vane "return"
-        {$poke p/wire q/(pair term mill)}               ::  vane "call"
+        {$pass p/wire q/(pair term mill)}               ::  vane "call"
     ==                                                  ::
   ++  worm                                              ::  compiler cache
     $:  nes/(set ^)                                     ::  ++nest
@@ -76,6 +104,16 @@
   --                                                    ::
 ++  live  (evil)                                        ::  modern molds
 ++  vile  (evil typo twit vise)                         ::  old molds
+++  wasp                                                ::  arvo effect
+  $%  {$walk ~}                                         ::  build mammal brain
+      {$wear p/@tas q/@t}                               ::  load/reload vane
+      {$what p/(list (pair path (pair term noun)))}     ::  put reptile files
+      {$whom p/@p q/arms r/(map @ud ruby)}              ::  put reptile identity
+      {$wine p/
+      {$wink p/@t q/@t}                                 ::  reset york/zuse
+      {$
+      {$woke ~}
+  ==                                                    ::
 --  =>
 |%
 ::                                                      ::  ::
@@ -87,16 +125,41 @@
   =+  mast:live
   =*  sys  -
   |%
-  ++  pike
+  ::                                                    ::  ++born:le
+  ++  born                                              ::  true if booted
+    ^-  ?
+    ::
+    ::  when arvo is "unborn," the ship 
+    ::
+    =(~ roy.rep)  
+  ::                                                    ::  ++pike:le
+  ++  pike                                              ::  make a move
     |=  $:  ::  lay: event route
             ::  now: date
             ::  ovo: event
             ::
             lay/@tas
             now/@da
-            ovo/ovum
+            tea/wire
         ==
-    work(run.gut [%unix 
+    ::  print event if not in laconic mode
+    ::
+    ~?  &(!lac.mal !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
+    ::
+    ::  add soft move to queue; 
+    ::
+    %=    work
+        run.gut
+      :_  run.gut
+      ^-  move
+      :-  `wire`[p.ovo ~]
+      ^-  part
+      :^  %pass  t.p.ovo
+        lay
+      :+  %&
+        [%cell [%atom %tas `%soft] %noun]
+      [%soft q.ovo]
+    ==
   ::                                                    ::  ++poke:le
   ++  poke                                              ::  event from unix
     |=  $:  ::  now: event date
@@ -106,14 +169,42 @@
             ovo/ovum
         ==
     ^+  sys
-    ?+    -.ovo  ~&(le-bad-egg++.ovo !!)
-        $helo
-      =+  dat=((hard {@p arms (map @ud ruby)}) +.ovo)
-      sys(
+    ~|  
+    ?+    -.ovo  ~&(le-bad-egg++.ovo sys)
+        belt
+        blip
+        born
+        hail
+        hook
+        they
+        thud
+        tick
+        sync
     ::
-        $hola                                           ::  
+    ::  $what: install boot files in reptile brain
+    ::
+        $what                                           ::  
+      =+  mol  $:  fat/(map path (pair term noun))
       =+  dat=((hard {@p arms (map @ud ruby)}) +.ovo)
+
+    ::
+    ::  $whom: install identity information and complete boot process
+    ::
+        $whom
+      =*  mol  $:  orb/@p
+                   nym/arms
+                   roy/(map @ud ruby)
+               ==
+      =+  dat=((hard mol) +.ovo)
+      =:  orb.rep  orb.dat
+          nym.rep  nym.dat
+          roy.rep  (~(uni by roy.rep) roy.rep roy.dat)
+        ==
+
     ==
+  ++  push
+  ++  work
+
   --
 --
 ::                                                      ::  ::
