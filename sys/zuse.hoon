@@ -284,7 +284,7 @@
   |%
   ++  able  ^?
     ::                                                  ::
-    ::::                  ++able:^dill                  ::  (1c1) arvo moves
+    ::::                  ++able:^clay                  ::  (1c1) arvo moves
       ::                                                ::::
     |%
     ++  gift                                            ::  out result <-$
@@ -4410,7 +4410,7 @@
       [p.one [%& (weld p.q.one p.q.two)]]
     --  ::space
   ::                                                    ::
-  ::::                  ++unix:userlib                  ::  (2uD) unix line-lists
+  ::::                  ++unix:userlib                  ::  (2uD) unix line-list
     ::                                                  ::::
   ++  unix  ^?
     |%
@@ -4551,7 +4551,19 @@
       {$j gift:able:^jael}
   ==
 ::
-++  
+++  unix-task                                           ::  input from unix
+  $%  {$belt p/belt}                                    ::  dill: keyboard
+      {$blew p/blew}                                    ::  dill: configure
+      {$boat $~}                                        ::  clay: reboot
+      {$born $~}                                        ::  eyre: new process
+      {$hail $~}                                        ::  dill: refresh
+      {$hear p/lane q/@}                                ::  ames: input packet
+      {$hook $~}                                        ::  dill: hangup
+      {$into p/desk q/? r/mode}                         ::  clay: external edit
+      {$they p/@ud q/httr}                              ::  eyre: in response
+      {$this p/? q/clip r/httq}                         ::  eyre: in request
+      {$thud $~}                                        ::  eyre: in cancel
+  == 
 ::
 ::
 ::  XX transitional alias layer

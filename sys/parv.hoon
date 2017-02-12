@@ -33,32 +33,6 @@
 ++  wire  path                                          ::  cause
 --  =>
 ::                                                      ::  ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) system molds
-::                                                      ::  ::
-|% 
-++  task                                                ::  action from unix
-  $%  {$belt $~}
-      {$blew $~}
-      {$blip $~}
-      {$born $~}
-      {$flow $~}
-      {$hail $~}
-      {$hook $~}
-      {$they $~}
-      {$thud $~}
-      {$tick $~}
-      {$sync $~}
-  ::
-      {$what $~}
-      {$whom $~}
-  == 
-++  gift
-  $%  {$sy
-      {$sy
-  ==  
-++  
---  =>
-::                                                      ::  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) state molds
 ::                                                      ::  ::
 |% 
@@ -72,16 +46,17 @@
     $:  $=  gut                                         ::  abdomen
         $:  run/(list move)                             ::  worklist
             out/(list ovum)                             ::  output
+            sac/worm                                    ::  compiler cache
         ==                                              ::
         $=  bug                                         ::  insect brain
         $:  noc/@ta                                     ::  process nonce
             ver/(qual @tas @ud @ud @ud)                 ::  vendor/version
         ==                                              ::
         $=  mal                                         ::  mammal brain
-        $:  lac/?                                       ::  laconic, !verbose
+        $:  off/?                                       ::  not yet booted
+            lac/?                                       ::  not verbose
             bud/vase                                    ::  compiled zuse
-            sac/worm                                    ::  vane compiler cache
-            van/(list (pair term vase))                 ::  vanes
+            van/(map term vase)                         ::  vanes
         ==                                              ::
         $=  rep                                         ::  reptile brain
         $:  orb/@p                                      ::  ship
@@ -105,14 +80,13 @@
 ++  live  (evil)                                        ::  modern molds
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
-  $%  {$walk ~}                                         ::  build mammal brain
+  $%  {$walk ~}                                         ::  finish mammal brain
       {$wear p/@tas q/@t}                               ::  load/reload vane
       {$what p/(list (pair path (pair term noun)))}     ::  put reptile files
       {$whom p/@p q/arms r/(map @ud ruby)}              ::  put reptile identity
-      {$wine p/
+      {$wine p/@tas q/@t}                               ::  install a vane
       {$wink p/@t q/@t}                                 ::  reset york/zuse
-      {$
-      {$woke ~}
+      {$woke ~}                                         ::  finish booting
   ==                                                    ::
 --  =>
 |%
@@ -123,63 +97,18 @@
 ::                                                      ::  ++le
 ++  le                                                  ::  deep engine
   =+  mast:live
-  =*  sys  -
+  =*  ::  
+      ::  sys: system state
+      ::
+      sys  -
   |%
-  ::                                                    ::  ++born:le
-  ++  born                                              ::  true if booted
-    ^-  ?
-    ::
-    ::  when arvo is "unborn," the ship 
-    ::
-    =(~ roy.rep)  
-  ::                                                    ::  ++pike:le
-  ++  pike                                              ::  make a move
-    |=  $:  ::  lay: event route
-            ::  now: date
-            ::  ovo: event
-            ::
-            lay/@tas
-            now/@da
-            tea/wire
-        ==
-    ::  print event if not in laconic mode
-    ::
-    ~?  &(!lac.mal !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
-    ::
-    ::  add soft move to queue; 
-    ::
-    %=    work
-        run.gut
-      :_  run.gut
-      ^-  move
-      :-  `wire`[p.ovo ~]
-      ^-  part
-      :^  %pass  t.p.ovo
-        lay
-      :+  %&
-        [%cell [%atom %tas `%soft] %noun]
-      [%soft q.ovo]
-    ==
-  ::                                                    ::  ++poke:le
-  ++  poke                                              ::  event from unix
-    |=  $:  ::  now: event date
-            ::  ovo: event
-            ::
-            now/@da
-            ovo/ovum
-        ==
-    ^+  sys
-    ~|  
-    ?+    -.ovo  ~&(le-bad-egg++.ovo sys)
-        belt
-        blip
-        born
-        hail
-        hook
-        they
-        thud
-        tick
-        sync
+  ::                                                    ::  ++abet:le
+  ++                                                
+  ::                                                    ::  ++buzz:le
+  ++  buzz                                              ::  arvo effect
+    |=  wap/wasp
+    ^+  +>
+    ?+  -.wap  !!
     ::
     ::  $what: install boot files in reptile brain
     ::
@@ -200,9 +129,72 @@
           nym.rep  nym.dat
           roy.rep  (~(uni by roy.rep) roy.rep roy.dat)
         ==
-
     ==
-  ++  push
+  ::                                                    ::  ++emit:le
+  ++  emit                                              ::  push move on stack
+    |=(move +>(run.gut [+> run.gut))
+  ::                                                    ::  ++pike:le
+  ++  pike                                              ::  event to %pass
+    |=  $:  ::  lay: event route
+            ::  now: date
+            ::  tea: cause
+            ::  vax: vase of card
+            ::
+            lay/@tas
+            now/@da
+            tea/wire
+            jac/card
+        ==
+    ^+  +>
+    ::  print event if in verbose mode
+    ::
+    ~?  &(!lac.mal !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
+    ::
+    ::  convert ovum to vase
+    ::
+    =^  vax  +>  (open jac)
+    ::
+    ::  push move to stack
+    ::
+    (emit %pass tea lay %& vax)
+  ::                                                    ::  ++open:le
+  ++  open                                              ::  input card to move
+    |=  jac/card
+    ^-  {vase _+>}
+    ?<  off.mal
+    =^  vax  sac.gut  (~(slap wa sac.gut) [%limb %unix-task])
+    [vax +>.$]
+  ::                                                    ::  ++poke:le
+  ++  poke                                              ::  event from unix
+    |=  $:  ::  now: event date
+            ::  ovo: event
+            ::
+            now/@da
+            ovo/ovum
+        ==
+    ^+  sys
+    ~|  [%poke -.ovo]
+    ::
+    ::  the event is either vane input or an arvo action (wasp).
+    ::  we default to treating it as a wasp.
+    ::
+    ?+  -.ovo  
+      (buzz ((hard wasp) ovo))
+    ::
+      $belt  (pike %d now ovo)
+      $blew  (pike %d now ovo)
+      $born  (pike %e now ovo)
+      $hail  (pike %d now ovo)
+      $hear  (pike %a now ovo)
+      $hook  (pike %d now ovo)
+      $into  (pike %c now ovo)
+      $they  (pike %e now ovo)
+      $this  (pike %e now ovo)
+      $thus  (pike %e now ovo)
+    ==
+  ::                                                    ::  ++wear:le
+  ++  wear                                              ::  primary import
+    |
   ++  work
 
   --
