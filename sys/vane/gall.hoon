@@ -557,7 +557,7 @@
           $(pyz t.pyz)
         =^  vad  +>  ap-fill(ost p.i.pyz)
         $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
-      =+  ded=(~(tap in ful) ~)
+      =+  ded=~(tap in ful)
       |-  ^+  +>.^$
       ?~  ded  +>.^$
       =>  %*(. $(ded t.ded) ost i.ded)
@@ -1067,8 +1067,8 @@
       =^  tur  +>.$
           %+  ap-call  %prep
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
-      ?~  tur 
-        `+>.$ 
+      ?~  tur
+        `+>.$
       :_(+>.$ `u.tur)
     ::
     ++  ap-pule                                         ::  silent delete

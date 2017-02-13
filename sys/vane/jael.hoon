@@ -1117,7 +1117,7 @@
   ::                                                    ::  ++exec:su
   ++  exec                                              ::  mass gift
     |=  {yen/(set duct) cad/card}
-    =/  noy  (~(tap in yen))
+    =/  noy  ~(tap in yen)
     |-  ^+  ..exec
     ?~  noy  ..exec
     $(noy t.noy, moz [[i.noy cad] moz])
@@ -1212,7 +1212,7 @@
     ::                                                  ::  ++flow:su
     ++  flow                                            ::  to set of ships
       |=  tar/(set ship)
-      =+  rot=(~(tap in (~(del in tar) our)))
+      =+  rot=~(tap in (~(del in tar) our))
       |-  ^+  ..fire
       ?~  rot  ..fire
       $(rot t.rot, ..fire (home i.rot))
@@ -1238,7 +1238,7 @@
       ::  nex: all wills to add
       ::
       =/  nex
-        =/  rom  (~(tap in mor))
+        =/  rom  ~(tap in mor)
         |-  ^-  farm
         ?~  rom  ~
         %+  ~(put by $(rom t.rom))

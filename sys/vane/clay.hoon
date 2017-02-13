@@ -1308,7 +1308,7 @@
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %exec  our  ~  [her syd %da now]  %tabl
         ^-  (list (pair silk:ford silk:ford))
-        %+  turn  (~(tap in sum))
+        %+  turn  ~(tap in sum)
         |=  a/path
         ^-  (pair silk:ford silk:ford)
         :-  [%$ %path !>(a)]
@@ -1351,7 +1351,7 @@
     %+  turn  (~(tap by mus))
     |=  {pot/term len/@ud pak/(set path)}
     :*  u.hez  %give  %ergo  pot
-        %+  turn  (~(tap in pak))
+        %+  turn  ~(tap in pak)
         |=  pax/path
         [(slag len pax) (~(got by can) pax)]
     ==
@@ -1522,12 +1522,12 @@
     =<  wake
     =+  ^-  nut/(map tako yaki)
         %-  molt  ^-  (list (pair tako yaki))
-        %+  turn  (~(tap in lar))
+        %+  turn  ~(tap in lar)
         |=  yak/yaki
         [r.yak yak]
     =+  ^-  nat/(map lobe blob)
         %-  molt  ^-  (list (pair lobe blob))
-        %+  turn  (~(tap in bar))
+        %+  turn  ~(tap in bar)
         |=  bol/blob
         [p.bol bol]
     ~|  :*  %bad-foreign-update
@@ -1581,7 +1581,7 @@
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
         %f  %exec  our  ~  [her syd cas]  %tabl
         ^-  (list (pair silk:ford silk:ford))
-        %+  turn  (~(tap in pop))
+        %+  turn  ~(tap in pop)
         |=  a/plop
         ?-  -.a
           $direct  [[%$ %blob !>([%direct p.a *page])] (vale-page p.q.a q.q.a)]
@@ -2063,10 +2063,10 @@
       =+  ^-  yal/(set tako)
           %-  silt
           %+  skip
-            (~(tap in (reachable-takos b)))
+            ~(tap in (reachable-takos b))
           |=(tak/tako (~(has in old) tak))
-      :-  (silt (turn (~(tap in yal)) tako-to-yaki))
-      (silt (turn (~(tap in (new-lobes (new-lobes ~ old) yal))) lobe-to-blob))
+      :-  (silt (turn ~(tap in yal) tako-to-yaki))
+      (silt (turn ~(tap in (new-lobes (new-lobes ~ old) yal)) lobe-to-blob))
     ::
     ::  Traverses parentage and finds all ancestor hashes
     ::
@@ -2087,7 +2087,7 @@
     ++  new-lobes                                       ::  object hash set
       |=  {b/(set lobe) a/(set tako)}                   ::  that aren't in b
       ^-  (set lobe)
-      %+  roll  (~(tap in a) ~)
+      %+  roll  ~(tap in a)
       |=  {tak/tako bar/(set lobe)}
       ^-  (set lobe)
       =+  yak=(tako-to-yaki tak)
@@ -2636,7 +2636,7 @@
           ?~  r
             (error:he %merge-no-merge-base ~)
           ?.  ?=({* $~ $~} r)
-            =+  (lent (~(tap in `(set yaki)`r)))
+            =+  (lent ~(tap in `(set yaki)`r))
             (error:he %merge-criss-cross >[-]< ~)
           =.  bas.dat  n.r
           ?:  ?=(?($mate $meld) gem.dat)
@@ -3105,7 +3105,7 @@
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
             %f  %exec  p.bob  ~  val  %tabl
             ^-  (list (pair silk:ford silk:ford))
-            %+  turn  (~(tap in sum))
+            %+  turn  ~(tap in sum)
             |=  a/path
             ^-  (pair silk:ford silk:ford)
             :-  [%$ %path !>(a)]
@@ -3145,7 +3145,7 @@
         %+  turn  (~(tap by mus))
         |=  {pot/term len/@ud pak/(set path)}
         :*  u.hez  %give  %ergo  pot
-            %+  turn  (~(tap in pak))
+            %+  turn  ~(tap in pak)
             |=  pax/path
             [(slag len pax) (~(got by can) pax)]
         ==
@@ -3222,7 +3222,7 @@
           =|  gud/(set yaki)
           =+  ^=  zar
               ^-  (map tako (set tako))
-              %+  roll  (~(tap in unk))
+              %+  roll  ~(tap in unk)
               |=  {yak/yaki qar/(map tako (set tako))}
               (~(put by qar) r.yak (reachable-takos r.yak))
           |-

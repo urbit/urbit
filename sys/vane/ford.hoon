@@ -238,14 +238,14 @@
         :-  [%done ~]
         ;:  weld
           (axap dep (~(del in q.dap) bem))              ::  cancel outstanding
-          (turn (~(tap in p.dap)) |=(hen/duct [hen %give %news dep]))
+          (turn ~(tap in p.dap) |=(hen/duct [hen %give %news dep]))
           mow
     ==  ==
       ==
   ::
   ++  axap                                              ::  unsubscribe beams
     |=  {dep/@uvH dap/(set beam)}
-    %+  turn  (~(tap in dap))
+    %+  turn  ~(tap in dap)
     |=  bem/beam
     :^  hen  %pass  [(scot %p our) (scot %uv dep) (en-beam bem)]
     [%c %warp [our p.bem] q.bem ~]
@@ -277,7 +277,7 @@
           (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
         ::
             mow
-          =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
+          =<  (welp :_(mow (turn ~(tap in p.u.dap) .)))
           |=  bem/beam
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (en-beam bem)]
           [%c [%warp [our p.bem] q.bem ~ [%next %z r.bem (flop s.bem)]]]
@@ -295,7 +295,7 @@
       ==
     ++  camo                                            ::  stop requests
       ^+  .
-      =+  kiz=(~(tap in kig))
+      =+  kiz=~(tap in kig)
       |-  ^+  +>
       ?~  kiz  +>
       $(kiz t.kiz, mow :_(mow [hen (cancel i.kiz)]))
@@ -569,7 +569,7 @@
       |=  {dep/(set beam) deh/(map @uvH deps)}
       ^+  [*@uvH deh.bay]
       =.  dep
-        =<  (silt (skip (~(tap in dep)) .))
+        =<  (silt (skip ~(tap in dep) .))
         |=  dap/beam  ^-  ?
         ?~  s.dap  |
         =>(.(s.dap t.s.dap) |((~(has in dep) dap) $))

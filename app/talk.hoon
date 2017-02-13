@@ -696,7 +696,7 @@
         %^    sh-repo-config-exceptions
             (weld (trip man.she) ": ")
           p.cordon.loc
-        [~ (~(tap in q.cordon.loc))]
+        [~ ~(tap in q.cordon.loc)]
       %^    sh-repo-config-exceptions
           (weld (trip man.she) ": ")
         p.cordon.loc
@@ -974,7 +974,7 @@
     ++  sh-whom                                         ::  current audience
       ^-  audience
       %-  ~(gas by *audience)
-      %+  turn  (~(tap in ?~(active.she passive.she u.active.she)))
+      %+  turn  ~(tap in ?~(active.she passive.she u.active.she))
       |=(a/partner [a *envelope %pending])
     ::
     ++  sh-tell                                         ::  add command
@@ -1070,7 +1070,7 @@
         ?^  qur
           =+  cha=(~(get by nik) qur)
           (sh-fact %txt ?~(cha "none" [u.cha]~))
-        =+  pan=(~(tap in (~(get ju nak) qur)))
+        =+  pan=~(tap in (~(get ju nak) qur))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
         |=(a/(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
@@ -1172,7 +1172,7 @@
         ^+  ..sh-work
         ?~  seg
           %+  sh-fact  %mor
-          %+  turn  (~(tap in settings.she))
+          %+  turn  ~(tap in settings.she)
           |=  s/knot
           [%txt (trip s)]
         %=  ..sh-work
@@ -1795,8 +1795,8 @@
     ++  pa-reform                                       ::  reconfigure, ugly
       |=  cof/config
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
-          =+  old=`(list partner)`(~(tap in sources.shape) ~)
-          =+  new=`(list partner)`(~(tap in sources.cof) ~)
+          =+  old=`(list partner)`~(tap in sources.shape)
+          =+  new=`(list partner)`~(tap in sources.cof)
           :-  (skip new |=(a/partner (~(has in sources.shape) a)))
           (skip old |=(a/partner (~(has in sources.cof) a)))
       =.  +>.$  (pa-acquire p.dif)
@@ -2069,7 +2069,7 @@
   ++  te-prom  ^-  tape                                 ::  render targets
     =.  .  te-deaf
     =+  ^=  all
-        %+  sort  `(list partner)`(~(tap in lix))
+        %+  sort  `(list partner)`~(tap in lix)
         |=  {a/partner b/partner}
         (~(ta-beat ta man a) b)
     =+  fir=&
@@ -2143,7 +2143,7 @@
     =+  hed=leaf+"{(scow %uv sen)} at {(scow %da wen)}"
     =+  =<  paz=(turn (~(tap by aud)) .)
         |=({a/partner *} leaf+~(ta-full ta man a))
-    =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
+    =+  bok=(turn (sort ~(tap in bou) aor) smyt)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
   ::
   ++  tr-body

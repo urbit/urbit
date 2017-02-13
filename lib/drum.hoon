@@ -238,7 +238,7 @@
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
-  %+  roll  (~(tap in ray))
+  %+  roll  ~(tap in ray)
   =<  .(con +>)
   |=  {wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con
@@ -250,7 +250,7 @@
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
-  %+  roll  (~(tap in eel))
+  %+  roll  ~(tap in eel)
   =<  .(con +>)
   |=  {gil/gill:gall con/_.}  ^+  con
   =.  +>.$  con
@@ -295,7 +295,7 @@
 ::
 ++  se-amor                                           ::  live targets
   ^-  (list gill:gall)
-  %+  skim  (~(tap in eel))
+  %+  skim  ~(tap in eel)
   |=(a/gill:gall ?=({$~ $~ *} (~(get by fug) a)))
 ::
 ++  se-anon                                           ::  rotate index
