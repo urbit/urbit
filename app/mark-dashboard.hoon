@@ -1,22 +1,22 @@
 |%
 ++  results  (map mark (each vase tang))
 ++  show-results
-  =,  js:eyre
+  =,  format
   |=  a/results  ^-  json
   :-  %o
   %-  ~(run by a)
   |=  b/(each vase tang)
   ?-  -.b
-    $&  (jape (text p.b))
-    $|  (jape (of-wall (wush 160 (flop p.b))))
+    $&  (tape:enjs (text p.b))
+    $|  (tape:enjs (of-wall (wush 160 (flop p.b))))
   ==
 ++  wush
   |=  {wid/@u tan/tang}  ^-  wall
   (zing (turn tan |=(a/tank (wash 0^wid a))))
 --
 ::
-=,  ^gall
-=,  ^ford
+=,  gall
+=,  ford
 |_  {bowl $~}
 ++  peek  _~
 ++  peer-scry-x
