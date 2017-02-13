@@ -3911,6 +3911,7 @@
     --  ::
   ::                                                    ::  ++de-purl:html
   ++  de-purl                                           ::  url+header parser
+    =<  |=(a/cord `(unit purl)`(rush a auri))
     |%
     ::                                                  ::  ++deft:de-purl:html
     ++  deft                                            ::  parse url extension
