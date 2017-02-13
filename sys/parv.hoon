@@ -36,17 +36,23 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) state molds
 ::                                                      ::  ::
 |% 
-++  evil                                                ::  hoon-dependent
-  |*  {span/_span twig/_twig vase/_vase}                ::  inject hoon version
+++  evil                                                ::  evolvable state
+  |*  {span/_span twig/_twig vase/_vase}                ::  injected molds
   |%                                                    ::
+  ++  boot  (pair hoof (unit hoof))                     ::  arvo/hoon boot src
+  ++  hoof  @t                                          ::  hoon source file
   ++  mall                                              ::  any arvo version
     $?  {$293 mast}                                     ::  kelvin 293, current
     ==                                                  ::
   ++  mast                                              ::  system state
     $:  $=  gut                                         ::  abdomen
         $:  run/(list move)                             ::  worklist
-            out/(list ovum)                             ::  output
-            sac/worm                                    ::  compiler cache
+            out/(list ovum)                             ::  unix output
+            but/(unit boot)                             ::  reboot 
+        ==                                              ::
+        $=  hax                                         ::  thorax
+        $:  sac/worm                                    ::  compiler cache
+            kit/toys                                    ::  common nouns
         ==                                              ::
         $=  bug                                         ::  insect brain
         $:  noc/@ta                                     ::  process nonce
@@ -55,7 +61,8 @@
         $=  mal                                         ::  mammal brain
         $:  off/?                                       ::  not yet booted
             lac/?                                       ::  not verbose
-            bud/vase                                    ::  compiled zuse
+            yor/vase                                    ::  %york, vane models
+            zus/vase                                    ::  %zuse, user lib
             van/(map term vase)                         ::  vanes
         ==                                              ::
         $=  rep                                         ::  reptile brain
@@ -71,6 +78,12 @@
     $%  {$give p/mill}                                  ::  vane "return"
         {$pass p/wire q/(pair term mill)}               ::  vane "call"
     ==                                                  ::
+  ++  toys                                              ::  reflexive constants
+    $:  typ/span                                        ::  -:!>(*span)
+        duc/span                                        ::  -:!>(*duct)
+        pah/span                                        ::  -:!>(*path)
+        mev/span                                        ::  -:!>([%meta *vase])
+    ==                                                  ::
   ++  worm                                              ::  compiler cache
     $:  nes/(set ^)                                     ::  ++nest
         pay/(map (pair span twig) span)                 ::  ++play
@@ -81,11 +94,8 @@
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
   $%  {$walk ~}                                         ::  finish mammal brain
-      {$wear p/@tas q/@t}                               ::  load/reload vane
       {$what p/(list (pair path (pair term noun)))}     ::  put reptile files
       {$whom p/@p q/arms r/(map @ud ruby)}              ::  put reptile identity
-      {$wine p/@tas q/@t}                               ::  install a vane
-      {$wink p/@t q/@t}                                 ::  reset york/zuse
       {$woke ~}                                         ::  finish booting
   ==                                                    ::
 --  =>
@@ -96,73 +106,92 @@
 |%
 ::                                                      ::  ++le
 ++  le                                                  ::  deep engine
-  =+  mast:live
+  =+  [now=*@da mast:live]
   =*  ::  
       ::  sys: system state
       ::
-      sys  -
+      sys  ->
   |%
   ::                                                    ::  ++abet:le
-  ++                                                
-  ::                                                    ::  ++buzz:le
-  ++  buzz                                              ::  arvo effect
-    |=  wap/wasp
-    ^+  +>
-    ?+  -.wap  !!
-    ::
-    ::  $what: install boot files in reptile brain
-    ::
-        $what                                           ::  
-      =+  mol  $:  fat/(map path (pair term noun))
-      =+  dat=((hard {@p arms (map @ud ruby)}) +.ovo)
-
-    ::
-    ::  $whom: install identity information and complete boot process
-    ::
-        $whom
-      =*  mol  $:  orb/@p
-                   nym/arms
-                   roy/(map @ud ruby)
-               ==
-      =+  dat=((hard mol) +.ovo)
-      =:  orb.rep  orb.dat
-          nym.rep  nym.dat
-          roy.rep  (~(uni by roy.rep) roy.rep roy.dat)
+  ++  abet                                              ::  complete cycle
+    ^-  {(pair (unit (pair @t @t)) (list move)) _sys}
+    :-  [but.gut flop 
+    [[but.gut (flop out.gut) sys(out.gut ~)]
+  ::                                                    ::  ++base:le
+  ++  base                                              ::  upgrade vane
+    |=  $:  ::  lal: vane name `%gall`
+            ::  src: vane source
+            ::
+            lal/term 
+            src/
         ==
-    ==
+    ::  lay: name prefix `%g`
+    ::
+    =+  lay=(end 3 1 lal)
+  ::                                                    ::  ++boss:le
+  ++  boss                                              ::  apply upgrades
+    |=  $:  ::  yor: sys/york upgrade
+            ::  zus: sys/zuse upgrade
+            ::  van: all vane upgrades
+            ::
+            $:  yor/(unit hoof)
+                zus/(unit hoof)
+            ==
+            van/(map term hoof)
+        ==
+    ::  bas: vase 
+    ::
+    =+  bas=!>(..arms)
+    ::
+    ::  
+    ::
   ::                                                    ::  ++emit:le
-  ++  emit                                              ::  push move on stack
-    |=(move +>(run.gut [+> run.gut))
+  ++  emit                                              ::  emit move
+    |=  mov/move  
+    +>(run.gut [mov run.gut]) 
   ::                                                    ::  ++pike:le
   ++  pike                                              ::  event to %pass
     |=  $:  ::  lay: event route
             ::  now: date
-            ::  tea: cause
-            ::  vax: vase of card
+            ::  ovo: input ovum
             ::
             lay/@tas
             now/@da
-            tea/wire
-            jac/card
+            ovo/ovum
         ==
     ^+  +>
     ::  print event if in verbose mode
     ::
     ~?  &(!lac.mal !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
     ::
-    ::  convert ovum to vase
+    ::  vax: card as vase
     ::
-    =^  vax  +>  (open jac)
+    =^  vax  +>  (open q.ovo)
     ::
-    ::  push move to stack
+    ::  hen: fundamental cause (unix input channel)
+    ::  tea: local cause (unix i/o)
+    ::  mov: action (pass into event route)
     ::
-    (emit %pass tea lay %& vax)
+    =*  hen  `duct`[p.ovo ~]
+    =*  tea  `wire`[%$ %unix ~]
+    =*  mov  `move`[%pass tea lay %& vax]
+    ::
+    ::  push move on stack
+    ::
+    (emit mov)
   ::                                                    ::  ++open:le
   ++  open                                              ::  input card to move
-    |=  jac/card
+    |=  fav/card
     ^-  {vase _+>}
     ?<  off.mal
-    =^  vax  sac.gut  (~(slap wa sac.gut) [%limb %unix-task])
+    ::
+    ::  gat: mold for correct unix task
+    ::  vax: molded card
+    ::
+    =^  gat  sac.gut  (~(slap wa sac.gut) bud.mal [%limb %unix-task])
+    =/  vax  (slam gat [%noun fav])
+    ~|  [%le-open -.fav]
+    ?>  =(fav q.vax)
     [vax +>.$]
   ::                                                    ::  ++poke:le
   ++  poke                                              ::  event from unix
@@ -178,8 +207,14 @@
     ::  the event is either vane input or an arvo action (wasp).
     ::  we default to treating it as a wasp.
     ::
+    ::  XX: this logic will be directed in the event structure itself.
+    ::
     ?+  -.ovo  
-      (buzz ((hard wasp) ovo))
+      =/  wap  ((hard wasp) ovo)
+      =*  tea  `wire`[%$ %init ~]
+      =*  hen  `duct`[tea [p.ovo ~]]
+      =*  mov  `move`[hen %give %& !>(wap)]
+      (emit mov)
     ::
       $belt  (pike %d now ovo)
       $blew  (pike %d now ovo)
@@ -192,11 +227,150 @@
       $this  (pike %e now ovo)
       $thus  (pike %e now ovo)
     ==
-  ::                                                    ::  ++wear:le
-  ++  wear                                              ::  primary import
-    |
-  ++  work
+  ::                                                    ::  ++work:le
+  ++  work                                              ::  main loop
+    =*  ken  +
+    ^+  ken
+    ::
+    ::  terminate when stack is empty
+    ::
+    ?~  run.gut  ken
+    ::
+    ::  mov: top move on stack
+    ::  hen: cause of move
+    ::  act: action in move
+    ::
+    =*  mov  `move`i.run.gut
+    =*  hen  `duct`p.mov
+    =*  egg  `part`q.mov
+    ::
+    ::  pop top move off stack
+    ::
+    =.  run.gut  t.run.gut
+    ::
+    ::  interpret top move
+    ::
+    ?-    -.egg
+    ::
+    ::  %give: event return
+    ::
+        $give
+      ::
+      ::  the duct can't be empty
+      ::
+      ?>  ?=(^ p.mov)
+      ::
+      ::  tea: top wire on duct
+      ::  hen: rest of duct
+      ::
+      =/  tea  i.p.mov
+      =*  hen  t.p.mov
+      ::
+      ::  route gift by wire
+      ::
+      ?:  ?=({%$ *} tea)
+        ::
+        ::  gift returned on arvo wire
+        ::
+        ?:  ?=({%unix $~} t.tea)
+          ::
+          ::  gift returned to unix i/o
+          ::
+          (unix hen XXp.egg)
+        ?>  ?=({%arvo $~} t.tea)
+        ::
+        ::  gift returned to arvo control
+        ::
+        (wasp hen XXp.egg)
+      ::
+      ::  gift returned to calling vane
+      ::
+      ?>  ?=({@tas *} tea)
+      (read hen i.tea t.tea p.egg)
+    ::
+    ::  %pass: event call
+    ::
+        $pass
+      (send [p.egg hen] p.q.egg q.egg)
+    ==
+    ::                                                  ::  ++buzz:le
+    ++  wasp                                            ::  arvo effect
+      |=  {hen/duct wap/wasp}
+      ^+  +>
+      ?+    -.wap  !!
+      ::
+      ::  $what: install boot files in reptile brain
+      ::
+          $what
+        ::
+        ::  we are rebooting if hoon or arvo change
+        ::
+        =/  but
+            ^-  (unit boot)
+            =/  new-hoon  (~(get by p.wap) /sys/hoon)
+            =/  new-arvo  (~(get by p.wap) /sys/arvo)
+            =*  old-hoon  (~(get by fat.rep) /sys/hoon)
+            =*  old-arvo  (~(get by fat.rep) /sys/arvo)
+            =.  new-hoon  ?~  new-hoon  ~
+                          =+  old=old-hoon
+                          ?~  old  ~
+                          ?:(=(old new-hoon) ~ new-hoon)
+            =.  new-arvo  ?^  new-hoon
+                          ?^(new-arvo new-arvo old-arvo)
+                          ?~  new-arvo  ~
+                          =+  old=old-arvo
+                          ?~  old  ~
+                          ?:(=(old new-arvo) ~ new-arvo)
+            ?~  new-arvo  ~
+            `[u.new-arvo new-hoon]
+        ::
+        ::  if rebooting, set boot trigger and re
+        ::
+        ?^
+        =|  act  $: ::  sys: hoon files in sys
+                    ::  van: hoon files in sys/van
+                    ::
+                    sys/(map term hoof)
+                    van/(map term hoof)
+                 ==
+        |-  ^+  +>.^$
+        ?~  p.wap  (boss sys van)
+        ?:  =(b
 
+
+      ::
+      ::  $whom: install identity information and complete boot process
+      ::
+          $whom
+        =*  mol  $:  orb/@p
+                     nym/arms
+                     roy/(map @ud ruby)
+                 ==
+        =+  dat=((hard mol) +.ovo)
+        =:  orb.rep  orb.dat
+            nym.rep  nym.dat
+            roy.rep  (~(uni by roy.rep) roy.rep roy.dat)
+          ==
+        !!
+      ==
+    ::                                                  ::  ++we-gift:work:le
+    ++  we-gift 
+      |=  $:  ::  hen: cause
+              ::  lay: vane to return to
+              ::  hil:
+              ::  
+              hen/duct
+              lay/term
+              hil/mill
+          ==
+      ^+  ken
+      !!
+    ++  we-wasp
+      |=  $:  ::  hen: cause 
+              ::  
+      ^_
+    ++  we-
+    --
   --
 --
 ::                                                      ::  ::

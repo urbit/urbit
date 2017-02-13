@@ -75,7 +75,7 @@
       ^-  (unit @da)
       ((hard (unit @da)) q:(slym (slap rig [%limb %doze]) +<))
     ::
-    ++  slid
+    ++  slid                                            ::  mill cell
       |=  {hed/mill tal/mill}
       ^-  mill
       ?:  &(?=($& -.hed) ?=($& -.tal))
