@@ -9,6 +9,17 @@ _persistence = require('../persistence/MessagePersistence.coffee');
 
 Persistence = _persistence({
   MessageActions: module.exports = {
+    setFilter: function(station) {
+      return Dispatcher.handleViewAction({
+        station: station,
+        type: "messages-filter"
+      });
+    },
+    clearFilter: function() {
+      return Dispatcher.handleViewAction({
+        type: "messages-filter-clear"
+      });
+    },
     loadMessages: function(messages, last, get) {
       return Dispatcher.handleServerAction({
         messages: messages,
@@ -800,7 +811,7 @@ module.exports = recl({
 
 
 },{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./LoadComponent.coffee":3,"./MessageComponent.coffee":5}],7:[function(require,module,exports){
-var Load, Member, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style, util,
+var Load, Member, MessageActions, MessageStore, StationActions, StationStore, a, clas, div, h1, h2, input, label, recl, ref, rele, span, style, util,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 util = require('../util.coffee');
@@ -817,6 +828,8 @@ MessageStore = require('../stores/MessageStore.coffee');
 
 StationStore = require('../stores/StationStore.coffee');
 
+MessageActions = require('../actions/MessageActions.coffee');
+
 StationActions = require('../actions/StationActions.coffee');
 
 Member = require('./MemberComponent.coffee');
@@ -831,6 +844,7 @@ module.exports = recl({
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
       station: util.mainStation(),
+      filter: MessageStore.getFilter(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       fetching: MessageStore.getFetching(),
@@ -844,6 +858,7 @@ module.exports = recl({
   },
   componentDidMount: function() {
     this.$el = $(ReactDOM.findDOMNode());
+    MessageStore.addChangeListener(this._onChangeStore);
     StationStore.addChangeListener(this._onChangeStore);
     if (this.state.listening.indexOf(this.state.station) === -1) {
       return StationActions.listenStation(this.state.station);
@@ -888,16 +903,23 @@ module.exports = recl({
     }
   },
   _openStation: function(e) {
-    var $t;
-    $t = $(e.target);
     return this.setState({
-      open: $t.attr('data-station')
+      open: $(e.target).attr('data-station')
     });
   },
   _closeStation: function() {
     return this.setState({
       open: null
     });
+  },
+  _filterStation: function(e) {
+    var station;
+    station = $(e.target).attr('data-station');
+    if (this.state.filter !== station) {
+      return MessageActions.setFilter(station);
+    } else {
+      return MessageActions.clearFilter();
+    }
   },
   _remove: function(e) {
     var _sources, _station;
@@ -969,10 +991,14 @@ module.exports = recl({
             onClick: this._openStation,
             "data-station": source
           }, source), div({
-            className: "close",
+            className: 'options'
+          }, div({
+            onClick: this._filterStation,
+            "data-station": source
+          }, this.state.filter === source ? "Clear" : "Filter"), div({
             onClick: this._remove,
             "data-station": source
-          }, "✕")));
+          }, "Leave"))));
         }
         return results;
       }).call(this);
@@ -1010,7 +1036,7 @@ module.exports = recl({
 });
 
 
-},{"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./LoadComponent.coffee":3,"./MemberComponent.coffee":4,"classnames":16}],8:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":13,"../stores/StationStore.coffee":14,"../util.coffee":15,"./LoadComponent.coffee":3,"./MemberComponent.coffee":4,"classnames":16}],8:[function(require,module,exports){
 var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, husl, input, recl, ref, textToHTML, textarea, util,
   hasProp = {}.hasOwnProperty;
 
@@ -1747,7 +1773,7 @@ module.exports = function(arg) {
 
 
 },{"../util.coffee":15}],13:[function(require,module,exports){
-var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
+var EventEmitter, MessageDispatcher, MessageStore, _fetching, _filter, _last, _listening, _messages, _station, _typing, moment;
 
 moment = window.moment.tz;
 
@@ -1762,6 +1788,8 @@ _fetching = false;
 _last = null;
 
 _station = null;
+
+_filter = null;
 
 _listening = [];
 
@@ -1822,6 +1850,15 @@ MessageStore = _.merge(new EventEmitter, {
   setStation: function(station) {
     return _station = station;
   },
+  getFilter: function() {
+    return _filter;
+  },
+  setFilter: function(station) {
+    return _filter = station;
+  },
+  clearFilter: function(station) {
+    return _filter = null;
+  },
   sendMessage: function(message) {
     return _messages[message.thought.serial] = message;
   },
@@ -1840,7 +1877,21 @@ MessageStore = _.merge(new EventEmitter, {
     return _fetching = false;
   },
   getAll: function() {
-    return _.values(_messages);
+    var mess;
+    mess = _.values(_messages);
+    if (!_filter) {
+      return mess;
+    } else {
+      return _.filter(mess, function(mess) {
+        var audi;
+        audi = _.keys(mess.thought.audience);
+        if (audi.indexOf(_filter) !== -1) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
   },
   getFetching: function() {
     return _fetching;
@@ -1861,6 +1912,14 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
   switch (action.type) {
     case 'station-switch':
       MessageStore.setStation(action.station);
+      break;
+    case 'messages-filter':
+      MessageStore.setFilter(action.station);
+      MessageStore.emitChange();
+      break;
+    case 'messages-filter-clear':
+      MessageStore.clearFilter(action.station);
+      MessageStore.emitChange();
       break;
     case 'messages-listen':
       MessageStore.setListening(action.station);
