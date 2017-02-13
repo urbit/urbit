@@ -43,7 +43,7 @@
   ^-  {beak silk}
   :-  now-beak
   :-  %tabl
-  %+  turn  list-marks
+  %+  turn  (weld list-marks list-sub-marks)
   |=  {a/mark $~}  ^-  {silk silk}
   :-  [%$ %mark !>(a)]
   [%bunt a]
@@ -61,4 +61,18 @@
   %+  skim  (~(tap by dir))
   |=  {a/mark $~}
   ?=(^ (file (en-beam now-beak /hoon/[a]/mar)))
+::
+++  list-sub-marks
+  =,  space:userlib
+  =,  format
+  ^-  (list {mark $~})
+  %-  zing  ^-  (list (list {mark $~}))
+  =/  top  .^(arch %cy (en-beam now-beak /mar))
+  %+  turn  (~(tap by dir.top))
+  |=  {sub/knot $~}
+  =+  .^(arch %cy (en-beam now-beak /[sub]/mar))
+  %+  murn  (~(tap by dir))
+  |=  {a/mark $~}  ^-  (unit {mark $~})
+  ?~  (file (en-beam now-beak /hoon/[a]/[sub]/mar))  ~
+  `[(rap 3 sub '-' a ~) ~]
 --

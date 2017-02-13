@@ -5,11 +5,14 @@ TreeActions.registerComponent("mark-dashboard", React.createClass({
   render: function(){ 
     return d.ul({},
       !this.state.data ? "loading..." :
-      _.map(this.state.data,
-         function(result,mark){
-           return d.li({key:mark},"%"+mark, "  ", 
-              (!/\n/.test(result) ? d.code({},result) : d.pre({},d.code({},result)))
-      )})
+      _(this.state.data)
+        .map(function(result,mark){return {result:result, mark:mark}})
+        .sortBy('mark')
+        .map(function(x){
+           return d.li({key:x.mark},"%"+x.mark, "  ", 
+              (!/\n/.test(x.result) ? d.code({},x.result) : d.pre({},d.code({},x.result)))
+          )})
+        .value()
   )},
   getInitialState: function(){ return {data:null}},
   componentDidMount: function(){
