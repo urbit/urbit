@@ -17,7 +17,7 @@
   |%
   ++  json
     %-  jobe
-    %+  turn  (~(tap by all))
+    %+  turn  ~(tap by all)
     |=  {a/ship b/stat:womb}  ^-  {cord ^json}
     :-  (crip +:<a>)
     (jobe live+[%s p.b] dist+(json-dist q.b) ~)

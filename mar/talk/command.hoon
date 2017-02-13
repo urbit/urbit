@@ -27,7 +27,7 @@
       %+  ci
         |=  a/(map cord _(need *wit))
         ^-  (unit (list _[(wonk *fel) (need *wit)]))
-        (zl (turn (~(tap by a)) (head-rush fel)))
+        (zl (turn ~(tap by a) (head-rush fel)))
       (om wit)
     ::
     ++  ke                                              ::  callbacks

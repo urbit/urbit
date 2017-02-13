@@ -1319,7 +1319,7 @@
           urb.ton
         %-  ~(gas by *(map ship sufi))
         %+  turn
-          (~(tap by urb.ton.fox) ~)
+          ~(tap by urb.ton.fox)
         |=  {p/ship q/sufi}  ^-  {p/ship q/sufi}
         :-  p
         %=    q
@@ -1422,7 +1422,7 @@
     ::
     ++  kick                                            ::    kick:am
       |=  hen/duct                                      ::  refresh net
-      =+  aks=(turn (~(tap by urb.ton.fox) ~) |=({p/ship q/sufi} p))
+      =+  aks=(turn ~(tap by urb.ton.fox) |=({p/ship q/sufi} p))
       |-  ^-  {p/(list boon) q/fort}
       ?~  aks  [~ fox]
       =^  buz  fox  zork:(kick:(um i.aks) hen)

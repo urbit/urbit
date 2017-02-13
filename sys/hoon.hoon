@@ -1155,7 +1155,7 @@
   +-  dep                                               ::  difference as patch
     |*  b/_a
     ^+  [p=a q=a]
-    =+  c=(~(tap by (def b)))
+    =+  c=~(tap by (def b))
     =+  [d e]=[`_a`~ `_a`~]
     |-  ^+  [d e]
     ?~  c  [d e]
@@ -1326,9 +1326,10 @@
     [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  tap                                               ::  listify pairs
+    =<  $
     ~/  %tap
-    |=  b/(list _?>(?=(^ a) n.a))
-    ^+  b
+    =|  b/(list _?>(?=(^ a) n.a))
+    |.  ^+  b
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
@@ -8352,7 +8353,7 @@
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
       {$core *}
-    (turn (~(tap by q.r.q.typ) ~) |=({a/term *} a))
+    (turn ~(tap by q.r.q.typ) |=({a/term *} a))
   ==
 ::
 ++  slop                                                ::  cons two vases
@@ -8598,7 +8599,7 @@
         |=  hug
         ^-  {twig (list twig)}
         =-  [a (welp - ?~(c d [[[%rock %tas p.c] q.c] d]))]
-        =-  (~(tap by -))
+        =-  ~(tap by -)
         %.  |=(e/(list tank) [%knit ~(ram re %rose [" " `~] e)])
         =<  ~(run by (reel b .))
         |=  {e/{p/term q/term} f/(jar twig tank)}
@@ -9854,7 +9855,7 @@
     [(welp "events: " (pi-mumm mon.day)) ~]
   ::
     %+  turn
-      (~(tap by hit.day) ~)
+      ~(tap by hit.day)
     |=  {nam/term num/@ud}
     :(welp (trip nam) ": " (scow %ud num))
     ["" ~]
@@ -9862,7 +9863,7 @@
     %-  zing
     ^-  (list (list tape))
     %+  turn
-      %+  sort  (~(tap by cut.day))
+      %+  sort  ~(tap by cut.day)
       |=  {one/(pair path hump) two/(pair path hump)}
       (gth (pi-moth mon.q.one) (pi-moth mon.q.two))
     |=  {pax/path hup/hump}
@@ -9875,7 +9876,7 @@
       ?:  =(~ out.hup)  ~
       :-  "into:"
       %+  turn
-        %+  sort  (~(tap by out.hup) ~)
+        %+  sort  ~(tap by out.hup)
         |=({{* a/@ud} {* b/@ud}} (gth a b))
       |=  {pax/path num/@ud}
       ^-  tape
@@ -9884,7 +9885,7 @@
       ?:  =(~ inn.hup)  ~
       :-  "from:"
       %+  turn
-        %+  sort  (~(tap by inn.hup) ~)
+        %+  sort  ~(tap by inn.hup)
         |=({{* a/@ud} {* b/@ud}} (gth a b))
       |=  {pax/path num/@ud}
       ^-  tape

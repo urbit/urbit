@@ -588,7 +588,7 @@
       ?-  -.q.bot
         $0  amok:(expo [%made dep q.q.bot])
         $2  amok:(expo [%made dep %| q.q.bot])
-        $1  =+  zuk=(~(tap by p.q.bot) ~)
+        $1  =+  zuk=~(tap by p.q.bot)
             =<  abet
             |-  ^+  ..exec
             ?~  zuk  ..exec
@@ -1107,7 +1107,7 @@
       |=  {cof/cafe mal/(map mark $~)}
       ?:  (~(has by mal) for)
         (cope (lace cof for bem) (flux some))
-      =+  opt=(silt (turn (~(tap by mal)) head))        ::  XX asymptotics
+      =+  opt=(silt (turn ~(tap by mal) head))          ::  XX asymptotics
       %+  cope  (lion cof for opt)
       |=  {cof/cafe wuy/(list @tas)}
       ?~  wuy  (flue cof)
@@ -1188,7 +1188,7 @@
       |=  {cof/cafe fro/(set mark)}  ^-  (bolt (list mark))
       ?:  (~(has in tag) p.won)
         (fine cof (flop pax))
-      =+  for=(skip (~(tap by fro)) ~(has by war))
+      =+  for=(skip ~(tap by fro) ~(has by war))
       =.  for  (sort for aor)         ::  XX useful?
       =:  q.won  (~(gas to q.won) for)
           war  (~(gas by war) (turn for |=(mark [+< pax])))
@@ -1490,14 +1490,14 @@
         |=  {cof/cafe sel/_..body}
         ^$(src t.src, ..body sel, cof cof)
       ::
-      :: ++  libs  `(set term)`(silt (turn (~(tap by bil)) head.is))
+      :: ++  libs  `(set term)`(silt (turn ~(tap by bil) head.is))
       ++  chad                                          ::  atomic list
         |=  {cof/cafe bax/vase doe/term hon/horn}
         ^-  (bolt vase)
         %+  cope  (lash cof how (flux (slat doe)))
         |=  {cof/cafe yep/(map knot @)}
         =+  ^=  poy  ^-  (list (pair knot @))
-            %+  sort  (~(tap by yep) ~)
+            %+  sort  ~(tap by yep)
             |=({{* a/@} {* b/@}} (lth a b))
         %+  cope
           |-  ^-  (bolt (list (pair @ vase)))
@@ -1895,7 +1895,7 @@
         ?~  -.q.i.i.a
           [%& (turn (turn a2 head) |=(b/mass ?~(-.q.b p.q.b !!)))]
         [%| $(a (turn (turn a2 head) |=(b/mass ?~(-.q.b !! p.q.b))))]
-    %+  turn  (~(tap by pol))
+    %+  turn  ~(tap by pol)
     |=  {@ baby}
     :~  =<  cache+[%| (turn `(list term)`/hood/bake/slit/slim/slap/slam .)]
         =-  |=(a/term [a %& (~(get ja dep) a)])

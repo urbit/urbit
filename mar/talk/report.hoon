@@ -24,7 +24,7 @@
     |^  %+  joba  -.rep
         ?-  -.rep
           $cabal  (cabl +.rep)
-          $house  a+(turn (~(tap by +.rep)) jose)
+          $house  a+(turn ~(tap by +.rep) jose)
           $glyph  ((jome |=(a/char a) nack) +.rep)
           $grams  (jobe num+(jone p.rep) tele+[%a (turn q.rep gram)] ~)
           $group  (jobe local+(grop p.rep) global+%.(q.rep (jome parn grop)) ~)
@@ -46,7 +46,7 @@
     ++  jome                                            ::  stringify keys
       |*  {a/_cord b/_json}
       |=  c/(map _+<.a _+<.b)
-      (jobe (turn (~(tap by c)) (both a b)))
+      (jobe (turn ~(tap by c) (both a b)))
     ::
     ++  both                                            ::  cons two gates
       |*  {a/_* b/_*}

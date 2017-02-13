@@ -644,7 +644,7 @@
       :+  (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
         (dy-silk-sources p.cig)
       :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
-      %+  turn  (~(tap by q.cig))
+      %+  turn  ~(tap by q.cig)
       |=  {a/term b/(unit dojo-source)}
       ^-  (pair wing silk:ford)
       :-  [a ~]

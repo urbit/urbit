@@ -52,7 +52,7 @@
   =/  red  ((read-at len (scag len pax)) p.typ ark) :: XX ugly
   (drop (bind red rend))
 |-  ^-  tang
-=+  =<  arl=(~(tap by (~(urn by dir.ark) .)))
+=+  =<  arl=~(tap by (~(urn by dir.ark) .))
     |=({a/@t $~} .^(arch cy+(welp pax /[a])))
 %+  welp
   =/  dir/(list {@ path})

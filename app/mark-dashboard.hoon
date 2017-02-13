@@ -58,7 +58,7 @@
   =,  space:userlib
   =,  format
   =+  .^(arch %cy (en-beam now-beak /mar))
-  %+  skim  (~(tap by dir))
+  %+  skim  ~(tap by dir)
   |=  {a/mark $~}
   ?=(^ (file (en-beam now-beak /hoon/[a]/mar)))
 ::
@@ -68,10 +68,10 @@
   ^-  (list {mark $~})
   %-  zing  ^-  (list (list {mark $~}))
   =/  top  .^(arch %cy (en-beam now-beak /mar))
-  %+  turn  (~(tap by dir.top))
+  %+  turn  ~(tap by dir.top)
   |=  {sub/knot $~}
   =+  .^(arch %cy (en-beam now-beak /[sub]/mar))
-  %+  murn  (~(tap by dir))
+  %+  murn  ~(tap by dir)
   |=  {a/mark $~}  ^-  (unit {mark $~})
   ?~  (file (en-beam now-beak /hoon/[a]/[sub]/mar))  ~
   `[(rap 3 sub '-' a ~) ~]

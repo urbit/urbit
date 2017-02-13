@@ -25,7 +25,7 @@
     ;title: *{hed.sum}
     ;link: {(ref /)}
     ;description: *{(no-meta tal.sum)}
-    ;*  %+  turn  (~(tap by kid))
+    ;*  %+  turn  ~(tap by kid)
         |=  {nom/@t hed/marl tal/marl}
         ;item
           ;title: *{hed}

@@ -1260,12 +1260,12 @@
     :^  hen  %give  %mass
     :-  %gall
     :-  %|
-    %+  turn  (~(tap by pol.all))     :: XX single-home
+    %+  turn  ~(tap by pol.all)       :: XX single-home
     |=  {our/@ mast}  ^-  mass
     :+  (scot %p our)  %|
     :~  [%foreign [%& sap]]
-        [%blocked [%| (sort (~(tap by (~(run by wub) |=(sofa [%& +<])))) aor)]]
-        [%active [%| (sort (~(tap by (~(run by bum) |=(seat [%& +<])))) aor)]]
+        [%blocked [%| (sort ~(tap by (~(run by wub) |=(sofa [%& +<]))) aor)]]
+        [%active [%| (sort ~(tap by (~(run by bum) |=(seat [%& +<]))) aor)]]
     ==
   ==
 ::
