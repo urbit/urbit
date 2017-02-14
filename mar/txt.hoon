@@ -3,23 +3,23 @@
   ::
 /?    310
 ::
-=,  ^clay
+=,  clay
 =,  differ
-=,  lines:clay
-=,  bytes:eyre
+=,  format
+=,  mimes:html
 |_  txt/wain
-::
+::  
 ++  grab                                                ::  convert from
   |%
-  ++  mime  |=({p/mite:^eyre q/octs:^eyre} (lore q.q))
+  ++  mime  |=({p/mite:eyre q/octs:eyre} (to-wain q.q))
   ++  noun  wain                                        ::  clam from %noun
-  ++  json  (corl lore so:dejs:format)
+  ++  json  (corl to-wain so:dejs:format)
   --
 ++  grow
   =>  v=.
   |%
-  ++  mime  =>  v  [/text/plain (taco (role txt))]
-  ++  elem  =>  v  ;pre: {(trip (role txt))}
+  ++  mime  =>  v  [/text/plain (as-octs (of-wain txt))]
+  ++  elem  =>  v  ;pre: {(trip (of-wain txt))}
   --
 ++  grad
   |%
@@ -155,7 +155,7 @@
       %-  flop
       ^-  (list (list @t))
       :-  :_  ~
-          %^  cat  3  '<<<<<<<<<<<<'
+          %^  cat  3  '<<<<<<<<<<<<' 
           %^  cat  3  ' '
           %^  cat  3  `@t`(scot %p bos)
           %^  cat  3  '/'
@@ -167,7 +167,7 @@
       :-  ~['++++++++++++']
       :-  ali
       :-  :_  ~
-          %^  cat  3  '>>>>>>>>>>>>'
+          %^  cat  3  '>>>>>>>>>>>>' 
           %^  cat  3  ' '
           %^  cat  3  `@t`(scot %p als)
           %^  cat  3  '/'
@@ -213,7 +213,7 @@
           =+  wat=(scag (sub lob p.i.ali) p.i.bob)
           =+  ^=  res
               %=  $
-                ali  t.ali
+                ali  t.ali 
                 bob  [[%| (scag (sub lob p.i.ali) p.i.bob) ~] t.bob]
               ==
           :*  :*  (welp bac.res wat)

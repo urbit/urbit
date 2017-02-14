@@ -906,7 +906,7 @@
   ::
 ++  in                                                  ::  set engine
   ~/  %in
-  |_  a/(tree)
+  |_  a/(tree)  :: (set)
   +-  all                                               ::  logical AND
     ~/  %all
     |*  b/$-(* ?)
@@ -1107,7 +1107,7 @@
   ::
 ++  by                                                  ::  map engine
   ~/  %by
-  =|  a/(tree (pair))
+  =|  a/(tree (pair))  ::  (map)
   =*  node  ?>(?=(^ a) n.a)
   |%
   +-  all                                               ::  logical AND
@@ -1402,7 +1402,7 @@
   ::                                                    ::
   ::
 ++  ja                                                  ::  jar engine
-  |_  a/(tree (pair * (list)))
+  |_  a/(tree (pair * (list)))  ::  (jar)
   +-  get                                               ::  gets list by key
     |*  b/*
     =+  c=(~(get by a) b)
@@ -1414,7 +1414,7 @@
     (~(put by a) b [c d])
   --
 ++  ju                                                  ::  jug engine
-  |_  a/(tree (pair * (tree)))
+  |_  a/(tree (pair * (tree)))  ::  (jug)
   +-  del                                               ::  del key-set pair
     |*  {b/* c/*}
     ^+  a
@@ -1453,7 +1453,7 @@
   ::                                                    ::
   ::
 ++  to                                                  ::  queue engine
-  |_  a/(tree)
+  |_  a/(tree)  ::  (qeu)
   +-  bal
     |-  ^+  a
     ?~  a  ~
@@ -1529,11 +1529,11 @@
   (molt `(list {p/_-<.a q/_->.a})`a)
 ::
 ++  molt                                                ::  map from pair list
-  |*  a/(list (pair))
+  |*  a/(list (pair))  ::  ^-  =,(i.-.a (map _p _q))
   (~(gas by `(tree {p/_p.i.-.a q/_q.i.-.a})`~) a)
 ::
 ++  silt                                                ::  set from list
-  |*  a/(list)
+  |*  a/(list)  ::  ^-  (set _i.-.a)
   =+  b=*(tree _?>(?=(^ a) i.a))
   (~(gas in b) a)
 ::                                                      ::

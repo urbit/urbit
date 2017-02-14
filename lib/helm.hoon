@@ -11,13 +11,13 @@
 |%                                                      ::  ::
 ++  helm-part  {$helm $0 helm-pith}                     ::  helm state
 ++  helm-pith                                           ::  helm content
-  $:  bur/(unit (pair ship mace:^ames))                 ::  requesting ticket
+  $:  bur/(unit (pair ship mace:ames))                 ::  requesting ticket
       hoc/(map bone helm-session)                       ::  consoles
-  ==                                                    ::
+  ==                                                    ::  
 ++  helm-session                                        ::
   $:  say/sole-share                                    ::  console state
       mud/(unit (sole-dialog @ud))                      ::  console dialog
-  ==                                                    ::
+  ==                                                    ::  
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -25,7 +25,7 @@
   $:  his/@p                                            ::  identity
       tic/@p                                            ::  ticket
       eny/@t                                            ::  entropy
-      ges/gens:^ames                                    ::  description
+      ges/gens:ames                                    ::  description
   ==                                                    ::
 ++  hood-init                                           ::  report init
   $:  him/ship                                          ::
@@ -40,14 +40,14 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:^gall helm-part}                              ::  main helm work
+|=  {bowl:gall helm-part}                              ::  main helm work
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$cash wire p/@p q/buck:^ames}                ::
+      $%  {$cash wire p/@p q/buck:ames}                ::
           {$conf wire dock $load ship term}             ::
-          {$flog wire flog:^dill}                       ::
-          {$funk wire @p @p @}                          ::
+          {$flog wire flog:dill}                       ::
+          {$funk wire @p @p @}                          ::   
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
           {$wont wire sock path *}                      ::  send message
@@ -66,7 +66,7 @@
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
 ++  emil                                              ::  return cards
-  |=  (list card)
+  |=  (list card) 
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -91,7 +91,7 @@
   |=  $~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
 ::
-++  poke-send-hi
+++  poke-send-hi  
   |=  {her/ship mes/(unit tape)}  =<  abet
   %^  emit  %poke  /helm/hi/(scot %p her)
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
@@ -135,7 +135,7 @@
     ?>  ?=({{@ $~} $~} zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
-  =+  zus==('z' tip)
+  =+  zus==('z' tip) 
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
@@ -149,10 +149,10 @@
 ++  poke-reset                                        ::  reset system
   |=  hood-reset  =<  abet
   %-  emil
-  %-  flop  ^-  (list card)
+  %-  flop  ^-  (list card) 
   =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
   =+  hun=.^(@ %cx (welp top /hoon/hoon))
-  =+  arv=.^(@ %cx (welp top /arvo/hoon))
+  =+  arv=.^(@ %cx (welp top /arvo/hoon))  
   :-  [%flog /reset [%velo `@t`hun `@t`arv]]
   :-  =+  way=(weld top `path`/zuse)
       [%flog /reset %veer %$ way .^(@ %cx (welp way /hoon))]
@@ -173,9 +173,9 @@
   [%flog /reset %veer p way txt]
 ::
 ++  poke-wyll                                         ::  hear certificate
-  |=  wil/(unit wyll:^ames)
+  |=  wil/(unit wyll:ames)
   ?>  ?=(^ bur)
-  ?>  ?=(^ wil)
+  ?>  ?=(^ wil)  
   =<  abet
   %-  emil(bur ~)
   :~  [%cash /helm p.u.bur q.u.bur u.wil]
@@ -187,7 +187,7 @@
   (emit %flog /helm %verb ~)
 ::
 ++  take-onto                                         ::  result of %conf
-  |=  saw/(each suss:^gall tang)  =<  abet
+  |=  saw/(each suss:gall tang)  =<  abet
   %-  emit
   ?-   -.saw
     $|  [%flog ~ %crud %onto `tang`p.saw]

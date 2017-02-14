@@ -5,21 +5,22 @@
   ::
 ::::  compute
   ::
-=,  ^eyre
-=,  js:eyre
+=,  eyre
+=,  format
+=,  html
 |_  jon/json
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/application/json (taco:bytes:eyre txt)]   ::  convert to %mime
-  ++  txt   (crip (pojo jon))
+  ++  mime  [/application/json (as-octs:mimes txt)]   ::  convert to %mime
+  ++  txt   (crip (en-json jon))
   --
 ++  grab
   |%                                                    ::  convert from
-  ++  mime  |=({p/mite q/octs} (fall (rush (@t q.q) apex:poja) *json))
+  ++  mime  |=({p/mite q/octs} (fall (rush (@t q.q) apex:de-json) *json))
   ++  noun  json                                        ::  clam from %noun
-  ++  numb  jone
-  ++  time  jode
+  ++  numb  numb:enjs
+  ++  time  time:enjs
   --
 ++  grad  %mime
 --

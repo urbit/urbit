@@ -3,7 +3,8 @@
 ::::  /hoon/oauth1/lib
   ::
 /+    interpolate, hep-to-cab
-=,  ^eyre
+=,  mimes:html
+=,  eyre
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
 ++  token                                               ::  user keys
@@ -18,7 +19,7 @@
   ::
 |%
 ++  parse-url  parse-url:interpolate
-++  join
+++  join  
   |=  {a/cord b/(list cord)}
   ?~  b  ''
   (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
@@ -50,14 +51,14 @@
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss
   =.  b  (quay:hep-to-cab b)
-  =-  [a %post - ?~(b ~ (some (tact +:(tail:earn b))))]
+  =-  [a %post - ?~(b ~ (some (as-octt +:(tail:earn b))))]
   (my content-type+['application/x-www-form-urlencoded']~ ~)
 ::
 ::
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
   =-  (mean (flop `tang`[>a< -]))
-  (turn (lore (crip b)) |=(c/cord leaf+(trip c)))
+  (turn (to-wain (crip b)) |=(c/cord leaf+(trip c)))
 ::
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  quay-keys  |-($@(knot {$ $}))  :: improper tree
@@ -82,7 +83,7 @@
   ^-  {key/@t sec/@t $~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {key/@t sec/@t $~}) (lore key))
+    ((hard {key/@t sec/@t $~}) (to-wain key))
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth1 {<`path`dom>}
@@ -152,7 +153,7 @@
   %&
 ::
 ++  auth
-  |%
+  |%  
   ++  header
     |=  {auq/quay url/purl med/meth math bod/(unit octs)}
     ^-  cord
@@ -233,7 +234,7 @@
     |=  a/httr  ^-  core-move
     ?^  tok  [%give a]
     ?.  =(%true (grab-quay r.a 'oauth_callback_confirmed'))
-      ~|(%callback-rejected !!)
+      ~|(%callback-rejected !!)    
     =+  request-token=(grab-token-response a)
     [[%redo ~] (save `token`[%request-token request-token])]
   ::
@@ -261,7 +262,7 @@
 ::::  Example "standard" sec/ core:
   ::
 ::
-::  ::
+::  :: 
 ::  ::::  /hoon/my-api/com/sec
 ::    ::
 ::  /+    oauth1
@@ -287,7 +288,7 @@
 ::::  Equivalent imperative code:
   ::
 ::
-::  ::
+::  :: 
 ::  ::::  /hoon/my-api/com/sec
 ::    ::
 ::  /+    oauth1

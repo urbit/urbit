@@ -12,7 +12,7 @@
           {$gh-issue-comment issue-comment:gh}
       ==
     --
-=,  ^gall
+=,  gall
 |_  {hid/bowl *}
 ++  poke-path
   |=  pax/path

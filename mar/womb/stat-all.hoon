@@ -2,10 +2,11 @@
 ::::  /hoon/stat-all/womb/mar
   ::
 /?    310
-/+    womb
+/+    womb, old-zuse
 ::
 ::::  ~fyr
   ::
+=,  old-zuse
 |_  all/(map ship stat:womb)
 ::
 ++  grab                                                ::  convert from

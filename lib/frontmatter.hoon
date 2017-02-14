@@ -3,7 +3,7 @@
   ::
 /?    310
 ::
-=,  lines:clay
+=,  format
 |%
 ++  atr-lines
   |=  atr/(map cord cord)
@@ -22,10 +22,10 @@
   ?~  wan  [~ '']
   ?^  (rush i.wan (star ace))
     $(wan t.wan)
-  ?.  =('---' i.wan)  [~ (role wan)]
+  ?.  =('---' i.wan)  [~ (of-wain wan)]
   |-  ^+  [atr mud='']
   ?~  t.wan  ~|(%unclosed-metadata !!)
-  ?:  =('---' i.t.wan)  [atr (role t.t.wan)]
+  ?:  =('---' i.t.wan)  [atr (of-wain t.t.wan)]
   ?^  (rush i.t.wan (star ace))
     $(wan t.wan)
   =-  $(wan t.wan, atr (~(put by atr) (crip key) (crip val)))

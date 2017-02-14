@@ -4,6 +4,8 @@
 ::  marks should include this library.
 ::
 /-  gh
+/+  old-zuse
+=,  old-zuse
 |%
 ++  repository
   ^-  $-(json (unit repository:gh))
@@ -150,6 +152,7 @@
 ++  id  no:jo
 ++  print-issue
   |=  issue:gh
+  =,  format
   ^-  wain
   =+  c=(cury cat 3)
   :*  :(c 'title: ' title ' (#' (rsh 3 2 (scot %ui number)) ')')
@@ -167,7 +170,7 @@
       (c 'comments: ' (rsh 3 2 (scot %ui comments)))
       (c 'url: ' url)
       ''
-      %+  turn  (lore body)  ::  strip carriage returns
+      %+  turn  (to-wain body)  ::  strip carriage returns
       |=  l/@t
       ?:  =('' l)
         l

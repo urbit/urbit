@@ -2,6 +2,8 @@
 ::::  /hoon/bonus/womb/mar
   ::
 /?    310
+/+    old-zuse
+=,  old-zuse
 |_  {aut/@uvH pla/@u sta/@u}
 ::
 ++  grab                                                ::  convert from

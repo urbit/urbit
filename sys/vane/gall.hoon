@@ -3,7 +3,7 @@
 ::::
 |=  pit/vase
 =>  =~
-=,  ^gall
+=,  gall
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    rest of arvo
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  volt  ?($low $high)                                 ::  voltage
@@ -139,7 +139,7 @@
     (~(nest ut p.u.bol) %| -:!>(*bowl))
   ::
   ++  mo-boom                                           ::  complete new boot
-    |=  {dap/dude byk/beak dep/@uvH gux/gage:^ford}
+    |=  {dap/dude byk/beak dep/@uvH gux/gage:ford}
     ^+  +>
     ?-    -.gux
         $tabl  ~|(%made-tabl !!)
@@ -179,7 +179,7 @@
     ==
   ::
   ++  mo-boon                                           ::  complete old boot
-    |=  {dap/dude byk/beak dep/@uvH gux/gage:^ford}
+    |=  {dap/dude byk/beak dep/@uvH gux/gage:ford}
     ^+  +>
     =+  sut=(~(get by bum) dap)
     ?~  sut

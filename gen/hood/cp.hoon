@@ -4,6 +4,7 @@
   ::
 /?    310
 :-  %say
+=,  space:userlib
 |=  {^ {input/path output/path $~} $~}
 :-  %kiln-info
 ?.  =(-:(flop input) -:(flop output))

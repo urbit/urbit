@@ -6,11 +6,11 @@
 /-    twitter
 /+    interpolate, hep-to-cab
 =+  sur-twit:^twitter  :: XX
-=,  ^eyre
-=,  bytes:eyre
+=,  eyre
+=,  mimes:html
+=,  html
 =,  format
-=,  url:eyre
-=,  xml:eyre
+=,  html
 =,  chrono:userlib
 ::
 ::::  functions
@@ -20,12 +20,12 @@
   |=  {a/char b/(list @t)}  ^-  @t
   %+  rap  3
   ?~  b  ~
-  |-(?~(t.b b [i.b a $(b t.b)]))
+  |-(?~(t.b b [i.b a $(b t.b)])) 
 ::
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
   ^-  hiss
-  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:urlp)  :: base path
+  =+  url=(scan "https://api.twitter.com/1.1/.json" auri:de-purl)  :: base path
   =.  q.q.url  (welp q.q.url pax)
   =.  r.url  quy
   ^-  hiss
@@ -33,7 +33,7 @@
     $get  [url med *math ~]
     $post
       =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
-      [url(r ~) med hed ?~(r.url ~ (some (tact +:(tail:earn r.url))))]
+      [url(r ~) med hed ?~(r.url ~ (some (as-octt +:(tail:en-purl r.url))))]
   ==
 ::
 ++  find-req
@@ -87,9 +87,9 @@
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
         (fasp created-at+(cu year (ci stud so)))
-        text+(cu crip (su (star escp:^parse)))  :: parse html escapes
+        text+(cu crip (su (star escp:de-xml)))  :: parse html escapes
     ==
-  ++  usel
+  ++  usel 
     =,  ^?(dejs)
     %+  ce  (list who/@ta)
     =-  (ot users+(ar -) ~)
@@ -119,12 +119,12 @@
     (valve med (cowl pax +.a b))
   ::
   ++  lutt  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
-  ++  llsc
+  ++  llsc 
     :: =>  args:reqs
     |=  a/$@(scr (list scr))  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
-  ++  llst
+  ++  llst  
     |=  a/$@(@t (list @t))  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
@@ -135,7 +135,7 @@
     ?@(a (lutt a) (join ',' (turn `(list tid)`a lutt)))
   ::
   ++  cowl                                        ::  handle parameters
-    |=  $:  pax/path
+    |=  $:  pax/path 
             ban/(list param)
             quy/quay
         ==

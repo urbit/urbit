@@ -6,10 +6,9 @@
 ::
 ::::  ~fyr
   ::
-=,  ^eyre
-=,  js:eyre
-=,  url:eyre
-=,  lines:clay
+=,  eyre
+=,  html
+=,  format
 |_  all/{{who/@txname loc/@txloc} acc/(map knot plan-acct)}
 ::
 ++  grow                                                ::  convert to
@@ -23,17 +22,18 @@
     |=  {a/knot b/plan-acct}  ^-  cord
     %+  rap  3
     :^  a  ': '  usr.b
-    ?~(url.b ~ [', ' (earf u.url.b)])
+    ?~(url.b ~ [', ' (apix:en-purl u.url.b)])
   ::
   ++  plan-json
-    %-  jobe  :~
+    %-  pairs:enjs  :~
       who+?~(who ~ s+who)
       loc+?~(loc ~ s+loc)
       acc+o+(~(run by acc) json-acct)
     ==
-  ++  json-acct                       ::  helper
+  ++  json-acct                       ::  helper                     
     |=  a/plan-acct  ^-  json
-    (jobe usr+s+usr.a url+?~(url.a ~ (jape (earf u.url.a))) ~)
+    =/  url  ?~(url.a ~ (tape:enjs (apix:en-purl u.url.a)))
+    (pairs:enjs usr+s+usr.a url+url ~)
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  {{cord cord} (map knot plan-acct)}  ::  clam from %noun
@@ -50,13 +50,13 @@
               ;~  plug
                 knot
                 ;~(pfix col ace knot)
-                (punt ;~(pfix com ace aurf:urlp))
+                (punt ;~(pfix com ace aurf:de-purl))
               ==
             --
-          ++  mime  |=({* a/octs} (txt (lore q.a)))     ::  XX mark translation
+          ++  mime  |=({* a/octs} (txt (to-wain q.a)))     ::  XX mark translation
           --
 ++  grad
-  |%
+  |%  
   ++  form  %plan-diff
   ++  diff
     |=  neu/_all  ^-  plan-diff                        :: XXX map functions

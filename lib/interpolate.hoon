@@ -2,18 +2,17 @@
 ::
 ::::  /hoon/interpolate/lib
   ::
-/?    310
+/?    310                        
 ::
 ::::  ~fyr
   ::
-=,  ^eyre
-=,  url:eyre
+=,  eyre
 |%
 ++  parse-url
   |=  a/$@(cord:purl purl)  ^-  purl
   ?^  a  a
   ~|  bad-url+a
-  (rash a auri:urlp)
+  (rash a auri:de-purl:html)
 ::
 ++  add-query
   |=  {a/$@(@t purl) b/quay}  ^-  purl

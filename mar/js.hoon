@@ -3,11 +3,11 @@
   ::
 /?    310
 ::
-=,  ^eyre
+=,  eyre
 |_  mud/@
 ++  grow
   |%
-  ++  mime  [/application/javascript (taco:bytes:eyre (@t mud))]
+  ++  mime  [/application/javascript (as-octs:mimes:html (@t mud))]
   ++  elem  ;script
               ;-  (trip (@t mud))
             ==

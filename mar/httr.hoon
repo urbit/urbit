@@ -3,13 +3,13 @@
   ::
 /?    310
 ::
-=,  ^eyre
-=,  js:eyre
-=,  lines:clay
+=,  eyre
+=,  format
+=,  html
 |_  hit/httr
 ++  grow  |%  ++  wall  (turn wain trip)
-              ++  wain  (lore cord)
-              ++  json  (need (poja cord))
+              ++  wain  (to-wain cord)
+              ++  json  (need (de-json cord))
               ++  cord  q:octs
               ++  octs
                 ~|  hit

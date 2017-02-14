@@ -5,6 +5,7 @@
 /?    310
 /-    plan-diff, plan-acct
 =,  format
+=*  as-octs  as-octs:mimes:html
 =,  space:userlib
 |%
 ++  part  {$write $0 pith}           :: no state
@@ -15,14 +16,14 @@
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$exec wire @p $~ {beak silk:^ford}}
-              {$info wire @p toro:^clay}
+++  card  $%  {$exec wire @p $~ {beak silk:ford}}
+              {$info wire @p toro:clay}
           ==
 --
 ::
 ::::
   ::
-|=  {bowl:^gall part}
+|=  {bowl:gall part}
 =*  par  +<+
 |_  moz/(list {bone card})
 ++  abet  [(flop moz) `part`par]
@@ -52,8 +53,8 @@
   |=  dif/plan-diff  ^+  abet
   ?.  =(our src)
     ~|(foreign-write+[our=our src=src] !!)
-  =;  sob/soba:^clay
-    ?~(sob abet abet:(emit %info write+~ our `toro:^clay`[q.byk %& sob]))
+  =;  sob/soba:clay
+    ?~(sob abet abet:(emit %info write+~ our `toro:clay`[q.byk %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(en-beam beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
@@ -76,7 +77,7 @@
 ::
 ++  poke-paste
   |=  {typ/?($hoon $md $txt) txt/@t}  ^+  abet
-  (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco:bytes:eyre txt))
+  (poke--data [`typ /web/paste/(scot %da now)] %mime / (as-octs txt))
 ::
 ++  poke-comment
   |=  {sup/path him/ship txt/@t}  ^+  abet
@@ -86,7 +87,7 @@
       '## `'  (scot %p him)  '`'
       '\0a'  txt
     ==
-  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
+  (poke--data [`%md pax] %mime / (as-octs txt))
 ::
 ++  poke-fora-post
   |=  {sup/path him/ship hed/@t txt/@t}  ^+  abet
@@ -106,7 +107,7 @@
 
     {(trip txt)}
     """
-  (poke--data [`%md pax] %mime / (taco:bytes:eyre txt))
+  (poke--data [`%md pax] %mime / (as-octs txt))
 ::
 ++  ames-secret
   ^-  @t
@@ -114,11 +115,11 @@
   pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
 ::
 ++  poke-sec-atom
-  |=  {hot/host:^eyre dat/@}
+  |=  {hot/host:eyre dat/@}
   ?>  ?=($& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
-  (poke--data [`%atom [%sec p.hot]] %mime / (taco:bytes:eyre dat))
+  (poke--data [`%atom [%sec p.hot]] %mime / (as-octs dat))
 ::
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet
@@ -131,7 +132,7 @@
   [our ~ beak-now %cast u.ext $+cay]
 ::
 ++  made
-  |=  {pax/wire @ res/gage:^ford}  ^+  abet
+  |=  {pax/wire @ res/gage:ford}  ^+  abet
   :: ?.  =(our src)
   ::   ~|(foreign-write/[our=our src=src] !!)
   ?+  -.res  ~|(gage+-.res !!)

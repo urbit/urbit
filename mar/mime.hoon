@@ -10,10 +10,10 @@
   --
 ::
 ++  grab                                                ::  convert from
-  |%
+  |% 
   ++  noun  mime                                  ::  clam from %noun
-  ++  tape
-    |=(a/_"" [/application/x-urb-unknown (tact:bytes:eyre a)])
+  ++  tape  
+    |=(a/_"" [/application/x-urb-unknown (as-octt:mimes:html a)])
   --
 ++  grad
   |%

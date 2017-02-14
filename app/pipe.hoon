@@ -8,7 +8,7 @@
       ==
     --
 ::
-=,  ^gall
+=,  gall
 |_  {hid/bowl connections/(set {app/term source/path station/knot})}
 ++  poke-noun
   |=  arg/*

@@ -2,7 +2,8 @@
 ::
 ::::  /hoon/usel/twit/mar
   ::
-/+  twitter, httr-to-json
+/+  twitter, httr-to-json, old-zuse
+=,  old-zuse
 |_  (list who/@ta)
 ++  grab
   |%

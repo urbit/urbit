@@ -6,9 +6,9 @@
 ::
 ::::  ~fyr
   ::
-=,  ^eyre
-=,  js:eyre
+=,  eyre
 =,  format
+=,  html
 |_   recoverable-error
 ++  grab
   |%
@@ -21,7 +21,7 @@
             %.  %x-rate-limit-reset
             ;~  biff
               ~(get by (malt q.a))
-              poja
+              de-json
               ni:dejs-soft
             ==
     ==

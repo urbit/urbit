@@ -13,7 +13,7 @@
   ++  email  @t
 --
 ::
-=,  ^gall
+=,  gall
 |_  $:  bow/bowl
         adr/(map email {time invited})
         sos/(map bone sole-share)
@@ -138,7 +138,7 @@
     """
     y - invite current ask
     n - ignore current ask
-
+    
     """
   """
   l - list new asks
@@ -152,7 +152,7 @@
   |=  ask/email
   :-  ost.bow
   ^-  card
-  :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]
+  :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]  
   :-  %womb-invite
   ^-  {cord invite}:womb
   =+  inv=(scot %uv (end 7 1 eny.bow))

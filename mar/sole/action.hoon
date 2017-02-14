@@ -3,10 +3,12 @@
   ::
 /?    310
 /-    sole
+/+    old-zuse
 ::
 ::::
   ::
 =,  sole
+=,  old-zuse
 |_  sole-action
 ::
 ++  grab                                                ::  convert from

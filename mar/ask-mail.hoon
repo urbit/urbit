@@ -3,7 +3,7 @@
   ::
 /?    310
 =,  format
-=,  bytes:eyre
+=,  mimes:html
 |_  txt/cord
 ::
 ++  grab                                                ::  convert from
@@ -14,6 +14,6 @@
 ++  grow
   |%
   ++  psal  ;div: {(trip txt)}
-  ++  mime  [text+/plain (taco txt)]
+  ++  mime  [text+/plain (as-octs txt)]
   --
 --

@@ -2,7 +2,7 @@
 ::::  /hoon/helm-hi/mar
   ::
 /?    310
-=,  bytes:eyre
+=,  mimes:html
 =,  format
 |_  txt/cord
 ::
@@ -14,6 +14,6 @@
 ++  grow
   |%
   ++  psal  ;div: {(trip txt)}
-  ++  mime  [text+/plain (taco txt)]
+  ++  mime  [text+/plain (as-octs txt)]
   --
 --

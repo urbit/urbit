@@ -22,11 +22,12 @@
 ::  the label resource returned by gmail in response to your successful request
 ++  label  *
 
-++  label-req-to-json
-  |=  label-req
-  %-  jobe  :^
-  ['name' `json`s+name]
-  ['labelListVisibility' `json`s+(crip (sifo `cord`llv))]
-  ['messageListVisibility' `json`s+(crip (sifo `cord`mlv))]
-  ~
+++  label-req-to-json  !! 
+::  XX belongs in a lib/
+::   |=  label-req
+::   %-  jobe  :^
+::   ['name' `json`s+name]
+::   ['labelListVisibility' `json`s+(crip (sifo `cord`llv))]
+::   ['messageListVisibility' `json`s+(crip (sifo `cord`mlv))]
+::   ~
 --

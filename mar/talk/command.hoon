@@ -3,6 +3,7 @@
   ::
 /?    310
 /-    talk
+/+    old-zuse
 ::
 =,  talk
 |_  cod/command
@@ -11,7 +12,8 @@
   |%
   ++  noun  command                                     ::  clam from %noun
   ++  json
-    =>  [jo ..command]
+    =,  old-zuse
+    =,  jo
     |=  a/json  ^-  command
     =-  (need ((of -) a))
     =<  :~  publish+(ar thot)

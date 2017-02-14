@@ -21,33 +21,32 @@
     ?+    n.g.i.a  $(a c.i.a)
         $img
       %-  zing  ^-  wall
-      %+  murn  a.g.i.a   |=  {a/mane b/tape}
+      %+  murn  a.g.i.a   |=  {a/mane b/tape}  
       ^-  (unit tape)
       ?+  a  ~
         $alt  [~ b]
       ==
     ==
   $(a t.a)
-::
+::  
 ++  sanitize
  |=  a/marl  ^-  tape
  =-  (zing `wall`(scan (flat a) fel))
- =<  fel=;~(sfix (star ;~(plug (cold '-' -) (plus +))) (star next))
+ =<  fel=;~(sfix (star ;~(plug (cold '-' -) (plus +))) (star next)) 
  [(star ;~(less aln prn)) ;~(pose nud low (cook |=(a/@ (add a ' ')) hig))]
 ::
 ++  sang                                                ::  tight item children
   |=  a/(list elem)
   ^-  marl
   ?~  a  ~
-  %+  weld
+  %+  weld  
     ?.  ?=($para -.i.a)
       (sing i.a ~)
     (sung p.i.a)
   $(a t.a)
 ::
 ++  sing                                                ::  elem to manx
-  =*  xml  xml:eyre
-  =,  js:eyre
+  =,  html
   =>  |%
       ++  first-word
         |=  a/tape
@@ -67,23 +66,23 @@
       (weld p.a $(lum q.a))
   ::
   ++  apex
-    ^-  {p/marl q/_lum}
-    ?~  lum
+    ^-  {p/marl q/_lum}  
+    ?~  lum  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
     =>  [ele=i.lum .(lum t.lum)]
     ?.  ?=($html -.ele)
       (push (reso ele) ~)
     ::  begin reparsing of html that the spec jankily lets through  ::
-    =+  tex=(trip (role p.ele))
-    =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:parse:xml))
+    =+  tex=(trip (of-wain p.ele))
+    =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:de-xml))
     ?^  mar
       (push u.mar)
-    =^  hed  lum  (chomp tex head:parse:xml)
+    =^  hed  lum  (chomp tex head:de-xml)
     ?^  hed
       =+  max=`marx`u.hed
       (push(lum q) [max p] ~):[apex(had `n.max) .]
-    =^  tal  lum  (chomp tex tail:parse:xml)
+    =^  tal  lum  (chomp tex tail:de-xml)
     ?~  tal
       =^  cha  lum  (chomp tex prn)
       ?^  cha
@@ -100,11 +99,11 @@
   ++  lose  |=(a/tape [[;lost:"{a}"]~ lum])
   ++  chomp
     |*  {tap/tape fel/rule}
-    ^-  {(unit _(wonk *fel)) _lum}
+    ^-  {(unit _(wonk *fel)) _lum}  
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
     :-  [~ (wonk vex)]
-    ?~(q.q.u.q.vex lum [[%html (lore (crip q.q.u.q.vex))] lum])
+    ?~(q.q.u.q.vex lum [[%html (to-wain (crip q.q.u.q.vex))] lum])
   ::
   ++  push
     |=  a/marl
@@ -124,39 +123,38 @@
         $item  ;li;
         $list  ?@  q.p.a  ;ul;
                ?:  =(1 p.q.p.a)  ;ol;
-               =+  num=(pojo (jone p.q.p.a))
+               =+  num=(en-json (numb:enjs p.q.p.a))
                ;ol(start num);
       ==
     ?-  -.a  ::  ;/("unimplemented {<p.a>}")
       $html  !!                       ::  handled earlier   XX do type stuff
       $para  [/p (sung p.a)]
-      $head
+      $head  
         =+  [hed=(add %h0 (lsh 3 1 p.a)) kid=(sung q.a)]
         [[hed id+(sanitize kid) ~] kid]
     ::
       $hrul  ;hr;
       $meta  ?:  =(~ p.a)  ;/(~)
              =+  jon=`json`o+(~(run by p.a) |=(cord s++<))
-             ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
-  ::     %html
-             ::=+  tex=(role (turn p.a crip))
-             ::=+  (parse:xml tex)
+             ;meta(value "{(en-json jon)}", name "frontmatter", urb_front "");
+  ::     %html  
+             ::=+  tex=(of-wain (turn p.a crip))
+             ::=+  (de-xml tex)
              ::?^  -  u.-
-             ::=+  (rush tex (star ;~(pose gah comt:parse:xml)))
+             ::=+  (rush tex (star ;~(pose gah comt:de-xml)))
              ::?^  -  ;/(~)
              ::;lost: {<p.a>}
-        :: ;/([(role (turn p.a crip))]~)                ::  XX  haaaaaaack
+        :: ;/([(of-wain (turn p.a crip))]~)                ::  XX  haaaaaaack
       $defn  ;/(~)
       $code  =+  lan=?~(p.a ~ (first-word r.u.p.a))
-             =+  tex=(trip (role q.a))
+             =+  tex=(trip (of-wain q.a))
              ?~  lan  ;pre:code:"{tex}"
              ;pre:code(class "language-{u.lan}"):"{tex}"
 
     ==
   --
-::
+::  
 ++  sung
-  =,  url:eyre
   |=  lim/kids
   =+  had=*(unit mane)
   |^  ^-  marl
@@ -167,24 +165,24 @@
   ::
   ++  apex
     ^-  {p/marl q/_lim}
-    ?~  lim
+    ?~  lim  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
     =>  [ele=i.lim .(lim t.lim)]
     ?.  ?=($htmt -.ele)
       ?:  &(?=($$ -.ele) ?=({{$$ *} *} lim))
-        apex(p.i.lim (weld p.ele p.i.lim))
+        apex(p.i.lim (weld p.ele p.i.lim))  
       (push (reso ele) ~)
     =+  tex=(trip p.ele)
-    =^  emo  lim  (chomp tex empt:parse:xml)
+    =^  emo  lim  (chomp tex empt:de-xml)
     ?^  emo
       =+  man=`manx`u.emo
       (push man ~)
-    =^  hed  lim  (chomp tex head:parse:xml)
+    =^  hed  lim  (chomp tex head:de-xml)
     ?^  hed
       =+  max=`marx`u.hed
       (push(lim q) [max p] ~):[apex(had `n.max) .]
-    =^  tal  lim  (chomp tex tail:parse:xml)
+    =^  tal  lim  (chomp tex tail:de-xml)
     ?~  tal
       (push ;lost:"{tex}" ~)
     ?:  =(had tal)
@@ -216,14 +214,14 @@
             (~(has in (silt "#!*'();:@&=+$,/?/%.~_")) i.a) ::  XX  reparse
         ==
       [i.a $(a t.a)]
-    (weld (urle (trip i.a)) $(a t.a))
+    (weld (en-urlt:html (trip i.a)) $(a t.a))
   ::
   ++  reso
     |=  b/inline
     ^-  manx
     ?@  -.b
       ?-  -.b
-        $$     ;/(p.b)
+        $$     ;/(p.b)  
         $line  ;br;
         $code  ;code:"{p.b}"
         $htmt  !!  ::p.b              ::  handled earlier ::  XX  do type stuff

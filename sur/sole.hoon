@@ -7,7 +7,7 @@
       {$det sole-change}                                ::  command line edit
       {$ret $~}                                         ::  submit and clear
       {$clr $~}                                         ::  exit context
-  ==                                                    ::
+  ==                                                    :: 
 ++  sole-buffer  (list @c)                              ::  command state
 ++  sole-change                                         ::  network change
   $:  ler/sole-clock                                    ::  destination clock
@@ -28,7 +28,7 @@
       {$clr $~}                                         ::  clear screen
       {$det sole-change}                                ::  edit command
       {$err p/@ud}                                      ::  error point
-      {$klr p/styx:^dill}                               ::  styled text line
+      {$klr p/styx:dill}                               ::  styled text line
       {$mor p/(list sole-effect)}                       ::  multiple effects
       {$nex $~}                                         ::  save clear command
       {$pro sole-prompt}                                ::  set prompt
@@ -41,12 +41,12 @@
   ==                                                    ::
 ++  sole-command                                        ::  command state
   $:  pos/@ud                                           ::  cursor position
-      say/sole-share                                    ::  cursor
+      say/sole-share                                    ::  cursor 
   ==                                                    ::
 ++  sole-prompt                                         ::  prompt definition
   $:  vis/?                                             ::  command visible
       tag/term                                          ::  history mode
-      cad/styx:^dill                                    ::  caption
+      cad/styx:dill                                    ::  caption
   ==                                                    ::
 ++  sole-share                                          ::  symmetric state
   $:  ven/sole-clock                                    ::  our vector clock
@@ -66,19 +66,19 @@
 ::                                                      ::
 ++  sole-product                                        ::  success result
   |*  out/$-(* *)                                       ::
-  %+  pair  (list tank)                                 ::
+  %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
   (pair sole-prompt (sole-dialog out))                  ::  ask and continue
 ::                                                      ::
 ++  sole-request                                        ::  scraper result
   |*  out/$-(* *)                                       ::  output structure
-  %+  pair  (list tank)                                 ::
+  %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
   %^    trel                                            ::  fetch and continue
       (unit knot)
-    hiss:^eyre
-  $-(httr:^eyre (sole-request out))
-
+    hiss:eyre
+  $-(httr:eyre (sole-request out))
+  
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   $%  {$say $-((sole-args) (cask))}                     ::  direct noun
@@ -105,7 +105,7 @@
 ::                                                      ::
 ++  sole-at                                             ::  fetch url
   =|  usr/knot                                          ::
-  |*  {pul/_purl:^eyre fun/$-(httr:^eyre *)}            ::
+  |*  {pul/_purl:eyre fun/$-(httr:eyre *)}            ::
   :-  p=*(list tank)                                    ::
   q=[%| p=`usr q=[pul %get ~ ~] r=fun]                  ::
 ::                                                      ::

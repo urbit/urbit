@@ -1,7 +1,7 @@
 !:  ::  %behn, just a timer
 !?  164
 ::::
-=,  ^behn
+=,  behn
 |=  pit/vase
 =>  =~
 |%

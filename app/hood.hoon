@@ -3,13 +3,13 @@
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
 /+  sole, talk, helm, kiln, drum, write, womb           ::  libraries
-[. helm kiln drum]
+[. helm kiln drum]                                      
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
-    ++  hood-old                                        ::
-      {?($0 $1) lac/(map @tas hood-part-old)}           ::
+    ++  hood-old                                        :: 
+      {?($0 $1) lac/(map @tas hood-part-old)}           :: 
     ++  hood-1                                          ::
       {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
@@ -48,7 +48,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-=,  ^gall
+=,  gall
 |_  $:  hid/bowl                                       ::  system state
         hood-1                                          ::  server state
     ==                                                  ::

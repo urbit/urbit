@@ -26,9 +26,9 @@
   [%& %oauth-client "client id: "]
 %+  sole-go  (boss 256 (star prn))
 |=  cid/@t
-%+  sole-lo
+%+  sole-lo  
   [%& %oauth-secret "client secret: "]
 %+  sole-go  (boss 256 (star prn))
 |=  cis/@t
 %+  sole-so  %write-sec-atom    :: XX typed pair
-[hot (role cid cis ~)]
+[hot (of-wain cid cis ~)]

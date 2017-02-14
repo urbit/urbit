@@ -2,14 +2,14 @@
 ::::  /hoon/hymn/mar
   ::
 /?    310
-=,  bytes:eyre
-=,  xml:eyre
+=,  mimes:html
+=,  html
 |_  own/manx
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  html  (crip (print own))                          ::  convert to %html
-  ++  mime  [/text/html (taco html)]                    ::  convert to %mime
+  ++  html  (crip (en-xml own))                          ::  convert to %html
+  ++  mime  [/text/html (as-octs html)]                    ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun

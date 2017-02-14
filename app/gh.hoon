@@ -18,9 +18,10 @@
 /+  gh-parse, connector
 ::
 ::
+=,  html
 =>  |%
     ++  move  (pair bone card)
-    ++  card
+    ++  card  
       $%  {$diff sub-result}
           {$them wire (unit hiss)}
           {$hiss wire {$~ $~} $httr {$hiss hiss}}
@@ -47,7 +48,7 @@
     --
 =+  connector=(connector move sub-result)  ::  Set up connector library
 ::
-=,  ^gall
+=,  gall
 |_  $:  hid/bowl
         hook/(map @t {id/@t listeners/(set bone)})  ::  map events to listeners
     ==
@@ -279,7 +280,7 @@
           "https://api.github.com/repos/{-<}/{->}/hooks"
         auri:urlp
         %post  ~  ~
-        %-  taco  %-  crip  %-  pojo  %-  jobe  :~
+        %-  as-octt  %-  en-json  %-  pairs:enjs  :~
           name+s+%web
           active+b+&
           events+a+~[s+event] ::(turn `(list ,@t)`t.t.pax |=(a=@t s/a))

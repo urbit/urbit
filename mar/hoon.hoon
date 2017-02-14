@@ -3,12 +3,12 @@
   ::
 /?    310
 ::
-=,  ^eyre
+=,  eyre
 |_  own/@t
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  `^mime`[/text/x-hoon (taco:bytes:eyre own)] ::  convert to %mime
+  ++  mime  `^mime`[/text/x-hoon (as-octs:mimes:html own)] ::  convert to %mime
   ++  elem                                              ::  convert to %html
     ;div:pre(urb_codemirror "", mode "hoon"):"{(trip own)}"
     :: =+  gen-id="src-{<`@ui`(mug own)>}"
@@ -31,20 +31,20 @@
         ;link(rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/".
           "codemirror/4.3.0/codemirror.min.css");
         ;link/"/lib/syntax/codemirror.css"(rel "stylesheet");
-      ==
+      == 
       ;body
         ;textarea#src:"{(trip own)}"
         ;script:'CodeMirror.fromTextArea(src, {lineNumbers:true, readOnly:true})'
       ==
     ==
   ++  txt
-    (lore:lines:clay own)
+    (to-wain:format own)
   --
 ++  grab
   |%                                            ::  convert from
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t                                  ::  clam from %noun
-  ++  txt   role:lines:clay
+  ++  txt   of-wain:format
   --
 ++  grad  %txt
 --

@@ -3,7 +3,8 @@
 ::::  /hoon/cred/twit/mar
   ::
 /-  plan-acct
-/+  httr-to-json, twitter
+/+  httr-to-json, twitter, old-zuse
+=,  old-zuse
 |_  {acc/plan-acct raw/json}
 ++  grab
   |%

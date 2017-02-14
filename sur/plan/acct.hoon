@@ -1,1 +1,1 @@
-{usr/knot url/(unit purf:^eyre)}
+{usr/knot url/(unit purf:eyre)}

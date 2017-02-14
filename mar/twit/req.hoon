@@ -2,7 +2,8 @@
 ::
 ::::  /hoon/req/twit/mar
   ::
-/+  twitter
+/+  twitter, old-zuse
+=,  old-zuse
 |_  {req/endpoint:reqs:twitter quy/quay}
 ++  grab
   |%

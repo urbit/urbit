@@ -5,7 +5,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-=,  ^clay
+=,  clay
 =,  space:userlib
 =,  format
 |%                                                      ::  ::
@@ -55,11 +55,11 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:^gall kiln-part}                              ::  main kiln work
+|=  {bowl:gall kiln-part}                              ::  main kiln work
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$exec wire @p $~ {beak silk:^ford}}                ::
+      $%  {$exec wire @p $~ {beak silk:ford}}                ::
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas @p @tas path}                ::
@@ -260,7 +260,7 @@
   abet:abet:(mere:(take way) are)
 ::
 ++  take-made                                         ::
-  |=  {way/wire dep/@uvH reg/gage:^ford}
+  |=  {way/wire dep/@uvH reg/gage:ford}
   abet:abet:(made:(take way) dep reg)
 ::
 ++  take-coup-fancy                                   ::
@@ -427,11 +427,11 @@
     (ford-fail p.res)
   ::
   ++  gage-to-cages
-    |=  gag/gage:^ford  ^-  (list (pair cage cage))
+    |=  gag/gage:ford  ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-tage gag))
   ::
   ++  gage-to-tage
-    |=  gag/gage:^ford
+    |=  gag/gage:ford
     ^-  (each (list (pair cage cage)) tang)
     ?.  ?=($tabl -.gag)
       (mule |.(`$~`(ford-fail >%strange-gage< ~)))
@@ -498,11 +498,11 @@
         %-  blab  :_  ~
         :*  ost  %exec  /kiln/[syd]
             our  ~  [our tic %da now]  %tabl
-            ^-  (list (pair silk:^ford silk:^ford))
+            ^-  (list (pair silk:ford silk:ford))
             :: ~&  >  kiln-mashing+[p.are syd=syd +<.abet]
             %+  turn  (~(tap in p.are))
             |=  pax/path
-            ^-  (pair silk:^ford silk:^ford)
+            ^-  (pair silk:ford silk:ford)
             :-  [%$ %path -:!>(*path) pax]
             =+  base=[%file [our tic %da now] (flop pax)]
             =+  alis=[%file [her sud cas] (flop pax)]
@@ -566,7 +566,7 @@
     (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
   ::
   ++  made
-    |=  {dep/@uvH reg/gage:^ford}
+    |=  {dep/@uvH reg/gage:ford}
     ^+  +>
     ?:  ?=($| -.reg)
       =+  "failed to mash"

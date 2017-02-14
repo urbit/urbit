@@ -1,4 +1,4 @@
-::
+::  
 ::::  /hoon/talk/sur
   ::
 |%
@@ -60,7 +60,7 @@
       {$ext p/@tas q/*}                                 ::  extended action
       {$fat p/torso q/speech}                           ::  attachment
       ::  {$inv p/station}                              ::  invite to station
-      {$url p/purf:^eyre}                               ::  parsed url
+      {$url p/purf:eyre}                               ::  parsed url
       {$ire p/serial q/speech}                          ::  in-reply-to
       {$lin p/? q/@t}                                   ::  no/@ text line
       {$mor p/(list speech)}                            ::  multiplex
@@ -68,10 +68,10 @@
       $:  $api                                          ::  api message
           service/@tas                                  ::  service name
           id/@t                                         ::  id on the service
-          id-url/purf:^eyre                             ::  link to id
+          id-url/purf:eyre                             ::  link to id
           summary/@t                                    ::  summary of event
           body/@t                                       ::  body of event
-          url/purf:^eyre                                ::  link to event
+          url/purf:eyre                                ::  link to event
           meta/json                                     ::  other data for web
       ==                                                ::
   ==                                                    ::

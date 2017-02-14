@@ -4,13 +4,15 @@
 /?    310
 ::
 ::::  A minimal atom mark
+  ::
+=,  mimes:html
 |_  ato/@
 ++  grab  |%
           ++  noun  @
-          ++  mime  |=({* p/octs:^eyre} q.p)
+          ++  mime  |=({* p/octs:eyre} q.p)
           --
 ++  grow  |%
-          ++  mime  [/application/x-urb-unknown (taco:bytes:eyre ato)]
-          --
+          ++  mime  [/application/x-urb-unknown (as-octs ato)]
+          --        
 ++  grad  %mime
 --

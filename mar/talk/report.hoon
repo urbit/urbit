@@ -3,10 +3,13 @@
   ::
 /?    310
 /-    talk
-/+    talk
+/+    talk, old-zuse
 ::
 =,  talk
-=,  bytes:eyre
+=,  mimes:html
+=,  html
+=,  format
+=,  old-zuse
 |_  rep/report
 ::
 ++  grab                                                ::  convert from
@@ -15,7 +18,7 @@
   --
 ++  grow
   |%
-  ++  mime  [/text/json (taco (crip (pojo json)))]
+  ++  mime  [/text/json (as-octs (crip (en-json json)))]
   ++  json
     =>  +
     |^  %+  joba  -.rep
@@ -38,7 +41,7 @@
         delivery+[%s b]
       ==
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
-    ++  joke  |=(a/tank [%s (role (turn (wash 0^80 a) crip))])
+    ++  joke  |=(a/tank (jape (of-wall (wash 0^80 a))))
     ++  jode  |=(a/time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
       |*  {a/_cord b/_json}
@@ -109,7 +112,7 @@
       |=  a/torso
       %+  joba  -.a
       ?-  -.a
-        $text  [%s (role +.a)]
+        $text  [%s (of-wain +.a)]
         $tank  [%a (turn +.a joke)]
         $name  (jobe nom+s+p.a mon+$(a q.a) ~)
       ==

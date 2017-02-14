@@ -1,6 +1,7 @@
 ::  Converts the result of an 'issues' event into a issues:gh.
 /-  gh
-/+  gh-parse, talk
+/+  gh-parse, talk, old-zuse
+=,  old-zuse
 |_  issues/issues:gh
 ++  grow
   |%

@@ -3,26 +3,25 @@
 ::::  /hoon/parse/down-jet/lib
   ::
 /?    310
-=*  xml  xml:eyre
-=,  lines:clay
+=,  html
+=,  format
 =+  =~
 |%
-++  loca  |*(a/_* {p/@u q/a})
+++  loca  |*(a/_* {p/@u q/a})  
 ++  stack  (list (loca tops))
 --
 |%
 ++  htm-enty                                            ::  XX belongs in zuse
   =,  space:userlib
-  =,  format
-  ~+
+  ~+  
   =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context
-      =+(parse:xml enty(ent mapping))
+      =+(de-xml enty(ent mapping))
   ^-  mapping/(map knot @tF)
   =+  pax=/==2%%/html5-entities/json                    ::  XX  %%/
   =+  maf=%.(pax ;~(biff file (soft json) (om so):dejs-soft))
   ?^  maf  u.maf
   ~&  no-enty+pax
-  (my amp+'&' quot+'"' apos+'\'' lt+'<' gt+'>' ~)       ::  fallback
+  (my amp+'&' quot+'"' apos+'\'' lt+'<' gt+'>' ~)       ::  fallback  
 ::
 ++  skem-symb  (star ;~(pose dot alp))
 ++  skem-set  ~+  ^-  (set cord)                        ::  URI schemes
@@ -58,7 +57,7 @@
 ::
 ++  tab
   |=  tub/nail
-  ^-  (like cord)
+  ^-  (like cord)  
   ?.  ?=({$9 *} q.tub)
     (fail tub)
   =+  sto=+((~(inv fe 1) (dec q.p.tub)))                ::  virt spaces produced
@@ -70,9 +69,9 @@
 ++  opts  |*(a/rule ;~((bend) (easy ~) a))
 ++  lots  |*({a/@u b/rule} ;~(pfix (stun [a a] b) (star b)))
 ++  leas  |*(a/rule ;~(pfix ;~(less (stun 4^4 ace) (stun 0^3 ace)) a))
-++  pech
+++  pech  
   |*  a/{rule rule}
-  |=  tub/nail
+  |=  tub/nail  
   ^-  (like (each _(wonk (-.a)) _(wonk (+.a))))
   %.  tub
   ;~(pose (stag %& -.a) (stag %| +.a))
@@ -154,25 +153,25 @@
     ++  madn
       |=  a/mane  ^-  ?
       =>  |=(b/knot ?=(^ (rush b ;~(plug alf (star aln)))))
-      ?@  a  (. a)
+      ?@  a  (. a)  
       &((. -.a) (. +.a))
     ::
-    ++  htmt
+    ++  htmt  
       %+  stag  %htmt
       =-  (cook crip (lite -))
       %+  sear
         %-  flit
         |=  a/$^({marx $~} $%({$& marx} {$| p/mane}))
         ?-  -.a
-          ^   (madn n.a)
-          $&  (madn n.a)
+          ^   (madn n.a) 
+          $&  (madn n.a) 
           $|  (madn p.a)
         ==
-      ;~(pose empt:parse:xml (pech [head tail]:parse:xml))
+      ;~(pose empt:de-xml (pech [head tail]:de-xml))
     ::
-    ++  line
+    ++  line 
       %+  cold  [%line ~]
-      ;~(plug ;~(pose (lots 2 ace) bas) nal)
+      ;~(plug ;~(pose (lots 2 ace) bas) nal)  
     ::
     ++  empty
       |=  a/inline
@@ -187,11 +186,11 @@
           =-  pra=;~(pose auto (cook - apex))
           |=({a/kids b/{tape (unit tape)}} [[%link b] a])
       |%
-      ++  apex
+      ++  apex  
         =+  ^-  rob/$-(nail (like {kids $@(cord {tape (unit tape)})}))
             ;~(plug text(nol &) labe)
         ::
-        |=  tub/nail
+        |=  tub/nail  
         ^-  (like (pair kids {tape (unit tape)}))
         ::  (fail tub)
         =+  vex=(rob tub)
@@ -206,50 +205,50 @@
           (~(get by ref) atr)
         =+  vux=(text:href tub)
         ?~  q.vux  ~
-        (~(get by ref) (wonk vux))
+        (~(get by ref) (wonk vux))  
       ::
-      ++  text
+      ++  text  
         =.  rec  ['[' ']' rec]
         (ifix sel^ser many)
       ::
       ++  titl  (opts ;~(pfix (plus gah) titl:href))
-      ++  labe
+      ++  labe  
         =+  wra=[;~(plug pel .) ;~(plug . per)]:(star gah)
         ;~  pose
-          (ifix wra ;~(plug dest:href titl))
+          (ifix wra ;~(plug dest:href titl))  
           ;~(pfix (star gah) text:href)
           (easy '')
         ==
       ::
       ++  blot
         %+  cook
-          |=({a/kids b/{tape (unit tape)}} [[%blot b] a])
+          |=({a/kids b/{tape (unit tape)}} [[%blot b] a])  
         ;~(pfix zap [.(rob ;~(plug text labe))]:apex)
       ::
-      ++  mail
+      ++  mail  
         %+  cook  |=(_[a="" b='' c="" d=*wall] :(welp a b^c (zing d)))
         ;~  plug
           (plus ;~(less (mask "\"\\ (),:;<>@[]") prn))
           pat
-          (plus alp)
+          (plus alp) 
           (star ;~(plug dot (plus alp)))
         ==
       ::
       ++  auto
         %+  ifix  gal^gar
         ;~  pose
-          (cook |=(a/tape [link+["mailto:{a}" ~] ~[[%$ a]]]) mail)
+          (cook |=(a/tape [link+["mailto:{a}" ~] ~[[%$ a]]]) mail)  
         ::
           =+  cha=;~(pose htm-enty ;~(less (mask "<> ") prn))
           %+  cook
             |=  a/_["" ""]
             [link+[(weld -.a +.a) ~] ~[[%$ (weld -.a +.a)]]]
-          ;~(plug uri-skem col (star cha))
+          ;~(plug uri-skem col (star cha))   
         ==
-      ::
+      ::  
       ++  pexp                                          ::  XX non-link nested
-        %+  cook
-          |=(a/kids (reso:many "[" (welp a [[%$ "]"] ~])))
+        %+  cook  
+          |=(a/kids (reso:many "[" (welp a [[%$ "]"] ~])))  
         (ifix sel^ser many)
       --
     --
@@ -304,7 +303,7 @@
         $(a t.a(p.i (weld p.i.a p.i.t.a)))
       [i.a $(a t.a)]
     ==
-  ++  pars                                      ::  XX
+  ++  pars                                      ::  XX    
     =>  |%
         ++  nufh  {tape kids}
         ++  fens  ?($'*' $'_')
@@ -313,7 +312,7 @@
           |=  a/nufh
           ^-  kids
           ?~  -.a  +.a
-          [[%$ -.a] +.a]
+          [[%$ -.a] +.a]  
         ::
         ++  veld
           |=  {a/$@(char inline) _[b c]=*nuft}
@@ -331,7 +330,7 @@
           |=  a/kids
           ^-  tape
           ?~  a  ~
-          %+  weld
+          %+  weld  
             ?@  -.i.a
               ?+  -.i.a  <i.a>
                 $~  p.i.a
@@ -340,7 +339,7 @@
             ?+  -.p  "[{(trip -.p)}]<{$(a q)}>"
               $emph  "({$(a q)})"
             ==
-          $(a t.a)
+          $(a t.a)  
         --
     |=  tap/tape  ^-  kids
     =.  tap  (trim-sp tap)
@@ -348,10 +347,10 @@
     ?~  q.vex
       ~
     =+  [a ~ b]=u.q.vex
-    ?~(b a (welp a [[%$ b]]~))
+    ?~(b a (welp a [[%$ b]]~))  
   ::
   ++  many
-    =>  pars                            ::  XX
+    =>  pars                            ::  XX  
     |=  tub/nail  ^-  (like kids)
     =-  [[0 0] ~ (reso -<) [0 0] ;;(tape ->)]           ::  XX
     =+  [ins=`?(fens $~)`~ bof=| noz=|]
@@ -388,7 +387,7 @@
           ins  i
           noz  |
         ==
-      ?~  t
+      ?~  t  
         (veld i done)
       $(+<+ t)
     ::
@@ -419,7 +418,7 @@
       ^-  nuft
       ~?  bug  [&3 &2]
       =+  clo=&(noz !=(~ `*`ins) (ends t p ~))      ::  can close delim
-      ?:  &(clo =(`*`ins i))                           ::  correct close
+      ?:  &(clo =(`*`ins i))                           ::  correct close  
         [`~ t]
       ?:  &(bof !=(`*`ins i))                          ::  outer close
         ?>  ?=(fens i)                                  ::  XX  do type stuff
@@ -442,7 +441,7 @@
     --
   ::
   --
---
+--  
 ::
 ::::
   ::
@@ -457,7 +456,7 @@
   |=  {a/_sam b/_sam}  ^-  ?
   .=  ?@(q.a q.a q.q.a)               ::  by checking delimiter characters
   ?@(q.b q.b q.q.b)
-::
+:: 
 ::   =-  =((cha p.a) (cha p.b))
 ::   ^=  cha
 ::   |=  a=_sam
@@ -490,13 +489,13 @@
 ::
 ++  donp
   |%
-  ++  blok
+  ++  blok  
     :~  %article   %aside  %blockquote  %body  %button  %canvas  %caption  %col
         %colgroup  %dd  %div  %dl  %dt  %embed  %fieldset  %figcaption  %figure
         %footer  %footer  %form  %h1  %h2  %h3  %h4  %h5  %h6  %header  %hgroup
         %hr      %iframe  %li  %map  %object  %ol  %output  %p  %pre  %progress
         %script  %section  %style    %table   %tbody   %td  %textarea    %tfoot
-        %th   %thead  %tr  %ul  %video
+        %th   %thead  %tr  %ul  %video  
     ==
   ++  htm-head  =+  blu=(flit ~(has in (silt `wain`blok)))
                 =+  blo=(sear blu (cook |=(a/tape (crip (cass a))) (star aln)))
@@ -509,8 +508,8 @@
                   ==
                 ==
   ++  leaf  (leas ;~(pose head hrul fcode))             ::  any node
-  ++  head
-    %+  cook  |=(a/tape [%head (lent a) ~])
+  ++  head  
+    %+  cook  |=(a/tape [%head (lent a) ~]) 
     ;~(sfix (stun 1^6 hax) ;~(pose ace (ahed eol)))
   ::
   ++  hrul
@@ -540,17 +539,17 @@
       ;~(plug gar ace)
       gar
     ==
-  ++  setext
+  ++  setext 
     %-  leas
     ;~(sfix ;~(pose (cold 2 (plus hep)) (cold 1 (plus tis))) (star ace))
   ++  icode  (cold `node`[%code ~ ~] (stun 4^4 ace))
   ++  fcode
     %.  ~['`' '~']   ::  (vary "`~")
-    |*  a/(pole char)
+    |*  a/(pole char) 
     ?~  a   fail
     =-  ;~(pose fel $(a +.a))
     ^=  fel
-    %+  cook
+    %+  cook      
       |=  {b/(list) c/tape $~}
       ^+  [?>(?=($code -) .)]:*node                       ::  XX do type stuff
       [%code `[-.a (add 3 (lent b)) c] ~]
@@ -573,14 +572,14 @@
           ?=($$ -.i.t.c)
       ==
     $(c t.c(p.i (weld p.i.c p.i.t.c)))
-  =.  i.c
+  =.  i.c  
     ?.(?=($$ -.i.c) i.c [%$ (trip (crip p.i.c))])       ::  XX  valid tapes
   :_  $(c t.c)
   ?@  -.i.c  i.c
-  ?~  q.i.c
+  ?~  q.i.c  
     i.c
   ?.  ?&  ?=({* $~} q.i.c)
-          ?=({$emph $|} -.i.c)
+          ?=({$emph $|} -.i.c)  
           ?=({$emph $|} -.i.q.i.c)
       ==
     i.c(q $(c q.i.c))
@@ -620,7 +619,7 @@
     |=  a/elem
     ?^  -.a  a(q (flop (turn q.a ..$)))
     ?+  -.a  a
-      $code
+      $code  
         ?~  p.a  a
         a(r.u.p (unesc:inli r.u.p.a))
       $para
@@ -660,8 +659,8 @@
           p.p
         p.p.cub  ::  XX set this upon parsing blank-headed block
       ==
-    ==
-  ::
+    == 
+  :: 
   ++  bye                                               ::  resolution arms
     |%
     ++  leaf                                            ::  resolve node
@@ -713,25 +712,25 @@
       ?~  p.nod  self(nod [%defn ~])
       =+  olt=tub
       =.  q.tub
-        =-  (trip (role -))
-        %+  turn
-          ;;((list {$$ p/tape}) (flop p.nod))         ::  XX do type stuff
-        |=({@ a/tape} (crip a))
+        %-  of-wall
+        %+  turn 
+          ;;((list {$$ p/tape}) (flop p.nod))         ::  XX do type stuff  
+        |=({@ a/tape} a)
       |-  ^+  self
       =^  ren  tub  (snack (leas href):inli)
       ?^  ren
         ?:  (~(has by ref) -.u.ren)  $
-        $(ref (~(put by ref) -.u.ren +.u.ren))
+        $(ref (~(put by ref) -.u.ren +.u.ren))  
       =.  q.tub  (strip (star gah) q.tub)
       ?~  q.tub  self(nod [%defn ~], tub olt)
       self(nod [%para [%$ q.tub]~], tub olt)
     ==
   ::
   ++  push                                              ::  open block
-    |=  nit/(loca _p:*tops)  ^+  +>
+    |=  nit/(loca _p:*tops)  ^+  +>  
     =.  self  cull
     =+  toz=[q.nit ~]
-    ?.  ?=({$list ^} q.nit)
+    ?.  ?=({$list ^} q.nit)  
       (shove p.nit toz)
     =.  self  (shove p.nit toz)
     (shove p.nit [%item ~]~)
@@ -781,10 +780,10 @@
     ?~  ruc  self
     ?.  ?=($bloq -.p.q.i.ruc)
       $(ruc t.ruc)
-    (collapse (flop ^+(cur ruc)))
+    (collapse (flop ^+(cur ruc)))  
   ::
-  ++  nil-li
-    ?&  ?=($defn -.nod)
+  ++  nil-li  
+    ?&  ?=($defn -.nod) 
         ?=(^ cur)
         ?=({{$item $~} $~} q.i.cur)
     ==
@@ -803,10 +802,10 @@
     a(p.p.q.i |)
   ::
   ++  blos                                              ::  extract elem list
-    (flop (turn cur |*({@ tops} +<+)))
+    (flop (turn cur |*({@ tops} +<+)))  
   ::
   ++  eat-line                                          ::  high-level line nom
-    ^+  .
+    ^+  .  
     ~?  >>  bug  line+curlin
      :: =>  [bup=bun sepa:eat]
      :: ?:  bun:+  +                                      ::  blank line nommed
@@ -817,7 +816,7 @@
       =+  sep=(sepa:eat)
       ?:  bun.sep  sep
       knot:eat.+
-    =>  [ruc .]=olds:eat
+    =>  [ruc .]=olds:eat  
     ?:  &(?=($~ ruc) ?=({$code ^ *} nod))
       code:eat
     =+  sep=(sepa:eat ruc)
@@ -829,7 +828,7 @@
     =<  .(bun |)
     =~  [ruc=ruc sep(bun bun)]
       (lazy:eat ruc)
-      news:eat
+      news:eat 
       node:eat
       knot:eat
     ::  ~?  bug  seated+[nod blos]  .
@@ -847,7 +846,7 @@
         self(bun |)
       ~?  bug  seat+cur
       =.  self
-        ?:  bun
+        ?:  bun  
           delist
         =.  bun  &
         (debloq ruc)
@@ -879,20 +878,20 @@
         [ruc self]
       ::
           $list
-        ?~  t.ruc  !!
+        ?~  t.ruc  !! 
           :: $(t.ruc [p.i.ruc [%item ~] ~]~)               ::  XX  why this
         ?>  ?=($item -.p.q.i.t.ruc)
         ~?  bug  leat+[p.i.t.ruc debu]
         =^  den  tub  (snack (stun [p p]:i.t.ruc ace))
         ?^  den  $(ruc t.t.ruc)
-        ?.  =(self horz)  [ruc self]                    ::  XX  efficiency
+        ?.  =(self horz)  [ruc self]                    ::  XX  efficiency  
         ?:  ?=({$code ^ *} nod)
-          [~ self]                                      ::  XX  correct?
+          [~ self]                                      ::  XX  correct?  
         =^  neu  tub  (snake limar:donp)
         ?~  neu  [ruc self]
         =>  .(q.u.neu ^+(p.q.i.ruc q.u.neu))            ::  XX do type stuff
         ?.  (list-nest p.q.i.ruc q.u.neu)
-          =.  self  (collapse (flop ^+(cur ruc)))
+          =.  self  (collapse (flop ^+(cur ruc)))    
           [~ (push u.neu)]
         =.  self  (collapse (flop ^+(cur t.ruc)))
         [~ (push p.u.neu [%item ~])]
@@ -938,10 +937,10 @@
     ::
     ++  node                                            ::  consume leaf node
       ^+  self
-      ~?  bug  neat+curlin
+      ~?  bug  neat+curlin  
       ::=.  self  ?.(bun self cull)
       ?^  [q]:((leas htm-head):donp tub)                ::  XX  efficiency
-        (pump [%html ~])
+        (pump [%html ~])  
       =+  ^=  hez
           %+  stag  %heas
           ?.  ?=({$para {$$ *} $~} nod)
@@ -949,10 +948,10 @@
           ;~(plug setext:donp (cold p.nod (ahed eol)))
       =+  ico=?:(?=($para -.nod) fail icode:donp)
       =+  saf=q.p.+:(snack (star ace))          ::  XX  efficiency
-      =^  neu  tub
+      =^  neu  tub  
         (snack ;~(pose hez ico leaf:donp))
       ~?  bug  feat+[bun saf blos neu]
-      =.  cur
+      =.  cur  
         ?.(bun cur widen)
       ?~  neu
         =.  tub  +:(snack (star ace))
@@ -978,7 +977,7 @@
         =.  q.nod  q.nod
         cull(tub tup)
       =^  buf  tub  (snack ;~(sfix (star ace) nal))
-      ?^  buf
+      ?^  buf  
         self(q.nod [(crip u.buf) q.nod])
       knot
     ::
@@ -987,7 +986,7 @@
       ?:  =(~ q.tub)  halt
       =^  lin  tub
         (snack line:donp)
-      ?~  lin
+      ?~  lin 
         halt
       ~?  bug  adva+u.lin
       |-
@@ -999,7 +998,7 @@
       ?+  -.nod  (pump para+~[[%$ u.lin]])
         $para  self(p.nod :_(p.nod [%$ u.lin]))
         $head  ?^  q.nod  $(self cull)
-               self(q.nod [[%$ (dehax u.lin)]]~)
+               self(q.nod [[%$ (dehax u.lin)]]~)   
         $code  self(q.nod :_(q.nod (crip u.lin)))
         $html  self(p.nod :_(p.nod (crip u.lin)))
       ==
