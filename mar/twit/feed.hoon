@@ -5,6 +5,7 @@
 /-  talk
 /+  twitter, httr-to-json, old-zuse
 =,  old-zuse
+=,  format
 |_  fed/(list post:twitter)
 ++  grab
   |%

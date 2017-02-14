@@ -26,8 +26,9 @@
       %+  cu  malt  
       %+  ci
         |=  a/(map cord _(need *wit))
+        =,  unity
         ^-  (unit (list _[(wonk *fel) (need *wit)]))
-        (zl (turn (~(tap by a)) (head-rush fel)))
+        (drop-list (turn (~(tap by a)) (head-rush fel)))
       (om wit)
     ::
     ++  ke                                              ::  callbacks  
