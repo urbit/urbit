@@ -3,12 +3,13 @@
   ::
 /?    310
 /-  talk
-/+  talk,map-to-json
+/+  talk,map-to-json, old-zuse
 ::
 =,  talk
 =,  mimes:html
 =,  format
 =,  html
+=,  old-zuse
 |_  gam/(list telegram)
 ::
 ++  grab  
@@ -128,7 +129,7 @@
       ==
     ::
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
-    ++  joke  |=(a/tank (jape (of-wall (wash 0^80 a)))])
+    ++  joke  |=(a/tank (jape (of-wall (wash 0^80 a))))
     ++  jode  |=(a/time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ::
     ++  thot

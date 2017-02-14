@@ -1696,6 +1696,7 @@
         ?~  bir  (fine cof ..neck)
         =.  boy
           ?:  p.i.bir  boy
+::           ~&  ford+tscm+[q.i.bir boy]
           (welp boy [[%use [%limb q.i.bir] [%$ 1]] ~])
         =+  byf=(~(get by bil) q.i.bir)
         ?^  byf

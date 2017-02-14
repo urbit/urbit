@@ -2,7 +2,9 @@
 ::::  /hoon/paste/write/mar
   ::
 /?    310
+/+    old-zuse
 ::
+=,  old-zuse
 |_  {typ/?($hoon $md $txt) txt/@t}
 ++  grab
   |%

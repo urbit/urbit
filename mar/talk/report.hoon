@@ -3,11 +3,13 @@
   ::
 /?    310
 /-    talk
-/+    talk
+/+    talk, old-zuse
 ::
 =,  talk
 =,  mimes:html
 =,  html
+=,  format
+=,  old-zuse
 |_  rep/report
 ::
 ++  grab                                                ::  convert from
@@ -39,7 +41,7 @@
         delivery+[%s b]
       ==
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
-    ++  joke  |=(a/tank (jape (of-wall (wash 0^80 a)))
+    ++  joke  |=(a/tank (jape (of-wall (wash 0^80 a))))
     ++  jode  |=(a/time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
       |*  {a/_cord b/_json}

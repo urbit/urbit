@@ -11,7 +11,7 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  [/text/json (as-octs (en-json jon))]        ::  convert to %mime
+  ++  mime  [/text/json (as-octt (en-json jon))]        ::  convert to %mime
   --
 ++  grab
   |%                                                    ::  convert from

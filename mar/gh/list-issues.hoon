@@ -1,6 +1,7 @@
 /-  gh
-/+  gh-parse
+/+  gh-parse, old-zuse
 =,  mimes:html
+=,  old-zuse
 |_  issues/(list issue:gh)
 ++  grab
   |%

@@ -2,8 +2,10 @@
 ::::  /hoon/tree/write/mar
   ::
 /?    310
+/+    old-zuse
 ::
 =,  mimes:html
+=,  old-zuse
 |_  {sup/spur mim/mime}
 ++  grab
   |%

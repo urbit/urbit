@@ -3,7 +3,8 @@
 ::::  /hoon/feed/twit/mar
   ::
 /-  talk
-/+  twitter, httr-to-json
+/+  twitter, httr-to-json, old-zuse
+=,  old-zuse
 |_  fed/(list post:twitter)
 ++  grab
   |%

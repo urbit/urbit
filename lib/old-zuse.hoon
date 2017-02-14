@@ -164,7 +164,7 @@
 ++  mess        mess:eyre                               ::  raw http headers
 ++  meta        !!                                      ::  path metadata
 ++  meth        meth:eyre                               ::  http methods
-++  mime        !!                                      ::  mimetyped data
+++  mime        mime.is                                 ::  mimetyped data
 ++  mite        mite:eyre                               ::  mime type
 ++  miso        miso:clay                               ::  ankh delta
 ++  misu        misu:clay                               ::  computed delta

@@ -2,7 +2,9 @@
 ::::  /hoon/paste/write/mar
   ::
 /?    310
+/+    old-zuse
 ::
+=,  old-zuse
 |_  {who/@txname loc/@txloc}
 ++  grab
   |%

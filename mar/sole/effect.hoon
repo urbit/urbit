@@ -3,13 +3,16 @@
   ::
 /?    310
 /-    sole
+/+    old-zuse
 ::
 ::::
   ::
 =,  sole
 =,  format
+=,  old-zuse
 |%
 ++  mar-sole-change                       ::  XX  dependency
+  =,  old-zuse
   |_  cha/sole-change
   ++  grow
     |%  ++  json
@@ -51,7 +54,7 @@
   ++  lens-json                       :: json for cli client
     ^-  ?($~ ^json)                   :: null = ignore
     ?+    -.sef  ~
-        $tan  (wall (turn (flop p.sef) ~(ram re a))))
+        $tan  (wall (turn (flop p.sef) |=(a/tank ~(ram re a))))
         $txt  s+(crip p.sef)
         $sav
       (pairs file+s+(crip <`path`p.sef>) data+s+(crip (sifo q.sef)) ~)
