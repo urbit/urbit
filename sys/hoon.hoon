@@ -1510,9 +1510,9 @@
     bal(a a(l $(a l.a)))
   ::
   +-  tap                                               ::  adds list to end
-    |=  b/(list _?>(?=(^ a) n.a))
+    =|  b/(list _?>(?=(^ a) n.a))
+    |-  ^+  b
     =+  0                                               ::  hack for jet match
-    ^+  b
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
