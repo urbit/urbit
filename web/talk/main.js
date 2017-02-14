@@ -235,8 +235,12 @@ Persistence = _persistence({
         'cabal': 'cabal'
       });
     },
-    createStation: function(name) {
-      return Persistence.createStation(name);
+    createStation: function(station) {
+      Dispatcher.handleViewAction({
+        station: station,
+        type: "station-create"
+      });
+      return Persistence.createStation(station);
     },
     setSources: function(station, sources) {
       return Persistence.setSources(station, window.urb.ship, sources);
@@ -316,7 +320,7 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var Member, a, clas, div, h2, h3, label, pre, recl, ref, util,
+var Member, a, clas, div, h2, h3, label, pre, recl, ref, rele, util,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 util = require('../util.coffee');
@@ -324,6 +328,8 @@ util = require('../util.coffee');
 clas = require('classnames');
 
 recl = React.createClass;
+
+rele = React.createElement;
 
 ref = React.DOM, div = ref.div, pre = ref.pre, a = ref.a, label = ref.label, h2 = ref.h2, h3 = ref.h3;
 
@@ -367,9 +373,16 @@ module.exports = recl({
     }
     return this.props._handlePm(user);
   },
+  abbreviate: function(s) {
+    if (s.length <= 80) {
+      return s;
+    } else {
+      return (s.slice(0, 77)) + "...";
+    }
+  },
   renderSpeech: function(arg) {
-    var app, com, exp, fat, lin, mor, tax, url, x;
-    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, com = arg.com;
+    var app, comment, exp, fat, lin, mor, post, tax, url, x;
+    lin = arg.lin, app = arg.app, exp = arg.exp, tax = arg.tax, url = arg.url, mor = arg.mor, fat = arg.fat, comment = arg.comment, post = arg.post;
     switch (false) {
       case !(lin || app || exp || tax):
         return (lin || app || exp || tax).txt;
@@ -379,11 +392,14 @@ module.exports = recl({
           target: "_blank",
           key: "speech"
         }, url.txt);
-      case !com:
-        return div({}, com.txt, div({}, a({
-          className: "btn",
-          href: com.url
-        }, "Go to thread")));
+      case !comment:
+        return div({}, a({
+          href: comment.url
+        }, this.abbreviate(comment.txt)));
+      case !post:
+        return div({}, a({
+          href: post.url
+        }, post.title));
       case !mor:
         return mor.map(this.renderSpeech);
       case !fat:
@@ -443,13 +459,13 @@ module.exports = recl({
     }
   },
   render: function() {
-    var aude, audi, bouquet, className, comment, delivery, k, mainStation, name, path, ref1, speech, style, thought, txt, type, url, v;
+    var aude, audi, bouquet, className, comment, delivery, glyph, k, mainStation, name, path, post, ref1, ref2, speech, style, thought, title, txt, type, url, v;
     thought = this.props.thought;
     delivery = _.uniq(_.pluck(thought.audience, "delivery"));
     speech = thought.statement.speech;
     bouquet = thought.statement.bouquet;
     if (speech == null) {
-      return;
+      return null;
     }
     name = this.props.name ? this.props.name : "";
     aude = _.keys(thought.audience);
@@ -477,21 +493,47 @@ module.exports = recl({
         href: url
       }, path);
       speech = {
-        com: {
+        comment: {
           txt: txt,
           url: url
         }
       };
     }
-    className = clas('gram', (this.props.sameAs ? "same" : "first"), (delivery.indexOf("received") !== -1 ? "received" : "pending"), {
+    if (_.filter(bouquet, ["fora-post"]).length > 0) {
+      post = true;
+      ref2 = speech.mor;
+      for (k in ref2) {
+        v = ref2[k];
+        if (v.fat) {
+          url = v.fat.taf.url.txt;
+          txt = v.fat.tor.text;
+        }
+        if (v.app) {
+          title = v.app.txt.replace("forum post: ", "");
+        }
+      }
+      audi = a({
+        href: url
+      }, title);
+      speech = {
+        post: {
+          txt: txt,
+          url: url,
+          title: title
+        }
+      };
+    }
+    className = clas('gram', (this.props.sameAs ? "same" : "first"), ((indexOf.call(delivery, "received") >= 0) ? "received" : "pending"), {
       'new': this.props.unseen
     }, {
-      comment: comment
+      comment: comment,
+      post: post
     }, this.classesInSpeech(speech));
     style = {
       height: this.props.height,
       marginTop: this.props.marginTop
     };
+    glyph = this.props.glyph || "*";
     return div({
       className: className,
       'data-index': this.props.index,
@@ -502,12 +544,12 @@ module.exports = recl({
       key: "meta"
     }, label({
       className: "type " + type,
-      "data-glyph": this.props.glyph || "*"
+      "data-glyph": glyph
     }), h2({
       className: 'author planet',
       onClick: this._handlePm,
       key: "member"
-    }, React.createElement(Member, {
+    }, rele(Member, {
       ship: this.props.ship,
       glyph: this.props.glyph,
       key: "member"
@@ -624,12 +666,10 @@ module.exports = recl({
   sortedMessages: function(messages) {
     var station;
     station = this.state.station;
-    return _.sortBy(messages, (function(_this) {
-      return function(message) {
-        message.pending = message.thought.audience[station];
-        return message.key;
-      };
-    })(this));
+    return _.sortBy(messages, function(message) {
+      message.pending = message.thought.audience[station];
+      return message.key;
+    });
   },
   componentWillMount: function() {
     return Infinite = window.Infinite;
@@ -729,16 +769,20 @@ module.exports = recl({
       sameAs = _.isEqual(lastSaid, nowSaid);
       lastSaid = nowSaid;
       lineNums = 1;
-      speechArr = [];
-      context.font = FONT_SIZE + 'px bau';
-      if (message.thought.statement.speech.lin != null) {
-        speechArr = message.thought.statement.speech.lin.txt.split(/(\s|-)/);
-      } else if (message.thought.statement.speech.url != null) {
-        speechArr = message.thought.statement.speech.url.txt.split(/(\s|-)/);
-      } else if (message.thought.statement.speech.fat != null) {
-        context.font = (FONT_SIZE * 0.9) + 'px scp';
-        speechArr = message.thought.statement.speech.fat.taf.exp.txt.split(/(\s|-)/);
-      }
+      speech = message.thought.statement.speech;
+      context.font = speech.fat == null ? (FONT_SIZE * 0.9) + 'px scp' : FONT_SIZE + 'px bau';
+      speechArr = (function() {
+        switch (false) {
+          case speech.lin == null:
+            return speechArr = speech.lin.txt.split(/(\s|-)/);
+          case speech.url == null:
+            return speechArr = speech.url.txt.split(/(\s|-)/);
+          case speech.fat == null:
+            return speech.fat.taf.exp.txt.split(/(\s|-)/);
+          default:
+            return [];
+        }
+      })();
       _.reduce(_.tail(speechArr), function(base, word) {
         if (context.measureText(base + word).width > speechLength) {
           lineNums += 1;
@@ -765,7 +809,6 @@ module.exports = recl({
         height = null;
         marginTop = null;
       }
-      speech = message.thought.statement.speech;
       audience = (_.keys(message.thought.audience)).join(" ");
       mez = rele(Message, _.extend({}, message, {
         station: station,
@@ -871,7 +914,7 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   componentWillReceiveProps: function(nextProps) {
-    if (this.props.open === true && nextProps.open === false) {
+    if (this.props.open && nextProps.open === false) {
       return this.setState({
         open: null
       });
@@ -1090,7 +1133,7 @@ Audience = recl({
     }
   },
   _autoCompleteAudience: function() {
-    var aud, g, i, j, len, len1, ref1, ref2, s, stations, txt;
+    var aud, g, i, j, len, len1, modulo, ref1, ref2, s, stations, txt;
     txt = $('#audience .input').text().trim();
     if (this.tabAudList == null) {
       this.tabAudList = [];
@@ -1123,7 +1166,10 @@ Audience = recl({
         } else {
           this.tabAudIndex++;
         }
-        this.tabAudIndex = (this.tabAudIndex % this.tabAudList.length + this.tabAudList.length) % this.tabAudList.length;
+        modulo = function(a, b) {
+          return ((a % b) + a) % b;
+        };
+        this.tabAudIndex = modulo(this.tabAudIndex, this.tabAudList.length);
       } else {
         this.tabAudIndex = 0;
       }
@@ -1277,7 +1323,7 @@ module.exports = recl({
     return this.set();
   },
   _autoComplete: function() {
-    var i, msg, name, obj, ptxt, ref1, ref2, tindex, txt;
+    var i, modulo, msg, name, obj, ptxt, ref1, ref2, tindex, txt;
     txt = this.$message.text();
     tindex = txt.lastIndexOf('~');
     if (tindex === -1) {
@@ -1307,7 +1353,10 @@ module.exports = recl({
         } else {
           this.tabIndex++;
         }
-        this.tabIndex = (this.tabIndex % this.tabList.length + this.tabList.length) % this.tabList.length;
+        modulo = function(a, b) {
+          return ((a % b) + a) % b;
+        };
+        this.tabIndex = modulo(this.tabIndex, this.tabList.length);
       } else {
         this.tabIndex = 0;
       }
@@ -1813,13 +1862,14 @@ MessageStore = _.merge(new EventEmitter, {
     }
   },
   convertDate: function(time) {
-    var d;
+    var date, t;
     time = time.substr(1).split(".");
     time[1] = this.leadingZero(time[1]);
     time[2] = this.leadingZero(time[2]);
-    d = new moment(time[0] + "-" + time[1] + "-" + time[2] + "T" + time[4] + ":" + time[5] + ":" + time[6] + "Z");
-    d.tz("Europe/London");
-    return d;
+    t = time;
+    date = new moment(t[0] + "-" + t[1] + "-" + t[2] + "T" + t[4] + ":" + t[5] + ":" + t[6] + "Z");
+    date.tz("Europe/London");
+    return date;
   },
   getListening: function() {
     return _listening;
@@ -1832,8 +1882,10 @@ MessageStore = _.merge(new EventEmitter, {
     if (_.keys(_messages).length === 0) {
       return [];
     }
-    messages = _.sortBy(_messages, function(_message) {
-      return _message.thought.statement.time;
+    messages = _.sortBy(_messages, function(arg) {
+      var time;
+      time = arg.thought.statement.time;
+      return time;
     });
     return _.keys(messages[messages.length - 1].thought.audience);
   },
@@ -2184,7 +2236,7 @@ module.exports = util = {
     var station;
     if (document.location.search) {
       station = document.location.search.replace(/^\?/, '');
-      if (station.indexOf('dbg.nopack') !== -1) {
+      if (station.indexOf('dbg.') !== -1) {
         return station = util.mainStation();
       }
     } else {
