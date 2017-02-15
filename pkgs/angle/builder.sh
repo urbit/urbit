@@ -11,11 +11,10 @@ do
   patch -p1 -i $patch
 done
 eval "$patchTmphax"
-cd ..
 
-mkdir build
-cd build
+# ANGLE's gyp build files do not handle out-of-tree builds properly,
+# so let's just do an in tree build.
 
-gyp $gypFlags ../asrc/src/angle.gyp
+gyp $gypFlags src/angle.gyp
 
 ninja -C out/Release

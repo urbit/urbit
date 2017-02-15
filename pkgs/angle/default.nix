@@ -41,7 +41,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   GYP_GENERATORS = "ninja";
 
-  patchTmphax = "cp ${../../angle-src/src/common/string_utils.cpp} src/common/string_utils.cpp; " +
-                "cp ${../../angle-src/src/angle.gyp} src/angle.gyp; " +
-                "cp ${../../angle-src/gyp/common_defines.gypi} gyp/common_defines.gypi; ";
+  #patchTmphax = "cp ${../../angle-src/src/common/string_utils.cpp} src/common/string_utils.cpp; " +
+  #              "cp ${../../angle-src/src/angle.gyp} src/angle.gyp; " +
+  #              "cp ${../../angle-src/gyp/common_defines.gypi} gyp/common_defines.gypi; ";
 }

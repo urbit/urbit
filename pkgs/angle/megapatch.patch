@@ -14,19 +14,6 @@ diff -ur angle-src-orig/gyp/common_defines.gypi angle-src/gyp/common_defines.gyp
 diff -ur angle-src-orig/src/angle.gyp angle-src/src/angle.gyp
 --- angle-src-orig/src/angle.gyp	2017-02-07 07:42:35.090343332 -0800
 +++ angle-src/src/angle.gyp	2017-02-09 08:44:52.752006998 -0800
-@@ -79,9 +79,9 @@
-             {
-                 'include_dirs':
-                 [
--                    '<(angle_path)/include',
--                    '<(angle_path)/src',
--                    '<(angle_path)/src/common/third_party/numerics',
-+                    './include',
-+                    '.',
-+                    'common/third_party/numerics',
-                 ],
-                 'conditions':
-                 [
 @@ -286,7 +286,7 @@
                  }
              ]
