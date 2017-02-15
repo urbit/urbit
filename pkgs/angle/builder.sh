@@ -1,20 +1,35 @@
 source $stdenv/setup
 
-cp -R $src asrc
+cp -R $src src
 
-chmod -R u+rw asrc
+chmod -R u+rw src
 
-cd asrc
-for patch in $patches
-do
+cd src
+for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
-eval "$patchTmphax"
 
 # ANGLE's gyp build files do not handle out-of-tree builds properly,
 # so let's just do an in tree build.
 
 gyp $gypFlags src/angle.gyp
 
-ninja -C out/Release
+cd out/Release
+
+ninja
+
+# TODO: trim this down
+libs="obj/src/libANGLE.a obj/src/libangle_common.a obj/src/libangle_image_util.a obj/src/libEGL.a obj/src/libEGL_static.a obj/src/libGLESv2.a obj/src/libGLESv2_static.a obj/src/libpreprocessor.a obj/src/libtranslator.a"
+
+# Make the static libraries not be thin.
+for lib in $libs; do
+  $AR rvs $lib.new $($AR -t $lib)
+  mv $lib.new $lib
+  $RANLIB $lib
+done
+
+mkdir -p $out/{lib,license,include}
+cp -r ../../LICENSE $out/license/
+cp $libs $out/lib/
+cp -r ../../include/{EGL,GLES2,GLSLANG} $out/include/

@@ -24,25 +24,21 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     crossenv.nixpkgs.ninja
   ];
 
-  # MSYS2 options: -D MSVS_VERSION="" -D TARGET=${_target} --format make --depth .
+  GYP_GENERATORS = "ninja";
+
   gypFlags =
       "-D OS=${crossenv.gyp_os} " +
       "-D TARGET=win32 " +  # TODO
       "-D use_ozone=0 " +
       "-D angle_enable_vulkan=0 " +   # Vulkan support is in progress
       "-D angle_gl_library_type=static_library " +
-      "-I ../asrc/gyp/common.gypi " +
+      "-I ../src/gyp/common.gypi " +
       "--depth .";
 
   CC_target = "${crossenv.host}-gcc";
   CXX_target = "${crossenv.host}-g++";
+  AR = "${crossenv.host}-ar";
+  RANLIB = "${crossenv.host}-ranlib";
 
-  # We can see from platform.h that ANGLE wants to use SSE instructions.
-  CXXFLAGS = "-msse2";
-
-  GYP_GENERATORS = "ninja";
-
-  #patchTmphax = "cp ${../../angle-src/src/common/string_utils.cpp} src/common/string_utils.cpp; " +
-  #              "cp ${../../angle-src/src/angle.gyp} src/angle.gyp; " +
-  #              "cp ${../../angle-src/gyp/common_defines.gypi} gyp/common_defines.gypi; ";
+  CXXFLAGS = "-msse2 -Wno-conversion-null";
 }
