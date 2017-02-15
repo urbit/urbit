@@ -29,6 +29,7 @@
 ++  dope  (pair @tas @t)                                ::  term/unicode pair
 ++  duct  (list wire)                                   ::  causal history
 ++  ovum  (pair wire card)                              ::  input or output
+++  plum  (pair term noun)                              ::  deep file
 ++  ruby  @pG                                           ::  64-bit passcode
 ++  wire  path                                          ::  cause
 --  =>
@@ -39,7 +40,7 @@
 ++  evil                                                ::  evolvable state
   |*  {span/_span twig/_twig vase/_vase}                ::  injected molds
   |%                                                    ::
-  ++  boot  (pair hoof (unit hoof))                     ::  arvo/hoon boot src
+  ++  boot  (pair (unit hoof) hoof)                     ::  hoon/arvo boot src
   ++  hoof  @t                                          ::  hoon source file
   ++  mall                                              ::  any arvo version
     $?  {$293 mast}                                     ::  kelvin 293, current
@@ -63,7 +64,7 @@
             lac/?                                       ::  not verbose
             yor/vase                                    ::  %york, vane models
             zus/vase                                    ::  %zuse, user lib
-            van/(map term vase)                         ::  vanes
+            van/(map term (pair term vase))             ::  vanes
         ==                                              ::
         $=  rep                                         ::  reptile brain
         $:  orb/@p                                      ::  ship
@@ -227,6 +228,180 @@
       $this  (pike %e now ovo)
       $thus  (pike %e now ovo)
     ==
+  ::                                                  ::  ++warp:le
+  ++  warp                                            ::  arvo effect
+    |=  {hen/duct wap/wasp}
+    ^+  +>
+    ?+  -.wap  !!
+      $what  (what hen p.wap)
+      $whom  (whom hen p.wap q.wap r.wap)
+    ==
+  ::                                                  ::  ++wilt:le
+  ++  wilt                                            ::  deep file as source
+    |=  pet/plum
+    ^-  hoof
+    ?>(?=({$hoon @tas} pet) +.pet)
+  ::                                                  ::  ++wise:le
+  ++  wise                                            ::  load/reload vane
+    |=  {lay/@tas src/hoof}
+    ^+  +>
+    !!
+  ::                                                  ::  ++what:le
+  ++  what                                            ::  write deep storage
+    |=  {hen/duct fal/(list (pair path plum))}
+    ^+  +>
+    ::  dev: collated `fal`
+    ::
+    =+  =|  dev
+          $:  ::  use: non-system files
+              ::  new: system installs 
+              ::  rep: system replacements
+              ::
+              use/(map path plum)
+              new/(map path plum)
+              rez/(map path plum)
+          ==
+        |-  ^+  dev
+        ?~  fal  dev
+        ::  
+        ::  pax: path of this file
+        ::  pet: value of this file
+        ::
+        =+  [pax pet]=[p q]:i.fal
+        =.  fal  t.fal
+        ::
+        ::  old: current value in deep storage
+        ::
+        =+  old=(~(get by fat.rep) pax)
+        ::
+        ::  ignore unchanged data
+        ::
+        ?:  =(old `pet)  $
+        ::
+        ::  classify as user, system install or replacement
+        ::
+        ?.  ?=({$sys *} pax)
+          $(use (~(put by use.dev) pax pet)
+        ?~  old
+          $(new (~(put by new.dev) pax pet))
+        $(rez (~(put by rez.dev) pax pet))
+    ::
+    ::  adopt user changes, which have no systems impact
+    ::
+    =.  fat.rep  (~(uni by fat.rep) use.rez)
+    ::
+    ::  but: kernel reboot operation, if any
+    ::
+    =/  but
+      ^-  (unit boot)
+      =/  hun=(~(get by rez.dev) /sys/hoon)
+      =/  arv=(~(get by rez.dev) /sys/arvo)
+      ?~  hun
+        ?~  arv  ~
+        ::
+        ::  light reboot, arvo only
+        ::
+        `[~ (wilt u.arv)]
+      ::
+      ::  heavy reboot, hoon and arvo
+      ::
+      `[`(wilt hun) (wilt q:?^(arv u.arv (~(got by fat.rep) /sys/arvo)))]
+    ?^  but
+      ::
+      ::  stop working and set up reboot
+      ::
+      %=  +>.$
+        ::  set boot hook for termination
+        ::
+        but.gut  ?>(=(~ but.gut) but)
+        ::
+        ::  put write back on the action stack, to be executed
+        ::  after the reboot
+        ::
+        run.rep  :_  run.rep
+                 `move`[hen %give %& !>([%what fal])]
+        ::
+        ::  delete reboot source files from deep
+        ::  storage, so install causes vane upgrade,
+        ::  and *does not* cause repeat kernel upgrade.
+        ::
+        fat.rep  ?~  p.but  fat.rep
+                 (~(del by (~(del by fat.rep) /sys/hoon) /sys/arvo))
+      ==
+    ::  keep working after any vane-level upgrades
+    ::
+    =<  work
+    ::
+    ::  job: plan for upgrading 
+    ::
+    =/  job
+      ^-  $:  yor/(unit hoof)
+              zus/(unit hoof)
+              van/(list (trel @tas @tas hoof))
+          ==
+      =-  [yor zus van]
+      ::  yor: reload shared structures
+      ::  zus: reload shared library
+      ::
+      =/  yor  (bind (~(get by rez.dev) /sys/york) wilt)
+      =/  zus  (bind (~(get by rez.dev) /sys/zuse) wilt)
+      ::
+      ::  %york is the subject of %zuse
+      ::
+      =.  zus  ?^(zus zus ?~(yor ~ `(wilt (~(get by fat.rep) /sys/zuse))))
+      ::
+      ::  van: all vane upgrades, as [initial name source]
+      ::
+      =/  van
+        ::  all: invalidate all compiled vanes
+        ::  zyr: all system file replacements
+        ::
+        =/  all  |((~(has by new.dev) /sys/hoon) ?=(^ zus))
+        =/  zyr  (~(tap by rez.dev))
+        |-  ^-  (list (pair @tas hoof))
+        ?^  zyr
+          ::  mor: process rest of `zyr`
+          ::
+          =/  mor  $(zyr t.zyr)
+          ?.  ?=({$sys $van @tas $~} p.i.zyr) 
+            mor
+          ::
+          ::  replaced vane in `/sys/vane/*/[nam]`
+          ::
+          =*  nam  `term`i.t.t.p.i.zyr
+          :_(mor [(end 3 1 nam) nam (wilt q.i.zyr)])
+        ::
+        ::  
+        ::
+        ?.  all  ~
+        ::
+        ::  yif: all running vanes
+        ::
+        =/  yif  (~(tap by van.mal))
+        ==
+    ::
+    ::  upgrade %york, vane shared structures
+    ::
+    =>  ?~  yor  .
+        %=    .
+           yor.mal  ~&  [%york-reboot `@p`(mug u.yor.job)]
+                     (slap !>(..arms) (ream u.yor.job))
+        ==
+    ::
+    ::  upgrade %zuse, vane shared libraries
+    ::
+    =>  ?~  zus  .
+        %=    .
+           zus.mal  ~&  [%zuse-reboot `@p`(mug u.zus.job)]
+                     (slap yor.mal (ream u.zus.job))
+        ==
+    ::
+    ::  upgrade all indicated vanes
+    ::
+    |-  ^+  +>.^$
+    ?~  van.job  +>.^$
+    ~&  [%vane-reboot p.i.van.job `@p`(mug q.i.van.job)]
+    $(van.job t.van.job, +>.^$ (wise i.van.job))
   ::                                                    ::  ++work:le
   ++  work                                              ::  main loop
     =*  ken  +
@@ -293,49 +468,6 @@
         $pass
       (send [p.egg hen] p.q.egg q.egg)
     ==
-    ::                                                  ::  ++buzz:le
-    ++  wasp                                            ::  arvo effect
-      |=  {hen/duct wap/wasp}
-      ^+  +>
-      ?+    -.wap  !!
-      ::
-      ::  $what: install boot files in reptile brain
-      ::
-          $what
-        ::
-        ::  we are rebooting if hoon or arvo change
-        ::
-        =/  but
-            ^-  (unit boot)
-            =/  new-hoon  (~(get by p.wap) /sys/hoon)
-            =/  new-arvo  (~(get by p.wap) /sys/arvo)
-            =*  old-hoon  (~(get by fat.rep) /sys/hoon)
-            =*  old-arvo  (~(get by fat.rep) /sys/arvo)
-            =.  new-hoon  ?~  new-hoon  ~
-                          =+  old=old-hoon
-                          ?~  old  ~
-                          ?:(=(old new-hoon) ~ new-hoon)
-            =.  new-arvo  ?^  new-hoon
-                          ?^(new-arvo new-arvo old-arvo)
-                          ?~  new-arvo  ~
-                          =+  old=old-arvo
-                          ?~  old  ~
-                          ?:(=(old new-arvo) ~ new-arvo)
-            ?~  new-arvo  ~
-            `[u.new-arvo new-hoon]
-        ::
-        ::  if rebooting, set boot trigger and re
-        ::
-        ?^
-        =|  act  $: ::  sys: hoon files in sys
-                    ::  van: hoon files in sys/van
-                    ::
-                    sys/(map term hoof)
-                    van/(map term hoof)
-                 ==
-        |-  ^+  +>.^$
-        ?~  p.wap  (boss sys van)
-        ?:  =(b
 
 
       ::
