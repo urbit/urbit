@@ -30,6 +30,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
       "-D TARGET=win32 " +  # TODO
       "-D use_ozone=0 " +
       "-D angle_enable_vulkan=0 " +   # Vulkan support is in progress
+      "-D angle_gl_library_type=static_library " +
       "-I ../asrc/gyp/common.gypi " +
       "--depth .";
 
