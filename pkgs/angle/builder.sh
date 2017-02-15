@@ -32,4 +32,4 @@ done
 mkdir -p $out/{lib,license,include}
 cp -r ../../LICENSE $out/license/
 cp $libs $out/lib/
-cp -r ../../include/{EGL,GLES2,GLSLANG} $out/include/
+cp -r ../../include/{KHR,EGL,GLES2,GLES3,GLSLANG} $out/include/

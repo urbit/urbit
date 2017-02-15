@@ -23,6 +23,10 @@ rec {
     inherit crossenv;
   };
 
+  angle-samples = import ./pkgs/angle/samples.nix {
+    inherit crossenv angle;
+  };
+
   qt58 = import ./pkgs/qt58 {
     inherit crossenv angle;
   };
