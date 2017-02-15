@@ -1225,6 +1225,9 @@ u3_term_ef_ctlc(void)
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
   u3_pier_plan(pax, u3nt(c3__belt, c3__ctl, 'c'));
+
+  u3_utty* uty_u = _term_ef_get(1);
+  _term_it_refresh_line(uty_u);
 }
 
 /* u3_term_ef_verb(): initial effects for verbose events
