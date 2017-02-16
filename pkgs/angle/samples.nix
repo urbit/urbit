@@ -1,4 +1,4 @@
-{ crossenv, angle }:
+{ crossenv, angle, angle_util }:
 
 crossenv.nixpkgs.stdenv.mkDerivation rec {
   name = "${angle.name}-samples";
@@ -10,7 +10,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     crossenv.binutils
   ];
 
-  inherit angle;
+  inherit angle angle_util;
 
   host = crossenv.host;
 
