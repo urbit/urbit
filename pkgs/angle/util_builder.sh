@@ -16,7 +16,7 @@ mkdir obj lib
 
 source_files=../util/*.cpp
 
-if [ "$os" == "windows"]; then
+if [ "$os" == "windows" ]; then
   source_files="$source_files ../util/windows/win32/*.cpp"
 fi
 
@@ -26,7 +26,7 @@ for c in $source_files; do
   echo "compiling $(basename $c)"
   $host-g++ -c -fpermissive \
     -I../include -I"$angle/include" -L"$angle/lib" \
-    -DGL_GLEXT_PROTOTYPES -DEGL_EGLEXT_PROTOTYPES -DLIBANGLE_UTIL_IMPLEMENTATION \
+    -DANGLE_EXPORT= -DGL_GLEXT_PROTOTYPES -DEGL_EGLEXT_PROTOTYPES -DLIBANGLE_UTIL_IMPLEMENTATION \
     $c -lGLESv2 -lEGL \
     -o obj/$(basename $c).o
 done
