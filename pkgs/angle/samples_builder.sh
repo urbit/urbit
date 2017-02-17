@@ -20,7 +20,7 @@ exe_suffix=.exe  # TODO: this should come from crossenv
 CFLAGS="-I../include -I$angle_util/include -I$angle/include"
 CFLAGS="$CFLAGS -DGL_APICALL= -DANGLE_EXPORT= -DGL_GLEXT_PROTOTYPES"
 LDFLAGS="-mwindows -L$angle_util/lib -L$angle/lib"
-LIBS="-langle_util -lEGL_static -lGLESv2_static -lANGLE -langle_common -ltranslator -lpreprocessor -langle_common -langle_image_util -langle_common -ld3d9 -lgdi32"
+LIBS="-langle_util -lEGL_static -lGLESv2_static -lANGLE -ltranslator -lpreprocessor -langle_image_util -langle_common -ld3d9 -lgdi32"
 
 echo "compiling hello_triangle"
 $host-g++ -g $CFLAGS $LDFLAGS \
