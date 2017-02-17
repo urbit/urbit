@@ -14,6 +14,7 @@ mkdir build
 cd build
 mkdir bin lib
 
+#ls "$angle_util/lib" "$angle/lib"; exit 3 # tmphax
 #grep -r DestroyTLSIndex "$angle_util/lib" "$angle/lib"; exit 2 # tmphax
 
-$host-g++ -I../include -I"$angle_util/include" -I"$angle/include" -L"$angle_util/lib" -L"$angle/lib" -DGL_APICALL= -DANGLE_EXPORT= -DGL_GLEXT_PROTOTYPES ../samples/hello_triangle/HelloTriangle.cpp ../samples/sample_util/SampleApplication.cpp -langle_util -lGLESv2 -langle_common -lEGL -o bin/hello_triangle
+$host-g++ -I../include -I"$angle_util/include" -I"$angle/include" -L"$angle_util/lib" -L"$angle/lib" -DGL_APICALL= -DANGLE_EXPORT= -DGL_GLEXT_PROTOTYPES ../samples/hello_triangle/HelloTriangle.cpp ../samples/sample_util/SampleApplication.cpp -langle_util -lGLESv2 -lEGL -lANGLE -langle_common -ltranslator -lpreprocessor -langle_common -langle_image_util -langle_common -o bin/hello_triangle
