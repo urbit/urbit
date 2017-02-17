@@ -40,3 +40,4 @@ cp $src/LICENSE $out/license/
 cp lib/libangle_util.a $out/lib/
 cp ../util/*.h $out/include/
 cp ../include/export.h $out/include/
+cp -r ../include/common $out/include/

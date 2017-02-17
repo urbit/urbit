@@ -4,8 +4,6 @@ cp -r $src/samples .
 cp -r $src/util .
 
 mkdir include
-mkdir include/common
-cp -r $src/src/common/{angleutils,platform,Optional}.h include/common/
 cp -r $src/samples/sample_util/* include/
 
 mkdir build
