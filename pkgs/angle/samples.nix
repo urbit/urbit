@@ -1,7 +1,7 @@
 { crossenv, angle, angle_util }:
 
 crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "${angle.name}-samples";
+  name = "angle_samples-${angle.version}-${crossenv.host}";
 
   src = angle.src;
 
