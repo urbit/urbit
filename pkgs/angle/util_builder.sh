@@ -35,9 +35,7 @@ done
 
 $host-ar r lib/libangle_util.a obj/*.o
 
-mkdir -p $out/{license,lib,include}
+mkdir -p $out/{license,lib}
 cp $src/LICENSE $out/license/
 cp lib/libangle_util.a $out/lib/
-cp ../util/*.h $out/include/
-cp ../include/export.h $out/include/
-cp -r ../include/common $out/include/
+cp -r ../include $out/
