@@ -3,12 +3,12 @@
 crossenv.nixpkgs.stdenv.mkDerivation rec {
   name = "angle-${version}-${crossenv.host}";
 
-  version = "2017-02-07";
+  version = "2017-02-17";
 
   src = crossenv.nixpkgs.fetchgit {
     url = "https://chromium.googlesource.com/angle/angle";
-    rev = "1d37bc508694e75f087261aafb31f232e7d62ddd";
-    sha256 = "1vahwf33h2wspp2cr109b2ajvh8yv2cj40yb61y10mqz7v3h0x63";
+    rev = "4e0e6f8acf8b56898add4facb3af6ffa409cc1d0";
+    sha256 = "0nib2zr6jl2vwalpc00igh5yv53p1rb5gh03mfdljf1ym6w2vhjb";
   };
 
   patches = [
