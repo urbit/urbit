@@ -62,6 +62,7 @@
         $=  mal                                         ::  mammal brain
         $:  off/?                                       ::  not yet booted
             lac/?                                       ::  not verbose
+            eny/@uvJ                                    ::  512-bit entropy
             yor/vase                                    ::  %york, vane models
             zus/vase                                    ::  %zuse, user lib
             van/(map term (pair term vase))             ::  vanes
@@ -118,34 +119,6 @@
     ^-  {(pair (unit (pair @t @t)) (list move)) _sys}
     :-  [but.gut flop 
     [[but.gut (flop out.gut) sys(out.gut ~)]
-  ::                                                    ::  ++base:le
-  ++  base                                              ::  upgrade vane
-    |=  $:  ::  lal: vane name `%gall`
-            ::  src: vane source
-            ::
-            lal/term 
-            src/
-        ==
-    ::  lay: name prefix `%g`
-    ::
-    =+  lay=(end 3 1 lal)
-  ::                                                    ::  ++boss:le
-  ++  boss                                              ::  apply upgrades
-    |=  $:  ::  yor: sys/york upgrade
-            ::  zus: sys/zuse upgrade
-            ::  van: all vane upgrades
-            ::
-            $:  yor/(unit hoof)
-                zus/(unit hoof)
-            ==
-            van/(map term hoof)
-        ==
-    ::  bas: vase 
-    ::
-    =+  bas=!>(..arms)
-    ::
-    ::  
-    ::
   ::                                                    ::  ++emit:le
   ++  emit                                              ::  emit move
     |=  mov/move  
@@ -228,6 +201,48 @@
       $this  (pike %e now ovo)
       $thus  (pike %e now ovo)
     ==
+  ::                                                  ::  ++va:le
+  ++  va                                              ::  vane engine
+    |_  $:  ::  lay: short name, eg %a
+            ::  way: long name, eg %ames
+            ::  vax: vane or vane builder
+            ::  
+            lay/term
+            way/term
+            vax/vase
+        ==
+    ::                                                ::  ++va-abet:va:le
+    ++  va-abet                                       ::  resolve
+      ^+  ..va
+      ..va(van.mal (~(put by van.mal) lay [way vax]))
+    ::                                                ::  ++va-abut:va:le
+    ++  va-abut                                       ::  deploy
+      ^+  +>
+      +>(+< [lay (~(got by van.mal) lay))
+    ::                                                ::  ++va-apex:va:le
+    ++  va-apex                                       ::  boot/reboot
+      |=  src/hoof
+      ^+  +>
+      =+  bun=(~(get by van.mal) lay)
+      ?~  bun
+        (va-create src)
+      (va-update(vax u.bun) src)
+    ::                                                ::  ++va-create:va:le 
+    ++  va-create                                     ::  compile new vase
+      |=  src/hoof
+      ^+
+      ::
+      ::  no existing vase; compile new vase
+      ::
+      ~&  [%vase-compile lay way `@p`(mug src)]
+      =.  vax  (slam zus.mal (ream src))
+    ::
+    ++  va-create                                     
+    --
+  ::                                                  ::  ++vale:le
+  ++  vale                                            ::  load existing vane
+    |=  lay/term
+    ~(. va lay (~(got by van.mal lay)))
   ::                                                  ::  ++warp:le
   ++  warp                                            ::  arvo effect
     |=  {hen/duct wap/wasp}
@@ -243,9 +258,18 @@
     ?>(?=({$hoon @tas} pet) +.pet)
   ::                                                  ::  ++wise:le
   ++  wise                                            ::  load/reload vane
-    |=  {lay/@tas src/hoof}
+    |=  {lay/term way/term src/hoof}
     ^+  +>
-    !!
+    =+  bun=(~(get by van) lay)
+    ?~  bun
+      ::
+      ::  no existing vase; compile new vase
+      ::
+      ~&  [%vase-compile lay way `@p`(mug src)]
+      =+  vax=(slam zus.mal (ream src))
+      ::
+      ::  if we are already live, activate new vase
+      ::
   ::                                                  ::  ++what:le
   ++  what                                            ::  write deep storage
     |=  {hen/duct fal/(list (pair path plum))}
@@ -307,7 +331,6 @@
       ::
       `[`(wilt hun) (wilt q:?^(arv u.arv (~(got by fat.rep) /sys/arvo)))]
     ?^  but
-      ::
       ::  stop working and set up reboot
       ::
       %=  +>.$
@@ -315,11 +338,13 @@
         ::
         but.gut  ?>(=(~ but.gut) but)
         ::
-        ::  put write back on the action stack, to be executed
-        ::  after the reboot
+        ::  execute write after reboot
         ::
-        run.rep  :_  run.rep
-                 `move`[hen %give %& !>([%what fal])]
+        run.rep  ::  syt: all systems changes
+                 ::
+                 =*  syt  (~(tap by (~(uni by rez.dev) new.dev)))
+                 :_  run.rep
+                 `move`[hen %give %& !>([%what syt])]
         ::
         ::  delete reboot source files from deep
         ::  storage, so install causes vane upgrade,
@@ -328,7 +353,7 @@
         fat.rep  ?~  p.but  fat.rep
                  (~(del by (~(del by fat.rep) /sys/hoon) /sys/arvo))
       ==
-    ::  keep working after any vane-level upgrades
+    ::  keep working after vane upgrades
     ::
     =<  work
     ::
@@ -353,10 +378,9 @@
       ::  van: all vane upgrades, as [initial name source]
       ::
       =/  van
-        ::  all: invalidate all compiled vanes
         ::  zyr: all system file replacements
         ::
-        =/  all  |((~(has by new.dev) /sys/hoon) ?=(^ zus))
+        =/  rad  
         =/  zyr  (~(tap by rez.dev))
         |-  ^-  (list (pair @tas hoof))
         ?^  zyr
@@ -371,20 +395,24 @@
           =*  nam  `term`i.t.t.p.i.zyr
           :_(mor [(end 3 1 nam) nam (wilt q.i.zyr)])
         ::
-        ::  
+        ::  reload compiled vanes if needed
         ::
-        ?.  all  ~
+        ?.  |((~(has by new.dev) /sys/hoon) ?=(^ zus))
+          ::
+          ::  we didn't replace compiler, %york or %zuse
+          ~
         ::
-        ::  yif: all running vanes
+        ::  get source code for current running vanes
         ::
-        =/  yif  (~(tap by van.mal))
-        ==
+        %+  turn  (~(tap by van.mal))
+        |=  {lay/term way/term vax/vase}
+        [lay way (wilt (~(got by fat.rep) [%sys %van way ~]))
     ::
     ::  upgrade %york, vane shared structures
     ::
     =>  ?~  yor  .
         %=    .
-           yor.mal  ~&  [%york-reboot `@p`(mug u.yor.job)]
+           yor.mal  ~&  [%york-boot `@p`(mug u.yor.job)]
                      (slap !>(..arms) (ream u.yor.job))
         ==
     ::
@@ -392,7 +420,7 @@
     ::
     =>  ?~  zus  .
         %=    .
-           zus.mal  ~&  [%zuse-reboot `@p`(mug u.zus.job)]
+           zus.mal  ~&  [%zuse-boot `@p`(mug u.zus.job)]
                      (slap yor.mal (ream u.zus.job))
         ==
     ::
@@ -400,7 +428,7 @@
     ::
     |-  ^+  +>.^$
     ?~  van.job  +>.^$
-    ~&  [%vane-reboot p.i.van.job `@p`(mug q.i.van.job)]
+    ~&  [%vane-boot p.i.van.job `@p`(mug q.i.van.job)]
     $(van.job t.van.job, +>.^$ (wise i.van.job))
   ::                                                    ::  ++work:le
   ++  work                                              ::  main loop
