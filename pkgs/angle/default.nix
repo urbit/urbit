@@ -11,9 +11,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     sha256 = "0nib2zr6jl2vwalpc00igh5yv53p1rb5gh03mfdljf1ym6w2vhjb";
   };
 
-  patches = [
-    ./megapatch.patch
-  ];
+  patches = [ ./megapatch.patch ];
 
   builder = ./builder.sh;
 
@@ -40,5 +38,5 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   AR = "${crossenv.host}-ar";
   RANLIB = "${crossenv.host}-ranlib";
 
-  CXXFLAGS = "-msse2 -Wno-conversion-null";
+  CXXFLAGS = "-msse2 -Wno-conversion-null -DMINGW_HAS_SECURE_API";
 }
