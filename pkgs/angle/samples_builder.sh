@@ -53,7 +53,7 @@ $host-g++ -g $CFLAGS $LDFLAGS \
 echo "compiling window_test"
 $host-g++ -g $CFLAGS $LDFLAGS \
   ../samples/WindowTest/WindowTest.cpp \
-  $LIBS -o bin/window_test${exe_suffix}
+  -langle_util -lgdi32 -o bin/window_test${exe_suffix}
 
 mkdir -p $out/license
 cp $src/LICENSE $out/license/
