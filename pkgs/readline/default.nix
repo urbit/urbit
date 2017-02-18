@@ -15,15 +15,15 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   patches = [
     (fetchurl {
-      url = "https://ftp.gnu.org/gnu/readline/readline-7.0-patches/readline70-001";
+      url = "mirror://gnu/readline/readline-7.0-patches/readline70-001";
       sha256 = "0xm3sxvwmss7ddyfb11n6pgcqd1aglnpy15g143vzcf75snb7hcs";
     })
     (fetchurl {
-      url = "https://ftp.gnu.org/gnu/readline/readline-7.0-patches/readline70-002";
+      url = "mirror://gnu/readline/readline-7.0-patches/readline70-002";
       sha256 = "0n1dxmqsbjgrfxb1hgk5c6lsraw4ncbnzxlsx7m35nym6lncjiw7";
     })
     (fetchurl {
-      url = "https://ftp.gnu.org/gnu/readline/readline-7.0-patches/readline70-003";
+      url = "mirror://gnu/readline/readline-7.0-patches/readline70-003";
       sha256 = "1027kmymniizcy0zbdlrczxfx3clxcdln5yq05q9yzlc6y9slhwy";
     })
   ];
