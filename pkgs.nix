@@ -3,6 +3,10 @@ let pkgs =
 rec {
   inherit (crossenv) binutils gcc;
 
+  readline = import ./pkgs/readline {
+    inherit crossenv;
+  };
+
   expat = import ./pkgs/expat {
     inherit crossenv;
   };
