@@ -1,4 +1,4 @@
-{ crossenv }:
+{ crossenv, pdcurses }:
 
 let
   fetchurl = crossenv.nixpkgs.fetchurl;
@@ -34,6 +34,8 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     crossenv.gcc
     crossenv.binutils
   ];
+
+  inherit pdcurses;
 
   inherit (crossenv) host;
 }
