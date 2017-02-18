@@ -12,3 +12,5 @@ let
 
 in
   pdcurses // { inherit demos; }
+
+# TODO: fix the issues revealed by the testcurs demo in mingw-w64
