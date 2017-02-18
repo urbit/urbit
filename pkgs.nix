@@ -3,6 +3,10 @@ let pkgs =
 rec {
   inherit (crossenv) binutils gcc;
 
+  expat = import ./pkgs/expat {
+    inherit crossenv;
+  };
+
   zlib = import ./pkgs/zlib {
     inherit crossenv;
   };
