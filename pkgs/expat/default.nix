@@ -10,6 +10,10 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     sha256 = "1zq4lnwjlw8s9mmachwfvfjf2x3lk24jm41746ykhdcvs7r0zrfr";
   };
 
+  patches = [
+    ./cve-2016-0718.patch
+  ];
+
   builder = ./builder.sh;
 
   buildInputs = [
