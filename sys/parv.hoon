@@ -227,17 +227,36 @@
       ?~  bun
         (va-create src)
       (va-update(vax u.bun) src)
+    ::                                                ::  ++va-active:va:le
+    ++  va-active                                     ::  make activated vane
+      |=  {ski
     ::                                                ::  ++va-create:va:le 
     ++  va-create                                     ::  compile new vase
       |=  src/hoof
-      ^+
-      ::
+      ^+  +>
       ::  no existing vase; compile new vase
       ::
       ~&  [%vase-compile lay way `@p`(mug src)]
       =.  vax  (slam zus.mal (ream src))
-    ::
-    ++  va-create                                     
+      ?:  off  
+        ::  not booted yet, wait to activate
+        +>
+      ::  already booted; activate now
+      ::
+      +>(vax (slam vax !>(orb.rep)))
+    ::                                                ::  ++va-settle:va:le
+    ++  va-settle                                     ::  initialize ship
+      ^+  +>
+      .(vax (slap vax !>(orb.rep)))
+    ::                                                ::  ++va-update
+    ++  va-update                                     ::  replace existing
+      |=  src/hoof
+      ?:  off
+        ::  replacing unbooted, weird
+        ::
+        (va-create src)
+      =+  nex=(slap (slam zus.mal (ream src)) !>(orb.rep))
+      
     --
   ::                                                  ::  ++vale:le
   ++  vale                                            ::  load existing vane
