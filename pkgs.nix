@@ -3,12 +3,20 @@ let pkgs =
 rec {
   inherit (crossenv) binutils gcc;
 
+  hello = import ./pkgs/hello {
+    inherit crossenv;
+  };
+
+  hello_cpp = import ./pkgs/hello_cpp {
+    inherit crossenv;
+  };
+
   pdcurses = import ./pkgs/pdcurses {
     inherit crossenv;
   };
 
   readline = import ./pkgs/readline {
-    inherit crossenv;
+    inherit crossenv pdcurses;
   };
 
   expat = import ./pkgs/expat {
@@ -21,14 +29,6 @@ rec {
 
   gdb = import ./pkgs/gdb {
     inherit crossenv zlib;
-  };
-
-  hello = import ./pkgs/hello {
-    inherit crossenv;
-  };
-
-  hello_cpp = import ./pkgs/hello_cpp {
-    inherit crossenv;
   };
 
   libusbp = import ./pkgs/libusbp {

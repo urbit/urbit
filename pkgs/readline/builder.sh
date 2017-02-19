@@ -1,8 +1,7 @@
 source $stdenv/setup
 
-export CC="${host}-gcc"
-export AR="${host}-ar"
-export RANLIB="${host}-ranlib"
+unset CC
+export bash_cv_wcwidth_broken=no
 
 tar -xf $src
 
