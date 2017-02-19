@@ -18,7 +18,17 @@
 ::                                                      ::  ::
 |%
 ++  arms  (map chip dope)                               ::  stated identity
+++  bait                                                ::  
+  $:  now/@da                                           ::
+      eny/@uvJ
+      sky/roof
+  ==
 ++  card  {p/@tas q/*}                                  ::  tagged event
+++  case                                                ::  version
+  $%  {$da p/@da}                                       ::  date
+      {$tas p/@tas}                                     ::  label
+      {$ud p/@ud}                                       ::  sequence
+  ==                                                    ::
 ++  chip                                                ::  standard identity
   $?  $giv                                              ::  given name
       $fam                                              ::  surname
@@ -26,11 +36,24 @@
       $mid                                              ::  middle name
       $gen                                              ::  generational suffix
   ==                                                    ::
+++  desk  @tas                                          ::  ship desk case spur
 ++  dope  (pair @tas @t)                                ::  term/unicode pair
 ++  duct  (list wire)                                   ::  causal history
 ++  ovum  (pair wire card)                              ::  input or output
 ++  plum  (pair term noun)                              ::  deep file
 ++  ruby  @pG                                           ::  64-bit passcode
+++  roof                                                ::  namespace
+  $-  $:  lyc/(unit (set ship))                         ::  leakset
+          car/term                                      ::  perspective
+          bem/beam                                      ::  name
+      ==                                                ::
+  %-  unit                                              ::  ~:   not known
+  %-  unit                                              ::  ~ ~: nonexistent
+  cask                                                  ::  marked vase
+::
+++  ship  @p                                            ::  network identity
+++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
+          (unit (unit cage))                            ::
 ++  wire  path                                          ::  cause
 --  =>
 ::                                                      ::  ::
@@ -93,6 +116,11 @@
     ==                                                  ::
   --                                                    ::
 ++  live  (evil)                                        ::  modern molds
+++  vane                                                ::  vane mockup
+  $_  ^?
+  =|  
+  |_  
+   
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
   $%  {$walk ~}                                         ::  finish mammal brain
@@ -256,7 +284,7 @@
         ::
         (va-create src)
       =+  nex=(slap (slam zus.mal (ream src)) !>(orb.rep))
-      
+      =+  out=(slap 
     --
   ::                                                  ::  ++vale:le
   ++  vale                                            ::  load existing vane
