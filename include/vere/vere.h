@@ -232,9 +232,9 @@
     */
       typedef struct _u3_moat {
         uv_pipe_t        pyp_u;             //  input stream
+        u3_bail          bal_f;             //  error response function
         void*            vod_p;             //  callback pointer
         u3_poke          pok_f;             //  action function
-        u3_bail          bal_f;             //  error response function
         struct _u3_mess* mes_u;             //  message in progress
         c3_d             len_d;             //  length of stray bytes
         c3_y*            rag_y;             //  stray bytes
@@ -246,6 +246,18 @@
         uv_pipe_t pyp_u;                    //  output stream
         u3_bail   bal_f;                    //  error response function
       } u3_mojo;
+
+    /* u3_moor: two-way message stream, linked list */
+      typedef struct _u3_moor {
+        uv_pipe_t        pyp_u;
+        u3_bail          bal_f;
+        void*            vod_p;
+        u3_poke          pok_f;
+        struct _u3_mess* mes_u;
+        c3_d             len_d;
+        c3_y*            rag_y;
+        struct _u3_moor* nex_u;
+      } u3_moor;
 
     /* u3_foil: abstract chub-addressed file.
     */
@@ -733,9 +745,9 @@
           c3_w      len_w;                       //  number of lords used
           c3_w      all_w;                       //  number of lords allocated
           u3_pier** tab_u;                       //  lord table
+          uv_pipe_t cmd_u;                       //  command socket
+          u3_moor*  cli_u;                       //  connected clients
         } u3_king;
-
-        static u3_king u3K;
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
@@ -1482,7 +1494,8 @@
       */
         void
         u3_pier_boot(c3_c* pax_c,                   //  pier path
-                     c3_c* sys_c);                  //  path to boot pill
+                     c3_c* sys_c,                   //  path to boot pill
+                     uv_prepare_t *pep_u);
 
       /* u3_pier_tank(): dump single tank.
       */
@@ -1498,3 +1511,6 @@
       */
         void
         u3_pier_sway(c3_l tab_l, u3_noun tax);
+
+        void
+        u3_king_commence();
