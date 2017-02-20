@@ -357,6 +357,7 @@ V_OFILES=\
        vere/unix.o \
        vere/save.o \
        vere/serf.o \
+       vere/king.o \
        vere/pier.o \
        vere/foil.o \
        vere/walk.o \
@@ -365,10 +366,19 @@ V_OFILES=\
 MAIN_FILE =\
        vere/main.o
 
+BOOTER_FILE=\
+       vere/booter.o
+
 VERE_OFILES=\
        $(OUT_OFILES) \
        $(BASE_OFILES) \
        $(MAIN_FILE) \
+       $(V_OFILES)
+
+BOOTER_OFILES=\
+       $(OUT_OFILES) \
+       $(BASE_OFILES) \
+       $(BOOTER_FILE) \
        $(V_OFILES)
 
 VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
@@ -391,7 +401,7 @@ TAGS=\
        GPATH GTAGS GRTAGS \
        cscope.in.out cscope.po.out cscope.out
 
-all: urbit links
+all: urbit links booter
 
 .MAKEFILE-VERSION: Makefile .make.conf
 	@echo "Makefile update."
@@ -404,6 +414,7 @@ links: urbit
 	$(LN) $(BIN)/urbit $(BIN)/urbit-worker
 
 urbit: $(BIN)/urbit
+booter: $(BIN)/booter
 
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
@@ -432,6 +443,11 @@ $(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(
 	@mkdir -p $(BIN)
 	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
+
+$(BIN)/booter: $(LIBCOMMONMARK) $(BOOTER_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	@echo "    CCLD  $(BIN)/booter"
+	@mkdir -p $(BIN)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/booter $(BOOTER_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 
 tags: ctags etags gtags cscope
 
