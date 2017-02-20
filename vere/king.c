@@ -56,6 +56,7 @@ void _king_boot(u3_noun boot)
 {
   u3_noun pax_n, sys_n;
   c3_c *pax_c, *sys_c;
+  uv_prepare_t *pep_u = u3a_malloc(sizeof(uv_prepare_t)); /* put in u3_pier? */
 
   pax_n = u3k(u3h(u3t(boot)));
   sys_n = u3k(u3h(u3t(u3t(boot))));
@@ -67,6 +68,7 @@ void _king_boot(u3_noun boot)
   u3z(sys_n);
 
   fprintf(stderr, "boot %s %s\r\n", pax_c, sys_c);
+  u3_pier_boot(pax_c, sys_c, pep_u);
 }
 
 void _king_doom(u3_noun doom)
@@ -220,9 +222,6 @@ void u3_king_commence()
   fprintf(stderr, "cmd socket up\r\n");
 
   _king_loop_init();
-
-  uv_prepare_t *pep_u = u3a_malloc(sizeof(uv_prepare_t)); /* put in u3_pier? */
-  u3_pier_boot(u3_Host.dir_c, u3_Host.ops_u.pil_c, pep_u);
 
   uv_run(u3L, UV_RUN_DEFAULT);
 
