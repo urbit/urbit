@@ -28,7 +28,7 @@ rec {
   };
 
   gdb = import ./pkgs/gdb {
-    inherit crossenv zlib expat readline;
+    inherit crossenv zlib expat readline pdcurses;
   };
 
   libusbp = import ./pkgs/libusbp {
