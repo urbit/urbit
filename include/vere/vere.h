@@ -656,7 +656,6 @@
         u3_cttp    ctp_u;                   //  http clients
         u3_utel    tel_u;                   //  telnet listener
         u3_utty*   uty_u;                   //  linked terminal list
-        u3_save    sav_u;                   //  autosave
         u3_opts    ops_u;                   //  commandline options
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
@@ -736,6 +735,7 @@
           u3_ames*         sam_u;               //  packet interface
           u3_behn*         teh_u;               //  behn timer
           u3_unix*         unx_u;               //  sync and clay
+          u3_save*         sav_u;               //  autosave
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
         } u3_pier;
@@ -1159,22 +1159,22 @@
       /* u3_save_ef_chld(): report SIGCHLD.
       */
         void
-        u3_save_ef_chld(void);
+        u3_save_ef_chld(u3_pier *pir_u);
 
       /* u3_save_io_init(): initialize autosave.
       */
         void
-        u3_save_io_init(void);
+        u3_save_io_init(u3_pier *pir_u);
 
       /* u3_save_io_exit(): terminate autosave.
       */
         void
-        u3_save_io_exit(void);
+        u3_save_io_exit(u3_pier *pir_u);
 
       /* u3_save_io_poll(): update autosave state.
       */
         void
-        u3_save_io_poll(void);
+        u3_save_io_poll(u3_pier *pir_u);
 
     /**  Storage, new school.
     **/

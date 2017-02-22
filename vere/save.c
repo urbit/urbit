@@ -22,7 +22,8 @@
 static void
 _save_time_cb(uv_timer_t* tim_u)
 {
-  u3_save* sav_u = &u3_Host.sav_u;
+  u3_pier *pir_u = tim_u->data;
+  u3_save* sav_u = pir_u->sav_u;
 
   if ( sav_u->pid_w ) {
     return;
@@ -41,9 +42,9 @@ _save_time_cb(uv_timer_t* tim_u)
 /* u3_save_ef_chld(): report save termination.
 */
 void
-u3_save_ef_chld(void)
+u3_save_ef_chld(u3_pier *pir_u)
 {
-  u3_save* sav_u = &u3_Host.sav_u;
+  u3_save* sav_u = pir_u->sav_u;
   c3_i     loc_i;
   c3_w     pid_w;
 
@@ -63,13 +64,14 @@ u3_save_ef_chld(void)
 /* u3_save_io_init(): initialize autosave.
 */
 void
-u3_save_io_init(void)
+u3_save_io_init(u3_pier *pir_u)
 {
-  u3_save* sav_u = &u3_Host.sav_u;
+  u3_save* sav_u = pir_u->sav_u;
 
   sav_u->ent_d = 0;
   sav_u->pid_w = 0;
 
+  sav_u->tim_u.data = pir_u;
   uv_timer_init(u3L, &sav_u->tim_u);
   uv_timer_start(&sav_u->tim_u, _save_time_cb, 120000, 120000);
 }
@@ -77,13 +79,13 @@ u3_save_io_init(void)
 /* u3_save_io_exit(): terminate save I/O.
 */
 void
-u3_save_io_exit(void)
+u3_save_io_exit(u3_pier *pir_u)
 {
 }
 
 /* u3_save_io_poll(): poll kernel for save I/O.
 */
 void
-u3_save_io_poll(void)
+u3_save_io_poll(u3_pier *pir_u)
 {
 }

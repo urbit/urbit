@@ -315,7 +315,7 @@ void _king_loop_exit()
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__save);
-  u3_save_io_exit();
+  u3_save_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__behn);
