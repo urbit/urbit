@@ -1262,6 +1262,9 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
     pir_u->sys_c = c3_malloc(1 + strlen(sys_c)); 
     strcpy(pir_u->sys_c, sys_c);
 
+    pir_u->arv_c = c3_malloc(1 + strlen(u3_Host.ops_u.arv_c)); /* parametrize */
+    strcpy(pir_u->arv_c, u3_Host.ops_u.arv_c);
+
     pir_u->gen_d = 0;
     pir_u->key_d[0] = pir_u->key_d[1] = pir_u->key_d[2] = pir_u->key_d[3] = 0;
 
@@ -1273,6 +1276,8 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
     memset(pir_u->sam_u, 0, sizeof(u3_ames));
     pir_u->teh_u = c3_malloc(sizeof(u3_behn));
     memset(pir_u->teh_u, 0, sizeof(u3_behn));
+    pir_u->unx_u = c3_malloc(sizeof(u3_unix));
+    memset(pir_u->unx_u, 0, sizeof(u3_unix));
   }
 
   /* start process
@@ -1399,10 +1404,6 @@ _pier_loop_init(void)
 {
   c3_l cod_l;
 
-  cod_l = u3a_lush(c3__unix);
-  u3_unix_io_init();
-  u3a_lop(cod_l);
-
   cod_l = u3a_lush(c3__term);
   u3_term_io_init();
   u3a_lop(cod_l);
@@ -1434,6 +1435,10 @@ _pier_loop_init_pier(u3_pier* pir_u)
   cod_l = u3a_lush(c3__behn);
   u3_behn_io_init(pir_u);
   u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__unix);
+  u3_unix_io_init(pir_u);
+  u3a_lop(cod_l);
 }
 
 /* _pier_loop_wake(): initialize listeners and send initial events.
@@ -1444,8 +1449,8 @@ _pier_loop_wake(u3_pier* pir_u)
   c3_l cod_l;
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_talk();
-  u3_unix_ef_bake();
+  u3_unix_io_talk(pir_u);
+  u3_unix_ef_bake(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__ames);
@@ -1472,7 +1477,7 @@ _pier_loop_exit(void)
   c3_l cod_l;
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_exit();
+  u3_unix_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__ames);
@@ -1524,7 +1529,7 @@ _pier_loop_poll(u3_pier* pir_u)
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_poll();
+  u3_unix_io_poll(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__behn);
@@ -1652,7 +1657,7 @@ _pier_boot_complete(u3_pier* pir_u,
     
       /* another anomaly
       */
-      u3_unix_ef_boot();
+      u3_unix_ef_boot(pir_u);
     }
   }
 

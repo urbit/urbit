@@ -166,15 +166,15 @@ _reck_kick_sync(u3_pier* pir_u, u3_noun pox, u3_noun fav)
       u3_noun mon = u3k(u3h(u3t(fav)));
       u3_noun can = u3k(u3t(u3t(fav)));
 
-      u3_unix_ef_ergo(mon, can);
+      u3_unix_ef_ergo(pir_u, mon, can);
       u3z(pox); u3z(fav); return c3y;
     } break;
     case c3__ogre: {
-      u3_unix_ef_ogre(u3k(u3t(fav)));
+      u3_unix_ef_ogre(pir_u, u3k(u3t(fav)));
       u3z(pox); u3z(fav); return c3y;
     }
     case c3__hill: {
-      u3_unix_ef_hill(u3k(u3t(fav)));
+      u3_unix_ef_hill(pir_u, u3k(u3t(fav)));
       u3z(pox); u3z(fav); return c3y;
     }
   }

@@ -66,8 +66,8 @@ _unix_string_to_path_helper(c3_c* pax_c) {
   }
 }
 static u3_noun
-_unix_string_to_path(c3_c* pax_c) {
-  pax_c += strlen(u3_Host.dir_c) + 1;
+_unix_string_to_path(u3_pier *pir_u, c3_c* pax_c) {
+  pax_c += strlen(pir_u->pax_c) + 1;
   c3_c* pox_c = strchr(pax_c, '/');
   if ( !pox_c ) {
     pox_c = strchr(pax_c, '.');
@@ -258,12 +258,12 @@ _unix_write_file_soft_go:
 static void
 _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c);
 static void
-_unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c);
+_unix_watch_file(u3_pier *pir_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c);
 
 /* _unix_get_mount_point(): retrieve or create mount point
 */
 static u3_umon*
-_unix_get_mount_point(u3_noun mon)
+_unix_get_mount_point(u3_pier *pir_u, u3_noun mon)
 {
   if ( c3n == u3ud(mon) ) {
     c3_assert(!"mount point must be an atom");
@@ -274,7 +274,7 @@ _unix_get_mount_point(u3_noun mon)
   c3_c* nam_c = u3r_string(mon);
   u3_umon* mon_u;
 
-  for ( mon_u = u3_Host.unx_u.mon_u;
+  for ( mon_u = pir_u->unx_u->mon_u;
         mon_u && 0 != strcmp(nam_c, mon_u->nam_c);
         mon_u = mon_u->nex_u )
   {
@@ -285,12 +285,12 @@ _unix_get_mount_point(u3_noun mon)
     mon_u->nam_c = nam_c;
     mon_u->dir_u.dir = c3y;
     mon_u->dir_u.dry = c3n;
-    mon_u->dir_u.pax_c = strdup(u3_Host.dir_c);
+    mon_u->dir_u.pax_c = strdup(pir_u->pax_c);
     mon_u->dir_u.par_u = NULL;
     mon_u->dir_u.nex_u = NULL;
     mon_u->dir_u.kid_u = NULL;
-    mon_u->nex_u = u3_Host.unx_u.mon_u;
-    u3_Host.unx_u.mon_u = mon_u;
+    mon_u->nex_u = pir_u->unx_u->mon_u;
+    pir_u->unx_u->mon_u = mon_u;
 
   }
   else {
@@ -305,7 +305,7 @@ _unix_get_mount_point(u3_noun mon)
 /* _unix_scan_mount_point(): scan unix for already-existing mount point
 */
 static void
-_unix_scan_mount_point(u3_umon* mon_u)
+_unix_scan_mount_point(u3_pier *pir_u, u3_umon* mon_u)
 {
   DIR* rid_u = opendir(mon_u->dir_u.pax_c);
   if ( !rid_u ) {
@@ -368,14 +368,14 @@ _unix_scan_mount_point(u3_umon* mon_u)
         }
         else {
           u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
-          _unix_watch_file(fil_u, &mon_u->dir_u, pax_c);
+          _unix_watch_file(pir_u, fil_u, &mon_u->dir_u, pax_c);
         }
       }
     }
   }
 }
 
-static u3_noun _unix_free_node(u3_unod* nod_u);
+static u3_noun _unix_free_node(u3_pier *pir_u, u3_unod* nod_u);
 
 /* _unix_free_file(): free file, unlinking it
 */
@@ -420,7 +420,7 @@ _unix_free_dir(uv_handle_t* was_u)
  * also deletes from parent list if in it
 */
 static u3_noun
-_unix_free_node(u3_unod* nod_u)
+_unix_free_node(u3_pier *pir_u, u3_unod* nod_u)
 {
   u3_noun can;
   if ( nod_u->par_u ) {
@@ -445,14 +445,14 @@ _unix_free_node(u3_unod* nod_u)
     u3_unod* nud_u = ((u3_udir*) nod_u)->kid_u;
     while ( nud_u ) {
       u3_unod* nex_u = nud_u->nex_u;
-      can = u3kb_weld(_unix_free_node(nud_u), can);
+      can = u3kb_weld(_unix_free_node(pir_u, nud_u), can);
       nud_u = nex_u;
     }
 
     uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_dir);
   }
   else {
-    can = u3nc(u3nc(_unix_string_to_path(nod_u->pax_c), u3_nul),
+    can = u3nc(u3nc(_unix_string_to_path(pir_u, nod_u->pax_c), u3_nul),
                u3_nul);
     uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_file);
   }
@@ -469,12 +469,12 @@ _unix_free_node(u3_unod* nod_u)
  * tread carefully
 */
 static void
-_unix_free_mount_point(u3_umon* mon_u)
+_unix_free_mount_point(u3_pier *pir_u, u3_umon* mon_u)
 {
   u3_unod* nod_u;
   for ( nod_u = mon_u->dir_u.kid_u; nod_u; ) {
     u3_unod* nex_u = nod_u->nex_u;
-    u3z(_unix_free_node(nod_u));
+    u3z(_unix_free_node(pir_u, nod_u));
     nod_u = nex_u;
   }
 
@@ -486,7 +486,7 @@ _unix_free_mount_point(u3_umon* mon_u)
 /* _unix_delete_mount_point(): remove mount point from list and free
 */
 static void
-_unix_delete_mount_point(u3_noun mon)
+_unix_delete_mount_point(u3_pier *pir_u, u3_noun mon)
 {
   if ( c3n == u3ud(mon) ) {
     c3_assert(!"mount point must be an atom");
@@ -498,14 +498,14 @@ _unix_delete_mount_point(u3_noun mon)
   u3_umon* mon_u;
   u3_umon* tem_u;
 
-  mon_u = u3_Host.unx_u.mon_u;
+  mon_u = pir_u->unx_u->mon_u;
   if ( !mon_u ) {
     uL(fprintf(uH, "mount point already gone: %s\r\n", nam_c));
     goto _delete_mount_point_out;
   }
   if ( 0 == strcmp(nam_c, mon_u->nam_c) ) {
-    u3_Host.unx_u.mon_u = mon_u->nex_u;
-    _unix_free_mount_point(mon_u);
+    pir_u->unx_u->mon_u = mon_u->nex_u;
+    _unix_free_mount_point(pir_u, mon_u);
     goto _delete_mount_point_out;
   }
 
@@ -522,7 +522,7 @@ _unix_delete_mount_point(u3_noun mon)
 
   tem_u = mon_u->nex_u;
   mon_u->nex_u = mon_u->nex_u->nex_u;
-  _unix_free_mount_point(tem_u);
+  _unix_free_mount_point(pir_u, tem_u);
 
 _delete_mount_point_out:
   free(nam_c);
@@ -535,8 +535,9 @@ static void
 _unix_time_cb(uv_timer_t* tim_u)
 {
   {
-    u3_Host.unx_u.alm = c3n;
-    u3_Host.unx_u.dyr = c3y;
+    u3_pier *pir_u = tim_u->data;
+    pir_u->unx_u->alm = c3n;
+    pir_u->unx_u->dyr = c3y;
   }
 }
 
@@ -557,6 +558,7 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
   // * this is what we get out of libuv down below
   // * thus a cast is cool
   u3_unod* nod_u = (u3_unod*) was_u;
+  u3_pier *pir_u = was_u->data;
 
   while ( nod_u ) {
     nod_u->dry = c3n;
@@ -567,22 +569,23 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
   // the extra time is so that the fs "settles down".
   // vim, for example, tends to delete and re-add files
   // for safety purposes.
-  if ( c3y == u3_Host.unx_u.alm ) {
-    uv_timer_stop(&u3_Host.unx_u.tim_u);
+  if ( c3y == pir_u->unx_u->alm ) {
+    uv_timer_stop(&pir_u->unx_u->tim_u);
   }
   else {
-    u3_Host.unx_u.alm = c3y;
+    pir_u->unx_u->alm = c3y;
   }
 
-  u3_Host.unx_u.dyr = c3n;
+  pir_u->unx_u->dyr = c3n;
 
-  uv_timer_start(&u3_Host.unx_u.tim_u, _unix_time_cb, 100, 0);
+  pir_u->unx_u->tim_u.data = pir_u;
+  uv_timer_start(&pir_u->unx_u->tim_u, _unix_time_cb, 100, 0);
 }
 
 /* _unix_watch_file(): initialize file
 */
 static void
-_unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
+_unix_watch_file(u3_pier *pir_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 {
   // initialize fil_u
 
@@ -609,6 +612,7 @@ _unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
     c3_assert(0);
   }
 
+  fil_u->was_u.data = pir_u;
   ret_w = uv_fs_event_start(&fil_u->was_u, _unix_fs_event_cb, pax_c, 0);
   if ( 0 != ret_w ){
     uL(fprintf(uH, "file event start %s: %s\n", fil_u->pax_c, uv_strerror(ret_w)));
@@ -674,7 +678,7 @@ _unix_create_dir(u3_udir* dir_u, u3_udir* par_u, u3_noun nam)
   _unix_watch_dir(dir_u, par_u, pax_c);
 }
 
-static u3_noun _unix_update_node(u3_unod* nod_u);
+static u3_noun _unix_update_node(u3_pier *pir_u, u3_unod* nod_u);
 
 /* _unix_update_file(): update file, producing list of changes
  *
@@ -685,7 +689,7 @@ static u3_noun _unix_update_node(u3_unod* nod_u);
  * mug_w with new mug and add path plus data to %into event.
 */
 static u3_noun
-_unix_update_file(u3_ufil* fil_u)
+_unix_update_file(u3_pier *pir_u, u3_ufil* fil_u)
 {
   c3_assert( c3n == fil_u->dir );
 
@@ -702,7 +706,7 @@ _unix_update_file(u3_ufil* fil_u)
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
     if ( ENOENT == errno ) {
-      return u3nc(u3nc(_unix_string_to_path(fil_u->pax_c), u3_nul), u3_nul);
+      return u3nc(u3nc(_unix_string_to_path(pir_u, fil_u->pax_c), u3_nul), u3_nul);
     }
     else {
       uL(fprintf(uH, "error opening file %s: %s\r\n",
@@ -760,7 +764,7 @@ _unix_update_file(u3_ufil* fil_u)
     else {
       fil_u->mug_w = mug_w;
 
-      u3_noun pax = _unix_string_to_path(fil_u->pax_c);
+      u3_noun pax = _unix_string_to_path(pir_u, fil_u->pax_c);
       u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
       u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
@@ -776,7 +780,7 @@ _unix_update_file(u3_ufil* fil_u)
  * _unix_initial_update_dir()
 */
 static u3_noun
-_unix_update_dir(u3_udir* dir_u)
+_unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
 {
   u3_noun can = u3_nul;
 
@@ -802,7 +806,7 @@ _unix_update_dir(u3_udir* dir_u)
           DIR* red_u = opendir(nod_u->pax_c);
           if ( 0 == red_u ) {
             u3_unod* nex_u = nod_u->nex_u;
-            can = u3kb_weld(_unix_free_node(nod_u), can);
+            can = u3kb_weld(_unix_free_node(pir_u, nod_u), can);
             nod_u = nex_u;
           }
           else {
@@ -821,7 +825,7 @@ _unix_update_dir(u3_udir* dir_u)
             }
 
             u3_unod* nex_u = nod_u->nex_u;
-            can = u3kb_weld(_unix_free_node(nod_u), can);
+            can = u3kb_weld(_unix_free_node(pir_u, nod_u), can);
             nod_u = nex_u;
           }
           else {
@@ -905,12 +909,12 @@ _unix_update_dir(u3_udir* dir_u)
             }
 
             u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
-            _unix_watch_file(fil_u, dir_u, pax_c);
+            _unix_watch_file(pir_u, fil_u, dir_u, pax_c);
           }
           else {
             u3_udir* dis_u = c3_malloc(sizeof(u3_udir));
             _unix_watch_dir(dis_u, dir_u, pax_c);
-            can = u3kb_weld(_unix_update_dir(dis_u), can); // XXX unnecessary?
+            can = u3kb_weld(_unix_update_dir(pir_u, dis_u), can); // XXX unnecessary?
           }
         }
       }
@@ -923,13 +927,13 @@ _unix_update_dir(u3_udir* dir_u)
   }
 
   if ( !dir_u->kid_u ) {
-    return u3kb_weld(_unix_free_node((u3_unod*) dir_u), can);
+    return u3kb_weld(_unix_free_node(pir_u, (u3_unod*) dir_u), can);
   }
 
   // get change list
 
   for ( nod_u = dir_u->kid_u; nod_u; nod_u = nod_u->nex_u ) {
-    can = u3kb_weld(_unix_update_node(nod_u), can);
+    can = u3kb_weld(_unix_update_node(pir_u, nod_u), can);
   }
 
   return can;
@@ -938,29 +942,30 @@ _unix_update_dir(u3_udir* dir_u)
 /* _unix_update_node(): update node, producing list of changes
 */
 static u3_noun
-_unix_update_node(u3_unod* nod_u)
+_unix_update_node(u3_pier *pir_u, u3_unod* nod_u)
 {
   if ( c3y == nod_u->dir ) {
-    return _unix_update_dir((void*)nod_u);
+    return _unix_update_dir(pir_u, (void*)nod_u);
   }
   else {
-    return _unix_update_file((void*)nod_u);
+    return _unix_update_file(pir_u, (void*)nod_u);
   }
 }
 
 /* _unix_update_mount(): update mount point
 */
 static void
-_unix_update_mount(u3_umon* mon_u, u3_noun all)
+_unix_update_mount(u3_pier *pir_u, u3_umon* mon_u, u3_noun all)
 {
   if ( c3n == mon_u->dir_u.dry ) {
     u3_noun  can = u3_nul;
     u3_unod* nod_u;
     for ( nod_u = mon_u->dir_u.kid_u; nod_u; nod_u = nod_u->nex_u ) {
-      can = u3kb_weld(_unix_update_node(nod_u), can);
+      can = u3kb_weld(_unix_update_node(pir_u, nod_u), can);
     }
 
-    u3_pier_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
+    u3_pier_work(pir_u,
+             u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, u3i_string(mon_u->nam_c), all, can));
   }
 }
@@ -968,7 +973,7 @@ _unix_update_mount(u3_umon* mon_u, u3_noun all)
 /* _unix_initial_update_file(): read file, but don't watch
 */
 static u3_noun
-_unix_initial_update_file(c3_c* pax_c)
+_unix_initial_update_file(u3_pier *pir_u, c3_c* pax_c)
 {
   struct stat buf_u;
   c3_i  fid_i = open(pax_c, O_RDONLY, 0644);
@@ -1010,7 +1015,7 @@ _unix_initial_update_file(c3_c* pax_c)
   }
   else {
     u3_noun pax = _unix_string_to_path_helper(pax_c
-                   + strlen(u3_Host.ops_u.arv_c)
+                   + strlen(pir_u->arv_c)
                    + 1); /* XX slightly less VERY BAD than before*/
     u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
     u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
@@ -1023,7 +1028,7 @@ _unix_initial_update_file(c3_c* pax_c)
 /* _unix_initial_update_dir(): read directory, but don't watch
 */
 static u3_noun
-_unix_initial_update_dir(c3_c* pax_c)
+_unix_initial_update_dir(u3_pier *pir_u, c3_c* pax_c)
 {
   u3_noun can = u3_nul;
 
@@ -1063,10 +1068,10 @@ _unix_initial_update_dir(c3_c* pax_c)
       }
       else {
         if ( S_ISDIR(buf_u.st_mode) ) {
-          can = u3kb_weld(_unix_initial_update_dir(pox_c), can);
+          can = u3kb_weld(_unix_initial_update_dir(pir_u, pox_c), can);
         }
         else {
-          can = u3kb_weld(_unix_initial_update_file(pox_c), can);
+          can = u3kb_weld(_unix_initial_update_file(pir_u, pox_c), can);
         }
         free(pox_c);
       }
@@ -1112,7 +1117,7 @@ _unix_ef_sync(uv_check_t* han_u)
 /* _unix_sync_file(): sync file to unix
 */
 static void
-_unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
+_unix_sync_file(u3_pier *pir_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
 {
   c3_assert( par_u );
   c3_assert( c3y == par_u->dir );
@@ -1150,7 +1155,7 @@ _unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
 
   if ( u3_nul == mim ) {
     if ( nod_u ) {
-      u3z(_unix_free_node(nod_u));
+      u3z(_unix_free_node(pir_u, nod_u));
     }
   }
   else {
@@ -1158,7 +1163,7 @@ _unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
     if ( !nod_u ) {
       c3_w gum_w = _unix_write_file_hard(pax_c, u3k(u3t(mim)));
       u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
-      _unix_watch_file(fil_u, par_u, pax_c);
+      _unix_watch_file(pir_u, fil_u, par_u, pax_c);
       fil_u->gum_w = gum_w;
       goto _unix_sync_file_out;
     }
@@ -1176,7 +1181,7 @@ _unix_sync_file_out:
 /* _unix_sync_change(): sync single change to unix
 */
 static void
-_unix_sync_change(u3_udir* dir_u, u3_noun pax, u3_noun mim)
+_unix_sync_change(u3_pier *pir_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
 {
   c3_assert( c3y == dir_u->dir );
 
@@ -1201,7 +1206,7 @@ _unix_sync_change(u3_udir* dir_u, u3_noun pax, u3_noun mim)
     u3_noun tt_pax = u3t(t_pax);
 
     if ( u3_nul == tt_pax ) {
-      _unix_sync_file(dir_u, u3k(i_pax), u3k(it_pax), mim);
+      _unix_sync_file(pir_u, dir_u, u3k(i_pax), u3k(it_pax), mim);
     }
     else {
       c3_c* nam_c = u3r_string(i_pax);
@@ -1226,7 +1231,7 @@ _unix_sync_change(u3_udir* dir_u, u3_noun pax, u3_noun mim)
         c3_assert(0);
       }
 
-      _unix_sync_change((u3_udir*) nod_u, u3k(t_pax), mim);
+      _unix_sync_change(pir_u, (u3_udir*) nod_u, u3k(t_pax), mim);
     }
   }
   u3z(pax);
@@ -1235,13 +1240,13 @@ _unix_sync_change(u3_udir* dir_u, u3_noun pax, u3_noun mim)
 /* _unix_sync_ergo(): sync list of changes to unix
 */
 static void
-_unix_sync_ergo(u3_umon* mon_u, u3_noun can)
+_unix_sync_ergo(u3_pier *pir_u, u3_umon* mon_u, u3_noun can)
 {
   u3_noun nac = can;
   u3_noun nam = u3i_string(mon_u->nam_c);
 
   while ( u3_nul != nac) {
-    _unix_sync_change(&mon_u->dir_u,
+    _unix_sync_change(pir_u, &mon_u->dir_u,
                       u3nc(u3k(nam), u3k(u3h(u3h(nac)))),
                       u3k(u3t(u3h(nac))));
     nac = u3t(nac);
@@ -1254,77 +1259,46 @@ _unix_sync_ergo(u3_umon* mon_u, u3_noun can)
 /* u3_unix_ef_ergo(): update filesystem from urbit
 */
 void
-u3_unix_ef_ergo(u3_noun mon, u3_noun can)
+u3_unix_ef_ergo(u3_pier *pir_u, u3_noun mon, u3_noun can)
 {
-  u3_umon* mon_u = _unix_get_mount_point(mon);
+  u3_umon* mon_u = _unix_get_mount_point(pir_u, mon);
 
-  _unix_sync_ergo(mon_u, can);
+  _unix_sync_ergo(pir_u, mon_u, can);
 }
 
 /* u3_unix_ef_ogre(): delete mount point
 */
 void
-u3_unix_ef_ogre(u3_noun mon)
+u3_unix_ef_ogre(u3_pier *pir_u, u3_noun mon)
 {
-  _unix_delete_mount_point(mon);
+  _unix_delete_mount_point(pir_u, mon);
 }
 
 /* u3_unix_ef_hill(): enumerate mount points
 */
 void
-u3_unix_ef_hill(u3_noun hil)
+u3_unix_ef_hill(u3_pier *pir_u, u3_noun hil)
 {
   u3_noun mon;
   for ( mon = hil; c3y == u3du(mon); mon = u3t(mon) ) {
-    u3_umon* mon_u = _unix_get_mount_point(u3k(u3h(mon)));
-    _unix_scan_mount_point(mon_u);
+    u3_umon* mon_u = _unix_get_mount_point(pir_u, u3k(u3h(mon)));
+    _unix_scan_mount_point(pir_u, mon_u);
   }
   u3z(hil);
-  u3_Host.unx_u.dyr = c3y;
-  u3_unix_ef_look(c3y);
+  pir_u->unx_u->dyr = c3y;
+  u3_unix_ef_look(pir_u, c3y);
 }
 
 /* u3_unix_io_init(): initialize unix sync.
 */
 void
-u3_unix_io_init(void)
+u3_unix_io_init(u3_pier *pir_u)
 {
-  u3_unix* unx_u = &u3_Host.unx_u;
+  u3_unix* unx_u = pir_u->unx_u;
 
   unx_u->mon_u = NULL;
 
-  {
-    u3_usig* sig_u;
-
-    sig_u = c3_malloc(sizeof(u3_usig));
-    uv_signal_init(u3L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGTERM;
-    sig_u->nex_u = unx_u->sig_u;
-    unx_u->sig_u = sig_u;
-  }
-  {
-    u3_usig* sig_u;
-
-    sig_u = c3_malloc(sizeof(u3_usig));
-    uv_signal_init(u3L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGINT;
-    sig_u->nex_u = unx_u->sig_u;
-    unx_u->sig_u = sig_u;
-  }
-  {
-    u3_usig* sig_u;
-
-    sig_u = c3_malloc(sizeof(u3_usig));
-    uv_signal_init(u3L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGWINCH;
-    sig_u->nex_u = unx_u->sig_u;
-    unx_u->sig_u = sig_u;
-  }
-
-  uv_check_init(u3_Host.lup_u, &u3_Host.unx_u.syn_u);
+  uv_check_init(u3L, &pir_u->unx_u->syn_u);
 
   uv_timer_init(u3L, &unx_u->tim_u);
   unx_u->alm = c3n;
@@ -1413,10 +1387,9 @@ u3_unix_release(c3_c* pax_c)
 void
 u3_unix_ef_hold(void)
 {
-  u3_unix* unx_u = &u3_Host.unx_u;
   u3_usig* sig_u;
 
-  for ( sig_u = unx_u->sig_u; sig_u; sig_u = sig_u->nex_u ) {
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
     uv_signal_stop(&sig_u->sil_u);
   }
 }
@@ -1424,9 +1397,10 @@ u3_unix_ef_hold(void)
 /* u3_unix_ef_bake(): initial effects for new process.
 */
 void
-u3_unix_ef_bake(void)
+u3_unix_ef_bake(u3_pier *pir_u)
 {
-  u3_pier_plan(u3nt(u3_blip, c3__boat, u3_nul),
+  u3_pier_work(pir_u,
+               u3nt(u3_blip, c3__boat, u3_nul),
                u3nc(c3__boat, u3_nul));
 
 }
@@ -1436,10 +1410,9 @@ u3_unix_ef_bake(void)
 void
 u3_unix_ef_move(void)
 {
-  u3_unix* unx_u = &u3_Host.unx_u;
   u3_usig* sig_u;
 
-  for ( sig_u = unx_u->sig_u; sig_u; sig_u = sig_u->nex_u ) {
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
     uv_signal_start(&sig_u->sil_u, _unix_sign_cb, sig_u->num_i);
   }
 }
@@ -1447,12 +1420,13 @@ u3_unix_ef_move(void)
 /* u3_unix_ef_boot(): boot actions 
 */
 void
-u3_unix_ef_boot(void)
+u3_unix_ef_boot(u3_pier *pir_u)
 {
   if ( u3_Host.ops_u.imp_c ) {
-    u3_noun can = _unix_initial_update_dir(u3_Host.ops_u.arv_c);
+    u3_noun can = _unix_initial_update_dir(pir_u, pir_u->arv_c);
 
-    u3_pier_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
+    u3_pier_work(pir_u,
+             u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, u3_nul, c3y, can));
   }
 }
@@ -1460,14 +1434,14 @@ u3_unix_ef_boot(void)
 /* u3_unix_ef_look(): update the root.
 */
 void
-u3_unix_ef_look(u3_noun all)
+u3_unix_ef_look(u3_pier *pir_u, u3_noun all)
 {
-  if ( c3y == u3_Host.unx_u.dyr ) {
-    u3_Host.unx_u.dyr = c3n;
+  if ( c3y == pir_u->unx_u->dyr ) {
+    pir_u->unx_u->dyr = c3n;
     u3_umon* mon_u;
   
-    for ( mon_u = u3_Host.unx_u.mon_u; mon_u; mon_u = mon_u->nex_u ) {
-      _unix_update_mount(mon_u, all);
+    for ( mon_u = pir_u->unx_u->mon_u; mon_u; mon_u = mon_u->nex_u ) {
+      _unix_update_mount(pir_u, mon_u, all);
     }
   }
 }
@@ -1475,25 +1449,25 @@ u3_unix_ef_look(u3_noun all)
 /* u3_unix_io_talk(): start listening for fs events.
 */
 void
-u3_unix_io_talk()
+u3_unix_io_talk(u3_pier *pir_u)
 {
-  u3_unix_acquire(u3_Host.dir_c);
+  u3_unix_acquire(pir_u->pax_c);
   u3_unix_ef_move();
-  uv_check_start(&u3_Host.unx_u.syn_u, _unix_ef_sync);
+  uv_check_start(&pir_u->unx_u->syn_u, _unix_ef_sync);
 }
 
 /* u3_unix_io_exit(): terminate unix I/O.
 */
 void
-u3_unix_io_exit(void)
+u3_unix_io_exit(u3_pier *pir_u)
 {
-  uv_check_stop(&u3_Host.unx_u.syn_u);
-  u3_unix_release(u3_Host.dir_c);
+  uv_check_stop(&pir_u->unx_u->syn_u);
+  u3_unix_release(pir_u->pax_c);
 }
 
 /* u3_unix_io_poll(): update unix IO state.
 */
 void
-u3_unix_io_poll(void)
+u3_unix_io_poll(u3_pier *pir_u)
 {
 }

@@ -256,6 +256,37 @@ void _king_socket_connect(uv_stream_t *sock, int status)
 
 void _king_loop_init()
 {
+  /* move signals out of unix.c */
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->num_i = SIGTERM;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->num_i = SIGINT;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->num_i = SIGWINCH;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
 }
 
 void _king_loop_exit()
@@ -264,7 +295,7 @@ void _king_loop_exit()
   c3_l cod_l;
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_exit();
+  u3_unix_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__ames);
