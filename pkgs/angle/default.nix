@@ -1,4 +1,4 @@
-{ crossenv }:
+{ crossenv, debug ? false }:
 
 crossenv.nixpkgs.stdenv.mkDerivation rec {
   name = "angle-${version}-${crossenv.host}";
@@ -39,4 +39,6 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   RANLIB = "${crossenv.host}-ranlib";
 
   CXXFLAGS = "-msse2 -Wno-conversion-null -DMINGW_HAS_SECURE_API";
+
+  inherit debug;
 }

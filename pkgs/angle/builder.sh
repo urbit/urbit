@@ -15,12 +15,26 @@ done
 
 gyp $gypFlags src/angle.gyp
 
-cd out/Release
+if [ -n "$debug" ]; then
+  cd out/Debug
+else
+  cd out/Release
+fi
 
 ninja
 
 # TODO: trim this down
-libs="obj/src/libANGLE.a obj/src/libangle_common.a obj/src/libangle_image_util.a obj/src/libEGL.a obj/src/libEGL_static.a obj/src/libGLESv2.a obj/src/libGLESv2_static.a obj/src/libpreprocessor.a obj/src/libtranslator.a"
+libs="
+obj/src/libANGLE.a
+obj/src/libangle_common.a
+obj/src/libangle_image_util.a
+obj/src/libEGL.a
+obj/src/libEGL_static.a
+obj/src/libGLESv2.a
+obj/src/libGLESv2_static.a
+obj/src/libpreprocessor.a
+obj/src/libtranslator.a
+"
 
 # Make the static libraries not be thin.
 for lib in $libs; do

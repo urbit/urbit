@@ -41,6 +41,7 @@ rec {
 
   angle = import ./pkgs/angle {
     inherit crossenv;
+    debug = false;
   };
 
   angle_util = import ./pkgs/angle/util.nix {
