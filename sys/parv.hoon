@@ -282,23 +282,40 @@
       ::  wok: working vase
       ::
       =/  wok  ^-  vase
-          !!
+        !!
       |%  
-      ::                                              ::  ++abet:va-work:va:le
-      ++  abet                                        ::
-        +>+>                                  
       ::                                              ::  ++doze:va-work:va:le
       ++  doze                                        ::  request wakeup at
         ^-  (unit @da)
         !!
       ::                                              ::  ++scry:va-work:va:le
       ++  scry                                        ::  
-        |=  $:  ::  lyc: 
+        |=  $:  ::  lyc: set of outputs 
                 ::
                 lyc/(unit (set ship))
                 car/term
                 bem/beam
             ==
+        ^-  (unit (unit cask))
+        !!
+      ::                                              ::  ++walk:va-work:va:le
+      ++  walk                                        ::
+        |=  hen/duct
+        ::
+        ::  fox: running vase
+        ::
+        =/  fox  ^-  vase
+          !!
+        |%
+        ::                                            ::  ++abet:walk:va-work:
+        ++  abet                                      ::
+          ^-  {(list move) _..va-work}
+          !!
+        ::                                            ::  ++call:walk:va-work:
+        ++  call                                      ::  
+          |=  hil/mill
+          ^+
+        --
       --
     ::                                                ::  ++va-create:va:le 
     ++  va-create                                     ::  compile new vase
@@ -306,27 +323,35 @@
       ^+  +>
       ::  no existing vase; compile new vase
       ::
-      ~&  [%vase-compile lay way `@p`(mug src)]
+      ~&  [%vase-compile way `@p`(mug src)]
       =.  vax  (slam zus.mal (ream src))
       ?:  off  
-        ::  not booted yet, wait to activate
         +>
-      ::  already booted; activate now
-      ::
-      +>(vax (slam vax !>(orb.rep)))
+      va-settle
     ::                                                ::  ++va-settle:va:le
     ++  va-settle                                     ::  initialize ship
       ^+  +>
-      .(vax (slap vax !>(orb.rep)))
+      .(vax (slam vax !>(orb.rep)))
     ::                                                ::  ++va-update
     ++  va-update                                     ::  replace existing
       |=  src/hoof
+      ^+  +>
       ?:  off
-        ::  replacing unbooted, weird
+        ::  replacing unbooted, weird but ok
         ::
         (va-create src)
-      =+  nex=(slap (slam zus.mal (ream src)) !>(orb.rep))
-      =+  out=(slam
+      ::
+      ::  out: saved state from old vane
+      ::
+      =+  out=(slap vax [%limb %stay])
+      ::
+      ::  replace `vax` with new empty vane
+      ::
+      =.  +>.$  (va-create src)
+      ::
+      ::  initialize new vane with old state
+      ::
+      +>.$(vax (slam (slap vax [%limb %come]) out))
     --
   ::                                                  ::  ++vale:le
   ++  vale                                            ::  load existing vane
