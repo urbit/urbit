@@ -18,11 +18,11 @@
 ::                                                      ::  ::
 |%
 ++  arms  (map chip dope)                               ::  stated identity
-++  bait                                                ::  
-  $:  now/@da                                           ::
-      eny/@uvJ
-      sky/roof
-  ==
+++  bait                                                ::  analysis state
+  $:  now/@da                                           ::  date
+      eny/@uvJ                                          ::  entropy
+      sky/roof                                          ::  namespace
+  ==                                                    ::
 ++  card  {p/@tas q/*}                                  ::  tagged event
 ++  case                                                ::  version
   $%  {$da p/@da}                                       ::  date
@@ -45,15 +45,13 @@
 ++  roof                                                ::  namespace
   $-  $:  lyc/(unit (set ship))                         ::  leakset
           car/term                                      ::  perspective
-          bem/beam                                      ::  name
+          bem/beam                                      ::  path
       ==                                                ::
-  %-  unit                                              ::  ~:   not known
-  %-  unit                                              ::  ~ ~: nonexistent
+  %-  unit                                              ::  ~: unknown
+  %-  unit                                              ::  ~ ~: invalid
   cask                                                  ::  marked vase
-::
+::                                                      ::
 ++  ship  @p                                            ::  network identity
-++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
-          (unit (unit cage))                            ::
 ++  wire  path                                          ::  cause
 --  =>
 ::                                                      ::  ::
@@ -116,11 +114,33 @@
     ==                                                  ::
   --                                                    ::
 ++  live  (evil)                                        ::  modern molds
-++  vane                                                ::  vane mockup
-  $_  ^?
-  =|  
-  |_  
-   
+++  vane                                                ::  kernel module
+  $_  ^?                                                ::  purely decorative
+  |%                                                    ::
+  ++  load  $-(* _+>)                                   ::  reload
+  ++  stay  **                                          ::  preserve
+  ++  work                                              ::  operate
+    |_  bait
+    ++  doze  *@da
+    ++  scry  roof
+    ++  spin
+      |_  $:  ::  hen: cause of this 
+              ::  moz: 
+              ::
+              hen/duct
+              moz/(list move)
+          ==
+      ++  call
+        |=  fav/card
+        ^+  +>
+        !!
+      ++  take
+        |=  {tea/wire fav/card}
+        ^+  +>
+        !!
+      --
+    --
+  --
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
   $%  {$walk ~}                                         ::  finish mammal brain

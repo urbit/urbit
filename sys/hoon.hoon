@@ -5506,6 +5506,7 @@
     {$need p/$@(p/@ {p/@ q/@}) q/twig}                  ::  !?
     {$fail $~}                                          ::  !!
   ==                                                    ::
+++  twit  twig                                          ::  last-gen twig
 ++  taro  $@(term (pair term twig))                     ::
 ++  tyre  (list {p/term q/twig})                        ::
 ++  tyke  (list (unit twig))                            ::
