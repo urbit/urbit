@@ -659,7 +659,6 @@
         u3_save    sav_u;                   //  autosave
         u3_opts    ops_u;                   //  commandline options
         u3_unix    unx_u;                   //  sync and clay
-        u3_behn    teh_u;                   //  behn timer
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
@@ -734,7 +733,8 @@
           c3_d             key_d[4];            //  save and passkey
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
-          u3_ames*         sam_u;              //  packet interface
+          u3_ames*         sam_u;               //  packet interface
+          u3_behn*         teh_u;               //  behn timer
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
         } u3_pier;
@@ -1395,17 +1395,17 @@
       /* u3_behn_io_init(): initialize time timer.
       */
         void
-        u3_behn_io_init(void);
+        u3_behn_io_init(u3_pier *pir_u);
 
       /* u3_behn_io_exit(): terminate timer.
       */
         void
-        u3_behn_io_exit(void);
+        u3_behn_io_exit(u3_pier *pir_u);
 
       /* u3_behn_io_poll(): update behn IO state.
       */
         void
-        u3_behn_io_poll(void);
+        u3_behn_io_poll(u3_pier *pir_u);
 
 
     /**  HTTP client.

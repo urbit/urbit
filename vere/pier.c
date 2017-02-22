@@ -1271,6 +1271,8 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
 
     pir_u->sam_u = c3_malloc(sizeof(u3_ames));
     memset(pir_u->sam_u, 0, sizeof(u3_ames));
+    pir_u->teh_u = c3_malloc(sizeof(u3_behn));
+    memset(pir_u->teh_u, 0, sizeof(u3_behn));
   }
 
   /* start process
@@ -1416,10 +1418,6 @@ _pier_loop_init(void)
   cod_l = u3a_lush(c3__save);
   u3_save_io_init();
   u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_io_init();
-  u3a_lop(cod_l);
 }
 
 /* _pier_loop_init_pier(): initialize loop handlers.
@@ -1431,6 +1429,10 @@ _pier_loop_init_pier(u3_pier* pir_u)
 
   cod_l = u3a_lush(c3__ames);
   u3_ames_io_init(pir_u);
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_init(pir_u);
   u3a_lop(cod_l);
 }
 
@@ -1494,7 +1496,7 @@ _pier_loop_exit(void)
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__behn);
-  u3_behn_io_exit();
+  u3_behn_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 }
 
@@ -1526,7 +1528,7 @@ _pier_loop_poll(u3_pier* pir_u)
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__behn);
-  u3_behn_io_poll();
+  u3_behn_io_poll(pir_u);
   u3a_lop(cod_l);
 }
 
