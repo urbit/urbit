@@ -114,11 +114,30 @@
     ==                                                  ::
   --                                                    ::
 ++  live  (evil)                                        ::  modern molds
-++  vane                                                ::  vane mockup
-  $_  ^?
-  =|  
-  |_  
-   
+++  vane                                                ::  vane definition
+  $_  ^?                                                ::  totally decorative
+  |%
+  ++  load  |=(old/* +>)
+  ++  stay  ^-(* !!)
+  ++  work
+    |_  bait
+    ++  doze  *@da
+    ++  scry  roof
+    ++  spin
+      |_  $:  hen/duct 
+              moz/(list move:live)
+          ==
+      ++  call
+        |=  {way/term hil/mill}
+        ^+  +>
+        !!
+      ++  take
+        |=  {way/term tea/wire}
+        ^+  +>
+        !!
+      --
+    --
+  --
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
   $%  {$walk ~}                                         ::  finish mammal brain
@@ -151,7 +170,7 @@
     +>(run.gut [mov run.gut]) 
   ::                                                    ::  ++pike:le
   ++  pike                                              ::  event to %pass
-    |=  $:  ::  lay: event route
+    |=  $:  ::  way: event route
             ::  now: date
             ::  ovo: input ovum
             ::
@@ -174,7 +193,7 @@
     ::
     =*  hen  `duct`[p.ovo ~]
     =*  tea  `wire`[%$ %unix ~]
-    =*  mov  `move`[%pass tea lay %& vax]
+    =*  mov  `move`[%pass tea way %& vax]
     ::
     ::  push move on stack, and work.
     ::
@@ -216,49 +235,68 @@
       =*  mov  `move`[hen %give %& !>(wap)]
       (emit mov)
     ::
-      $belt  (pike %d now ovo)
-      $blew  (pike %d now ovo)
-      $born  (pike %e now ovo)
-      $hail  (pike %d now ovo)
-      $hear  (pike %a now ovo)
-      $hook  (pike %d now ovo)
-      $into  (pike %c now ovo)
-      $they  (pike %e now ovo)
-      $this  (pike %e now ovo)
-      $thus  (pike %e now ovo)
+      $belt  (pike %dill now ovo)
+      $blew  (pike %dill now ovo)
+      $born  (pike %eyre now ovo)
+      $hail  (pike %dill now ovo)
+      $hear  (pike %ames now ovo)
+      $hook  (pike %dill now ovo)
+      $into  (pike %clay now ovo)
+      $they  (pike %eyre now ovo)
+      $this  (pike %eyre now ovo)
+      $thus  (pike %eyre now ovo)
     ==
+  ::                                                  ::  ++re:le
+  ++  re                                              ::
+    
   ::                                                  ::  ++va:le
   ++  va                                              ::  vane engine
-    |_  $:  ::  lay: short name, eg %a
-            ::  way: long name, eg %ames
-            ::  vax: vane or vane builder
+    |_  $:  ::  way: vane name, eg `%ames`
+            ::  vax: vane, or vane builder if `off.mal`
             ::  
-            lay/term
             way/term
             vax/vase
         ==
     ::                                                ::  ++va-abet:va:le
     ++  va-abet                                       ::  resolve
       ^+  ..va
-      ..va(van.mal (~(put by van.mal) lay [way vax]))
+      ..va(van.mal (~(put by van.mal) way vax))
     ::                                                ::  ++va-abut:va:le
-    ++  va-apex                                       ::  deploy
-      |=  $:  lay/term
-              way/term
+    ++  va-apex                                       ::  boot or reboot
+      |=  $:  way/term
               src/hoof
           ==
       ^+  +>
-      =:  ^lay  lay
-          ^way  way
-        ==
-      =+  bun=(~(get by van.mal) lay)
+      =.  ^way  way
+      =+  bun  (~(get by van.mal) way)
       ?~  bun
         (va-create src)
       (va-update(vax u.bun) src)
     ::                                                ::  ++va-active:va:le
-    ++  va-active                                     ::  make activated vane
-      |=  {now 
-      ^+
+    ++  va-work                                       ::  activated vane
+      |=  bait
+      ::
+      ::  wok: working vase
+      ::
+      =/  wok  ^-  vase
+          !!
+      |%  
+      ::                                              ::  ++abet:va-work:va:le
+      ++  abet                                        ::
+        +>+>                                  
+      ::                                              ::  ++doze:va-work:va:le
+      ++  doze                                        ::  request wakeup at
+        ^-  (unit @da)
+        !!
+      ::                                              ::  ++scry:va-work:va:le
+      ++  scry                                        ::  
+        |=  $:  ::  lyc: 
+                ::
+                lyc/(unit (set ship))
+                car/term
+                bem/beam
+            ==
+      --
     ::                                                ::  ++va-create:va:le 
     ++  va-create                                     ::  compile new vase
       |=  src/hoof
