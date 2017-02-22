@@ -6,11 +6,11 @@ let
     inherit crossenv;
   };
 
-  demos = import ./demos.nix {
+  examples = import ./examples.nix {
     inherit crossenv pdcurses;
   };
 
 in
-  pdcurses // { inherit demos; }
+  pdcurses // { inherit examples; }
 
 # TODO: fix the issues revealed by the testcurs demo in mingw-w64
