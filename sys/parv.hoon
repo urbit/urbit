@@ -143,10 +143,10 @@
   --
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
-  $%  {$walk ~}                                         ::  finish mammal brain
+  $%  {$walk $~}                                        ::  finish mammal brain
       {$what p/(list (pair path (pair term noun)))}     ::  put reptile files
       {$whom p/@p q/arms r/(map @ud ruby)}              ::  put reptile identity
-      {$woke ~}                                         ::  finish booting
+      {$woke $~}                                        ::  finish booting
   ==                                                    ::
 --
 ::                                                      ::  ::
@@ -155,11 +155,12 @@
 |%
 ::                                                      ::  ++le
 ++  le                                                  ::  deep engine
-  =+  [now=*@da mast:live]
+  =+  [now=*@da *mast:live]
   =*  ::  
       ::  sys: system state
       ::
       sys  ->
+  =+  foo=run.gut
   |%
   ::                                                    ::  ++abet:le
   ++  abet                                              ::  complete cycle
@@ -596,13 +597,13 @@
     ::  hen: cause of move
     ::  act: action in move
     ::
-    =*  mov  `move`i.run.gut
+    =/  mov  `move`i.run.gut
     =*  hen  `duct`p.mov
-    =*  egg  `part`q.mov
+    =*  egg  `part:live`q.mov
     ::
     ::  pop top move off stack
     ::
-    =.  run.gut  t.run.gut
+    =>  .(run.gut t.run.gut)
     ::
     ::  interpret top move
     ::
