@@ -4552,16 +4552,16 @@
   ==
 ::
 ++  unix-task                                           ::  input from unix
-  $%  {$belt p/belt}                                    ::  dill: keyboard
-      {$blew p/blew}                                    ::  dill: configure
+  $%  {$belt p/belt:^dill}                              ::  dill: keyboard
+      {$blew p/blew:^dill}                              ::  dill: configure
       {$boat $~}                                        ::  clay: reboot
       {$born $~}                                        ::  eyre: new process
       {$hail $~}                                        ::  dill: refresh
-      {$hear p/lane q/@}                                ::  ames: input packet
+      {$hear p/lane:^ames q/@}                          ::  ames: input packet
       {$hook $~}                                        ::  dill: hangup
-      {$into p/desk q/? r/mode}                         ::  clay: external edit
-      {$they p/@ud q/httr}                              ::  eyre: in response
-      {$this p/? q/clip r/httq}                         ::  eyre: in request
+      {$into p/desk q/? r/mode:^clay}                   ::  clay: external edit
+      {$they p/@ud q/httr:^eyre}                        ::  eyre: in response
+      {$this p/? q/clip:^eyre r/httq:^eyre}             ::  eyre: in request
       {$thud $~}                                        ::  eyre: in cancel
   == 
 ::
