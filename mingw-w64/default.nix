@@ -1,4 +1,5 @@
 { nixpkgs, arch }:
+
 let
   host = "${arch}-w64-mingw32";
 
