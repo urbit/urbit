@@ -9,5 +9,12 @@ cp -r $examples/* $out
 chmod -R u+w $out
 
 mkdir -p $out/src
-cp -r $src/* $out/src/
+cp -r $src $out/src/angle
 chmod -R u+w $out
+
+cat <<EOF > $out/gdbcmd.txt
+set substitute-path ../samples src/angle/samples
+file bin/hello_triangle
+break main
+run
+EOF
