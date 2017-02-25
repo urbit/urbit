@@ -12,6 +12,10 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     sha256 = "11ii260h1sd7v0bs3cz6d5l8gqxxgldry0md60ncjgixjw5nh1s6";
   };
 
+  patches = [
+    ./substitute-path-all-filenames.patch  # TODO: consider removing if upstream does not accept
+  ];
+
   buildInputs = [
     crossenv.gcc
     crossenv.binutils

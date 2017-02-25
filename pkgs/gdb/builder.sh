@@ -6,6 +6,14 @@ unset LD
 
 tar -xf $src
 
+cd gdb-$version
+for patch in $patches
+do
+  echo applying patch $patch
+  patch -p1 -i $patch
+done
+cd ..
+
 mkdir build
 cd build
 
