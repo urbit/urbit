@@ -1366,7 +1366,10 @@
       (ra-config p.cod u.q.cod)
     ::
         $review   (ra-think | her +.cod)
-        $publish  (ra-think & her +.cod)
+    ::
+        $publish
+      ?.  (team our.hid her)  +>.$
+      (ra-think & her +.cod)
     ==
   ::
   ++  ra-config                                         ::  configure story
