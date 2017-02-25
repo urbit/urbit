@@ -197,6 +197,8 @@ void _king_loop_exit()
   cod_l = u3a_lush(c3__behn);
   u3_behn_io_exit();
   u3a_lop(cod_l);
+
+  unlink("/tmp/urbit.sock");
 }
 
 void u3_king_commence()
