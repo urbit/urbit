@@ -120,7 +120,7 @@
   |%                                                    ::
   ++  load  $-(* _+>)                                   ::  reload
   ++  stay  **                                          ::  preserve
-  ++  work                                              ::
+  ++  plow                                              ::
     |_  bait
     ++  doze  *@da
     ++  scry  roof
@@ -154,6 +154,49 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) engines
 ::                                                      ::  ::
 |%
+::
+::::
+  ::
+::                                                      ::  ++me
+++  me                                                  ::  cached analyses
+  =|  {sac/worm kit/toys}
+  ::
+  ::
+  =*  sys  -
+  |%
+  ::
+  ++  abet
+  ::
+  ++  refine-moves
+    |=  vax/vase
+    ^-  {(list move:live) _+>+<}
+    !!
+  ::                                                    ::  ++reduce-card:me
+  ++  reduce-card                                       ::
+        ::  mex: vase of card
+        ::
+        mex/vase
+    ^-  {
+    ^-  (unit (pair mill worm))                       ::
+    =^  hip  sac  (~(nell wa sac) p.mex)          ::
+    ?.  hip  ~                                        ::  a card is a cell
+    ?.  ?=($meta -.q.mex)  `[[%& mex] sac]          ::  ordinary card
+    =^  tiv  sac  (~(slot wa sac) 3 mex)          ::
+    =^  hip  sac  (~(nell wa p.sew) p.tiv)          ::
+    ?.  hip  ~                                        ::  a vase is a cell
+    =^  vax  p.sew  (~(slot wa p.sew) 2 tiv)          ::
+    =^  hip  p.sew  (~(nest wa p.sew) typ.vil p.vax)  ::
+    ?.  hip  ~                                        ::  vase head is span
+    %+  biff                                          ::
+      =+  mut=(milt q.tiv)                            ::  card span, value
+      |-  ^-  (unit (pair milt worm))                 ::
+      ?.  ?=({$meta p/* q/milt} q.mut)  `[mut p.sew]  ::  ordinary metacard
+      =^  hip  p.sew  (~(nets wa p.sew) mev.vil p.mut)::
+      ?.  hip  ~                                      ::  meta-metacard
+      $(mut +.q.mut)                                  ::  descend into meta
+    |=(a/(pair milt worm) `[[%| p.a] q.a])            ::  milt to mill
+
+  --
 ::                                                      ::  ++le
 ++  le                                                  ::  deep engine
   =+  [now=*@da *mast:live]
@@ -283,7 +326,13 @@
       ::  wok: working vase
       ::
       =/  wok  ^-  vase
-        !!
+        %+  slap
+          (slop (slap vax `twig`[%limb %plow]) !>(+<))
+        ^-  twig
+        :+  %keep
+          [[%& 2] ~]
+        :~  [[[%& 6] ~] [%$ 3]]
+        ==
       |%  
       ::                                              ::  ++doze:va-work:va:le
       ++  doze                                        ::  request wakeup at
@@ -299,25 +348,31 @@
             ==
         ^-  (unit (unit cage))
         !!
-      ::                                              ::  ++walk:va-work:va:le
-      ++  walk                                        ::  causal action
+      ::                                              ::  ++spin:va-work:va:le
+      ++  spin                                        ::  causal action
         |=  hen/duct
         ::
         ::  fox: running vase
         ::
         =/  fox  ^-  vase
-          !!
+          %+  slap
+            (slop (slap wok `twig`[%limb %spin]) !>(+<))
+          ^-  twig
+          :+  %keep
+            [[%& 2] ~]
+          :~  [[[%& 6] ~] [%$ 3]]
+          ==
         |%
-        ::                                            ::  ++abet:walk:va-work:
+        ::                                            ::  ++abet:spin:va-work:
         ++  abet                                      ::  integrate
           ^+  ..va
           !!
-        ::                                            ::  ++call:walk:va-work:
+        ::                                            ::  ++call:spin:va-work:
         ++  call                                      ::  
           |=  hil/mill
           ^+  +>
-          !!
-        ::                                            ::  ++take:walk:va-work:
+          =^  
+        ::                                            ::  ++take:spin:va-work:
         ++  take                                      ::
           |=  {tea/wire hil/mill}
           ^+  +>
@@ -577,7 +632,7 @@
   ++  call                                              ::  forward to vane
     |=  {hen/duct way/term hil/mill}
     ^+  +>
-    =>  (call:(walk:(va-plow:(va-amid:va way) now eny.mal peek) hen) hil)
+    =>  (call:(spin:(va-plow:(va-amid:va way) now eny.mal peek) hen) hil)
     abet
   ::                                                    ::  ++grow:le
   ++  grow                                              ::  hardcoded prefixes
@@ -615,7 +670,7 @@
   ++  take
     |=  {hen/duct way/term tea/wire hil/mill}
     ^+  +>
-    =>  (take:(walk:(va-plow:(va-amid:va way) now eny.mal peek) hen) tea hil)
+    =>  (take:(spin:(va-plow:(va-amid:va way) now eny.mal peek) hen) tea hil)
     abet
   ::                                                    ::  ++work:le
   ++  work                                              ::  main loop
