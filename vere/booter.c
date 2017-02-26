@@ -27,8 +27,7 @@ void _nop_conn(uv_connect_t *conn, int status)
   pax = u3i_string(argv1);
   sys = u3i_string(argv2);
 
-  doom = u3ke_jam(u3nt(c3__doom,
-                       u3_nul,
+  doom = u3ke_jam(u3nc(c3__doom,
                        u3nc(c3__boot,
                             u3nq(0, pax, sys, 0))));
   u3_newt_write(&moj_u, doom, 0);

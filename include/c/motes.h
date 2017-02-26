@@ -1160,6 +1160,7 @@
 #   define c3__veer   c3_s4('v','e','e','r')
 #   define c3__vega   c3_s4('v','e','g','a')
 #   define c3__velt   c3_s4('v','e','l','t')
+#   define c3__vent   c3_s4('v','e','n','t')
 #   define c3__verb   c3_s4('v','e','r','b')
 #   define c3__vern   c3_s4('v','e','r','n')
 #   define c3__very   c3_s4('v','e','r','y')

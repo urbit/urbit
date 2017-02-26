@@ -3,53 +3,185 @@
 #include "vere/vere.h"
 
 /*
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  wyrd: requires auth to a single relevant ship       ::
+::  doom: requires auth to the daemon itself            ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  fate                                                ::  client to lord
-  $%  $:  $wyrd                                         ::  send a card
-          p/ship                                        ::  target ship
-          q/ovum                                        ::  action
+  $%  $:  $auth                                         ::  authenticate client
+          p/(unit ship)                                 ::  what to auth
+          q/@                                           ::  auth secret
       ==                                                ::
-      $:  $doom                                         ::  control the daemon
-          p/(unit ship)                                 ::  who to command
-          q/doom                                        ::  the command
+  $%  $:  $wyrd                                         ::  ship action
+          p/ship                                        ::  which ship
+          q/wyrd                                        ::  the action
+      ==                                                ::
+      $:  $doom                                         ::  daemon command
+          p/doom                                        ::  the command
       ==                                                ::
   ==                                                    ::
 ::                                                      ::
-++  cede                                                ::  lord to client
-  $@  $?  $firm                                         ::  accept command
-          $deny                                         ::  reject command
+++  wyrd                                                ::  ship action
+  $%  $:  $susp                                         ::  release this pier
+          $~                                            ::
       ==                                                ::
-  $%  $:  $cede                                         ::  send cards
-          p/ship                                        ::  sending ship
-          q/(list ovum)                                 ::  actions
+      $:  $vent                                         ::  generate event
+          p/ovum                                        ::  wire and card
       ==                                                ::
   ==                                                    ::
 ::                                                      ::
 ++  doom                                                ::  daemon command
-  $@  $?  $susp                                         ::  release a pier
-          $exit                                         ::  end the daemon
+  $%  $:  $boot                                         ::  boot new pier
+          p/ship                                        ::  ship
+          q/@                                           ::  generator or ticket
+          r/(map @t *)                                  ::  debug options
       ==                                                ::
-  $%  $:  $auth                                         ::  auth this client
-          p/@                                           ::  auth secret
-      ==                                                ::
-      $:  $boot                                         ::  boot new pier
-          p/@                                           ::  generator or ticket
-          q/(unit @t)                                   ::  unix path to arvo
-          r/(unit @t)                                   ::  unix path to pill
-          s/(map @t *)                                  ::  debug options
+      $:  $exit                                         ::  end the daemon
+          $~                                            ::
       ==                                                ::
       $:  $pier                                         ::  acquire a pier
           p/(unit @t)                                   ::  unix path
       ==                                                ::
+      $:  $root                                         ::  admin ship actions
+          p/ship                                        ::  which ship
+          q/wyrd                                        ::  the action
   ==                                                    ::
+++  cede                                                ::  lord to client
+  $%  $:  $cede                                         ::  send cards
+          p/ship                                        ::  sending ship
+          q/(list ovum)                                 ::  actions
+      ==                                                ::
+      $:  $firm                                         ::  accept command
+          $~                                            ::
+      ==                                                ::
+      $:  $deny                                         ::  reject command
+          p/@t                                          ::  error message
+      ==                                                ::
+  ==                                                    ::
+::                                                      ::
 */
+
+void _king_auth(u3_noun auth);
+
+void _king_wyrd(u3_noun ship_wyrd);
+  void _king_susp(u3_atom ship, u3_noun susp);
+  void _king_vent(u3_atom ship, u3_noun vent);
+
+void _king_doom(u3_noun doom);
+  void _king_boot(u3_noun boot);
+  void _king_exit(u3_noun exit);
+  void _king_pier(u3_noun pier);
+  void _king_root(u3_noun root);
 
 void _king_defy_fate()
 {
   exit(1);
 }
 
-void _king_wyrd(u3_noun wyrd)
+void _king_fate(void *vod_p, u3_noun mat)
 {
+  u3_noun fate = u3ke_cue(u3k(mat));
+  u3_noun load;
+  void (*next)(u3_noun);
+
+  c3_assert(_(u3a_is_cell(fate)));
+  c3_assert(_(u3a_is_cat(u3h(fate))));
+
+  switch ( u3h(fate) ) {
+    case c3__auth:
+      next = _king_auth;
+      break;
+    case c3__wyrd:
+      next = _king_wyrd;
+      break;
+    case c3__doom:
+      next = _king_doom;
+      break;
+    default:
+      _king_defy_fate();
+  }
+
+  load = u3k(u3t(fate));
+  u3z(fate);
+  next(load);
+}
+
+void _king_auth(u3_noun auth)
+{
+}
+
+void _king_wyrd(u3_noun ship_wyrd)
+{
+  u3_atom ship;
+  u3_noun wyrd;
+  u3_noun load;
+  void (*next)(u3_atom, u3_noun);
+
+  c3_assert(_(u3a_is_cell(ship_wyrd)));
+  c3_assert(_(u3a_is_atom(u3h(ship_wyrd))));
+  ship = u3k(u3h(ship_wyrd));
+  wyrd = u3k(u3t(ship_wyrd));
+  u3z(ship_wyrd);
+
+  c3_assert(_(u3a_is_cell(wyrd)));
+  c3_assert(_(u3a_is_cat(u3h(wyrd))));
+
+  switch ( u3h(wyrd) ) {
+    case c3__susp:
+      next = _king_susp;
+      break;
+    case c3__vent:
+      next = _king_vent;
+      break;
+    default:
+      _king_defy_fate();
+  }
+
+  load = u3k(u3t(wyrd));
+  u3z(wyrd);
+  next(ship, load);
+}
+
+void _king_susp(u3_atom ship, u3_noun susp)
+{
+}
+
+void _king_vent(u3_atom ship, u3_noun vent)
+{
+  /* stub; have to find pier from ship */
+  u3z(ship);
+  u3_pier_work(u3_pier_stub(), u3h(vent), u3t(vent));
+  u3z(vent);
+}
+
+void _king_doom(u3_noun doom)
+{
+  u3_noun load;
+  void (*next)(u3_noun);
+
+  c3_assert(_(u3a_is_cell(doom)));
+  c3_assert(_(u3a_is_cat(u3h(doom))));
+
+  switch ( u3h(doom) ) {
+    case c3__boot:
+      next = _king_boot;
+      break;
+    case c3__exit:
+      next = _king_exit;
+      break;
+    case c3__pier:
+      next = _king_pier;
+      break;
+    case c3__root:
+      next = _king_root;
+      break;
+    default:
+      _king_defy_fate();
+  }
+
+  load = u3k(u3t(doom));
+  u3z(doom);
+  next(load);
 }
 
 void _king_boot(u3_noun boot)
@@ -71,56 +203,16 @@ void _king_boot(u3_noun boot)
   u3_pier_boot(pax_c, sys_c, pep_u);
 }
 
-void _king_doom(u3_noun doom)
+void _king_exit(u3_noun exit)
 {
-  u3_noun load;
-  if ( c3y == u3ud(doom) ) {
-    c3_assert(_(u3a_is_cat(doom)));
-    switch ( doom ) {
-      case c3__susp:
-        break;
-      case c3__exit:
-        break;
-      default:
-        _king_defy_fate();
-    }
-  } else {
-    switch ( u3h(doom) ) {
-      case c3__auth:
-        break;
-      case c3__boot:
-        load = u3k(u3t(doom));
-        u3z(doom);
-        _king_boot(load);
-        break;
-      case c3__pier:
-        break;
-      default:
-        _king_defy_fate();
-    }
-  }
 }
 
-void _king_fate(void *vod_p, u3_noun mat)
+void _king_pier(u3_noun pier)
 {
-  u3_noun fate = u3ke_cue(u3k(mat));
-  u3_noun load;
-  c3_assert(_(u3a_is_cat(u3h(fate))));
-  c3_assert(_(u3a_is_cell(u3t(fate))));
-  switch ( u3h(fate) ) {
-    case c3__wyrd:
-      load = u3k(u3t(u3t(fate)));
-      u3z(fate);
-      _king_wyrd(load);
-      break;
-    case c3__doom:
-      load = u3k(u3t(u3t(fate)));
-      u3z(fate);
-      _king_doom(load);
-      break;
-    default:
-      _king_defy_fate();
-  }
+}
+
+void _king_root(u3_noun root)
+{
 }
 
 void _king_bail(u3_moor *vod_p, const c3_c *err_c)
@@ -168,6 +260,7 @@ void _king_loop_init()
 
 void _king_loop_exit()
 {
+  /*  all needs to move extept unlink */
   c3_l cod_l;
 
   cod_l = u3a_lush(c3__unix);
