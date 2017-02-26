@@ -53,6 +53,42 @@
   cage                                                  ::  marked vase
 ::                                                      ::
 ++  ship  @p                                            ::  network identity
+++  vane                                                ::  kernel module
+  |*  $:  $:  task/mold                                 ::  ->$ in request
+              gift/mold                                 ::  <-$ out result
+              sign/mold                                 ::  $<- in result
+              note/mold                                 ::  $-> out request
+          ==                                            ::
+          mind/mold                                     ::  active state
+          tomb/mold                                     ::  former state
+      ==                                                ::
+  =*  move                                              ::
+    $%  {$give p/gift}                                  ::  return
+        {$pass p/path q/note}                           ::  invoke
+    ==                                                  ::
+  $_  ^?                                                ::
+  |_  mind                                              ::
+  ++  load  $-(tomb _+>)                                ::  reload
+  ++  stay  *mind                                       ::  preserve
+  ++  plow                                              ::  work in time
+    |_  $:  now/@da                                     ::  date
+            eny/@uvJ                                    ::  entropy
+            sky/roof                                    ::  namespace
+        ==                                              ::
+    ++  doze  *(unit @da)                               ::  awake when
+    ++  scry  roof                                      ::  local namespace
+    ++  spin                                            ::  work on state
+      |_  $:  ::  hen: cause stack                      ::
+              ::  moz: generated moves                  ::
+              ::                                        ::
+              hen/duct                                  ::
+              moz/(list move)                           ::
+          ==                                            ::
+      ++  call  |=(task +>)                             ::  forward effect
+      ++  take  |=({wire card} +>)                      ::  backward effect
+      --                                                ::
+    --                                                  ::
+  --                                                    ::
 ++  wire  path                                          ::  cause
 --  =>
 ::                                                      ::  ::
@@ -63,6 +99,10 @@
 ++  evil                                                ::  evolvable state
   |*  {span/_span twig/_twig vase/_vase}                ::  injected molds
   |%                                                    ::
+  ++  deal                                              ::  arvo vane move
+    $%  {$give p/mill}                                  ::  vane "return"
+        {$pass p/wire q/(pair term mill)}               ::  vane "call"
+    ==                                                  ::
   ++  mall                                              ::  any arvo version
     $?  {$293 mast}                                     ::  kelvin 293, current
     ==                                                  ::
@@ -74,7 +114,6 @@
         ==                                              ::
         $=  hax                                         ::  thorax
         $:  sac/worm                                    ::  compiler cache
-            kit/toys                                    ::  common nouns
         ==                                              ::
         $=  bug                                         ::  insect brain
         $:  noc/@ta                                     ::  process nonce
@@ -96,17 +135,7 @@
     ==  ==                                              ::
   ++  mill  (each vase milo)                            ::  vase or metavase
   ++  milo  {p/* q/*}                                   ::  untyped metavase
-  ++  move  (pair duct part)                            ::  vane move
-  ++  part                                              ::  arvo vane move
-    $%  {$give p/mill}                                  ::  vane "return"
-        {$pass p/wire q/(pair term mill)}               ::  vane "call"
-    ==                                                  ::
-  ++  toys                                              ::  reflexive constants
-    $:  typ/span                                        ::  -:!>(*span)
-        duc/span                                        ::  -:!>(*duct)
-        pah/span                                        ::  -:!>(*path)
-        mev/span                                        ::  -:!>([%meta *vase])
-    ==                                                  ::
+  ++  move  (pair duct deal)                            ::  vane move
   ++  worm                                              ::  compiler cache
     $:  nes/(set ^)                                     ::  ++nest
         pay/(map (pair span twig) span)                 ::  ++play
@@ -115,33 +144,6 @@
   --                                                    ::
 ++  hoof  @t                                            ::  hoon source file
 ++  live  (evil)                                        ::  modern molds
-++  vane                                                ::  kernel module
-  $_  ^?                                                ::  totally decorative
-  |%                                                    ::
-  ++  load  $-(* _+>)                                   ::  reload
-  ++  stay  **                                          ::  preserve
-  ++  plow                                              ::
-    |_  bait
-    ++  doze  *@da
-    ++  scry  roof
-    ++  spin
-      |_  $:  ::  hen: cause of this 
-              ::  moz: 
-              ::
-              hen/duct
-              moz/(list move)
-          ==
-      ++  call
-        |=  fav/card
-        ^+  +>
-        !!
-      ++  take
-        |=  {tea/wire fav/card}
-        ^+  +>
-        !!
-      --
-    --
-  --
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
   $%  {$walk $~}                                        ::  finish mammal brain
@@ -154,48 +156,96 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) engines
 ::                                                      ::  ::
 |%
-::
-::::
-  ::
 ::                                                      ::  ++me
-++  me                                                  ::  cached analyses
-  =|  {sac/worm kit/toys}
+++  me                                                  ::  dynamic analysis
+  ::  sac: compiler cache
   ::
-  ::
-  =*  sys  -
-  |%
-  ::
-  ++  abet
-  ::
-  ++  refine-moves
+  |_  sac/worm
+  ::                                                    ::  ++refine-moves:me
+  ++  refine-moves                                      ::  move list from vase
     |=  vax/vase
-    ^-  {(list move:live) _+>+<}
-    !!
-  ::                                                    ::  ++reduce-card:me
-  ++  reduce-card                                       ::
-        ::  mex: vase of card
-        ::
-        mex/vase
-    ^-  {
-    ^-  (unit (pair mill worm))                       ::
-    =^  hip  sac  (~(nell wa sac) p.mex)          ::
-    ?.  hip  ~                                        ::  a card is a cell
-    ?.  ?=($meta -.q.mex)  `[[%& mex] sac]          ::  ordinary card
-    =^  tiv  sac  (~(slot wa sac) 3 mex)          ::
-    =^  hip  sac  (~(nell wa p.sew) p.tiv)          ::
-    ?.  hip  ~                                        ::  a vase is a cell
-    =^  vax  p.sew  (~(slot wa p.sew) 2 tiv)          ::
-    =^  hip  p.sew  (~(nest wa p.sew) typ.vil p.vax)  ::
-    ?.  hip  ~                                        ::  vase head is span
-    %+  biff                                          ::
-      =+  mut=(milt q.tiv)                            ::  card span, value
-      |-  ^-  (unit (pair milt worm))                 ::
-      ?.  ?=({$meta p/* q/milt} q.mut)  `[mut p.sew]  ::  ordinary metacard
-      =^  hip  p.sew  (~(nets wa p.sew) mev.vil p.mut)::
-      ?.  hip  ~                                      ::  meta-metacard
-      $(mut +.q.mut)                                  ::  descend into meta
-    |=(a/(pair milt worm) `[[%| p.a] q.a])            ::  milt to mill
-
+    ^-  {(list move:live) worm}
+    ?:  =(~ q.vax)  [~ sac]
+    =^  hed  sac  (~(slot wa sac) 2 vax)
+    =^  tal  sac  (~(slot wa sac) 3 vax)
+    =^  mov  sac  (refine-move hed)
+    =^  moz  sac  $(vax tal)
+    [[mov moz] sac]
+  ::                                                    ::  ++refine-move:me
+  ++  refine-move                                       ::  move from vase
+    |=  vax/vase
+    ^-  {move:live worm}
+    ::
+    ::  den: ++duct vase
+    ::  yat: card vase
+    ::
+    =^  hip  sac  (~(nell wa sac) p.vax)
+    ?>  hip
+    =^  den  sac  (~(slot wa sac) 2 vax)
+    =^  yat  sac  (~(slot wa sac) 3 vax)
+    =^  hip  sac  (~(nest wa sac) -:!>(*duct) p.den)
+    ?>  hip
+    =^  del  sac  (refine-deal yat)
+    [[(duct q.den) del] sac]
+  ::                                                    ::  ++refine-deal:me
+  ++  refine-deal                                       ::  deal from vase
+    |=  vax/vase
+    ^-  {deal:live worm}
+    ::
+    ::  specialize span to actual card stem
+    ::
+    =^  hex  sac  (~(spec wa sac) vax)
+    ?+    -.q.hex  ~|(%bad-move !!)
+        $give
+      =^  hip  sac  (~(nest wa sac) -:!>([%give *card]) p.hex)
+      ?>  hip
+      ::
+      ::  yed: vase containing card
+      ::  hil: card as mill
+      ::  
+      =^  yed  sac  (~(slot wa sac) 3 hex)
+      =^  hil  sac  (refine-card yed) 
+      [[%give hil] sac]
+    ::
+        $pass
+      =^  hip  sac  (~(nest wa sac) -:!>([%pass *path *term *card]) p.hex)
+      ?>  hip
+      ::
+      ::  yed: vase containing card
+      ::  hil: card as mill
+      ::  
+      =^  yed  sac  (~(slot wa sac) 15 hex)
+      =^  hil  sac  (refine-card yed) 
+      [[%pass (path +6:p.hex) (term +14:p.hex) hil] sac]
+    == 
+  ::                                                    ::  ++refine-card:me
+  ++  refine-card                                       ::  card from vase
+    |=  vax/vase
+    ^-  (pair mill worm)
+    ::
+    ::  specialize span to actual card data
+    ::
+    =^  hex  sac  (~(spec wa sac) vax)
+    =^  hip  sac  (~(nell wa sac) p.hex)
+    ?>  hip
+    ?.  ?=($meta -.q.hex)  
+      ::
+      ::  for an non-meta card, the mill is the vase
+      ::
+      [[%& hex] sac]
+    ::
+    ::  tiv: vase of vase of card
+    ::  typ: vase of span
+    ::
+    =^  tiv  sac  (~(slot wa sac) 3 hex)
+    =^  hip  sac  (~(nell wa sac) p.tiv)
+    ?>  hip
+    =^  typ  sac  (~(slot wa sac) 2 tiv)
+    =^  hip  sac  (~(nest wa sac) -:!>(*span) p.hex)
+    ::
+    ::  support for meta-meta-cards has been removed
+    ::
+    [[%| (^ q.tiv)] sac]
   --
 ::                                                      ::  ++le
 ++  le                                                  ::  deep engine
@@ -371,7 +421,7 @@
         ++  call                                      ::  
           |=  hil/mill
           ^+  +>
-          =^  
+          !!
         ::                                            ::  ++take:spin:va-work:
         ++  take                                      ::
           |=  {tea/wire hil/mill}
