@@ -9,7 +9,6 @@
   ::                                                    ::
 ~%  %k.149  ~  ~                                        ::
 |%
-++  foo  %bar
 ++  hoon  +
 --  =>
 ::                                                      ::
@@ -24,7 +23,6 @@
 ::                                                      ::
 ::::    1a: unsigned arithmetic                         ::
   ::
-++  foo  %bar
 ++  add                                                 ::  unsigned addition
   ~/  %add
   |=  {a/@ b/@}
@@ -208,7 +206,6 @@
   ::
 ~%  %two  +  ~
 |%
-++  foo  %bar
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -1725,7 +1722,6 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
-++  foo  %bar
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3425,7 +3421,6 @@
     %show  show
   ==
 |%
-++  foo  %bar
 ::
 ::::  4a: exotic bases
   ::
@@ -5581,7 +5576,6 @@
     %ut    ut
   ==
 |%
-++  foo  %bar
 ::
 ::::  5a: compiler utilities
   ::
@@ -9559,6 +9553,36 @@
       ~>  %slog.[0 foo]
       [| +>+<.$]
     [& +>+<(nes (~(put in nes) [sut ref]))]
+  ::
+  ++  call                                              ::  call gate
+    |=  {vax/vase nam/term som/(each vase ^)}
+    ^-  {vase worm}
+    =^  duf  +>+<.$  (open vax nam som)
+    (slap duf [%limb %$])
+  ::
+  ++  open                                              ::  assemble door
+    |=  {vax/vase nam/term som/(each vase ^)}
+    ^-  {vase worm}
+    =*  key  [%keep [[%& 2] ~] [[[%& 6] ~] [%$ 3]] ~]
+    =^  dor  +>+<.$  (slap vax [%limb nam])
+    =^  mes  +>+<.$  (slot 6 dor)
+    =^  hip  ?-  -.som
+               %&  (nest p.mes p.p.som)
+               %|  (nets p.mes -.p.som)
+             ==
+    ?>  hip
+    [p.dor q.dor(+6 +7.som)]
+  ::
+  ++  neat                                              ::  type compliance
+    |=  {typ/span som/(each vase ^)}
+    ^-  worm
+    =^  hip  +>+<.$
+      ?-  -.som
+        %&  (nest typ p.p.som)
+        %|  (nets typ -.p.som)
+      ==
+    ?>  hip
+    +>+<.$
   ::
   ++  nets                                              ::  spanless nest
     |=  {sut/* ref/*}

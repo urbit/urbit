@@ -4563,6 +4563,7 @@
       {$they p/@ud q/httr:^eyre}                        ::  eyre: in response
       {$this p/? q/clip:^eyre r/httq:^eyre}             ::  eyre: in request
       {$thud $~}                                        ::  eyre: in cancel
+      {$wake $~}                                        ::  behn: wakeup
   == 
 ::
 ::
