@@ -401,10 +401,14 @@
   +>(mir lin)
 ::
 ++  se-just                                           ::  adjusted buffer
-  |=  lin/(pair @ud stub:dill)
+  |=  {pom/stub:dill lin/(pair @ud (list @c))}
   ^+  +>
-  =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
-  (se-show (sub p.lin off) (scag:klr edg (slag:klr off q.lin)))
+  =/  pol  (lent-char:klr pom)
+  =/  end  (sub edg pol)
+  =.  off  ?:((lte p.lin end) 0 (sub p.lin end))
+  %+  se-show
+    (sub (add pol p.lin) off)
+  (welp pom [*stye:dill (swag [off end] q.lin)]~)
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
@@ -826,11 +830,9 @@
     (ta-hom (cat:edit pos.inp txt))
   ::
   ++  ta-vew                                          ::  computed prompt
-    ^-  (pair @ud stub:dill)
+    ^-  {pom/stub:dill lin/(pair @ud (list @c))}
     =;  vew/(pair (list @c) styx:dill)
-      =+  lin=(make:klr q.vew)
-      :_  (welp lin [*stye:dill p.vew]~)
-      (add pos.inp (lent-char:klr lin))
+      [(make:klr q.vew) pos.inp p.vew]
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
       ?~  ris
