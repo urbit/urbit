@@ -9566,20 +9566,21 @@
     =*  key  [%keep [[%& 2] ~] [[[%& 6] ~] [%$ 3]] ~]
     =^  dor  +>+<.$  (slap vax [%limb nam])
     =^  mes  +>+<.$  (slot 6 dor)
-    =^  hip  ?-  -.som
-               %&  (nest p.mes p.p.som)
-               %|  (nets p.mes -.p.som)
-             ==
+    =^  hip  +>+<.$
+      ?-  -.som
+         $&  (nest p.mes p.p.som)
+         $|  (nets p.mes -.p.som)
+      ==
     ?>  hip
-    [p.dor q.dor(+6 +7.som)]
+    [[p.dor q.dor(+6 +7.som)] +>+<.$] 
   ::
   ++  neat                                              ::  type compliance
     |=  {typ/span som/(each vase ^)}
     ^-  worm
     =^  hip  +>+<.$
       ?-  -.som
-        %&  (nest typ p.p.som)
-        %|  (nets typ -.p.som)
+        $&  (nest typ p.p.som)
+        $|  (nets typ -.p.som)
       ==
     ?>  hip
     +>+<.$

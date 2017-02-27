@@ -187,7 +187,7 @@
     ?>  hip
     =^  den  sac  (~(slot wa sac) 2 vax)
     =^  yat  sac  (~(slot wa sac) 3 vax)
-    =.  sac  (~(neat wa sac) -:!>(*duct) %& p.den)
+    =.  sac  (~(neat wa sac) -:!>(*duct) %& den)
     ?>  hip
     =^  del  sac  (refine-ball yat)
     [[(duct q.den) del] sac]
@@ -201,8 +201,7 @@
     =^  hex  sac  (~(spec wa sac) vax)
     ?+    -.q.hex  ~|(%bad-move !!)
         $give
-      =.  sac  (~(neat wa sac) -:!>([%give *card]) %& p.hex)
-      ?>  hip
+      =.  sac  (~(neat wa sac) -:!>([%give *card]) %& hex)
       ::
       ::  yed: vase containing card
       ::  hil: card as mill
@@ -212,8 +211,7 @@
       [[%give hil] sac]
     ::
         $pass
-      =.  sac  (~(neat wa sac) -:!>([%pass *path *term *card]) %& p.hex)
-      ?>  hip
+      =.  sac  (~(neat wa sac) -:!>([%pass *path *term *card]) %& hex)
       ::
       ::  yed: vase containing card
       ::  hil: card as mill
@@ -245,7 +243,7 @@
     =^  hip  sac  (~(nell wa sac) p.tiv)
     ?>  hip
     =^  typ  sac  (~(slot wa sac) 2 tiv)
-    =.  sac  (~(neat wa sac) -:!>(*span) %& p.hex)
+    =.  sac  (~(neat wa sac) -:!>(*span) %& hex)
     ::
     ::  support for meta-meta-cards has been removed
     ::
@@ -347,7 +345,6 @@
     ==
   ::                                                    ::  ++va:le
   ++  va                                                ::  vane engine
-    =,  hax
     |_  $:  ::  way: vane name, eg `%ames`
             ::  vax: vane, or vane builder if `off.mal`
             ::  
@@ -391,14 +388,13 @@
       ::
       =*  kys  `vase`[-:!>(*roof) sky]
       =*  sam  (slop !>(now) (slop !>(eny) kys))
-      =^  wok  sac  (~(open wa sac) vax %plow %& sam)
+      =^  wok  sac.hax  (~(open wa sac.hax) vax %plow %& sam)
       |%  
       ::                                                ::  ++doze:va-plow:va:le
       ++  doze                                          ::  next wakeup 
         ^-  (unit @da)
-        =^  pro  sac  (~(slap wa sac) wok [%limb %doze])
-        =^  hip  sac  (~(nest wa sac) -:!>(*(unit @da)))
-        ?>  hip
+        =^  pro  sac.hax  (~(slap wa sac.hax) wok [%limb %doze])
+        =.  sac.hax  (~(neat wa sac.hax) -:!>(*(unit @da)) %& pro)
         ((unit @da) q.pro)
       ::                                                ::  ++scry:va-plow:va:le
       ++  scry                                          ::  internal peek
@@ -416,9 +412,8 @@
         ::  pro: namespace output
         ::
         =/  yeb  !>([lyc car bem])
-        =^  pro  sac  (~(call wa sac) wok %scry %& yeb)
-        =.  sac  (~(neat wa sac) -:!>([*mark *vase]) %& p.pro)
-        ?>  hip
+        =^  pro  sac.hax  (~(call wa sac.hax) wok %scry %& yeb)
+        =.  sac.hax  (~(neat wa sac.hax) -:!>([*mark *vase]) %& pro)
         ::
         ::  detect unit cases
         ::
@@ -427,8 +422,8 @@
         ::
         ::  dat: vase of [mark vase]
         ::
-        =^  dat  sac  (~(slot wa sac) 7 pro)
-        `[(mark -.q.dat) +.q.dat]
+        =^  dat  sac.hax  (~(slot wa sac.hax) 7 pro)
+        ``[(mark -.q.dat) (^ +.q.dat)]
       ::                                                ::  ++spin:va-plow:va:le
       ++  spin                                          ::  causal action
         |=  hen/duct
@@ -436,40 +431,40 @@
         ::  fox: spinning vase
         ::
         =*  sam  !>([hen *(list move)])
-        =^  fox  sac  (~(open wa sac) vax %spin %& sam)
+        =^  fox  sac.hax  (~(open wa sac.hax) vax %spin %& sam)
         |%
         ::                                              ::  ++abet:spin:va-plow:
         ++  abet                                        ::  integrate
-          ^-  {(list move) _..va}
+          ^+  ..va
           ::
           ::  vom: vase of (list move)
           ::  moz: actual output list (inverted order)
           ::  zax: new vase core
           ::
-          =^  vom  sac  (~(slot me sac) 13 fox)
-          =^  moz  sac  (~(refine-moves me sac) vom)
-          =^  zax  sac  (~(slot me sac) 31 fox)
-          ::
-          ::  save new vane core
-          ::
-          :_  va-abet(vax zax)
-          ::
-          ::  invert raw moves
-          ::
-          %+  turn  `(list move:live)`(flop moz)
-          ::
-          ::  append vane label to pass return address
-          ::
-          |=  mov/move:live
-          ?.  ?=($pass -.mov)  mov
-          mov(p [way p.mov])
+          =^  vom  sac.hax  (~(slot wa sac.hax) 13 fox)
+          =^  moz  sac.hax  (~(refine-moves me sac.hax) vom)
+          =^  zax  sac.hax  (~(slot wa sac.hax) 31 fox)
+          %=    va-abet
+              vax  zax
+              run.gut
+            %+  weld
+              %+  turn  moz
+              |=  mov/move:live
+              ?.  ?=($pass -.q.mov)  mov
+              ::
+              ::  append vane label to pass return address
+              ::
+              mov(p.q [way p.q.mov])
+            run.gut
+          ==
         ::                                              ::  ++call:spin:va-plow:
         ++  call                                        ::  pass forward
           |=  $:  ::  hil: logical argument
                   ::
                   hil/mill
               ==
-          =^  nex  sac  (~(call me sac) fox %call hil)
+          ^+  ..va
+          =^  nex  sac.hax  (~(call wa sac.hax) fox %call hil)
           abet(fox nex)
         ::                                              ::  ++take:spin:va-plow:
         ++  take                                        ::  pass backward
@@ -479,17 +474,17 @@
                   tea/wire 
                   hil/mill
               ==
-          ^+  +>
+          ^+  ..va
           ::  yet: return address as vase
           ::  sam: whole sample as mill
           ::
           =/  yet  !>(tea)
           =/  sam  ^-  mill
             ?-  -.hil
-              %&  [%& (slop yet p.hil)]
-              %|  [%| [[%cell p.yet p.p.hil] [q.yet q.p.hil]]]
+              $&  [%& (slop yet p.hil)]
+              $|  [%| [[%cell p.yet p.p.hil] [q.yet q.p.hil]]]
             ==
-          =^  nex  sac  (~(call me sac) fox %take sam)
+          =^  nex  sac.hax  (~(call wa sac.hax) fox %take sam)
           abet(fox nex)
         --
       --
@@ -535,7 +530,7 @@
   ++  warp                                              ::  arvo effect
     |=  {hen/duct wap/wasp}
     ^+  +>
-    ?+  -.wap  !!
+    ?-  -.wap 
       $what  (what hen p.wap)
       $whim  +>(nym.rep p.wap)
       $wise  +>(roy.rep p.wap)
@@ -557,7 +552,7 @@
     ::
     =.  van.mal
       %-  ~(run by van.mal) 
-      |=(vane ~(va-settle va +<))
+      |=(vase (slam +< !>(our)))
     ::
     ::  boot vanes in alphabetical order
     ::
@@ -565,7 +560,7 @@
     |-  ^+  +>.^$
     ?~  fal  +>.^$
     =.  +>.^$  $(fal t.fal)
-    (emit [hen %pass [%$ %arvo ~] i.fal %& !>[%init ~])
+    (emit [hen %pass [%$ %arvo ~] i.fal %& !>([%init ~])])
   ::                                                    ::  ++wile:le
   ++  wile                                              ::  mill as card
     |=  hil/mill
@@ -773,7 +768,7 @@
   ++  call                                              ::  forward to vane
     |=  {hen/duct way/term hil/mill}
     ^+  +>
-    abet:(call:(spin way hen) hil)
+    (call:(spin way hen) hil)
   ::                                                    ::  ++grow:le
   ++  grow                                              ::  hardcoded prefixes
     |=  lay/term
@@ -810,79 +805,7 @@
   ++  take
     |=  {hen/duct way/term tea/wire hil/mill}
     ^+  +>
-    abet:(take:(spin way hen) tea hil)
-  ::                                                    ::  ++velo
-  ++  velo                                              ::  full reboot
-    |=  $:  ::  hun: hoon.hoon source
-            ::  arv: arvo.hoon source
-            ::
-            hun/(unit hoof)
-            arv/hoof
-        ==
-    ^-  *
-    ::
-    ::  compile the hoon.hoon source with the current compiler
-    ::
-    ~&  [%hoon-compile `@p`(mug hun)]
-    =+  raw=(ride %noun hun)
-    ::
-    ::  activate the new compiler gate
-    ::
-    =+  cop=.*(0 +.raw)
-    ::
-    ::  find the hoon version number of the new kernel
-    ::
-    =+  nex=(@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon])))
-    ?>  |(=(nex hoon) =(+(nex) hoon))
-    ::
-    ::  if we're upgrading language versions, recompile the compiler
-    ::
-    =>  ?:  =(nex hoon)
-          [hot=`*`raw .]
-        ~&  [%hoon-compile-upgrade nex]
-        =+  hot=.*(cop(+< [%noun hun]) -.cop)
-        .(cop .*(0 +.hot))
-    ::
-    ::  extract the hoon core from the outer gate
-    ::
-    =+  hoc=.*(cop [0 7])
-    ::
-    ::  compute the span of the hoon.hoon core
-    ::
-    =+  hyp=-:.*(cop(+< [-.hot '+>']) -.cop)
-    ::
-    ::  compile arvo
-    ::
-    ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug van)]
-    =+  rav=.*(cop(+< [hyp van]) -.cop)
-    ::
-    ::  create the arvo kernel
-    ::
-    =+  arv=.*(hoc +.rav)
-    ::
-    ::  extract the arvo core from the outer gate
-    ::
-    =+  voc=.*(arv [0 7])
-    ::
-    ::  compute the span of the arvo.hoon core
-    ::
-    =+  vip=-:.*(cop(+< [-.rav '+>']) -.cop)
-    ::
-    ::  entry gate: ++load for the normal case, ++come for upgrade
-    ::
-    =+  gat=.*(voc +:.*(cop(+< [vip ?:(=(nex hoon) 'load' 'come')]) -.cop))
-    ::
-    ::  sample: [entropy actions vases]
-    ::
-    =+  sam=[eny ova q.niz]
-    ::
-    ::  call into the new kernel
-    ::
-    =+  out=.*(gat(+< sam) -.gat)
-    ::
-    ::  tack a reset notification onto the product
-    ::
-    [[[~ %vega ~] ((list ovum) -.out)] +.out]
+    (take:(spin way hen) tea hil)
   ::                                                    ::  ++work:le
   ++  work                                              ::  main loop
     =*  ken  .
@@ -949,53 +872,3 @@
     ==
   --
 --  
-::                                                      ::  ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (3) outer core
-::                                                      ::  ::
-|%
-++  come  
-  |=  {@ (list ovum) pone}                  ::  11
-          ^-  {(list ovum) _+>}
-          ~&  %hoon-come
-          =^  rey  +>+  (^come +<)
-          [rey +>.$]
-++  keep  |=(* (^keep ((hard {@da path}) +<)))      ::  4
-++  load  |=  {@ (list ovum) pane}                  ::  86
-          ^-  {(list ovum) _+>}
-          ~&  %hoon-load
-          =^  rey  +>+  (^load +<)
-          [rey +>.$]
-++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  87
-++  poke  |=  *                                     ::  42
-          ^-  {(list ovum) *}
-          =>  .(+< ((hard {now/@da ovo/ovum}) +<))
-          =^  ova  +>+  (^poke now ovo)
-          |-  ^-  {(list ovum) *}
-          ?~  ova
-            [~ +>.^$]
-          ?:  ?=($verb -.q.i.ova)
-            $(ova t.ova, lac !lac)
-          ?:  ?=($veer -.q.i.ova)
-            $(ova t.ova, +>+.^$ (veer now q.i.ova))
-          ?:  ?=($velo -.q.i.ova)
-            (fall (velo now t.ova ({@ @} +.q.i.ova)) [~ +>.^$])
-          ?:  ?=(?($init $veal) -.q.i.ova)
-            =+  avo=$(ova t.ova, +>+.^$ (boot (@ +.q.i.ova)))
-            [[i.ova -.avo] +.avo]
-          ?:  ?=($mass -.q.i.ova)
-            =+  avo=$(ova t.ova)
-            :_  +.avo
-            :_  -.avo
-            %=    i.ova
-                q.q
-              :-  %userspace
-              :-  %|
-              :~  hoon+`pit
-                  zuse+`mast
-                  hoon-cache+`p.niz
-                  q.q.i.ova
-                  dot+`.
-              ==
-            ==
-          =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
-++  wish  |=(* (^wish ((hard @ta) +<)))             ::  20
