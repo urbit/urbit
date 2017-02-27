@@ -412,13 +412,19 @@
   ^+  +>
   =/  pol  (lent-char:klr pom)
   =/  end  (sub edg pol)
+  =/  pos  (add pol p.lin)
+  ?:  (gte (div (mul pol 100) edg) 35)      :: old style (long prompt)
+    =/  off  ?:((lte p.lin end) 0 (sub p.lin end))
+    %+  se-show
+      (sub pos off)
+    (swag:klr [off edg] (welp pom [*stye q.lin]~))
   =.  off  ?:  (gth p.lin (add end off))
              (sub p.lin end)
            ?:  (lth p.lin off)
              (min p.lin (dec off))
            off
   %+  se-show
-    (sub (add pol p.lin) off)
+    (sub pos off)
   (welp pom [*stye (swag [off end] q.lin)]~)
 ::
 ++  se-view                                           ::  flush buffer
@@ -1002,5 +1008,9 @@
     =+  n=(snag p.u.i b)
     :_  ~  :-  p.n
     (^scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+  ::
+  ++  swag                                            ::  swag stub, keep stye
+    |=  {{a/@ b/@} c/stub}
+    (scag b (slag a c))
   --
 --
