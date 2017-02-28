@@ -11,8 +11,7 @@
     |=  {now/@da ovo/ovum}
     ^+  .
     ~>  %slog.[0 leaf+"arvo-event"]
-    ::  XX  .(+> +:(poke now ovo))    REMOVE BEFORE USE
-    .
+    .(+> +:(poke now ovo))
 =>
 ::                                                      ::  ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (1) public molds
@@ -30,7 +29,7 @@
       {$tas p/@tas}                                     ::  label
       {$ud p/@ud}                                       ::  sequence
   ==                                                    ::
-++  cave  (cask milo)                                   ::  marked untyped vase
+++  cave  (cask maze)                                   ::  marked untyped vase
 ++  chip                                                ::  standard identity
   $?  $giv                                              ::  given name
       $fam                                              ::  surname
@@ -41,14 +40,14 @@
 ++  desk  @tas                                          ::  ship desk case spur
 ++  dope  (pair @tas @t)                                ::  term/unicode pair
 ++  duct  (list wire)                                   ::  causal history
-++  milo  {p/* q/*}                                     ::  untyped vase
+++  maze  {p/* q/*}                                     ::  untyped vase
 ++  ovum  (pair wire card)                              ::  input or output
 ++  plum  (pair term noun)                              ::  deep file
 ++  ruby  @pG                                           ::  64-bit passcode
 ++  roof  (room vase)                                   ::  namespace
-++  rook  (room milo)                                   ::  meta-namespace
+++  rook  (room maze)                                   ::  meta-namespace
 ++  room                                                ::  either namespace
-  |*  vase/mold                                         ::  vase or milo
+  |*  vase/mold                                         ::  vase or maze
   $-  $:  lyc/(unit (set ship))                         ::  leakset
           car/term                                      ::  perspective
           bem/beam                                      ::  path
@@ -64,15 +63,15 @@
               sign/mold                                 ::  $<- in result
               note/mold                                 ::  $-> out request
           ==                                            ::
-          mind/mold                                     ::  active state
-          tomb/mold                                     ::  former state
+          mind/mold                                     ::  current state
+          tomb/mold                                     ::  prior state
       ==                                                ::
   =*  move                                              ::
     $%  {$give p/gift}                                  ::  return
         {$pass p/path q/note}                           ::  invoke
     ==                                                  ::
   $_  ^?                                                ::
-  |_  mind                                              ::
+  |_  mind                                              ::  active state
   ++  load  $-(tomb _+>)                                ::  reload
   ++  stay  *mind                                       ::  preserve
   ++  plow                                              ::  work in time
@@ -81,16 +80,13 @@
             sky/roof                                    ::  namespace
         ==                                              ::
     ++  doze  *(unit @da)                               ::  awake when
-    ++  scry  roof                                      ::  local namespace
+    ++  peek  roof                                      ::  local namespace
     ++  spin                                            ::  work on state
-      |_  $:  ::  hen: cause stack                      ::
-              ::  moz: generated moves                  ::
-              ::                                        ::
-              hen/duct                                  ::
-              moz/(list move)                           ::
+      |_  $:  hen/duct                                  ::  cause stack
+              moz/(list move)                           ::  moves, inverted
           ==                                            ::
       ++  call  |=(task +>)                             ::  forward effect
-      ++  take  |=({wire card} +>)                      ::  backward effect
+      ++  take  |=({wire sign} +>)                      ::  backward effect
       --                                                ::
     --                                                  ::
   --                                                    ::
@@ -100,7 +96,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) state molds
 ::                                                      ::  ::
 |% 
-++  boot  (pair (unit hoof) hoof)                       ::  hoon/arvo boot src
+++  seed  (pair (unit hoof) hoof)                       ::  hoon/arvo boot src
 ++  evil                                                ::  evolvable state
   |*  {span/_span twig/_twig vase/_vase}                ::  injected molds
   |%                                                    ::
@@ -115,7 +111,7 @@
     $:  $=  gut                                         ::  abdomen
         $:  run/(list move)                             ::  worklist
             out/(list ovum)                             ::  unix output
-            but/(unit boot)                             ::  reboot 
+            but/(unit seed)                             ::  reboot 
         ==                                              ::
         $=  hax                                         ::  thorax
         $:  sac/worm                                    ::  compiler cache
@@ -138,7 +134,7 @@
             roy/(map @ud ruby)                          ::  start secrets
             fat/(map path (pair term noun))             ::  boot filesystem
     ==  ==                                              ::
-  ++  mill  (each vase milo)                            ::  vase or metavase
+  ++  mill  (each vase maze)                            ::  vase or metavase
   ++  move  (pair duct ball)                            ::  vane move
   ++  worm                                              ::  compiler cache
     $:  nes/(set ^)                                     ::  ++nest
@@ -150,108 +146,20 @@
 ++  live  (evil)                                        ::  modern molds
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
-  $%  {$what p/(list (pair path (pair term noun)))}     ::  reset reptile files
+  $%  {$wack p/@uvJ}                                    ::  add entropy
+      {$what p/(list (pair path (pair term noun)))}     ::  reset reptile files
       {$whim p/arms}                                    ::  reset arms
       {$wise p/(map @ud ruby)}                          ::  reset secrets
       {$whom p/@p}                                      ::  set identity; boot
   ==                                                    ::
---
+--  =>
 ::                                                      ::  ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) engines
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (3) engines
 ::                                                      ::  ::
 |%
-::                                                      ::  ++me
-++  me                                                  ::  dynamic analysis
-  ::  sac: compiler cache
-  ::
-  |_  sac/worm
-  ::                                                    ::  ++refine-moves:me
-  ++  refine-moves                                      ::  move list from vase
-    |=  vax/vase
-    ^-  {(list move:live) worm}
-    ?:  =(~ q.vax)  [~ sac]
-    =^  hed  sac  (~(slot wa sac) 2 vax)
-    =^  tal  sac  (~(slot wa sac) 3 vax)
-    =^  mov  sac  (refine-move hed)
-    =^  moz  sac  $(vax tal)
-    [[mov moz] sac]
-  ::                                                    ::  ++refine-move:me
-  ++  refine-move                                       ::  move from vase
-    |=  vax/vase
-    ^-  {move:live worm}
-    ::
-    ::  den: ++duct vase
-    ::  yat: card vase
-    ::
-    =^  hip  sac  (~(nell wa sac) p.vax)
-    ?>  hip
-    =^  den  sac  (~(slot wa sac) 2 vax)
-    =^  yat  sac  (~(slot wa sac) 3 vax)
-    =.  sac  (~(neat wa sac) -:!>(*duct) %& den)
-    ?>  hip
-    =^  del  sac  (refine-ball yat)
-    [[(duct q.den) del] sac]
-  ::                                                    ::  ++refine-ball:me
-  ++  refine-ball                                       ::  ball from vase
-    |=  vax/vase
-    ^-  {ball:live worm}
-    ::
-    ::  specialize span to actual card stem
-    ::
-    =^  hex  sac  (~(spec wa sac) vax)
-    ?+    -.q.hex  ~|(%bad-move !!)
-        $give
-      =.  sac  (~(neat wa sac) -:!>([%give *card]) %& hex)
-      ::
-      ::  yed: vase containing card
-      ::  hil: card as mill
-      ::  
-      =^  yed  sac  (~(slot wa sac) 3 hex)
-      =^  hil  sac  (refine-card yed) 
-      [[%give hil] sac]
-    ::
-        $pass
-      =.  sac  (~(neat wa sac) -:!>([%pass *path *term *card]) %& hex)
-      ::
-      ::  yed: vase containing card
-      ::  hil: card as mill
-      ::  
-      =^  yed  sac  (~(slot wa sac) 15 hex)
-      =^  hil  sac  (refine-card yed) 
-      [[%pass (path +6:p.hex) (term +14:p.hex) hil] sac]
-    == 
-  ::                                                    ::  ++refine-card:me
-  ++  refine-card                                       ::  card from vase
-    |=  vax/vase
-    ^-  (pair mill worm)
-    ::
-    ::  specialize span to actual card data
-    ::
-    =^  hex  sac  (~(spec wa sac) vax)
-    =^  hip  sac  (~(nell wa sac) p.hex)
-    ?>  hip
-    ?.  ?=($meta -.q.hex)  
-      ::
-      ::  for an non-meta card, the mill is the vase
-      ::
-      [[%& hex] sac]
-    ::
-    ::  tiv: vase of vase of card
-    ::  typ: vase of span
-    ::
-    =^  tiv  sac  (~(slot wa sac) 3 hex)
-    =^  hip  sac  (~(nell wa sac) p.tiv)
-    ?>  hip
-    =^  typ  sac  (~(slot wa sac) 2 tiv)
-    =.  sac  (~(neat wa sac) -:!>(*span) %& hex)
-    ::
-    ::  support for meta-meta-cards has been removed
-    ::
-    [[%| (^ q.tiv)] sac]
-  --
 ::                                                      ::  ++le
 ++  le                                                  ::  deep engine
-  =+  [now=*@da *mast:live]
+  =+  [now=*@da *mall:live]
   =*  ::  
       ::  sys: system state
       ::
@@ -259,13 +167,179 @@
   |%
   ::                                                    ::  ++abet:le
   ++  abet                                              ::  complete cycle
-    ^-  {(pair (unit boot) (list ovum)) _sys}
-    :-  [but.gut (flop out.gut)]
-    sys(out.gut ~, but.gut ~)
+    ^-  {(each (list ovum) seed) _sys}
+    ?^  but.gut
+      [[%| u.but.gut] sys]
+    [[%& (flop out.gut)] sys(out.gut ~)]
+  ::                                                    ::  ++boot:le
+  ++  boot                                              ::  reboot
+    |=  $:  ::  hyn: optional hoon.hoon source
+            ::  arv: arvo.hoon source
+            ::
+            hyn/(unit @t)
+            arv/@t
+        ==
+    ^-  {* *}
+    ::  hun: require full hoon recompile
+    ::
+    ?>  ?=(^ hyn) 
+    =*  hun  u.hyn
+    ::
+    ::  compile the hoon.hoon source with the current compiler
+    ::
+    ~&  [%hoon-compile `@p`(mug hun)]
+    =+  raw=(ride %noun hun)
+    ::
+    ::  activate the new compiler gate
+    ::
+    =+  cop=.*(0 +.raw)
+    ::
+    ::  find the hoon version number of the new kernel
+    ::
+    =+  nex=(@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon])))
+    ?>  |(=(nex hoon) =(+(nex) hoon))
+    ::
+    ::  if we're upgrading language versions, recompile the compiler
+    ::
+    =>  ?:  =(nex hoon)
+          [hot=`*`raw .]
+        ~&  [%hoon-compile-upgrade nex]
+        =+  hot=.*(cop(+< [%noun hun]) -.cop)
+        .(cop .*(0 +.hot))
+    ::
+    ::  extract the hoon core from the outer gate
+    ::
+    =+  hoc=.*(cop [0 7])
+    ::
+    ::  compute the span of the hoon.hoon core
+    ::
+    =+  hyp=-:.*(cop(+< [-.hot '+>']) -.cop)
+    ::
+    ::  compile arvo
+    ::
+    ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug van)]
+    =+  rav=.*(cop(+< [hyp van]) -.cop)
+    ::
+    ::  create the arvo kernel
+    ::
+    =+  arv=.*(hoc +.rav)
+    ::
+    ::  extract the arvo core from the outer gate
+    ::
+    =+  voc=.*(arv [0 7])
+    ::
+    ::  compute the span of the arvo.hoon core
+    ::
+    =+  vip=-:.*(cop(+< [-.rav '+>']) -.cop)
+    ::
+    ::  entry gate: ++load for the normal case, ++come for upgrade
+    ::
+    =+  gat=.*(voc +:.*(cop(+< [vip ?:(=(nex hoon) 'load' 'come')]) -.cop))
+    ::
+    ::  sample: [date system-state]
+    ::
+    =+  sam=[now sys]
+    ::
+    ::  call into the new kernel
+    ::
+    .*(gat(+< sam) -.gat)
+  ::                                                    ::  ++call:le
+  ++  call                                              ::  forward to vane
+    |=  {hen/duct way/term hil/mill}
+    ^+  +>
+    (call:(spin way hen) hil)
+  ::                                                    ::  ++doze:le
+  ++  doze                                              ::  next wakeup by vane
+    |=  way/term
+    ^-  (unit @da)
+    doze:(plow way)
   ::                                                    ::  ++emit:le
   ++  emit                                              ::  emit move
     |=  mov/move:live
     +>(run.gut [mov run.gut]) 
+  ::                                                    ::  ++grow:le
+  ++  grow                                              ::  hardcoded prefixes
+    |=  lay/term
+    ^-  term
+    ?+  lay  !!
+      $a  %ames
+      $b  %behn
+      $c  %clay
+      $d  %dill
+      $e  %eyre
+      $f  %ford
+      $g  %gall
+      $j  %jael
+    ==
+  ::                                                    ::  ++loop:le
+  ++  loop                                              ::  main loop
+    ^+  .
+    ::  done if stack is empty
+    ::
+    ?~  run.gut  .
+    ::
+    ::  mov: top move on stack
+    ::
+    =/  mov  `move:live`i.run.gut
+    ::
+    ::  pop top move off stack
+    ::
+    =>  .(run.gut t.run.gut)
+    ::
+    ::  interpret top move
+    ::
+    ?-    -.q.mov
+    ::
+    ::  %give: return move
+    ::
+        $give
+      ::
+      ::  the duct can't be empty
+      ::
+      ?>  ?=(^ p.mov)
+      ::
+      ::  tea: top wire on duct
+      ::  nex: rest of duct
+      ::
+      =/  tea  i.p.mov
+      =*  nex  t.p.mov
+      ::
+      ::  route gift by wire
+      ::
+      ?.  ?=({$$ *} tea)
+        ::
+        ::  the caller was another vane
+        ::
+        ?>  ?=({@tas *} tea)
+        (take nex i.tea t.tea p.q.mov)
+      ::
+      ::  the caller was arvo itself
+      ::
+      ?:  ?=({$unix $~} t.tea)
+        ::
+        ::  the caller was unix i/o
+        ::
+        (unix nex (wile p.q.mov))
+      ?>  ?=({$arvo $~} t.tea)
+      ::
+      ::  the caller was boot logic
+      ::
+      (warp nex ((hard wasp) (wile p.q.mov)))
+    ::
+    ::  %pass: forward move
+    ::
+        $pass
+      ::  tea: proximate cause of action
+      ::  hen: ultimate cause of action
+      ::  way: target 
+      ::  hil: event data
+      ::
+      =*  tea  p.q.mov
+      =*  hen  p.mov
+      =*  way  p.q.q.mov
+      =*  hil  q.q.q.mov
+      (call [tea hen] way hil)
+    ==
   ::                                                    ::  ++pike:le
   ++  pike                                              ::  event to %pass
     |=  $:  ::  way: event route
@@ -295,7 +369,7 @@
     ::
     ::  push move on stack, and work.
     ::
-    work:(emit mov)
+    loop:(emit mov)
   ::                                                    ::  ++open:le
   ++  open                                              ::  input card to move
     |=  fav/card
@@ -310,12 +384,32 @@
     ~|  [%le-open -.fav]
     ?>  =(fav q.vax)
     [vax +>.$]
+  ::                                                    ::  ++peek:le
+  ++  peek                                              ::  namespace
+    |=  $:  ::  lyc: other ships result may leak to
+            ::  cyr: general perspective, eg %cx
+            ::  bem: name
+            ::
+            lyc/(unit (set ship))
+            cyr/term
+            bem/beam
+        ==
+    ^-  (unit (unit cave))
+    ::
+    ::  way: vane to look in
+    ::  car: perspective within vane
+    ::
+    =*  way  (grow (end 3 1 cyr))
+    =*  car  (rsh 3 1 cyr)
+    (peek:(plow(eny.mal `@`0) way) lyc car bem)
+  ::                                                    ::  ++plow:le
+  ++  plow                                              ::  plowing vane
+    |=  way/term
+    (va-plow:(va-amid:va way) now eny.mal peek)
   ::                                                    ::  ++poke:le
   ++  poke                                              ::  event from unix
-    |=  $:  ::  now: event date
-            ::  ovo: event
+    |=  $:  ::  ovo: event
             ::
-            now/@da
             ovo/ovum
         ==
     ^+  +>
@@ -336,13 +430,29 @@
         $thus  (pike %eyre now ovo)
         $wake  (pike %behn now ovo)
     ::
-        ?($what $whom $whim $wise)
+        ?($wack $what $whom $whim $wise)
       =/  wap  ((hard wasp) ovo)
       =*  tea  `wire`[%$ %arvo ~]
       =*  hen  `duct`[tea [p.ovo ~]]
       =*  mov  `move:live`[hen %give %& !>(wap)]
       (emit mov)
     ==
+  ::                                                    ::  ++spin:le
+  ++  spin                                              ::  spinning vane
+    |=  {way/term hen/duct}
+    (spin:(plow way) hen)
+  ::
+  ++  take
+    |=  {hen/duct way/term tea/wire hil/mill}
+    ^+  +>
+    =<  loop
+    (take:(spin way hen) tea hil)
+  ::                                                    ::  ++unix:le
+  ++  unix                                              ::  return to unix
+    |=  {hen/duct fav/card}
+    ^+  +>
+    ?>  ?=({* $~} hen)
+    loop(out.gut [[i.hen fav] out.gut])
   ::                                                    ::  ++va:le
   ++  va                                                ::  vane engine
     |_  $:  ::  way: vane name, eg `%ames`
@@ -396,8 +506,8 @@
         =^  pro  sac.hax  (~(slap wa sac.hax) wok [%limb %doze])
         =.  sac.hax  (~(neat wa sac.hax) -:!>(*(unit @da)) %& pro)
         ((unit @da) q.pro)
-      ::                                                ::  ++scry:va-plow:va:le
-      ++  scry                                          ::  internal peek
+      ::                                                ::  ++peek:va-plow:va:le
+      ++  peek                                          ::  internal peek
         |=  $:  ::  lyc: set of output ships
                 ::  car: local perspective
                 ::  bem: true path
@@ -412,7 +522,7 @@
         ::  pro: namespace output
         ::
         =/  yeb  !>([lyc car bem])
-        =^  pro  sac.hax  (~(call wa sac.hax) wok %scry %& yeb)
+        =^  pro  sac.hax  (~(call wa sac.hax) wok %peek %& yeb)
         =.  sac.hax  (~(neat wa sac.hax) -:!>([*mark *vase]) %& pro)
         ::
         ::  detect unit cases
@@ -531,6 +641,7 @@
     |=  {hen/duct wap/wasp}
     ^+  +>
     ?-  -.wap 
+      $wack  +>(eny.mal (mix (shaz (mix now eny.mal)) (shaz p.wap)))
       $what  (what hen p.wap)
       $whim  +>(nym.rep p.wap)
       $wise  +>(roy.rep p.wap)
@@ -540,7 +651,13 @@
   ++  whom                                              ::  initialize ship
     |=  {hen/duct our/@p}
     ^+  +>
+    ::  initialization only happens once
+    ::  
     ?>  =(& off.mal)
+    ::
+    ::  continue working after initialization
+    ::
+    =<  loop
     ::
     ::  set all flags
     ::
@@ -554,13 +671,13 @@
       %-  ~(run by van.mal) 
       |=(vase (slam +< !>(our)))
     ::
-    ::  boot vanes in alphabetical order
+    ::  send vanes `[%boot ~]` card, in alphabetical order
     ::
     =/  fal  (sort (turn (~(tap by van.mal)) |=({term *} +<-)) aor)
     |-  ^+  +>.^$
     ?~  fal  +>.^$
     =.  +>.^$  $(fal t.fal)
-    (emit [hen %pass [%$ %arvo ~] i.fal %& !>([%init ~])])
+    (emit [hen %pass [%$ %arvo ~] i.fal %& !>([%boot ~])])
   ::                                                    ::  ++wile:le
   ++  wile                                              ::  mill as card
     |=  hil/mill
@@ -628,7 +745,7 @@
     ::  but: kernel reboot operation, if any
     ::
     =/  but
-      ^-  (unit boot:live)
+      ^-  (unit seed)
       =/  hun  (~(get by rez.dev) /sys/hoon)
       =/  arv  (~(get by rez.dev) /sys/arvo)
       ?~  hun
@@ -667,7 +784,7 @@
       ==
     ::  keep working after vane upgrades
     ::
-    =<  work
+    =<  loop
     ::
     ::  job: plan for upgrading 
     ::
@@ -750,125 +867,182 @@
     ?~  vat.job  +>.^$
     ~&  [%vane-boot p.i.vat.job `@p`(mug q.i.vat.job)]
     $(vat.job t.vat.job, +>.^$ (wine i.vat.job))
-  ::                                                    ::  ++unix:le
-  ++  unix                                              ::  return to unix
-    |=  {hen/duct fav/card}
-    ^+  +>
-    ?>  ?=({* $~} hen)
-    work(out.gut [[i.hen fav] out.gut])
-  ::                                                    ::  ++plow:le
-  ++  plow                                              ::  plowing vane
-    |=  way/term
-    (va-plow:(va-amid:va way) now eny.mal peek)
-  ::                                                    ::  ++spin:le
-  ++  spin                                              ::  spinning vane
-    |=  {way/term hen/duct}
-    (spin:(plow way) hen)
-  ::                                                    ::  ++call:le
-  ++  call                                              ::  forward to vane
-    |=  {hen/duct way/term hil/mill}
-    ^+  +>
-    (call:(spin way hen) hil)
-  ::                                                    ::  ++grow:le
-  ++  grow                                              ::  hardcoded prefixes
-    |=  lay/term
-    ^-  term
-    ?+  lay  !!
-      $a  %ames
-      $b  %behn
-      $c  %clay
-      $d  %dill
-      $e  %eyre
-      $f  %ford
-      $g  %gall
-      $j  %jael
-    ==
-  ::                                                    ::  ++peek:le
-  ++  peek                                              ::  namespace
-    |=  $:  ::  lyc: other ships result may leak to
-            ::  cyr: general perspective, eg %cx
-            ::  bem: name
-            ::
-            lyc/(unit (set ship))                       ::  leakset
-            cyr/term                                    ::  full perspective
-            bem/beam                                    ::  path
-        ==
-    ^-  (unit (unit cave))
-    ::
-    ::  way: vane to look in
-    ::  car: perspective within vane
-    ::
-    =*  way  (grow (end 3 1 cyr))
-    =*  car  (rsh 3 1 cyr)
-    (scry:(plow(eny.mal `@`0) way) lyc car bem)
+  --
+::                                                      ::  ++me
+++  me                                                  ::  dynamic analysis
+  ::  sac: compiler cache
   ::
-  ++  take
-    |=  {hen/duct way/term tea/wire hil/mill}
-    ^+  +>
-    (take:(spin way hen) tea hil)
-  ::                                                    ::  ++work:le
-  ++  work                                              ::  main loop
-    =*  ken  .
-    ^+  ken
+  |_  sac/worm
+  ::                                                    ::  ++refine-moves:me
+  ++  refine-moves                                      ::  move list from vase
+    |=  vax/vase
+    ^-  {(list move:live) worm}
+    ?:  =(~ q.vax)  [~ sac]
+    =^  hed  sac  (~(slot wa sac) 2 vax)
+    =^  tal  sac  (~(slot wa sac) 3 vax)
+    =^  mov  sac  (refine-move hed)
+    =^  moz  sac  $(vax tal)
+    [[mov moz] sac]
+  ::                                                    ::  ++refine-move:me
+  ++  refine-move                                       ::  move from vase
+    |=  vax/vase
+    ^-  {move:live worm}
     ::
-    ::  no-op if stack is empty
+    ::  den: ++duct vase
+    ::  yat: card vase
     ::
-    ?~  run.gut  ken
+    =^  hip  sac  (~(nell wa sac) p.vax)
+    ?>  hip
+    =^  den  sac  (~(slot wa sac) 2 vax)
+    =^  yat  sac  (~(slot wa sac) 3 vax)
+    =.  sac  (~(neat wa sac) -:!>(*duct) %& den)
+    ?>  hip
+    =^  del  sac  (refine-ball yat)
+    [[(duct q.den) del] sac]
+  ::                                                    ::  ++refine-ball:me
+  ++  refine-ball                                       ::  ball from vase
+    |=  vax/vase
+    ^-  {ball:live worm}
     ::
-    ::  mov: top move on stack
-    ::  hen: cause of move
-    ::  act: action in move
+    ::  specialize span to actual card stem
     ::
-    =/  mov  `move:live`i.run.gut
-    ::
-    ::  pop top move off stack
-    ::
-    =>  .(run.gut t.run.gut)
-    ::
-    ::  interpret top move
-    ::
-    ?-    -.q.mov
-    ::
-    ::  %give: return move
-    ::
+    =^  hex  sac  (~(spec wa sac) vax)
+    ?+    -.q.hex  ~|(%bad-move !!)
         $give
+      =.  sac  (~(neat wa sac) -:!>([%give *card]) %& hex)
       ::
-      ::  the duct can't be empty
-      ::
-      ?>  ?=(^ p.mov)
-      ::
-      ::  tea: top wire on duct
-      ::  nex: rest of duct
-      ::
-      =/  tea  i.p.mov
-      =*  nex  t.p.mov
-      ::
-      ::  route gift by wire
-      ::
-      ?:  ?=({$$ *} tea)
-        ::
-        ::  gift returned on arvo wire
-        ::
-        ?:  ?=({$unix $~} t.tea)
-          ::
-          ::  gift returned to unix i/o
-          ::
-          (unix nex (wile p.q.mov))
-        ?>  ?=({$arvo $~} t.tea)
-        ::
-        ::  gift returned to arvo control
-        ::
-        (warp nex ((hard wasp) (wile p.q.mov)))
-      ::
-      ::  gift returned to calling vane
-      ::
-      ?>  ?=({@tas *} tea)
-      (take nex i.tea t.tea p.q.mov)
-    ::
-    ::  %pass: forward move
+      ::  yed: vase containing card
+      ::  hil: card as mill
+      ::  
+      =^  yed  sac  (~(slot wa sac) 3 hex)
+      =^  hil  sac  (refine-card yed) 
+      [[%give hil] sac]
     ::
         $pass
-      (call [p.q.mov p.mov] p.q.q.mov q.q.q.mov)
-    ==
+      =.  sac  (~(neat wa sac) -:!>([%pass *path *term *card]) %& hex)
+      ::
+      ::  yed: vase containing card
+      ::  hil: card as mill
+      ::  
+      =^  yed  sac  (~(slot wa sac) 15 hex)
+      =^  hil  sac  (refine-card yed) 
+      [[%pass (path +6:p.hex) (term +14:p.hex) hil] sac]
+    == 
+  ::                                                    ::  ++refine-card:me
+  ++  refine-card                                       ::  card from vase
+    |=  vax/vase
+    ^-  (pair mill worm)
+    ::
+    ::  specialize span to actual card data
+    ::
+    =^  hex  sac  (~(spec wa sac) vax)
+    =^  hip  sac  (~(nell wa sac) p.hex)
+    ?>  hip
+    ?.  ?=($meta -.q.hex)  
+      ::
+      ::  for an non-meta card, the mill is the vase
+      ::
+      [[%& hex] sac]
+    ::
+    ::  tiv: vase of vase of card
+    ::  typ: vase of span
+    ::
+    =^  tiv  sac  (~(slot wa sac) 3 hex)
+    =^  hip  sac  (~(nell wa sac) p.tiv)
+    ?>  hip
+    =^  typ  sac  (~(slot wa sac) 2 tiv)
+    =.  sac  (~(neat wa sac) -:!>(*span) %& hex)
+    ::
+    ::  support for meta-meta-cards has been removed
+    ::
+    [[%| (^ q.tiv)] sac]
   --
 --  
+::                                                      ::  ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (4) interface
+::                                                      ::  ::
+=|  sys/mall:live
+|%
+::                                                      ::  ++come
+++  come                                                ::  load old-hoon, +11
+  |=  {now/@da old/mall:vile}
+  ^+  +>
+  ::  trivial when arvo models don't change
+  ::
+  (load now old)
+::                                                      ::  ++keep
+++  keep                                                ::  timeout, +4
+  |=  {now/@da pax/path}
+  ^-  (unit @da)
+  ::
+  ::  XX: change interface to specify vane, not path
+  ::  XX: rename "keep" to "doze"
+  ::  way: vane of timeout
+  ::
+  ?>  ?=({$$ @tas $~} pax)
+  =*  way  i.t.pax
+  (~(doze le now sys) way)
+::                                                      ::  ++load
+++  load                                                ::  load current, +86
+  |=  {now/@da new/mall:live}
+  (poke(sys new) now *ovum)
+::                                                      ::  ++peek
+++  peek                                                ::  inspect, 87
+  |=  {now/@da pax/path}
+  ^-  (unit *)
+  ::
+  ::  XX: adapt external users to modern (unit (unit cage))
+  ::
+  ?.  ?=({@ta @ta @ta @ta *} pax)  ~
+  ::
+  ::  lyc: access control, `[~ ~]` gets anything
+  ::  cyr: perspective
+  ::  bec: path head, `[ship desk case]`
+  ::  tyl: path tail
+  ::  nut: peek result
+  ::
+  =/  lyc  `(unit (set ship))`[~ ~]
+  =/  cyr  ?>(((sane %tas) i.pax) `@tas`i.pax)
+  =/  bec  ^-  beak
+    :+  (slav %p i.t.pax)
+      (slav %tas i.t.t.pax)
+    ((hard case) (slay i.t.t.t.pax))
+  =*  tyl  t.t.t.t.pax     
+  =/  nut  (~(peek le now sys) lyc cyr bec tyl)
+  ?~  nut  ~
+  ?~  u.nut  ~
+  [~ +.q.u.u.nut]
+::                                                      ::  ++poke
+++  poke                                                ::  apply, 42
+  |=  {now/@da ovo/ovum}
+  ^-  {* *}
+  ::
+  ::  iterate entropy, it can't hurt
+  ::
+  =.  eny.mal.sys  (mix (shaz now) eny.mal.sys)
+  ::
+  ::  produce a new state, and either output or a reboot 
+  ::
+  =^  new  sys  
+    =<  abet
+    ::
+    ::  as a hack for reboots, an empty ovum is a no-op
+    ::
+    ?:  =(*ovum ovo)
+      ~(loop le now sys)
+    (~(poke le now sys) ovo)
+  ?-  -.new
+    ::
+    ::  no reboot; produce output and current core
+    ::
+    $&  [`(list ovum)`p.new +>.$]
+  ::
+  ::  reboot; produce loop result from new kernel
+  ::
+  ~&  %poke-reboot
+  ~(boot le now sys)
+::                                                      ::  ++wish
+++  wish                                                ::  compute, 20
+  |=  src/hoof
+  q:(slap ?:(off.mal.sys !>(+>) zus.mal.sys) (ream txt))
+--
