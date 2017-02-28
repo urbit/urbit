@@ -1,5 +1,5 @@
 !:                                                      ::  /van/zuse
-::                                                      ::  !%reference/1
+::                                                      ::  %reference/1
 ::  %zuse: arvo library.
 ::
 ::  %zuse is two nested cores: the first for models

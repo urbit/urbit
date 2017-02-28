@@ -1,5 +1,5 @@
 !:                                                      ::  /sys/arvo
-::                                                      ::  !%reference/2
+::                                                      ::  %reference/2
 ::  %arvo: arvo microkernel.
 ::
 =<  ::  this lifecycle wrapper makes the arvo door
@@ -95,7 +95,6 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::  (2) state molds
 ::                                                      ::  ::
 |% 
-++  seed  (pair (unit hoof) hoof)                       ::  hoon/arvo boot src
 ++  evil                                                ::  evolvable state
   |*  {span/_span twig/_twig vase/_vase}                ::  injected molds
   |%                                                    ::
@@ -143,6 +142,7 @@
   --                                                    ::
 ++  hoof  @t                                            ::  hoon source file
 ++  live  (evil)                                        ::  modern molds
+++  seed  (pair (unit hoof) hoof)                       ::  hoon/arvo boot src
 ++  vile  (evil typo twit vise)                         ::  old molds
 ++  wasp                                                ::  arvo effect
   $%  {$wack p/@uvJ}                                    ::  add entropy
@@ -173,21 +173,29 @@
   ::                                                    ::  ++boot:le
   ++  boot                                              ::  reboot
     |=  $:  ::  hyn: optional hoon.hoon source
-            ::  arv: arvo.hoon source
+            ::  ars: arvo.hoon source
             ::
             hyn/(unit @t)
-            arv/@t
+            ars/@t
         ==
     ^-  {* *}
-    ::  hun: require full hoon recompile
-    ::
-    ?>  ?=(^ hyn) 
-    =*  hun  u.hyn
+    ?~  hyn
+      ::  hon: hoon kernel as a vase
+      ::  are: arvo kernel as a vase
+      ::  arc: arvo core as a vase
+      ::  lod: load gate on arvo core
+      ::
+      =/  hon  !>(..ride)
+      ~&  [%compile-arvo `@p`(mug p.hon) `@p`(mug ars)]
+      =*  are  (slap hon (ream ars))
+      =*  arc  (slot 7 are)
+      =*  lod  (slap arc [%limb %load])
+      (^ q:(slam lod !>([now sys])))
     ::
     ::  compile the hoon.hoon source with the current compiler
     ::
-    ~&  [%hoon-compile `@p`(mug hun)]
-    =+  raw=(ride %noun hun)
+    ~&  [%hoon-compile `@p`(mug u.hyn)]
+    =+  raw=(ride %noun u.hyn)
     ::
     ::  activate the new compiler gate
     ::
@@ -203,7 +211,7 @@
     =>  ?:  =(nex hoon)
           [hot=`*`raw .]
         ~&  [%hoon-compile-upgrade nex]
-        =+  hot=.*(cop(+< [%noun hun]) -.cop)
+        =+  hot=.*(cop(+< [%noun u.hyn]) -.cop)
         .(cop .*(0 +.hot))
     ::
     ::  extract the hoon core from the outer gate
@@ -216,8 +224,8 @@
     ::
     ::  compile arvo
     ::
-    ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug arv)]
-    =+  rav=.*(cop(+< [hyp arv]) -.cop)
+    ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug ars)]
+    =+  rav=.*(cop(+< [hyp ars]) -.cop)
     ::
     ::  create the arvo kernel
     ::
