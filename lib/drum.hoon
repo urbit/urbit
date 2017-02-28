@@ -577,7 +577,7 @@
         $v  ta-bel
         $w  ?:  =(0 pos.inp)
               ta-bel
-            =+  sop=(ta-off %l %ace pos.inp)
+            =+  sop=(ta-pos %l %ace pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
         $x  +>(..ta se-anon)
         $y  ?:  =(0 num.kil)
@@ -639,22 +639,31 @@
       ==
     ==
   ::
+  ++  ta-off                                          ::  reset buffer offset
+    |=  ted/sole-edit
+    =.  off  ?:  |-  ?.  ?=({$mor *} ted)
+                   ?=({$set *} ted)
+                 |-  ?~(p.ted | |(^$(ted i.p.ted) $(p.ted t.p.ted)))
+               0
+             off
+    +>
+  ::
   ++  ta-got                                          ::  apply change
     |=  cal/sole-change
     =^  ted  say.inp  (~(receive sole say.inp) cal)
-    (ta-dog ted)
+    (ta-dog:(ta-off ted.cal) ted)
   ::
   ++  ta-hom                                          ::  local edit
     |=  ted/sole-edit
     ^+  +>
-    =.  +>  (ta-det ted)
+    =.  +>  (ta-det:(ta-off ted) ted)
     (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
   ::
   ++  ta-jump                                         ::  buffer pos
     |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
     ^-  @ud
     %-  ?:(?=($l dir) sub add)
-    [pos (ta-off dir til pos)]
+    [pos (ta-pos dir til pos)]
   ::
   ++  ta-kil                                          ::  kill selection
     |=  {dir/?($l $r) sel/{@ @}}
@@ -695,7 +704,7 @@
             ::
       $bac  ?:  =(0 pos.inp)                          ::  kill left-word
               ta-bel
-            =+  sop=(ta-off %l %edg pos.inp)
+            =+  sop=(ta-pos %l %edg pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
             ::
       $b    ?:  =(0 pos.inp)                          ::  jump left-word
@@ -712,7 +721,7 @@
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))         ::  kill right-word
               ta-bel
-            (ta-kil %r [pos.inp (ta-off %r %edg pos.inp)])
+            (ta-kil %r [pos.inp (ta-pos %r %edg pos.inp)])
             ::
       $f    ?:  =(pos.inp (lent buf.say.inp))         ::  jump right-word
               ta-bel
@@ -729,7 +738,7 @@
             ?:  =(b c)
               ta-bel
             =+  next=[b (sub a b)]
-            =+  prev=[c (ta-off %r %edg c)]
+            =+  prev=[c (ta-pos %r %edg c)]
             %-  ta-hom(pos.inp a)
             :~  %mor
                 (rep:edit next (swag prev buf.say.inp))
@@ -741,7 +750,7 @@
               ta-bel
             =+  case=?:(?=($u key) cuss cass)
             =+  sop=(ta-jump %r %wrd pos.inp)
-            =+  sel=[sop (ta-off %r %edg sop)]
+            =+  sel=[sop (ta-pos %r %edg sop)]
             %-  ta-hom
             %+  rep:edit  sel
             ^-  (list @c)  ^-  (list @)               :: XX unicode
@@ -784,7 +793,7 @@
       old.hit  [buf.say.inp old.hit]
     ==
   ::
-  ++  ta-off                                          ::  buffer pos offset
+  ++  ta-pos                                          ::  buffer pos offset
     |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
     ^-  @ud
     %-  ?-  til  $ace  ace:offset
