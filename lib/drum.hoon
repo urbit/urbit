@@ -405,7 +405,11 @@
   ^+  +>
   =/  pol  (lent-char:klr pom)
   =/  end  (sub edg pol)
-  =.  off  ?:((lte p.lin end) 0 (sub p.lin end))
+  =.  off  ?:  (gth p.lin (add end off))
+             (sub p.lin end)
+           ?:  (lth p.lin off)
+             (min p.lin (dec off))
+           off
   %+  se-show
     (sub (add pol p.lin) off)
   (welp pom [*stye:dill (swag [off end] q.lin)]~)
