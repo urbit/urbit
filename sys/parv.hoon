@@ -9,7 +9,6 @@
     ::  can ignore it.
     ::
     |=  {now/@da ovo/ovum}
-    ^+  .
     ~>  %slog.[0 leaf+"arvo-event"]
     .(+> +:(poke now ovo))
 =>
@@ -217,8 +216,8 @@
     ::
     ::  compile arvo
     ::
-    ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug van)]
-    =+  rav=.*(cop(+< [hyp van]) -.cop)
+    ~&  [%compile-arvo `@p`(mug hyp) `@p`(mug arv)]
+    =+  rav=.*(cop(+< [hyp arv]) -.cop)
     ::
     ::  create the arvo kernel
     ::
@@ -242,7 +241,7 @@
     ::
     ::  call into the new kernel
     ::
-    .*(gat(+< sam) -.gat)
+    (^ .*(gat(+< sam) -.gat))
   ::                                                    ::  ++call:le
   ++  call                                              ::  forward to vane
     |=  {hen/duct way/term hil/mill}
@@ -966,7 +965,10 @@
 ::                                                      ::  ++come
 ++  come                                                ::  load old-hoon, +11
   |=  {now/@da old/mall:vile}
-  ^+  +>
+  ::
+  ::  if typed, would produce `{(list ovum) _+>}`
+  ::
+  ^-  {* *}
   ::  trivial when arvo models don't change
   ::
   (load now old)
@@ -985,6 +987,10 @@
 ::                                                      ::  ++load
 ++  load                                                ::  load current, +86
   |=  {now/@da new/mall:live}
+  ::
+  ::  if typed, would produce `{(list ovum) _+>}`
+  ::
+  ^-  {* *}
   (poke(sys new) now *ovum)
 ::                                                      ::  ++peek
 ++  peek                                                ::  inspect, 87
@@ -1015,6 +1021,9 @@
 ::                                                      ::  ++poke
 ++  poke                                                ::  apply, 42
   |=  {now/@da ovo/ovum}
+  ::
+  ::  if typed, would produce `{(list ovum) _+>}`
+  ::
   ^-  {* *}
   ::
   ::  iterate entropy, it can't hurt
@@ -1036,13 +1045,13 @@
     ::  no reboot; produce output and current core
     ::
     $&  [`(list ovum)`p.new +>.$]
-  ::
-  ::  reboot; produce loop result from new kernel
-  ::
-  ~&  %poke-reboot
-  ~(boot le now sys)
+    ::
+    ::  reboot; produce loop result from new kernel
+    ::
+    $|  ~(boot le now sys)
+  ==
 ::                                                      ::  ++wish
 ++  wish                                                ::  compute, 20
   |=  src/hoof
-  q:(slap ?:(off.mal.sys !>(+>) zus.mal.sys) (ream txt))
+  q:(slap ?:(off.mal.sys !>(+>) zus.mal.sys) (ream src))
 --
