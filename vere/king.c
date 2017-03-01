@@ -254,6 +254,21 @@ void _king_socket_connect(uv_stream_t *sock, int status)
   u3_newt_read((u3_moat *)mor_u);
 }
 
+void _boothack_cb(uv_connect_t *conn, int status)
+{
+  u3_mojo *moj_u = conn->data;
+  u3_atom doom;
+  u3_atom pax, sys;
+
+  pax = u3i_string(u3_Host.dir_c);
+  sys = u3i_string(u3_Host.ops_u.pil_c);
+
+  doom = u3ke_jam(u3nc(c3__doom,
+                       u3nc(c3__boot,
+                            u3nq(0, pax, sys, 0))));
+  u3_newt_write(moj_u, doom, 0);
+}
+
 void _king_loop_init()
 {
   /* move signals out of unix.c */
@@ -286,6 +301,14 @@ void _king_loop_init()
     sig_u->num_i = SIGWINCH;
     sig_u->nex_u = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
+  }
+  /* boot hack */
+  {
+    u3_moor *mor_u = c3_malloc(sizeof(u3_moor));
+    uv_connect_t *conn = c3_malloc(sizeof(uv_connect_t));
+    conn->data = mor_u;
+    uv_pipe_init(u3L, &mor_u->pyp_u, 0);
+    uv_pipe_connect(conn, &mor_u->pyp_u, "/tmp/urbit.sock", _boothack_cb);
   }
 }
 
