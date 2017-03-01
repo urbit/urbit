@@ -19,5 +19,3 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   inherit (crossenv) host os;
 }
-
-# TODO: add the pdcurses demos
