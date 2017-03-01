@@ -24,7 +24,7 @@ cd build
 ../readline-$version/configure \
   --prefix=$out --host=$host \
   --enable-static --disable-shared \
-  --with-curses=$pdcurses
+  --with-curses=$curses
 
 make
 

@@ -20,7 +20,8 @@ rec {
   };
 
   readline = import ./pkgs/readline {
-    inherit crossenv pdcurses;
+    inherit crossenv;
+    curses = pdcurses;
   };
 
   expat = import ./pkgs/expat {
