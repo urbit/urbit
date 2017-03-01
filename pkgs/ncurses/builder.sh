@@ -1,5 +1,7 @@
 source $stdenv/setup
 
+unset CC CXX
+
 tar -xf $src
 
 mkdir build
