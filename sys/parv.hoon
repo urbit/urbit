@@ -168,7 +168,13 @@
   ++  abet                                              ::  complete cycle
     ^-  {(each (list ovum) seed) _sys}
     ?^  but.gut
+      ::
+      ::  cycle has ordered a reboot; report it
+      ::
       [[%| u.but.gut] sys]
+    ::
+    ::  no reboot; flush output
+    ::
     [[%& (flop out.gut)] sys(out.gut ~)]
   ::                                                    ::  ++boot:le
   ++  boot                                              ::  reboot
