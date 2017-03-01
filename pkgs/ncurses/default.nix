@@ -1,3 +1,7 @@
+# NOTE: ncurses currently does not compile for mingw because it cannot
+# find its own _nc_mingw_tcgetattr and _nc_mingw_tcsetattr functions.
+# We will probably just use pdcurses instead.
+
 { crossenv }:
 
 crossenv.nixpkgs.stdenv.mkDerivation rec {
@@ -19,4 +23,3 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   inherit (crossenv) host os;
 }
-

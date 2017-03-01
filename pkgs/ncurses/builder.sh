@@ -1,6 +1,6 @@
 source $stdenv/setup
 
-unset CC CXX
+unset CC CXX LD
 
 tar -xf $src
 
