@@ -309,7 +309,7 @@
   =+  wag=se-amor
   ?~  wag  +
   ::  ~&  [%se-anon inx+inx wag+wag nex+(mod +(inx) (lent se-amor))]
-  +(inx (mod +(inx) (lent wag)))
+  +(off 0, inx (mod +(inx) (lent wag)))
 ::
 ++  se-agon                                           ::  current gill
   ^-  (unit gill)
