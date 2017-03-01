@@ -1,4 +1,7 @@
-{ crossenv, zlib, expat, readline, pdcurses }:
+{ crossenv, zlib, expat, curses }:
+
+# Note: GDB has a bundled copy of readline that it uses.
+# There is a --with-system-readline option we could try to use.
 
 # TODO: provide a mingw-w64 isl to gdb because its configure script looks for it?
 
@@ -13,7 +16,9 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   };
 
   patches = [
-    ./substitute-path-all-filenames.patch  # TODO: consider removing if upstream does not accept
+    # Make GCC better at finding source files.
+    # https://sourceware.org/ml/gdb-patches/2017-02/msg00693.html
+    ./substitute-path-all-filenames.patch
   ];
 
   buildInputs = [
@@ -26,7 +31,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     crossenv.nixpkgs.flex
   ];
 
-  inherit zlib expat readline pdcurses;
+  inherit zlib expat curses;
 
   builder = ./builder.sh;
 

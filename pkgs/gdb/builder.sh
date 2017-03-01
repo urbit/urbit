@@ -24,8 +24,7 @@ cd build
   --target=$host \
   --with-zlib=$zlib \
   --with-expat=$expat \
-  --with-readline=$readline \
-  --with-curses=$pdcurses \
+  --with-curses=$curses \
   --disable-tui \
   --disable-win32-registry \
   --disable-rpath
