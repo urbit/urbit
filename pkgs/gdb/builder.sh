@@ -23,7 +23,7 @@ cd build
   --host=$host \
   --target=$host \
   --with-zlib=$zlib \
-  --with-expat=$expat \
+  --with-expat=yes --with-libexpat-prefix=$expat \
   --with-curses=$curses \
   --disable-tui \
   --disable-win32-registry \
