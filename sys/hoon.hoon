@@ -1869,7 +1869,7 @@
   =>
     ~%  %cofl  +>  ~
     ::  internal functions; mostly operating on {e/@s a/@u}, in other words
-    ::  positive numbers. many of these have undefined behavior if a=0.
+    ::  positive numbers. many of these error out if a=0.
     |%
     ++  rou
       |=  {a/{e/@s a/@u}}  ^-  fn  (rau a &)
@@ -1908,7 +1908,7 @@
       =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
       =+  ^=  w  %+  dif:si  e.a  %-  sun:si
         ?:  (gth prc ma)  (^sub prc ma)  0
-      =+  ^=  x  %+  sum:si  e.b  (sun:si mb)
+      =+  ^=  x  %+  sum:si  e.b  (sun:si +(mb))
       ?:  &(!e =((cmp:si w x) --1))
         ?-  r
           $z  (lug %sm a &)  $d  (lug %sm a &)
@@ -1954,15 +1954,6 @@
       ?:  =((cmp:si e.a e.b) -1)
         (^lth (rsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
       (^lth (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
-    ::
-    ++  lte                                             ::  less-equals
-      |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  ?
-      ?:  =(e.a e.b)  (^lte a.a a.b)
-      =+  c=(cmp:si (ibl a) (ibl b))
-      ?:  =(c -1)  &  ?:  =(c --1)  |
-      ?:  =((cmp:si e.a e.b) -1)
-        (^lte a.a (lsh 0 (abs:si (dif:si e.a e.b)) a.b))
-      (^lte (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
     ::
     ++  equ                                             ::  equals
       |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  ?
@@ -2277,14 +2268,7 @@
   ::
   ++  lte                                               ::  less-equal
     |=  {a/fn b/fn}  ^-  (unit ?)
-    ?:  |(?=({$n *} a) ?=({$n *} b))  ~  :-  ~
-    ?:  =(a b)  &
-    ?:  ?=({$i *} a)  !s.a  ?:  ?=({$i *} b)  s.b
-    ?:  |(=(a.a 0) =(a.b 0))
-      ?:  &(=(a.a 0) =(a.b 0))  &
-      ?:  =(a.a 0)  s.b  !s.a
-    ?:  !=(s.a s.b)  s.b
-    ?:  s.a  (^lte +>.a +>.b)  (^lte +>.b +>.a)
+    %+  bind  (lth b a)  |=  a/?  !a
   ::
   ++  equ                                               ::  equal
     |=  {a/fn b/fn}  ^-  (unit ?)
@@ -2694,31 +2678,6 @@
   ::
   ++  fos                                               ::  @rs to @rh
     |=  {a/@rs}  (bit (sea:rs a))
-  ::
-  ++  lth  ~/  %lth                                     ::  less-than
-    |=  {a/@rh b/@rh}
-    ~_  leaf+"rh-fail"
-    (lth:ma a b)
-  ::
-  ++  lte  ~/  %lte                                     ::  less-equals
-    |=  {a/@rh b/@rh}
-    ~_  leaf+"rh-fail"
-    (lte:ma a b)
-  ::
-  ++  equ  ~/  %equ                                     ::  equals
-    |=  {a/@rh b/@rh}
-    ~_  leaf+"rh-fail"
-    (equ:ma a b)
-  ::
-  ++  gte  ~/  %gte                                     ::  greater-equals
-    |=  {a/@rh b/@rh}
-    ~_  leaf+"rh-fail"
-    (gte:ma a b)
-  ::
-  ++  gth  ~/  %gth                                     ::  greater-than
-    |=  {a/@rh b/@rh}
-    ~_  leaf+"rh-fail"
-    (gth:ma a b)
   ::
   ++  sun  |=  {a/@u}  ^-  @rh  (sun:ma a)              ::  uns integer to @rh
   ++  san  |=  {a/@s}  ^-  @rh  (san:ma a)              ::  sgn integer to @rh
