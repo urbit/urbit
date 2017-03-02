@@ -73,12 +73,18 @@ void _king_doom(u3_noun doom);
   void _king_pier(u3_noun pier);
   void _king_root(u3_noun root);
 
-void _king_defy_fate()
+/* _king_defy_fate(): invalid fate
+*/
+void
+_king_defy_fate()
 {
   exit(1);
 }
 
-void _king_fate(void *vod_p, u3_noun mat)
+/* _king_fate(): top-level fate parser
+*/
+void
+_king_fate(void *vod_p, u3_noun mat)
 {
   u3_noun fate = u3ke_cue(u3k(mat));
   u3_noun load;
@@ -106,11 +112,17 @@ void _king_fate(void *vod_p, u3_noun mat)
   next(load);
 }
 
-void _king_auth(u3_noun auth)
+/* _king_auth(): auth parser
+*/
+void
+_king_auth(u3_noun auth)
 {
 }
 
-void _king_wyrd(u3_noun ship_wyrd)
+/* _king_wyrd(): wyrd parser
+*/
+void
+_king_wyrd(u3_noun ship_wyrd)
 {
   u3_atom ship;
   u3_noun wyrd;
@@ -142,11 +154,17 @@ void _king_wyrd(u3_noun ship_wyrd)
   next(ship, load);
 }
 
-void _king_susp(u3_atom ship, u3_noun susp)
+/* _king_susp(): susp parser
+*/
+void
+_king_susp(u3_atom ship, u3_noun susp)
 {
 }
 
-void _king_vent(u3_atom ship, u3_noun vent)
+/* _king_vent(): vent parser
+*/
+void
+_king_vent(u3_atom ship, u3_noun vent)
 {
   /* stub; have to find pier from ship */
   u3z(ship);
@@ -154,7 +172,10 @@ void _king_vent(u3_atom ship, u3_noun vent)
   u3z(vent);
 }
 
-void _king_doom(u3_noun doom)
+/* _king_doom(): doom parser
+*/
+void
+_king_doom(u3_noun doom)
 {
   u3_noun load;
   void (*next)(u3_noun);
@@ -184,7 +205,10 @@ void _king_doom(u3_noun doom)
   next(load);
 }
 
-void _king_boot(u3_noun boot)
+/* _king_boot(): boot parser
+*/
+void
+_king_boot(u3_noun boot)
 {
   u3_noun pax_n, sys_n;
   c3_c *pax_c, *sys_c;
@@ -203,19 +227,31 @@ void _king_boot(u3_noun boot)
   u3_pier_boot(pax_c, sys_c, pep_u);
 }
 
-void _king_exit(u3_noun exit)
+/* _king_exit(): exit parser
+*/
+void
+_king_exit(u3_noun exit)
 {
 }
 
-void _king_pier(u3_noun pier)
+/* _king_pier(): pier parser
+*/
+void
+_king_pier(u3_noun pier)
 {
 }
 
-void _king_root(u3_noun root)
+/* _king_root(): root parser
+*/
+void
+_king_root(u3_noun root)
 {
 }
 
-void _king_bail(u3_moor *vod_p, const c3_c *err_c)
+/* _king_bail(): bail for command socket newt
+*/
+void
+_king_bail(u3_moor *vod_p, const c3_c *err_c)
 {
   u3_moor *free_p;
   fprintf(stderr, "_king_bail: %s\r\n", err_c);
@@ -230,7 +266,10 @@ void _king_bail(u3_moor *vod_p, const c3_c *err_c)
   }
 }
 
-void _king_socket_connect(uv_stream_t *sock, int status)
+/* _king_socket_connect(): callback for new connections
+*/
+void
+_king_socket_connect(uv_stream_t *sock, int status)
 {
   u3_moor *mor_u;
   if ( u3K.cli_u == 0 ) {
@@ -254,7 +293,10 @@ void _king_socket_connect(uv_stream_t *sock, int status)
   u3_newt_read((u3_moat *)mor_u);
 }
 
-void _boothack_cb(uv_connect_t *conn, int status)
+/* _boothack_cb(): callback for the boothack self-connection
+*/
+void
+_boothack_cb(uv_connect_t *conn, int status)
 {
   u3_mojo *moj_u = conn->data;
   u3_atom doom;
@@ -269,7 +311,10 @@ void _boothack_cb(uv_connect_t *conn, int status)
   u3_newt_write(moj_u, doom, 0);
 }
 
-void _king_loop_init()
+/* _king_loop_init(): stuff that comes before the event loop
+*/
+void
+_king_loop_init()
 {
   /* move signals out of unix.c */
   {
@@ -312,7 +357,10 @@ void _king_loop_init()
   }
 }
 
-void _king_loop_exit()
+/* _king_loop_exit(): cleanup after event loop
+*/
+void
+_king_loop_exit()
 {
   /*  all needs to move extept unlink */
   c3_l cod_l;
@@ -348,7 +396,10 @@ void _king_loop_exit()
   unlink("/tmp/urbit.sock");
 }
 
-void u3_king_commence()
+/* u3_king_commence(): start the daemon
+*/
+void
+u3_king_commence()
 {
   u3_Host.lup_u = uv_default_loop();
 
