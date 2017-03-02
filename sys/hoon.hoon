@@ -2019,9 +2019,9 @@
           $sm  [%f & zer]
           $ce  [%f & spd]
           $lg  [%f & spd]
-          $ne  ?:  s  [%f & ?:((^lte b (bex (dec q))) zer spd)]
+          $ne  ?:  s  [%f & ?:((lte b (bex (dec q))) zer spd)]
                [%f & ?:((^lth b (bex (dec q))) zer spd)]
-          $nt  ?:  s  [%f & ?:((^lte b (bex (dec q))) zer spd)]
+          $nt  ?:  s  [%f & ?:((lte b (bex (dec q))) zer spd)]
                [%f & ?:((^lth b (bex (dec q))) zer spd)]
           $na  [%f & ?:((^lth b (bex (dec q))) zer spd)]
         ==
@@ -2035,7 +2035,7 @@
           $sm  ?.  &(=(b 0) s)  a
                ?:  &(=(e.a emn) !=(den %i))  a(a (dec a.a))
                =+  y=(dec (^mul a.a 2))
-               ?.  (^lte (met 0 y) prc)  a(a (dec a.a))
+               ?.  (lte (met 0 y) prc)  a(a (dec a.a))
                [(dif:si e.a --1) y]
           $ce  ?:  &(=(b 0) s)  a  a(a +(a.a))
           $ne  ?~  b  a
@@ -2661,6 +2661,7 @@
   --
 ::
 ++  rh                                                  ::  half precision fp
+  ~%  %rh  +>  ~
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -2672,6 +2673,61 @@
   ::
   ++  bit                                               ::  fn to @rh
     |=  {a/fn}  ^-  @rh  (bit:ma a)
+  ::
+  ++  add  ~/  %add                                     ::  add
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (add:ma a b)
+  ::
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  {a/@rh b/@rh c/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  {a/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (sqt:ma a)
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  {a/@rh b/@rh}
+    ~_  leaf+"rh-fail"
+    (lth:ma a b)
+  ::
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  {a/@rh b/@rh}
+    ~_  leaf+"rh-fail"
+    (lte:ma a b)
+  ::
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  {a/@rh b/@rh}
+    ~_  leaf+"rh-fail"
+    (equ:ma a b)
+  ::
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  {a/@rh b/@rh}
+    ~_  leaf+"rh-fail"
+    (gte:ma a b)
+  ::
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  {a/@rh b/@rh}
+    ~_  leaf+"rh-fail"
+    (gth:ma a b)
   ::
   ++  tos                                               ::  @rh to @rs
     |=  {a/@rh}  (bit:rs (sea a))
