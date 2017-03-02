@@ -270,6 +270,7 @@ J_E_OFILES=\
        jets/e/rd.o \
        jets/e/rq.o \
        jets/e/rs.o \
+       jets/e/rh.o \
        jets/e/rub.o \
        jets/e/scr.o \
        jets/e/shax.o \

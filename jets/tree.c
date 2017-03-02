@@ -247,6 +247,14 @@ static u3j_core _149_qua_d[] =
 
 /* layer three
 */
+    static u3j_harm _149_tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
+    static u3j_harm _149_tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
+  static u3j_core _149_tri__cofl_d[] =
+    { { "drg", _149_tri__cofl__drg_a },
+      { "lug", _149_tri__cofl__lug_a },
+      {}
+    };
+
     static u3j_harm _149_tri__rd_add_a[] = {{".2", u3wer_add}, {}};
     static u3j_harm _149_tri__rd_sub_a[] = {{".2", u3wer_sub}, {}};
     static u3j_harm _149_tri__rd_mul_a[] = {{".2", u3wer_mul}, {}};
@@ -272,15 +280,6 @@ static u3j_core _149_qua_d[] =
       { "gth", _149_tri__rd_gth_a },
       {}
     };
-
-    static u3j_harm _149_tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
-    static u3j_harm _149_tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
-  static u3j_core _149_tri__cofl_d[] =
-    { { "drg", _149_tri__cofl__drg_a },
-      { "lug", _149_tri__cofl__lug_a },
-      {}
-    };
-
     static u3j_harm _149_tri__rs_add_a[] = {{".2", u3wet_add}, {}};
     static u3j_harm _149_tri__rs_sub_a[] = {{".2", u3wet_sub}, {}};
     static u3j_harm _149_tri__rs_mul_a[] = {{".2", u3wet_mul}, {}};
@@ -333,6 +332,32 @@ static u3j_core _149_qua_d[] =
       {}
     };
 
+    static u3j_harm _149_tri__rh_add_a[] = {{".2", u3wes_add}, {}};
+    static u3j_harm _149_tri__rh_sub_a[] = {{".2", u3wes_sub}, {}};
+    static u3j_harm _149_tri__rh_mul_a[] = {{".2", u3wes_mul}, {}};
+    static u3j_harm _149_tri__rh_div_a[] = {{".2", u3wes_div}, {}};
+    static u3j_harm _149_tri__rh_sqt_a[] = {{".2", u3wes_sqt}, {}};
+    static u3j_harm _149_tri__rh_fma_a[] = {{".2", u3wes_fma}, {}};
+    static u3j_harm _149_tri__rh_lth_a[] = {{".2", u3wes_lth}, {}};
+    static u3j_harm _149_tri__rh_lte_a[] = {{".2", u3wes_lte}, {}};
+    static u3j_harm _149_tri__rh_equ_a[] = {{".2", u3wes_equ}, {}};
+    static u3j_harm _149_tri__rh_gte_a[] = {{".2", u3wes_gte}, {}};
+    static u3j_harm _149_tri__rh_gth_a[] = {{".2", u3wes_gth}, {}};
+  static u3j_core _149_tri__rh_d[] =
+    { { "add", _149_tri__rh_add_a },
+      { "sub", _149_tri__rh_sub_a },
+      { "mul", _149_tri__rh_mul_a },
+      { "div", _149_tri__rh_div_a },
+      { "sqt", _149_tri__rh_sqt_a },
+      { "fma", _149_tri__rh_fma_a },
+      { "lth", _149_tri__rh_lth_a },
+      { "lte", _149_tri__rh_lte_a },
+      { "equ", _149_tri__rh_equ_a },
+      { "gte", _149_tri__rh_gte_a },
+      { "gth", _149_tri__rh_gth_a },
+      {}
+    };
+
     static u3j_harm _149_tri__aesc_en_a[] = {{".2", u3wea_en}, {}};
     static u3j_harm _149_tri__aesc_de_a[] = {{".2", u3wea_de}, {}};
   static u3j_core _149_tri__aesc_d[] =
@@ -359,6 +384,7 @@ static u3j_core _149_tri_d[] =
     { "rd", 0, _149_tri__rd_d },
     { "rs", 0, _149_tri__rs_d },
     { "rq", 0, _149_tri__rq_d },
+    { "rh", 0, _149_tri__rh_d },
     { "og", 0, _149_tri__og_d },
     { "shax", _149_tri_shax_a },
     { "shay", _149_tri_shay_a },
@@ -813,6 +839,14 @@ static u3j_core _150_qua_d[] =
 
 /* layer three
 */
+    static u3j_harm _150_tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
+    static u3j_harm _150_tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
+  static u3j_core _150_tri__cofl_d[] =
+    { { "drg", _150_tri__cofl__drg_a },
+      { "lug", _150_tri__cofl__lug_a },
+      {}
+    };
+
     static u3j_harm _150_tri__rd_add_a[] = {{".2", u3wer_add}, {}};
     static u3j_harm _150_tri__rd_sub_a[] = {{".2", u3wer_sub}, {}};
     static u3j_harm _150_tri__rd_mul_a[] = {{".2", u3wer_mul}, {}};
@@ -836,14 +870,6 @@ static u3j_core _150_qua_d[] =
       { "equ", _150_tri__rd_equ_a },
       { "gte", _150_tri__rd_gte_a },
       { "gth", _150_tri__rd_gth_a },
-      {}
-    };
-
-    static u3j_harm _150_tri__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
-    static u3j_harm _150_tri__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
-  static u3j_core _150_tri__cofl_d[] =
-    { { "drg", _150_tri__cofl__drg_a },
-      { "lug", _150_tri__cofl__lug_a },
       {}
     };
 
@@ -899,6 +925,32 @@ static u3j_core _150_qua_d[] =
       {}
     };
 
+    static u3j_harm _150_tri__rh_add_a[] = {{".2", u3wes_add}, {}};
+    static u3j_harm _150_tri__rh_sub_a[] = {{".2", u3wes_sub}, {}};
+    static u3j_harm _150_tri__rh_mul_a[] = {{".2", u3wes_mul}, {}};
+    static u3j_harm _150_tri__rh_div_a[] = {{".2", u3wes_div}, {}};
+    static u3j_harm _150_tri__rh_sqt_a[] = {{".2", u3wes_sqt}, {}};
+    static u3j_harm _150_tri__rh_fma_a[] = {{".2", u3wes_fma}, {}};
+    static u3j_harm _150_tri__rh_lth_a[] = {{".2", u3wes_lth}, {}};
+    static u3j_harm _150_tri__rh_lte_a[] = {{".2", u3wes_lte}, {}};
+    static u3j_harm _150_tri__rh_equ_a[] = {{".2", u3wes_equ}, {}};
+    static u3j_harm _150_tri__rh_gte_a[] = {{".2", u3wes_gte}, {}};
+    static u3j_harm _150_tri__rh_gth_a[] = {{".2", u3wes_gth}, {}};
+  static u3j_core _150_tri__rh_d[] =
+    { { "add", _150_tri__rh_add_a },
+      { "sub", _150_tri__rh_sub_a },
+      { "mul", _150_tri__rh_mul_a },
+      { "div", _150_tri__rh_div_a },
+      { "sqt", _150_tri__rh_sqt_a },
+      { "fma", _150_tri__rh_fma_a },
+      { "lth", _150_tri__rh_lth_a },
+      { "lte", _150_tri__rh_lte_a },
+      { "equ", _150_tri__rh_equ_a },
+      { "gte", _150_tri__rh_gte_a },
+      { "gth", _150_tri__rh_gth_a },
+      {}
+    };
+
     static u3j_harm _150_tri__aesc_en_a[] = {{".2", u3wea_en}, {}};
     static u3j_harm _150_tri__aesc_de_a[] = {{".2", u3wea_de}, {}};
   static u3j_core _150_tri__aesc_d[] =
@@ -925,6 +977,7 @@ static u3j_core _150_tri_d[] =
     { "rd", 0, _150_tri__rd_d },
     { "rs", 0, _150_tri__rs_d },
     { "rq", 0, _150_tri__rq_d },
+    { "rh", 0, _150_tri__rh_d },
     { "og", 0, _150_tri__og_d },
     { "shax", _150_tri_shax_a },
     { "shay", _150_tri_shay_a },
