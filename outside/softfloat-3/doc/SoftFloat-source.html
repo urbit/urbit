@@ -7,11 +7,11 @@
 
 <BODY>
 
-<H1>Berkeley SoftFloat Release 3: Source Documentation</H1>
+<H1>Berkeley SoftFloat Release 3c: Source Documentation</H1>
 
 <P>
 John R. Hauser<BR>
-2015 February 16<BR>
+2017 February 10<BR>
 </P>
 
 
@@ -53,7 +53,7 @@ This document gives information needed for compiling and/or porting Berkeley
 SoftFloat, a library of C functions implementing binary floating-point
 conforming to the IEEE Standard for Floating-Point Arithmetic.
 For basic documentation about SoftFloat refer to
-<A HREF="SoftFloat.html"><CODE>SoftFloat.html</CODE></A>.
+<A HREF="SoftFloat.html"><NOBR><CODE>SoftFloat.html</CODE></NOBR></A>.
 </P>
 
 <P>
@@ -65,10 +65,11 @@ SoftFloat has been successfully compiled with the GNU C Compiler
 </P>
 
 <P>
-<NOBR>Release 3</NOBR> of SoftFloat is a complete rewrite relative to
+<NOBR>Release 3</NOBR> of SoftFloat was a complete rewrite relative to
 <NOBR>Release 2</NOBR> or earlier.
 Changes to the interface of SoftFloat functions are documented in
-<A HREF="SoftFloat.html"><CODE>SoftFloat.html</CODE></A>.
+<A HREF="SoftFloat.html"><NOBR><CODE>SoftFloat.html</CODE></NOBR></A>.
+The current version of SoftFloat is <NOBR>Release 3c</NOBR>.
 </P>
 
 
@@ -88,7 +89,7 @@ arithmetic on <NOBR>64-bit</NOBR> integers.
 Earlier releases of SoftFloat included implementations of <NOBR>32-bit</NOBR>
 single-precision and <NOBR>64-bit</NOBR> double-precision floating-point that
 did not require <NOBR>64-bit</NOBR> integers, but this option is not supported
-with <NOBR>Release 3</NOBR>.
+starting with <NOBR>Release 3</NOBR>.
 Since 1999, ISO standards for C have mandated compiler support for
 <NOBR>64-bit</NOBR> integers.
 A compiler conforming to the 1999 C Standard or later is recommended but not
@@ -102,8 +103,8 @@ integer types.
 If these headers are not supplied with the C compiler, minimal substitutes must
 be provided.
 SoftFloat&rsquo;s dependence on these headers is detailed later in
-<NOBR>section 5.1</NOBR>, <I>Standard Headers &lt;stdbool.h&gt; and
-&lt;stdint.h&gt;</I>.
+<NOBR>section 5.1</NOBR>, <I>Standard Headers <CODE>&lt;stdbool.h&gt;</CODE>
+and <CODE>&lt;stdint.h&gt;</CODE></I>.
 </P>
 
 
@@ -111,12 +112,12 @@ SoftFloat&rsquo;s dependence on these headers is detailed later in
 
 <P>
 The SoftFloat package was written by me, <NOBR>John R.</NOBR> Hauser.
-<NOBR>Release 3</NOBR> of SoftFloat is a completely new implementation
+<NOBR>Release 3</NOBR> of SoftFloat was a completely new implementation
 supplanting earlier releases.
-This project (<NOBR>Release 3</NOBR> only, not earlier releases) was done in
-the employ of the University of California, Berkeley, within the Department of
-Electrical Engineering and Computer Sciences, first for the Parallel Computing
-Laboratory (Par Lab) and then for the ASPIRE Lab.
+The project to create <NOBR>Release 3</NOBR> (now <NOBR>through 3c</NOBR>) was
+done in the employ of the University of California, Berkeley, within the
+Department of Electrical Engineering and Computer Sciences, first for the
+Parallel Computing Laboratory (Par Lab) and then for the ASPIRE Lab.
 The work was officially overseen by Prof. Krste Asanovic, with funding provided
 by these sources:
 <BLOCKQUOTE>
@@ -147,43 +148,56 @@ Oracle, and Samsung.
 </P>
 
 <P>
-The following applies to the whole of SoftFloat <NOBR>Release 3</NOBR> as well
+The following applies to the whole of SoftFloat <NOBR>Release 3c</NOBR> as well
 as to each source file individually.
 </P>
 
 <P>
-Copyright 2011, 2012, 2013, 2014, 2015 The Regents of the University of
-California (Regents).
-All Rights Reserved.
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 The Regents of the
+University of California.
+All rights reserved.
 </P>
 
 <P>
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+<OL>
+
+<LI>
+<P>
 Redistributions of source code must retain the above copyright notice, this
-list of conditions, and the following two paragraphs of disclaimer.
+list of conditions, and the following disclaimer.
+</P>
+
+<LI>
+<P>
 Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions, and the following two paragraphs of disclaimer in the
-documentation and/or other materials provided with the distribution.
-Neither the name of the Regents nor the names of its contributors may be used
-to endorse or promote products derived from this software without specific
+list of conditions, and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+</P>
+
+<LI>
+<P>
+Neither the name of the University nor the names of its contributors may be
+used to endorse or promote products derived from this software without specific
 prior written permission.
 </P>
 
-<P>
-IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
-INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
-THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</OL>
 </P>
 
 <P>
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS
-PROVIDED "<NOBR>AS IS</NOBR>".
-REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS &ldquo;AS IS&rdquo;,
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
+DISCLAIMED.
+IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </P>
 
 
@@ -222,9 +236,9 @@ processors.
 The files in directory <CODE>8086</CODE> give floating-point behavior
 consistent solely with Intel&rsquo;s older, 8087-derived floating-point, while
 those in <NOBR><CODE>8086-SSE</CODE></NOBR> update the behavior of the
-non-extended formats (<CODE>float32_t</CODE>, <CODE>float64_t</CODE>, and
-<CODE>float128_t</CODE>) to mirror Intel&rsquo;s more recent Streaming SIMD
-Extensions (SSE) and other compatible extensions.
+non-extended formats (<CODE>float16_t</CODE>, <CODE>float32_t</CODE>,
+<CODE>float64_t</CODE>, and <CODE>float128_t</CODE>) to mirror Intel&rsquo;s
+more recent Streaming SIMD Extensions (SSE) and other compatible extensions.
 If other specializations are attempted, these would be expected to be other
 subdirectories of <CODE>source</CODE> alongside <CODE>8086</CODE> and
 <NOBR><CODE>8086-SSE</CODE></NOBR>.
@@ -246,13 +260,13 @@ contain sample files for creating new target directories.
 <P>
 Ignoring the <CODE>template</CODE> directories, the supplied target directories
 are intended to follow a naming system of
-<NOBR><CODE>&lt;execution-environment&gt;-&lt;compiler&gt;</CODE></NOBR>.
+<NOBR><CODE>&lt;<I>execution-environment</I>&gt;-&lt;<I>compiler</I>&gt;</CODE></NOBR>.
 For the example targets,
-<NOBR><CODE>&lt;execution-environment&gt;</CODE></NOBR> is
+<NOBR><CODE>&lt;<I>execution-environment</I>&gt;</CODE></NOBR> is
 <NOBR><CODE>Linux-386</CODE></NOBR>, <NOBR><CODE>Linux-386-SSE2</CODE></NOBR>,
 <NOBR><CODE>Linux-x86_64</CODE></NOBR>, <CODE>Win32</CODE>,
 <NOBR><CODE>Win32-SSE2</CODE></NOBR>, or <CODE>Win64</CODE>, and
-<NOBR><CODE>&lt;compiler&gt;</CODE></NOBR> is <CODE>GCC</CODE>,
+<NOBR><CODE>&lt;<I>compiler</I>&gt;</CODE></NOBR> is <CODE>GCC</CODE>,
 <CODE>MinGW</CODE>, or <NOBR><CODE>MinGW-w64</CODE></NOBR>.
 </P>
 
@@ -352,13 +366,16 @@ The files in a specialization subdirectory must determine:
 <LI>
 whether tininess for underflow is detected before or after rounding by default;
 <LI>
-what (if anything) special happens when exceptions are raised;
-<LI>
 how signaling NaNs are distinguished from quiet NaNs;
 <LI>
-the default generated quiet NaNs; and
+what (if anything) special happens when exceptions are raised;
 <LI>
-how NaNs are propagated from function inputs to output.
+the default generated quiet NaNs;
+<LI>
+how NaNs are propagated from function inputs to output; and
+<LI>
+the integer results returned when conversions to integer type raise the
+<I>invalid</I> exception.
 </UL>
 </P>
 
@@ -388,30 +405,47 @@ needed.
 
 <P>
 The SoftFloat source files adapt the floating-point implementation according to
-a few C preprocessor macros:
+several C preprocessor macros:
 <BLOCKQUOTE>
 <DL>
 <DT><CODE>LITTLEENDIAN</CODE>
 <DD>
 Must be defined for little-endian machines; must not be defined for big-endian
 machines.
-<DT><CODE>SOFTFLOAT_FAST_INT64</CODE>
+<DT><CODE>INLINE</CODE>
 <DD>
-Can be defined to indicate that the build target&rsquo;s implementation of
-<NOBR>64-bit</NOBR> arithmetic is efficient.
-For newer <NOBR>64-bit</NOBR> processors, this macro should usually be defined.
-For very small microprocessors whose buses and registers are <NOBR>8-bit</NOBR>
-or <NOBR>16-bit</NOBR> in size, this macro should usually not be defined.
-Whether this macro should be defined for a <NOBR>32-bit</NOBR> processor may
-depend on the target machine and the applications that will use SoftFloat.
-<DT><CODE>SOFTFLOAT_FAST_DIV64TO32</CODE>
+Specifies the sequence of tokens used to indicate that a C function should be
+inlined.
+If macro <CODE>INLINE_LEVEL</CODE> is defined with a value of 1 or higher, this
+macro must be defined; otherwise, this macro is ignored and need not be
+defined.
+For compilers that conform to the C Standard&rsquo;s rules for inline
+functions, this macro can be defined as the single keyword <CODE>inline</CODE>.
+For other compilers that follow a convention pre-dating the standardization of
+<CODE>inline</CODE>, this macro may need to be defined to <CODE>extern</CODE>
+<CODE>inline</CODE>.
+<DT><CODE>THREAD_LOCAL</CODE>
 <DD>
-Can be defined to indicate that the target&rsquo;s division operator
-<NOBR>in C</NOBR> (written as <CODE>/</CODE>) is reasonably efficient for
-dividing a <NOBR>64-bit</NOBR> unsigned integer by a <NOBR>32-bit</NOBR>
-unsigned integer.
-Setting this macro may affect the performance of division, remainder, and
-square root operations.
+Can be defined to a sequence of tokens that, when appearing at the start of a
+variable declaration, indicates to the C compiler that the variable is
+<I>per-thread</I>, meaning that each execution thread gets its own separate
+instance of the variable.
+This macro is used in header <CODE>softfloat.h</CODE> in the declarations of
+variables <CODE>softfloat_roundingMode</CODE>,
+<CODE>softfloat_detectTininess</CODE>, <CODE>extF80_roundingPrecision</CODE>,
+and <CODE>softfloat_exceptionFlags</CODE>.
+If macro <CODE>THREAD_LOCAL</CODE> is left undefined, these variables will
+default to being ordinary global variables.
+Depending on the compiler, possible valid definitions of this macro include
+<CODE>_Thread_local</CODE> and <CODE>__thread</CODE>.
+</DL>
+<DL>
+<DT><CODE>SOFTFLOAT_ROUND_ODD</CODE>
+<DD>
+Can be defined to enable support for optional rounding mode
+<CODE>softfloat_round_odd</CODE>.
+</DL>
+<DL>
 <DT><CODE>INLINE_LEVEL</CODE>
 <DD>
 Can be defined to an integer to determine the degree of inlining requested of
@@ -422,35 +456,48 @@ If this macro is not defined or is defined to a value less <NOBR>than 1</NOBR>
 The maximum effective value is no higher <NOBR>than 5</NOBR>.
 Defining this macro to a value greater than 5 is the same as defining it
 <NOBR>to 5</NOBR>.
-<DT><CODE>INLINE</CODE>
+<DT><CODE>SOFTFLOAT_FAST_INT64</CODE>
 <DD>
-Specifies the sequence of tokens used to indicate that a C function should be
-inlined.
-If macro <CODE>INLINE_LEVEL</CODE> is defined with a value of 1 or higher, this
-macro must be defined; otherwise, this macro is ignored and need not be
-defined.
-For some compilers, this macro can be defined as the single keyword
-<CODE>inline</CODE>.
-Historically, the <CODE>gcc</CODE> compiler has required that this macro be
-defined to <CODE>extern</CODE> <CODE>inline</CODE>.
+Can be defined to indicate that the build target&rsquo;s implementation of
+<NOBR>64-bit</NOBR> arithmetic is efficient.
+For newer <NOBR>64-bit</NOBR> processors, this macro should usually be defined.
+For very small microprocessors whose buses and registers are <NOBR>8-bit</NOBR>
+or <NOBR>16-bit</NOBR> in size, this macro should usually not be defined.
+Whether this macro should be defined for a <NOBR>32-bit</NOBR> processor may
+depend on the target machine and the applications that will use SoftFloat.
+<DT><CODE>SOFTFLOAT_FAST_DIV32TO16</CODE>
+<DD>
+Can be defined to indicate that the target&rsquo;s division operator
+<NOBR>in C</NOBR> (written as <CODE>/</CODE>) is reasonably efficient for
+dividing a <NOBR>32-bit</NOBR> unsigned integer by a <NOBR>16-bit</NOBR>
+unsigned integer.
+Setting this macro may affect the performance of function <CODE>f16_div</CODE>.
+<DT><CODE>SOFTFLOAT_FAST_DIV64TO32</CODE>
+<DD>
+Can be defined to indicate that the target&rsquo;s division operator
+<NOBR>in C</NOBR> (written as <CODE>/</CODE>) is reasonably efficient for
+dividing a <NOBR>64-bit</NOBR> unsigned integer by a <NOBR>32-bit</NOBR>
+unsigned integer.
+Setting this macro may affect the performance of division, remainder, and
+square root operations other than <CODE>f16_div</CODE>.
 </DL>
 </BLOCKQUOTE>
 </P>
 
 <P>
-Following the usual custom <NOBR>for C</NOBR>, for the first three macros (all
-except <CODE>INLINE_LEVEL</CODE> and <CODE>INLINE</CODE>), the content of any
-definition is irrelevant;
+Following the usual custom <NOBR>for C</NOBR>, for most of these macros (all
+except <CODE>INLINE</CODE>, <CODE>THREAD_LOCAL</CODE>, and
+<CODE>INLINE_LEVEL</CODE>), the content of any definition is irrelevant;
 what matters is a macro&rsquo;s effect on <CODE>#ifdef</CODE> directives.
 </P>
 
 <P>
-It is recommended that any definitions of macros <CODE>LITTLEENDIAN</CODE> and
-<CODE>INLINE</CODE> be made in a build target&rsquo;s <CODE>platform.h</CODE>
-header file, because these macros are expected to be determined inflexibly by
-the target machine and compiler.
-The other three macros control optimization and might be better located in the
-target&rsquo;s Makefile (or its equivalent).
+It is recommended that any definitions of macros <CODE>LITTLEENDIAN</CODE>,
+<CODE>INLINE</CODE>, and <CODE>THREAD_LOCAL</CODE> be made in a build
+target&rsquo;s <CODE>platform.h</CODE> header file, because these macros are
+expected to be determined inflexibly by the target machine and compiler.
+The other five macros select options and control optimization, and thus might
+be better located in the target&rsquo;s Makefile (or its equivalent).
 </P>
 
 
@@ -482,7 +529,7 @@ underlying arithmetic operations upon which many of SoftFloat&rsquo;s
 floating-point functions are ultimately built.
 The SoftFloat sources include implementations of all of these functions/macros,
 written as standard C code, so a complete and correct SoftFloat library can be
-built using only the supplied code for all functions.
+created using only the supplied code for all functions.
 However, for many targets, SoftFloat&rsquo;s performance can be improved by
 substituting target-specific implementations of some of the functions/macros
 declared in <CODE>primitives.h</CODE>.
@@ -491,8 +538,8 @@ declared in <CODE>primitives.h</CODE>.
 <P>
 For example, <CODE>primitives.h</CODE> declares a function called
 <CODE>softfloat_countLeadingZeros32</CODE> that takes an unsigned
-<NOBR>32-bit</NOBR> integer as an argument and returns the maximal number of
-the integer&rsquo;s most-significant bits that are all zeros.
+<NOBR>32-bit</NOBR> integer as an argument and returns the number of the
+integer&rsquo;s most-significant bits that are zeros.
 While the SoftFloat sources include an implementation of this function written
 in <NOBR>standard C</NOBR>, many processors can perform this same function
 directly in only one or two machine instructions.
@@ -513,14 +560,15 @@ When a desired replacement implementation is a function, not a macro, it is
 sufficient for <CODE>platform.h</CODE> to include the line
 <BLOCKQUOTE>
 <PRE>
-#define &lt;function-name&gt; &lt;function-name&gt;
+#define &lt;<I>function-name</I>&gt; &lt;<I>function-name</I>&gt;
 </PRE>
 </BLOCKQUOTE>
-where <NOBR><CODE>&lt;function-name&gt;</CODE></NOBR> is the name of the
+where <NOBR><CODE>&lt;<I>function-name</I>&gt;</CODE></NOBR> is the name of the
 function.
-This technically defines <NOBR><CODE>&lt;function-name&gt;</CODE></NOBR> as a
-macro, but one that resolves to the same name, which may then be a function.
-(A preprocessor conforming to the C Standard must limit recursive macro
+This technically defines <NOBR><CODE>&lt;<I>function-name</I>&gt;</CODE></NOBR>
+as a macro, but one that resolves to the same name, which may then be a
+function.
+(A preprocessor that conforms to the C Standard must limit recursive macro
 expansion from being applied more than once.)
 </P>
 
@@ -532,7 +580,7 @@ SoftFloat can be tested using the <CODE>testsoftfloat</CODE> program by the
 same author.
 This program is part of the Berkeley TestFloat package available at the Web
 page
-<A HREF="http://www.jhauser.us/arithmetic/TestFloat.html"><CODE>http://www.jhauser.us/arithmetic/TestFloat.html</CODE></A>.
+<A HREF="http://www.jhauser.us/arithmetic/TestFloat.html"><NOBR><CODE>http://www.jhauser.us/arithmetic/TestFloat.html</CODE></NOBR></A>.
 The TestFloat package also has a program called <CODE>timesoftfloat</CODE> that
 measures the speed of SoftFloat&rsquo;s floating-point functions.
 </P>
@@ -544,18 +592,18 @@ measures the speed of SoftFloat&rsquo;s floating-point functions.
 Header file <CODE>softfloat.h</CODE> defines the SoftFloat interface as seen by
 clients.
 If the SoftFloat library will be made a common library for programs on a
-particular system, the supplied <CODE>softfloat.h</CODE> has a couple of
-deficiencies for this purpose:
+system, the supplied <CODE>softfloat.h</CODE> has a couple of deficiencies for
+this purpose:
 <UL>
 <LI>
 As supplied, <CODE>softfloat.h</CODE> depends on another header,
 <CODE>softfloat_types.h</CODE>, that is not intended for public use but which
 must also be visible to the programmer&rsquo;s compiler.
 <LI>
-More troubling, at the time <CODE>softfloat.h</CODE> is included in a C
-source file, macro <CODE>SOFTFLOAT_FAST_INT64</CODE> must be defined, or not
-defined, consistent with whether this macro was defined when the SoftFloat
-library was built.
+More troubling, at the time <CODE>softfloat.h</CODE> is included in a C source
+file, macros <CODE>SOFTFLOAT_FAST_INT64</CODE> and <CODE>THREAD_LOCAL</CODE>
+must be defined, or not defined, consistent with how these macro were defined
+when the SoftFloat library was built.
 </UL>
 In the situation that new programs may regularly <CODE>#include</CODE> header
 file <CODE>softfloat.h</CODE>, it is recommended that a custom, self-contained
@@ -568,7 +616,7 @@ version of this header file be created that eliminates these issues.
 <P>
 At the time of this writing, the most up-to-date information about SoftFloat
 and the latest release can be found at the Web page
-<A HREF="http://www.jhauser.us/arithmetic/SoftFloat.html"><CODE>http://www.jhauser.us/arithmetic/SoftFloat.html</CODE></A>.
+<A HREF="http://www.jhauser.us/arithmetic/SoftFloat.html"><NOBR><CODE>http://www.jhauser.us/arithmetic/SoftFloat.html</CODE></NOBR></A>.
 </P>
 
 

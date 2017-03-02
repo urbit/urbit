@@ -2,32 +2,35 @@
 /*============================================================================
 
 This C header file is part of the SoftFloat IEEE Floating-Point Arithmetic
-Package, Release 3, by John R. Hauser.
+Package, Release 3c, by John R. Hauser.
 
-Copyright 2011, 2012, 2013, 2014 The Regents of the University of California
-(Regents).  All Rights Reserved.  Redistribution and use in source and binary
-forms, with or without modification, are permitted provided that the following
-conditions are met:
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 The Regents of the
+University of California.  All rights reserved.
 
-Redistributions of source code must retain the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer.
-Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer in the
-documentation and/or other materials provided with the distribution.  Neither
-the name of the Regents nor the names of its contributors may be used to
-endorse or promote products derived from this software without specific prior
-written permission.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING
-OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS
-BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions, and the following disclaimer.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED
-TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
-HEREUNDER IS PROVIDED "AS IS".  REGENTS HAS NO OBLIGATION TO PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions, and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+ 3. Neither the name of the University nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS", AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
+DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =============================================================================*/
 
@@ -39,6 +42,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "primitives.h"
 #include "softfloat_types.h"
 
+union ui16_f16 { uint16_t ui; float16_t f; };
 union ui32_f32 { uint32_t ui; float32_t f; };
 union ui64_f64 { uint64_t ui; float64_t f; };
 
@@ -54,28 +58,46 @@ enum {
 
 /*----------------------------------------------------------------------------
 *----------------------------------------------------------------------------*/
-uint_fast32_t
- softfloat_roundPackToUI32( bool, uint_fast64_t, uint_fast8_t, bool );
+uint_fast32_t softfloat_roundToUI32( bool, uint_fast64_t, uint_fast8_t, bool );
 
 #ifdef SOFTFLOAT_FAST_INT64
 uint_fast64_t
- softfloat_roundPackToUI64(
+ softfloat_roundToUI64(
      bool, uint_fast64_t, uint_fast64_t, uint_fast8_t, bool );
 #else
-uint_fast64_t
- softfloat_roundPackMToUI64( bool, uint32_t *, uint_fast8_t, bool );
+uint_fast64_t softfloat_roundMToUI64( bool, uint32_t *, uint_fast8_t, bool );
 #endif
 
-int_fast32_t
- softfloat_roundPackToI32( bool, uint_fast64_t, uint_fast8_t, bool );
+int_fast32_t softfloat_roundToI32( bool, uint_fast64_t, uint_fast8_t, bool );
 
 #ifdef SOFTFLOAT_FAST_INT64
 int_fast64_t
- softfloat_roundPackToI64(
+ softfloat_roundToI64(
      bool, uint_fast64_t, uint_fast64_t, uint_fast8_t, bool );
 #else
-int_fast64_t softfloat_roundPackMToI64( bool, uint32_t *, uint_fast8_t, bool );
+int_fast64_t softfloat_roundMToI64( bool, uint32_t *, uint_fast8_t, bool );
 #endif
+
+/*----------------------------------------------------------------------------
+*----------------------------------------------------------------------------*/
+#define signF16UI( a ) ((bool) ((uint16_t) (a)>>15))
+#define expF16UI( a ) ((int_fast8_t) ((a)>>10) & 0x1F)
+#define fracF16UI( a ) ((a) & 0x03FF)
+#define packToF16UI( sign, exp, sig ) (((uint16_t) (sign)<<15) + ((uint16_t) (exp)<<10) + (sig))
+
+#define isNaNF16UI( a ) (((~(a) & 0x7C00) == 0) && ((a) & 0x03FF))
+
+struct exp8_sig16 { int_fast8_t exp; uint_fast16_t sig; };
+struct exp8_sig16 softfloat_normSubnormalF16Sig( uint_fast16_t );
+
+float16_t softfloat_roundPackToF16( bool, int_fast16_t, uint_fast16_t );
+float16_t softfloat_normRoundPackToF16( bool, int_fast16_t, uint_fast16_t );
+
+float16_t softfloat_addMagsF16( uint_fast16_t, uint_fast16_t );
+float16_t softfloat_subMagsF16( uint_fast16_t, uint_fast16_t );
+float16_t
+ softfloat_mulAddF16(
+     uint_fast16_t, uint_fast16_t, uint_fast16_t, uint_fast8_t );
 
 /*----------------------------------------------------------------------------
 *----------------------------------------------------------------------------*/
@@ -84,7 +106,7 @@ int_fast64_t softfloat_roundPackMToI64( bool, uint32_t *, uint_fast8_t, bool );
 #define fracF32UI( a ) ((a) & 0x007FFFFF)
 #define packToF32UI( sign, exp, sig ) (((uint32_t) (sign)<<31) + ((uint32_t) (exp)<<23) + (sig))
 
-#define isNaNF32UI( a ) ((((a) & 0x7F800000) == 0x7F800000) && ((a) & 0x007FFFFF))
+#define isNaNF32UI( a ) (((~(a) & 0x7F800000) == 0) && ((a) & 0x007FFFFF))
 
 struct exp16_sig32 { int_fast16_t exp; uint_fast32_t sig; };
 struct exp16_sig32 softfloat_normSubnormalF32Sig( uint_fast32_t );
@@ -92,8 +114,8 @@ struct exp16_sig32 softfloat_normSubnormalF32Sig( uint_fast32_t );
 float32_t softfloat_roundPackToF32( bool, int_fast16_t, uint_fast32_t );
 float32_t softfloat_normRoundPackToF32( bool, int_fast16_t, uint_fast32_t );
 
-float32_t softfloat_addMagsF32( uint_fast32_t, uint_fast32_t, bool );
-float32_t softfloat_subMagsF32( uint_fast32_t, uint_fast32_t, bool );
+float32_t softfloat_addMagsF32( uint_fast32_t, uint_fast32_t );
+float32_t softfloat_subMagsF32( uint_fast32_t, uint_fast32_t );
 float32_t
  softfloat_mulAddF32(
      uint_fast32_t, uint_fast32_t, uint_fast32_t, uint_fast8_t );
@@ -105,7 +127,7 @@ float32_t
 #define fracF64UI( a ) ((a) & UINT64_C( 0x000FFFFFFFFFFFFF ))
 #define packToF64UI( sign, exp, sig ) ((uint64_t) (((uint_fast64_t) (sign)<<63) + ((uint_fast64_t) (exp)<<52) + (sig)))
 
-#define isNaNF64UI( a ) ((((a) & UINT64_C( 0x7FF0000000000000 )) == UINT64_C( 0x7FF0000000000000 )) && ((a) & UINT64_C( 0x000FFFFFFFFFFFFF )))
+#define isNaNF64UI( a ) (((~(a) & UINT64_C( 0x7FF0000000000000 )) == 0) && ((a) & UINT64_C( 0x000FFFFFFFFFFFFF )))
 
 struct exp16_sig64 { int_fast16_t exp; uint_fast64_t sig; };
 struct exp16_sig64 softfloat_normSubnormalF64Sig( uint_fast64_t );
@@ -156,7 +178,7 @@ extFloat80_t
 #define fracF128UI64( a64 ) ((a64) & UINT64_C( 0x0000FFFFFFFFFFFF ))
 #define packToF128UI64( sign, exp, sig64 ) (((uint_fast64_t) (sign)<<63) + ((uint_fast64_t) (exp)<<48) + (sig64))
 
-#define isNaNF128UI( a64, a0 ) ((((a64) & UINT64_C( 0x7FFF000000000000 )) == UINT64_C( 0x7FFF000000000000 )) && (a0 || ((a64) & UINT64_C( 0x0000FFFFFFFFFFFF ))))
+#define isNaNF128UI( a64, a0 ) (((~(a64) & UINT64_C( 0x7FFF000000000000 )) == 0) && (a0 || ((a64) & UINT64_C( 0x0000FFFFFFFFFFFF ))))
 
 struct exp32_sig128 { int_fast32_t exp; struct uint128 sig; };
 struct exp32_sig128
