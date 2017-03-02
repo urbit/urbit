@@ -31,7 +31,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     crossenv.nixpkgs.flex
   ];
 
-  inherit zlib expat curses;
+  inherit expat curses;
 
   builder = ./builder.sh;
 
