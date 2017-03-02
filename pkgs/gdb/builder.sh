@@ -22,7 +22,6 @@ cd build
   --prefix=$out \
   --host=$host \
   --target=$host \
-  --with-zlib=$zlib \
   --with-expat=yes --with-libexpat-prefix=$expat \
   --with-curses=$curses \
   --disable-tui \

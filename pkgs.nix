@@ -33,7 +33,7 @@ rec {
   };
 
   gdb = import ./pkgs/gdb {
-    inherit crossenv zlib expat;
+    inherit crossenv expat;
     curses = pdcurses;
   };
 

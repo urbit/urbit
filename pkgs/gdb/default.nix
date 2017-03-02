@@ -1,4 +1,4 @@
-{ crossenv, zlib, expat, curses }:
+{ crossenv, expat, curses }:
 
 # Note: GDB has a bundled copy of readline that it uses.
 # There is a --with-system-readline option we could try to use.
