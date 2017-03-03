@@ -6772,12 +6772,21 @@
         [%axil %void]
       ?~  t.p.gen
         boil(gen i.p.gen)
-      =+  :*  def=bile(gen i.p.gen)
-              ^=  end  ^-  (list line)
-              ~_  leaf+"book-foul"
-              %+  turn  `(list hoon)`t.p.gen
-              |=(a/hoon =+(bile(gen a) ?>(?=($& -<) ->)))
-          ==
+      =/  def  bile(gen i.p.gen)
+      =|  tag/(set term)
+      =?  tag  ?=($& -.def)  (~(put in tag) `@tas`q.p.p.def)
+      =/  end
+        =|  lit/(list line)
+        |-  ^+  lit
+        =/  tar  bile(gen i.t.p.gen)
+        ?.  ?=($& -.tar)
+          ~_(leaf+"book-foul" !!)
+        =/  hed  `@tas`q.p.p.tar
+        ?:  (~(has in tag) hed)
+          ~_(leaf+"book-dup-page: {<hed>}" !!)
+        =.  lit  [+.tar lit]
+        ?~  t.t.p.gen  lit
+        $(tag (~(put in tag) hed), t.p.gen t.t.p.gen)
       ?-  -.def
         $&  [%kelp p.def end]
         $|  ?~(end p.def [%fern p.def [%kelp end] ~])
