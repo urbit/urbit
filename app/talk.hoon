@@ -1386,7 +1386,7 @@
         $review   (ra-think | her +.cod)
     ::
         $publish
-      ?.  (team our.hid her)  +>.$
+      ?.  (team:title our.hid her)  +>.$
       (ra-think & her +.cod)
     ==
   ::
