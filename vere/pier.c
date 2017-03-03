@@ -1818,41 +1818,21 @@ _pier_boot_make(c3_c* pax_c,
 */
 void
 u3_pier_boot(c3_c* pax_c,                   //  pier path
-             c3_c* sys_c)                   //  path to boot pill
+             c3_c* sys_c,                   //  path to boot pill
+             uv_prepare_t *pep_u)
 {
-  uv_prepare_t pep_u;
-
-  u3_Host.lup_u = uv_default_loop();
-
-  /* start up a "fast-compile" arvo for internal use only
-  */
-  u3m_boot_pier();
-  {
-    extern c3_w u3_Ivory_length_w;
-    extern c3_y u3_Ivory_pill_y[];
-    u3_noun     lit;
-
-    lit = u3i_bytes(u3_Ivory_length_w, u3_Ivory_pill_y);
-    u3v_boot_lite(lit);
-  }
-
   /* make initial pier
   */
   _pier_boot_make(pax_c, sys_c);
 
   /* initialize polling handle
   */
-  uv_prepare_init(u3_Host.lup_u, &pep_u);
-  uv_prepare_start(&pep_u, _pier_loop_prepare);
+  uv_prepare_init(u3_Host.lup_u, pep_u);
+  uv_prepare_start(pep_u, _pier_loop_prepare);
 
   /* initialize loop - move to _pier_boot_make().
   */
   _pier_loop_init();
 
-  /* enter loop
-  */
-  uv_run(u3L, UV_RUN_DEFAULT);
-
-  _pier_loop_exit();
-  exit(0);
+  /* remember to deal with _pier_loop_exit stuff */
 }
