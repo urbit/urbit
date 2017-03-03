@@ -232,9 +232,9 @@
     */
       typedef struct _u3_moat {
         uv_pipe_t        pyp_u;             //  input stream
+        u3_bail          bal_f;             //  error response function
         void*            vod_p;             //  callback pointer
         u3_poke          pok_f;             //  action function
-        u3_bail          bal_f;             //  error response function
         struct _u3_mess* mes_u;             //  message in progress
         c3_d             len_d;             //  length of stray bytes
         c3_y*            rag_y;             //  stray bytes
@@ -246,6 +246,18 @@
         uv_pipe_t pyp_u;                    //  output stream
         u3_bail   bal_f;                    //  error response function
       } u3_mojo;
+
+    /* u3_moor: two-way message stream, linked list */
+      typedef struct _u3_moor {
+        uv_pipe_t        pyp_u;
+        u3_bail          bal_f;
+        void*            vod_p;
+        u3_poke          pok_f;
+        struct _u3_mess* mes_u;
+        c3_d             len_d;
+        c3_y*            rag_y;
+        struct _u3_moor* nex_u;
+      } u3_moor;
 
     /* u3_foil: abstract chub-addressed file.
     */
@@ -439,7 +451,6 @@
         uv_check_t  syn_u;                  //  fs sync check
         uv_timer_t  tim_u;                  //  timer
         u3_umon*    mon_u;                  //  mount points
-        u3_usig*    sig_u;                  //  signal list
         c3_o        alm;                    //  timer set
         c3_o        dyr;                    //  ready to update
 #ifdef SYNCLOG
@@ -640,14 +651,12 @@
         c3_c*      dir_c;                   //  pier path (no trailing /)
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
+        u3_usig*   sig_u;                   //  signal list
         u3_http*   htp_u;                   //  http servers
         u3_cttp    ctp_u;                   //  http clients
         u3_utel    tel_u;                   //  telnet listener
         u3_utty*   uty_u;                   //  linked terminal list
-        u3_save    sav_u;                   //  autosave
         u3_opts    ops_u;                   //  commandline options
-        u3_unix    unx_u;                   //  sync and clay
-        u3_behn    teh_u;                   //  behn timer
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
@@ -716,13 +725,17 @@
       */
         typedef struct _u3_pier {
           c3_c*            pax_c;               //  pier directory
-          c3_c*            sys_c;               //  pill directory
+          c3_c*            sys_c;               //  pill file
+          c3_c*            arv_c;               //  arvo directory
           c3_d             gen_d;               //  last event discovered
           c3_d             but_d;               //  boot barrier
           c3_d             key_d[4];            //  save and passkey
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
-          u3_ames*         sam_u;              //  packet interface
+          u3_ames*         sam_u;               //  packet interface
+          u3_behn*         teh_u;               //  behn timer
+          u3_unix*         unx_u;               //  sync and clay
+          u3_save*         sav_u;               //  autosave
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
         } u3_pier;
@@ -733,9 +746,9 @@
           c3_w      len_w;                       //  number of lords used
           c3_w      all_w;                       //  number of lords allocated
           u3_pier** tab_u;                       //  lord table
+          uv_pipe_t cmd_u;                       //  command socket
+          u3_moor*  cli_u;                       //  connected clients
         } u3_king;
-
-        static u3_king u3K;
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
@@ -1146,89 +1159,89 @@
       /* u3_save_ef_chld(): report SIGCHLD.
       */
         void
-        u3_save_ef_chld(void);
+        u3_save_ef_chld(u3_pier *pir_u);
 
       /* u3_save_io_init(): initialize autosave.
       */
         void
-        u3_save_io_init(void);
+        u3_save_io_init(u3_pier *pir_u);
 
       /* u3_save_io_exit(): terminate autosave.
       */
         void
-        u3_save_io_exit(void);
+        u3_save_io_exit(u3_pier *pir_u);
 
       /* u3_save_io_poll(): update autosave state.
       */
         void
-        u3_save_io_poll(void);
+        u3_save_io_poll(u3_pier *pir_u);
 
     /**  Storage, new school.
     **/
       /* u3_unix_ef_hold():
       */
         void
-        u3_unix_ef_hold();
+        u3_unix_ef_hold(void);
 
       /* u3_unix_ef_boot(): boot actions 
       */
         void
-        u3_unix_ef_boot(void);
+        u3_unix_ef_boot(u3_pier *pir_u);
 
       /* u3_unix_ef_bake(): initial effects for new process.
       */
         void
-        u3_unix_ef_bake(void);
+        u3_unix_ef_bake(u3_pier *pir_u);
 
       /* u3_unix_ef_move():
       */
         void
-        u3_unix_ef_move();
+        u3_unix_ef_move(void);
 
       /* u3_unix_initial_into(): intialize filesystem from urb/zod
       */
         void
-        u3_unix_ef_initial_into();
+        u3_unix_ef_initial_into(u3_pier *pir_u);
 
       /* u3_unix_ef_look(): update filesystem from unix
       */
         void
-        u3_unix_ef_look(u3_noun all);
+        u3_unix_ef_look(u3_pier *pir_u, u3_noun all);
 
       /* u3_unix_ef_ergo(): update filesystem from urbit
       */
         void
-        u3_unix_ef_ergo(u3_noun mon, u3_noun can);
+        u3_unix_ef_ergo(u3_pier *pir_u, u3_noun mon, u3_noun can);
 
       /* u3_unix_ef_ogre(): delete mount point
       */
         void
-        u3_unix_ef_ogre(u3_noun mon);
+        u3_unix_ef_ogre(u3_pier *pir_u, u3_noun mon);
 
       /* u3_unix_ef_hill(): enumerate mount points
       */
         void
-        u3_unix_ef_hill(u3_noun hil);
+        u3_unix_ef_hill(u3_pier *pir_u, u3_noun hil);
 
       /* u3_unix_io_init(): initialize storage.
       */
         void
-        u3_unix_io_init(void);
+        u3_unix_io_init(u3_pier *pir_u);
 
       /* u3_unix_io_talk(): start listening for fs events.
       */
         void
-        u3_unix_io_talk(void);
+        u3_unix_io_talk(u3_pier *pir_u);
 
       /* u3_unix_io_exit(): terminate storage.
       */
         void
-        u3_unix_io_exit(void);
+        u3_unix_io_exit(u3_pier *pir_u);
 
       /* u3_unix_io_poll(): update storage state.
       */
         void
-        u3_unix_io_poll(void);
+        u3_unix_io_poll(u3_pier *pir_u);
 
 
     /**  behn, just a timer.
@@ -1383,17 +1396,17 @@
       /* u3_behn_io_init(): initialize time timer.
       */
         void
-        u3_behn_io_init(void);
+        u3_behn_io_init(u3_pier *pir_u);
 
       /* u3_behn_io_exit(): terminate timer.
       */
         void
-        u3_behn_io_exit(void);
+        u3_behn_io_exit(u3_pier *pir_u);
 
       /* u3_behn_io_poll(): update behn IO state.
       */
         void
-        u3_behn_io_poll(void);
+        u3_behn_io_poll(u3_pier *pir_u);
 
 
     /**  HTTP client.
@@ -1482,7 +1495,8 @@
       */
         void
         u3_pier_boot(c3_c* pax_c,                   //  pier path
-                     c3_c* sys_c);                  //  path to boot pill
+                     c3_c* sys_c,                   //  path to boot pill
+                     uv_prepare_t *pep_u);
 
       /* u3_pier_tank(): dump single tank.
       */
@@ -1498,3 +1512,6 @@
       */
         void
         u3_pier_sway(c3_l tab_l, u3_noun tax);
+
+        void
+        u3_king_commence();

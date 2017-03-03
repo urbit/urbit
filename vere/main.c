@@ -545,7 +545,7 @@ main(c3_i   argc,
       }
     }
 
-    u3_pier_boot(u3_Host.dir_c, u3_Host.ops_u.pil_c);
+    u3_king_commence();
   }
   return 0;
 }

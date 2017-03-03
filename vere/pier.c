@@ -1262,6 +1262,9 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
     pir_u->sys_c = c3_malloc(1 + strlen(sys_c)); 
     strcpy(pir_u->sys_c, sys_c);
 
+    pir_u->arv_c = c3_malloc(1 + strlen(u3_Host.ops_u.arv_c)); /* parametrize */
+    strcpy(pir_u->arv_c, u3_Host.ops_u.arv_c);
+
     pir_u->gen_d = 0;
     pir_u->key_d[0] = pir_u->key_d[1] = pir_u->key_d[2] = pir_u->key_d[3] = 0;
 
@@ -1271,6 +1274,12 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
 
     pir_u->sam_u = c3_malloc(sizeof(u3_ames));
     memset(pir_u->sam_u, 0, sizeof(u3_ames));
+    pir_u->teh_u = c3_malloc(sizeof(u3_behn));
+    memset(pir_u->teh_u, 0, sizeof(u3_behn));
+    pir_u->unx_u = c3_malloc(sizeof(u3_unix));
+    memset(pir_u->unx_u, 0, sizeof(u3_unix));
+    pir_u->sav_u = c3_malloc(sizeof(u3_save));
+    memset(pir_u->sav_u, 0, sizeof(u3_save));
   }
 
   /* start process
@@ -1397,10 +1406,6 @@ _pier_loop_init(void)
 {
   c3_l cod_l;
 
-  cod_l = u3a_lush(c3__unix);
-  u3_unix_io_init();
-  u3a_lop(cod_l);
-
   cod_l = u3a_lush(c3__term);
   u3_term_io_init();
   u3a_lop(cod_l);
@@ -1411,14 +1416,6 @@ _pier_loop_init(void)
 
   cod_l = u3a_lush(c3__cttp);
   u3_cttp_io_init();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__save);
-  u3_save_io_init();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_io_init();
   u3a_lop(cod_l);
 }
 
@@ -1432,6 +1429,18 @@ _pier_loop_init_pier(u3_pier* pir_u)
   cod_l = u3a_lush(c3__ames);
   u3_ames_io_init(pir_u);
   u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_init(pir_u);
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__unix);
+  u3_unix_io_init(pir_u);
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
+  u3_save_io_init(pir_u);
+  u3a_lop(cod_l);
 }
 
 /* _pier_loop_wake(): initialize listeners and send initial events.
@@ -1442,8 +1451,8 @@ _pier_loop_wake(u3_pier* pir_u)
   c3_l cod_l;
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_talk();
-  u3_unix_ef_bake();
+  u3_unix_io_talk(pir_u);
+  u3_unix_ef_bake(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__ames);
@@ -1470,7 +1479,7 @@ _pier_loop_exit(void)
   c3_l cod_l;
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_exit();
+  u3_unix_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__ames);
@@ -1490,11 +1499,11 @@ _pier_loop_exit(void)
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__save);
-  u3_save_io_exit();
+  u3_save_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__behn);
-  u3_behn_io_exit();
+  u3_behn_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 }
 
@@ -1518,15 +1527,15 @@ _pier_loop_poll(u3_pier* pir_u)
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__save);
-  u3_save_io_poll();
+  u3_save_io_poll(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_poll();
+  u3_unix_io_poll(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__behn);
-  u3_behn_io_poll();
+  u3_behn_io_poll(pir_u);
   u3a_lop(cod_l);
 }
 
@@ -1650,7 +1659,7 @@ _pier_boot_complete(u3_pier* pir_u,
     
       /* another anomaly
       */
-      u3_unix_ef_boot();
+      u3_unix_ef_boot(pir_u);
     }
   }
 
@@ -1818,41 +1827,21 @@ _pier_boot_make(c3_c* pax_c,
 */
 void
 u3_pier_boot(c3_c* pax_c,                   //  pier path
-             c3_c* sys_c)                   //  path to boot pill
+             c3_c* sys_c,                   //  path to boot pill
+             uv_prepare_t *pep_u)
 {
-  uv_prepare_t pep_u;
-
-  u3_Host.lup_u = uv_default_loop();
-
-  /* start up a "fast-compile" arvo for internal use only
-  */
-  u3m_boot_pier();
-  {
-    extern c3_w u3_Ivory_length_w;
-    extern c3_y u3_Ivory_pill_y[];
-    u3_noun     lit;
-
-    lit = u3i_bytes(u3_Ivory_length_w, u3_Ivory_pill_y);
-    u3v_boot_lite(lit);
-  }
-
   /* make initial pier
   */
   _pier_boot_make(pax_c, sys_c);
 
   /* initialize polling handle
   */
-  uv_prepare_init(u3_Host.lup_u, &pep_u);
-  uv_prepare_start(&pep_u, _pier_loop_prepare);
+  uv_prepare_init(u3_Host.lup_u, pep_u);
+  uv_prepare_start(pep_u, _pier_loop_prepare);
 
   /* initialize loop - move to _pier_boot_make().
   */
   _pier_loop_init();
 
-  /* enter loop
-  */
-  uv_run(u3L, UV_RUN_DEFAULT);
-
-  _pier_loop_exit();
-  exit(0);
+  /* remember to deal with _pier_loop_exit stuff */
 }

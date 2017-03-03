@@ -358,6 +358,7 @@ V_OFILES=\
        vere/unix.o \
        vere/save.o \
        vere/serf.o \
+       vere/king.o \
        vere/pier.o \
        vere/foil.o \
        vere/walk.o \
@@ -405,6 +406,7 @@ links: urbit
 	$(LN) $(BIN)/urbit $(BIN)/urbit-worker
 
 urbit: $(BIN)/urbit
+booter: $(BIN)/booter
 
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
