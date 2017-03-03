@@ -2,32 +2,35 @@
 /*============================================================================
 
 This C source file is part of the SoftFloat IEEE Floating-Point Arithmetic
-Package, Release 3, by John R. Hauser.
+Package, Release 3c, by John R. Hauser.
 
-Copyright 2011, 2012, 2013, 2014 The Regents of the University of California
-(Regents).  All Rights Reserved.  Redistribution and use in source and binary
-forms, with or without modification, are permitted provided that the following
-conditions are met:
+Copyright 2011, 2012, 2013, 2014, 2015, 2016 The Regents of the University of
+California.  All rights reserved.
 
-Redistributions of source code must retain the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer.
-Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer in the
-documentation and/or other materials provided with the distribution.  Neither
-the name of the Regents nor the names of its contributors may be used to
-endorse or promote products derived from this software without specific prior
-written permission.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING
-OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS
-BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions, and the following disclaimer.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED
-TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
-HEREUNDER IS PROVIDED "AS IS".  REGENTS HAS NO OBLIGATION TO PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions, and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+ 3. Neither the name of the University nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS", AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
+DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =============================================================================*/
 
@@ -61,7 +64,7 @@ float64_t
     uint_fast64_t sigZ;
     int_fast16_t expDiff;
     struct uint128 sig128C;
-    int_fast8_t shiftCount;
+    int_fast8_t shiftDist;
     union ui64_f64 uZ;
 
     /*------------------------------------------------------------------------
@@ -174,7 +177,7 @@ float64_t
             sig128Z.v64 = sig128Z.v64 - sigC;
             if ( ! (sig128Z.v64 | sig128Z.v0) ) goto completeCancellation;
             if ( sig128Z.v64 & UINT64_C( 0x8000000000000000 ) ) {
-                signZ ^= 1;
+                signZ = ! signZ;
                 sig128Z = softfloat_sub128( 0, 0, sig128Z.v64, sig128Z.v0 );
             }
         } else {
@@ -189,14 +192,14 @@ float64_t
             sig128Z.v64 = sig128Z.v0;
             sig128Z.v0 = 0;
         }
-        shiftCount = softfloat_countLeadingZeros64( sig128Z.v64 ) - 1;
-        expZ -= shiftCount;
-        if ( shiftCount < 0 ) {
-            sigZ = softfloat_shortShiftRightJam64( sig128Z.v64, -shiftCount );
+        shiftDist = softfloat_countLeadingZeros64( sig128Z.v64 ) - 1;
+        expZ -= shiftDist;
+        if ( shiftDist < 0 ) {
+            sigZ = softfloat_shortShiftRightJam64( sig128Z.v64, -shiftDist );
         } else {
             sig128Z =
                 softfloat_shortShiftLeft128(
-                    sig128Z.v64, sig128Z.v0, shiftCount );
+                    sig128Z.v64, sig128Z.v0, shiftDist );
             sigZ = sig128Z.v64;
         }
         sigZ |= (sig128Z.v0 != 0);
@@ -217,7 +220,6 @@ float64_t
         if ( sigC ) goto propagateNaN_ZC;
         if ( signZ == signC ) goto uiZ;
     }
- invalid:
     softfloat_raiseFlags( softfloat_flag_invalid );
     uiZ = defaultNaNF64UI;
  propagateNaN_ZC:
@@ -230,7 +232,8 @@ float64_t
     if ( ! (expC | sigC) && (signZ != signC) ) {
  completeCancellation:
         uiZ =
-            packToF64UI( softfloat_roundingMode == softfloat_round_min, 0, 0 );
+            packToF64UI(
+                (softfloat_roundingMode == softfloat_round_min), 0, 0 );
     }
  uiZ:
     uZ.ui = uiZ;
@@ -259,7 +262,7 @@ float64_t
     int_fast16_t expZ;
     uint32_t sig128Z[4];
     uint64_t sigZ;
-    int_fast16_t shiftCount, expDiff;
+    int_fast16_t shiftDist, expDiff;
     uint32_t sig128C[4];
     union ui64_f64 uZ;
 
@@ -317,14 +320,14 @@ float64_t
     softfloat_mul64To128M( sigA, sigB, sig128Z );
     sigZ =
         (uint64_t) sig128Z[indexWord( 4, 3 )]<<32 | sig128Z[indexWord( 4, 2 )];
-    shiftCount = 0;
+    shiftDist = 0;
     if ( ! (sigZ & UINT64_C( 0x4000000000000000 )) ) {
         --expZ;
-        shiftCount = -1;
+        shiftDist = -1;
     }
     if ( ! expC ) {
         if ( ! sigC ) {
-            if ( shiftCount ) sigZ <<= 1;
+            if ( shiftDist ) sigZ <<= 1;
             goto sigZ;
         }
         normExpSig = softfloat_normSubnormalF64Sig( sigC );
@@ -338,17 +341,17 @@ float64_t
     if ( expDiff < 0 ) {
         expZ = expC;
         if ( (signZ == signC) || (expDiff < -1) ) {
-            shiftCount -= expDiff;
-            if ( shiftCount) {
-                sigZ = softfloat_shiftRightJam64( sigZ, shiftCount );
+            shiftDist -= expDiff;
+            if ( shiftDist) {
+                sigZ = softfloat_shiftRightJam64( sigZ, shiftDist );
             }
         } else {
-            if ( ! shiftCount ) {
+            if ( ! shiftDist ) {
                 softfloat_shortShiftRight128M( sig128Z, 1, sig128Z );
             }
         }
     } else {
-        if ( shiftCount ) softfloat_add128M( sig128Z, sig128Z, sig128Z );
+        if ( shiftDist ) softfloat_add128M( sig128Z, sig128Z, sig128Z );
         if ( ! expDiff ) {
             sigZ =
                 (uint64_t) sig128Z[indexWord( 4, 3 )]<<32
@@ -413,7 +416,7 @@ float64_t
             sig128Z[indexWord( 4, 3 )] = sigZ>>32;
             sig128Z[indexWord( 4, 2 )] = sigZ;
             if ( sigZ & UINT64_C( 0x8000000000000000 ) ) {
-                signZ ^= 1;
+                signZ = ! signZ;
                 softfloat_negX128M( sig128Z );
             }
         } else {
@@ -431,20 +434,20 @@ float64_t
         }
         /*--------------------------------------------------------------------
         *--------------------------------------------------------------------*/
-        shiftCount = 0;
+        shiftDist = 0;
         sigZ =
             (uint64_t) sig128Z[indexWord( 4, 3 )]<<32
                 | sig128Z[indexWord( 4, 2 )];
         if ( ! sigZ ) {
-            shiftCount = 64;
+            shiftDist = 64;
             sigZ =
                 (uint64_t) sig128Z[indexWord( 4, 1 )]<<32
                     | sig128Z[indexWord( 4, 0 )];
         }
-        shiftCount += softfloat_countLeadingZeros64( sigZ ) - 1;
-        if ( shiftCount ) {
-            expZ -= shiftCount;
-            softfloat_shiftLeft128M( sig128Z, shiftCount, sig128Z );
+        shiftDist += softfloat_countLeadingZeros64( sigZ ) - 1;
+        if ( shiftDist ) {
+            expZ -= shiftDist;
+            softfloat_shiftLeft128M( sig128Z, shiftDist, sig128Z );
             sigZ =
                 (uint64_t) sig128Z[indexWord( 4, 3 )]<<32
                     | sig128Z[indexWord( 4, 2 )];
@@ -468,7 +471,6 @@ float64_t
         if ( sigC ) goto propagateNaN_ZC;
         if ( signZ == signC ) goto uiZ;
     }
- invalid:
     softfloat_raiseFlags( softfloat_flag_invalid );
     uiZ = defaultNaNF64UI;
  propagateNaN_ZC:
@@ -481,7 +483,8 @@ float64_t
     if ( ! (expC | sigC) && (signZ != signC) ) {
  completeCancellation:
         uiZ =
-            packToF64UI( softfloat_roundingMode == softfloat_round_min, 0, 0 );
+            packToF64UI(
+                (softfloat_roundingMode == softfloat_round_min), 0, 0 );
     }
  uiZ:
     uZ.ui = uiZ;

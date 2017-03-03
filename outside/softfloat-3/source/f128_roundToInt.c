@@ -2,32 +2,35 @@
 /*============================================================================
 
 This C source file is part of the SoftFloat IEEE Floating-Point Arithmetic
-Package, Release 3, by John R. Hauser.
+Package, Release 3c, by John R. Hauser.
 
-Copyright 2011, 2012, 2013, 2014 The Regents of the University of California
-(Regents).  All Rights Reserved.  Redistribution and use in source and binary
-forms, with or without modification, are permitted provided that the following
-conditions are met:
+Copyright 2011, 2012, 2013, 2014, 2017 The Regents of the University of
+California.  All rights reserved.
 
-Redistributions of source code must retain the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer.
-Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer in the
-documentation and/or other materials provided with the distribution.  Neither
-the name of the Regents nor the names of its contributors may be used to
-endorse or promote products derived from this software without specific prior
-written permission.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING
-OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS
-BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions, and the following disclaimer.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED
-TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
-HEREUNDER IS PROVIDED "AS IS".  REGENTS HAS NO OBLIGATION TO PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions, and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+ 3. Neither the name of the University nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS", AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
+DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =============================================================================*/
 
@@ -91,12 +94,12 @@ float128_t
                     uiZ.v0 &= ~lastBitMask;
                 }
             }
-        } else if ( roundingMode != softfloat_round_minMag ) {
-            if (
-                signF128UI64( uiZ.v64 ) ^ (roundingMode == softfloat_round_max)
-            ) {
-                uiZ = softfloat_add128( uiZ.v64, uiZ.v0, 0, roundBitsMask );
-            }
+        } else if (
+            roundingMode
+                == (signF128UI64( uiZ.v64 ) ? softfloat_round_min
+                        : softfloat_round_max)
+        ) {
+            uiZ = softfloat_add128( uiZ.v64, uiZ.v0, 0, roundBitsMask );
         }
         uiZ.v0 &= ~roundBitsMask;
     } else {
@@ -137,12 +140,12 @@ float128_t
             if ( ! ((uiZ.v64 & roundBitsMask) | uiA0) ) {
                 uiZ.v64 &= ~lastBitMask;
             }
-        } else if ( roundingMode != softfloat_round_minMag ) {
-            if (
-                signF128UI64( uiZ.v64 ) ^ (roundingMode == softfloat_round_max)
-            ) {
-                uiZ.v64 = (uiZ.v64 | (uiA0 != 0)) + roundBitsMask;
-            }
+        } else if (
+            roundingMode
+                == (signF128UI64( uiZ.v64 ) ? softfloat_round_min
+                        : softfloat_round_max)
+        ) {
+            uiZ.v64 = (uiZ.v64 | (uiA0 != 0)) + roundBitsMask;
         }
         uiZ.v64 &= ~roundBitsMask;
     }

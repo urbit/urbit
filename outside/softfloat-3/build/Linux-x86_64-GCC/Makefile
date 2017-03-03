@@ -2,39 +2,44 @@
 #=============================================================================
 #
 # This Makefile is part of the SoftFloat IEEE Floating-Point Arithmetic
-# Package, Release 3, by John R. Hauser.
+# Package, Release 3c, by John R. Hauser.
 #
-# Copyright 2011, 2012, 2013, 2014 The Regents of the University of California
-# (Regents).  All Rights Reserved.  Redistribution and use in source and
-# binary forms, with or without modification, are permitted provided that the
-# following conditions are met:
+# Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 The Regents of the
+# University of California.  All rights reserved.
 #
-# Redistributions of source code must retain the above copyright notice,
-# this list of conditions, and the following two paragraphs of disclaimer.
-# Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions, and the following two paragraphs of disclaimer in
-# the documentation and/or other materials provided with the distribution.
-# Neither the name of the Regents nor the names of its contributors may be
-# used to endorse or promote products derived from this software without
-# specific prior written permission.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-# SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS,
-# ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-# REGENTS HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#  1. Redistributions of source code must retain the above copyright notice,
+#     this list of conditions, and the following disclaimer.
 #
-# REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED
-# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-# PURPOSE.  THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
-# HEREUNDER IS PROVIDED "AS IS".  REGENTS HAS NO OBLIGATION TO PROVIDE
-# MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions, and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+#  3. Neither the name of the University nor the names of its contributors
+#     may be used to endorse or promote products derived from this software
+#     without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS", AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
+# DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #=============================================================================
 
-SOURCE_DIR = ../../source
-SPECIALIZE_TYPE = 8086-SSE
+SOURCE_DIR ?= ../../source
+SPECIALIZE_TYPE ?= 8086-SSE
 
-SOFTFLOAT_OPTS = -DINLINE_LEVEL=5 -DSOFTFLOAT_FAST_DIV64TO32
+SOFTFLOAT_OPTS ?= \
+  -DSOFTFLOAT_ROUND_ODD -DINLINE_LEVEL=5 -DSOFTFLOAT_FAST_DIV32TO16 \
+  -DSOFTFLOAT_FAST_DIV64TO32
 
 DELETE = rm -f
 C_INCLUDES = -I. -I$(SOURCE_DIR)/$(SPECIALIZE_TYPE) -I$(SOURCE_DIR)/include
@@ -66,6 +71,7 @@ OBJS_PRIMITIVES = \
   s_shiftRightJam128Extra$(OBJ) \
   s_shiftRightJam256M$(OBJ) \
   s_countLeadingZeros8$(OBJ) \
+  s_countLeadingZeros16$(OBJ) \
   s_countLeadingZeros32$(OBJ) \
   s_countLeadingZeros64$(OBJ) \
   s_add128$(OBJ) \
@@ -76,11 +82,16 @@ OBJS_PRIMITIVES = \
   s_mul64To128$(OBJ) \
   s_mul128By32$(OBJ) \
   s_mul128To256M$(OBJ) \
+  s_approxRecip_1Ks$(OBJ) \
   s_approxRecip32_1$(OBJ) \
+  s_approxRecipSqrt_1Ks$(OBJ) \
   s_approxRecipSqrt32_1$(OBJ) \
 
 OBJS_SPECIALIZE = \
   softfloat_raiseFlags$(OBJ) \
+  s_f16UIToCommonNaN$(OBJ) \
+  s_commonNaNToF16UI$(OBJ) \
+  s_propagateNaNF16UI$(OBJ) \
   s_f32UIToCommonNaN$(OBJ) \
   s_commonNaNToF32UI$(OBJ) \
   s_propagateNaNF32UI$(OBJ) \
@@ -97,10 +108,16 @@ OBJS_SPECIALIZE = \
   s_propagateNaNF128UI$(OBJ) \
 
 OBJS_OTHERS = \
-  s_roundPackToUI32$(OBJ) \
-  s_roundPackToUI64$(OBJ) \
-  s_roundPackToI32$(OBJ) \
-  s_roundPackToI64$(OBJ) \
+  s_roundToUI32$(OBJ) \
+  s_roundToUI64$(OBJ) \
+  s_roundToI32$(OBJ) \
+  s_roundToI64$(OBJ) \
+  s_normSubnormalF16Sig$(OBJ) \
+  s_roundPackToF16$(OBJ) \
+  s_normRoundPackToF16$(OBJ) \
+  s_addMagsF16$(OBJ) \
+  s_subMagsF16$(OBJ) \
+  s_mulAddF16$(OBJ) \
   s_normSubnormalF32Sig$(OBJ) \
   s_roundPackToF32$(OBJ) \
   s_normRoundPackToF32$(OBJ) \
@@ -125,30 +142,63 @@ OBJS_OTHERS = \
   s_subMagsF128$(OBJ) \
   s_mulAddF128$(OBJ) \
   softfloat_state$(OBJ) \
+  ui32_to_f16$(OBJ) \
   ui32_to_f32$(OBJ) \
   ui32_to_f64$(OBJ) \
   ui32_to_extF80$(OBJ) \
   ui32_to_extF80M$(OBJ) \
   ui32_to_f128$(OBJ) \
   ui32_to_f128M$(OBJ) \
+  ui64_to_f16$(OBJ) \
   ui64_to_f32$(OBJ) \
   ui64_to_f64$(OBJ) \
   ui64_to_extF80$(OBJ) \
   ui64_to_extF80M$(OBJ) \
   ui64_to_f128$(OBJ) \
   ui64_to_f128M$(OBJ) \
+  i32_to_f16$(OBJ) \
   i32_to_f32$(OBJ) \
   i32_to_f64$(OBJ) \
   i32_to_extF80$(OBJ) \
   i32_to_extF80M$(OBJ) \
   i32_to_f128$(OBJ) \
   i32_to_f128M$(OBJ) \
+  i64_to_f16$(OBJ) \
   i64_to_f32$(OBJ) \
   i64_to_f64$(OBJ) \
   i64_to_extF80$(OBJ) \
   i64_to_extF80M$(OBJ) \
   i64_to_f128$(OBJ) \
   i64_to_f128M$(OBJ) \
+  f16_to_ui32$(OBJ) \
+  f16_to_ui64$(OBJ) \
+  f16_to_i32$(OBJ) \
+  f16_to_i64$(OBJ) \
+  f16_to_ui32_r_minMag$(OBJ) \
+  f16_to_ui64_r_minMag$(OBJ) \
+  f16_to_i32_r_minMag$(OBJ) \
+  f16_to_i64_r_minMag$(OBJ) \
+  f16_to_f32$(OBJ) \
+  f16_to_f64$(OBJ) \
+  f16_to_extF80$(OBJ) \
+  f16_to_extF80M$(OBJ) \
+  f16_to_f128$(OBJ) \
+  f16_to_f128M$(OBJ) \
+  f16_roundToInt$(OBJ) \
+  f16_add$(OBJ) \
+  f16_sub$(OBJ) \
+  f16_mul$(OBJ) \
+  f16_mulAdd$(OBJ) \
+  f16_div$(OBJ) \
+  f16_rem$(OBJ) \
+  f16_sqrt$(OBJ) \
+  f16_eq$(OBJ) \
+  f16_le$(OBJ) \
+  f16_lt$(OBJ) \
+  f16_eq_signaling$(OBJ) \
+  f16_le_quiet$(OBJ) \
+  f16_lt_quiet$(OBJ) \
+  f16_isSignalingNaN$(OBJ) \
   f32_to_ui32$(OBJ) \
   f32_to_ui64$(OBJ) \
   f32_to_i32$(OBJ) \
@@ -157,6 +207,7 @@ OBJS_OTHERS = \
   f32_to_ui64_r_minMag$(OBJ) \
   f32_to_i32_r_minMag$(OBJ) \
   f32_to_i64_r_minMag$(OBJ) \
+  f32_to_f16$(OBJ) \
   f32_to_f64$(OBJ) \
   f32_to_extF80$(OBJ) \
   f32_to_extF80M$(OBJ) \
@@ -185,6 +236,7 @@ OBJS_OTHERS = \
   f64_to_ui64_r_minMag$(OBJ) \
   f64_to_i32_r_minMag$(OBJ) \
   f64_to_i64_r_minMag$(OBJ) \
+  f64_to_f16$(OBJ) \
   f64_to_f32$(OBJ) \
   f64_to_extF80$(OBJ) \
   f64_to_extF80M$(OBJ) \
@@ -213,6 +265,7 @@ OBJS_OTHERS = \
   extF80_to_ui64_r_minMag$(OBJ) \
   extF80_to_i32_r_minMag$(OBJ) \
   extF80_to_i64_r_minMag$(OBJ) \
+  extF80_to_f16$(OBJ) \
   extF80_to_f32$(OBJ) \
   extF80_to_f64$(OBJ) \
   extF80_to_f128$(OBJ) \
@@ -238,6 +291,7 @@ OBJS_OTHERS = \
   extF80M_to_ui64_r_minMag$(OBJ) \
   extF80M_to_i32_r_minMag$(OBJ) \
   extF80M_to_i64_r_minMag$(OBJ) \
+  extF80M_to_f16$(OBJ) \
   extF80M_to_f32$(OBJ) \
   extF80M_to_f64$(OBJ) \
   extF80M_to_f128M$(OBJ) \
@@ -262,6 +316,7 @@ OBJS_OTHERS = \
   f128_to_ui64_r_minMag$(OBJ) \
   f128_to_i32_r_minMag$(OBJ) \
   f128_to_i64_r_minMag$(OBJ) \
+  f128_to_f16$(OBJ) \
   f128_to_f32$(OBJ) \
   f128_to_extF80$(OBJ) \
   f128_to_f64$(OBJ) \
@@ -288,6 +343,7 @@ OBJS_OTHERS = \
   f128M_to_ui64_r_minMag$(OBJ) \
   f128M_to_i32_r_minMag$(OBJ) \
   f128M_to_i64_r_minMag$(OBJ) \
+  f128M_to_f16$(OBJ) \
   f128M_to_f32$(OBJ) \
   f128M_to_extF80M$(OBJ) \
   f128M_to_f64$(OBJ) \
