@@ -647,9 +647,7 @@
   ::
   ++  ta-off                                          ::  reset buffer offset
     |=  ted/sole-edit
-    =.  off  ?:  |-  ?.  ?=({$mor *} ted)
-                   ?=({$set *} ted)
-                 |-  ?~(p.ted | |(^$(ted i.p.ted) $(p.ted t.p.ted)))
+    =.  off  ?:  (any:edit ted |=(a/sole-edit ?=($set -.a)))
                0
              off
     +>
@@ -884,6 +882,11 @@
         (cut pos num)
         (cat pos txt)
     ==
+  ++  any                                             ::  matches?
+    |=  {a/sole-edit b/$-(sole-edit ?)}
+    ^-  ?
+    ?.  ?=($mor -.a)  (b a)
+    (lien p.a |=(c/sole-edit ^$(a c)))
   --
 ++  offset                                            ::  calculate offsets
   |%
