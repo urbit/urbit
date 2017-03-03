@@ -1869,7 +1869,7 @@
   =>
     ~%  %cofl  +>  ~
     ::  internal functions; mostly operating on {e/@s a/@u}, in other words
-    ::  positive numbers. many of these have undefined behavior if a=0.
+    ::  positive numbers. many of these error out if a=0.
     |%
     ++  rou
       |=  {a/{e/@s a/@u}}  ^-  fn  (rau a &)
@@ -1908,7 +1908,7 @@
       =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
       =+  ^=  w  %+  dif:si  e.a  %-  sun:si
         ?:  (gth prc ma)  (^sub prc ma)  0
-      =+  ^=  x  %+  sum:si  e.b  (sun:si mb)
+      =+  ^=  x  %+  sum:si  e.b  (sun:si +(mb))
       ?:  &(!e =((cmp:si w x) --1))
         ?-  r
           $z  (lug %sm a &)  $d  (lug %sm a &)
@@ -1954,15 +1954,6 @@
       ?:  =((cmp:si e.a e.b) -1)
         (^lth (rsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
       (^lth (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
-    ::
-    ++  lte                                             ::  less-equals
-      |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  ?
-      ?:  =(e.a e.b)  (^lte a.a a.b)
-      =+  c=(cmp:si (ibl a) (ibl b))
-      ?:  =(c -1)  &  ?:  =(c --1)  |
-      ?:  =((cmp:si e.a e.b) -1)
-        (^lte a.a (lsh 0 (abs:si (dif:si e.a e.b)) a.b))
-      (^lte (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
     ::
     ++  equ                                             ::  equals
       |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  ?
@@ -2028,9 +2019,9 @@
           $sm  [%f & zer]
           $ce  [%f & spd]
           $lg  [%f & spd]
-          $ne  ?:  s  [%f & ?:((^lte b (bex (dec q))) zer spd)]
+          $ne  ?:  s  [%f & ?:((lte b (bex (dec q))) zer spd)]
                [%f & ?:((^lth b (bex (dec q))) zer spd)]
-          $nt  ?:  s  [%f & ?:((^lte b (bex (dec q))) zer spd)]
+          $nt  ?:  s  [%f & ?:((lte b (bex (dec q))) zer spd)]
                [%f & ?:((^lth b (bex (dec q))) zer spd)]
           $na  [%f & ?:((^lth b (bex (dec q))) zer spd)]
         ==
@@ -2044,7 +2035,7 @@
           $sm  ?.  &(=(b 0) s)  a
                ?:  &(=(e.a emn) !=(den %i))  a(a (dec a.a))
                =+  y=(dec (^mul a.a 2))
-               ?.  (^lte (met 0 y) prc)  a(a (dec a.a))
+               ?.  (lte (met 0 y) prc)  a(a (dec a.a))
                [(dif:si e.a --1) y]
           $ce  ?:  &(=(b 0) s)  a  a(a +(a.a))
           $ne  ?~  b  a
@@ -2277,14 +2268,7 @@
   ::
   ++  lte                                               ::  less-equal
     |=  {a/fn b/fn}  ^-  (unit ?)
-    ?:  |(?=({$n *} a) ?=({$n *} b))  ~  :-  ~
-    ?:  =(a b)  &
-    ?:  ?=({$i *} a)  !s.a  ?:  ?=({$i *} b)  s.b
-    ?:  |(=(a.a 0) =(a.b 0))
-      ?:  &(=(a.a 0) =(a.b 0))  &
-      ?:  =(a.a 0)  s.b  !s.a
-    ?:  !=(s.a s.b)  s.b
-    ?:  s.a  (^lte +>.a +>.b)  (^lte +>.b +>.a)
+    %+  bind  (lth b a)  |=  a/?  !a
   ::
   ++  equ                                               ::  equal
     |=  {a/fn b/fn}  ^-  (unit ?)
@@ -2677,6 +2661,7 @@
   --
 ::
 ++  rh                                                  ::  half precision fp
+  ~%  %rh  +>  ~
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -2689,11 +2674,35 @@
   ++  bit                                               ::  fn to @rh
     |=  {a/fn}  ^-  @rh  (bit:ma a)
   ::
-  ++  tos                                               ::  @rh to @rs
-    |=  {a/@rh}  (bit:rs (sea a))
+  ++  add  ~/  %add                                     ::  add
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (add:ma a b)
   ::
-  ++  fos                                               ::  @rs to @rh
-    |=  {a/@rs}  (bit (sea:rs a))
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  {a/@rh b/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  {a/@rh b/@rh c/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  {a/@rh}  ^-  @rh
+    ~_  leaf+"rh-fail"
+    (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
     |=  {a/@rh b/@rh}
@@ -2719,6 +2728,12 @@
     |=  {a/@rh b/@rh}
     ~_  leaf+"rh-fail"
     (gth:ma a b)
+  ::
+  ++  tos                                               ::  @rh to @rs
+    |=  {a/@rh}  (bit:rs (sea a))
+  ::
+  ++  fos                                               ::  @rs to @rh
+    |=  {a/@rs}  (bit (sea:rs a))
   ::
   ++  sun  |=  {a/@u}  ^-  @rh  (sun:ma a)              ::  uns integer to @rh
   ++  san  |=  {a/@s}  ^-  @rh  (san:ma a)              ::  sgn integer to @rh
