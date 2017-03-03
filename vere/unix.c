@@ -606,6 +606,7 @@ _unix_watch_file(u3_pier *pir_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
   // note that we're doing something tricky here
   // see comment in _unix_fs_event_cb
 
+  fil_u->was_u.data = pir_u;
   c3_w ret_w = uv_fs_event_init(u3L, &fil_u->was_u);
   if (0 != ret_w){
     uL(fprintf(uH, "file event init: %s\n", uv_strerror(ret_w)));
@@ -1300,6 +1301,7 @@ u3_unix_io_init(u3_pier *pir_u)
 
   uv_check_init(u3L, &pir_u->unx_u->syn_u);
 
+  unx_u->tim_u.data = pir_u;
   uv_timer_init(u3L, &unx_u->tim_u);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
