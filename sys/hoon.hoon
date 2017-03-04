@@ -8954,7 +8954,7 @@
                     ['.' (rune dot %trap expa)]
                     ['/' (rune fas %door expr)]
                     ['-' (rune hep %loop expa)]
-                    ['^' (rune ket %cork expr)]
+                    ['^' (rune ket %cork expx)]
                     ['~' (rune sig %port expb)]
                     ['*' (rune tar %gill expb)]
                     ['=' (rune tis %gate expb)]
@@ -9008,7 +9008,7 @@
                   (word %trap expa)
                   (word %door expr)
                   (word %loop expa)
-                  (word %cork expr)
+                  (word %cork expx)
                   (word %port expb)
                   (word %gill expb)
                   (word %gate expb)
@@ -9341,7 +9341,14 @@
     ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
     ++  expv  |.((butt rick))                           ::  just changes
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three twigs
+    ++  expx  |.  ;~  gunk  loaf                        ::  twig and core tail
+                    %+  sear                            ::
+                      |=  a/(map term foot)             ::
+                      ?:((~(has by a) %$) ~ [~ u=a])    ::  (with no $ arm)
+                    wisp                                ::
+                  ==                                    ::
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
+    ::
     ::
     ::    tiki expansion for %wt runes
     ::
