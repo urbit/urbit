@@ -1,8 +1,6 @@
 source $stdenv/setup
 
-unset CC
-unset CXX
-unset LD
+unset CC CXX LD
 
 tar -xf $src
 
@@ -17,14 +15,16 @@ cd ..
 mkdir build
 cd build
 
-# TODO: enable the text UI some day
+export LDFLAGS="-L$curses/lib"
+export CFLAGS="-I$curses/include"
+export CXXFLAGS="-I$curses/include"
+
 ../gdb-$version/configure \
   --prefix=$out \
   --host=$host \
   --target=$host \
   --with-expat=yes --with-libexpat-prefix=$expat \
-  --with-curses=$curses \
-  --disable-tui \
+  --enable-tui \
   --disable-win32-registry \
   --disable-rpath
 

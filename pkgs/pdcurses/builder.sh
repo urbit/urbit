@@ -23,6 +23,10 @@ ${host}-ar r libpdcurses.a *.o
 ${host}-ranlib libpdcurses.a
 
 mkdir -p $out/{lib,include}
-mv libpdcurses.a $out/lib/
+cp libpdcurses.a $out/lib/libpdcurses.a
+
+# Make libcurses.a so programs like GDB can find pdcurses.
+ln -s $out/lib/libpdcurses.a $out/lib/libcurses.a
+
 cd ../PDCurses-$version
 cp curses.h panel.h term.h $out/include/
