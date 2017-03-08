@@ -281,7 +281,7 @@ _unix_get_mount_point(u3_pier *pir_u, u3_noun mon)
   }
 
   if ( !mon_u ) {
-    mon_u = malloc(sizeof(u3_umon));
+    mon_u = c3_malloc(sizeof(u3_umon));
     mon_u->nam_c = nam_c;
     mon_u->dir_u.dir = c3y;
     mon_u->dir_u.dry = c3n;
@@ -536,19 +536,8 @@ _unix_commit_mount_point(u3_pier *pir_u, u3_noun mon)
 {
   pir_u->unx_u->dyr = c3y;
   u3z(mon);
+  u3_unix_ef_look(pir_u, c3y);
   return;
-}
-
-/* _unix_time_cb: timer callback
-*/
-static void
-_unix_time_cb(uv_timer_t* tim_u)
-{
-  {
-    u3_pier *pir_u = tim_u->data;
-    pir_u->unx_u->alm = c3n;
-    pir_u->unx_u->dyr = c3n;
-  }
 }
 
 /* _unix_fs_event_cb(): filesystem event callback.
@@ -575,21 +564,8 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
     nod_u = (u3_unod*) nod_u->par_u;
   }
 
-  // we start a timer so that in 100 ms we check the fs.
-  // the extra time is so that the fs "settles down".
-  // vim, for example, tends to delete and re-add files
-  // for safety purposes.
-  if ( c3y == pir_u->unx_u->alm ) {
-    uv_timer_stop(&pir_u->unx_u->tim_u);
-  }
-  else {
-    pir_u->unx_u->alm = c3y;
-  }
-
+  /* do nothing */
   pir_u->unx_u->dyr = c3n;
-
-  pir_u->unx_u->tim_u.data = pir_u;
-  uv_timer_start(&pir_u->unx_u->tim_u, _unix_time_cb, 100, 0);
 }
 
 /* _unix_watch_file(): initialize file
@@ -1319,8 +1295,6 @@ u3_unix_io_init(u3_pier *pir_u)
 
   uv_check_init(u3L, &pir_u->unx_u->syn_u);
 
-  unx_u->tim_u.data = pir_u;
-  uv_timer_init(u3L, &unx_u->tim_u);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
 }

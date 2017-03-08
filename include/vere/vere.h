@@ -449,7 +449,6 @@
     */
       typedef struct _u3_unix {
         uv_check_t  syn_u;                  //  fs sync check
-        uv_timer_t  tim_u;                  //  timer
         u3_umon*    mon_u;                  //  mount points
         c3_o        alm;                    //  timer set
         c3_o        dyr;                    //  ready to update
