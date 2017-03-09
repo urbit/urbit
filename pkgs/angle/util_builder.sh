@@ -20,11 +20,9 @@ if [ "$os" == "windows" ]; then
   source_files="$source_files ../util/windows/*.cpp ../util/windows/win32/*.cpp"
 fi
 
-# TODO: add -O2 here after things are working
-
 for c in $source_files; do
   echo "compiling $(basename $c)"
-  $host-g++ -g -c -fpermissive \
+  $host-g++ -c -g -O2 -fpermissive \
     -I../include -I"$angle/include" -L"$angle/lib" \
     -DGL_APICALL= -DANGLE_EXPORT= -DEGLAPI= \
     -DGL_GLEXT_PROTOTYPES -DEGL_EGLEXT_PROTOTYPES -DLIBANGLE_UTIL_IMPLEMENTATION \
