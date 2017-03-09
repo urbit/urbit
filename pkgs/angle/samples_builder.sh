@@ -10,7 +10,7 @@ mkdir build
 cd build
 mkdir bin
 
-CFLAGS="-g -O2 -I../include -I$angle_util/include -I$angle/include"
+CFLAGS="-mwindows -g -O2 -I../include -I$angle_util/include -I$angle/include"
 CFLAGS="$CFLAGS -DGL_APICALL= -DANGLE_EXPORT= -DGL_GLEXT_PROTOTYPES"
 LDFLAGS="-L$angle_util/lib -L$angle/lib"
 LIBS="-langle_util -lEGL_static -lGLESv2_static -lANGLE -ltranslator -lpreprocessor -langle_image_util -langle_common -ld3d9 -lgdi32"
