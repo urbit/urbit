@@ -10,8 +10,6 @@ mkdir build
 cd build
 mkdir bin
 
-exe_suffix=.exe  # TODO: this should come from crossenv
-
 CFLAGS="-g -O2 -I../include -I$angle_util/include -I$angle/include"
 CFLAGS="$CFLAGS -DGL_APICALL= -DANGLE_EXPORT= -DGL_GLEXT_PROTOTYPES"
 LDFLAGS="-L$angle_util/lib -L$angle/lib"

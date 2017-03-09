@@ -12,7 +12,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   inherit angle angle_util;
 
-  host = crossenv.host;
+  inherit (crossenv) host exe_suffix;
 
   builder = ./samples_builder.sh;
 }

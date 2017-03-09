@@ -3,10 +3,6 @@
 let
   host = "${arch}-w64-mingw32";
 
-  os = "windows";
-
-  gyp_os = "win";
-
   binutils = import ./binutils { inherit nixpkgs arch; };
 
   mingw-w64_info = rec {
@@ -51,10 +47,16 @@ let
     inherit nixpkgs host;
   };
 
+  os = "windows";
+
+  exe_suffix = ".exe";
+
+  gyp_os = "win";
+
 in
 {
   # Target info
-  inherit host arch os;
+  inherit host arch os exe_suffix;
 
   # Toolchain
   inherit gcc binutils mingw-w64_full;
