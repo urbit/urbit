@@ -14,8 +14,6 @@ let
     angle_util = util;
   };
 
-  # TODO: make a convenient way to generate bundles like this
-  # for debugging and release, handle LICENSE files correctly
   debug_bundle = import ./debug_bundle.nix {
     inherit crossenv gdb angle examples;
   };
