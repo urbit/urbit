@@ -50,7 +50,7 @@ rec {
   };
 
   qt58 = import ./pkgs/qt58 {
-    inherit crossenv angle;
+    inherit crossenv;
   };
 };
 in pkgs

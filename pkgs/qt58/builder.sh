@@ -10,16 +10,18 @@ mkdir build
 cd build
 
 ../qt-everywhere-opensource-src-$version/configure \
-  -opensource \
-  -confirm-license \
-  -xplatform win32-g++ \
+  -prefix $out \
   -device-option CROSS_COMPILE=${host}- \
+  -opensource -confirm-license \
+  -release \
+  -static \
   -nomake examples \
-  -release
+  -opengl desktop \
+  -xplatform win32-g++ \
+  -no-icu
 
-# TODO: get it to use our zlib instead of compiling its own copy
-# TODO: get it to find angle above
+# TODO: maybe get it to use system zlib/libpng/libjpeg/FreeType/HarfBuzz/SQLite/pcre
 
-# TODO: make
+make
 
 cd ..
