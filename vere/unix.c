@@ -377,15 +377,11 @@ _unix_scan_mount_point(u3_pier *pir_u, u3_umon* mon_u)
 
 static u3_noun _unix_free_node(u3_pier *pir_u, u3_unod* nod_u);
 
-/* needs to be redone to use u3_unods or just paths */
-#if 0
 /* _unix_free_file(): free file, unlinking it
 */
 static void
-_unix_free_file(uv_handle_t* was_u)
+_unix_free_file(u3_ufil *fil_u)
 {
-  u3_ufil* fil_u = (void*) was_u;
-
   if ( 0 != unlink(fil_u->pax_c) && ENOENT != errno ) {
     uL(fprintf(uH, "error unlinking %s: %s\n", fil_u->pax_c, strerror(errno)));
     c3_assert(0);
@@ -398,10 +394,8 @@ _unix_free_file(uv_handle_t* was_u)
 /* _unix_free_dir(): free directory, deleting everything within
 */
 static void
-_unix_free_dir(uv_handle_t* was_u)
+_unix_free_dir(u3_udir *dir_u)
 {
-  u3_udir* dir_u = (void*) was_u;
-
   _unix_rm_r(dir_u->pax_c);
 
   if ( dir_u->kid_u ) {
@@ -416,7 +410,6 @@ _unix_free_dir(uv_handle_t* was_u)
                //     i suspect we should do this only if
                //     our kid list is empty
 }
-#endif
 
 /* _unix_free_node(): free node, deleting everything within
  *
@@ -451,10 +444,12 @@ _unix_free_node(u3_pier *pir_u, u3_unod* nod_u)
       can = u3kb_weld(_unix_free_node(pir_u, nud_u), can);
       nud_u = nex_u;
     }
+    _unix_free_dir((u3_udir *)nod_u);
   }
   else {
     can = u3nc(u3nc(_unix_string_to_path(pir_u, nod_u->pax_c), u3_nul),
                u3_nul);
+    _unix_free_file((u3_ufil *)nod_u);
   }
 
   return can;
