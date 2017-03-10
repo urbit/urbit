@@ -377,6 +377,8 @@ _unix_scan_mount_point(u3_pier *pir_u, u3_umon* mon_u)
 
 static u3_noun _unix_free_node(u3_pier *pir_u, u3_unod* nod_u);
 
+/* needs to be redone to use u3_unods or just paths */
+#if 0
 /* _unix_free_file(): free file, unlinking it
 */
 static void
@@ -414,6 +416,7 @@ _unix_free_dir(uv_handle_t* was_u)
                //     i suspect we should do this only if
                //     our kid list is empty
 }
+#endif
 
 /* _unix_free_node(): free node, deleting everything within
  *
@@ -533,36 +536,8 @@ _unix_commit_mount_point(u3_pier *pir_u, u3_noun mon)
 {
   pir_u->unx_u->dyr = c3y;
   u3z(mon);
-  u3_unix_ef_look(pir_u, c3y);
+  u3_unix_ef_look(pir_u, c3n);
   return;
-}
-
-/* _unix_fs_event_cb(): filesystem event callback.
-*/
-static void
-_unix_fs_event_cb(uv_fs_event_t* was_u,
-                  const c3_c*    pax_c,
-                  c3_i           evt_i,
-                  c3_i           sas_i)
-{
-  // note that we're doing something tricky and weird here.
-  //
-  // * libuv passes around a pointer to a uv_fs_event_t
-  // * we define a struct that STARTS with a uv_fs_event_t and then has
-  //     more fields after it
-  // * this is what we pass into libuv up top
-  // * this is what we get out of libuv down below
-  // * thus a cast is cool
-  u3_unod* nod_u = (u3_unod*) was_u;
-  u3_pier *pir_u = was_u->data;
-
-  while ( nod_u ) {
-    nod_u->dry = c3n;
-    nod_u = (u3_unod*) nod_u->par_u;
-  }
-
-  /* do nothing */
-  pir_u->unx_u->dyr = c3n;
 }
 
 /* _unix_watch_file(): initialize file
@@ -647,7 +622,7 @@ _unix_update_file(u3_pier *pir_u, u3_ufil* fil_u)
     return u3_nul;
   }
 
-  fil_u->dry = c3y;
+  fil_u->dry = c3n;
 
   struct stat buf_u;
   c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
@@ -727,7 +702,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
     return u3_nul;
   }
 
-  dir_u->dry = c3y;
+  dir_u->dry = c3n;
 
   // Check that old nodes are still there
 
@@ -800,8 +775,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
     else if ( !out_u ) {
       break;
     }
-    else if ( '.' == out_u->d_name[0] || 
-              !strcmp("LICENSE.txt", out_u->d_name) ) {
+    else if ( '.' == out_u->d_name[0] ) {
       continue;
     }
     else {
@@ -1044,13 +1018,6 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
   }
 }
 
-/* _unix_ef_sync(): check for files to sync.
- */
-static void
-_unix_ef_sync(uv_check_t* han_u)
-{
-}
-
 /* _unix_sync_file(): sync file to unix
 */
 static void
@@ -1230,7 +1197,7 @@ u3_unix_ef_hill(u3_pier *pir_u, u3_noun hil)
     _unix_scan_mount_point(pir_u, mon_u);
   }
   u3z(hil);
-  pir_u->unx_u->dyr = c3n;
+  pir_u->unx_u->dyr = c3y;
   u3_unix_ef_look(pir_u, c3y);
 }
 
