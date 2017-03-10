@@ -448,13 +448,10 @@ _unix_free_node(u3_pier *pir_u, u3_unod* nod_u)
       can = u3kb_weld(_unix_free_node(pir_u, nud_u), can);
       nud_u = nex_u;
     }
-
-    uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_dir);
   }
   else {
     can = u3nc(u3nc(_unix_string_to_path(pir_u, nod_u->pax_c), u3_nul),
                u3_nul);
-    uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_file);
   }
 
   return can;
@@ -587,24 +584,6 @@ _unix_watch_file(u3_pier *pir_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
     fil_u->nex_u = par_u->kid_u;
     par_u->kid_u = (u3_unod*) fil_u;
   }
-
-  // stuff fil_u into libuv
-  // note that we're doing something tricky here
-  // see comment in _unix_fs_event_cb
-
-  fil_u->was_u.data = pir_u;
-  c3_w ret_w = uv_fs_event_init(u3L, &fil_u->was_u);
-  if (0 != ret_w){
-    uL(fprintf(uH, "file event init: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
-  }
-
-  fil_u->was_u.data = pir_u;
-  ret_w = uv_fs_event_start(&fil_u->was_u, _unix_fs_event_cb, pax_c, 0);
-  if ( 0 != ret_w ){
-    uL(fprintf(uH, "file event start %s: %s\n", fil_u->pax_c, uv_strerror(ret_w)));
-    c3_assert(0);
-  }
 }
 
 /* _unix_watch_dir(): initialize directory
@@ -624,22 +603,6 @@ _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
   if ( par_u ) {
     dir_u->nex_u = par_u->kid_u;
     par_u->kid_u = (u3_unod*) dir_u;
-  }
-
-  // stuff dir_u into libuv
-  // note that we're doing something tricky here
-  // see comment in _unix_fs_event_cb
-
-  c3_w ret_w = uv_fs_event_init(u3L, &dir_u->was_u);
-  if (0 != ret_w){
-    uL(fprintf(uH, "directory event init: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
-  }
-
-  ret_w = uv_fs_event_start(&dir_u->was_u, _unix_fs_event_cb, pax_c, 0);
-  if (0 != ret_w){
-    uL(fprintf(uH, "directory event start: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
   }
 }
 
@@ -700,19 +663,6 @@ _unix_update_file(u3_pier *pir_u, u3_ufil* fil_u)
                  fil_u->pax_c, strerror(errno)));
       return u3_nul;
     }
-  }
-
-  // So, if file gets deleted and then quickly re-added, like vim and
-  // other editors do, we lose the notification.  This is a bad thing,
-  // so we always stop and restart the notification.
-  uv_fs_event_stop(&fil_u->was_u);
-  c3_w ret_w = uv_fs_event_start(&fil_u->was_u,
-                                 _unix_fs_event_cb,
-                                 fil_u->pax_c,
-                                 0);
-  if ( 0 != ret_w ){
-    uL(fprintf(uH, "update file event start: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
   }
 
   len_ws = buf_u.st_size;
@@ -1293,8 +1243,6 @@ u3_unix_io_init(u3_pier *pir_u)
 
   unx_u->mon_u = NULL;
 
-  uv_check_init(u3L, &pir_u->unx_u->syn_u);
-
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
 }
@@ -1447,7 +1395,6 @@ u3_unix_io_talk(u3_pier *pir_u)
 {
   u3_unix_acquire(pir_u->pax_c);
   u3_unix_ef_move();
-  uv_check_start(&pir_u->unx_u->syn_u, _unix_ef_sync);
 }
 
 /* u3_unix_io_exit(): terminate unix I/O.
@@ -1455,7 +1402,6 @@ u3_unix_io_talk(u3_pier *pir_u)
 void
 u3_unix_io_exit(u3_pier *pir_u)
 {
-  uv_check_stop(&pir_u->unx_u->syn_u);
   u3_unix_release(pir_u->pax_c);
 }
 
