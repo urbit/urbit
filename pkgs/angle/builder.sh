@@ -23,14 +23,11 @@ fi
 
 ninja
 
-# TODO: trim this down
 libs="
 obj/src/libANGLE.a
 obj/src/libangle_common.a
 obj/src/libangle_image_util.a
-obj/src/libEGL.a
 obj/src/libEGL_static.a
-obj/src/libGLESv2.a
 obj/src/libGLESv2_static.a
 obj/src/libpreprocessor.a
 obj/src/libtranslator.a
