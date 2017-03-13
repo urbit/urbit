@@ -29,6 +29,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+++  kiln-commit  term                                   ::
 ++  kiln-mount                                          ::
     $:  pax/path                                        ::
         pot/term                                        ::
@@ -62,7 +63,8 @@
       $%  {$exec wire @p $~ {beak silk:ford}}                ::
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
-          {$mont wire @tas @p @tas path}                ::
+          {$mont wire @tas beam}                        ::
+          {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
           {$poke wire dock pear}                        ::
@@ -93,13 +95,17 @@
   :^  %palm  [" " ~ ~ ~]  leaf+mez
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
+++  poke-commit
+  |=  mon/kiln-commit
+  abet:(emit %dirk /commit mon)
+::
 ++  poke-mount
   |=  kiln-mount
   =+  bem=(de-beam pax)
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
-  abet:(emit %mont /mount pot p.u.bem q.u.bem (flop s.u.bem))
+  abet:(emit %mont /mount pot u.bem)
 ::
 ++  poke-unmount
   |=  mon/kiln-unmount
@@ -108,7 +114,7 @@
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf+- ~)
-    abet:(emit %ogre /unmount-beam [[p q %ud 0] s]:u.bem)
+    abet:(emit %ogre /unmount-beam [[p q r] s]:u.bem)
   abet:(emit %ogre /unmount-point mon)
 ::
 ++  poke-track                                        ::

@@ -1196,6 +1196,7 @@
         $info  `%c
         $merg  `%c
         $mont  `%c
+        $dirk  `%c
         $ogre  `%c
         $serv  `%e
         $them  `%e
