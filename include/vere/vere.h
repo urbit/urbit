@@ -396,7 +396,6 @@
     /* u3_unod: file or directory.
     */
       typedef struct _u3_unod {
-        uv_fs_event_t     was_u;            //  stat watcher
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
@@ -407,7 +406,6 @@
     /* u3_ufil: synchronized file.
     */
       typedef struct _u3_ufil {
-        uv_fs_event_t     was_u;            //  stat watcher
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
@@ -420,7 +418,6 @@
     /* u3_ufil: synchronized directory.
     */
       typedef struct _u3_udir {
-        uv_fs_event_t     was_u;            //  stat watcher
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
@@ -448,8 +445,6 @@
     /* u3_unix: clay support system, also
     */
       typedef struct _u3_unix {
-        uv_check_t  syn_u;                  //  fs sync check
-        uv_timer_t  tim_u;                  //  timer
         u3_umon*    mon_u;                  //  mount points
         c3_o        alm;                    //  timer set
         c3_o        dyr;                    //  ready to update
@@ -1212,6 +1207,11 @@
       */
         void
         u3_unix_ef_ergo(u3_pier *pir_u, u3_noun mon, u3_noun can);
+
+      /* u3_unix_ef_dirk(): mark mount dirty
+      */
+        void
+        u3_unix_ef_dirk(u3_pier *pir_u, u3_noun mon);
 
       /* u3_unix_ef_ogre(): delete mount point
       */

@@ -302,6 +302,7 @@
 #   define c3__die    c3_s3('d','i','e')
 #   define c3__dill   c3_s4('d','i','l','l')
 #   define c3__dire   c3_s4('d','i','r','e')
+#   define c3__dirk   c3_s4('d','i','r','k')
 #   define c3__dis    c3_s3('d','i','s')
 #   define c3__dish   c3_s4('d','i','s','h')
 #   define c3__disk   c3_s4('d','i','s','k')

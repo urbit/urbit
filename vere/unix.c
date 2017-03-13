@@ -281,7 +281,7 @@ _unix_get_mount_point(u3_pier *pir_u, u3_noun mon)
   }
 
   if ( !mon_u ) {
-    mon_u = malloc(sizeof(u3_umon));
+    mon_u = c3_malloc(sizeof(u3_umon));
     mon_u->nam_c = nam_c;
     mon_u->dir_u.dir = c3y;
     mon_u->dir_u.dry = c3n;
@@ -380,10 +380,8 @@ static u3_noun _unix_free_node(u3_pier *pir_u, u3_unod* nod_u);
 /* _unix_free_file(): free file, unlinking it
 */
 static void
-_unix_free_file(uv_handle_t* was_u)
+_unix_free_file(u3_ufil *fil_u)
 {
-  u3_ufil* fil_u = (void*) was_u;
-
   if ( 0 != unlink(fil_u->pax_c) && ENOENT != errno ) {
     uL(fprintf(uH, "error unlinking %s: %s\n", fil_u->pax_c, strerror(errno)));
     c3_assert(0);
@@ -396,10 +394,8 @@ _unix_free_file(uv_handle_t* was_u)
 /* _unix_free_dir(): free directory, deleting everything within
 */
 static void
-_unix_free_dir(uv_handle_t* was_u)
+_unix_free_dir(u3_udir *dir_u)
 {
-  u3_udir* dir_u = (void*) was_u;
-
   _unix_rm_r(dir_u->pax_c);
 
   if ( dir_u->kid_u ) {
@@ -448,13 +444,12 @@ _unix_free_node(u3_pier *pir_u, u3_unod* nod_u)
       can = u3kb_weld(_unix_free_node(pir_u, nud_u), can);
       nud_u = nex_u;
     }
-
-    uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_dir);
+    _unix_free_dir((u3_udir *)nod_u);
   }
   else {
     can = u3nc(u3nc(_unix_string_to_path(pir_u, nod_u->pax_c), u3_nul),
                u3_nul);
-    uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_file);
+    _unix_free_file((u3_ufil *)nod_u);
   }
 
   return can;
@@ -529,57 +524,15 @@ _delete_mount_point_out:
   u3z(mon);
 }
 
-/* _unix_time_cb: timer callback
+/* _unix_commit_mount_point: commit from mount point
 */
 static void
-_unix_time_cb(uv_timer_t* tim_u)
+_unix_commit_mount_point(u3_pier *pir_u, u3_noun mon)
 {
-  {
-    u3_pier *pir_u = tim_u->data;
-    pir_u->unx_u->alm = c3n;
-    pir_u->unx_u->dyr = c3y;
-  }
-}
-
-/* _unix_fs_event_cb(): filesystem event callback.
-*/
-static void
-_unix_fs_event_cb(uv_fs_event_t* was_u,
-                  const c3_c*    pax_c,
-                  c3_i           evt_i,
-                  c3_i           sas_i)
-{
-  // note that we're doing something tricky and weird here.
-  //
-  // * libuv passes around a pointer to a uv_fs_event_t
-  // * we define a struct that STARTS with a uv_fs_event_t and then has
-  //     more fields after it
-  // * this is what we pass into libuv up top
-  // * this is what we get out of libuv down below
-  // * thus a cast is cool
-  u3_unod* nod_u = (u3_unod*) was_u;
-  u3_pier *pir_u = was_u->data;
-
-  while ( nod_u ) {
-    nod_u->dry = c3n;
-    nod_u = (u3_unod*) nod_u->par_u;
-  }
-
-  // we start a timer so that in 100 ms we check the fs.
-  // the extra time is so that the fs "settles down".
-  // vim, for example, tends to delete and re-add files
-  // for safety purposes.
-  if ( c3y == pir_u->unx_u->alm ) {
-    uv_timer_stop(&pir_u->unx_u->tim_u);
-  }
-  else {
-    pir_u->unx_u->alm = c3y;
-  }
-
-  pir_u->unx_u->dyr = c3n;
-
-  pir_u->unx_u->tim_u.data = pir_u;
-  uv_timer_start(&pir_u->unx_u->tim_u, _unix_time_cb, 100, 0);
+  pir_u->unx_u->dyr = c3y;
+  u3z(mon);
+  u3_unix_ef_look(pir_u, c3n);
+  return;
 }
 
 /* _unix_watch_file(): initialize file
@@ -601,24 +554,6 @@ _unix_watch_file(u3_pier *pir_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
     fil_u->nex_u = par_u->kid_u;
     par_u->kid_u = (u3_unod*) fil_u;
   }
-
-  // stuff fil_u into libuv
-  // note that we're doing something tricky here
-  // see comment in _unix_fs_event_cb
-
-  fil_u->was_u.data = pir_u;
-  c3_w ret_w = uv_fs_event_init(u3L, &fil_u->was_u);
-  if (0 != ret_w){
-    uL(fprintf(uH, "file event init: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
-  }
-
-  fil_u->was_u.data = pir_u;
-  ret_w = uv_fs_event_start(&fil_u->was_u, _unix_fs_event_cb, pax_c, 0);
-  if ( 0 != ret_w ){
-    uL(fprintf(uH, "file event start %s: %s\n", fil_u->pax_c, uv_strerror(ret_w)));
-    c3_assert(0);
-  }
 }
 
 /* _unix_watch_dir(): initialize directory
@@ -638,22 +573,6 @@ _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
   if ( par_u ) {
     dir_u->nex_u = par_u->kid_u;
     par_u->kid_u = (u3_unod*) dir_u;
-  }
-
-  // stuff dir_u into libuv
-  // note that we're doing something tricky here
-  // see comment in _unix_fs_event_cb
-
-  c3_w ret_w = uv_fs_event_init(u3L, &dir_u->was_u);
-  if (0 != ret_w){
-    uL(fprintf(uH, "directory event init: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
-  }
-
-  ret_w = uv_fs_event_start(&dir_u->was_u, _unix_fs_event_cb, pax_c, 0);
-  if (0 != ret_w){
-    uL(fprintf(uH, "directory event start: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
   }
 }
 
@@ -698,7 +617,7 @@ _unix_update_file(u3_pier *pir_u, u3_ufil* fil_u)
     return u3_nul;
   }
 
-  fil_u->dry = c3y;
+  fil_u->dry = c3n;
 
   struct stat buf_u;
   c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
@@ -714,19 +633,6 @@ _unix_update_file(u3_pier *pir_u, u3_ufil* fil_u)
                  fil_u->pax_c, strerror(errno)));
       return u3_nul;
     }
-  }
-
-  // So, if file gets deleted and then quickly re-added, like vim and
-  // other editors do, we lose the notification.  This is a bad thing,
-  // so we always stop and restart the notification.
-  uv_fs_event_stop(&fil_u->was_u);
-  c3_w ret_w = uv_fs_event_start(&fil_u->was_u,
-                                 _unix_fs_event_cb,
-                                 fil_u->pax_c,
-                                 0);
-  if ( 0 != ret_w ){
-    uL(fprintf(uH, "update file event start: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
   }
 
   len_ws = buf_u.st_size;
@@ -791,7 +697,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
     return u3_nul;
   }
 
-  dir_u->dry = c3y;
+  dir_u->dry = c3n;
 
   // Check that old nodes are still there
 
@@ -864,8 +770,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
     else if ( !out_u ) {
       break;
     }
-    else if ( '.' == out_u->d_name[0] || 
-              !strcmp("LICENSE.txt", out_u->d_name) ) {
+    else if ( '.' == out_u->d_name[0] ) {
       continue;
     }
     else {
@@ -1108,13 +1013,6 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
   }
 }
 
-/* _unix_ef_sync(): check for files to sync.
- */
-static void
-_unix_ef_sync(uv_check_t* han_u)
-{
-}
-
 /* _unix_sync_file(): sync file to unix
 */
 static void
@@ -1257,6 +1155,14 @@ _unix_sync_ergo(u3_pier *pir_u, u3_umon* mon_u, u3_noun can)
   u3z(can);
 }
 
+/* u3_unix_ef_dirk(): commit mount point
+*/
+void
+u3_unix_ef_dirk(u3_pier *pir_u, u3_noun mon)
+{
+  _unix_commit_mount_point(pir_u, mon);
+}
+
 /* u3_unix_ef_ergo(): update filesystem from urbit
 */
 void
@@ -1299,10 +1205,6 @@ u3_unix_io_init(u3_pier *pir_u)
 
   unx_u->mon_u = NULL;
 
-  uv_check_init(u3L, &pir_u->unx_u->syn_u);
-
-  unx_u->tim_u.data = pir_u;
-  uv_timer_init(u3L, &unx_u->tim_u);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
 }
@@ -1455,7 +1357,6 @@ u3_unix_io_talk(u3_pier *pir_u)
 {
   u3_unix_acquire(pir_u->pax_c);
   u3_unix_ef_move();
-  uv_check_start(&pir_u->unx_u->syn_u, _unix_ef_sync);
 }
 
 /* u3_unix_io_exit(): terminate unix I/O.
@@ -1463,7 +1364,6 @@ u3_unix_io_talk(u3_pier *pir_u)
 void
 u3_unix_io_exit(u3_pier *pir_u)
 {
-  uv_check_stop(&pir_u->unx_u->syn_u);
   u3_unix_release(pir_u->pax_c);
 }
 
