@@ -1,4 +1,5 @@
 { nixpkgs, host }:
+
 nixpkgs.stdenv.mkDerivation rec {
   name = "binutils-${version}-${host}";
 
@@ -12,8 +13,6 @@ nixpkgs.stdenv.mkDerivation rec {
   patches = [
     ./deterministic.patch
   ];
-
-  outputs = [ "out" "info" ];
 
   buildInputs = [ nixpkgs.bison nixpkgs.zlib ];
 
