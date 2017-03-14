@@ -1,0 +1,34 @@
+diff --git a/mingw-w64-headers/Makefile.am b/mingw-w64-headers/Makefile.am
+index 80911fc7..b29baed2 100644
+--- a/mingw-w64-headers/Makefile.am
++++ b/mingw-w64-headers/Makefile.am
+@@ -160,7 +160,7 @@ IDL_SRCS = \
+   include/tuner.idl \
+   include/uiautomationclient.idl \
+   include/uiautomationcore.idl \
+-  include/uiviewsettingsinterop.idl \
++  include/UIViewSettingsInterop.idl \
+   include/unknwn.idl \
+   include/unknwnbase.idl \
+   include/urlmon.idl \
+diff --git a/mingw-w64-headers/Makefile.in b/mingw-w64-headers/Makefile.in
+index fb5ca139..8b702f12 100644
+--- a/mingw-w64-headers/Makefile.in
++++ b/mingw-w64-headers/Makefile.in
+@@ -459,7 +459,7 @@ EXTRA_HEADERS = \
+ @HAVE_WIDL_TRUE@  include/tuner.idl \
+ @HAVE_WIDL_TRUE@  include/uiautomationclient.idl \
+ @HAVE_WIDL_TRUE@  include/uiautomationcore.idl \
+-@HAVE_WIDL_TRUE@  include/uiviewsettingsinterop.idl \
++@HAVE_WIDL_TRUE@  include/UIViewSettingsInterop.idl \
+ @HAVE_WIDL_TRUE@  include/unknwn.idl \
+ @HAVE_WIDL_TRUE@  include/unknwnbase.idl \
+ @HAVE_WIDL_TRUE@  include/urlmon.idl \
+diff --git a/mingw-w64-headers/include/uiviewsettingsinterop.h b/mingw-w64-headers/include/UIViewSettingsInterop.h
+similarity index 100%
+rename from mingw-w64-headers/include/uiviewsettingsinterop.h
+rename to mingw-w64-headers/include/UIViewSettingsInterop.h
+diff --git a/mingw-w64-headers/include/uiviewsettingsinterop.idl b/mingw-w64-headers/include/UIViewSettingsInterop.idl
+similarity index 100%
+rename from mingw-w64-headers/include/uiviewsettingsinterop.idl
+rename to mingw-w64-headers/include/UIViewSettingsInterop.idl
