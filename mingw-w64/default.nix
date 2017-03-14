@@ -3,7 +3,7 @@
 let
   host = "${arch}-w64-mingw32";
 
-  binutils = import ./binutils { inherit nixpkgs arch; };
+  binutils = import ./binutils { inherit nixpkgs host; };
 
   mingw-w64_info = rec {
     name = "mingw-w64-${version}";
