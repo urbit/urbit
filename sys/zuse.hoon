@@ -3426,7 +3426,7 @@
     |%
     ::                                                  ::  ++abet:lusk:differ
     ++  abet                                            ::
-      =?  q.rag  =([& 0] p.rag)  [p.rag q.rag]
+      =?  q.rag  !=([& 0] p.rag)  [p.rag q.rag]
       (flop q.rag)
     ::                                                  ::  ++done:lusk:differ
     ++  done                                            ::
