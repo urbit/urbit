@@ -7,7 +7,7 @@ rec {
     x86_64-w64-mingw32 = import ./mingw-w64 { inherit nixpkgs; arch = "x86_64"; };
   };
 
-  pkgFun = crossenv: import ./pkgs.nix { inherit crossenv; };
+  pkgFun = crossenv: import ./pkgs.nix { inherit crossenv; } // crossenv;
 
   pkgs = {
     recurseForDerivations = true;
