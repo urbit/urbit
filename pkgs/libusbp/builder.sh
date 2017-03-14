@@ -3,8 +3,7 @@ source $stdenv/setup
 tar -xf $src
 
 cd libusbp-$version
-for patch in $patches
-do
+for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
