@@ -8,6 +8,8 @@ let
     sha256 = "1di492c455m43q0bqa9draq98yxvrr2p2slkd9hc1fixdlw58k0g";
   };
 
+  # TODO: add the patch from martchus for UIViewSettingsInterop.h
+
   base = crossenv.nixpkgs.stdenv.mkDerivation rec {
     name = "qt-${version}-${crossenv.host}";
 

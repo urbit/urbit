@@ -13,7 +13,7 @@ let
       rev = "c2f24277dbc6878b98a5f5174a01b103d16d5bcd";
       sha256 = "1r8pbq0z0x8lchwm434x81grf3g8sq488bq2cr2w6pr0sp5cxcn8";
     };
-    patches = [ ./fix-caps.patch ];
+    patches = [ ];
   };
 
   mingw-w64_headers = nixpkgs.stdenv.mkDerivation {
