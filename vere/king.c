@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <uv.h>
 #include "all.h"
 #include "vere/vere.h"
@@ -416,6 +417,10 @@ u3_king_commence()
   }
 
   /* listen on command socket */
+  if ( access("/tmp/urbit.sock", F_OK) != -1 ) {
+    fprintf(stderr, "/tmp/urbit.sock exists - is urbit already running?\r\n");
+    exit(1);
+  }
   uv_pipe_init(u3L, &u3K.cmd_u, 0);
   uv_pipe_bind(&u3K.cmd_u, "/tmp/urbit.sock");
   uv_listen((uv_stream_t *)&u3K.cmd_u, 128, _king_socket_connect);
