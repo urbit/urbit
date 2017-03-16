@@ -1,0 +1,11 @@
+--- x86_64/qtbase/src/plugins/platforms/minimal/qminimalintegration.cpp.orig	2016-06-08 20:09:49.795870200 +0300
++++ x86_64/qtbase/src/plugins/platforms/minimal/qminimalintegration.cpp	2016-06-08 20:10:59.856863400 +0300
+@@ -112,7 +112,7 @@
+ QPlatformFontDatabase *QMinimalIntegration::fontDatabase() const
+ {
+     if (m_options & EnableFonts) {
+-#if QT_CONFIG(fontconfig)
++#if QT_CONFIG(fontconfig) && !defined(Q_OS_WIN)
+         if (!m_fontDatabase)
+             m_fontDatabase = new QGenericUnixFontDatabase;
+ #else

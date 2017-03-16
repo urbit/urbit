@@ -1,0 +1,120 @@
+From 1d9aff66270aba6d16077f460aa85fbf161aba99 Mon Sep 17 00:00:00 2001
+From: Joerg Bornemann <joerg.bornemann@nokia.com>
+Date: Tue, 17 Jan 2012 14:21:05 +0100
+Subject: [PATCH] Revert "Revert "fix NTFS mount points""
+
+This reverts commit 49d1b068987d0895b2429b3d87beb561d9fbcbd7
+
+Because of https://github.com/msys2/msys2.github.io/issues/4
+
+.. bringing back:
+
+fix NTFS mount points
+
+NTFS mount points are not treated as symlinks, because they might
+not have a link target.
+This is the case when a volume is mounted as a single mount point
+without a drive letter.
+This patch fixes building Qt in an NTFS mount point.
+
+Task-number: QTBUG-20431
+Change-Id: Ie2e15212e1a7ca7fa0067b7ca8857e243e42c21a
+Reviewed-by: Thomas Hartmann <Thomas.Hartmann@nokia.com>
+---
+ src/corelib/io/qfilesystemengine_win.cpp   | 10 ++++++----
+ src/corelib/io/qfilesystemiterator_win.cpp |  2 +-
+ src/corelib/io/qfilesystemmetadata_p.h     | 23 +++++++++++++++++------
+ 3 files changed, 24 insertions(+), 11 deletions(-)
+
+diff --git a/src/corelib/io/qfilesystemengine_win.cpp b/src/corelib/io/qfilesystemengine_win.cpp
+index 221cea3..fa56d7c 100644
+--- a/src/corelib/io/qfilesystemengine_win.cpp
++++ b/src/corelib/io/qfilesystemengine_win.cpp
+@@ -914,9 +914,10 @@ static bool tryFindFallback(const QFileSystemEntry &fname, QFileSystemMetaData &
+     int errorCode = GetLastError();
+     if (errorCode == ERROR_ACCESS_DENIED || errorCode == ERROR_SHARING_VIOLATION) {
+         WIN32_FIND_DATA findData;
+-        if (getFindData(fname.nativeFilePath(), findData)
++        const QString nativeFilePath = fname.nativeFilePath();
++        if (getFindData(nativeFilePath, findData)
+             && findData.dwFileAttributes != INVALID_FILE_ATTRIBUTES) {
+-            data.fillFromFindData(findData, true, fname.isDriveRoot());
++            data.fillFromFindData(findData, true, fname.isDriveRoot(), nativeFilePath);
+             filledData = true;
+         }
+     }
+@@ -1031,8 +1032,9 @@ bool QFileSystemEngine::fillMetaData(const QFileSystemEntry &entry, QFileSystemM
+         data.knownFlagsMask |= QFileSystemMetaData::LinkType;
+         if (data.fileAttribute_ & FILE_ATTRIBUTE_REPARSE_POINT) {
+             WIN32_FIND_DATA findData;
+-            if (getFindData(fname.nativeFilePath(), findData))
+-                data.fillFromFindData(findData, true);
++            const QString nativeFilePath = fname.nativeFilePath();
++            if (getFindData(nativeFilePath, findData))
++                data.fillFromFindData(findData, true, false, nativeFilePath);
+         }
+     }
+     data.knownFlagsMask |= what;
+diff --git a/src/corelib/io/qfilesystemiterator_win.cpp b/src/corelib/io/qfilesystemiterator_win.cpp
+index 6351a35..6fa22ef 100644
+--- a/src/corelib/io/qfilesystemiterator_win.cpp
++++ b/src/corelib/io/qfilesystemiterator_win.cpp
+@@ -138,7 +138,7 @@ bool QFileSystemIterator::advance(QFileSystemEntry &fileEntry, QFileSystemMetaDa
+         fileEntry = QFileSystemEntry(dirPath + fileName);
+         metaData = QFileSystemMetaData();
+         if (!fileName.endsWith(QLatin1String(".lnk"))) {
+-            metaData.fillFromFindData(findData, true);
++            metaData.fillFromFindData(findData, true, false, fileEntry.nativeFilePath());
+         }
+         return true;
+     }
+diff --git a/src/corelib/io/qfilesystemmetadata_p.h b/src/corelib/io/qfilesystemmetadata_p.h
+index da9576b..266111e 100644
+--- a/src/corelib/io/qfilesystemmetadata_p.h
++++ b/src/corelib/io/qfilesystemmetadata_p.h
+@@ -211,7 +211,7 @@ public:
+ 
+ #if defined(Q_OS_WIN)
+     inline void fillFromFileAttribute(DWORD fileAttribute, bool isDriveRoot = false);
+-    inline void fillFromFindData(WIN32_FIND_DATA &findData, bool setLinkType = false, bool isDriveRoot = false);
++    inline void fillFromFindData(WIN32_FIND_DATA &findData, bool setLinkType = false, bool isDriveRoot = false, const QString &nativeFullFilePath = QString());
+ #  ifndef Q_OS_WINRT
+     inline void fillFromFindInfo(BY_HANDLE_FILE_INFORMATION &fileInfo);
+ #  endif
+@@ -308,7 +308,7 @@ inline void QFileSystemMetaData::fillFromFileAttribute(DWORD fileAttribute,bool
+     knownFlagsMask |= FileType | DirectoryType | HiddenAttribute | ExistsAttribute;
+ }
+ 
+-inline void QFileSystemMetaData::fillFromFindData(WIN32_FIND_DATA &findData, bool setLinkType, bool isDriveRoot)
++inline void QFileSystemMetaData::fillFromFindData(WIN32_FIND_DATA &findData, bool setLinkType, bool isDriveRoot, const QString &nativeFullFilePath)
+ {
+     fillFromFileAttribute(findData.dwFileAttributes, isDriveRoot);
+     creationTime_ = findData.ftCreationTime;
+@@ -326,9 +326,21 @@ inline void QFileSystemMetaData::fillFromFindData(WIN32_FIND_DATA &findData, boo
+     if (setLinkType) {
+         knownFlagsMask |=  LinkType;
+         entryFlags &= ~LinkType;
+-        if ((fileAttribute_ & FILE_ATTRIBUTE_REPARSE_POINT)
+-            && (findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK)) {
+-            entryFlags |= LinkType;
++        if (fileAttribute_ & FILE_ATTRIBUTE_REPARSE_POINT) {
++            if (findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK) {
++                entryFlags |= LinkType;
++            } else if (findData.dwReserved0 == IO_REPARSE_TAG_MOUNT_POINT) {
++                // Junctions and mount points are implemented as NTFS reparse points.
++                // But mount points cannot be treated as symlinks because they might
++                // not have a link target.
++                wchar_t buf[50];
++                QString path = nativeFullFilePath;
++                if (!path.endsWith(QLatin1Char('\\')))
++                    path.append(QLatin1Char('\\'));
++                BOOL isMountPoint = GetVolumeNameForVolumeMountPoint(reinterpret_cast<const wchar_t*>(path.utf16()), buf, sizeof(buf) / sizeof(wchar_t));
++                if (!isMountPoint)
++                    entryFlags |= LinkType;
++            }
+         }
+     }
+ }
+-- 
+2.3.4
+

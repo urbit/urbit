@@ -1,0 +1,12 @@
+diff -urN qt-everywhere-opensource-src-5.5.0.orig/qtwebengine/tools/qmake/mkspecs/features/functions.prf qt-everywhere-opensource-src-5.5.0/qtwebengine/tools/qmake/mkspecs/features/functions.prf
+--- qt-everywhere-opensource-src-5.5.0.orig/qtwebengine/tools/qmake/mkspecs/features/functions.prf	2015-08-26 14:34:22.019269600 +0100
++++ qt-everywhere-opensource-src-5.5.0/qtwebengine/tools/qmake/mkspecs/features/functions.prf	2015-08-26 15:34:44.547516900 +0100
+@@ -14,7 +14,7 @@
+ 
+   linux-g++*:!isGCCVersionSupported(): return(false)
+   !isPythonVersionSupported(): return(false)
+-  linux-g++*|win32-msvc2013|macx-clang: return(true)
++  linux-g++*|win32-*|macx-clang: return(true)
+   boot2qt: return(true)
+ 
+   skipBuild("Qt WebEngine can currently only be built for Linux (GCC), Windows (MSVC 2013), OS X (XCode 5.1+) or Qt for Device Creation.")

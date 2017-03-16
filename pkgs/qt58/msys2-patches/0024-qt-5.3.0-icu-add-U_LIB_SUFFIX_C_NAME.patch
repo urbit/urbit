@@ -1,0 +1,21 @@
+--- x86_64/qtbase/src/3rdparty/icu_dependency.pri.orig	2014-04-20 21:24:31.107015700 +0100
++++ x86_64/qtbase/src/3rdparty/icu_dependency.pri	2014-04-20 21:24:25.573813000 +0100
+@@ -2,11 +2,17 @@
+     CONFIG(static, static|shared) {
+         CONFIG(debug, debug|release) {
+             LIBS_PRIVATE += -lsicuind -lsicuucd -lsicudtd
++            DEFINES += "U_LIB_SUFFIX_C_NAME=d"
+         } else {
+             LIBS_PRIVATE += -lsicuin -lsicuuc -lsicudt
+         }
+     } else {
+-        LIBS_PRIVATE += -licuin -licuuc -licudt
++        CONFIG(debug, debug|release) {
++            LIBS_PRIVATE += -licuind -licuucd -licudtd
++            DEFINES += "U_LIB_SUFFIX_C_NAME=d"
++        } else {
++            LIBS_PRIVATE += -licuin -licuuc -licudt
++        }
+     }
+ } else {
+     LIBS_PRIVATE += -licui18n -licuuc -licudata

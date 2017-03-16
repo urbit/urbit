@@ -1,0 +1,11 @@
+--- qtbase-opensource-src-5.3.2/qtbase/qmake/generators/win32/mingw_make.cpp.orig	2014-10-19 12:16:07.387600000 +0400
++++ qtbase-opensource-src-5.3.2/qtbase/qmake/generators/win32/mingw_make.cpp	2014-10-19 12:16:07.387600000 +0400
+@@ -254,7 +254,7 @@
+ 
+     processVars();
+ 
+-    project->values("QMAKE_LIBS") += project->values("RES_FILE");
++    project->values("OBJECTS") += project->values("RES_FILE");
+ 
+     if (project->isActiveConfig("dll")) {
+         QString destDir = "";

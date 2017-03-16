@@ -1,0 +1,82 @@
+From 29b4407c73d05bb98afb3a3a65e987cd825aa7f8 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Wed, 25 Jan 2017 21:08:20 +0100
+Subject: [PATCH 26/30] Enable anf fix use of iconv
+
+---
+ config.tests/unix/gnu-libiconv/gnu-libiconv.cpp | 2 +-
+ src/corelib/codecs/qiconvcodec.cpp              | 7 +++----
+ src/corelib/configure.json                      | 4 ++--
+ 3 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/config.tests/unix/gnu-libiconv/gnu-libiconv.cpp b/config.tests/unix/gnu-libiconv/gnu-libiconv.cpp
+index 1276311e08..993a12c7ee 100644
+--- a/config.tests/unix/gnu-libiconv/gnu-libiconv.cpp
++++ b/config.tests/unix/gnu-libiconv/gnu-libiconv.cpp
+@@ -46,7 +46,7 @@ int main(int, char **)
+ {
+     iconv_t x = iconv_open("", "");
+ 
+-    const char *inp;
++    char *inp;
+     char *outp;
+     size_t inbytes, outbytes;
+     iconv(x, &inp, &inbytes, &outp, &outbytes);
+diff --git a/src/corelib/codecs/qiconvcodec.cpp b/src/corelib/codecs/qiconvcodec.cpp
+index e4fb359f2c..771b1fa9f2 100644
+--- a/src/corelib/codecs/qiconvcodec.cpp
++++ b/src/corelib/codecs/qiconvcodec.cpp
+@@ -50,7 +50,6 @@ QT_REQUIRE_CONFIG(iconv);
+ #include <errno.h>
+ #include <locale.h>
+ #include <stdio.h>
+-#include <dlfcn.h>
+ 
+ // unistd.h is needed for the _XOPEN_UNIX macro
+ #include <unistd.h>
+@@ -183,7 +182,7 @@ QString QIconvCodec::convertToUnicode(const char* chars, int len, ConverterState
+     IconvState *state = *pstate;
+     size_t inBytesLeft = len;
+     // best case assumption, each byte is converted into one UTF-16 character, plus 2 bytes for the BOM
+-#if !QT_CONFIG(posix_libiconv)
++#if !QT_CONFIG(posix_libiconv) && !defined(Q_OS_WIN)
+     // GNU doesn't disagree with POSIX :/
+     const char *inBytes = chars;
+ #else
+@@ -282,7 +281,7 @@ static bool setByteOrder(iconv_t cd)
+     size_t outBytesLeft = sizeof buf;
+     size_t inBytesLeft = sizeof bom;
+ 
+-#if !QT_CONFIG(posix_libiconv)
++#if !QT_CONFIG(posix_libiconv) && !defined(Q_OS_WIN)
+     const char **inBytesPtr = const_cast<const char **>(&inBytes);
+ #else
+     char **inBytesPtr = &inBytes;
+@@ -304,7 +303,7 @@ QByteArray QIconvCodec::convertFromUnicode(const QChar *uc, int len, ConverterSt
+     char *outBytes;
+     size_t inBytesLeft;
+ 
+-#if !QT_CONFIG(posix_libiconv)
++#if !QT_CONFIG(posix_libiconv) && !defined(Q_OS_WIN)
+     const char **inBytesPtr = const_cast<const char **>(&inBytes);
+ #else
+     char **inBytesPtr = &inBytes;
+diff --git a/src/corelib/configure.json b/src/corelib/configure.json
+index 0d1954c3a8..32bbe92f57 100644
+--- a/src/corelib/configure.json
++++ b/src/corelib/configure.json
+@@ -263,9 +263,9 @@
+         },
+         "gnu-libiconv": {
+             "label": "GNU iconv",
+-            "enable": "input.iconv == 'gnu'",
++            "enable": "'enabling via -gnu-iconv fails' == 'enabling via -gnu-iconv fails'",
+             "disable": "input.iconv == 'posix' || input.iconv == 'sun' || input.iconv == 'no'",
+-            "condition": "!config.win32 && !config.qnx && !config.android && !config.darwin && !features.posix-libiconv && !features.sun-libiconv && libs.gnu_iconv",
++            "condition": "!config.qnx && !config.android && !config.darwin && !features.posix-libiconv && !features.sun-libiconv && libs.gnu_iconv",
+             "output": [ "privateFeature" ]
+         },
+         "icu": {
+-- 
+2.11.1
+

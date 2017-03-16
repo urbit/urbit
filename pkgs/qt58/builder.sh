@@ -3,6 +3,16 @@ source $stdenv/setup
 time tar -xf $src
 
 cd qt-everywhere-opensource-src-$version
+cd qtbase
+for patch in $qtbase_patches; do
+  echo applying patch $patch
+  patch -p1 -i $patch
+done
+cd ..
+for patch in $patches; do
+  echo applying patch $patch
+  patch -p1 -i $patch
+done
 # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 cd ..
 

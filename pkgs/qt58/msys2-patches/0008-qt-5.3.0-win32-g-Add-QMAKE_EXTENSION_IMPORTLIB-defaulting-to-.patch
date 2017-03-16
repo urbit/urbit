@@ -1,0 +1,87 @@
+From f09d23b9cd22771e04f49b386e3b67df8ad108c3 Mon Sep 17 00:00:00 2001
+From: Ray Donnelly <mingw.android@gmail.com>
+Date: Mon, 10 Mar 2014 22:59:39 +0000
+Subject: [PATCH] win32-g++: Add QMAKE_EXTENSION_IMPORTLIB defaulting to 'a'
+
+This is to allow the MSYS2 project to set it to 'dll.a' so
+that static and shared Qt libraries can be installed into
+the same prefix without conflicting.
+
+To change it, you should pass -device-option to configure.
+
+Change-Id: I9ee49d2aef46e21f31b97611de2fc6d3070e288a
+---
+ mkspecs/features/create_cmake.prf     |  5 +++--
+ qmake/generators/win32/mingw_make.cpp | 15 +++++++++++++--
+ qmake/generators/win32/mingw_make.h   |  1 +
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/mkspecs/features/create_cmake.prf b/mkspecs/features/create_cmake.prf
+index 82e2812..2d8a043 100644
+--- a/mkspecs/features/create_cmake.prf
++++ b/mkspecs/features/create_cmake.prf
+@@ -214,8 +214,9 @@ mac {
+             CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.prl
+             CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
+         } else {
+-            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
+-            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
++            isEmpty(QMAKE_EXTENSION_IMPORTLIB): QMAKE_EXTENSION_IMPORTLIB = a
++            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.$${QMAKE_EXTENSION_IMPORTLIB}
++            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.$${QMAKE_EXTENSION_IMPORTLIB}
+         }
+     } else {
+         CMAKE_WINMAIN_FILE_LOCATION_DEBUG = qtmain$${QT_LIBINFIX}d.lib
+diff --git a/mkspecs/win32-g++/qmake.conf b/mkspecs/win32-g++/qmake.conf
+index 6d5764f..77e910b 100644
+--- a/mkspecs/win32-g++/qmake.conf
++++ b/mkspecs/win32-g++/qmake.conf
+@@ -92,7 +92,7 @@
+ QMAKE_EXTENSION_SHLIB   = dll
+ QMAKE_PREFIX_STATICLIB  = lib
+ QMAKE_EXTENSION_STATICLIB = a
+-QMAKE_LIB_EXTENSIONS    = a dll.a
++QMAKE_EXTENSION_IMPORTLIB    = dll.a
+ 
+ QMAKE_LIBS              =
+ QMAKE_LIBS_CORE         = -lole32 -luuid -lws2_32 -ladvapi32 -lshell32 -luser32 -lkernel32
+diff --git a/qmake/generators/win32/winmakefile.cpp b/qmake/generators/win32/winmakefile.cpp
+index 6d5764f..77e910b 100644
+--- a/qmake/generators/win32/winmakefile.cpp
++++ b/qmake/generators/win32/winmakefile.cpp
+@@ -85,10 +85,14 @@
+ bool
+ Win32MakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
+ {
+-    ProStringList impexts = project->values("QMAKE_LIB_EXTENSIONS");
+-    if (impexts.isEmpty())
+-        impexts = project->values("QMAKE_EXTENSION_STATICLIB");
+-    QList<QMakeLocalFileName> dirs;
++  ProStringList impexts;
++  if (project->isActiveConfig("staticlib")) {
++    impexts.append(project->values("QMAKE_EXTENSION_STATICLIB"));
++  } else {
++    impexts.append(project->values("QMAKE_EXTENSION_IMPORTLIB"));
++    impexts.append(project->values("QMAKE_EXTENSION_STATICLIB"));
++  }
++  QList<QMakeLocalFileName> dirs;
+   static const char * const lflags[] = { "QMAKE_LIBS", "QMAKE_LIBS_PRIVATE", 0 };
+   for (int i = 0; lflags[i]; i++) {
+     ProStringList &l = project->values(lflags[i]);
+@@ -233,9 +237,12 @@
+     if (!project->values("QMAKE_APP_FLAG").isEmpty()) {
+         project->values("TARGET_EXT").append(".exe");
+     } else if (project->isActiveConfig("shared")) {
++        ProString impext = project->first("QMAKE_EXTENSION_IMPORTLIB");
++        if (impext.isEmpty())
++          impext = project->first("QMAKE_PREFIX_STATICLIB");
+         project->values("LIB_TARGET").prepend(project->first("QMAKE_PREFIX_STATICLIB")
+                                               + project->first("TARGET") + project->first("TARGET_VERSION_EXT")
+-                                              + '.' + project->first("QMAKE_EXTENSION_STATICLIB"));
++                                              + '.' + impext);
+         project->values("TARGET_EXT").append(project->first("TARGET_VERSION_EXT") + "."
+                 + project->first("QMAKE_EXTENSION_SHLIB"));
+         project->values("TARGET").first() = project->first("QMAKE_PREFIX_SHLIB") + project->first("TARGET");
+-- 
+1.9.0
+

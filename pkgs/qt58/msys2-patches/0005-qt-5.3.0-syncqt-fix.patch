@@ -1,0 +1,11 @@
+diff -urN --ignore-all-space a/qtbase/bin/syncqt.pl b/qtbase/bin/syncqt.pl
+--- a/qtbase/bin/syncqt.pl	2014-05-02 23:02:57.995360800 +0100
++++ b/qtbase/bin/syncqt.pl	2014-05-02 23:03:59.474877200 +0100
+@@ -214,6 +214,7 @@
+     push @ret, split(/,/, $classname) if ($classname);
+ 
+     my $parsable = "";
++    local $/ = "\n";
+     if(open(F, "<$iheader")) {
+         while(<F>) {
+             my $line = $_;

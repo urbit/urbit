@@ -1,0 +1,25 @@
+From 37a65bf51b0747f9d306eb5c466f9b34096aa8a6 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Wed, 25 Jan 2017 23:41:16 +0100
+Subject: [PATCH 28/30] Include uiviewsettingsinterop.h correctly
+
+---
+ src/plugins/platforms/windows/qwin10helpers.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/plugins/platforms/windows/qwin10helpers.cpp b/src/plugins/platforms/windows/qwin10helpers.cpp
+index 977bbfd11b..12cccd124b 100644
+--- a/src/plugins/platforms/windows/qwin10helpers.cpp
++++ b/src/plugins/platforms/windows/qwin10helpers.cpp
+@@ -57,7 +57,7 @@
+ #endif
+ 
+ #ifdef HAS_UI_VIEW_SETTINGS_INTEROP
+-#  include <UIViewSettingsInterop.h>
++#  include <uiviewsettingsinterop.h>
+ #endif
+ 
+ #ifndef HAS_UI_VIEW_SETTINGS_INTEROP
+-- 
+2.11.1
+

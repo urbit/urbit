@@ -1,0 +1,41 @@
+diff -urN --ignore-all-space a/qtbase/src/angle/src/compiler/preprocessor/preprocessor.pro b/qtbase/src/angle/src/compiler/preprocessor/preprocessor.pro
+--- a/qtbase/src/angle/src/compiler/preprocessor/preprocessor.pro	2014-05-02 23:06:13.969569900 +0100
++++ b/qtbase/src/angle/src/compiler/preprocessor/preprocessor.pro	2014-05-02 23:06:33.470685300 +0100
+@@ -41,14 +41,14 @@
+     $$ANGLE_DIR/src/compiler/preprocessor/Token.cpp
+ 
+ # NOTE: 'flex' and 'bison' can be found in qt5/gnuwin32/bin
+-flex.commands = $$addGnuPath(flex) --noline --nounistd --outfile=${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
++flex.commands = flex --noline --nounistd --outfile=${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
+ flex.output = $${BUILDSUBDIR}${QMAKE_FILE_BASE}.cpp
+ flex.input = FLEX_SOURCES
+ flex.dependency_type = TYPE_C
+ flex.variable_out = GENERATED_SOURCES
+ QMAKE_EXTRA_COMPILERS += flex
+ 
+-bison.commands = $$addGnuPath(bison) --no-lines --skeleton=yacc.c --output=${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
++bison.commands = bison --no-lines --skeleton=yacc.c --output=${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
+ bison.output = $${BUILDSUBDIR}${QMAKE_FILE_BASE}.cpp
+ bison.input = BISON_SOURCES
+ bison.dependency_type = TYPE_C
+diff -urN --ignore-all-space a/qtbase/src/angle/src/compiler/translator.pro b/qtbase/src/angle/src/compiler/translator.pro
+--- a/qtbase/src/angle/src/compiler/translator.pro	2014-05-02 23:06:13.969569900 +0100
++++ b/qtbase/src/angle/src/compiler/translator.pro	2014-05-02 23:06:33.467685100 +0100
+@@ -163,15 +163,15 @@
+ 
+ 
+ # NOTE: 'flex' and 'bison' can be found in qt5/gnuwin32/bin
+-flex.commands = $$addGnuPath(flex) --noline --nounistd --outfile=${QMAKE_FILE_OUT} ${QMAKE_FILE_NAME}
++flex.commands = flex --noline --nounistd --outfile=${QMAKE_FILE_OUT}_lex.cpp ${QMAKE_FILE_NAME}
+ flex.output = $${BUILDSUBDIR}${QMAKE_FILE_BASE}_lex.cpp
+ flex.input = FLEX_SOURCES
+ flex.dependency_type = TYPE_C
+ flex.variable_out = GENERATED_SOURCES
+ QMAKE_EXTRA_COMPILERS += flex
+ 
+ defineReplace(myDirName) { return($$dirname(1)) }
+-bison.commands = $$addGnuPath(bison) --no-lines --skeleton=yacc.c --defines=${QMAKE_FILE_OUT} \
++bison.commands = bison --no-lines --skeleton=yacc.c --defines=${QMAKE_FILE_OUT} \
+                 --output=${QMAKE_FUNC_FILE_OUT_myDirName}$$QMAKE_DIR_SEP${QMAKE_FILE_OUT_BASE}.cpp \
+                 ${QMAKE_FILE_NAME}
+ bison.output = $${BUILDSUBDIR}${QMAKE_FILE_BASE}_tab.h

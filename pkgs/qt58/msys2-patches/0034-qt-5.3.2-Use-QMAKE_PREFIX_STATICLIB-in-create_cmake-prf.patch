@@ -1,0 +1,26 @@
+--- qt-everywhere-opensource-src-5.4.0-rc/qtbase/mkspecs/features/create_cmake.prf.orig	2014-12-01 01:49:24.066920200 +0000
++++ qt-everywhere-opensource-src-5.4.0-rc/qtbase/mkspecs/features/create_cmake.prf	2014-12-01 01:59:39.496120700 +0000
+@@ -134,15 +134,15 @@
+ 
+     win32 {
+         isEmpty(CMAKE_STATIC_TYPE) {
+-            CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/$${TARGET}.dll
+-            CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/$${TARGET}d.dll
+-        } else:mingw {
+-            CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/lib$${TARGET}.a
+-            CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/lib$${TARGET}d.a
+-        } else {                         # MSVC static
+-            CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/$${TARGET}.lib
+-            CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/$${TARGET}d.lib
++            CMAKE_PlUGIN_EXT = .$${QMAKE_EXTENSION_SHLIB}
++            CMAKE_PlUGIN_PREFIX =
++        } else {
++            CMAKE_PlUGIN_EXT = .$${QMAKE_EXTENSION_STATICLIB}
++            CMAKE_PlUGIN_PREFIX = $${QMAKE_PREFIX_STATICLIB}
+         }
++
++        CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/$${CMAKE_PlUGIN_PREFIX}$${TARGET}$${CMAKE_PlUGIN_EXT}
++        CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/$${CMAKE_PlUGIN_PREFIX}$${TARGET}d$${CMAKE_PlUGIN_EXT}
+     } else {
+         mac {
+             isEmpty(CMAKE_STATIC_TYPE): CMAKE_PlUGIN_EXT = .dylib

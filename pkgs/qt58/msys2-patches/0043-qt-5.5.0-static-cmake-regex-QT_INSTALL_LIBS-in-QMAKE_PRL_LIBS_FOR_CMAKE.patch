@@ -1,0 +1,11 @@
+diff -urN qt-everywhere-opensource-src-5.5.0.orig/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt-everywhere-opensource-src-5.5.0/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
+--- qt-everywhere-opensource-src-5.5.0.orig/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2015-08-27 12:15:50.549764900 +0100
++++ qt-everywhere-opensource-src-5.5.0/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2015-08-27 12:32:35.136763200 +0100
+@@ -249,6 +249,7 @@
+     if (EXISTS \"${prl_file_location}\")
+         file(STRINGS \"${prl_file_location}\" prl_strings REGEX \"QMAKE_PRL_LIBS_FOR_CMAKE\")
+         string(REGEX REPLACE \"QMAKE_PRL_LIBS_FOR_CMAKE *= *([^\\n]*)\" \"\\\\1\" static_depends ${prl_strings} )
++        string(REGEX REPLACE \"\\\\$\\\\$\\\\[QT_INSTALL_LIBS\\\\]\" \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/lib\" static_depends \"${static_depends}\")
+         if (_Qt5$${CMAKE_MODULE_NAME}_STATIC_${Configuration}_LIB_DEPENDENCIES)
+             set(_list_sep \";\")
+         endif()

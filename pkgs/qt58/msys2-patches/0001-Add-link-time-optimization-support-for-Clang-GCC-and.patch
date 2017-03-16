@@ -1,0 +1,203 @@
+From 1bd27f24fb7f7d82f4b67cffe43e0af644709106 Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Thu, 26 Jun 2014 14:56:06 -0700
+Subject: [PATCH] Add link-time optimization support for Clang, GCC and ICC
+
+GCC currently requires fat object files for static libraries, since the
+linker would otherwise not load the .o file from the archive at all and
+the linking would fail with a lot of undefined references. Clang on
+Linux also needs this, but it has no equivalent flag, so enabling LTCG
+for Clang on static libraries will result in linker error.
+
+This commit does not add support for enabling it in configure. It can be
+enabled on a per-project basis by doing CONFIG += ltcg or by passing
+-config ltcg to qmake's command-line.
+
+Change-Id: I52cf99f1ed9f1701e23a3b457ba3502fd28126ce
+Reviewed-by: Oswald Buddenhagen <oswald.buddenhagen@digia.com>
+---
+ mkspecs/common/clang.conf       |  6 ++++-
+ mkspecs/common/gcc-base.conf    |  3 +++
+ mkspecs/features/ltcg.prf       | 54 +++++++++++++++++++++++++++++++++++++++++
+ mkspecs/features/win32/ltcg.prf |  5 ----
+ mkspecs/linux-icc/qmake.conf    |  3 +++
+ mkspecs/macx-icc/qmake.conf     |  3 +++
+ 7 files changed, 71 insertions(+), 6 deletions(-)
+ create mode 100644 mkspecs/features/ltcg.prf
+ delete mode 100644 mkspecs/features/win32/ltcg.prf
+
+diff --git a/mkspecs/common/clang.conf b/mkspecs/common/clang.conf
+index d58b44b..6235296 100644
+--- a/mkspecs/common/clang.conf
++++ b/mkspecs/common/clang.conf
+@@ -16,8 +16,12 @@ QMAKE_PCH_OUTPUT_EXT    = .pch
+ QMAKE_CFLAGS_ISYSTEM             = -isystem
+ QMAKE_CFLAGS_PRECOMPILE          = -x c-header -c ${QMAKE_PCH_INPUT} -o ${QMAKE_PCH_OUTPUT}
+ QMAKE_CFLAGS_USE_PRECOMPILE      = -Xclang -include-pch -Xclang ${QMAKE_PCH_OUTPUT}
++QMAKE_CFLAGS_LTCG                = -flto
++
+ QMAKE_CXXFLAGS_PRECOMPILE        = -x c++-header -c ${QMAKE_PCH_INPUT} -o ${QMAKE_PCH_OUTPUT}
+ QMAKE_CXXFLAGS_USE_PRECOMPILE    = $$QMAKE_CFLAGS_USE_PRECOMPILE
++QMAKE_CXXFLAGS_LTCG              = $$QMAKE_CFLAGS_LTCG
++QMAKE_CXXFLAGS_CXX11             = -std=c++11
+ 
+-QMAKE_CXXFLAGS_CXX11    = -std=c++11
+ QMAKE_LFLAGS_CXX11      =
++QMAKE_LFLAGS_LTCG       = $$QMAKE_CFLAGS_LTCG
+diff --git a/mkspecs/common/gcc-base.conf b/mkspecs/common/gcc-base.conf
+index fcff502a..06d87d7 100644
+--- a/mkspecs/common/gcc-base.conf
++++ b/mkspecs/common/gcc-base.conf
+@@ -48,6 +48,7 @@ QMAKE_CFLAGS_YACC          += -Wno-unused -Wno-parentheses
+ QMAKE_CFLAGS_HIDESYMS      += -fvisibility=hidden
+ QMAKE_CFLAGS_EXCEPTIONS_OFF += -fno-exceptions
+ QMAKE_CFLAGS_SPLIT_SECTIONS += -ffunction-sections
++QMAKE_CFLAGS_LTCG           = -flto
+ 
+ QMAKE_CXXFLAGS            += $$QMAKE_CFLAGS
+ QMAKE_CXXFLAGS_DEPS       += $$QMAKE_CFLAGS_DEPS
+@@ -62,12 +63,14 @@ QMAKE_CXXFLAGS_YACC       += $$QMAKE_CFLAGS_YACC
+ QMAKE_CXXFLAGS_HIDESYMS   += $$QMAKE_CFLAGS_HIDESYMS -fvisibility-inlines-hidden
+ QMAKE_CXXFLAGS_EXCEPTIONS_OFF += $$QMAKE_CFLAGS_EXCEPTIONS_OFF
+ QMAKE_CXXFLAGS_SPLIT_SECTIONS += $$QMAKE_CFLAGS_SPLIT_SECTIONS
++QMAKE_CXXFLAGS_LTCG        = $$QMAKE_CFLAGS_LTCG
+ 
+ QMAKE_LFLAGS           +=
+ QMAKE_LFLAGS_DEBUG     +=
+ QMAKE_LFLAGS_APP       +=
+ QMAKE_LFLAGS_RELEASE   +=
+ QMAKE_LFLAGS_EXCEPTIONS_OFF +=
++QMAKE_LFLAGS_LTCG       = $$QMAKE_CFLAGS_LTCG -fuse-linker-plugin
+ 
+ QMAKE_CFLAGS_SSE2      += -msse2
+ QMAKE_CFLAGS_SSE3      += -msse3
+diff --git a/mkspecs/features/ltcg.prf b/mkspecs/features/ltcg.prf
+new file mode 100644
+index 0000000..b418135
+--- /dev/null
++++ b/mkspecs/features/ltcg.prf
+@@ -0,0 +1,54 @@
++CONFIG(release, debug|release) {
++    # We need fat object files when creating static libraries on some platforms
++    # so the linker will know to load a particular object from the library
++    # in the first place. With GCC, we have -ffat-lto-objects. MSVC
++    # seems to work just fine. For other compilers, we disable LTCG
++    # for static libraries.
++    msvc {
++        # Nothing to do
++    } else: gcc {
++        !clang:!intel_icc {
++            static|fat-lto {
++                QMAKE_CFLAGS_LTCG   += -ffat-lto-objects
++                QMAKE_CXXFLAGS_LTCG += -ffat-lto-objects
++            } else {
++                QMAKE_CFLAGS_LTCG   += -fno-fat-lto-objects
++                QMAKE_CXXFLAGS_LTCG += -fno-fat-lto-objects
++            }
++            linux {
++                # Get the number of online processors, like _SC_NPROCESSORS_ONLN
++                isEmpty(QMAKE_NPROCESSORS_ONLN) {
++                    QMAKE_NPROCESSORS_ONLN = $$system("grep -c '^processor' /proc/cpuinfo 2>/dev/null || echo 1")
++                    cache(QMAKE_NPROCESSORS_ONLN, set stash)
++                }
++
++                # Override LTO number of jobs
++                QMAKE_LFLAGS_LTCG -= -flto
++                QMAKE_LFLAGS_LTCG += -flto=$$QMAKE_NPROCESSORS_ONLN
++            }
++        } else: static {
++            QMAKE_CFLAGS_LTCG =
++            QMAKE_CXXFLAGS_LTCG =
++            QMAKE_LFLAGS_LTCG =
++        }
++
++        # When doing link-time code generation, we need to pass the compiler
++        # flags during linking stage too. This file is processed after
++        # default_post.prf, so the QMAKE_CXXFLAGS already contains
++        # QMAKE_CXXFLAGS_DEBUG or _RELEASE.
++        use_c_linker {
++            # use_c_linker.prf is in effect, use the C flags
++            QMAKE_LFLAGS_LTCG += $$QMAKE_CFLAGS $$QMAKE_CFLAGS_LTCG
++            QMAKE_LFLAGS_APP += $$QMAKE_CFLAGS_APP
++            QMAKE_LFLAGS_SHLIB += $$QMAKE_CFLAGS_SHLIB
++        } else {
++            QMAKE_LFLAGS_LTCG = $$QMAKE_CXXFLAGS $$QMAKE_LFLAGS_LTCG
++            QMAKE_LFLAGS_APP += $$QMAKE_CXXFLAGS_APP
++            QMAKE_LFLAGS_SHLIB += $$QMAKE_CXXFLAGS_SHLIB
++        }
++    }
++
++    QMAKE_CFLAGS *= $$QMAKE_CFLAGS_LTCG
++    QMAKE_CXXFLAGS *= $$QMAKE_CXXFLAGS_LTCG
++    QMAKE_LFLAGS *= $$QMAKE_LFLAGS_LTCG
++}
+diff --git a/mkspecs/features/win32/ltcg.prf b/mkspecs/features/win32/ltcg.prf
+deleted file mode 100644
+index f6f1299..0000000
+--- a/mkspecs/features/win32/ltcg.prf
++++ /dev/null
+@@ -1,5 +0,0 @@
+-CONFIG(release, debug|release) {
+-    QMAKE_CFLAGS *= $$QMAKE_CFLAGS_LTCG
+-    QMAKE_CXXFLAGS *= $$QMAKE_CXXFLAGS_LTCG
+-    QMAKE_LFLAGS *= $$QMAKE_LFLAGS_LTCG
+-}
+diff --git a/mkspecs/linux-icc/qmake.conf b/mkspecs/linux-icc/qmake.conf
+index c0caca0..8119c8a 100644
+--- a/mkspecs/linux-icc/qmake.conf
++++ b/mkspecs/linux-icc/qmake.conf
+@@ -24,6 +24,7 @@ QMAKE_CFLAGS_YACC       =
+ QMAKE_CFLAGS_ISYSTEM    = -isystem
+ QMAKE_CFLAGS_THREAD     = -D_REENTRANT
+ QMAKE_CFLAGS_SPLIT_SECTIONS = -ffunction-sections
++QMAKE_CFLAGS_LTCG       = -ipo
+ 
+ QMAKE_CFLAGS_SSE2      += -xSSE2
+ QMAKE_CFLAGS_SSE3      += -xSSE3
+@@ -49,6 +50,7 @@ QMAKE_CXXFLAGS_SPLIT_SECTIONS = $$QMAKE_CFLAGS_SPLIT_SECTIONS
+ # Disabling exceptions disabled - workaround for QTBUG-36577
+ #QMAKE_CXXFLAGS_EXCEPTIONS_OFF = -fno-exceptions
+ QMAKE_CXXFLAGS_CXX11    = -std=c++0x
++QMAKE_CXXFLAGS_LTCG     = $$QMAKE_CFLAGS_LTCG
+ 
+ QMAKE_INCDIR            =
+ QMAKE_LIBDIR            =
+@@ -70,6 +72,7 @@ QMAKE_LFLAGS_NOUNDEF    = -Wl,-z,defs
+ QMAKE_LFLAGS_RPATH      = -Wl,-rpath,
+ QMAKE_LFLAGS_RPATHLINK  = -Wl,-rpath-link,
+ QMAKE_LFLAGS_CXX11      =
++QMAKE_LFLAGS_LTCG       = $$QMAKE_CFLAGS_LTCG
+ 
+ QMAKE_LIBS              =
+ QMAKE_LIBS_DYNLOAD      = -ldl
+diff --git a/mkspecs/macx-icc/qmake.conf b/mkspecs/macx-icc/qmake.conf
+index 370a738..88b0497 100644
+--- a/mkspecs/macx-icc/qmake.conf
++++ b/mkspecs/macx-icc/qmake.conf
+@@ -23,6 +23,7 @@ QMAKE_CFLAGS_STATIC_LIB = $$QMAKE_CFLAGS_SHLIB
+ QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
+ QMAKE_CFLAGS_THREAD     =
+ QMAKE_CFLAGS_SPLIT_SECTIONS = -ffunction-sections
++QMAKE_CFLAGS_LTCG       = -ipo
+ 
+ QMAKE_CFLAGS_SSE2      += -msse2
+ QMAKE_CFLAGS_SSE3      += -msse3
+@@ -54,6 +55,7 @@ QMAKE_CXXFLAGS_THREAD   = $$QMAKE_CFLAGS_THREAD
+ # Disabled, due to invalid C++11 code on Apple headers
+ #QMAKE_CXXFLAGS_CXX11    = -std=c++11
+ QMAKE_CXXFLAGS_SPLIT_SECTIONS = $$QMAKE_CFLAGS_SPLIT_SECTIONS
++QMAKE_CXXFLAGS_LTCG     = $$QMAKE_CFLAGS_LTCG
+ 
+ QMAKE_LINK              = icpc
+ QMAKE_LINK_SHLIB        = icpc
+@@ -66,6 +68,7 @@ QMAKE_LFLAGS_PLUGIN     = $$QMAKE_LFLAGS_SHLIB
+ QMAKE_LFLAGS_SONAME     = -install_name$${LITERAL_WHITESPACE}
+ QMAKE_LFLAGS_THREAD     =
+ QMAKE_LFLAGS_RPATH      =
++QMAKE_LFLAGS_LTCG       = $$QMAKE_CFLAGS_LTCG
+ 
+ QMAKE_LFLAGS_VERSION    = -current_version$${LITERAL_WHITESPACE}
+ QMAKE_LFLAGS_COMPAT_VERSION = -compatibility_version$${LITERAL_WHITESPACE}
+-- 
+2.1.0
+

@@ -1,0 +1,31 @@
+From 18d6993dc57d56a2a952c913099fb634c047de6e Mon Sep 17 00:00:00 2001
+From: Ray Donnelly <mingw.android@gmail.com>
+Date: Tue, 22 Apr 2014 20:59:21 +0000
+Subject: [PATCH] qdoc: increase stack size for win32-g++ too
+
+---
+ src/tools/qdoc/qdoc.pro | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/tools/qdoc/qdoc.pro b/src/tools/qdoc/qdoc.pro
+index 7ec4b4f..7cb9f54 100644
+--- a/src/tools/qdoc/qdoc.pro
++++ b/src/tools/qdoc/qdoc.pro
+@@ -14,10 +14,13 @@ DEFINES += \
+ INCLUDEPATH += $$QT_SOURCE_TREE/src/tools/qdoc \
+                $$QT_SOURCE_TREE/src/tools/qdoc/qmlparser
+ 
+-# Increase the stack size on MSVC to 4M to avoid a stack overflow
++# Increase the stack size on Windows to 4M to avoid a stack overflow
+ win32-msvc*:{
+     QMAKE_LFLAGS += /STACK:4194304
+ }
++win32-g++:{
++    QMAKE_LFLAGS += -Wl,--stack,4194304
++}
+ 
+ HEADERS += atom.h \
+            codechunk.h \
+-- 
+1.9.2
+

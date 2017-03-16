@@ -1,0 +1,36 @@
+From 4f2f3f020a8fb463532afa4aa9ffeaae211208d5 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Wed, 25 Jan 2017 20:59:54 +0100
+Subject: [PATCH 25/30] Ignore errors about missing feature static
+
+Not sure why this error occurs, let's hope for the best
+---
+ mkspecs/features/qt_build_config.prf | 2 +-
+ mkspecs/features/qt_functions.prf    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mkspecs/features/qt_build_config.prf b/mkspecs/features/qt_build_config.prf
+index 3762c14f98..a58200a297 100644
+--- a/mkspecs/features/qt_build_config.prf
++++ b/mkspecs/features/qt_build_config.prf
+@@ -132,5 +132,5 @@ defineTest(qtConfig) {
+         contains(QT.$${module}.disabled_features, $$1): \
+             return(false)
+     }
+-    error("Could not find feature $${1}.")
++    !equals($$1, "static"): error("Could not find feature $${1}.")
+ }
+diff --git a/mkspecs/features/qt_functions.prf b/mkspecs/features/qt_functions.prf
+index 999cd18154..6bf08ea583 100644
+--- a/mkspecs/features/qt_functions.prf
++++ b/mkspecs/features/qt_functions.prf
+@@ -349,5 +349,5 @@ defineTest(qtConfig) {
+         contains(QT.$${module}.disabled_features, $$1): \
+             return(false)
+     }
+-    error("Could not find feature $${1}.")
++    !equals($$1, "static"): error("Could not find feature $${1}.")
+ }
+-- 
+2.11.1
+

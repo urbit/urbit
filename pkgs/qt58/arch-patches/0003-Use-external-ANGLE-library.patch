@@ -1,0 +1,97 @@
+From 1ffc87d8805a92fb7666084c656bac46cd276599 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 18 Sep 2016 13:41:38 +0200
+Subject: [PATCH 03/30] Use external ANGLE library
+
+---
+ src/gui/Qt5GuiConfigExtras.cmake.in       | 4 ++--
+ src/gui/gui.pro                           | 8 ++------
+ src/opengl/opengl.pro                     | 1 +
+ src/plugins/platforms/windows/windows.pri | 1 +
+ src/src.pro                               | 4 ----
+ 5 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/src/gui/Qt5GuiConfigExtras.cmake.in b/src/gui/Qt5GuiConfigExtras.cmake.in
+index 07869efd7d..2e32911a64 100644
+--- a/src/gui/Qt5GuiConfigExtras.cmake.in
++++ b/src/gui/Qt5GuiConfigExtras.cmake.in
+@@ -2,9 +2,9 @@
+ !!IF !isEmpty(CMAKE_ANGLE_EGL_DLL_RELEASE)
+ 
+ !!IF isEmpty(CMAKE_INCLUDE_DIR_IS_ABSOLUTE)
+-set(Qt5Gui_EGL_INCLUDE_DIRS \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$$CMAKE_INCLUDE_DIR/QtANGLE\")
++set(Qt5Gui_EGL_INCLUDE_DIRS \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$$CMAKE_INCLUDE_DIR\")
+ !!ELSE
+-set(Qt5Gui_EGL_INCLUDE_DIRS \"$$CMAKE_INCLUDE_DIR/QtANGLE\")
++set(Qt5Gui_EGL_INCLUDE_DIRS \"$$CMAKE_INCLUDE_DIR\")
+ !!ENDIF
+ 
+ _qt5_Gui_check_file_exists(${Qt5Gui_EGL_INCLUDE_DIRS})
+diff --git a/src/gui/gui.pro b/src/gui/gui.pro
+index 5f8cbe2cbe..0ebf6b7281 100644
+--- a/src/gui/gui.pro
++++ b/src/gui/gui.pro
+@@ -18,12 +18,6 @@ MODULE_PLUGIN_TYPES = \
+     imageformats \
+     egldeviceintegrations
+ 
+-# This is here only because the platform plugin is no module, obviously.
+-qtConfig(angle) {
+-    MODULE_AUX_INCLUDES = \
+-        \$\$QT_MODULE_INCLUDE_BASE/QtANGLE
+-}
+-
+ # Code coverage with TestCocoon
+ # The following is required as extra compilers use $$QMAKE_CXX instead of $(CXX).
+ # Without this, testcocoon.prf is read only after $$QMAKE_CXX is used by the
+@@ -34,6 +28,8 @@ testcocoon {
+ 
+ osx: LIBS_PRIVATE += -framework AppKit
+ 
++win32:qtConfig(angle): LIBS_PRIVATE += -lGLESv2
++
+ CONFIG += simd optimize_full
+ 
+ include(accessible/accessible.pri)
+diff --git a/src/opengl/opengl.pro b/src/opengl/opengl.pro
+index 718a886809..89965709ed 100644
+--- a/src/opengl/opengl.pro
++++ b/src/opengl/opengl.pro
+@@ -11,6 +11,7 @@ QMAKE_DOCS = $$PWD/doc/qtopengl.qdocconf
+ 
+ qtConfig(opengl): CONFIG += opengl
+ qtConfig(opengles2): CONFIG += opengles2
++win32:qtConfig(angle): LIBS_PRIVATE += -lGLESv2
+ 
+ HEADERS += qgl.h \
+            qgl_p.h \
+diff --git a/src/plugins/platforms/windows/windows.pri b/src/plugins/platforms/windows/windows.pri
+index 20e0b81da9..b55847fc69 100644
+--- a/src/plugins/platforms/windows/windows.pri
++++ b/src/plugins/platforms/windows/windows.pri
+@@ -2,6 +2,7 @@
+ LIBS += -lole32 -luser32 -lwinspool -limm32 -lwinmm -loleaut32
+ 
+ qtConfig(opengl):!qtConfig(opengles2):!qtConfig(dynamicgl): LIBS *= -lopengl32
++qtConfig(angle):LIBS += -lGLESv2 -lEGL
+ 
+ mingw: LIBS *= -luuid
+ # For the dialog helpers:
+diff --git a/src/src.pro b/src/src.pro
+index 90d7e2b76c..92e89ea39f 100644
+--- a/src/src.pro
++++ b/src/src.pro
+@@ -160,10 +160,6 @@ qtConfig(gui) {
+         SUBDIRS += src_3rdparty_harfbuzzng
+         src_gui.depends += src_3rdparty_harfbuzzng
+     }
+-    qtConfig(angle) {
+-        SUBDIRS += src_angle
+-        src_gui.depends += src_angle
+-    }
+     qtConfig(png):!qtConfig(system-png) {
+         SUBDIRS += src_3rdparty_libpng
+         src_3rdparty_freetype.depends += src_3rdparty_libpng
+-- 
+2.11.1
+

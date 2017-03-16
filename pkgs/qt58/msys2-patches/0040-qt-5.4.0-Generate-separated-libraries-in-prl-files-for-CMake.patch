@@ -1,0 +1,32 @@
+diff -urN qt-everywhere-opensource-src-5.5.0.orig/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt-everywhere-opensource-src-5.5.0/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
+--- qt-everywhere-opensource-src-5.5.0.orig/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2015-08-26 15:06:08.512109600 +0100
++++ qt-everywhere-opensource-src-5.5.0/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2015-08-26 15:06:33.366637700 +0100
+@@ -240,9 +240,8 @@
+ # all the right information.
+ macro(macro_process_prl_file prl_file_location Configuration)
+     if (EXISTS \"${prl_file_location}\")
+-        file(STRINGS \"${prl_file_location}\" prl_strings REGEX \"QMAKE_PRL_LIBS\")
+-        string(REGEX REPLACE \"QMAKE_PRL_LIBS *= *([^\\n]*)\" \"\\\\1\" static_depends ${prl_strings} )
+-        string(STRIP ${static_depends} static_depends)
++        file(STRINGS \"${prl_file_location}\" prl_strings REGEX \"QMAKE_PRL_LIBS_FOR_CMAKE\")
++        string(REGEX REPLACE \"QMAKE_PRL_LIBS_FOR_CMAKE *= *([^\\n]*)\" \"\\\\1\" static_depends ${prl_strings} )
+         if (_Qt5$${CMAKE_MODULE_NAME}_LIB_DEPENDENCIES)
+             set(_list_sep \";\")
+         endif()
+diff -urN qt-everywhere-opensource-src-5.5.0.orig/qtbase/qmake/generators/makefile.cpp qt-everywhere-opensource-src-5.5.0/qtbase/qmake/generators/makefile.cpp
+--- qt-everywhere-opensource-src-5.5.0.orig/qtbase/qmake/generators/makefile.cpp	2015-08-26 14:29:10.131124600 +0100
++++ qt-everywhere-opensource-src-5.5.0/qtbase/qmake/generators/makefile.cpp	2015-08-26 15:06:33.375635900 +0100
+@@ -1006,6 +1006,13 @@
+         for (ProStringList::Iterator it = libs.begin(); it != libs.end(); ++it)
+             t << qv(project->values((*it).toKey()));
+         t << endl;
++        t << "QMAKE_PRL_LIBS_FOR_CMAKE = ";
++        QString sep;
++        for (ProStringList::Iterator it = libs.begin(); it != libs.end(); ++it) {
++            t << sep << project->values((*it).toKey()).join(';').replace('\\', "\\\\");
++            sep = ';';
++        }
++        t << endl;
+     }
+ }
+ 

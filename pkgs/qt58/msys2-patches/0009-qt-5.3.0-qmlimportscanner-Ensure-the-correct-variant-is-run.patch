@@ -1,0 +1,43 @@
+From 766827ac48845626fae31acb46d3e3a6f32046a1 Mon Sep 17 00:00:00 2001
+From: Ray Donnelly <mingw.android@gmail.com>
+Date: Mon, 10 Mar 2014 23:31:16 +0000
+Subject: [PATCH 1/2] qmlimportscanner: Ensure the correct variant is run
+
+qmlimportscanner is run as a $$system command (as opposed
+to as a makefile command) so specify it as such to
+qtPrepareTool and run it as such too.
+
+The distinction is important for MinGW-w64 static
+builds where it must be run via cmd.exe and not sh.exe.
+
+A subsequent commit will force win32-g++ under MSYS2
+to take the correct cmd.exe path for $$system commands.
+
+Change-Id: I0832d5138bff7f4fa1968646df28d2367ad062c2
+---
+ mkspecs/features/qt.prf | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/mkspecs/features/qt.prf b/mkspecs/features/qt.prf
+index fb83e59..756382e 100644
+--- a/mkspecs/features/qt.prf
++++ b/mkspecs/features/qt.prf
+@@ -89,12 +89,12 @@
+     }
+ 
+     # run qmlimportscanner
+-    qtPrepareTool(QMLIMPORTSCANNER, qmlimportscanner)
++    qtPrepareTool(QMLIMPORTSCANNER, qmlimportscanner, _SYS)
+     for (QMLPATH, QMLPATHS): \
+         IMPORTPATHS += -importPath $$QMLPATH
+ 
+-    #message(run $$QMLIMPORTSCANNER $$_PRO_FILE_PWD_  $$IMPORTPATHS)
+-    JSON = $$system($$QMLIMPORTSCANNER $$_PRO_FILE_PWD_ $$IMPORTPATHS)
++    #message(run $$QMLIMPORTSCANNER_SYS $$_PRO_FILE_PWD_  $$IMPORTPATHS)
++    JSON = $$system($$QMLIMPORTSCANNER_SYS $$_PRO_FILE_PWD_ $$IMPORTPATHS)
+ 
+     parseJson(JSON, IMPORTS)| error("Failed to parse qmlimportscanner output.")
+ 
+-- 
+1.9.0
+

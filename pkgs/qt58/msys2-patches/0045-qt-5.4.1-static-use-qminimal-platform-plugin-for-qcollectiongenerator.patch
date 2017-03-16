@@ -1,0 +1,8 @@
+--- qt-everywhere-opensource-src-5.4.1/qttools/src/assistant/qcollectiongenerator/qcollectiongenerator.pro.orig	2015-03-26 21:59:29.662519600 +0000
++++ qt-everywhere-opensource-src-5.4.1/qttools/src/assistant/qcollectiongenerator/qcollectiongenerator.pro	2015-03-26 21:59:33.804756600 +0000
+@@ -1,4 +1,5 @@
+ QT += network help-private
++QTPLUGIN.platforms = qminimal
+ TARGET = qcollectiongenerator
+ SOURCES += ../shared/helpgenerator.cpp \
+     main.cpp \

@@ -1,0 +1,26 @@
+From f3a39738bcf7560f023bd280017aedaeb756e5c2 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Thu, 26 Jan 2017 17:51:31 +0100
+Subject: [PATCH 08/30] Fix linking against shared/static libpng
+
+---
+ src/gui/configure.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/gui/configure.json b/src/gui/configure.json
+index 1f5011617c..5006ff5a3a 100644
+--- a/src/gui/configure.json
++++ b/src/gui/configure.json
+@@ -161,7 +161,8 @@
+             "sources": [
+                 { "type": "pkgConfig", "args": "libpng" },
+                 { "libs": "-llibpng", "condition": "config.msvc" },
+-                { "libs": "-lpng", "condition": "!config.msvc" }
++                { "libs": "-lpng -lz", "condition": "!config.msvc && !features.shared" },
++                { "libs": "-lpng", "condition": "!config.msvc && features.shared" }
+             ]
+         },
+         "mirclient": {
+-- 
+2.11.1
+

@@ -1,0 +1,13 @@
+--- qt-everywhere-opensource-src-5.4.0.orig/qtbase/mkspecs/features/create_cmake.prf.orig	2014-12-14 20:11:38.710428500 +0000
++++ qt-everywhere-opensource-src-5.4.0/qtbase/mkspecs/features/create_cmake.prf	2014-12-14 22:16:48.451709600 +0000
+@@ -233,8 +233,8 @@
+             CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
+             CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
+ 
+-            CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.prl
+-            CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
++            CMAKE_PRL_FILE_LOCATION_DEBUG = $${CMAKE_QT_STEM}d.prl
++            CMAKE_PRL_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.prl
+         } else {
+             isEmpty(QMAKE_EXTENSION_IMPORTLIB): QMAKE_EXTENSION_IMPORTLIB = a
+             CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.$${QMAKE_EXTENSION_IMPORTLIB}

@@ -1,0 +1,66 @@
+From 3379bc4d4d65124ec08aa8dade1b6b2a7b25f61e Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Fri, 3 Feb 2017 19:36:25 +0100
+Subject: [PATCH 09/30] Fix linking against static D-Bus
+
+---
+ config.tests/unix/dbus/dbus.cpp | 4 ++++
+ configure.json                  | 6 +++++-
+ src/dbus/qdbus_symbols_p.h      | 4 ++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/config.tests/unix/dbus/dbus.cpp b/config.tests/unix/dbus/dbus.cpp
+index 295c904400..80d3e9c044 100644
+--- a/config.tests/unix/dbus/dbus.cpp
++++ b/config.tests/unix/dbus/dbus.cpp
+@@ -37,6 +37,10 @@
+ **
+ ****************************************************************************/
+ 
++#ifdef QT_STATIC
++#  define DBUS_STATIC_BUILD
++#endif
++
+ #define DBUS_API_SUBJECT_TO_CHANGE
+ #include <dbus/dbus.h>
+ 
+diff --git a/configure.json b/configure.json
+index f774291d22..12714da714 100644
+--- a/configure.json
++++ b/configure.json
+@@ -158,12 +158,16 @@
+             "sources": [
+                 { "type": "pkgConfig", "args": "dbus-1 >= 1.2" },
+                 {
++                    "libs": "-ldbus-1 -lws2_32 -liphlpapi",
++                    "condition": "config.win32 && !features.shared"
++                },
++                {
+                     "libs": "",
+                     "builds": {
+                         "debug": "-ldbus-1d",
+                         "release": "-ldbus-1"
+                     },
+-                    "condition": "config.win32"
++                    "condition": "config.win32 && features.shared"
+                 },
+                 { "libs": "-ldbus-1", "condition": "!config.win32" }
+             ]
+diff --git a/src/dbus/qdbus_symbols_p.h b/src/dbus/qdbus_symbols_p.h
+index cfc0e12046..65f1397cd6 100644
+--- a/src/dbus/qdbus_symbols_p.h
++++ b/src/dbus/qdbus_symbols_p.h
+@@ -57,6 +57,10 @@
+ 
+ #ifndef QT_NO_DBUS
+ 
++#ifdef QT_STATIC
++#  define DBUS_STATIC_BUILD
++#endif
++
+ #ifdef QT_LINKED_LIBDBUS
+ #  include <dbus/dbus.h>
+ #else
+-- 
+2.11.1
+

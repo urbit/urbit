@@ -1,0 +1,28 @@
+--- x86_64/qtbase/configure.bat.orig	2017-01-26 10:49:27.923099300 +0300
++++ x86_64/qtbase/configure.bat	2017-01-26 10:50:56.168562200 +0300
+@@ -103,12 +103,6 @@
+     rem This must have a trailing space.
+     echo QTSRC = %QTSRC% >> Makefile
+     set tmpl=win32
+-) else if not "%clang-cl.exe%" == "" (
+-    echo CXX = clang-cl>>Makefile
+-    echo EXTRA_CXXFLAGS = -fms-compatibility-version=19.00.23506 -Wno-microsoft-enum-value>>Makefile
+-    rem This must have a trailing space.
+-    echo QTSRC = %QTSRC% >> Makefile
+-    set tmpl=win32
+ ) else if not "%g++.exe%" == "" (
+     echo CXX = g++>>Makefile
+     echo EXTRA_CXXFLAGS =>>Makefile
+@@ -116,6 +110,12 @@
+     echo QTSRC = %QTSRC:\=/%>> Makefile
+     set tmpl=mingw
+     set make=mingw32-make
++) else if not "%clang-cl.exe%" == "" (
++    echo CXX = clang-cl>>Makefile
++    echo EXTRA_CXXFLAGS = -fms-compatibility-version=19.00.23506 -Wno-microsoft-enum-value>>Makefile
++    rem This must have a trailing space.
++    echo QTSRC = %QTSRC% >> Makefile
++    set tmpl=win32
+ ) else (
+     echo No suitable compiler found in PATH. Aborting. >&2
+     cd ..\..

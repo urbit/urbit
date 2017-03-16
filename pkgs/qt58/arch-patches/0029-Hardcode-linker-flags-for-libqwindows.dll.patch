@@ -1,0 +1,45 @@
+From 511bcf53d5fdf051becd7707e816dc6ad1111790 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Wed, 25 Jan 2017 23:42:30 +0100
+Subject: [PATCH 29/30] Hardcode linker flags for libqwindows.dll
+
+Otherwise incorrect order of libs leads to linker
+errors
+---
+ src/plugins/platforms/windows/windows.pro | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/src/plugins/platforms/windows/windows.pro b/src/plugins/platforms/windows/windows.pro
+index 23168c10dc..e27cf1a248 100644
+--- a/src/plugins/platforms/windows/windows.pro
++++ b/src/plugins/platforms/windows/windows.pro
+@@ -1,11 +1,22 @@
+ TARGET = qwindows
+ 
+ QT += \
+-    core-private gui-private \
+-    eventdispatcher_support-private accessibility_support-private \
+-    fontdatabase_support-private theme_support-private
++    core-private gui-private
+ 
+-LIBS += -lgdi32 -ldwmapi
++# Fix linker error when building libqwindows.dll by specifying linker flags for
++# required modules manually (otherwise order is messed)
++LIBS += \
++    -lQt5EventDispatcherSupport \
++    -lQt5AccessibilitySupport \
++    -lQt5FontDatabaseSupport \
++    -lQt5ThemeSupport \
++    -lfreetype -lole32 -lgdi32 -ldwmapi
++# However, this workaround leads to the necessity of specifying include dirs manually
++INCLUDEPATH += \
++    $$QT_SOURCE_TREE/include/QtEventDispatcherSupport/5.8.0 \
++    $$QT_SOURCE_TREE/include/QtAccessibilitySupport/5.8.0 \
++    $$QT_SOURCE_TREE/include/QtFontDatabaseSupport/5.8.0 \
++    $$QT_SOURCE_TREE/include/QtThemeSupport/5.8.0
+ 
+ include(windows.pri)
+ 
+-- 
+2.11.1
+

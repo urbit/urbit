@@ -1,0 +1,26 @@
+From acbc69f1a6d40c8a4106e4b931650b6921a40503 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 18 Sep 2016 18:56:55 +0200
+Subject: [PATCH 13/30] Fix linking against shared/static MariaDB
+
+---
+ src/sql/configure.json | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/sql/configure.json b/src/sql/configure.json
+index 96c82e84f9..7219926cf5 100644
+--- a/src/sql/configure.json
++++ b/src/sql/configure.json
+@@ -58,6 +58,9 @@
+             "label": "MySQL",
+             "test": "unix/mysql",
+             "sources": [
++                { "libs": "-lmariadbclient -lssl -lcrypto -lws2_32 -lpthread -lz -lm", "condition": "config.win32 && !features.shared" },
++                { "libs": "-Wl,-Bdynamic -lmariadb -Wl,-Bstatic", "condition": "config.win32 && !features.shared" },
++                { "libs": "-lmariadb", "condition": "config.win32 && features.shared" },
+                 { "type": "mysqlConfig", "query": "--libs_r" },
+                 { "type": "mysqlConfig", "query": "--libs" },
+                 { "libs": "-lmysqlclient_r", "condition": "!config.win32" },
+-- 
+2.11.1
+

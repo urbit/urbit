@@ -1,0 +1,43 @@
+From 15b374d87ff91c3a20d9022d5036a97c1252bb98 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Tue, 7 Feb 2017 18:25:28 +0100
+Subject: [PATCH 30/30] Prevent qmake from messing static lib dependencies
+
+In particular, it messes resolving cyclic dependency between
+static freetype2 and harfbuzz
+---
+ qmake/generators/unix/unixmake.cpp     | 3 +++
+ qmake/generators/win32/winmakefile.cpp | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/qmake/generators/unix/unixmake.cpp b/qmake/generators/unix/unixmake.cpp
+index 349dcd2f40..f6d3d1fa29 100644
+--- a/qmake/generators/unix/unixmake.cpp
++++ b/qmake/generators/unix/unixmake.cpp
+@@ -394,6 +394,9 @@ UnixMakefileGenerator::fixLibFlag(const ProString &lib)
+ bool
+ UnixMakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
+ {
++    if(project->isActiveConfig("staticlib")) {
++        return false; // prevent qmake from messing static lib dependencies
++    }
+     QList<QMakeLocalFileName> libdirs, frameworkdirs;
+     int libidx = 0, fwidx = 0;
+     for (const ProString &dlib : project->values("QMAKE_DEFAULT_LIBDIRS"))
+diff --git a/qmake/generators/win32/winmakefile.cpp b/qmake/generators/win32/winmakefile.cpp
+index e6338546bb..2407d26a5a 100644
+--- a/qmake/generators/win32/winmakefile.cpp
++++ b/qmake/generators/win32/winmakefile.cpp
+@@ -87,6 +87,9 @@ Win32MakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
+     impexts.append(project->values("QMAKE_EXTENSION_IMPORTLIB"));
+     impexts.append(project->values("QMAKE_EXTENSION_STATICLIB"));
+   }
++  if(project->isActiveConfig("staticlib")) {
++    return false; // prevent qmake from messing static lib dependencies
++  }
+   QList<QMakeLocalFileName> dirs;
+   static const char * const lflags[] = { "QMAKE_LIBS", "QMAKE_LIBS_PRIVATE", 0 };
+   for (int i = 0; lflags[i]; i++) {
+-- 
+2.11.1
+

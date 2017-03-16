@@ -1,0 +1,40 @@
+From c4f22ef225f6e4c2f1943da620a0dc6fff6296cb Mon Sep 17 00:00:00 2001
+From: Oswald Buddenhagen <oswald.buddenhagen@theqtcompany.com>
+Date: Tue, 13 Oct 2015 17:09:33 +0200
+Subject: [PATCH] fix the trailing-backslash-in-DESTDIR-on-mingw workaround
+
+at least the mingw version we use now interprets the sequence \# as a
+literal hashmark, which completely defeats the previous hack.
+
+the new hack escapes the backslash with another backslash, which appears
+to work. however, make does *not* remove the additional backslash, so
+the result is a bit ugly.
+
+Change-Id: I591a2be443880b162094d04e5a5e624216b59311
+---
+ qmake/generators/unix/unixmake2.cpp | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/qmake/generators/unix/unixmake2.cpp b/qmake/generators/unix/unixmake2.cpp
+index d0cd5d2..9db64be 100644
+--- a/qmake/generators/unix/unixmake2.cpp
++++ b/qmake/generators/unix/unixmake2.cpp
+@@ -269,11 +269,13 @@
+     t << "DIST          = " << valList(fileFixify(project->values("DISTFILES").toQStringList())) << " "
+                             << fileVarList("HEADERS") << ' ' << fileVarList("SOURCES") << endl;
+     t << "QMAKE_TARGET  = " << fileVar("QMAKE_ORIG_TARGET") << endl;
+-    // The comment is important for mingw32-make.exe on Windows as otherwise trailing slashes
+-    // would be interpreted as line continuation. The lack of spacing between the value and the
+-    // comment is also important as otherwise quoted use of "$(DESTDIR)" would include this
+-    // spacing.
+-    t << "DESTDIR       = " << fileVar("DESTDIR") << "#avoid trailing-slash linebreak\n";
++    QString destd = fileVar("DESTDIR");
++    // When building on non-MSys MinGW, the path ends with a backslash, which
++    // GNU make will interpret that as a line continuation. Doubling the backslash
++    // avoids the problem, at the cost of the variable containing *both* backslashes.
++    if (destd.endsWith('\\'))
++        destd += '\\';
++    t << "DESTDIR       = " << destd << endl;
+     if(project->isActiveConfig("compile_libtool"))
+         t << "TARGETL       = " << fileVar("TARGET_la") << endl;
+     t << "TARGET        = " << fileVar("TARGET") << endl; // ### mixed use!

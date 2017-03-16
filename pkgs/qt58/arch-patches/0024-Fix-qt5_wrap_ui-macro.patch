@@ -1,0 +1,28 @@
+From 40049fa696cc4b02cab01cf3a79f5ea76b92d364 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 4 Dec 2016 20:35:47 +0100
+Subject: [PATCH 24/30] Fix qt5_wrap_ui() macro
+
+See https://github.com/Martchus/PKGBUILDs/issues/11
+---
+ src/widgets/Qt5WidgetsMacros.cmake | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/widgets/Qt5WidgetsMacros.cmake b/src/widgets/Qt5WidgetsMacros.cmake
+index f5e7b7f050..18d120f0c7 100644
+--- a/src/widgets/Qt5WidgetsMacros.cmake
++++ b/src/widgets/Qt5WidgetsMacros.cmake
+@@ -55,8 +55,9 @@ function(QT5_WRAP_UI outfiles )
+         get_filename_component(outfile ${it} NAME_WE)
+         get_filename_component(infile ${it} ABSOLUTE)
+         set(outfile ${CMAKE_CURRENT_BINARY_DIR}/ui_${outfile}.h)
++        get_target_property(UIC_LOC ${Qt5Widgets_UIC_EXECUTABLE} IMPORTED_LOCATION)
+         add_custom_command(OUTPUT ${outfile}
+-          COMMAND ${Qt5Widgets_UIC_EXECUTABLE}
++          COMMAND ${UIC_LOC}
+           ARGS ${ui_options} -o ${outfile} ${infile}
+           MAIN_DEPENDENCY ${infile} VERBATIM)
+         list(APPEND ${outfiles} ${outfile})
+-- 
+2.11.1
+

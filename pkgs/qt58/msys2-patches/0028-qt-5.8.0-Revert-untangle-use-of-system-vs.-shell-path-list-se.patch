@@ -1,0 +1,103 @@
+From f5380f44d371f470b3455e1b604046af655e5be9 Mon Sep 17 00:00:00 2001
+From: Ray Donnelly <mingw.android@gmail.com>
+Date: Sun, 29 Jun 2014 21:16:08 +0100
+Subject: [PATCH] Revert "untangle use of system vs. shell path(-list)
+ semantics"
+
+This reverts commit e5024c219fffa972e087a684bacef240082dca82.
+---
+ mkspecs/features/default_post.prf      | 4 ++--
+ mkspecs/features/incredibuild_xge.prf  | 2 +-
+ mkspecs/features/java.prf              | 2 +-
+ mkspecs/features/testcase.prf          | 2 +-
+ mkspecs/features/win32/windeployqt.prf | 6 +++---
+ qtbase.pro                             | 2 +-
+ 7 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/mkspecs/features/default_post.prf b/mkspecs/features/default_post.prf
+index 6fb140b..938670b 100644
+--- a/mkspecs/features/default_post.prf
++++ b/mkspecs/features/default_post.prf
+@@ -83,8 +83,8 @@ silent {
+ 
+ breakpad {
+     load(resolve_target)
+-    DEBUGFILENAME = $$shell_quote($$system_path($$QMAKE_RESOLVED_TARGET))
+-    PROJECTPATH = $$shell_quote($$system_path($$OUT_PWD))
++    DEBUGFILENAME = $$shell_quote($$shell_path($$QMAKE_RESOLVED_TARGET))
++    PROJECTPATH = $$shell_quote($$shell_path($$OUT_PWD))
+ 
+     !isEmpty(QMAKE_POST_LINK):QMAKE_POST_LINK = $$QMAKE_POST_LINK$$escape_expand(\\n\\t)
+     QMAKE_POST_LINK = $$QMAKE_POST_LINK$$quote($${QT_BREAKPAD_ROOT_PATH}$${QMAKE_DIR_SEP}qtbreakpadsymbols $$DEBUGFILENAME $$PROJECTPATH)
+diff --git a/mkspecs/features/incredibuild_xge.prf b/mkspecs/features/incredibuild_xge.prf
+index 75c7a9a..b43ecf2 100644
+--- a/mkspecs/features/incredibuild_xge.prf
++++ b/mkspecs/features/incredibuild_xge.prf
+@@ -3,6 +3,6 @@ contains(TEMPLATE, "vc.*") {
+     EOC = $$escape_expand(\\r\\h)
+ 
+     for(xge, INCREDIBUILD_XGE) {
+-        $${xge}.commands = Rem IncrediBuild_AllowRemote $$EOC Rem IncrediBuild_OutputFile $$system_path($${xge}.output) $$EOC $$eval($${xge}.commands)
++        $${xge}.commands = Rem IncrediBuild_AllowRemote $$EOC Rem IncrediBuild_OutputFile $$shell_path($${xge}.output) $$EOC $$eval($${xge}.commands)
+     }
+ }
+diff --git a/mkspecs/features/java.prf b/mkspecs/features/java.prf
+index 790724c..eeaafcc 100644
+--- a/mkspecs/features/java.prf
++++ b/mkspecs/features/java.prf
+@@ -44,7 +44,7 @@ CONFIG += plugin no_plugin_name_prefix
+ javac.input = JAVASOURCES
+ javac.output = $$CLASS_DIR
+ javac.CONFIG += combine
+-javac.commands = javac -source 6 -target 6 -Xlint:unchecked -bootclasspath $$ANDROID_JAR_FILE -cp $$shell_quote($$system_path($$join(JAVACLASSPATH, $$DIRLIST_SEPARATOR))) -d $$shell_quote($$CLASS_DIR) ${QMAKE_FILE_IN}
++javac.commands = javac -source 6 -target 6 -Xlint:unchecked -bootclasspath $$ANDROID_JAR_FILE -cp $$shell_quote($$shell_path($$join(JAVACLASSPATH, $$QMAKE_DIRLIST_SEP))) -d $$shell_quote($$CLASS_DIR) ${QMAKE_FILE_IN}
+ # Force rebuild every time, because we don't know the paths of the destination files
+ # as they depend on the code.
+ javac.depends = FORCE
+diff --git a/mkspecs/features/testcase.prf b/mkspecs/features/testcase.prf
+index 770afa3..c06cbf1 100644
+--- a/mkspecs/features/testcase.prf
++++ b/mkspecs/features/testcase.prf
+@@ -45,8 +45,7 @@ qtAddTargetEnv(check.commands, QT)
+ # Allow for custom arguments to tests
+ $${type}.commands += $(TESTARGS)
+ 
+-!isEmpty(TESTRUN_CWD):!contains(TESTRUN_CWD, ^\\./?): \
+-    $${type}.commands = $$QMAKE_CD $$shell_path($$TESTRUN_CWD) && $$eval($${type}.commands)
++    $${type}.commands = $$QMAKE_CD $$system_path($$TESTRUN_CWD) && $$eval($${type}.commands)
+ 
+ # If the test is marked as insignificant, discard the exit code
+ insignificant_test: $${type}.commands = -$$eval($${type}.commands)
+diff --git a/mkspecs/features/win32/windeployqt.prf b/mkspecs/features/win32/windeployqt.prf
+index 22253f6..f49df47 100644
+--- a/mkspecs/features/win32/windeployqt.prf
++++ b/mkspecs/features/win32/windeployqt.prf
+@@ -3,9 +3,9 @@ qtPrepareTool(QMAKE_WINDEPLOYQT, windeployqt)
+ build_pass {
+     load(resolve_target)
+ 
+-    isEmpty(WINDEPLOYQT_OPTIONS): WINDEPLOYQT_OPTIONS = -qmldir $$shell_quote($$system_path($$_PRO_FILE_PWD_))
+-    WINDEPLOYQT_TARGET = $$shell_quote($$system_path($$QMAKE_RESOLVED_TARGET))
+-    WINDEPLOYQT_OUTPUT = $$shell_quote($$system_path($$dirname(QMAKE_RESOLVED_TARGET)/$$basename(TARGET).windeployqt))
++    isEmpty(WINDEPLOYQT_OPTIONS): WINDEPLOYQT_OPTIONS = -qmldir $$shell_quote($$shell_path($$_PRO_FILE_PWD_))
++    WINDEPLOYQT_TARGET = $$shell_quote($$shell_path($$QMAKE_RESOLVED_TARGET))
++    WINDEPLOYQT_OUTPUT = $$shell_quote($$shell_path($$dirname(QMAKE_RESOLVED_TARGET)/$$basename(TARGET).windeployqt))
+     windeployqt.target = windeployqt
+     windeployqt.commands = $$QMAKE_WINDEPLOYQT $$WINDEPLOYQT_OPTIONS -list target $$WINDEPLOYQT_TARGET > $$WINDEPLOYQT_OUTPUT
+ 
+diff --git a/qtbase.pro b/qtbase.pro
+index d6861cf..ed6fc39 100644
+--- a/qtbase.pro
++++ b/qtbase.pro
+@@ -87,7 +87,7 @@ INSTALLS += syncqt
+ # qtPrepareTool() to find the non-installed syncqt.
+ prefix_build|!equals(PWD, $$OUT_PWD) {
+ 
+-    cmd = perl -w $$system_path($$PWD/bin/syncqt.pl)
++    cmd = perl -w $$shell_path($$PWD/bin/syncqt.pl)
+ 
+     TOOL_PRI = $$OUT_PWD/mkspecs/modules/qt_tool_syncqt.pri
+ 
+-- 
+2.0.1
+

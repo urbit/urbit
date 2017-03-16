@@ -1,0 +1,23 @@
+--- qt-everywhere-opensource-src-5.8.0/qtbase/configure.json.orig	2017-01-25 16:08:36.160957400 +0300
++++ qt-everywhere-opensource-src-5.8.0/qtbase/configure.json	2017-01-26 07:12:57.018632800 +0300
+@@ -163,9 +163,9 @@
+                         "debug": "-ldbus-1d",
+                         "release": "-ldbus-1"
+                     },
+-                    "condition": "config.win32"
++                    "condition": "config.msvc"
+                 },
+-                { "libs": "-ldbus-1", "condition": "!config.win32" }
++                { "libs": "-ldbus-1", "condition": "!config.msvc" }
+             ]
+         },
+         "host_dbus": {
+@@ -467,7 +467,7 @@
+         },
+         "pkg-config": {
+             "label": "Using pkg-config",
+-            "autoDetect": "!config.darwin && !config.win32",
++            "autoDetect": "!config.darwin && !config.msvc",
+             "condition": "tests.pkg-config",
+             "output": [
+                 "publicFeature",

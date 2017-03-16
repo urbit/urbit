@@ -1,0 +1,24 @@
+--- qtbase/src/network/kernel/qdnslookup.h.orig	2014-06-19 14:08:02.000000000 +0400
++++ qtbase/src/network/kernel/qdnslookup.h	2014-07-28 10:26:09.194800000 +0400
+@@ -195,6 +195,10 @@
+         NotFoundError
+     };
+ 
++#ifdef PTR
++#define PTR_OLD_DEFINE PTR
++#undef PTR
++#endif
+     enum Type
+     {
+         A = 1,
+@@ -207,6 +211,10 @@
+         TXT = 16
+     };
+     Q_ENUM(Type)
++// Set PTR back what it previously contained.
++#ifdef PTR_OLD_DEFINE
++#define PTR PTR_OLD_DEFINE
++#endif
+ 
+     explicit QDnsLookup(QObject *parent = 0);
+     QDnsLookup(Type type, const QString &name, QObject *parent = 0);

@@ -1,0 +1,29 @@
+From 52c34159dec8c829d1f2928d2c9a56bb7299fbff Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 18 Sep 2016 14:22:56 +0200
+Subject: [PATCH 11/30] Fix linking against static harfbuzz
+
+---
+ src/gui/configure.json | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/gui/configure.json b/src/gui/configure.json
+index 6530357be9..c5b9b1542a 100644
+--- a/src/gui/configure.json
++++ b/src/gui/configure.json
+@@ -125,7 +125,11 @@
+             "label": "HarfBuzz",
+             "test": "unix/harfbuzz",
+             "sources": [
+-                "-lharfbuzz"
++                { "type": "pkgConfig", "args": "--static --libs harfbuzz", "condition": "!features.shared" },
++                { "type": "pkgConfig", "args": "--libs harfbuzz", "condition": "features.shared" },
++                { "libs": "-lharfbuzz  -lfreetype -lharfbuzz -lglib-2.0 -lintl -lws2_32 -lole32 -lwinmm -lshlwapi -lpcre -lintl -lpcre -lintl -liconv -lgraphite2 -lbz2", "condition": "!features.shared" },
++                { "libs": "-Wl,-Bdynamic -lharfbuzz -Wl,-Bstatic", "condition": "!features.shared" },
++                { "libs": "-lharfbuzz", "condition": "features.shared" }
+             ]
+         },
+         "imf": {
+-- 
+2.11.1
+

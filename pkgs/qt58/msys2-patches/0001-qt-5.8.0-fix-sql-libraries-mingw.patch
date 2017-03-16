@@ -1,0 +1,37 @@
+--- qt-everywhere-opensource-src-5.8.0/qtbase/src/sql/configure.json.orig	2017-01-25 13:37:26.111247700 +0300
++++ qt-everywhere-opensource-src-5.8.0/qtbase/src/sql/configure.json	2017-01-25 13:40:54.161502400 +0300
+@@ -50,7 +50,7 @@
+             "label": "InterBase",
+             "test": "unix/ibase",
+             "sources": [
+-                { "libs": "-lgds32_ms", "condition": "config.win32" },
++                { "libs": "-lfbclient", "condition": "config.win32" },
+                 { "libs": "-lgds", "condition": "!config.win32" }
+             ]
+         },
+@@ -61,7 +61,7 @@
+                 { "type": "mysqlConfig", "query": "--libs_r" },
+                 { "type": "mysqlConfig", "query": "--libs" },
+                 { "libs": "-lmysqlclient_r", "condition": "!config.win32" },
+-                { "libs": "-llibmysql", "condition": "config.win32" },
++                { "libs": "-lmysqlclient", "condition": "config.win32" },
+                 { "libs": "-lmysqlclient", "condition": "!config.win32" }
+             ]
+         },
+@@ -180,16 +180,6 @@
+         }
+     },
+ 
+-    "report": [
+-        {
+-            "type": "warning",
+-            "condition": "config.win32 && !config.msvc && features.sql-oci",
+-            "message": "Qt does not support compiling the Oracle database driver with
+-MinGW, due to lack of such support from Oracle. Consider disabling the
+-Oracle driver, as the current build will most likely fail."
+-        }
+-    ],
+-
+     "summary": [
+         {
+             "section": "Qt Sql",

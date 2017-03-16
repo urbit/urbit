@@ -1,0 +1,18 @@
+--- x86_64/qtbase/src/gui/configure.json.orig	2017-01-26 11:44:31.552004100 +0300
++++ x86_64/qtbase/src/gui/configure.json	2017-01-26 11:45:32.569724600 +0300
+@@ -465,13 +465,13 @@
+             "label": "  Using system FreeType",
+             "enable": "input.freetype == 'system'",
+             "disable": "input.freetype == 'qt'",
+-            "autoDetect": "!config.win32",
++            "autoDetect": "!config.msvc",
+             "condition": "features.freetype && libs.freetype",
+             "output": [ "privateFeature" ]
+         },
+         "fontconfig": {
+             "label": "Fontconfig",
+-            "condition": "!config.win32 && !config.darwin && features.system-freetype && libs.fontconfig",
++            "condition": "!config.msvc && !config.darwin && features.system-freetype && libs.fontconfig",
+             "output": [ "privateFeature", "feature" ]
+         },
+         "gbm": {

@@ -1,0 +1,24 @@
+--- a/qtcanvas3d/src/imports/qtcanvas3d/context3d_p.h.orig	2015-07-02 11:38:07.087024200 +0300
++++ b/qtcanvas3d/src/imports/qtcanvas3d/context3d_p.h	2015-07-02 11:46:54.641638300 +0300
+@@ -100,6 +100,10 @@
+     Q_PROPERTY(uint drawingBufferHeight READ drawingBufferHeight NOTIFY drawingBufferHeightChanged)
+ 
+ public:
++#ifdef BOOL
++#define BOOL_OLD_DEFINE BOOL
++#undef BOOL
++#endif
+     enum glEnums {
+         /* ClearBufferMask */
+         DEPTH_BUFFER_BIT               = 0x00000100,
+@@ -543,6 +547,10 @@
+         COMPRESSED_RGBA_PVRTC_4BPPV1_IMG     = 0x8C02,
+         COMPRESSED_RGBA_PVRTC_2BPPV1_IMG     = 0x8C03
+     };
++// Set BOOL back what it previously contained.
++#ifdef BOOL_OLD_DEFINE
++#define BOOL BOOL_OLD_DEFINE
++#endif
+ 
+     /* ClearBufferMask */
+     ENUM_AS_PROPERTY(DEPTH_BUFFER_BIT)

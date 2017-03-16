@@ -1,0 +1,11 @@
+--- x86_64/qtbase/src/plugins/platforms/direct2d/qwindowsdirect2dintegration.cpp.orig	2017-01-26 15:35:53.584495700 +0300
++++ x86_64/qtbase/src/plugins/platforms/direct2d/qwindowsdirect2dintegration.cpp	2017-01-26 15:40:06.088564600 +0300
+@@ -113,7 +113,7 @@
+                         UINT size;
+                         DWORD *fi;
+ 
+-                        if (VerQueryValue(info.constData(), __TEXT("\\"), (LPVOID *) &fi, &size) && size) {
++                        if (VerQueryValue(info.data(), __TEXT("\\"), (LPVOID *) &fi, &size) && size) {
+                             VS_FIXEDFILEINFO *verInfo = (VS_FIXEDFILEINFO *) fi;
+                             return Direct2DVersion(HIWORD(verInfo->dwFileVersionMS),
+                                                    LOWORD(verInfo->dwFileVersionMS),

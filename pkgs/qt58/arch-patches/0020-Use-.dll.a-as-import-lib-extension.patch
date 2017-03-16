@@ -1,0 +1,68 @@
+From 6993d2146fb9adf79f7e1f28b44b12a2104ed71c Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 18 Sep 2016 18:26:18 +0200
+Subject: [PATCH 20/30] Use *.dll.a as import lib extension
+
+The variables used here are provided by
+mingw-w64 specific mkspec
+---
+ mkspecs/features/create_cmake.prf      |  5 +++--
+ qmake/generators/win32/winmakefile.cpp | 17 ++++++++++++-----
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/mkspecs/features/create_cmake.prf b/mkspecs/features/create_cmake.prf
+index ed9b82fba9..461a7fdff5 100644
+--- a/mkspecs/features/create_cmake.prf
++++ b/mkspecs/features/create_cmake.prf
+@@ -236,8 +236,9 @@ mac {
+             CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.prl
+             CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
+         } else {
+-            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
+-            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
++            isEmpty(QMAKE_EXTENSION_IMPORTLIB): QMAKE_EXTENSION_IMPORTLIB = a
++            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.$${QMAKE_EXTENSION_IMPORTLIB}
++            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.$${QMAKE_EXTENSION_IMPORTLIB}
+         }
+     } else {
+         CMAKE_WINMAIN_FILE_LOCATION_DEBUG = qtmain$${QT_LIBINFIX}d.lib
+diff --git a/qmake/generators/win32/winmakefile.cpp b/qmake/generators/win32/winmakefile.cpp
+index caa000ea53..e6338546bb 100644
+--- a/qmake/generators/win32/winmakefile.cpp
++++ b/qmake/generators/win32/winmakefile.cpp
+@@ -80,10 +80,14 @@ Win32MakefileGenerator::parseLibFlag(const ProString &flag, ProString *arg)
+ bool
+ Win32MakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
+ {
+-    ProStringList impexts = project->values("QMAKE_LIB_EXTENSIONS");
+-    if (impexts.isEmpty())
+-        impexts = project->values("QMAKE_EXTENSION_STATICLIB");
+-    QList<QMakeLocalFileName> dirs;
++  ProStringList impexts;
++  if (project->isActiveConfig("staticlib")) {
++    impexts.append(project->values("QMAKE_EXTENSION_STATICLIB"));
++  } else {
++    impexts.append(project->values("QMAKE_EXTENSION_IMPORTLIB"));
++    impexts.append(project->values("QMAKE_EXTENSION_STATICLIB"));
++  }
++  QList<QMakeLocalFileName> dirs;
+   static const char * const lflags[] = { "QMAKE_LIBS", "QMAKE_LIBS_PRIVATE", 0 };
+   for (int i = 0; lflags[i]; i++) {
+     ProStringList &l = project->values(lflags[i]);
+@@ -231,9 +235,12 @@ void Win32MakefileGenerator::fixTargetExt()
+     if (!project->values("QMAKE_APP_FLAG").isEmpty()) {
+         project->values("TARGET_EXT").append(".exe");
+     } else if (project->isActiveConfig("shared")) {
++        ProString impext = project->first("QMAKE_EXTENSION_IMPORTLIB");
++        if (impext.isEmpty())
++          impext = project->first("QMAKE_PREFIX_STATICLIB");
+         project->values("LIB_TARGET").prepend(project->first("QMAKE_PREFIX_STATICLIB")
+                                               + project->first("TARGET") + project->first("TARGET_VERSION_EXT")
+-                                              + '.' + project->first("QMAKE_EXTENSION_STATICLIB"));
++                                              + '.' + impext);
+         project->values("TARGET_EXT").append(project->first("TARGET_VERSION_EXT") + "."
+                 + project->first("QMAKE_EXTENSION_SHLIB"));
+         project->values("TARGET").first() = project->first("QMAKE_PREFIX_SHLIB") + project->first("TARGET");
+-- 
+2.11.1
+

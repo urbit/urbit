@@ -1,0 +1,28 @@
+From fee4dff74c2483c2f4a4d7299e062c366431fc53 Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 18 Sep 2016 13:58:28 +0200
+Subject: [PATCH 06/30] Don't add resource files to LIBS parameter
+
+Solves an issue where the generated pkg-config
+files contained invalid Libs.private references
+like .obj/debug/Qt5Cored_resource_res.o
+---
+ qmake/generators/win32/mingw_make.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/qmake/generators/win32/mingw_make.cpp b/qmake/generators/win32/mingw_make.cpp
+index 8d5a9a7d0f..d2cf8d9afc 100644
+--- a/qmake/generators/win32/mingw_make.cpp
++++ b/qmake/generators/win32/mingw_make.cpp
+@@ -196,7 +196,7 @@ void MingwMakefileGenerator::init()
+ 
+     processVars();
+ 
+-    project->values("QMAKE_LIBS") += project->values("RES_FILE");
++    project->values("OBJECTS") += project->values("RES_FILE");
+ 
+     if (project->isActiveConfig("dll")) {
+         QString destDir = "";
+-- 
+2.11.1
+

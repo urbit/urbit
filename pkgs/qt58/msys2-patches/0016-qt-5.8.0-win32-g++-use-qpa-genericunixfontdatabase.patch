@@ -1,0 +1,11 @@
+--- a/qtbase/src/platformsupport/fontdatabases/fontdatabases.pro	2014-04-08 22:03:26.386318500 +0100
++++ b/qtbase/src/platformsupport/fontdatabases/fontdatabases.pro	2014-04-08 22:01:12.262286900 +0100
+@@ -14,7 +14,7 @@
+         include($$PWD/basic/basic.pri)
+     }
+ 
+-    unix {
++    unix|win32-g++ {
+         include($$PWD/genericunix/genericunix.pri)
+         qtConfig(fontconfig) {
+             include($$PWD/fontconfig/fontconfig.pri)

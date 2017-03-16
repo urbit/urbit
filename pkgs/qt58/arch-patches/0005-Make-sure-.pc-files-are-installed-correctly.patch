@@ -1,0 +1,66 @@
+From 74be1cdb27c34b149b4b227a8c3107ca49cc254a Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 18 Sep 2016 13:54:12 +0200
+Subject: [PATCH 05/30] Make sure *.pc files are installed correctly
+
+---
+ qmake/generators/makefile.cpp          | 8 ++++++--
+ qmake/generators/makefile.h            | 2 +-
+ qmake/generators/win32/winmakefile.cpp | 2 +-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
+index 4450e619b9..182fe79238 100644
+--- a/qmake/generators/makefile.cpp
++++ b/qmake/generators/makefile.cpp
+@@ -3150,7 +3150,7 @@ MakefileGenerator::openOutput(QFile &file, const QString &build) const
+ }
+ 
+ QString
+-MakefileGenerator::pkgConfigFileName(bool fixify)
++MakefileGenerator::pkgConfigFileName(bool fixify, bool onlyPrependDestdir)
+ {
+     QString ret = project->first("QMAKE_PKGCONFIG_FILE").toQString();
+     if (ret.isEmpty()) {
+@@ -3175,7 +3175,11 @@ MakefileGenerator::pkgConfigFileName(bool fixify)
+     if(fixify) {
+         if(QDir::isRelativePath(ret) && !project->isEmpty("DESTDIR"))
+             ret.prepend(project->first("DESTDIR").toQString());
+-        ret = fileFixify(ret, FileFixifyBackwards);
++        if (onlyPrependDestdir) {
++            ret = Option::fixPathToLocalOS(ret);
++        } else {
++            ret = fileFixify(ret, FileFixifyBackwards);
++        }
+     }
+     return ret;
+ }
+diff --git a/qmake/generators/makefile.h b/qmake/generators/makefile.h
+index 86fec748eb..cbe23d7e3a 100644
+--- a/qmake/generators/makefile.h
++++ b/qmake/generators/makefile.h
+@@ -89,7 +89,7 @@ protected:
+     virtual void writeDefaultVariables(QTextStream &t);
+ 
+     QString pkgConfigPrefix() const;
+-    QString pkgConfigFileName(bool fixify=true);
++    QString pkgConfigFileName(bool fixify=true, bool onlyPrependDestdir = false);
+     QString pkgConfigFixPath(QString) const;
+     void writePkgConfigFile();   // for pkg-config
+ 
+diff --git a/qmake/generators/win32/winmakefile.cpp b/qmake/generators/win32/winmakefile.cpp
+index 3c029c8004..caa000ea53 100644
+--- a/qmake/generators/win32/winmakefile.cpp
++++ b/qmake/generators/win32/winmakefile.cpp
+@@ -721,7 +721,7 @@ QString Win32MakefileGenerator::defaultInstall(const QString &t)
+                 }
+                 if(!ret.isEmpty())
+                     ret += "\n\t";
+-                ret += installMetaFile(ProKey("QMAKE_PKGCONFIG_INSTALL_REPLACE"), pkgConfigFileName(true), dst_pc);
++                ret += installMetaFile(ProKey("QMAKE_PKGCONFIG_INSTALL_REPLACE"), pkgConfigFileName(true, true), dst_pc);
+                 if(!uninst.isEmpty())
+                     uninst.append("\n\t");
+                 uninst.append("-$(DEL_FILE) " + escapeFilePath(dst_pc));
+-- 
+2.11.1
+

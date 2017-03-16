@@ -1,0 +1,29 @@
+From 0712fd493611c503092fe616b4bd1c75e1d5d5ee Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sun, 18 Sep 2016 18:58:25 +0200
+Subject: [PATCH 14/30] Fix linking against shared/static PostgreSQL
+
+---
+ src/sql/configure.json | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/sql/configure.json b/src/sql/configure.json
+index 7219926cf5..713254b8cf 100644
+--- a/src/sql/configure.json
++++ b/src/sql/configure.json
+@@ -72,9 +72,10 @@
+             "label": "PostgreSQL",
+             "test": "unix/psql",
+             "sources": [
+-                { "type": "pkgConfig", "args": "libpq" },
+                 { "type": "psqlConfig" },
+-                { "type": "psqlEnv", "libs": "-llibpq -lws2_32 -ladvapi32", "condition": "config.win32" },
++                { "type": "psqlEnv", "libs": "-lpq -lintl -lssl -lcrypto -lshell32 -lws2_32 -lsecur32", "condition": "config.win32 && !features.shared" },
++                { "type": "psqlEnv", "libs": "-Wl,-Bdynamic -lpq -Wl,-Bstatic", "condition": "config.win32 && !features.shared" },
++                { "type": "psqlEnv", "libs": "-lpq", "condition": "config.win32 && features.shared" },
+                 { "type": "psqlEnv", "libs": "-lpq", "condition": "!config.win32" }
+             ]
+         },
+-- 
+2.11.1
+

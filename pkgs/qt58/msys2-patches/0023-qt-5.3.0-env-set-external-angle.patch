@@ -1,0 +1,53 @@
+--- x86_64/qtbase/tools/configure/configureapp.cpp.orig	2014-03-23 03:12:04.000000000 +0400
++++ x86_64/qtbase/tools/configure/configureapp.cpp	2014-04-10 22:56:50.341400000 +0400
+@@ -2077,6 +2077,8 @@
+ 
+ bool Configure::checkAngleAvailability(QString *errorMessage /* = 0 */) const
+ {
++    const QByteArray externalAngle = qgetenv("EXTERNAL_ANGLE");
++    if (externalAngle.isEmpty()) {
+     // Check for Direct X SDK (include lib and direct shader compiler 'fxc').
+     // Up to Direct X SDK June 2010 and for MinGW, this is pointed to by the
+     // DXSDK_DIR variable. Starting with Windows Kit 8, it is included
+@@ -2120,6 +2122,7 @@
+             *errorMessage = QString::fromLatin1("The shader compiler '%1' could not be found.").arg(fxcBinary);
+         return false;
+     }
++    }
+     return true;
+ }
+ 
+--- x86_64/qtbase/tools/configure/environment.cpp.orig	2014-04-10 22:49:11.171000000 +0400
++++ x86_64/qtbase/tools/configure/environment.cpp	2014-04-10 22:57:20.901800000 +0400
+@@ -610,11 +610,14 @@
+     // MinGW: Although gcc doesn't care about INCLUDE, qmake automatically adds it via -I
+     headerPaths += splitPathList(QString::fromLocal8Bit(getenv("INCLUDE")));
+ 
++    const QByteArray externalAngle = qgetenv("EXTERNAL_ANGLE");
++    if (externalAngle.isEmpty()) {
+     // Add Direct X SDK for ANGLE
+     const QString directXSdk = detectDirectXSdk();
+     if (!directXSdk.isEmpty()) // Add Direct X SDK for ANGLE
+         headerPaths += directXSdk + QLatin1String("/include");
+     return headerPaths;
++    }
+ }
+ 
+ QStringList Environment::libraryPaths(Compiler compiler)
+@@ -626,6 +629,8 @@
+     // MinGW: Although gcc doesn't care about LIB, qmake automatically adds it via -L
+     libraryPaths += splitPathList(QString::fromLocal8Bit(qgetenv("LIB")));
+ 
++    const QByteArray externalAngle = qgetenv("EXTERNAL_ANGLE");
++    if (externalAngle.isEmpty()) {
+     // Add Direct X SDK for ANGLE
+     const QString directXSdk = detectDirectXSdk();
+     if (!directXSdk.isEmpty()) {
+@@ -635,6 +640,7 @@
+         libraryPaths += directXSdk + QLatin1String("/lib/x86");
+ #endif
+     }
++    }
+     return libraryPaths;
+ }
+ 
