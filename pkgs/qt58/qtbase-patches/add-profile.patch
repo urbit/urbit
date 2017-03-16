@@ -1,18 +1,6 @@
-From eb3e8004e4cb74f021294e1e57dd268af001980e Mon Sep 17 00:00:00 2001
-From: Martchus <martchus@gmx.net>
-Date: Fri, 3 Feb 2017 18:30:51 +0100
-Subject: [PATCH 01/30] Add profile for cross compilation with mingw-w64
+Most of this patch is written by Martchus <martchus@gmx.net> from the
+mingw-w64-qt5-base AUR package, but it has been edited a bit.
 
----
- mkspecs/mingw-w64-g++/qmake.conf      | 125 +++++++++++++++++++++++++++
- mkspecs/mingw-w64-g++/qplatformdefs.h | 155 ++++++++++++++++++++++++++++++++++
- 2 files changed, 280 insertions(+)
- create mode 100644 mkspecs/mingw-w64-g++/qmake.conf
- create mode 100644 mkspecs/mingw-w64-g++/qplatformdefs.h
-
-diff --git a/mkspecs/mingw-w64-g++/qmake.conf b/mkspecs/mingw-w64-g++/qmake.conf
-new file mode 100644
-index 0000000000..6f21ae75d5
 --- /dev/null
 +++ b/mkspecs/mingw-w64-g++/qmake.conf
 @@ -0,0 +1,125 @@
@@ -141,12 +129,9 @@ index 0000000000..6f21ae75d5
 +QMAKE_LIBS_QT_ENTRY     = -lmingw32 -lqt5main
 +
 +load(qt_config)
-diff --git a/mkspecs/mingw-w64-g++/qplatformdefs.h b/mkspecs/mingw-w64-g++/qplatformdefs.h
-new file mode 100644
-index 0000000000..c5a70b1445
 --- /dev/null
 +++ b/mkspecs/mingw-w64-g++/qplatformdefs.h
-@@ -0,0 +1,155 @@
+@@ -0,1 +1,157 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2016 The Qt Company Ltd.
@@ -198,6 +183,8 @@ index 0000000000..c5a70b1445
 +// Get Qt defines/settings
 +
 +#include "qglobal.h"
++
++#define MINGW_HAS_SECURE_API
 +
 +#include <tchar.h>
 +#include <io.h>
@@ -302,6 +289,3 @@ index 0000000000..c5a70b1445
 +
 +
 +#endif // QPLATFORMDEFS_H
--- 
-2.11.1
-

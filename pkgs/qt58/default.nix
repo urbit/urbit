@@ -57,7 +57,8 @@ let
     };
 
     patches = [
-      ./qtbase-arch-patches/0001-Add-profile-for-cross-compilation-with-mingw-w64.patch
+      ./qtbase-patches/add-profile.patch
+      ./qtbase-patches/direct2d-const-error.patch
       ./qtbase-arch-patches/0002-Ensure-GLdouble-is-defined-when-using-dynamic-OpenGL.patch
       ./qtbase-arch-patches/0003-Use-external-ANGLE-library.patch
       ./qtbase-arch-patches/0004-Fix-too-many-sections-assemler-error-in-OpenGL-facto.patch
