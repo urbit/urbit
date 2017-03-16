@@ -89,7 +89,7 @@ let
   base = crossenv.nixpkgs.stdenv.mkDerivation rec {
     name = "qt-${version}-${crossenv.host}";
 
-    inherit version src qtbase_patches;
+    inherit version src qtbase_patches patches;
 
     inherit (crossenv) host;
 
