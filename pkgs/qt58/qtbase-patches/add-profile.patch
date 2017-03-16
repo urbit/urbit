@@ -1,5 +1,7 @@
-Most of this patch is written by Martchus <martchus@gmx.net> from the
-mingw-w64-qt5-base AUR package, but it has been edited a bit.
+Most of this patch is from Martchus:
+https://aur.archlinux.org/cgit/aur.git/plain/0001-Add-profile-for-cross-compilation-with-mingw-w64.patch?h=mingw-w64-qt5-base
+
+But I edited it a bit.
 
 --- /dev/null
 +++ b/mkspecs/mingw-w64-g++/qmake.conf
@@ -131,7 +133,7 @@ mingw-w64-qt5-base AUR package, but it has been edited a bit.
 +load(qt_config)
 --- /dev/null
 +++ b/mkspecs/mingw-w64-g++/qplatformdefs.h
-@@ -0,1 +1,157 @@
+@@ -0,0 +1,155 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2016 The Qt Company Ltd.
@@ -185,7 +187,6 @@ mingw-w64-qt5-base AUR package, but it has been edited a bit.
 +#include "qglobal.h"
 +
 +#define MINGW_HAS_SECURE_API
-+
 +#include <tchar.h>
 +#include <io.h>
 +#include <direct.h>
