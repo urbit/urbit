@@ -1,25 +1,18 @@
 source $stdenv/setup
 
-time tar -xf $src
+tar -xf $src
 
-cd qt-everywhere-opensource-src-$version
-cd qtbase
-for patch in $qtbase_patches; do
-  echo applying patch $patch
-  patch -p1 -i $patch
-done
-cd ..
+cd qtbase-opensource-src-$version
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
-# TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 cd ..
 
 mkdir build
 cd build
 
-../qt-everywhere-opensource-src-$version/configure \
+../qtbase-opensource-src-$version/configure \
   -prefix $out \
   -device-option CROSS_COMPILE=${host}- \
   -opensource -confirm-license \
