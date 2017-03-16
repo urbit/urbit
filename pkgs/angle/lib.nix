@@ -42,7 +42,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   AR = "${crossenv.host}-ar";
   RANLIB = "${crossenv.host}-ranlib";
 
-  CXXFLAGS = "-msse2 -Wno-conversion-null -DMINGW_HAS_SECURE_API";
+  CXXFLAGS = "-msse2 -Wno-conversion-null";
 
   inherit debug;
 }
