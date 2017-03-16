@@ -186,7 +186,6 @@ But I edited it a bit.
 +
 +#include "qglobal.h"
 +
-+#define MINGW_HAS_SECURE_API
 +#include <tchar.h>
 +#include <io.h>
 +#include <direct.h>

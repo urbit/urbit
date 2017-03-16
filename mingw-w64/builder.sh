@@ -16,7 +16,8 @@ cd ..
 mkdir build_crt_and_headers
 cd build_crt_and_headers
 ../mingw-w64/configure \
-    --host=$host --prefix=$out
+    --host=$host --prefix=$out \
+    --enable-secure-api
 make
 make install
 cd ..

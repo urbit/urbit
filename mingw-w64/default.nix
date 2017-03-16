@@ -20,7 +20,7 @@ let
     name = "${mingw-w64_info.name}-headers";
     inherit (mingw-w64_info) src patches;
     preConfigure = "cd mingw-w64-headers";
-    configureFlags = "--without-crt";
+    configureFlags = "--without-crt --enable-secure-api";
   };
 
   gcc_stage_1 = import ./gcc {

@@ -58,7 +58,10 @@ let
 
     patches = [
       ./qtbase-patches/add-profile.patch
+
+      # We can get rid of this patch once mingw-w64 is fixed.
       ./qtbase-patches/direct2d-const-error.patch
+
       ./qtbase-arch-patches/0002-Ensure-GLdouble-is-defined-when-using-dynamic-OpenGL.patch
       ./qtbase-arch-patches/0003-Use-external-ANGLE-library.patch
       ./qtbase-arch-patches/0004-Fix-too-many-sections-assemler-error-in-OpenGL-facto.patch
