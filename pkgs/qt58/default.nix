@@ -55,14 +55,14 @@ let
     builder = ./builder.sh;
 
     configureFlags =
-      "-xplatform mingw-w64-g++ " +    # was win32-g++
+      "-opensource -confirm-license " +
+      "-xplatform mingw-w64-g++ " +
       "-device-option CROSS_COMPILE=${host}- " +
       "-release " +
       "-static " +
       "-nomake examples " +
       "-opengl desktop " +
-      "-no-icu" +
-      "-opensource -confirm-license ";
+      "-no-icu";
   };
 in
 {
