@@ -100,6 +100,16 @@ let
     buildInputs = [ crossenv.gcc crossenv.binutils ];
 
     builder = ./builder.sh;
+
+    configureFlags =
+      "-xplatform mingw-w64-g++ " +    # was win32-g++
+      "-device-option CROSS_COMPILE=${host}- " +
+      "-release " +
+      "-static " +
+      "-nomake examples " +
+      "-opengl desktop " +
+      "-no-icu" +
+      "-opensource -confirm-license ";
   };
 in
 {

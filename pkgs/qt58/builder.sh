@@ -12,19 +12,10 @@ cd ..
 mkdir build
 cd build
 
-../qtbase-opensource-src-$version/configure \
-  -prefix $out \
-  -device-option CROSS_COMPILE=${host}- \
-  -opensource -confirm-license \
-  -release \
-  -static \
-  -nomake examples \
-  -opengl desktop \
-  -xplatform win32-g++ \
-  -no-icu
+../qtbase-opensource-src-$version/configure -prefix $out $configureFlags
 
 # TODO: maybe get it to use system zlib/libpng/libjpeg/FreeType/HarfBuzz/SQLite/pcre
 
 make
 
-cd ..
+make install
