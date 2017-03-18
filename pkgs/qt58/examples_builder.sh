@@ -39,17 +39,23 @@ LIBS="
 
 echo "compiling rasterwindow"
 $qtbase/bin/moc ../examples/gui/rasterwindow/rasterwindow.h > moc/rasterwindow.cpp
-$host-g++ \
-  -mwindows \
-  $CFLAGS \
-  $LDFLAGS \
+$host-g++ -mwindows $CFLAGS $LDFLAGS \
   ../examples/gui/rasterwindow/rasterwindow.cpp \
   ../examples/gui/rasterwindow/main.cpp \
   moc/rasterwindow.cpp \
   obj/plugins.o \
-  $LIBS \
-  -o bin/rasterwindow${exe_suffix}
+  $LIBS -o bin/rasterwindow${exe_suffix}
 
+echo "compiling analogclock"
+$host-g++ -mwindows $CFLAGS $LDFLAGS \
+  -I../examples/gui/rasterwindow/ \
+  ../examples/gui/analogclock/main.cpp \
+  ../examples/gui/rasterwindow/rasterwindow.cpp \
+  moc/rasterwindow.cpp \
+  obj/plugins.o \
+  $LIBS -o bin/analogclock${exe_suffix}
+
+echo "stripping"
 $host-strip bin/*
 
 mkdir $out
