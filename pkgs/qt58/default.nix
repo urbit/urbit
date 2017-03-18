@@ -6,7 +6,7 @@ let
   # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
   base = crossenv.nixpkgs.stdenv.mkDerivation rec {
-    name = "qt-${version}-${crossenv.host}";
+    name = "qt-${version}-${crossenv.host}"; # TODO: add base to name
 
     src = crossenv.nixpkgs.fetchurl {
       url = https://download.qt.io/official_releases/qt/5.8/5.8.0/submodules/qtbase-opensource-src-5.8.0.tar.xz;
@@ -64,8 +64,26 @@ let
       "-opengl desktop " +
       "-no-icu";
   };
+
+  base-examples = if false then "not working yet" else
+    crossenv.nixpkgs.stdenv.mkDerivation rec {
+    name = "qtbase-examples-${version}-${crossenv.host}";
+
+    inherit version;
+
+    inherit (crossenv) host exe_suffix;
+
+    inherit (base) src;
+
+    qtbase = base;
+
+    buildInputs = [ crossenv.gcc crossenv.binutils ];
+
+    builder = ./examples_builder.sh;
+  };
 in
 {
   recurseForDerivations = true;
   inherit base;
+  inherit base-examples;
 }
