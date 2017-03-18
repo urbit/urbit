@@ -4,6 +4,8 @@
 
 { crossenv }:
 
+if true then "not working yet" else
+
 crossenv.nixpkgs.stdenv.mkDerivation rec {
   name = "ncurses-${version}-${crossenv.host}";
 
