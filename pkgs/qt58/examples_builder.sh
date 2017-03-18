@@ -23,15 +23,21 @@ $host-g++ \
   -c obj/plugins.cpp \
   -o obj/plugins.o
 
-CFLAGS="-mwindows"
-CFLAGS="$CFLAGS -I. -I$qtbase/include/ -I$qtbase/include/QtGui -I$qtbase/include/QtCore"
+CFLAGS="
+-mwindows
+-I.
+-I$qtbase/include/
+-I$qtbase/include/QtWidgets
+-I$qtbase/include/QtGui
+-I$qtbase/include/QtCore
+"
 
 LDFLAGS="-L$qtbase/lib -L$qtbase/plugins/platforms"
 
 # TODO: make this junk come from $host-pkg-config, so that it is cross-platform
 LIBS="
 -lqwindows
--lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport
+-lQt5Widgets -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport
 -lQt5EventDispatcherSupport -lQt5Core
 -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype
 -lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm -lopengl32
@@ -63,6 +69,17 @@ $host-g++ -mwindows $CFLAGS $LDFLAGS \
   moc/openglwindow.cpp \
   obj/plugins.o \
   $LIBS -o bin/openglwindow${exe_suffix}
+
+echo "compiling dynamiclayouts"
+$qtbase/bin/moc ../examples/widgets/layouts/dynamiclayouts/dialog.h > moc/dynamiclayouts.cpp
+$host-g++ -mwindows $CFLAGS $LDFLAGS \
+  ../examples/widgets/layouts/dynamiclayouts/dialog.cpp \
+  ../examples/widgets/layouts/dynamiclayouts/main.cpp \
+  moc/dynamiclayouts.cpp \
+  obj/plugins.o \
+  $LIBS -o bin/dynamiclayouts${exe_suffix}
+
+# TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
 
 echo "stripping"
 $host-strip bin/*
