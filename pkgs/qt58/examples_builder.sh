@@ -32,7 +32,7 @@ CFLAGS="
 -I$qtbase/include/QtCore
 "
 
-LDFLAGS="-L$qtbase/lib -L$qtbase/plugins/platforms"
+LDFLAGS="-L$qtbase/lib -L$qtbase/plugins/platforms -Wl,-gc-sections"
 
 # TODO: make this junk come from $host-pkg-config, so that it is cross-platform
 LIBS="
