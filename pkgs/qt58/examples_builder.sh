@@ -38,10 +38,10 @@ $host-g++ \
   moc/rasterwindow.cpp \
   obj/plugins.o \
   -lqwindows -lqminimal -lqdirect2d -lqoffscreen \
-  -lQt5Gui -lQt5Widgets -lQt5ThemeSupport -lQt5FontDatabaseSupport \
+  -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport \
   -lQt5EventDispatcherSupport -lQt5Core \
-  -lmpr -lwinmm -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype \
-  -lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi \
+  -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype \
+  -lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm \
   -o bin/rasterwindow${exe_suffix}
 
 mkdir $out
