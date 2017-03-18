@@ -34,7 +34,7 @@ LIBS="
 -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport
 -lQt5EventDispatcherSupport -lQt5Core
 -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype
--lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm
+-lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm -lopengl32
 "
 
 echo "compiling rasterwindow"
@@ -54,6 +54,15 @@ $host-g++ -mwindows $CFLAGS $LDFLAGS \
   moc/rasterwindow.cpp \
   obj/plugins.o \
   $LIBS -o bin/analogclock${exe_suffix}
+
+echo "compiling openglwindow"
+$qtbase/bin/moc ../examples/gui/openglwindow/openglwindow.h > moc/openglwindow.cpp
+$host-g++ -mwindows $CFLAGS $LDFLAGS \
+  ../examples/gui/openglwindow/main.cpp \
+  ../examples/gui/openglwindow/openglwindow.cpp \
+  moc/openglwindow.cpp \
+  obj/plugins.o \
+  $LIBS -o bin/openglwindow${exe_suffix}
 
 echo "stripping"
 $host-strip bin/*
