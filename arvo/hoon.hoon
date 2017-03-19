@@ -731,7 +731,7 @@
 ++  oust                                                ::  remove
   ~/  %oust
   |*  {{a/@ b/@} c/(list)}
-  (weld (scag a c) (slag (add a b) c))
+  (weld (scag +<-< c) (slag (add +<-< +<->) c))
 ::
 ++  reap                                                ::  replicate
   ~/  %reap
