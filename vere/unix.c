@@ -1329,6 +1329,8 @@ u3_unix_ef_boot(u3_pier *pir_u)
   if ( u3_Host.ops_u.imp_c ) {
     u3_noun can = _unix_initial_update_dir(pir_u, pir_u->arv_c);
 
+    fprintf(stderr, "initial sync (%d)\r\n", u3kb_lent(u3k(can)));
+    u3m_p("first in list", u3h(u3h(can))); 
     u3_pier_work(pir_u,
              u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, u3_nul, c3y, can));
