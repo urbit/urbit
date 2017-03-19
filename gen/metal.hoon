@@ -215,7 +215,70 @@
             ::  sys/vane/jael: security
             ::
             (vent %j /vane/jael)
+            ::
+            ::  legacy boot event
+            ::
+            [[%$ %term '1' ~] [%boot %sith who `@uw`who &]]
+            ::
+            ::  userspace:
+            ::
+            ::    /app    %gall applications
+            ::    /gen    :dojo generators
+            ::    /lib    %ford libraries
+            ::    /mar    %ford marks
+            ::    /sur    %ford structures
+            ::    /ren    %ford renderers
+            ::    /web    %eyre web content
+            ::    /sys    system files
+            ::
+            (user /app /gen /lib /mar /sur /ren /web /sys ~)
         ==
+    ::                                                  ::  
+    ++  user                                            ::  userspace loading
+      |=  ::  sal: all spurs to load from
+          ::
+          sal/(list spur)
+      ^-  ovum
+      ::
+      ::  hav: all user files 
+      ::  
+      =;  hav  ~&  user-files+(lent hav)
+               [[%$ %sync ~] [%into %$ & hav]]
+      =|  hav/mode:clay
+      |-  ^+  hav
+      ?~  sal  ~
+      =.  hav  $(sal t.sal)
+      ::
+      ::  tyl: spur 
+      ::
+      =/  tyl  i.sal
+      |-  ^+  hav
+      ::
+      ::  pax: full path at `tyl`
+      ::  lon: directory at `tyl`
+      ::
+      =/  pax  (en-beam:format bec tyl)
+      =/  lon  .^(arch %cy pax)
+      =?  hav  ?=(^ fil.lon)  
+          ?.  ?=({$hoon *} tyl)
+            ::
+            ::  install only hoon files for now
+            ::
+            hav
+          ::
+          ::  cot: file as plain-text octet-stream
+          ::
+          =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
+          ^-  octs
+          ?-    tyl  
+              {$hoon *}
+            =/  dat  .^(@t %cx pax)
+            [(met 3 dat) dat]
+          ==
+      =/  all  (~(tap by dir.lon) ~)
+      |-  ^-  mode:clay
+      ?~  all  hav
+      $(all t.all, hav ^$(tyl [p.i.all tyl]))
     ::
     ++  vent
       |=  {abr/term den/path}
@@ -226,6 +289,7 @@
 ::
 ::  main-events: full events with advancing times
 ::
+=.  now  ~2017.3.1
 =+  ^=  main-events
     |-  ^-  (list (pair @da ovum))
     ?~  main-moves  ~
