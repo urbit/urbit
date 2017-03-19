@@ -250,7 +250,7 @@ _pier_disk_precommit_replace(u3_writ* wit_u)
     /* otherwise, decrement the precommit request counter.
     ** the returning request will notice this and rerequest.
     */
-    //  fprintf(stderr, "pier: (%lld): precommit: replace\r\n", wit_u->evt_d);
+    fprintf(stderr, "pier: (%lld): precommit: replace\r\n", wit_u->evt_d);
 
     c3_assert(wit_u->evt_d == log_u->rep_d);
     log_u->rep_d -= 1ULL;
@@ -1131,6 +1131,11 @@ _pier_work_poke(void*   vod_p,
             if ( !wit_u || (mug_l && (mug_l != wit_u->mug_l)) ) {
               goto error;
             }
+            {
+              // XX not the right place to print an error!
+              //
+              u3_pier_punt(0, u3k(u3t(u3t(u3t(r_jar)))));
+            }
             _pier_work_replace(wit_u, u3k(r_jar), mat);
           }
           break;
@@ -1262,9 +1267,6 @@ u3_pier_create(c3_c* pax_c, c3_c* sys_c)
     pir_u->sys_c = c3_malloc(1 + strlen(sys_c)); 
     strcpy(pir_u->sys_c, sys_c);
 
-    pir_u->arv_c = c3_malloc(1 + strlen(u3_Host.ops_u.arv_c)); /* parametrize */
-    strcpy(pir_u->arv_c, u3_Host.ops_u.arv_c);
-
     pir_u->gen_d = 0;
     pir_u->key_d[0] = pir_u->key_d[1] = pir_u->key_d[2] = pir_u->key_d[3] = 0;
 
@@ -1388,6 +1390,7 @@ u3_pier_rand(c3_w* rad_w)
   close(fid_i);
 }
 
+#if 0
 /* _pier_zen(): get OS entropy.
 */
 static u3_noun
@@ -1398,6 +1401,7 @@ _pier_zen()
   c3_rand(rad_w);
   return u3i_words(16, rad_w);
 }
+#endif
 
 /* _pier_loop_init(): initialize loop handlers.
 */
@@ -1473,6 +1477,7 @@ _pier_loop_wake(u3_pier* pir_u)
 
 /* _pier_loop_exit(): terminate I/O across the process.
 */
+#if 0
 static void
 _pier_loop_exit(void)
 {
@@ -1506,6 +1511,7 @@ _pier_loop_exit(void)
   u3_behn_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 }
+#endif
 
 /* _pier_loop_poll(): update listeners.
 */
@@ -1550,6 +1556,7 @@ _pier_loop_time(void)
   u3v_time(u3_time_in_tv(&tim_tv));
 }
 
+#if 0
 /* _pier_boot_seed(): build the cryptographic seed noun.
 */
 static u3_noun
@@ -1585,6 +1592,7 @@ _pier_boot_seed(u3_pier* pir_u)
     u3z(imp);
   }
 }
+#endif
 
 #if 0
 /* _pier_boot_legacy(): poorly organized legacy boot calls.
@@ -1645,24 +1653,6 @@ _pier_boot_complete(u3_pier* pir_u,
 
   _pier_work_save(pir_u);
 
-#if 0
-  _pier_boot_legacy(pir_u, nuu_o);
-#else
-  /* an anomaly that the true sequence will eliminate
-  */
-  {
-    if ( c3y == nuu_o ) {
-      u3_noun pig = _pier_boot_seed(pir_u);
-      u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-
-      u3_pier_plan(pax, u3nc(c3__boot, pig));
-    
-      /* another anomaly
-      */
-      u3_unix_ef_boot(pir_u);
-    }
-  }
-
   /* the main course
   */
   _pier_loop_wake(pir_u);
@@ -1674,7 +1664,6 @@ _pier_boot_complete(u3_pier* pir_u,
       u3_term_ef_verb();
     }
   }
-#endif
 }
 
 /* _pier_loop_prepare():
