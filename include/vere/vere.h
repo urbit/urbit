@@ -614,7 +614,6 @@
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   pil_c;                      //  -B, bootstrap from
-        c3_c*   arv_c;                      //  -A, initial sync from
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
         c3_c*   gen_c;                      //  -G, czar generator
         c3_w    kno_w;                      //  -k, kernel version
@@ -721,7 +720,6 @@
         typedef struct _u3_pier {
           c3_c*            pax_c;               //  pier directory
           c3_c*            sys_c;               //  pill file
-          c3_c*            arv_c;               //  arvo directory
           c3_d             gen_d;               //  last event discovered
           c3_d             but_d;               //  boot barrier
           c3_d             key_d[4];            //  save and passkey
