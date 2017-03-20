@@ -13,6 +13,7 @@
   ==                                                    ::
 ++  rook                                                ::  forward ames msg
   $%  {$m p/mark q/*}                                   ::  message
+      {$l p/mark q/path}                                ::  "peel" subscribe
       {$s p/path}                                       ::  subscribe
       {$u $~}                                           ::  cancel+unsubscribe
   ==                                                    ::
@@ -251,11 +252,11 @@
     =^  num  +>.$  (mo-bale him)
     =+  ^=  roc  ^-  rook
         ?-  -.q.caz
-          $peel  !!
           $poke  [%m p.p.q.caz q.q.p.q.caz]
           $pull  [%u ~]
           $puff  !!
           $punk  !!
+          $peel  [%l p.q.caz q.q.caz]
           $peer  [%s p.q.caz]
         ==
     %+  mo-pass  
@@ -274,11 +275,12 @@
     `[[%leaf (trip p.u.ars)] q.u.ars]
   ::
   ++  mo-awed                                           ::  foreign response
-    |=  {him/ship why/?($peer $poke $pull) art/(unit ares)}
+    |=  {him/ship why/?($peer $peel $poke $pull) art/(unit ares)}
     ^+  +>
     ::  ~&  [%mo-awed him why art]
     =+  tug=(mo-baba (mo-baal art))
     ?-  why
+      $peel  (mo-give %unto %reap tug)
       $peer  (mo-give %unto %reap tug)
       $poke  (mo-give %unto %coup tug)
       $pull  +>.$
@@ -428,7 +430,7 @@
         ?>  ?=({@ $~} t.pax)
         %-  mo-awed
         :*  p.+>.sih
-            (?($peer $poke $pull) i.t.pax)
+            (?($peer $peel $poke $pull) i.t.pax)
             ~
         ==
       ?>  ?=({$a $woot *} sih)
@@ -554,6 +556,7 @@
     ?-  -.rok
       ::  %m  [%f %exec our ~ (mo-beak dap) %vale p.rok q.rok]
       $m  [%g %deal [him our] dap %puff p.rok q.rok]
+      $l  [%g %deal [him our] dap %peel p.rok q.rok]
       $s  [%g %deal [him our] dap %peer p.rok]
       $u  [%g %deal [him our] dap %pull ~]
     ==
