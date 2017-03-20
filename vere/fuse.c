@@ -311,7 +311,7 @@ _inode_load(u3_fnod* nod_u)
         if ( u3_nul == u3h(ark) ) {
           nod_u->typ_e = u3_fuse_type_directory;
           nod_u->dir_u = _inode_fill_directory
-            (nod_u, u3qdb_tap(u3t(ark), u3_nul));
+            (nod_u, u3qdb_tap(u3t(ark)));
         }
         else {
           u3_noun dat;
