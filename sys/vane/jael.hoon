@@ -337,7 +337,7 @@
       0w0                           ::  233, ~dyn, Tlon
       0w0                           ::  234, ~dem, Tlon
       0w0                           ::  235, ~lux, Tlon Investor 15
-      0w0                           ::  236, ~fed, Tlon
+      0w0                           ::  236, ~fed, Iceman
       0w0                           ::  237, ~sed, Tlon
       0w0                           ::  238, ~bec, Tlon
       0w0                           ::  239, ~mun, Tlon
