@@ -6351,7 +6351,11 @@
       :+  %pin  [%name %b [%per [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
       :+  %pin                                          ::  =+  c=(a b)
         [%name %c [%call [%limb %a] [%limb %b] ~]]      ::
-      [%sure [%same [%limb %c] [%limb %b]] [%limb %c]]  ::  ?>(=(c b) c)
+      :+  %sure                                         ::  ?>(=(`*`c `*`b) c)
+        :+  %same                                       ::
+        [%cast [%base %noun] [%limb %c]]                ::
+        [%cast [%base %noun] [%limb %b]]                ::
+      [%limb %c]                                        ::
     ::
         {$new *}
       [%pin ~(bunt al %herb p.gen) q.gen]
