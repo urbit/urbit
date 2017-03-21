@@ -1,6 +1,8 @@
 { nixpkgs }:
 
 rec {
+  pkgconf = import ./pkgconf { inherit nixpkgs; };
+
   crossenvs = {
     recurseForDerivations = true;
     i686-w64-mingw32 = import ./mingw-w64 { inherit nixpkgs; arch = "i686"; };
