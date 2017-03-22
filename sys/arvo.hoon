@@ -625,7 +625,7 @@
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
     =+  orb=`@p`?~(urb 0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff u.urb)
-    +>.^$(bod `[[%cell [%face %our [%atom %p ~]] p.vax] [orb q.vax]])
+    +>.^$(bod `[[%cell [%face [~ %our] [%atom %p ~]] p.vax] [orb q.vax]])
   %_    +>.^$
       q.niz
     |-  ^+  q.niz

@@ -1448,8 +1448,8 @@
       ++  able                                          ::  assemble preamble
         ^-  twig
         :+  %per
-          ?:(=(~ rop) [%$ 1] [%core (~(run by rop) |=({^ a/twig} [%ash a]))])
-        ?:(=(~ bil) [%$ 1] [%core (~(run by bil) |=({^ a/twig} [%ash a]))])
+          ?:(=(~ rop) [%$ 1] [%core (~(run by rop) |=({^ a/twig} [~ %ash a]))])
+        ?:(=(~ bil) [%$ 1] [%core (~(run by bil) |=({^ a/twig} [~ %ash a]))])
       ::
       ++  abut                                          ::  generate
         |=  {cof/cafe hyd/hood}
@@ -1559,7 +1559,7 @@
           %+  cope  $(hon q.hon)
           %-  flux
           |=  {mar/mark vax/vase}
-          [mar [%face p.hon p.vax] q.vax]
+          [mar [%face [~ p.hon] p.vax] q.vax]
         ::
             $fan
           %+  cope
@@ -1741,12 +1741,12 @@
             (flux |=(sel/_..wilt sel(boy [[%tow boy.sel] boy])))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  cope
-            |-  ^-  (bolt (pair (map term foot) _..wilt))
+            |-  ^-  (bolt (pair (map term (pair wain foot)) _..wilt))
             ?~  all  (fine cof ~ ..wilt)
             %+  cope  $(all l.all)
-            |=  {cof/cafe lef/(map term foot) sel/_..wilt}
+            |=  {cof/cafe lef/(map term (pair wain foot)) sel/_..wilt}
             %+  cope  ^$(all r.all, cof cof, sel sel)
-            |=  {cof/cafe rig/(map term foot) sel/_..wilt}
+            |=  {cof/cafe rig/(map term (pair wain foot)) sel/_..wilt}
             %+  cope
               %=    ^^^^$
                   cof      cof
@@ -1755,8 +1755,10 @@
               ==
             |=  {cof/cafe sel/_..wilt}
             %+  fine  cof
-            [`(map term foot)`[[p.n.all [%ash [%tow boy.sel]]] lef rig] sel]
-          |=  {cof/cafe mav/(map term foot) sel/_..wilt}
+            :_  sel
+            ^-  (map term (pair wain foot))
+            [[p.n.all [~ %ash [%tow boy.sel]]] lef rig]
+          |=  {cof/cafe mav/(map term (pair wain foot)) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
           (fine cof sel(boy [[%core mav] boy]))
