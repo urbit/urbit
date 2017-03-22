@@ -304,7 +304,7 @@ _boothack_cb(uv_connect_t *conn, int status)
   u3_atom pax, sys;
 
   pax = u3i_string(u3_Host.dir_c);
-  sys = u3i_string(u3_Host.ops_u.pil_c);
+  sys = u3_Host.ops_u.pil_c ? u3i_string(u3_Host.ops_u.pil_c) : u3_nul;
 
   doom = u3ke_jam(u3nc(c3__doom,
                        u3nc(c3__boot,
