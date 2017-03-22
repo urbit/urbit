@@ -120,11 +120,13 @@
         =+  ^=  compiler-tool
             .*(compiler-gate(+< [%noun compiler-source]) -.compiler-gate)
         ::
-        ::  check that the new compiler formula equals the old formula.
-        ::  this is not proof against thompson attacks but it doesn't hurt.
+        ::  switch to the second-generation compiler.  we want to be
+        ::  able to generate matching reflection nouns even if the
+        ::  language changes -- the first-generation formula will 
+        ::  generate last-generation spans for `!>`, etc.
         ::
         ~>  %slog.[0 leaf+"1-d"]
-        ?>  =(compiler-formula +:compiler-tool)
+        =.  compiler-gate  .*(0 +:compiler-tool)
         ::
         ::  get the span (type) of the kernel core, which is the context
         ::  of the compiler gate.  we just compiled the compiler,
@@ -231,7 +233,7 @@
             ::    /web    %eyre web content
             ::    /sys    system files
             ::
-            (user /app /gen /lib /mar /sur /ren /web /sys ~)
+            (user /app /gen /lib /mar /ren /sec /sur /sys /web ~)
         ==
     ::                                                  ::  
     ++  user                                            ::  userspace loading
