@@ -987,7 +987,7 @@
 
 /* boilerplate
 */
-  u3_noun
+  static u3_noun
   _ap_core(u3_noun ter,
            u3_noun gen)
   {

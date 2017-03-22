@@ -794,7 +794,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = c3__find + !!u3r_at(u3qfu_van_vet, van);
+    c3_m    fun_m = 149 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
@@ -832,7 +832,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = c3__fond + !!u3r_at(u3qfu_van_vet, van);
+    c3_m    fun_m = 149 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {

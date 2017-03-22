@@ -104,6 +104,11 @@
     u3_noun
     u3kf_fork(u3_noun yed);
 
+  /* u3kz_fork(): build %fork span.
+  */
+    u3_noun
+    u3kz_fork(u3_noun yed);
+
   /* u3kfu_repo(): 
   */
     u3_noun 

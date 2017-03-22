@@ -775,7 +775,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    c3_m    fun_m = c3__mull + !!u3r_at(u3qfu_van_vet, van);
+    c3_m    fun_m = 149 + c3__mull + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_4(fun_m, sut, gol, dox, gen);
 
     if ( u3_none != pro ) {

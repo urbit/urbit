@@ -19,7 +19,7 @@
     else if ( c3__void == hoz ) {
       return u3k(bur);
     }
-    else return u3kf_fork(u3nt(u3k(hoz), u3k(bur), u3_nul));
+    else return u3kz_fork(u3nt(u3k(hoz), u3k(bur), u3_nul));
   }
 
   u3_noun
@@ -69,7 +69,7 @@
   }
 
   u3_noun
-  u3kf_fork(u3_noun yed)
+  u3kz_fork(u3_noun yed)
   {
     u3_noun ret = u3qf_fork(yed);
 
