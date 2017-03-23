@@ -98,13 +98,13 @@
         u3m_bail(c3__fail);
       }
       else {
-        u3_noun qn_dab = u3t(n_dab);
+        u3_noun qqn_dab = u3t(u3t(n_dab));
         u3_noun vad;
 
-        switch ( u3h(qn_dab) ) {
+        switch ( u3h(qqn_dab) ) {
           default: u3m_bail(c3__exit);
           case c3__ash: {
-            vad = _mull_in(van, sut, c3__noun, dox, u3t(qn_dab));
+            vad = _mull_in(van, sut, c3__noun, dox, u3t(qqn_dab));
             break;
           }
           case c3__elm: {
@@ -775,7 +775,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    c3_m    fun_m = 149 + c3__mull + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 148 + c3__mull + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_4(fun_m, sut, gol, dox, gen);
 
     if ( u3_none != pro ) {

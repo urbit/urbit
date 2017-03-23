@@ -148,17 +148,17 @@
         return u3m_bail(c3__fail);
       }
       else {
-        u3_noun qn_dab = u3t(n_dab);
+        u3_noun qqn_dab = u3t(u3t(n_dab));
         u3_noun vad;
 
-        switch ( u3h(qn_dab) ) {
+        switch ( u3h(qqn_dab) ) {
           default: return u3m_bail(c3__exit);
           case c3__ash: {
-            vad = _mint_brew(van, sut, c3y, u3t(qn_dab));
+            vad = _mint_brew(van, sut, c3y, u3t(qqn_dab));
             break;
           }
           case c3__elm: {
-            vad = _mint_brew(van, sut, c3n, u3t(qn_dab));
+            vad = _mint_brew(van, sut, c3n, u3t(qqn_dab));
             break;
           }
         }
@@ -862,7 +862,7 @@
              u3_noun gol,
              u3_noun gen)
   {
-    c3_m    fun_m = 149 + c3__mint;
+    c3_m    fun_m = 148 + c3__mint;
     u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
     u3_noun pro   = u3z_find_4(fun_m, vrf, sut, gol, gen);
 

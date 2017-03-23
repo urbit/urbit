@@ -326,47 +326,6 @@ J_F_OFILES_UT=\
        jets/f/ut_toss.o \
        jets/f/ut_wrap.o
 
-J_Z_OFILES=\
-       jets/z/al.o \
-       jets/z/ap.o \
-       jets/z/cell.o \
-       jets/z/comb.o \
-       jets/z/cons.o \
-       jets/z/core.o \
-       jets/z/face.o \
-       jets/z/fitz.o \
-       jets/z/flan.o \
-       jets/z/flip.o \
-       jets/z/flor.o \
-       jets/z/fork.o \
-       jets/z/help.o \
-       jets/z/hike.o \
-       jets/z/look.o \
-
-J_Z_OFILES_UT=\
-       jets/z/ut.o \
-       jets/z/ut_burn.o \
-       jets/z/ut_buss.o \
-       jets/z/ut_conk.o \
-       jets/z/ut_crop.o \
-       jets/z/ut_find.o \
-       jets/z/ut_fire.o \
-       jets/z/ut_fish.o \
-       jets/z/ut_fuse.o \
-       jets/z/ut_gain.o \
-       jets/z/ut_lose.o \
-       jets/z/ut_mint.o \
-       jets/z/ut_mull.o \
-       jets/z/ut_nest.o \
-       jets/z/ut_peek.o \
-       jets/z/ut_peel.o \
-       jets/z/ut_play.o \
-       jets/z/ut_repo.o \
-       jets/z/ut_rest.o \
-       jets/z/ut_tack.o \
-       jets/z/ut_toss.o \
-       jets/z/ut_wrap.o
-
 J_G_OFILES=\
        jets/g/down.o
 

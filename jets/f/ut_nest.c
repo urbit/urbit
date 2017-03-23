@@ -28,7 +28,7 @@
     } else {
       u3_noun n_dab, l_dab, r_dab;
       u3_noun n_hem, l_hem, r_hem;
-      u3_noun pn_hem, qn_hem, pn_dab, qn_dab;
+      u3_noun pn_hem, pqn_hem, qqn_hem, pn_dab, pqn_dab, qqn_dab;
 
       u3x_trel(dab, &n_dab, &l_dab, &r_dab);
       u3x_trel(hem, &n_hem, &l_hem, &r_hem);
@@ -38,26 +38,26 @@
       {
         return c3n;
       }
-      u3x_cell(n_dab, &pn_dab, &qn_dab);
-      u3x_cell(n_hem, &pn_hem, &qn_hem);
+      u3x_trel(n_dab, &pn_dab, &pqn_dab, &qqn_dab);
+      u3x_trel(n_hem, &pn_hem, &pqn_hem, &qqn_hem);
 
       if ( c3n == u3r_sing(pn_dab, pn_hem) ) {
         return c3n;
       } else {
-        if ( (c3n == u3du(qn_dab)) || (c3n == u3du(qn_hem)) ) {
+        if ( (c3n == u3du(qqn_dab)) || (c3n == u3du(qqn_hem)) ) {
           return u3m_bail(c3__fail);
         }
-        else switch ( u3h(qn_dab) ) {
+        else switch ( u3h(qqn_dab) ) {
           default: return u3m_bail(c3__exit);
           case c3__ash: {
-            if ( c3__ash != u3h(qn_hem) ) {
+            if ( c3__ash != u3h(qqn_hem) ) {
               return c3n;
             } else {
-              u3_noun pqn_dab = u3t(qn_dab);
-              u3_noun pqn_hem = u3t(qn_hem);
-              u3_noun vis = u3qfu_play(van, sut, pqn_dab);
-              u3_noun lon = u3qfu_play(van, ref, pqn_hem);
-              
+              u3_noun qqqn_dab = u3t(qqn_dab);
+              u3_noun qqqn_hem = u3t(qqn_hem);
+              u3_noun vis = u3qfu_play(van, sut, qqqn_dab);
+              u3_noun lon = u3qfu_play(van, ref, qqqn_hem);
+ 
               u3_noun ret = _nest_dext(van, vis, tel, lon, u3_nul, u3_nul, gil);
 
               u3z(vis);
@@ -66,7 +66,7 @@
             }
           }
           case c3__elm: {
-            return u3r_sing(qn_dab, qn_hem);
+            return u3r_sing(qqn_dab, qqn_hem);
           }
         }
       }
@@ -358,7 +358,7 @@
     }
 
     {
-      c3_m    fun_m = 149 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+      c3_m    fun_m = 148 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
       u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
       if ( u3_none != pro ) {

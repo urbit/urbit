@@ -658,6 +658,11 @@
       if ( c3y == u3h(heg) ) {
         u3_noun p_heg = u3t(heg);         //  axis
 
+        if ( c3n == u3ud(p_heg) ) {
+          u3m_p("p_heg", p_heg);
+
+          return u3m_error("balls");
+        }
         ret = u3nq
           (c3y,
            u3nc(u3nc(u3_nul, u3k(p_heg)), u3k(lon)),
@@ -794,7 +799,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 149 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 148 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
@@ -832,7 +837,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 149 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 148 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
