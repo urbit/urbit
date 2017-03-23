@@ -23,14 +23,18 @@
 =>  |%                                                  ::  data structures
     ++  house                                           ::
       $:  stories/(map knot story)                      ::  conversations
+          ::TODO  rename to readers?
           general/(set bone)                            ::  meta-subscribe
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
           log/(map knot @ud)                            ::  logged to clay
+          folks/(map ship human)                        ::  human identities
+          nik/(map (set partner) char)                  ::  bound station glyphs
+          nak/(jug char (set partner))                  ::  station glyph lookup
       ==                                                ::
     ++  story                                           ::  wire content
       $:  count/@ud                                     ::  (lent grams)
           grams/(list telegram)                         ::  all history
-          locals/(map ship (pair @da status))           ::  local presence
+          locals/atlas                                  ::  local presence
           remotes/(map partner atlas)                   ::  remote presence
           mirrors/(map station config)                  ::  remote config
           sequence/(map partner @ud)                    ::  partners heard

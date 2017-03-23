@@ -9,6 +9,12 @@
   $%  {$design (pair knot (unit config))}               ::  configure+destroy
       {$publish (list thought)}                         ::  originate
       {$review (list thought)}                          ::  deliver
+      {$update update}                                  ::  change shared state
+  ==                                                    ::
+++  update                                              ::x  these may need work
+  $%  {$status (pair (set knot) status)                 ::  our status update
+      {$human (map ship human)}                         ::  new identity
+      {$bind (pair char (set partner))}                 ::  bind a glyph
   ==                                                    ::
 ++  cabal                                               ::  metaconfiguration
   $:  loc/config                                        ::  local config
@@ -52,6 +58,7 @@
       {$group register}                                 ::  presence
       {$house shelf}                                    ::  station set
       {$glyph (jug char (set partner))}                 ::  relevant binding
+      {$names (map ship human)}                         ::  new identities
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce

@@ -9,27 +9,32 @@
 ::::
   ::
 =>  |%                                                  ::  data structures
-    ++  house                                           ::  full state
-      $:  shells/(map bone shell)                       ::  interaction state
+    ++  chattel                                         ::  full state
+      $:  tales/(map knot tale)                         ::  conversations
           folks/(map ship human)                        ::  human identities
           nik/(map (set partner) char)                  ::  bound station glyphs
           nak/(jug char (set partner))                  ::  station glyph lookup
+          shells/(map bone shell)                       ::  interaction state
       ==                                                ::
-    ::TODO  ++rental, state from the guardian we want to keep around
+    ++  tale                                            ::  user-facing story
+      $:  count/@ud                                     ::  (lent grams)
+          grams/(list telegram)                         ::  all history
+          locals/atlas                                  ::  local presence
+          shape/config                                  ::  configuration
+      ==                                                ::
     ++  shell                                           ::  console session
       $:  her/ship                                      ::  client identity
           man/knot                                      ::  mailbox
           count/@ud                                     ::  messages shown
           say/sole-share                                ::  console state
-          active/{$~ u/(set partner)}                   ::  active targets
-          $passive-deprecated                           ::  passive targets
+          active/(unit (set partner))                   ::  active targets
           owners/register                               ::  presence mirror
           harbor/(map knot (pair posture cord))         ::  stations mirror
           system/cabal                                  ::  config mirror
           settings/(set knot)                           ::  frontend settings
       ==                                                ::
     --
-|_  {hid/bowl house}
+|_  {hid/bowl chattel}
 ++  sh                                                ::  per console
   ::x  shell core, responsible for doing things with console sessions,
   ::x  like parsing input, acting based on input, showing output, keeping
