@@ -59,7 +59,7 @@
       qel/(map bone @ud)                                ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
-  $:  mak/(unit duct)                                   ::  ames awaiting crash
+  $:  mak/*                                             ::  (deprecated)
       sys/duct                                          ::  system duct
       sap/(map ship scad)                               ::  foreign contacts
       bum/(map dude seat)                               ::  running agents
@@ -463,9 +463,6 @@
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
               +>.$
-            ?:  ?=($quit +>-.q.hin)
-              =.  ap.pap  (mo-resume-mack:pap ~)
-              ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
             ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
     ==
   ::
@@ -536,7 +533,7 @@
     =.  hen  (mo-ball him num)
     ?-    -.ron
         $d
-      =.  mak  (mo-defer-mack hen)
+      =.  +>  (mo-give %mack ~)
       %+  mo-pass  
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
       [%f %exec our (mo-beak dap) ~ %vale p.ron our q.ron]
@@ -544,18 +541,6 @@
         $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
             (mo-give(hen (mo-ball him num)) %unto %quit ~)
     ==
-  ::
-  ++  mo-defer-mack                                     ::  future %mack
-    |=  hon/duct  ^+  mak
-    ?~  mak  `hon
-    ~|(double-mak+[u.mak hon] !!)
-  ::
-  ++  mo-resume-mack                                    ::  route %mack
-    |=  a/(unit tang)  ^+  +>.$
-    ?^  mak
-      +>.$(mak ~, moz :_(moz [u.mak %give %mack a]))
-    ?~  a  +>.$
-    (mean >%gall-mack< u.a)  ::  XX unnecessary?
   ::
   ++  ap                                                ::  agent engine
     ~%  %gall-ap  +>  ~
