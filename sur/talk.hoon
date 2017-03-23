@@ -38,7 +38,7 @@
   ==                                                    ::
 ++  posture                                             ::  security posture
   $?  $black                                            ::  channel
-      $white                                            ::  chamber
+      $white                                            ::  village
       $green                                            ::  journal
       $brown                                            ::  mailbox
   ==                                                    ::

@@ -92,7 +92,7 @@
       ==                                                ::
     ++  where  (set partner)                            ::  non-empty audience 
     ++  sigh                                            ::  assemble label
-      ::x?  why is this not in ++ta?
+      ::TODO  move to ++ta.
       ::
       |=  {len/@ud pre/tape yiz/cord}
       ^-  tape
@@ -223,24 +223,26 @@
     ::x  extracts and applies the talk-reports in moves.
     ::
     ^+  .
-    ::x  separate our talk-reports from other moves.
+    ::x  separate talk-reports meant for our shells from other moves.
     =+  ^=  rey
         |-  ^-  (pair (list move) (list (pair bone report)))
         ?~  moves
           [~ ~]
         =+  mor=$(moves t.moves)
+        ::x  if we know the target shell is ours, and it's a talk report,
+        ::x  add it to the list of reports to be locally applied.
         ?.  ?&  (~(has by shells) `bone`p.i.moves)
                 ?=({$diff $talk-report *} q.i.moves)
             ==
           [[i.moves p.mor] q.mor]
         [p.mor [[p.i.moves +>.q.i.moves] q.mor]]
-    ::x  update moves to exclude talk-reports.
+    ::x  update moves to exclude our talk-reports.
     =.  moves  p.rey
     =.  q.rey  (flop q.rey)
     ?:  =(q.rey ~)  +
     |-  ^+  +>
     ?~  q.rey  ra-axel
-    ::x  apply reports.
+    ::x  apply reports to our shells.
     =+  bak=(ra-back(ost.hid p.i.q.rey) q.i.q.rey)
     $(q.rey t.q.rey, +> bak(ost.hid ost.hid))
   ::
@@ -283,9 +285,8 @@
     !!
   ::
   ++  ra-house                                          ::  emit partners
-    ::x  emits a talk-report move containing all our stories?
-    ::x?  this is for showing people what they can subscribe to, right?
-    ::x?  but this also shows invite-only stories, aren't they secret clubs?
+    ::x  emits a talk-report move containing all our stories.
+    ::TODO  if we don't check for team on subscription, check here.
     ::
     |=  ost/bone
     %+  ra-emit  ost.hid
@@ -328,14 +329,16 @@
       ::x  the $design command is used for modifying channel configs,
       ::x  which is done when joining, leaving or creating channels.
       ::x  this may only be done by ourselves.
-      ::x?  shouldn't this be team-only too?
+      ::TODO  use team instead of our.
         $design
       ?.  =(her our.hid)
         (ra-evil %talk-no-owner)
       ?~  q.cod
         ?.  (~(has by stories) p.cod)
           (ra-evil %talk-no-story)
-        ::x?  why delete story if we got no config? can't we overwrite?
+        ::x  $design with ~ for config signals delete
+        ::TODO  untangle into ++ra-unconfig, ++pa-reform-gone instead of using
+        ::      bunts or empty keys.
         (ra-config(stories (~(del by stories) p.cod)) p.cod *config)
       (ra-config p.cod u.q.cod)
     ::
@@ -754,7 +757,7 @@
     ++  pa-report-group                                  ::  update presence
       ::x  build a group report, containing our different presence maps, and
       ::x  send it to all bones.
-      ::x?  why should we be responsible for sending remotes presences?
+      ::x  we send remote presences to facilitate federation. aka "relay"
       ::
       |=  vew/(set bone)
       %^  pa-report  vew  %group
@@ -776,7 +779,7 @@
     ::
     ++  pa-cabal
       ::x  add station's config to our remote config map.
-      ::x?  ham is unused, not even when calling this.
+      ::TODO  if web frontend doesn't use ham, remove it (also from sur/talk)
       ::
       |=  {cuz/station con/config ham/(map station config)}
       ^+  +>
@@ -820,7 +823,7 @@
       ::x  for each partner, produce a %pull/unsubscribe move.
       ::
       |=  tal/(list partner)
-      %+  pa-sauce  0  ::x  why bone 0?
+      %+  pa-sauce  0  ::x  subscription is caused by this app
       %-  zing
       %+  turn  tal
       |=  tay/partner
@@ -919,6 +922,7 @@
       ::
       |=  riv/river
       ^+  +>
+      ::TODO  use =; lab/{dun/? end/@u zeg/(list telegram)}
       =-  ::  ~&  [%pa-start riv lab]
           =.  +>.$
           (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
@@ -934,7 +938,7 @@
             $da  (lte p.q.riv p.r.q.i.gaz)
           ==
         ::x  if we're past the river, continue browsing back.
-        $(end (dec end), gaz t.gaz)
+        $(end (dec end), gaz t.gaz)  ::TODO  dun &
       ?:  ?-  -.p.riv                                   ::  before the start
             $ud  (lth end p.p.riv)
             $da  (lth p.r.q.i.gaz p.p.riv)
@@ -964,8 +968,7 @@
             $(t.paf [%da (dec (bex 128))]~)
           ?.  ?=({{?($ud $da) @} {?($ud $da) @} $~} paf)
             ~
-          ::x?  the switches, they do nothing!
-          `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::  XX types
+          `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::XX arvo issue #366
       ::  ~&  [%pa-watch-grams her pax ruv]
       ?~  ruv
         ~&  [%pa-watch-grams-malformed pax]

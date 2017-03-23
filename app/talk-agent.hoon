@@ -243,7 +243,7 @@
     +>(moves :_(moves [ost.hid %diff %sole-effect fec]))
   ::
   ++  sh-peep                                         ::  peer to path
-    ::x?  unused?
+    ::TODO  remove.
     ::
     |=  pax/path
     ^+  +>
@@ -283,7 +283,7 @@
     |=  lix/(set partner)
     ^+  +>
     =+  act=(sh-pare lix)  ::x  ensure we can see what we send.
-    ?~  act  ~|(%no-audience !!)  ::x?  this can't actually happen, right?
+    ?~  act  ~|(%no-audience !!)  ::TODO  can't happen, remove.
     ?:  =(active.she `act)  +>.$
     sh-prod(active.she `act)
   ::
@@ -1245,6 +1245,7 @@
   ++  sn-best                                           ::  best to show
     ::x  returns true if one is better to show, false otherwise.
     ::x  prioritizes: our > main > size.
+    ::TODO  maybe simplify. (lth (xeb (xeb p.one)) (xeb (xeb p.two)))
     ::
     |=  two/station
     ^-  ?
@@ -1271,7 +1272,7 @@
   ::
   ++  sn-curt                                           ::  render name in 14
     ::x  prints a ship name in 14 characters. left-pads with spaces.
-    ::x?  mup is unused, what is it even for? ++ta-show still uses it.
+    ::x  mup signifies "are there other targets besides this one"
     ::
     |=  mup/?
     ^-  tape
@@ -1616,4 +1617,6 @@
       (tr-chow 64 "[{(trip id.sep)}@{(trip service.sep)}]: {(trip summary.sep)}")
     ==
   --
+::TODO  ++  poke-sole-action
+::TODO  ++  diff-talk-report
 --
