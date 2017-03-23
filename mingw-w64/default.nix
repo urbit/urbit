@@ -3,6 +3,8 @@
 let
   host = "${arch}-w64-mingw32";
 
+  host_as_var = nixpkgs.lib.replaceChars ["-"] ["_"] (nixpkgs.lib.toUpper host);
+
   binutils = import ./binutils { inherit nixpkgs host; };
 
   mingw-w64_info = rec {
@@ -47,6 +49,12 @@ let
     inherit nixpkgs host;
   };
 
+  pkg-config = import ../pkgconf { inherit nixpkgs; };
+
+  pkg-config-cross = import ../pkg-config-cross {
+    inherit nixpkgs host host_as_var;
+  };
+
   os = "windows";
 
   exe_suffix = ".exe";
@@ -60,6 +68,9 @@ in
 
   # Toolchain
   inherit gcc binutils mingw-w64_full;
+
+  # Build tools
+  inherit pkg-config pkg-config-cross;
 
   # nixpkgs: a wide variety of programs and build tools
   inherit nixpkgs;
