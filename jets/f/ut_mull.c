@@ -585,7 +585,14 @@
       case c3__tune: p_gen = u3t(gen);
       _mull_used();
       {
-        return u3nc(u3qf_face(p_gen, sut), u3qf_face(p_gen, dox));
+        u3_noun nux = u3nc(u3_nul, u3k(p_gen));
+        u3_noun pro;
+
+        pro = u3nc(u3qf_face(nux, sut), 
+                   u3qf_face(nux, dox));
+
+        u3z(nux);
+        return pro;
       }
 
       case c3__burn: p_gen = u3t(gen);
@@ -775,7 +782,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    c3_m    fun_m = 148 + c3__mull + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 147 + c3__mull + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_4(fun_m, sut, gol, dox, gen);
 
     if ( u3_none != pro ) {

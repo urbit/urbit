@@ -482,8 +482,10 @@
                   u3_noun gil)
   {
     u3_noun p_sut, q_sut;
+    u3_noun pp_sut, qp_sut;
 
     u3x_cell(u3t(sut), &p_sut, &q_sut);
+    u3x_cell(p_sut, &pp_sut, &qp_sut);
 
     if ( u3_nul == q_heg ) {
       return _find_buck_here(van, q_sut, way, p_heg, q_heg, axe, lon, gil);
@@ -491,8 +493,8 @@
     else {
       u3_noun uq_heg = u3t(q_heg);          //  term
 
-      if ( c3y == u3ud(p_sut) ) {
-        if ( c3y == u3r_sing(p_sut, uq_heg) ) {
+      if ( c3y == u3ud(qp_sut) ) {
+        if ( c3y == u3r_sing(qp_sut, uq_heg) ) {
           return _find_buck_here(van, q_sut, way, p_heg, q_heg, axe, lon, gil);
         } 
         else {
@@ -500,13 +502,13 @@
         }
       }
       else {
-        u3_noun pp_sut = u3h(p_sut);              //  (map term (unit port))
-        u3_noun qp_sut = u3t(p_sut);              //  (list (pair span nock))
-        u3_noun tyr = u3qdb_get(pp_sut, uq_heg);  //  (unit (unit port))
+        u3_noun pqp_sut = u3h(qp_sut);              //  (map term (unit port))
+        u3_noun qqp_sut = u3t(qp_sut);              //  (list (pair span nock))
+        u3_noun tyr = u3qdb_get(pqp_sut, uq_heg);   //  (unit (unit port))
 
         if ( u3_nul == tyr ) {
           return _find_buck_face_next
-            (van, sut, q_sut, qp_sut, way, p_heg, q_heg, axe, lon, gil);
+            (van, sut, q_sut, qqp_sut, way, p_heg, q_heg, axe, lon, gil);
         }
         else {
           u3_noun u_tyr = u3t(tyr);       //  (unit port)
@@ -799,7 +801,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 148 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 147 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
@@ -837,7 +839,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 148 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 147 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
