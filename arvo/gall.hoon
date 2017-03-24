@@ -530,10 +530,8 @@
   ::
   ++  mo-gawd                                           ::  ames backward
     |=  {him/@p dap/dude num/@ud ron/roon}
-    =.  hen  (mo-ball him num)
     ?-    -.ron
         $d
-      =.  +>  (mo-give %mack ~)
       %+  mo-pass
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
       [%f %exec our ~ (mo-beak dap) %vale p.ron q.ron]
