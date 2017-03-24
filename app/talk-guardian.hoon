@@ -40,10 +40,7 @@
           sequence/(map partner @ud)                    ::  partners heard
           shape/config                                  ::  configuration
           known/(map serial @ud)                        ::  messages heard
-          gramsers/(map bone river)                     ::  message followers
-          groupers/(set bone)                           ::  presence followers
-          cabalers/(set bone)                           ::  config followers
-          glyphers/(set bone)                           ::  glyph followers
+          followers/(map bone river)                    ::  subscribers
       ==                                                ::
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
@@ -74,23 +71,6 @@
           {$friend p/knot q/station}                    ::
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool'
-    ++  peer-type                                       ::  stream requests
-      ::x  helper functions for determining/specifying from/in a path, what kind
-      ::x  of subscription our peer wants/what they're interested in.
-      ::
-      =<  apex
-      |%
-      ++  apex  ?($a-group $f-grams $v-glyph $x-cabal)  ::  options
-      ++  encode  |=(a/apex ^-(char (end 3 1 a)))       ::  by first char
-      ++  decode                                        ::  discriminate
-        |=  a/char  ^-  apex
-        ?+  a  ~|(bad-subscription-designator+a !!)
-          $a  %a-group
-          $f  %f-grams
-          $v  %v-glyph
-          $x  %x-cabal
-        ==
-      --
     --
 |%
 ::  old protocol workaround door
@@ -577,23 +557,22 @@
     ::x  empty path, meta-subscribe and send report with all our stories.
     ?:  ?=($~ pax)
       (ra-house(general (~(put in general) ost.hid)) ost.hid)
-    ?.  ?=({@ @ *} pax)
+    ?.  ?=({@ *} pax)
       (ra-evil %talk-bad-path)
-    =+  vab=(~(gas in *(set peer-type)) (turn (rip 3 i.pax) decode:peer-type))
-    =+  pur=(~(get by stories) i.t.pax)
+    =+  pur=(~(get by stories) i.pax)
     ?~  pur
-      ~&  [%bad-subscribe-story-c i.t.pax]
+      ~&  [%bad-subscribe-story-c i.pax]
       (ra-evil %talk-no-story)
-    =+  soy=~(. pa i.t.pax u.pur)
-    ::x  check her read permissions.
+    =+  soy=~(. pa i.pax u.pur)
+    ::x  she needs read permissions to subscribe.
     ?.  (pa-visible:soy her)
       (ra-evil %talk-no-story)
-    =^  who  +>.$  (ra-human her)
-    ::x  for each stream type she is interested in, add her to the followers.
-    =.  soy  ?.((~(has in vab) %a-group) soy (pa-watch-group:soy her))
-    =.  soy  ?.((~(has in vab) %v-glyph) soy (pa-watch-glyph:soy her))
-    =.  soy  ?.((~(has in vab) %x-cabal) soy (pa-watch-cabal:soy her))
-    =.  soy  ?.((~(has in vab) %f-grams) soy (pa-watch-grams:soy her t.t.pax))
+      ::TODO?  or (pa-sauce ost.hid [%quit ~]~) ?
+    =^  who  +>.$  (ra-human her)  ::TODO?  can we safely move this down?
+    ::x  send current data to bring her up to date.
+    =.  soy  (pa-report-group:soy ost.hid ~ ~)
+    =.  soy  (pa-report-cabal:soy ost.hid ~ ~)
+    =.  soy  (pa-first-grams:soy her t.pax)
     ::x  add her status to presence map.
     =.  soy  (pa-notify:soy her %hear who)
     ::x  apply changes to story.
@@ -695,6 +674,12 @@
       ^+  +>
       +>(stories (~(put by stories) man `story`+<+))
     ::
+    ++  pa-followers
+      ^-  (set bone)
+      %-  ~(gas in *(set bone))
+      %+  turn  (~(tap by followers))
+      |=  {b/bone *}  b
+    ::
     ++  pa-admire                                       ::  accept from
       ::x  should be checking her write permissions, but defaults to allowed.
       ::x  commented code seems to use an older control structure.
@@ -732,39 +717,6 @@
       ::  ~&  [%pa-report-cabal man shape]
       (pa-sauce n.wac [%diff %talk-report caw]~)
     ::
-    ++  pa-watch-group                                  ::  subscribe presence
-      ::x  if she may, add her bone to presence followers and send her a group
-      ::x  (presence) report.
-      ::
-      |=  her/ship
-      ?.  (pa-admire her)
-        (pa-sauce ost.hid [%quit ~]~)
-      =.  groupers  (~(put in groupers) ost.hid)
-      (pa-report-group ost.hid ~ ~)
-    ::
-    ++  pa-watch-cabal                                  ::  subscribe config
-      ::x  if she may, add her bone to config followers and send her an updated
-      ::x  cabal (config) report.
-      ::
-      |=  her/ship
-      ?.  (pa-admire her)
-        ~&  [%pa-admire-not her]
-        (pa-sauce ost.hid [%quit ~]~)
-      =.  cabalers  (~(put in cabalers) ost.hid)
-      ::  ~&  [%pa-watch-cabal her man shape]
-      (pa-sauce ost.hid [[%diff %talk-report %cabal shape mirrors] ~])
-    ::
-    ++  pa-watch-glyph                                  ::  subscribe config
-      ::x  if she may, add her bone to glyph followers and send an updated glyph
-      ::x  report.
-      ::
-      |=  her/ship
-      ?.  (pa-admire her)
-        ~&  [%pa-admire-not her]
-        (pa-sauce ost.hid [%quit ~]~)
-      =.  glyphers  (~(put in glyphers) ost.hid)
-      (pa-report [ost.hid ~ ~] %glyph nak)
-    ::
     ++  pa-report-group                                  ::  update presence
       ::x  build a group report, containing our different presence maps, and
       ::x  send it to all bones.
@@ -783,10 +735,10 @@
       |=({@ a/status} a)
     ::
     ++  pa-report-cabal                                 ::  update config
-      ::x  a cabal report, containing our and remote configs, to all config
-      ::x  followers.
+      ::x  a cabal report, containing our and remote configs, to all bones.
       ::
-      (pa-report cabalers %cabal shape mirrors)
+      |=  vew/(set bone)
+      (pa-report vew %cabal shape mirrors)
     ::
     ++  pa-cabal
       ::x  add station's config to our remote config map.
@@ -866,17 +818,14 @@
       ::x  subscribe starting at the last message we read,
       ::x  or if we haven't read any yet, messages from up to a day ago.
       =+  ini=?^(num (scot %ud u.num) (scot %da old))
-      =/  typ
-        =+  (ly ~[%a-group %f-grams %x-cabal])
-        (rap 3 (turn - encode:peer-type))
       ?-  -.tay
         $|  !!
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [p.p.tay %talk] 
-                /[typ]/[q.p.tay]/[ini]
+                [p.p.tay %talk]
+                /[q.p.tay]/[ini]
             ==
       ==
     ::
@@ -899,12 +848,7 @@
       ::x  deletes the current ost.hid from all follower groups.
       ::
       ::  ~&  [%pa-cancel ost.hid]
-      %_  .
-        gramsers  (~(del by gramsers) ost.hid)
-        groupers  (~(del in groupers) ost.hid)
-        glyphers  (~(del in glyphers) ost.hid)
-        cabalers  (~(del in cabalers) ost.hid)
-      ==
+      .(followers (~(del by followers) ost.hid))
     ::
     ++  pa-notify                                       ::  local presence
       ::x  add her status to our presence map. if this changes it, send report.
@@ -913,7 +857,7 @@
       ^+  +>
       =/  nol  (~(put by locals) her now.hid saz)
       ?:  =(nol locals)  +>.$
-      (pa-report-group(locals nol) groupers)
+      (pa-report-group(locals nol) pa-followers)
     ::
     ++  pa-remind                                       ::  remote presence
       ::x  adds tay's loc to our remote presence map, after merging with rem.
@@ -925,7 +869,7 @@
       =/  buk  (~(uni timed remotes) rem)  ::  XX drop?
       =.  buk  (~(put timed buk) tay now.hid loc)
       ?:  =(~(strip timed buk) ~(strip timed remotes))  +>.$
-      (pa-report-group(remotes buk) groupers)
+      (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream
       ::x  grab all telegrams that fall within the river and send them in a
@@ -939,7 +883,7 @@
           (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
           ?:  p.lab  ::x?  dun never gets changed, so always | ?
             (pa-sauce ost.hid [[%quit ~] ~])
-          +>.$(gramsers (~(put by gramsers) ost.hid riv))
+          +>.$(followers (~(put by followers) ost.hid riv))
       ^=  lab
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       |-  ^-  (trel ? @ud (list telegram))
@@ -959,14 +903,14 @@
       ::x  if we're in the river, add this gram and continue.
       $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
     ::
-    ++  pa-watch-grams                                  ::  subscribe messages
+    ++  pa-first-grams                                  ::  subscribe messages
       ::x  (called upon subscribe) send backlog of grams to her.
       ::x  deduces which messages to send from pax.
       ::
       |=  {her/ship pax/path}
       ^+  +>
       ?.  (pa-admire her)
-        ~&  [%pa-watch-grams-admire ~]
+        ~&  [%pa-first-grams-admire ~]
         (pa-sauce ost.hid [%quit ~]~)
       ::x  find the range of grams to send.
       =+  ^=  ruv  ^-  (unit river)
@@ -980,42 +924,42 @@
           ?.  ?=({{?($ud $da) @} {?($ud $da) @} $~} paf)
             ~
           `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::XX arvo issue #366
-      ::  ~&  [%pa-watch-grams her pax ruv]
+      ::  ~&  [%pa-first-grams her pax ruv]
       ?~  ruv
-        ~&  [%pa-watch-grams-malformed pax]
+        ~&  [%pa-first-grams-malformed pax]
         (pa-sauce ost.hid [%quit ~]~)
       (pa-start u.ruv)
     ::
     ++  pa-refresh                                      ::  update to listeners
       ::x  called when grams get added or changed. calculates the changes and
-      ::x  sends them to all message followers. if we run into any followers
-      ::x  that are no longer interested in this story, remove them.
+      ::x  sends them to all followers. if we run into any followers that are
+      ::x  no longer interested in this story, remove them.
       ::
       |=  {num/@ud gam/telegram}
       ^+  +>
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
-          ?~  gramsers  [~ ~]
-          ::  ~&  [%pa-refresh num n.gramsers]
-          =+  lef=$(gramsers l.gramsers)
-          =+  rit=$(gramsers r.gramsers)
+          ?~  followers  [~ ~]
+          ::  ~&  [%pa-refresh num n.followers]
+          =+  lef=$(followers l.followers)
+          =+  rit=$(followers r.followers)
           =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
-          ?:  ?-  -.q.q.n.gramsers                        ::  after the end
-                $ud  (lte p.q.q.n.gramsers num)
-                $da  (lte p.q.q.n.gramsers p.r.q.gam)
+          ?:  ?-  -.q.q.n.followers                        ::  after the end
+                $ud  (lte p.q.q.n.followers num)
+                $da  (lte p.q.q.n.followers p.r.q.gam)
               ==
-            [[p.n.gramsers p.old] [[p.n.gramsers %quit ~] q.old]]
-          ?:  ?-  -.p.q.n.gramsers                        ::  before the start
-                $ud  (gth p.p.q.n.gramsers num)
-                $da  (gth p.p.q.n.gramsers p.r.q.gam)
+            [[p.n.followers p.old] [[p.n.followers %quit ~] q.old]]
+          ?:  ?-  -.p.q.n.followers                        ::  before the start
+                $ud  (gth p.p.q.n.followers num)
+                $da  (gth p.p.q.n.followers p.r.q.gam)
               ==
             old
           :-  p.old
-          [[p.n.gramsers %diff %talk-report %grams num gam ~] q.old]
+          [[p.n.followers %diff %talk-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
-      $(p.moy t.p.moy, gramsers (~(del by gramsers) i.p.moy))
+      $(p.moy t.p.moy, followers (~(del by followers) i.p.moy))
     ::
     ++  pa-lesson                                       ::  learn multiple
       ::x  learn all telegrams in a list.

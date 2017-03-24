@@ -510,11 +510,8 @@
       =<  sh-prod
       %_    .
           +>
-        =/  typ
-          =+  (ly ~[%a-group %f-grams %x-cabal])
-          (rap 3 (turn - encode:peer-type))
         ::x  subscriptions to the shell's ship's default channels.
-        (ra-subscribe:(ra-subscribe her.she ~) her.she [typ man.she ~])
+        (ra-subscribe:(ra-subscribe her.she ~) her.she [man.she ~])
       ==
     ::
     ++  sh-prod                                         ::  show prompt
