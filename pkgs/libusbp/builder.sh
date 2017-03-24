@@ -14,7 +14,8 @@ cd build
 
 cmake ../libusbp-$version \
   -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
-  -DCMAKE_INSTALL_PREFIX=$out
+  -DCMAKE_INSTALL_PREFIX=$out \
+  -DBUILD_SHARED_LIBS=false
 
 make
 
