@@ -536,7 +536,7 @@
       =.  +>  (mo-give %mack ~)
       %+  mo-pass
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%f %exec our ~ (mo-beak dap) %vale p.ron our q.ron]
+      [%f %exec our ~ (mo-beak dap) %vale p.ron q.ron]
     ::
         $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
             (mo-give(hen (mo-ball him num)) %unto %quit ~)
