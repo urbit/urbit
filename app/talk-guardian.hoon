@@ -319,6 +319,15 @@
       (ra-think & her +.cod)
     ==
   ::
+  ++  ra-inform                                         ::x  new lowdown
+    ::x  send talk-lowdown to all readers.
+    ::
+    |=  low/lowdown
+    %-  ra-emil
+    %-  ~(rep in general)
+    |=  {b/bone l/(list move)}
+    [[b %diff %talk-lowdown low] l]
+  ::
   ++  ra-update
     ::x  applies update sent by her.
     ::
@@ -341,28 +350,15 @@
       ?.  ?|(?=($~ who) !.=(who q.dup))  ::TODO?  != won't work, right?
         +>.$  ::x  no change.
       =.  folks  (~(put by folks) her q.dup)
-      ::TODO  make arm for sending lowdowns to readers, which takes lowdowns
-      ::      and sends to all readers.
-      %-  ra-emil  ::TODO?  order doesn't matter here, right?
-      =/  cad/card
-        :^  %diff  %talk-lowdown  %names
-        (~(put by *(map ship human)) her q.dup)
-      %-  ~(rep in general)
-      |=  {b/bone l/(list move)}
-      [[b cad] l]
-      ::TODO  eventually squash multiple %names reports for same bone into one.
+      %+  ra-inform  %names
+      (~(put by *(map ship human)) her q.dup)
     ::
     $bind                                               ::x  set glyph binding.
-      ::TODO  maybe %-  %=  ra-emil ?
-      =:  nik  (~(put by nik) q.dup p.dup)
-          nak  (~(put ju nak) p.dup q.dup)
+      %.  [%glyph nak]
+      %=  ra-inform
+        nik  (~(put by nik) q.dup p.dup)
+        nak  (~(put ju nak) p.dup q.dup)
       ==
-      ::TODO  see above
-      %-  ra-emil
-      =/  cad/card  [%diff %talk-lowdown %glyph nak]
-      %-  ~(rep in glyphers)
-      |=  {b/bone l/(list move)}
-      [[b cad] l]
     ==
   ::
   ++  ra-config                                         ::  configure story
