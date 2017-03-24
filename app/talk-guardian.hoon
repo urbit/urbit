@@ -346,12 +346,13 @@
       pa-abet:(~(pa-notify n.p.dup story) our q.dup)
     ::
     $human                                              ::x  change an identity.
-      =+  who=(~(get by folks) her)
-      ?.  ?|(?=($~ who) !.=(who q.dup))  ::TODO?  != won't work, right?
-        +>.$  ::x  no change.
-      =.  folks  (~(put by folks) her q.dup)
+      ?.  =((~(get by folks) her) q.dup)
+        +>  ::x  no change.
+      =.  folks
+        ?~  hand.q.dup  (~(del by folks) p.dup)
+        (~(put by folks) her u.q.dup)
       %+  ra-inform  %names
-      (~(put by *(map ship human)) her q.dup)
+      (~(put by *(map ship (unit human))) her q.dup)
     ::
     $bind                                               ::x  set glyph binding.
       %.  [%glyph nak]

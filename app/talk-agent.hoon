@@ -489,6 +489,14 @@
       ^+  +>
       +>(moves :_(moves [ost.hid %diff %sole-effect fec]))
     ::
+    ++  sh-update
+      ::x  adds a talk-update to ++ra's moves
+      ::
+      |=  dup/update
+      ^+  +>
+      ::TODO  is ost.hid okay here? or do we want to store bone of broker?
+      +>(moves :_(moves [ost.hid %diff %talk-update dup]))
+    ::
     ++  sh-peep                                         ::  peer to path
       ::TODO  remove.
       ::
@@ -1241,10 +1249,7 @@
             nak  (~(put ju nak) cha lix)
           ==
         %_    ..sh-work
-            ..pa
-          %-  (ra-know man.she)
-          ::TODO  send %talk-update instead.
-          |=(_pa pa-abet:(pa-report glyphers %glyph nak))
+          (sh-update %glyph cha lix)
         ==
       ::
       ++  join                                          ::  %join
@@ -1367,8 +1372,9 @@
           [%txt "{<p>}: {<u.nym>}"]
         %=  ..sh-work
           folks  ?~  u.nym
-                   (~(del by folks) u.her)
-                 (~(put by folks) u.her [true=~ hand=nym])
+                   (~(del by folks) u.her)  ::x  unset nickname
+                 (~(put by folks) u.her [true=~ hand=nym])  ::x  set nickname
+          ..sh-work  (sh-update %human [true=~ hand=nym])
         ==
       ::
       ++  wo-set                                        ::  %set
@@ -1917,7 +1923,16 @@
     ==
     ::TODO  sh-prod each shell?
   $names
-    +>(folks (~(uni by +.rad) folks))
+    %=  +>
+      folks  %-  ~(gas by *(map ship human))
+             %+  murn
+             %~  tap  by
+                 %-  ~(uni by +.rad)
+                 (~(run by folks) some)
+             |=  {s/ship h/(unit human)}
+             ?~  h  ~
+             [s u.h]
+    ==
 ::
 ++  poke-sole-action                                    ::  accept console
   ::x  incoming sole action. process it.

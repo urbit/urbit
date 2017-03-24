@@ -12,7 +12,7 @@
   ==                                                    ::
 ++  update                                              ::  change shared state
   $%  {$status (pair (set knot) status)                 ::  our status update
-      {$human (pair ship human)}                        ::  new identity
+      {$human (pair ship (unit human))}                 ::  new identity
       {$bind (pair char (set partner))}                 ::  bind a glyph
   ==                                                    ::
 ++  cabal                                               ::  metaconfiguration
@@ -59,7 +59,7 @@
   ==                                                    ::
 ++  lowdown                                             ::  changed shared state
   $%  {$glyph (jug char (set partner))}                 ::  new bindings
-      {$names (map ship human)}                         ::  new identities
+      {$names (map ship (unit human))}                         ::  new identities
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce
