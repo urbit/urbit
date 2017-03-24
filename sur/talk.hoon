@@ -9,11 +9,10 @@
   $%  {$design (pair knot (unit config))}               ::  configure+destroy
       {$publish (list thought)}                         ::  originate
       {$review (list thought)}                          ::  deliver
-      {$update update}                                  ::  change shared state
   ==                                                    ::
-++  update                                              ::x  these may need work
+++  update                                              ::  change shared state
   $%  {$status (pair (set knot) status)                 ::  our status update
-      {$human (map ship human)}                         ::  new identity
+      {$human (pair ship human)}                        ::  new identity
       {$bind (pair char (set partner))}                 ::  bind a glyph
   ==                                                    ::
 ++  cabal                                               ::  metaconfiguration
@@ -57,7 +56,9 @@
       {$grams (pair @ud (list telegram))}               ::  beginning thoughts
       {$group register}                                 ::  presence
       {$house shelf}                                    ::  station set
-      {$glyph (jug char (set partner))}                 ::  relevant binding
+  ==                                                    ::
+++  lowdown                                             ::  changed shared state
+  $%  {$glyph (jug char (set partner))}                 ::  new bindings
       {$names (map ship human)}                         ::  new identities
   ==                                                    ::
 ++  speech                                              ::  narrative action

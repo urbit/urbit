@@ -53,6 +53,7 @@
     ++  move  (pair bone card)                          ::  all actions
     ++  lime                                            ::  diff fruit
       $%  {$talk-report report}                         ::
+          {$talk-lowdown lowdown}                       ::
           {$sole-effect sole-effect}                    ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
@@ -72,43 +73,6 @@
       $%  {$repeat p/@ud q/@p r/knot}                   ::
           {$friend p/knot q/station}                    ::
       ==                                                ::
-    ++  work                                            ::  interface action
-      $%  {$number p/$@(@ud {@u @ud})}                  ::  relative/absolute
-          {$help $~}                                    ::  print usage info
-          {$who p/where}                                ::  presence
-          {$what p/$@(char (set partner))}              ::  show bound glyph
-          {$bind p/char q/(unit where)}                 ::
-          {$join p/where}                               ::  
-          {$leave p/where}                              ::  
-          {$say p/(list speech)}                        ::
-          {$eval p/cord q/twig}                         ::
-          {$invite p/knot q/(list partner)}             ::  whitelist add
-          {$banish p/knot q/(list partner)}             ::  blacklist add
-          {$block p/knot q/(list partner)}              ::  blacklist add
-          {$author p/knot q/(list partner)}             ::  whitelist add
-          {$nick p/(unit ship) q/(unit cord)}           ::
-          {$set p/knot}                                 ::
-          {$unset p/knot}                               ::
-          {$target p/where q/(unit work)}               ::  set active targets
-          ::  {$destroy p/knot}                         ::
-          {$create p/posture q/knot r/cord}             ::
-          {$probe p/station}                            ::
-      ==                                                ::
-    ++  where  (set partner)                            ::  non-empty audience 
-    ++  sigh                                            ::  assemble label
-      ::TODO  move to ++ta.
-      ::
-      |=  {len/@ud pre/tape yiz/cord}
-      ^-  tape
-      =+  nez=(trip yiz)
-      =+  lez=(lent nez)
-      ?>  (gth len (lent pre))
-      =.  len  (sub len (lent pre))
-      ?.  (gth lez len)  
-        =.  nez  (welp pre nez)
-        ?.  (lth lez len)  nez
-        (runt [(sub len lez) '-'] nez)
-      :(welp pre (scag (dec len) nez) "+")  
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool'
     ++  peer-type                                       ::  stream requests
       ::x  helper functions for determining/specifying from/in a path, what kind
@@ -353,6 +317,52 @@
         $publish
       ?.  (team our.hid her)  +>.$
       (ra-think & her +.cod)
+    ==
+  ::
+  ++  ra-update
+    ::x  applies update sent by her.
+    ::
+    |=  {her/ship dup/update}
+    ^+  +>
+    ::x  only allow updates by our team.
+    ?.  (team our.hid her)  +>
+    ?-  -.dup
+    $status                                             ::x  update our status.
+      ::x  for every knot (story) in the set, update our status.
+      |-  ^+  +>  ::TODO  maybe +>.^$
+      ?~  p.dup  +>
+      =.  +>  $(p.dup l.p.dup)
+      =.  +>  $(p.dup r.p.dup)
+      ::x  uses our because status is per identity, not per client.
+      pa-abet:(~(pa-notify n.p.dup story) our q.dup)
+    ::
+    $human                                              ::x  change an identity.
+      =+  who=(~(get by folks) her)
+      ?.  ?|(?=($~ who) !.=(who q.dup))  ::TODO?  != won't work, right?
+        +>.$  ::x  no change.
+      =.  folks  (~(put by folks) her q.dup)
+      ::TODO  make arm for sending lowdowns to readers, which takes lowdowns
+      ::      and sends to all readers.
+      %-  ra-emil  ::TODO?  order doesn't matter here, right?
+      =/  cad/card
+        :^  %diff  %talk-lowdown  %names
+        (~(put by *(map ship human)) her q.dup)
+      %-  ~(rep in general)
+      |=  {b/bone l/(list move)}
+      [[b cad] l]
+      ::TODO  eventually squash multiple %names reports for same bone into one.
+    ::
+    $bind                                               ::x  set glyph binding.
+      ::TODO  maybe %-  %=  ra-emil ?
+      =:  nik  (~(put by nik) q.dup p.dup)
+          nak  (~(put ju nak) p.dup q.dup)
+      ==
+      ::TODO  see above
+      %-  ra-emil
+      =/  cad/card  [%diff %talk-lowdown %glyph nak]
+      %-  ~(rep in glyphers)
+      |=  {b/bone l/(list move)}
+      [[b cad] l]
     ==
   ::
   ++  ra-config                                         ::  configure story
@@ -1094,6 +1104,12 @@
       ra-abet:(ra-apply:ra src.hid cod)
   =^  mow  +>.$  log-all-to-file
   [(welp mos mow) +>.$]
+::
+++  poke-talk-update                                    ::  accept update
+  ::x  incoming talk update. process it.
+  ::
+  |=  dup/update
+  ra-abet:(ra-update src.hid dup)
 ::
 ++  poke-sole-action                                    ::  accept console
   ::x  incoming sole action. process it.
