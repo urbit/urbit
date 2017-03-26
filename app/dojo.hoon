@@ -1010,7 +1010,7 @@
             :+  %as  `mark`(cat 3 api.sink.com '-poke')
             :-  1
             :+  %do
-              :+  %gill  [%base %noun]
+              :^  %gill  ~  [%base %noun]
               :^  %cont  [%rock %tas %post]
                 [%rock %$ endpoint.sink.com]
               [%make ~[[%.y 6]] ~]
