@@ -1448,8 +1448,16 @@
       ++  able                                          ::  assemble preamble
         ^-  twig
         :+  %per
-          ?:(=(~ rop) [%$ 1] [%core (~(run by rop) |=({^ a/twig} [~ %ash a]))])
-        ?:(=(~ bil) [%$ 1] [%core (~(run by bil) |=({^ a/twig} [~ %ash a]))])
+          ?:  =(~ rop)  
+            [%$ 1] 
+          :-  %core 
+          =-  [[0 ~ -] ~ ~]
+          (~(run by rop) |=({^ a/twig} [~ %ash a]))
+        ?:  =(~ bil) 
+          [%$ 1] 
+        :-  %core
+        =-  [[0 ~ -] ~ ~]
+        (~(run by bil) |=({^ a/twig} [~ %ash a]))
       ::
       ++  abut                                          ::  generate
         |=  {cof/cafe hyd/hood}
@@ -1761,7 +1769,7 @@
           |=  {cof/cafe mav/(map term (pair wain foot)) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
-          (fine cof sel(boy [[%core mav] boy]))
+          (fine cof sel(boy [[%core [[0 ~ mav] ~ ~]] boy]))
         ==
       --
     ::
