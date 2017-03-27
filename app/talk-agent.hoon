@@ -28,7 +28,7 @@
           man/knot                                      ::  mailbox
           count/@ud                                     ::  messages shown
           say/sole-share                                ::  console state
-          active/(unit (set partner))                   ::  active targets
+          active/(set partner)                          ::  active targets
           owners/register                               ::  presence mirror
           harbor/(map knot (pair posture cord))         ::  stations mirror
           system/cabal                                  ::  config mirror
@@ -522,7 +522,7 @@
       :+  &  %talk-line
       ^-  tape
       =/  rew/(pair (pair @t @t) (set partner))
-          [['[' ']'] u.active.she]
+          [['[' ']'] active.she]
       =+  cha=(~(get by nik) q.rew)
       ?^  cha  ~[u.cha ' ']
       :: ~&  [rew nik nak]
@@ -536,8 +536,8 @@
       ^+  +>
       =+  act=(sh-pare lix)  ::x  ensure we can see what we send.
       ?~  act  ~|(%no-audience !!)  ::TODO  can't happen, remove.
-      ?:  =(active.she `act)  +>.$
-      sh-prod(active.she `act)
+      ?:  =(active.she act)  +>.$
+      sh-prod(active.she act)
     ::
     ++  sh-pare                                         ::  adjust target list
       ::x  if the audience paz does not contain a partner we're subscribed to,
@@ -1172,7 +1172,7 @@
       ::
       ^-  audience
       %-  ~(gas by *audience)
-      %+  turn  (~(tap in u.active.she))
+      %+  turn  (~(tap in active.she))
       |=(a/partner [a *envelope %pending])
     ::
     ++  sh-tell                                         ::  add command
@@ -1223,7 +1223,7 @@
         ^+  ..sh-work
         =+  tay=~(. tr man.she settings.she gam)
         =.  ..sh-work  (sh-fact tr-fact:tay)
-        sh-prod(active.she `tr-pals:tay)
+        sh-prod(active.she tr-pals:tay)
       ::
       ++  help
         (sh-fact %txt "see http://urbit.org/docs/using/messaging/")
@@ -1296,7 +1296,7 @@
       ::
       ++  bind                                          ::  %bind
         |=  {cha/char pan/(unit (set partner))}  ^+  ..sh-work
-        ?~  pan  $(pan [~ u.active.she])
+        ?~  pan  $(pan `active.she)
         =+  ole=(~(get by nik) u.pan)
         ?:  =(ole [~ cha])  ..sh-work
         (sh-note:(set-glyph cha u.pan) "bound {<cha>} {<u.pan>}")
