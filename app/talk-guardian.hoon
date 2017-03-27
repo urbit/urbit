@@ -781,7 +781,7 @@
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
-      pa-report-cabal
+      (pa-report-cabal pa-followers)
     ::
     ++  pa-cancel                                       ::  unsubscribe from
       ::x  deletes the current ost.hid from all follower groups.

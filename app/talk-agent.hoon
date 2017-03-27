@@ -49,6 +49,7 @@
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
           {$poke wire dock pear}                        ::
+          {$peer wire dock path}                        ::
       ==                                                ::
     ++  work                                            ::  interface action
       $%  {$number p/$@(@ud {@u @ud})}                  ::  relative/absolute
@@ -166,12 +167,28 @@
   ++  ra-diff-talk-report                               ::  subscription update
     ::x  process a talk report from cuz into story man.
     ::
+    ::TODO  also show reports to sh-repo
     |=  {man/knot cuz/station rad/report}
     ^+  +>
+    ?:  ?=($house -.rad)
+      (ra-diff-talk-report-house +.rad)
     ::TODO  ra-know needed counter +1
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] !!)
     pa-abet:(~(pa-diff-talk-report pa man u.tal) cuz rad)
+  ::
+  ++  ra-diff-talk-report-house
+    ::x  learn of stories.
+    ::
+    |=  sef/shelf
+    ^+  +>
+    =+  sas=(~(tap by sef))
+    |-  ^+  +>.^$
+    ?~  sas  +>.^$
+    =/  tal  (fall (~(get by tales) p.i.sas) *tale)
+    =.  caption.shape.tal   q.q.i.sas
+    =.  p.cordon.shape.tal  p.q.i.sas
+    $(sas t.sas, tales (~(put by tales) p.i.sas tal))
   ::
   ++  ra-emil                                           ::  ra-emit move list
     ::x  adds multiple moves to the core's list. flops to emulate ++ra-emit.
@@ -210,6 +227,18 @@
     =/  she/shell
       %*(. *shell her her, man man, id ost.hid, active (sy [%& our.hid man] ~))
     sh-abet:~(sh-peer sh ~ she)
+  ::
+  ++  ra-init
+    ::x  populate state on first boot. subscribes to our broker.
+    ::
+    ~&  %r-ra-init
+    %-  ra-emit
+    :*  ost.hid
+        %peer
+        /
+        (broker our.hid)
+        /
+    ==
   ::
   ++  pa                                                ::  story core
     ::x  tale core, used for doing work on a story.
@@ -928,8 +957,9 @@
     ++  sh-repo-house
       ::x  applies new shelf ("house"?) and prints changes to cli.
       ::
-      |=  awl/(map knot (pair posture cord))
+      |=  awl/shelf
       ^+  +>
+      ~&  [%sh-repo-house awl]
       =+  dif=(sh-repo-house-diff harbor.she awl)
       =.  harbor.she  awl
       =.  +>.$
@@ -1897,6 +1927,21 @@
     ==
   --
 ::
+++  peer
+  ::x  incoming subscription on pax.
+  ::
+  |=  pax/path
+  ~&  [%r-peer pax ost.hid src.hid]
+  ^-  (quip move +>)
+  ?.  (team src.hid our.hid)
+    ~&  [%peer-talk-reader-stranger src.hid]
+    [~ +>]
+  ?.  ?=({$sole *} pax)
+    ~&  [%peer-talk-reader-strange pax]
+    [~ +>]
+  ::~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
+  ra-abet:(ra-console:ra src.hid t.pax)
+::
 ::TODO  move to lib.
 ++  etch                                                ::  parse wire
   ::x  parse wire to obtain either %friend with story and station or %repeat
@@ -1926,6 +1971,8 @@
   ::
   |=  {way/wire rad/report}
   ^-  (quip move +>)
+  ?:  =(-.rad %house)
+    ra-abet:(ra-diff-talk-report:ra *knot *station rad)
   %+  etch-friend  way  |=  {man/knot cuz/station}
   ra-abet:(ra-diff-talk-report:ra man cuz rad)
 ::
@@ -1969,4 +2016,13 @@
   |=  act/sole-action
   ra-abet:(ra-sole:ra act)
 ::
+++  prep
+  ::x  state adapter.
+  ::
+  |=  old/(unit chattel)
+  ra-abet:ra-init:ra
+  ::^-  (quip move ..prep)
+  ::?~  old
+  ::  ra-abet:ra-init:ra
+  ::[~ ..prep(+<+ u.old)]
 --
