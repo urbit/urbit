@@ -15,7 +15,7 @@
           folks/(map ship human)                        ::  human identities
           nik/(map (set partner) char)                  ::  bound station glyphs
           nak/(jug char (set partner))                  ::  station glyph lookup
-          shells/(map bone shell)                       ::  interaction state
+          cli/shell                                    ::  interaction state
       ==                                                ::
     ++  tale                                            ::  user-facing story
       $:  count/@ud                                     ::  (lent grams)
@@ -26,6 +26,7 @@
       ==                                                ::
     ++  shell                                           ::  console session
       $:  her/ship                                      ::  client identity
+          id/bone                                       ::  identifier
           man/knot                                      ::  mailbox
           count/@ud                                     ::  messages shown
           say/sole-share                                ::  console state
@@ -139,7 +140,7 @@
         =+  mor=$(moves t.moves)
         ::x  if we know the target shell is ours, and it's a talk report,
         ::x  add it to the list of reports to be locally applied.
-        ?.  ?&  (~(has by shells) `bone`p.i.moves)
+        ?.  ?&  =(id.cli `bone`p.i.moves)
                 ?=({$diff $talk-report *} q.i.moves)
             ==
           [[i.moves p.mor] q.mor]
@@ -160,7 +161,7 @@
     ::
     |=  rad/report
     ^+  +>
-    sh-abet:(~(sh-repo sh ~ (~(got by shells) ost.hid)) rad)
+    sh-abet:(~(sh-repo sh ~ cli) rad)
   ::
   ++  ra-diff-talk-report                               ::  subscription update
     ::x  process a talk report from cuz into story man.
@@ -189,13 +190,26 @@
     ::
     |=  act/sole-action
     ^+  +>
-    =+  shu=(~(get by shells) ost.hid)
-    ?~  shu
-      ~|  :+  %ra-console-broken  ost.hid
-          ::x  differentiate between subscribers we know and don't know.
-          ?:((~(has by sup.hid) ost.hid) %lost %unknown)
+    ?.  =(id.cli ost.hid)
+      ~&  %strange-sole
       !!
-    sh-abet:(~(sh-sole sh ~ u.shu) act)
+    sh-abet:(~(sh-sole sh ~ cli) act)
+  ::
+  ++  ra-console
+    ::x  make a shell for her.
+    ::
+    |=  {her/ship pax/path}
+    ~&  [%ra-console her pax]
+    ^+  +>
+    ::x  get story from the path, default to standard mailbox.
+    =/  man/knot
+      ?+  pax  !!
+        $~        (main her)
+        {@ta $~}  i.pax
+      ==
+    =/  she/shell
+      %*(. *shell her her, man man, id ost.hid, active (sy [%& our.hid man] ~))
+    sh-abet:~(sh-peer sh ~ she)
   ::
   ++  pa                                                ::  story core
     ::x  tale core, used for doing work on a story.
@@ -495,7 +509,7 @@
             (broker our.hid)
             [%talk-command c]
         ==
-      ra-emil(shells (~(put by shells) ost.hid she))
+      ra-emil(cli she)
     ::
     ++  sh-fact                                         ::  send console effect
       ::x  adds a console effect to ++ra's moves.
