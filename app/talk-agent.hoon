@@ -1246,7 +1246,7 @@
             nak  (~(put ju nak) cha lix)
           ==
         %_    ..sh-work
-          (sh-update %glyph cha lix)
+          ..sh  (sh-update %bind cha lix)
         ==
       ::
       ++  join                                          ::  %join
@@ -1926,10 +1926,12 @@
              %~  tap  by
                  %-  ~(uni by +.rad)
                  (~(run by folks) some)
+             ==
              |=  {s/ship h/(unit human)}
              ?~  h  ~
              [s u.h]
     ==
+  ==
 ::
 ++  poke-sole-action                                    ::  accept console
   ::x  incoming sole action. process it.

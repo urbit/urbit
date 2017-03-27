@@ -11,7 +11,7 @@
       {$review (list thought)}                          ::  deliver
   ==                                                    ::
 ++  update                                              ::  change shared state
-  $%  {$status (pair (set knot) status)                 ::  our status update
+  $%  {$status (pair (set knot) status)}                ::  our status update
       {$human (pair ship (unit human))}                 ::  new identity
       {$bind (pair char (set partner))}                 ::  bind a glyph
   ==                                                    ::
