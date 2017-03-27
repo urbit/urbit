@@ -137,7 +137,7 @@
   ::
   ::x  moves: moves storage, added to by ++ra-emit and -emil, produced by -abed.
   |_  moves/(list move)
-  ++  ra-abed                                           ::  resolve core
+  ++  ra-abet                                           ::  resolve core
     ::x  produces the moves stored in ++ra's moves.
     ::x  sole-effects get special treatment to become a single move.
     ::
@@ -162,57 +162,6 @@
     ::x  produce moves or sole-effects and moves.
     ?~(foc moz [[ost.hid %diff %sole-effect u.foc] moz])
   ::
-  ++  ra-abet                                           ::  complete core
-    ::x  applies talk reports, then produces moves and updated state.
-    ::
-    ra-abed:ra-axel
-  ::
-  ++  ra-axel                                           ::  rebound reports
-    ::x  extracts and applies the talk-reports in moves.
-    ::
-    ^+  .
-    ::x  separate talk-reports meant for our shells from other moves.
-    =+  ^=  rey
-        |-  ^-  (pair (list move) (list (pair bone report)))
-        ?~  moves
-          [~ ~]
-        =+  mor=$(moves t.moves)
-        ::x  if we know the target shell is ours, and it's a talk report,
-        ::x  add it to the list of reports to be locally applied.
-        ?.  ?&  (~(has by shells) `bone`p.i.moves)
-                ?=({$diff $talk-report *} q.i.moves)
-            ==
-          [[i.moves p.mor] q.mor]
-        [p.mor [[p.i.moves +>.q.i.moves] q.mor]]
-    ::x  update moves to exclude our talk-reports.
-    =.  moves  p.rey
-    =.  q.rey  (flop q.rey)
-    ?:  =(q.rey ~)  +
-    |-  ^+  +>
-    ?~  q.rey  ra-axel
-    ::x  apply reports to our shells.
-    =+  bak=(ra-back(ost.hid p.i.q.rey) q.i.q.rey)
-    $(q.rey t.q.rey, +> bak(ost.hid ost.hid))
-  ::
-  ++  ra-back
-    ::x  applies report.
-    ::
-    |=  rad/report
-    ^+  +>
-    sh-abet:(~(sh-repo sh ~ (~(got by shells) ost.hid)) rad)
-  ::
-  ++  ra-sole
-    ::x  applies sole-action.
-    ::
-    |=  act/sole-action
-    ^+  +>
-    =+  shu=(~(get by shells) ost.hid)
-    ?~  shu
-      ~|  :+  %ra-console-broken  ost.hid 
-          ?:((~(has by sup.hid) ost.hid) %lost %unknown)
-      !!
-    sh-abet:(~(sh-sole sh ~ u.shu) act)
-  ::  
   ++  ra-emil                                           ::  ra-emit move list
     ::x  adds multiple moves to the core's list. flops to emulate ++ra-emit.
     ::
@@ -318,15 +267,17 @@
     ?-  -.dup
     $status                                             ::x  update our status.
       ::x  for every knot (story) in the set, update our status.
-      |-  ^+  +>  ::TODO  maybe +>.^$
-      ?~  p.dup  +>
-      =.  +>  $(p.dup l.p.dup)
-      =.  +>  $(p.dup r.p.dup)
+      |-  ^+  +>.^$
+      ?~  p.dup  +>.^$
+      =.  +>.^$  $(p.dup l.p.dup)
+      =.  +>.^$  $(p.dup r.p.dup)
       ::x  uses our because status is per identity, not per client.
-      pa-abet:(~(pa-notify n.p.dup story) our q.dup)
+      ::TODO  check if this can crash or not.
+      =<  pa-abet
+      (~(pa-notify pa n.p.dup (~(got by stories) n.p.dup)) our.hid q.dup)
     ::
     $human                                              ::x  change an identity.
-      ?.  =((~(get by folks) her) q.dup)
+      ?.  =((~(get by folks) her) `q.dup)
         +>  ::x  no change.
       =.  folks
         ?~  hand.q.dup  (~(del by folks) p.dup)
@@ -334,7 +285,7 @@
       %+  ra-inform  %names
       ::TODO  think long and hard, do we need unit for delition or is a human
       ::      with [~ ~] good enough? if the latter, agent's $names will change.
-      (~(put by *(map ship (unit human))) her ?~(hand.q.dup ~ q.dup))
+      (~(put by *(map ship (unit human))) her ?~(hand.q.dup ~ `q.dup))
     ::
     $bind                                               ::x  set glyph binding.
       %.  [%glyph nak]
@@ -535,21 +486,6 @@
         [who (~(put by folks) her who)]
     [who +>.$]
   ::
-  ++  ra-console                                        ::  console subscribe
-    ::x  make a shell for her, subscribe her to it.
-    ::
-    |=  {her/ship pax/path}
-    ^+  +>
-    ::x  get story from the path, default to standard mailbox.
-    =/  man/knot
-      ?+  pax  !!
-        $~        (main her)
-        {@ta $~}  i.pax
-      ==
-    =/  she/shell
-      %*(. *shell her her, man man, active `(sy [%& our.hid man] ~))
-    sh-abet:~(sh-peer sh ~ `shell`she)
-  ::
   ++  ra-subscribe                                      ::  listen to
     ::x  subscribe her at pax.
     ::
@@ -558,9 +494,11 @@
     ::  ~&  [%ra-subscribe ost.hid her pax]
     ::x  empty path, meta-subscribe and send report with all our stories.
     ?:  ?=($~ pax)
+      ::TODO  these are our readers! send lowdowns and tell them our tales!
       (ra-house(general (~(put in general) ost.hid)) ost.hid)
-    ?.  ?=({@ *} pax)
-      (ra-evil %talk-bad-path)
+    ::?.  ?=({@ *} pax)
+    ::  (ra-evil %talk-bad-path)
+    ::TODO  ^ mint-vains?
     =+  pur=(~(get by stories) i.pax)
     ?~  pur
       ~&  [%bad-subscribe-story-c i.pax]
@@ -726,15 +664,13 @@
       ::
       |=  vew/(set bone)
       %^  pa-report  vew  %group
-      :-  %-  ~(run by locals)
-          |=({@ a/status} a)
+      :-  locals
       %-  ~(urn by remotes)           ::  XX preformance
       |=  {pan/partner atl/atlas}  ^-  atlas
       ?.  &(?=($& -.pan) =(our.hid p.p.pan))  atl
-      =+  (~(get by stories) q.p.pan)
-      ?~  -  atl
-      %-  ~(run by locals.u)
-      |=({@ a/status} a)
+      =+  soy=(~(get by stories) q.p.pan)
+      ?~  soy  atl
+      locals.u.soy
     ::
     ++  pa-report-cabal                                 ::  update config
       ::x  a cabal report, containing our and remote configs, to all bones.
@@ -752,7 +688,7 @@
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)
         +>.$
-      pa-report-cabal 
+      (pa-report-cabal pa-followers)
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
       ::x  process a talk report from cuz.
@@ -773,6 +709,7 @@
       ::x  delete tay from our subscriptions, then send an updated capal report.
       ::
       |=  tay/partner
+      %.  pa-followers
       pa-report-cabal(sources.shape (~(del in sources.shape) tay))
     ::
     ++  pa-sauce                                        ::  send backward
@@ -857,7 +794,7 @@
       ::
       |=  {her/ship saz/status}
       ^+  +>
-      =/  nol  (~(put by locals) her now.hid saz)
+      =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
       (pa-report-group(locals nol) pa-followers)
     ::
@@ -1028,13 +965,7 @@
   ::
   |=  pax/path
   ^+  [*(list move) +>]
-  ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
-  :: ~&   [%talk-peer src.hid ost.hid pax]
-  ?:  ?=({$sole *} pax)
-    ?>  (team our.hid src.hid)
-    ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
-    ra-abet:(ra-console:ra src.hid t.pax)
-  ::  ~&  [%talk-peer-data ost.hid src.hid pax]
+  ~?  !(team src.hid our.hid)  [%peer-talk-stranger src.hid]
   ra-abet:(ra-subscribe:ra src.hid pax)
 ::
 ++  poke-talk-command                                   ::  accept command
@@ -1052,13 +983,7 @@
   ::x  incoming talk update. process it.
   ::
   |=  dup/update
-  ra-abet:(ra-update src.hid dup)
-::
-++  poke-sole-action                                    ::  accept console
-  ::x  incoming sole action. process it.
-  ::
-  |=  act/sole-action
-  ra-abet:(ra-sole:ra act)
+  ra-abet:(ra-update:ra src.hid dup)
 ::
 ++  diff-talk-report                                    ::
   ::x  incoming talk-report. process it and update logs.
@@ -1132,8 +1057,7 @@
   |=  pax/path
   ^+  [*(list move) +>]
   ::  ~&  [%talk-pull src.hid ost.hid pax]
-  =^  moz  +>.$  ra-abet:(ra-cancel:ra src.hid pax)
-  [moz +>.$(shells (~(del by shells) ost.hid))]
+  ra-abet:(ra-cancel:ra src.hid pax)
 ::
 ++  log-all-to-file
   ::x  for every story we're logging, (over)write all their grams to log files,
