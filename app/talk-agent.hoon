@@ -69,7 +69,12 @@
       ==                                                ::
     ++  where  (set partner)                            ::  non-empty audience
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool'
-
+    ++  broker                                          ::  broker ship and name
+      |=  our/ship
+      :_  %talk-guardian
+      ?.  =((clan our) %earl)
+        our
+      (sein our)
     --
 ::
 |_  {hid/bowl chattel}
@@ -142,6 +147,13 @@
     =+  bak=(ra-back(ost.hid p.i.q.rey) q.i.q.rey)
     $(q.rey t.q.rey, +> bak(ost.hid ost.hid))
   ::
+  ++  ra-back
+    ::x  applies report.
+    ::
+    |=  rad/report
+    ^+  +>
+    sh-abet:(~(sh-repo sh ~ (~(got by shells) ost.hid)) rad)
+  ::
   ++  ra-diff-talk-report                               ::  subscription update
     ::x  process a talk report from cuz into story man.
     ::
@@ -151,7 +163,18 @@
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] !!)
     pa-abet:(~(pa-diff-talk-report pa man u.tal) cuz rad)
-
+  ::
+  ++  ra-emil                                           ::  ra-emit move list
+    ::x  adds multiple moves to the core's list. flops to emulate ++ra-emit.
+    ::
+    |=  mol/(list move)
+    %_(+> moves (welp (flop mol) moves))
+  ::
+  ++  ra-emit                                           ::  emit a move
+    ::x  adds a move to the core's list.
+    ::
+    |=  mov/move
+    %_(+> moves [mov moves])
   ::
   ++  ra-sole
     ::x  applies sole-action.
@@ -452,35 +475,18 @@
       ::x  [coz new]). produces an updated context for the ++sh core.
       ::
       ^+  +>  ::x  points to ++sh's |_ core's context.
-      =+  zoc=(flop coz)
-      |-  ^+  +>+>  ::x  +> would point to |-'s context. +>+> goes to ++sh |_'s.
-      ::x  produce context with this shell updated.
-      ?~  zoc  +>+>.$(shells (~(put by shells) ost.hid she))
-      ::x  recurse, with context (of |-?) modified.
-      $(zoc t.zoc, +>.$ (sh-deal i.zoc))
-    ::
-    ++  sh-deal                                         ::  apply from shell
-      ::x  used by ++sh-abet, applies an individual talk command.
-      ::
-      |=  cod/command
-      ^+  +>
-      ?-    -.cod
-        ::x  the $design command is used for modifying channel configs,
-        ::x  which is done when joining, leaving or creating channels.
-          $design
-        ?~  q.cod
-          ::x  updates context with new config state.
-          =.  +>+>.$  (ra-config p.cod *config)
-          ::x  produces context with story p.cod deleted.
-          +>.$(stories (~(del by stories) p.cod))
-        ::x  produces +> with its +> (so, +>+>) updated by ++ra-think.
-        +>(+> (ra-config p.cod u.q.cod))
-      ::
-        ::x  used for relaying messages (as a station host).
-          $review   +>(+> (ra-think | her.she +.cod))
-        ::x  used for sending messages (as their author).
-          $publish  +>(+> (ra-think & her.she +.cod))
-      ==
+      %.  ^-  (list move)
+        %-  flop
+        %+  turn  coz
+        |=  c/command
+        ^-  move
+        :*  ost.hid
+            %poke
+            /reader/command
+            (broker our.hid)
+            [%talk-command c]
+        ==
+      ra-emil(shells (~(put by shells) ost.hid she))
     ::
     ++  sh-fact                                         ::  send console effect
       ::x  adds a console effect to ++ra's moves.
@@ -495,7 +501,16 @@
       |=  dup/update
       ^+  +>
       ::TODO  is ost.hid okay here? or do we want to store bone of broker?
-      +>(moves :_(moves [ost.hid %diff %talk-update dup]))
+      ~&  [%update-to ost.hid]
+      %=  +>
+        moves  :_  moves
+               :*  ost.hid
+                   %poke
+                   /reader/update
+                   (broker our.hid)
+                   [%talk-update dup]
+               ==
+      ==
     ::
     ++  sh-peep                                         ::  peer to path
       ::TODO  remove.
