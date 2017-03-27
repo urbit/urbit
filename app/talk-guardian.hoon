@@ -330,9 +330,11 @@
         +>  ::x  no change.
       =.  folks
         ?~  hand.q.dup  (~(del by folks) p.dup)
-        (~(put by folks) her u.q.dup)
+        (~(put by folks) her q.dup)
       %+  ra-inform  %names
-      (~(put by *(map ship (unit human))) her q.dup)
+      ::TODO  think long and hard, do we need unit for delition or is a human
+      ::      with [~ ~] good enough? if the latter, agent's $names will change.
+      (~(put by *(map ship (unit human))) her ?~(hand.q.dup ~ q.dup))
     ::
     $bind                                               ::x  set glyph binding.
       %.  [%glyph nak]

@@ -12,7 +12,7 @@
   ==                                                    ::
 ++  update                                              ::  change shared state
   $%  {$status (pair (set knot) status)}                ::  our status update
-      {$human (pair ship (unit human))}                 ::  new identity
+      {$human (pair ship human)}                        ::  new identity
       {$bind (pair char (set partner))}                 ::  bind a glyph
   ==                                                    ::
 ++  cabal                                               ::  metaconfiguration

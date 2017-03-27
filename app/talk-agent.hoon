@@ -1367,11 +1367,11 @@
           %+  turn  (reverse-folks u.nym)
           |=  p/ship
           [%txt "{<p>}: {<u.nym>}"]
-        %=  ..sh-work
+        %.  [%human u.her [true=~ hand=nym]]
+        %=  sh-update
           folks  ?~  u.nym
                    (~(del by folks) u.her)  ::x  unset nickname
                  (~(put by folks) u.her [true=~ hand=nym])  ::x  set nickname
-          ..sh-work  (sh-update %human [true=~ hand=nym])
         ==
       ::
       ++  wo-set                                        ::  %set
