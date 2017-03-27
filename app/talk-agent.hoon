@@ -8,6 +8,7 @@
 ::
 ::::
   ::
+[. talk sole]
 =>  |%                                                  ::  data structures
     ++  chattel                                         ::  full state
       $:  tales/(map knot tale)                         ::  conversations
@@ -36,7 +37,10 @@
       ==                                                ::
     ::                                                  ::
     ++  move  (pair bone card)                          ::  all actions
-    ++  lime  {$sole-effect sole-effect}                ::  diff fruit
+    ++  lime                                            ::  diff fruit
+      $%  {$talk-report report}                         ::
+          {$sole-effect sole-effect}                    ::
+      ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
           {$talk-update update}                         ::
@@ -66,6 +70,10 @@
           ::  {$destroy p/knot}                         ::
           {$create p/posture q/knot r/cord}             ::
           {$probe p/station}                            ::
+      ==                                                ::
+    ++  weir                                            ::  parsed wire
+      $%  {$repeat p/@ud q/@p r/knot}                   ::
+          {$friend p/knot q/station}                    ::
       ==                                                ::
     ++  where  (set partner)                            ::  non-empty audience
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool'
@@ -199,13 +207,13 @@
         ::x  story doesn't get a face because ease of use
         ::
         $:  man/knot
-            story
+            tale
         ==
     ++  pa-abet
       ::x  apply/fold changes back into the stories map.
       ::
       ^+  +>
-      +>(stories (~(put by stories) man `story`+<+))
+      +>(tales (~(put by tales) man `tale`+<+))
     ::
     ++  pa-lesson                                       ::  learn multiple
       ::x  learn all telegrams in a list.
@@ -223,10 +231,8 @@
       ^+  +>
       ::x  if author isn't allowed to write here, reject.
       ::TODO  we shouldn't need to do permission checks anymore, all we need to
-      ::      do is make sure the grams came from our broker.
-      ?.  (pa-admire p.gam)
-        ~&  %pa-admire-rejected
-        +>.$
+      ::      do is make sure the grams were sent to us by our broker.
+      ::      do this earlier up in the chain.
       =.  q.q.gam
         ::x  if we are in the audience, mark us as having received it.
         =+  ole=(~(get by q.q.gam) [%& our.hid man])
@@ -268,19 +274,22 @@
     ++  pa-remind                                       ::  presence update
       ::x  merge local and remote presences, and store them in locals.
       ::
-      ::TODO  stop using timed.
-      |=  {tay/partner loc/atlas rem/(map partner atlas)}
+      ::TODO  verify if this now does what it's supposed to.
+      |=  {loc/atlas rem/(map partner atlas)}
       ::x  remove this story from the presence map, since it's in local already.
       =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
       ::TODO  stop using timed, just do uni here.
-      =/  buk  (~(uni timed remotes) rem)  ::  XX drop?
-      =.  buk  (~(put timed buk) tay now.hid loc)
-      +>.$
+      =/  pres
+        %+  roll  (~(tap by rem))
+        |=  {r/(pair partner atlas) l/atlas}
+        =.  l  ?~(l loc l)  ::TODO  =?
+        (~(uni by l) q.r)
+      +>.$(locals pres)
     ::
     ++  pa-cabal
       ::x  update the tale's config.
       ::
-      |=  {cuz/station con/config}
+      |=  {cuz/station con/config ham/(map station config)}
       ^+  +>
       +>(shape con)
     ::
@@ -295,7 +304,7 @@
         +>
       ?+  -.rad  ~|([%talk-odd-friend rad] !!)
         $cabal  (pa-cabal cuz +.rad)
-        $group  (pa-remind [%& cuz] +.rad)
+        $group  (pa-remind +.rad)
         $grams  (pa-lesson q.+.rad)
       ==
     ::
@@ -312,8 +321,8 @@
     |_  $:  ::x  coz: talk commands storage, applied by ++sh-abet.
             ::x  she: console session state used in this core.
             ::
+            coz/(list command)
             she/shell
-            coz/(list command)                          ::  talk actions
         ==
     ++  sh-scad                                         ::  command parser
       ::x  builds a core with parsers for talk-cli, and produces its work arm.
@@ -512,21 +521,14 @@
                ==
       ==
     ::
-    ++  sh-peep                                         ::  peer to path
-      ::TODO  remove.
-      ::
-      |=  pax/path
-      ^+  +>
-      +>(+> (ra-subscribe her.she pax))
-    ::
     ++  sh-peer                                         ::  subscribe shell
       ::x  create a shell, subscribe to default stories.
       ::
       =<  sh-prod
       %_    .
           +>
-        ::x  subscriptions to the shell's ship's default channels.
-        (ra-subscribe:(ra-subscribe her.she ~) her.she [man.she ~])
+        +>
+        ::TODO  peer susbcribe to /sole and /sole/man.she at our broker.
       ==
     ::
     ++  sh-prod                                         ::  show prompt
@@ -570,7 +572,7 @@
       ?~  paz  |
       ?|  $(paz l.paz)
           $(paz r.paz)
-          (~(has in sources.shape:(~(got by stories) man.she)) `partner`n.paz)
+          (~(has in sources.shape:(~(got by tales) man.she)) `partner`n.paz)
       ==
     ::
     ++  sh-pest                                         ::  report listen
@@ -612,7 +614,7 @@
       ?:  =(~ lax)  ~  ::x  no partner.
       ?:  ?=({* $~ $~} lax)  `n.lax  ::x  single partner.
       ::x  in case of multiple partners, pick the most recently active one.
-      =+  grams=grams:(~(got by stories) man.she)
+      =+  grams=grams:(~(got by tales) man.she)
       |-  ^-  (unit (set partner))
       ?~  grams  ~
       ::x  get first partner from a telegram's audience.
@@ -727,8 +729,6 @@
               new/(list (pair partner atlas))
               cha/(list (pair partner atlas))
           ==
-      =.  one  ~(strip timed one)
-      =.  two  ~(strip timed two)
       ^+  ret
       =.  ret
         =+  eno=(~(tap by one))
@@ -1059,20 +1059,6 @@
       ?~  gaz  +>
       $(gaz t.gaz, num +(num), +> (sh-repo-gram num i.gaz))
     ::
-    ++  sh-repo-glyph                                   ::  apply binding
-      ::x  updates glyph bindings and lookup, and updates selected audience.
-      ::
-      |=  nac/(jug char (set partner))
-      ^+  +>
-      %_  sh-prod
-        nak  nac
-        nik  %-  ~(gas by *(map (set partner) char))
-             =-  (zing `(list (list {(set partner) char}))`-)
-             %+  turn  (~(tap by nac))
-             |=  {a/char b/(set (set partner))}
-             (turn (~(tap by b)) |=(c/(set partner) [c a]))
-      ==
-    ::
     ++  sh-repo                                         ::  apply report
       ::x  applies the different kinds of reports using their handler arms above
       ::
@@ -1082,7 +1068,6 @@
       ?-  -.rad
         $cabal   (sh-repo-cabal +.rad)
         $grams   (sh-repo-grams +.rad)
-        $glyph   (sh-repo-glyph +.rad)                  ::  XX ever happens?
         $group   (sh-repo-group +.rad)
         $house   (sh-repo-house +.rad)
       ==
@@ -1207,7 +1192,7 @@
       ::
       |=  job/work
       ^+  +>
-      =+  roy=(~(got by stories) man.she)
+      =+  roy=(~(got by tales) man.she)
       =<  work
       |%
       ++  work
@@ -1260,9 +1245,7 @@
         =:  nik  (~(put by nik) lix cha)
             nak  (~(put ju nak) cha lix)
           ==
-        %_    ..sh-work
-          ..sh  (sh-update %bind cha lix)
-        ==
+        (sh-update %bind cha lix)
       ::
       ++  join                                          ::  %join
         |=  pan/(set partner)
@@ -1339,7 +1322,7 @@
       ++  create                                        ::  %create
         |=  {por/posture nom/knot txt/cord}
         ^+  ..sh-work
-        ?:  (~(has in stories) nom)
+        ?:  (~(has in tales) nom)
           (sh-lame "{(trip nom)}: already exists")
         =.  ..sh-work
             ::x  create new config for channel.
@@ -1417,7 +1400,7 @@
       ++  number                                        ::  %number
         |=  num/$@(@ud {p/@u q/@ud})
         ^+  ..sh-work
-        =+  roy=(~(got by stories) man.she)
+        =+  roy=(~(got by tales) man.she)
         |-
         ?@  num
           ?:  (gte num count.roy)
@@ -1710,7 +1693,7 @@
     ?&  ?=($& -.pan)
         =(p.p.pan our.hid)
     ::
-        =+  sot=(~(get by stories) q.p.pan)
+        =+  sot=(~(get by tales) q.p.pan)
         &(?=(^ sot) ?=($brown p.cordon.shape.u.sot))
     ==
   ::
@@ -1901,6 +1884,22 @@
   --
 ::
 ::TODO  move to lib.
+++  etch                                                ::  parse wire
+  ::x  parse wire to obtain either %friend with story and station or %repeat
+  ::x  with message number, source ship and story.
+  ::
+  |=  way/wire
+  ^-  weir
+  ?+    -.way  !!
+      $friend
+    ?>  ?=({$show @ @ @ $~} t.way)
+    [%friend i.t.t.way (slav %p i.t.t.t.way) i.t.t.t.t.way]
+  ::
+      $repeat
+    ?>  ?=({@ @ @ $~} t.way)
+    [%repeat (slav %ud i.t.way) (slav %p i.t.t.way) i.t.t.t.way]
+  ==
+::
 ++  etch-friend                                         ::
   ::x  parse a /friend wire, call gate with resulting data.
   ::
@@ -1926,10 +1925,10 @@
   ?-  -.low
   $glyph
     %_  +>
-      nak  +.rad
+      nak  +.low
       nik  %-  ~(gas by *(map (set partner) char))
            =-  (zing `(list (list {(set partner) char}))`-)
-           %+  turn  (~(tap by +.rad))
+           %+  turn  (~(tap by +.low))
            |=  {a/char b/(set (set partner))}
            (turn (~(tap by b)) |=(c/(set partner) [c a]))
     ==
@@ -1938,13 +1937,15 @@
     %=  +>
       folks  %-  ~(gas by *(map ship human))
              %+  murn
+             =<  $
              %~  tap  by
-                 %-  ~(uni by +.rad)
+                 %-  ~(uni by +.low)
+                 ^-  (map ship (unit human))
                  (~(run by folks) some)
              ==
              |=  {s/ship h/(unit human)}
              ?~  h  ~
-             [s u.h]
+             (some [s u.h])
     ==
   ==
 ::
