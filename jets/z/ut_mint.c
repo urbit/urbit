@@ -901,7 +901,7 @@
              u3_noun gol,
              u3_noun gen)
   {
-    c3_m    fun_m = 146 + c3__mint;
+    c3_m    fun_m = 145 + c3__mint;
     u3_noun vrf   = u3r_at(u3qzu_van_vrf, van);
     u3_noun pro   = u3z_find_4(fun_m, vrf, sut, gol, gen);
 

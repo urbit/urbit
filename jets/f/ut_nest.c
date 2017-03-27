@@ -13,7 +13,7 @@
     _nest_dext(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _nest_clip(u3_noun van,
+  _nest_deep(u3_noun van,
              u3_noun sut,
              u3_noun tel,
              u3_noun ref,
@@ -33,8 +33,8 @@
       u3x_trel(dab, &n_dab, &l_dab, &r_dab);
       u3x_trel(hem, &n_hem, &l_hem, &r_hem);
 
-      if ( (c3n == _nest_clip(van, sut, tel, ref, l_dab, l_hem, gil)) ||
-           (c3n == _nest_clip(van, sut, tel, ref, r_dab, r_hem, gil)) ) 
+      if ( (c3n == _nest_deep(van, sut, tel, ref, l_dab, l_hem, gil)) ||
+           (c3n == _nest_deep(van, sut, tel, ref, r_dab, r_hem, gil)) ) 
       {
         return c3n;
       }
@@ -69,6 +69,43 @@
             return u3r_sing(qqn_dab, qqn_hem);
           }
         }
+      }
+    }
+  }
+
+  static u3_noun
+  _nest_dope(u3_noun van,
+             u3_noun sut,
+             u3_noun tel,
+             u3_noun ref,
+             u3_noun dom,
+             u3_noun vim,
+             u3_noun gil)
+  {
+    if ( u3_nul == dom ) {
+      return u3r_sing(u3_nul, vim);
+    } else if ( u3_nul == vim ) {
+      return c3n;
+    } else {
+      u3_noun n_dom, l_dom, r_dom;
+      u3_noun n_vim, l_vim, r_vim;
+      u3_noun pn_vim, pqn_vim, qqn_vim, pn_dom, pqn_dom, qqn_dom;
+
+      u3x_trel(dom, &n_dom, &l_dom, &r_dom);
+      u3x_trel(vim, &n_vim, &l_vim, &r_vim);
+
+      if ( (c3n == _nest_dope(van, sut, tel, ref, l_dom, l_vim, gil)) ||
+           (c3n == _nest_dope(van, sut, tel, ref, r_dom, r_vim, gil)) ) 
+      {
+        return c3n;
+      }
+      u3x_trel(n_dom, &pn_dom, &pqn_dom, &qqn_dom);
+      u3x_trel(n_vim, &pn_vim, &pqn_vim, &qqn_vim);
+
+      if ( c3n == u3r_sing(pn_dom, pn_vim) ) {
+        return c3n;
+      } else {
+        return _nest_deep(van, sut, tel, ref, qqn_dom, qqn_vim, gil);
       }
     }
   }
@@ -134,7 +171,7 @@
                              u3nc(c3__gold,
                                   u3k(u3t(q_ref))));
 
-          ret = _nest_clip(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
+          ret = _nest_dope(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
           u3z(fer);
           u3z(tus);
           u3z(zoc);
@@ -358,7 +395,7 @@
     }
 
     {
-      c3_m    fun_m = 147 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+      c3_m    fun_m = 146 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
       u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
       if ( u3_none != pro ) {

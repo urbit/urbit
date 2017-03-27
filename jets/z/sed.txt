@@ -1,0 +1,3 @@
+s/wf/wz/g
+s/qf/qz/g
+s/146 + c3/145 + c3/g

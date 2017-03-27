@@ -131,6 +131,41 @@
     }
   }
 
+  static void
+  _mull_balk(u3_noun van,
+             u3_noun sut,
+             u3_noun dox,
+             u3_noun dom)
+  {
+    if ( u3_nul != dom ) {
+      u3_noun n_dom, l_dom, r_dom;
+
+      u3r_trel(dom, &n_dom, &l_dom, &r_dom);
+      if ( c3n == u3du(n_dom) ) {
+        u3m_bail(c3__fail);
+      }
+      else {
+        u3_noun qqn_dom = u3t(u3t(n_dom));
+
+        _mull_bake(van, sut, dox, qqn_dom);
+
+        if ( (u3_nul == l_dom) && (u3_nul == r_dom) ) {
+          return;
+        }
+        else if ( (u3_nul == l_dom) ) {
+          _mull_balk(van, sut, dox, r_dom);
+        }
+        else if ( (u3_nul == r_dom) ) {
+          _mull_balk(van, sut, dox, l_dom);
+        }
+        else {
+          _mull_balk(van, sut, dox, l_dom);
+          _mull_balk(van, sut, dox, r_dom);
+        }
+      }
+    }
+  }
+
   static u3_noun
   _mull_grow(u3_noun van,
              u3_noun sut,
@@ -138,7 +173,7 @@
              u3_noun dox,
              u3_atom mel,
              u3_noun ruf,
-             u3_noun dab)
+             u3_noun dom)
   {
     u3_noun dan = _mull_in(van, sut, c3__noun, dox, ruf);
     u3_noun p_dan = u3h(dan);
@@ -146,24 +181,24 @@
     u3_noun p_toc = _mull_core(u3k(p_dan),
                                u3nt(c3__gold,
                                     u3k(p_dan),
-                                    u3nc(u3_nul, u3k(dab))));
+                                    u3nc(u3_nul, u3k(dom))));
     u3_noun q_toc = _mull_core(u3k(q_dan),
                                u3nt(c3__gold,
                                     u3k(q_dan),
-                                    u3nc(u3_nul, u3k(dab))));
+                                    u3nc(u3_nul, u3k(dom))));
     u3_noun p_ret = _mull_core(u3k(p_dan),
                                u3nt(u3k(mel),
                                     u3k(p_dan),
                                     u3nc(u3nc(u3_nul, u3_nul),
-                                         u3k(dab))));
+                                         u3k(dom))));
     u3_noun q_ret = _mull_core(u3k(q_dan),
                                u3nt(u3k(mel),
                                     u3k(q_dan),
                                     u3nc(u3nc(u3_nul, u3_nul),
-                                         u3k(dab))));
+                                         u3k(dom))));
     u3_noun ret = u3nc(_mull_nice(van, gol, p_ret), q_ret);
 
-    _mull_bake(van, p_toc, q_toc, dab);
+    _mull_balk(van, p_toc, q_toc, dom);
 
     u3z(q_toc);
     u3z(p_toc);
@@ -585,14 +620,8 @@
       case c3__tune: p_gen = u3t(gen);
       _mull_used();
       {
-        u3_noun nux = u3nc(u3_nul, u3k(p_gen));
-        u3_noun pro;
-
-        pro = u3nc(u3qf_face(nux, sut), 
-                   u3qf_face(nux, dox));
-
-        u3z(nux);
-        return pro;
+        return u3nc(u3qf_face(p_gen, sut), 
+                    u3qf_face(p_gen, dox));
       }
 
       case c3__burn: p_gen = u3t(gen);
@@ -782,7 +811,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    c3_m    fun_m = 147 + c3__mull + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 146 + c3__mull + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_4(fun_m, sut, gol, dox, gen);
 
     if ( u3_none != pro ) {

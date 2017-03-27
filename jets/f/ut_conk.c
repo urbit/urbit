@@ -26,7 +26,7 @@
       }
       case 1: {
         u3_noun cok = _cqfu_conk(van, sut, u3t(u3t(got)));
-        u3_noun nux = u3nc(u3_nul, u3k(u3h(u3t(got))));
+        u3_noun nux = u3k(u3h(u3t(got)));
         u3_noun ret = u3qf_face(nux, cok);
 
         u3z(nux);

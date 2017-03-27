@@ -301,6 +301,7 @@ J_F_OFILES=\
        jets/f/help.o \
        jets/f/hike.o \
        jets/f/look.o \
+       jets/f/loot.o
 
 J_F_OFILES_UT=\
        jets/f/ut.o \
@@ -342,7 +343,7 @@ J_Z_OFILES=\
        jets/z/help.o \
        jets/z/hike.o \
        jets/z/look.o \
-			 jets/z/loot.o 
+       jets/z/loot.o
 
 J_Z_OFILES_UT=\
        jets/z/ut.o \
