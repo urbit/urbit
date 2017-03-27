@@ -171,7 +171,7 @@
         return _find_buck_here(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       else {
-        u3_noun zem = u3qz_look(u3t(q_heg), qrq_sut);
+        u3_noun zem = u3qz_loot(u3t(q_heg), qrq_sut);
 
         if ( (u3_nul != zem) && (0 != p_heg) ) {
           u3_noun ped;

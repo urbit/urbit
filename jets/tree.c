@@ -626,6 +626,7 @@ static u3j_core _146_hex_d[] =
   static u3j_harm _146_pen_fork_a[] = {{".2", u3wz_fork}, {}};
   static u3j_harm _146_pen_hike_a[] = {{".2", u3wz_hike}, {}};
   static u3j_harm _146_pen_look_a[] = {{".2", u3wz_look}, {}};
+  static u3j_harm _146_pen_loot_a[] = {{".2", u3wz_loot}, {}};
 
     static u3j_harm _146_pen__ut_burn_a[] = {{".2", u3wzu_burn}, {}};
     static u3j_harm _146_pen__ut_conk_a[] = {{".2", u3wzu_conk}, {}};
@@ -696,6 +697,7 @@ static u3j_core _146_pen_d[] =
     { "help", _146_pen_help_a },
     { "hike", _146_pen_hike_a },
     { "look", _146_pen_look_a },
+    { "loot", _146_pen_loot_a },
 
     // { "ap", _146_pen__ap_a },
     // { "al", _146_pen__al_a },

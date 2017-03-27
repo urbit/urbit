@@ -236,6 +236,7 @@
     u3_noun u3wf_help(u3_noun);
     u3_noun u3wf_hike(u3_noun);
     u3_noun u3wf_look(u3_noun);
+    u3_noun u3wf_loot(u3_noun);
 
     u3_noun u3wfl_bunt(u3_noun);
     u3_noun u3wfl_whip(u3_noun);
@@ -291,6 +292,7 @@
     u3_noun u3wz_help(u3_noun);
     u3_noun u3wz_hike(u3_noun);
     u3_noun u3wz_look(u3_noun);
+    u3_noun u3wz_loot(u3_noun);
 
     u3_noun u3wzl_bunt(u3_noun);
     u3_noun u3wzl_whip(u3_noun);

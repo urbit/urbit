@@ -342,6 +342,7 @@ J_Z_OFILES=\
        jets/z/help.o \
        jets/z/hike.o \
        jets/z/look.o \
+			 jets/z/loot.o 
 
 J_Z_OFILES_UT=\
        jets/z/ut.o \

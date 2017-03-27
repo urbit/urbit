@@ -224,7 +224,9 @@ _king_boot(u3_noun boot)
   sys_c = u3r_string(sys_n);
   u3z(sys_n);
 
-  fprintf(stderr, "boot %s %s\r\n", pax_c, sys_c);
+  if ( pax_c ) {
+    fprintf(stderr, "boot %s %s\r\n", pax_c, sys_c);
+  }
   u3_pier_boot(pax_c, sys_c, pep_u);
 }
 

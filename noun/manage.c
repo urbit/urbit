@@ -583,6 +583,10 @@ u3m_bail(u3_noun how)
     abort();
   }
 
+  if ( c3__fail == how ) {
+    abort();
+  }
+
 #ifdef U3_PRINT_WATERMARK
   if ( c3__meme == how ) {
     fprintf(stderr, "u3R %p, parent %x\n", u3R, u3R->par_p);

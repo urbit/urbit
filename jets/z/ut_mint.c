@@ -182,12 +182,51 @@
   }
 
   static u3_noun
+  _mint_hope(u3_noun van,
+             u3_noun sut,
+             u3_noun dom)
+  {
+    if ( (u3_nul == dom) ) {
+      return 0;
+    }
+    else {
+      u3_noun n_dom, l_dom, r_dom;
+
+      u3r_trel(dom, &n_dom, &l_dom, &r_dom);
+      if ( c3n == u3du(n_dom) ) {
+        return u3m_bail(c3__fail);
+      }
+      else {
+        u3_noun qqn_dom = u3t(u3t(n_dom));
+        u3_noun dov;
+
+        dov = _mint_harp(van, sut, qqn_dom);
+
+        if ( (u3_nul == l_dom) && (u3_nul == r_dom) ) {
+          return dov;
+        }
+        else if ( (u3_nul == l_dom) ) {
+          return u3nc(dov, _mint_hope(van, sut, r_dom));
+        }
+        else if ( (u3_nul == r_dom) ) {
+          return u3nc(dov, _mint_hope(van, sut, l_dom));
+        }
+        else {
+          return u3nt(dov,
+                      _mint_hope(van, sut, l_dom),
+                      _mint_hope(van, sut, r_dom));
+        }
+      }
+    }
+  }
+
+  static u3_noun
   _mint_grow(u3_noun van,
              u3_noun sut,
              u3_noun gol,
              u3_atom mel,
              u3_noun ruf,
-             u3_noun dab)
+             u3_noun dom)
   {
     u3_noun dan = _mint_in(van, sut, c3__noun, ruf);
     u3_noun p_dan = u3h(dan);
@@ -196,14 +235,14 @@
                              u3nt(c3__gold,
                                   u3k(p_dan),
                                   u3nc(u3_nul,
-                                       u3k(dab))));
-    u3_noun dez = _mint_harp(van, toc, dab);
+                                       u3k(dom))));
+    u3_noun dez = _mint_hope(van, toc, dom);
     u3_noun zod = u3nc(1, dez);
     u3_noun cot = _mint_core(u3k(p_dan),
                              u3nt(mel,
                                   u3k(p_dan),
                                   u3nc(u3k(dez),
-                                       u3k(dab))));
+                                       u3k(dom))));
     u3_noun ret = u3nc(_mint_nice(van, gol, cot),
                        u3qz_cons(zod, q_dan));
 
@@ -619,13 +658,7 @@
       case c3__tune: p_gen = u3t(gen);
       _mint_used();
       {
-        u3_noun nux = u3nc(u3_nul, u3k(p_gen));
-        u3_noun pro;
-
-        pro = u3nc(u3qz_face(nux, sut), u3nc(0, 1));
-        u3z(nux);
-
-        return pro;
+        return u3nc(u3qz_face(p_gen, sut), u3nc(0, 1));
       }
 
       case c3__burn: p_gen = u3t(gen);

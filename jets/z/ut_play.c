@@ -364,13 +364,7 @@
       case c3__tune: p_gen = u3t(gen);
       _play_used();
       {
-        u3_noun nux = u3nc(u3_nul, u3k(p_gen));
-        u3_noun pro;
-
-        pro = u3qz_face(nux, sut);
-        u3z(nux);
-
-        return pro;
+        return u3qz_face(p_gen, sut);
       }
 
       case c3__burn: p_gen = u3t(gen);
