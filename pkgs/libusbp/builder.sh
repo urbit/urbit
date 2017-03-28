@@ -2,7 +2,7 @@ source $stdenv/setup
 
 tar -xf $src
 
-cd libusbp-$version
+cd libusbp-*
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
@@ -12,7 +12,7 @@ cd ..
 mkdir build
 cd build
 
-cmake ../libusbp-$version \
+cmake ../libusbp-* \
   -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
   -DCMAKE_INSTALL_PREFIX=$out \
   -DBUILD_SHARED_LIBS=false

@@ -4,18 +4,17 @@
 crossenv.nixpkgs.stdenv.mkDerivation rec {
   name = "libusbp-${version}-${crossenv.host}";
 
-  version = "1.0.1";
+  version = "1.0.1ish";
 
   host = crossenv.host;
   cmake_toolchain = crossenv.cmake_toolchain;
 
   src = crossenv.nixpkgs.fetchurl {
-    url = "https://github.com/pololu/libusbp/archive/${version}.tar.gz";
-    sha256 = "1fa86imgkzbhnldb534gm8r8rzanql3vz55m856pq011ymgnifah";
+    url = "https://github.com/pololu/libusbp/archive/245f5e4.tar.gz";
+    sha256 = "1xnv5w1c9zcdsdmgacgb1y5qlwpj0868v3cwcmbxxdx89hcsw2mp";
   };
 
   patches = [
-    ./header-capitalization.patch  # TODO: get this upstreamed
   ];
 
   buildInputs = [

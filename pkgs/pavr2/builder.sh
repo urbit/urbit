@@ -2,17 +2,12 @@ source $stdenv/setup
 unset CC CXX AR LD
 
 tar -xf $src
-
-mv pololu-usb-avr-programmer-v2-$version pavr2-$version
+mv pololu-usb-avr-programmer-v2-* pavr2
 
 mkdir build
 cd build
 
-# TODO: these CXXFLAGS and LDFLAGS should really come form libusbp-1.pc
-export CXXFLAGS="-DLIBUSBP_STATIC"
-export LIBS="-lsetupapi -lwinusb -luuid -lole32"
-
-cmake ../pavr2-$version \
+cmake ../pavr2 \
   -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
   -DCMAKE_INSTALL_PREFIX=$out \
   -DCMAKE_CXX_STANDARD_LIBRARIES="$LIBS" \
