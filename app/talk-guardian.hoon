@@ -495,7 +495,7 @@
     ::x  empty path, meta-subscribe and send report with all our stories.
     ?:  ?=($~ pax)
       ::TODO  these are our readers! send lowdowns and tell them our tales!
-      (ra-house(general (~(put in general) ost.hid)) ost.hid)
+      (ra-welcome(general (~(put in general) ost.hid)) ost.hid)
     ::?.  ?=({@ *} pax)
     ::  (ra-evil %talk-bad-path)
     ::TODO  ^ mint-vains?
@@ -517,6 +517,25 @@
     =.  soy  (pa-notify:soy her %hear who)
     ::x  apply changes to story.
     pa-abet:soy
+  ::
+  ++  ra-welcome
+    ::x  brings reader new up to date.
+    ::
+    |=  new/bone
+    =.  +>  %-  ra-emit
+      :*  new  %diff  %talk-lowdown  %tales
+          %-  ~(gas in *(map knot config))
+          %+  turn  (~(tap by stories))
+          |=({a/knot b/story} [a shape.b])
+      ==
+    =.  +>  %-  ra-emil  :~
+      [new %diff %talk-lowdown %glyph nak]
+      [new %diff %talk-lowdown %names (~(run by folks) some)]
+    ==
+    %-  ra-emil
+      %+  turn  (~(tap by stories))
+      |=  {k/knot s/story}
+      [new %diff %talk-lowdown %grams k count.s grams.s]
   ::
   ++  ra-think                                          ::  publish+review
     ::x  consumes each thought.
@@ -876,6 +895,16 @@
       ::
       |=  {num/@ud gam/telegram}
       ^+  +>
+      ::x  notify all of our readers.
+      =+  ^=  roy
+          |-  ^-  (list move)
+          ?~  general  ~
+          =+  lef=$(general l.general)
+          =+  rit=$(general r.general)
+          ~&  [%b-refreshing n.general]
+          :_  (welp lef rit)
+          [n.general %diff %talk-lowdown %grams man num gam ~]
+      ::x  notify only the followers who are currently interested.
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  followers  [~ ~]
@@ -895,7 +924,7 @@
             old
           :-  p.old
           [[p.n.followers %diff %talk-report %grams num gam ~] q.old]
-      =.  moves  (welp q.moy moves)
+      =.  moves  :(welp roy q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
       $(p.moy t.p.moy, followers (~(del by followers) i.p.moy))

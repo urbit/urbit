@@ -58,8 +58,15 @@
       {$house shelf}                                    ::  station set
   ==                                                    ::
 ++  lowdown                                             ::  changed shared state
+  ::TODO  change these so that they're always just the diff.
+  ::      this will aid with ++sh's printing.
   $%  {$glyph (jug char (set partner))}                 ::  new bindings
-      {$names (map ship (unit human))}                         ::  new identities
+      {$names (map ship (unit human))}                  ::  new identities
+      {$tales (map knot config)}                        ::  changed config
+      ::TODO  cabal, or merge its contents into tale's config
+      ::      basically we just want to merge the ship sets, right?
+      {$precs (pair knot atlas)}                        ::  changed presence
+      {$grams (pair knot (pair @ud (list telegram)))}   ::  new grams
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce

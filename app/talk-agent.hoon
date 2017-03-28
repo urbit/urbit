@@ -164,31 +164,84 @@
     ^+  +>
     sh-abet:(~(sh-repo sh ~ cli) rad)
   ::
-  ++  ra-diff-talk-report                               ::  subscription update
-    ::x  process a talk report from cuz into story man.
+  ++  ra-diff-talk-lowdown
+    ::x  process a talk lowdown
     ::
-    ::TODO  also show reports to sh-repo
-    |=  {man/knot cuz/station rad/report}
+    |=  low/lowdown
     ^+  +>
-    ?:  ?=($house -.rad)
-      (ra-diff-talk-report-house +.rad)
-    ::TODO  ra-know needed counter +1
-    =+  tal=(~(get by tales) man)
-    ?~  tal  ~&([%know-no-tale man] !!)
-    pa-abet:(~(pa-diff-talk-report pa man u.tal) cuz rad)
+    ?-  -.low
+    $glyph  (ra-diff-talk-lowdown-glyph +.low)
+    $names  (ra-diff-talk-lowdown-names +.low)
+    $tales  (ra-diff-talk-lowdown-tales +.low)
+    $precs  (ra-diff-talk-lowdown-precs +.low)
+    $grams  (ra-diff-talk-lowdown-grams +.low)
+    ==
   ::
-  ++  ra-diff-talk-report-house
-    ::x  learn of stories.
+  ++  ra-diff-talk-lowdown-glyph
+    ::x  apply new set of glyph bindings.
     ::
-    |=  sef/shelf
+    |=  nek/_nak
     ^+  +>
-    =+  sas=(~(tap by sef))
-    |-  ^+  +>.^$
-    ?~  sas  +>.^$
-    =/  tal  (fall (~(get by tales) p.i.sas) *tale)
-    =.  caption.shape.tal   q.q.i.sas
-    =.  p.cordon.shape.tal  p.q.i.sas
-    $(sas t.sas, tales (~(put by tales) p.i.sas tal))
+    =.  nak  nek
+    =.  nik  %-  ~(gas by *(map (set partner) char))
+             =-  (zing `(list (list {(set partner) char}))`-)
+             %+  turn  (~(tap by nek))
+             |=  {a/char b/(set (set partner))}
+             (turn (~(tap by b)) |=(c/(set partner) [c a]))
+    sh-abet:~(sh-prod sh ~ cli)
+  ::
+  ++  ra-diff-talk-lowdown-names
+    ::x  apply new local identities.
+    ::
+    |=  nas/(map ship (unit human))
+    ^+  +>
+    %=  +>  folks
+      %-  ~(gas by *(map ship human))
+      %+  murn
+      =<  $
+      %~  tap  by
+          %-  ~(uni by nas)
+          ^-  _nas
+          (~(run by folks) some)
+      ==
+      |=  {s/ship h/(unit human)}
+      ?~  h  ~
+      (some [s u.h])
+    ==
+  ::  ::
+  ++  ra-diff-talk-lowdown-tales
+    ::x  apply tale configs.
+    ::
+    |=  tals/(map knot config)
+    ~&  %ra-diff-talk-lowdown-tales
+    ^+  +>
+    ::TODO  for every config, (sh-repo-config-show "" oldconfig newconfig)
+    %=  +>  tales
+      %+  roll  (~(tap by tals))
+      |=  {t/(pair knot config) tas/_tales}
+      =.  tas  ?~(tas tales tas)
+      =+  tal=(fall (~(get by tas) p.t) *tale)
+      (~(put by tas) p.t tal(shape q.t))
+    ==
+  ::
+  ++  ra-diff-talk-lowdown-precs
+    ::x  apply new presence.
+    ::
+    |=  {man/knot pes/atlas}
+    ^+  +>
+    =+  tal=(~(get by tales) man)
+    ?~  tal  ~&([%know-no-tale man] +>.$)
+    =.  +>.$  sh-abet:(~(sh-repo-group-here sh ~ cli(p.owners locals.u.tal)) pes)
+    +>.$(tales (~(put by tales) man u.tal(locals pes)))
+  ::
+  ++  ra-diff-talk-lowdown-grams
+    ::x  apply new grams
+    ::
+    |=  {man/knot num/@ud gams/(list telegram)}
+    =+  tal=(~(get by tales) man)
+    ?~  tal  ~&([%know-no-tale man] +>.$)
+    =.  +>.$  sh-abet:(~(sh-repo-grams sh ~ cli) num gams)
+    pa-abet:(~(pa-lesson pa man u.tal) gams)
   ::
   ++  ra-emil                                           ::  ra-emit move list
     ::x  adds multiple moves to the core's list. flops to emulate ++ra-emit.
@@ -335,22 +388,6 @@
       |=  {cuz/station con/config ham/(map station config)}
       ^+  +>
       +>(shape con)
-    ::
-    ++  pa-diff-talk-report                             ::  subscribed update
-      ::x  process a talk report from cuz.
-      ::
-      |=  {cuz/station rad/report}
-      ^+  +>
-      ::x  verify we are supposed to receive reports from cuz.
-      ?.  (~(has in sources.shape) [%& cuz])
-        ~&  [%pa-diff-unexpected cuz rad]
-        +>
-      ?+  -.rad  ~|([%talk-odd-friend rad] !!)
-        $cabal  (pa-cabal cuz +.rad)
-        $group  (pa-remind +.rad)
-        $grams  (pa-lesson q.+.rad)
-      ==
-    ::
     --
   ++  sh                                                ::  per console
     ::x  shell core, responsible for doing things with console sessions,
@@ -1966,49 +2003,11 @@
   =+  wer=(etch way)
   ?>(?=($friend -.wer) (fun p.wer q.wer))
 ::
-++  diff-talk-report                                    ::  accept report
-  ::x  incoming talk-report. process it.
-  ::
-  |=  {way/wire rad/report}
-  ^-  (quip move +>)
-  ?:  =(-.rad %house)
-    ra-abet:(ra-diff-talk-report:ra *knot *station rad)
-  %+  etch-friend  way  |=  {man/knot cuz/station}
-  ra-abet:(ra-diff-talk-report:ra man cuz rad)
-::
 ++  diff-talk-lowdown
   ::x  incoming talk-lowdown. process it.
   ::
-  ::TODO  would it be tidier to put this into ++ra?
   |=  {way/wire low/lowdown}
-  ^-  (quip move +>)
-  :-  ~
-  ?-  -.low
-  $glyph
-    %_  +>
-      nak  +.low
-      nik  %-  ~(gas by *(map (set partner) char))
-           =-  (zing `(list (list {(set partner) char}))`-)
-           %+  turn  (~(tap by +.low))
-           |=  {a/char b/(set (set partner))}
-           (turn (~(tap by b)) |=(c/(set partner) [c a]))
-    ==
-    ::TODO  sh-prod each shell?
-  $names
-    %=  +>
-      folks  %-  ~(gas by *(map ship human))
-             %+  murn
-             =<  $
-             %~  tap  by
-                 %-  ~(uni by +.low)
-                 ^-  (map ship (unit human))
-                 (~(run by folks) some)
-             ==
-             |=  {s/ship h/(unit human)}
-             ?~  h  ~
-             (some [s u.h])
-    ==
-  ==
+  ra-abet:(ra-diff-talk-lowdown:ra low)
 ::
 ++  poke-sole-action                                    ::  accept console
   ::x  incoming sole action. process it.
