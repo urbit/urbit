@@ -3,7 +3,7 @@
   ::
 /?    310
 /-  talk
-/+  talk,map-to-json, old-zuse
+/+  talk, map-to-json, old-zuse
 ::
 =,  talk
 =,  mimes:html
@@ -17,46 +17,37 @@
   ++  noun  (list telegram)
   ++  mime  |=(^mime (json (rash q.q apex:de-json)))
   ++  json
-    =>  [jo ..telegram]
+    =>  [dejs talk old-zuse]
     |=  a/json  ^-  (list telegram)
-    =-  (need ((ar (ot ship+(su fed:ag) thought+thot ~)) a))
-    |%
-    ++  of
-      |*  a/(pole {@tas fist})
-      |=  b/json
-      %.  ((of:jo a) b)
-      %-  slog
-      ?+  b  ~
-          {$o *} 
-        %+  murn  `(list {@tas fist})`a
-        |=  {c/term d/fist}  ^-  (unit tank)
-        =+  (~(get by p.b) c)
-        ?~  -  ~
-        =+  (d u)
-        ?~  -  (some >[c u]<)
-        ~  
-      ==
-    ++  op                                              ::  parse keys of map
-      |*  {fel/rule wit/fist}
-      %+  cu  malt  
-      %+  ci
-        |=  a/(map cord _(need *wit))
-        ^-  (unit (list _[(wonk *fel) (need *wit)]))
-        (zl (turn (~(tap by a)) (head-rush fel)))
-      (om wit)
+    %.  a
+    |^  (ar (ot ship+(su fed:ag) thought+thot ~))
+::     ++  of
+::       |*  a/(pole {@tas fist})
+::       |=  b/json
+::       %.  ((of:jo a) b)
+::       %-  slog
+::       ?+  b  ~
+::           {$o *} 
+::         %+  murn  `(list {@tas fist})`a
+::         |=  {c/term d/fist}  ^-  (unit tank)
+::         =+  (~(get by p.b) c)
+::         ?~  -  ~
+::         =+  (d u)
+::         ?~  -  (some >[c u]<)
+::         ~  
+::       ==
     ::
     ++  as                                              ::  array as set
       |*  a/fist 
-      (cu ~(gas in *(set _(need *a))) (ar a))
+      (cu ~(gas in *(set _*a)) (ar a))
     ::
     ++  ke                                              ::  callbacks
       |*  {gar/* sef/_|.(fist)}
       |=  jon/json
-      ^-  (unit _gar)
+      ^+  gar
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
-    ++  lake  |*(a/_* $-(json (unit a)))
     ++  head-rush  
       |*  a/rule
       |*  {cord *}
@@ -65,17 +56,17 @@
       (some [u.nit +>->])
     ::
     ++  thot
-      ^-  $-(json (unit thought))
+      ^-  $-(json thought)
       %-  ot  :~
-        serial+`$-(json (unit serial))`(ci (slat %uv) so)  
-        audience+`$-(json (unit audience))`audi 
-        statement+`$-(json (unit statement))`stam  
+        serial+`$-(json serial)`(ci (slat %uv) so)  
+        audience+`$-(json audience)`audi 
+        statement+`$-(json statement)`stam  
       ==
     ::
-    ++  audi  `$-(json (unit audience))`(op parn memb)  
+    ++  audi  `$-(json audience)`(op parn memb)  
     ++  auri  (op parn (ci (soft presence) so))  
-    ++  memb  ^-  $-(json (unit (pair envelope delivery)))
-              (ot envelope+lope delivery+(ci (soft delivery) so) ~)
+    ++  memb  ^-  $-(json (pair envelope delivery))
+              (ot envelope+lope delivery+(cu (hard delivery) so) ~)
     ++  lope  (ot visible+bo sender+(mu (su parn)) ~)
     ::
     ++  parn
