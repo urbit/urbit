@@ -110,7 +110,7 @@
         |-  ^-  (pair (list move) (list sole-effect))
         ?~  moves  [~ ~]
         =+  mor=$(moves t.moves)
-        ?:  ?&  =(ost.hid p.i.moves)
+        ?:  ?&  =(id.cli p.i.moves)
                 ?=({$diff $sole-effect *} q.i.moves)
             ==
           [p.mor [+>.q.i.moves q.mor]]
@@ -121,8 +121,13 @@
             ?~  q.yop  ~
             ?~(t.q.yop `i.q.yop `[%mor (flop `(list sole-effect)`q.yop)])
         ==
+    ?~  foc
+      moz
+    ?~  id.cli
+      ~&  %no-sole
+      moz
     ::x  produce moves or sole-effects and moves.
-    ?~(foc moz [[ost.hid %diff %sole-effect u.foc] moz])
+    [[id.cli %diff %sole-effect u.foc] moz]
   ::
   ++  ra-abet                                           ::  complete core
     ::x  applies talk reports, then produces moves and updated state.
@@ -582,7 +587,7 @@
       ::
       |=  fec/sole-effect
       ^+  +>
-      +>(moves :_(moves [ost.hid %diff %sole-effect fec]))
+      +>(moves :_(moves [id.she %diff %sole-effect fec]))
     ::
     ++  sh-update
       ::x  adds a talk-update to ++ra's moves
