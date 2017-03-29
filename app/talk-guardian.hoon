@@ -71,6 +71,7 @@
           {$friend p/knot q/station}                    ::
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool'
+    ++  strap  |*({k/* v/*} (~(put by *(map _k _v)) k v))
     --
 |%
 ::  old protocol workaround door
@@ -226,9 +227,8 @@
       ::x  the $design command is used for modifying channel configs,
       ::x  which is done when joining, leaving or creating channels.
       ::x  this may only be done by ourselves.
-      ::TODO  use team instead of our.
         $design
-      ?.  =(her our.hid)
+      ?.  (team our.hid her)
         (ra-evil %talk-no-owner)
       ?~  q.cod
         ?.  (~(has by stories) p.cod)
@@ -285,7 +285,7 @@
       %+  ra-inform  %names
       ::TODO  think long and hard, do we need unit for delition or is a human
       ::      with [~ ~] good enough? if the latter, agent's $names will change.
-      (~(put by *(map ship (unit human))) her ?~(hand.q.dup ~ `q.dup))
+      (strap her ?~(hand.q.dup ~ `q.dup))
     ::
     $bind                                               ::x  set glyph binding.
       %.  [%glyph nak]
@@ -303,6 +303,7 @@
     =+  :-  neu=(~(has by stories) man)
         pur=(fall (~(get by stories) man) *story)
     =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
+    =.  +>.$  (ra-inform %tales (strap man con))
     ?:(neu +>.$ ra-homes)
   ::
   ++  ra-base-hart
@@ -491,10 +492,12 @@
     ::
     |=  {her/ship pax/path}
     ^+  +>
-    ::  ~&  [%ra-subscribe ost.hid her pax]
     ::x  empty path, meta-subscribe and send report with all our stories.
     ?:  ?=($~ pax)
-      ::TODO  these are our readers! send lowdowns and tell them our tales!
+      ?.  (team our.hid her)
+        ~&  [%foreign-reader her]
+        +>
+      ~&  [%subscribed-reader ost.hid]
       (ra-welcome(general (~(put in general) ost.hid)) ost.hid)
     ::?.  ?=({@ *} pax)
     ::  (ra-evil %talk-bad-path)
@@ -610,7 +613,7 @@
         %+  ra-emit  ost.hid
         :*  %poke
             /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
-            [p.cuz %talk]
+            [p.cuz %talk-guardian]
             [%talk-command `command`[%review tip ~]]
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
@@ -676,6 +679,19 @@
       ::  ~&  [%pa-report-cabal man shape]
       (pa-sauce n.wac [%diff %talk-report caw]~)
     ::
+    ++  pa-inform
+      ::x  sends lowdown to all readers.
+      ::
+      |=  low/lowdown
+      =.  moves
+        |-  ^-  (list move)
+        ?~  general  moves
+        =+  lef=$(general l.general)
+        =+  rit=$(general r.general)
+        :_  (welp lef rit)
+        [n.general %diff %talk-lowdown low]
+      +>.$
+    ::
     ++  pa-report-group                                  ::  update presence
       ::x  build a group report, containing our different presence maps, and
       ::x  send it to all bones.
@@ -707,6 +723,7 @@
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)
         +>.$
+      =.  +>.$  (pa-inform %tales (strap man con))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
@@ -728,6 +745,8 @@
       ::x  delete tay from our subscriptions, then send an updated capal report.
       ::
       |=  tay/partner
+      ::TODO  send deletion lowdown.
+      ::=.  +>  (pa-inform %tales )
       %.  pa-followers
       pa-report-cabal(sources.shape (~(del in sources.shape) tay))
     ::
@@ -757,7 +776,7 @@
             :_  ~
             :*  %pull
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [p.p.tay %talk]
+                [p.p.tay %talk-guardian]
                 ~
             ==
       ==
@@ -782,7 +801,7 @@
             :_  ~
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [p.p.tay %talk]
+                [p.p.tay %talk-guardian]
                 /[q.p.tay]/[ini]
             ==
       ==
@@ -800,6 +819,7 @@
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
+      =.  +>.$  (pa-inform %tales (strap man cof))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-cancel                                       ::  unsubscribe from
@@ -896,14 +916,7 @@
       |=  {num/@ud gam/telegram}
       ^+  +>
       ::x  notify all of our readers.
-      =+  ^=  roy
-          |-  ^-  (list move)
-          ?~  general  ~
-          =+  lef=$(general l.general)
-          =+  rit=$(general r.general)
-          ~&  [%b-refreshing n.general]
-          :_  (welp lef rit)
-          [n.general %diff %talk-lowdown %grams man num gam ~]
+      =.  +>  (pa-inform %grams man num gam ~)
       ::x  notify only the followers who are currently interested.
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
@@ -924,7 +937,7 @@
             old
           :-  p.old
           [[p.n.followers %diff %talk-report %grams num gam ~] q.old]
-      =.  moves  :(welp roy q.moy moves)
+      =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
       $(p.moy t.p.moy, followers (~(del by followers) i.p.moy))
