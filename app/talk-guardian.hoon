@@ -182,28 +182,6 @@
     ~|  [%ra-evil msg]
     !!
   ::
-  ++  ra-house                                          ::  emit partners
-    ::x  emits a talk-report move containing all our stories.
-    ::TODO  if we don't check for team on subscription, check here.
-    ::
-    |=  ost/bone
-    %+  ra-emit  ost.hid
-    :+  %diff  %talk-report
-    :-  %house
-    %-  ~(gas in *(map knot (pair posture cord)))
-    %+  turn  (~(tap by stories)) 
-    |=({a/knot b/story} [a p.cordon.shape.b caption.shape.b])
-  ::
-  ++  ra-homes                                          ::  update partners
-    ::x  send a list of our stories to all general subscribers.
-    ::
-    =+  gel=general
-    |-  ^+  +>
-    ?~  gel  +>
-    =.  +>  $(gel l.gel)
-    =.  +>  $(gel r.gel)
-    (ra-house n.gel)
-  ::
   ++  ra-init                                           ::  initialize talk
     ::x  populate state on first boot. creates our main and public stories.
     ::
@@ -735,7 +713,7 @@
       ?.  (~(has in sources.shape) [%& cuz])
         ~&  [%pa-diff-unexpected cuz rad]
         +>
-      ?+  -.rad  ~|([%talk-odd-friend rad] !!)
+      ?-  -.rad
         $cabal  (pa-cabal cuz +.rad)
         $group  (pa-remind [%& cuz] +.rad)
         $grams  (pa-lesson q.+.rad)

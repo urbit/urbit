@@ -20,14 +20,10 @@
     |^  %+  joba  -.rep
         ?-  -.rep
           $cabal  (cabl +.rep)
-          $house  a+(turn (~(tap by +.rep)) jose)
           $grams  (jobe num+(jone p.rep) tele+[%a (turn q.rep gram)] ~)
           $group  (jobe local+(grop p.rep) global+%.(q.rep (jome parn grop)) ~)
         ==
     ++  joce  |=(a/knot [%s a])
-    ++  jose
-      |=  {a/knot b/posture c/cord}
-      (jobe name+[%s a] posture+[%s a] caption+[%s b] ~)
     ::
     ++  jove
       |=  {a/envelope b/delivery}
@@ -60,7 +56,7 @@
     ++  audi  (jome parn jove)
     ++  bouq
       |=  a/bouquet
-      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))  
+      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))
     ::
     ++  parn
       |=  a/partner  ^-  cord
@@ -87,7 +83,7 @@
         $lin  (jobe txt+[%s q.a] say+[%b p.a] ~)
         $url  (joba txt+[%s (crip (earf p.a))])
         $exp  (joba txt+[%s p.a])
-        $app  (jobe txt+[%s q.a] src+[%s p.a] ~)  
+        $app  (jobe txt+[%s q.a] src+[%s p.a] ~)
         $fat  (jobe tor+(tors p.a) taf+$(a q.a) ~)
         $mor  a+(turn p.a spec)
         $api
@@ -129,7 +125,7 @@
         ham+((jome stat conf) ham)
       ==
     ::
-    ++  sorc  
+    ++  sorc
       |=  a/(set partner)  ^-  json
       [%a (turn (~(tap in a)) |=(b/partner s+(parn b)))]
     ::
@@ -143,4 +139,3 @@
       ==
   --
 --  --
-

@@ -55,7 +55,6 @@
   ::  {$folder (list report)}                           ::  multiple
       {$grams (pair @ud (list telegram))}               ::  beginning thoughts
       {$group register}                                 ::  presence
-      {$house shelf}                                    ::  station set
   ==                                                    ::
 ++  lowdown                                             ::  changed shared state
   ::TODO  change these so that they're always just the diff.
