@@ -278,11 +278,8 @@
     ::
     |=  {man/knot con/config}
     ^+  +>
-    =+  :-  neu=(~(has by stories) man)
-        pur=(fall (~(get by stories) man) *story)
-    =.  +>.$  pa-abet:(~(pa-reform pa man pur) con)
-    =.  +>.$  (ra-inform %tales (strap man con))
-    ?:(neu +>.$ ra-homes)
+    =+  pur=(fall (~(get by stories) man) *story)
+    pa-abet:(~(pa-reform pa man pur) con)
   ::
   ++  ra-base-hart
     ::x  produces our ship's host desk's web address as a hart.
