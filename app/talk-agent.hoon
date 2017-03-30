@@ -835,59 +835,13 @@
         ret(new [i.owt new.ret])
       ret
     ::
-    ++  sh-repo-whom-diff
-      ::x  calculates the difference between two partner sets.
+    ++  sh-set-diff
+      ::x  calculates the difference between two sets,
+      ::x  returning what was lost in old and what was gained in new.
       ::
-      |=  {one/(set partner) two/(set partner)}
-      =|  $=  ret
-          $:  old/(list partner)
-              new/(list partner)
-          ==
-      ^+  ret
-      =.  ret
-        =+  eno=(~(tap by one))
-        |-  ^+  ret
-        ?~  eno  ret
-        =.  ret  $(eno t.eno)
-        ?:  (~(has in two) i.eno)
-          ret
-        ret(old [i.eno old.ret])
-      =.  ret
-        =+  owt=(~(tap by two))
-        |-  ^+  ret
-        ?~  owt  ret
-        =.  ret  $(owt t.owt)
-        ?:  (~(has in one) i.owt)
-          ret
-        ret(new [i.owt new.ret])
-      ret
-    ::
-    ++  sh-repo-ship-diff
-      ::x  calculates the difference between two ship sets.
-      ::
-      |=  {one/(set ship) two/(set ship)}
-      =|  $=  ret
-          $:  old/(list ship)
-              new/(list ship)
-          ==
-      ^+  ret
-      =.  ret
-        =+  eno=(~(tap by one))
-        |-  ^+  ret
-        ?~  eno  ret
-        =.  ret  $(eno t.eno)
-        ?:  (~(has in two) i.eno)
-          ret
-        ret(old [i.eno old.ret])
-      =.  ret
-        =+  owt=(~(tap by two))
-        |-  ^+  ret
-        ?~  owt  ret
-        =.  ret  $(owt t.owt)
-        ?:  (~(has in one) i.owt)
-          ret
-        ret(new [i.owt new.ret])
-      ret
+      |*  {one/(set *) two/(set *)}
+      :-  ^=  old  (~(tap in (~(dif in one) two)))
+          ^=  new  (~(tap in (~(dif in two) one)))
     ::
     ++  sh-puss
       ::x  posture as text.
@@ -947,7 +901,7 @@
       =.  +>.$
           %+  sh-repo-config-sources
             (weld (trip man.she) ": ")
-          (sh-repo-whom-diff sources.laz sources.loc)
+          (sh-set-diff sources.laz sources.loc)
       ?:  !=(p.cordon.loc p.cordon.laz)
         =.  +>.$  (sh-note :(weld pre "but " (sh-puss p.cordon.loc)))
         %^    sh-repo-config-exceptions
@@ -957,7 +911,7 @@
       %^    sh-repo-config-exceptions
           (weld (trip man.she) ": ")
         p.cordon.loc
-      (sh-repo-ship-diff q.cordon.laz q.cordon.loc)
+      (sh-set-diff q.cordon.laz q.cordon.loc)
     ::
     ++  sh-repo-cabal-changes
       ::x  used by ++sh-repo-cabal for printing cabal config changes to cli.
@@ -1155,7 +1109,6 @@
         $cabal   (sh-repo-cabal +.rad)
         $grams   (sh-repo-grams +.rad)
         $group   (sh-repo-group +.rad)
-        $house   (sh-repo-house +.rad)
       ==
     ::
     ++  sh-sane-chat                                    ::  sanitize chatter
