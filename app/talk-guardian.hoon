@@ -279,11 +279,9 @@
       (strap her ?~(hand.q.dup ~ `q.dup))
     ::
     $bind                                               ::x  set glyph binding.
-      %.  [%glyph nak]
-      %=  ra-inform
-        nik  (~(put by nik) q.dup p.dup)
-        nak  (~(put ju nak) p.dup q.dup)
-      ==
+      =.  nik  (~(put by nik) q.dup p.dup)
+      =.  nak  (~(put ju nak) p.dup q.dup)
+      (ra-inform %glyph nak)
     ==
   ::
   ++  ra-config                                         ::  configure story

@@ -154,6 +154,8 @@
     ::
     |=  nek/_nak
     ^+  +>
+    ?:  =(nek nak)
+      +>
     =.  nak  nek
     =.  nik  %-  ~(gas by *(map (set partner) char))
              =-  (zing `(list (list {(set partner) char}))`-)
