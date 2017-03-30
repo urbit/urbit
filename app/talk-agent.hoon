@@ -217,16 +217,16 @@
   ++  ra-diff-talk-lowdown-tales
     ::x  apply tale configs.
     ::
-    |=  tals/(map knot config)
-    ~&  %ra-diff-talk-lowdown-tales
+    |=  tals/(map knot (unit config))
     ^+  +>
     ::TODO  for every config, (sh-repo-config-show "" oldconfig newconfig)
     %=  +>  tales
       %+  roll  (~(tap by tals))
-      |=  {t/(pair knot config) tas/_tales}
-      =.  tas  ?~(tas tales tas)
+      |=  {t/(pair knot (unit config)) tas/_tales}
+      =.  tas  ?~(tas tales tas)  ::x  start with our current tales.
       =+  tal=(fall (~(get by tas) p.t) *tale)
-      (~(put by tas) p.t tal(shape q.t))
+      ?~  q.t  (~(del by tas) p.t)
+      (~(put by tas) p.t tal(shape u.q.t))
     ==
   ::
   ++  ra-diff-talk-lowdown-precs

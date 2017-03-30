@@ -214,6 +214,7 @@
         ::x  $design with ~ for config signals delete
         ::TODO  untangle into ++ra-unconfig, ++pa-reform-gone instead of using
         ::      bunts or empty keys.
+        ::      be sure to send a deletion %tales lowdown!
         (ra-config(stories (~(del by stories) p.cod)) p.cod *config)
       (ra-config p.cod u.q.cod)
     ::
@@ -502,9 +503,9 @@
     |=  new/bone
     =.  +>  %-  ra-emit
       :*  new  %diff  %talk-lowdown  %tales
-          %-  ~(gas in *(map knot config))
+          %-  ~(gas in *(map knot (unit config)))
           %+  turn  (~(tap by stories))
-          |=({a/knot b/story} [a shape.b])
+          |=({a/knot b/story} [a `shape.b])
       ==
     =.  +>  %-  ra-emil  :~
       [new %diff %talk-lowdown %glyph nak]
@@ -698,7 +699,7 @@
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)
         +>.$
-      =.  +>.$  (pa-inform %tales (strap man con))
+      =.  +>.$  (pa-inform %tales (strap man `con))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
@@ -720,10 +721,10 @@
       ::x  delete tay from our subscriptions, then send an updated capal report.
       ::
       |=  tay/partner
-      ::TODO  send deletion lowdown.
-      ::=.  +>  (pa-inform %tales )
-      %.  pa-followers
-      pa-report-cabal(sources.shape (~(del in sources.shape) tay))
+      =.  +>
+        %.  pa-followers
+        pa-report-cabal(sources.shape (~(del in sources.shape) tay))
+      (pa-inform %tales (strap man `shape))
     ::
     ++  pa-sauce                                        ::  send backward
       ::x  turns cards into moves, reverse order, prepend to existing moves.
@@ -794,7 +795,7 @@
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
-      =.  +>.$  (pa-inform %tales (strap man cof))
+      =.  +>.$  (pa-inform %tales (strap man `cof))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-cancel                                       ::  unsubscribe from

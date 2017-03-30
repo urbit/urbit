@@ -61,9 +61,9 @@
   ::      this will aid with ++sh's printing.
   $%  {$glyph (jug char (set partner))}                 ::  new bindings
       {$names (map ship (unit human))}                  ::  new identities
-      {$tales (map knot config)}                        ::  changed config
       ::TODO  cabal, or merge its contents into tale's config
       ::      basically we just want to merge the ship sets, right?
+      {$tales (map knot (unit config))}                 ::  changed config
       {$precs (pair knot atlas)}                        ::  changed presence
       {$grams (pair knot (pair @ud (list telegram)))}   ::  new grams
   ==                                                    ::
