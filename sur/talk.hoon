@@ -51,10 +51,10 @@
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
 ++  shelf  (map knot (pair posture cord))               ::  ship shape
 ++  report                                              ::  talk update
-  $%  {$cabal cabal}                                    ::  config neighborhood
+  $%  {$cabal config}                                   ::  config neighborhood
   ::  {$folder (list report)}                           ::  multiple
       {$grams (pair @ud (list telegram))}               ::  beginning thoughts
-      {$group register}                                 ::  presence
+      {$group atlas}                                    ::  presence
   ==                                                    ::
 ++  lowdown                                             ::  changed shared state
   ::TODO  change these so that they're always just the diff.
