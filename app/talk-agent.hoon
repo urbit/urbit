@@ -1710,30 +1710,6 @@
   ~&  [%r-peer-sole ost.hid]
   ra-abet:(ra-console:ra src.hid t.pax)
 ::
-::TODO  move to lib.
-++  etch                                                ::  parse wire
-  ::x  parse wire to obtain either %friend with story and station or %repeat
-  ::x  with message number, source ship and story.
-  ::
-  |=  way/wire
-  ^-  weir
-  ?+    -.way  !!
-      $friend
-    ?>  ?=({$show @ @ @ $~} t.way)
-    [%friend i.t.t.way (slav %p i.t.t.t.way) i.t.t.t.t.way]
-  ::
-      $repeat
-    ?>  ?=({@ @ @ $~} t.way)
-    [%repeat (slav %ud i.t.way) (slav %p i.t.t.way) i.t.t.t.way]
-  ==
-::
-++  etch-friend                                         ::
-  ::x  parse a /friend wire, call gate with resulting data.
-  ::
-  |=  {way/wire fun/$-({man/knot cuz/station} {(list move) _.})}
-  =+  wer=(etch way)
-  ?>(?=($friend -.wer) (fun p.wer q.wer))
-::
 ++  diff-talk-lowdown
   ::x  incoming talk-lowdown. process it.
   ::
