@@ -1,4 +1,4 @@
-::  
+::
 ::::  /hoon/talk/sur
   !:
 |%
@@ -35,7 +35,7 @@
 ++  envelope  (pair ? (unit partner))                   ::  visible sender
 ++  flavor  path                                        ::  content flavor
 ++  human                                               ::  human identifier
-  $:  true/(unit (trel @t (unit @t) @t))                ::  true name
+  $:  true/(unit (trel @t (unit @t) @t))                ::TODO  used?  true name
       hand/(unit @t)                                    ::  handle
   ==                                                    ::
 ++  passport                                            ::  foreign flow
@@ -64,6 +64,7 @@
       ::TODO  cabal, or merge its contents into tale's config
       ::      basically we just want to merge the ship sets, right?
       {$tales (map knot (unit config))}                 ::  changed config
+      ::TODO  merge remote and local presences.
       {$precs (pair knot atlas)}                        ::  changed presence
       {$grams (pair knot (pair @ud (list telegram)))}   ::  new grams
   ==                                                    ::
@@ -71,6 +72,10 @@
   $%  {$lan p/knot q/@t}                                ::  local announce
       {$exp p/@t}                                       ::  hoon line
       {$non $~}                                         ::  no content (yo)
+      ::TODO  so, this is extensibility tacked on, rather than built-in?
+      ::      really, talk has been two-split but the guardian is still two
+      ::      things at once.  you want base-guardian and talk-guardian.
+      ::      ...that's probably what %gall is, but then why do we have $ext?
       {$ext p/@tas q/*}                                 ::  extended action
       {$fat p/torso q/speech}                           ::  attachment
       ::  {$inv p/station}                              ::  invite to station
@@ -78,6 +83,7 @@
       {$ire p/serial q/speech}                          ::  in-reply-to
       {$lin p/? q/@t}                                   ::  no/@ text line
       {$mor p/(list speech)}                            ::  multiplex
+      ::TODO?  what are p and q supposed to be?
       {$app p/@tas q/@t}                                ::  app message
       $:  $api                                          ::  api message
           service/@tas                                  ::  service name

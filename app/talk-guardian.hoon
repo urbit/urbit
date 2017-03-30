@@ -1,19 +1,27 @@
-::                                                      ::  ::  
+::                                                      ::  ::
 ::::  /hoon/talk/app                                    ::  ::
-  ::                                                    ::  ::   
+  ::                                                    ::  ::
 ::
 ::TODO  master changes
 ::TODO  =/ instead of =+ ^= where possible
 ::TODO  avoid lark where possible
 ::TODO  remove old/unused code
-::TODO  improve naming
-::TODO  tidiness
+::TODO  improve naming. way->wir, rad->rep, etc.
+::TODO  tidiness, remove unnecessary ~&, etc.
 ::TODO  better presence notifications. typing, idle...
+::
+::TODO  crash on pokes/peers we do not expect
+::TODO  send %names report when a reader first connects
+::TODO  merge follower groups into followers
+::TODO  rename cores. ra->ta (transaction), pa->to (story).
+::TODO  maybe ensure every arm has a mini-description at :57 too?
+::TODO  maybe prefix all printfs and other errors with %talk?
 ::
 /?    310                                               ::  hoon version
 /-    talk, sole                                        ::  structures
 /+    talk, sole, time-to-id, twitter                   ::  libraries
 /=    seed  /~  !>(.)
+!:
 ::
 ::::
   ::
@@ -24,7 +32,7 @@
     ++  house                                           ::
       $:  stories/(map knot story)                      ::  conversations
           ::TODO  rename to readers?
-          general/(set bone)                            ::  meta-subscribe
+          general/(set bone)                            ::  our message readers
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
           log/(map knot @ud)                            ::  logged to clay
           folks/(map ship human)                        ::  human identities
@@ -70,7 +78,6 @@
       $%  {$repeat p/@ud q/@p r/knot}                   ::
           {$friend p/knot q/station}                    ::
       ==                                                ::
-    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool'
     ++  strap  |*({k/* v/*} (~(put by *(map _k _v)) k v))
     --
 |%
@@ -128,7 +135,9 @@
     q.nb
   --
 --
+::
 |_  {hid/bowl house}
+::
 ++  ra                                                  ::  per transaction
   ::x  gets called when talk gets poked or otherwise prompted/needs to perform
   ::x  an action.
@@ -138,9 +147,13 @@
   ::
   ::x  moves: moves storage, added to by ++ra-emit and -emil, produced by -abed.
   |_  moves/(list move)
+  ::
   ++  ra-abet                                           ::  resolve core
     ::x  produces the moves stored in ++ra's moves.
     ::x  sole-effects get special treatment to become a single move.
+    ::TODO  this shouldn't ever make sole-effects anymore, so remove that logic.
+    ::TODO  instead, we want to squash lowdown %names and %glyphs,
+    ::      but figure out if that'll ever be needed first.
     ::
     ^+  [*(list move) +>]
     :_  +>
@@ -185,6 +198,7 @@
   ++  ra-init                                           ::  initialize talk
     ::x  populate state on first boot. creates our main and public stories.
     ::
+    ~&  %ra-init
     %+  roll
       ^-  (list {posture knot cord})
       :~  [%brown (main our.hid) 'default home']
@@ -356,9 +370,9 @@
       :+  %design  man
       :-  ~  :-  ~
       :-  'letters to the editor'
-      [%brown ~] 
+      [%brown ~]
     %^  ra-consume  &  our.hid
-    :^    (shaf %init eny.hid)  
+    :^    (shaf %init eny.hid)
         (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
       now.hid
     [~ %app %tree 'receiving comments, ;join %comments for details']
@@ -560,7 +574,6 @@
     ::
     |=  {pub/? her/ship tay/partner tip/thought}
     ^+  +>
-    ::  ~&  [%ra-conduct pub her tay]
     ?-  -.tay
       $&  ?:  pub
             =.  her  our.hid                            ::  XX security!
@@ -748,7 +761,7 @@
         $|  ~&  tweet-abjure+p.p.tay
             !!
       ::
-        $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
+        $&  ~&  [%pa-abjure /[man]/(scot %p p.p.tay)/[q.p.tay]]
             :_  ~
             :*  %pull
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
@@ -761,7 +774,7 @@
       ::x  for each partner, produce a %peer/subscribe move.
       ::
       |=  tal/(list partner)
-      %+  pa-sauce  0
+      %+  pa-sauce  0  ::x  subscription is caused by this app
       %-  zing
       %+  turn  tal
       |=  tay/partner
@@ -775,6 +788,7 @@
         $|  !!
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
+            ~&  [%pa-acquire /[man]/(scot %p p.p.tay)/[q.p.tay]]
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk-guardian]
@@ -817,6 +831,7 @@
       ::x  adds tay's loc to our remote presence map, after merging with rem.
       ::x  if this changes anything, send update report.
       ::
+      ::TODO  stop using timed.
       |=  {tay/partner loc/atlas rem/(map partner atlas)}
       ::x  remove this story from the presence map, since it's in local already.
       =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
@@ -972,7 +987,7 @@
       |=  {num/@ud gam/telegram}
       =+  way=(sub count num)
       ?:  =(gam (snag (dec way) grams))
-        +>.$                                            ::  no change    
+        +>.$                                            ::  no change
       =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
       (pa-refresh num gam)
     --
@@ -982,6 +997,7 @@
   ::x  incoming subscription on pax.
   ::
   |=  pax/path
+  ~&  [%b-peer pax src.hid ost.hid]
   ^+  [*(list move) +>]
   ~?  !(team src.hid our.hid)  [%peer-talk-stranger src.hid]
   ra-abet:(ra-subscribe:ra src.hid pax)
@@ -1003,7 +1019,7 @@
   |=  dup/update
   ra-abet:(ra-update:ra src.hid dup)
 ::
-++  diff-talk-report                                    ::
+++  diff-talk-report                                    ::  accept report
   ::x  incoming talk-report. process it and update logs.
   ::
   |=  {way/wire rad/report}
@@ -1028,7 +1044,7 @@
   |=  way/wire
   ^-  weir
   ?+    -.way  !!
-      $friend 
+      $friend
     ?>  ?=({$show @ @ @ $~} t.way)
     [%friend i.t.t.way (slav %p i.t.t.t.way) i.t.t.t.t.way]
   ::
@@ -1070,7 +1086,7 @@
   ra-abet:(ra-retry:ra man cuz)
 ::
 ++  pull                                                ::
-  ::x  unsubscribe. remove from story and shells.
+  ::x  unsubscribe.
   ::
   |=  pax/path
   ^+  [*(list move) +>]
@@ -1160,8 +1176,8 @@
   ::x  state adapter.
   ::
   |=  old/(unit house)
-  ^-  (quip move ..prep)
-  ?~  old
+  ::^-  (quip move ..prep)
+  ::?~  old
     ra-abet:ra-init:ra
-  [~ ..prep(+<+ u.old)]
+  ::[~ ..prep(+<+ u.old)]
 --

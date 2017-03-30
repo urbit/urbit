@@ -1,10 +1,21 @@
 ::                                                      ::  ::
 ::::  /hoon/talk-agent/app                              ::  ::
   ::                                                    ::  ::
+::
+::TODO  guardian's todo's apply here too
+::TODO  if we use a new structure for sending messages broker->reader, then we
+::      can be safe in not doing permission checks.
+::TODO  actually send update moves when needed
+::TODO  process reports
+::TODO  init, general subscribe to broker.
+::TODO?  do we even need multiple shells?
+::TODO  rename cores. pa->ta (transaction), ta->pa (partner), etc.
+::
 /?    310                                               ::  hoon version
 /-    talk, sole                                        ::  structures
 /+    talk, sole, time-to-id, twitter                   ::  libraries
 /=    seed  /~  !>(.)
+!:
 ::
 ::::
   ::
@@ -15,7 +26,7 @@
           folks/(map ship human)                        ::  human identities
           nik/(map (set partner) char)                  ::  bound station glyphs
           nak/(jug char (set partner))                  ::  station glyph lookup
-          cli/shell                                    ::  interaction state
+          cli/shell                                     ::  interaction state
       ==                                                ::
     ++  tale                                            ::  user-facing story
       $:  count/@ud                                     ::  (lent grams)
@@ -24,6 +35,7 @@
           shape/config                                  ::  configuration
           known/(map serial @ud)                        ::  messages heard
       ==                                                ::
+    ::TODO  do away with most of shell state, it's largely a mirror of tale..?
     ++  shell                                           ::  console session
       $:  her/ship                                      ::  client identity
           id/bone                                       ::  identifier
@@ -99,7 +111,7 @@
   ::x  moves: moves storage, added to by ++ra-emit and -emil, produced by -abed.
   |_  moves/(list move)
   ::
-  ++  ra-abed                                           ::  resolve core
+  ++  ra-abet                                           ::  resolve core
     ::x  produces the moves stored in ++ra's moves.
     ::x  sole-effects get special treatment to become a single move.
     ::
@@ -183,6 +195,7 @@
     %=  +>  tales
       %+  roll  (~(tap by tals))
       |=  {t/(pair knot (unit config)) tas/_tales}
+      ~&  [%r-new-config-for p.t]
       =.  tas  ?~(tas tales tas)  ::x  start with our current tales.
       =+  tal=(fall (~(get by tas) p.t) *tale)
       ?~  q.t  (~(del by tas) p.t)
@@ -235,7 +248,7 @@
     ::x  make a shell for her.
     ::
     |=  {her/ship pax/path}
-    ~&  [%ra-console her pax]
+    ~&  [%ra-console her pax ost.hid]
     ^+  +>
     ::x  get story from the path, default to standard mailbox.
     =/  man/knot
@@ -245,12 +258,12 @@
       ==
     =/  she/shell
       %*(. *shell her her, man man, id ost.hid, active (sy [%& our.hid man] ~))
-    sh-abet:~(sh-peer sh ~ she)
+    sh-abet:~(sh-prod sh ~ she)
   ::
   ++  ra-init
     ::x  populate state on first boot. subscribes to our broker.
     ::
-    ~&  %r-ra-init
+    ~&  [%r-ra-init ost.hid]
     %-  ra-emit
     :*  ost.hid
         %peer
@@ -355,6 +368,7 @@
       ^+  +>
       +>(shape con)
     --
+  ::
   ++  sh                                                ::  per console
     ::x  shell core, responsible for doing things with console sessions,
     ::x  like parsing input, acting based on input, showing output, keeping
@@ -556,7 +570,7 @@
       |=  dup/update
       ^+  +>
       ::TODO  is ost.hid okay here? or do we want to store bone of broker?
-      ~&  [%update-to ost.hid]
+      ~&  [%r-update-to ost.hid]
       %=  +>
         moves  :_  moves
                :*  ost.hid
@@ -565,16 +579,6 @@
                    (broker our.hid)
                    [%talk-update dup]
                ==
-      ==
-    ::
-    ++  sh-peer                                         ::  subscribe shell
-      ::x  create a shell, subscribe to default stories.
-      ::
-      =<  sh-prod
-      %_    .
-          +>
-        +>
-        ::TODO  peer susbcribe to /sole and /sole/man.she at our broker.
       ==
     ::
     ++  sh-prod                                         ::  show prompt
@@ -668,7 +672,9 @@
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
     ::
-    ::TODO  we have a stdlib set diff now!
+    ::TODO  can we really not do some shenanigans to make a generic maps diff?
+    ::      that way we could do rogue- cabal- and house- diffs in one arm.
+    ::      you want to be able to indicate return type based on map contents...
     ++  sh-repo-house-diff
       ::x  calculates difference between two shelves (channel definitions).
       ::
@@ -1341,6 +1347,7 @@
       ++  nick                                          ::  %nick
         |=  {her/(unit ship) nym/(unit cord)}
         ^+  ..sh-work
+        ::x  no arguments
         ?:  ?=({$~ $~} +<)
           %+  sh-fact  %mor
           %+  turn  (~(tap by folks))
@@ -1349,6 +1356,7 @@
           ?~  hand.q
             "{<p>}:"
           "{<p>}: {<u.hand.q>}"
+        ::x  unset nickname
         ?~  nym
           ?>  ?=(^ her)
           =+  asc=(~(get by folks) u.her)
@@ -1356,6 +1364,7 @@
           ?~  asc  "{<u.her>} unbound"
           ?~  hand.u.asc  "{<u.her>}:"
           "{<u.her>}: {<u.hand.u.asc>}"
+        ::x  get nickname
         ?~  her
           %+  sh-fact  %mor
           %+  turn  (reverse-folks u.nym)
@@ -1394,6 +1403,12 @@
         ?~(woe ..sh-work work(job u.woe))
       ::
       ++  number                                        ::  %number
+        ::TODO  !!!!!
+        ::TODO  mistakes were made. turns out we need multiple shells after all!
+        ::TODO  but that seems a bit hacky, surely we can do better than it was?
+        ::TODO  ...just storing the telegrams in the order they were printed
+        ::      doesn't seem clean enough though.
+        ::TODO  !!!!!
         |=  num/$@(@ud {p/@u q/@ud})
         ^+  ..sh-work
         =+  roy=(~(got by tales) man.she)
@@ -1744,7 +1759,7 @@
     =+  txt=(tr-text =(who our.hid))
     ?:  =(~ txt)  ""
     =+  ^=  baw
-        ::  ?:  oug 
+        ::  ?:  oug
         ::  ~(te-whom te man tr-pals)
         ?.  (~(has in sef) %noob)
           (~(sn-curt sn man [who (main who)]) |)
@@ -1854,7 +1869,7 @@
         $exp  (tr-chow 66 '#' ' ' (trip p.sep))
         $url  =+  ful=(earf p.sep)
               ?:  (gth 64 (lent ful))  ['/' ' ' ful]
-              :+  '/'  '_' 
+              :+  '/'  '_'
               =+  hok=r.p.p.p.sep
               ~!  hok
               =-  (swag [a=(sub (max 64 (lent -)) 64) b=64] -)
@@ -1891,7 +1906,7 @@
   ?.  ?=({$sole *} pax)
     ~&  [%peer-talk-reader-strange pax]
     [~ +>]
-  ::~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
+  ~&  [%r-peer-sole ost.hid]
   ra-abet:(ra-console:ra src.hid t.pax)
 ::
 ::TODO  move to lib.
@@ -1933,10 +1948,9 @@
 ++  prep
   ::x  state adapter.
   ::
-  |=  old/(unit chattel)
-  ra-abet:ra-init:ra
+  |=  old/*::(unit chattel)
   ::^-  (quip move ..prep)
   ::?~  old
-  ::  ra-abet:ra-init:ra
+    ra-abet:ra-init:ra
   ::[~ ..prep(+<+ u.old)]
 --
