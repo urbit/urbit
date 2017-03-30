@@ -129,46 +129,6 @@
     ::x  produce moves or sole-effects and moves.
     [[id.cli %diff %sole-effect u.foc] moz]
   ::
-  ++  ra-abet                                           ::  complete core
-    ::x  applies talk reports, then produces moves and updated state.
-    ::
-    ra-abed:ra-axel
-  ::
-  ++  ra-axel                                           ::  rebound reports
-    ::x  extracts and applies the talk-reports in moves meant for our shells.
-    ::
-    ^+  .
-    ::x  separate talk-reports meant for our shells from other moves.
-    =+  ^=  rey
-        |-  ^-  (pair (list move) (list (pair bone report)))
-        ?~  moves
-          [~ ~]
-        =+  mor=$(moves t.moves)
-        ::x  if we know the target shell is ours, and it's a talk report,
-        ::x  add it to the list of reports to be locally applied.
-        ?.  ?&  =(id.cli `bone`p.i.moves)
-                ?=({$diff $talk-report *} q.i.moves)
-            ==
-          [[i.moves p.mor] q.mor]
-        [p.mor [[p.i.moves +>.q.i.moves] q.mor]]
-    ::x  update moves to exclude our talk-reports.
-    =.  moves  p.rey
-    =.  q.rey  (flop q.rey)
-    ?:  =(q.rey ~)  +
-    |-  ^+  +>
-    ?~  q.rey  ra-axel
-    ::x  apply reports to our shells.
-    ::TODO  will this ever happen? yes: implement ra-back. no: delete sh-repo-*
-    =+  bak=(ra-back(ost.hid p.i.q.rey) q.i.q.rey)
-    $(q.rey t.q.rey, +> bak(ost.hid ost.hid))
-  ::
-  ++  ra-back
-    ::x  applies report.
-    ::
-    |=  rad/report
-    ^+  +>
-    sh-abet:(~(sh-repo sh ~ cli) rad)
-  ::
   ++  ra-diff-talk-lowdown
     ::x  process a talk lowdown
     ::
@@ -236,16 +196,17 @@
     ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] +>.$)
-    =.  +>.$  sh-abet:(~(sh-repo-group-here sh ~ cli(p.owners locals.u.tal)) pes)
+    =.  +>.$  sh-abet:(~(sh-low-precs sh ~ cli) locals.u.tal pes)
     +>.$(tales (~(put by tales) man u.tal(locals pes)))
   ::
   ++  ra-diff-talk-lowdown-grams
     ::x  apply new grams
     ::
     |=  {man/knot num/@ud gams/(list telegram)}
+    ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] +>.$)
-    =.  +>.$  sh-abet:(~(sh-repo-grams sh ~ cli) num gams)
+    =.  +>.$  sh-abet:(~(sh-low-grams sh ~ cli) num gams)
     pa-abet:(~(pa-lesson pa man u.tal) gams)
   ::
   ++  ra-emil                                           ::  ra-emit move list
@@ -1027,6 +988,14 @@
           (weld pre "set {(scow %p p.i.cha.cul)} {(sh-spaz q.i.cha.cul)}")
       +>.$
     ::
+    ++  sh-low-precs
+      ::x  print presence changes
+      ::
+      |=  {old/atlas new/atlas}
+      ^+  +>
+      =+  dif=(sh-repo-atlas-diff old new)
+      (sh-repo-group-diff-here "" dif)
+    ::
     ++  sh-repo-group-here                              ::  update local
       ::x  updates local presence store and prints changes.
       ::
@@ -1077,7 +1046,7 @@
       =.  +>  (sh-repo-group-there q.ges)
       +>
     ::
-    ++  sh-repo-gram
+    ++  sh-low-gram
       ::x  renders telegram: increase gram count and print the gram.
       ::x  every fifth gram, prints the number.
       ::
@@ -1091,25 +1060,13 @@
         (sh-rend(count.she +(num)) gam)
       +>
     ::
-    ++  sh-repo-grams                                   ::  apply telegrams
+    ++  sh-low-grams                                    ::  apply telegrams
       ::x  renders telegrams.
       ::
       |=  {num/@ud gaz/(list telegram)}
       ^+  +>
       ?~  gaz  +>
-      $(gaz t.gaz, num +(num), +> (sh-repo-gram num i.gaz))
-    ::
-    ++  sh-repo                                         ::  apply report
-      ::x  applies the different kinds of reports using their handler arms above
-      ::
-      |=  rad/report
-      ^+  +>
-      ::  ~&  [%sh-repo rad]
-      ?-  -.rad
-        $cabal   (sh-repo-cabal +.rad)
-        $grams   (sh-repo-grams +.rad)
-        $group   (sh-repo-group +.rad)
-      ==
+      $(gaz t.gaz, num +(num), +> (sh-low-gram num i.gaz))
     ::
     ++  sh-sane-chat                                    ::  sanitize chatter
       ::x  (for chat messages) sanitizes the input buffer and splits it into
