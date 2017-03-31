@@ -53,7 +53,7 @@
            u3_noun sut,
            u3_noun gil)
   {
-    u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, prq_sut, qrq_sut;
+    u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, sq_sut, psq_sut, qsq_sut;
 
     if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3m_bail(c3__fail);
@@ -98,8 +98,8 @@
         }
       }
       case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
-                     u3x_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
-                     u3x_cell(rq_sut, &prq_sut, &qrq_sut);
+                     u3x_qual(q_sut, &pq_sut, &qq_sut, &rq_sut, &sq_sut);
+                     u3x_cell(sq_sut, &psq_sut, &qsq_sut);
       {
         u3_noun pay = _burn_in(van, p_sut, gil);
 
@@ -107,7 +107,7 @@
           return u3_nul;
         }
         else {
-          u3_noun ret = u3nt(u3_nul, u3k(prq_sut), u3k(u3t(pay)));
+          u3_noun ret = u3nt(u3_nul, u3k(psq_sut), u3k(u3t(pay)));
 
           u3z(pay);
           return ret;
@@ -166,7 +166,7 @@
   u3qzu_burn(u3_noun van,
              u3_noun sut)
   {
-    c3_m    fun_m = 145 + c3__burn + ((!!u3r_at(u3qzu_van_vet, van)) << 8);
+    c3_m    fun_m = 144 + c3__burn + ((!!u3r_at(u3qzu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find(fun_m, sut);
 
     if ( u3_none != pro ) {

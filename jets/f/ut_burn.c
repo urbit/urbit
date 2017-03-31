@@ -166,7 +166,7 @@
   u3qfu_burn(u3_noun van,
              u3_noun sut)
   {
-    c3_m    fun_m = 146 + c3__burn + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 145 + c3__burn + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find(fun_m, sut);
 
     if ( u3_none != pro ) {

@@ -226,21 +226,24 @@
              u3_noun gol,
              u3_atom mel,
              u3_noun ruf,
+             u3_noun wan,
              u3_noun dom)
   {
     u3_noun dan = _mint_in(van, sut, c3__noun, ruf);
     u3_noun p_dan = u3h(dan);
     u3_noun q_dan = u3t(dan);
     u3_noun toc = _mint_core(u3k(p_dan),
-                             u3nt(c3__gold,
+                             u3nq(c3__gold,
                                   u3k(p_dan),
+                                  u3k(wan),
                                   u3nc(u3_nul,
                                        u3k(dom))));
     u3_noun dez = _mint_hope(van, toc, dom);
     u3_noun zod = u3nc(1, dez);
     u3_noun cot = _mint_core(u3k(p_dan),
-                             u3nt(mel,
+                             u3nq(mel,
                                   u3k(p_dan),
+                                  u3k(wan),
                                   u3nc(u3k(dez),
                                        u3k(dom))));
     u3_noun ret = u3nc(_mint_nice(van, gol, cot),
@@ -742,23 +745,12 @@
         return _mint_cnts(van, sut, gol, p_gen, q_gen);
       }
 
-      case c3__core: p_gen = u3t(gen);
-      _mint_used();
-      {
-        u3_noun ruf = u3nc(u3_nul, 1);
-
-        ret = _mint_grow(van, sut, gol, c3__gold, ruf, p_gen);
-        u3z(ruf);
-
-        return ret;
-      }
-
       case c3__corp: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun ruf = u3nc(u3_nul, 1);
 
-        ret = _mint_grow(van, sut, gol, c3__gold, ruf, q_gen);
+        ret = _mint_grow(van, sut, gol, c3__gold, ruf, p_gen, q_gen);
         u3z(ruf);
 
         return ret;
@@ -912,7 +904,7 @@
              u3_noun gol,
              u3_noun gen)
   {
-    c3_m    fun_m = 145 + c3__mint;
+    c3_m    fun_m = 144 + c3__mint;
     u3_noun vrf   = u3r_at(u3qzu_van_vrf, van);
     u3_noun pro   = u3z_find_4(fun_m, vrf, sut, gol, gen);
 
