@@ -74,7 +74,8 @@
     (a b)
   ::
   ++  doc-data-dry    ::  staticly typed for endpoint lookup
-    ^-  (list {typ/_{term (list param)} met/?($get $post) pax/path}):param
+    =,  param
+    ^-  (list {typ/_{term (list param)} met/?($get $post) pax/path})
     doc-data
   ::
   ++  doc-data    :: scraped from api docs, used to create types and requests

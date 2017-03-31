@@ -543,7 +543,7 @@
       |-  ^-  $?  $%  {$atom @tas (unit @)}
                       {$cell _$ _$}
                       {$cube * _$}
-                      {$face {wain $@(term tune)} _$}
+                      {$face {what $@(term tune)} _$}
                       {$fork (set _$)}
                       {$hold _$ twig}
                   ==
@@ -1010,7 +1010,7 @@
             :+  %as  `mark`(cat 3 api.sink.com '-poke')
             :-  1
             :+  %do
-              :^  %gill  ~  [%base %noun]
+              :^  %gill  [~ ~]  [%base %noun]
               :^  %cont  [%rock %tas %post]
                 [%rock %$ endpoint.sink.com]
               [%make ~[[%.y 6]] ~]
@@ -1120,7 +1120,7 @@
   =-  [wrap=- +]
   |*  he-arm/_he-span
   |=  _+<.he-arm  
-  ^-  (quip move ..he)
+  ^-  (quip move _..he)
   he-abet:(he-arm +<)
 ::
 ++  peer-sole
@@ -1154,7 +1154,7 @@
 ++  unto       (wrap he-unto):arm
 ++  pull
   |=  {pax/path}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =^  moz  +>  ~(he-abut he ~ (~(got by hoc) ost.hid))
   [moz +>.$(hoc (~(del by hoc) ost.hid))]
 --

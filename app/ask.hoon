@@ -29,7 +29,7 @@
 ::
 ++  peer-sole
   |=  path
-  ^-  (quip {bone card} +>)
+  ^-  (quip {bone card} _+>)
   ~|  [%not-in-whitelist src.bow]
   ?>  |((~(has in admins) src.bow) =(our.bow src.bow))
   :_  +>.$(sos (~(put by sos) ost.bow *sole-share))
@@ -69,7 +69,7 @@
 ::
 ++  poke-ask-mail
   |=  ask/@t
-  ^-  (quip {bone card} +>)
+  ^-  (quip {bone card} _+>)
   ~|  have-mail+ask
   ?<  (~(has by adr) ask)
   =.  adr  (~(put by adr) ask now.bow %new) :: XX electroplating

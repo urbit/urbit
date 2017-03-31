@@ -161,7 +161,7 @@
 ::
 ++  murn-by
   |*  {a/(map) b/$-(* (unit))}
-  ^-  ?~(a !! (map _p.n.a _(need (b q.n.a))))
+  ^+  ?~(a !! *(map _p.n.a _(need (b q.n.a))))
   %-  malt
   %+  murn  (~(tap by a))
   ?~  a  $~
@@ -180,11 +180,11 @@
 |=  {bowl:gall part}                                 ::  main womb work
 |_  moz/(list move)
 ++  abet                                              ::  resolve
-  ^-  (quip move *part)
+  ^-  (quip move part)
   [(flop moz) +>+<+]
 ::
 ++  teba                                              ::  install resolved
-  |=  a/(quip move *part)  ^+  +>
+  |=  a/(quip move part)  ^+  +>
   +>(moz (flop -.a), +>+<+ +.a)
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card

@@ -2268,7 +2268,7 @@
 ::
 ++  diff-talk-report                                    ::
   |=  {way/wire rad/report}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =^  mos  +>.$
       %+  etch-friend  way  |=  {man/knot cuz/station}
       ra-abet:(ra-diff-talk-report:ra man cuz rad)
@@ -2305,7 +2305,7 @@
 ::
 ++  reap-friend                                         ::
   |=  {way/wire saw/(unit tang)}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ?~  saw  [~ +>]
   %+  etch-friend  [%friend way]  |=  {man/knot cuz/station}
   =.  u.saw  [>%reap-friend-fail man cuz< u.saw]
@@ -2325,7 +2325,7 @@
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
 ++  log-all-to-file
-  ^-  (quip move .)
+  ^-  (quip move _.)
   ?:  &  [~ .]  ::  XXX!!!!
   :_  %_  .
         log   %-  ~(urn by log)
@@ -2349,16 +2349,16 @@
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-talk-comment
-  |=  {pax/path sup/path txt/@t}  ^-  (quip move +>)
+  |=  {pax/path sup/path txt/@t}  ^-  (quip move _+>)
   ra-abet:(ra-comment:ra pax sup txt)
 ::
 ++  poke-talk-fora-post
-  |=  {pax/path sup/path hed/@t txt/@t}  ^-  (quip move +>)
+  |=  {pax/path sup/path hed/@t txt/@t}  ^-  (quip move _+>)
   ra-abet:(ra-fora-post:ra pax sup hed txt)
 ::
 ++  poke-talk-save
   |=  man/knot
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
   =+  grams:(~(got by stories) man)
   [[ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]~ +>.$]
@@ -2376,19 +2376,19 @@
 ++  poke-talk-log
   |=  man/knot
   ~&  %poke-log
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   :-  [(log-to-file man) ~]
   +>.$(log (~(put by log) man count:(~(got by stories) man)))
 ::
 ++  poke-talk-unlog
   |=  man/knot
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   :-  ~
   +>.$(log (~(del by log) man))
 ::
 ++  prep
   |=  old/(unit house-any)
-  ^-  (quip move ..prep)
+  ^-  (quip move _..prep)
   ?~  old
     ra-abet:ra-init:ra
   |-

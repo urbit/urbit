@@ -1,18 +1,42 @@
-::  "Hello world" sample generator
-::
-::::  /hoon/hello/gen
-  ::
-/?    310
 ::
 ::::
   ::
 :-  %say
-|=  *
-=<  [%noun %walk]
+|=  $:  {now/@da * bec/beak}
+        *
+    ==
+=<  ~&  %walk-testing
+    :-  %noun
+    =+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
+    =+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
+    ~&  %test-parsing
+    =+  compiler-twig=(ream compiler-source)
+    ~&  %test-walking
+    ~(test ap compiler-twig)
+=<  |%
+    ++  come                                            ::  parsed docline
+      $%  {$blank $~}
+          {$var p/term q/
+    ++  post                                            ::  print state
+    
+    --
 |%
 ::
 ++  ap                                                  ::  twig engine
   |_  gen/twig
+  ::
+  ++  test                                            ::  test ++walk
+    ^-  ?
+    =-  ~|  [gen+gen neg+neg ~]
+        ?>  =(gen neg)
+        &
+    ^=  neg
+    ^-  twig
+    =<  -
+    %+  (walk $~)
+      ~
+    |=  {gen/twig vit/$~ aid/$-({? twig $~} {twig $~})}
+    ~
   ++  dock                                              ::  apply document
     |=  doc/cord
     |^  ^-  (unit twig)
@@ -91,7 +115,6 @@
     |%  
     ++  apex
       |-  ^-  {twig life}
-      =-  [~=(gen -<)  ~=(vit +>)]
       =*  aid  |=  {use/? gen/twig vit/life} 
                ^$(use use, gen gen, vit vit)
       =/  gun  ?:(use (mac gen vit aid) ~)
@@ -123,16 +146,18 @@
         $bush  (lead -.gen %.(+.gen dubs))
         $pick  (lead -.gen %.(+.gen moar))
         $coat  (lead -.gen %.(+.gen nexp))
-        $door  (lead -.gen %.(+.gen (twin expr arms)))
-        $gasp  (lead -.gen %.(+.gen dubs))
-        $core  (lead -.gen %.(+.gen arms)) 
-        $trap  (lead -.gen %.(+.gen expr))
-        $cork  (lead -.gen %.(+.gen (twin expr arms)))
-        $loop  (lead -.gen %.(+.gen expr))
-        $port  (lead -.gen %.(+.gen dubs))
-        $gill  (lead -.gen %.(+.gen dubs))
-        $gate  (lead -.gen %.(+.gen dubs))
-        $tray  (lead -.gen %.(+.gen expr))
+        $grow  (lead -.gen %.(+.gen expr))
+        $door  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $door  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $gasp  (lead -.gen %.(+.gen (twin noop dubs)))
+        $corp  (lead -.gen %.(+.gen (twin noop arms)))
+        $trap  (lead -.gen %.(+.gen (twin noop expr)))
+        $cork  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $loop  (lead -.gen %.(+.gen (twin noop expr)))
+        $port  (lead -.gen %.(+.gen (twin noop dubs)))
+        $gill  (lead -.gen %.(+.gen (twin noop dubs)))
+        $gate  (lead -.gen %.(+.gen (twin noop dubs)))
+        $tray  (lead -.gen %.(+.gen (twin noop expr)))
         $scon  (lead -.gen %.(+.gen dubs))
         $conq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
         $cons  (lead -.gen %.(+.gen dubs))
@@ -181,14 +206,14 @@
         $fry   (lead -.gen %.(+.gen dubs))
         $new   (lead -.gen %.(+.gen dubs))
         $fix   (lead -.gen %.(+.gen (twin moan expr)))
-        $var   (lead -.gen %.(+.gen (trio toad expr expr)))
-        $rev   (lead -.gen %.(+.gen (trio toad expr expr)))
+        $var   (lead -.gen %.(+.gen (trio tora expr expr)))
+        $rev   (lead -.gen %.(+.gen (trio tora expr expr)))
         $set   (lead -.gen %.(+.gen trip))
         $huh   (lead -.gen %.(+.gen (quad noop expr expr expr)))
         $rap   (lead -.gen %.(+.gen dubs))
         $nip   (lead -.gen %.(+.gen dubs))
         $per   (lead -.gen %.(+.gen dubs))
-        $sip   (lead -.gen %.(+.gen (quad toad noop expr expr)))
+        $sip   (lead -.gen %.(+.gen (quad tora noop expr expr)))
         $pin   (lead -.gen %.(+.gen dubs))
         $tow   (lead -.gen %.(+.gen moar))
         $aka   (lead -.gen %.(+.gen trip))
@@ -305,10 +330,13 @@
       ?@  bud  [bud vit]
       (lead p.bud (expr q.bud))
     ::
+    ++  tora
+      (twin noop twee)
+    ::
     ++  tung
       |=  bud/{p/wain q/$@(term tune)}
       ?@  q.bud  [bud vit]
-      (lead p.bud %.(q.bud (twin (raid twee) (moto expr))))
+      (lead p.bud %.(q.bud (twin (raid (twin noop twee)) (moto expr))))
     ::
     ++  twee
       |=  bud/(unit twig)

@@ -81,7 +81,7 @@
   ==
 ::
 ++  poke-email
-  |=  {adr/@ta tyl/tape mez/wall}  ^-  (quip move +>)
+  |=  {adr/@ta tyl/tape mez/wall}  ^-  (quip move _+>)
   ?>  =(our.hid src.hid)
   %-  poke-gmail-req  :*
     %post

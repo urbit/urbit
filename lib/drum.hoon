@@ -220,7 +220,7 @@
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip move *drum-part)
+  ^-  (quip move drum-part)
   =*  pith  +>+>+<+
   ?.  se-ably
     =.  .  se-adit
