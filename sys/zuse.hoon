@@ -644,6 +644,7 @@
   ++  purf  (pair purl (unit @t))                       ::  url with fragment
   ++  purl  {p/hart q/pork r/quay}                      ::  parsed url
   ++  quay  (list {p/@t q/@t})                          ::  parsed url query
+  ++  quer  |-($@($~ {p/@t q/@t t/$}))                  ::  query tree
   ++  quri                                              ::  request-uri
     $%  {$& p/purl}                                     ::  absolute
         {$| p/pork q/quay}                              ::  relative
@@ -4086,7 +4087,7 @@
   ::  MOVEME
   ::                                                    ::  ++fuel:html
   ++  fuel                                              ::  parse urbit fcgi
-      |=  {bem/beam ced/noun:cred quy/|-($@($~ {p/@t q/@t t/$}))}
+      |=  {bem/beam ced/noun:cred quy/quer}
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
       [(malt qix) ((hard cred) ced) bem /]
@@ -4118,8 +4119,9 @@
     ::  (raid /ack/~sarnel+.y p=%tas q=%p r=%f ~)
     ::
     =-  |*  {a/path b/{@tas (pole @tas)}}
-        ?~  +.b  `(odo -.b)`(slav -.b -.a)
-        [`(odo -.b)`(slav -.b -.a) (..$ +.a +.b)]
+        =*  fog  (odo -.b)
+        ?~  +.b  `fog`(slav -.b -.a)
+        [`fog`(slav -.b -.a) (..$ +.a +.b)]
     ^=  odo
     |*  a/@tas
     |=  b/*
@@ -4136,10 +4138,11 @@
     |=  a/path
     ?~  a  ~
     =+  hed=(slaw -.b i.a)
+    =*  fog  (odo:raid -.b)
     ?~  +.b
-      ^-  (unit (odo:raid -.b))
+      ^-  (unit fog)
       ?^(+.a ~ hed)
-    ^-  (unit {(odo:raid -.b) _(need *(..^$ +.b))})
+    ^-  (unit {fog _(need *(..^$ +.b))})
     (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::

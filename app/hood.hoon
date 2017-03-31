@@ -65,7 +65,7 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  prep
-  |=  old/(unit hood-old)  ^-  (quip _!! +>)            ::
+  |=  old/(unit hood-old)  ^-  (quip _!! _+>)            ::
   :-  ~
   ?~  old  +>
   +>(lac (~(run by lac.u.old) hood-port))
