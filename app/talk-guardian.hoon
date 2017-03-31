@@ -511,13 +511,12 @@
     ::x  brings reader new up to date.
     ::
     |=  new/bone
-    =.  +>  %-  ra-emit
+    =.  +>  %-  ra-emil  :~
       :*  new  %diff  %talk-lowdown  %tales
           %-  ~(gas in *(map knot (unit config)))
           %+  turn  (~(tap by stories))
           |=({a/knot b/story} [a `shape.b])
       ==
-    =.  +>  %-  ra-emil  :~
       [new %diff %talk-lowdown %glyph nak]
       [new %diff %talk-lowdown %names (~(run by folks) some)]
     ==
@@ -786,6 +785,7 @@
       ::x  partners we gained/lost, and send out an updated cabal report.
       ::
       |=  cof/config
+      =.  +>.$  (pa-inform %tales (strap man `cof))
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
           =+  old=`(list partner)`(~(tap in sources.shape) ~)
           =+  new=`(list partner)`(~(tap in sources.cof) ~)
@@ -794,7 +794,6 @@
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
-      =.  +>.$  (pa-inform %tales (strap man `cof))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-cancel                                       ::  unsubscribe from
