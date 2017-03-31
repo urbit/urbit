@@ -1052,6 +1052,8 @@
           ?^  -  (sh-note "has glyph {<u>}")
           =+  cha=(glyph (mug pan))
           (sh-note:(set-glyph cha pan) "new glyph {<cha>}")
+        =.  ..sh-work
+          sh-prod(active.she pan)
         =+  loc=shape:(~(got by tales) man)
         ::x  change local mailbox config to include subscription to pan.
         %^  sh-tell  %design  man
