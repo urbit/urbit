@@ -207,8 +207,10 @@
     ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] +>.$)
-    =.  +>.$  sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal pes)
-    +>.$(tales (~(put by tales) man u.tal(locals pes)))
+    =+  new=(~(uni by pes) locals.u.tal)
+    ?:  =(locals.u.tal new)  +>.$
+    =.  +>.$  sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal new)
+    +>.$(tales (~(put by tales) man u.tal(locals new)))
   ::
   ++  ra-diff-talk-lowdown-grams
     ::x  apply new grams
@@ -1080,22 +1082,22 @@
       ++  who                                          ::  %who
         |=  pan/(set partner)  ^+  ..sh-work
         ::TODO  clever use of =< and . take note!
-        ::TODO  test/fix/update
+        ::TODO  actually use the correct station.
+        ~&  [%who-ing pan]
         =<  (sh-fact %mor (murn (sort (~(tap by tales) ~) aor) .))
         |=  {nam/knot tal/tale}
-        ~
-        ::=<  (sh-fact %mor (murn (sort (~(tap by q.owners.she) ~) aor) .))
-        ::|=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
-        ::?.  |(=(~ pan) (~(has in pan) pon))  ~
-        ::=-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man.she pon) ~]
-        ::=<  (murn (sort (~(tap by alt)) aor) .)
-        ::|=  {a/ship b/presence c/human}  ^-  (unit tank)
-        ::::TODO  print human names.
-        ::?-  b
-        ::  $gone  ~
-        ::  $hear  `>a<
-        ::  $talk  `>a<      ::  XX difference
-        ::==
+        ^-  (unit sole-effect)
+        ?.  |(=(~ pan) (~(any in pan) ~(has in sources.shape.tal)))  ~
+        =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man [%& ~zod nam]) ~]
+        =<  (murn (sort (~(tap by locals.tal)) aor) .)
+        |=  {a/ship b/presence c/human}  ^-  (unit tank)
+        ::TODO  print human names.
+        ~&  %present
+        ?-  b
+          $gone  ~
+          $hear  `>a<
+          $talk  `>a<      ::  XX difference
+        ==
       ::
       ++  bind                                          ::  %bind
         |=  {cha/char pan/(unit (set partner))}  ^+  ..sh-work

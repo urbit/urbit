@@ -810,6 +810,7 @@
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
+      =.  +>.$  (pa-inform %precs man (strap her saz))
       (pa-report-group(locals nol) pa-followers)
     ::
     ++  pa-remind                                       ::  update presence
