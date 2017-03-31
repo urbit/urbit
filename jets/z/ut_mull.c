@@ -697,6 +697,17 @@
         return ret;
       }
 
+      case c3__corp: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mull_used();
+      {
+        u3_noun ruf = u3nc(u3_nul, 1);
+
+        ret = _mull_grow(van, sut, gol, dox, c3__gold, ruf, q_gen);
+        u3z(ruf);
+
+        return ret;
+      }
+
       case c3__peep: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {

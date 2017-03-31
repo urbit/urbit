@@ -202,7 +202,7 @@
           u3_noun zix = u3qfu_shep(van, "gene", 'q', u3k(gen));
 
           u3t_push(u3nc(c3__mean, zix));
-          return u3m_error("play-open");
+          return u3m_error("play-open-f");
         }
         ret = _play_x(van, sut, rex);
         u3z(rex);
