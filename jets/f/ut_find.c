@@ -173,17 +173,17 @@
                   u3_noun lon,
                   u3_noun gil)
   {
-    u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, prq_sut, qrq_sut;
+    u3_noun p_sut, q_sut, pq_sut, qq_sut, rq_sut, sq_sut, psq_sut, qsq_sut;
 
     u3x_cell(u3t(sut), &p_sut, &q_sut);
-    u3x_trel(q_sut, &pq_sut, &qq_sut, &rq_sut);
-    u3x_cell(rq_sut, &prq_sut, &qrq_sut);
+    u3x_qual(q_sut, &pq_sut, &qq_sut, &rq_sut, &sq_sut);
+    u3x_cell(sq_sut, &psq_sut, &qsq_sut);
     {
       if ( u3_nul == q_heg ) {
         return _find_buck_here(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       else {
-        u3_noun zem = u3qf_loot(u3t(q_heg), qrq_sut);
+        u3_noun zem = u3qf_loot(u3t(q_heg), qsq_sut);
 
         if ( (u3_nul != zem) && (0 != p_heg) ) {
           u3_noun ped;
@@ -206,9 +206,10 @@
 
           mut = u3nt(c3__core,
                      u3k(p_sut),
-                     u3nt(c3__gold,
+                     u3nq(c3__gold,
                           u3k(qq_sut),
-                          u3k(rq_sut)));
+                          u3k(rq_sut),
+                          u3k(sq_sut)));
 
           pro = u3nq
             (c3y,
@@ -842,7 +843,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 145 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 144 + c3__find + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
@@ -880,7 +881,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = 145 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 144 + c3__fond + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {
