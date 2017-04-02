@@ -1,0 +1,16 @@
+diff --git a/mingw-w64-headers/include/strsafe.h b/mingw-w64-headers/include/strsafe.h
+index 36c7796c..ba2eb610 100644
+--- a/mingw-w64-headers/include/strsafe.h
++++ b/mingw-w64-headers/include/strsafe.h
+@@ -82,9 +82,9 @@ typedef __LONG32 HRESULT;
+ #endif
+ 
+ #ifndef __CRT_STRSAFE_IMPL
+-#define STRSAFEAPI _STRSAFE_EXTERN_C __inline HRESULT WINAPI
++#define STRSAFEAPI _STRSAFE_EXTERN_C __CRT_INLINE HRESULT WINAPI
+ /* Variadic functions can't be __stdcall.  */
+-#define STRSAFEAPIV _STRSAFE_EXTERN_C __inline HRESULT
++#define STRSAFEAPIV _STRSAFE_EXTERN_C __CRT_INLINE HRESULT
+ #else
+ #define STRSAFEAPI HRESULT WINAPI
+ /* Variadic functions can't be __stdcall.  */

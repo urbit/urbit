@@ -11,6 +11,10 @@ rec {
     inherit crossenv;
   };
 
+  usbview = import ./pkgs/usbview {
+    inherit crossenv;
+  };
+
   ncurses = import ./pkgs/ncurses {
     inherit crossenv;
   };
