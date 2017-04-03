@@ -31,6 +31,8 @@
 =>  |%                                                  ::  data structures
     ++  house                                           ::
       $:  stories/(map knot story)                      ::  conversations
+          remotes/(map partner atlas)                   ::  remote presence
+          mirrors/(map station config)                  ::  remote config
           ::TODO  rename to readers?
           general/(set bone)                            ::  our message readers
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
@@ -43,8 +45,6 @@
       $:  count/@ud                                     ::  (lent grams)
           grams/(list telegram)                         ::  all history
           locals/atlas                                  ::  local presence
-          remotes/(map partner atlas)                   ::  remote presence
-          mirrors/(map station config)                  ::  remote config
           sequence/(map partner @ud)                    ::  partners heard
           shape/config                                  ::  configuration
           known/(map serial @ud)                        ::  messages heard
@@ -458,20 +458,30 @@
   ++  ra-welcome
     ::x  brings reader new up to date.
     ::
+    ::TODO  just like weld somehow
     |=  new/bone
-    =.  +>  %-  ra-emil  :~
-      :*  new  %diff  %talk-lowdown  %tales
-          %-  ~(gas in *(map knot (unit cabal)))
-          %+  turn  (~(tap by stories))
-          |=({a/knot b/story} [a `[shape.b mirrors.b]])
-      ==
-      [new %diff %talk-lowdown %glyph nak]
-      [new %diff %talk-lowdown %names (~(run by folks) some)]
-    ==
-    %-  ra-emil
+    =.  +>  %-  ra-emil
+      %-  zing
       %+  turn  (~(tap by stories))
       |=  {k/knot s/story}
-      [new %diff %talk-lowdown %grams k count.s grams.s]
+      ^-  (list move)
+      :~  ::x  story configurations
+          [new %diff %talk-lowdown %tales k `shape.s]
+          ::x  local presences
+          [new %diff %talk-lowdown %precs k locals.s]
+          ::x  telegrams
+          [new %diff %talk-lowdown %grams k count.s grams.s]
+      ==
+    %-  ra-emil
+    :~  ::x  remote configurations
+        [new %diff %talk-lowdown %remco mirrors]
+        ::x  remote presences
+        [new %diff %talk-lowdown %rempe remotes]
+        ::x  bound glyphs
+        [new %diff %talk-lowdown %glyph nak]
+        ::x  nicknames
+        [new %diff %talk-lowdown %names (~(run by folks) some)]
+    ==
   ::
   ++  ra-think                                          ::  publish+review
     ::x  consumes each thought.
@@ -643,11 +653,6 @@
       |=  vew/(set bone)
       (pa-report vew %group locals pa-remotes)
     ::
-    ++  pa-lowdown-precs
-      ::x  build a presence lowdown, containing our different presence maps.
-      ::
-      (pa-inform %precs man locals pa-remotes)
-    ::
     ++  pa-report-cabal                                 ::  update config
       ::x  a cabal report, containing our and remote configs, to all bones.
       ::
@@ -663,9 +668,8 @@
       =+  old=mirrors
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)  +>.$
-      =.  +>.$  (pa-inform %tales (strap man `[con ham]))
+      =.  +>.$  (pa-inform %remco mirrors)
       (pa-report-cabal pa-followers)
-
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
       ::x  process a talk report from cuz.
@@ -689,7 +693,7 @@
       =.  +>
         %.  pa-followers
         pa-report-cabal(sources.shape (~(del in sources.shape) tay))
-      (pa-inform %tales (strap man `[shape mirrors]))
+      (pa-inform %tales man `shape)
     ::
     ++  pa-sauce                                        ::  send backward
       ::x  turns cards into moves, reverse order, prepend to existing moves.
@@ -753,7 +757,7 @@
       ::x  partners we gained/lost, and send out an updated cabal report.
       ::
       |=  cof/config
-      =.  +>.$  (pa-inform %tales (strap man `[cof mirrors]))
+      =.  +>.$  (pa-inform %tales man `cof)
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
           =+  old=`(list partner)`(~(tap in sources.shape) ~)
           =+  new=`(list partner)`(~(tap in sources.cof) ~)
@@ -777,7 +781,7 @@
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
-      =<  pa-lowdown-precs
+      =.  +>.$  (pa-inform %precs man nol)
       (pa-report-group(locals nol) pa-followers)
     ::
     ++  pa-remind                                       ::  remote presence
@@ -790,7 +794,7 @@
       =/  buk  (~(uni by remotes) rem)  ::TODO  drop?
       =.  buk  (~(put by buk) tay loc)
       ?:  =(buk remotes)  +>.$
-      =<  pa-lowdown-precs
+      =.  +>.$  (pa-inform %rempe buk)
       (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream

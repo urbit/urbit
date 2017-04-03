@@ -63,9 +63,11 @@
       {$names (map ship (unit human))}                  ::  new identities
       ::TODO  cabal, or merge its contents into tale's config
       ::      basically we just want to merge the ship sets, right?
-      {$tales (map knot (unit cabal))}                  ::  changed config
+      {$tales (pair knot (unit config))}                ::  changed config
+      {$remco (map station config)}                     ::  remote configs
       ::TODO  merge remote and local presences.
-      {$precs (pair knot register)}                     ::  changed presence
+      {$precs (pair knot atlas)}                        ::  changed presence
+      {$rempe (map partner atlas)}                      ::  remote presences
       {$grams (pair knot (pair @ud (list telegram)))}   ::  new grams
   ==                                                    ::
 ++  speech                                              ::  narrative action

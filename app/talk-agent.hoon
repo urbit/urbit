@@ -23,6 +23,8 @@
 =>  |%                                                  ::  data structures
     ++  chattel                                         ::  full state
       $:  tales/(map knot tale)                         ::  conversations
+          remotes/(map partner atlas)                   ::  remote presences
+          mirrors/(map station config)                  ::  remote configs
           folks/(map ship human)                        ::  human identities
           nik/(map (set partner) char)                  ::  bound station glyphs
           nak/(jug char (set partner))                  ::  station glyph lookup
@@ -31,10 +33,9 @@
     ++  tale                                            ::  user-facing story
       $:  count/@ud                                     ::  (lent grams)
           grams/(list telegram)                         ::  all history
+          ::TODO  given remotes and mirrors, do we still need locals and shape?
           locals/atlas                                  ::  presence
-          remotes/(map partner atlas)                   ::  remote presences
           shape/config                                  ::  configuration
-          mirrors/(map station config)                  ::  remote configs
           known/(map serial @ud)                        ::  messages heard
       ==                                                ::
     ++  shell                                           ::  console session
@@ -146,7 +147,9 @@
     $glyph  (ra-diff-talk-lowdown-glyph +.low)
     $names  (ra-diff-talk-lowdown-names +.low)
     $tales  (ra-diff-talk-lowdown-tales +.low)
+    $remco  (ra-diff-talk-lowdown-remco +.low)
     $precs  (ra-diff-talk-lowdown-precs +.low)
+    $rempe  (ra-diff-talk-lowdown-rempe +.low)
     $grams  (ra-diff-talk-lowdown-grams +.low)
     ==
   ::
@@ -183,41 +186,45 @@
       ?~  h  ~
       (some [s u.h])
     ==
-  ::  ::
+  ::
   ++  ra-diff-talk-lowdown-tales
     ::x  apply tale configs.
     ::
-    |=  tals/(map knot (unit cabal))
+    |=  {man/knot cof/(unit config)}
     ^+  +>
-    ::TODO  for every changed config, (sh-low-config oldconfig newconfig)
+    ::TODO  for changed configs, (sh-low-config oldconfig newconfig)
     ::      maybe something else for new/removed tales?
-    %=  +>  tales
-      %+  roll  (~(tap by tals))
-      |=  {t/(pair knot (unit cabal)) tas/_tales}
-      ~&  [%r-new-config-for p.t]
-      =.  tas  ?~(tas tales tas)  ::x  start with our current tales.
-      =+  tal=(fall (~(get by tas) p.t) *tale)
-      ?~  q.t  (~(del by tas) p.t)
-      (~(put by tas) p.t tal(shape loc.u.q.t, mirrors ham.u.q.t))
-    ==
+    ~&  [%r-new-config-for man]
+    ?~  cof  +>(tales (~(del by tales) man))
+    =+  tal=(fall (~(get by tales) man) *tale)
+    +>.$(tales (~(put by tales) man tal(shape u.cof)))
+  ::
+  ++  ra-diff-talk-lowdown-remco
+    |=  cofs/(map station config)
+    ^+  +>
+    ::TODO  ++sh arm for printing of remote configs.
+    +>(mirrors (~(uni by cofs) mirrors))
   ::
   ++  ra-diff-talk-lowdown-precs
     ::x  apply new presence.
     ::
-    |=  {man/knot pes/atlas pas/(map partner atlas)}
+    |=  {man/knot pes/atlas}
     ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%low-precs-know-no-tale man] +>.$)
     =+  nel=(~(uni by pes) locals.u.tal)
-    ::TODO  make better ++sh arms for this.
     =.  +>.$
       ?:  =(locals.u.tal nel)  +>.$
-      sh-abet:(~(sh-low-precs sh ~ cli man) [locals.u.tal ~] [nel ~])
-    =+  ner=(~(uni by pas) remotes.u.tal)  ::TODO  better uni.
-    =.  +>.$
-      ?:  =(remotes.u.tal ner)  +>.$
-      sh-abet:(~(sh-low-precs sh ~ cli man) [~ remotes.u.tal] [~ ner])
-    +>.$(tales (~(put by tales) man u.tal(locals nel, remotes ner)))
+      sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal nel)
+    +>.$(tales (~(put by tales) man u.tal(locals nel)))
+  ::
+  ++  ra-diff-talk-lowdown-rempe
+    |=  pas/(map partner atlas)
+    ^+  +>
+    =+  ner=(~(uni by pas) remotes)  ::TODO  better uni.
+    ?:  =(remotes ner)  +>.$
+    =.  remotes  ner
+    sh-abet:(~(sh-repo-group-there sh ~ cli (main our.hid)) remotes ner)
   ::
   ++  ra-diff-talk-lowdown-grams
     ::x  apply new grams
@@ -368,13 +375,6 @@
         =.  l  ?~(l loc l)  ::TODO  =?
         (~(uni by l) q.r)
       +>.$(locals pres)
-    ::
-    ++  pa-cabal
-      ::x  update the tale's config.
-      ::
-      |=  {cuz/station con/config ham/(map station config)}
-      ^+  +>
-      +>(shape con)
     --
   ::
   ++  sh                                                ::  per console
@@ -912,13 +912,10 @@
     ++  sh-low-precs
       ::x  print presence changes
       ::
-      |=  $:  old/(pair atlas (map partner atlas))
-              new/(pair atlas (map partner atlas))
-          ==
+      |=  {old/atlas new/atlas}
       ^+  +>
-      =+  dif=(sh-repo-atlas-diff p.old p.new)
-      =.  +>.$  (sh-repo-group-diff-here "" dif)
-      (sh-repo-group-there q.old q.new)
+      =+  dif=(sh-repo-atlas-diff old new)
+      (sh-repo-group-diff-here "" dif)
     ::
     ++  sh-low-gram
       ::x  renders telegram: increase gram count and print the gram.
@@ -1155,7 +1152,7 @@
         ::TODO  clever use of =< and . take note!
         ~&  [%who-ing pan]
         =+  tal=(~(got by tales) man)
-        =<  (sh-fact %mor (murn (sort (~(tap by remotes.tal) ~) aor) .))
+        =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man pon) ~]
