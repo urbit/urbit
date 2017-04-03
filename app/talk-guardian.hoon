@@ -42,7 +42,9 @@
     ++  story                                           ::  wire content
       $:  count/@ud                                     ::  (lent grams)
           grams/(list telegram)                         ::  all history
-          locals/atlas                                  ::  presence
+          locals/atlas                                  ::  local presence
+          remotes/(map partner atlas)                   ::  remote presence
+          mirrors/(map station config)                  ::  remote config
           sequence/(map partner @ud)                    ::  partners heard
           shape/config                                  ::  configuration
           known/(map serial @ud)                        ::  messages heard
@@ -678,27 +680,38 @@
       +>.$
     ::
     ++  pa-report-group                                  ::  update presence
-      ::x  build a group report, containing our presence map, and send it to all
-      ::x  bones.
+      ::x  build a group report, containing our different presence maps, and
+      ::x  send it to all bones.
+      ::x  we send remote presences to facilitate federation. aka "relay"
       ::
       |=  vew/(set bone)
-      (pa-report vew %group locals)
+      %^  pa-report  vew  %group
+      :-  locals
+      %-  ~(urn by remotes)           ::  XX performance
+      |=  {pan/partner atl/atlas}  ^-  atlas
+      ?.  &(?=($& -.pan) =(our.hid p.p.pan))  atl
+      =+  soy=(~(get by stories) q.p.pan)
+      ?~  soy  atl
+      locals.u.soy
     ::
     ++  pa-report-cabal                                 ::  update config
       ::x  a cabal report, containing our and remote configs, to all bones.
       ::
       |=  vew/(set bone)
-      (pa-report vew %cabal shape)
+      (pa-report vew %cabal shape mirrors)
     ::
     ++  pa-cabal
       ::x  add station's config to our remote config map.
       ::
-      |=  con/config
+      ::TODO  if web frontend doesn't use ham, remove it (also from sur/talk)
+      |=  {cuz/station con/config ham/(map station config)}
       ^+  +>
-      ?:  =(shape con)
-        +>.$
+      =+  old=mirrors
+      =.  mirrors  (~(put by mirrors) cuz con)
+      ?:  =(mirrors old)  +>.$
       =.  +>.$  (pa-inform %tales (strap man `con))
-      (pa-report-cabal(shape con) pa-followers)
+      (pa-report-cabal pa-followers)
+
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
       ::x  process a talk report from cuz.
@@ -710,8 +723,8 @@
         ~&  [%pa-diff-unexpected cuz rad]
         +>
       ?-  -.rad
-        $cabal  (pa-cabal +.rad)
-        $group  (pa-remind +.rad)
+        $cabal  (pa-cabal cuz +.rad)
+        $group  (pa-remind [%& cuz] +.rad)
         $grams  (pa-lesson q.+.rad)
       ==
     ::
@@ -813,13 +826,17 @@
       =.  +>.$  (pa-inform %precs man (strap her saz))
       (pa-report-group(locals nol) pa-followers)
     ::
-    ++  pa-remind                                       ::  update presence
+    ++  pa-remind                                       ::  remote presence
       ::x  adds tay's loc to our remote presence map, after merging with rem.
       ::x  if this changes anything, send update report.
       ::
-      |=  loc/atlas
-      ?:  =(loc locals)  +>
-      (pa-report-group(locals loc) pa-followers)
+      |=  {tay/partner loc/atlas rem/(map partner atlas)}
+      ::x  remove this story from the presence map, since it's in local already.
+      =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
+      =/  buk  (~(uni by remotes) rem)  ::TODO  drop?
+      =.  buk  (~(put by buk) tay loc)
+      ?:  =(buk remotes)  +>.$
+      (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream
       ::x  grab all telegrams that fall within the river and send them in a

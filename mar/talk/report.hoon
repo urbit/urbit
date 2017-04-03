@@ -19,9 +19,9 @@
     =>  +
     |^  %+  joba  -.rep
         ?-  -.rep
-          $cabal  (conf +.rep)
+          $cabal  (cabl +.rep)
           $grams  (jobe num+(jone p.rep) tele+[%a (turn q.rep gram)] ~)
-          $group  (grop +.rep)
+          $group  (jobe local+(grop p.rep) global+%.(q.rep (jome parn grop)) ~)
         ==
     ++  joce  |=(a/knot [%s a])
     ::
@@ -117,6 +117,13 @@
         =+  u.true
         (jobe first+[%s p] middle+?~(q ~ [%s u.q]) last+[%s r] ~)
       ~
+    ::
+    ++  cabl
+      |=  cabal
+      %-  jobe  :~
+        loc+(conf loc)
+        ham+((jome stat conf) ham)
+      ==
     ::
     ++  sorc
       |=  a/(set partner)  ^-  json
