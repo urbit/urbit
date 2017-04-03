@@ -227,7 +227,8 @@
         ::TODO  untangle into ++ra-unconfig, ++pa-reform-gone instead of using
         ::      bunts or empty keys.
         ::      be sure to send a deletion %tales lowdown!
-        (ra-config(stories (~(del by stories) p.cod)) p.cod *config)
+        =.  +>.$  (ra-config p.cod *config)
+        +>.$(stories (~(del by stories) p.cod))
       (ra-config p.cod u.q.cod)
     ::
       ::x  used for relaying messages (as a station host).
