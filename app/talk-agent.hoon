@@ -32,10 +32,11 @@
       $:  count/@ud                                     ::  (lent grams)
           grams/(list telegram)                         ::  all history
           locals/atlas                                  ::  presence
+          remotes/(map partner atlas)                   ::  remote presences
           shape/config                                  ::  configuration
+          mirrors/(map station config)                  ::  remote configs
           known/(map serial @ud)                        ::  messages heard
       ==                                                ::
-    ::TODO  do away with most of shell state, it's largely a mirror of tale..?
     ++  shell                                           ::  console session
       $:  id/bone                                       ::  identifier
           count/@ud                                     ::  messages shown
@@ -186,31 +187,37 @@
   ++  ra-diff-talk-lowdown-tales
     ::x  apply tale configs.
     ::
-    |=  tals/(map knot (unit config))
+    |=  tals/(map knot (unit cabal))
     ^+  +>
     ::TODO  for every changed config, (sh-low-config oldconfig newconfig)
     ::      maybe something else for new/removed tales?
     %=  +>  tales
       %+  roll  (~(tap by tals))
-      |=  {t/(pair knot (unit config)) tas/_tales}
+      |=  {t/(pair knot (unit cabal)) tas/_tales}
       ~&  [%r-new-config-for p.t]
       =.  tas  ?~(tas tales tas)  ::x  start with our current tales.
       =+  tal=(fall (~(get by tas) p.t) *tale)
       ?~  q.t  (~(del by tas) p.t)
-      (~(put by tas) p.t tal(shape u.q.t))
+      (~(put by tas) p.t tal(shape loc.u.q.t, mirrors ham.u.q.t))
     ==
   ::
   ++  ra-diff-talk-lowdown-precs
     ::x  apply new presence.
     ::
-    |=  {man/knot pes/atlas}
+    |=  {man/knot pes/atlas pas/(map partner atlas)}
     ^+  +>
     =+  tal=(~(get by tales) man)
-    ?~  tal  ~&([%know-no-tale man] +>.$)
-    =+  new=(~(uni by pes) locals.u.tal)
-    ?:  =(locals.u.tal new)  +>.$
-    =.  +>.$  sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal new)
-    +>.$(tales (~(put by tales) man u.tal(locals new)))
+    ?~  tal  ~&([%low-precs-know-no-tale man] +>.$)
+    =+  nel=(~(uni by pes) locals.u.tal)
+    ::TODO  make better ++sh arms for this.
+    =.  +>.$
+      ?:  =(locals.u.tal nel)  +>.$
+      sh-abet:(~(sh-low-precs sh ~ cli man) [locals.u.tal ~] [nel ~])
+    =+  ner=(~(uni by pas) remotes.u.tal)  ::TODO  better uni.
+    =.  +>.$
+      ?:  =(remotes.u.tal ner)  +>.$
+      sh-abet:(~(sh-low-precs sh ~ cli man) [~ remotes.u.tal] [~ ner])
+    +>.$(tales (~(put by tales) man u.tal(locals nel, remotes ner)))
   ::
   ++  ra-diff-talk-lowdown-grams
     ::x  apply new grams
@@ -811,6 +818,37 @@
       ^-  tape
       ['%' (trip p.saz)]
     ::
+    ++  sh-repo-rogue-diff
+      ::x  calculates the difference between two maps of stations and their
+      ::x  presence lists.
+      ::
+      |=  {one/(map partner atlas) two/(map partner atlas)}
+      =|  $=  ret
+          $:  old/(list (pair partner atlas))
+              new/(list (pair partner atlas))
+              cha/(list (pair partner atlas))
+          ==
+      ^+  ret
+      =.  ret
+        =+  eno=(~(tap by one))
+        |-  ^+  ret
+        ?~  eno  ret
+        =.  ret  $(eno t.eno)
+        =+  unt=(~(get by two) p.i.eno)
+        ?~  unt
+          ret(old [i.eno old.ret])
+        ?:  =(q.i.eno u.unt)  ret
+        ret(cha [[p.i.eno u.unt] cha.ret])
+      =.  ret
+        =+  owt=(~(tap by two))
+        |-  ^+  ret
+        ?~  owt  ret
+        =.  ret  $(owt t.owt)
+        ?:  (~(has by one) p.i.owt)
+          ret
+        ret(new [i.owt new.ret])
+      ret
+    ::
     ++  sh-repo-group-diff-here                         ::  print atlas diff
       ::x  prints presence notifications.
       ::
@@ -841,13 +879,46 @@
           (weld pre "set {(scow %p p.i.cha.cul)} {(sh-spaz q.i.cha.cul)}")
       +>.$
     ::
+    ++  sh-repo-group-there                             ::  update foreign
+      ::x  updates remote presences(?) and prints changes.
+      ::
+      |=  {old/(map partner atlas) new/(map partner atlas)}
+      =+  day=(sh-repo-rogue-diff old new)
+      ?:  (~(has in settings.she) %quiet)
+        +>.$
+      =.  +>.$
+          |-  ^+  +>.^$
+          ?~  old.day  +>.^$
+          =.  +>.^$  $(old.day t.old.day)
+          (sh-note (weld "not " (~(ta-show ta man p.i.old.day) ~)))
+      =.  +>.$
+          |-  ^+  +>.^$
+          ?~  new.day  +>.^$
+          =.  +>.^$  $(new.day t.new.day)
+          =.  +>.^$
+              (sh-note (weld "new " (~(ta-show ta man p.i.new.day) ~)))
+          (sh-repo-group-diff-here "--" ~ (~(tap by q.i.new.day)) ~)
+      =.  +>.$
+          |-  ^+  +>.^$
+          ?~  cha.day  +>.^$
+          =.  +>.^$  $(cha.day t.cha.day)
+          =.  +>.^$
+              (sh-note (weld "for " (~(ta-show ta man p.i.cha.day) ~)))
+          =+  yez=(~(got by old) p.i.cha.day)
+          %+  sh-repo-group-diff-here  "--"
+          (sh-repo-atlas-diff yez q.i.cha.day)
+      +>.$
+    ::
     ++  sh-low-precs
       ::x  print presence changes
       ::
-      |=  {old/atlas new/atlas}
+      |=  $:  old/(pair atlas (map partner atlas))
+              new/(pair atlas (map partner atlas))
+          ==
       ^+  +>
-      =+  dif=(sh-repo-atlas-diff old new)
-      (sh-repo-group-diff-here "" dif)
+      =+  dif=(sh-repo-atlas-diff p.old p.new)
+      =.  +>.$  (sh-repo-group-diff-here "" dif)
+      (sh-repo-group-there q.old q.new)
     ::
     ++  sh-low-gram
       ::x  renders telegram: increase gram count and print the gram.
@@ -1082,17 +1153,15 @@
       ++  who                                          ::  %who
         |=  pan/(set partner)  ^+  ..sh-work
         ::TODO  clever use of =< and . take note!
-        ::TODO  actually use the correct station.
         ~&  [%who-ing pan]
-        =<  (sh-fact %mor (murn (sort (~(tap by tales) ~) aor) .))
-        |=  {nam/knot tal/tale}
-        ^-  (unit sole-effect)
-        ?.  |(=(~ pan) (~(any in pan) ~(has in sources.shape.tal)))  ~
-        =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man [%& ~zod nam]) ~]
-        =<  (murn (sort (~(tap by locals.tal)) aor) .)
+        =+  tal=(~(got by tales) man)
+        =<  (sh-fact %mor (murn (sort (~(tap by remotes.tal) ~) aor) .))
+        |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
+        ?.  |(=(~ pan) (~(has in pan) pon))  ~
+        =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man pon) ~]
+        =<  (murn (sort (~(tap by alt)) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         ::TODO  print human names.
-        ~&  %present
         ?-  b
           $gone  ~
           $hear  `>a<

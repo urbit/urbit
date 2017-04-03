@@ -516,9 +516,9 @@
     |=  new/bone
     =.  +>  %-  ra-emil  :~
       :*  new  %diff  %talk-lowdown  %tales
-          %-  ~(gas in *(map knot (unit config)))
+          %-  ~(gas in *(map knot (unit cabal)))
           %+  turn  (~(tap by stories))
-          |=({a/knot b/story} [a `shape.b])
+          |=({a/knot b/story} [a `[shape.b mirrors.b]])
       ==
       [new %diff %talk-lowdown %glyph nak]
       [new %diff %talk-lowdown %names (~(run by folks) some)]
@@ -679,20 +679,29 @@
         [n.general %diff %talk-lowdown low]
       +>.$
     ::
-    ++  pa-report-group                                  ::  update presence
-      ::x  build a group report, containing our different presence maps, and
-      ::x  send it to all bones.
-      ::x  we send remote presences to facilitate federation. aka "relay"
+    ++  pa-remotes
+      ::x  produces remotes, with all our local presences replaced by their
+      ::x  versions from their stories.
       ::
-      |=  vew/(set bone)
-      %^  pa-report  vew  %group
-      :-  locals
       %-  ~(urn by remotes)           ::  XX performance
       |=  {pan/partner atl/atlas}  ^-  atlas
       ?.  &(?=($& -.pan) =(our.hid p.p.pan))  atl
       =+  soy=(~(get by stories) q.p.pan)
       ?~  soy  atl
       locals.u.soy
+    ::
+    ++  pa-report-group                                  ::  update presence
+      ::x  build a group report, containing our different presence maps, and
+      ::x  send it to all bones.
+      ::x  we send remote presences to facilitate federation. aka "relay"
+      ::
+      |=  vew/(set bone)
+      (pa-report vew %group locals pa-remotes)
+    ::
+    ++  pa-lowdown-precs
+      ::x  build a presence lowdown, containing our different presence maps.
+      ::
+      (pa-inform %precs man locals pa-remotes)
     ::
     ++  pa-report-cabal                                 ::  update config
       ::x  a cabal report, containing our and remote configs, to all bones.
@@ -709,7 +718,7 @@
       =+  old=mirrors
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)  +>.$
-      =.  +>.$  (pa-inform %tales (strap man `con))
+      =.  +>.$  (pa-inform %tales (strap man `[con ham]))
       (pa-report-cabal pa-followers)
 
     ::
@@ -735,7 +744,7 @@
       =.  +>
         %.  pa-followers
         pa-report-cabal(sources.shape (~(del in sources.shape) tay))
-      (pa-inform %tales (strap man `shape))
+      (pa-inform %tales (strap man `[shape mirrors]))
     ::
     ++  pa-sauce                                        ::  send backward
       ::x  turns cards into moves, reverse order, prepend to existing moves.
@@ -799,7 +808,7 @@
       ::x  partners we gained/lost, and send out an updated cabal report.
       ::
       |=  cof/config
-      =.  +>.$  (pa-inform %tales (strap man `cof))
+      =.  +>.$  (pa-inform %tales (strap man `[cof mirrors]))
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
           =+  old=`(list partner)`(~(tap in sources.shape) ~)
           =+  new=`(list partner)`(~(tap in sources.cof) ~)
@@ -823,7 +832,7 @@
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
-      =.  +>.$  (pa-inform %precs man (strap her saz))
+      =<  pa-lowdown-precs
       (pa-report-group(locals nol) pa-followers)
     ::
     ++  pa-remind                                       ::  remote presence
@@ -836,6 +845,7 @@
       =/  buk  (~(uni by remotes) rem)  ::TODO  drop?
       =.  buk  (~(put by buk) tay loc)
       ?:  =(buk remotes)  +>.$
+      =<  pa-lowdown-precs
       (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream
