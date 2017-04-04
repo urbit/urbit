@@ -185,11 +185,9 @@
     ::
     |=  {man/knot cof/(unit config)}
     ^+  +>
-    ::TODO  for changed configs, (sh-low-config oldconfig newconfig)
-    ::      maybe something else for new/removed tales?
-    ~&  [%r-new-config-for man]
     ?~  cof  +>(tales (~(del by tales) man))
     =+  tal=(fall (~(get by tales) man) *tale)
+    =.  +>.$  sh-abet:(~(sh-low-config sh ~ cli man) shape.tal (fall cof *config))
     +>.$(tales (~(put by tales) man tal(shape u.cof)))
   ::
   ++  ra-diff-talk-lowdown-remco
@@ -692,6 +690,36 @@
         ret
       ret
     ::
+    ++  sh-repo-cabal-diff
+      ::x  calculates the difference between two cabals (station configurations)
+      ::
+      |=  {one/(map station config) two/(map station config)}
+      =|  $=  ret
+          $:  old/(list (pair station config))
+              new/(list (pair station config))
+              cha/(list (pair station config))
+          ==
+      ^+  ret
+      =.  ret
+        =+  eno=(~(tap by one))
+        |-  ^+  ret
+        ?~  eno  ret
+        =.  ret  $(eno t.eno)
+        =+  unt=(~(get by two) p.i.eno)
+        ?~  unt
+          ret(old [i.eno old.ret])
+        ?:  =(q.i.eno u.unt)  ret
+        ret(cha [[p.i.eno u.unt] cha.ret])
+      =.  ret
+        =+  owt=(~(tap by two))
+        |-  ^+  ret
+        ?~  owt  ret
+        =.  ret  $(owt t.owt)
+        ?:  (~(has by one) p.i.owt)
+          ret
+        ret(new [i.owt new.ret])
+      ret
+    ::
     ++  sh-set-diff
       ::x  calculates the difference between two sets,
       ::x  returning what was lost in old and what was gained in new.
@@ -771,11 +799,34 @@
       (sh-set-diff q.cordon.laz q.cordon.loc)
     ::
     ++  sh-low-config
-      ::x  updates the current shell's cabal and prints changes to cli.
+      ::x  prints changes to a config to cli.
       ::
       |=  {old/config new/config}
       ^+  +>
       (sh-repo-config-show "" old new)
+    ::
+    ++  sh-low-remco
+      ::x  prints changes to remote configs to cli.
+      ::
+      |=  {ole/(map station config) neu/(map station config)}
+      ^+  +>
+      =+  (sh-repo-cabal-diff ole neu)
+      =.  +>.$
+          |-  ^+  +>.^$
+          ?~  new  +>.^$
+          =.  +>.^$  $(new t.new)
+          =.  +>.^$  (sh-pest [%& p.i.new])
+          %+  sh-repo-config-show
+            (weld ~(sn-phat sn man p.i.new) ": ")
+          [*config q.i.new]
+      =.  +>.$
+          |-  ^+  +>.^$
+          ?~  cha  +>.^$
+          =.  +>.^$  $(cha t.cha)
+          %+  sh-repo-config-show
+            (weld ~(sn-phat sn man p.i.cha) ": ")
+          [(~(got by ole) `station`p.i.cha) q.i.cha]
+      +>.$
     ::
     ++  sh-note                                         ::  shell message
       ::x  prints a txt to cli in talk's format.
