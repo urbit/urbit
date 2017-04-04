@@ -24,8 +24,16 @@ diff -ur usbview-orig/uvcdesc.h usbview/uvcdesc.h
  #define SUBCLASS_UNDEFINED              0x00
 diff -ur usbview-orig/uvcview.h usbview/uvcview.h
 --- usbview-orig/uvcview.h	2017-04-01 16:00:09.314007997 -0700
-+++ usbview/uvcview.h	2017-04-01 16:08:45.414007998 -0700
-@@ -34,10 +34,10 @@
++++ usbview/uvcview.h	2017-04-03 20:25:08.145676664 -0700
+@@ -26,7 +26,6 @@
+ *****************************************************************************/
+ #include <windows.h>
+ #include <windowsx.h>
+-#include <initguid.h>
+ #include <devioctl.h>
+ #include <dbt.h>
+ #include <stdio.h>
+@@ -34,10 +33,10 @@
  #include <usbioctl.h>
  #include <usbiodef.h>
  #include <intsafe.h>
@@ -37,7 +45,7 @@ diff -ur usbview-orig/uvcview.h usbview/uvcview.h
  #include <basetyps.h>
  #include <wtypes.h>
  #include <objbase.h>
-@@ -50,6 +50,8 @@
+@@ -50,6 +49,8 @@
  #include <winioctl.h>
  #include <devpkey.h>
  #include <math.h>
@@ -46,7 +54,7 @@ diff -ur usbview-orig/uvcview.h usbview/uvcview.h
  
  // This is mostly a private USB Audio descriptor header
  #include "usbdesc.h"
-@@ -381,7 +383,7 @@
+@@ -381,7 +382,7 @@
  // ENUM.C
  //
  

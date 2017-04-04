@@ -16,7 +16,7 @@ cd build
 
 $host-windres ../usbview/uvcview.rc rc.o
 
-$host-gcc -mwindows --std=c99 -O2 \
+$host-gcc -mwindows -std=gnu99 -O2 \
   -Iinclude \
   -DNTDDI_VERSION=0x06020000 -D_WIN32_WINNT=0x0602 \
   -DSTRSAFE_NO_DEPRECATE -Doffsetof=__builtin_offsetof \
