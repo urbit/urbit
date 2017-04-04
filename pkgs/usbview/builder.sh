@@ -14,12 +14,12 @@ cd ..
 mkdir build
 cd build
 
-$host-windres ../usbview/uvcview.rc rc.so
+$host-windres ../usbview/uvcview.rc rc.o
 
-$host-gcc -mwindows --std=c99 ${CFLAGS} ${LDFLAGS} \
+$host-gcc -mwindows --std=c99 \
   -Iinclude \
   -DNTDDI_VERSION=0x06020000 -D_WIN32_WINNT=0x0602 \
-  -DSTRSAFE_NO_DEPRECATE \
-  ../usbview/*.c rc.so \
+  -DSTRSAFE_NO_DEPRECATE -Doffsetof=__builtin_offsetof \
+  ../usbview/*.c rc.o \
   -lcomctl32 -lcomdlg32 -lsetupapi -lshell32 -lshlwapi -lole32 -lgdi32 \
   -o usbview.exe
