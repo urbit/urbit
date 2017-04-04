@@ -57,15 +57,13 @@
       {$group register}                                 ::  presence
   ==                                                    ::
 ++  lowdown                                             ::  changed shared state
-  ::TODO  change these so that they're always just the diff.
+  ::TODO  change these so that they're always just the diff?
+  ::      re-check existing implementations too!
   ::      this will aid with ++sh's printing.
   $%  {$glyph (jug char (set partner))}                 ::  new bindings
       {$names (map ship (unit human))}                  ::  new identities
-      ::TODO  cabal, or merge its contents into tale's config
-      ::      basically we just want to merge the ship sets, right?
       {$tales (pair knot (unit config))}                ::  changed config
       {$remco (map station config)}                     ::  remote configs
-      ::TODO  merge remote and local presences.
       {$precs (pair knot atlas)}                        ::  changed presence
       {$rempe (map partner atlas)}                      ::  remote presences
       {$grams (pair knot (pair @ud (list telegram)))}   ::  new grams
@@ -85,7 +83,6 @@
       {$ire p/serial q/speech}                          ::  in-reply-to
       {$lin p/? q/@t}                                   ::  no/@ text line
       {$mor p/(list speech)}                            ::  multiplex
-      ::TODO?  what are p and q supposed to be?
       {$app p/@tas q/@t}                                ::  app message
       $:  $api                                          ::  api message
           service/@tas                                  ::  service name

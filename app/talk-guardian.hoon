@@ -8,14 +8,13 @@
 ::TODO  remove old/unused code
 ::TODO  improve naming. way->wir, rad->rep, etc.
 ::TODO  tidiness, remove unnecessary ~&, etc.
-::TODO  better presence notifications. typing, idle...
-::
-::TODO  crash on pokes/peers we do not expect
-::TODO  send %names report when a reader first connects
-::TODO  merge follower groups into followers
-::TODO  rename cores. ra->ta (transaction), pa->to (story).
 ::TODO  maybe ensure every arm has a mini-description at :57 too?
 ::TODO  maybe prefix all printfs and other errors with %talk?
+::
+::TODO  sending remotes and mirrors alongside locals and shape no longer makes
+::      any sense, does it?
+::TODO  crash on pokes/peers we do not expect
+::TODO  rename cores. ra->ta (transaction), pa->to (story).
 ::
 /?    310                                               ::  hoon version
 /-    talk, sole                                        ::  structures
@@ -31,6 +30,7 @@
 =>  |%                                                  ::  data structures
     ++  house                                           ::
       $:  stories/(map knot story)                      ::  conversations
+          ::TODO  maybe also store locals/shapes for easier syncing with readers
           remotes/(map partner atlas)                   ::  remote presence
           mirrors/(map station config)                  ::  remote config
           ::TODO  rename to readers?
@@ -436,7 +436,6 @@
       ?.  (team our.hid her)
         ~&  [%foreign-reader her]
         +>
-      ~&  [%subscribed-reader ost.hid]
       (ra-welcome(general (~(put in general) ost.hid)) ost.hid)
     ::?.  ?=({@ *} pax)
     ::  (ra-evil %talk-bad-path)
@@ -450,11 +449,11 @@
     ?.  (pa-visible:soy her)
       (ra-evil %talk-no-story)
       ::TODO?  or (pa-sauce ost.hid [%quit ~]~) ?
-    =^  who  +>.$  (ra-human her)  ::TODO?  can we safely move this down?
+    =^  who  +>.$  (ra-human her)
     ::x  send current data to bring her up to date.
-    =.  soy  (pa-report-group:soy ost.hid ~ ~)
     =.  soy  (pa-report-cabal:soy ost.hid ~ ~)
-    =.  soy  (pa-first-grams:soy her t.pax)
+    ::=.  soy  (pa-report-group:soy ost.hid ~ ~)  ::TODO  reenable if pa-not=dif
+    =.  soy  (pa-first-grams:soy her t.pax)  ::x  also adds new sub to followers
     ::x  add her status to presence map.
     =.  soy  (pa-notify:soy her %hear who)
     ::x  apply changes to story.
@@ -683,7 +682,7 @@
       ^+  +>
       ::x  verify we are supposed to receive reports from cuz.
       ?.  (~(has in sources.shape) [%& cuz])
-        ~&  [%pa-diff-unexpected cuz rad]
+        ~&  [%pa-diff-unexpected cuz -.rad]
         +>
       ?-  -.rad
         $cabal  (pa-cabal cuz +.rad)
@@ -749,7 +748,6 @@
         $|  !!
         $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :_  ~
-            ~&  [%pa-acquire /[man]/(scot %p p.p.tay)/[q.p.tay]]
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk-guardian]
@@ -788,11 +786,9 @@
       ::x  add her status to our presence map. if this changes it, send report.
       ::
       |=  {her/ship saz/status}
-      ~&  [%b-pa-notify man her saz]
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
-      ~&  [%notifying pa-followers nol]
       =.  +>.$  (pa-inform %precs man nol)
       (pa-report-group(locals nol) pa-followers)
     ::
@@ -818,7 +814,7 @@
       ::TODO  use =; lab/{dun/? end/@u zeg/(list telegram)}
       =-  ::  ~&  [%pa-start riv lab]
           =.  +>.$
-          (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
+            (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
           ?:  p.lab  ::x?  dun never gets changed, so always | ?
             (pa-sauce ost.hid [[%quit ~] ~])
           +>.$(followers (~(put by followers) ost.hid riv))
@@ -969,6 +965,7 @@
   ~&  [%b-peer pax src.hid ost.hid]
   ^+  [*(list move) +>]
   ~?  !(team src.hid our.hid)  [%peer-talk-stranger src.hid]
+  ?:  ?=({$sole *} pax)  ~&(%broker-no-sole !!)
   ra-abet:(ra-subscribe:ra src.hid pax)
 ::
 ++  poke-talk-command                                   ::  accept command

@@ -138,13 +138,13 @@
     |=  low/lowdown
     ^+  +>
     ?-  -.low
-    $glyph  (ra-low-glyph +.low)
-    $names  (ra-low-names +.low)
-    $tales  (ra-low-tales +.low)
-    $remco  (ra-low-remco +.low)
-    $precs  (ra-low-precs +.low)
-    $rempe  (ra-low-rempe +.low)
-    $grams  (ra-low-grams +.low)
+      $glyph  (ra-low-glyph +.low)
+      $names  (ra-low-names +.low)
+      $tales  (ra-low-tales +.low)
+      $remco  (ra-low-remco +.low)
+      $precs  (ra-low-precs +.low)
+      $rempe  (ra-low-rempe +.low)
+      $grams  (ra-low-grams +.low)
     ==
   ::
   ++  ra-low-glyph
