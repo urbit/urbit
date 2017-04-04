@@ -15,6 +15,10 @@ rec {
     inherit crossenv;
   };
 
+  devcon = import ./pkgs/devcon {
+    inherit crossenv;
+  };
+
   ncurses = import ./pkgs/ncurses {
     inherit crossenv;
   };

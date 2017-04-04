@@ -15,7 +15,7 @@ let
       rev = "05e07b384e0ecf792aa81e2bed41c1384eaf755d";
       sha256 = "0j5qh23fkaz0fkjpb9xp2p95xyma7i1skyh8fl5jg2d03adgiji6";
     };
-    patches = [ ./usb.patch ./guid-selectany.patch ];
+    patches = [ ./usb.patch ./guid-selectany.patch ./strsafe-extern-c.patch ];
   };
 
   mingw-w64_headers = nixpkgs.stdenv.mkDerivation {

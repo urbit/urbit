@@ -1,7 +1,7 @@
 { crossenv }:
 
 crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "usbview-${version}-${crossenv.host}";
+  name = "devcon-${version}-${crossenv.host}";
 
   inherit (crossenv) host;
 
@@ -17,8 +17,6 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   patches = [ ./megapatch.patch ];
 
   buildInputs = [ crossenv.gcc crossenv.binutils ];
-
-  my_xmlhelper_c = ./my_xmlhelper.c;
 
   builder = ./builder.sh;
 }
