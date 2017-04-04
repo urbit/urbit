@@ -3,12 +3,6 @@
   ::                                                    ::  ::
 ::
 ::TODO  guardian's todo's apply here too
-::TODO  if we use a new structure for sending messages broker->reader, then we
-::      can be safe in not doing permission checks.
-::TODO  actually send update moves when needed
-::TODO  process reports
-::TODO  init, general subscribe to broker.
-::TODO?  do we even need multiple shells?
 ::TODO  rename cores. pa->ta (transaction), ta->pa (partner), etc.
 ::
 /?    310                                               ::  hoon version
@@ -166,7 +160,7 @@
              %+  turn  (~(tap by nek))
              |=  {a/char b/(set (set partner))}
              (turn (~(tap by b)) |=(c/(set partner) [c a]))
-    sh-abet:~(sh-prod sh ~ cli (main our.hid))  ::TODO  mailbox not used
+    sh-abet:~(sh-prod sh ~ cli (main our.hid))
   ::
   ++  ra-diff-talk-lowdown-names
     ::x  apply new local identities.
@@ -255,7 +249,6 @@
     ?.  =(id.cli ost.hid)
       ~&  %strange-sole
       !!
-    ::TODO  but there's not actually a tale to specify. mailbox is "fake"!
     sh-abet:(~(sh-sole sh ~ cli (main our.hid)) act)
   ::
   ++  ra-console
@@ -359,21 +352,6 @@
         +>.$                                            ::  no change
       =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
       +>.$
-    ::
-    ++  pa-remind                                       ::  presence update
-      ::x  merge local and remote presences, and store them in locals.
-      ::
-      ::TODO  verify if this now does what it's supposed to.
-      |=  {loc/atlas rem/(map partner atlas)}
-      ::x  remove this story from the presence map, since it's in local already.
-      =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
-      ::TODO  stop using timed, just do uni here.
-      =/  pres
-        %+  roll  (~(tap by rem))
-        |=  {r/(pair partner atlas) l/atlas}
-        =.  l  ?~(l loc l)  ::TODO  =?
-        (~(uni by l) q.r)
-      +>.$(locals pres)
     --
   ::
   ++  sh                                                ::  per console
@@ -577,8 +555,6 @@
       ::
       |=  dup/update
       ^+  +>
-      ::TODO  is ost.hid okay here? or do we want to store bone of broker?
-      ~&  [%r-update-to ost.hid]
       %=  +>
         moves  :_  moves
                :*  ost.hid
@@ -610,7 +586,6 @@
       |=  lix/(set partner)
       ^+  +>
       =+  act=(sh-pare lix)  ::x  ensure we can see what we send.
-      ?~  act  ~|(%no-audience !!)  ::TODO  can't happen, remove.
       ?:  =(active.she act)  +>.$
       sh-prod(active.she act)
     ::
@@ -628,10 +603,9 @@
       ::
       |=  paz/(set partner)
       ?~  paz  |
-      ::TODO  hoon does short-circuiting, right? do the has first, then recurse.
-      ?|  $(paz l.paz)
+      ?|  (~(has in sources.shape:(~(got by tales) man)) `partner`n.paz)
+          $(paz l.paz)
           $(paz r.paz)
-          (~(has in sources.shape:(~(got by tales) man)) `partner`n.paz)
       ==
     ::
     ++  sh-pest                                         ::  report listen
@@ -1157,11 +1131,13 @@
         =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man pon) ~]
         =<  (murn (sort (~(tap by alt)) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
-        ::TODO  print human names.
+        =.  c
+          ?.  =(hand.c `(scot %p a))  c
+          [true.c ~]
         ?-  b
           $gone  ~
-          $hear  `>a<
-          $talk  `>a<      ::  XX difference
+          $hear  `leaf+:(weld "hear " (scow %p a) " " (trip (fall hand.c '')))
+          $talk  `leaf+:(weld "talk " (scow %p a) " " (trip (fall hand.c '')))
         ==
       ::
       ++  bind                                          ::  %bind
@@ -1273,15 +1249,9 @@
         ?~(woe ..sh-work work(job u.woe))
       ::
       ++  number                                        ::  %number
-        ::TODO  !!!!!
-        ::TODO  mistakes were made. turns out we need multiple shells after all!
-        ::TODO  but that seems a bit hacky, surely we can do better than it was?
-        ::TODO  ...just storing the telegrams in the order they were printed
-        ::      doesn't seem clean enough though.
-        ::TODO  !!!!!
         |=  num/$@(@ud {p/@u q/@ud})
         ^+  ..sh-work
-        =+  roy=(~(got by tales) man)  ::TODO  see above
+        =+  roy=(~(got by tales) man)
         |-
         ?@  num
           ?:  (gte num count.roy)
