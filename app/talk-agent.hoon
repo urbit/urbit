@@ -193,7 +193,7 @@
   ++  ra-diff-talk-lowdown-remco
     |=  cofs/(map station config)
     ^+  +>
-    ::TODO  ++sh arm for printing of remote configs.
+    =.  +>  sh-abet:(~(sh-low-remco sh ~ cli (main our.hid)) mirrors cofs)
     +>(mirrors (~(uni by mirrors) cofs))
   ::
   ++  ra-diff-talk-lowdown-precs
@@ -215,7 +215,7 @@
     =+  ner=(~(uni by remotes) pas)  ::TODO  better uni.
     ?:  =(remotes ner)  +>.$
     =.  remotes  ner
-    sh-abet:(~(sh-repo-group-there sh ~ cli (main our.hid)) remotes ner)
+    sh-abet:(~(sh-low-rempe sh ~ cli (main our.hid)) remotes ner)
   ::
   ++  ra-diff-talk-lowdown-grams
     ::x  apply new grams
@@ -654,7 +654,7 @@
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
     ::
-    ++  sh-repo-atlas-diff
+    ++  sh-low-atlas-diff
       ::x  calculates the difference between two atlasses (presence lists).
       ::
       |=  {one/atlas two/atlas}
@@ -690,8 +690,8 @@
         ret
       ret
     ::
-    ++  sh-repo-cabal-diff
-      ::x  calculates the difference between two cabals (station configurations)
+    ++  sh-low-remco-diff
+      ::x  calculates the difference between two maps of station configurations.
       ::
       |=  {one/(map station config) two/(map station config)}
       =|  $=  ret
@@ -739,8 +739,8 @@
         $green  "journal"
       ==
     ::
-    ++  sh-repo-config-exceptions
-      ::x  used by ++sh-repo-config-show to aid in printing info to cli.
+    ++  sh-low-config-exceptions
+      ::x  used by ++sh-low-config-show to aid in printing info to cli.
       ::
       |=  {pre/tape por/posture old/(list ship) new/(list ship)}
       =+  out=?:(?=(?($black $brown) por) "try " "cut ")
@@ -757,8 +757,8 @@
           (sh-note :(weld pre out " " (scow %p i.new)))
       +>.$
     ::
-    ++  sh-repo-config-sources
-      ::x  used by ++sh-repo-config-show to aid in printing info to cli,
+    ++  sh-low-config-sources
+      ::x  used by ++sh-low-config-show to aid in printing info to cli,
       ::x  pertaining to the un/subscribing to partners.
       ::
       |=  {pre/tape old/(list partner) new/(list partner)}
@@ -775,7 +775,7 @@
           (sh-note (weld pre "hey {~(ta-full ta man i.new)}"))
       +>.$
     ::
-    ++  sh-repo-config-show
+    ++  sh-low-config-show
       ::x  prints config changes to the cli.
       ::
       |=  {pre/tape laz/config loc/config}
@@ -784,16 +784,16 @@
         ?:  =(caption.loc caption.laz)  +>.$
         (sh-note :(weld pre "cap " (trip caption.loc)))
       =.  +>.$
-          %+  sh-repo-config-sources
+          %+  sh-low-config-sources
             (weld (trip man) ": ")
           (sh-set-diff sources.laz sources.loc)
       ?:  !=(p.cordon.loc p.cordon.laz)
         =.  +>.$  (sh-note :(weld pre "but " (sh-puss p.cordon.loc)))
-        %^    sh-repo-config-exceptions
+        %^    sh-low-config-exceptions
             (weld (trip man) ": ")
           p.cordon.loc
         [~ (~(tap in q.cordon.loc))]
-      %^    sh-repo-config-exceptions
+      %^    sh-low-config-exceptions
           (weld (trip man) ": ")
         p.cordon.loc
       (sh-set-diff q.cordon.laz q.cordon.loc)
@@ -803,27 +803,27 @@
       ::
       |=  {old/config new/config}
       ^+  +>
-      (sh-repo-config-show "" old new)
+      (sh-low-config-show "" old new)
     ::
     ++  sh-low-remco
       ::x  prints changes to remote configs to cli.
       ::
       |=  {ole/(map station config) neu/(map station config)}
       ^+  +>
-      =+  (sh-repo-cabal-diff ole neu)
+      =+  (sh-low-remco-diff ole neu)
       =.  +>.$
           |-  ^+  +>.^$
           ?~  new  +>.^$
           =.  +>.^$  $(new t.new)
           =.  +>.^$  (sh-pest [%& p.i.new])
-          %+  sh-repo-config-show
+          %+  sh-low-config-show
             (weld ~(sn-phat sn man p.i.new) ": ")
           [*config q.i.new]
       =.  +>.$
           |-  ^+  +>.^$
           ?~  cha  +>.^$
           =.  +>.^$  $(cha t.cha)
-          %+  sh-repo-config-show
+          %+  sh-low-config-show
             (weld ~(sn-phat sn man p.i.cha) ": ")
           [(~(got by ole) `station`p.i.cha) q.i.cha]
       +>.$
@@ -842,7 +842,7 @@
       ^-  tape
       ['%' (trip p.saz)]
     ::
-    ++  sh-repo-rogue-diff
+    ++  sh-low-rogue-diff
       ::x  calculates the difference between two maps of stations and their
       ::x  presence lists.
       ::
@@ -873,7 +873,7 @@
         ret(new [i.owt new.ret])
       ret
     ::
-    ++  sh-repo-group-diff-here                         ::  print atlas diff
+    ++  sh-low-precs-diff                               ::  print atlas diff
       ::x  prints presence notifications.
       ::
       |=  $:  pre/tape
@@ -903,11 +903,11 @@
           (weld pre "set {(scow %p p.i.cha.cul)} {(sh-spaz q.i.cha.cul)}")
       +>.$
     ::
-    ++  sh-repo-group-there                             ::  update foreign
+    ++  sh-low-rempe                                    ::  update foreign
       ::x  updates remote presences(?) and prints changes.
       ::
       |=  {old/(map partner atlas) new/(map partner atlas)}
-      =+  day=(sh-repo-rogue-diff old new)
+      =+  day=(sh-low-rogue-diff old new)
       ?:  (~(has in settings.she) %quiet)
         +>.$
       =.  +>.$
@@ -921,7 +921,7 @@
           =.  +>.^$  $(new.day t.new.day)
           =.  +>.^$
               (sh-note (weld "new " (~(ta-show ta man p.i.new.day) ~)))
-          (sh-repo-group-diff-here "--" ~ (~(tap by q.i.new.day)) ~)
+          (sh-low-precs-diff "--" ~ (~(tap by q.i.new.day)) ~)
       =.  +>.$
           |-  ^+  +>.^$
           ?~  cha.day  +>.^$
@@ -929,8 +929,8 @@
           =.  +>.^$
               (sh-note (weld "for " (~(ta-show ta man p.i.cha.day) ~)))
           =+  yez=(~(got by old) p.i.cha.day)
-          %+  sh-repo-group-diff-here  "--"
-          (sh-repo-atlas-diff yez q.i.cha.day)
+          %+  sh-low-precs-diff  "--"
+          (sh-low-atlas-diff yez q.i.cha.day)
       +>.$
     ::
     ++  sh-low-precs
@@ -938,8 +938,8 @@
       ::
       |=  {old/atlas new/atlas}
       ^+  +>
-      =+  dif=(sh-repo-atlas-diff old new)
-      (sh-repo-group-diff-here "" dif)
+      =+  dif=(sh-low-atlas-diff old new)
+      (sh-low-precs-diff "" dif)
     ::
     ++  sh-low-gram
       ::x  renders telegram: increase gram count and print the gram.
