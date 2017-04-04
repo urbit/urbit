@@ -15,8 +15,7 @@ cd build
 
 $host-windres ../devcon/devcon.rc rc.o
 
-# TODO: -O2
-$host-g++ -municode \
+$host-g++ -municode -O2 \
   -DUNICODE -D_UNICODE \
   ../devcon/*.cpp rc.o \
   -lsetupapi -lole32 \
