@@ -176,12 +176,11 @@
     %=  +>  folks
       %-  ~(gas by *(map ship human))
       %+  murn
-      =<  $
-      %~  tap  by
-          %-  ~(uni by nas)
-          ^-  _nas
-          (~(run by folks) some)
-      ==
+        =<  $
+        %~  tap  by
+            %.  nas
+            ~(uni by `_nas`(~(run by folks) some))
+        ==
       |=  {s/ship h/(unit human)}
       ?~  h  ~
       (some [s u.h])
@@ -203,7 +202,7 @@
     |=  cofs/(map station config)
     ^+  +>
     ::TODO  ++sh arm for printing of remote configs.
-    +>(mirrors (~(uni by cofs) mirrors))
+    +>(mirrors (~(uni by mirrors) cofs))
   ::
   ++  ra-diff-talk-lowdown-precs
     ::x  apply new presence.
@@ -212,7 +211,7 @@
     ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%low-precs-know-no-tale man] +>.$)
-    =+  nel=(~(uni by pes) locals.u.tal)
+    =+  nel=(~(uni by locals.u.tal) pes)
     =.  +>.$
       ?:  =(locals.u.tal nel)  +>.$
       sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal nel)
@@ -221,7 +220,7 @@
   ++  ra-diff-talk-lowdown-rempe
     |=  pas/(map partner atlas)
     ^+  +>
-    =+  ner=(~(uni by pas) remotes)  ::TODO  better uni.
+    =+  ner=(~(uni by remotes) pas)  ::TODO  better uni.
     ?:  =(remotes ner)  +>.$
     =.  remotes  ner
     sh-abet:(~(sh-repo-group-there sh ~ cli (main our.hid)) remotes ner)
