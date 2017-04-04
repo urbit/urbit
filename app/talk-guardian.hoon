@@ -410,7 +410,7 @@
     ?.  ?=({@ @ *} pax)
       ::x  if story is not in path, just delete the bone from general.
       +>(general (~(del in general) ost.hid))
-    %-  (ra-know i.t.pax)  |=  par/_pa  =<  pa-abet
+    %-  (ra-know i.pax)  |=  par/_pa  =<  pa-abet
     ::x  delete bone from all follower groups and set src's status to %gone.
     (pa-notify:pa-cancel:par src %gone *human)
   ::
