@@ -23,3 +23,7 @@ $host-gcc -mwindows -std=gnu99 -O2 \
   ../usbview/*.c rc.o \
   -lcomctl32 -lcomdlg32 -lsetupapi -lshell32 -lshlwapi -lole32 -lgdi32 -luuid \
   -o usbview.exe
+
+mkdir -p $out/bin $out/license
+cp usbview.exe $out/bin
+cp $src/LICENSE $out/license
