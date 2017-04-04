@@ -171,11 +171,8 @@
         ?.  (~(has by stories) p.cod)
           (ra-evil %talk-no-story)
         ::x  $design with ~ for config signals delete
-        ::TODO  untangle into ++ra-unconfig, ++pa-reform-gone instead of using
-        ::      bunts or empty keys.
-        ::      be sure to send a deletion %tales lowdown!
-        =.  +>.$  (ra-config p.cod *config)
-        +>.$(stories (~(del by stories) p.cod))
+        ::TODO  be sure to send a deletion %tales lowdown!
+        (ra-unconfig p.cod)
       (ra-config p.cod u.q.cod)
     ::
       ::x  used for relaying messages (as a station host).
@@ -239,6 +236,14 @@
     ^+  +>
     =+  pur=(fall (~(get by stories) man) *story)
     pa-abet:(~(pa-reform pa man pur) con)
+  ::
+  ++  ra-unconfig
+    |=  man/knot
+    ^+  +>
+    =+  soy=(~(get by stories) man)
+    ?~  soy  +>.$
+    =.  stories  (~(del by stories) man)
+    pa-abet:~(pa-reform-gone pa man u.soy)
   ::
   ++  ra-base-hart
     ::x  produces our ship's host desk's web address as a hart.
@@ -768,6 +773,11 @@
       =.  shape  cof
       (pa-report-cabal pa-followers)
     ::
+    ++  pa-reform-gone
+      =.  .  (pa-inform %tales man ~)
+      =.  .  (pa-report-cabal pa-followers)
+      (pa-abjure (~(tap in sources.shape)))
+    ::
     ++  pa-cancel                                       ::  unsubscribe from
       ::x  deletes the current ost.hid from all follower groups.
       ::
@@ -778,9 +788,11 @@
       ::x  add her status to our presence map. if this changes it, send report.
       ::
       |=  {her/ship saz/status}
+      ~&  [%b-pa-notify man her saz]
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
+      ~&  [%notifying pa-followers nol]
       =.  +>.$  (pa-inform %precs man nol)
       (pa-report-group(locals nol) pa-followers)
     ::
