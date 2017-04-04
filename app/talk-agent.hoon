@@ -132,22 +132,22 @@
     ::x  produce moves or sole-effects and moves.
     [[id.cli %diff %sole-effect u.foc] moz]
   ::
-  ++  ra-diff-talk-lowdown
+  ++  ra-low
     ::x  process a talk lowdown
     ::
     |=  low/lowdown
     ^+  +>
     ?-  -.low
-    $glyph  (ra-diff-talk-lowdown-glyph +.low)
-    $names  (ra-diff-talk-lowdown-names +.low)
-    $tales  (ra-diff-talk-lowdown-tales +.low)
-    $remco  (ra-diff-talk-lowdown-remco +.low)
-    $precs  (ra-diff-talk-lowdown-precs +.low)
-    $rempe  (ra-diff-talk-lowdown-rempe +.low)
-    $grams  (ra-diff-talk-lowdown-grams +.low)
+    $glyph  (ra-low-glyph +.low)
+    $names  (ra-low-names +.low)
+    $tales  (ra-low-tales +.low)
+    $remco  (ra-low-remco +.low)
+    $precs  (ra-low-precs +.low)
+    $rempe  (ra-low-rempe +.low)
+    $grams  (ra-low-grams +.low)
     ==
   ::
-  ++  ra-diff-talk-lowdown-glyph
+  ++  ra-low-glyph
     ::x  apply new set of glyph bindings.
     ::
     |=  nek/_nak
@@ -162,7 +162,7 @@
              (turn (~(tap by b)) |=(c/(set partner) [c a]))
     sh-abet:~(sh-prod sh ~ cli (main our.hid))
   ::
-  ++  ra-diff-talk-lowdown-names
+  ++  ra-low-names
     ::x  apply new local identities.
     ::
     |=  nas/(map ship (unit human))
@@ -180,7 +180,7 @@
       (some [s u.h])
     ==
   ::
-  ++  ra-diff-talk-lowdown-tales
+  ++  ra-low-tales
     ::x  apply tale configs.
     ::
     |=  {man/knot cof/(unit config)}
@@ -190,13 +190,13 @@
     =.  +>.$  sh-abet:(~(sh-low-config sh ~ cli man) shape.tal (fall cof *config))
     +>.$(tales (~(put by tales) man tal(shape u.cof)))
   ::
-  ++  ra-diff-talk-lowdown-remco
+  ++  ra-low-remco
     |=  cofs/(map station config)
     ^+  +>
     =.  +>  sh-abet:(~(sh-low-remco sh ~ cli (main our.hid)) mirrors cofs)
     +>(mirrors (~(uni by mirrors) cofs))
   ::
-  ++  ra-diff-talk-lowdown-precs
+  ++  ra-low-precs
     ::x  apply new presence.
     ::
     |=  {man/knot pes/atlas}
@@ -209,7 +209,7 @@
       sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal nel)
     +>.$(tales (~(put by tales) man u.tal(locals nel)))
   ::
-  ++  ra-diff-talk-lowdown-rempe
+  ++  ra-low-rempe
     |=  pas/(map partner atlas)
     ^+  +>
     =+  ner=(~(uni by remotes) pas)  ::TODO  better uni.
@@ -217,7 +217,7 @@
     =.  remotes  ner
     sh-abet:(~(sh-low-rempe sh ~ cli (main our.hid)) remotes ner)
   ::
-  ++  ra-diff-talk-lowdown-grams
+  ++  ra-low-grams
     ::x  apply new grams
     ::
     |=  {man/knot num/@ud gams/(list telegram)}
@@ -1804,7 +1804,7 @@
   ::x  incoming talk-lowdown. process it.
   ::
   |=  {way/wire low/lowdown}
-  ra-abet:(ra-diff-talk-lowdown:ra low)
+  ra-abet:(ra-low:ra low)
 ::
 ++  poke-sole-action                                    ::  accept console
   ::x  incoming sole action. process it.
