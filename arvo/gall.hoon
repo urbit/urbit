@@ -429,14 +429,14 @@
         ?>  ?=({@ $~} t.pax)
         %-  mo-awed
         :*  p.+>.sih
-            (?($peer $peel $poke $pull) i.t.pax)
+            ;;(?($peer $peel $poke $pull) i.t.pax)
             ~
         ==
       ?>  ?=({$a $woot *} sih)
       ?>  ?=({@ $~} t.pax)
       %-  mo-awed
       :*  p.+>.sih
-          (?($peer $poke $pull) i.t.pax)
+          ;;(?($peer $peel $poke $pull) i.t.pax)
           +>+.sih
       ==
     ==
