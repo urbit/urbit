@@ -1287,6 +1287,9 @@ ol > li:before {
   content: "—";
   margin-right: .6rem; }
 
+#body.post img {
+  max-width: 100%; }
+
 .urbit .post h1.title,
 .urbit .post p.preview,
 .urbit.post h1.title,
