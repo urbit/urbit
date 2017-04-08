@@ -69,7 +69,7 @@ CC=cc
 LN=ln -f
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
+CLD=$(CXX) $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
