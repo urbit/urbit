@@ -10,6 +10,17 @@
       {$publish (list thought)}                         ::  originate
       {$review (list thought)}                          ::  deliver
   ==                                                    ::
+++  action                                              ::  user action
+  $%  {$create (pair knot (pair cord posture))}         ::  configure + destroy
+      {$permit (trel knot ? (set ship))}                ::  invite/banish
+      {$say (list (pair audience statement))}           ::  originate
+      ::TODO  probably include ++update in this.        ::
+  ==                                                    ::
+++  reaction                                            ::  user information
+  $:  kind/?($info $fail)                               ::  result
+      what/@t                                           ::  explain
+      why/(unit action)                                 ::  cause
+  ==                                                    ::
 ++  update                                              ::  change shared state
   $%  {$status (pair (set knot) status)}                ::  our status update
       {$human (pair ship human)}                        ::  new identity

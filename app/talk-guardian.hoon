@@ -59,6 +59,7 @@
     ++  lime                                            ::  diff fruit
       $%  {$talk-report report}                         ::
           {$talk-lowdown lowdown}                       ::
+          {$talk-reaction reaction}                     ::
           {$sole-effect sole-effect}                    ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
@@ -193,6 +194,31 @@
     |=  {b/bone l/(list move)}
     [[b %diff %talk-lowdown low] l]
   ::
+  ++  ra-react
+    ::x  send a talk-reaction to a reader.
+    ::
+    |=  {red/bone rac/reaction}
+    %-  ra-emit
+    [red %diff %talk-reaction rac]
+  ::
+  ++  ra-action
+    ::x  peforms action sent by a reader.
+    ::
+    |=  {red/bone act/action}
+    ^+  +>
+    ?-  -.act
+        $create
+      ~&(%talk-action-create !!)
+        $permit
+      =+  soy=(~(get by stories) p.act)
+      ?~  soy
+        %+  ra-react  red
+        [%fail (crip (weld "no story " (trip p.act))) `act]
+      pa-abet:(~(pa-permit pa p.act ~ u.soy) q.act r.act)
+        $say
+      ~&(%talk-action-say !!)
+    ==
+  ::
   ++  ra-update
     ::x  applies update sent by her.
     ::
@@ -210,7 +236,7 @@
       ::x  uses our because status is per identity, not per client.
       ::TODO  check if this can crash or not.
       =<  pa-abet
-      (~(pa-notify pa n.p.dup (~(got by stories) n.p.dup)) our.hid q.dup)
+      (~(pa-notify pa n.p.dup ~ (~(got by stories) n.p.dup)) our.hid q.dup)
     ::
     $human                                              ::x  change an identity.
       ?.  =((~(get by folks) her) `q.dup)
@@ -235,7 +261,7 @@
     |=  {man/knot con/config}
     ^+  +>
     =+  pur=(fall (~(get by stories) man) *story)
-    pa-abet:(~(pa-reform pa man pur) con)
+    pa-abet:(~(pa-reform pa man ~ pur) con)
   ::
   ++  ra-unconfig
     |=  man/knot
@@ -243,7 +269,7 @@
     =+  soy=(~(get by stories) man)
     ?~  soy  +>.$
     =.  stories  (~(del by stories) man)
-    pa-abet:~(pa-reform-gone pa man u.soy)
+    pa-abet:~(pa-reform-gone pa man ~ u.soy)
   ::
   ++  ra-base-hart
     ::x  produces our ship's host desk's web address as a hart.
@@ -356,7 +382,7 @@
       ~&  [%ra-know-not man]                            ::  XX should crash
       +>+>.$
     ::x  call the sample gate with a ++pa core.
-    (fun ~(. pa man u.pur))
+    (fun ~(. pa man ~ u.pur))
   ::
   ++  ra-diff-talk-report                               ::  subscription update
     ::x  process a talk report from cuz into story man.
@@ -444,7 +470,7 @@
     ?~  pur
       ~&  [%bad-subscribe-story-c i.pax]
       (ra-evil %talk-no-story)
-    =+  soy=~(. pa i.pax u.pur)
+    =+  soy=~(. pa i.pax `(list command)`~ u.pur)  ::TODO  nest-fail if no cast
     ::x  she needs read permissions to subscribe.
     ?.  (pa-visible:soy her)
       (ra-evil %talk-no-story)
@@ -978,6 +1004,15 @@
       ra-abet:(ra-apply:ra src.hid cod)
   =^  mow  +>.$  log-all-to-file
   [(welp mos mow) +>.$]
+::
+++  poke-talk-action                                    ::  accept action
+  ::x  incoming talk action. process it.
+  ::
+  |=  act/action
+  ?.  (team src.hid our.hid)
+    ~&  [%talk-action-stranger src.hid]
+    [~ +>]
+  ra-abet:(ra-action:ra ost.hid act)
 ::
 ++  poke-talk-update                                    ::  accept update
   ::x  incoming talk update. process it.

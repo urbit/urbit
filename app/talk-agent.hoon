@@ -47,6 +47,7 @@
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
+          {$talk-action action}                         ::
           {$talk-update update}                         ::
       ==                                                ::
     ++  card                                            ::  general card
@@ -132,6 +133,13 @@
     ::x  produce moves or sole-effects and moves.
     [[id.cli %diff %sole-effect u.foc] moz]
   ::
+  ++  ra-reaction
+    ::x  process a talk reaction.
+    ::
+    |=  rac/reaction
+    ^+  +>
+    sh-abet:(~(sh-reaction sh ~ ~ cli (main our.hid)) rac)
+  ::
   ++  ra-low
     ::x  process a talk lowdown
     ::
@@ -160,7 +168,7 @@
              %+  turn  (~(tap by nek))
              |=  {a/char b/(set (set partner))}
              (turn (~(tap by b)) |=(c/(set partner) [c a]))
-    sh-abet:~(sh-prod sh ~ cli (main our.hid))
+    sh-abet:~(sh-prod sh ~ ~ cli (main our.hid))
   ::
   ++  ra-low-names
     ::x  apply new local identities.
@@ -187,13 +195,13 @@
     ^+  +>
     ?~  cof  +>(tales (~(del by tales) man))
     =+  tal=(fall (~(get by tales) man) *tale)
-    =.  +>.$  sh-abet:(~(sh-low-config sh ~ cli man) shape.tal (fall cof *config))
+    =.  +>.$  sh-abet:(~(sh-low-config sh ~ ~ cli man) shape.tal (fall cof *config))
     +>.$(tales (~(put by tales) man tal(shape u.cof)))
   ::
   ++  ra-low-remco
     |=  cofs/(map station config)
     ^+  +>
-    =.  +>  sh-abet:(~(sh-low-remco sh ~ cli (main our.hid)) mirrors cofs)
+    =.  +>  sh-abet:(~(sh-low-remco sh ~ ~ cli (main our.hid)) mirrors cofs)
     +>(mirrors (~(uni by mirrors) cofs))
   ::
   ++  ra-low-precs
@@ -206,7 +214,7 @@
     =+  nel=(~(uni by locals.u.tal) pes)
     =.  +>.$
       ?:  =(locals.u.tal nel)  +>.$
-      sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal nel)
+      sh-abet:(~(sh-low-precs sh ~ ~ cli man) locals.u.tal nel)
     +>.$(tales (~(put by tales) man u.tal(locals nel)))
   ::
   ++  ra-low-rempe
@@ -215,7 +223,7 @@
     =+  ner=(~(uni by remotes) pas)  ::TODO  better uni.
     ?:  =(remotes ner)  +>.$
     =.  remotes  ner
-    sh-abet:(~(sh-low-rempe sh ~ cli (main our.hid)) remotes ner)
+    sh-abet:(~(sh-low-rempe sh ~ ~ cli (main our.hid)) remotes ner)
   ::
   ++  ra-low-grams
     ::x  apply new grams
@@ -224,7 +232,7 @@
     ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] +>.$)
-    =.  +>.$  sh-abet:(~(sh-low-grams sh ~ cli man) num gams)
+    =.  +>.$  sh-abet:(~(sh-low-grams sh ~ ~ cli man) num gams)
     pa-abet:(~(pa-lesson pa man u.tal) gams)
   ::
   ++  ra-emil                                           ::  ra-emit move list
@@ -247,7 +255,7 @@
     ?.  =(id.cli ost.hid)
       ~&  %strange-sole
       !!
-    sh-abet:(~(sh-sole sh ~ cli (main our.hid)) act)
+    sh-abet:(~(sh-sole sh ~ ~ cli (main our.hid)) act)
   ::
   ++  ra-console
     ::x  make a shell for her.
@@ -263,7 +271,7 @@
       ==
     =/  she/shell
       %*(. *shell id ost.hid, active (sy [%& our.hid man] ~))
-    sh-abet:~(sh-prod sh ~ she man)
+    sh-abet:~(sh-prod sh ~ ~ she man)
   ::
   ++  ra-init
     ::x  populate state on first boot. subscribes to our broker.
@@ -365,6 +373,7 @@
             ::x  she: console session state used in this core.
             ::
             coz/(list command)
+            acs/(list action)
             she/shell
             man/knot
         ==
@@ -528,7 +537,17 @@
       ::x  [coz new]). produces an updated context for the ++sh core.
       ::
       ^+  +>  ::x  points to ++sh's |_ core's context.
-      %.  ^-  (list move)
+      %.  %+  weld
+        %-  flop
+        %+  turn  acs
+        |=  a/action
+        ^-  move
+        :*  ost.hid
+            %poke
+            /reader/action
+            (broker our.hid)
+            [%talk-action a]
+        ==
         %-  flop
         %+  turn  coz
         |=  c/command
@@ -653,6 +672,12 @@
       =+  pan=(silt (turn (~(tap by q.q.i.grams)) head))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
+    ::
+    ++  sh-reaction
+      ::x  renders a reaction.
+      ::
+      |=  rac/reaction
+      (sh-lame (trip what.rac))
     ::
     ++  sh-low-atlas-diff
       ::x  calculates the difference between two atlasses (presence lists).
@@ -1071,6 +1096,12 @@
       ::
       |=  cod/command
       %_(+> coz [cod coz])
+    ::
+    ++  sh-act
+      ::x  adds an action to the core state.
+      ::
+      |=  act/action
+      %_(+> acs [act acs])
     ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
       ::x  makes a vase of environment data to evaluate against (#-messages).
@@ -1805,6 +1836,15 @@
   ::
   |=  {way/wire low/lowdown}
   ra-abet:(ra-low:ra low)
+::
+++  diff-talk-reaction                                  ::  accept reaction
+  ::x  incoming talk reaction. process it.
+  ::
+  |=  {way/wire rac/reaction}
+  ?.  =(src.hid -:(broker our.hid))
+    ~&  [%diff-reaction-stranger src.hid]
+    [~ +>]
+  ra-abet:(ra-reaction:ra rac)
 ::
 ++  poke-sole-action                                    ::  accept console
   ::x  incoming sole action. process it.
