@@ -65,10 +65,8 @@
           {$leave p/where}                              ::
           {$say p/(list speech)}                        ::
           {$eval p/cord q/twig}                         ::
-          {$invite p/knot q/(list partner)}             ::  whitelist add
-          {$banish p/knot q/(list partner)}             ::  blacklist add
-          {$block p/knot q/(list partner)}              ::  blacklist add
-          {$author p/knot q/(list partner)}             ::  whitelist add
+          {$invite p/knot q/(set ship)}                 ::  give permission
+          {$banish p/knot q/(set ship)}                 ::  deny permission
           {$nick p/(unit ship) q/(unit cord)}           ::
           {$set p/knot}                                 ::
           {$unset p/knot}                               ::
@@ -496,6 +494,9 @@
             ;~(pfix cen sym)
             qut
           ==
+        ::
+          ;~((glue ace) (perk %invite ~) ;~(pfix cen sym) shiz)
+          ;~((glue ace) (perk %banish ~) ;~(pfix cen sym) shiz)
         ::
           ;~(plug (perk %who ~) ;~(pose ;~(pfix ace para) (easy ~)))
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
@@ -1128,8 +1129,6 @@
           $bind    (bind +.job)
           $invite  (invite +.job)
           $banish  (banish +.job)
-          $author  (author +.job)
-          $block   (block +.job)
           $create  (create +.job)
           $nick    (nick +.job)
           $set     (wo-set +.job)
@@ -1230,24 +1229,14 @@
         (sh-note:(set-glyph cha u.pan) "bound {<cha>} {<u.pan>}")
       ::
       ++  invite                                        ::  %invite
-        |=  {nom/knot tal/(list partner)}
+        |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
-        !!
-      ::
-      ++  block                                         ::  %block
-        |=  {nom/knot tal/(list partner)}
-        ^+  ..sh-work
-        !!
-      ::
-      ++  author                                        ::  %author
-        |=  {nom/knot tal/(list partner)}
-        ^+  ..sh-work
-        !!
+        (sh-act %permit nom & sis)
       ::
       ++  banish                                        ::  %banish
-        |=  {nom/knot tal/(list partner)}
+        |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
-        !!
+        (sh-act %permit nom | sis)
       ::
       ++  create                                        ::  %create
         |=  {por/posture nom/knot txt/cord}
@@ -1720,6 +1709,15 @@
       $url  url+(crip (earf p.sep))
       $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
       $fat  [%mor $(sep q.sep) tan+(tr-rend-tors p.sep) ~]
+      $inv
+        :-  %tan
+        :_  ~
+        :-  %leaf
+        %+  weld
+          ?:  p.sep
+            "you have been invited to "
+          "you have been banished from "
+        ~(sn-phat sn man q.sep)
       $api
         :-  %tan
         :_  ~
@@ -1807,6 +1805,13 @@
                  (~(del in pal) [%& who (main who)])
         (weld ~(te-pref te man pal) txt)
       (weld " " txt)
+    ::
+        $inv
+      %+  weld
+        ?:  p.sep
+          " invited you to "
+        " banished you from "
+      ~(sn-phat sn man q.sep)
     ::
         $app
       (tr-chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")

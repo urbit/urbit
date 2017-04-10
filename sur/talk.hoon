@@ -53,10 +53,10 @@
   $%  {$twitter p/@t}                                   ::  twitter
   ==                                                    ::
 ++  posture                                             ::  security posture
-  $?  $black                                            ::  channel
-      $white                                            ::  village
-      $green                                            ::  journal
-      $brown                                            ::  mailbox
+  $?  $black                                            ::  channel, blacklist
+      $white                                            ::  village, whitelist
+      $green                                            ::  journal, author list
+      $brown                                            ::  mailbox, our + black
   ==                                                    ::
 ++  presence   ?($gone $hear $talk)                     ::  status type
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
@@ -89,7 +89,7 @@
       ::      ...that's probably what %gall is, but then why do we have $ext?
       {$ext p/@tas q/*}                                 ::  extended action
       {$fat p/torso q/speech}                           ::  attachment
-      ::  {$inv p/station}                              ::  invite to station
+      {$inv p/? q/station}                              ::  inv/ban for station
       {$url p/purf}                                     ::  parsed url
       {$ire p/serial q/speech}                          ::  in-reply-to
       {$lin p/? q/@t}                                   ::  no/@ text line

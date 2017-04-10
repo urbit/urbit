@@ -260,7 +260,12 @@
     ::
     |=  {man/knot con/config}
     ^+  +>
-    =+  pur=(fall (~(get by stories) man) *story)
+    =+  :-  neu=!(~(has by stories) man)
+        pur=(fall (~(get by stories) man) *story)
+    ::x  if we just created the story, and it's invite only, make sure we're in.
+    =.  con  ::TODO  =?
+      ?.  &(neu ?=(?($white $green) p.cordon.con))  con
+      con(q.cordon [our.hid ~ ~])
     pa-abet:(~(pa-reform pa man ~ pur) con)
   ::
   ++  ra-unconfig
@@ -594,19 +599,33 @@
     ::x  story core, used for doing work on a story.
     ::x  as always, an -abet arms is used for applying changes to the state.
     ::x  ++pa-watch- arms get called by ++ra-subscribe to add a subscriber.
-    ::x  bones are used to identify subscribers (source event identifiers)
+    ::x  bones are used to identify subscribers (source event identifiers).
     ::
     |_  ::x  man: the knot identifying the story in stories.
-        ::x  story doesn't get a face because ease of use
+        ::x  coz: talk commands issued due to changes.
+        ::x  story doesn't get a face because ease of use.
         ::
         $:  man/knot
+            coz/(list command)
             story
         ==
     ++  pa-abet
       ::x  apply/fold changes back into the stories map.
       ::
       ^+  +>
-      +>(stories (~(put by stories) man `story`+<+))
+      =.  +>  +>(stories (~(put by stories) man `story`+<+>))
+      =.  coz  (flop coz)
+      |-  ^+  +>+
+      ?~  coz  +>+
+      =.  +>+  (ra-apply our.hid i.coz)
+      $(coz t.coz)
+    ::
+    ++  pa-tell
+      ::x  stores a talk command.
+      ::
+      |=  cod/command
+      ^+  +>
+      +>(coz [cod coz])
     ::
     ++  pa-followers
       ^-  (set bone)
@@ -621,11 +640,12 @@
       ::
       |=  her/ship
       ^-  ?
-      ::?-  -.cordon.shape
-      ::  %&  (~(has in p.cordon.shape) her)
-      ::  %|  !(~(has in p.cordon.shape) her)
-      ::==
-      &
+      ?-  p.cordon.shape
+        $black  !(~(has in q.cordon.shape) her)         ::x  channel, blacklist
+        $green  (~(has in q.cordon.shape) her)          ::x  journal, whitelist
+        $brown  !(~(has in q.cordon.shape) her)         ::x  mailbox, blacklist
+        $white  (~(has in q.cordon.shape) her)          ::x  village, whitelist
+      ==
     ::
     ++  pa-visible                                      ::  display to
       ::x  checks her read permissions.
@@ -633,10 +653,10 @@
       |=  her/ship
       ^-  ?
       ?-  p.cordon.shape
-        $black  &                                       ::x  channel, all
+        $black  !(~(has in q.cordon.shape) her)         ::x  channel, blacklist
         $green  &                                       ::x  journal, all
         $brown  (team our.hid her)                      ::x  mailbox, our
-        $white  (~(has in q.cordon.shape) her)          ::x  village, invite
+        $white  (~(has in q.cordon.shape) her)          ::x  village, whitelist
       ==
     ::
     ++  pa-report                                       ::  update
@@ -869,8 +889,8 @@
       ::
       |=  {her/ship pax/path}
       ^+  +>
-      ?.  (pa-admire her)
-        ~&  [%pa-first-grams-admire ~]
+      ?.  (pa-visible her)
+        ~&  [%pa-first-grams-visible ~]
         (pa-sauce ost.hid [%quit ~]~)
       ::x  find the range of grams to send.
       =+  ^=  ruv  ^-  (unit river)
@@ -940,7 +960,6 @@
       ^+  +>
       ::x  if author isn't allowed to write here, reject.
       ?.  (pa-admire p.gam)
-        ~&  %pa-admire-rejected
         +>.$
       =.  q.q.gam
         ::x  if we are in the audience, mark us as having received it.
@@ -981,6 +1000,56 @@
         +>.$                                            ::  no change
       =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
       (pa-refresh num gam)
+    ::
+    ++  pa-unearth
+      ::x  find the bones in our follower list than belong to a ship in sis.
+      ::
+      |=  sis/(set ship)
+      ^-  (set bone)
+      %-  ~(rep in sup.hid)
+      |=  {{b/bone s/ship p/path} c/(set bone)}
+      ?.  ?&  (~(has in sis) s)
+              (~(has by followers) b)
+              ?=({@tas *} p)
+              =(i.p man)
+          ==
+        c
+      (~(put in c) b)
+    ::
+    ++  pa-permit
+      ::x  invite/banish ships to/from this station.
+      ::
+      |=  {inv/? sis/(set ship)}
+      ^+  +>
+      =/  white/?  ?=(?($white $green) p.cordon.shape)  ::  whitelist?
+      =/  add/?  =(inv white)                           ::  add to list?
+      =.  followers  ::TODO  =?
+        ?:  inv  followers
+        %-  ~(rep in (pa-unearth sis))
+        |=  {b/bone f/_followers}
+        =.  f  ?~  f  followers  f  ::TODO  =?
+        (~(del by f) b)
+      =.  +>.$
+        %-  pa-tell
+        :-  %publish
+        %-  ~(rep in sis)
+        |=  {s/ship t/(list thought)}
+        :_  t
+        =^  sir  eny.hid  (uniq eny.hid)
+        :+  sir                                         ::  serial
+          [[[%& s (main s)] [*envelope %pending]] ~ ~]  ::  audience
+        :+  now.hid  ~                                  ::  statement
+        [%inv inv [our.hid man]]
+      %-  pa-reform
+      %=  shape
+          q.cordon
+        %.  sis
+        ?:  add
+          ~&  [%new-shape (~(uni in q.cordon.shape) sis)]
+          ~(uni in q.cordon.shape)
+        ~&  [%new-shape (~(dif in q.cordon.shape) sis)]
+        ~(dif in q.cordon.shape)
+      ==
     --
   --
 ::
