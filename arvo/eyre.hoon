@@ -776,7 +776,6 @@
         ::  ~?  ?=($lens r.q.tee)  hen=hen^hcuf=-.cuf
         (get-ack:(ire-ix p.tee) q.tee ?~(p.cuf ~ `[-.cuf u.p.cuf]))
       ::
-          $doff  !!
           $diff
         ?.  ?=($json p.p.cuf)
           :: ~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
