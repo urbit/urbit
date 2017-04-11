@@ -172,7 +172,6 @@
         ?.  (~(has by stories) p.cod)
           (ra-evil %talk-no-story)
         ::x  $design with ~ for config signals delete
-        ::TODO  be sure to send a deletion %tales lowdown!
         (ra-unconfig p.cod)
       (ra-config p.cod u.q.cod)
     ::
@@ -266,7 +265,6 @@
     ^+  +>
     =+  soy=(~(get by stories) man)
     ?~  soy  +>.$
-    =.  stories  (~(del by stories) man)
     pa-abet:~(pa-reform-gone pa man ~ u.soy)
   ::
   ++  ra-base-hart
@@ -499,30 +497,18 @@
   ++  ra-welcome
     ::x  brings reader new up to date.
     ::
-    ::TODO  just like weld somehow
     |=  new/bone
-    =.  +>  %-  ra-emil
-      %-  zing
-      %+  turn  (~(tap by stories))
-      |=  {k/knot s/story}
-      ^-  (list move)
-      :~  ::x  story configurations
-          [new %diff %talk-lowdown %tales k `shape.s]
-          ::x  local presences
-          [new %diff %talk-lowdown %precs k locals.s]
-          ::x  telegrams
-          [new %diff %talk-lowdown %grams k count.s grams.s]
-      ==
     %-  ra-emil
     :~  ::x  remote configurations
-        [new %diff %talk-lowdown %remco mirrors]
+        [new %diff %talk-lowdown %confs (~(run by mirrors) some)]
         ::x  remote presences
-        [new %diff %talk-lowdown %rempe remotes]
+        [new %diff %talk-lowdown %precs remotes]
         ::x  bound glyphs
         [new %diff %talk-lowdown %glyph nak]
         ::x  nicknames
         [new %diff %talk-lowdown %names (~(run by folks) some)]
     ==
+    ::TODO  all mailbox %grams!
   ::
   ++  ra-think                                          ::  publish+review
     ::x  consumes each thought.
@@ -724,7 +710,7 @@
       =+  old=mirrors
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)  +>.$
-      =.  +>.$  (pa-inform %remco mirrors)
+      =.  +>.$  (pa-inform %confs (~(run by mirrors) some))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
@@ -746,10 +732,12 @@
       ::x  delete tay from our subscriptions, then send an updated capal report.
       ::
       |=  tay/partner
-      =.  +>
-        %.  pa-followers
-        pa-report-cabal(sources.shape (~(del in sources.shape) tay))
-      (pa-inform %tales man `shape)
+      ^+  +>
+      ?.  (~(has in sources.shape) tay)  +>
+      =.  sources.shape  (~(del in sources.shape) tay)
+      =.  mirrors  (~(put by mirrors) [our.hid man] shape)
+      =.  +>  (pa-inform %confs (strap [our.hid man] `shape))
+      (pa-report-cabal pa-followers)
     ::
     ++  pa-sauce                                        ::  send backward
       ::x  turns cards into moves, reverse order, prepend to existing moves.
@@ -812,7 +800,7 @@
       ::x  partners we gained/lost, and send out an updated cabal report.
       ::
       |=  cof/config
-      =.  +>.$  (pa-inform %tales man `cof)
+      =.  +>.$  (pa-inform %confs (strap [our.hid man] `cof))
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
           =+  old=`(list partner)`(~(tap in sources.shape) ~)
           =+  new=`(list partner)`(~(tap in sources.cof) ~)
@@ -821,10 +809,13 @@
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
+      =.  mirrors  (~(put by mirrors) [our.hid man] cof)
       (pa-report-cabal pa-followers)
     ::
     ++  pa-reform-gone
-      =.  .  (pa-inform %tales man ~)
+      =.  stories  (~(del by stories) man)
+      =.  mirrors  (~(del by mirrors) [our.hid man])
+      =.  .  (pa-inform %confs (strap [our.hid man] ~))
       =.  .  (pa-report-cabal pa-followers)
       (pa-abjure (~(tap in sources.shape)))
     ::
@@ -841,7 +832,8 @@
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
-      =.  +>.$  (pa-inform %precs man nol)
+      =.  +>.$  (pa-inform %precs (strap [%& our.hid man] nol))
+      =/  ner  (~(put by remotes) [%& our.hid man] nol)
       (pa-report-group(locals nol) pa-followers)
     ::
     ++  pa-remind                                       ::  remote presence
@@ -854,7 +846,7 @@
       =/  buk  (~(uni by remotes) rem)  ::TODO  drop?
       =.  buk  (~(put by buk) tay loc)
       ?:  =(buk remotes)  +>.$
-      =.  +>.$  (pa-inform %rempe buk)
+      =.  +>.$  (pa-inform %precs buk)
       (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream

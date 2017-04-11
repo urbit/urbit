@@ -145,10 +145,8 @@
     ?-  -.low
       $glyph  (ra-low-glyph +.low)
       $names  (ra-low-names +.low)
-      $tales  (ra-low-tales +.low)
-      $remco  (ra-low-remco +.low)
+      $confs  (ra-low-confs +.low)
       $precs  (ra-low-precs +.low)
-      $rempe  (ra-low-rempe +.low)
       $grams  (ra-low-grams +.low)
     ==
   ::
@@ -185,39 +183,19 @@
       (some [s u.h])
     ==
   ::
-  ++  ra-low-tales
-    ::x  apply tale configs.
-    ::
-    |=  {man/knot cof/(unit config)}
+  ++  ra-low-confs
+    |=  cofs/(map station (unit config))
     ^+  +>
-    ?~  cof  +>(tales (~(del by tales) man))
-    =+  tal=(fall (~(get by tales) man) *tale)
-    =.  +>.$  sh-abet:(~(sh-low-config sh cli man) shape.tal (fall cof *config))
-    +>.$(tales (~(put by tales) man tal(shape u.cof)))
-  ::
-  ++  ra-low-remco
-    |=  cofs/(map station config)
-    ^+  +>
-    =.  +>  sh-abet:(~(sh-low-remco sh cli (main our.hid)) mirrors cofs)
-    +>(mirrors (~(uni by mirrors) cofs))
+    ::TODO  fix sh-low-remco to print properly.
+    =/  cogs/_mirrors  (~(run by cofs) |=(a/(unit config) (fall a *config)))
+    =.  +>.$  sh-abet:(~(sh-low-remco sh cli (main our.hid)) mirrors cogs)
+    =.  mirrors  (~(uni by mirrors) cogs)
+    +>.$
   ::
   ++  ra-low-precs
-    ::x  apply new presence.
-    ::
-    |=  {man/knot pes/atlas}
-    ^+  +>
-    =+  tal=(~(get by tales) man)
-    ?~  tal  ~&([%low-precs-know-no-tale man] +>.$)
-    =+  nel=(~(uni by locals.u.tal) pes)
-    =.  +>.$
-      ?:  =(locals.u.tal nel)  +>.$
-      sh-abet:(~(sh-low-precs sh cli man) locals.u.tal nel)
-    +>.$(tales (~(put by tales) man u.tal(locals nel)))
-  ::
-  ++  ra-low-rempe
     |=  pas/(map partner atlas)
     ^+  +>
-    =+  ner=(~(uni by remotes) pas)  ::TODO  better uni.
+    =+  ner=(~(uni by remotes) pas)  ::TODO  per-partner uni.
     ?:  =(remotes ner)  +>.$
     =.  remotes  ner
     sh-abet:(~(sh-low-rempe sh cli (main our.hid)) remotes ner)
@@ -610,6 +588,7 @@
       ::
       |=  paz/(set partner)
       ?~  paz  |
+      ::TODO  use mailbox sources.shape
       ?|  (~(has in sources.shape:(~(got by tales) man)) `partner`n.paz)
           $(paz l.paz)
           $(paz r.paz)

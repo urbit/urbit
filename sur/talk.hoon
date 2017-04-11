@@ -73,10 +73,8 @@
   ::      this will aid with ++sh's printing.
   $%  {$glyph (jug char (set partner))}                 ::  new bindings
       {$names (map ship (unit human))}                  ::  new identities
-      {$tales (pair knot (unit config))}                ::  changed config
-      {$remco (map station config)}                     ::  remote configs
-      {$precs (pair knot atlas)}                        ::  changed presence
-      {$rempe (map partner atlas)}                      ::  remote presences
+      {$confs (map station (unit config))}              ::  changed configs
+      {$precs (map partner atlas)}                      ::  changed presences
       {$grams (pair knot (pair @ud (list telegram)))}   ::  new grams
   ==                                                    ::
 ++  speech                                              ::  narrative action
