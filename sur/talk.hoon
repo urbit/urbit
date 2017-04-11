@@ -12,7 +12,7 @@
   ==                                                    ::
 ++  action                                              ::  user action
   $%  ::  station configuration                         ::
-      {$create (pair knot (pair cord posture))}         ::  create station
+      {$create (trel knot cord posture)}                ::  create station
       {$permit (trel knot ? (set ship))}                ::  invite/banish
       ::  personal metadata                             ::
       ::TODO  change to target partners, not only our stations.

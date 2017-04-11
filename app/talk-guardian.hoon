@@ -211,7 +211,9 @@
       ::  station configuration
       ::
         $create                                         ::  create station
-      ~&(%talk-action-create !!)
+      ?.  (~(has in stories) p.act)
+        (ra-config p.act [[%& our.hid p.act] ~ ~] q.act [r.act ~])
+      (ra-react red %fail (crip "{(trip p.act)}: already exists") `act)
       ::
         $permit                                         ::  invite/banish
       %-  (ra-affect p.act red `act)  |=  par/_pa  =<  pa-abet
@@ -390,7 +392,7 @@
     =+  pur=(~(get by stories) man)
     ?~  pur
       %+  ra-react  red
-      [%fail (crip (weld "no story " (trip man))) act]
+      [%fail (crip "no story {(trip man)}") act]
     (fun ~(. pa man ~ u.pur))
   ::
   ++  ra-diff-talk-report                               ::  subscription update

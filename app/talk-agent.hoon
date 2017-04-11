@@ -1221,12 +1221,7 @@
         ?:  (~(has in tales) nom)
           (sh-lame "{(trip nom)}: already exists")
         =.  ..sh-work
-            ::x  create new config for channel.
-            %^  sh-tell  %design  nom
-            :-  ~
-            :+  [[%& our.hid nom] ~ ~]
-              (end 3 64 txt)
-            [por ~]
+          (sh-action %create nom txt por)
         (join [[%& our.hid nom] ~ ~])
       ::
       ++  reverse-folks
