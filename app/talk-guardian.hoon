@@ -507,8 +507,11 @@
         [new %diff %talk-lowdown %glyph nak]
         ::x  nicknames
         [new %diff %talk-lowdown %names (~(run by folks) some)]
+        ::x  messages
+        :*  new  %diff  %talk-lowdown  %grams  0
+          grams:(~(got by stories) (main our.hid))
+        ==
     ==
-    ::TODO  all mailbox %grams!
   ::
   ++  ra-think                                          ::  publish+review
     ::x  consumes each thought.
@@ -916,7 +919,9 @@
       |=  {num/@ud gam/telegram}
       ^+  +>
       ::x  notify all of our readers.
-      =.  +>  (pa-inform %grams man num gam ~)
+      =.  +>  ::TODO  =?
+        ?.  =(man (main our.hid))  +>
+        (pa-inform %grams num gam ~)
       ::x  notify only the followers who are currently interested.
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))

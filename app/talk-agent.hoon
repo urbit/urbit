@@ -205,9 +205,9 @@
   ++  ra-low-grams
     ::x  apply new grams
     ::
-    |=  {man/knot num/@ud gams/(list telegram)}
+    |=  {num/@ud gams/(list telegram)}
     ^+  +>
-    =.  +>.$  sh-abet:(~(sh-low-grams sh cli man) num gams)
+    =.  +>.$  sh-abet:(~(sh-low-grams sh cli (main our.hid)) num gams)
     (ra-lesson gams)
   ::
   ++  ra-emil                                           ::  ra-emit move list

@@ -75,7 +75,7 @@
       {$names (map ship (unit human))}                  ::  new identities
       {$confs (map station (unit config))}              ::  changed configs
       {$precs (map partner atlas)}                      ::  changed presences
-      {$grams (pair knot (pair @ud (list telegram)))}   ::  new grams
+      {$grams (pair @ud (list telegram))}               ::  new grams
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce
