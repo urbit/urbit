@@ -207,46 +207,42 @@
     |=  {red/bone act/action}
     ^+  +>
     ?-  -.act
-        $create
+      ::
+      ::  station configuration
+      ::
+        $create                                         ::  create station
       ~&(%talk-action-create !!)
-        $permit
+      ::
+        $permit                                         ::  invite/banish
       %-  (ra-affect p.act red `act)  |=  par/_pa  =<  pa-abet
       (pa-permit:par q.act r.act)
-    ==
-  ::
-  ++  ra-update
-    ::x  applies update sent by her.
-    ::
-    |=  {her/ship dup/update}
-    ^+  +>
-    ::x  only allow updates by our team.
-    ?.  (team our.hid her)  +>
-    ?-  -.dup
-    $status                                             ::x  update our status.
+      ::
+      ::  personal metadata
+      ::
+        $status                                         ::  our status update
       ::x  for every knot (story) in the set, update our status.
       |-  ^+  +>.^$
-      ?~  p.dup  +>.^$
-      =.  +>.^$  $(p.dup l.p.dup)
-      =.  +>.^$  $(p.dup r.p.dup)
-      ::x  uses our because status is per identity, not per client.
-      ::TODO  check if this can crash or not.
-      =<  pa-abet
-      (~(pa-notify pa n.p.dup ~ (~(got by stories) n.p.dup)) our.hid q.dup)
-    ::
-    $human                                              ::x  change an identity.
-      ?.  =((~(get by folks) her) `q.dup)
-        +>  ::x  no change.
+      ?~  p.act  +>.^$
+      =.  +>.^$  $(p.act l.p.act)
+      =.  +>.^$  $(p.act r.p.act)
+      %-  (ra-affect n.p.act red `act)  |=  par/_pa  =<  pa-abet
+      (pa-notify:par our.hid q.act)
+      ::
+      ::  changing shared ui
+      ::
+        $human                                          ::  new identity
+      ?.  =((~(get by folks) p.act) `q.act)  +>         ::  no change
       =.  folks
-        ?~  hand.q.dup  (~(del by folks) p.dup)
-        (~(put by folks) her q.dup)
+        ?~  hand.q.act  (~(del by folks) p.act)
+        (~(put by folks) p.act q.act)
       %+  ra-inform  %names
       ::TODO  think long and hard, do we need unit for delition or is a human
       ::      with [~ ~] good enough? if the latter, agent's $names will change.
-      (strap her ?~(hand.q.dup ~ `q.dup))
-    ::
-    $bind                                               ::x  set glyph binding.
-      =.  nik  (~(put by nik) q.dup p.dup)
-      =.  nak  (~(put ju nak) p.dup q.dup)
+      (strap p.act ?~(hand.q.act ~ `q.act))
+      ::
+        $glyph                                          ::  bind a glyph
+      =.  nik  (~(put by nik) q.act p.act)
+      =.  nak  (~(put ju nak) p.act q.act)
       (ra-inform %glyph nak)
     ==
   ::
@@ -1090,12 +1086,6 @@
     ~&  [%talk-action-stranger src.hid]
     [~ +>]
   ra-abet:(ra-action:ra ost.hid act)
-::
-++  poke-talk-update                                    ::  accept update
-  ::x  incoming talk update. process it.
-  ::
-  |=  dup/update
-  ra-abet:(ra-update:ra src.hid dup)
 ::
 ++  diff-talk-report                                    ::  accept report
   ::x  incoming talk-report. process it and update logs.

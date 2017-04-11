@@ -48,7 +48,6 @@
     ++  pear                                            ::  poke fruit
       $%  {$talk-command command}                       ::
           {$talk-action action}                         ::
-          {$talk-update update}                         ::
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
@@ -136,7 +135,7 @@
     ::
     |=  rac/reaction
     ^+  +>
-    sh-abet:(~(sh-reaction sh ~ ~ cli (main our.hid)) rac)
+    sh-abet:(~(sh-reaction sh ~ cli (main our.hid)) rac)
   ::
   ++  ra-low
     ::x  process a talk lowdown
@@ -166,7 +165,7 @@
              %+  turn  (~(tap by nek))
              |=  {a/char b/(set (set partner))}
              (turn (~(tap by b)) |=(c/(set partner) [c a]))
-    sh-abet:~(sh-prod sh ~ ~ cli (main our.hid))
+    sh-abet:~(sh-prod sh ~ cli (main our.hid))
   ::
   ++  ra-low-names
     ::x  apply new local identities.
@@ -193,13 +192,13 @@
     ^+  +>
     ?~  cof  +>(tales (~(del by tales) man))
     =+  tal=(fall (~(get by tales) man) *tale)
-    =.  +>.$  sh-abet:(~(sh-low-config sh ~ ~ cli man) shape.tal (fall cof *config))
+    =.  +>.$  sh-abet:(~(sh-low-config sh ~ cli man) shape.tal (fall cof *config))
     +>.$(tales (~(put by tales) man tal(shape u.cof)))
   ::
   ++  ra-low-remco
     |=  cofs/(map station config)
     ^+  +>
-    =.  +>  sh-abet:(~(sh-low-remco sh ~ ~ cli (main our.hid)) mirrors cofs)
+    =.  +>  sh-abet:(~(sh-low-remco sh ~ cli (main our.hid)) mirrors cofs)
     +>(mirrors (~(uni by mirrors) cofs))
   ::
   ++  ra-low-precs
@@ -212,7 +211,7 @@
     =+  nel=(~(uni by locals.u.tal) pes)
     =.  +>.$
       ?:  =(locals.u.tal nel)  +>.$
-      sh-abet:(~(sh-low-precs sh ~ ~ cli man) locals.u.tal nel)
+      sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal nel)
     +>.$(tales (~(put by tales) man u.tal(locals nel)))
   ::
   ++  ra-low-rempe
@@ -221,7 +220,7 @@
     =+  ner=(~(uni by remotes) pas)  ::TODO  better uni.
     ?:  =(remotes ner)  +>.$
     =.  remotes  ner
-    sh-abet:(~(sh-low-rempe sh ~ ~ cli (main our.hid)) remotes ner)
+    sh-abet:(~(sh-low-rempe sh ~ cli (main our.hid)) remotes ner)
   ::
   ++  ra-low-grams
     ::x  apply new grams
@@ -230,7 +229,7 @@
     ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] +>.$)
-    =.  +>.$  sh-abet:(~(sh-low-grams sh ~ ~ cli man) num gams)
+    =.  +>.$  sh-abet:(~(sh-low-grams sh ~ cli man) num gams)
     pa-abet:(~(pa-lesson pa man u.tal) gams)
   ::
   ++  ra-emil                                           ::  ra-emit move list
@@ -253,7 +252,7 @@
     ?.  =(id.cli ost.hid)
       ~&  %strange-sole
       !!
-    sh-abet:(~(sh-sole sh ~ ~ cli (main our.hid)) act)
+    sh-abet:(~(sh-sole sh ~ cli (main our.hid)) act)
   ::
   ++  ra-console
     ::x  make a shell for her.
@@ -269,7 +268,7 @@
       ==
     =/  she/shell
       %*(. *shell id ost.hid, active (sy [%& our.hid man] ~))
-    sh-abet:~(sh-prod sh ~ ~ she man)
+    sh-abet:~(sh-prod sh ~ she man)
   ::
   ++  ra-init
     ::x  populate state on first boot. subscribes to our broker.
@@ -371,7 +370,6 @@
             ::x  she: console session state used in this core.
             ::
             coz/(list command)
-            acs/(list action)
             she/shell
             man/knot
         ==
@@ -538,18 +536,7 @@
       ::x  [coz new]). produces an updated context for the ++sh core.
       ::
       ^+  +>  ::x  points to ++sh's |_ core's context.
-      %.  %+  weld
-        %-  flop
-        %+  turn  acs
-        |=  a/action
-        ^-  move
-        :*  ost.hid
-            %poke
-            /reader/action
-            (broker our.hid)
-            [%talk-action a]
-        ==
-        %-  flop
+      %.  %-  flop
         %+  turn  coz
         |=  c/command
         ^-  move
@@ -568,19 +555,20 @@
       ^+  +>
       +>(moves :_(moves [id.she %diff %sole-effect fec]))
     ::
-    ++  sh-update
-      ::x  adds a talk-update to ++ra's moves
+    ++  sh-action
+      ::x  adds a talk-action to ++ra's moves
       ::
-      |=  dup/update
+      |=  act/action
       ^+  +>
       %=  +>
-        moves  :_  moves
-               :*  ost.hid
-                   %poke
-                   /reader/update
-                   (broker our.hid)
-                   [%talk-update dup]
-               ==
+          moves
+        :_  moves
+        :*  ost.hid
+            %poke
+            /reader/action
+            (broker our.hid)
+            [%talk-action act]
+        ==
       ==
     ::
     ++  sh-prod                                         ::  show prompt
@@ -1098,12 +1086,6 @@
       |=  cod/command
       %_(+> coz [cod coz])
     ::
-    ++  sh-act
-      ::x  adds an action to the core state.
-      ::
-      |=  act/action
-      %_(+> acs [act acs])
-    ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
       ::x  makes a vase of environment data to evaluate against (#-messages).
       ::
@@ -1166,7 +1148,7 @@
         =:  nik  (~(put by nik) lix cha)
             nak  (~(put ju nak) cha lix)
           ==
-        (sh-update %bind cha lix)
+        (sh-action %glyph cha lix)
       ::
       ++  join                                          ::  %join
         |=  pan/(set partner)
@@ -1231,12 +1213,12 @@
       ++  invite                                        ::  %invite
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
-        (sh-act %permit nom & sis)
+        (sh-action %permit nom & sis)
       ::
       ++  banish                                        ::  %banish
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
-        (sh-act %permit nom | sis)
+        (sh-action %permit nom | sis)
       ::
       ++  create                                        ::  %create
         |=  {por/posture nom/knot txt/cord}
@@ -1288,7 +1270,7 @@
           |=  p/ship
           [%txt "{<p>}: {<u.nym>}"]
         %.  [%human u.her [true=~ hand=nym]]
-        %=  sh-update
+        %=  sh-action
           folks  ?~  u.nym
                    (~(del by folks) u.her)  ::x  unset nickname
                  (~(put by folks) u.her [true=~ hand=nym])  ::x  set nickname
