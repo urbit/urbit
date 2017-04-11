@@ -5,6 +5,9 @@
 ::TODO  guardian's todo's apply here too
 ::TODO  rename cores. pa->ta (transaction), ta->pa (partner), etc.
 ::
+::TODO  maybe collapse sources, remotes and mirrors into a single map?
+::TODO  maybe keep track of received grams per partner, too?
+::
 /?    310                                               ::  hoon version
 /-    talk, sole                                        ::  structures
 /+    talk, sole, time-to-id, twitter                   ::  libraries
@@ -16,21 +19,19 @@
 [. talk sole]
 =>  |%                                                  ::  data structures
     ++  chattel                                         ::  full state
-      $:  tales/(map knot tale)                         ::  conversations
+      $:  ::  messaging state                           ::
+          count/@ud                                     ::  (lent grams)
+          grams/(list telegram)                         ::  all history
+          known/(map serial @ud)                        ::  messages heard
+          sources/(set partner)                         ::  our subscriptions
+          ::  partner details                           ::
           remotes/(map partner atlas)                   ::  remote presences
           mirrors/(map station config)                  ::  remote configs
+          ::  ui state                                  ::
           folks/(map ship human)                        ::  human identities
           nik/(map (set partner) char)                  ::  bound station glyphs
           nak/(jug char (set partner))                  ::  station glyph lookup
           cli/shell                                     ::  interaction state
-      ==                                                ::
-    ++  tale                                            ::  user-facing story
-      $:  count/@ud                                     ::  (lent grams)
-          grams/(list telegram)                         ::  all history
-          ::TODO  given remotes and mirrors, do we still need locals and shape?
-          locals/atlas                                  ::  presence
-          shape/config                                  ::  configuration
-          known/(map serial @ud)                        ::  messages heard
       ==                                                ::
     ++  shell                                           ::  console session
       $:  id/bone                                       ::  identifier
@@ -187,6 +188,7 @@
     |=  cofs/(map station (unit config))
     ^+  +>
     ::TODO  fix sh-low-remco to print properly.
+    ::TODO  actually delete ~ configs.
     =/  cogs/_mirrors  (~(run by cofs) |=(a/(unit config) (fall a *config)))
     =.  +>.$  sh-abet:(~(sh-low-remco sh cli (main our.hid)) mirrors cogs)
     =.  mirrors  (~(uni by mirrors) cogs)
@@ -205,10 +207,8 @@
     ::
     |=  {man/knot num/@ud gams/(list telegram)}
     ^+  +>
-    =+  tal=(~(get by tales) man)
-    ?~  tal  ~&([%know-no-tale man] +>.$)
     =.  +>.$  sh-abet:(~(sh-low-grams sh cli man) num gams)
-    pa-abet:(~(pa-lesson pa man u.tal) gams)
+    (ra-lesson gams)
   ::
   ++  ra-emil                                           ::  ra-emit move list
     ::x  adds multiple moves to the core's list. flops to emulate ++ra-emit.
@@ -260,80 +260,45 @@
         /
     ==
   ::
-  ++  pa                                                ::  story core
-    ::x  tale core, used for doing work on a story.
-    ::x  as always, an -abet arms is used for applying changes to the state.
-    ::x  ++pa-watch- arms get called by ++ra-subscribe to add a subscriber.
-    ::x  bones are used to identify subscribers (source event identifiers)
+  ++  ra-lesson                                       ::  learn multiple
+    ::x  learn all telegrams in a list.
     ::
-    |_  ::x  man: the knot identifying the story in stories.
-        ::x  story doesn't get a face because ease of use
-        ::
-        $:  man/knot
-            tale
-        ==
-    ++  pa-abet
-      ::x  apply/fold changes back into the stories map.
-      ::
-      ^+  +>
-      +>(tales (~(put by tales) man `tale`+<+))
+    |=  gaz/(list telegram)
+    ^+  +>
+    ?~  gaz  +>
+    $(gaz t.gaz, +> (ra-learn i.gaz))
+  ::
+  ++  ra-learn                                        ::  learn message
+    ::x  store an incoming telegram, modifying audience to say we received it.
+    ::x  update existing telegram if it already exists.
     ::
-    ++  pa-lesson                                       ::  learn multiple
-      ::x  learn all telegrams in a list.
-      ::
-      |=  gaz/(list telegram)
-      ^+  +>
-      ?~  gaz  +>
-      $(gaz t.gaz, +> (pa-learn i.gaz))
+    |=  gam/telegram
+    ^+  +>
+    =+  old=(~(get by known) p.q.gam)
+    ?~  old
+      (ra-append gam)      ::x  add
+    (ra-revise u.old gam)  ::x  modify
+  ::
+  ++  ra-append                                       ::  append new gram
+    ::x  add gram to our story, and update our subscribers.
     ::
-    ++  pa-learn                                        ::  learn message
-      ::x  store an incoming telegram, modifying audience to say we received it.
-      ::x  update existing telegram if it already exists.
-      ::
-      |=  gam/telegram
-      ^+  +>
-      ::x  if author isn't allowed to write here, reject.
-      ::TODO  we shouldn't need to do permission checks anymore, all we need to
-      ::      do is make sure the grams were sent to us by our broker.
-      ::      do this earlier up in the chain.
-      =.  q.q.gam
-        ::x  if we are in the audience, mark us as having received it.
-        =+  ole=(~(get by q.q.gam) [%& our.hid man])
-        ?^  ole  (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
-        ::  for fedearted stations, pretend station src/foo is also our/foo
-        ::  XX pass src through explicitly instead of relying on implicit
-        ::     value in hid from the subscription to src/foo
-        =+  ole=(~(get by q.q.gam) [%& src.hid man])
-        ?~  ole  q.q.gam
-        ::x  as described above, fake src into our.
-        =.  q.q.gam  (~(del by q.q.gam) [%& src.hid man])
-        (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
-      =+  old=(~(get by known) p.q.gam)
-      ?~  old
-        (pa-append gam)      ::x  add
-      (pa-revise u.old gam)  ::x  modify
+    |=  gam/telegram
+    ^+  +>
+    %=  +>
+      grams  [gam grams]
+      count  +(count)
+      known  (~(put by known) p.q.gam count)
+    ==
+  ::
+  ++  ra-revise                                       ::  revise existing gram
+    ::x  modify a gram in our story, and update our subscribers.
     ::
-    ++  pa-append                                       ::  append new gram
-      ::x  add gram to our story, and update our subscribers.
-      ::
-      |=  gam/telegram
-      ^+  +>
-      %=  +>
-        grams  [gam grams]
-        count  +(count)
-        known  (~(put by known) p.q.gam count)
-      ==
-    ::
-    ++  pa-revise                                       ::  revise existing gram
-      ::x  modify a gram in our story, and update our subscribers.
-      ::
-      |=  {num/@ud gam/telegram}
-      =+  way=(sub count num)
-      ?:  =(gam (snag (dec way) grams))
-        +>.$                                            ::  no change
-      =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
-      +>.$
-    --
+    |=  {num/@ud gam/telegram}
+    =+  way=(sub count num)
+    ?:  =(gam (snag (dec way) grams))
+      +>.$                                            ::  no change
+    =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
+    +>.$
   ::
   ++  sh                                                ::  per console
     ::x  shell core, responsible for doing things with console sessions,
@@ -588,8 +553,7 @@
       ::
       |=  paz/(set partner)
       ?~  paz  |
-      ::TODO  use mailbox sources.shape
-      ?|  (~(has in sources.shape:(~(got by tales) man)) `partner`n.paz)
+      ?|  (~(has in sources) `partner`n.paz)
           $(paz l.paz)
           $(paz r.paz)
       ==
@@ -602,8 +566,8 @@
       |=  tay/partner
       ^+  +>
       ?.  ?=($& -.tay)  +>  ::x  if partner is a passport, do nothing.
-      =+  tal=(~(get by tales) q.p.tay)
-      ?.  |(?=($~ tal) !?=($white p.cordon.shape.u.tal))
+      =+  cof=(~(get by mirrors) +.tay)
+      ?.  |(?=($~ cof) !?=($white p.cordon.u.cof))
         +>.$
       (sh-pact [tay ~ ~])
     ::
@@ -634,7 +598,6 @@
       ?:  =(~ lax)  ~  ::x  no partner.
       ?:  ?=({* $~ $~} lax)  `n.lax  ::x  single partner.
       ::x  in case of multiple partners, pick the most recently active one.
-      =+  grams=grams:(~(got by tales) man)  ::TODO  probably no longer correct.
       |-  ^-  (unit (set partner))
       ?~  grams  ~
       ::x  get first partner from a telegram's audience.
@@ -1071,7 +1034,6 @@
       ::
       |=  job/work
       ^+  +>
-      =+  roy=(~(got by tales) man)
       =<  work
       |%
       ++  work
@@ -1134,7 +1096,7 @@
           (sh-note:(set-glyph cha pan) "new glyph {<cha>}")
         =.  ..sh-work
           sh-prod(active.she pan)
-        =+  loc=shape:(~(got by tales) man)
+        =+  loc=(~(got by mirrors) [our.hid man])
         ::x  change local mailbox config to include subscription to pan.
         %^  sh-tell  %design  man
         `loc(sources (~(uni in sources.loc) pan))
@@ -1142,7 +1104,7 @@
       ++  leave                                          ::  %leave
         |=  pan/(set partner)
         ^+  ..sh-work
-        =+  loc=shape:(~(got by tales) man)
+        =+  loc=(~(got by mirrors) [our.hid man])
         ::x  change local mailbox config to exclude subscription to pan.
         %^  sh-tell  %design  man
         `loc(sources (~(dif in sources.loc) pan))
@@ -1161,7 +1123,6 @@
         |=  pan/(set partner)  ^+  ..sh-work
         ::TODO  clever use of =< and . take note!
         ~&  [%who-ing pan]
-        =+  tal=(~(got by tales) man)
         =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
@@ -1197,7 +1158,7 @@
       ++  create                                        ::  %create
         |=  {por/posture nom/knot txt/cord}
         ^+  ..sh-work
-        ?:  (~(has in tales) nom)
+        ?:  (~(has in mirrors) [our.hid nom])
           (sh-lame "{(trip nom)}: already exists")
         =.  ..sh-work
           (sh-action %create nom txt por)
@@ -1273,19 +1234,18 @@
       ++  number                                        ::  %number
         |=  num/$@(@ud {p/@u q/@ud})
         ^+  ..sh-work
-        =+  roy=(~(got by tales) man)
         |-
         ?@  num
-          ?:  (gte num count.roy)
+          ?:  (gte num count)
             (sh-lame "{(scow %s (new:si | +(num)))}: no such telegram")
           =.  ..sh-fact  (sh-fact %txt "? {(scow %s (new:si | +(num)))}")
-          (activate (snag num grams.roy))
-        ?.  (gth q.num count.roy)
-          ?~  count.roy
+          (activate (snag num grams))
+        ?.  (gth q.num count)
+          ?:  =(count 0)
             (sh-lame "0: no messages")
-          =+  msg=(deli (dec count.roy) num)
+          =+  msg=(deli (dec count) num)
           =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
-          (activate (snag (sub count.roy +(msg)) grams.roy))
+          (activate (snag (sub count +(msg)) grams))
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
       ::
       ++  deli                                          ::  find number
@@ -1566,8 +1526,8 @@
     ?&  ?=($& -.pan)
         =(p.p.pan our.hid)
     ::
-        =+  sot=(~(get by tales) q.p.pan)
-        &(?=(^ sot) ?=($brown p.cordon.shape.u.sot))
+        =+  sot=(~(get by mirrors) +.pan)
+        &(?=(^ sot) ?=($brown p.cordon.u.sot))
     ==
   ::
   ++  te-pref                                           ::  audience glyph
