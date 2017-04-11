@@ -135,7 +135,7 @@
     ::
     |=  rac/reaction
     ^+  +>
-    sh-abet:(~(sh-reaction sh ~ cli (main our.hid)) rac)
+    sh-abet:(~(sh-reaction sh cli (main our.hid)) rac)
   ::
   ++  ra-low
     ::x  process a talk lowdown
@@ -165,7 +165,7 @@
              %+  turn  (~(tap by nek))
              |=  {a/char b/(set (set partner))}
              (turn (~(tap by b)) |=(c/(set partner) [c a]))
-    sh-abet:~(sh-prod sh ~ cli (main our.hid))
+    sh-abet:~(sh-prod sh cli (main our.hid))
   ::
   ++  ra-low-names
     ::x  apply new local identities.
@@ -192,13 +192,13 @@
     ^+  +>
     ?~  cof  +>(tales (~(del by tales) man))
     =+  tal=(fall (~(get by tales) man) *tale)
-    =.  +>.$  sh-abet:(~(sh-low-config sh ~ cli man) shape.tal (fall cof *config))
+    =.  +>.$  sh-abet:(~(sh-low-config sh cli man) shape.tal (fall cof *config))
     +>.$(tales (~(put by tales) man tal(shape u.cof)))
   ::
   ++  ra-low-remco
     |=  cofs/(map station config)
     ^+  +>
-    =.  +>  sh-abet:(~(sh-low-remco sh ~ cli (main our.hid)) mirrors cofs)
+    =.  +>  sh-abet:(~(sh-low-remco sh cli (main our.hid)) mirrors cofs)
     +>(mirrors (~(uni by mirrors) cofs))
   ::
   ++  ra-low-precs
@@ -211,7 +211,7 @@
     =+  nel=(~(uni by locals.u.tal) pes)
     =.  +>.$
       ?:  =(locals.u.tal nel)  +>.$
-      sh-abet:(~(sh-low-precs sh ~ cli man) locals.u.tal nel)
+      sh-abet:(~(sh-low-precs sh cli man) locals.u.tal nel)
     +>.$(tales (~(put by tales) man u.tal(locals nel)))
   ::
   ++  ra-low-rempe
@@ -220,7 +220,7 @@
     =+  ner=(~(uni by remotes) pas)  ::TODO  better uni.
     ?:  =(remotes ner)  +>.$
     =.  remotes  ner
-    sh-abet:(~(sh-low-rempe sh ~ cli (main our.hid)) remotes ner)
+    sh-abet:(~(sh-low-rempe sh cli (main our.hid)) remotes ner)
   ::
   ++  ra-low-grams
     ::x  apply new grams
@@ -229,7 +229,7 @@
     ^+  +>
     =+  tal=(~(get by tales) man)
     ?~  tal  ~&([%know-no-tale man] +>.$)
-    =.  +>.$  sh-abet:(~(sh-low-grams sh ~ cli man) num gams)
+    =.  +>.$  sh-abet:(~(sh-low-grams sh cli man) num gams)
     pa-abet:(~(pa-lesson pa man u.tal) gams)
   ::
   ++  ra-emil                                           ::  ra-emit move list
@@ -252,7 +252,7 @@
     ?.  =(id.cli ost.hid)
       ~&  %strange-sole
       !!
-    sh-abet:(~(sh-sole sh ~ cli (main our.hid)) act)
+    sh-abet:(~(sh-sole sh cli (main our.hid)) act)
   ::
   ++  ra-console
     ::x  make a shell for her.
@@ -268,7 +268,7 @@
       ==
     =/  she/shell
       %*(. *shell id ost.hid, active (sy [%& our.hid man] ~))
-    sh-abet:~(sh-prod sh ~ she man)
+    sh-abet:~(sh-prod sh she man)
   ::
   ++  ra-init
     ::x  populate state on first boot. subscribes to our broker.
@@ -363,13 +363,10 @@
     ::x  track of settings and other frontend state.
     ::x  important arms include ++sh-repo which is used to apply reports, and
     ::x  ++sh-sole which gets called upon cli prompt interaction.
-    ::x  any talk commands the core's arms want to have executed get put into
-    ::x  coz. the stored commands get applied upon calling ++sh-abet.
     ::
-    |_  $:  ::x  coz: talk commands storage, applied by ++sh-abet.
-            ::x  she: console session state used in this core.
+    |_  $:  ::x  she: console session state used in this core.
+            ::x  man: our mailbox
             ::
-            coz/(list command)
             she/shell
             man/knot
         ==
@@ -531,22 +528,10 @@
         ==
       --
     ++  sh-abet
-      ::x  applies talk commands (in reverse order, because ++sh-tell adds them
-      ::x  to coz as [new coz], but you want to apply them in the order
-      ::x  [coz new]). produces an updated context for the ++sh core.
+      ::x  stores changes to the cli.
       ::
       ^+  +>  ::x  points to ++sh's |_ core's context.
-      %.  %-  flop
-        %+  turn  coz
-        |=  c/command
-        ^-  move
-        :*  ost.hid
-            %poke
-            /reader/command
-            (broker our.hid)
-            [%talk-command c]
-        ==
-      ra-emil(cli she)
+      +>(cli she)
     ::
     ++  sh-fact                                         ::  send console effect
       ::x  adds a console effect to ++ra's moves.
@@ -554,6 +539,22 @@
       |=  fec/sole-effect
       ^+  +>
       +>(moves :_(moves [id.she %diff %sole-effect fec]))
+    ::
+    ++  sh-tell                                         ::  add command
+      ::x  adds talk command to ++ra's moves.
+      ::
+      |=  cod/command
+      ^+  +>
+      %=  +>
+          moves
+        :_  moves
+        :*  ost.hid
+            %poke
+            /reader/command
+            (broker our.hid)
+            [%talk-command cod]
+        ==
+      ==
     ::
     ++  sh-action
       ::x  adds a talk-action to ++ra's moves
@@ -1080,12 +1081,6 @@
       %+  turn  (~(tap in active.she))
       |=(a/partner [a *envelope %pending])
     ::
-    ++  sh-tell                                         ::  add command
-      ::x  adds talk command to core state. these get applied with ++sh-abet.
-      ::
-      |=  cod/command
-      %_(+> coz [cod coz])
-    ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
       ::x  makes a vase of environment data to evaluate against (#-messages).
       ::
@@ -1341,7 +1336,7 @@
       ++  say                                           ::  publish
         |=  sep/(list speech)
         ^+  ..sh-work
-        =-  ..sh-work(coz ?~(tot coz :_(coz [%publish tot])))
+        =-  (sh-tell [%publish tot])
         |-  ^-  tot/(list thought)
         ?~  sep  ~
         =^  sir  ..sh-work  sh-uniq
