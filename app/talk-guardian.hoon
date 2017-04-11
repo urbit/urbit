@@ -210,13 +210,8 @@
         $create
       ~&(%talk-action-create !!)
         $permit
-      =+  soy=(~(get by stories) p.act)
-      ?~  soy
-        %+  ra-react  red
-        [%fail (crip (weld "no story " (trip p.act))) `act]
-      pa-abet:(~(pa-permit pa p.act ~ u.soy) q.act r.act)
-        $say
-      ~&(%talk-action-say !!)
+      %-  (ra-affect p.act red `act)  |=  par/_pa  =<  pa-abet
+      (pa-permit:par q.act r.act)
     ==
   ::
   ++  ra-update
@@ -387,6 +382,19 @@
       ~&  [%ra-know-not man]                            ::  XX should crash
       +>+>.$
     ::x  call the sample gate with a ++pa core.
+    (fun ~(. pa man ~ u.pur))
+  ::
+  ++  ra-affect
+    ::x  attempt to retrieve a story and call a sample gate with it.
+    ::x  if no such story, react.
+    ::
+    |=  {man/knot red/bone act/(unit action)}
+    |*  fun/$-(_pa _+>)
+    ^+  +>+>
+    =+  pur=(~(get by stories) man)
+    ?~  pur
+      %+  ra-react  red
+      [%fail (crip (weld "no story " (trip man))) act]
     (fun ~(. pa man ~ u.pur))
   ::
   ++  ra-diff-talk-report                               ::  subscription update
