@@ -12,7 +12,8 @@
 ::TODO  maybe keep track of received grams per partner, too?
 ::
 ::x  This reader implementation makes use of the mailbox for all its
-::x  subscriptions and messaging.
+::x  subscriptions and messaging. All lowdowns received are exclusively about
+::x  the mailbox, since that's the only thing the reader ever subscribes to.
 ::
 /?    310                                               ::  hoon version
 /-    talk, sole                                        ::  structures
@@ -191,22 +192,20 @@
     ==
   ::
   ++  ra-low-confs
-    |=  cofs/(map station (unit config))
+    |=  {coy/(unit config) cofs/(map station (unit config))}
     ^+  +>
     ::x  if possible, update sources. if we do, and we gain new ones, update
     ::x  the prompt. (this is to remove the mailbox from the audience after
     ::x  creating or joining a new station.)
-    =.  +>
-      =+  cof=(fall (~(get by cofs) [our.hid (main our.hid)]) ~)
-      ?~  cof  +>.$
-      =.  +>.$  ::TODO  =?
-        ?~  (~(dif in sources.u.cof) sources)  +>.$
-        =<  sh-abet
-        %-  ~(sh-pact sh(sources sources.u.cof) cli (main our.hid))
-        (~(dif in sources.u.cof) sources)
-      =.  sources  sources.u.cof
-      +>.$
-    =.  +>
+    ?~  coy  ~&(%mailbox-deleted !!)
+    =.  +>  ::TODO  =?
+      ?~  (~(dif in sources.u.coy) sources)  +>.$
+      =<  sh-abet
+      %-  ~(sh-pact sh(sources sources.u.coy) cli (main our.hid))
+      (~(dif in sources.u.coy) sources)
+    =.  sources  sources.u.coy
+    =.  cofs  (~(put by cofs) [our.hid (main our.hid)] coy)
+    =.  +>.$
       =<  sh-abet
       %+  roll  (~(tap by cofs))
       |=  {{s/station c/(unit config)} core/_sh}
@@ -224,19 +223,18 @@
     +>.$
   ::
   ++  ra-low-precs
-    |=  pas/(map partner atlas)
+    |=  {tas/atlas pas/(map partner atlas)}
     ^+  +>
     =+  ner=(~(uni by remotes) pas)  ::TODO  per-partner uni.
     ?:  =(remotes ner)  +>.$
-    =.  remotes  ner
-    sh-abet:(~(sh-low-rempe sh cli (main our.hid)) remotes ner)
+    =.  +>.$  sh-abet:(~(sh-low-rempe sh cli (main our.hid)) remotes ner)
+    +>.$(remotes ner)
   ::
   ++  ra-low-grams
     ::x  apply new grams
     ::
-    |=  {man/knot num/@ud gams/(list telegram)}
+    |=  {num/@ud gams/(list telegram)}
     ^+  +>
-    ?.  =(man (main our.hid))  ~&([%unexpected-grams man] +>)
     =.  +>.$  sh-abet:(~(sh-low-grams sh cli (main our.hid)) num gams)
     (ra-lesson gams)
   ::
@@ -285,9 +283,9 @@
     %-  ra-emit
     :*  ost.hid
         %peer
-        /
+        /                       ::x  return/diff path
         (broker our.hid)
-        /reader/(main our.hid)
+        /reader/(main our.hid)  ::x  peer path
     ==
   ::
   ++  ra-lesson                                       ::  learn multiple
@@ -1784,6 +1782,9 @@
 ::
 ++  diff-talk-lowdown
   ::x  incoming talk-lowdown. process it.
+  ::x  we *could* use the wire to identify what story subscription our lowdown
+  ::x  is coming from, but since we only ever subscribe to a single story, we
+  ::x  don't bother.
   ::
   |=  {way/wire low/lowdown}
   ra-abet:(ra-low:ra low)

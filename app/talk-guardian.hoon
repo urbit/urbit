@@ -11,8 +11,6 @@
 ::TODO  maybe ensure every arm has a mini-description at :57 too?
 ::TODO  maybe prefix all printfs and other errors with %talk?
 ::
-::TODO  put remotes and mirrors back into stories.
-::
 ::TODO  do permission checks for the whole team instead of just a ship, maybe?
 ::TODO  sending remotes and mirrors alongside locals and shape no longer makes
 ::      any sense, does it?
@@ -33,8 +31,6 @@
 =>  |%                                                  ::  data structures
     ++  house                                           ::  broker state
       $:  stories/(map knot story)                      ::  conversations
-          remotes/(map partner atlas)                   ::  remote presence
-          mirrors/(map station config)                  ::  remote config
           ::TODO  rename to readers?
           general/(map bone (set knot))                 ::  our message readers
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
@@ -47,8 +43,11 @@
       $:  count/@ud                                     ::  (lent grams)
           grams/(list telegram)                         ::  all history
           locals/atlas                                  ::  local presence
-          sequence/(map partner @ud)                    ::  partners heard
+          remotes/(map partner atlas)                   ::  remote presence
           shape/config                                  ::  configuration
+          mirrors/(map station config)                  ::  remote config
+          ::TODO  never gets updated.                   ::
+          sequence/(map partner @ud)                    ::  partners heard
           known/(map serial @ud)                        ::  messages heard
           followers/(map bone river)                    ::  subscribers
       ==                                                ::
@@ -505,21 +504,23 @@
     =.  +>.$  ::TODO  =?
       ?:  (~(has by general) new)  +>.$
       %-  ra-emil
-      :~  ::x  remote configurations
-          [new %diff %talk-lowdown %confs (~(run by mirrors) some)]
-          ::x  remote presences
-          [new %diff %talk-lowdown %precs remotes]
-          ::x  bound glyphs
+      :~  ::x  bound glyphs
           [new %diff %talk-lowdown %glyph nak]
           ::x  nicknames
           [new %diff %talk-lowdown %names (~(run by folks) some)]
       ==
     =.  +>.$  ::TODO  =?
       ?.  (~(has by stories) sor)  +>.$
-      %-  ra-emit
-      ::x  messages
-      :*  new  %diff  %talk-lowdown  %grams  sor  0
-        grams:(~(got by stories) sor)
+      =+  soy=(~(got by stories) sor)
+      %-  ra-emil
+      :~  ::x  configurations
+          :*  new  %diff  %talk-lowdown  %confs
+            `shape.soy  (~(run by mirrors.soy) some)
+          ==
+          ::x  presences
+          [new %diff %talk-lowdown %precs locals.soy remotes.soy]
+          ::x  messages
+          [new %diff %talk-lowdown %grams 0 grams.soy]
       ==
     %=  +>.$
         general
@@ -690,7 +691,7 @@
           %+  murn  (~(tap by general))
           |=  {b/bone s/(set knot)}
           ^-  (unit move)
-          ?:  &(=(%grams -.low) !(~(has in s) man))  ~
+          ?.  (~(has in s) man)  ~
           `[b %diff %talk-lowdown low]
         moves
       +>.$
@@ -728,7 +729,7 @@
       =+  old=mirrors
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)  +>.$
-      =.  +>.$  (pa-inform %confs (strap cuz `con))
+      =.  +>.$  (pa-inform %confs `shape (strap cuz `con))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
@@ -753,8 +754,7 @@
       ^+  +>
       ?.  (~(has in sources.shape) tay)  +>
       =.  sources.shape  (~(del in sources.shape) tay)
-      =.  mirrors  (~(put by mirrors) [our.hid man] shape)
-      =.  +>  (pa-inform %confs (strap [our.hid man] `shape))
+      =.  +>  (pa-inform %confs `shape ~)
       (pa-report-cabal pa-followers)
     ::
     ++  pa-sauce                                        ::  send backward
@@ -789,7 +789,7 @@
       ==
     ::
     ++  pa-acquire                                      ::  subscribe to
-      ::x  for each partner, produce a %peer/subscribe move.
+      ::x  subscribe this story to the partners.
       ::
       |=  tal/(list partner)
       %+  pa-sauce  0  ::x  subscription is caused by this app
@@ -817,7 +817,7 @@
       ::x  partners we gained/lost, and send out an updated cabal report.
       ::
       |=  cof/config
-      =.  +>.$  (pa-inform %confs (strap [our.hid man] `cof))
+      =.  +>.$  (pa-inform %confs `cof ~)
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
           =+  old=`(list partner)`(~(tap in sources.shape) ~)
           =+  new=`(list partner)`(~(tap in sources.cof) ~)
@@ -826,13 +826,11 @@
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
-      =.  mirrors  (~(put by mirrors) [our.hid man] cof)
       (pa-report-cabal pa-followers)
     ::
     ++  pa-reform-gone
       =.  stories  (~(del by stories) man)
-      =.  mirrors  (~(del by mirrors) [our.hid man])
-      =.  .  (pa-inform %confs (strap [our.hid man] ~))
+      =.  .  (pa-inform %confs ~ ~)
       =.  .  (pa-report-cabal pa-followers)
       (pa-abjure (~(tap in sources.shape)))
     ::
@@ -849,8 +847,7 @@
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
-      =.  +>.$  (pa-inform %precs (strap [%& our.hid man] (strap her saz)))
-      =/  ner  (~(put by remotes) [%& our.hid man] nol)
+      =.  +>.$  (pa-inform %precs (strap her saz) ~)
       (pa-report-group(locals nol) pa-followers)
     ::
     ++  pa-remind                                       ::  remote presence
@@ -863,7 +860,7 @@
       =/  buk  (~(uni by remotes) rem)  ::TODO  drop?
       =.  buk  (~(put by buk) tay loc)
       ?:  =(buk remotes)  +>.$
-      =.  +>.$  (pa-inform %precs (~(dif in buk) remotes))
+      =.  +>.$  (pa-inform %precs ~ (~(dif in buk) remotes))
       (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream
@@ -933,7 +930,7 @@
       |=  {num/@ud gam/telegram}
       ^+  +>
       ::x  notify the interested readers.
-      =.  +>  (pa-inform %grams man num gam ~)
+      =.  +>  (pa-inform %grams num gam ~)
       ::x  notify only the followers who are currently interested.
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))

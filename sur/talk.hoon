@@ -56,26 +56,27 @@
   $?  $black                                            ::  channel, blacklist
       $white                                            ::  village, whitelist
       $green                                            ::  journal, author list
-      $brown                                            ::  mailbox, our + black
+      $brown                                            ::  mailbox, our r, bl w
   ==                                                    ::
 ++  presence   ?($gone $hear $talk)                     ::  status type
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
 ++  shelf  (map knot (pair posture cord))               ::  ship shape
 ++  report                                              ::  talk update
-  $%  {$cabal cabal}                                    ::  config neighborhood
+  $%  ::  relevant story is determined from wire: reader responsibility.
+      {$cabal cabal}                                    ::  config neighborhood
   ::  {$folder (list report)}                           ::  multiple
       {$grams (pair @ud (list telegram))}               ::  beginning thoughts
       {$group register}                                 ::  presence
   ==                                                    ::
 ++  lowdown                                             ::  changed shared state
-  ::TODO  change these so that they're always just the diff?
-  ::      re-check existing implementations too!
-  ::      this will aid with ++sh's printing.
-  $%  {$glyph (jug char (set partner))}                 ::  new bindings
+  $%  ::  ui state
+      {$glyph (jug char (set partner))}                 ::  new bindings
       {$names (map ship (unit human))}                  ::  new identities
-      {$confs (map station (unit config))}              ::  changed configs
-      {$precs (map partner atlas)}                      ::  changed presences
-      {$grams (trel knot @ud (list telegram))}          ::  new grams
+      ::  story state
+      ::  relevant story is determined from wire: reader responsibility.
+      {$confs (unit config) (map station (unit config))}::  changed configs
+      {$precs register}                                 ::  changed presences
+      {$grams (pair @ud (list telegram))}               ::  new grams
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce
