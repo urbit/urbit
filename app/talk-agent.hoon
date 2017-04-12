@@ -8,6 +8,9 @@
 ::TODO  maybe collapse sources, remotes and mirrors into a single map?
 ::TODO  maybe keep track of received grams per partner, too?
 ::
+::x  This reader implementation makes use of the mailbox for all its
+::x  subscriptions and messaging.
+::
 /?    310                                               ::  hoon version
 /-    talk, sole                                        ::  structures
 /+    talk, sole, time-to-id, twitter                   ::  libraries
@@ -205,8 +208,9 @@
   ++  ra-low-grams
     ::x  apply new grams
     ::
-    |=  {num/@ud gams/(list telegram)}
+    |=  {man/knot num/@ud gams/(list telegram)}
     ^+  +>
+    ?.  =(man (main our.hid))  ~&([%unexpected-grams man] +>)
     =.  +>.$  sh-abet:(~(sh-low-grams sh cli (main our.hid)) num gams)
     (ra-lesson gams)
   ::
@@ -257,7 +261,7 @@
         %peer
         /
         (broker our.hid)
-        /
+        /reader/(main our.hid)
     ==
   ::
   ++  ra-lesson                                       ::  learn multiple

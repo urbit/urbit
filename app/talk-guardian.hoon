@@ -34,7 +34,7 @@
           remotes/(map partner atlas)                   ::  remote presence
           mirrors/(map station config)                  ::  remote config
           ::TODO  rename to readers?
-          general/(set bone)                            ::  our message readers
+          general/(map bone (set knot))                 ::  our message readers
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
           log/(map knot @ud)                            ::  logged to clay
           folks/(map ship human)                        ::  human identities
@@ -189,8 +189,8 @@
     ::
     |=  low/lowdown
     %-  ra-emil
-    %-  ~(rep in general)
-    |=  {b/bone l/(list move)}
+    %-  ~(rep by general)
+    |=  {{b/bone *} l/(list move)}
     [[b %diff %talk-lowdown low] l]
   ::
   ++  ra-react
@@ -444,7 +444,7 @@
     ^+  +>
     ?.  ?=({@ @ *} pax)
       ::x  if story is not in path, just delete the bone from general.
-      +>(general (~(del in general) ost.hid))
+      +>(general (~(del by general) ost.hid))
     %-  (ra-know i.pax)  |=  par/_pa  =<  pa-abet
     ::x  delete bone from all follower groups and set src's status to %gone.
     (pa-notify:pa-cancel:par src %gone *human)
@@ -467,14 +467,15 @@
     |=  {her/ship pax/path}
     ^+  +>
     ::x  empty path, meta-subscribe and send report with all our stories.
-    ?:  ?=($~ pax)
+    ~&  [%b-ra-subscribe-path pax]
+    ?:  ?=({$reader *} pax)
       ?.  (team our.hid her)
         ~&  [%foreign-reader her]
         +>
-      (ra-welcome(general (~(put in general) ost.hid)) ost.hid)
-    ::?.  ?=({@ *} pax)
-    ::  (ra-evil %talk-bad-path)
-    ::TODO  ^ mint-vains?
+      ~&  [%b-subscribed-reader ost.hid]
+      (ra-welcome ost.hid t.pax)
+    ?.  ?=({@ *} pax)
+      (ra-evil %talk-bad-path)
     =+  pur=(~(get by stories) i.pax)
     ?~  pur
       ~&  [%bad-subscribe-story-c i.pax]
@@ -495,22 +496,35 @@
     pa-abet:soy
   ::
   ++  ra-welcome
-    ::x  brings reader new up to date.
+    ::x  brings new reader up to date. susbcribes it to the specified story.
     ::
-    |=  new/bone
-    %-  ra-emil
-    :~  ::x  remote configurations
-        [new %diff %talk-lowdown %confs (~(run by mirrors) some)]
-        ::x  remote presences
-        [new %diff %talk-lowdown %precs remotes]
-        ::x  bound glyphs
-        [new %diff %talk-lowdown %glyph nak]
-        ::x  nicknames
-        [new %diff %talk-lowdown %names (~(run by folks) some)]
-        ::x  messages
-        :*  new  %diff  %talk-lowdown  %grams  0
-          grams:(~(got by stories) (main our.hid))
-        ==
+    |=  {new/bone pax/path}
+    =/  sor/knot
+      ?:  ?=({@tas *} pax)  i.pax
+      (main our.hid)                                    ::  default to mailbox
+    =.  +>.$  ::TODO  =?
+      ?:  (~(has by general) new)  +>.$
+      %-  ra-emil
+      :~  ::x  remote configurations
+          [new %diff %talk-lowdown %confs (~(run by mirrors) some)]
+          ::x  remote presences
+          [new %diff %talk-lowdown %precs remotes]
+          ::x  bound glyphs
+          [new %diff %talk-lowdown %glyph nak]
+          ::x  nicknames
+          [new %diff %talk-lowdown %names (~(run by folks) some)]
+      ==
+    =.  +>.$  ::TODO  =?
+      ?.  (~(has by stories) sor)  +>.$
+      %-  ra-emit
+      ::x  messages
+      :*  new  %diff  %talk-lowdown  %grams  sor  0
+        grams:(~(got by stories) sor)
+      ==
+    %=  +>.$
+        general
+      %+  ~(put by general)  new
+      (~(put in (fall (~(get by general) new) ~)) sor)
     ==
   ::
   ++  ra-think                                          ::  publish+review
@@ -667,16 +681,18 @@
       (pa-sauce n.wac [%diff %talk-report caw]~)
     ::
     ++  pa-inform
-      ::x  sends lowdown to all readers.
+      ::x  sends lowdown to all interested readers.
       ::
       |=  low/lowdown
       =.  moves
-        |-  ^-  (list move)
-        ?~  general  moves
-        =+  lef=$(general l.general)
-        =+  rit=$(general r.general)
-        :_  (welp lef rit)
-        [n.general %diff %talk-lowdown low]
+        %+  weld
+          ^-  (list move)
+          %+  murn  (~(tap by general))
+          |=  {b/bone s/(set knot)}
+          ^-  (unit move)
+          ?:  &(=(%grams -.low) !(~(has in s) man))  ~
+          `[b %diff %talk-lowdown low]
+        moves
       +>.$
     ::
     ++  pa-remotes
@@ -918,10 +934,8 @@
       ::
       |=  {num/@ud gam/telegram}
       ^+  +>
-      ::x  notify all of our readers.
-      =.  +>  ::TODO  =?
-        ?.  =(man (main our.hid))  +>
-        (pa-inform %grams num gam ~)
+      ::x  notify the interested readers.
+      =.  +>  (pa-inform %grams man num gam ~)
       ::x  notify only the followers who are currently interested.
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
