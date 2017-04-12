@@ -11,6 +11,9 @@
 ::TODO  maybe ensure every arm has a mini-description at :57 too?
 ::TODO  maybe prefix all printfs and other errors with %talk?
 ::
+::TODO  put remotes and mirrors back into stories.
+::
+::TODO  do permission checks for the whole team instead of just a ship, maybe?
 ::TODO  sending remotes and mirrors alongside locals and shape no longer makes
 ::      any sense, does it?
 ::TODO  crash on pokes/peers we do not expect
@@ -28,9 +31,8 @@
 ::x  so we can do some-arm instead of some-arm:talk.
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house                                           ::
+    ++  house                                           ::  broker state
       $:  stories/(map knot story)                      ::  conversations
-          ::TODO  maybe also store locals/shapes for easier syncing with readers
           remotes/(map partner atlas)                   ::  remote presence
           mirrors/(map station config)                  ::  remote config
           ::TODO  rename to readers?
@@ -467,12 +469,10 @@
     |=  {her/ship pax/path}
     ^+  +>
     ::x  empty path, meta-subscribe and send report with all our stories.
-    ~&  [%b-ra-subscribe-path pax]
     ?:  ?=({$reader *} pax)
       ?.  (team our.hid her)
         ~&  [%foreign-reader her]
         +>
-      ~&  [%b-subscribed-reader ost.hid]
       (ra-welcome ost.hid t.pax)
     ?.  ?=({@ *} pax)
       (ra-evil %talk-bad-path)
@@ -706,7 +706,7 @@
       ?~  soy  atl
       locals.u.soy
     ::
-    ++  pa-report-group                                  ::  update presence
+    ++  pa-report-group                                 ::  update presence
       ::x  build a group report, containing our different presence maps, and
       ::x  send it to all bones.
       ::x  we send remote presences to facilitate federation. aka "relay"
@@ -723,13 +723,12 @@
     ++  pa-cabal
       ::x  add station's config to our remote config map.
       ::
-      ::TODO  if web frontend doesn't use ham, remove it (also from sur/talk)
       |=  {cuz/station con/config ham/(map station config)}
       ^+  +>
       =+  old=mirrors
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)  +>.$
-      =.  +>.$  (pa-inform %confs (~(run by mirrors) some))
+      =.  +>.$  (pa-inform %confs (strap cuz `con))
       (pa-report-cabal pa-followers)
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
@@ -805,8 +804,7 @@
       =+  ini=?^(num (scot %ud u.num) (scot %da old))
       ?-  -.tay
         $|  !!
-        $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
-            :_  ~
+        $&  :_  ~
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk-guardian]
@@ -851,7 +849,7 @@
       ^+  +>
       =/  nol  (~(put by locals) her saz)
       ?:  =(nol locals)  +>.$
-      =.  +>.$  (pa-inform %precs (strap [%& our.hid man] nol))
+      =.  +>.$  (pa-inform %precs (strap [%& our.hid man] (strap her saz)))
       =/  ner  (~(put by remotes) [%& our.hid man] nol)
       (pa-report-group(locals nol) pa-followers)
     ::
@@ -865,7 +863,7 @@
       =/  buk  (~(uni by remotes) rem)  ::TODO  drop?
       =.  buk  (~(put by buk) tay loc)
       ?:  =(buk remotes)  +>.$
-      =.  +>.$  (pa-inform %precs buk)
+      =.  +>.$  (pa-inform %precs (~(dif in buk) remotes))
       (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream
@@ -1062,9 +1060,7 @@
           q.cordon
         %.  sis
         ?:  add
-          ~&  [%new-shape (~(uni in q.cordon.shape) sis)]
           ~(uni in q.cordon.shape)
-        ~&  [%new-shape (~(dif in q.cordon.shape) sis)]
         ~(dif in q.cordon.shape)
       ==
     --
@@ -1074,7 +1070,6 @@
   ::x  incoming subscription on pax.
   ::
   |=  pax/path
-  ~&  [%b-peer pax src.hid ost.hid]
   ^+  [*(list move) +>]
   ~?  !(team src.hid our.hid)  [%peer-talk-stranger src.hid]
   ?:  ?=({$sole *} pax)  ~&(%broker-no-sole !!)

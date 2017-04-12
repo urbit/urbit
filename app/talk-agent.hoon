@@ -4,7 +4,10 @@
 ::
 ::TODO  guardian's todo's apply here too
 ::TODO  rename cores. pa->ta (transaction), ta->pa (partner), etc.
+::TODO  make sure glyphs get unbound when joins etc don't succeed.
+::TODO  correct/clean up presence/config change notifications
 ::
+::TODO  remove man from door sample where it's always (main our.hid).
 ::TODO  maybe collapse sources, remotes and mirrors into a single map?
 ::TODO  maybe keep track of received grams per partner, too?
 ::
@@ -203,11 +206,21 @@
         (~(dif in sources.u.cof) sources)
       =.  sources  sources.u.cof
       +>.$
+    =.  +>
+      =<  sh-abet
+      %+  roll  (~(tap by cofs))
+      |=  {{s/station c/(unit config)} core/_sh}
+      (~(sh-low-config core cli (main our.hid)) s (~(get by mirrors) s) c)
     ::TODO  fix sh-low-remco to print properly.
     ::TODO  actually delete ~ configs.
-    =/  cogs/_mirrors  (~(run by cofs) |=(a/(unit config) (fall a *config)))
-    =.  +>.$  sh-abet:(~(sh-low-remco sh cli (main our.hid)) mirrors cogs)
-    =.  mirrors  (~(uni by mirrors) cogs)
+    ::=/  cogs/_mirrors  (~(run by cofs) |=(a/(unit config) (fall a *config)))
+    ::=.  +>.$  sh-abet:(~(sh-low-remco sh cli (main our.hid)) mirrors cogs)
+    =.  mirrors
+      %-  ~(gas by *_mirrors)
+      %+  murn  (~(tap by cofs))
+      |=  {s/station c/(unit config)}
+      ^-  (unit (pair station config))
+      ?~(c ~ `[s u.c])
     +>.$
   ::
   ++  ra-low-precs
@@ -775,9 +788,13 @@
     ++  sh-low-config
       ::x  prints changes to a config to cli.
       ::
-      |=  {old/config new/config}
+      |=  {sat/station old/(unit config) new/(unit config)}
       ^+  +>
-      (sh-low-config-show "" old new)
+      ?~  old  ~&([%new-conf sat] +>)
+      ?~  new  ~&([%del-conf sat] +>)  ::TODO  tmp
+      %^  sh-low-config-show
+        (weld ~(sn-phat sn man sat) ": ")
+      u.old  u.new
     ::
     ++  sh-low-remco
       ::x  prints changes to remote configs to cli.
@@ -1275,6 +1292,7 @@
       ++  probe                                         ::  inquire
         |=  cuz/station
         ^+  ..sh-work
+        ::TODO?  what's this?
         ~&  [%probe cuz]
         ..sh-work
       ::
