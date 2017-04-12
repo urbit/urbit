@@ -190,6 +190,19 @@
   ++  ra-low-confs
     |=  cofs/(map station (unit config))
     ^+  +>
+    ::x  if possible, update sources. if we do, and we gain new ones, update
+    ::x  the prompt. (this is to remove the mailbox from the audience after
+    ::x  creating or joining a new station.)
+    =.  +>
+      =+  cof=(fall (~(get by cofs) [our.hid (main our.hid)]) ~)
+      ?~  cof  +>.$
+      =.  +>.$  ::TODO  =?
+        ?~  (~(dif in sources.u.cof) sources)  +>.$
+        =<  sh-abet
+        %-  ~(sh-pact sh(sources sources.u.cof) cli (main our.hid))
+        (~(dif in sources.u.cof) sources)
+      =.  sources  sources.u.cof
+      +>.$
     ::TODO  fix sh-low-remco to print properly.
     ::TODO  actually delete ~ configs.
     =/  cogs/_mirrors  (~(run by cofs) |=(a/(unit config) (fall a *config)))
