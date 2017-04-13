@@ -1750,6 +1750,7 @@
   ==
 ::
 ++  fo                                                  ::  modulo prime
+  ^?
   |_  a/@
   ++  dif
     |=  {b/@ c/@}
@@ -1786,6 +1787,7 @@
   --
 ::
 ++  si                                                  ::  signed integer
+  ^?
   |%
   ++  abs  |=(a/@s (add (end 0 1 a) (rsh 0 1 a)))       ::  absolute value
   ++  dif  |=  {a/@s b/@s}                              ::  subtraction
@@ -2428,6 +2430,7 @@
 ++  rylq  |=  a/dn  ^-  @rq  (grd:rq a)                 ::  finish parsing @rq
 ::
 ++  rd                                                  ::  double precision fp
+  ^?
   ~%  %rd  +>  ~
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
@@ -2506,6 +2509,7 @@
 ::
 ++  rs                                                  ::  single precision fp
   ~%  %rs  +>  ~
+  ^?
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -2584,6 +2588,7 @@
 ::
 ++  rq                                                  ::  quad precision fp
   ~%  %rq  +>  ~
+  ^?
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -2662,6 +2667,7 @@
 ::
 ++  rh                                                  ::  half precision fp
   ~%  %rh  +>  ~
+  ^?
   |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
