@@ -6,9 +6,7 @@
 ++  atlas  (map ship status)                            ::  presence map
 ++  bouquet  (set flavor)                               ::  complete aroma
 ++  command                                             ::  effect on party
-  $%  {$design (pair knot (unit config))}               ::  configure+destroy
-      {$publish (list thought)}                         ::  originate
-      {$review (list thought)}                          ::  deliver
+  $%  {$review (list thought)}                          ::  deliver
   ==                                                    ::
 ++  action                                              ::  user action
   $%  ::  station configuration                         ::

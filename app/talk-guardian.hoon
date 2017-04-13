@@ -152,10 +152,8 @@
           [%green ~.public 'visible activity']
       ==
     |:  [[typ=*posture man=*knot des=*cord] ..ra-init]  ^+  ..ra-init
-    %+  ra-apply  our.hid
-    :+  %design  man
-    :-  ~  :-  ~
-    [des [typ ~]]
+    %+  ra-action  ost.hid
+    [%create man des typ]
   ::
   ++  ra-apply                                          ::  apply command
     ::x  applies the command sent by her.
@@ -163,26 +161,8 @@
     |=  {her/ship cod/command}
     ^+  +>
     ?-    -.cod
-      ::x  the $design command is used for modifying channel configs,
-      ::x  which is done when joining, leaving or creating channels.
-      ::x  this may only be done by ourselves.
-        $design
-      ?.  (team our.hid her)
-        (ra-evil %talk-no-owner)
-      ?~  q.cod
-        ?.  (~(has by stories) p.cod)
-          (ra-evil %talk-no-story)
-        ::x  $design with ~ for config signals delete
-        (ra-unconfig p.cod)
-      (ra-config p.cod u.q.cod)
-    ::
       ::x  used for relaying messages (as a station host).
         $review   (ra-think | her +.cod)
-    ::
-      ::x  used for sending messages (as their author).
-        $publish
-      ?.  (team our.hid her)  +>.$
-      (ra-think & her +.cod)
     ==
   ::
   ++  ra-inform                                         ::x  new lowdown
@@ -320,12 +300,9 @@
       (ra-consume-fora-post man pax hed txt)
     ::x  if we have no %posts story, first create it, then consume.
     =;  new  (ra-consume-fora-post:new man pax hed txt)
-    =.  ..ra-apply
-      %+  ra-apply  our.hid
-      :+  %design  man
-      :-  ~  :-  ~               ::x  sources
-      :-  'towards a community'  ::x  caption
-      [%brown ~]                 ::x  cordon
+    =.  ..ra-action
+      %+  ra-action  ost.hid
+      [%create man 'towards a community' %brown]
     ::x  send informative message to our mailbox.
     %^  ra-consume  &  our.hid
     :^    (shaf %init eny.hid)  ::x  serial
@@ -366,12 +343,9 @@
     ?:  (~(has by stories) man)
       (ra-consume-comment man pax sup txt)
     =;  new  (ra-consume-comment:new man pax sup txt)
-    =.  ..ra-apply
-      %+  ra-apply  our.hid
-      :+  %design  man
-      :-  ~  :-  ~
-      :-  'letters to the editor'
-      [%brown ~]
+    =.  ..ra-action
+      %+  ra-action  ost.hid
+      [%create man 'letters to the editor' %brown]
     %^  ra-consume  &  our.hid
     :^    (shaf %init eny.hid)
         (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
@@ -508,7 +482,7 @@
     ?~  pur
       ~&  [%bad-subscribe-story-c i.pax]
       (ra-evil %talk-no-story)
-    =+  soy=~(. pa i.pax `(list command)`~ u.pur)  ::TODO  nest-fail if no cast
+    =+  soy=~(. pa i.pax `(list action)`~ u.pur)  ::TODO  nest-fail if no cast
     ::x  she needs read permissions to subscribe.
     ?.  (pa-visible:soy her)
       (ra-evil %talk-no-story)
@@ -641,11 +615,11 @@
     ::x  bones are used to identify subscribers (source event identifiers).
     ::
     |_  ::x  man: the knot identifying the story in stories.
-        ::x  coz: talk commands issued due to changes.
+        ::x  acs: talk actions issued due to changes.
         ::x  story doesn't get a face because ease of use.
         ::
         $:  man/knot
-            coz/(list command)
+            acs/(list action)
             story
         ==
     ++  pa-abet
@@ -653,18 +627,18 @@
       ::
       ^+  +>
       =.  +>  +>(stories (~(put by stories) man `story`+<+>))
-      =.  coz  (flop coz)
+      =.  acs  (flop acs)
       |-  ^+  +>+
-      ?~  coz  +>+
-      =.  +>+  (ra-apply our.hid i.coz)
-      $(coz t.coz)
+      ?~  acs  +>+
+      =.  +>+  (ra-action ost.hid i.acs)
+      $(acs t.acs)
     ::
-    ++  pa-tell
-      ::x  stores a talk command.
+    ++  pa-act
+      ::x  stores a talk action.
       ::
-      |=  cod/command
+      |=  act/action
       ^+  +>
-      +>(coz [cod coz])
+      +>(acs [act acs])
     ::
     ++  pa-followers
       ^-  (set bone)
@@ -1071,16 +1045,12 @@
         =.  f  ?~  f  followers  f  ::TODO  =?
         (~(del by f) b)
       =.  +>.$
-        %-  pa-tell
-        :-  %publish
+        %-  pa-act
+        :-  %phrase
         %-  ~(rep in sis)
-        |=  {s/ship t/(list thought)}
-        :_  t
-        =^  sir  eny.hid  (uniq eny.hid)
-        :+  sir                                         ::  serial
-          [[[%& s (main s)] [*envelope %pending]] ~ ~]  ::  audience
-        :+  now.hid  ~                                  ::  statement
-        [%inv inv [our.hid man]]
+        |=  {s/ship a/(set partner) t/(list speech)}
+        :-  (~(put in a) [%& s (main s)])
+        [[%inv inv [our.hid man]] t]
       %-  pa-reform
       %=  shape
           q.cordon

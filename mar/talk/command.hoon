@@ -14,9 +14,7 @@
     =>  [jo ..command]
     |=  a/json  ^-  command
     =-  (need ((of -) a))
-    =<  :~  publish+(ar thot)
-            review+(ar thot)
-            design+(ot party+so config+(mu conf) ~)
+    =<  :~  review+(ar thot)
         ==
     |%
     ++  op                                              ::  parse keys of map
@@ -39,7 +37,6 @@
       |*  a/fist 
       (cu ~(gas in *(set _(need *a))) (ar a))
     ::
-    ++  lake  |*(a/_* $-(json (unit a)))
     ++  peach
       |*  a/{rule rule}
       |=  tub/nail  
@@ -71,7 +68,6 @@
       ^-  $-(json (unit audience))
       (op parn memb) 
     ::
-    ++  auri  (op parn (ci (soft presence) so))  
     ++  memb  (ot [envelope+lope delivery+(ci (soft delivery) so) ~])
     ++  lope  (ot [visible+bo sender+(mu (su parn)) ~])  
     ::
@@ -110,15 +106,6 @@
           mor+(ar spec)
           ::  exp+(cu |=(a=cord [a ~]) so)
           ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
-      ==
-    ::
-    ++  conf
-      ^-  $-(json (unit config))
-      %-  ot  :~
-        sources+(as (su parn))
-        caption+so
-        :-  %cordon
-        (ot posture+(ci (soft posture) so) list+(as (su fed:ag)) ~)
       ==
   --
 --  --

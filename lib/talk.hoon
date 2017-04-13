@@ -21,20 +21,17 @@
 ++  said-url                                            ::  app url
   |=  url/purl
   :^  ost.bol  %poke  /said-url
-  :+  [our.bol %talk]  %talk-command
-  ^-  command
-  :-  %publish
-  :_  ~
-  ^-  thought
-  :+  (shaf %thot eny.bol)
-    [[[%& our.bol (main our.bol)] [*envelope %pending]] ~ ~]
-  [now.bol *bouquet [%app dap.bol (crip (earn url))]]   :: XX
+  :+  [our.bol %talk]  %talk-action
+  ^-  action
+  :+  %phrase
+    [[%& our.bol (main our.bol)] ~ ~]
+  [%app dap.bol (crip (earn url))]~   :: XX
 ::
 ++  said                                                ::  app message
   |=  {our/@p dap/term now/@da eny/@uvJ mes/(list tank)}
-  :-  %talk-command
-  ^-  command
-  :-  %publish
+  :-  %talk-action
+  ^-  action
+  :-  %convey
   |-  ^-  (list thought)
   ?~  mes  ~
   :_  $(mes t.mes, eny (sham eny mes))
