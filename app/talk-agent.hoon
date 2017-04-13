@@ -511,22 +511,6 @@
       ^+  +>
       +>(moves :_(moves [id.she %diff %sole-effect fec]))
     ::
-    ++  sh-tell                                         ::  add command
-      ::x  adds talk command to ++ra's moves.
-      ::
-      |=  cod/command
-      ^+  +>
-      %=  +>
-          moves
-        :_  moves
-        :*  ost.hid
-            %poke
-            /reader/command
-            (broker our.hid)
-            [%talk-command cod]
-        ==
-      ==
-    ::
     ++  sh-action
       ::x  adds a talk-action to ++ra's moves
       ::
@@ -1047,14 +1031,6 @@
       |=  txt/tape
       (sh-fact [%txt txt])
     ::
-    ++  sh-whom                                         ::  current audience
-      ::x  produces the currently selected audience for this shell.
-      ::
-      ^-  audience
-      %-  ~(gas by *audience)
-      %+  turn  (~(tap in active.she))
-      |=(a/partner [a *envelope %pending])
-    ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
       ::x  makes a vase of environment data to evaluate against (#-messages).
       ::
@@ -1130,16 +1106,14 @@
           sh-prod(active.she pan)
         =+  loc=(~(got by mirrors) [our.hid man])
         ::x  change local mailbox config to include subscription to pan.
-        %^  sh-tell  %design  man
-        `loc(sources (~(uni in sources.loc) pan))
+        (sh-action %source man & pan)
       ::
       ++  leave                                          ::  %leave
         |=  pan/(set partner)
         ^+  ..sh-work
         =+  loc=(~(got by mirrors) [our.hid man])
         ::x  change local mailbox config to exclude subscription to pan.
-        %^  sh-tell  %design  man
-        `loc(sources (~(dif in sources.loc) pan))
+        (sh-action %source man | pan)
       ::
       ++  what                                          ::  %what
         |=  qur/$@(char (set partner))  ^+  ..sh-work
@@ -1303,11 +1277,7 @@
       ++  say                                           ::  publish
         |=  sep/(list speech)
         ^+  ..sh-work
-        =-  (sh-tell [%publish tot])
-        |-  ^-  tot/(list thought)
-        ?~  sep  ~
-        =^  sir  ..sh-work  sh-uniq
-        [[sir sh-whom [now.hid ~ i.sep]] $(sep t.sep)]
+        (sh-action %phrase active.she sep)
       --
     ::
     ++  sh-done                                         ::  apply result

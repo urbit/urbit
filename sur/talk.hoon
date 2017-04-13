@@ -14,6 +14,10 @@
   $%  ::  station configuration                         ::
       {$create (trel knot cord posture)}                ::  create station
       {$permit (trel knot ? (set ship))}                ::  invite/banish
+      {$source (trel knot ? (set partner))}             ::  un/sub p to/from r
+      ::  messaging                                     ::
+      {$convey (list thought)}                          ::  post exact
+      {$phrase (pair (set partner) (list speech))}      ::  post easy
       ::  personal metadata                             ::
       ::TODO  change to target partners, not only our stations.
       {$status (pair (set knot) status)}                ::  our status update

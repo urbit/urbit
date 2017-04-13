@@ -219,6 +219,35 @@
       %-  (ra-affect p.act red `act)  |=  par/_pa  =<  pa-abet
       (pa-permit:par q.act r.act)
       ::
+        $source                                         ::  un/sub p to/from r
+      =+  pur=(~(get by stories) p.act)
+      ?~  pur
+        %+  ra-react  red
+        [%fail (crip "no story {(trip p.act)}") `act]
+      =.  sources.shape.u.pur
+        %.  r.act
+        ?:  q.act
+          ~(uni in sources.shape.u.pur)
+        ~(dif in sources.shape.u.pur)
+      (ra-config p.act shape.u.pur)
+      ::
+      ::  messaging
+      ::
+        $convey                                         ::  post exact
+      (ra-think & our.hid +.act)
+      ::
+        $phrase                                         ::  post easy
+      =-  (ra-think & our.hid tos)
+      |-  ^-  tos/(list thought)
+      ?~  q.act  ~
+      =^  sir  eny.hid  (uniq eny.hid)
+      :_  $(q.act t.q.act)
+      :+  sir
+        %-  ~(gas by *audience)
+        %+  turn  (~(tap in p.act))
+        |=(p/partner [p *envelope %pending])
+      [now.hid ~ i.q.act]
+      ::
       ::  personal metadata
       ::
         $status                                         ::  our status update
