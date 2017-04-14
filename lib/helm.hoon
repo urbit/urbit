@@ -3,7 +3,6 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole
-/+    talk
 [. sole]
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -60,7 +59,6 @@
     ++  move  (pair bone card)                        ::  user-level move
     ++  pear                                          ::  poke fruit
       $%  {$hood-unsync desk ship desk}               ::
-          {$talk-command command:talk}                ::
           {$ask-mail cord}                            ::
           {$helm-hi cord}                             ::
       ==                                              ::
@@ -137,12 +135,6 @@
   =+  way=(welp top /[nam])
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
-::
-++  poke-invite                                       ::  send invite; fake
-  |=  {who/@p myl/@t}  =<  abet
-  %^  emit  %poke  /helm/invite
-  :-  [our %talk]
-  (said:talk our %helm now eny [%leaf "invited: {<who>} at {(trip myl)}"]~)
 ::
 ++  poke-reset                                        ::  reset system
   |=  hood-reset  =<  abet
