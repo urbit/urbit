@@ -1042,6 +1042,17 @@
         c
       (~(put in c) b)
     ::
+    ++  pa-eject
+      ::x  removes the ships from our followers.
+      |=  sis/(set ship)
+      %=  +>
+          followers
+        %-  ~(rep in (pa-unearth sis))
+        |=  {b/bone f/_followers}
+        =.  f  ?~  f  followers  f  ::TODO  =?
+        (~(del by f) b)
+      ==
+    ::
     ++  pa-permit
       ::x  invite/banish ships to/from this station.
       ::
@@ -1049,12 +1060,9 @@
       ^+  +>
       =/  white/?  ?=(?($white $green) p.cordon.shape)  ::  whitelist?
       =/  add/?  =(inv white)                           ::  add to list?
-      =.  followers  ::TODO  =?
-        ?:  inv  followers
-        %-  ~(rep in (pa-unearth sis))
-        |=  {b/bone f/_followers}
-        =.  f  ?~  f  followers  f  ::TODO  =?
-        (~(del by f) b)
+      =.  +>.$  ::TODO  =?
+        ?:  inv  +>.$
+        (pa-eject sis)
       =.  +>.$
         %-  pa-act
         :-  %phrase
