@@ -195,21 +195,30 @@
         (ra-config p.act [[%& our.hid p.act] ~ ~] q.act [r.act ~])
       (ra-react red %fail (crip "{(trip p.act)}: already exists") `act)
       ::
-        $permit                                         ::  invite/banish
-      %-  (ra-affect p.act red `act)  |=  par/_pa  =<  pa-abet
-      (pa-permit:par q.act r.act)
-      ::
         $source                                         ::  un/sub p to/from r
-      =+  pur=(~(get by stories) p.act)
-      ?~  pur
-        %+  ra-react  red
-        [%fail (crip "no story {(trip p.act)}") `act]
-      =.  sources.shape.u.pur
+      %-  (ra-affect p.act red `act)  |=  {par/_pa soy/story}
+      =.  sources.shape.soy
         %.  r.act
         ?:  q.act
-          ~(uni in sources.shape.u.pur)
-        ~(dif in sources.shape.u.pur)
-      (ra-config p.act shape.u.pur)
+          ~(uni in sources.shape.soy)
+        ~(dif in sources.shape.soy)
+      (ra-config p.act shape.soy)
+      ::
+        $depict                                         ::  change description
+      %-  (ra-affect p.act red `act)  |=  {par/_pa soy/story}
+      =.  caption.shape.soy  q.act
+      (ra-config p.act shape.soy)
+      ::
+        $permit                                         ::  invite/banish
+      %-  (ra-affect p.act red `act)  |=  {par/_pa *}  =<  pa-abet
+      (pa-permit:par q.act r.act)
+      ::
+        $delete                                         ::  delete + announce
+      %-  (ra-affect p.act red `act)  |=  *
+      =.  +>.^$  ::TODO  =?
+        ?~  q.act  +>.^$
+        (ra-action red %phrase [[%& our.hid p.act] ~ ~] [%lin | u.q.act]~)
+      (ra-unconfig p.act)
       ::
       ::  messaging
       ::
@@ -236,7 +245,7 @@
       ?~  p.act  +>.^$
       =.  +>.^$  $(p.act l.p.act)
       =.  +>.^$  $(p.act r.p.act)
-      %-  (ra-affect n.p.act red `act)  |=  par/_pa  =<  pa-abet
+      %-  (ra-affect n.p.act red `act)  |=  {par/_pa *}  =<  pa-abet
       (pa-notify:par our.hid q.act)
       ::
       ::  changing shared ui
@@ -264,10 +273,12 @@
     ^+  +>
     =+  :-  neu=!(~(has by stories) man)
         pur=(fall (~(get by stories) man) *story)
-    ::x  if we just created the story, and it's invite only, make sure we're in.
-    =.  con  ::TODO  =?
-      ?.  &(neu ?=(?($white $green) p.cordon.con))  con
-      con(q.cordon [our.hid ~ ~])
+    ::  wyt:  will be white
+    =+  wyt=?=(?($white $green) p.cordon.con)
+    ::x  if we just created the story, and invite only, make sure we're in.
+    =.  q.cordon.con  ::TODO  =?
+      ?:  &(neu wyt)  q.cordon.con
+      [our.hid ~ ~]
     pa-abet:(~(pa-reform pa man ~ pur) con)
   ::
   ++  ra-unconfig
@@ -395,7 +406,7 @@
     ?~  pur
       %+  ra-react  red
       [%fail (crip "no story {(trip man)}") act]
-    (fun ~(. pa man ~ u.pur))
+    (fun ~(. pa man ~ u.pur) u.pur)
   ::
   ++  ra-diff-talk-report                               ::  subscription update
     ::x  process a talk report from cuz into story man.

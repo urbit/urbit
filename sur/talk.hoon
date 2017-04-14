@@ -13,6 +13,9 @@
       {$create (trel knot cord posture)}                ::  create station
       {$permit (trel knot ? (set ship))}                ::  invite/banish
       {$source (trel knot ? (set partner))}             ::  un/sub p to/from r
+      {$depict (pair knot cord)}                        ::  change description
+      {$permit (trel knot ? (set ship))}                ::  invite/banish
+      {$delete (pair knot (unit @t))}                   ::  delete + announce
       ::  messaging                                     ::
       {$convey (list thought)}                          ::  post exact
       {$phrase (pair (set partner) (list speech))}      ::  post easy

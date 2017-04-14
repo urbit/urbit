@@ -80,6 +80,9 @@
           {$target p/where q/(unit work)}               ::  set active targets
           ::  {$destroy p/knot}                         ::
           {$create p/posture q/knot r/cord}             ::
+          {$depict p/knot q/cord}                       ::
+          {$source p/knot q/(set partner)}              ::
+          {$delete p/knot q/(unit cord)}                ::
           {$probe p/station}                            ::
       ==                                                ::
     ++  weir                                            ::  parsed wire
@@ -463,6 +466,16 @@
         ::
           ;~((glue ace) (perk %invite ~) ;~(pfix cen sym) shiz)
           ;~((glue ace) (perk %banish ~) ;~(pfix cen sym) shiz)
+        ::
+          ;~((glue ace) (perk %depict ~) ;~(pfix cen sym) qut)
+          ;~((glue ace) (perk %source ~) ;~(pfix cen sym) parz)
+          ;~  plug  (perk %delete ~)
+            ;~(pfix ;~(plug ace cen) sym)
+            ;~  pose
+              (cook some ;~(pfix ace qut))
+              (easy ~)
+            ==
+          ==
         ::
           ;~(plug (perk %who ~) ;~(pose ;~(pfix ace para) (easy ~)))
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
@@ -1056,6 +1069,9 @@
           $invite  (invite +.job)
           $banish  (banish +.job)
           $create  (create +.job)
+          $depict  (depict +.job)
+          $source  (source +.job)
+          $delete  (delete +.job)
           $nick    (nick +.job)
           $set     (wo-set +.job)
           $unset   (unset +.job)
@@ -1169,6 +1185,21 @@
         =.  ..sh-work
           (sh-action %create nom txt por)
         (join [[%& our.hid nom] ~ ~])
+      ::
+      ++  depict
+        |=  {nom/knot txt/cord}
+        ^+  ..sh-work
+        (sh-action %depict nom txt)
+      ::
+      ++  source
+        |=  {nom/knot pas/(set partner)}
+        ^+  ..sh-work
+        (sh-action %source nom & pas)
+      ::
+      ++  delete
+        |=  {nom/knot say/(unit cord)}
+        ^+  ..sh-work
+        (sh-action %delete nom say)
       ::
       ++  reverse-folks
         |=  nym/knot
