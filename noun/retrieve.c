@@ -586,6 +586,8 @@ _sang_x(u3_noun a, u3_noun b)
 }
 
 /* _sung_one(): pick a unified pointer for identical (a) and (b).
+**
+**  Assumes exclusive access to noun memory.
 */
 static void
 _sung_one(u3_noun* a, u3_noun* b)
@@ -609,11 +611,19 @@ _sung_one(u3_noun* a, u3_noun* b)
 
         if ( _(asr_o) && _(bsr_o) ) {
           //
-          //  both are senior, so we address them on a higher road
-          //  if possible.
+          //  we can't unify on a higher road, because we can't
+          //  track junior nouns that point into that road.   this
+          //  is just an implementation issue -- we could set use
+          //  counts to 0 without actually freeing.  but the system 
+          //  would have to be actually designed for this.
           //
-          u3R = u3to(u3_road, u3R->par_p);
-          continue;
+          //  the commented-out code was installed for quite some
+          //  time in a released system...
+          //
+          // u3R = u3to(u3_road, u3R->par_p);
+          // continue;
+          // 
+          return;
         }
 
         if ( _(asr_o) && !_(bsr_o) ){
