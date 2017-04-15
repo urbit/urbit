@@ -10228,8 +10228,12 @@
     ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three twigs
     ++  expx  |.  ;~  gunk  loaf                        ::  twig and core tail
                     %+  sear                            ::
-                      |=  a/(map term foot)             ::
-                      ?:((~(has by a) %$) ~ [~ u=a])    ::  (with no $ arm)
+                      |=  a/(map @ tomb)                ::
+                      ^-  (unit (map @ tomb))           ::
+                      =*  fir  (~(got by a) 0)          ::
+                      ?:  (~(has by q.fir) %$)          ::  %$ in first chapter
+                         ~                              ::
+                      [~ u=a]                           ::
                     wisp                                ::
                   ==                                    ::
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
