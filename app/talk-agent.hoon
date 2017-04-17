@@ -376,6 +376,9 @@
           ==
         ==
       ::
+      ++  stat                                          ::  local station
+        ;~(pfix cen sym)
+      ::
       ++  stan                                          ::  station
         ;~  pose
           (cold [our.hid (main our.hid)] col)
@@ -460,15 +463,15 @@
         ;~  pose
           ;~  (glue ace)  (perk %create ~)
             pore
-            ;~(pfix cen sym)
+            stat
             qut
           ==
         ::
-          ;~((glue ace) (perk %invite ~) ;~(pfix cen sym) shiz)
-          ;~((glue ace) (perk %banish ~) ;~(pfix cen sym) shiz)
+          ;~((glue ace) (perk %invite ~) stat shiz)
+          ;~((glue ace) (perk %banish ~) stat shiz)
         ::
-          ;~((glue ace) (perk %depict ~) ;~(pfix cen sym) qut)
-          ;~((glue ace) (perk %source ~) ;~(pfix cen sym) parz)
+          ;~((glue ace) (perk %depict ~) stat qut)
+          ;~((glue ace) (perk %source ~) stat parz)
           ;~  plug  (perk %delete ~)
             ;~(pfix ;~(plug ace cen) sym)
             ;~  pose
