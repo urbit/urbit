@@ -277,8 +277,8 @@
     =+  wyt=?=(?($white $green) p.cordon.con)
     ::x  if we just created the story, and invite only, make sure we're in.
     =.  q.cordon.con  ::TODO  =?
-      ?:  &(neu wyt)  q.cordon.con
-      [our.hid ~ ~]
+      ?:  &(neu wyt)  [our.hid ~ ~]
+      q.cordon.con
     pa-abet:(~(pa-reform pa man ~ pur) con)
   ::
   ++  ra-unconfig
