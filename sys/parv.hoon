@@ -439,7 +439,7 @@
         $wake  (pike %behn now ovo)
     ::
         ?($wack $what $whom $whim $wise)
-      =/  wap  ((hard wasp) ovo)
+      =/  wap  ((hard wasp) q.ovo)
       =*  tea  `wire`[%$ %arvo ~]
       =*  hen  `duct`[tea [p.ovo ~]]
       =*  mov  `move:live`[hen %give %& !>(wap)]

@@ -48,6 +48,7 @@
     ::
     ::  events: list of events to feed our urbit
     ::
+    ~&  %events
     =+  events=main-events
     ~&  [%events `@p`(mug events)]
     ::
