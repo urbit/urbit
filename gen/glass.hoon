@@ -20,7 +20,6 @@
 ::
 ::  deterministic test
 ::
-=.  now  ~2017.3.1
 =.  eny  0v0
 ::
 ::  build arvo with existing compiler
@@ -29,7 +28,7 @@
     ::
     ::  sys: root path to boot system, `/~me/[desk]/now/sys`
     ::
-    =+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
+    =+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/neo
     ::
     ::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
     ::
@@ -64,6 +63,7 @@
     ==
 ::
 ++  main-events
+  =.  now  ~2017.3.1
   =+  mov=main-moves
   |-  ^-  (list (pair @da ovum))
   ?~  mov  ~
@@ -72,10 +72,11 @@
 ::
 ++  main-moves
   ^-  (list ovum)
-  :~  [%what boot-files] 
-      [%whom ~zod]
+  :~  [[%$ ~] [%what boot-files]]
+      [[%$ ~] [%whom ~zod]]
   ==
 ++  boot-files
+  ^-  (list (pair path (pair term noun)))
   ::
   ::  userspace:
   ::
