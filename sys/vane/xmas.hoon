@@ -1029,23 +1029,23 @@
       ^+  +>
       ?-    -.fic
           $good
-        ::  ~&  [%ok her `@p`(mug p.fic) r.fic]
+        ~&  [%ok her `@p`(mug p.fic) r.fic]
         (wy-good q.fic s.fic)
       ::
           $send
-        ::  ~&  [%go her `@p`(mug p.fic) q.fic]
+        ~&  [%go her `@p`(mug p.fic) q.fic]
         +>(fex [[%send p.fic r.fic] fex])
       ==
     ::                                                  ::
     ++  wy-back                                         ::  hear an ack
       |=  {dam/flap cop/coop lag/@dr}
-      ::  ~&  [%wy-back (flam dam) cop lag]
+      ~&  [%wy-back (flam dam) cop lag]
       +>(mup (work:mup now %back dam cop lag))
     ::                                                  ::
     ++  wy-feed                                         ::  feed pump
       ^+  .
       =^  cly  .  (wy-find want.mup)
-      ::  ~&  [%wy-feed want.mup (lent cly)]
+      ~&  [%wy-feed want.mup (lent cly)]
       +(mup (work:mup now %pack cly))
     ::                                                  ::
     ++  wy-find                                         ::  collect packets
@@ -1075,7 +1075,7 @@
       ^+  +>
       =+  bum=(~(get by cob) q.paz)
       ?:  |(?=($~ bum) =(~ cly.u.bum))
-        ::  ~&  [%wy-good-ignore paz ?=($~ cop)]
+        ~&  [%wy-good-ignore paz ?=($~ cop)]
         +>.$
       ?^  cop
         ::
@@ -1096,7 +1096,7 @@
       ^+  +>
       =+  yex=((knit her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
       =.  fex  (weld (flop p.yex) fex)
-      ::  ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
+      ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
       %_    +>.$
           seq  +(seq)
           cob
@@ -1119,7 +1119,7 @@
       =+  zup=(~(get by cob) lac)
       ?~  zup  +.$
       ?~  cup.u.zup  +.$
-      ::  ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
+      ~&  [?:(=(0 (end 0 1 kos)) %ta %ba) her kos lac]
       %=  $
         lac  +(lac)
         cob  (~(del by cob) lac)

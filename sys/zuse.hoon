@@ -1,5 +1,5 @@
 !:                                                      ::  /van/zuse
-::                                                      ::  !%reference/1
+::                                                      ::  %reference/1
 ::  %zuse: arvo library.
 ::
 ::  %zuse is two nested cores: the first for models
@@ -367,7 +367,7 @@
   ++  mizu  {p/@u q/(map @ud tako) r/rang}              ::  new state
   ++  moar  {p/@ud q/@ud}                               ::  normal change range
   ++  moat  {p/case q/case r/path}                      ::  change range
-  ++  mode  (list {path (unit mime)})                   ::
+  ++  mode  (list {path (unit mime)})                   ::  external files
   ++  mood  {p/care q/case r/path}                      ::  request in desk
   ++  nori                                              ::  repository action
     $%  {$& p/soba}                                     ::  delta
@@ -4450,7 +4450,7 @@
       [p.one [%& (weld p.q.one p.q.two)]]
     --  ::space
   ::                                                    ::
-  ::::                    ++unix:userlib                ::  (2uD) unix line-lists
+  ::::                  ++unix:userlib                  ::  (2uD) unix line-list
     ::                                                  ::::
   ++  unix  ^?
     |%
@@ -4591,4 +4591,18 @@
       {$j gift:able:jael}
   ==
 ::
+++  unix-task                                           ::  input from unix
+  $%  {$belt p/belt:dill}                               ::  dill: keyboard
+      {$blew p/blew:dill}                               ::  dill: configure
+      {$boat $~}                                        ::  clay: reboot
+      {$born $~}                                        ::  eyre: new process
+      {$hail $~}                                        ::  dill: refresh
+      {$hear p/lane:ames q/@}                           ::  ames: input packet
+      {$hook $~}                                        ::  dill: hangup
+      {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
+      {$they p/@ud q/httr:eyre}                         ::  eyre: in response
+      {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
+      {$thud $~}                                        ::  eyre: in cancel
+      {$wake $~}                                        ::  behn: wakeup
+  == 
 --  ::
