@@ -28,11 +28,11 @@
     ::
     ::  sys: root path to boot system, `/~me/[desk]/now/sys`
     ::
-    =+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/neo
+    =+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
     ::
-    ::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
+    ::  arvo-source: hoon source file producing arvo kernel, `sys/parv`
     ::
-    =+  arvo-source=.^(@t %cx (welp sys /arvo/hoon))
+    =+  arvo-source=.^(@t %cx (welp sys /parv/hoon))
     ::
     ::  arvo-twig: parsed arvo source
     ::
