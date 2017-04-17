@@ -9,13 +9,16 @@ let
 
   mingw-w64_info = rec {
     name = "mingw-w64-${version}";
-    version = "2017-04-04";
+    version = "2017-04-12";
     src = nixpkgs.fetchgit {
       url = "git://git.code.sf.net/p/mingw-w64/mingw-w64";
-      rev = "05e07b384e0ecf792aa81e2bed41c1384eaf755d";
-      sha256 = "0j5qh23fkaz0fkjpb9xp2p95xyma7i1skyh8fl5jg2d03adgiji6";
+      rev = "bc766d1c5e553640b25f51afc9b9e0d6f7fdc344";
+      sha256 = "0g8yjiarq36d6mwaykxjrmr40x6y56y1hkybqh4mm33gms9kdq9h";
     };
-    patches = [ ./usb.patch ./guid-selectany.patch ./strsafe-extern-c.patch ];
+    patches = [
+      ./usb.patch
+      ./guid-selectany.patch
+    ];
   };
 
   mingw-w64_headers = nixpkgs.stdenv.mkDerivation {
