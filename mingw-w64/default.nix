@@ -19,13 +19,15 @@ let
       ./usb.patch
       ./guid-selectany.patch
     ];
+    configure_flags = "--enable-secure-api --enable-idl";
   };
 
   mingw-w64_headers = nixpkgs.stdenv.mkDerivation {
     name = "${mingw-w64_info.name}-headers";
-    inherit (mingw-w64_info) src patches;
-    preConfigure = "cd mingw-w64-headers";
-    configureFlags = "--without-crt --enable-secure-api";
+    inherit host;
+    inherit (mingw-w64_info) src patches configure_flags;
+    builder = ./builder.sh;
+    just_headers = true;
   };
 
   gcc_stage_1 = import ./gcc {
@@ -38,6 +40,10 @@ let
     name = "${mingw-w64_info.name}-${host}";
     inherit host;
     inherit (mingw-w64_info) version src patches;
+    configure_flags =
+      "--host=${host} " +
+      "--disable-shared --enable-static " +
+      mingw-w64_info.configure_flags;
     buildInputs = [ binutils gcc_stage_1 ];
     builder = ./builder.sh;
   };
