@@ -886,10 +886,16 @@
       |=  {tay/partner loc/atlas rem/(map partner atlas)}
       ::x  remove this story from the presence map, since it's in local already.
       =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
-      =/  buk  (~(uni by remotes) rem)  ::TODO  drop?
+      =/  buk  (~(uni by remotes) rem)
       =.  buk  (~(put by buk) tay loc)
       ?:  =(buk remotes)  +>.$
-      =.  +>.$  (pa-inform %precs ~ (~(dif in buk) remotes))
+      =.  +>.$
+        %^  pa-inform  %precs  ~
+        ::  per-partner diff.
+        %-  ~(urn by buk)
+        |=  {p/partner a/atlas}
+        =+  o=(~(get by remotes) p)
+        ?~(o a (~(dif in a) u.o))
       (pa-report-group(remotes buk) pa-followers)
     ::
     ++  pa-start                                        ::  start stream
