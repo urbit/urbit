@@ -75,7 +75,7 @@
 ++  main-moves
   ^-  (list ovum)
   :~  [[%$ ~] [%what boot-files]]
-      [[%$ ~] [%whom ~zod]]
+      ::  [[%$ ~] [%whom ~zod]]
   ==
 ++  boot-files
   ^-  (list (pair path (pair term noun)))
@@ -90,8 +90,9 @@
   ::    /ren    %ford renderers
   ::    /web    %eyre web content
   ::    /sys    system files
+  ::    /neo    new system files
   ::
-  (user-files /sys ~)
+  (user-files /neo ~)
 ::
 ++  user-files                                      ::  userspace loading
   |=  ::  sal: all spurs to load from
@@ -121,7 +122,7 @@
       ::  install only hoon files for now
       ::
       ?.  ?=({$hoon *} tyl)  hav
-      :_(hav [(flop `path`tyl) [%hoon .^(@t %cx pax)]])
+      :_(hav [(flop `path`t.tyl) [%hoon .^(@t %cx pax)]])
   ::
   =/  all  (~(tap by dir.lon) ~)
   |-  ^+  hav

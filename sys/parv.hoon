@@ -716,11 +716,11 @@
     =/  dev
       =|  $=  dev
           $:  ::  use: non-system files
-              ::  new: system installs 
+              ::  new: new set
               ::  del: installs + replacements
               ::
               use/(map path plum)
-              new/(map path plum)
+              new/(set path)
               del/(map path plum)
           ==
       |-  ^+  dev
@@ -742,11 +742,11 @@
       ::
       ::  classify as user, system install or replacement
       ::
-      ?.  ?=({$sys *} pax)
+      ?.  ?=({$neo *} pax)
         $(use.dev (~(put by use.dev) pax pet))
       =?    =(~ old)  
           new.dev  
-        (~(put by new.dev) pax pet)
+        (~(put in new.dev) pax)
       $(del.dev (~(put by del.dev) pax pet))
     ::
     ::  print new entries
@@ -754,7 +754,7 @@
     ~?  !=(~ use.dev) 
       [%what-use (turn (~(tap by use.dev) ~) |=({path *} +<-))]
     ~?  !=(~ new.dev) 
-      [%what-new (turn (~(tap by new.dev) ~) |=({path *} +<-))]
+      [%what-new (~(tap in new.dev) ~)]
     ~?  !=(~ use.dev) 
       [%what-del (turn (~(tap by del.dev) ~) |=({path *} +<-))]
     ::
@@ -766,10 +766,14 @@
     ::
     =/  but
       ^-  (unit seed)
-      =/  hun  ?:  (~(has by new.dev) /sys/hoon)  ~
-               (~(get by del.dev) /sys/hoon)
-      =/  arv  ?:  (~(has by new.dev) /sys/arvo)  ~
-               (~(get by del.dev) /sys/hoon)
+      ::
+      ::  when we get new hoon and arvo system files, 
+      ::  we assume they match what's running now
+      ::
+      =/  hun  ?:  (~(has in new.dev) /neo/hoon)  ~
+               (~(get by del.dev) /neo/hoon)
+      =/  arv  ?:  (~(has in new.dev) /neo/arvo)  ~
+               (~(get by del.dev) /neo/hoon)
       ?~  hun
         ?~  arv  ~
         ::
@@ -781,30 +785,29 @@
       ::  heavy reboot, hoon and arvo
       ::
       ~&  %heavy-reboot
-      `[`(wilt u.hun) (wilt ?^(arv u.arv (~(got by fat.rep) /sys/arvo)))]
+      `[`(wilt u.hun) (wilt ?^(arv u.arv (~(got by fat.rep) /neo/arvo)))]
     ?^  but
       ::  stop working and set up reboot
       ::
+      ~&  %reboot
       %=  +>.$
         ::  set boot hook for termination
         ::
         but.gut  ?>(=(~ but.gut) but)
         ::
-        ::  execute write after reboot
+        ::  finish write *after* reboot, not now, so that new code
+        ::  can use the new kernel
         ::
-        run.gut  ::  syt: all systems changes
-                 ::
-                 =*  syt  (~(tap by (~(uni by rez.dev) new.dev)))
-                 :_  run.gut
-                 `move:live`[hen %give %& !>([%what syt])]
+        run.gut  :_  run.gut
+                 `move:live`[hen %give %& !>([%what (~(tap by del.dev))])]
         ::
-        ::  delete reboot source files from deep
-        ::  storage, so install causes vane upgrade,
+        ::  delete kernel source file from deep
+        ::  storage, so that install causes vane upgrade,
         ::  and *does not* cause repeat kernel upgrade.
         ::
         fat.rep  ?~  p.u.but
                    fat.rep
-                 (~(del by fat.rep) /sys/hoon)
+                 (~(del by fat.rep) /neo/hoon)
       ==
     ::  keep working after vane upgrades
     ::
@@ -818,53 +821,56 @@
               vat/(list (pair term hoof))
           ==
       =<  [yor zus (~(tap by van))]
-      ::  yor: reload shared structures
-      ::  zus: reload shared library
-      ::  vat: replacement map
       ::
-      =/  yor  (bind (~(get by rez.dev) /sys/york) wilt)
-      =/  zus  (bind (~(get by rez.dev) /sys/zuse) wilt)
+      ::  yor: shared structures
+      ::  zus: shared library
       ::
-      ::  %york is the subject of %zuse
+      =/  yor  (bind (~(get by del.dev) /neo/york) wilt)
+      =/  zus  (bind (~(get by del.dev) /neo/zuse) wilt)
       ::
-      =.  zus  ?^(zus zus ?~(yor ~ `(wilt (~(got by fat.rep) /sys/zuse))))
+      ::  %york is the subject of %zuse; if we have a new %york,
+      ::  but no new %zuse, get the running %
       ::
-      ::  vat: all vane upgrades, as [initial name source]
+      =.  zus  ?^(zus zus ?~(yor ~ `(wilt (~(got by fat.rep) /neo/zuse))))
+      ::
+      ::  van: all vane upgrades, as [initial name source]
       ::
       =/  van
         ::  zyr: all system file replacements
         ::  van: accumulated upgrades
         ::
-        =/  zyr  (~(tap by rez.dev))
+        =/  zyr  (~(tap by del.dev))
         =|  van/(map @tas hoof)
         |-  ^+  van
         ?^  zyr
           ::  mor: process rest of `zyr`
           ::
           =/  mor  $(zyr t.zyr)
-          ?.  ?=({$sys $van @tas $~} p.i.zyr) 
+          ?.  ?=({$neo $van @tas $~} p.i.zyr) 
+            ::
+            ::  ignore anything that isn't a vane
+            ::
             mor
-          ::
-          ::  replaced vane in `/sys/vane/*/[nam]`
+          ::  replaced vane in `/neo/vane/*/[nam]`
           ::
           =*  nam  `term`i.t.t.p.i.zyr
+          ~&  [%vane nam p.i.zyr `@p`(mug q.i.zyr)]
           (~(put in mor) nam (wilt q.i.zyr))
         ::
-        ::  reload current vanes if needed
+        ::  if this is a new install after a heavy reboot, 
+        ::  or if we've adjusted %zuse or %york, reboot all
+        ::  running vanes
         ::
-        ?.  |((~(has by new.dev) /sys/hoon) ?=(^ zus))
-          ::
-          ::  we didn't replace compiler, %york or %zuse
-          van
+        ?.  |((~(has in new.dev) /neo/hoon) ?=(^ zus))  van
         ::
-        ::  also reboot any vanes not already rebooted
+        ::  all running vanes 
         ::
         %-  ~(gas by van)
         %+  skip  
           ^-  (list (pair term hoof))
           %+  turn  (~(tap by van.mal))
           |=  {way/term vax/vase}
-          [way (wilt (~(got by fat.rep) [%sys %van way ~]))]
+          [way (wilt (~(got by fat.rep) [%neo %van way ~]))]
         |=  {way/term src/hoof}
         (~(has in van) way)
       .
