@@ -66,21 +66,18 @@
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
 ++  shelf  (map knot (pair posture cord))               ::  ship shape
 ++  report                                              ::  talk update
-  $%  ::  relevant story is determined from wire: reader responsibility.
-      {$cabal cabal}                                    ::  config neighborhood
-  ::  {$folder (list report)}                           ::  multiple
-      {$grams (pair @ud (list telegram))}               ::  beginning thoughts
+  $%  {$cabal cabal}                                    ::  config neighborhood
+      {$grams (pair @ud (list telegram))}               ::  thoughts
       {$group register}                                 ::  presence
   ==                                                    ::
 ++  lowdown                                             ::  changed shared state
-  $%  ::  ui state
-      {$glyph (jug char (set partner))}                 ::  new bindings
-      {$names (map ship (unit human))}                  ::  new identities
-      ::  story state
-      ::  relevant story is determined from wire: reader responsibility.
+  $%  ::  story state                                   ::
       {$confs (unit config) (map station (unit config))}::  changed configs
       {$precs register}                                 ::  changed presences
       {$grams (pair @ud (list telegram))}               ::  new grams
+      ::  ui state                                      ::
+      {$glyph (jug char (set partner))}                 ::  new bindings
+      {$names (map ship (unit human))}                  ::  new identities
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce

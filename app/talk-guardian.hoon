@@ -10,12 +10,21 @@
 ::TODO  tidiness, remove unnecessary ~&, etc.
 ::TODO  maybe ensure every arm has a mini-description at :57 too?
 ::TODO  maybe prefix all printfs and other errors with %talk?
-::
-::TODO  do permission checks for the whole team instead of just a ship, maybe?
-::TODO  sending remotes and mirrors alongside locals and shape no longer makes
-::      any sense, does it?
-::TODO  crash on pokes/peers we do not expect
 ::TODO  rename cores. ra->ta (transaction), pa->to (story).
+::
+::TODO  we can't do away with the default mailbox because we need it for things
+::      like invite notifications etc. can we do better than request that apps
+::      don't use it frivolously?
+::TODO  federation stuff.
+::TODO  ".. the importance of the CQRS pattern (command-query separation) behind
+::      Urbit's separation of %poke and %peer. Pokes (messages) are one-way
+::      commands, not queries. Peers (subscriptions) have no effect on the
+::      server state."
+::      but we *do* change state on-subscribe! is that a problem?
+::
+::TODO  permission checks should only use team if it's coming from a reader.
+::TODO  for story permission checks, count moons as their parent identity.
+::TODO  crash on pokes/peers we do not expect
 ::
 /?    310                                               ::  hoon version
 /-    talk, sole                                        ::  structures
@@ -47,6 +56,7 @@
           shape/config                                  ::  configuration
           mirrors/(map station config)                  ::  remote config
           ::TODO  never gets updated.                   ::
+          ::      should probably just be @ud, per story?
           sequence/(map partner @ud)                    ::  partners heard
           known/(map serial @ud)                        ::  messages heard
           followers/(map bone river)                    ::  subscribers
@@ -508,7 +518,7 @@
     ?~  pur
       ~&  [%bad-subscribe-story-c i.pax]
       (ra-evil %talk-no-story)
-    =+  soy=~(. pa i.pax `(list action)`~ u.pur)  ::TODO  nest-fail if no cast
+    =+  soy=~(. pa i.pax `(list action)`~ u.pur)  ::  nest-fails if not cast?
     ::x  she needs read permissions to subscribe.
     ?.  (pa-visible:soy her)
       (ra-evil %talk-no-story)
@@ -516,7 +526,7 @@
     =^  who  +>.$  (ra-human her)
     ::x  send current data to bring her up to date.
     =.  soy  (pa-report-cabal:soy ost.hid ~ ~)
-    ::=.  soy  (pa-report-group:soy ost.hid ~ ~)  ::TODO  reenable if pa-not=dif
+    =.  soy  (pa-report-group:soy ost.hid ~ ~)
     =.  soy  (pa-first-grams:soy her t.pax)  ::x  also adds new sub to followers
     ::x  add her status to presence map.
     =.  soy  (pa-notify:soy her %hear who)
@@ -524,7 +534,8 @@
     pa-abet:soy
   ::
   ++  ra-welcome
-    ::x  brings new reader up to date. susbcribes it to the specified story.
+    ::x  brings new reader up to date. susbcribes it to the specified story,
+    ::TODO  or shared ui state if no story was specified.
     ::
     |=  {new/bone pax/path}
     =/  sor/knot
@@ -753,6 +764,7 @@
     ++  pa-cabal
       ::x  add station's config to our remote config map.
       ::
+      ::TODO  when do we care about ham?
       |=  {cuz/station con/config ham/(map station config)}
       ^+  +>
       =+  old=mirrors

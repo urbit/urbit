@@ -8,7 +8,7 @@
 ::TODO  correct/clean up presence/config change notifications
 ::
 ::TODO  remove man from door sample where it's always (main our.hid).
-::TODO  maybe collapse sources, remotes and mirrors into a single map?
+::TODO  sh-action -> sh-act
 ::TODO  maybe keep track of received grams per partner, too?
 ::
 ::x  This reader implementation makes use of the mailbox for all its
@@ -631,7 +631,6 @@
     ++  sh-glyf                                         ::  decode glyph
       ::x  gets the partner(s) that match a glyph.
       ::x?  why (set partner)? it seems like it only ever returns a single one.
-      ::TODO should produce a set when ambiguous.
       ::
       |=  cha/char  ^-  (unit (set partner))
       =+  lax=(~(get ju nak) cha)
