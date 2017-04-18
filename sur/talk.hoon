@@ -23,7 +23,7 @@
       {$status (pair (set knot) status)}                ::  our status update
       ::  changing shared ui                            ::
       {$human (pair ship human)}                        ::  new identity
-      {$glyph (pair char (set partner))}                ::  bind a glyph
+      {$glyph (trel char (set partner) ?)}              ::  un/bind a glyph
   ==                                                    ::
 ++  reaction                                            ::  user information
   $:  kind/?($info $fail)                               ::  result

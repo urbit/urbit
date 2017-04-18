@@ -68,6 +68,7 @@
           {$who p/where}                                ::  presence
           {$what p/$@(char (set partner))}              ::  show bound glyph
           {$bind p/char q/(unit where)}                 ::
+          {$unbind p/char q/(unit where)}               ::
           {$join p/where}                               ::
           {$leave p/where}                              ::
           {$say p/(list speech)}                        ::
@@ -482,6 +483,7 @@
         ::
           ;~(plug (perk %who ~) ;~(pose ;~(pfix ace para) (easy ~)))
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
+          ;~(plug (perk %unbind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
           ;~((glue ace) (perk %join ~) para)
           ;~((glue ace) (perk %leave ~) para)
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
@@ -1069,6 +1071,7 @@
           $who     (who +.job)
           $what    (what +.job)
           $bind    (bind +.job)
+          $unbind  (unbind +.job)
           $invite  (invite +.job)
           $banish  (banish +.job)
           $create  (create +.job)
@@ -1110,8 +1113,23 @@
         |=  {cha/char lix/(set partner)}
         =:  nik  (~(put by nik) lix cha)
             nak  (~(put ju nak) cha lix)
-          ==
-        (sh-action %glyph cha lix)
+        ==
+        (sh-action %glyph cha lix &)
+      ::
+      ++  unset-glyph
+        |=  {cha/char lix/(unit (set partner))}
+        =/  ole/(set (set partner))
+          ?^  lix  [u.lix ~ ~]
+          (~(get ju nak) cha)
+        =.  ..sh-work  (sh-action %glyph cha (fall lix ~) |)
+        |-  ^+  ..sh-work
+        ?~  ole  ..sh-work
+        =.  ..sh-work  $(ole l.ole)
+        =.  ..sh-work  $(ole r.ole)
+        %=  ..sh-work
+          nik  (~(del by nik) n.ole)
+          nak  (~(del ju nak) cha n.ole)
+        ==
       ::
       ++  join                                          ::  %join
         |=  pan/(set partner)
@@ -1168,7 +1186,15 @@
         ?~  pan  $(pan `active.she)
         =+  ole=(~(get by nik) u.pan)
         ?:  =(ole [~ cha])  ..sh-work
-        (sh-note:(set-glyph cha u.pan) "bound {<cha>} {<u.pan>}")
+        (sh-note:sh-prod:(set-glyph cha u.pan) "bound {<cha>} {<u.pan>}")
+      ::
+      ++  unbind                                        ::  %unbind
+        |=  {cha/char pan/(unit (set partner))}  ^+  ..sh-work
+        ?.  ?|  &(?=(^ pan) (~(has by nik) u.pan))
+                &(?=($~ pan) (~(has by nak) cha))
+            ==
+          ..sh-work
+        (sh-note:sh-prod:(unset-glyph cha pan) "unbound {<cha>}")
       ::
       ++  invite                                        ::  %invite
         |=  {nom/knot sis/(set ship)}

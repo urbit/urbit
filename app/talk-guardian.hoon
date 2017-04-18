@@ -261,8 +261,23 @@
       (strap p.act ?~(hand.q.act ~ `q.act))
       ::
         $glyph                                          ::  bind a glyph
-      =.  nik  (~(put by nik) q.act p.act)
-      =.  nak  (~(put ju nak) p.act q.act)
+      =.  +>.$
+        ?:  r.act
+          %=  +>.$
+            nik  (~(put by nik) q.act p.act)
+            nak  (~(put ju nak) p.act q.act)
+          ==
+        =/  ole/(set (set partner))
+          ?.  =(q.act ~)  [q.act ~ ~]
+          (~(get ju nak) p.act)
+        |-  ^+  +>.^$
+        ?~  ole  +>.^$
+        =.  +>.^$  $(ole l.ole)
+        =.  +>.^$  $(ole r.ole)
+        %=  +>.^$
+          nik  (~(del by nik) n.ole)
+          nak  (~(del ju nak) p.act n.ole)
+        ==
       (ra-inform %glyph nak)
     ==
   ::
