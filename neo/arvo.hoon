@@ -744,8 +744,8 @@
       ::
       ?.  ?=({$neo *} pax)
         $(use.dev (~(put by use.dev) pax pet))
-      =?    =(~ old)  
-          new.dev  
+      =?    new.dev
+          =(~ old)  
         (~(put in new.dev) pax)
       $(del.dev (~(put by del.dev) pax pet))
     ::
