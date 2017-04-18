@@ -227,9 +227,19 @@
     +>.$
   ::
   ++  ra-low-precs
+    ::x  applies new presences. other clients might care for tas, but we're only
+    ::x  ever getting this for the mailbox, where we're the only ones present.
+    ::
     |=  {tas/atlas pas/(map partner atlas)}
     ^+  +>
-    =+  ner=(~(uni by remotes) pas)  ::TODO  per-partner uni.
+    =/  ner/_remotes
+      ::  per-partner uni.
+      %-  ~(urn by pas)
+      |=  {p/partner a/atlas}
+      =+  o=(~(get by remotes) p)
+      ?~(o a (~(uni by u.o) a))
+    ::  then fill in the gaps with what we know.
+    =.  ner  (~(uni by remotes) ner)
     ?:  =(remotes ner)  +>.$
     =.  +>.$  sh-abet:(~(sh-low-rempe sh cli (main our.hid)) remotes ner)
     +>.$(remotes ner)
