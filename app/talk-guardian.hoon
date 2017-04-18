@@ -904,14 +904,12 @@
       ::
       |=  riv/river
       ^+  +>
-      ::TODO  use =; lab/{dun/? end/@u zeg/(list telegram)}
-      =-  ::  ~&  [%pa-start riv lab]
+      =;  lab/{dun/? end/@u zeg/(list telegram)}
           =.  +>.$
-            (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
-          ?:  p.lab  ::x?  dun never gets changed, so always | ?
+            (pa-sauce ost.hid [[%diff %talk-report %grams end.lab zeg.lab] ~])
+          ?:  dun.lab
             (pa-sauce ost.hid [[%quit ~] ~])
           +>.$(followers (~(put by followers) ost.hid riv))
-      ^=  lab
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       |-  ^-  (trel ? @ud (list telegram))
       ?~  gaz  [dun end zeg]
@@ -919,8 +917,8 @@
             $ud  (lte p.q.riv end)
             $da  (lte p.q.riv p.r.q.i.gaz)
           ==
-        ::x  if we're past the river, continue browsing back.
-        $(end (dec end), gaz t.gaz)  ::TODO  dun &
+        ::x  if we're past the river, keep browsing back, mark stream as done.
+        $(end (dec end), gaz t.gaz, dun &)
       ?:  ?-  -.p.riv                                   ::  before the start
             $ud  (lth end p.p.riv)
             $da  (lth p.r.q.i.gaz p.p.riv)
