@@ -122,7 +122,7 @@
         $:  off/?                                       ::  not yet booted
             lac/_|                                      ::  not verbose
             eny/@uvJ                                    ::  512-bit entropy
-            yor/vase                                    ::  %york, vane models
+            yor/vase                                    ::  %lull, vane models
             zus/vase                                    ::  %zuse, user lib
             van/(map term vase)                         ::  vanes
         ==                                              ::
@@ -816,22 +816,22 @@
     ::  job: plan for upgrading 
     ::
     =/  job
-      ^-  $:  yor/(unit hoof)
+      ^-  $:  lul/(unit hoof)
               zus/(unit hoof)
               vat/(list (pair term hoof))
           ==
-      =<  [yor zus (~(tap by van))]
+      =<  [lul zus (~(tap by van))]
       ::
-      ::  yor: shared structures
+      ::  lul: shared structures
       ::  zus: shared library
       ::
-      =/  yor  (bind (~(get by del.dev) /neo/york) wilt)
+      =/  lul  (bind (~(get by del.dev) /neo/lull) wilt)
       =/  zus  (bind (~(get by del.dev) /neo/zuse) wilt)
       ::
-      ::  %york is the subject of %zuse; if we have a new %york,
+      ::  %lull is the subject of %zuse; if we have a new %lull,
       ::  but no new %zuse, get the running %
       ::
-      =.  zus  ?^(zus zus ?~(yor ~ `(wilt (~(got by fat.rep) /neo/zuse))))
+      =.  zus  ?^(zus zus ?~(lul ~ `(wilt (~(got by fat.rep) /neo/zuse))))
       ::
       ::  van: all vane upgrades, as [initial name source]
       ::
@@ -858,7 +858,7 @@
           (~(put in mor) nam (wilt q.i.zyr))
         ::
         ::  if this is a new install after a heavy reboot, 
-        ::  or if we've adjusted %zuse or %york, reboot all
+        ::  or if we've adjusted %zuse or %lull, reboot all
         ::  running vanes
         ::
         ?.  |((~(has in new.dev) /neo/hoon) ?=(^ zus))  van
@@ -874,23 +874,20 @@
         |=  {way/term src/hoof}
         (~(has in van) way)
       .
+    ::  upgrade %lull, vane shared structures
     ::
-    ::  upgrade %york, vane shared structures
-    ::
-    =>  ?~  yor.job  .
+    =>  ?~  lul.job  .
         %=    .
-           yor.mal  ~&  [%york-boot `@p`(mug u.yor.job)]
-                     (slap !>(..arms) (ream u.yor.job))
+           lul.mal  ~&  [%lull-boot `@p`(mug u.lul.job)]
+                     (slap !>(..arms) (ream u.lul.job))
         ==
-    ::
     ::  upgrade %zuse, vane shared libraries
     ::
     =>  ?~  zus.job  .
         %=    .
            zus.mal  ~&  [%zuse-boot `@p`(mug u.zus.job)]
-                     (slap yor.mal (ream u.zus.job))
+                     (slap lul.mal (ream u.zus.job))
         ==
-    ::
     ::  upgrade all indicated vanes
     ::
     |-  ^+  +>.^$

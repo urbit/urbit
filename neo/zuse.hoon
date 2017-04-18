@@ -277,7 +277,7 @@
   ::::                    ++aes:crypto                  ::  (2b1) aes, all sizes
     ::                                                  ::::
   ++  aes    !.                                         
-    ~%  %aes  ..is  ~
+    ~%  %aes  ..ship  ~
     |%
     ::                                                  ::  ++ahem:aes:crypto
     ++  ahem                                            ::  kernel state
