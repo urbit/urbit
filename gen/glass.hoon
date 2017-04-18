@@ -24,7 +24,7 @@
 ::
 ::  build arvo with existing compiler
 ::
-|^  ^-  vase
+|^  ^-  *
     ::
     ::  sys: root path to boot system, `/~me/[desk]/now/sys`
     ::
@@ -40,27 +40,28 @@
     =+  arvo-twig=(ream arvo-source)
     ~&  %parsed
     ::
-    ::  arvo-vase: a living urbit
+    ::  arvo-kernel: a living urbit
     ::
     ~&  [%compiling `@p`(mug arvo-twig)]
-    =+  arvo-vase=(slap !>(..ream) arvo-twig)
+    =+  arvo-kernel=+:(slap !>(..ream) arvo-twig)
     ~&  %compiled
     ::
     ::  events: list of events to feed our urbit
     ::
-    ~&  %events
+    ~&  %loading
     =+  events=main-events
-    ~&  [%events `@p`(mug events)]
+    ~&  [%loaded `@p`(mug events)]
     ::
     ::  execute events
     ::
     =+  number=0
-    |-  ^-  vase
-    ?~  events  arvo-vase
+    |-  ^-  *
+    ?~  events  arvo-kernel
+    ~&  number+number
     %=  $
-      events     t.events
-      number     +(number)
-      arvo-vase  (slam arvo-vase !>(i.events))
+      events       t.events
+      number       +(number)
+      arvo-kernel  .*(arvo-kernel(+< i.events) -.arvo-kernel)
     ==
 ::
 ++  main-events
@@ -90,7 +91,7 @@
   ::    /web    %eyre web content
   ::    /sys    system files
   ::
-  (user-files /app /gen /lib /mar /ren /sec /sur /sys /web ~)
+  (user-files /sys ~)
 ::
 ++  user-files                                      ::  userspace loading
   |=  ::  sal: all spurs to load from

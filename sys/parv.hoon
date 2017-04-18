@@ -295,6 +295,7 @@
     ::
     ::  interpret top move
     ::
+    ~&  [%loop -.q.mov]
     ?-    -.q.mov
     ::
     ::  %give: return move
@@ -443,7 +444,7 @@
       =*  tea  `wire`[%$ %arvo ~]
       =*  hen  `duct`[tea [p.ovo ~]]
       =*  mov  `move:live`[hen %give %& !>(wap)]
-      (emit mov)
+      loop:(emit mov)
     ==
   ::                                                    ::  ++spin:le
   ++  spin                                              ::  spinning vane
@@ -648,6 +649,7 @@
   ++  warp                                              ::  arvo effect
     |=  {hen/duct wap/wasp}
     ^+  +>
+    ~&  [%warp -.wap]
     ?-  -.wap 
       $wack  +>(eny.mal (mix (shaz (mix now eny.mal)) (shaz p.wap)))
       $what  (what hen p.wap)
@@ -690,7 +692,7 @@
   ++  wile                                              ::  mill as card
     |=  hil/mill
     ^-  card
-    =.  sac.hax  (~(neat wa sac.hax) -:!>(card) hil)
+    =.  sac.hax  (~(neat wa sac.hax) -:!>(*card) hil)
     ?-  -.hil
       $|  ((hard card) q.p.hil)
       $&  ((hard card) q.p.hil)
@@ -715,11 +717,11 @@
       =|  $=  dev
           $:  ::  use: non-system files
               ::  new: system installs 
-              ::  rep: system replacements
+              ::  del: installs + replacements
               ::
               use/(map path plum)
               new/(map path plum)
-              rez/(map path plum)
+              del/(map path plum)
           ==
       |-  ^+  dev
       ?~  fal  dev
@@ -742,9 +744,19 @@
       ::
       ?.  ?=({$sys *} pax)
         $(use.dev (~(put by use.dev) pax pet))
-      ?~  old
-        $(new.dev (~(put by new.dev) pax pet))
-      $(rez.dev (~(put by rez.dev) pax pet))
+      =?    =(~ old)  
+          new.dev  
+        (~(put by new.dev) pax pet)
+      $(del.dev (~(put by del.dev) pax pet))
+    ::
+    ::  print new entries
+    ::
+    ~?  !=(~ use.dev) 
+      [%what-use (turn (~(tap by use.dev) ~) |=({path *} +<-))]
+    ~?  !=(~ new.dev) 
+      [%what-new (turn (~(tap by new.dev) ~) |=({path *} +<-))]
+    ~?  !=(~ use.dev) 
+      [%what-del (turn (~(tap by del.dev) ~) |=({path *} +<-))]
     ::
     ::  just adopt user changes, which have no systems impact
     ::
@@ -754,17 +766,21 @@
     ::
     =/  but
       ^-  (unit seed)
-      =/  hun  (~(get by rez.dev) /sys/hoon)
-      =/  arv  (~(get by rez.dev) /sys/arvo)
+      =/  hun  ?:  (~(has by new.dev) /sys/hoon)  ~
+               (~(get by del.dev) /sys/hoon)
+      =/  arv  ?:  (~(has by new.dev) /sys/arvo)  ~
+               (~(get by del.dev) /sys/hoon)
       ?~  hun
         ?~  arv  ~
         ::
         ::  light reboot, arvo only
         ::
+        ~&  %light-reboot
         `[~ (wilt u.arv)]
       ::
       ::  heavy reboot, hoon and arvo
       ::
+      ~&  %heavy-reboot
       `[`(wilt u.hun) (wilt ?^(arv u.arv (~(got by fat.rep) /sys/arvo)))]
     ?^  but
       ::  stop working and set up reboot
