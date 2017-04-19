@@ -137,7 +137,7 @@
     ?~  foc
       moz
     ?~  id.cli
-      ~&  %no-sole
+      ~&  %reader-no-sole
       moz
     ::x  produce moves or sole-effects and moves.
     [[id.cli %diff %sole-effect u.foc] moz]
@@ -201,7 +201,7 @@
     ::x  if possible, update sources. if we do, and we gain new ones, update
     ::x  the prompt. (this is to remove the mailbox from the audience after
     ::x  creating or joining a new station.)
-    ?~  coy  ~&(%mailbox-deleted !!)
+    ?~  coy  ~&(%mailbox-gone !!)
     =.  +>  ::TODO  =?
       ?~  (~(dif in sources.u.coy) sources)  +>.$
       =<  sh-abet
@@ -270,15 +270,13 @@
     |=  act/sole-action
     ^+  +>
     ?.  =(id.cli ost.hid)
-      ~&  %strange-sole
-      !!
+      ~&(%strange-sole !!)
     sh-abet:(~(sh-sole sh cli (main our.hid)) act)
   ::
   ++  ra-console
     ::x  make a shell for her.
     ::
     |=  {her/ship pax/path}
-    ~&  [%ra-console her pax ost.hid]
     ^+  +>
     ::x  get story from the path, default to standard mailbox.
     =/  man/knot
@@ -293,7 +291,6 @@
   ++  ra-init
     ::x  populate state on first boot. subscribes to our broker.
     ::
-    ~&  [%r-ra-init ost.hid]
     %-  ra-emit
     :*  ost.hid
         %peer
@@ -566,7 +563,6 @@
           [['[' ']'] active.she]
       =+  cha=(~(get by nik) q.rew)
       ?^  cha  ~[u.cha ' ']
-      :: ~&  [rew nik nak]
       =+  por=~(te-prom te man q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
@@ -1174,7 +1170,6 @@
       ++  who                                          ::  %who
         |=  pan/(set partner)  ^+  ..sh-work
         ::TODO  clever use of =< and . take note!
-        ~&  [%who-ing pan]
         =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
@@ -1331,9 +1326,9 @@
         (add fin (sub max (mod max dog)))
       ::
       ++  probe                                         ::  inquire
+        ::TODO?  what's this? unused...
         |=  cuz/station
         ^+  ..sh-work
-        ::TODO?  what's this?
         ~&  [%probe cuz]
         ..sh-work
       ::
@@ -1808,7 +1803,6 @@
   ::x  incoming subscription on pax.
   ::
   |=  pax/path
-  ~&  [%r-peer pax ost.hid src.hid]
   ^-  (quip move +>)
   ?.  (team src.hid our.hid)
     ~&  [%peer-talk-reader-stranger src.hid]
@@ -1816,7 +1810,6 @@
   ?.  ?=({$sole *} pax)
     ~&  [%peer-talk-reader-strange pax]
     [~ +>]
-  ~&  [%r-peer-sole ost.hid]
   ra-abet:(ra-console:ra src.hid t.pax)
 ::
 ++  diff-talk-lowdown

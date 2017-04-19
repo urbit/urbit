@@ -155,7 +155,6 @@
   ++  ra-init                                           ::  initialize talk
     ::x  populate state on first boot. creates our main and public stories.
     ::
-    ~&  %ra-init
     %+  roll
       ^-  (list {posture knot cord})
       :~  [%brown (main our.hid) 'default home']
@@ -713,12 +712,10 @@
       ::x  sends report to all bones.
       ::
       |=  {wac/(set bone) caw/report}
-      ::  ~&  [%pa-report man -.caw]
       ^+  +>
       ?~  wac  +>
       =.  +>  $(wac l.wac)
       =.  +>  $(wac r.wac)
-      ::  ~&  [%pa-report-cabal man shape]
       (pa-sauce n.wac [%diff %talk-report caw]~)
     ::
     ++  pa-inform
@@ -820,8 +817,7 @@
         $|  ~&  tweet-abjure+p.p.tay
             !!
       ::
-        $&  ~&  [%pa-abjure /[man]/(scot %p p.p.tay)/[q.p.tay]]
-            :_  ~
+        $&  :_  ~
             :*  %pull
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk-guardian]
@@ -878,7 +874,6 @@
     ++  pa-cancel                                       ::  unsubscribe from
       ::x  deletes the current ost.hid from all follower groups.
       ::
-      ::  ~&  [%pa-cancel ost.hid]
       .(followers (~(del by followers) ost.hid))
     ::
     ++  pa-notify                                       ::  local presence
@@ -961,7 +956,6 @@
           ?.  ?=({{?($ud $da) @} {?($ud $da) @} $~} paf)
             ~
           `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::XX arvo issue #366
-      ::  ~&  [%pa-first-grams her pax ruv]
       ?~  ruv
         ~&  [%pa-first-grams-malformed pax]
         (pa-sauce ost.hid [%quit ~]~)
@@ -980,7 +974,6 @@
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  followers  [~ ~]
-          ::  ~&  [%pa-refresh num n.followers]
           =+  lef=$(followers l.followers)
           =+  rit=$(followers r.followers)
           =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
@@ -1126,7 +1119,6 @@
   ::
   |=  cod/command
   ^+  [*(list move) +>]
-  ::  ~&  [%talk-poke-command src.hid cod]
   =^  mos  +>.$
       ra-abet:(ra-apply:ra src.hid cod)
   =^  mow  +>.$  log-all-to-file
@@ -1212,7 +1204,6 @@
   ::
   |=  pax/path
   ^+  [*(list move) +>]
-  ::  ~&  [%talk-pull src.hid ost.hid pax]
   ra-abet:(ra-cancel:ra src.hid pax)
 ::
 ++  log-all-to-file
