@@ -1,4 +1,4 @@
-!:
+::
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -464,14 +464,14 @@
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
-  ++  ford-fail  |=(tan/tang ~|(%ford-fail (mean tan)))
+  ++  ford-fail  |=(tan/tang ~|(%ford-fail (mean:error:userlib tan)))
   ::
   ::  Takes either a result or a stack trace.  If it's a stack trace, we crash;
   ::  else, we produce the result.
   ::
   ++  unwrap-tang
     |*  res/(each * tang)
-    ?:(?=($& -.res) p.res (mean p.res))
+    ?:(?=($& -.res) p.res (mean:error:userlib p.res))
   ::
   ::  Parse a gage to a list of pairs of cages, crashing on error.
   ::

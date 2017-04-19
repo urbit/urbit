@@ -1,4 +1,4 @@
-!:::::
+::::::
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -217,7 +217,7 @@
       ?+  -.p.+.sih  ~|(ford-strange-unto+-.p.+.sih !!)
         $diff  (~(resd zo [num u.tus]) [van ren bem] p.p.+.sih)
         $reap  ?~  p.p.+.sih  +>.$
-               ((slog leaf+"ford-reap-fail" u.p.p.+.sih) +>.$)
+               ((slog:error:userlib leaf+"ford-reap-fail" u.p.p.+.sih) +>.$)
       ==
     ==
   ::
@@ -251,7 +251,7 @@
     [%c %warp [our p.bem] q.bem ~]
   ::
   ++  awap                                              ::  get next revision
-    ~%  %ford-w  ..is  ~
+    ~%  %ford-w  ..ship  ~
     |=  {dep/@uvH ask/?}
     ?:  =(`@`0 dep)
       ~&(dep-empty+hen +>.$)
@@ -284,7 +284,7 @@
     ==  ==
   ::
   ++  zo
-    ~%  %ford-z  ..is  ~
+    ~%  %ford-z  ..ship  ~
     =|  dyv/@
     |_  {num/@ud task}
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
@@ -1225,7 +1225,7 @@
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  {cof/cafe typ/span fol/nock}
-      %+  (coup cof)  (mock [q.vax fol] (sloy syve))
+      %+  (coup cof)  (mock [q.vax fol] (sloy:error:userlib syve))
       |=(val/* `vase`[typ val])
     ::
     ++  make-norm-bek                                   ::  normalize root beak
@@ -1432,7 +1432,7 @@
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
       |=  {cof/cafe typ/span}
-      %+  (coup cof)  (mong [q.gat q.sam] (sloy syve))
+      %+  (coup cof)  (mong [q.gat q.sam] (sloy:error:userlib syve))
       |=(val/* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
@@ -1885,7 +1885,7 @@
 =*  lex  -
 |=  {now/@da eny/@ ski/sley}                            ::  activate
 ^?                                                      ::  opaque core
-~%  %ford-d  ..is  ~
+~%  %ford-d  ..ship  ~
 |%                                                      ::
 ++  call                                                ::  request
   |=  {hen/duct hic/(hypo (hobo task:able))}

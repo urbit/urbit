@@ -629,7 +629,7 @@
           bolo                                          ::  all vane state
       ==                                                ::
   =*  bol  ->
-  ~%  %eyre-y  ..is  ~
+  ~%  %eyre-y  ..ship  ~
   |%
   ++  abet                                              ::  resolve moves
     ^-  {(list move) bolo}
@@ -1021,14 +1021,14 @@
       ::
           {$le $~}
         ?:  ?=($| -.q.sih)
-          ((slog p.q.sih) +>.$)             ::  XX get-ack (some)?
+          ((slog:error:userlib p.q.sih) +>.$)             ::  XX get-ack (some)?
         %-  ~(get-diff lens ~)
         ?>  ?=($json p.p.q.sih)                    ::  XX others
         ((hard json) q.q.p.q.sih)
       ::
           {$of @ ^}
         ?:  ?=($| -.q.sih)
-          ((slog p.q.sih) +>.$)             ::  XX get-even %mean
+          ((slog:error:userlib p.q.sih) +>.$)             ::  XX get-even %mean
         %+  get-rush:(ire-ix p.tee)  q.tee
         ?>  ?=($json p.p.q.sih)                    ::  XX others
         ((hard json) q.q.p.q.sih)
@@ -1212,7 +1212,7 @@
   ::
   ::
   ++  handle
-    ~%  %eyre-h  ..is  ~
+    ~%  %eyre-h  ..ship  ~
     |_  $:  {hat/hart pok/pork quy/quay}                ::  purl parsed url
             {cip/clip aut/?}                            ::  client ip nonymous?
             {mef/meth maf/math bod/(unit octs)}         ::  method+headers+body
@@ -1672,7 +1672,7 @@
   ::
   ++  oryx-to-ixor  |=(a/oryx (rsh 3 1 (scot %p (end 6 1 (shas %ire a)))))
   ++  ya                                                ::  session engine
-    ~%  %eyre-y  ..is  ~
+    ~%  %eyre-y  ..ship  ~
     |_  ses/hole
     ++  abet  ..ya
     ++  abut  (jael-note / %kill-cookie ses)
@@ -1710,7 +1710,7 @@
     --
   ::
   ++  ix
-    ~%  %eyre-x  ..is  ~
+    ~%  %eyre-x  ..ship  ~
     =|  {ire/ixor stem}
     =*  sem  ->
     |%
@@ -1868,7 +1868,7 @@
       ?~  a
         ..lens  :: (give-json 200 ~ (frond:enjs %okey-dokey %b &))
       =+  tag=(flop `tang`[>[%eyre-lens-fail p.u.a]< q.u.a])
-      %-  (slog tag)
+      %-  (slog:error:userlib tag)
       (give-json:abet 500 ~ (wall:enjs (wush 160 tag)))
     ::
     ++  get-diff
@@ -1882,7 +1882,7 @@
     ++  get-quit  (give-json:abet 500 ~ (frond:enjs %quit b+&))
     --
   ++  vi                                                ::  auth engine
-    ~%  %eyre-v  ..is  ~
+    ~%  %eyre-v  ..ship  ~
     |_  $:  {usr/user dom/path}
             cor/(unit $@($~ vase))
             {liv/? req/(qeu {p/duct q/mark r/vase:hiss})}
@@ -1896,7 +1896,7 @@
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
     ++  pass-note  |=({a/whir-se b/note} (pass-note:abet se+[a usr dom] b))
     ::  XX block reqs until correct core checked in?
-    ++  warn  |=(a/tang ((slog (flop a)) abet))
+    ++  warn  |=(a/tang ((slog:error:userlib (flop a)) abet))
     ++  with  |*({a/vase b/$-(vase abet)} |=(c/vase (b (slam a c))))
     ++  root-beak  `beak`[our %home da+now]
     ::
@@ -2029,7 +2029,8 @@
     ::  Result handling
     ::
     ::    XX formal dill-blit %url via hood
-    ++  auth-print  |=({$show a/purl} (slog auth-tank leaf+(en-purl a) ~))
+    ++  auth-print  
+      |=({$show a/purl} (slog:error:userlib auth-tank leaf+(en-purl a) ~))
     ++  auth-tank
       =>  =-  ?~(usr - rose+["@" `~]^~[leaf+(trip usr) -])
           rose+["." `~]^(turn (flop dom) |=(a/cord leaf+(trip a)))
@@ -2115,7 +2116,7 @@
         misc+[%& bol]
     ==
   =+  our=`@p`0x100  ::  XX  sentinel
-  =+  ska=(sloy ski)
+  =+  ska=(sloy:error:userlib ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]
@@ -2149,7 +2150,7 @@
   ?.  ?=($& -.why)  ~
   =*  who  p.why
   =+  our=(need hov)                  :: XX single home
-  =+  ska=(sloy ski)
+  =+  ska=(sloy:error:userlib ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   ?.  ?=($$ ren)  [~ ~]
   ?.  ?=($$ -.lot)  [~ ~]
@@ -2174,7 +2175,7 @@
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
   =+  our=`@p`0x100  ::  XX  sentinel
-  =+  ska=(sloy ski)
+  =+  ska=(sloy:error:userlib ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]

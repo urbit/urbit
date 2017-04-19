@@ -367,7 +367,7 @@
             {$c $mere *}
           ?:  ?=($& -.p.sih)
             +>.$
-          (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
+          (mean:error:userlib >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]

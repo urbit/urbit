@@ -122,7 +122,7 @@
         $:  off/?                                       ::  not yet booted
             lac/_|                                      ::  not verbose
             eny/@uvJ                                    ::  512-bit entropy
-            yor/vase                                    ::  %lull, vane models
+            lul/vase                                    ::  %lull, vane models
             zus/vase                                    ::  %zuse, user lib
             van/(map term vase)                         ::  vanes
         ==                                              ::
@@ -752,7 +752,7 @@
     ::  print new entries
     ::
     ~?  !=(~ use.dev) 
-      [%what-use (turn (~(tap by use.dev) ~) |=({path *} +<-))]
+      [%what-old (turn (~(tap by use.dev) ~) |=({path *} +<-))]
     ~?  !=(~ new.dev) 
       [%what-new (~(tap in new.dev) ~)]
     ~?  !=(~ use.dev) 
@@ -854,7 +854,7 @@
           ::  replaced vane in `/neo/vane/*/[nam]`
           ::
           =*  nam  `term`i.t.t.p.i.zyr
-          ~&  [%vane nam p.i.zyr `@p`(mug q.i.zyr)]
+          ~&  [%new-vane nam `path`p.i.zyr `@p`(mug q.i.zyr)]
           (~(put in mor) nam (wilt q.i.zyr))
         ::
         ::  if this is a new install after a heavy reboot, 

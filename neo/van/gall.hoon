@@ -1,4 +1,4 @@
-!:  ::  %gall, agent execution
+::  ::  %gall, agent execution
 !?  163
 ::::
 |=  pit/vase
@@ -90,7 +90,7 @@
         eny/@uvJ                                        ::  entropy
         ska/sley                                        ::  activate
     ==                                                  ::  opaque core
-~%  %gall-top  ..is  ~
+~%  %gall-top  ..ship  ~
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state machine
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  mo
@@ -615,19 +615,19 @@
           [mar=i tyl=(flop t)]
       =+  cug=(ap-find %peek ren tyl)
       ?~  cug
-        ((slog leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
+        ((slog:error:userlib leaf+"peek find fail" >tyl< >mar< ~) [~ ~])
       =.  ..ap-bowl  ap-bowl
       =^  arm  +>.$  (ap-farm q.u.cug)
-      ?:  ?=($| -.arm)  ((slog leaf+"peek farm fail" p.arm) [~ ~])
+      ?:  ?=($| -.arm)  ((slog:error:userlib leaf+"peek farm fail" p.arm) [~ ~])
       =^  zem  +>.$  (ap-slam q.u.cug p.arm !>((slag p.u.cug `path`[ren tyl])))
-      ?:  ?=($| -.zem)  ((slog leaf+"peek slam fail" p.zem) [~ ~])
-      ?+  q.p.zem  ((slog leaf+"peek bad result" ~) [~ ~])
+      ?:  ?=($| -.zem)  ((slog:error:userlib leaf+"peek slam fail" p.zem) [~ ~])
+      ?+  q.p.zem  ((slog:error:userlib leaf+"peek bad result" ~) [~ ~])
         $~              ~
         {$~ $~}         [~ ~]
         {$~ $~ ^}
           =+  caz=(spec (slot 7 p.zem))
           ?.  &(?=({p/@ *} q.caz) ((sane %tas) p.q.caz))
-            ((slog leaf+"scry: malformed cage" ~) [~ ~])
+            ((slog:error:userlib leaf+"scry: malformed cage" ~) [~ ~])
           ?.  =(mar p.q.caz)
             [~ ~]
           ``[p.q.caz (slot 3 caz)]
@@ -1159,7 +1159,11 @@
           (~(mint wa vel) [%cell p.gat p.arg] [%open [%$ ~] [%$ 2] [%$ 3] ~])
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
-            (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
+            %-  slog:error:userlib 
+            :~  >%ap-slam-mismatch< 
+                ~(duck ut p.arg) 
+                ~(duck ut sam)
+            ==
         :_(+>.$ [%| (ap-suck "call: {<cog>}: type mismatch")])
       :_  +>.$(vel +>.wyz)
       =+  [typ nok]=+<.wyz
@@ -1170,7 +1174,7 @@
         $2  [%| p.ton]
       ==
     ::
-    ++  ap-sled  (sloy ska)                             ::  namespace view
+    ++  ap-sled  (sloy:error:userlib ska)               ::  namespace view
     ++  ap-suck                                         ::  standard tang
       |=  msg/tape
       ^-  tang

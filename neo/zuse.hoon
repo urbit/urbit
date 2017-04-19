@@ -1824,7 +1824,7 @@
   |%               
   ::                                                    ::  ++to-wain:format
   ++  to-wain                                           ::  atom to line list
-    ~%  %lore  ..is  ~
+    ~%  %lore  ..ship  ~
     |=  lub/@
     =|  tez/(list @t)
     |-  ^+  tez
@@ -2228,7 +2228,7 @@
     ==
   ::                                                    ::  ++loss:differ
   ++  loss                                              ::  longest subsequence
-    ~%  %loss  ..is  ~
+    ~%  %loss  ..ship  ~
     |*  {hel/(list) hev/(list)}
     |-  ^+  hev
     =+  ^=  sev
@@ -3311,6 +3311,58 @@
       --  ::yu
     --  ::chrono
   ::                                                    ::
+  ::::                    ++error:userlib               ::  error handling
+    ::                                                  ::::
+  ++  error  ^?
+    |%
+    ::                                                  ::  ++mean:error:
+    ++  mean                                            ::  deify stack trace
+      |=(a/tang (fear (flop a) |.(!!)))
+    ::                                                  ::  ++fear:error:
+    ++  fear                                            ::  insert user mean
+      |*  {a/tang _|?(**)}
+      ^+  (+<+)
+      =>  .(a `tang`a)
+      ?~  a  (+<+)
+      ~_(i.a $(a t.a))
+    ::                                                  ::  ++slog:error:
+    ++  slog                                            ::  deify printf
+      ::  pri: priority level
+      =|  pri/@
+      ::
+      ::  .=  ~&(%a 1)
+      ::
+      |=  a/tang  ^+  same
+      ::
+      ::  ((slog ~[>%a<]) 1)
+      ::
+      ?~(a same ~>(%slog.[pri i.a] $(a t.a)))
+    ::                                                  ::  ++sloy:error:
+    ++  sloy                                            ::  temporary hack
+      |=  sod/slyd
+      ^-  slyt
+      |=  {ref/* raw/*}
+      =+  pux=((soft path) raw)
+      ?~  pux  ~
+      ?.  ?=({@ @ @ @ *} u.pux)  ~
+      =+  :*  hyr=(slay i.u.pux)
+              fal=(slay i.t.u.pux)
+              dyc=(slay i.t.t.u.pux)
+              ved=(slay i.t.t.t.u.pux)
+              tyl=t.t.t.t.u.pux
+          ==
+      ?.  ?=({$~ $$ $tas @} hyr)  ~
+      ?.  ?=({$~ $$ $p @} fal)  ~
+      ?.  ?=({$~ $$ $tas @} dyc)  ~
+      ?.  ?=(^ ved)  ~
+      =+  ron=q.p.u.hyr
+      =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
+      =+  bop=(sod ref ~ ron bed)
+      ?~  bop  ~
+      ?~  u.bop  [~ ~]
+      [~ ~ +.q.u.u.bop]
+    --
+  ::                                                    ::
   ::::                    ++space:userlib               ::  (2uC) file utils
     ::                                                  ::::
   ++  space  ^?
@@ -3358,7 +3410,7 @@
     |%
     ::                                                  ::  ++lune:unix:userlib
     ++  lune                                            ::  cord by unix line
-      ~%  %lune  ..is  ~
+      ~%  %lune  ..ship  ~
       |=  txt/@t
       ?~  txt
         ^-  (list @t)  ~
@@ -3381,7 +3433,7 @@
       $(off +(off))
     ::                                                  ::  ++nule:unix:userlib
     ++  nule                                            ::  lines to unix cord
-      ~%  %nule  ..is  ~
+      ~%  %nule  ..ship  ~
       |=  lin/(list @t)
       ^-  @t
       %+  can  3
