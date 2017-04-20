@@ -3,14 +3,10 @@
   ::                                                    ::  ::
 ::
 ::TODO  master changes
-::TODO  =/ instead of =+ ^= where possible
 ::TODO  avoid lark where possible
-::TODO  remove old/unused code
-::TODO  improve naming. way->wir, rad->rep, etc.
-::TODO  tidiness, remove unnecessary ~&, etc.
-::TODO  maybe ensure every arm has a mini-description at :57 too?
-::TODO  maybe prefix all printfs and other errors with %talk?
-::TODO  rename cores. ra->ta (transaction), pa->to (story).
+::TODO  think about what printfs we want to keep for the user to see.
+::TODO  document what user-facing printfs actually mean!
+::TODO  ::> to :> etc.
 ::
 ::TODO  we can't do away with the default mailbox because we need it for things
 ::      like invite notifications etc. can we do better than request that apps
@@ -25,60 +21,60 @@
 ::TODO  permission checks should only use team if it's coming from a reader.
 ::TODO  for story permission checks, count moons as their parent identity.
 ::TODO  crash on pokes/peers we do not expect
+::TODO  keep both a folks and nicks maps. (actual profiles and local nicknames.)
 ::
-/?    310                                               ::  hoon version
-/-    talk, sole                                        ::  structures
-/+    talk, sole, time-to-id, twitter                   ::  libraries
+/?    310                                               ::<  hoon version
+/-    talk                                              ::<  structures
+/+    talk, time-to-id, twitter                         ::<  libraries
 /=    seed  /~  !>(.)
 !:
-::
 ::::
   ::
-::x  include talk and sole cores from the /+ include into our subject,
-::x  so we can do some-arm instead of some-arm:talk.
-[. talk sole]
-=>  |%                                                  ::  data structures
-    ++  house                                           ::  broker state
-      $:  stories/(map knot story)                      ::  conversations
-          ::TODO  rename to readers?
-          general/(map bone (set knot))                 ::  our message readers
-          outbox/(pair @ud (map @ud thought))           ::  urbit outbox
-          log/(map knot @ud)                            ::  logged to clay
-          folks/(map ship human)                        ::  human identities
-          nik/(map (set partner) char)                  ::  bound station glyphs
-          nak/(jug char (set partner))                  ::  station glyph lookup
+[. talk]
+=>  ::>  ||
+    ::>  ||  %arch
+    ::>  ||
+    ::>    data structures
+    ::
+    |%
+    ++  house                                           ::>  broker state
+      $:  stories/(map knot story)                      ::<  conversations
+          readers/(map bone (set knot))                 ::<  our message readers
+          outbox/(pair @ud (map @ud thought))           ::<  urbit outbox
+          log/(map knot @ud)                            ::<  logged to clay
+          folks/(map ship human)                        ::<  human identities
+          nik/(map (set partner) char)                  ::<  bound station glyphs
+          nak/(jug char (set partner))                  ::<  station glyph lookup
       ==                                                ::
-    ++  story                                           ::  wire content
-      $:  count/@ud                                     ::  (lent grams)
-          grams/(list telegram)                         ::  all history
-          locals/atlas                                  ::  local presence
-          remotes/(map partner atlas)                   ::  remote presence
-          shape/config                                  ::  configuration
-          mirrors/(map station config)                  ::  remote config
+    ++  story                                           ::>  wire content
+      $:  count/@ud                                     ::<  (lent grams)
+          grams/(list telegram)                         ::<  all messages
+          locals/atlas                                  ::<  local presence
+          remotes/(map partner atlas)                   ::<  remote presence
+          shape/config                                  ::<  configuration
+          mirrors/(map station config)                  ::<  remote config
           ::TODO  never gets updated.                   ::
-          ::      should probably just be @ud, per story?
-          sequence/(map partner @ud)                    ::  partners heard
-          known/(map serial @ud)                        ::  messages heard
-          followers/(map bone river)                    ::  subscribers
+          sequence/(map partner @ud)                    ::<  partners heard
+          known/(map serial @ud)                        ::<  messages heard
+          followers/(map bone river)                    ::<  subscribers
       ==                                                ::
-    ++  river  (pair point point)                       ::  stream definition
-    ++  point                                           ::  stream endpoint
-      $%  {$ud p/@ud}                                   ::  by number
-          {$da p/@da}                                   ::  by date
+    ++  river  (pair point point)                       ::<  stream definition
+    ++  point                                           ::>  stream endpoint
+      $%  {$ud p/@ud}                                   ::<  by number
+          {$da p/@da}                                   ::<  by date
       ==                                                ::
-    ++  move  (pair bone card)                          ::  all actions
-    ++  lime                                            ::  diff fruit
+    ++  move  (pair bone card)                          ::<  all actions
+    ++  lime                                            ::>  diff fruit
       $%  {$talk-report report}                         ::
           {$talk-lowdown lowdown}                       ::
           {$talk-reaction reaction}                     ::
-          {$sole-effect sole-effect}                    ::
       ==                                                ::
-    ++  pear                                            ::  poke fruit
+    ++  pear                                            ::>  poke fruit
       $%  {$talk-command command}                       ::
           {$write-comment spur ship cord}               ::
           {$write-fora-post spur ship cord cord}        ::
       ==                                                ::
-    ++  card                                            ::  general card
+    ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::
           {$info wire @p @tas nori}                     ::
           {$peer wire dock path}                        ::
@@ -86,472 +82,431 @@
           {$pull wire dock $~}                          ::
           {$quit $~}                                    ::
       ==                                                ::
-    ++  weir                                            ::  parsed wire
-      $%  {$repeat p/@ud q/@p r/knot}                   ::
-          {$friend p/knot q/station}                    ::
+    ++  weir                                            ::>  parsed wire
+      $%  {$repeat p/@ud q/@p r/knot}                   ::<  messaging wire
+          {$friend p/knot q/station}                    ::<  subscription wire
       ==                                                ::
-    ++  strap  |*({k/* v/*} (~(put by *(map _k _v)) k v))
     --
 ::
-|_  {hid/bowl house}
+::>  ||
+::>  ||  %work
+::>  ||
+::>    functional cores and arms.
 ::
-++  ra                                                  ::  per transaction
-  ::x  gets called when talk gets poked or otherwise prompted/needs to perform
-  ::x  an action.
-  ::x  arms generally modify state, and store moves in ++ra's moves. these get
-  ::x  produced when calling ++ra-abet.
-  ::x  in applying commands and making reports, it uses ++pa for story work.
+|_  {bol/bowl house}
+::
+++  prep                                                ::<  prepare state
+  ::x  adapts state.
   ::
-  ::x  moves: moves storage, added to by ++ra-emit and -emil, produced by -abed.
-  |_  moves/(list move)
+  |=  old/(unit house)
+  ^-  (quip move ..prep)
+  ?~  old
+    ta-done:ta-init:ta
+  [~ ..prep(+<+ u.old)]
+::
+::>  ||
+::>  ||  %utility
+::>  ||
+::>    small utility functions.
+::+|
+::
+++  strap  |*({k/* v/*} (~(put by *(map _k _v)) k v))   ::<  map key-value pair
+::
+::>  ||
+::>  ||  %engines
+::>  ||
+::>    main cores.
+::+|
+::
+++  ta                                                  ::<  per transaction
+  ::>  for every transaction/event (poke, peer, etc.)
+  ::>  talk-guardian receives, the ++ta transaction core
+  ::>  is called.
+  ::>  in processing transactions, ++ta may modify app
+  ::>  state, or create moves. these moves get produced
+  ::>  upon finalizing the core's work with ++ta-done.
+  ::>  when making changes to stories, the ++so core is
+  ::>  used.
   ::
-  ++  ra-abet                                           ::  resolve core
-    ::x  produces the moves stored in ++ra's moves.
-    ::x  sole-effects get special treatment to become a single move.
-    ::TODO  this shouldn't ever make sole-effects anymore, so remove that logic.
-    ::TODO  instead, we want to squash lowdown %names and %glyphs,
-    ::      but figure out if that'll ever be needed first.
+  |_  ::>  moves: moves created by core operations.
+      ::
+      moves/(list move)
+  ::
+  ++  ta-done                                           ::<  resolve core
+    ::>  produces the moves stored in ++ta's moves.
+    ::>  they are produced in reverse order because
+    ::>  ++ta-emil and ++ta-emit add them to the head of
+    ::>  the {moves}.
+    ::TODO  maybe squash lowdown %names and %glyphs into single moves.
     ::
-    ^+  [*(list move) +>]
-    :_  +>
-    ::x  seperate our sole-effects from other moves.
-    =+  ^=  yop
-        |-  ^-  (pair (list move) (list sole-effect))
-        ?~  moves  [~ ~]
-        =+  mor=$(moves t.moves)
-        ?:  ?&  =(ost.hid p.i.moves)
-                ?=({$diff $sole-effect *} q.i.moves)
-            ==
-          [p.mor [+>.q.i.moves q.mor]]
-        [[i.moves p.mor] q.mor]
-    ::x  flop moves, flop and squash sole-effects into a %mor.
-    =+  :*  moz=(flop p.yop)
-            ^=  foc  ^-  (unit sole-effect)
-            ?~  q.yop  ~
-            ?~(t.q.yop `i.q.yop `[%mor (flop `(list sole-effect)`q.yop)])
-        ==
-    ::x  produce moves or sole-effects and moves.
-    ?~(foc moz [[ost.hid %diff %sole-effect u.foc] moz])
+    ^-  (quip move +>)
+    [(flop moves) +>]
   ::
-  ++  ra-emil                                           ::  ra-emit move list
-    ::x  adds multiple moves to the core's list. flops to emulate ++ra-emit.
+  ::>  ||
+  ::>  ||  %emitters
+  ::>  ||
+  ::>    arms that create outward changes.
+  ::+|
+  ::
+  ++  ta-emil                                           ::<  emit move list
+    ::>  adds multiple moves to the head of {moves}.
+    ::>  flops to stay consistent with ++ta-emit.
     ::
     |=  mol/(list move)
     %_(+> moves (welp (flop mol) moves))
   ::
-  ++  ra-emit                                           ::  emit a move
-    ::x  adds a move to the core's list.
+  ++  ta-emit                                           ::<  emit a move
+    ::>  adds a move to the head of {moves}.
     ::
     |=  mov/move
     %_(+> moves [mov moves])
   ::
-  ++  ra-evil                                           ::  emit error
-    ::x  stack trace and crash.
-    ::
-    |=  msg/cord
-    ~|  [%ra-evil msg]
-    !!
-  ::
-  ++  ra-init                                           ::  initialize talk
-    ::x  populate state on first boot. creates our main and public stories.
-    ::
-    %+  roll
-      ^-  (list {posture knot cord})
-      :~  [%brown (main our.hid) 'default home']
-          [%green ~.public 'visible activity']
-      ==
-    |:  [[typ=*posture man=*knot des=*cord] ..ra-init]  ^+  ..ra-init
-    %+  ra-action  ost.hid
-    [%create man des typ]
-  ::
-  ++  ra-apply                                          ::  apply command
-    ::x  applies the command sent by her.
-    ::
-    |=  {her/ship cod/command}
-    ^+  +>
-    ?-    -.cod
-      ::x  used for relaying messages (as a station host).
-        $review   (ra-think | her +.cod)
-    ==
-  ::
-  ++  ra-inform                                         ::x  new lowdown
-    ::x  send talk-lowdown to all readers.
+  ++  ta-inform                                         ::<  broadcast lowdown
+    ::>  sends a talk-lowdown diff to all readers.
     ::
     |=  low/lowdown
-    %-  ra-emil
-    %-  ~(rep by general)
+    %-  ta-emil
+    %-  ~(rep by readers)
     |=  {{b/bone *} l/(list move)}
     [[b %diff %talk-lowdown low] l]
   ::
-  ++  ra-react
-    ::x  send a talk-reaction to a reader.
+  ++  ta-react                                          ::<  send reaction
+    ::>  sends a talk-reaction diff to a reader.
     ::
     |=  {red/bone rac/reaction}
-    %-  ra-emit
+    %-  ta-emit
     [red %diff %talk-reaction rac]
   ::
-  ++  ra-action
-    ::x  peforms action sent by a reader.
+  ++  ta-evil                                           ::<  emit error
+    ::>  tracing printf and crash.
+    ::
+    |=  msg/cord
+    ~|  [%talk-ta-evil msg]
+    !!
+  ::
+  ::>  ||
+  ::>  ||  %data
+  ::>  ||
+  ::>    utility functions for data retrieval.
+  ::+|
+  ::
+  ++  ta-know                                           ::<  story monad
+    ::>  produces a gill that takes a gate.
+    ::>  if the story {nom} exists, calls the gate with
+    ::>  a story core. if it doesn't, does nothing.
+    ::
+    |=  nom/knot
+    |*  fun/$-(_so _+>)
+    ^+  +>+>
+    =+  pur=(~(get by stories) nom)
+    ?~  pur
+      ~&  [%talk-ta-know-not nom]                       ::  XX should crash
+      +>+>.$
+    (fun ~(. so nom ~ u.pur))
+  ::
+  ++  ta-human                                          ::<  look up person
+    ::>  get {her} identity. if we need to, create one.
+    ::
+    |=  her/ship
+    ^-  (quid human +>)
+    =^  who  folks
+      =+  who=(~(get by folks) her)
+      ?^  who  [u.who folks]
+      =+  who=`human`[~ `(scot %p her)]                 ::  XX do right
+      [who (~(put by folks) her who)]
+    [who +>.$]
+  ::
+  ::>  ||
+  ::>  ||  %interaction-events
+  ::>  ||
+  ::>    arms that apply events we received.
+  ::+|
+  ::
+  ++  ta-init                                           ::<  initialize app
+    ::>  populate state on first boot.
+    ::>  creates our default mailbox and journal.
+    ::
+    %+  roll
+      ^-  (list {posture knot cord})
+      :~  [%brown (main our.bol) 'default home']
+          [%green ~.public 'visible activity']
+      ==
+    |=  {{typ/posture nom/knot des/cord} _ta}
+    %+  ta-action  ost.bol
+    [%create nom des typ]
+  ::
+  ++  ta-apply                                          ::<  apply command
+    ::>  applies the command sent by {src}.
+    ::
+    |=  {src/ship cod/command}
+    ^+  +>
+    ?-  -.cod
+      ::>  %review commands prompt us (as a station host)
+      ::>  to verify and distribute messages.
+        $review
+      (ta-think | src +.cod)
+    ==
+  ::
+  ++  ta-action                                         ::<  apply reader action
+    ::>  performs action sent by a reader.
     ::
     |=  {red/bone act/action}
     ^+  +>
-    ?-  -.act
+    =<  work
+    ::>  ||
+    ::>  ||  %actions
+    ::>  ||
+    ::>    action processing core
+    ::>
+    ::>  ++work calls the appropriate action processing
+    ::>  arm. most use ++affect to retrieve the affected
+    ::>  story, reacting if it doesn't exist.
+    |%
+    ::  ||  %utility
+    ::+|
+    ++  work                                            ::<  perform action
+      ^+  ..ta-action
+      ?-  -.act
+        ::  station configuration
+        $create  (action-create +.act)
+        $source  (action-source +.act)
+        $depict  (action-depict +.act)
+        $permit  (action-permit +.act)
+        $delete  (action-delete +.act)
+        ::  messaging
+        $convey  (action-convey +.act)
+        $phrase  (action-phrase +.act)
+        ::  personal metadata
+        $status  (action-status +.act)
+        ::  changing shared ui
+        $human   (action-human +.act)
+        $glyph   (action-glyph +.act)
+      ==
+    ::
+    ++  affect                                          ::<  affect story
+      ::>  produces a gill that takes a gate.
+      ::>  if the story {nom} exists, calls the gate with
+      ::>  a story core and the story itself.
+      ::>  if it doesn't, reacts accordingly.
       ::
-      ::  station configuration
+      |=  nom/knot
+      |*  fec/$-(_so _ta)
+      ^+  ta
+      =+  pur=(~(get by stories) nom)
+      ?^  pur
+        (fec ~(. so nom ~ u.pur) u.pur)
+      %+  ta-react  red
+      [%fail (crip "no story {(trip nom)}") `act]
+    ::
+    ::>  ||  %station-configuration
+    ::+|
+    ++  action-create                                   ::<  create story
+      ::>  creates a story with the specified parameters.
       ::
-        $create                                         ::  create station
-      ?.  (~(has in stories) p.act)
-        (ra-config p.act [[%& our.hid p.act] ~ ~] q.act [r.act ~])
-      (ra-react red %fail (crip "{(trip p.act)}: already exists") `act)
+      |=  {nom/knot des/cord typ/posture}
+      ^+  ..ta-action
+      ?.  (~(has in stories) nom)
+        (ta-config nom [[%& our.bol nom] ~ ~] des [typ ~])
+      (ta-react red %fail (crip "{(trip nom)}: already exists") `act)
+    ::
+    ++  action-source                                   ::<  un/sub p to/from r
+      ::>  add/remove {pas} as sources for story {nom}.
       ::
-        $source                                         ::  un/sub p to/from r
-      %-  (ra-affect p.act red `act)  |=  {par/_pa soy/story}
+      |=  {nom/knot sub/? pas/(set partner)}
+      ^+  ..ta-action
+      %-  (affect nom)  |=  {sor/_so soy/story}
       =.  sources.shape.soy
-        %.  r.act
-        ?:  q.act
+        %.  pas
+        ?:  sub
           ~(uni in sources.shape.soy)
         ~(dif in sources.shape.soy)
-      (ra-config p.act shape.soy)
+      (ta-config nom shape.soy)
+    ::
+    ++  action-depict                                   ::<  change description
+      ::>  change description of story {nom} to {des}.
       ::
-        $depict                                         ::  change description
-      %-  (ra-affect p.act red `act)  |=  {par/_pa soy/story}
-      =.  caption.shape.soy  q.act
-      (ra-config p.act shape.soy)
+      |=  {nom/knot des/cord}
+      ^+  ..ta-action
+      %-  (affect nom)  |=  {sor/_so soy/story}
+      =.  caption.shape.soy  des
+      (ta-config nom shape.soy)
+    ::
+    ++  action-permit                                   ::<  invite/banish
+      ::>  invite to/banish from story {nom} all {sis}.
       ::
-        $permit                                         ::  invite/banish
-      %-  (ra-affect p.act red `act)  |=  {par/_pa *}  =<  pa-abet
-      (pa-permit:par q.act r.act)
+      |=  {nom/knot inv/? sis/(set ship)}
+      ^+  ..ta-action
+      %-  (affect nom)  |=  {sor/_so *}  =<  so-done
+      (so-permit:sor inv sis)
+    ::
+    ++  action-delete                                   ::<  delete + announce
+      ::>  delete story {nom}, optionally announcing the
+      ::>  event with message {mes}.
       ::
-        $delete                                         ::  delete + announce
-      %-  (ra-affect p.act red `act)  |=  *
-      =.  +>.^$  ::TODO  =?
-        ?~  q.act  +>.^$
-        (ra-action red %phrase [[%& our.hid p.act] ~ ~] [%lin | u.q.act]~)
-      (ra-unconfig p.act)
+      |=  {nom/knot mes/(unit cord)}
+      ^+  ..ta-action
+      %-  (affect nom)  |=  *
+      =.  ..ta-action  ::TODO  =?
+        ?~  mes  ..ta-action
+        %+  action-phrase
+          [[%& our.bol nom] ~ ~]
+        [%lin | u.mes]~
+      (ta-unconfig nom)
+    ::
+    ::>  ||  %messaging
+    ::+|
+    ++  action-convey                                   ::<  post exact
+      ::>  sends the messages provided in the action.
       ::
-      ::  messaging
+      |=  tos/(list thought)
+      ^+  ..ta-action
+      (ta-think & our.bol tos)
+    ::
+    ++  action-phrase                                   ::<  post easy
+      ::>  sends the message contents provided in the
+      ::>  action, constructing the audience, generating a
+      ::>  serial and setting a timestamp.
       ::
-        $convey                                         ::  post exact
-      (ra-think & our.hid +.act)
-      ::
-        $phrase                                         ::  post easy
-      =-  (ra-think & our.hid tos)
+      |=  {pas/(set partner) ses/(list speech)}
+      ^+  ..ta-action
+      =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
-      ?~  q.act  ~
-      =^  sir  eny.hid  (uniq eny.hid)
-      :_  $(q.act t.q.act)
+      ?~  ses  ~
+      =^  sir  eny.bol  (uniq eny.bol)
+      :_  $(ses t.ses)
       :+  sir
         %-  ~(gas by *audience)
-        %+  turn  (~(tap in p.act))
+        %+  turn  (~(tap in pas))
         |=(p/partner [p *envelope %pending])
-      [now.hid ~ i.q.act]
+      [now.bol ~ i.ses]
+    ::
+    ::>  ||  %personal-metadata
+    ::+|
+    ++  action-status                                   ::<  our status update
+      ::>  for every story in the set, update our status.
       ::
-      ::  personal metadata
+      |=  {nos/(set knot) sat/status}
+      ^+  ..ta-action
+      %-  ~(rep in nos)
+      |=  {k/knot _ta}
+      %-  (affect k)  |=  {sor/_so *}
+      so-done:(so-notify:sor our.bol sat)
+    ::
+    ::>  ||  %changing-shared-ui
+    ::+|
+    ++  action-human                                    ::<  new identity
+      ::>  assigns a new local identity ("nickname") to the
+      ::>  target ship.
       ::
-        $status                                         ::  our status update
-      ::x  for every knot (story) in the set, update our status.
-      |-  ^+  +>.^$
-      ?~  p.act  +>.^$
-      =.  +>.^$  $(p.act l.p.act)
-      =.  +>.^$  $(p.act r.p.act)
-      %-  (ra-affect n.p.act red `act)  |=  {par/_pa *}  =<  pa-abet
-      (pa-notify:par our.hid q.act)
-      ::
-      ::  changing shared ui
-      ::
-        $human                                          ::  new identity
-      ?.  =((~(get by folks) p.act) `q.act)  +>         ::  no change
+      |=  {sip/ship nic/human}
+      ^+  ..ta-action
+      ?.  =((~(get by folks) sip) `nic)  ..ta-action    ::<  no change
       =.  folks
-        ?~  hand.q.act  (~(del by folks) p.act)
-        (~(put by folks) p.act q.act)
-      %+  ra-inform  %names
+        ?~  hand.nic  (~(del by folks) sip)
+        (~(put by folks) sip nic)
+      %+  ta-inform  %names
       ::TODO  think long and hard, do we need unit for delition or is a human
       ::      with [~ ~] good enough? if the latter, agent's $names will change.
-      (strap p.act ?~(hand.q.act ~ `q.act))
+      (strap sip ?~(hand.nic ~ `nic))
+    ::
+    ++  action-glyph                                    ::<  bind a glyph
+      ::>  un/bind glyph {lif} to partners {pas}.
       ::
-        $glyph                                          ::  bind a glyph
-      =.  +>.$
-        ?:  r.act
-          %=  +>.$
-            nik  (~(put by nik) q.act p.act)
-            nak  (~(put ju nak) p.act q.act)
+      |=  {lif/char pas/(set partner) bin/?}
+      =.  ..ta-action
+        ?:  bin
+          %=  ..ta-action                               ::<  bind
+            nik  (~(put by nik) pas lif)
+            nak  (~(put ju nak) lif pas)
           ==
-        =/  ole/(set (set partner))
-          ?.  =(q.act ~)  [q.act ~ ~]
-          (~(get ju nak) p.act)
-        |-  ^+  +>.^$
-        ?~  ole  +>.^$
-        =.  +>.^$  $(ole l.ole)
-        =.  +>.^$  $(ole r.ole)
-        %=  +>.^$
-          nik  (~(del by nik) n.ole)
-          nak  (~(del ju nak) p.act n.ole)
+        =/  ole/(set (set partner))                     ::<  unbind
+          ?.  =(pas ~)  [pas ~ ~]
+          (~(get ju nak) lif)
+        ::TODO  want to replace these kinds of loops with
+        ::      ++rep:in and ++roll, but doesn't seem to
+        ::      work correctly?
+        |-  ^+  ..ta-action
+        ?~  ole  ..ta-action
+        =.  ..ta-action  $(ole l.ole)
+        =.  ..ta-action  $(ole r.ole)
+        %=  ..ta-action
+          nik  (~(del by nik) pas)
+          nak  (~(del ju nak) lif pas)
         ==
-      (ra-inform %glyph nak)
-    ==
+      (ta-inform %glyph nak)
+    --
   ::
-  ++  ra-config                                         ::  configure story
-    ::x  (re)configures story man. if it's a new story, emit our stories.
+  ++  ta-diff-report                                    ::<  subscription update
+    ::>  process a talk report from {sat} into story {nom}.
     ::
-    |=  {man/knot con/config}
-    ^+  +>
-    =+  :-  neu=!(~(has by stories) man)
-        pur=(fall (~(get by stories) man) *story)
-    ::  wyt:  will be white
-    =+  wyt=?=(?($white $green) p.cordon.con)
-    ::x  if we just created the story, and invite only, make sure we're in.
-    =.  q.cordon.con  ::TODO  =?
-      ?:  &(neu wyt)  [our.hid ~ ~]
-      q.cordon.con
-    pa-abet:(~(pa-reform pa man ~ pur) con)
+    |=  {nom/knot sat/station ret/report}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-diff-report:sor sat ret)
   ::
-  ++  ra-unconfig
-    |=  man/knot
-    ^+  +>
-    =+  soy=(~(get by stories) man)
-    ?~  soy  +>.$
-    pa-abet:~(pa-reform-gone pa man ~ u.soy)
+  ::>  ||
+  ::>  ||  %subscription-events
+  ::>  ||
+  ::>    arms that react to subscription events.
+  ::+|
   ::
-  ++  ra-base-hart
-    ::x  produces our ship's host desk's web address as a hart.
-    ::
-    .^(hart %e /(scot %p our.hid)/host/(scot %da now.hid))
-  ::
-  ++  ra-fora-post
-    ::x  sends a fora post. if we don't have a channel for posts yet, create one
-    ::
-    |=  {pax/path sup/spur hed/@t txt/@t}
-    ::x  tell %hood to submit a fora post.
-    =.  ..ra-emit
-      %+  ra-emit  ost.hid
-      :*  %poke
-          /fora-post
-          [our.hid %hood]
-          [%write-fora-post sup src.hid hed txt]
-      ==
-    =+  man=%posts
-    ::x  if we have a %posts story, go ahead and consume.
-    ?:  (~(has by stories) man)
-      (ra-consume-fora-post man pax hed txt)
-    ::x  if we have no %posts story, first create it, then consume.
-    =;  new  (ra-consume-fora-post:new man pax hed txt)
-    =.  ..ra-action
-      %+  ra-action  ost.hid
-      [%create man 'towards a community' %brown]
-    ::x  send informative message to our mailbox.
-    %^  ra-consume  &  our.hid
-    :^    (shaf %init eny.hid)  ::x  serial
-        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)  ::x  audience
-    ::x  statement
-      now.hid
-    [~ %app %tree 'receiving forum posts, ;join %posts for details']
-  ::
-  ++  ra-consume-fora-post
-    ::x  add a message for a fora post to the man story.
-    ::
-    |=  {man/knot pax/path hed/@t txt/@t}  ^+  +>
-    =.  pax  (welp pax /posts/(crip "{<now.hid>}~"))
-    %^  ra-consume  |
-      src.hid
-    :*  (shaf %comt eny.hid)
-        (my [[%& our.hid man] *envelope %pending] ~)
-        now.hid
-        (sy /fora-post eyre+pax ~)
-      :-  %mor  :~
-        [%fat text+(lore txt) [%url [ra-base-hart `pax ~] ~]]
-        [%app %tree (crip "forum post: '{(trip hed)}'")]
-      ==
-    ==
-  ::
-  ++  ra-comment
-    ::x  sends a comment. if we don't have a channel for them yet, creates one.
-    ::
-    |=  {pax/path sup/spur txt/@t}
-    =.  ..ra-emit
-      %+  ra-emit  ost.hid
-      :*  %poke
-          /comment
-          [our.hid %hood]
-          [%write-comment sup src.hid txt]
-      ==
-    =+  man=%comments
-    ?:  (~(has by stories) man)
-      (ra-consume-comment man pax sup txt)
-    =;  new  (ra-consume-comment:new man pax sup txt)
-    =.  ..ra-action
-      %+  ra-action  ost.hid
-      [%create man 'letters to the editor' %brown]
-    %^  ra-consume  &  our.hid
-    :^    (shaf %init eny.hid)
-        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
-      now.hid
-    [~ %app %tree 'receiving comments, ;join %comments for details']
-  ::
-  ++  ra-consume-comment
-    ::x  adds a message for a comment to the man story.
-    ::
-    |=  {man/knot pax/path sup/spur txt/@t}  ^+  +>
-    =+  nam=?~(sup "" (trip i.sup))                     :: file name
-    =+  fra=(crip (time-to-id now.hid))                 :: url fragment
-    %^  ra-consume  |
-      src.hid
-    :*  (shaf %comt eny.hid)
-        (my [[%& our.hid man] *envelope %pending] ~)
-        now.hid
-        (sy /comment eyre+pax ~)
-      :-  %mor  :~
-        [%fat text+(lore txt) [%url [ra-base-hart `pax ~] `fra]]
-        [%app %tree (crip "comment on /{nam}")]
-      ==
-    ==
-  ::
-  ++  ra-know                                           ::  story monad
-    ::x  produces a wet core that takes a gate that takes a story core and
-    ::x  produces updated state.
-    ::
-    |=  man/knot
-    |*  fun/$-(_pa _+>)
-    ^+  +>+>
-    =+  pur=(~(get by stories) man)
-    ?~  pur
-      ~&  [%ra-know-not man]                            ::  XX should crash
-      +>+>.$
-    ::x  call the sample gate with a ++pa core.
-    (fun ~(. pa man ~ u.pur))
-  ::
-  ++  ra-affect
-    ::x  attempt to retrieve a story and call a sample gate with it.
-    ::x  if no such story, react.
-    ::
-    |=  {man/knot red/bone act/(unit action)}
-    |*  fun/$-(_pa _+>)
-    ^+  +>+>
-    =+  pur=(~(get by stories) man)
-    ?~  pur
-      %+  ra-react  red
-      [%fail (crip "no story {(trip man)}") act]
-    (fun ~(. pa man ~ u.pur) u.pur)
-  ::
-  ++  ra-diff-talk-report                               ::  subscription update
-    ::x  process a talk report from cuz into story man.
-    ::
-    |=  {man/knot cuz/station rad/report}
-    %-  (ra-know man)  |=  par/_pa  =<  pa-abet
-    (pa-diff-talk-report:par cuz rad)
-  ::
-  ++  ra-quit                                           ::  subscription quit
-    ::x  removes cuz from the subscribers of story man.
-    ::
-    |=  {man/knot cuz/station}
-    %-  (ra-know man)  |=  par/_pa  =<  pa-abet
-    (pa-quit:par %& cuz)
-  ::
-  ++  ra-retry                                          ::  subscription resend
-    ::x  produce a %peer/subscribe move for cuz to story man.
-    ::
-    |=  {man/knot cuz/station}
-    %-  (ra-know man)  |=  par/_pa  =<  pa-abet
-    (pa-acquire:par [%& cuz]~)
-  ::
-  ++  ra-coup-repeat                                    ::
-    ::x  assemble partner and call ++ra-repeat.
-    ::
-    |=  {{num/@ud her/@p man/knot} saw/(unit tang)}
-    (ra-repeat num [%& her man] saw)
-  ::
-  ++  ra-repeat                                         ::  remove from outbox
-    ::x  take message out of outbox, mark it as received or rejected.
-    ::x  crashes if pan is not in message's audience.
-    ::
-    |=  {num/@ud pan/partner saw/(unit tang)}
-    =+  oot=(~(get by q.outbox) num)
-    ?~  oot  ~|([%ra-repeat-none num] !!)
-    =.  q.outbox  (~(del by q.outbox) num)
-    =.  q.u.oot
-      =+  olg=(~(got by q.u.oot) pan)
-      %+  ~(put by q.u.oot)  pan
-      :-  -.olg
-      ?~  saw  %received
-      ~>  %slog.[0 u.saw]
-      %rejected
-    (ra-think | our.hid u.oot ~)
-  ::
-  ++  ra-cancel                                         ::  drop a bone
-    ::x  removes a bone from the story in pax.
-    ::
-    |=  {src/ship pax/path}
-    ^+  +>
-    ?.  ?=({@ @ *} pax)
-      ::x  if story is not in path, just delete the bone from general.
-      +>(general (~(del by general) ost.hid))
-    %-  (ra-know i.pax)  |=  par/_pa  =<  pa-abet
-    ::x  delete bone from all follower groups and set src's status to %gone.
-    (pa-notify:pa-cancel:par src %gone *human)
-  ::
-  ++  ra-human                                          ::  look up person
-    ::x  get her identity. if she has none, make her one.
-    ::
-    |=  her/ship
-    ^-  {human _+>}
-    =^  who  folks
-        =+  who=(~(get by folks) her)
-        ?^  who  [u.who folks]
-        =+  who=`human`[~ `(scot %p her)]               ::  XX do right
-        [who (~(put by folks) her who)]
-    [who +>.$]
-  ::
-  ++  ra-subscribe                                      ::  listen to
-    ::x  subscribe her at pax.
+  ++  ta-subscribe                                      ::<  listen to
+    ::>  start {her} susbcription on {pax}.
+    ::>  for readers, we forward to ++ta-welcome.
+    ::>  for foreign brokers, we check if their desired
+    ::>  story exists and if they have permission to
+    ::>  subscribe to it, before sending them all data.
     ::
     |=  {her/ship pax/path}
     ^+  +>
-    ::x  empty path, meta-subscribe and send report with all our stories.
+    ::  reader subscription.
     ?:  ?=({$reader *} pax)
-      ?.  (team our.hid her)
-        ~&  [%foreign-reader her]
+      ?.  (team our.bol her)
+        ~&  [%talk-foreign-reader her]
         +>
-      (ra-welcome ost.hid t.pax)
+      (ta-welcome ost.bol t.pax)
+    ::  weird subscription path.
     ?.  ?=({@ *} pax)
-      (ra-evil %talk-bad-path)
+      (ta-evil %bad-path)
     =+  pur=(~(get by stories) i.pax)
     ?~  pur
-      ~&  [%bad-subscribe-story-c i.pax]
-      (ra-evil %talk-no-story)
-    =+  soy=~(. pa i.pax `(list action)`~ u.pur)  ::  nest-fails if not cast?
-    ::x  she needs read permissions to subscribe.
-    ?.  (pa-visible:soy her)
-      (ra-evil %talk-no-story)
-      ::TODO?  or (pa-sauce ost.hid [%quit ~]~) ?
-    =^  who  +>.$  (ra-human her)
-    ::x  send current data to bring her up to date.
-    =.  soy  (pa-report-cabal:soy ost.hid ~ ~)
-    =.  soy  (pa-report-group:soy ost.hid ~ ~)
-    =.  soy  (pa-first-grams:soy her t.pax)  ::x  also adds new sub to followers
-    ::x  add her status to presence map.
-    =.  soy  (pa-notify:soy her %hear who)
-    ::x  apply changes to story.
-    pa-abet:soy
+      ~&  [%talk-bad-subscribe-story i.pax]
+      (ta-evil %no-story)
+    =+  soy=~(. so i.pax `(list action)`~ u.pur)        ::  nest-fail if no cast
+    ::  she needs read permissions to subscribe.
+    ?.  (so-visible:soy her)
+      (ta-evil %no-story)
+      ::TODO?  or (so-sauce ost.bol [%quit ~]~) ?
+    =^  who  +>.$  (ta-human her)
+    ::  send current data to bring her up to date.
+    =.  soy  (so-report-cabal:soy ost.bol ~ ~)
+    =.  soy  (so-report-group:soy ost.bol ~ ~)
+    =.  soy  (so-start:soy her t.pax)             ::<  also adds story sub
+    =.  soy  (so-notify:soy her %hear who)              ::<  add her status
+    so-done:soy                                         ::<  apply story changes
   ::
-  ++  ra-welcome
-    ::x  brings new reader up to date. susbcribes it to the specified story,
+  ++  ta-welcome                                        ::<  reader subscription
+    ::>  brings new reader up to date. susbcribes it to the specified story,
     ::TODO  or shared ui state if no story was specified.
+    ::TODO  maybe also send a list of knots again? (basically a %house lowdown)
     ::
     |=  {new/bone pax/path}
     =/  sor/knot
       ?:  ?=({@tas *} pax)  i.pax
-      (main our.hid)                                    ::  default to mailbox
+      (main our.bol)                                    ::  default to mailbox
+    ::>  new reader? send shared ui state.
     =.  +>.$  ::TODO  =?
-      ?:  (~(has by general) new)  +>.$
-      %-  ra-emil
+      ?:  (~(has by readers) new)  +>.$
+      %-  ta-emil
       :~  ::x  bound glyphs
           [new %diff %talk-lowdown %glyph nak]
           ::x  nicknames
           [new %diff %talk-lowdown %names (~(run by folks) some)]
       ==
+    ::>  send story state.
     =.  +>.$  ::TODO  =?
       ?.  (~(has by stories) sor)  +>.$
       =+  soy=(~(got by stories) sor)
-      %-  ra-emil
+      %-  ta-emil
       :~  ::x  configurations
           :*  new  %diff  %talk-lowdown  %confs
             `shape.soy  (~(run by mirrors.soy) some)
@@ -561,32 +516,174 @@
           ::x  messages
           [new %diff %talk-lowdown %grams 0 grams.soy]
       ==
+    ::>  add this subscription to {readers}.
     %=  +>.$
-        general
-      %+  ~(put by general)  new
-      (~(put in (fall (~(get by general) new) ~)) sor)
+        readers
+      %+  ~(put by readers)  new
+      (~(put in (fall (~(get by readers) new) ~)) sor)
     ==
   ::
-  ++  ra-think                                          ::  publish+review
-    ::x  consumes each thought.
+  ++  ta-retry                                          ::<  subscription resend
+    ::>  re-subscribes {sat} to story {nom}.
     ::
-    |=  {pub/? her/ship tiz/(list thought)}
-    ^+  +>
-    ?~  tiz  +>
-    $(tiz t.tiz, +> (ra-consume pub her i.tiz))
+    |=  {nom/knot sat/station}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-acquire:sor [%& sat]~)
   ::
-  ++  ra-normal                                         ::  normalize
-    ::x  sanitize %lin speech, enforce lowercase and no special characters.
+  ++  ta-quit                                           ::<  subscription failed
+    ::>  removes {sat} from story {nom}'s followers.
     ::
-    |=  tip/thought
+    |=  {nom/knot sat/station}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-quit:sor %& sat)
+  ::
+  ++  ta-cancel                                         ::<  unsubscribe
+    ::>  drops {src}'s subscription. deduce the right way
+    ::>  to do this from the subscription path {pax}.
+    ::
+    |=  {src/ship pax/path}
+    ^+  +>
+    ::  remove a reader subscription.
+    ?:  ?=({$reader *} pax)
+    =/  nom/knot
+      ?:  ?=({@tas *} t.pax)  i.pax
+      (main our.bol)  ::TODO  change when ++ta-welcome changes.
+    =/  nes/(set knot)
+      %.  nom
+      ~(del in (~(got by readers) ost.bol))
+    +>.$(readers (~(put by readers) ost.bol nes))
+    ::  weird subscription path.
+    ?.  ?=({@ @ *} pax)
+      ~&([%talk-ta-cancel-weird-path pax] +>)
+    ::  remove a regular subscription, set ship status to %gone.
+    %-  (ta-know i.pax)  |=  sor/_so  =<  so-done
+    (so-notify:so-cancel:sor src %gone *human)
+  ::
+  ::>  ||  %fora
+  ::>    fora things.
+  ::TODO  move outside of guardian...
+  ::+|
+  ::
+  ++  ta-base-hart
+    ::x  produces our ship's host desk's web address as a hart.
+    ::
+    .^(hart %e /(scot %p our.bol)/host/(scot %da now.bol))
+  ::
+  ++  ta-fora-post
+    ::x  sends a fora post. if we don't have a channel for posts yet, create one
+    ::
+    |=  {pax/path sup/spur hed/@t txt/@t}
+    ::x  tell %hood to submit a fora post.
+    =.  ..ta-emit
+      %+  ta-emit  ost.bol
+      :*  %poke
+          /fora-post
+          [our.bol %hood]
+          [%write-fora-post sup src.bol hed txt]
+      ==
+    =+  man=%posts
+    ::x  if we have a %posts story, go ahead and consume.
+    ?:  (~(has by stories) man)
+      (ta-consume-fora-post man pax hed txt)
+    ::x  if we have no %posts story, first create it, then consume.
+    =;  new  (ta-consume-fora-post:new man pax hed txt)
+    =.  ..ta-action
+      %+  ta-action  ost.bol
+      [%create man 'towards a community' %brown]
+    ::x  send informative message to our mailbox.
+    %^  ta-consume  &  our.bol
+    :^    (shaf %init eny.bol)                          ::<  serial
+        (my [[%& our.bol (main our.bol)] *envelope %pending] ~)  ::<  audience
+    ::>  statement
+      now.bol
+    [~ %app %tree 'receiving forum posts, ;join %posts for details']
+  ::
+  ++  ta-consume-fora-post
+    ::x  add a message for a fora post to the man story.
+    ::
+    |=  {man/knot pax/path hed/@t txt/@t}  ^+  +>
+    =.  pax  (welp pax /posts/(crip "{<now.bol>}~"))
+    %^  ta-consume  |
+      src.bol
+    :*  (shaf %comt eny.bol)
+        (my [[%& our.bol man] *envelope %pending] ~)
+        now.bol
+        (sy /fora-post eyre+pax ~)
+      :-  %mor  :~
+        [%fat text+(lore txt) [%url [ta-base-hart `pax ~] ~]]
+        [%app %tree (crip "forum post: '{(trip hed)}'")]
+      ==
+    ==
+  ::
+  ++  ta-comment
+    ::x  sends a comment. if we don't have a channel for them yet, creates one.
+    ::
+    |=  {pax/path sup/spur txt/@t}
+    =.  ..ta-emit
+      %+  ta-emit  ost.bol
+      :*  %poke
+          /comment
+          [our.bol %hood]
+          [%write-comment sup src.bol txt]
+      ==
+    =+  man=%comments
+    ?:  (~(has by stories) man)
+      (ta-consume-comment man pax sup txt)
+    =;  new  (ta-consume-comment:new man pax sup txt)
+    =.  ..ta-action
+      %+  ta-action  ost.bol
+      [%create man 'letters to the editor' %brown]
+    %^  ta-consume  &  our.bol
+    :^    (shaf %init eny.bol)
+        (my [[%& our.bol (main our.bol)] *envelope %pending] ~)
+      now.bol
+    [~ %app %tree 'receiving comments, ;join %comments for details']
+  ::
+  ++  ta-consume-comment
+    ::x  adds a message for a comment to the man story.
+    ::
+    |=  {man/knot pax/path sup/spur txt/@t}  ^+  +>
+    =+  nam=?~(sup "" (trip i.sup))                     :: file name
+    =+  fra=(crip (time-to-id now.bol))                 :: url fragment
+    %^  ta-consume  |
+      src.bol
+    :*  (shaf %comt eny.bol)
+        (my [[%& our.bol man] *envelope %pending] ~)
+        now.bol
+        (sy /comment eyre+pax ~)
+      :-  %mor  :~
+        [%fat text+(lore txt) [%url [ta-base-hart `pax ~] `fra]]
+        [%app %tree (crip "comment on /{nam}")]
+      ==
+    ==
+  ::
+  ::>  ||
+  ::>  ||  %messaging
+  ::>  ||
+  ::>    arms for sending and processing messages.
+  ::+|
+  ::
+  ++  ta-think                                          ::<  publish or review
+    ::>  consumes each thought.
+    ::
+    |=  {pub/? aut/ship tos/(list thought)}
+    ^+  +>
+    ?~  tos  +>
+    $(tos t.tos, +> (ta-consume pub aut i.tos))
+  ::
+  ++  ta-sane                                           ::<  sanitize
+    ::>  sanitize %lin speech, enforce lowercase and no special characters.
+    ::TODO  make configurable per-station.
+    ::
+    |=  tot/thought
     ^-  thought
-    ?.  ?=({$lin *} r.r.tip)  tip
-    %_    tip
+    ?.  ?=({$lin *} r.r.tot)  tot
+    %_    tot
         q.r.r
       %-  crip
       %+  scag  64
       %-  tufa
-      %+  turn  (tuba (trip q.r.r.tip))
+      %+  turn  (tuba (trip q.r.r.tot))
       |=  a/@c
       ?:  &((gte a 'A') (lte a 'Z'))
         (add a 32)
@@ -595,208 +692,147 @@
       a
     ==
   ::
-  ++  ra-consume                                        ::  consume thought
-    ::x  if pub is true, sends the thought to each partner in the audience.
-    ::x  if false, updates the thought in our store.
+  ++  ta-consume                                        ::<  consume thought
+    ::>  conducts thought {tot} to each partner in its audience.
     ::
-    |=  {pub/? her/ship tip/thought}
-    =.  tip  (ra-normal tip)
-    =+  aud=(~(tap by q.tip) ~)  ::x  why ~ ?
+    |=  {pub/? aut/ship tot/thought}
+    =.  tot  (ta-sane tot)
+    =+  aud=(~(tap by q.tot))
     |-  ^+  +>.^$
     ?~  aud  +>.^$
-    $(aud t.aud, +>.^$ (ra-conduct pub her p.i.aud tip))
+    $(aud t.aud, +>.^$ (ta-conduct pub aut p.i.aud tot))
   ::
-  ++  ra-conduct                                        ::  thought to partner
-    ::x  record a message or sends it.
+  ++  ta-conduct                                        ::  thought to partner
+    ::>  either publishes or records a thought.
     ::
-    |=  {pub/? her/ship tay/partner tip/thought}
+    |=  {pub/? aut/ship pan/partner tot/thought}
     ^+  +>
-    ?-  -.tay
-      $&  ?:  pub
-            =.  her  our.hid                            ::  XX security!
-            ?:  =(her p.p.tay)
-              (ra-record q.p.tay p.p.tay tip)
-            (ra-transmit p.tay tip)
-          ?.  =(our.hid p.p.tay)
-            +>
-          (ra-record q.p.tay her tip)
-      $|  !!
+    ?-  -.pan
+        $&                                              ::<  station partner
+      ?:  pub
+        ?.  (team our.bol aut)
+          ~&([%talk-strange-author aut] +>)
+        =.  aut  our.bol
+        ?:  =(aut p.p.pan)
+          (ta-record q.p.pan p.p.pan tot)
+        (ta-transmit p.pan tot)
+      ?.  =(our.bol p.p.pan)  +>
+      (ta-record q.p.pan aut tot)
+      ::
+        $|  !!                                          ::<  passport partner
     ==
   ::
-  ++  ra-record                                         ::  add to story
-    ::x  add or update a telegram in story man.
+  ++  ta-record                                         ::<  add to story
+    ::>  add or update telegram {gam} in story {nom}.
     ::
-    |=  {man/knot gam/telegram}
-    %-  (ra-know man)  |=  par/_pa  =<  pa-abet
-    (pa-learn:par gam)
+    |=  {nom/knot gam/telegram}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-learn:sor gam)
   ::
-  ++  ra-transmit                                       ::  send to neighbor
-    ::x  sends a thought to a station, adds it to the outbox.
+  ++  ta-transmit                                       ::<  send message
+    ::>  sends thought {tot} to {sat}.
+    ::>  stores it to the outbox to await confirmation.
     ::
-    |=  {cuz/station tip/thought}
+    |=  {sat/station tot/thought}
     ^+  +>
     =.  +>
-        %+  ra-emit  ost.hid
+        %+  ta-emit  ost.bol
         :*  %poke
-            /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
-            [p.cuz %talk-guardian]
-            [%talk-command `command`[%review tip ~]]
+            /repeat/(scot %ud p.outbox)/(scot %p p.sat)/[q.sat]
+            [p.sat %talk-guardian]
+            [%talk-command [%review tot ~]]
         ==
-    +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
+    +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tot))
   ::
-  ++  pa                                                ::  story core
-    ::x  story core, used for doing work on a story.
-    ::x  as always, an -abet arms is used for applying changes to the state.
-    ::x  ++pa-watch- arms get called by ++ra-subscribe to add a subscriber.
-    ::x  bones are used to identify subscribers (source event identifiers).
+  ++  ta-coup-repeat                                    ::<  remove from outbox
+    ::>  assemble partner and call ++ta-repeat.
     ::
-    |_  ::x  man: the knot identifying the story in stories.
-        ::x  acs: talk actions issued due to changes.
-        ::x  story doesn't get a face because ease of use.
+    |=  {{num/@ud src/ship nom/knot} fal/(unit tang)}
+    (ta-repeat num [%& src nom] fal)
+  ::
+  ++  ta-repeat                                         ::<  remove from outbox
+    ::>  take message out of outbox, mark it as received
+    ::>  or rejected, based on the existence of error
+    ::>  message {fal}.
+    ::
+    |=  {num/@ud pan/partner fal/(unit tang)}
+    =+  oot=(~(get by q.outbox) num)
+    ?~  oot  ~|([%ta-repeat-none num] !!)
+    =.  q.outbox  (~(del by q.outbox) num)
+    =.  q.u.oot
+      =+  olg=(~(got by q.u.oot) pan)
+      %+  ~(put by q.u.oot)  pan
+      :-  -.olg
+      ?~  fal  %received
+      ~>  %slog.[0 u.fal]
+      %rejected
+    (ta-think | our.bol u.oot ~)
+  ::
+  ::>  ||
+  ::>  ||  %stories
+  ::>  ||
+  ::>    arms for modifying stories.
+  ::+|
+  ::
+  ++  ta-config                                         ::<  configure story
+    ::>  configures story {nom}, creating it if needed.
+    ::>  if it's a whitelist config, and we're creating
+    ::>  the story, makes sure we're in it.
+    ::
+    |=  {nom/knot con/config}
+    ^+  +>
+    ::>  neu:  is new story
+    ::>  pur:  the story
+    ::>  wyt:  will be white
+    =+  :+  neu=!(~(has by stories) nom)
+          pur=(fall (~(get by stories) nom) *story)
+        wyt=?=(?($white $green) p.cordon.con)
+    =.  q.cordon.con  ::TODO  =?
+      ?:  &(neu wyt)  [our.bol ~ ~]
+      q.cordon.con
+    so-done:(~(so-reform so nom ~ pur) con)
+  ::
+  ++  ta-unconfig                                       ::<  delete story
+    ::>  calls the story core to delete story {nom}.
+    ::
+    |=  nom/knot
+    ^+  +>
+    =+  soy=(~(get by stories) nom)
+    ?~  soy  +>.$
+    so-done:~(so-reform-gone so nom ~ u.soy)
+  ::
+  ++  so                                                ::<  story core
+    ::>  story core, used for doing work on a story.
+    ::
+    |_  ::>  nom: story name in {stories}.
+        ::>  acs: talk actions issued due to changes.
+        ::>  story is faceless to ease data access.
         ::
-        $:  man/knot
+        $:  nom/knot
             acs/(list action)
             story
         ==
-    ++  pa-abet
-      ::x  apply/fold changes back into the stories map.
+    ::
+    ++  so-done                                         ::<  apply changes
+      ::>  put changed story back into the map and apply
+      ::>  actions.
       ::
       ^+  +>
-      =.  +>  +>(stories (~(put by stories) man `story`+<+>))
+      =.  +>  +>(stories (~(put by stories) nom +<+>))
       =.  acs  (flop acs)
       |-  ^+  +>+
       ?~  acs  +>+
-      =.  +>+  (ra-action ost.hid i.acs)
+      =.  +>+  (ta-action ost.bol i.acs)
       $(acs t.acs)
     ::
-    ++  pa-act
-      ::x  stores a talk action.
-      ::
-      |=  act/action
-      ^+  +>
-      +>(acs [act acs])
+    ::>  ||
+    ::>  ||  %emitters
+    ::>  ||
+    ::>    arms that create outward changes.
+    ::+|
     ::
-    ++  pa-followers
-      ^-  (set bone)
-      %-  ~(gas in *(set bone))
-      %+  turn  (~(tap by followers))
-      |=  {b/bone *}  b
-    ::
-    ++  pa-admire                                       ::  accept from
-      ::x  should be checking her write permissions, but defaults to allowed.
-      ::x  commented code seems to use an older control structure.
-      ::x?  this seems like an easy fix, why was this ever disabled?
-      ::
-      |=  her/ship
-      ^-  ?
-      ?-  p.cordon.shape
-        $black  !(~(has in q.cordon.shape) her)         ::x  channel, blacklist
-        $green  (~(has in q.cordon.shape) her)          ::x  journal, whitelist
-        $brown  !(~(has in q.cordon.shape) her)         ::x  mailbox, blacklist
-        $white  (~(has in q.cordon.shape) her)          ::x  village, whitelist
-      ==
-    ::
-    ++  pa-visible                                      ::  display to
-      ::x  checks her read permissions.
-      ::
-      |=  her/ship
-      ^-  ?
-      ?-  p.cordon.shape
-        $black  !(~(has in q.cordon.shape) her)         ::x  channel, blacklist
-        $green  &                                       ::x  journal, all
-        $brown  (team our.hid her)                      ::x  mailbox, our
-        $white  (~(has in q.cordon.shape) her)          ::x  village, whitelist
-      ==
-    ::
-    ++  pa-report                                       ::  update
-      ::x  sends report to all bones.
-      ::
-      |=  {wac/(set bone) caw/report}
-      ^+  +>
-      ?~  wac  +>
-      =.  +>  $(wac l.wac)
-      =.  +>  $(wac r.wac)
-      (pa-sauce n.wac [%diff %talk-report caw]~)
-    ::
-    ++  pa-inform
-      ::x  sends lowdown to all interested readers.
-      ::
-      |=  low/lowdown
-      =.  moves
-        %+  weld
-          ^-  (list move)
-          %+  murn  (~(tap by general))
-          |=  {b/bone s/(set knot)}
-          ^-  (unit move)
-          ?.  (~(has in s) man)  ~
-          `[b %diff %talk-lowdown low]
-        moves
-      +>.$
-    ::
-    ++  pa-remotes
-      ::x  produces remotes, with all our local presences replaced by their
-      ::x  versions from their stories.
-      ::
-      %-  ~(urn by remotes)           ::  XX performance
-      |=  {pan/partner atl/atlas}  ^-  atlas
-      ?.  &(?=($& -.pan) =(our.hid p.p.pan))  atl
-      =+  soy=(~(get by stories) q.p.pan)
-      ?~  soy  atl
-      locals.u.soy
-    ::
-    ++  pa-report-group                                 ::  update presence
-      ::x  build a group report, containing our different presence maps, and
-      ::x  send it to all bones.
-      ::x  we send remote presences to facilitate federation. aka "relay"
-      ::
-      |=  vew/(set bone)
-      (pa-report vew %group locals pa-remotes)
-    ::
-    ++  pa-report-cabal                                 ::  update config
-      ::x  a cabal report, containing our and remote configs, to all bones.
-      ::
-      |=  vew/(set bone)
-      (pa-report vew %cabal shape mirrors)
-    ::
-    ++  pa-cabal
-      ::x  add station's config to our remote config map.
-      ::
-      ::TODO  when do we care about ham?
-      |=  {cuz/station con/config ham/(map station config)}
-      ^+  +>
-      =+  old=mirrors
-      =.  mirrors  (~(put by mirrors) cuz con)
-      ?:  =(mirrors old)  +>.$
-      =.  +>.$  (pa-inform %confs `shape (strap cuz `con))
-      (pa-report-cabal pa-followers)
-    ::
-    ++  pa-diff-talk-report                             ::  subscribed update
-      ::x  process a talk report from cuz.
-      ::
-      |=  {cuz/station rad/report}
-      ^+  +>
-      ::x  verify we are supposed to receive reports from cuz.
-      ?.  (~(has in sources.shape) [%& cuz])
-        ~&  [%pa-diff-unexpected cuz -.rad]
-        +>
-      ?-  -.rad
-        $cabal  (pa-cabal cuz +.rad)
-        $group  (pa-remind [%& cuz] +.rad)
-        $grams  (pa-lesson q.+.rad)
-      ==
-    ::
-    ++  pa-quit                                         ::  stop subscription
-      ::x  delete tay from our subscriptions, then send an updated capal report.
-      ::
-      |=  tay/partner
-      ^+  +>
-      ?.  (~(has in sources.shape) tay)  +>
-      =.  sources.shape  (~(del in sources.shape) tay)
-      =.  +>  (pa-inform %confs `shape ~)
-      (pa-report-cabal pa-followers)
-    ::
-    ++  pa-sauce                                        ::  send backward
-      ::x  turns cards into moves, reverse order, prepend to existing moves.
+    ++  so-sauce                                        ::<  send backward
+      ::>  cards to moves, prepend to {moves} reversed.
       ::
       |=  {ost/bone cub/(list card)}
       %_    +>.$
@@ -804,149 +840,266 @@
         (welp (flop (turn cub |=(a/card [ost a]))) moves)
       ==
     ::
-    ++  pa-abjure                                       ::  unsubscribe move
-      ::x  for each partner, produce a %pull/unsubscribe move.
+    ++  so-act                                          ::<  send action
+      ::>  stores a talk action.
       ::
-      |=  tal/(list partner)
-      %+  pa-sauce  0  ::x  subscription is caused by this app
-      %-  zing
-      %+  turn  tal
-      |=  tay/partner
-      ^-  (list card)
-      ?-  -.tay
-        $|  ~&  tweet-abjure+p.p.tay
-            !!
-      ::
-        $&  :_  ~
-            :*  %pull
-                /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [p.p.tay %talk-guardian]
-                ~
-            ==
-      ==
-    ::
-    ++  pa-acquire                                      ::  subscribe to
-      ::x  subscribe this story to the partners.
-      ::
-      |=  tal/(list partner)
-      %+  pa-sauce  0  ::x  subscription is caused by this app
-      %-  zing
-      %+  turn  tal
-      |=  tay/partner
-      ^-  (list card)
-      =+  num=(~(get by sequence) tay)
-      =+  old=(sub now.hid ~d1)                         :: XX full backlog
-      ::x  subscribe starting at the last message we read,
-      ::x  or if we haven't read any yet, messages from up to a day ago.
-      =+  ini=?^(num (scot %ud u.num) (scot %da old))
-      ?-  -.tay
-        $|  !!
-        $&  :_  ~
-            :*  %peer
-                /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [p.p.tay %talk-guardian]
-                /[q.p.tay]/[ini]
-            ==
-      ==
-    ::
-    ++  pa-reform                                       ::  reconfigure, ugly
-      ::x  change config of current story, subscribe/unsubscribe to/from the
-      ::x  partners we gained/lost, and send out an updated cabal report.
-      ::
-      |=  cof/config
-      =.  +>.$  (pa-inform %confs `cof ~)
-      =+  ^=  dif  ^-  (pair (list partner) (list partner))
-          =+  old=`(list partner)`(~(tap in sources.shape) ~)
-          =+  new=`(list partner)`(~(tap in sources.cof) ~)
-          :-  (skip new |=(a/partner (~(has in sources.shape) a)))
-          (skip old |=(a/partner (~(has in sources.cof) a)))
-      =.  +>.$  (pa-acquire p.dif)
-      =.  +>.$  (pa-abjure q.dif)
-      =.  shape  cof
-      (pa-report-cabal pa-followers)
-    ::
-    ++  pa-reform-gone
-      =.  stories  (~(del by stories) man)
-      =.  .  (pa-inform %confs ~ ~)
-      =.  .  (pa-report-cabal pa-followers)
-      (pa-abjure (~(tap in sources.shape)))
-    ::
-    ++  pa-cancel                                       ::  unsubscribe from
-      ::x  deletes the current ost.hid from all follower groups.
-      ::
-      .(followers (~(del by followers) ost.hid))
-    ::
-    ++  pa-notify                                       ::  local presence
-      ::x  add her status to our presence map. if this changes it, send report.
-      ::
-      |=  {her/ship saz/status}
+      |=  act/action
       ^+  +>
-      =/  nol  (~(put by locals) her saz)
-      ?:  =(nol locals)  +>.$
-      =.  +>.$  (pa-inform %precs (strap her saz) ~)
-      (pa-report-group(locals nol) pa-followers)
+      +>(acs [act acs])
     ::
-    ++  pa-remind                                       ::  remote presence
-      ::x  adds tay's loc to our remote presence map, after merging with rem.
-      ::x  if this changes anything, send update report.
+    ++  so-inform                                       ::<  send lowdown
+      ::>  sends lowdown to all interested readers.
       ::
-      |=  {tay/partner loc/atlas rem/(map partner atlas)}
-      ::x  remove this story from the presence map, since it's in local already.
-      =.  rem  (~(del by rem) %& our.hid man)  :: superceded by local data
+      |=  low/lowdown
+      =.  moves
+        %+  weld
+          ^-  (list move)
+          %+  murn  (~(tap by readers))
+          |=  {b/bone s/(set knot)}
+          ^-  (unit move)
+          ?.  (~(has in s) nom)  ~
+          `[b %diff %talk-lowdown low]
+        moves
+      +>.$
+    ::
+    ++  so-report                                       ::<  send update
+      ::>  sends report to all bones.
+      ::
+      |=  {bos/(set bone) ret/report}
+      ^+  +>
+      ?~  bos  +>
+      =.  +>  $(bos l.bos)
+      =.  +>  $(bos r.bos)
+      (so-sauce n.bos [%diff %talk-report ret]~)
+    ::
+    ++  so-report-group                                 ::<  presence update
+      ::>  send local and remote presences in a report.
+      ::
+      |=  bos/(set bone)
+      (so-report bos %group locals so-remotes)
+    ::
+    ++  so-report-cabal                                 ::<  config update
+      ::>  send local and remote configs in a report.
+      ::
+      |=  bos/(set bone)
+      (so-report bos %cabal shape mirrors)
+    ::
+    ::>  ||
+    ::>  ||  %data
+    ::>  ||
+    ::>    utility functions for data retrieval.
+    ::+|
+    ::
+    ++  so-followers                                    ::<  follower bones
+      ::>  turns the keys of {followers} into a set.
+      ::
+      ^-  (set bone)
+      %-  ~(gas in *(set bone))
+      %+  turn  (~(tap by followers))
+      |=  {b/bone *}  b
+    ::
+    ++  so-unearth                                      ::<  ships' bones
+      ::>  find the bones in {followers} that belong to
+      ::>  a ship in {sis}.
+      ::
+      |=  sis/(set ship)
+      ^-  (set bone)
+      %-  ~(rep in sup.bol)
+      |=  {{b/bone s/ship p/path} c/(set bone)}
+      ?.  ?&  (~(has in sis) s)
+              (~(has by followers) b)
+              ?=({@tas *} p)
+              =(i.p nom)
+          ==
+        c
+      (~(put in c) b)
+    ::
+    ++  so-remotes                                      ::<  remote presences
+      ::>  produces {remotes}, with all our local
+      ::>  presences replaced by the versions from their
+      ::>  stories.
+      ::
+      %-  ~(urn by remotes)                             ::  XX performance
+      |=  {pan/partner atl/atlas}
+      ^-  atlas
+      ?.  &(?=($& -.pan) =(our.bol p.p.pan))  atl
+      =+  soy=(~(get by stories) q.p.pan)
+      ?~  soy  atl
+      locals.u.soy
+    ::
+    ::>  ||
+    ::>  ||  %interaction-events
+    ::>  ||
+    ::>    arms that apply events we received.
+    ::+|
+    ::
+    ++  so-diff-report                                  ::<  process update
+      ::>  process a talk report from {sat}.
+      ::>  if we didn't expect it, ignore.
+      ::
+      |=  {sat/station ret/report}
+      ^+  +>
+      ?.  (~(has in sources.shape) [%& sat])
+        ~&  [%talk-so-diff-unexpected sat -.ret]
+        +>
+      ?-  -.ret
+        $cabal  (so-cabal sat +.ret)
+        $group  (so-remind [%& sat] +.ret)
+        $grams  (so-lesson q.+.ret)
+      ==
+    ::
+    ++  so-cabal                                        ::<  update config
+      ::>  add station's config to our remote config map.
+      ::
+      ::TODO  when do we care about ham?
+      |=  {sat/station con/config ham/(map station config)}
+      ^+  +>
+      =+  old=mirrors
+      =.  mirrors  (~(put by mirrors) sat con)
+      ?:  =(mirrors old)  +>.$
+      =.  +>.$  (so-inform %confs `shape (strap sat `con))
+      (so-report-cabal so-followers)
+    ::
+    ++  so-remind                                       ::<  remote presence
+      ::>  adds tay's loc to our remote presence map,
+      ::>  after merging with rem.
+      ::>  if this changes anything, send a report.
+      ::
+      |=  {pan/partner loc/atlas rem/(map partner atlas)}
+      =.  rem  (~(del by rem) %& our.bol nom)           ::<  superseded by local
       =/  buk  (~(uni by remotes) rem)
-      =.  buk  (~(put by buk) tay loc)
+      =.  buk  (~(put by buk) pan loc)
       ?:  =(buk remotes)  +>.$
       =.  +>.$
-        %^  pa-inform  %precs  ~
-        ::  per-partner diff.
+        %^  so-inform  %precs  ~
+        ::>  per-partner diff.
         %-  ~(urn by buk)
         |=  {p/partner a/atlas}
         =+  o=(~(get by remotes) p)
         ?~(o a (~(dif in a) u.o))
-      (pa-report-group(remotes buk) pa-followers)
+      (so-report-group(remotes buk) so-followers)
     ::
-    ++  pa-start                                        ::  start stream
-      ::x  grab all telegrams that fall within the river and send them in a
-      ::x  grams report to ost.hid.
+    ::>  ||
+    ::>  ||  %changes
+    ::>  ||
+    ::>    arms that make miscelaneous changes to this story.
+    ::+|
+    ::
+    ++  so-reform                                       ::<  reconfigure
+      ::>  changes the config of this story and notify
+      ::>  our followers.
+      ::>  subscribes to new sources, unsubs from removed
+      ::>  ones.
       ::
-      |=  riv/river
-      ^+  +>
-      =;  lab/{dun/? end/@u zeg/(list telegram)}
-          =.  +>.$
-            (pa-sauce ost.hid [[%diff %talk-report %grams end.lab zeg.lab] ~])
-          ?:  dun.lab
-            (pa-sauce ost.hid [[%quit ~] ~])
-          +>.$(followers (~(put by followers) ost.hid riv))
-      =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
-      |-  ^-  (trel ? @ud (list telegram))
-      ?~  gaz  [dun end zeg]
-      ?:  ?-  -.q.riv                                   ::  after the end
-            $ud  (lte p.q.riv end)
-            $da  (lte p.q.riv p.r.q.i.gaz)
-          ==
-        ::x  if we're past the river, keep browsing back, mark stream as done.
-        $(end (dec end), gaz t.gaz, dun &)
-      ?:  ?-  -.p.riv                                   ::  before the start
-            $ud  (lth end p.p.riv)
-            $da  (lth p.r.q.i.gaz p.p.riv)
-          ==
-        ::x  if we're before the river, we're done.
-        [dun end zeg]
-      ::x  if we're in the river, add this gram and continue.
-      $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
+      |=  cof/config
+      =.  +>.$  (so-inform %confs `cof ~)
+      =/  dif/(pair (list partner) (list partner))
+          =+  old=`(list partner)`(~(tap in sources.shape) ~)
+          =+  new=`(list partner)`(~(tap in sources.cof) ~)
+          :-  (skip new |=(a/partner (~(has in sources.shape) a)))
+          (skip old |=(a/partner (~(has in sources.cof) a)))
+      =.  +>.$  (so-acquire p.dif)
+      =.  +>.$  (so-abjure q.dif)
+      =.  shape  cof
+      (so-report-cabal so-followers)
     ::
-    ++  pa-first-grams                                  ::  subscribe messages
-      ::x  (called upon subscribe) send backlog of grams to her.
-      ::x  deduces which messages to send from pax.
+    ++  so-reform-gone                                  ::<  delete story
+      ::>  deletes this story. removes it from {stories}
+      ::>  and unsubscribes from all sources.
+      ::
+      =.  stories  (~(del by stories) nom)
+      =.  .  (so-inform %confs ~ ~)
+      =.  .  (so-report-cabal so-followers)
+      (so-abjure (~(tap in sources.shape)))
+    ::
+    ++  so-notify                                       ::<  local presence
+      ::>  add {her} status to this story's presence map.
+      ::>  if this changes it, send a report.
+      ::
+      |=  {her/ship sas/status}
+      ^+  +>
+      =/  nol  (~(put by locals) her sas)
+      ?:  =(nol locals)  +>.$
+      =.  +>.$  (so-inform %precs (strap her sas) ~)
+      (so-report-group(locals nol) so-followers)
+    ::
+    ::>  ||
+    ::>  ||  %subscriptions
+    ::>  ||
+    ::>    arms for starting and ending subscriptions
+    ::+|
+    ::
+    ++  so-acquire                                      ::<  subscribe us
+      ::>  subscribes this story to each partner.
+      ::
+      |=  pas/(list partner)
+      %+  so-sauce  0  ::  subscription is caused by this app
+      %-  zing
+      %+  turn  pas
+      |=  pan/partner
+      ^-  (list card)
+      ::>  subscribe starting at the last message we got,
+      ::>  or if we haven't gotten any yet, messages
+      ::>  from up to a day ago.
+      =+  num=(~(get by sequence) pan)
+      =+  old=(sub now.bol ~d1)                         :: XX full backlog
+      =+  ini=?^(num (scot %ud u.num) (scot %da old))
+      ?-  -.pan
+          $|  !!                                        ::<  passport partner
+        ::
+          $&                                            ::<  station partner
+        :_  ~
+        :*  %peer
+            /friend/show/[nom]/(scot %p p.p.pan)/[q.p.pan]
+            [p.p.pan %talk-guardian]
+            /[q.p.pan]/[ini]
+        ==
+      ==
+    ::
+    ++  so-abjure                                       ::<  unsubscribe us
+      ::>  unsubscribes this story from each partner.
+      ::
+      |=  pas/(list partner)
+      %+  so-sauce  0  ::  subscription is caused by this app
+      %-  zing
+      %+  turn  pas
+      |=  pan/partner
+      ^-  (list card)
+      ?-  -.pan
+          $|  !!                                        ::<  passport partner
+        ::
+          $&                                            ::<  station partner
+        :_  ~
+        :*  %pull
+            /friend/show/[nom]/(scot %p p.p.pan)/[q.p.pan]
+            [p.p.pan %talk-guardian]
+            ~
+        ==
+      ==
+    ::
+    ++  so-quit                                         ::<  subscription failed
+      ::>  delete {pan} from our subscriptions, then send
+      ::>  an updated capal report.
+      ::
+      |=  pan/partner
+      ^+  +>
+      ?.  (~(has in sources.shape) pan)  +>
+      =.  sources.shape  (~(del in sources.shape) pan)
+      =.  +>  (so-inform %confs `shape ~)
+      (so-report-cabal so-followers)
+    ::
+    ++  so-start                                        ::<  subscribe follower
+      ::>  called upon subscribe. deduces the range of
+      ::>  {her} subscription from {pax}, then sends
+      ::>  the currently available part of it.
       ::
       |=  {her/ship pax/path}
       ^+  +>
-      ?.  (pa-visible her)
-        ~&  [%pa-first-grams-visible ~]
-        (pa-sauce ost.hid [%quit ~]~)
-      ::x  find the range of grams to send.
-      =+  ^=  ruv  ^-  (unit river)
-          %+  biff  ::x  collapse unit list.
+      ?.  (so-visible her)                              ::  read permissions
+        ~&  [%talk-so-start-visible ~]
+        (so-sauce ost.bol [%quit ~]~)
+      =/  ruv/(unit river)                              ::  find grams range
+          %+  biff                                      ::  collapse unit list
             (zl:jo (turn pax ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~)))))
           |=  paf/(list dime)
           ?~  paf
@@ -957,21 +1110,77 @@
             ~
           `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::XX arvo issue #366
       ?~  ruv
-        ~&  [%pa-first-grams-malformed pax]
-        (pa-sauce ost.hid [%quit ~]~)
-      (pa-start u.ruv)
+        ~&  [%talk-so-start-malformed pax]
+        (so-sauce ost.bol [%quit ~]~)
+      (so-first-grams u.ruv)
     ::
-    ++  pa-refresh                                      ::  update to listeners
-      ::x  called when grams get added or changed. calculates the changes and
-      ::x  sends them to all followers. if we run into any followers that are
-      ::x  no longer interested in this story, remove them.
+    ++  so-first-grams                                  ::<  beginning of stream
+      ::>  find all grams that fall within the river and
+      ::>  send them in a grams report to {ost.bol}.
+      ::
+      |=  riv/river
+      ^+  +>
+      =;  lab/{dun/? end/@u zeg/(list telegram)}
+          =.  +>.$
+            (so-sauce ost.bol [[%diff %talk-report %grams end.lab zeg.lab] ~])
+          ?:  dun.lab
+            (so-sauce ost.bol [[%quit ~] ~])
+          +>.$(followers (~(put by followers) ost.bol riv))
+      =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
+      |-  ^-  (trel ? @ud (list telegram))
+      ?~  gaz  [dun end zeg]
+      ?:  ?-  -.q.riv                                   ::  after the end
+            $ud  (lte p.q.riv end)
+            $da  (lte p.q.riv p.r.q.i.gaz)
+          ==
+        ::  if past the river, continue back, mark as done.
+        $(end (dec end), gaz t.gaz, dun &)
+      ?:  ?-  -.p.riv                                   ::  before the start
+            $ud  (lth end p.p.riv)
+            $da  (lth p.r.q.i.gaz p.p.riv)
+          ==
+        ::  if before the river, we're done searching.
+        [dun end zeg]
+      ::x  if in the river, add this gram and continue.
+      $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
+    ::
+    ++  so-cancel                                       ::<  unsubscribe follower
+      ::>  removes {ost.bol} from our followers.
+      ::
+      .(followers (~(del by followers) ost.bol))
+    ::
+    ++  so-eject                                        ::<  unsubscribe ships
+      ::>  removes ships {sis} from {followers}.
+      ::
+      |=  sis/(set ship)
+      %=  +>
+          followers
+        %-  ~(rep in (so-unearth sis))
+        |=  {b/bone f/_followers}
+        =.  f  ?~(f followers f)  ::TODO  =?
+        (~(del by f) b)
+      ==
+    ::
+    ::>  ||
+    ::>  ||  %messaging
+    ::>  ||
+    ::>    arms for adding to this story's messages.
+    ::+|
+    ::
+    ++  so-refresh                                      ::<  update to listeners
+      ::>  called when messages get added or changed.
+      ::>  calculates the changes and sends them to all
+      ::>  followers.
+      ::>  any followers that are no longer interested
+      ::>  get removed.
       ::
       |=  {num/@ud gam/telegram}
       ^+  +>
-      ::x  notify the interested readers.
-      =.  +>  (pa-inform %grams num gam ~)
-      ::x  notify only the followers who are currently interested.
-      =+  ^=  moy
+      ::>  notify the interested readers.
+      =.  +>  (so-inform %grams num gam ~)
+      ::>  notify only the followers who are currently interested.
+      ::TODO  might be able to refactor using ~(rep in followers)?
+      =/  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  followers  [~ ~]
           =+  lef=$(followers l.followers)
@@ -994,46 +1203,46 @@
       ?~  p.moy  +>.^$
       $(p.moy t.p.moy, followers (~(del by followers) i.p.moy))
     ::
-    ++  pa-lesson                                       ::  learn multiple
-      ::x  learn all telegrams in a list.
+    ++  so-lesson                                       ::<  learn messages
+      ::>  learn all telegrams in a list.
       ::
       |=  gaz/(list telegram)
       ^+  +>
       ?~  gaz  +>
-      $(gaz t.gaz, +> (pa-learn i.gaz))
+      $(gaz t.gaz, +> (so-learn i.gaz))
     ::
-    ++  pa-learn                                        ::  learn message
-      ::x  store an incoming telegram, modifying audience to say we received it.
-      ::x  update existing telegram if it already exists.
+    ++  so-learn                                        ::<  save/update message
+      ::>  store an incoming telegram, updating if it
+      ::>  already exists.
       ::
       |=  gam/telegram
       ^+  +>
-      ::x  if author isn't allowed to write here, reject.
-      ?.  (pa-admire p.gam)
+      ?.  (so-admire p.gam)                             ::<  write permissions
         +>.$
       =.  q.q.gam
-        ::x  if we are in the audience, mark us as having received it.
-        =+  ole=(~(get by q.q.gam) [%& our.hid man])
-        ?^  ole  (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
-        ::  for fedearted stations, pretend station src/foo is also our/foo
-        ::  XX pass src through explicitly instead of relying on implicit
-        ::     value in hid from the subscription to src/foo
-        =+  ole=(~(get by q.q.gam) [%& src.hid man])
+        ::>  if we are in the audience, mark as received.
+        =+  ole=(~(get by q.q.gam) [%& our.bol nom])
+        ?^  ole  (~(put by q.q.gam) [%& our.bol nom] -.u.ole %received)
+        ::>  federated stations need to pretend ~src/nom
+        ::>  is also ~our/nom.
+        ::TODO  pass src through explicitly instead of
+        ::      relying on src.bol.
+        =+  ole=(~(get by q.q.gam) [%& src.bol nom])
         ?~  ole  q.q.gam
-        ::x  as described above, fake src into our.
-        =.  q.q.gam  (~(del by q.q.gam) [%& src.hid man])
-        (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
+        ::>  as described above, fake src into our.
+        =.  q.q.gam  (~(del by q.q.gam) [%& src.bol nom])
+        (~(put by q.q.gam) [%& our.bol nom] -.u.ole %received)
       =+  old=(~(get by known) p.q.gam)
       ?~  old
-        (pa-append gam)      ::x  add
-      (pa-revise u.old gam)  ::x  modify
+        (so-append gam)      ::<  add
+      (so-revise u.old gam)  ::<  modify
     ::
-    ++  pa-append                                       ::  append new
-      ::x  add gram to our story, and update our subscribers.
+    ++  so-append                                       ::<  append message
+      ::>  add gram to our story, send report to subs.
       ::
       |=  gam/telegram
       ^+  +>
-      %+  %=  pa-refresh
+      %+  %=  so-refresh
             grams  [gam grams]
             count  +(count)
             known  (~(put by known) p.q.gam count)
@@ -1041,60 +1250,45 @@
         count
       gam
     ::
-    ++  pa-revise                                       ::  revise existing
-      ::x  modify a gram in our story, and update our subscribers.
+    ++  so-revise                                       ::<  revise message
+      ::>  modify gram in our story, send report to subs.
       ::
       |=  {num/@ud gam/telegram}
-      =+  way=(sub count num)
-      ?:  =(gam (snag (dec way) grams))
-        +>.$                                            ::  no change
-      =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
-      (pa-refresh num gam)
+      ::>  dex: index in grams list to insert message at.
+      =+  dex=(sub count num)
+      ?:  =(gam (snag (dec dex) grams))  +>.$           ::<  no change
+      =.  grams
+        %+  welp
+        (scag (dec dex) grams)
+        [gam (slag dex grams)]
+      (so-refresh num gam)
     ::
-    ++  pa-unearth
-      ::x  find the bones in our follower list than belong to a ship in sis.
-      ::
-      |=  sis/(set ship)
-      ^-  (set bone)
-      %-  ~(rep in sup.hid)
-      |=  {{b/bone s/ship p/path} c/(set bone)}
-      ?.  ?&  (~(has in sis) s)
-              (~(has by followers) b)
-              ?=({@tas *} p)
-              =(i.p man)
-          ==
-        c
-      (~(put in c) b)
+    ::>  ||
+    ::>  ||  %permissions
+    ::>  ||
+    ::>    arms relating to story permissions.
+    ::+|
     ::
-    ++  pa-eject
-      ::x  removes the ships from our followers.
-      |=  sis/(set ship)
-      %=  +>
-          followers
-        %-  ~(rep in (pa-unearth sis))
-        |=  {b/bone f/_followers}
-        =.  f  ?~  f  followers  f  ::TODO  =?
-        (~(del by f) b)
-      ==
-    ::
-    ++  pa-permit
-      ::x  invite/banish ships to/from this station.
+    ++  so-permit                                       ::<  invite/banish
+      ::>  update config to dis/allow ships permission.
       ::
       |=  {inv/? sis/(set ship)}
       ^+  +>
-      =/  white/?  ?=(?($white $green) p.cordon.shape)  ::  whitelist?
-      =/  add/?  =(inv white)                           ::  add to list?
+      ::>  wyt:  whitelist?
+      ::>  add:  add to list?
+      =/  wyt/?  ?=(?($white $green) p.cordon.shape)
+      =/  add/?  =(inv wyt)
       =.  +>.$  ::TODO  =?
         ?:  inv  +>.$
-        (pa-eject sis)
+        (so-eject sis)
       =.  +>.$
-        %-  pa-act
+        %-  so-act
         :-  %phrase
         %-  ~(rep in sis)
         |=  {s/ship a/(set partner) t/(list speech)}
         :-  (~(put in a) [%& s (main s)])
-        [[%inv inv [our.hid man]] t]
-      %-  pa-reform
+        [[%inv inv [our.bol nom]] t]
+      %-  so-reform
       %=  shape
           q.cordon
         %.  sis
@@ -1102,195 +1296,282 @@
           ~(uni in q.cordon.shape)
         ~(dif in q.cordon.shape)
       ==
+    ::
+    ++  so-admire                                       ::<  accept from
+      ::>  checks {her} write permissions.
+      ::
+      |=  her/ship
+      ^-  ?
+      ?-  p.cordon.shape
+        $black  !(~(has in q.cordon.shape) her)         ::<  channel, blacklist
+        $white  (~(has in q.cordon.shape) her)          ::<  village, whitelist
+        $green  (~(has in q.cordon.shape) her)          ::<  journal, whitelist
+        $brown  !(~(has in q.cordon.shape) her)         ::<  mailbox, blacklist
+      ==
+    ::
+    ++  so-visible                                      ::<  display to
+      ::>  checks {her} read permissions.
+      ::
+      |=  her/ship
+      ^-  ?
+      ?-  p.cordon.shape
+        $black  !(~(has in q.cordon.shape) her)         ::<  channel, blacklist
+        $white  (~(has in q.cordon.shape) her)          ::<  village, whitelist
+        $green  &                                       ::<  journal, all
+        $brown  (team our.bol her)                      ::<  mailbox, our team
+      ==
     --
   --
 ::
-++  peer                                                ::  accept subscription
-  ::x  incoming subscription on pax.
-  ::
-  |=  pax/path
-  ^+  [*(list move) +>]
-  ~?  !(team src.hid our.hid)  [%peer-talk-stranger src.hid]
-  ?:  ?=({$sole *} pax)  ~&(%broker-no-sole !!)
-  ra-abet:(ra-subscribe:ra src.hid pax)
+::>  ||
+::>  ||  %wire-parsing
+::>  ||
+::+|
 ::
-++  poke-talk-command                                   ::  accept command
-  ::x  incoming talk command. process it and update logs.
+++  etch                                                ::<  parse wire
+  ::>  parses {wir}} to obtain either %friend with story
+  ::>  and station or %repeat with message number,
+  ::>  source ship and story.
   ::
-  |=  cod/command
-  ^+  [*(list move) +>]
-  =^  mos  +>.$
-      ra-abet:(ra-apply:ra src.hid cod)
-  =^  mow  +>.$  log-all-to-file
-  [(welp mos mow) +>.$]
-::
-++  poke-talk-action                                    ::  accept action
-  ::x  incoming talk action. process it.
-  ::
-  |=  act/action
-  ?.  (team src.hid our.hid)
-    ~&  [%talk-action-stranger src.hid]
-    [~ +>]
-  ra-abet:(ra-action:ra ost.hid act)
-::
-++  diff-talk-report                                    ::  accept report
-  ::x  incoming talk-report. process it and update logs.
-  ::
-  |=  {way/wire rad/report}
-  ^-  (quip move +>)
-  =^  mos  +>.$
-      %+  etch-friend  way  |=  {man/knot cuz/station}
-      ra-abet:(ra-diff-talk-report:ra man cuz rad)
-  =^  mow  +>.$  log-all-to-file
-  [(welp mos mow) +>.$]
-::
-++  coup-repeat                                         ::
-  ::x  ack from ++ra-transmit. mark the message as received or rejected.
-  ::
-  |=  {way/wire saw/(unit tang)}
-  %+  etch-repeat  [%repeat way]  |=  {num/@ud src/@p man/knot}
-  ra-abet:(ra-coup-repeat:ra [num src man] saw)
-::
-++  etch                                                ::  parse wire
-  ::x  parse wire to obtain either %friend with story and station or %repeat
-  ::x  with message number, source ship and story.
-  ::
-  |=  way/wire
+  |=  wir/wire
   ^-  weir
-  ?+    -.way  !!
+  ?+    -.wir  !!
       $friend
-    ?>  ?=({$show @ @ @ $~} t.way)
-    [%friend i.t.t.way (slav %p i.t.t.t.way) i.t.t.t.t.way]
-  ::
+    ?>  ?=({$show @ @ @ $~} t.wir)
+    :^    %friend
+        i.t.t.wir
+      (slav %p i.t.t.t.wir)
+    i.t.t.t.t.wir
+    ::
       $repeat
-    ?>  ?=({@ @ @ $~} t.way)
-    [%repeat (slav %ud i.t.way) (slav %p i.t.t.way) i.t.t.t.way]
+    ?>  ?=({@ @ @ $~} t.wir)
+    :^    %repeat
+        (slav %ud i.t.wir)
+      (slav %p i.t.t.wir)
+    i.t.t.t.wir
   ==
 ::
-++  etch-friend                                         ::
-  ::x  parse a /friend wire, call gate with resulting data.
+++  etch-friend                                         ::<  parse /friend wire
+  ::>  parses a /friend wire, call a gate with the result.
   ::
-  |=  {way/wire fun/$-({man/knot cuz/station} {(list move) _.})}
-  =+  wer=(etch way)
+  |=  $:  wir/wire
+          $=  fun
+          $-  {nom/knot sat/station}
+              {(list move) _.}
+      ==
+  =+  wer=(etch wir)
   ?>(?=($friend -.wer) (fun p.wer q.wer))
 ::
-++  etch-repeat                                         ::
-  ::x  parse a /repeat wire, call gate with resulting data.
+++  etch-repeat                                         ::<  parse /repeat wire
+  ::>  parses a /repeat wire, call gate with the result.
   ::
-  |=  {way/wire fun/$-({num/@ud src/@p man/knot} {(list move) _.})}
-  =+  wer=(etch way)
+  |=  $:  wir/wire
+          $=  fun
+          $-  {num/@ud src/ship nom/knot}
+              {(list move) _.}
+      ==
+  =+  wer=(etch wir)
   ?>(?=($repeat -.wer) (fun p.wer q.wer r.wer))
 ::
-++  reap-friend                                         ::
-  ::x  subscription n/ack. if it failed, remove their subscription from state.
+::>  ||
+::>  ||  %poke-events
+::>  ||
+::+|
+::
+++  poke-talk-command                                   ::<  accept command
+  ::>  incoming talk command. process it and update logs.
   ::
-  |=  {way/wire saw/(unit tang)}
+  |=  cod/command
   ^-  (quip move +>)
-  ?~  saw  [~ +>]
-  %+  etch-friend  [%friend way]  |=  {man/knot cuz/station}
-  =.  u.saw  [>%reap-friend-fail man cuz< u.saw]
-  %-  (slog (flop u.saw))
-  ra-abet:(ra-quit:ra man cuz)
+  =^  mos  +>.$
+    ta-done:(ta-apply:ta src.bol cod)
+  =^  mow  +>.$
+    log-all-to-file
+  [(welp mos mow) +>.$]
 ::
-++  quit-friend                                         ::
-  ::x  resubscribe.
+++  poke-talk-action                                    ::<  accept action
+  ::>  incoming talk action. process it.
   ::
-  |=  way/wire
-  %+  etch-friend  [%friend way]  |=  {man/knot cuz/station}
-  ra-abet:(ra-retry:ra man cuz)
+  |=  act/action
+  ^-  (quip move +>)
+  ?.  (team src.bol our.bol)
+    ~&  [%talk-action-stranger src.bol]
+    [~ +>]
+  ta-done:(ta-action:ta ost.bol act)
 ::
-++  pull                                                ::
-  ::x  unsubscribe.
+++  poke-talk-comment                                   ::<  do comment
+  ::>  sends a comment.
+  ::
+  |=  {pax/path sup/spur txt/@t}
+  ^-  (quip move +>)
+  ta-done:(ta-comment:ta pax sup txt)
+::
+++  poke-talk-fora-post                                 ::<  do fora post
+  ::>  sends a fora post.
+  ::
+  |=  {pax/path sup/spur hed/@t txt/@t}
+  ^-  (quip move +>)
+  ta-done:(ta-fora-post:ta pax sup hed txt)
+::
+::>  ||
+::>  ||  %subscription-events
+::>  ||
+::+|
+::
+++  diff-talk-report                                    ::<  accept report
+  ::>  incoming talk-report. process it and update logs.
+  ::
+  |=  {wir/wire ret/report}
+  ^-  (quip move +>)
+  =^  mos  +>.$
+    %+  etch-friend  wir
+    |=  {nom/knot sat/station}
+    ta-done:(ta-diff-report:ta nom sat ret)
+  =^  mow  +>.$
+    log-all-to-file
+  [(welp mos mow) +>.$]
+::
+++  peer                                                ::<  accept subscription
+  ::>  incoming subscription on {pax}.
   ::
   |=  pax/path
-  ^+  [*(list move) +>]
-  ra-abet:(ra-cancel:ra src.hid pax)
+  ^-  (quip move +>)
+  ~?  !(team src.bol our.bol)  [%talk-peer-stranger src.bol]
+  ?:  ?=({$sole *} pax)  ~&(%talk-broker-no-sole !!)
+  ta-done:(ta-subscribe:ta src.bol pax)
 ::
-++  log-all-to-file
-  ::x  for every story we're logging, (over)write all their grams to log files,
-  ::x  if new ones have arrived.
+++  pull                                                ::<  unsubscribe
+  ::>  unsubscribes.
   ::
+  |=  pax/path
+  ^-  (quip move +>)
+  ta-done:(ta-cancel:ta src.bol pax)
+::
+++  reap-friend                                         ::<  subscription n/ack
+  ::>  if subscribing failed, update state to reflect
+  ::>  that.
+  ::
+  ::TODO  this should deal with /reader subscriptions too.
+  |=  {wir/wire fal/(unit tang)}
+  ^-  (quip move +>)
+  ?~  fal  [~ +>]
+  %+  etch-friend  [%friend wir]
+  |=  {nom/knot sat/station}
+  =.  u.fal  [>%reap-friend-fail nom sat< u.fal]
+  %-  (slog (flop u.fal))
+  ta-done:(ta-quit:ta nom sat)
+::
+++  quit-friend                                         ::<  dropped subscription
+  ::>  gall dropped our subscription. resubscribe.
+  ::
+  |=  wir/wire
+  ^-  (quip move +>)
+  %+  etch-friend  [%friend wir]
+  |=  {nom/knot sat/station}
+  ta-done:(ta-retry:ta nom sat)
+::
+++  coup-repeat                                         ::<  message n/ack
+  ::>  ack from ++ta-transmit. mark the message as
+  ::>  received or rejected.
+  ::
+  |=  {wir/wire fal/(unit tang)}
+  ^-  (quip move +>)
+  %+  etch-repeat  [%repeat wir]
+  |=  {num/@ud src/ship nom/knot}
+  ta-done:(ta-coup-repeat:ta [num src nom] fal)
+::
+::>  ||
+::>  ||  %logging
+::>  ||
+::+|
+::
+++  poke-talk-save                                      ::<  save as log
+  ::>  stores the telegrams of story {nom} in a log file,
+  ::>  to be re-loaded by ++poke-talk-load.
+  ::
+  |=  nom/knot
+  ^-  (quip move +>)
+  =/  paf/path
+    /(scot %p our.bol)/home/(scot %da now.bol)/talk/[nom]/talk-telegrams
+  =+  grams:(~(got by stories) nom)
+  :_  +>.$
+  :_  ~
+  :*  ost.bol
+      %info
+      /jamfile
+      our.bol
+      (foal paf [%talk-telegrams !>(-)])
+  ==
+::
+++  poke-talk-load                                      ::<  load from log
+  ::>  loads the telegrams of story {nom} into our state,
+  ::>  as saved in ++poke-talk-save.
+  ::
+  |=  nom/knot
+  ^-  (quip move +>)
+  =/  grams
+    .^  (list telegram)
+        %cx
+        /(scot %p our.bol)/home/(scot %da now.bol)/talk/[nom]/talk-telegrams
+    ==
+  =+  soy=(~(got by stories) nom)
+  :-  ~
+  %=  +>.$
+      stories
+    %+  ~(put by stories)  nom
+    soy(grams grams, count (lent grams))
+  ==
+::
+++  poke-talk-log                                       ::<  start logging
+  ::>  starts logging story {nom}'s messages.
+  ::
+  |=  nom/knot
+  ~&  %talk-poke-log
+  ^-  (quip move +>)
+  :-  [(log-to-file nom) ~]
+  %=  +>.$
+      log
+    %+  ~(put by log)  nom
+    count:(~(got by stories) nom)
+  ==
+::
+++  poke-talk-unlog                                     ::<  stop logging
+  ::>  stops logging story {nom}'s messages.
+  ::
+  |=  nom/knot
+  ^-  (quip move +>)
+  :-  ~
+  +>.$(log (~(del by log) nom))
+::
+++  log-all-to-file                                     ::<  update stories logs
+  ::>  for every story we're logging, (over)writes all
+  ::>  their grams to log files if new ones have arrived.
+  ::
+  ::TODO  re-enable and test.
   ^-  (quip move .)
   ?:  &  [~ .]  ::  XXX!!!!
   :_  %_  .
-        log   %-  ~(urn by log)
-              |=({man/knot len/@ud} count:(~(got by stories) man))
+          log
+        %-  ~(urn by log)
+        |=  {nom/knot len/@ud}
+        count:(~(got by stories) nom)
       ==
   %+  murn  (~(tap by log))
-  |=  {man/knot len/@ud}
+  |=  {nom/knot len/@ud}
   ^-  (unit move)
-  ?:  (gte len count:(~(got by stories) man))
+  ?:  (gte len count:(~(got by stories) nom))
     ~
-  `(log-to-file man)
+  `(log-to-file nom)
 ::
-++  log-to-file
-  ::x  log all grams of story man to a file.
+++  log-to-file                                         ::<  update story log
+  ::>  logs all grams of story {nom} to a file.
   ::
-  |=  man/knot
+  |=  nom/knot
   ^-  move
   =+  ^-  paf/path
-      =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
-      %+  tope  [our.hid %home da+now.hid]
-      /talk-telegrams/(scot %da day)/[man]/talk
-  =+  grams:(~(got by stories) man)
-  [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
-::
-++  poke-talk-comment
-  ::x  send a comment.
-  ::
-  |=  {pax/path sup/spur txt/@t}  ^-  (quip move +>)
-  ra-abet:(ra-comment:ra pax sup txt)
-::
-++  poke-talk-fora-post
-  ::x  send a fora post.
-  ::
-  |=  {pax/path sup/spur hed/@t txt/@t}  ^-  (quip move +>)
-  ra-abet:(ra-fora-post:ra pax sup hed txt)
-::
-++  poke-talk-save
-  ::x  store the talk telegrams of story man in a log file.
-  ::
-  |=  man/knot
-  ^-  (quip move +>)
-  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
-  =+  grams:(~(got by stories) man)
-  [[ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]~ +>.$]
-::
-++  poke-talk-load
-  ::x  load/update the story man into our state, as saved in ++poke-talk-save.
-  ::
-  |=  man/knot
-  =+  ^=  grams
-      .^  (list telegram)
-          %cx
-          /(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
-      ==
-  =+  toy=(~(got by stories) man)
-  [~ +>.$(stories (~(put by stories) man toy(grams grams, count (lent grams))))]
-::
-++  poke-talk-log
-  ::x  start logging story man.
-  ::
-  |=  man/knot
-  ~&  %poke-log
-  ^-  (quip move +>)
-  :-  [(log-to-file man) ~]
-  +>.$(log (~(put by log) man count:(~(got by stories) man)))
-::
-++  poke-talk-unlog
-  ::x  stop logging story man.
-  ::
-  |=  man/knot
-  ^-  (quip move +>)
-  :-  ~
-  +>.$(log (~(del by log) man))
-::
-++  prep
-  ::x  state adapter.
-  ::
-  |=  old/(unit house)
-  ::^-  (quip move ..prep)
-  ::?~  old
-    ra-abet:ra-init:ra
-  ::[~ ..prep(+<+ u.old)]
+      =+  day=(year %*(. (yore now.bol) +.t +:*tarp))
+      %+  tope  [our.bol %home da+now.bol]
+      /talk-telegrams/(scot %da day)/[nom]/talk
+  =+  grams:(~(got by stories) nom)
+  [ost.bol %info /jamfile our.bol (foal paf [%talk-telegrams !>(-)])]
 --
