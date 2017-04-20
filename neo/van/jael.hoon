@@ -15,6 +15,7 @@
 ::      - scry namespace
 ::      - task for converting invites to tickets
 ::
+=+  our=*@p
 |=  pit/vase
 =,  pki:jael
 =,  rights:jael

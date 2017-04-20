@@ -1,6 +1,7 @@
 ::                                                      ::  ::
 ::::  /hoon/ames/arvo                                   ::::::  vane prelude
   !:                                                    ::  ::
+=+  our=~zod    ::  XX placeholder
 |=  pit/vase                                            ::  kernel vase
 =>  =~                                                  ::
 =,  xmas
@@ -8,8 +9,8 @@
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
 ::
-=*  pipe  channel:able:^jael                            ::  secure channel
-=*  gree  farm:pki:^jael                                ::  pki information
+=*  pipe  channel:able:jael                            ::  secure channel
+=*  gree  farm:pki:jael                                ::  pki information
 |%                                                      ::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
@@ -479,7 +480,7 @@
     ::  data will crash the packet when we install it.
     ::
     %-  (bond |.(pub.dat:(~(got by (~(got by gyr) lyf)) him)))
-    (bind (~(get by pub.det) lyf) |=(cert:pki:^jael pub.dat))
+    (bind (~(get by pub.det) lyf) |=(cert:pki:jael pub.dat))
   --
 ::                                                      ::
 ::::  hose                                              ::
@@ -1096,7 +1097,7 @@
       ^+  +>
       =+  yex=((knit her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
       =.  fex  (weld (flop p.yex) fex)
-      ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
+      ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent fex)]
       %_    +>.$
           seq  +(seq)
           cob

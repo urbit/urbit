@@ -232,8 +232,9 @@
             ::    /ren    %ford renderers
             ::    /web    %eyre web content
             ::    /sys    system files
+            ::    /neo    new system files
             ::
-            (user /app /gen /lib /mar /ren /sec /sur /sys /web ~)
+            (user /app /gen /lib /mar /neo /ren /sec /sur /sys /web ~)
         ==
     ::                                                  ::  
     ++  user                                            ::  userspace loading
