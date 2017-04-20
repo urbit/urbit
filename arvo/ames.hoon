@@ -917,8 +917,8 @@
       =:  caw  2
           rto  ;:  min
                  (mul 2 rto)
-                 ~m2
-                 (mul ~s16 ?~(rue 1 +((div (sub now u.rue) ~d1))))
+                 ~m15
+                 (mul ~m1 ?~(rue 1 +((div (sub now u.rue) ~d1))))
                ==
         ==
       (harv now)
