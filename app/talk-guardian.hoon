@@ -4,6 +4,7 @@
 ::
 ::TODO  master changes
 ::TODO  avoid lark where possible
+::TODO  maybe rename wires. repeat & friend -> message & follower
 ::TODO  think about what printfs we want to keep for the user to see.
 ::TODO  document what user-facing printfs actually mean!
 ::TODO  ::> to :> etc.
@@ -25,7 +26,7 @@
 ::
 /?    310                                               ::<  hoon version
 /-    talk                                              ::<  structures
-/+    talk, time-to-id, twitter                         ::<  libraries
+/+    talk, time-to-id                                  ::<  libraries
 /=    seed  /~  !>(.)
 !:
 ::::
@@ -96,7 +97,7 @@
 |_  {bol/bowl house}
 ::
 ++  prep                                                ::<  prepare state
-  ::x  adapts state.
+  ::>  adapts state.
   ::
   |=  old/(unit house)
   ^-  (quip move ..prep)
@@ -497,9 +498,9 @@
     =.  +>.$  ::TODO  =?
       ?:  (~(has by readers) new)  +>.$
       %-  ta-emil
-      :~  ::x  bound glyphs
+      :~  ::>  bound glyphs
           [new %diff %talk-lowdown %glyph nak]
-          ::x  nicknames
+          ::>  nicknames
           [new %diff %talk-lowdown %names (~(run by folks) some)]
       ==
     ::>  send story state.
@@ -507,13 +508,13 @@
       ?.  (~(has by stories) sor)  +>.$
       =+  soy=(~(got by stories) sor)
       %-  ta-emil
-      :~  ::x  configurations
+      :~  ::>  configurations
           :*  new  %diff  %talk-lowdown  %confs
             `shape.soy  (~(run by mirrors.soy) some)
           ==
-          ::x  presences
+          ::>  presences
           [new %diff %talk-lowdown %precs locals.soy remotes.soy]
-          ::x  messages
+          ::>  messages
           [new %diff %talk-lowdown %grams 0 grams.soy]
       ==
     ::>  add this subscription to {readers}.
@@ -692,7 +693,7 @@
       a
     ==
   ::
-  ++  ta-consume                                        ::<  consume thought
+  ++  ta-consume                                        ::<  to each audience
     ::>  conducts thought {tot} to each partner in its audience.
     ::
     |=  {pub/? aut/ship tot/thought}
@@ -702,7 +703,7 @@
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ta-conduct pub aut p.i.aud tot))
   ::
-  ++  ta-conduct                                        ::  thought to partner
+  ++  ta-conduct                                        ::<  thought to partner
     ::>  either publishes or records a thought.
     ::
     |=  {pub/? aut/ship pan/partner tot/thought}
@@ -797,9 +798,8 @@
     ::
     |=  nom/knot
     ^+  +>
-    =+  soy=(~(get by stories) nom)
-    ?~  soy  +>.$
-    so-done:~(so-reform-gone so nom ~ u.soy)
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    so-reform-gone:so
   ::
   ++  so                                                ::<  story core
     ::>  story core, used for doing work on a story.
@@ -1141,7 +1141,7 @@
           ==
         ::  if before the river, we're done searching.
         [dun end zeg]
-      ::x  if in the river, add this gram and continue.
+      ::  if in the river, add this gram and continue.
       $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
     ::
     ++  so-cancel                                       ::<  unsubscribe follower
