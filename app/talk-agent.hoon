@@ -3,186 +3,215 @@
   ::                                                    ::  ::
 ::
 ::TODO  guardian's todo's apply here too
-::TODO  rename cores. pa->ta (transaction), ta->pa (partner), etc.
 ::TODO  make sure glyphs get unbound when joins etc don't succeed.
 ::TODO  correct/clean up presence/config change notifications
 ::
-::TODO  remove man from door sample where it's always (main our.hid).
-::TODO  sh-action -> sh-act
+::TODO  remove man from door sample where it's always (main our.bol).
 ::TODO  maybe keep track of received grams per partner, too?
 ::
-::x  This reader implementation makes use of the mailbox for all its
-::x  subscriptions and messaging. All lowdowns received are exclusively about
-::x  the mailbox, since that's the only thing the reader ever subscribes to.
+::>  This reader implementation makes use of the mailbox for all its
+::>  subscriptions and messaging. All lowdowns received are exclusively about
+::>  the mailbox, since that's the only thing the reader ever subscribes to.
 ::
-/?    310                                               ::  hoon version
-/-    talk, sole                                        ::  structures
-/+    talk, sole, time-to-id, twitter                   ::  libraries
+/?    310                                               ::<  hoon version
+/-    talk, sole                                        ::<  structures
+/+    talk, sole                                        ::<  libraries
 /=    seed  /~  !>(.)
 !:
-::
 ::::
   ::
 [. talk sole]
-=>  |%                                                  ::  data structures
-    ++  chattel                                         ::  full state
+=>  ::>  ||
+    ::>  ||  %arch
+    ::>  ||
+    ::>    data structures
+    ::
+    |%
+    ++  chattel                                         ::>  reader state
       $:  ::  messaging state                           ::
-          count/@ud                                     ::  (lent grams)
-          grams/(list telegram)                         ::  all history
-          known/(map serial @ud)                        ::  messages heard
-          sources/(set partner)                         ::  our subscriptions
+          count/@ud                                     ::<  (lent grams)
+          grams/(list telegram)                         ::<  all history
+          known/(map serial @ud)                        ::<  messages heard
+          sources/(set partner)                         ::<  our subscriptions
           ::  partner details                           ::
-          remotes/(map partner atlas)                   ::  remote presences
-          mirrors/(map station config)                  ::  remote configs
+          remotes/(map partner atlas)                   ::<  remote presences
+          mirrors/(map station config)                  ::<  remote configs
           ::  ui state                                  ::
-          folks/(map ship human)                        ::  human identities
-          nik/(map (set partner) char)                  ::  bound station glyphs
-          nak/(jug char (set partner))                  ::  station glyph lookup
-          cli/shell                                     ::  interaction state
+          folks/(map ship human)                        ::<  human identities
+          nik/(map (set partner) char)                  ::<  bound station glyphs
+          nak/(jug char (set partner))                  ::<  station glyph lookup
+          cli/shell                                     ::<  interaction state
       ==                                                ::
-    ++  shell                                           ::  console session
-      $:  id/bone                                       ::  identifier
-          count/@ud                                     ::  messages shown
-          say/sole-share                                ::  console state
-          active/(set partner)                          ::  active targets
-          settings/(set knot)                           ::  frontend settings
+    ++  shell                                           ::>  console session
+      $:  id/bone                                       ::<  identifier
+          count/@ud                                     ::<  messages shown
+          say/sole-share                                ::<  console state
+          active/(set partner)                          ::<  active targets
+          settings/(set knot)                           ::<  frontend settings
       ==                                                ::
-    ::                                                  ::
-    ++  move  (pair bone card)                          ::  all actions
-    ++  lime                                            ::  diff fruit
+    ++  move  (pair bone card)                          ::<  all actions
+    ++  lime                                            ::>  diff fruit
       $%  {$talk-report report}                         ::
           {$sole-effect sole-effect}                    ::
       ==                                                ::
-    ++  pear                                            ::  poke fruit
+    ++  pear                                            ::>  poke fruit
       $%  {$talk-command command}                       ::
           {$talk-action action}                         ::
       ==                                                ::
-    ++  card                                            ::  general card
+    ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::
           {$poke wire dock pear}                        ::
           {$peer wire dock path}                        ::
       ==                                                ::
-    ++  work                                            ::  interface action
-      $%  {$number p/$@(@ud {@u @ud})}                  ::  relative/absolute
-          {$help $~}                                    ::  print usage info
-          {$who p/where}                                ::  presence
-          {$what p/$@(char (set partner))}              ::  show bound glyph
-          {$bind p/char q/(unit where)}                 ::
-          {$unbind p/char q/(unit where)}               ::
-          {$join p/where}                               ::
-          {$leave p/where}                              ::
-          {$say p/(list speech)}                        ::
-          {$eval p/cord q/twig}                         ::
-          {$invite p/knot q/(set ship)}                 ::  give permission
-          {$banish p/knot q/(set ship)}                 ::  deny permission
-          {$nick p/(unit ship) q/(unit cord)}           ::
-          {$set p/knot}                                 ::
-          {$unset p/knot}                               ::
-          {$target p/where q/(unit work)}               ::  set active targets
-          ::  {$destroy p/knot}                         ::
-          {$create p/posture q/knot r/cord}             ::
-          {$depict p/knot q/cord}                       ::
-          {$source p/knot q/(set partner)}              ::
-          {$delete p/knot q/(unit cord)}                ::
-          {$probe p/station}                            ::
+    ++  work                                            ::>  interface action
+      $%  ::  station management                        ::
+          {$join p/where}                               ::<  subscribe to
+          {$leave p/where}                              ::<  unsubscribe from
+          {$create p/posture q/knot r/cord}             ::<  create station
+          {$delete p/knot q/(unit cord)}                ::<  delete station
+          {$depict p/knot q/cord}                       ::<  change description
+          {$source p/knot q/(set partner)}              ::<  add source
+          {$invite p/knot q/(set ship)}                 ::<  give permission
+          {$banish p/knot q/(set ship)}                 ::<  deny permission
+          ::  messaging                                 ::
+          {$say p/(list speech)}                        ::<  send message
+          {$eval p/cord q/twig}                         ::<  send #-message
+          {$target p/where q/(unit work)}               ::<  set active targets
+          ::  displaying info                           ::
+          {$number p/$@(@ud {@u @ud})}                  ::<  relative/absolute
+          {$who p/where}                                ::<  presence
+          {$what p/$@(char (set partner))}              ::<  show bound glyph
+          ::  ui settings                               ::
+          {$bind p/char q/(unit where)}                 ::<  bind glyph
+          {$unbind p/char q/(unit where)}               ::<  unbind glyph
+          {$nick p/(unit ship) q/(unit cord)}           ::<  un/set/show nick
+          {$set p/knot}                                 ::<  enable setting
+          {$unset p/knot}                               ::<  disable setting
+          ::  miscelaneous                              ::
+          {$help $~}                                    ::<  print usage info
       ==                                                ::
-    ++  weir                                            ::  parsed wire
-      $%  {$repeat p/@ud q/@p r/knot}                   ::
-          {$friend p/knot q/station}                    ::
-      ==                                                ::
-    ++  where  (set partner)                            ::  non-empty audience
-    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool'
-    ++  broker                                          ::  broker ship and name
-      |=  our/ship
-      :_  %talk-guardian
-      ?.  =((clan our) %earl)
-        our
-      (sein our)
+    ++  where  (set partner)                            ::<  non-empty audience
+    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  station char pool '
     --
 ::
-|_  {hid/bowl chattel}
+::>  ||
+::>  ||  %work
+::>  ||
+::>    functional cores and arms.
 ::
-++  ra                                                  ::  per transaction
-  ::x  gets called when talk gets poked or otherwise prompted/needs to perform
-  ::x  an action.
-  ::x  arms generally modify state, and store moves in ++ra's moves. these get
-  ::x  produced when calling ++ra-abet.
-  ::x  in applying commands and making reports, it uses ++pa for story work.
+|_  {bol/bowl chattel}
+::
+++  prep                                                ::<  prepare state
+  ::>  adapts state.
   ::
-  ::x  moves: moves storage, added to by ++ra-emit and -emil, produced by -abed.
-  |_  moves/(list move)
+  |=  old/(unit chattel)
+  ^-  (quip move ..prep)
+  ?~  old
+    ta-done:ta-init:ta
+  [~ ..prep(+<+ u.old)]
+::
+::>  ||
+::>  ||  %utility
+::>  ||
+::>    small utility functions.
+::+|
+::
+++  broker                                              ::<  broker ship + name
+  |=  our/ship
+  :_  %talk-guardian
+  ?.  =((clan our) %earl)
+    our
+  (sein our)
+::
+::>  ||
+::>  ||  %engines
+::>  ||
+::>    main cores.
+::+|
+::
+++  ta                                                  ::  per transaction
+  ::>  for every transaction/event (poke, peer etc.)
+  ::>  talk-agent receives, the ++ta transaction core is
+  ::>  called.
+  ::>  in processing transactions, ++ta may modify app
+  ::>  state, or create moves. these moves get produced
+  ::>  upon finalizing the core's with with ++ta-done.
+  ::>  when making changes to the shell, the ++sh core is
+  ::>  used.
   ::
-  ++  ra-abet                                           ::  resolve core
-    ::x  produces the moves stored in ++ra's moves.
-    ::x  sole-effects get special treatment to become a single move.
+  |_  ::>  moves:  moves created by core operations.
+      ::
+      moves/(list move)
+  ::
+  ++  ta-done                                           ::<  resolve core
+    ::>  produces the moves stored in ++ta's moves.
+    ::>  %sole-effect moves get squashed into a %mor.
     ::
     ^+  [*(list move) +>]
     :_  +>
-    ::x  seperate our sole-effects from other moves.
-    =+  ^=  yop
-        |-  ^-  (pair (list move) (list sole-effect))
-        ?~  moves  [~ ~]
-        =+  mor=$(moves t.moves)
-        ?:  ?&  =(id.cli p.i.moves)
-                ?=({$diff $sole-effect *} q.i.moves)
-            ==
-          [p.mor [+>.q.i.moves q.mor]]
-        [[i.moves p.mor] q.mor]
-    ::x  flop moves, flop and squash sole-effects into a %mor.
-    =+  :*  moz=(flop p.yop)
-            ^=  foc  ^-  (unit sole-effect)
-            ?~  q.yop  ~
-            ?~(t.q.yop `i.q.yop `[%mor (flop `(list sole-effect)`q.yop)])
-        ==
-    ?~  foc
-      moz
-    ?~  id.cli
-      ~&  %reader-no-sole
-      moz
-    ::x  produce moves or sole-effects and moves.
+    ::  seperate our sole-effects from other moves.
+    =/  yop
+      |-  ^-  (pair (list move) (list sole-effect))
+      ?~  moves  [~ ~]
+      =+  mor=$(moves t.moves)
+      ?:  ?&  =(id.cli p.i.moves)
+              ?=({$diff $sole-effect *} q.i.moves)
+          ==
+        [p.mor [+>.q.i.moves q.mor]]
+      [[i.moves p.mor] q.mor]
+    ::  flop moves, flop and squash sole-effects into a %mor.
+    =+  moz=(flop p.yop)
+    =/  foc/(unit sole-effect)
+      ?~  q.yop  ~
+      ?~  t.q.yop  `i.q.yop                             ::<  single sole-effect
+      `[%mor (flop q.yop)]                              ::<  more sole-effects
+    ::  produce moves or sole-effects and moves.
+    ?~  foc  moz
+    ?~  id.cli  ~&(%reader-no-sole moz)
     [[id.cli %diff %sole-effect u.foc] moz]
   ::
-  ++  ra-reaction
-    ::x  process a talk reaction.
+  ++  ta-reaction                                       ::<  apply reaction
+    ::>  processes a talk reaction.
     ::
     |=  rac/reaction
     ^+  +>
-    sh-abet:(~(sh-reaction sh cli (main our.hid)) rac)
+    sh-done:(~(sh-reaction sh cli (main our.bol)) rac)
   ::
-  ++  ra-low
-    ::x  process a talk lowdown
+  ++  ta-low                                            ::<  apply lowdown
+    ::>  processes a talk lowdown
     ::
     |=  low/lowdown
     ^+  +>
     ?-  -.low
-      $glyph  (ra-low-glyph +.low)
-      $names  (ra-low-names +.low)
-      $confs  (ra-low-confs +.low)
-      $precs  (ra-low-precs +.low)
-      $grams  (ra-low-grams +.low)
+      $glyph  (ta-low-glyph +.low)
+      $names  (ta-low-names +.low)
+      $confs  (ta-low-confs +.low)
+      $precs  (ta-low-precs +.low)
+      $grams  (ta-low-grams +.low)
     ==
   ::
-  ++  ra-low-glyph
-    ::x  apply new set of glyph bindings.
+  ++  ta-low-glyph                                      ::<  apply changed glyphs
+    ::x  applies new set of glyph bindings.
     ::
     |=  nek/_nak
     ^+  +>
-    ?:  =(nek nak)
-      +>
+    ?:  =(nek nak)  +>                                  ::  no change
     =.  nak  nek
-    =.  nik  %-  ~(gas by *(map (set partner) char))
-             =-  (zing `(list (list {(set partner) char}))`-)
-             %+  turn  (~(tap by nek))
-             |=  {a/char b/(set (set partner))}
-             (turn (~(tap by b)) |=(c/(set partner) [c a]))
-    sh-abet:~(sh-prod sh cli (main our.hid))
+    =.  nik
+      %-  ~(gas by *(map (set partner) char))
+      =-  (zing -)
+      %+  turn  (~(tap by nek))
+      |=  {a/char b/(set (set partner))}
+      (turn (~(tap by b)) |=(c/(set partner) [c a]))
+    sh-done:~(sh-prod sh cli (main our.bol))
   ::
-  ++  ra-low-names
-    ::x  apply new local identities.
+  ++  ta-low-names                                      ::<  apply changed names
+    ::>  applies new local identities.
     ::
     |=  nas/(map ship (unit human))
     ^+  +>
-    %=  +>  folks
+    %=  +>
+        folks
       %-  ~(gas by *(map ship human))
       %+  murn
         =<  $
@@ -191,33 +220,37 @@
             ~(uni by `_nas`(~(run by folks) some))
         ==
       |=  {s/ship h/(unit human)}
-      ?~  h  ~
-      (some [s u.h])
+      ?~(h ~ (some [s u.h]))
     ==
   ::
-  ++  ra-low-confs
+  ++  ta-low-confs                                      ::<  apply changed confs
+    ::>  applies new station configurations.
+    ::>  because of how this reader only subscribes to
+    ::>  the main mailbox, {coy} is always the mailbox's
+    ::>  config.
+    ::
     |=  {coy/(unit config) cofs/(map station (unit config))}
     ^+  +>
-    ::x  if possible, update sources. if we do, and we gain new ones, update
-    ::x  the prompt. (this is to remove the mailbox from the audience after
-    ::x  creating or joining a new station.)
+    ::>  if possible, update {sources}. if we do, and we
+    ::>  gain new ones, update the prompt. (this is to
+    ::>  remove the mailbox from the audience after
+    ::>  creating or joining a new station.)
     ?~  coy  ~&(%mailbox-gone !!)
     =.  +>  ::TODO  =?
       ?~  (~(dif in sources.u.coy) sources)  +>.$
-      =<  sh-abet
-      %-  ~(sh-pact sh(sources sources.u.coy) cli (main our.hid))
+      =<  sh-done
+      %-  ~(sh-pact sh(sources sources.u.coy) cli (main our.bol))
       (~(dif in sources.u.coy) sources)
     =.  sources  sources.u.coy
-    =.  cofs  (~(put by cofs) [our.hid (main our.hid)] coy)
+    =.  cofs  (~(put by cofs) [our.bol (main our.bol)] coy)
+    ::  print changes for each config.
     =.  +>.$
-      =<  sh-abet
+      =<  sh-done
       %+  roll  (~(tap by cofs))
       |=  {{s/station c/(unit config)} core/_sh}
-      (~(sh-low-config core cli (main our.hid)) s (~(get by mirrors) s) c)
-    ::TODO  fix sh-low-remco to print properly.
-    ::TODO  actually delete ~ configs.
-    ::=/  cogs/_mirrors  (~(run by cofs) |=(a/(unit config) (fall a *config)))
-    ::=.  +>.$  sh-abet:(~(sh-low-remco sh cli (main our.hid)) mirrors cogs)
+      %^  ~(sh-low-config core cli (main our.bol))
+      s  (~(get by mirrors) s)  c
+    ::  apply config changes to {mirrors}.
     =.  mirrors
       %-  ~(gas by *_mirrors)
       %+  murn  (~(tap by cofs))
@@ -226,54 +259,60 @@
       ?~(c ~ `[s u.c])
     +>.$
   ::
-  ++  ra-low-precs
-    ::x  applies new presences. other clients might care for tas, but we're only
-    ::x  ever getting this for the mailbox, where we're the only ones present.
+  ++  ta-low-precs                                      ::<  apply changed precs
+    ::>  applies new presences.
+    ::>  other clients might care for {tas}, but we're
+    ::>  only ever getting this for the mailbox, where
+    ::>  we're the only ones present.
     ::
     |=  {tas/atlas pas/(map partner atlas)}
     ^+  +>
-    =/  ner/_remotes
-      ::  per-partner uni.
+    =/  ner/_remotes                                    ::  per-partner uni
       %-  ~(urn by pas)
       |=  {p/partner a/atlas}
       =+  o=(~(get by remotes) p)
       ?~(o a (~(uni by u.o) a))
-    ::  then fill in the gaps with what we know.
-    =.  ner  (~(uni by remotes) ner)
-    ?:  =(remotes ner)  +>.$
-    =.  +>.$  sh-abet:(~(sh-low-rempe sh cli (main our.hid)) remotes ner)
+    =.  ner  (~(uni by remotes) ner)                    ::  fill in the gaps
+    ?:  =(remotes ner)  +>.$                            ::  no change
+    =.  +>.$
+      =<  sh-done
+      %+  ~(sh-low-rempe sh cli (main our.bol))
+      remotes  ner
     +>.$(remotes ner)
   ::
-  ++  ra-low-grams
-    ::x  apply new grams
+  ++  ta-low-grams                                      ::<  apply messages
+    ::>  applies new or changed telegrams.
     ::
     |=  {num/@ud gams/(list telegram)}
     ^+  +>
-    =.  +>.$  sh-abet:(~(sh-low-grams sh cli (main our.hid)) num gams)
-    (ra-lesson gams)
+    =.  +>.$
+      =<  sh-done
+      %+  ~(sh-low-grams sh cli (main our.bol))
+      num  gams
+    (ta-lesson gams)
   ::
-  ++  ra-emil                                           ::  ra-emit move list
-    ::x  adds multiple moves to the core's list. flops to emulate ++ra-emit.
+  ++  ta-emil                                           ::  ta-emit move list
+    ::x  adds multiple moves to the core's list. flops to emulate ++ta-emit.
     ::
     |=  mol/(list move)
     %_(+> moves (welp (flop mol) moves))
   ::
-  ++  ra-emit                                           ::  emit a move
+  ++  ta-emit                                           ::  emit a move
     ::x  adds a move to the core's list.
     ::
     |=  mov/move
     %_(+> moves [mov moves])
   ::
-  ++  ra-sole
+  ++  ta-sole
     ::x  applies sole-action.
     ::
     |=  act/sole-action
     ^+  +>
-    ?.  =(id.cli ost.hid)
+    ?.  =(id.cli ost.bol)
       ~&(%strange-sole !!)
-    sh-abet:(~(sh-sole sh cli (main our.hid)) act)
+    sh-done:(~(sh-sole sh cli (main our.bol)) act)
   ::
-  ++  ra-console
+  ++  ta-console
     ::x  make a shell for her.
     ::
     |=  {her/ship pax/path}
@@ -285,29 +324,29 @@
         {@ta $~}  i.pax
       ==
     =/  she/shell
-      %*(. *shell id ost.hid, active (sy [%& our.hid man] ~))
-    sh-abet:~(sh-prod sh she man)
+      %*(. *shell id ost.bol, active (sy [%& our.bol man] ~))
+    sh-done:~(sh-prod sh she man)
   ::
-  ++  ra-init
+  ++  ta-init
     ::x  populate state on first boot. subscribes to our broker.
     ::
-    %-  ra-emit
-    :*  ost.hid
+    %-  ta-emit
+    :*  ost.bol
         %peer
         /                       ::x  return/diff path
-        (broker our.hid)
-        /reader/(main our.hid)  ::x  peer path
+        (broker our.bol)
+        /reader/(main our.bol)  ::x  peer path
     ==
   ::
-  ++  ra-lesson                                       ::  learn multiple
+  ++  ta-lesson                                       ::  learn multiple
     ::x  learn all telegrams in a list.
     ::
     |=  gaz/(list telegram)
     ^+  +>
     ?~  gaz  +>
-    $(gaz t.gaz, +> (ra-learn i.gaz))
+    $(gaz t.gaz, +> (ta-learn i.gaz))
   ::
-  ++  ra-learn                                        ::  learn message
+  ++  ta-learn                                        ::  learn message
     ::x  store an incoming telegram, modifying audience to say we received it.
     ::x  update existing telegram if it already exists.
     ::
@@ -315,10 +354,10 @@
     ^+  +>
     =+  old=(~(get by known) p.q.gam)
     ?~  old
-      (ra-append gam)      ::x  add
-    (ra-revise u.old gam)  ::x  modify
+      (ta-append gam)      ::x  add
+    (ta-revise u.old gam)  ::x  modify
   ::
-  ++  ra-append                                       ::  append new gram
+  ++  ta-append                                       ::  append new gram
     ::x  add gram to our story, and update our subscribers.
     ::
     |=  gam/telegram
@@ -329,7 +368,7 @@
       known  (~(put by known) p.q.gam count)
     ==
   ::
-  ++  ra-revise                                       ::  revise existing gram
+  ++  ta-revise                                       ::  revise existing gram
     ::x  modify a gram in our story, and update our subscribers.
     ::
     |=  {num/@ud gam/telegram}
@@ -362,7 +401,7 @@
       ++  expr                                          ::  [cord twig]
         |=  tub/nail  %.  tub
         %+  stag  (crip q.tub)
-        wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
+        wide:(vang & [&1:% &2:% (scot %da now.bol) |3:%])
       ::
       ++  dare                                          ::  @dr
         %+  sear
@@ -389,9 +428,9 @@
       ::
       ++  stan                                          ::  station
         ;~  pose
-          (cold [our.hid (main our.hid)] col)
-          ;~(pfix cen (stag our.hid sym))
-          ;~(pfix fas (stag (sein our.hid) sym))
+          (cold [our.bol (main our.bol)] col)
+          ;~(pfix cen (stag our.bol sym))
+          ;~(pfix fas (stag (sein our.bol) sym))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -523,31 +562,31 @@
           (stag %number (cook lent (star sem)))
         ==
       --
-    ++  sh-abet
+    ++  sh-done
       ::x  stores changes to the cli.
       ::
       ^+  +>  ::x  points to ++sh's |_ core's context.
       +>(cli she)
     ::
     ++  sh-fact                                         ::  send console effect
-      ::x  adds a console effect to ++ra's moves.
+      ::x  adds a console effect to ++ta's moves.
       ::
       |=  fec/sole-effect
       ^+  +>
       +>(moves :_(moves [id.she %diff %sole-effect fec]))
     ::
-    ++  sh-action
-      ::x  adds a talk-action to ++ra's moves
+    ++  sh-act
+      ::x  adds a talk-action to ++ta's moves
       ::
       |=  act/action
       ^+  +>
       %=  +>
           moves
         :_  moves
-        :*  ost.hid
+        :*  ost.bol
             %poke
             /reader/action
-            (broker our.hid)
+            (broker our.bol)
             [%talk-action act]
         ==
       ==
@@ -563,7 +602,7 @@
           [['[' ']'] active.she]
       =+  cha=(~(get by nik) q.rew)
       ?^  cha  ~[u.cha ' ']
-      =+  por=~(te-prom te man q.rew)
+      =+  por=~(ar-prom ar man q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
     ++  sh-pact                                         ::  update active aud
@@ -581,7 +620,7 @@
       ::
       |=  paz/(set partner)
       ?:  (sh-pear paz)  paz
-      (~(put in paz) [%& our.hid (main our.hid)])
+      (~(put in paz) [%& our.bol (main our.bol)])
     ::
     ++  sh-pear                                         ::  hearback
       ::x  produces true if any partner is included in our subscriptions,
@@ -596,7 +635,7 @@
     ::
     ++  sh-pest                                         ::  report listen
       ::x  updates audience to be tay, only if tay is not a village/%white.
-      ::x?  why exclude village (invite-only?) audiences from this?
+      ::x?  why exclude village (inviar-only?) audiences from this?
       ::
       ::TODO  does this still do the correct thing?
       |=  tay/partner
@@ -759,12 +798,12 @@
           |-  ^+  +>.^$
           ?~  old  +>.^$
           =.  +>.^$  $(old t.old)
-          (sh-note (weld pre "off {~(ta-full ta man i.old)}"))
+          (sh-note (weld pre "off {~(pr-full pr man i.old)}"))
       =.  +>.$
           |-  ^+  +>.^$
           ?~  new  +>.^$
           =.  +>.^$  $(new t.new)
-          (sh-note (weld pre "hey {~(ta-full ta man i.new)}"))
+          (sh-note (weld pre "hey {~(pr-full pr man i.new)}"))
       +>.$
     ::
     ++  sh-low-config-show
@@ -798,7 +837,7 @@
       ?~  old  ~&([%new-conf sat] +>)
       ?~  new  ~&([%del-conf sat] +>)  ::TODO  tmp
       %^  sh-low-config-show
-        (weld ~(sn-phat sn man sat) ": ")
+        (weld ~(sr-phat sr man sat) ": ")
       u.old  u.new
     ::
     ++  sh-low-remco
@@ -813,14 +852,14 @@
           =.  +>.^$  $(new t.new)
           =.  +>.^$  (sh-pest [%& p.i.new])
           %+  sh-low-config-show
-            (weld ~(sn-phat sn man p.i.new) ": ")
+            (weld ~(sr-phat sr man p.i.new) ": ")
           [*config q.i.new]
       =.  +>.$
           |-  ^+  +>.^$
           ?~  cha  +>.^$
           =.  +>.^$  $(cha t.cha)
           %+  sh-low-config-show
-            (weld ~(sn-phat sn man p.i.cha) ": ")
+            (weld ~(sr-phat sr man p.i.cha) ": ")
           [(~(got by ole) `station`p.i.cha) q.i.cha]
       +>.$
     ::
@@ -910,20 +949,20 @@
           |-  ^+  +>.^$
           ?~  old.day  +>.^$
           =.  +>.^$  $(old.day t.old.day)
-          (sh-note (weld "not " (~(ta-show ta man p.i.old.day) ~)))
+          (sh-note (weld "not " (~(pr-show pr man p.i.old.day) ~)))
       =.  +>.$
           |-  ^+  +>.^$
           ?~  new.day  +>.^$
           =.  +>.^$  $(new.day t.new.day)
           =.  +>.^$
-              (sh-note (weld "new " (~(ta-show ta man p.i.new.day) ~)))
+              (sh-note (weld "new " (~(pr-show pr man p.i.new.day) ~)))
           (sh-low-precs-diff "--" ~ (~(tap by q.i.new.day)) ~)
       =.  +>.$
           |-  ^+  +>.^$
           ?~  cha.day  +>.^$
           =.  +>.^$  $(cha.day t.cha.day)
           =.  +>.^$
-              (sh-note (weld "for " (~(ta-show ta man p.i.cha.day) ~)))
+              (sh-note (weld "for " (~(pr-show pr man p.i.cha.day) ~)))
           =+  yez=(~(got by old) p.i.cha.day)
           %+  sh-low-precs-diff  "--"
           (sh-low-atlas-diff yez q.i.cha.day)
@@ -1057,7 +1096,7 @@
     ++  sh-twig-head  ^-  vase                          ::  eval data
       ::x  makes a vase of environment data to evaluate against (#-messages).
       ::
-      !>(`{our/@p now/@da eny/@uvI}`[our.hid now.hid (shas %eny eny.hid)])
+      !>(`{our/@p now/@da eny/@uvI}`[our.bol now.bol (shas %eny eny.bol)])
     ::
     ++  sh-work                                         ::  do work
       ::x  implements worker arms for different talk commands.
@@ -1069,27 +1108,31 @@
       |%
       ++  work
         ?-  -.job
-          $number  (number +.job)
-          $leave   (leave +.job)
+          ::  station management
           $join    (join +.job)
-          $eval    (eval +.job)
-          $who     (who +.job)
-          $what    (what +.job)
-          $bind    (bind +.job)
-          $unbind  (unbind +.job)
-          $invite  (invite +.job)
-          $banish  (banish +.job)
+          $leave   (leave +.job)
           $create  (create +.job)
+          $delete  (delete +.job)
           $depict  (depict +.job)
           $source  (source +.job)
-          $delete  (delete +.job)
+          $invite  (invite +.job)
+          $banish  (banish +.job)
+          ::  messaging
+          $say     (say +.job)
+          $eval    (eval +.job)
+          $target  (target +.job)
+          ::  displaying info
+          $number  (number +.job)
+          $who     (who +.job)
+          $what    (what +.job)
+          ::  ui settings
+          $bind    (bind +.job)
+          $unbind  (unbind +.job)
           $nick    (nick +.job)
           $set     (wo-set +.job)
           $unset   (unset +.job)
-          $target  (target +.job)
-          $probe   (probe +.job)
+          ::  miscelaneous
           $help    help
-          $say     (say +.job)
         ==
       ::
       ++  activate                                      ::  from %number
@@ -1119,14 +1162,14 @@
         =:  nik  (~(put by nik) lix cha)
             nak  (~(put ju nak) cha lix)
         ==
-        (sh-action %glyph cha lix &)
+        (sh-act %glyph cha lix &)
       ::
       ++  unset-glyph
         |=  {cha/char lix/(unit (set partner))}
         =/  ole/(set (set partner))
           ?^  lix  [u.lix ~ ~]
           (~(get ju nak) cha)
-        =.  ..sh-work  (sh-action %glyph cha (fall lix ~) |)
+        =.  ..sh-work  (sh-act %glyph cha (fall lix ~) |)
         |-  ^+  ..sh-work
         ?~  ole  ..sh-work
         =.  ..sh-work  $(ole l.ole)
@@ -1146,16 +1189,16 @@
           (sh-note:(set-glyph cha pan) "new glyph {<cha>}")
         =.  ..sh-work
           sh-prod(active.she pan)
-        =+  loc=(~(got by mirrors) [our.hid man])
+        =+  loc=(~(got by mirrors) [our.bol man])
         ::x  change local mailbox config to include subscription to pan.
-        (sh-action %source man & pan)
+        (sh-act %source man & pan)
       ::
       ++  leave                                          ::  %leave
         |=  pan/(set partner)
         ^+  ..sh-work
-        =+  loc=(~(got by mirrors) [our.hid man])
+        =+  loc=(~(got by mirrors) [our.bol man])
         ::x  change local mailbox config to exclude subscription to pan.
-        (sh-action %source man | pan)
+        (sh-act %source man | pan)
       ::
       ++  what                                          ::  %what
         |=  qur/$@(char (set partner))  ^+  ..sh-work
@@ -1165,7 +1208,7 @@
         =+  pan=(~(tap in (~(get ju nak) qur)))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
-        |=(a/(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
+        |=(a/(set partner) [%txt <a>]) ::  XX ~(ar-whom ar man.she a)
       ::
       ++  who                                          ::  %who
         |=  pan/(set partner)  ^+  ..sh-work
@@ -1173,7 +1216,7 @@
         =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
-        =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man pon) ~]
+        =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr man pon) ~]
         =<  (murn (sort (~(tap by alt)) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         =.  c
@@ -1203,36 +1246,37 @@
       ++  invite                                        ::  %invite
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
-        (sh-action %permit nom & sis)
+        (sh-act %permit nom & sis)
       ::
       ++  banish                                        ::  %banish
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
-        (sh-action %permit nom | sis)
+        (sh-act %permit nom | sis)
       ::
       ++  create                                        ::  %create
         |=  {por/posture nom/knot txt/cord}
         ^+  ..sh-work
-        ?:  (~(has in mirrors) [our.hid nom])
+        ::TODO  simplify?
+        ?:  (~(has in mirrors) [our.bol nom])
           (sh-lame "{(trip nom)}: already exists")
         =.  ..sh-work
-          (sh-action %create nom txt por)
-        (join [[%& our.hid nom] ~ ~])
+          (sh-act %create nom txt por)
+        (join [[%& our.bol nom] ~ ~])
       ::
       ++  depict
         |=  {nom/knot txt/cord}
         ^+  ..sh-work
-        (sh-action %depict nom txt)
+        (sh-act %depict nom txt)
       ::
       ++  source
         |=  {nom/knot pas/(set partner)}
         ^+  ..sh-work
-        (sh-action %source nom & pas)
+        (sh-act %source nom & pas)
       ::
       ++  delete
         |=  {nom/knot say/(unit cord)}
         ^+  ..sh-work
-        (sh-action %delete nom say)
+        (sh-act %delete nom say)
       ::
       ++  reverse-folks
         |=  nym/knot
@@ -1270,7 +1314,7 @@
           |=  p/ship
           [%txt "{<p>}: {<u.nym>}"]
         %.  [%human u.her [true=~ hand=nym]]
-        %=  sh-action
+        %=  sh-act
           folks  ?~  u.nym
                    (~(del by folks) u.her)  ::x  unset nickname
                  (~(put by folks) u.her [true=~ hand=nym])  ::x  set nickname
@@ -1325,13 +1369,6 @@
         =-  ?:((lte - max) - (sub - dog))
         (add fin (sub max (mod max dog)))
       ::
-      ++  probe                                         ::  inquire
-        ::TODO?  what's this? unused...
-        |=  cuz/station
-        ^+  ..sh-work
-        ~&  [%probe cuz]
-        ..sh-work
-      ::
       ++  eval                                          ::  run
         |=  {txt/cord exe/twig}
         =>  |.([(sell (slap (slop sh-twig-head seed) exe))]~)
@@ -1341,10 +1378,10 @@
       ++  say                                           ::  publish
         |=  sep/(list speech)
         ^+  ..sh-work
-        (sh-action %phrase active.she sep)
+        (sh-act %phrase active.she sep)
       --
     ::
-    ++  sh-done                                         ::  apply result
+    ++  sh-obey                                         ::  apply result
       ::x  called upon hitting return in the prompt. if input is invalid,
       ::x  ++sh-slug is called. otherwise, the appropriate work is done
       ::x  and the entered command (if any) gets displayed to the user.
@@ -1375,24 +1412,24 @@
       ?-  -.act
         $det  (sh-stir +.act)
         $clr  ..sh-sole :: (sh-pact ~) :: XX clear to PM-to-self?
-        $ret  sh-done
+        $ret  sh-obey
       ==
     ::
     ++  sh-uniq
       ::x  generates a new serial.
       ::
       ^-  {serial _.}
-      [(shaf %serial eny.hid) .(eny.hid (shax eny.hid))]
+      [(shaf %serial eny.bol) .(eny.bol (shax eny.bol))]
     --
   --
 ::
-++  sn                                                  ::  station render core
+++  sr                                                  ::  station render core
   ::x  used in both station and ship rendering.
   ::
   ::x  man: mailbox.
   ::x  one: the station.
   |_  {man/knot one/station}
-  ++  sn-best                                           ::  best to show
+  ++  sr-best                                           ::  best to show
     ::x  returns true if one is better to show, false otherwise.
     ::x  prioritizes: our > main > size.
     ::TODO  maybe simplify. (lth (xeb (xeb p.one)) (xeb (xeb p.two)))
@@ -1400,8 +1437,8 @@
     |=  two/station
     ^-  ?
     ::x  the station that's ours is better.
-    ?:  =(our.hid p.one)
-      ?:  =(our.hid p.two)
+    ?:  =(our.bol p.one)
+      ?:  =(our.bol p.two)
         ?<  =(q.one q.two)
         ::x  if both stations are ours, the main story is better.
         ?:  =((main p.one) q.one)  %&
@@ -1410,7 +1447,7 @@
         (lth q.one q.two)
       %&
     ::x  if one isn't ours but two is, two is better.
-    ?:  =(our.hid p.two)
+    ?:  =(our.bol p.two)
       %|
     ?:  =(p.one p.two)
       ::x  if they're from the same ship, pick the "larger" one.
@@ -1420,7 +1457,7 @@
     ::x  this still seems pretty arbitrary.
     (lth p.one q.one)
   ::
-  ++  sn-curt                                           ::  render name in 14
+  ++  sr-curt                                           ::  render name in 14
     ::x  prints a ship name in 14 characters. left-pads with spaces.
     ::x  mup signifies "are there other targets besides this one"
     ::
@@ -1429,30 +1466,30 @@
     =+  raw=(cite p.one)
     (runt [(sub 14 (lent raw)) ' '] raw)
   ::
-  ++  sn-nick
+  ++  sr-nick
     ::x  get nick for ship, or shortname if no nick. left-pads with spaces.
     ::
     |.  ^-  tape
     =+  nym=(~(get by folks) p.one)
     ?~  nym
-      (sn-curt |)
+      (sr-curt |)
     ?~  hand.u.nym
-      (sn-curt |)
+      (sr-curt |)
     =+  raw=(trip u.hand.u.nym)
     =+  len=(sub 14 (lent raw))
     (weld (reap len ' ') raw)
   ::
-  ++  sn-phat                                           ::  render accurately
+  ++  sr-phat                                           ::  render accurately
     ::x  prints a station fully, but still taking "shortcuts" where possible:
     ::x  ":" for local mailbox, "~ship" for foreign mailbox,
     ::x  "%channel" for local station, "/channel" for parent station.
     ::
     ^-  tape
-    ?:  =(p.one our.hid)
+    ?:  =(p.one our.bol)
       ?:  =(q.one man)
         ":"
       ['%' (trip q.one)]
-    ?:  =(p.one (sein our.hid))
+    ?:  =(p.one (sein our.bol))
       ['/' (trip q.one)]
     =+  wun=(scow %p p.one)
     ?:  =(q.one (main p.one))
@@ -1460,15 +1497,15 @@
     :(welp wun "/" (trip q.one))
   --
 ::
-++  ta                                                  ::  partner core
+++  pr                                                  ::  partner render core
   ::x  used primarily for printing partners.
   ::
   ::x  man: mailbox.
   ::x  one: the partner.
   |_  {man/knot one/partner}
-  ++  ta-beat                                           ::  more relevant
+  ++  pr-beat                                           ::  more relevant
     ::x  returns true if one is better to show, false otherwise.
-    ::x  prefers stations over passports. if both are stations, sn-best. if both
+    ::x  prefers stations over passports. if both are stations, sr-best. if both
     ::x  are passports, pick the "larger" one, if they're equal, content hash.
     ::
     |=  two/partner  ^-  ?
@@ -1476,7 +1513,7 @@
         $&
       ?-  -.two
         $|  %&
-        $&  (~(sn-best sn man p.one) p.two)
+        $&  (~(sr-best sr man p.one) p.two)
       ==
     ::
         $|
@@ -1487,12 +1524,12 @@
             (lth -.p.two -.p.one)
       ==
     ==
-  ++  ta-best                                           ::  most relevant
+  ++  pr-best                                           ::  most relevant
     ::x  picks the most relevant partner.
     ::
-    |=(two/partner ?:((ta-beat two) two one))
+    |=(two/partner ?:((pr-beat two) two one))
   ::
-  ++  ta-sigh                                            ::  assemble label
+  ++  pr-sigh                                            ::  assemble label
     ::x  prepend pre to yiz, omitting characters of yiz to stay within len.
     ::
     |=  {len/@ud pre/tape yiz/cord}
@@ -1507,8 +1544,8 @@
       (runt [(sub len lez) '-'] nez)
     :(welp pre (scag (dec len) nez) "+")
   ::
-  ++  ta-full  (ta-show ~)                              ::  render full width
-  ++  ta-show                                           ::  render partner
+  ++  pr-full  (pr-show ~)                              ::  render full width
+  ++  pr-show                                           ::  render partner
     ::x  renders a partner as text.
     ::
     |=  moy/(unit ?)
@@ -1519,8 +1556,8 @@
       ?~  moy
         =+  cha=(~(get by nik) one ~ ~)
         =-  ?~(cha - "'{u.cha ~}' {-}")
-        ~(sn-phat sn man p.one)
-      (~(sn-curt sn man p.one) u.moy)
+        ~(sr-phat sr man p.one)
+      (~(sr-curt sr man p.one) u.moy)
     ::
     ::x  render passport.
         $|
@@ -1531,80 +1568,80 @@
       ?~  moy
         (weld pre (trip p.p.one))
       =.  pre  ?.(=(& u.moy) pre ['*' pre])
-      (ta-sigh 14 pre p.p.one)
+      (pr-sigh 14 pre p.p.one)
     ==
   --
 ::
-++  te                                                  ::  audience renderer
+++  ar                                                  ::  audience renderer
   ::x  used for representing audiences (sets of partners) as tapes.
   ::
   ::  man: mailbox.
   ::  lix: members of the audience.
   |_  {man/knot lix/(set partner)}
-  ++  te-best  ^-  (unit partner)
+  ++  ar-best  ^-  (unit partner)
     ::x  pick the most relevant partner.
     ::
     ?~  lix  ~
     :-  ~
     |-  ^-  partner
-    =+  lef=`(unit partner)`te-best(lix l.lix)
-    =+  rit=`(unit partner)`te-best(lix r.lix)
-    =.  n.lix  ?~(lef n.lix (~(ta-best ta man n.lix) u.lef))
-    =.  n.lix  ?~(rit n.lix (~(ta-best ta man n.lix) u.rit))
+    =+  lef=`(unit partner)`ar-best(lix l.lix)
+    =+  rit=`(unit partner)`ar-best(lix r.lix)
+    =.  n.lix  ?~(lef n.lix (~(pr-best pr man n.lix) u.lef))
+    =.  n.lix  ?~(rit n.lix (~(pr-best pr man n.lix) u.rit))
     n.lix
   ::
-  ++  te-deaf  ^+  .                                    ::  except for self
+  ++  ar-deaf  ^+  .                                    ::  except for self
     ::x  remove ourselves from the audience.
     ::
-    .(lix (~(del in lix) `partner`[%& our.hid man]))
+    .(lix (~(del in lix) `partner`[%& our.bol man]))
   ::
-  ++  te-maud  ^-  ?                                    ::  multiple audience
+  ++  ar-maud  ^-  ?                                    ::  multiple audience
     ::x  checks if there's multiple partners in the audience via pattern match.
     ::
-    =.  .  te-deaf
+    =.  .  ar-deaf
     !?=($@($~ {* $~ $~}) lix)
   ::
-  ++  te-prom  ^-  tape                                 ::  render targets
+  ++  ar-prom  ^-  tape                                 ::  render targets
     ::x  render all partners, ordered by relevance.
     ::
-    =.  .  te-deaf
+    =.  .  ar-deaf
     =+  ^=  all
         %+  sort  `(list partner)`(~(tap in lix))
         |=  {a/partner b/partner}
-        (~(ta-beat ta man a) b)
+        (~(pr-beat pr man a) b)
     =+  fir=&
     |-  ^-  tape
     ?~  all  ~
     ;:  welp
       ?:(fir "" " ")
-      (~(ta-show ta man i.all) ~)
+      (~(pr-show pr man i.all) ~)
       $(all t.all, fir |)
     ==
   ::
-  ++  te-whom                                           ::  render sender
+  ++  ar-whom                                           ::  render sender
     ::x  render sender as the most relevant partner.
     ::
-    (~(ta-show ta man (need te-best)) ~ te-maud)
+    (~(pr-show pr man (need ar-best)) ~ ar-maud)
   ::
-  ++  ta-dire                                           ::  direct message
+  ++  pr-dire                                           ::  direct message
     ::x  returns true if partner is a mailbox of ours.
     ::
     |=  pan/partner  ^-  ?
     ?&  ?=($& -.pan)
-        =(p.p.pan our.hid)
+        =(p.p.pan our.bol)
     ::
         =+  sot=(~(get by mirrors) +.pan)
         &(?=(^ sot) ?=($brown p.cordon.u.sot))
     ==
   ::
-  ++  te-pref                                           ::  audience glyph
+  ++  ar-pref                                           ::  audience glyph
     ::x  get the glyph that corresponds to the audience, with a space appended.
     ::x  if it's a dm to us, use :. if it's a dm by us, use ;. complex, use *.
     ::
     ^-  tape
     =+  cha=(~(get by nik) lix)
     ?^  cha  ~[u.cha ' ']
-    ?.  (lien (~(tap by lix)) ta-dire)
+    ?.  (lien (~(tap by lix)) pr-dire)
       "* "
     ?:  ?=({{$& ^} $~ $~} lix)
       ": "
@@ -1645,16 +1682,16 @@
     ::x  crams a telegram into a single line by displaying a short ship name,
     ::x  a short representation of the gram, and an optional timestamp.
     ::
-    =+  txt=(tr-text =(who our.hid))
+    =+  txt=(tr-text =(who our.bol))
     ?:  =(~ txt)  ""
     =+  ^=  baw
         ::  ?:  oug
-        ::  ~(te-whom te man tr-pals)
+        ::  ~(ar-whom ar man tr-pals)
         ?.  (~(has in sef) %noob)
-          (~(sn-curt sn man [who (main who)]) |)
-        (~(sn-nick sn man [who (main who)]))
+          (~(sr-curt sr man [who (main who)]) |)
+        (~(sr-nick sr man [who (main who)]))
     ?:  (~(has in sef) %showtime)
-      =+  dat=(yore now.hid)
+      =+  dat=(yore now.bol)
       =+  ^=  t
         |=  a/@  ^-  tape
         %+  weld
@@ -1671,7 +1708,7 @@
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))     :: round
     =+  hed=leaf+"{(scow %uv sen)} at {(scow %da wen)}"
     =+  =<  paz=(turn (~(tap by aud)) .)
-        |=({a/partner *} leaf+~(ta-full ta man a))
+        |=({a/partner *} leaf+~(pr-full pr man a))
     =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
   ::
@@ -1695,7 +1732,7 @@
           ?:  p.sep
             "you have been invited to "
           "you have been banished from "
-        ~(sn-phat sn man q.sep)
+        ~(sr-phat sr man q.sep)
       $api
         :-  %tan
         :_  ~
@@ -1779,9 +1816,9 @@
       =+  txt=(trip q.sep)
       ?:  p.sep
         =+  pal=tr-pals
-        =.  pal  ?:  =(who our.hid)  pal
+        =.  pal  ?:  =(who our.bol)  pal
                  (~(del in pal) [%& who (main who)])
-        (weld ~(te-pref te man pal) txt)
+        (weld ~(ar-pref ar man pal) txt)
       (weld " " txt)
     ::
         $inv
@@ -1789,7 +1826,7 @@
         ?:  p.sep
           " invited you to "
         " banished you from "
-      ~(sn-phat sn man q.sep)
+      ~(sr-phat sr man q.sep)
     ::
         $app
       (tr-chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
@@ -1804,13 +1841,13 @@
   ::
   |=  pax/path
   ^-  (quip move +>)
-  ?.  (team src.hid our.hid)
-    ~&  [%peer-talk-reader-stranger src.hid]
+  ?.  (team src.bol our.bol)
+    ~&  [%peer-talk-reader-stranger src.bol]
     [~ +>]
   ?.  ?=({$sole *} pax)
     ~&  [%peer-talk-reader-strange pax]
     [~ +>]
-  ra-abet:(ra-console:ra src.hid t.pax)
+  ta-done:(ta-console:ta src.bol t.pax)
 ::
 ++  diff-talk-lowdown
   ::x  incoming talk-lowdown. process it.
@@ -1819,29 +1856,20 @@
   ::x  don't bother.
   ::
   |=  {way/wire low/lowdown}
-  ra-abet:(ra-low:ra low)
+  ta-done:(ta-low:ta low)
 ::
 ++  diff-talk-reaction                                  ::  accept reaction
   ::x  incoming talk reaction. process it.
   ::
   |=  {way/wire rac/reaction}
-  ?.  =(src.hid -:(broker our.hid))
-    ~&  [%diff-reaction-stranger src.hid]
+  ?.  =(src.bol -:(broker our.bol))
+    ~&  [%diff-reaction-stranger src.bol]
     [~ +>]
-  ra-abet:(ra-reaction:ra rac)
+  ta-done:(ta-reaction:ta rac)
 ::
 ++  poke-sole-action                                    ::  accept console
   ::x  incoming sole action. process it.
   ::
   |=  act/sole-action
-  ra-abet:(ra-sole:ra act)
-::
-++  prep
-  ::x  state adapter.
-  ::
-  |=  old/*::(unit chattel)
-  ::^-  (quip move ..prep)
-  ::?~  old
-    ra-abet:ra-init:ra
-  ::[~ ..prep(+<+ u.old)]
+  ta-done:(ta-sole:ta act)
 --
