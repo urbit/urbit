@@ -38,6 +38,10 @@ let
       "${nixpkgs.bash}/bin:" +
       "${nixpkgs.patch}/bin:" +
       "${nixpkgs.xz}/bin";
+
+    inherit (crossenv) cmake_toolchain;
+
+    PKG_CONFIG = "${crossenv.host}-pkg-config";
   };
 
 in

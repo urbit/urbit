@@ -12,18 +12,5 @@ crossenv.make_derivation rec {
 
   builder = ./builder.sh;
 
-  buildInputs = [
-    crossenv.binutils
-    crossenv.gcc
-    crossenv.pkg-config
-    crossenv.pkg-config-cross
-    crossenv.nixpkgs.cmake
-  ];
-
-  inherit (crossenv) cmake_toolchain;
-
-  PKG_CONFIG = "${crossenv.host}-pkg-config";
-  I686_W64_MINGW32_PKG_CONFIG_PATH = "${libusbp}/lib/pkgconfig"; # TODO
-
-  CMAKE_PREFIX_PATH="";
+  I686_W64_MINGW32_PKG_CONFIG_PATH = "${libusbp}/lib/pkgconfig";  # TODO
 }
