@@ -1,6 +1,6 @@
 { crossenv, qt, libusbp }:
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
+crossenv.make_derivation rec {
   name = "pavr2-${version}-${crossenv.host}";
 
   version = "1.0.2ish";

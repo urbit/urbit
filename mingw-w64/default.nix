@@ -70,23 +70,27 @@ let
 
   gyp_os = "win";
 
+  crossenv_base = {
+    # Target info
+    inherit host arch os exe_suffix;
+
+    # Toolchain
+    inherit gcc binutils mingw-w64_full;
+
+    # Build tools
+    inherit pkg-config pkg-config-cross;
+
+    # nixpkgs: a wide variety of programs and build tools
+    inherit nixpkgs;
+
+    # Expressions used to bootstrap the toolchain, not normally needed.
+    inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
+
+    # Support for various build tools
+    inherit cmake_toolchain gyp_os;
+  };
 in
-{
-  # Target info
-  inherit host arch os exe_suffix;
+  {
+    make_derivation = import ../make_derivation.nix crossenv_base;
+  } // crossenv_base
 
-  # Toolchain
-  inherit gcc binutils mingw-w64_full;
-
-  # Build tools
-  inherit pkg-config pkg-config-cross;
-
-  # nixpkgs: a wide variety of programs and build tools
-  inherit nixpkgs;
-
-  # Expressions used to bootstrap the toolchain, not normally needed.
-  inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
-
-  # Support for various build tools
-  inherit cmake_toolchain gyp_os;
-}
