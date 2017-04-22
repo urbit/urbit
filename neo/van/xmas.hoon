@@ -1,12 +1,12 @@
 ::                                                      ::  ::
-::::  /hoon/ames/arvo                                   ::::::  vane prelude
+::::  /hoon/xmas/arvo                                   ::::::  vane prelude
   !:                                                    ::  ::
 =+  our=~zod    ::  XX placeholder
 |=  pit/vase                                            ::  kernel vase
 =>  =~                                                  ::
 =,  xmas
 ::                                                      ::  ::
-::::                                                    ::::::  ames structures
+::::                                                    ::::::  xmas structures
   ::                                                    ::  ::
 ::
 =*  pipe  channel:able:jael                            ::  secure channel
@@ -153,7 +153,7 @@
       ?>  =(our q.p.kec)
       =+  buh=(~(get by pol) p.p.kec)
       ?~  buh
-        ~&  [%ames-from p.p.kec]
+        ~&  [%xmas-from p.p.kec]
         =+  nut=(fall (~(get by ech) p.p.kec) *mute)
         %_  +>.$
           fex  [[%veil p.p.kec] fex]
@@ -164,7 +164,7 @@
         $mess
       =+  buh=(~(get by pol) p.job)
       ?~  buh
-        ~&  [%ames-unto p.job]
+        ~&  [%xmas-unto p.job]
         =+  nut=(fall (~(get by ech) p.job) *mute)
         %_  +>.$
           fex  [[%veil p.job] fex]
