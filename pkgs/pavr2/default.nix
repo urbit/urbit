@@ -1,7 +1,7 @@
 { crossenv, qt, libusbp }:
 
 crossenv.make_derivation rec {
-  name = "pavr2-${version}-${crossenv.host}";
+  name = "pavr2-${version}";
 
   version = "1.0.2ish";
 
@@ -13,4 +13,5 @@ crossenv.make_derivation rec {
   builder = ./builder.sh;
 
   I686_W64_MINGW32_PKG_CONFIG_PATH = "${libusbp}/lib/pkgconfig";  # TODO
+  X86_64_W64_MINGW32_PKG_CONFIG_PATH = "${libusbp}/lib/pkgconfig";  # TODO
 }

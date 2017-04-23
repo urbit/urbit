@@ -1,7 +1,5 @@
 source $setup
 
-unset CC CXX AR LD
-
 tar -xf $src
 mv pololu-usb-avr-programmer-v2-* pavr2
 
