@@ -1,14 +1,7 @@
 { crossenv }:
 
-# TODO: get rid of boilerplate, don't refer to nixpkgs
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "hello_cpp-${crossenv.host}";
-
-  inherit (crossenv) host;
-
+crossenv.make_derivation rec {
+  name = "hello_cpp";
   src_file = ./hello.cpp;
-
-  buildInputs = [ crossenv.gcc crossenv.binutils ];
-
   builder = ./builder.sh;
 }

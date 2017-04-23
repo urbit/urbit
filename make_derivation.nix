@@ -8,11 +8,17 @@ let
   nixpkgs = crossenv.nixpkgs;
 
   drv_attrs = attrs // rec {
+    name = "${attrs.name}-${crossenv.host}";
     system = builtins.currentSystem;
     builder = "${bash}/bin/bash";
     args = ["-ue" attrs.builder];
     setup = ./builder_setup.sh;
+
+    inherit (crossenv) host arch os exe_suffix;
+    inherit (crossenv) cmake_toolchain;
+
     SHELL = builder;
+
     INITIAL_PATH =
       "${crossenv.gcc}/bin:" +
       "${crossenv.binutils}/bin:" +
@@ -38,10 +44,6 @@ let
       "${nixpkgs.bash}/bin:" +
       "${nixpkgs.patch}/bin:" +
       "${nixpkgs.xz}/bin";
-
-    inherit (crossenv) cmake_toolchain;
-
-    PKG_CONFIG = "${crossenv.host}-pkg-config";
   };
 
 in

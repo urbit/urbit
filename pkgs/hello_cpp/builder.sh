@@ -1,10 +1,8 @@
-source $stdenv/setup
+. $setup
 
-exec_suffix=.exe
-
-$host-g++ $src_file -o hello$exec_suffix
+$host-g++ $src_file -o hello$exe_suffix
 
 mkdir -p $out/bin/
 
-cp hello$exec_suffix $out/bin/
+cp hello$exe_suffix $out/bin/
 

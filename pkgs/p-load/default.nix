@@ -1,12 +1,9 @@
 { crossenv, libusbp }:
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "p-load-${version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "p-load-${version}";
 
   version = "2.0.1ish";
-
-  host = crossenv.host;
-  cmake_toolchain = crossenv.cmake_toolchain;
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://github.com/pololu/p-load/archive/31126da.tar.gz";
@@ -14,10 +11,6 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
-    crossenv.nixpkgs.cmake
-    crossenv.nixpkgs.pkgconfig
     libusbp
   ];
 
