@@ -36,6 +36,57 @@
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
 |%
+++  roof  (room vase)                                   ::  namespace
+++  faro
+  |*  {gift/mold note/mold}
+  $%  {$give p/gift}                                  ::  return
+      {$pass p/path q/note}                           ::  invoke
+  ==                                                  ::
+++  room                                                ::  either namespace
+  |*  vase/mold                                         ::  vase or maze
+  $-  $:  lyc/(unit (set ship))                         ::  leakset
+          car/term                                      ::  perspective
+          bem/beam                                      ::  path
+      ==                                                ::
+  %-  unit                                              ::  ~: unknown
+  %-  unit                                              ::  ~ ~: invalid
+  (cask vase)                                           ::  marked cargo
+++  vane                                                ::  kernel module
+  |*  $:  task/mold                                     ::  ->$ in request
+          gift/mold                                     ::  <-$ out result
+          sign/mold                                     ::  $<- in result
+          note/mold                                     ::  $-> out request
+          mind/mold                                     ::  current state
+          seed/mold                                     ::  prior state
+      ==                                                ::
+  =*  self  (vane task gift sign note mind seed)        ::
+  $_  =|  mind
+  ^|  |%
+  ++  load  |~(seed ^|(+>))
+  ++  stay  *mind                                       ::  preserve
+  ++  plow                                              ::  work in time
+    =|  $:  now/@da                                     ::  date
+            eny/@uvJ                                    ::  entropy
+            sky/roof                                    ::  namespace
+        ==                                              ::
+    ^|  |%
+    ++  doze  *(unit @da)                               ::  awake when
+    ++  peek  roof
+    ++  spin                                            ::  work on state
+      =|  hen/duct                                      ::  cause stack
+      ^|  |%
+      ++  call                                          ::  advancing effect
+        |~  task 
+        :_  ^|(+>)
+        *(list (wind note gift))
+      ::
+      ++  take                                          ::  returning effect
+        |~  {wire sign} 
+        :_  ^|(+>)
+        *(list (wind note gift))
+      --                                                ::
+    --
+  --                                                    ::
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
   ::                                                    ::::

@@ -1,4 +1,4 @@
-::                                                      ::  /van/jael
+!:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
 !?  150
 ::
@@ -2065,7 +2065,37 @@
         =*  val  (sign:as:(nol:nu:crub q.pev) *@ ash)
         new(syg (~(put by syg.new) dad [p.pev val]))
   --  --
---  --
+    --
+++  neon
+  ^-  (vane task gift sign note state state)
+  =|  lex/state
+  |%
+  ++  load  |=(state +>)
+  ++  stay  lex
+  ++  plow
+    =|  $:  now/@da
+            eny/@uvJ
+            sky/roof
+        ==
+    |%
+    ++  doze  ~
+    ++  peek  roof
+    ++  spin
+      =|  hen/duct
+      |%
+      ++  call  
+        |=  task
+        ^-  {(list (wind note gift)) _+>}
+        !!
+      ::
+      ++  take  
+        |=  {tea/wire hin/sign}
+        ^-  {(list (wind note gift)) _+>}
+        !!
+      --
+    --
+  --
+--
 ::                                                      ::::
 ::::                    #  vane                         ::  interface
   ::                                                    ::::

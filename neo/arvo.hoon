@@ -57,22 +57,21 @@
 ::                                                      ::
 ++  ship  @p                                            ::  network identity
 ++  vane                                                ::  kernel module
-  |*  $:  $:  task/mold                                 ::  ->$ in request
-              gift/mold                                 ::  <-$ out result
-              sign/mold                                 ::  $<- in result
-              note/mold                                 ::  $-> out request
-          ==                                            ::
-          mind/mold                                     ::  current state
-          tomb/mold                                     ::  prior state
+  |*  $:  task/mold                                     ::  ->$ in request
+          gift/mold                                     ::  <-$ out result
+          sign/mold                                     ::  $<- in result
+          note/mold                                     ::  $-> out request
+          soul/mold                                     ::  current state
+          seed/mold                                     ::  prior state
       ==                                                ::
   =*  move                                              ::
     $%  {$give p/gift}                                  ::  return
         {$pass p/path q/note}                           ::  invoke
     ==                                                  ::
-  $_  ^?                                                ::
-  |_  mind                                              ::  active state
-  ++  load  $-(tomb _+>)                                ::  reload
-  ++  stay  *mind                                       ::  preserve
+  $_  =|  soul                                          ::  active state
+  ^?  |%                                                ::
+  ++  load  |~(seed +>)                                 ::  restore
+  ++  stay  *soul                                       ::  preserve
   ++  plow                                              ::  work in time
     |_  $:  now/@da                                     ::  date
             eny/@uvJ                                    ::  entropy
@@ -84,8 +83,8 @@
       |_  $:  hen/duct                                  ::  cause stack
               moz/(list move)                           ::  moves, inverted
           ==                                            ::
-      ++  call  |=(task +>)                             ::  forward effect
-      ++  take  |=({wire sign} +>)                      ::  backward effect
+      ++  call  |~(task +>)                             ::  forward effect
+      ++  take  |~({wire sign} +>)                      ::  backward effect
       --                                                ::
     --                                                  ::
   --                                                    ::
