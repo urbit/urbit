@@ -73,17 +73,15 @@
     ++  doze  *(unit @da)                               ::  awake when
     ++  peek  roof
     ++  spin                                            ::  work on state
-      =|  hen/duct                                      ::  cause stack
+      =|  $:  hen/duct                                  ::  cause stack
+              moz/(list (wind note gift))               ::  actions, reversed
+          ==
       ^|  |%
       ++  call                                          ::  advancing effect
-        |~  task 
-        :_  ^|(+>)
-        *(list (wind note gift))
+        |~(task ^|(+>))
       ::
       ++  take                                          ::  returning effect
-        |~  {wire sign} 
-        :_  ^|(+>)
-        *(list (wind note gift))
+        |~({wire sign} ^|(+>))
       --                                                ::
     --
   --                                                    ::

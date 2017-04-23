@@ -2081,16 +2081,18 @@
     ++  doze  ~
     ++  peek  roof
     ++  spin
-      =|  hen/duct
+      =|  $:  hen/duct
+              moz/(list (wind note gift))
+          ==
       |%
       ++  call  
         |=  task
-        ^-  {(list (wind note gift)) _+>}
+        ^+  +>
         !!
       ::
       ++  take  
         |=  {tea/wire hin/sign}
-        ^-  {(list (wind note gift)) _+>}
+        ^+  +>
         !!
       --
     --
