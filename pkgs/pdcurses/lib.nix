@@ -1,7 +1,7 @@
 { crossenv }:
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "pdcurses-${version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "pdcurses-${version}";
 
   version = "3.4";
 
@@ -11,11 +11,4 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   };
 
   builder = ./builder.sh;
-
-  buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
-  ];
-
-  inherit (crossenv) host os;
 }
