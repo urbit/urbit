@@ -1,4 +1,4 @@
-source $stdenv/setup
+source $setup
 
 cp --no-preserve=mode -r $src/setup/devcon .
 
