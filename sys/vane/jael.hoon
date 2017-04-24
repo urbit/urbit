@@ -2067,6 +2067,7 @@
   --  --
     --
 ++  neon
+  |=  our/ship
   ^-  (vane task gift sign note state state)
   =|  lex/state
   |%
@@ -2074,26 +2075,41 @@
   ++  stay  lex
   ++  plow
     =|  $:  now/@da
-            eny/@uvJ
+            eny/@e
             sky/roof
         ==
     |%
     ++  doze  ~
-    ++  peek  roof
+    ++  peek
+      |=  $:  lyc/(unit (set ship))
+              car/term
+              bem/beam
+          ==
+      ^-  (unit (unit (cask vase)))
+      ^-  (unit (unit cage))
+      ::
+      ::  XX: needs review
+      ::
+      ?.  &(=(p.bem our) =(r.bem `case`[%da now]))  ~
+      %-  some
+      ?.  =(%$ car)  ~
+      %+  bind  (~(scry of [now eny] lex) q.bem s.bem)
+      |=(a/gilt [-.a (slot 3 (spec !>(a)))])
+    ::
     ++  spin
       =|  $:  hen/duct
-              moz/(list (wind note gift))
+              moz/(list (pair duct (wind note gift)))
           ==
       |%
       ++  call  
-        |=  task
+        |=  tac/task
         ^+  +>
-        !!
+        =^  did  lex  abet:(~(call of [now eny] lex) hen tac)
+        +>.$(moz (weld moz did))
       ::
       ++  take  
         |=  {tea/wire hin/sign}
-        ^+  +>
-        !!
+        +>
       --
     --
   --

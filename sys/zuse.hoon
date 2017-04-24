@@ -37,11 +37,6 @@
   ::                                                    ::  ::
 |%
 ++  roof  (room vase)                                   ::  namespace
-++  faro
-  |*  {gift/mold note/mold}
-  $%  {$give p/gift}                                  ::  return
-      {$pass p/path q/note}                           ::  invoke
-  ==                                                  ::
 ++  room                                                ::  either namespace
   |*  vase/mold                                         ::  vase or maze
   $-  $:  lyc/(unit (set ship))                         ::  leakset
@@ -66,15 +61,21 @@
   ++  stay  *mind                                       ::  preserve
   ++  plow                                              ::  work in time
     =|  $:  now/@da                                     ::  date
-            eny/@uvJ                                    ::  entropy
+            eny/@e                                      ::  entropy
             sky/roof                                    ::  namespace
         ==                                              ::
     ^|  |%
     ++  doze  *(unit @da)                               ::  awake when
-    ++  peek  roof
+    ++  peek
+      |~  $:  lyc/(unit (set ship))                     ::  leakset
+              car/term                                  ::  perspective
+              bem/beam                                  ::  global path
+          ==
+      *(unit (unit (cask vase)))
+    ::
     ++  spin                                            ::  work on state
       =|  $:  hen/duct                                  ::  cause stack
-              moz/(list (wind note gift))               ::  actions, reversed
+              moz/(list (pair duct (wind note gift)))   ::  actions, reversed
           ==
       ^|  |%
       ++  call                                          ::  advancing effect

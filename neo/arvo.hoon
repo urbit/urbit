@@ -74,7 +74,7 @@
   ++  stay  *soul                                       ::  preserve
   ++  plow                                              ::  work in time
     |_  $:  now/@da                                     ::  date
-            eny/@uvJ                                    ::  entropy
+            eny/@e                                      ::  entropy
             sky/roof                                    ::  namespace
         ==                                              ::
     ++  doze  *(unit @da)                               ::  awake when
@@ -566,7 +566,7 @@
               vax  zax
               run.gut
             %+  weld
-              %+  turn  moz
+              %+  turn  (flop moz)
               |=  mov/move:live
               ?.  ?=($pass -.q.mov)  mov
               ::
