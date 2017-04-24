@@ -6,7 +6,7 @@ mv pololu-usb-avr-programmer-v2-* pavr2
 mkdir build
 cd build
 
-PKG_CONFIG=$host-pkg-config \
+PKG_CONFIG=$PKG_CONFIG_CROSS \
 cmake ../pavr2 \
   -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
   -DCMAKE_INSTALL_PREFIX=$out \

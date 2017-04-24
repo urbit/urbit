@@ -60,9 +60,7 @@ let
 
   pkg-config = import ../pkgconf { inherit nixpkgs; };
 
-  pkg-config-cross = import ../pkg-config-cross {
-    inherit nixpkgs host host_as_var;
-  };
+  pkg-config-cross = import ../pkg-config-cross { inherit nixpkgs; };
 
   os = "windows";
 

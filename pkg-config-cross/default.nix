@@ -1,9 +1,6 @@
-{ nixpkgs, host, host_as_var }:
+{ nixpkgs }:
 
 nixpkgs.stdenv.mkDerivation rec {
-  name = "pkg-config-wrapper-${host}";
-
-  inherit host host_as_var;
-
+  name = "pkg-config-cross";
   builder = ./builder.sh;
 }

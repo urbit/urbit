@@ -12,6 +12,5 @@ crossenv.make_derivation rec {
 
   builder = ./builder.sh;
 
-  I686_W64_MINGW32_PKG_CONFIG_PATH = "${libusbp}/lib/pkgconfig";  # TODO
-  X86_64_W64_MINGW32_PKG_CONFIG_PATH = "${libusbp}/lib/pkgconfig";  # TODO
+  cross_inputs = [ libusbp ];
 }

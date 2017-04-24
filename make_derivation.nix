@@ -1,50 +1,75 @@
 crossenv: attrs:
 
-# crossenv.nixpkgs.stdenv.mkDerivation attrs
-
 let
-  bash = crossenv.nixpkgs.bash;
-
   nixpkgs = crossenv.nixpkgs;
 
-  drv_attrs = attrs // rec {
+  default_native_inputs = [
+    crossenv.gcc
+    crossenv.binutils
+    crossenv.pkg-config
+    crossenv.pkg-config-cross
+    nixpkgs.cmake
+    nixpkgs.ninja
+    nixpkgs.gcc
+    nixpkgs.binutils
+    nixpkgs.coreutils
+    nixpkgs.findutils
+    nixpkgs.diffutils
+    nixpkgs.gnused
+    nixpkgs.gnugrep
+    nixpkgs.gawk
+    nixpkgs.gnutar
+    nixpkgs.gzip
+    nixpkgs.bzip2
+    nixpkgs.gnumake
+    nixpkgs.bash
+    nixpkgs.patch
+    nixpkgs.xz
+  ];
+
+  native_inputs = (attrs.native_inputs or []) ++ default_native_inputs;
+
+  cross_inputs = (attrs.cross_inputs or []);
+
+  path_join = builtins.concatStringsSep ":";
+
+  path_map = dir: inputs: (map (i: "${i}" + dir) inputs);
+
+  auto_drv_attrs = rec {
     name = "${attrs.name}-${crossenv.host}";
     system = builtins.currentSystem;
-    builder = "${bash}/bin/bash";
+    builder = "${nixpkgs.bash}/bin/bash";
     args = ["-ue" attrs.builder];
-    setup = ./builder_setup.sh;
 
     inherit (crossenv) host arch os exe_suffix;
     inherit (crossenv) cmake_toolchain;
 
+    setup = ./builder_setup.sh;
     SHELL = builder;
 
-    INITIAL_PATH =
-      "${crossenv.gcc}/bin:" +
-      "${crossenv.binutils}/bin:" +
-      "${crossenv.pkg-config}/bin:" +
-      "${crossenv.pkg-config-cross}/bin:" +
+    NIXCRPKGS = true;
 
-      "${nixpkgs.cmake}/bin:" +
-      "${nixpkgs.ninja}/bin:" +
+    PATH = path_join (
+      (if attrs ? PATH then [attrs.PATH] else []) ++
+      (path_map "/bin" native_inputs)
+    );
 
-      "${nixpkgs.gcc}/bin:" +
-      "${nixpkgs.binutils}/bin:" +
+    PKG_CONFIG_CROSS = "pkg-config-cross";
 
-      "${nixpkgs.coreutils}/bin:" +
-      "${nixpkgs.findutils}/bin:" +
-      "${nixpkgs.diffutils}/bin:" +
-      "${nixpkgs.gnused}/bin:" +
-      "${nixpkgs.gnugrep}/bin:" +
-      "${nixpkgs.gawk}/bin:" +
-      "${nixpkgs.gnutar}/bin:" +
-      "${nixpkgs.gzip}/bin:" +
-      "${nixpkgs.bzip2}/bin:" +
-      "${nixpkgs.gnumake}/bin:" +
-      "${nixpkgs.bash}/bin:" +
-      "${nixpkgs.patch}/bin:" +
-      "${nixpkgs.xz}/bin";
+    PKG_CONFIG_PATH = path_join (
+      (if attrs ? PKG_CONFIG_PATH then [attrs.PKG_CONFIG_PATH] else []) ++
+      (path_map "/lib/pkgconfig" native_inputs)
+    );
+
+    PKG_CONFIG_CROSS_PATH = path_join (
+      (if attrs ? PKG_CONFIG_CROSS_PATH then [attrs.PKG_CONFIG_CROSS_PATH] else []) ++
+      (path_map "/lib/pkgconfig" cross_inputs)
+    );
   };
+
+  pkg_config_attrs = {};
+
+  drv_attrs = attrs // auto_drv_attrs // pkg_config_attrs;
 
 in
   derivation drv_attrs
