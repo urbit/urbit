@@ -1,7 +1,7 @@
 { crossenv }:
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "expat-${version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "expat-${version}";
 
   version = "2.2.0";
 
@@ -15,11 +15,4 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   ];
 
   builder = ./builder.sh;
-
-  buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
-  ];
-
-  inherit (crossenv) host;
 }
