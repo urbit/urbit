@@ -3,10 +3,10 @@
 # Note: GDB has a bundled copy of readline that it uses.
 # There is a --with-system-readline option we could try to use.
 
-# TODO: provide a mingw-w64 isl to gdb because its configure script looks for it?
+# Note: consider providing a mingw-w64 isl to gdb because its configure script looks for it
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "gdb-${version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "gdb-${version}";
 
   version = "7.12.1";
 
@@ -21,9 +21,7 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
     ./substitute-path-all-filenames.patch
   ];
 
-  buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
+  native_inputs = [
     crossenv.nixpkgs.texinfo
     crossenv.nixpkgs.bison
     crossenv.nixpkgs.yacc
@@ -34,6 +32,4 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   inherit expat curses;
 
   builder = ./builder.sh;
-
-  inherit (crossenv) host;
 }
