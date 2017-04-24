@@ -3,8 +3,6 @@
   !:
 |%
 ::
-::TODO  station -> circle
-::
 ::>  ||
 ::>  ||  %reader-communication
 ::>  ||
@@ -12,32 +10,35 @@
 ::+|
 ::
 ++  action                                              ::>  user action
-  $%  ::  station configuration                         ::
-      {$create (trel knot cord posture)}                ::<  create station
-      {$source (trel knot ? (set partner))}             ::<  un/sub p to/from r
-      {$depict (pair knot cord)}                        ::<  change description
-      {$permit (trel knot ? (set ship))}                ::<  invite/banish
-      {$delete (pair knot (unit cord))}                 ::<  delete + announce
+  $%  ::  circle configuration                          ::
+      {$create nom/knot des/cord sec/posture}           ::<  create circle
+      {$source nom/knot sub/? src/(set partner)}        ::<  un/sub p to/from r
+      {$depict nom/knot des/cord}                       ::<  change description
+      {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
+      {$delete nom/knot ano/(unit cord)}                ::<  delete + announce
       ::  messaging                                     ::
-      {$convey (list thought)}                          ::<  post exact
-      {$phrase (pair (set partner) (list speech))}      ::<  post easy
+      {$convey tos/(list thought)}                      ::<  post exact
+      {$phrase aud/(set partner) ses/(list speech)}     ::<  post easy
       ::  personal metadata                             ::
-      ::TODO  change to target partners, not only our stations.
-      {$status (pair (set knot) status)}                ::<  our status update
+      ::TODO  change to target partners, not only our circles.
+      {$status nos/(set knot) sat/status}               ::<  our status update
       ::  changing shared ui                            ::
-      {$human (pair ship human)}                        ::<  new identity
-      {$glyph (trel char (set partner) ?)}              ::<  un/bind a glyph
+      {$human sip/ship man/human}                       ::<  new identity
+      {$glyph gyf/char pas/(set partner) bin/?}         ::<  un/bind a glyph
   ==                                                    ::
 ++  reaction                                            ::>  user information
-  $:  kind/?($info $fail)                               ::<  result
-      what/@t                                           ::<  explain
+  $:  res/?($info $fail)                                ::<  result
+      wat/@t                                            ::<  explain
       why/(unit action)                                 ::<  cause
   ==                                                    ::
 ++  lowdown                                             ::>  new/changed state
   $%  ::  story state                                   ::
-      {$confs (unit config) (map station (unit config))}::<  configs
-      {$precs register}                                 ::<  presences
-      {$grams (pair @ud (list telegram))}               ::<  messages
+      $:  $confs                                        ::<  configs
+          loc/(unit config)                             ::<  local config
+          rem/(map circle (unit config))                ::<  remote configs
+      ==                                                ::
+      {$precs reg/register}                             ::<  presences
+      {$grams num/@ud gaz/(list telegram)}              ::<  messages
       ::  ui state                                      ::
       {$glyph (jug char (set partner))}                 ::<  glyph bindings
       {$names (map ship (unit human))}                  ::<  nicknames
@@ -50,12 +51,12 @@
 ::+|
 ::
 ++  command                                             ::>  effect on story
-  $%  {$review (list thought)}                          ::<  deliver
+  $%  {$review tos/(list thought)}                      ::<  deliver
   ==                                                    ::
 ++  report                                              ::>  update
-  $%  {$cabal cabal}                                    ::<  config neighborhood
-      {$group register}                                 ::<  presence
-      {$grams (pair @ud (list telegram))}               ::<  thoughts
+  $%  {$cabal cab/cabal}                                ::<  config neighborhood
+      {$group reg/register}                             ::<  presence
+      {$grams num/@ud gaz/(list telegram)}              ::<  thoughts
   ==                                                    ::
 ::
 ::>  ||
@@ -64,22 +65,22 @@
 ::>    messaging targets and their metadata.
 ::+|
 ::
-++  partner    (each station passport)                  ::<  message target
-++  station    (pair ship knot)                         ::<  native target
+++  partner    (each circle passport)                   ::<  message target
+++  circle     {hos/ship nom/knot}                      ::<  native target
 ++  passport                                            ::>  foreign target
   $%  {$twitter p/@t}                                   ::<  twitter handle
   ==                                                    ::
 ::>  circle configurations.
 ++  cabal                                               ::>  metaconfiguration
   $:  loc/config                                        ::<  local config
-      ham/(map station config)                          ::<  neighborhood configs
+      rem/(map circle config)                           ::<  neighborhood configs
   ==                                                    ::
-++  config                                              ::>  station config
-  $:  sources/(set partner)                             ::<  pulls from
-      caption/cord                                      ::<  description
-      cordon/control                                    ::<  restrictions
+++  config                                              ::>  circle config
+  $:  src/(set partner)                                 ::<  pulls from
+      cap/cord                                          ::<  description
+      con/control                                       ::<  restrictions
   ==                                                    ::
-++  control    (pair posture (set ship))                ::<  access control
+++  control    {sec/posture ses/(set ship)}             ::<  access control
 ++  posture                                             ::>  security kind
   $?  $black                                            ::<  channel, blacklist
       $white                                            ::<  village, whitelist
@@ -87,13 +88,18 @@
       $brown                                            ::<  mailbox, our r, bl w
   ==                                                    ::
 ::>  participant metadata.
-++  register   (pair atlas (map partner atlas))         ::<  our & srcs presences
+++  register   {loc/atlas rem/(map partner atlas)}      ::<  our & srcs presences
 ++  atlas      (map ship status)                        ::<  presence map
-++  status     (pair presence human)                    ::<  participant
-++  presence   ?($gone $hear $talk)                     ::<  status type
+++  status     {pec/presence man/human}                 ::<  participant
+++  presence                                            ::>  status type
+  $?  $gone                                             ::<  left
+      $idle                                             ::<  idle
+      $hear                                             ::<  present
+      $talk                                             ::<  typing
+  ==
 ++  human                                               ::>  human identifier
-  $:  true/(unit (trel @t (unit @t) @t))                ::<TODO  unused true name
-      hand/(unit @t)                                    ::<  handle
+  $:  tru/(unit (trel @t (unit @t) @t))                 ::<TODO  unused true name
+      han/(unit @t)                                     ::<  handle
   ==                                                    ::
 ::
 ::>  ||
@@ -102,21 +108,21 @@
 ::>    structures for containing main message data.
 ::+|
 ::
-++  telegram   (pair ship thought)                      ::<  who thought
-++  thought    (trel serial audience statement)         ::<  which whom what
-++  statement  (trel @da bouquet speech)                ::<  when this
+++  telegram   {aut/ship tot/thought}                   ::<  who thought
+++  thought    {uid/serial aud/audience sam/statement}  ::<  which whom what
+++  statement  {wen/@da boq/bouquet sep/speech}         ::<  when this
 ++  speech                                              ::>  narrative action
   $%  {$non $~}                                         ::<  no content (yo)
-      {$lin p/? q/@t}                                   ::<  no/@ text line
-      {$ire p/serial q/speech}                          ::<  in-reply-to
-      {$url p/purf}                                     ::<  parsed url
-      {$exp p/@t}                                       ::<  hoon line
-      {$fat p/torso q/speech}                           ::<  attachment
-      {$lan p/knot q/@t}                                ::<  local announce
-      {$inv p/? q/station}                              ::<  inv/ban for station
-      {$mor p/(list speech)}                            ::<  multiplex
-      {$ext p/@tas q/*}                                 ::<  extended action
-      {$app p/@tas q/@t}                                ::<  app message
+      {$lin pat/? msg/@t}                               ::<  no/@ text line
+      {$ire tos/serial sep/speech}                      ::<  in-reply-to
+      {$url url/purf}                                   ::<  parsed url
+      {$exp exp/@t}                                     ::<  hoon line
+      {$fat tac/torso sep/speech}                       ::<  attachment
+      {$lan nom/knot msg/@t}                            ::<  local announce
+      {$inv inv/? sat/circle}                           ::<  inv/ban for circle
+      {$mor ses/(list speech)}                          ::<  multiplex
+      {$ext nom/@tas dat/*}                             ::<  extended action
+      {$app app/@tas msg/@t}                            ::<  app message
       $:  $api                                          ::<  api message
           service/@tas                                  ::<  service name
           id/@t                                         ::<  id on the service
@@ -128,7 +134,7 @@
       ==                                                ::
   ==                                                    ::
 ++  torso                                               ::>  attachment
-  $%  {$name (pair @t torso)}                           ::<  named attachment
+  $%  {$name nom/@t tac/torso}                          ::<  named attachment
       {$text (list @t)}                                 ::<  text lines
       {$tank (list tank)}                               ::<  tank list
   ==                                                    ::
@@ -141,7 +147,7 @@
 ::
 ++  serial     @uvH                                     ::<  unique identifier
 ++  audience   (map partner (pair envelope delivery))   ::<  destination + state
-++  envelope   (pair ? (unit partner))                  ::<  visible sender
+++  envelope   {vis/? sen/(unit partner)}               ::<  visible sender
 ++  delivery                                            ::>  delivery state
   $?  $pending                                          ::<  undelivered
       $received                                         ::<  delivered

@@ -3,8 +3,10 @@
   ::                                                    ::  ::
 ::
 ::TODO  master changes
+::TODO  char57 comments as line comments when regarding code.
 ::TODO  avoid lark where possible
 ::TODO  maybe rename wires. repeat & friend -> message & follower
+::TODO  put printfs properly through console/mailbox
 ::TODO  think about what printfs we want to keep for the user to see.
 ::TODO  document what user-facing printfs actually mean!
 ::TODO  ::> to :> etc.
@@ -44,8 +46,8 @@
           outbox/(pair @ud (map @ud thought))           ::<  urbit outbox
           log/(map knot @ud)                            ::<  logged to clay
           folks/(map ship human)                        ::<  human identities
-          nik/(map (set partner) char)                  ::<  bound station glyphs
-          nak/(jug char (set partner))                  ::<  station glyph lookup
+          nik/(map (set partner) char)                  ::<  bound circle glyphs
+          nak/(jug char (set partner))                  ::<  circle glyph lookup
       ==                                                ::
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
@@ -53,7 +55,7 @@
           locals/atlas                                  ::<  local presence
           remotes/(map partner atlas)                   ::<  remote presence
           shape/config                                  ::<  configuration
-          mirrors/(map station config)                  ::<  remote config
+          mirrors/(map circle config)                   ::<  remote config
           ::TODO  never gets updated.                   ::
           sequence/(map partner @ud)                    ::<  partners heard
           known/(map serial @ud)                        ::<  messages heard
@@ -85,7 +87,7 @@
       ==                                                ::
     ++  weir                                            ::>  parsed wire
       $%  {$repeat p/@ud q/@p r/knot}                   ::<  messaging wire
-          {$friend p/knot q/station}                    ::<  subscription wire
+          {$friend p/knot q/circle}                     ::<  subscription wire
       ==                                                ::
     --
 ::
@@ -197,7 +199,7 @@
     ::>  a story core. if it doesn't, does nothing.
     ::
     |=  nom/knot
-    |*  fun/$-(_so _+>)
+    |=  fun/$-(_so _ta)
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
     ?~  pur
@@ -242,7 +244,7 @@
     |=  {src/ship cod/command}
     ^+  +>
     ?-  -.cod
-      ::>  %review commands prompt us (as a station host)
+      ::>  %review commands prompt us (as a circle host)
       ::>  to verify and distribute messages.
         $review
       (ta-think | src +.cod)
@@ -268,7 +270,7 @@
     ++  work                                            ::<  perform action
       ^+  ..ta-action
       ?-  -.act
-        ::  station configuration
+        ::  circle configuration
         $create  (action-create +.act)
         $source  (action-source +.act)
         $depict  (action-depict +.act)
@@ -291,7 +293,7 @@
       ::>  if it doesn't, reacts accordingly.
       ::
       |=  nom/knot
-      |*  fec/$-(_so _ta)
+      |=  fec/$-({_so story} _ta)
       ^+  ta
       =+  pur=(~(get by stories) nom)
       ?^  pur
@@ -299,7 +301,7 @@
       %+  ta-react  red
       [%fail (crip "no story {(trip nom)}") `act]
     ::
-    ::>  ||  %station-configuration
+    ::>  ||  %circle-configuration
     ::+|
     ++  action-create                                   ::<  create story
       ::>  creates a story with the specified parameters.
@@ -316,11 +318,11 @@
       |=  {nom/knot sub/? pas/(set partner)}
       ^+  ..ta-action
       %-  (affect nom)  |=  {sor/_so soy/story}
-      =.  sources.shape.soy
+      =.  src.shape.soy
         %.  pas
         ?:  sub
-          ~(uni in sources.shape.soy)
-        ~(dif in sources.shape.soy)
+          ~(uni in src.shape.soy)
+        ~(dif in src.shape.soy)
       (ta-config nom shape.soy)
     ::
     ++  action-depict                                   ::<  change description
@@ -329,7 +331,7 @@
       |=  {nom/knot des/cord}
       ^+  ..ta-action
       %-  (affect nom)  |=  {sor/_so soy/story}
-      =.  caption.shape.soy  des
+      =.  cap.shape.soy  des
       (ta-config nom shape.soy)
     ::
     ++  action-permit                                   ::<  invite/banish
@@ -403,12 +405,12 @@
       ^+  ..ta-action
       ?.  =((~(get by folks) sip) `nic)  ..ta-action    ::<  no change
       =.  folks
-        ?~  hand.nic  (~(del by folks) sip)
+        ?~  han.nic  (~(del by folks) sip)
         (~(put by folks) sip nic)
       %+  ta-inform  %names
       ::TODO  think long and hard, do we need unit for delition or is a human
       ::      with [~ ~] good enough? if the latter, agent's $names will change.
-      (strap sip ?~(hand.nic ~ `nic))
+      (strap sip ?~(han.nic ~ `nic))
     ::
     ++  action-glyph                                    ::<  bind a glyph
       ::>  un/bind glyph {lif} to partners {pas}.
@@ -440,7 +442,7 @@
   ++  ta-diff-report                                    ::<  subscription update
     ::>  process a talk report from {sat} into story {nom}.
     ::
-    |=  {nom/knot sat/station ret/report}
+    |=  {nom/knot sat/circle ret/report}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-diff-report:sor sat ret)
   ::
@@ -527,14 +529,14 @@
   ++  ta-retry                                          ::<  subscription resend
     ::>  re-subscribes {sat} to story {nom}.
     ::
-    |=  {nom/knot sat/station}
+    |=  {nom/knot sat/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-acquire:sor [%& sat]~)
   ::
   ++  ta-quit                                           ::<  subscription failed
     ::>  removes {sat} from story {nom}'s followers.
     ::
-    |=  {nom/knot sat/station}
+    |=  {nom/knot sat/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-quit:sor %& sat)
   ::
@@ -674,17 +676,17 @@
   ::
   ++  ta-sane                                           ::<  sanitize
     ::>  sanitize %lin speech, enforce lowercase and no special characters.
-    ::TODO  make configurable per-station.
+    ::TODO  make configurable per-circle.
     ::
     |=  tot/thought
     ^-  thought
-    ?.  ?=({$lin *} r.r.tot)  tot
-    %_    tot
-        q.r.r
+    ?.  ?=({$lin *} sep.sam.tot)  tot
+    %_  tot
+        msg.sep.sam
       %-  crip
       %+  scag  64
       %-  tufa
-      %+  turn  (tuba (trip q.r.r.tot))
+      %+  turn  (tuba (trip msg.sep.sam.tot))
       |=  a/@c
       ?:  &((gte a 'A') (lte a 'Z'))
         (add a 32)
@@ -698,7 +700,7 @@
     ::
     |=  {pub/? aut/ship tot/thought}
     =.  tot  (ta-sane tot)
-    =+  aud=(~(tap by q.tot))
+    =+  aud=(~(tap by aud.tot))
     |-  ^+  +>.^$
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ta-conduct pub aut p.i.aud tot))
@@ -709,16 +711,16 @@
     |=  {pub/? aut/ship pan/partner tot/thought}
     ^+  +>
     ?-  -.pan
-        $&                                              ::<  station partner
+        $&                                              ::<  circle partner
       ?:  pub
         ?.  (team our.bol aut)
           ~&([%talk-strange-author aut] +>)
         =.  aut  our.bol
-        ?:  =(aut p.p.pan)
-          (ta-record q.p.pan p.p.pan tot)
+        ?:  =(aut hos.p.pan)
+          (ta-record nom.p.pan hos.p.pan tot)
         (ta-transmit p.pan tot)
-      ?.  =(our.bol p.p.pan)  +>
-      (ta-record q.p.pan aut tot)
+      ?.  =(our.bol hos.p.pan)  +>
+      (ta-record nom.p.pan aut tot)
       ::
         $|  !!                                          ::<  passport partner
     ==
@@ -734,13 +736,13 @@
     ::>  sends thought {tot} to {sat}.
     ::>  stores it to the outbox to await confirmation.
     ::
-    |=  {sat/station tot/thought}
+    |=  {sat/circle tot/thought}
     ^+  +>
     =.  +>
         %+  ta-emit  ost.bol
         :*  %poke
-            /repeat/(scot %ud p.outbox)/(scot %p p.sat)/[q.sat]
-            [p.sat %talk-guardian]
+            /repeat/(scot %ud p.outbox)/(scot %p hos.sat)/[nom.sat]
+            [hos.sat %talk-guardian]
             [%talk-command [%review tot ~]]
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tot))
@@ -760,9 +762,9 @@
     =+  oot=(~(get by q.outbox) num)
     ?~  oot  ~|([%ta-repeat-none num] !!)
     =.  q.outbox  (~(del by q.outbox) num)
-    =.  q.u.oot
-      =+  olg=(~(got by q.u.oot) pan)
-      %+  ~(put by q.u.oot)  pan
+    =.  aud.u.oot
+      =+  olg=(~(got by aud.u.oot) pan)
+      %+  ~(put by aud.u.oot)  pan
       :-  -.olg
       ?~  fal  %received
       ~>  %slog.[0 u.fal]
@@ -787,10 +789,10 @@
     ::>  wyt:  will be white
     =+  :+  neu=!(~(has by stories) nom)
           pur=(fall (~(get by stories) nom) *story)
-        wyt=?=(?($white $green) p.cordon.con)
-    =.  q.cordon.con  ::TODO  =?
+        wyt=?=(?($white $green) sec.con.con)
+    =.  ses.con.con  ::TODO  =?
       ?:  &(neu wyt)  [our.bol ~ ~]
-      q.cordon.con
+      ses.con.con
     so-done:(~(so-reform so nom ~ pur) con)
   ::
   ++  ta-unconfig                                       ::<  delete story
@@ -922,8 +924,8 @@
       %-  ~(urn by remotes)                             ::  XX performance
       |=  {pan/partner atl/atlas}
       ^-  atlas
-      ?.  &(?=($& -.pan) =(our.bol p.p.pan))  atl
-      =+  soy=(~(get by stories) q.p.pan)
+      ?.  &(?=($& -.pan) =(our.bol hos.p.pan))  atl
+      =+  soy=(~(get by stories) nom.p.pan)
       ?~  soy  atl
       locals.u.soy
     ::
@@ -937,22 +939,22 @@
       ::>  process a talk report from {sat}.
       ::>  if we didn't expect it, ignore.
       ::
-      |=  {sat/station ret/report}
+      |=  {sat/circle ret/report}
       ^+  +>
-      ?.  (~(has in sources.shape) [%& sat])
+      ?.  (~(has in src.shape) [%& sat])
         ~&  [%talk-so-diff-unexpected sat -.ret]
         +>
       ?-  -.ret
         $cabal  (so-cabal sat +.ret)
         $group  (so-remind [%& sat] +.ret)
-        $grams  (so-lesson q.+.ret)
+        $grams  (so-lesson gaz.ret)
       ==
     ::
     ++  so-cabal                                        ::<  update config
-      ::>  add station's config to our remote config map.
+      ::>  add circle's config to our remote config map.
       ::
-      ::TODO  when do we care about ham?
-      |=  {sat/station con/config ham/(map station config)}
+      ::TODO  when do we care about rem?
+      |=  {sat/circle con/config rem/(map circle config)}
       ^+  +>
       =+  old=mirrors
       =.  mirrors  (~(put by mirrors) sat con)
@@ -986,7 +988,7 @@
     ::+|
     ::
     ++  so-reform                                       ::<  reconfigure
-      ::>  changes the config of this story and notify
+      ::>  changes the config of this story and notify::
       ::>  our followers.
       ::>  subscribes to new sources, unsubs from removed
       ::>  ones.
@@ -994,10 +996,10 @@
       |=  cof/config
       =.  +>.$  (so-inform %confs `cof ~)
       =/  dif/(pair (list partner) (list partner))
-          =+  old=`(list partner)`(~(tap in sources.shape) ~)
-          =+  new=`(list partner)`(~(tap in sources.cof) ~)
-          :-  (skip new |=(a/partner (~(has in sources.shape) a)))
-          (skip old |=(a/partner (~(has in sources.cof) a)))
+          =+  old=`(list partner)`(~(tap in src.shape) ~)
+          =+  new=`(list partner)`(~(tap in src.cof) ~)
+          :-  (skip new |=(a/partner (~(has in src.shape) a)))
+          (skip old |=(a/partner (~(has in src.cof) a)))
       =.  +>.$  (so-acquire p.dif)
       =.  +>.$  (so-abjure q.dif)
       =.  shape  cof
@@ -1005,22 +1007,22 @@
     ::
     ++  so-reform-gone                                  ::<  delete story
       ::>  deletes this story. removes it from {stories}
-      ::>  and unsubscribes from all sources.
+      ::>  and unsubscribes from all src.
       ::
       =.  stories  (~(del by stories) nom)
       =.  .  (so-inform %confs ~ ~)
       =.  .  (so-report-cabal so-followers)
-      (so-abjure (~(tap in sources.shape)))
+      (so-abjure (~(tap in src.shape)))
     ::
     ++  so-notify                                       ::<  local presence
       ::>  add {her} status to this story's presence map.
       ::>  if this changes it, send a report.
       ::
-      |=  {her/ship sas/status}
+      |=  {her/ship sat/status}
       ^+  +>
-      =/  nol  (~(put by locals) her sas)
+      =/  nol  (~(put by locals) her sat)
       ?:  =(nol locals)  +>.$
-      =.  +>.$  (so-inform %precs (strap her sas) ~)
+      =.  +>.$  (so-inform %precs (strap her sat) ~)
       (so-report-group(locals nol) so-followers)
     ::
     ::>  ||
@@ -1047,12 +1049,12 @@
       ?-  -.pan
           $|  !!                                        ::<  passport partner
         ::
-          $&                                            ::<  station partner
+          $&                                            ::<  circle partner
         :_  ~
         :*  %peer
-            /friend/show/[nom]/(scot %p p.p.pan)/[q.p.pan]
-            [p.p.pan %talk-guardian]
-            /[q.p.pan]/[ini]
+            /friend/show/[nom]/(scot %p hos.p.pan)/[nom.p.pan]
+            [hos.p.pan %talk-guardian]
+            /[nom.p.pan]/[ini]
         ==
       ==
     ::
@@ -1068,11 +1070,11 @@
       ?-  -.pan
           $|  !!                                        ::<  passport partner
         ::
-          $&                                            ::<  station partner
+          $&                                            ::<  circle partner
         :_  ~
         :*  %pull
-            /friend/show/[nom]/(scot %p p.p.pan)/[q.p.pan]
-            [p.p.pan %talk-guardian]
+            /friend/show/[nom]/(scot %p hos.p.pan)/[nom.p.pan]
+            [hos.p.pan %talk-guardian]
             ~
         ==
       ==
@@ -1083,8 +1085,8 @@
       ::
       |=  pan/partner
       ^+  +>
-      ?.  (~(has in sources.shape) pan)  +>
-      =.  sources.shape  (~(del in sources.shape) pan)
+      ?.  (~(has in src.shape) pan)  +>
+      =.  src.shape  (~(del in src.shape) pan)
       =.  +>  (so-inform %confs `shape ~)
       (so-report-cabal so-followers)
     ::
@@ -1131,13 +1133,13 @@
       ?~  gaz  [dun end zeg]
       ?:  ?-  -.q.riv                                   ::  after the end
             $ud  (lte p.q.riv end)
-            $da  (lte p.q.riv p.r.q.i.gaz)
+            $da  (lte p.q.riv wen.sam.tot.i.gaz)
           ==
         ::  if past the river, continue back, mark as done.
         $(end (dec end), gaz t.gaz, dun &)
       ?:  ?-  -.p.riv                                   ::  before the start
             $ud  (lth end p.p.riv)
-            $da  (lth p.r.q.i.gaz p.p.riv)
+            $da  (lth wen.sam.tot.i.gaz p.p.riv)
           ==
         ::  if before the river, we're done searching.
         [dun end zeg]
@@ -1188,12 +1190,12 @@
           =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
           ?:  ?-  -.q.q.n.followers                        ::  after the end
                 $ud  (lte p.q.q.n.followers num)
-                $da  (lte p.q.q.n.followers p.r.q.gam)
+                $da  (lte p.q.q.n.followers wen.sam.tot.gam)
               ==
             [[p.n.followers p.old] [[p.n.followers %quit ~] q.old]]
           ?:  ?-  -.p.q.n.followers                        ::  before the start
                 $ud  (gth p.p.q.n.followers num)
-                $da  (gth p.p.q.n.followers p.r.q.gam)
+                $da  (gth p.p.q.n.followers wen.sam.tot.gam)
               ==
             old
           :-  p.old
@@ -1217,22 +1219,22 @@
       ::
       |=  gam/telegram
       ^+  +>
-      ?.  (so-admire p.gam)                             ::<  write permissions
+      ?.  (so-admire aut.gam)                             ::<  write permissions
         +>.$
-      =.  q.q.gam
+      =.  aud.tot.gam
         ::>  if we are in the audience, mark as received.
-        =+  ole=(~(get by q.q.gam) [%& our.bol nom])
-        ?^  ole  (~(put by q.q.gam) [%& our.bol nom] -.u.ole %received)
-        ::>  federated stations need to pretend ~src/nom
+        =+  ole=(~(get by aud.tot.gam) [%& our.bol nom])
+        ?^  ole  (~(put by aud.tot.gam) [%& our.bol nom] -.u.ole %received)
+        ::>  federated circles need to pretend ~src/nom
         ::>  is also ~our/nom.
         ::TODO  pass src through explicitly instead of
-        ::      relying on src.bol.
-        =+  ole=(~(get by q.q.gam) [%& src.bol nom])
-        ?~  ole  q.q.gam
+        ::      relying on src.bol.  :
+        =+  ole=(~(get by aud.tot.gam) [%& src.bol nom])
+        ?~  ole  aud.tot.gam
         ::>  as described above, fake src into our.
-        =.  q.q.gam  (~(del by q.q.gam) [%& src.bol nom])
-        (~(put by q.q.gam) [%& our.bol nom] -.u.ole %received)
-      =+  old=(~(get by known) p.q.gam)
+        =.  aud.tot.gam  (~(del by aud.tot.gam) [%& src.bol nom])
+        (~(put by aud.tot.gam) [%& our.bol nom] -.u.ole %received)
+      =+  old=(~(get by known) uid.tot.gam)
       ?~  old
         (so-append gam)      ::<  add
       (so-revise u.old gam)  ::<  modify
@@ -1245,7 +1247,7 @@
       %+  %=  so-refresh
             grams  [gam grams]
             count  +(count)
-            known  (~(put by known) p.q.gam count)
+            known  (~(put by known) uid.tot.gam count)
           ==
         count
       gam
@@ -1276,7 +1278,7 @@
       ^+  +>
       ::>  wyt:  whitelist?
       ::>  add:  add to list?
-      =/  wyt/?  ?=(?($white $green) p.cordon.shape)
+      =/  wyt/?  ?=(?($white $green) sec.con.shape)
       =/  add/?  =(inv wyt)
       =.  +>.$  ::TODO  =?
         ?:  inv  +>.$
@@ -1290,11 +1292,11 @@
         [[%inv inv [our.bol nom]] t]
       %-  so-reform
       %=  shape
-          q.cordon
+          ses.con
         %.  sis
         ?:  add
-          ~(uni in q.cordon.shape)
-        ~(dif in q.cordon.shape)
+          ~(uni in ses.con.shape)
+        ~(dif in ses.con.shape)
       ==
     ::
     ++  so-admire                                       ::<  accept from
@@ -1302,11 +1304,11 @@
       ::
       |=  her/ship
       ^-  ?
-      ?-  p.cordon.shape
-        $black  !(~(has in q.cordon.shape) her)         ::<  channel, blacklist
-        $white  (~(has in q.cordon.shape) her)          ::<  village, whitelist
-        $green  (~(has in q.cordon.shape) her)          ::<  journal, whitelist
-        $brown  !(~(has in q.cordon.shape) her)         ::<  mailbox, blacklist
+      ?-  sec.con.shape
+        $black  !(~(has in ses.con.shape) her)         ::<  channel, blacklist
+        $white  (~(has in ses.con.shape) her)          ::<  village, whitelist
+        $green  (~(has in ses.con.shape) her)          ::<  journal, whitelist
+        $brown  !(~(has in ses.con.shape) her)         ::<  mailbox, blacklist
       ==
     ::
     ++  so-visible                                      ::<  display to
@@ -1314,9 +1316,9 @@
       ::
       |=  her/ship
       ^-  ?
-      ?-  p.cordon.shape
-        $black  !(~(has in q.cordon.shape) her)         ::<  channel, blacklist
-        $white  (~(has in q.cordon.shape) her)          ::<  village, whitelist
+      ?-  sec.con.shape
+        $black  !(~(has in ses.con.shape) her)         ::<  channel, blacklist
+        $white  (~(has in ses.con.shape) her)          ::<  village, whitelist
         $green  &                                       ::<  journal, all
         $brown  (team our.bol her)                      ::<  mailbox, our team
       ==
@@ -1330,7 +1332,7 @@
 ::
 ++  etch                                                ::<  parse wire
   ::>  parses {wir}} to obtain either %friend with story
-  ::>  and station or %repeat with message number,
+  ::>  and circle or %repeat with message number,
   ::>  source ship and story.
   ::
   |=  wir/wire
@@ -1356,7 +1358,7 @@
   ::
   |=  $:  wir/wire
           $=  fun
-          $-  {nom/knot sat/station}
+          $-  {nom/knot sat/circle}
               {(list move) _.}
       ==
   =+  wer=(etch wir)
@@ -1425,7 +1427,7 @@
   ^-  (quip move +>)
   =^  mos  +>.$
     %+  etch-friend  wir
-    |=  {nom/knot sat/station}
+    |=  {nom/knot sat/circle}
     ta-done:(ta-diff-report:ta nom sat ret)
   =^  mow  +>.$
     log-all-to-file
@@ -1456,7 +1458,7 @@
   ^-  (quip move +>)
   ?~  fal  [~ +>]
   %+  etch-friend  [%friend wir]
-  |=  {nom/knot sat/station}
+  |=  {nom/knot sat/circle}
   =.  u.fal  [>%reap-friend-fail nom sat< u.fal]
   %-  (slog (flop u.fal))
   ta-done:(ta-quit:ta nom sat)
@@ -1467,7 +1469,7 @@
   |=  wir/wire
   ^-  (quip move +>)
   %+  etch-friend  [%friend wir]
-  |=  {nom/knot sat/station}
+  |=  {nom/knot sat/circle}
   ta-done:(ta-retry:ta nom sat)
 ::
 ++  coup-repeat                                         ::<  message n/ack

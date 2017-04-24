@@ -36,11 +36,11 @@
           sources/(set partner)                         ::<  our subscriptions
           ::  partner details                           ::
           remotes/(map partner atlas)                   ::<  remote presences
-          mirrors/(map station config)                  ::<  remote configs
+          mirrors/(map circle config)                   ::<  remote configs
           ::  ui state                                  ::
           folks/(map ship human)                        ::<  human identities
-          nik/(map (set partner) char)                  ::<  bound station glyphs
-          nak/(jug char (set partner))                  ::<  station glyph lookup
+          nik/(map (set partner) char)                  ::<  bound circle glyphs
+          nak/(jug char (set partner))                  ::<  circle glyph lookup
           cli/shell                                     ::<  interaction state
       ==                                                ::
     ++  shell                                           ::>  console session
@@ -65,11 +65,11 @@
           {$peer wire dock path}                        ::
       ==                                                ::
     ++  work                                            ::>  interface action
-      $%  ::  station management                        ::
+      $%  ::  circle management                         ::
           {$join p/where}                               ::<  subscribe to
           {$leave p/where}                              ::<  unsubscribe from
-          {$create p/posture q/knot r/cord}             ::<  create station
-          {$delete p/knot q/(unit cord)}                ::<  delete station
+          {$create p/posture q/knot r/cord}             ::<  create circle
+          {$delete p/knot q/(unit cord)}                ::<  delete circle
           {$depict p/knot q/cord}                       ::<  change description
           {$source p/knot q/(set partner)}              ::<  add source
           {$invite p/knot q/(set ship)}                 ::<  give permission
@@ -88,11 +88,11 @@
           {$nick p/(unit ship) q/(unit cord)}           ::<  un/set/show nick
           {$set p/knot}                                 ::<  enable setting
           {$unset p/knot}                               ::<  disable setting
-          ::  miscellaneous                              ::
+          ::  miscellaneous                             ::
           {$help $~}                                    ::<  print usage info
       ==                                                ::
     ++  where  (set partner)                            ::<  non-empty audience
-    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  station char pool '
+    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  circle char pool '
     --
 ::
 ::>  ||
@@ -124,8 +124,8 @@
     our
   (sein our)
 ::
-++  inbox                                               ::<  reader's station
-  ::>  produces the name of the station used by this
+++  inbox                                               ::<  reader's circle
+  ::>  produces the name of the circle used by this
   ::>  reader for all its operations
   (main our.bol)
 ::
@@ -266,38 +266,38 @@
     ==
   ::
   ++  ta-low-confs                                      ::<  apply changed confs
-    ::>  applies new station configurations.
+    ::>  applies new circle configurations.
     ::>  because of how this reader only subscribes to
     ::>  the main mailbox, {coy} is always the mailbox's
     ::>  config.
     ::
-    |=  {coy/(unit config) cofs/(map station (unit config))}
+    |=  {coy/(unit config) cofs/(map circle (unit config))}
     ^+  +>
     ::>  if possible, update {sources}. if we do, and we
     ::>  gain new ones, update the prompt. (this is to
     ::>  remove the mailbox from the audience after
-    ::>  creating or joining a new station.)
+    ::>  creating or joining a new circle.)
     ?~  coy  ~&(%mailbox-gone !!)
     =.  +>  ::TODO  =?
-      ?~  (~(dif in sources.u.coy) sources)  +>.$
+      ?~  (~(dif in src.u.coy) sources)  +>.$
       =<  sh-done
-      %-  ~(sh-pact sh(sources sources.u.coy) cli)
-      (~(dif in sources.u.coy) sources)
-    =.  sources  sources.u.coy
+      %-  ~(sh-pact sh(sources src.u.coy) cli)
+      (~(dif in src.u.coy) sources)
+    =.  sources  src.u.coy
     =.  cofs  (~(put by cofs) [our.bol inbox] coy)
     ::  print changes for each config.
     =.  +>.$
       =<  sh-done
       %+  roll  (~(tap by cofs))
-      |=  {{s/station c/(unit config)} core/_sh}
+      |=  {{s/circle c/(unit config)} core/_sh}
       %^  ~(sh-low-config core cli)
       s  (~(get by mirrors) s)  c
     ::  apply config changes to {mirrors}.
     =.  mirrors
       %-  ~(gas by *_mirrors)
       %+  murn  (~(tap by cofs))
-      |=  {s/station c/(unit config)}
-      ^-  (unit (pair station config))
+      |=  {s/circle c/(unit config)}
+      ^-  (unit (pair circle config))
       ?~(c ~ `[s u.c])
     +>.$
   ::
@@ -351,7 +351,7 @@
     ::
     |=  gam/telegram
     ^+  +>
-    =+  old=(~(get by known) p.q.gam)
+    =+  old=(~(get by known) uid.tot.gam)
     ?~  old
       (ta-append gam)      ::<  add
     (ta-revise u.old gam)  ::<  modify
@@ -364,7 +364,7 @@
     %=  +>
       grams  [gam grams]
       count  +(count)
-      known  (~(put by known) p.q.gam count)
+      known  (~(put by known) uid.tot.gam count)
     ==
   ::
   ++  ta-revise                                         ::<  revise message
@@ -514,10 +514,10 @@
           ==
         ==
       ::
-      ++  stat                                          ::<  local station
+      ++  stat                                          ::<  local circle
         ;~(pfix cen sym)
       ::
-      ++  stan                                          ::<  station
+      ++  stan                                          ::<  circle
         ;~  pose
           (cold [our.bol inbox] col)
           ;~(pfix cen (stag our.bol sym))
@@ -589,7 +589,7 @@
       ::
       ++  nick  (cook crip (stun [1 14] low))           ::<  nickname
       ++  text  (cook crip (plus (shim ' ' '~')))       ::<  bullets separating
-      ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::<  station postfix
+      ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::<  circle postfix
       ++  setting                                       ::<  setting flag
         %-  perk  :~
           %noob
@@ -601,7 +601,7 @@
         =-  ;~(pose ;~(pfix sem -) message)
         ;~  pose
           ::
-          ::  station management
+          ::  circle management
           ::
           ;~((glue ace) (perk %join ~) para)
           ::
@@ -808,7 +808,7 @@
       ::
       ++  work                                          ::<  call correct worker
         ?-  -.job
-          ::  station management
+          ::  circle management
           $join    (join +.job)
           $leave   (leave +.job)
           $create  (create +.job)
@@ -903,8 +903,8 @@
         ^-  (list ship)
         %+  murn  (~(tap by folks))
         |=  {p/ship q/human}
-        ?~  hand.q  ~
-        ?.  =(u.hand.q nym)  ~
+        ?~  han.q  ~
+        ?.  =(u.han.q nym)  ~
         [~ u=p]
       ::
       ++  twig-head                                       ::<  eval data
@@ -916,7 +916,7 @@
         [our.bol now.bol (shas %eny eny.bol)]
       ::
       ::>  ||
-      ::>  ||  %station-management
+      ::>  ||  %circle-management
       ::>  ||
       ::+|
       ::
@@ -946,7 +946,7 @@
         (sh-act %source inbox | pas)
       ::
       ++  create                                        ::<  %create
-        ::>  creates station {nom} with specified config.
+        ::>  creates circle {nom} with specified config.
         ::
         |=  {por/posture nom/knot txt/cord}
         ^+  ..sh-work
@@ -958,7 +958,7 @@
         (join [[%& our.bol nom] ~ ~])
       ::
       ++  delete                                        ::<  %delete
-        ::>  deletes our station {nom}, after optionally
+        ::>  deletes our circle {nom}, after optionally
         ::>  sending a last announce message {say}.
         ::
         |=  {nom/knot say/(unit cord)}
@@ -973,21 +973,21 @@
         (sh-act %depict nom txt)
       ::
       ++  source                                        ::<  %source
-        ::>  adds {pas} to {nom}'s sources.
+        ::>  adds {pas} to {nom}'s src.
         ::
         |=  {nom/knot pas/(set partner)}
         ^+  ..sh-work
         (sh-act %source nom & pas)
       ::
       ++  invite                                        ::<  %invite
-        ::>  invites {sis} to our station {nom}.
+        ::>  invites {sis} to our circle {nom}.
         ::
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom & sis)
       ::
       ++  banish                                        ::<  %banish
-        ::>  banish {sis} from our station {nom}.
+        ::>  banish {sis} from our circle {nom}.
         ::
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
@@ -1039,12 +1039,13 @@
         =<  (murn (sort (~(tap by alt)) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         =.  c
-          ?.  =(hand.c `(scot %p a))  c
-          [true.c ~]
+          ?.  =(han.c `(scot %p a))  c
+          [tru.c ~]
         ?-  b
           $gone  ~
-          $hear  `leaf+:(weld "hear " (scow %p a) " " (trip (fall hand.c '')))
-          $talk  `leaf+:(weld "talk " (scow %p a) " " (trip (fall hand.c '')))
+          $idle  `leaf+:(weld "idle " (scow %p a) " " (trip (fall han.c '')))
+          $hear  `leaf+:(weld "hear " (scow %p a) " " (trip (fall han.c '')))
+          $talk  `leaf+:(weld "talk " (scow %p a) " " (trip (fall han.c '')))
         ==
       ::
       ++  what                                          ::<  %what
@@ -1120,17 +1121,17 @@
           %+  turn  (~(tap by folks))
           |=  {p/ship q/human}
           :-  %txt
-          ?~  hand.q
+          ?~  han.q
             "{<p>}:"
-          "{<p>}: {<u.hand.q>}"
+          "{<p>}: {<u.han.q>}"
         ::>  show her nick
         ?~  nym
           ?>  ?=(^ her)
           =+  asc=(~(get by folks) u.her)
           %+  sh-fact  %txt
           ?~  asc  "{<u.her>} unbound"
-          ?~  hand.u.asc  "{<u.her>}:"
-          "{<u.her>}: {<u.hand.u.asc>}"
+          ?~  han.u.asc  "{<u.her>}:"
+          "{<u.her>}: {<u.han.u.asc>}"
         ::>  show nick ship
         ?~  her
           %+  sh-fact  %mor
@@ -1225,7 +1226,7 @@
       ::>  if partner is a passport, ignore.
       ?.  ?=($& -.tay)  +>
       =+  cof=(~(get by mirrors) +.tay)
-      ?.  |(?=($~ cof) !?=($white p.cordon.u.cof))
+      ?.  |(?=($~ cof) !?=($white sec.con.u.cof))
         +>.$
       (sh-pact [tay ~ ~])
     ::
@@ -1244,7 +1245,7 @@
       |-  ^-  (unit (set partner))
       ?~  grams  ~
       ::>  get first partner from a telegram's audience.
-      =+  pan=(silt (turn (~(tap by q.q.i.grams)) head))
+      =+  pan=(silt (turn (~(tap by aud.tot.i.grams)) head))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
     ::
@@ -1271,11 +1272,11 @@
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
-        ?:  =(%gone p.q.i.eno)  ret
+        ?:  =(%gone pec.q.i.eno)  ret
         =+  unt=(~(get by two) p.i.eno)
         ?~  unt
           ret(old [i.eno old.ret])
-        ?:  =(%gone p.u.unt)
+        ?:  =(%gone pec.u.unt)
           ret(old [i.eno old.ret])
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
@@ -1284,10 +1285,10 @@
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
-        ?:  =(%gone p.q.i.owt)  ret
+        ?:  =(%gone pec.q.i.owt)  ret
         ?.  (~(has by one) p.i.owt)
           ret(new [i.owt new.ret])
-        ?:  =(%gone p:(~(got by one) p.i.owt))
+        ?:  =(%gone pec:(~(got by one) p.i.owt))
           ret(new [i.owt new.ret])
         ret
       ret
@@ -1329,11 +1330,11 @@
       ::>  maps, producing lists of removed, added and
       ::>  changed configs.
       ::
-      |=  {one/(map station config) two/(map station config)}
+      |=  {one/(map circle config) two/(map circle config)}
       =|  $=  ret
-          $:  old/(list (pair station config))
-              new/(list (pair station config))
-              cha/(list (pair station config))
+          $:  old/(list (pair circle config))
+              new/(list (pair circle config))
+              cha/(list (pair circle config))
           ==
       ^+  ret
       =.  ret
@@ -1374,7 +1375,7 @@
       ::>  renders a reaction to the cli.
       ::
       |=  rac/reaction
-      (sh-lame (trip what.rac))
+      (sh-lame (trip wat.rac))
     ::
     ++  sh-lame                                         ::<  send error
       ::>  just puts some text into the cli as-is.
@@ -1435,9 +1436,9 @@
     ++  sh-spaz                                         ::<  render status
       ::>  gets the presence of {saz} as a tape.
       ::
-      |=  saz/status
+      |=  sat/status
       ^-  tape
-      ['%' (trip p.saz)]
+      ['%' (trip pec.sat)]
     ::
     ++  sh-show-precs                                   ::<  print atlas diff
       ::>  prints presence changes to the cli.
@@ -1510,38 +1511,38 @@
       |=  {pre/tape laz/config loc/config}
       ^+  +>
       =.  +>.$
-        ?:  =(caption.loc caption.laz)  +>.$
-        (sh-note :(weld pre "cap " (trip caption.loc)))
+        ?:  =(cap.loc cap.laz)  +>.$
+        (sh-note :(weld pre "cap " (trip cap.loc)))
       =.  +>.$
           %+  sh-show-sources
             (weld (trip inbox) ": ")
-          (sh-set-diff sources.laz sources.loc)
-      ?:  !=(p.cordon.loc p.cordon.laz)
-        =.  +>.$  (sh-note :(weld pre "but " (sh-puss p.cordon.loc)))
+          (sh-set-diff src.laz src.loc)
+      ?:  !=(sec.con.loc sec.con.laz)
+        =.  +>.$  (sh-note :(weld pre "but " (sh-puss sec.con.loc)))
         %^    sh-show-permits
             (weld (trip inbox) ": ")
-          p.cordon.loc
-        [~ (~(tap in q.cordon.loc))]
+          sec.con.loc
+        [~ (~(tap in ses.con.loc))]
       %^    sh-show-permits
           (weld (trip inbox) ": ")
-        p.cordon.loc
-      (sh-set-diff q.cordon.laz q.cordon.loc)
+        sec.con.loc
+      (sh-set-diff ses.con.laz ses.con.loc)
     ::
     ++  sh-low-config                                   ::<  do show config
-      ::>  prints a station's config changes to the cli.
+      ::>  prints a circle's config changes to the cli.
       ::
-      |=  {sat/station old/(unit config) new/(unit config)}
+      |=  {sat/circle old/(unit config) new/(unit config)}
       ^+  +>
       ?~  old  ~&([%new-conf sat] +>)
       ?~  new  ~&([%del-conf sat] +>)  ::TODO  tmp
       %^  sh-show-config
-        (weld ~(sr-phat sr sat) ": ")
+        (weld ~(cr-phat cr sat) ": ")
       u.old  u.new
     ::
     ++  sh-low-remco                                    ::TODO  delete me
       ::>  prints changes to remote configs to the cli
       ::
-      |=  {ole/(map station config) neu/(map station config)}
+      |=  {ole/(map circle config) neu/(map circle config)}
       ^+  +>
       =+  (sh-remco-diff ole neu)
       =.  +>.$
@@ -1550,15 +1551,15 @@
           =.  +>.^$  $(new t.new)
           =.  +>.^$  (sh-pest [%& p.i.new])
           %+  sh-show-config
-            (weld ~(sr-phat sr p.i.new) ": ")
+            (weld ~(cr-phat cr p.i.new) ": ")
           [*config q.i.new]
       =.  +>.$
           |-  ^+  +>.^$
           ?~  cha  +>.^$
           =.  +>.^$  $(cha t.cha)
           %+  sh-show-config
-            (weld ~(sr-phat sr p.i.cha) ": ")
-          [(~(got by ole) `station`p.i.cha) q.i.cha]
+            (weld ~(cr-phat cr p.i.cha) ": ")
+          [(~(got by ole) `circle`p.i.cha) q.i.cha]
       +>.$
     ::
     ++  sh-low-rempe                                    ::<  show remotes
@@ -1630,81 +1631,81 @@
 ::>    rendering cores.
 ::+|
 ::
-++  sr                                                  ::<  station renderer
-  ::>  used in both station and ship rendering.
+++  cr                                                  ::<  circle renderer
+  ::>  used in both circle and ship rendering.
   ::
-  |_  ::>  one: the station.
+  |_  ::>  one: the circle.
       ::
-      one/station
+      one/circle
   ::
-  ++  sr-best                                           ::<  best to show
+  ++  cr-best                                           ::<  best to show
     ::>  returns true if one is better to show, false
     ::>  otherwise. prioritizes: our > main > size.
-    ::TODO  maybe simplify. (lth (xeb (xeb p.one)) (xeb (xeb p.two)))
+    ::TODO  maybe simplify. (lth (xeb (xeb hos.one)) (xeb (xeb hos.two)))
     ::
-    |=  two/station
+    |=  two/circle
     ^-  ?
-    ::  the station that's ours is better.
-    ?:  =(our.bol p.one)
-      ?:  =(our.bol p.two)
-        ?<  =(q.one q.two)
-        ::  if both stations are ours, the main story is better.
-        ?:  =((main p.one) q.one)  %&
-        ?:  =((main p.two) q.two)  %|
+    ::  the circle that's ours is better.
+    ?:  =(our.bol hos.one)
+      ?:  =(our.bol hos.two)
+        ?<  =(nom.one nom.two)
+        ::  if both circles are ours, the main story is better.
+        ?:  =((main hos.one) nom.one)  %&
+        ?:  =((main hos.two) nom.two)  %|
         ::  if neither are, pick the "larger" one.
-        (lth q.one q.two)
+        (lth nom.one nom.two)
       %&
     ::  if one isn't ours but two is, two is better.
-    ?:  =(our.bol p.two)
+    ?:  =(our.bol hos.two)
       %|
-    ?:  =(p.one p.two)
+    ?:  =(hos.one hos.two)
       ::  if they're from the same ship, pick the "larger" one.
-      (lth q.one q.two)
+      (lth nom.one nom.two)
     ::  when in doubt, pick one if its ship is "smaller" than its channel.
-    (lth p.one q.one)
+    (lth hos.one nom.one)
   ::
-  ++  sr-curt                                           ::<  render name in 14
+  ++  cr-curt                                           ::<  render name in 14
     ::>  prints a ship name in 14 characters. left-pads
     ::>  with spaces. {mup} signifies "are there other
     ::>  targets besides this one?"
     ::
     |=  mup/?
     ^-  tape
-    =+  raw=(cite p.one)
+    =+  raw=(cite hos.one)
     (runt [(sub 14 (lent raw)) ' '] raw)
   ::
-  ++  sr-nick                                           ::<  nick or name in 14
+  ++  cr-nick                                           ::<  nick or name in 14
     ::>  get nick for ship, or shortname if no nick.
     ::>  left-pads with spaces.
     ::
     |.  ^-  tape
-    =+  nym=(~(get by folks) p.one)
+    =+  nym=(~(get by folks) hos.one)
     ?~  nym
-      (sr-curt |)
-    ?~  hand.u.nym
-      (sr-curt |)
-    =+  raw=(trip u.hand.u.nym)
+      (cr-curt |)
+    ?~  han.u.nym
+      (cr-curt |)
+    =+  raw=(trip u.han.u.nym)
     =+  len=(sub 14 (lent raw))
     (weld (reap len ' ') raw)
   ::
-  ++  sr-phat                                           ::<  render accurately
-    ::>  prints a station fully, but still taking
+  ++  cr-phat                                           ::<  render accurately
+    ::>  prints a circle fully, but still taking
     ::>  "shortcuts" where possible:
     ::>  ":" for local mailbox, "~ship" for foreign
-    ::>  mailbox, "%channel" for local station,
-    ::>  "/channel" for parent station.
+    ::>  mailbox, "%channel" for local circle,
+    ::>  "/channel" for parent circle.
     ::
     ^-  tape
-    ?:  =(p.one our.bol)
-      ?:  =(q.one inbox)
+    ?:  =(hos.one our.bol)
+      ?:  =(nom.one inbox)
         ":"
-      ['%' (trip q.one)]
-    ?:  =(p.one (sein our.bol))
-      ['/' (trip q.one)]
-    =+  wun=(scow %p p.one)
-    ?:  =(q.one (main p.one))
+      ['%' (trip nom.one)]
+    ?:  =(hos.one (sein our.bol))
+      ['/' (trip nom.one)]
+    =+  wun=(scow %p hos.one)
+    ?:  =(nom.one (main hos.one))
       wun
-    :(welp wun "/" (trip q.one))
+    :(welp wun "/" (trip nom.one))
   --
 ::
 ++  pr                                                  ::<  partner renderer
@@ -1716,8 +1717,8 @@
   ::
   ++  pr-beat                                           ::<  more relevant
     ::>  returns true if one is better to show, false
-    ::>  otherwise. prefers stations over passports.
-    ::>  if both are stations, ++sr-best.
+    ::>  otherwise. prefers circles over passports.
+    ::>  if both are circles, ++cr-best.
     ::>  if both are passports, pick the "larger" one.
     ::>  if they're equal, content hash.
     ::
@@ -1726,7 +1727,7 @@
         $&
       ?-  -.two
         $|  %&
-        $&  (~(sr-best sr p.one) p.two)
+        $&  (~(cr-best cr p.one) p.two)
       ==
     ::
         $|
@@ -1767,13 +1768,13 @@
     |=  moy/(unit ?)
     ^-  tape
     ?-  -.one
-      ::  render station (as glyph if we can).
+      ::  render circle (as glyph if we can).
         $&
       ?~  moy
         =+  cha=(~(get by nik) one ~ ~)
         =-  ?~(cha - "'{u.cha ~}' {-}")
-        ~(sr-phat sr p.one)
-      (~(sr-curt sr p.one) u.moy)
+        ~(cr-phat cr p.one)
+      (~(cr-curt cr p.one) u.moy)
       ::  render passport.
         $|
       =/  pre  ^-  tape
@@ -1850,9 +1851,9 @@
     ::
     |=  pan/partner  ^-  ?
     ?&  ?=($& -.pan)
-        =(p.p.pan our.bol)
+        =(hos.p.pan our.bol)
         =+  sot=(~(get by mirrors) +.pan)
-        &(?=(^ sot) ?=($brown p.cordon.u.sot))
+        &(?=(^ sot) ?=($brown sec.con.u.sot))
     ==
   ::
   ++  ar-pref                                           ::<  audience glyph
@@ -1915,8 +1916,8 @@
       ::  ?:  oug
       ::  ~(ar-whom ar tr-pals)
       ?.  (~(has in sef) %noob)
-        (~(sr-curt sr [who (main who)]) |)
-      (~(sr-nick sr [who (main who)]))
+        (~(cr-curt cr [who (main who)]) |)
+      (~(cr-nick cr [who (main who)]))
     ?:  (~(has in sef) %showtime)
       =+  dat=(yore now.bol)
       =/  t
@@ -1959,31 +1960,32 @@
       tan+~
       ::
         $lin
-      tan+~[leaf+"{?:(p.sep "" "@ ")}{(trip q.sep)}"]
+      tan+~[leaf+"{?:(pat.sep "" "@ ")}{(trip msg.sep)}"]
       ::
         $url
-      url+(crip (earf p.sep))
+      url+(crip (earf url.sep))
       ::
         $exp
-      tan+~[leaf+"# {(trip p.sep)}"]
+      tan+~[leaf+"# {(trip exp.sep)}"]
       ::
         $fat
-      [%mor $(sep q.sep) tan+(tr-tors p.sep) ~]
+      [%mor $(sep sep.sep) tan+(tr-tors tac.sep) ~]
       ::
         $inv
       :-  %tan
       :_  ~
       :-  %leaf
       %+  weld
-        ?:  p.sep
+        ?:  inv.sep
           "you have been invited to "
         "you have been banished from "
-      ~(sr-phat sr q.sep)
+      ~(cr-phat cr sat.sep)
+      ::
         $mor
-      mor+(turn p.sep |=(speech ^$(sep +<)))
+      mor+(turn ses.sep |=(speech ^$(sep +<)))
       ::
         $app
-      tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip p.sep)}]" leaf+(trip q.sep)]]
+      tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip app.sep)}]" leaf+(trip msg.sep)]]
       ::
         $api
       :-  %tan
@@ -2002,7 +2004,7 @@
     |=  a/torso
     ^-  tang
     ?-  -.a
-      $name  (welp $(a q.a) leaf+"={(trip p.a)}" ~)
+      $name  (welp $(a tac.a) leaf+"={(trip nom.a)}" ~)
       $tank  +.a
       $text  (turn (flop +.a) |=(b/cord leaf+(trip b)))
     ==
@@ -2050,25 +2052,25 @@
       ~&(tr-lost+sep "")
       ::
         $mor
-      ?~  p.sep  ~&(%tr-mor-empty "")
+      ?~  ses.sep  ~&(%tr-mor-empty "")
       |-  ^-  tape
-      ?~  t.p.sep  ^$(sep i.p.sep)
-      (tr-both ^$(sep i.p.sep) $(p.sep t.p.sep))
+      ?~  t.ses.sep  ^$(sep i.ses.sep)
+      (tr-both ^$(sep i.ses.sep) $(ses.sep t.ses.sep))
       ::
         $fat
-      %+  tr-both  $(sep q.sep)
-      ?+  -.p.sep  "..."
-        $tank  ~(ram re %rose [" " `~] +.p.sep)
+      %+  tr-both  $(sep sep.sep)
+      ?+  -.tac.sep  "..."
+        $tank  ~(ram re %rose [" " `~] +.tac.sep)
       ==
       ::
         $exp
-      (tr-chow 66 '#' ' ' (trip p.sep))
+      (tr-chow 66 '#' ' ' (trip exp.sep))
       ::
         $url
-      =+  ful=(earf p.sep)
+      =+  ful=(earf url.sep)
       ?:  (gth 64 (lent ful))  ['/' ' ' ful]
       :+  '/'  '_'
-      =+  hok=r.p.p.p.sep
+      =+  hok=r.p.p.url.sep
       ~!  hok
       =-  (swag [a=(sub (max 64 (lent -)) 64) b=64] -)
       ^-  tape
@@ -2080,8 +2082,8 @@
       (welp b '.' (trip a))
       ::
         $lin
-      =+  txt=(trip q.sep)
-      ?:  p.sep
+      =+  txt=(trip msg.sep)
+      ?:  pat.sep
         =+  pal=tr-pals
         =.  pal  ?:  =(who our.bol)  pal  ::TODO  =?
                  (~(del in pal) [%& who (main who)])
@@ -2090,13 +2092,13 @@
       ::
         $inv
       %+  weld
-        ?:  p.sep
+        ?:  inv.sep
           " invited you to "
         " banished you from "
-      ~(sr-phat sr q.sep)
+      ~(cr-phat cr sat.sep)
       ::
         $app
-      (tr-chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
+      (tr-chow 64 "[{(trip app.sep)}]: {(trip msg.sep)}")
       ::
         $api
       %+  tr-chow  64
