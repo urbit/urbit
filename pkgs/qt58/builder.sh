@@ -1,4 +1,4 @@
-source $stdenv/setup
+source $setup
 
 tar -xf $src
 
@@ -12,7 +12,7 @@ cd ..
 mkdir build
 cd build
 
-../qtbase-opensource-src-$version/configure -prefix $out $configureFlags
+../qtbase-opensource-src-$version/configure -prefix $out $configure_flags
 
 # TODO: maybe get it to use system zlib/libpng/libjpeg/FreeType/HarfBuzz/SQLite/pcre
 

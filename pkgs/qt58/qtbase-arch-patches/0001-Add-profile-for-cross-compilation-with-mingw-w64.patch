@@ -1,3 +1,5 @@
+Tweaked by David on 2017-04-23 to use the right pkg-config.
+
 From eb3e8004e4cb74f021294e1e57dd268af001980e Mon Sep 17 00:00:00 2001
 From: Martchus <martchus@gmx.net>
 Date: Fri, 3 Feb 2017 18:30:51 +0100
@@ -124,8 +126,8 @@ index 0000000000..6f21ae75d5
 +QMAKE_OBJCOPY           = $${CROSS_COMPILE}objcopy
 +QMAKE_NM                = $${CROSS_COMPILE}nm -P
 +
-+PKG_CONFIG              = $${CROSS_COMPILE}pkg-config
-+QMAKE_PKG_CONFIG        = $${CROSS_COMPILE}pkg-config
++PKG_CONFIG              = pkg-config-cross
++QMAKE_PKG_CONFIG        = pkg-config-cross
 +
 +QMAKE_LIBS              =
 +QMAKE_LIBS_CORE         = -lole32 -luuid -lwinmm -lws2_32 -ladvapi32 -lshell32 -luser32 -lkernel32 -lz -lpcre16

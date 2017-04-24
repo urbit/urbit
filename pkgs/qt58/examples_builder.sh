@@ -1,4 +1,4 @@
-source $stdenv/setup
+source $setup
 
 tar -xf $src qtbase-opensource-src-$version/examples
 
