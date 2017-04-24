@@ -2086,7 +2086,6 @@
               bem/beam
           ==
       ^-  (unit (unit (cask vase)))
-      ^-  (unit (unit cage))
       ::
       ::  XX: needs review
       ::
