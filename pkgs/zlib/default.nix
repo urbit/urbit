@@ -1,7 +1,7 @@
 { crossenv }:
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "zlib-${version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "zlib-${version}";
 
   version = "1.2.11";
 
@@ -11,11 +11,4 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
   };
 
   builder = ./builder.sh;
-
-  buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
-  ];
-
-  inherit (crossenv) host;
 }
