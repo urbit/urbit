@@ -4,8 +4,8 @@ let
   target = if crossenv.os == "windows" then "win32"
            else throw "unknown target";
 in
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "angle-${version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "angle-${version}";
 
   version = "2017-03-09";
 
@@ -19,16 +19,13 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   builder = ./builder.sh;
 
-  buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
+  native_inputs = [
     crossenv.nixpkgs.pythonPackages.gyp
-    crossenv.nixpkgs.ninja
   ];
 
   GYP_GENERATORS = "ninja";
 
-  gypFlags =
+  gyp_flags =
       "-D OS=${crossenv.gyp_os} " +
       "-D TARGET=${target} " +
       "-D use_ozone=0 " +

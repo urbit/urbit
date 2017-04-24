@@ -1,4 +1,4 @@
-source $stdenv/setup
+source $setup
 
 cp -r $src/samples .
 cp -r $src/util .

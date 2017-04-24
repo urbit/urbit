@@ -1,4 +1,4 @@
-source $stdenv/setup
+source $setup
 
 cp -R $src src
 
@@ -13,7 +13,7 @@ done
 # ANGLE's gyp build files do not handle out-of-tree builds properly,
 # so let's just do an in tree build.
 
-gyp $gypFlags src/angle.gyp
+gyp $gyp_flags src/angle.gyp
 
 if [ -n "$debug" ]; then
   cd out/Debug

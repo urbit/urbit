@@ -1,7 +1,7 @@
 { crossenv, gdb, angle, examples }:
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "angle_debug_bundle-${angle.version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "angle_debug_bundle-${angle.version}";
 
   builder = ./debug_bundle_builder.sh;
 

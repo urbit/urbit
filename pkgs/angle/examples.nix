@@ -1,18 +1,11 @@
 { crossenv, angle, angle_util }:
 
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "angle-samples-${angle.version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "angle-samples-${angle.version}";
 
   src = angle.src;
 
-  buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
-  ];
-
   inherit angle angle_util;
-
-  inherit (crossenv) host exe_suffix;
 
   builder = ./samples_builder.sh;
 }
