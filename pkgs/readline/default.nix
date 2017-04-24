@@ -3,8 +3,8 @@
 let
   fetchurl = crossenv.nixpkgs.fetchurl;
 in
-crossenv.nixpkgs.stdenv.mkDerivation rec {
-  name = "readline-${version}-${crossenv.host}";
+crossenv.make_derivation rec {
+  name = "readline-${version}";
 
   version = "7.0";
 
@@ -34,12 +34,5 @@ crossenv.nixpkgs.stdenv.mkDerivation rec {
 
   builder = ./builder.sh;
 
-  buildInputs = [
-    crossenv.gcc
-    crossenv.binutils
-  ];
-
   inherit curses;
-
-  inherit (crossenv) host;
 }

@@ -1,6 +1,4 @@
-source $stdenv/setup
-
-unset CC
+source $setup
 
 # This is from the mingw-w64-readline AUR arch package.
 export bash_cv_wcwidth_broken=no
