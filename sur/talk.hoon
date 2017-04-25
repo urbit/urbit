@@ -119,7 +119,7 @@
       {$exp exp/@t}                                     ::<  hoon line
       {$fat tac/torso sep/speech}                       ::<  attachment
       {$lan nom/knot msg/@t}                            ::<  local announce
-      {$inv inv/? sat/circle}                           ::<  inv/ban for circle
+      {$inv inv/? cir/circle}                           ::<  inv/ban for circle
       {$mor ses/(list speech)}                          ::<  multiplex
       {$ext nom/@tas dat/*}                             ::<  extended action
       {$app app/@tas msg/@t}                            ::<  app message

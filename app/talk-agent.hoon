@@ -6,9 +6,6 @@
 ::TODO  make sure glyphs only get bound when joins succeed
 ::      ...this is a bit troublesome, because failed joins don't actually
 ::      unsubscribe us.
-::TODO  correct/clean up presence/config change notifications
-::
-::TODO  sat/circle -> cir/circle
 ::TODO  maybe keep track of received grams per partner, too?
 ::
 ::>  This reader implementation makes use of the mailbox
@@ -1510,7 +1507,7 @@
     ++  sh-low-config                                   ::<  do show config
       ::>  prints a circle's config changes to the cli.
       ::
-      |=  {sat/circle old/(unit config) new/(unit config)}
+      |=  {cir/circle old/(unit config) new/(unit config)}
       ^+  +>
       ::  new circle
       ?~  old
@@ -1518,9 +1515,9 @@
         +>
       ::  removed circle
       ?~  new
-        (sh-note (weld "rip " ~(cr-phat cr sat)))
+        (sh-note (weld "rip " ~(cr-phat cr cir)))
       %^  sh-show-config
-        (weld ~(cr-phat cr sat) ": ")
+        (weld ~(cr-phat cr cir) ": ")
       u.old  u.new
     ::
     ++  sh-low-rempe                                    ::<  show remotes
@@ -1937,7 +1934,7 @@
         ?:  inv.sep
           "you have been invited to "
         "you have been banished from "
-      ~(cr-phat cr sat.sep)
+      ~(cr-phat cr cir.sep)
       ::
         $mor
       mor+(turn ses.sep |=(speech ^$(sep +<)))
@@ -2053,7 +2050,7 @@
         ?:  inv.sep
           " invited you to "
         " banished you from "
-      ~(cr-phat cr sat.sep)
+      ~(cr-phat cr cir.sep)
       ::
         $app
       (tr-chow 64 "[{(trip app.sep)}]: {(trip msg.sep)}")

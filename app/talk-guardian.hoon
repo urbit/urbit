@@ -18,7 +18,6 @@
 ::      server state."
 ::      but we *do* change state on-subscribe! is that a problem?
 ::
-::TODO  sat/circle -> cir/circle
 ::TODO  crash on pokes/peers we do not expect
 ::TODO  keep both a folks and nicks maps. (actual profiles and local nicknames.)
 ::
@@ -37,7 +36,7 @@
     ::
     |%
     ++  house                                           ::>  broker state
-      $:  stories/(map knot story)                      ::<  conversations
+      $:  stories/(map knot story)                      ::<  convercirions
           readers/(map bone (set knot))                 ::<  our message readers
           outbox/(pair @ud (map @ud thought))           ::<  urbit outbox
           log/(map knot @ud)                            ::<  logged to clay
@@ -442,11 +441,11 @@
     --
   ::
   ++  ta-diff-report                                    ::<  subscription update
-    ::>  process a talk report from {sat} into story {nom}.
+    ::>  process a talk report from {cir} into story {nom}.
     ::
-    |=  {nom/knot sat/circle ret/report}
+    |=  {nom/knot cir/circle ret/report}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-diff-report:sor sat ret)
+    (so-diff-report:sor cir ret)
   ::
   ::>  ||
   ::>  ||  %subscription-events
@@ -530,18 +529,18 @@
     ==
   ::
   ++  ta-retry                                          ::<  subscription resend
-    ::>  re-subscribes {sat} to story {nom}.
+    ::>  re-subscribes {cir} to story {nom}.
     ::
-    |=  {nom/knot sat/circle}
+    |=  {nom/knot cir/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-acquire:sor [%& sat]~)
+    (so-acquire:sor [%& cir]~)
   ::
   ++  ta-quit                                           ::<  subscription failed
-    ::>  removes {sat} from story {nom}'s followers.
+    ::>  removes {cir} from story {nom}'s followers.
     ::
-    |=  {nom/knot sat/circle}
+    |=  {nom/knot cir/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-quit:sor %& sat)
+    (so-quit:sor %& cir)
   ::
   ++  ta-cancel                                         ::<  unsubscribe
     ::>  drops {src}'s subscription. deduce the right way
@@ -738,16 +737,16 @@
     (so-learn:sor gam)
   ::
   ++  ta-transmit                                       ::<  send message
-    ::>  sends thought {tot} to {sat}.
+    ::>  sends thought {tot} to {cir}.
     ::>  stores it to the outbox to await confirmation.
     ::
-    |=  {sat/circle tot/thought}
+    |=  {cir/circle tot/thought}
     ^+  +>
     =.  +>
         %+  ta-emit  ost.bol
         :*  %poke
-            /repeat/(scot %ud p.outbox)/(scot %p hos.sat)/[nom.sat]
-            [hos.sat %talk-guardian]
+            /repeat/(scot %ud p.outbox)/(scot %p hos.cir)/[nom.cir]
+            [hos.cir %talk-guardian]
             [%talk-command [%review tot ~]]
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tot))
@@ -951,21 +950,21 @@
     ::+|
     ::
     ++  so-diff-report                                  ::<  process update
-      ::>  process a talk report from {sat}.
+      ::>  process a talk report from {cir}.
       ::>  if we didn't expect it, ignore.
       ::
-      |=  {sat/circle ret/report}
+      |=  {cir/circle ret/report}
       ^+  +>
-      ?.  (~(has in src.shape) [%& sat])
+      ?.  (~(has in src.shape) [%& cir])
         %-  so-note
         %-  crip  ;:  weld
           "so-diff unexpected "
-          (scow %p hos.sat)  "/"  (trip nom.sat)
+          (scow %p hos.cir)  "/"  (trip nom.cir)
           " %"  (scow %tas -.ret)
         ==
       ?-  -.ret
-        $cabal  (so-cabal sat +.ret)
-        $group  (so-remind [%& sat] +.ret)
+        $cabal  (so-cabal cir +.ret)
+        $group  (so-remind [%& cir] +.ret)
         $grams  (so-lesson gaz.ret)
       ==
     ::
@@ -973,12 +972,12 @@
       ::>  add circle's config to our remote config map.
       ::
       ::TODO  when do we care about rem?
-      |=  {sat/circle con/config rem/(map circle config)}
+      |=  {cir/circle con/config rem/(map circle config)}
       ^+  +>
       =+  old=mirrors
-      =.  mirrors  (~(put by mirrors) sat con)
+      =.  mirrors  (~(put by mirrors) cir con)
       ?:  =(mirrors old)  +>.$
-      =.  +>.$  (so-inform %confs `shape (strap sat `con))
+      =.  +>.$  (so-inform %confs `shape (strap cir `con))
       (so-report-cabal so-followers)
     ::
     ++  so-remind                                       ::<  remote presence
@@ -1386,7 +1385,7 @@
   ::
   |=  $:  wir/wire
           $=  fun
-          $-  {nom/knot sat/circle}
+          $-  {nom/knot cir/circle}
               {(list move) _.}
       ==
   =+  wer=(etch wir)
@@ -1456,8 +1455,8 @@
   ^-  (quip move +>)
   =^  mos  +>.$
     %+  etch-friend  wir
-    |=  {nom/knot sat/circle}
-    ta-done:(ta-diff-report:ta nom sat ret)
+    |=  {nom/knot cir/circle}
+    ta-done:(ta-diff-report:ta nom cir ret)
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
@@ -1486,10 +1485,10 @@
   ^-  (quip move +>)
   ?~  fal  [~ +>]
   %+  etch-friend  [%friend wir]
-  |=  {nom/knot sat/circle}
-  =.  u.fal  [>%reap-friend-fail nom sat< u.fal]
+  |=  {nom/knot cir/circle}
+  =.  u.fal  [>%reap-friend-fail nom cir< u.fal]
   %-  (slog (flop u.fal))
-  ta-done:(ta-quit:ta nom sat)
+  ta-done:(ta-quit:ta nom cir)
 ::
 ++  quit-friend                                         ::<  dropped subscription
   ::>  gall dropped our subscription. resubscribe.
@@ -1497,8 +1496,8 @@
   |=  wir/wire
   ^-  (quip move +>)
   %+  etch-friend  [%friend wir]
-  |=  {nom/knot sat/circle}
-  ta-done:(ta-retry:ta nom sat)
+  |=  {nom/knot cir/circle}
+  ta-done:(ta-retry:ta nom cir)
 ::
 ++  coup-repeat                                         ::<  message n/ack
   ::>  ack from ++ta-transmit. mark the message as
