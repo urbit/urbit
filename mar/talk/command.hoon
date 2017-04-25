@@ -78,14 +78,15 @@
       %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
-    ++  speech-or-eval  $?(speech {$eval p/@t} {$mor p/(list speech-or-eval)})
+    ++  speech-or-eval  $?(speech {$eval p/@t} {$mor ses/(list speech-or-eval)})
     ++  eval
       |=  a/(trel @da bouquet speech-or-eval)  
       ^-  statement
-      %=  a  r  ^-  speech
-        |-
+      %=  a
+          r
+        |-  ^-  speech
         ?:  ?=($mor -.r.a)
-          [%mor (turn p.r.a |=(b/speech-or-eval ^$(r.a b)))]
+          [%mor (turn ses.r.a |=(b/speech-or-eval ^$(r.a b)))]
         ?.  ?=($eval -.r.a)  r.a
         =-  [%fat tank+- %exp p.r.a]
         =+  pax=[&1:% &2:% (scot %da p.a) |3:%]
