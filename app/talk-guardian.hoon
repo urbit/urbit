@@ -180,6 +180,15 @@
     %-  ta-emit
     [red %diff %talk-reaction rac]
   ::
+  ++  ta-note                                           ::<  tell user
+    ::>  sends {msg} as an %app message to the user's
+    ::>  inbox.
+    ::
+    |=  msg/cord
+    %^  ta-action  ost.bol  %phrase  ::TODO  ost.bol vs 0 ?
+    :-  [[%& our.bol (main our.bol)] ~ ~]
+    [%app %talk-guardian msg]~
+  ::
   ++  ta-evil                                           ::<  emit error
     ::>  tracing printf and crash.
     ::
@@ -203,8 +212,9 @@
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
     ?~  pur
-      ~&  [%talk-ta-know-not nom]                       ::  XX should crash
-      +>+>.$
+      ::TODO  crash instead?
+      %-  ta-note
+      (crip "unknown story '{(trip nom)}'")
     (fun ~(. so nom ~ u.pur))
   ::
   ++  ta-human                                          ::<  look up person
@@ -464,16 +474,16 @@
     ::  reader subscription.
     ?:  ?=({$reader *} pax)
       ?.  (team our.bol her)
-        ~&  [%talk-foreign-reader her]
-        +>
+        %-  ta-note
+        (crip "foreign reader {(scow %p her)}")
       (ta-welcome ost.bol t.pax)
     ::  weird subscription path.
     ?.  ?=({@ *} pax)
       (ta-evil %bad-path)
     =+  pur=(~(get by stories) i.pax)
     ?~  pur
-      ~&  [%talk-bad-subscribe-story i.pax]
-      (ta-evil %no-story)
+      %-  ta-note
+      (crip "bad subscribe story '{(trip i.pax)}'")
     =+  soy=~(. so i.pax `(list action)`~ u.pur)        ::  nest-fail if no cast
     ::  she needs read permissions to subscribe.
     ?.  (so-visible:soy her)
@@ -557,7 +567,8 @@
     +>.$(readers (~(put by readers) ost.bol nes))
     ::  weird subscription path.
     ?.  ?=({@ @ *} pax)
-      ~&([%talk-ta-cancel-weird-path pax] +>)
+      %-  ta-note
+      (crip "ta-cancel weird path {~(ram re >pax<)}")
     ::  remove a regular subscription, set ship status to %gone.
     %-  (ta-know i.pax)  |=  sor/_so  =<  so-done
     (so-notify:so-cancel:sor src %gone *human)
@@ -714,7 +725,8 @@
         $&                                              ::<  circle partner
       ?:  pub
         ?.  (team our.bol aut)
-          ~&([%talk-strange-author aut] +>)
+          %-  ta-note
+          (crip "strange author {(scow %p aut)}")
         =.  aut  our.bol
         ?:  =(aut hos.p.pan)
           (ta-record nom.p.pan hos.p.pan tot)
@@ -849,6 +861,16 @@
       ^+  +>
       +>(acs [act acs])
     ::
+    ++  so-note                                         ::<  tell user
+      ::>  sends {msg} as an %app message to the user's
+      ::>  inbox.
+      ::
+      |=  msg/cord
+      ^+  +>
+      %+  so-act  %phrase
+      :-  [[%& our.bol (main our.bol)] ~ ~]
+      [%app %talk-guardian msg]~
+    ::
     ++  so-inform                                       ::<  send lowdown
       ::>  sends lowdown to all interested readers.
       ::
@@ -942,8 +964,12 @@
       |=  {sat/circle ret/report}
       ^+  +>
       ?.  (~(has in src.shape) [%& sat])
-        ~&  [%talk-so-diff-unexpected sat -.ret]
-        +>
+        %-  so-note
+        %-  crip  ;:  weld
+          "so-diff unexpected "
+          (scow %p hos.sat)  "/"  (trip nom.sat)
+          " %"  (scow %tas -.ret)
+        ==
       ?-  -.ret
         $cabal  (so-cabal sat +.ret)
         $group  (so-remind [%& sat] +.ret)
@@ -1097,23 +1123,32 @@
       ::
       |=  {her/ship pax/path}
       ^+  +>
-      ?.  (so-visible her)                              ::  read permissions
-        ~&  [%talk-so-start-visible ~]
-        (so-sauce ost.bol [%quit ~]~)
-      =/  ruv/(unit river)                              ::  find grams range
-          %+  biff                                      ::  collapse unit list
-            (zl:jo (turn pax ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~)))))
-          |=  paf/(list dime)
-          ?~  paf
-            $(paf [%ud (sub (max 64 count) 64)]~)
-          ?~  t.paf
-            $(t.paf [%da (dec (bex 128))]~)
-          ?.  ?=({{?($ud $da) @} {?($ud $da) @} $~} paf)
-            ~
-          `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::XX arvo issue #366
+      ::  read permissions
+      ?.  (so-visible her)
+        =.  +>
+          (so-sauce ost.bol [%quit ~]~)
+        %-  so-note  %-  crip
+        "so-start permission denied {(scow %p her)}"
+      ::  find grams range
+      =/  ruv/(unit river)
+        ::  collapse unit list
+        %+  biff
+          %-  zl:jo
+          %+  turn  pax
+          ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~)))
+        |=  paf/(list dime)
+        ?~  paf
+          $(paf [%ud (sub (max 64 count) 64)]~)
+        ?~  t.paf
+          $(t.paf [%da (dec (bex 128))]~)
+        ?.  ?=({{?($ud $da) @} {?($ud $da) @} $~} paf)
+          ~
+        `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::XX arvo issue #366
       ?~  ruv
-        ~&  [%talk-so-start-malformed pax]
-        (so-sauce ost.bol [%quit ~]~)
+        =.  +>.$
+          (so-sauce ost.bol [%quit ~]~)
+        %-  so-note  %-  crip
+        "so-start malformed path {~(ram re >pax<)}"
       (so-first-grams u.ruv)
     ::
     ++  so-first-grams                                  ::<  beginning of stream
@@ -1397,8 +1432,9 @@
   |=  act/action
   ^-  (quip move +>)
   ?.  (team src.bol our.bol)
-    ~&  [%talk-action-stranger src.bol]
-    [~ +>]
+    =<  ta-done
+    %-  ta-note:ta  %-  crip
+    "talk-action stranger {(scow %p src.bol)}"
   ta-done:(ta-action:ta ost.bol act)
 ::
 ++  poke-talk-comment                                   ::<  do comment
@@ -1438,7 +1474,6 @@
   ::
   |=  pax/path
   ^-  (quip move +>)
-  ~?  !(team src.bol our.bol)  [%talk-peer-stranger src.bol]
   ?:  ?=({$sole *} pax)  ~&(%talk-broker-no-sole !!)
   ta-done:(ta-subscribe:ta src.bol pax)
 ::
