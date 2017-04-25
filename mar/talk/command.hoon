@@ -10,7 +10,7 @@
 ++  grab                                                ::  convert from
   |%
   ++  noun  command                                     ::  clam from %noun
-  ++  json 
+  ++  json
     =>  [jo ..command]
     |=  a/json  ^-  command
     =-  (need ((of -) a))
@@ -18,15 +18,15 @@
         ==
     |%
     ++  op                                              ::  parse keys of map
-      |*  {fel/rule wit/fist}  
-      %+  cu  malt  
+      |*  {fel/rule wit/fist}
+      %+  cu  malt
       %+  ci
         |=  a/(map cord _(need *wit))
         ^-  (unit (list _[(wonk *fel) (need *wit)]))
         (zl (turn (~(tap by a)) (head-rush fel)))
       (om wit)
     ::
-    ++  ke                                              ::  callbacks  
+    ++  ke                                              ::  callbacks
       |*  {gar/* sef/_|.(fist)}
       |=  jon/json
       ^-  (unit _gar)
@@ -34,12 +34,12 @@
       ((sef) jon)
     ::
     ++  as                                              ::  array as set
-      |*  a/fist 
+      |*  a/fist
       (cu ~(gas in *(set _(need *a))) (ar a))
     ::
     ++  peach
       |*  a/{rule rule}
-      |=  tub/nail  
+      |=  tub/nail
       ^-  (like (each _(wonk (-.a)) _(wonk (+.a))))
       %.  tub
       ;~(pose (stag %& -.a) (stag %| +.a))
@@ -47,16 +47,16 @@
     ++  head-rush
       |*  a/rule
       |*  {cord *}
-      =+  nit=(rush +<- a) 
+      =+  nit=(rush +<- a)
       ?~  nit  ~
-      (some [u.nit +>->])  
+      (some [u.nit +>->])
     ::
     ::
     ++  thot
       ^-  $-(json (unit thought))
       %-  ot  :~
-        serial+ceri  
-        audience+audi 
+        serial+ceri
+        audience+audi
         statement+stam
       ==
     ::
@@ -64,12 +64,12 @@
       ^-  $-(json (unit serial))
       (ci (slat %uv) so)
     ::
-    ++  audi  
+    ++  audi
       ^-  $-(json (unit audience))
-      (op parn memb) 
+      (op parn memb)
     ::
     ++  memb  (ot [envelope+lope delivery+(ci (soft delivery) so) ~])
-    ++  lope  (ot [visible+bo sender+(mu (su parn)) ~])  
+    ++  lope  (ot [visible+bo sender+(mu (su parn)) ~])
     ::
     ++  parn
       ^-  $-(nail (like partner))
@@ -80,7 +80,7 @@
     ::
     ++  speech-or-eval  $?(speech {$eval p/@t} {$mor ses/(list speech-or-eval)})
     ++  eval
-      |=  a/(trel @da bouquet speech-or-eval)  
+      |=  a/(trel @da bouquet speech-or-eval)
       ^-  statement
       %=  a
           r
@@ -94,14 +94,14 @@
       ==
     ::
     ++  stam
-      ^-  $-(json (unit statement))   
+      ^-  $-(json (unit statement))
       %+  cu  eval
       (ot date+di bouquet+(as (ar so)) speech+spec ~)
     ::
     ++  spec
       %+  ke  *speech-or-eval  |.
       %-  of
-      :~  lin+(ot say+bo txt+so ~) 
+      :~  lin+(ot say+bo txt+so ~)
           url+(su aurf:urlp)
           eval+so
           mor+(ar spec)
@@ -110,4 +110,3 @@
       ==
   --
 --  --
-
