@@ -17,6 +17,9 @@
 ++  note  $~                                            ::  out request $->
 ++  sign  $~                                            ::  in result $<-
 ++  clok  (broq @da duct)                               ::  stored timers
+++  coke  $:  $0                                        ::  all state
+              tym/{p/clok q/clok}                       ::  positive+negative
+          ==                                            ::
 --
 ::
 |%
@@ -138,6 +141,67 @@
     ^+  a
     (meek (uniq a) (uniq q))
   --
+++  neon
+  |=  our/ship
+  ^-  (vane task:able gift:able sign:able note:able silo silo)
+    !!
+  =|  coke
+  |%
+  ++  load  |=(coke +>)
+  ++  stay  `coke`+<
+  ++  plow
+    =|  $:  now/@da
+            eny/@e
+            sky/roof
+        ==
+    |%
+    ++  doze  ~
+    ++  peek
+      |=  $:  lyc/(unit (set ship))
+              car/term
+              bem/beam
+          ==
+      ^-  (unit (unit (cask vase)))
+      ~
+    ::
+    ++  spin
+      =|  $:  hen/duct
+              moz/(list move)
+          ==
+      |%
+      ++  call  
+        |=  tac/task:able
+        ^+  +>
+        =*  job  ^-  task:loft
+            ?-  -.tac
+              $hear  tac
+              $mess  [%mess p.tac hen q.tac r.tac]
+              $wake  tac
+            ==
+        =^  fex  syl  abet:(apex:love job)
+        +>.$(moz (weld (turn fex lung) moz))
+      ::
+      ++  take  
+        |=  {tea/wire hin/sign:able}
+        =*  job  ^-  task:loft
+          ?+    -.tea  !!
+              $msg
+            ?>  ?=({@ @ $~} +.tea)
+            =+  [who kos]=[(slav %p i.t.tea) (slav %ud i.t.t.tea)]
+            ?-  +<.hin
+                $rend  
+              [%rend who kos p.+.hin q.+.hin]
+                $mack  
+              [%done who kos ?~(p.+.hin ~ `coop`[~ `[%fail u.p.+.hin]])]
+            ==
+          ==
+        =^  fex  syl  abet:(apex:love job)
+        +>.$(moz (weld (turn fex lung) moz))
+      --
+    --
+  --
+
+
 --
 .  ==
 =|  $:  $0                                              ::
