@@ -64,14 +64,14 @@
     ++  parn
       |=  a/partner  ^-  cord
       ?-  -.a
-        $&  (stat p.a)
+        $&  (circ p.a)
         $|  %-  crip
             ?-  -.p.a
               $twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
             ==
       ==
     ::
-    ++  stat
+    ++  circ
       |=  a/circle  ^-  cord
       (crip "{<hos.a>}/{(trip nom.a)}")
     ::
@@ -125,7 +125,7 @@
       |=  cabal
       %-  jobe  :~
         loc+(conf loc)
-        ham+((jome stat conf) rem)
+        ham+((jome circ conf) rem)
       ==
     ::
     ++  sorc
