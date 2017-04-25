@@ -3,9 +3,12 @@
   ::                                                    ::  ::
 ::
 ::TODO  guardian's todo's apply here too
-::TODO  make sure glyphs get unbound when joins etc don't succeed.
+::TODO  make sure glyphs only get bound when joins succeed
+::      ...this is a bit troublesome, because failed joins don't actually
+::      unsubscribe us.
 ::TODO  correct/clean up presence/config change notifications
 ::
+::TODO  sat/circle -> cir/circle
 ::TODO  maybe keep track of received grams per partner, too?
 ::
 ::>  This reader implementation makes use of the mailbox
@@ -289,8 +292,8 @@
     =.  +>.$
       =<  sh-done
       %+  roll  (~(tap by cofs))
-      |=  {{s/circle c/(unit config)} core/_sh}
-      %^  ~(sh-low-config core cli)
+      |=  {{s/circle c/(unit config)} cil/_sh}
+      %^  ~(sh-low-config cil cli)
       s  (~(get by mirrors) s)  c
     ::  apply config changes to {mirrors}.
     =.  mirrors
@@ -923,8 +926,6 @@
       ++  join                                          ::<  %join
         ::>  change local mailbox config to include
         ::>  subscriptions to {pas}.
-        ::TODO  only bind glyph *after* we've
-        ::      successfully joined.
         ::
         |=  pas/(set partner)
         ^+  ..sh-work
@@ -950,9 +951,6 @@
         ::
         |=  {por/posture nom/knot txt/cord}
         ^+  ..sh-work
-        ::TODO  simplify?
-        ?:  (~(has in mirrors) [our.bol nom])
-          (sh-lame "{(trip nom)}: already exists")
         =.  ..sh-work
           (sh-act %create nom txt por)
         (join [[%& our.bol nom] ~ ~])
@@ -1031,7 +1029,6 @@
         ::>  prints presence lists for {pas} or all.
         ::
         |=  pas/(set partner)  ^+  ..sh-work
-        ::TODO  clever use of =< and . take note!
         =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pas) (~(has in pas) pon))  ~
@@ -1050,7 +1047,6 @@
       ::
       ++  what                                          ::<  %what
         ::>  prints binding details. goes both ways.
-        ::TODO  pretty-print
         ::
         |=  qur/$@(char (set partner))
         ^+  ..sh-work
@@ -1060,7 +1056,7 @@
         =+  pan=(~(tap in (~(get ju nak) qur)))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
-        |=(a/(set partner) [%txt <a>]) ::  XX ~(ar-whom ar a)
+        |=(a/(set partner) [%txt ~(ar-prom ar a)])
       ::
       ++  number                                        ::<  %number
         ::>  finds selected message, expand it.
@@ -1215,25 +1211,8 @@
           $(paz r.paz)
       ==
     ::
-    ++  sh-pest                                         ::<  report listen
-      ::>  updates audience to be {tay}, only if {tay} is
-      ::>  not a village/%white.
-      ::TODO  why exclude village (invite-only?) audiences from this?
-      ::TODO  only used in config change printing, maybe delete.
-      ::
-      |=  tay/partner
-      ^+  +>
-      ::>  if partner is a passport, ignore.
-      ?.  ?=($& -.tay)  +>
-      =+  cof=(~(get by mirrors) +.tay)
-      ?.  |(?=($~ cof) !?=($white sec.con.u.cof))
-        +>.$
-      (sh-pact [tay ~ ~])
-    ::
     ++  sh-glyf                                         ::<  decode glyph
       ::>  finds the partner(s) that match a glyph.
-      ::TODO  should maybe return full set, not latest,
-      ::      if ambiguous.
       ::
       |=  cha/char  ^-  (unit (set partner))
       =+  lax=(~(get ju nak) cha)
@@ -1533,42 +1512,24 @@
       ::
       |=  {sat/circle old/(unit config) new/(unit config)}
       ^+  +>
-      ?~  old  ~&([%new-conf sat] +>)
-      ?~  new  ~&([%del-conf sat] +>)  ::TODO  tmp
+      ::  new circle
+      ?~  old
+        ::  ++sh-low-rempe will notice a new partner.
+        +>
+      ::  removed circle
+      ?~  new
+        (sh-note (weld "rip " ~(cr-phat cr sat)))
       %^  sh-show-config
         (weld ~(cr-phat cr sat) ": ")
       u.old  u.new
-    ::
-    ++  sh-low-remco                                    ::TODO  delete me
-      ::>  prints changes to remote configs to the cli
-      ::
-      |=  {ole/(map circle config) neu/(map circle config)}
-      ^+  +>
-      =+  (sh-remco-diff ole neu)
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  new  +>.^$
-          =.  +>.^$  $(new t.new)
-          =.  +>.^$  (sh-pest [%& p.i.new])
-          %+  sh-show-config
-            (weld ~(cr-phat cr p.i.new) ": ")
-          [*config q.i.new]
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  cha  +>.^$
-          =.  +>.^$  $(cha t.cha)
-          %+  sh-show-config
-            (weld ~(cr-phat cr p.i.cha) ": ")
-          [(~(got by ole) `circle`p.i.cha) q.i.cha]
-      +>.$
     ::
     ++  sh-low-rempe                                    ::<  show remotes
       ::>  prints remote presence changes to the cli.
       ::
       |=  {old/(map partner atlas) new/(map partner atlas)}
-      =+  day=(sh-rempe-diff old new)
       ?:  (~(has in settings.she) %quiet)
         +>.$
+      =+  day=(sh-rempe-diff old new)
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old.day  +>.^$
@@ -1641,28 +1602,25 @@
   ++  cr-best                                           ::<  best to show
     ::>  returns true if one is better to show, false
     ::>  otherwise. prioritizes: our > main > size.
-    ::TODO  maybe simplify. (lth (xeb (xeb hos.one)) (xeb (xeb hos.two)))
     ::
     |=  two/circle
     ^-  ?
     ::  the circle that's ours is better.
     ?:  =(our.bol hos.one)
-      ?:  =(our.bol hos.two)
-        ?<  =(nom.one nom.two)
-        ::  if both circles are ours, the main story is better.
-        ?:  =((main hos.one) nom.one)  %&
-        ?:  =((main hos.two) nom.two)  %|
-        ::  if neither are, pick the "larger" one.
-        (lth nom.one nom.two)
-      %&
+      ?.  =(our.bol hos.two)  %&
+      ?<  =(nom.one nom.two)
+      ::  if both circles are ours, the main story is better.
+      ?:  =((main hos.one) nom.one)  %&
+      ?:  =((main hos.two) nom.two)  %|
+      ::  if neither are, pick the "larger" one.
+      (lth nom.one nom.two)
     ::  if one isn't ours but two is, two is better.
-    ?:  =(our.bol hos.two)
-      %|
+    ?:  =(our.bol hos.two)  %|
     ?:  =(hos.one hos.two)
       ::  if they're from the same ship, pick the "larger" one.
       (lth nom.one nom.two)
-    ::  when in doubt, pick one if its ship is "smaller" than its channel.
-    (lth hos.one nom.one)
+    ::  if they're from different ships, neither ours, pick hierarchically.
+    (lth (xeb hos.one) (xeb hos.two))
   ::
   ++  cr-curt                                           ::<  render name in 14
     ::>  prints a ship name in 14 characters. left-pads

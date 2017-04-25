@@ -70,7 +70,7 @@
 ++  passport                                            ::>  foreign target
   $%  {$twitter p/@t}                                   ::<  twitter handle
   ==                                                    ::
-::>  circle configurations.
+::  circle configurations.                              ::
 ++  cabal                                               ::>  metaconfiguration
   $:  loc/config                                        ::<  local config
       rem/(map circle config)                           ::<  neighborhood configs
@@ -87,7 +87,7 @@
       $green                                            ::<  journal, author list
       $brown                                            ::<  mailbox, our r, bl w
   ==                                                    ::
-::>  participant metadata.
+::  participant metadata.                               ::
 ++  register   {loc/atlas rem/(map partner atlas)}      ::<  our & srcs presences
 ++  atlas      (map ship status)                        ::<  presence map
 ++  status     {pec/presence man/human}                 ::<  participant
@@ -96,7 +96,7 @@
       $idle                                             ::<  idle
       $hear                                             ::<  present
       $talk                                             ::<  typing
-  ==
+  ==                                                    ::
 ++  human                                               ::>  human identifier
   $:  tru/(unit (trel @t (unit @t) @t))                 ::<TODO  unused true name
       han/(unit @t)                                     ::<  handle

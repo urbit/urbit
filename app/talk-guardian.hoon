@@ -5,10 +5,7 @@
 ::TODO  master changes
 ::TODO  char57 comments as line comments when regarding code.
 ::TODO  avoid lark where possible
-::TODO  maybe rename wires. repeat & friend -> message & follower
-::TODO  put printfs properly through console/mailbox
-::TODO  think about what printfs we want to keep for the user to see.
-::TODO  document what user-facing printfs actually mean!
+::TODO  document what user-facing messages actually mean!
 ::TODO  ::> to :> etc.
 ::
 ::TODO  we can't do away with the default mailbox because we need it for things
@@ -21,8 +18,7 @@
 ::      server state."
 ::      but we *do* change state on-subscribe! is that a problem?
 ::
-::TODO  permission checks should only use team if it's coming from a reader.
-::TODO  for story permission checks, count moons as their parent identity.
+::TODO  sat/circle -> cir/circle
 ::TODO  crash on pokes/peers we do not expect
 ::TODO  keep both a folks and nicks maps. (actual profiles and local nicknames.)
 ::
@@ -140,7 +136,6 @@
     ::>  they are produced in reverse order because
     ::>  ++ta-emil and ++ta-emit add them to the head of
     ::>  the {moves}.
-    ::TODO  maybe squash lowdown %names and %glyphs into single moves.
     ::
     ^-  (quip move +>)
     [(flop moves) +>]
@@ -185,7 +180,7 @@
     ::>  inbox.
     ::
     |=  msg/cord
-    %^  ta-action  ost.bol  %phrase  ::TODO  ost.bol vs 0 ?
+    %^  ta-action  0  %phrase
     :-  [[%& our.bol (main our.bol)] ~ ~]
     [%app %talk-guardian msg]~
   ::
@@ -435,9 +430,6 @@
         =/  ole/(set (set partner))                     ::<  unbind
           ?.  =(pas ~)  [pas ~ ~]
           (~(get ju nak) lif)
-        ::TODO  want to replace these kinds of loops with
-        ::      ++rep:in and ++roll, but doesn't seem to
-        ::      work correctly?
         |-  ^+  ..ta-action
         ?~  ole  ..ta-action
         =.  ..ta-action  $(ole l.ole)
@@ -482,6 +474,7 @@
       (ta-evil %bad-path)
     =+  pur=(~(get by stories) i.pax)
     ?~  pur
+      ::TODO  send this to the subscriber! make them unsub!
       %-  ta-note
       (crip "bad subscribe story '{(trip i.pax)}'")
     =+  soy=~(. so i.pax `(list action)`~ u.pur)        ::  nest-fail if no cast
@@ -493,7 +486,7 @@
     ::  send current data to bring her up to date.
     =.  soy  (so-report-cabal:soy ost.bol ~ ~)
     =.  soy  (so-report-group:soy ost.bol ~ ~)
-    =.  soy  (so-start:soy her t.pax)             ::<  also adds story sub
+    =.  soy  (so-start:soy her t.pax)                   ::<  also adds story sub
     =.  soy  (so-notify:soy her %hear who)              ::<  add her status
     so-done:soy                                         ::<  apply story changes
   ::
@@ -1216,25 +1209,25 @@
       ::>  notify the interested readers.
       =.  +>  (so-inform %grams num gam ~)
       ::>  notify only the followers who are currently interested.
-      ::TODO  might be able to refactor using ~(rep in followers)?
       =/  moy
-          |-  ^-  (pair (list bone) (list move))
-          ?~  followers  [~ ~]
-          =+  lef=$(followers l.followers)
-          =+  rit=$(followers r.followers)
-          =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
-          ?:  ?-  -.q.q.n.followers                        ::  after the end
-                $ud  (lte p.q.q.n.followers num)
-                $da  (lte p.q.q.n.followers wen.sam.tot.gam)
-              ==
-            [[p.n.followers p.old] [[p.n.followers %quit ~] q.old]]
-          ?:  ?-  -.p.q.n.followers                        ::  before the start
-                $ud  (gth p.p.q.n.followers num)
-                $da  (gth p.p.q.n.followers wen.sam.tot.gam)
-              ==
-            old
-          :-  p.old
-          [[p.n.followers %diff %talk-report %grams num gam ~] q.old]
+        ^-  (pair (list bone) (list move))
+        %-  ~(rep in followers)
+        |=  {f/(pair bone river) r/(pair (list bone) (list move))}
+        ::  after the end: unsubscribe
+        ?:  ?-  -.q.q.f
+              $ud  (lte p.q.q.f num)
+              $da  (lte p.q.q.f wen.sam.tot.gam)
+            ==
+          [[p.f p.r] [[p.f %quit ~] q.r]]
+        ::  before the start: ignore
+        ?:  ?-  -.p.q.f
+              $ud  (gth p.p.q.f num)
+              $da  (gth p.p.q.f wen.sam.tot.gam)
+            ==
+          r
+        ::  in the river: send gram
+        :-  p.r
+        [[p.f %diff %talk-report %grams num gam ~] q.r]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
@@ -1263,7 +1256,7 @@
         ::>  federated circles need to pretend ~src/nom
         ::>  is also ~our/nom.
         ::TODO  pass src through explicitly instead of
-        ::      relying on src.bol.  :
+        ::      relying on src.bol.
         =+  ole=(~(get by aud.tot.gam) [%& src.bol nom])
         ?~  ole  aud.tot.gam
         ::>  as described above, fake src into our.
