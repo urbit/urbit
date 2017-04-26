@@ -11,7 +11,7 @@
 ::
 ++  action                                              ::>  user action
   $%  ::  circle configuration                          ::
-      {$create nom/knot des/cord sec/posture}           ::<  create circle
+      {$create nom/knot des/cord sec/security}          ::<  create circle
       {$source nom/knot sub/? src/(set partner)}        ::<  un/sub p to/from r
       {$depict nom/knot des/cord}                       ::<  change description
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
@@ -37,7 +37,7 @@
           loc/(unit config)                             ::<  local config
           rem/(map circle (unit config))                ::<  remote configs
       ==                                                ::
-      {$precs reg/register}                             ::<  presences
+      {$precs reg/crowd}                                ::<  presences
       {$grams num/@ud gaz/(list telegram)}              ::<  messages
       ::  ui state                                      ::
       {$glyph (jug char (set partner))}                 ::<  glyph bindings
@@ -54,8 +54,8 @@
   $%  {$review tos/(list thought)}                      ::<  deliver
   ==                                                    ::
 ++  report                                              ::>  update
-  $%  {$cabal cab/cabal}                                ::<  config neighborhood
-      {$group reg/register}                             ::<  presence
+  $%  {$lobby cab/lobby}                                ::<  config neighborhood
+      {$crowd reg/crowd}                                ::<  presence
       {$grams num/@ud gaz/(list telegram)}              ::<  thoughts
   ==                                                    ::
 ::
@@ -71,25 +71,22 @@
   $%  {$twitter p/@t}                                   ::<  twitter handle
   ==                                                    ::
 ::  circle configurations.                              ::
-++  cabal                                               ::>  metaconfiguration
-  $:  loc/config                                        ::<  local config
-      rem/(map circle config)                           ::<  neighborhood configs
-  ==                                                    ::
+++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config
   $:  src/(set partner)                                 ::<  pulls from
       cap/cord                                          ::<  description
       con/control                                       ::<  restrictions
   ==                                                    ::
-++  control    {sec/posture ses/(set ship)}             ::<  access control
-++  posture                                             ::>  security kind
+++  control    {sec/security ses/(set ship)}            ::<  access control
+++  security                                            ::>  security kind
   $?  $black                                            ::<  channel, blacklist
       $white                                            ::<  village, whitelist
       $green                                            ::<  journal, author list
       $brown                                            ::<  mailbox, our r, bl w
   ==                                                    ::
 ::  participant metadata.                               ::
-++  register   {loc/atlas rem/(map partner atlas)}      ::<  our & srcs presences
-++  atlas      (map ship status)                        ::<  presence map
+++  crowd      {loc/group rem/(map partner group)}      ::<  our & srcs presences
+++  group      (map ship status)                        ::<  presence map
 ++  status     {pec/presence man/human}                 ::<  participant
 ++  presence                                            ::>  status type
   $?  $gone                                             ::<  left
@@ -117,7 +114,7 @@
       {$ire tos/serial sep/speech}                      ::<  in-reply-to
       {$url url/purf}                                   ::<  parsed url
       {$exp exp/@t}                                     ::<  hoon line
-      {$fat tac/torso sep/speech}                       ::<  attachment
+      {$fat tac/attache sep/speech}                     ::<  attachment
       {$lan nom/knot msg/@t}                            ::<  local announce
       {$inv inv/? cir/circle}                           ::<  inv/ban for circle
       {$mor ses/(list speech)}                          ::<  multiplex
@@ -133,8 +130,8 @@
           meta/json                                     ::<  other data for web
       ==                                                ::
   ==                                                    ::
-++  torso                                               ::>  attachment
-  $%  {$name nom/@t tac/torso}                          ::<  named attachment
+++  attache                                             ::>  attachment
+  $%  {$name nom/@t tac/attache}                        ::<  named attachment
       {$text (list @t)}                                 ::<  text lines
       {$tank (list tank)}                               ::<  tank list
   ==                                                    ::

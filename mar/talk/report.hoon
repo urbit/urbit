@@ -19,9 +19,9 @@
     =>  +
     |^  %+  joba  -.rep
         ?-  -.rep
-          $cabal  (cabl cab.rep)
+          $lobby  (loby cab.rep)
           $grams  (jobe num+(jone num.rep) tele+[%a (turn gaz.rep gram)] ~)
-          $group  %^    jobe
+          $crowd  %^    jobe
                       local+(grop loc.reg.rep)
                     global+%.(rem.reg.rep (jome parn grop))
                   ~
@@ -121,8 +121,8 @@
         (jobe first+[%s p] middle+?~(q ~ [%s u.q]) last+[%s r] ~)
       ~
     ::
-    ++  cabl
-      |=  cabal
+    ++  loby
+      |=  lobby
       %-  jobe  :~
         loc+(conf loc)
         ham+((jome circ conf) rem)
@@ -137,7 +137,7 @@
       %-  jobe  :~
         sources+(sorc src)
         caption+[%s cap]
-        =-  cordon+(jobe posture+[%s -.con] list+[%a -] ~)
+        =-  control+(jobe security+[%s -.con] list+[%a -] ~)
         (turn (~(tap in ses.con)) jope)                ::  XX  jase
       ==
   --

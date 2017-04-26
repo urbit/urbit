@@ -35,7 +35,7 @@
           known/(map serial @ud)                        ::<  messages heard
           sources/(set partner)                         ::<  our subscriptions
           ::  partner details                           ::
-          remotes/(map partner atlas)                   ::<  remote presences
+          remotes/(map partner group)                   ::<  remote presences
           mirrors/(map circle config)                   ::<  remote configs
           ::  ui state                                  ::
           folks/(map ship human)                        ::<  human identities
@@ -68,7 +68,7 @@
       $%  ::  circle management                         ::
           {$join p/where}                               ::<  subscribe to
           {$leave p/where}                              ::<  unsubscribe from
-          {$create p/posture q/knot r/cord}             ::<  create circle
+          {$create p/security q/knot r/cord}             ::<  create circle
           {$delete p/knot q/(unit cord)}                ::<  delete circle
           {$depict p/knot q/cord}                       ::<  change description
           {$source p/knot q/(set partner)}              ::<  add source
@@ -303,17 +303,17 @@
   ::
   ++  ta-low-precs                                      ::<  apply changed precs
     ::>  applies new presences.
-    ::>  other clients might care for {tas}, but we're
+    ::>  other clients might care for {gop}, but we're
     ::>  only ever getting this for the mailbox, where
     ::>  we're the only ones present.
     ::
-    |=  {tas/atlas pas/(map partner atlas)}
+    |=  {gop/group pas/(map partner group)}
     ^+  +>
     =/  ner/_remotes                                    ::  per-partner uni
       %-  ~(urn by pas)
-      |=  {p/partner a/atlas}
+      |=  {p/partner g/group}
       =+  o=(~(get by remotes) p)
-      ?~(o a (~(uni by u.o) a))
+      ?~(o g (~(uni by u.o) g))
     =.  ner  (~(uni by remotes) ner)                    ::  fill in the gaps
     ?:  =(remotes ner)  +>.$                            ::  no change
     =.  +>.$
@@ -566,7 +566,7 @@
           (stag 0 dem:ag)
         ==
       ::
-      ++  pore                                          ::<  posture
+      ++  pore                                          ::<  security
         ;~  pose
           (cold %black (jest %channel))
           (cold %white (jest %village))
@@ -946,10 +946,10 @@
       ++  create                                        ::<  %create
         ::>  creates circle {nom} with specified config.
         ::
-        |=  {por/posture nom/knot txt/cord}
+        |=  {sec/security nom/knot txt/cord}
         ^+  ..sh-work
         =.  ..sh-work
-          (sh-act %create nom txt por)
+          (sh-act %create nom txt sec)
         (join [[%& our.bol nom] ~ ~])
       ::
       ++  delete                                        ::<  %delete
@@ -1027,10 +1027,10 @@
         ::
         |=  pas/(set partner)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
-        |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
+        |=  {pon/partner gop/group}  ^-  (unit sole-effect)
         ?.  |(=(~ pas) (~(has in pas) pon))  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr pon) ~]
-        =<  (murn (sort (~(tap by alt)) aor) .)
+        =<  (murn (sort (~(tap by gop)) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         =.  c
           ?.  =(han.c `(scot %p a))  c
@@ -1231,12 +1231,12 @@
     ::>    arms that calculate differences between datasets.
     ::+|
     ::
-    ++  sh-atlas-diff                                   ::<  atlas diff parts
+    ++  sh-group-diff                                   ::<  group diff parts
       ::>  calculates the difference between two presence
       ::>  lists, producing lists of removed, added and
       ::>  changed presences.
       ::
-      |=  {one/atlas two/atlas}
+      |=  {one/group two/group}
       =|  $=  ret
           $:  old/(list (pair ship status))
               new/(list (pair ship status))
@@ -1274,11 +1274,11 @@
       ::>  presence maps, producing a list of removed,
       ::>  added and changed presences maps.
       ::
-      |=  {one/(map partner atlas) two/(map partner atlas)}
+      |=  {one/(map partner group) two/(map partner group)}
       =|  $=  ret
-          $:  old/(list (pair partner atlas))
-              new/(list (pair partner atlas))
-              cha/(list (pair partner atlas))
+          $:  old/(list (pair partner group))
+              new/(list (pair partner group))
+              cha/(list (pair partner group))
           ==
       ^+  ret
       =.  ret
@@ -1398,10 +1398,11 @@
       %+  sh-fact  %txt
       (runt [(sub 13 (lent bun)) '-'] "[{bun}]")
     ::
-    ++  sh-puss                                         ::<  readable posture
-      ::>  renders a security posture.
+    ++  sh-cure                                         ::<  readable security
+      ::>  renders a security kind.
       ::
-      |=  a/posture  ^-  tape
+      |=  a/security
+      ^-  tape
       ?-  a
         $black  "channel"
         $brown  "mailbox"
@@ -1416,7 +1417,7 @@
       ^-  tape
       ['%' (trip pec.sat)]
     ::
-    ++  sh-show-precs                                   ::<  print atlas diff
+    ++  sh-show-precs                                   ::<  print group diff
       ::>  prints presence changes to the cli.
       ::
       |=  $:  pre/tape
@@ -1449,9 +1450,9 @@
     ++  sh-show-permits                                 ::<  show permits
       ::>  prints invite/banish effects to the cli.
       ::
-      |=  {pre/tape por/posture old/(list ship) new/(list ship)}
-      =+  out=?:(?=(?($black $brown) por) "try " "cut ")
-      =+  inn=?:(?=(?($black $brown) por) "ban " "add ")
+      |=  {pre/tape sec/security old/(list ship) new/(list ship)}
+      =+  out=?:(?=(?($black $brown) sec) "try " "cut ")
+      =+  inn=?:(?=(?($black $brown) sec) "ban " "add ")
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old  +>.^$
@@ -1494,7 +1495,7 @@
             (weld (trip inbox) ": ")
           (sh-set-diff src.laz src.loc)
       ?:  !=(sec.con.loc sec.con.laz)
-        =.  +>.$  (sh-note :(weld pre "but " (sh-puss sec.con.loc)))
+        =.  +>.$  (sh-note :(weld pre "but " (sh-cure sec.con.loc)))
         %^    sh-show-permits
             (weld (trip inbox) ": ")
           sec.con.loc
@@ -1523,7 +1524,7 @@
     ++  sh-low-rempe                                    ::<  show remotes
       ::>  prints remote presence changes to the cli.
       ::
-      |=  {old/(map partner atlas) new/(map partner atlas)}
+      |=  {old/(map partner group) new/(map partner group)}
       ?:  (~(has in settings.she) %quiet)
         +>.$
       =+  day=(sh-rempe-diff old new)
@@ -1547,15 +1548,15 @@
               (sh-note (weld "for " (~(pr-show pr p.i.cha.day) ~)))
           =+  yez=(~(got by old) p.i.cha.day)
           %+  sh-show-precs  "--"
-          (sh-atlas-diff yez q.i.cha.day)
+          (sh-group-diff yez q.i.cha.day)
       +>.$
     ::
     ++  sh-low-precs                                    ::<  show presence
       ::>  prints presence changes to the cli.
       ::
-      |=  {old/atlas new/atlas}
+      |=  {old/group new/group}
       ^+  +>
-      =+  dif=(sh-atlas-diff old new)
+      =+  dif=(sh-group-diff old new)
       (sh-show-precs "" dif)
     ::
     ++  sh-low-gram                                     ::<  show telegram
@@ -1924,7 +1925,7 @@
       tan+~[leaf+"# {(trip exp.sep)}"]
       ::
         $fat
-      [%mor $(sep sep.sep) tan+(tr-tors tac.sep) ~]
+      [%mor $(sep sep.sep) tan+(tr-tach tac.sep) ~]
       ::
         $inv
       :-  %tan
@@ -1953,10 +1954,10 @@
       ==
     ==
   ::
-  ++  tr-tors                                           ::<  attachment
+  ++  tr-tach                                           ::<  attachment
     ::>  renders an attachment.
     ::
-    |=  a/torso
+    |=  a/attache
     ^-  tang
     ?-  -.a
       $name  (welp $(a tac.a) leaf+"={(trip nom.a)}" ~)

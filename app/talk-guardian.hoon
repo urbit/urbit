@@ -47,8 +47,8 @@
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all messages
-          locals/atlas                                  ::<  local presence
-          remotes/(map partner atlas)                   ::<  remote presence
+          locals/group                                  ::<  local presence
+          remotes/(map partner group)                   ::<  remote presence
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
           ::TODO  never gets updated.                   ::
@@ -234,11 +234,11 @@
     ::>  creates our default mailbox and journal.
     ::
     %+  roll
-      ^-  (list {posture knot cord})
+      ^-  (list {security knot cord})
       :~  [%brown (main our.bol) 'default home']
           [%green ~.public 'visible activity']
       ==
-    |=  {{typ/posture nom/knot des/cord} _ta}
+    |=  {{typ/security nom/knot des/cord} _ta}
     %+  ta-action  ost.bol
     [%create nom des typ]
   ::
@@ -310,7 +310,7 @@
     ++  action-create                                   ::<  create story
       ::>  creates a story with the specified parameters.
       ::
-      |=  {nom/knot des/cord typ/posture}
+      |=  {nom/knot des/cord typ/security}
       ^+  ..ta-action
       ?.  (~(has in stories) nom)
         (ta-config nom [[%& our.bol nom] ~ ~] des [typ ~])
@@ -483,7 +483,7 @@
       ::TODO?  or (so-sauce ost.bol [%quit ~]~) ?
     =^  who  +>.$  (ta-human her)
     ::  send current data to bring her up to date.
-    =.  soy  (so-report-cabal:soy ost.bol ~ ~)
+    =.  soy  (so-report-lobby:soy ost.bol ~ ~)
     =.  soy  (so-report-group:soy ost.bol ~ ~)
     =.  soy  (so-start:soy her t.pax)                   ::<  also adds story sub
     =.  soy  (so-notify:soy her %hear who)              ::<  add her status
@@ -892,13 +892,13 @@
       ::>  send local and remote presences in a report.
       ::
       |=  bos/(set bone)
-      (so-report bos %group locals so-remotes)
+      (so-report bos %crowd locals so-remotes)
     ::
-    ++  so-report-cabal                                 ::<  config update
+    ++  so-report-lobby                                 ::<  config update
       ::>  send local and remote configs in a report.
       ::
       |=  bos/(set bone)
-      (so-report bos %cabal shape mirrors)
+      (so-report bos %lobby shape mirrors)
     ::
     ::>  ||
     ::>  ||  %data
@@ -936,11 +936,11 @@
       ::>  stories.
       ::
       %-  ~(urn by remotes)                             ::  XX performance
-      |=  {pan/partner atl/atlas}
-      ^-  atlas
-      ?.  &(?=($& -.pan) =(our.bol hos.p.pan))  atl
+      |=  {pan/partner gop/group}
+      ^-  group
+      ?.  &(?=($& -.pan) =(our.bol hos.p.pan))  gop
       =+  soy=(~(get by stories) nom.p.pan)
-      ?~  soy  atl
+      ?~  soy  gop
       locals.u.soy
     ::
     ::>  ||
@@ -963,12 +963,12 @@
           " %"  (scow %tas -.ret)
         ==
       ?-  -.ret
-        $cabal  (so-cabal cir +.ret)
-        $group  (so-remind [%& cir] +.ret)
+        $lobby  (so-lobby cir +.ret)
+        $crowd  (so-remind [%& cir] +.ret)
         $grams  (so-lesson gaz.ret)
       ==
     ::
-    ++  so-cabal                                        ::<  update config
+    ++  so-lobby                                        ::<  update config
       ::>  add circle's config to our remote config map.
       ::
       ::TODO  when do we care about rem?
@@ -978,14 +978,14 @@
       =.  mirrors  (~(put by mirrors) cir con)
       ?:  =(mirrors old)  +>.$
       =.  +>.$  (so-inform %confs `shape (strap cir `con))
-      (so-report-cabal so-followers)
+      (so-report-lobby so-followers)
     ::
     ++  so-remind                                       ::<  remote presence
-      ::>  adds tay's loc to our remote presence map,
-      ::>  after merging with rem.
+      ::>  adds {tay}'s {loc} to our remote presence map,
+      ::>  after merging with {rem}.
       ::>  if this changes anything, send a report.
       ::
-      |=  {pan/partner loc/atlas rem/(map partner atlas)}
+      |=  {pan/partner loc/group rem/(map partner group)}
       =.  rem  (~(del by rem) %& our.bol nom)           ::<  superseded by local
       =/  buk  (~(uni by remotes) rem)
       =.  buk  (~(put by buk) pan loc)
@@ -994,7 +994,7 @@
         %^  so-inform  %precs  ~
         ::>  per-partner diff.
         %-  ~(urn by buk)
-        |=  {p/partner a/atlas}
+        |=  {p/partner a/group}
         =+  o=(~(get by remotes) p)
         ?~(o a (~(dif in a) u.o))
       (so-report-group(remotes buk) so-followers)
@@ -1006,7 +1006,7 @@
     ::+|
     ::
     ++  so-reform                                       ::<  reconfigure
-      ::>  changes the config of this story and notify::
+      ::>  changes the config of this story and notify
       ::>  our followers.
       ::>  subscribes to new sources, unsubs from removed
       ::>  ones.
@@ -1021,7 +1021,7 @@
       =.  +>.$  (so-acquire p.dif)
       =.  +>.$  (so-abjure q.dif)
       =.  shape  cof
-      (so-report-cabal so-followers)
+      (so-report-lobby so-followers)
     ::
     ++  so-reform-gone                                  ::<  delete story
       ::>  deletes this story. removes it from {stories}
@@ -1029,7 +1029,7 @@
       ::
       =.  stories  (~(del by stories) nom)
       =.  .  (so-inform %confs ~ ~)
-      =.  .  (so-report-cabal so-followers)
+      =.  .  (so-report-lobby so-followers)
       (so-abjure (~(tap in src.shape)))
     ::
     ++  so-notify                                       ::<  local presence
@@ -1106,7 +1106,7 @@
       ?.  (~(has in src.shape) pan)  +>
       =.  src.shape  (~(del in src.shape) pan)
       =.  +>  (so-inform %confs `shape ~)
-      (so-report-cabal so-followers)
+      (so-report-lobby so-followers)
     ::
     ++  so-start                                        ::<  subscribe follower
       ::>  called upon subscribe. deduces the range of
