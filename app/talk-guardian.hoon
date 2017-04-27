@@ -81,8 +81,8 @@
           {$quit $~}                                    ::
       ==                                                ::
     ++  weir                                            ::>  parsed wire
-      $%  {$repeat p/@ud q/@p r/knot}                   ::<  messaging wire
-          {$friend p/knot q/circle}                     ::<  subscription wire
+      $%  {$repeat num/@ud hos/@p nom/knot}             ::<  messaging wire
+          {$friend nom/knot cir/circle}                 ::<  subscription wire
       ==                                                ::
     --
 ::
@@ -1389,7 +1389,7 @@
               {(list move) _.}
       ==
   =+  wer=(etch wir)
-  ?>(?=($friend -.wer) (fun p.wer q.wer))
+  ?>(?=($friend -.wer) (fun nom.wer cir.wer))
 ::
 ++  etch-repeat                                         ::<  parse /repeat wire
   ::>  parses a /repeat wire, call gate with the result.
@@ -1400,7 +1400,7 @@
               {(list move) _.}
       ==
   =+  wer=(etch wir)
-  ?>(?=($repeat -.wer) (fun p.wer q.wer r.wer))
+  ?>(?=($repeat -.wer) (fun num.wer hos.wer nom.wer))
 ::
 ::>  ||
 ::>  ||  %poke-events
