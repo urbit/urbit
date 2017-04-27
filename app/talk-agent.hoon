@@ -28,7 +28,7 @@
     ::>    data structures
     ::
     |%
-    ++  chattel                                         ::>  reader state
+    ++  state                                           ::>  reader state
       $:  ::  messaging state                           ::
           count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all history
@@ -100,12 +100,12 @@
 ::>  ||
 ::>    functional cores and arms.
 ::
-|_  {bol/bowl chattel}
+|_  {bol/bowl state}
 ::
 ++  prep                                                ::<  prepare state
   ::>  adapts state.
   ::
-  |=  old/(unit chattel)
+  |=  old/(unit state)
   ^-  (quip move ..prep)
   ?~  old
     ta-done:ta-init:ta

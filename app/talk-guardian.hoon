@@ -35,7 +35,7 @@
     ::>    data structures
     ::
     |%
-    ++  house                                           ::>  broker state
+    ++  state                                           ::>  broker state
       $:  stories/(map knot story)                      ::<  convercirions
           readers/(map bone (set knot))                 ::<  our message readers
           outbox/(pair @ud (map @ud thought))           ::<  urbit outbox
@@ -91,12 +91,12 @@
 ::>  ||
 ::>    functional cores and arms.
 ::
-|_  {bol/bowl house}
+|_  {bol/bowl state}
 ::
 ++  prep                                                ::<  prepare state
   ::>  adapts state.
   ::
-  |=  old/(unit house)
+  |=  old/(unit state)
   ^-  (quip move ..prep)
   ?~  old
     ta-done:ta-init:ta
