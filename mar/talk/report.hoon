@@ -86,7 +86,7 @@
         $lin  (jobe txt+[%s msg.a] say+[%b pat.a] ~)
         $url  (joba txt+[%s (crip (earf url.a))])
         $exp  (joba txt+[%s exp.a])
-        $fat  (jobe tor+(tors tac.a) taf+$(a sep.a) ~)
+        $fat  (jobe tor+(tach tac.a) taf+$(a sep.a) ~)
         $mor  a+(turn ses.a spec)
         $app  (jobe txt+[%s msg.a] src+[%s app.a] ~)
         $api
@@ -102,8 +102,8 @@
         ::  %inv  (jobe ship+(jope p.a) party+[%s q.a] ~)
       ==
     ::
-    ++  tors
-      |=  a/torso
+    ++  tach
+      |=  a/attache
       %+  joba  -.a
       ?-  -.a
         $text  [%s (role +.a)]
