@@ -11,7 +11,7 @@
 ::TODO  we can't do away with the default mailbox because we need it for things
 ::      like invite notifications etc. can we do better than request that apps
 ::      don't use it frivolously?
-::TODO  federation stuff.
+::
 ::TODO  ".. the importance of the CQRS pattern (command-query separation) behind
 ::      Urbit's separation of %poke and %peer. Pokes (messages) are one-way
 ::      commands, not queries. Peers (subscriptions) have no effect on the
@@ -21,7 +21,7 @@
 ::TODO  crash on pokes/peers we do not expect
 ::TODO  keep both a folks and nicks maps. (actual profiles and local nicknames.)
 ::
-/?    310                                               ::<  hoon version
+/?    151                                               ::<  hoon version
 /-    talk                                              ::<  structures
 /+    talk, time-to-id                                  ::<  libraries
 /=    seed  /~  !>(.)
@@ -252,7 +252,31 @@
       ::>  to verify and distribute messages.
         $review
       (ta-think | src +.cod)
+      ::>  %burden commands ask us to add the sender as a
+      ::>  federator for the specified story, taking the
+      ::>  state it sent into account.
+        $burden
+      (ta-burden src +.cod)
+      ::>  %relief commands prompt us to relieve the
+      ::>  specified federators of their duty.
+        $relief
+      (ta-relieve src +.cod)
     ==
+  ::
+  ++  ta-burden                                         ::<  accept federator
+    ::>  adds {src} as a federator to story {nom},
+    ::>  integrating its state into the story.
+    ::
+    |=  {src/ship nom/knot cof/lobby pes/crowd gaz/(list telegram)}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-burden:sor src cof pes gaz)
+  ::
+  ++  ta-relieve                                        ::<  remove federator
+    ::>  removes {who} as federators from story {nom}.
+    ::
+    |=  {src/ship nom/knot who/(set ship)}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-relieve:sor src who)
   ::
   ++  ta-action                                         ::<  apply reader action
     ::>  performs action sent by a reader.
@@ -280,6 +304,8 @@
         $depict  (action-depict +.act)
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
+        $enlist  (action-enlist +.act)
+        $burden  (action-burden +.act)
         ::  messaging
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
@@ -313,7 +339,12 @@
       |=  {nom/knot des/cord typ/security}
       ^+  ..ta-action
       ?.  (~(has in stories) nom)
-        (ta-config nom [[%& our.bol nom] ~ ~] des [typ ~])
+        %+  ta-config  nom
+        :*  [[%& our.bol nom] ~ ~]
+            des
+            [typ ~]
+            [[our.bol ~ ~] [our.bol ~ ~]]
+        ==
       (ta-react red %fail (crip "{(trip nom)}: already exists") `act)
     ::
     ++  action-source                                   ::<  un/sub p to/from r
@@ -359,6 +390,52 @@
           [[%& our.bol nom] ~ ~]
         [%lin | u.mes]~
       (ta-unconfig nom)
+    ::
+    ++  action-enlist                                   ::<  dis/allow federation
+      ::>  adds {sis} to story {nom}'s list of allowed
+      ::>  federators.
+      ::
+      |=  {nom/knot fed/? sis/(set ship)}
+      ^+  ..ta-action
+      %-  (affect nom)  |=  {sor/_so soy/story}
+      ::TODO  maybe so-enlist, with message note and everything
+      =.  may.fed.shape.soy
+        %.  sis
+        ?:  fed
+          ~(uni in may.fed.shape.soy)
+        ~(dif in may.fed.shape.soy)
+      (ta-config nom shape.soy)
+    ::
+    ++  action-burden                                   ::<  help federate
+      ::>  starts federating the specified circle. create
+      ::>  it locally if it doesn't yet exist.
+      ::
+      |=  {hos/ship nom/knot}
+      ^+  ..ta-action
+      ::  update federation config.
+      =+  soy=(fall (~(get by stories) nom) *story)
+      =.  may.fed.shape.soy
+        (~(put in may.fed.shape.soy) hos)
+      =.  fes.fed.shape.soy
+        (~(put in fes.fed.shape.soy) hos)
+      =.  src.shape.soy
+        (~(put in src.shape.soy) [%& hos nom])
+      =.  ..ta-action
+        (ta-config nom shape.soy)
+      ::  send %burden command with story's current state.
+      %-  ta-emit
+      :*  ost.bol
+          %poke
+          /burden
+          [hos %talk-guardian]
+          :*  %talk-command
+              %burden
+              nom
+              [shape.soy mirrors.soy]
+              [locals.soy remotes.soy]
+              grams.soy
+          ==
+      ==
     ::
     ::>  ||  %messaging
     ::+|
@@ -943,11 +1020,100 @@
       ?~  soy  gop
       locals.u.soy
     ::
+    ++  so-right                                        ::<  is federator?
+      ::>  checks whether partner {pan} has authority
+      ::>  over this story.
+      ::
+      |=  pan/partner
+      ?&  ?=($& -.pan)
+          =(nom nom.p.pan)
+          (~(has in fes.fed.shape) hos.p.pan)
+      ==
+    ::
     ::>  ||
     ::>  ||  %interaction-events
     ::>  ||
     ::>    arms that apply events we received.
     ::+|
+    ::
+    ++  so-burden                                       ::<  accept federator
+      ::>  if {src} is allowed to, have it federate this
+      ::>  story.
+      ::>  starts by assimilating {src}'s state into our
+      ::>  own (giving priority to local state), removing
+      ::>  redundant data, then sending updated state to
+      ::>  all followers.
+      ::
+      |=  {src/ship cof/lobby pes/crowd gaz/(list telegram)}
+      ^+  +>
+      ::  continue if permitted and not yet done.
+      ?.  (~(has in may.fed.shape) src)  +>
+      ?:  (~(has in fes.fed.shape) src)  +>
+      ::  assimilate config.
+      =.  +>
+        =+  nec=shape
+        ::  adopt security list if they're similar.
+        =.  ses.con.nec  ::TODO  =?
+          ?.  .=  ?=(?($white $green) sec.con.nec)
+                  ?=(?($white $green) sec.con.loc.cof)
+            ses.con.nec
+          (~(uni in ses.con.nec) ses.con.loc.cof)
+        =.  fes.fed.nec
+          (~(put in fes.fed.nec) src)
+        =.  src.nec
+          (~(put in src.nec) [%& src nom])
+        (so-reform nec)
+      ::  assimilate presence and remotes.
+      =.  locals   (~(uni by loc.pes) locals)
+      =.  remotes  (~(uni by rem.pes) remotes)
+      =.  mirrors  (~(uni by rem.cof) mirrors)
+      ::  remove redundant remotes.
+      =.  remotes
+        %-  ~(gas by *_remotes)
+        %+  murn  (~(tap by remotes))
+        |=  {p/partner g/group}
+        ^-  (unit {partner group})
+        ?:  ?&  ?=($& -.p)
+                =(nom.p.p nom)
+                (~(has in fes.fed.shape) hos.p.p)
+            ==
+          ~
+        `[p g]
+      ::  remove redundant mirrors.
+      =.  mirrors
+        %-  ~(gas by *_mirrors)
+        %+  murn  (~(tap by mirrors))
+        |=  {c/circle f/config}
+        ^-  (unit {circle config})
+        ?:  ?&  =(nom.c nom)
+                (~(has in fes.fed.shape) hos.c)
+            ==
+          ~
+        `[c f]
+      ::  send updates to followers.
+      =.  +>.$  (so-report-group so-followers)
+      =.  +>.$  (so-report-lobby so-followers)
+      ::  finally, learn all grams.
+      (so-lesson gaz)
+    ::
+    ++  so-relieve                                      ::<  remove federator
+      ::>  if {src} is allowed to, removes {who} as
+      ::>  federators from this story.
+      ::
+      |=  {src/ship who/(set ship)}
+      ^+  +>
+      ?.  (~(has in fes.fed.shape) src)  +>
+      =+  nes=shape
+      =.  fes.fed.nes
+        (~(dif in fes.fed.nes) who)
+      =.  src.nes
+        %-  ~(dif in src.nes)
+        ^-  (set partner)
+        %-  ~(run in who)
+        |=(s/ship [%& s nom])
+      ?:  =(nes shape)  +>.$
+      ::TODO  propogate %relief to other federators.
+      (so-reform nes)
     ::
     ++  so-diff-report                                  ::<  process update
       ::>  process a talk report from {cir}.
@@ -955,12 +1121,14 @@
       ::
       |=  {cir/circle ret/report}
       ^+  +>
+      ?:  =(cir [our.bol nom])  +>
       ?.  (~(has in src.shape) [%& cir])
         %-  so-note
         %-  crip  ;:  weld
           "so-diff unexpected "
           (scow %p hos.cir)  "/"  (trip nom.cir)
           " %"  (scow %tas -.ret)
+          " in "  (scow %tas nom)
         ==
       ?-  -.ret
         $lobby  (so-lobby cir +.ret)
@@ -974,6 +1142,24 @@
       ::TODO  when do we care about rem?
       |=  {cir/circle con/config rem/(map circle config)}
       ^+  +>
+      ::  if they're a federator, set new shape.
+      =.  +>  ::TODO  =?
+        ?.  ?&  =(nom nom.cir)
+                (~(has in fes.fed.shape) hos.cir)
+            ==
+          +>
+        ::  to prevent removal of federators during initial setup, only allow
+        ::  federator deletion through explicit action.
+        =.  fes.fed.con  (~(uni in fes.fed.con) fes.fed.shape)
+        =.  may.fed.con  (~(uni in may.fed.con) may.fed.shape)
+        =.  src.con  ::TODO  is this needed?
+          %-  ~(uni in src.con)
+          ^-  (set partner)
+          %-  ~(run in fes.fed.con)
+          |=  s/ship
+          ^-  partner
+          [%& s nom]
+        (so-reform con)
       =+  old=mirrors
       =.  mirrors  (~(put by mirrors) cir con)
       ?:  =(mirrors old)  +>.$
@@ -986,18 +1172,36 @@
       ::>  if this changes anything, send a report.
       ::
       |=  {pan/partner loc/group rem/(map partner group)}
-      =.  rem  (~(del by rem) %& our.bol nom)           ::<  superseded by local
+      ::  if they're a federator, set new locals.
       =/  buk  (~(uni by remotes) rem)
       =.  buk  (~(put by buk) pan loc)
-      ?:  =(buk remotes)  +>.$
-      =.  +>.$
-        %^  so-inform  %precs  ~
-        ::>  per-partner diff.
-        %-  ~(urn by buk)
+      ::  seperate federation presences and true remotes.
+      =/  nep/crowd
+        %+  roll  (~(tap by buk))
+        |=  {{p/partner g/group} c/crowd}
+        ?:  (so-right p)
+          [(~(uni by loc.c) g) rem.c]
+        [loc.c (~(put by rem.c) p g)]
+      ::  ensure we have the latest.
+      =.  loc.nep
+        ?.  (so-right pan)  (~(uni by locals) loc.nep)
+        (~(uni by (~(uni by locals) loc.nep)) loc)
+      ::  if nothing changed, we're done.
+      ?:  ?&  =(loc.nep locals)
+              =(rem.nep remotes)
+          ==
+        +>.$
+      ::  reader update.
+      =.  +>.$  ::TODO  =?
+        %^  so-inform  %precs
+        (~(dif in loc.nep) locals)  ::  locals
+        ::  per-partner diff for remotes.
+        %-  ~(urn by rem.nep)
         |=  {p/partner a/group}
         =+  o=(~(get by remotes) p)
         ?~(o a (~(dif in a) u.o))
-      (so-report-group(remotes buk) so-followers)
+      ::  subscriber update.
+      (so-report-group(locals loc.nep, remotes rem.nep) so-followers)
     ::
     ::>  ||
     ::>  ||  %changes
@@ -1012,6 +1216,7 @@
       ::>  ones.
       ::
       |=  cof/config
+      ?:  =(cof shape)  +>
       =.  +>.$  (so-inform %confs `cof ~)
       =/  dif/(pair (list partner) (list partner))
           =+  old=`(list partner)`(~(tap in src.shape) ~)

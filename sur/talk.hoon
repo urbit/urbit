@@ -16,6 +16,8 @@
       {$depict nom/knot des/cord}                       ::<  change description
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
       {$delete nom/knot ano/(unit cord)}                ::<  delete + announce
+      {$enlist nom/knot fed/? sis/(set ship)}           ::<  dis/allow federation
+      {$burden circle}                                  ::<  help federate
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::<  post exact
       {$phrase aud/(set partner) ses/(list speech)}     ::<  post easy
@@ -52,6 +54,13 @@
 ::
 ++  command                                             ::>  effect on story
   $%  {$review tos/(list thought)}                      ::<  deliver
+      $:  $burden                                       ::<  starting fed state
+          nom/knot
+          cof/lobby
+          pes/crowd
+          gaz/(list telegram)
+      ==
+      {$relief nom/knot who/(set ship)}                 ::<  federation ended
   ==                                                    ::
 ++  report                                              ::>  update
   $%  {$lobby cab/lobby}                                ::<  config neighborhood
@@ -76,6 +85,7 @@
   $:  src/(set partner)                                 ::<  pulls from
       cap/cord                                          ::<  description
       con/control                                       ::<  restrictions
+      fed/federal                                       ::<  federators
   ==                                                    ::
 ++  control    {sec/security ses/(set ship)}            ::<  access control
 ++  security                                            ::>  security kind
@@ -84,6 +94,7 @@
       $green                                            ::<  journal, author list
       $brown                                            ::<  mailbox, our r, bl w
   ==                                                    ::
+++  federal    {may/(set ship) fes/(set ship)}          ::<  federation control
 ::  participant metadata.                               ::
 ++  crowd      {loc/group rem/(map partner group)}      ::<  our & srcs presences
 ++  group      (map ship status)                        ::<  presence map

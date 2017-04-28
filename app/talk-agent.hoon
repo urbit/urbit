@@ -14,7 +14,7 @@
 ::>  since that's the only thing the reader ever
 ::>  subscribes to.
 ::
-/?    310                                               ::<  hoon version
+/?    151                                               ::<  hoon version
 /-    talk, sole                                        ::<  structures
 /+    talk, sole                                        ::<  libraries
 /=    seed  /~  !>(.)
@@ -74,6 +74,9 @@
           {$source p/knot q/(set partner)}              ::<  add source
           {$invite p/knot q/(set ship)}                 ::<  give permission
           {$banish p/knot q/(set ship)}                 ::<  deny permission
+          {$enlist p/knot q/(set ship)}                 ::<  allow federation
+          {$retire p/knot q/(set ship)}                 ::<  deny federation
+          {$burden p/circle}                            ::<  help federate
           ::  messaging                                 ::
           {$say p/(list speech)}                        ::<  send message
           {$eval p/cord q/twig}                         ::<  send #-message
@@ -629,6 +632,12 @@
           ::
           ;~((glue ace) (perk %banish ~) stat shiz)
           ::
+          ;~((glue ace) (perk %enlist ~) stat shiz)
+          ::
+          ;~((glue ace) (perk %retire ~) stat shiz)
+          ::
+          ;~((glue ace) (perk %burden ~) stan)
+          ::
           ::  displaying info
           ::
           ;~(plug (perk %who ~) ;~(pose ;~(pfix ace para) (easy ~)))
@@ -817,6 +826,9 @@
           $source  (source +.job)
           $invite  (invite +.job)
           $banish  (banish +.job)
+          $enlist  (enlist +.job)
+          $retire  (retire +.job)
+          $burden  (burden +.job)
           ::  messaging
           $say     (say +.job)
           $eval    (eval +.job)
@@ -987,6 +999,27 @@
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom | sis)
+      ::
+      ++  enlist
+        ::>
+        ::
+        |=  {nom/knot sis/(set ship)}
+        ^+  ..sh-work
+        (sh-act %enlist nom & sis)
+      ::
+      ++  retire
+        ::>
+        ::
+        |=  {nom/knot sis/(set ship)}
+        ^+  ..sh-work
+        (sh-act %enlist nom | sis)
+      ::
+      ++  burden
+        ::>
+        ::
+        |=  cir/circle
+        ^+  ..sh-work
+        (sh-act %burden cir)
       ::
       ::>  ||
       ::>  ||  %messaging
