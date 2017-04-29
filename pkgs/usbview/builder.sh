@@ -21,7 +21,7 @@ $host-gcc -mwindows -std=gnu99 -O2 \
   -DNTDDI_VERSION=0x06020000 -D_WIN32_WINNT=0x0602 \
   -DSTRSAFE_NO_DEPRECATE -Doffsetof=__builtin_offsetof \
   ../usbview/*.c rc.o \
-  -lcomctl32 -lcomdlg32 -lsetupapi -lshell32 -lshlwapi -lole32 -lgdi32 -luuid \
+  -lcomctl32 -lcomdlg32 -lsetupapi -lshell32 -lshlwapi -lole32 -lgdi32 \
   -o usbview.exe
 
 mkdir -p $out/bin $out/license
