@@ -3,8 +3,6 @@
 let
   host = "${arch}-w64-mingw32";
 
-  host_as_var = nixpkgs.lib.replaceChars ["-"] ["_"] (nixpkgs.lib.toUpper host);
-
   binutils = import ./binutils { inherit nixpkgs host; };
 
   mingw-w64_info = rec {
