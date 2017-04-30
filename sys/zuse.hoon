@@ -39,7 +39,8 @@
 ++  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
   |*  vase/mold                                         ::  vase or maze
-  $-  $:  lyc/(unit (set ship))                         ::  leakset
+  $-  $:  ref/*                                         ::  reference span
+          lyc/(unit (set ship))                         ::  leakset
           car/term                                      ::  perspective
           bem/beam                                      ::  path
       ==                                                ::
@@ -4151,6 +4152,30 @@
   ::                                                    ::::
 ++  wired  ^?
   |%
+  ::
+  ++  auld                                              ::  ++auld:wired
+    |=  sky/roof                                        ::  old style namespace
+    ^-  slyt
+    |=  {ref/* raw/*}
+    =+  pux=((soft path) raw)
+    ?~  pux  ~
+    ?.  ?=({@ @ @ @ *} u.pux)  ~
+    =+  :*  hyr=(slay i.u.pux)
+            fal=(slay i.t.u.pux)
+            dyc=(slay i.t.t.u.pux)
+            ved=(slay i.t.t.t.u.pux)
+            tyl=t.t.t.t.u.pux
+        ==
+    ?.  ?=({$~ $$ $tas @} hyr)  ~
+    ?.  ?=({$~ $$ $p @} fal)  ~
+    ?.  ?=({$~ $$ $tas @} dyc)  ~
+    ?.  ?=(^ ved)  ~
+    =+  ron=q.p.u.hyr
+    =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
+    =+  bop=(sky ref ~ ron bed)
+    ?~  bop  ~
+    ?~  u.bop  [~ ~]
+    [~ ~ +.q.u.u.bop]
   ::                                                    ::  ++dray:wired
   ++  dray                                              ::  load tuple in path
     ::
