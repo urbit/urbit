@@ -1320,4 +1320,74 @@
     mo-abet:(mo-cyst:mow t.t.tea q.hin)
   ?>  ?=($use i.t.tea)
   mo-abet:(mo-cook:mow t.t.tea hin)
+::
+++  neon
+  |=  our/ship
+  ^-  (vane task:able gift:able sign-arvo note-arvo axle axle)
+  =|  axle
+  =*  lex  -
+  |%
+  ++  load  |=(axle +>)
+  ++  stay  `axle`+<
+  ++  plow
+    =|  $:  now/@da
+            eny/@e
+            sky/roof
+        ==
+    |%
+    ++  doze  ~
+    ++  peek
+      |=  $:  lyc/(unit (set ship))
+              car/term
+              bem/beam
+          ==
+      ^-  (unit (unit (cask vase)))
+      =*  who  p.bem
+      ?:  ?&  =(%u car)
+              =(~ s.bem)
+              =([%da now] r.bem)
+              (~(has by pol.all) who)
+              (~(has by bum:(~(got by pol.all) who)) q.bem)
+          ==
+        ``[%null !>(~)]
+      ?.  (~(has by pol.all) who)
+        ~
+      ?.  =([%da now] r.bem)
+        ~
+      ?.  (~(has by bum:(~(got by pol.all) who)) q.bem)
+        [~ ~]
+      ?.  ?=(^ s.bem)
+        ~
+      (mo-peek:(mo-abed:mo who *duct) q.bem high+`who car s.bem)
+    ::
+    ++  spin
+      =|  $:  hen/duct
+              moz/(list (pair duct (wind note-arvo gift:able)))
+          ==
+      |%
+      ++  call  
+        |=  tac/task:able
+        ^+  +>
+        =^  vam  +>
+          ^+  [p=*(list move) q=+>.$]
+          !!
+        +>.$(moz (weld `(list move)`vam moz))
+      ::
+      ++  take  
+        |=  {tea/wire hin/sign-arvo}
+        ^+  +>
+        =^  vam  +>
+          ^+  [p=*(list move) q=+>.$]
+          :~|  [%gall-take tea]
+          ?>  ?=({@ ?($sys $use) *} tea)
+          =+  our=(need (slaw %p i.tea))
+          =+  mow=(mo-abed:mo our hen)
+          ?:  ?=($sys i.t.tea)
+            mo-abet:(mo-cyst:mow t.t.tea q.hin)
+          ?>  ?=($use i.t.tea)
+          mo-abet:(mo-cook:mow t.t.tea hin)
+        +>.$(moz (weld `(list move)`vam moz))
+      --
+    --
+  --
 --
