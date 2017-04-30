@@ -10,14 +10,15 @@ diff -ur devcon-orig/devcon.h devcon/devcon.h
  #include <fcntl.h>
  
 diff -ur devcon-orig/dump.cpp devcon/dump.cpp
---- devcon-orig/dump.cpp	2017-04-03 22:32:04.995677665 -0700
-+++ devcon/dump.cpp	2017-04-03 22:54:09.635677664 -0700
-@@ -407,7 +407,7 @@
+--- devcon-orig/dump.cpp        2017-04-30 07:21:34.058007997 -0700
++++ devcon/dump.cpp     2017-04-30 07:23:19.708007999 -0700
+@@ -407,8 +407,7 @@
      return TRUE;
  }
  
 -
-+__stdcall
- UINT DumpDeviceDriversCallback(_In_ PVOID Context, _In_ UINT Notification, _In_ UINT_PTR Param1, _In_ UINT_PTR Param2)
+-UINT DumpDeviceDriversCallback(_In_ PVOID Context, _In_ UINT Notification, _In_ UINT_PTR Param1, _In_ UINT_PTR Param2)
++UINT CALLBACK DumpDeviceDriversCallback(_In_ PVOID Context, _In_ UINT Notification, _In_ UINT_PTR Param1, _In_ UINT_PTR Param2)
  /*++
  
+ Routine Description:
