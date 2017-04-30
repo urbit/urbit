@@ -1,6 +1,6 @@
 diff -ur devcon-orig/devcon.h devcon/devcon.h
---- devcon-orig/devcon.h	2017-04-03 22:32:04.995677665 -0700
-+++ devcon/devcon.h	2017-04-03 22:49:54.215677665 -0700
+--- devcon-orig/devcon.h	2017-04-30 07:21:34.058007997 -0700
++++ devcon/devcon.h	2017-04-30 07:36:15.028007999 -0700
 @@ -25,6 +25,7 @@
  #include <newdev.h>
  #include <objbase.h>
@@ -10,8 +10,8 @@ diff -ur devcon-orig/devcon.h devcon/devcon.h
  #include <fcntl.h>
  
 diff -ur devcon-orig/dump.cpp devcon/dump.cpp
---- devcon-orig/dump.cpp        2017-04-30 07:21:34.058007997 -0700
-+++ devcon/dump.cpp     2017-04-30 07:23:19.708007999 -0700
+--- devcon-orig/dump.cpp	2017-04-30 07:21:34.058007997 -0700
++++ devcon/dump.cpp	2017-04-30 07:23:19.708007999 -0700
 @@ -407,8 +407,7 @@
      return TRUE;
  }

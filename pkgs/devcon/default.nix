@@ -14,7 +14,5 @@ crossenv.make_derivation rec {
 
   patches = [ ./megapatch.patch ];
 
-  native_inputs = [ crossenv.nixpkgs.dos2unix ];
-
   builder = ./builder.sh;
 }

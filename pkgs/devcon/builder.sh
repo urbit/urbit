@@ -3,7 +3,6 @@ source $setup
 cp --no-preserve=mode -r $src/setup/devcon .
 
 cd devcon
-dos2unix *.h *.cpp
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
