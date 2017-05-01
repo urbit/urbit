@@ -1321,7 +1321,7 @@
   ?>  ?=($use i.t.tea)
   mo-abet:(mo-cook:mow t.t.tea hin)
 ::
-++  neon
+++  neon  !:
   |=  our/ship
   ^-  (vane task:able gift:able sign-arvo note-arvo axle axle)
   =|  axle
@@ -1368,24 +1368,81 @@
       ++  call  
         |=  tac/task:able
         ^+  +>
-        =^  vam  +>
-          ^+  [p=*(list move) q=+>.$]
-          !!
+        =^  vam  ..^^$
+          ^+  [p=*(list move) q=..^^$]
+          ?-    -.tac
+              $conf
+            ?.  (~(has by pol.all) p.p.tac)
+              ~&  [%gall-not-ours p.p.tac]
+              [~ ..^^$]
+            mo-abet:(mo-conf:(mo-abed:mo p.p.tac hen) q.p.tac q.tac)
+          ::
+              $deal
+            =<  mo-abet
+            ?.  (~(has by pol.all) q.p.tac)                   ::  either to us
+              ?>  (~(has by pol.all) p.p.tac)                 ::  or from us
+              (mo-away:(mo-abed:mo p.p.tac hen) q.p.tac q.tac)
+            (mo-come:(mo-abed:mo q.p.tac hen) p.p.tac q.tac)
+          ::
+              $init
+            ::  ~&  [%gall-init p.tac]
+            [~ ..^^$(pol.all (~(put by pol.all) p.tac [hen ~ ~ ~]))]
+          ::
+              $went
+            ?.  (~(has by pol.all) p.p.tac)
+              ~&  [%gall-not-ours p.tac]
+              [~ ..^^$]
+            ?>  ?=({?($k $l $r) @ $~} q.tac)
+            =+  dap=i.t.q.tac
+            =+  our=p.p.tac
+            =+  him=q.p.tac
+            =<  mo-abet
+            (mo-gawp:(mo-abed:mo our hen) him dap s.tac)
+          ::
+              $west
+            ?.  (~(has by pol.all) p.p.tac)
+              ~&  [%gall-not-ours p.tac]
+              [~ ..^^$]
+            ?>  ?=({?($k $l $r) @ $~} q.tac)
+            =+  dap=i.t.q.tac
+            =+  our=p.p.tac
+            =+  him=q.p.tac
+            =+  mes=((hard {@ud rook}) s.tac)
+            =<  mo-abet
+            (mo-gawk:(mo-abed:mo our hen) him dap mes)
+          ::
+              $wegh
+            :_  ..^^$  :_  ~
+            :^  hen  %give  %mass
+            :-  %gall
+            :-  %|
+            %+  turn  (~(tap by pol.all))     :: XX single-home
+            |=  {our/@ mast}  ^-  mass
+            :+  (scot %p our)  %|
+            :~  :-  %foreign 
+                  [%& sap]
+                :-  %blocked 
+                  [%| (sort (~(tap by (~(run by wub) |=(sofa [%& +<])))) aor)]
+                :-  %active
+                  [%| (sort (~(tap by (~(run by bum) |=(seat [%& +<])))) aor)]
+            ==
+          ==
         +>.$(moz (weld `(list move)`vam moz))
       ::
       ++  take  
         |=  {tea/wire hin/sign-arvo}
         ^+  +>
-        =^  vam  +>
-          ^+  [p=*(list move) q=+>.$]
-          :~|  [%gall-take tea]
+        =^  vam  ..^^$
+          ^+  [p=*(list move) q=..^^$]
+          ~|  [%gall-take tea]
           ?>  ?=({@ ?($sys $use) *} tea)
           =+  our=(need (slaw %p i.tea))
           =+  mow=(mo-abed:mo our hen)
           ?:  ?=($sys i.t.tea)
-            mo-abet:(mo-cyst:mow t.t.tea q.hin)
+            mo-abet:(mo-cyst:mow t.t.tea hin)
           ?>  ?=($use i.t.tea)
-          mo-abet:(mo-cook:mow t.t.tea hin)
+          =+  vax=!>(hin)
+          mo-abet:(mo-cook:mow t.t.tea -.vax hin)
         +>.$(moz (weld `(list move)`vam moz))
       --
     --
