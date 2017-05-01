@@ -30,7 +30,7 @@
   ==                                                    ::
 ++  reaction                                            ::>  user information
   $:  res/?($info $fail)                                ::<  result
-      wat/@t                                            ::<  explain
+      wat/cord                                          ::<  explain
       why/(unit action)                                 ::<  cause
   ==                                                    ::
 ++  lowdown                                             ::>  new/changed state
@@ -77,7 +77,7 @@
 ++  partner    (each circle passport)                   ::<  message target
 ++  circle     {hos/ship nom/knot}                      ::<  native target
 ++  passport                                            ::>  foreign target
-  $%  {$twitter p/@t}                                   ::<  twitter handle
+  $%  {$twitter p/cord}                                 ::<  twitter handle
   ==                                                    ::
 ::  circle configurations.                              ::
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
@@ -106,8 +106,8 @@
       $talk                                             ::<  typing
   ==                                                    ::
 ++  human                                               ::>  human identifier
-  $:  tru/(unit (trel @t (unit @t) @t))                 ::<TODO  unused true name
-      han/(unit @t)                                     ::<  handle
+  $:  tru/(unit (trel cord (unit cord) cord))           ::<TODO  unused true name
+      han/(unit cord)                                   ::<  handle
   ==                                                    ::
 ::
 ::>  ||
@@ -121,29 +121,29 @@
 ++  statement  {wen/@da boq/bouquet sep/speech}         ::<  when this
 ++  speech                                              ::>  narrative action
   $%  {$non $~}                                         ::<  no content (yo)
-      {$lin pat/? msg/@t}                               ::<  no/@ text line
+      {$lin pat/? msg/cord}                             ::<  no/@ text line
       {$ire tos/serial sep/speech}                      ::<  in-reply-to
       {$url url/purf}                                   ::<  parsed url
-      {$exp exp/@t}                                     ::<  hoon line
+      {$exp exp/cord}                                   ::<  hoon line
       {$fat tac/attache sep/speech}                     ::<  attachment
-      {$lan nom/knot msg/@t}                            ::<  local announce
+      {$lan nom/knot msg/cord}                          ::<  local announce
       {$inv inv/? cir/circle}                           ::<  inv/ban for circle
       {$mor ses/(list speech)}                          ::<  multiplex
-      {$ext nom/@tas dat/*}                             ::<  extended action
-      {$app app/@tas msg/@t}                            ::<  app message
+      {$ext nom/term dat/*}                             ::<  extended action
+      {$app app/term msg/cord}                          ::<  app message
       $:  $api                                          ::<  api message
-          service/@tas                                  ::<  service name
-          id/@t                                         ::<  id on the service
+          service/term                                  ::<  service name
+          id/cord                                       ::<  id on the service
           id-url/purf                                   ::<  link to id
-          summary/@t                                    ::<  summary of event
-          body/@t                                       ::<  body of event
+          summary/cord                                  ::<  summary of event
+          body/cord                                     ::<  body of event
           url/purf                                      ::<  link to event
           meta/json                                     ::<  other data for web
       ==                                                ::
   ==                                                    ::
 ++  attache                                             ::>  attachment
-  $%  {$name nom/@t tac/attache}                        ::<  named attachment
-      {$text (list @t)}                                 ::<  text lines
+  $%  {$name nom/cord tac/attache}                      ::<  named attachment
+      {$text (list cord)}                               ::<  text lines
       {$tank (list tank)}                               ::<  tank list
   ==                                                    ::
 ::

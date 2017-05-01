@@ -1407,7 +1407,7 @@
       %+  sh-fact  %pro
       :+  &  %talk-line
       ^-  tape
-      =/  rew/(pair (pair @t @t) (set partner))
+      =/  rew/(pair (pair cord cord) (set partner))
           [['[' ']'] active.she]
       =+  cha=(~(get by nik) q.rew)
       ?^  cha  ~[u.cha ' ']

@@ -74,14 +74,14 @@
       ==                                                ::
     ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::
-          {$info wire @p @tas nori}                     ::
+          {$info wire ship term nori}                   ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
           {$pull wire dock $~}                          ::
           {$quit $~}                                    ::
       ==                                                ::
     ++  weir                                            ::>  parsed wire
-      $%  {$repeat num/@ud hos/@p nom/knot}             ::<  messaging wire
+      $%  {$repeat num/@ud hos/ship nom/knot}           ::<  messaging wire
           {$friend nom/knot cir/circle}                 ::<  subscription wire
       ==                                                ::
     --
