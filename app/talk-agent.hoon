@@ -517,10 +517,10 @@
           ==
         ==
       ::
-      ++  stat                                          ::<  local circle
+      ++  cire                                          ::<  local circle
         ;~(pfix cen sym)
       ::
-      ++  stan                                          ::<  circle
+      ++  circ                                          ::<  circle
         ;~  pose
           (cold [our.bol inbox] col)
           ;~(pfix cen (stag our.bol sym))
@@ -537,7 +537,7 @@
       ::
       ++  parn                                          ::<  partner
         ;~  pose
-          (stag %& stan)
+          (stag %& circ)
           (stag %| pasp)
         ==
       ::
@@ -612,7 +612,7 @@
           ::
           ;~  (glue ace)  (perk %create ~)
             pore
-            stat
+            cire
             qut
           ==
           ::
@@ -624,19 +624,19 @@
             ==
           ==
           ::
-          ;~((glue ace) (perk %depict ~) stat qut)
+          ;~((glue ace) (perk %depict ~) cire qut)
           ::
-          ;~((glue ace) (perk %source ~) stat parz)
+          ;~((glue ace) (perk %source ~) cire parz)
           ::
-          ;~((glue ace) (perk %invite ~) stat shiz)
+          ;~((glue ace) (perk %invite ~) cire shiz)
           ::
-          ;~((glue ace) (perk %banish ~) stat shiz)
+          ;~((glue ace) (perk %banish ~) cire shiz)
           ::
-          ;~((glue ace) (perk %enlist ~) stat shiz)
+          ;~((glue ace) (perk %enlist ~) cire shiz)
           ::
-          ;~((glue ace) (perk %retire ~) stat shiz)
+          ;~((glue ace) (perk %retire ~) cire shiz)
           ::
-          ;~((glue ace) (perk %burden ~) stan)
+          ;~((glue ace) (perk %burden ~) circ)
           ::
           ::  displaying info
           ::
