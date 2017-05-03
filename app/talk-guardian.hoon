@@ -347,18 +347,19 @@
         ==
       (ta-react red %fail (crip "{(trip nom)}: already exists") `act)
     ::
-    ++  action-source                                   ::<  un/sub p to/from r
-      ::>  add/remove {pas} as sources for story {nom}.
+    ++  action-delete                                   ::<  delete + announce
+      ::>  delete story {nom}, optionally announcing the
+      ::>  event with message {mes}.
       ::
-      |=  {nom/knot sub/? pas/(set partner)}
+      |=  {nom/knot mes/(unit cord)}
       ^+  ..ta-action
-      %-  (affect nom)  |=  {sor/_so soy/story}
-      =.  src.shape.soy
-        %.  pas
-        ?:  sub
-          ~(uni in src.shape.soy)
-        ~(dif in src.shape.soy)
-      (ta-config nom shape.soy)
+      %-  (affect nom)  |=  *
+      =.  ..ta-action  ::TODO  =?
+        ?~  mes  ..ta-action
+        %+  action-phrase
+          [[%& our.bol nom] ~ ~]
+        [%lin | u.mes]~
+      (ta-unconfig nom)
     ::
     ++  action-depict                                   ::<  change description
       ::>  change description of story {nom} to {des}.
@@ -377,19 +378,18 @@
       %-  (affect nom)  |=  {sor/_so *}  =<  so-done
       (so-permit:sor inv sis)
     ::
-    ++  action-delete                                   ::<  delete + announce
-      ::>  delete story {nom}, optionally announcing the
-      ::>  event with message {mes}.
+    ++  action-source                                   ::<  un/sub p to/from r
+      ::>  add/remove {pas} as sources for story {nom}.
       ::
-      |=  {nom/knot mes/(unit cord)}
+      |=  {nom/knot sub/? pas/(set partner)}
       ^+  ..ta-action
-      %-  (affect nom)  |=  *
-      =.  ..ta-action  ::TODO  =?
-        ?~  mes  ..ta-action
-        %+  action-phrase
-          [[%& our.bol nom] ~ ~]
-        [%lin | u.mes]~
-      (ta-unconfig nom)
+      %-  (affect nom)  |=  {sor/_so soy/story}
+      =.  src.shape.soy
+        %.  pas
+        ?:  sub
+          ~(uni in src.shape.soy)
+        ~(dif in src.shape.soy)
+      (ta-config nom shape.soy)
     ::
     ++  action-enlist                                   ::<  dis/allow federation
       ::>  adds {sis} to story {nom}'s list of allowed

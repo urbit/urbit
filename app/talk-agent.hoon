@@ -68,12 +68,12 @@
       $%  ::  circle management                         ::
           {$join p/where}                               ::<  subscribe to
           {$leave p/where}                              ::<  unsubscribe from
-          {$create p/security q/knot r/cord}             ::<  create circle
+          {$create p/security q/knot r/cord}            ::<  create circle
           {$delete p/knot q/(unit cord)}                ::<  delete circle
           {$depict p/knot q/cord}                       ::<  change description
-          {$source p/knot q/(set partner)}              ::<  add source
           {$invite p/knot q/(set ship)}                 ::<  give permission
           {$banish p/knot q/(set ship)}                 ::<  deny permission
+          {$source p/knot q/(set partner)}              ::<  add source
           {$enlist p/knot q/(set ship)}                 ::<  allow federation
           {$retire p/knot q/(set ship)}                 ::<  deny federation
           {$burden p/circle}                            ::<  help federate
@@ -626,11 +626,11 @@
           ::
           ;~((glue ace) (perk %depict ~) cire qut)
           ::
-          ;~((glue ace) (perk %source ~) cire parz)
-          ::
           ;~((glue ace) (perk %invite ~) cire shiz)
           ::
           ;~((glue ace) (perk %banish ~) cire shiz)
+          ::
+          ;~((glue ace) (perk %source ~) cire parz)
           ::
           ;~((glue ace) (perk %enlist ~) cire shiz)
           ::
@@ -823,9 +823,9 @@
           $create  (create +.job)
           $delete  (delete +.job)
           $depict  (depict +.job)
-          $source  (source +.job)
           $invite  (invite +.job)
           $banish  (banish +.job)
+          $source  (source +.job)
           $enlist  (enlist +.job)
           $retire  (retire +.job)
           $burden  (burden +.job)
@@ -979,13 +979,6 @@
         ^+  ..sh-work
         (sh-act %depict nom txt)
       ::
-      ++  source                                        ::<  %source
-        ::>  adds {pas} to {nom}'s src.
-        ::
-        |=  {nom/knot pas/(set partner)}
-        ^+  ..sh-work
-        (sh-act %source nom & pas)
-      ::
       ++  invite                                        ::<  %invite
         ::>  invites {sis} to our circle {nom}.
         ::
@@ -999,6 +992,13 @@
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom | sis)
+      ::
+      ++  source                                        ::<  %source
+        ::>  adds {pas} to {nom}'s src.
+        ::
+        |=  {nom/knot pas/(set partner)}
+        ^+  ..sh-work
+        (sh-act %source nom & pas)
       ::
       ++  enlist
         ::>

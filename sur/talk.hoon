@@ -12,10 +12,10 @@
 ++  action                                              ::>  user action
   $%  ::  circle configuration                          ::
       {$create nom/knot des/cord sec/security}          ::<  create circle
-      {$source nom/knot sub/? src/(set partner)}        ::<  un/sub p to/from r
+      {$delete nom/knot ano/(unit cord)}                ::<  delete + announce
       {$depict nom/knot des/cord}                       ::<  change description
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
-      {$delete nom/knot ano/(unit cord)}                ::<  delete + announce
+      {$source nom/knot sub/? src/(set partner)}        ::<  un/sub to/from src
       {$enlist nom/knot fed/? sis/(set ship)}           ::<  dis/allow federation
       {$burden circle}                                  ::<  help federate
       ::  messaging                                     ::
