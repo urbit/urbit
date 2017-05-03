@@ -561,7 +561,7 @@
     =^  who  +>.$  (ta-human her)
     ::  send current data to bring her up to date.
     =.  soy  (so-report-lobby:soy ost.bol ~ ~)
-    =.  soy  (so-report-group:soy ost.bol ~ ~)
+    =.  soy  (so-report-crowd:soy ost.bol ~ ~)
     =.  soy  (so-start:soy her t.pax)                   ::<  also adds story sub
     =.  soy  (so-notify:soy her %hear who)              ::<  add her status
     so-done:soy                                         ::<  apply story changes
@@ -965,7 +965,7 @@
       =.  +>  $(bos r.bos)
       (so-sauce n.bos [%diff %talk-report ret]~)
     ::
-    ++  so-report-group                                 ::<  presence update
+    ++  so-report-crowd                                 ::<  presence update
       ::>  send local and remote presences in a report.
       ::
       |=  bos/(set bone)
@@ -1091,7 +1091,7 @@
           ~
         `[c f]
       ::  send updates to followers.
-      =.  +>.$  (so-report-group so-followers)
+      =.  +>.$  (so-report-crowd so-followers)
       =.  +>.$  (so-report-lobby so-followers)
       ::  finally, learn all grams.
       (so-lesson gaz)
@@ -1201,7 +1201,7 @@
         =+  o=(~(get by remotes) p)
         ?~(o a (~(dif in a) u.o))
       ::  subscriber update.
-      (so-report-group(locals loc.nep, remotes rem.nep) so-followers)
+      (so-report-crowd(locals loc.nep, remotes rem.nep) so-followers)
     ::
     ::>  ||
     ::>  ||  %changes
@@ -1246,7 +1246,7 @@
       =/  nol  (~(put by locals) her sat)
       ?:  =(nol locals)  +>.$
       =.  +>.$  (so-inform %precs (strap her sat) ~)
-      (so-report-group(locals nol) so-followers)
+      (so-report-crowd(locals nol) so-followers)
     ::
     ::>  ||
     ::>  ||  %subscriptions
