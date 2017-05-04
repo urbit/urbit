@@ -16,6 +16,8 @@ cd build
 
 $host-windres ../usbview/uvcview.rc rc.o
 
+# TODO: after fixing bug with selectany in GCC, remove -DINITGUID
+
 $host-gcc -mwindows -std=gnu99 -O2 \
   -Iinclude \
   -DNTDDI_VERSION=0x06020000 -D_WIN32_WINNT=0x0602 \
