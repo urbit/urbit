@@ -9073,11 +9073,11 @@
     ::  fine: definition line
     ::
     ++  line  (cook crip ;~(plug prz (star prn)))
-    ++  head  ;~(pfix ;~(plug bar bar ace ace cen) sym)
+    ++  head  ;~(pfix ;~(plug hax ace ace cen) sym)
     ++  text  (pick line code)
     ++  code  (cook crip (dubs (star prn)))
     ++  null  (star ace)
-    ++  noel  ;~(pose (step ;~(sfix ;~(plug bar bar) (star ace))) null)
+    ++  noel  ;~(pose (step ;~(sfix hax (star ace))) null)
     ++  fine  ;~(plug sym (cook crip ;~(pfix ;~(plug col ace) (star prn))))
     ::
     ::  lean: line delimited
