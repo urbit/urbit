@@ -148,7 +148,8 @@
       txt/term
   ^-  tape
   "hello, {(rip 3 txt)}"
-:>    ++say-goodbye: say a really proper goodbye
+:>
+:>  ++say-goodbye: say a really proper goodbye
 :>
 :>  some paragraphs about the goodbye algorithm, possibly
 :>  including code indented by four extra spaces:
