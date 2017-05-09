@@ -96,6 +96,7 @@
       ==                                                ::
     ++  where  (set partner)                            ::<  non-empty audience
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  circle char pool '
+    ++  termwidth  80  ::TODO  put in setting or something?
     --
 ::
 ::>  ||
@@ -690,49 +691,6 @@
         ==
       --
     ::
-    ++  sh-sane-chat                                    ::<  sanitize chatter
-      ::>  (for chat messages) sanitizes the input buffer
-      ::>  and splits it into  multiple lines (by '•').
-      ::
-      |=  buf/(list @c)
-      ^-  (list sole-edit)
-      ?~  buf  ~
-      =+  isa==(i.buf (turf '@'))
-      =+  [[pre=*@c cur=i.buf buf=t.buf] inx=0 brk=0 len=0 new=|]
-      =*  txt  -<
-      |^  ^-  (list sole-edit)
-          ?:  =(cur (turf '•'))
-            ?:  =(pre (turf '•'))
-              [[%del inx] ?~(buf ~ $(txt +.txt))]
-            ?:  new
-              [(fix ' ') $(cur `@c`' ')]
-            newline
-          ?:  =(cur `@`' ')
-            =.  brk  ?:(=(pre `@`' ') brk inx)
-            ?.  =(64 len)  advance
-            :-  (fix(inx brk) (turf '•'))
-            ?:  isa
-              [[%ins +(brk) (turf '@')] newline(new &)]
-            newline(new &)
-          ?:  =(64 len)
-            =+  dif=(sub inx brk)
-            ?:  (lth dif 64)
-              :-  (fix(inx brk) (turf '•'))
-              ?:  isa
-                [[%ins +(brk) (turf '@')] $(len dif, new &)]
-              $(len dif, new &)
-            [[%ins inx (turf '•')] $(len 0, inx +(inx), new &)]
-          ?:  |((lth cur 32) (gth cur 126))
-            [(fix '?') advance]
-          ?:  &((gte cur 'A') (lte cur 'Z'))
-            [(fix (add 32 cur)) advance]
-          advance
-      ::
-      ++  advance  ?~(buf ~ $(len +(len), inx +(inx), txt +.txt))
-      ++  newline  ?~(buf ~ $(len 0, inx +(inx), txt +.txt))
-      ++  fix  |=(cha/@ [%mor [%del inx] [%ins inx `@c`cha] ~])
-      --
-    ::
     ++  sh-sane                                         ::<  sanitize input
       ::>  parses cli prompt input using ++sh-read and
       ::>  sanitizes when invalid.
@@ -750,13 +708,6 @@
         ::
           $target
         ?~(q.wok ~ $(wok u.q.wok))
-        ::
-          $say
-        |-  ::  XX per line
-        ?~  p.wok  ~
-        ?:  ?=($lin -.i.p.wok)
-          (sh-sane-chat buf)
-        $(p.wok t.p.wok)
       ==
     ::
     ++  sh-slug                                         ::<  edit to sanity
@@ -1414,13 +1365,18 @@
       =+  por=~(ar-prom ar q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
-    ++  sh-rend                                         ::<  print on one line
-      ::>  renders a telegram as a single line, adds it
-      ::>  as a console move.
+    ++  sh-rend                                         ::<  print telegram
+      ::>  prints a telegram as rendered by ++tr-rend.
       ::
       |=  gam/telegram
-      =+  lin=~(tr-line tr settings.she gam)
-      (sh-fact %txt lin)
+      ^+  +>
+      =+  lis=~(tr-rend tr settings.she gam)
+      ?~  lis  +>.$
+      %+  sh-fact  %mor
+      ::TODO?  we need to cast, but not if we do =(0 (lent lis)) above instead..
+      %+  turn  `(list tape)`lis
+      |=  t/tape
+      [%txt t]
     ::
     ++  sh-numb                                         ::<  print msg number
       ::>  prints a message number, left-padded by heps.
@@ -1892,27 +1848,34 @@
     ^-  sole-effect
     ~[%mor [%tan tr-meta] tr-body]
   ::
-  ++  tr-line                                           ::<  one-line print
-    ::>  crams a telegram into a single line by
-    ::>  displaying a short ship name, a short
-    ::>  representation of the gram, and an optional
-    ::>  timestamp.
+  ++  tr-rend                                           ::<  render telegram
+    ::>  renders a telegram.
+    ::>  the first line will contain the author and
+    ::>  optional timestamp.
     ::
-    ^-  tape
-    =+  txt=(tr-text =(who our.bol))
-    ?:  =(~ txt)  ""
-    =/  baw
-      ::  ?:  oug
-      ::  ~(ar-whom ar tr-pals)
-      ?.  (~(has in sef) %noob)
-        (~(cr-curt cr [who (main who)]) |)
-      (~(cr-nick cr [who (main who)]))
-    ?:  (~(has in sef) %showtime)
+    ^-  (list tape)
+    =/  wyd
+      %+  sub  termwidth                                ::  termwidth,
+      %+  add  14                                       ::  minus author,
+      ?:((~(has in sef) %showtime) 10 0)                ::  minus timestamp.
+    =+  txs=(tr-text wyd)
+    ?~  txs  ~
+    ::  render the author.
+    =/  nom/tape
+      ?:  (~(has in sef) %noob)
+        (~(cr-nick cr [who (main who)]))
+      (~(cr-curt cr [who (main who)]) |)
+    ::  regular indent.
+    =/  den/tape
+      (reap (lent nom) ' ')
+    ::  timestamp, if desired.
+    =/  tam/tape
+      ?.  (~(has in sef) %showtime)  ""
       =+  dat=(yore now.bol)
       =/  t
         |=  a/@
         %+  weld
-        ?:  (lth a 10)  "0"  ~
+          ?:((lth a 10) "0" ~)
         (scow %ud a)
       =/  time
         ;:  weld
@@ -1920,8 +1883,14 @@
           "."  (t m.t.dat)
           "."  (t s.t.dat)
         ==
-      :(weld baw txt (reap (sub 67 (lent txt)) ' ') time)
-    (weld baw txt)
+      %+  weld
+        (reap (sub +(wyd) (min wyd (lent i.txs))) ' ')
+      time
+    %-  flop
+    %+  roll  `(list tape)`txs
+    |=  {t/tape l/(list tape)}
+    ?~  l  [:(weld nom t tam) ~]
+    [(weld den t) l]
   ::
   ++  tr-meta                                           ::<  metadata
     ::>  builds string that display metadata, including
@@ -2019,49 +1988,54 @@
     |-
     ?~  txt  txt
     ?:  =(' ' i.txt)
-      |-(['_' ?.(?=({$' ' *} t.txt) t.txt $(txt t.txt))])
+      |-
+      :-  '_'
+      ?.  ?=({$' ' *} t.txt)
+        t.txt
+      $(txt t.txt)
     ?~  t.txt  "…"
     [i.txt $(txt t.txt)]
   ::
-  ++  tr-both                                           ::<  two tapes one line
-    ::>  attempts to fit two tapes into a 64-char line.
+  ++  tr-text                                           ::<  compact contents
+    ::>  renders just the most important data of the
+    ::>  message. if possible, these stay within a single
+    ::>  line.
     ::
-    |=  {a/tape b/tape}
-    ^-  tape
-    ?:  (gth (lent a) 62)  (tr-chow 64 a)
-    %+  weld  a
-    (tr-chow (sub 64 (lent a)) "  {b}")
-  ::
-  ++  tr-text                                           ::<  one line contents
-    ::>  renders a single-line version of the message.
-    ::
-    |=  oug/?
-    ^-  tape
+    |=  wyd/@ud
+    ^-  (list tape)
     ?+  -.sep
-      ~&(tr-lost+sep "")
+      ~&(tr-lost+sep ~)
       ::
         $mor
-      ?~  ses.sep  ~&(%tr-mor-empty "")
-      |-  ^-  tape
+      ?~  ses.sep  ~&(%tr-mor-empty ~)
+      |-  ^-  (list tape)
       ?~  t.ses.sep  ^$(sep i.ses.sep)
-      (tr-both ^$(sep i.ses.sep) $(ses.sep t.ses.sep))
+      (weld ^$(sep i.ses.sep) $(ses.sep t.ses.sep))
       ::
         $fat
-      %+  tr-both  $(sep sep.sep)
-      ?+  -.tac.sep  "..."
-        $tank  ~(ram re %rose [" " `~] +.tac.sep)
+      %+  weld  $(sep sep.sep)
+      ^-  (list tape)
+      ?+  -.tac.sep  ["attached: ..." ~]
+        $name  ["attached: {(trip nom.tac.sep)}" ~]
       ==
       ::
         $exp
-      (tr-chow 66 '#' ' ' (trip exp.sep))
+      ::TODO  separate expr and res in the speech type,
+      ::      then print both on their own line. (still 64)
+      :_  ~
+      (tr-chow wyd '#' ' ' (trip exp.sep))
       ::
         $url
+      :_  ~
       =+  ful=(earf url.sep)
-      ?:  (gth 64 (lent ful))  ['/' ' ' ful]
+      =.  wyd  (sub wyd 2)  ::  account for prefix.
+      ::  if the full url fits, just render it.
+      ?:  (gte wyd (lent ful))  ['/' ' ' ful]
+      ::  if it doesn't, prefix with _ and render just (the tail of) the domain.
       :+  '/'  '_'
       =+  hok=r.p.p.url.sep
       ~!  hok
-      =-  (swag [a=(sub (max 64 (lent -)) 64) b=64] -)
+      =-  (swag [a=(sub (max wyd (lent -)) wyd) b=wyd] -)
       ^-  tape
       =<  ?:  ?=($& -.hok)
             (reel p.hok .)
@@ -2071,15 +2045,29 @@
       (welp b '.' (trip a))
       ::
         $lin
+      ::  glyph prefix
+      =/  pef
+        ?.  pat.sep  " "
+        %~  ar-pref  ar
+          =+  pal=tr-pals
+          ?:  =(who our.bol)  pal
+          (~(del in pal) [%& who (main who)])
+        ==
+      =.  wyd  (sub wyd (lent pef))
       =+  txt=(trip msg.sep)
-      ?:  pat.sep
-        =+  pal=tr-pals
-        =.  pal  ?:  =(who our.bol)  pal  ::TODO  =?
-                 (~(del in pal) [%& who (main who)])
-        (weld ~(ar-pref ar pal) txt)
-      (weld " " txt)
+      |-  ^-  (list tape)
+      ?~  txt  ~
+      =/  end
+        ?:  (lte (lent txt) wyd)  (lent txt)
+        =+  ace=(find " " (flop (scag +(wyd) `tape`txt)))
+        ?~  ace  wyd
+        (sub wyd u.ace)
+      :-  (weld pef (scag end `tape`txt))
+      $(txt (slag +(end) `tape`txt), pef (reap (lent pef) ' '))  ::TODO  why do we need to cast?
       ::
         $inv
+      :_  ~
+      %+  tr-chow  wyd
       %+  weld
         ?:  inv.sep
           " invited you to "
@@ -2087,10 +2075,12 @@
       ~(cr-phat cr cir.sep)
       ::
         $app
-      (tr-chow 64 "[{(trip app.sep)}]: {(trip msg.sep)}")
+      :_  ~
+      (tr-chow wyd "[{(trip app.sep)}]: {(trip msg.sep)}")
       ::
         $api
-      %+  tr-chow  64
+      :_  ~
+      %+  tr-chow  wyd
       %+  weld
         "[{(trip id.sep)}@{(trip service.sep)}]: "
       (trip summary.sep)
