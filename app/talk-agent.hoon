@@ -71,6 +71,7 @@
           {$create p/security q/knot r/cord}            ::<  create circle
           {$delete p/knot q/(unit cord)}                ::<  delete circle
           {$depict p/knot q/cord}                       ::<  change description
+          {$filter p/knot q/? r/?}                      ::<  change message rules
           {$invite p/knot q/(set ship)}                 ::<  give permission
           {$banish p/knot q/(set ship)}                 ::<  deny permission
           {$source p/knot q/(set partner)}              ::<  add source
@@ -578,6 +579,12 @@
           (cold %brown (jest %mailbox))
         ==
       ::
+      ++  lobe                                          ::<  y/n loob
+        ;~  pose
+          (cold %& ;~(pose (jest 'y') (jest '&')))
+          (cold %| ;~(pose (jest 'n') (jest '|')))
+        ==
+      ::
       ++  message                                       ::<  exp, lin or url msg
         ;~  pose
           ;~(plug (cold %eval hax) expr)
@@ -592,7 +599,7 @@
         ==
       ::
       ++  nick  (cook crip (stun [1 14] low))           ::<  nickname
-      ++  text  (cook crip (plus (shim ' ' '~')))       ::<  bullets separating
+      ++  text  (cook crip (plus next))                 ::<  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::<  circle postfix
       ++  setting                                       ::<  setting flag
         %-  perk  :~
@@ -626,6 +633,8 @@
           ==
           ::
           ;~((glue ace) (perk %depict ~) cire qut)
+          ::
+          ;~((glue ace) (perk %filter ~) cire lobe lobe)
           ::
           ;~((glue ace) (perk %invite ~) cire shiz)
           ::
@@ -774,6 +783,7 @@
           $create  (create +.job)
           $delete  (delete +.job)
           $depict  (depict +.job)
+          $filter  (filter +.job)
           $invite  (invite +.job)
           $banish  (banish +.job)
           $source  (source +.job)
@@ -936,6 +946,11 @@
         |=  {nom/knot sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom & sis)
+      ::
+      ++  filter
+        |=  {nom/knot cus/? utf/?}
+        ^+  ..sh-work
+        (sh-act %filter nom cus utf)
       ::
       ++  banish                                        ::<  %banish
         ::>  banish {sis} from our circle {nom}.

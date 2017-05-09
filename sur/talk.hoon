@@ -14,6 +14,7 @@
       {$create nom/knot des/cord sec/security}          ::<  create circle
       {$delete nom/knot ano/(unit cord)}                ::<  delete + announce
       {$depict nom/knot des/cord}                       ::<  change description
+      {$filter nom/knot fit/filter}                     ::<  change message rules
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
       {$source nom/knot sub/? src/(set partner)}        ::<  un/sub to/from src
       {$enlist nom/knot fed/? sis/(set ship)}           ::<  dis/allow federation
@@ -84,8 +85,13 @@
 ++  config                                              ::>  circle config
   $:  src/(set partner)                                 ::<  pulls from
       cap/cord                                          ::<  description
+      fit/filter                                        ::<  message rules
       con/control                                       ::<  restrictions
       fed/federal                                       ::<  federators
+  ==                                                    ::
+++  filter                                              ::>  content filters
+  $:  cus/?                                             ::<  dis/allow capitals
+      utf/?                                             ::<  dis/allow non-ascii
   ==                                                    ::
 ++  control    {sec/security ses/(set ship)}            ::<  access control
 ++  security                                            ::>  security kind

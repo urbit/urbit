@@ -302,6 +302,7 @@
         $create  (action-create +.act)
         $source  (action-source +.act)
         $depict  (action-depict +.act)
+        $filter  (action-filter +.act)
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
         $enlist  (action-enlist +.act)
@@ -342,6 +343,7 @@
         %+  ta-config  nom
         :*  [[%& our.bol nom] ~ ~]
             des
+            [| |]
             [typ ~]
             [[our.bol ~ ~] [our.bol ~ ~]]
         ==
@@ -368,6 +370,16 @@
       ^+  ..ta-action
       %-  (affect nom)  |=  {sor/_so soy/story}
       =.  cap.shape.soy  des
+      (ta-config nom shape.soy)
+    ::
+    ++  action-filter                                   ::<  change message rules
+      ::>  replaces the story's current filter with the
+      ::>  specified one.
+      ::
+      |=  {nom/knot fit/filter}
+      ^+  ..ta-action
+      %-  (affect nom)  |=  {sor/_so soy/story}
+      =.  fit.shape.soy  fit
       (ta-config nom shape.soy)
     ::
     ++  action-permit                                   ::<  invite/banish
@@ -754,32 +766,10 @@
     ?~  tos  +>
     $(tos t.tos, +> (ta-consume pub aut i.tos))
   ::
-  ++  ta-sane                                           ::<  sanitize
-    ::>  sanitize %lin speech, enforce lowercase and no special characters.
-    ::TODO  make configurable per-circle.
-    ::
-    |=  tot/thought
-    ^-  thought
-    ?.  ?=({$lin *} sep.sam.tot)  tot
-    %_  tot
-        msg.sep.sam
-      %-  crip
-      %+  scag  64
-      %-  tufa
-      %+  turn  (tuba (trip msg.sep.sam.tot))
-      |=  a/@c
-      ?:  &((gte a 'A') (lte a 'Z'))
-        (add a 32)
-      ?:  |((lth a 32) (gth a 126))
-        `@`'?'
-      a
-    ==
-  ::
   ++  ta-consume                                        ::<  to each audience
     ::>  conducts thought {tot} to each partner in its audience.
     ::
     |=  {pub/? aut/ship tot/thought}
-    =.  tot  (ta-sane tot)
     =+  aud=(~(tap by aud.tot))
     |-  ^+  +>.^$
     ?~  aud  +>.^$
@@ -1401,6 +1391,35 @@
     ::>    arms for adding to this story's messages.
     ::+|
     ::
+    ++  so-sane                                         ::<  sanitize
+      ::>  sanitize %lin speech according to our settings.
+      ::
+      |=  tot/thought
+      ^-  thought
+      ?.  ?=({$lin *} sep.sam.tot)  tot
+      %_  tot
+          msg.sep.sam
+        %-  crip
+        %-  tufa
+        %+  turn  (tuba (trip msg.sep.sam.tot))
+        |=  a/@c
+        ::  always replace control characters.
+        ?:  |((lth a 32) =(a `@c`127))
+          `@`'?'
+        ::  if desired, remove uppercasing.
+        ?:  ?&  !cus.fit.shape
+                (gte a 'A')
+                (lte a 'Z')
+            ==
+          (add a 32)
+        ::  if desired, replace non-ascii characters.
+        ?:  ?&  !utf.fit.shape
+                (gth a 127)
+            ==
+          `@`'?'
+        a
+      ==
+    ::
     ++  so-refresh                                      ::<  update to listeners
       ::>  called when messages get added or changed.
       ::>  calculates the changes and sends them to all
@@ -1451,8 +1470,10 @@
       ::
       |=  gam/telegram
       ^+  +>
-      ?.  (so-admire aut.gam)                             ::<  write permissions
-        +>.$
+      ::  check for write permissions.
+      ?.  (so-admire aut.gam)  +>.$
+      ::  clean up the message to conform to our rules.
+      =.  tot.gam  (so-sane tot.gam)
       =.  aud.tot.gam
         ::>  if we are in the audience, mark as received.
         =+  ole=(~(get by aud.tot.gam) [%& our.bol nom])
