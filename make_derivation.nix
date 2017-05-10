@@ -56,6 +56,8 @@ let
 
     PKG_CONFIG_CROSS = "pkg-config-cross";
 
+    # TODO: do the default native inputs really deserve to be in PKG_CONFIG_PATH?
+    # Seems unnecessary.
     PKG_CONFIG_PATH = path_join (
       (if attrs ? PKG_CONFIG_PATH then [attrs.PKG_CONFIG_PATH] else []) ++
       (path_map "/lib/pkgconfig" native_inputs)

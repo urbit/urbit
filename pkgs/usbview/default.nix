@@ -3,7 +3,7 @@
 crossenv.make_derivation rec {
   name = "usbview-${version}";
 
-  version = "2017-03-21";
+  version = "2017-05-01";
 
   src = crossenv.nixpkgs.fetchFromGitHub {
     owner = "Microsoft";

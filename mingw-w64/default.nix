@@ -14,9 +14,10 @@ let
       sha256 = "02cy4sqy0dc159accyrwrnfw47f85cm3kbb0giqkyb90qc3yf696";
     };
     patches = [
+      ./01-specstrings-driverspecs.patch
+      ./02-specstrings-include-guard.patch
       ./usb.patch
       ./guid-selectany.patch
-      ./specstrings-driverspecs.patch
     ];
     configure_flags = "--enable-secure-api --enable-idl";
   };
