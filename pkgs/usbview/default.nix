@@ -8,8 +8,8 @@ crossenv.make_derivation rec {
   src = crossenv.nixpkgs.fetchFromGitHub {
     owner = "Microsoft";
     repo = "Windows-driver-samples";
-    rev = "d0ff69d56d030d96767ee51e1e3a74b6f6eeaf4a";
-    sha256 = "0ii27rl544sah4p1j8qa2vhqvs6gpd24lk5vg9fpghzyc54z756h";
+    rev = "4c5c5e0297c7a61e151f92af702cdac650a14489";
+    sha256 = "1drq26bnad98xqn805qx0b6g4y65lmrdj7v40b3jhhzdsp8993pf";
   };
 
   patches = [ ./megapatch.patch ];

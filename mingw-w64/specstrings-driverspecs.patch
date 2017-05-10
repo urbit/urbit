@@ -1,0 +1,27 @@
+From bbe97312dabdbd7200b337ad8f8232786ae77c4e Mon Sep 17 00:00:00 2001
+From: David Grayson <davidegrayson@gmail.com>
+Date: Tue, 9 May 2017 09:15:29 -0700
+Subject: [PATCH] specstrings.h:  Include driverspecs.h near the bottom.
+
+That's what the Microsoft header does, and their UsbView utility
+depends on it.
+---
+ mingw-w64-headers/include/specstrings.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mingw-w64-headers/include/specstrings.h b/mingw-w64-headers/include/specstrings.h
+index 485b4330..5c344445 100644
+--- a/mingw-w64-headers/include/specstrings.h
++++ b/mingw-w64-headers/include/specstrings.h
+@@ -325,6 +325,8 @@ extern "C" {
+ #endif
+ #endif /* DECLSPEC_ADDRSAFE */
+ 
++#include <driverspecs.h>
++
+ #ifdef __cplusplus
+ }
+ #endif
+-- 
+2.12.1
+

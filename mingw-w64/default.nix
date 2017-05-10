@@ -16,6 +16,7 @@ let
     patches = [
       ./usb.patch
       ./guid-selectany.patch
+      ./specstrings-driverspecs.patch
     ];
     configure_flags = "--enable-secure-api --enable-idl";
   };
