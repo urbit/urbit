@@ -3,7 +3,7 @@ From: David Grayson <davidegrayson@gmail.com>
 Date: Tue, 9 May 2017 09:15:29 -0700
 Subject: [PATCH] specstrings.h:  Include driverspecs.h near the bottom.
 
-That's what the Microsoft header does, and their UsbView utility
+That's what the Microsoft header does, and their devcon utility
 depends on it.
 ---
  mingw-w64-headers/include/specstrings.h | 2 ++
