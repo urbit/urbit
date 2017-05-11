@@ -586,55 +586,86 @@ _sang_x(u3_noun a, u3_noun b)
 }
 
 /* _sung_one(): pick a unified pointer for identical (a) and (b).
+**
+**  Assumes exclusive access to noun memory.
 */
 static void
 _sung_one(u3_noun* a, u3_noun* b)
 {
+
   if ( *a == *b ) {
     return;
-  } 
-  else {
-    c3_o asr_o = u3a_is_senior(u3R, *a);
-    c3_o bsr_o = u3a_is_senior(u3R, *b);
-
-    if ( _(asr_o) && _(bsr_o) ) {
-      // You shouldn't have let this happen.  We don't want to
-      // descend down to a lower road and free there, because
-      // synchronization - though this could be revisited under
-      // certain circumstances.
+  } else {
+    u3_road* rod_u = u3R;
+    while ( 1 ) {
       //
-      return;
-    }
-    if ( _(asr_o) && !_(bsr_o) ){
-      u3z(*b); 
-      *b = *a;
-    }
-    if ( _(bsr_o) && !_(asr_o) ) {
-      u3z(*a); 
-      *a = *b;
-    }
-    if ( u3a_is_north(u3R) ) {
-      if ( *a <= *b ) {
-        u3k(*a);
-        u3z(*b); 
-        *b = *a;
-      } else {
-        u3k(*b);
-        u3z(*a); 
-        *a = *b;
+      //  we can't perform this kind of butchery on the home road,
+      //  where asynchronous things can allocate.
+      //
+      if ( u3R == &u3H->rod_u ) {
+        break;
+      }
+      else {
+        c3_o asr_o = u3a_is_senior(u3R, *a);
+        c3_o bsr_o = u3a_is_senior(u3R, *b);
+
+        if ( _(asr_o) && _(bsr_o) ) {
+          //
+          //  when unifying on a higher road, we can't free nouns,
+          //  because we can't track junior nouns that point into
+          //  that road.
+          //
+          //  this is just an implementation issue -- we could set use
+          //  counts to 0 without actually freeing.  but the allocator
+          //  would have to be actually designed for this.
+          //
+          //  not freeing may generate spurious leaks, so we disable
+          //  senior unification when debugging memory.  this will
+          //  cause a very slow boot process as the compiler compiles
+          //  itself, constantly running into duplicates.
+          //
+#ifdef U3_MEMORY_DEBUG
+          return;
+#else
+          u3R = u3to(u3_road, u3R->par_p);
+          continue;
+#endif
+        }
+
+        if ( _(asr_o) && !_(bsr_o) ){
+          if ( u3R == rod_u ) { u3z(*b); }
+          *b = *a;
+        }
+        if ( _(bsr_o) && !_(asr_o) ) {
+          if ( u3R == rod_u ) { u3z(*a); }
+          *a = *b;
+        }
+        if ( u3a_is_north(u3R) ) {
+          if ( *a <= *b ) {
+            u3k(*a);
+            if ( u3R == rod_u ) { u3z(*b); }
+            *b = *a;
+          } else {
+            u3k(*b);
+            if ( u3R == rod_u ) { u3z(*a); }
+            *a = *b;
+          }
+        }
+        else {
+          if ( *a >= *b ) {
+            u3k(*a);
+            if ( u3R == rod_u ) { u3z(*b); }
+            *b = *a;
+          } else {
+            u3k(*b);
+            if ( u3R == rod_u ) { u3z(*a); }
+            *a = *b;
+          }
+        }
+        break;
       }
     }
-    else {
-      if ( *a >= *b ) {
-        u3k(*a);
-        u3z(*b); 
-        *b = *a;
-      } else {
-        u3k(*b);
-        u3z(*a); 
-        *a = *b;
-      }
-    }
+    u3R = rod_u;
   }
 }
 
