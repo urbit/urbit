@@ -224,6 +224,37 @@
     ^+  +>
     sh-done:(~(sh-reaction sh cli) rac)
   ::
+  ++  ta-change                                         ::<  apply change
+    ::>
+    ::
+    |=  dif/delta
+    ^+  +>
+    ?+  -.dif
+      ~&  [%ignoring-delta -.dif]
+      +>
+      ::
+        $mor
+      |-  ^+  +>.^$
+      ?~  mor.dif  +>.^$
+      $(+>.^$ ^$(dif i.mor.dif), mor.dif t.mor.dif)
+      ::
+        $cir
+      (ta-change-circle +.dif)
+    ==
+  ::
+  ++  ta-change-circle                                  ::<  apply circle change
+    ::>
+    ::
+    |=  {cir/circle dif/delta-circle}
+    ^+  +>
+    ?+  -.dif
+      ~&  [%ignoring-delta-circle -.dif]
+      +>
+      ::
+        $put
+      (ta-low-grams count.cli gaz.dif)
+    ==
+  ::
   ++  ta-low                                            ::<  apply lowdown
     ::>  processes a talk lowdown
     ::
@@ -2119,6 +2150,14 @@
     ~&  [%peer-talk-reader-strange pax]
     [~ +>]
   ta-done:ta-console:ta
+::
+++  diff-talk-delta                                     ::<  accept change
+  ::>
+  ::TODO  ++feel
+  ::
+  |=  {way/wire dif/delta}
+  ^-  (quip move +>)
+  ta-done:(ta-change:ta dif)
 ::
 ++  diff-talk-lowdown                                   ::<  accept lowdown
   ::>  incoming talk-lowdown. process it.

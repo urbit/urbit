@@ -4,6 +4,91 @@
 |%
 ::
 ::>  ||
+::>  ||  %query-models
+::>  ||
+::>    models relating to queries, their results and updates.
+::+|
+::
+::TODO  path parsing/casting: ;;(query pax) or ((hard query) pax)
+::      or (raid /~zod/5 /[%p]/[%ud])
+::      ...but it's still shit.
+++  query                                               ::>  query paths
+  $%  {$reader $~}                                      ::<  shared ui state
+      {$friend $~}                                      ::<  publicly joined
+      {$circle nom/knot ran/range}                      ::<  story query
+  ==                                                    ::
+++  range  (unit {hed/@ t/(unit {tal/@ $~})})           ::<  msg range, @ud/@da
+++  prize                                               ::>  query result
+  $%  $:  $reader                                       ::<  /reader
+          gys/(jug char (set partner))                  ::<  glyph bindings
+          nis/(map ship cord)                           ::<  nicknames
+      ==                                                ::
+      {$friend cis/(set circle)}                        ::<  /friend
+      $:  $circle                                       ::<  /circle
+          gaz/(list telegram)                           ::<  queried messages
+          cos/lobby                                     ::<  configs
+          pes/crowd                                     ::<  presences
+      ==                                                ::
+  ==                                                    ::
+++  rumor                                               ::<  query result change
+  $%  $:  $reader                                       ::<  /reader
+          $=  dif                                       ::
+          $%  {$glyph diff-glyph}                       ::
+              {$nick diff-nick}                         ::
+          ==                                            ::
+      ==                                                ::
+      {$friend add/? cir/circle}                        ::<  /friend
+      {$circle dif/diff-story}                          ::<  /circle
+  ==                                                    ::
+::TODO  deltas into app
+++  delta                                               ::
+  $%  ::TODO  no more %more, just produce/take list instead!
+      {$more mor/(list delta)}                          ::<  multiple changes
+      ::  messaging state                               ::
+      {$out cir/circle out/(list thought)}              ::<  msgs into outbox
+      {$done don/(map @ud {partner ?})}                 ::<  msgs delivered
+      ::  shared ui state                               ::
+      {$glyph diff-glyph}                               ::<  un/bound glyph
+      {$nick diff-nick}                                 ::<  changed nickname
+      ::  story state                                   ::
+      {$story nom/knot dif/diff-story}                  ::<  change to story
+      ::  side-effects                                  ::
+      {$bear cir/circle}                                ::<  %burden command
+      {$react ost/bone rac/reaction}  ::TODO  ost.bol?  ::<  reaction to action
+      {$quit ost/bone}                                  ::<  force unsubscribe
+  ==                                                    ::
+++  diff-glyph  {bin/? gyf/char pas/(set partner)}      ::<  un/bound glyph
+++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
+++  diff-story                                          ::
+  $%  {$new con/config}                                 ::<  new story
+      {$grams gaz/(list telegram)}                      ::<  new/changed msgs
+      {$config cir/circle dif/diff-config}              ::<  new/changed config
+      {$status pan/partner who/ship dif/diff-status}    ::<  new/changed status
+      {$remove $~}                                      ::<  removed story
+  ==                                                    ::
+++  diff-config                                         ::>  config change
+  $%  {$full cof/config}                                ::<  fully changed config
+      {$source add/? pas/(set partner)}                 ::<  add/rem sources
+      {$caption cap/cord}                               ::<  changed description
+      {$filter fit/filter}                              ::<  changed filter
+      {$permit add/? sis/(set ship)}                    ::<  add/rem to b/w-list
+      {$secure sec/security}                            ::<  changed security
+      {$federal add/? fed/? sis/(set ship)}             ::<  add/rem may/fes
+      {$remove $~}                                      ::<  removed config
+  ==                                                    ::
+++  diff-status                                         ::>  status change
+  $%  {$full sat/status}                                ::<  fully changed status
+      {$presence pec/presence}                          ::<  changed presence
+      {$human dif/diff-human}                           ::<  changed name
+      {$remove $~}                                      ::<  removed config
+  ==                                                    ::
+++  diff-human                                          ::>  name change
+  $%  {$full man/human}                                 ::<  fully changed name
+      {$true tru/(unit (trel cord (unit cord) cord))}   ::<  changed true name
+      {$handle han/(unit cord)}                         ::<  changed handle
+  ==                                                    ::
+::
+::>  ||
 ::>  ||  %reader-communication
 ::>  ||
 ::>    broker interfaces for readers.
@@ -26,8 +111,8 @@
       ::TODO  change to target partners, not only our circles.
       {$status nos/(set knot) sat/status}               ::<  our status update
       ::  changing shared ui                            ::
-      {$human sip/ship man/human}                       ::<  new identity
       {$glyph gyf/char pas/(set partner) bin/?}         ::<  un/bind a glyph
+      {$nick who/ship nic/knot}                         ::<  new identity
   ==                                                    ::
 ++  reaction                                            ::>  user information
   $:  res/?($info $fail)                                ::<  result
