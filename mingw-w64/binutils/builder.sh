@@ -1,8 +1,8 @@
 source $stdenv/setup
 
-tar -xf $src
+unset CC CXX CFLAGS LDFLAGS
 
-ls
+tar -xf $src
 
 cd binutils-$version
 for patch in $patches; do
@@ -12,12 +12,6 @@ done
 
 # Clear the default library search path (noSysDirs)
 echo 'NATIVE_LIB_DIRS=' >> ld/configure.tgt
-
-# Use symlinks instead of hard links to save space ("strip" in the
-# fixup phase strips each hard link separately).
-for i in binutils/Makefile.in gas/Makefile.in ld/Makefile.in gold/Makefile.in; do
-  sed -i "$i" -e 's|ln |ln -s |'
-done
 
 cd ..
 

@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
 
-  configureFlags =
+  configure_flags =
     "--target=${arch}-w64-mingw32 " +
     "--with-sysroot=${libc} " +
     "--with-native-system-header-dir=/include " +
@@ -74,26 +74,19 @@ stdenv.mkDerivation rec {
     "--disable-win32-registry " +
     "--disable-bootstrap";
 
-  makeFlags =
+  make_flags =
     if stage == 1 then
       ["all-gcc" "all-target-libgcc"]
     else
       [];
 
-  installTargets =
+  install_targets =
     if stage == 1 then
       ["install-gcc install-target-libgcc"]
     else
       ["install-strip"];
 
-  enableParallelBuilding = true;
-
-  # TODO: some day submit patches to GCC, remove this line
   hardeningDisable = [ "format" ];
-
-  dontDisableStatic = true;
-
-  dontStrip = true;
 
   meta = {
     homepage = http://gcc.gnu.org/;
