@@ -32,9 +32,9 @@ let
       ./qtbase-arch-patches/0017-Enable-rpath-for-build-tools.patch
       ./qtbase-arch-patches/0018-Use-system-zlib-for-build-tools.patch
       ./qtbase-arch-patches/0019-Disable-determing-default-include-and-lib-dirs-at-qm.patch
-      ./qtbase-arch-patches/0020-Use-.dll.a-as-import-lib-extension.patch
+      #./qtbase-arch-patches/0020-Use-.dll.a-as-import-lib-extension.patch
       ./qtbase-arch-patches/0021-Merge-shared-and-static-library-trees.patch
-      ./qtbase-arch-patches/0022-Allow-usage-of-static-version-with-CMake.patch
+      #./qtbase-arch-patches/0022-Allow-usage-of-static-version-with-CMake.patch
       ./qtbase-arch-patches/0023-Use-correct-pkg-config-static-flag.patch
       ./qtbase-arch-patches/0024-Fix-qt5_wrap_ui-macro.patch
       ./qtbase-arch-patches/0025-Ignore-errors-about-missing-feature-static.patch
@@ -42,7 +42,9 @@ let
       ./qtbase-arch-patches/0027-Ignore-failing-pkg-config-test.patch
       ./qtbase-arch-patches/0028-Include-uiviewsettingsinterop.h-correctly.patch
       ./qtbase-arch-patches/0029-Hardcode-linker-flags-for-libqwindows.dll.patch
-      ./qtbase-arch-patches/0030-Prevent-qmake-from-messing-static-lib-dependencies.patch
+      #./qtbase-arch-patches/0030-Prevent-qmake-from-messing-static-lib-dependencies.patch
+      # based on 0020 and 0022, and 0030 from Arch
+      ./static-cmake.patch
     ];
 
     inherit version;
