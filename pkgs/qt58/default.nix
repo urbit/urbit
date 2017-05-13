@@ -21,21 +21,21 @@ let
       ./qtbase-arch-patches/0005-Make-sure-.pc-files-are-installed-correctly.patch
       ./qtbase-arch-patches/0006-Don-t-add-resource-files-to-LIBS-parameter.patch
       ./qtbase-arch-patches/0007-Prevent-debug-library-names-in-pkg-config-files.patch
-      ./qtbase-arch-patches/0008-Fix-linking-against-shared-static-libpng.patch
-      ./qtbase-arch-patches/0009-Fix-linking-against-static-D-Bus.patch
-      ./qtbase-arch-patches/0010-Fix-linking-against-static-freetype2.patch
-      ./qtbase-arch-patches/0011-Fix-linking-against-static-harfbuzz.patch
-      ./qtbase-arch-patches/0012-Fix-linking-against-static-pcre.patch
-      ./qtbase-arch-patches/0013-Fix-linking-against-shared-static-MariaDB.patch
-      ./qtbase-arch-patches/0014-Fix-linking-against-shared-static-PostgreSQL.patch
+      # ./qtbase-arch-patches/0008-Fix-linking-against-shared-static-libpng.patch
+      # ./qtbase-arch-patches/0009-Fix-linking-against-static-D-Bus.patch
+      # ./qtbase-arch-patches/0010-Fix-linking-against-static-freetype2.patch
+      # ./qtbase-arch-patches/0011-Fix-linking-against-static-harfbuzz.patch
+      # ./qtbase-arch-patches/0012-Fix-linking-against-static-pcre.patch
+      # ./qtbase-arch-patches/0013-Fix-linking-against-shared-static-MariaDB.patch
+      # ./qtbase-arch-patches/0014-Fix-linking-against-shared-static-PostgreSQL.patch
       ./qtbase-arch-patches/0015-Rename-qtmain-to-qt5main.patch
       ./qtbase-arch-patches/0016-Build-dynamic-host-libraries.patch
       ./qtbase-arch-patches/0017-Enable-rpath-for-build-tools.patch
       ./qtbase-arch-patches/0018-Use-system-zlib-for-build-tools.patch
       ./qtbase-arch-patches/0019-Disable-determing-default-include-and-lib-dirs-at-qm.patch
       ./qtbase-arch-patches/0020-Use-.dll.a-as-import-lib-extension.patch
-      ./qtbase-arch-patches/0021-Merge-shared-and-static-library-trees.patch
-      ./qtbase-arch-patches/0022-Allow-usage-of-static-version-with-CMake.patch
+      # ./qtbase-arch-patches/0021-Merge-shared-and-static-library-trees.patch
+      # ./qtbase-arch-patches/0022-Allow-usage-of-static-version-with-CMake.patch
       ./qtbase-arch-patches/0023-Use-correct-pkg-config-static-flag.patch
       ./qtbase-arch-patches/0024-Fix-qt5_wrap_ui-macro.patch
       ./qtbase-arch-patches/0025-Ignore-errors-about-missing-feature-static.patch

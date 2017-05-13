@@ -10,7 +10,7 @@ crossenv.make_derivation rec {
     sha256 = "0mh3qyvk4k5i82zcf4q0anvm8aq1b684v91ss2kqhz80fafm6gy3";
   };
 
-  patches = [ ./megapatch.patch ];
+  patches = [];
 
   builder = ./builder.sh;
 
