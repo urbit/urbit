@@ -2364,10 +2364,18 @@
           $:  rtt/@dr                                   ::  decaying avg rtt
               wid/@ud                                   ::  logical wdow msgs
           ==                                            ::
-++  fort                                                ::  formal state
+++  furt                                                ::  formal state
           $:  $0                                        ::  version
               gad/duct                                  ::  client interface
               hop/@da                                   ::  network boot date
+              ton/town                                  ::  security
+              zac/(map ship corn)                       ::  flows by server
+          ==                                            ::
+++  fort                                                ::  formal state
+          $:  $1                                        ::  version
+              gad/duct                                  ::  client interface
+              hop/@da                                   ::  network boot date
+              bad/(set @p)                              ::  bad ships
               ton/town                                  ::  security
               zac/(map ship corn)                       ::  flows by server
           ==                                            ::
@@ -2676,6 +2684,7 @@
               {$hole p/lane q/@}                        ::  packet failed
               {$junk p/@}                               ::  entropy
               {$kick p/@da}                             ::  wake up
+              {$nuke p/@p}                              ::  toggle auto-block
               {$make p/(unit @t) q/@ud r/@ s/?}         ::  wild license
               {$sith p/@p q/@uw r/?}                    ::  imperial generator
               {$wake $~}                                ::  timer activate
@@ -2951,6 +2960,7 @@
 ++  cuft                                                ::  internal gift
   $%  {$coup p/(unit tang)}                             ::  poke result
       {$diff p/cage}                                    ::  subscription output
+      {$doff p/mark q/noun}                             ::  untyped diff
       {$quit $~}                                        ::  close subscription
       {$reap p/(unit tang)}                             ::  peer result
   ==                                                    ::

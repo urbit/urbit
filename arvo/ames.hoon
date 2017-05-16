@@ -378,7 +378,7 @@
         0w0                           ::  233, ~dyn, Tlon
         0w0                           ::  234, ~dem, Tlon
         0w0                           ::  235, ~lux, Tlon Investor 15
-        0w1O.Jq9xt.YFg7U.qg13U.WFNGJ  ::  236, ~fed, Iceman
+        0w0                           ::  236, ~fed, Tlon
         0w0                           ::  237, ~sed, Tlon
         0w0                           ::  238, ~bec, Tlon
         0w0                           ::  239, ~mun, Tlon
@@ -917,8 +917,8 @@
       =:  caw  2
           rto  ;:  min
                  (mul 2 rto)
-                 ~m15
-                 (mul ~m1 ?~(rue 1 +((div (sub now u.rue) ~d1))))
+                 ~m2
+                 (mul ~s16 ?~(rue 1 +((div (sub now u.rue) ~d1))))
                ==
         ==
       (harv now)
@@ -1182,6 +1182,9 @@
             |%
             ++  apse
               ^+  +>.$
+              ?:  =(%dead kay)
+                ~&  [%dead-ack source+her packet+`@p`(mug dam)]
+                cock
               =+  oub=bust:puz
               =+  neg==(~ yed.caq.dur.diz)
               =.  +>.$  east
@@ -1594,10 +1597,15 @@
       (hunt doz rtn.sop.bah)
     ::
     ++  load
-      |=  old/fort
-      ^+  ..^$
+      |=  old/?(fort furt)
       ~&  %ames-reload
-      ..^$(fox old)
+      %_    ..^$
+          fox
+        ?-  -.old
+          $0  [%1 gad.old hop.old ~ ton.old zac.old]
+          $1  old
+        ==
+      ==
     ::
     ++  scry
       |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
@@ -1810,6 +1818,14 @@
         ::
             $sith
           (~(czar am [now fox]) p.kyz q.kyz r.kyz)
+        ::
+            $nuke
+          :-  ~
+          ?:  (~(has in bad.fox) p.kyz)
+            ~&  [%unblock p.kyz]
+            fox(bad (~(del in bad.fox) p.kyz))
+          ~&  [%block p.kyz]
+          fox(bad (~(put in bad.fox) p.kyz))
         ::
             $wake
           (~(wake am [now fox]) hen)

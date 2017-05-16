@@ -30,6 +30,9 @@
 ++  hood-init                                           ::  report init
   $:  him/ship                                          ::
   ==                                                    ::
+++  hood-nuke                                           ::  block/unblock
+  $:  him/ship                                          ::
+  ==                                                    ::
 ++  hood-reset                                          ::  reset command
   $~                                                    ::
 ++  hood-deset                                          ::  reset command
@@ -53,6 +56,7 @@
       $%  {$cash wire p/@p q/buck}                    ::
           {$conf wire dock $load ship term}           ::
           {$flog wire flog}                           ::
+          {$nuke wire ship}                           ::
           {$serv wire ?(desk beam)}                   ::
           {$poke wire dock pear}                      ::
           {$wont wire sock path *}                    ::  send message
@@ -86,6 +90,10 @@
 ++  poke-init                                         ::  initialize
   |=  him/ship  =<  abet
   (emit %flog /helm %crud %hax-init leaf+(scow %p him) ~)
+::
+++  poke-nuke                                         ::  initialize
+  |=  him/ship  =<  abet
+  (emit %nuke /helm him)
 ::
 ++  poke-mass
   |=  $~  =<  abet

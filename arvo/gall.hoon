@@ -13,7 +13,6 @@
   ==                                                    ::
 ++  rook                                                ::  forward ames msg
   $%  {$m p/mark q/*}                                   ::  message
-      {$l p/mark q/path}                                ::  "peel" subscribe
       {$s p/path}                                       ::  subscribe
       {$u $~}                                           ::  cancel+unsubscribe
   ==                                                    ::
@@ -59,7 +58,7 @@
       qel/(map bone @ud)                                ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
-  $:  mak/*                                             ::  (deprecated)
+  $:  mak/(unit duct)                                   ::  ames awaiting crash
       sys/duct                                          ::  system duct
       sap/(map ship scad)                               ::  foreign contacts
       bum/(map dude seat)                               ::  running agents
@@ -252,11 +251,11 @@
     =^  num  +>.$  (mo-bale him)
     =+  ^=  roc  ^-  rook
         ?-  -.q.caz
+          $peel  !!
           $poke  [%m p.p.q.caz q.q.p.q.caz]
           $pull  [%u ~]
           $puff  !!
           $punk  !!
-          $peel  [%l p.q.caz q.q.caz]
           $peer  [%s p.q.caz]
         ==
     %+  mo-pass  
@@ -275,12 +274,11 @@
     `[[%leaf (trip p.u.ars)] q.u.ars]
   ::
   ++  mo-awed                                           ::  foreign response
-    |=  {him/ship why/?($peer $peel $poke $pull) art/(unit ares)}
+    |=  {him/ship why/?($peer $poke $pull) art/(unit ares)}
     ^+  +>
     ::  ~&  [%mo-awed him why art]
     =+  tug=(mo-baba (mo-baal art))
     ?-  why
-      $peel  (mo-give %unto %reap tug)
       $peer  (mo-give %unto %reap tug)
       $poke  (mo-give %unto %coup tug)
       $pull  +>.$
@@ -408,6 +406,7 @@
         $coup  (mo-give %mack p.cuf)
         $diff  %+  mo-pass  [%sys %red t.pax]
                [%a %wont [our him] [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
+        $doff  !!
         $quit  %+  mo-pass  [%sys pax]
                [%a %wont [our him] [%g %gh dap ~] [num %x ~]]
         $reap  (mo-give %mack p.cuf)
@@ -429,14 +428,14 @@
         ?>  ?=({@ $~} t.pax)
         %-  mo-awed
         :*  p.+>.sih
-            ;;(?($peer $peel $poke $pull) i.t.pax)
+            (?($peer $poke $pull) i.t.pax)
             ~
         ==
       ?>  ?=({$a $woot *} sih)
       ?>  ?=({@ $~} t.pax)
       %-  mo-awed
       :*  p.+>.sih
-          ;;(?($peer $peel $poke $pull) i.t.pax)
+          (?($peer $poke $pull) i.t.pax)
           +>+.sih
       ==
     ==
@@ -459,10 +458,42 @@
               +>.$
             ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
     ::
-      $out  ?.  ?=({$g $unto *} q.hin)
+      $out  ?:  ?=({$f $made *} q.hin)
+              ?-  -.q.+>.q.hin  
+                $tabl  ~|(%made-tabl !!)
+                $&     =.  ap.pap  (mo-resume-mack:pap ~)
+                       ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
+                $|
+                    =+  why=p.q.+>.q.hin
+                    =.  ..ap  ap-abet:(ap-misvale:pap t.pax)
+                    =.  why  (turn why |=(a/tank rose+[~ "! " ~]^[a]~))
+                    ~>  %slog.`rose+["  " "[" "]"]^[>%mo-cook-fail< (flop why)]
+                    ~&  [him=q.q.pry our=our pax=pax]
+                    ::
+                    ::  here we should crash because the right thing
+                    ::  for the client to do is to upgrade so that it
+                    ::  understands the server's mark, thus allowing
+                    ::  the message to proceed.  but ames is not quite
+                    ::  ready for promiscuous crashes, so instead we
+                    ::  send a pull outward and a quit downward.
+                    ::  or not... outgoing dap (XXX) is not in the path.
+                    ::  =.  +>.$  ap-abet:(ap-pout:pap t.t.t.pax %quit ~)
+                    ::  %+  mo-pass
+                    ::    [%use pax]
+                    ::  [%g %deal [q.q.pry our] XXX %pull ~]
+                    (mo-resume-mack ~ >%mo-cook-fail< p.q.+>.q.hin)
+              ==
+            ?.  ?=({$g $unto *} q.hin)
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
               +>.$
+            ?:  ?=($doff +>-.q.hin)
+              %+  mo-pass
+                [%use pax]
+              [%f %exec our ~ byk.pap %vale +.p.q.hin]
+            ?:  ?=($quit +>-.q.hin)
+              =.  ap.pap  (mo-resume-mack:pap ~)
+              ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
             ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
     ==
   ::
@@ -523,22 +554,30 @@
     ?-  -.rok
       ::  %m  [%f %exec our ~ (mo-beak dap) %vale p.rok q.rok]
       $m  [%g %deal [him our] dap %puff p.rok q.rok]
-      $l  [%g %deal [him our] dap %peel p.rok q.rok]
       $s  [%g %deal [him our] dap %peer p.rok]
       $u  [%g %deal [him our] dap %pull ~]
     ==
   ::
   ++  mo-gawd                                           ::  ames backward
     |=  {him/@p dap/dude num/@ud ron/roon}
-    ?-    -.ron
-        $d
-      %+  mo-pass
-        [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%f %exec our ~ (mo-beak dap) %vale p.ron q.ron]
-    ::
-        $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
-            (mo-give(hen (mo-ball him num)) %unto %quit ~)
+    =.  mak  (mo-defer-mack hen)
+    =.  hen  (mo-ball him num)
+    ?-  -.ron
+      $d  (mo-give %unto %doff p.ron q.ron)
+      $x  (mo-give %unto %quit ~)
     ==
+  ::
+  ++  mo-defer-mack                                     ::  future %mack
+    |=  hon/duct  ^+  mak
+    ?~  mak  `hon
+    ~|(double-mak+[u.mak hon] !!)
+  ::
+  ++  mo-resume-mack                                    ::  route %mack
+    |=  a/(unit tang)  ^+  +>.$
+    ?^  mak
+      +>.$(mak ~, moz :_(moz [u.mak %give %mack a]))
+    ?~  a  +>.$
+    (mean >%gall-mack< u.a)  ::  XX unnecessary?
   ::
   ++  ap                                                ::  agent engine
     ~%  %gall-ap  +>  ~
@@ -594,7 +633,7 @@
       ?~  ded  +>.^$
       =>  %*(. $(ded t.ded) ost i.ded)
       =+  tib=(~(get by sup.ged) ost)
-      ?~  tib  ~&([%ap-abut-bad-bone dap ost] ..ap-kill)
+      ?~  tib  ..ap-kill
       ap-kill(q.q.pry p.u.tib)
     ::
     ++  ap-aver                                         ::  cove to move
@@ -1080,6 +1119,7 @@
       ?-  -.cuf
         $coup  (ap-take q.q.pry %coup +.pax `!>(p.cuf))
         $diff  (ap-diff q.q.pry pax p.cuf)
+        $doff  !!
         $quit  (ap-take q.q.pry %quit +.pax ~)
         $reap  (ap-take q.q.pry %reap +.pax `!>(p.cuf))
       ==
@@ -1239,6 +1279,7 @@
         $info  `%c
         $merg  `%c
         $mont  `%c
+        $nuke  `%a
         $ogre  `%c
         $serv  `%e
         $them  `%e
