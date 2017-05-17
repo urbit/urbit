@@ -271,7 +271,7 @@
         }
 
         {
-          u3_noun dey = u3qdi_tap(p_sut, u3_nul);
+          u3_noun dey = u3qdi_tap(p_sut);
           u3_noun yed = dey;
 
           while ( u3_nul != yed ) {
@@ -418,7 +418,7 @@
         }
         case c3__fork: p_ref = u3t(ref);
         {
-          u3_noun dey = u3qdi_tap(p_ref, u3_nul);
+          u3_noun dey = u3qdi_tap(p_ref);
           u3_noun yed = dey;
 
           while ( u3_nul != yed ) {
