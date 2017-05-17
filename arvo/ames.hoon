@@ -1182,9 +1182,6 @@
             |%
             ++  apse
               ^+  +>.$
-              ?:  =(%dead kay)
-                ~&  [%dead-ack source+her packet+`@p`(mug dam)]
-                cock
               =+  oub=bust:puz
               =+  neg==(~ yed.caq.dur.diz)
               =.  +>.$  east
@@ -1294,6 +1291,14 @@
           ++  deer                                      ::    deer:la:ho:um:am
             |=  {cha/path num/@ud dut/(unit)}           ::  interpret message
             ^+  +>
+            ::
+            ::  these patches are both hacks and result in 
+            ::  unnecessary transmissions.  but they should
+            ::  solve the problem that needs to be solved:
+            ::  acknowledging messages after a bad skip.
+            ::
+            =.  kay  ?.((~(has in bad.fox) her) kay %dead)
+            =.  +>  ?.(=(%dead kay) +> cock)
             =+  rum=(fall (~(get by raz.bah) cha) *race)
             %=    +>.$
                 +>
