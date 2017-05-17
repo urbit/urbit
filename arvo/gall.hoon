@@ -680,7 +680,7 @@
     ::
     ++  ap-diff                                         ::  pour a diff
       |=  {her/ship pax/path cag/cage}
-      =.  q.cag  (spec q.cag)
+      ::  =.  q.cag  (spec q.cag)
       =+  cug=(ap-find [%diff p.cag +.pax])
       ?~  cug
         %.  [| her +.pax]

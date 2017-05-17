@@ -309,7 +309,7 @@
   =+  wag=se-amor
   ?~  wag  +
   ::  ~&  [%se-anon inx+inx wag+wag nex+(mod +(inx) (lent se-amor))]
-  +(inx (mod +(inx) (lent wag)))
+  +(off 0, inx (mod +(inx) (lent wag)))
 ::
 ++  se-agon                                           ::  current gill
   ^-  (unit gill)
@@ -408,10 +408,24 @@
   +>(mir lin)
 ::
 ++  se-just                                           ::  adjusted buffer
-  |=  lin/(pair @ud stub)
+  |=  {pom/stub lin/(pair @ud (list @c))}
   ^+  +>
-  =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
-  (se-show (sub p.lin off) (scag:klr edg (slag:klr off q.lin)))
+  =/  pol  (lent-char:klr pom)
+  =/  end  (sub edg pol)
+  =/  pos  (add pol p.lin)
+  ?:  (gte (div (mul pol 100) edg) 35)      :: old style (long prompt)
+    =/  off  ?:((lte p.lin end) 0 (sub p.lin end))
+    %+  se-show
+      (sub pos off)
+    (swag:klr [off edg] (welp pom [*stye q.lin]~))
+  =.  off  ?:  (gth p.lin (add end off))
+             (sub p.lin end)
+           ?:  (lth p.lin off)
+             (min p.lin (dec off))
+           off
+  %+  se-show
+    (sub pos off)
+  (welp pom [*stye (swag [off end] q.lin)]~)
 ::
 ++  se-view                                           ::  flush buffer
   ^+  .
@@ -569,7 +583,7 @@
         $v  ta-bel
         $w  ?:  =(0 pos.inp)
               ta-bel
-            =+  sop=(ta-off %l %ace pos.inp)
+            =+  sop=(ta-pos %l %ace pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
         $x  +>(..ta se-anon)
         $y  ?:  =(0 num.kil)
@@ -631,22 +645,29 @@
       ==
     ==
   ::
+  ++  ta-off                                          ::  reset buffer offset
+    |=  ted/sole-edit
+    =.  off  ?:  (any:edit ted |=(a/sole-edit ?=($set -.a)))
+               0
+             off
+    +>
+  ::
   ++  ta-got                                          ::  apply change
     |=  cal/sole-change
     =^  ted  say.inp  (~(receive sole say.inp) cal)
-    (ta-dog ted)
+    (ta-dog:(ta-off ted.cal) ted)
   ::
   ++  ta-hom                                          ::  local edit
     |=  ted/sole-edit
     ^+  +>
-    =.  +>  (ta-det ted)
+    =.  +>  (ta-det:(ta-off ted) ted)
     (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
   ::
   ++  ta-jump                                         ::  buffer pos
     |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
     ^-  @ud
     %-  ?:(?=($l dir) sub add)
-    [pos (ta-off dir til pos)]
+    [pos (ta-pos dir til pos)]
   ::
   ++  ta-kil                                          ::  kill selection
     |=  {dir/?($l $r) sel/{@ @}}
@@ -687,7 +708,7 @@
             ::
       $bac  ?:  =(0 pos.inp)                          ::  kill left-word
               ta-bel
-            =+  sop=(ta-off %l %edg pos.inp)
+            =+  sop=(ta-pos %l %edg pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
             ::
       $b    ?:  =(0 pos.inp)                          ::  jump left-word
@@ -704,7 +725,7 @@
             ::
       $d    ?:  =(pos.inp (lent buf.say.inp))         ::  kill right-word
               ta-bel
-            (ta-kil %r [pos.inp (ta-off %r %edg pos.inp)])
+            (ta-kil %r [pos.inp (ta-pos %r %edg pos.inp)])
             ::
       $f    ?:  =(pos.inp (lent buf.say.inp))         ::  jump right-word
               ta-bel
@@ -721,7 +742,7 @@
             ?:  =(b c)
               ta-bel
             =+  next=[b (sub a b)]
-            =+  prev=[c (ta-off %r %edg c)]
+            =+  prev=[c (ta-pos %r %edg c)]
             %-  ta-hom(pos.inp a)
             :~  %mor
                 (rep:edit next (swag prev buf.say.inp))
@@ -733,7 +754,7 @@
               ta-bel
             =+  case=?:(?=($u key) cuss cass)
             =+  sop=(ta-jump %r %wrd pos.inp)
-            =+  sel=[sop (ta-off %r %edg sop)]
+            =+  sel=[sop (ta-pos %r %edg sop)]
             %-  ta-hom
             %+  rep:edit  sel
             ^-  (list @c)  ^-  (list @)               :: XX unicode
@@ -776,7 +797,7 @@
       old.hit  [buf.say.inp old.hit]
     ==
   ::
-  ++  ta-off                                          ::  buffer pos offset
+  ++  ta-pos                                          ::  buffer pos offset
     |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
     ^-  @ud
     %-  ?-  til  $ace  ace:offset
@@ -819,11 +840,9 @@
     (ta-hom (cat:edit pos.inp txt))
   ::
   ++  ta-vew                                          ::  computed prompt
-    ^-  (pair @ud stub)
+    ^-  {pom/stub lin/(pair @ud (list @c))}
     =;  vew/(pair (list @c) styx)
-      =+  lin=(make:klr q.vew)
-      :_  (welp lin [*stye p.vew]~)
-      (add pos.inp (lent-char:klr lin))
+      [(make:klr q.vew) pos.inp p.vew]
     ?:  vis.pom
       :-  buf.say.inp                                 ::  default prompt
       ?~  ris
@@ -863,6 +882,11 @@
         (cut pos num)
         (cat pos txt)
     ==
+  ++  any                                             ::  matches?
+    |=  {a/sole-edit b/$-(sole-edit ?)}
+    ^-  ?
+    ?.  ?=($mor -.a)  (b a)
+    (lien p.a |=(c/sole-edit ^$(a c)))
   --
 ++  offset                                            ::  calculate offsets
   |%
@@ -987,5 +1011,9 @@
     =+  n=(snag p.u.i b)
     :_  ~  :-  p.n
     (^scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
+  ::
+  ++  swag                                            ::  swag stub, keep stye
+    |=  {{a/@ b/@} c/stub}
+    (scag b (slag a c))
   --
 --
