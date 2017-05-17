@@ -3131,7 +3131,7 @@
       |=  jon/json  ^-  (map _(wonk *fel) _*wit)
       =/  jom  ((om wit) jon)
       %-  malt
-      %+  turn  (~(tap by jom))
+      %+  turn  ~(tap by jom)
       |*  {a/cord b/*}
       =>  .(+< [a b]=+<)
       [(rash a fel) b]
@@ -3280,7 +3280,7 @@
       ?~  jom  ~
       %-  drop-map
       %-  malt
-      %+  turn  (~(tap by jom))
+      %+  turn  ~(tap by jom)
       |*  {a/cord b/*}
       (both (rush a fel) (some b))
     ::                                                  ::  ++pe:dejs-soft:
@@ -3555,7 +3555,7 @@
           $o
         :-  '{'
         =.  rez  ['}' rez]
-        =+  viz=(~(tap by p.val))
+        =+  viz=~(tap by p.val)
         ?~  viz  rez
         !.
         |-  ^+  rez
@@ -4536,7 +4536,7 @@
     ::                                                  ::  ++pale:pubsub:
     ++  pale                                            ::  filter peers
       |=  {hid/bowl fun/$-(sink ?)}
-      (skim (~(tap by sup.hid)) fun)
+      (skim ~(tap by sup.hid) fun)
     ::                                                  ::  ++prix:pubsub:
     ++  prix                                            ::  filter gate
       |=  pax/path  |=  sink  ^-  ?

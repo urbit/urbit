@@ -130,7 +130,7 @@
     ++  audi  (map-to-json parn jove)
     ++  bouq
       |=  a/bouquet
-      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))  
+      a+(turn ~(tap in a) |=(b/path a+(turn b |=(c/knot s+c))))
     ::
     ++  parn
       |=  a/partner  ^-  cord

@@ -44,7 +44,7 @@
 ::
 ++  adrs
   =-  (sort - lor)
-  %+  turn  (~(tap by adr))
+  %+  turn  ~(tap by adr)
   |=({a/email b/time c/invited} [tym=b ask=a inv=c])
 ::
 ++  new-adrs  (skim adrs |=({@ @ inv/invited} =(%new inv)))

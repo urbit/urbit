@@ -8,7 +8,7 @@
   |=  {vane/?($c $g) pax/path des/(map @t $~)}
   ^-  tank
   :+  %rose  [" " `~]
-  %+  turn  (sort (~(tap by des)) aor)
+  %+  turn  (sort ~(tap by des) aor)
   |=  {kid/@ta $~}
   =+  paf=`path`/[kid]
   =-  :+  %rose  ["/" ~ ?:(dir "/" ~)]

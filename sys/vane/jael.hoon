@@ -819,14 +819,14 @@
   ++  remove                                            ::  pig minus gob
     |=  gob/safe
     ^-  safe
-    =/  buv  (~(tap by gob))
+    =/  buv  ~(tap by gob)
     |-  ?~  buv  pig
         $(buv t.buv, pig (delete i.buv))
   ::                                                    ::  ++splice:up
   ++  splice                                            ::  pig plus gob
     |=  gob/safe
     ^-  safe
-    =/  buv  (~(tap by gob))
+    =/  buv  ~(tap by gob)
     |-  ?~  buv  pig
         $(buv t.buv, pig (insert i.buv))
   ::                                                    ::  ++update:up
@@ -844,7 +844,7 @@
   ++  collate                                           ::  sort by version
     |=  ord/$-({{life cert} {life cert}} ?)
     ^-  (list (pair life cert))
-    (sort (~(tap by pub)) ord)
+    (sort ~(tap by pub) ord)
   ::                                                    ::  ++current:we
   ++  current                                           ::  current number
     ^-  (unit life)
@@ -1117,7 +1117,7 @@
   ::                                                    ::  ++exec:su
   ++  exec                                              ::  mass gift
     |=  {yen/(set duct) cad/card}
-    =/  noy  (~(tap in yen))
+    =/  noy  ~(tap in yen)
     |-  ^+  ..exec
     ?~  noy  ..exec
     $(noy t.noy, moz [[i.noy cad] moz])
@@ -1212,7 +1212,7 @@
     ::                                                  ::  ++flow:su
     ++  flow                                            ::  to set of ships
       |=  tar/(set ship)
-      =+  rot=(~(tap in (~(del in tar) our)))
+      =+  rot=~(tap in (~(del in tar) our))
       |-  ^+  ..fire
       ?~  rot  ..fire
       $(rot t.rot, ..fire (home i.rot))
@@ -1238,7 +1238,7 @@
       ::  nex: all wills to add
       ::
       =/  nex
-        =/  rom  (~(tap in mor))
+        =/  rom  ~(tap in mor)
         |-  ^-  farm
         ?~  rom  ~
         %+  ~(put by $(rom t.rom))
@@ -1250,11 +1250,11 @@
       =.  sea  (~(uni in sea) mor)
       =/  wit
         =|  wit/(set ship)
-        =/  fem  (~(tap by nex))
+        =/  fem  ~(tap by nex)
         |-  ^+  wit
         ?~  fem  wit
         =.  wit  $(fem t.fem)
-        =/  naw  (~(tap by q.i.fem))
+        =/  naw  ~(tap by q.i.fem)
         |-  ^+   wit
         ?~  naw  wit
         =.  wit  $(naw t.naw)
@@ -1335,7 +1335,7 @@
       =/  fub
         ^-  (list (pair ship (unit safe)))
         %+  turn
-          (~(tap by pry.urb))
+          ~(tap by pry.urb)
         |=  (pair ship (map ship safe))
         [p (~(get by q) our)]
       =*  veg
@@ -1364,7 +1364,7 @@
       ?.  (~(has in kyz.rel) who)  cod.rel
       =-  (~(uni by cod.rel) -)
       %-  ~(gas by *farm)
-      %+  skim  (~(tap by pug.urb))
+      %+  skim  ~(tap by pug.urb)
       |=({who/ship *} (lth who 65.536))
     ::
     (~(home fire hec) who)
@@ -1559,7 +1559,7 @@
             cod/farm
         ==
     ^+  +>
-    =+  lec=(~(tap by cod))
+    =+  lec=~(tap by cod)
     |-  ^+  ..meet
     ?~  lec  ..meet
     %=  $
@@ -1983,7 +1983,7 @@
           ::
           ::  sow: all new signatures
           ::
-          =+  sow=`(list (trel ship life @))`(~(tap by syg.new))
+          =+  sow=`(list (trel ship life @))`~(tap by syg.new)
           |-  ^-  (pair (list change) cert)
           ?~  sow  [~ u.eld]
           ::
