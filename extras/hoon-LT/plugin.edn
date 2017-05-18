@@ -1,0 +1,6 @@
+{:name "hoon"
+ :version "0.0.1"
+ :author "ohAitch"
+ :source "https://github.com/ohAitch/LT-Hoon"
+ :desc "Hoon Language Plugin"
+ :behaviors "hoon.behaviors"}
