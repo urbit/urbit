@@ -142,6 +142,14 @@
         }
         else return _crop_sint(van, sut, ref, bix);
       }
+      case c3__help: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+        u3_noun foz = _crop_dext(van, q_sut, ref, bix);
+        u3_noun ret = u3qf_help(p_sut, foz);
+
+        u3z(foz);
+        return ret;
+      }
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun foz = _crop_dext(van, q_sut, ref, bix);

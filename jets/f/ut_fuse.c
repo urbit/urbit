@@ -124,6 +124,14 @@
       {
         return _fuse_repo(van, sut, ref, bix);
       }
+      case c3__help: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+        u3_noun vot = _fuse_in(van, q_sut, ref, bix);
+        u3_noun ret = u3qf_help(p_sut, vot);
+
+        u3z(vot);
+        return ret;
+      }
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun vot = _fuse_in(van, q_sut, ref, bix);

@@ -233,6 +233,7 @@
     u3_noun u3wf_flor(u3_noun);
     u3_noun u3wf_forq(u3_noun);
     u3_noun u3wf_fork(u3_noun);
+    u3_noun u3wf_help(u3_noun);
     u3_noun u3wf_hike(u3_noun);
     u3_noun u3wf_look(u3_noun);
 
