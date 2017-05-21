@@ -42,6 +42,7 @@
           {$poke p/goal}                                ::  poke app
           {$show p/?($0 $1 $2 $3)}                      ::  print val+span+twig
           {$verb p/term}                                ::  store variable
+          {$help p/(list term)}                         ::  look up help
       ==                                                ::
     ++  dojo-source                                     ::  construction node
       $:  p/@ud                                         ::  assembly index
@@ -168,6 +169,18 @@
           ;~  pose
             (dp-variable (cold %sur hep) ;~(pfix gap dp-hooves))
             (dp-variable (cold %lib lus) ;~(pfix gap dp-hooves))
+          ==
+        ==
+      ::
+        ;~  pfix  hax
+          ;~  pose
+            ;~  pfix  ace
+              %+  cook
+                |=  a/(list term)
+                [[%help a] 0 %ex [%make p=~[[%.y p=1]] q=~]]
+              (most col sym)
+            ==
+            (easy [[%help ~] 0 %ex [%make p=~[[%.y p=1]] q=~]])
           ==
         ==
       ::
@@ -461,10 +474,10 @@
             $eny  ~|(%entropy-is-eternal !!)
             $now  ~|(%time-is-immutable !!)
             $our  ~|(%self-is-immutable !!)
-            $lib  
+            $lib
           .(lib ((dy-cast (list hoof:ford) !>(*(list hoof:ford))) q.cay))
         ::
-            $sur  
+            $sur
           .(sur ((dy-cast (list hoof:ford) !>(*(list hoof:ford))) q.cay))
         ::
             $dir  =+  ^=  pax  ^-  path
@@ -478,7 +491,14 @@
                   rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
         ==
       ::
-          $poke       
+          $help
+        ::  =*  type  +.p.mad
+        ::  ?~  type
+        ::    (dy-show-help-overview p.q.cay)
+        (dy-inspect +.p.mad p.q.cay)
+::        (dy-show-help-for-topic type p.q.cay)
+      ::
+          $poke
         %-  he-card(poy ~)
         :*  %deal
             /poke
@@ -536,6 +556,526 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
+    ::
+    ++  dy-inspect
+      |=  {topic/(list term) sut/span}
+      %+  dy-rash  %tan
+      |^  ^-  tang
+          =+  to-display=(find-item-in-span (flop topic) sut)
+          ?~  to-display
+            [%leaf "Could not find help"]~
+          (flop (print-item u.to-display))
+      :>  #  %models
+      +|
+      ::
+      :>    an overview of all named things in the span.
+      :>
+      :>  each item in the overview list is either a documentation for a sublist
+      :>  or an association between a term and documentation for it.
+      ++  overview  (list overview-item)
+      ::
+      :>  in instance in the ++overview list.
+      ++  overview-item
+        $%  :>  a header {doc} which will indent its {children}.
+            {$header doc/what children/overview}
+            :>  an item in a list with {name} and {docs}.
+            {$item name/tape doc/what}
+        ==
+      ::
+      :>  the part of a {span} being inspected.
+      ++  item
+        $%  :>  overview of span
+            {$view items/overview}
+            :>  inspecting a full core.
+            $:  $core
+                name/tape
+                docs/what
+                r/span
+                con/coil
+                children/(unit item)
+            ==
+            :>  inspecting a single arm on a core.
+            $:  $arm
+                name/tape
+                docs/what
+                r/span
+                con/coil
+            ==
+            :>  inspecting a single chapter on a core.
+            $:  $chapter
+                name/tape
+                docs/what
+                con/coil
+                chapter-id/@
+            ==
+            :>  inspecting a face and what's behind it.
+            $:  $face
+                name/tape
+                docs/what
+                children/(unit item)
+            ==
+        ==
+      :>  #
+      :>  #  %searching
+      :>  #
+      :>    functions which find what to print
+      +|
+      :>    returns the item to print while searching through {topic}.
+      :>
+      :>  this gate is called recursively to find the path {topic} in the span
+      :>  {sut}. once it finds the correct part of the span, it switches to
+      :>  ++build-inspectable-recursively to describe that part of the span.
+      ++  find-item-in-span
+        |=  {topics/(list term) sut/span}
+        ^-  (unit item)
+        ?~  topics
+          ::  we have no more search path. return the rest as an overview
+          (build-inspectable-recursively sut)
+        ?-  sut
+            {$atom *}  ~
+        ::
+            {$cell *}
+          =+  lhs=$(sut p.sut)
+          ?~  lhs
+            $(sut q.sut)
+          lhs
+        ::
+            {$core *}
+          =+  core-docs=r.q.sut
+          ?~  p.core-docs
+            ::  todo: this core has no toplevel documentation. it might have
+            ::  an arm though. check that next.
+            $(sut p.sut)
+          ?~  (find `(list term)`[i.topics ~] p.core-docs)
+            ::  the current topic isn't the toplevel core topic.
+            =+  arm-docs=(find-arm-in-coil i.topics q.sut)
+            ?~  arm-docs
+              ::  the current topic is neither the name of the core or an arm
+              ::  on the core.
+              $(sut p.sut)
+            `[%arm (trip i.topics) u.arm-docs p.sut q.sut]
+          ?~  t.topics
+            ::  we matched the core name and have no further search terms.
+            =*  compiled-against  (build-inspectable-recursively p.sut)
+            `[%core (trip i.topics) q.core-docs p.sut q.sut compiled-against]
+          ::  search the core for chapters.
+          =/  tombs/(list (pair @ tomb))  (~(tap by q.s.q.sut))
+          |-
+          ^-  (unit item)
+          ?~  tombs
+            ~
+          ?~  (find `(list term)`[i.t.topics ~] p.p.q.i.tombs)
+            ::  this isn't the topic.
+            $(tombs t.tombs)
+          `[%chapter (trip i.t.topics) q.p.q.i.tombs q.sut p.i.tombs]
+        ::
+            {$face *}
+          ?.  ?=(term q.p.sut)
+            ::  todo: is there something we could do if we have a tune?
+            ~
+          ?.  =(i.topics q.p.sut)
+            ::  this face has a name, but it's not the name we're looking for.
+            ~
+          ?~  t.topics
+            `[%face (trip q.p.sut) p.p.sut (build-inspectable-recursively q.sut)]
+          (find-item-in-span t.topics q.sut)
+        ::
+            {$fork *}
+          =/  spans/(list span)  (~(tap in p.sut))
+          |-
+          ?~  spans
+            ~
+          =+  res=(find-item-in-span topics i.spans)
+          ?~  res
+            $(spans t.spans)
+          res
+        ::
+            {$help *}
+          ::  while we found a raw help, it's associated on the wrong side of a
+          ::  set of topics. Walk through it instead of showing it.
+          (find-item-in-span t.topics q.sut)
+        ::
+            {$hold *}  $(sut (~(play ut p.sut) q.sut))
+            $noun      ~
+            $void      ~
+        ==
+      ::
+      :>  changes a {span} into an {item}.
+      ++  build-inspectable-recursively
+        |=  sut/span
+        ^-  (unit item)
+        ?-  sut
+        ::
+            {$atom *}  ~
+        ::
+            {$cell *}
+          %+  join-items
+            (build-inspectable-recursively p.sut)
+            (build-inspectable-recursively q.sut)
+        ::
+            {$core *}
+          =/  name/term
+            ?~  p.r.q.sut
+              ''
+            i.p.r.q.sut
+          =*  compiled-against  (build-inspectable-recursively p.sut)
+          `[%core (trip name) q.r.q.sut p.sut q.sut compiled-against]
+        ::
+            {$face *}
+          ?.  ?=(term q.p.sut)
+            ::  todo: can we do anything here if this face doesn't have a term?
+            ~
+          =*  compiled-against  (build-inspectable-recursively q.sut)
+          `[%face (trip q.p.sut) p.p.sut compiled-against]
+        ::
+            {$fork *}
+          =/  spans  (~(tap in p.sut))
+          =/  items  (turn spans build-inspectable-recursively)
+          (roll items join-items)
+        ::
+            {$help *}
+          =*  rest-span  (build-inspectable-recursively q.sut)
+          `[%view [%header p.sut (item-as-overview rest-span)]~]
+        ::
+            {$hold *}  $(sut (~(play ut p.sut) q.sut))
+            $noun      ~
+            $void      ~
+        ==
+      ::
+      :>  combines two {(unit item)} together
+      ++  join-items
+        |=  {lhs/(unit item) rhs/(unit item)}
+        ^-  (unit item)
+        ?~  lhs  rhs
+        ?~  rhs  lhs
+        `[%view (weld (item-as-overview lhs) (item-as-overview rhs))]
+      ::
+      :>  changes an item into an overview.
+      ++  item-as-overview
+        |=  uit/(unit item)
+        ^-  overview
+        ?~  uit  ~
+        =+  itm=u.uit
+        ?-  itm
+        ::
+            {$view *}
+          items.itm
+        ::
+            {$core *}
+          ?~  name.itm
+            (item-as-overview children.itm)
+          :-  [%item name.itm docs.itm]
+          (item-as-overview children.itm)
+        ::
+            {$arm *}
+          [%item name.itm docs.itm]~
+        ::
+            {$chapter *}
+          [%item name.itm docs.itm]~
+        ::
+            {$face *}
+          ?~  name.itm
+            ~
+          [%item name.itm docs.itm]~
+        ==
+      ::
+      :>  translate the internals of a core's {tomb} into an {overview}.
+      ++  arms-as-overview
+        |=  a/(map term (pair what foot))
+        ^-  overview
+        %+  turn  (~(tap by a))
+          |=  (pair term (pair what foot))
+          [%item (weld "++" (trip p)) p.q]
+      ::
+      :>  if {arm-name} is an arm in {c}, returns its documentation.
+      ++  find-arm-in-coil
+        |=  {arm-name/term con/coil}
+        ^-  (unit what)
+        =/  tombs  (~(tap by q.s.con))
+        |-
+        ?~  tombs
+          ~
+        =+  item=(~(get by q.q.i.tombs) arm-name)
+        ?~  item
+          $(tombs t.tombs)
+        [~ p.u.item]
+      ::
+      :>    returns an overview for a core's arms and chapters.
+      :>
+      :>  returns an overview for arms which are part of unnamed chapters,
+      :>  and an overview of the named chapters.
+      ++  arm-and-chapter-overviews
+        |=  {con/coil core-name/tape}
+        ^-  {overview overview}
+        =|  arm-docs/overview                           :<  documented arms
+        =|  chapter-docs/overview                       :<  documented chapters
+        =/  tombs  (~(tap by q.s.con))
+        |-
+        ?~  tombs
+          [(sort-overview arm-docs) (sort-overview chapter-docs)]
+        =*  current  q.i.tombs
+        ?~  p.p.current
+          ::  this chapter has no name. add all the foot documentation
+          ::  to arm-docs.
+          =.  arm-docs  (weld arm-docs (arms-as-overview q.current))
+          $(tombs t.tombs)
+        ::  this chapter has a name. add it to the list of chapters
+        =.  chapter-docs
+          %+  weld  chapter-docs
+          ^-  overview
+          [%item :(weld (trip i.p.p.current) ":" core-name) q.p.current]~
+        $(tombs t.tombs)
+      ::
+      :>    returns an overview of the arms in a specific chapter.
+      ++  arms-in-chapter
+        |=  {con/coil chapter-id/@}
+        ^-  overview
+        =/  chapter-tomb  (~(got by q.s.con) chapter-id)
+        (sort-overview (arms-as-overview q.chapter-tomb))
+      ::
+      :>  sort the items.
+      ++  sort-overview
+        |=  ovr/overview
+        ^-  overview
+        %+  sort  ovr
+          |=  {lhs/overview-item rhs/overview-item}
+          (aor (get-overview-name lhs) (get-overview-name rhs))
+      ::
+      ++  get-overview-name
+        |=  ovr/overview-item
+        ?-  ovr
+          {$header *}  ""
+          {$item *}    name.ovr
+        ==
+      ::
+      :>  #
+      :>  #  %printing
+      :>  #
+      :>    functions which display output of various types.
+      +|
+      ++  print-item
+        |=  itm/item
+        ^-  tang
+        ?-  itm
+          {$view *}     (print-overview items.itm)
+          {$core *}     (print-core +.itm)
+          {$arm *}      (print-arm +.itm)
+          {$chapter *}  (print-chapter +.itm)
+          {$face *}     (print-face +.itm)
+        ==
+      ::
+      :>    renders the documentation for a full core.
+      ++  print-core
+        |=  {core-name/tape docs/what spn/span con/coil uit/(unit item)}
+        ^-  tang
+        =+  [arms chapters]=(arm-and-chapter-overviews con core-name)
+        ;:  weld
+          (print-header (turn p.r.con trip) q.r.con)
+        ::
+        ::  todo: figure out how to display the default arm, which should
+        ::  be rendered separately.
+        ::
+          ?~  arms
+            ~
+          (print-overview [%header `['arms:' ~] arms]~)
+        ::
+          ?~  chapters
+            ~
+          (print-overview [%header `['chapters:' ~] chapters]~)
+        ::
+          =+  compiled=(item-as-overview uit)
+          ?~  compiled
+            ~
+          (print-overview [%header `['compiled against:' ~] compiled]~)
+        ==
+      ::
+      :>    renders the documentation for a single arm in a core.
+      ++  print-arm
+        |=  {arm-name/tape doc/what r/span con/coil}
+        ::  todo: use the coil to figure out what this arm is.
+        ?~  doc
+          `tang`[%leaf "{arm-name}: (Undocumented)"]~
+        %+  weld
+          `tang`[%leaf "{arm-name}: {(trip p.u.doc)}"]~
+          (print-sections q.u.doc)
+      ::
+      :>    renders the documentation for a chapter in a core.
+      ++  print-chapter
+        |=  {name/tape docs/what con/coil chapter-id/@}
+        ;:  weld
+          `tang`[%leaf name]~
+        ::
+          ?~  docs
+            ~
+          (print-sections q.u.docs)
+        ::
+          =+  arms=(arms-in-chapter con chapter-id)
+          ?~  arms
+            ~
+          (print-overview [%header `['arms:' ~] arms]~)
+        ==
+      ::
+      :>    renders the documentation for a face.
+      ++  print-face
+        |=  {name/tape docs/what children/(unit item)}
+        %+  weld
+          (print-header [name ~] docs)
+          ?~  children
+            ~
+          (print-item u.children)
+      ::
+      :>    returns a set of lines from a {chap}
+      ++  print-header
+        ::  todo: it's weird that (list tape) is the type used for names.
+        |=  {p/(list tape) docs/what}
+        ^-  tang
+        ?~  p
+          ?~  docs
+            [%leaf "(Undocumented)"]~
+          %+  weld
+            `tang`[%leaf "{(trip p.u.docs)}"]~
+            (print-sections q.u.docs)
+        ?~  docs
+          [%leaf "{i.p}"]~
+        %+  weld
+          `tang`[%leaf "{i.p}: {(trip p.u.docs)}"]~
+          (print-sections q.u.docs)
+      ::
+      :>  renders an overview as {tang}
+      ++  print-overview
+        |=  ovr/overview
+        ^-  tang
+        |^  (print-level ovr 0)
+        ++  print-level
+          :>  indentation: multiply by 2 to get number of spaces.
+          |=  {ovr/overview indentation/@u}
+          ^-  tang
+          :>  max-key-length: length of the longest {item} term.
+          =/  max-key-length  (calculate-max-key-length ovr)
+          :>  output: what we return
+          =|  output/tang
+          |-
+          ?~  ovr
+            output
+          ?-  i.ovr
+          ::
+              {$header *}
+            %=  $
+              output  ;:  weld
+                output
+                ?~  doc.i.ovr
+                  ~
+                `tang`[[%leaf ""] [%leaf "{(trip p.u.doc.i.ovr)}"] ~]
+                ?~  doc.i.ovr
+                  ~
+                (print-sections q.u.doc.i.ovr)
+                (print-level children.i.ovr (add 1 indentation))
+              ==
+              ovr     t.ovr
+            ==
+          ::
+              {$item *}
+            =*  rendered  (render-item indentation max-key-length +.i.ovr)
+            %=  $
+              output  (weld output rendered)
+              ovr  t.ovr
+            ==
+          ==
+        ::
+        :>
+        ++  calculate-max-key-length
+          |=  ovr/overview
+          ^-  @u
+          %-  dy-longest-tape
+          (turn ovr get-overview-name)
+        ::
+        :>  renders a single item line with the given indentation level.
+        ++  render-item
+          |=  {indentation/@u max-key-length/@u name/tape docs/what}
+          ^-  tang
+          =+  spaces=(mul indentation 2)
+          =+  line=(weld (dy-build-space spaces) name)
+          =+  line-len=(lent line)
+          =+  name-len=(lent name)
+          =+  diff=(sub max-key-length name-len)
+          =?  line  (gth diff 0)
+            (weld line (dy-build-space diff))
+          =/  slogan/tape
+            ?~  docs
+              ~
+            (trip p.u.docs)
+          =?  line  !=(0 (lent slogan))
+            ;:  weld
+              line
+              " : "
+              (dy-truncate (sub 80 :(add 1 spaces line-len)) slogan)
+            ==
+          [%leaf line]~
+        --
+      ::
+      :>    renders a list of sections as {tang}
+      :>
+      :>  prints the longform documentation.
+      ++  print-sections
+        |=  sections/(list sect)
+        ^-  tang
+        =|  output/tang
+        |-
+        ?~  sections
+          output
+        =.  output  ;:  weld
+          output
+          `tang`[%leaf ""]~
+          (print-section i.sections)
+        ==
+        $(sections t.sections)
+      ::
+      :>  renders an individual {sect} to a {tang}
+      ++  print-section
+        |=  section/sect
+        ^-  tang
+        %+  turn  section
+        |=  pica
+        ^-  tank
+        ?:  p
+          [%leaf (trip q)]
+        [%leaf "    {(trip q)}"]
+      --
+    ::
+    :>  truncates `t` down to `i` characters, adding an ellipsis.
+    ++  dy-truncate
+      ::  todo: when ~palfun's string library is landed, switch to his
+      ::  implementation.
+      |=  {i/@u t/tape}
+      ^-  tape
+      =+  t-len=(lent t)
+      ?:  (lth t-len i)
+        t
+      :(weld (scag (sub i 4) t) "...")
+    ::
+    :>  creates a tape of i spaces, used for padding.
+    ++  dy-build-space
+      ::  todo: when ~palfun's string library is landed, switch to his
+      ::  implementation.
+      |=  i/@u
+      ^-  tape
+      =|  t/tape
+      |-
+      ?:  =(0 i)
+        t
+      $(t (weld " " t), i (sub i 1))
+    ::
+    :>  returns the length of the longest tape in c.
+    ++  dy-longest-tape
+      |=  c/(list tape)
+      =|  ret/@ud
+      |-
+      ?~  c
+        ret
+      =+  l=(lent i.c)
+      ?:  (gth l ret)
+        $(ret l, c t.c)
+      $(c t.c)
     ::
     ++  dy-show-span-noun
       |=  a/span  ^-  tank
@@ -653,6 +1193,13 @@
       ?~(b !>([~ ~]) (dy-vase p.u.b))
     ::
     ++  dy-twig-head                                    ::  dynamic state
+      ::  todo: how do i separate the toplevel 'dojo state' comment?
+      :>  dojo state
+      :>
+      :>  our: the name of this urbit
+      :>  now: the current time
+      :>  eny: a piece of random entropy
+      :>
       ^-  cage
       :-  %noun
       =+  sloop=|=({a/vase b/vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
