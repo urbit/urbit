@@ -2466,7 +2466,6 @@
 ++  meal                                                ::  payload
           $%  {$back p/cape q/flap r/@dr}               ::  acknowledgment
               {$buck p/coop q/flap r/@dr}               ::  e2e ack
-              {$bond p/life q/path r/@ud s/*}           ::  message
               {$bund p/life q/path r/@ud s/*}           ::  e2e message
               {$carp p/@ q/@ud r/@ud s/flap t/@}        ::  skin+inx+cnt+hash
               {$fore p/ship q/(unit lane) r/@}          ::  forwarded packet
@@ -2688,7 +2687,6 @@
               {$make p/(unit @t) q/@ud r/@ s/?}         ::  wild license
               {$sith p/@p q/@uw r/?}                    ::  imperial generator
               {$wake $~}                                ::  timer activate
-              {$want p/sock q/path r/*}                 ::  send message
               {$wegh $~}                                ::  report memory
               {$west p/sack q/path r/*}                 ::  network request
               {$wont p/sock q/path r/*}                 ::  e2e send message

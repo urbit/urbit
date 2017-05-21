@@ -1083,9 +1083,9 @@
       $(sox t.sox, bin (weld p.bun bin))
     ::
     ++  wise                                            ::    wise:am
-      |=  {soq/sock hen/duct cha/path val/* ete/?}      ::  send a statement
+      |=  {soq/sock hen/duct cha/path val/*}            ::  send a statement
       ^-  {p/(list boon) q/fort}
-      zork:zank:(wool:(ho:(um p.soq) q.soq) hen cha val ete)
+      zork:zank:(wool:(ho:(um p.soq) q.soq) hen cha val)
     ::
     ++  um                                              ::  per server
       |=  our/ship
@@ -1328,11 +1328,6 @@
               =.  +>  ?.(=(%full aut) +> cock)          ::  finish key exch
               +>(..la (tock p.fud q.fud r.fud))
             ::
-                $bond
-              ::  ~&  [%bond q.fud r.fud]
-              ?>  =(p:sen:gus p.fud)
-              (dear q.fud r.fud ?-(kay $dead ~, $good [~ s.fud]))
-            ::
                 $bund
               ::  ~&  [%bund q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
@@ -1461,7 +1456,7 @@
           (busk xong:diz feh)
         ::
         ++  wool                                        ::    wool:ho:um:am
-          |=  {hen/duct cha/path val/* ete/?}           ::  send a statement
+          |=  {hen/duct cha/path val/*}                 ::  send a statement
           ^+  +>
           =+  ^=  rol  ^-  rill
               =+  rol=(~(get by ryl.bah) cha)
@@ -1473,9 +1468,7 @@
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
           =+  cov=[p=p:sen:gus q=clon:diz]
           %+  wind  [cha sex]
-          ?:  ete
-            [%bund q.cov cha sex val]
-          [%bond q.cov cha sex val]
+          [%bund q.cov cha sex val]
         ::
         ++  zest                                        ::    zest:ho:um:am
           :~  :~  :*  [%rtt rtt.sop.bah]
@@ -1835,11 +1828,8 @@
             $wake
           (~(wake am [now fox]) hen)
         ::
-            $want
-          (~(wise am [now fox]) p.kyz hen q.kyz r.kyz |)
-        ::
             $wont
-          (~(wise am [now fox]) p.kyz hen q.kyz r.kyz &)
+          (~(wise am [now fox]) p.kyz hen q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)
     =|  out/(list move)
