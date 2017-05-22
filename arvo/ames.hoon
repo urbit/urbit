@@ -1121,9 +1121,32 @@
           |=  {cha/path rum/race}                       ::  update input race
           ^+  +>
           =+  cun=(~(get by mis.rum) did.rum)
-          ?~  cun
+          ?:  |(!dod.rum ?=($~ cun))
+            ::
+            ::  if we have not yet received the current message,
+            ::  or if we are not idle, just wait.
+            ::
             +>.$(raz.bah (~(put by raz.bah) cha rum))
-          ?.  =(%good p.u.cun)  +>.$
+          ?.  =(%good p.u.cun)
+            ::
+            ::  if we are recording a failed message, acknowledge
+            ::  it now, since it obviously won't be processed.
+            ::
+            ~&  [%fail-ack did.rum]
+            =^  gud  +>.$  
+              (cook ``[%dead-message ~] cha `[q.u.cun r.u.cun])
+            ?.  gud  +>.$
+            %=    +>.$
+                raz.bah
+              %+  ~(put by raz.bah)  cha
+              %=  rum
+                did  +(did.rum)
+                mis  (~(del by mis.rum) did.rum)
+              ==
+            ==
+          ::
+          ::  the message is good.  send it to be processed.
+          ::
           ?>  ?=(^ s.u.cun)
           %=    +>.$
               raz.bah  (~(put by raz.bah) cha rum(dod |))
@@ -1248,7 +1271,7 @@
             =.  diz  ?:(=(%none aut) diz (wast:diz ryn))
             (dine fud)
           ::
-          ++  cuck                                      ::    cuck:la:ho:um:am
+          ++  cock                                      ::    cock:la:ho:um:am
             ^+  .                                       ::  send new ack
             ::  ~&  [%back kay dam]
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
@@ -1258,29 +1281,34 @@
           ++  deer                                      ::    deer:la:ho:um:am
             |=  {cha/path num/@ud dut/(unit)}           ::  interpret message
             ^+  +>
-            ::
-            ::  these patches are both hacks and result in 
-            ::  unnecessary transmissions.  but they should
-            ::  solve the problem that needs to be solved:
-            ::  acknowledging messages after a bad skip.
-            ::
-            =.  kay  ?.((~(has in bad.fox) her) kay %dead)
-            =.  +>  ?.(=(%dead kay) +> cuck)
             =+  rum=(fall (~(get by raz.bah) cha) *race)
+            ~&  [%rx kay cha num [dod.rum did.rum] ?=($~ dut)]
+            =*  bad  (~(has in bad.fox) her)
+            =.  kay  ?.((~(has in bad.fox) her) kay ~&(%blocked %dead))
             %=    +>.$
                 +>
-              ?.  (gte num did.rum)                     ::  always ack a dup
-                ::  ~&  [%deer-1 num]
-                con:(cook (~(get by bum.rum) num) cha ~ ryn dam)
-              ?:  dod.rum
-                ::  ~&  [%deer-2 num]
-                (coat cha rum(mis (~(put by mis.rum) num [kay ryn dam dut])))
-              ::  ~&  [%deer-3 num]
-              %=    +>.+>.$
-                  raz.bah
-                %+  ~(put by raz.bah)  cha
-                rum(mis (~(put by mis.rum) num [kay ryn dam dut]))
-              ==
+              ?:  (lth num did.rum)
+                ::
+                ::  this message already acknowledged; repeat old ack,
+                ::  or negative ack if this ship is blocked
+                ::
+                =*  cop  ^-  coop
+                  %+  fall  
+                    (~(get by bum.rum) num) 
+                  ?:(bad ~ ``[%blocked ~])
+                con:(cook (~(get by bum.rum) num) cha `[ryn dam])
+              ::
+              ::  insert this message in unprocessed set
+              ::
+              =.  mis.rum  (~(put by mis.rum) num [kay ryn dam dut])
+              :: 
+              ::  if ship is blocked, advance pointer to latest message
+              ::
+              =.  did.rum  ?.(bad did.rum num)
+              ::
+              ::  process update
+              ::
+              (coat cha rum)
             ==
           ::
           ++  dine                                      ::    dine:la:ho:um:am
@@ -1288,7 +1316,7 @@
             ^+  +>
             ?-    -.fud
                 $back
-              =.  +>  ?.(=(%full aut) +> cuck)          ::  finish key exch
+              =.  +>  ?.(=(%full aut) +> cock)          ::  finish handshake
               +>(..la (tock p.fud q.fud r.fud))
             ::
                 $bond
@@ -1298,7 +1326,7 @@
             ::
                 $carp
               ::  =+  zol=(~(get by olz.weg) s.fud)
-              ::  ?^  zol  cuck(kay u.zol)
+              ::  ?^  zol  cock(kay u.zol)
               =^  neb  nys.weg
                   =+  neb=(~(get by nys.weg) s.fud)
                   ?^  neb  [u.neb nys.weg]
@@ -1308,7 +1336,7 @@
               ?>  =((kins p.fud) p.neb)
               ?>  =(r.fud p.r.neb)
               =+  doy=`(unit @)`(~(get by q.r.neb) q.fud)
-              ?^  doy  cuck
+              ?^  doy  cock
               =>  ^+  .   %=  .
                     q.r.neb  (~(put by q.r.neb) q.fud t.fud)
                     q.neb    +(q.neb)
@@ -1319,7 +1347,7 @@
                 ::  olz.weg  (~(put by olz.weg) s.fud kay)
                   ==
                 (golf p.neb r.neb)
-              =.  +>.$  cuck
+              =.  +>.$  cock
               +>.$(nys.weg (~(put by nys.weg) s.fud neb))
             ::
                 $fore

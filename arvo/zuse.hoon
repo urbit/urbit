@@ -2539,7 +2539,7 @@
           ==                                            ::
 ++  race                                                ::  inbound stream
           $:  did/@ud                                   ::  filled sequence
-              dod/?                                     ::  not processing
+              dod/?                                     ::  idle
               bum/(map @ud ares)                        ::  nacks
               mis/(map @ud {p/cape q/lane r/flap s/(unit)}) ::  misordered
           ==                                            ::
@@ -2676,6 +2676,7 @@
               {$crud p/@tas q/(list tank)}              ::  error with trace
               {$cash p/@p q/buck}                       ::  civil license
               {$hear p/lane q/@}                        ::  receive packet
+              {$halo p/lane q/@ r/ares}                 ::  hole with trace
               {$hole p/lane q/@}                        ::  packet failed
               {$junk p/@}                               ::  entropy
               {$kick p/@da}                             ::  wake up
