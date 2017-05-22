@@ -2268,9 +2268,7 @@
 ++  boon                                                ::  fort output
           $%  {$beer p/ship q/@uvG}                     ::  gained ownership
               {$cake p/sock q/soap r/coop s/duct}       ::  e2e message result
-              {$coke p/sock q/soap r/cape s/duct}       ::  message result
               {$mead p/lane q/rock}                     ::  accept packet
-              {$milk p/sock q/soap r/*}                 ::  accept message
               {$mulk p/sock q/soap r/*}                 ::  e2e pass message
               {$ouzo p/lane q/rock}                     ::  transmit packet
               {$wine p/sock q/tape}                     ::  notify user
@@ -2464,9 +2462,8 @@
 ++  mace  (list {p/life q/ring})                        ::  private secrets
 ++  math  (map @t (list @t))                            ::  semiparsed headers
 ++  meal                                                ::  payload
-          $%  {$back p/cape q/flap r/@dr}               ::  acknowledgment
-              {$buck p/coop q/flap r/@dr}               ::  e2e ack
-              {$bund p/life q/path r/@ud s/*}           ::  e2e message
+          $%  {$buck p/coop q/flap r/@dr}               ::  ack
+              {$bund p/life q/path r/@ud s/*}           ::  message
               {$carp p/@ q/@ud r/@ud s/flap t/@}        ::  skin+inx+cnt+hash
               {$fore p/ship q/(unit lane) r/@}          ::  forwarded packet
           ==                                            ::
@@ -2672,8 +2669,7 @@
               {$send p/lane q/@}                        ::  transmit packet
               {$waft p/sock q/*}                        ::  response message
               {$wart p/sock q/@tas r/path s/*}          ::  network request
-              {$went p/ship q/cape}                     ::  reaction message
-              {$woot p/ship q/coop}                     ::  e2e reaction message
+              {$woot p/ship q/coop}                     ::  reaction message
           ==                                            ::
 ++  kiss-ames                                           ::  in request ->$
           $%  {$barn $~}                                ::  new unix process
@@ -2689,7 +2685,7 @@
               {$wake $~}                                ::  timer activate
               {$wegh $~}                                ::  report memory
               {$west p/sack q/path r/*}                 ::  network request
-              {$wont p/sock q/path r/*}                 ::  e2e send message
+              {$wont p/sock q/path r/*}                 ::  send message
           ==                                            ::
 ::
 ::::    %behn
