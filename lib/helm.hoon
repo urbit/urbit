@@ -59,7 +59,7 @@
           {$nuke wire ship}                           ::
           {$serv wire ?(desk beam)}                   ::
           {$poke wire dock pear}                      ::
-          {$wont wire sock path *}                    ::  send message
+          {$want wire sock path *}                    ::  send message
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
     ++  pear                                          ::  poke fruit
@@ -85,7 +85,7 @@
   =+  buz=(shaz :(mix (jam ges) eny))
   =+  loy=(pit:nu:crub 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%wont /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
+  [%want /helm/ticket [our (sein his)] /a/ta his tic ges pub:ex:loy]
 ::
 ++  poke-init                                         ::  initialize
   |=  him/ship  =<  abet
@@ -225,7 +225,7 @@
   |=  {way/wire chr/@tD tan/tank}  =<  abet
   (emit %flog ~ %text chr ' ' ~(ram re tan))
 ::
-++  take-woot                                         ::  result of %wont
+++  take-woot                                         ::  result of %want
   |=  {way/wire her/ship cop/coop}  =<  abet
   (emit %flog ~ %text "woot: {<[way cop]>}")
 --

@@ -17,7 +17,6 @@
           ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  {$init p/@p}                              ::
-              {$want p/sock q/path r/*}                 ::
               {$wart p/sock q/@tas r/path s/*}          ::
               {$west p/sack q/path r/*}                 ::
           ==  ==  ==                                    ::
@@ -631,7 +630,7 @@
               %^  cat  7
                 p.u.yed.caq.dur
               (en:r:cluy q.u.yed.caq.dur (jam ham))
-            ?:  &(=(~ lew.wod.dur) =(%buck -.ham))
+            ?:  &(=(~ lew.wod.dur) =(%back -.ham))
               [wasp ..wisp]
             =^  tuy  +>.$
               ?:(=(~ lew.wod.dur) [*code +>.$] (griz now))
@@ -1130,7 +1129,7 @@
               raz.bah  (~(put by raz.bah) cha rum(dod |))
               bin
             :_  bin
-            :^    %mulk
+            :^    %milk
                 [our her]
               `soap`[[p:sen:gus clon:diz] cha did.rum]
             u.s.u.cun
@@ -1154,7 +1153,7 @@
             ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
             rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
-          =^  roc  diz  (zuul:diz now [%buck cop dam ~s0])
+          =^  roc  diz  (zuul:diz now [%back cop dam ~s0])
           (busk(diz (wast:diz ryn)) xong:diz roc)
         ::
         ++  done                                        ::    done:ho:um:am
@@ -1253,7 +1252,7 @@
             ^+  .                                       ::  send new ack
             ::  ~&  [%back kay dam]
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
-            =^  pax  diz  (zuul:diz now [%buck cop dam ~s0])
+            =^  pax  diz  (zuul:diz now [%back cop dam ~s0])
             +(+> (busk(diz (wast:diz ryn)) xong:diz pax))
           ::
           ++  deer                                      ::    deer:la:ho:um:am
@@ -1288,12 +1287,12 @@
             |=  fud/meal                                ::  interpret meal
             ^+  +>
             ?-    -.fud
-                $buck
+                $back
               =.  +>  ?.(=(%full aut) +> cuck)          ::  finish key exch
               +>(..la (tock p.fud q.fud r.fud))
             ::
-                $bund
-              ::  ~&  [%bund q.fud r.fud]
+                $bond
+              ::  ~&  [%bond q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
               (deer q.fud r.fud ?-(kay $dead ~, $good [~ s.fud]))
             ::
@@ -1416,7 +1415,7 @@
               rol(sed +(sed.rol), san (~(put by san.rol) sex hen))
           =+  cov=[p=p:sen:gus q=clon:diz]
           %+  wind  [cha sex]
-          [%bund q.cov cha sex val]
+          [%bond q.cov cha sex val]
         ::
         ++  zest                                        ::    zest:ho:um:am
           :~  :~  :*  [%rtt rtt.sop.bah]
@@ -1600,8 +1599,8 @@
       ==
     ::
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
-        $mulk
-      ::  ~&  [%mulk p.bon q.bon]
+        $milk
+      ::  ~&  [%milk p.bon q.bon]
       ?>  ?=({@ @ *} q.q.bon)
       ?>  ?=(?($a $c $e $g) i.q.q.bon)
       =+  pax=[(scot %p p.p.bon) (scot %p q.p.bon) q.q.bon]
@@ -1712,7 +1711,7 @@
             $wake
           (~(wake am [now fox]) hen)
         ::
-            $wont
+            $want
           (~(wise am [now fox]) p.kyz hen q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)

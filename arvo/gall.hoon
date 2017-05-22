@@ -261,7 +261,7 @@
         ==
     %+  mo-pass  
       [%sys %way -.q.caz ~]
-    `note-arvo`[%a %wont [our him] [%g %ge p.caz ~] [num roc]]
+    `note-arvo`[%a %want [our him] [%g %ge p.caz ~] [num roc]]
   ::
   ++  mo-baal                                           ::  error convert a
     |=  art/(unit ares)
@@ -373,7 +373,7 @@
         (mo-pass [%sys pax] %g %deal [him our] dap %pump ~)
       ~&  [%diff-bad-ack q.+>.sih]                      ::  should not happen
       =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
-      (mo-pass [%sys pax] %a %wont [our him] [%g %gh dap ~] [num %x ~])
+      (mo-pass [%sys pax] %a %want [our him] [%g %gh dap ~] [num %x ~])
     ::
         $rep                                            ::  reverse request
       ?>  ?=({@ @ @ $~} t.pax)
@@ -407,9 +407,9 @@
       ?-    -.cuf
         $coup  (mo-give %mack p.cuf)
         $diff  %+  mo-pass  [%sys %red t.pax]
-               [%a %wont [our him] [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
+               [%a %want [our him] [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
         $quit  %+  mo-pass  [%sys pax]
-               [%a %wont [our him] [%g %gh dap ~] [num %x ~]]
+               [%a %want [our him] [%g %gh dap ~] [num %x ~]]
         $reap  (mo-give %mack p.cuf)
       ==
     ::
@@ -1237,7 +1237,6 @@
         $them  `%e
         $wait  `%b
         $want  `%a
-        $wont  `%a                                      ::  XX for begin; remove
         $warp  `%c
         $wipe  `%f                                      ::  XX cache clear
       ==

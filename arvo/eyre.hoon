@@ -9,7 +9,7 @@
 ++  move  {p/duct q/(wind note gift)}                   ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
-          $%  {$wont p/sock q/{path *}}                 ::
+          $%  {$want p/sock q/{path *}}                 ::
           ==  ==                                        ::
               $:  $b                                    ::  to  %behn
           $%  {$wait p/@da}                             ::
@@ -919,7 +919,7 @@
     (pass-note tea [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
-    |=({him/ship gam/gram} (pass-note ~ %a %wont [our him] [%e -.gam] +.gam))
+    |=({him/ship gam/gram} (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
