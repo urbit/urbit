@@ -1687,6 +1687,7 @@
     ::
     ++  pa-report-group                                  ::  update presence
       |=  vew/(set bone)
+      ?:  [no-presence=&]  +>.$
       %^  pa-report  vew  %group
       :-  %-  ~(run by locals)
           |=({@ a/status} a)
