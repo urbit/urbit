@@ -598,8 +598,8 @@
             $:  $arm
                 name/tape
                 docs/what
+                f/foot
                 r/span
-                con/coil
             ==
             :>  inspecting a single chapter on a core.
             $:  $chapter
@@ -648,12 +648,12 @@
             $(sut p.sut)
           ?~  (find `(list term)`[i.topics ~] p.core-docs)
             ::  the current topic isn't the toplevel core topic.
-            =+  arm-docs=(find-arm-in-coil i.topics q.sut)
-            ?~  arm-docs
+            =+  arm=(find-arm-in-coil i.topics q.sut)
+            ?~  arm
               ::  the current topic is neither the name of the core or an arm
               ::  on the core.
               $(sut p.sut)
-            `[%arm (trip i.topics) u.arm-docs p.sut q.sut]
+            `[%arm (trip i.topics) p.u.arm q.u.arm p.sut]
           ?~  t.topics
             ::  we matched the core name and have no further search terms.
             =*  compiled-against  (build-inspectable-recursively p.sut)
@@ -790,7 +790,7 @@
       :>  if {arm-name} is an arm in {c}, returns its documentation.
       ++  find-arm-in-coil
         |=  {arm-name/term con/coil}
-        ^-  (unit what)
+        ^-  (unit (pair what foot))
         =/  tombs  (~(tap by q.s.con))
         |-
         ?~  tombs
@@ -798,7 +798,7 @@
         =+  item=(~(get by q.q.i.tombs) arm-name)
         ?~  item
           $(tombs t.tombs)
-        [~ p.u.item]
+        [~ u.item]
       ::
       :>    returns an overview for a core's arms and chapters.
       :>
@@ -891,23 +891,42 @@
       ::
       :>    renders the documentation for a single arm in a core.
       ++  print-arm
-        |=  {arm-name/tape doc/what r/span con/coil}
-        ::  todo: use the coil to figure out what this arm is.
-        ?~  doc
-          `tang`[%leaf "{arm-name}: (Undocumented)"]~
+        |=  {arm-name/tape doc/what f/foot sut/span}
+        ::  ok, so i misunderstood how this works. in case of something like a
+        ::  constant:
+        ::
+        ::    ++  forty-two
+        ::      :>  the answer
+        ::      42
+        ::
+        ::  the %help never shows up in the span.
+        ::
+        ::  todo: need to get the sample here. also hoist this to the general
+        ::  core printing machinery, too.
+        =/  foot-span  (~(play ut sut) p.f)
+        ::  ~&  [%foot-span foot-span]
+        =/  product/what
+          ?+  foot-span  ~
+            {$help *}  p.foot-span
+            {$core *}  q.r.q.foot-span
+          ==
         %+  weld
-          `tang`[%leaf "{arm-name}: {(trip p.u.doc)}"]~
-          (print-sections q.u.doc)
+          (print-header [arm-name ~] doc)
+          ?~  product
+            ~
+          %+  weld
+            `tang`[[%leaf ""] [%leaf "product:"] ~]
+            (print-header ~ product)
       ::
       :>    renders the documentation for a chapter in a core.
       ++  print-chapter
-        |=  {name/tape docs/what con/coil chapter-id/@}
+        |=  {name/tape doc/what con/coil chapter-id/@}
         ;:  weld
-          `tang`[%leaf name]~
+          (print-header [name ~] doc)
         ::
-          ?~  docs
+          ?~  doc
             ~
-          (print-sections q.u.docs)
+          (print-sections q.u.doc)
         ::
           =+  arms=(arms-in-chapter con chapter-id)
           ?~  arms
@@ -917,9 +936,9 @@
       ::
       :>    renders the documentation for a face.
       ++  print-face
-        |=  {name/tape docs/what children/(unit item)}
+        |=  {name/tape doc/what children/(unit item)}
         %+  weld
-          (print-header [name ~] docs)
+          (print-header [name ~] doc)
           ?~  children
             ~
           (print-item u.children)
@@ -927,19 +946,19 @@
       :>    returns a set of lines from a {chap}
       ++  print-header
         ::  todo: it's weird that (list tape) is the type used for names.
-        |=  {p/(list tape) docs/what}
+        |=  {p/(list tape) doc/what}
         ^-  tang
         ?~  p
-          ?~  docs
+          ?~  doc
             [%leaf "(Undocumented)"]~
           %+  weld
-            `tang`[%leaf "{(trip p.u.docs)}"]~
-            (print-sections q.u.docs)
-        ?~  docs
+            `tang`[%leaf "{(trip p.u.doc)}"]~
+            (print-sections q.u.doc)
+        ?~  doc
           [%leaf "{i.p}"]~
         %+  weld
-          `tang`[%leaf "{i.p}: {(trip p.u.docs)}"]~
-          (print-sections q.u.docs)
+          `tang`[%leaf "{i.p}: {(trip p.u.doc)}"]~
+          (print-sections q.u.doc)
       ::
       :>  renders an overview as {tang}
       ++  print-overview
@@ -991,7 +1010,7 @@
         ::
         :>  renders a single item line with the given indentation level.
         ++  render-item
-          |=  {indentation/@u max-key-length/@u name/tape docs/what}
+          |=  {indentation/@u max-key-length/@u name/tape doc/what}
           ^-  tang
           =+  spaces=(mul indentation 2)
           =+  line=(weld (dy-build-space spaces) name)
@@ -1001,9 +1020,9 @@
           =?  line  (gth diff 0)
             (weld line (dy-build-space diff))
           =/  slogan/tape
-            ?~  docs
+            ?~  doc
               ~
-            (trip p.u.docs)
+            (trip p.u.doc)
           =?  line  !=(0 (lent slogan))
             ;:  weld
               line
