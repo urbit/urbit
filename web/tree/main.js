@@ -1927,6 +1927,9 @@ module.exports = query({
   },
   onSubmit: function(e) {
     var comment, path, title;
+    this.setState({
+      loading: true
+    });
     title = this.refs["in"].title.value;
     comment = this.refs["in"].comment.value;
     path = this.props.path || "/";
@@ -1939,27 +1942,26 @@ module.exports = query({
     });
   },
   render: function() {
-    var _attr, bodyTextArea, postButton, titleInput;
-    _attr = {};
-    if (this.state.loading === true) {
-      _attr.disabled = "true";
-    }
-    titleInput = input(_.create(_attr, {
+    var bodyTextArea, postButton, titleInput;
+    titleInput = input({
+      disabled: this.state.loading ? "true" : void 0,
       type: "text",
       name: "title",
       placeholder: "Title"
-    }));
-    bodyTextArea = textarea(_.create(_attr, {
+    });
+    bodyTextArea = textarea({
+      disabled: this.state.loading ? "true" : void 0,
       type: "text",
       name: "comment",
       value: this.state.value,
       onChange: this.onChange
-    }));
-    postButton = input(_.create(_attr, {
+    });
+    postButton = input({
+      disabled: this.state.loading ? "true" : void 0,
       type: "submit",
       value: "Post",
       className: "btn btn-primary"
-    }));
+    });
     return div({}, div({
       className: "add-post"
     }, form({
@@ -3153,14 +3155,18 @@ module.exports = {
     }
   },
   dateFromAtom: function(date) {
-    var __, day, hor, min, mon, ref, sec, str, yer;
+    var __, d, day, hor, min, mon, ref, sec, yer;
     ref = date.slice(1).split("."), yer = ref[0], mon = ref[1], day = ref[2], __ = ref[3], hor = ref[4], min = ref[5], sec = ref[6];
     if (day != null) {
-      str = yer + "-" + mon + "-" + day;
-      if (hor != null) {
-        str += " " + hor + ":" + min + ":" + sec;
-      }
-      return new Date(str);
+      d = new Date();
+      d.setYear(yer);
+      d.setMonth(mon - 1);
+      d.setDate(day);
+    }
+    if (hor != null) {
+      d.setHours(hor);
+      d.setMinutes(min);
+      return d.setSeconds(sec);
     }
   },
   getKeys: function(kids, sortBy) {
@@ -3341,8 +3347,12 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
