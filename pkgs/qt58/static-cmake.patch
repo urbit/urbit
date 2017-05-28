@@ -515,8 +515,8 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +            get_filename_component(_PLUGIN_DIR ${PLUGIN_LOCATION} PATH)
 +            get_filename_component(_PLUGIN_DIR_NAME ${_PLUGIN_DIR} NAME)
 +            get_filename_component(_PLUGIN_NAME ${PLUGIN_LOCATION} NAME)
-+            string(REGEX REPLACE \"^lib(.*)\\\\.a\" \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/lib/qt/plugins/${_PLUGIN_DIR_NAME}/\\\\1.static.prl\" PLUGIN_PRL_FILE_LOCATION ${_PLUGIN_NAME})
-+            _process_plugin_prl_file(${PLUGIN_PRL_FILE_LOCATION} ${CONFIG} \"lib/qt/plugins\" ${PLUGIN_LOCATION})
++            string(REGEX REPLACE \"^lib(.*)\\\\.a\" \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/plugins/${_PLUGIN_DIR_NAME}/\\\\1.static.prl\" PLUGIN_PRL_FILE_LOCATION ${_PLUGIN_NAME})
++            _process_plugin_prl_file(${PLUGIN_PRL_FILE_LOCATION} ${CONFIG} \"plugins\" ${PLUGIN_LOCATION})
 +!!ENDIF
 +
 +    endmacro()
