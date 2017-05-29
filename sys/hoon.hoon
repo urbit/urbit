@@ -8938,7 +8938,11 @@
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
       {$core *}
-    (turn (~(tap by q.s.q.typ) ~) |=({a/term *} a))
+    %-  zing
+    %+  turn  (~(tap by q.s.q.typ) ~)
+    |=  {* b/tomb}
+    %+  turn  (~(tap by q.b) ~)
+    |=({a/term *} a)
   ==
 ::
 ++  slop                                                ::  cons two vases
