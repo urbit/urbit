@@ -8112,6 +8112,59 @@
       ==
     --
   ::
+  ::  mean: adapt by reference
+  ::
+  ++  mean
+    |=  ref/span
+    =|  $:  ::  ret:  
+            ::
+            re
+    =|  ret/(set (pair span span))
+    =|  wad/(list term)
+    =<  sint
+    |%
+
+    ++  dext
+        ?-    sut
+            $void
+          !!
+            $noun 
+          !!
+            {$atom *}
+          !!
+            {$cell *}
+          !!
+            {$core *}
+          !!
+            {$face *} 
+          !!
+            {$fork *}
+          !!
+            {$help *}
+          !!
+            {$hold *}
+        ==
+    ::
+    ++  sint
+      ?-    ref
+          $noun  
+        sut
+          $void  
+        sut
+          $
+
+      ==
+
+                     ?:  (~(has in gil) [sut ref])  &
+                     %=  dext
+                       sut  repo
+                       seg  (~(put in seg) sut)
+                       gil  (~(put in gil) [sut ref])
+        ==           ==
+        ?-  -.sut
+        
+    |-  ^-  span
+
   ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
   ++  mite  |=(ref/span |((nest | ref) (nest(sut ref) & sut)))
   ++  nest
