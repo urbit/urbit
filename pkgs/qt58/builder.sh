@@ -19,3 +19,14 @@ cd build
 make
 
 make install
+
+cd $out
+PRL="$(find -name \*.prl)"
+echo 'hey hey'
+echo $PRL
+sed -i 's/-ljpeg//g' $PRL
+sed -i 's/-lz//g' $PRL
+sed -i 's/-lVersion//g' $PRL
+sed -i 's/-lfreetype/-lqtfreetype/g' $PRL
+sed -i 's/-lpcre16/-lqtpcre/g' $PRL
+sed -i 's/-lpng/-lqtlibpng/g' $PRL

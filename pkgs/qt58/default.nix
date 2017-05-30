@@ -21,13 +21,13 @@ let
       ./qtbase-arch-patches/0005-Make-sure-.pc-files-are-installed-correctly.patch
       ./qtbase-arch-patches/0006-Don-t-add-resource-files-to-LIBS-parameter.patch
       ./qtbase-arch-patches/0007-Prevent-debug-library-names-in-pkg-config-files.patch
-      ./qtbase-arch-patches/0008-Fix-linking-against-shared-static-libpng.patch
-      ./qtbase-arch-patches/0009-Fix-linking-against-static-D-Bus.patch
-      ./qtbase-arch-patches/0010-Fix-linking-against-static-freetype2.patch
-      ./qtbase-arch-patches/0011-Fix-linking-against-static-harfbuzz.patch
-      ./qtbase-arch-patches/0012-Fix-linking-against-static-pcre.patch
-      ./qtbase-arch-patches/0013-Fix-linking-against-shared-static-MariaDB.patch
-      ./qtbase-arch-patches/0014-Fix-linking-against-shared-static-PostgreSQL.patch
+      #./qtbase-arch-patches/0008-Fix-linking-against-shared-static-libpng.patch
+      #./qtbase-arch-patches/0009-Fix-linking-against-static-D-Bus.patch
+      #./qtbase-arch-patches/0010-Fix-linking-against-static-freetype2.patch
+      #./qtbase-arch-patches/0011-Fix-linking-against-static-harfbuzz.patch
+      #./qtbase-arch-patches/0012-Fix-linking-against-static-pcre.patch
+      #./qtbase-arch-patches/0013-Fix-linking-against-shared-static-MariaDB.patch
+      #./qtbase-arch-patches/0014-Fix-linking-against-shared-static-PostgreSQL.patch
       ./qtbase-arch-patches/0016-Build-dynamic-host-libraries.patch
       ./qtbase-arch-patches/0017-Enable-rpath-for-build-tools.patch
       ./qtbase-arch-patches/0018-Use-system-zlib-for-build-tools.patch
@@ -41,7 +41,7 @@ let
       # ./qtbase-arch-patches/0026-Enable-anf-fix-use-of-iconv.patch
       ./qtbase-arch-patches/0027-Ignore-failing-pkg-config-test.patch
       ./qtbase-arch-patches/0028-Include-uiviewsettingsinterop.h-correctly.patch
-      ./qtbase-arch-patches/0029-Hardcode-linker-flags-for-libqwindows.dll.patch
+      #./qtbase-arch-patches/0029-Hardcode-linker-flags-for-libqwindows.dll.patch
       #./qtbase-arch-patches/0030-Prevent-qmake-from-messing-static-lib-dependencies.patch
       # based on 0020 and 0022, and 0030 from Arch
       ./static-cmake.patch
