@@ -22,8 +22,6 @@ make install
 
 cd $out
 PRL="$(find -name \*.prl)"
-echo 'hey hey'
-echo $PRL
 sed -i 's/-ljpeg//g' $PRL
 sed -i 's/-lz//g' $PRL
 sed -i 's/-lVersion//g' $PRL
