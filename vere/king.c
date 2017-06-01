@@ -33,9 +33,10 @@
 ::                                                      ::
 ++  doom                                                ::  daemon command
   $%  $:  $boot                                         ::  boot new pier
-          p/ship                                        ::  ship
-          q/@                                           ::  generator or ticket
-          r/(map @t *)                                  ::  debug options
+          who/ship                                      ::  ship
+          sec/@                                         ::  secret
+          sys/@                                         ::  boot pill
+          pax/@t                                        ::  directory
       ==                                                ::
       $:  $exit                                         ::  end the daemon
           $~                                            ::
@@ -184,6 +185,8 @@ _king_doom(u3_noun doom)
   c3_assert(_(u3a_is_cell(doom)));
   c3_assert(_(u3a_is_cat(u3h(doom))));
 
+  u3m_p("doom", doom);
+
   switch ( u3h(doom) ) {
     case c3__boot:
       next = _king_boot;
@@ -209,25 +212,22 @@ _king_doom(u3_noun doom)
 /* _king_boot(): boot parser
 */
 void
-_king_boot(u3_noun boot)
+_king_boot(u3_noun bul)
 {
-  u3_noun pax_n, sys_n;
-  c3_c *pax_c, *sys_c;
-  uv_prepare_t *pep_u = u3a_malloc(sizeof(uv_prepare_t)); /* put in u3_pier? */
+  u3_noun who, sec, sys, pax;
 
-  pax_n = u3k(u3h(u3t(boot)));
-  sys_n = u3k(u3h(u3t(u3t(boot))));
-  u3z(boot);
+  u3r_qual(bul, &who, &sec, &sys, &pax);
+  {
+    uv_prepare_t* pep_u = u3a_malloc(sizeof(uv_prepare_t)); // put in u3_pier?
+    c3_c*         pax_c = u3r_string(pax);
+    c3_c*         sys_c = u3r_string(sys);
 
-  pax_c = u3r_string(pax_n);
-  u3z(pax_n);
-  sys_c = u3r_string(sys_n);
-  u3z(sys_n);
-
-  if ( pax_c ) {
-    fprintf(stderr, "boot %s %s\r\n", pax_c, sys_c);
+    if ( pax_c ) {
+      fprintf(stderr, "boot %s %s\r\n", pax_c, sys_c);
+    }
+    u3_pier_boot(pax_c, sys_c, pep_u);
   }
-  u3_pier_boot(pax_c, sys_c, pep_u);
+  u3z(bul);
 }
 
 /* _king_exit(): exit parser
@@ -302,16 +302,16 @@ void
 _boothack_cb(uv_connect_t *conn, int status)
 {
   u3_mojo *moj_u = conn->data;
-  u3_atom doom;
+  u3_atom mat;
   u3_atom pax, sys;
 
   pax = u3i_string(u3_Host.dir_c);
   sys = u3_Host.ops_u.pil_c ? u3i_string(u3_Host.ops_u.pil_c) : u3_nul;
 
-  doom = u3ke_jam(u3nc(c3__doom,
+  mat = u3ke_jam(u3nc(c3__doom,
                        u3nc(c3__boot,
-                            u3nq(0, pax, sys, 0))));
-  u3_newt_write(moj_u, doom, 0);
+                            u3nq(0, 0, sys, pax))));
+  u3_newt_write(moj_u, mat, 0);
 }
 
 /* _king_loop_init(): stuff that comes before the event loop
