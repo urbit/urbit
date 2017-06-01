@@ -350,13 +350,14 @@ _king_loop_init()
     sig_u->nex_u = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
   }
+
   /* boot hack */
   {
     u3_moor *mor_u = c3_malloc(sizeof(u3_moor));
     uv_connect_t *conn = c3_malloc(sizeof(uv_connect_t));
     conn->data = mor_u;
     uv_pipe_init(u3L, &mor_u->pyp_u, 0);
-    uv_pipe_connect(conn, &mor_u->pyp_u, "/tmp/urbit.sock", _boothack_cb);
+    uv_pipe_connect(conn, &mor_u->pyp_u, u3K.soc_c, _boothack_cb);
   }
 }
 
@@ -396,7 +397,7 @@ _king_loop_exit()
   u3_behn_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 
-  unlink("/tmp/urbit.sock");
+  unlink(u3K.soc_c);
 }
 
 /* u3_king_commence(): start the daemon
@@ -418,13 +419,17 @@ u3_king_commence()
     u3v_boot_lite(lit);
   }
 
-  /* listen on command socket */
-  if ( access("/tmp/urbit.sock", F_OK) != -1 ) {
-    fprintf(stderr, "/tmp/urbit.sock exists - is urbit already running?\r\n");
-    exit(1);
+  /* listen on command socket
+  */
+  {
+    c3_c buf_c[256];
+
+    sprintf(buf_c, "/tmp/urbit-sock-%d", getpid());
+    u3K.soc_c = strdup(buf_c);
   }
+
   uv_pipe_init(u3L, &u3K.cmd_u, 0);
-  uv_pipe_bind(&u3K.cmd_u, "/tmp/urbit.sock");
+  uv_pipe_bind(&u3K.cmd_u, u3K.soc_c);
   uv_listen((uv_stream_t *)&u3K.cmd_u, 128, _king_socket_connect);
   fprintf(stderr, "cmd socket up\r\n");
 

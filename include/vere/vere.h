@@ -736,11 +736,12 @@
       /* u3_king: all executing piers.
       */
         typedef struct _u3_king {
-          c3_w      len_w;                       //  number of lords used
-          c3_w      all_w;                       //  number of lords allocated
-          u3_pier** tab_u;                       //  lord table
-          uv_pipe_t cmd_u;                       //  command socket
-          u3_moor*  cli_u;                       //  connected clients
+          c3_c*     soc_c;                      //  socket name
+          c3_w      len_w;                      //  number of lords used
+          c3_w      all_w;                      //  number of lords allocated
+          u3_pier** tab_u;                      //  lord table
+          uv_pipe_t cmd_u;                      //  command socket
+          u3_moor*  cli_u;                      //  connected clients
         } u3_king;
 
 #     define u3L  u3_Host.lup_u             //  global event loop
