@@ -118,29 +118,15 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
          CMAKE_LIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-01 22:33:38.054089293 -0700
-@@ -35,15 +35,14 @@
- 
++++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-01 23:28:08.292032860 -0700
+@@ -36,7 +36,6 @@
  !!IF !equals(TEMPLATE, aux)
  # For backwards compatibility only. Use Qt5$${CMAKE_MODULE_NAME}_VERSION instead.
--set(Qt5$${CMAKE_MODULE_NAME}_VERSION_STRING "$$eval(QT.$${MODULE}.MAJOR_VERSION).$$eval(QT.$${MODULE}.MINOR_VERSION).$$eval(QT.$${MODULE}.PATCH_VERSION)")
+ set(Qt5$${CMAKE_MODULE_NAME}_VERSION_STRING "$$eval(QT.$${MODULE}.MAJOR_VERSION).$$eval(QT.$${MODULE}.MINOR_VERSION).$$eval(QT.$${MODULE}.PATCH_VERSION)")
 -
--set(Qt5$${CMAKE_MODULE_NAME}_LIBRARIES Qt5::$${CMAKE_MODULE_NAME})
-+set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_VERSION_STRING "$$eval(QT.$${MODULE}.MAJOR_VERSION).$$eval(QT.$${MODULE}.MINOR_VERSION).$$eval(QT.$${MODULE}.PATCH_VERSION)")
-+set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_LIBRARIES $${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME})
+ set(Qt5$${CMAKE_MODULE_NAME}_LIBRARIES Qt5::$${CMAKE_MODULE_NAME})
  !!ENDIF // TEMPLATE != aux
  
--macro(_qt5_$${CMAKE_MODULE_NAME}_check_file_exists file)
--    if(NOT EXISTS \"${file}\" )
--        message(FATAL_ERROR \"The imported target \\\"Qt5::$${CMAKE_MODULE_NAME}\\\" references the file
--   \\\"${file}\\\"
-+macro(_qt5_$${CMAKE_MODULE_NAME}_check_file_exists FILE)
-+    if(NOT EXISTS \"${FILE}\")
-+        message(FATAL_ERROR \"The imported target \\\"$${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME}\\\" references the file
-+   \\\"${FILE}\\\"
- but this file does not exist.  Possible reasons include:
- * The file was deleted, renamed, or moved to another location.
- * An install or uninstall procedure did not complete successfully.
 @@ -55,43 +54,70 @@
  endmacro()
  
@@ -206,9 +192,8 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF
      _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(${imported_implib})
      if(NOT \"${IMPLIB_LOCATION}\" STREQUAL \"\")
--        set_target_properties(Qt5::$${CMAKE_MODULE_NAME} PROPERTIES
+         set_target_properties(Qt5::$${CMAKE_MODULE_NAME} PROPERTIES
 -        \"IMPORTED_IMPLIB_${Configuration}\" ${imported_implib}
-+        set_target_properties($${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME} PROPERTIES
 +        \"IMPORTED_IMPLIB_${TARGET_CONFIG}\" ${imported_implib}
          )
      endif()
@@ -217,141 +202,14 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF
  
 -if (NOT TARGET Qt5::$${CMAKE_MODULE_NAME})
-+set(TARGET_NAME $${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME})
++set(TARGET_NAME Qt5::$${CMAKE_MODULE_NAME})
  
 +if(NOT TARGET ${TARGET_NAME})
  !!IF !no_module_headers
  !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
      set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS
-@@ -99,33 +125,33 @@
-       \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}Qt$${CMAKE_MODULE_NAME}.framework/Headers\"
-     )
- !!IF isEmpty(CMAKE_NO_PRIVATE_INCLUDES)
--    set(Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS
-         \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}Qt$${CMAKE_MODULE_NAME}.framework/Versions/$$section(VERSION, ., 0, 0)/Headers/$$VERSION/\"
-         \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}Qt$${CMAKE_MODULE_NAME}.framework/Versions/$$section(VERSION, ., 0, 0)/Headers/$$VERSION/$${MODULE_INCNAME}\"
-     )
- !!ELSE
--    set(Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
- !!ENDIF
- !!ELSE
- !!IF isEmpty(CMAKE_INCLUDE_DIR_IS_ABSOLUTE)
-     set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$$CMAKE_INCLUDE_DIR\" \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_INCLUDE_DIR}$${MODULE_INCNAME}\")
- !!IF isEmpty(CMAKE_NO_PRIVATE_INCLUDES)
--    set(Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS
-         \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_INCLUDE_DIR}$${MODULE_INCNAME}/$$VERSION\"
-         \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_INCLUDE_DIR}$${MODULE_INCNAME}/$$VERSION/$${MODULE_INCNAME}\"
-     )
- !!ELSE
--    set(Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
- !!ENDIF
- !!ELSE
-     set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS \"$$CMAKE_INCLUDE_DIR\" \"$${CMAKE_INCLUDE_DIR}Qt$${CMAKE_MODULE_NAME}\")
- !!IF isEmpty(CMAKE_NO_PRIVATE_INCLUDES)
--    set(Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS
-         \"$${CMAKE_INCLUDE_DIR}$${MODULE_INCNAME}/$$VERSION\"
-         \"$${CMAKE_INCLUDE_DIR}$${MODULE_INCNAME}/$$VERSION/$${MODULE_INCNAME}\"
-     )
- !!ELSE
--    set(Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
- !!ENDIF
- !!ENDIF
- !!ENDIF
-@@ -134,7 +160,7 @@
- !!ENDIF
- !!ELSE
-     set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS \"\")
--    set(Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"\")
- !!ENDIF
- 
-     foreach(_dir ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
-@@ -153,10 +179,10 @@
- !!ENDIF
- 
- !!IF !equals(TEMPLATE, aux)
--    set(Qt5$${CMAKE_MODULE_NAME}_INCLUDE_DIRS ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_INCLUDE_DIRS ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
- 
--    set(Qt5$${CMAKE_MODULE_NAME}_DEFINITIONS -D$${MODULE_DEFINE})
--    set(Qt5$${CMAKE_MODULE_NAME}_COMPILE_DEFINITIONS $${MODULE_DEFINE})
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_DEFINITIONS -D$${MODULE_DEFINE})
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_COMPILE_DEFINITIONS $${MODULE_DEFINE})
- !!ENDIF // TEMPLATE != aux
-     set(_Qt5$${CMAKE_MODULE_NAME}_MODULE_DEPENDENCIES \"$${CMAKE_MODULE_DEPS}\")
- 
-@@ -167,7 +193,7 @@
- !!ENDIF
- 
-     set(_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_REQUIRED)
--    if (Qt5$${CMAKE_MODULE_NAME}_FIND_REQUIRED)
-+    if ($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_FIND_REQUIRED)
-         set(_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_REQUIRED REQUIRED)
-     endif()
-     set(_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_QUIET)
-@@ -175,17 +201,17 @@
-         set(_Qt5$${CMAKE_MODULE_NAME}_DEPENDENCIES_FIND_QUIET QUIET)
-     endif()
-     set(_Qt5$${CMAKE_MODULE_NAME}_FIND_VERSION_EXACT)
--    if (Qt5$${CMAKE_MODULE_NAME}_FIND_VERSION_EXACT)
-+    if ($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_FIND_VERSION_EXACT)
-         set(_Qt5$${CMAKE_MODULE_NAME}_FIND_VERSION_EXACT EXACT)
-     endif()
- 
- !!IF !equals(TEMPLATE, aux)
--    set(Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS \"\")
-+    set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS \"\")
- !!ENDIF // TEMPLATE != aux
- 
-     foreach(_module_dep ${_Qt5$${CMAKE_MODULE_NAME}_MODULE_DEPENDENCIES})
--        if (NOT Qt5${_module_dep}_FOUND)
--            find_package(Qt5${_module_dep}
-+        if (NOT $${VAR_PREFIX}Qt5${_module_dep}_FOUND)
-+            find_package($${VAR_PREFIX}Qt5${_module_dep}
-                 $$VERSION ${_Qt5$${CMAKE_MODULE_NAME}_FIND_VERSION_EXACT}
-                 ${_Qt5$${CMAKE_MODULE_NAME}_DEPENDENCIES_FIND_QUIET}
-                 ${_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_REQUIRED}
-@@ -193,28 +219,32 @@
-             )
-         endif()
- 
--        if (NOT Qt5${_module_dep}_FOUND)
--            set(Qt5$${CMAKE_MODULE_NAME}_FOUND False)
-+        if (NOT $${VAR_PREFIX}Qt5${_module_dep}_FOUND)
-+            set($${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_FOUND False)
-             return()
-         endif()
- 
- !!IF !equals(TEMPLATE, aux)
--        list(APPEND Qt5$${CMAKE_MODULE_NAME}_INCLUDE_DIRS \"${Qt5${_module_dep}_INCLUDE_DIRS}\")
--        list(APPEND Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"${Qt5${_module_dep}_PRIVATE_INCLUDE_DIRS}\")
--        list(APPEND Qt5$${CMAKE_MODULE_NAME}_DEFINITIONS ${Qt5${_module_dep}_DEFINITIONS})
--        list(APPEND Qt5$${CMAKE_MODULE_NAME}_COMPILE_DEFINITIONS ${Qt5${_module_dep}_COMPILE_DEFINITIONS})
--        list(APPEND Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS ${Qt5${_module_dep}_EXECUTABLE_COMPILE_FLAGS})
-+        list(APPEND $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_INCLUDE_DIRS \"${Qt5${_module_dep}_INCLUDE_DIRS}\")
-+        list(APPEND $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS \"${Qt5${_module_dep}_PRIVATE_INCLUDE_DIRS}\")
-+        list(APPEND $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_DEFINITIONS ${Qt5${_module_dep}_DEFINITIONS})
-+        list(APPEND $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_COMPILE_DEFINITIONS ${Qt5${_module_dep}_COMPILE_DEFINITIONS})
-+        list(APPEND $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS ${Qt5${_module_dep}_EXECUTABLE_COMPILE_FLAGS})
- !!ENDIF // TEMPLATE != aux
-     endforeach()
- !!IF !equals(TEMPLATE, aux)
--    list(REMOVE_DUPLICATES Qt5$${CMAKE_MODULE_NAME}_INCLUDE_DIRS)
--    list(REMOVE_DUPLICATES Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS)
--    list(REMOVE_DUPLICATES Qt5$${CMAKE_MODULE_NAME}_DEFINITIONS)
--    list(REMOVE_DUPLICATES Qt5$${CMAKE_MODULE_NAME}_COMPILE_DEFINITIONS)
--    list(REMOVE_DUPLICATES Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS)
-+    list(REMOVE_DUPLICATES $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_INCLUDE_DIRS)
-+    list(REMOVE_DUPLICATES $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS)
-+    list(REMOVE_DUPLICATES $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_DEFINITIONS)
-+    list(REMOVE_DUPLICATES $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_COMPILE_DEFINITIONS)
-+    list(REMOVE_DUPLICATES $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS)
+@@ -214,7 +240,11 @@
+     list(REMOVE_DUPLICATES Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS)
  !!ENDIF // TEMPLATE != aux
  
 +!!IF !isEmpty(CMAKE_STATIC_TYPE)
@@ -362,7 +220,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  
  !!IF !isEmpty(CMAKE_INTERFACE_QT5_MODULE_DEPS)
      if (NOT CMAKE_VERSION VERSION_LESS 3.0.0)
-@@ -225,79 +255,173 @@
+@@ -225,13 +255,54 @@
  !!IF !isEmpty(CMAKE_STATIC_TYPE)
      add_library(Qt5::$${CMAKE_MODULE_NAME} STATIC IMPORTED)
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY IMPORTED_LINK_INTERFACE_LANGUAGES "CXX")
@@ -410,19 +268,16 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +
 +!!IF !equals(TEMPLATE, aux)
 +!!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
-+    set_property(TARGET $${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
++    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
 +!!ENDIF
 +!!ENDIF // TEMPLATE != aux
 +
  !!IF !equals(TEMPLATE, aux)
  !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
--    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
-+    set_property(TARGET $${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
- !!ENDIF
- !!ENDIF // TEMPLATE != aux
+     set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
+@@ -240,64 +311,117 @@
  
--    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
-+    set_property(TARGET $${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME} PROPERTY
+     set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
        INTERFACE_INCLUDE_DIRECTORIES ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
 +    set(interface_compile_definitions $${MODULE_DEFINE})
 +!!IF !isEmpty(CMAKE_STATIC_TYPE)
@@ -439,7 +294,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +    unset(pluginTargets)
 +    if(pluginTargetsMaybe)
 +        foreach(pluginTarget ${pluginTargetsMaybe})
-+            file(STRINGS ${pluginTarget} matched REGEX $${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}_PLUGINS)
++            file(STRINGS ${pluginTarget} matched REGEX Qt5$${CMAKE_MODULE_NAME}_PLUGINS)
 +            if(matched)
 +                list(APPEND pluginTargets ${pluginTarget})
 +            endif()
@@ -572,7 +427,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF // CMAKE_RELEASE_TYPE
  !!ENDIF // CMAKE_FIND_OTHER_LIBRARY_BUILD
  
-@@ -323,35 +449,11 @@
+@@ -323,33 +449,9 @@
      )
  !!ENDIF // TEMPLATE != aux
  
@@ -600,16 +455,12 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 -
 -
  !!IF !isEmpty(CMAKE_MODULE_EXTRAS)
--    include(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}ConfigExtras.cmake\")
-+    include(\"${CMAKE_CURRENT_LIST_DIR}/$${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}ConfigExtras.cmake\")
+     include(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}ConfigExtras.cmake\")
  !!ENDIF
 -
  !!IF !isEmpty(CMAKE_MODULE_MACROS)
--    include(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}Macros.cmake\")
-+    include(\"${CMAKE_CURRENT_LIST_DIR}/$${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}Macros.cmake\")
+     include(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}Macros.cmake\")
  !!ENDIF
- 
- _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}ConfigVersion.cmake\")
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-05-28 02:07:07.288956391 -0700
 +++ qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-06-01 18:22:11.734511490 -0700
