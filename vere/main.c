@@ -198,9 +198,14 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.tic_c == 0 && u3_Host.ops_u.who_c != 0 ) {
+  if ( (u3_Host.ops_u.tic_c == 0) && 
+       (u3_Host.ops_u.who_c != 0) && 
+       (c3n == u3_Host.ops_u.fak) 
+     )
+  {
       c3_c tic_c[29];
-      printf("your ticket: ~");
+
+      printf("enter your secret: ~");
       scanf("%28s",tic_c);
       u3_Host.ops_u.tic_c = _main_presig(tic_c);
   }

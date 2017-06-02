@@ -303,14 +303,54 @@ _boothack_cb(uv_connect_t *conn, int status)
 {
   u3_mojo *moj_u = conn->data;
   u3_atom mat;
-  u3_atom pax, sys;
+  u3_atom pax, sys, who, sec;
 
+  {
+    if ( !u3_Host.ops_u.pil_c ) {
+      // fprintf(stderr, "boot: new ship must specify pill (-B)\r\n");
+      // exit(1);
+      sys = 0;
+    }
+    else sys = u3i_string(u3_Host.ops_u.pil_c);
+  }
+  {
+    u3_noun whu;
+
+    if ( !u3_Host.ops_u.who_c ) {
+      fprintf(stderr, "boot: new ship must specify identity (-w)\r\n");
+      exit(1);
+    }
+    whu = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.who_c));
+
+    if ( u3_nul == whu ) {
+      fprintf(stderr, "boot: malformed identity (-w)\r\n");
+      exit(1);
+    }
+    who = u3k(u3t(whu));
+    u3z(whu);
+  }
+  {
+    if ( !u3_Host.ops_u.tic_c ) {
+      fprintf(stderr, "boot: F A K E ship with null security (use -t)\r\n");
+      sec = 0;
+    } 
+    else {
+      u3_noun suc = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.tic_c));
+
+      if ( u3_nul == suc ) {
+        fprintf(stderr, "boot: malformed secret (-t)\r\n");
+        exit(1);
+      }
+      sec = u3k(u3t(suc));
+      u3z(suc);
+    }
+  }
   pax = u3i_string(u3_Host.dir_c);
-  sys = u3_Host.ops_u.pil_c ? u3i_string(u3_Host.ops_u.pil_c) : u3_nul;
 
   mat = u3ke_jam(u3nc(c3__doom,
                        u3nc(c3__boot,
-                            u3nq(0, 0, sys, pax))));
+                            u3nq(who, sec, sys, pax))));
+
   u3_newt_write(moj_u, mat, 0);
 }
 
