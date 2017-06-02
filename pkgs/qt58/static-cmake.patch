@@ -1,6 +1,6 @@
 diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/create_cmake.prf
---- qt58-orig/mkspecs/features/create_cmake.prf	2017-01-18 06:20:58.000000000 -0800
-+++ qt58/mkspecs/features/create_cmake.prf	2017-05-14 08:13:39.933341332 -0700
+--- qt58-orig/mkspecs/features/create_cmake.prf	2017-05-28 02:07:07.288956391 -0700
++++ qt58/mkspecs/features/create_cmake.prf	2017-06-01 18:20:31.554258880 -0700
 @@ -135,17 +135,19 @@
      CMAKE_PLUGIN_NAME = $$PLUGIN_CLASS_NAME
  
@@ -116,10 +116,9 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
      !isEmpty(CMAKE_STATIC_TYPE) {
          CMAKE_LIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.a
          CMAKE_LIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
-Only in qt58/mkspecs/features: create_cmake.prf.orig
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
---- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-01-18 06:20:58.000000000 -0800
-+++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-14 08:18:09.306674666 -0700
+--- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
++++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-01 18:20:31.554258880 -0700
 @@ -35,15 +35,18 @@
  
  !!IF !equals(TEMPLATE, aux)
@@ -666,19 +665,11 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  
  endif()
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in
---- qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-01-18 06:20:58.000000000 -0800
-+++ qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-05-14 08:18:59.093341332 -0700
-@@ -1,11 +1,31 @@
+--- qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-05-28 02:07:07.288956391 -0700
++++ qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-06-01 18:22:11.734511490 -0700
+@@ -1,11 +1,18 @@
 -
--add_library(Qt5::$$CMAKE_PLUGIN_NAME MODULE IMPORTED)
-+# Some Qt modules also load plugin target in extra config, so check whether the target already exists
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+if(NOT TARGET Qt5::$$CMAKE_PLUGIN_NAME)
-+    add_library(Qt5::$$CMAKE_PLUGIN_NAME MODULE IMPORTED)
-+!!ELSE
-+if(NOT TARGET Qt5::$$CMAKE_PLUGIN_NAME)
-+    add_library(Qt5::$$CMAKE_PLUGIN_NAME MODULE IMPORTED)
-+!!ENDIF
+ add_library(Qt5::$$CMAKE_PLUGIN_NAME MODULE IMPORTED)
  
  !!IF !isEmpty(CMAKE_RELEASE_TYPE)
 -_populate_$${CMAKE_MODULE_NAME}_plugin_properties($$CMAKE_PLUGIN_NAME RELEASE \"$${CMAKE_PLUGIN_LOCATION_RELEASE}\")
@@ -695,19 +686,12 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in qt58/mks
 +!!ELSE
 +    _populate_$${CMAKE_MODULE_NAME}_plugin_properties(Qt5::$$CMAKE_MODULE_NAME Qt5::$$CMAKE_PLUGIN_NAME $$CMAKE_PLUGIN_NAME DEBUG \"$${CMAKE_PLUGIN_LOCATION_DEBUG}\")
 +!!ENDIF
-+!!ENDIF
-+
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+    list(APPEND Qt5$${CMAKE_MODULE_NAME}_PLUGINS Qt5::$$CMAKE_PLUGIN_NAME)
-+!!ELSE
-+    list(APPEND Qt5$${CMAKE_MODULE_NAME}_PLUGINS Qt5::$$CMAKE_PLUGIN_NAME)
  !!ENDIF
  
--list(APPEND Qt5$${CMAKE_MODULE_NAME}_PLUGINS Qt5::$$CMAKE_PLUGIN_NAME)
-+endif()
+ list(APPEND Qt5$${CMAKE_MODULE_NAME}_PLUGINS Qt5::$$CMAKE_PLUGIN_NAME)
 diff -ur qt58-orig/qmake/generators/makefile.cpp qt58/qmake/generators/makefile.cpp
---- qt58-orig/qmake/generators/makefile.cpp	2017-01-18 06:20:58.000000000 -0800
-+++ qt58/qmake/generators/makefile.cpp	2017-05-13 10:56:54.163360331 -0700
+--- qt58-orig/qmake/generators/makefile.cpp	2017-05-28 02:07:07.302289847 -0700
++++ qt58/qmake/generators/makefile.cpp	2017-06-01 18:20:31.557592242 -0700
 @@ -998,6 +998,13 @@
          for (ProStringList::Iterator it = libs.begin(); it != libs.end(); ++it)
              t << qv(project->values((*it).toKey()));
@@ -723,8 +707,8 @@ diff -ur qt58-orig/qmake/generators/makefile.cpp qt58/qmake/generators/makefile.
  }
  
 diff -ur qt58-orig/qmake/generators/unix/unixmake.cpp qt58/qmake/generators/unix/unixmake.cpp
---- qt58-orig/qmake/generators/unix/unixmake.cpp	2017-01-18 06:20:58.000000000 -0800
-+++ qt58/qmake/generators/unix/unixmake.cpp	2017-05-13 10:59:36.036693664 -0700
+--- qt58-orig/qmake/generators/unix/unixmake.cpp	2017-05-28 02:07:07.302289847 -0700
++++ qt58/qmake/generators/unix/unixmake.cpp	2017-06-01 18:20:31.557592242 -0700
 @@ -394,6 +394,9 @@
  bool
  UnixMakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
@@ -736,8 +720,8 @@ diff -ur qt58-orig/qmake/generators/unix/unixmake.cpp qt58/qmake/generators/unix
      int libidx = 0, fwidx = 0;
      for (const ProString &dlib : project->values("QMAKE_DEFAULT_LIBDIRS"))
 diff -ur qt58-orig/qmake/generators/win32/winmakefile.cpp qt58/qmake/generators/win32/winmakefile.cpp
---- qt58-orig/qmake/generators/win32/winmakefile.cpp	2017-01-18 06:20:58.000000000 -0800
-+++ qt58/qmake/generators/win32/winmakefile.cpp	2017-05-13 10:59:36.036693664 -0700
+--- qt58-orig/qmake/generators/win32/winmakefile.cpp	2017-05-28 02:07:07.302289847 -0700
++++ qt58/qmake/generators/win32/winmakefile.cpp	2017-06-01 18:20:31.557592242 -0700
 @@ -80,10 +80,17 @@
  bool
  Win32MakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
@@ -774,15 +758,3 @@ diff -ur qt58-orig/qmake/generators/win32/winmakefile.cpp qt58/qmake/generators/
          project->values("TARGET_EXT").append(project->first("TARGET_VERSION_EXT") + "."
                  + project->first("QMAKE_EXTENSION_SHLIB"));
          project->values("TARGET").first() = project->first("QMAKE_PREFIX_SHLIB") + project->first("TARGET");
-diff -ur qt58-orig/src/corelib/Qt5CoreConfigExtras.cmake.in qt58/src/corelib/Qt5CoreConfigExtras.cmake.in
-@@ -188,3 +189,10 @@
- set(_Qt5CTestMacros \"${_Qt5CoreConfigDir}/Qt5CTestMacros.cmake\")
- 
- _qt5_Core_check_file_exists(${_Qt5CTestMacros})
-+
-+!!IF !isEmpty(CMAKE_STATIC_WINDOWS_BUILD)
-+set(_isExe $<STREQUAL:$<TARGET_PROPERTY:TYPE>,EXECUTABLE>)
-+# INTERFACE_LINK_LIBRARIES is used to pass a linker flag '-static' and library ws2_32
-+set_target_properties(${IMPORTED_TARGET_NAME} PROPERTIES \"INTERFACE_LINK_LIBRARIES\" \"$<${_isExe}:-static;ws2_32>\")
-+unset(_isExe)
-+!!ENDIF
