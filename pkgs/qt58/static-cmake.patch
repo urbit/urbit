@@ -118,8 +118,8 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
          CMAKE_LIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-01 18:20:31.554258880 -0700
-@@ -35,15 +35,18 @@
++++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-01 20:47:39.266030812 -0700
+@@ -35,15 +35,14 @@
  
  !!IF !equals(TEMPLATE, aux)
  # For backwards compatibility only. Use Qt5$${CMAKE_MODULE_NAME}_VERSION instead.
@@ -134,30 +134,16 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 -    if(NOT EXISTS \"${file}\" )
 -        message(FATAL_ERROR \"The imported target \\\"Qt5::$${CMAKE_MODULE_NAME}\\\" references the file
 -   \\\"${file}\\\"
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+macro(_qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static FILE)
-+!!ELSE
 +macro(_qt5_$${CMAKE_MODULE_NAME}_check_file_exists FILE)
-+!!ENDIF
 +    if(NOT EXISTS \"${FILE}\")
 +        message(FATAL_ERROR \"The imported target \\\"$${VAR_PREFIX}Qt5::$${CMAKE_MODULE_NAME}\\\" references the file
 +   \\\"${FILE}\\\"
  but this file does not exist.  Possible reasons include:
  * The file was deleted, renamed, or moved to another location.
  * An install or uninstall procedure did not complete successfully.
-@@ -54,44 +57,91 @@
-     endif()
+@@ -55,43 +54,73 @@
  endmacro()
  
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+# ensure also regular/dynamic macro exists because it might be used in some extra config
-+if(NOT COMMAND _qt5_$${CMAKE_MODULE_NAME}_check_file_exists)
-+    macro(_qt5_$${CMAKE_MODULE_NAME}_check_file_exists FILE)
-+        _qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static("${FILE}")
-+    endmacro()
-+endif()
-+!!ENDIF
-+
  !!IF !equals(TEMPLATE, aux)
 -macro(_populate_$${CMAKE_MODULE_NAME}_target_properties Configuration LIB_LOCATION IMPLIB_LOCATION)
 -    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${Configuration})
@@ -194,14 +180,10 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +
 +!!ENDIF
 +
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+    _qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static(${imported_location})
-+!!ELSE
      _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(${imported_location})
 -    set_target_properties(Qt5::$${CMAKE_MODULE_NAME} PROPERTIES
 -        \"INTERFACE_LINK_LIBRARIES\" \"${_Qt5$${CMAKE_MODULE_NAME}_LIB_DEPENDENCIES}\"
 -        \"IMPORTED_LOCATION_${Configuration}\" ${imported_location}
-+!!ENDIF
 +
 +    if (_Qt5$${CMAKE_MODULE_NAME}_LIB_DEPENDENCIES)
 +        set(_list_sep \";\")
@@ -225,11 +207,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 -    set(imported_implib \"IMPORTED_IMPLIB_${Configuration}\" \"$${CMAKE_LIB_DIR}${IMPLIB_LOCATION}\")
 +    set(imported_implib \"IMPORTED_IMPLIB_${TARGET_CONFIG}\" \"$${CMAKE_LIB_DIR}${IMPLIB_LOCATION}\")
  !!ENDIF
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+    _qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static(${imported_implib})
-+!!ELSE
      _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(${imported_implib})
-+!!ENDIF
      if(NOT \"${IMPLIB_LOCATION}\" STREQUAL \"\")
 -        set_target_properties(Qt5::$${CMAKE_MODULE_NAME} PROPERTIES
 -        \"IMPORTED_IMPLIB_${Configuration}\" ${imported_implib}
@@ -248,7 +226,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!IF !no_module_headers
  !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
      set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS
-@@ -99,33 +149,33 @@
+@@ -99,33 +128,33 @@
        \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}Qt$${CMAKE_MODULE_NAME}.framework/Headers\"
      )
  !!IF isEmpty(CMAKE_NO_PRIVATE_INCLUDES)
@@ -288,7 +266,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF
  !!ENDIF
  !!ENDIF
-@@ -134,11 +184,15 @@
+@@ -134,7 +163,7 @@
  !!ENDIF
  !!ELSE
      set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS \"\")
@@ -297,25 +275,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF
  
      foreach(_dir ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+        _qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static(${_dir})
-+!!ELSE
-         _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(${_dir})
-+!!ENDIF
-     endforeach()
- 
- !!IF isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
-@@ -147,16 +201,20 @@
-     list(FIND Qt5$${CMAKE_MODULE_NAME}_FIND_COMPONENTS Private _check_private)
-     if (NOT _check_private STREQUAL -1)
-         foreach(_dir ${Qt5$${CMAKE_MODULE_NAME}_PRIVATE_INCLUDE_DIRS})
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+            _qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static(${_dir})
-+!!ELSE
-             _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(${_dir})
-+!!ENDIF
-         endforeach()
-     endif()
+@@ -153,10 +182,10 @@
  !!ENDIF
  
  !!IF !equals(TEMPLATE, aux)
@@ -329,7 +289,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF // TEMPLATE != aux
      set(_Qt5$${CMAKE_MODULE_NAME}_MODULE_DEPENDENCIES \"$${CMAKE_MODULE_DEPS}\")
  
-@@ -167,7 +225,7 @@
+@@ -167,7 +196,7 @@
  !!ENDIF
  
      set(_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_REQUIRED)
@@ -338,7 +298,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
          set(_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_REQUIRED REQUIRED)
      endif()
      set(_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_QUIET)
-@@ -175,17 +233,17 @@
+@@ -175,17 +204,17 @@
          set(_Qt5$${CMAKE_MODULE_NAME}_DEPENDENCIES_FIND_QUIET QUIET)
      endif()
      set(_Qt5$${CMAKE_MODULE_NAME}_FIND_VERSION_EXACT)
@@ -360,7 +320,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
                  $$VERSION ${_Qt5$${CMAKE_MODULE_NAME}_FIND_VERSION_EXACT}
                  ${_Qt5$${CMAKE_MODULE_NAME}_DEPENDENCIES_FIND_QUIET}
                  ${_Qt5$${CMAKE_MODULE_NAME}_FIND_DEPENDENCIES_REQUIRED}
-@@ -193,28 +251,32 @@
+@@ -193,28 +222,32 @@
              )
          endif()
  
@@ -405,7 +365,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  
  !!IF !isEmpty(CMAKE_INTERFACE_QT5_MODULE_DEPS)
      if (NOT CMAKE_VERSION VERSION_LESS 3.0.0)
-@@ -225,79 +287,177 @@
+@@ -225,79 +258,173 @@
  !!IF !isEmpty(CMAKE_STATIC_TYPE)
      add_library(Qt5::$${CMAKE_MODULE_NAME} STATIC IMPORTED)
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY IMPORTED_LINK_INTERFACE_LANGUAGES "CXX")
@@ -469,12 +429,12 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
        INTERFACE_INCLUDE_DIRECTORIES ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
 +    set(interface_compile_definitions $${MODULE_DEFINE})
 +!!IF !isEmpty(CMAKE_STATIC_TYPE)
-     set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
--      INTERFACE_COMPILE_DEFINITIONS $${MODULE_DEFINE})
++    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
 +        INTERFACE_COMPILE_DEFINITIONS $${CMAKE_INTERFACE_COMPILE_DEFINITIONS_STATIC} $${MODULE_DEFINE})
 +    file(GLOB pluginTargetsMaybe \"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}_*.cmake\")
 +!!ELSE
-+    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
+     set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
+-      INTERFACE_COMPILE_DEFINITIONS $${MODULE_DEFINE})
 +        INTERFACE_COMPILE_DEFINITIONS $${MODULE_DEFINE})
 +    file(GLOB pluginTargetsMaybe \"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}_*.cmake\")
 +!!ENDIF
@@ -501,11 +461,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +!!ELSE
 +        set(imported_location \"$${CMAKE_PLUGIN_DIR}${PLUGIN_LOCATION}\")
 +!!ENDIF
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+        _qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static(${imported_location})
-+!!ELSE
 +        _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(${imported_location})
-+!!ENDIF
 +        set_target_properties(${PLUGIN_TARGET_NAME} PROPERTIES
 +            \"IMPORTED_LOCATION_${CONFIG}\" ${imported_location}
 +        )
@@ -606,7 +562,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
      if (EXISTS
  !!IF isEmpty(CMAKE_DLL_DIR_IS_ABSOLUTE)
          \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_DLL_DIR}$${CMAKE_LIB_FILE_LOCATION_RELEASE}\"
-@@ -310,9 +470,11 @@
+@@ -310,9 +437,11 @@
  !!ELSE
          \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" )
  !!ENDIF
@@ -620,7 +576,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF // CMAKE_RELEASE_TYPE
  !!ENDIF // CMAKE_FIND_OTHER_LIBRARY_BUILD
  
-@@ -323,37 +485,17 @@
+@@ -323,35 +452,11 @@
      )
  !!ENDIF // TEMPLATE != aux
  
@@ -657,13 +613,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +    include(\"${CMAKE_CURRENT_LIST_DIR}/$${VAR_PREFIX}Qt5$${CMAKE_MODULE_NAME}Macros.cmake\")
  !!ENDIF
  
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+_qt5_$${CMAKE_MODULE_NAME}_check_file_exists_static(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}ConfigVersion.cmake\")
-+!!ELSE
  _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}ConfigVersion.cmake\")
-+!!ENDIF
- 
- endif()
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-05-28 02:07:07.288956391 -0700
 +++ qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-06-01 18:22:11.734511490 -0700
