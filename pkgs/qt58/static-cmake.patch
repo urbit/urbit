@@ -1,6 +1,6 @@
 diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/create_cmake.prf
 --- qt58-orig/mkspecs/features/create_cmake.prf	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/create_cmake.prf	2017-06-03 09:35:27.775141770 -0700
++++ qt58/mkspecs/features/create_cmake.prf	2017-06-03 11:48:42.653779868 -0700
 @@ -180,6 +180,7 @@
  lib_deps =
  aux_mod_deps =
@@ -71,7 +71,7 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
      !isEmpty(CMAKE_STATIC_TYPE) {
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-03 09:38:36.660535778 -0700
++++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-03 11:56:30.335606638 -0700
 @@ -55,23 +55,48 @@
  endmacro()
  
@@ -212,8 +212,8 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +        endforeach()
 +    endif()
 +
-+    macro(_populate_$${CMAKE_MODULE_NAME}_plugin_properties TARGET_NAME PLUGIN_TARGET_NAME PLUGIN_NAME CONFIG PLUGIN_LOCATION)
-+        set_property(TARGET ${PLUGIN_TARGET_NAME} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${CONFIG})
++    macro(_populate_$${CMAKE_MODULE_NAME}_plugin_properties PLUGIN_NAME CONFIG PLUGIN_LOCATION)
++        set_property(TARGET Qt5::${PLUGIN_NAME} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${CONFIG})
 +
 +!!IF isEmpty(CMAKE_PLUGIN_DIR_IS_ABSOLUTE)
 +        set(imported_location \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_PLUGIN_DIR}${PLUGIN_LOCATION}\")
@@ -221,11 +221,11 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +        set(imported_location \"$${CMAKE_PLUGIN_DIR}${PLUGIN_LOCATION}\")
 +!!ENDIF
 +        _qt5_$${CMAKE_MODULE_NAME}_check_file_exists(${imported_location})
-+        set_target_properties(${PLUGIN_TARGET_NAME} PROPERTIES
++        set_target_properties(Qt5::${PLUGIN_NAME} PROPERTIES
 +            \"IMPORTED_LOCATION_${CONFIG}\" ${imported_location}
 +        )
 +!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+            set_property(TARGET ${TARGET_NAME} APPEND PROPERTY STATIC_PLUGINS ${PLUGIN_NAME})
++            set_property(TARGET Qt5::$$CMAKE_MODULE_NAME APPEND PROPERTY STATIC_PLUGINS ${PLUGIN_NAME})
 +            get_filename_component(_PLUGIN_DIR ${PLUGIN_LOCATION} PATH)
 +            get_filename_component(_PLUGIN_DIR_NAME ${_PLUGIN_DIR} NAME)
 +            get_filename_component(_PLUGIN_NAME ${PLUGIN_LOCATION} NAME)
@@ -368,25 +368,9 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!IF !isEmpty(CMAKE_MODULE_MACROS)
      include(\"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}Macros.cmake\")
  !!ENDIF
-diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in
---- qt58-orig/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/data/cmake/Qt5PluginTarget.cmake.in	2017-06-03 00:25:28.782943977 -0700
-@@ -2,10 +2,10 @@
- add_library(Qt5::$$CMAKE_PLUGIN_NAME MODULE IMPORTED)
- 
- !!IF !isEmpty(CMAKE_RELEASE_TYPE)
--_populate_$${CMAKE_MODULE_NAME}_plugin_properties($$CMAKE_PLUGIN_NAME RELEASE \"$${CMAKE_PLUGIN_LOCATION_RELEASE}\")
-+_populate_$${CMAKE_MODULE_NAME}_plugin_properties(Qt5::$$CMAKE_MODULE_NAME Qt5::$$CMAKE_PLUGIN_NAME $$CMAKE_PLUGIN_NAME RELEASE \"$${CMAKE_PLUGIN_LOCATION_RELEASE}\")
- !!ENDIF
- !!IF !isEmpty(CMAKE_DEBUG_TYPE)
--_populate_$${CMAKE_MODULE_NAME}_plugin_properties($$CMAKE_PLUGIN_NAME DEBUG \"$${CMAKE_PLUGIN_LOCATION_DEBUG}\")
-+_populate_$${CMAKE_MODULE_NAME}_plugin_properties(Qt5::$$CMAKE_MODULE_NAME Qt5::$$CMAKE_PLUGIN_NAME $$CMAKE_PLUGIN_NAME DEBUG \"$${CMAKE_PLUGIN_LOCATION_DEBUG}\")
- !!ENDIF
- 
- list(APPEND Qt5$${CMAKE_MODULE_NAME}_PLUGINS Qt5::$$CMAKE_PLUGIN_NAME)
 diff -ur qt58-orig/qmake/generators/makefile.cpp qt58/qmake/generators/makefile.cpp
 --- qt58-orig/qmake/generators/makefile.cpp	2017-05-28 02:07:07.302289847 -0700
-+++ qt58/qmake/generators/makefile.cpp	2017-06-01 18:20:31.557592242 -0700
++++ qt58/qmake/generators/makefile.cpp	2017-06-03 11:48:42.653779868 -0700
 @@ -998,6 +998,13 @@
          for (ProStringList::Iterator it = libs.begin(); it != libs.end(); ++it)
              t << qv(project->values((*it).toKey()));
@@ -403,7 +387,7 @@ diff -ur qt58-orig/qmake/generators/makefile.cpp qt58/qmake/generators/makefile.
  
 diff -ur qt58-orig/qmake/generators/unix/unixmake.cpp qt58/qmake/generators/unix/unixmake.cpp
 --- qt58-orig/qmake/generators/unix/unixmake.cpp	2017-05-28 02:07:07.302289847 -0700
-+++ qt58/qmake/generators/unix/unixmake.cpp	2017-06-01 18:20:31.557592242 -0700
++++ qt58/qmake/generators/unix/unixmake.cpp	2017-06-03 11:48:42.653779868 -0700
 @@ -394,6 +394,9 @@
  bool
  UnixMakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
@@ -416,7 +400,7 @@ diff -ur qt58-orig/qmake/generators/unix/unixmake.cpp qt58/qmake/generators/unix
      for (const ProString &dlib : project->values("QMAKE_DEFAULT_LIBDIRS"))
 diff -ur qt58-orig/qmake/generators/win32/winmakefile.cpp qt58/qmake/generators/win32/winmakefile.cpp
 --- qt58-orig/qmake/generators/win32/winmakefile.cpp	2017-05-28 02:07:07.302289847 -0700
-+++ qt58/qmake/generators/win32/winmakefile.cpp	2017-06-01 18:20:31.557592242 -0700
++++ qt58/qmake/generators/win32/winmakefile.cpp	2017-06-03 11:48:42.653779868 -0700
 @@ -80,10 +80,17 @@
  bool
  Win32MakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
