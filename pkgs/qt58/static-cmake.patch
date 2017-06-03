@@ -71,7 +71,7 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
      !isEmpty(CMAKE_STATIC_TYPE) {
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-03 13:21:54.367364470 -0700
++++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-03 14:50:35.404633977 -0700
 @@ -59,19 +59,44 @@
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${Configuration})
  
@@ -119,17 +119,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
      )
  
  !!IF !isEmpty(CMAKE_WINDOWS_BUILD)
-@@ -90,8 +115,7 @@
- endmacro()
- !!ENDIF
- 
--if (NOT TARGET Qt5::$${CMAKE_MODULE_NAME})
--
-+if(NOT TARGET Qt5::$${CMAKE_MODULE_NAME})
- !!IF !no_module_headers
- !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
-     set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS
-@@ -225,13 +249,54 @@
+@@ -225,13 +250,54 @@
  !!IF !isEmpty(CMAKE_STATIC_TYPE)
      add_library(Qt5::$${CMAKE_MODULE_NAME} STATIC IMPORTED)
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY IMPORTED_LINK_INTERFACE_LANGUAGES "CXX")
@@ -158,12 +148,12 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +
 +!!IF isEmpty(CMAKE_LIB_DIR_IS_ABSOLUTE)
 +    _process_prl_file(\"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_DEBUG_STATIC}\" DEBUG)
-+!!ELSE
+ !!ELSE
 +    _process_prl_file(\"$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_DEBUG_STATIC}\" DEBUG)
 +!!ENDIF
 +!!IF isEmpty(CMAKE_LIB_DIR_IS_ABSOLUTE)
 +    _process_prl_file(\"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_RELEASE_STATIC}\" RELEASE)
- !!ELSE
++!!ELSE
 +    _process_prl_file(\"$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_RELEASE_STATIC}\" RELEASE)
 +!!ENDIF
 +
@@ -184,7 +174,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!IF !equals(TEMPLATE, aux)
  !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
-@@ -240,64 +305,107 @@
+@@ -240,64 +306,107 @@
  
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
        INTERFACE_INCLUDE_DIRECTORIES ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
@@ -310,7 +300,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
      if (EXISTS
  !!IF isEmpty(CMAKE_DLL_DIR_IS_ABSOLUTE)
          \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_DLL_DIR}$${CMAKE_LIB_FILE_LOCATION_RELEASE}\"
-@@ -311,8 +419,10 @@
+@@ -311,8 +420,10 @@
          \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" )
  !!ENDIF
          _populate_$${CMAKE_MODULE_NAME}_target_properties(RELEASE \"$${CMAKE_LIB_FILE_LOCATION_RELEASE}\" \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" )
@@ -322,7 +312,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF // CMAKE_RELEASE_TYPE
  !!ENDIF // CMAKE_FIND_OTHER_LIBRARY_BUILD
  
-@@ -323,33 +433,9 @@
+@@ -323,33 +434,9 @@
      )
  !!ENDIF // TEMPLATE != aux
  
