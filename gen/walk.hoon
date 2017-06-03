@@ -128,7 +128,7 @@
         $per   (lead -.gen %.(+.gen dubs))
         $sip   (lead -.gen %.(+.gen (quad tora noop expr expr)))
         $pin   (lead -.gen %.(+.gen dubs))
-        $tow   (lead -.gen %.(+.gen moar))  
+        $tow   (lead -.gen %.(+.gen moar))
         $aka   (lead -.gen %.(+.gen trip))
         $use   (lead -.gen %.(+.gen dubs))
         $or    (lead -.gen %.(+.gen moar))
@@ -175,6 +175,10 @@
     ++  lead
       |*  {sem/@tas out/{* life}}
       [[sem -.out] +.out]
+    ::
+    ++  lede
+      |*  {sem/@tas out/{* life}}
+      [`twig`[sem -.out] +.out]
     ::
     ++  moan
       (moto nexp)
