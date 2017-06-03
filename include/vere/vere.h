@@ -722,7 +722,10 @@
           c3_c*            sys_c;               //  pill file
           c3_d             gen_d;               //  last event discovered
           c3_d             but_d;               //  boot barrier
-          c3_d             key_d[4];            //  save and passkey
+          c3_d             sec_d[1];            //  secret (unstretched)
+          c3_d             key_d[4];            //  secret (stretched)
+          c3_d             who_d[2];            //  identity
+          c3_c*            who_c;               //  identity as C string
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
@@ -731,6 +734,7 @@
           u3_save*         sav_u;               //  autosave
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
+          uv_prepare_t     pep_u;               //  preloop registration
         } u3_pier;
 
       /* u3_king: all executing piers.
@@ -1493,9 +1497,10 @@
       /* u3_pier_boot(): start the new pier system.
       */
         void
-        u3_pier_boot(c3_c* pax_c,                   //  pier path
-                     c3_c* sys_c,                   //  path to boot pill
-                     uv_prepare_t *pep_u);
+        u3_pier_boot(u3_noun who,                   //  identity
+                     u3_noun sec,                   //  secret or 0
+                     u3_noun pax,                   //  path to pier
+                     u3_noun sys);                  //  path to boot pill
 
       /* u3_pier_tank(): dump single tank.
       */

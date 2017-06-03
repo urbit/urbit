@@ -1801,36 +1801,61 @@ u3_pier_stub(void)
 
 /* _pier_boot_make(): create/load a pier.
 */
-static void
-_pier_boot_make(c3_c* pax_c,
-                c3_c* sys_c)
+static u3_pier*
+_pier_boot_make(u3_noun who,
+                u3_noun sec,
+                u3_noun pax,
+                u3_noun sys)
 {
+  c3_c*    pax_c = u3r_string(pax);
+  c3_c*    sys_c = u3r_string(sys);
   u3_pier* pir_u;
 
   pir_u = u3_pier_create(pax_c, sys_c);
-  
+
+  u3z(pax); free(pax_c);
+  u3z(sys); free(sys_c);
+
+  {
+    u3_noun how = u3dc("scot", 'p', u3k(who)); 
+
+    pir_u->who_c = u3r_string(how);
+    u3z(how);
+    fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
+  }
+
+  u3r_chubs(0, 1, pir_u->sec_d, sec);
+  u3r_chubs(0, 2, pir_u->who_d, who);
+  u3z(sec);
+  u3z(who);
+
   _pier_loop_init_pier(pir_u);
+  return pir_u;
 }
 
 /* u3_pier_boot(): start the new pier system.
 */
 void
-u3_pier_boot(c3_c* pax_c,                   //  pier path
-             c3_c* sys_c,                   //  path to boot pill
-             uv_prepare_t *pep_u)
+u3_pier_boot(u3_noun who,                   //  identity
+             u3_noun sec,                   //  secret or 0
+             u3_noun pax,                   //  path to pier
+             u3_noun sys)                   //  path to boot pill (if needed)
 {
-  /* make initial pier
+  u3_pier* pir_u;
+
+  /* make/load pier
   */
-  _pier_boot_make(pax_c, sys_c);
+  pir_u = _pier_boot_make(who, sec, pax, sys);
 
   /* initialize polling handle
   */
-  uv_prepare_init(u3_Host.lup_u, pep_u);
-  uv_prepare_start(pep_u, _pier_loop_prepare);
+  uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
+  uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
 
   /* initialize loop - move to _pier_boot_make().
   */
   _pier_loop_init();
 
-  /* remember to deal with _pier_loop_exit stuff */
+  /* XX: _pier_loop_exit() should be called somewhere, but is not.
+  */
 }

@@ -35,8 +35,8 @@
   $%  $:  $boot                                         ::  boot new pier
           who/ship                                      ::  ship
           sec/@                                         ::  secret
-          sys/@                                         ::  boot pill
           pax/@t                                        ::  directory
+          sys/@                                         ::  boot pill
       ==                                                ::
       $:  $exit                                         ::  end the daemon
           $~                                            ::
@@ -217,16 +217,8 @@ _king_boot(u3_noun bul)
   u3_noun who, sec, sys, pax;
 
   u3r_qual(bul, &who, &sec, &sys, &pax);
-  {
-    uv_prepare_t* pep_u = u3a_malloc(sizeof(uv_prepare_t)); // put in u3_pier?
-    c3_c*         pax_c = u3r_string(pax);
-    c3_c*         sys_c = u3r_string(sys);
+  u3_pier_boot(u3k(who), u3k(sec), u3k(sys), u3k(pax));
 
-    if ( pax_c ) {
-      fprintf(stderr, "boot %s %s\r\n", pax_c, sys_c);
-    }
-    u3_pier_boot(pax_c, sys_c, pep_u);
-  }
   u3z(bul);
 }
 
@@ -349,7 +341,7 @@ _boothack_cb(uv_connect_t *conn, int status)
 
   mat = u3ke_jam(u3nc(c3__doom,
                        u3nc(c3__boot,
-                            u3nq(who, sec, sys, pax))));
+                            u3nq(who, sec, pax, sys))));
 
   u3_newt_write(moj_u, mat, 0);
 }
