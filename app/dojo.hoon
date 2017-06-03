@@ -646,7 +646,7 @@
             ::  todo: this core has no toplevel documentation. it might have
             ::  an arm though. check that next.
             $(sut p.sut)
-          ?~  (find `(list term)`[i.topics ~] p.core-docs)
+          ?:  !=(i.topics u.p.core-docs)
             ::  the current topic isn't the toplevel core topic.
             =+  arm=(find-arm-in-coil i.topics q.sut)
             ?~  arm
@@ -664,7 +664,10 @@
           ^-  (unit item)
           ?~  tombs
             ~
-          ?~  (find `(list term)`[i.t.topics ~] p.p.q.i.tombs)
+          ?~  p.p.q.i.tombs
+            ::  this has no chapter name.
+            $(tombs t.tombs)
+          ?:  !=(i.t.topics u.p.p.q.i.tombs)
             ::  this isn't the topic.
             $(tombs t.tombs)
           `[%chapter (trip i.t.topics) q.p.q.i.tombs q.sut p.i.tombs]
@@ -714,10 +717,7 @@
             (build-inspectable-recursively q.sut)
         ::
             {$core *}
-          =/  name/term
-            ?~  p.r.q.sut
-              ''
-            i.p.r.q.sut
+          =/  name/term  (fall p.r.q.sut '')
           =*  compiled-against  (build-inspectable-recursively p.sut)
           `[%core (trip name) q.r.q.sut p.sut q.sut compiled-against]
         ::
@@ -823,7 +823,7 @@
         =.  chapter-docs
           %+  weld  chapter-docs
           ^-  overview
-          [%item :(weld (trip i.p.p.current) ":" core-name) q.p.current]~
+          [%item :(weld (trip u.p.p.current) ":" core-name) q.p.current]~
         $(tombs t.tombs)
       ::
       :>    returns an overview of the arms in a specific chapter.
@@ -870,7 +870,7 @@
         ^-  tang
         =+  [arms chapters]=(arm-and-chapter-overviews con core-name)
         ;:  weld
-          (print-header (turn p.r.con trip) q.r.con)
+          (print-header (trip (fall p.r.con '')) q.r.con)
         ::
         ::  todo: figure out how to display the default arm, which should
         ::  be rendered separately.
@@ -911,18 +911,18 @@
             {$core *}  q.r.q.foot-span
           ==
         %+  weld
-          (print-header [arm-name ~] doc)
+          (print-header arm-name doc)
           ?~  product
             ~
           %+  weld
             `tang`[[%leaf ""] [%leaf "product:"] ~]
-            (print-header ~ product)
+            (print-header "" product)
       ::
       :>    renders the documentation for a chapter in a core.
       ++  print-chapter
         |=  {name/tape doc/what con/coil chapter-id/@}
         ;:  weld
-          (print-header [name ~] doc)
+          (print-header name doc)
         ::
           ?~  doc
             ~
@@ -938,26 +938,25 @@
       ++  print-face
         |=  {name/tape doc/what children/(unit item)}
         %+  weld
-          (print-header [name ~] doc)
+          (print-header name doc)
           ?~  children
             ~
           (print-item u.children)
       ::
       :>    returns a set of lines from a {chap}
       ++  print-header
-        ::  todo: it's weird that (list tape) is the type used for names.
-        |=  {p/(list tape) doc/what}
+        |=  {name/tape doc/what}
         ^-  tang
-        ?~  p
+        ?~  name
           ?~  doc
             [%leaf "(Undocumented)"]~
           %+  weld
             `tang`[%leaf "{(trip p.u.doc)}"]~
             (print-sections q.u.doc)
         ?~  doc
-          [%leaf "{i.p}"]~
+          [%leaf name]~
         %+  weld
-          `tang`[%leaf "{i.p}: {(trip p.u.doc)}"]~
+          `tang`[%leaf "{name}: {(trip p.u.doc)}"]~
           (print-sections q.u.doc)
       ::
       :>  renders an overview as {tang}

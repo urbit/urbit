@@ -5328,7 +5328,7 @@
               {$d p/twig}                               ::  take $-(marl marl)
               {$e p/twig q/(list tuna)}                 ::  element literal
           ==                                            ::
-++  chap  (pair (list term) what)                       ::  labeled help
+++  chap  (pair (unit term) what)                       ::  labeled help
 ++  chum  $?  lef/term                                  ::  jet name
               {std/term kel/@}                          ::  kelvin version
               {ven/term pro/term kel/@}                 ::  vendor and product
@@ -6238,7 +6238,7 @@
         :_  wit(lab ~, boy ~)
         =-  [pif - suf]
         ^-  chap
-        :-  ?~(lab p.pac [u.lab ~])
+        :-  ?~(lab p.pac [~ u.lab])
             ?~(boy q.pac boy)
       ::
       ++  helk
@@ -8940,9 +8940,10 @@
       {$core *}
     %-  zing
     %+  turn  (~(tap by q.s.q.typ) ~)
-    |=  {* b/tomb}
-    %+  turn  (~(tap by q.b) ~)
-    |=({a/term *} a)
+      |=  {* b/tomb}
+      %+  turn  (~(tap by q.b) ~)
+        |=  {a/term *}
+        a
   ==
 ::
 ++  slop                                                ::  cons two vases
@@ -10119,7 +10120,7 @@
             ~&(duplicate-arm+p.i.q.i.a ~)
           $(q.i.a t.q.i.a, e (~(put by e) p.i.q.i.a q.i.q.i.a))
         ?~  d  ~
-        =*  hap  `chap`[?~(lab.p.i.a ~ [u.lab.p.i.a ~]) boy.p.i.a]
+        =*  hap  `chap`[?~(lab.p.i.a ~ [~ u.lab.p.i.a]) boy.p.i.a]
         $(a t.a, b (~(put by b) c [hap u.d]), c +(c))
       ;~  pose
         dun
