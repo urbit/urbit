@@ -1,6 +1,6 @@
 diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/create_cmake.prf
 --- qt58-orig/mkspecs/features/create_cmake.prf	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/create_cmake.prf	2017-06-03 07:30:01.041577204 -0700
++++ qt58/mkspecs/features/create_cmake.prf	2017-06-03 08:44:10.988855824 -0700
 @@ -180,6 +180,7 @@
  lib_deps =
  aux_mod_deps =
@@ -9,28 +9,15 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
  # Until CMake 3.0 is the minimum requirement of Qt 5, we need to filter
  # out header-only modules from dependencies.  CMake 3.0 provides INTERFACE
  # libraries which are equivalent to header-only modules.
-@@ -188,15 +189,20 @@
-     !contains(QT.$${dep}.module_config, no_link) {
-         mod_deps += $$cdep
-         lib_deps += Qt5::$$cdep
-+        lib_deps_static += Qt5::$$cdep
-     } else {
-         aux_mod_deps += $$cdep
-         aux_lib_deps += Qt5::$$cdep
-+        aux_lib_deps_static += Qt5::$$cdep
-     }
- }
- CMAKE_MODULE_DEPS = $$join(mod_deps, ";")
+@@ -197,6 +198,7 @@
  CMAKE_QT5_MODULE_DEPS = $$join(lib_deps, ";")
-+CMAKE_QT5_MODULE_DEPS_STATIC = $$join(lib_deps_static, ";")
  CMAKE_INTERFACE_MODULE_DEPS = $$join(aux_mod_deps, ";")
  CMAKE_INTERFACE_QT5_MODULE_DEPS = $$join(aux_lib_deps, ";")
-+CMAKE_INTERFACE_QT5_MODULE_DEPS_STATIC = $$join(aux_lib_deps_static, ";")
 +CMAKE_INTERFACE_COMPILE_DEFINITIONS_STATIC = $$join(aux_compile_defs, ";")
  
  CMAKE_QT_STEM = Qt$$QT_MAJOR_VERSION$${CMAKE_MODULE_NAME}$${QT_LIBINFIX}
  
-@@ -228,32 +234,30 @@
+@@ -228,32 +230,30 @@
          CMAKE_WINMAIN_FILE_LOCATION_DEBUG = libqtmain$${QT_LIBINFIX}d.a
          CMAKE_WINMAIN_FILE_LOCATION_RELEASE = libqtmain$${QT_LIBINFIX}.a
  
@@ -84,7 +71,7 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
      !isEmpty(CMAKE_STATIC_TYPE) {
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-03 01:00:18.149692453 -0700
++++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-03 08:44:47.242619886 -0700
 @@ -36,7 +36,6 @@
  !!IF !equals(TEMPLATE, aux)
  # For backwards compatibility only. Use Qt5$${CMAKE_MODULE_NAME}_VERSION instead.
@@ -173,19 +160,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!IF !no_module_headers
  !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
      set(_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS
-@@ -214,7 +239,11 @@
-     list(REMOVE_DUPLICATES Qt5$${CMAKE_MODULE_NAME}_EXECUTABLE_COMPILE_FLAGS)
- !!ENDIF // TEMPLATE != aux
- 
-+!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+    set(_Qt5$${CMAKE_MODULE_NAME}_LIB_DEPENDENCIES \"$${CMAKE_QT5_MODULE_DEPS_STATIC}\")
-+!!ELSE
-     set(_Qt5$${CMAKE_MODULE_NAME}_LIB_DEPENDENCIES \"$${CMAKE_QT5_MODULE_DEPS}\")
-+!!ENDIF
- 
- !!IF !isEmpty(CMAKE_INTERFACE_QT5_MODULE_DEPS)
-     if (NOT CMAKE_VERSION VERSION_LESS 3.0.0)
-@@ -225,13 +254,54 @@
+@@ -225,13 +250,54 @@
  !!IF !isEmpty(CMAKE_STATIC_TYPE)
      add_library(Qt5::$${CMAKE_MODULE_NAME} STATIC IMPORTED)
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY IMPORTED_LINK_INTERFACE_LANGUAGES "CXX")
@@ -214,12 +189,12 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +
 +!!IF isEmpty(CMAKE_LIB_DIR_IS_ABSOLUTE)
 +    _process_prl_file(\"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_DEBUG_STATIC}\" DEBUG)
- !!ELSE
++!!ELSE
 +    _process_prl_file(\"$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_DEBUG_STATIC}\" DEBUG)
 +!!ENDIF
 +!!IF isEmpty(CMAKE_LIB_DIR_IS_ABSOLUTE)
 +    _process_prl_file(\"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_RELEASE_STATIC}\" RELEASE)
-+!!ELSE
+ !!ELSE
 +    _process_prl_file(\"$${CMAKE_LIB_DIR}$${CMAKE_PRL_FILE_LOCATION_RELEASE_STATIC}\" RELEASE)
 +!!ENDIF
 +
@@ -240,18 +215,18 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!IF !equals(TEMPLATE, aux)
  !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
-@@ -240,64 +310,113 @@
+@@ -240,64 +306,113 @@
  
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
        INTERFACE_INCLUDE_DIRECTORIES ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
 +    set(interface_compile_definitions $${MODULE_DEFINE})
 +!!IF !isEmpty(CMAKE_STATIC_TYPE)
-+    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
+     set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
+-      INTERFACE_COMPILE_DEFINITIONS $${MODULE_DEFINE})
 +        INTERFACE_COMPILE_DEFINITIONS $${CMAKE_INTERFACE_COMPILE_DEFINITIONS_STATIC} $${MODULE_DEFINE})
 +    file(GLOB pluginTargetsMaybe \"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}_*.cmake\")
 +!!ELSE
-     set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
--      INTERFACE_COMPILE_DEFINITIONS $${MODULE_DEFINE})
++    set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
 +        INTERFACE_COMPILE_DEFINITIONS $${MODULE_DEFINE})
 +    file(GLOB pluginTargetsMaybe \"${CMAKE_CURRENT_LIST_DIR}/Qt5$${CMAKE_MODULE_NAME}_*.cmake\")
 +!!ENDIF
@@ -374,7 +349,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
      if (EXISTS
  !!IF isEmpty(CMAKE_DLL_DIR_IS_ABSOLUTE)
          \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_DLL_DIR}$${CMAKE_LIB_FILE_LOCATION_RELEASE}\"
-@@ -310,9 +429,11 @@
+@@ -310,9 +425,11 @@
  !!ELSE
          \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" )
  !!ENDIF
@@ -388,7 +363,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF // CMAKE_RELEASE_TYPE
  !!ENDIF // CMAKE_FIND_OTHER_LIBRARY_BUILD
  
-@@ -323,33 +444,9 @@
+@@ -323,33 +440,9 @@
      )
  !!ENDIF // TEMPLATE != aux
  
