@@ -407,7 +407,7 @@
   ::
 =+  pit=`vase`!>(.)                                     ::
 =+  vil=(viol p.pit)                                    ::  cached reflexives
-=|  $:  lac/?                                           ::  not verbose
+=|  $:  lac/?                                          ::  not verbose
         bod/(unit vase)                                 ::  standard library
         urb/(unit ship)                                 ::  identity
         eny/@                                           ::  entropy

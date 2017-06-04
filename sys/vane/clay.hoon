@@ -3297,17 +3297,15 @@
     [mos ..^$]
   ::
       $init
-    :_  %_    ..^$
-            fat.ruf
-          ?<  (~(has by fat.ruf) p.q.hic)
-          (~(put by fat.ruf) p.q.hic [-(hun hen)]:[*room .])
-        ==
-    =+  [bos=(sein:title p.q.hic) can=(clan:title p.q.hic)]
-    %-  zing  ^-  (list (list move))
-    :~  ?:  =(bos p.q.hic)  ~
-        [hen %pass /init-merge %c %merg p.q.hic %base bos %kids da+now %init]~
     ::
-        ~
+    ::  this used to start the initial merge, which is now
+    ::  not a necessary part of the boot sequence.
+    ::
+    :-  ~
+    %_    ..^$
+        fat.ruf
+      ?<  (~(has by fat.ruf) p.q.hic)
+      (~(put by fat.ruf) p.q.hic [-(hun hen)]:[*room .])
     ==
   ::
       $into
