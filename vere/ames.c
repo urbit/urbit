@@ -318,20 +318,16 @@ u3_ames_io_init(u3_pier* pir_u)
   u3_ames* sam_u = pir_u->sam_u;
   c3_s     por_s;
 
-  por_s = u3_Host.ops_u.por_s;
-  if ( 0 != u3_Host.ops_u.imp_c ) {
-    u3_noun imp   = u3i_string(u3_Host.ops_u.imp_c);
-    u3_noun num   = u3dc("slaw", 'p', imp);
-    c3_y    num_y;
-
-    if ( c3n == u3du(num) ) {
-      uL(fprintf(uH, "malformed emperor: %s\n", u3_Host.ops_u.imp_c));
-      exit(1);
-    }
-    num_y = u3r_byte(0, u3t(num));
+  por_s = pir_u->por_s;
+  if ( (0 == pir_u->who_d[1]) && (256ULL > pir_u->who_d[0]) ) {
+    c3_y    num_y = pir_u->who_d[0];
+    u3_noun num   = u3dc("scot", 'p', num_y);
+    c3_c*   num_c = u3r_string(num);
 
     _ames_czar(pir_u, num_y, &por_s);
-    uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
+    uL(fprintf(uH, "ames: czar: %s on %d\n", num_c, por_s));
+
+    free(num_c);
     u3z(num);
   }
 

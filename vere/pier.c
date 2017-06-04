@@ -894,7 +894,7 @@ _pier_disk_consolidate(u3_pier*  pir_u,
     }
     {
       u3_noun lal = u3ke_cue(u3k(u3A->sys));
-#if 1
+#if 0
       u3_noun all = lal;
 
       pir_u->but_d = u3kb_lent(u3k(all));
@@ -1926,6 +1926,9 @@ _pier_boot_make(u3_noun who,
 
   u3r_chubs(0, 1, pir_u->sec_d, sec);
   u3r_chubs(0, 2, pir_u->who_d, who);
+
+  pir_u->por_s = 0;
+
   u3z(sec);
   u3z(who);
 

@@ -726,6 +726,8 @@
           c3_d             key_d[4];            //  secret (stretched)
           c3_d             who_d[2];            //  identity
           c3_c*            who_c;               //  identity as C string
+          c3_s             por_s;               //  UDP port
+          c3_o             fak_o;               //  yes iff fake security
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
@@ -775,9 +777,7 @@
     **  Seconds before Unix epoch: 9.223.372.091.860.848.000
     **  The same, in C hex notation: 0x8000000cce9e0d80ULL
     **
-    **  New leap seconds after July 2012 (leap second 25) are ignored.  The
-    **  platform OS will not ignore them, of course, so they must be detected
-    **  and counteracted.  Perhaps this phenomenon will soon find an endpoint.
+    **  XX: needs to be adjusted to implement Google leap-smear time.
     */
       /* u3_time_sec_in(): urbit seconds from unix time.
       **
