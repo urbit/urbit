@@ -107,7 +107,7 @@ _pier_work_shutdown(u3_pier* pir_u)
 {
 }
 
-/* _pier_insert(): insert raw job.
+/* _pier_insert(): insert raw event.
 */
 static void
 _pier_insert(u3_pier* pir_u,
@@ -135,6 +135,22 @@ _pier_insert(u3_pier* pir_u,
     pir_u->ent_u->nex_u = wit_u;
     pir_u->ent_u = wit_u;
   }
+}
+
+/* _pier_insert_ovum(): insert raw ovum.
+*/
+static void
+_pier_insert_ovum(u3_pier* pir_u,
+                  c3_l     msc_l,
+                  u3_noun  ovo)
+{
+  u3_noun        now;
+  struct timeval tim_tv;
+
+  gettimeofday(&tim_tv, 0);
+  now = u3_time_in_tv(&tim_tv);
+
+  _pier_insert(pir_u, msc_l, u3nc(now, ovo));
 }
 
 /* _pier_disk_precommit_complete(): save request completed.
@@ -872,10 +888,13 @@ _pier_disk_consolidate(u3_pier*  pir_u,
     c3_w inx_w = 1;
 
     if ( !u3A->sys ) {
+      fprintf(stderr, "boot: loading pill %s\r\n", pir_u->sys_c);
+
       u3A->sys = u3m_file(pir_u->sys_c);
     }
     {
       u3_noun lal = u3ke_cue(u3k(u3A->sys));
+#if 1
       u3_noun all = lal;
 
       pir_u->but_d = u3kb_lent(u3k(all));
@@ -885,6 +904,87 @@ _pier_disk_consolidate(u3_pier*  pir_u,
         inx_w++;
         all = u3t(all);
       }
+#else
+    /* this new boot sequence is almost, but not quite, 
+    ** the right thing.  see new arvo.
+    */
+    {
+      u3_noun who = u3i_chubs(2, pir_u->who_d);
+      u3_noun bot, mod, fil;
+
+      u3r_trel(lal, &bot, &mod, &fil);
+      pir_u->but_d = 0;
+
+      /* insert boot sequence directly
+      */
+      {
+        u3_noun seq = u3k(bot);
+        {
+          u3_noun all = seq;
+
+          pir_u->but_d += u3kb_lent(u3k(all));
+          while ( all ) {
+            _pier_insert(pir_u, 0, u3k(u3h(all)));
+            inx_w++;
+            all = u3t(all);
+          }
+        }
+        u3z(seq);
+      }
+
+      /* insert module sequence, prepending first identity event
+      */
+      {
+        u3_noun seq;
+
+        /* prepend identity event to module sequence
+        */
+        {
+          u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
+          u3_noun car = u3nc(c3__veal, u3k(who));
+          u3_noun ovo = u3nc(wir, car);
+
+          seq = u3nc(ovo, u3k(mod));
+        }
+
+        /* insert with timestamp
+        */
+        {
+          u3_noun all = seq;
+
+          pir_u->but_d += u3kb_lent(u3k(all));
+
+          while ( all ) {
+            _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
+            inx_w++;
+            all = u3t(all);
+          }
+        }
+      }
+      
+      /* insert legacy boot event
+      */
+      {
+        u3_noun ovo;
+
+        /* make legacy boot event
+        */
+        {
+          u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
+          u3_noun car = u3nq(c3__boot, c3__sith, u3k(who), u3nc(u3k(who), c3y));
+ 
+          ovo = u3nc(wir, car);
+        }
+        _pier_insert_ovum(pir_u, 0, ovo);
+      }
+     
+      /* insert filesystem install event
+      */
+      {
+        _pier_insert_ovum(pir_u, 0, u3k(fil));
+      }
+    }
+#endif
       u3z(lal);
     }
   } else {

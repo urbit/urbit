@@ -1159,6 +1159,7 @@
 #   define c3__vane   c3_s4('v','a','n','e')
 #   define c3__var    c3_s3('v','a','r')
 #   define c3__veb    c3_s3('v','e','b')
+#   define c3__veal   c3_s4('v','e','a','l')
 #   define c3__veck   c3_s4('v','e','c','k')
 #   define c3__veer   c3_s4('v','e','e','r')
 #   define c3__vega   c3_s4('v','e','g','a')
