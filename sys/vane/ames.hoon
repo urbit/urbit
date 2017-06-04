@@ -1911,7 +1911,6 @@
           |=  hen/duct
           ^+  ve
           =+  ust=(~(get by q.zam.bah) hen)
-          ~&  [%vend ust hen]
           ?~  ust
             %.  [p.zam.bah vind]
             %_  vond
