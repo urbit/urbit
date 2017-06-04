@@ -1,6 +1,6 @@
 diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/create_cmake.prf
 --- qt58-orig/mkspecs/features/create_cmake.prf	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/create_cmake.prf	2017-06-04 09:15:11.232211727 -0700
++++ qt58/mkspecs/features/create_cmake.prf	2017-06-04 10:26:16.800924697 -0700
 @@ -180,6 +180,7 @@
  lib_deps =
  aux_mod_deps =
@@ -17,7 +17,7 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
  
  CMAKE_QT_STEM = Qt$$QT_MAJOR_VERSION$${CMAKE_MODULE_NAME}$${QT_LIBINFIX}
  
-@@ -233,27 +235,26 @@
+@@ -233,12 +235,18 @@
              CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
              CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
  
@@ -38,25 +38,6 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
      } else {
          CMAKE_WINMAIN_FILE_LOCATION_DEBUG = qtmain$${QT_LIBINFIX}d.lib
          CMAKE_WINMAIN_FILE_LOCATION_RELEASE = qtmain$${QT_LIBINFIX}.lib
- 
--        !isEmpty(CMAKE_STATIC_TYPE) {
--            CMAKE_STATIC_WINDOWS_BUILD = "true"
--            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = $${CMAKE_QT_STEM}d.lib
--            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.lib
--
--            CMAKE_PRL_FILE_LOCATION_DEBUG = $${CMAKE_QT_STEM}d.prl
--            CMAKE_PRL_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.prl
--        } else {
--            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = $${CMAKE_QT_STEM}d.lib
--            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.lib
--        }
-+        CMAKE_IMPLIB_FILE_LOCATION_DEBUG = $${CMAKE_QT_STEM}d.lib
-+        CMAKE_IMPLIB_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.lib
-+        CMAKE_PRL_FILE_LOCATION_DEBUG = $${CMAKE_QT_STEM}d.static.prl
-+        CMAKE_PRL_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.static.prl
-     }
- } else {
-     !isEmpty(CMAKE_STATIC_TYPE) {
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
 +++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-04 08:23:09.325663561 -0700
