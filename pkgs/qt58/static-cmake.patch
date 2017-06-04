@@ -1,6 +1,6 @@
 diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/create_cmake.prf
 --- qt58-orig/mkspecs/features/create_cmake.prf	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/create_cmake.prf	2017-06-04 08:21:30.481426010 -0700
++++ qt58/mkspecs/features/create_cmake.prf	2017-06-04 09:15:11.232211727 -0700
 @@ -180,6 +180,7 @@
  lib_deps =
  aux_mod_deps =
@@ -17,24 +17,17 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
  
  CMAKE_QT_STEM = Qt$$QT_MAJOR_VERSION$${CMAKE_MODULE_NAME}$${QT_LIBINFIX}
  
-@@ -230,30 +232,29 @@
- 
-         !isEmpty(CMAKE_STATIC_TYPE) {
-             CMAKE_STATIC_WINDOWS_BUILD = "true"
--            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
--            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
-+#            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
-+#            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
+@@ -233,27 +235,26 @@
+             CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
+             CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
  
 -            CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.prl
 -            CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
-+#            CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.prl
-+#            CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
++            CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.static.prl
++            CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.static.prl
          } else {
--            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
--            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
-+#            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
-+#            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
+             CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
+             CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
          }
 +
 +        QMAKE_EXTENSION_IMPORTLIB = a
