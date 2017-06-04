@@ -1,6 +1,6 @@
 diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/create_cmake.prf
 --- qt58-orig/mkspecs/features/create_cmake.prf	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/create_cmake.prf	2017-06-03 15:06:40.605632271 -0700
++++ qt58/mkspecs/features/create_cmake.prf	2017-06-04 08:21:30.481426010 -0700
 @@ -180,6 +180,7 @@
  lib_deps =
  aux_mod_deps =
@@ -17,21 +17,26 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
  
  CMAKE_QT_STEM = Qt$$QT_MAJOR_VERSION$${CMAKE_MODULE_NAME}$${QT_LIBINFIX}
  
-@@ -228,32 +230,19 @@
-         CMAKE_WINMAIN_FILE_LOCATION_DEBUG = libqtmain$${QT_LIBINFIX}d.a
-         CMAKE_WINMAIN_FILE_LOCATION_RELEASE = libqtmain$${QT_LIBINFIX}.a
+@@ -230,30 +232,29 @@
  
--        !isEmpty(CMAKE_STATIC_TYPE) {
--            CMAKE_STATIC_WINDOWS_BUILD = "true"
+         !isEmpty(CMAKE_STATIC_TYPE) {
+             CMAKE_STATIC_WINDOWS_BUILD = "true"
 -            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
 -            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
--
++#            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
++#            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
+ 
 -            CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.prl
 -            CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
--        } else {
++#            CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.prl
++#            CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
+         } else {
 -            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
 -            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
--        }
++#            CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
++#            CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
+         }
++
 +        QMAKE_EXTENSION_IMPORTLIB = a
 +        CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}d.a
 +        CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
@@ -61,7 +66,7 @@ diff -ur qt58-orig/mkspecs/features/create_cmake.prf qt58/mkspecs/features/creat
      !isEmpty(CMAKE_STATIC_TYPE) {
 diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
 --- qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-05-28 02:07:07.288956391 -0700
-+++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-03 15:05:11.527951785 -0700
++++ qt58/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2017-06-04 08:23:09.325663561 -0700
 @@ -59,19 +59,44 @@
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${Configuration})
  
@@ -164,7 +169,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!IF !equals(TEMPLATE, aux)
  !!IF !isEmpty(CMAKE_BUILD_IS_FRAMEWORK)
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY FRAMEWORK 1)
-@@ -240,64 +306,107 @@
+@@ -240,64 +306,108 @@
  
      set_property(TARGET Qt5::$${CMAKE_MODULE_NAME} PROPERTY
        INTERFACE_INCLUDE_DIRECTORIES ${_Qt5$${CMAKE_MODULE_NAME}_OWN_INCLUDE_DIRS})
@@ -219,6 +224,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
 +!!IF !isEmpty(CMAKE_STATIC_TYPE)
      _populate_$${CMAKE_MODULE_NAME}_target_properties(RELEASE \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" \"\" )
  !!ELSE
++    # heya 1
      _populate_$${CMAKE_MODULE_NAME}_target_properties(RELEASE \"$${CMAKE_LIB_FILE_LOCATION_RELEASE}\" \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" )
 -!!ENDIF // CMAKE_STATIC_WINDOWS_BUILD
 +!!ENDIF // CMAKE_STATIC_TYPE
@@ -284,9 +290,11 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
      if (EXISTS
  !!IF isEmpty(CMAKE_DLL_DIR_IS_ABSOLUTE)
          \"${_qt5$${CMAKE_MODULE_NAME}_install_prefix}/$${CMAKE_DLL_DIR}$${CMAKE_LIB_FILE_LOCATION_RELEASE}\"
-@@ -311,8 +420,10 @@
+@@ -310,9 +420,12 @@
+ !!ELSE
          \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" )
  !!ENDIF
++        # heya 2
          _populate_$${CMAKE_MODULE_NAME}_target_properties(RELEASE \"$${CMAKE_LIB_FILE_LOCATION_RELEASE}\" \"$${CMAKE_IMPLIB_FILE_LOCATION_RELEASE}\" )
 -!!ENDIF // CMAKE_STATIC_WINDOWS_BUILD
      endif()
@@ -296,7 +304,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF // CMAKE_RELEASE_TYPE
  !!ENDIF // CMAKE_FIND_OTHER_LIBRARY_BUILD
  
-@@ -323,33 +434,9 @@
+@@ -323,33 +436,9 @@
      )
  !!ENDIF // TEMPLATE != aux
  
@@ -332,7 +340,7 @@ diff -ur qt58-orig/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in qt58/mksp
  !!ENDIF
 diff -ur qt58-orig/qmake/generators/makefile.cpp qt58/qmake/generators/makefile.cpp
 --- qt58-orig/qmake/generators/makefile.cpp	2017-05-28 02:07:07.302289847 -0700
-+++ qt58/qmake/generators/makefile.cpp	2017-06-03 11:48:42.653779868 -0700
++++ qt58/qmake/generators/makefile.cpp	2017-06-04 01:34:31.602305294 -0700
 @@ -998,6 +998,13 @@
          for (ProStringList::Iterator it = libs.begin(); it != libs.end(); ++it)
              t << qv(project->values((*it).toKey()));
@@ -349,7 +357,7 @@ diff -ur qt58-orig/qmake/generators/makefile.cpp qt58/qmake/generators/makefile.
  
 diff -ur qt58-orig/qmake/generators/unix/unixmake.cpp qt58/qmake/generators/unix/unixmake.cpp
 --- qt58-orig/qmake/generators/unix/unixmake.cpp	2017-05-28 02:07:07.302289847 -0700
-+++ qt58/qmake/generators/unix/unixmake.cpp	2017-06-03 11:48:42.653779868 -0700
++++ qt58/qmake/generators/unix/unixmake.cpp	2017-06-04 01:34:31.605638658 -0700
 @@ -394,6 +394,9 @@
  bool
  UnixMakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
@@ -362,7 +370,7 @@ diff -ur qt58-orig/qmake/generators/unix/unixmake.cpp qt58/qmake/generators/unix
      for (const ProString &dlib : project->values("QMAKE_DEFAULT_LIBDIRS"))
 diff -ur qt58-orig/qmake/generators/win32/winmakefile.cpp qt58/qmake/generators/win32/winmakefile.cpp
 --- qt58-orig/qmake/generators/win32/winmakefile.cpp	2017-05-28 02:07:07.302289847 -0700
-+++ qt58/qmake/generators/win32/winmakefile.cpp	2017-06-03 11:48:42.653779868 -0700
++++ qt58/qmake/generators/win32/winmakefile.cpp	2017-06-04 01:34:31.605638658 -0700
 @@ -80,10 +80,17 @@
  bool
  Win32MakefileGenerator::findLibraries(bool linkPrl, bool mergeLflags)
