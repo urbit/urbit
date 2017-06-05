@@ -3,7 +3,10 @@ From: Martchus <martchus@gmx.net>
 Date: Sun, 18 Sep 2016 18:45:08 +0200
 Subject: [PATCH 21/30] Merge shared and static library trees
 
-Allow installation of shared and static build in the same prefix
+Allow installation of shared and static build in the same prefix.
+
+This patch was edited by David Grayson.
+
 ---
  configure.pri                     |  7 +++++++
  mkspecs/features/default_post.prf | 11 +++++++++++
@@ -42,7 +45,7 @@ index e7e9a5bd87..72305ad9b8 100644
 +    # Ensure we link against all dependencies statically
 +    QMAKE_LFLAGS += -static -static-libstdc++ -static-libgcc
 +    # Prevent qmake from finding the prl file for shared libs
-+    QMAKE_EXT_PRL = .static.prl
++    QMAKE_EXT_PRL = .prl
 +}
 +
  contains(TEMPLATE, ".*(lib|app)"):CONFIG += have_target
@@ -73,28 +76,6 @@ index 98f794c485..1799622edd 100644
 +        }
      }
      !isEmpty(BAD_QT):error("Unknown module(s) in QT$$var_sfx: $$replace(BAD_QT, _private$, -private)")
- 
-diff --git a/mkspecs/features/spec_pre.prf b/mkspecs/features/spec_pre.prf
-index 51ea3a8321..275e080ae4 100644
---- a/mkspecs/features/spec_pre.prf
-+++ b/mkspecs/features/spec_pre.prf
-@@ -14,9 +14,14 @@ QMAKE_EXT_H             = .h .hpp .hh .hxx
- QMAKE_EXT_H_MOC         = .cpp
- QMAKE_EXT_JS            = .js
- QMAKE_EXT_LEX           = .l
--QMAKE_EXT_LIBTOOL       = .la
--QMAKE_EXT_PKGCONFIG     = .pc
--QMAKE_EXT_PRL           = .prl
-+QMAKE_EXT_PKGCONFIG = .pc
-+contains(CONFIG, static) {
-+    QMAKE_EXT_LIBTOOL   = .static.la
-+    QMAKE_EXT_PRL       = .static.prl
-+} else {
-+    QMAKE_EXT_LIBTOOL   = .la
-+    QMAKE_EXT_PRL       = .prl
-+}
- QMAKE_EXT_UI            = .ui
- QMAKE_EXT_YACC          = .y
  
 diff --git a/qmake/generators/makefile.cpp b/qmake/generators/makefile.cpp
 index a762443fe2..8ac3a0f647 100644
