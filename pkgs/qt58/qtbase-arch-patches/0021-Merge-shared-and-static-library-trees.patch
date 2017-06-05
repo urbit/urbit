@@ -34,7 +34,7 @@ diff --git a/mkspecs/features/default_post.prf b/mkspecs/features/default_post.p
 index e7e9a5bd87..72305ad9b8 100644
 --- a/mkspecs/features/default_post.prf
 +++ b/mkspecs/features/default_post.prf
-@@ -1,5 +1,16 @@
+@@ -1,5 +1,15 @@
  # This file is loaded by qmake right after loading the actual project file.
  
 +win32:contains(CONFIG, static) {
@@ -44,7 +44,6 @@ index e7e9a5bd87..72305ad9b8 100644
 +    contains(QT_CONFIG, angle): DEFINES *= QT_OPENGL_ES_2_ANGLE_STATIC
 +    # Ensure we link against all dependencies statically
 +    QMAKE_LFLAGS += -static -static-libstdc++ -static-libgcc
-+    # Prevent qmake from finding the prl file for shared libs
 +    QMAKE_EXT_PRL = .prl
 +}
 +
