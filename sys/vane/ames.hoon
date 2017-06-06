@@ -1,4 +1,4 @@
-::                                                      ::  ::
+!:                                                      ::  ::
 ::::  /hoon/ames/arvo                                   ::::::  vane prelude
   ::                                                    ::  ::
 |=  pit/vase                                            ::  kernel vase
@@ -845,7 +845,6 @@
         ::
         ++  kuch                                        ::    kuch:lax:as:go
           |=  had/hand                                  ::  hear key tag
-          ~&  [%kuch her `@p`(mug had)]
           ^-  (unit {code _+>})
           =+  wey=(~(get by heg.caq.dur) had)
           ?^  wey
@@ -936,9 +935,12 @@
         ::
         ++  zuul                                        ::    zuul:lax:as:go
           |=  {now/@da ham/meal}                        ::  encode message
-          ^-  (list rock)
+          ^-  {(list rock) _+>}
           =<  weft
           |%
+          ++  wasp                                      ::  null security
+            ^-({p/skin q/@} [%none (jam ham)])
+          ::
           ++  wain                                      ::  message identity
             ^-  flea
             ?+  -.ham  [0 0]
@@ -946,18 +948,17 @@
               $carp  [kos liq]:p.ham
             ==
           ::
-          ++  wasp                                      ::  null security
-            ^-({p/skin q/@} [%none (jam ham)])
-          ::
           ++  weft                                      ::  fragment message
+            ^-  {p/(list rock) q/_+>.$}
+            =^  gim  ..weft  wisp
+            :_  +>.$
             ^-  (list rock)
-            =+  gim=wisp
-            =+  wit=(met ?:(fak.ton 13 13) q.gim)
+            =+  wit=(met ?:(fak.ton 16 13) q.gim)
             ?<  =(0 wit)
-            ?:  |(?=($back -.ham) =(1 wit))
+            ?:  =(1 wit)
               =+  yup=(spit [our her] p.gim q.gim)
               [yup ~]
-            =+  ruv=(rip ?:(fak.ton 13 13) q.gim)
+            =+  ruv=(rip ?:(fak.ton 16 13) q.gim)
             =+  inx=0
             |-  ^-  (list rock)
             ?~  ruv  ~
@@ -969,22 +970,24 @@
             $(ruv t.ruv, inx +(inx))
           ::
           ++  wisp                                      ::  generate message
-            ^-  {p/skin q/@}
+            ^-  {{p/skin q/@} q/_..wisp}
             ?:  =(%carp -.ham)
-              wasp
+              [wasp ..wisp]
             ?:  !=(~ yed.caq.dur)
               ?>  ?=(^ yed.caq.dur)
+              :_  ..wisp
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dur
               (en:r:cluy q.u.yed.caq.dur (jam ham))
-            ?:  &(=(~ lew.wod.dur) |(=(%back -.ham)))
-              wasp
+            ?:  &(=(~ lew.wod.dur) =(%back -.ham))
+              [wasp ..wisp]
             =^  tuy  +>.$
               ?:(=(~ lew.wod.dur) [*code +>.$] (griz now))
+            :_  ..wisp
             =+  yig=sen
-            ::  =+  bil=`wyll`(pare wyl.dur law.saf)    ::  XX not set
-            =+  bil=law.saf                             ::  XX send whole wyll
+            ::  =+  bil=`will`(pare wyl.dur law.saf)    ::  XX not set
+            =+  bil=law.saf                             ::  XX send whole will
             =+  hom=(jam ham)
             ?:  =(~ lew.wod.dur)
               :-  %open
@@ -1304,7 +1307,6 @@
         |%
         ++  zest  ~
         ++  abet                                        ::    abet:ho:um:am
-          ~&  [%ho-abet her]
           %=  +>.$                                      ::  resolve
             gus      (nux:gus diz)
             wab.weg  (~(put by wab.weg) her bah)
@@ -1335,7 +1337,7 @@
           ::  ++chew
           ::
           =^  fud  diz  (grok sin ryn msg)
-          ~&  [%chew sin -.fud `@p`(mug dam) ryn (met 3 msg)]
+          ::  ~&  [%chew sin -.fud `@p`(mug dam) ryn (met 3 msg)]
           ?-  -.fud
             $back  =.  +>.$  ?.  =(%full sin)  +>.$
                        ::  here we send a dummy ack
@@ -1360,7 +1362,7 @@
             ::  don't ack an ack
             ~&  [%conk-acaq (flam dam)]
             +>
-          =+  pex=(zuul:diz now [%back (mix 1 kos) dam cop ~s0])
+          =^  pex  diz  (zuul:diz now [%back (mix 1 kos) dam cop ~s0])
           (busk xong:diz pex)
         ::
         ++  doze                                        ::    doze:ho:um:am
@@ -1675,7 +1677,7 @@
           ++  ve-tell                                   ::  send
             |=  {cha/path val/*}
             ^+  +>
-            =+  pex=(zuul:diz now [%bond [(mix kos 1) seq] cha val])
+            =^  pex  diz  (zuul:diz now [%bond [(mix kos 1) seq] cha val])
             ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent pex)]
             %_    +>.$
                 seq  +(seq)
@@ -1869,7 +1871,7 @@
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         $milk  (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
-      ~&  [%to (flam (shaf %flap q.bon))]
+      ::  ~&  [%to (flam (shaf %flap q.bon))]
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::

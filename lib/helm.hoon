@@ -181,6 +181,10 @@
   :~  [%cash /helm p.u.bur q.u.bur u.wil]
       [%poke /helm [our %hood] %hood-unsync %base (sein:title our) %kids]
   ==
+++  poke-test
+  |=  fat/@
+  ~&  [%poke-test `@p`(mug fat) (met 3 fat)]A
+  [~ +>]
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  $~  =<  abet
