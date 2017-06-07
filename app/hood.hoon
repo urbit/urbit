@@ -122,6 +122,7 @@
 ++  peer-drum                 (wrap peer):from-drum
 ++  peek-x-womb               peek-x:(womb hid (able %womb))
 ++  peer-scry-x-womb          (wrap peer-scry-x):from-womb
+++  poke-atom                 (wrap poke-atom):from-helm
 ++  poke-dill-belt            (wrap poke-dill-belt):from-drum
 ++  poke-drum-put             (wrap poke-put):from-drum
 ++  poke-drum-link            (wrap poke-link):from-drum
@@ -129,7 +130,6 @@
 ++  poke-drum-exit            (wrap poke-exit):from-drum
 ++  poke-drum-start           (wrap poke-start):from-drum
 ++  poke-helm-hi              (wrap poke-hi):from-helm
-++  poke-helm-test            (wrap poke-test):from-helm
 ++  poke-helm-init            (wrap poke-init):from-helm   :: XX used?
 ::++  poke-helm-invite          (wrap poke-invite):from-helm
 ++  poke-helm-mass            (wrap poke-mass):from-helm

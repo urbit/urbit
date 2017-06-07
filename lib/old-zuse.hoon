@@ -236,7 +236,6 @@
 ++  tube        !!                                      ::  canonical path
 ++  tutu        !!                                      ::  XX deprecated
 ++  yaki        yaki:clay                               ::  XX deprecated
-++  view        view:clay                               ::  view mode
 ++  waks        !!                                      ::  XX deprecated
 ++  what        what:ames                               ::  logical identity
 ++  whom        whom:ames                               ::  year+govt+id

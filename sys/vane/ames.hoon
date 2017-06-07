@@ -94,6 +94,11 @@
               ton/town                                  ::  security
               zac/(map ship corn)                       ::  flows by server
           ==                                            ::
+++  loco                                                ::  ames-to-ames
+          $%  {$ping $~}                                ::  noop/ping
+              {$born p/wyll}                            ::  will to sign
+              {$more p/wyll}                            ::  will to install
+          ==                                            ::
 ++  lock                                                ::  inbound sequencer
           $:  laq/tick                                  ::  acknowledged until
               nys/(map tick bait)                       ::  inbound partials
@@ -786,27 +791,6 @@
     |_  ton/town                                        ::  ames state
     ++  as                                              ::    as:go
       |_  {our/ship saf/sufi}                           ::  per server
-      ++  born                                          ::    born:as:go
-        |=  {now/@da her/@p tic/@pG ges/gens pub/pass}  ::  register user
-        ^-  {(unit wyll) _+>}
-        ?.  =(our (sein:title her))  [~ +>.$]
-        =+  nes=sen
-        =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
-        ?.  =(tic ryt)
-          ~&  [%ames-wrong-ticket `@p`ryt]
-          [~ +>.$]
-        =+  rad=(~(get by hoc.saf) her)
-        ?^  rad
-          ?.  ?=(^ lew.wod.u.rad)
-            $(hoc.saf (~(del by hoc.saf) her))          :: XX how can this be?
-          ?.  =(pub r.q.i.lew.wod.u.rad)  [~ +>.$]
-          [[~ lew.wod.u.rad] +>.$]
-        =+  syp=[[0 [~ p.nes] her now] ges pub]
-        =+  ded=[(sign:as:q.nes *code (shaf %meld (sham syp))) syp fak.ton]
-        =+  wil=[ded law.saf]
-        ?>  =(wil (grip wil ~))
-        :-  [~ wil]
-        +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
       ::
       ++  lax                                           ::    lax:as:go
         |_  {her/ship dur/door}                         ::  security engine
@@ -1221,7 +1205,7 @@
         [~ fox]
       =<  zork
       =<  abet
-      ~&  [%in p.p.kec (flam (shaf %flap pac))]
+      ::  ~&  [%in p.p.kec (flam (shaf %flap pac))]
       %-  chew:(ho:(um q.p.kec) p.p.kec)
       [q.kec (shaf %flap pac) ryn r.kec]
     ::
@@ -1404,16 +1388,24 @@
           ::
               $fast
             =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
-            ~&  [%chew-fast `@p`(shax mag)]
+            ::  ~&  [%chew-fast `@p`(shax mag)]
             =+  dey=(kuch:diz mag)
             ?~  dey
               ~&  [%bad-key her mag]
               !!
             =^  key  diz  u.dey
-            [(maw (dy:q:sen:gus key bod)) diz]
+            =+  cru=`(unit @)`(de:q:sen:gus key bod)
+            ?~  cru
+              ~&  :*  %crypto-fail 
+                      hand+`@p`(mug mag) 
+                      key+`@p`(mug key) 
+                      body+`@p`(mug bod)
+                  ==
+              !!
+            [(maw u.cru) diz]
           ::
               $full
-            ~&  %chew-full
+            ::  ~&  %chew-full
             =+  mex=((hard {p/{p/life q/life} q/wyll r/@}) (cue msg))
             =.  diz  (deng:diz q.mex)
             =+  wug=cluy:diz
@@ -1424,7 +1416,7 @@
             [(maw q.mes) diz]
           ::
               $open
-            ~&  %chew-open
+            ::  ~&  %chew-open
             =+  mex=((hard {p/{$~ q/life} q/wyll r/@}) (cue msg))
             =.  diz  (deng:diz q.mex)
             =+  wug=cluy:diz
@@ -1484,7 +1476,7 @@
               %=  +>.$
                 bin  :_(bin [%malt [our her] (~(got by r.zam.bah) kos) cha val])
               ==
-            ~&  [%tr her kos cha liq]
+            ::  ~&  [%tr ship+her bole+kos channel+cha sequence+
             %=  +>.$
               bin  :_(bin [%milk [our her] kos cha val])
               laz  `[[kos liq] fap ryn]

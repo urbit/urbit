@@ -106,6 +106,13 @@
   (emit %serv /helm/serv top)
 ::
 ++  poke-hi  |=(mes/@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
+++  poke-atom  
+  |=  ato/@
+  =+  len=(scow %ud (met 3 ato))
+  =+  gum=(scow %p (mug ato))
+  =<  abet
+  (emit %flog /di %text "< {<src>}: atom: {len} bytes, mug {gum}")
+::
 ++  coup-hi
   |=  {pax/path cop/(unit tang)}  =<  abet
   ?>  ?=({@t $~} pax)
@@ -181,10 +188,6 @@
   :~  [%cash /helm p.u.bur q.u.bur u.wil]
       [%poke /helm [our %hood] %hood-unsync %base (sein:title our) %kids]
   ==
-++  poke-test
-  |=  fat/@
-  ~&  [%poke-test `@p`(mug fat) (met 3 fat)]A
-  [~ +>]
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  $~  =<  abet
