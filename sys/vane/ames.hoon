@@ -937,12 +937,12 @@
             =^  gim  ..weft  wisp
             :_  +>.$
             ^-  (list rock)
-            =+  wit=(met ?:(fak.ton 16 13) q.gim)
+            =+  wit=(met 13 q.gim)
             ?<  =(0 wit)
             ?:  =(1 wit)
               =+  yup=(spit [our her] p.gim q.gim)
               [yup ~]
-            =+  ruv=(rip ?:(fak.ton 16 13) q.gim)
+            =+  ruv=(rip 13 q.gim)
             =+  inx=0
             |-  ^-  (list rock)
             ?~  ruv  ~
