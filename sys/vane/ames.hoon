@@ -797,11 +797,11 @@
         ::
         ++  bear                                        ::    bear:lax:as:go
           |=  {now/@da ges/gens pub/pass}               ::  create child
-          ^-  {(unit will) _+>}
+          ^-  {(unit wyll) _+>}
           ::
           ::  we must be default parent to the new ship
           ::
-          ?.  =(our (sein her))  [~ +>.$]
+          ?.  =(our (sein:title her))  [~ +>.$]
           ::
           ::  do we already have a will for this ship?
           ::
