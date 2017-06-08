@@ -794,6 +794,48 @@
       ::
       ++  lax                                           ::    lax:as:go
         |_  {her/ship dur/door}                         ::  security engine
+        ::
+        ++  bear                                        ::    bear:lax:as:go
+          |=  {now/@da ges/gens pub/pass}               ::  create child
+          ^-  {(unit will) _+>}
+          ::
+          ::  we must be default parent to the new ship
+          ::
+          ?.  =(our (sein her))  [~ +>.$]
+          ::
+          ::  do we already have a will for this ship?
+          ::
+          =+  rad=(~(get by hoc.saf) her)
+          ?^  rad
+            ::
+            ::  strangely, we do.
+            ::
+            ?.  ?=(^ lew.wod.u.rad)
+              ::
+              ::  it's empty, that's super weird, let's
+              ::  pretend it didn't exist and start over
+              ::
+              $(hoc.saf (~(del by hoc.saf) her))
+            ?.  =(pub r.q.i.lew.wod.u.rad)  
+              ::
+              ::  uh oh, the incumbent has a different public key.
+              ::  let's 
+              ::
+              [~ +>.$]
+            ::
+            ::  make the operation idempotent, return the incumbent
+            ::
+            [[~ lew.wod.u.rad] +>.$]
+          ::
+          ::  sign and return the will
+          ::
+          =+  syp=[[0 [~ p.nes] her now] ges pub]
+          =+  ded=[(sign:as:q.nes *code (shaf %meld (sham syp))) syp fak.ton]
+          =+  wil=[ded law.saf]
+          ?>  =(wil (grip wil ~))
+          :-  [~ wil]
+          +>.$(hoc.saf (~(put by hoc.saf) her [[~31337.1.1 ~ wil] ~ *clot]))
+        :: 
         ++  cluy                                        ::    cluy:lax:as:go
           ^-  {p/life q/gens r/acru}                    ::  client crypto
           ?~  lew.wod.dur  !!
@@ -1826,6 +1868,23 @@
     --
   |%
   ++  claw  |=(our/ship ^-(duct hen:(need (~(get by zac.fox) our))))
+  ++  clew
+    |=  {hen/duct {our/ship his/ship} loq/loco}
+    ^-  {(list move) fort}
+    ~&  [our+our her+her message+loq]
+    ?:  ?=($ping -.loq)
+      [~ fox]
+    =^  gob  fox  
+      ?-  -.loq
+        $born  (born:(ho:(~(um am [now fox]) our) his) now p.loq q.loq)
+        $more  (more:(ho:(~(um am [now fox]) our) his) p.loq)
+      ==
+    ::
+    ::  XX  this mishmash of conventions is maddening
+    ::
+    =^  moz  +>.$  (knit gob)
+    [moz fox]
+  ::
   ++  clod
     |=  {soq/sock kos/bole cha/path hen/duct cad/card:able}
     ^-  {(list move) fort}
@@ -1861,7 +1920,10 @@
         $coke  :_(fox [[q.bon [%give %woot q.p.bon r.bon s.bon]] ~])
         $malt  :_(fox [[q.bon [%give %waft q.p.bon r.bon s.bon]] ~])
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
-        $milk  (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
+        $milk  
+      ?:  ?=(%a -.r.bon)
+        (clew ((hard loco) s.bon))
+      (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
       ::  ~&  [%to (flam (shaf %flap q.bon))]
       :_  fox

@@ -164,17 +164,6 @@
       --  ::nu                                          ::
     --  ::acru                                          ::
   ++  bait  {p/skin q/@ud r/dove}                       ::  fmt nrecvd spec
-  ++  boon                                              ::  fort output
-    $%  {$beer p/ship}                                  ::  gained ownership
-        {$bier p/ship q/deyd}                           ::  unsigned deyd
-        {$cake p/sock q/soap r/coop s/duct}             ::  e2e message result
-        {$coke p/sock q/soap r/cape s/duct}             ::  message result
-        {$mead p/lane q/rock}                           ::  accept packet
-        {$milk p/sock q/soap r/*}                       ::  accept message
-        {$mulk p/sock q/soap r/*}                       ::  e2e pass message
-        {$ouzo p/lane q/rock}                           ::  transmit packet
-        {$wine p/sock q/tape}                           ::  notify user
-    ==                                                  ::
   ++  bray  {p/life q/(unit life) r/ship s/@da}         ::  our parent us now
   ++  buck  {p/mace q/wyll}                             ::  all security data
   ++  cake  {p/sock q/skin r/@}                         ::  top level packet
