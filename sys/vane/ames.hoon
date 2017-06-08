@@ -801,7 +801,13 @@
           ::
           ::  we must be default parent to the new ship
           ::
-          ?.  =(our (sein:title her))  [~ +>.$]
+          ?.  =(our (sein:title her))  
+            ~&  [%ames-strange-bearer her]
+            [~ +>.$]
+          ::
+          ::  current crypto technology
+          ::
+          =+  nes=sen
           ::
           ::  do we already have a will for this ship?
           ::
@@ -819,8 +825,9 @@
             ?.  =(pub r.q.i.lew.wod.u.rad)  
               ::
               ::  uh oh, the incumbent has a different public key.
-              ::  let's 
+              ::  let's panic and do nothing
               ::
+              ~&  [%ames-bearer-conflict her]
               [~ +>.$]
             ::
             ::  make the operation idempotent, return the incumbent
@@ -1337,6 +1344,14 @@
             gus      (nux:gus diz)
             wab.weg  (~(put by wab.weg) her bah)
           ==
+        ::                                              ::    born:ho:um:am
+        ++  born                                        ::  create client
+          |=  {ges/gens pub/pass}
+          =+  wul=(bear:diz now ges pub)
+          ?~   wul
+
+        ::                                              ::  bing:ho:um:am
+        ++  bing                                        ::  send to ames peer
         ::
         ++  back                                        ::    back:ho:um:am
           |=  {ost/bone dam/flap cop/coop lag/@dr}      ::  receive ack
@@ -1876,8 +1891,8 @@
       [~ fox]
     =^  gob  fox  
       ?-  -.loq
-        $born  (born:(ho:(~(um am [now fox]) our) his) now p.loq q.loq)
-        $more  (more:(ho:(~(um am [now fox]) our) his) p.loq)
+        $born  abet:(born:(ho:(~(um am [now fox]) our) his) p.loq q.loq)
+        $more  abet:(more:(ho:(~(um am [now fox]) our) his) p.loq)
       ==
     ::
     ::  XX  this mishmash of conventions is maddening
