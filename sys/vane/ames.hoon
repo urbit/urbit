@@ -18,7 +18,7 @@
 ++  bole  bone                                          ::  inbound opaque
 ++  boon                                                ::  internal effect
           $%  {$acid $~}                                ::  drop input
-              {$beer p/ship q/@uvG}                     ::  gained ownership
+              {$beer p/ship}                            ::  gained ownership
               {$coke p/sock q/duct r/path s/coop}       ::  forward ack
               {$cola p/sock q/bole r/path s/coop}       ::  reverse ack
               {$mead p/lane q/rock}                     ::  forward to self
@@ -96,8 +96,8 @@
           ==                                            ::
 ++  loco                                                ::  ames-to-ames
           $%  {$ping $~}                                ::  noop/ping
-              {$born p/wyll}                            ::  will to sign
-              {$more p/wyll}                            ::  will to install
+              {$born p/gens q/pass}                     ::  will to create
+              {$more p/ship q/wyll}                     ::  will to install
           ==                                            ::
 ++  lock                                                ::  inbound sequencer
           $:  laq/tick                                  ::  acknowledged until
@@ -143,7 +143,6 @@
   ::                                                    ::  ::
 |%                                                      ::
 ++  flam  |=(a/flap `@p`(mug a))                        ::  debug flap
-++  msec  |=(a/@dr `@ud`(div a (div ~s1 1.000)))        ::  debug @dr
 ++  move  {p/duct q/(wind note-arvo gift:able)}         ::  local move
 --
 ::                                                      ::
@@ -889,7 +888,18 @@
                 qim.caq.dur  (~(put by qim.caq.dur) had key)
             ==
           =+  dyv=(~(get by qim.caq.dur) had)
-          ?~  dyv  ~
+          ?~  dyv
+            ?.  =(our (sein her))
+              ~
+            ::  ryt: ticket for this ship
+            ::  key: stretched ticket
+            ::  dah: handle of stretched ticket
+            ::
+            =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q:sen))))
+            =+  key=(shax ryt)  :: XX no stretch
+            =+  dah=(shaf %hand key)
+            ?.  =(dah had)  ~
+            `[key ..kuch(yed.caq.dur [~ had key])]
           [~ u.dyv ..kuch]
         ::
         ++  wasc                                        ::    wasc:lax:as:go
@@ -1139,29 +1149,6 @@
   |%
   ++  am                                                ::    am
     |_  {now/@da fox/fort}                              ::  protocol engine
-    ++  anon
-      |=  wen/@da
-      ^-  @tas
-      ?:  =(wen now)  %now
-      ?:  (gth wen now)
-        (cat 3 (scot %ud (msec (sub wen now))) %ms)
-      (cat 3 '-' $(now wen, wen now))
-    ::
-    ++  anun
-      |=  wun/(unit @da)
-      ^-  @tas
-      ?~(wun %no (anon u.wun))
-    ::
-    ++  anos
-      |=  one/@dr
-      ^-  @tas
-      ?:  =(`@`0 one)  '0ms'
-      (cat 3 (scot %ud (msec one)) %ms)
-    ::
-    ++  anus
-      |=  une/(unit @dr)
-      ^-  @tas
-      ?~(une %no (anos u.une))
     ::
     ++  boot                                            ::    boot:am
       ^-  fort                                          ::  restore from noun
@@ -1178,7 +1165,7 @@
         ==
       ==
     ++  come                                            ::    come:am
-      |=  {ges/(unit @t) wid/@ bur/@ fak/?}             ::  instantiate pawn
+      |=  {ges/(unit @t) wid/@ bur/@ fak/?}             ::  instantiate comet
       ^-  {p/{p/ship q/@uvG} q/fort}
       =+  loy=(bruw:suite wid bur)
       =+  rig=sec:ex:loy
@@ -1195,44 +1182,66 @@
         fak
       ==
     ::
-    ++  czar  !:                                        ::    czar:am
-      |=  {her/ship ger/@uw fak/?}                      ::  instantiate emperor
+    ++  cred  !:                                        ::    cred:am
+      |=  {her/ship ges/gens ger/@uw}                   ::  make non-comet
       ^-  {p/(list boon) q/fort}
-      ~&  [%czar her]
+      ~&  [%cred her `@p`(mug ger)]
+      ::  
+      ::  fak: fake network
+      ::  loy: keypair core
       ::
-      ::  fake uses carrier #
-      ::
-      =+  loy=?:(fak (bruw:suite 2.048 her) (bruw:suite 2.048 ger))
-      =+  fim==(fig:ex:loy (zeno her))
-      ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
+      =/  fak  =(0 ger)
+      =+  loy=(pit:nu:crub 512 ?:(fak our ger))
+      ?<  &(!fak !=((zeno her) fig:ex:loy))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
-      =+  syp=`step`[`bray`[0 ~ her now] [%en %czar ~] pub:ex:loy]
+      =+  syp=`step`[`bray`[0 ~ her now] ges pub:ex:loy]
       =+  ded=`deyd`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
       =+  buq=`buck`[mac [ded ~]]
       =:  ton.fox  (~(ha go ton.fox) her buq)
           zac.fox  (~(put by zac.fox) her *corn)
           fak.ton.fox  fak
         ==
-      [[[%beer her pac:ex:loy] ~] fox]
-    ::
+      [[[%beer her ges pac:ex:loy] ~] fox]
+    ::                                                  ::    user:am
     ++  user                                            ::  instantiate citizen
-      |=  {her/ship ger/@uw fak/?}
+      |=  {hen/duct her/ship ges/gens tic/@uw ger/@uw}
       ^-  {p/(list boon) q/fort}
-      =^  out  fox  (czar her ger fak)
+      ::  
+      ::  fak: fake network
+      ::  loy: keypair core
+      ::
+      =/  fak  =(0 ger)
+      =+  loy=(pit:nu:crub 512 ?:(fak our ger))
+      =+  pub=`pass`pub:ex:loy
+      ?<  &(!fak !=((zeno her) fig:ex:loy))
+      =+  mac=`mace`[[0 sec:ex:loy] ~]
+      =+  syp=`step`[`bray`[0 ~ her now] ges pub]
+      =+  ded=`deyd`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
+      =+  buq=`buck`[mac [ded ~]]
+      =:  ton.fox  (~(ha go ton.fox) her buq)
+          zac.fox  (~(put by zac.fox) her *corn)
+          fak.ton.fox  fak
+        ==
+      =+  bon=`boon`[%beer her]
       ?:  (lth her 256)
-        [out fox]
+        [[bon ~] fox]
       ::
-      ::  `ger` is the ticket; make a key out of it (XX use scrypt);
-      ::  install it as a symmetric key.
+      ::  `tic` is the ticket; stretch and 
+      ::  install it as a symmetric key
       ::
-      =+  key=(shax ger)
+      =+  key=(shax tic)    ::  XX real stretch
       =+  dad=(sein:title her)
       ~&  [%user-auth her `@p`ger `@p`(mug key)]
       =+  gus=(need (~(us go ton.fox) her))
       =+  diz=(wasc:(myx:gus dad) key)
       =.  gus  (nux:gus diz)
       =.  ton.fox  (~(su go ton.fox) gus)
-      [out fox]
+      ::
+      ::  using this key, ask parent to create our will
+      ::
+      =*  bor  `loco`[%born ges pub]
+      =^  out  fox  (~(wise am [now fox]) [our dad] hen /a bor)
+      [[bon out] fox]
     ::
     ++  doze
       %^  hunt  lth  `(add now ~s32)
@@ -1303,7 +1312,6 @@
       |=  {soq/sock kos/bole cha/path val/*}            ::  return response
       ^-  {p/(list boon) q/fort}
       zork:abet:ve-abet:(ve-tell:(vand:(ho:(um p.soq) q.soq) kos) cha val)
-      ::
     ::
     ++  um                                              ::  per server
       |=  our/ship
@@ -1322,6 +1330,10 @@
             doze:(ho p.n.wab.weg)
         ==
       ::
+      ++  know
+        |=  {wyl/wyll}
+        +>(law.saf (grip wyl law.saf.gus))
+      ::
       ++  wake                                          ::    wake:um:am
         |=  hen/duct                                    ::  activate
         =.  +>  (kick hen)
@@ -1338,7 +1350,10 @@
         =+  bah=(~(get by wab.weg) her)
         =>  .(bah `bath`?~(bah [~ [2 ~ ~] ~] u.bah))
         |%
-        ++  zest  ~
+        ++  zest  
+          ::  produce an self-typed state for examination
+          ::
+          ~
         ++  abet                                        ::    abet:ho:um:am
           %=  +>.$                                      ::  resolve
             gus      (nux:gus diz)
@@ -1347,11 +1362,19 @@
         ::                                              ::    born:ho:um:am
         ++  born                                        ::  create client
           |=  {ges/gens pub/pass}
+          ^+  +>
+          ::  wul: will, if any, of new child
+          ::
           =+  wul=(bear:diz now ges pub)
           ?~   wul
-
-        ::                                              ::  bing:ho:um:am
-        ++  bing                                        ::  send to ames peer
+            ~&  [%born-fail her `@p`(mug pass)]
+            +>.$
+          =.  diz  (deng:diz u.wul)
+          ve-abet:(ve-tell:(vend /a `loco`[%more her u.wul]))
+        ::                                              ::    more:ho:um:am
+        ++  more                                        ::  update will
+          |=  wyl/will
+          +>(diz (deng:diz wyl))
         ::
         ++  back                                        ::    back:ho:um:am
           |=  {ost/bone dam/flap cop/coop lag/@dr}      ::  receive ack
@@ -1595,8 +1618,7 @@
         ++  pong                                        ::    pong:ho:um:am
           |=  hen/duct                                  ::  test connection
           ^+  +>
-          +>
-          ::  (conk 0 `@`0 ~)
+          ve-abet:(ve-tell:(vend hen) /a `loco`[%ping ~])
         ::                                              ::
         ++  thaw                                        ::  activate by time
           ^+  .
@@ -1891,11 +1913,13 @@
       [~ fox]
     =^  gob  fox  
       ?-  -.loq
-        $born  abet:(born:(ho:(~(um am [now fox]) our) his) p.loq q.loq)
-        $more  abet:(more:(ho:(~(um am [now fox]) our) his) p.loq)
+        $born  zork:abet:(born:(ho:(~(um am [now fox]) our) his) p.loq q.loq)
+        $more  ?:  =(p.loq our)
+                 zork:(know:(~(um am [now fox]) our) q.loq)
+               zork:abet:(bore:(ho:(~(um am [now fox]) our) p.loq) q.loq)
       ==
     ::
-    ::  XX  this mishmash of conventions is maddening
+    ::  XX  this mishmash of monad conventions is maddening
     ::
     =^  moz  +>.$  (knit gob)
     [moz fox]
@@ -2026,7 +2050,7 @@
           [[[%beer p.vun] ~] q.vun]
         ::
             $sith
-          (~(user am [now fox]) p.kyz q.kyz r.kyz)
+          (~(user am [now fox]) hen p.kyz q.kyz r.kyz)
         ::
             $wake
           (~(wake am [now fox]) hen)

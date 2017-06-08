@@ -4302,6 +4302,39 @@
     ==
   --  ::title
 ::                                                      ::
+::::                      ++milly                       ::  (2k) milliseconds
+  ::                                                    ::::
+++  milly  ^?
+  |_  now/@da
+  ::                                                    ::  ++around:milly
+  ++  around                                            ::  relative msec
+    |=  wen/@da
+    ^-  @tas
+    ?:  =(wen now)  %now
+    ?:  (gth wen now)
+      (cat 3 (scot %ud (msec (sub wen now))) %ms)
+    (cat 3 '-' $(now wen, wen now))
+  ::  
+  ++  about                                             ::  ++about:milly
+    |=  wun/(unit @da)                                  ::  unit relative msec
+    ^-  @tas
+    ?~(wun %no (around u.wun))
+  ::                                                    ::  ++mill:milly
+  ++  mill                                              ::  msec diff
+    |=  one/@dr
+    ^-  @tas
+    ?:  =(`@`0 one)  '0ms'
+    (cat 3 (scot %ud (msec one)) %ms)
+  ::                                                    ::  ++msec:milly
+  ++  msec                                              ::  @dr to @ud ms
+    |=(a/@dr `@ud`(div a (div ~s1 1.000)))
+  ::                                                    ::  ++mull:milly
+  ++  mull                                              ::  unit msec diff
+    |=  une/(unit @dr)
+    ^-  @tas
+    ?~(une %no (mill u.une))
+  --
+::                                                      ::
 ::::                      ++userlib                     ::  (2u) non-vane utils
   ::                                                    ::::
 ++  userlib  ^?
