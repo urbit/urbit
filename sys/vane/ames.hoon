@@ -889,7 +889,7 @@
             ==
           =+  dyv=(~(get by qim.caq.dur) had)
           ?~  dyv
-            ?.  =(our (sein her))
+            ?.  =(our (sein:title her))
               ~
             ::  ryt: ticket for this ship
             ::  key: stretched ticket
@@ -1181,27 +1181,6 @@
           fak.ton
         fak
       ==
-    ::
-    ++  cred  !:                                        ::    cred:am
-      |=  {her/ship ges/gens ger/@uw}                   ::  make non-comet
-      ^-  {p/(list boon) q/fort}
-      ~&  [%cred her `@p`(mug ger)]
-      ::  
-      ::  fak: fake network
-      ::  loy: keypair core
-      ::
-      =/  fak  =(0 ger)
-      =+  loy=(pit:nu:crub 512 ?:(fak our ger))
-      ?<  &(!fak !=((zeno her) fig:ex:loy))
-      =+  mac=`mace`[[0 sec:ex:loy] ~]
-      =+  syp=`step`[`bray`[0 ~ her now] ges pub:ex:loy]
-      =+  ded=`deyd`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
-      =+  buq=`buck`[mac [ded ~]]
-      =:  ton.fox  (~(ha go ton.fox) her buq)
-          zac.fox  (~(put by zac.fox) her *corn)
-          fak.ton.fox  fak
-        ==
-      [[[%beer her ges pac:ex:loy] ~] fox]
     ::                                                  ::    user:am
     ++  user                                            ::  instantiate citizen
       |=  {hen/duct her/ship ges/gens tic/@uw ger/@uw}
@@ -1210,7 +1189,7 @@
       ::  fak: fake network
       ::  loy: keypair core
       ::
-      =/  fak  =(0 ger)
+      =/  fak  =(0 `@`ger)
       =+  loy=(pit:nu:crub 512 ?:(fak our ger))
       =+  pub=`pass`pub:ex:loy
       ?<  &(!fak !=((zeno her) fig:ex:loy))
@@ -1277,7 +1256,7 @@
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
         ==
-      [[[%beer our pac:ex:q:sen:(need (~(us go ton.fox) our))] ~] fox]
+      [[[%beer our] ~] fox]
     ::
     ++  kick                                            ::    kick:am
       |=  hen/duct                                      ::  refresh net
@@ -1332,7 +1311,7 @@
       ::
       ++  know
         |=  {wyl/wyll}
-        +>(law.saf (grip wyl law.saf.gus))
+        +>(law.saf.gus (grip wyl law.saf.gus))
       ::
       ++  wake                                          ::    wake:um:am
         |=  hen/duct                                    ::  activate
@@ -1361,19 +1340,19 @@
           ==
         ::                                              ::    born:ho:um:am
         ++  born                                        ::  create client
-          |=  {ges/gens pub/pass}
+          |=  {hen/duct ges/gens pub/pass}
           ^+  +>
           ::  wul: will, if any, of new child
           ::
-          =+  wul=(bear:diz now ges pub)
+          =^  wul  diz  (bear:diz now ges pub)
           ?~   wul
             ~&  [%born-fail her `@p`(mug pass)]
             +>.$
           =.  diz  (deng:diz u.wul)
-          ve-abet:(ve-tell:(vend /a `loco`[%more her u.wul]))
+          ve-abet:(ve-tell:(vend hen) /a `loco`[%more her u.wul])
         ::                                              ::    more:ho:um:am
         ++  more                                        ::  update will
-          |=  wyl/will
+          |=  wyl/wyll
           +>(diz (deng:diz wyl))
         ::
         ++  back                                        ::    back:ho:um:am
@@ -1912,11 +1891,12 @@
     ?:  ?=($ping -.loq)
       [~ fox]
     =^  gob  fox  
+      =<  zork
       ?-  -.loq
-        $born  zork:abet:(born:(ho:(~(um am [now fox]) our) his) p.loq q.loq)
+        $born  abet:(born:(ho:(~(um am [now fox]) our) his) hen p.loq q.loq)
         $more  ?:  =(p.loq our)
-                 zork:(know:(~(um am [now fox]) our) q.loq)
-               zork:abet:(bore:(ho:(~(um am [now fox]) our) p.loq) q.loq)
+                 (know:(~(um am [now fox]) our) q.loq)
+               abet:(bore:(ho:(~(um am [now fox]) our) p.loq) q.loq)
       ==
     ::
     ::  XX  this mishmash of monad conventions is maddening
