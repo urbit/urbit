@@ -611,48 +611,54 @@ _sung_one(u3_noun* a, u3_noun* b)
 
         if ( _(asr_o) && _(bsr_o) ) {
           //
-          //  we can't unify on a higher road, because we can't
-          //  track junior nouns that point into that road.   this
-          //  is just an implementation issue -- we could set use
-          //  counts to 0 without actually freeing.  but the system 
+          //  when unifying on a higher road, we can't free nouns, 
+          //  because we can't track junior nouns that point into 
+          //  that road.
+          //  
+          //  this is just an implementation issue -- we could set use
+          //  counts to 0 without actually freeing.  but the allocator
           //  would have to be actually designed for this.
           //
-          //  the commented-out code was installed for quite some
-          //  time in a released system...
+          //  not freeing may generate spurious leaks, so we disable
+          //  senior unification when debugging memory.  this will
+          //  cause a very slow boot process as the compiler compiles
+          //  itself, constantly running into duplicates.
           //
-          // u3R = u3to(u3_road, u3R->par_p);
-          // continue;
-          // 
+#ifdef U3_MEMORY_DEBUG
           return;
+#else
+          u3R = u3to(u3_road, u3R->par_p);
+          continue;
+#endif
         }
 
         if ( _(asr_o) && !_(bsr_o) ){
-          u3z(*b); 
+          if ( u3R == rod_u ) { u3z(*b); }
           *b = *a;
         }
         if ( _(bsr_o) && !_(asr_o) ) {
-          u3z(*a); 
+          if ( u3R == rod_u ) { u3z(*a); }
           *a = *b;
         }
         if ( u3a_is_north(u3R) ) {
           if ( *a <= *b ) {
             u3k(*a);
-            u3z(*b); 
+            if ( u3R == rod_u ) { u3z(*b); }
             *b = *a;
           } else {
             u3k(*b);
-            u3z(*a); 
+            if ( u3R == rod_u ) { u3z(*a); }
             *a = *b;
           }
         }
         else {
           if ( *a >= *b ) {
             u3k(*a);
-            u3z(*b); 
+            if ( u3R == rod_u ) { u3z(*b); }
             *b = *a;
           } else {
             u3k(*b);
-            u3z(*a); 
+            if ( u3R == rod_u ) { u3z(*a); }
             *a = *b;
           }
         }
