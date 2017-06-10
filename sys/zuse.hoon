@@ -2180,7 +2180,7 @@
           =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
           =+  ii=(exp.fq (div (dec q) 4) 2)
           [b=b q=q fq=fq l=l d=d ii=ii]
-      ~%  %coed  +>  ~
+      ~%  %coed  ..is  ~
       |%
       ::                                                ::  ++norm:ed:crypto
       ++  norm                                          ::
@@ -2251,7 +2251,7 @@
         =+  bby=(pro.fq 4 (inv.fq 5))
         [(xrec bby) bby]
       --  ::
-    ~%  %ed  +>  ~
+    ~%  %ed  +  ~
     |%
     ::                                                  ::  ++puck:ed:crypto
     ++  puck                                            ::  public key
@@ -2342,7 +2342,7 @@
   ::::                    ++scr:crypto                  ::  (2b3) scrypt
     ::                                                  ::::
   ++  scr
-    ~%  %scr  +>  ~
+    ~%  %scr  ..is  ~
     |%
     ::                                                  ::  ++sal:scr:crypto
     ++  sal                                             ::  salsa20 hash
@@ -2549,7 +2549,7 @@
   ::                                                    ::
   ::::                    ++crub:crypto                 ::  (2b4) suite B, Ed
     ::                                                  ::::
-  ++  crub
+  ++  crub  !:
     ^-  acru
     =|  {pub/{cry/@ sgn/@} sek/(unit {cry/@ sgn/@})}
     |%
@@ -2852,26 +2852,7 @@
   ::::                    ++test:crypto                 ::  (2b6) test crypto
     ::                                                  ::::
   ++  test  ^?
-    ::
-    ::  XX: ++bruw, ++haul and ++weur are obsolete crua interfaces;
-    ::  delete or restructure
     |%
-    ::                                                  ::  ++trua:test:crypto
-    ++  trua                                            ::  test crua
-      |=  msg/@tas
-      ^-  @
-      =+  ali=(bruw:suite 1.024 (shax 'ali'))
-      =+  bob=(bruw:suite 1.024 (shax 'bob'))
-      =+  tef=(sign:as.ali [0 msg])
-      =+  lov=(sure:as.ali [0 tef])
-      ?.  &(?=(^ lov) =(msg u.lov))
-        ~|(%test-fail-sign !!)
-      =+  key=(shax (shax (shax msg)))
-      =+  sax=(seal:as.ali pub:ex.bob key msg)
-      =+  tin=(tear:as.bob pub:ex.ali sax)
-      ?.  &(?=(^ tin) =(key p.u.tin) =(msg q.u.tin))
-        ~|(%test-fail-seal !!)
-      msg
     ::                                                  ::  ++trub:test:crypto
     ++  trub                                            ::  test crub
       |=  msg/@t
@@ -2899,34 +2880,6 @@
       ::  alice decrypts with same key
       `@t`(dy.ali secret-key crypted-msg)
     --  ::test
-  ::                                                    ::
-  ::::                    ++suite:crypto                ::  (2b7) generalized
-    ::                                                  ::::
-  ++  suite  ^?
-    ::
-    ::  XX: ++bruw, ++haul and ++weur are obsolete crua interfaces;
-    ::  delete or restructure
-    |%
-    ::                                                  ::  ++bruw:suite:crypto
-    ++  bruw                                            ::  create keypair
-      |=  {width/@ seed/@}
-      ^-  acru
-      (pit:nu:crua width seed)
-    ::                                                  ::  ++haul:suite:crypto
-    ++  haul                                            ::  activate public key
-      |=  a/pass
-      ^-  acru
-      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-      ?>  =('a' mag)
-      (com:nu:crua bod)
-    ::                                                  ::  ++weur:suite:crypto
-    ++  weur                                            ::  activate secret key
-      |=  a/ring
-      ^-  acru
-      =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
-      ?>  =('A' mag)
-      (nol:nu:crua bod)
-    --  ::suite
   --  ::crypto
 ::                                                      ::::
 ::::                      ++unity                       ::  (2c) unit promotion

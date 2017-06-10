@@ -403,8 +403,8 @@
     |=  {new/deyd old/deyd}
     ^-  $&
     ?>  (melt new old)
-    ?>  .=  (shaf %meld (sham q.new))
-            (need (sure:as:(haul:suite r.q.old) *code p.new))
+    ?>  .=  (shaf %meld (sham q.new)) 
+            (need (sure:as:(com:nu:crub r.q.old) *code p.new))
     %&
   ::
   ++  melt                                              ::  proper connect
@@ -436,14 +436,14 @@
     ?.  =(i.wal i.ouf)  ouf
     $(wal t.wal, ouf t.ouf)
   ::
-  ++  pier  !:                                          ::  initial deyd
+  ++  pier  !:                                          ::  initial deed
     |=  wed/deyd
     ^-  $&
     ?>  =+  rac=(clan:title r.p.q.wed)
-        =+  loy=(haul:suite r.q.wed)
+        =+  loy=(com:nu:crub r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
-        ?>  =(fig:ex:loy ?+(rac !! $czar (zeno r.p.q.wed), $pawn r.p.q.wed))
+        ::  ?>  =(fig:ex:loy ?+(rac !! $czar (zeno r.p.q.wed), $pawn r.p.q.wed))
         ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
         %&
     %&
@@ -455,7 +455,7 @@
             ?>  ?&  ?=(^ law)
                     (lth p.p.q.i.law 9)                 ::  9-lives rule
                     =(p.p.q.i.law p.i.mac)
-                    =(r.q.i.law pub:ex:(weur:suite q.i.mac))
+                    =(r.q.i.law pub:ex:(nol:nu:crub q.i.mac))
                 ==
             $(mac t.mac, law t.law)
         ==
@@ -848,7 +848,7 @@
           ?.  =(fak.ton r.i.lew.wod.dur)  ~|([%client-wrong-fake her] !!)
           :+  p.p.q.i.lew.wod.dur
             q.q.i.lew.wod.dur
-          (haul:suite r.q.i.lew.wod.dur)
+          (com:nu:crub r.q.i.lew.wod.dur)
         ::
         ++  clon
           ^-  life
@@ -957,7 +957,7 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dyr
-              (en:crua q.u.yed.caq.dyr mal)
+              (en:crub q.u.yed.caq.dyr mal)
           ==
         ::
         ++  xeno                                        ::    xeno:lax:as:go
@@ -1118,7 +1118,7 @@
             |-  ^-  (list ship)
             ?:((lth our 256) ~ =+(seg=(sein:title our) [seg $(our seg)]))
         ::
-            (turn mac |=({p/life q/ring} [p q (weur:suite q)]))
+            (turn mac |=({p/life q/ring} [p q (nol:nu:crub q)]))
             wil
             ~
             ~
@@ -1161,13 +1161,13 @@
         :-  p
         %=    q
             val
-          (turn val.q |=({p/life q/ring r/acru} [p q (weur:suite q)]))
+          (turn val.q |=({p/life q/ring r/acru} [p q (nol:nu:crub q)]))
         ==
       ==
     ++  come                                            ::    come:am
       |=  {ges/(unit @t) wid/@ bur/@ fak/?}             ::  instantiate comet
       ^-  {p/{p/ship q/@uvG} q/fort}
-      =+  loy=(bruw:suite wid bur)
+      =+  loy=(pit:nu:crub wid bur)
       =+  rig=sec:ex:loy
       =+  our=`@p`fig:ex:loy
       =+  syp=[[0 ~ our now] [%en %pawn ges] pub:ex:loy]
@@ -1190,9 +1190,10 @@
       ::  loy: keypair core
       ::
       =/  fak  =(0 `@`ger)
+      ~&  [%user fak ger]
       =+  loy=(pit:nu:crub 512 ?:(fak our ger))
       =+  pub=`pass`pub:ex:loy
-      ?<  &(!fak !=((zeno her) fig:ex:loy))
+      ::  ?<  &(!fak !=((zeno her) fig:ex:loy))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
       =+  syp=`step`[`bray`[0 ~ her now] ges pub]
       =+  ded=`deyd`[(sign:as:loy *@ (shaf %self (sham syp))) syp fak]
@@ -1219,6 +1220,7 @@
       ::  using this key, ask parent to create our will
       ::
       =*  bor  `loco`[%born ges pub]
+      ~&  [%child-ask dad bor]
       =^  out  fox  (~(wise am [now fox]) [our dad] hen /a bor)
       [[bon out] fox]
     ::
@@ -1338,6 +1340,10 @@
             gus      (nux:gus diz)
             wab.weg  (~(put by wab.weg) her bah)
           ==
+        ::                                              ::    more:ho:um:am
+        ++  bore                                        ::  update will
+          |=  wyl/wyll
+          +>(diz (deng:diz wyl))
         ::                                              ::    born:ho:um:am
         ++  born                                        ::  create client
           |=  {hen/duct ges/gens pub/pass}
@@ -1348,12 +1354,9 @@
           ?~   wul
             ~&  [%born-fail her `@p`(mug pass)]
             +>.$
+          ~&  [%born-worked her `@p`(mug pass)]
           =.  diz  (deng:diz u.wul)
           ve-abet:(ve-tell:(vend hen) /a `loco`[%more her u.wul])
-        ::                                              ::    more:ho:um:am
-        ++  more                                        ::  update will
-          |=  wyl/wyll
-          +>(diz (deng:diz wyl))
         ::
         ++  back                                        ::    back:ho:um:am
           |=  {ost/bone dam/flap cop/coop lag/@dr}      ::  receive ack
@@ -1887,7 +1890,7 @@
   ++  clew
     |=  {hen/duct {our/ship his/ship} loq/loco}
     ^-  {(list move) fort}
-    ~&  [our+our her+her message+loq]
+    ~&  [our+our his+his message+loq]
     ?:  ?=($ping -.loq)
       [~ fox]
     =^  gob  fox  
@@ -1901,7 +1904,7 @@
     ::
     ::  XX  this mishmash of monad conventions is maddening
     ::
-    =^  moz  +>.$  (knit gob)
+    =^  moz  +>.$  (knit hen gob)
     [moz fox]
   ::
   ++  clod
@@ -1941,7 +1944,7 @@
         $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
         $milk  
       ?:  ?=(%a -.r.bon)
-        (clew ((hard loco) s.bon))
+        (clew hen p.bon ((hard loco) s.bon))
       (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
       ::  ~&  [%to (flam (shaf %flap q.bon))]
@@ -2027,10 +2030,20 @@
         ::
             $make
           =+  vun=(~(come am [now fox]) p.kyz (bex q.kyz) r.kyz s.kyz)
-          [[[%beer p.vun] ~] q.vun]
+          [[[%beer p.p.vun] ~] q.vun]
         ::
             $sith
-          (~(user am [now fox]) hen p.kyz q.kyz r.kyz)
+          =+  ^=  ges  ^-  gens
+              :-  %en
+              =+  rac=(clan:title p.kyz)
+              ?-  rac
+                %czar  [%czar ~]
+                %duke  [%duke %anon ~]
+                %earl  [%earl (scot %p p.kyz)]
+                %king  [%king (scot %p p.kyz)]
+                %pawn  [%pawn ~]
+              ==
+          (~(user am [now fox]) hen p.kyz ges q.kyz q.kyz)
         ::
             $wake
           (~(wake am [now fox]) hen)
