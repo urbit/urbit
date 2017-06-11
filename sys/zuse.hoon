@@ -129,7 +129,7 @@
           {$junk p/@}                                   ::  entropy
           {$kick p/@da}                                 ::  wake up
           {$make p/(unit @t) q/@ud r/@ s/?}             ::  wild license
-          {$sith p/@p q/@uw r/?}                        ::  imperial generator
+          {$sith p/@p q/@uw r/@uw}                      ::  user/ticket/secret
           {$wake $~}                                    ::  timer activate
           {$want p/sock q/path r/*}                     ::  send message
           {$wegh $~}                                    ::  report memory

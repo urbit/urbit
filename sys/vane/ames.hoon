@@ -1183,15 +1183,15 @@
       ==
     ::                                                  ::    user:am
     ++  user                                            ::  instantiate citizen
-      |=  {hen/duct her/ship ges/gens tic/@uw ger/@uw}
+      |=  {hen/duct her/ship ges/gens tic/@uw sec/@uw}
       ^-  {p/(list boon) q/fort}
       ::  
       ::  fak: fake network
       ::  loy: keypair core
       ::
-      =/  fak  =(0 `@`ger)
-      ~&  [%user fak ger]
-      =+  loy=(pit:nu:crub 512 ?:(fak our ger))
+      =/  fak  =(0 `@`sec)
+      ~&  [%user fak sec]
+      =+  loy=(pit:nu:crub 512 ?:(fak our sec))
       =+  pub=`pass`pub:ex:loy
       ::  ?<  &(!fak !=((zeno her) fig:ex:loy))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
@@ -1211,7 +1211,7 @@
       ::
       =+  key=(shax tic)    ::  XX real stretch
       =+  dad=(sein:title her)
-      ~&  [%user-auth her `@p`ger `@p`(mug key)]
+      ~&  [%user-auth her `@p`sec `@p`(mug key)]
       =+  gus=(need (~(us go ton.fox) her))
       =+  diz=(wasc:(myx:gus dad) key)
       =.  gus  (nux:gus diz)
@@ -2043,7 +2043,7 @@
                 %king  [%king (scot %p p.kyz)]
                 %pawn  [%pawn ~]
               ==
-          (~(user am [now fox]) hen p.kyz ges q.kyz q.kyz)
+          (~(user am [now fox]) hen p.kyz ges q.kyz r.kyz)
         ::
             $wake
           (~(wake am [now fox]) hen)
