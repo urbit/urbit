@@ -34,7 +34,8 @@
 ++  doom                                                ::  daemon command
   $%  $:  $boot                                         ::  boot new pier
           who/ship                                      ::  ship
-          sec/@                                         ::  secret
+          tic/@                                         ::  ticket (or 0)
+          sec/@                                         ::  secret (or 0)
           pax/@t                                        ::  directory
           sys/@                                         ::  boot pill
       ==                                                ::
@@ -214,10 +215,10 @@ _king_doom(u3_noun doom)
 void
 _king_boot(u3_noun bul)
 {
-  u3_noun who, sec, sys, pax;
+  u3_noun who, sec, tic, sys, pax;
 
-  u3r_qual(bul, &who, &sec, &sys, &pax);
-  u3_pier_boot(u3k(who), u3k(sec), u3k(sys), u3k(pax));
+  u3r_quil(bul, &who, &tic, &sec, &sys, &pax);
+  u3_pier_boot(u3k(who), u3k(tic), u3k(sec), u3k(sys), u3k(pax));
 
   u3z(bul);
 }
@@ -295,7 +296,7 @@ _boothack_cb(uv_connect_t *conn, int status)
 {
   u3_mojo *moj_u = conn->data;
   u3_atom mat;
-  u3_atom pax, sys, who, sec;
+  u3_atom pax, sys, who, tic, sec;
 
   {
     if ( !u3_Host.ops_u.pil_c ) {
@@ -321,6 +322,7 @@ _boothack_cb(uv_connect_t *conn, int status)
     who = u3k(u3t(whu));
     u3z(whu);
   }
+
   {
     if ( !u3_Host.ops_u.tic_c ) {
       fprintf(stderr, "boot: F A K E ship with null security (use -t)\r\n");
@@ -337,11 +339,12 @@ _boothack_cb(uv_connect_t *conn, int status)
       u3z(suc);
     }
   }
+  tic = u3k(sec);
   pax = u3i_string(u3_Host.dir_c);
 
   mat = u3ke_jam(u3nc(c3__doom,
                        u3nc(c3__boot,
-                            u3nq(who, sec, pax, sys))));
+                            u3nq(who, tic, sec, u3nc(pax, sys)))));
 
   u3_newt_write(moj_u, mat, 0);
 }

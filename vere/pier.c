@@ -894,98 +894,95 @@ _pier_disk_consolidate(u3_pier*  pir_u,
     }
     {
       u3_noun lal = u3ke_cue(u3k(u3A->sys));
-#if 0
-      u3_noun all = lal;
 
-      pir_u->but_d = u3kb_lent(u3k(all));
-
-      while ( all ) {
-        _pier_insert(pir_u, 0, u3k(u3h(all)));
-        inx_w++;
-        all = u3t(all);
-      }
-#else
-    /* this new boot sequence is almost, but not quite, 
-    ** the right thing.  see new arvo.
-    */
-    {
-      u3_noun who = u3i_chubs(2, pir_u->who_d);
-      u3_noun bot, mod, fil;
-
-      u3r_trel(lal, &bot, &mod, &fil);
-      pir_u->but_d = 0;
-
-      /* insert boot sequence directly
+      /* this new boot sequence is almost, but not quite, 
+      ** the right thing.  see new arvo.
       */
       {
-        u3_noun seq = u3k(bot);
-        {
-          u3_noun all = seq;
+        u3_noun who = u3i_chubs(2, pir_u->who_d);
+        u3_noun tic = u3i_chubs(1, pir_u->tic_d);
+        u3_noun sec = u3i_chubs(1, pir_u->sec_d);
+        u3_noun bot, mod, fil;
 
-          pir_u->but_d += u3kb_lent(u3k(all));
-          while ( all ) {
-            _pier_insert(pir_u, 0, u3k(u3h(all)));
-            inx_w++;
-            all = u3t(all);
+        u3r_trel(lal, &bot, &mod, &fil);
+        pir_u->but_d = 0;
+
+        /* insert boot sequence directly
+        */
+        {
+          u3_noun seq = u3k(bot);
+          {
+            u3_noun all = seq;
+
+            pir_u->but_d += u3kb_lent(u3k(all));
+            while ( all ) {
+              _pier_insert(pir_u, 0, u3k(u3h(all)));
+              inx_w++;
+              all = u3t(all);
+            }
+          }
+          u3z(seq);
+        }
+
+        /* insert module sequence, prepending first identity event
+        */
+        {
+          u3_noun seq;
+
+          /* prepend identity event to module sequence
+          */
+          {
+            u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
+            u3_noun car = u3nc(c3__veal, u3k(who));
+            u3_noun ovo = u3nc(wir, car);
+
+            seq = u3nc(ovo, u3k(mod));
+          }
+
+          /* insert with timestamp
+          */
+          {
+            u3_noun all = seq;
+
+            pir_u->but_d += u3kb_lent(u3k(all));
+
+            while ( all ) {
+              _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
+              inx_w++;
+              all = u3t(all);
+            }
           }
         }
-        u3z(seq);
-      }
-
-      /* insert module sequence, prepending first identity event
-      */
-      {
-        u3_noun seq;
-
-        /* prepend identity event to module sequence
+        
+        /* insert legacy boot event
         */
         {
-          u3_noun wir = u3nt(c3__name, u3dc("scot", 'p', u3k(who)), u3_nul);
-          u3_noun car = u3nc(c3__veal, u3k(who));
-          u3_noun ovo = u3nc(wir, car);
+          u3_noun ovo;
 
-          seq = u3nc(ovo, u3k(mod));
-        }
+          /* make legacy boot event
+          */
+          {
+            u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
+            u3_noun car = u3nq(c3__boot, 
+                               c3__sith, 
+                               u3k(who), 
+                               u3nc(u3k(tic), u3k(sec)));
 
-        /* insert with timestamp
-        */
-        {
-          u3_noun all = seq;
-
-          pir_u->but_d += u3kb_lent(u3k(all));
-
-          while ( all ) {
-            _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
-            inx_w++;
-            all = u3t(all);
+            ovo = u3nc(wir, car);
           }
+          _pier_insert_ovum(pir_u, 0, ovo);
         }
-      }
-      
-      /* insert legacy boot event
-      */
-      {
-        u3_noun ovo;
-
-        /* make legacy boot event
+       
+        /* insert filesystem install event
         */
         {
-          u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-          u3_noun car = u3nq(c3__boot, c3__sith, u3k(who), u3nc(u3k(who), c3y));
- 
-          ovo = u3nc(wir, car);
+          _pier_insert_ovum(pir_u, 0, u3k(fil));
         }
-        _pier_insert_ovum(pir_u, 0, ovo);
+
+        u3z(lal);
+        u3z(sec);
+        u3z(who);
       }
-     
-      /* insert filesystem install event
-      */
-      {
-        _pier_insert_ovum(pir_u, 0, u3k(fil));
-      }
-    }
-#endif
-      u3z(lal);
     }
   } else {
     pir_u->but_d = (lav_d - 1ULL);
@@ -1903,6 +1900,7 @@ u3_pier_stub(void)
 */
 static u3_pier*
 _pier_boot_make(u3_noun who,
+                u3_noun tic,
                 u3_noun sec,
                 u3_noun pax,
                 u3_noun sys)
@@ -1924,11 +1922,13 @@ _pier_boot_make(u3_noun who,
     fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
   }
 
-  u3r_chubs(0, 1, pir_u->sec_d, sec);
   u3r_chubs(0, 2, pir_u->who_d, who);
+  u3r_chubs(0, 1, pir_u->tic_d, tic);
+  u3r_chubs(0, 1, pir_u->sec_d, sec);
 
   pir_u->por_s = 0;
 
+  u3z(tic);
   u3z(sec);
   u3z(who);
 
@@ -1940,6 +1940,7 @@ _pier_boot_make(u3_noun who,
 */
 void
 u3_pier_boot(u3_noun who,                   //  identity
+             u3_noun tic,                   //  ticket if any
              u3_noun sec,                   //  secret or 0
              u3_noun pax,                   //  path to pier
              u3_noun sys)                   //  path to boot pill (if needed)
@@ -1948,7 +1949,7 @@ u3_pier_boot(u3_noun who,                   //  identity
 
   /* make/load pier
   */
-  pir_u = _pier_boot_make(who, sec, pax, sys);
+  pir_u = _pier_boot_make(who, tic, sec, pax, sys);
 
   /* initialize polling handle
   */

@@ -12,11 +12,29 @@
   static u3j_harm _144_hex_loss_a[] = {{".2", u3we_loss}, {}};
   static u3j_harm _144_hex_lune_a[] = {{".2", u3we_lune}, {}};
 
+  static u3j_harm _144_hex_coed__ed_puck_a[] = {{".2", u3wee_puck}, {}};
+  static u3j_harm _144_hex_coed__ed_sign_a[] = {{".2", u3wee_sign}, {}};
+  static u3j_harm _144_hex_coed__ed_veri_a[] = {{".2", u3wee_veri}, {}};
+  static u3j_harm _144_hex_coed__ed_shar_a[] = {{".2", u3wee_shar}, {}};
+
+  static u3j_core _144_hex_coed__ed_d[] =
+    { { "sign", _144_hex_coed__ed_sign_a },
+      { "puck", _144_hex_coed__ed_puck_a },
+      { "veri", _144_hex_coed__ed_veri_a },
+      { "shar", _144_hex_coed__ed_shar_a },
+      {}
+    };
+static u3j_core _144_hex_coed_d[] =
+  { { "ed", 0, _144_hex_coed__ed_d },
+    {}
+  };
+
 static u3j_core _144_hex_d[] =
   { { "down", 0, _144_hex_down_d },
     { "lore", _144_hex_lore_a },
     { "loss", _144_hex_loss_a },
     { "lune", _144_hex_lune_a },
+    { "coed", 0, _144_hex_coed_d },
     {}
   };
 
