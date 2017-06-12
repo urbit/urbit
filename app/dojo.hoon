@@ -653,6 +653,7 @@
               ::  the current topic is neither the name of the core or an arm
               ::  on the core.
               $(sut p.sut)
+            ~&  [%a arm]
             `[%arm (trip i.topics) p.u.arm q.u.arm p.sut]
           ?~  t.topics
             ::  we matched the core name and have no further search terms.
@@ -848,6 +849,14 @@
           {$item *}    name.ovr
         ==
       ::
+      ++  what-from-span
+        |=  sut/span
+        ?+  sut  ~
+          {$core *}  q.r.q.sut
+          {$help *}  p.sut
+          {$hold *}  $(sut (~(play ut p.sut) q.sut))
+        ==
+      ::
       :>  #
       :>  #  %printing
       :>  #
@@ -891,7 +900,7 @@
       ::
       :>    renders the documentation for a single arm in a core.
       ++  print-arm
-        |=  {arm-name/tape doc/what f/foot sut/span}
+        |=  {arm-name/tape arm-doc/what f/foot sut/span}
         ::  ok, so i misunderstood how this works. in case of something like a
         ::  constant:
         ::
@@ -903,20 +912,36 @@
         ::
         ::  todo: need to get the sample here. also hoist this to the general
         ::  core printing machinery, too.
+        ~&  [%p-f p.f]
         =/  foot-span  (~(play ut sut) p.f)
-        ::  ~&  [%foot-span foot-span]
-        =/  product/what
-          ?+  foot-span  ~
-            {$help *}  p.foot-span
-            {$core *}  q.r.q.foot-span
-          ==
+        ~&  [%dy-foot-span (dy-show-span-noun foot-span)]
+        ~&  [%foot-span foot-span]
+        =/  raw-product/what  (what-from-span foot-span)
+        =/  product-product/what
+          ?.  ?=({$core *} foot-span)
+            ~
+          =*  inner-span  (~(play ut foot-span) [%limb %$])
+          (what-from-span inner-span)
+        =/  main-doc/what
+          ?~  arm-doc
+            raw-product
+          arm-doc
+        =/  product-doc/what
+          ?~  arm-doc
+            ~
+          raw-product
+        ~&  [%arm-doc arm-doc]
+        ~&  [%raw-product raw-product]
+        ~&  [%product-product product-product]
+        ~&  [%main-doc main-doc]
+        ~&  [%product-doc product-doc]
         %+  weld
-          (print-header arm-name doc)
-          ?~  product
+          (print-header arm-name main-doc)
+          ?~  product-doc
             ~
           %+  weld
             `tang`[[%leaf ""] [%leaf "product:"] ~]
-            (print-header "" product)
+            (print-header "" product-doc)
       ::
       :>    renders the documentation for a chapter in a core.
       ++  print-chapter
