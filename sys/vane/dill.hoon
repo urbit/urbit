@@ -72,19 +72,20 @@
   ==  ==                                                ::
 ++  sign-ames                                           ::
   $%  {$nice $~}                                        ::
+      {$send p/lane:ames q/@}                           ::
       {$init p/ship}                                    ::
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
-      {$writ p/riot:clay}                              ::
+      {$writ p/riot:clay}                               ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
 ++  sign-gall                                           ::
-  $%  {$onto p/(each suss:gall tang)}                  ::
-      {$unto p/cuft:gall}                              ::
+  $%  {$onto p/(each suss:gall tang)}                   ::
+      {$unto p/cuft:gall}                               ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
@@ -362,6 +363,9 @@
           +>
         ::
             {$a $init *}
+          +>(moz :_(moz [hen %give +.sih]))
+        ::
+            {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$c $mere *}

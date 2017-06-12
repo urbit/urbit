@@ -471,6 +471,7 @@
           {$init p/@p}                                  ::  set owner
           {$logo $~}                                    ::  logout
           {$mass p/mass}                                ::  memory usage
+          {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$vega p/path}                                ::  old reboot
           {$velo p/@t q/@t}                             ::  reboot
