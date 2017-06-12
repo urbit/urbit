@@ -14,7 +14,8 @@
     =>  [jo ..command]
     |=  a/json  ^-  command
     =-  (need ((of -) a))
-    =<  :~  review+(ar thot)
+    =<  :~  publish+(ar thot)
+            bearing+ul
         ==
     |%
     ++  op                                              ::  parse keys of map

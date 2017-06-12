@@ -11,12 +11,18 @@
 [. ^talk]
 |_  bol/bowl
 ++  main                                                ::  main story
-  |=  our/ship  ^-  cord
-  =+  can=(clan our)
+  |=  who/ship  ^-  cord
+  =+  can=(clan who)
   ?+  can  %porch
     $czar  %court
     $king  %floor
   ==
+::
+::TODO  add to zuse?
+++  true-self
+  |=  who/ship
+  ?.  ?=($earl (clan who))  who
+  (sein who)
 ::
 ++  said-url                                            ::  app url
   |=  url/purl
@@ -87,13 +93,14 @@
     $filter   cof(fit fit.dif)
     $remove   cof
     ::
-      $source
+      $sourcee
     %=  cof
-        src
+        sre
       %.  `(set partner)`pas.dif  ::TODO?  why do we *need* to cast?
+      ~&  [%doing-sourcee add.dif pas.dif]
       ?:  add.dif
-        ~(uni in src.cof)
-      ~(dif in src.cof)
+        ~(uni in sre.cof)
+      ~(dif in sre.cof)
     ==
     ::
       $permit
@@ -115,23 +122,6 @@
               ?=(?($white $green) sec.con.cof)
         ~
       ses.con.cof
-    ==
-    ::
-      $federal
-    %=  cof
-        fes.fed
-      ?.  fed.dif  fes.fed.cof
-      %.  sis.dif
-      ?:  add.dif
-        ~(uni in fes.fed.cof)
-      ~(dif in fes.fed.cof)
-      ::
-        may.fed
-      ?:  fed.dif  may.fed.cof
-      %.  sis.dif
-      ?:  add.dif
-        ~(uni in may.fed.cof)
-      ~(dif in may.fed.cof)
     ==
   ==
 ::
@@ -155,4 +145,77 @@
       ==
     ==
   ==
+::
+++  depa                                              ::  de-pathing core
+  =>  |%  ++  grub  *                                 ::  result
+          ++  weir  (list coin)                       ::  parsed wire
+          ++  fist  $-(weir grub)                     ::  reparser instance
+      --
+  |%
+  ::
+  ++  al
+    |*  {hed/$-(coin *) tal/fist}
+    |=  wir/weir  ^+  [*hed *tal]
+    ?~  wir  !!
+    [(hed i.wir) (tal t.wir)]
+  ::
+  ++  at
+    |*  typ/{@tas (pole @tas)}
+    =+  [i-typ t-typ]=typ
+    |=  wer/weir
+    ^-  (tup:dray i-typ t-typ)  ::< ie, (tup %p %tas ~) is {@p @tas}
+    ?~  wer  !!
+    ?~  t-typ
+      ?^  t.wer  !!
+      ((do i-typ) i.wer)
+    :-  ((do i-typ) i.wer)
+    (^$(typ t-typ) t.wer)
+  ::
+  ++  mu                                              ::  true unit
+    |*  wit/fist
+    |=  wer/weir
+    ?~(wer ~ (some (wit wer)))
+  ::
+  ++  af                                              ::  object as frond
+    |*  buk/(pole {cord fist})
+    |=  wer/weir
+    ?>  ?=({{$$ $tas @tas} *} wer)
+    ?~  buk  !!
+    =+  [[tag wit] t-buk]=buk
+    ?:  =(tag q.p.i.wer)
+      [tag ~|(tag+`@tas`tag (wit t.wer))]
+    ?~  t-buk  ~|(bad-tag+q.p.i.wer !!)
+    (^$(buk t-buk) wer)
+  ::
+  ++  or
+    |*  typ/|-($@(@tas {@tas $}))
+    |=  con/coin
+    ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid a)])))
+    ?>  ?=($$ -.con)
+    =/  i-typ  ?@(typ typ -.typ)
+    ?:  =(i-typ p.p.con)
+      :-  i-typ
+      ^-  (odo:raid i-typ)
+      q.p.con
+    ?@  typ  ~|(%bad-odor !!)
+    (^$(typ +.typ) con)
+  ::
+  ++  do
+    |*  typ/@tas
+    |=  con/coin
+    ^-  (odo:raid typ)
+    ?.  ?=($$ -.con)  ~|(%not-dime !!)
+    ?.  =(typ p.p.con)  ~|(bad-odor+`@tas`p.p.con !!)
+    q.p.con
+  ::
+  ++  ul                                              ::  null
+    |=(wer/weir ?~(wer ~ !!))
+  ::
+  ++  un
+    |*  wit/$-(coin *)
+    |=  wir/weir  ^+  *wit
+    ?~  wir  !!
+    ?^  t.wir  !!
+    (wit i.wir)
+  --
 --

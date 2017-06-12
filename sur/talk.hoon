@@ -9,26 +9,23 @@
 ::>    models relating to queries, their results and updates.
 ::+|
 ::
-::TODO  path parsing/casting: ;;(query pax) or ((hard query) pax)
-::      or (raid /~zod/5 /[%p]/[%ud])
-::      ...but it's still shit.
 ++  query                                               ::>  query paths
   $%  {$reader $~}                                      ::<  shared ui state
       {$friend $~}                                      ::<  publicly joined
+      {$burden $~}                                      ::<  duties to share
+      {$report $~}                                      ::<  duty reports
       {$circle nom/knot ran/range}                      ::<  story query
   ==                                                    ::
-++  range  (unit {hed/@ t/(unit {tal/@ $~})})           ::<  msg range, @ud/@da
+++  range  (unit {hed/place tal/(unit place)})          ::<  msg range, @ud/@da
+++  place  $%({$da @da} {$ud @ud})                      ::<  point for range
 ++  prize                                               ::>  query result
   $%  $:  $reader                                       ::<  /reader
           gys/(jug char (set partner))                  ::<  glyph bindings
           nis/(map ship cord)                           ::<  nicknames
       ==                                                ::
       {$friend cis/(set circle)}                        ::<  /friend
-      $:  $circle                                       ::<  /circle
-          gaz/(list telegram)                           ::<  queried messages
-          cos/lobby                                     ::<  configs
-          pes/crowd                                     ::<  presences
-      ==                                                ::
+      {$burden sos/(map knot burden)}                   ::<  /burden
+      {$circle burden}                                  ::<  /circle
   ==                                                    ::
 ++  rumor                                               ::<  query result change
   $%  $:  $reader                                       ::<  /reader
@@ -38,7 +35,13 @@
           ==                                            ::
       ==                                                ::
       {$friend add/? cir/circle}                        ::<  /friend
+      {$burden nom/knot dif/diff-story}                 ::<  /burden
       {$circle dif/diff-story}                          ::<  /circle
+  ==                                                    ::
+++  burden                                              ::<  full story state
+  $:  gaz/(list telegram)                               ::<  all messages
+      cos/lobby                                         ::<  loc & rem configs
+      pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
 ::TODO  deltas into app
 ++  delta                                               ::
@@ -46,14 +49,15 @@
       {$more mor/(list delta)}                          ::<  multiple changes
       ::  messaging state                               ::
       {$out cir/circle out/(list thought)}              ::<  msgs into outbox
-      {$done don/(map @ud {partner ?})}                 ::<  msgs delivered
+      {$done don/(map @ud {partner (unit tang)})}       ::<  msgs delivered
       ::  shared ui state                               ::
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
       ::  story state                                   ::
       {$story nom/knot dif/diff-story}                  ::<  change to story
       ::  side-effects                                  ::
-      {$bear cir/circle}                                ::<  %burden command
+      {$init $~}                                        ::<  initialize
+      {$observe who/ship}                               ::<  watch burden bearer
       {$react ost/bone rac/reaction}  ::TODO  ost.bol?  ::<  reaction to action
       {$quit ost/bone}                                  ::<  force unsubscribe
   ==                                                    ::
@@ -61,19 +65,21 @@
 ++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
 ++  diff-story                                          ::
   $%  {$new con/config}                                 ::<  new story
+      {$bear bur/burden}                                ::<  new inherited story
       {$grams gaz/(list telegram)}                      ::<  new/changed msgs
       {$config cir/circle dif/diff-config}              ::<  new/changed config
       {$status pan/partner who/ship dif/diff-status}    ::<  new/changed status
+      {$follow sub/? pas/(set partner)}  ::TODO  range  ::<  un/subscribe
       {$remove $~}                                      ::<  removed story
   ==                                                    ::
 ++  diff-config                                         ::>  config change
   $%  {$full cof/config}                                ::<  fully changed config
-      {$source add/? pas/(set partner)}                 ::<  add/rem sources
+      ::TODO  maybe just single partner, since we prob always do that
+      {$sourcee add/? pas/(set partner)}                 ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
       {$filter fit/filter}                              ::<  changed filter
       {$permit add/? sis/(set ship)}                    ::<  add/rem to b/w-list
       {$secure sec/security}                            ::<  changed security
-      {$federal add/? fed/? sis/(set ship)}             ::<  add/rem may/fes
       {$remove $~}                                      ::<  removed config
   ==                                                    ::
 ++  diff-status                                         ::>  status change
@@ -102,8 +108,6 @@
       {$filter nom/knot fit/filter}                     ::<  change message rules
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
       {$source nom/knot sub/? src/(set partner)}        ::<  un/sub to/from src
-      {$enlist nom/knot fed/? sis/(set ship)}           ::<  dis/allow federation
-      {$burden circle}                                  ::<  help federate
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::<  post exact
       {$phrase aud/(set partner) ses/(list speech)}     ::<  post easy
@@ -119,18 +123,6 @@
       wat/cord                                          ::<  explain
       why/(unit action)                                 ::<  cause
   ==                                                    ::
-++  lowdown                                             ::>  new/changed state
-  $%  ::  story state                                   ::
-      $:  $confs                                        ::<  configs
-          loc/(unit config)                             ::<  local config
-          rem/(map circle (unit config))                ::<  remote configs
-      ==                                                ::
-      {$precs reg/crowd}                                ::<  presences
-      {$grams num/@ud gaz/(list telegram)}              ::<  messages
-      ::  ui state                                      ::
-      {$glyph (jug char (set partner))}                 ::<  glyph bindings
-      {$names (map ship (unit human))}                  ::<  nicknames
-  ==                                                    ::
 ::
 ::>  ||
 ::>  ||  %broker-communication
@@ -139,19 +131,8 @@
 ::+|
 ::
 ++  command                                             ::>  effect on story
-  $%  {$review tos/(list thought)}                      ::<  deliver
-      $:  $burden                                       ::<  starting fed state
-          nom/knot
-          cof/lobby
-          pes/crowd
-          gaz/(list telegram)
-      ==
-      {$relief nom/knot who/(set ship)}                 ::<  federation ended
-  ==                                                    ::
-++  report                                              ::>  update
-  $%  {$lobby cab/lobby}                                ::<  config neighborhood
-      {$crowd reg/crowd}                                ::<  presence
-      {$grams num/@ud gaz/(list telegram)}              ::<  thoughts
+  $%  {$publish tos/(list thought)}                     ::<  deliver
+      {$bearing $~}                                     ::<  prompt to listen
   ==                                                    ::
 ::
 ::>  ||
@@ -168,24 +149,25 @@
 ::  circle configurations.                              ::
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config
-  $:  src/(set partner)                                 ::<  pulls from
+  $:  sre/(set partner)                                 ::<  active sources
       cap/cord                                          ::<  description
       fit/filter                                        ::<  message rules
       con/control                                       ::<  restrictions
-      fed/federal                                       ::<  federators
+      ::  so: only change src on success of peer/pull (√)
+      ::  and: when gaining a fed, do a %peer (√)
   ==                                                    ::
 ++  filter                                              ::>  content filters
   $:  cus/?                                             ::<  dis/allow capitals
+      ::TODO  rename cus to cas? (capitals/case instead of cuss)
       utf/?                                             ::<  dis/allow non-ascii
   ==                                                    ::
 ++  control    {sec/security ses/(set ship)}            ::<  access control
-++  security                                            ::>  security kind
+++  security                                            ::>  security mode
   $?  $black                                            ::<  channel, blacklist
       $white                                            ::<  village, whitelist
       $green                                            ::<  journal, author list
       $brown                                            ::<  mailbox, our r, bl w
   ==                                                    ::
-++  federal    {may/(set ship) fes/(set ship)}          ::<  federation control
 ::  participant metadata.                               ::
 ++  crowd      {loc/group rem/(map partner group)}      ::<  our & srcs presences
 ++  group      (map ship status)                        ::<  presence map
@@ -254,7 +236,6 @@
       $released                                         ::<  sent one-way
       $accepted                                         ::<  fully processed
   ==                                                    ::
-::TODO  what is ++bouquet even for? not yet used...
 ++  bouquet    (set flavor)                             ::<  complete aroma
 ++  flavor     path                                     ::<  content flavor
 --

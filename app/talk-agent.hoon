@@ -2,15 +2,19 @@
 ::::  /hoon/talk-agent/app                              ::  ::
   ::                                                    ::  ::
 ::
+::TODO  master changes, incl %notify
 ::TODO  guardian's todo's apply here too
 ::TODO  make sure glyphs only get bound when joins succeed
 ::      ...this is a bit troublesome, because failed joins don't actually
 ::      unsubscribe us.
 ::TODO  maybe keep track of received grams per partner, too?
 ::
+::TODO  for delta model:
+::      3) split into delta creation and application, as with hall.
+::
 ::>  This reader implementation makes use of the mailbox
 ::>  for all its subscriptions and messaging. All
-::>  lowdowns received are exclusively about the mailbox,
+::>  rumors received are exclusively about the mailbox,
 ::>  since that's the only thing the reader ever
 ::>  subscribes to.
 ::
@@ -38,22 +42,21 @@
           remotes/(map partner group)                   ::<  remote presences
           mirrors/(map circle config)                   ::<  remote configs
           ::  ui state                                  ::
-          folks/(map ship human)                        ::<  human identities
+          nicks/(map ship cord)                         ::<  human identities
           nik/(map (set partner) char)                  ::<  bound circle glyphs
           nak/(jug char (set partner))                  ::<  circle glyph lookup
           cli/shell                                     ::<  interaction state
       ==                                                ::
     ++  shell                                           ::>  console session
       $:  id/bone                                       ::<  identifier
-          count/@ud                                     ::<  messages shown
+          latest/@ud                                    ::<  latest shown msg num
           say/sole-share                                ::<  console state
           active/(set partner)                          ::<  active targets
           settings/(set knot)                           ::<  frontend settings
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
-      $%  {$talk-report report}                         ::
-          {$sole-effect sole-effect}                    ::
+      $%  {$sole-effect sole-effect}                    ::
       ==                                                ::
     ++  pear                                            ::>  poke fruit
       $%  {$talk-command command}                       ::
@@ -75,9 +78,8 @@
           {$invite p/knot q/(set ship)}                 ::<  give permission
           {$banish p/knot q/(set ship)}                 ::<  deny permission
           {$source p/knot q/(set partner)}              ::<  add source
-          {$enlist p/knot q/(set ship)}                 ::<  allow federation
-          {$retire p/knot q/(set ship)}                 ::<  deny federation
-          {$burden p/circle}                            ::<  help federate
+          ::  personal metadata
+          {$status p/knot q/presence}  ::TODO  better interface ::<  set status
           ::  messaging                                 ::
           {$say p/(list speech)}                        ::<  send message
           {$eval p/cord q/twig}                         ::<  send #-message
@@ -123,16 +125,38 @@
 ::+|
 ::
 ++  broker                                              ::<  broker ship + name
-  |=  our/ship
+  ^-  dock
   :_  %talk-guardian
-  ?.  =((clan our) %earl)
-    our
-  (sein our)
+  (true-self our.bol)
 ::
-++  inbox                                               ::<  reader's circle
+++  inbox                                               ::<  reader's circle name
   ::>  produces the name of the circle used by this
   ::>  reader for all its operations
+  ^-  knot
   (main our.bol)
+::
+++  incir                                               ::<  reader's circle
+  ::>  ++inbox, except a full circle.
+  ^-  circle
+  :_  inbox
+  (true-self our.bol)
+::
+++  inpan                                               ::<  reader's partner
+  ::>  ++inbox, except a full partner.
+  ^-  partner
+  [%& incir]
+::
+++  nik-from-nak                                        ::<  nik from nak
+  ::>
+  ::
+  ::TODO  ...we really should rename these.
+  |=  nek/_nak
+  ^+  nik
+  %-  ~(gas by *(map (set partner) char))
+  =-  (zing -)
+  %+  turn  (~(tap by nek))
+  |=  {a/char b/(set (set partner))}
+  (turn (~(tap by b)) |=(c/(set partner) [c a]))
 ::
 ::>  ||
 ::>  ||  %engines
@@ -209,12 +233,20 @@
   ++  ta-init                                           ::<  initialize app
     ::>  subscribes to our broker.
     ::
-    %-  ta-emit
-    :*  ost.bol
-        %peer
-        /                 ::<  return/diff path
-        (broker our.bol)
-        /reader/[inbox]   ::<  peer path
+    %-  ta-emil
+    ^-  (list move)
+    :~  :*  ost.bol
+            %peer
+            /
+            broker
+            /reader
+        ==
+        :*  ost.bol
+            %peer
+            /
+            broker
+            /circle/[inbox]
+        ==
     ==
   ::
   ++  ta-reaction                                       ::<  apply reaction
@@ -224,148 +256,115 @@
     ^+  +>
     sh-done:(~(sh-reaction sh cli) rac)
   ::
-  ++  ta-change                                         ::<  apply change
+  ++  ta-take                                           ::<  accept prize
     ::>
     ::
-    |=  dif/delta
+    |=  piz/prize
+    ^+  +>
+    ?+  -.piz
+      ~&([%ignoring-prize -.piz] +>)
+      ::
+        $reader
+      %=  +>
+        nak     gys.piz
+        nik     (nik-from-nak gys.piz)
+        nicks   nis.piz
+      ==
+      ::
+        $circle
+      %.  gaz.piz
+      %=  ta-change-grams
+        sources   sre.loc.cos.piz
+        mirrors   (~(put by rem.cos.piz) incir loc.cos.piz)
+        remotes   (~(put by rem.pes.piz) inpan loc.pes.piz)
+      ==
+    ==
+  ::
+  ++  ta-hear                                           ::<  apply change
+    ::>
+    ::
+    |=  dif/rumor
     ^+  +>
     ?+  -.dif
-      ~&  [%ignoring-delta -.dif]
-      +>
+      ~&([%ignoring-rumor -.dif] +>)
       ::
-        $mor
-      |-  ^+  +>.^$
-      ?~  mor.dif  +>.^$
-      $(+>.^$ ^$(dif i.mor.dif), mor.dif t.mor.dif)
+        $reader
+      ?-  -.dif.dif
+          $glyph
+        (ta-change-glyph +.dif.dif)
+        ::
+          $nick
+        +>(nicks (change-nicks nicks who.dif.dif nic.dif.dif))
+      ==
       ::
-        $cir
-      (ta-change-circle +.dif)
+        $circle
+      (ta-change-circle dif.dif)
     ==
   ::
   ++  ta-change-circle                                  ::<  apply circle change
     ::>
     ::
-    |=  {cir/circle dif/delta-circle}
+    |=  dif/diff-story
     ^+  +>
     ?+  -.dif
-      ~&  [%ignoring-delta-circle -.dif]
-      +>
+        ~&([%unexpected-circle-rumor -.dif] +>)
       ::
-        $put
-      (ta-low-grams count.cli gaz.dif)
+        $grams
+      (ta-change-grams gaz.dif)
+      ::
+        $config
+      %=  +>
+          sources
+        ?.  ?&  ?=($sourcee -.dif.dif)
+                =(cir.dif incir)
+            ==
+          sources
+        %.  pas.dif.dif
+        ?:  add.dif.dif
+          ~(uni in sources)
+        ~(dif in sources)
+        ::
+          mirrors
+        ?:  ?=($remove -.dif.dif)  (~(del by mirrors) cir.dif)
+        %+  ~(put by mirrors)  cir.dif
+        %+  change-config
+          (fall (~(get by mirrors) cir.dif) *config)
+        dif.dif
+      ==
+      ::
+        $status
+      %=  +>
+          remotes
+        %+  ~(put by remotes)  pan.dif
+        =+  rem=(fall (~(get by remotes) pan.dif) *group)
+        ?:  ?=($remove -.dif.dif)  (~(del by rem) who.dif)
+        %+  ~(put by rem)  who.dif
+        %+  change-status
+          (fall (~(get by rem) who.dif) *status)
+        dif.dif
+      ==
     ==
   ::
-  ++  ta-low                                            ::<  apply lowdown
-    ::>  processes a talk lowdown
-    ::
-    |=  low/lowdown
-    ^+  +>
-    ?-  -.low
-      $glyph  (ta-low-glyph +.low)
-      $names  (ta-low-names +.low)
-      $confs  (ta-low-confs +.low)
-      $precs  (ta-low-precs +.low)
-      $grams  (ta-low-grams +.low)
-    ==
-  ::
-  ++  ta-low-glyph                                      ::<  apply changed glyphs
+  ++  ta-change-glyph                                   ::<  apply changed glyphs
     ::>  applies new set of glyph bindings.
     ::
-    |=  nek/_nak
+    |=  {bin/? gyf/char pas/(set partner)}
     ^+  +>
-    ?:  =(nek nak)  +>                                  ::  no change
+    =+  nek=(change-glyphs nak bin gyf pas)
+    ?:  =(nek nak)  +>.$                                ::  no change
     =.  nak  nek
-    =.  nik
-      %-  ~(gas by *(map (set partner) char))
-      =-  (zing -)
-      %+  turn  (~(tap by nek))
-      |=  {a/char b/(set (set partner))}
-      (turn (~(tap by b)) |=(c/(set partner) [c a]))
+    =.  nik  (nik-from-nak nek)
     sh-done:~(sh-prod sh cli)
   ::
-  ++  ta-low-names                                      ::<  apply changed names
-    ::>  applies new local identities.
-    ::
-    |=  nas/(map ship (unit human))
-    ^+  +>
-    %=  +>
-        folks
-      %-  ~(gas by *(map ship human))
-      %+  murn
-        =<  $
-        %~  tap  by
-            %.  nas
-            ~(uni by `_nas`(~(run by folks) some))
-        ==
-      |=  {s/ship h/(unit human)}
-      ?~(h ~ (some [s u.h]))
-    ==
-  ::
-  ++  ta-low-confs                                      ::<  apply changed confs
-    ::>  applies new circle configurations.
-    ::>  because of how this reader only subscribes to
-    ::>  the main mailbox, {coy} is always the mailbox's
-    ::>  config.
-    ::
-    |=  {coy/(unit config) cofs/(map circle (unit config))}
-    ^+  +>
-    ::>  if possible, update {sources}. if we do, and we
-    ::>  gain new ones, update the prompt. (this is to
-    ::>  remove the mailbox from the audience after
-    ::>  creating or joining a new circle.)
-    ?~  coy  ~&(%mailbox-gone !!)
-    =.  +>  ::TODO  =?
-      ?~  (~(dif in src.u.coy) sources)  +>.$
-      =<  sh-done
-      %-  ~(sh-pact sh(sources src.u.coy) cli)
-      (~(dif in src.u.coy) sources)
-    =.  sources  src.u.coy
-    =.  cofs  (~(put by cofs) [our.bol inbox] coy)
-    ::  print changes for each config.
-    =.  +>.$
-      =<  sh-done
-      %+  roll  (~(tap by cofs))
-      |=  {{s/circle c/(unit config)} cil/_sh}
-      %^  ~(sh-low-config cil cli)
-      s  (~(get by mirrors) s)  c
-    ::  apply config changes to {mirrors}.
-    =.  mirrors
-      %-  ~(gas by *_mirrors)
-      %+  murn  (~(tap by cofs))
-      |=  {s/circle c/(unit config)}
-      ^-  (unit (pair circle config))
-      ?~(c ~ `[s u.c])
-    +>.$
-  ::
-  ++  ta-low-precs                                      ::<  apply changed precs
-    ::>  applies new presences.
-    ::>  other clients might care for {gop}, but we're
-    ::>  only ever getting this for the mailbox, where
-    ::>  we're the only ones present.
-    ::
-    |=  {gop/group pas/(map partner group)}
-    ^+  +>
-    =/  ner/_remotes                                    ::  per-partner uni
-      %-  ~(urn by pas)
-      |=  {p/partner g/group}
-      =+  o=(~(get by remotes) p)
-      ?~(o g (~(uni by u.o) g))
-    =.  ner  (~(uni by remotes) ner)                    ::  fill in the gaps
-    ?:  =(remotes ner)  +>.$                            ::  no change
-    =.  +>.$
-      =<  sh-done
-      %+  ~(sh-low-rempe sh cli)
-      remotes  ner
-    +>.$(remotes ner)
-  ::
-  ++  ta-low-grams                                      ::<  apply messages
+  ++  ta-change-grams                                      ::<  apply messages
     ::>  applies new or changed telegrams.
     ::
-    |=  {num/@ud gams/(list telegram)}
+    |=  gaz/(list telegram)
     ^+  +>
-    =.  +>.$  (ta-lesson gams)
+    =.  +>.$  (ta-lesson gaz)
+    ::TODO  maybe move to ta-learn and pass num?
     =<  sh-done
-    (~(sh-low-grams sh cli) num gams)
+    (~(sh-grams sh cli) gaz)
   ::
   ::>  ||
   ::>  ||  %messages
@@ -424,7 +423,7 @@
     ::
     ^+  .
     =/  she/shell
-      %*(. *shell id ost.bol, active (sy [%& our.bol inbox] ~))
+      %*(. *shell id ost.bol, active (sy inpan ~))
     sh-done:~(sh-prod sh she)
   ::
   ++  ta-sole                                           ::<  apply sole input
@@ -477,7 +476,7 @@
         :*  ost.bol
             %poke
             /reader/action
-            (broker our.bol)
+            broker
             [%talk-action act]
         ==
       ==
@@ -555,7 +554,7 @@
       ::
       ++  circ                                          ::<  circle
         ;~  pose
-          (cold [our.bol inbox] col)
+          (cold incir col)
           ;~(pfix cen (stag our.bol sym))
           ;~(pfix fas (stag (sein our.bol) sym))
         ::
@@ -621,9 +620,10 @@
           ;~(plug (cold %eval hax) expr)
         ::
           %+  stag  %say
-          %+  most  (jest '•')
+          %+  most  (jest '•')  ::TODO  why is this not breaking msgs up?
           ;~  pose
             (stag %url aurf:urlp)
+            ::TODO  maybe reverse loobs. at least document properly! confusing.
             :(stag %lin | ;~(pfix pat text))
             :(stag %lin & ;~(less sem hax text))
           ==
@@ -634,7 +634,7 @@
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::<  circle postfix
       ++  setting                                       ::<  setting flag
         %-  perk  :~
-          %noob
+          %noob  ::TODO  rename to nick
           %quiet
           %showtime
         ==
@@ -673,11 +673,9 @@
           ::
           ;~((glue ace) (perk %source ~) cire parz)
           ::
-          ;~((glue ace) (perk %enlist ~) cire shiz)
+          ::  personal metadata
           ::
-          ;~((glue ace) (perk %retire ~) cire shiz)
-          ::
-          ;~((glue ace) (perk %burden ~) circ)
+          ;~((glue ace) (perk %status ~) cire (perk %gone %idle %hear %talk ~))
           ::
           ::  displaying info
           ::
@@ -808,6 +806,7 @@
       ::
       ++  work                                          ::<  call correct worker
         ?-  -.job
+          ::TODO  for inv/ban, enl/ret etc, set bools here?
           ::  circle management
           $join    (join +.job)
           $leave   (leave +.job)
@@ -818,9 +817,8 @@
           $invite  (invite +.job)
           $banish  (banish +.job)
           $source  (source +.job)
-          $enlist  (enlist +.job)
-          $retire  (retire +.job)
-          $burden  (burden +.job)
+          ::  personal metadata
+          $status  (status +.job)
           ::  messaging
           $say     (say +.job)
           $eval    (eval +.job)
@@ -900,15 +898,14 @@
           nak  (~(del ju nak) cha n.ole)
         ==
       ::
-      ++  reverse-folks                                 ::<  find by handle
+      ++  reverse-nicks                                 ::<  find by handle
         ::>  finds all ships whose handle matches {nym}.
         ::
         |=  nym/knot
         ^-  (list ship)
-        %+  murn  (~(tap by folks))
-        |=  {p/ship q/human}
-        ?~  han.q  ~
-        ?.  =(u.han.q nym)  ~
+        %+  murn  (~(tap by nicks))
+        |=  {p/ship q/knot}
+        ?.  =(q nym)  ~
         [~ u=p]
       ::
       ++  twig-head                                       ::<  eval data
@@ -997,26 +994,17 @@
         ^+  ..sh-work
         (sh-act %source nom & pas)
       ::
-      ++  enlist
-        ::>
-        ::
-        |=  {nom/knot sis/(set ship)}
-        ^+  ..sh-work
-        (sh-act %enlist nom & sis)
+      ::>  ||
+      ::>  ||  %personal-metadata
+      ::>  ||
+      ::+|
       ::
-      ++  retire
+      ++  status                                        ::<  set status
         ::>
         ::
-        |=  {nom/knot sis/(set ship)}
+        |=  {nom/knot pec/presence}
         ^+  ..sh-work
-        (sh-act %enlist nom | sis)
-      ::
-      ++  burden
-        ::>
-        ::
-        |=  cir/circle
-        ^+  ..sh-work
-        (sh-act %burden cir)
+        (sh-act %status [nom ~ ~] [pec [~ ~]])
       ::
       ::>  ||
       ::>  ||  %messaging
@@ -1141,34 +1129,31 @@
         ::>  no arguments, show all
         ?:  ?=({$~ $~} +<)
           %+  sh-fact  %mor
-          %+  turn  (~(tap by folks))
-          |=  {p/ship q/human}
+          %+  turn  (~(tap by nicks))
+          |=  {p/ship q/knot}
           :-  %txt
-          ?~  han.q
-            "{<p>}:"
-          "{<p>}: {<u.han.q>}"
+          "{<p>}: {<q>}"
         ::>  show her nick
         ?~  nym
           ?>  ?=(^ her)
-          =+  asc=(~(get by folks) u.her)
+          =+  asc=(~(get by nicks) u.her)
           %+  sh-fact  %txt
           ?~  asc  "{<u.her>} unbound"
-          ?~  han.u.asc  "{<u.her>}:"
-          "{<u.her>}: {<u.han.u.asc>}"
+          "{<u.her>}: {<u.asc>}"
         ::>  show nick ship
         ?~  her
           %+  sh-fact  %mor
-          %+  turn  (reverse-folks u.nym)
+          %+  turn  (reverse-nicks u.nym)
           |=  p/ship
           [%txt "{<p>}: {<u.nym>}"]
-        %.  [%human u.her [true=~ hand=nym]]
+        %.  [%nick u.her (fall nym '')]
         %=  sh-act
-            folks
+            nicks
           ?~  u.nym
             ::>  unset nickname
-            (~(del by folks) u.her)
+            (~(del by nicks) u.her)
           ::>  set nickname
-          (~(put by folks) u.her [true=~ hand=nym])
+          (~(put by nicks) u.her u.nym)
         ==
       ::
       ++  wo-set                                        ::<  %set
@@ -1224,7 +1209,7 @@
       ::
       |=  paz/(set partner)
       ?:  (sh-pear paz)  paz
-      (~(put in paz) [%& our.bol inbox])
+      (~(put in paz) inpan)
     ::
     ++  sh-pear                                         ::<  hearback
       ::>  produces true if any partner is included in
@@ -1528,7 +1513,7 @@
       =.  +>.$
           %+  sh-show-sources
             (weld (trip inbox) ": ")
-          (sh-set-diff src.laz src.loc)
+          (sh-set-diff sre.laz sre.loc)
       ?:  !=(sec.con.loc sec.con.laz)
         =.  +>.$  (sh-note :(weld pre "but " (sh-cure sec.con.loc)))
         %^    sh-show-permits
@@ -1540,14 +1525,14 @@
         sec.con.loc
       (sh-set-diff ses.con.laz ses.con.loc)
     ::
-    ++  sh-low-config                                   ::<  do show config
+    ++  sh-config                                       ::<  do show config
       ::>  prints a circle's config changes to the cli.
       ::
       |=  {cir/circle old/(unit config) new/(unit config)}
       ^+  +>
       ::  new circle
       ?~  old
-        ::  ++sh-low-rempe will notice a new partner.
+        ::  ++sh-show-rempe will notice a new partner.
         +>
       ::  removed circle
       ?~  new
@@ -1556,65 +1541,30 @@
         (weld ~(cr-phat cr cir) ": ")
       u.old  u.new
     ::
-    ++  sh-low-rempe                                    ::<  show remotes
-      ::>  prints remote presence changes to the cli.
-      ::
-      |=  {old/(map partner group) new/(map partner group)}
-      ?:  (~(has in settings.she) %quiet)
-        +>.$
-      =+  day=(sh-rempe-diff old new)
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  old.day  +>.^$
-          =.  +>.^$  $(old.day t.old.day)
-          (sh-note (weld "not " (~(pr-show pr p.i.old.day) ~)))
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  new.day  +>.^$
-          =.  +>.^$  $(new.day t.new.day)
-          =.  +>.^$
-              (sh-note (weld "new " (~(pr-show pr p.i.new.day) ~)))
-          (sh-show-precs "--" ~ (~(tap by q.i.new.day)) ~)
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  cha.day  +>.^$
-          =.  +>.^$  $(cha.day t.cha.day)
-          =.  +>.^$
-              (sh-note (weld "for " (~(pr-show pr p.i.cha.day) ~)))
-          =+  yez=(~(got by old) p.i.cha.day)
-          %+  sh-show-precs  "--"
-          (sh-group-diff yez q.i.cha.day)
-      +>.$
-    ::
-    ++  sh-low-precs                                    ::<  show presence
-      ::>  prints presence changes to the cli.
-      ::
-      |=  {old/group new/group}
-      ^+  +>
-      =+  dif=(sh-group-diff old new)
-      (sh-show-precs "" dif)
-    ::
-    ++  sh-low-gram                                     ::<  show telegram
+    ++  sh-gram                                         ::<  show telegram
       ::>  prints the telegram. every fifth message,
       ::>  print the message number also.
       ::
-      |=  {num/@ud gam/telegram}
+      |=  gam/telegram
       ^+  +>
-      ?:  =(num count.she)
-        =.  +>  ?:(=(0 (mod num 5)) (sh-numb num) +>)
-        (sh-rend(count.she +(num)) gam)
-      ?:  (gth num count.she)
-        =.  +>  (sh-numb num)
-        (sh-rend(count.she +(num)) gam)
-      +>
+      ::TODO  is it cool to just assume all messages we print are already stored?
+      =+  num=(~(got by known) uid.tot.gam)
+      =.  +>.$
+        ::  if the number isn't directly after latest, print it always.
+        ?.  =(num +(latest.she))
+          (sh-numb num)
+        ::  if the number is directly after latest, print every fifth.
+        ?.  =(0 (mod num 5))  +>.$
+        (sh-numb num)
+      (sh-rend(latest.she num) gam)
     ::
-    ++  sh-low-grams                                    ::<  do show telegrams
+    ++  sh-grams                                        ::<  do show telegrams
       ::>  prints multiple telegrams.
       ::
-      |=  {num/@ud gaz/(list telegram)}
+      |=  gaz/(list telegram)
       ^+  +>
       ?~  gaz  +>
-      $(gaz t.gaz, num +(num), +> (sh-low-gram num i.gaz))
+      $(gaz t.gaz, +> (sh-gram i.gaz))
     ::
     --
   --
@@ -1670,12 +1620,10 @@
     ::>  left-pads with spaces.
     ::
     |.  ^-  tape
-    =+  nym=(~(get by folks) hos.one)
+    =+  nym=(~(get by nicks) hos.one)
     ?~  nym
       (cr-curt |)
-    ?~  han.u.nym
-      (cr-curt |)
-    =+  raw=(trip u.han.u.nym)
+    =+  raw=(trip u.nym)
     =+  len=(sub 14 (lent raw))
     (weld (reap len ' ') raw)
   ::
@@ -1691,11 +1639,11 @@
       ?:  =(nom.one inbox)
         ":"
       ['%' (trip nom.one)]
-    ?:  =(hos.one (sein our.bol))
-      ['/' (trip nom.one)]
     =+  wun=(scow %p hos.one)
     ?:  =(nom.one (main hos.one))
       wun
+    ?:  =(hos.one (sein our.bol))
+      ['/' (trip nom.one)]
     :(welp wun "/" (trip nom.one))
   --
 ::
@@ -1756,6 +1704,7 @@
   ++  pr-show                                           ::<  render partner
     ::>  renders a partner as text.
     ::
+    ::>  moy:  multiple partners in audience?
     |=  moy/(unit ?)
     ^-  tape
     ?-  -.one
@@ -1804,7 +1753,7 @@
     ::>  remove ourselves from the audience.
     ::
     ^+  .
-    .(lix (~(del in lix) `partner`[%& our.bol inbox]))
+    .(lix (~(del in lix) `partner`inpan))
   ::
   ++  ar-maud                                           ::<  multiple audience
     ::>  checks if there's multiple partners in the
@@ -2109,7 +2058,7 @@
         ?~  ace  wyd
         (sub wyd u.ace)
       :-  (weld pef (scag end `tape`txt))
-      $(txt (slag +(end) `tape`txt), pef (reap (lent pef) ' '))  ::TODO  why do we need to cast?
+      $(txt (slag +(end) `tape`txt), pef (reap (lent pef) ' '))  ::TODO?  why do we need to cast?
       ::
         $inv
       :_  ~
@@ -2151,29 +2100,25 @@
     [~ +>]
   ta-done:ta-console:ta
 ::
-++  diff-talk-delta                                     ::<  accept change
+++  diff-talk-prize                                     ::<  accept query answer
   ::>
-  ::TODO  ++feel
   ::
-  |=  {way/wire dif/delta}
+  |=  {way/wire piz/prize}
   ^-  (quip move +>)
-  ta-done:(ta-change:ta dif)
+  ta-done:(ta-take:ta piz)
 ::
-++  diff-talk-lowdown                                   ::<  accept lowdown
-  ::>  incoming talk-lowdown. process it.
-  ::>  we *could* use the wire to identify what story
-  ::>  subscription our lowdown is coming from, but
-  ::>  since we only ever subscribe to a single story,
-  ::>  we don't bother.
+++  diff-talk-rumor                                     ::<  accept query change
+  ::>
   ::
-  |=  {way/wire low/lowdown}
-  ta-done:(ta-low:ta low)
+  |=  {way/wire dif/rumor}
+  ^-  (quip move +>)
+  ta-done:(ta-hear:ta dif)
 ::
 ++  diff-talk-reaction                                  ::<  accept reaction
   ::>  incoming talk reaction. process it.
   ::
   |=  {way/wire rac/reaction}
-  ?.  =(src.bol -:(broker our.bol))
+  ?.  =(src.bol -:broker)
     ~&  [%diff-reaction-stranger src.bol]
     [~ +>]
   ta-done:(ta-reaction:ta rac)

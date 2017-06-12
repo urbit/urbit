@@ -17,6 +17,19 @@
 ::
 ::TODO  crash on pokes/peers we do not expect
 ::
+::TODO  federation should not be present at all in delta-application cores. the
+::      way changes are to be applied should be figured out by the delta-
+::      geenration cores entirely.
+::
+::TODO  for using moons as tmp identities for friends: stories may want to keep
+::      lists of moons (or just ships in general?) that we define as "standalone"
+::      so that the "convert to true identity" doesn't happen for them.
+::
+::TODO  we need to have something for upward changes on burdens as well. we
+::      could use entirely new query for this. to do so, we'd need to add
+::      a new code path in front of changes that checks if it's not a config
+::      change, and then redirects it to existing arms.
+::
 /?    151                                               ::<  hoon version
 /-    talk                                              ::<  structures
 /+    talk, time-to-id                                  ::<  libraries
@@ -36,7 +49,6 @@
           outbox/(pair @ud (map @ud thought))           ::<  urbit outbox
           log/(map knot @ud)                            ::<  logged to clay
           nicks/(map ship knot)                         ::<  nicknames
-          nik/(map (set partner) char)                  ::<  bound circle glyphs
           nak/(jug char (set partner))                  ::<  circle glyph lookup
       ==                                                ::
     ++  story                                           ::>  wire content
@@ -49,6 +61,8 @@
           ::TODO  never gets updated.                   ::
           sequence/(map partner @ud)                    ::<  partners heard
           known/(map serial @ud)                        ::<  messages heard
+          burden/?                                      ::<  from parent?
+          ::TODO  send changes to herited story changes up.
       ==                                                ::
     ++  river  (pair point point)                       ::<  stream definition
     ++  point                                           ::>  stream endpoint
@@ -93,7 +107,7 @@
   |=  old/(unit state)
   ^-  (quip move ..prep)
   ?~  old
-    %-  f-bake  :-  %more
+    %-  pre-bake
     ta-done:ta-init:ta
   [~ ..prep(+<+ u.old)]
 ::
@@ -103,6 +117,7 @@
 ::>    small utility functions.
 ::+|
 ::
+::TODO  remove, only used once.
 ++  strap  |*({k/* v/*} (~(put by *(map _k _v)) k v))   ::<  map key-value pair
 ::
 ::>  ||
@@ -173,9 +188,6 @@
   ::>    utility functions for data retrieval.
   ::+|
   ::
-  ::TODO  functions for getting readers or followers of a specific story from
-  ::      the subs in sup.bol.
-  ::
   ++  ta-know                                           ::<  story monad
     ::>  produces a gill that takes a gate.
     ::>  if the story {nom} exists, calls the gate with
@@ -201,6 +213,8 @@
     ::>  populate state on first boot.
     ::>  creates our default mailbox and journal.
     ::
+    ::TODO  but now init it spread out over two arms? ugly!
+    =<  (ta-delta %init ~)  ::  side-effects
     %+  roll
       ^-  (list {security knot cord})
       :~  [%brown (main our.bol) 'default home']
@@ -216,35 +230,12 @@
     |=  {src/ship cod/command}
     ^+  +>
     ?-  -.cod
-      ::>  %review commands prompt us (as a circle host)
+      ::>  %publish commands prompt us (as a circle host)
       ::>  to verify and distribute messages.
-        $review
-      (ta-think | src +.cod)
-      ::>  %burden commands ask us to add the sender as a
-      ::>  federator for the specified story, taking the
-      ::>  state it sent into account.
-        $burden
-      (ta-burden src +.cod)
-      ::>  %relief commands prompt us to relieve the
-      ::>  specified federators of their duty.
-        $relief
-      (ta-relieve src +.cod)
+      $publish  (ta-think | src +.cod)
+      ::TODO  document
+      $bearing  (ta-observe src)
     ==
-  ::
-  ++  ta-burden                                         ::<  accept federator
-    ::>  adds {src} as a federator to story {nom},
-    ::>  integrating its state into the story.
-    ::
-    |=  {src/ship nom/knot cof/lobby pes/crowd gaz/(list telegram)}
-    %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-burden:sor src cof pes gaz)
-  ::
-  ++  ta-relieve                                        ::<  remove federator
-    ::>  removes {who} as federators from story {nom}.
-    ::
-    |=  {src/ship nom/knot who/(set ship)}
-    %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-relieve:sor src who)
   ::
   ++  ta-action                                         ::<  apply reader action
     ::>  performs action sent by a reader.
@@ -266,7 +257,6 @@
     ::+|
     ++  work                                            ::<  perform action
       ^+  ..ta-action
-      ::TODO  %.  +.act
       ::TODO  require deltas as product?
       ?-  -.act
         ::  circle configuration
@@ -276,8 +266,6 @@
         $filter  (action-filter +.act)
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
-        $enlist  (action-enlist +.act)
-        $burden  (action-burden +.act)
         ::  messaging
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
@@ -322,7 +310,6 @@
             des
             [| |]
             [typ ~]
-            [[our.bol ~ ~] [our.bol ~ ~]]
         ==
       %-  react
       [%fail (crip "{(trip nom)}: already exists") `act]
@@ -369,48 +356,7 @@
       ::>  add/remove {pas} as sources for story {nom}.
       ::
       |=  {nom/knot sub/? pas/(set partner)}
-      (affect nom %config [our.bol nom] %source sub pas)
-    ::
-    ++  action-enlist                                   ::<  dis/allow federation
-      ::>  adds {sis} to story {nom}'s list of allowed
-      ::>  federators.
-      ::
-      |=  {nom/knot fed/? sis/(set ship)}
-      (affect nom %config [our.bol nom] %federal fed | sis)
-    ::
-    ++  action-burden                                   ::<  help federate
-      ::>  starts federating the specified circle. create
-      ::>  it locally if it doesn't yet exist.
-      ::
-      ::TODO  make deltas instead.
-      ::TODO  ...but we'll still need to broadcast this move???
-      |=  {hos/ship nom/knot}
-      ^+  ..ta-action
-      ::  update federation config.
-      ::  we don't use the specialized so-arms for this because followers will
-      ::  get notified once we receive updates from {hos} anyway.
-      =+  new=(~(has by stories) nom)
-      =.  ..ta-action  ::TODO  =?
-        ?.  new  ..ta-action
-        %^  impact   nom   %new
-        :*  [[%& hos nom] ~ ~]
-            *cord
-            *filter
-            *control
-            [[hos ~ ~] [hos ~ ~]]
-        ==
-      =.  ..ta-action  ::TODO  =?
-        ?:  new  ..ta-action
-        (affect nom %config [our.bol nom] %federal & | [hos ~ ~])
-      =.  ..ta-action  ::TODO  =?
-        ?:  new  ..ta-action
-        (affect nom %config [our.bol nom] %federal & & [hos ~ ~])
-      ::TODO  shouldn't src-adding be included in %fed & & application?
-      =.  ..ta-action  ::TODO  =?
-        ?:  new  ..ta-action
-        (affect nom %config [our.bol nom] %source & [[%& hos nom] ~ ~])
-      ::  send %burden command with story's current state.
-      (ta-delta %bear [hos nom])
+      (affect nom %follow sub pas)
     ::
     ::>  ||  %messaging
     ::+|
@@ -444,6 +390,8 @@
       ::>  for every story in the set, update our status.
       ::TODO  accept (set circle). for locals, do directly.
       ::      for remotes, send command.
+      ::      on getting such a command, first check if
+      ::      the sender actually is in our presende map.
       ::TODO  split interface into action-presence and
       ::      action-human.
       ::
@@ -477,26 +425,37 @@
   ::>    arms that react to subscription events.
   ::+|
   ::
+  ++  ta-observe                                        ::<  watch burden bearer
+    ::>
+    ::
+    |=  who/ship
+    ^+  +>
+    ?.  =(our.bol (sein who))
+      ~&([%not-our-bearer who] +>)
+    ~&  [%gonna-observe who]
+    (ta-delta %observe who)
+  ::
   ++  ta-subscribe                                      ::<  listen to
     ::>  add her to a presence list if applicable.
     ::
+    ::TODO  change interface to not include path,
+    ::      only call for /circle queries.
     |=  {her/ship pax/path}
     ^+  +>
-    ::  weird subscription path.
-    ::TODO  catch earlier, just pass nom instead of path?
-    ::  also check story existence earlier maybe?
-    ?.  ?=({$circle @ta *} pax)  +>
-    %-  (ta-know i.pax)  |=  sor/_so  =<  so-done
-    (so-attend:sor her %hear [~ ~])
+    ?.  ?=({@ta *} pax)  +>
+    ?+  -.pax
+      +>
+      ::
+        $burden
+      (ta-observe her)
+      ::
+        $circle
+      ?.  ?=({@ta *} t.pax)  +>
+      %-  (ta-know i.t.pax)  |=  sor/_so  =<  so-done
+      (so-attend:sor her %hear [~ ~])
+    ==
   ::
-  ++  ta-leave                                          ::<  subscription failed
-    ::>  removes {cir} from story {nom}'s followers.
-    ::
-    |=  {nom/knot cir/circle}
-    %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-leave:sor %& cir)
-  ::
-  ++  ta-cancel                                         ::<  unsubscribe
+  ++  ta-cancel                                         ::<  forget
     ::>  drops {src}'s subscription. deduce the right way
     ::>  to do this from the subscription path {pax}.
     ::
@@ -505,22 +464,78 @@
     ::TODO  catch earlier, just pass nom?
     ?.  ?=({$circle @ta *} pax)  +>
     ::  set ship status to %gone.
-    %-  (ta-know i.pax)  |=  sor/_so  =<  so-done
+    %-  (ta-know i.t.pax)  |=  sor/_so  =<  so-done
     (so-absent:sor src)
+  ::
+  ++  ta-greet                                          ::<  subscription success
+    ::>
+    ::
+    |=  {nom/knot cir/circle}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-greet:sor %& cir)
+  ::
+  ++  ta-leave                                          ::<  subscription failed
+    ::>  removes {cir} from story {nom}'s followers.
+    ::
+    |=  {nom/knot cir/circle}
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-leave:sor %& cir)
+  ::
+  ++  ta-take                                           ::<  apply prize
+    ::>
+    ::
+    |=  {wir/wire piz/prize}
+    ^+  +>
+    ?+  -.piz
+      ~&([%ignoring-prize -.piz] +>)
+      ::
+        $burden
+      %-  ta-deltas
+      %+  roll  (~(tap by sos.piz))
+      |=  {{n/knot b/burden} d/(list delta)}
+      =-  [[%story n %bear b(gaz -)] d]
+      ::TODO  change audiences of messages from (sein our)/n into our/n
+      %+  turn  gaz.b
+      |=  t/telegram
+      =-  t(aud.tot -)
+      =/  oud
+        (~(get by aud.tot.t) [%& (sein our.bol) n])
+      ?~  oud  ::TODO  seems like it should never occur?
+        ~&  %unexpected-parent-not-audience
+        aud.tot.t
+      =.  aud.tot.t
+        (~(del by aud.tot.t) [%& (sein our.bol) n])
+      (~(put by aud.tot.t) [%& our.bol n] u.oud)
+      ::
+        $circle
+      =+  res=(tmp-parse-diff-path wir)
+      %-  (ta-know p.res)  |=  sor/_so  =<  so-done
+      (so-take:sor q.res +.piz)
+    ==
   ::
   ++  ta-hear                                           ::<  apply rumor
     ::>
     ::
-    |=  {det/knot src/partner dif/rumor}
+    |=  {wir/wire dif/rumor}
     ^+  +>
     ?+  -.dif
       ~&([%ignoring-rumor -.dif] +>)
       ::
+        $burden
+      ~&  [%hear-burden -.dif.dif]
+      ?+  -.dif.dif
+        %-  (ta-know nom.dif)  |=  sor/_so  =<  so-done
+        (so-hear:sor & [our.bol nom.dif] dif.dif)
+        ::
+          $new
+        ::TODO  we make a %bear delta with just the config set.
+        (ta-delta %story nom.dif %bear ~ [con.dif.dif ~] [~ ~])
+      ==
+      ::
         $circle
-      ?.  ?=($& -.src)
-        ~&([%unexpected-rumor -.dif src] +>)
-      %-  (ta-know det)  |=  sor/_so  =<  so-done
-      (so-hear-circle:sor p.src dif.dif)
+      =+  res=(tmp-parse-diff-path wir)
+      %-  (ta-know p.res)  |=  sor/_so  =<  so-done
+      (so-hear:sor | q.res dif.dif)
     ==
   ::
   ::>  ||
@@ -644,6 +659,12 @@
       ^+  +>
       +>(deltas [dif deltas])
     ::
+    ++  so-deltas                                       ::<  send delta list
+      ::>
+      ::
+      |=  dis/(list delta)
+      %_(+> deltas (welp (flop dis) deltas))
+    ::
     ++  so-delta-our                                    ::<  send delta of us
       ::>  adds a delta about this story.
       ::
@@ -660,122 +681,60 @@
     ++  so-pan  [%& our.bol nom]                        ::<  us as partner
     ++  so-cir  [our.bol nom]                           ::<  us as circle
     ::
-    ++  so-right                                        ::<  is federator?
-      ::>  checks whether partner {pan} has authority
-      ::>  over this story.
-      ::
-      |=  pan/partner
-      ?&  ?=($& -.pan)
-          =(nom nom.p.pan)
-          (~(has in fes.fed.shape) hos.p.pan)
-      ==
-    ::
     ::>  ||
     ::>  ||  %interaction-events
     ::>  ||
     ::>    arms that apply events we received.
     ::+|
     ::
-    ++  so-hear-circle                                  ::<  accept circle rumor
+    ++  so-take                                  ::<  accept circle prize
       ::>
       ::
-      |=  {src/circle dif/diff-story}
+      |=  {src/circle gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
-      ?.  (~(has in src.shape) [%& src])
-        ~&([%unexpected-rumor -.dif src] +>)
-      ::  rumor from federator? apply to us.
-      =.  src  ::TODO  =?
-        ?:  (so-right [%& src])  so-cir
-        src
-      ?-  -.dif
-        $new      $(dif [%config src %full con.dif])
-        $grams    (so-lesson gaz.dif)
-        $config   ::  ignore foreign mirrors.
-                  ?.  |(=(src cir.dif) =(src so-cir))  +>
-                  (so-delta-our dif)
-        $status   ::  ignore foreign remotes.
-                  ?.  |(=([%& src] pan.dif) =(src so-cir))  +>
-                  (so-delta-our dif)
-        $remove   (so-delta-our %config src %remove ~)
-      ==
-    ::
-    ++  so-burden                                       ::<  accept federator
-      ::>  if {src} is allowed to, have it federate this
-      ::>  story.
-      ::>  starts by assimilating {src}'s state into our
-      ::>  own (giving priority to local state), removing
-      ::>  redundant data, then sending updated state to
-      ::>  all followers.
-      ::
-      |=  {src/ship cof/lobby pes/crowd gaz/(list telegram)}
-      ^+  +>
-      ::  continue if permitted and not yet done.
-      ?.  (~(has in may.fed.shape) src)  +>
-      ?:  (~(has in fes.fed.shape) src)  +>
-      ::  assimilate config.
-      =.  +>
-        =+  nec=shape
-        ::  adopt security list if they're similar.
-        =.  ses.con.nec  ::TODO  =?
-          ?.  .=  ?=(?($white $green) sec.con.nec)
-                  ?=(?($white $green) sec.con.loc.cof)
-            ses.con.nec
-          (~(uni in ses.con.nec) ses.con.loc.cof)
-        =.  fes.fed.nec
-          (~(put in fes.fed.nec) src)
-        =.  src.nec
-          (~(put in src.nec) [%& src nom])
-        ::TODO  maybe do more granular deltas later.
-        (so-delta-our %config so-cir %full nec)
-      ::  assimilate presence and remotes.
-      ::TODO!!!  just delta my shit up famalam.
-      ::TODO  should totally just make an arm that calculates deltas given
-      ::      old and new inputs.
-      ::=.  locals   (~(uni by loc.pes) locals)
-      ::=.  remotes  (~(uni by rem.pes) remotes)
-      ::=.  mirrors  (~(uni by rem.cof) mirrors)
-      ::::  remove redundant remotes.
-      ::=.  remotes
-      ::  %-  ~(gas by *_remotes)
-      ::  %+  murn  (~(tap by remotes))
-      ::  |=  {p/partner g/group}
-      ::  ^-  (unit {partner group})
-      ::  ?:  ?&  ?=($& -.p)
-      ::          =(nom.p.p nom)
-      ::          (~(has in fes.fed.shape) hos.p.p)
-      ::      ==
-      ::    ~
-      ::  `[p g]
-      ::::  remove redundant mirrors.
-      ::=.  mirrors
-      ::  %-  ~(gas by *_mirrors)
-      ::  %+  murn  (~(tap by mirrors))
-      ::  |=  {c/circle f/config}
-      ::  ^-  (unit {circle config})
-      ::  ?:  ?&  =(nom.c nom)
-      ::          (~(has in fes.fed.shape) hos.c)
-      ::      ==
-      ::    ~
-      ::  `[c f]
-      ::  finally, learn all grams.
+      =.  +>.$
+        (so-hear | src %config src %full loc.cos)
+      ::TODO  we'd need a %precs diff-story for this if we don't want to urn...
+      =.  +>.$
+        %-  ~(rep in loc.pes)
+        |=  {{w/ship s/status} _+>.$}
+        (so-hear | src %status [%& src] w %full s)
       (so-lesson gaz)
     ::
-    ++  so-relieve                                      ::<  remove federator
-      ::>  if {src} is allowed to, removes {who} as
-      ::>  federators from this story.
+    ++  so-hear                                  ::<  accept circle rumor
+      ::>
       ::
-      |=  {src/ship who/(set ship)}
+      |=  {bur/? src/circle dif/diff-story}
       ^+  +>
-      ?.  (~(has in fes.fed.shape) src)  +>
-      =+  wos=(~(uni in fes.fed.shape) who)
-      ?~  wos  +>.$
-      =.  +>.$
-        (so-delta-our %config so-cir %federal | & wos)
-      %-  so-delta-our
-      :+  %config  so-cir
-      :+  %source  |
-      %-  ~(run in `(set ship)`wos)  ::TODO?  why need to cast?
-      |=(s/ship [%& s nom])
+      ::TODO?  these checks are still important, because
+      ::       when things are slow we may get diffs from
+      ::       things we already unsubscribed from, right?
+      ::TODO  account for federation.
+      ~?  ?!  ?|  (~(has in sre.shape) [%& src])
+                  =(src so-cir)
+              ==
+        [%unexpected-rumor-source nom -.dif src]
+      ?-  -.dif
+        ::TODO  we check for foreigns here, but they should just not get sent
+        ::      in the first place. update ++-change or whatever!
+        ::      (we don't care for remote remotes, etc.)
+        $new      $(dif [%config src %full con.dif])
+        $bear     ~&(%so-hear-unexpected-bear +>)
+        $grams    (so-lesson gaz.dif)
+        $config   ::TODO  accept burden change by parents.
+                  ::  ignore foreign mirrors.
+                  ?.  |(=(src cir.dif) =(src so-cir))
+                    ~&  %unexpected-ignoring-remote-config
+                    +>
+                  (so-delta-our dif)
+        $status   ::  ignore foreign remotes.
+                  ?.  |(=([%& src] pan.dif) =(src so-cir))
+                    ~&  %unexpected-ignoring-remote-status
+                    +>
+                  (so-delta-our dif)
+        $follow   ~&(%follow-not-rumor +>)  ::TODO  crash?
+        $remove   (so-delta-our %config src %remove ~)
+      ==
     ::
     ::>  ||
     ::>  ||  %changes
@@ -789,10 +748,10 @@
       |=  {add/? pas/(set partner)}
       ^+  +>
       =/  sus/(set partner)
-        %.  src.shape
+        %.  sre.shape
         ?:(add ~(dif in pas) ~(int in pas))
       ?~  sus  +>.$
-      (so-delta-our %config so-cir %source add sus)
+      (so-delta-our %follow & sus)
     ::
     ++  so-depict                                       ::<  change description
       ::>  modifies our caption.
@@ -809,28 +768,6 @@
       ^+  +>
       ?:  =(fit fit.shape)  +>
       (so-delta-our %config so-cir %filter fit)
-    ::
-    ++  so-federate                                     ::<  change federators
-      ::>  adds or removes sis as active/allow
-      ::>  ({fed} y/n) federators.
-      ::
-      |=  {add/? fed/? sis/(set ship)}
-      =+  ses=?:(fed fes.fed.shape may.fed.shape)
-      =/  sus/(set ship)
-        %.  ses
-        ?:(add ~(dif in sis) ~(int in sis))
-      ?~  sus  +>.$
-      ::  we also take care of the %src delta because we
-      ::  want to keep delta application as simple as
-      ::  possible.
-      =.  +>.$  ::TODO  =?
-        ?.  fed  +>.$
-        %-  so-delta-our
-        :+  %config  so-cir
-        :+  %source  add
-        %-  ~(run in `(set ship)`sus)  ::TODO  weird casting need, depends on ?~
-        |=  s/ship  [%& s nom]
-      (so-delta-our %config so-cir %federal add fed sus)
     ::
     ++  so-delete                                       ::<  delete story
       ::>  deletes this story. removes it from {stories}
@@ -860,13 +797,21 @@
     ::>    arms for starting and ending subscriptions
     ::+|
     ::
-    ++  so-leave                                        ::<  unsub from source
+    ++  so-greet                                        ::<  subscription started
+      ::>
+      ::
+      |=  pan/partner
+      ^+  +>
+      ?:  (~(has in sre.shape) pan)  +>
+      (so-delta-our %config so-cir %sourcee & [pan ~ ~])
+    ::
+    ++  so-leave                                        ::<  subscription ended
       ::>  delete {pan} from our sources.
       ::
       |=  pan/partner
       ^+  +>
-      ?.  (~(has in src.shape) pan)  +>
-      (so-delta-our %config so-cir %source | [pan ~ ~])
+      ?.  (~(has in sre.shape) pan)  +>
+      (so-delta-our %config so-cir %sourcee | [pan ~ ~])
     ::
     ++  so-start                                        ::<  subscribe follower
       ::>  called upon subscribe. deduces the range of
@@ -978,22 +923,23 @@
       |=  gam/telegram
       ^+  +>
       ::  check for write permissions.
-      ?.  (so-admire aut.gam)  +>.$
+      ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  tot.gam  (so-sane tot.gam)
       =.  aud.tot.gam
         ::>  if we are in the audience, mark as received.
-        =+  ole=(~(get by aud.tot.gam) [%& our.bol nom])
-        ?^  ole  (~(put by aud.tot.gam) [%& our.bol nom] -.u.ole %received)
-        ::>  federated circles need to pretend ~src/nom
-        ::>  is also ~our/nom.
+        =+  ole=(~(get by aud.tot.gam) so-pan)
+        ?^  ole  (~(put by aud.tot.gam) so-pan -.u.ole %received)
+        ::TODO  can we delete the below? seems old federation?
         ::TODO  pass src through explicitly instead of
         ::      relying on src.bol.
+        ::TODO?  ^ why?
         =+  ole=(~(get by aud.tot.gam) [%& src.bol nom])
         ?~  ole  aud.tot.gam
-        ::>  as described above, fake src into our.
+        ::TODO  below line is old federation, but should work for our current
+        ::      use case, right? why doesn't it?
         =.  aud.tot.gam  (~(del by aud.tot.gam) [%& src.bol nom])
-        (~(put by aud.tot.gam) [%& our.bol nom] -.u.ole %received)
+        (~(put by aud.tot.gam) so-pan -.u.ole %received)
       (so-delta-our %grams [gam ~])
     ::
     ::>  ||
@@ -1046,8 +992,8 @@
       |=  her/ship
       ^-  ?
       ?-  sec.con.shape
-        $black  !(~(has in ses.con.shape) her)         ::<  channel, blacklist
-        $white  (~(has in ses.con.shape) her)          ::<  village, whitelist
+        $black  !(~(has in ses.con.shape) her)          ::<  channel, blacklist
+        $white  (~(has in ses.con.shape) her)           ::<  village, whitelist
         $green  &                                       ::<  journal, all
         $brown  (team our.bol her)                      ::<  mailbox, our team
       ==
@@ -1096,40 +1042,18 @@
   ++  da-react                                          ::<  send reaction
     ::>  sends a talk-reaction diff to a reader.
     ::
-    ::TODO  send the delta instead! (remove bone from delta: always ost.bol?)
+    ::TODO  argument always ost.bol? seems to be that way
     |=  {red/bone rac/reaction}
     %-  da-emit
+    ~?  !=(red ost.bol)  %react-different-bones
     ::TODO  is diff the way to react to a poke?
     [red %diff %talk-reaction rac]
-  ::
-  ++  da-bear                                           ::<  share burden
-    ::>
-    ::
-    |=  cir/circle
-    =+  soy=(~(got by stories) nom.cir)
-    %-  da-emit
-    :*  ost.bol
-        %poke
-        /burden
-        [hos.cir %talk-guardian]
-        :*  %talk-command
-            %burden
-            nom.cir
-            [shape.soy mirrors.soy]
-            [locals.soy remotes.soy]
-            grams.soy
-        ==
-    ==
   ::
   ::>  ||
   ::>  ||  %data
   ::>  ||
   ::>    utility functions for data retrieval.
   ::+|
-  ::
-  ::TODO  functions for getting readers or followers of a specific story from
-  ::      the subs in sup.bol.
-  ::      but maybe just on the outer core...
   ::
   ::>  ||
   ::>  ||  %change-application
@@ -1154,9 +1078,41 @@
       $glyph  (da-change-glyph +.dif)
       $nick   (da-change-nick +.dif)
       $story  (da-change-story +.dif)
-      $bear   (da-bear +.dif)
+      $init   da-init
+      $observe  (da-observe +.dif)
       $react  (da-react +.dif)
       $quit   (da-emit [ost.dif %quit ~])
+    ==
+  ::
+  ++  da-init                                           ::<  startup side-effects
+    ::>
+    ::
+    =+  sen=(sein our.bol)
+    ::TODO  move this logic to ta-init
+    ?:  ?|  !=(%czar (clan sen))
+            =(sen our.bol)
+            =(%pawn (clan our.bol))
+        ==
+      ..da-init
+    %-  da-emit
+    :*  0
+        %peer
+        /burden
+        [sen %talk-guardian]
+        /burden
+    ==
+  ::
+  ++  da-observe                                        ::<  watch burden bearer
+    ::>
+    ::
+    |=  who/ship
+    ~&  [%peering-report who]
+    %-  da-emit
+    :*  0
+        %peer
+        /report
+        [who %talk-guardian]
+        /report
     ==
   ::
   ++  da-change-out                                     ::<  outgoing messages
@@ -1170,25 +1126,31 @@
       :*  %poke
           /repeat/(scot %ud p.outbox)/(scot %p hos.cir)/[nom.cir]
           [hos.cir %talk-guardian]
-          [%talk-command %review i.out ~]
+          [%talk-command %publish i.out ~]
       ==
-    $(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox i.out))
+    %=  $
+      p.outbox  +(p.outbox)
+      q.outbox  (~(put by q.outbox) p.outbox i.out)
+      out       t.out
+    ==
   ::
   ++  da-change-done                                    ::<  sent & receives msgs
     ::>
     ::
-    |=  don/(list {num/@ud who/partner gud/?})
+    ::TODO  this needs a lot of work, maybe?
+    ::      make this dumber, make the ++ta equivalent smarter!
+    |=  don/(list {num/@ud who/partner fal/(unit tang)})
     ^+  +>
     ?~  don  +>
     =+  oot=(~(get by q.outbox) num.i.don)
-    ?~  oot  ~|([%da-change-done-none num.i.don] !!)
+    ?~  oot  ~&([%da-change-done-none num.i.don] +>.$)  ::TODO  crash?
     =.  aud.u.oot
       =+  olg=(~(got by aud.u.oot) who.i.don)
       %+  ~(put by aud.u.oot)  who.i.don
       :-  -.olg
-      ?:(gud.i.don %received %rejected)
+      ?~(fal.i.don %received ~>(%slog.[0 u.fal.i.don] %rejected))
     =.  +>.$
-      +>.$  ::TODO!!!  da-think??????????
+      +>.$  ::TODO!!!  da-think???
     $(q.outbox (~(del by q.outbox) num.i.don))
     ::|=  {num/@ud pan/partner fal/(unit tang)}
     ::=+  oot=(~(get by q.outbox) num)
@@ -1210,7 +1172,6 @@
     ^+  +>
     ?:  bin
       %_  +>
-        nik  (~(put by nik) pas gyf)
         nak  (~(put ju nak) gyf pas)
       ==
     =/  ole/(list (set partner))
@@ -1219,7 +1180,6 @@
     |-  ^+  +>.^$
     ?~  ole  +>.^$
     %_  $
-      nik  (~(del by nik) i.ole)
       nak  (~(del ju nak) gyf i.ole)
       ole  t.ole
     ==
@@ -1244,34 +1204,40 @@
     ::
     |=  {nom/knot dif/diff-story}
     ^+  +>
-    ::TODO  just ~(got by stories) everywhere in ++da, the
-    ::      relevant checks should be made when constructing
-    ::      the deltas.
     ?+  -.dif
       sa-done:(~(sa-change sa nom (~(got by stories) nom)) dif)
       ::
       $new      (da-create nom +.dif)
+      $bear     (da-bear nom +.dif)
       $remove   (da-delete nom)
     ==
   ::
   ++  da-create                                         ::<  configure story
     ::>  creates story {nom} with config {con}.
     ::
-    |=  {nom/knot con/config}
+    |=  {nom/knot cof/config}
     ^+  +>
     ::  if it's a whitelisted circle, put us in it.
-    =.  ses.con.con  ::TODO  =?
-      ?:  ?=(?($white $green) sec.con.con)
+    =.  ses.con.cof  ::TODO  =?
+      ?:  ?=(?($white $green) sec.con.cof)
         [our.bol ~ ~]
-      ses.con.con
-    ::  also ensure we're listed as a federator.
-    =.  may.fed.con
-      (~(put in may.fed.con) our.bol)
-    =.  fes.fed.con
-      (~(put in fes.fed.con) our.bol)
+      ses.con.cof
+    ::  make sure it's its own source.
+    ::TODO?  is this... necessary? probably, for other circle's reference...
+    =.  sre.cof
+      (~(put in sre.cof) [%& our.bol nom])
     =<  sa-done
-    %-  ~(sa-change sa nom *story)
-    [%config [our.bol nom] %full con]
+    ::  default for ? is &, so we manually set to | now.
+    %-  ~(sa-change sa nom %*(. *story burden |))
+    [%config [our.bol nom] %full cof]
+  ::
+  ++  da-bear                                           ::<  accept new burden
+    ::>
+    ::
+    |=  {nom/knot bur/burden}
+    ^+  +>
+    =+  soy=(fall (~(get by stories) nom) *story)
+    sa-done:(~(sa-bear sa nom soy) bur)
   ::
   ++  da-delete                                         ::<  delete story
     ::>  calls the story core to delete story {nom}.
@@ -1325,6 +1291,14 @@
       (flop (turn cub |=(a/card [ost a])))
     ::
     ::>  ||
+    ::>  ||  %data  ::TODO consistent naming!
+    ::>  ||
+    ::+|
+    ::
+    ++  sa-cir  [our.bol nom]
+    ++  sa-pan  [%& our.bol nom]
+    ::
+    ::>  ||
     ::>  ||  %delta-application
     ::>  ||
     ::>    arms for applying deltas.
@@ -1333,12 +1307,48 @@
     ++  sa-delete                                       ::<  deletion of story
       ::>
       ::
-      (sa-abjure (~(tap in src.shape)))
+      (sa-abjure (~(tap in sre.shape)))
+    ::
+    ++  sa-bear                                         ::<  ...
+      ::>
+      ::>  for now, just overwrite all existing state.
+      ::
+      ::TODO  should we calculate these changes in
+      ::      ++so instead? the change to burden is
+      ::      distinct, but everything else is just
+      ::      more of the same deltas.
+      |=  {gaz/(list telegram) cos/lobby pes/crowd}
+      ^+  +>
+      ::  local config
+      =.  +>
+        (sa-change-local %config sa-cir %full loc.cos)
+      ::  remote config
+      =.  +>
+        %+  roll  (~(tap by rem.cos))
+        |=  {{r/circle c/config} _..sa-bear}
+        (sa-change-remote %config r %full c)
+      ::  local presence
+      =.  +>
+        %+  roll  (~(tap by loc.pes))
+        |=  {{w/ship s/status} _..sa-bear}
+        (sa-change-local %status sa-pan w %full s)
+      ::  remote presence
+      =.  +>
+        %+  roll  (~(tap by rem.pes))
+        |=  {{p/partner g/group} _..sa-bear}
+        %+  roll  (~(tap by g))
+        |=  {{w/ship s/status} _..sa-bear}
+        (sa-change-remote %status p w %full s)
+      ::  telegrams
+      =.  +>
+        %+  roll  gaz
+        |=  {g/telegram _..sa-bear}
+        (sa-change-gram g)
+      ::  burden flag
+      +>(burden &)
     ::
     ++  sa-change                                       ::<  apply circle delta
       ::>
-      ::>  we don't do checks for federation here, this
-      ::>  should have happened during delta generation.
       ::
       |=  dif/diff-story
       ^+  +>
@@ -1347,7 +1357,7 @@
         sa-change-local
         ::
           $config
-        ?:  =(cir.dif [our.bol nom])
+        ?:  =(cir.dif sa-cir)
           sa-change-local
         sa-change-remote
         ::
@@ -1368,7 +1378,7 @@
           $grams
         |-  ^+  +>.^$
         ?~  gaz.dif  +>.^$
-        =.  +>.^$  (sa-change-grams i.gaz.dif)
+        =.  +>.^$  (sa-change-gram i.gaz.dif)
         $(gaz.dif t.gaz.dif)
         ::
           $config
@@ -1385,9 +1395,23 @@
             (fall (~(get by locals) who.dif) *status)
           dif.dif
         ==
+        ::
+          $follow
+        ::  we have to do the effects first, because it
+        ::  checks for new sub targets using sre.shape.
+        ~&  [%sa-change-follow nom sub.dif pas.dif]
+        =.  +>
+          (sa-emil (sa-follow-effects sub.dif pas.dif))
+        %_  +>  ::TODO  delete, only done once success
+            sre.shape  ::TODO  =?
+          %.  pas.dif
+          ?:  sub.dif
+            ~(uni in sre.shape)
+          ~(dif in sre.shape)
+        ==
       ==
     ::
-    ++  sa-change-grams                                 ::<  save/update message
+    ++  sa-change-gram                                 ::<  save/update message
       ::>
       ::
       |=  gam/telegram
@@ -1439,61 +1463,62 @@
     ++  sa-config-effects                               ::<  config side-effects
       ::>
       ::
+      ::TODO  we shouldn't even be applying %full diffs, only their results!
       |=  {old/config dif/diff-config}
       ^-  (list move)
       ?+  -.dif  ~
-        $source   (sa-source-effects src.old +.dif)
         $permit   (sa-permit-effects sec.con.old ses.con.old +.dif)
         ::
-          $federal
-        ?.  fed.dif  ~
-        %^  sa-source-effects  src.old  add.dif
-        %-  ~(run in sis.dif)
-        |=  s/ship  [%& s nom]
-        ::
           $full
+        ~&  %full-config-changes
         =*  new  cof.dif
         ::  deal with subscription changes.
         =/  sem
           .=  ?=(?($white $green) sec.con.new)
               ?=(?($white $green) sec.con.old)
         ;:  weld
-          (sa-source-effects src.old | (~(dif in src.old) src.new))
-          (sa-source-effects src.old & (~(dif in src.new) src.old))
+          ::TODO  but these needs to be treated as %sourcee, right?
+          ::(sa-follow-effects | (~(dif in sre.old) sre.new))
+          ::(sa-follow-effects & (~(dif in src.new) src.old))
+          ::
           ?.  sem  ~
           %^  sa-permit-effects  sec.con.new  ses.con.old
           [| (~(dif in ses.con.old) ses.con.new)]
+          ::
           ?.  sem  ~
           %^  sa-permit-effects  sec.con.new  ses.con.old
           [& (~(dif in ses.con.new) ses.con.old)]
-          ::TODO  maybe do federal source changes, but also take above source
-          ::      changes into account: don't do doubles!
         ==
       ==
     ::
-    ++  sa-source-effects                               ::<  un/subscribe
+    ++  sa-follow-effects                               ::<  un/subscribe
       ::>
       ::
-      |=  {old/(set partner) add/? pas/(set partner)}
+      |=  {sub/? pas/(set partner)}
       ^-  (list move)
       =/  sus/(set partner)
-        %.  old
-        ?:(add ~(dif in pas) ~(int in pas))
-      %.  (~(tap in `(set partner)`sus))  ::TODO  *need* to cast?
-      ?:(add sa-acquire sa-abjure)
+        %.  sre.shape
+        ?:(sub ~(dif in pas) ~(int in pas))
+      %.  (~(tap in sus))
+      ?:(sub sa-acquire sa-abjure)
     ::
     ++  sa-permit-effects                               ::<  notify permitted
       ::>
       ::
+      ::TODO  this seems to also be done in the action,
+      ::      there makes more sense because logic goes into ta.
       |=  {sec/security old/(set ship) add/? sis/(set ship)}
       ^-  (list move)
+      =/  sus/(set ship)
+        %.  ses.con.shape
+        ?:(add ~(dif in sis) ~(int in sis))
       =/  wyt  ?=(?($white $green) sec)
       =/  inv  =(wyt add)
       ?:  inv
         ::TODO  %inv & speeches
         ~
       ::TODO  %inv | speeches
-      (sa-eject sis)
+      (sa-eject sus)
     ::
     ::>  ||
     ::>  ||  %subscriptions
@@ -1510,6 +1535,7 @@
       %+  turn  pas
       |=  pan/partner
       ^-  (list card)
+      ?:  =(pan [%& our.bol nom])  ~  ::  ignore self-subs  ::TODO  also abjure?
       ::>  subscribe starting at the last message we got,
       ::>  or if we haven't gotten any yet, messages
       ::>  from up to a day ago.
@@ -1543,6 +1569,7 @@
           $&                                            ::<  circle partner
         :_  ~
         :*  %pull
+        ::TODO  update path
             /friend/show/[nom]/(scot %p hos.p.pan)/[nom.p.pan]
             [hos.p.pan %talk-guardian]
             ~
@@ -1559,7 +1586,7 @@
       [b %quit ~]
     ::
     ++  sa-unearth                                      ::<  ships' bones
-      ::>  find the bones in {followers} that belong to
+      ::>  find the bones in {sup.bol} that belong to
       ::>  a ship in {sis}.
       ::
       |=  sis/(set ship)
@@ -1642,54 +1669,112 @@
   :_  +>.$
   :(welp mos (affection dif))
 ::
+++  pre-bake                                            ::<  apply more deltas
+  ::>
+  ::
+  |=  dis/(list delta)
+  ^-  (quip move +>)
+  %+  roll  dis
+  |=  {d/delta m/(list move) _+>.$}  ::TODO  ^$ nest-fails, is this correct?
+  =^  mos  +>.^$  (f-bake d)
+  [(welp m mos) +>.^$]
+::
 ++  g-query                                             ::<  query on state
   ::>
   ::
   |=  weg/(list coin)
-  ::TODO  how would the system know how to parse the path?
-  ::      should we define that ourselves?
-  ::  ...i just want to cast to ++query if i can.
   ::TODO  should return (unit prize)? ie for /circle/non-existing
   ^-  prize
-  ?~  weg  ~&(%empty-query !!)
-  ?:  =(i.weg [%$ %tas %reader])
+  =+  qer=(coins-to-query weg)
+  ?-  -.qer
+      $reader
     [%reader nak nicks]
-  ?:  =(i.weg [%$ %tas %friend])
+    ::
+      $friend
     :-  %friend
     %-  ~(gas in *(set circle))
     %+  murn
-      =-  (~(tap in src.shape.-))
+      =-  (~(tap in sre.shape.-))
       (~(got by stories) (main our.bol))
     |=  p/partner
     ^-  (unit circle)
     ?.  ?=($& -.p)  ~
     [~ p.p]
-  ?:  ?&  =(i.weg [%$ %tas %circle])
-          ?=(^ t.weg)
-          ?=({$$ p/$ta q/@ta} i.t.weg)
-      ==
+    ::
+      $burden
+    :-  %burden
+    %-  ~(gas in *(map knot burden))
+    %+  murn  (~(tap by stories))
+    |=  {n/knot s/story}
+    ^-  (unit (pair knot burden))
+    ::  only auto-federate channels for now.
+    ?.  ?=($black sec.con.shape.s)  ~
+    :+  ~  n
+    :+  grams.s
+      [shape.s mirrors.s]
+    [locals.s remotes.s]
+    ::
+      $report
+    ::TODO  want to return no prize
+    [%friend ~]
+    ::
+      $circle
     :-  %circle
-    =+  soy=(~(got by stories) +>.i.t.weg)
+    =+  soy=(~(got by stories) nom.qer)
     :+  grams.soy  ::TODO  get using specified range.
       [shape.soy mirrors.soy]
     [locals.soy remotes.soy]
-  ~&(%invalid-query !!)
+  ==
+::
+++  tmp-their-change                                    ::<  diff-story to theirs
+  ::>
+  ::
+  |=  {who/ship dif/diff-story}
+  ^-  diff-story
+  ?+  -.dif
+    dif
+    ::
+      $config
+    ?.  =(hos.cir.dif our.bol)  dif
+    dif(cir [who nom.cir.dif])
+    ::
+      $status
+    ?.  &(?=($& -.pan.dif) =(hos.p.pan.dif our.bol))  dif
+    dif(pan [%& who nom.p.pan.dif])
+  ==
+::
+++  tmp-clean-change                                    ::<  remove remotes
+  ::>
+  ::
+  |=  {nom/knot dif/diff-story}
+  ^-  (unit diff-story)
+  ?+  -.dif
+    `dif
+    ::
+      $config
+    ?.  =(cir.dif [our.bol nom])  ~
+    `dif
+    ::
+      $status
+    ?.  =(pan.dif [%& our.bol nom])  ~
+    `dif
+  ==
 ::
 ++  i-change                                            ::<  delta to rumor
   ::>
   ::
-  ::TODO  probably want to do "affected by" checks for every bone,
-  ::  and just construct the rumor once.
-  |=  {weg/(list coin) dif/delta}
+  |=  {who/ship weg/(list coin) dif/delta}
   ^-  (unit rumor)
-  ?~  weg  ~&(%empty-query !!)
-  ?:  =(i.weg [%$ %tas %reader])
+  =+  qer=(coins-to-query weg)
+  ?-  -.qer
+      $reader
     ::  changes to shared ui state apply.
     ?+  -.dif  ~
       $glyph  `[%reader dif]
       $nick   `[%reader dif]
     ==
-  ?:  =(i.weg [%$ %tas %friend])
+    ::
+      $friend
     ::  new or removed local stories apply.
     ::TODO  include mailbox sources. check privacy flags.
     ?.  ?=($story -.dif)  ~
@@ -1700,50 +1785,91 @@
       ==
     ?~  add  ~
     `[%friend u.add [our.bol nom.dif]]
-  ?:  ?&  =(i.weg [%$ %tas %circle])
-          ?=(^ t.weg)
-          ?=({$$ p/$ta q/@ta} i.t.weg)
-      ==
+    ::
+      $burden
+    ::TODO  only avoid src.bol when they sent a burden or similar?
+    ::TODO  shouldn't this prevent senders from getting their message echoed
+    ::      to them?
+    ?:  =(who src.bol)  ~
     ?.  ?=($story -.dif)  ~
-    ?.  =(+>.i.t.weg nom.dif)  ~
+    ::  only burden channels for now.
+    ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
+    ~&  [%sending-burden nom.dif -.dif.dif who]
+    `[%burden nom.dif (tmp-their-change who dif.dif)]
+    ::
+      $report
+    ::  only send changes we didn't get from above.
+    ?:  =(src.bol (sein our.bol))  ~
+    ::  only send story reports about grams and status.
+    ?.  ?=($story -.dif)  ~
+    ?.  ?=(?($grams $status) -.dif.dif)  ~
+    =+  soy=(~(got by stories) nom.dif)
+    ::  and only if the story is inherited.
+    ?.  burden.soy  ~
+    ::  only burden channels for now.
+    ?.  =(%black sec.con.shape.soy)  ~
+    ~&  [%sending-report nom.dif -.dif.dif who]
+    `[%burden nom.dif (tmp-their-change who dif.dif)]
+    ::
+      $circle
+    ?.  ?=($story -.dif)  ~
+    ?.  =(nom.qer nom.dif)  ~
+    ?:  ?=($follow -.dif.dif)  ~                        ::  internal-only delta
+    ~&  [%sending-circle nom.dif -.dif.dif who]
     `[%circle dif.dif]
-  ~&(%invalid-query !!)
+  ==
 ::
 ++  affection                                           ::<  rumors to interested
   ::>
   ::
   ::TODO  probably want to do "affected by" checks for every bone,
-  ::  and just construct the rumor once.
+  ::      and just construct the rumor once.
   |=  dif/delta
   ^-  (list move)
   %+  murn  (~(tap by sup.bol))
   |=  {b/bone s/ship p/path}
   ^-  (unit move)
-  =+  rum=(i-change (tmp-parse-path p) dif)
+  =+  rum=(i-change s (path-to-coins p) dif)
   ::TODO  %quit bones that are done with their subscription.
   ::  ...but that would also require a ta-cancel call to remove
   ::  them from the presence list! how do?
   ?~  rum  ~
   `[b %diff %talk-rumor u.rum]
 ::
-++  tmp-parse-path                                      ::<  ...
+++  path-to-query                                       ::<  ...
+  ::>
+  ::
+  |=  pax/path
+  (coins-to-query (path-to-coins pax))
+::
+++  path-to-coins                                       ::<  ...
   ::>
   ::
   |=  pax/path
   ^-  (list coin)
-  ?~  pax  ~
-  :-  [%$ %tas `@tas`i.pax]
-  ?.  =(%circle `@tas`i.pax)  ~
-  ?~  t.pax  ~&(%invalid-circle-path !!)
-  :-  [%$ %ta `@ta`i.t.pax]
-  ~
-  ::=+  tmp=((hard range) t.t.pax)
-  ::?~  tmp  ~
-  :::-  hed.u.tmp
-  ::?~  t.u.tmp  ~
-  ::[tal.u.t.u.tmp ~]
+  %+  turn  `path`pax
+  |=  a/@ta
+  (need (slay a))
 ::
-++  tmp-parse-peer-path                                 ::<  ...
+++  coins-to-query                                      ::<  ...
+  ::>
+  ::
+  ^-  $-((list coin) query)
+  ::TODO  silently crashes, make it loud!
+  =>  depa
+  |^  %-  af  :~
+          [%reader ul]
+          [%friend ul]
+          [%burden ul]
+          [%report ul]
+          [%circle (al knot rang)]
+      ==
+  ++  knot  (do %tas)
+  ++  rang  (mu (al plac (mu (un plac))))
+  ++  plac  (or %da %ud)
+  --
+::
+++  tmp-parse-diff-path                                 ::<  ...
   ::>
   ::
   |=  pax/path
@@ -1759,25 +1885,18 @@
   ::
   |=  {who/ship weg/(list coin)}
   ^-  ?
-  ::TODO
-  ::?:  ?=({$reader *} pax)
-  ::  ?.  (team our.bol her)
-  ::    %-  ta-note
-  ::    (crip "foreign reader {(scow %p her)}")
-  ::  (ta-welcome ost.bol t.pax)
-  ::::  weird subscription path.
-  ::?.  ?=({@ *} pax)
-  ::  (ta-evil %bad-path)
-  ::=+  pur=(~(get by stories) i.pax)
-  ::?~  pur
-  ::  ::TODO  send this to the subscriber! make them unsub!
-  ::  %-  ta-note
-  ::  (crip "bad subscribe story '{(trip i.pax)}'")
-  ::=+  soy=~(. so i.pax `(list action)`~ u.pur)        ::  nest-fail if no cast
-  ::::  she needs read permissions to subscribe.
-  ::?.  (so-visible:soy her)
-  ::  (ta-evil %no-story)
-  &
+  =+  qer=(coins-to-query weg)
+  ?-  -.qer
+    $reader   (team our.bol who)
+    $friend   &
+    $burden   =(our.bol (sein who))
+    $report   =(who (sein our.bol))
+    ::
+      $circle
+    ?.  (~(has by stories) nom.qer)  |
+    %.  who
+    ~(so-visible so:ta nom.qer ~ (~(got by stories) nom.qer))
+  ==
 ::
 ::>  ||
 ::>  ||  %poke-events
@@ -1790,7 +1909,7 @@
   |=  cod/command
   ^-  (quip move +>)
   =^  mos  +>.$
-    %-  f-bake  :-  %more
+    %-  pre-bake
     ta-done:(ta-apply:ta src.bol cod)
   =^  mow  +>.$
     log-all-to-file
@@ -1802,11 +1921,11 @@
   |=  act/action
   ^-  (quip move +>)
   ?.  (team src.bol our.bol)
-    %-  f-bake  :-  %more
+    %-  pre-bake
     =<  ta-done
     %-  ta-note:ta  %-  crip
     "talk-action stranger {(scow %p src.bol)}"
-  %-  f-bake  :-  %more
+  %-  pre-bake
   ta-done:(ta-action:ta ost.bol act)
 ::
 ::>  ||
@@ -1814,16 +1933,26 @@
 ::>  ||
 ::+|
 ::
+++  diff-talk-prize                                     ::<  accept prize
+  ::>
+  ::
+  |=  {wir/wire piz/prize}
+  ^-  (quip move +>)
+  =^  mos  +>.$
+    %-  pre-bake
+    ta-done:(ta-take:ta wir piz)
+  =^  mow  +>.$
+    log-all-to-file
+  [(welp mos mow) +>.$]
+::
 ++  diff-talk-rumor                                     ::<  accept rumor
   ::>
   ::
   |=  {wir/wire dif/rumor}
   ^-  (quip move +>)
   =^  mos  +>.$
-    %-  f-bake  :-  %more
-    ::TODO  parse wire to get source and target of change
-    =+  res=(tmp-parse-peer-path wir)
-    ta-done:(ta-hear:ta p.res [%& q.res] dif)
+    %-  pre-bake
+    ta-done:(ta-hear:ta wir dif)
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
@@ -1834,22 +1963,21 @@
   |=  pax/path
   ^-  (quip move +>)
   ?:  ?=({$sole *} pax)  ~&(%talk-broker-no-sole !!)
-  =+  qer=(tmp-parse-path pax)
+  =+  qer=(path-to-coins pax)
   ?.  (leak src.bol qer)  ~&(%peer-invisible !!)
   =^  mos  +>.$
-    %-  f-bake  :-  %more
+    %-  pre-bake
     ta-done:(ta-subscribe:ta src.bol pax)
   :_  +>.$
   :_  mos
   [ost.bol %diff %talk-prize (g-query qer)]
-
 ::
 ++  pull                                                ::<  unsubscribe
   ::>  unsubscribes.
   ::
   |=  pax/path
   ^-  (quip move +>)
-  %-  f-bake  :-  %more
+  %-  pre-bake
   ta-done:(ta-cancel:ta src.bol pax)
 ::
 ++  reap-friend                                         ::<  subscription n/ack
@@ -1859,12 +1987,14 @@
   ::TODO  this should deal with /reader subscriptions too.
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)
-  ?~  fal  [~ +>]
   %+  etch-friend  [%friend wir]
   |=  {nom/knot cir/circle}
+  ?~  fal
+    %-  pre-bake
+    ta-done:(ta-greet:ta nom cir)
   =.  u.fal  [>%reap-friend-fail nom cir< u.fal]
   %-  (slog (flop u.fal))
-  %-  f-bake  :-  %more
+  %-  pre-bake
   ta-done:(ta-leave:ta nom cir)
 ::
 ++  quit-friend                                         ::<  dropped subscription
@@ -1891,7 +2021,7 @@
   ^-  (quip move +>)
   %+  etch-repeat  [%repeat wir]
   |=  {num/@ud src/ship nom/knot}
-  (f-bake %done (strap num [%& src nom] ?=($~ fal)))
+  (f-bake %done (strap num [%& src nom] fal))
 ::
 ::>  ||
 ::>  ||  %logging
