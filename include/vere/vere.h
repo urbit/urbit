@@ -608,20 +608,18 @@
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
-        c3_c*   imp_c;                      //  -I, czar name
         c3_c*   nam_c;                      //  -n, unix hostname
-        c3_c*   raf_c;                      //  -r, raft flotilla
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_c*   tic_c;                      //  -t, ticket value
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
-        c3_c*   gen_c;                      //  -G, czar generator
+        c3_c*   sec_c;                      //  -s, secret
         c3_w    kno_w;                      //  -k, kernel version
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
-        c3_s    rop_s;                      //  -l, raft port
         c3_o    abo;                        //  -a, abort aggressively
         c3_o    bat;                        //  -b, batch create
+        c3_o    sic;                        //  -S, enter secret at prompt
         c3_o    gab;                        //  -g, test garbage collection
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute, no checkpoint  
@@ -1474,6 +1472,11 @@
         u3_pier_discover(u3_pier* pir_u,
                          c3_l     msc_l,
                          u3_noun  job);
+
+      /* u3_pier_rand(): fill a 512-bit (16-word) buffer.
+      */
+        void
+        u3_pier_rand(c3_w* rad_w);
 
       /* u3_pier_exit(): trigger a gentle shutdown.
       */

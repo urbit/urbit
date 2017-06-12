@@ -74,6 +74,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.dry = c3n;
+  u3_Host.ops_u.sic = c3n;
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.nuu = c3n;
@@ -81,7 +82,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:I:w:t:f:k:l:n:p:r:LabcdgmqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"s:B:I:w:t:f:k:l:n:p:LSabcdgmqvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -91,12 +92,8 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
       }
-      case 'G': {
-        u3_Host.ops_u.gen_c = strdup(optarg);
-        break;
-      }
-      case 'I': {
-        u3_Host.ops_u.imp_c = _main_presig(optarg);
+      case 's': {
+        u3_Host.ops_u.sec_c = strdup(optarg);
         break;
       }
       case 'w': {
@@ -128,12 +125,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         }
         break;
       }
-      case 'l': {
-        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
-          return c3n;
-        } else u3_Host.ops_u.rop_s = arg_w;
-        break;
-      }
       case 'n': {
         u3_Host.ops_u.nam_c = strdup(optarg);
         break;
@@ -142,10 +133,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.por_s = arg_w;
-        break;
-      }
-      case 'r': {
-        u3_Host.ops_u.raf_c = strdup(optarg);
         break;
       }
       case 'R': {
@@ -181,43 +168,60 @@ _main_getopt(c3_i argc, c3_c** argv)
     exit(1); /* (avoid simple usage msg) */
   }
 
-  if ( u3_Host.ops_u.gen_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-G only makes sense when creating a new galaxy\n");
-    return c3n;
-  }
-  
-  if ( u3_Host.ops_u.tic_c != 0 && ( u3_Host.ops_u.imp_c != 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-t only makes sense when creating a new non-galaxy\n");
-    return c3n;
-  }
+  /* fill in any missing security data, etc
+  */
+  if ( u3_Host.ops_u.nuu == c3y ) {
+    if ( u3_Host.ops_u.who_c == 0 ) {
+      fprintf(stderr, "comets are not yet supported; identify with -w\r\n");
+      return c3n;
+    }
+    else {
+      if ( c3n == u3_Host.ops_u.fak ) {
+        if ( (u3_Host.ops_u.tic_c == 0) && 
+             (strlen(u3_Host.ops_u.who_c) >= 4)
+           )
+        {
+          c3_c tic_c[29];
 
-  if ( u3_Host.ops_u.rop_s == 0 && u3_Host.ops_u.raf_c != 0 ) {
-    fprintf(stderr, "The -r flag requires -l.\n");
-    return c3n;
-  }
+          printf("enter your ticket: ~");
+          scanf("%28s", tic_c);
+          u3_Host.ops_u.tic_c = _main_presig(tic_c);
+        }
 
-  if ( (u3_Host.ops_u.tic_c == 0) && 
-       (u3_Host.ops_u.who_c != 0) && 
-       (c3n == u3_Host.ops_u.fak) 
-     )
-  {
-      c3_c tic_c[29];
+        if ( c3y == u3_Host.ops_u.sic ) {
+          c3_c sec_c[29];
 
-      printf("enter your secret: ~");
-      scanf("%28s",tic_c);
-      u3_Host.ops_u.tic_c = _main_presig(tic_c);
+          printf("enter your secret: ~");
+          scanf("%28s", sec_c);
+          u3_Host.ops_u.sec_c = _main_presig(sec_c);
+        }
+      }
+    }
+  } else {
+    if ( u3_Host.ops_u.sec_c != 0 ) {
+      fprintf(stderr, "-s only makes sense when creating a new ship\n");
+      return c3n;
+    }
+    
+    if ( u3_Host.ops_u.tic_c != 0 ) {
+      fprintf(stderr, "-t only makes sense when creating a new ship\n");
+      return c3n;
+    }
+
+    if ( u3_Host.ops_u.who_c != 0  ) {
+      fprintf(stderr, "-w only makes sense when creating a new ship\n");
+      return c3n;
+    }
+    if ( u3_Host.ops_u.pil_c != 0) {
+      fprintf(stderr, "-B only makes sense when creating a new ship\n");
+      return c3n;
+    }
+
   }
 
   if ( c3y == u3_Host.ops_u.bat ) {
     u3_Host.ops_u.dem = c3y;
     u3_Host.ops_u.nuu = c3y;
-  }
-
-  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.pil_c != 0) {
-    fprintf(stderr, "-B only makes sense when bootstrapping a new instance\n");
-    return c3n;
   }
 
   if ( u3_Host.ops_u.pil_c != 0 ) {

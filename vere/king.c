@@ -323,20 +323,50 @@ _boothack_cb(uv_connect_t *conn, int status)
     u3z(whu);
   }
 
-  {
-    if ( !u3_Host.ops_u.tic_c ) {
-      fprintf(stderr, "boot: F A K E ship with null security (use -t)\r\n");
-      sec = 0;
-    } 
-    else {
-      u3_noun suc = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.tic_c));
+  if ( c3y == u3_Host.ops_u.fak ) {
+    fprintf(stderr, "boot: F A K E ship with null security\r\n");
+
+    sec = 0;
+    tic = 0;
+  }
+  else {
+    if ( 0 == u3_Host.ops_u.sec_c ) {
+      c3_w eny_w[16];
+
+      u3_pier_rand(eny_w);
+      sec = u3i_words(2, eny_w);
+      {
+        u3_noun rot   = u3dc("scot", 'p', u3k(sec));
+        c3_c*   rot_c = u3r_string(rot);
+
+        fprintf(stderr, "boot: %s: R O O T  P A S S W O R D %s\r\n", 
+                               u3_Host.ops_u.who_c,
+                               rot_c);
+        fprintf(stderr, "      (write it down and put it in your wallet)\r\n");
+
+        u3z(rot);
+        c3_free(rot_c);
+      }
+    } else {
+      u3_noun suc = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.sec_c));
 
       if ( u3_nul == suc ) {
-        fprintf(stderr, "boot: malformed secret (-t)\r\n");
+        fprintf(stderr, "boot: malformed secret (-s)\r\n");
         exit(1);
       }
       sec = u3k(u3t(suc));
       u3z(suc);
+    }
+
+    {
+      u3_noun tuc = u3dc("slaw", 'p', u3i_string(u3_Host.ops_u.tic_c));
+
+      if ( u3_nul == tuc ) {
+        fprintf(stderr, "boot: malformed ticket (-t)\r\n");
+        exit(1);
+      }
+      tic = u3k(u3t(tuc));
+      u3z(tuc);
     }
   }
   tic = u3k(sec);
