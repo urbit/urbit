@@ -1022,7 +1022,7 @@
               :-  %fast
               %^  cat  7
                 p.u.yed.caq.dur
-              (en:r:cluy q.u.yed.caq.dur (jam ham))
+              (en:crub q.u.yed.caq.dur (jam ham))
             ?:  &(=(~ lew.wod.dur) =(%back -.ham))
               [wasp ..wisp]
             =^  tuy  +>.$
@@ -1190,7 +1190,7 @@
       ::  loy: keypair core
       ::
       =/  fak  =(0 `@`sec)
-      ~&  [%user fak sec]
+      ~&  [%user fak sec hen]
       =+  loy=(pit:nu:crub 512 ?:(fak our sec))
       =+  pub=`pass`pub:ex:loy
       ::  ?<  &(!fak !=((zeno her) fig:ex:loy))
@@ -1890,7 +1890,7 @@
   ++  clew
     |=  {hen/duct {our/ship his/ship} loq/loco}
     ^-  {(list move) fort}
-    ~&  [our+our his+his message+loq]
+    ~&  [%clew our+our his+his loco+loq]
     ?:  ?=($ping -.loq)
       [~ fox]
     =^  gob  fox  
@@ -1931,7 +1931,6 @@
       ~&  [%beer p.bon]
       :*  [hen [%slip %c %init p.bon]]
           [hen [%give %init p.bon]]
-          [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
           [hen [%slip %g %init p.bon]]
           [hen [%slip %d %init p.bon]]                  ::  must be after gall
@@ -1949,7 +1948,7 @@
         $ouzo
       ::  ~&  [%to (flam (shaf %flap q.bon))]
       :_  fox
-      [[gad.fox [%give %send p.bon q.bon]] ~]
+      [[?~(gad.fox hen gad.fox) [%give %send p.bon q.bon]] ~]
     ::
         $wine
       :_  fox
@@ -2009,6 +2008,7 @@
         ?-    -.kyz
             $barn
           [~ fox(gad hen)]
+        ::
             $cash
           (~(have am [now fox]) p.kyz q.kyz)
         ::
