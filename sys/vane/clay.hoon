@@ -347,6 +347,7 @@
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
           $%  {$woot p/ship q/coop}                     ::
+              {$send p/lane:ames q/@}                   ::  transmit packet
           ==  ==                                        ::
               $:  $c                                    ::  by %clay
           $%  {$note p/@tD q/tank}                      ::
@@ -3543,6 +3544,7 @@
         `cage`p.q.q.hin
     ==
   ?-    -.+.q.hin
+  ::
       $crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]
   ::
@@ -3670,6 +3672,9 @@
             (bind p.+.q.hin rant-to-rand)
         ==
     ==
+  ::
+      $send
+    [[[hen %give +.q.hin] ~] ..^$]
   ::
       $woot
     [~ ..^$]
@@ -3993,6 +3998,10 @@
                 `cage`p.q.hin
             ==
           ?-    -.+.hin
+          ::
+              $send
+            [[[hen %give +.q.hin] ~] ..^$]
+          ::
               $crud
             [[[hen %slip %d %flog +.hin] ~] +>.$]
           ::

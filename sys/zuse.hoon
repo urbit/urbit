@@ -333,6 +333,7 @@
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
+          {$send p/lane:ames q/@}                       ::  transmit packet
           {$writ p/riot}                                ::  response
       ==                                                ::
     ++  task                                            ::  in request ->$

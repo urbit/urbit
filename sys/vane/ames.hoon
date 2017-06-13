@@ -896,8 +896,10 @@
             ::  dah: handle of stretched ticket
             ::
             =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q:sen))))
-            =+  key=(shax ryt)  :: XX no stretch
+            ~&  [%kuch-ticket her `@p`ryt]
+            =+  key=(shax ryt)  :: XX true stretch
             =+  dah=(shaf %hand key)
+            ~&  [%kuch-hands `@p`dah `@p`had]
             ?.  =(dah had)  ~
             `[key ..kuch(yed.caq.dur [~ had key])]
           [~ u.dyv ..kuch]
@@ -1209,6 +1211,7 @@
       ::  `tic` is the ticket; stretch and 
       ::  install it as a symmetric key
       ::
+      ~&  [%ticket `@p`tic]
       =+  key=(shax tic)    ::  XX real stretch
       =+  dad=(sein:title her)
       ~&  [%user-auth her `@p`sec `@p`(mug key)]
@@ -1947,6 +1950,7 @@
       (clod p.bon q.bon r.bon hen [%west p.bon +.r.bon q.bon s.bon])
         $ouzo
       ::  ~&  [%to (flam (shaf %flap q.bon))]
+      ~?  =(~ gad.fox)  [%soft-send hen]
       :_  fox
       [[?~(gad.fox hen gad.fox) [%give %send p.bon q.bon]] ~]
     ::
@@ -2007,6 +2011,7 @@
         ^-  {(list boon) fort}
         ?-    -.kyz
             $barn
+          ~&  [%knob-gad hen]
           [~ fox(gad hen)]
         ::
             $cash
