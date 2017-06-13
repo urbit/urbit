@@ -355,12 +355,14 @@ if args.source is None:
 payload = {"source": args.source, "sink": args.sink}
 logging.debug(['payload', json.dumps(payload)])
 
-if args.pier is None:
-  PORT = os.environ.get('LENS_PORT', 12321)
-  logging.warn("No pier specified, looking on port " + str(PORT))
-else:
+if args.pier is not None:
   with open(args.pier + "/.urb/ports.json") as ports:
     PORT = json.load(ports)["loopback"]
+elif os.environ.has_key('LENS_PORT'):
+  PORT = os.environ['LENS_PORT']
+else:
+  PORT = 12321
+  logging.warn("No pier specified, looking on port " + str(PORT))
                
 url = "http://localhost:%s" % PORT
 r = requests.post(url, data=json.dumps(payload))
