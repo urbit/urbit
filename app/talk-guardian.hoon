@@ -1099,7 +1099,7 @@
         %peer
         /burden
         [sen %talk-guardian]
-        /burden
+        /burden/(scot %p our.bol)
     ==
   ::
   ++  da-observe                                        ::<  watch burden bearer
@@ -1790,12 +1790,12 @@
     ::TODO  only avoid src.bol when they sent a burden or similar?
     ::TODO  shouldn't this prevent senders from getting their message echoed
     ::      to them?
-    ?:  =(who src.bol)  ~
+    ?:  =(who.qer src.bol)  ~
     ?.  ?=($story -.dif)  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
     ~&  [%sending-burden nom.dif -.dif.dif who]
-    `[%burden nom.dif (tmp-their-change who dif.dif)]
+    `[%burden nom.dif (tmp-their-change who.qer dif.dif)]
     ::
       $report
     ::  only send changes we didn't get from above.
@@ -1809,7 +1809,7 @@
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape.soy)  ~
     ~&  [%sending-report nom.dif -.dif.dif who]
-    `[%burden nom.dif (tmp-their-change who dif.dif)]
+    `[%burden nom.dif (tmp-their-change (sein our.bol) dif.dif)]
     ::
       $circle
     ?.  ?=($story -.dif)  ~
@@ -1860,7 +1860,7 @@
   |^  %-  af  :~
           [%reader ul]
           [%friend ul]
-          [%burden ul]
+          [%burden (at /[%p])]
           [%report ul]
           [%circle (al knot rang)]
       ==
@@ -1889,7 +1889,7 @@
   ?-  -.qer
     $reader   (team our.bol who)
     $friend   &
-    $burden   =(our.bol (sein who))
+    $burden   &(=(our.bol (sein who)) =(who who.qer))
     $report   =(who (sein our.bol))
     ::
       $circle
