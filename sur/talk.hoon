@@ -49,7 +49,7 @@
       {$more mor/(list delta)}                          ::<  multiple changes
       ::  messaging state                               ::
       {$out cir/circle out/(list thought)}              ::<  msgs into outbox
-      {$done don/(map @ud {partner (unit tang)})}       ::<  msgs delivered
+      {$done num/@ud}                                   ::<  msgs delivered
       ::  shared ui state                               ::
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname

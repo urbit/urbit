@@ -538,6 +538,22 @@
       (so-hear:sor | q.res dif.dif)
     ==
   ::
+  ++  ta-repeat                                         ::<  message delivered
+    ::>
+    ::
+    |=  {num/@ud who/partner fal/(unit tang)}
+    ^+  +>
+    =+  oot=(~(get by q.outbox) num)
+    ?~  oot  ~&([%ta-repeat-none num] +>.$)  ::TODO  crash?
+    =.  aud.u.oot
+      =+  olg=(~(got by aud.u.oot) who)
+      %+  ~(put by aud.u.oot)  who
+      :-  -.olg
+      ?~(fal %received ~>(%slog.[0 u.fal] %rejected))
+    =.  +>.$
+      (ta-think | our.bol u.oot ~)
+    (ta-delta %done num)
+  ::
   ::>  ||
   ::>  ||  %messaging
   ::>  ||
@@ -1074,7 +1090,7 @@
       $(+>.^$ ^$(dif i.mor.dif), mor.dif t.mor.dif)
       ::
       $out    (da-change-out +.dif)
-      $done   (da-change-done (~(tap by don.dif)))
+      $done   (da-change-done +.dif)
       $glyph  (da-change-glyph +.dif)
       $nick   (da-change-nick +.dif)
       $story  (da-change-story +.dif)
@@ -1134,36 +1150,12 @@
       out       t.out
     ==
   ::
-  ++  da-change-done                                    ::<  sent & receives msgs
+  ++  da-change-done                                    ::<  delivered messages
     ::>
     ::
-    ::TODO  this needs a lot of work, maybe?
-    ::      make this dumber, make the ++ta equivalent smarter!
-    |=  don/(list {num/@ud who/partner fal/(unit tang)})
+    |=  num/@ud
     ^+  +>
-    ?~  don  +>
-    =+  oot=(~(get by q.outbox) num.i.don)
-    ?~  oot  ~&([%da-change-done-none num.i.don] +>.$)  ::TODO  crash?
-    =.  aud.u.oot
-      =+  olg=(~(got by aud.u.oot) who.i.don)
-      %+  ~(put by aud.u.oot)  who.i.don
-      :-  -.olg
-      ?~(fal.i.don %received ~>(%slog.[0 u.fal.i.don] %rejected))
-    =.  +>.$
-      +>.$  ::TODO!!!  da-think???
-    $(q.outbox (~(del by q.outbox) num.i.don))
-    ::|=  {num/@ud pan/partner fal/(unit tang)}
-    ::=+  oot=(~(get by q.outbox) num)
-    ::?~  oot  ~|([%ta-repeat-none num] !!)
-    ::=.  q.outbox  (~(del by q.outbox) num)
-    ::=.  aud.u.oot
-    ::  =+  olg=(~(got by aud.u.oot) pan)
-    ::  %+  ~(put by aud.u.oot)  pan
-    ::  :-  -.olg
-    ::  ?~  fal  %received
-    ::  ~>  %slog.[0 u.fal]
-    ::  %rejected
-    ::(ta-think | our.bol u.oot ~)
+    +>(q.outbox (~(del by q.outbox) num))
   ::
   ++  da-change-glyph                                   ::<  un/bound glyph
     ::>
@@ -2029,7 +2021,8 @@
   ^-  (quip move +>)
   %+  etch-repeat  [%repeat wir]
   |=  {num/@ud src/ship nom/knot}
-  (f-bake %done (strap num [%& src nom] fal))
+  %-  pre-bake
+  ta-done:(ta-repeat:ta num [%& src nom] fal)
 ::
 ::>  ||
 ::>  ||  %logging
