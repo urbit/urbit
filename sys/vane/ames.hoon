@@ -895,12 +895,13 @@
             ::  key: stretched ticket
             ::  dah: handle of stretched ticket
             ::
-            =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q:sen))))
-            ~&  [%kuch-ticket her `@p`ryt]
+            =+  ^=  ryt
+                ?:  fak.ton
+                  her
+                (end 6 1 (shaf %tick (mix her (shax sec:ex:q:sen))))
             =+  key=(shax ryt)  :: XX true stretch
             =+  dah=(shaf %hand key)
-            ~&  [%kuch-hands `@p`dah `@p`had]
-            ?.  =(dah had)  ~
+            405G?.  =(dah had)  ~
             `[key ..kuch(yed.caq.dur [~ had key])]
           [~ u.dyv ..kuch]
         ::
@@ -908,7 +909,7 @@
           |=  key/code                                  ::  hear foreign code
           ^+  +>
           =+  had=(shaf %hand key)
-          ~&  [%wasc her `@p`(mug had)]
+          ~&  [%wasc her `@p`had `@p`key]
           %_  ..wasc
             yed.caq.dur  [~ had key]
             qim.caq.dur  (~(put by qim.caq.dur) had key)
