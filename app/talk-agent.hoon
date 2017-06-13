@@ -273,7 +273,7 @@
       ::
         $circle
       %.  gaz.piz
-      %=  ta-change-grams
+      %=  ta-lesson
         sources   sre.loc.cos.piz
         mirrors   (~(put by rem.cos.piz) incir loc.cos.piz)
         remotes   (~(put by rem.pes.piz) inpan loc.pes.piz)
@@ -310,7 +310,7 @@
         ~&([%unexpected-circle-rumor -.dif] +>)
       ::
         $grams
-      (ta-change-grams gaz.dif)
+      (ta-lesson gaz.dif)
       ::
         $config
       %=  +>
@@ -356,16 +356,6 @@
     =.  nik  (nik-from-nak nek)
     sh-done:~(sh-prod sh cli)
   ::
-  ++  ta-change-grams                                      ::<  apply messages
-    ::>  applies new or changed telegrams.
-    ::
-    |=  gaz/(list telegram)
-    ^+  +>
-    =.  +>.$  (ta-lesson gaz)
-    ::TODO  maybe move to ta-learn and pass num?
-    =<  sh-done
-    (~(sh-grams sh cli) gaz)
-  ::
   ::>  ||
   ::>  ||  %messages
   ::>  ||
@@ -396,21 +386,24 @@
     ::
     |=  gam/telegram
     ^+  +>
-    %=  +>
-      grams  [gam grams]
-      count  +(count)
-      known  (~(put by known) uid.tot.gam count)
+    =:  grams  [gam grams]
+        count  +(count)
+        known  (~(put by known) uid.tot.gam count)
     ==
+    =<  sh-done
+    (~(sh-gram sh cli) gam)
   ::
   ++  ta-revise                                         ::<  revise message
     ::>  modify a telegram we know.
     ::
     |=  {num/@ud gam/telegram}
     =+  way=(sub count num)
-    ?:  =(gam (snag (dec way) grams))
-      +>.$                                            ::  no change
+    =+  old=(snag (dec way) grams)
+    ?:  =(gam old)  +>.$                                ::  no change
     =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
-    +>.$
+    ?:  =(sam.tot.gam sam.tot.old)  +>.$                ::  just audience change
+    =<  sh-done
+    (~(sh-gram sh cli) gam)
   ::
   ::>  ||
   ::>  ||  %console
