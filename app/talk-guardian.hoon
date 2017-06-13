@@ -1855,7 +1855,6 @@
   ::>
   ::
   ^-  $-((list coin) query)
-  ::TODO  silently crashes, make it loud!
   =>  depa
   |^  %-  af  :~
           [%reader ul]
@@ -1979,6 +1978,15 @@
   ^-  (quip move +>)
   %-  pre-bake
   ta-done:(ta-cancel:ta src.bol pax)
+::
+++  reap                                                ::<  catch-all reap
+  ::>
+  ::
+  |=  {wir/wire fal/(unit tang)}
+  ^-  (quip move +>)
+  ?~  fal  [~ +>]
+  ~|  reap-fail+wir
+  (mean u.fal)
 ::
 ++  reap-friend                                         ::<  subscription n/ack
   ::>  if subscribing failed, update state to reflect
