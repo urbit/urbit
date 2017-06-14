@@ -213,8 +213,14 @@
     ::>  populate state on first boot.
     ::>  creates our default mailbox and journal.
     ::
-    ::TODO  but now init it spread out over two arms? ugly!
-    =<  (ta-delta %init ~)  ::  side-effects
+    =<  %-  ta-deltas  ::  side-effects
+      =+  sen=(above our.bol)
+      ?:  ?|  !=(%czar (clan sen))
+              =(sen our.bol)
+              =(%pawn (clan our.bol))
+          ==
+        ~
+      [%init ~]~
     %+  roll
       ^-  (list {security knot cord})
       :~  [%brown (main our.bol) 'default home']
@@ -1168,18 +1174,11 @@
   ++  da-init                                           ::<  startup side-effects
     ::>
     ::
-    =+  sen=(above our.bol)
-    ::TODO  move this logic to ta-init
-    ?:  ?|  !=(%czar (clan sen))
-            =(sen our.bol)
-            =(%pawn (clan our.bol))
-        ==
-      ..da-init
     %-  da-emit
     :*  0
         %peer
         /burden
-        [sen %talk-guardian]
+        [(above our.bol) %talk-guardian]
         /burden/(scot %p our.bol)
     ==
   ::
