@@ -516,7 +516,6 @@
       ~&([%ignoring-rumor -.dif] +>)
       ::
         $burden
-      ~&  [%hear-burden -.dif.dif]
       ?+  -.dif.dif
         %-  (ta-know nom.dif)  |=  sor/_so  =<  so-done
         (so-hear:sor & [our.bol nom.dif] dif.dif)
@@ -1512,7 +1511,7 @@
       %+  turn  pas
       |=  pan/partner
       ^-  (list card)
-      ?:  =(pan [%& our.bol nom])  ~  ::  ignore self-subs  ::TODO  also abjure?
+      ?:  =(pan [%& our.bol nom])  ~                    ::  ignore self-subs
       ::>  subscribe starting at the last message we got,
       ::>  or if we haven't gotten any yet, messages
       ::>  from up to a day ago.
@@ -1546,8 +1545,7 @@
           $&                                            ::<  circle partner
         :_  ~
         :*  %pull
-        ::TODO  update path
-            /friend/show/[nom]/(scot %p hos.p.pan)/[nom.p.pan]
+            /circle/[nom]/(scot %p hos.p.pan)/[nom.p.pan]
             [hos.p.pan %talk-guardian]
             ~
         ==
@@ -1740,8 +1738,7 @@
 ++  i-change                                            ::<  delta to rumor
   ::>
   ::
-  ::TODO  remove who from sample
-  |=  {who/ship weg/(list coin) dif/delta}
+  |=  {weg/(list coin) dif/delta}
   ^-  (unit rumor)
   =+  qer=(coins-to-query weg)
   ?-  -.qer
@@ -1769,7 +1766,6 @@
     ?.  ?=($story -.dif)  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
-    ~&  [%sending-burden nom.dif -.dif.dif who]
     `[%burden nom.dif (tmp-their-change who.qer dif.dif)]
     ::
       $report
@@ -1783,14 +1779,12 @@
     ?.  burden.soy  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape.soy)  ~
-    ~&  [%sending-report nom.dif -.dif.dif who]
     `[%burden nom.dif (tmp-their-change (above our.bol) dif.dif)]
     ::
       $circle
     ?.  ?=($story -.dif)  ~
     ?.  =(nom.qer nom.dif)  ~
     ?:  ?=($follow -.dif.dif)  ~                        ::  internal-only delta
-    ~&  [%sending-circle nom.dif -.dif.dif who]
     `[%circle dif.dif]
   ==
 ::
@@ -1804,7 +1798,7 @@
   %+  murn  (~(tap by sup.bol))
   |=  {b/bone s/ship p/path}
   ^-  (unit move)
-  =+  rum=(i-change s (path-to-coins p) dif)
+  =+  rum=(i-change (path-to-coins p) dif)
   ::TODO  %quit bones that are done with their subscription.
   ::  ...but that would also require a ta-cancel call to remove
   ::  them from the presence list! how do?
