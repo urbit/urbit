@@ -8,6 +8,10 @@ script: make && make test # no ./configure
 
 addons:
   apt:
+    sources:
+    # precise, which is the default, doesn't have an official libuv1 package
+    - sourceline: 'deb http://us.archive.ubuntu.com/ubuntu/ xenial universe'
+    #
     packages:
     - libgmp3-dev
     - libsigsegv-dev
@@ -23,4 +27,3 @@ addons:
     - re2c
     - libcurl4-gnutls-dev
     - python
-
