@@ -492,11 +492,7 @@
         ==
       ::
           $help
-        ::  =*  type  +.p.mad
-        ::  ?~  type
-        ::    (dy-show-help-overview p.q.cay)
         (dy-inspect +.p.mad p.q.cay)
-::        (dy-show-help-for-topic type p.q.cay)
       ::
           $poke
         %-  he-card(poy ~)
@@ -590,7 +586,7 @@
             $:  $core
                 name/tape
                 docs/what
-                r/span
+                sut/span
                 con/coil
                 children/(unit item)
             ==
@@ -599,12 +595,13 @@
                 name/tape
                 docs/what
                 f/foot
-                r/span
+                sut/span
             ==
             :>  inspecting a single chapter on a core.
             $:  $chapter
                 name/tape
                 docs/what
+                sut/span
                 con/coil
                 chapter-id/@
             ==
@@ -671,7 +668,7 @@
           ?:  !=(i.t.topics u.p.p.q.i.tombs)
             ::  this isn't the topic.
             $(tombs t.tombs)
-          `[%chapter (trip i.t.topics) q.p.q.i.tombs q.sut p.i.tombs]
+          `[%chapter (trip i.t.topics) q.p.q.i.tombs p.sut q.sut p.i.tombs]
         ::
             {$face *}
           ?.  ?=(term q.p.sut)
@@ -718,7 +715,7 @@
             (build-inspectable-recursively q.sut)
         ::
             {$core *}
-          =/  name/term  (fall p.r.q.sut '')
+          =*  name  (fall p.r.q.sut '')
           =*  compiled-against  (build-inspectable-recursively p.sut)
           `[%core (trip name) q.r.q.sut p.sut q.sut compiled-against]
         ::
@@ -730,8 +727,8 @@
           `[%face (trip q.p.sut) p.p.sut compiled-against]
         ::
             {$fork *}
-          =/  spans  (~(tap in p.sut))
-          =/  items  (turn spans build-inspectable-recursively)
+          =*  spans  (~(tap in p.sut))
+          =*  items  (turn spans build-inspectable-recursively)
           (roll items join-items)
         ::
             {$help *}
@@ -782,11 +779,12 @@
       ::
       :>  translate the internals of a core's {tomb} into an {overview}.
       ++  arms-as-overview
-        |=  a/(map term (pair what foot))
+        |=  {a/(map term (pair what foot)) sut/span}
         ^-  overview
         %+  turn  (~(tap by a))
           |=  (pair term (pair what foot))
-          [%item (weld "++" (trip p)) p.q]
+          =*  doc  (select-arm-docs p.q q.q sut)
+          [%item (weld "++" (trip p)) -.doc]
       ::
       :>  if {arm-name} is an arm in {c}, returns its documentation.
       ++  find-arm-in-coil
@@ -806,7 +804,7 @@
       :>  returns an overview for arms which are part of unnamed chapters,
       :>  and an overview of the named chapters.
       ++  arm-and-chapter-overviews
-        |=  {con/coil core-name/tape}
+        |=  {sut/span con/coil core-name/tape}
         ^-  {overview overview}
         =|  arm-docs/overview                           :<  documented arms
         =|  chapter-docs/overview                       :<  documented chapters
@@ -818,7 +816,7 @@
         ?~  p.p.current
           ::  this chapter has no name. add all the foot documentation
           ::  to arm-docs.
-          =.  arm-docs  (weld arm-docs (arms-as-overview q.current))
+          =.  arm-docs  (weld arm-docs (arms-as-overview q.current sut))
           $(tombs t.tombs)
         ::  this chapter has a name. add it to the list of chapters
         =.  chapter-docs
@@ -829,10 +827,10 @@
       ::
       :>    returns an overview of the arms in a specific chapter.
       ++  arms-in-chapter
-        |=  {con/coil chapter-id/@}
+        |=  {sut/span con/coil chapter-id/@}
         ^-  overview
-        =/  chapter-tomb  (~(got by q.s.con) chapter-id)
-        (sort-overview (arms-as-overview q.chapter-tomb))
+        =*  chapter-tomb  (~(got by q.s.con) chapter-id)
+        (sort-overview (arms-as-overview q.chapter-tomb sut))
       ::
       :>  sort the items.
       ++  sort-overview
@@ -875,9 +873,9 @@
       ::
       :>    renders the documentation for a full core.
       ++  print-core
-        |=  {core-name/tape docs/what spn/span con/coil uit/(unit item)}
+        |=  {core-name/tape docs/what sut/span con/coil uit/(unit item)}
         ^-  tang
-        =+  [arms chapters]=(arm-and-chapter-overviews con core-name)
+        =+  [arms chapters]=(arm-and-chapter-overviews sut con core-name)
         ;:  weld
           (print-header (trip (fall p.r.con '')) q.r.con)
         ::
@@ -898,6 +896,27 @@
           (print-overview [%header `['compiled against:' ~] compiled]~)
         ==
       ::
+      ++  select-arm-docs
+        |=  {arm-doc/what f/foot sut/span}
+        ^-  {what what}
+        ::  ~&  [%p-f p.f]
+        =+  foot-span=(~(play ut sut) p.f)
+        ::  ~&  [%dy-foot-span (dy-show-span-noun foot-span)]
+        ::  ~&  [%foot-span foot-span]
+        =+  raw-product=(what-from-span foot-span)
+        =/  product-product/what
+          ?.  ?=({$core *} foot-span)
+            ~
+          =*  inner-span  (~(play ut foot-span) [%limb %$])
+          (what-from-span inner-span)
+        :-
+          ?~  arm-doc
+            raw-product
+          arm-doc
+        ?~  arm-doc
+          product-product
+        raw-product
+      ::
       :>    renders the documentation for a single arm in a core.
       ++  print-arm
         |=  {arm-name/tape arm-doc/what f/foot sut/span}
@@ -912,29 +931,7 @@
         ::
         ::  todo: need to get the sample here. also hoist this to the general
         ::  core printing machinery, too.
-        ~&  [%p-f p.f]
-        =/  foot-span  (~(play ut sut) p.f)
-        ~&  [%dy-foot-span (dy-show-span-noun foot-span)]
-        ~&  [%foot-span foot-span]
-        =/  raw-product/what  (what-from-span foot-span)
-        =/  product-product/what
-          ?.  ?=({$core *} foot-span)
-            ~
-          =*  inner-span  (~(play ut foot-span) [%limb %$])
-          (what-from-span inner-span)
-        =/  main-doc/what
-          ?~  arm-doc
-            raw-product
-          arm-doc
-        =/  product-doc/what
-          ?~  arm-doc
-            ~
-          raw-product
-        ~&  [%arm-doc arm-doc]
-        ~&  [%raw-product raw-product]
-        ~&  [%product-product product-product]
-        ~&  [%main-doc main-doc]
-        ~&  [%product-doc product-doc]
+        =+  [main-doc product-doc]=(select-arm-docs arm-doc f sut)
         %+  weld
           (print-header arm-name main-doc)
           ?~  product-doc
@@ -945,7 +942,7 @@
       ::
       :>    renders the documentation for a chapter in a core.
       ++  print-chapter
-        |=  {name/tape doc/what con/coil chapter-id/@}
+        |=  {name/tape doc/what sut/span con/coil chapter-id/@}
         ;:  weld
           (print-header name doc)
         ::
@@ -953,7 +950,7 @@
             ~
           (print-sections q.u.doc)
         ::
-          =+  arms=(arms-in-chapter con chapter-id)
+          =+  arms=(arms-in-chapter sut con chapter-id)
           ?~  arms
             ~
           (print-overview [%header `['arms:' ~] arms]~)
@@ -1038,8 +1035,8 @@
           ^-  tang
           =+  spaces=(mul indentation 2)
           =+  line=(weld (dy-build-space spaces) name)
-          =+  line-len=(lent line)
-          =+  name-len=(lent name)
+          =*  line-len  (lent line)
+          =*  name-len  (lent name)
           =+  diff=(sub max-key-length name-len)
           =?  line  (gth diff 0)
             (weld line (dy-build-space diff))
