@@ -309,7 +309,9 @@
         :*  [[%& our.bol nom] ~ ~]
             des
             [| |]
-            [typ ~]
+            :-  typ
+            ?.  ?=(?($white $green) typ)  ~
+            [our.bol ~ ~]
         ==
       %-  react
       [%fail (crip "{(trip nom)}: already exists") `act]
@@ -490,22 +492,10 @@
       ~&([%ignoring-prize -.piz] +>)
       ::
         $burden
-      %-  ta-deltas
       %+  roll  (~(tap by sos.piz))
-      |=  {{n/knot b/burden} d/(list delta)}
-      =-  [[%story n %bear b(gaz -)] d]
-      ::TODO  change audiences of messages from (sein our)/n into our/n
-      %+  turn  gaz.b
-      |=  t/telegram
-      =-  t(aud.tot -)
-      =/  oud
-        (~(get by aud.tot.t) [%& (sein our.bol) n])
-      ?~  oud  ::TODO  seems like it should never occur?
-        ~&  %unexpected-parent-not-audience
-        aud.tot.t
-      =.  aud.tot.t
-        (~(del by aud.tot.t) [%& (sein our.bol) n])
-      (~(put by aud.tot.t) [%& our.bol n] u.oud)
+      |=  {{n/knot b/burden} _..ta-take}
+      =<  so-done
+      (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
       ::
         $circle
       =+  res=(tmp-parse-diff-path wir)
@@ -528,8 +518,9 @@
         (so-hear:sor & [our.bol nom.dif] dif.dif)
         ::
           $new
-        ::TODO  we make a %bear delta with just the config set.
-        (ta-delta %story nom.dif %bear ~ [con.dif.dif ~] [~ ~])
+        =<  so-done
+        %-  ~(so-hear so nom.dif ~ (fall (~(get by stories) nom.dif) *story))
+        [& [our.bol nom.dif] %bear ~ [cof.dif.dif ~] [~ ~]]
       ==
       ::
         $circle
@@ -688,6 +679,31 @@
       ^+  +>
       (so-delta %story nom dif)
     ::
+    ++  so-config-full                                  ::<  split full config
+      ::>
+      ::
+      |=  {old/(unit config) cof/config}
+      ^+  +>
+      ~&  %so-config-full
+      %-  so-deltas
+      %+  turn
+        %+  weld
+          ^-  (list diff-story)
+          ?~  old  ~
+          ::TODO?  what to do about sre?
+          :~  ::[%follow | sre.u.old]
+              [%config so-cir %permit | ses.con.u.old]
+          ==
+        ^-  (list diff-story)
+        :~  ::[%follow & sre.cof]  ::TODO  double-check da-$follow checks existing sre
+            [%config so-cir %caption cap.cof]
+            [%config so-cir %filter fit.cof]
+            [%config so-cir %secure sec.con.cof]
+            [%config so-cir %permit & ses.con.cof]
+        ==
+      |=  d/diff-story
+      [%story nom d]
+    ::
     ::>  ||
     ::>  ||  %data
     ::>  ||
@@ -734,15 +750,24 @@
         ::TODO  we check for foreigns here, but they should just not get sent
         ::      in the first place. update ++-change or whatever!
         ::      (we don't care for remote remotes, etc.)
-        $new      $(dif [%config src %full con.dif])
-        $bear     ~&(%so-hear-unexpected-bear +>)
+        $new      ?:  =(src so-cir)
+                    ~&  %new-by-us
+                    (so-config-full ~ cof.dif)
+                  ~&  %new-by-other
+                  $(dif [%config src %full cof.dif])
+        $bear     ~&(%so-bear (so-bear bur.dif))
+        $burden   ~&(%burden-not-rumor +>)
         $grams    (so-lesson gaz.dif)
-        $config   ::TODO  accept burden change by parents.
-                  ::  ignore foreign mirrors.
-                  ?.  |(=(src cir.dif) =(src so-cir))
-                    ~&  %unexpected-ignoring-remote-config
-                    +>
-                  (so-delta-our dif)
+        $config   ::  full changes to us need to get split up.
+                  ?:  &(=(cir.dif so-cir) ?=($full -.dif.dif))
+                    (so-config-full `shape cof.dif.dif)
+                  ::  remotes are fine.
+                  ?:  =(src cir.dif)
+                    (so-delta-our dif)
+                  ::  remotes of remotes are not.
+                  ~&  %unexpected-ignoring-remote-config
+                  ~?  =(src so-cir)  %but-src-is-us
+                  +>
         $status   ::  ignore foreign remotes.
                   ?.  |(=([%& src] pan.dif) =(src so-cir))
                     ~&  %unexpected-ignoring-remote-status
@@ -751,6 +776,48 @@
         $follow   ~&(%follow-not-rumor +>)  ::TODO  crash?
         $remove   (so-delta-our %config src %remove ~)
       ==
+    ::
+    ++  so-bear                                         ::<  accept burden
+      ::>
+      ::
+      |=  {gaz/(list telegram) cos/lobby pes/crowd}
+      ^+  +>
+      ::  local config
+      =.  ..so-bear
+        (so-config-full `shape loc.cos)
+      ::  remote config
+      =.  ..so-bear
+        %+  roll  (~(tap by rem.cos))
+        |=  {{r/circle c/config} _..so-bear}
+        (so-delta-our %config r %full c)
+      ::  local presence
+      =.  ..so-bear
+        %+  roll  (~(tap by loc.pes))
+        |=  {{w/ship s/status} _..so-bear}
+        (so-delta-our %status so-pan w %full s)
+      ::  remote presence
+      =.  ..so-bear
+        %+  roll  (~(tap by rem.pes))
+        |=  {{p/partner g/group} _..so-bear}
+        %+  roll  (~(tap by g))
+        |=  {{w/ship s/status} _..so-bear}
+        (so-delta-our %status p w %full s)
+      ::  telegrams
+      =.  ..so-bear
+        %+  so-delta-our  %grams
+        %+  turn  gaz
+        |=  t/telegram
+        =-  t(aud.tot -)
+        =/  oud
+          (~(get by aud.tot.t) [%& (sein our.bol) nom])
+        ?~  oud  ::TODO  seems like it should never occur?
+          ~&  %unexpected-parent-not-audience
+          aud.tot.t
+        =.  aud.tot.t
+          (~(del by aud.tot.t) [%& (sein our.bol) nom])
+        (~(put by aud.tot.t) [%& our.bol nom] u.oud)
+      ::  burden flag
+      (so-delta-our %burden &)
     ::
     ::>  ||
     ::>  ||  %changes
@@ -1197,10 +1264,10 @@
     |=  {nom/knot dif/diff-story}
     ^+  +>
     ?+  -.dif
-      sa-done:(~(sa-change sa nom (~(got by stories) nom)) dif)
+      sa-done:(~(sa-change sa nom (fall (~(get by stories) nom) *story)) dif)
       ::
       $new      (da-create nom +.dif)
-      $bear     (da-bear nom +.dif)
+      $bear     ~&(%unexpected-unsplit-bear +>)
       $remove   (da-delete nom)
     ==
   ::
@@ -1209,27 +1276,10 @@
     ::
     |=  {nom/knot cof/config}
     ^+  +>
-    ::  if it's a whitelisted circle, put us in it.
-    =.  ses.con.cof  ::TODO  =?
-      ?:  ?=(?($white $green) sec.con.cof)
-        [our.bol ~ ~]
-      ses.con.cof
-    ::  make sure it's its own source.
-    ::TODO?  is this... necessary? probably, for other circle's reference...
-    =.  sre.cof
-      (~(put in sre.cof) [%& our.bol nom])
     =<  sa-done
     ::  default for ? is &, so we manually set to | now.
     %-  ~(sa-change sa nom %*(. *story burden |))
     [%config [our.bol nom] %full cof]
-  ::
-  ++  da-bear                                           ::<  accept new burden
-    ::>
-    ::
-    |=  {nom/knot bur/burden}
-    ^+  +>
-    =+  soy=(fall (~(get by stories) nom) *story)
-    sa-done:(~(sa-bear sa nom soy) bur)
   ::
   ++  da-delete                                         ::<  delete story
     ::>  calls the story core to delete story {nom}.
@@ -1301,44 +1351,6 @@
       ::
       (sa-abjure (~(tap in sre.shape)))
     ::
-    ++  sa-bear                                         ::<  ...
-      ::>
-      ::>  for now, just overwrite all existing state.
-      ::
-      ::TODO  should we calculate these changes in
-      ::      ++so instead? the change to burden is
-      ::      distinct, but everything else is just
-      ::      more of the same deltas.
-      |=  {gaz/(list telegram) cos/lobby pes/crowd}
-      ^+  +>
-      ::  local config
-      =.  +>
-        (sa-change-local %config sa-cir %full loc.cos)
-      ::  remote config
-      =.  +>
-        %+  roll  (~(tap by rem.cos))
-        |=  {{r/circle c/config} _..sa-bear}
-        (sa-change-remote %config r %full c)
-      ::  local presence
-      =.  +>
-        %+  roll  (~(tap by loc.pes))
-        |=  {{w/ship s/status} _..sa-bear}
-        (sa-change-local %status sa-pan w %full s)
-      ::  remote presence
-      =.  +>
-        %+  roll  (~(tap by rem.pes))
-        |=  {{p/partner g/group} _..sa-bear}
-        %+  roll  (~(tap by g))
-        |=  {{w/ship s/status} _..sa-bear}
-        (sa-change-remote %status p w %full s)
-      ::  telegrams
-      =.  +>
-        %+  roll  gaz
-        |=  {g/telegram _..sa-bear}
-        (sa-change-gram g)
-      ::  burden flag
-      +>(burden &)
-    ::
     ++  sa-change                                       ::<  apply circle delta
       ::>
       ::
@@ -1366,6 +1378,9 @@
       ^+  +>
       ?+  -.dif
         ~&([%unexpected-delta-local -.dif] !!)
+        ::
+          $burden
+        +>(burden bur.dif)
         ::
           $grams
         |-  ^+  +>.^$
@@ -1455,32 +1470,10 @@
     ++  sa-config-effects                               ::<  config side-effects
       ::>
       ::
-      ::TODO  we shouldn't even be applying %full diffs, only their results!
       |=  {old/config dif/diff-config}
       ^-  (list move)
       ?+  -.dif  ~
         $permit   (sa-permit-effects sec.con.old ses.con.old +.dif)
-        ::
-          $full
-        ~&  %full-config-changes
-        =*  new  cof.dif
-        ::  deal with subscription changes.
-        =/  sem
-          .=  ?=(?($white $green) sec.con.new)
-              ?=(?($white $green) sec.con.old)
-        ;:  weld
-          ::TODO  but these needs to be treated as %sourcee, right?
-          ::(sa-follow-effects | (~(dif in sre.old) sre.new))
-          ::(sa-follow-effects & (~(dif in src.new) src.old))
-          ::
-          ?.  sem  ~
-          %^  sa-permit-effects  sec.con.new  ses.con.old
-          [| (~(dif in ses.con.old) ses.con.new)]
-          ::
-          ?.  sem  ~
-          %^  sa-permit-effects  sec.con.new  ses.con.old
-          [& (~(dif in ses.con.new) ses.con.old)]
-        ==
       ==
     ::
     ++  sa-follow-effects                               ::<  un/subscribe

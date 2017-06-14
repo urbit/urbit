@@ -64,8 +64,9 @@
 ++  diff-glyph  {bin/? gyf/char pas/(set partner)}      ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
 ++  diff-story                                          ::
-  $%  {$new con/config}                                 ::<  new story
+  $%  {$new cof/config}                                 ::<  new story
       {$bear bur/burden}                                ::<  new inherited story
+      {$burden bur/?}                                   ::<  burden flag
       {$grams gaz/(list telegram)}                      ::<  new/changed msgs
       {$config cir/circle dif/diff-config}              ::<  new/changed config
       {$status pan/partner who/ship dif/diff-status}    ::<  new/changed status
@@ -73,7 +74,7 @@
       {$remove $~}                                      ::<  removed story
   ==                                                    ::
 ++  diff-config                                         ::>  config change
-  $%  {$full cof/config}                                ::<  fully changed config
+  $%  {$full cof/config}                                ::<  set w/o side-effects
       ::TODO  maybe just single partner, since we prob always do that
       {$sourcee add/? pas/(set partner)}                 ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
