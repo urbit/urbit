@@ -1776,9 +1776,7 @@
     `[%friend u.add [our.bol nom.dif]]
     ::
       $burden
-    ::TODO  keep an eye on this, maybe only avoid src.bol when they sent a
-    ::      burden rumor.
-    ?:  =(who.qer src.bol)  ~
+    ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
     ?.  ?=($story -.dif)  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
