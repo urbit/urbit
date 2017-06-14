@@ -436,6 +436,10 @@ $(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(
 	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
+# This should start a comet or something
+test:
+	@echo "FIXME no tests defined"
+
 tags: ctags etags gtags cscope
 
 ctags:
@@ -479,4 +483,4 @@ distclean: clean
 	$(MAKE) -C outside/scrypt clean
 	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC clean
 
-.PHONY: clean debbuild debinstalldistclean etags osxpackage tags
+.PHONY: clean debbuild debinstalldistclean etags osxpackage tags test
