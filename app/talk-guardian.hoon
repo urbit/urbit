@@ -1412,7 +1412,7 @@
       ?~  old
         ::  new message
         %_  +>.$
-          grams    [gam grams]
+          grams    (welp grams [gam ~])
           count    +(count)
           known    (~(put by known) uid.tot.gam count)
         ==
