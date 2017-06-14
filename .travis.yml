@@ -1,4 +1,7 @@
 language: c
+before_script:
+  - curl -L https://github.com/libuv/libuv/archive/v1.x.tar.gz | tar xzf -
+  - (cd libuv-1.x && ./autogen.sh && ./configure --prefix=/usr && make && sudo make install)
 script: make && make test # no ./configure
 
 # Uncomment me if this gets annoying
