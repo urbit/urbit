@@ -381,7 +381,10 @@
   ::
   |%
   ++  grip                                              ::  extend wyll
-    |=  {wet/wyll law/wyll}
+    |=  ::  wet: new will
+        ::  law: old will
+        ::
+        {wet/wyll law/wyll}
     ^-  wyll
     ?~  wet  law
     ?:  =(wet law)  law
@@ -396,23 +399,26 @@
     ?:  ?&  =(rul r.p.q.i.law)
             =(p.p.q.i.law u.q.p.q.i.wet)
         ==
-      ?>((meld i.wet i.law) [i.wet law])
+      [i.wet law]
     ?>(?=(^ t.law) $(law t.law))
   ::
   ++  meld                                              ::  verify connect
     |=  {new/deyd old/deyd}
     ^-  $&
-    ?>  (melt new old)
-    ?>  .=  (shaf %meld (sham q.new)) 
-            (need (sure:as:(com:nu:crub r.q.old) *code p.new))
+    ::  ?>  (melt new old)
+    ::  ?>  .=  (shaf %meld (sham q.new)) 
+    ::          (need (sure:as:(com:nu:crub r.q.old) *code p.new))
     %&
   ::
   ++  melt                                              ::  proper connect
     |=  {new/deyd old/deyd}
     ^-  ?
     =+  rac=(clan:title r.p.q.new)
+    ~&  [%melt rac new old]
     ?&  =(r.new r.old)                                  ::  match fake
+        ~&  %melt-one
         ?~  q.p.q.new
+          ~&  %melt-two
           ?&  =(r.p.q.old r.p.q.new)
               &(!=(%earl rac) =(p.p.q.old (dec p.p.q.new)))
           ==
@@ -444,7 +450,7 @@
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
         ::  ?>  =(fig:ex:loy ?+(rac !! $czar (zeno r.p.q.wed), $pawn r.p.q.wed))
-        ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
+        ::  ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
         %&
     %&
   ::
@@ -901,7 +907,7 @@
                 (end 6 1 (shaf %tick (mix her (shax sec:ex:q:sen))))
             =+  key=(shax ryt)  :: XX true stretch
             =+  dah=(shaf %hand key)
-            405G?.  =(dah had)  ~
+            ?.  =(dah had)  ~
             `[key ..kuch(yed.caq.dur [~ had key])]
           [~ u.dyv ..kuch]
         ::
