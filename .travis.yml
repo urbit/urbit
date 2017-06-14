@@ -1,0 +1,26 @@
+language: c
+script: make && make test # no ./configure
+
+# Uncomment me if this gets annoying
+#
+# notifications: 
+#   email: false 
+
+addons:
+  apt:
+    packages:
+    - libgmp3-dev
+    - libsigsegv-dev
+    - openssl
+    - libssl-dev
+    - libncurses5-dev
+    - make
+    - exuberant-ctags
+    - libuv1-dev
+    - g++
+    - ragel
+    - cmake
+    - re2c
+    - libcurl4-gnutls-dev
+    - python
+

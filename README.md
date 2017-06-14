@@ -9,6 +9,8 @@ If you're doing development on Urbit, keep reading.
 
 # Build instructions
 
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
+
 ## External dependencies
 
 `vere`, the Urbit virtual machine, depends on the following:
