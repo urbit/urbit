@@ -432,7 +432,7 @@
     ::
     |=  who/ship
     ^+  +>
-    ?.  =(our.bol (sein who))
+    ?.  =(our.bol (above who))
       ~&([%not-our-bearer who] +>)
     ~&  [%gonna-observe who]
     (ta-delta %observe who)
@@ -809,12 +809,12 @@
         |=  t/telegram
         =-  t(aud.tot -)
         =/  oud
-          (~(get by aud.tot.t) [%& (sein our.bol) nom])
+          (~(get by aud.tot.t) [%& (above our.bol) nom])
         ?~  oud  ::TODO  seems like it should never occur?
           ~&  %unexpected-parent-not-audience
           aud.tot.t
         =.  aud.tot.t
-          (~(del by aud.tot.t) [%& (sein our.bol) nom])
+          (~(del by aud.tot.t) [%& (above our.bol) nom])
         (~(put by aud.tot.t) [%& our.bol nom] u.oud)
       ::  burden flag
       (so-delta-our %burden &)
@@ -1170,7 +1170,7 @@
   ++  da-init                                           ::<  startup side-effects
     ::>
     ::
-    =+  sen=(sein our.bol)
+    =+  sen=(above our.bol)
     ::TODO  move this logic to ta-init
     ?:  ?|  !=(%czar (clan sen))
             =(sen our.bol)
@@ -1784,7 +1784,7 @@
     ::
       $report
     ::  only send changes we didn't get from above.
-    ?:  =(src.bol (sein our.bol))  ~
+    ?:  =(src.bol (above our.bol))  ~
     ::  only send story reports about grams and status.
     ?.  ?=($story -.dif)  ~
     ?.  ?=(?($grams $status) -.dif.dif)  ~
@@ -1794,7 +1794,7 @@
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape.soy)  ~
     ~&  [%sending-report nom.dif -.dif.dif who]
-    `[%burden nom.dif (tmp-their-change (sein our.bol) dif.dif)]
+    `[%burden nom.dif (tmp-their-change (above our.bol) dif.dif)]
     ::
       $circle
     ?.  ?=($story -.dif)  ~
@@ -1873,8 +1873,10 @@
   ?-  -.qer
     $reader   (team our.bol who)
     $friend   &
-    $burden   &(=(our.bol (sein who)) =(who who.qer))
-    $report   =(who (sein our.bol))
+    $burden   ?&  =(who who.qer)
+                  =(our.bol (above who))
+              ==
+    $report   =(who (above our.bol))
     ::
       $circle
     ?.  (~(has by stories) nom.qer)  |

@@ -24,6 +24,11 @@
   ?.  ?=($earl (clan who))  who
   (sein who)
 ::
+++  above
+  |=  who/ship
+  ?:  ?=($czar (clan who))  ~zod
+  (sein who)
+::
 ++  said-url                                            ::  app url
   |=  url/purl
   :^  ost.bol  %poke  /said-url
