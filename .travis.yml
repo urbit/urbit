@@ -1,7 +1,4 @@
 language: c
-before_script:
-  - curl -L https://github.com/libuv/libuv/archive/v1.x.tar.gz | tar xzf -
-  - (cd libuv-1.x && ./autogen.sh && ./configure --prefix=/usr && make && sudo make install)
 script: make && make test # no ./configure
 
 # Uncomment me if this gets annoying
@@ -11,6 +8,10 @@ script: make && make test # no ./configure
 
 addons:
   apt:
+    sources:
+    # precise, which is the default, doesn't have an official libuv1 package
+    - sourceline: 'deb http://us.archive.ubuntu.com/ubuntu/ xenial universe'
+    #
     packages:
     - libgmp3-dev
     - libsigsegv-dev
@@ -19,13 +20,10 @@ addons:
     - libncurses5-dev
     - make
     - exuberant-ctags
-    - automake
-    - autoconf
-    - libtool
+    - libuv1-dev
     - g++
     - ragel
     - cmake
     - re2c
     - libcurl4-gnutls-dev
     - python
-

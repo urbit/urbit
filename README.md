@@ -9,7 +9,7 @@ If you're doing development on Urbit, keep reading.
 
 # Build instructions
 
-[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=maint-0.4)](https://travis-ci.org/urbit/urbit)
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
 
 ## External dependencies
 
