@@ -356,9 +356,7 @@
       ?~  soy
         %^  ta-delta  %react  red
         [%fail (crip "no story {(trip nom)}") `act]
-      =/  wyt/?  ?=(?($white $green) sec.con.shape.u.soy)
-      =/  add/?  =(inv wyt)
-      (affect nom %config [our.bol nom] %permit add sis)
+      so-done:(~(so-permit so nom ~ u.soy) inv sis)
     ::
     ++  action-source                                   ::<  un/sub p to/from r
       ::>  add/remove {pas} as sources for story {nom}.
@@ -1035,14 +1033,6 @@
     ::>    arms relating to story permissions.
     ::+|
     ::
-    ++  so-secure                                       ::<  change security mode
-      ::>  changes our security mode.
-      ::
-      |=  sec/security
-      ^+  +>
-      ?:  =(sec sec.con.shape)  +>
-      (so-delta-our %config so-cir %secure sec)
-    ::
     ++  so-permit                                       ::<  invite/banish
       ::>  update config to dis/allow ships permission.
       ::
@@ -1052,14 +1042,17 @@
       ::>  add:  add to list?
       =/  wyt/?  ?=(?($white $green) sec.con.shape)
       =/  add/?  =(inv wyt)
+      =/  sus/(set ship)
+        %.  ses.con.shape
+        ?:(add ~(dif in sis) ~(int in sis))
       =.  +>.$
         %-  so-act
         :-  %phrase
-        %-  ~(rep in sis)
+        %-  ~(rep in sus)
         |=  {s/ship a/(set partner) t/(list speech)}
         :-  (~(put in a) [%& s (main s)])
         [[%inv inv so-cir] t]
-      (so-delta-our %config so-cir %permit [add sis])
+      (so-delta-our %config so-cir %permit [add sus])
     ::
     ++  so-admire                                       ::<  accept from
       ::>  checks {her} write permissions.
@@ -1477,6 +1470,7 @@
       ^-  (list move)
       ?+  -.dif  ~
         $permit   (sa-permit-effects sec.con.old ses.con.old +.dif)
+        ::TODO  $secure ?
       ==
     ::
     ++  sa-follow-effects                               ::<  un/subscribe
@@ -1493,8 +1487,6 @@
     ++  sa-permit-effects                               ::<  notify permitted
       ::>
       ::
-      ::TODO  this seems to also be done in the action,
-      ::      there makes more sense because logic goes into ta.
       |=  {sec/security old/(set ship) add/? sis/(set ship)}
       ^-  (list move)
       =/  sus/(set ship)
@@ -1502,10 +1494,7 @@
         ?:(add ~(dif in sis) ~(int in sis))
       =/  wyt  ?=(?($white $green) sec)
       =/  inv  =(wyt add)
-      ?:  inv
-        ::TODO  %inv & speeches
-        ~
-      ::TODO  %inv | speeches
+      ?:  inv  ~
       (sa-eject sus)
     ::
     ::>  ||
