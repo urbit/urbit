@@ -719,21 +719,20 @@
     ::>    arms that apply events we received.
     ::+|
     ::
-    ++  so-take                                  ::<  accept circle prize
+    ++  so-take                                         ::<  accept circle prize
       ::>
       ::
       |=  {src/circle gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
       =.  +>.$
         (so-hear | src %config src %full loc.cos)
-      ::TODO  we'd need a %precs diff-story for this if we don't want to urn...
       =.  +>.$
         %-  ~(rep in loc.pes)
         |=  {{w/ship s/status} _+>.$}
         (so-hear | src %status [%& src] w %full s)
       (so-lesson gaz)
     ::
-    ++  so-hear                                  ::<  accept circle rumor
+    ++  so-hear                                         ::<  accept circle rumor
       ::>
       ::
       |=  {bur/? src/circle dif/diff-story}
@@ -741,7 +740,6 @@
       ::TODO?  these checks are still important, because
       ::       when things are slow we may get diffs from
       ::       things we already unsubscribed from, right?
-      ::TODO  account for federation.
       ~?  ?!  ?|  (~(has in sre.shape) [%& src])
                   =(src so-cir)
               ==
@@ -1193,7 +1191,7 @@
     %-  da-emit
     :*  0
         %peer
-        /report
+        /report/(scot %p who)
         [who %talk-guardian]
         /report
     ==
@@ -1748,6 +1746,7 @@
 ++  i-change                                            ::<  delta to rumor
   ::>
   ::
+  ::TODO  remove who from sample
   |=  {who/ship weg/(list coin) dif/delta}
   ^-  (unit rumor)
   =+  qer=(coins-to-query weg)
@@ -1772,9 +1771,8 @@
     `[%friend u.add [our.bol nom.dif]]
     ::
       $burden
-    ::TODO  only avoid src.bol when they sent a burden or similar?
-    ::TODO  shouldn't this prevent senders from getting their message echoed
-    ::      to them?
+    ::TODO  keep an eye on this, maybe only avoid src.bol when they sent a
+    ::      burden rumor.
     ?:  =(who.qer src.bol)  ~
     ?.  ?=($story -.dif)  ~
     ::  only burden channels for now.
@@ -1979,7 +1977,7 @@
   ::>  if subscribing failed, update state to reflect
   ::>  that.
   ::
-  ::TODO  this should deal with /reader subscriptions too.
+  ::TODO  update to handle all subscription kinds.
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)
   %+  etch-friend  [%friend wir]
@@ -1995,6 +1993,7 @@
 ++  quit-friend                                         ::<  dropped subscription
   ::>  gall dropped our subscription. resubscribe.
   ::
+  ::TODO  update for all subscription kinds.
   |=  wir/wire
   ^-  (quip move +>)
   %+  etch-friend  [%friend wir]

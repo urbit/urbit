@@ -79,8 +79,8 @@
       {$sourcee add/? pas/(set partner)}                 ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
       {$filter fit/filter}                              ::<  changed filter
-      {$permit add/? sis/(set ship)}                    ::<  add/rem to b/w-list
       {$secure sec/security}                            ::<  changed security
+      {$permit add/? sis/(set ship)}                    ::<  add/rem to b/w-list
       {$remove $~}                                      ::<  removed config
   ==                                                    ::
 ++  diff-status                                         ::>  status change

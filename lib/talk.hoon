@@ -11,7 +11,8 @@
 [. ^talk]
 |_  bol/bowl
 ++  main                                                ::  main story
-  |=  who/ship  ^-  cord
+  |=  who/ship
+  ^-  cord
   =+  can=(clan who)
   ?+  can  %porch
     $czar  %court
@@ -151,6 +152,7 @@
     ==
   ==
 ::
+::TODO  annotate all!
 ++  depa                                              ::  de-pathing core
   =>  |%  ++  grub  *                                 ::  result
           ++  weir  (list coin)                       ::  parsed wire
@@ -207,6 +209,7 @@
   ::
   ++  do
     |*  typ/@tas
+    =/  typecheck  `@tas`typ
     |=  con/coin
     ^-  (odo:raid typ)
     ?.  ?=($$ -.con)  ~|(%not-dime !!)
@@ -218,9 +221,9 @@
   ::
   ++  un
     |*  wit/$-(coin *)
-    |=  wir/weir  ^+  *wit
-    ?~  wir  !!
-    ?^  t.wir  !!
-    (wit i.wir)
+    |=  wer/weir  ^+  *wit
+    ?~  wer  !!
+    ?^  t.wer  !!
+    (wit i.wer)
   --
 --
