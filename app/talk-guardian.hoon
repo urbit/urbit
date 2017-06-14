@@ -1261,7 +1261,13 @@
     |=  {nom/knot dif/diff-story}
     ^+  +>
     ?+  -.dif
-      sa-done:(~(sa-change sa nom (fall (~(get by stories) nom) *story)) dif)
+      =<  sa-done
+      %.  dif
+      %~  sa-change  sa  nom
+          %+  fall
+            (~(get by stories) nom)
+          %*(. *story burden |)
+      ==
       ::
       $new      (da-create nom +.dif)
       $bear     ~&(%unexpected-unsplit-bear +>)
