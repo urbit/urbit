@@ -85,10 +85,14 @@ _serf_send(u3_noun job)
 /* _serf_send_replace(): send replacement job back to lord.
 */
 static void
-_serf_send_replace(u3_noun ovo)
+_serf_send_replace(c3_d evt_d, u3_noun ovo)
 {
+  fprintf(stderr, "serf_send_replace %lld %s\r\n", 
+                  evt_d,
+                  u3r_string(u3h(u3t(ovo)))); 
+
   _serf_send(u3nq(c3__work,
-                  u3i_chubs(1, &u3V.evt_d),
+                  u3i_chubs(1, &evt_d),
                   u3V.mug_l,
                   u3nc(u3k(u3A->now), ovo)));
 }
@@ -107,12 +111,12 @@ _serf_send_complete(u3_noun vir)
 /* _serf_lame(): event failed, replace with error event.
 */
 static void
-_serf_lame(u3_noun ovo, u3_noun why, u3_noun tan)
+_serf_lame(c3_d evt_d, u3_noun ovo, u3_noun why, u3_noun tan)
 {
   /* XX: the next crud will contain the original event.
   */
   u3z(ovo);
-  _serf_send_replace(u3nt(c3__crud, why, tan));
+  _serf_send_replace(evt_d, u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, tan)));
 }
 
 /* _serf_sure(): event succeeded, report completion.
@@ -138,10 +142,7 @@ _serf_poke_live(c3_d    evt_d,              //  event number
   u3_noun now = u3k(u3h(job));
   u3_noun ovo = u3k(u3t(job));
 
-  // fprintf(stderr, "serf: (%lld)| live\r\n", evt_d);
-  
   c3_assert(evt_d == u3V.evt_d + 1ULL);
-  u3V.evt_d = evt_d;
 
   u3z(job);
   {
@@ -159,11 +160,18 @@ _serf_poke_live(c3_d    evt_d,              //  event number
 #ifdef GHETTO
     struct timeval b4, f2, d0;
     gettimeofday(&b4, 0);
-#endif
 
+    if ( c3__belt != u3h(u3t(ovo)) ) {
+      c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
+
+      fprintf(stderr, "serf: %s (%lld) live\r\n", txt_c, evt_d);
+    }
+#endif
+  
     gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
 #ifdef GHETTO
+    c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
     c3_w ms_w;
     c3_w clr_w;
 
@@ -172,24 +180,36 @@ _serf_poke_live(c3_d    evt_d,              //  event number
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
     if (c3__belt != u3h(u3t(ovo)) || clr_w != 2) {
-      uL(fprintf(uH, "\x1b[3%dm%%%s %4d.%02dms\x1b[0m\n",
-                         clr_w, txt_c, ms_w, (int) (d0.tv_usec % 1000) / 10));
+      uL(fprintf(uH, "\x1b[3%dm%%%s (%lld) %4d.%02dms\x1b[0m\n",
+                        clr_w, txt_c, evt_d, ms_w, 
+                        (int) (d0.tv_usec % 1000) / 10));
     }
     free(txt_c);
 #endif
 
     if ( u3_blip != u3h(gon) ) {
+      //
+      //  event rejected
+      //  
       u3_noun why = u3k(u3h(gon));
       u3_noun tan = u3k(u3t(gon));
 
       u3z(gon);
-      _serf_lame(ovo, why, tan);
+      _serf_lame(evt_d, ovo, why, tan);
     }
     else {
-      u3_noun vir = u3k(u3h(u3t(gon)));
-      u3_noun cor = u3k(u3t(u3t(gon)));
+      //  event accepted
+      //
+      u3V.evt_d = evt_d;
+      {
+        //  vir/(list ovum)  list of effects
+        //  cor/arvo         arvo core
+        //
+        u3_noun vir = u3k(u3h(u3t(gon)));
+        u3_noun cor = u3k(u3t(u3t(gon)));
 
-      _serf_sure(ovo, vir, cor);
+        _serf_sure(ovo, vir, cor);
+      }
     }
   }
 }

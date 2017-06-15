@@ -255,7 +255,7 @@ _pier_disk_precommit_replace(u3_writ* wit_u)
     c3_assert(wit_u->evt_d == log_u->rep_d);
     c3_assert(wit_u->evt_d == log_u->pre_d);
 
-    //  fprintf(stderr, "pier: (%lld): precommit: replacing\r\n", wit_u->evt_d);
+    // fprintf(stderr, "pier: (%lld): precommit: replacing\r\n", wit_u->evt_d);
 
     log_u->rep_d -= 1ULL;
     log_u->pre_d -= 1ULL;
@@ -266,7 +266,7 @@ _pier_disk_precommit_replace(u3_writ* wit_u)
     /* otherwise, decrement the precommit request counter.
     ** the returning request will notice this and rerequest.
     */
-    fprintf(stderr, "pier: (%lld): precommit: replace\r\n", wit_u->evt_d);
+    // fprintf(stderr, "pier: (%lld): precommit: replace\r\n", wit_u->evt_d);
 
     c3_assert(wit_u->evt_d == log_u->rep_d);
     log_u->rep_d -= 1ULL;
@@ -452,7 +452,7 @@ _pier_work_replace(u3_writ* wit_u,
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
 
-  //  fprintf(stderr, "pier: (%lld): compute: replace\r\n", wit_u->evt_d);
+  fprintf(stderr, "pier: (%lld): compute: replace\r\n", wit_u->evt_d);
   c3_assert(god_u->sen_d == wit_u->evt_d);
 
   /* move backward in work processing
@@ -1231,8 +1231,10 @@ _pier_work_poke(void*   vod_p,
             {
               // XX not the right place to print an error!
               //
-              u3_pier_punt(0, u3k(u3t(u3t(u3t(r_jar)))));
+              // u3_pier_punt(0, u3k(u3t(u3t(u3t(r_jar)))));
             }
+            fprintf(stderr, "pier: replace: %lld\r\n", evt_d);
+
             _pier_work_replace(wit_u, u3k(r_jar), mat);
           }
           break;

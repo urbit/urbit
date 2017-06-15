@@ -103,7 +103,7 @@ endif
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
 #   -DHUSH
-CFLAGS+= $(COSFLAGS) -ffast-math \
+CFLAGS+= $(COSFLAGS) -ffast-math -DGHETTO \
 	-funsigned-char \
 	-I/usr/local/include \
 	$(OPTLOCALIFLAGS) \
