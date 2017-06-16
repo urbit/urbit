@@ -352,30 +352,41 @@
       mpz_clear(c.a); mpz_clear(c.e);
       u3m_bail(c3__exit);
     }
-    mpz_t r, s, m, i, j, u, o;
+    mpz_t r, s, mn, mp, i, j, u, o;
     mpz_init_set(r, c.a);
     mpz_init_set_ui(s, 1);
-    mpz_init_set_ui(m, 1);
+    mpz_init_set_ui(mn, 1);
     mpz_init(i);
     mpz_init(j);
     c3_w se = mpz_sgn(c.e);
     if ( se == 1 ) {
       mpz_mul_2exp(r, r, mpz_get_ui(c.e));
-      mpz_mul_2exp(m, m, mpz_get_ui(c.e));
+      mpz_mul_2exp(mn, mn, mpz_get_ui(c.e));
     }
     else if ( se == -1 ) {
       mpz_mul_2exp(s, s, mpz_get_ui(c.e));
+    }
+    mpz_init_set(mp, mn);
+    mpz_set_ui(i, 1);
+    mpz_mul_2exp(i, i, d.precision - 1);
+    if ( (mpz_cmp(c.a, i) == 0) && 
+         ((mpz_cmp(c.e, d.minExp) != 0 ) ||
+         (d.eMode == c3__i)) ) {
+      mpz_mul_2exp(mp, mp, 1);
+      mpz_mul_2exp(r, r, 1);
+      mpz_mul_2exp(s, s, 1);
     }
     mpz_cdiv_q_ui(i, s, 10);
     mpz_set_ui(c.e, 0);
     while ( mpz_cmp(r, i) < 0 ) {
       mpz_sub_ui(c.e, c.e, 1);
       mpz_mul_ui(r, r, 10);
-      mpz_mul_ui(m, m, 10);
+      mpz_mul_ui(mn, mn, 10);
+      mpz_mul_ui(mp, mp, 10);
     }
     while ( 1 ) {
       mpz_mul_2exp(i, r, 1);
-      mpz_add(i, i, m);
+      mpz_add(i, i, mp);
       mpz_mul_2exp(j, s, 1);
       if ( mpz_cmp(i, j) < 0 ) {
         break;
@@ -388,20 +399,21 @@
     while ( 1 ) {
       mpz_sub_ui(c.e, c.e, 1);
       mpz_mul_ui(r, r, 10);
-      mpz_mul_ui(m, m, 10);
+      mpz_mul_ui(mn, mn, 10);
+      mpz_mul_ui(mp, mp, 10);
       mpz_tdiv_qr(u, r, r, s);
       mpz_mul_2exp(i, r, 1);
       mpz_mul_2exp(j, s, 1);
-      c3_t l = mpz_cmp(i, m) < 0;
-      c3_t h = mpz_cmp(j, m) < 0;
+      c3_t l = mpz_cmp(i, mn) < 0;
+      c3_t h = mpz_cmp(j, mp) < 0;
       if ( !h ) {
-        mpz_sub(j, j, m);
+        mpz_sub(j, j, mp);
         h = mpz_cmp(i, j) > 0;
       }
       if ( l || h ) {
         mpz_mul_ui(o, o, 10);
         mpz_add(o, o, u);
-        if ( h && (!l || (mpz_cmp(i, s) >= 0)) ) {
+        if ( h && (!l || (mpz_cmp(i, s) > 0)) ) {
           mpz_add_ui(o, o, 1);
         }
         break;
@@ -410,7 +422,8 @@
       mpz_add(o, o, u);
     }
     mpz_set(c.a, o);
-    mpz_clear(r); mpz_clear(s); mpz_clear(m);
+    mpz_clear(r); mpz_clear(s);
+    mpz_clear(mn); mpz_clear(mp);
     mpz_clear(i); mpz_clear(j); mpz_clear(u);
     mpz_clear(o); mpz_clear(d.minExp); mpz_clear(d.expWidth);
 
