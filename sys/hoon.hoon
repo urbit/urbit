@@ -2219,13 +2219,10 @@
       ::
       =+  m=(met 0 a.a)
       ?>  |(s (gth m prc))                              ::  require precision
-      =+  ^=  q
-        =+  ^=  f                                       ::  reduce precision
-          ?:  (gth m prc)  (^sub m prc)  0
-        =+  ^=  g  %-  abs:si                           ::  enforce min. exp
-          ?:  =(den %i)  --0
-          ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
-        (max f g)
+      =+  ^=  q  %+  max
+          ?:  (gth m prc)  (^sub m prc)  0              ::  reduce precision
+        %-  abs:si  ?:  =(den %i)  --0                  ::  enforce min. prec
+        ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
       =^  b  a  :-  (end 0 q a.a)
         a(e (sum:si e.a (sun:si q)), a (rsh 0 q a.a))
       ::
@@ -2276,40 +2273,53 @@
       ?:  =(den %i)  [%f & a]
       ?:  =((cmp:si emx e.a) -1)  [%i &]  [%f & a]      ::  enforce max. exp
     ::
-    ++  drg                                             ::  dragon4;
-      ~/  %drg                                          ::  convert to decimal
-      |=  {a/{e/@s a/@u}}  ^-  {@s @u}
-      ?<  =(a.a 0)
+    ++  drg                                             ::  dragon4; get
+      ~/  %drg                                          ::  printable decimal;
+      |=  {a/{e/@s a/@u}}  ^-  {@s @u}                  ::  guaranteed accurate
+      ?<  =(a.a 0)                                      ::  for rounded floats
       =.  a  (xpd a)
       =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
       =+  s=(lsh 0 ?.((syn:si e.a) (abs:si e.a) 0) 1)
-      =+  m=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) 1)
+      =+  mn=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) 1)
+      =+  mp=mn
+      =>  ?.
+            ?&  =(a.a (bex (dec prc)))                  ::  if next smallest
+                |(!=(e.a emn) =(den %i))                ::  float is half ULP,
+            ==                                          ::  tighten lower bound
+          .
+        %=  .
+          mp  (lsh 0 1 mp)
+          r  (lsh 0 1 r)
+          s  (lsh 0 1 s)
+        ==
       =+  [k=--0 q=(^div (^add s 9) 10)]
       |-  ?:  (^lth r q)
         %=  $
           k  (dif:si k --1)
           r  (^mul r 10)
-          m  (^mul m 10)
+          mn  (^mul mn 10)
+          mp  (^mul mp 10)
         ==
-      |-  ?:  (gte (^add (^mul r 2) m) (^mul s 2))
+      |-  ?:  (gte (^add (^mul r 2) mp) (^mul s 2))
         $(s (^mul s 10), k (sum:si k --1))
       =+  [u=0 o=0]
-      |-
+      |-                                                ::  r/s+o = a*10^-k
       =+  v=(dvr (^mul r 10) s)
       =>  %=  .
           k  (dif:si k --1)
           u  p.v
           r  q.v
-          m  (^mul m 10)
+          mn  (^mul mn 10)
+          mp  (^mul mp 10)
         ==
-      =+  l=(^lth (^mul r 2) m)
-      =+  ^=  h
-        ?|  (^lth (^mul s 2) m)
-            (gth (^mul r 2) (^sub (^mul s 2) m))
+      =+  l=(^lth (^mul r 2) mn)                        ::  in lower bound
+      =+  ^=  h                                         ::  in upper bound
+        ?|  (^lth (^mul s 2) mp)
+            (gth (^mul r 2) (^sub (^mul s 2) mp))
         ==
       ?:  &(!l !h)
         $(o (^add (^mul o 10) u))
-      =+  q=&(h |(!l (gte (^mul r 2) s)))
+      =+  q=&(h |(!l (gth (^mul r 2) s)))
       =.  o  (^add (^mul o 10) ?:(q +(u) u))
       [k o]
     ::
