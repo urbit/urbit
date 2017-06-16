@@ -650,7 +650,6 @@
               ::  the current topic is neither the name of the core or an arm
               ::  on the core.
               $(sut p.sut)
-            ~&  [%a arm]
             `[%arm (trip i.topics) p.u.arm q.u.arm p.sut]
           ?~  t.topics
             ::  we matched the core name and have no further search terms.
@@ -896,13 +895,16 @@
           (print-overview [%header `['compiled against:' ~] compiled]~)
         ==
       ::
+      :>    figures out which {what}s to use.
+      :>
+      :>  there are three places with a relevant {what}: the {arm-doc} on the
+      :>  arm, the {what} in the computed span of the foot, and the {what} on
+      :>  the product of the default arm when the computed span is a core.
       ++  select-arm-docs
         |=  {arm-doc/what f/foot sut/span}
+        :>  the computed arm documentation and the product documentation.
         ^-  {what what}
-        ::  ~&  [%p-f p.f]
         =+  foot-span=(~(play ut sut) p.f)
-        ::  ~&  [%dy-foot-span (dy-show-span-noun foot-span)]
-        ::  ~&  [%foot-span foot-span]
         =+  raw-product=(what-from-span foot-span)
         =/  product-product/what
           ?.  ?=({$core *} foot-span)
@@ -920,15 +922,6 @@
       :>    renders the documentation for a single arm in a core.
       ++  print-arm
         |=  {arm-name/tape arm-doc/what f/foot sut/span}
-        ::  ok, so i misunderstood how this works. in case of something like a
-        ::  constant:
-        ::
-        ::    ++  forty-two
-        ::      :>  the answer
-        ::      42
-        ::
-        ::  the %help never shows up in the span.
-        ::
         ::  todo: need to get the sample here. also hoist this to the general
         ::  core printing machinery, too.
         =+  [main-doc product-doc]=(select-arm-docs arm-doc f sut)
