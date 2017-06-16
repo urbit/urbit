@@ -158,8 +158,7 @@
       ::  and: when gaining a fed, do a %peer (√)
   ==                                                    ::
 ++  filter                                              ::>  content filters
-  $:  cus/?                                             ::<  dis/allow capitals
-      ::TODO  rename cus to cas? (capitals/case instead of cuss)
+  $:  cas/?                                             ::<  dis/allow capitals
       utf/?                                             ::<  dis/allow non-ascii
   ==                                                    ::
 ++  control    {sec/security ses/(set ship)}            ::<  access control

@@ -979,7 +979,7 @@
         ?:  |((lth a 32) =(a `@c`127))
           `@`'?'
         ::  if desired, remove uppercasing.
-        ?:  ?&  !cus.fit.shape
+        ?:  ?&  !cas.fit.shape
                 (gte a 'A')
                 (lte a 'Z')
             ==
