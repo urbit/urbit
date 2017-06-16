@@ -99,14 +99,14 @@
     $filter   cof(fit fit.dif)
     $remove   cof
     ::
-      $sourcee
+      $source
     %=  cof
-        sre
+        src
       %.  `(set partner)`pas.dif  ::TODO?  why do we *need* to cast?
-      ~&  [%doing-sourcee add.dif pas.dif]
+      ~&  [%doing-source add.dif pas.dif]
       ?:  add.dif
-        ~(uni in sre.cof)
-      ~(dif in sre.cof)
+        ~(uni in src.cof)
+      ~(dif in src.cof)
     ==
     ::
       $permit

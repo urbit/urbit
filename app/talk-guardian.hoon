@@ -693,12 +693,12 @@
         %+  weld
           ^-  (list diff-story)
           ?~  old  ~
-          ::TODO?  what to do about sre?
-          :~  ::[%follow | sre.u.old]
+          ::TODO?  what to do about src?
+          :~  ::[%follow | src.u.old]
               [%config so-cir %permit | ses.con.u.old]
           ==
         ^-  (list diff-story)
-        :~  ::[%follow & sre.cof]  ::TODO  double-check da-$follow checks existing sre
+        :~  ::[%follow & src.cof]  ::TODO  double-check da-$follow checks existing src
             [%config so-cir %caption cap.cof]
             [%config so-cir %filter fit.cof]
             [%config so-cir %secure sec.con.cof]
@@ -743,7 +743,7 @@
       ::TODO?  these checks are still important, because
       ::       when things are slow we may get diffs from
       ::       things we already unsubscribed from, right?
-      ~?  ?!  ?|  (~(has in sre.shape) [%& src])
+      ~?  ?!  ?|  (~(has in src.shape) [%& src])
                   =(src so-cir)
               ==
         [%unexpected-rumor-source nom -.dif src]
@@ -832,7 +832,7 @@
       |=  {add/? pas/(set partner)}
       ^+  +>
       =/  sus/(set partner)
-        %.  sre.shape
+        %.  src.shape
         ?:(add ~(dif in pas) ~(int in pas))
       ?~  sus  +>.$
       (so-delta-our %follow & sus)
@@ -886,16 +886,16 @@
       ::
       |=  pan/partner
       ^+  +>
-      ?:  (~(has in sre.shape) pan)  +>
-      (so-delta-our %config so-cir %sourcee & [pan ~ ~])
+      ?:  (~(has in src.shape) pan)  +>
+      (so-delta-our %config so-cir %source & [pan ~ ~])
     ::
     ++  so-leave                                        ::<  subscription ended
       ::>  delete {pan} from our sources.
       ::
       |=  pan/partner
       ^+  +>
-      ?.  (~(has in sre.shape) pan)  +>
-      (so-delta-our %config so-cir %sourcee | [pan ~ ~])
+      ?.  (~(has in src.shape) pan)  +>
+      (so-delta-our %config so-cir %source | [pan ~ ~])
     ::
     ++  so-start                                        ::<  subscribe follower
       ::>  called upon subscribe. deduces the range of
@@ -1344,7 +1344,7 @@
     ++  sa-delete                                       ::<  deletion of story
       ::>
       ::
-      (sa-abjure (~(tap in sre.shape)))
+      (sa-abjure (~(tap in src.shape)))
     ::
     ++  sa-change                                       ::<  apply circle delta
       ::>
@@ -1400,16 +1400,16 @@
         ::
           $follow
         ::  we have to do the effects first, because it
-        ::  checks for new sub targets using sre.shape.
+        ::  checks for new sub targets using src.shape.
         ~&  [%sa-change-follow nom sub.dif pas.dif]
         =.  +>
           (sa-emil (sa-follow-effects sub.dif pas.dif))
         %_  +>  ::TODO  delete, only done once success
-            sre.shape  ::TODO  =?
+            src.shape  ::TODO  =?
           %.  pas.dif
           ?:  sub.dif
-            ~(uni in sre.shape)
-          ~(dif in sre.shape)
+            ~(uni in src.shape)
+          ~(dif in src.shape)
         ==
       ==
     ::
@@ -1478,7 +1478,7 @@
       |=  {sub/? pas/(set partner)}
       ^-  (list move)
       =/  sus/(set partner)
-        %.  sre.shape
+        %.  src.shape
         ?:(sub ~(dif in pas) ~(int in pas))
       %.  (~(tap in sus))
       ?:(sub sa-acquire sa-abjure)
@@ -1669,7 +1669,7 @@
     :-  %friend
     %-  ~(gas in *(set circle))
     %+  murn
-      =-  (~(tap in sre.shape.-))
+      =-  (~(tap in src.shape.-))
       (~(got by stories) (main our.bol))
     |=  p/partner
     ^-  (unit circle)

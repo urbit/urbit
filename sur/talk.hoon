@@ -76,7 +76,7 @@
 ++  diff-config                                         ::>  config change
   $%  {$full cof/config}                                ::<  set w/o side-effects
       ::TODO  maybe just single partner, since we prob always do that
-      {$sourcee add/? pas/(set partner)}                 ::<  add/rem sources
+      {$source add/? pas/(set partner)}                 ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
       {$filter fit/filter}                              ::<  changed filter
       {$secure sec/security}                            ::<  changed security
@@ -150,7 +150,7 @@
 ::  circle configurations.                              ::
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config
-  $:  sre/(set partner)                                 ::<  active sources
+  $:  src/(set partner)                                 ::<  active sources
       cap/cord                                          ::<  description
       fit/filter                                        ::<  message rules
       con/control                                       ::<  restrictions

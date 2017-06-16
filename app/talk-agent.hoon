@@ -274,7 +274,7 @@
         $circle
       %.  gaz.piz
       %=  ta-lesson
-        sources   sre.loc.cos.piz
+        sources   src.loc.cos.piz
         mirrors   (~(put by rem.cos.piz) incir loc.cos.piz)
         remotes   (~(put by rem.pes.piz) inpan loc.pes.piz)
       ==
@@ -315,7 +315,7 @@
         $config
       %=  +>
           sources
-        ?.  ?&  ?=($sourcee -.dif.dif)
+        ?.  ?&  ?=($source -.dif.dif)
                 =(cir.dif incir)
             ==
           sources
@@ -1506,7 +1506,7 @@
       =.  +>.$
           %+  sh-show-sources
             (weld (trip inbox) ": ")
-          (sh-set-diff sre.laz sre.loc)
+          (sh-set-diff src.laz src.loc)
       ?:  !=(sec.con.loc sec.con.laz)
         =.  +>.$  (sh-note :(weld pre "but " (sh-cure sec.con.loc)))
         %^    sh-show-permits
