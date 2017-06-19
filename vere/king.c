@@ -326,14 +326,12 @@ _boothack_cb(uv_connect_t *conn, int status)
   if ( c3y == u3_Host.ops_u.fak ) {
     fprintf(stderr, "boot: F A K E ship with null security\r\n");
 
-    if ( u3_Host.ops_u.tic_c ) {
-      fprintf(stderr, "boot: fake ship doesn't need a ticket\r\n");
+    sec = 0;
+    if ( 0 != u3_Host.ops_u.tic_c ) {
+      fprintf(stderr, "boot: fake ship does not need a ticket (-t)\r\n");
       exit(1);
     }
-    else {
-      sec = 0;
-      tic = u3k(who);
-    }
+    tic = u3k(who);
   }
   else {
     if ( 0 == u3_Host.ops_u.sec_c ) {
