@@ -285,8 +285,8 @@
     ++  react                                           ::<  new reaction
       ::>
       ::
-      |=  rac/reaction
-      (ta-delta %react red rac)
+      |=  {res/?($info $fail) wat/cord}
+      (ta-delta %react red [res wat `act])
     ::
     ++  affect                                          ::<  delta to story
       ::>
@@ -294,8 +294,7 @@
       |=  {nom/knot dif/diff-story}
       ?:  (~(has by stories) nom)
         (impact nom dif)
-      %-  react
-      [%fail (crip "no story {(trip nom)}") `act]
+      (react %fail (crip "no story {(trip nom)}"))
     ::
     ++  impact                                          ::<  delta for story
       ::>
@@ -319,8 +318,7 @@
             ?.  ?=(?($white $green) typ)  ~
             [our.bol ~ ~]
         ==
-      %-  react
-      [%fail (crip "{(trip nom)}: already exists") `act]
+      (react %fail (crip "{(trip nom)}: already exists"))
     ::
     ++  action-delete                                   ::<  delete + announce
       ::>  delete story {nom}, optionally announcing the
@@ -354,8 +352,7 @@
       |=  {nom/knot inv/? sis/(set ship)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
-        %^  ta-delta  %react  red
-        [%fail (crip "no story {(trip nom)}") `act]
+        (react %fail (crip "no story {(trip nom)}"))
       so-done:(~(so-permit so nom ~ u.soy) inv sis)
     ::
     ++  action-source                                   ::<  un/sub p to/from r
