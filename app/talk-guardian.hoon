@@ -283,13 +283,14 @@
       ==
     ::
     ++  react                                           ::<  new reaction
-      ::>
+      ::>  send reaction to this action.
       ::
       |=  {res/?($info $fail) wat/cord}
       (ta-delta %react red [res wat `act])
     ::
     ++  affect                                          ::<  delta to story
-      ::>
+      ::>  store a delta about a story. if the story
+      ::>  does not exist, react.
       ::
       |=  {nom/knot dif/diff-story}
       ?:  (~(has by stories) nom)
@@ -297,7 +298,7 @@
       (react %fail (crip "no story {(trip nom)}"))
     ::
     ++  impact                                          ::<  delta for story
-      ::>
+      ::>  Store a delta about a story.
       ::
       |=  {nom/knot dif/diff-story}
       (ta-delta %story nom dif)
@@ -429,7 +430,7 @@
   ::+|
   ::
   ++  ta-observe                                        ::<  watch burden bearer
-    ::>
+    ::>  subscribe to a child who is bearing our burden.
     ::
     |=  who/ship
     ^+  +>
@@ -471,7 +472,7 @@
     (so-absent:sor src)
   ::
   ++  ta-greet                                          ::<  subscription success
-    ::>
+    ::>  store a started subscription as source.
     ::
     |=  {nom/knot cir/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
@@ -485,7 +486,9 @@
     (so-leave:sor %& cir)
   ::
   ++  ta-take                                           ::<  apply prize
-    ::>
+    ::>  for a %burden prize, bear the burden in a new
+    ::>  or existing story.
+    ::>  for a %circle prize, use ++so to accept it.
     ::
     |=  {wir/wire piz/prize}
     ^+  +>
@@ -505,7 +508,10 @@
     ==
   ::
   ++  ta-hear                                           ::<  apply rumor
-    ::>
+    ::>  apply changes from a rumor to our state.
+    ::>  for %burden, authoratively apply the story
+    ::>  diff. if it's a new one, bear it.
+    ::>  for %circle, apply the story diff normally.
     ::
     |=  {wir/wire dif/rumor}
     ^+  +>
@@ -530,7 +536,8 @@
     ==
   ::
   ++  ta-repeat                                         ::<  message delivered
-    ::>
+    ::>  message got delivered. if an error was returned
+    ::>  mark the message as rejected. if not, received.
     ::
     |=  {num/@ud who/partner fal/(unit tang)}
     ^+  +>
@@ -660,14 +667,14 @@
       [%app %talk-guardian msg]~
     ::
     ++  so-delta                                        ::<  send delta
-      ::>
+      ::>  store delta in ++ta core.
       ::
       |=  dif/delta
       ^+  +>
       +>(deltas [dif deltas])
     ::
     ++  so-deltas                                       ::<  send delta list
-      ::>
+      ::>  store multiple deltas in ++ta core.
       ::
       |=  dis/(list delta)
       %_(+> deltas (welp (flop dis) deltas))
@@ -680,7 +687,8 @@
       (so-delta %story nom dif)
     ::
     ++  so-config-full                                  ::<  split full config
-      ::>
+      ::>  split a %full config delta up into multiple
+      ::>  smaller ones, for easier application.
       ::
       |=  {old/(unit config) cof/config}
       ^+  +>
@@ -720,7 +728,7 @@
     ::+|
     ::
     ++  so-take                                         ::<  accept circle prize
-      ::>
+      ::>  apply the prize as if it were rumors.
       ::
       |=  {src/circle gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
@@ -733,7 +741,7 @@
       (so-lesson gaz)
     ::
     ++  so-hear                                         ::<  accept circle rumor
-      ::>
+      ::>  apply changes from a rumor to this story.
       ::
       |=  {bur/? src/circle dif/diff-story}
       ^+  +>
@@ -776,7 +784,9 @@
       ==
     ::
     ++  so-bear                                         ::<  accept burden
-      ::>
+      ::>  add what was pushed down from above to our
+      ::>  state. in case of conflict, existing data is
+      ::>  overwritten.
       ::
       |=  {gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
@@ -865,7 +875,7 @@
       (so-delta-our %status so-pan her %full sat)
     ::
     ++  so-absent                                       ::<  del local presence
-      ::>
+      ::>  remove {her} from our presence map.
       ::
       |=  her/ship
       ^+  +>
@@ -879,7 +889,7 @@
     ::+|
     ::
     ++  so-greet                                        ::<  subscription started
-      ::>
+      ::>  store a started subscription as source.
       ::
       |=  pan/partner
       ^+  +>
@@ -1126,12 +1136,6 @@
     [red %diff %talk-reaction rac]
   ::
   ::>  ||
-  ::>  ||  %data
-  ::>  ||
-  ::>    utility functions for data retrieval.
-  ::+|
-  ::
-  ::>  ||
   ::>  ||  %change-application
   ::>  ||
   ::>    arms that change the application state.
@@ -1161,7 +1165,8 @@
     ==
   ::
   ++  da-init                                           ::<  startup side-effects
-    ::>
+    ::>  apply %init delta, querying the /burden of the
+    ::>  ship above us.
     ::
     %-  da-emit
     :*  0
@@ -1172,7 +1177,8 @@
     ==
   ::
   ++  da-observe                                        ::<  watch burden bearer
-    ::>
+    ::>  apply %observe delta, querying the /report of
+    ::>  {who} below us.
     ::
     |=  who/ship
     ~&  [%peering-report who]
@@ -1185,7 +1191,8 @@
     ==
   ::
   ++  da-change-out                                     ::<  outgoing messages
-    ::>
+    ::>  apply an %out delta, sending a message and
+    ::>  adding it to our outbox.
     ::
     |=  {cir/circle out/(list thought)}
     ^+  +>
@@ -1204,14 +1211,16 @@
     ==
   ::
   ++  da-change-done                                    ::<  delivered messages
-    ::>
+    ::>  apply a %done delta, removing a delivered
+    ::>  message from our outbox.
     ::
     |=  num/@ud
     ^+  +>
     +>(q.outbox (~(del by q.outbox) num))
   ::
   ++  da-change-glyph                                   ::<  un/bound glyph
-    ::>
+    ::>  apply a %glyph delta, un/binding a glyph to/from
+    ::>  a set of partners.
     ::
     |=  {bin/? gyf/char pas/(set partner)}
     ^+  +>
@@ -1230,7 +1239,8 @@
     ==
   ::
   ++  da-change-nick                                    ::<  changed nickname
-    ::>
+    ::>  apply a %nick delta, setting a nickname for a
+    ::>  ship.
     ::
     |=  {who/ship nic/cord}
     ^+  +>
@@ -1245,7 +1255,10 @@
   ::+|
   ::
   ++  da-change-story                                   ::<  apply circle delta
-    ::>
+    ::>  apply a %story delta, redirecting the delta
+    ::>  itself to ++sa-change.
+    ::>  in case of a new or deleted story, specialized
+    ::>  arms are called.
     ::
     |=  {nom/knot dif/diff-story}
     ^+  +>
@@ -1339,12 +1352,14 @@
     ::+|
     ::
     ++  sa-delete                                       ::<  deletion of story
-      ::>
+      ::>  apply a %remove story delta, unsubscribing
+      ::>  this story from all its active sources.
       ::
       (sa-abjure (~(tap in src.shape)))
     ::
     ++  sa-change                                       ::<  apply circle delta
-      ::>
+      ::>  figure out whether to apply a %story delta to
+      ::>  local or remote data.
       ::
       |=  dif/diff-story
       ^+  +>
@@ -1364,7 +1379,7 @@
       ==
     ::
     ++  sa-change-local                                 ::<  apply our delta
-      ::>
+      ::>  apply a %story delta to local data.
       ::
       |=  dif/diff-story
       ^+  +>
@@ -1410,8 +1425,9 @@
         ==
       ==
     ::
-    ++  sa-change-gram                                 ::<  save/update message
-      ::>
+    ++  sa-change-gram                                  ::<  save/update message
+      ::>  apply a %grams delta, either appending or
+      ::>  updating a message.
       ::
       |=  gam/telegram
       ^+  +>
@@ -1432,7 +1448,7 @@
       ==
     ::
     ++  sa-change-remote                                ::<  apply remote's delta
-      ::>
+      ::>  apply a story diff to remote data.
       ::
       |=  dif/diff-story
       ^+  +>
@@ -1460,7 +1476,7 @@
       ==
     ::
     ++  sa-config-effects                               ::<  config side-effects
-      ::>
+      ::>  apply side-effects for a %config delta.
       ::
       |=  {old/config dif/diff-config}
       ^-  (list move)
@@ -1470,7 +1486,8 @@
       ==
     ::
     ++  sa-follow-effects                               ::<  un/subscribe
-      ::>
+      ::>  apply side-effects for a %follow delta,
+      ::>  un/subscribing this story to/from {pas}.
       ::
       |=  {sub/? pas/(set partner)}
       ^-  (list move)
@@ -1481,7 +1498,9 @@
       ?:(sub sa-acquire sa-abjure)
     ::
     ++  sa-permit-effects                               ::<  notify permitted
-      ::>
+      ::>  apply side-effects for a %permit delta,
+      ::>  kicking the subscriptions of {sis} if they
+      ::>  are being banished.
       ::
       |=  {sec/security old/(set ship) add/? sis/(set ship)}
       ^-  (list move)
@@ -1642,7 +1661,7 @@
   :(welp mos (affection dif))
 ::
 ++  pre-bake                                            ::<  apply more deltas
-  ::>
+  ::>  bake a list of deltas.
   ::
   |=  dis/(list delta)
   ^-  (quip move +>)
@@ -1652,7 +1671,7 @@
   [(welp m mos) +>.^$]
 ::
 ++  g-query                                             ::<  query on state
-  ::>
+  ::>  find the result (if any) for a given query.
   ::
   |=  weg/(list coin)
   ::TODO  should return (unit prize)? ie for /circle/non-existing
@@ -1699,7 +1718,8 @@
   ==
 ::
 ++  tmp-their-change                                    ::<  diff-story to theirs
-  ::>
+  ::>  modify a %story delta to make it about their ship
+  ::>  instead of ours.
   ::
   |=  {who/ship dif/diff-story}
   ^-  diff-story
@@ -1733,7 +1753,8 @@
   ==
 ::
 ++  i-change                                            ::<  delta to rumor
-  ::>
+  ::>  if the given delta changes the result of the given
+  ::>  query, produce the relevant rumor.
   ::
   |=  {weg/(list coin) dif/delta}
   ^-  (unit rumor)
@@ -1786,7 +1807,8 @@
   ==
 ::
 ++  affection                                           ::<  rumors to interested
-  ::>
+  ::>  for a given delta, send rumors to all queries it
+  ::>  affects.
   ::
   ::TODO  probably want to do "affected by" checks for every bone,
   ::      and just construct the rumor once.
@@ -1802,14 +1824,15 @@
   ?~  rum  ~
   `[b %diff %talk-rumor u.rum]
 ::
-++  path-to-query                                       ::<  ...
-  ::>
+++  path-to-query                                       ::<  path, coins, query
+  ::>  parse a path into a (list coin), then parse that
+  ::>  into a query structure.
   ::
   |=  pax/path
   (coins-to-query (path-to-coins pax))
 ::
-++  path-to-coins                                       ::<  ...
-  ::>
+++  path-to-coins                                       ::<  path to coin list
+  ::>  parse a path into a list of coins.
   ::
   |=  pax/path
   ^-  (list coin)
@@ -1817,8 +1840,8 @@
   |=  a/@ta
   (need (slay a))
 ::
-++  coins-to-query                                      ::<  ...
-  ::>
+++  coins-to-query                                      ::<  coin list to query
+  ::>  parse a list of coins into a query structure.
   ::
   ^-  $-((list coin) query)
   =>  depa
@@ -1834,8 +1857,8 @@
   ++  plac  (or %da %ud)
   --
 ::
-++  tmp-parse-diff-path                                 ::<  ...
-  ::>
+++  tmp-parse-diff-path                                 ::<  find target story
+  ::>  "parses" a path to determine the target story
   ::
   |=  pax/path
   ^-  (pair knot circle)
@@ -1846,7 +1869,8 @@
   i.t.t.t.pax
 ::
 ++  leak                                                ::<  visible to
-  ::>
+  ::>  determine if the given query is visible to the
+  ::>  ship.
   ::
   |=  {who/ship weg/(list coin)}
   ^-  ?
@@ -1901,7 +1925,7 @@
 ::+|
 ::
 ++  diff-talk-prize                                     ::<  accept prize
-  ::>
+  ::>  accept a query result.
   ::
   |=  {wir/wire piz/prize}
   ^-  (quip move +>)
@@ -1913,7 +1937,7 @@
   [(welp mos mow) +>.$]
 ::
 ++  diff-talk-rumor                                     ::<  accept rumor
-  ::>
+  ::>  accept a query result change.
   ::
   |=  {wir/wire dif/rumor}
   ^-  (quip move +>)
@@ -1948,7 +1972,7 @@
   ta-done:(ta-cancel:ta src.bol pax)
 ::
 ++  reap                                                ::<  catch-all reap
-  ::>
+  ::>  handle all remote errors.
   ::
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)

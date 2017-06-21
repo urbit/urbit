@@ -154,8 +154,6 @@
       cap/cord                                          ::<  description
       fit/filter                                        ::<  message rules
       con/control                                       ::<  restrictions
-      ::  so: only change src on success of peer/pull (√)
-      ::  and: when gaining a fed, do a %peer (√)
   ==                                                    ::
 ++  filter                                              ::>  content filters
   $:  cas/?                                             ::<  dis/allow capitals
@@ -173,13 +171,13 @@
 ++  group      (map ship status)                        ::<  presence map
 ++  status     {pec/presence man/human}                 ::<  participant
 ++  presence                                            ::>  status type
-  $?  $gone                                             ::<  left
+  $?  $gone                                             ::<  absent
       $idle                                             ::<  idle
       $hear                                             ::<  present
       $talk                                             ::<  typing
   ==                                                    ::
 ++  human                                               ::>  human identifier
-  $:  tru/(unit (trel cord (unit cord) cord))           ::<TODO  unused true name
+  $:  tru/(unit (trel cord (unit cord) cord))           ::<  true name
       han/(unit cord)                                   ::<  handle
   ==                                                    ::
 ::
@@ -190,9 +188,9 @@
 ::+|
 ::
 ++  telegram   {aut/ship tot/thought}                   ::<  who thought
-++  thought    {uid/serial aud/audience sam/statement}  ::<  which whom what
-++  statement  {wen/@da boq/bouquet sep/speech}         ::<  when this
-++  speech                                              ::>  narrative action
+++  thought    {uid/serial aud/audience sam/statement}  ::<  which whom this
+++  statement  {wen/@da boq/bouquet sep/speech}         ::<  when what body
+++  speech                                              ::>  content body
   $%  {$non $~}                                         ::<  no content (yo)
       {$lin pat/? msg/cord}                             ::<  no/@ text line
       {$ire tos/serial sep/speech}                      ::<  in-reply-to
