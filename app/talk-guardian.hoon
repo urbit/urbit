@@ -1637,7 +1637,7 @@
 ::>  ||
 ::+|
 ::TODO  make use of ++prey for filtering subs?
-++  f-bake                                              ::<  apply state delta
+++  bake                                                ::<  apply state delta
   ::>  applies a change to the application state,
   ::>  producing side-effects.
   ::
@@ -1646,7 +1646,8 @@
   =^  mos  +>.$
     da-done:(da-change:da dif)
   :_  +>.$
-  :(welp mos (affection dif))
+  ::TODO  move affection to pre-bake, but then station creation doesn't happen?
+  (welp mos (affection dif))
 ::
 ++  pre-bake                                            ::<  apply more deltas
   ::>  bake a list of deltas.
@@ -1654,8 +1655,8 @@
   |=  dis/(list delta)
   ^-  (quip move +>)
   %+  roll  dis
-  |=  {d/delta m/(list move) _+>.$}  ::TODO  ^$ nest-fails, is this correct?
-  =^  mos  +>.^$  (f-bake d)
+  |=  {d/delta m/(list move) _+>.$}  ::TODO?  ^$ find-fails, how is this correct?
+  =^  mos  +>.^$  (bake d)
   [(welp m mos) +>.^$]
 ::
 ++  peek                                                ::<  query on state
@@ -1707,7 +1708,7 @@
     [locals.u.soy remotes.u.soy]
   ==
 ::
-++  tmp-their-change                                    ::<  diff-story to theirs
+++  dedicate                                            ::<  diff-story to theirs
   ::>  modify a %story delta to make it about their ship
   ::>  instead of ours.
   ::
@@ -1725,7 +1726,7 @@
     dif(pan [%& who nom.p.pan.dif])
   ==
 ::
-++  i-change                                            ::<  delta to rumor
+++  feel                                                ::<  delta to rumor
   ::>  if the given delta changes the result of the given
   ::>  query, produce the relevant rumor.
   ::
@@ -1757,7 +1758,7 @@
     ?.  ?=($story -.dif)  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
-    `[%burden nom.dif (tmp-their-change who.qer dif.dif)]
+    `[%burden nom.dif (dedicate who.qer dif.dif)]
     ::
       $report
     ::  only send changes we didn't get from above.
@@ -1770,7 +1771,7 @@
     ?.  burden.soy  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape.soy)  ~
-    `[%burden nom.dif (tmp-their-change (above our.bol) dif.dif)]
+    `[%burden nom.dif (dedicate (above our.bol) dif.dif)]
     ::
       $circle
     ?.  ?=($story -.dif)  ~
@@ -1783,17 +1784,19 @@
   ::>  for a given delta, send rumors to all queries it
   ::>  affects.
   ::
-  ::TODO  probably want to do "affected by" checks for every bone,
-  ::      and just construct the rumor once.
+  ::TODO?  probably want to do "affected by" checks for
+  ::  every bone, and just construct the rumor once.
+  ::  ^ gall need to do this for you.
   |=  dif/delta
   ^-  (list move)
   %+  murn  (~(tap by sup.bol))
   |=  {b/bone s/ship p/path}
   ^-  (unit move)
-  =+  rum=(i-change (path-to-coins p) dif)
-  ::TODO  %quit bones that are done with their subscription.
+  =+  rum=(feel (path-to-coins p) dif)
+  ::TODO?  %quit bones that are done with their subscription.
   ::  ...but that would also require a ta-cancel call to remove
   ::  them from the presence list! how do?
+  ::  should there be an ++away arm for gall to call?
   ?~  rum  ~
   `[b %diff %talk-rumor u.rum]
 ::
