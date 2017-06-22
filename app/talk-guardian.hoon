@@ -1663,18 +1663,18 @@
   =^  mos  +>.^$  (f-bake d)
   [(welp m mos) +>.^$]
 ::
-++  g-query                                             ::<  query on state
+++  peek                                                ::<  query on state
   ::>  find the result (if any) for a given query.
   ::
   |=  weg/(list coin)
-  ::TODO  (unit (unit prize))
-  ^-  prize
+  ^-  (unit (unit prize))
   =+  qer=(coins-to-query weg)
   ?-  -.qer
       $reader
-    [%reader nak nicks]
+    ``[%reader nak nicks]
     ::
       $friend
+    :+  ~  ~
     :-  %friend
     %-  ~(gas in *(set circle))
     %+  murn
@@ -1686,6 +1686,7 @@
     [~ p.p]
     ::
       $burden
+    :+  ~  ~
     :-  %burden
     %-  ~(gas in *(map knot burden))
     %+  murn  (~(tap by stories))
@@ -1699,15 +1700,16 @@
     [locals.s remotes.s]
     ::
       $report
-    ::TODO  want to return no prize
-    [%friend ~]
+    ~  ::TODO?  we just don't have a prize. or do we need [%report ~] ?
     ::
       $circle
+    =+  soy=(~(get by stories) nom.qer)
+    ?~  soy  ~
+    :+  ~  ~
     :-  %circle
-    =+  soy=(~(got by stories) nom.qer)
-    :+  grams.soy  ::TODO  get using specified range.
-      [shape.soy mirrors.soy]
-    [locals.soy remotes.soy]
+    :+  grams.u.soy  ::TODO  get using specified range.
+      [shape.u.soy mirrors.u.soy]
+    [locals.u.soy remotes.u.soy]
   ==
 ::
 ++  tmp-their-change                                    ::<  diff-story to theirs
@@ -1937,8 +1939,11 @@
     %-  pre-bake
     ta-done:(ta-subscribe:ta src.bol pax)
   :_  +>.$
+  =+  piz=(peek qer)
+  ?~  piz  ~&([%query-unavailable pax] mos)
+  ?~  u.piz  ~&([%query-invalid pax] mos)
   :_  mos
-  [ost.bol %diff %talk-prize (g-query qer)]
+  [ost.bol %diff %talk-prize u.u.piz]
 ::
 ++  pull                                                ::<  unsubscribe
   ::>  unsubscribes.
