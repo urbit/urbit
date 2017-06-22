@@ -213,22 +213,28 @@
     ::>  populate state on first boot.
     ::>  creates our default mailbox and journal.
     ::
-    =<  %-  ta-deltas  ::  side-effects
-      =+  sen=(above our.bol)
-      ?:  ?|  !=(%czar (clan sen))
-              =(sen our.bol)
-              =(%pawn (clan our.bol))
+    ::  create default circles.
+    =>  %+  roll
+          ^-  (list {security knot cord})
+          :~  [%brown (main our.bol) 'default home']
+              [%green ~.public 'visible activity']
           ==
-        ~
-      [%init ~]~
-    %+  roll
-      ^-  (list {security knot cord})
-      :~  [%brown (main our.bol) 'default home']
-          [%green ~.public 'visible activity']
-      ==
-    |=  {{typ/security nom/knot des/cord} _ta}
-    %+  ta-action  ost.bol
-    [%create nom des typ]
+        |=  {{typ/security nom/knot des/cord} _ta}
+        %+  ta-action  ost.bol
+        [%create nom des typ]
+    %-  ta-deltas
+    ::  change inbox filter to allow everything.
+    :-  :+  %story  (main our.bol)
+        :+  %config  [our.bol (main our.bol)]
+        [%filter [& &]]
+    ::  if needed, subscribe to our parent's /burden.
+    =+  sen=(above our.bol)
+    ?:  ?|  !=(%czar (clan sen))
+            =(sen our.bol)
+            =(%pawn (clan our.bol))
+        ==
+      ~
+    [%init ~]~
   ::
   ++  ta-apply                                          ::<  apply command
     ::>  applies the command sent by {src}.
