@@ -69,8 +69,9 @@
   ::  unbind single.
   (~(del ju gys) gyf pas)
 ::
-++  change-nicks                                        ::<  ...
-  ::>
+++  change-nicks                                        ::<  change nick map
+  ::>  changes a nickname in a map, adding if it doesn't
+  ::>  yet exist, removing if the nickname is empty.
   ::
   |=  {nis/(map ship cord) who/ship nic/cord}
   ^+  nis
@@ -78,18 +79,8 @@
     (~(del by nis) who)
   (~(put by nis) who nic)
 ::
-++  change-friends                                      ::<  ...
-  ::>
-  ::
-  |=  {cis/(set circle) add/? cir/circle}
-  ^+  cis
-  %.  cir
-  ?:  add
-    ~(put in cis)
-  ~(del in cis)
-::
-++  change-config                                       ::<  ...
-  ::>
+++  change-config                                       ::<  apply config diff
+  ::>  applies a config diff to the given config.
   ::
   |=  {cof/config dif/diff-config}
   ^+  cof
@@ -102,8 +93,7 @@
       $source
     %=  cof
         src
-      %.  `(set partner)`pas.dif  ::TODO?  why do we *need* to cast?
-      ~&  [%doing-source add.dif pas.dif]
+      %.  pas.dif
       ?:  add.dif
         ~(uni in src.cof)
       ~(dif in src.cof)
@@ -131,8 +121,8 @@
     ==
   ==
 ::
-++  change-status                                       ::<  ...
-  ::>
+++  change-status                                       ::<  apply status diff
+  ::>  applies a status diff to the given status.
   ::
   |=  {sat/status dif/diff-status}
   ^+  sat

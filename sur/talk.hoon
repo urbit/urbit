@@ -104,7 +104,7 @@
 ++  action                                              ::>  user action
   $%  ::  circle configuration                          ::
       {$create nom/knot des/cord sec/security}          ::<  create circle
-      {$delete nom/knot ano/(unit cord)}                ::<  delete + announce
+      {$delete nom/knot why/(unit cord)}                ::<  delete + announce
       {$depict nom/knot des/cord}                       ::<  change description
       {$filter nom/knot fit/filter}                     ::<  change message rules
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish

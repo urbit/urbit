@@ -62,7 +62,6 @@
           sequence/(map partner @ud)                    ::<  partners heard
           known/(map serial @ud)                        ::<  messages heard
           burden/?                                      ::<  from parent?
-          ::TODO  send changes to herited story changes up.
       ==                                                ::
     ++  river  (pair point point)                       ::<  stream definition
     ++  point                                           ::>  stream endpoint
@@ -160,7 +159,7 @@
     %_(+> deltas [dif deltas])
   ::
   ++  ta-deltas                                         ::<  emit delta list
-    ::>  adds multiple deltas to the haad of {deltas}.
+    ::>  adds multiple deltas to the head of {deltas}.
     ::>  flops to stay consistent with ++ta-delta.
     ::
     |=  dis/(list delta)
@@ -245,14 +244,15 @@
       ::>  %publish commands prompt us (as a circle host)
       ::>  to verify and distribute messages.
       $publish  (ta-think | src +.cod)
-      ::TODO  document
+      ::>  %bearing commands are used by our children to
+      ::>  let us know they're bearing our /burden. we
+      ::>  need to watch them to allow changes to go up.
       $bearing  (ta-observe src)
     ==
   ::
   ++  ta-action                                         ::<  apply reader action
     ::>  performs action sent by a reader.
     ::
-    ::delta-generation
     |=  {red/bone act/action}
     ^+  +>
     =<  work
@@ -442,7 +442,6 @@
     ^+  +>
     ?.  =(our.bol (above who))
       ~&([%not-our-bearer who] +>)
-    ~&  [%gonna-observe who]
     (ta-delta %observe who)
   ::
   ++  ta-subscribe                                      ::<  listen to
@@ -530,6 +529,7 @@
         (so-hear:sor & [our.bol nom.dif] dif.dif)
         ::
           $new
+        ::TODO  shouldn't this act the same as $burden in ++ta-take?
         =<  so-done
         %-  ~(so-hear so nom.dif ~ (fall (~(get by stories) nom.dif) *story))
         [& [our.bol nom.dif] %bear ~ [cof.dif.dif ~] [~ ~]]
@@ -640,9 +640,6 @@
       ::>  actions.
       ::
       ^+  +>
-      ::?:  =(`+<+> (~(get by stories) nom))
-      ::  ::TODO  tmp
-      ::  ~&(%illegal-change-story !!)
       =.  acs  (flop acs)
       |-  ^+  +>+
       ?~  acs  +>+
@@ -692,32 +689,6 @@
       ^+  +>
       (so-delta %story nom dif)
     ::
-    ++  so-config-full                                  ::<  split full config
-      ::>  split a %full config delta up into multiple
-      ::>  smaller ones, for easier application.
-      ::
-      |=  {old/(unit config) cof/config}
-      ^+  +>
-      ~&  %so-config-full
-      %-  so-deltas
-      %+  turn
-        %+  weld
-          ^-  (list diff-story)
-          ?~  old  ~
-          ::TODO?  what to do about src?
-          :~  ::[%follow | src.u.old]
-              [%config so-cir %permit | ses.con.u.old]
-          ==
-        ^-  (list diff-story)
-        :~  ::[%follow & src.cof]  ::TODO  double-check da-$follow checks existing src
-            [%config so-cir %caption cap.cof]
-            [%config so-cir %filter fit.cof]
-            [%config so-cir %secure sec.con.cof]
-            [%config so-cir %permit & ses.con.cof]
-        ==
-      |=  d/diff-story
-      [%story nom d]
-    ::
     ::>  ||
     ::>  ||  %data
     ::>  ||
@@ -749,6 +720,7 @@
     ++  so-hear                                         ::<  accept circle rumor
       ::>  apply changes from a rumor to this story.
       ::
+      ::TODO  cleanup
       |=  {bur/? src/circle dif/diff-story}
       ^+  +>
       ::TODO?  these checks are still important, because
@@ -763,9 +735,7 @@
         ::      in the first place. update ++-change or whatever!
         ::      (we don't care for remote remotes, etc.)
         $new      ?:  =(src so-cir)
-                    ~&  %new-by-us
                     (so-config-full ~ cof.dif)
-                  ~&  %new-by-other
                   $(dif [%config src %full cof.dif])
         $bear     ~&(%so-bear (so-bear bur.dif))
         $burden   ~&(%burden-not-rumor +>)
@@ -838,6 +808,31 @@
     ::>  ||
     ::>    arms that make miscelaneous changes to this story.
     ::+|
+    ::
+    ++  so-config-full                                  ::<  split full config
+      ::>  split a %full config delta up into multiple
+      ::>  smaller ones, for easier application.
+      ::
+      |=  {old/(unit config) cof/config}
+      ^+  +>
+      %-  so-deltas
+      %+  turn
+        %+  weld
+          ^-  (list diff-story)
+          ?~  old  ~
+          ::TODO?  what to do about src?
+          :~  ::[%follow | src.u.old]
+              [%config so-cir %permit | ses.con.u.old]
+          ==
+        ^-  (list diff-story)
+        :~  ::[%follow & src.cof]
+            [%config so-cir %caption cap.cof]
+            [%config so-cir %filter fit.cof]
+            [%config so-cir %secure sec.con.cof]
+            [%config so-cir %permit & ses.con.cof]
+        ==
+      |=  d/diff-story
+      [%story nom d]
     ::
     ++  so-sources                                      ::<  change source
       ::>  adds or removes {pas} from our sources.
@@ -1072,10 +1067,10 @@
       |=  her/ship
       ^-  ?
       ?-  sec.con.shape
-        $black  !(~(has in ses.con.shape) her)         ::<  channel, blacklist
-        $white  (~(has in ses.con.shape) her)          ::<  village, whitelist
-        $green  (~(has in ses.con.shape) her)          ::<  journal, whitelist
-        $brown  !(~(has in ses.con.shape) her)         ::<  mailbox, blacklist
+        $black  !(~(has in ses.con.shape) her)          ::<  channel, blacklist
+        $white  (~(has in ses.con.shape) her)           ::<  village, whitelist
+        $green  (~(has in ses.con.shape) her)           ::<  journal, whitelist
+        $brown  !(~(has in ses.con.shape) her)          ::<  mailbox, blacklist
       ==
     ::
     ++  so-visible                                      ::<  display to
@@ -1203,6 +1198,7 @@
     |=  {cir/circle out/(list thought)}
     ^+  +>
     ?~  out  +>
+    ::TODO  just send the list at once?
     =.  +>
       %+  da-emit  ost.bol
       :*  %poke
@@ -1250,9 +1246,7 @@
     ::
     |=  {who/ship nic/cord}
     ^+  +>
-    ?:  =('' nic)
-      $(nicks (~(del by nicks) who))
-    $(nicks (~(put by nicks) who nic))
+    +>(nicks (change-nicks nicks who nic))
   ::
   ::>  ||
   ::>  ||  %stories
@@ -1344,8 +1338,9 @@
       (flop (turn cub |=(a/card [ost a])))
     ::
     ::>  ||
-    ::>  ||  %data  ::TODO consistent naming!
+    ::>  ||  %data
     ::>  ||
+    ::>    utility functions for data retrieval.
     ::+|
     ::
     ++  sa-cir  [our.bol nom]
@@ -1387,6 +1382,7 @@
     ++  sa-change-local                                 ::<  apply our delta
       ::>  apply a %story delta to local data.
       ::
+      ::TODO  split?
       |=  dif/diff-story
       ^+  +>
       ?+  -.dif
@@ -1417,18 +1413,7 @@
         ==
         ::
           $follow
-        ::  we have to do the effects first, because it
-        ::  checks for new sub targets using src.shape.
-        ~&  [%sa-change-follow nom sub.dif pas.dif]
-        =.  +>
-          (sa-emil (sa-follow-effects sub.dif pas.dif))
-        %_  +>  ::TODO  delete, only done once success
-            src.shape  ::TODO  =?
-          %.  pas.dif
-          ?:  sub.dif
-            ~(uni in src.shape)
-          ~(dif in src.shape)
-        ==
+        (sa-emil (sa-follow-effects sub.dif pas.dif))
       ==
     ::
     ++  sa-change-gram                                  ::<  save/update message
@@ -1446,6 +1431,7 @@
           known    (~(put by known) uid.tot.gam count)
         ==
       ::  changed message
+      ::TODO  shouldn't overwrite audience maybe? at least keep delivery?
       =+  dex=(sub count u.old)
       %_  +>.$
         grams    %+  welp
@@ -1456,6 +1442,7 @@
     ++  sa-change-remote                                ::<  apply remote's delta
       ::>  apply a story diff to remote data.
       ::
+      ::TODO  split?
       |=  dif/diff-story
       ^+  +>
       ?+  -.dif
@@ -1488,7 +1475,7 @@
       ^-  (list move)
       ?+  -.dif  ~
         $permit   (sa-permit-effects sec.con.old ses.con.old +.dif)
-        ::TODO  $secure ?
+        ::TODO  $secure ? not here, logic should go up-stream.
       ==
     ::
     ++  sa-follow-effects                               ::<  un/subscribe
@@ -1510,12 +1497,12 @@
       ::
       |=  {sec/security old/(set ship) add/? sis/(set ship)}
       ^-  (list move)
-      =/  sus/(set ship)
-        %.  ses.con.shape
-        ?:(add ~(dif in sis) ~(int in sis))
       =/  wyt  ?=(?($white $green) sec)
       =/  inv  =(wyt add)
       ?:  inv  ~
+      =/  sus/(set ship)
+        %.  ses.con.shape
+        ?:(add ~(dif in sis) ~(int in sis))
       (sa-eject sus)
     ::
     ::>  ||
@@ -1680,7 +1667,7 @@
   ::>  find the result (if any) for a given query.
   ::
   |=  weg/(list coin)
-  ::TODO  should return (unit prize)? ie for /circle/non-existing
+  ::TODO  (unit (unit prize))
   ^-  prize
   =+  qer=(coins-to-query weg)
   ?-  -.qer
@@ -1739,23 +1726,6 @@
       $status
     ?.  &(?=($& -.pan.dif) =(hos.p.pan.dif our.bol))  dif
     dif(pan [%& who nom.p.pan.dif])
-  ==
-::
-++  tmp-clean-change                                    ::<  remove remotes
-  ::>
-  ::
-  |=  {nom/knot dif/diff-story}
-  ^-  (unit diff-story)
-  ?+  -.dif
-    `dif
-    ::
-      $config
-    ?.  =(cir.dif [our.bol nom])  ~
-    `dif
-    ::
-      $status
-    ?.  =(pan.dif [%& our.bol nom])  ~
-    `dif
   ==
 ::
 ++  i-change                                            ::<  delta to rumor
@@ -1866,10 +1836,11 @@
 ++  tmp-parse-diff-path                                 ::<  find target story
   ::>  "parses" a path to determine the target story
   ::
+  ::TODO  merge with etch?
   |=  pax/path
   ^-  (pair knot circle)
   ?.  ?=({$circle @ta @ta @ta *} pax)
-    ~&(%invalid-peer-path !!)
+    ~&(%invalid-diff-path !!)
   :-  i.t.pax
   :-  (slav %p i.t.t.pax)
   i.t.t.t.pax
