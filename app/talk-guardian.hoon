@@ -88,8 +88,8 @@
           {$quit $~}                                    ::
       ==                                                ::
     ++  weir                                            ::>  parsed wire
-      $%  {$repeat num/@ud hos/ship nom/knot}           ::<  messaging wire
-          {$friend nom/knot cir/circle}                 ::<  subscription wire
+      $%  {$repeat num/@ud cir/circle}                  ::<  messaging wire
+          {$circle nom/knot cir/circle}                 ::<  subscription wire
       ==                                                ::
     --
 ::
@@ -507,9 +507,10 @@
       (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
       ::
         $circle
-      =+  res=(tmp-parse-diff-path wir)
-      %-  (ta-know p.res)  |=  sor/_so  =<  so-done
-      (so-take:sor q.res +.piz)
+      =+  wer=(etch wir)
+      ?>  ?=($circle -.wer)
+      %-  (ta-know nom.wer)  |=  sor/_so  =<  so-done
+      (so-take:sor cir.wer +.piz)
     ==
   ::
   ++  ta-hear                                           ::<  apply rumor
@@ -536,9 +537,10 @@
       ==
       ::
         $circle
-      =+  res=(tmp-parse-diff-path wir)
-      %-  (ta-know p.res)  |=  sor/_so  =<  so-done
-      (so-hear:sor | q.res dif.dif)
+      =+  wer=(etch wir)
+      ?>  ?=($circle -.wer)
+      %-  (ta-know nom.wer)  |=  sor/_so  =<  so-done
+      (so-hear:sor | cir.wer dif.dif)
     ==
   ::
   ++  ta-repeat                                         ::<  message delivered
@@ -1588,19 +1590,19 @@
 ::+|
 ::
 ++  etch                                                ::<  parse wire
-  ::>  parses {wir}} to obtain either %friend with story
-  ::>  and circle or %repeat with message number,
-  ::>  source ship and story.
+  ::>  parses {wir}} to obtain either %circle with story
+  ::>  and circle or %repeat with message number, source
+  ::>  ship and story.
   ::
   |=  wir/wire
   ^-  weir
   ?+    -.wir  !!
-      $friend
-    ?>  ?=({$show @ @ @ $~} t.wir)
-    :^    %friend
-        i.t.t.wir
-      (slav %p i.t.t.t.wir)
-    i.t.t.t.t.wir
+      $circle
+    ?>  ?=({@ @ @ *} t.wir)
+    :^    %circle
+        i.t.wir
+      (slav %p i.t.t.wir)
+    i.t.t.t.wir
     ::
       $repeat
     ?>  ?=({@ @ @ $~} t.wir)
@@ -1610,8 +1612,9 @@
     i.t.t.t.wir
   ==
 ::
-++  etch-friend                                         ::<  parse /friend wire
-  ::>  parses a /friend wire, call a gate with the result.
+++  etch-circle                                         ::<  parse /circle wire
+  ::>  parses a /circle wire, call a gate with the
+  ::>  result.
   ::
   |=  $:  wir/wire
           $=  fun
@@ -1619,18 +1622,18 @@
               {(list move) _.}
       ==
   =+  wer=(etch wir)
-  ?>(?=($friend -.wer) (fun nom.wer cir.wer))
+  ?>(?=($circle -.wer) (fun nom.wer cir.wer))
 ::
 ++  etch-repeat                                         ::<  parse /repeat wire
   ::>  parses a /repeat wire, call gate with the result.
   ::
   |=  $:  wir/wire
           $=  fun
-          $-  {num/@ud src/ship nom/knot}
+          $-  {num/@ud cir/circle}
               {(list move) _.}
       ==
   =+  wer=(etch wir)
-  ?>(?=($repeat -.wer) (fun num.wer hos.wer nom.wer))
+  ?>(?=($repeat -.wer) (fun num.wer cir.wer))
 ::
 ::>  ||
 ::>  ||  %new-events
@@ -1833,18 +1836,6 @@
   ++  plac  (or %da %ud)
   --
 ::
-++  tmp-parse-diff-path                                 ::<  find target story
-  ::>  "parses" a path to determine the target story
-  ::
-  ::TODO  merge with etch?
-  |=  pax/path
-  ^-  (pair knot circle)
-  ?.  ?=({$circle @ta @ta @ta *} pax)
-    ~&(%invalid-diff-path !!)
-  :-  i.t.pax
-  :-  (slav %p i.t.t.pax)
-  i.t.t.t.pax
-::
 ++  leak                                                ::<  visible to
   ::>  determine if the given query is visible to the
   ::>  ship.
@@ -1960,14 +1951,14 @@
   ~|  reap-fail+wir
   (mean u.fal)
 ::
-++  reap-friend                                         ::<  subscription n/ack
+++  reap-circle                                         ::<  subscription n/ack
   ::>  if subscribing failed, update state to reflect
   ::>  that.
   ::
   ::TODO  update to handle all subscription kinds.
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)
-  %+  etch-friend  [%friend wir]
+  %+  etch-circle  [%circle wir]
   |=  {nom/knot cir/circle}
   ?~  fal
     %-  pre-bake
@@ -1977,20 +1968,20 @@
   %-  pre-bake
   ta-done:(ta-leave:ta nom cir)
 ::
-++  quit-friend                                         ::<  dropped subscription
+++  quit-circle                                         ::<  dropped subscription
   ::>  gall dropped our subscription. resubscribe.
   ::
   ::TODO  update for all subscription kinds.
   |=  wir/wire
   ^-  (quip move +>)
-  %+  etch-friend  [%friend wir]
+  %+  etch-circle  [%circle wir]
   |=  {nom/knot cir/circle}
   ::TODO  do better
   :_  +>.^$  :_  ~
   :*  0
       %peer
       /circle/[nom]/(scot %p hos.cir)/[nom.cir]
-      [hos.cir %talk-guardian]
+      [hos.cir %hall]
       /circle/[nom.cir]/(sub now.bol ~h1)
   ==
 ::
@@ -2001,9 +1992,9 @@
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)
   %+  etch-repeat  [%repeat wir]
-  |=  {num/@ud src/ship nom/knot}
+  |=  {num/@ud cir/circle}
   %-  pre-bake
-  ta-done:(ta-repeat:ta num [%& src nom] fal)
+  ta-done:(ta-repeat:ta num [%& cir] fal)
 ::
 ::>  ||
 ::>  ||  %logging
