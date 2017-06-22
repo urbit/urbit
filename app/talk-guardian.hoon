@@ -1149,11 +1149,6 @@
     |=  dif/delta
     ^+  +>
     ?-  -.dif
-        $more
-      |-  ^+  +>.^$
-      ?~  mor.dif  +>.^$
-      $(+>.^$ ^$(dif i.mor.dif), mor.dif t.mor.dif)
-      ::
       $out    (da-change-out +.dif)
       $done   (da-change-done +.dif)
       $glyph  (da-change-glyph +.dif)

@@ -45,9 +45,7 @@
   ==                                                    ::
 ::TODO  deltas into app
 ++  delta                                               ::
-  $%  ::TODO  no more %more, just produce/take list instead!
-      {$more mor/(list delta)}                          ::<  multiple changes
-      ::  messaging state                               ::
+  $%  ::  messaging state                               ::
       {$out cir/circle out/(list thought)}              ::<  msgs into outbox
       {$done num/@ud}                                   ::<  msgs delivered
       ::  shared ui state                               ::
