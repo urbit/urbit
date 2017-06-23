@@ -1488,18 +1488,14 @@
       ::>  or if we haven't gotten any yet, messages
       ::>  from up to a day ago.
       =+  num=(~(get by sequence) pan)
-      =+  old=(sub now.bol ~d1)                         :: XX full backlog
-      =+  ini=?^(num (scot %ud u.num) (scot %da old))
+      =+  old=(sub now.bol ~d1)                         ::TODO?  full backlog
+      =+  ini=?^(num [%ud u.num] [%da old])
       ?-  -.pan
           $|  !!                                        ::<  passport partner
         ::
           $&                                            ::<  circle partner
         :_  ~
-        :*  %peer
-            /circle/[nom]/(scot %p hos.p.pan)/[nom.p.pan]
-            [hos.p.pan %talk-guardian]
-            /circle/[nom.p.pan]/[ini]
-        ==
+        (circle-peer nom p.pan `[ini ~])
       ==
     ::
     ++  sa-abjure                                       ::<  unsubscribe us
@@ -1600,6 +1596,23 @@
       ==
   =+  wer=(etch wir)
   ?>(?=($repeat -.wer) (fun num.wer cir.wer))
+::
+++  circle-peer                                         ::<  /circle peer card
+  ::>  constructs a %peer move to subscribe {nom} to
+  ::>  {cir}.
+  ::
+  |=  {nom/cord cir/circle wen/range}
+  ^-  card
+  :*  %peer
+      /circle/[nom]/(scot %p hos.cir)/[nom.cir]
+      [hos.cir %talk-guardian]
+      %+  welp  /circle/[nom.cir]
+        ?~  wen  ~
+        %+  welp
+          /(scot -.hed.u.wen +.hed.u.wen)
+        ?~  tal.u.wen  ~
+        /(scot -.u.tal.u.wen +.u.tal.u.wen)
+  ==
 ::
 ::>  ||
 ::>  ||  %new-events
@@ -1941,14 +1954,8 @@
   ^-  (quip move +>)
   %+  etch-circle  [%circle wir]
   |=  {nom/knot cir/circle}
-  ::TODO  do better
   :_  +>.^$  :_  ~
-  :*  0
-      %peer
-      /circle/[nom]/(scot %p hos.cir)/[nom.cir]
-      [hos.cir %hall]
-      /circle/[nom.cir]/(sub now.bol ~h1)
-  ==
+  [0 (circle-peer nom cir `[[%da (sub now.bol ~m5)] ~])]
 ::
 ++  coup-repeat                                         ::<  message n/ack
   ::>  ack from ++ta-transmit. mark the message as
