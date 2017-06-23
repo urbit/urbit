@@ -111,15 +111,6 @@
   [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
-::>  ||  %utility
-::>  ||
-::>    small utility functions.
-::+|
-::
-::TODO  remove, only used once.
-++  strap  |*({k/* v/*} (~(put by *(map _k _v)) k v))   ::<  map key-value pair
-::
-::>  ||
 ::>  ||  %engines
 ::>  ||
 ::>    main cores.
@@ -524,7 +515,7 @@
         (so-hear:sor & [our.bol nom.dif] dif.dif)
         ::
           $new
-        ::TODO  shouldn't this act the same as $burden in ++ta-take?
+        ::TODO?  shouldn't this act the same as $burden in ++ta-take?
         =<  so-done
         %-  ~(so-hear so nom.dif ~ (fall (~(get by stories) nom.dif) *story))
         [& [our.bol nom.dif] %bear ~ [cof.dif.dif ~] [~ ~]]
@@ -544,7 +535,7 @@
     |=  {num/@ud who/partner fal/(unit tang)}
     ^+  +>
     =+  oot=(~(get by q.outbox) num)
-    ?~  oot  ~&([%ta-repeat-none num] +>.$)  ::TODO  crash?
+    ?~  oot  ~&([%ta-repeat-none num] +>.$)  ::TODO?  crash?
     =.  aud.u.oot
       =+  olg=(~(got by aud.u.oot) who)
       %+  ~(put by aud.u.oot)  who
@@ -719,7 +710,7 @@
       ::TODO  cleanup
       |=  {bur/? src/circle dif/diff-story}
       ^+  +>
-      ::TODO?  these checks are still important, because
+      ::TODO?  are these checks still important?
       ::       when things are slow we may get diffs from
       ::       things we already unsubscribed from, right?
       ~?  ?!  ?|  (~(has in src.shape) [%& src])
@@ -727,9 +718,6 @@
               ==
         [%unexpected-rumor-source nom -.dif src]
       ?-  -.dif
-        ::TODO  we check for foreigns here, but they should just not get sent
-        ::      in the first place. update ++-change or whatever!
-        ::      (we don't care for remote remotes, etc.)
         $new      ?:  =(src so-cir)
                     (so-config-full ~ cof.dif)
                   $(dif [%config src %full cof.dif])
@@ -743,15 +731,15 @@
                   ?:  =(src cir.dif)
                     (so-delta-our dif)
                   ::  remotes of remotes are not.
-                  ~&  %unexpected-ignoring-remote-config
+                  ~&  %ignoring-remote-config
                   ~?  =(src so-cir)  %but-src-is-us
                   +>
         $status   ::  ignore foreign remotes.
                   ?.  |(=([%& src] pan.dif) =(src so-cir))
-                    ~&  %unexpected-ignoring-remote-status
+                    ~&  %ignoring-remote-status
                     +>
                   (so-delta-our dif)
-        $follow   ~&(%follow-not-rumor +>)  ::TODO  crash?
+        $follow   ~&(%follow-not-rumor +>)  ::TODO?  crash?
         $remove   (so-delta-our %config src %remove ~)
       ==
     ::
@@ -789,13 +777,9 @@
         |=  t/telegram
         =-  t(aud.tot -)
         =/  oud
-          (~(get by aud.tot.t) [%& (above our.bol) nom])
-        ?~  oud  ::TODO  seems like it should never occur?
-          ~&  %unexpected-parent-not-audience
-          aud.tot.t
-        =.  aud.tot.t
-          (~(del by aud.tot.t) [%& (above our.bol) nom])
-        (~(put by aud.tot.t) [%& our.bol nom] u.oud)
+          (~(got by aud.tot.t) [%& (above our.bol) nom])
+        =+  (~(del by aud.tot.t) [%& (above our.bol) nom])
+        (~(put by -) [%& our.bol nom] oud)
       ::  burden flag
       (so-delta-our %burden &)
     ::
@@ -1017,17 +1001,8 @@
       =.  aud.tot.gam
         ::>  if we are in the audience, mark as received.
         =+  ole=(~(get by aud.tot.gam) so-pan)
-        ?^  ole  (~(put by aud.tot.gam) so-pan -.u.ole %received)
-        ::TODO  can we delete the below? seems old federation?
-        ::TODO  pass src through explicitly instead of
-        ::      relying on src.bol.
-        ::TODO?  ^ why?
-        =+  ole=(~(get by aud.tot.gam) [%& src.bol nom])
         ?~  ole  aud.tot.gam
-        ::TODO  below line is old federation, but should work for our current
-        ::      use case, right? why doesn't it?
-        =.  aud.tot.gam  (~(del by aud.tot.gam) [%& src.bol nom])
-        (~(put by aud.tot.gam) so-pan -.u.ole %received)
+        (~(put by aud.tot.gam) so-pan p.u.ole %received)
       (so-delta-our %grams [gam ~])
     ::
     ::>  ||
