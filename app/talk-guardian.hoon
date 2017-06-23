@@ -447,20 +447,16 @@
   ++  ta-subscribe                                      ::<  listen to
     ::>  add her to a presence list if applicable.
     ::
-    ::TODO  change interface to not include path,
-    ::      only call for /circle queries.
-    |=  {her/ship pax/path}
+    |=  {her/ship qer/query}
     ^+  +>
-    ?.  ?=({@ta *} pax)  +>
-    ?+  -.pax
+    ?+  -.qer
       +>
       ::
         $burden
       (ta-observe her)
       ::
         $circle
-      ?.  ?=({@ta *} t.pax)  +>
-      %-  (ta-know i.t.pax)  |=  sor/_so  =<  so-done
+      %-  (ta-know nom.qer)  |=  sor/_so  =<  so-done
       (so-attend:sor her %hear [~ ~])
     ==
   ::
@@ -468,12 +464,10 @@
     ::>  drops {src}'s subscription. deduce the right way
     ::>  to do this from the subscription path {pax}.
     ::
-    |=  {src/ship pax/path}
+    |=  {src/ship nom/knot}
     ^+  +>
-    ::TODO  catch earlier, just pass nom?
-    ?.  ?=({$circle @ta *} pax)  +>
     ::  set ship status to %gone.
-    %-  (ta-know i.t.pax)  |=  sor/_so  =<  so-done
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-absent:sor src)
   ::
   ++  ta-greet                                          ::<  subscription success
@@ -1665,9 +1659,8 @@
 ++  peek                                                ::<  query on state
   ::>  find the result (if any) for a given query.
   ::
-  |=  weg/(list coin)
+  |=  qer/query
   ^-  (unit (unit prize))
-  =+  qer=(coins-to-query weg)
   ?-  -.qer
       $reader
     ``[%reader nak nicks]
@@ -1733,9 +1726,8 @@
   ::>  if the given delta changes the result of the given
   ::>  query, produce the relevant rumor.
   ::
-  |=  {weg/(list coin) dif/delta}
+  |=  {qer/query dif/delta}
   ^-  (unit rumor)
-  =+  qer=(coins-to-query weg)
   ?-  -.qer
       $reader
     ::  changes to shared ui state apply.
@@ -1795,7 +1787,7 @@
   %+  murn  (~(tap by sup.bol))
   |=  {b/bone s/ship p/path}
   ^-  (unit move)
-  =+  rum=(feel (path-to-coins p) dif)
+  =+  rum=(feel (path-to-query p) dif)
   ::TODO?  %quit bones that are done with their subscription.
   ::  ...but that would also require a ta-cancel call to remove
   ::  them from the presence list! how do?
@@ -1840,9 +1832,8 @@
   ::>  determine if the given query is visible to the
   ::>  ship.
   ::
-  |=  {who/ship weg/(list coin)}
+  |=  {who/ship qer/query}
   ^-  ?
-  =+  qer=(coins-to-query weg)
   ?-  -.qer
     $reader   (team our.bol who)
     $friend   &
@@ -1922,11 +1913,11 @@
   |=  pax/path
   ^-  (quip move +>)
   ?:  ?=({$sole *} pax)  ~&(%talk-broker-no-sole !!)
-  =+  qer=(path-to-coins pax)
+  =+  qer=(path-to-query pax)
   ?.  (leak src.bol qer)  ~&(%peer-invisible !!)
   =^  mos  +>.$
     %-  pre-bake
-    ta-done:(ta-subscribe:ta src.bol pax)
+    ta-done:(ta-subscribe:ta src.bol qer)
   :_  +>.$
   =+  piz=(peek qer)
   ?~  piz  ~&([%query-unavailable pax] mos)
@@ -1939,8 +1930,10 @@
   ::
   |=  pax/path
   ^-  (quip move +>)
+  =+  qer=(path-to-query pax)
+  ?.  ?=($circle -.qer)  [~ +>.$]
   %-  pre-bake
-  ta-done:(ta-cancel:ta src.bol pax)
+  ta-done:(ta-cancel:ta src.bol nom.qer)
 ::
 ++  reap                                                ::<  catch-all reap
   ::>  handle all remote errors.
