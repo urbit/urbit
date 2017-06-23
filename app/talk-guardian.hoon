@@ -292,7 +292,7 @@
       ::>  send reaction to this action.
       ::
       |=  {res/?($info $fail) wat/cord}
-      (ta-delta %react red [res wat `act])
+      (ta-delta %react [res wat `act])
     ::
     ++  affect                                          ::<  delta to story
       ::>  store a delta about a story. if the story
@@ -1125,12 +1125,9 @@
   ++  da-react                                          ::<  send reaction
     ::>  sends a talk-reaction diff to a reader.
     ::
-    ::TODO  argument always ost.bol? seems to be that way
-    |=  {red/bone rac/reaction}
+    |=  rac/reaction
     %-  da-emit
-    ~?  !=(red ost.bol)  %react-different-bones
-    ::TODO  is diff the way to react to a poke?
-    [red %diff %talk-reaction rac]
+    [ost.bol %diff %talk-reaction rac]
   ::
   ::>  ||
   ::>  ||  %change-application

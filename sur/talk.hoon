@@ -56,7 +56,7 @@
       ::  side-effects                                  ::
       {$init $~}                                        ::<  initialize
       {$observe who/ship}                               ::<  watch burden bearer
-      {$react ost/bone rac/reaction}  ::TODO  ost.bol?  ::<  reaction to action
+      {$react rac/reaction}                             ::<  reaction to action
       {$quit ost/bone}                                  ::<  force unsubscribe
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char pas/(set partner)}      ::<  un/bound glyph
