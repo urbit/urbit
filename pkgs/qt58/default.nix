@@ -71,6 +71,8 @@ let
   base-wrapper = crossenv.make_derivation rec {
     name = "qtbase-wrapper-${version}";
 
+    inherit version;
+
     builder.builder = "${crossenv.nixpkgs.ruby}/bin/ruby";
     builder.args = [./wrapper_builder.rb];
 

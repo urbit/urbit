@@ -2,7 +2,8 @@ require 'pathname'
 require 'fileutils'
 include FileUtils
 
-QtVersionMajor = 5
+QtVersionString = ENV.fetch('version')
+QtVersionMajor = QtVersionString.split('.').first.to_i
 
 def parse_prl_file(filename)
   attrs = {}
@@ -45,13 +46,15 @@ mkdir CMakeDir
 
 mkdir CMakeDir + 'Qt5Widgets'
 
-File.open(CMakeDir + 'moc.cmake', 'w') do |f|
+File.open(CMakeDir + 'core.cmake', 'w') do |f|
+  f.puts "set(QT_VERSION_MAJOR #{QtVersionMajor})"
+  f.puts
+
   moc_exe = OutDir + 'bin' + 'moc'
   f.puts "add_executable(Qt5::moc IMPORTED)"
   f.puts "set(QT_MOC_EXECUTABLE #{moc_exe})"
   f.puts "set_target_properties(Qt5::moc PROPERTIES " \
          "IMPORTED_LOCATION ${QT_MOC_EXECUTABLE})"
-  f.puts "set(QT_VERSION_MAJOR #{QtVersionMajor})"
 end
 
 File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
@@ -82,5 +85,5 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
     f.puts "set_property(TARGET Qt5::Widgets PROPERTY #{name} #{value})"
   end
 
-  f.puts "include(#{OutDir + 'lib' + 'cmake' + 'moc.cmake'})"
+  f.puts "include(#{CMakeDir + 'core.cmake'})"
 end
