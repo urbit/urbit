@@ -6,7 +6,7 @@ QtVersionString = ENV.fetch('version')
 QtVersionMajor = QtVersionString.split('.').first.to_i
 
 def parse_prl_file(filename)
-  attrs = {}
+  attrs = { prl_filename: Pathname(filename) }
   File.foreach(filename) do |line|
     md = line.match(/(\w+) = (.*)/)
     attrs[md[1]] = md[2]
@@ -15,9 +15,21 @@ def parse_prl_file(filename)
 end
 
 def libs_from_prl(prl)
-  libs = prl.fetch('QMAKE_PRL_LIBS')
-  libs.gsub!(/\$\$\[QT_INSTALL_LIBS\]/, (OutDir + 'lib').to_s)
-  libs.split(' ')
+  libs = []
+
+  target = prl.fetch('QMAKE_PRL_TARGET')
+  if !Pathname(target).absolute?
+    libs << "-L#{prl.fetch(:prl_filename).dirname}"
+  end
+  if md = target.match(/lib(\w+).a/)
+    libs << target
+  end
+
+  listed_libs = prl.fetch('QMAKE_PRL_LIBS')
+  listed_libs.gsub!(/\$\$\[QT_INSTALL_LIBS\]/, (OutDir + 'lib').to_s)
+  libs.concat listed_libs.split(' ')
+
+  libs
 end
 
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
@@ -68,9 +80,16 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   ]
 
   libs = [ OutDir + 'lib' + 'libQt5Core.a' ]
-  libs += libs_from_prl(parse_prl_file(OutDir + 'lib' + 'Qt5Widgets.prl'))
-  libs += libs_from_prl(parse_prl_file(OutDir + 'lib' + 'Qt5Gui.prl'))
-  libs += libs_from_prl(parse_prl_file(OutDir + 'lib' + 'Qt5Core.prl'))
+  prls = [
+    OutDir + 'lib' + 'Qt5Widgets.prl',
+    OutDir + 'plugins' + 'platforms' + 'qwindows.prl',
+    OutDir + 'lib' + 'Qt5Gui.prl',
+    OutDir + 'lib' + 'Qt5Core.prl',
+  ]
+  prls.each do |prl|
+    prl_libs = libs_from_prl(parse_prl_file(prl))
+    libs.concat(prl_libs)
+  end
 
   properties = {
     IMPORTED_LOCATION: afile,

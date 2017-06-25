@@ -53,13 +53,13 @@ rec {
     inherit crossenv gdb;
   };
 
-  qt58 = import ./pkgs/qt58 {
+  qt = import ./pkgs/qt58 {
     inherit crossenv;
   };
 
   pavr2 = import ./pkgs/pavr2 {
     inherit crossenv libusbp;
-    qt = qt58.base-wrapper;
+    qt = qt.base-wrapper;
   };
 };
 in pkgs
