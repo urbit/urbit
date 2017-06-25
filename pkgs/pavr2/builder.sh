@@ -10,8 +10,8 @@ for patch in $patches; do
 done
 
 cat >> gui/main.cpp <<END
-#include <QtPlugin>
-Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+//#include <QtPlugin>
+//Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 END
 
 cd ..
@@ -23,6 +23,9 @@ PKG_CONFIG=$PKG_CONFIG_CROSS \
 cmake ../pavr2 \
   -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
   -DCMAKE_INSTALL_PREFIX=$out
+
+cat gui/CMakeFiles/gui.dir/linklibs.rsp
+#exit
 
 make VERBOSE=YES
 

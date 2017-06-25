@@ -13,7 +13,7 @@ end
 
 def libs_from_prl(prl)
   libs = prl.fetch('QMAKE_PRL_LIBS')
-  libs.gsub!(/$$\[QT_INSTALL_LIBS\]/, (OutDir + 'lib').to_s)
+  libs.gsub!(/\$\$\[QT_INSTALL_LIBS\]/, (OutDir + 'lib').to_s)
   libs.split(' ')
 end
 
@@ -46,7 +46,6 @@ mkdir CMakeDir + 'Qt5Widgets'
 File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   afile = OutDir + 'lib' + 'libQt5Widgets.a'
 
-  prl = parse_prl_file(OutDir + 'lib' + 'Qt5Widgets.prl')
 
   includes = [
     QtBaseDir + 'include',
@@ -56,7 +55,9 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   ]
 
   libs = [ OutDir + 'lib' + 'libQt5Core.a' ]
-  libs += libs_from_prl(prl)
+  libs += libs_from_prl(parse_prl_file(OutDir + 'lib' + 'Qt5Widgets.prl'))
+  libs += libs_from_prl(parse_prl_file(OutDir + 'lib' + 'Qt5Gui.prl'))
+  libs += libs_from_prl(parse_prl_file(OutDir + 'lib' + 'Qt5Core.prl'))
 
   properties = {
     IMPORTED_LOCATION: afile,
