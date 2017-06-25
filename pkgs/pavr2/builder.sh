@@ -8,6 +8,12 @@ for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
+
+cat >> gui/main.cpp <<END
+#include <QtPlugin>
+Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+END
+
 cd ..
 
 mkdir build
@@ -18,6 +24,6 @@ cmake ../pavr2 \
   -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
   -DCMAKE_INSTALL_PREFIX=$out
 
-make
+make VERBOSE=YES
 
 make install

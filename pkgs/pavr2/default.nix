@@ -17,5 +17,5 @@ crossenv.make_derivation rec {
   cross_inputs = [ libusbp ];
 
   # TODO: this pattern is bad because projects building native apps will find Qt
-  CMAKE_PREFIX_PATH = "${qt.base}";
+  CMAKE_PREFIX_PATH = "${qt}";
 }

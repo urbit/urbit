@@ -64,15 +64,27 @@ let
       "-no-icu";
   };
 
-  base-examples =
-    crossenv.make_derivation rec {
+  # This wrapper aims to make Qt easier to use by generating CMake package files
+  # for it.  The existing support for CMake in Qt does not handle static
+  # linking; other projects maintian large, messy patches to fix it, but we
+  # prefer to generate the CMake files in a clean way from scratch.
+  base-wrapper = crossenv.make_derivation rec {
+    name = "qtbase-wrapper-${version}";
+
+    builder.builder = "${crossenv.nixpkgs.ruby}/bin/ruby";
+    builder.args = [./wrapper_builder.rb];
+
+    qtbase = base;
+  };
+
+  base-examples = crossenv.make_derivation rec {
     name = "qtbase-examples-${version}";
 
     inherit version;
 
     inherit (base) src;
 
-    qtbase = base;
+    qtbase = base-wrapper;
 
     builder = ./examples_builder.sh;
   };
@@ -80,5 +92,6 @@ in
 {
   recurseForDerivations = true;
   inherit base;
+  inherit base-wrapper;
   inherit base-examples;
 }
