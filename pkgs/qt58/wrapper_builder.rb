@@ -2,6 +2,21 @@ require 'pathname'
 require 'fileutils'
 include FileUtils
 
+def parse_prl_file(filename)
+  attrs = {}
+  File.foreach(filename) do |line|
+    md = line.match(/(\w+) = (.*)/)
+    attrs[md[1]] = md[2]
+  end
+  attrs
+end
+
+def libs_from_prl(prl)
+  libs = prl.fetch('QMAKE_PRL_LIBS')
+  libs.gsub!(/$$\[QT_INSTALL_LIBS\]/, (OutDir + 'lib').to_s)
+  libs.split(' ')
+end
+
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
 
@@ -18,7 +33,7 @@ symlink QtBaseDir + 'plugins', OutDir + 'plugins'
 mkdir OutDir + 'lib'
 
 (QtBaseDir + 'lib').each_child do |c|
-  if c.extname == '.a'
+  if %w(.a .prl).include?(c.extname)
     symlink c, OutDir + 'lib'
   end
 end
@@ -31,6 +46,8 @@ mkdir CMakeDir + 'Qt5Widgets'
 File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   afile = OutDir + 'lib' + 'libQt5Widgets.a'
 
+  prl = parse_prl_file(OutDir + 'lib' + 'Qt5Widgets.prl')
+
   includes = [
     QtBaseDir + 'include',
     QtBaseDir + 'include' + 'QtWidgets',
@@ -38,11 +55,15 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
     QtBaseDir + 'include' + 'QtGui',
   ]
 
+  libs = [ OutDir + 'lib' + 'libQt5Core.a' ]
+  libs += libs_from_prl(prl)
+
   properties = {
     IMPORTED_LOCATION: afile,
     IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
+    IMPORTED_LINK_INTERFACE_LIBRARIES: libs.join(' '),
     INTERFACE_INCLUDE_DIRECTORIES: includes.join(' '),
-    INTERFACE_COMPILE_DEFINITIONS: '',
+    INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC',
   }
 
   f.puts "add_library(Qt5::Widgets STATIC IMPORTED)"
