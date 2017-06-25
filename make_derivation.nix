@@ -27,6 +27,14 @@ let
     nixpkgs.xz
   ];
 
+  builder_attrs =
+    if builtins.isAttrs attrs.builder then attrs.builder
+    else rec {
+      SHELL = builder;
+      builder = "${nixpkgs.bash}/bin/bash";
+      args = ["-ue" attrs.builder];
+    };
+
   native_inputs = (attrs.native_inputs or []) ++ default_native_inputs;
 
   cross_inputs = (attrs.cross_inputs or []);
@@ -38,14 +46,11 @@ let
   auto_drv_attrs = rec {
     name = "${attrs.name}-${crossenv.host}";
     system = builtins.currentSystem;
-    builder = "${nixpkgs.bash}/bin/bash";
-    args = ["-ue" attrs.builder];
 
     inherit (crossenv) host arch os exe_suffix;
     inherit (crossenv) cmake_toolchain;
 
     setup = ./builder_setup.sh;
-    SHELL = builder;
 
     NIXCRPKGS = true;
 
@@ -71,7 +76,7 @@ let
 
   pkg_config_attrs = {};
 
-  drv_attrs = attrs // auto_drv_attrs // pkg_config_attrs;
+  drv_attrs = attrs // auto_drv_attrs // builder_attrs // pkg_config_attrs;
 
 in
   derivation drv_attrs
