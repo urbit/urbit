@@ -30,6 +30,14 @@
   ?:  ?=($czar (clan who))  ~zod
   (sein who)
 ::
+::TODO  remove when on master, use +-  key:by instead
+++  key-by
+  |*  m/(map)
+  =|  b/(set _?>(?=(^ m) p.n.m))
+  |-  ^+  b
+  ?~  m  b
+  $(m r.m, b $(m l.m, b (~(put in b) p.n.m)))
+::
 ++  said-url                                            ::  app url
   |=  url/purl
   :^  ost.bol  %poke  /said-url
