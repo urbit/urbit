@@ -27,3 +27,5 @@ cmake ../pavr2 \
 make
 
 make install
+
+$host-strip $out/bin/*
