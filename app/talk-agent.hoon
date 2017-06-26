@@ -69,7 +69,7 @@
       ==                                                ::
     ++  work                                            ::>  interface action
       $%  ::  circle management                         ::
-          {$join p/where}                               ::<  subscribe to
+          {$join p/(map partner range)}                 ::<  subscribe to
           {$leave p/where}                              ::<  unsubscribe from
           {$create p/security q/knot r/cord}            ::<  create circle
           {$delete p/knot q/(unit cord)}                ::<  delete circle
@@ -77,7 +77,7 @@
           {$filter p/knot q/? r/?}                      ::<  change message rules
           {$invite p/knot q/(set ship)}                 ::<  give permission
           {$banish p/knot q/(set ship)}                 ::<  deny permission
-          {$source p/knot q/(set partner)}              ::<  add source
+          {$source p/knot q/(map partner range)}        ::<  add source
           ::  personal metadata
           {$status p/knot q/presence}  ::TODO  better interface ::<  set status
           ::  messaging                                 ::
@@ -584,6 +584,34 @@
         %+  cook  ~(gas in *(set partner))
         (most ;~(plug com (star ace)) parn)
       ::
+      ++  pont                                          ::<  point for range
+        ;~  pose
+          ::TODO  support entering of @da and @dr,
+          ::      convert all to @da. use sear with crub?
+          ::      also allow "now"?
+          (stag %ud dem:ag)
+        ==
+      ::
+      ++  rang                                          ::<  subscription range
+        =+  ;~  pose
+              (cook some ;~(pfix fas pont))
+              (easy ~)
+            ==
+        ;~  pose
+          (cook some ;~(plug ;~(pfix fas pont) -))
+          (easy ~)
+        ==
+      ::
+      ++  sorc                                          ::<  partner + range
+        ;~  pose
+          ;~(plug (stag %& circ) rang)
+          ;~(plug (stag %| pasp) (easy ~))
+        ==
+      ::
+      ++  sorz                                          ::<  non-empty sources
+        %+  cook  ~(gas by *(map partner range))
+        (most ;~(plug com (star ace)) sorc)
+      ::
       ++  nump                                          ::<  number reference
         ;~  pose
           ;~(pfix hep dem:ag)
@@ -638,7 +666,7 @@
           ::
           ::  circle management
           ::
-          ;~((glue ace) (perk %join ~) para)
+          ;~((glue ace) (perk %join ~) sorz)
           ::
           ;~((glue ace) (perk %leave ~) para)
           ::
@@ -664,7 +692,7 @@
           ::
           ;~((glue ace) (perk %banish ~) cire shiz)
           ::
-          ;~((glue ace) (perk %source ~) cire parz)
+          ;~((glue ace) (perk %source ~) cire sorz)
           ::
           ::  personal metadata
           ::
@@ -918,8 +946,9 @@
         ::>  change local mailbox config to include
         ::>  subscriptions to {pas}.
         ::
-        |=  pas/(set partner)
+        |=  pos/(map partner range)
         ^+  ..sh-work
+        =+  pas=(key-by pos)
         =.  ..sh-work
           =+  (~(get by nik) pas)
           ?^  -  (sh-note "has glyph {<u>}")
@@ -927,7 +956,7 @@
           (sh-note:(set-glyph cha pas) "new glyph {<cha>}")
         =.  ..sh-work
           sh-prod(active.she pas)
-        (sh-act %source inbox & pas)
+        (sh-act %source inbox & pos)
       ::
       ++  leave                                         ::<  %leave
         ::>  change local mailbox config to exclude
@@ -935,7 +964,10 @@
         ::
         |=  pas/(set partner)
         ^+  ..sh-work
-        (sh-act %source inbox | pas)
+        =/  pos
+          %-  ~(run in pas)
+          |=(p/partner [p ~])
+        (sh-act %source inbox | pos)
       ::
       ++  create                                        ::<  %create
         ::>  creates circle {nom} with specified config.
@@ -944,7 +976,7 @@
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
-        (join [[%& our.bol nom] ~ ~])
+        (join [[[%& our.bol nom] ~] ~ ~])
       ::
       ++  delete                                        ::<  %delete
         ::>  deletes our circle {nom}, after optionally
@@ -983,9 +1015,9 @@
       ++  source                                        ::<  %source
         ::>  adds {pas} to {nom}'s src.
         ::
-        |=  {nom/knot pas/(set partner)}
+        |=  {nom/knot pos/(map partner range)}
         ^+  ..sh-work
-        (sh-act %source nom & pas)
+        (sh-act %source nom & pos)
       ::
       ::>  ||
       ::>  ||  %personal-metadata

@@ -63,11 +63,6 @@
           known/(map serial @ud)                        ::<  messages heard
           burden/?                                      ::<  from parent?
       ==                                                ::
-    ++  river  (pair point point)                       ::<  stream definition
-    ++  point                                           ::>  stream endpoint
-      $%  {$ud p/@ud}                                   ::<  by number
-          {$da p/@da}                                   ::<  by date
-      ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
       $%  {$talk-prize prize}                           ::
@@ -356,8 +351,11 @@
     ++  action-source                                   ::<  un/sub p to/from r
       ::>  add/remove {pas} as sources for story {nom}.
       ::
-      |=  {nom/knot sub/? pas/(set partner)}
-      (affect nom %follow sub pas)
+      |=  {nom/knot sub/? pos/(map partner range)}
+      =+  soy=(~(get by stories) nom)
+      ?~  soy
+        (react %fail (crip "no story {(trip nom)}"))
+      so-done:(~(so-sources so nom ~ u.soy) sub pos)
     ::
     ::>  ||  %messaging
     ::+|
@@ -817,13 +815,18 @@
     ++  so-sources                                      ::<  change source
       ::>  adds or removes {pas} from our sources.
       ::
-      |=  {add/? pas/(set partner)}
+      ::TODO  should ++action-source make use of this,
+      ::      because of the {sus} logic?
+      |=  {add/? pos/(map partner range)}
       ^+  +>
-      =/  sus/(set partner)
-        %.  src.shape
-        ?:(add ~(dif in pas) ~(int in pas))
-      ?~  sus  +>.$
-      (so-delta-our %follow & sus)
+      ::TODO  for new sources, follow.
+      ::      for existing sources, unfollow and refollow
+      ::      with new range?
+      ::=/  sus/(set partner)
+      ::  %.  src.shape
+      ::  ?:(add ~(dif in pas) ~(int in pas))
+      ::?~  sus  +>.$
+      (so-delta-our %follow & pos)
     ::
     ++  so-depict                                       ::<  change description
       ::>  modifies our caption.
@@ -885,65 +888,58 @@
       ?.  (~(has in src.shape) pan)  +>
       (so-delta-our %config so-cir %source | [pan ~ ~])
     ::
-    ++  so-start                                        ::<  subscribe follower
-      ::>  called upon subscribe. deduces the range of
-      ::>  {her} subscription from {pax}, then sends
-      ::>  the currently available part of it.
-      ::
-      |=  {her/ship pax/path}
-      ^+  +>
-      ::  read permissions
-      ?.  (so-visible her)
-        =.  +>  (so-delta %quit ost.bol)
-        %-  so-note  %-  crip
-        "so-start permission denied {(scow %p her)}"
-      ::  find grams range
-      =/  ruv/(unit river)
-        ::  collapse unit list
-        %+  biff
-          %-  zl:jo
-          %+  turn  pax
-          ;~(biff slay |=(a/coin `(unit dime)`?~(-.a a ~)))
-        |=  paf/(list dime)
-        ?~  paf
-          $(paf [%ud (sub (max 64 count) 64)]~)
-        ?~  t.paf
-          $(t.paf [%da (dec (bex 128))]~)
-        ?.  ?=({{?($ud $da) @} {?($ud $da) @} $~} paf)
-          ~
-        `[[?+(- . $ud .)]:i.paf [?+(- . $ud .)]:i.t.paf]  ::XX arvo issue #366
-      ?~  ruv
-        =.  +>.$  (so-delta %quit ost.bol)
-        %-  so-note  %-  crip
-        "so-start malformed path {~(ram re >pax<)}"
-      (so-first-grams u.ruv)
-    ::
     ++  so-first-grams                                  ::<  beginning of stream
-      ::>  find all grams that fall within the river and
-      ::>  send them in a grams report to {ost.bol}.
+      ::>  find all grams that fall within the range.
       ::
-      |=  riv/river
-      ^+  +>
-      =;  lab/{dun/? end/@u zeg/(list telegram)}
-          ?.  dun.lab  +>.$
-          (so-delta %quit ost.bol)
-      =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
-      |-  ^-  (trel ? @ud (list telegram))
-      ?~  gaz  [dun end zeg]
-      ?:  ?-  -.q.riv                                   ::  after the end
-            $ud  (lte p.q.riv end)
-            $da  (lte p.q.riv wen.sam.tot.i.gaz)
+      ::TODO  strip unused vars.
+      |=  ran/range
+      ^-  (list telegram)
+      =+  [num=0 gaz=grams zeg=*(list telegram)]
+      ::  fill in empty ranges to select all grams.
+      =.  ran
+        ?~  ran  `[[%ud 0] `[%ud count]]
+        ?~  tal.u.ran  `[hed.u.ran `[%ud count]]
+        ran
+      ::  never fails, but compiler needs it.
+      ?>  &(?=(^ ran) ?=(^ tal.u.ran))
+      %-  flop
+      |-  ^-  (list telegram)
+      ?~  gaz  zeg
+      ?:  ?-  -.u.tal.u.ran                             ::  after the end
+            $ud  (lth +.u.tal.u.ran num)
+            $da  (lth +.u.tal.u.ran wen.sam.tot.i.gaz)
           ==
-        ::  if past the river, continue back, mark as done.
-        $(end (dec end), gaz t.gaz, dun &)
-      ?:  ?-  -.p.riv                                   ::  before the start
-            $ud  (lth end p.p.riv)
-            $da  (lth wen.sam.tot.i.gaz p.p.riv)
+        ::  if past the river, we're done searching.
+        zeg
+      ?:  ?-  -.hed.u.ran                               ::  before the start
+            $ud  (lth num +.hed.u.ran)
+            $da  (lth wen.sam.tot.i.gaz +.hed.u.ran)
           ==
-        ::  if before the river, we're done searching.
-        [dun end zeg]
+        ::  if before the river, continue onward.
+        $(num +(num), gaz t.gaz)
       ::  if in the river, add this gram and continue.
-      $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
+      $(num +(num), gaz t.gaz, zeg [i.gaz zeg])
+    ::
+    ++  so-in-range                                     ::<  place in range?
+      ::>  produces two booleans: whether we're
+      ::>  currently in the range, and whether the range
+      ::>  has passed.
+      ::
+      |=  ran/range
+      ^-  {in/? done/?}
+      ?~  ran  [& |]
+      =/  min
+        ?-  -.hed.u.ran
+          $ud  (gth count +.hed.u.ran)
+          $da  (gth now.bol +.hed.u.ran)
+        ==
+      ?~  tal.u.ran
+        [min |]
+      =-  [&(min -) !-]
+      ?-  -.u.tal.u.ran
+        $ud  (gte +(+.u.tal.u.ran) count)
+        $da  (gte +.u.tal.u.ran now.bol)
+      ==
     ::
     ::>  ||
     ::>  ||  %messaging
@@ -1445,13 +1441,11 @@
       ::>  apply side-effects for a %follow delta,
       ::>  un/subscribing this story to/from {pas}.
       ::
-      |=  {sub/? pas/(set partner)}
+      |=  {sub/? pos/(map partner range)}
       ^-  (list move)
-      =/  sus/(set partner)
-        %.  src.shape
-        ?:(sub ~(dif in pas) ~(int in pas))
-      %.  (~(tap in sus))
-      ?:(sub sa-acquire sa-abjure)
+      ?:  sub
+        (sa-acquire (~(tap by pos)))
+      (sa-abjure (~(tap in (key-by pos))))
     ::
     ++  sa-permit-effects                               ::<  notify permitted
       ::>  apply side-effects for a %permit delta,
@@ -1477,25 +1471,26 @@
     ++  sa-acquire                                      ::<  subscribe us
       ::>  subscribes this story to each partner.
       ::
-      |=  pas/(list partner)
+      |=  pas/(list (pair partner range))
       %+  sa-sauce  0  ::  subscription is caused by this app
       %-  zing
       %+  turn  pas
-      |=  pan/partner
+      |=  {pan/partner ran/range}
       ^-  (list card)
       ?:  =(pan [%& our.bol nom])  ~                    ::  ignore self-subs
-      ::>  subscribe starting at the last message we got,
-      ::>  or if we haven't gotten any yet, messages
-      ::>  from up to a day ago.
-      =+  num=(~(get by sequence) pan)
-      =+  old=(sub now.bol ~d1)                         ::TODO?  full backlog
-      =+  ini=?^(num [%ud u.num] [%da old])
+      ::  unless otherwise specified, subscribe starting
+      ::  at the last message we heard.
+      =.  ran  ::TODO  =?
+        ?^  ran  ran
+        =+  num=(~(get by sequence) pan)
+        ?~  num  `[[%ud 0] ~]
+        `[[%ud u.num] ~]
       ?-  -.pan
           $|  !!                                        ::<  passport partner
         ::
           $&                                            ::<  circle partner
         :_  ~
-        (circle-peer nom p.pan `[ini ~])
+        (circle-peer nom p.pan ran)
       ==
     ::
     ++  sa-abjure                                       ::<  unsubscribe us
@@ -1603,15 +1598,16 @@
   ::
   |=  {nom/cord cir/circle wen/range}
   ^-  card
+  =/  ran
+    ?~  wen  ~
+    %+  welp
+      /(scot -.hed.u.wen +.hed.u.wen)
+    ?~  tal.u.wen  ~
+    /(scot -.u.tal.u.wen +.u.tal.u.wen)
   :*  %peer
-      /circle/[nom]/(scot %p hos.cir)/[nom.cir]
+      (welp /circle/[nom]/(scot %p hos.cir)/[nom.cir] ran)
       [hos.cir %talk-guardian]
-      %+  welp  /circle/[nom.cir]
-        ?~  wen  ~
-        %+  welp
-          /(scot -.hed.u.wen +.hed.u.wen)
-        ?~  tal.u.wen  ~
-        /(scot -.u.tal.u.wen +.u.tal.u.wen)
+      (welp /circle/[nom.cir] ran)
   ==
 ::
 ::>  ||
@@ -1679,12 +1675,16 @@
       $report
     ~  ::TODO?  we just don't have a prize. or do we need [%report ~] ?
     ::
-      $circle
+      $circle  ::REVIEW  should we send precs & config to out of range subs?
+    ::  we can either be:
+    ::  - before range: send precs, config
+    ::  - in range:     send precs, config, msgs
+    ::  - after range:  send msgs
     =+  soy=(~(get by stories) nom.qer)
     ?~  soy  ~
     :+  ~  ~
     :-  %circle
-    :+  grams.u.soy  ::TODO  get using specified range.
+    :+  (~(so-first-grams so:ta nom.qer ~ u.soy) ran.qer)
       [shape.u.soy mirrors.u.soy]
     [locals.u.soy remotes.u.soy]
   ==
@@ -1757,6 +1757,9 @@
     ?.  ?=($story -.dif)  ~
     ?.  =(nom.qer nom.dif)  ~
     ?:  ?=($follow -.dif.dif)  ~                        ::  internal-only delta
+    =+  ren=(~(so-in-range so:ta nom.qer ~ (~(got by stories) nom.qer)) ran.qer)
+    ::TODO  if done.ren, %quit bone
+    ?.  in.ren  ~
     `[%circle dif.dif]
   ==
 ::

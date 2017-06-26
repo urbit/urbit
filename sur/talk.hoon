@@ -16,8 +16,8 @@
       {$report $~}                                      ::<  duty reports
       {$circle nom/knot ran/range}                      ::<  story query
   ==                                                    ::
-++  range  (unit {hed/place tal/(unit place)})          ::<  msg range, @ud/@da
-++  place  $%({$da @da} {$ud @ud})                      ::<  point for range
+++  range  (unit {hed/place tal/(unit place)})          ::<  inclusive msg range
+++  place  $%({$da @da} {$ud @ud})                      ::<  @ud/@da for range
 ++  prize                                               ::>  query result
   $%  $:  $reader                                       ::<  /reader
           gys/(jug char (set partner))                  ::<  glyph bindings
@@ -68,7 +68,7 @@
       {$grams gaz/(list telegram)}                      ::<  new/changed msgs
       {$config cir/circle dif/diff-config}              ::<  new/changed config
       {$status pan/partner who/ship dif/diff-status}    ::<  new/changed status
-      {$follow sub/? pas/(set partner)}  ::TODO  range  ::<  un/subscribe
+      {$follow sub/? pas/(map partner range)}           ::<  un/subscribe
       {$remove $~}                                      ::<  removed story
   ==                                                    ::
 ++  diff-config                                         ::>  config change
@@ -149,6 +149,7 @@
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config
   $:  src/(set partner)                                 ::<  active sources
+      ::TODO  ^ include range?
       cap/cord                                          ::<  description
       fit/filter                                        ::<  message rules
       con/control                                       ::<  restrictions
