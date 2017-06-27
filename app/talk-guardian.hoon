@@ -1156,15 +1156,15 @@
     ::
     |=  {cir/circle out/(list thought)}
     ^+  +>
-    ?~  out  +>
-    ::TODO  just send the list at once?
     =.  +>
       %+  da-emit  ost.bol
       :*  %poke
           /repeat/(scot %ud p.outbox)/(scot %p hos.cir)/[nom.cir]
           [hos.cir %talk-guardian]
-          [%talk-command %publish i.out ~]
+          [%talk-command %publish out]
       ==
+    |-  ^+  +>.^$
+    ?~  out  +>.^$
     %=  $
       p.outbox  +(p.outbox)
       q.outbox  (~(put by q.outbox) p.outbox i.out)
