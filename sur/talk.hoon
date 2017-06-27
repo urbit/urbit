@@ -106,7 +106,7 @@
       {$depict nom/knot des/cord}                       ::<  change description
       {$filter nom/knot fit/filter}                     ::<  change message rules
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
-      {$source nom/knot sub/? src/(set partner)}        ::<  un/sub to/from src
+      {$source nom/knot sub/? src/(map partner range)}  ::<  un/sub to/from src
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::<  post exact
       {$phrase aud/(set partner) ses/(list speech)}     ::<  post easy
