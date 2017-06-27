@@ -230,11 +230,25 @@
       ::>  %publish commands prompt us (as a circle host)
       ::>  to verify and distribute messages.
       $publish  (ta-think | src +.cod)
+      ::>  %present commands are used to ask us to set
+      ::>  someone's status in the indicated stories.
+      $present  (ta-present src +.cod)
       ::>  %bearing commands are used by our children to
       ::>  let us know they're bearing our /burden. we
       ::>  need to watch them to allow changes to go up.
       $bearing  (ta-observe src)
     ==
+  ::
+  ++  ta-present                                        ::<  update a status
+    ::>
+    ::
+    |=  {who/ship nos/(set knot) dif/diff-status}
+    ^+  +>
+    %-  ta-deltas
+    %-  ~(rep in nos)
+    |=  {n/knot l/(list delta)}
+    :_  l
+    [%story n %status [%& our.bol n] who dif]
   ::
   ++  ta-action                                         ::<  apply reader action
     ::>  performs action sent by a reader.
@@ -268,7 +282,8 @@
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
         ::  personal metadata
-        $status  (action-status +.act)
+        $notify  (action-notify +.act)
+        $naming  (action-naming +.act)
         ::  changing shared ui
         $glyph   (action-glyph +.act)
         $nick    (action-nick +.act)
@@ -294,6 +309,28 @@
       ::
       |=  {nom/knot dif/diff-story}
       (ta-delta %story nom dif)
+    ::
+    ++  present                                         ::<  send status update
+      ::>
+      ::
+      |=  {cis/(set circle) dif/diff-status}
+      ^+  ..ta-action
+      =/  cic
+        ^-  (jug ship knot)
+        %-  ~(rep in cis)
+        |=  {c/circle m/(jug ship knot)}
+        (~(put ju m) hos.c nom.c)
+      =.  ..ta-action  ::TODO  =?
+        ?.  (~(has by cic) our.bol)  ..ta-action
+        %-  ~(rep in (~(get ju cic) our.bol))
+        |=  {n/knot _ta}
+        (affect n %status [%& our.bol n] our.bol dif)
+      =.  cic  (~(del by cic) our.bol)
+      %-  ta-deltas
+      %-  ~(rep by cic)
+      |=  {{h/ship s/(set knot)} l/(list delta)}
+      :_  l
+      [%present h s dif]
     ::
     ::>  ||  %circle-configuration
     ::+|
@@ -385,20 +422,20 @@
     ::
     ::>  ||  %personal-metadata
     ::+|
-    ++  action-status                                   ::<  our status update
-      ::>  for every story in the set, update our status.
-      ::TODO  accept (set circle). for locals, do directly.
-      ::      for remotes, send command.
-      ::      on getting such a command, first check if
-      ::      the sender actually is in our presende map.
-      ::TODO  split interface into action-presence and
-      ::      action-human.
+    ::
+    ++  action-notify                                   ::<  our presence update
+      ::>
       ::
-      |=  {nos/(set knot) sat/status}
+      |=  {cis/(set circle) pes/presence}
       ^+  ..ta-action
-      %-  ~(rep in nos)
-      |=  {k/knot _ta}
-      (affect k %status [%& our.bol k] our.bol %full sat)
+      (present cis %presence pes)
+    ::
+    ++  action-naming                                   ::<  our name update
+      ::>
+      ::
+      |=  {cis/(set circle) man/human}
+      ^+  ..ta-action
+      (present cis %human %full man)
     ::
     ::>  ||  %changing-shared-ui
     ::+|
@@ -1100,6 +1137,19 @@
     %-  da-emit
     [ost.bol %diff %talk-reaction rac]
   ::
+  ++  da-present                                        ::<  send %present cmd
+    ::>
+    ::
+    |=  {hos/ship nos/(set knot) dif/diff-status}
+    ^+  +>
+    %-  da-emit
+    :*  ost.bol
+        %poke
+        /present
+        [hos %talk-guardian]
+        [%talk-command %present nos dif]
+    ==
+  ::
   ::>  ||
   ::>  ||  %change-application
   ::>  ||
@@ -1113,15 +1163,16 @@
     |=  dif/delta
     ^+  +>
     ?-  -.dif
-      $out    (da-change-out +.dif)
-      $done   (da-change-done +.dif)
-      $glyph  (da-change-glyph +.dif)
-      $nick   (da-change-nick +.dif)
-      $story  (da-change-story +.dif)
-      $init   da-init
+      $out      (da-change-out +.dif)
+      $done     (da-change-done +.dif)
+      $glyph    (da-change-glyph +.dif)
+      $nick     (da-change-nick +.dif)
+      $story    (da-change-story +.dif)
+      $init     da-init
       $observe  (da-observe +.dif)
-      $react  (da-react +.dif)
-      $quit   (da-emit [ost.dif %quit ~])
+      $react    (da-react +.dif)
+      $present  (da-present +.dif)
+      $quit     (da-emit [ost.dif %quit ~])
     ==
   ::
   ++  da-init                                           ::<  startup side-effects

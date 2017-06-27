@@ -79,7 +79,8 @@
           {$banish p/knot q/(set ship)}                 ::<  deny permission
           {$source p/knot q/(map partner range)}        ::<  add source
           ::  personal metadata
-          {$status p/knot q/presence}  ::TODO  better interface ::<  set status
+          {$attend p/(set circle) q/presence}           ::<  set our presence
+          {$name p/(set circle) q/human}                ::<  set our name
           ::  messaging                                 ::
           {$say p/(list speech)}                        ::<  send message
           {$eval p/cord q/twig}                         ::<  send #-message
@@ -560,6 +561,10 @@
           ==
         ==
       ::
+      ++  cirs                                          ::<  non-empty circles
+        %+  cook  ~(gas in *(set circle))
+        (most ;~(plug com (star ace)) circ)
+      ::
       ++  parn                                          ::<  partner
         ;~  pose
           (stag %& circ)
@@ -696,7 +701,28 @@
           ::
           ::  personal metadata
           ::
-          ;~((glue ace) (perk %status ~) cire (perk %gone %idle %hear %talk ~))
+          ;~  (glue ace)
+            (perk %attend ~)
+            cirs
+            (perk %gone %idle %hear %talk ~)
+          ==
+          ::
+          ;~  plug
+            (perk %name ~)
+            ;~(pfix ace cirs)
+            ;~(pfix ace ;~(pose (cook some qut) (cold ~ sig)))
+            ;~  pose
+              ;~  pfix  ace
+                %+  cook  some
+                ;~  pose
+                  ;~((glue ace) qut (cook some qut) qut)
+                  ;~(plug qut (cold ~ ace) qut)
+                ==
+              ==
+              ;~(pfix ace (cold ~ sig))
+              (easy ~)
+            ==
+          ==
           ::
           ::  displaying info
           ::
@@ -839,7 +865,8 @@
           $banish  (banish +.job)
           $source  (source +.job)
           ::  personal metadata
-          $status  (status +.job)
+          $attend  (attend +.job)
+          $name    (name +.job)
           ::  messaging
           $say     (say +.job)
           $eval    (eval +.job)
@@ -1024,12 +1051,19 @@
       ::>  ||
       ::+|
       ::
-      ++  status                                        ::<  set status
-        ::>
+      ++  attend                                        ::<  set our presence
+        ::>  sets our presence to {pec} in circles {cis}.
         ::
-        |=  {nom/knot pec/presence}
+        |=  {cis/(set circle) pec/presence}
         ^+  ..sh-work
-        (sh-act %status [nom ~ ~] [pec [~ ~]])
+        (sh-act %notify cis pec)
+      ::
+      ++  name                                          ::<  set our name
+        ::>  sets our name to {man} in circles {cis}.
+        ::
+        |=  {cis/(set circle) man/human}
+        ^+  ..sh-work
+        (sh-act %naming cis man)
       ::
       ::>  ||
       ::>  ||  %messaging
@@ -1077,7 +1111,7 @@
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         =.  c
           ?.  =(han.c `(scot %p a))  c
-          [tru.c ~]
+          [~ tru.c]
         ?-  b
           $gone  ~
           $idle  `leaf+:(weld "idle " (scow %p a) " " (trip (fall han.c '')))

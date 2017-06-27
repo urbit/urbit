@@ -57,6 +57,7 @@
       {$init $~}                                        ::<  initialize
       {$observe who/ship}                               ::<  watch burden bearer
       {$react rac/reaction}                             ::<  reaction to action
+      {$present hos/ship nos/(set knot) dif/diff-status}::<  send %present cmd
       {$quit ost/bone}                                  ::<  force unsubscribe
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char pas/(set partner)}      ::<  un/bound glyph
@@ -111,8 +112,8 @@
       {$convey tos/(list thought)}                      ::<  post exact
       {$phrase aud/(set partner) ses/(list speech)}     ::<  post easy
       ::  personal metadata                             ::
-      ::TODO  change to target partners, not only our circles.
-      {$status nos/(set knot) sat/status}               ::<  our status update
+      {$notify cis/(set circle) pes/presence}           ::<  our presence update
+      {$naming cis/(set circle) man/human}              ::<  our name update
       ::  changing shared ui                            ::
       {$glyph gyf/char pas/(set partner) bin/?}         ::<  un/bind a glyph
       {$nick who/ship nic/knot}                         ::<  new identity
@@ -131,6 +132,7 @@
 ::
 ++  command                                             ::>  effect on story
   $%  {$publish tos/(list thought)}                     ::<  deliver
+      {$present nos/(set knot) dif/diff-status}         ::<  status update
       {$bearing $~}                                     ::<  prompt to listen
   ==                                                    ::
 ::
@@ -176,8 +178,8 @@
       $talk                                             ::<  typing
   ==                                                    ::
 ++  human                                               ::>  human identifier
-  $:  tru/(unit (trel cord (unit cord) cord))           ::<  true name
-      han/(unit cord)                                   ::<  handle
+  $:  han/(unit cord)                                   ::<  handle
+      tru/(unit (trel cord (unit cord) cord))           ::<  true name
   ==                                                    ::
 ::
 ::>  ||

@@ -144,8 +144,8 @@
         man
       ?-  -.dif.dif
         $full     man.dif.dif
-        $true     [tru.dif.dif han.man.sat]
-        $handle   [tru.man.sat han.dif.dif]
+        $true     [han.man.sat tru.dif.dif]
+        $handle   [han.dif.dif tru.man.sat]
       ==
     ==
   ==
