@@ -1128,6 +1128,7 @@ _http_release_ports_file(c3_c *pax_c)
   snprintf(paf_c, pal_i, "%s/%s", pax_c, ".http.ports");
 
   unlink(paf_c);
+  u3a_free(paf_c);
 }
 
 /* u3_http_io_init(): initialize http I/O.
