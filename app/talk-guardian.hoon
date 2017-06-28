@@ -550,10 +550,9 @@
         (so-hear:sor & [our.bol nom.dif] dif.dif)
         ::
           $new
-        ::TODO?  shouldn't this act the same as $burden in ++ta-take?
         =<  so-done
-        %-  ~(so-hear so nom.dif ~ (fall (~(get by stories) nom.dif) *story))
-        [& [our.bol nom.dif] %bear ~ [cof.dif.dif ~] [~ ~]]
+        %-  ~(so-bear so nom.dif ~ (fall (~(get by stories) nom.dif) *story))
+        [~ [cof.dif.dif ~] [~ ~]]
       ==
       ::
         $circle
