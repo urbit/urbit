@@ -59,7 +59,7 @@ rec {
 
   pavr2 = import ./pkgs/pavr2 {
     inherit crossenv libusbp;
-    qt = qt.base-wrapper;
+    qt = qt.base;
   };
 };
 in pkgs
