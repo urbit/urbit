@@ -74,8 +74,7 @@
   ==                                                    ::
 ++  diff-config                                         ::>  config change
   $%  {$full cof/config}                                ::<  set w/o side-effects
-      ::TODO  maybe just single partner, since we prob always do that
-      {$source add/? pas/(set partner)}                 ::<  add/rem sources
+      {$source add/? pan/partner}                       ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
       {$filter fit/filter}                              ::<  changed filter
       {$secure sec/security}                            ::<  changed security

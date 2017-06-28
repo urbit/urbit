@@ -101,10 +101,10 @@
       $source
     %=  cof
         src
-      %.  pas.dif
+      %.  pan.dif
       ?:  add.dif
-        ~(uni in src.cof)
-      ~(dif in src.cof)
+        ~(put in src.cof)
+      ~(del in src.cof)
     ==
     ::
       $permit

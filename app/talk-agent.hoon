@@ -320,10 +320,10 @@
                 =(cir.dif incir)
             ==
           sources
-        %.  pas.dif.dif
+        %.  pan.dif.dif
         ?:  add.dif.dif
-          ~(uni in sources)
-        ~(dif in sources)
+          ~(put in sources)
+        ~(del in sources)
         ::
           mirrors
         ?:  ?=($remove -.dif.dif)  (~(del by mirrors) cir.dif)

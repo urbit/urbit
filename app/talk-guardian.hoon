@@ -914,7 +914,7 @@
       |=  pan/partner
       ^+  +>
       ?:  (~(has in src.shape) pan)  +>
-      (so-delta-our %config so-cir %source & [pan ~ ~])
+      (so-delta-our %config so-cir %source & pan)
     ::
     ++  so-leave                                        ::<  subscription ended
       ::>  delete {pan} from our sources.
@@ -922,7 +922,7 @@
       |=  pan/partner
       ^+  +>
       ?.  (~(has in src.shape) pan)  +>
-      (so-delta-our %config so-cir %source | [pan ~ ~])
+      (so-delta-our %config so-cir %source | pan)
     ::
     ++  so-first-grams                                  ::<  beginning of stream
       ::>  find all grams that fall within the range.
