@@ -1818,19 +1818,23 @@
   ::>  for a given delta, send rumors to all queries it
   ::>  affects.
   ::
-  ::TODO?  probably want to do "affected by" checks for
-  ::  every bone, and just construct the rumor once.
-  ::  ^ gall need to do this for you.
-  |=  dif/delta
-  ^-  (list move)
-  %+  murn  (~(tap by sup.bol))
-  |=  {b/bone s/ship p/path}
-  ^-  (unit move)
-  =+  rum=(feel (path-to-query p) dif)
   ::TODO?  %quit bones that are done with their subscription.
   ::  ...but that would also require a ta-cancel call to remove
   ::  them from the presence list! how do?
   ::  should there be an ++away arm for gall to call?
+  |=  dif/delta
+  ^-  (list move)
+  ::  cache results for paths.
+  =|  res/(map path (unit rumor))
+  %+  murn  (~(tap by sup.bol))
+  |=  {b/bone s/ship p/path}
+  ^-  (unit move)
+  =+  mur=(~(get by res) p)
+  ?^  mur
+    ?~  u.mur  ~
+    `[b %diff %talk-rumor u.u.mur]
+  =+  rum=(feel (path-to-query p) dif)
+  =.  res  (~(put by res) p rum)
   ?~  rum  ~
   `[b %diff %talk-rumor u.rum]
 ::
