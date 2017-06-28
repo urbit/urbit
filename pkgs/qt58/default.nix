@@ -16,7 +16,7 @@ let
     patches = [
       ./qtbase-arch-patches/0001-Add-profile-for-cross-compilation-with-mingw-w64.patch
       ./qtbase-arch-patches/0002-Ensure-GLdouble-is-defined-when-using-dynamic-OpenGL.patch
-      ./qtbase-arch-patches/0003-Use-external-ANGLE-library.patch
+      #./qtbase-arch-patches/0003-Use-external-ANGLE-library.patch
       ./qtbase-arch-patches/0004-Fix-too-many-sections-assemler-error-in-OpenGL-facto.patch
       ./qtbase-arch-patches/0005-Make-sure-.pc-files-are-installed-correctly.patch
       ./qtbase-arch-patches/0006-Don-t-add-resource-files-to-LIBS-parameter.patch
@@ -33,10 +33,10 @@ let
       ./qtbase-arch-patches/0018-Use-system-zlib-for-build-tools.patch
       ./qtbase-arch-patches/0019-Disable-determing-default-include-and-lib-dirs-at-qm.patch
       #./qtbase-arch-patches/0020-Use-.dll.a-as-import-lib-extension.patch
-      ./qtbase-arch-patches/0021-Merge-shared-and-static-library-trees.patch
+      #./qtbase-arch-patches/0021-Merge-shared-and-static-library-trees.patch
       #./qtbase-arch-patches/0022-Allow-usage-of-static-version-with-CMake.patch
       ./qtbase-arch-patches/0023-Use-correct-pkg-config-static-flag.patch
-      ./qtbase-arch-patches/0024-Fix-qt5_wrap_ui-macro.patch
+      #./qtbase-arch-patches/0024-Fix-qt5_wrap_ui-macro.patch
       ./qtbase-arch-patches/0025-Ignore-errors-about-missing-feature-static.patch
       # ./qtbase-arch-patches/0026-Enable-anf-fix-use-of-iconv.patch
       ./qtbase-arch-patches/0027-Ignore-failing-pkg-config-test.patch
@@ -44,7 +44,7 @@ let
       #./qtbase-arch-patches/0029-Hardcode-linker-flags-for-libqwindows.dll.patch
       #./qtbase-arch-patches/0030-Prevent-qmake-from-messing-static-lib-dependencies.patch
       # based on 0020 and 0022, and 0030 from Arch
-      ./static-cmake.patch
+      #./static-cmake.patch
       # uxtheme.h test is broken, always returns false, and results in QtWidgets
       # apps looking bad on Windows.  https://stackoverflow.com/q/44784414/28128
       ./dont-test-uxtheme.patch
