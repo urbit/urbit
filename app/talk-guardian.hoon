@@ -813,7 +813,7 @@
         =/  oud
           (~(got by aud.tot.t) [%& (above our.bol) nom])
         =+  (~(del by aud.tot.t) [%& (above our.bol) nom])
-        (~(put by -) [%& our.bol nom] oud)
+        (~(put by -) so-pan oud)
       ::  burden flag
       (so-delta-our %burden &)
     ::
@@ -1383,7 +1383,7 @@
         sa-change-remote
         ::
           $status
-        ?:  =(pan.dif [%& our.bol nom])
+        ?:  =(pan.dif sa-pan)
           sa-change-local
         sa-change-remote
       ==
@@ -1527,7 +1527,7 @@
       %+  turn  pas
       |=  {pan/partner ran/range}
       ^-  (list card)
-      ?:  =(pan [%& our.bol nom])  ~                    ::  ignore self-subs
+      ?:  =(pan sa-pan)  ~                              ::  ignore self-subs
       ::  unless otherwise specified, subscribe starting
       ::  at the last message we heard.
       =.  ran  ::TODO  =?
