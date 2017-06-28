@@ -1786,6 +1786,7 @@
       $burden
     ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
     ?.  ?=($story -.dif)  ~
+    ?:  ?=(?($follow $burden) -.dif.dif)  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
     `[%burden nom.dif (dedicate who.qer dif.dif)]
@@ -1806,7 +1807,7 @@
       $circle
     ?.  ?=($story -.dif)  ~
     ?.  =(nom.qer nom.dif)  ~
-    ?:  ?=($follow -.dif.dif)  ~                        ::  internal-only delta
+    ?:  ?=(?($follow $burden) -.dif.dif)  ~             ::  internal-only delta
     =+  ren=(~(so-in-range so:ta nom.qer ~ (~(got by stories) nom.qer)) ran.qer)
     ::TODO  if done.ren, %quit bone
     ?.  in.ren  ~
