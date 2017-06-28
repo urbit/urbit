@@ -40,7 +40,8 @@ LIBS="
 -lQt5Widgets -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport
 -lQt5EventDispatcherSupport -lQt5Core
 -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype
--lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm -lopengl32
+-lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm
+-luxtheme -lopengl32
 "
 
 echo "compiling rasterwindow"

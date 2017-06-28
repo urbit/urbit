@@ -35,11 +35,6 @@ end
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
 
-puts
-puts "qtbase: #{QtBaseDir}"
-puts "out: #{OutDir}"
-puts
-
 mkdir OutDir
 symlink QtBaseDir + 'include', OutDir + 'include'
 symlink QtBaseDir + 'bin', OutDir + 'bin'

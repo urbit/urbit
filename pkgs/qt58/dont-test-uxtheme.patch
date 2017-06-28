@@ -1,0 +1,24 @@
+diff -ur qt58-orig/src/widgets/configure.json qt58/src/widgets/configure.json
+--- qt58-orig/src/widgets/configure.json	2017-05-28 02:07:07.625626151 -0700
++++ qt58/src/widgets/configure.json	2017-06-27 21:25:52.752628339 -0700
+@@ -28,11 +28,6 @@
+     },
+ 
+     "tests": {
+-        "uxtheme": {
+-            "label": "uxtheme.h",
+-            "type": "files",
+-            "files": [ "uxtheme.h" ]
+-        }
+     },
+ 
+     "features": {
+@@ -57,7 +52,7 @@
+         },
+         "style-windowsxp": {
+             "label": "WindowsXP",
+-            "condition": "features.style-windows && config.win32 && !config.winrt && tests.uxtheme",
++            "condition": "features.style-windows && config.win32 && !config.winrt",
+             "output": [ "styles" ]
+         },
+         "style-windowsvista": {

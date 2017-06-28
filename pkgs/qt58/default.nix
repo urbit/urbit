@@ -45,6 +45,9 @@ let
       #./qtbase-arch-patches/0030-Prevent-qmake-from-messing-static-lib-dependencies.patch
       # based on 0020 and 0022, and 0030 from Arch
       ./static-cmake.patch
+      # uxtheme.h test is broken, always returns false, and results in QtWidgets
+      # apps looking bad on Windows.  https://stackoverflow.com/q/44784414/28128
+      ./dont-test-uxtheme.patch
     ];
 
     inherit version;
