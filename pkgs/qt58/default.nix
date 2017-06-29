@@ -66,7 +66,7 @@ let
 
     inherit version;
 
-    inherit (base) src;
+    inherit (base-raw) src;
 
     qtbase = base;
 

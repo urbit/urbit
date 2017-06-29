@@ -7,7 +7,7 @@ rmdir qtbase-opensource-src-$version
 
 mkdir build
 cd build
-mkdir bin moc obj
+mkdir bin moc obj aux
 
 # TODO: use $host-pkg-config to get the compiler settings
 
@@ -78,6 +78,7 @@ $host-g++ -mwindows $CFLAGS $LDFLAGS \
   ../examples/widgets/layouts/dynamiclayouts/main.cpp \
   moc/dynamiclayouts.cpp \
   obj/plugins.o \
+  -Wl,-Map=aux/dynamiclayouts.map \
   $LIBS -o bin/dynamiclayouts${exe_suffix}
 
 # TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
@@ -88,4 +89,5 @@ $host-strip bin/*
 mkdir $out
 
 cp -r bin $out
+cp -r aux $out
 # TODO: cp -r $qtbase/license $out
