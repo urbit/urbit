@@ -14,7 +14,10 @@ let
     };
 
     patches = [
+      # Settings we need to cross compile.
       ./qtbase-arch-patches/0001-Add-profile-for-cross-compilation-with-mingw-w64.patch
+
+      # The .pc files have incorrect library names without this (e.g. Qt5Cored)
       ./qtbase-arch-patches/0007-Prevent-debug-library-names-in-pkg-config-files.patch
 
       # An #include statement in Qt contained uppercase letters, but
