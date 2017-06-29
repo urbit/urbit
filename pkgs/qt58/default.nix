@@ -15,20 +15,10 @@ let
 
     patches = [
       ./qtbase-arch-patches/0001-Add-profile-for-cross-compilation-with-mingw-w64.patch
-      ./qtbase-arch-patches/0002-Ensure-GLdouble-is-defined-when-using-dynamic-OpenGL.patch
-      ./qtbase-arch-patches/0004-Fix-too-many-sections-assemler-error-in-OpenGL-facto.patch
-      ./qtbase-arch-patches/0005-Make-sure-.pc-files-are-installed-correctly.patch
-      ./qtbase-arch-patches/0006-Don-t-add-resource-files-to-LIBS-parameter.patch
       ./qtbase-arch-patches/0007-Prevent-debug-library-names-in-pkg-config-files.patch
-      ./qtbase-arch-patches/0016-Build-dynamic-host-libraries.patch
-      ./qtbase-arch-patches/0017-Enable-rpath-for-build-tools.patch
-      ./qtbase-arch-patches/0018-Use-system-zlib-for-build-tools.patch
-      ./qtbase-arch-patches/0019-Disable-determing-default-include-and-lib-dirs-at-qm.patch
-      ./qtbase-arch-patches/0023-Use-correct-pkg-config-static-flag.patch
-      ./qtbase-arch-patches/0025-Ignore-errors-about-missing-feature-static.patch
-      ./qtbase-arch-patches/0027-Ignore-failing-pkg-config-test.patch
 
-      # An #include statement in Qt contained uppercase letters.
+      # An #include statement in Qt contained uppercase letters, but
+      # mingw-w64 headers are all lowercase.
       ./qtbase-arch-patches/0028-Include-uiviewsettingsinterop.h-correctly.patch
 
       # uxtheme.h test is broken, always returns false, and results in QtWidgets
@@ -65,7 +55,7 @@ let
     builder.builder = "${crossenv.nixpkgs.ruby}/bin/ruby";
     builder.args = [./wrapper_builder.rb];
 
-    qtbase = base;
+    qtbase = base-raw;
   };
 
   base-examples = crossenv.make_derivation rec {
@@ -82,6 +72,7 @@ let
 in
 {
   recurseForDerivations = true;
+  inherit base-raw;
   inherit base;
   inherit base-examples;
 }

@@ -39,8 +39,8 @@ mkdir OutDir
 symlink QtBaseDir + 'include', OutDir + 'include'
 symlink QtBaseDir + 'bin', OutDir + 'bin'
 symlink QtBaseDir + 'plugins', OutDir + 'plugins'
-
 mkdir OutDir + 'lib'
+symlink QtBaseDir + 'lib' + 'pkgconfig', OutDir + 'lib' + 'pkgconfig'
 
 (QtBaseDir + 'lib').each_child do |c|
   if %w(.a .prl).include?(c.extname)
