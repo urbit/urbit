@@ -10,8 +10,12 @@ for patch in $patches; do
 done
 
 cat >> gui/main.cpp <<END
+#ifdef QT_STATIC
 #include <QtPlugin>
+#ifdef _WIN32
 Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+#endif
+#endif
 END
 
 cd ..
