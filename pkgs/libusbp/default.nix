@@ -3,11 +3,11 @@
 crossenv.make_derivation rec {
   name = "libusbp-${version}-${crossenv.host}";
 
-  version = "1.0.1ish";
+  version = "1.0.2";
 
   src = crossenv.nixpkgs.fetchurl {
-    url = "https://github.com/pololu/libusbp/archive/245f5e4.tar.gz";
-    sha256 = "1xnv5w1c9zcdsdmgacgb1y5qlwpj0868v3cwcmbxxdx89hcsw2mp";
+    url = "https://github.com/pololu/libusbp/archive/${version}.tar.gz";
+    sha256 = "04r2b5v226j4mvc60m0hsl2w20x4c5h0qh0619nn21kkkv15sirb";
   };
 
   patches = [
