@@ -17,5 +17,5 @@ rec {
   win32 = i686-w64-mingw32;
   win64 = x86_64-w64-mingw32;
 
-  filter = builtins.filterSource (path: type: (baseNameOf path) != ".git");
+  filter = nixpkgs.lib.cleanSource;
 }

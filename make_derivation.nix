@@ -27,7 +27,7 @@ let
     nixpkgs.xz
   ];
 
-  default_name = "anon";
+  default_name = "package";
 
   builder_attrs =
     if builtins.isAttrs attrs.builder then attrs.builder
