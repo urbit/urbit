@@ -11,9 +11,11 @@ rec {
 
   pkgFun = crossenv: import ./pkgs.nix { inherit crossenv; } // crossenv;
 
-  pkgs = {
-    recurseForDerivations = true;
-    i686-w64-mingw32 = pkgFun crossenvs.i686-w64-mingw32;
-    x86_64-w64-mingw32 = pkgFun crossenvs.x86_64-w64-mingw32;
-  };
+  i686-w64-mingw32 = pkgFun crossenvs.i686-w64-mingw32;
+  x86_64-w64-mingw32 = pkgFun crossenvs.x86_64-w64-mingw32;
+
+  win32 = i686-w64-mingw32;
+  win64 = x86_64-w64-mingw32;
+
+  filter = builtins.filterSource (path: type: (baseNameOf path) != ".git");
 }

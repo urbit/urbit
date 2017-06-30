@@ -27,6 +27,8 @@ let
     nixpkgs.xz
   ];
 
+  default_name = "anon";
+
   builder_attrs =
     if builtins.isAttrs attrs.builder then attrs.builder
     else rec {
@@ -44,7 +46,7 @@ let
   path_map = dir: inputs: (map (i: "${i}" + dir) inputs);
 
   auto_drv_attrs = rec {
-    name = "${attrs.name}-${crossenv.host}";
+    name = "${attrs.name or default_name}-${crossenv.host}";
     system = builtins.currentSystem;
 
     inherit (crossenv) host arch os exe_suffix;
