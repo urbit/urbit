@@ -1748,6 +1748,23 @@
   ?+  -.dif
     dif
     ::
+      $grams
+    %=  dif
+        gaz
+      %+  turn  gaz.dif
+      |=  gam/telegram
+      =.  aud.tot.gam
+        %-  ~(run in aud.tot.gam)
+        |=  {p/partner s/(pair envelope delivery)}
+        ::TODO  it probably isn't safe to do this for
+        ::      all audience members hosted by us, even
+        ::      if this is only called for burdens.
+        :_  s
+        ?.  &(?=($& -.p) =(hos.p.p our.bol))  p
+        [%& who nom.p.p]
+      gam
+    ==
+    ::
       $config
     ?.  =(hos.cir.dif our.bol)  dif
     dif(cir [who nom.cir.dif])
