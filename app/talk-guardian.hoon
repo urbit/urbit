@@ -37,7 +37,7 @@
 !:
 ::::
   ::
-[. talk]
+[. talk]  ::TODO  =,
 =>  ::>  ||
     ::>  ||  %arch
     ::>  ||
@@ -46,6 +46,7 @@
     |%
     ++  state                                           ::>  broker state
       $:  stories/(map knot story)                      ::<  conversations
+          ::TODO  outbox not needed
           outbox/(pair @ud (map @ud thought))           ::<  urbit outbox
           log/(map knot @ud)                            ::<  logged to clay
           nicks/(map ship knot)                         ::<  nicknames
@@ -58,7 +59,7 @@
           remotes/(map partner group)                   ::<  remote presence
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
-          ::TODO  never gets updated.                   ::
+          ::TODO?  never gets updated. still needed?    ::
           sequence/(map partner @ud)                    ::<  partners heard
           known/(map serial @ud)                        ::<  messages heard
           burden/?                                      ::<  from parent?
@@ -117,7 +118,7 @@
   ::
   ::TODO  maybe rewrite all arms to produce (list delta)
   ::      instead of state? or nah?
-  |_  ::>  moves: moves created by core operations.
+  |_  ::>  deltas: deltas created by core operations.
       ::
       deltas/(list delta)
   ::
@@ -741,7 +742,6 @@
     ++  so-hear                                         ::<  accept circle rumor
       ::>  apply changes from a rumor to this story.
       ::
-      ::TODO  cleanup
       |=  {bur/? src/circle dif/diff-story}
       ^+  +>
       ::TODO?  are these checks still important?
@@ -773,7 +773,7 @@
                     ~&  %ignoring-remote-status
                     +>
                   (so-delta-our dif)
-        $follow   ~&(%follow-not-rumor +>)  ::TODO?  crash?
+        $follow   ~&(%follow-not-rumor +>)  ::REVIEW
         $remove   (so-delta-our %config src %remove ~)
       ==
     ::
@@ -1484,7 +1484,8 @@
       ^-  (list move)
       ?+  -.dif  ~
         $permit   (sa-permit-effects sec.con.old ses.con.old +.dif)
-        ::TODO  $secure ? not here, logic should go up-stream.
+        ::NOTE  when doing a lone %secure, calculate the
+        ::      necessary %permit deltas alongside it.
       ==
     ::
     ++  sa-follow-effects                               ::<  un/subscribe
@@ -1664,7 +1665,6 @@
 ::>  ||  %new-events
 ::>  ||
 ::+|
-::TODO  make use of ++prey for filtering subs?
 ++  bake                                                ::<  apply state delta
   ::>  applies a change to the application state,
   ::>  producing side-effects.
@@ -1683,7 +1683,7 @@
   |=  dis/(list delta)
   ^-  (quip move +>)
   %+  roll  dis
-  |=  {d/delta m/(list move) _+>.$}  ::TODO?  ^$ find-fails, how is this correct?
+  |=  {d/delta m/(list move) _+>.$}  ::REVIEW  ^$ find-fails, how is this correct?
   =^  mos  +>.^$  (bake d)
   [(welp m mos) +>.^$]
 ::
@@ -1715,7 +1715,7 @@
     %+  murn  (~(tap by stories))
     |=  {n/knot s/story}
     ^-  (unit (pair knot burden))
-    ::  only auto-federate channels for now.
+    ::  only auto-federate channels for now.  ::REVIEW
     ?.  ?=($black sec.con.shape.s)  ~
     :+  ~  n
     :+  grams.s
@@ -1723,13 +1723,11 @@
     [locals.s remotes.s]
     ::
       $report
-    ~  ::TODO?  we just don't have a prize. or do we need [%report ~] ?
+    ::REVIEW  we just don't have a prize... but do have rumors.
+    ::        or do we need [%report ~] ?
+    ~
     ::
       $circle  ::REVIEW  should we send precs & config to out of range subs?
-    ::  we can either be:
-    ::  - before range: send precs, config
-    ::  - in range:     send precs, config, msgs
-    ::  - after range:  send msgs
     =+  soy=(~(get by stories) nom.qer)
     ?~  soy  ~
     :+  ~  ~
@@ -2025,6 +2023,7 @@
   ::>  gall dropped our subscription. resubscribe.
   ::
   ::TODO  update for all subscription kinds.
+  ::TODO?  does new gall still drop subscriptions?
   |=  wir/wire
   ^-  (quip move +>)
   %+  etch-circle  [%circle wir]
