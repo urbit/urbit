@@ -191,26 +191,12 @@
 ++  thought    {uid/serial aud/audience sam/statement}  ::<  which whom this
 ++  statement  {wen/@da sep/speech}                     ::<  when what body
 ++  speech                                              ::>  content body
-  $%  {$non $~}                                         ::<  no content (yo)
-      {$lin pat/? msg/cord}                             ::<  no/@ text line
-      {$ire tos/serial sep/speech}                      ::<  in-reply-to
+  $%  {$lin pat/? msg/cord}                             ::<  no/@ text line
       {$url url/purf}                                   ::<  parsed url
-      {$exp exp/cord}                                   ::<  hoon line
+      {$exp exp/cord res/(list tank)}                   ::<  hoon line
       {$fat tac/attache sep/speech}                     ::<  attachment
-      {$lan nom/knot msg/cord}                          ::<  local announce
       {$inv inv/? cir/circle}                           ::<  inv/ban for circle
-      {$mor ses/(list speech)}                          ::<  multiplex
-      {$ext nom/term dat/*}                             ::<  extended action
       {$app app/term msg/cord}                          ::<  app message
-      $:  $api                                          ::<  api message
-          service/term                                  ::<  service name
-          id/cord                                       ::<  id on the service
-          id-url/purf                                   ::<  link to id
-          summary/cord                                  ::<  summary of event
-          body/cord                                     ::<  body of event
-          url/purf                                      ::<  link to event
-          meta/json                                     ::<  other data for web
-      ==                                                ::
   ==                                                    ::
 ++  attache                                             ::>  attachment
   $%  {$name nom/cord tac/attache}                      ::<  named attachment

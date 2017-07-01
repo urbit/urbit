@@ -1084,7 +1084,7 @@
         |=  {txt/cord exe/twig}
         =>  |.([(sell (slap (slop twig-head seed) exe))]~)
         =+  tan=p:(mule .)
-        (say [%fat tank+tan exp+txt] ~)
+        (say [%exp txt tan] ~)
       ::
       ++  target                                        ::<  %target
         ::>  sets messaging target, then execute {woe}.
@@ -1963,12 +1963,7 @@
     ::>  to each speech type.
     ::
     |-  ^-  sole-effect
-    ?+  -.sep
-      tan+[>sep<]~
-      ::
-        $non
-      tan+~
-      ::
+    ?-  -.sep
         $lin
       tan+~[leaf+"{?:(pat.sep "" "@ ")}{(trip msg.sep)}"]
       ::
@@ -1976,7 +1971,7 @@
       url+(crip (earf url.sep))
       ::
         $exp
-      tan+~[leaf+"# {(trip exp.sep)}"]
+      tan+~[rose+[" " ~ ~]^[leaf+"# {(trip exp.sep)}" res.sep]]
       ::
         $fat
       [%mor $(sep sep.sep) tan+(tr-tach tac.sep) ~]
@@ -1991,21 +1986,8 @@
         "you have been banished from "
       ~(cr-phat cr cir.sep)
       ::
-        $mor
-      mor+(turn ses.sep |=(speech ^$(sep +<)))
-      ::
         $app
       tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip app.sep)}]" leaf+(trip msg.sep)]]
-      ::
-        $api
-      :-  %tan
-      :_  ~
-      :+  %rose
-        [": " ~ ~]
-      :~  leaf+"[{(trip id.sep)} on {(trip service.sep)}]"
-          leaf+(trip body.sep)
-          leaf+(earf url.sep)
-      ==
     ==
   ::
   ++  tr-tach                                           ::<  attachment
@@ -2055,15 +2037,7 @@
     ::
     |=  wyd/@ud
     ^-  (list tape)
-    ?+  -.sep
-      ~&(tr-lost+sep ~)
-      ::
-        $mor
-      ?~  ses.sep  ~&(%tr-mor-empty ~)
-      |-  ^-  (list tape)
-      ?~  t.ses.sep  ^$(sep i.ses.sep)
-      (weld ^$(sep i.ses.sep) $(ses.sep t.ses.sep))
-      ::
+    ?-  -.sep
         $fat
       %+  weld  $(sep sep.sep)
       ^-  (list tape)
@@ -2072,8 +2046,7 @@
       ==
       ::
         $exp
-      ::TODO  separate expr and res in the speech type,
-      ::      then print both on their own line. (still 64)
+      ::TODO  print truncated res on its own line.
       :_  ~
       (tr-chow wyd '#' ' ' (trip exp.sep))
       ::
@@ -2129,13 +2102,6 @@
         $app
       :_  ~
       (tr-chow wyd "[{(trip app.sep)}]: {(trip msg.sep)}")
-      ::
-        $api
-      :_  ~
-      %+  tr-chow  wyd
-      %+  weld
-        "[{(trip id.sep)}@{(trip service.sep)}]: "
-      (trip summary.sep)
     ==
   --
 ::
