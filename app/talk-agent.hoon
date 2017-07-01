@@ -1891,7 +1891,6 @@
           sen/serial
           aud/audience
           wen/@da
-          bou/bouquet
           sep/speech
       ==
   ::
@@ -1957,8 +1956,7 @@
       %+  turn  (~(tap by aud))
       |=  {a/partner *}
       leaf+~(pr-full pr a)
-    =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
-    [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
+    [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] ~]]~
   ::
   ++  tr-body                                           ::<  message content
     ::>  long-form display of message contents, specific

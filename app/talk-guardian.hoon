@@ -419,7 +419,7 @@
         %-  ~(gas by *audience)
         %+  turn  (~(tap in pas))
         |=(p/partner [p *envelope %pending])
-      [now.bol ~ i.ses]
+      [now.bol i.ses]
     ::
     ::>  ||  %personal-metadata
     ::+|

@@ -58,7 +58,7 @@
   ^-  thought
   :+  (shaf %thot eny)
     [[[%& our (main our)] [*envelope %pending]] ~ ~]
-  [now *bouquet [%app dap (crip ~(ram re i.mes))]]
+  [now [%app dap (crip ~(ram re i.mes))]]
 ::
 ++  uniq
   |=  eny/@uvJ

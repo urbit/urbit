@@ -81,7 +81,7 @@
       %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
-    ++  stam  (ot date+di bouquet+(as (ar so)) speech+spec ~)
+    ++  stam  (ot date+di speech+spec ~)
     ++  spec
       %+  ke  *speech  |.  ~+
       %-  of  :~

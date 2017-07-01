@@ -97,7 +97,7 @@
     ++  stam
       ^-  $-(json (unit statement))
       %+  cu  eval
-      (ot date+di bouquet+(as (ar so)) speech+spec ~)
+      (ot date+di speech+spec ~)
     ::
     ++  spec
       %+  ke  *speech-or-eval  |.

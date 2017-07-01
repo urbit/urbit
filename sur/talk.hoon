@@ -189,7 +189,7 @@
 ::
 ++  telegram   {aut/ship tot/thought}                   ::<  who thought
 ++  thought    {uid/serial aud/audience sam/statement}  ::<  which whom this
-++  statement  {wen/@da boq/bouquet sep/speech}         ::<  when what body
+++  statement  {wen/@da sep/speech}                     ::<  when what body
 ++  speech                                              ::>  content body
   $%  {$non $~}                                         ::<  no content (yo)
       {$lin pat/? msg/cord}                             ::<  no/@ text line
@@ -234,6 +234,4 @@
       $released                                         ::<  sent one-way
       $accepted                                         ::<  fully processed
   ==                                                    ::
-++  bouquet    (set flavor)                             ::<  complete aroma
-++  flavor     path                                     ::<  content flavor
 --
