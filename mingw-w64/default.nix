@@ -87,6 +87,6 @@ let
   };
 in
   {
-    make_derivation = import ../make_derivation.nix crossenv_base;
+    make_derivation = import ../make_derivation.nix nixpkgs crossenv_base;
   } // crossenv_base
 

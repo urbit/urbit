@@ -1,8 +1,6 @@
-crossenv: attrs:
+nixpkgs: crossenv: attrs:
 
 let
-  nixpkgs = crossenv.nixpkgs;
-
   cross_build_tools = if crossenv == null then [] else [
     crossenv.gcc
     crossenv.binutils
