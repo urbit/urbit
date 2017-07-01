@@ -1,6 +1,7 @@
 { crossenv }:
 let pkgs =
 rec {
+  recurseForDerivations = true;
   inherit (crossenv) binutils gcc;
 
   hello = import ./pkgs/hello {
