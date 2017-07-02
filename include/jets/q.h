@@ -103,6 +103,7 @@
     u3_noun u3qe_lune(u3_atom);
     u3_noun u3qe_repg(u3_noun, u3_noun, u3_noun);
     u3_noun u3qe_rexp(u3_noun, u3_noun);
+    u3_noun u3qe_runt(u3_noun, u3_noun, u3_noun);
     u3_noun u3qe_trip(u3_atom);
 
     u3_noun u3qea_ecba_en(u3_atom, u3_atom);
@@ -194,6 +195,7 @@
     u3_noun u3qf_grof(u3_noun);
     u3_noun u3qf_hike(u3_noun, u3_noun);
     u3_noun u3qf_look(u3_noun, u3_noun);
+    u3_noun u3qf_wash(u3_noun, u3_noun, u3_noun);
     u3_noun u3qf_slot(u3_atom, u3_noun);
     u3_noun u3qf_type(u3_noun);
 

@@ -6,6 +6,7 @@
   **/
     u3_noun u3ka_add(u3_noun a, u3_noun b); 
     u3_noun u3ka_sub(u3_noun a, u3_noun b);
+    u3_noun u3ka_mod(u3_noun a, u3_noun b);
     u3_noun u3ka_mul(u3_noun a, u3_noun b);
     u3_noun u3ka_gth(u3_noun a, u3_noun b);
     u3_noun u3ka_lte(u3_noun a, u3_noun b);
@@ -93,6 +94,11 @@
   */
     u3_atom
     u3ke_jam(u3_noun a);
+
+  /* u3ke_runt(): prepend repeatedly.
+   */
+    u3_noun
+    u3ke_runt(u3_noun a, u3_noun b, u3_noun c);
 
   /* u3ke_trip(): atom to tape.
   */

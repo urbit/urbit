@@ -131,6 +131,7 @@ static u3j_harm _mood__hoon_loss_a[] = {{".2", u3we_loss}, {}};
 static u3j_harm _mood__hoon_lune_a[] = {{".2", u3we_lune}, {}};
 static u3j_harm _mood__hoon_mink_a[] = {{".2", u3we_mink}, {}};
 static u3j_harm _mood__hoon_mule_a[] = {{".2", u3we_mule}, {}};
+static u3j_harm _mood__hoon_runt_a[] = {{".2", u3we_runt}, {}};
 static u3j_harm _mood__hoon_trip_a[] = {{".2", u3we_trip}, {}};
 
 static u3j_harm _mood__hoon__aesc_en_a[] = {{".2", u3wea_en}, {}};
@@ -349,6 +350,7 @@ static u3j_harm _mood__hoon_flor_a[] = {{".2", u3wf_flor}, {}};
 static u3j_harm _mood__hoon_fork_a[] = {{".2", u3wf_fork}, {}};
 static u3j_harm _mood__hoon_hike_a[] = {{".2", u3wf_hike}, {}};
 static u3j_harm _mood__hoon_look_a[] = {{".2", u3wf_look}, {}};
+static u3j_harm _mood__hoon_wash_a[] = {{".2", u3wf_wash}, {}};
 
 static u3j_harm _mood__hoon__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
 static u3j_harm _mood__hoon__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
@@ -563,6 +565,7 @@ static u3j_core _mood__hoon_d[] =
     { "lune", _mood__hoon_lune_a },
     { "mink", _mood__hoon_mink_a },
     { "mule", _mood__hoon_mule_a },
+    { "runt", _mood__hoon_runt_a },
     { "trip", _mood__hoon_trip_a },
 
     { "aesc", 0, _mood__hoon__aesc_d },
@@ -611,6 +614,7 @@ static u3j_core _mood__hoon_d[] =
     { "fork", _mood__hoon_fork_a },
     { "hike", _mood__hoon_hike_a },
     { "look", _mood__hoon_look_a },
+    { "wash", _mood__hoon_wash_a },
 
     // { "ap", _mood__hoon__ap_a },
     // { "al", _mood__hoon__al_a },

@@ -280,6 +280,7 @@ J_E_OFILES=\
        jets/e/lore.o \
        jets/e/loss.o \
        jets/e/lune.o \
+       jets/e/runt.o \
        jets/e/trip.o
 
 J_E_OFILES_ED=\
@@ -303,6 +304,7 @@ J_F_OFILES=\
        jets/f/fork.o \
        jets/f/hike.o \
        jets/f/look.o \
+       jets/f/wash.o \
 
 J_F_OFILES_UT=\
        jets/f/ut.o \

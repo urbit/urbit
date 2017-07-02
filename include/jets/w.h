@@ -110,6 +110,7 @@
     u3_noun u3we_mule(u3_noun);
     u3_noun u3we_repg(u3_noun);
     u3_noun u3we_rexp(u3_noun);
+    u3_noun u3we_runt(u3_noun);
     u3_noun u3we_trip(u3_noun);
 
     u3_noun u3we_pfix(u3_noun);
@@ -223,6 +224,7 @@
     u3_noun u3wf_fork(u3_noun);
     u3_noun u3wf_hike(u3_noun);
     u3_noun u3wf_look(u3_noun);
+    u3_noun u3wf_wash(u3_noun);
 
     u3_noun u3wfl_bunt(u3_noun);
     u3_noun u3wfl_whip(u3_noun);
