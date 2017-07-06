@@ -40,15 +40,31 @@ let
 
   path_map = dir: inputs: (map (i: "${i}" + dir) inputs);
 
-  default_attrs = {
-    system = builtins.currentSystem;
+  # We can't just set PATH in our derivation because nix-shell will make the
+  # derivation's PATH override the system PATH, meaning we can't use utilities
+  # like "git" or "which" form the host system.  So we set _PATH instead, and we
+  # use a setup script ($setup) that copies _PATH to PATH. And we provide
+  # $stdenv/setup so that nix-shell can find our setup script.
+  #
+  # nixcrpkgs does not expose its users to this mess.  The user can specify a
+  # PATH if they want, and it will be automatically moved to _PATH in the
+  # derivation.
+  filtered_attrs = nixpkgs.lib.filterAttrs (n: v: n != "PATH") attrs;
 
-    setup = ./builder_setup.sh;
-
-    PATH = path_join (
+  path_attrs = {
+    _PATH = path_join (
       (if attrs ? PATH then [attrs.PATH] else []) ++
       (path_map "/bin" native_inputs)
     );
+  };
+
+  default_attrs = {
+    system = builtins.currentSystem;
+
+    setup = ./pretend_stdenv/setup;
+
+    # This allows nix-shell to find our setup script.
+    stdenv = ./pretend_stdenv;
 
     PKG_CONFIG_PATH = path_join (
       (if attrs ? PKG_CONFIG_PATH then [attrs.PKG_CONFIG_PATH] else []) ++
@@ -84,7 +100,7 @@ let
     };
 
   drv_attrs = default_attrs // cross_attrs
-    // attrs // name_attrs // builder_attrs;
+    // filtered_attrs // name_attrs // builder_attrs // path_attrs;
 
 in
   derivation drv_attrs
