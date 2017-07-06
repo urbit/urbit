@@ -9,6 +9,7 @@
 ::TODO  document what user-facing messages actually mean!
 ::TODO  maybe have brokers accept reactions as well, redirect them to readers.
 ::      that way we can have foreign brokers react to our requests!
+::TODO  document gate samples fully.
 ::TODO  ::> to :> etc.
 ::
 ::TODO  we can't do away with the default mailbox because we need it for things
@@ -184,7 +185,7 @@
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
     ?~  pur
-      ::TODO  crash instead?
+      ::TODO  crash instead!
       %-  ta-note
       (crip "unknown story '{(trip nom)}'")
     (fun ~(. so nom ~ u.pur))
@@ -270,7 +271,7 @@
     ::+|
     ++  work                                            ::<  perform action
       ^+  ..ta-action
-      ::TODO  require deltas as product?
+      ::TODO  require deltas as product!
       ?-  -.act
         ::  circle configuration
         $create  (action-create +.act)
@@ -660,6 +661,8 @@
     ++  so-done                                         ::<  apply changes
       ::>  put changed story back into the map and apply
       ::>  actions.
+      ::TODO  update inline docs
+      ::TODO  maybe produce list of actions, apply in ++ta
       ::
       ^+  +>
       =.  acs  (flop acs)
@@ -694,6 +697,7 @@
     ++  so-delta                                        ::<  send delta
       ::>  store delta in ++ta core.
       ::
+      ::TODO  maybe keep our own list of deltas, produce in done
       |=  dif/delta
       ^+  +>
       +>(deltas [dif deltas])
@@ -744,9 +748,9 @@
       ::
       |=  {bur/? src/circle dif/diff-story}
       ^+  +>
-      ::TODO?  are these checks still important?
-      ::       when things are slow we may get diffs from
-      ::       things we already unsubscribed from, right?
+      ::  check that we're still subscribed to this story
+      ::  this is a small %gall bug, we shouldn't get these
+      ::
       ~?  ?!  ?|  (~(has in src.shape) [%& src])
                   =(src so-cir)
               ==
@@ -784,6 +788,7 @@
       ::
       |=  {gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
+      ::TODO  =*  self  +>
       ::  local config
       =.  ..so-bear
         (so-config-full `shape loc.cos)
@@ -820,12 +825,13 @@
     ::>  ||
     ::>  ||  %changes
     ::>  ||
-    ::>    arms that make miscelaneous changes to this story.
+    ::>    arms that make miscellaneous changes to this story.
     ::+|
     ::
     ++  so-config-full                                  ::<  split full config
       ::>  split a %full config delta up into multiple
       ::>  smaller ones, for easier application.
+      ::TODO  mention side-effects
       ::
       |=  {old/(unit config) cof/config}
       ^+  +>
@@ -1391,7 +1397,6 @@
     ++  sa-change-local                                 ::<  apply our delta
       ::>  apply a %story delta to local data.
       ::
-      ::TODO  split?
       |=  dif/diff-story
       ^+  +>
       ?+  -.dif
@@ -1598,7 +1603,7 @@
 ::+|
 ::
 ++  etch                                                ::<  parse wire
-  ::>  parses {wir}} to obtain either %circle with story
+  ::>  parses {wir} to obtain either %circle with story
   ::>  and circle or %repeat with message number, source
   ::>  ship and story.
   ::
@@ -1725,6 +1730,8 @@
       $report
     ::REVIEW  we just don't have a prize... but do have rumors.
     ::        or do we need [%report ~] ?
+    ::TODO  gall note: need to be able to subscirbe to just changes... or just
+    ::      data etc.
     ~
     ::
       $circle  ::REVIEW  should we send precs & config to out of range subs?

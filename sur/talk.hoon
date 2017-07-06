@@ -3,6 +3,9 @@
   !:
 |%
 ::
+::TODO  wrappers around knot for story name, nickname,
+::TODO  use different words for different kinds of burdens
+::
 ::>  ||
 ::>  ||  %query-models
 ::>  ||
@@ -15,7 +18,10 @@
       {$burden who/ship}                                ::<  duties to share
       {$report $~}                                      ::<  duty reports
       {$circle nom/knot ran/range}                      ::<  story query
+      ::TODO  separate stream for just msgs? what about just configs? presences?
+      ::      yes!
   ==                                                    ::
+  ::TODO  more newlines
 ++  range  (unit {hed/place tal/(unit place)})          ::<  inclusive msg range
 ++  place  $%({$da @da} {$ud @ud})                      ::<  @ud/@da for range
 ++  prize                                               ::>  query result
@@ -25,8 +31,10 @@
       ==                                                ::
       {$friend cis/(set circle)}                        ::<  /friend
       {$burden sos/(map knot burden)}                   ::<  /burden
+      ::TODO  do we ever use remote things from remote circles?
       {$circle burden}                                  ::<  /circle
   ==                                                    ::
+  ::TODO  ++prize-reader {gys nis} etc.
 ++  rumor                                               ::<  query result change
   $%  $:  $reader                                       ::<  /reader
           $=  dif                                       ::
@@ -62,6 +70,11 @@
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char pas/(set partner)}      ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
+::TODO  separate remote-only diffs, like so:
+::++  diff-foobar
+::  $?  diff-story
+::  $%  {$other-thing ...}
+::  ==
 ++  diff-story                                          ::
   $%  {$new cof/config}                                 ::<  new story
       {$bear bur/burden}                                ::<  new inherited story
@@ -73,6 +86,7 @@
       {$remove $~}                                      ::<  removed story
   ==                                                    ::
 ++  diff-config                                         ::>  config change
+  ::TODO  maybe just full? think.
   $%  {$full cof/config}                                ::<  set w/o side-effects
       {$source add/? pan/partner}                       ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
@@ -117,6 +131,7 @@
       {$glyph gyf/char pas/(set partner) bin/?}         ::<  un/bind a glyph
       {$nick who/ship nic/knot}                         ::<  new identity
   ==                                                    ::
+::TODO  don't send reactions, just crash!
 ++  reaction                                            ::>  user information
   $:  res/?($info $fail)                                ::<  result
       wat/cord                                          ::<  explain
@@ -150,7 +165,7 @@
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config
   $:  src/(set partner)                                 ::<  active sources
-      ::TODO  ^ include range?
+      ::TODO  ^ include range? just remove!
       cap/cord                                          ::<  description
       fit/filter                                        ::<  message rules
       con/control                                       ::<  restrictions
@@ -158,6 +173,7 @@
 ++  filter                                              ::>  content filters
   $:  cas/?                                             ::<  dis/allow capitals
       utf/?                                             ::<  dis/allow non-ascii
+      ::TODO  maybe message length
   ==                                                    ::
 ++  control    {sec/security ses/(set ship)}            ::<  access control
 ++  security                                            ::>  security mode
@@ -167,6 +183,7 @@
       $brown                                            ::<  mailbox, our r, bl w
   ==                                                    ::
 ::  participant metadata.                               ::
+::TODO  think about naming more
 ++  crowd      {loc/group rem/(map partner group)}      ::<  our & srcs presences
 ++  group      (map ship status)                        ::<  presence map
 ++  status     {pec/presence man/human}                 ::<  participant
@@ -211,6 +228,7 @@
 ::+|
 ::
 ++  serial     @uvH                                     ::<  unique identifier
+::TODO  move delivery state out of audience, into local state
 ++  audience   (map partner (pair envelope delivery))   ::<  destination + state
 ++  envelope   {vis/? sen/(unit partner)}               ::<  visible sender
 ++  delivery                                            ::>  delivery state
