@@ -788,29 +788,29 @@
       ::
       |=  {gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
-      ::TODO  =*  self  +>
+      =*  self  +>
       ::  local config
-      =.  ..so-bear
+      =.  self
         (so-config-full `shape loc.cos)
       ::  remote config
-      =.  ..so-bear
+      =.  self
         %+  roll  (~(tap by rem.cos))
-        |=  {{r/circle c/config} _..so-bear}
+        |=  {{r/circle c/config} _self}
         (so-delta-our %config r %full c)
       ::  local presence
-      =.  ..so-bear
+      =.  self
         %+  roll  (~(tap by loc.pes))
-        |=  {{w/ship s/status} _..so-bear}
+        |=  {{w/ship s/status} _self}
         (so-delta-our %status so-pan w %full s)
       ::  remote presence
-      =.  ..so-bear
+      =.  self
         %+  roll  (~(tap by rem.pes))
-        |=  {{p/partner g/group} _..so-bear}
+        |=  {{p/partner g/group} _self}
         %+  roll  (~(tap by g))
-        |=  {{w/ship s/status} _..so-bear}
+        |=  {{w/ship s/status} _self}
         (so-delta-our %status p w %full s)
       ::  telegrams
-      =.  ..so-bear
+      =.  self
         %+  so-delta-our  %grams
         %+  turn  gaz
         |=  t/telegram
