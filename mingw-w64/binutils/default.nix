@@ -16,7 +16,7 @@ nixpkgs.stdenv.mkDerivation rec {
 
   buildInputs = [ nixpkgs.bison nixpkgs.zlib ];
 
-  configureFlags =
+  configure_flags =
     "--target=${host} " +
     "--enable-shared " +
     "--enable-deterministic-archives " +

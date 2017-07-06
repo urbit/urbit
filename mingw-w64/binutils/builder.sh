@@ -18,7 +18,7 @@ cd ..
 mkdir build
 cd build
 
-../binutils-$version/configure --prefix=$out $configureFlags
+../binutils-$version/configure --prefix=$out $configure_flags
 
 make
 

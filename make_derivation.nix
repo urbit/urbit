@@ -23,7 +23,8 @@ let
     nixpkgs.gzip
     nixpkgs.bzip2
     nixpkgs.gnumake
-    nixpkgs.bash
+    nixpkgs.bashInteractive
+    nixpkgs.which
     nixpkgs.patch
     nixpkgs.xz
   ];
@@ -77,9 +78,9 @@ let
   builder_attrs =
     if builtins.isAttrs attrs.builder then attrs.builder
     else rec {
-      SHELL = builder;
-      builder = "${nixpkgs.bash}/bin/bash";
+      builder = "${nixpkgs.bashInteractive}/bin/bash";
       args = ["-ue" attrs.builder];
+      SHELL = builder;
     };
 
   drv_attrs = default_attrs // cross_attrs
