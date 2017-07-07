@@ -1,6 +1,8 @@
 { nixpkgs }:
 
 rec {
+  inherit nixpkgs;
+
   # Some native build tools.
   native = {
     recurseForDerivations = true;
