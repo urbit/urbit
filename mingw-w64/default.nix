@@ -67,23 +67,20 @@ let
   gyp_os = "win";
 
   crossenv_base = {
-    # Target info
+    # Target info variables.
     inherit host arch os exe_suffix;
 
-    # Toolchain
+    # Cross-compiling toolchain.
     inherit gcc binutils mingw-w64_full;
 
-    # Build tools
-    inherit pkg-config wrappers;
+    # Build tools and variables to support them.
+    inherit pkg-config wrappers cmake_toolchain gyp_os;
 
-    # nixpkgs: a wide variety of programs and build tools
+    # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
 
     # Expressions used to bootstrap the toolchain, not normally needed.
     inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
-
-    # Support for various build tools
-    inherit cmake_toolchain gyp_os;
   };
 in
   {
