@@ -47,8 +47,6 @@
     |%
     ++  state                                           ::>  broker state
       $:  stories/(map knot story)                      ::<  conversations
-          ::TODO  outbox not needed
-          outbox/(pair @ud (map @ud thought))           ::<  urbit outbox
           log/(map knot @ud)                            ::<  logged to clay
           nicks/(map ship knot)                         ::<  nicknames
           nak/(jug char (set partner))                  ::<  circle glyph lookup
@@ -85,7 +83,7 @@
           {$quit $~}                                    ::
       ==                                                ::
     ++  weir                                            ::>  parsed wire
-      $%  {$repeat num/@ud cir/circle}                  ::<  messaging wire
+      $%  {$repeat cir/circle}                          ::<  messaging wire
           {$circle nom/knot cir/circle}                 ::<  subscription wire
       ==                                                ::
     --
@@ -564,13 +562,12 @@
     ::>  message got delivered. if an error was returned
     ::>  mark the message as rejected. if not, received.
     ::
-    |=  {num/@ud who/partner fal/(unit tang)}
+    |=  {who/partner fal/(unit tang)}
     ^+  +>
-    =+  oot=(~(get by q.outbox) num)
-    ?~  oot  ~&([%ta-repeat-none num] +>.$)  ::TODO?  crash?
+    ~?  ?=(^ fal)  u.fal
     ::TODO  store delivery state locally
     ::?~(fal %received ~>(%slog.[0 u.fal] %rejected))
-    (ta-delta %done num)
+    +>
   ::
   ::>  ||
   ::>  ||  %messaging
@@ -625,7 +622,6 @@
   ::
   ++  ta-transmit                                       ::<  send message
     ::>  sends thought {tot} to {cir}.
-    ::>  stores it to the outbox to await confirmation.
     ::
     |=  {cir/circle tot/thought}
     ^+  +>
@@ -1154,7 +1150,6 @@
     ^+  +>
     ?-  -.dif
       $out      (da-change-out +.dif)
-      $done     (da-change-done +.dif)
       $glyph    (da-change-glyph +.dif)
       $nick     (da-change-nick +.dif)
       $story    (da-change-story +.dif)
@@ -1192,33 +1187,17 @@
     ==
   ::
   ++  da-change-out                                     ::<  outgoing messages
-    ::>  apply an %out delta, sending a message and
-    ::>  adding it to our outbox.
+    ::>  apply an %out delta, sending a message.
     ::
     |=  {cir/circle out/(list thought)}
     ^+  +>
-    =.  +>
-      %+  da-emit  ost.bol
-      :*  %poke
-          /repeat/(scot %ud p.outbox)/(scot %p hos.cir)/[nom.cir]
-          [hos.cir %talk-guardian]
-          [%talk-command %publish out]
-      ==
-    |-  ^+  +>.^$
-    ?~  out  +>.^$
-    %=  $
-      p.outbox  +(p.outbox)
-      q.outbox  (~(put by q.outbox) p.outbox i.out)
-      out       t.out
+    ~&  [%da-change-out hos.cir]
+    %+  da-emit  ost.bol
+    :*  %poke
+        /repeat/(scot %p hos.cir)/[nom.cir]
+        [hos.cir %talk-guardian]
+        [%talk-command %publish out]
     ==
-  ::
-  ++  da-change-done                                    ::<  delivered messages
-    ::>  apply a %done delta, removing a delivered
-    ::>  message from our outbox.
-    ::
-    |=  num/@ud
-    ^+  +>
-    +>(q.outbox (~(del by q.outbox) num))
   ::
   ++  da-change-glyph                                   ::<  un/bound glyph
     ::>  apply a %glyph delta, un/binding a glyph to/from
@@ -1602,11 +1581,10 @@
     i.t.t.t.wir
     ::
       $repeat
-    ?>  ?=({@ @ @ $~} t.wir)
-    :^    %repeat
-        (slav %ud i.t.wir)
-      (slav %p i.t.t.wir)
-    i.t.t.t.wir
+    ?>  ?=({@ @ $~} t.wir)
+    :+  %repeat
+      (slav %p i.t.wir)
+    i.t.t.wir
   ==
 ::
 ++  etch-circle                                         ::<  parse /circle wire
@@ -1626,11 +1604,11 @@
   ::
   |=  $:  wir/wire
           $=  fun
-          $-  {num/@ud cir/circle}
+          $-  cir/circle
               {(list move) _.}
       ==
   =+  wer=(etch wir)
-  ?>(?=($repeat -.wer) (fun num.wer cir.wer))
+  ?>(?=($repeat -.wer) (fun cir.wer))
 ::
 ++  circle-peer                                         ::<  /circle peer card
   ::>  constructs a %peer move to subscribe {nom} to
@@ -2028,9 +2006,9 @@
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)
   %+  etch-repeat  [%repeat wir]
-  |=  {num/@ud cir/circle}
+  |=  cir/circle
   %-  pre-bake
-  ta-done:(ta-repeat:ta num [%& cir] fal)
+  ta-done:(ta-repeat:ta [%& cir] fal)
 ::
 ::>  ||
 ::>  ||  %logging

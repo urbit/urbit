@@ -55,7 +55,6 @@
 ++  delta                                               ::
   $%  ::  messaging state                               ::
       {$out cir/circle out/(list thought)}              ::<  msgs into outbox
-      {$done num/@ud}                                   ::<  msgs delivered
       ::  shared ui state                               ::
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
