@@ -1663,18 +1663,6 @@
       $reader
     ``[%reader nak nicks]
     ::
-      $friend
-    :+  ~  ~
-    :-  %friend
-    %-  ~(gas in *(set circle))
-    %+  murn
-      =-  (~(tap in src.shape.-))
-      (~(got by stories) (main our.bol))
-    |=  p/partner
-    ^-  (unit circle)
-    ?.  ?=($& -.p)  ~
-    [~ p.p]
-    ::
       $burden
     :+  ~  ~
     :-  %burden
@@ -1754,18 +1742,6 @@
       $nick   `[%reader dif]
     ==
     ::
-      $friend
-    ::  new or removed local stories apply.
-    ::TODO  include mailbox sources. check privacy flags.
-    ?.  ?=($story -.dif)  ~
-    =/  add/(unit ?)
-      ?+  -.dif.dif  ~
-        $new      `&
-        $remove   `|
-      ==
-    ?~  add  ~
-    `[%friend u.add [our.bol nom.dif]]
-    ::
       $burden
     ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
     ?.  ?=($story -.dif)  ~
@@ -1844,7 +1820,6 @@
   =>  depa
   |^  %-  af  :~
           [%reader ul]
-          [%friend ul]
           [%burden (at /[%p])]
           [%report ul]
           [%circle (al knot rang)]
@@ -1862,7 +1837,6 @@
   ^-  ?
   ?-  -.qer
     $reader   (team our.bol who)
-    $friend   &
     $burden   ?&  =(who who.qer)
                   =(our.bol (above who))
               ==
@@ -1982,7 +1956,7 @@
   ?~  fal
     %-  pre-bake
     ta-done:(ta-greet:ta nom cir)
-  =.  u.fal  [>%reap-friend-fail nom cir< u.fal]
+  =.  u.fal  [>%reap-circle-fail nom cir< u.fal]
   %-  (slog (flop u.fal))
   %-  pre-bake
   ta-done:(ta-leave:ta nom cir)

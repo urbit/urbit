@@ -14,7 +14,6 @@
 ::
 ++  query                                               ::>  query paths
   $%  {$reader $~}                                      ::<  shared ui state
-      {$friend $~}                                      ::<  publicly joined
       {$burden who/ship}                                ::<  duties to share
       {$report $~}                                      ::<  duty reports
       {$circle nom/knot ran/range}                      ::<  story query
