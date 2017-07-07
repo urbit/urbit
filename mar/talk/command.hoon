@@ -67,10 +67,7 @@
     ::
     ++  audi
       ^-  $-(json (unit audience))
-      (op parn memb)
-    ::
-    ++  memb  (ot [envelope+lope delivery+(ci (soft delivery) so) ~])
-    ++  lope  (ot [visible+bo sender+(mu (su parn)) ~])
+      (as (su parn))
     ::
     ++  parn
       ^-  $-(nail (like partner))
@@ -81,17 +78,19 @@
     ::
     ++  speech-or-eval  $?(speech {$eval p/@t} {$mor ses/(list speech-or-eval)})
     ++  eval
-      |=  a/(trel @da bouquet speech-or-eval)
+      |=  a/(pair @da speech-or-eval)
       ^-  statement
       %=  a
-          r
+          q
         |-  ^-  speech
-        ?:  ?=($mor -.r.a)
-          [%mor (turn ses.r.a |=(b/speech-or-eval ^$(r.a b)))]
-        ?.  ?=($eval -.r.a)  r.a
-        =-  [%fat tank+- %exp p.r.a]
+        ?:  ?=($mor -.q.a)
+          ::[%mor (turn ses.q.a |=(b/speech-or-eval ^$(q.a b)))]
+          ~&  %todo-talk-command-mark  ::TODO  fix
+          *speech
+        ?.  ?=($eval -.q.a)  q.a
+        =-  [%exp p.q.a -]
         =+  pax=[&1:% &2:% (scot %da p.a) |3:%]
-        p:(mule |.([(sell (slap !>(..zuse) (rain pax p.r.a)))]~))
+        p:(mule |.([(sell (slap !>(..zuse) (rain pax p.q.a)))]~))
       ==
     ::
     ++  stam
