@@ -228,14 +228,5 @@
 ::+|
 ::
 ++  serial     @uvH                                     ::<  unique identifier
-::TODO  move delivery state out of audience, into local state
-++  audience   (map partner (pair envelope delivery))   ::<  destination + state
-++  envelope   {vis/? sen/(unit partner)}               ::<  visible sender
-++  delivery                                            ::>  delivery state
-  $?  $pending                                          ::<  undelivered
-      $received                                         ::<  delivered
-      $rejected                                         ::<  undeliverable
-      $released                                         ::<  sent one-way
-      $accepted                                         ::<  fully processed
-  ==                                                    ::
+++  audience   (set partner)                            ::<  destinations
 --

@@ -57,7 +57,7 @@
   :_  $(mes t.mes, eny (sham eny mes))
   ^-  thought
   :+  (shaf %thot eny)
-    [[[%& our (main our)] [*envelope %pending]] ~ ~]
+    [[%& our (main our)] ~ ~]
   [now [%app dap (crip ~(ram re i.mes))]]
 ::
 ++  uniq

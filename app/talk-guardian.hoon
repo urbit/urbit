@@ -406,8 +406,8 @@
     ::
     ++  action-phrase                                   ::<  post easy
       ::>  sends the message contents provided in the
-      ::>  action, constructing the audience, generating a
-      ::>  serial and setting a timestamp.
+      ::>  action generating a serial and setting a
+      ::>  timestamp.
       ::
       |=  {pas/(set partner) ses/(list speech)}
       ^+  ..ta-action
@@ -416,11 +416,7 @@
       ?~  ses  ~
       =^  sir  eny.bol  (uniq eny.bol)
       :_  $(ses t.ses)
-      :+  sir
-        %-  ~(gas by *audience)
-        %+  turn  (~(tap in pas))
-        |=(p/partner [p *envelope %pending])
-      [now.bol i.ses]
+      [sir pas [now.bol i.ses]]
     ::
     ::>  ||  %personal-metadata
     ::+|
@@ -572,13 +568,8 @@
     ^+  +>
     =+  oot=(~(get by q.outbox) num)
     ?~  oot  ~&([%ta-repeat-none num] +>.$)  ::TODO?  crash?
-    =.  aud.u.oot
-      =+  olg=(~(got by aud.u.oot) who)
-      %+  ~(put by aud.u.oot)  who
-      :-  -.olg
-      ?~(fal %received ~>(%slog.[0 u.fal] %rejected))
-    =.  +>.$
-      (ta-think | our.bol u.oot ~)
+    ::TODO  store delivery state locally
+    ::?~(fal %received ~>(%slog.[0 u.fal] %rejected))
     (ta-delta %done num)
   ::
   ::>  ||
@@ -599,10 +590,10 @@
     ::>  conducts thought {tot} to each partner in its audience.
     ::
     |=  {pub/? aut/ship tot/thought}
-    =+  aud=(~(tap by aud.tot))
+    =+  aud=(~(tap in aud.tot))
     |-  ^+  +>.^$
     ?~  aud  +>.^$
-    $(aud t.aud, +>.^$ (ta-conduct pub aut p.i.aud tot))
+    $(aud t.aud, +>.^$ (ta-conduct pub aut i.aud tot))
   ::
   ++  ta-conduct                                        ::<  thought to partner
     ::>  either publishes or records a thought.
@@ -814,11 +805,10 @@
         %+  so-delta-our  %grams
         %+  turn  gaz
         |=  t/telegram
+        ::  in audience, replace above with us.
         =-  t(aud.tot -)
-        =/  oud
-          (~(got by aud.tot.t) [%& (above our.bol) nom])
-        =+  (~(del by aud.tot.t) [%& (above our.bol) nom])
-        (~(put by -) so-pan oud)
+        =+  (~(del in aud.tot.t) [%& (above our.bol) nom])
+        (~(put in -) so-pan)
       ::  burden flag
       (so-delta-our %burden &)
     ::
@@ -1036,11 +1026,6 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  tot.gam  (so-sane tot.gam)
-      =.  aud.tot.gam
-        ::>  if we are in the audience, mark as received.
-        =+  ole=(~(get by aud.tot.gam) so-pan)
-        ?~  ole  aud.tot.gam
-        (~(put by aud.tot.gam) so-pan p.u.ole %received)
       (so-delta-our %grams [gam ~])
     ::
     ::>  ||
@@ -1445,7 +1430,6 @@
           known    (~(put by known) uid.tot.gam count)
         ==
       ::  changed message
-      ::TODO  shouldn't overwrite audience maybe? at least keep delivery?
       =+  dex=(sub count u.old)
       %_  +>.$
         grams    %+  welp
@@ -1760,11 +1744,10 @@
       |=  gam/telegram
       =.  aud.tot.gam
         %-  ~(run in aud.tot.gam)
-        |=  {p/partner s/(pair envelope delivery)}
+        |=  p/partner
         ::TODO  it probably isn't safe to do this for
         ::      all audience members hosted by us, even
         ::      if this is only called for burdens.
-        :_  s
         ?.  &(?=($& -.p) =(hos.p.p our.bol))  p
         [%& who nom.p.p]
       gam

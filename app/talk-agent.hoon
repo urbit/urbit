@@ -892,7 +892,7 @@
         ^+  ..sh-work
         =+  tay=~(. tr settings.she gam)
         =.  ..sh-work  (sh-fact tr-fact:tay)
-        sh-prod(active.she tr-pals:tay)
+        sh-prod(active.she aud.tot.gam)
       ::
       ++  deli                                          ::<  find number
         ::>  gets absolute message number from relative.
@@ -1295,7 +1295,7 @@
       |-  ^-  (unit (set partner))
       ?~  grams  ~
       ::>  get first partner from a telegram's audience.
-      =+  pan=(silt (turn (~(tap by aud.tot.i.grams)) head))
+      =+  pan=(silt (~(tap in aud.tot.i.grams)))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
     ::
@@ -1953,8 +1953,8 @@
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))    :: round
     =+  hed=leaf+"{(scow %uv sen)} at {(scow %da wen)}"
     =/  paz
-      %+  turn  (~(tap by aud))
-      |=  {a/partner *}
+      %+  turn  (~(tap in aud))
+      |=  a/partner
       leaf+~(pr-full pr a)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] ~]]~
   ::
@@ -2000,15 +2000,6 @@
       $tank  +.a
       $text  (turn (flop +.a) |=(b/cord leaf+(trip b)))
     ==
-  ::
-  ++  tr-pals                                           ::<  aud w/o delivery
-    ::>  strip delivery info from audience, producing a
-    ::>  plain set of partners.
-    ::
-    ^-  (set partner)
-    %-  ~(gas in *(set partner))
-    %+  turn  (~(tap by aud))
-    |=({a/partner *} a)
   ::
   ++  tr-chow                                           ::<  truncate
     ::>  truncates the {txt} to be of max {len}
@@ -2074,9 +2065,8 @@
       =/  pef
         ?.  pat.sep  " "
         %~  ar-pref  ar
-          =+  pal=tr-pals
-          ?:  =(who our.bol)  pal
-          (~(del in pal) [%& who (main who)])
+          ?:  =(who our.bol)  aud
+          (~(del in aud) [%& who (main who)])
         ==
       =.  wyd  (sub wyd (lent pef))
       =+  txt=(trip msg.sep)
