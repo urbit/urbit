@@ -5,7 +5,7 @@ let
     crossenv.gcc
     crossenv.binutils
     crossenv.pkg-config
-    crossenv.pkg-config-cross
+    crossenv.wrappers
   ];
 
   default_native_inputs = [

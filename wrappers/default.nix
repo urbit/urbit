@@ -1,6 +1,6 @@
 { nixpkgs }:
 
 nixpkgs.stdenv.mkDerivation rec {
-  name = "pkg-config-cross";
+  name = "cross-wrappers";
   builder = ./builder.sh;
 }

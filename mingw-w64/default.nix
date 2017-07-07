@@ -58,7 +58,7 @@ let
 
   pkg-config = import ../pkgconf { inherit nixpkgs; };
 
-  pkg-config-cross = import ../pkg-config-cross { inherit nixpkgs; };
+  wrappers = import ../wrappers { inherit nixpkgs; };
 
   os = "windows";
 
@@ -74,7 +74,7 @@ let
     inherit gcc binutils mingw-w64_full;
 
     # Build tools
-    inherit pkg-config pkg-config-cross;
+    inherit pkg-config wrappers;
 
     # nixpkgs: a wide variety of programs and build tools
     inherit nixpkgs;
