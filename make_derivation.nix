@@ -78,11 +78,14 @@ let
     inherit (crossenv) host arch os exe_suffix;
     inherit (crossenv) cmake_toolchain;
 
-    PKG_CONFIG_CROSS = "pkg-config-cross";
-
     PKG_CONFIG_CROSS_PATH = path_join (
       (if attrs ? PKG_CONFIG_CROSS_PATH then [attrs.PKG_CONFIG_CROSS_PATH] else []) ++
       (path_map "/lib/pkgconfig" cross_inputs)
+    );
+
+    CMAKE_CROSS_PREFIX_PATH = path_join (
+      (if attrs ? CMAKE_CROSS_PREFIX_PATH then [attrs.CMAKE_CROSS_PREFIX_PATH] else []) ++
+      cross_inputs
     );
   };
 

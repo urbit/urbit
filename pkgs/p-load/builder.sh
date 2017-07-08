@@ -6,9 +6,7 @@ mv p-load-* p-load
 mkdir build
 cd build
 
-PKG_CONFIG=$PKG_CONFIG_CROSS \
-cmake ../p-load \
-  -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
+cmake-cross ../p-load \
   -DCMAKE_INSTALL_PREFIX=$out
 
 make

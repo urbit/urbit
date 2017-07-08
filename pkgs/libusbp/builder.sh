@@ -12,8 +12,7 @@ cd ..
 mkdir build
 cd build
 
-cmake ../libusbp-* \
-  -DCMAKE_TOOLCHAIN_FILE=$cmake_toolchain \
+cmake-cross ../libusbp-* \
   -DCMAKE_INSTALL_PREFIX=$out \
   -DBUILD_SHARED_LIBS=false
 
