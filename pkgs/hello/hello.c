@@ -6,10 +6,10 @@
 
 int main(int argc, char ** argv)
 {
-  printf("hello world\n");
+  printf("Hello, World!\n");
 
 #ifdef _WIN32
-  MessageBoxA(NULL, "Hello world", "Hello Box", MB_OK);
+  MessageBoxA(NULL, "Hello, World!", "Hello", MB_OK);
 #endif
   return 0;
 }

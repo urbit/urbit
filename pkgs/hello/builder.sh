@@ -1,4 +1,4 @@
-. $setup
+source $setup
 
 $host-gcc $src_file -o hello$exe_suffix
 
