@@ -5,7 +5,7 @@
 *Nixcrpkgs* is a collection of tools for cross-compiling statically-linked,
 standalone software applications.  With Nixcrpkgs, you can specify what
 platforms you want to target, what libraries and build tools you depend on, and
-the commands that build your software.  When you build your software, nixcrpkgs
+the commands that build your software.  When you build your software, Nixcrpkgs
 will automatically take care of building everything you need, including
 cross-compilers and libraries.
 
@@ -45,7 +45,7 @@ If you run `nix-build -A win32.hello` a second time, Nix will detect that
 nothing about the build recipes has changed, so it will simply print the
 directory name and remake the symbolic link.
 
-To see how the `hello` package is specified in nixcrpkgs, you can look in
+To see how the `hello` package is specified in Nixcrpkgs, you can look in
 `pkgs.nix` and the `pkgs/hello` directory.  To see how the mingw-w64
 cross-compiler was specified, you can look in the `mingw-w64` directory.  If you
 change any of the build recipes for `hello` or its dependencies and then run the
