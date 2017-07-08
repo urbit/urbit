@@ -46,8 +46,8 @@ nothing about the build recipes has changed, so it will simply print the
 directory name and remake the symbolic link.
 
 To see how the `hello` package is specified in Nixcrpkgs, you can look in
-`pkgs.nix` and the `pkgs/hello` directory.  To see how the mingw-w64
-cross-compiler was specified, you can look in the `mingw-w64` directory.  If you
+`pkgs.nix` and the `pkgs/hello` directory.  To see how the GCC cross-compiler
+for Windows was specified, you can look in the `mingw-w64` directory.  If you
 change any of the build recipes for `hello` or its dependencies and then run the
 `nix-build` command again, Nix will automatically rebuild those dependencies and
 anything that depends on them, ensuring that you always get a consistent build.
@@ -59,8 +59,8 @@ is included with Nixcrpkgs.  Instead of adding your project to Nixcrpkgs, you
 will probably want to just use Nixcrpkgs as a tool in your project.  To get an
 idea of how to do that, you can look at other projects that have done the same.
 In the projects listed below, you should look for a file named `default.nix` in
-the top-level directory and look for build instructions that explain how to use
-it.
+the top-level directory and look for build instructions that explain what
+`nix-build` commands to run.
 
 * The [Pololu USB AVR Programmer v2 software](https://github.com/pololu/pololu-usb-avr-programmer-v2) is a C++ project that uses CMake and Nixcrpkgs.
 
