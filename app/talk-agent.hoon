@@ -250,13 +250,6 @@
         ==
     ==
   ::
-  ++  ta-reaction                                       ::<  apply reaction
-    ::>  processes a talk reaction.
-    ::
-    |=  rac/reaction
-    ^+  +>
-    sh-done:(~(sh-reaction sh cli) rac)
-  ::
   ++  ta-take                                           ::<  accept prize
     ::>
     ::
@@ -1421,12 +1414,6 @@
     ::>    arms for printing data to the cli.
     ::+|
     ::
-    ++  sh-reaction                                     ::<  apply reaction
-      ::>  renders a reaction to the cli.
-      ::
-      |=  rac/reaction
-      (sh-lame (trip wat.rac))
-    ::
     ++  sh-lame                                         ::<  send error
       ::>  just puts some text into the cli as-is.
       ::
@@ -2127,18 +2114,18 @@
   ^-  (quip move +>)
   ta-done:(ta-hear:ta dif)
 ::
-++  diff-talk-reaction                                  ::<  accept reaction
-  ::>  incoming talk reaction. process it.
-  ::
-  |=  {way/wire rac/reaction}
-  ?.  =(src.bol -:broker)
-    ~&  [%diff-reaction-stranger src.bol]
-    [~ +>]
-  ta-done:(ta-reaction:ta rac)
-::
 ++  poke-sole-action                                    ::<  accept console
   ::>  incoming sole action. process it.
   ::
   |=  act/sole-action
   ta-done:(ta-sole:ta act)
+::
+++  coup-reader-action                                                ::<  accept n/ack
+  ::>
+  ::
+  |=  {wir/wire fal/(unit tang)}
+  ^-  (quip move +>)
+  ?~  fal  [~ +>]
+  %-  (slog leaf+"action failed: " u.fal)
+  [~ +>]
 --

@@ -62,7 +62,6 @@
       ::  side-effects                                  ::
       {$init $~}                                        ::<  initialize
       {$observe who/ship}                               ::<  watch burden bearer
-      {$react rac/reaction}                             ::<  reaction to action
       {$present hos/ship nos/(set knot) dif/diff-status}::<  send %present cmd
       {$quit ost/bone}                                  ::<  force unsubscribe
   ==                                                    ::
@@ -128,12 +127,6 @@
       ::  changing shared ui                            ::
       {$glyph gyf/char pas/(set partner) bin/?}         ::<  un/bind a glyph
       {$nick who/ship nic/knot}                         ::<  new identity
-  ==                                                    ::
-::TODO  don't send reactions, just crash!
-++  reaction                                            ::>  user information
-  $:  res/?($info $fail)                                ::<  result
-      wat/cord                                          ::<  explain
-      why/(unit action)                                 ::<  cause
   ==                                                    ::
 ::
 ::>  ||

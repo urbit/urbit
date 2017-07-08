@@ -67,7 +67,6 @@
     ++  lime                                            ::>  diff fruit
       $%  {$talk-prize prize}                           ::
           {$talk-rumor rumor}                           ::
-          {$talk-reaction reaction}                     ::
       ==                                                ::
     ++  pear                                            ::>  poke fruit
       $%  {$talk-command command}                       ::
@@ -183,9 +182,8 @@
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
     ?~  pur
-      ::TODO  crash instead!
-      %-  ta-note
-      (crip "unknown story '{(trip nom)}'")
+      %-  ta-evil
+      (crip "no story '{(trip nom)}'")
     (fun ~(. so nom ~ u.pur))
   ::
   ::>  ||
@@ -263,7 +261,7 @@
     ::>
     ::>  ++work calls the appropriate action processing
     ::>  arm. most use ++affect to retrieve the affected
-    ::>  story, reacting if it doesn't exist.
+    ::>  story, crashing if it doesn't exist.
     |%
     ::  ||  %utility
     ::+|
@@ -289,20 +287,14 @@
         $nick    (action-nick +.act)
       ==
     ::
-    ++  react                                           ::<  new reaction
-      ::>  send reaction to this action.
-      ::
-      |=  {res/?($info $fail) wat/cord}
-      (ta-delta %react [res wat `act])
-    ::
     ++  affect                                          ::<  delta to story
       ::>  store a delta about a story. if the story
-      ::>  does not exist, react.
+      ::>  does not exist, crash.
       ::
       |=  {nom/knot dif/diff-story}
       ?:  (~(has by stories) nom)
         (impact nom dif)
-      (react %fail (crip "no story {(trip nom)}"))
+      (ta-evil (crip "no story {(trip nom)}"))
     ::
     ++  impact                                          ::<  delta for story
       ::>  Store a delta about a story.
@@ -348,7 +340,7 @@
             ?.  ?=(?($white $green) typ)  ~
             [our.bol ~ ~]
         ==
-      (react %fail (crip "{(trip nom)}: already exists"))
+      (ta-evil (crip "{(trip nom)}: already exists"))
     ::
     ++  action-delete                                   ::<  delete + announce
       ::>  delete story {nom}, optionally announcing the
@@ -382,7 +374,7 @@
       |=  {nom/knot inv/? sis/(set ship)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
-        (react %fail (crip "no story {(trip nom)}"))
+        (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-permit so nom ~ u.soy) inv sis)
     ::
     ++  action-source                                   ::<  un/sub p to/from r
@@ -391,7 +383,7 @@
       |=  {nom/knot sub/? pos/(map partner range)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
-        (react %fail (crip "no story {(trip nom)}"))
+        (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-sources so nom ~ u.soy) sub pos)
     ::
     ::>  ||  %messaging
@@ -1116,13 +1108,6 @@
     |=  mov/move
     %_(+> moves [mov moves])
   ::
-  ++  da-react                                          ::<  send reaction
-    ::>  sends a talk-reaction diff to a reader.
-    ::
-    |=  rac/reaction
-    %-  da-emit
-    [ost.bol %diff %talk-reaction rac]
-  ::
   ++  da-present                                        ::<  send %present cmd
     ::>
     ::
@@ -1155,7 +1140,6 @@
       $story    (da-change-story +.dif)
       $init     da-init
       $observe  (da-observe +.dif)
-      $react    (da-react +.dif)
       $present  (da-present +.dif)
       $quit     (da-emit [ost.dif %quit ~])
     ==
