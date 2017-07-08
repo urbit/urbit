@@ -291,7 +291,7 @@
       ::>  store a delta about a story. if the story
       ::>  does not exist, crash.
       ::
-      |=  {nom/knot dif/diff-story}
+      |=  {nom/knot dif/delta-story}
       ?:  (~(has by stories) nom)
         (impact nom dif)
       (ta-evil (crip "no story {(trip nom)}"))
@@ -299,7 +299,7 @@
     ++  impact                                          ::<  delta for story
       ::>  Store a delta about a story.
       ::
-      |=  {nom/knot dif/diff-story}
+      |=  {nom/knot dif/delta-story}
       (ta-delta %story nom dif)
     ::
     ++  present                                         ::<  send status update
@@ -690,7 +690,7 @@
     ++  so-delta-our                                    ::<  send delta of us
       ::>  adds a delta about this story.
       ::
-      |=  dif/diff-story
+      |=  dif/delta-story
       ^+  +>
       (so-delta %story nom dif)
     ::
@@ -739,7 +739,6 @@
                     (so-config-full ~ cof.dif)
                   $(dif [%config src %full cof.dif])
         $bear     ~&(%so-bear (so-bear bur.dif))
-        $burden   ~&(%burden-not-rumor +>)
         $grams    (so-lesson gaz.dif)
         $config   ::  full changes to us need to get split up.
                   ?:  &(=(cir.dif so-cir) ?=($full -.dif.dif))
@@ -756,7 +755,6 @@
                     ~&  %ignoring-remote-status
                     +>
                   (so-delta-our dif)
-        $follow   ~&(%follow-not-rumor +>)  ::REVIEW
         $remove   (so-delta-our %config src %remove ~)
       ==
     ::
@@ -816,20 +814,20 @@
       %-  so-deltas
       %+  turn
         %+  weld
-          ^-  (list diff-story)
+          ^-  (list delta-story)
           ?~  old  ~
           ::TODO?  what to do about src?
           :~  ::[%follow | src.u.old]
               [%config so-cir %permit | ses.con.u.old]
           ==
-        ^-  (list diff-story)
+        ^-  (list delta-story)
         :~  ::[%follow & src.cof]
             [%config so-cir %caption cap.cof]
             [%config so-cir %filter fit.cof]
             [%config so-cir %secure sec.con.cof]
             [%config so-cir %permit & ses.con.cof]
         ==
-      |=  d/diff-story
+      |=  d/delta-story
       [%story nom d]
     ::
     ++  so-sources                                      ::<  change source
@@ -1223,7 +1221,7 @@
     ::>  in case of a new or deleted story, specialized
     ::>  arms are called.
     ::
-    |=  {nom/knot dif/diff-story}
+    |=  {nom/knot dif/delta-story}
     ^+  +>
     ?+  -.dif
       =<  sa-done
@@ -1325,7 +1323,7 @@
       ::>  figure out whether to apply a %story delta to
       ::>  local or remote data.
       ::
-      |=  dif/diff-story
+      |=  dif/delta-story
       ^+  +>
       %.  dif
       ?+  -.dif
@@ -1345,7 +1343,7 @@
     ++  sa-change-local                                 ::<  apply our delta
       ::>  apply a %story delta to local data.
       ::
-      |=  dif/diff-story
+      |=  dif/delta-story
       ^+  +>
       ?+  -.dif
         ~&([%unexpected-delta-local -.dif] !!)
@@ -1403,8 +1401,7 @@
     ++  sa-change-remote                                ::<  apply remote's delta
       ::>  apply a story diff to remote data.
       ::
-      ::TODO  split?
-      |=  dif/diff-story
+      |=  dif/delta-story
       ^+  +>
       ?+  -.dif
         ~&([%unexpected-delta-remote -.dif] !!)
@@ -1679,7 +1676,7 @@
   ==
 ::
 ++  dedicate                                            ::<  diff-story to theirs
-  ::>  modify a %story delta to make it about their ship
+  ::>  modify a %story diff to make it about their ship
   ::>  instead of ours.
   ::
   |=  {who/ship dif/diff-story}

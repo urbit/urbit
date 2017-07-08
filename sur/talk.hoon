@@ -58,7 +58,7 @@
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
       ::  story state                                   ::
-      {$story nom/knot dif/diff-story}                  ::<  change to story
+      {$story nom/knot dif/delta-story}                 ::<  change to story
       ::  side-effects                                  ::
       {$init $~}                                        ::<  initialize
       {$observe who/ship}                               ::<  watch burden bearer
@@ -67,19 +67,17 @@
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char pas/(set partner)}      ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
-::TODO  separate remote-only diffs, like so:
-::++  diff-foobar
-::  $?  diff-story
-::  $%  {$other-thing ...}
-::  ==
-++  diff-story                                          ::
+++  delta-story                                         ::<  story delta
+  $?  diff-story                                        ::<  both in & outward
+  $%  {$burden bur/?}                                   ::<  burden flag
+      {$follow sub/? pas/(map partner range)}           ::<  un/subscribe
+  ==  ==                                                ::
+++  diff-story                                          ::<  story rumor
   $%  {$new cof/config}                                 ::<  new story
       {$bear bur/burden}                                ::<  new inherited story
-      {$burden bur/?}                                   ::<  burden flag
       {$grams gaz/(list telegram)}                      ::<  new/changed msgs
       {$config cir/circle dif/diff-config}              ::<  new/changed config
       {$status pan/partner who/ship dif/diff-status}    ::<  new/changed status
-      {$follow sub/? pas/(map partner range)}           ::<  un/subscribe
       {$remove $~}                                      ::<  removed story
   ==                                                    ::
 ++  diff-config                                         ::>  config change
