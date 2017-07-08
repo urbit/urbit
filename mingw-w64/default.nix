@@ -66,7 +66,7 @@ let
 
   gyp_os = "win";
 
-  crossenv_base = {
+  crossenv = {
     # Target info variables.
     inherit host arch os exe_suffix;
 
@@ -81,9 +81,9 @@ let
 
     # Expressions used to bootstrap the toolchain, not normally needed.
     inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
+
+    make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
 in
-  {
-    make_derivation = import ../make_derivation.nix nixpkgs crossenv_base;
-  } // crossenv_base
+  crossenv
 
