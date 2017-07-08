@@ -26,7 +26,7 @@ To get started, you should first install Nix on a Linux machine by following the
 instructions on the [Nix website][nix].
 
 Next, clone or download the this repository and use `cd` to change into the
-top-level directory of this repository.
+top-level directory.
 
 To build a simple "Hello, World!" program for Windows, run:
 
