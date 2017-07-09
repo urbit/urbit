@@ -1,0 +1,40 @@
+diff --git a/gcc/config/gnu-user.h b/gcc/config/gnu-user.h
+index b0bf40a..d4b56fe 100644
+--- a/gcc/config/gnu-user.h
++++ b/gcc/config/gnu-user.h
+@@ -51,10 +51,10 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ #if defined HAVE_LD_PIE
+ #define GNU_USER_TARGET_STARTFILE_SPEC \
+   "%{!shared: %{pg|p|profile:gcrt1.o%s;: \
+-    %{" PIE_SPEC ":Scrt1.o%s} %{" NO_PIE_SPEC ":crt1.o%s}}} \
+-   crti.o%s %{static:crtbeginT.o%s;: %{shared:crtbeginS.o%s} \
++    %{" PIE_SPEC ":%{static:rcrt1.o%s;:Scrt1.o%s}} %{" NO_PIE_SPEC ":crt1.o%s}}} \
++   crti.o%s %{shared:crtbeginS.o%s;: \
+ 	      %{" PIE_SPEC ":crtbeginS.o%s} \
+-	      %{" NO_PIE_SPEC ":crtbegin.o%s}} \
++	      %{" NO_PIE_SPEC ":%{static:crtbeginT.o%s;:crtbegin.o%s}}} \
+    %{fvtable-verify=none:%s; \
+      fvtable-verify=preinit:vtv_start_preinit.o%s; \
+      fvtable-verify=std:vtv_start.o%s} \
+diff --git a/gcc/gcc.c b/gcc/gcc.c
+index 0576ea7..0a280e0 100644
+--- a/gcc/gcc.c
++++ b/gcc/gcc.c
+@@ -870,7 +870,7 @@ proper position among the other output files.  */
+ #endif
+ 
+ #ifdef ENABLE_DEFAULT_PIE
+-#define NO_PIE_SPEC		"no-pie|static"
++#define NO_PIE_SPEC		"no-pie"
+ #define PIE_SPEC		NO_PIE_SPEC "|r|shared:;"
+ #define NO_FPIE1_SPEC		"fno-pie"
+ #define FPIE1_SPEC		NO_FPIE1_SPEC ":;"
+@@ -916,7 +916,7 @@ proper position among the other output files.  */
+ #ifndef LINK_PIE_SPEC
+ #ifdef HAVE_LD_PIE
+ #ifndef LD_PIE_SPEC
+-#define LD_PIE_SPEC "-pie"
++#define LD_PIE_SPEC "-pie %{static:--no-dynamic-linker -Bsymbolic}"
+ #endif
+ #else
+ #define LD_PIE_SPEC ""

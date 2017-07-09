@@ -1,0 +1,349 @@
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index 1d5b23f..ef0a6ab 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -471,7 +471,7 @@ s390*-*-*)
+ 	extra_headers="s390intrin.h htmintrin.h htmxlintrin.h vecintrin.h"
+ 	;;
+ # Note the 'l'; we need to be able to match e.g. "shle" or "shl".
+-sh[123456789lbe]*-*-* | sh-*-*)
++sh[123456789lbej]*-*-* | sh-*-*)
+ 	cpu_type=sh
+ 	extra_options="${extra_options} fused-madd.opt"
+ 	extra_objs="${extra_objs} sh_treg_combine.o sh-mem.o sh_optimize_sett_clrt.o"
+@@ -2624,19 +2624,19 @@ s390x-ibm-tpf*)
+ 	extra_options="${extra_options} s390/tpf.opt"
+ 	tmake_file="${tmake_file} s390/t-s390"
+ 	;;
+-sh-*-elf* | sh[12346l]*-*-elf* | \
+-  sh-*-linux* | sh[2346lbe]*-*-linux* | \
++sh-*-elf* | sh[12346lj]*-*-elf* | \
++  sh-*-linux* | sh[2346lbej]*-*-linux* | \
+   sh-*-netbsdelf* | shl*-*-netbsdelf* | sh5-*-netbsd* | sh5l*-*-netbsd* | \
+   sh64-*-netbsd* | sh64l*-*-netbsd*)
+ 	tmake_file="${tmake_file} sh/t-sh sh/t-elf"
+ 	if test x${with_endian} = x; then
+ 		case ${target} in
+-		sh[1234]*be-*-* | sh[1234]*eb-*-*) with_endian=big ;;
++		sh[j1234]*be-*-* | sh[j1234]*eb-*-*) with_endian=big ;;
+ 		shbe-*-* | sheb-*-*)		   with_endian=big,little ;;
+ 		sh[1234]l* | sh[34]*-*-linux*)	   with_endian=little ;;
+ 		shl* | sh64l* | sh*-*-linux* | \
+ 		  sh5l* | sh-superh-elf)	   with_endian=little,big ;;
+-		sh[1234]*-*-*)			   with_endian=big ;;
++		sh[j1234]*-*-*)			   with_endian=big ;;
+ 		*)				   with_endian=big,little ;;
+ 		esac
+ 	fi
+@@ -2726,6 +2726,7 @@ sh-*-elf* | sh[12346l]*-*-elf* | \
+ 	sh2a_nofpu*)		sh_cpu_target=sh2a-nofpu ;;
+ 	sh2a*)			sh_cpu_target=sh2a ;;
+ 	sh2e*)			sh_cpu_target=sh2e ;;
++	shj2*)			sh_cpu_target=shj2;;
+ 	sh2*)			sh_cpu_target=sh2 ;;
+ 	*)			sh_cpu_target=sh1 ;;
+ 	esac
+@@ -2750,7 +2751,7 @@ sh-*-elf* | sh[12346l]*-*-elf* | \
+ 	  sh2a-single-only | sh2a-single | sh2a-nofpu | sh2a | \
+ 	  sh4a-single-only | sh4a-single | sh4a-nofpu | sh4a | sh4al | \
+ 	  sh4-single-only | sh4-single | sh4-nofpu | sh4 | sh4-300 | \
+-	  sh3e | sh3 | sh2e | sh2 | sh1) ;;
++	  sh3e | sh3 | sh2e | sh2 | sh1 | shj2) ;;
+ 	"")	sh_cpu_default=${sh_cpu_target} ;;
+ 	*)	echo "with_cpu=$with_cpu not supported"; exit 1 ;;
+ 	esac
+@@ -2761,9 +2762,9 @@ sh-*-elf* | sh[12346l]*-*-elf* | \
+ 		sh[1234]*)	sh_multilibs=${sh_cpu_target} ;;
+ 		sh64* | sh5*)	sh_multilibs=m5-32media,m5-32media-nofpu,m5-compact,m5-compact-nofpu,m5-64media,m5-64media-nofpu ;;
+ 		sh-superh-*)	sh_multilibs=m4,m4-single,m4-single-only,m4-nofpu ;;
+-		sh*-*-linux*)	sh_multilibs=m1,m2,m2a,m3e,m4 ;;
++		sh*-*-linux*)	sh_multilibs=m1,m2,m2a,m3e,m4,mj2 ;;
+ 		sh*-*-netbsd*)	sh_multilibs=m3,m3e,m4 ;;
+-		*) sh_multilibs=m1,m2,m2e,m4,m4-single,m4-single-only,m2a,m2a-single ;;
++		*) sh_multilibs=m1,m2,m2e,m4,m4-single,m4-single-only,m2a,m2a-single,mj2 ;;
+ 		esac
+ 		if test x$with_fp = xno; then
+ 			sh_multilibs="`echo $sh_multilibs|sed -e s/m4/sh4-nofpu/ -e s/,m4-[^,]*//g -e s/,m[23]e// -e s/m2a,m2a-single/m2a-nofpu/ -e s/m5-..m....,//g`"
+@@ -2781,7 +2782,8 @@ sh-*-elf* | sh[12346l]*-*-elf* | \
+ 		m2a | m2a-single | m2a-single-only | m2a-nofpu | \
+ 		m5-64media | m5-64media-nofpu | \
+ 		m5-32media | m5-32media-nofpu | \
+-		m5-compact | m5-compact-nofpu)
++		m5-compact | m5-compact-nofpu | \
++		mj2)
+ 			# TM_MULTILIB_CONFIG is used by t-sh for the non-endian multilib definition
+ 			# It is passed to MULTIILIB_OPTIONS verbatim.
+ 			TM_MULTILIB_CONFIG="${TM_MULTILIB_CONFIG}/${sh_multilib}"
+@@ -2798,7 +2800,7 @@ sh-*-elf* | sh[12346l]*-*-elf* | \
+ 	done
+ 	TM_MULTILIB_CONFIG=`echo $TM_MULTILIB_CONFIG | sed 's:^/::'`
+ 	if test x${enable_incomplete_targets} = xyes ; then
+-		tm_defines="$tm_defines SUPPORT_SH1=1 SUPPORT_SH2E=1 SUPPORT_SH4=1 SUPPORT_SH4_SINGLE=1 SUPPORT_SH2A=1 SUPPORT_SH2A_SINGLE=1 SUPPORT_SH5_32MEDIA=1 SUPPORT_SH5_32MEDIA_NOFPU=1 SUPPORT_SH5_64MEDIA=1 SUPPORT_SH5_64MEDIA_NOFPU=1"
++		tm_defines="$tm_defines SUPPORT_SH1=1 SUPPORT_SH2E=1 SUPPORT_SH4=1 SUPPORT_SH4_SINGLE=1 SUPPORT_SH2A=1 SUPPORT_SH2A_SINGLE=1 SUPPORT_SH5_32MEDIA=1 SUPPORT_SH5_32MEDIA_NOFPU=1 SUPPORT_SH5_64MEDIA=1 SUPPORT_SH5_64MEDIA_NOFPU=1 SUPPORT_SHJ2=1"
+ 	fi
+ 	tm_file="$tm_file ./sysroot-suffix.h"
+ 	tmake_file="$tmake_file t-sysroot-suffix"
+@@ -4269,6 +4271,8 @@ case "${target}" in
+ 			;;
+ 		m4a | m4a-single | m4a-single-only | m4a-nofpu | m4al)
+ 		        ;;
++		mj2)
++			;;
+ 		*)
+ 			echo "Unknown CPU used in --with-cpu=$with_cpu, known values:"  1>&2
+ 			echo "m1 m2 m2e m3 m3e m4 m4-single m4-single-only m4-nofpu" 1>&2
+@@ -4478,7 +4482,7 @@ case ${target} in
+ 		tmake_file="rs6000/t-rs6000 ${tmake_file}"
+ 		;;
+ 
+-	sh[123456ble]*-*-* | sh-*-*)
++	sh[123456blej]*-*-* | sh-*-*)
+ 		c_target_objs="${c_target_objs} sh-c.o"
+ 		cxx_target_objs="${cxx_target_objs} sh-c.o"
+ 		;;
+diff --git a/gcc/config/sh/sh-protos.h b/gcc/config/sh/sh-protos.h
+index b08120d..63b77fa 100644
+--- a/gcc/config/sh/sh-protos.h
++++ b/gcc/config/sh/sh-protos.h
+@@ -45,6 +45,7 @@ struct sh_atomic_model
+     hard_llcs,
+     soft_tcb,
+     soft_imask,
++    hard_cas,
+ 
+     num_models
+   };
+@@ -88,6 +89,9 @@ extern const sh_atomic_model& selected_atomic_model (void);
+ #define TARGET_ATOMIC_SOFT_IMASK \
+   (selected_atomic_model ().type == sh_atomic_model::soft_imask)
+ 
++#define TARGET_ATOMIC_HARD_CAS \
++  (selected_atomic_model ().type == sh_atomic_model::hard_cas)
++
+ #ifdef RTX_CODE
+ extern rtx sh_fsca_sf2int (void);
+ extern rtx sh_fsca_int2sf (void);
+diff --git a/gcc/config/sh/sh.c b/gcc/config/sh/sh.c
+index b18e59b..88520e8 100644
+--- a/gcc/config/sh/sh.c
++++ b/gcc/config/sh/sh.c
+@@ -692,6 +692,7 @@ parse_validate_atomic_model_option (const char* str)
+   model_names[sh_atomic_model::hard_llcs] = "hard-llcs";
+   model_names[sh_atomic_model::soft_tcb] = "soft-tcb";
+   model_names[sh_atomic_model::soft_imask] = "soft-imask";
++  model_names[sh_atomic_model::hard_cas] = "hard-cas";
+ 
+   const char* model_cdef_names[sh_atomic_model::num_models];
+   model_cdef_names[sh_atomic_model::none] = "NONE";
+@@ -699,6 +700,7 @@ parse_validate_atomic_model_option (const char* str)
+   model_cdef_names[sh_atomic_model::hard_llcs] = "HARD_LLCS";
+   model_cdef_names[sh_atomic_model::soft_tcb] = "SOFT_TCB";
+   model_cdef_names[sh_atomic_model::soft_imask] = "SOFT_IMASK";
++  model_cdef_names[sh_atomic_model::hard_cas] = "HARD_CAS";
+ 
+   sh_atomic_model ret;
+   ret.type = sh_atomic_model::none;
+@@ -780,6 +782,9 @@ got_mode_name:;
+   if (ret.type == sh_atomic_model::soft_imask && TARGET_USERMODE)
+     err_ret ("cannot use atomic model %s in user mode", ret.name);
+ 
++  if (ret.type == sh_atomic_model::hard_cas && !TARGET_SHJ2)
++    err_ret ("atomic model %s is only available J2 targets", ret.name);
++
+   return ret;
+ 
+ #undef err_ret
+@@ -845,6 +850,8 @@ sh_option_override (void)
+     sh_cpu = PROCESSOR_SH2E;
+   if (TARGET_SH2A)
+     sh_cpu = PROCESSOR_SH2A;
++  if (TARGET_SHJ2)
++    sh_cpu = PROCESSOR_SHJ2;
+   if (TARGET_SH3)
+     sh_cpu = PROCESSOR_SH3;
+   if (TARGET_SH3E)
+diff --git a/gcc/config/sh/sh.h b/gcc/config/sh/sh.h
+index 7187c23..3bc2817 100644
+--- a/gcc/config/sh/sh.h
++++ b/gcc/config/sh/sh.h
+@@ -106,6 +106,7 @@ extern int code_for_indirect_jump_scratch;
+ #define SUPPORT_SH4_SINGLE 1
+ #define SUPPORT_SH2A 1
+ #define SUPPORT_SH2A_SINGLE 1
++#define SUPPORT_SHJ2 1
+ #endif
+ 
+ #define TARGET_DIVIDE_INV \
+@@ -157,6 +158,7 @@ extern int code_for_indirect_jump_scratch;
+ #define SELECT_SH5_32MEDIA_NOFPU (MASK_SH5 | MASK_SH_E)
+ #define SELECT_SH5_COMPACT	 (MASK_SH5 | MASK_SH4 | SELECT_SH3E)
+ #define SELECT_SH5_COMPACT_NOFPU (MASK_SH5 | SELECT_SH3)
++#define SELECT_SHJ2		 (MASK_SHJ2 | SELECT_SH2)
+ 
+ #if SUPPORT_SH1
+ #define SUPPORT_SH2 1
+@@ -164,6 +166,7 @@ extern int code_for_indirect_jump_scratch;
+ #if SUPPORT_SH2
+ #define SUPPORT_SH3 1
+ #define SUPPORT_SH2A_NOFPU 1
++#define SUPPORT_SHJ2 1
+ #endif
+ #if SUPPORT_SH3
+ #define SUPPORT_SH4_NOFPU 1
+@@ -211,7 +214,7 @@ extern int code_for_indirect_jump_scratch;
+ #define MASK_ARCH (MASK_SH1 | MASK_SH2 | MASK_SH3 | MASK_SH_E | MASK_SH4 \
+ 		   | MASK_HARD_SH2A | MASK_HARD_SH2A_DOUBLE | MASK_SH4A \
+ 		   | MASK_HARD_SH4 | MASK_FPU_SINGLE | MASK_SH5 \
+-		   | MASK_FPU_SINGLE_ONLY)
++		   | MASK_FPU_SINGLE_ONLY | MASK_SHJ2)
+ 
+ /* This defaults us to big-endian.  */
+ #ifndef TARGET_ENDIAN_DEFAULT
+@@ -289,8 +292,8 @@ extern int code_for_indirect_jump_scratch;
+ %{m5-compact*:--isa=SHcompact} \
+ %{m5-32media*:--isa=SHmedia --abi=32} \
+ %{m5-64media*:--isa=SHmedia --abi=64} \
+-%{m4al:-dsp} %{mcut2-workaround:-cut2-workaround}"
+-
++%{m4al:-dsp} %{mcut2-workaround:-cut2-workaround} \
++%{mj2:-isa=j2}"
+ #define ASM_SPEC SH_ASM_SPEC
+ 
+ #ifndef SUBTARGET_ASM_ENDIAN_SPEC
+@@ -1853,7 +1856,7 @@ struct sh_args {
+ 
+ /* Nonzero if the target supports dynamic shift instructions
+    like shad and shld.  */
+-#define TARGET_DYNSHIFT (TARGET_SH3 || TARGET_SH2A)
++#define TARGET_DYNSHIFT (TARGET_SH3 || TARGET_SH2A || TARGET_SHJ2)
+ 
+ /* The cost of using the dynamic shift insns (shad, shld) are the same
+    if they are available.  If they are not available a library function will
+@@ -2185,6 +2188,7 @@ enum processor_type {
+   PROCESSOR_SH2,
+   PROCESSOR_SH2E,
+   PROCESSOR_SH2A,
++  PROCESSOR_SHJ2,
+   PROCESSOR_SH3,
+   PROCESSOR_SH3E,
+   PROCESSOR_SH4,
+diff --git a/gcc/config/sh/sh.opt b/gcc/config/sh/sh.opt
+index 1026c73..bac47ed 100644
+--- a/gcc/config/sh/sh.opt
++++ b/gcc/config/sh/sh.opt
+@@ -71,6 +71,10 @@ m2e
+ Target RejectNegative Condition(SUPPORT_SH2E)
+ Generate SH2e code.
+ 
++mj2
++Target RejectNegative Mask(SHJ2) Condition(SUPPORT_SHJ2)
++Generate J2 code.
++
+ m3
+ Target RejectNegative Mask(SH3) Condition(SUPPORT_SH3)
+ Generate SH3 code.
+diff --git a/gcc/config/sh/sync.md b/gcc/config/sh/sync.md
+index 6f1337b..7cfd9ef 100644
+--- a/gcc/config/sh/sync.md
++++ b/gcc/config/sh/sync.md
+@@ -240,6 +240,9 @@
+       || (TARGET_SH4A && <MODE>mode == SImode && !TARGET_ATOMIC_STRICT))
+     atomic_insn = gen_atomic_compare_and_swap<mode>_hard (old_val, mem,
+ 							  exp_val, new_val);
++  else if (TARGET_ATOMIC_HARD_CAS && <MODE>mode == SImode)
++    atomic_insn = gen_atomic_compare_and_swap<mode>_cas (old_val, mem,
++							 exp_val, new_val);
+   else if (TARGET_ATOMIC_SOFT_GUSA)
+     atomic_insn = gen_atomic_compare_and_swap<mode>_soft_gusa (old_val, mem,
+ 		      exp_val, new_val);
+@@ -306,6 +309,57 @@
+ }
+   [(set_attr "length" "14")])
+ 
++(define_expand "atomic_compare_and_swapsi_cas"
++  [(set (match_operand:SI 0 "register_operand" "=r")
++	(unspec_volatile:SI
++	  [(match_operand:SI 1 "atomic_mem_operand_0" "=Sra")
++	   (match_operand:SI 2 "register_operand" "r")
++	   (match_operand:SI 3 "register_operand" "r")]
++	  UNSPECV_CMPXCHG_1))]
++  "TARGET_ATOMIC_HARD_CAS"
++{
++  rtx mem = gen_rtx_REG (SImode, 0);
++  emit_move_insn (mem, force_reg (SImode, XEXP (operands[1], 0)));
++  emit_insn (gen_shj2_cas (operands[0], mem, operands[2], operands[3]));
++  DONE;
++})
++
++(define_insn "shj2_cas"
++  [(set (match_operand:SI 0 "register_operand" "=&r")
++  (unspec_volatile:SI
++   [(match_operand:SI 1 "register_operand" "=r")
++   (match_operand:SI 2 "register_operand" "r")
++   (match_operand:SI 3 "register_operand" "0")]
++   UNSPECV_CMPXCHG_1))
++   (set (reg:SI T_REG)
++	(unspec_volatile:SI [(const_int 0)] UNSPECV_CMPXCHG_3))]
++  "TARGET_ATOMIC_HARD_CAS"
++  "cas.l	%2,%0,@%1"
++  [(set_attr "length" "2")]
++)
++
++(define_expand "atomic_compare_and_swapqi_cas"
++  [(set (match_operand:SI 0 "arith_reg_dest" "=&r")
++	(unspec_volatile:SI
++	  [(match_operand:SI 1 "atomic_mem_operand_0" "=Sra")
++	   (match_operand:SI 2 "arith_operand" "rI08")
++	   (match_operand:SI 3 "arith_operand" "rI08")]
++	  UNSPECV_CMPXCHG_1))]
++  "TARGET_ATOMIC_HARD_CAS"
++{FAIL;}
++)
++
++(define_expand "atomic_compare_and_swaphi_cas"
++  [(set (match_operand:SI 0 "arith_reg_dest" "=&r")
++	(unspec_volatile:SI
++	  [(match_operand:SI 1 "atomic_mem_operand_0" "=Sra")
++	   (match_operand:SI 2 "arith_operand" "rI08")
++	   (match_operand:SI 3 "arith_operand" "rI08")]
++	  UNSPECV_CMPXCHG_1))]
++  "TARGET_ATOMIC_HARD_CAS"
++{FAIL;}
++)
++
+ ;; The QIHImode llcs patterns modify the address register of the memory
+ ;; operand.  In order to express that, we have to open code the memory
+ ;; operand.  Initially the insn is expanded like every other atomic insn
+diff --git a/gcc/config/sh/t-sh b/gcc/config/sh/t-sh
+index 348cc0b..8e6bdaf 100644
+--- a/gcc/config/sh/t-sh
++++ b/gcc/config/sh/t-sh
+@@ -52,7 +52,7 @@ MULTILIB_MATCHES = $(shell \
+              m4-single,m4-100-single,m4-200-single,m4-300-single,m4a-single \
+              m4,m4-100,m4-200,m4-300,m4a \
+              m5-32media,m5-compact,m5-32media \
+-             m5-32media-nofpu,m5-compact-nofpu,m5-32media-nofpu; do \
++             m5-32media-nofpu,m5-compact-nofpu,m5-32media-nofpu,mj2; do \
+     subst= ; \
+     for lib in `echo $$abi|tr , ' '` ; do \
+       if test "`echo $$multilibs|sed s/$$lib//`" != "$$multilibs"; then \
+@@ -65,9 +65,9 @@ MULTILIB_MATCHES = $(shell \
+ 
+ # SH1 and SH2A support big endian only.
+ ifeq ($(DEFAULT_ENDIAN),ml)
+-MULTILIB_EXCEPTIONS = m1 ml/m1 m2a* ml/m2a* $(TM_MULTILIB_EXCEPTIONS_CONFIG)
++MULTILIB_EXCEPTIONS = m1 ml/m1 m2a* ml/m2a* ml/mj2 $(TM_MULTILIB_EXCEPTIONS_CONFIG)
+ else
+-MULTILIB_EXCEPTIONS = ml/m1 ml/m2a* $(TM_MULTILIB_EXCEPTIONS_CONFIG)
++MULTILIB_EXCEPTIONS = ml/m1 ml/m2a* ml/mj2 $(TM_MULTILIB_EXCEPTIONS_CONFIG)
+ endif
+ 
+ MULTILIB_OSDIRNAMES = \
+@@ -96,6 +96,7 @@ MULTILIB_OSDIRNAMES = \
+ 	m5-compact-nofpu=!m5-compact-nofpu $(OTHER_ENDIAN)/m5-compact-nofpu=!$(OTHER_ENDIAN)/m5-compact-nofpu \
+ 	m5-64media=!m5-64media $(OTHER_ENDIAN)/m5-64media=!$(OTHER_ENDIAN)/m5-64media \
+ 	m5-64media-nofpu=!m5-64media-nofpu $(OTHER_ENDIAN)/m5-64media-nofpu=!$(OTHER_ENDIAN)/m5-64media-nofpu
++	mj2=!j2
+ 
+ $(out_object_file): gt-sh.h
+ gt-sh.h : s-gtype ; @true

@@ -1,6 +1,7 @@
 source $setup
 
-$host-gcc $src_file -o hello$exe_suffix
+# TODO: remove -static once the musl toolchain is fixed
+$host-gcc -static $src_file -o hello$exe_suffix
 
 mkdir -p $out/bin/
 

@@ -1,0 +1,12 @@
+diff -u a/Makefile b/Makefile
+--- a/Makefile	2016-05-11 10:23:26.000000000 +0100
++++ b/Makefile	2016-05-20 16:26:20.000000000 +0100
+@@ -1047,7 +1047,7 @@
+ archscripts:
+ 
+ PHONY += __headers
+-__headers: $(version_h) scripts_basic asm-generic archheaders archscripts FORCE
++__headers: $(version_h) scripts_basic asm-generic archheaders FORCE
+ 	$(Q)$(MAKE) $(build)=scripts build_unifdef
+ 
+ PHONY += headers_install_all

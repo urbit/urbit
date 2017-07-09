@@ -1,0 +1,58 @@
+diff --git a/libitm/testsuite/Makefile.am b/libitm/testsuite/Makefile.am
+index 561b7e2..2548a1b 100644
+--- a/libitm/testsuite/Makefile.am
++++ b/libitm/testsuite/Makefile.am
+@@ -11,3 +11,9 @@ EXPECT = $(shell if test -f $(top_builddir)/../expect/expect; then \
+ _RUNTEST = $(shell if test -f $(top_srcdir)/../dejagnu/runtest; then \
+ 	     echo $(top_srcdir)/../dejagnu/runtest; else echo runtest; fi)
+ RUNTEST = "$(_RUNTEST) $(AM_RUNTESTFLAGS)"
++
++EXTRA_DEJAGNU_SITE_CONFIG = extra.exp
++
++extra.exp:
++	echo 'set BUILD_CC "$(CC)"' > $@.tmp
++	mv $@.tmp $@
+diff --git a/libitm/testsuite/Makefile.in b/libitm/testsuite/Makefile.in
+index 4d79781..46cdc8b 100644
+--- a/libitm/testsuite/Makefile.in
++++ b/libitm/testsuite/Makefile.in
+@@ -232,6 +232,7 @@ _RUNTEST = $(shell if test -f $(top_srcdir)/../dejagnu/runtest; then \
+ 	     echo $(top_srcdir)/../dejagnu/runtest; else echo runtest; fi)
+ 
+ RUNTEST = "$(_RUNTEST) $(AM_RUNTESTFLAGS)"
++EXTRA_DEJAGNU_SITE_CONFIG = extra.exp
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -438,6 +439,10 @@ uninstall-am:
+ 	uninstall uninstall-am
+ 
+ 
++extra.exp:
++	echo 'set BUILD_CC "$(CC)"' > $@.tmp
++	mv $@.tmp $@
++
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.
+ .NOEXPORT:
+diff --git a/libitm/testsuite/lib/libitm.exp b/libitm/testsuite/lib/libitm.exp
+index 0416296..748f492 100644
+--- a/libitm/testsuite/lib/libitm.exp
++++ b/libitm/testsuite/lib/libitm.exp
+@@ -74,6 +74,7 @@ proc libitm_init { args } {
+     global ALWAYS_CFLAGS
+     global CFLAGS
+     global TOOL_EXECUTABLE TOOL_OPTIONS
++    global BUILD_CC
+     global GCC_UNDER_TEST
+     global TESTING_IN_BUILD_TREE
+     global target_triplet
+@@ -89,6 +90,8 @@ proc libitm_init { args } {
+     if ![info exists GCC_UNDER_TEST] then {
+ 	if [info exists TOOL_EXECUTABLE] {
+ 	    set GCC_UNDER_TEST $TOOL_EXECUTABLE
++	} elseif [info exists BUILD_CC] {
++	    set GCC_UNDER_TEST $BUILD_CC
+ 	} else {
+ 	    set GCC_UNDER_TEST "[find_gcc]"
+ 	}

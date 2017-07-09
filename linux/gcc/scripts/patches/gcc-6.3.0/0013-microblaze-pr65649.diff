@@ -1,0 +1,20 @@
+--- gcc-6.3.0/gcc/config/microblaze/microblaze.c.orig	2017-01-02 15:07:18.924082703 -0500
++++ gcc-6.3.0/gcc/config/microblaze/microblaze.c	2017-01-02 15:08:06.362438573 -0500
+@@ -2364,7 +2364,7 @@
+ 	  unsigned long value_long;
+ 	  REAL_VALUE_TO_TARGET_SINGLE (*CONST_DOUBLE_REAL_VALUE (op),
+ 				       value_long);
+-	  fprintf (file, HOST_WIDE_INT_PRINT_HEX, value_long);
++	  fprintf (file, "0x%lx", value_long);
+ 	}
+       else
+ 	{
+@@ -2423,7 +2423,7 @@
+       print_operand_address (file, XEXP (op, 0));
+     }
+   else if (letter == 'm')
+-    fprintf (file, HOST_WIDE_INT_PRINT_DEC, (1L << INTVAL (op)));
++    fprintf (file, "%ld", (1L << INTVAL (op)));
+   else
+     output_addr_const (file, op);
+ }

@@ -1,0 +1,13 @@
+diff --git a/gcc/config/linux.c b/gcc/config/linux.c
+index 250296b..16c3768 100644
+--- a/gcc/config/linux.c
++++ b/gcc/config/linux.c
+@@ -26,7 +26,7 @@ along with GCC; see the file COPYING3.  If not see
+ bool
+ linux_libc_has_function (enum function_class fn_class)
+ {
+-  if (OPTION_GLIBC)
++  if (OPTION_GLIBC || OPTION_MUSL)
+     return true;
+   if (OPTION_BIONIC)
+     if (fn_class == function_c94

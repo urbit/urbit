@@ -1,0 +1,13 @@
+diff --git a/libgcc/config/mips/linux-unwind.h b/libgcc/config/mips/linux-unwind.h
+index bf12de5..4035c121 100644
+--- a/libgcc/config/mips/linux-unwind.h
++++ b/libgcc/config/mips/linux-unwind.h
+@@ -27,7 +27,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+    state data appropriately.  See unwind-dw2.c for the structs.  */
+ 
+ #include <signal.h>
+-#include <asm/unistd.h>
++#include <sys/syscall.h>
+ 
+ /* The third parameter to the signal handler points to something with
+  * this structure defined in asm/ucontext.h, but the name clashes with

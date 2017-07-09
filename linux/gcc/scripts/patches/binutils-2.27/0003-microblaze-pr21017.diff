@@ -1,0 +1,10 @@
+--- binutils-2.27/bfd/elf32-microblaze.c.orig	2017-01-02 15:44:42.110115295 -0500
++++ binutils-2.27/bfd/elf32-microblaze.c	2017-01-02 15:43:22.768999626 -0500
+@@ -2399,6 +2399,7 @@
+           tls_type |= (TLS_TLS | TLS_LD);
+         dogottls:
+           sec->has_tls_reloc = 1;
++        case R_MICROBLAZE_GOTOFF_64:
+         case R_MICROBLAZE_GOT_64:
+           if (htab->sgot == NULL)
+             {

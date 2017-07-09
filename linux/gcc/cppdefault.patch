@@ -1,0 +1,35 @@
+cppdefault.c If CROSS_DIRECTORY_STRUCTURE is defined, don't use the native
+system header dir; use CROSS_INCLUDE_DIR instead if it is defined.
+
+This just makes GCC's behavior match the documentation for the
+"--with-sysroot" configure option, which corresponds to
+TARGET_SYSTEM_ROOT.  The documentation says that if you specify
+directories with --with-sysroot and --with-native-system-header-dir,
+then the compilter will concatenate the the two together (with the
+sysroot coming first) and search that directory instead of the default
+/usr/include.
+
+The concatenation is done with this line in configure.ac:
+
+ CROSS_SYSTEM_HEADER_DIR='$(TARGET_SYSTEM_ROOT)$${sysroot_headers_suffix}$(NATIVE_SYSTEM_HEADER_DIR)'
+
+Then Makefile.in sets the preprocessor macro CROSS_INCLUDE_DIR equal to
+CROSS_SYSTEM_HEADER_DIR.
+
+This patch reverts one of the changes from Daniel Jacobowitz on 2013-02-13.
+https://github.com/gcc-mirror/gcc/commit/17acc97af91fbd116659301b0b7d4965ecc1631d
+
+--- gcc-5.4.0/gcc/cppdefault.c
++++ gcc-5.4.0/gcc/cppdefault.c
+@@ -28,9 +28,9 @@
+ #define NATIVE_SYSTEM_HEADER_COMPONENT 0
+ #endif
+ 
+-#if defined (CROSS_DIRECTORY_STRUCTURE) && !defined (TARGET_SYSTEM_ROOT)
++#if defined (CROSS_DIRECTORY_STRUCTURE)
+ # undef LOCAL_INCLUDE_DIR
+ # undef NATIVE_SYSTEM_HEADER_DIR
+ #else
+ # undef CROSS_INCLUDE_DIR
+ #endif
+

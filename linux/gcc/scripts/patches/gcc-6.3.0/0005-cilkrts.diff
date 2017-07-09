@@ -1,0 +1,47 @@
+diff --git a/libcilkrts/runtime/os-unix.c b/libcilkrts/runtime/os-unix.c
+index cb582dd..e43d7d5 100644
+--- a/libcilkrts/runtime/os-unix.c
++++ b/libcilkrts/runtime/os-unix.c
+@@ -51,6 +51,7 @@
+ #if defined __linux__
+ #   include <sys/sysinfo.h>
+ #   include <sys/syscall.h>
++#   include <sched.h>
+ #elif defined __APPLE__
+ #   include <sys/sysctl.h>
+     // Uses sysconf(_SC_NPROCESSORS_ONLN) in verbose output
+@@ -400,28 +401,19 @@ COMMON_SYSDEP void __cilkrts_sleep(void)
+ 
+ COMMON_SYSDEP void __cilkrts_yield(void)
+ {
+-#if __APPLE__ || __FreeBSD__ || __VXWORKS__
+-    // On MacOS, call sched_yield to yield quantum.  I'm not sure why we
+-    // don't do this on Linux also.
+-    sched_yield();
+-#elif defined(__DragonFly__)
+-    // On DragonFly BSD, call sched_yield to yield quantum.
+-    sched_yield();
+-#elif defined(__MIC__)
++#if defined(__MIC__)
+     // On MIC, pthread_yield() really trashes things.  Arch's measurements
+     // showed that calling _mm_delay_32() (or doing nothing) was a better
+     // option.  Delaying 1024 clock cycles is a reasonable compromise between
+     // giving up the processor and latency starting up when work becomes
+     // available
+     _mm_delay_32(1024);
+-#elif defined(__ANDROID__) || (defined(__sun__) && defined(__svr4__))
+-    // On Android and Solaris, call sched_yield to yield quantum.  I'm not
+-    // sure why we don't do this on Linux also.
+-    sched_yield();
+-#else
+-    // On Linux, call pthread_yield (which in turn will call sched_yield)
+-    // to yield quantum.
++#elif defined(__sun__) && !defined(__svr4__)
++    // On old SunOS call pthread_yield to yield a quantum.
+     pthread_yield();
++#else
++    // On other platforms call sched_yield to yield a quantum.
++    sched_yield();
+ #endif
+ }
+ 

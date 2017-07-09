@@ -1,0 +1,60 @@
+diff --git a/libgomp/testsuite/Makefile.am b/libgomp/testsuite/Makefile.am
+index 66a9d94..83d3f67 100644
+--- a/libgomp/testsuite/Makefile.am
++++ b/libgomp/testsuite/Makefile.am
+@@ -12,6 +12,11 @@ _RUNTEST = $(shell if test -f $(top_srcdir)/../dejagnu/runtest; then \
+ 	     echo $(top_srcdir)/../dejagnu/runtest; else echo runtest; fi)
+ RUNTEST = "$(_RUNTEST) $(AM_RUNTESTFLAGS)"
+ 
++EXTRA_DEJAGNU_SITE_CONFIG = extra.exp
++
++extra.exp:
++	echo 'set BUILD_CC "$(CC)"' > $@.tmp
++	mv $@.tmp $@
+ 
+ # Instead of directly in ../testsuite/libgomp-test-support.exp.in, the
+ # following variables have to be "routed through" this Makefile, for expansion
+diff --git a/libgomp/testsuite/Makefile.in b/libgomp/testsuite/Makefile.in
+index 4dbb406..001a163 100644
+--- a/libgomp/testsuite/Makefile.in
++++ b/libgomp/testsuite/Makefile.in
+@@ -254,6 +254,7 @@ _RUNTEST = $(shell if test -f $(top_srcdir)/../dejagnu/runtest; then \
+ 	     echo $(top_srcdir)/../dejagnu/runtest; else echo runtest; fi)
+ 
+ RUNTEST = "$(_RUNTEST) $(AM_RUNTESTFLAGS)"
++EXTRA_DEJAGNU_SITE_CONFIG = extra.exp
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -462,6 +463,10 @@ uninstall-am:
+ 	ps ps-am uninstall uninstall-am
+ 
+ 
++extra.exp:
++	echo 'set BUILD_CC "$(CC)"' > $@.tmp
++	mv $@.tmp $@
++
+ # Instead of directly in ../testsuite/libgomp-test-support.exp.in, the
+ # following variables have to be "routed through" this Makefile, for expansion
+ # of the several (Makefile) variables used therein.
+diff --git a/libgomp/testsuite/lib/libgomp.exp b/libgomp/testsuite/lib/libgomp.exp
+index 1cb4991..398ba1f 100644
+--- a/libgomp/testsuite/lib/libgomp.exp
++++ b/libgomp/testsuite/lib/libgomp.exp
+@@ -85,6 +85,7 @@ proc libgomp_init { args } {
+     global ALWAYS_CFLAGS
+     global CFLAGS
+     global TOOL_EXECUTABLE TOOL_OPTIONS
++    global BUILD_CC
+     global GCC_UNDER_TEST
+     global TESTING_IN_BUILD_TREE
+     global target_triplet
+@@ -107,6 +108,8 @@ proc libgomp_init { args } {
+     if ![info exists GCC_UNDER_TEST] then {
+ 	if [info exists TOOL_EXECUTABLE] {
+ 	    set GCC_UNDER_TEST $TOOL_EXECUTABLE
++	} elseif [info exists BUILD_CC] {
++	    set GCC_UNDER_TEST $BUILD_CC
+ 	} else {
+ 	    set GCC_UNDER_TEST "[find_gcc]"
+ 	}
