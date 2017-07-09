@@ -1712,6 +1712,9 @@
             $hear
           (~(gnaw am [now fox]) %good p.kyz q.kyz)
         ::
+            $halo
+          (~(gnaw am [now fox]) %dead p.kyz q.kyz)
+        ::
             $hole
           (~(gnaw am [now fox]) %dead p.kyz q.kyz)
         ::
