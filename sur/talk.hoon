@@ -24,26 +24,25 @@
 ++  range  (unit {hed/place tal/(unit place)})          ::<  inclusive msg range
 ++  place  $%({$da @da} {$ud @ud})                      ::<  @ud/@da for range
 ++  prize                                               ::>  query result
-  $%  $:  $reader                                       ::<  /reader
-          gys/(jug char (set partner))                  ::<  glyph bindings
-          nis/(map ship cord)                           ::<  nicknames
-      ==                                                ::
+  $%  {$reader prize-reader}                            ::<  /reader
       {$friend cis/(set circle)}                        ::<  /friend
       {$burden sos/(map knot burden)}                   ::<  /burden
       ::TODO  do we ever use remote things from remote circles?
       {$circle burden}                                  ::<  /circle
   ==                                                    ::
-  ::TODO  ++prize-reader {gys nis} etc.
+++  prize-reader                                        ::
+  $:  gys/(jug char (set partner))                      ::<  glyph bindings
+      nis/(map ship cord)                               ::<  nicknames
+  ==                                                    ::
 ++  rumor                                               ::<  query result change
-  $%  $:  $reader                                       ::<  /reader
-          $=  dif                                       ::
-          $%  {$glyph diff-glyph}                       ::
-              {$nick diff-nick}                         ::
-          ==                                            ::
-      ==                                                ::
+  $%  {$reader dif/rumor-reader}                        ::<  /reader
       {$friend add/? cir/circle}                        ::<  /friend
       {$burden nom/knot dif/diff-story}                 ::<  /burden
       {$circle dif/diff-story}                          ::<  /circle
+  ==                                                    ::
+++  rumor-reader                                        ::<  changed ui state
+  $%  {$glyph diff-glyph}                               ::<  un/bound glyph
+      {$nick diff-nick}                                 ::<  changed nickname
   ==                                                    ::
 ++  burden                                              ::<  full story state
   $:  gaz/(list telegram)                               ::<  all messages
