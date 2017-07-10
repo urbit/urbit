@@ -71,5 +71,12 @@ ln -s ../src_mpc mpc
 ln -s ../src_mpfr mpfr
 cd ..
 
+mkdir obj_sysroot
+mkdir obj_sysroot/include
+mkdir obj_sysroot/lib
+ln -s . obj_sysroot/usr
+ln -s lib obj_sysroot/lib32
+ln -s lib obj_sysroot/lib64
+
 make
 make install OUTPUT=$out

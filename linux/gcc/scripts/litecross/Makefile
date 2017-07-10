@@ -29,7 +29,6 @@ FULL_MUSL_CONFIG += CC="$(XGCC)" LIBCC="../obj_toolchain/$(TARGET)/libgcc/libgcc
 MUSL_VARS = AR=../obj_toolchain/binutils/ar RANLIB=../obj_toolchain/binutils/ranlib
 obj_musl/.lc_configured: | obj_toolchain/gcc/.lc_built
 obj_musl/.lc_built: | obj_toolchain/$(TARGET)/libgcc/libgcc.a
-obj_toolchain/gcc/.lc_built: | obj_sysroot/usr obj_sysroot/lib32 obj_sysroot/lib64 obj_sysroot/include
 obj_toolchain/.lc_built: | obj_sysroot/.lc_libs obj_sysroot/.lc_headers
 
 all: musl toolchain
@@ -45,18 +44,6 @@ toolchain: obj_toolchain/.lc_built
 obj_%:
 	mkdir -p $@
 
-obj_sysroot/include:
-	mkdir -p $@
-
-obj_sysroot/usr: | obj_sysroot
-	ln -sf . $@
-
-obj_sysroot/lib32: | obj_sysroot
-	ln -sf lib $@
-
-obj_sysroot/lib64: | obj_sysroot
-	ln -sf lib $@
-
 obj_toolchain/.lc_configured: | obj_toolchain
 	cd obj_toolchain && ../src_toolchain/configure $(FULL_TOOLCHAIN_CONFIG)
 	touch $@
@@ -69,7 +56,7 @@ obj_musl/.lc_configured: | obj_musl
 	cd obj_musl && ../src_musl/configure $(FULL_MUSL_CONFIG)
 	touch $@
 
-obj_sysroot/.lc_headers: | obj_musl/.lc_configured obj_sysroot
+obj_sysroot/.lc_headers: | obj_musl/.lc_configured
 	cd obj_musl && $(MAKE) DESTDIR=$(CURDIR)/obj_sysroot install-headers
 	touch $@
 
