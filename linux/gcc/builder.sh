@@ -54,5 +54,13 @@ LINUX_SRCDIR = ../linux-4.4.10
 EOF
 
 cd build
+ln -s ../linux-4.4.10 src_kernel_headers
+ln -s ../mpfr-3.1.4 src_mpfr
+ln -s ../mpc-1.0.3 src_mpc
+ln -s ../gmp-6.1.1 src_gmp
+ln -s ../binutils-2.27 src_binutils
+ln -s ../gcc-6.3.0 src_gcc
+ln -s ../musl-1.1.16 src_musl
+
 make
 make install OUTPUT=$out

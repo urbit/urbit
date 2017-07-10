@@ -42,40 +42,7 @@ toolchain: obj_toolchain/.lc_built
 
 .PHONY: all musl toolchain install-musl install-toolchain clean
 
-src_binutils: | $(BINUTILS_SRCDIR)
-	ln -sf $(BINUTILS_SRCDIR) $@
-
-src_gcc: | $(GCC_SRCDIR)
-	ln -sf $(GCC_SRCDIR) $@
-
-src_musl: | $(MUSL_SRCDIR)
-	ln -sf $(MUSL_SRCDIR) $@
-
-ifneq ($(GMP_SRCDIR),)
-src_toolchain: src_gmp
-src_gmp: | $(GMP_SRCDIR)
-	ln -sf "$(GMP_SRCDIR)" $@
-endif
-
-ifneq ($(MPC_SRCDIR),)
-src_toolchain: src_mpc
-src_mpc: | $(MPC_SRCDIR)
-	ln -sf "$(MPC_SRCDIR)" $@
-endif
-
-ifneq ($(MPFR_SRCDIR),)
-src_toolchain: src_mpfr
-src_mpfr: | $(MPFR_SRCDIR)
-	ln -sf "$(MPFR_SRCDIR)" $@
-endif
-
-ifneq ($(ISL_SRCDIR),)
-src_toolchain: src_isl
-src_isl: | $(ISL_SRCDIR)
-	ln -sf "$(ISL_SRCDIR)" $@
-endif
-
-src_toolchain: src_binutils src_gcc
+src_toolchain:
 	rm -rf $@ $@.tmp
 	mkdir $@.tmp
 	cd $@.tmp && ln -sf ../src_binutils/* .
@@ -109,7 +76,7 @@ obj_toolchain/gcc/.lc_built: | obj_toolchain/.lc_configured
 	cd obj_toolchain && $(MAKE) MAKE="$(MAKE)" all-gcc
 	touch $@
 
-obj_musl/.lc_configured: | obj_musl src_musl
+obj_musl/.lc_configured: | obj_musl
 	cd obj_musl && ../src_musl/configure $(FULL_MUSL_CONFIG)
 	touch $@
 
@@ -142,9 +109,7 @@ install-toolchain: | obj_toolchain/.lc_built
 all: kernel-headers
 install: install-kernel-headers
 kernel-headers: | obj_kernel_headers/.lc_built
-src_kernel_headers: | $(LINUX_SRCDIR)
-	ln -sf "$(LINUX_SRCDIR)" $@
-obj_kernel_headers/.lc_built: | src_kernel_headers
+obj_kernel_headers/.lc_built:
 	mkdir -p $(CURDIR)/obj_kernel_headers/staged
 	cd src_kernel_headers && $(MAKE) ARCH=$(LINUX_ARCH) O=$(CURDIR)/obj_kernel_headers INSTALL_HDR_PATH=$(CURDIR)/obj_kernel_headers/staged headers_install
 	find obj_kernel_headers/staged/include '(' -name .install -o -name ..install.cmd ')' -exec rm {} +
