@@ -41,7 +41,8 @@ mkdir -p build
 cp scripts/litecross/Makefile build
 
 cat > build/config.mak <<EOF
-TARGET = $host
+TARGET = $TARGET
+LINUX_ARCH = $LINUX_ARCH
 HOST =
 MUSL_SRCDIR = ../musl-1.1.16
 GCC_SRCDIR = ../gcc-6.3.0

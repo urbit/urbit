@@ -139,12 +139,6 @@ install-toolchain: | obj_toolchain/.lc_built
 	cd obj_toolchain && $(MAKE) MAKE="$(MAKE)" DESTDIR=$(DESTDIR)$(OUTPUT) install
 	ln -sf $(TARGET)-gcc $(DESTDIR)$(OUTPUT)/bin/$(TARGET)-cc
 
-ifneq ($(LINUX_SRCDIR),)
-TARGET_ARCH = $(firstword $(subst -, ,$(TARGET)))
-TARGET_ARCH_MANGLED = $(patsubst i%86,x86,$(patsubst aarch64%,arm64%,$(TARGET_ARCH)))
-LINUX_ARCH_LIST = $(sort $(notdir $(wildcard $(LINUX_SRCDIR)/arch/*)))
-LINUX_ARCH = $(firstword $(foreach a,$(LINUX_ARCH_LIST),$(findstring $(a),$(TARGET_ARCH_MANGLED))))
-ifneq ($(LINUX_ARCH),)
 all: kernel-headers
 install: install-kernel-headers
 kernel-headers: | obj_kernel_headers/.lc_built
@@ -158,8 +152,6 @@ obj_kernel_headers/.lc_built: | src_kernel_headers
 install-kernel-headers: | obj_kernel_headers/.lc_built
 	mkdir -p $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
 	cp -R obj_kernel_headers/staged/include/* $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
-endif
-endif
 
 clean:
 	rm -rf src_* obj_*

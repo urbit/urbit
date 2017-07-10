@@ -67,7 +67,8 @@ stdenv.mkDerivation rec {
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
 
-  inherit host;
+  TARGET = host;
+  LINUX_ARCH = "x86";  # TODO
 
   configure_flags =
     "--target=${host} " +
