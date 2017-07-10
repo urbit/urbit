@@ -47,6 +47,7 @@ rec {
     (type == "directory" && bn == ".git") ||
     (type == "symlink" && nixpkgs.lib.hasPrefix "result" bn) ||
     (type == "directory" && bn == "nix") ||
+    (type == "directory" && bn == "build") ||
     nixpkgs.lib.hasSuffix ".nix" bn ||
     nixpkgs.lib.hasSuffix "~" bn
   );
