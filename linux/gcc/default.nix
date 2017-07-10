@@ -49,6 +49,9 @@ stdenv.mkDerivation rec {
     sha256 = "048h0w4yjyza4h05bkc6dpwg3hq6l03na46g0q1ha8fpwnjqawck";
   };
 
+  # TODO: do this use /usr/include/stdio.h at any point?  I think it might, so try
+  # adding #error to it
+
   builder = ./builder.sh;
 
   scripts = ./scripts;
