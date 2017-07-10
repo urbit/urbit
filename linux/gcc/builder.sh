@@ -62,5 +62,14 @@ ln -s ../binutils-2.27 src_binutils
 ln -s ../gcc-6.3.0 src_gcc
 ln -s ../musl-1.1.16 src_musl
 
+mkdir src_toolchain
+cd src_toolchain
+ln -sf ../src_binutils/* .
+ln -sf ../src_gcc/* .
+ln -s ../src_gmp gmp
+ln -s ../src_mpc mpc
+ln -s ../src_mpfr mpfr
+cd ..
+
 make
 make install OUTPUT=$out

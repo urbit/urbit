@@ -42,17 +42,6 @@ toolchain: obj_toolchain/.lc_built
 
 .PHONY: all musl toolchain install-musl install-toolchain clean
 
-src_toolchain:
-	rm -rf $@ $@.tmp
-	mkdir $@.tmp
-	cd $@.tmp && ln -sf ../src_binutils/* .
-	cd $@.tmp && ln -sf ../src_gcc/* .
-	$(if $(GMP_SRCDIR),cd $@.tmp && ln -sf ../src_gmp gmp)
-	$(if $(MPC_SRCDIR),cd $@.tmp && ln -sf ../src_mpc mpc)
-	$(if $(MPFR_SRCDIR),cd $@.tmp && ln -sf ../src_mpfr mpfr)
-	$(if $(ISL_SRCDIR),cd $@.tmp && ln -sf ../src_isl isl)
-	mv $@.tmp $@
-
 obj_%:
 	mkdir -p $@
 
@@ -68,7 +57,7 @@ obj_sysroot/lib32: | obj_sysroot
 obj_sysroot/lib64: | obj_sysroot
 	ln -sf lib $@
 
-obj_toolchain/.lc_configured: | obj_toolchain src_toolchain
+obj_toolchain/.lc_configured: | obj_toolchain
 	cd obj_toolchain && ../src_toolchain/configure $(FULL_TOOLCHAIN_CONFIG)
 	touch $@
 
