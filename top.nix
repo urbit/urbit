@@ -20,7 +20,7 @@ rec {
     #  inherit nixpkgs;
     #  arch = "armv6";
     #  fpu = "vfp";
-    #  float = "hard";
+    #  float = "hard";  # --with-float=hard
     #};
   };
 

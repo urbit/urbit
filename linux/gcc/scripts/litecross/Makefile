@@ -1,48 +1,8 @@
 
-OUTPUT = $(CURDIR)/output
-
-BINUTILS_SRCDIR = BINUTILS_SRCDIR_not_set
-GCC_SRCDIR = GCC_SRCDIR_not_set
-MUSL_SRCDIR = MUSL_SRCDIR_not_set
-
-GCC_CONFIG_FOR_TARGET = 
-COMMON_CONFIG = 
-GCC_CONFIG = 
-TOOLCHAIN_CONFIG = 
-
 XGCC_DIR = ../obj_toolchain/gcc
 XGCC = $(XGCC_DIR)/xgcc -B $(XGCC_DIR)
 
 -include config.mak
-
-ifneq ($(findstring fdpic,$(TARGET)),)
-GCC_CONFIG_FOR_TARGET += --enable-fdpic
-endif
-
-ifneq ($(filter x86_64%x32,$(TARGET)),)
-GCC_CONFIG_FOR_TARGET += --with-abi=x32
-endif
-
-ifneq ($(findstring powerpc64,$(TARGET)),)
-GCC_CONFIG_FOR_TARGET += --with-abi=elfv2
-endif
-
-ifneq ($(findstring mips64,$(TARGET))$(findstring mipsisa64,$(TARGET)),)
-ifneq ($(findstring n32,$(TARGET)),)
-GCC_CONFIG_FOR_TARGET += --with-abi=n32
-else
-GCC_CONFIG_FOR_TARGET += --with-abi=64
-endif
-endif
-
-ifneq ($(filter %sf,$(TARGET)),)
-GCC_CONFIG_FOR_TARGET += --with-float=soft
-endif
-
-ifneq ($(filter %hf,$(TARGET)),)
-GCC_CONFIG_FOR_TARGET += --with-float=hard
-endif
-
 
 MAKE += MULTILIB_OSDIRNAMES=
 MAKE += INFO_DEPS= infodir=
@@ -50,8 +10,6 @@ MAKE += ac_cv_prog_lex_root=lex.yy.c
 MAKE += MAKEINFO=false
 
 FULL_TOOLCHAIN_CONFIG = --enable-languages=c,c++ \
-	$(GCC_CONFIG_FOR_TARGET) \
-	$(COMMON_CONFIG) $(GCC_CONFIG) $(TOOLCHAIN_CONFIG) \
 	--disable-werror \
 	--target=$(TARGET) --prefix= \
 	--libdir=/lib --disable-multilib \
@@ -63,14 +21,8 @@ FULL_TOOLCHAIN_CONFIG = --enable-languages=c,c++ \
 	--enable-deterministic-archives \
 	--enable-libstdcxx-time
 
-FULL_MUSL_CONFIG = $(MUSL_CONFIG) \
-	--prefix= --host=$(TARGET)
+FULL_MUSL_CONFIG = --prefix= --host=$(TARGET)
 
-ifneq ($(NATIVE),)
-HOST:=$(TARGET)
-endif
-
-ifeq ($(HOST),)
 SYSROOT = /$(TARGET)
 FULL_TOOLCHAIN_CONFIG += --with-build-sysroot=$(CURDIR)/obj_sysroot
 FULL_MUSL_CONFIG += CC="$(XGCC)" LIBCC="../obj_toolchain/$(TARGET)/libgcc/libgcc.a" 
@@ -79,21 +31,6 @@ obj_musl/.lc_configured: | obj_toolchain/gcc/.lc_built
 obj_musl/.lc_built: | obj_toolchain/$(TARGET)/libgcc/libgcc.a
 obj_toolchain/gcc/.lc_built: | obj_sysroot/usr obj_sysroot/lib32 obj_sysroot/lib64 obj_sysroot/include
 obj_toolchain/.lc_built: | obj_sysroot/.lc_libs obj_sysroot/.lc_headers
-else
-SYSROOT = /
-FULL_TOOLCHAIN_CONFIG += --host=$(HOST)
-MUSL_VARS = 
-endif
-
-ifeq ($(TARGET),)
-
-all:
-	@echo TARGET must be set.
-	@exit 1
-
-install: all
-
-else
 
 all: musl toolchain
 
@@ -222,8 +159,6 @@ install-kernel-headers: | obj_kernel_headers/.lc_built
 	mkdir -p $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
 	cp -R obj_kernel_headers/staged/include/* $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
 endif
-endif
-
 endif
 
 clean:
