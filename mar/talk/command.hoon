@@ -52,7 +52,6 @@
       ?~  nit  ~
       (some [u.nit +>->])
     ::
-    ::
     ++  thot
       ^-  $-(json (unit thought))
       %-  ot  :~
@@ -67,14 +66,11 @@
     ::
     ++  audi
       ^-  $-(json (unit audience))
-      (as (su parn))
+      (as (su circ))
     ::
-    ++  parn
-      ^-  $-(nail (like partner))
-      %+  peach
-        ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
-      %+  sear  (soft passport)
-      ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
+    ++  circ
+      ^-  $-(nail (like circle))
+      ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
     ::
     ++  speech-or-eval  $?(speech {$eval p/@t} {$mor ses/(list speech-or-eval)})
     ++  eval

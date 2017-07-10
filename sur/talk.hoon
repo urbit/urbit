@@ -31,7 +31,7 @@
       {$circle burden}                                  ::<  /circle
   ==                                                    ::
 ++  prize-reader                                        ::
-  $:  gys/(jug char (set partner))                      ::<  glyph bindings
+  $:  gys/(jug char (set circle))                       ::<  glyph bindings
       nis/(map ship cord)                               ::<  nicknames
   ==                                                    ::
 ++  rumor                                               ::<  query result change
@@ -64,25 +64,25 @@
       {$present hos/ship nos/(set knot) dif/diff-status}::<  send %present cmd
       {$quit ost/bone}                                  ::<  force unsubscribe
   ==                                                    ::
-++  diff-glyph  {bin/? gyf/char pas/(set partner)}      ::<  un/bound glyph
+++  diff-glyph  {bin/? gyf/char pas/(set circle)}       ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
 ++  delta-story                                         ::<  story delta
   $?  diff-story                                        ::<  both in & outward
   $%  {$burden bur/?}                                   ::<  burden flag
-      {$follow sub/? pas/(map partner range)}           ::<  un/subscribe
+      {$follow sub/? cos/(map circle range)}            ::<  un/subscribe
   ==  ==                                                ::
 ++  diff-story                                          ::<  story rumor
   $%  {$new cof/config}                                 ::<  new story
       {$bear bur/burden}                                ::<  new inherited story
       {$grams gaz/(list telegram)}                      ::<  new/changed msgs
       {$config cir/circle dif/diff-config}              ::<  new/changed config
-      {$status pan/partner who/ship dif/diff-status}    ::<  new/changed status
+      {$status cir/circle who/ship dif/diff-status}     ::<  new/changed status
       {$remove $~}                                      ::<  removed story
   ==                                                    ::
 ++  diff-config                                         ::>  config change
   ::TODO  maybe just full? think.
   $%  {$full cof/config}                                ::<  set w/o side-effects
-      {$source add/? pan/partner}                       ::<  add/rem sources
+      {$source add/? cir/circle}                        ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
       {$filter fit/filter}                              ::<  changed filter
       {$secure sec/security}                            ::<  changed security
@@ -114,15 +114,15 @@
       {$depict nom/knot des/cord}                       ::<  change description
       {$filter nom/knot fit/filter}                     ::<  change message rules
       {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
-      {$source nom/knot sub/? src/(map partner range)}  ::<  un/sub to/from src
+      {$source nom/knot sub/? src/(map circle range)}   ::<  un/sub to/from src
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::<  post exact
-      {$phrase aud/(set partner) ses/(list speech)}     ::<  post easy
+      {$phrase aud/(set circle) ses/(list speech)}      ::<  post easy
       ::  personal metadata                             ::
       {$notify cis/(set circle) pes/presence}           ::<  our presence update
       {$naming cis/(set circle) man/human}              ::<  our name update
       ::  changing shared ui                            ::
-      {$glyph gyf/char pas/(set partner) bin/?}         ::<  un/bind a glyph
+      {$glyph gyf/char pas/(set circle) bin/?}          ::<  un/bind a glyph
       {$nick who/ship nic/knot}                         ::<  new identity
   ==                                                    ::
 ::
@@ -144,7 +144,6 @@
 ::>    messaging targets and their metadata.
 ::+|
 ::
-++  partner    (each circle passport)                   ::<  message target
 ++  circle     {hos/ship nom/knot}                      ::<  native target
 ++  passport                                            ::>  foreign target
   $%  {$twitter p/cord}                                 ::<  twitter handle
@@ -152,7 +151,7 @@
 ::  circle configurations.                              ::
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config
-  $:  src/(set partner)                                 ::<  active sources
+  $:  src/(set circle)                                  ::<  active sources
       ::TODO  ^ include range? just remove!
       cap/cord                                          ::<  description
       fit/filter                                        ::<  message rules
@@ -172,7 +171,7 @@
   ==                                                    ::
 ::  participant metadata.                               ::
 ::TODO  think about naming more
-++  crowd      {loc/group rem/(map partner group)}      ::<  our & srcs presences
+++  crowd      {loc/group rem/(map circle group)}       ::<  our & srcs presences
 ++  group      (map ship status)                        ::<  presence map
 ++  status     {pec/presence man/human}                 ::<  participant
 ++  presence                                            ::>  status type
@@ -216,5 +215,5 @@
 ::+|
 ::
 ++  serial     @uvH                                     ::<  unique identifier
-++  audience   (set partner)                            ::<  destinations
+++  audience   (set circle)                             ::<  destinations
 --

@@ -44,7 +44,7 @@
   :+  [our.bol %talk]  %talk-action
   ^-  action
   :+  %phrase
-    [[%& our.bol (main our.bol)] ~ ~]
+    [[our.bol (main our.bol)] ~ ~]
   [%app dap.bol (crip (earn url))]~   :: XX
 ::
 ++  said                                                ::  app message
@@ -57,7 +57,7 @@
   :_  $(mes t.mes, eny (sham eny mes))
   ^-  thought
   :+  (shaf %thot eny)
-    [[%& our (main our)] ~ ~]
+    [[our (main our)] ~ ~]
   [now [%app dap (crip ~(ram re i.mes))]]
 ::
 ++  uniq
@@ -68,14 +68,14 @@
 ++  change-glyphs                                       ::<  ...
   ::>
   ::
-  |=  {gys/(jug char (set partner)) bin/? gyf/char pas/(set partner)}
+  |=  {gys/(jug char (set circle)) bin/? gyf/char cis/(set circle)}
   ^+  gys
   ::  simple bind.
-  ?:  bin  (~(put ju gys) gyf pas)
+  ?:  bin  (~(put ju gys) gyf cis)
   ::  unbind all of glyph.
-  ?~  pas  (~(del by gys) gyf)
+  ?~  cis  (~(del by gys) gyf)
   ::  unbind single.
-  (~(del ju gys) gyf pas)
+  (~(del ju gys) gyf cis)
 ::
 ++  change-nicks                                        ::<  change nick map
   ::>  changes a nickname in a map, adding if it doesn't
@@ -101,7 +101,7 @@
       $source
     %=  cof
         src
-      %.  pan.dif
+      %.  cir.dif
       ?:  add.dif
         ~(put in src.cof)
       ~(del in src.cof)

@@ -7,7 +7,7 @@
 ::TODO  make sure glyphs only get bound when joins succeed
 ::      ...this is a bit troublesome, because failed joins don't actually
 ::      unsubscribe us.
-::TODO  maybe keep track of received grams per partner, too?
+::TODO  maybe keep track of received grams per circle, too?
 ::
 ::TODO  for delta model:
 ::      3) split into delta creation and application, as with hall.
@@ -37,21 +37,21 @@
           count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all history
           known/(map serial @ud)                        ::<  messages heard
-          sources/(set partner)                         ::<  our subscriptions
-          ::  partner details                           ::
-          remotes/(map partner group)                   ::<  remote presences
+          sources/(set circle)                          ::<  our subscriptions
+          ::  circle details                            ::
+          remotes/(map circle group)                    ::<  remote presences
           mirrors/(map circle config)                   ::<  remote configs
           ::  ui state                                  ::
           nicks/(map ship cord)                         ::<  human identities
-          nik/(map (set partner) char)                  ::<  bound circle glyphs
-          nak/(jug char (set partner))                  ::<  circle glyph lookup
+          nik/(map (set circle) char)                   ::<  bound circle glyphs
+          nak/(jug char (set circle))                   ::<  circle glyph lookup
           cli/shell                                     ::<  interaction state
       ==                                                ::
     ++  shell                                           ::>  console session
       $:  id/bone                                       ::<  identifier
           latest/@ud                                    ::<  latest shown msg num
           say/sole-share                                ::<  console state
-          active/(set partner)                          ::<  active targets
+          active/(set circle)                           ::<  active targets
           settings/(set knot)                           ::<  frontend settings
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
@@ -69,7 +69,7 @@
       ==                                                ::
     ++  work                                            ::>  interface action
       $%  ::  circle management                         ::
-          {$join p/(map partner range)}                 ::<  subscribe to
+          {$join p/(map circle range)}                  ::<  subscribe to
           {$leave p/where}                              ::<  unsubscribe from
           {$create p/security q/knot r/cord}            ::<  create circle
           {$delete p/knot q/(unit cord)}                ::<  delete circle
@@ -77,7 +77,7 @@
           {$filter p/knot q/? r/?}                      ::<  change message rules
           {$invite p/knot q/(set ship)}                 ::<  give permission
           {$banish p/knot q/(set ship)}                 ::<  deny permission
-          {$source p/knot q/(map partner range)}        ::<  add source
+          {$source p/knot q/(map circle range)}         ::<  add source
           ::  personal metadata
           {$attend p/(set circle) q/presence}           ::<  set our presence
           {$name p/(set circle) q/human}                ::<  set our name
@@ -88,7 +88,7 @@
           ::  displaying info                           ::
           {$number p/$@(@ud {@u @ud})}                  ::<  relative/absolute
           {$who p/where}                                ::<  presence
-          {$what p/$@(char (set partner))}              ::<  show bound glyph
+          {$what p/$@(char (set circle))}               ::<  show bound glyph
           ::  ui settings                               ::
           {$bind p/char q/(unit where)}                 ::<  bind glyph
           {$unbind p/char q/(unit where)}               ::<  unbind glyph
@@ -98,7 +98,7 @@
           ::  miscellaneous                             ::
           {$help $~}                                    ::<  print usage info
       ==                                                ::
-    ++  where  (set partner)                            ::<  non-empty audience
+    ++  where  (set circle)                             ::<  non-empty audience
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  circle char pool '
     ++  termwidth  80  ::TODO  put in setting or something?
     --
@@ -142,22 +142,17 @@
   :_  inbox
   (true-self our.bol)
 ::
-++  inpan                                               ::<  reader's partner
-  ::>  ++inbox, except a full partner.
-  ^-  partner
-  [%& incir]
-::
 ++  nik-from-nak                                        ::<  nik from nak
   ::>
   ::
   ::TODO  ...we really should rename these.
   |=  nek/_nak
   ^+  nik
-  %-  ~(gas by *(map (set partner) char))
+  %-  ~(gas by *(map (set circle) char))
   =-  (zing -)
   %+  turn  (~(tap by nek))
-  |=  {a/char b/(set (set partner))}
-  (turn (~(tap by b)) |=(c/(set partner) [c a]))
+  |=  {a/char b/(set (set circle))}
+  (turn (~(tap by b)) |=(c/(set circle) [c a]))
 ::
 ::>  ||
 ::>  ||  %engines
@@ -270,7 +265,7 @@
       %=  ta-lesson
         sources   src.loc.cos.piz
         mirrors   (~(put by rem.cos.piz) incir loc.cos.piz)
-        remotes   (~(put by rem.pes.piz) inpan loc.pes.piz)
+        remotes   (~(put by rem.pes.piz) incir loc.pes.piz)
       ==
     ==
   ::
@@ -313,7 +308,7 @@
                 =(cir.dif incir)
             ==
           sources
-        %.  pan.dif.dif
+        %.  cir.dif.dif
         ?:  add.dif.dif
           ~(put in sources)
         ~(del in sources)
@@ -329,8 +324,8 @@
         $status
       %=  +>
           remotes
-        %+  ~(put by remotes)  pan.dif
-        =+  rem=(fall (~(get by remotes) pan.dif) *group)
+        %+  ~(put by remotes)  cir.dif
+        =+  rem=(fall (~(get by remotes) cir.dif) *group)
         ?:  ?=($remove -.dif.dif)  (~(del by rem) who.dif)
         %+  ~(put by rem)  who.dif
         %+  change-status
@@ -342,7 +337,7 @@
   ++  ta-change-glyph                                   ::<  apply changed glyphs
     ::>  applies new set of glyph bindings.
     ::
-    |=  {bin/? gyf/char pas/(set partner)}
+    |=  {bin/? gyf/char pas/(set circle)}
     ^+  +>
     =+  nek=(change-glyphs nak bin gyf pas)
     ?:  =(nek nak)  +>.$                                ::  no change
@@ -410,7 +405,7 @@
     ::
     ^+  .
     =/  she/shell
-      %*(. *shell id ost.bol, active (sy inpan ~))
+      %*(. *shell id ost.bol, active (sy incir ~))
     sh-done:~(sh-prod sh she)
   ::
   ++  ta-sole                                           ::<  apply sole input
@@ -529,13 +524,6 @@
           |=(a/(list ^ship) (~(gas in *(set ^ship)) a))
         (most ;~(plug com (star ace)) ship)
       ::
-      ++  pasp                                          ::<  passport
-        ;~  pfix  pat
-          ;~  pose
-            (stag %twitter ;~(pfix (jest 't') col urs:ab))
-          ==
-        ==
-      ::
       ++  cire                                          ::<  local circle
         ;~(pfix cen sym)
       ::
@@ -558,30 +546,6 @@
         %+  cook  ~(gas in *(set circle))
         (most ;~(plug com (star ace)) circ)
       ::
-      ++  parn                                          ::<  partner
-        ;~  pose
-          (stag %& circ)
-          (stag %| pasp)
-        ==
-      ::
-      ++  partners-flat                                 ::<  collapse mixed list
-        |=  a/(list (each partner (set partner)))
-        ^-  (set partner)
-        ?~  a  ~
-        ?-  -.i.a
-          $&  (~(put in $(a t.a)) p.i.a)
-          $|  (~(uni in $(a t.a)) p.i.a)
-        ==
-      ::
-      ++  para                                          ::<  partners alias
-        %+  cook  partners-flat
-        %+  most  ;~(plug com (star ace))
-        (pick parn (sear sh-glyf glyph))
-      ::
-      ++  parz                                          ::<  non-empty partners
-        %+  cook  ~(gas in *(set partner))
-        (most ;~(plug com (star ace)) parn)
-      ::
       ++  pont                                          ::<  point for range
         ;~  pose
           ::TODO  support entering of @da and @dr,
@@ -600,15 +564,9 @@
           (easy ~)
         ==
       ::
-      ++  sorc                                          ::<  partner + range
-        ;~  pose
-          ;~(plug (stag %& circ) rang)
-          ;~(plug (stag %| pasp) (easy ~))
-        ==
-      ::
       ++  sorz                                          ::<  non-empty sources
-        %+  cook  ~(gas by *(map partner range))
-        (most ;~(plug com (star ace)) sorc)
+        %+  cook  ~(gas by *(map circle range))
+        (most ;~(plug com (star ace)) ;~(plug circ rang))
       ::
       ++  nump                                          ::<  number reference
         ;~  pose
@@ -666,7 +624,7 @@
           ::
           ;~((glue ace) (perk %join ~) sorz)
           ::
-          ;~((glue ace) (perk %leave ~) para)
+          ;~((glue ace) (perk %leave ~) cirs)
           ::
           ;~  (glue ace)  (perk %create ~)
             pore
@@ -719,15 +677,15 @@
           ::
           ::  displaying info
           ::
-          ;~(plug (perk %who ~) ;~(pose ;~(pfix ace para) (easy ~)))
+          ;~(plug (perk %who ~) ;~(pose ;~(pfix ace cirs) (easy ~)))
           ::
-          ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
+          ;~((glue ace) (perk %what ~) ;~(pose cirs glyph))
           ::
           ::  ui settings
           ::
-          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
+          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace cirs)))
           ::
-          ;~(plug (perk %unbind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
+          ;~(plug (perk %unbind ~) ;~(pfix ace glyph) (punt ;~(pfix ace cirs)))
           ::
           ;~  plug  (perk %nick ~)
             ;~  pose
@@ -760,7 +718,7 @@
           ::
           ::  messaging
           ::
-          (stag %target ;~(plug para (punt ;~(pfix ace message))))
+          (stag %target ;~(plug cirs (punt ;~(pfix ace message))))
           ::
           ::  displaying info
           ::
@@ -915,7 +873,7 @@
         ::>  applies glyph binding to our state and sends
         ::>  an action.
         ::
-        |=  {cha/char pas/(set partner)}
+        |=  {cha/char pas/(set circle)}
         =:  nik  (~(put by nik) pas cha)
             nak  (~(put ju nak) cha pas)
         ==
@@ -925,8 +883,8 @@
         ::>  removes either {pas} or all bindings on a
         ::>  glyph and sends an action.
         ::
-        |=  {cha/char pas/(unit (set partner))}
-        =/  ole/(set (set partner))
+        |=  {cha/char pas/(unit (set circle))}
+        =/  ole/(set (set circle))
           ?^  pas  [u.pas ~ ~]
           (~(get ju nak) cha)
         =.  ..sh-work  (sh-act %glyph cha (fall pas ~) |)
@@ -966,7 +924,7 @@
         ::>  change local mailbox config to include
         ::>  subscriptions to {pas}.
         ::
-        |=  pos/(map partner range)
+        |=  pos/(map circle range)
         ^+  ..sh-work
         =+  pas=(key-by pos)
         =.  ..sh-work
@@ -982,11 +940,11 @@
         ::>  change local mailbox config to exclude
         ::>  subscriptions to {pas}.
         ::
-        |=  pas/(set partner)
+        |=  pas/(set circle)
         ^+  ..sh-work
         =/  pos
           %-  ~(run in pas)
-          |=(p/partner [p ~])
+          |=(p/circle [p ~])
         (sh-act %source inbox | pos)
       ::
       ++  create                                        ::<  %create
@@ -996,7 +954,7 @@
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
-        (join [[[%& our.bol nom] ~] ~ ~])
+        (join [[[our.bol nom] ~] ~ ~])
       ::
       ++  delete                                        ::<  %delete
         ::>  deletes our circle {nom}, after optionally
@@ -1035,7 +993,7 @@
       ++  source                                        ::<  %source
         ::>  adds {pas} to {nom}'s src.
         ::
-        |=  {nom/knot pos/(map partner range)}
+        |=  {nom/knot pos/(map circle range)}
         ^+  ..sh-work
         (sh-act %source nom & pos)
       ::
@@ -1082,7 +1040,7 @@
       ++  target                                        ::<  %target
         ::>  sets messaging target, then execute {woe}.
         ::
-        |=  {pan/(set partner) woe/(unit ^work)}
+        |=  {pan/(set circle) woe/(unit ^work)}
         ^+  ..sh-work
         =.  ..sh-pact  (sh-pact pan)
         ?~(woe ..sh-work work(job u.woe))
@@ -1095,9 +1053,9 @@
       ++  who                                          ::<  %who
         ::>  prints presence lists for {pas} or all.
         ::
-        |=  pas/(set partner)  ^+  ..sh-work
+        |=  pas/(set circle)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
-        |=  {pon/partner gop/group}  ^-  (unit sole-effect)
+        |=  {pon/circle gop/group}  ^-  (unit sole-effect)
         ?.  |(=(~ pas) (~(has in pas) pon))  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr pon) ~]
         =<  (murn (sort (~(tap by gop)) aor) .)
@@ -1115,7 +1073,7 @@
       ++  what                                          ::<  %what
         ::>  prints binding details. goes both ways.
         ::
-        |=  qur/$@(char (set partner))
+        |=  qur/$@(char (set circle))
         ^+  ..sh-work
         ?^  qur
           =+  cha=(~(get by nik) qur)
@@ -1123,7 +1081,7 @@
         =+  pan=(~(tap in (~(get ju nak) qur)))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
-        |=(a/(set partner) [%txt ~(ar-prom ar a)])
+        |=(a/(set circle) [%txt ~(ar-prom ar a)])
       ::
       ++  number                                        ::<  %number
         ::>  finds selected message, expand it.
@@ -1152,7 +1110,7 @@
       ++  bind                                          ::<  %bind
         ::>  binds targets {pas} to the glyph {cha}.
         ::
-        |=  {cha/char pas/(unit (set partner))}
+        |=  {cha/char pas/(unit (set circle))}
         ^+  ..sh-work
         ?~  pas  $(pas `active.she)
         =+  ole=(~(get by nik) u.pas)
@@ -1163,7 +1121,7 @@
       ++  unbind                                        ::<  %unbind
         ::>  unbinds targets {pas} to glyph {cha}.
         ::
-        |=  {cha/char pan/(unit (set partner))}
+        |=  {cha/char pan/(unit (set circle))}
         ^+  ..sh-work
         ?.  ?|  &(?=(^ pan) (~(has by nik) u.pan))
                 &(?=($~ pan) (~(has by nak) cha))
@@ -1246,7 +1204,7 @@
       ::>  change currently selected audience to {lix}
       ::>  and update the prompt.
       ::
-      |=  lix/(set partner)
+      |=  lix/(set circle)
       ^+  +>
       ::>  ensure we can see what we send.
       =+  act=(sh-pare lix)
@@ -1254,40 +1212,40 @@
       sh-prod(active.she act)
     ::
     ++  sh-pare                                         ::<  adjust target list
-      ::>  if the audience {paz} does not contain a
-      ::>  partner we're subscribed to, add our mailbox
+      ::>  if the audience {cis} does not contain a
+      ::>  circle we're subscribed to, add our mailbox
       ::>  to the audience (so that we can see our own
       ::>  message).
       ::
-      |=  paz/(set partner)
-      ?:  (sh-pear paz)  paz
-      (~(put in paz) inpan)
+      |=  cis/(set circle)
+      ?:  (sh-pear cis)  cis
+      (~(put in cis) incir)
     ::
     ++  sh-pear                                         ::<  hearback
-      ::>  produces true if any partner is included in
+      ::>  produces true if any circle is included in
       ::>  our subscriptions, meaning, we hear messages
-      ::>  sent to {paz}.
+      ::>  sent to {cis}.
       ::
-      |=  paz/(set partner)
-      ?~  paz  |
-      ?|  (~(has in sources) `partner`n.paz)
-          $(paz l.paz)
-          $(paz r.paz)
+      |=  cis/(set circle)
+      ?~  cis  |
+      ?|  (~(has in sources) `circle`n.cis)
+          $(cis l.cis)
+          $(cis r.cis)
       ==
     ::
     ++  sh-glyf                                         ::<  decode glyph
-      ::>  finds the partner(s) that match a glyph.
+      ::>  finds the circle(s) that match a glyph.
       ::
-      |=  cha/char  ^-  (unit (set partner))
+      |=  cha/char  ^-  (unit (set circle))
       =+  lax=(~(get ju nak) cha)
-      ::>  no partner.
+      ::>  no circle.
       ?:  =(~ lax)  ~
-      ::>  single partner.
+      ::>  single circle.
       ?:  ?=({* $~ $~} lax)  `n.lax
-      ::>  in case of multiple partners, pick the most recently active one.
-      |-  ^-  (unit (set partner))
+      ::>  in case of multiple circles, pick the most recently active one.
+      |-  ^-  (unit (set circle))
       ?~  grams  ~
-      ::>  get first partner from a telegram's audience.
+      ::>  get first circle from a telegram's audience.
       =+  pan=(silt (~(tap in aud.tot.i.grams)))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
@@ -1341,11 +1299,11 @@
       ::>  presence maps, producing a list of removed,
       ::>  added and changed presences maps.
       ::
-      |=  {one/(map partner group) two/(map partner group)}
+      |=  {one/(map circle group) two/(map circle group)}
       =|  $=  ret
-          $:  old/(list (pair partner group))
-              new/(list (pair partner group))
-              cha/(list (pair partner group))
+          $:  old/(list (pair circle group))
+              new/(list (pair circle group))
+              cha/(list (pair circle group))
           ==
       ^+  ret
       =.  ret
@@ -1435,7 +1393,7 @@
       %+  sh-fact  %pro
       :+  &  %talk-line
       ^-  tape
-      =/  rew/(pair (pair cord cord) (set partner))
+      =/  rew/(pair (pair cord cord) (set circle))
           [['[' ']'] active.she]
       =+  cha=(~(get by nik) q.rew)
       ?^  cha  ~[u.cha ' ']
@@ -1476,7 +1434,7 @@
         $green  "journal"
       ==
     ::
-    ++  sh-spaz                                         ::<  render status
+    ++  sh-scis                                         ::<  render status
       ::>  gets the presence of {saz} as a tape.
       ::
       |=  sat/status
@@ -1505,12 +1463,12 @@
           ?~  new.cul  +>.^$
           =.  +>.^$  $(new.cul t.new.cul)
           %-  sh-note
-          (weld pre "met {(scow %p p.i.new.cul)} {(sh-spaz q.i.new.cul)}")
+          (weld pre "met {(scow %p p.i.new.cul)} {(sh-scis q.i.new.cul)}")
       =.  +>.$
           |-  ^+  +>.^$
           ?~  cha.cul  +>.^$
           %-  sh-note
-          (weld pre "set {(scow %p p.i.cha.cul)} {(sh-spaz q.i.cha.cul)}")
+          (weld pre "set {(scow %p p.i.cha.cul)} {(sh-scis q.i.cha.cul)}")
       +>.$
     ::
     ++  sh-show-permits                                 ::<  show permits
@@ -1534,7 +1492,7 @@
     ++  sh-show-sources                                 ::<  show sources
       ::>  prints subscription changes to the cli.
       ::
-      |=  {pre/tape old/(list partner) new/(list partner)}
+      |=  {pre/tape old/(list circle) new/(list circle)}
       ^+  +>
       =.  +>.$
           |-  ^+  +>.^$
@@ -1578,7 +1536,7 @@
       ^+  +>
       ::  new circle
       ?~  old
-        ::  ++sh-show-rempe will notice a new partner.
+        ::  ++sh-show-rempe will notice a new circle.
         +>
       ::  removed circle
       ?~  new
@@ -1693,12 +1651,13 @@
     :(welp wun "/" (trip nom.one))
   --
 ::
-++  pr                                                  ::<  partner renderer
-  ::>  used primarily for printing partners.
+::TODO  maybe merge with cr?
+++  pr                                                  ::<  circle renderer
+  ::>  used primarily for printing circles.
   ::
-  |_  ::>  one: the partner
+  |_  ::>  one: the circle
       ::
-      one/partner
+      one/circle
   ::
   ++  pr-beat                                           ::<  more relevant
     ::>  returns true if one is better to show, false
@@ -1707,27 +1666,13 @@
     ::>  if both are passports, pick the "larger" one.
     ::>  if they're equal, content hash.
     ::
-    |=  two/partner  ^-  ?
-    ?-  -.one
-        $&
-      ?-  -.two
-        $|  %&
-        $&  (~(cr-best cr p.one) p.two)
-      ==
-    ::
-        $|
-      ?-  -.two
-        $&  %|
-        $|  ?:  =(-.p.two -.p.one)
-              (lth (mug +.p.one) (mug +.p.two))
-            (lth -.p.two -.p.one)
-      ==
-    ==
+    |=  two/circle  ^-  ?
+    (~(cr-best cr one) two)
   ::
   ++  pr-best                                           ::<  most relevant
-    ::>  picks the most relevant partner.
+    ::>  picks the most relevant circle.
     ::
-    |=(two/partner ?:((pr-beat two) two one))
+    |=(two/circle ?:((pr-beat two) two one))
   ::
   ++  pr-sigh                                           ::<  assemble label
     ::>  prepend {pre} to {yiz}, omitting characters of
@@ -1747,50 +1692,37 @@
   ::
   ++  pr-full  (pr-show ~)                              ::<  render full width
   ::
-  ++  pr-show                                           ::<  render partner
-    ::>  renders a partner as text.
+  ++  pr-show                                           ::<  render circle
+    ::>  renders a circle as text.
     ::
-    ::>  moy:  multiple partners in audience?
+    ::>  moy:  multiple circles in audience?
     |=  moy/(unit ?)
     ^-  tape
-    ?-  -.one
-      ::  render circle (as glyph if we can).
-        $&
-      ?~  moy
-        =+  cha=(~(get by nik) one ~ ~)
-        =-  ?~(cha - "'{u.cha ~}' {-}")
-        ~(cr-phat cr p.one)
-      (~(cr-curt cr p.one) u.moy)
-      ::  render passport.
-        $|
-      =/  pre  ^-  tape
-        ?-  -.p.one
-          $twitter  "@t:"
-        ==
-      ?~  moy
-        (weld pre (trip p.p.one))
-      =.  pre  ?.(u.moy pre ['*' pre])
-      (pr-sigh 14 pre p.p.one)
-    ==
+    ::  render circle (as glyph if we can).
+    ?~  moy
+      =+  cha=(~(get by nik) one ~ ~)
+      =-  ?~(cha - "'{u.cha ~}' {-}")
+      ~(cr-phat cr one)
+    (~(cr-curt cr one) u.moy)
   --
 ::
 ++  ar                                                  ::<  audience renderer
-  ::>  used for representing audiences (sets of partners)
+  ::>  used for representing audiences (sets of circles)
   ::>  as tapes.
   ::
   |_  ::>  lix: members of the audience.
       ::
-      lix/(set partner)
+      lix/(set circle)
   ::
   ++  ar-best                                           ::<  most relevant
-    ::>  find the most relevant partner in the set.
+    ::>  find the most relevant circle in the set.
     ::
-    ^-  (unit partner)
+    ^-  (unit circle)
     ?~  lix  ~
     :-  ~
-    |-  ^-  partner
-    =+  lef=`(unit partner)`ar-best(lix l.lix)
-    =+  rit=`(unit partner)`ar-best(lix r.lix)
+    |-  ^-  circle
+    =+  lef=`(unit circle)`ar-best(lix l.lix)
+    =+  rit=`(unit circle)`ar-best(lix r.lix)
     =.  n.lix  ?~(lef n.lix (~(pr-best pr n.lix) u.lef))
     =.  n.lix  ?~(rit n.lix (~(pr-best pr n.lix) u.rit))
     n.lix
@@ -1799,10 +1731,10 @@
     ::>  remove ourselves from the audience.
     ::
     ^+  .
-    .(lix (~(del in lix) `partner`inpan))
+    .(lix (~(del in lix) `circle`incir))
   ::
   ++  ar-maud                                           ::<  multiple audience
-    ::>  checks if there's multiple partners in the
+    ::>  checks if there's multiple circles in the
     ::>  audience via pattern matching.
     ::
     ^-  ?
@@ -1810,13 +1742,13 @@
     !?=($@($~ {* $~ $~}) lix)
   ::
   ++  ar-prom                                           ::<  render targets
-    ::>  render all partners, ordered by relevance.
+    ::>  render all circles, ordered by relevance.
     ::
     ^-  tape
     =.  .  ar-deaf
     =/  all
-      %+  sort  `(list partner)`(~(tap in lix))
-      |=  {a/partner b/partner}
+      %+  sort  `(list circle)`(~(tap in lix))
+      |=  {a/circle b/circle}
       (~(pr-beat pr a) b)
     =+  fir=&
     |-  ^-  tape
@@ -1828,17 +1760,16 @@
     ==
   ::
   ++  ar-whom                                           ::<  render sender
-    ::>  render sender as the most relevant partner.
+    ::>  render sender as the most relevant circle.
     ::
     (~(pr-show pr (need ar-best)) ~ ar-maud)
   ::
   ++  ar-dire                                           ::<  direct message
-    ::>  returns true if partner is a mailbox of ours.
+    ::>  returns true if circle is a mailbox of ours.
     ::
-    |=  pan/partner  ^-  ?
-    ?&  ?=($& -.pan)
-        =(hos.p.pan our.bol)
-        =+  sot=(~(get by mirrors) +.pan)
+    |=  cir/circle  ^-  ?
+    ?&  =(hos.cir our.bol)
+        =+  sot=(~(get by mirrors) cir)
         &(?=(^ sot) ?=($brown sec.con.u.sot))
     ==
   ::
@@ -1852,7 +1783,7 @@
     ?^  cha  ~[u.cha ' ']
     ?.  (lien (~(tap by lix)) ar-dire)
       "* "
-    ?:  ?=({{$& ^} $~ $~} lix)
+    ?:  ?=({^ $~ $~} lix)
       ": "
     "; "
   --
@@ -1939,11 +1870,11 @@
     ^-  tang
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))    :: round
     =+  hed=leaf+"{(scow %uv sen)} at {(scow %da wen)}"
-    =/  paz
+    =/  cis
       %+  turn  (~(tap in aud))
-      |=  a/partner
+      |=  a/circle
       leaf+~(pr-full pr a)
-    [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] ~]]~
+    [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] cis] ~]]~
   ::
   ++  tr-body                                           ::<  message content
     ::>  long-form display of message contents, specific

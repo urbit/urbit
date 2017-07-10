@@ -49,17 +49,17 @@
       $:  stories/(map knot story)                      ::<  conversations
           log/(map knot @ud)                            ::<  logged to clay
           nicks/(map ship knot)                         ::<  nicknames
-          nak/(jug char (set partner))                  ::<  circle glyph lookup
+          nak/(jug char (set circle))                   ::<  circle glyph lookup
       ==                                                ::
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all messages
           locals/group                                  ::<  local presence
-          remotes/(map partner group)                   ::<  remote presence
+          remotes/(map circle group)                    ::<  remote presence
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
           ::TODO?  never gets updated. still needed?    ::
-          sequence/(map partner @ud)                    ::<  partners heard
+          sequence/(map circle @ud)                     ::<  circles heard
           known/(map serial @ud)                        ::<  messages heard
           burden/?                                      ::<  from parent?
       ==                                                ::
@@ -156,7 +156,7 @@
     ::
     |=  msg/cord
     %^  ta-action  0  %phrase
-    :-  [[%& our.bol (main our.bol)] ~ ~]
+    :-  [[our.bol (main our.bol)] ~ ~]
     [%app %talk-guardian msg]~
   ::
   ++  ta-evil                                           ::<  emit error
@@ -246,7 +246,7 @@
     %-  ~(rep in nos)
     |=  {n/knot l/(list delta)}
     :_  l
-    [%story n %status [%& our.bol n] who dif]
+    [%story n %status [our.bol n] who dif]
   ::
   ++  ta-action                                         ::<  apply reader action
     ::>  performs action sent by a reader.
@@ -316,7 +316,7 @@
         ?.  (~(has by cic) our.bol)  ..ta-action
         %-  ~(rep in (~(get ju cic) our.bol))
         |=  {n/knot _ta}
-        (affect n %status [%& our.bol n] our.bol dif)
+        (affect n %status [our.bol n] our.bol dif)
       =.  cic  (~(del by cic) our.bol)
       %-  ta-deltas
       %-  ~(rep by cic)
@@ -333,7 +333,7 @@
       ^+  ..ta-action
       ?.  (~(has in stories) nom)
         %^  impact  nom  %new
-        :*  [[%& our.bol nom] ~ ~]
+        :*  [[our.bol nom] ~ ~]
             des
             [| |]
             :-  typ
@@ -351,7 +351,7 @@
       =.  ..ta-action  ::TODO  =?
         ?~  mes  ..ta-action
         %+  action-phrase
-          [[%& our.bol nom] ~ ~]
+          [[our.bol nom] ~ ~]
         [%lin | u.mes]~
       (affect nom %remove ~)
     ::
@@ -378,9 +378,9 @@
       so-done:(~(so-permit so nom ~ u.soy) inv sis)
     ::
     ++  action-source                                   ::<  un/sub p to/from r
-      ::>  add/remove {pas} as sources for story {nom}.
+      ::>  add/remove {pos} as sources for story {nom}.
       ::
-      |=  {nom/knot sub/? pos/(map partner range)}
+      |=  {nom/knot sub/? pos/(map circle range)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
@@ -399,14 +399,14 @@
       ::>  action generating a serial and setting a
       ::>  timestamp.
       ::
-      |=  {pas/(set partner) ses/(list speech)}
+      |=  {cis/(set circle) ses/(list speech)}
       ^+  ..ta-action
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
       =^  sir  eny.bol  (uniq eny.bol)
       :_  $(ses t.ses)
-      [sir pas [now.bol i.ses]]
+      [sir cis [now.bol i.ses]]
     ::
     ::>  ||  %personal-metadata
     ::+|
@@ -437,10 +437,10 @@
       (ta-delta %nick who nic)
     ::
     ++  action-glyph                                    ::<  bind a glyph
-      ::>  un/bind glyph {lif} to partners {pas}.
+      ::>  un/bind glyph {lif} to circles {cis}.
       ::
-      |=  {lif/char pas/(set partner) bin/?}
-      (ta-delta %glyph bin lif pas)
+      |=  {lif/char cis/(set circle) bin/?}
+      (ta-delta %glyph bin lif cis)
     --
   ::
   ::>  ||
@@ -489,14 +489,14 @@
     ::
     |=  {nom/knot cir/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-greet:sor %& cir)
+    (so-greet:sor cir)
   ::
   ++  ta-leave                                          ::<  subscription failed
     ::>  removes {cir} from story {nom}'s followers.
     ::
     |=  {nom/knot cir/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-leave:sor %& cir)
+    (so-leave:sor cir)
   ::
   ++  ta-take                                           ::<  apply prize
     ::>  for a %burden prize, bear the burden in a new
@@ -554,7 +554,7 @@
     ::>  message got delivered. if an error was returned
     ::>  mark the message as rejected. if not, received.
     ::
-    |=  {who/partner fal/(unit tang)}
+    |=  {who/circle fal/(unit tang)}
     ^+  +>
     ~?  ?=(^ fal)  u.fal
     ::TODO  store delivery state locally
@@ -576,7 +576,7 @@
     $(tos t.tos, +> (ta-consume pub aut i.tos))
   ::
   ++  ta-consume                                        ::<  to each audience
-    ::>  conducts thought {tot} to each partner in its audience.
+    ::>  conducts thought {tot} to each circle in its audience.
     ::
     |=  {pub/? aut/ship tot/thought}
     =+  aud=(~(tap in aud.tot))
@@ -584,26 +584,21 @@
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ta-conduct pub aut i.aud tot))
   ::
-  ++  ta-conduct                                        ::<  thought to partner
+  ++  ta-conduct                                        ::<  thought to circle
     ::>  either publishes or records a thought.
     ::
-    |=  {pub/? aut/ship pan/partner tot/thought}
+    |=  {pub/? aut/ship cir/circle tot/thought}
     ^+  +>
-    ?-  -.pan
-        $&                                              ::<  circle partner
-      ?:  pub
-        ?.  (team our.bol aut)
-          %-  ta-note
-          (crip "strange author {(scow %p aut)}")
-        =.  aut  our.bol
-        ?:  =(aut hos.p.pan)
-          (ta-record nom.p.pan hos.p.pan tot)
-        (ta-transmit p.pan tot)
-      ?.  =(our.bol hos.p.pan)  +>
-      (ta-record nom.p.pan aut tot)
-      ::
-        $|  !!                                          ::<  passport partner
-    ==
+    ?:  pub
+      ?.  (team our.bol aut)
+        %-  ta-note
+        (crip "strange author {(scow %p aut)}")
+      =.  aut  our.bol
+      ?:  =(aut hos.cir)
+        (ta-record nom.cir hos.cir tot)
+      (ta-transmit cir tot)
+    ?.  =(our.bol hos.cir)  +>
+    (ta-record nom.cir aut tot)
   ::
   ++  ta-record                                         ::<  add to story
     ::>  add or update telegram {gam} in story {nom}.
@@ -670,7 +665,7 @@
       |=  msg/cord
       ^+  +>
       %+  so-act  %phrase
-      :-  [[%& our.bol (main our.bol)] ~ ~]
+      :-  [[our.bol (main our.bol)] ~ ~]
       [%app %talk-guardian msg]~
     ::
     ++  so-delta                                        ::<  send delta
@@ -700,7 +695,6 @@
     ::>    utility functions for data retrieval.
     ::+|
     ::
-    ++  so-pan  [%& our.bol nom]                        ::<  us as partner
     ++  so-cir  [our.bol nom]                           ::<  us as circle
     ::
     ::>  ||
@@ -719,7 +713,7 @@
       =.  +>.$
         %-  ~(rep in loc.pes)
         |=  {{w/ship s/status} _+>.$}
-        (so-hear | src %status [%& src] w %full s)
+        (so-hear | src %status src w %full s)
       (so-lesson gaz)
     ::
     ++  so-hear                                         ::<  accept circle rumor
@@ -729,8 +723,7 @@
       ^+  +>
       ::  check that we're still subscribed to this story
       ::  this is a small %gall bug, we shouldn't get these
-      ::
-      ~?  ?!  ?|  (~(has in src.shape) [%& src])
+      ~?  ?!  ?|  (~(has in src.shape) src)
                   =(src so-cir)
               ==
         [%unexpected-rumor-source nom -.dif src]
@@ -751,7 +744,7 @@
                   ~?  =(src so-cir)  %but-src-is-us
                   +>
         $status   ::  ignore foreign remotes.
-                  ?.  |(=([%& src] pan.dif) =(src so-cir))
+                  ?.  =(src so-cir)
                     ~&  %ignoring-remote-status
                     +>
                   (so-delta-our dif)
@@ -778,14 +771,14 @@
       =.  self
         %+  roll  (~(tap by loc.pes))
         |=  {{w/ship s/status} _self}
-        (so-delta-our %status so-pan w %full s)
+        (so-delta-our %status so-cir w %full s)
       ::  remote presence
       =.  self
         %+  roll  (~(tap by rem.pes))
-        |=  {{p/partner g/group} _self}
+        |=  {{c/circle g/group} _self}
         %+  roll  (~(tap by g))
         |=  {{w/ship s/status} _self}
-        (so-delta-our %status p w %full s)
+        (so-delta-our %status c w %full s)
       ::  telegrams
       =.  self
         %+  so-delta-our  %grams
@@ -793,8 +786,8 @@
         |=  t/telegram
         ::  in audience, replace above with us.
         =-  t(aud.tot -)
-        =+  (~(del in aud.tot.t) [%& (above our.bol) nom])
-        (~(put in -) so-pan)
+        =+  (~(del in aud.tot.t) [(above our.bol) nom])
+        (~(put in -) so-cir)
       ::  burden flag
       (so-delta-our %burden &)
     ::
@@ -831,20 +824,20 @@
       [%story nom d]
     ::
     ++  so-sources                                      ::<  change source
-      ::>  adds or removes {pas} from our sources.
+      ::>  adds or removes {cos} from our sources.
       ::
       ::TODO  should ++action-source make use of this,
       ::      because of the {sus} logic?
-      |=  {add/? pos/(map partner range)}
+      |=  {add/? cos/(map circle range)}
       ^+  +>
       ::TODO  for new sources, follow.
       ::      for existing sources, unfollow and refollow
       ::      with new range?
-      ::=/  sus/(set partner)
+      ::=/  sus/(set circle)
       ::  %.  src.shape
       ::  ?:(add ~(dif in pas) ~(int in pas))
       ::?~  sus  +>.$
-      (so-delta-our %follow & pos)
+      (so-delta-our %follow & cos)
     ::
     ++  so-depict                                       ::<  change description
       ::>  modifies our caption.
@@ -874,7 +867,7 @@
       |=  {her/ship sat/status}
       ^+  +>
       ?:  =(`sat (~(get by locals) her))  +>.$
-      (so-delta-our %status so-pan her %full sat)
+      (so-delta-our %status so-cir her %full sat)
     ::
     ++  so-absent                                       ::<  del local presence
       ::>  remove {her} from our presence map.
@@ -882,7 +875,7 @@
       |=  her/ship
       ^+  +>
       ?.  (~(has by locals) her)  +>
-      (so-delta-our %status so-pan her %remove ~)
+      (so-delta-our %status so-cir her %remove ~)
     ::
     ::>  ||
     ::>  ||  %subscriptions
@@ -893,18 +886,18 @@
     ++  so-greet                                        ::<  subscription started
       ::>  store a started subscription as source.
       ::
-      |=  pan/partner
+      |=  cir/circle
       ^+  +>
-      ?:  (~(has in src.shape) pan)  +>
-      (so-delta-our %config so-cir %source & pan)
+      ?:  (~(has in src.shape) cir)  +>
+      (so-delta-our %config so-cir %source & cir)
     ::
     ++  so-leave                                        ::<  subscription ended
-      ::>  delete {pan} from our sources.
+      ::>  delete {cir} from our sources.
       ::
-      |=  pan/partner
+      |=  cir/circle
       ^+  +>
-      ?.  (~(has in src.shape) pan)  +>
-      (so-delta-our %config so-cir %source | pan)
+      ?.  (~(has in src.shape) cir)  +>
+      (so-delta-our %config so-cir %source | cir)
     ::
     ++  so-first-grams                                  ::<  beginning of stream
       ::>  find all grams that fall within the range.
@@ -1036,8 +1029,8 @@
         %-  so-act
         :-  %phrase
         %-  ~(rep in sus)
-        |=  {s/ship a/(set partner) t/(list speech)}
-        :-  (~(put in a) [%& s (main s)])
+        |=  {s/ship a/(set circle) t/(list speech)}
+        :-  (~(put in a) [s (main s)])
         [[%inv inv so-cir] t]
       (so-delta-our %config so-cir %permit [add sus])
     ::
@@ -1183,16 +1176,16 @@
   ::
   ++  da-change-glyph                                   ::<  un/bound glyph
     ::>  apply a %glyph delta, un/binding a glyph to/from
-    ::>  a set of partners.
+    ::>  a set of circles.
     ::
-    |=  {bin/? gyf/char pas/(set partner)}
+    |=  {bin/? gyf/char cis/(set circle)}
     ^+  +>
     ?:  bin
       %_  +>
-        nak  (~(put ju nak) gyf pas)
+        nak  (~(put ju nak) gyf cis)
       ==
-    =/  ole/(list (set partner))
-      ?.  =(pas ~)  [pas ~]
+    =/  ole/(list (set circle))
+      ?.  =(cis ~)  [cis ~]
       (~(tap in (~(get ju nak) gyf)))
     |-  ^+  +>.^$
     ?~  ole  +>.^$
@@ -1305,7 +1298,6 @@
     ::+|
     ::
     ++  sa-cir  [our.bol nom]
-    ++  sa-pan  [%& our.bol nom]
     ::
     ::>  ||
     ::>  ||  %delta-application
@@ -1326,19 +1318,11 @@
       |=  dif/delta-story
       ^+  +>
       %.  dif
-      ?+  -.dif
-        sa-change-local
-        ::
-          $config
-        ?:  =(cir.dif sa-cir)
-          sa-change-local
+      ?:  ?&  ?=(?($config $status) -.dif)
+              !=(cir.dif sa-cir)
+          ==
         sa-change-remote
-        ::
-          $status
-        ?:  =(pan.dif sa-pan)
-          sa-change-local
-        sa-change-remote
-      ==
+      sa-change-local
     ::
     ++  sa-change-local                                 ::<  apply our delta
       ::>  apply a %story delta to local data.
@@ -1373,7 +1357,7 @@
         ==
         ::
           $follow
-        (sa-emil (sa-follow-effects sub.dif pas.dif))
+        (sa-emil (sa-follow-effects sub.dif cos.dif))
       ==
     ::
     ++  sa-change-gram                                  ::<  save/update message
@@ -1418,8 +1402,8 @@
           $status
         %_  +>.$
             remotes
-          %+  ~(put by remotes)  pan.dif
-          =+  ole=(fall (~(get by remotes) pan.dif) *group)
+          %+  ~(put by remotes)  cir.dif
+          =+  ole=(fall (~(get by remotes) cir.dif) *group)
           ?:  ?=($remove -.dif.dif)  (~(del by ole) who.dif)
           =+  old=(fall (~(get by ole) who.dif) *status)
           (~(put by ole) who.dif (change-status old dif.dif))
@@ -1439,13 +1423,13 @@
     ::
     ++  sa-follow-effects                               ::<  un/subscribe
       ::>  apply side-effects for a %follow delta,
-      ::>  un/subscribing this story to/from {pas}.
+      ::>  un/subscribing this story to/from {cos}.
       ::
-      |=  {sub/? pos/(map partner range)}
+      |=  {sub/? cos/(map circle range)}
       ^-  (list move)
       ?:  sub
-        (sa-acquire (~(tap by pos)))
-      (sa-abjure (~(tap in (key-by pos))))
+        (sa-acquire (~(tap by cos)))
+      (sa-abjure (~(tap in (key-by cos))))
     ::
     ++  sa-permit-effects                               ::<  notify permitted
       ::>  apply side-effects for a %permit delta,
@@ -1469,49 +1453,39 @@
     ::+|
     ::
     ++  sa-acquire                                      ::<  subscribe us
-      ::>  subscribes this story to each partner.
+      ::>  subscribes this story to each circle.
       ::
-      |=  pas/(list (pair partner range))
+      |=  cos/(list (pair circle range))
       %+  sa-sauce  0  ::  subscription is caused by this app
       %-  zing
-      %+  turn  pas
-      |=  {pan/partner ran/range}
+      %+  turn  cos
+      |=  {cir/circle ran/range}
       ^-  (list card)
-      ?:  =(pan sa-pan)  ~                              ::  ignore self-subs
+      ?:  =(cir sa-cir)  ~                              ::  ignore self-subs
       ::  unless otherwise specified, subscribe starting
       ::  at the last message we heard.
       =.  ran  ::TODO  =?
         ?^  ran  ran
-        =+  num=(~(get by sequence) pan)
+        =+  num=(~(get by sequence) cir)
         ?~  num  `[[%ud 0] ~]
         `[[%ud u.num] ~]
-      ?-  -.pan
-          $|  !!                                        ::<  passport partner
-        ::
-          $&                                            ::<  circle partner
-        :_  ~
-        (circle-peer nom p.pan ran)
-      ==
+      :_  ~
+      (circle-peer nom cir ran)
     ::
     ++  sa-abjure                                       ::<  unsubscribe us
-      ::>  unsubscribes this story from each partner.
+      ::>  unsubscribes this story from each circle.
       ::
-      |=  pas/(list partner)
+      |=  cis/(list circle)
       %+  sa-sauce  0  ::  subscription is caused by this app
       %-  zing
-      %+  turn  pas
-      |=  pan/partner
+      %+  turn  cis
+      |=  cir/circle
       ^-  (list card)
-      ?-  -.pan
-          $|  !!                                        ::<  passport partner
-        ::
-          $&                                            ::<  circle partner
-        :_  ~
-        :*  %pull
-            /circle/[nom]/(scot %p hos.p.pan)/[nom.p.pan]
-            [hos.p.pan %talk-guardian]
-            ~
-        ==
+      :_  ~
+      :*  %pull
+          /circle/[nom]/(scot %p hos.cir)/[nom.cir]
+          [hos.cir %talk-guardian]
+          ~
       ==
     ::
     ++  sa-eject                                        ::<  unsubscribe ships
@@ -1691,12 +1665,12 @@
       |=  gam/telegram
       =.  aud.tot.gam
         %-  ~(run in aud.tot.gam)
-        |=  p/partner
+        |=  c/circle
         ::TODO  it probably isn't safe to do this for
         ::      all audience members hosted by us, even
         ::      if this is only called for burdens.
-        ?.  &(?=($& -.p) =(hos.p.p our.bol))  p
-        [%& who nom.p.p]
+        ?.  =(hos.c our.bol)  c
+        [who nom.c]
       gam
     ==
     ::
@@ -1705,8 +1679,8 @@
     dif(cir [who nom.cir.dif])
     ::
       $status
-    ?.  &(?=($& -.pan.dif) =(hos.p.pan.dif our.bol))  dif
-    dif(pan [%& who nom.p.pan.dif])
+    ?.  =(hos.cir.dif our.bol)  dif
+    dif(cir [who nom.cir.dif])
   ==
 ::
 ++  feel                                                ::<  delta to rumor
@@ -1963,7 +1937,7 @@
   %+  etch-repeat  [%repeat wir]
   |=  cir/circle
   %-  pre-bake
-  ta-done:(ta-repeat:ta [%& cir] fal)
+  ta-done:(ta-repeat:ta cir fal)
 ::
 ::>  ||
 ::>  ||  %logging

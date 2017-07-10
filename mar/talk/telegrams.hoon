@@ -68,18 +68,13 @@
         statement+`$-(json (unit statement))`stam
       ==
     ::
-    ++  audi  `$-(json (unit audience))`(op parn memb)
-    ++  auri  (op parn (ci (soft presence) so))
-    ++  memb  ^-  $-(json (unit (pair envelope delivery)))
-              (ot envelope+lope delivery+(ci (soft delivery) so) ~)
-    ++  lope  (ot visible+bo sender+(mu (su parn)) ~)
+    ++  audi  `$-(json (unit audience))`circ
+    ++  auri  (op circ (ci (soft presence) so))
+    ++  lope  (ot visible+bo sender+(mu (su circ)) ~)
     ::
-    ++  parn
-      ^-  $-(nail (like partner))
-      %+  pick
-        ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
-      %+  sear  (soft passport)
-      ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
+    ++  circ
+      ^-  $-(nail (like circle))
+      ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
     ::
     ++  stam  (ot date+di speech+spec ~)
     ++  spec
@@ -90,9 +85,6 @@
         exp+(ot txt+so ~)
         app+(ot txt+so src+so ~)
         fat+(ot tor+tors taf+spec ~)
-        ext+(ot nom+so txe+blob ~)
-        non+ul
-        mor+(ar spec)
         ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
       ==
     ++  tors
@@ -118,13 +110,6 @@
     |=  telegram
     (jobe ship+(jope aut) thought+(thot tot) ~)
     ::
-    ++  jove
-      |=  {a/envelope b/delivery}
-      %-  jobe  :~
-        envelope+(jobe visible+[%b vis.a] sender+?~(sen.a ~ s+(parn u.sen.a)) ~)
-        delivery+[%s b]
-      ==
-    ::
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
     ++  joke  |=(a/tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a/time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
@@ -133,20 +118,7 @@
       |=  thought
       (jobe serial+(jape <uid>) audience+(audi aud) statement+(stam sam) ~)
     ::
-    ++  audi  (map-to-json parn jove)
-    ++  bouq
-      |=  a/bouquet
-      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/knot s+c))))
-    ::
-    ++  parn
-      |=  a/partner  ^-  cord
-      ?-  -.a
-        $&  (circ p.a)
-        $|  %-  crip
-            ?-  -.p.a
-              $twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
-            ==
-      ==
+    ++  audi  (set-to-json circ)
     ::
     ++  circ
       |=  a/circle  ^-  cord
@@ -154,22 +126,16 @@
     ::
     ++  stam
       |=  statement
-      (jobe date+(jode wen) bouquet+(bouq boq) speech+(spec sep) ~)
+      (jobe date+(jode wen) speech+(spec sep) ~)
     ::
     ++  spec
       |=  a/speech
       %+  joba  -.a
       ?+  -.a  ~|(stub+-.a !!)
-        $non  ~
         $lin  (jobe txt+[%s msg.a] say+[%b pat.a] ~)
         $url  (joba txt+(jape (earf url.a)))
         $exp  (joba txt+[%s exp.a])
         $fat  (jobe tor+(tors tac.a) taf+$(a sep.a) ~)
-        $mor  :-  %a
-              |-  ^-  (list json)
-              ?~  ses.a  ~
-              [^$(a i.ses.a) $(ses.a t.ses.a)]
-        $ext  (jobe nom+[%s nom.a] txe+(jape (sifo (jam +.a))) ~)
         $app  (jobe txt+[%s msg.a] src+[%s app.a] ~)
         ::  $inv  (jobe ship+(jope p.a) party+[%s q.a] ~)
       ==
