@@ -64,25 +64,8 @@ all:
 
 else
 
-$(BUILD_DIR):
-	mkdir -p $@
-
 $(BUILD_DIR)/Makefile: | $(BUILD_DIR)
 	ln -sf $(REL_TOP)/litecross/Makefile $@
-
-$(BUILD_DIR)/config.mak: | $(BUILD_DIR)
-	printf >$@ '%s\n' \
-	"TARGET = $(TARGET)" \
-	"HOST = $(HOST)" \
-	"MUSL_SRCDIR = $(REL_TOP)/musl-$(MUSL_VER)" \
-	"GCC_SRCDIR = $(REL_TOP)/gcc-$(GCC_VER)" \
-	"BINUTILS_SRCDIR = $(REL_TOP)/binutils-$(BINUTILS_VER)" \
-	$(if $(GMP_VER),"GMP_SRCDIR = $(REL_TOP)/gmp-$(GMP_VER)") \
-	$(if $(MPC_VER),"MPC_SRCDIR = $(REL_TOP)/mpc-$(MPC_VER)") \
-	$(if $(MPFR_VER),"MPFR_SRCDIR = $(REL_TOP)/mpfr-$(MPFR_VER)") \
-	$(if $(ISL_VER),"ISL_SRCDIR = $(REL_TOP)/isl-$(ISL_VER)") \
-	$(if $(LINUX_VER),"LINUX_SRCDIR = $(REL_TOP)/linux-$(LINUX_VER)") \
-	"-include $(REL_TOP)/config.mak"
 
 all: | $(SRC_DIRS) $(BUILD_DIR) $(BUILD_DIR)/Makefile $(BUILD_DIR)/config.mak
 	cd $(BUILD_DIR) && $(MAKE) $@

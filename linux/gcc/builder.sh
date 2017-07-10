@@ -41,6 +41,20 @@ tar -xf $musl_src
 
 ls -d binutils-2.27 gmp-6.1.1 mpfr-3.1.4 gcc-6.3.0  mpc-1.0.3  musl-1.1.16
 
+mkdir -p build/local/$host
+
+cat > build/local/$host/config.mak <<EOF
+TARGET = $host
+HOST = 
+MUSL_SRCDIR = ../../../musl-1.1.16
+GCC_SRCDIR = ../../../gcc-6.3.0
+BINUTILS_SRCDIR = ../../../binutils-2.27
+GMP_SRCDIR = ../../../gmp-6.1.1
+MPC_SRCDIR = ../../../mpc-1.0.3
+MPFR_SRCDIR = ../../../mpfr-3.1.4
+LINUX_SRCDIR = ../../../linux-4.4.10
+EOF
+
 make
 
 make install OUTPUT=$out
