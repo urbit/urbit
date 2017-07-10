@@ -3,6 +3,13 @@
 let
   version = "5.8.0";
 
+  # TODO: for people doing incremental builds with this package, try
+  # to make the link step faster and not produce such a huge (400 MB)
+  # executable.  Maybe strip the static libraries in the output or
+  # disable the generation of debug symbols by GCC in the first place.
+  # Qt has built-in support for compiling both debug and release
+  # libraries and installing them side by side, which we could try.
+
   # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
   base-raw = crossenv.make_derivation rec {
