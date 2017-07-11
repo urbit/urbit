@@ -31,10 +31,6 @@ obj_musl/.lc_configured: | obj_toolchain/gcc/.lc_built
 obj_musl/.lc_built: | obj_toolchain/$(TARGET)/libgcc/libgcc.a
 obj_toolchain/.lc_built: | obj_sysroot/.lc_libs obj_sysroot/.lc_headers
 
-musl: obj_musl/.lc_built
-
-toolchain: obj_toolchain/.lc_built
-
 .PHONY: all musl toolchain install-musl install-toolchain clean
 
 obj_toolchain/.lc_configured: | obj_toolchain
@@ -68,18 +64,12 @@ obj_toolchain/.lc_built: | obj_toolchain/.lc_configured obj_toolchain/gcc/.lc_bu
 	cd obj_toolchain && $(MAKE) MAKE="$(MAKE)"
 	touch $@
 
-install-musl: | obj_musl/.lc_built
-	cd obj_musl && $(MAKE) $(MUSL_VARS) DESTDIR=$(DESTDIR)$(OUTPUT)$(SYSROOT) install
-
-install-toolchain: | obj_toolchain/.lc_built
-	cd obj_toolchain && $(MAKE) MAKE="$(MAKE)" DESTDIR=$(DESTDIR)$(OUTPUT) install
-
-all: musl toolchain
+install: obj_musl/.lc_built obj_toolchain/.lc_built
 	mkdir -p $(CURDIR)/obj_kernel_headers/staged
 	cd src_kernel_headers && $(MAKE) ARCH=$(LINUX_ARCH) O=$(CURDIR)/obj_kernel_headers INSTALL_HDR_PATH=$(CURDIR)/obj_kernel_headers/staged headers_install
 	find obj_kernel_headers/staged/include '(' -name .install -o -name ..install.cmd ')' -exec rm {} +
-
-install: install-musl install-toolchain
+	cd obj_musl && $(MAKE) $(MUSL_VARS) DESTDIR=$(DESTDIR)$(OUTPUT)$(SYSROOT) install
+	cd obj_toolchain && $(MAKE) MAKE="$(MAKE)" DESTDIR=$(DESTDIR)$(OUTPUT) install
 	mkdir -p $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
 	cp -R obj_kernel_headers/staged/include/* $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
 

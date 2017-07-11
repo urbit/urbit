@@ -24,6 +24,7 @@ stdenv.mkDerivation rec {
   builder = ./builder.sh;
 
   patches = [
+    # TODO: combine three of these patches into one called search-dirs.patch
     ./mingw-search-paths.patch
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
