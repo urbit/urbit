@@ -744,7 +744,7 @@
                   ~?  =(src so-cir)  %but-src-is-us
                   +>
         $status   ::  ignore foreign remotes.
-                  ?.  =(src so-cir)
+                  ?.  |(=(src cir.dif) =(src so-cir))
                     ~&  %ignoring-remote-status
                     +>
                   (so-delta-our dif)
@@ -785,8 +785,8 @@
         %+  turn  gaz
         |=  t/telegram
         ::  in audience, replace above with us.
-        =-  t(aud.tot -)
-        =+  (~(del in aud.tot.t) [(above our.bol) nom])
+        =-  t(aud -)
+        =+  (~(del in aud.t) [(above our.bol) nom])
         (~(put in -) so-cir)
       ::  burden flag
       (so-delta-our %burden &)
@@ -918,13 +918,13 @@
       ?~  gaz  zeg
       ?:  ?-  -.u.tal.u.ran                             ::  after the end
             $ud  (lth +.u.tal.u.ran num)
-            $da  (lth +.u.tal.u.ran wen.sam.tot.i.gaz)
+            $da  (lth +.u.tal.u.ran wen.i.gaz)
           ==
         ::  if past the river, we're done searching.
         zeg
       ?:  ?-  -.hed.u.ran                               ::  before the start
             $ud  (lth num +.hed.u.ran)
-            $da  (lth wen.sam.tot.i.gaz +.hed.u.ran)
+            $da  (lth wen.i.gaz +.hed.u.ran)
           ==
         ::  if before the river, continue onward.
         $(num +(num), gaz t.gaz)
@@ -961,14 +961,14 @@
     ++  so-sane                                         ::<  sanitize
       ::>  sanitize %lin speech according to our settings.
       ::
-      |=  tot/thought
-      ^-  thought
-      ?.  ?=({$lin *} sep.sam.tot)  tot
-      %_  tot
-          msg.sep.sam
+      |=  sep/speech
+      ^-  speech
+      ?.  ?=($lin -.sep)  sep
+      %_  sep
+          msg
         %-  crip
         %-  tufa
-        %+  turn  (tuba (trip msg.sep.sam.tot))
+        %+  turn  (tuba (trip msg.sep))
         |=  a/@c
         ::  always replace control characters.
         ?:  |((lth a 32) =(a `@c`127))
@@ -1004,7 +1004,7 @@
       ::  check for write permissions.
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
-      =.  tot.gam  (so-sane tot.gam)
+      =.  sep.gam  (so-sane sep.gam)
       (so-delta-our %grams [gam ~])
     ::
     ::>  ||
@@ -1366,13 +1366,13 @@
       ::
       |=  gam/telegram
       ^+  +>
-      =+  old=(~(get by known) uid.tot.gam)
+      =+  old=(~(get by known) uid.gam)
       ?~  old
         ::  new message
         %_  +>.$
           grams    (welp grams [gam ~])
           count    +(count)
-          known    (~(put by known) uid.tot.gam count)
+          known    (~(put by known) uid.gam count)
         ==
       ::  changed message
       =+  dex=(sub count u.old)
@@ -1663,8 +1663,8 @@
         gaz
       %+  turn  gaz.dif
       |=  gam/telegram
-      =.  aud.tot.gam
-        %-  ~(run in aud.tot.gam)
+      =.  aud.gam
+        %-  ~(run in aud.gam)
         |=  c/circle
         ::TODO  it probably isn't safe to do this for
         ::      all audience members hosted by us, even

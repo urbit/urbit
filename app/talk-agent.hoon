@@ -365,7 +365,7 @@
     ::
     |=  gam/telegram
     ^+  +>
-    =+  old=(~(get by known) uid.tot.gam)
+    =+  old=(~(get by known) uid.gam)
     ?~  old
       (ta-append gam)      ::<  add
     (ta-revise u.old gam)  ::<  modify
@@ -377,7 +377,7 @@
     ^+  +>
     =:  grams  [gam grams]
         count  +(count)
-        known  (~(put by known) uid.tot.gam count)
+        known  (~(put by known) uid.gam count)
     ==
     =<  sh-done
     (~(sh-gram sh cli) gam)
@@ -390,7 +390,7 @@
     =+  old=(snag (dec way) grams)
     ?:  =(gam old)  +>.$                                ::  no change
     =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
-    ?:  =(sam.tot.gam sam.tot.old)  +>.$                ::  just audience change
+    ?:  =(sep.gam sep.old)  +>.$                        ::  no worthy change
     =<  sh-done
     (~(sh-gram sh cli) gam)
   ::
@@ -843,7 +843,7 @@
         ^+  ..sh-work
         =+  tay=~(. tr settings.she gam)
         =.  ..sh-work  (sh-fact tr-fact:tay)
-        sh-prod(active.she aud.tot.gam)
+        sh-prod(active.she aud.gam)
       ::
       ++  deli                                          ::<  find number
         ::>  gets absolute message number from relative.
@@ -1246,7 +1246,7 @@
       |-  ^-  (unit (set circle))
       ?~  grams  ~
       ::>  get first circle from a telegram's audience.
-      =+  pan=(silt (~(tap in aud.tot.i.grams)))
+      =+  pan=(silt (~(tap in aud.i.grams)))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
     ::
@@ -1552,7 +1552,7 @@
       |=  gam/telegram
       ^+  +>
       ::TODO  is it cool to just assume all messages we print are already stored?
-      =+  num=(~(got by known) uid.tot.gam)
+      =+  num=(~(got by known) uid.gam)
       =.  +>.$
         ::  if the number isn't directly after latest, print it always.
         ?.  =(num +(latest.she))

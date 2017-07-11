@@ -191,9 +191,13 @@
 ::>    structures for containing main message data.
 ::+|
 ::
-++  telegram   {aut/ship tot/thought}                   ::<  who thought
-++  thought    {uid/serial aud/audience sam/statement}  ::<  which whom this
-++  statement  {wen/@da sep/speech}                     ::<  when what body
+++  telegram   {aut/ship thought}                       ::<  whose message
+++  thought                                             ::>  inner message
+  $:  uid/serial                                        ::<  unique identifier
+      aud/audience                                      ::<  destinations
+      wen/@da                                           ::<  timestamp
+      sep/speech                                        ::<  content
+  ==                                                    ::
 ++  speech                                              ::>  content body
   $%  {$lin pat/? msg/cord}                             ::<  no/@ text line
       {$url url/purf}                                   ::<  parsed url
