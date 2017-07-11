@@ -200,7 +200,7 @@
     =>  %+  roll
           ^-  (list {security naem cord})
           :~  [%brown (main our.bol) 'default home']
-              [%green ~.public 'visible activity']
+              [%green %public 'visible activity']
           ==
         |=  {{typ/security nom/naem des/cord} _ta}
         %+  ta-action  ost.bol
@@ -1774,9 +1774,9 @@
           [%reader ul]
           [%burden (at /[%p])]
           [%report ul]
-          [%circle (al knot rang)]
+          [%circle (al term rang)]
       ==
-  ++  knot  (do %tas)
+  ++  term  (do %tas)
   ++  rang  (mu (al plac (mu (un plac))))
   ++  plac  (or %da %ud)
   --

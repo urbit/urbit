@@ -11,8 +11,8 @@
 ::>    wrapper molds, for semantic clarity.
 ::+|
 ::
-::TODO  term & rename
-++  naem  knot                                          ::<  circle name
+::TODO  rename
+++  naem  term                                          ::<  circle name
 ++  nick  cord                                          ::<  local nickname
 ::
 ::>  ||
