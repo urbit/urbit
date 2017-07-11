@@ -42,7 +42,7 @@
           remotes/(map circle group)                    ::<  remote presences
           mirrors/(map circle config)                   ::<  remote configs
           ::  ui state                                  ::
-          nicks/(map ship cord)                         ::<  human identities
+          nicks/(map ship nick)                         ::<  human identities
           nik/(map (set circle) char)                   ::<  bound circle glyphs
           nak/(jug char (set circle))                   ::<  circle glyph lookup
           cli/shell                                     ::<  interaction state
@@ -52,7 +52,7 @@
           latest/@ud                                    ::<  latest shown msg num
           say/sole-share                                ::<  console state
           active/(set circle)                           ::<  active targets
-          settings/(set knot)                           ::<  frontend settings
+          settings/(set knot)  ::TODO  term             ::<  frontend settings
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
@@ -71,13 +71,13 @@
       $%  ::  circle management                         ::
           {$join p/(map circle range)}                  ::<  subscribe to
           {$leave p/where}                              ::<  unsubscribe from
-          {$create p/security q/knot r/cord}            ::<  create circle
-          {$delete p/knot q/(unit cord)}                ::<  delete circle
-          {$depict p/knot q/cord}                       ::<  change description
-          {$filter p/knot q/? r/?}                      ::<  change message rules
-          {$invite p/knot q/(set ship)}                 ::<  give permission
-          {$banish p/knot q/(set ship)}                 ::<  deny permission
-          {$source p/knot q/(map circle range)}         ::<  add source
+          {$create p/security q/naem r/cord}            ::<  create circle
+          {$delete p/naem q/(unit cord)}                ::<  delete circle
+          {$depict p/naem q/cord}                       ::<  change description
+          {$filter p/naem q/? r/?}                      ::<  change message rules
+          {$invite p/naem q/(set ship)}                 ::<  give permission
+          {$banish p/naem q/(set ship)}                 ::<  deny permission
+          {$source p/naem q/(map circle range)}         ::<  add source
           ::  personal metadata
           {$attend p/(set circle) q/presence}           ::<  set our presence
           {$name p/(set circle) q/human}                ::<  set our name
@@ -133,7 +133,7 @@
 ++  inbox                                               ::<  reader's circle name
   ::>  produces the name of the circle used by this
   ::>  reader for all its operations
-  ^-  knot
+  ^-  naem
   (main our.bol)
 ::
 ++  incir                                               ::<  reader's circle
@@ -900,10 +900,10 @@
       ++  reverse-nicks                                 ::<  find by handle
         ::>  finds all ships whose handle matches {nym}.
         ::
-        |=  nym/knot
+        |=  nym/^nick
         ^-  (list ship)
         %+  murn  (~(tap by nicks))
-        |=  {p/ship q/knot}
+        |=  {p/ship q/^nick}
         ?.  =(q nym)  ~
         [~ u=p]
       ::
@@ -950,7 +950,7 @@
       ++  create                                        ::<  %create
         ::>  creates circle {nom} with specified config.
         ::
-        |=  {sec/security nom/knot txt/cord}
+        |=  {sec/security nom/naem txt/cord}
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
@@ -960,40 +960,40 @@
         ::>  deletes our circle {nom}, after optionally
         ::>  sending a last announce message {say}.
         ::
-        |=  {nom/knot say/(unit cord)}
+        |=  {nom/naem say/(unit cord)}
         ^+  ..sh-work
         (sh-act %delete nom say)
       ::
       ++  depict                                        ::<  %depict
         ::>  changes the description of {nom} to {txt}.
         ::
-        |=  {nom/knot txt/cord}
+        |=  {nom/naem txt/cord}
         ^+  ..sh-work
         (sh-act %depict nom txt)
       ::
       ++  invite                                        ::<  %invite
         ::>  invites {sis} to our circle {nom}.
         ::
-        |=  {nom/knot sis/(set ship)}
+        |=  {nom/naem sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom & sis)
       ::
       ++  filter
-        |=  {nom/knot cus/? utf/?}
+        |=  {nom/naem cus/? utf/?}
         ^+  ..sh-work
         (sh-act %filter nom cus utf)
       ::
       ++  banish                                        ::<  %banish
         ::>  banish {sis} from our circle {nom}.
         ::
-        |=  {nom/knot sis/(set ship)}
+        |=  {nom/naem sis/(set ship)}
         ^+  ..sh-work
         (sh-act %permit nom | sis)
       ::
       ++  source                                        ::<  %source
         ::>  adds {pas} to {nom}'s src.
         ::
-        |=  {nom/knot pos/(map circle range)}
+        |=  {nom/naem pos/(map circle range)}
         ^+  ..sh-work
         (sh-act %source nom & pos)
       ::
@@ -1134,13 +1134,13 @@
         ::>  either shows, sets or unsets nicknames
         ::>  depending on arguments.
         ::
-        |=  {her/(unit ship) nym/(unit cord)}
+        |=  {her/(unit ship) nym/(unit ^nick)}
         ^+  ..sh-work
         ::>  no arguments, show all
         ?:  ?=({$~ $~} +<)
           %+  sh-fact  %mor
           %+  turn  (~(tap by nicks))
-          |=  {p/ship q/knot}
+          |=  {p/ship q/^nick}
           :-  %txt
           "{<p>}: {<q>}"
         ::>  show her nick
