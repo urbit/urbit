@@ -20,9 +20,15 @@
       ::TODO  separate stream for just msgs? what about just configs? presences?
       ::      yes!
   ==                                                    ::
-  ::TODO  more newlines
-++  range  (unit {hed/place tal/(unit place)})          ::<  inclusive msg range
-++  place  $%({$da @da} {$ud @ud})                      ::<  @ud/@da for range
+++  range                                               ::>  inclusive msg range
+  %-  unit                                              ::<  ~ means everything
+  $:  hed/place                                         ::<  start of range
+      tal/(unit place)                                  ::<  opt end of range
+  ==                                                    ::
+++  place                                               ::>  range indicators
+  $%  {$da @da}                                         ::<  date
+      {$ud @ud}                                         ::<  message number
+  ==                                                    ::
 ++  prize                                               ::>  query result
   $%  {$reader prize-reader}                            ::<  /reader
       {$friend cis/(set circle)}                        ::<  /friend
