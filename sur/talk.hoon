@@ -74,7 +74,7 @@
 ++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
 ++  delta-story                                         ::<  story delta
   $?  diff-story                                        ::<  both in & outward
-  $%  {$burden bur/?}                                   ::<  burden flag
+  $%  {$inherited ihr/?}                                ::<  inherited flag
       {$follow sub/? cos/(map circle range)}            ::<  un/subscribe
   ==  ==                                                ::
 ++  diff-story                                          ::<  story rumor

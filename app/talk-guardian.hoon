@@ -61,7 +61,7 @@
           ::TODO?  never gets updated. still needed?    ::
           sequence/(map circle @ud)                     ::<  circles heard
           known/(map serial @ud)                        ::<  messages heard
-          burden/?                                      ::<  from parent?
+          inherited/?($| $&)                            ::<  from parent?
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
@@ -788,8 +788,8 @@
         =-  t(aud -)
         =+  (~(del in aud.t) [(above our.bol) nom])
         (~(put in -) so-cir)
-      ::  burden flag
-      (so-delta-our %burden &)
+      ::  inherited flag
+      (so-delta-our %inherited &)
     ::
     ::>  ||
     ::>  ||  %changes
@@ -1219,11 +1219,8 @@
     ?+  -.dif
       =<  sa-done
       %.  dif
-      %~  sa-change  sa  nom
-          %+  fall
-            (~(get by stories) nom)
-          %*(. *story burden |)
-      ==
+      =+  (fall (~(get by stories) nom) *story)
+      ~(sa-change sa nom -)
       ::
       $new      (da-create nom +.dif)
       $bear     ~&(%unexpected-unsplit-bear +>)
@@ -1236,8 +1233,7 @@
     |=  {nom/knot cof/config}
     ^+  +>
     =<  sa-done
-    ::  default for ? is &, so we manually set to | now.
-    %-  ~(sa-change sa nom %*(. *story burden |))
+    %-  ~(sa-change sa nom *story)
     [%config [our.bol nom] %full cof]
   ::
   ++  da-delete                                         ::<  delete story
@@ -1332,8 +1328,8 @@
       ?+  -.dif
         ~&([%unexpected-delta-local -.dif] !!)
         ::
-          $burden
-        +>(burden bur.dif)
+          $inherited
+        +>(inherited ihr.dif)
         ::
           $grams
         |-  ^+  +>.^$
@@ -1700,7 +1696,7 @@
       $burden
     ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
     ?.  ?=($story -.dif)  ~
-    ?:  ?=(?($follow $burden) -.dif.dif)  ~
+    ?:  ?=(?($follow $inherited) -.dif.dif)  ~  ::REVIEW  ?= diff-story fishloop
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
     `[%burden nom.dif (dedicate who.qer dif.dif)]
@@ -1713,7 +1709,7 @@
     ?.  ?=(?($grams $status) -.dif.dif)  ~
     =+  soy=(~(got by stories) nom.dif)
     ::  and only if the story is inherited.
-    ?.  burden.soy  ~
+    ?.  inherited.soy  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape.soy)  ~
     `[%burden nom.dif (dedicate (above our.bol) dif.dif)]
@@ -1725,6 +1721,7 @@
     =+  ren=(~(so-in-range so:ta nom.qer ~ (~(got by stories) nom.qer)) ran.qer)
     ::TODO  if done.ren, %quit bone
     ?.  in.ren  ~
+    ?:  ?=(?($follow $inherited) -.dif.dif)  ~  ::REVIEW ^
     `[%circle dif.dif]
   ==
 ::
