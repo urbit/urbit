@@ -49,7 +49,7 @@
       $:  stories/(map knot story)                      ::<  conversations
           log/(map knot @ud)                            ::<  logged to clay
           nicks/(map ship knot)                         ::<  nicknames
-          nak/(jug char (set circle))                   ::<  circle glyph lookup
+          binds/(jug char (set circle))                 ::<  circle glyph lookup
       ==                                                ::
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
@@ -1182,15 +1182,15 @@
     ^+  +>
     ?:  bin
       %_  +>
-        nak  (~(put ju nak) gyf cis)
+        binds  (~(put ju binds) gyf cis)
       ==
     =/  ole/(list (set circle))
       ?.  =(cis ~)  [cis ~]
-      (~(tap in (~(get ju nak) gyf)))
+      (~(tap in (~(get ju binds) gyf)))
     |-  ^+  +>.^$
     ?~  ole  +>.^$
     %_  $
-      nak  (~(del ju nak) gyf i.ole)
+      binds  (~(del ju binds) gyf i.ole)
       ole  t.ole
     ==
   ::
@@ -1612,7 +1612,7 @@
   ^-  (unit (unit prize))
   ?-  -.qer
       $reader
-    ``[%reader nak nicks]
+    ``[%reader binds nicks]
     ::
       $burden
     :+  ~  ~
