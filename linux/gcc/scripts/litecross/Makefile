@@ -31,10 +31,6 @@ obj_musl/.lc_configured: | obj_toolchain/gcc/.lc_built
 obj_musl/.lc_built: | obj_toolchain/$(TARGET)/libgcc/libgcc.a
 obj_toolchain/.lc_built: | obj_sysroot/.lc_libs obj_sysroot/.lc_headers
 
-all: musl toolchain
-
-install: install-musl install-toolchain
-
 musl: obj_musl/.lc_built
 
 toolchain: obj_toolchain/.lc_built
@@ -78,14 +74,12 @@ install-musl: | obj_musl/.lc_built
 install-toolchain: | obj_toolchain/.lc_built
 	cd obj_toolchain && $(MAKE) MAKE="$(MAKE)" DESTDIR=$(DESTDIR)$(OUTPUT) install
 
-all: kernel-headers
-install: install-kernel-headers
-kernel-headers: | obj_kernel_headers/.lc_built
-obj_kernel_headers/.lc_built:
+all: musl toolchain
 	mkdir -p $(CURDIR)/obj_kernel_headers/staged
 	cd src_kernel_headers && $(MAKE) ARCH=$(LINUX_ARCH) O=$(CURDIR)/obj_kernel_headers INSTALL_HDR_PATH=$(CURDIR)/obj_kernel_headers/staged headers_install
 	find obj_kernel_headers/staged/include '(' -name .install -o -name ..install.cmd ')' -exec rm {} +
-	touch $@
-install-kernel-headers: | obj_kernel_headers/.lc_built
+
+install: install-musl install-toolchain
 	mkdir -p $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
 	cp -R obj_kernel_headers/staged/include/* $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
+
