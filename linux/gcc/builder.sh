@@ -78,5 +78,8 @@ ln -s . obj_sysroot/usr
 ln -s lib obj_sysroot/lib32
 ln -s lib obj_sysroot/lib64
 
+mkdir obj_toolchain
+mkdir obj_musl
+
 make
 make install OUTPUT=$out

@@ -14,6 +14,7 @@ FULL_TOOLCHAIN_CONFIG = --enable-languages=c,c++ \
 	--target=$(TARGET) --prefix= \
 	--libdir=/lib --disable-multilib \
 	--with-sysroot=$(SYSROOT) \
+        --with-build-sysroot=$(CURDIR)/obj_sysroot \
 	--enable-tls \
 	--disable-libmudflap --disable-libsanitizer \
 	--disable-gnu-indirect-function \
@@ -24,7 +25,6 @@ FULL_TOOLCHAIN_CONFIG = --enable-languages=c,c++ \
 FULL_MUSL_CONFIG = --prefix= --host=$(TARGET)
 
 SYSROOT = /$(TARGET)
-FULL_TOOLCHAIN_CONFIG += --with-build-sysroot=$(CURDIR)/obj_sysroot
 FULL_MUSL_CONFIG += CC="$(XGCC)" LIBCC="../obj_toolchain/$(TARGET)/libgcc/libgcc.a" 
 MUSL_VARS = AR=../obj_toolchain/binutils/ar RANLIB=../obj_toolchain/binutils/ranlib
 obj_musl/.lc_configured: | obj_toolchain/gcc/.lc_built
@@ -40,9 +40,6 @@ musl: obj_musl/.lc_built
 toolchain: obj_toolchain/.lc_built
 
 .PHONY: all musl toolchain install-musl install-toolchain clean
-
-obj_%:
-	mkdir -p $@
 
 obj_toolchain/.lc_configured: | obj_toolchain
 	cd obj_toolchain && ../src_toolchain/configure $(FULL_TOOLCHAIN_CONFIG)
@@ -80,7 +77,6 @@ install-musl: | obj_musl/.lc_built
 
 install-toolchain: | obj_toolchain/.lc_built
 	cd obj_toolchain && $(MAKE) MAKE="$(MAKE)" DESTDIR=$(DESTDIR)$(OUTPUT) install
-	ln -sf $(TARGET)-gcc $(DESTDIR)$(OUTPUT)/bin/$(TARGET)-cc
 
 all: kernel-headers
 install: install-kernel-headers
@@ -93,6 +89,3 @@ obj_kernel_headers/.lc_built:
 install-kernel-headers: | obj_kernel_headers/.lc_built
 	mkdir -p $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
 	cp -R obj_kernel_headers/staged/include/* $(DESTDIR)$(OUTPUT)$(SYSROOT)/include
-
-clean:
-	rm -rf src_* obj_*
