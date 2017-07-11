@@ -3,8 +3,17 @@
   !:
 |%
 ::
-::TODO  wrappers around knot for story name, nickname,
 ::TODO  use different words for different kinds of burdens
+::
+::>  ||
+::>  ||  %wrappers
+::>  ||
+::>    wrapper molds, for semantic clarity.
+::+|
+::
+::TODO  term & rename
+++  naem  knot                                          ::<  circle name
+++  nick  cord                                          ::<  local nickname
 ::
 ::>  ||
 ::>  ||  %query-models
@@ -16,7 +25,7 @@
   $%  {$reader $~}                                      ::<  shared ui state
       {$burden who/ship}                                ::<  duties to share
       {$report $~}                                      ::<  duty reports
-      {$circle nom/knot ran/range}                      ::<  story query
+      {$circle nom/naem ran/range}                      ::<  story query
       ::TODO  separate stream for just msgs? what about just configs? presences?
       ::      yes!
   ==                                                    ::
@@ -32,18 +41,18 @@
 ++  prize                                               ::>  query result
   $%  {$reader prize-reader}                            ::<  /reader
       {$friend cis/(set circle)}                        ::<  /friend
-      {$burden sos/(map knot burden)}                   ::<  /burden
+      {$burden sos/(map naem burden)}                   ::<  /burden
       ::TODO  do we ever use remote things from remote circles?
       {$circle burden}                                  ::<  /circle
   ==                                                    ::
 ++  prize-reader                                        ::
   $:  gys/(jug char (set circle))                       ::<  glyph bindings
-      nis/(map ship cord)                               ::<  nicknames
+      nis/(map ship nick)                               ::<  local nicknames
   ==                                                    ::
 ++  rumor                                               ::<  query result change
   $%  {$reader dif/rumor-reader}                        ::<  /reader
       {$friend add/? cir/circle}                        ::<  /friend
-      {$burden nom/knot dif/diff-story}                 ::<  /burden
+      {$burden nom/naem dif/diff-story}                 ::<  /burden
       {$circle dif/diff-story}                          ::<  /circle
   ==                                                    ::
 ++  rumor-reader                                        ::<  changed ui state
@@ -63,15 +72,15 @@
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
       ::  story state                                   ::
-      {$story nom/knot dif/delta-story}                 ::<  change to story
+      {$story nom/naem dif/delta-story}                 ::<  change to story
       ::  side-effects                                  ::
       {$init $~}                                        ::<  initialize
       {$observe who/ship}                               ::<  watch burden bearer
-      {$present hos/ship nos/(set knot) dif/diff-status}::<  send %present cmd
+      {$present hos/ship nos/(set naem) dif/diff-status}::<  send %present cmd
       {$quit ost/bone}                                  ::<  force unsubscribe
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char pas/(set circle)}       ::<  un/bound glyph
-++  diff-nick   {who/ship nic/cord}                     ::<  changed nickname
+++  diff-nick   {who/ship nic/nick}                     ::<  changed nickname
 ++  delta-story                                         ::<  story delta
   $?  diff-story                                        ::<  both in & outward
   $%  {$inherited ihr/?}                                ::<  inherited flag
@@ -115,12 +124,12 @@
 ::
 ++  action                                              ::>  user action
   $%  ::  circle configuration                          ::
-      {$create nom/knot des/cord sec/security}          ::<  create circle
-      {$delete nom/knot why/(unit cord)}                ::<  delete + announce
-      {$depict nom/knot des/cord}                       ::<  change description
-      {$filter nom/knot fit/filter}                     ::<  change message rules
-      {$permit nom/knot inv/? sis/(set ship)}           ::<  invite/banish
-      {$source nom/knot sub/? src/(map circle range)}   ::<  un/sub to/from src
+      {$create nom/naem des/cord sec/security}          ::<  create circle
+      {$delete nom/naem why/(unit cord)}                ::<  delete + announce
+      {$depict nom/naem des/cord}                       ::<  change description
+      {$filter nom/naem fit/filter}                     ::<  change message rules
+      {$permit nom/naem inv/? sis/(set ship)}           ::<  invite/banish
+      {$source nom/naem sub/? src/(map circle range)}   ::<  un/sub to/from src
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::<  post exact
       {$phrase aud/(set circle) ses/(list speech)}      ::<  post easy
@@ -129,7 +138,7 @@
       {$naming cis/(set circle) man/human}              ::<  our name update
       ::  changing shared ui                            ::
       {$glyph gyf/char pas/(set circle) bin/?}          ::<  un/bind a glyph
-      {$nick who/ship nic/knot}                         ::<  new identity
+      {$nick who/ship nic/nick}                         ::<  new identity
   ==                                                    ::
 ::
 ::>  ||
@@ -140,7 +149,7 @@
 ::
 ++  command                                             ::>  effect on story
   $%  {$publish tos/(list thought)}                     ::<  deliver
-      {$present nos/(set knot) dif/diff-status}         ::<  status update
+      {$present nos/(set naem) dif/diff-status}         ::<  status update
       {$bearing $~}                                     ::<  prompt to listen
   ==                                                    ::
 ::
@@ -150,10 +159,7 @@
 ::>    messaging targets and their metadata.
 ::+|
 ::
-++  circle     {hos/ship nom/knot}                      ::<  native target
-++  passport                                            ::>  foreign target
-  $%  {$twitter p/cord}                                 ::<  twitter handle
-  ==                                                    ::
+++  circle     {hos/ship nom/naem}                      ::<  native target
 ::  circle configurations.                              ::
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config

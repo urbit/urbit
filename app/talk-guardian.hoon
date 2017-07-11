@@ -46,9 +46,9 @@
     ::
     |%
     ++  state                                           ::>  broker state
-      $:  stories/(map knot story)                      ::<  conversations
-          log/(map knot @ud)                            ::<  logged to clay
-          nicks/(map ship knot)                         ::<  nicknames
+      $:  stories/(map naem story)                      ::<  conversations
+          log/(map naem @ud)                            ::<  logged to clay
+          nicks/(map ship nick)                         ::<  local nicknames
           binds/(jug char (set circle))                 ::<  circle glyph lookup
       ==                                                ::
     ++  story                                           ::>  wire content
@@ -83,7 +83,7 @@
       ==                                                ::
     ++  weir                                            ::>  parsed wire
       $%  {$repeat cir/circle}                          ::<  messaging wire
-          {$circle nom/knot cir/circle}                 ::<  subscription wire
+          {$circle nom/naem cir/circle}                 ::<  subscription wire
       ==                                                ::
     --
 ::
@@ -177,7 +177,7 @@
     ::>  if the story {nom} exists, calls the gate with
     ::>  a story core. if it doesn't, does nothing.
     ::
-    |=  nom/knot
+    |=  nom/naem
     |=  fun/$-(_so _ta)
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
@@ -198,11 +198,11 @@
     ::
     ::  create default circles.
     =>  %+  roll
-          ^-  (list {security knot cord})
+          ^-  (list {security naem cord})
           :~  [%brown (main our.bol) 'default home']
               [%green ~.public 'visible activity']
           ==
-        |=  {{typ/security nom/knot des/cord} _ta}
+        |=  {{typ/security nom/naem des/cord} _ta}
         %+  ta-action  ost.bol
         [%create nom des typ]
     %-  ta-deltas
@@ -240,11 +240,11 @@
   ++  ta-present                                        ::<  update a status
     ::>
     ::
-    |=  {who/ship nos/(set knot) dif/diff-status}
+    |=  {who/ship nos/(set naem) dif/diff-status}
     ^+  +>
     %-  ta-deltas
     %-  ~(rep in nos)
-    |=  {n/knot l/(list delta)}
+    |=  {n/naem l/(list delta)}
     :_  l
     [%story n %status [our.bol n] who dif]
   ::
@@ -291,7 +291,7 @@
       ::>  store a delta about a story. if the story
       ::>  does not exist, crash.
       ::
-      |=  {nom/knot dif/delta-story}
+      |=  {nom/naem dif/delta-story}
       ?:  (~(has by stories) nom)
         (impact nom dif)
       (ta-evil (crip "no story {(trip nom)}"))
@@ -299,7 +299,7 @@
     ++  impact                                          ::<  delta for story
       ::>  Store a delta about a story.
       ::
-      |=  {nom/knot dif/delta-story}
+      |=  {nom/naem dif/delta-story}
       (ta-delta %story nom dif)
     ::
     ++  present                                         ::<  send status update
@@ -308,19 +308,19 @@
       |=  {cis/(set circle) dif/diff-status}
       ^+  ..ta-action
       =/  cic
-        ^-  (jug ship knot)
+        ^-  (jug ship naem)
         %-  ~(rep in cis)
-        |=  {c/circle m/(jug ship knot)}
+        |=  {c/circle m/(jug ship naem)}
         (~(put ju m) hos.c nom.c)
       =.  ..ta-action  ::TODO  =?
         ?.  (~(has by cic) our.bol)  ..ta-action
         %-  ~(rep in (~(get ju cic) our.bol))
-        |=  {n/knot _ta}
+        |=  {n/naem _ta}
         (affect n %status [our.bol n] our.bol dif)
       =.  cic  (~(del by cic) our.bol)
       %-  ta-deltas
       %-  ~(rep by cic)
-      |=  {{h/ship s/(set knot)} l/(list delta)}
+      |=  {{h/ship s/(set naem)} l/(list delta)}
       :_  l
       [%present h s dif]
     ::
@@ -329,7 +329,7 @@
     ++  action-create                                   ::<  create story
       ::>  creates a story with the specified parameters.
       ::
-      |=  {nom/knot des/cord typ/security}
+      |=  {nom/naem des/cord typ/security}
       ^+  ..ta-action
       ?.  (~(has in stories) nom)
         %^  impact  nom  %new
@@ -346,7 +346,7 @@
       ::>  delete story {nom}, optionally announcing the
       ::>  event with message {mes}.
       ::
-      |=  {nom/knot mes/(unit cord)}
+      |=  {nom/naem mes/(unit cord)}
       ^+  ..ta-action
       =.  ..ta-action  ::TODO  =?
         ?~  mes  ..ta-action
@@ -358,20 +358,20 @@
     ++  action-depict                                   ::<  change description
       ::>  change description of story {nom} to {des}.
       ::
-      |=  {nom/knot cap/cord}
+      |=  {nom/naem cap/cord}
       (affect nom %config [our.bol nom] %caption cap)
     ::
     ++  action-filter                                   ::<  change message rules
       ::>  replaces the story's current filter with the
       ::>  specified one.
       ::
-      |=  {nom/knot fit/filter}
+      |=  {nom/naem fit/filter}
       (affect nom %config [our.bol nom] %filter fit)
     ::
     ++  action-permit                                   ::<  invite/banish
       ::>  invite to/banish from story {nom} all {sis}.
       ::
-      |=  {nom/knot inv/? sis/(set ship)}
+      |=  {nom/naem inv/? sis/(set ship)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
@@ -380,7 +380,7 @@
     ++  action-source                                   ::<  un/sub p to/from r
       ::>  add/remove {pos} as sources for story {nom}.
       ::
-      |=  {nom/knot sub/? pos/(map circle range)}
+      |=  {nom/naem sub/? pos/(map circle range)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
@@ -431,7 +431,7 @@
       ::>  assigns a new local identity ("nickname") to the
       ::>  target ship.
       ::
-      |=  {who/ship nic/cord}
+      |=  {who/ship nic/nick}
       ^+  ..ta-action
       ?.  =((~(get by nicks) who) `nic)  ..ta-action    ::<  no change
       (ta-delta %nick who nic)
@@ -478,7 +478,7 @@
     ::>  drops {src}'s subscription. deduce the right way
     ::>  to do this from the subscription path {pax}.
     ::
-    |=  {src/ship nom/knot}
+    |=  {src/ship nom/naem}
     ^+  +>
     ::  set ship status to %gone.
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
@@ -487,14 +487,14 @@
   ++  ta-greet                                          ::<  subscription success
     ::>  store a started subscription as source.
     ::
-    |=  {nom/knot cir/circle}
+    |=  {nom/naem cir/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-greet:sor cir)
   ::
   ++  ta-leave                                          ::<  subscription failed
     ::>  removes {cir} from story {nom}'s followers.
     ::
-    |=  {nom/knot cir/circle}
+    |=  {nom/naem cir/circle}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-leave:sor cir)
   ::
@@ -510,7 +510,7 @@
       ::
         $burden
       %+  roll  (~(tap by sos.piz))
-      |=  {{n/knot b/burden} _..ta-take}
+      |=  {{n/naem b/burden} _..ta-take}
       =<  so-done
       (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
       ::
@@ -603,7 +603,7 @@
   ++  ta-record                                         ::<  add to story
     ::>  add or update telegram {gam} in story {nom}.
     ::
-    |=  {nom/knot gam/telegram}
+    |=  {nom/naem gam/telegram}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-learn:sor gam)
   ::
@@ -627,7 +627,7 @@
         ::>  acs: talk actions issued due to changes.
         ::>  story is faceless to ease data access.
         ::
-        $:  nom/knot
+        $:  nom/naem
             acs/(list action)
             story
         ==
@@ -1102,7 +1102,7 @@
   ++  da-present                                        ::<  send %present cmd
     ::>
     ::
-    |=  {hos/ship nos/(set knot) dif/diff-status}
+    |=  {hos/ship nos/(set naem) dif/diff-status}
     ^+  +>
     %-  da-emit
     :*  ost.bol
@@ -1198,7 +1198,7 @@
     ::>  apply a %nick delta, setting a nickname for a
     ::>  ship.
     ::
-    |=  {who/ship nic/cord}
+    |=  {who/ship nic/nick}
     ^+  +>
     +>(nicks (change-nicks nicks who nic))
   ::
@@ -1214,7 +1214,7 @@
     ::>  in case of a new or deleted story, specialized
     ::>  arms are called.
     ::
-    |=  {nom/knot dif/delta-story}
+    |=  {nom/naem dif/delta-story}
     ^+  +>
     ?+  -.dif
       =<  sa-done
@@ -1230,7 +1230,7 @@
   ++  da-create                                         ::<  configure story
     ::>  creates story {nom} with config {con}.
     ::
-    |=  {nom/knot cof/config}
+    |=  {nom/naem cof/config}
     ^+  +>
     =<  sa-done
     %-  ~(sa-change sa nom *story)
@@ -1239,7 +1239,7 @@
   ++  da-delete                                         ::<  delete story
     ::>  calls the story core to delete story {nom}.
     ::
-    |=  nom/knot
+    |=  nom/naem
     ^+  +>
     =.  +>
       %-  da-emil
@@ -1252,7 +1252,7 @@
     |_  ::>  nom: story name in {stories}.
         ::>  story is faceless to ease data access.
         ::
-        $:  nom/knot
+        $:  nom/naem
             story
         ==
     ::
@@ -1544,7 +1544,7 @@
   ::
   |=  $:  wir/wire
           $=  fun
-          $-  {nom/knot cir/circle}
+          $-  {nom/naem cir/circle}
               {(list move) _.}
       ==
   =+  wer=(etch wir)
@@ -1617,10 +1617,10 @@
       $burden
     :+  ~  ~
     :-  %burden
-    %-  ~(gas in *(map knot burden))
+    %-  ~(gas in *(map naem burden))
     %+  murn  (~(tap by stories))
-    |=  {n/knot s/story}
-    ^-  (unit (pair knot burden))
+    |=  {n/naem s/story}
+    ^-  (unit (pair naem burden))
     ::  only auto-federate channels for now.  ::REVIEW
     ?.  ?=($black sec.con.shape.s)  ~
     :+  ~  n
@@ -1904,7 +1904,7 @@
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)
   %+  etch-circle  [%circle wir]
-  |=  {nom/knot cir/circle}
+  |=  {nom/naem cir/circle}
   ?~  fal
     %-  pre-bake
     ta-done:(ta-greet:ta nom cir)
@@ -1921,7 +1921,7 @@
   |=  wir/wire
   ^-  (quip move +>)
   %+  etch-circle  [%circle wir]
-  |=  {nom/knot cir/circle}
+  |=  {nom/naem cir/circle}
   :_  +>.^$  :_  ~
   [0 (circle-peer nom cir `[[%da (sub now.bol ~m5)] ~])]
 ::
@@ -1945,7 +1945,7 @@
   ::>  stores the telegrams of story {nom} in a log file,
   ::>  to be re-loaded by ++poke-talk-load.
   ::
-  |=  nom/knot
+  |=  nom/naem
   ^-  (quip move +>)
   =/  paf/path
     /(scot %p our.bol)/home/(scot %da now.bol)/talk/[nom]/talk-telegrams
@@ -1963,7 +1963,7 @@
   ::>  loads the telegrams of story {nom} into our state,
   ::>  as saved in ++poke-talk-save.
   ::
-  |=  nom/knot
+  |=  nom/naem
   ^-  (quip move +>)
   =/  grams
     .^  (list telegram)
@@ -1981,7 +1981,7 @@
 ++  poke-talk-log                                       ::<  start logging
   ::>  starts logging story {nom}'s messages.
   ::
-  |=  nom/knot
+  |=  nom/naem
   ~&  %talk-poke-log
   ^-  (quip move +>)
   :-  [(log-to-file nom) ~]
@@ -1994,7 +1994,7 @@
 ++  poke-talk-unlog                                     ::<  stop logging
   ::>  stops logging story {nom}'s messages.
   ::
-  |=  nom/knot
+  |=  nom/naem
   ^-  (quip move +>)
   :-  ~
   +>.$(log (~(del by log) nom))
@@ -2009,11 +2009,11 @@
   :_  %_  .
           log
         %-  ~(urn by log)
-        |=  {nom/knot len/@ud}
+        |=  {nom/naem len/@ud}
         count:(~(got by stories) nom)
       ==
   %+  murn  (~(tap by log))
-  |=  {nom/knot len/@ud}
+  |=  {nom/naem len/@ud}
   ^-  (unit move)
   ?:  (gte len count:(~(got by stories) nom))
     ~
@@ -2022,7 +2022,7 @@
 ++  log-to-file                                         ::<  update story log
   ::>  logs all grams of story {nom} to a file.
   ::
-  |=  nom/knot
+  |=  nom/naem
   ^-  move
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.bol) +.t +:*tarp))
