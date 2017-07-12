@@ -32,6 +32,8 @@ stdenv.mkDerivation rec {
     ./cppdefault.patch
   ];
 
+  # TODO: can probably remove libelf here, and might as well remove
+  # the libraries that are given to GCC as configure flags
   buildInputs = [
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
