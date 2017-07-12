@@ -1371,11 +1371,10 @@
           known    (~(put by known) uid.gam count)
         ==
       ::  changed message
-      =+  dex=(sub count u.old)
       %_  +>.$
         grams    %+  welp
-                 (scag (dec dex) grams)
-                 [gam (slag dex grams)]
+                 (scag (dec u.old) grams)
+                 [gam (slag u.old grams)]
       ==
     ::
     ++  sa-change-remote                                ::<  apply remote's delta
