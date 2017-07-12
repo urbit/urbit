@@ -12,8 +12,6 @@ for patch in $patch_dir/gcc-6.3.0/*; do
 done
 cd ..
 
-tar -xf $gmp_src
-
 tar -xf $linux_src
 cd linux-4.4.10
 for patch in $patch_dir/linux-4.4.10/*; do
@@ -22,26 +20,18 @@ for patch in $patch_dir/linux-4.4.10/*; do
 done
 cd ..
 
-tar -xf $mpc_src
-tar -xf $mpfr_src
 tar -xf $musl_src
 
 mkdir -p build
 
 cd build
 ln -s ../linux-4.4.10 src_kernel_headers
-ln -s ../mpfr-3.1.4 src_mpfr
-ln -s ../mpc-1.0.3 src_mpc
-ln -s ../gmp-6.1.1 src_gmp
 ln -s ../gcc-6.3.0 src_gcc
 ln -s ../musl-1.1.16 src_musl
 
 mkdir src_toolchain
 cd src_toolchain
 ln -s ../src_gcc/* .
-ln -s ../src_gmp gmp
-ln -s ../src_mpc mpc
-ln -s ../src_mpfr mpfr
 cd ..
 
 mkdir obj_sysroot
@@ -73,10 +63,8 @@ cd ..
 cd obj_toolchain
 $MAKE MAKE="$MAKE enable_shared=no" all-target-libgcc
 cd ..
-cd obj_musl
-$MAKE
-$MAKE DESTDIR=$CURDIR/obj_sysroot install
-cd ..
+$MAKE -C obj_musl
+$MAKE -C obj_musl DESTDIR=$CURDIR/obj_sysroot install
 cd obj_toolchain
 $MAKE MAKE="$MAKE"
 cd ..

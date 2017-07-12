@@ -59,7 +59,7 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
+    binutils gettext texinfo
   ];
 
   TARGET = host;
@@ -69,19 +69,22 @@ stdenv.mkDerivation rec {
     "--with-gnu-as " +
     "--with-gnu-ld " +
     "--with-as=${binutils}/bin/${host}-as " +
-    "--with-ld=${binutils}/bin/${host}-ld ";
+    "--with-ld=${binutils}/bin/${host}-ld " +
+    "--with-isl=${isl.out} " +
+    "--with-gmp-include=${gmp.dev}/include " +
+    "--with-gmp-lib=${gmp.out}/lib " +
+    "--with-libelf=${libelf}" +
+    "--with-mpfr=${mpfr.dev} " +
+    "--with-mpfr-include=${mpfr.dev}/include " +
+    "--with-mpfr-lib=${mpfr.out}/lib " +
+    "--with-mpc=${libmpc.out} " +
+    "--with-zlib=${zlib.dev}" +
+    "--with-zlib-lib=${zlib.out}";
 
   configure_flags =
     "--target=${host} " +
     # "--with-sysroot=${libc} " +
     "--with-native-system-header-dir=/include " +
-    "--with-isl=${isl} " +
-    "--with-gmp-include=${gmp.dev}/include " +
-    "--with-gmp-lib=${gmp.out}/lib " +
-    "--with-mpfr-include=${mpfr.dev}/include " +
-    "--with-mpfr-lib=${mpfr.out}/lib " +
-    "--with-mpc=${libmpc} " +
-    "--with-system-zlib " +
     "--enable-lto " +
     "--enable-plugin " +
     "--enable-static " +
