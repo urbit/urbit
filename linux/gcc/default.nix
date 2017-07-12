@@ -19,24 +19,9 @@ stdenv.mkDerivation rec {
     sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
   };
 
-  gmp_src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/gmp/gmp-6.1.1.tar.xz";
-    sha256 = "0cg84n482gcvl0s4xq4wgwsk4r0x0m8dnzpizwqdd2j8vw2rqvnk";
-  };
-
   linux_src = fetchurl {
     url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.10.tar.xz";
     sha256 = "1kpjvvd9q9wwr3314q5ymvxii4dv2d27295bzly225wlc552xhja";
-  };
-
-  mpc_src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz";
-    sha256 = "1hzci2zrrd7v3g1jk35qindq05hbl0bhjcyyisq9z209xb3fqzb1";
-  };
-
-  mpfr_src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/mpfr/mpfr-3.1.4.tar.xz";
-    sha256 = "1x8pcnpn1vxfzfsr0js07rwhwyq27fmdzcfjpzi5773ldnqi653n";
   };
 
   musl_src = nixpkgs.fetchurl {
@@ -58,9 +43,7 @@ stdenv.mkDerivation rec {
     ./cppdefault.patch
   ];
 
-  buildInputs = [
-    binutils gettext texinfo
-  ];
+  buildInputs = [ binutils ];
 
   TARGET = host;
   LINUX_ARCH = "x86";  # TODO
@@ -70,7 +53,7 @@ stdenv.mkDerivation rec {
     "--with-gnu-ld " +
     "--with-as=${binutils}/bin/${host}-as " +
     "--with-ld=${binutils}/bin/${host}-ld " +
-    "--with-isl=${isl.out} " +
+    "--with-isl=${isl} " +
     "--with-gmp-include=${gmp.dev}/include " +
     "--with-gmp-lib=${gmp.out}/lib " +
     "--with-libelf=${libelf}" +
@@ -100,7 +83,6 @@ stdenv.mkDerivation rec {
       "--enable-languages=c,c++ " +
       "--enable-threads=posix "
     ) +
-    "--without-included-gettext " +
     "--disable-libstdcxx-pch " +
     "--disable-nls " +
     "--disable-shared " +

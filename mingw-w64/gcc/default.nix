@@ -34,6 +34,7 @@ stdenv.mkDerivation rec {
 
   # TODO: can probably remove libelf here, and might as well remove
   # the libraries that are given to GCC as configure flags
+  # TODO: just let GCC use its own gettext (intl)
   buildInputs = [
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
