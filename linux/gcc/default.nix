@@ -14,11 +14,6 @@ stdenv.mkDerivation rec {
 
   version = "6.3.0";
 
-  binutils_src = nixpkgs.fetchurl {
-    url = "mirror://gnu/binutils/binutils-2.27.tar.bz2";
-    sha256 = "125clslv17xh1sab74343fg6v31msavpmaa1c1394zsqa773g5rn";
-  };
-
   gcc_src = fetchurl {
     url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
     sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
@@ -70,14 +65,16 @@ stdenv.mkDerivation rec {
   TARGET = host;
   LINUX_ARCH = "x86";  # TODO
 
+  configure_flags2 =
+    "--with-gnu-as " +
+    "--with-gnu-ld " +
+    "--with-as=${binutils}/bin/${host}-as " +
+    "--with-ld=${binutils}/bin/${host}-ld ";
+
   configure_flags =
     "--target=${host} " +
     # "--with-sysroot=${libc} " +
     "--with-native-system-header-dir=/include " +
-    "--with-gnu-as " +
-    "--with-gnu-ld " +
-    "--with-as=${binutils}/bin/${host}-as " +
-    "--with-ld=${binutils}/bin/${host}-ld " +
     "--with-isl=${isl} " +
     "--with-gmp-include=${gmp.dev}/include " +
     "--with-gmp-lib=${gmp.out}/lib " +
