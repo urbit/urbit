@@ -54,7 +54,7 @@ stdenv.mkDerivation rec {
 
   builder = ./builder.sh;
 
-  scripts = ./scripts;
+  patch_dir = ./patches;
 
   gcc_patches = [
     ./use-source-date-epoch.patch

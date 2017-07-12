@@ -4,11 +4,9 @@ shopt -u nullglob
 
 unset CC CXX CFLAGS LDFLAGS
 
-cp --no-preserve=mode -r $scripts scripts
-
 tar -xf $binutils_src
 cd binutils-2.27
-for patch in ../scripts/patches/binutils-2.27/*; do
+for patch in $patch_dir/binutils-2.27/*; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
@@ -16,7 +14,7 @@ cd ..
 
 tar -xf $gcc_src
 cd gcc-6.3.0
-for patch in ../scripts/patches/gcc-6.3.0/*; do
+for patch in $patch_dir/gcc-6.3.0/*; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
@@ -26,7 +24,7 @@ tar -xf $gmp_src
 
 tar -xf $linux_src
 cd linux-4.4.10
-for patch in ../scripts/patches/linux-4.4.10/*; do
+for patch in $patch_dir/linux-4.4.10/*; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
