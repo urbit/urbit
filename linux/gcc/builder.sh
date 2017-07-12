@@ -40,19 +40,6 @@ mkdir -p build
 
 cp scripts/litecross/Makefile build
 
-cat > build/config.mak <<EOF
-TARGET = $TARGET
-LINUX_ARCH = $LINUX_ARCH
-HOST =
-MUSL_SRCDIR = ../musl-1.1.16
-GCC_SRCDIR = ../gcc-6.3.0
-BINUTILS_SRCDIR = ../binutils-2.27
-GMP_SRCDIR = ../gmp-6.1.1
-MPC_SRCDIR = ../mpc-1.0.3
-MPFR_SRCDIR = ../mpfr-3.1.4
-LINUX_SRCDIR = ../linux-4.4.10
-EOF
-
 cd build
 ln -s ../linux-4.4.10 src_kernel_headers
 ln -s ../mpfr-3.1.4 src_mpfr
@@ -81,4 +68,44 @@ ln -s lib obj_sysroot/lib64
 mkdir obj_toolchain
 mkdir obj_musl
 
-make install OUTPUT=$out
+# TODO: fix xgcc; it searches directories outside of the Nix store for libraries
+
+MAKE="make MULTILIB_OSDIRNAMES= INFO_DEPS= infodir= ac_cv_prog_lex_root=lex.yy.c MAKEINFO=false"
+FULL_TOOLCHAIN_CONFIG="--enable-languages=c,c++ --disable-werror --target=$TARGET --prefix= --libdir=/lib --disable-multilib --with-sysroot=$SYSROOT --with-build-sysroot=$(pwd)/obj_sysroot --enable-tls --disable-libmudflap --disable-libsanitizer --disable-gnu-indirect-function --disable-libmpx --enable-deterministic-archives --enable-libstdcxx-time"
+FULL_MUSL_CONFIG="--prefix= --host=$TARGET CC=../obj_toolchain/gcc/xgcc\ -B\ ../obj_toolchain/gcc LIBCC=../obj_toolchain/$TARGET/libgcc/libgcc.a"
+SYSROOT="/$TARGET"
+MUSL_VARS="AR=../obj_toolchain/binutils/ar RANLIB=../obj_toolchain/binutils/ranlib"
+CURDIR=$(pwd)
+
+cd obj_toolchain
+../src_toolchain/configure $FULL_TOOLCHAIN_CONFIG
+$MAKE MAKE="$MAKE" all-gcc
+cd ..
+cd obj_musl
+bash -c "../src_musl/configure $FULL_MUSL_CONFIG"
+$MAKE DESTDIR=$CURDIR/obj_sysroot install-headers
+cd ..
+cd obj_toolchain
+$MAKE MAKE="$MAKE enable_shared=no" all-target-libgcc
+cd ..
+cd obj_musl
+$MAKE $MUSL_VARS
+$MAKE $MUSL_VARS DESTDIR=$CURDIR/obj_sysroot install
+cd ..
+cd obj_toolchain
+$MAKE MAKE="$MAKE"
+cd ..
+mkdir -p $CURDIR/obj_kernel_headers/staged
+cd src_kernel_headers
+$MAKE ARCH=$LINUX_ARCH O=$CURDIR/obj_kernel_headers INSTALL_HDR_PATH=$CURDIR/obj_kernel_headers/staged headers_install
+cd ..
+find obj_kernel_headers/staged/include '(' -name .install -o -name ..install.cmd ')' -exec rm {} +
+cd obj_musl
+$MAKE $MUSL_VARS DESTDIR=$out$SYSROOT install
+cd ..
+cd obj_toolchain
+$MAKE MAKE="$MAKE" DESTDIR=$out install
+cd ..
+mkdir -p $out$SYSROOT/include
+cp -R obj_kernel_headers/staged/include/* $out$SYSROOT/include
+
