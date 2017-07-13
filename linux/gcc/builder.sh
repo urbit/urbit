@@ -61,7 +61,7 @@ cd obj_musl
 bash -c "../src_musl/configure $FULL_MUSL_CONFIG"
 $MAKE DESTDIR=$CURDIR/obj_sysroot install-headers
 cd ..
-$MAKE -C obj_toolchain MAKE="$MAKE enable_shared=no" all-target-libgcc
+$MAKE -C obj_toolchain MAKE="$MAKE" all-target-libgcc
 $MAKE -C obj_musl
 $MAKE -C obj_musl DESTDIR=$CURDIR/obj_sysroot install
 $MAKE -C obj_toolchain MAKE="$MAKE"

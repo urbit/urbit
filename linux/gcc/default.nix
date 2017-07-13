@@ -76,7 +76,8 @@ stdenv.mkDerivation rec {
 
   musl_conf =
     "--target=${host} " +
-    "--prefix= ";
+    "--prefix= " +
+    "--disable-shared";
 
   hardeningDisable = [ "format" ];
 
