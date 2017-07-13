@@ -9,7 +9,6 @@ let
   binutils = import ./binutils { inherit nixpkgs host; };
 
   gcc = import ./gcc {
-    libc = throw "no libc yet";
     inherit nixpkgs host binutils;
   };
 

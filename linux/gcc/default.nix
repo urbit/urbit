@@ -1,16 +1,13 @@
-{ nixpkgs, host, stage ? 2, binutils, libc }:
+{ nixpkgs, host, binutils }:
 
 let
   isl = nixpkgs.isl_0_14;
   inherit (nixpkgs) stdenv lib fetchurl;
   inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
-
-  stageName = if stage == 1 then "-stage1"
-              else assert stage == 2; "";
 in
 
 stdenv.mkDerivation rec {
-  name = "gcc-${version}-${host}${stageName}";
+  name = "gcc-${version}-${host}";
 
   version = "6.3.0";
 
@@ -29,8 +26,8 @@ stdenv.mkDerivation rec {
     sha256 = "048h0w4yjyza4h05bkc6dpwg3hq6l03na46g0q1ha8fpwnjqawck";
   };
 
-  # TODO: do this use /usr/include/stdio.h at any point?  I think it might, so try
-  # adding #error to it
+  # TODO: does this use /usr/include/stdio.h at any point?  I think it might, so try
+  # adding #error to it or building in a sandbox
 
   builder = ./builder.sh;
 
@@ -66,7 +63,6 @@ stdenv.mkDerivation rec {
 
   configure_flags =
     "--target=${host} " +
-    # "--with-sysroot=${libc} " +
     "--with-native-system-header-dir=/include " +
     "--enable-lto " +
     "--enable-plugin " +
@@ -76,13 +72,8 @@ stdenv.mkDerivation rec {
     "--enable-long-long " +
     "--with-dwarf2 " +
     "--enable-fully-dynamic-string " +
-    (if stage == 1 then
-      "--enable-languages=c " +
-      "--enable-threads=win32 "
-    else
-      "--enable-languages=c,c++ " +
-      "--enable-threads=posix "
-    ) +
+    "--enable-languages=c,c++ " +
+    "--enable-threads=posix " +
     "--disable-libstdcxx-pch " +
     "--disable-nls " +
     "--disable-shared " +
@@ -90,18 +81,6 @@ stdenv.mkDerivation rec {
     "--disable-libssp " +
     "--disable-win32-registry " +
     "--disable-bootstrap";
-
-  make_flags =
-    if stage == 1 then
-      ["all-gcc" "all-target-libgcc"]
-    else
-      [];
-
-  install_targets =
-    if stage == 1 then
-      ["install-gcc install-target-libgcc"]
-    else
-      ["install-strip"];
 
   hardeningDisable = [ "format" ];
 
