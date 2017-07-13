@@ -3,7 +3,7 @@
 let
   isl = nixpkgs.isl_0_14;
   inherit (nixpkgs) stdenv lib fetchurl;
-  inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
+  inherit (nixpkgs) gmp libmpc libelf mpfr zlib;
 in
 
 stdenv.mkDerivation rec {
@@ -45,9 +45,10 @@ stdenv.mkDerivation rec {
   TARGET = host;
   LINUX_ARCH = "x86";  # TODO
 
-  configure_flags2 =
+  gcc_conf =
     "--target=${host} " +
-    "--enable-languages=c,c++ " +
+    "--prefix= " +
+    "--libdir=/lib " +
     "--with-gnu-as " +
     "--with-gnu-ld " +
     "--with-as=${binutils}/bin/${host}-as " +
@@ -62,26 +63,22 @@ stdenv.mkDerivation rec {
     "--with-mpc=${libmpc.out} " +
     "--with-zlib=${zlib.dev}" +
     "--with-zlib-lib=${zlib.out}" +
+    "--enable-deterministic-archives " +
+    "--enable-languages=c,c++ " +
+    "--enable-libstdcxx-time " +
+    # "--enable-static " +
+    "--enable-tls " +
+    "--disable-gnu-indirect-function " +
+    "--disable-libmudflap " +
+    "--disable-libmpx " +
+    "--disable-libsanitizer " +
+    "--disable-multilib " +
+    # "--disable-shared " +
     "--disable-werror";
 
-  configure_flags =
-    "--with-native-system-header-dir=/include " +
-    "--enable-lto " +
-    "--enable-plugin " +
-    "--enable-static " +
-    "--enable-sjlj-exceptions " +
-    "--enable-__cxa_atexit " +
-    "--enable-long-long " +
-    "--with-dwarf2 " +
-    "--enable-fully-dynamic-string " +
-    "--enable-threads=posix " +
-    "--disable-libstdcxx-pch " +
-    "--disable-nls " +
-    "--disable-shared " +
-    "--disable-multilib " +
-    "--disable-libssp " +
-    "--disable-win32-registry " +
-    "--disable-bootstrap";
+  musl_conf =
+    "--target=${host} " +
+    "--prefix= ";
 
   hardeningDisable = [ "format" ];
 
@@ -90,5 +87,3 @@ stdenv.mkDerivation rec {
     license = lib.licenses.gpl3Plus;
   };
 }
-
-# TODO: why is GCC providing a fixed limits.h?
