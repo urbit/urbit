@@ -5,29 +5,32 @@ shopt -u nullglob
 unset CC CXX CFLAGS LDFLAGS
 
 tar -xf $gcc_src
-cd gcc-6.3.0
-for patch in $patch_dir/gcc-6.3.0/*; do
+mv gcc-$gcc_version gcc
+cd gcc
+for patch in $patch_dir/gcc-$gcc_version/*; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
 cd ..
 
 tar -xf $linux_src
-cd linux-4.4.10
-for patch in $patch_dir/linux-4.4.10/*; do
+mv linux-$linux_version linux
+cd linux
+for patch in $patch_dir/linux-$linux_version/*; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
 cd ..
 
 tar -xf $musl_src
+mv musl-$musl_version musl
 
 mkdir -p build
 
 cd build
-ln -s ../linux-4.4.10 src_kernel_headers
-ln -s ../gcc-6.3.0 src_gcc
-ln -s ../musl-1.1.16 src_musl
+ln -s ../linux src_kernel_headers
+ln -s ../gcc src_gcc
+ln -s ../musl src_musl
 
 mkdir src_toolchain
 cd src_toolchain
@@ -43,8 +46,6 @@ ln -s lib obj_sysroot/lib64
 
 mkdir obj_toolchain
 mkdir obj_musl
-
-# TODO: fix xgcc; it searches directories outside of the Nix store for libraries
 
 MAKE="make MULTILIB_OSDIRNAMES= INFO_DEPS= infodir= ac_cv_prog_lex_root=lex.yy.c MAKEINFO=false"
 FULL_TOOLCHAIN_CONFIG="$gcc_conf --with-sysroot=/${host} --with-build-sysroot=$(pwd)/obj_sysroot "

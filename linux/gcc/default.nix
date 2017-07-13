@@ -7,27 +7,25 @@ let
 in
 
 stdenv.mkDerivation rec {
-  name = "gcc-${version}-${host}";
+  name = "gcc-${gcc_version}-${host}";
 
-  version = "6.3.0";
-
+  gcc_version = "6.3.0";
   gcc_src = fetchurl {
-    url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
+    url = "mirror://gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.bz2";
     sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
   };
 
+  linux_version = "4.4.10";
   linux_src = fetchurl {
-    url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.10.tar.xz";
+    url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${linux_version}.tar.xz";
     sha256 = "1kpjvvd9q9wwr3314q5ymvxii4dv2d27295bzly225wlc552xhja";
   };
 
+  musl_version = "1.1.16";
   musl_src = nixpkgs.fetchurl {
-    url = "https://www.musl-libc.org/releases/musl-1.1.16.tar.gz";
+    url = "https://www.musl-libc.org/releases/musl-${musl_version}.tar.gz";
     sha256 = "048h0w4yjyza4h05bkc6dpwg3hq6l03na46g0q1ha8fpwnjqawck";
   };
-
-  # TODO: does this use /usr/include/stdio.h at any point?  I think it might, so try
-  # adding #error to it or building in a sandbox
 
   builder = ./builder.sh;
 
@@ -66,14 +64,14 @@ stdenv.mkDerivation rec {
     "--enable-deterministic-archives " +
     "--enable-languages=c,c++ " +
     "--enable-libstdcxx-time " +
-    # "--enable-static " +
+    "--enable-static " +
     "--enable-tls " +
     "--disable-gnu-indirect-function " +
     "--disable-libmudflap " +
     "--disable-libmpx " +
     "--disable-libsanitizer " +
     "--disable-multilib " +
-    # "--disable-shared " +
+    "--disable-shared " +
     "--disable-werror";
 
   musl_conf =
@@ -87,3 +85,8 @@ stdenv.mkDerivation rec {
     license = lib.licenses.gpl3Plus;
   };
 }
+
+# TODO: does this use /usr/include/stdio.h at any point?  I think it might, so
+# try adding #error to it or building in a sandbox
+
+# TODO: fix xgcc; it searches directories outside of the Nix store for libraries
