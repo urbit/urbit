@@ -46,6 +46,8 @@ stdenv.mkDerivation rec {
   LINUX_ARCH = "x86";  # TODO
 
   configure_flags2 =
+    "--target=${host} " +
+    "--enable-languages=c,c++ " +
     "--with-gnu-as " +
     "--with-gnu-ld " +
     "--with-as=${binutils}/bin/${host}-as " +
@@ -59,10 +61,10 @@ stdenv.mkDerivation rec {
     "--with-mpfr-lib=${mpfr.out}/lib " +
     "--with-mpc=${libmpc.out} " +
     "--with-zlib=${zlib.dev}" +
-    "--with-zlib-lib=${zlib.out}";
+    "--with-zlib-lib=${zlib.out}" +
+    "--disable-werror";
 
   configure_flags =
-    "--target=${host} " +
     "--with-native-system-header-dir=/include " +
     "--enable-lto " +
     "--enable-plugin " +
@@ -72,7 +74,6 @@ stdenv.mkDerivation rec {
     "--enable-long-long " +
     "--with-dwarf2 " +
     "--enable-fully-dynamic-string " +
-    "--enable-languages=c,c++ " +
     "--enable-threads=posix " +
     "--disable-libstdcxx-pch " +
     "--disable-nls " +

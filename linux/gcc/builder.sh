@@ -47,7 +47,7 @@ mkdir obj_musl
 # TODO: fix xgcc; it searches directories outside of the Nix store for libraries
 
 MAKE="make MULTILIB_OSDIRNAMES= INFO_DEPS= infodir= ac_cv_prog_lex_root=lex.yy.c MAKEINFO=false"
-FULL_TOOLCHAIN_CONFIG="$configure_flags2 --enable-languages=c,c++ --disable-werror --target=$TARGET --prefix= --libdir=/lib --disable-multilib --with-sysroot=$SYSROOT --with-build-sysroot=$(pwd)/obj_sysroot --enable-tls --disable-libmudflap --disable-libsanitizer --disable-gnu-indirect-function --disable-libmpx --enable-deterministic-archives --enable-libstdcxx-time"
+FULL_TOOLCHAIN_CONFIG="$configure_flags2 --prefix= --libdir=/lib --disable-multilib --with-sysroot=$SYSROOT --with-build-sysroot=$(pwd)/obj_sysroot --enable-tls --disable-libmudflap --disable-libsanitizer --disable-gnu-indirect-function --disable-libmpx --enable-deterministic-archives --enable-libstdcxx-time"
 FULL_MUSL_CONFIG="--prefix= --host=$TARGET CC=../obj_toolchain/gcc/xgcc\ -B\ ../obj_toolchain/gcc LIBCC=../obj_toolchain/$TARGET/libgcc/libgcc.a"
 SYSROOT="/$TARGET"
 CURDIR=$(pwd)
