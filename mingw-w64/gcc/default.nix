@@ -76,7 +76,8 @@ stdenv.mkDerivation rec {
     "--disable-multilib " +
     "--disable-libssp " +
     "--disable-win32-registry " +
-    "--disable-bootstrap";
+    "--disable-bootstrap";  # TODO: not needed, --disable-bootstrap
+                            # only applies to native builds
 
   make_flags =
     if stage == 1 then
