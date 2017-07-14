@@ -33,6 +33,7 @@ Packages collection (Nixpkgs)][nixpkgs].
   - GDB
 - Notable supported libraries:
   - Qt 5.8.0
+  - libusbp
 
 
 ## Getting started
