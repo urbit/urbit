@@ -6,8 +6,8 @@
 standalone software applications.  With Nixcrpkgs, you can specify what
 platforms you want to target, what libraries and build tools you depend on, and
 the commands that build your software.  When you build your software, Nixcrpkgs
-will automatically take care of building everything you need, including
-cross-compilers and libraries.
+will automatically take care of building or retrieving everything you need,
+including cross-compilers and libraries.
 
 Nixcrpkgs primarily consists of *Nix expressions*, which are recipes for
 building software with [Nix, the purely functional package
