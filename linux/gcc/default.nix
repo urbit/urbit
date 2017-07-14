@@ -1,60 +1,35 @@
-{ nixpkgs, host, stage ? 2, binutils, libc }:
+{ nixpkgs, host, binutils }:
 
 let
   isl = nixpkgs.isl_0_14;
   inherit (nixpkgs) stdenv lib fetchurl;
-  inherit (nixpkgs) gettext gmp libmpc libelf mpfr texinfo which zlib;
-
-  stageName = if stage == 1 then "-stage1"
-              else assert stage == 2; "";
+  inherit (nixpkgs) gmp libmpc libelf mpfr zlib;
 in
 
 stdenv.mkDerivation rec {
-  name = "gcc-${version}-${host}${stageName}";
+  name = "gcc-${gcc_version}-${host}";
 
-  version = "6.3.0";
-
-  binutils_src = nixpkgs.fetchurl {
-    url = "mirror://gnu/binutils/binutils-2.27.tar.bz2";
-    sha256 = "125clslv17xh1sab74343fg6v31msavpmaa1c1394zsqa773g5rn";
-  };
-
+  gcc_version = "6.3.0";
   gcc_src = fetchurl {
-    url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
+    url = "mirror://gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.bz2";
     sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
   };
 
-  gmp_src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/gmp/gmp-6.1.1.tar.xz";
-    sha256 = "0cg84n482gcvl0s4xq4wgwsk4r0x0m8dnzpizwqdd2j8vw2rqvnk";
-  };
-
+  linux_version = "4.4.10";
   linux_src = fetchurl {
-    url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.10.tar.xz";
+    url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${linux_version}.tar.xz";
     sha256 = "1kpjvvd9q9wwr3314q5ymvxii4dv2d27295bzly225wlc552xhja";
   };
 
-  mpc_src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz";
-    sha256 = "1hzci2zrrd7v3g1jk35qindq05hbl0bhjcyyisq9z209xb3fqzb1";
-  };
-
-  mpfr_src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/mpfr/mpfr-3.1.4.tar.xz";
-    sha256 = "1x8pcnpn1vxfzfsr0js07rwhwyq27fmdzcfjpzi5773ldnqi653n";
-  };
-
+  musl_version = "1.1.16";
   musl_src = nixpkgs.fetchurl {
-    url = "https://www.musl-libc.org/releases/musl-1.1.16.tar.gz";
+    url = "https://www.musl-libc.org/releases/musl-${musl_version}.tar.gz";
     sha256 = "048h0w4yjyza4h05bkc6dpwg3hq6l03na46g0q1ha8fpwnjqawck";
   };
 
-  # TODO: do this use /usr/include/stdio.h at any point?  I think it might, so try
-  # adding #error to it
-
   builder = ./builder.sh;
 
-  scripts = ./scripts;
+  patch_dir = ./patches;
 
   gcc_patches = [
     ./use-source-date-epoch.patch
@@ -63,17 +38,16 @@ stdenv.mkDerivation rec {
     ./cppdefault.patch
   ];
 
-  buildInputs = [
-    binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
-  ];
+  buildInputs = [ binutils ];
 
   TARGET = host;
+  SYSROOT = "/${host}";
   LINUX_ARCH = "x86";  # TODO
 
-  configure_flags =
+  gcc_conf =
     "--target=${host} " +
-    # "--with-sysroot=${libc} " +
-    "--with-native-system-header-dir=/include " +
+    "--prefix= " +
+    "--libdir=/lib " +
     "--with-gnu-as " +
     "--with-gnu-ld " +
     "--with-as=${binutils}/bin/${host}-as " +
@@ -81,45 +55,30 @@ stdenv.mkDerivation rec {
     "--with-isl=${isl} " +
     "--with-gmp-include=${gmp.dev}/include " +
     "--with-gmp-lib=${gmp.out}/lib " +
+    "--with-libelf=${libelf}" +
+    "--with-mpfr=${mpfr.dev} " +
     "--with-mpfr-include=${mpfr.dev}/include " +
     "--with-mpfr-lib=${mpfr.out}/lib " +
-    "--with-mpc=${libmpc} " +
-    "--with-system-zlib " +
-    "--enable-lto " +
-    "--enable-plugin " +
+    "--with-mpc=${libmpc.out} " +
+    "--with-zlib=${zlib.dev}" +
+    "--with-zlib-lib=${zlib.out}" +
+    "--enable-deterministic-archives " +
+    "--enable-languages=c,c++ " +
+    "--enable-libstdcxx-time " +
     "--enable-static " +
-    "--enable-sjlj-exceptions " +
-    "--enable-__cxa_atexit " +
-    "--enable-long-long " +
-    "--with-dwarf2 " +
-    "--enable-fully-dynamic-string " +
-    (if stage == 1 then
-      "--enable-languages=c " +
-      "--enable-threads=win32 "
-    else
-      "--enable-languages=c,c++ " +
-      "--enable-threads=posix "
-    ) +
-    "--without-included-gettext " +
-    "--disable-libstdcxx-pch " +
-    "--disable-nls " +
-    "--disable-shared " +
+    "--enable-tls " +
+    "--disable-gnu-indirect-function " +
+    "--disable-libmudflap " +
+    "--disable-libmpx " +
+    "--disable-libsanitizer " +
     "--disable-multilib " +
-    "--disable-libssp " +
-    "--disable-win32-registry " +
-    "--disable-bootstrap";
+    "--disable-shared " +
+    "--disable-werror";
 
-  make_flags =
-    if stage == 1 then
-      ["all-gcc" "all-target-libgcc"]
-    else
-      [];
-
-  install_targets =
-    if stage == 1 then
-      ["install-gcc install-target-libgcc"]
-    else
-      ["install-strip"];
+  musl_conf =
+    "--target=${host} " +
+    "--prefix= " +
+    "--disable-shared";
 
   hardeningDisable = [ "format" ];
 
@@ -129,4 +88,7 @@ stdenv.mkDerivation rec {
   };
 }
 
-# TODO: why is GCC providing a fixed limits.h?
+# TODO: does this use /usr/include/stdio.h at any point?  I think it might, so
+# try adding #error to it or building in a sandbox
+
+# TODO: fix xgcc; it searches directories outside of the Nix store for libraries

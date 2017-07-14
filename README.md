@@ -6,19 +6,36 @@
 standalone software applications.  With Nixcrpkgs, you can specify what
 platforms you want to target, what libraries and build tools you depend on, and
 the commands that build your software.  When you build your software, Nixcrpkgs
-will automatically take care of building everything you need, including
-cross-compilers and libraries.
+will automatically take care of building or retrieving everything you need,
+including cross-compilers and libraries.
 
 Nixcrpkgs primarily consists of *Nix expressions*, which are recipes for
 building software with [Nix, the purely functional package
 manager][nix].  These recipes build on top of the [Nix
 Packages collection (Nixpkgs)][nixpkgs].
 
-Currently, the only supported target platforms are 32-bit Windows and 64-bit
-Windows, but we plan to support macOS and Linux in the future.  The only
-supported build platform is Linux.  The only languages currently supported for
-cross-compiling are C and C++, but almost any language can be used in the build
-process.
+## Features
+
+- Supported target platforms:
+  - Windows (32-bit or 64-bit) using [mingw-w64](https://mingw-w64.org/) and [GCC](https://gcc.gnu.org/) 6.3.0
+- Supported languages for cross-compiling:
+  - C
+  - C++
+- Supported build platforms:
+  - Linux
+- Supported build tools:
+  - [CMake](https://cmake.org/)
+  - [GNU Make](https://www.gnu.org/software/make/)
+  - [Ninja](https://ninja-build.org/)
+  - pkg-config (as implemented by [pkgconf](https://github.com/pkgconf/pkgconf))
+  - [GNU Bash](https://www.gnu.org/software/bash/)
+  - [Ruby](https://www.ruby-lang.org/)
+  - [GDB](https://www.gnu.org/software/gdb/)
+- Notable supported libraries:
+  - [Qt](https://www.qt.io/) 5.8.0
+  - [libusbp](https://github.com/pololu/libusbp)
+  - [Windows API](https://en.wikipedia.org/wiki/Windows_API) (thanks to mingw-w64)
+
 
 ## Getting started
 

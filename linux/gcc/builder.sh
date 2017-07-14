@@ -4,55 +4,63 @@ shopt -u nullglob
 
 unset CC CXX CFLAGS LDFLAGS
 
-cp --no-preserve=mode -r $scripts scripts
-
-tar -xf $binutils_src
-cd binutils-2.27
-for patch in ../scripts/patches/binutils-2.27/*; do
-  echo applying patch $patch
-  patch -p1 -i $patch
-done
-cd ..
-
 tar -xf $gcc_src
-cd gcc-6.3.0
-for patch in ../scripts/patches/gcc-6.3.0/*; do
+mv gcc-$gcc_version gcc
+cd gcc
+for patch in $patch_dir/gcc-$gcc_version/*; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
 cd ..
-
-tar -xf $gmp_src
 
 tar -xf $linux_src
-cd linux-4.4.10
-for patch in ../scripts/patches/linux-4.4.10/*; do
-  echo applying patch $patch
-  patch -p1 -i $patch
-done
-cd ..
+mv linux-$linux_version linux
 
-tar -xf $mpc_src
-tar -xf $mpfr_src
 tar -xf $musl_src
+mv musl-$musl_version musl
 
 mkdir -p build
 
-cp scripts/litecross/Makefile build
-
-cat > build/config.mak <<EOF
-TARGET = $TARGET
-LINUX_ARCH = $LINUX_ARCH
-HOST =
-MUSL_SRCDIR = ../musl-1.1.16
-GCC_SRCDIR = ../gcc-6.3.0
-BINUTILS_SRCDIR = ../binutils-2.27
-GMP_SRCDIR = ../gmp-6.1.1
-MPC_SRCDIR = ../mpc-1.0.3
-MPFR_SRCDIR = ../mpfr-3.1.4
-LINUX_SRCDIR = ../linux-4.4.10
-EOF
-
 cd build
-make
-make install OUTPUT=$out
+ln -s ../linux src_kernel_headers
+ln -s ../gcc src_gcc
+ln -s ../musl src_musl
+
+mkdir src_toolchain
+cd src_toolchain
+ln -s ../src_gcc/* .
+cd ..
+
+mkdir obj_sysroot
+mkdir obj_sysroot/include
+mkdir obj_sysroot/lib
+ln -s . obj_sysroot/usr
+ln -s lib obj_sysroot/lib32
+ln -s lib obj_sysroot/lib64
+
+mkdir obj_toolchain
+mkdir obj_musl
+
+MAKE="make MULTILIB_OSDIRNAMES= INFO_DEPS= infodir= ac_cv_prog_lex_root=lex.yy.c MAKEINFO=false"
+gcc_conf="$gcc_conf --with-sysroot=/${host} --with-build-sysroot=$(pwd)/obj_sysroot "
+musl_conf="$musl_conf CC=../obj_toolchain/gcc/xgcc\ -B\ ../obj_toolchain/gcc LIBCC=../obj_toolchain/$TARGET/libgcc/libgcc.a"
+
+cd obj_toolchain
+../src_toolchain/configure $gcc_conf
+cd ..
+$MAKE -C obj_toolchain MAKE="$MAKE" all-gcc
+cd obj_musl
+bash -c "../src_musl/configure $musl_conf"
+cd ..
+$MAKE -C obj_musl DESTDIR=$(pwd)/obj_sysroot install-headers
+$MAKE -C obj_toolchain MAKE="$MAKE" all-target-libgcc
+$MAKE -C obj_musl
+$MAKE -C obj_musl DESTDIR=$(pwd)/obj_sysroot install
+$MAKE -C obj_toolchain MAKE="$MAKE"
+mkdir -p obj_kernel_headers/staged
+$MAKE -C src_kernel_headers ARCH=$LINUX_ARCH O=$(pwd)/obj_kernel_headers INSTALL_HDR_PATH=$(pwd)/obj_kernel_headers/staged archscripts headers_install
+find obj_kernel_headers/staged/include '(' -name .install -o -name ..install.cmd ')' -exec rm {} +
+$MAKE -C obj_musl DESTDIR=$out$SYSROOT install
+$MAKE -C obj_toolchain MAKE="$MAKE" DESTDIR=$out install
+mkdir -p $out$SYSROOT/include
+cp -R obj_kernel_headers/staged/include/* $out$SYSROOT/include

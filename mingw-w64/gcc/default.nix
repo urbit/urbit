@@ -24,6 +24,7 @@ stdenv.mkDerivation rec {
   builder = ./builder.sh;
 
   patches = [
+    # TODO: combine three of these patches into one called search-dirs.patch
     ./mingw-search-paths.patch
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
@@ -31,6 +32,9 @@ stdenv.mkDerivation rec {
     ./cppdefault.patch
   ];
 
+  # TODO: can probably remove libelf here, and might as well remove
+  # the libraries that are given to GCC as configure flags
+  # TODO: just let GCC use its own gettext (intl)
   buildInputs = [
     binutils gettext gmp isl libmpc libelf mpfr texinfo which zlib
   ];
@@ -72,7 +76,8 @@ stdenv.mkDerivation rec {
     "--disable-multilib " +
     "--disable-libssp " +
     "--disable-win32-registry " +
-    "--disable-bootstrap";
+    "--disable-bootstrap";  # TODO: not needed, --disable-bootstrap
+                            # only applies to native builds
 
   make_flags =
     if stage == 1 then
