@@ -41,6 +41,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ binutils ];
 
   TARGET = host;
+  SYSROOT = "/${host}";
   LINUX_ARCH = "x86";  # TODO
 
   gcc_conf =
