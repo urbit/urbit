@@ -36,7 +36,7 @@ ln -s lib obj_sysroot/lib64
 mkdir obj_gcc
 mkdir obj_musl
 
-MAKE="make MULTILIB_OSDIRNAMES= INFO_DEPS= infodir= ac_cv_prog_lex_root=lex.yy.c MAKEINFO=false"
+MAKE="make MULTILIB_OSDIRNAMES= ac_cv_prog_lex_root=lex.yy.c"
 gcc_conf="$gcc_conf --with-sysroot=/${host} --with-build-sysroot=$(pwd)/obj_sysroot "
 musl_conf="$musl_conf CC=../obj_gcc/gcc/xgcc\ -B\ ../obj_gcc/gcc LIBCC=../obj_gcc/$TARGET/libgcc/libgcc.a"
 
@@ -53,7 +53,7 @@ $MAKE -C obj_musl
 $MAKE -C obj_musl DESTDIR=$(pwd)/obj_sysroot install
 $MAKE -C obj_gcc MAKE="$MAKE"
 mkdir -p obj_kernel_headers/staged
-$MAKE -C src_linux ARCH=$LINUX_ARCH O=$(pwd)/obj_kernel_headers INSTALL_HDR_PATH=$(pwd)/obj_kernel_headers/staged archscripts headers_install
+$MAKE -C src_linux ARCH=$LINUX_ARCH O=$(pwd)/obj_kernel_headers INSTALL_HDR_PATH=$(pwd)/obj_kernel_headers/staged headers_install
 find obj_kernel_headers/staged/include '(' -name .install -o -name ..install.cmd ')' -exec rm {} +
 $MAKE -C obj_musl DESTDIR=$out$SYSROOT install
 $MAKE -C obj_gcc MAKE="$MAKE" DESTDIR=$out install
