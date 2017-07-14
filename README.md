@@ -17,7 +17,7 @@ Packages collection (Nixpkgs)][nixpkgs].
 ## Features
 
 - Supported target platforms:
-  - Windows (i686 or x86_64) with a mingw-w64 GCC compiler
+  - Windows (32-bit or 64-bit) using mingw-w64 and GCC
 - Supported languages for cross-compiling:
   - C
   - C++
