@@ -17,23 +17,24 @@ Packages collection (Nixpkgs)][nixpkgs].
 ## Features
 
 - Supported target platforms:
-  - Windows (32-bit or 64-bit) using mingw-w64 and GCC
+  - Windows (32-bit or 64-bit) using [mingw-w64](https://mingw-w64.org/) and [GCC](https://gcc.gnu.org/) 6.3.0
 - Supported languages for cross-compiling:
   - C
   - C++
 - Supported build platforms:
   - Linux
 - Supported build tools:
-  - CMake
-  - GNU Make
-  - Ninja
-  - pkg-config (pkgconf)
-  - Bash
-  - Ruby
-  - GDB
+  - [CMake](https://cmake.org/)
+  - [GNU Make](https://www.gnu.org/software/make/)
+  - [Ninja](https://ninja-build.org/)
+  - pkg-config (as implemented by [pkgconf](https://github.com/pkgconf/pkgconf))
+  - [GNU Bash](https://www.gnu.org/software/bash/)
+  - [Ruby](https://www.ruby-lang.org/)
+  - [GDB](https://www.gnu.org/software/gdb/)
 - Notable supported libraries:
-  - Qt 5.8.0
-  - libusbp
+  - [Qt](https://www.qt.io/) 5.8.0
+  - [libusbp](https://github.com/pololu/libusbp)
+  - [Windows API](https://en.wikipedia.org/wiki/Windows_API) (thanks to mingw-w64)
 
 
 ## Getting started
