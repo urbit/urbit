@@ -75,7 +75,7 @@ ifeq ($(OS),osx)
   OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
-  OSLIBS=-lpthread -lrt -lcurses -lz
+  OSLIBS=-lpthread -lrt -lcurses
   DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
 endif
 ifeq ($(OS),bsd)
