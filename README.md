@@ -14,11 +14,26 @@ building software with [Nix, the purely functional package
 manager][nix].  These recipes build on top of the [Nix
 Packages collection (Nixpkgs)][nixpkgs].
 
-Currently, the only supported target platforms are 32-bit Windows and 64-bit
-Windows, but we plan to support macOS and Linux in the future.  The only
-supported build platform is Linux.  The only languages currently supported for
-cross-compiling are C and C++, but almost any language can be used in the build
-process.
+## Features
+
+- Supported target platforms:
+  - Windows (i686 or x86_64) with a mingw-w64 GCC compiler
+- Supported languages for cross-compiling:
+  - C
+  - C++
+- Supported build platforms:
+  - Linux
+- Supported build tools:
+  - CMake
+  - GNU Make
+  - Ninja
+  - pkg-config (pkgconf)
+  - Bash
+  - Ruby
+  - GDB
+- Notable supported libraries:
+  - Qt 5.8.0
+
 
 ## Getting started
 
