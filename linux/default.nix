@@ -37,6 +37,8 @@ let
     inherit nixpkgs;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
+
+    make_native_derivation = import ../make_derivation.nix nixpkgs null;
   };
 in
   crossenv

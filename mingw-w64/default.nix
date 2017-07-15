@@ -89,6 +89,8 @@ let
     inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
+
+    make_native_derivation = import ../make_derivation.nix nixpkgs null;
   };
 in
   crossenv
