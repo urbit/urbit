@@ -51,7 +51,12 @@ let
     inherit nixpkgs arch binutils;
   };
 
-  global_license_fragment = ./license_fragment.html;
+  global_license_fragment = nixpkgs.stdenv.mkDerivation {
+    name = "${mingw-w64_info.name}-license-fragment";
+    inherit (mingw-w64_info) version src;
+    gcc_src = gcc.src;
+    builder = ./license_builder.sh;
+  };
 
   cmake_toolchain = import ../cmake_toolchain {
     cmake_system_name = "Windows";
