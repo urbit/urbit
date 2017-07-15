@@ -62,7 +62,7 @@ let
     builder.args = [./wrapper_builder.rb];
   };
 
-  base_examples = crossenv.make_derivation {
+  examples = crossenv.make_derivation {
     name = "qtbase-examples-${version}";
     inherit version;
     src = base_src;
@@ -70,7 +70,7 @@ let
     builder = ./examples_builder.sh;
   };
 
-  base_license_fragment = crossenv.make_native_derivation {
+  license_fragment = crossenv.make_native_derivation {
     name = "qtbase-${version}-license-fragment";
     inherit version;
     src = base_src;
@@ -82,6 +82,6 @@ base // {
   inherit base_src;
   inherit base_raw;
   inherit base;
-  inherit base_examples;
-  inherit base_license_fragment;
+  inherit examples;
+  inherit license_fragment;
 }
