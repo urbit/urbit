@@ -1,8 +1,6 @@
 { crossenv }:
 
-crossenv.make_derivation rec {
-  name = "libusbp-${version}-${crossenv.host}";
-
+let
   version = "1.0.2";
 
   src = crossenv.nixpkgs.fetchurl {
@@ -10,8 +8,16 @@ crossenv.make_derivation rec {
     sha256 = "04r2b5v226j4mvc60m0hsl2w20x4c5h0qh0619nn21kkkv15sirb";
   };
 
-  patches = [
-  ];
+  lib = crossenv.make_derivation {
+    name = "libusbp-${version}";
+    inherit src;
+    builder = ./builder.sh;
+  };
 
-  builder = ./builder.sh;
-}
+  license_fragment = crossenv.make_native_derivation {
+    name = "libusbp-${version}-license-fragment";
+    inherit src;
+    builder = ./license_builder.sh;
+  };
+in
+ lib // { inherit license_fragment; }
