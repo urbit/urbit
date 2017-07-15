@@ -1,6 +1,9 @@
 source $setup
 
 tar -xf $src
+mv libusbp-* libusbp
+
+license=$(cat libusbp/LICENSE.txt)
 
 cat > $out <<EOF
 <p>
@@ -8,6 +11,6 @@ cat > $out <<EOF
 </p>
 
 <pre>
-$(cat libusbp-*/LICENSE.txt)
+$license
 </pre>
 EOF
