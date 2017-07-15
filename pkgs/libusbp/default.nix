@@ -20,4 +20,4 @@ let
     builder = ./license_builder.sh;
   };
 in
- lib // { inherit license_fragment; }
+  lib // { inherit license_fragment; }
