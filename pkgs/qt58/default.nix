@@ -5,7 +5,7 @@ let
 
   # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
-  base-raw = crossenv.make_derivation rec {
+  base_raw = crossenv.make_derivation rec {
     name = "qtbase-raw-${version}";
 
     src = crossenv.nixpkgs.fetchurl {
@@ -58,24 +58,27 @@ let
     builder.builder = "${crossenv.nixpkgs.ruby}/bin/ruby";
     builder.args = [./wrapper_builder.rb];
 
-    qtbase = base-raw;
+    qtbase = base_raw;
   };
 
-  base-examples = crossenv.make_derivation rec {
+  base_examples = crossenv.make_derivation rec {
     name = "qtbase-examples-${version}";
 
     inherit version;
 
-    inherit (base-raw) src;
+    inherit (base_raw) src;
 
     qtbase = base;
 
     builder = ./examples_builder.sh;
   };
+
+  base_license_fragment = ./license_fragment.html;
 in
 {
   recurseForDerivations = true;
-  inherit base-raw;
+  inherit base_raw;
   inherit base;
-  inherit base-examples;
+  inherit base_examples;
+  inherit base_license_fragment;
 }
