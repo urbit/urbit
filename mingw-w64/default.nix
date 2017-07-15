@@ -51,6 +51,8 @@ let
     inherit nixpkgs arch binutils;
   };
 
+  global_license_fragment = ./license_fragment.html;
+
   cmake_toolchain = import ../cmake_toolchain {
     cmake_system_name = "Windows";
     inherit nixpkgs host;
@@ -79,6 +81,10 @@ let
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
 
+    # License information that should be shipped with any software compiled by
+    # this environment.
+    inherit global_license_fragment;
+
     # Expressions used to bootstrap the toolchain, not normally needed.
     inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
 
@@ -86,4 +92,3 @@ let
   };
 in
   crossenv
-
