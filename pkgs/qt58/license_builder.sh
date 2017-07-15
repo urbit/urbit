@@ -10,7 +10,32 @@ fi
 tar -xf $src
 mv qtbase-* qtbase
 
-# TODO: need to make it a fatal error if a file below is missing
+# Read the license files here instead of in the big string so it is a fatal
+# error if any of them are missing.
+license_qt=$(cat qtbase/LICENSE.GPLv3)
+cd qtbase/src/3rdparty
+license_android=$(cat android/LICENSE)
+license_angle1=$(cat angle/LICENSE)
+license_angle2=$(cat angle/TRACEEVENT_LICENSE)
+license_angle3=$(cat angle/SYSTEMINFO_LICENSE)
+license_atspi2=$(cat atspi2/LICENSE)
+license_dc=$(cat double-conversion/LICENSE)
+license_easing=$(cat easing/LICENSE)
+license_forkfd=$(cat forkfd/LICENSE)
+license_freebsd=$(cat freebsd/LICENSE)
+license_freetype=$(cat freetype/docs/LICENSE.TXT)
+license_harfbuzz=$(cat harfbuzz/COPYING)
+license_ia2=$(cat iaccessible2/LICENSE)
+license_libjpeg=$(cat libjpeg/LICENSE)
+license_libpng=$(cat libpng/LICENSE)
+license_pcre=$(cat pcre/LICENCE)
+license_pixman=$(cat pixman/LICENSE)
+license_rfc6234=$(cat rfc6234/LICENSE)
+license_sha3_1=$(cat sha3/BRG_ENDIAN_LICENSE)
+license_sha3_2=$(cat sha3/CC0_LICENSE)
+license_xcb=$(cat xcb/LICENSE)
+license_xkbcommon=$(cat xkbcommon/COPYING)
+license_zlib=$(cat zlib/README)
 
 cat > $out <<EOF
 <p>
@@ -19,160 +44,101 @@ cat > $out <<EOF
 </p>
 
 <pre>
-$(cat qtbase/LICENSE.GPLv3)
+$license_qt
 </pre>
 
 <h2>Third-party components bundled with Qt</h2>
 
 <p>
-  From src/3rdparty/android:
+  This software might include code from third-party comoponents bundled with Qt.
+  The copyright notices of those components are reproduced below.
 </p>
 
 <pre>
-$(cat xasdasd)
+$license_android
 </pre>
 
-<p>
-  From src/3rdparty/angle:
-</p>
-
 <pre>
-TODO
+$license_angle1
 </pre>
 
-<p>
-  From src/3rdparty/atspi2:
-</p>
-
 <pre>
-TODO
+$license_angle2
 </pre>
 
-<p>
-  From src/3rdparty/double-conversion:
-</p>
-
 <pre>
-TODO
+$license_angle3
 </pre>
 
-<p>
-  From src/3rdparty/easing:
-</p>
-
 <pre>
-TODO
+$license_atspi2
 </pre>
 
-<p>
-  From src/3rdparty/forkfd:
-</p>
-
 <pre>
-TODO
+$license_dc
 </pre>
 
-<p>
-  From src/3rdparty/freebsd:
-</p>
-
 <pre>
-TODO
+$license_easing
 </pre>
 
-<p>
-  From src/3rdparty/freetype:
-</p>
-
 <pre>
-TODO
+$license_forkfd
 </pre>
 
-<p>
-  From src/3rdparty/harfbuzz:
-</p>
-
 <pre>
-TODO
+$license_freebsd
 </pre>
 
-<p>
-  From src/3rdparty/iaccessible2:
-</p>
-
 <pre>
-TODO
+$license_freetype
 </pre>
 
-<p>
-  From src/3rdparty/libjpeg:
-</p>
-
 <pre>
-TODO
+$license_harfbuzz
 </pre>
 
-<p>
-  From src/3rdparty/libpng:
-</p>
-
 <pre>
-TODO
+$license_ia2
 </pre>
 
-<p>
-  From src/3rdparty/pcre:
-</p>
-
 <pre>
-TODO
+$license_libjpeg
 </pre>
 
-<p>
-  From src/3rdparty/pixman:
-</p>
-
 <pre>
-TODO
+$license_libpng
 </pre>
 
-<p>
-  From src/3rdparty/rfc6234:
-</p>
-
 <pre>
-TODO
+$license_pcre
 </pre>
 
-<p>
-  From src/3rdparty/sha3:
-</p>
-
 <pre>
-TODO
+$license_pixman
 </pre>
 
-<p>
-  From src/3rdparty/xcb:
-</p>
-
 <pre>
-TODO
+$license_rfc6234
 </pre>
 
-<p>
-  From src/3rdparty/xkbcommon:
-</p>
-
 <pre>
-TODO
+$license_sha3_1
 </pre>
 
-<p>
-  From src/3rdparty/zlib:
-</p>
+<pre>
+$license_sha3_2
+</pre>
 
 <pre>
-TODO
+$license_xcb
+</pre>
+
+<pre>
+$license_xkbcommon
+</pre>
+
+<pre>
+$license_zlib
 </pre>
 EOF
