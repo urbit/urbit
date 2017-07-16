@@ -42,6 +42,17 @@ Packages collection (Nixpkgs)][nixpkgs].
 To get started, you should first install Nix on a Linux machine by following the
 instructions on the [Nix website][nix].
 
+Next, run `df -h` to make sure you have enough disk space.
+
+- The filesystem that holds `/nix` should also have several gigabytes of free
+space.  Each GCC cross-compiler takes about 300 MB while each Qt installation
+takes about 800 MB.
+- The filesystem that holds `/tmp` should have at least 4 gigabytes of free
+space, which will be needed while building cross-compilers.  If that is not the
+case on your system, you can set the `TMPDIR` environment variable to tell
+`nix-build` to perform its builds in a different directory on a filesystem with
+more free space.
+
 Next, clone or download this repository and use `cd` to change into the
 top-level directory.
 
@@ -69,6 +80,7 @@ change any of the build recipes for `hello` or its dependencies and then run the
 `nix-build` command again, Nix will automatically rebuild those dependencies and
 anything that depends on them, ensuring that you always get a consistent build.
 
+
 ### Integrating Nixcrpkgs into your project
 
 The instructions above show how to cross-compile a "Hello, World!" program that
@@ -84,3 +96,30 @@ the top-level directory and look for build instructions that explain what
 
 [nix]: http://nixos.org/nix/
 [nixpkgs]: http://nixos.org/nixpkgs/
+
+
+### Maintaining the Nixcrpkgs system
+
+You should occasionally run `nix-collect-garbage` to remove items that are no
+longer needed and reclaim your disk space.  However, note that Nix will
+typically remove all of your cross compilers and libraries when you run this
+command, so be prepared to do a lengthy mass rebuild.  The Nix manual has more
+information about [Nix garbage
+collection](http://nixos.org/nix/manual/#sec-garbage-collection).
+
+You should occasionally run `nix-channel --update` to update to the latest
+version of Nixpkgs.  However, when doing this, be aware that the new version of
+Nixpkgs might require you to do a mass rebuild.
+
+You should occasionally update your checkout of the Nixcrpkgs repository to get
+the latest versions of build tools, new features, and bug fixes.  Once again,
+this might require a mass rebuild.
+
+If you want your builds to be very stable and reliable, you could make forks of
+Nixcrpkgs and/or Nixpkgs and update them at your own pace, carefully considering
+any changes made by others before merging them in.  That's one of the beauties
+of Nix when compared to other package management systems: you will never be
+forced to upgrade your build tools, and using old tools is just as easy as using
+new ones.  You can use the `NIX_PATH` environment variable to tell `nix-build`
+to use your forked versions.
+
