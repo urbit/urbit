@@ -58,8 +58,7 @@ let
     name = "qtbase-${version}";
     inherit version;
     qtbase = base_raw;
-    builder.builder = "${crossenv.nixpkgs.ruby}/bin/ruby";
-    builder.args = [./wrapper_builder.rb];
+    builder.ruby = ./wrapper_builder.rb;
   };
 
   examples = crossenv.make_derivation {

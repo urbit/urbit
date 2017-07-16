@@ -95,12 +95,20 @@ let
   };
 
   builder_attrs =
-    if builtins.isAttrs attrs.builder then attrs.builder
-    else rec {
-      builder = "${nixpkgs.bashInteractive}/bin/bash";
-      args = ["-ue" attrs.builder];
-      SHELL = builder;
-    };
+    if builtins.isAttrs attrs.builder then
+      if attrs.builder ? ruby then
+        {
+          builder = "${nixpkgs.ruby}/bin/ruby";
+          args = [attrs.builder.ruby];
+        }
+      else
+        attrs.builder
+    else
+      rec {
+        builder = "${nixpkgs.bashInteractive}/bin/bash";
+        args = ["-ue" attrs.builder];
+        SHELL = "${nixpkgs.bashInteractive}/bin/bash";  # TODO: move to default_attrs
+      };
 
   drv_attrs = default_attrs // cross_attrs
     // filtered_attrs // name_attrs // builder_attrs // path_attrs;
