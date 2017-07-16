@@ -61,6 +61,8 @@ let
   default_attrs = {
     system = builtins.currentSystem;
 
+    SHELL = "${nixpkgs.bashInteractive}/bin/bash";
+
     setup = ./pretend_stdenv/setup;
 
     # This allows nix-shell to find our setup script.
@@ -107,7 +109,6 @@ let
       rec {
         builder = "${nixpkgs.bashInteractive}/bin/bash";
         args = ["-ue" attrs.builder];
-        SHELL = "${nixpkgs.bashInteractive}/bin/bash";  # TODO: move to default_attrs
       };
 
   drv_attrs = default_attrs // cross_attrs
