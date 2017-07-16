@@ -10,7 +10,7 @@ let
 
   lib = crossenv.make_derivation {
     name = "libusbp-${version}";
-    inherit src;
+    inherit src version;
     builder = ./builder.sh;
   };
 
