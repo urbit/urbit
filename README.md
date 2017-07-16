@@ -79,6 +79,7 @@ In the projects listed below, you should look for a file named `default.nix` in
 the top-level directory and look for build instructions that explain what
 `nix-build` commands to run.
 
+* The [Pololu Tic Stepper Motor Controller software](https://github.com/pololu/pololu-tic-software) is a C/C++ project that uses CMake and Nixcrpkgs.
 * The [Pololu USB AVR Programmer v2 software](https://github.com/pololu/pololu-usb-avr-programmer-v2) is a C++ project that uses CMake and Nixcrpkgs.
 
 [nix]: http://nixos.org/nix/
