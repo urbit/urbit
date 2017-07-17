@@ -30,7 +30,6 @@ ln -s lib obj_sysroot/lib64
 mkdir obj_gcc
 mkdir obj_musl
 
-MAKE="make MULTILIB_OSDIRNAMES= ac_cv_prog_lex_root=lex.yy.c"
 gcc_conf="$gcc_conf --with-sysroot=/${host} --with-build-sysroot=$(pwd)/obj_sysroot "
 musl_conf="$musl_conf CC=../obj_gcc/gcc/xgcc\ -B\ ../obj_gcc/gcc LIBCC=../obj_gcc/$host/libgcc/libgcc.a"
 
@@ -40,14 +39,14 @@ cp -r --no-preserve=mode $headers/include $out/$host
 cd obj_gcc
 ../src_gcc/configure $gcc_conf
 cd ..
-$MAKE -C obj_gcc MAKE="$MAKE" all-gcc
+make -C obj_gcc all-gcc
 cd obj_musl
 bash -c "../src_musl/configure $musl_conf"
 cd ..
-$MAKE -C obj_musl DESTDIR=$(pwd)/obj_sysroot install-headers
-$MAKE -C obj_gcc MAKE="$MAKE" all-target-libgcc
-$MAKE -C obj_musl
-$MAKE -C obj_musl DESTDIR=$(pwd)/obj_sysroot install
-$MAKE -C obj_gcc MAKE="$MAKE"
-$MAKE -C obj_musl DESTDIR=$out/$host install
-$MAKE -C obj_gcc MAKE="$MAKE" DESTDIR=$out install
+make -C obj_musl DESTDIR=$(pwd)/obj_sysroot install-headers
+make -C obj_gcc all-target-libgcc
+make -C obj_musl
+make -C obj_musl DESTDIR=$(pwd)/obj_sysroot install
+make -C obj_gcc
+make -C obj_musl DESTDIR=$out/$host install
+make -C obj_gcc DESTDIR=$out install
