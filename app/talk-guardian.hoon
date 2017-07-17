@@ -54,8 +54,8 @@
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all messages
-          locals/group                                  ::<  local presence
-          remotes/(map circle group)                    ::<  remote presence
+          locals/group                                  ::<  local status
+          remotes/(map circle group)                    ::<  remote status
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
           ::TODO?  never gets updated. still needed?    ::
@@ -459,7 +459,7 @@
     (ta-delta %observe who)
   ::
   ++  ta-subscribe                                      ::<  listen to
-    ::>  add her to a presence list if applicable.
+    ::>  add her to a status list if applicable.
     ::
     |=  {her/ship qer/query}
     ^+  +>
@@ -767,12 +767,12 @@
         %+  roll  (~(tap by rem.cos))
         |=  {{r/circle c/config} _self}
         (so-delta-our %config r %full c)
-      ::  local presence
+      ::  local status
       =.  self
         %+  roll  (~(tap by loc.pes))
         |=  {{w/ship s/status} _self}
         (so-delta-our %status so-cir w %full s)
-      ::  remote presence
+      ::  remote status
       =.  self
         %+  roll  (~(tap by rem.pes))
         |=  {{c/circle g/group} _self}
@@ -861,16 +861,16 @@
       ::
       (so-delta-our %remove ~)
     ::
-    ++  so-attend                                       ::<  add local presence
-      ::>  add {her} status to this story's presence map.
+    ++  so-attend                                       ::<  add local status
+      ::>  add {her} status to this story's status map.
       ::
       |=  {her/ship sat/status}
       ^+  +>
       ?:  =(`sat (~(get by locals) her))  +>.$
       (so-delta-our %status so-cir her %full sat)
     ::
-    ++  so-absent                                       ::<  del local presence
-      ::>  remove {her} from our presence map.
+    ++  so-absent                                       ::<  del local status
+      ::>  remove {her} from our status map.
       ::
       |=  her/ship
       ^+  +>
@@ -1730,7 +1730,7 @@
   ::
   ::TODO?  %quit bones that are done with their subscription.
   ::  ...but that would also require a ta-cancel call to remove
-  ::  them from the presence list! how do?
+  ::  them from the status list! how do?
   ::  should there be an ++away arm for gall to call?
   |=  dif/delta
   ^-  (list move)
