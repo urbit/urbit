@@ -1,4 +1,4 @@
-{ crossenv }:
+{ crossenv, libudev }:
 
 let
   version = "4876d89";  # 1.0.2ish
@@ -12,12 +12,23 @@ let
     name = "libusbp-${version}";
     inherit src version;
     builder = ./builder.sh;
+
+    cross_inputs =
+      if crossenv.os == "linux" then
+        [ libudev ]
+      else
+        [];
   };
 
   license_fragment = crossenv.make_native_derivation {
     name = "libusbp-${version}-license-fragment";
     inherit src;
     builder = ./license_builder.sh;
+    input_license_fragments =
+      if crossenv.os == "linux" then
+        [ libudev.license_fragment ]
+      else
+        [];
   };
 in
   lib // { inherit license_fragment; }

@@ -5,7 +5,10 @@ mv libusbp-* libusbp
 
 license=$(cat libusbp/LICENSE.txt)
 
-cat > $out <<EOF
+{
+  cat > $out <<EOF
+<h2>Pololu USB library (libusbp)</h2>
+
 <p>
   The Pololu USB Library (libusbp) is licensed under the following license:
 </p>
@@ -14,3 +17,5 @@ cat > $out <<EOF
 $license
 </pre>
 EOF
+  cat $input_license_fragments
+} > $out

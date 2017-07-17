@@ -42,8 +42,12 @@ rec {
     curses = pdcurses;
   };
 
-  libusbp = import ./pkgs/libusbp {
+  libudev = import ./pkgs/libudev {
     inherit crossenv;
+  };
+
+  libusbp = import ./pkgs/libusbp {
+    inherit crossenv libudev;
   };
 
   p-load = import ./pkgs/p-load {
