@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
 
   inherit host headers;
 
-  builder = ./builder.sh;
+  builder = ./builder.sh;  # TODO: keep simplifying this script
 
   patch_dir = ./patches;
 
