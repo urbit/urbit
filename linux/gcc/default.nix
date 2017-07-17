@@ -1,4 +1,4 @@
-{ nixpkgs, host, binutils }:
+{ nixpkgs, host, binutils, headers }:
 
 let
   isl = nixpkgs.isl_0_14;
@@ -15,17 +15,13 @@ stdenv.mkDerivation rec {
     sha256 = "17xjz30jb65hcf714vn9gcxvrrji8j20xm7n33qg1ywhyzryfsph";
   };
 
-  linux_version = "4.4.10";
-  linux_src = fetchurl {
-    url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${linux_version}.tar.xz";
-    sha256 = "1kpjvvd9q9wwr3314q5ymvxii4dv2d27295bzly225wlc552xhja";
-  };
-
   musl_version = "1.1.16";
   musl_src = nixpkgs.fetchurl {
     url = "https://www.musl-libc.org/releases/musl-${musl_version}.tar.gz";
     sha256 = "048h0w4yjyza4h05bkc6dpwg3hq6l03na46g0q1ha8fpwnjqawck";
   };
+
+  inherit host headers;
 
   builder = ./builder.sh;
 
@@ -39,10 +35,6 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [ binutils ];
-
-  TARGET = host;
-  SYSROOT = "/${host}";
-  LINUX_ARCH = "x86";  # TODO
 
   gcc_conf =
     "--target=${host} " +
