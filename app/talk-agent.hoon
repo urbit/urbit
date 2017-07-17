@@ -52,7 +52,7 @@
           latest/@ud                                    ::<  latest shown msg num
           say/sole-share                                ::<  console state
           active/(set circle)                           ::<  active targets
-          settings/(set knot)  ::TODO  term             ::<  frontend settings
+          settings/(set term)                           ::<  frontend settings
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
@@ -93,8 +93,8 @@
           {$bind p/char q/(unit where)}                 ::<  bind glyph
           {$unbind p/char q/(unit where)}               ::<  unbind glyph
           {$nick p/(unit ship) q/(unit cord)}           ::<  un/set/show nick
-          {$set p/knot}                                 ::<  enable setting
-          {$unset p/knot}                               ::<  disable setting
+          {$set p/term}                                 ::<  enable setting
+          {$unset p/term}                               ::<  disable setting
           ::  miscellaneous                             ::
           {$help $~}                                    ::<  print usage info
       ==                                                ::
@@ -1169,12 +1169,12 @@
       ++  wo-set                                        ::<  %set
         ::>  enables ui setting flag.
         ::
-        |=  seg/knot
+        |=  seg/term
         ^+  ..sh-work
         ?~  seg
           %+  sh-fact  %mor
           %+  turn  (~(tap in settings.she))
-          |=  s/knot
+          |=  s/term
           [%txt (trip s)]
         %=  ..sh-work
           settings.she  (~(put in settings.she) seg)
@@ -1183,7 +1183,7 @@
       ++  unset                                         ::<  %unset
         ::>  disables ui setting flag.
         ::
-        |=  neg/knot
+        |=  neg/term
         ^+  ..sh-work
         %=  ..sh-work
           settings.she  (~(del in settings.she) neg)
@@ -1804,7 +1804,7 @@
           ::>     bou: complete aroma.
           ::>     sep: message contents.
           ::
-          sef/(set knot)
+          sef/(set term)
           who/ship
           sen/serial
           aud/audience
