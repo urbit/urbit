@@ -1,0 +1,20 @@
+--- systemd-234-orig/src/basic/missing.h
++++ systemd-234/src/basic/missing.h
+@@ -40,6 +40,8 @@
+ #include <uchar.h>
+ #include <unistd.h>
+ 
++typedef int comparison_fn_t(const void *, const void *);
++
+ #ifdef HAVE_AUDIT
+ #include <libaudit.h>
+ #endif
+@@ -550,7 +552,7 @@
+ #  ifdef HAVE___SECURE_GETENV
+ #    define secure_getenv __secure_getenv
+ #  else
+-#    error "neither secure_getenv nor __secure_getenv are available"
++
+ #  endif
+ #endif
+ 
