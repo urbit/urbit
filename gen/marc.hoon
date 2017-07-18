@@ -1,29 +1,23 @@
-
-# communist manifesto
-
-
-  =/  xml
-    \/
-      # communist manifesto
-
-      there is a specter hanging over europe -- the specter
-      of communism!
-    \/
-
-    - foo
-
-    - foo 
 ::
 ::::  hoon/marc/gen
   ::
+:-  %say
+|=  *
+:-  %noun
 =>  |%
-    ++  capo  (each mite head)                          ::  style
-    ++  head  {n/mane a/(list n/mane v/(list beer))     ::  xml context
-    ++  item  (pair capo (list item))                   ::  xml node generator
+    ++  item  (pair mite (list flow))                   ::  xml node generator
     ++  colm  @ud                                       ::  column
-    ++  flow  (each item tube)                          ::  node or generator
+    ++  flow  (each item twig)                          ::  node or generator
     ++  form  (unit $?($emph $bold $code))              ::  formatting
-    ++  mite  ?($body $list $lord)                      ::  div, ul, ol
+    ++  mite                                            ::  context
+      $?  $down                                         ::  outer embed
+          $flow                                         ::  regular flow; div
+          $list                                         ::  unordered list
+          $lime                                         ::  list item
+          $lord                                         ::  ordered list
+          $bloc                                         ::  blockquote
+          $code                                         ::  preformatted code
+      ==
     ++  mode                                            ::  inclusion mode
       $?  $cord                                         ::  ++cord (hard string)
           $manx                                         ::  ++manx (XML node)
@@ -42,33 +36,31 @@
               $head                                     ::  # heading
               $text                                     ::  anything else
       ==  ==                                            ::
-    ++  tube  (pair mode twig)                          ::  inclusion
     ++  word  @t                                        ::  source text
     --
 |%
 ++  parse
   |=  {naz/hair los/tape}
-  =|  
   ^-  (like item)
   ::
-  ::  err: yes iff error
+  ::  err: error position
   ::  col: current control column
   ::  hac: stack of items under construction
   ::  cur: current item under construction
   ::  lub: current line stack
   ::
-  =|  err/_|
-  =/  col  q.nax
+  =|  err/(unit hair)
+  =/  col  q.naz
   =|  hac/(list item)
-  =/  cur/item  [[%& %text] ~]
-  =|  lap/(list flow)
+  =/  cur/item  [%flow ~]
   =|  lub/(unit (pair hair (list tape)))
-  =<  $:body
+  =<  $:line
   |%
   ::                                                    ::
   ++  $                                                 ::  complete parse
+    ^-  (like item)
+    ?^  err  [u.err ~]
     :-  naz
-    ?:  err  ~
     :-  ~
     =.  hac  [cur hac]
     ?~  hac  !!
@@ -82,61 +74,44 @@
     ?~  t.hac  dis
     $(i.hac i.t.hac(q [dis q.i.t.hac]), t.hac t.t.hac)
   ::                                                    ::
-  ++  home                                              ::  to head of line
-    ^+  ..$
-    ?.  =(' ' i.los)  .
-    home(los t.los, q.naz +(q.naz))
-  ::                                                    ::
-  ++  fail                                              ::  syntax error
-    ^+  ..$
-    .(err &)
-  ::                                                    ::
   ++  back                                              ::  column retreat
-    ^+  . 
+    |=  bac/@ud
+    ^+  +>
     !!
   ::                                                    ::
-  ++  look                                              ::  inspect line
-    ^-  (unit trig)
-  ::                                                    ::
-  ++  seam                                              ::  parse leaf block
-    ^+  .
-    !!
-  ::                                                    ::
-  ++  code                                              ::  finish code block
-    ^+  .
-   
-  ::                                                    ::
-  ++  snap                                              ::  produce line
+  ++  snap                                              ::  capture line
     =|  nap/tape
-    ^+  {nap ..$}
+    ^+  {nap +} 
     !!
   ::                                                    ::
-  ++  swim                                              ::  add line to buffer
-    ^+  .
-    !!
-  ::                                                    ::  
+  ++  skip  +:snap                                      ::  discard line
   ++  made                                              ::  finish paragraph
     ^+  . 
     !!
-  ::                                                    ::
-  ++  know                                              ::  append to flow
-    |=  mit
-    ^+  +>
-    !!
-  ::                                                    ::
-  ++  knew                                              ::  
-    |=  sep/tape                                        
-    ^+  +>
-    !!
-  ::                                                    ::  
-  ++  push                                              ::
+  ::
+::    ++  expr
 
+      ::  sab: rule for embedded twig
+      ::
+::      =*  sab  (ifix [gay ;~(plug (star ace) (just `@`10))] tall:vast)
+      ::  vex: product of parsing following twig
+      ::
+::      =/  vex/(like twig)  (sab naz los)
+      ::  fail upward if parse failed
+      ::
+::      ?~  q.vex  ..^$(err `p.vex)
+      ::  otherwise, add item and continue
+::    ::
+::    %=  $
+::      naz  p.q.u.vex
+::      los  q.q.u.vex
+::      lap  :_(lap [%| %marl p.u.vex])
+::    ==
   ::                                                    ::  
-  ++  body                                              ::  body line loop
-    ^+  .
+  ++  line  ^+  .                                       ::  body line loop
     ::  abort after first error
     ::
-    ?:  err  .
+    ?^  err  .
     ::  pic: profile of this line
     ::
     =/  pic  look
@@ -145,88 +120,109 @@
     ?~  u.pic
       ::  break section
       ::
-      body(..^$ made)
+      line(..$ made:skip)
     ::  line is not blank
     ::
     =>  .(pic u.pic)
-    ::  if end of input, complain
+    ::  if end of input, complete
     ::
-    ?:  ?=($none sty.pic)  fail(q.naz col.pic)
-    ::  loop against profile
+    ?:  ?=($none sty.pic)
+      ..$(q.naz col.pic)
+    ::  if end marker behind current column
     ::
-    |-  ^+  ..^$
-    ::  if column has advanced
-    :: 
-    ?:  (gth col.pic col) 
-      ::  dif: columns advanced
+    ?:  &(?=($done col.pic) (lth col.pic col))
+      ::  retract and complete
       ::
-      =/  dif  (sub col.pic col)
-      ?+    dif  
-        ::  fail if advance is not 2, 4, 6 or 8
-        ::
-        ..^$(err &, q.naz col.pic)
-          ::  hoon expression literal
-          ::
-          $2
-        ::  sab: rule for embedded twig (producing (list manx))
-        ::
-        =*  sab  (ifix [gay ;~(plug (star ace) (just `@`10))] tall:vast)
-        ::  vex: product of parsing following twig
-        ::
-        =/  vex/(like twig)  (sab naz los)
-        ::  fail upward if parse failed
-        ::
-        ?~  q.vex  ..^$(err &, naz p.vex)
-        ::  otherwise, add item and continue
-        ::
-        %=  body
-          naz  p.q.u.vex
-          los  q.q.u.vex
-          lap  :_(lap [%| %marl p.u.vex])
-        ==
-          ::  preformatted text in code style
-          ::
-          $4
-        ::
-        ::
-        body(..^$ poem:seam:take(col col.pic))
-          ::
-          ::  blockquote
-          ::
-          $6
-        ::  repeat line loop with nested item
-        ::
-        $(..^$ (push(col (add 6 col)) [[%& %quot] ~]))
-          ::
-          ::  preformatted text in verse style
-          ::
-          $8
-        body(..^$ poem:seam:take(col col.pic))
+      (back(q.naz (add 2 col.pic)) col.pic)
+    ::  if within section
+    ::
+    ?^  lub
+      ::  detect bad block structure
+      ::
+      ?:  ?|  ?=($head sty.pic)
+              ?:  ?=(?($code $poem $expr) p.cur)
+                (lth col.pic col)
+              |(!=($text sty.pic) !=(col.pic col))
+          ==
+        ..$(err `[p.naz col.pic])
+      ::  accept line and continue
+      :: 
+      =^  nap  ..$  snap
+      line(lub lub(q.u [nap q.u.lub]))
+    ::  if column has retreated, adjust stack
+    ::
+    =.  ..$  ?:  (lth col.pic col)  ..$
+        (back col.pic)
+    ::  dif: columns advanced
+    ::  erz: error position
+    ::
+    =/  dif  (sub col.pic col)
+    =/  erz  [p.naz col.pic]
+    =.  col  col.pic
+    ::  nap: take first line
+    ::
+    =^  nap  ..$  snap
+    ::  execute appropriate paragraph form
+    ::
+    =<  line(..$ abet:apex)
+    |%
+    ::                                                  ::  
+    ++  abet                                            ::  accept line
+      ..$(lub `[naz nap ~])
+    ::                                                  ::
+    ++  apex                                            ::  by column offset
+      ?+  dif  fail
+        $0  apse
+        $2  expr
+        $4  code
+        $6  bloc
+        $8  poem
       ==
-    ::  if column has retreated
-    ::
-    ?:  (lth col.pic col)
-      ::  repeat with parsing stack adjusted
+    ::                                                  ::
+    ++  apse                                            ::  by prefix style
+      ?-  sty.pic
+        $head  head
+        $lite  lite
+        $lint  lint
+        $text  text
+      ==
+    ::                                                  ::
+    ++  bloc  apse:(push %bloc)                         ::  blockquote line
+    ++  fail  ..$(err `erz)                             ::  set error position
+    ++  push  |=(mite +>(hac [cur hac], cur [+< ~]))    ::  deeper stack
+    ++  expr  (push %expr)                              ::  hoon expression
+    ++  code  (push %code)                              ::  code literal
+    ++  poem  (push %poem)                              ::  verse literal
+    ++  head  !!
+    ++  lent                                            ::  list entry
+      |=  ord/?
+      ::  erase list marker
       ::
-      $(..^$ back)
+      =.  nap  =+(+(col) (runt [- ' '] (slag - nap)))
+      ::  indent by 2
+      ::
+      =.  col  (add 2 col)
+      ::  can't switch list types
+      ::
+      ?:  =(?:(ord %list %lord) p.cur)  fail
+      ::  push item context
+      ::
+      =<  (push %lime)
+      ::  if not already in list, start list
+      ::
+      =+  ?:(ord %lord %list)
+      ?:(=(- p.cur) . (push -))
     ::
-    ::  at 
-    ::
-    ?-    sty.pic
-        ::
-        $done  
-      ..^$(q.naz (add 2 col))
-      $none  ..^$(q.naz col)
-      $lite  ?^(body(..^$ (push:(snip [%
-      $lint  body(..^$ (push:(
-    ==
-    body(..^$ norm)
-  ::
-  ++  many
-    |=  all/(list twig)
-    ?~  all  !!
-    |-  ^-  twig
-    ?~  t.all
-      i.all
-    [i.all $(i.all i.t.all, t.all t.t.all)]
+    ++  lint  (lent &)                                  ::  numbered list
+    ++  lite  (lent |)                                  ::  unnumbered list
+    ++  text                                            ::  plain text
+      ::  except in lists, continue in current flow
+      ::
+      ?.  ?=(?($list $lord) p.cur)  .
+      ::  in lists, finish current and switch to text
+      ::
+      ?>  ?=(^ hac)
+      .(hac [[p.i.hac [cur q.i.hac]]], cur [%text ~])
+    --
   --
+--
