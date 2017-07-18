@@ -20,7 +20,7 @@ cd build
 ln -s ../gcc src_gcc
 ln -s ../musl src_musl
 
-gcc_conf="$gcc_conf --with-sysroot=/$out/$host "
+gcc_conf="$gcc_conf --with-sysroot=/$out/$host"
 musl_conf="$musl_conf CC=../obj_gcc/gcc/xgcc\ -B\ ../obj_gcc/gcc LIBCC=../obj_gcc/$host/libgcc/libgcc.a"
 
 mkdir -p $out/$host
@@ -46,5 +46,4 @@ make -C obj_gcc all-target-libgcc
 make -C obj_musl
 make -C obj_musl DESTDIR=$out/$host install
 make -C obj_gcc
-make -C obj_musl DESTDIR=$out/$host install
 make -C obj_gcc DESTDIR=$out install
