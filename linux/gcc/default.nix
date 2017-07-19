@@ -38,8 +38,6 @@ stdenv.mkDerivation rec {
 
   gcc_conf =
     "--target=${host} " +
-    "--prefix= " +
-    "--libdir=/lib " +
     "--with-gnu-as " +
     "--with-gnu-ld " +
     "--with-as=${binutils}/bin/${host}-as " +
@@ -69,7 +67,6 @@ stdenv.mkDerivation rec {
 
   musl_conf =
     "--target=${host} " +
-    "--prefix= " +
     "--disable-shared";
 
   hardeningDisable = [ "format" ];
