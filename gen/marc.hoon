@@ -15,17 +15,11 @@
           $list                                         ::  unordered list
           $lime                                         ::  list item
           $lord                                         ::  ordered list
+          $poem                                         ::  verse
           $bloc                                         ::  blockquote
           $code                                         ::  preformatted code
+          $expr                                         ::  dynamic expression
       ==
-    ++  mode                                            ::  inclusion mode
-      $?  $cord                                         ::  ++cord (hard string)
-          $manx                                         ::  ++manx (XML node)
-          $marl                                         ::  ++marl (XML nodes)
-          $tape                                         ::  ++tape (soft string)
-          $text                                         ::  (list cord)
-          $wall                                         ::  (list tape)
-      ==                                                ::
     ++  trig                                            ::  line style
       $:  col/@ud                                       ::  start column 
           $=  sty                                       ::  style
@@ -60,8 +54,7 @@
   ++  $                                                 ::  complete parse
     ^-  (like item)
     ?^  err  [u.err ~]
-    :-  naz
-    :-  ~
+    =-  [naz `[- [naz los]]]
     =.  hac  [cur hac]
     ?~  hac  !!
     |-  ^-  item
@@ -72,7 +65,7 @@
     ::  add as last entry in parent, or return
     ::
     ?~  t.hac  dis
-    $(i.hac i.t.hac(q [dis q.i.t.hac]), t.hac t.t.hac)
+    $(i.hac `item`i.t.hac(q [[%& dis] q.i.t.hac]), t.hac `(list item)`t.t.hac)
   ::                                                    ::
   ++  back                                              ::  column retreat
     |=  bac/@ud
@@ -81,10 +74,13 @@
   ::                                                    ::
   ++  snap                                              ::  capture line
     =|  nap/tape
-    ^+  {nap +} 
+    ^+  [nap +]
     !!
   ::                                                    ::
   ++  skip  +:snap                                      ::  discard line
+  ++  look                                              ::  inspect line
+    ^-  (unit trig)
+    !!
   ++  made                                              ::  finish paragraph
     ^+  . 
     !!
@@ -111,16 +107,16 @@
   ++  line  ^+  .                                       ::  body line loop
     ::  abort after first error
     ::
-    ?^  err  .
+    ?:  !=(~ err)  .
     ::  pic: profile of this line
     ::
     =/  pic  look
     ::  if line is blank
     ::
-    ?~  u.pic
+    ?~  pic
       ::  break section
       ::
-      line(..$ made:skip)
+      line:made:skip
     ::  line is not blank
     ::
     =>  .(pic u.pic)
@@ -130,34 +126,37 @@
       ..$(q.naz col.pic)
     ::  if end marker behind current column
     ::
-    ?:  &(?=($done col.pic) (lth col.pic col))
+    ?:  &(?=($done sty.pic) (lth col.pic col))
       ::  retract and complete
       ::
       (back(q.naz (add 2 col.pic)) col.pic)
+    ::  bal: inspection copy of lub, current section
+    ::
+    =/  bal  lub
     ::  if within section
     ::
-    ?^  lub
+    ?^  bal
       ::  detect bad block structure
       ::
       ?:  ?|  ?=($head sty.pic)
               ?:  ?=(?($code $poem $expr) p.cur)
                 (lth col.pic col)
-              |(!=($text sty.pic) !=(col.pic col))
+              |(!=(%text sty.pic) !=(col.pic col))
           ==
         ..$(err `[p.naz col.pic])
       ::  accept line and continue
       :: 
-      =^  nap  ..$  snap
-      line(lub lub(q.u [nap q.u.lub]))
+      =^  nap  ..line  snap
+      line(lub bal(q.u [nap q.u.bal]))
     ::  if column has retreated, adjust stack
     ::
     =.  ..$  ?:  (lth col.pic col)  ..$
         (back col.pic)
     ::  dif: columns advanced
-    ::  erz: error position
+    ::  erp: error position
     ::
     =/  dif  (sub col.pic col)
-    =/  erz  [p.naz col.pic]
+    =/  erp  [p.naz col.pic]
     =.  col  col.pic
     ::  nap: take first line
     ::
@@ -170,7 +169,7 @@
     ++  abet                                            ::  accept line
       ..$(lub `[naz nap ~])
     ::                                                  ::
-    ++  apex                                            ::  by column offset
+    ++  apex  ^+  .                                     ::  by column offset
       ?+  dif  fail
         $0  apse
         $2  expr
@@ -179,8 +178,9 @@
         $8  poem
       ==
     ::                                                  ::
-    ++  apse                                            ::  by prefix style
+    ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
+        $done  !!
         $head  head
         $lite  lite
         $lint  lint
@@ -188,14 +188,15 @@
       ==
     ::                                                  ::
     ++  bloc  apse:(push %bloc)                         ::  blockquote line
-    ++  fail  ..$(err `erz)                             ::  set error position
-    ++  push  |=(mite +>(hac [cur hac], cur [+< ~]))    ::  deeper stack
+    ++  fail  .(err `erp)                               ::  set error position
+    ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  deeper stack
     ++  expr  (push %expr)                              ::  hoon expression
     ++  code  (push %code)                              ::  code literal
     ++  poem  (push %poem)                              ::  verse literal
     ++  head  !!
     ++  lent                                            ::  list entry
       |=  ord/?
+      ^+  +>
       ::  erase list marker
       ::
       =.  nap  =+(+(col) (runt [- ' '] (slag - nap)))
@@ -205,24 +206,24 @@
       ::  can't switch list types
       ::
       ?:  =(?:(ord %list %lord) p.cur)  fail
-      ::  push item context
-      ::
-      =<  (push %lime)
       ::  if not already in list, start list
       ::
       =+  ?:(ord %lord %list)
-      ?:(=(- p.cur) . (push -))
+      ?:  =(- p.cur) 
+        (push %lime)
+      (push:(push -) %lime)
     ::
     ++  lint  (lent &)                                  ::  numbered list
     ++  lite  (lent |)                                  ::  unnumbered list
     ++  text                                            ::  plain text
+      ^+  .
       ::  except in lists, continue in current flow
       ::
       ?.  ?=(?($list $lord) p.cur)  .
       ::  in lists, finish current and switch to text
       ::
       ?>  ?=(^ hac)
-      .(hac [[p.i.hac [cur q.i.hac]]], cur [%text ~])
+      .(hac [[p.i.hac [[%& cur] q.i.hac]] t.hac], cur [%flow ~])
     --
   --
 --
