@@ -13,3 +13,5 @@ cmake-cross ../libusbp \
 make
 
 make install
+
+find $out/bin/* -exec $host-strip {} +
