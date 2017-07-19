@@ -8,8 +8,19 @@ let
 
   binutils = import ./binutils { inherit nixpkgs host; };
 
+  headers = nixpkgs.stdenv.mkDerivation rec {
+    name = "linux-headers-${linux_arch}-${version}";
+    linux_arch = "x86";  # TODO
+    version = "4.4.10";
+    src = nixpkgs.fetchurl {
+      url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
+      sha256 = "1kpjvvd9q9wwr3314q5ymvxii4dv2d27295bzly225wlc552xhja";
+    };
+    builder = ./headers_builder.sh;
+  };
+
   gcc = import ./gcc {
-    inherit nixpkgs host binutils;
+    inherit nixpkgs host binutils headers;
   };
 
   pkg-config = import ../pkgconf { inherit nixpkgs; };
@@ -35,6 +46,8 @@ let
 
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
+
+    inherit headers;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
 
