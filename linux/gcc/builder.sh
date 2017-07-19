@@ -14,21 +14,19 @@ cd ..
 tar -xf $musl_src
 mv musl-* musl
 
-gcc_conf="$gcc_conf --prefix=$out"
-musl_conf="$musl_conf --prefix=$out/$host CC=../build_gcc/gcc/xgcc\ -B\ ../build_gcc/gcc LIBCC=../build_gcc/$host/libgcc/libgcc.a"
-
 mkdir -p $out/$host
-
 cp -r --no-preserve=mode $headers/include $out/$host
 
 mkdir build_gcc
 cd build_gcc
-../gcc/configure $gcc_conf
+../gcc/configure --prefix=$out $gcc_conf
 cd ..
 make -C build_gcc all-gcc
 mkdir build_musl
 cd build_musl
-eval ../musl/configure $musl_conf
+../musl/configure --prefix=$out/$host $musl_conf \
+  CC="../build_gcc/gcc/xgcc -B ../build_gcc/gcc" \
+  LIBCC=../build_gcc/$host/libgcc/libgcc.a
 cd ..
 make -C build_musl install-headers
 make -C build_gcc all-target-libgcc
