@@ -261,7 +261,7 @@
       ==
       ::
         $circle
-      %.  gaz.piz
+      %.  gaz.nev.piz
       %=  ta-lesson
         sources   src.loc.cos.piz
         mirrors   (~(put by rem.cos.piz) incir loc.cos.piz)
@@ -293,13 +293,13 @@
   ++  ta-change-circle                                  ::<  apply circle change
     ::>
     ::
-    |=  dif/diff-story
+    |=  dif/rumor-story
     ^+  +>
     ?+  -.dif
         ~&([%unexpected-circle-rumor -.dif] +>)
       ::
         $grams
-      (ta-lesson gaz.dif)
+      (ta-lesson gaz.nev.dif)
       ::
         $config
       %=  +>

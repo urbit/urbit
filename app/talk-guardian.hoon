@@ -48,7 +48,7 @@
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
           ::TODO  update & use.
-          sequence/(map circle @ud)                     ::<  circles heard
+          sequence/(map circle @ud)                     ::<  last-heard p circle
           known/(map serial @ud)                        ::<  messages heard
           inherited/?($| $&)                            ::<  from parent?
       ==                                                ::
@@ -691,7 +691,7 @@
     ++  so-take                                         ::<  accept circle prize
       ::>  apply the prize as if it were rumors.
       ::
-      |=  {src/circle gaz/(list telegram) cos/lobby pes/crowd}
+      |=  {src/circle nev/envelope cos/lobby pes/crowd}
       ^+  +>
       =.  +>.$
         (so-hear | src %config src %full loc.cos)
@@ -699,12 +699,12 @@
         %-  ~(rep in loc.pes)
         |=  {{w/ship s/status} _+>.$}
         (so-hear | src %status src w %full s)
-      (so-lesson gaz)
+      (so-unpack src nev)
     ::
     ++  so-hear                                         ::<  accept circle rumor
       ::>  apply changes from a rumor to this story.
       ::
-      |=  {bur/? src/circle dif/diff-story}
+      |=  {bur/? src/circle dif/rumor-story}
       ^+  +>
       ::  check that we're still subscribed to this story
       ::  this is a small %gall bug, we shouldn't get these
@@ -717,7 +717,7 @@
                     (so-config-full ~ cof.dif)
                   $(dif [%config src %full cof.dif])
         $bear     ~&(%so-bear (so-bear bur.dif))
-        $grams    (so-lesson gaz.dif)
+        $grams    (so-unpack src nev.dif)
         $config   ::  full changes to us need to get split up.
                   ?:  &(=(cir.dif so-cir) ?=($full -.dif.dif))
                     (so-config-full `shape cof.dif.dif)
@@ -973,6 +973,17 @@
           `@`'?'
         a
       ==
+    ::
+    ++  so-unpack                                       ::<  process envelope
+      ::>  learn telegrams from envelope and update the
+      ::>  sequence of the source.
+      ::
+      |=  {src/circle nev/envelope}
+      ^+  +>
+      ?~  gaz.nev  +>
+      =.  +>  (so-lesson gaz.nev)
+      %^  so-delta-our  %sequent  src
+      (add num.nev (dec (lent gaz.nev)))
     ::
     ++  so-lesson                                       ::<  learn messages
       ::>  learn all telegrams in a list.
@@ -1318,6 +1329,13 @@
           $inherited
         +>(inherited ihr.dif)
         ::
+          $follow
+        (sa-emil (sa-follow-effects sub.dif cos.dif))
+        ::
+          $sequent
+        +>(sequence (~(put by sequence) cir.dif num.dif))
+        ::
+        ::
           $grams
         |-  ^+  +>.^$
         ?~  gaz.dif  +>.^$
@@ -1338,9 +1356,6 @@
             (fall (~(get by locals) who.dif) *status)
           dif.dif
         ==
-        ::
-          $follow
-        (sa-emil (sa-follow-effects sub.dif cos.dif))
       ==
     ::
     ++  sa-change-gram                                  ::<  save/update message
@@ -1628,35 +1643,39 @@
     ?~  soy  ~
     :+  ~  ~
     :-  %circle
-    :+  (~(so-first-grams so:ta nom.qer ~ u.soy) ran.qer)
+    :+  %+  grams-to-envelope  nom.qer
+        (~(so-first-grams so:ta nom.qer ~ u.soy) ran.qer)
       [shape.u.soy mirrors.u.soy]
     [locals.u.soy remotes.u.soy]
   ==
 ::
-++  dedicate                                            ::<  diff-story to theirs
+++  dedicate                                            ::<  rumor-story to theirs
   ::>  modify a %story diff to make it about their ship
   ::>  instead of ours.
   ::
-  |=  {who/ship dif/diff-story}
-  ^-  diff-story
-  ?+  -.dif
-    dif
+  |=  {who/ship nom/naem dif/delta-story}
+  ^-  rumor-story
+  ?+  -.dif  dif
+    ::
+    ::TODO  ...
+    $follow     !!
+    $inherited  !!
+    $sequent    !!
     ::
       $grams
-    %=  dif
-        gaz
-      %+  turn  gaz.dif
-      |=  gam/telegram
-      =.  aud.gam
-        %-  ~(run in aud.gam)
-        |=  c/circle
-        ::TODO  it probably isn't safe to do this for
-        ::      all audience members hosted by us, even
-        ::      if this is only called for burdens.
-        ?.  =(hos.c our.bol)  c
-        [who nom.c]
-      gam
-    ==
+    :-  %grams
+    %+  grams-to-envelope  nom
+    %+  turn  gaz.dif
+    |=  gam/telegram
+    =.  aud.gam
+      %-  ~(run in aud.gam)
+      |=  c/circle
+      ::TODO  it probably isn't safe to do this for
+      ::      all audience members hosted by us, even
+      ::      if this is only called for burdens.
+      ?.  =(hos.c our.bol)  c
+      [who nom.c]
+    gam
     ::
       $config
     ?.  =(hos.cir.dif our.bol)  dif
@@ -1666,6 +1685,18 @@
     ?.  =(hos.cir.dif our.bol)  dif
     dif(cir [who nom.cir.dif])
   ==
+::
+++  grams-to-envelope                                   ::<  wrap grams with nr
+  ::>  deduce the initial msg number from a list of
+  ::>  telegrams for a given story.
+  ::
+  |=  {nom/naem gaz/(list telegram)}
+  ^-  envelope
+  ?:  =((lent gaz) 0)  [0 ~]  ::TODO?  ?~  nest-fails:
+  ~?  (gth (lent gaz) 1)  %multi-msg
+  :_  gaz
+  %.  uid:(snag 0 gaz)
+  ~(got by known:(~(got by stories) nom))
 ::
 ++  feel                                                ::<  delta to rumor
   ::>  if the given delta changes the result of the given
@@ -1684,10 +1715,10 @@
       $burden
     ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
     ?.  ?=($story -.dif)  ~
-    ?:  ?=(?($follow $inherited) -.dif.dif)  ~  ::REVIEW  ?= diff-story fishloop
+    ?:  ?=(?($follow $inherited $sequent) -.dif.dif)  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
-    `[%burden nom.dif (dedicate who.qer dif.dif)]
+    `[%burden nom.dif (dedicate who.qer nom.dif dif.dif)]
     ::
       $report
     ::  only send changes we didn't get from above.
@@ -1700,7 +1731,7 @@
     ?.  inherited.soy  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape.soy)  ~
-    `[%burden nom.dif (dedicate (above our.bol) dif.dif)]
+    `[%burden nom.dif (dedicate (above our.bol) nom.dif dif.dif)]
     ::
       $circle
     ?.  ?=($story -.dif)  ~
@@ -1709,8 +1740,14 @@
     =+  ren=(~(so-in-range so:ta nom.qer ~ (~(got by stories) nom.qer)) ran.qer)
     ::TODO  if done.ren, %quit bone
     ?.  in.ren  ~
-    ?:  ?=(?($follow $inherited) -.dif.dif)  ~  ::REVIEW ^
-    `[%circle dif.dif]
+    ::TODO  move up? we also check for $follow above, why?
+    ?:  ?=(?($follow $inherited $sequent) -.dif.dif)  ~
+    =/  rdif/rumor-story
+      ?+  -.dif.dif  dif.dif
+          $grams
+        [%grams (grams-to-envelope nom.dif gaz.dif.dif)]
+      ==
+    `[%circle rdif]
   ==
 ::
 ++  affection                                           ::<  rumors to interested

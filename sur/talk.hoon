@@ -43,7 +43,7 @@
       {$friend cis/(set circle)}                        ::<  /friend
       {$burden sos/(map naem burden)}                   ::<  /burden
       ::TODO  do we ever use remote things from remote circles?
-      {$circle burden}                                  ::<  /circle
+      {$circle package}                                 ::<  /circle
   ==                                                    ::
 ++  prize-reader                                        ::
   $:  gys/(jug char (set circle))                       ::<  glyph bindings
@@ -52,8 +52,8 @@
 ++  rumor                                               ::<  query result change
   $%  {$reader dif/rumor-reader}                        ::<  /reader
       {$friend add/? cir/circle}                        ::<  /friend
-      {$burden nom/naem dif/diff-story}                 ::<  /burden
-      {$circle dif/diff-story}                          ::<  /circle
+      {$burden nom/naem dif/rumor-story}                ::<  /burden
+      {$circle dif/rumor-story}                         ::<  /circle
   ==                                                    ::
 ++  rumor-reader                                        ::<  changed ui state
   $%  {$glyph diff-glyph}                               ::<  un/bound glyph
@@ -64,10 +64,15 @@
       cos/lobby                                         ::<  loc & rem configs
       pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
+++  package                                             ::<  story state
+  $:  nev/envelope                                      ::<  messages
+      cos/lobby                                         ::<  loc & rem configs
+      pes/crowd                                         ::<  loc & rem presences
+  ==                                                    ::
 ::TODO  deltas into app
 ++  delta                                               ::
   $%  ::  messaging state                               ::
-      {$out cir/circle out/(list thought)}              ::<  msgs into outbox
+      {$out cir/circle out/(list thought)}              ::<  send msgs to circle
       ::  shared ui state                               ::
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
@@ -81,19 +86,24 @@
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char pas/(set circle)}       ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/nick}                     ::<  changed nickname
-++  delta-story                                         ::<  story delta
+++  delta-story                                         ::>  story delta
   $?  diff-story                                        ::<  both in & outward
   $%  {$inherited ihr/?}                                ::<  inherited flag
       {$follow sub/? cos/(map circle range)}            ::<  un/subscribe
+      {$sequent cir/circle num/@ud}                     ::<  update last-heard
+      {$grams gaz/(list telegram)}                      ::<  new/changed msgs
   ==  ==                                                ::
-++  diff-story                                          ::<  story rumor
+++  diff-story                                          ::>  story change
   $%  {$new cof/config}                                 ::<  new story
       {$bear bur/burden}                                ::<  new inherited story
-      {$grams gaz/(list telegram)}                      ::<  new/changed msgs
       {$config cir/circle dif/diff-config}              ::<  new/changed config
       {$status cir/circle who/ship dif/diff-status}     ::<  new/changed status
       {$remove $~}                                      ::<  removed story
   ==                                                    ::
+++  rumor-story                                         ::>  story rumor
+  $?  diff-story                                        ::<  both in & outward
+  $%  {$grams nev/envelope}                             ::<  new/changed msgs
+  ==  ==                                                ::
 ++  diff-config                                         ::>  config change
   ::TODO  maybe just full? think.
   $%  {$full cof/config}                                ::<  set w/o side-effects
@@ -203,6 +213,7 @@
 ::>    structures for containing main message data.
 ::+|
 ::
+++  envelope   {num/@ud gaz/(list telegram)}            ::<  outward messages
 ++  telegram   {aut/ship thought}                       ::<  whose message
 ++  thought                                             ::>  inner message
   $:  uid/serial                                        ::<  unique identifier
