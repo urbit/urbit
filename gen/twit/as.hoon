@@ -11,4 +11,4 @@
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {{who/knot msg/cord $~} $~}
     ==
-[%twit-do [who %post eny msg]]
+[%twit-do [who %post `@uvI`(rsh 8 1 eny) msg]]

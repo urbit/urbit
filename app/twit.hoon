@@ -29,7 +29,7 @@
   $%  {$quit $~}                                         ::  terminate
       {$diff gilt}                                      ::  send data
   ==
-++  gilt  
+++  gilt
   $%  {$twit-feed p/(list stat)}                        ::  posts in feed
       {$twit-post p/stat}                               ::  tweet accepted
       {$ares term (list tank)}                          ::  error
@@ -97,7 +97,7 @@
   |=  {pax/path mof/(list move)}  ^+  done
   =^  tym  ran  (dely pax)
   :_  +>.$
-  ?~  tym  
+  ?~  tym
     :: ~&  no-wait/ran
     mof
   :: ~&  will-wait/u.tym
@@ -124,7 +124,7 @@
       pus=(~(gas ju *(jug path bone)) (turn ~(tap by sup) .))
   ?~  (~(get ju pus) pax)
     ~
-  ~&  peer-again+[pax ran]  
+  ~&  peer-again+[pax ran]
   (pear | `~. pax) ::(user-from-path pax))
 ::
 ++  sigh-recoverable-error                              ::  Rate-limit
@@ -195,11 +195,11 @@
   |=  {usr/(unit user:eyre) req/(unit user:eyre)}
   ?~(req & =(usr req))
 ::
-::  .^(twit-feed %gx /=twit=/~/home/urbit_test)
-::  .^(twit-stat %gx /=twit=/~./post/0vv0old.0post.hash0.0000)
-++  peek
-  |=  {ren/care:clay pax/path}  ^-  (unit (unit gilt))
-  ?>  ?=($x ren)  ::  others unsupported
+::   /+  twitter
+::  .^((list post:twitter) %gx /=twit=/home/urbit_test/twit-feed)
+::  .^(post:twitter %gx /=twit=/post/0vv0old.0post.hash0.0000/twit-feed)
+++  peek-x
+  |=  pax/path  ^-  (unit (unit gilt))
   =+  usr=`~.  ::   =^  usr  pax  (user-from-path pax)
   ?.  ?=(twit-path pax)
     ~|([%missed-path pax] !!)
@@ -213,7 +213,7 @@
 ++  peer-scry-x
   |=  pax/path  ^+  done
   :_  +>
-  =+  pek=(peek %x pax)
+  =+  pek=(peek-x pax)
   ?^  pek
     ?~  u.pek  ~|(bad-scry+x+pax !!)
     ~[[ost %diff u.u.pek] [ost %quit ~]]
@@ -223,7 +223,7 @@
   =+  hiz=(pear-hiss pax)
   ?~  hiz  ~                          :: already in flight
   ::?>  (compat usr -.u.hiz)                  ::  XX better auth
-  [ost %hiss scry+pax usr +.u.hiz]~  
+  [ost %hiss scry+pax usr +.u.hiz]~
 ::
 ++  peer  |=(pax/path :_(+> (pear & `~. pax)))       ::  accept subscription
 ++  pear                              ::  poll, possibly returning current data
