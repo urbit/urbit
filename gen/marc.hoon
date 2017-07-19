@@ -163,7 +163,7 @@
     =^  nap  ..$  snap
     ::  execute appropriate paragraph form
     ::
-    =<  line(..$ abet:apex)
+    =<  line:abet:apex
     |%
     ::                                                  ::  
     ++  abet                                            ::  accept line
