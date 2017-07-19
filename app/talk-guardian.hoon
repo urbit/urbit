@@ -12,24 +12,13 @@
 ::TODO  document gate samples fully.
 ::TODO  ::> to :> etc.
 ::
-::TODO  we can't do away with the default mailbox because we need it for things
-::      like invite notifications etc. can we do better than request that apps
-::      don't use it frivolously?
-::
 ::TODO  crash on pokes/peers we do not expect
-::
-::TODO  federation should not be present at all in delta-application cores. the
-::      way changes are to be applied should be figured out by the delta-
-::      geenration cores entirely.
 ::
 ::TODO  for using moons as tmp identities for friends: stories may want to keep
 ::      lists of moons (or just ships in general?) that we define as "standalone"
 ::      so that the "convert to true identity" doesn't happen for them.
 ::
-::TODO  we need to have something for upward changes on burdens as well. we
-::      could use entirely new query for this. to do so, we'd need to add
-::      a new code path in front of changes that checks if it's not a config
-::      change, and then redirects it to existing arms.
+::TODO/REVIEW  rename porch/floor/court to inbox?
 ::
 /?    151                                               ::<  hoon version
 /-    talk                                              ::<  structures
@@ -58,7 +47,7 @@
           remotes/(map circle group)                    ::<  remote status
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
-          ::TODO?  never gets updated. still needed?    ::
+          ::TODO  update & use.
           sequence/(map circle @ud)                     ::<  circles heard
           known/(map serial @ud)                        ::<  messages heard
           inherited/?($| $&)                            ::<  from parent?
@@ -931,6 +920,8 @@
       ::>  produces two booleans: whether we're
       ::>  currently in the range, and whether the range
       ::>  has passed.
+      ::TODO  to deal with changed messages, we'll want
+      ::      to be able to pass in a num.
       ::
       |=  ran/range
       ^-  {in/? done/?}
@@ -1358,6 +1349,8 @@
       ::
       |=  gam/telegram
       ^+  +>
+      ::TODO  move "known" logic up into ++so? that way,
+      ::      we can attach message numbers to changes.
       =+  old=(~(get by known) uid.gam)
       ?~  old
         ::  new message
@@ -1596,7 +1589,7 @@
   |=  dis/(list delta)
   ^-  (quip move +>)
   %+  roll  dis
-  |=  {d/delta m/(list move) _+>.$}  ::REVIEW  ^$ find-fails, how is this correct?
+  |=  {d/delta m/(list move) _+>.$}
   =^  mos  +>.^$  (bake d)
   [(welp m mos) +>.^$]
 ::
@@ -1616,7 +1609,7 @@
     %+  murn  (~(tap by stories))
     |=  {n/naem s/story}
     ^-  (unit (pair naem burden))
-    ::  only auto-federate channels for now.  ::REVIEW
+    ::  only auto-federate channels for now.
     ?.  ?=($black sec.con.shape.s)  ~
     :+  ~  n
     :+  grams.s
@@ -1912,7 +1905,6 @@
   ::>  gall dropped our subscription. resubscribe.
   ::
   ::TODO  update for all subscription kinds.
-  ::TODO?  does new gall still drop subscriptions?
   |=  wir/wire
   ^-  (quip move +>)
   %+  etch-circle  [%circle wir]
