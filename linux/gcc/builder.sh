@@ -20,7 +20,7 @@ cd build
 ln -s ../gcc src_gcc
 ln -s ../musl src_musl
 
-gcc_conf="$gcc_conf --prefix=$out --libdir=$out/lib --with-sysroot=$out/$host"
+gcc_conf="$gcc_conf --prefix=$out --with-sysroot=$out/$host"
 musl_conf="$musl_conf --prefix=$out/$host CC=../obj_gcc/gcc/xgcc\ -B\ ../obj_gcc/gcc LIBCC=../obj_gcc/$host/libgcc/libgcc.a"
 
 mkdir -p $out/$host
