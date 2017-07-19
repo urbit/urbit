@@ -206,10 +206,6 @@
         %+  ta-action  ost.bol
         [%create nom des typ]
     %-  ta-deltas
-    ::  change inbox filter to allow everything.
-    :-  :+  %story  (main our.bol)
-        :+  %config  [our.bol (main our.bol)]
-        [%filter [& &]]
     ::  if needed, subscribe to our parent's /burden.
     =+  sen=(above our.bol)
     ?:  ?|  !=(%czar (clan sen))
@@ -335,7 +331,7 @@
         %^  impact  nom  %new
         :*  [[our.bol nom] ~ ~]
             des
-            [| |]
+            *filter
             :-  typ
             ?.  ?=(?($white $green) typ)  ~
             [our.bol ~ ~]
