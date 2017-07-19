@@ -28,7 +28,7 @@ cd ..
 make -C build_gcc all-gcc
 mkdir build_musl
 cd build_musl
-bash -c "../musl/configure $musl_conf"
+eval ../musl/configure $musl_conf
 cd ..
 make -C build_musl install-headers
 make -C build_gcc all-target-libgcc
