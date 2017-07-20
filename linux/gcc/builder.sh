@@ -5,7 +5,7 @@ unset CC CXX CFLAGS LDFLAGS
 tar -xf $gcc_src
 mv gcc-* gcc
 cd gcc
-for patch in $patch_dir/gcc-$gcc_version/*; do
+for patch in $gcc_patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done

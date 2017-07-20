@@ -25,13 +25,9 @@ stdenv.mkDerivation rec {
 
   builder = ./builder.sh;  # TODO: keep simplifying this script
 
-  patch_dir = ./patches;
-
   gcc_patches = [
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
-    ./no-sys-dirs.patch
-    ./cppdefault.patch
   ];
 
   buildInputs = [ binutils ];
@@ -76,8 +72,5 @@ stdenv.mkDerivation rec {
     license = lib.licenses.gpl3Plus;
   };
 }
-
-# TODO: does this use /usr/include/stdio.h at any point?  I think it might, so
-# try adding #error to it or building in a sandbox
 
 # TODO: fix xgcc; it searches directories outside of the Nix store for libraries
