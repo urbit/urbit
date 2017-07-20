@@ -674,6 +674,16 @@
       ^+  +>
       (so-delta %story nom dif)
     ::
+    ++  so-deltas-our                                   ::<  send deltas of us
+      ::>  adds multiple deltas about this story.
+      ::
+      |=  dis/(list delta-story)
+      ^+  +>
+      %-  so-deltas
+      %+  turn  dis
+      |=  d/delta-story
+      [%story nom d]
+    ::
     ::>  ||
     ::>  ||  %data
     ::>  ||
@@ -691,7 +701,7 @@
     ++  so-take                                         ::<  accept circle prize
       ::>  apply the prize as if it were rumors.
       ::
-      |=  {src/circle nev/envelope cos/lobby pes/crowd}
+      |=  {src/circle nes/(list envelope) cos/lobby pes/crowd}
       ^+  +>
       =.  +>.$
         (so-hear | src %config src %full loc.cos)
@@ -699,7 +709,7 @@
         %-  ~(rep in loc.pes)
         |=  {{w/ship s/status} _+>.$}
         (so-hear | src %status src w %full s)
-      (so-unpack src nev)
+      (so-unpack src nes)
     ::
     ++  so-hear                                         ::<  accept circle rumor
       ::>  apply changes from a rumor to this story.
@@ -717,7 +727,7 @@
                     (so-config-full ~ cof.dif)
                   $(dif [%config src %full cof.dif])
         $bear     ~&(%so-bear (so-bear bur.dif))
-        $grams    (so-unpack src nev.dif)
+        $gram     (so-open src nev.dif)
         $config   ::  full changes to us need to get split up.
                   ?:  &(=(cir.dif so-cir) ?=($full -.dif.dif))
                     (so-config-full `shape cof.dif.dif)
@@ -766,9 +776,11 @@
         (so-delta-our %status c w %full s)
       ::  telegrams
       =.  self
-        %+  so-delta-our  %grams
+        %-  so-deltas-our
         %+  turn  gaz
         |=  t/telegram
+        ^-  delta-story
+        :-  %gram
         ::  in audience, replace above with us.
         =-  t(aud -)
         =+  (~(del in aud.t) [(above our.bol) nom])
@@ -974,16 +986,31 @@
         a
       ==
     ::
-    ++  so-unpack                                       ::<  process envelope
-      ::>  learn telegrams from envelope and update the
-      ::>  sequence of the source.
+    ++  so-unpack                                       ::<  process envelopes
+      ::>  learn telegrams from list of envelopes and
+      ::>  update the sequence of the source if needed.
+      ::
+      |=  {src/circle nes/(list envelope)}
+      ^+  +>
+      =.  +>  (so-lesson (turn nes tail))
+      =/  num
+        %+  roll  nes
+        |=  {nev/envelope max/@ud}
+        ?:((gth num.nev max) num.nev max)
+      ?.  (gth num (fall (~(get by sequence) src) 0))
+        +>.$
+      (so-delta-our %sequent src num)
+    ::
+    ++  so-open                                         ::<  process envelope
+      ::>  learn telegram from envelope and update the
+      ::>  sequence of the source if needed.
       ::
       |=  {src/circle nev/envelope}
       ^+  +>
-      ?~  gaz.nev  +>
-      =.  +>  (so-lesson gaz.nev)
-      %^  so-delta-our  %sequent  src
-      (add num.nev (dec (lent gaz.nev)))
+      =.  +>  (so-learn gam.nev)
+      ?.  (gth num.nev (fall (~(get by sequence) src) 0))
+        +>
+      (so-delta-our %sequent src num.nev)
     ::
     ++  so-lesson                                       ::<  learn messages
       ::>  learn all telegrams in a list.
@@ -1003,7 +1030,7 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
-      (so-delta-our %grams [gam ~])
+      (so-delta-our %gram gam)
     ::
     ::>  ||
     ::>  ||  %permissions
@@ -1336,11 +1363,8 @@
         +>(sequence (~(put by sequence) cir.dif num.dif))
         ::
         ::
-          $grams
-        |-  ^+  +>.^$
-        ?~  gaz.dif  +>.^$
-        =.  +>.^$  (sa-change-gram i.gaz.dif)
-        $(gaz.dif t.gaz.dif)
+          $gram
+        (sa-change-gram gam.dif)
         ::
           $config
         =.  +>
@@ -1359,7 +1383,7 @@
       ==
     ::
     ++  sa-change-gram                                  ::<  save/update message
-      ::>  apply a %grams delta, either appending or
+      ::>  apply a %gram delta, either appending or
       ::>  updating a message.
       ::
       |=  gam/telegram
@@ -1643,8 +1667,9 @@
     ?~  soy  ~
     :+  ~  ~
     :-  %circle
-    :+  %+  grams-to-envelope  nom.qer
-        (~(so-first-grams so:ta nom.qer ~ u.soy) ran.qer)
+    :+  %+  turn
+          (~(so-first-grams so:ta nom.qer ~ u.soy) ran.qer)
+        (cury gram-to-envelope nom.qer)
       [shape.u.soy mirrors.u.soy]
     [locals.u.soy remotes.u.soy]
   ==
@@ -1662,20 +1687,19 @@
     $inherited  !!
     $sequent    !!
     ::
-      $grams
-    :-  %grams
-    %+  grams-to-envelope  nom
-    %+  turn  gaz.dif
-    |=  gam/telegram
-    =.  aud.gam
-      %-  ~(run in aud.gam)
+      $gram
+    :-  %gram
+    %+  gram-to-envelope  nom
+    %_  gam.dif
+        aud
+      %-  ~(run in aud.gam.dif)
       |=  c/circle
       ::TODO  it probably isn't safe to do this for
       ::      all audience members hosted by us, even
       ::      if this is only called for burdens.
       ?.  =(hos.c our.bol)  c
       [who nom.c]
-    gam
+    ==
     ::
       $config
     ?.  =(hos.cir.dif our.bol)  dif
@@ -1686,16 +1710,15 @@
     dif(cir [who nom.cir.dif])
   ==
 ::
-++  grams-to-envelope                                   ::<  wrap grams with nr
-  ::>  deduce the initial msg number from a list of
-  ::>  telegrams for a given story.
+++  gram-to-envelope                                   ::<  wrap gram with nr
+  ::>  deduce the initial msg number from a telegram
+  ::>  for a given story. assumes both story and
+  ::>  telegram are known.
   ::
-  |=  {nom/naem gaz/(list telegram)}
+  |=  {nom/naem gam/telegram}
   ^-  envelope
-  ?:  =((lent gaz) 0)  [0 ~]  ::TODO?  ?~  nest-fails:
-  ~?  (gth (lent gaz) 1)  %multi-msg
-  :_  gaz
-  %.  uid:(snag 0 gaz)
+  :_  gam
+  %.  uid.gam
   ~(got by known:(~(got by stories) nom))
 ::
 ++  feel                                                ::<  delta to rumor
@@ -1744,8 +1767,8 @@
     ?:  ?=(?($follow $inherited $sequent) -.dif.dif)  ~
     =/  rdif/rumor-story
       ?+  -.dif.dif  dif.dif
-          $grams
-        [%grams (grams-to-envelope nom.dif gaz.dif.dif)]
+          $gram
+        [%gram (gram-to-envelope nom.dif gam.dif.dif)]
       ==
     `[%circle rdif]
   ==

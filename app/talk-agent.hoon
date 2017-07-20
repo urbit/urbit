@@ -261,8 +261,8 @@
       ==
       ::
         $circle
-      %.  gaz.nev.piz
-      %=  ta-lesson
+      %.  nes.piz
+      %=  ta-unpack
         sources   src.loc.cos.piz
         mirrors   (~(put by rem.cos.piz) incir loc.cos.piz)
         remotes   (~(put by rem.pes.piz) incir loc.pes.piz)
@@ -298,8 +298,8 @@
     ?+  -.dif
         ~&([%unexpected-circle-rumor -.dif] +>)
       ::
-        $grams
-      (ta-lesson gaz.nev.dif)
+        $gram
+      (ta-learn gam.nev.dif)
       ::
         $config
       %=  +>
@@ -350,6 +350,13 @@
   ::>  ||
   ::>    storing and updating messages.
   ::+|
+  ::
+  ++  ta-unpack                                         ::<  open envelopes
+    ::>  the reader currently doesn't care about nums.
+    ::
+    |=  nes/(list envelope)
+    ^+  +>
+    (ta-lesson (turn nes tail))
   ::
   ++  ta-lesson                                         ::<  learn messages
     ::>  learn all telegrams in a list.

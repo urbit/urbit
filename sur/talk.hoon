@@ -65,7 +65,7 @@
       pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
 ++  package                                             ::<  story state
-  $:  nev/envelope                                      ::<  messages
+  $:  nes/(list envelope)                               ::<  messages
       cos/lobby                                         ::<  loc & rem configs
       pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
@@ -91,7 +91,7 @@
   $%  {$inherited ihr/?}                                ::<  inherited flag
       {$follow sub/? cos/(map circle range)}            ::<  un/subscribe
       {$sequent cir/circle num/@ud}                     ::<  update last-heard
-      {$grams gaz/(list telegram)}                      ::<  new/changed msgs
+      {$gram gam/telegram}                              ::<  new/changed msgs
   ==  ==                                                ::
 ++  diff-story                                          ::>  story change
   $%  {$new cof/config}                                 ::<  new story
@@ -102,7 +102,7 @@
   ==                                                    ::
 ++  rumor-story                                         ::>  story rumor
   $?  diff-story                                        ::<  both in & outward
-  $%  {$grams nev/envelope}                             ::<  new/changed msgs
+  $%  {$gram nev/envelope}                              ::<  new/changed msgs
   ==  ==                                                ::
 ++  diff-config                                         ::>  config change
   ::TODO  maybe just full? think.
@@ -213,7 +213,7 @@
 ::>    structures for containing main message data.
 ::+|
 ::
-++  envelope   {num/@ud gaz/(list telegram)}            ::<  outward messages
+++  envelope   {num/@ud gam/telegram}                   ::<  outward message
 ++  telegram   {aut/ship thought}                       ::<  whose message
 ++  thought                                             ::>  inner message
   $:  uid/serial                                        ::<  unique identifier
