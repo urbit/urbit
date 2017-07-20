@@ -7,11 +7,10 @@
 =>  |%
     ++  item  (pair mite (list flow))                   ::  xml node generator
     ++  colm  @ud                                       ::  column
-    ++  flow  (each item twig)                          ::  node or generator
+    ++  flow  (each manx twig)                          ::  node or generator
     ++  form  (unit $?($emph $bold $code))              ::  formatting
     ++  mite                                            ::  context
       $?  $down                                         ::  outer embed
-          $flow                                         ::  regular flow; div
           $list                                         ::  unordered list
           $lime                                         ::  list item
           $lord                                         ::  ordered list
@@ -23,7 +22,7 @@
     ++  trig                                            ::  line style
       $:  col/@ud                                       ::  start column 
           $=  sty                                       ::  style
-          $?  $done                                     ::  \/ terminator
+          $?  $done                                     ::   terminator
               $none                                     ::  end of input
               $lint                                     ::  + line item
               $lite                                     ::  - line item
@@ -32,8 +31,8 @@
       ==  ==                                            ::
     ++  word  @t                                        ::  source text
     --
-|%
-++  parse
+|%                                                      ::  
+++  cram                                                ::  markdown with errors
   |=  {naz/hair los/tape}
   ^-  (like item)
   ::
@@ -41,61 +40,184 @@
   ::  col: current control column
   ::  hac: stack of items under construction
   ::  cur: current item under construction
-  ::  lub: current line stack
+  ::  lub: current block being read in
   ::
   =|  err/(unit hair)
   =/  col  q.naz
   =|  hac/(list item)
-  =/  cur/item  [%flow ~]
+  =/  cur/item  [%down ~]
   =|  lub/(unit (pair hair (list tape)))
   =<  $:line
   |%
   ::                                                    ::
-  ++  $                                                 ::  complete parse
+  ++  $                                                 ::  resolve
     ^-  (like item)
-    ?^  err  [u.err ~]
+    ::  if error position is set, produce error
+    ::
+    ?.  =(~ err)  [+.err ~]
+    ::  all data was consumed
+    ::
     =-  [naz `[- [naz los]]]
-    =.  hac  [cur hac]
-    ?~  hac  !!
     |-  ^-  item
-    ::  complete assembly by inverting stack
+    ::  fold all the way to top
     ::
-    =/  dis/item  [p.i.hac (flop q.i.hac)]
-    ::
-    ::  add as last entry in parent, or return
-    ::
-    ?~  t.hac  dis
-    $(i.hac `item`i.t.hac(q [[%& dis] q.i.t.hac]), t.hac `(list item)`t.t.hac)
+    ?~  hac  cur
+    $(..^$ fold)
   ::                                                    ::
   ++  back                                              ::  column retreat
-    |=  bac/@ud
+    |=  luc/@ud
     ^+  +>
-    !!
+    ?:  =(luc col)  +>
+    ::  nex: next backward step that terminates this context
+    ::
+    =/  nex/@ud
+      ?-  p.cur
+        $down  0
+        $expr  2
+        $list  0
+        $lime  2
+        $lord  0
+        $poem  8
+        $code  4
+        $bloc  6
+      ==
+    ?:  (gth nex (sub col luc))
+      ::  indenting pattern violation
+      ::
+      ..^$(err `[p.naz luc])
+    $(..^$ fold, col (sub col nex))
   ::                                                    ::
-  ++  snap                                              ::  capture line
+  ++  fine                                              ::  item to flow
+    ^-  flow
+    =-  [%& [[- ~] q.cur]]
+    ::  only items which contain flows
+    ::
+    ?+  p.cur  !!
+      $list  %ul
+      $lord  %ol
+      $lime  %li
+      $bloc  %bq
+      $code  %pre
+    ==
+  ::                                                    ::
+  ++  fold  ^+  .                                       ::  complete and pop
+    ?~  hac  .
+    %=  .
+      hac  t.hac
+      cur  [p.i.hac [fine q.i.hac]]
+    ==
+  ::                                                    ::
+  ++  snap                                              ::  capture raw line
     =|  nap/tape
-    ^+  [nap +]
-    !!
+    |-  ^+  [nap +>]
+    ::  no unterminated lines
+    ::
+    ?~  los  [~ +>(err `naz)]
+    ?:  =(`@`10 i.los)  
+      ::  consume newline
+      ::
+      :_  +>(los t.los, naz [+(p.naz) 1])
+      ::  trim trailing spaces
+      ::
+      |-  ^-  tape 
+      ?:  ?=({$' ' *} nap) 
+        $(nap t.nap) 
+      (flop nap)
+    $(los t.los, q.naz +(q.naz), nap [i.los nap])
   ::                                                    ::
   ++  skip  +:snap                                      ::  discard line
   ++  look                                              ::  inspect line
     ^-  (unit trig)
-    !!
-  ++  made                                              ::  finish paragraph
+    ?~  los
+      `[q.naz %none]
+    ?:  =(`@`10 i.los)
+      ~
+    ?:  =(' ' i.los)
+      look(los t.los, q.naz +(q.naz))
+    :-  q.naz
+    ?:  =('\\' i.los)
+      %done
+    ?:  =('\\' i.los)
+      %head
+    ?:  ?=({$'-' $' ' *} los)
+      %lite
+    ?:  ?=({$'-' $' ' *} los)
+      %lint
+    %text
+  ::                                                    ::
+  ++  cape                                              ::  xml-escape
+    |=  tex/tape
+    ^-  tape
+    ?~  tex  tex
+    =+  $(tex t.tex)
+    ?+  i.tex  [i.tex -]
+      $34  ['&' 'q' 'u' 'o' 't' ';' -]
+      $38  ['&' 'a' 'm' 'p' ';' -]
+      $39  ['&' '#' '3' '9' ';' -]
+      $60  ['&' 'l' 't' ';' -]
+      $62  ['&' 'g' 't' ';' -]
+    ==
+  ::                                                    ::
+  ++  made                                              ::  compose block
     ^+  . 
-    !!
-  ::
-::    ++  expr
-
+    ::  empty block, no action
+    ::
+    ?~  lub  .
+    ::  if block is preformatted code
+    ::
+    ?:  ?=($code p.cur)
+      ::  add blank line between blocks
+      ::
+      =.  q.cur
+        ?~  q.cur  q.cur
+        :_(q.cur `manx`[[%$ [%$ `tape`[`@`10 ~]]] ~])
+      %=    .
+          q.cur  
+        %+  weld
+          %+  turn
+            q.u.lub
+          |=  tape  ^-  flow
+          ::  each line is text data with its newline
+          ::
+          :-  %&
+          [[%$ [%$ (weld (slag col +<) `tape`[`@`10 ~]]] ~])
+        q.cur
+      ==
+    ::  if block is verse
+    ::
+    ?:  ?=($poem p.cur)
+      ::  add break between stanzas
+      ::
+      =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
+      %=    .
+          q.cur  
+        %+  weld
+          %+  turn
+            q.u.lub
+          |=  tape  ^-  flow
+          ::  each line is a paragraph
+          ::
+          :-  %&
+          :-  [%p ~]
+          :_  ~
+          [[%$ [%$ (weld (slag col +<) `tape`[`@`10 ~]]] ~])
+        q.cur
+      ==
+    ::  yex: block recomposed for reparsing
+    ::
+    =/  yex/tape  (zing (flop q.u.lub))
+    ::  if block is dynamic
+    ::
+    ?:  ?=($expr p.cur)
       ::  sab: rule for embedded twig
       ::
-::      =*  sab  (ifix [gay ;~(plug (star ace) (just `@`10))] tall:vast)
+      =*  sab  (ifix [gay ;~(plug (star ace) (just `@`10))] tall:vast)
       ::  vex: product of parsing following twig
       ::
-::      =/  vex/(like twig)  (sab naz los)
+      =/  vex/(like twig)  (sab naz los)
       ::  fail upward if parse failed
       ::
-::      ?~  q.vex  ..^$(err `p.vex)
+      ?~  q.vex  ..^$(err `p.vex)
       ::  otherwise, add item and continue
 ::    ::
 ::    %=  $
@@ -146,7 +268,7 @@
         ..$(err `[p.naz col.pic])
       ::  accept line and continue
       :: 
-      =^  nap  ..line  snap
+      =^  nap  ..$  snap
       line(lub bal(q.u [nap q.u.bal]))
     ::  if column has retreated, adjust stack
     ::
@@ -189,7 +311,7 @@
     ::                                                  ::
     ++  bloc  apse:(push %bloc)                         ::  blockquote line
     ++  fail  .(err `erp)                               ::  set error position
-    ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  deeper stack
+    ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  push context
     ++  expr  (push %expr)                              ::  hoon expression
     ++  code  (push %code)                              ::  code literal
     ++  poem  (push %poem)                              ::  verse literal
@@ -206,12 +328,14 @@
       ::  can't switch list types
       ::
       ?:  =(?:(ord %list %lord) p.cur)  fail
-      ::  if not already in list, start list
+      ::  push list item
+      ::
+      %.  %lime
+      =<  push
+      ::  push list context, unless we're in list
       ::
       =+  ?:(ord %lord %list)
-      ?:  =(- p.cur) 
-        (push %lime)
-      (push:(push -) %lime)
+      ?:  =(- p.cur)  ..push  (push -)
     ::
     ++  lint  (lent &)                                  ::  numbered list
     ++  lite  (lent |)                                  ::  unnumbered list
@@ -220,10 +344,13 @@
       ::  except in lists, continue in current flow
       ::
       ?.  ?=(?($list $lord) p.cur)  .
-      ::  in lists, finish current and switch to text
+      ::  in lists, complete current list and pop
       ::
       ?>  ?=(^ hac)
-      .(hac [[p.i.hac [[%& cur] q.i.hac]] t.hac], cur [%flow ~])
+      %=  .
+        hac  t.hac
+        cur  [p.i.hac [[%& cur] q.i.hac]] 
+      ==
     --
   --
 --

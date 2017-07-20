@@ -1335,7 +1335,7 @@
     ?~  xet  rez
     %=    $
       xet  t.xet
-      rez  ?-  i.xet
+      ez  ?-  i.xet
              $34  ['&' 'q' 'u' 'o' 't' ';' rez]
              $38  ['&' 'a' 'm' 'p' ';' rez]
              $39  ['&' '#' '3' '9' ';' rez]
