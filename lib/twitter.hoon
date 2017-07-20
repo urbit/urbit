@@ -20,7 +20,7 @@
   |=  {a/char b/(list @t)}  ^-  @t
   %+  rap  3
   ?~  b  ~
-  |-(?~(t.b b [i.b a $(b t.b)])) 
+  |-(?~(t.b b [i.b a $(b t.b)]))
 ::
 ++  valve                                               ::  produce request
   |=  {med/?($get $post) pax/path quy/quay}
@@ -87,9 +87,10 @@
     :~  id+ni
         user+(ot (fasp screen-name+(su user)) ~)
         (fasp created-at+(cu year (ci stud so)))
-        text+(cu crip (su (star escp:de-xml)))  :: parse html escapes
+        :: parse html escapes and newlines
+        text+(cu crip (su (star ;~(pose (just `@`10) escp:de-xml))))
     ==
-  ++  usel 
+  ++  usel
     =,  ^?(dejs)
     %+  ce  (list who/@ta)
     =-  (ot users+(ar -) ~)
@@ -119,12 +120,12 @@
     (valve med (cowl pax +.a b))
   ::
   ++  lutt  |=(@u `@t`(rsh 3 2 (scot %ui +<)))
-  ++  llsc 
+  ++  llsc
     :: =>  args:reqs
     |=  a/$@(scr (list scr))  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
-  ++  llst  
+  ++  llst
     |=  a/$@(@t (list @t))  ^-  @t
     ?@(a `@t`a (join ',' a))
   ::
@@ -135,7 +136,7 @@
     ?@(a (lutt a) (join ',' (turn `(list tid)`a lutt)))
   ::
   ++  cowl                                        ::  handle parameters
-    |=  $:  pax/path 
+    |=  $:  pax/path
             ban/(list param)
             quy/quay
         ==
