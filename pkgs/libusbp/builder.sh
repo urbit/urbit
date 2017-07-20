@@ -14,4 +14,6 @@ make
 
 make install
 
-find $out/bin/* -exec $host-strip {} +
+if [ -d $out/bin ]; then
+  find $out/bin -type f -exec $host-strip {} +
+fi
