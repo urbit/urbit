@@ -32,6 +32,7 @@ cd build
 # -DHAVE_SECURE_GETENV: We don't have secure_getenv but we want to avoid a header error,
 # and hopefully secure_getenv isn't actually needed by libudev.
 
+$host-gcc -c -I$fill $fill/*.c
 $host-gcc -c \
   -D_GNU_SOURCE \
   $size_flags \
@@ -40,8 +41,21 @@ $host-gcc -c \
   -I../systemd/src/libsystemd/sd-device \
   -I../systemd/src/libsystemd/sd-hwdb \
   -I../systemd/src/systemd \
-  -I. \
   ../systemd/src/libudev/*.c
+$host-gcc -c \
+  -D_GNU_SOURCE \
+  $size_flags \
+  -I../systemd/src/libsystemd/sd-device \
+  -I../systemd/src/basic \
+  -I../systemd/src/systemd \
+  ../systemd/src/libsystemd/sd-device/device-enumerator.c
+$host-gcc -c \
+  -D_GNU_SOURCE \
+  $size_flags \
+  -I../systemd/src/basic \
+  -I../systemd/src/systemd \
+  -I$fill \
+  ../systemd/src/basic/{prioq,log}.c
 $host-ar cr libudev.a *.o
 
 mkdir -p $out/lib/pkgconfig $out/include

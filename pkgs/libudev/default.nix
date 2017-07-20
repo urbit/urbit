@@ -12,4 +12,5 @@ crossenv.make_derivation rec {
     # Fix some compile-time errors caused by not using glibc.
     ./megapatch.patch
   ];
+  fill = ./fill;
 }
