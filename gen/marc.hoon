@@ -2,13 +2,14 @@
 ::::  hoon/marc/gen
   ::
 :-  %say
-|=  *
+|=  {^ {file/path $~} $~}
 :-  %noun
+=<  =+  txt=.^(@t %cx file)
+    (cram [1 1] (rip 3 txt))
 =>  |%
     ++  item  (pair mite (list flow))                   ::  xml node generator
     ++  colm  @ud                                       ::  column
-    ++  flow  (each manx twig)                          ::  node or generator
-    ++  form  (unit $?($emph $bold $code))              ::  formatting
+    ++  flow  manx                                      ::  node or generator
     ++  mite                                            ::  context
       $?  $down                                         ::  outer embed
           $list                                         ::  unordered list
@@ -17,8 +18,9 @@
           $poem                                         ::  verse
           $bloc                                         ::  blockquote
           $code                                         ::  preformatted code
+          $head                                         ::  heading
           $expr                                         ::  dynamic expression
-      ==
+      ==                                                ::
     ++  trig                                            ::  line style
       $:  col/@ud                                       ::  start column 
           $=  sty                                       ::  style
@@ -29,7 +31,15 @@
               $head                                     ::  # heading
               $text                                     ::  anything else
       ==  ==                                            ::
-    ++  word  @t                                        ::  source text
+    ++  graf                                            ::  input fragment
+      $@  @tD                                           ::  textbyte
+      $%  {$bold p/(list graf)}                         ::  bold
+          {$ital p/(list graf)}                         ::  italics
+          {$thru p/(list graf)}                         ::  strikethru
+          {$code p/tape)                                ::  code literal
+          {$link p/(list graf) q/tape}                  ::  URL
+          {$
+      ==
     --
 |%                                                      ::  
 ++  cram                                                ::  markdown with errors
@@ -73,6 +83,7 @@
     =/  nex/@ud
       ?-  p.cur
         $down  0
+        $head  0
         $expr  2
         $list  0
         $lime  2
@@ -89,7 +100,7 @@
   ::                                                    ::
   ++  fine                                              ::  item to flow
     ^-  flow
-    =-  [%& [[- ~] q.cur]]
+    =-  [[- ~] q.cur]
     ::  only items which contain flows
     ::
     ?+  p.cur  !!
@@ -123,6 +134,8 @@
       ?:  ?=({$' ' *} nap) 
         $(nap t.nap) 
       (flop nap)
+    ::  save byte and repeat
+    ::
     $(los t.los, q.naz +(q.naz), nap [i.los nap])
   ::                                                    ::
   ++  skip  +:snap                                      ::  discard line
@@ -134,14 +147,14 @@
       ~
     ?:  =(' ' i.los)
       look(los t.los, q.naz +(q.naz))
-    :-  q.naz
+    :+  ~  q.naz
     ?:  =('\\' i.los)
       %done
     ?:  =('\\' i.los)
       %head
     ?:  ?=({$'-' $' ' *} los)
       %lite
-    ?:  ?=({$'-' $' ' *} los)
+    ?:  ?=({$'+' $' ' *} los)
       %lint
     %text
   ::                                                    ::
@@ -158,6 +171,16 @@
       $62  ['&' 'g' 't' ';' -]
     ==
   ::                                                    ::
+  ++  down                                              ::  inline rule
+    %+  cook
+      |=(a/manx a)
+    %+  cook
+      |=(tape `manx`[%$ [%$ +< ~] ~])
+    %-  star
+    ;~  pose
+      (cold ' ' (plus ;~(pose (just `@`10) (just `@`32))))
+    !!
+  ::                                                    ::
   ++  made                                              ::  compose block
     ^+  . 
     ::  empty block, no action
@@ -170,7 +193,7 @@
       ::
       =.  q.cur
         ?~  q.cur  q.cur
-        :_(q.cur `manx`[[%$ [%$ `tape`[`@`10 ~]]] ~])
+        :_(q.cur [[%$ [%$ [`@`10 ~]] ~] ~])
       %=    .
           q.cur  
         %+  weld
@@ -179,8 +202,7 @@
           |=  tape  ^-  flow
           ::  each line is text data with its newline
           ::
-          :-  %&
-          [[%$ [%$ (weld (slag col +<) `tape`[`@`10 ~]]] ~])
+          [[%$ [%$ (weld (slag col +<) `tape`[`@`10 ~])] ~] ~]
         q.cur
       ==
     ::  if block is verse
@@ -197,34 +219,24 @@
           |=  tape  ^-  flow
           ::  each line is a paragraph
           ::
-          :-  %&
           :-  [%p ~]
           :_  ~
-          [[%$ [%$ (weld (slag col +<) `tape`[`@`10 ~]]] ~])
+          [[%$ [%$ (weld (slag col +<) `tape`[`@`10 ~])] ~] ~]
         q.cur
       ==
     ::  yex: block recomposed for reparsing
     ::
     =/  yex/tape  (zing (flop q.u.lub))
-    ::  if block is dynamic
+    ?<  ?=($expr p.cur)
+    ::  vex: parse of paragraph
     ::
-    ?:  ?=($expr p.cur)
-      ::  sab: rule for embedded twig
-      ::
-      =*  sab  (ifix [gay ;~(plug (star ace) (just `@`10))] tall:vast)
-      ::  vex: product of parsing following twig
-      ::
-      =/  vex/(like twig)  (sab naz los)
-      ::  fail upward if parse failed
-      ::
-      ?~  q.vex  ..^$(err `p.vex)
-      ::  otherwise, add item and continue
-::    ::
-::    %=  $
-::      naz  p.q.u.vex
-::      los  q.q.u.vex
-::      lap  :_(lap [%| %marl p.u.vex])
-::    ==
+    =/  vex/(like manx)  (down p.u.lub yex)
+    ::  if error, propagate correctly
+    ::
+    ?~  q.vex  ..$(err `p.vex)
+    ::  save good result
+    ::
+    ..$(q.cur [p.u.q.vex q.cur])
   ::                                                    ::  
   ++  line  ^+  .                                       ::  body line loop
     ::  abort after first error
@@ -260,9 +272,15 @@
     ?^  bal
       ::  detect bad block structure
       ::
-      ?:  ?|  ?=($head sty.pic)
+      ?:  ?|  ::  only one line in a heading
+              ::
+              =(%head p.cur)
               ?:  ?=(?($code $poem $expr) p.cur)
+                ::  literals need to end with a blank line
+                ::
                 (lth col.pic col)
+              ::  text flows must continue aligned
+              ::
               |(!=(%text sty.pic) !=(col.pic col))
           ==
         ..$(err `[p.naz col.pic])
@@ -315,7 +333,7 @@
     ++  expr  (push %expr)                              ::  hoon expression
     ++  code  (push %code)                              ::  code literal
     ++  poem  (push %poem)                              ::  verse literal
-    ++  head  !!
+    ++  head  (push %head)                              ::  heading
     ++  lent                                            ::  list entry
       |=  ord/?
       ^+  +>
@@ -341,16 +359,10 @@
     ++  lite  (lent |)                                  ::  unnumbered list
     ++  text                                            ::  plain text
       ^+  .
-      ::  except in lists, continue in current flow
+      ::  only in lists, fold
       ::
       ?.  ?=(?($list $lord) p.cur)  .
-      ::  in lists, complete current list and pop
-      ::
-      ?>  ?=(^ hac)
-      %=  .
-        hac  t.hac
-        cur  [p.i.hac [[%& cur] q.i.hac]] 
-      ==
+      .($ fold)
     --
   --
 --
