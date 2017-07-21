@@ -1862,7 +1862,7 @@
           "."  (t s.t.dat)
         ==
       %+  weld
-        (reap (sub +(wyd) (min wyd (lent i.txs))) ' ')
+        (reap (sub +(wyd) (min wyd (lent (tuba i.txs)))) ' ')
       time
     %-  flop
     %+  roll  `(list tape)`txs
@@ -1994,16 +1994,16 @@
           (~(del in aud) [%& who (main who)])
         ==
       =.  wyd  (sub wyd (lent pef))
-      =+  txt=(trip msg.sep)
+      =/  txt  (tuba (trip msg.sep))
       |-  ^-  (list tape)
       ?~  txt  ~
       =/  end
         ?:  (lte (lent txt) wyd)  (lent txt)
-        =+  ace=(find " " (flop (scag +(wyd) `tape`txt)))
+        =+  ace=(find " " (flop (scag +(wyd) `(list @c)`txt)))
         ?~  ace  wyd
         (sub wyd u.ace)
-      :-  (weld pef (scag end `tape`txt))
-      $(txt (slag +(end) `tape`txt), pef (reap (lent pef) ' '))  ::TODO?  why do we need to cast?
+      :-  (weld pef (tufa (scag end `(list @c)`txt)))
+      $(txt (slag +(end) `(list @c)`txt), pef (reap (lent pef) ' '))
       ::
         $inv
       :_  ~
