@@ -1,20 +1,46 @@
---- systemd-234-orig/src/basic/missing.h
-+++ systemd-234/src/basic/missing.h
-@@ -40,6 +40,8 @@
+diff -ur systemd-234-orig/src/basic/missing.h systemd-234/src/basic/missing.h
+--- systemd-234-orig/src/basic/missing.h	2017-07-17 19:46:03.031674662 -0700
++++ systemd-234/src/basic/missing.h	2017-07-21 08:02:12.349505168 -0700
+@@ -40,6 +40,22 @@
  #include <uchar.h>
  #include <unistd.h>
  
++static __inline__ char * canonicalize_file_name(const char * path)
++{
++  return realpath(path, NULL);
++}
++
++static __inline__ char * strndupa(const char * s, size_t n)
++{
++  size_t length = strnlen(s, n);
++  char * new_string = (char *)__builtin_alloca(length + 1);
++  new_string[length] = 0;
++  memcpy(new_string, s, length);
++  return new_string;
++}
++
 +typedef int comparison_fn_t(const void *, const void *);
 +
  #ifdef HAVE_AUDIT
  #include <libaudit.h>
  #endif
-@@ -550,7 +552,7 @@
+@@ -550,7 +566,7 @@
  #  ifdef HAVE___SECURE_GETENV
  #    define secure_getenv __secure_getenv
  #  else
 -#    error "neither secure_getenv nor __secure_getenv are available"
-+
++#    define secure_getenv getenv
  #  endif
  #endif
  
+diff -ur systemd-234-orig/src/basic/parse-util.c systemd-234/src/basic/parse-util.c
+--- systemd-234-orig/src/basic/parse-util.c	2017-07-17 19:46:03.031674662 -0700
++++ systemd-234/src/basic/parse-util.c	2017-07-21 07:59:05.337491775 -0700
+@@ -30,6 +30,7 @@
+ #include "parse-util.h"
+ #include "process-util.h"
+ #include "string-util.h"
++#include "missing.h"
+ 
+ int parse_boolean(const char *v) {
+         assert(v);
