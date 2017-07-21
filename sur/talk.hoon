@@ -50,10 +50,10 @@
       nis/(map ship nick)                               ::<  local nicknames
   ==                                                    ::
 ++  rumor                                               ::<  query result change
-  $%  {$reader dif/rumor-reader}                        ::<  /reader
+  $%  {$reader rum/rumor-reader}                        ::<  /reader
       {$friend add/? cir/circle}                        ::<  /friend
-      {$burden nom/naem dif/rumor-story}                ::<  /burden
-      {$circle dif/rumor-story}                         ::<  /circle
+      {$burden nom/naem rum/rumor-story}                ::<  /burden
+      {$circle rum/rumor-story}                         ::<  /circle
   ==                                                    ::
 ++  rumor-reader                                        ::<  changed ui state
   $%  {$glyph diff-glyph}                               ::<  un/bound glyph
@@ -77,7 +77,7 @@
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
       ::  story state                                   ::
-      {$story nom/naem dif/delta-story}                 ::<  change to story
+      {$story nom/naem det/delta-story}                 ::<  change to story
       ::  side-effects                                  ::
       {$init $~}                                        ::<  initialize
       {$observe who/ship}                               ::<  watch burden bearer

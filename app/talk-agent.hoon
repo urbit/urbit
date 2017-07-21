@@ -272,65 +272,65 @@
   ++  ta-hear                                           ::<  apply change
     ::>
     ::
-    |=  dif/rumor
+    |=  rum/rumor
     ^+  +>
-    ?+  -.dif
-      ~&([%ignoring-rumor -.dif] +>)
+    ?+  -.rum
+      ~&([%ignoring-rumor -.rum] +>)
       ::
         $reader
-      ?-  -.dif.dif
+      ?-  -.rum.rum
           $glyph
-        (ta-change-glyph +.dif.dif)
+        (ta-change-glyph +.rum.rum)
         ::
           $nick
-        +>(nicks (change-nicks nicks who.dif.dif nic.dif.dif))
+        +>(nicks (change-nicks nicks who.rum.rum nic.rum.rum))
       ==
       ::
         $circle
-      (ta-change-circle dif.dif)
+      (ta-change-circle rum.rum)
     ==
   ::
   ++  ta-change-circle                                  ::<  apply circle change
     ::>
     ::
-    |=  dif/rumor-story
+    |=  rum/rumor-story
     ^+  +>
-    ?+  -.dif
-        ~&([%unexpected-circle-rumor -.dif] +>)
+    ?+  -.rum
+        ~&([%unexpected-circle-rumor -.rum] +>)
       ::
         $gram
-      (ta-learn gam.nev.dif)
+      (ta-learn gam.nev.rum)
       ::
         $config
       %=  +>
           sources
-        ?.  ?&  ?=($source -.dif.dif)
-                =(cir.dif incir)
+        ?.  ?&  ?=($source -.dif.rum)
+                =(cir.rum incir)
             ==
           sources
-        %.  cir.dif.dif
-        ?:  add.dif.dif
+        %.  cir.dif.rum
+        ?:  add.dif.rum
           ~(put in sources)
         ~(del in sources)
         ::
           mirrors
-        ?:  ?=($remove -.dif.dif)  (~(del by mirrors) cir.dif)
-        %+  ~(put by mirrors)  cir.dif
+        ?:  ?=($remove -.dif.rum)  (~(del by mirrors) cir.rum)
+        %+  ~(put by mirrors)  cir.rum
         %+  change-config
-          (fall (~(get by mirrors) cir.dif) *config)
-        dif.dif
+          (fall (~(get by mirrors) cir.rum) *config)
+        dif.rum
       ==
       ::
         $status
       %=  +>
           remotes
-        %+  ~(put by remotes)  cir.dif
-        =+  rem=(fall (~(get by remotes) cir.dif) *group)
-        ?:  ?=($remove -.dif.dif)  (~(del by rem) who.dif)
-        %+  ~(put by rem)  who.dif
+        %+  ~(put by remotes)  cir.rum
+        =+  rem=(fall (~(get by remotes) cir.rum) *group)
+        ?:  ?=($remove -.dif.rum)  (~(del by rem) who.rum)
+        %+  ~(put by rem)  who.rum
         %+  change-status
-          (fall (~(get by rem) who.dif) *status)
-        dif.dif
+          (fall (~(get by rem) who.rum) *status)
+        dif.rum
       ==
     ==
   ::
@@ -2048,9 +2048,9 @@
 ++  diff-talk-rumor                                     ::<  accept query change
   ::>
   ::
-  |=  {way/wire dif/rumor}
+  |=  {way/wire rum/rumor}
   ^-  (quip move +>)
-  ta-done:(ta-hear:ta dif)
+  ta-done:(ta-hear:ta rum)
 ::
 ++  poke-sole-action                                    ::<  accept console
   ::>  incoming sole action. process it.

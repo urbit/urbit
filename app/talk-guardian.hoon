@@ -129,15 +129,15 @@
   ++  ta-delta                                          ::<  emit a delta
     ::>  adds a delta to the head of {deltas}.
     ::
-    |=  dif/delta
-    %_(+> deltas [dif deltas])
+    |=  det/delta
+    %_(+> deltas [det deltas])
   ::
   ++  ta-deltas                                         ::<  emit delta list
     ::>  adds multiple deltas to the head of {deltas}.
     ::>  flops to stay consistent with ++ta-delta.
     ::
-    |=  dis/(list delta)
-    %_(+> deltas (welp (flop dis) deltas))
+    |=  des/(list delta)
+    %_(+> deltas (welp (flop des) deltas))
   ::
   ++  ta-note                                           ::<  tell user
     ::>  sends {msg} as an %app message to the user's
@@ -276,16 +276,16 @@
       ::>  store a delta about a story. if the story
       ::>  does not exist, crash.
       ::
-      |=  {nom/naem dif/delta-story}
+      |=  {nom/naem det/delta-story}
       ?:  (~(has by stories) nom)
-        (impact nom dif)
+        (impact nom det)
       (ta-evil (crip "no story {(trip nom)}"))
     ::
     ++  impact                                          ::<  delta for story
       ::>  Store a delta about a story.
       ::
-      |=  {nom/naem dif/delta-story}
-      (ta-delta %story nom dif)
+      |=  {nom/naem det/delta-story}
+      (ta-delta %story nom det)
     ::
     ++  present                                         ::<  send status update
       ::>
@@ -512,27 +512,27 @@
     ::>  diff. if it's a new one, bear it.
     ::>  for %circle, apply the story diff normally.
     ::
-    |=  {wir/wire dif/rumor}
+    |=  {wir/wire rum/rumor}
     ^+  +>
-    ?+  -.dif
-      ~&([%ignoring-rumor -.dif] +>)
+    ?+  -.rum
+      ~&([%ignoring-rumor -.rum] +>)
       ::
         $burden
-      ?+  -.dif.dif
-        %-  (ta-know nom.dif)  |=  sor/_so  =<  so-done
-        (so-hear:sor & [our.bol nom.dif] dif.dif)
+      ?+  -.rum.rum
+        %-  (ta-know nom.rum)  |=  sor/_so  =<  so-done
+        (so-hear:sor & [our.bol nom.rum] rum.rum)
         ::
           $new
         =<  so-done
-        %-  ~(so-bear so nom.dif ~ (fall (~(get by stories) nom.dif) *story))
-        [~ [cof.dif.dif ~] [~ ~]]
+        %-  ~(so-bear so nom.rum ~ (fall (~(get by stories) nom.rum) *story))
+        [~ [cof.rum.rum ~] [~ ~]]
       ==
       ::
         $circle
       =+  wer=(etch wir)
       ?>  ?=($circle -.wer)
       %-  (ta-know nom.wer)  |=  sor/_so  =<  so-done
-      (so-hear:sor | cir.wer dif.dif)
+      (so-hear:sor | cir.wer rum.rum)
     ==
   ::
   ++  ta-repeat                                         ::<  message delivered
@@ -657,30 +657,30 @@
       ::>  store delta in ++ta core.
       ::
       ::TODO  maybe keep our own list of deltas, produce in done
-      |=  dif/delta
+      |=  det/delta
       ^+  +>
-      +>(deltas [dif deltas])
+      +>(deltas [det deltas])
     ::
     ++  so-deltas                                       ::<  send delta list
       ::>  store multiple deltas in ++ta core.
       ::
-      |=  dis/(list delta)
-      %_(+> deltas (welp (flop dis) deltas))
+      |=  des/(list delta)
+      %_(+> deltas (welp (flop des) deltas))
     ::
     ++  so-delta-our                                    ::<  send delta of us
       ::>  adds a delta about this story.
       ::
-      |=  dif/delta-story
+      |=  det/delta-story
       ^+  +>
-      (so-delta %story nom dif)
+      (so-delta %story nom det)
     ::
     ++  so-deltas-our                                   ::<  send deltas of us
       ::>  adds multiple deltas about this story.
       ::
-      |=  dis/(list delta-story)
+      |=  des/(list delta-story)
       ^+  +>
       %-  so-deltas
-      %+  turn  dis
+      %+  turn  des
       |=  d/delta-story
       [%story nom d]
     ::
@@ -714,35 +714,35 @@
     ++  so-hear                                         ::<  accept circle rumor
       ::>  apply changes from a rumor to this story.
       ::
-      |=  {bur/? src/circle dif/rumor-story}
+      |=  {bur/? src/circle rum/rumor-story}
       ^+  +>
       ::  check that we're still subscribed to this story
       ::  this is a small %gall bug, we shouldn't get these
       ~?  ?!  ?|  (~(has in src.shape) src)
                   =(src so-cir)
               ==
-        [%unexpected-rumor-source nom -.dif src]
-      ?-  -.dif
+        [%unexpected-rumor-source nom -.rum src]
+      ?-  -.rum
         $new      ?:  =(src so-cir)
-                    (so-config-full ~ cof.dif)
-                  $(dif [%config src %full cof.dif])
-        $bear     ~&(%so-bear (so-bear bur.dif))
-        $gram     (so-open src nev.dif)
+                    (so-config-full ~ cof.rum)
+                  $(rum [%config src %full cof.rum])
+        $bear     ~&(%so-bear (so-bear bur.rum))
+        $gram     (so-open src nev.rum)
         $config   ::  full changes to us need to get split up.
-                  ?:  &(=(cir.dif so-cir) ?=($full -.dif.dif))
-                    (so-config-full `shape cof.dif.dif)
+                  ?:  &(=(cir.rum so-cir) ?=($full -.dif.rum))
+                    (so-config-full `shape cof.dif.rum)
                   ::  remotes are fine.
-                  ?:  =(src cir.dif)
-                    (so-delta-our dif)
+                  ?:  =(src cir.rum)
+                    (so-delta-our rum)
                   ::  remotes of remotes are not.
                   ~&  %ignoring-remote-config
                   ~?  =(src so-cir)  %but-src-is-us
                   +>
         $status   ::  ignore foreign remotes.
-                  ?.  |(=(src cir.dif) =(src so-cir))
+                  ?.  |(=(src cir.rum) =(src so-cir))
                     ~&  %ignoring-remote-status
                     +>
-                  (so-delta-our dif)
+                  (so-delta-our rum)
         $remove   (so-delta-our %config src %remove ~)
       ==
     ::
@@ -1147,17 +1147,17 @@
     ::>  modifies application state according to the
     ::>  change specified in {dif}.
     ::
-    |=  dif/delta
+    |=  det/delta
     ^+  +>
-    ?-  -.dif
-      $out      (da-change-out +.dif)
-      $glyph    (da-change-glyph +.dif)
-      $nick     (da-change-nick +.dif)
-      $story    (da-change-story +.dif)
+    ?-  -.det
+      $out      (da-change-out +.det)
+      $glyph    (da-change-glyph +.det)
+      $nick     (da-change-nick +.det)
+      $story    (da-change-story +.det)
       $init     da-init
-      $observe  (da-observe +.dif)
-      $present  (da-present +.dif)
-      $quit     (da-emit [ost.dif %quit ~])
+      $observe  (da-observe +.det)
+      $present  (da-present +.det)
+      $quit     (da-emit [ost.det %quit ~])
     ==
   ::
   ++  da-init                                           ::<  startup side-effects
@@ -1239,15 +1239,15 @@
     ::>  in case of a new or deleted story, specialized
     ::>  arms are called.
     ::
-    |=  {nom/naem dif/delta-story}
+    |=  {nom/naem det/delta-story}
     ^+  +>
-    ?+  -.dif
+    ?+  -.det
       =<  sa-done
-      %.  dif
+      %.  det
       =+  (fall (~(get by stories) nom) *story)
       ~(sa-change sa nom -)
       ::
-      $new      (da-create nom +.dif)
+      $new      (da-create nom +.det)
       $bear     ~&(%unexpected-unsplit-bear +>)
       $remove   (da-delete nom)
     ==
@@ -1336,11 +1336,11 @@
       ::>  figure out whether to apply a %story delta to
       ::>  local or remote data.
       ::
-      |=  dif/delta-story
+      |=  det/delta-story
       ^+  +>
-      %.  dif
-      ?:  ?&  ?=(?($config $status) -.dif)
-              !=(cir.dif sa-cir)
+      %.  det
+      ?:  ?&  ?=(?($config $status) -.det)
+              !=(cir.det sa-cir)
           ==
         sa-change-remote
       sa-change-local
@@ -1348,37 +1348,37 @@
     ++  sa-change-local                                 ::<  apply our delta
       ::>  apply a %story delta to local data.
       ::
-      |=  dif/delta-story
+      |=  det/delta-story
       ^+  +>
-      ?+  -.dif
-        ~&([%unexpected-delta-local -.dif] !!)
+      ?+  -.det
+        ~&([%unexpected-delta-local -.det] !!)
         ::
           $inherited
-        +>(inherited ihr.dif)
+        +>(inherited ihr.det)
         ::
           $follow
-        (sa-emil (sa-follow-effects sub.dif cos.dif))
+        (sa-emil (sa-follow-effects sub.det cos.det))
         ::
           $sequent
-        +>(sequence (~(put by sequence) cir.dif num.dif))
+        +>(sequence (~(put by sequence) cir.det num.det))
         ::
         ::
           $gram
-        (sa-change-gram gam.dif)
+        (sa-change-gram gam.det)
         ::
           $config
         =.  +>
           %-  sa-emil
-          (sa-config-effects shape dif.dif)
-        +>(shape (change-config shape dif.dif))
+          (sa-config-effects shape dif.det)
+        +>(shape (change-config shape dif.det))
         ::
           $status
         %_  +>
             locals
-          %+  ~(put by locals)  who.dif
+          %+  ~(put by locals)  who.det
           %+  change-status
-            (fall (~(get by locals) who.dif) *status)
-          dif.dif
+            (fall (~(get by locals) who.det) *status)
+          dif.det
         ==
       ==
     ::
@@ -1408,28 +1408,28 @@
     ++  sa-change-remote                                ::<  apply remote's delta
       ::>  apply a story diff to remote data.
       ::
-      |=  dif/delta-story
+      |=  det/delta-story
       ^+  +>
-      ?+  -.dif
-        ~&([%unexpected-delta-remote -.dif] !!)
+      ?+  -.det
+        ~&([%unexpected-delta-remote -.det] !!)
         ::
           $config
-        ?:  ?=($remove -.dif.dif)
-          +>(mirrors (~(del by mirrors) cir.dif))
+        ?:  ?=($remove -.dif.det)
+          +>(mirrors (~(del by mirrors) cir.det))
         =/  new/config
           %+  change-config
-          (fall (~(get by mirrors) cir.dif) *config)
-          dif.dif
-        +>.$(mirrors (~(put by mirrors) cir.dif new))
+          (fall (~(get by mirrors) cir.det) *config)
+          dif.det
+        +>.$(mirrors (~(put by mirrors) cir.det new))
         ::
           $status
         %_  +>.$
             remotes
-          %+  ~(put by remotes)  cir.dif
-          =+  ole=(fall (~(get by remotes) cir.dif) *group)
-          ?:  ?=($remove -.dif.dif)  (~(del by ole) who.dif)
-          =+  old=(fall (~(get by ole) who.dif) *status)
-          (~(put by ole) who.dif (change-status old dif.dif))
+          %+  ~(put by remotes)  cir.det
+          =+  ole=(fall (~(get by remotes) cir.det) *group)
+          ?:  ?=($remove -.dif.det)  (~(del by ole) who.det)
+          =+  old=(fall (~(get by ole) who.det) *status)
+          (~(put by ole) who.det (change-status old dif.det))
         ==
       ==
     ::
@@ -1614,20 +1614,20 @@
   ::>  applies a change to the application state,
   ::>  producing side-effects.
   ::
-  |=  dif/delta
+  |=  det/delta
   ^-  (quip move +>)
   =^  mos  +>.$
-    da-done:(da-change:da dif)
+    da-done:(da-change:da det)
   :_  +>.$
   ::TODO  move affection to pre-bake, but then station creation doesn't happen?
-  (welp mos (affection dif))
+  (welp mos (affection det))
 ::
 ++  pre-bake                                            ::<  apply more deltas
   ::>  bake a list of deltas.
   ::
-  |=  dis/(list delta)
+  |=  des/(list delta)
   ^-  (quip move +>)
-  %+  roll  dis
+  %+  roll  des
   |=  {d/delta m/(list move) _+>.$}
   =^  mos  +>.^$  (bake d)
   [(welp m mos) +>.^$]
@@ -1678,9 +1678,9 @@
   ::>  modify a %story diff to make it about their ship
   ::>  instead of ours.
   ::
-  |=  {who/ship nom/naem dif/delta-story}
+  |=  {who/ship nom/naem det/delta-story}
   ^-  rumor-story
-  ?+  -.dif  dif
+  ?+  -.det  det
     ::
     ::TODO  ...
     $follow     !!
@@ -1690,9 +1690,9 @@
       $gram
     :-  %gram
     %+  gram-to-envelope  nom
-    %_  gam.dif
+    %_  gam.det
         aud
-      %-  ~(run in aud.gam.dif)
+      %-  ~(run in aud.gam.det)
       |=  c/circle
       ::TODO  it probably isn't safe to do this for
       ::      all audience members hosted by us, even
@@ -1702,12 +1702,12 @@
     ==
     ::
       $config
-    ?.  =(hos.cir.dif our.bol)  dif
-    dif(cir [who nom.cir.dif])
+    ?.  =(hos.cir.det our.bol)  det
+    det(cir [who nom.cir.det])
     ::
       $status
-    ?.  =(hos.cir.dif our.bol)  dif
-    dif(cir [who nom.cir.dif])
+    ?.  =(hos.cir.det our.bol)  det
+    det(cir [who nom.cir.det])
   ==
 ::
 ++  gram-to-envelope                                   ::<  wrap gram with nr
@@ -1725,52 +1725,52 @@
   ::>  if the given delta changes the result of the given
   ::>  query, produce the relevant rumor.
   ::
-  |=  {qer/query dif/delta}
+  |=  {qer/query det/delta}
   ^-  (unit rumor)
   ?-  -.qer
       $reader
     ::  changes to shared ui state apply.
-    ?+  -.dif  ~
-      $glyph  `[%reader dif]
-      $nick   `[%reader dif]
+    ?+  -.det  ~
+      $glyph  `[%reader det]
+      $nick   `[%reader det]
     ==
     ::
       $burden
     ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
-    ?.  ?=($story -.dif)  ~
-    ?:  ?=(?($follow $inherited $sequent) -.dif.dif)  ~
+    ?.  ?=($story -.det)  ~
+    ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
     ::  only burden channels for now.
-    ?.  =(%black sec.con.shape:(~(got by stories) nom.dif))  ~
-    `[%burden nom.dif (dedicate who.qer nom.dif dif.dif)]
+    ?.  =(%black sec.con.shape:(~(got by stories) nom.det))  ~
+    `[%burden nom.det (dedicate who.qer nom.det det.det)]
     ::
       $report
     ::  only send changes we didn't get from above.
     ?:  =(src.bol (above our.bol))  ~
     ::  only send story reports about grams and status.
-    ?.  ?=($story -.dif)  ~
-    ?.  ?=(?($grams $status) -.dif.dif)  ~
-    =+  soy=(~(got by stories) nom.dif)
+    ?.  ?=($story -.det)  ~
+    ?.  ?=(?($grams $status) -.det.det)  ~
+    =+  soy=(~(got by stories) nom.det)
     ::  and only if the story is inherited.
     ?.  inherited.soy  ~
     ::  only burden channels for now.
     ?.  =(%black sec.con.shape.soy)  ~
-    `[%burden nom.dif (dedicate (above our.bol) nom.dif dif.dif)]
+    `[%burden nom.det (dedicate (above our.bol) nom.det det.det)]
     ::
       $circle
-    ?.  ?=($story -.dif)  ~
-    ?.  =(nom.qer nom.dif)  ~
-    ?:  ?=(?($follow $burden) -.dif.dif)  ~             ::  internal-only delta
+    ?.  ?=($story -.det)  ~
+    ?.  =(nom.qer nom.det)  ~
+    ?:  ?=(?($follow $burden) -.det.det)  ~             ::  internal-only delta
     =+  ren=(~(so-in-range so:ta nom.qer ~ (~(got by stories) nom.qer)) ran.qer)
     ::TODO  if done.ren, %quit bone
     ?.  in.ren  ~
     ::TODO  move up? we also check for $follow above, why?
-    ?:  ?=(?($follow $inherited $sequent) -.dif.dif)  ~
-    =/  rdif/rumor-story
-      ?+  -.dif.dif  dif.dif
+    ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
+    =/  rum/rumor-story
+      ?+  -.det.det  det.det
           $gram
-        [%gram (gram-to-envelope nom.dif gam.dif.dif)]
+        [%gram (gram-to-envelope nom.det gam.det.det)]
       ==
-    `[%circle rdif]
+    `[%circle rum]
   ==
 ::
 ++  affection                                           ::<  rumors to interested
@@ -1781,7 +1781,7 @@
   ::  ...but that would also require a ta-cancel call to remove
   ::  them from the status list! how do?
   ::  should there be an ++away arm for gall to call?
-  |=  dif/delta
+  |=  det/delta
   ^-  (list move)
   ::  cache results for paths.
   =|  res/(map path (unit rumor))
@@ -1792,7 +1792,7 @@
   ?^  mur
     ?~  u.mur  ~
     `[b %diff %talk-rumor u.u.mur]
-  =+  rum=(feel (path-to-query p) dif)
+  =+  rum=(feel (path-to-query p) det)
   =.  res  (~(put by res) p rum)
   ?~  rum  ~
   `[b %diff %talk-rumor u.rum]
@@ -1898,11 +1898,11 @@
 ++  diff-talk-rumor                                     ::<  accept rumor
   ::>  accept a query result change.
   ::
-  |=  {wir/wire dif/rumor}
+  |=  {wir/wire rum/rumor}
   ^-  (quip move +>)
   =^  mos  +>.$
     %-  pre-bake
-    ta-done:(ta-hear:ta wir dif)
+    ta-done:(ta-hear:ta wir rum)
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
