@@ -55,7 +55,7 @@ $host-gcc -c $CFLAGS \
   -I../systemd/src/basic \
   -I../systemd/src/systemd \
   -I$fill \
-  ../systemd/src/basic/{alloc-util,cgroup-util,escape,extract-word,fd-util,fs-util,hashmap,hash-funcs,hexdecoct,io-util,log,mempool,path-util,proc-cmdline,parse-util,prioq,process-util,random-util,siphash24,stat-util,string-table,string-util,time-util,utf8,util}.c
+  ../systemd/src/basic/{alloc-util,cgroup-util,escape,extract-word,fd-util,fs-util,glob-util,hashmap,hash-funcs,hexdecoct,io-util,log,mempool,path-util,proc-cmdline,parse-util,prioq,process-util,random-util,siphash24,stat-util,string-table,string-util,time-util,utf8,util}.c
 $host-ar cr libudev.a *.o
 
 mkdir -p $out/lib/pkgconfig $out/include
