@@ -1,11 +1,11 @@
 { crossenv, libudev }:
 
 let
-  version = "d440c9a";  # 1.0.2ish
+  version = "4752d45";  # 1.0.2ish
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://github.com/pololu/libusbp/archive/${version}.tar.gz";
-    sha256 = "0wq9sgqr55qvn6rycl4khyzwjbk2y79nfs5p74x5q39y9hq9mvj4";
+    sha256 = "1agwa0zml2vzi10mmpsymwbd20llkwkcz656q65595pi24v710si";
   };
 
   lib = crossenv.make_derivation {
@@ -20,6 +20,13 @@ let
         [];
   };
 
+  examples = crossenv.make_derivation {
+    name = "libusbp-examples-${version}";
+    inherit src version;
+    builder = ./examples_builder.sh;
+    cross_inputs = [ lib ];
+  };
+
   license_fragment = crossenv.make_native_derivation {
     name = "libusbp-${version}-license-fragment";
     inherit src;
@@ -31,4 +38,4 @@ let
         [];
   };
 in
-  lib // { inherit license_fragment; }
+  lib // { inherit examples license_fragment; }
