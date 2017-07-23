@@ -70,7 +70,7 @@ includedir=\${prefix}/include
 
 Name: libudev
 Version: $version
-Libs: -L\${libdir} -ludev -ludev -ludev
+Libs: -L\${libdir} -ludev
 Cflags: -I\${includedir}
 EOF
 
