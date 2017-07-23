@@ -1,5 +1,7 @@
 { crossenv }:
 
+if crossenv.os != "linux" then "linux only" else
+
 crossenv.make_derivation rec {
   name = "libudev-${version}";
   version = "234";

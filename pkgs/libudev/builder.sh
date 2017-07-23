@@ -47,15 +47,16 @@ $host-gcc -c $CFLAGS \
   -I../systemd/src/libsystemd/sd-device \
   -I../systemd/src/basic \
   -I../systemd/src/systemd \
-  ../systemd/src/libsystemd/sd-device/{device-enumerator,sd-device}.c
+  ../systemd/src/libsystemd/sd-device/{device-enumerator,device-private,sd-device}.c
 $host-gcc -c $CFLAGS \
   -DPACKAGE_STRING="\"libudev $version\"" \
+  -DFALLBACK_HOSTNAME="\"localhost\"" \
   -DDEFAULT_HIERARCHY_NAME="\"hybrid\"" \
   -DDEFAULT_HIERARCHY=CGROUP_UNIFIED_SYSTEMD \
   -I../systemd/src/basic \
   -I../systemd/src/systemd \
   -I$fill \
-  ../systemd/src/basic/{alloc-util,cgroup-util,escape,extract-word,fd-util,fs-util,glob-util,hashmap,hash-funcs,hexdecoct,io-util,log,mempool,path-util,proc-cmdline,parse-util,prioq,process-util,random-util,siphash24,stat-util,string-table,string-util,time-util,utf8,util}.c
+  ../systemd/src/basic/{alloc-util,architecture,bus-label,cgroup-util,dirent-util,env-util,escape,extract-word,fd-util,fileio,fs-util,gunicode,glob-util,hashmap,hash-funcs,hexdecoct,hostname-util,io-util,log,login-util,mempool,mkdir,path-util,proc-cmdline,parse-util,prioq,process-util,random-util,signal-util,siphash24,socket-util,stat-util,string-table,string-util,strv,strxcpyx,syslog-util,terminal-util,time-util,unit-name,user-util,utf8,util,virt}.c
 $host-ar cr libudev.a *.o
 
 mkdir -p $out/lib/pkgconfig $out/include
