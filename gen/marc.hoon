@@ -2,10 +2,9 @@
 ::::  hoon/marc/gen
   ::
 :-  %say
-|=  {^ {file/path $~} $~}
+|=  {^ {pax/path $~} $~}
 :-  %noun
-=<  =+  txt=.^(@t %cx file)
-    (cram [1 1] (rip 3 txt))
+=<  (test pax)
 =>  |%
     ++  item  (pair mite (list flow))                   ::  xml node generator
     ++  colm  @ud                                       ::  column
@@ -40,7 +39,23 @@
       ==
     --
 |%                                                      ::  
-++  cram                                                ::  markdown with errors
+++  test                                                ::  test text parsing
+  |=  pax/path
+  ^-  tape
+  ::  src: text file as (list cord)
+  ::  txt: source as tape with newlines
+  ::  vex: parsing result
+  ::
+  =/  src  .^(wain %cx pax)
+  =*  txt  (zing (turn src |=(@t (weld (rip 3 +<) `tape`~[`@`10]))))
+  =/  vex  (cram [1 1] txt)
+  ::  print result as error or xml text
+  ::
+  ?~  q.vex
+    "syntax error: line {(scow %ud p.p.vex)}, column {(scow %ud q.p.vex)}"
+  (poxo p.u.q.vex)
+::                                                      ::
+++  cram                                                ::  parse unmark
   |=  {naz/hair los/tape}
   ^-  (like flow)
   ::
@@ -99,9 +114,8 @@
   ++  fine                                              ::  item to flow
     ^-  flow
     =-  [[- ~] q.cur]
-    ::  only items which contain flows
-    ::
     ?+  p.cur  !!
+      $down  %body
       $list  %ul
       $lord  %ol
       $lime  %li
@@ -287,15 +301,14 @@
                 ::  txt: unconsumed text
                 ::
                 =/  txt/tape
-                  =/  pif  (flop fip)
                   =|  txt/tape
                   |-  ^+  txt
-                  ?~  pif  txt
+                  ?~  fip  txt
                   %=    $
-                      pif  t.pif
+                      fip  t.fip
                       txt  ?:  =(~ txt)
-                             i.pif
-                           (weld i.pif `tape`[' ' txt])
+                             i.fip
+                           (weld i.fip `tape`[' ' txt])
                   ==
                 ?:  =(~ txt)  +
                 %=  +
@@ -325,6 +338,9 @@
                 ==
       --
     (most whit word)
+  ::                                                    ::
+  ++  para                                              ::  paragraph
+    (cook |=((list manx) `(list manx)`[[%p ~] +<]~) down)
   ::                                                    ::
   ++  whit                                              ::  whitespace
     (cold ' ' (plus ;~(pose (just ' ') (just `@`10))))
@@ -426,16 +442,19 @@
           (clue (weld (slag col +<) `tape`[`@`10 ~]))
         q.cur
       ==
-    ::  yex: block recomposed for reparsing
+    ::  yex: block recomposed, with newlines
     ::
-    =/  yex/tape  (zing (flop q.u.lub))
+    =/  yex/tape  
+      (zing (turn (flop q.u.lub) |=(tape (weld +< `tape`[`@`10 ~]))))
+    ::  XX expressions commented out
+    ::
     ?<  ?=($expr p.cur)
     ::  vex: parse of paragraph
     ::
     =/  vex/(like (list manx))
-      ::  either a one-line header or regular flow
+      ::  either a one-line header or a paragraph
       ::
-      %.([p.u.lub yex] ?:(?=($head p.cur) head down))
+      %.([p.u.lub yex] ?:(?=($head p.cur) head para))
     ::  if error, propagate correctly
     ::
     ?~  q.vex  ..$(err `p.vex)
