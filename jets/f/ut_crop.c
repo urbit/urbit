@@ -204,6 +204,7 @@
       default: return u3m_bail(c3__fail);
 
       case c3__core:
+      case c3__help:
       case c3__face: u3x_cell(u3t(ref), &p_ref, &q_ref);
       {
         return _crop_dext(van, sut, q_ref, bix);
