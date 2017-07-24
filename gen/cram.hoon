@@ -33,6 +33,7 @@
   ::  with normal hoon rules.  multipass parsing is the tax
   ::  humans have to pay for simple but human-friendly syntax.)
   ::   
+!.
 :-  %say
 |=  {^ {pax/path $~} $~}
 :-  %noun
