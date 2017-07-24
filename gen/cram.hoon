@@ -33,6 +33,59 @@
   ::  with normal hoon rules.  multipass parsing is the tax
   ::  humans have to pay for simple but human-friendly syntax.)
   ::   
+
+|%
+++  dynamic
+  |%
+  ++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
+  ++  manx  {g/marx c/marl}                               ::  XML node
+  ++  marl  (list $^(manx tuna))                          ::  XML node list
+  ++  mart  (list {n/mane v/(list beer)})                 ::  XML attributes
+  ++  marx  {n/mane a/mart}                               ::  XML tag
+  ++  tuna  {?($tape $manx $marl $call) p/twig}
+  --
+::
+++  freeze
+  |=  manx:dynamic  ^-  manx
+  :-  [n.g (turn a.g freeze-mart)]
+  %+  turn  c
+  |=(a/=>(dynamic $^(manx tuna)) ?@(-.a !! (freeze a)))
+::
+++  freeze-mart
+  |=  {n/mane v/(list beer)}  ^-  {mane tape}
+  [n (turn v |=(a/beer ?^(a !! a)))]
+::
+::+|
+::
+++  steam
+  |=  manx:dynamic  ^-  twig:manx
+  :-  [(steam-mane n.g) %conl (turn a.g steam-mart)]
+  |-  ^-  twig:marl
+  ?~  c  [%conl ~]
+  ?-  -.i.c
+    ^      [(steam i.c) $(c t.c)]
+    $manx  [p.i.c $(c t.c)]
+    $tape  [[%nub p.i.c] $(c t.c)]
+    $call  [%call p.i.c [$(c t.c)]~]
+    $marl  [%per [p.i.c $(c t.c)] cons-twig]
+  ==
+::
+++  cons-twig  ^-  twig
+  !,(*twig =>([a b]=. |-(?~(a b [-.a $(a +.a)]))))
+  :::+  %per  [%name 2+[%a %b] $+1]                :: =>  [a b]=.
+  :::*  %loop                                      :: |-
+  ::  %ifno  /a  wing+/b                           :: ?~  a  b
+  ::  [wing+/[&+2]/a make+[/[%$] [/a /[&+3]/a]~]]  :: [-.a $(a +.a)]
+  ::==
+::
+++  steam-mane
+  |=  a/mane  ^-  twig
+  ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
+::
+++  steam-mart
+  |=  {n/mane v/(list beer)}
+  [(steam-mane n) %knit v]
+--
 |=  pax/path
 =<  (test pax)
 =>  |%
@@ -84,7 +137,7 @@
   ::
   ?~  q.vex
     "syntax error: line {(scow %ud p.p.vex)}, column {(scow %ud q.p.vex)}"
-  (poxo p.u.q.vex)
+  (poxo ;;(manx q:(slap !>(~) (steam p.u.q.vex))))
 ::                                                      ::
 ++  cram                                                ::  parse unmark
   |=  {naz/hair los/tape}
