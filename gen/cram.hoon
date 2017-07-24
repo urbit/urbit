@@ -430,21 +430,20 @@
   ::
   ++  head                                              ::  parse heading
     %+  cook
-      |=  $:  ::  a: list of #
-              ::  b: tag flow of header line
+      |=  a/manx  ^-  marl
+      =.  a.g.a  :_(a.g.a [%id (sanitize-to-id c.a)])
+      [a]~
               ::
-              a/tape
-              b/(list manx)
-          ==
-      ^-  (list manx)
-      ::  hag: header tag, h1 through h6
+    ;~  plug
       ::
-      =*  hag  (cat 3 'h' (add '0' =+((lent a) ?:((gth - 6) 6 -))))
-      ::  sid: header text flattened as id
-      ::
-      =/  sid  ^-  tape
-        ::  assemble, normalize and kebab-case
+      :: # -> 1 -> %h1, ### -> 3 -> %h3, etc
+      :(cook |=(a/@u /(crip "h{<a>}")) lent (stun [1 6] hax))
         ::
+      ;~(pfix whit down)
+    ==
+  ::                                                    ::
+  ++  sanitize-to-id
+    |=  a/(list manx)  ^-  tape
         =-  %-  zing 
             %+  turn  `(list tape)`(flop -)
             |=  tape  ^-  tape
@@ -462,24 +461,17 @@
         ::
         =|  ges/(list tape)
         |-  ^-  (list tape)
-        ?~  b  ges
+    ?~  a  ges
         %=    $
-            b  t.b
+        a  t.a
             ges
-          ?:  ?=({{$$ {$$ *} $~} $~} i.b)
+      ?:  ?=({{$$ {$$ *} $~} $~} i.a)
             ::  capture text 
             ::
-            [v.i.a.g.i.b ges]
+        [v.i.a.g.i.a ges]
           ::  descend into children
           ::
-          $(b c.i.b)
-        == 
-      ::  header as tag with id attribute
-      ::
-      [[[hag [%id sid] ~] b] ~]
-    ;~  plug
-      ;~(sfix (star (just '#')) whit)
-      down
+      $(a c.i.a)
     ==
   ::                                                    ::
   ++  made                                              ::  compose block
