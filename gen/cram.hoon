@@ -32,7 +32,7 @@
   ::  to cut the lines into blocks, then reparse flow blocks
   ::  with normal hoon rules.  multipass parsing is the tax
   ::  humans have to pay for simple but human-friendly syntax.)
-  ::   
+  ::
 
 |%
 ++  dynamic
@@ -431,13 +431,13 @@
   ++  down                                              ::  parse inline flow
     %+  knee  *(list manx)  |.  ~+
     =-  (cook - work)
-      ::  collect raw flow into xml tags
-      ::
-      |=  gaf/(list graf)
-      ^-  (list manx)
-      ::  nap: collected words
-      ::  max: collected tags
-      ::
+    ::  collect raw flow into xml tags
+    ::
+    |=  gaf/(list graf)
+    ^-  (list manx)
+    ::  nap: collected words
+    ::  max: collected tags
+    ::
     =<  main
     |%
     ++  main
@@ -456,23 +456,23 @@
     ::
     ++  item
       |=  nex/graf
-                ^-  (list manx)
-                ?-  -.nex
+      ^-  (list manx)
+      ?-  -.nex
         $text  !!  :: handled separately
         $bold  [[%b ~] ^$(gaf p.nex)]~
         $talc  [[%i ~] ^$(gaf p.nex)]~
         $code  [[%code ~] ;/((cape p.nex)) ~]~
-                  $quod  ::  smart quotes
-                         ::
+        $quod  ::  smart quotes
+               ::
                %=    ^$
-                             gaf
+                   gaf
                  :-  [%text (tufa ~-~201c. ~)]
-                           %+  weld  p.nex
+                 %+  weld  p.nex
                  `(list graf)`[%text (tufa ~-~201d. ~)]~
-                         ==
+               ==
         $link  [[%a [%href (cape q.nex)] ~] ^$(gaf p.nex)]~
-                ==
-      --
+      ==
+    --
   ::                                                    ::
   ++  para                                              ::  paragraph
     %+  cook
@@ -487,44 +487,44 @@
       |=  a/manx  ^-  marl
       =.  a.g.a  :_(a.g.a [%id (sanitize-to-id c.a)])
       [a]~
-              ::
+    ::
     ;~  plug
       ::
       :: # -> 1 -> %h1, ### -> 3 -> %h3, etc
       :(cook |=(a/@u /(crip "h{<a>}")) lent (stun [1 6] hax))
-        ::
+    ::
       ;~(pfix whit down)
     ==
   ::                                                    ::
   ++  sanitize-to-id
     |=  a/(list manx)  ^-  tape
-        =-  %-  zing 
-            %+  turn  `(list tape)`(flop -)
-            |=  tape  ^-  tape
-            %+  turn  `tape`+<
-            |=  @tD
-            ^-  @tD
-            ?:  ?|  &((gte +< 'a') (lte +< 'z'))
-                    &((gte +< '0') (lte +< '9'))
-                ==
-              +<
-            ?:  &((gte +< 'A') (lte +< 'Z'))
-              (add 32 +<)
-            '-'
-        ::  collect all text in header flow
-        ::
-        =|  ges/(list tape)
-        |-  ^-  (list tape)
+    =-  %-  zing
+        %+  turn  `(list tape)`(flop -)
+        |=  tape  ^-  tape
+        %+  turn  `tape`+<
+        |=  @tD
+        ^-  @tD
+        ?:  ?|  &((gte +< 'a') (lte +< 'z'))
+                &((gte +< '0') (lte +< '9'))
+            ==
+          +<
+        ?:  &((gte +< 'A') (lte +< 'Z'))
+          (add 32 +<)
+        '-'
+    ::  collect all text in header flow
+    ::
+    =|  ges/(list tape)
+    |-  ^-  (list tape)
     ?~  a  ges
-        %=    $
+    %=    $
         a  t.a
-            ges
+        ges
       ?:  ?=({{$$ {$$ *} $~} $~} i.a)
-            ::  capture text 
-            ::
+        ::  capture text
+        ::
         [v.i.a.g.i.a ges]
-          ::  descend into children
-          ::
+      ::  descend into children
+      ::
       $(a c.i.a)
     ==
   ::                                                    ::
