@@ -53,8 +53,8 @@
     ++  trig                                            ::  line style
       $:  col/@ud                                       ::  start column
           $=  sty                                       ::  style
-          $?  $done                                     ::   terminator
-              $none                                     ::  end of input
+          $?  $fini                                     ::   terminator
+              $done                                     ::  end of input
               $lint                                     ::  + line item
               $lite                                     ::  - line item
               $head                                     ::  # heading
@@ -195,14 +195,14 @@
   ++  look                                              ::  inspect line
     ^-  (unit trig)
     ?~  los
-      `[q.naz %none]
+      `[q.naz %done]
     ?:  =(`@`10 i.los)
       ~
     ?:  =(' ' i.los)
       look(los t.los, q.naz +(q.naz))
     :+  ~  q.naz
     ?:  =('\\' i.los)
-      %done
+      %fini
     ?:  ?&  =('#' i.los)
             |-  ^-  ?
             ?~  t.los  |
@@ -574,11 +574,11 @@
     =>  .(pic u.pic)
     ::  if end of input, complete
     ::
-    ?:  ?=($none sty.pic)
+    ?:  ?=($done sty.pic)
       ..$(q.naz col.pic)
     ::  if end marker behind current column
     ::
-    ?:  &(?=($done sty.pic) (lth col.pic col))
+    ?:  &(?=($fini sty.pic) (lth col.pic col))
       ::  retract and complete
       ::
       (back(q.naz (add 2 col.pic)) col.pic)
@@ -637,7 +637,7 @@
     ::                                                  ::
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
-        $done  !!
+        $fini  !!
         $head  head
         $lite  lite
         $lint  lint
