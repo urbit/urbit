@@ -11,12 +11,12 @@
   ::  a document format should be easy to type and read, but
   ::  that doesn't mean it can't or have rigorous syntax.
   ::
-  ::  tldr: ++cram is indent-oriented.  indent 2 spaces for 
+  ::  tldr: ++cram is indent-oriented.  indent 2 spaces for
   ::  a dynamic interpolation, 4 spaces for example code, 6
   ::  spaces for a blockquote and 8 spaces for verse.  separate
-  ::  every semantic block by a blank line.  use - for 
-  ::  unordered lists, + for ordered lists.  
-  ::  
+  ::  every semantic block by a blank line.  use - for
+  ::  unordered lists, + for ordered lists.
+  ::
   ::  markdown link syntax works.  * means bold, _ means
   ::  italics, "" inserts smart quotes.  all enclosed
   ::  strings are reparsed; escape the terminator within
@@ -24,7 +24,7 @@
   ::
   ::  markdown `literal` syntax is supported, but all hoon
   ::  constants are automatically marked as code.  also, any
-  ::  hoon expression prefixed with # is a code literal. 
+  ::  hoon expression prefixed with # is a code literal.
   ::
   ::  (++cram is a valid hoon parsing rule, but it does a lot
   ::  of custom processing internally, since the language is
@@ -53,7 +53,7 @@
           $expr                                         ::  dynamic expression
       ==                                                ::
     ++  trig                                            ::  line style
-      $:  col/@ud                                       ::  start column 
+      $:  col/@ud                                       ::  start column
           $=  sty                                       ::  style
           $?  $done                                     ::   terminator
               $none                                     ::  end of input
@@ -71,7 +71,7 @@
           {$link p/(list graf) q/tape}                  ::  URL
       ==
     --
-|%                                                      ::  
+|%                                                      ::
 ++  test                                                ::  test text parsing
   |=  pax/path
   ^-  tape
@@ -92,7 +92,7 @@
   |=  {naz/hair los/tape}
   ^-  (like flow)
   ::
-  ::  state of the parsing loop.  we maintain a construction 
+  ::  state of the parsing loop.  we maintain a construction
   ::  stack for elements and a line stack for lines in the
   ::  current block.  a blank line causes the current block
   ::  to be parsed and thrown in the current element.  when
@@ -179,15 +179,15 @@
     ::  no unterminated lines
     ::
     ?~  los  [~ +>(err `naz)]
-    ?:  =(`@`10 i.los)  
+    ?:  =(`@`10 i.los)
       ::  consume newline
       ::
       :_  +>(los t.los, naz [+(p.naz) 1])
       ::  trim trailing spaces
       ::
-      |-  ^-  tape 
-      ?:  ?=({$' ' *} nap) 
-        $(nap t.nap) 
+      |-  ^-  tape
+      ?:  ?=({$' ' *} nap)
+        $(nap t.nap)
       (flop nap)
     ::  save byte and repeat
     ::
@@ -242,7 +242,7 @@
     ;~  sfix
       %-  star
       =+  ;~(pose bas tem)
-      ;~  pose 
+      ;~  pose
         (cold ' ' whit)
         ;~(pose ;~(less - prn) ;~(pfix bas -))
       ==
@@ -259,16 +259,20 @@
         ==
     |=  {naz/hair los/tape}
     ^+  *sab
+    ::
     ::  vex: fenced span
     ::
     =/  vex/(like tape)  (fex naz los)
     ?~  q.vex  vex
+    ::
     ::  hav: reparse full fenced text
     ::
     =/  hav  ((full sab) [naz p.u.q.vex])
+    ::
     ::  reparsed error position is always at start
     ::
     ?~  q.hav  [naz ~]
+    ::
     ::  the complete span with the main product
     ::
     :-  p.vex
@@ -284,7 +288,7 @@
     ::  use result of expression parser
     ::
     ?~  q.vex  vex
-    =-  [p.vex `[- q.u.q.vex]] 
+    =-  [p.vex `[- q.u.q.vex]]
     ::  but replace payload with bytes consumed
     ::
     |-  ^-  tape
@@ -295,41 +299,51 @@
   ++  word                                              ::  flow parser
     %+  knee  *(list graf)  |.  ~+
     ;~  pose
+    ::
     ::  whitespace
     ::
       (cold [%text " "]~ whit)
+    ::
     ::  ordinary word
     ::
       %+  cook  |=(graf [+< ~])
       (stag %text ;~(plug ;~(pose low hig) (star ;~(pose nud low hig hep))))
+    ::
     ::  naked \escape
     ::
       %+  cook  |=(@ [%text [+< ~]]~)
       ;~(pfix bas ;~(less ace prn))
+    ::
     ::  *bold literal*
     ::
       %+  cook  |=(graf [+< ~])
       (stag %bold ;~(pfix tar (cool (cash tar) work)))
+    ::
     ::  _italic literal_
     ::
       %+  cook  |=(graf [+< ~])
       (stag %talc ;~(pfix cab (cool (cash cab) work)))
+    ::
     ::  "quoted text"
     ::
       %+  cook  |=(graf [+< ~])
       (stag %quod ;~(pfix doq (cool (cash doq) work)))
+    ::
     ::  `classic markdown quote`
     ::
       %+  cook  |=(graf [+< ~])
       (stag %code ;~(pfix tec (cash tec)))
+    ::
     ::  #twig
     ::
       %+  cook  |=(graf [+< ~])
       (stag %code ;~(pfix hax (echo wide:vast)))
+    ::
     ::  ++arm
     ::
       %+  cook  |=(graf [+< ~])
       (stag %code ;~(plug lus lus low (star ;~(pose nud low hep))))
+    ::
     ::  [arbitrary *content*](url)
     ::
       %+  cook  |=(graf [+< ~])
@@ -338,6 +352,7 @@
         ;~(pfix sel (cool (cash ser) work))
         ;~(pfix gay ;~(pfix pel (cash per)))
       ==
+    ::
     ::  direct hoon constant
     ::
       %+  cook  |=(graf [+< ~])
@@ -350,6 +365,7 @@
         ;~(pfix sig ;~(pose twid:so (easy [%$ %n 0])))
         ;~(pfix cen ;~(pose sym buc pam bar qut nuck:so))
       ==
+    ::
     ::  just a byte
     ::
       (cook |=(@ [%text [+< ~]]~) ;~(less ace prn))
@@ -412,12 +428,12 @@
   ::                                                    ::
   ++  para                                              ::  paragraph
     %+  cook
-      |=((list manx) [[%p ~] +<]~) 
-    ;~(pfix gay down)
+      |=((list manx) [[%p ~] +<]~)
+    ;~(pfix gay down)  ::REVIEW does this mean comments work?
   ::                                                    ::
   ++  whit                                              ::  whitespace
     (cold ' ' (plus ;~(pose (just ' ') (just `@`10))))
-  ::                                                    ::
+  ::
   ++  head                                              ::  parse heading
     %+  cook
       |=  $:  ::  a: list of #
@@ -473,7 +489,7 @@
     ==
   ::                                                    ::
   ++  made                                              ::  compose block
-    ^+  . 
+    ^+  .
     ::  empty block, no action
     ::
     ?~  lub  .
@@ -486,7 +502,7 @@
         ?~  q.cur  q.cur
         :_(q.cur (clue `@`10 ~))
       %=    .
-          q.cur  
+          q.cur
         %+  weld
           %+  turn
             q.u.lub
@@ -503,7 +519,7 @@
       ::
       =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
       %=    .
-          q.cur  
+          q.cur
         %+  weld
           %+  turn
             q.u.lub
@@ -541,7 +557,7 @@
     ::  save good result, clear buffer
     ::
     ..$(lub ~, q.cur (weld p.u.q.vex q.cur))
-  ::                                                    ::  
+  ::                                                    ::
   ++  line  ^+  .                                       ::  body line loop
     ::  abort after first error
     ::
@@ -589,7 +605,7 @@
           ==
         ..$(err `[p.naz col.pic])
       ::  accept line and continue
-      :: 
+      ::
       =^  nap  ..$  snap
       line(lub bal(q.u [nap q.u.bal]))
     ::  if column has retreated, adjust stack
@@ -608,7 +624,7 @@
     ::
     =<  line:abet:apex
     |%
-    ::                                                  ::  
+    ::                                                  ::
     ++  abet                                            ::  accept line
       ..$(lub `[naz nap ~])
     ::                                                  ::
