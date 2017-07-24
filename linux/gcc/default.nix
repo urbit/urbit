@@ -26,6 +26,7 @@ stdenv.mkDerivation rec {
   builder = ./builder.sh;  # TODO: keep simplifying this script
 
   gcc_patches = [
+    # These patches are from nixpkgs.
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
   ];
