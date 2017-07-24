@@ -218,6 +218,7 @@
     %text
   ::                                                    ::
   ++  cape                                              ::  xml-escape
+    ::FIXME p sure this is redundant with native manx escaping
     |=  tex/tape
     ^-  tape
     ?~  tex  tex
@@ -486,7 +487,7 @@
       ::
       =.  q.cur
         ?~  q.cur  q.cur
-        :_(q.cur (clue `@`10 ~))
+        :_(q.cur ;/("\0a"))
       %=    .
           q.cur
         %+  weld
@@ -495,7 +496,7 @@
           |=  tape  ^-  flow
           ::  each line is text data with its newline
           ::
-          (clue (weld (slag (dec col) +<) `tape`[`@`10 ~]))
+          ;/((weld (slag (dec col) +<) "\0a"))
         q.cur
       ==
     ::  if block is verse
@@ -514,7 +515,7 @@
           ::
           :-  [%p ~]
           :_  ~
-          (clue (weld (slag (dec col) +<) `tape`[`@`10 ~]))
+          ;/((weld (slag (dec col) +<) "\0a"))
         q.cur
       ==
     ::  yex: block recomposed, with newlines
@@ -527,7 +528,8 @@
       (weld i.hel `tape`[`@`10 $(hel t.hel)])
     ::  XX live expressions stubbed out
     ::
-    ?<  ?=($expr p.cur)
+    ?:  ?=($expr p.cur)
+      !!
     ::  vex: parse of paragraph
     ::
     =/  vex/(like (list manx))
