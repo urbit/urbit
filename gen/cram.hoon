@@ -376,7 +376,7 @@
   ::                                                    ::
   ++  down                                              ::  parse inline flow
     %+  knee  *(list manx)  |.  ~+
-    %+  cook
+    =-  (cook - work)
       ::  collect raw flow into xml tags
       ::
       |=  gaf/(list graf)
@@ -384,45 +384,41 @@
       ::  nap: collected words
       ::  max: collected tags
       ::
-      =|  fip/(list tape)
-      =|  max/(list manx)
-      =<  (flop max:main)
-      |%                                                ::
-      ++  fill  %_  .                                   ::  unify text block
-                  max  :_(max (clue (zing (flop fip))))
-                  fip  ~
-                ==                                      ::
-      ++  main  ^+  .                                   ::  flow to 
-                ?~  gaf  fill
-                ?:  ?=($text -.i.gaf)
-                  main(gaf t.gaf, fip [(cape p.i.gaf) fip])
-                ::  nex: first word in flow
-                ::  mor: rest of flow
-                ::
-                =>  :-  [nex=i.gaf mor=t.gaf]
-                    ::  combine accumulated text
-                    ::
-                    fill
-                ::  convert and accumulate fragment
-                ::
-                =-  main(gaf mor, max (weld - max))
+    =<  main
+    |%
+    ++  main
+      ^-  marl
+      ?~  gaf  ~
+      ?.  ?=($text -.i.gaf)
+        (weld (item i.gaf) $(gaf t.gaf))
+      ::
+      ::  fip: accumulate text blocks
+      =/  fip/(list tape)  [p.i.gaf]~
+      |-  ^-  marl
+      ?~  t.gaf  [;/((zing (flop fip))) ~]
+      ?.  ?=($text -.i.t.gaf)
+        [;/((zing (flop fip))) ^$(gaf t.gaf)]
+      $(gaf t.gaf, fip :_(fip p.i.t.gaf))
+    ::
+    ++  item
+      |=  nex/graf
                 ^-  (list manx)
                 ?-  -.nex
-                  $bold  [[%b ~] $(gaf p.nex)]~
-                  $talc  [[%i ~] $(gaf p.nex)]~
-                  $code  [[%code ~] (clue (cape p.nex)) ~]~
+        $text  !!  :: handled separately
+        $bold  [[%b ~] ^$(gaf p.nex)]~
+        $talc  [[%i ~] ^$(gaf p.nex)]~
+        $code  [[%code ~] ;/((cape p.nex)) ~]~
                   $quod  ::  smart quotes
                          ::
-                         %=    $
+               %=    ^$
                              gaf
-                           :-  [%text `@`226 `@`128 `@`156 ~] 
+                 :-  [%text (tufa ~-~201c. ~)]
                            %+  weld  p.nex
-                           `(list graf)`[%text `@`226 `@`128 `@`157 ~]~
+                 `(list graf)`[%text (tufa ~-~201d. ~)]~
                          ==
-                  $link  [[%a [%href (cape q.nex)] ~] $(gaf p.nex)]~
+        $link  [[%a [%href (cape q.nex)] ~] ^$(gaf p.nex)]~
                 ==
       --
-    work
   ::                                                    ::
   ++  para                                              ::  paragraph
     %+  cook
