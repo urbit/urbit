@@ -89,70 +89,74 @@
 ::+|
 ::
 ++  beet  $@  @                                         ::  advanced embed
-          $%  {$a p/twig}                               ::  take tape
-              {$b p/twig}                               ::  take manx
-              {$c p/twig}                               ::  take marl
-              {$d p/twig}                               ::  take $-(marl marl)
-              {$e p/twig q/(list tuna)}                 ::  element literal
+          $%  {$tape p/twig}                            ::  take tape
+              {$manx p/twig}                            ::  take manx
+              {$marl p/twig}                            ::  take marl
+              {$call p/twig}                            ::  take $-(marl marl)
+              {$elem p/twig q/(list tuna)}              ::  element literal
           ==                                            ::
 ::
 ++  tuna                                                ::  tagflow
-          $%  {$a p/twig}                               ::  plain text
-              {$b p/twig}                               ::  single tag
-              {$c p/twig}                               ::  simple list
-              {$d p/twig}                               ::  dynamic list
-              {$e p/twig q/(list tuna)}                 ::  element
-              {$f p/(list tuna)}                        ::  subflow
+          $%  {$tape p/twig}                            ::  plain text
+              {$manx p/twig}                            ::  single tag
+              {$marl p/twig}                            ::  simple list
+              {$call p/twig}                            ::  dynamic list
+              {$elem p/twig q/(list tuna)}              ::  element
+              {$many p/(list tuna)}                     ::  subflow
           ==                                            ::
 ::
 ++  sail                                                ::  xml template
-  |=  tol/?  =|  lin/?
+  |=  in-tall-form/?  =|  lin/?
   |%
-  ++  ape                                               ::  product twig
+  ++  apex                                             ::  product twig
     %+  cook
       |=  tum/tuna  ^-  twig
-      ?:  ?=({$e *} tum)
-        [p.tum (sag q.tum)]
-      (sag tum ~)
-    amp
+      ::?:  ?=({$elem *} tum)
+      ::  [p.tum (tuna-to-twig q.tum)]
+      (tuna-to-twig tum ~)
+    toplevel
   ::
-  ++  amp                                               ::  entry point
-    ;~(pfix sem ?:(tol bam bat))
+  ++  toplevel                                             ::  entry point
+    ;~(pfix sem ?:(in-tall-form tall-top wide-outer-top))
   ::
-  ++  bam                                               ::  tall top
+  ++  tall-top                                             ::  tall top
     %+  knee  *tuna  |.  ~+
     ;~  pose
-      (stag %f ;~(pfix (plus ace) (cook rab puv)))
-      (stag %e ;~(plug hag nal))
-      (stag %e hul)
-      (stag %f nup)
-      ;~(pfix tis (stag %f nol))
-      ;~(pfix hep (stag %a ;~(pfix gap tall)))
-      ;~(pfix lus (stag %b ;~(pfix gap tall)))
-      ;~(pfix tar (stag %c ;~(pfix gap tall)))
-      ;~(pfix cen (stag %d ;~(pfix gap tall)))
-      (easy [%f [%a [%knit 10 ~]] ~])
+      (stag %many ;~(pfix (plus ace) (cook beet-to-tuna quote-innards)))
+      (stag %elem ;~(plug script-or-style script-style-tail))
+      (stag %elem tall-elem)
+      (stag %many wide-quote)
+      ;~(pfix tis (stag %many tall-tail))
+      tall-interpolation
+      (easy [%many [%tape [%knit 10 ~]] ~])
     ==
   ::
-  ++  bat                                               ::  wide outer top
+  ++  tall-interpolation
+    ;~  pose
+      ;~(pfix hep (stag %tape ;~(pfix gap tall:vast)))
+      ;~(pfix lus (stag %manx ;~(pfix gap tall:vast)))
+      ;~(pfix tar (stag %marl ;~(pfix gap tall:vast)))
+      ;~(pfix cen (stag %call ;~(pfix gap tall:vast)))
+    ==
+  ++  wide-outer-top                                             ::  wide outer top
     %+  knee  *tuna  |.  ~+
     ;~  pose
-      (stag %f nup)
-      (stag %f ped)
-      (stag %e ;~(plug hig lif))
+      (stag %many wide-quote)
+      (stag %many wide-paren-elems)
+      (stag %elem ;~(plug wide-head wide-tail))
     ==
   ::
-  ++  bet                                               ::  wide inner top
+  ++  wide-inner-top                                             ::  wide inner top
     %+  knee  *tuna  |.  ~+
     ;~  pose
-      bat
-      ;~(pfix hep (stag %a wide))
-      ;~(pfix lus (stag %b wide))
-      ;~(pfix tar (stag %c wide))
-      ;~(pfix cen (stag %d wide))
+      wide-outer-top
+      ;~(pfix hep (stag %tape wide:vast))
+      ;~(pfix lus (stag %manx wide:vast))
+      ;~(pfix tar (stag %marl wide:vast))
+      ;~(pfix cen (stag %call wide:vast))
     ==
   ::
-  ++  fry                                               ::  mane as twig
+  ++  mane-as-twig                                             ::  mane as twig
     %+  cook
       |=  {a/@tas b/(unit @tas)}
       ?~  b
@@ -160,79 +164,84 @@
       [[%rock %tas a] [%rock %tas u.b]]
     ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
   ::
-  ++  hag                                               ::  script or style
+  ++  script-or-style                                             ::  script or style
     %+  cook  |=(a/twig a)
     ;~  plug
       (stag %rock (stag %tas ;~(pose (jest %script) (jest %style))))
-      (stag %conl jaw)
+      (stag %conl wide-attrs)
     ==
   ::
-  ++  hig                                               ::  simple head
-    (cook |=({a/twig b/(list twig)} [a %conl b]) hog)
+  ++  wide-head                                             ::  simple head
+    (cook |=({a/twig b/(list twig)} [a %conl b]) tag-head)
   ::
-  ++  hog                                               ::  tag head
+  ++  en-class
+    |=  a/(list {$class p/term})  ^-  (unit {$class tape})
+    ?~  a  ~
+    %-  some
+    :-  %class
+    |-
+    %+  welp  (trip p.i.a)
+    ?~  t.a  ~
+    [' ' $(a t.a)]
+  ::
+  ++  tag-head                                             ::  tag head
     %+  cook
-      |=  hug
+      |=  {a/twig b/(list twig) c/(unit (list twig))}
       ^-  {twig (list twig)}
-      =-  [a (welp - ?~(c d [[[%rock %tas p.c] q.c] d]))]
-      =-  (~(tap by -))
-      %.  |=(e/(list tank) [%knit ~(ram re %rose [" " `~] e)])
-      =<  ~(run by (reel b .))
-      |=  {e/{p/term q/term} f/(jar twig tank)}
-      (~(add ja f) [%rock %tas p.e] [%leaf (trip q.e)])
+      [a (weld b (fall c ~))]
     ;~  plug
-      fry
-      =-  (star ;~(plug - sym))
-      ;~(pose (cold %class dot) (cold %id hax))
-      =-  ;~(pose ;~(plug - (stag %knit soil)) (easy ~))
-      ;~(pose (cold %href fas) (cold %src pat))
-      ;~  pose
-        %+  ifix  [pel per]
-        %+  more  ;~(plug com ace)
-        ;~(plug fry ;~(pfix ace wide))
+      mane-as-twig
+    ::
+      %+  cook
+        |=  a/(list (unit {term (list beer)}))
+        ^-  (list twig)
+        %+  murn  a
+        (lift |=({a/term b/(list beer)} [[%rock %tas a] [%knit b]]))
       ::
+      ;~  plug
+        (punt ;~(plug (cold %id hax) (cook trip sym)))
+        (cook en-class (star ;~(plug (cold %class dot) sym)))
+        (punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil:vast))
         (easy ~)
       ==
+    ::
+      %-  punt
+      %+  ifix  [pel per]
+      %+  more  ;~(plug com ace)
+      ;~(plug mane-as-twig ;~(pfix ace wide:vast))
     ==
   ::
-  ++  hoy                                               ::  tall attributes
+  ++  tall-attrs                                             ::  tall attributes
     %-  star
     ;~  pfix  ;~(plug gap tis)
-      ;~(plug fry ;~(pfix gap tall))
+      ;~(plug mane-as-twig ;~(pfix gap tall:vast))
     ==
   ::
-  ++  hug                                               ::  head shape
-    $:  a/twig                                          ::  XX translation
-        b/(list {@tas @tas})
-        c/$@($~ {p/@tas q/twig})
-        d/(list twig)
-    ==
-  ::
-  ++  hul                                               ::  tall preface
+  ++  tall-elem                                             ::  tall preface
     %+  cook
       |=  {a/{p/twig q/(list twig)} b/(list twig) c/(list tuna)}
       ^-  {twig (list tuna)}
       [[p.a %conl (weld q.a b)] c]
-    ;~(plug hog hoy nol)
+    ;~(plug tag-head tall-attrs tall-tail)
   ::
-  ++  jaw                                               ::  wide attributes
+  ++  wide-attrs                                             ::  wide attributes
     ;~  pose
       %+  ifix  [pel per]
       %+  more  ;~(plug com ace)
-      ;~(plug fry ;~(pfix ace wide))
+      ;~(plug mane-as-twig ;~(pfix ace wide:vast))
     ::
       (easy ~)
     ==
   ::
-  ++  lif                                               ::  wide elements
+  ++  wide-tail                                             ::  wide elements
     %+  cook  |=(a/(list tuna) a)
-    ;~(pose ;~(pfix col pep) (cold ~ sem) (easy ~))
+    ;~(pose ;~(pfix col wrapped-elems) (cold ~ sem) (easy ~))
   ::
-  ++  luf                                               ::  wide elements
+  ++  wide-elems                                             ::  wide elements
     %+  cook  |=(a/(list tuna) a)
-    (star ;~(pfix ace bet))
+    (star ;~(pfix ace wide-inner-top))
   ::
-  ++  nal                                               ::  unescaped tall tail
+  ++  script-style-tail                                             ::  unescaped tall tail
     %+  cook  |=(a/(list tuna) a)
     %+  ifix  [gap ;~(plug gap duz)]
     %+  most  gap
@@ -241,88 +250,93 @@
         ;~  pfix  ace
           %+  cook
             |=  a/tape
-            [%a %knit (weld a `tape`[`@`10 ~])]
+            [%tape %knit (weld a `tape`[`@`10 ~])]
           (star (shim 32 255))
         ==
-        (easy [%a %knit `@`10 ~])
+        (easy [%tape %knit `@`10 ~])
       ==
     ==
   ::
-  ++  nol                                               ::  tall tail
-    ?>  tol
+  ++  tall-tail                                             ::  tall tail
+    ?>  in-tall-form
     %+  cook  |=(a/(list tuna) a)
     ;~  pose
       (cold ~ sem)
-      ;~(pfix col pep(tol |))
-      ;~(pfix ;~(plug col ace) (cook rab(tol |) puv))
-      (ifix [gap ;~(plug gap duz)] (most gap amp))
+      ;~(pfix col wrapped-elems(in-tall-form |))
+      ;~(pfix ;~(plug col ace) (cook beet-to-tuna(in-tall-form |) quote-innards))
+      (ifix [gap ;~(plug gap duz)] (most gap toplevel))
     ==
   ::
-  ++  nup                                               ::  wide quote
+  ++  wide-quote                                             ::  wide quote
     %+  cook  |=(a/(list tuna) a)
     ;~  pose
-      ;~(less (jest '"""') (ifix [doq doq] (cook rab puv)))
-      (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook rab puv(lin |))))
+      ;~(less (jest '"""') (ifix [doq doq] (cook beet-to-tuna quote-innards)))
+      (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook beet-to-tuna quote-innards(lin |))))
     ==
   ::
-  ++  pab  (ifix [kel ker] ;~(plug hig luf))            ::  bracketed element
-  ++  ped                                               ::  wide flow
+  ++  bracketed-elem  (ifix [kel ker] ;~(plug wide-head wide-elems))          ::  bracketed element
+  ++  wide-paren-elems                                             ::  wide flow
     %+  cook  |=(a/(list tuna) a)
-    (ifix [pel per] (more ace bet))
+    (ifix [pel per] (more ace wide-inner-top))
   ::
-  ++  pep                                               ::  wrapped tuna
+  ++  wrapped-elems                                             ::  wrapped tuna
     %+  cook  |=(a/(list tuna) a)
     ;~  pose
-      ped
-      (ifix [pel per] (more ace bet))
-      (cook |=(@t [%a %knit (trip +<)]~) qut)
+      wide-paren-elems
+      (cook |=(@t [%tape %knit (trip +<)]~) qut)
       ;~  plug
-        bat
+        wide-outer-top
         (easy ~)
       ==
     ==
   ::
-  ++  puv                                               ::  wide+tall flow
+  ::++  wide-quote-innards  (cook beet-to-tuna(in-tall-form |) quote-innards)
+  ++  quote-innards                                             ::  wide+tall flow
     %+  cook  |=(a/(list beet) a)
     %-  star
     ;~  pose
       ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
-      ;~(pfix hep (stag %a sump))
-      ;~(pfix lus (stag %b sump))
-      ;~(pfix tar (stag %c sump))
-      ;~(pfix cen (stag %d sump))
-      ;~(pfix sem (stag %e pab(tol |)))
-      ;~(less bas kel ?:(tol fail doq) prn)
+      quote-interpolation
+      ;~(pfix sem (stag %elem bracketed-elem(in-tall-form |)))
+      ;~(less bas kel ?:(in-tall-form fail doq) prn)
       ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
-      (stag %a sump)
     ==
   ::
-  ++  rab                                               ::  beet to tuna
+  ++  quote-interpolation
+    ;~  pose
+      (stag %tape sump:vast)
+      ;~(pfix hep (stag %tape sump:vast))
+      ;~(pfix lus (stag %manx sump:vast))
+      ;~(pfix tar (stag %marl sump:vast))
+      ;~(pfix cen (stag %call sump:vast))
+    ==
+  ++  beet-to-tuna                                             ::  beet to tuna
     |=  reb/(list beet)
     ^-  (list tuna)
     =|  {sim/(list @) tuz/(list tuna)}
     |-  ^-  (list tuna)
     ?~  reb
       =.  sim
-        ?.  tol   sim
+        ?.  in-tall-form   sim
         [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
-      ?~(sim tuz [[%a %knit (flop sim)] tuz])
+      ?~(sim tuz [[%tape %knit (flop sim)] tuz])
     ?@  i.reb
       $(reb t.reb, sim [i.reb sim])
     =+  zut=$(reb t.reb, sim ~)
     ?~  sim  [i.reb zut]
-    [[%a %knit (flop sim)] i.reb zut]
+    [[%tape %knit (flop sim)] i.reb zut]
   ::
-  ++  sag                                               ::  tuna to twig
+  ++  tuna-to-twig                                             ::  tuna to twig
     |=  lut/(list tuna)
     ^-  twig
     :-  %conp
     |-  ^-  (list twig)
     ?~  lut  [[%rock %n ~] ~]
     ?-  -.i.lut
-      $a  [[%nub p.i.lut] $(lut t.lut)]
-      $b  [p.i.lut $(lut t.lut)]
-      $c  :_  ~
+      $tape  [[%nub p.i.lut] $(lut t.lut)]
+      $manx  [p.i.lut $(lut t.lut)]
+      $marl
+          :_  ~
           :+  %lace  `twig`[p.i.lut [%conp $(lut t.lut)]]
           :+  %new  [%base %cell]
           :-  %core
@@ -333,9 +347,9 @@
           :^  %ifno  sug
             [%make sug [[[[%& 1] ~] [%$ 13]] ~]]
           [%make sug [[[[%& 3] ~] [%make [%$ ~] [[sug [%$ 25]] ~]]] ~]]
-      $d  [[%call p.i.lut [%conp $(lut t.lut)] ~] ~]
-      $e  [[p.i.lut ^$(lut [[%f q.i.lut] ~])] $(lut t.lut)]
-      $f  $(lut (weld p.i.lut t.lut))
+      $call  [[%call p.i.lut [%conp $(lut t.lut)] ~] ~]
+      $elem  [[p.i.lut ^$(lut [[%many q.i.lut] ~])] $(lut t.lut)]
+      $many  $(lut (weld p.i.lut t.lut))
     ==
   --
 --
