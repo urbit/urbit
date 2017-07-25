@@ -59,18 +59,20 @@
 ::
 ++  steam
   |=  manx:dynamic  ^-  twig:manx
-  :-  [(steam-mane n.g) %conl (turn a.g steam-mart)]
-  !.
-  |-  ^-  twig:marl
-  ?~  c  [%conl ~]
-  ?-  -.i.c
-    ^      [(steam i.c) $(c t.c)]
-    $manx  [p.i.c $(c t.c)]
-    $tape  [[%nub p.i.c] $(c t.c)]
-    $call  [%call p.i.c [$(c t.c)]~]
-    $marl  [%per [p.i.c $(c t.c)] cons-twig]
+  [[(steam-mane n.g) %conl (turn a.g steam-mart)] (steam-marl c)]
+::
+++  steam-marl
+  |=  a/marl:dynamic  ^-  twig:marl
+  ?~  a  [%conl ~]
+  ?-  -.i.a
+    ^      [(steam i.a) $(a t.a)]
+    $manx  [p.i.a $(a t.a)]
+    $tape  [[%nub p.i.a] $(a t.a)]
+    $call  [%call p.i.a [$(a t.a)]~]
+    $marl  [%per [p.i.a $(a t.a)] cons-twig]
   ==
 ::
+::TODO  properly support ;= syntax
 ++  cons-twig  ^-  twig
   !,(*twig =>([a b]=. |-(?~(a b [-.a $(a +.a)]))))
   :::+  %per  [%name 2+[%a %b] $+1]                :: =>  [a b]=.
@@ -78,6 +80,17 @@
   ::  %ifno  /a  wing+/b                           :: ?~  a  b
   ::  [wing+/[&+2]/a make+[/[%$] [/a /[&+3]/a]~]]  :: [-.a $(a +.a)]
   ::==
+  ::REVIEW compare to xisting sail code:
+  :::+  %lace  [%$ 1]
+  :::+  %new  [%base %cell]
+  :::-  %core
+  ::^-  (map term foot)
+  :::_  [~ ~]
+  ::=+  sug=[[%& 12] ~]
+  :::+  %$  %elm
+  :::^  %ifno  sug
+  ::  [%make sug [[[[%& 1] ~] [%$ 13]] ~]]
+  ::[%make sug [[[[%& 3] ~] [%make [%$ ~] [[sug [%$ 25]] ~]]] ~]]
 ::
 ++  steam-mane
   |=  a/mane  ^-  twig
@@ -107,30 +120,22 @@
           ==                                            ::
 ::
 ++  sail                                              ::  xml template
+  =>  dynamic
   |=  in-tall-form/?  =|  lin/?
   |%
-  ++  apex                                             ::  product twig
-    ::%+  cook
-    ::  |=  tum/tuna  ^-  twig
-    ::  ::?:  ?=({$elem *} tum)
-    ::  ::  [p.tum (tuna-to-twig q.tum)]
-    ::  (tuna-to-twig tum ~)
-    toplevel
-  ::
-  ++  toplevel                                             ::  entry point
+  ++  apex                                              ::  entry point
     ;~(pfix sem ?:(in-tall-form tall-top wide-top))
   ::
-  ++  single  !.  |*(a/rule (cook |=(b/manx [b]~) a))
+  ++  single  !.  |*(a/rule (cook |=(b/$^(manx tuna) [b]~) a))
   ++  tall-top                                             ::  tall top
     %+  knee  *marl  |.  ~+
     ;~  pose
-      ::(stag %many ;~(pfix (plus ace) (cook beet-to-tuna quote-innards)))
       ;~(pfix (plus ace) (cook collapse-chars quote-innards))
       (single ;~(plug script-or-style script-style-tail))
       (single tall-elem)
       wide-quote
-      ::;~(pfix tis tall-tail)
-      ::;~((glue gap) tuna-mode tall:vast)
+      ;~(pfix tis tall-tail)
+      (single ;~((glue gap) tuna-mode tall:vast))
       (easy [;/("\0a")]~)
     ==
   ::
@@ -153,7 +158,7 @@
     %+  knee  *marl  |.  ~+
     ;~  pose
       wide-top
-      ::;~(plug tuna-mode wide:vast)
+      (single ;~(plug tuna-mode wide:vast))
     ==
   ::
   ++  a-mane                                             ::  mane as twig
@@ -181,40 +186,32 @@
   ::
   ++  tag-head                                             ::  tag head
     %+  cook
-      |=  {a/mane b/mart c/(unit mart)}
+      |=  {a/mane b/mart c/mart}
       ^-  marx
-      [a (weld b (fall c ~))]
+      [a (weld b c)]
     ;~  plug
       a-mane
     ::
       %+  cook
-        ::|=  a/(list (unit {term (list beer)}))
-        |=  a/(list (unit {term tape}))
-        ^-  (list {term tape})
+        |=  a/(list (unit {term (list beer)}))
+        ^-  (list {term (list beer)})
         :: discard nulls
         (murn a same)
       ::
       ;~  plug
         (punt ;~(plug (cold %id hax) (cook trip sym)))
         (cook en-class (star ;~(plug (cold %class dot) sym)))
-        ::(punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil:vast))
+        (punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil:vast))
         (easy ~)
       ==
     ::
-      %-  punt
-      ::%+  ifix  [pel per]
-      ::%+  more  ;~(plug com ace)
-      ::%+  cook  |=({a/mane b/twig} [a [~ b]~])
-      ::;~((glue ace) a-mane wide:vast))
-      fail
+      wide-attrs
     ==
   ::
   ++  tall-attrs                                             ::  tall attributes
     %-  star
-    ::%+  cook  |=({a/mane b/twig} [a [~ b]~])
     ;~  pfix  ;~(plug gap tis)
-      ::;~(plug a-mane ;~(pfix gap tall:vast))
-      fail
+      ;~((glue gap) a-mane hopefully-quote)
     ==
   ::
   ++  tall-elem                                             ::  tall preface
@@ -224,17 +221,20 @@
       [[p.a (weld q.a b)] c]
     ;~(plug tag-head tall-attrs tall-tail)
   ::
-  ++  wide-attrs                                             ::  wide attributes
-    %+  cook  |=(a/mart a)
+  ::HACK prefer static parse
+  ++  hopefully-quote
+    %+  cook  |=(a/(list beer) a)
     ;~  pose
-      %+  ifix  [pel per]
-      %+  more  (jest ', ')
-      ::%+  cook  |=({a/mane b/twig} [a [~ b]~])
-      ::;~((glue ace) a-mane wide:vast)
-      fail
-    ::
-      (easy ~)
+      soil:vast
+      (cook |=(b/twig [~ b]~) wide:vast)
     ==
+  ::
+  ++  wide-attrs                                             ::  wide attributes
+    %+  cook  |=(a/(unit mart) (fall a ~))
+    %-  punt
+    %+  ifix  [pel per]
+    %+  more  (jest ', ')
+    ;~((glue ace) a-mane hopefully-quote)
   ::
   ++  wide-tail                                             ::  wide elements
     %+  cook  |=(a/marl a)
@@ -263,17 +263,12 @@
     ;~  pose
       (cold ~ sem)
       ;~(pfix col wrapped-elems(in-tall-form |))
-      ::;~(pfix ;~(plug col ace) (cook beet-to-tuna(in-tall-form |) quote-innards))
       ;~(pfix col ace (cook collapse-chars(in-tall-form |) quote-innards))
-      (cook zing (ifix [gap ;~(plug gap duz)] (most gap toplevel)))
+      (cook zing (ifix [gap ;~(plug gap duz)] (most gap apex)))
     ==
   ::
   ++  wide-quote                                             ::  wide quote
     %+  cook  |=(a/marl a)
-    ::;~  pose
-    ::  ;~(less (jest '"""') (ifix [doq doq] (cook beet-to-tuna quote-innards)))
-    ::  (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook beet-to-tuna quote-innards(lin |))))
-    ::==
     ;~  pose
       ;~(less (jest '"""') (ifix [doq doq] (cook collapse-chars quote-innards)))
       (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook collapse-chars quote-innards(lin |))))
@@ -293,37 +288,21 @@
       wide-top
     ==
   ::
-  ::++  wide-quote-innards  (cook beet-to-tuna(in-tall-form |) quote-innards)
+  ::++  wide-quote-innards  (cook collapse-chars(in-tall-form |) quote-innards)
   ++  quote-innards                                             ::  wide+tall flow
-    %+  cook  |=(a/(list $@(@ manx)) a)
+    %+  cook  |=(a/(list $@(@ $^(manx tuna))) a)
     %-  star
     ;~  pose
       ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
-      ::;~(plug tuna-mode sump:vast)
-      ::(stag %tape sump:vast)
+      ;~(plug tuna-mode sump:vast)
+      (stag %tape sump:vast)
       ;~(pfix sem bracketed-elem(in-tall-form |))
       ;~(less bas kel ?:(in-tall-form fail doq) prn)
       ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
     ==
   ::
-  ::++  beet-to-tuna                                             ::  beet to tuna
-  ::  |=  reb/(list beet)
-  ::  ^-  (list tuna)
-  ::  =|  {sim/(list @) tuz/(list tuna)}
-  ::  |-  ^-  (list tuna)
-  ::  ?~  reb
-  ::    =.  sim
-  ::      ?.  in-tall-form   sim
-  ::      [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
-  ::    ?~(sim tuz [[%tape %knit (flop sim)] tuz])
-  ::  ?@  i.reb
-  ::    $(reb t.reb, sim [i.reb sim])
-  ::  =+  zut=$(reb t.reb, sim ~)
-  ::  ?~  sim  [i.reb zut]
-  ::  [[%tape %knit (flop sim)] i.reb zut]
-  ::
   ++  collapse-chars                                             ::  beet to tuna
-    |=  reb/(list $@(@ manx))
+    |=  reb/(list $@(@ $^(manx tuna)))
     ^-  marl
     =|  {sim/(list @) tuz/marl}
     |-  ^-  marl
@@ -336,36 +315,10 @@
       $(reb t.reb, sim [i.reb sim])
     ?~  sim  [i.reb $(reb t.reb, sim ~)]
     [;/((flop sim)) i.reb $(reb t.reb, sim ~)]
-  ::
-  ++  tuna-to-twig                                             ::  tuna to twig
-    |=  lut/(list tuna)
-    ^-  twig
-    :-  %conp
-    |-  ^-  (list twig)
-    ?~  lut  [[%rock %n ~] ~]
-    ?-  -.i.lut
-      $tape  [[%nub p.i.lut] $(lut t.lut)]
-      $manx  [p.i.lut $(lut t.lut)]
-      $marl
-          :_  ~
-          :+  %lace  `twig`[p.i.lut [%conp $(lut t.lut)]]
-          :+  %new  [%base %cell]
-          :-  %core
-          ^-  (map term foot)
-          :_  [~ ~]
-          =+  sug=[[%& 12] ~]
-          :+  %$  %elm
-          :^  %ifno  sug
-            [%make sug [[[[%& 1] ~] [%$ 13]] ~]]
-          [%make sug [[[[%& 3] ~] [%make [%$ ~] [[sug [%$ 25]] ~]]] ~]]
-      $call  [[%call p.i.lut [%conp $(lut t.lut)] ~] ~]
-      $elem  [[p.i.lut ^$(lut [[%many q.i.lut] ~])] $(lut t.lut)]
-      $many  $(lut (weld p.i.lut t.lut))
-    ==
   --
 --
 |=  inp/cord
-=<  (rash inp apex:(sail &))
+=<  (steam-marl (rash inp apex:(sail &)))
 ::|=  pax/path
 ::=<  (test pax)
 =>  |%
