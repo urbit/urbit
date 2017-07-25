@@ -33,6 +33,7 @@
   ::  with normal hoon rules.  multipass parsing is the tax
   ::  humans have to pay for simple but human-friendly syntax.)
   ::
+=>
 |%
 ++  dynamic
   |%
@@ -109,17 +110,17 @@
   |=  in-tall-form/?  =|  lin/?
   |%
   ++  apex                                             ::  product twig
-    %+  cook
-      |=  tum/tuna  ^-  twig
-      ::?:  ?=({$elem *} tum)
-      ::  [p.tum (tuna-to-twig q.tum)]
-      (tuna-to-twig tum ~)
+    ::%+  cook
+    ::  |=  tum/tuna  ^-  twig
+    ::  ::?:  ?=({$elem *} tum)
+    ::  ::  [p.tum (tuna-to-twig q.tum)]
+    ::  (tuna-to-twig tum ~)
     toplevel
   ::
   ++  toplevel                                             ::  entry point
-    ;~(pfix sem ?:(in-tall-form tall-top wide-outer-top))
+    ;~(pfix sem ?:(in-tall-form tall-top wide-top))
   ::
-  ++  single  |*(a/rule (cook |*(b/* [b]~) a))
+  ++  single  !.  |*(a/rule (cook |=(b/manx [b]~) a))
   ++  tall-top                                             ::  tall top
     %+  knee  *marl  |.  ~+
     ;~  pose
@@ -128,53 +129,45 @@
       (single ;~(plug script-or-style script-style-tail))
       (single tall-elem)
       wide-quote
-      ;~(pfix tis tall-tail)
-      ::tall-interpolation
+      ::;~(pfix tis tall-tail)
+      ::;~((glue gap) tuna-mode tall:vast)
       (easy [;/("\0a")]~)
     ==
   ::
-  ++  tall-interpolation
+  ++  tuna-mode
     ;~  pose
-      ;~(pfix hep (stag %tape ;~(pfix gap tall:vast)))
-      ;~(pfix lus (stag %manx ;~(pfix gap tall:vast)))
-      ;~(pfix tar (stag %marl ;~(pfix gap tall:vast)))
-      ;~(pfix cen (stag %call ;~(pfix gap tall:vast)))
+      (cold %tape hep)
+      (cold %manx lus)
+      (cold %marl tar)
+      (cold %call cen)
     ==
-  ++  wide-outer-top                                             ::  wide outer top
-    %+  knee  *tuna  |.  ~+
+  ++  wide-top                                             ::  wide outer top
+    %+  knee  *marl  |.  ~+
     ;~  pose
-      (stag %many wide-quote)
-      (stag %many wide-paren-elems)
-      (stag %elem ;~(plug wide-head wide-tail))
+      wide-quote
+      wide-paren-elems
+      (single ;~(plug tag-head wide-tail))
     ==
   ::
   ++  wide-inner-top                                             ::  wide inner top
-    %+  knee  *tuna  |.  ~+
+    %+  knee  *marl  |.  ~+
     ;~  pose
-      wide-outer-top
-      ;~(pfix hep (stag %tape wide:vast))
-      ;~(pfix lus (stag %manx wide:vast))
-      ;~(pfix tar (stag %marl wide:vast))
-      ;~(pfix cen (stag %call wide:vast))
+      wide-top
+      ::;~(plug tuna-mode wide:vast)
     ==
   ::
-  ++  mane-as-twig                                             ::  mane as twig
+  ++  a-mane                                             ::  mane as twig
     %+  cook
       |=  {a/@tas b/(unit @tas)}
-      ?~  b
-        [%rock %tas a]
-      [[%rock %tas a] [%rock %tas u.b]]
+      ?~(b a [a u.b])
     ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
   ::
   ++  script-or-style                                             ::  script or style
-    %+  cook  |=(a/manx a)
+    %+  cook  |=(a/marx a)
     ;~  plug
-      (stag %rock (stag %tas ;~(pose (jest %script) (jest %style))))
-      (stag %conl wide-attrs)
+      ;~(pose (jest %script) (jest %style))
+      wide-attrs
     ==
-  ::
-  ++  wide-head                                             ::  simple head
-    (cook |=({a/twig b/(list twig)} [a %conl b]) tag-head)
   ::
   ++  en-class
     |=  a/(list {$class p/term})  ^-  (unit {$class tape})
@@ -188,74 +181,79 @@
   ::
   ++  tag-head                                             ::  tag head
     %+  cook
-      |=  {a/twig b/(list twig) c/(unit (list twig))}
-      ^-  {twig (list twig)}
+      |=  {a/mane b/mart c/(unit mart)}
+      ^-  marx
       [a (weld b (fall c ~))]
     ;~  plug
-      mane-as-twig
+      a-mane
     ::
       %+  cook
-        |=  a/(list (unit {term (list beer)}))
-        ^-  (list twig)
-        %+  murn  a
-        (lift |=({a/term b/(list beer)} [[%rock %tas a] [%knit b]]))
+        ::|=  a/(list (unit {term (list beer)}))
+        |=  a/(list (unit {term tape}))
+        ^-  (list {term tape})
+        :: discard nulls
+        (murn a same)
       ::
       ;~  plug
         (punt ;~(plug (cold %id hax) (cook trip sym)))
         (cook en-class (star ;~(plug (cold %class dot) sym)))
-        (punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil:vast))
+        ::(punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil:vast))
         (easy ~)
       ==
     ::
       %-  punt
-      %+  ifix  [pel per]
-      %+  more  ;~(plug com ace)
-      ;~(plug mane-as-twig ;~(pfix ace wide:vast))
+      ::%+  ifix  [pel per]
+      ::%+  more  ;~(plug com ace)
+      ::%+  cook  |=({a/mane b/twig} [a [~ b]~])
+      ::;~((glue ace) a-mane wide:vast))
+      fail
     ==
   ::
   ++  tall-attrs                                             ::  tall attributes
     %-  star
+    ::%+  cook  |=({a/mane b/twig} [a [~ b]~])
     ;~  pfix  ;~(plug gap tis)
-      ;~(plug mane-as-twig ;~(pfix gap tall:vast))
+      ::;~(plug a-mane ;~(pfix gap tall:vast))
+      fail
     ==
   ::
   ++  tall-elem                                             ::  tall preface
     %+  cook
-      |=  {a/{p/twig q/(list twig)} b/(list twig) c/(list tuna)}
-      ^-  {twig (list tuna)}
-      [[p.a %conl (weld q.a b)] c]
+      |=  {a/{p/mane q/mart} b/mart c/marl}
+      ^-  manx
+      [[p.a (weld q.a b)] c]
     ;~(plug tag-head tall-attrs tall-tail)
   ::
   ++  wide-attrs                                             ::  wide attributes
+    %+  cook  |=(a/mart a)
     ;~  pose
       %+  ifix  [pel per]
-      %+  more  ;~(plug com ace)
-      ;~(plug mane-as-twig ;~(pfix ace wide:vast))
+      %+  more  (jest ', ')
+      ::%+  cook  |=({a/mane b/twig} [a [~ b]~])
+      ::;~((glue ace) a-mane wide:vast)
+      fail
     ::
       (easy ~)
     ==
   ::
   ++  wide-tail                                             ::  wide elements
-    %+  cook  |=(a/(list tuna) a)
+    %+  cook  |=(a/marl a)
     ;~(pose ;~(pfix col wrapped-elems) (cold ~ sem) (easy ~))
   ::
   ++  wide-elems                                             ::  wide elements
-    %+  cook  |=(a/(list tuna) a)
+    %+  cook  |=(a/marl a)
+    %+  cook  zing
     (star ;~(pfix ace wide-inner-top))
   ::
   ++  script-style-tail                                             ::  unescaped tall tail
-    %+  cook  |=(a/(list tuna) a)
+    %+  cook  |=(a/marl a)
     %+  ifix  [gap ;~(plug gap duz)]
     %+  most  gap
     ;~  pfix  sem
+      %+  cook  |=(a/tape ;/(a))
       ;~  pose
-        ;~  pfix  ace
-          %+  cook
-            |=  a/tape
-            [%tape %knit (weld a `tape`[`@`10 ~])]
-          (star (shim 32 255))
-        ==
-        (easy [%tape %knit `@`10 ~])
+        ;~(pfix ace (star prn))
+        (easy "\0a")
       ==
     ==
   ::
@@ -266,8 +264,8 @@
       (cold ~ sem)
       ;~(pfix col wrapped-elems(in-tall-form |))
       ::;~(pfix ;~(plug col ace) (cook beet-to-tuna(in-tall-form |) quote-innards))
-      ;~(pfix ;~(plug col ace) (cook collapse-chars(in-tall-form |) quote-innards))
-      (ifix [gap ;~(plug gap duz)] (most gap toplevel))
+      ;~(pfix col ace (cook collapse-chars(in-tall-form |) quote-innards))
+      (cook zing (ifix [gap ;~(plug gap duz)] (most gap toplevel)))
     ==
   ::
   ++  wide-quote                                             ::  wide quote
@@ -281,42 +279,33 @@
       (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook collapse-chars quote-innards(lin |))))
     ==
   ::
-  ++  bracketed-elem  (ifix [kel ker] ;~(plug wide-head wide-elems))          ::  bracketed element
+  ++  bracketed-elem  (ifix [kel ker] ;~(plug tag-head wide-elems))          ::  bracketed element
   ++  wide-paren-elems                                             ::  wide flow
-    %+  cook  |=(a/(list tuna) a)
+    %+  cook  |=(a/marl a)
+    %+  cook  zing
     (ifix [pel per] (more ace wide-inner-top))
   ::
   ++  wrapped-elems                                             ::  wrapped tuna
-    %+  cook  |=(a/(list tuna) a)
+    %+  cook  |=(a/marl a)
     ;~  pose
       wide-paren-elems
-      (cook |=(@t [%tape %knit (trip +<)]~) qut)
-      ;~  plug
-        wide-outer-top
-        (easy ~)
-      ==
+      (cook |=(@t `marl`[;/((trip +<))]~) qut)
+      wide-top
     ==
   ::
   ::++  wide-quote-innards  (cook beet-to-tuna(in-tall-form |) quote-innards)
   ++  quote-innards                                             ::  wide+tall flow
-    %+  cook  |=(a/(list (list $@(@ manx))) (zing a))
+    %+  cook  |=(a/(list $@(@ manx)) a)
     %-  star
     ;~  pose
       ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
-      ::quote-interpolation
-      ;~(pfix sem (single bracketed-elem(in-tall-form |)))
+      ::;~(plug tuna-mode sump:vast)
+      ::(stag %tape sump:vast)
+      ;~(pfix sem bracketed-elem(in-tall-form |))
       ;~(less bas kel ?:(in-tall-form fail doq) prn)
       ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
     ==
   ::
-  ++  quote-interpolation
-    ;~  pose
-      (stag %tape sump:vast)
-      ;~(pfix hep (stag %tape sump:vast))
-      ;~(pfix lus (stag %manx sump:vast))
-      ;~(pfix tar (stag %marl sump:vast))
-      ;~(pfix cen (stag %call sump:vast))
-    ==
   ::++  beet-to-tuna                                             ::  beet to tuna
   ::  |=  reb/(list beet)
   ::  ^-  (list tuna)
@@ -375,8 +364,10 @@
     ==
   --
 --
-|=  pax/path
-=<  (test pax)
+|=  inp/cord
+=<  (rash inp apex:(sail &))
+::|=  pax/path
+::=<  (test pax)
 =>  |%
     ++  item  (pair mite (list flow))                   ::  xml node generator
     ++  colm  @ud                                       ::  column
