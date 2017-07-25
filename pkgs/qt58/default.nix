@@ -12,6 +12,17 @@ let
 
   # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
+  platform =
+    let
+      os_code =
+        if crossenv.os == "windows" then "win32"
+        else if crossenv.os == "macos" then "macx"
+        else crossenv.os;
+      compiler_code =
+        if crossenv.compiler == "gcc" then "g++"
+        else crossenv.compiler;
+    in "${os_code}-${compiler_code}";
+
   base_src = crossenv.nixpkgs.fetchurl {
     url = https://download.qt.io/official_releases/qt/5.8/5.8.0/submodules/qtbase-opensource-src-5.8.0.tar.xz;
     sha256 = "01f07yjly7y24njl2h4hyknmi7pf8yd9gky23szcfkd40ap12wf1";
@@ -23,10 +34,10 @@ let
     src = base_src;
     builder = ./builder.sh;
 
-    patches = [
-      # Settings we need to cross compile.
-      ./qtbase-arch-patches/0001-Add-profile-for-cross-compilation-with-mingw-w64.patch
+    # TODO: I think I'd rather have this be a patch on the win32-g++ profile
+    mkspecs = ./mkspecs;
 
+    patches = [
       # The .pc files have incorrect library names without this (e.g. Qt5Cored)
       ./qtbase-arch-patches/0007-Prevent-debug-library-names-in-pkg-config-files.patch
 
@@ -41,13 +52,16 @@ let
 
     configure_flags =
       "-opensource -confirm-license " +
-      "-xplatform mingw-w64-g++ " +
+      "-xplatform ${platform} " +
       "-device-option CROSS_COMPILE=${crossenv.host}- " +
+      "-device-option PKG_CONFIG=pkg-config-cross " +
+      "-device-option QMAKE_PKG_CONFIG=pkg-config-cross " +
       "-release " +
       "-static " +
       "-nomake examples " +
-      "-opengl desktop " +
-      "-no-icu";
+      "-no-icu " +
+      ( if crossenv.os == "windows" then "-opengl desktop"
+        else "");
   };
 
   # This wrapper aims to make Qt easier to use by generating CMake package files

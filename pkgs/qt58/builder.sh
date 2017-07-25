@@ -3,6 +3,7 @@ source $setup
 tar -xf $src
 
 cd qtbase-opensource-src-$version
+cp -r $mkspecs/* mkspecs
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
