@@ -1,5 +1,5 @@
-:: 
-::  zuse (3), standard library (tang)   
+::
+::  zuse (3), standard library (tang)
 ::
 ~%  %zuse  +  ~
 !:
@@ -878,7 +878,7 @@
           ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
     --
   --                                                    ::
-:: 
+::
 ++  bruw                                                ::  create keypair
   |=  {a/@ b/@}                                         ::  width seed
   ^-  acru
@@ -1116,10 +1116,10 @@
   ::
   ++  sepa  ;~(pose ;~(plug com (star ace)) (plus ace))
   ++  elem
-    ;~  pose 
+    ;~  pose
       (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
       (stag %w w)  (stag %z z)
-    == 
+    ==
   ::
   ++  y  (stag %& (bass 10 (stun 3^4 dit)))
   ++  m  (sear (snug mon:yu) (plus alf))
@@ -1180,10 +1180,10 @@
   ?:  =(~ t.myn)  (trip i.myn)
   (weld (trip i.myn) `tape`['/' $(myn t.myn)])
 ::
-++  perk                                                ::  parse cube fork 
+++  perk                                                ::  parse cube fork
   |*  a/(pole @tas)
   ?~  a  fail
-  ;~  pose 
+  ;~  pose
     (cold -.a (jest -.a))
     $(a +.a)
   ==
@@ -1319,9 +1319,9 @@
     ^-  tape
     ?~  tat  rez
     =.  rez  $(tat t.tat)
-    ;:  weld 
+    ;:  weld
       (name n.i.tat)
-      "=\"" 
+      "=\""
       (escp(unq |) v.i.tat '"' ?~(t.tat rez [' ' rez]))
     ==
   ::
@@ -1335,7 +1335,7 @@
     ?~  xet  rez
     %=    $
       xet  t.xet
-      ez  ?-  i.xet
+      rez  ?-  i.xet
              $34  ['&' 'q' 'u' 'o' 't' ';' rez]
              $38  ['&' 'a' 'm' 'p' ';' rez]
              $39  ['&' '#' '3' '9' ';' rez]
@@ -1360,7 +1360,7 @@
     %~  has  in
         %-  silt  ^-  (list term)  :~
           %area  %base  %br  %col  %command  %embed  %hr  %img  %input  %keygen
-          %link  %meta  %param     %source   %track  %wbr 
+          %link  %meta  %param     %source   %track  %wbr
     ==  ==
   --
 ::
@@ -1377,12 +1377,12 @@
       %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
         ;~(plug head many tail)
       empt
-    == 
+    ==
   ::
   ++  attr                                              ::  attributes
-    %+  knee  *mart  |.  ~+ 
+    %+  knee  *mart  |.  ~+
     %-  star
-    ;~  plug  
+    ;~  plug
       ;~(pfix (plus whit) name)
       ;~  pose
         (ifix [;~(plug tis doq) doq] (star ;~(less doq escp)))
@@ -1395,14 +1395,14 @@
     %+  cook  |=(a/tape ^-(mars ;/(a)))
     (plus ;~(less doq ;~(pose (just `@`10) escp)))
   ::
-  ++  comt                                              ::  comments 
+  ++  comt                                              ::  comments
     =-  (ifix [(jest '<!--') (jest '-->')] (star -))
     ;~  pose
       ;~(less hep prn)
       whit
       ;~(less (jest '-->') hep)
     ==
-  :: 
+  ::
   ++  escp  ;~(pose ;~(less gal gar pam prn) enty)
   ++  enty                                              ::  entity
     %+  ifix  pam^sem
@@ -1426,11 +1426,11 @@
   ++  many
     (more (star comt) ;~(pose apex chrd))
   ::
-  ++  name                                              ::  tag name 
+  ++  name                                              ::  tag name
     =+  ^=  chx
-        %+  cook  crip 
-        ;~  plug 
-            ;~(pose cab alf) 
+        %+  cook  crip
+        ;~  plug
+            ;~(pose cab alf)
             (star ;~(pose cab dot alp))
         ==
     ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
@@ -1440,7 +1440,7 @@
   --
 ::
 ++  jo                                                  ::  json reparser
-  =>  |%  ++  grub  (unit *) 
+  =>  |%  ++  grub  (unit *)
           ++  fist  $-(json grub)
       --
   |%
@@ -1449,7 +1449,7 @@
     |=  jon/json
     ?.  ?=({$a *} jon)  ~
     %-  zl
-    |-  
+    |-
     ?~  p.jon  ~
     [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
   ::
@@ -1505,7 +1505,7 @@
     !!
   ::
   ++  ni                                                ::  number as integer
-    |=  jon/json 
+    |=  jon/json
     ?.  ?=({$n *} jon)  ~
     (rush p.jon dem)
   ::
@@ -1520,7 +1520,7 @@
     ?.  ?=({$o {@ *} $~ $~} jon)  ~
     |-
     ?~  wer  ~
-    ?:  =(-.-.wer p.n.p.jon)  
+    ?:  =(-.-.wer p.n.p.jon)
       ((pe -.-.wer +.-.wer) q.n.p.jon)
     ((of +.wer) jon)
   ::
@@ -1552,7 +1552,7 @@
     ^-  (unit (list _[(wonk *fel) (need *wit)]))
     =-  (zl (turn (~(tap by a)) -))
     |*  {a/cord b/*}
-    =+  nit=(rush a fel) 
+    =+  nit=(rush a fel)
     ?~  nit  ~
     (some [u.nit b])
   ::
@@ -1594,7 +1594,7 @@
   ++  zp                                                ::  unit tuple
     |*  but/(pole (unit))
     ?~  but  !!
-    ?~  +.but  
+    ?~  +.but
       u:->.but
     [u:->.but (zp +.but)]
   ::
@@ -1628,12 +1628,12 @@
   (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
 ::
 ++  jode                                                ::  ms timestamp
-  |=  a/time 
+  |=  a/time
   =-  (jone (div (mul - 1.000) ~s1))
   (add (div ~s1 2.000) (sub a ~1970.1.1))
 ::
 ++  jesc
-  =+  utf=|=(a/@ ['\\' 'u' ((x-co 4):co a)]) 
+  =+  utf=|=(a/@ ['\\' 'u' ((x-co 4):co a)])
   |=  a/@  ^-  tape
   ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
     $10  "\\n"
@@ -1654,7 +1654,7 @@
       [i $(+< t)]
   ::
   ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
-  ++  norm                                             
+  ++  norm
     |*  (pole _;/(*{$^(rule tape)}))
     ?~  +<  ~
     =>  .(+< [i=+<- t=+<+])
@@ -1973,7 +1973,7 @@
       ;~(plug htts thor)
       ;~(plug ;~(pose apat (easy *pork)) yque)
     ==
-  ++  htts  
+  ++  htts
     %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
     ;~(sfix scem ;~(plug col fas fas))
   ::
@@ -2134,10 +2134,10 @@
 ::
 ++  prix                                                ::  filter gate
   |=  pax/path  |=  sink  ^-  ?
-  ?~  pax  &  ?~  r.+<  | 
+  ?~  pax  &  ?~  r.+<  |
   &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
 ::
-++  prey  |=({pax/path hid/bowl} (pale hid (prix pax))) ::  prefix 
+++  prey  |=({pax/path hid/bowl} (pale hid (prix pax))) ::  prefix
 ++  hunt                                                ::  first of unit dates
   |=  {one/(unit @da) two/(unit @da)}
   ^-  (unit @da)
@@ -2204,7 +2204,7 @@
             |%  ++  seal  |~({a/pass b/@ c/@} *@)       ::  encrypt to a
                 ++  sign  |~({a/@ b/@} *@)              ::  certify as us
                 ++  sure  |~({a/@ b/@} *(unit @))       ::  authenticate from us
-                ++  tear  |~  {a/pass b/@}              ::  accept from a 
+                ++  tear  |~  {a/pass b/@}              ::  accept from a
                           *(unit {p/@ q/@})             ::
             --                                          ::
           ++  de  |~({a/@ b/@} *(unit @))               ::  symmetric de, soft
@@ -2279,7 +2279,7 @@
         $:  $:  our/ship                                ::  host
                 src/ship                                ::  guest
                 dap/term                                ::  agent
-            ==                                          ::  
+            ==                                          ::
             $:  wex/boat                                ::  outgoing subs
                 sup/bitt                                ::  incoming subs
             ==                                          ::
@@ -2870,7 +2870,7 @@
 ++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
 ++  hoop                                                ::  source in hood
   $%  {$& p/twig}                                       ::  direct twig
-      {$| p/beam}                                       ::  resource location   
+      {$| p/beam}                                       ::  resource location
   ==                                                    ::
 ++  hops   {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}  ::  XX late-bound path
 ++  horn                                                ::  resource tree
