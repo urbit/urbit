@@ -105,7 +105,7 @@
               {$many p/(list tuna)}                     ::  subflow
           ==                                            ::
 ::
-++  sail                                                ::  xml template
+++  sail                                              ::  xml template
   |=  in-tall-form/?  =|  lin/?
   |%
   ++  apex                                             ::  product twig
@@ -119,16 +119,18 @@
   ++  toplevel                                             ::  entry point
     ;~(pfix sem ?:(in-tall-form tall-top wide-outer-top))
   ::
+  ++  single  |*(a/rule (cook |*(b/* [b]~) a))
   ++  tall-top                                             ::  tall top
-    %+  knee  *tuna  |.  ~+
+    %+  knee  *marl  |.  ~+
     ;~  pose
-      (stag %many ;~(pfix (plus ace) (cook beet-to-tuna quote-innards)))
-      (stag %elem ;~(plug script-or-style script-style-tail))
-      (stag %elem tall-elem)
-      (stag %many wide-quote)
-      ;~(pfix tis (stag %many tall-tail))
-      tall-interpolation
-      (easy [%many [%tape [%knit 10 ~]] ~])
+      ::(stag %many ;~(pfix (plus ace) (cook beet-to-tuna quote-innards)))
+      ;~(pfix (plus ace) (cook collapse-chars quote-innards))
+      (single ;~(plug script-or-style script-style-tail))
+      (single tall-elem)
+      wide-quote
+      ;~(pfix tis tall-tail)
+      ::tall-interpolation
+      (easy [;/("\0a")]~)
     ==
   ::
   ++  tall-interpolation
@@ -165,7 +167,7 @@
     ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
   ::
   ++  script-or-style                                             ::  script or style
-    %+  cook  |=(a/twig a)
+    %+  cook  |=(a/manx a)
     ;~  plug
       (stag %rock (stag %tas ;~(pose (jest %script) (jest %style))))
       (stag %conl wide-attrs)
@@ -259,19 +261,24 @@
   ::
   ++  tall-tail                                             ::  tall tail
     ?>  in-tall-form
-    %+  cook  |=(a/(list tuna) a)
+    %+  cook  |=(a/marl a)
     ;~  pose
       (cold ~ sem)
       ;~(pfix col wrapped-elems(in-tall-form |))
-      ;~(pfix ;~(plug col ace) (cook beet-to-tuna(in-tall-form |) quote-innards))
+      ::;~(pfix ;~(plug col ace) (cook beet-to-tuna(in-tall-form |) quote-innards))
+      ;~(pfix ;~(plug col ace) (cook collapse-chars(in-tall-form |) quote-innards))
       (ifix [gap ;~(plug gap duz)] (most gap toplevel))
     ==
   ::
   ++  wide-quote                                             ::  wide quote
-    %+  cook  |=(a/(list tuna) a)
+    %+  cook  |=(a/marl a)
+    ::;~  pose
+    ::  ;~(less (jest '"""') (ifix [doq doq] (cook beet-to-tuna quote-innards)))
+    ::  (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook beet-to-tuna quote-innards(lin |))))
+    ::==
     ;~  pose
-      ;~(less (jest '"""') (ifix [doq doq] (cook beet-to-tuna quote-innards)))
-      (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook beet-to-tuna quote-innards(lin |))))
+      ;~(less (jest '"""') (ifix [doq doq] (cook collapse-chars quote-innards)))
+      (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook collapse-chars quote-innards(lin |))))
     ==
   ::
   ++  bracketed-elem  (ifix [kel ker] ;~(plug wide-head wide-elems))          ::  bracketed element
@@ -292,12 +299,12 @@
   ::
   ::++  wide-quote-innards  (cook beet-to-tuna(in-tall-form |) quote-innards)
   ++  quote-innards                                             ::  wide+tall flow
-    %+  cook  |=(a/(list beet) a)
+    %+  cook  |=(a/(list (list $@(@ manx))) (zing a))
     %-  star
     ;~  pose
       ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
-      quote-interpolation
-      ;~(pfix sem (stag %elem bracketed-elem(in-tall-form |)))
+      ::quote-interpolation
+      ;~(pfix sem (single bracketed-elem(in-tall-form |)))
       ;~(less bas kel ?:(in-tall-form fail doq) prn)
       ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
     ==
@@ -310,21 +317,36 @@
       ;~(pfix tar (stag %marl sump:vast))
       ;~(pfix cen (stag %call sump:vast))
     ==
-  ++  beet-to-tuna                                             ::  beet to tuna
-    |=  reb/(list beet)
-    ^-  (list tuna)
-    =|  {sim/(list @) tuz/(list tuna)}
-    |-  ^-  (list tuna)
+  ::++  beet-to-tuna                                             ::  beet to tuna
+  ::  |=  reb/(list beet)
+  ::  ^-  (list tuna)
+  ::  =|  {sim/(list @) tuz/(list tuna)}
+  ::  |-  ^-  (list tuna)
+  ::  ?~  reb
+  ::    =.  sim
+  ::      ?.  in-tall-form   sim
+  ::      [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
+  ::    ?~(sim tuz [[%tape %knit (flop sim)] tuz])
+  ::  ?@  i.reb
+  ::    $(reb t.reb, sim [i.reb sim])
+  ::  =+  zut=$(reb t.reb, sim ~)
+  ::  ?~  sim  [i.reb zut]
+  ::  [[%tape %knit (flop sim)] i.reb zut]
+  ::
+  ++  collapse-chars                                             ::  beet to tuna
+    |=  reb/(list $@(@ manx))
+    ^-  marl
+    =|  {sim/(list @) tuz/marl}
+    |-  ^-  marl
     ?~  reb
       =.  sim
         ?.  in-tall-form   sim
         [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
-      ?~(sim tuz [[%tape %knit (flop sim)] tuz])
+      ?~(sim tuz [;/((flop sim)) tuz])
     ?@  i.reb
       $(reb t.reb, sim [i.reb sim])
-    =+  zut=$(reb t.reb, sim ~)
-    ?~  sim  [i.reb zut]
-    [[%tape %knit (flop sim)] i.reb zut]
+    ?~  sim  [i.reb $(reb t.reb, sim ~)]
+    [;/((flop sim)) i.reb $(reb t.reb, sim ~)]
   ::
   ++  tuna-to-twig                                             ::  tuna to twig
     |=  lut/(list tuna)
