@@ -33,7 +33,6 @@
   ::  with normal hoon rules.  multipass parsing is the tax
   ::  humans have to pay for simple but human-friendly syntax.)
   ::
-!.
 |%
 ++  dynamic
   |%
@@ -60,6 +59,7 @@
 ++  steam
   |=  manx:dynamic  ^-  twig:manx
   :-  [(steam-mane n.g) %conl (turn a.g steam-mart)]
+  !.
   |-  ^-  twig:marl
   ?~  c  [%conl ~]
   ?-  -.i.c
@@ -375,6 +375,7 @@
           {$link p/(list graf) q/tape}                  ::  URL
       ==
     --
+!.
 |%                                                      ::
 ++  test                                                ::  test text parsing
   |=  pax/path
@@ -390,7 +391,7 @@
   ::
   ?~  q.vex
     "syntax error: line {(scow %ud p.p.vex)}, column {(scow %ud q.p.vex)}"
-  (poxo ;;(manx q:(slap !>(~) (steam p.u.q.vex))))
+  (poxo ;;(manx q:(slap =>(..onan !>(~)) (steam p.u.q.vex))))
 ::                                                      ::
 ++  cram                                                ::  parse unmark
   |=  {naz/hair los/tape}
