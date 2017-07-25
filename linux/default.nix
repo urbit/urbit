@@ -4,6 +4,8 @@ let
 
   os = "linux";
 
+  compiler = "gcc";
+
   exe_suffix = "";
 
   binutils = import ./binutils { inherit nixpkgs host; };
@@ -36,7 +38,7 @@ let
 
   crossenv = {
     # Target info variables.
-    inherit host arch os exe_suffix;
+    inherit host arch os compiler exe_suffix;
 
     # Cross-compiling toolchain.
     inherit gcc binutils;

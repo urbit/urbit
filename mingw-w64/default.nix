@@ -69,13 +69,15 @@ let
 
   os = "windows";
 
+  compiler = "gcc";
+
   exe_suffix = ".exe";
 
   gyp_os = "win";
 
   crossenv = {
     # Target info variables.
-    inherit host arch os exe_suffix;
+    inherit host arch os compiler exe_suffix;
 
     # Cross-compiling toolchain.
     inherit gcc binutils mingw-w64_full;
