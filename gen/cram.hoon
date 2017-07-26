@@ -437,18 +437,19 @@
   ::                                                    ::
   ++  fine                                              ::  item to flow
     ^-  flow
-    ?:  ?=($head p.cur)
+    ?:  ?=(?($head $expr) p.cur) ::XX deal with ;= expr?
       ?>  ?=({* $~} q.cur)
       ?@  -.i.q.cur  !!  ::REVIEW over-strict?
       i.q.cur
     =-  [[- ~] (flop q.cur)]
-    ?+  p.cur  !!
+    ?-  p.cur
       $down  %div
       $list  %ul
       $lord  %ol
       $lime  %li
       $bloc  %bq
       $code  %pre
+      $poem  !!  ::XX what does this even mean
     ==
   ::                                                    ::
   ++  fold  ^+  .                                       ::  complete and pop
@@ -713,6 +714,9 @@
       |=(marl:dynamic [[%p ~] +<]~)
     ;~(pfix gay down)  ::REVIEW does this mean comments work?
   ::                                                    ::
+  ++  expr                                              ::  expression
+    ;~(pfix gay apex:(sail &))
+  ::                                                    ::
   ++  whit                                              ::  whitespace
     (cold ' ' (plus ;~(pose (just ' ') (just `@`10))))
   ::
@@ -808,16 +812,13 @@
       ?~  hel  ~
       ?~  t.hel  i.hel
       (weld i.hel `tape`[`@`10 $(hel t.hel)])
-    ::  XX live expressions stubbed out
-    ::
-    ?:  ?=($expr p.cur)
-      !!
     ::  vex: parse of paragraph
     ::
     =/  vex/(like marl:dynamic)
       ::  either a one-line header or a paragraph
       ::
       %.  [p.u.lub yex]
+      ?:  ?=($expr p.cur)  expr
       ?:  ?=($head p.cur)  head
       para
     ::  if error, propagate correctly
@@ -825,7 +826,7 @@
     ?~  q.vex  ..$(err `p.vex)
     ::  finish tag if it's a header
     ::
-    =<  ?.  =(%head p.cur)  ..$  fold
+    =<  ?:(=(%head p.cur) fold ..$)
     ::  save good result, clear buffer
     ::
     ..$(lub ~, q.cur (weld p.u.q.vex q.cur))
