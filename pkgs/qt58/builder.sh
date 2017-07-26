@@ -1,8 +1,9 @@
 source $setup
 
 tar -xf $src
+mv qtbase-opensource-src-* qt
 
-cd qtbase-opensource-src-$version
+cd qt
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
@@ -12,17 +13,8 @@ cd ..
 mkdir build
 cd build
 
-../qtbase-opensource-src-$version/configure -prefix $out $configure_flags
+../qt/configure -prefix $out $configure_flags
 
 make
 
 make install
-
-cd $out
-PRL="$(find -name \*.prl)"
-sed -i 's/-ljpeg//g' $PRL
-sed -i 's/-lz//g' $PRL
-sed -i 's/-lVersion//g' $PRL
-sed -i 's/-lfreetype/-lqtfreetype/g' $PRL
-sed -i 's/-lpcre16/-lqtpcre/g' $PRL
-sed -i 's/-lpng/-lqtlibpng/g' $PRL
