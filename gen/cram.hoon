@@ -512,20 +512,6 @@
       %lint
     %text
   ::                                                    ::
-  ++  cape                                              ::  xml-escape
-    ::FIXME p sure this is redundant with native manx escaping
-    |=  tex/tape
-    ^-  tape
-    ?~  tex  tex
-    =+  $(tex t.tex)
-    ?+  i.tex  [i.tex -]
-      $34  ['&' 'q' 'u' 'o' 't' ';' -]
-      $38  ['&' 'a' 'm' 'p' ';' -]
-      $39  ['&' 'a' 'p' 'o' 's' ';' -]
-      $60  ['&' 'l' 't' ';' -]
-      $62  ['&' 'g' 't' ';' -]
-    ==
-  ::                                                    ::
   ++  clue                                              ::  tape to xml
     |=  tex/tape
     ^-  manx:dynamic
@@ -695,7 +681,7 @@
         $expr  [p.nex]~
         $bold  [[%b ~] ^$(gaf p.nex)]~
         $talc  [[%i ~] ^$(gaf p.nex)]~
-        $code  [[%code ~] ;/((cape p.nex)) ~]~
+        $code  [[%code ~] ;/(p.nex) ~]~
         $quod  ::  smart quotes
                ::
                %=    ^$
@@ -704,7 +690,7 @@
                  %+  weld  p.nex
                  `(list graf)`[%text (tufa ~-~201d. ~)]~
                ==
-        $link  [[%a [%href (cape q.nex)] ~] ^$(gaf p.nex)]~
+        $link  [[%a [%href q.nex] ~] ^$(gaf p.nex)]~
       ==
     --
   ::                                                    ::
