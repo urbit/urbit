@@ -321,7 +321,7 @@
 =>  |%
     ++  item  (pair mite marl:dynamic)                  ::  xml node generator
     ++  colm  @ud                                       ::  column
-    ++  flow  manx:dynamic                              ::  node or generator
+    ++  flow  marl:dynamic                              ::  node or generator
     ++  mite                                            ::  context
       $?  $down                                         ::  outer embed
           $list                                         ::  unordered list
@@ -372,8 +372,9 @@
   (poxo ;;(manx q:(slap !>(..zuse) (steam p.u.q.vex))))
 ::                                                      ::
 ++  cram                                                ::  parse unmark
+  %+  stag  [%div ~]  ::REVIEW
   |=  {naz/hair los/tape}
-  ^-  (like flow)
+  ^-  (like marl:dynamic)
   ::
   ::  state of the parsing loop.  we maintain a construction
   ::  stack for elements and a line stack for lines in the
@@ -436,13 +437,10 @@
   ::                                                    ::
   ++  fine                                              ::  item to flow
     ^-  flow
-    ?:  ?=(?($head $expr) p.cur) ::XX deal with ;= expr?
-      ?>  ?=({* $~} q.cur)
-      ?@  -.i.q.cur  !!  ::REVIEW over-strict?
-      i.q.cur
-    =-  [[- ~] (flop q.cur)]
+    ?:  ?=(?($down $head $expr) p.cur)
+      (flop q.cur)
+    =-  [[- ~] (flop q.cur)]~
     ?-  p.cur
-      $down  %div
       $list  %ul
       $lord  %ol
       $lime  %li
@@ -455,7 +453,7 @@
     ?~  hac  .
     %=  .
       hac  t.hac
-      cur  [p.i.hac [fine q.i.hac]]
+      cur  [p.i.hac (weld fine q.i.hac)]
     ==
   ::                                                    ::
   ++  snap                                              ::  capture raw line
@@ -640,26 +638,26 @@
   ++  work  (star word)                                 ::  indefinite flow
   ::                                                    ::
   ++  down                                              ::  parse inline flow
-    %+  knee  *marl:dynamic  |.  ~+
+    %+  knee  *flow  |.  ~+
     =-  (cook - work)
     ::  collect raw flow into xml tags
     ::
     |=  gaf/(list graf)
-    ^-  marl:dynamic
+    ^-  flow
     ::  nap: collected words
     ::  max: collected tags
     ::
     =<  main
     |%
     ++  main
-      ^-  marl:dynamic
+      ^-  flow
       ?~  gaf  ~
       ?.  ?=($text -.i.gaf)
         (weld (item i.gaf) $(gaf t.gaf))
       ::
       ::  fip: accumulate text blocks
       =/  fip/(list tape)  [p.i.gaf]~
-      |-  ^-  marl:dynamic
+      |-  ^-  flow
       ?~  t.gaf  [;/((zing (flop fip))) ~]
       ?.  ?=($text -.i.t.gaf)
         [;/((zing (flop fip))) ^$(gaf t.gaf)]
@@ -667,7 +665,7 @@
     ::
     ++  item
       |=  nex/graf
-      ^-  marl:dynamic
+      ^-  flow
       ?-  -.nex
         $text  !!  :: handled separately
         $expr  [p.nex]~
@@ -688,7 +686,7 @@
   ::                                                    ::
   ++  para                                              ::  paragraph
     %+  cook
-      |=(marl:dynamic [[%p ~] +<]~)
+      |=(flow [[%p ~] +<]~)
     ;~(pfix gay down)  ::REVIEW does this mean comments work?
   ::                                                    ::
   ++  expr                                              ::  expression
@@ -756,7 +754,7 @@
         %+  weld
           %+  turn
             q.u.lub
-          |=  tape  ^-  flow
+          |=  tape  ^-  mars
           ::  each line is text data with its newline
           ::
           ;/((weld (slag (dec col) +<) "\0a"))
@@ -773,7 +771,7 @@
         %+  weld
           %+  turn
             q.u.lub
-          |=  tape  ^-  flow
+          |=  tape  ^-  manx
           ::  each line is a paragraph
           ::
           :-  [%p ~]
