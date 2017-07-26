@@ -34,9 +34,6 @@ let
     src = base_src;
     builder = ./builder.sh;
 
-    # TODO: I think I'd rather have this be a patch on the win32-g++ profile
-    mkspecs = ./mkspecs;
-
     patches = [
       # The .pc files have incorrect library names without this (e.g. Qt5Cored)
       ./qtbase-arch-patches/0007-Prevent-debug-library-names-in-pkg-config-files.patch
