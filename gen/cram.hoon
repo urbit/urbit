@@ -294,11 +294,17 @@
     %-  star
     ;~  pose
       ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
-      ;~(plug tuna-mode sump:vast)
-      (stag %tape sump:vast)
-      ;~(pfix sem bracketed-elem(in-tall-form |))
+      inline-embed
       ;~(less bas kel ?:(in-tall-form fail doq) prn)
       ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
+    ==
+  ::
+  ++  inline-embed
+    %+  cook  |=(a/$^(manx tuna) a)
+    ;~  pose
+      ;~(pfix sem bracketed-elem(in-tall-form |))
+      ;~(plug tuna-mode sump:vast)
+      (stag %tape sump:vast)
     ==
   ::
   ++  collapse-chars                                             ::  beet to tuna
@@ -353,6 +359,7 @@
           {$code p/tape}                                ::  code literal
           {$text p/tape}                                ::  text symbol
           {$link p/(list graf) q/tape}                  ::  URL
+          {$expr p/=<($^(tuna manx) dynamic)}
       ==
     --
 |%                                                      ::
@@ -643,6 +650,10 @@
         ;~(pfix cen ;~(pose sym buc pam bar qut nuck:so))
       ==
     ::
+    ::  {interpolated} sail
+    ::
+      (stag %expr inline-embed:(sail |))
+    ::
     ::  just a byte
     ::
       (stag %text (cook trip ;~(less ace prn)))
@@ -681,6 +692,7 @@
       ^-  marl:dynamic
       ?-  -.nex
         $text  !!  :: handled separately
+        $expr  [p.nex]~
         $bold  [[%b ~] ^$(gaf p.nex)]~
         $talc  [[%i ~] ^$(gaf p.nex)]~
         $code  [[%code ~] ;/((cape p.nex)) ~]~
