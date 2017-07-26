@@ -62,6 +62,7 @@
   [[(steam-mane n.g) %conl (turn a.g steam-mart)] (steam-marl c)]
 ::
 ++  steam-marl
+  !.
   |=  a/marl:dynamic  ^-  twig:marl
   ?~  a  [%conl ~]
   ?-  -.i.a
