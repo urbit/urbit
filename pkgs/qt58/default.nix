@@ -36,11 +36,11 @@ let
 
     patches = [
       # The .pc files have incorrect library names without this (e.g. Qt5Cored)
-      ./qtbase-arch-patches/0007-Prevent-debug-library-names-in-pkg-config-files.patch
+      ./pc-debug-name.patch
 
       # An #include statement in Qt contained uppercase letters, but
       # mingw-w64 headers are all lowercase.
-      ./qtbase-arch-patches/0028-Include-uiviewsettingsinterop.h-correctly.patch
+      ./header-caps.patch
 
       # uxtheme.h test is broken, always returns false, and results in QtWidgets
       # apps looking bad on Windows.  https://stackoverflow.com/q/44784414/28128
