@@ -221,13 +221,11 @@
       [[p.a (weld q.a b)] c]
     ;~(plug tag-head tall-attrs tall-tail)
   ::
-  ::HACK prefer static parse
+  ::REVIEW is there a better way to do this?
   ++  hopefully-quote
     %+  cook  |=(a/(list beer) a)
-    ;~  pose
-      soil:vast
-      (cook |=(b/twig [~ b]~) wide:vast)
-    ==
+    %+  cook  |=(a/twig ?:(?=($knit -.a) p.a [~ a]~))
+    wide:vast
   ::
   ++  wide-attrs                                             ::  wide attributes
     %+  cook  |=(a/(unit mart) (fall a ~))
@@ -377,7 +375,8 @@
   ::
   ?~  q.vex
     "syntax error: line {(scow %ud p.p.vex)}, column {(scow %ud q.p.vex)}"
-  (poxo (freeze p.u.q.vex))
+  ?:  [freeze=|]  (poxo (freeze p.u.q.vex))
+  (poxo ;;(manx q:(slap !>(..zuse) (steam p.u.q.vex))))
 ::                                                      ::
 ++  cram                                                ::  parse unmark
   |=  {naz/hair los/tape}
