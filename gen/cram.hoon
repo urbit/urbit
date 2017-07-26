@@ -69,28 +69,20 @@
     $manx  [p.i.a $(a t.a)]
     $tape  [[%nub p.i.a] $(a t.a)]
     $call  [%call p.i.a [$(a t.a)]~]
-    $marl  [%per [p.i.a $(a t.a)] cons-twig]
+    $marl  [%lace [p.i.a $(a t.a)] cons-gate-twig]
   ==
 ::
-::TODO  properly support ;= syntax
-++  cons-twig  ^-  twig
-  !,(*twig =>([a b]=. |-(?~(a b [-.a $(a +.a)]))))
-  :::+  %per  [%name 2+[%a %b] $+1]                :: =>  [a b]=.
-  :::*  %loop                                      :: |-
-  ::  %ifno  /a  wing+/b                           :: ?~  a  b
-  ::  [wing+/[&+2]/a make+[/[%$] [/a /[&+3]/a]~]]  :: [-.a $(a +.a)]
-  ::==
-  ::REVIEW compare to xisting sail code:
-  :::+  %lace  [%$ 1]
-  :::+  %new  [%base %cell]
-  :::-  %core
-  ::^-  (map term foot)
-  :::_  [~ ~]
-  ::=+  sug=[[%& 12] ~]
-  :::+  %$  %elm
-  :::^  %ifno  sug
-  ::  [%make sug [[[[%& 1] ~] [%$ 13]] ~]]
-  ::[%make sug [[[[%& 3] ~] [%make [%$ ~] [[sug [%$ 25]] ~]]] ~]]
+++  cons-gate-twig
+  ^-  twig
+  :+  %new  [%base %cell]
+  :-  %core
+  ^-  (map term foot)
+  :_  [~ ~]
+  =+  sug=[[%& 12] ~]
+  :+  %$  %elm
+  :^  %ifno  sug
+    [%make sug [[[[%& 1] ~] [%$ 13]] ~]]
+  [%make sug [[[[%& 3] ~] [%make [%$ ~] [[sug [%$ 25]] ~]]] ~]]
 ::
 ++  steam-mane
   |=  a/mane  ^-  twig
