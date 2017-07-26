@@ -584,56 +584,47 @@
     [i.los $(los +.los)]
   ::                                                    ::
   ++  word                                              ::  flow parser
-    %+  knee  *(list graf)  |.  ~+
+    %+  knee  *graf  |.  ~+
     ;~  pose
     ::
     ::  whitespace
     ::
-      (cold [%text " "]~ whit)
+      (stag %text (cold " " whit))
     ::
     ::  ordinary word
     ::
-      %+  cook  |=(graf [+< ~])
       (stag %text ;~(plug ;~(pose low hig) (star ;~(pose nud low hig hep))))
     ::
     ::  naked \escape
     ::
-      %+  cook  |=(@ [%text [+< ~]]~)
-      ;~(pfix bas ;~(less ace prn))
+      (stag %text ;~(pfix bas (cook trip ;~(less ace prn))))
     ::
     ::  *bold literal*
     ::
-      %+  cook  |=(graf [+< ~])
       (stag %bold ;~(pfix tar (cool (cash tar) work)))
     ::
     ::  _italic literal_
     ::
-      %+  cook  |=(graf [+< ~])
       (stag %talc ;~(pfix cab (cool (cash cab) work)))
     ::
     ::  "quoted text"
     ::
-      %+  cook  |=(graf [+< ~])
       (stag %quod ;~(pfix doq (cool (cash doq) work)))
     ::
     ::  `classic markdown quote`
     ::
-      %+  cook  |=(graf [+< ~])
       (stag %code ;~(pfix tec (cash tec)))
     ::
     ::  #twig
     ::
-      %+  cook  |=(graf [+< ~])
       (stag %code ;~(pfix hax (echo wide:vast)))
     ::
     ::  ++arm
     ::
-      %+  cook  |=(graf [+< ~])
       (stag %code ;~(plug lus lus low (star ;~(pose nud low hep))))
     ::
     ::  [arbitrary *content*](url)
     ::
-      %+  cook  |=(graf [+< ~])
       %+  stag  %link
       ;~  plug
         ;~(pfix sel (cool (cash ser) work))
@@ -642,7 +633,6 @@
     ::
     ::  direct hoon constant
     ::
-      %+  cook  |=(graf [+< ~])
       %+  stag  %code
       %-  echo
       ;~  pose
@@ -655,13 +645,10 @@
     ::
     ::  just a byte
     ::
-      (cook |=(@ [%text [+< ~]]~) ;~(less ace prn))
+      (stag %text (cook trip ;~(less ace prn)))
     ==
   ::                                                    ::
-  ++  work                                              ::  indefinite flow
-    %+  cook
-      |=((list (list graf)) (zing +<))
-    (star word)
+  ++  work  (star word)                                 ::  indefinite flow
   ::                                                    ::
   ++  down                                              ::  parse inline flow
     %+  knee  *marl:dynamic  |.  ~+
