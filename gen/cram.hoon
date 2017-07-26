@@ -317,14 +317,14 @@
     [;/((flop sim)) i.reb $(reb t.reb, sim ~)]
   --
 --
-|=  inp/cord
-=<  (steam-marl (rash inp apex:(sail &)))
-::|=  pax/path
-::=<  (test pax)
+::|=  inp/cord
+::=<  (steam-marl (rash inp apex:(sail &)))
+|=  pax/path
+=<  (test pax)
 =>  |%
-    ++  item  (pair mite (list flow))                   ::  xml node generator
+    ++  item  (pair mite marl:dynamic)                  ::  xml node generator
     ++  colm  @ud                                       ::  column
-    ++  flow  manx                                      ::  node or generator
+    ++  flow  manx:dynamic                              ::  node or generator
     ++  mite                                            ::  context
       $?  $down                                         ::  outer embed
           $list                                         ::  unordered list
@@ -355,7 +355,6 @@
           {$link p/(list graf) q/tape}                  ::  URL
       ==
     --
-!.
 |%                                                      ::
 ++  test                                                ::  test text parsing
   |=  pax/path
@@ -371,7 +370,7 @@
   ::
   ?~  q.vex
     "syntax error: line {(scow %ud p.p.vex)}, column {(scow %ud q.p.vex)}"
-  (poxo ;;(manx q:(slap =>(..onan !>(~)) (steam p.u.q.vex))))
+  (poxo (freeze p.u.q.vex))
 ::                                                      ::
 ++  cram                                                ::  parse unmark
   |=  {naz/hair los/tape}
@@ -440,6 +439,7 @@
     ^-  flow
     ?:  ?=($head p.cur)
       ?>  ?=({* $~} q.cur)
+      ?@  -.i.q.cur  !!  ::REVIEW over-strict?
       i.q.cur
     =-  [[- ~] (flop q.cur)]
     ?+  p.cur  !!
@@ -520,7 +520,7 @@
   ::                                                    ::
   ++  clue                                              ::  tape to xml
     |=  tex/tape
-    ^-  manx
+    ^-  manx:dynamic
     [[%$ [%$ tex] ~] ~]
   ::                                                    ::
   ++  cash                                              ::  escaped fence
@@ -663,26 +663,26 @@
     (star word)
   ::                                                    ::
   ++  down                                              ::  parse inline flow
-    %+  knee  *(list manx)  |.  ~+
+    %+  knee  *marl:dynamic  |.  ~+
     =-  (cook - work)
     ::  collect raw flow into xml tags
     ::
     |=  gaf/(list graf)
-    ^-  (list manx)
+    ^-  marl:dynamic
     ::  nap: collected words
     ::  max: collected tags
     ::
     =<  main
     |%
     ++  main
-      ^-  marl
+      ^-  marl:dynamic
       ?~  gaf  ~
       ?.  ?=($text -.i.gaf)
         (weld (item i.gaf) $(gaf t.gaf))
       ::
       ::  fip: accumulate text blocks
       =/  fip/(list tape)  [p.i.gaf]~
-      |-  ^-  marl
+      |-  ^-  marl:dynamic
       ?~  t.gaf  [;/((zing (flop fip))) ~]
       ?.  ?=($text -.i.t.gaf)
         [;/((zing (flop fip))) ^$(gaf t.gaf)]
@@ -690,7 +690,7 @@
     ::
     ++  item
       |=  nex/graf
-      ^-  (list manx)
+      ^-  marl:dynamic
       ?-  -.nex
         $text  !!  :: handled separately
         $bold  [[%b ~] ^$(gaf p.nex)]~
@@ -710,7 +710,7 @@
   ::                                                    ::
   ++  para                                              ::  paragraph
     %+  cook
-      |=((list manx) [[%p ~] +<]~)
+      |=(marl:dynamic [[%p ~] +<]~)
     ;~(pfix gay down)  ::REVIEW does this mean comments work?
   ::                                                    ::
   ++  whit                                              ::  whitespace
@@ -718,7 +718,7 @@
   ::
   ++  head                                              ::  parse heading
     %+  cook
-      |=  a/manx  ^-  marl
+      |=  a/manx:dynamic  ^-  marl:dynamic
       =.  a.g.a  :_(a.g.a [%id (sanitize-to-id c.a)])
       [a]~
     ::
@@ -731,36 +731,31 @@
     ==
   ::                                                    ::
   ++  sanitize-to-id
-    |=  a/(list manx)  ^-  tape
-    =-  %-  zing
-        %+  turn  `(list tape)`(flop -)
-        |=  tape  ^-  tape
-        %+  turn  `tape`+<
-        |=  @tD
-        ^-  @tD
-        ?:  ?|  &((gte +< 'a') (lte +< 'z'))
-                &((gte +< '0') (lte +< '9'))
-            ==
-          +<
-        ?:  &((gte +< 'A') (lte +< 'Z'))
-          (add 32 +<)
-        '-'
+    |=  a/(list $^(tuna manx)):dynamic  ^-  tape
+    =;  raw/tape
+      %+  turn  raw
+      |=  @tD
+      ^-  @tD
+      ?:  ?|  &((gte +< 'a') (lte +< 'z'))
+              &((gte +< '0') (lte +< '9'))
+          ==
+        +<
+      ?:  &((gte +< 'A') (lte +< 'Z'))
+        (add 32 +<)
+      '-'
     ::  collect all text in header flow
     ::
-    =|  ges/(list tape)
-    |-  ^-  (list tape)
-    ?~  a  ges
-    %=    $
-        a  t.a
-        ges
-      ?:  ?=({{$$ {$$ *} $~} $~} i.a)
-        ::  capture text
-        ::
-        [v.i.a.g.i.a ges]
-      ::  descend into children
-      ::
-      $(a c.i.a)
-    ==
+    |-  ^-  tape
+    ?~  a  ~
+    %+  weld
+      ^-  tape
+      ?-    i.a
+        {{$$ {$$ *} $~} $~}  ::  text node contents
+          (murn v.i.a.g.i.a |=(a/beer ?^(a ~ (some a))))
+        {^ *}  $(a c.i.a)    ::  concatenate children
+        {@ *}  ~             ::  ignore interpolation
+      ==
+    $(a t.a)
   ::                                                    ::
   ++  made                                              ::  compose block
     ^+  .
@@ -819,10 +814,12 @@
       !!
     ::  vex: parse of paragraph
     ::
-    =/  vex/(like (list manx))
+    =/  vex/(like marl:dynamic)
       ::  either a one-line header or a paragraph
       ::
-      %.([p.u.lub yex] ?:(?=($head p.cur) head para))
+      %.  [p.u.lub yex]
+      ?:  ?=($head p.cur)  head
+      para
     ::  if error, propagate correctly
     ::
     ?~  q.vex  ..$(err `p.vex)
