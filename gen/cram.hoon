@@ -509,15 +509,12 @@
   ::                                                    ::
   ++  cash                                              ::  escaped fence
     |*  tem/rule
-    ;~  sfix
+    %-  echo
       %-  star
-      =+  ;~(pose bas tem)
       ;~  pose
-        (cold ' ' whit)
-        ;~(pose ;~(less - prn) ;~(pfix bas -))
-      ==
-    ::
-      tem
+      whit
+      ;~(plug bas tem)
+      ;~(less tem prn)
     ==
   ::                                                    ::
   ++  cool                                              ::  reparse
@@ -584,19 +581,19 @@
     ::
     ::  *bold literal*
     ::
-      (stag %bold ;~(pfix tar (cool (cash tar) work)))
+      (stag %bold (ifix [tar tar] (cool (cash tar) work)))
     ::
     ::  _italic literal_
     ::
-      (stag %talc ;~(pfix cab (cool (cash cab) work)))
+      (stag %talc (ifix [cab cab] (cool (cash cab) work)))
     ::
     ::  "quoted text"
     ::
-      (stag %quod ;~(pfix doq (cool (cash doq) work)))
+      (stag %quod (ifix [doq doq] (cool (cash doq) work)))
     ::
     ::  `classic markdown quote`
     ::
-      (stag %code ;~(pfix tec (cash tec)))
+      (stag %code (ifix [tec tec] (cash tec)))
     ::
     ::  #twig
     ::
@@ -609,9 +606,9 @@
     ::  [arbitrary *content*](url)
     ::
       %+  stag  %link
-      ;~  plug
-        ;~(pfix sel (cool (cash ser) work))
-        ;~(pfix gay ;~(pfix pel (cash per)))
+      ;~  (glue gay)
+        (ifix [sel ser] (cool (cash ser) work))
+        (ifix [pel per] (cash per))
       ==
     ::
     ::  direct hoon constant
