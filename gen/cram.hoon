@@ -316,8 +316,7 @@
 --
 ::|=  inp/cord
 ::=<  (steam-marl (rash inp apex:(sail &)))
-|=  pax/path
-=<  (test pax)
+=<  |=(pax/path (test pax))
 =>  |%
     ++  item  (pair mite marl:dynamic)                  ::  xml node generator
     ++  colm  @ud                                       ::  column
@@ -375,6 +374,13 @@
   ?:  [freeze=|]  (poxo (freeze p.u.q.vex))
   (poxo ;;(manx q:(slap !>(..zuse) (steam p.u.q.vex))))
 ::                                                      ::
+++  join
+  |=  {a/char b/(list tape)}
+  ?~  b  ""
+  |-  ^-  tape
+  ?~  t.b  i.b
+  (welp i.b a $(b t.b))
+::
 ++  cram                                                ::  parse unmark
   %+  stag  [%div ~]  ::REVIEW
   |=  {naz/hair los/tape}
@@ -444,9 +450,9 @@
   ::                                                    ::
   ++  fine                                              ::  item to flow
     ^-  flow
+    ?<  ?=($poem p.cur)  :: handled elsewhere?
     ?:  ?=(?($down $head $expr) p.cur)
       (flop q.cur)
-    ?<  ?=($poem p.cur)  :: handled elsewhere?
     =-  [[- ~] (flop q.cur)]~
     ?-  p.cur
       $list  %ul
@@ -487,12 +493,7 @@
   ++  look                                              ::  inspect line
     ^-  (unit trig)
     (wonk (trig:parse naz los))
-  ::                                                    ::
-  ++  clue                                              ::  tape to xml
-    |=  tex/tape
-    ^-  manx:dynamic
-    [[%$ [%$ tex] ~] ~]
-  ::                                                    ::
+  ::                                                    ::                                                   ::
   ++  made                                              ::  compose block
     ^+  .
     ::  empty block, no action
@@ -506,44 +507,32 @@
       =.  q.cur
         ?~  q.cur  q.cur
         :_(q.cur ;/("\0a"))
-      %=    .
-          q.cur
-        %+  weld
-          %+  turn
-            q.u.lub
-          |=  tape  ^-  mars
-          ::  each line is text data with its newline
-          ::
-          ;/((weld (slag (dec col) +<) "\0a"))
-        q.cur
-      ==
+      =-  ..made(q.cur (weld - q.cur))
+      %+  turn
+        q.u.lub
+      |=  tape  ^-  mars
+      ::  each line is text data with its newline
+      ::
+      ;/((weld (slag (dec col) +<) "\0a"))
     ::  if block is verse
     ::
     ?:  ?=($poem p.cur)
       ::  add break between stanzas
       ::
       =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
-      %=    .
-          q.cur
-        %+  weld
-          %+  turn
-            q.u.lub
-          |=  tape  ^-  manx
-          ::  each line is a paragraph
-          ::
-          :-  [%p ~]
-          :_  ~
-          ;/((weld (slag (dec col) +<) "\0a"))
-        q.cur
-      ==
+      =-  ..made(q.cur (weld - q.cur))
+      %+  turn
+        q.u.lub
+      |=  tape  ^-  manx
+      ::  each line is a paragraph
+      ::
+      :-  [%p ~]
+      :_  ~
+      ;/((weld (slag (dec col) +<) "\0a"))
     ::  yex: block recomposed, with newlines
     ::
-    =/  yex/tape
-      =/  hel  (flop q.u.lub)
-      |-  ^-  tape
-      ?~  hel  ~
-      ?~  t.hel  i.hel
-      (weld i.hel `tape`[`@`10 $(hel t.hel)])
+    =/  yex/tape  (join '\0a' (flop q.u.lub))
+    ::
     ::  vex: parse of paragraph
     ::
     =/  vex/(like marl:dynamic)
@@ -637,29 +626,24 @@
     ::                                                  ::
     ++  apex  ^+  .                                     ::  by column offset
       ?+  dif  fail
-        $0  apse
-        $2  expr
-        $4  code
-        $6  bloc
-        $8  poem
+        $0  apse                                        ::  unindented forms
+        $2  (push %expr)                                ::  hoon expression
+        $4  (push %code)                                ::  code literal
+        $6  apse:(push %bloc)                           ::  blockquote line
+        $8  (push %poem)                                ::  verse literal
       ==
     ::                                                  ::
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
         $fini  !!
-        $head  head
-        $lite  lite
-        $lint  lint
+        $head  (push %head)                             ::  heading
+        $lite  (lent |)                                 ::  unnumbered list
+        $lint  (lent &)                                 ::  numbered list
         $text  text
       ==
     ::                                                  ::
-    ++  bloc  apse:(push %bloc)                         ::  blockquote line
     ++  fail  .(err `erp)                               ::  set error position
     ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  push context
-    ++  expr  (push %expr)                              ::  hoon expression
-    ++  code  (push %code)                              ::  code literal
-    ++  poem  (push %poem)                              ::  verse literal
-    ++  head  (push %head)                              ::  heading
     ++  lent                                            ::  list entry
       |=  ord/?
       ^+  +>
@@ -681,8 +665,6 @@
       =+  ?:(ord %lord %list)
       ?:  =(- p.cur)  ..push  (push -)
     ::
-    ++  lint  (lent &)                                  ::  numbered list
-    ++  lite  (lent |)                                  ::  unnumbered list
     ++  text                                            ::  plain text
       ^+  .
       ::  only in lists, fold
@@ -705,6 +687,8 @@
         (cold %head ;~(plug (star hax) ace))
         (cold %lite ;~(plug hep ace))
         (cold %lint ;~(plug lus ace))
+        ::(cold %quot ;~(plug gar ace))
+        ::(cold %expr ;~(plug zap ace))
         (easy %text)
       ==
     ==
