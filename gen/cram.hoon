@@ -492,7 +492,7 @@
   ++  skip  +:snap                                      ::  discard line
   ++  look                                              ::  inspect line
     ^-  (unit trig)
-    (wonk (trig:parse naz los))
+    (wonk (look:parse naz los))
   ::                                                    ::                                                   ::
   ++  made                                              ::  compose block
     ^+  .
@@ -588,16 +588,18 @@
     ?^  bal
       ::  detect bad block structure
       ::
-      ?:  ?|  ::  only one line in a heading
-              ::
-              =(%head p.cur)
-              ?:  ?=(?($code $poem $expr) p.cur)
-                ::  literals need to end with a blank line
-                ::
-                (lth col.pic col)
-              ::  text flows must continue aligned
-              ::
-              |(!=(%text sty.pic) !=(col.pic col))
+      ?.  ?-  p.cur
+            ::  only one line in a heading
+            ::
+            $head  |
+            ::  literals need to end with a blank line
+            ::
+            ?($code $poem $expr)
+              (gte col.pic col)
+            ::  text flows must continue aligned
+            ::
+            ?($down $list $lime $lord $bloc)
+              &(=(%text sty.pic) =(col.pic col))
           ==
         ..$(err `[p.naz col.pic])
       ::  accept line and continue
@@ -675,8 +677,8 @@
   --
 ++  cram-parsers
   |%
-  ++  trig
-    %+  cook  |=(a/(unit ^trig) a)
+  ++  look
+    %+  cook  |=(a/(unit trig) a)
     ;~  pfix  (star ace)
       %+  here
         |=({a/pint b/?($~ trig-style)} ?~(b ~ `[q.p.a b]))
