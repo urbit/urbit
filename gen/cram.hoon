@@ -379,6 +379,10 @@
   %+  stag  [%div ~]  ::REVIEW
   |=  {naz/hair los/tape}
   ^-  (like marl:dynamic)
+  $:line:(cram-main +<)
+++  cram-main
+  =*  parse  cram-parsers
+  |=  {naz/hair los/tape}
   ::
   ::  state of the parsing loop.  we maintain a construction
   ::  stack for elements and a line stack for lines in the
@@ -397,7 +401,6 @@
   =|  hac/(list item)
   =/  cur/item  [%down ~]
   =|  lub/(unit (pair hair (list tape)))
-  =<  $:line
   |%
   ::                                                    ::
   ++  $                                                 ::  resolve
@@ -483,7 +486,215 @@
   ++  skip  +:snap                                      ::  discard line
   ++  look                                              ::  inspect line
     ^-  (unit trig)
-    =-  (wonk (- naz los))
+    (wonk (trig:parse naz los))
+  ::                                                    ::
+  ++  clue                                              ::  tape to xml
+    |=  tex/tape
+    ^-  manx:dynamic
+    [[%$ [%$ tex] ~] ~]
+  ::                                                    ::
+  ++  made                                              ::  compose block
+    ^+  .
+    ::  empty block, no action
+    ::
+    ?~  lub  .
+    ::  if block is preformatted code
+    ::
+    ?:  ?=($code p.cur)
+      ::  add blank line between blocks
+      ::
+      =.  q.cur
+        ?~  q.cur  q.cur
+        :_(q.cur ;/("\0a"))
+      %=    .
+          q.cur
+        %+  weld
+          %+  turn
+            q.u.lub
+          |=  tape  ^-  mars
+          ::  each line is text data with its newline
+          ::
+          ;/((weld (slag (dec col) +<) "\0a"))
+        q.cur
+      ==
+    ::  if block is verse
+    ::
+    ?:  ?=($poem p.cur)
+      ::  add break between stanzas
+      ::
+      =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
+      %=    .
+          q.cur
+        %+  weld
+          %+  turn
+            q.u.lub
+          |=  tape  ^-  manx
+          ::  each line is a paragraph
+          ::
+          :-  [%p ~]
+          :_  ~
+          ;/((weld (slag (dec col) +<) "\0a"))
+        q.cur
+      ==
+    ::  yex: block recomposed, with newlines
+    ::
+    =/  yex/tape
+      =/  hel  (flop q.u.lub)
+      |-  ^-  tape
+      ?~  hel  ~
+      ?~  t.hel  i.hel
+      (weld i.hel `tape`[`@`10 $(hel t.hel)])
+    ::  vex: parse of paragraph
+    ::
+    =/  vex/(like marl:dynamic)
+      ::  either a one-line header or a paragraph
+      ::
+      %.  [p.u.lub yex]
+      ?-  p.cur
+        $expr  expr:parse
+        $head  head:parse
+        @      para:parse
+      ==
+    ::  if error, propagate correctly
+    ::
+    ?~  q.vex  ..$(err `p.vex)
+    ::  finish tag if it's a header
+    ::
+    =<  ?:(=(%head p.cur) fold ..$)
+    ::  save good result, clear buffer
+    ::
+    ..$(lub ~, q.cur (weld p.u.q.vex q.cur))
+  ::                                                    ::
+  ++  line  ^+  .                                       ::  body line loop
+    ::  abort after first error
+    ::
+    ?:  !=(~ err)  .
+    ::  pic: profile of this line
+    ::
+    =/  pic  look
+    ::  if line is blank
+    ::
+    ?~  pic
+      ::  break section
+      ::
+      line:made:skip
+    ::  line is not blank
+    ::
+    =>  .(pic u.pic)
+    ::  if end of input, complete
+    ::
+    ?:  ?=($done sty.pic)
+      ..$(q.naz col.pic)
+    ::  if end marker behind current column
+    ::
+    ?:  &(?=($fini sty.pic) (lth col.pic col))
+      ::  retract and complete
+      ::
+      (back(q.naz (add 2 col.pic)) col.pic)
+    ::  bal: inspection copy of lub, current section
+    ::
+    =/  bal  lub
+    ::  if within section
+    ::
+    ?^  bal
+      ::  detect bad block structure
+      ::
+      ?:  ?|  ::  only one line in a heading
+              ::
+              =(%head p.cur)
+              ?:  ?=(?($code $poem $expr) p.cur)
+                ::  literals need to end with a blank line
+                ::
+                (lth col.pic col)
+              ::  text flows must continue aligned
+              ::
+              |(!=(%text sty.pic) !=(col.pic col))
+          ==
+        ..$(err `[p.naz col.pic])
+      ::  accept line and continue
+      ::
+      =^  nap  ..$  snap
+      line(lub bal(q.u [nap q.u.bal]))
+    ::  if column has retreated, adjust stack
+    ::
+    =.  ..$  ?.  (lth col.pic col)  ..$  (back col.pic)
+    ::  dif: columns advanced
+    ::  erp: error position
+    ::
+    =/  dif  (sub col.pic col)
+    =/  erp  [p.naz col.pic]
+    =.  col  col.pic
+    ::  nap: take first line
+    ::
+    =^  nap  ..$  snap
+    ::  execute appropriate paragraph form
+    ::
+    =<  line:abet:apex
+    |%
+    ::                                                  ::
+    ++  abet                                            ::  accept line
+      ..$(lub `[naz nap ~])
+    ::                                                  ::
+    ++  apex  ^+  .                                     ::  by column offset
+      ?+  dif  fail
+        $0  apse
+        $2  expr
+        $4  code
+        $6  bloc
+        $8  poem
+      ==
+    ::                                                  ::
+    ++  apse  ^+  .                                     ::  by prefix style
+      ?-  sty.pic
+        $fini  !!
+        $head  head
+        $lite  lite
+        $lint  lint
+        $text  text
+      ==
+    ::                                                  ::
+    ++  bloc  apse:(push %bloc)                         ::  blockquote line
+    ++  fail  .(err `erp)                               ::  set error position
+    ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  push context
+    ++  expr  (push %expr)                              ::  hoon expression
+    ++  code  (push %code)                              ::  code literal
+    ++  poem  (push %poem)                              ::  verse literal
+    ++  head  (push %head)                              ::  heading
+    ++  lent                                            ::  list entry
+      |=  ord/?
+      ^+  +>
+      ::  erase list marker
+      ::
+      =.  nap  =+(+(col) (runt [- ' '] (slag - nap)))
+      ::  indent by 2
+      ::
+      =.  col  (add 2 col)
+      ::  can't switch list types
+      ::
+      ?:  =(?:(ord %list %lord) p.cur)  fail
+      ::  push list item
+      ::
+      %.  %lime
+      =<  push
+      ::  push list context, unless we're in list
+      ::
+      =+  ?:(ord %lord %list)
+      ?:  =(- p.cur)  ..push  (push -)
+    ::
+    ++  lint  (lent &)                                  ::  numbered list
+    ++  lite  (lent |)                                  ::  unnumbered list
+    ++  text                                            ::  plain text
+      ^+  .
+      ::  only in lists, fold
+      ::
+      ?.  ?=(?($list $lord) p.cur)  .
+      .($ fold)
+    --
+  --
+++  cram-parsers
+  |%
+  ++  trig
+    %+  cook  |=(a/(unit ^trig) a)
     ;~  pfix  (star ace)
       %+  here
         |=({a/pint b/?($~ trig-style)} ?~(b ~ `[q.p.a b]))
@@ -497,12 +708,6 @@
         (easy %text)
       ==
     ==
-  ::                                                    ::
-  ++  clue                                              ::  tape to xml
-    |=  tex/tape
-    ^-  manx:dynamic
-    [[%$ [%$ tex] ~] ~]
-  ::                                                    ::
   ++  cash                                              ::  escaped fence
     |*  tem/rule
     %-  echo
@@ -728,201 +933,5 @@
         {@ *}  ~             ::  ignore interpolation
       ==
     $(a t.a)
-  ::                                                    ::
-  ++  made                                              ::  compose block
-    ^+  .
-    ::  empty block, no action
-    ::
-    ?~  lub  .
-    ::  if block is preformatted code
-    ::
-    ?:  ?=($code p.cur)
-      ::  add blank line between blocks
-      ::
-      =.  q.cur
-        ?~  q.cur  q.cur
-        :_(q.cur ;/("\0a"))
-      %=    .
-          q.cur
-        %+  weld
-          %+  turn
-            q.u.lub
-          |=  tape  ^-  mars
-          ::  each line is text data with its newline
-          ::
-          ;/((weld (slag (dec col) +<) "\0a"))
-        q.cur
-      ==
-    ::  if block is verse
-    ::
-    ?:  ?=($poem p.cur)
-      ::  add break between stanzas
-      ::
-      =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
-      %=    .
-          q.cur
-        %+  weld
-          %+  turn
-            q.u.lub
-          |=  tape  ^-  manx
-          ::  each line is a paragraph
-          ::
-          :-  [%p ~]
-          :_  ~
-          ;/((weld (slag (dec col) +<) "\0a"))
-        q.cur
-      ==
-    ::  yex: block recomposed, with newlines
-    ::
-    =/  yex/tape
-      =/  hel  (flop q.u.lub)
-      |-  ^-  tape
-      ?~  hel  ~
-      ?~  t.hel  i.hel
-      (weld i.hel `tape`[`@`10 $(hel t.hel)])
-    ::  vex: parse of paragraph
-    ::
-    =/  vex/(like marl:dynamic)
-      ::  either a one-line header or a paragraph
-      ::
-      %.  [p.u.lub yex]
-      ?:  ?=($expr p.cur)  expr
-      ?:  ?=($head p.cur)  head
-      para
-    ::  if error, propagate correctly
-    ::
-    ?~  q.vex  ..$(err `p.vex)
-    ::  finish tag if it's a header
-    ::
-    =<  ?:(=(%head p.cur) fold ..$)
-    ::  save good result, clear buffer
-    ::
-    ..$(lub ~, q.cur (weld p.u.q.vex q.cur))
-  ::                                                    ::
-  ++  line  ^+  .                                       ::  body line loop
-    ::  abort after first error
-    ::
-    ?:  !=(~ err)  .
-    ::  pic: profile of this line
-    ::
-    =/  pic  look
-    ::  if line is blank
-    ::
-    ?~  pic
-      ::  break section
-      ::
-      line:made:skip
-    ::  line is not blank
-    ::
-    =>  .(pic u.pic)
-    ::  if end of input, complete
-    ::
-    ?:  ?=($done sty.pic)
-      ..$(q.naz col.pic)
-    ::  if end marker behind current column
-    ::
-    ?:  &(?=($fini sty.pic) (lth col.pic col))
-      ::  retract and complete
-      ::
-      (back(q.naz (add 2 col.pic)) col.pic)
-    ::  bal: inspection copy of lub, current section
-    ::
-    =/  bal  lub
-    ::  if within section
-    ::
-    ?^  bal
-      ::  detect bad block structure
-      ::
-      ?:  ?|  ::  only one line in a heading
-              ::
-              =(%head p.cur)
-              ?:  ?=(?($code $poem $expr) p.cur)
-                ::  literals need to end with a blank line
-                ::
-                (lth col.pic col)
-              ::  text flows must continue aligned
-              ::
-              |(!=(%text sty.pic) !=(col.pic col))
-          ==
-        ..$(err `[p.naz col.pic])
-      ::  accept line and continue
-      ::
-      =^  nap  ..$  snap
-      line(lub bal(q.u [nap q.u.bal]))
-    ::  if column has retreated, adjust stack
-    ::
-    =.  ..$  ?.  (lth col.pic col)  ..$  (back col.pic)
-    ::  dif: columns advanced
-    ::  erp: error position
-    ::
-    =/  dif  (sub col.pic col)
-    =/  erp  [p.naz col.pic]
-    =.  col  col.pic
-    ::  nap: take first line
-    ::
-    =^  nap  ..$  snap
-    ::  execute appropriate paragraph form
-    ::
-    =<  line:abet:apex
-    |%
-    ::                                                  ::
-    ++  abet                                            ::  accept line
-      ..$(lub `[naz nap ~])
-    ::                                                  ::
-    ++  apex  ^+  .                                     ::  by column offset
-      ?+  dif  fail
-        $0  apse
-        $2  expr
-        $4  code
-        $6  bloc
-        $8  poem
-      ==
-    ::                                                  ::
-    ++  apse  ^+  .                                     ::  by prefix style
-      ?-  sty.pic
-        $fini  !!
-        $head  head
-        $lite  lite
-        $lint  lint
-        $text  text
-      ==
-    ::                                                  ::
-    ++  bloc  apse:(push %bloc)                         ::  blockquote line
-    ++  fail  .(err `erp)                               ::  set error position
-    ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  push context
-    ++  expr  (push %expr)                              ::  hoon expression
-    ++  code  (push %code)                              ::  code literal
-    ++  poem  (push %poem)                              ::  verse literal
-    ++  head  (push %head)                              ::  heading
-    ++  lent                                            ::  list entry
-      |=  ord/?
-      ^+  +>
-      ::  erase list marker
-      ::
-      =.  nap  =+(+(col) (runt [- ' '] (slag - nap)))
-      ::  indent by 2
-      ::
-      =.  col  (add 2 col)
-      ::  can't switch list types
-      ::
-      ?:  =(?:(ord %list %lord) p.cur)  fail
-      ::  push list item
-      ::
-      %.  %lime
-      =<  push
-      ::  push list context, unless we're in list
-      ::
-      =+  ?:(ord %lord %list)
-      ?:  =(- p.cur)  ..push  (push -)
-    ::
-    ++  lint  (lent &)                                  ::  numbered list
-    ++  lite  (lent |)                                  ::  unnumbered list
-    ++  text                                            ::  plain text
-      ^+  .
-      ::  only in lists, fold
-      ::
-      ?.  ?=(?($list $lord) p.cur)  .
-      .($ fold)
-    --
   --
 --
