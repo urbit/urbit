@@ -335,14 +335,18 @@
       ==                                                ::
     ++  trig                                            ::  line style
       $:  col/@ud                                       ::  start column
-          $=  sty                                       ::  style
-          $?  $fini                                     ::   terminator
-              $done                                     ::  end of input
-              $lint                                     ::  + line item
-              $lite                                     ::  - line item
-              $head                                     ::  # heading
-              $text                                     ::  anything else
-      ==  ==                                            ::
+          sty/trig-style                                ::  style
+      ==
+    ++  trig-style
+      $?  $fini                                         ::   terminator
+          $done                                         ::  end of input
+          $lint                                         ::  + line item
+          $lite                                         ::  - line item
+          $head                                         ::  # heading
+          ::$quot                                       :: > block-quote
+          ::$expr                                       :: ! interpolation
+          $text                                         ::  anything else
+      ==                                                ::
     ++  graf                                            ::  input fragment
       $%  {$bold p/(list graf)}                         ::  *bold*
           {$talc p/(list graf)}                         ::  _italics_
@@ -439,14 +443,14 @@
     ^-  flow
     ?:  ?=(?($down $head $expr) p.cur)
       (flop q.cur)
+    ?<  ?=($poem p.cur)  :: handled elsewhere?
     =-  [[- ~] (flop q.cur)]~
     ?-  p.cur
       $list  %ul
       $lord  %ol
       $lime  %li
-      $bloc  %bq
       $code  %pre
-      $poem  !!  ::XX what does this even mean
+      $bloc  %blockquote
     ==
   ::                                                    ::
   ++  fold  ^+  .                                       ::  complete and pop
@@ -479,28 +483,20 @@
   ++  skip  +:snap                                      ::  discard line
   ++  look                                              ::  inspect line
     ^-  (unit trig)
-    ?~  los
-      `[q.naz %done]
-    ?:  =(`@`10 i.los)
-      ~
-    ?:  =(' ' i.los)
-      look(los t.los, q.naz +(q.naz))
-    :+  ~  q.naz
-    ?:  =('\\' i.los)
-      %fini
-    ?:  ?&  =('#' i.los)
-            |-  ^-  ?
-            ?~  t.los  |
-            ?:  =(' ' i.t.los)  &
-            ?:  =('#' i.t.los)  $(t.los t.t.los)
-            |
-        ==
-      %head
-    ?:  ?=({$'-' $' ' *} los)
-      %lite
-    ?:  ?=({$'+' $' ' *} los)
-      %lint
-    %text
+    =-  (wonk (- naz los))
+    ;~  pfix  (star ace)
+      %+  here
+        |=({a/pint b/?($~ trig-style)} ?~(b ~ `[q.p.a b]))
+      ;~  pose
+        (full (easy %done))
+        (cold ~ (just `@`10))
+        (cold %fini bas)
+        (cold %head ;~(plug (star hax) ace))
+        (cold %lite ;~(plug hep ace))
+        (cold %lint ;~(plug lus ace))
+        (easy %text)
+      ==
+    ==
   ::                                                    ::
   ++  clue                                              ::  tape to xml
     |=  tex/tape
@@ -510,8 +506,8 @@
   ++  cash                                              ::  escaped fence
     |*  tem/rule
     %-  echo
-      %-  star
-      ;~  pose
+    %-  star
+    ;~  pose
       whit
       ;~(plug bas tem)
       ;~(less tem prn)
