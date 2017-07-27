@@ -507,9 +507,8 @@
       =.  q.cur
         ?~  q.cur  q.cur
         :_(q.cur ;/("\0a"))
-      =-  ..made(q.cur (weld - q.cur))
-      %+  turn
-        q.u.lub
+      =-  +(q.u.lub ~, q.cur (weld - q.cur))
+      %+  turn  q.u.lub
       |=  tape  ^-  mars
       ::  each line is text data with its newline
       ::
@@ -520,9 +519,8 @@
       ::  add break between stanzas
       ::
       =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
-      =-  ..made(q.cur (weld - q.cur))
-      %+  turn
-        q.u.lub
+      =-  +(q.u.lub ~, q.cur (weld - q.cur))
+      %+  turn  q.u.lub
       |=  tape  ^-  manx
       ::  each line is a paragraph
       ::
