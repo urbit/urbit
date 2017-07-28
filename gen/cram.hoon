@@ -95,14 +95,6 @@
 ::
 ::+|
 ::
-++  beet  $@  @                                         ::  advanced embed
-          $%  {$tape p/twig}                            ::  take tape
-              {$manx p/twig}                            ::  take manx
-              {$marl p/twig}                            ::  take marl
-              {$call p/twig}                            ::  take $-(marl marl)
-              {$elem p/twig q/(list tuna)}              ::  element literal
-          ==                                            ::
-::
 ++  tuna                                                ::  tagflow
           $%  {$tape p/twig}                            ::  plain text
               {$manx p/twig}                            ::  single tag
@@ -112,15 +104,17 @@
               {$many p/(list tuna)}                     ::  subflow
           ==                                            ::
 ::
-++  sail                                              ::  xml template
+++  sail                                                ::  xml template
   =>  dynamic
   |=  in-tall-form/?  =|  lin/?
   |%
   ++  apex                                              ::  entry point
     ;~(pfix sem ?:(in-tall-form tall-top wide-top))
   ::
-  ++  single  !.  |*(a/rule (cook |=(b/$^(manx tuna) [b]~) a))
-  ++  tall-top                                             ::  tall top
+  ++  single                                            ::  elem as tuna
+    |*(a/rule (cook |=(b/$^(manx tuna) [b]~) a))
+  ::
+  ++  tall-top                                          ::  tall top
     %+  knee  *marl  |.  ~+
     ;~  pose
       ;~(pfix (plus ace) (cook collapse-chars quote-innards))
@@ -132,14 +126,14 @@
       (easy [;/("\0a")]~)
     ==
   ::
-  ++  tuna-mode
+  ++  tuna-mode                                         ::  xml node(s) kind
     ;~  pose
       (cold %tape hep)
       (cold %manx lus)
       (cold %marl tar)
       (cold %call cen)
     ==
-  ++  wide-top                                             ::  wide outer top
+  ++  wide-top                                          ::  wide outer top
     %+  knee  *marl  |.  ~+
     ;~  pose
       wide-quote
@@ -147,20 +141,20 @@
       (single ;~(plug tag-head wide-tail))
     ==
   ::
-  ++  wide-inner-top                                             ::  wide inner top
+  ++  wide-inner-top                                    ::  wide inner top
     %+  knee  *marl  |.  ~+
     ;~  pose
       wide-top
       (single ;~(plug tuna-mode wide:vast))
     ==
   ::
-  ++  a-mane                                             ::  mane as twig
+  ++  a-mane                                            ::  mane as twig
     %+  cook
       |=  {a/@tas b/(unit @tas)}
       ?~(b a [a u.b])
     ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
   ::
-  ++  script-or-style                                             ::  script or style
+  ++  script-or-style                                   ::  script or style
     %+  cook  |=(a/marx a)
     ;~  plug
       ;~(pose (jest %script) (jest %style))
@@ -177,7 +171,7 @@
     ?~  t.a  ~
     [' ' $(a t.a)]
   ::
-  ++  tag-head                                             ::  tag head
+  ++  tag-head                                          ::  tag head
     %+  cook
       |=  {a/mane b/mart c/mart}
       ^-  marx
@@ -190,7 +184,6 @@
         ^-  (list {term (list beer)})
         :: discard nulls
         (murn a same)
-      ::
       ;~  plug
         (punt ;~(plug (cold %id hax) (cook trip sym)))
         (cook en-class (star ;~(plug (cold %class dot) sym)))
@@ -201,13 +194,13 @@
       wide-attrs
     ==
   ::
-  ++  tall-attrs                                             ::  tall attributes
+  ++  tall-attrs                                        ::  tall attributes
     %-  star
     ;~  pfix  ;~(plug gap tis)
       ;~((glue gap) a-mane hopefully-quote)
     ==
   ::
-  ++  tall-elem                                             ::  tall preface
+  ++  tall-elem                                         ::  tall preface
     %+  cook
       |=  {a/{p/mane q/mart} b/mart c/marl}
       ^-  manx
@@ -220,23 +213,23 @@
     %+  cook  |=(a/twig ?:(?=($knit -.a) p.a [~ a]~))
     wide:vast
   ::
-  ++  wide-attrs                                             ::  wide attributes
+  ++  wide-attrs                                        ::  wide attributes
     %+  cook  |=(a/(unit mart) (fall a ~))
     %-  punt
     %+  ifix  [pel per]
     %+  more  (jest ', ')
     ;~((glue ace) a-mane hopefully-quote)
   ::
-  ++  wide-tail                                             ::  wide elements
+  ++  wide-tail                                         ::  wide elements
     %+  cook  |=(a/marl a)
     ;~(pose ;~(pfix col wrapped-elems) (cold ~ sem) (easy ~))
   ::
-  ++  wide-elems                                             ::  wide elements
+  ++  wide-elems                                        ::  wide elements
     %+  cook  |=(a/marl a)
     %+  cook  zing
     (star ;~(pfix ace wide-inner-top))
   ::
-  ++  script-style-tail                                             ::  unescaped tall tail
+  ++  script-style-tail                                 ::  unescaped tall tail
     %+  cook  |=(a/marl a)
     %+  ifix  [gap ;~(plug gap duz)]
     %+  most  gap
@@ -248,7 +241,7 @@
       ==
     ==
   ::
-  ++  tall-tail                                             ::  tall tail
+  ++  tall-tail                                         ::  tall tail
     ?>  in-tall-form
     %+  cook  |=(a/marl a)
     ;~  pose
@@ -258,20 +251,23 @@
       (cook zing (ifix [gap ;~(plug gap duz)] (most gap apex)))
     ==
   ::
-  ++  wide-quote                                             ::  wide quote
+  ++  wide-quote                                        ::  wide quote
     %+  cook  |=(a/marl a)
     ;~  pose
       ;~(less (jest '"""') (ifix [doq doq] (cook collapse-chars quote-innards)))
       (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook collapse-chars quote-innards(lin |))))
     ==
   ::
-  ++  bracketed-elem  (ifix [kel ker] ;~(plug tag-head wide-elems))          ::  bracketed element
-  ++  wide-paren-elems                                             ::  wide flow
+  ++  bracketed-elem                                    ::  bracketed element
+    %+  ifix  [kel ker]
+    ;~(plug tag-head wide-elems)
+  ::
+  ++  wide-paren-elems                                  ::  wide flow
     %+  cook  |=(a/marl a)
     %+  cook  zing
     (ifix [pel per] (more ace wide-inner-top))
   ::
-  ++  wrapped-elems                                             ::  wrapped tuna
+  ++  wrapped-elems                                     ::  wrapped tuna
     %+  cook  |=(a/marl a)
     ;~  pose
       wide-paren-elems
@@ -280,7 +276,7 @@
     ==
   ::
   ::++  wide-quote-innards  (cook collapse-chars(in-tall-form |) quote-innards)
-  ++  quote-innards                                             ::  wide+tall flow
+  ++  quote-innards                                     ::  wide+tall flow
     %+  cook  |=(a/(list $@(@ $^(manx tuna))) a)
     %-  star
     ;~  pose
@@ -290,7 +286,7 @@
       ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
     ==
   ::
-  ++  inline-embed
+  ++  inline-embed                                      ::
     %+  cook  |=(a/$^(manx tuna) a)
     ;~  pose
       ;~(pfix sem bracketed-elem(in-tall-form |))
@@ -298,7 +294,7 @@
       (stag %tape sump:vast)
     ==
   ::
-  ++  collapse-chars                                             ::  beet to tuna
+  ++  collapse-chars                                    ::  group consec chars
     |=  reb/(list $@(@ $^(manx tuna)))
     ^-  marl
     =|  {sim/(list @) tuz/marl}
@@ -335,15 +331,15 @@
     ++  trig                                            ::  line style
       $:  col/@ud                                       ::  start column
           sty/trig-style                                ::  style
-      ==
-    ++  trig-style
-      $?  $fini                                         ::   terminator
+      ==                                                ::
+    ++  trig-style                                      ::
+      $?  $fini                                         ::  terminator
           $done                                         ::  end of input
           $lint                                         ::  + line item
           $lite                                         ::  - line item
           $head                                         ::  # heading
-          ::$quot                                       :: > block-quote
-          ::$expr                                       :: ! interpolation
+          ::$quot                                       ::  > block-quote
+          ::$expr                                       ::  ! interpolation
           $text                                         ::  anything else
       ==                                                ::
     ++  graf                                            ::  input fragment
@@ -353,13 +349,14 @@
           {$code p/tape}                                ::  code literal
           {$text p/tape}                                ::  text symbol
           {$link p/(list graf) q/tape}                  ::  URL
-          {$expr p/=<($^(tuna manx) dynamic)}
+          {$expr p/=<($^(tuna manx) dynamic)}           ::  interpolated hoon
       ==
     --
 |%                                                      ::
 ++  test                                                ::  test text parsing
   |=  pax/path
   ^-  tape
+  ::
   ::  src: text file as (list cord)
   ::  txt: source as tape with newlines
   ::  vex: parsing result
@@ -367,14 +364,14 @@
   =/  src  .^(wain %cx pax)
   =*  txt  (zing (turn src |=(@t (weld (rip 3 +<) `tape`~[`@`10]))))
   =/  vex  (cram [1 1] txt)
-  ::  print result as error or xml text
   ::
+  ::  print result as error or xml text
   ?~  q.vex
     "syntax error: line {(scow %ud p.p.vex)}, column {(scow %ud q.p.vex)}"
   ?:  [freeze=|]  (poxo (freeze p.u.q.vex))
   (poxo ;;(manx q:(slap !>(..zuse) (steam p.u.q.vex))))
-::                                                      ::
-++  join
+::
+++  join                                                ::  glue tapes together
   |=  {a/char b/(list tape)}
   ?~  b  ""
   |-  ^-  tape
@@ -386,7 +383,8 @@
   |=  {naz/hair los/tape}
   ^-  (like marl:dynamic)
   $:line:(cram-main +<)
-++  cram-main
+::
+++  cram-main                                           ::  parsing loop logic
   =*  parse  cram-parsers
   |=  {naz/hair los/tape}
   ::
@@ -408,27 +406,27 @@
   =/  cur/item  [%down ~]
   =|  lub/(unit (pair hair (list tape)))
   |%
-  ::                                                    ::
+  ::
   ++  $                                                 ::  resolve
     ^-  (like flow)
+    ::
     ::  if error position is set, produce error
-    ::
     ?.  =(~ err)  [+.err ~]
-    ::  all data was consumed
     ::
+    ::  all data was consumed
     =-  [naz `[- [naz los]]]
     |-  ^-  flow
-    ::  fold all the way to top
     ::
+    ::  fold all the way to top
     ?~  hac  fine
     $(..^$ fold)
-  ::                                                    ::
+  ::
   ++  back                                              ::  column retreat
     |=  luc/@ud
     ^+  +>
     ?:  =(luc col)  +>
-    ::  nex: next backward step that terminates this context
     ::
+    ::  nex: next backward step that terminates this context
     =/  nex/@ud
       ?-  p.cur
         $down  2
@@ -442,15 +440,16 @@
         $bloc  6
       ==
     ?:  (gth nex (sub col luc))
-      ::  indenting pattern violation
       ::
+      ::  indenting pattern violation
+      ~&  %indent-pattern-violation
       ..^$(col luc, err `[p.naz luc])
     =.  ..^$  fold
     $(col (sub col nex))
-  ::                                                    ::
+  ::
   ++  fine                                              ::  item to flow
     ^-  flow
-    ?<  ?=($poem p.cur)  :: handled elsewhere?
+    ?<  ?=($poem p.cur)  ::REVIEW handled elsewhere?
     ?:  ?=(?($down $head $expr) p.cur)
       (flop q.cur)
     =-  [[- ~] (flop q.cur)]~
@@ -461,15 +460,15 @@
       $code  %pre
       $bloc  %blockquote
     ==
-  ::                                                    ::
+  ::
   ++  fold  ^+  .                                       ::  complete and pop
     ?~  hac  .
     %=  .
       hac  t.hac
       cur  [p.i.hac (concat-code (weld fine q.i.hac))]
     ==
-  ::                                                    ::
-  ++  concat-code
+  ::
+  ++  concat-code                                       ::  merge continuous pre
     |=  a/flow
     ?~  a  a
     ?.  ?=({$pre *} -.i.a)  a
@@ -482,204 +481,206 @@
   ++  snap                                              ::  capture raw line
     =|  nap/tape
     |-  ^+  [nap +>]
-    ::  no unterminated lines
     ::
-    ?~  los  [~ +>(err `naz)]
+    ::  no unterminated lines
+    ?~  los  ~&(%unterminated-line [~ +>(err `naz)])
     ?:  =(`@`10 i.los)
+      ::
       ::  consume newline
-      ::
       :_  +>(los t.los, naz [+(p.naz) 1])
-      ::  trim trailing spaces
       ::
+      ::  trim trailing spaces
       |-  ^-  tape
       ?:  ?=({$' ' *} nap)
         $(nap t.nap)
       (flop nap)
-    ::  save byte and repeat
     ::
+    ::  save byte and repeat
     $(los t.los, q.naz +(q.naz), nap [i.los nap])
-  ::                                                    ::
+  ::
   ++  skip  +:snap                                      ::  discard line
   ++  look                                              ::  inspect line
     ^-  (unit trig)
     (wonk (look:parse naz los))
-  ::                                                    ::                                                   ::
+  ::                                                   ::
   ++  made                                              ::  compose block
     ^+  .
+    ::
     ::  empty block, no action
-    ::
     ?~  lub  .
-    ::  if block is preformatted code
     ::
+    ::  if block is preformatted code
     ?:  ?=($code p.cur)
-      ::  add blank line between blocks
-      ::
       =-  fold(lub ~, q.cur (weld - q.cur))
       %+  turn  q.u.lub
       |=  tape  ^-  mars
-      ::  each line is text data with its newline
       ::
-    ::  if block is verse
+      ::  each line is text data with its newline
       ;/((weld (slag (add 4 (dec col)) +<) "\0a"))
     ::
+    ::  if block is verse
     ?:  ?=($poem p.cur)
-      ::  add break between stanzas
       ::
+      ::  add break between stanzas
       =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
       =-  fold(lub ~, q.cur (weld - q.cur))
       %+  turn  q.u.lub
       |=  tape  ^-  manx
-      ::  each line is a paragraph
       ::
+      ::  each line is a paragraph
       :-  [%p ~]
       :_  ~
       ;/((weld (slag (dec col) +<) "\0a"))
-    ::  yex: block recomposed, with newlines
     ::
+    ::  yex: block recomposed, with newlines
     =/  yex/tape  (join '\0a' (flop q.u.lub))
     ::
     ::  vex: parse of paragraph
-    ::
     =/  vex/(like marl:dynamic)
-      ::  either a one-line header or a paragraph
       ::
+      ::  either a one-line header or a paragraph
       %.  [p.u.lub yex]
       ?-  p.cur
         $expr  expr:parse
         $head  head:parse
         @      para:parse
       ==
+    ::
     ::  if error, propagate correctly
+    ?~  q.vex  ~&(%err-prop ..$(err `p.vex))
     ::
-    ?~  q.vex  ..$(err `p.vex)
     ::  finish tag if it's a header
-    ::
     =<  ?:(=(%head p.cur) fold ..$)
+    ::
     ::  save good result, clear buffer
-    ::
     ..$(lub ~, q.cur (weld p.u.q.vex q.cur))
-  ::                                                    ::
+  ::
   ++  line  ^+  .                                       ::  body line loop
+    ::
     ::  abort after first error
-    ::
     ?:  !=(~ err)  .
+    ::
     ::  pic: profile of this line
-    ::
     =/  pic  look
+    ::
     ::  if line is blank
-    ::
+    ~&  line+[pic -.cur (flop (turn hac head))]
     ?~  pic
-      ::  break section
       ::
+      ::  break section
       line:made:skip
+    ::
     ::  line is not blank
-    ::
     =>  .(pic u.pic)
-    ::  if end of input, complete
     ::
+    ::  if end of input, complete
     ?:  ?=($done sty.pic)
       ..$(q.naz col.pic)
+    ::
     ::  if end marker behind current column
-    ::
     ?:  &(?=($fini sty.pic) (lth col.pic col))
+      ::
       ::  retract and complete
-      ::
       (back(q.naz (add 2 col.pic)) col.pic)
+    ::
     ::  bal: inspection copy of lub, current section
-    ::
     =/  bal  lub
-    ::  if within section
     ::
+    ::  if within section
     ?^  bal
-      ::  detect bad block structure
       ::
+      ::  detect bad block structure
       ?.  ?-  p.cur
+            ::
             ::  only one line in a heading
-            ::
             $head  |
-            ::  literals need to end with a blank line
             ::
+            ::  literals need to end with a blank line
             ?($code $poem $expr)
               (gte col.pic col)
-            ::  text flows must continue aligned
             ::
+            ::  text flows must continue aligned
             ?($down $list $lime $lord $bloc)
               &(=(%text sty.pic) =(col.pic col))
           ==
+        ~&  bad-block-structure+[col pic cur]
         ..$(err `[p.naz col.pic])
-      ::  accept line and continue
+      ::?:  sth  sth-else  ::TODO
       ::
+      ::  accept line and continue
       =^  nap  ..$  snap
       line(lub bal(q.u [nap q.u.bal]))
-    ::  if column has retreated, adjust stack
     ::
+    ::  if column has retreated, adjust stack
     =.  ..$  ?.  (lth col.pic col)  ..$  (back col.pic)
+    ::
     ::  dif: columns advanced
     ::  erp: error position
     ::
     =/  dif  (sub col.pic col)
     =/  erp  [p.naz col.pic]
+    ::
     ::  nap: take first line
-    ::
     =^  nap  ..$  snap
-    ::  execute appropriate paragraph form
     ::
+    ::  execute appropriate paragraph form
     =<  line:abet:apex
     |%
-    ::                                                  ::
+    ::
     ++  abet                                            ::  accept line
       ..$(lub `[naz nap ~])
-    ::                                                  ::
+    ::
     ++  apex  ^+  .                                     ::  by column offset
-      ?+  dif  fail
+      ?+  dif  ~&  offset+dif  fail
         $0  apse                                        ::  unindented forms
         $2  (push %expr)                                ::  hoon expression
         $4  (push %code)                                ::  code literal
         $6  apse:(push %bloc)                           ::  blockquote line
         $8  (push %poem)                                ::  verse literal
       ==
-    ::                                                  ::
+    ::
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
-        $fini  !!
+        $fini  !!                                       ::  terminator
         $head  (push %head)                             ::  heading
         $lite  (lent |)                                 ::  unnumbered list
         $lint  (lent &)                                 ::  numbered list
-        $text  text
+        $text  text                                     ::  anything else
       ==
-    ::                                                  ::
+    ::
     ++  fail  .(err `erp)                               ::  set error position
     ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  push context
     ++  lent                                            ::  list entry
       |=  ord/?
       ^+  +>
+      ::
       ::  erase list marker
-      ::
       =.  nap  =+(+(col) (runt [- ' '] (slag - nap)))
+      ::
       ::  indent by 2
-      ::
       =.  col  (add 2 col)
+      ::
       ::  can't switch list types
+      ?:  =(?:(ord %list %lord) p.cur)  ~&  wrong-list-type+p.cur  fail
       ::
-      ?:  =(?:(ord %list %lord) p.cur)  fail
       ::  push list item
-      ::
       %.  %lime
       =<  push
-      ::  push list context, unless we're in list
       ::
+      ::  push list context, unless we're in list
       =+  ?:(ord %lord %list)
       ?:  =(- p.cur)  ..push  (push -)
     ::
     ++  text                                            ::  plain text
       ^+  .
-      ::  only in lists, fold
       ::
+      ::  only in lists, fold
       ?.  ?=(?($list $lord) p.cur)  .
       .($ fold)
     --
   --
-++  cram-parsers
+::
+++  cram-parsers                                        ::  individual parsers
   |%
   ++  look
     %+  cook  |=(a/(unit trig) a)
@@ -698,6 +699,7 @@
         (easy %text)
       ==
     ==
+  ::
   ++  cash                                              ::  escaped fence
     |*  tem/rule
     %-  echo
@@ -707,7 +709,7 @@
       ;~(plug bas tem)
       ;~(less tem prn)
     ==
-  ::                                                    ::
+  ::
   ++  cool                                              ::  reparse
     |*  $:  ::  fex: primary parser
             ::  sab: secondary parser
@@ -719,41 +721,37 @@
     ^+  *sab
     ::
     ::  vex: fenced span
-    ::
     =/  vex/(like tape)  (fex naz los)
     ?~  q.vex  vex
     ::
     ::  hav: reparse full fenced text
-    ::
     =/  hav  ((full sab) [naz p.u.q.vex])
     ::
     ::  reparsed error position is always at start
-    ::
     ?~  q.hav  [naz ~]
     ::
     ::  the complete span with the main product
-    ::
     :-  p.vex
     `[p.u.q.hav q.u.q.vex]
-  ::                                                    ::
+  ::
   ++  echo                                              ::  hoon literal
     |*  sab/rule
     |=  {naz/hair los/tape}
     ^-  (like tape)
+    ::
     ::  vex: result of parsing wide twig
-    ::
     =/  vex  (sab naz los)
-    ::  use result of expression parser
     ::
+    ::  use result of expression parser
     ?~  q.vex  vex
     =-  [p.vex `[- q.u.q.vex]]
-    ::  but replace payload with bytes consumed
     ::
+    ::  but replace payload with bytes consumed
     |-  ^-  tape
     ?:  =(q.q.u.q.vex los)  ~
     ?~  los  ~
     [i.los $(los +.los)]
-  ::                                                    ::
+  ::
   ++  word                                              ::  flow parser
     %+  knee  *graf  |.  ~+
     ;~  pose
@@ -822,19 +820,16 @@
     ::
       (stag %text (cook trip ;~(less ace prn)))
     ==
-  ::                                                    ::
+  ::
   ++  work  (star word)                                 ::  indefinite flow
-  ::                                                    ::
+  ::
   ++  down                                              ::  parse inline flow
     %+  knee  *flow  |.  ~+
     =-  (cook - work)
-    ::  collect raw flow into xml tags
     ::
+    ::  collect raw flow into xml tags
     |=  gaf/(list graf)
     ^-  flow
-    ::  nap: collected words
-    ::  max: collected tags
-    ::
     =<  main
     |%
     ++  main
@@ -860,8 +855,8 @@
         $bold  [[%b ~] ^$(gaf p.nex)]~
         $talc  [[%i ~] ^$(gaf p.nex)]~
         $code  [[%code ~] ;/(p.nex) ~]~
-        $quod  ::  smart quotes
-               ::
+        $quod  ::
+               ::  smart quotes
                %=    ^$
                    gaf
                  :-  [%text (tufa ~-~201c. ~)]
@@ -871,15 +866,15 @@
         $link  [[%a [%href q.nex] ~] ^$(gaf p.nex)]~
       ==
     --
-  ::                                                    ::
+  ::
   ++  para                                              ::  paragraph
     %+  cook
       |=(flow [[%p ~] +<]~)
     ;~(pfix gay down)  ::REVIEW does this mean comments work?
-  ::                                                    ::
+  ::
   ++  expr                                              ::  expression
     ;~(pfix gay apex:(sail &))
-  ::                                                    ::
+  ::
   ++  whit                                              ::  whitespace
     (cold ' ' (plus ;~(pose (just ' ') (just `@`10))))
   ::
@@ -896,8 +891,8 @@
     ::
       ;~(pfix whit down)
     ==
-  ::                                                    ::
-  ++  sanitize-to-id
+  ::
+  ++  sanitize-to-id                                    ::  # text into elem id
     |=  a/(list $^(tuna manx)):dynamic  ^-  tape
     =;  raw/tape
       %+  turn  raw
@@ -910,17 +905,17 @@
       ?:  &((gte +< 'A') (lte +< 'Z'))
         (add 32 +<)
       '-'
-    ::  collect all text in header flow
     ::
+    ::  collect all text in header flow
     |-  ^-  tape
     ?~  a  ~
     %+  weld
       ^-  tape
       ?-    i.a
-        {{$$ {$$ *} $~} $~}  ::  text node contents
+        {{$$ {$$ *} $~} $~}                             ::  text node contents
           (murn v.i.a.g.i.a |=(a/beer ?^(a ~ (some a))))
-        {^ *}  $(a c.i.a)    ::  concatenate children
-        {@ *}  ~             ::  ignore interpolation
+        {^ *}  $(a c.i.a)                               ::  concatenate children
+        {@ *}  ~                                        ::  ignore interpolation
       ==
     $(a t.a)
   --
