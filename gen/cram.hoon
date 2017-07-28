@@ -466,9 +466,19 @@
     ?~  hac  .
     %=  .
       hac  t.hac
-      cur  [p.i.hac (weld fine q.i.hac)]
+      cur  [p.i.hac (concat-code (weld fine q.i.hac))]
     ==
   ::                                                    ::
+  ++  concat-code
+    |=  a/flow
+    ?~  a  a
+    ?.  ?=({$pre *} -.i.a)  a
+    |-
+    ?~  t.a  a
+    ?.  ?=({$pre $~} -.i.t.a)  a
+    ::  add blank line between blocks
+    $(t.a t.t.a, c.i.a (welp c.i.t.a ;/("\0a") c.i.a))
+  ::
   ++  snap                                              ::  capture raw line
     =|  nap/tape
     |-  ^+  [nap +>]
@@ -504,22 +514,19 @@
     ?:  ?=($code p.cur)
       ::  add blank line between blocks
       ::
-      =.  q.cur
-        ?~  q.cur  q.cur
-        :_(q.cur ;/("\0a"))
-      =-  +(q.u.lub ~, q.cur (weld - q.cur))
+      =-  fold(lub ~, q.cur (weld - q.cur))
       %+  turn  q.u.lub
       |=  tape  ^-  mars
       ::  each line is text data with its newline
       ::
-      ;/((weld (slag (dec col) +<) "\0a"))
     ::  if block is verse
+      ;/((weld (slag (add 4 (dec col)) +<) "\0a"))
     ::
     ?:  ?=($poem p.cur)
       ::  add break between stanzas
       ::
       =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
-      =-  +(q.u.lub ~, q.cur (weld - q.cur))
+      =-  fold(lub ~, q.cur (weld - q.cur))
       %+  turn  q.u.lub
       |=  tape  ^-  manx
       ::  each line is a paragraph
@@ -612,7 +619,6 @@
     ::
     =/  dif  (sub col.pic col)
     =/  erp  [p.naz col.pic]
-    =.  col  col.pic
     ::  nap: take first line
     ::
     =^  nap  ..$  snap
