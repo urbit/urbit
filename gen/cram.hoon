@@ -338,8 +338,8 @@
           $lint                                         ::  + line item
           $lite                                         ::  - line item
           $head                                         ::  # heading
-          ::$quot                                       ::  > block-quote
-          ::$expr                                       ::  ! interpolation
+          $bloc                                         ::  > block-quote
+          $expr                                         ::  ! interpolation
           $text                                         ::  anything else
       ==                                                ::
     ++  graf                                            ::  input fragment
@@ -437,7 +437,7 @@
         $lord  0
         $poem  8
         $code  4
-        $bloc  6
+        $bloc  2
       ==
     ?:  (gth nex (sub col luc))
       ::
@@ -633,43 +633,47 @@
     ++  apex  ^+  .                                     ::  by column offset
       ?+  dif  ~&  offset+dif  fail
         $0  apse                                        ::  unindented forms
-        $2  (push %expr)                                ::  hoon expression
         $4  (push %code)                                ::  code literal
-        $6  apse:(push %bloc)                           ::  blockquote line
         $8  (push %poem)                                ::  verse literal
       ==
     ::
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
         $fini  !!                                       ::  terminator
-        $head  (push %head)                             ::  heading
-        $lite  (lent |)                                 ::  unnumbered list
-        $lint  (lent &)                                 ::  numbered list
+        $bloc  (entr %bloc)                             ::  blockquote line
+        $expr  (entr %expr)                             ::  hoon expression
+        $head  (entr %head)                             ::  heading
+        $lite  (lent %list)                             ::  unnumbered list
+        $lint  (lent %lord)                             ::  numbered list
         $text  text                                     ::  anything else
       ==
     ::
     ++  fail  .(err `erp)                               ::  set error position
     ++  push  |=(mite %_(+> hac [cur hac], cur [+< ~])) ::  push context
-    ++  lent                                            ::  list entry
-      |=  ord/?
+    ++  entr                                            ::  enter container
+      |=  typ/mite
       ^+  +>
       ::
-      ::  erase list marker
+      ::  erase marker
       =.  nap  =+(+(col) (runt [- ' '] (slag - nap)))
       ::
       ::  indent by 2
       =.  col  (add 2 col)
       ::
+      (push typ)
+    ::
+    ++  lent                                            ::  list entry
+      |=  ord/?($lord $list)
+      ^+  +>
       ::  can't switch list types
-      ?:  =(?:(ord %list %lord) p.cur)  ~&  wrong-list-type+p.cur  fail
+      ?:  =(?-(ord $list %lord, $lord %list) p.cur)
+        fail
       ::
       ::  push list item
-      %.  %lime
-      =<  push
+      =<  (entr %lime)
       ::
       ::  push list context, unless we're in list
-      =+  ?:(ord %lord %list)
-      ?:  =(- p.cur)  ..push  (push -)
+      ?:(=(ord p.cur) ..push (push ord))
     ::
     ++  text                                            ::  plain text
       ^+  .
@@ -688,15 +692,15 @@
       %+  here
         |=({a/pint b/?($~ trig-style)} ?~(b ~ `[q.p.a b]))
       ;~  pose
-        (full (easy %done))
-        (cold ~ (just `@`10))
-        (cold %fini bas)
-        (cold %head ;~(plug (star hax) ace))
-        (cold %lite ;~(plug hep ace))
-        (cold %lint ;~(plug lus ace))
-        ::(cold %quot ;~(plug gar ace))
-        ::(cold %expr ;~(plug zap ace))
-        (easy %text)
+        (full (easy %done))                             ::  end of input
+        (cold ~ (just `@`10))                           ::  blank line
+        (cold %fini bas)                                ::  terminator
+        (cold %head ;~(plug (star hax) ace))            ::  # heading
+        (cold %lite ;~(plug hep ace))                   ::  - line item
+        (cold %lint ;~(plug lus ace))                   ::  + line item
+        (cold %bloc ;~(plug gar ace))                   ::  > block-quote
+        (cold %expr ;~(plug zap ace))                   ::  ! interpolation
+        (easy %text)                                    ::  anything else
       ==
     ==
   ::
