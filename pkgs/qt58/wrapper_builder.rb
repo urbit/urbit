@@ -2,8 +2,16 @@ require 'pathname'
 require 'fileutils'
 include FileUtils
 
+Os = ENV.fetch('os')
 QtVersionString = ENV.fetch('version')
 QtVersionMajor = QtVersionString.split('.').first.to_i
+
+case Os
+when "windows"
+  prl_prefix = ''
+else
+  prl_prefix = 'lib'
+end
 
 def parse_prl_file(filename)
   attrs = { prl_filename: Pathname(filename) }
@@ -162,11 +170,14 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
 
   libs = [ OutDir + 'lib' + 'libQt5Core.a' ]
   prls = [
-    OutDir + 'lib' + 'Qt5Widgets.prl',
-    OutDir + 'plugins' + 'platforms' + 'qwindows.prl',
-    OutDir + 'lib' + 'Qt5Gui.prl',
-    OutDir + 'lib' + 'Qt5Core.prl',
+    OutDir + 'lib' + (prl_prefix + 'Qt5Widgets.prl'),
+    OutDir + 'lib' + (prl_prefix + 'Qt5Gui.prl'),
+    OutDir + 'lib' + (prl_prefix +'Qt5Core.prl'),
   ]
+  if Os == "windows"
+    prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
+  end
+
   prls.each do |prl|
     prl_libs = libs_from_prl(parse_prl_file(prl))
     libs.concat(prl_libs)

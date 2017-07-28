@@ -45,6 +45,13 @@ let
       # uxtheme.h test is broken, always returns false, and results in QtWidgets
       # apps looking bad on Windows.  https://stackoverflow.com/q/44784414/28128
       ./dont-test-uxtheme.patch
+
+      # Without this, the Linux build would use "gcc" and "g++" instead of our
+      # musl cross compiler.
+      # Also, without this, Qt is confused about the difference between the
+      # native GCC and cross GCC and tries to use GCC 6 options with the native
+      # GCC 5 from nixpkgs, resulting in a comilation error.
+      ./mkspecs.patch
     ];
 
     configure_flags =
@@ -58,7 +65,7 @@ let
       "-nomake examples " +
       "-no-icu " +
       ( if crossenv.os == "windows" then "-opengl desktop"
-        else "");
+        else "-opengl no -no-reduce-relocations");
   };
 
   # This wrapper aims to make Qt easier to use by generating CMake package files
@@ -68,6 +75,7 @@ let
   base = crossenv.make_derivation {
     name = "qtbase-${version}";
     inherit version;
+    os = crossenv.os;
     qtbase = base_raw;
     builder.ruby = ./wrapper_builder.rb;
   };
@@ -75,8 +83,10 @@ let
   examples = crossenv.make_derivation {
     name = "qtbase-examples-${version}";
     inherit version;
+    os = crossenv.os;
     src = base_src;
     qtbase = base;
+    cross_inputs = [ base ];
     builder = ./examples_builder.sh;
   };
 

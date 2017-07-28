@@ -24,7 +24,6 @@ $host-g++ \
   -o obj/plugins.o
 
 CFLAGS="
--mwindows
 -I.
 -I$qtbase/include/
 -I$qtbase/include/QtWidgets
@@ -32,53 +31,57 @@ CFLAGS="
 -I$qtbase/include/QtCore
 "
 
+if [ $os = "windows" ]; then
+  CFLAGS="-mwindows $CFLAGS"
+fi
+
 LDFLAGS="-L$qtbase/lib -L$qtbase/plugins/platforms -Wl,-gc-sections"
 
-# TODO: make this junk come from $host-pkg-config, so that it is cross-platform
-LIBS="
--lqwindows
--lQt5Widgets -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport
--lQt5EventDispatcherSupport -lQt5Core
--lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype
--lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm
--luxtheme -lopengl32
-"
+LIBS="$(pkg-config-cross --libs Qt5Widgets)"
+
+# TODO: make sure Windows still works, remove this old stuff:
+# -lqwindows
+# -lQt5Widgets -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport
+# -lQt5EventDispatcherSupport -lQt5Core
+# -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype
+# -lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm
+# -luxtheme -lopengl32
 
 echo "compiling rasterwindow"
 $qtbase/bin/moc ../examples/gui/rasterwindow/rasterwindow.h > moc/rasterwindow.cpp
-$host-g++ -mwindows $CFLAGS $LDFLAGS \
+$host-g++ $CFLAGS $LDFLAGS \
   ../examples/gui/rasterwindow/rasterwindow.cpp \
   ../examples/gui/rasterwindow/main.cpp \
   moc/rasterwindow.cpp \
   obj/plugins.o \
-  $LIBS -o bin/rasterwindow${exe_suffix}
+  $LIBS -o bin/rasterwindow$exe_suffix
 
 echo "compiling analogclock"
-$host-g++ -mwindows $CFLAGS $LDFLAGS \
+$host-g++ $CFLAGS $LDFLAGS \
   -I../examples/gui/rasterwindow/ \
   ../examples/gui/analogclock/main.cpp \
   ../examples/gui/rasterwindow/rasterwindow.cpp \
   moc/rasterwindow.cpp \
   obj/plugins.o \
-  $LIBS -o bin/analogclock${exe_suffix}
+  $LIBS -o bin/analogclock$exe_suffix
 
 echo "compiling openglwindow"
 $qtbase/bin/moc ../examples/gui/openglwindow/openglwindow.h > moc/openglwindow.cpp
-$host-g++ -mwindows $CFLAGS $LDFLAGS \
+$host-g++ $CFLAGS $LDFLAGS \
   ../examples/gui/openglwindow/main.cpp \
   ../examples/gui/openglwindow/openglwindow.cpp \
   moc/openglwindow.cpp \
   obj/plugins.o \
-  $LIBS -o bin/openglwindow${exe_suffix}
+  $LIBS -o bin/openglwindow$exe_suffix
 
 echo "compiling dynamiclayouts"
 $qtbase/bin/moc ../examples/widgets/layouts/dynamiclayouts/dialog.h > moc/dynamiclayouts.cpp
-$host-g++ -mwindows $CFLAGS $LDFLAGS \
+$host-g++ $CFLAGS $LDFLAGS \
   ../examples/widgets/layouts/dynamiclayouts/dialog.cpp \
   ../examples/widgets/layouts/dynamiclayouts/main.cpp \
   moc/dynamiclayouts.cpp \
   obj/plugins.o \
-  $LIBS -o bin/dynamiclayouts${exe_suffix}
+  $LIBS -o bin/dynamiclayouts$exe_suffix
 
 # TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
 
