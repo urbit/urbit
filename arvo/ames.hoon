@@ -17,7 +17,6 @@
           ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  {$init p/@p}                              ::
-              {$wart p/sock q/@tas r/path s/*}          ::
               {$west p/sack q/path r/*}                 ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result _<-
@@ -1282,7 +1281,7 @@
             |=  {cha/path num/@ud dut/(unit)}           ::  interpret message
             ^+  +>
             =+  rum=(fall (~(get by raz.bah) cha) *race)
-            ~&  [%rx kay cha num [dod.rum did.rum] ?=($~ dut)]
+            ::  ~&  [%rx kay cha num [dod.rum did.rum] ?=($~ dut)]
             =*  bad  (~(has in bad.fox) her)
             =.  kay  ?.((~(has in bad.fox) her) kay ~&(%blocked %dead))
             %=    +>.$
@@ -1622,6 +1621,7 @@
       ==
     ::
         $cake
+      ~?  ?=(^ r.bon)  [%cake-woot-bad hen]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==

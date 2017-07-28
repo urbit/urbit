@@ -2667,8 +2667,6 @@
               {$init p/@p}                              ::  report install
               {$mass p/mass}                            ::  memory usage
               {$send p/lane q/@}                        ::  transmit packet
-              {$waft p/sock q/*}                        ::  response message
-              {$wart p/sock q/@tas r/path s/*}          ::  reverse request
               {$woot p/ship q/coop}                     ::  reaction message
           ==                                            ::
 ++  kiss-ames                                           ::  in request ->$
