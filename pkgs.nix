@@ -58,8 +58,16 @@ rec {
     inherit crossenv gdb;
   };
 
+  xcb-proto = import ./pkgs/xcb-proto {
+    inherit crossenv;
+  };
+
+  libxcb = import ./pkgs/libxcb {
+    inherit crossenv xcb-proto;
+  };
+
   qt = import ./pkgs/qt58 {
-    inherit crossenv libudev;
+    inherit crossenv libudev libxcb;
   };
 
   pavr2 = import ./pkgs/pavr2 {

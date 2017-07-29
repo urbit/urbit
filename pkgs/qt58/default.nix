@@ -1,4 +1,4 @@
-{ crossenv, libudev }:
+{ crossenv, libudev, libxcb }:
 
 let
   version = "5.8.0";
@@ -65,18 +65,22 @@ let
       "-device-option CROSS_COMPILE=${crossenv.host}- " +
       "-release " +
       "-static " +
+      "-pkg-config " +
       "-nomake examples " +
       "-no-icu " +
-      "-pkg-config " +
       ( if crossenv.os == "windows" then "-opengl desktop"
         else if crossenv.os == "linux" then
-          "-qt-xcb -opengl no -no-reduce-relocations"
+          "-qpa xcb " +
+          # TODO: -xcb-xlib to guarantee faster rendering
+          "-qt-xcb " +
+          "-opengl no " +
+          "-no-reduce-relocations"
         else "");
 
      cross_inputs =
        if crossenv.os == "linux" then
          # not sure if this helps anything, but Qt does look for it
-         [ libudev ]
+         [ libudev libxcb ]
        else [];
   };
 
