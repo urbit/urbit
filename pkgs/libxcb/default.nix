@@ -1,7 +1,5 @@
 { crossenv, xcb-proto, xorg-macros }:
 
-if crossenv.os != "linux" then "" else
-
 crossenv.make_derivation rec {
   name = "libxcb-${version}";
   version = "1.12";

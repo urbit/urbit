@@ -1,7 +1,5 @@
 { crossenv }:
 
-if crossenv.os != "linux" then "" else
-
 crossenv.make_derivation rec {
   name = "xcb-proto-${version}";
   version = "1.12";
