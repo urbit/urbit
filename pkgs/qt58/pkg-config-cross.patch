@@ -1,0 +1,13 @@
+diff -ur qt-orig/configure.pri qt/configure.pri
+--- qt-orig/configure.pri	2017-07-27 18:16:48.205591390 -0700
++++ qt/configure.pri	2017-07-29 13:11:08.957085166 -0700
+@@ -139,7 +139,8 @@
+         }
+     }
+ 
+-    $$qtConfEvaluate("features.cross_compile") {
++    qtLog("Blindly trusting this pkg-config to be valid.");
++    false {
+         # cross compiling, check that pkg-config is set up sanely
+         sysroot = $$config.input.sysroot
+ 

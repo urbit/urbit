@@ -13,7 +13,12 @@ mkdir bin moc obj
 
 cat > obj/plugins.cpp <<EOF
 #include <QtPlugin>
+#ifdef _WIN32
 Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+#endif
+#ifdef __linux__
+Q_IMPORT_PLUGIN (QLinuxFbIntegrationPlugin);
+#endif
 EOF
 
 echo "compiling reference to plugins"
@@ -39,13 +44,24 @@ LDFLAGS="-L$qtbase/lib -L$qtbase/plugins/platforms -Wl,-gc-sections"
 
 LIBS="$(pkg-config-cross --libs Qt5Widgets)"
 
-# TODO: make sure Windows still works, remove this old stuff:
-# -lqwindows
-# -lQt5Widgets -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport
-# -lQt5EventDispatcherSupport -lQt5Core
-# -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype
-# -lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm
-# -luxtheme -lopengl32
+if [ $os = "linux" ]; then
+  LIBS+="-lqlinuxfb -lQt5FbSupport -lQt5Gui -lQt5InputSupport -lQt5DeviceDiscoverySupport -lQt5EventDispatcherSupport -lQt5FontDatabaseSupport -lQt5ServiceSupport -lQt5Core -lqtfreetype -lqtharfbuzz -lqtlibpng -lqtpcre"
+fi
+
+if [ $os = "windows" ]; then
+  LIBS+="-lqwindows -lQt5Widgets -lQt5Gui -lQt5ThemeSupport -lQt5FontDatabaseSupport -lQt5EventDispatcherSupport -lQt5Core -lqtpcre -lqtlibpng -lqtharfbuzz  -lqtfreetype -lole32 -luuid -lwinmm -lws2_32 -loleaut32 -limm32 -ldwmapi -lmpr -lwinmm -luxtheme -lopengl32"
+fi
+
+echo "compiling dynamiclayouts"
+$qtbase/bin/moc ../examples/widgets/layouts/dynamiclayouts/dialog.h > moc/dynamiclayouts.cpp
+$host-g++ $CFLAGS $LDFLAGS \
+  ../examples/widgets/layouts/dynamiclayouts/dialog.cpp \
+  ../examples/widgets/layouts/dynamiclayouts/main.cpp \
+  moc/dynamiclayouts.cpp \
+  obj/plugins.o \
+  $LIBS -o bin/dynamiclayouts$exe_suffix
+
+mkdir $out && cp -r bin $out && exit 0
 
 echo "compiling rasterwindow"
 $qtbase/bin/moc ../examples/gui/rasterwindow/rasterwindow.h > moc/rasterwindow.cpp
@@ -73,15 +89,6 @@ $host-g++ $CFLAGS $LDFLAGS \
   moc/openglwindow.cpp \
   obj/plugins.o \
   $LIBS -o bin/openglwindow$exe_suffix
-
-echo "compiling dynamiclayouts"
-$qtbase/bin/moc ../examples/widgets/layouts/dynamiclayouts/dialog.h > moc/dynamiclayouts.cpp
-$host-g++ $CFLAGS $LDFLAGS \
-  ../examples/widgets/layouts/dynamiclayouts/dialog.cpp \
-  ../examples/widgets/layouts/dynamiclayouts/main.cpp \
-  moc/dynamiclayouts.cpp \
-  obj/plugins.o \
-  $LIBS -o bin/dynamiclayouts$exe_suffix
 
 # TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
 

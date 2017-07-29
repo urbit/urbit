@@ -17,6 +17,7 @@ let
       os_code =
         if crossenv.os == "windows" then "win32"
         else if crossenv.os == "macos" then "macx"
+        else if crossenv.os == "linux" then "devices/linux-musl"
         else crossenv.os;
       compiler_code =
         if crossenv.compiler == "gcc" then "g++"
@@ -46,26 +47,31 @@ let
       # apps looking bad on Windows.  https://stackoverflow.com/q/44784414/28128
       ./dont-test-uxtheme.patch
 
-      # Without this, the Linux build would use "gcc" and "g++" instead of our
-      # musl cross compiler.
-      # Also, without this, Qt is confused about the difference between the
-      # native GCC and cross GCC and tries to use GCC 6 options with the native
-      # GCC 5 from nixpkgs, resulting in a comilation error.
+      # Add a devices/linux-musl-g++ platform to Qt, copied from
+      # devices/linux-arm-generic-g++.  When we upgrade to Qt 5.9, we should
+      # consider using device/linux-generic-g++ instead.
       ./mkspecs.patch
+
+      # When cross-compiling, Qt uses some heuristics about whether to trust the
+      # pkg-config executable supplied by the PKG_CONFIG environment variable.
+      # These heuristics are wrong for us, so disable them, making qt use
+      # pkg-config-cross.
+      ./pkg-config-cross.patch
     ];
 
     configure_flags =
       "-opensource -confirm-license " +
       "-xplatform ${platform} " +
       "-device-option CROSS_COMPILE=${crossenv.host}- " +
-      "-device-option PKG_CONFIG=pkg-config-cross " +
-      "-device-option QMAKE_PKG_CONFIG=pkg-config-cross " +
       "-release " +
       "-static " +
       "-nomake examples " +
       "-no-icu " +
+      "-pkg-config " +
       ( if crossenv.os == "windows" then "-opengl desktop"
-        else "-opengl no -no-reduce-relocations");
+        else if crossenv.os == "linux" then
+          "-qt-xcb -opengl no -no-reduce-relocations"
+        else "");
   };
 
   # This wrapper aims to make Qt easier to use by generating CMake package files

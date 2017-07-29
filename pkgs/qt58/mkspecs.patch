@@ -1,37 +1,12 @@
-diff -ur qt-orig/mkspecs/features/qt_common.prf qt/mkspecs/features/qt_common.prf
---- qt-orig/mkspecs/features/qt_common.prf	2017-07-27 18:16:49.538935394 -0700
-+++ qt/mkspecs/features/qt_common.prf	2017-07-27 19:00:04.315720160 -0700
-@@ -61,7 +61,6 @@
-     # GCC 5 introduced -Wdate-time
-     greaterThan(QT_GCC_MAJOR_VERSION, 4): QMAKE_CXXFLAGS_WARN_ON += -Wdate-time
-     # GCC 6 introduced these
--    greaterThan(QT_GCC_MAJOR_VERSION, 5): QMAKE_CXXFLAGS_WARN_ON += -Wshift-overflow=2 -Wduplicated-cond
- }
- 
- warnings_are_errors:warning_clean {
-diff -ur qt-orig/mkspecs/linux-g++/qmake.conf qt/mkspecs/linux-g++/qmake.conf
---- qt-orig/mkspecs/linux-g++/qmake.conf	2017-07-27 18:16:49.622269394 -0700
-+++ qt/mkspecs/linux-g++/qmake.conf	2017-07-27 18:53:29.540112831 -0700
-@@ -9,4 +9,20 @@
- include(../common/linux.conf)
- include(../common/gcc-base-unix.conf)
- include(../common/g++-unix.conf)
--load(qt_config)
-+
-+load(device_config)
-+
-+QMAKE_CC                = $${CROSS_COMPILE}gcc
-+QMAKE_CXX               = $${CROSS_COMPILE}g++
-+QMAKE_LINK_C            = $${QMAKE_CC}
-+QMAKE_LINK_C_SHLIB      = $${QMAKE_CC}
-+QMAKE_LINK              = $${QMAKE_CXX}
-+QMAKE_LINK_SHLIB        = $${QMAKE_CXX}
-+QMAKE_AR                = $${CROSS_COMPILE}ar cqs
-+QMAKE_OBJCOPY           = $${CROSS_COMPILE}objcopy
-+QMAKE_NM                = $${CROSS_COMPILE}nm -P
-+QMAKE_STRIP             = $${CROSS_COMPILE}strip
-+
-+#include(../devices/common/linux_device_pre.conf)
-+#include(../devices/common/linux_device_post.conf)
+diff -urN qt-orig/mkspecs/devices/linux-musl-g++/qmake.conf qt/mkspecs/devices/linux-musl-g++/qmake.conf
+--- qt-orig/mkspecs/devices/linux-musl-g++/qmake.conf	1969-12-31 16:00:00.000000000 -0800
++++ qt/mkspecs/devices/linux-musl-g++/qmake.conf	2017-07-28 07:21:19.317203748 -0700
+@@ -0,0 +1,3 @@
++include(../common/linux_device_pre.conf)
++include(../common/linux_device_post.conf)
 +load(qt_config)
-\ No newline at end of file
+diff -urN qt-orig/mkspecs/devices/linux-musl-g++/qplatformdefs.h qt/mkspecs/devices/linux-musl-g++/qplatformdefs.h
+--- qt-orig/mkspecs/devices/linux-musl-g++/qplatformdefs.h	1969-12-31 16:00:00.000000000 -0800
++++ qt/mkspecs/devices/linux-musl-g++/qplatformdefs.h	2017-07-27 19:25:29.651253674 -0700
+@@ -0,0 +1 @@
++#include "../../linux-g++/qplatformdefs.h"
