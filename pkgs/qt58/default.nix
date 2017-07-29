@@ -1,4 +1,4 @@
-{ crossenv }:
+{ crossenv, libudev }:
 
 let
   version = "5.8.0";
@@ -72,6 +72,12 @@ let
         else if crossenv.os == "linux" then
           "-qt-xcb -opengl no -no-reduce-relocations"
         else "");
+
+     cross_inputs =
+       if crossenv.os == "linux" then
+         # not sure if this helps anything, but Qt does look for it
+         [ libudev ]
+       else [];
   };
 
   # This wrapper aims to make Qt easier to use by generating CMake package files

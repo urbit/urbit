@@ -59,7 +59,7 @@ rec {
   };
 
   qt = import ./pkgs/qt58 {
-    inherit crossenv;
+    inherit crossenv libudev;
   };
 
   pavr2 = import ./pkgs/pavr2 {
