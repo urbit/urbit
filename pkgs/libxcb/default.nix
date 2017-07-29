@@ -18,7 +18,7 @@ crossenv.make_derivation rec {
     "--enable-xinput " +
     "--enable-xkb";
 
-  build_inputs = [ xcb-proto xorg-macros ];
+  cross_inputs = [ xcb-proto xorg-macros ];
 
   native_inputs = [ crossenv.nixpkgs.python2 ];
 }

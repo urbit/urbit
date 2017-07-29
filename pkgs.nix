@@ -67,7 +67,7 @@ rec {
   };
 
   libxcb = import ./pkgs/libxcb {
-    inherit crossenv xcb-proto;
+    inherit crossenv xcb-proto xorg-macros;
   };
 
   qt = import ./pkgs/qt58 {
