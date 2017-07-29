@@ -1,4 +1,4 @@
-{ crossenv }:
+{ crossenv, xcb-proto, xorg-macros }:
 
 if crossenv.os != "linux" then "" else
 
@@ -7,7 +7,7 @@ crossenv.make_derivation rec {
   version = "1.12";
 
   src = crossenv.nixpkgs.fetchurl {
-    url = "http://xcb.freedesktop.org/dist/libxcb-${version}.tar.bz2";
+    url = "https://xcb.freedesktop.org/dist/libxcb-${version}.tar.bz2";
     sha256 = "0nvv0la91cf8p5qqlb3r5xnmg1jn2wphn4fb5jfbr6byqsvv3psa";
   };
 
@@ -20,7 +20,7 @@ crossenv.make_derivation rec {
     "--enable-xinput " +
     "--enable-xkb";
 
-  build_inputs = [ xcb-proto xorg-macros ]
+  build_inputs = [ xcb-proto xorg-macros ];
 
   native_inputs = [ crossenv.nixpkgs.python2 ];
 }

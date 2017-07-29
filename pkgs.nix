@@ -62,6 +62,10 @@ rec {
     inherit crossenv;
   };
 
+  xorg-macros = import ./pkgs/xorg-macros {
+    inherit crossenv;
+  };
+
   libxcb = import ./pkgs/libxcb {
     inherit crossenv xcb-proto;
   };

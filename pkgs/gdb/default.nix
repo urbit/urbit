@@ -11,7 +11,7 @@ crossenv.make_derivation rec {
   version = "7.12.1";
 
   src = crossenv.nixpkgs.fetchurl {
-    url = "http://ftp.gnu.org/gnu/gdb/gdb-${version}.tar.xz";
+    url = "https://ftp.gnu.org/gnu/gdb/gdb-${version}.tar.xz";
     sha256 = "11ii260h1sd7v0bs3cz6d5l8gqxxgldry0md60ncjgixjw5nh1s6";
   };
 
