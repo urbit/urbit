@@ -88,22 +88,11 @@ let
   };
 
   examples = crossenv.make_derivation rec {
-    name = "xcb-examples-${version}";
-    version = "0.1";
-
-    src = crossenv.nixpkgs.fetchurl {
-      url = "https://xcb.freedesktop.org/dist/xcb-demo-${version}.tar.bz2";
-      sha256 = "191kswbrpj2rnky7j9bbp02gzz5kqk36yaas38qh1p2qjnsknx90";
-    };
+    name = "xcb-examples";
 
     builder = ./examples_builder.sh;
 
-    configure_flags =
-      "--host=${crossenv.host} " +
-      "--enable-static " +
-      "--disable-shared";
-
-    cross_inputs = [ lib util util-image util-wm ];
+    cross_inputs = [ lib ];
 
     example1 = ./example1.c;
   };
