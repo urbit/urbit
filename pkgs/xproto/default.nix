@@ -1,7 +1,7 @@
 { crossenv, xorg-macros }:
 
 crossenv.make_derivation rec {
-  name = "libxau-${version}";
+  name = "xproto-${version}";
   version = "7.0.31";
 
   src = crossenv.nixpkgs.fetchurl {
