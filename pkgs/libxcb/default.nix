@@ -1,4 +1,4 @@
-{ crossenv, xcb-proto, xorg-macros }:
+{ crossenv, xcb-proto, xorg-macros, libxau }:
 
 crossenv.make_derivation rec {
   name = "libxcb-${version}";
@@ -20,7 +20,10 @@ crossenv.make_derivation rec {
     "--enable-xinput " +
     "--enable-xkb";
 
-  cross_inputs = [ xcb-proto xorg-macros ];
+  cross_inputs = [ xcb-proto libxau ];
+
+  # Not needed since we won't run autoreconf:
+  # ACLOCAL_PATH = "${xorg-macros}/share/aclocal";
 
   native_inputs = [ crossenv.nixpkgs.python2 ];
 }

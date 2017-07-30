@@ -9,8 +9,8 @@ let
   ];
 
   default_native_inputs = [
-    nixpkgs.autoconf
-    nixpkgs.automake
+    #nixpkgs.autoconf
+    #nixpkgs.automake
     nixpkgs.bashInteractive
     nixpkgs.binutils
     nixpkgs.bzip2
@@ -25,6 +25,7 @@ let
     nixpkgs.gnused
     nixpkgs.gnutar
     nixpkgs.gzip
+    #nixpkgs.libtool
     nixpkgs.ninja
     nixpkgs.patch
     nixpkgs.which
