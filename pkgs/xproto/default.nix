@@ -17,4 +17,7 @@ crossenv.make_derivation rec {
     "--disable-shared";
 
   cross_inputs = [ xorg-macros ];
+
+  # Need the latest version of config.sub so we can support musl.
+  gnu_config = crossenv.native.gnu_config;
 }

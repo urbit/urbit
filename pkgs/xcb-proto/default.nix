@@ -1,6 +1,6 @@
 { crossenv }:
 
-crossenv.make_derivation rec {
+crossenv.native.make_derivation rec {
   name = "xcb-proto-${version}";
   version = "1.12";
 

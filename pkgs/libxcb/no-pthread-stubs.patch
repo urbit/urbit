@@ -10,15 +10,3 @@ diff -ur libxcb-1.12-orig/configure libxcb-1.12/configure
  
  pkg_failed=no
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for NEEDED" >&5
-diff -ur libxcb-1.12-orig/configure.ac libxcb-1.12/configure.ac
---- libxcb-1.12-orig/configure.ac	2017-07-29 22:28:37.986987240 -0700
-+++ libxcb-1.12/configure.ac	2017-07-29 22:28:52.597124282 -0700
-@@ -51,7 +51,7 @@
- 
- # Checks for pkg-config packages
- PKG_CHECK_MODULES(XCBPROTO, xcb-proto >= 1.12)
--NEEDED="pthread-stubs xau >= 0.99.2"
-+NEEDED="xau >= 0.99.2"
- PKG_CHECK_MODULES(NEEDED, $NEEDED)
- 
- have_xdmcp="no"
