@@ -1,8 +1,6 @@
 { crossenv }:
 
-if crossenv.os != "linux" then "" else
-
-crossenv.make_derivation rec {
+crossenv.native.make_derivation rec {
   name = "xorg-macros-${version}";
   version = "1.19.1";
 

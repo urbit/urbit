@@ -4,8 +4,8 @@ let
   cross_build_tools = if crossenv == null then [] else [
     crossenv.gcc
     crossenv.binutils
-    crossenv.pkg-config
-    crossenv.wrappers
+    crossenv.native.pkgconf
+    crossenv.native.wrappers
   ];
 
   default_native_inputs = [

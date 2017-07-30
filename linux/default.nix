@@ -1,5 +1,7 @@
-{ nixpkgs, arch }:
+{ native, arch }:
 let
+  nixpkgs = native.nixpkgs;
+
   host = "${arch}-linux-musl";
 
   os = "linux";
@@ -25,10 +27,6 @@ let
     inherit nixpkgs host binutils headers;
   };
 
-  pkg-config = import ../pkgconf { inherit nixpkgs; };
-
-  wrappers = import ../wrappers { inherit nixpkgs; };
-
   cmake_toolchain = import ../cmake_toolchain {
     cmake_system_name = "Linux";
     inherit nixpkgs host;
@@ -44,16 +42,17 @@ let
     inherit gcc binutils;
 
     # Build tools and variables to support them.
-    inherit pkg-config wrappers cmake_toolchain gyp_os;
+    inherit cmake_toolchain gyp_os;
 
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
 
+    # Some native build tools made by nixcrpkgs.
+    inherit native;
+
     inherit headers;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
-
-    make_native_derivation = import ../make_derivation.nix nixpkgs null;
   };
 in
   crossenv

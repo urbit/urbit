@@ -27,7 +27,7 @@ let
     cross_inputs = [ lib ];
   };
 
-  license_fragment = crossenv.make_native_derivation {
+  license_fragment = crossenv.native.make_derivation {
     name = "libusbp-${version}-license-fragment";
     inherit src;
     builder = ./license_builder.sh;

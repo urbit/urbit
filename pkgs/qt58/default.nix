@@ -106,7 +106,7 @@ let
     builder = ./examples_builder.sh;
   };
 
-  license_fragment = crossenv.make_native_derivation {
+  license_fragment = crossenv.native.make_derivation {
     name = "qtbase-${version}-license-fragment";
     inherit version;
     src = base_src;

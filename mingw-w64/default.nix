@@ -1,6 +1,8 @@
-{ nixpkgs, arch }:
+{ native, arch }:
 
 let
+  nixpkgs = native.nixpkgs;
+
   host = "${arch}-w64-mingw32";
 
   binutils = import ./binutils { inherit nixpkgs host; };
@@ -63,10 +65,6 @@ let
     inherit nixpkgs host;
   };
 
-  pkg-config = import ../pkgconf { inherit nixpkgs; };
-
-  wrappers = import ../wrappers { inherit nixpkgs; };
-
   os = "windows";
 
   compiler = "gcc";
@@ -83,10 +81,13 @@ let
     inherit gcc binutils mingw-w64_full;
 
     # Build tools and variables to support them.
-    inherit pkg-config wrappers cmake_toolchain gyp_os;
+    inherit cmake_toolchain gyp_os;
 
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
+
+    # Some native build tools made by nixcrpkgs.
+    inherit native;
 
     # License information that should be shipped with any software compiled by
     # this environment.
@@ -96,8 +97,6 @@ let
     inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
-
-    make_native_derivation = import ../make_derivation.nix nixpkgs null;
   };
 in
   crossenv

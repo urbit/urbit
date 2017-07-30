@@ -23,6 +23,7 @@ rec {
   pdcurses = import ./pkgs/pdcurses {
     inherit crossenv;
   };
+  pdcurses_examples = pdcurses.examples;
 
   readline = import ./pkgs/readline {
     inherit crossenv;
@@ -49,6 +50,8 @@ rec {
   libusbp = import ./pkgs/libusbp {
     inherit crossenv libudev;
   };
+  libusbp_examples = libusbp.examples;
+  libusbp_license_fragment = libusbp.license_fragment;
 
   p-load = import ./pkgs/p-load {
     inherit crossenv libusbp;
@@ -81,6 +84,8 @@ rec {
   qt = import ./pkgs/qt58 {
     inherit crossenv libudev libxcb;
   };
+  qt_examples = qt.examples;
+  qt_license_fragment = qt.license_fragment;
 
   pavr2 = import ./pkgs/pavr2 {
     inherit crossenv libusbp;

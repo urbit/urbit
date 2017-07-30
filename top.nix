@@ -4,23 +4,14 @@ rec {
   inherit nixpkgs;
 
   # Some native build tools.
-  native = {
-    recurseForDerivations = true;
-    make_derivation = import ./make_derivation.nix nixpkgs null;
-    pkgconf = import ./pkgconf { inherit nixpkgs; };
-    gnu_config = nixpkgs.fetchgit {
-      url = "https://git.savannah.gnu.org/git/config.git";
-      rev = "81497f5aaf50a12a9fe0cba30ef18bda46b62959";
-      sha256 = "1fq0nki2118zwbc8rdkqx5i04lbfw7gqbsyf5bscg5im6sfphq1d";
-    };
-  };
+  native = import ./native { inherit nixpkgs; };
 
   # Cross-compiling environments for each target system.
   crossenvs = {
-    i686-w64-mingw32 = import ./mingw-w64 { inherit nixpkgs; arch = "i686"; };
-    x86_64-w64-mingw32 = import ./mingw-w64 { inherit nixpkgs; arch = "x86_64"; };
-    i686-linux-musl = import ./linux { inherit nixpkgs; arch = "i686"; };
-    x86_64-linux-musl = import ./linux { inherit nixpkgs; arch = "x86_64"; };
+    i686-w64-mingw32 = import ./mingw-w64 { inherit native; arch = "i686"; };
+    x86_64-w64-mingw32 = import ./mingw-w64 { inherit native; arch = "x86_64"; };
+    i686-linux-musl = import ./linux { inherit native; arch = "i686"; };
+    x86_64-linux-musl = import ./linux { inherit native; arch = "x86_64"; };
     #armv6l-linux-musl = import ./linux {
     #  inherit nixpkgs;
     #  arch = "armv6";

@@ -1,6 +1,8 @@
 { crossenv, gdb, debug ? false }:
-let
 
+if crossenv.os != "windows" then "" else
+
+let
   angle = import ./lib.nix {
     inherit crossenv debug;
   };
