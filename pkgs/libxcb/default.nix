@@ -66,6 +66,27 @@ let
     cross_inputs = [ lib util ];
   };
 
+  util-wm = crossenv.make_derivation rec {
+    name = "xcb-util-wm-${version}";
+    version = "0.4.1";
+
+    src = crossenv.nixpkgs.fetchurl {
+      url = "https://xcb.freedesktop.org/dist/xcb-util-wm-${version}.tar.bz2";
+      sha256 = "0gra7hfyxajic4mjd63cpqvd20si53j1q3rbdlkqkahfciwq3gr8";
+    };
+
+    builder = ./util_wm_builder.sh;
+
+    configure_flags =
+      "--host=${crossenv.host} " +
+      "--enable-static " +
+      "--disable-shared";
+
+    cross_inputs = [ lib ];
+
+    native_inputs = [ crossenv.nixpkgs.m4 ];
+  };
+
   examples = crossenv.make_derivation rec {
     name = "xcb-examples-${version}";
     version = "0.1";
@@ -82,7 +103,7 @@ let
       "--enable-static " +
       "--disable-shared";
 
-    cross_inputs = [ lib util util-image ];
+    cross_inputs = [ lib util util-image util-wm ];
   };
 in
-  lib // { inherit util examples; }
+  lib // { inherit util util-image util-wm examples; }
