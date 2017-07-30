@@ -80,6 +80,7 @@ rec {
   libxcb = import ./pkgs/libxcb {
     inherit crossenv xcb-proto libxau xproto;
   };
+  libxcb_examples = libxcb.examples;
 
   qt = import ./pkgs/qt58 {
     inherit crossenv libudev libxcb;
