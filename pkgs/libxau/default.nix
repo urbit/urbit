@@ -1,5 +1,9 @@
 { crossenv, xorg-macros, xproto }:
 
+# TODO: what if we use a symbolic link to xproto.pc to ensure that if pkg-config
+# finds xau it always finds xproto too?  That would be a way to propagate build
+# inputs.
+
 crossenv.make_derivation rec {
   name = "libxau-${version}";
   version = "1.0.8";

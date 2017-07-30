@@ -16,8 +16,6 @@ cd build
 PKG_CONFIG=pkg-config-cross \
 ../qt/configure -prefix $out $configure_flags
 
-exit 33
-
 make
 
 make install
