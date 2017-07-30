@@ -21,7 +21,7 @@ let
       "--enable-xinput " +
       "--enable-xkb";
 
-    cross_inputs = [ xcb-proto libxau xproto ];
+    cross_inputs = [ xcb-proto libxau ];
 
     native_inputs = [ crossenv.nixpkgs.python2 ];
   };
@@ -35,7 +35,7 @@ let
     };
     builder = ./util_builder.sh;
     configure_flags = "--host=${crossenv.host}";
-    cross_inputs = [ lib libxau xproto ];
+    cross_inputs = [ lib libxau ];
   };
 
   util-image = crossenv.make_derivation rec {
@@ -47,7 +47,7 @@ let
     };
     builder = ./util_image_builder.sh;
     configure_flags = "--host=${crossenv.host}";
-    cross_inputs = [ lib libxau xproto util ];
+    cross_inputs = [ lib libxau util ];
   };
 
   examples = crossenv.make_derivation rec {

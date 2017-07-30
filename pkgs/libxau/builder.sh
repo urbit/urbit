@@ -12,3 +12,5 @@ PKG_CONFIG=pkg-config-cross \
 make
 
 make install
+
+ln -s $xproto/lib/pkgconfig/xproto.pc $out/lib/pkgconfig
