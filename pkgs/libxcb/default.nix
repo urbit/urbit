@@ -23,31 +23,47 @@ let
 
     cross_inputs = [ xcb-proto libxau ];
 
+    inherit libxau;
+
     native_inputs = [ crossenv.nixpkgs.python2 ];
   };
 
   util = crossenv.make_derivation rec {
     name = "xcb-util-${version}";
     version = "0.4.0";
+
     src = crossenv.nixpkgs.fetchurl {
       url = "https://xcb.freedesktop.org/dist/xcb-util-${version}.tar.bz2";
       sha256 = "1sahmrgbpyki4bb72hxym0zvxwnycmswsxiisgqlln9vrdlr9r26";
     };
+
     builder = ./util_builder.sh;
-    configure_flags = "--host=${crossenv.host}";
-    cross_inputs = [ lib libxau ];
+
+    configure_flags =
+      "--host=${crossenv.host} " +
+      "--enable-static " +
+      "--disable-shared";
+
+    cross_inputs = [ lib ];
   };
 
   util-image = crossenv.make_derivation rec {
     name = "xcb-util-image-${version}";
     version = "0.4.0";
+
     src = crossenv.nixpkgs.fetchurl {
       url = "https://xcb.freedesktop.org/dist/xcb-util-image-0.4.0.tar.bz2";
       sha256 = "1z1gxacg7q4cw6jrd26gvi5y04npsyavblcdad1xccc8swvnmf9d";
     };
+
     builder = ./util_image_builder.sh;
-    configure_flags = "--host=${crossenv.host}";
-    cross_inputs = [ lib libxau util ];
+
+    configure_flags =
+      "--host=${crossenv.host} " +
+      "--enable-static " +
+      "--disable-shared";
+
+    cross_inputs = [ lib util ];
   };
 
   examples = crossenv.make_derivation rec {
@@ -61,7 +77,10 @@ let
 
     builder = ./examples_builder.sh;
 
-    configure_flags = "--host=${crossenv.host}";
+    configure_flags =
+      "--host=${crossenv.host} " +
+      "--enable-static " +
+      "--disable-shared";
 
     cross_inputs = [ lib util util-image ];
   };

@@ -19,3 +19,5 @@ PKG_CONFIG=pkg-config-cross \
 make
 
 make install
+
+ln -sv $libxau/lib/pkgconfig/*.pc $out/lib/pkgconfig/
