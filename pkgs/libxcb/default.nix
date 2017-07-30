@@ -9,6 +9,8 @@ crossenv.make_derivation rec {
     sha256 = "0nvv0la91cf8p5qqlb3r5xnmg1jn2wphn4fb5jfbr6byqsvv3psa";
   };
 
+  patches = [ ./no-pthread-stubs.patch ];
+
   builder = ./builder.sh;
 
   configure_flags =

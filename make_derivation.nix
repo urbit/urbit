@@ -9,23 +9,25 @@ let
   ];
 
   default_native_inputs = [
-    nixpkgs.cmake
-    nixpkgs.ninja
-    nixpkgs.gcc
+    nixpkgs.autoconf
+    nixpkgs.automake
+    nixpkgs.bashInteractive
     nixpkgs.binutils
+    nixpkgs.bzip2
+    nixpkgs.cmake
     nixpkgs.coreutils
-    nixpkgs.findutils
     nixpkgs.diffutils
-    nixpkgs.gnused
-    nixpkgs.gnugrep
+    nixpkgs.findutils
+    nixpkgs.gcc
     nixpkgs.gawk
+    nixpkgs.gnumake
+    nixpkgs.gnugrep
+    nixpkgs.gnused
     nixpkgs.gnutar
     nixpkgs.gzip
-    nixpkgs.bzip2
-    nixpkgs.gnumake
-    nixpkgs.bashInteractive
-    nixpkgs.which
+    nixpkgs.ninja
     nixpkgs.patch
+    nixpkgs.which
     nixpkgs.xz
   ];
 
