@@ -104,6 +104,8 @@ let
       "--disable-shared";
 
     cross_inputs = [ lib util util-image util-wm ];
+
+    example1 = ./example1.c;
   };
 in
   lib // { inherit util util-image util-wm examples; }
