@@ -86,8 +86,12 @@ rec {
     inherit crossenv;
   };
 
+  xextproto = import ./pkgs/xextproto {
+    inherit crossenv;
+  };
+
   libx11 = import ./pkgs/libx11 {
-    inherit crossenv xorg-macros xproto libxcb xtrans;
+    inherit crossenv xorg-macros xproto libxcb xtrans xextproto;
   };
 
   qt = import ./pkgs/qt58 {
