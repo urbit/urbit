@@ -1,7 +1,7 @@
 source $setup
 
 tar -xf $src
-mv xcb-util-wm-* util
+mv xcb-* util
 
 mkdir build
 cd build

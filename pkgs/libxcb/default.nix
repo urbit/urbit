@@ -52,7 +52,7 @@ let
     version = "0.4.0";
 
     src = crossenv.nixpkgs.fetchurl {
-      url = "https://xcb.freedesktop.org/dist/xcb-util-image-0.4.0.tar.bz2";
+      url = "https://xcb.freedesktop.org/dist/xcb-util-image-${version}.tar.bz2";
       sha256 = "1z1gxacg7q4cw6jrd26gvi5y04npsyavblcdad1xccc8swvnmf9d";
     };
 
@@ -64,6 +64,25 @@ let
       "--disable-shared";
 
     cross_inputs = [ lib util ];
+  };
+
+  util-keysyms = crossenv.make_derivation rec {
+    name = "xcb-util-keysyms";
+    version = "0.4.0";
+
+    src = crossenv.nixpkgs.fetchurl {
+      url = "https://xcb.freedesktop.org/dist/xcb-util-keysyms-${version}.tar.bz2";
+      sha256 = "1nbd45pzc1wm6v5drr5338j4nicbgxa5hcakvsvm5pnyy47lky0f";
+    };
+
+    builder = ./util_keysyms_builder.sh;
+
+    configure_flags =
+      "--host=${crossenv.host} " +
+      "--enable-static " +
+      "--disable-shared";
+
+    cross_inputs = [ lib ];
   };
 
   util-wm = crossenv.make_derivation rec {
@@ -97,4 +116,4 @@ let
     example1 = ./example1.c;
   };
 in
-  lib // { inherit util util-image util-wm examples; }
+  lib // { inherit util util-image util-keysyms util-wm examples; }

@@ -72,15 +72,19 @@ let
         else if crossenv.os == "linux" then
           "-qpa xcb " +
           # TODO: -xcb-xlib to guarantee faster rendering
-          "-qt-xcb " +
+          "-system-xcb " +
           "-opengl no " +
           "-no-reduce-relocations"
         else "");
 
      cross_inputs =
-       if crossenv.os == "linux" then
-         # not sure if this helps anything, but Qt does look for it
-         [ libudev libxcb ]
+       if crossenv.os == "linux" then [
+           libudev  # not sure if this helps, but Qt does look for it
+           libxcb
+           libxcb.util-image
+           libxcb.util-wm
+           libxcb.util-keysyms
+         ]
        else [];
   };
 
