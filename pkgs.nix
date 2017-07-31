@@ -82,8 +82,12 @@ rec {
   };
   libxcb_examples = libxcb.examples;
 
+  xtrans = import ./pkgs/xtrans {
+    inherit crossenv;
+  };
+
   libx11 = import ./pkgs/libx11 {
-    inherit crossenv xorg-macros xproto libxcb;
+    inherit crossenv xorg-macros xproto libxcb xtrans;
   };
 
   qt = import ./pkgs/qt58 {
