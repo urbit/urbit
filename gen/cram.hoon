@@ -757,12 +757,9 @@
     [i.los $(los +.los)]
   ::
   ++  word                                              ::  flow parser
-    %+  knee  *graf  |.  ~+
+    %+  knee  *(list graf)  |.  ~+
+    %+  cook  |=(a/?(graf (list graf)) ?+(a a {@ *} [a]~))
     ;~  pose
-    ::
-    ::  whitespace
-    ::
-      (stag %text (cold " " whit))
     ::
     ::  ordinary word
     ::
@@ -788,10 +785,6 @@
     ::
       (stag %code (ifix [tec tec] (cash tec)))
     ::
-    ::  #twig
-    ::
-      (stag %code ;~(pfix hax (echo wide:vast)))
-    ::
     ::  ++arm
     ::
       (stag %code ;~(plug lus lus low (star ;~(pose nud low hep))))
@@ -804,17 +797,35 @@
         (ifix [pel per] (cash per))
       ==
     ::
+    ::  #twig
+    ::
+      ;~  plug
+        (stag %text (cold " " whit))
+        (stag %code ;~(pfix hax (echo wide:vast)))
+        (easy ~)
+      ==
+    ::
     ::  direct hoon constant
     ::
-      %+  stag  %code
-      %-  echo
-      ;~  pose
-        bisk:so
-        tash:so
-        ;~(pfix dot perd:so)
-        ;~(pfix sig ;~(pose twid:so (easy [%$ %n 0])))
-        ;~(pfix cen ;~(pose sym buc pam bar qut nuck:so))
+      ;~  plug
+        (stag %text (cold " " whit))
+      ::
+        %+  stag  %code
+        %-  echo
+        ;~  pose
+          bisk:so
+          tash:so
+          ;~(pfix dot perd:so)
+          ;~(pfix sig ;~(pose twid:so (easy [%$ %n 0])))
+          ;~(pfix cen ;~(pose sym buc pam bar qut nuck:so))
+        ==
+      ::
+        (easy ~)
       ==
+    ::
+    ::  whitespace
+    ::
+      (stag %text (cold " " whit))
     ::
     ::  {interpolated} sail
     ::
@@ -825,7 +836,7 @@
       (stag %text (cook trip ;~(less ace prn)))
     ==
   ::
-  ++  work  (star word)                                 ::  indefinite flow
+  ++  work  (cook zing (star word))                     ::  indefinite flow
   ::
   ++  down                                              ::  parse inline flow
     %+  knee  *flow  |.  ~+
