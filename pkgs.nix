@@ -73,10 +73,6 @@ rec {
     inherit crossenv xorg-macros;
   };
 
-  libx11 = import ./pkgs/libx11 {
-    inherit crossenv xorg-macros;
-  };
-
   libxau = import ./pkgs/libxau {
     inherit crossenv xorg-macros xproto;
   };
@@ -85,6 +81,10 @@ rec {
     inherit crossenv xcb-proto libxau xproto;
   };
   libxcb_examples = libxcb.examples;
+
+  libx11 = import ./pkgs/libx11 {
+    inherit crossenv xorg-macros xproto libxcb;
+  };
 
   qt = import ./pkgs/qt58 {
     inherit crossenv libudev libxcb libx11;

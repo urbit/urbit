@@ -1,4 +1,10 @@
-{ crossenv, xorg-macros }:
+{ crossenv, xorg-macros, xproto, libxcb }:
+
+# TODO: fix missing pkg-config packages:
+# Package 'xextproto', required by 'virtual:world', not found
+# Package 'xtrans', required by 'virtual:world', not found
+# Package 'kbproto', required by 'virtual:world', not found
+# Package 'inputproto', required by 'virtual:world', not found
 
 crossenv.make_derivation rec {
   name = "libx11-${version}";
@@ -16,5 +22,5 @@ crossenv.make_derivation rec {
     "--enable-static " +
     "--disable-shared";
 
-  cross_inputs = [ xorg-macros ];
+  cross_inputs = [ xorg-macros xproto libxcb ];
 }
