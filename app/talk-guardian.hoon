@@ -50,7 +50,7 @@
           ::TODO  update & use.
           sequence/(map circle @ud)                     ::<  last-heard p circle
           known/(map serial @ud)                        ::<  messages heard
-          inherited/?($| $&)                            ::<  from parent?
+          inherited/_|                                  ::<  from parent?
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
