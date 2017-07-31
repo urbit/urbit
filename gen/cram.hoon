@@ -640,9 +640,9 @@
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
         $fini  !!                                       ::  terminator
+        $head  (push %head)                             ::  heading
         $bloc  (entr %bloc)                             ::  blockquote line
         $expr  (entr %expr)                             ::  hoon expression
-        $head  (entr %head)                             ::  heading
         $lite  (lent %list)                             ::  unnumbered list
         $lint  (lent %lord)                             ::  numbered list
         $text  text                                     ::  anything else
@@ -654,11 +654,11 @@
       |=  typ/mite
       ^+  +>
       ::
-      ::  erase marker
-      =.  nap  =+(+(col) (runt [- ' '] (slag - nap)))
-      ::
       ::  indent by 2
       =.  col  (add 2 col)
+      ::
+      ::  erase marker
+      =.  nap  =+((dec col) (runt [- ' '] (slag - nap)))
       ::
       (push typ)
     ::
