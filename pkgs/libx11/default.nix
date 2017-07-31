@@ -1,5 +1,5 @@
 { crossenv, xorg-macros, xproto, libxcb, xtrans,
-  xextproto, inputproto }:
+  xextproto, inputproto, kbproto }:
 
 # TODO: fix missing pkg-config packages:
 # Package 'kbproto', required by 'virtual:world', not found
@@ -27,5 +27,8 @@ crossenv.make_derivation rec {
     xtrans
     xextproto
     inputproto
+    kbproto
   ];
+
+  inherit kbproto xproto libxcb;
 }
