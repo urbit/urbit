@@ -319,6 +319,7 @@
     ++  flow  marl:dynamic                              ::  node or generator
     ++  mite                                            ::  context
       $?  $down                                         ::  outer embed
+          $rule                                         ::  horizontal ruler
           $list                                         ::  unordered list
           $lime                                         ::  list item
           $lord                                         ::  ordered list
@@ -335,6 +336,7 @@
     ++  trig-style                                      ::
       $?  $fini                                         ::  terminator
           $done                                         ::  end of input
+          $rule                                         ::  --- horizontal ruler
           $lint                                         ::  + line item
           $lite                                         ::  - line item
           $head                                         ::  # heading
@@ -430,6 +432,7 @@
     =/  nex/@ud
       ?-  p.cur
         $down  2
+        $rule  0
         $head  0
         $expr  2
         $list  0
@@ -454,6 +457,7 @@
       (flop q.cur)
     =-  [[- ~] (flop q.cur)]~
     ?-  p.cur
+      $rule  %hr
       $list  %ul
       $lord  %ol
       $lime  %li
@@ -541,6 +545,7 @@
       ::  either a one-line header or a paragraph
       %.  [p.u.lub yex]
       ?-  p.cur
+        $rule  (full hrul):parse
         $expr  expr:parse
         $head  head:parse
         @      para:parse
@@ -549,8 +554,8 @@
     ::  if error, propagate correctly
     ?~  q.vex  ~&(%err-prop ..$(err `p.vex))
     ::
-    ::  finish tag if it's a header
-    =<  ?:(=(%head p.cur) fold ..$)
+    ::  finish tag if it's a header or rule
+    =<  ?:(?=(?($head $rule) p.cur) fold ..$)
     ::
     ::  save good result, clear buffer
     ..$(lub ~, q.cur (weld p.u.q.vex q.cur))
@@ -592,8 +597,8 @@
       ::  detect bad block structure
       ?.  ?-  p.cur
             ::
-            ::  only one line in a heading
-            $head  |
+            ::  only one line in a heading/ruler
+            ?($rule $head)  |
             ::
             ::  literals need to end with a blank line
             ?($code $poem $expr)
@@ -640,6 +645,7 @@
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
         $fini  !!                                       ::  terminator
+        $rule  (push %rule)                             ::  horizontal ruler
         $head  (push %head)                             ::  heading
         $bloc  (entr %bloc)                             ::  blockquote line
         $expr  (entr %expr)                             ::  hoon expression
@@ -695,6 +701,7 @@
         (full (easy %done))                             ::  end of input
         (cold ~ (just `@`10))                           ::  blank line
         (cold %fini bas)                                ::  terminator
+        (cold %rule ;~(plug hep hep hep))               ::  --- horizontal ruler
         (cold %head ;~(plug (star hax) ace))            ::  # heading
         (cold %lite ;~(plug hep ace))                   ::  - line item
         (cold %lint ;~(plug lus ace))                   ::  + line item
@@ -881,6 +888,9 @@
         $link  [[%a [%href q.nex] ~] ^$(gaf p.nex)]~
       ==
     --
+  ::
+  ++  hrul                                              ::  empty besides fence
+    (cold ~ ;~(plug gay hep hep hep (star hep)))
   ::
   ++  para                                              ::  paragraph
     %+  cook
