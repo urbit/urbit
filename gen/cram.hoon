@@ -364,7 +364,8 @@
   ::  vex: parsing result
   ::
   =/  src  .^(wain %cx pax)
-  =*  txt  (zing (turn src |=(@t (weld (rip 3 +<) `tape`~[`@`10]))))
+  =.  src  ['---' src]
+  =/  txt  (zing (turn src |=(@t (weld (rip 3 +<) `tape`~[`@`10]))))
   =/  vex  (cram [1 1] txt)
   ::
   ::  print result as error or xml text
@@ -383,12 +384,13 @@
 ++  cram                                                ::  parse unmark
   %+  stag  [%div ~]  ::REVIEW
   |=  {naz/hair los/tape}
-  ^-  (like marl:dynamic)
-  $:line:(cram-main +<)
+  %+  pfix  (hrul:cram-parsers +<)
+  |=  nail  ^-  (like marl:dynamic)
+  $:line:(cram-main q.naz +<)
 ::
 ++  cram-main                                           ::  parsing loop logic
   =*  parse  cram-parsers
-  |=  {naz/hair los/tape}
+  |=  {col/@u naz/hair los/tape}
   ::
   ::  state of the parsing loop.  we maintain a construction
   ::  stack for elements and a line stack for lines in the
@@ -403,7 +405,6 @@
   ::  lub: current block being read in
   ::
   =|  err/(unit hair)
-  =/  col  q.naz
   =|  hac/(list item)
   =/  cur/item  [%down ~]
   =|  lub/(unit (pair hair (list tape)))
@@ -417,6 +418,7 @@
     ::
     ::  all data was consumed
     =-  [naz `[- [naz los]]]
+    =>  made
     |-  ^-  flow
     ::
     ::  fold all the way to top
@@ -446,7 +448,7 @@
     ?:  (gth nex (sub col luc))
       ::
       ::  indenting pattern violation
-      ~&  %indent-pattern-violation
+      ~&  indent-pattern-violation+[p.cur nex col luc]
       ..^$(col luc, err `[p.naz luc])
     =.  ..^$  fold
     $(col (sub col nex))
@@ -562,7 +564,7 @@
       ::  either a one-line header or a paragraph
       %.  [p.u.lub yex]
       ?-  p.cur
-        $rule  (full hrul):parse
+        $rule  (full ;~(pfix gay hrul)):parse
         $expr  expr:parse
         $head  head:parse
         @      para:parse
@@ -922,7 +924,7 @@
     --
   ::
   ++  hrul                                              ::  empty besides fence
-    (cold ~ ;~(plug gay hep hep hep (star hep)))
+    (cold ~ ;~(plug hep hep hep (star hep)))
   ::
   ++  para                                              ::  paragraph
     %+  cook
@@ -977,4 +979,12 @@
       ==
     $(a t.a)
   --
+++  lines-with-md
+  %-  star
+  ;~  pfix  gay
+    ;~  pose
+      cram
+      ;~(sfix ;~(less hrul:cram-parsers (star prn)) (just '\0a'))
+    ==
+  ==
 --
