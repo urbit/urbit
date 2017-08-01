@@ -611,7 +611,7 @@
             $head  |
         ::
         ::  literals need to end with a blank line
-            ?($code $poem $expr)  (gte col.pic col)
+            ?($code $poem $expr)  (gte col.pic (add cur-indent col))
         ::
         ::  text flows must continue aligned
             ?($down $list $lime $lord $bloc)  =(col.pic col)
