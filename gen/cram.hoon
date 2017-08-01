@@ -613,7 +613,7 @@
     ::
     ::  detect unspaced new containers
     ?:  ?&  ?=(?($down $lime $bloc) p.cur)
-            !=(%text sty.pic)
+            |(!=(%text sty.pic) (gth col.pic col))
         ==
       (new-container:made pic)
     ::
@@ -675,7 +675,7 @@
     ::
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
-        ?($fini $done)  !!                                       ::  terminator
+        ?($fini $done)  !!                              ::  terminator
         $rule  (push %rule)                             ::  horizontal ruler
         $head  (push %head)                             ::  heading
         $bloc  (entr %bloc)                             ::  blockquote line
