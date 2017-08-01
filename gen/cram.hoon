@@ -594,6 +594,12 @@
     ::  if within section
     ?~  bal  (new-container pic)
     ::
+    ::  detect unspaced new containers
+    ?:  ?&  ?=(?($down $lime $bloc) p.cur)
+            !=(%text sty.pic)
+        ==
+      (new-container:made pic)
+    ::
     ::  detect bad block structure
     ?.  ?-    p.cur
         ::
