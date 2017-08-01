@@ -532,19 +532,19 @@
     ::
     ::  if block is preformatted code
     ?:  ?=($code p.cur)
-      =-  fold(lub ~, q.cur (weld - q.cur))
+      =-  fold(lub ~, q.cur (weld - q.cur), col (sub col 4))
       %+  turn  q.u.lub
       |=  tape  ^-  mars
       ::
       ::  each line is text data with its newline
-      ;/((weld (slag 4 +<) "\0a"))
+      ;/("{+<}\0a")
     ::
     ::  if block is verse
     ?:  ?=($poem p.cur)
       ::
       ::  add break between stanzas
       =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
-      =-  fold(lub ~, q.cur (weld - q.cur))
+      =-  fold(lub ~, q.cur (weld - q.cur), col (sub col 8))
       %+  turn  q.u.lub
       |=  tape  ^-  manx
       ::
@@ -632,11 +632,12 @@
             $head  |
         ::
         ::  literals need to end with a blank line
-            ?($code $poem $expr)  (gte col.pic (add cur-indent col))
+            ?($code $poem $expr)  (gte col.pic col)
         ::
         ::  text flows must continue aligned
             ?($down $list $lime $lord $bloc)  =(col.pic col)
         ==
+      ~&  bad-block-structure+[p.cur col col.pic]
       ..$(err `[p.naz col.pic])
     ::
     ::  accept line and continue
@@ -654,6 +655,7 @@
     ::
     =/  dif  (sub col.pic col)
     =/  erp  [p.naz col.pic]
+    =.  col  col.pic
     ::
     ::  execute appropriate paragraph form
     =<  line:abet:apex
