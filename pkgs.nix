@@ -103,8 +103,20 @@ rec {
     inherit xextproto inputproto kbproto;
   };
 
+  xext = import ./pkgs/xext {
+    inherit crossenv xproto libx11 xextproto;
+  };
+
+  libxfixes = import ./pkgs/libxfixes {
+    inherit crossenv xproto libx11 xextproto;
+  };
+
+  libxi = import ./pkgs/libxi {
+    inherit crossenv xproto libx11 xextproto inputproto xext libxfixes;
+  };
+
   qt = import ./pkgs/qt58 {
-    inherit crossenv libudev libxcb libx11;
+    inherit crossenv libudev libxcb libx11 libxi;
   };
   qt_examples = qt.examples;
   qt_license_fragment = qt.license_fragment;

@@ -1,4 +1,4 @@
-{ crossenv, libudev, libxcb, libx11 }:
+{ crossenv, libudev, libxcb, libx11, libxi }:
 
 let
   version = "5.8.0";
@@ -80,6 +80,7 @@ let
        if crossenv.os == "linux" then [
            libudev  # not sure if this helps, but Qt does look for it
            libx11
+           libxi
            libxcb
            libxcb.util-image
            libxcb.util-wm
