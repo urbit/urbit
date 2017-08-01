@@ -423,25 +423,26 @@
     ?~  hac  fine
     $(..^$ fold)
   ::
+  ++  cur-indent
+    ?-  p.cur
+      $down  2
+      $rule  0
+      $head  0
+      $expr  2
+      $list  0
+      $lime  2
+      $lord  0
+      $poem  8
+      $code  4
+      $bloc  2
+    ==
   ++  back                                              ::  column retreat
     |=  luc/@ud
     ^+  +>
     ?:  =(luc col)  +>
     ::
     ::  nex: next backward step that terminates this context
-    =/  nex/@ud
-      ?-  p.cur
-        $down  2
-        $rule  0
-        $head  0
-        $expr  2
-        $list  0
-        $lime  2
-        $lord  0
-        $poem  8
-        $code  4
-        $bloc  2
-      ==
+    =/  nex/@ud  cur-indent  ::REVIEW code and poem blocks are handled elsewhere
     ?:  (gth nex (sub col luc))
       ::
       ::  indenting pattern violation
@@ -452,7 +453,6 @@
   ::
   ++  fine                                              ::  item to flow
     ^-  flow
-    ?<  ?=($poem p.cur)  ::REVIEW handled elsewhere?
     ?:  ?=(?($down $head $expr) p.cur)
       (flop q.cur)
     =-  [[- ~] (flop q.cur)]~
@@ -462,6 +462,7 @@
       $lord  %ol
       $lime  %li
       $code  %pre
+      $poem  %div ::REVIEW actual container element?
       $bloc  %blockquote
     ==
   ::
