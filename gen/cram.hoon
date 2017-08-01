@@ -489,21 +489,37 @@
     ::
     ::  no unterminated lines
     ?~  los  ~&(%unterminated-line [~ +>(err `naz)])
-    ?:  =(`@`10 i.los)
+    ?.  =(`@`10 i.los)
+      ?:  (gth col q.naz)
+        ?.  (~(has in ^~((silt " -+>!"))) i.los)
+          ~&(expected-indent+[col naz los] [~ +>(err `naz)])
+        $(los t.los, q.naz +(q.naz))
       ::
-      ::  consume newline
-      :_  +>(los t.los, naz [+(p.naz) 1])
-      ::
-      ::  trim trailing spaces
-      |-  ^-  tape
-      ?:  ?=({$' ' *} nap)
-        $(nap t.nap)
-      (flop nap)
+      ::  save byte and repeat
+      $(los t.los, q.naz +(q.naz), nap [i.los nap])
     ::
-    ::  save byte and repeat
-    $(los t.los, q.naz +(q.naz), nap [i.los nap])
+    ::  consume newline
+    :_  +>(los t.los, naz [+(p.naz) 1])
+    ::
+    ::  trim trailing spaces
+    |-  ^-  tape
+    ?:  ?=({$' ' *} nap)
+      $(nap t.nap)
+    (flop nap)
   ::
-  ++  skip  +:snap                                      ::  discard line
+  ++  skip                                      ::  discard line
+    |-  ^+  +
+    ::
+    ::  no unterminated lines
+    ?~  los  ~&(%unterminated-line +(err `naz))
+    ?.  =(`@`10 i.los)
+      ::
+      ::  eat byte and repeat
+      $(los t.los)
+    ::
+    ::  consume newline
+    +(los t.los, naz [+(p.naz) 1])
+  ::
   ++  look                                              ::  inspect line
     ^-  (unit trig)
     (wonk (look:parse naz los))
@@ -521,7 +537,7 @@
       |=  tape  ^-  mars
       ::
       ::  each line is text data with its newline
-      ;/((weld (slag (add 4 (dec col)) +<) "\0a"))
+      ;/((weld (slag 4 +<) "\0a"))
     ::
     ::  if block is verse
     ?:  ?=($poem p.cur)
@@ -535,7 +551,7 @@
       ::  each line is a paragraph
       :-  [%p ~]
       :_  ~
-      ;/((weld (slag (dec col) +<) "\0a"))
+      ;/("{+<}\0a")
     ::
     ::  yex: block recomposed, with newlines
     =/  yex/tape  (join '\0a' (flop q.u.lub))
@@ -634,14 +650,14 @@
     =/  dif  (sub col.pic col)
     =/  erp  [p.naz col.pic]
     ::
-    ::  nap: take first line
-    =^  nap  +>.$  snap
-    ::
     ::  execute appropriate paragraph form
     =<  line:abet:apex
     |%
     ::
     ++  abet                                            ::  accept line
+      ::
+      ::  nap: take first line
+      =^  nap  +>.$  snap
       ..$(lub `[naz nap ~])
     ::
     ++  apex  ^+  .                                     ::  by column offset
@@ -671,9 +687,6 @@
       ::
       ::  indent by 2
       =.  col  (add 2 col)
-      ::
-      ::  erase marker
-      =.  nap  =+((dec col) (runt [- ' '] (slag - nap)))
       ::
       (push typ)
     ::
