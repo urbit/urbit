@@ -14,3 +14,7 @@ make
 make install
 
 sed -i 's/Requires.private/Requires/' $out/lib/pkgconfig/*.pc
+
+ln -sf $xproto/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+ln -sf $fixesproto/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+ln -sf $libx11/lib/pkgconfig/*.pc $out/lib/pkgconfig/

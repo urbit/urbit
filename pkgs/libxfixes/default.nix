@@ -1,4 +1,4 @@
-{ crossenv, xproto, xextproto, libx11 }:
+{ crossenv, xproto, xextproto, libx11, fixesproto }:
 
 crossenv.make_derivation rec {
   name = "libxfixes-${version}";
@@ -16,5 +16,7 @@ crossenv.make_derivation rec {
     "--enable-static " +
     "--disable-shared";
 
-  cross_inputs = [ xproto xextproto libx11 ];
+  cross_inputs = [ xproto xextproto libx11 fixesproto ];
+
+  inherit xproto libx11 fixesproto;
 }

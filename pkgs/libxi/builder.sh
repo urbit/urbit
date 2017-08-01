@@ -12,3 +12,10 @@ PKG_CONFIG=pkg-config-cross \
 make
 
 make install
+
+sed -i 's/Requires.private/Requires/' $out/lib/pkgconfig/*.pc
+
+ln -sf $inputproto/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+ln -sf $libx11/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+ln -sf $libxext/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+ln -sf $libxfixes/lib/pkgconfig/*.pc $out/lib/pkgconfig/

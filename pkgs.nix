@@ -98,21 +98,26 @@ rec {
     inherit crossenv;
   };
 
+  fixesproto = import ./pkgs/fixesproto {
+    inherit crossenv xorg-macros xextproto;
+  };
+
   libx11 = import ./pkgs/libx11 {
     inherit crossenv xorg-macros xproto libxcb xtrans;
     inherit xextproto inputproto kbproto;
   };
 
-  xext = import ./pkgs/xext {
-    inherit crossenv xproto libx11 xextproto;
+  libxext = import ./pkgs/libxext {
+    inherit crossenv xproto xextproto libx11;
   };
 
   libxfixes = import ./pkgs/libxfixes {
-    inherit crossenv xproto libx11 xextproto;
+    inherit crossenv xproto xextproto fixesproto libx11;
   };
 
   libxi = import ./pkgs/libxi {
-    inherit crossenv xproto libx11 xextproto inputproto xext libxfixes;
+    inherit crossenv xproto xextproto inputproto;
+    inherit libx11 libxext libxfixes;
   };
 
   qt = import ./pkgs/qt58 {

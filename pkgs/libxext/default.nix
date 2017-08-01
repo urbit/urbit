@@ -1,7 +1,7 @@
 { crossenv, xproto, libx11, xextproto }:
 
 crossenv.make_derivation rec {
-  name = "xext-${version}";
+  name = "libxext-${version}";
   version = "1.3.3";
 
   src = crossenv.nixpkgs.fetchurl {
