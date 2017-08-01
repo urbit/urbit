@@ -617,6 +617,11 @@
         ==
       (new-container:made pic)
     ::
+    ::  first line of container is legal
+    ?~  q.u.bal
+      =^  nap  ..$  snap
+      line(lub bal(q.u [nap q.u.bal]))
+    ::
     ::  detect bad block structure
     ?.  ?-    p.cur
         ::
