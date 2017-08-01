@@ -71,7 +71,6 @@ let
       ( if crossenv.os == "windows" then "-opengl desktop"
         else if crossenv.os == "linux" then
           "-qpa xcb " +
-          # TODO: -xcb-xlib to guarantee faster rendering
           "-system-xcb " +
           "-opengl no " +
           "-no-reduce-relocations"
@@ -85,6 +84,7 @@ let
            libxcb.util-image
            libxcb.util-wm
            libxcb.util-keysyms
+           libxcb.util-renderutil
          ]
        else [];
   };

@@ -85,6 +85,27 @@ let
     cross_inputs = [ lib ];
   };
 
+  util-renderutil = crossenv.make_derivation rec {
+    name = "xcb-util-renderutil";
+    version = "0.3.9";
+
+    src = crossenv.nixpkgs.fetchurl {
+      url = "https://xcb.freedesktop.org/dist/xcb-util-renderutil-${version}.tar.bz2";
+      sha256 = "0nza1csdvvxbmk8vgv8vpmq7q8h05xrw3cfx9lwxd1hjzd47xsf6";
+    };
+
+    builder = ./util_renderutil_builder.sh;
+
+    configure_flags =
+      "--host=${crossenv.host} " +
+      "--enable-static " +
+      "--disable-shared";
+
+    cross_inputs = [ lib ];
+
+    xcb = lib;
+  };
+
   util-wm = crossenv.make_derivation rec {
     name = "xcb-util-wm-${version}";
     version = "0.4.1";
@@ -116,4 +137,6 @@ let
     example1 = ./example1.c;
   };
 in
-  lib // { inherit util util-image util-keysyms util-wm examples; }
+  lib // {
+    inherit util util-image util-keysyms util-renderutil util-wm examples;
+  }
