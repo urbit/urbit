@@ -592,32 +592,34 @@
     =/  bal  lub
     ::
     ::  if within section
-    ?^  bal
-      ::
-      ::  detect bad block structure
-      ?.  ?-  p.cur
-            ::
-            ::  only one line in a heading/ruler
-            ?($rule $head)  |
-            ::
-            ::  literals need to end with a blank line
-            ?($code $poem $expr)
-              (gte col.pic col)
-            ::
-            ::  text flows must continue aligned
-            ?($down $list $lime $lord $bloc)
-              &(=(%text sty.pic) =(col.pic col))
-          ==
-        ~&  bad-block-structure+[col pic cur]
-        ..$(err `[p.naz col.pic])
-      ::?:  sth  sth-else  ::TODO
-      ::
-      ::  accept line and continue
-      =^  nap  ..$  snap
-      line(lub bal(q.u [nap q.u.bal]))
+    ?~  bal  (new-container pic)
+    ::
+    ::  detect bad block structure
+    ?.  ?-    p.cur
+        ::
+        ::  can't(/directly) contain text
+            ?($rule $lord $list)  ~|(bad-leaf-container+p.cur !!)
+        ::
+        ::  only one line in a header
+            $head  |
+        ::
+        ::  literals need to end with a blank line
+            ?($code $poem $expr)  (gte col.pic col)
+        ::
+        ::  text flows must continue aligned
+            ?($down $list $lime $lord $bloc)  =(col.pic col)
+        ==
+      ..$(err `[p.naz col.pic])
+    ::
+    ::  accept line and continue
+    =^  nap  ..$  snap
+    line(lub bal(q.u [nap q.u.bal]))
+  ::
+  ++  new-container
+    |=  pic/trig
     ::
     ::  if column has retreated, adjust stack
-    =.  ..$  ?.  (lth col.pic col)  ..$  (back col.pic)
+    =.  +>.$  ?.  (lth col.pic col)  +>.$  (back col.pic)
     ::
     ::  dif: columns advanced
     ::  erp: error position
@@ -626,7 +628,7 @@
     =/  erp  [p.naz col.pic]
     ::
     ::  nap: take first line
-    =^  nap  ..$  snap
+    =^  nap  +>.$  snap
     ::
     ::  execute appropriate paragraph form
     =<  line:abet:apex
@@ -644,7 +646,7 @@
     ::
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
-        $fini  !!                                       ::  terminator
+        ?($fini $done)  !!                                       ::  terminator
         $rule  (push %rule)                             ::  horizontal ruler
         $head  (push %head)                             ::  heading
         $bloc  (entr %bloc)                             ::  blockquote line
@@ -686,7 +688,7 @@
       ::
       ::  only in lists, fold
       ?.  ?=(?($list $lord) p.cur)  .
-      .($ fold)
+      .(^$ fold)
     --
   --
 ::
@@ -901,8 +903,9 @@
     ;~(pfix gay apex:(sail &))
   ::
   ++  whit                                              ::  whitespace
-    (cold ' ' (plus ;~(pose (just ' ') (just `@`10))))
+    (cold ' ' (plus ;~(pose (just ' ') line)))
   ::
+  ++  line  (just '\0a')  ::TODO lookahead
   ++  head                                              ::  parse heading
     %+  cook
       |=  a/manx:dynamic  ^-  marl:dynamic
