@@ -491,7 +491,7 @@
     ?~  los  ~&(%unterminated-line [~ +>(err `naz)])
     ?.  =(`@`10 i.los)
       ?:  (gth col q.naz)
-        ?.  (~(has in ^~((silt " -+>!"))) i.los)
+        ?.  =(' ' i.los)
           ~&(expected-indent+[col naz los] [~ +>(err `naz)])
         $(los t.los, q.naz +(q.naz))
       ::
@@ -657,8 +657,7 @@
     ++  abet                                            ::  accept line
       ::
       ::  nap: take first line
-      =^  nap  +>.$  snap
-      ..$(lub `[naz nap ~])
+      ..$(lub `[naz ~])
     ::
     ++  apex  ^+  .                                     ::  by column offset
       ?+  dif  ~&  offset+dif  fail
@@ -687,6 +686,10 @@
       ::
       ::  indent by 2
       =.  col  (add 2 col)
+      ::
+      ::  "parse" marker
+      =.  los  (slag (sub col q.naz) los)
+      =.  q.naz  col
       ::
       (push typ)
     ::
