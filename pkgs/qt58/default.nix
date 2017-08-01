@@ -80,12 +80,12 @@ let
        if crossenv.os == "linux" then [
            libudev  # not sure if this helps, but Qt does look for it
            libx11
-           libxi
            libxcb
            libxcb.util-image
            libxcb.util-wm
            libxcb.util-keysyms
            libxcb.util-renderutil
+           libxi
          ]
        else [];
   };
