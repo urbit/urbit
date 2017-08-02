@@ -99,6 +99,7 @@ let
     inherit version;
     os = crossenv.os;
     qtbase = base_raw;
+    cross_inputs = base_raw.cross_inputs;
     builder.ruby = ./wrapper_builder.rb;
   };
 

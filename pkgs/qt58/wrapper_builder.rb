@@ -40,21 +40,128 @@ def libs_from_prl(prl)
   libs
 end
 
+DependencyGraph = {}
+
+def add_dep(library, *deps)
+  a = DependencyGraph[library] ||= []
+  deps.each do |dep|
+    DependencyGraph[dep] ||= []
+    a << dep unless a.include? dep
+  end
+end
+
+def make_dependency_graph
+  add_dep 'Qt5Widgets', 'Qt5Gui'
+  add_dep 'Qt5Gui', 'Qt5Core'
+end
+
+LibTypes = {}
+PcFiles = {}
+
+def find_pkg_config_cross_file(name)
+  ENV.fetch('PKG_CONFIG_CROSS_PATH').split(':').each do |dir|
+    path = Pathname(dir) + "#{name}.pc"
+    if path.exist?
+      puts "found pc file for #{name}"
+      return name
+    end
+  end
+  nil
+end
+
+# Determine if this library:
+# - comes from Qt,
+# - comes from a .pc file,
+# - or comes from the compiler toolchain
+def determine_lib_type(name)
+  if (OutDir + 'lib' + "lib#{name}.a").exist?
+    LibTypes[name] = :qt
+    return
+  end
+
+  path = find_pkg_config_cross_file(name)
+  if path
+    LibTypes[name] = :pc
+    PcFiles[name] = path
+    return
+  end
+
+  LibTypes[name] = :compiler
+end
+
+def determine_lib_types
+  DependencyGraph.keys.each do |lib|
+    determine_lib_type(lib)
+  end
+end
+
+def create_pc_file_for_qt_library(name)
+  requires = []
+  libs = []
+  cflags = []
+
+  DependencyGraph[name].each do |dep|
+    case LibTypes[dep]
+    when :qt then requires << dep
+    when :pc then requires << dep
+    when :compiler then libs << dep
+    end
+  end
+
+  name_no_num = name.gsub(/Qt\d/, 'Qt')
+  if (OutDir + 'include' + name_no_num).directory?
+    cflags << "-I${includedir}/#{name_no_num}"
+  end
+  cflags << "-I${includedir}"
+
+  path = OutDir + 'lib' + 'pkgconfig' + "#{name}.pc"
+  File.open(path.to_s, 'w') do |f|
+    f.write <<EOF
+prefix=#{OutDir}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+Version: #{QtVersionString}
+Libs: -L${libdir} -l#{name} #{libs.join(' ')}
+Cflags: #{cflags.join(' ')}
+Requires: #{requires.join(' ')}
+EOF
+  end
+end
+
+def create_pc_files
+  pc_dir = OutDir + 'lib' + 'pkgconfig'
+  mkdir pc_dir
+
+  LibTypes.each do |lib, type|
+    if type == :qt
+      create_pc_file_for_qt_library(lib)
+    end
+  end
+end
+
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
+
+# Symlink the include, bin, and plugins directories into $out.
 
 mkdir OutDir
 symlink QtBaseDir + 'include', OutDir + 'include'
 symlink QtBaseDir + 'bin', OutDir + 'bin'
 symlink QtBaseDir + 'plugins', OutDir + 'plugins'
-mkdir OutDir + 'lib'
-symlink QtBaseDir + 'lib' + 'pkgconfig', OutDir + 'lib' + 'pkgconfig'
 
+# Symlink the .a files and copy the .prl files into $out/lib.
+
+mkdir OutDir + 'lib'
 (QtBaseDir + 'lib').each_child do |c|
-  if %w(.a .prl).include?(c.extname)
-    symlink c, OutDir + 'lib'
-  end
+  symlink c, OutDir + 'lib' if c.extname == '.a'
+  cp c, OutDir + 'lib' if c.extname == '.prl'
 end
+
+make_dependency_graph
+
+determine_lib_types
+
+create_pc_files
 
 CMakeDir = OutDir + 'lib' + 'cmake'
 mkdir CMakeDir
