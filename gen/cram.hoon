@@ -334,8 +334,7 @@
           sty/trig-style                                ::  style
       ==                                                ::
     ++  trig-style                                      ::
-      $?  $fini                                         ::  terminator
-          $done                                         ::  end of input
+      $?  $done                                         ::  end of input
           $rule                                         ::  --- horizontal ruler
           $lint                                         ::  + line item
           $lite                                         ::  - line item
@@ -390,7 +389,7 @@
 ::
 ++  cram-main                                           ::  parsing loop logic
   =*  parse  cram-parsers
-  |=  {col/@u naz/hair los/tape}
+  |=  {top/@u naz/hair los/tape}
   ::
   ::  state of the parsing loop.  we maintain a construction
   ::  stack for elements and a line stack for lines in the
@@ -405,6 +404,7 @@
   ::  lub: current block being read in
   ::
   =|  err/(unit hair)
+  =/  col  top
   =|  hac/(list item)
   =/  cur/item  [%down ~]
   =|  lub/(unit (pair hair (list tape)))
@@ -598,14 +598,8 @@
     =>  .(pic u.pic)
     ::
     ::  if end of input, complete
-    ?:  ?=($done sty.pic)
+    ?:  |(?=($done sty.pic) (lth col.pic top))
       ..$(q.naz col.pic)
-    ::
-    ::  if end marker behind current column
-    ?:  &(?=($fini sty.pic) (lth col.pic col))
-      ::
-      ::  retract and complete
-      (back(q.naz (add 2 col.pic)) col.pic)
     ::
     ::  bal: inspection copy of lub, current section
     =/  bal  lub
@@ -677,7 +671,7 @@
     ::
     ++  apse  ^+  .                                     ::  by prefix style
       ?-  sty.pic
-        ?($fini $done)  !!                              ::  terminator
+        $done  !!                                       ::  blank
         $rule  (push %rule)                             ::  horizontal ruler
         $head  (push %head)                             ::  heading
         $bloc  (entr %bloc)                             ::  blockquote line
@@ -734,7 +728,6 @@
       ;~  pose
         (full (easy %done))                             ::  end of input
         (cold ~ (just `@`10))                           ::  blank line
-        (cold %fini bas)                                ::  terminator
         (cold %rule ;~(plug hep hep hep))               ::  --- horizontal ruler
         (cold %head ;~(plug (star hax) ace))            ::  # heading
         (cold %lite ;~(plug hep ace))                   ::  - line item
@@ -983,7 +976,7 @@
   %-  star
   ;~  pfix  gay
     ;~  pose
-      cram
+      :(cook poxo freeze cram)
       ;~(sfix ;~(less hrul:cram-parsers (star prn)) (just '\0a'))
     ==
   ==
