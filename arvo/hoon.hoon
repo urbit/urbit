@@ -7344,9 +7344,9 @@
         {$xmn *}
       ::
       ::REVIEW separate ap arms?
-      =*  open-mane
+      =/  open-mane
         |=(a/mane ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]]))
-      =*  open-mart  |=({n/mane v/(list beer)} [(open-mane n) %knit v])
+      =/  open-mart  |=({n/mane v/(list beer)} [(open-mane n) %knit v])
       [[(open-mane n.g.p.gen) %conl (turn a.g.p.gen open-mart)] %xml c.p.gen]
     ::
         {$xml *}
@@ -7501,6 +7501,22 @@
       ~|([%hoon-fail hoon p.gen] !!)
     ::
         *           gen
+    ==
+  ::
+  ++  shut                                                :: as xml constant
+    ^-  marl
+    ?+    -.gen  ~|([%bad-xml -.gen] !!)
+        $xmn
+      =/  shut-mart
+        |=({n/mane v/(list beer)} [n (turn v |=(a/beer ?^(a !! a)))])
+      ::
+      [[n.g.p.gen (turn a.g.p.gen shut-mart)] shut(gen [%xml c.p.gen])]~
+    ::
+        $xml
+      ?~  p.gen  ~
+      =-  (weld - shut(p.gen t.p.gen))
+      ?@  -.i.p.gen   ~|([%shut-tuna -.i.p.gen] !!)
+      shut(gen [%xmn i.p.gen])
     ==
   ::
   ++  rake  ~|(%rake-twig (need reek))

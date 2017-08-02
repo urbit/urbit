@@ -33,23 +33,6 @@
   ::  with normal hoon rules.  multipass parsing is the tax
   ::  humans have to pay for simple but human-friendly syntax.)
   ::
-=>
-|%
-::
-++  freeze
-  |=  manx:twig  ^-  manx
-  :-  [n.g (turn a.g freeze-mart)]
-  %+  turn  c
-  |=(a/tuna:twig ?@(-.a !! (freeze a)))
-::
-++  freeze-mart
-  |=  {n/mane v/(list beer)}  ^-  {mane tape}
-  [n (turn v |=(a/beer ?^(a !! a)))]
-::
-::
-::+|
-::
---
 ::|=  inp/cord
 ::=<  (steam-marl (rash inp apex:(sail &)))
 =<  |=(pax/path (test pax))
@@ -110,8 +93,8 @@
   ::  print result as error or xml text
   ?~  q.vex
     "syntax error: line {(scow %ud p.p.vex)}, column {(scow %ud q.p.vex)}"
-  ?:  [freeze=|]  (poxo (freeze p.u.q.vex))
-  (poxo ;;(manx q:(slap !>(..zuse) (steam p.u.q.vex))))
+  ?:  [freeze=|]  (poxo /div ~(shut ap %xml p.u.q.vex))
+  (poxo /div ;;(marl q:(slap !>(..zuse) [%xml p.u.q.vex])))
 ::
 ++  join                                                ::  glue tapes together
   |=  {a/char b/(list tape)}
@@ -121,7 +104,6 @@
   (welp i.b a $(b t.b))
 ::
 ++  cram                                                ::  parse unmark
-  %+  stag  [%div ~]  ::REVIEW
   |=  {naz/hair los/tape}
   %+  pfix  (hrul:cram-parsers +<)
   |=  nail  ^-  (like marl:twig)
@@ -665,7 +647,7 @@
     ;~(pfix gay down)  ::REVIEW does this mean comments work?
   ::
   ++  expr                                              ::  expression
-    ;~(pfix gay a-marl:(sail:vast &))
+    ;~(pfix gay (cook drop-top toplevel):(sail:vast &))
   ::
   ++  whit                                              ::  whitespace
     (cold ' ' (plus ;~(pose (just ' ') line)))
@@ -716,7 +698,6 @@
   %-  star
   ;~  pfix  gay
     ;~  pose
-      :(cook poxo freeze cram)
       ;~(sfix ;~(less hrul:cram-parsers (star prn)) (just '\0a'))
     ==
   ==
