@@ -24,10 +24,13 @@ end
 def make_dependency_graph
   add_dep 'Qt5Widgets', 'Qt5Gui'
   add_dep 'Qt5Gui', 'Qt5Core'
+  add_dep 'Qt5Gui', 'qtlibpng', 'qtharfbuzz'
+  add_dep 'Qt5Core', 'qtpcre'
 
   if Os == 'linux'
-    add_dep 'Qt5Gui', 'qxcb'
-    add_dep 'Qt5Gui', 'qlinuxfb'
+    add_dep 'Qt5Gui', 'qxcb', 'qlinuxfb'
+    add_dep 'qxcb', 'Qt5XcbQpa'
+    add_dep 'Qt5XcbQpa', 'xcb'
   end
 end
 
