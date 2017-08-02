@@ -6,11 +6,29 @@ Os = ENV.fetch('os')
 QtVersionString = ENV.fetch('version')
 QtVersionMajor = QtVersionString.split('.').first.to_i
 
+QtBaseDir = Pathname(ENV.fetch('qtbase'))
+OutDir = Pathname(ENV.fetch('out'))
+
+DependencyGraph = {}
+LibTypes = {}
+PcFiles = {}
+PluginGroup = {}
+
 case Os
 when "windows"
   prl_prefix = ''
 else
   prl_prefix = 'lib'
+end
+
+def make_dependency_graph
+  add_dep 'Qt5Widgets', 'Qt5Gui'
+  add_dep 'Qt5Gui', 'Qt5Core'
+
+  if Os == 'linux'
+    add_dep 'Qt5Gui', 'qxcb'
+    add_dep 'Qt5Gui', 'qlinuxfb'
+  end
 end
 
 def parse_prl_file(filename)
@@ -40,8 +58,6 @@ def libs_from_prl(prl)
   libs
 end
 
-DependencyGraph = {}
-
 def add_dep(library, *deps)
   a = DependencyGraph[library] ||= []
   deps.each do |dep|
@@ -49,14 +65,6 @@ def add_dep(library, *deps)
     a << dep unless a.include? dep
   end
 end
-
-def make_dependency_graph
-  add_dep 'Qt5Widgets', 'Qt5Gui'
-  add_dep 'Qt5Gui', 'Qt5Core'
-end
-
-LibTypes = {}
-PcFiles = {}
 
 def find_pkg_config_cross_file(name)
   ENV.fetch('PKG_CONFIG_CROSS_PATH').split(':').each do |dir|
@@ -76,6 +84,13 @@ end
 def determine_lib_type(name)
   if (OutDir + 'lib' + "lib#{name}.a").exist?
     LibTypes[name] = :qt
+    return
+  end
+
+  plugin_paths = Pathname.glob(OutDir + 'plugins' + '*' + "lib#{name}.a")
+  if plugin_paths.size == 1
+    LibTypes[name] = :qt
+    PluginGroup[name] = plugin_paths.first.dirname.basename
     return
   end
 
@@ -114,6 +129,11 @@ def create_pc_file_for_qt_library(name)
   end
   cflags << "-I${includedir}"
 
+  libdir = '${libdir}'
+  if PluginGroup[name]
+    libdir = "${prefix}/plugins/#{PluginGroup[name]}"
+  end
+
   path = OutDir + 'lib' + 'pkgconfig' + "#{name}.pc"
   File.open(path.to_s, 'w') do |f|
     f.write <<EOF
@@ -121,7 +141,7 @@ prefix=#{OutDir}
 libdir=${prefix}/lib
 includedir=${prefix}/include
 Version: #{QtVersionString}
-Libs: -L${libdir} -l#{name} #{libs.join(' ')}
+Libs: -L#{libdir} -l#{name} #{libs.join(' ')}
 Cflags: #{cflags.join(' ')}
 Requires: #{requires.join(' ')}
 EOF
@@ -138,9 +158,6 @@ def create_pc_files
     end
   end
 end
-
-QtBaseDir = Pathname(ENV.fetch('qtbase'))
-OutDir = Pathname(ENV.fetch('out'))
 
 # Symlink the include, bin, and plugins directories into $out.
 
