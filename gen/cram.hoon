@@ -39,17 +39,17 @@
   |%
   ++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
   ++  manx  {g/marx c/marl}                               ::  XML node
-  ++  marl  (list $^(manx tuna))                          ::  XML node list
+  ++  marl  (list tuna)                                   ::  XML node list
   ++  mart  (list {n/mane v/(list beer)})                 ::  XML attributes
   ++  marx  {n/mane a/mart}                               ::  XML tag
-  ++  tuna  {?($tape $manx $marl $call) p/twig}
+  ++  tuna  $^(manx {?($tape $manx $marl $call) p/twig})
   --
 ::
 ++  freeze
   |=  manx:dynamic  ^-  manx
   :-  [n.g (turn a.g freeze-mart)]
   %+  turn  c
-  |=(a/=>(dynamic $^(manx tuna)) ?@(-.a !! (freeze a)))
+  |=(a/tuna:dynamic ?@(-.a !! (freeze a)))
 ::
 ++  freeze-mart
   |=  {n/mane v/(list beer)}  ^-  {mane tape}
@@ -94,28 +94,19 @@
   [(steam-mane n) %knit v]
 ::
 ::+|
-::
-++  tuna                                                ::  tagflow
-          $%  {$tape p/twig}                            ::  plain text
-              {$manx p/twig}                            ::  single tag
-              {$marl p/twig}                            ::  simple list
-              {$call p/twig}                            ::  dynamic list
-              {$elem p/twig q/(list tuna)}              ::  element
-              {$many p/(list tuna)}                     ::  subflow
-          ==                                            ::
+++  tuna  tuna:dynamic
 ::
 ++  sail                                                ::  xml template
-  =>  dynamic
   |=  in-tall-form/?  =|  lin/?
   |%
   ++  apex                                              ::  entry point
     ;~(pfix sem ?:(in-tall-form tall-top wide-top))
   ::
   ++  single                                            ::  elem as tuna
-    |*(a/rule (cook |=(b/$^(manx tuna) [b]~) a))
+    |*(a/rule (cook |=(b/tuna:dynamic [b]~) a))
   ::
   ++  tall-top                                          ::  tall top
-    %+  knee  *marl  |.  ~+
+    %+  knee  *marl:dynamic  |.  ~+
     ;~  pose
       ;~(pfix (plus ace) (cook collapse-chars quote-innards))
       (single ;~(plug script-or-style script-style-tail))
@@ -134,7 +125,7 @@
       (cold %call cen)
     ==
   ++  wide-top                                          ::  wide outer top
-    %+  knee  *marl  |.  ~+
+    %+  knee  *marl:dynamic  |.  ~+
     ;~  pose
       wide-quote
       wide-paren-elems
@@ -142,7 +133,7 @@
     ==
   ::
   ++  wide-inner-top                                    ::  wide inner top
-    %+  knee  *marl  |.  ~+
+    %+  knee  *marl:dynamic  |.  ~+
     ;~  pose
       wide-top
       (single ;~(plug tuna-mode wide:vast))
@@ -155,7 +146,7 @@
     ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
   ::
   ++  script-or-style                                   ::  script or style
-    %+  cook  |=(a/marx a)
+    %+  cook  |=(a/marx:dynamic a)
     ;~  plug
       ;~(pose (jest %script) (jest %style))
       wide-attrs
@@ -173,6 +164,7 @@
   ::
   ++  tag-head                                          ::  tag head
     %+  cook
+      =>  dynamic
       |=  {a/mane b/mart c/mart}
       ^-  marx
       [a (weld b c)]
@@ -202,6 +194,7 @@
   ::
   ++  tall-elem                                         ::  tall preface
     %+  cook
+      =>  dynamic
       |=  {a/{p/mane q/mart} b/mart c/marl}
       ^-  manx
       [[p.a (weld q.a b)] c]
@@ -214,23 +207,23 @@
     wide:vast
   ::
   ++  wide-attrs                                        ::  wide attributes
-    %+  cook  |=(a/(unit mart) (fall a ~))
+    %+  cook  |=(a/(unit mart:dynamic) (fall a ~))
     %-  punt
     %+  ifix  [pel per]
     %+  more  (jest ', ')
     ;~((glue ace) a-mane hopefully-quote)
   ::
   ++  wide-tail                                         ::  wide elements
-    %+  cook  |=(a/marl a)
+    %+  cook  |=(a/marl:dynamic a)
     ;~(pose ;~(pfix col wrapped-elems) (cold ~ sem) (easy ~))
   ::
   ++  wide-elems                                        ::  wide elements
-    %+  cook  |=(a/marl a)
+    %+  cook  |=(a/marl:dynamic a)
     %+  cook  zing
     (star ;~(pfix ace wide-inner-top))
   ::
   ++  script-style-tail                                 ::  unescaped tall tail
-    %+  cook  |=(a/marl a)
+    %+  cook  |=(a/marl:dynamic a)
     %+  ifix  [gap ;~(plug gap duz)]
     %+  most  gap
     ;~  pfix  sem
@@ -243,7 +236,7 @@
   ::
   ++  tall-tail                                         ::  tall tail
     ?>  in-tall-form
-    %+  cook  |=(a/marl a)
+    %+  cook  |=(a/marl:dynamic a)
     ;~  pose
       (cold ~ sem)
       ;~(pfix col wrapped-elems(in-tall-form |))
@@ -252,7 +245,7 @@
     ==
   ::
   ++  wide-quote                                        ::  wide quote
-    %+  cook  |=(a/marl a)
+    %+  cook  |=(a/marl:dynamic a)
     ;~  pose
       ;~(less (jest '"""') (ifix [doq doq] (cook collapse-chars quote-innards)))
       (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook collapse-chars quote-innards(lin |))))
@@ -263,12 +256,12 @@
     ;~(plug tag-head wide-elems)
   ::
   ++  wide-paren-elems                                  ::  wide flow
-    %+  cook  |=(a/marl a)
+    %+  cook  |=(a/marl:dynamic a)
     %+  cook  zing
     (ifix [pel per] (more ace wide-inner-top))
   ::
   ++  wrapped-elems                                     ::  wrapped tuna
-    %+  cook  |=(a/marl a)
+    %+  cook  |=(a/marl:dynamic a)
     ;~  pose
       wide-paren-elems
       (cook |=(@t `marl`[;/((trip +<))]~) qut)
@@ -277,7 +270,7 @@
   ::
   ::++  wide-quote-innards  (cook collapse-chars(in-tall-form |) quote-innards)
   ++  quote-innards                                     ::  wide+tall flow
-    %+  cook  |=(a/(list $@(@ $^(manx tuna))) a)
+    %+  cook  |=(a/(list $@(@ tuna:dynamic)) a)
     %-  star
     ;~  pose
       ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
@@ -287,7 +280,7 @@
     ==
   ::
   ++  inline-embed                                      ::
-    %+  cook  |=(a/$^(manx tuna) a)
+    %+  cook  |=(a/tuna:dynamic a)
     ;~  pose
       ;~(pfix sem bracketed-elem(in-tall-form |))
       ;~(plug tuna-mode sump:vast)
@@ -295,10 +288,10 @@
     ==
   ::
   ++  collapse-chars                                    ::  group consec chars
-    |=  reb/(list $@(@ $^(manx tuna)))
-    ^-  marl
-    =|  {sim/(list @) tuz/marl}
-    |-  ^-  marl
+    |=  reb/(list $@(@ tuna:dynamic))
+    ^-  marl:dynamic
+    =|  {sim/(list @) tuz/marl:dynamic}
+    |-  ^-  marl:dynamic
     ?~  reb
       =.  sim
         ?.  in-tall-form   sim
@@ -350,7 +343,7 @@
           {$code p/tape}                                ::  code literal
           {$text p/tape}                                ::  text symbol
           {$link p/(list graf) q/tape}                  ::  URL
-          {$expr p/=<($^(tuna manx) dynamic)}           ::  interpolated hoon
+          {$expr p/tuna:dynamic}                        ::  interpolated hoon
       ==
     --
 |%                                                      ::
@@ -946,7 +939,7 @@
     ==
   ::
   ++  sanitize-to-id                                    ::  # text into elem id
-    |=  a/(list $^(tuna manx)):dynamic  ^-  tape
+    |=  a/(list tuna:dynamic)  ^-  tape
     =;  raw/tape
       %+  turn  raw
       |=  @tD
