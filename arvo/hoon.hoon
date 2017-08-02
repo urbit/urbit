@@ -9487,20 +9487,17 @@
   ++  sail                                              ::  xml template
     |=  in-tall-form/?  =|  lin/?
     |%
-    ++  single                                          ::  elem as tuna
-      |*(a/rule (cook |=(b/tuna:twig [b]~) a))
-    ::
-    ::+|
     ::
     ++  apex                                            ::  product twig
       %+  cook
-        |=  tum/marl:twig  ^-  twig
-        ?:  ?=({{^ *} $~} tum)
-          [%xmn i.tum]
-        [%xml tum]
-      a-marl
+        |=  tum/(each manx marl):twig  ^-  twig
+        ?-  -.tum
+          $&  [%xmn p.tum]
+          $|  [%xml p.tum]
+        ==
+      toplevel
     ::
-    ++  a-marl                                          ::  entry-point
+    ++  toplevel                                          ::  entry-point
       ;~(pfix sem ?:(in-tall-form tall-top wide-top))
     ::
     ++  inline-embed                                    ::  brace interpolation
@@ -9527,18 +9524,18 @@
       ==
     ::
     ++  wide-top                                        ::  wide outer top
-      %+  knee  *marl:twig  |.  ~+
+      %+  knee  *(each manx marl):twig  |.  ~+
       ;~  pose
-        wide-quote
-        wide-paren-elems
-        (single ;~(plug tag-head wide-tail))
+        (stag %| wide-quote)
+        (stag %| wide-paren-elems)
+        (stag %& ;~(plug tag-head wide-tail))
       ==
     ::
     ++  wide-inner-top                                  ::  wide inner top
-      %+  knee  *marl:twig  |.  ~+
+      %+  knee  *(each tuna marl):twig  |.  ~+
       ;~  pose
         wide-top
-        (single ;~(plug tuna-mode wide))
+        (stag %& ;~(plug tuna-mode wide))
       ==
     ::
     ++  wide-attrs                                      ::  wide attributes
@@ -9554,13 +9551,26 @@
     ::
     ++  wide-elems                                      ::  wide elements
       %+  cook  |=(a/marl:twig a)
-      %+  cook  zing
+      %+  cook  join-tops
       (star ;~(pfix ace wide-inner-top))
     ::
     ++  wide-paren-elems                                ::  wide flow
       %+  cook  |=(a/marl:twig a)
-      %+  cook  zing
+      %+  cook  join-tops
       (ifix [pel per] (more ace wide-inner-top))
+    ::
+    ::+|
+    ::
+    ++  drop-top
+      |=  a/(each tuna marl):twig  ^-  marl:twig
+      ?-  -.a
+        $&  [p.a]~
+        $|  p.a
+      ==
+    ::
+    ++  join-tops
+      |=  a/(list (each tuna marl)):twig  ^-  marl:twig
+      (zing (turn a drop-top))
     ::
     ::+|
     ::
@@ -9595,7 +9605,7 @@
       ;~  pose
         wide-paren-elems
         (cook |=(@t `marl`[;/((trip +<))]~) qut)
-        wide-top
+        (cook drop-top wide-top)
       ==
     ::
     ::+|
@@ -9644,15 +9654,15 @@
     ::+|
     ::
     ++  tall-top                                        ::  tall top
-      %+  knee  *marl:twig  |.  ~+
+      %+  knee  *(each manx marl):twig  |.  ~+
       ;~  pose
-        ;~(pfix (plus ace) (cook collapse-chars quote-innards))
-        (single ;~(plug script-or-style script-style-tail))
-        (single tall-elem)
-        wide-quote
-        ;~(pfix tis tall-tail)
-        (single ;~((glue gap) tuna-mode tall))
-        (easy [;/("\0a")]~)
+        (stag %| ;~(pfix (plus ace) (cook collapse-chars quote-innards)))
+        (stag %& ;~(plug script-or-style script-style-tail))
+        (stag %& tall-elem)
+        (stag %| wide-quote)
+        (stag %| ;~(pfix tis tall-tail))
+        (stag %| ;~(plug ;~((glue gap) tuna-mode tall) (easy ~)))
+        (easy %| [;/("\0a")]~)
       ==
     ::
     ++  tall-attrs                                      ::  tall attributes
@@ -9696,7 +9706,7 @@
         (cold ~ sem)
         ;~(pfix col wrapped-elems(in-tall-form |))
         ;~(pfix col ace (cook collapse-chars(in-tall-form |) quote-innards))
-        (cook zing (ifix [gap ;~(plug gap duz)] (most gap a-marl)))
+        (cook join-tops (ifix [gap ;~(plug gap duz)] (most gap toplevel)))
       ==
     ::
     ++  collapse-chars                                  ::  group consec chars
