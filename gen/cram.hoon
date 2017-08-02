@@ -35,281 +35,28 @@
   ::
 =>
 |%
-++  dynamic
-  |%
-  ++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
-  ++  manx  {g/marx c/marl}                               ::  XML node
-  ++  marl  (list tuna)                                   ::  XML node list
-  ++  mart  (list {n/mane v/(list beer)})                 ::  XML attributes
-  ++  marx  {n/mane a/mart}                               ::  XML tag
-  ++  tuna  $^(manx {?($tape $manx $marl $call) p/twig})
-  --
 ::
 ++  freeze
-  |=  manx:dynamic  ^-  manx
+  |=  manx:twig  ^-  manx
   :-  [n.g (turn a.g freeze-mart)]
   %+  turn  c
-  |=(a/tuna:dynamic ?@(-.a !! (freeze a)))
+  |=(a/tuna:twig ?@(-.a !! (freeze a)))
 ::
 ++  freeze-mart
   |=  {n/mane v/(list beer)}  ^-  {mane tape}
   [n (turn v |=(a/beer ?^(a !! a)))]
 ::
-::+|
-::
-++  steam
-  |=  manx:dynamic  ^-  twig:manx
-  [[(steam-mane n.g) %conl (turn a.g steam-mart)] (steam-marl c)]
-::
-++  steam-marl
-  !.
-  |=  a/marl:dynamic  ^-  twig:marl
-  ?~  a  [%conl ~]
-  ?-  -.i.a
-    ^      [(steam i.a) $(a t.a)]
-    $manx  [p.i.a $(a t.a)]
-    $tape  [[%nub p.i.a] $(a t.a)]
-    $call  [%call p.i.a [$(a t.a)]~]
-    $marl  [%lace [p.i.a $(a t.a)] cons-gate-twig]
-  ==
-::
-++  cons-gate-twig
-  ^-  twig
-  :+  %new  [%base %cell]
-  :-  %core
-  ^-  (map term foot)
-  :_  [~ ~]
-  =+  sug=[[%& 12] ~]
-  :+  %$  %elm
-  :^  %ifno  sug
-    [%make sug [[[[%& 1] ~] [%$ 13]] ~]]
-  [%make sug [[[[%& 3] ~] [%make [%$ ~] [[sug [%$ 25]] ~]]] ~]]
-::
-++  steam-mane
-  |=  a/mane  ^-  twig
-  ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
-::
-++  steam-mart
-  |=  {n/mane v/(list beer)}
-  [(steam-mane n) %knit v]
 ::
 ::+|
-++  tuna  tuna:dynamic
 ::
-++  sail                                                ::  xml template
-  |=  in-tall-form/?  =|  lin/?
-  |%
-  ++  apex                                              ::  entry point
-    ;~(pfix sem ?:(in-tall-form tall-top wide-top))
-  ::
-  ++  single                                            ::  elem as tuna
-    |*(a/rule (cook |=(b/tuna:dynamic [b]~) a))
-  ::
-  ++  tall-top                                          ::  tall top
-    %+  knee  *marl:dynamic  |.  ~+
-    ;~  pose
-      ;~(pfix (plus ace) (cook collapse-chars quote-innards))
-      (single ;~(plug script-or-style script-style-tail))
-      (single tall-elem)
-      wide-quote
-      ;~(pfix tis tall-tail)
-      (single ;~((glue gap) tuna-mode tall:vast))
-      (easy [;/("\0a")]~)
-    ==
-  ::
-  ++  tuna-mode                                         ::  xml node(s) kind
-    ;~  pose
-      (cold %tape hep)
-      (cold %manx lus)
-      (cold %marl tar)
-      (cold %call cen)
-    ==
-  ++  wide-top                                          ::  wide outer top
-    %+  knee  *marl:dynamic  |.  ~+
-    ;~  pose
-      wide-quote
-      wide-paren-elems
-      (single ;~(plug tag-head wide-tail))
-    ==
-  ::
-  ++  wide-inner-top                                    ::  wide inner top
-    %+  knee  *marl:dynamic  |.  ~+
-    ;~  pose
-      wide-top
-      (single ;~(plug tuna-mode wide:vast))
-    ==
-  ::
-  ++  a-mane                                            ::  mane as twig
-    %+  cook
-      |=  {a/@tas b/(unit @tas)}
-      ?~(b a [a u.b])
-    ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
-  ::
-  ++  script-or-style                                   ::  script or style
-    %+  cook  |=(a/marx:dynamic a)
-    ;~  plug
-      ;~(pose (jest %script) (jest %style))
-      wide-attrs
-    ==
-  ::
-  ++  en-class
-    |=  a/(list {$class p/term})  ^-  (unit {$class tape})
-    ?~  a  ~
-    %-  some
-    :-  %class
-    |-
-    %+  welp  (trip p.i.a)
-    ?~  t.a  ~
-    [' ' $(a t.a)]
-  ::
-  ++  tag-head                                          ::  tag head
-    %+  cook
-      =>  dynamic
-      |=  {a/mane b/mart c/mart}
-      ^-  marx
-      [a (weld b c)]
-    ;~  plug
-      a-mane
-    ::
-      %+  cook
-        |=  a/(list (unit {term (list beer)}))
-        ^-  (list {term (list beer)})
-        :: discard nulls
-        (murn a same)
-      ;~  plug
-        (punt ;~(plug (cold %id hax) (cook trip sym)))
-        (cook en-class (star ;~(plug (cold %class dot) sym)))
-        (punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil:vast))
-        (easy ~)
-      ==
-    ::
-      wide-attrs
-    ==
-  ::
-  ++  tall-attrs                                        ::  tall attributes
-    %-  star
-    ;~  pfix  ;~(plug gap tis)
-      ;~((glue gap) a-mane hopefully-quote)
-    ==
-  ::
-  ++  tall-elem                                         ::  tall preface
-    %+  cook
-      =>  dynamic
-      |=  {a/{p/mane q/mart} b/mart c/marl}
-      ^-  manx
-      [[p.a (weld q.a b)] c]
-    ;~(plug tag-head tall-attrs tall-tail)
-  ::
-  ::REVIEW is there a better way to do this?
-  ++  hopefully-quote
-    %+  cook  |=(a/(list beer) a)
-    %+  cook  |=(a/twig ?:(?=($knit -.a) p.a [~ a]~))
-    wide:vast
-  ::
-  ++  wide-attrs                                        ::  wide attributes
-    %+  cook  |=(a/(unit mart:dynamic) (fall a ~))
-    %-  punt
-    %+  ifix  [pel per]
-    %+  more  (jest ', ')
-    ;~((glue ace) a-mane hopefully-quote)
-  ::
-  ++  wide-tail                                         ::  wide elements
-    %+  cook  |=(a/marl:dynamic a)
-    ;~(pose ;~(pfix col wrapped-elems) (cold ~ sem) (easy ~))
-  ::
-  ++  wide-elems                                        ::  wide elements
-    %+  cook  |=(a/marl:dynamic a)
-    %+  cook  zing
-    (star ;~(pfix ace wide-inner-top))
-  ::
-  ++  script-style-tail                                 ::  unescaped tall tail
-    %+  cook  |=(a/marl:dynamic a)
-    %+  ifix  [gap ;~(plug gap duz)]
-    %+  most  gap
-    ;~  pfix  sem
-      %+  cook  |=(a/tape ;/(a))
-      ;~  pose
-        ;~(pfix ace (star prn))
-        (easy "\0a")
-      ==
-    ==
-  ::
-  ++  tall-tail                                         ::  tall tail
-    ?>  in-tall-form
-    %+  cook  |=(a/marl:dynamic a)
-    ;~  pose
-      (cold ~ sem)
-      ;~(pfix col wrapped-elems(in-tall-form |))
-      ;~(pfix col ace (cook collapse-chars(in-tall-form |) quote-innards))
-      (cook zing (ifix [gap ;~(plug gap duz)] (most gap apex)))
-    ==
-  ::
-  ++  wide-quote                                        ::  wide quote
-    %+  cook  |=(a/marl:dynamic a)
-    ;~  pose
-      ;~(less (jest '"""') (ifix [doq doq] (cook collapse-chars quote-innards)))
-      (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook collapse-chars quote-innards(lin |))))
-    ==
-  ::
-  ++  bracketed-elem                                    ::  bracketed element
-    %+  ifix  [kel ker]
-    ;~(plug tag-head wide-elems)
-  ::
-  ++  wide-paren-elems                                  ::  wide flow
-    %+  cook  |=(a/marl:dynamic a)
-    %+  cook  zing
-    (ifix [pel per] (more ace wide-inner-top))
-  ::
-  ++  wrapped-elems                                     ::  wrapped tuna
-    %+  cook  |=(a/marl:dynamic a)
-    ;~  pose
-      wide-paren-elems
-      (cook |=(@t `marl`[;/((trip +<))]~) qut)
-      wide-top
-    ==
-  ::
-  ::++  wide-quote-innards  (cook collapse-chars(in-tall-form |) quote-innards)
-  ++  quote-innards                                     ::  wide+tall flow
-    %+  cook  |=(a/(list $@(@ tuna:dynamic)) a)
-    %-  star
-    ;~  pose
-      ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
-      inline-embed
-      ;~(less bas kel ?:(in-tall-form fail doq) prn)
-      ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
-    ==
-  ::
-  ++  inline-embed                                      ::
-    %+  cook  |=(a/tuna:dynamic a)
-    ;~  pose
-      ;~(pfix sem bracketed-elem(in-tall-form |))
-      ;~(plug tuna-mode sump:vast)
-      (stag %tape sump:vast)
-    ==
-  ::
-  ++  collapse-chars                                    ::  group consec chars
-    |=  reb/(list $@(@ tuna:dynamic))
-    ^-  marl:dynamic
-    =|  {sim/(list @) tuz/marl:dynamic}
-    |-  ^-  marl:dynamic
-    ?~  reb
-      =.  sim
-        ?.  in-tall-form   sim
-        [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
-      ?~(sim tuz [;/((flop sim)) tuz])
-    ?@  i.reb
-      $(reb t.reb, sim [i.reb sim])
-    ?~  sim  [i.reb $(reb t.reb, sim ~)]
-    [;/((flop sim)) i.reb $(reb t.reb, sim ~)]
-  --
 --
 ::|=  inp/cord
 ::=<  (steam-marl (rash inp apex:(sail &)))
 =<  |=(pax/path (test pax))
 =>  |%
-    ++  item  (pair mite marl:dynamic)                  ::  xml node generator
+    ++  item  (pair mite marl:twig)                     ::  xml node generator
     ++  colm  @ud                                       ::  column
-    ++  flow  marl:dynamic                              ::  node or generator
+    ++  flow  marl:twig                                 ::  node or generator
     ++  mite                                            ::  context
       $?  $down                                         ::  outer embed
           $rule                                         ::  horizontal ruler
@@ -343,7 +90,7 @@
           {$code p/tape}                                ::  code literal
           {$text p/tape}                                ::  text symbol
           {$link p/(list graf) q/tape}                  ::  URL
-          {$expr p/tuna:dynamic}                        ::  interpolated hoon
+          {$expr p/tuna:twig}                        ::  interpolated hoon
       ==
     --
 |%                                                      ::
@@ -377,7 +124,7 @@
   %+  stag  [%div ~]  ::REVIEW
   |=  {naz/hair los/tape}
   %+  pfix  (hrul:cram-parsers +<)
-  |=  nail  ^-  (like marl:dynamic)
+  |=  nail  ^-  (like marl:twig)
   $:line:(cram-main q.naz +<)
 ::
 ++  cram-main                                           ::  parsing loop logic
@@ -552,7 +299,7 @@
     =/  yex/tape  (join '\0a' (flop q.u.lub))
     ::
     ::  vex: parse of paragraph
-    =/  vex/(like marl:dynamic)
+    =/  vex/(like marl:twig)
       ::
       ::  either a one-line header or a paragraph
       %.  [p.u.lub yex]
@@ -856,7 +603,7 @@
     ::
     ::  {interpolated} sail
     ::
-      (stag %expr inline-embed:(sail |))
+      (stag %expr inline-embed:(sail:vast |))
     ::
     ::  just a byte
     ::
@@ -890,7 +637,7 @@
     ::
     ++  item
       |=  nex/graf
-      ^-  flow
+      ^-  flow  ::CHECK can be tuna:twig?
       ?-  -.nex
         $text  !!  :: handled separately
         $expr  [p.nex]~
@@ -918,7 +665,7 @@
     ;~(pfix gay down)  ::REVIEW does this mean comments work?
   ::
   ++  expr                                              ::  expression
-    ;~(pfix gay apex:(sail &))
+    ;~(pfix gay a-marl:(sail:vast &))
   ::
   ++  whit                                              ::  whitespace
     (cold ' ' (plus ;~(pose (just ' ') line)))
@@ -926,7 +673,7 @@
   ++  line  (just '\0a')  ::TODO lookahead
   ++  head                                              ::  parse heading
     %+  cook
-      |=  a/manx:dynamic  ^-  marl:dynamic
+      |=  a/manx:twig  ^-  marl:twig
       =.  a.g.a  :_(a.g.a [%id (sanitize-to-id c.a)])
       [a]~
     ::
@@ -939,7 +686,7 @@
     ==
   ::
   ++  sanitize-to-id                                    ::  # text into elem id
-    |=  a/(list tuna:dynamic)  ^-  tape
+    |=  a/(list tuna:twig)  ^-  tape
     =;  raw/tape
       %+  turn  raw
       |=  @tD
