@@ -36,16 +36,23 @@ def make_dependency_graph
   add_dep 'Qt5Core', 'qtpcre'
 
   if Os == 'linux'
+    add_dep 'qlinuxfb', 'Qt5FbSupport'
+    add_dep 'qlinuxfb', 'Qt5InputSupport'
+
+    add_dep 'qxcb', 'Qt5XcbQpa'
+
     add_dep 'Qt5DBus', 'Qt5Core'
     add_dep 'Qt5DBus', 'Qt5Gui'
     # add_dep 'Qt5Gui', 'qxcb'   # TODO: this can't be a "dep" because that makes it circular
+    add_dep 'Qt5DeviceDiscoverySupport', 'libudev'
     add_dep 'Qt5FontDatabaseSupport', 'qtfreetype'
+    add_dep 'Qt5InputSupport', 'Qt5DeviceDiscoverySupport'
     add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5AccessibilitySupport'
     add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5DBus'
     add_dep 'Qt5LinuxAccessibilitySupport', 'xcb-aux'
     add_dep 'Qt5ThemeSupport', 'Qt5DBus'
 
-    # TODO: add_dep 'Qt5Gui', 'qlinuxfb'
+    # add_dep 'Qt5Gui', 'qlinuxfb'
     add_dep 'Qt5XcbQpa', 'Qt5EventDispatcherSupport'
     add_dep 'Qt5XcbQpa', 'Qt5FontDatabaseSupport'
     add_dep 'Qt5XcbQpa', 'Qt5Gui'
@@ -59,6 +66,7 @@ def make_dependency_graph
     add_dep 'Qt5XcbQpa', 'xcb-image'
     add_dep 'Qt5XcbQpa', 'xcb-keysyms'
     add_dep 'Qt5XcbQpa', 'xcb-randr'
+    add_dep 'Qt5XcbQpa', 'xcb-renderutil'
     add_dep 'Qt5XcbQpa', 'xcb-shape'
     add_dep 'Qt5XcbQpa', 'xcb-shm'
     add_dep 'Qt5XcbQpa', 'xcb-sync'
@@ -66,8 +74,6 @@ def make_dependency_graph
     add_dep 'Qt5XcbQpa', 'xcb-xinerama'
     add_dep 'Qt5XcbQpa', 'xcb-xkb'
     add_dep 'Qt5XcbQpa', 'xi'
-
-    add_dep 'qxcb', 'Qt5XcbQpa'
   end
 end
 
@@ -161,7 +167,7 @@ def create_pc_file_for_qt_library(name)
     case LibTypes[dep]
     when :qt then requires << dep
     when :pc then requires << dep
-    when :compiler then libs << dep
+    when :compiler then libs << "-l#{dep}"
     end
   end
 
