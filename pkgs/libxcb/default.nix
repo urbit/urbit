@@ -64,6 +64,9 @@ let
       "--disable-shared";
 
     cross_inputs = [ lib util ];
+
+    libxcb = lib;
+    libxcb_util = util;
   };
 
   util-keysyms = crossenv.make_derivation rec {
