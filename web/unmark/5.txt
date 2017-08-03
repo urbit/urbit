@@ -1,3 +1,5 @@
+  {pathological case}
+
 ## A digital home base
 
 What you need is a digital home base.  What is that computer?  Is
