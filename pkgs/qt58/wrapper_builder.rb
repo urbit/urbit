@@ -30,10 +30,27 @@ end
 # purely transitive.
 def make_dependency_graph
   add_dep 'Qt5Widgets', 'Qt5Gui'
+  add_dep 'Qt5FontDatabaseSupport', 'qtfreetype'
   add_dep 'Qt5Gui', 'Qt5Core'
   add_dep 'Qt5Gui', 'qtlibpng'
   add_dep 'Qt5Gui', 'qtharfbuzz'
   add_dep 'Qt5Core', 'qtpcre'
+
+  if Os == 'windows'
+    add_dep 'qwindows', 'dwmapi'
+    add_dep 'qwindows', 'imm32'
+    add_dep 'qwindows', 'oleaut32'
+    add_dep 'qwindows', 'Qt5Gui'
+    add_dep 'qwindows', 'Qt5EventDispatcherSupport'
+    add_dep 'qwindows', 'Qt5FontDatabaseSupport'
+    add_dep 'qwindows', 'Qt5ThemeSupport'
+
+    add_dep 'Qt5Core', 'ole32'
+    add_dep 'Qt5Core', 'uuid'
+    add_dep 'Qt5Core', 'uxtheme'
+    add_dep 'Qt5Core', 'winmm'
+    add_dep 'Qt5Core', 'ws2_32'
+  end
 
   if Os == 'linux'
     add_dep 'qlinuxfb', 'Qt5FbSupport'
@@ -43,16 +60,15 @@ def make_dependency_graph
 
     add_dep 'Qt5DBus', 'Qt5Core'
     add_dep 'Qt5DBus', 'Qt5Gui'
-    # add_dep 'Qt5Gui', 'qxcb'   # TODO: this can't be a "dep" because that makes it circular
     add_dep 'Qt5DeviceDiscoverySupport', 'libudev'
-    add_dep 'Qt5FontDatabaseSupport', 'qtfreetype'
+    # add_dep 'Qt5Gui', 'qxcb'   # TODO: this can't be a "dep" because that makes it circular
+    # add_dep 'Qt5Gui', 'qlinuxfb'
     add_dep 'Qt5InputSupport', 'Qt5DeviceDiscoverySupport'
     add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5AccessibilitySupport'
     add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5DBus'
     add_dep 'Qt5LinuxAccessibilitySupport', 'xcb-aux'
     add_dep 'Qt5ThemeSupport', 'Qt5DBus'
 
-    # add_dep 'Qt5Gui', 'qlinuxfb'
     add_dep 'Qt5XcbQpa', 'Qt5EventDispatcherSupport'
     add_dep 'Qt5XcbQpa', 'Qt5FontDatabaseSupport'
     add_dep 'Qt5XcbQpa', 'Qt5Gui'
@@ -210,7 +226,7 @@ def symlink_pc_file_closure(name)
     puts "  Symlinking lib/pkgconfig/#{link.basename}"
 
     # Link directly to the real PC file.
-    target = target.readlink while target.symlink?
+    target = target.readlink while target.absolute? && target.symlink?
 
     ln_s target, link
   end
