@@ -2,12 +2,15 @@ require 'pathname'
 require 'fileutils'
 include FileUtils
 
+STDOUT.sync = true
+
 Os = ENV.fetch('os')
 QtVersionString = ENV.fetch('version')
 QtVersionMajor = QtVersionString.split('.').first.to_i
 
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
+OutPcDir = OutDir + 'lib' + 'pkgconfig'
 
 DependencyGraph = {}
 LibTypes = {}
@@ -21,16 +24,50 @@ else
   prl_prefix = 'lib'
 end
 
+# Note: These dependencies just came from me fixing link errors for specific
+# programs.  There are likely misisng dependencies in this graph, and there
+# might be a few dependencies that could be safely removed because they are
+# purely transitive.
 def make_dependency_graph
   add_dep 'Qt5Widgets', 'Qt5Gui'
   add_dep 'Qt5Gui', 'Qt5Core'
-  add_dep 'Qt5Gui', 'qtlibpng', 'qtharfbuzz'
+  add_dep 'Qt5Gui', 'qtlibpng'
+  add_dep 'Qt5Gui', 'qtharfbuzz'
   add_dep 'Qt5Core', 'qtpcre'
 
   if Os == 'linux'
-    add_dep 'Qt5Gui', 'qxcb', 'qlinuxfb'
-    add_dep 'qxcb', 'Qt5XcbQpa'
+    add_dep 'Qt5DBus', 'Qt5Core'
+    add_dep 'Qt5DBus', 'Qt5Gui'
+    # add_dep 'Qt5Gui', 'qxcb'   # TODO: this can't be a "dep" because that makes it circular
+    add_dep 'Qt5FontDatabaseSupport', 'qtfreetype'
+    add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5AccessibilitySupport'
+    add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5DBus'
+    add_dep 'Qt5LinuxAccessibilitySupport', 'xcb-aux'
+    add_dep 'Qt5ThemeSupport', 'Qt5DBus'
+
+    # TODO: add_dep 'Qt5Gui', 'qlinuxfb'
+    add_dep 'Qt5XcbQpa', 'Qt5EventDispatcherSupport'
+    add_dep 'Qt5XcbQpa', 'Qt5FontDatabaseSupport'
+    add_dep 'Qt5XcbQpa', 'Qt5Gui'
+    add_dep 'Qt5XcbQpa', 'Qt5LinuxAccessibilitySupport'
+    add_dep 'Qt5XcbQpa', 'Qt5ServiceSupport'
+    add_dep 'Qt5XcbQpa', 'Qt5ThemeSupport'
+    add_dep 'Qt5XcbQpa', 'x11'
+    add_dep 'Qt5XcbQpa', 'x11-xcb'
     add_dep 'Qt5XcbQpa', 'xcb'
+    add_dep 'Qt5XcbQpa', 'xcb-icccm'
+    add_dep 'Qt5XcbQpa', 'xcb-image'
+    add_dep 'Qt5XcbQpa', 'xcb-keysyms'
+    add_dep 'Qt5XcbQpa', 'xcb-randr'
+    add_dep 'Qt5XcbQpa', 'xcb-shape'
+    add_dep 'Qt5XcbQpa', 'xcb-shm'
+    add_dep 'Qt5XcbQpa', 'xcb-sync'
+    add_dep 'Qt5XcbQpa', 'xcb-xfixes'
+    add_dep 'Qt5XcbQpa', 'xcb-xinerama'
+    add_dep 'Qt5XcbQpa', 'xcb-xkb'
+    add_dep 'Qt5XcbQpa', 'xi'
+
+    add_dep 'qxcb', 'Qt5XcbQpa'
   end
 end
 
@@ -74,7 +111,7 @@ def find_pkg_config_cross_file(name)
     path = Pathname(dir) + "#{name}.pc"
     if path.exist?
       puts "found pc file for #{name}"
-      return name
+      return path
     end
   end
   nil
@@ -114,6 +151,8 @@ def determine_lib_types
 end
 
 def create_pc_file_for_qt_library(name)
+  puts "Creating pc file for Qt library #{name}"
+
   requires = []
   libs = []
   cflags = []
@@ -137,7 +176,7 @@ def create_pc_file_for_qt_library(name)
     libdir = "${prefix}/plugins/#{PluginGroup[name]}"
   end
 
-  path = OutDir + 'lib' + 'pkgconfig' + "#{name}.pc"
+  path = OutPcDir + "#{name}.pc"
   File.open(path.to_s, 'w') do |f|
     f.write <<EOF
 prefix=#{OutDir}
@@ -151,13 +190,34 @@ EOF
   end
 end
 
-def create_pc_files
-  pc_dir = OutDir + 'lib' + 'pkgconfig'
-  mkdir pc_dir
+# For .pc files we depend on, add symlinks to the .pc file and any other .pc
+# files in the same directory which might be transitive dependencies.
+def symlink_pc_file_closure(name)
+  puts "Symlinking pc files for #{name}"
+  dep_pc_dir = PcFiles.fetch(name).dirname
+  dep_pc_dir.each_child do |target|
+    link = OutPcDir + target.basename
 
-  LibTypes.each do |lib, type|
-    if type == :qt
-      create_pc_file_for_qt_library(lib)
+    # Skip it if we already made this link.
+    next if link.symlink?
+
+    puts "  Symlinking lib/pkgconfig/#{link.basename}"
+
+    # Link directly to the real PC file.
+    target = target.readlink while target.symlink?
+
+    ln_s target, link
+  end
+end
+
+def create_pc_files
+  mkdir OutPcDir
+  LibTypes.each do |name, type|
+    case type
+    when :qt
+      create_pc_file_for_qt_library(name)
+    when :pc
+      symlink_pc_file_closure(name)
     end
   end
 end
