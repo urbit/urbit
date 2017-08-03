@@ -36,6 +36,7 @@
     |%
     ++  state                                           ::>  broker state
       $:  stories/(map naem story)                      ::<  conversations
+          outbox/(map serial tracking)                  ::<  sent messages
           log/(map naem @ud)                            ::<  logged to clay
           nicks/(map ship nick)                         ::<  local nicknames
           binds/(jug char (set circle))                 ::<  circle glyph lookup
@@ -71,7 +72,7 @@
           {$quit $~}                                    ::
       ==                                                ::
     ++  weir                                            ::>  parsed wire
-      $%  {$repeat cir/circle}                          ::<  messaging wire
+      $%  {$repeat cir/circle ses/(list serial)}        ::<  messaging wire
           {$circle nom/naem cir/circle}                 ::<  subscription wire
       ==                                                ::
     --
@@ -539,12 +540,13 @@
     ::>  message got delivered. if an error was returned
     ::>  mark the message as rejected. if not, received.
     ::
-    |=  {who/circle fal/(unit tang)}
+    |=  {who/circle ses/(list serial) fal/(unit tang)}
     ^+  +>
     ~?  ?=(^ fal)  u.fal
-    ::TODO  store delivery state locally
-    ::?~(fal %received ~>(%slog.[0 u.fal] %rejected))
-    +>
+    ~&  [%outbox-was outbox]
+    =-  (ta-delta %done who ses -)
+    ?~  fal  %accepted
+    ~>(%slog.[0 u.fal] %rejected)
   ::
   ::>  ||
   ::>  ||  %messaging
@@ -1151,6 +1153,7 @@
     ^+  +>
     ?-  -.det
       $out      (da-change-out +.det)
+      $done     (da-change-done +.det)
       $glyph    (da-change-glyph +.det)
       $nick     (da-change-nick +.det)
       $story    (da-change-story +.det)
@@ -1192,11 +1195,37 @@
     |=  {cir/circle out/(list thought)}
     ^+  +>
     ~&  [%da-change-out hos.cir]
+    =+  ses=(turn out head)
+    =.  outbox
+      ::  for every serial, add %pending state.
+      %+  roll  ses
+      |=  {s/serial o/_outbox}
+      =.  o  ?~(o outbox o)  ::TODO  =?
+      =+  t=(fall (~(get by o) s) *tracking)
+      %+  ~(put by o)  s
+      (~(put by t) cir %pending)
     %+  da-emit  ost.bol
     :*  %poke
-        /repeat/(scot %p hos.cir)/[nom.cir]
+        /repeat/(scot %p hos.cir)/[nom.cir]/(scot %ud (jam ses))
         [hos.cir %talk-guardian]
         [%talk-command %publish out]
+    ==
+  ::
+  ++  da-change-done                                    ::<  delivered messages
+    ::>  apply a %done delta, setting new delivery state
+    ::>  for messages.
+    ::
+    |=  {cir/circle ses/(list serial) res/delivery}
+    ^+  +>
+    %_  +>
+        outbox
+      ::  for every serial, set new delivery state.
+      %-  ~(gas by outbox)
+      %+  turn  ses
+      |=  s/serial
+      :-  s
+      %+  ~(put by (~(got by outbox) s))
+      cir  res
     ==
   ::
   ++  da-change-glyph                                   ::<  un/bound glyph
@@ -1546,7 +1575,7 @@
 ++  etch                                                ::<  parse wire
   ::>  parses {wir} to obtain either %circle with story
   ::>  and circle or %repeat with message number, source
-  ::>  ship and story.
+  ::>  ship, story and serials.
   ::
   |=  wir/wire
   ^-  weir
@@ -1559,10 +1588,10 @@
     i.t.t.t.wir
     ::
       $repeat
-    ?>  ?=({@ @ $~} t.wir)
+    ?>  ?=({@ @ @ $~} t.wir)
     :+  %repeat
-      (slav %p i.t.wir)
-    i.t.t.wir
+      [(slav %p i.t.wir) i.t.t.wir]
+    ((list serial) (cue (slav %ud i.t.t.t.wir)))
   ==
 ::
 ++  etch-circle                                         ::<  parse /circle wire
@@ -1582,11 +1611,11 @@
   ::
   |=  $:  wir/wire
           $=  fun
-          $-  cir/circle
+          $-  {cir/circle ses/(list serial)}
               {(list move) _.}
       ==
   =+  wer=(etch wir)
-  ?>(?=($repeat -.wer) (fun cir.wer))
+  ?>(?=($repeat -.wer) (fun cir.wer ses.wer))
 ::
 ++  circle-peer                                         ::<  /circle peer card
   ::>  constructs a %peer move to subscribe {nom} to
@@ -1979,9 +2008,9 @@
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move +>)
   %+  etch-repeat  [%repeat wir]
-  |=  cir/circle
+  |=  {cir/circle ses/(list serial)}
   %-  pre-bake
-  ta-done:(ta-repeat:ta cir fal)
+  ta-done:(ta-repeat:ta cir ses fal)
 ::
 ::>  ||
 ::>  ||  %logging

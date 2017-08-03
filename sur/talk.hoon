@@ -73,6 +73,7 @@
 ++  delta                                               ::
   $%  ::  messaging state                               ::
       {$out cir/circle out/(list thought)}              ::<  send msgs to circle
+      {$done cir/circle ses/(list serial) res/delivery} ::<  set delivery state
       ::  shared ui state                               ::
       {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
@@ -243,4 +244,10 @@
 ::
 ++  serial     @uvH                                     ::<  unique identifier
 ++  audience   (set circle)                             ::<  destinations
+++  tracking   (map circle delivery)                    ::>  delivery per target
+++  delivery                                            ::>  delivery state
+  $?  $pending                                          ::<  undelivered
+      $accepted                                         ::<  received
+      $rejected                                         ::<  denied
+  ==                                                    ::
 --
