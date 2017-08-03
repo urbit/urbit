@@ -7515,8 +7515,12 @@
         $xml
       ?~  p.gen  ~
       =-  (weld - shut(p.gen t.p.gen))
-      ?@  -.i.p.gen   ~|([%shut-tuna -.i.p.gen] !!)
-      shut(gen [%xmn i.p.gen])
+      ?^  -.i.p.gen  shut(gen [%xmn i.p.gen])
+      ~|  [%shut-tuna -.i.p.gen]
+      ?+  -.i.p.gen  !!
+        $manx  ?>(?=($xmn -.p.i.p.gen) shut(gen p.i.p.gen))
+        $marl  ?>(?=($xml -.p.i.p.gen) shut(gen p.i.p.gen))
+      ==
     ==
   ::
   ++  rake  ~|(%rake-twig (need reek))
