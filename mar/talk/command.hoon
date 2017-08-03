@@ -57,7 +57,8 @@
       %-  ot  :~
         serial+ceri
         audience+audi
-        statement+stam
+        date+di
+        speech+spec
       ==
     ::
     ++  ceri
@@ -72,37 +73,13 @@
       ^-  $-(nail (like circle))
       ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
     ::
-    ++  speech-or-eval  $?(speech {$eval p/@t} {$mor ses/(list speech-or-eval)})
-    ++  eval
-      |=  a/(pair @da speech-or-eval)
-      ^-  statement
-      %=  a
-          q
-        |-  ^-  speech
-        ?:  ?=($mor -.q.a)
-          ::[%mor (turn ses.q.a |=(b/speech-or-eval ^$(q.a b)))]
-          ~&  %todo-talk-command-mark  ::TODO  fix
-          *speech
-        ?.  ?=($eval -.q.a)  q.a
-        =-  [%exp p.q.a -]
-        =+  pax=[&1:% &2:% (scot %da p.a) |3:%]
-        p:(mule |.([(sell (slap !>(..zuse) (rain pax p.q.a)))]~))
-      ==
-    ::
-    ++  stam
-      ^-  $-(json (unit statement))
-      %+  cu  eval
-      (ot date+di speech+spec ~)
-    ::
     ++  spec
-      %+  ke  *speech-or-eval  |.
-      %-  of
-      :~  lin+(ot say+bo txt+so ~)
-          url+(su aurf:urlp)
-          eval+so
-          mor+(ar spec)
-          ::  exp+(cu |=(a=cord [a ~]) so)
-          ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
+      ^-  $-(json (unit speech))
+      %-  of  :~
+        lin+(ot say+bo txt+so ~)
+        url+(su aurf:urlp)
+        ::  exp+(cu |=(a=cord [a ~]) so)
+        ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
       ==
   --
 --  --
