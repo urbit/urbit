@@ -47,9 +47,10 @@ def make_dependency_graph
 
     add_dep 'Qt5Core', 'ole32'
     add_dep 'Qt5Core', 'uuid'
-    add_dep 'Qt5Core', 'uxtheme'
     add_dep 'Qt5Core', 'winmm'
     add_dep 'Qt5Core', 'ws2_32'
+
+    add_dep 'Qt5Widgets', 'uxtheme'
   end
 
   if Os == 'linux'
