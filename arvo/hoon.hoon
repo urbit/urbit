@@ -9746,7 +9746,7 @@
           ::  either a one-line header or a paragraph
           %.  [p.u.lub yex]
           ?-  p.cur
-            $rule  (full ;~(pfix gay hrul)):parse
+            $rule  (full ;~(pfix (punt whit) hrul)):parse
             $expr  expr:parse
             $head  head:parse
             @      para:parse
@@ -10010,7 +10010,7 @@
         ::  [arbitrary *content*](url)
         ::
           %+  stag  %link
-          ;~  (glue gay)
+          ;~  (glue (punt whit))
             (ifix [sel ser] (cool (cash ser) work))
             (ifix [pel per] (cash per))
           ==
@@ -10106,10 +10106,10 @@
       ++  para                                          ::  paragraph
         %+  cook
           |=(flow [[%p ~] +<]~)
-        ;~(pfix gay down)  ::REVIEW does this mean comments work?
+        ;~(pfix (punt whit) down)  ::REVIEW does this mean comments work?
       ::
       ++  expr                                          ::  expression
-        ;~(pfix gay (cook drop-top toplevel):(sail &))
+        ;~(pfix (punt whit) (cook drop-top toplevel):(sail &))
       ::
       ++  whit                                          ::  whitespace
         (cold ' ' (plus ;~(pose (just ' ') (just '\0a'))))
