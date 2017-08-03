@@ -39,7 +39,7 @@
               ==                                        ::
           {$atom p/odor}                                ::  atom
 ++  bean  ?                                             ::  0=&=yes, 1=|=no
-++  beer  $@(@ {$~ p/twig})                             ::  simple embed
+++  beer  $@(char {$~ p/twig})                          ::  simple embed
 ++  bloq  @                                             ::  blockclass
 ++  char  @tD                                           ::  UTF-8 byte
 ++  chub                                                ::  registered battery
@@ -9625,7 +9625,7 @@
         ?:  (gth nex (sub col luc))
           ::
           ::  indenting pattern violation
-          ~&  indent-pattern-violation+[p.cur nex col luc]
+          ::~&  indent-pattern-violation+[p.cur nex col luc]
           ..^$(col luc, err `[p.naz luc])
         =.  ..^$  fold
         $(col (sub col nex))
@@ -9667,11 +9667,14 @@
         |-  ^+  [nap +>]
         ::
         ::  no unterminated lines
-        ?~  los  ~&(%unterminated-line [~ +>(err `naz)])
+        ?~  los
+          ::~& %unterminated-line
+          [~ +>(err `naz)]
         ?.  =(`@`10 i.los)
           ?:  (gth col q.naz)
             ?.  =(' ' i.los)
-              ~&(expected-indent+[col naz los] [~ +>(err `naz)])
+              ::~&  expected-indent+[col naz los]
+              [~ +>(err `naz)]
             $(los t.los, q.naz +(q.naz))
           ::
           ::  save byte and repeat
@@ -9690,7 +9693,9 @@
         |-  ^+  +
         ::
         ::  no unterminated lines
-        ?~  los  ~&(%unterminated-line +(err `naz))
+        ?~  los
+          ::~& %unterminated-line
+          +(err `naz)
         ?.  =(`@`10 i.los)
           ::
           ::  eat byte and repeat
@@ -9748,7 +9753,7 @@
           ==
         ::
         ::  if error, propagate correctly
-        ?~  q.vex  ~&(%err-prop ..$(err `p.vex))
+        ?~  q.vex  ..$(err `p.vex)
         ::
         ::  finish tag if it's a header or rule
         =<  ?:(?=(?($head $rule) p.cur) fold ..$)
@@ -9767,7 +9772,6 @@
         =/  pic  look
         ::
         ::  if line is blank
-        ~&  line+[pic -.cur (flop (turn hac head))]
         ?~  pic
           ::
           ::  break section
@@ -9812,7 +9816,7 @@
             ::  text flows must continue aligned
               ?($down $list $lime $lord $bloc)  =(col.pic col)
             ==
-          ~&  bad-block-structure+[p.cur col col.pic]
+          ::~&  bad-block-structure+[p.cur col col.pic]
           ..$(err `[p.naz col.pic])
         ::
         ::  accept line and continue
@@ -11129,10 +11133,14 @@
   ++  wise  %+  cook
               |=({a/term b/(unit twig)} ?~(b a [a u.b]))
             ;~(plug sym (punt ;~(pfix fas wide)))
-  ++  tall  %+  knee  *twig                             ::  full tall form
-            |.(~+((wart ;~(pose (norm &) long lute apex:(sail &)))))
-  ++  wide  %+  knee  *twig                             ::  full wide form
-            |.(~+((wart ;~(pose (norm |) long apex:(sail |)))))
+  ++  tall                                              ::  full tall form
+    %+  knee  *twig
+    |.(~+((wart ;~(pose (norm &) cram long lute apex:(sail &)))))
+  ::
+  ++  wide                                              ::  full wide form
+    %+  knee  *twig
+    |.(~+((wart ;~(pose (norm |) long apex:(sail |)))))
+  ::
   ++  wart
     |*  zor/rule
     %+  here
