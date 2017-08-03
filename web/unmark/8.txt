@@ -1,7 +1,33 @@
-> foo
+> xyz
+  abc
 
-  bar
+      code
 
-  > baz
+  zyxxy
 
-! ;div#hi;
+> bar
+
+          poe
+          m
+
+> baz
+  > bal
+
+- - bleh
+- blah
+  + one
+  + two
+
+1
+
+> > bel
+> what did you just say about me
+
+...
+
+    code
+      still code?
+
+> > foo
+
+    not-code

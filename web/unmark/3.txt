@@ -1,7 +1,13 @@
+#(add 2 2) is a hoon expression
+
+un*bearably*
+
+---
+
 ## This is a header
 
-The quick brown fox jumped over          
-the extremely lazy dogs.        
+The quick brown fox jumped over
+the extremely lazy dogs.
 
 Then a horse arrived.  It was extremely angry.
 Outside, two bears [were fighting](http://google.com) each other.
@@ -32,10 +38,10 @@ We sometimes speak in %hoon  We also say 0xdead.beef things like ~ and #`@`2.
 We don't care if we sound funny, and sometimes we !@#$%%#^? cuss.
 
     We also sometimes put
-    in 
+    in
     code
 
-    which 
+    which
     looks
     like
     this
