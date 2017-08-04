@@ -59,11 +59,18 @@
           ^-  manx
           |-
           =+  [inp out]=(split-on '.' q.a)
+          =/  mar  c:(snag 0 (mads inp))
           ;li
             ;pre: {(trip (role inp))}
             ;p: =>
             ;pre: {(trip (role out))}
             ;p: vs
-            ;pre: {(many:poxo c:(snag 0 (mads inp)) "")}
+            ;pre: {(many:poxo mar "")}
+            ;p
+              ;-  =/  pox  (rush (role out) many:poxa)
+                  ?~  pox  "INVALID"
+                  ?:  =(u.pox (strip mar))  "COMPATIBLE"
+                  "DIVERGE"
+            ==
   ==      ==
 ==  ==
