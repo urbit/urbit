@@ -30,6 +30,16 @@
   ?~  all  !!
   ?:  =(mid i.all)  [(flop hed) t.all]
   $(all t.all, hed :_(hed i.all))
+::
+++  strip
+  |=  a/manx  ^-  manx
+  :_  (turn c.a ..$)
+  ?+  g.a  g.a
+    {@ {$id *} *}   g.a(a t.a.g.a)
+    {$$ {$$ *} $~}
+      =<  g.a(v.i.a (tufa (turn (tuba v.i.a.g.a) .)))
+      |=(b/@c `@`?+(b b $~-~201c. '"', $~-~201d. '"'))
+  ==
 --
 ::
 ^-  manx
@@ -69,7 +79,8 @@
             ;p
               ;-  =/  pox  (rush (role out) many:poxa)
                   ?~  pox  "INVALID"
-                  ?:  =(u.pox (strip mar))  "COMPATIBLE"
+                  ?:  =(u.pox mar)  "EQUIVALENT"
+                  ?:  =(u.pox (turn mar strip))  "COMPATIBLE"
                   "DIVERGE"
             ==
   ==      ==
