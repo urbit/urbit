@@ -14,8 +14,9 @@ OutPcDir = OutDir + 'lib' + 'pkgconfig'
 
 DependencyGraph = {}
 LibTypes = {}
-PcFiles = {}
-PluginGroup = {}
+LibTypes.default_proc = proc do |hash, name|
+  hash[name] = determine_lib_type(name)
+end
 
 case Os
 when "windows"
@@ -29,68 +30,68 @@ end
 # might be a few dependencies that could be safely removed because they are
 # purely transitive.
 def make_dependency_graph
-  add_dep 'Qt5Widgets', 'Qt5Gui'
-  add_dep 'Qt5FontDatabaseSupport', 'qtfreetype'
-  add_dep 'Qt5Gui', 'Qt5Core'
-  add_dep 'Qt5Gui', 'qtlibpng'
-  add_dep 'Qt5Gui', 'qtharfbuzz'
-  add_dep 'Qt5Core', 'qtpcre'
+  add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
+  add_dep 'libQt5FontDatabaseSupport.a', 'libqtfreetype.a'
+  add_dep 'libQt5Gui.a', 'libQt5Core.a'
+  add_dep 'libQt5Gui.a', 'libqtlibpng.a'
+  add_dep 'libQt5Gui.a', 'libqtharfbuzz.a'
+  add_dep 'libQt5Core.a', 'libqtpcre.a'
 
   if Os == 'windows'
-    add_dep 'qwindows', 'dwmapi'
-    add_dep 'qwindows', 'imm32'
-    add_dep 'qwindows', 'oleaut32'
-    add_dep 'qwindows', 'Qt5Gui'
-    add_dep 'qwindows', 'Qt5EventDispatcherSupport'
-    add_dep 'qwindows', 'Qt5FontDatabaseSupport'
-    add_dep 'qwindows', 'Qt5ThemeSupport'
+    add_dep 'libqwindows.a', '-ldwmapi'
+    add_dep 'libqwindows.a', '-limm32'
+    add_dep 'libqwindows.a', '-loleaut32'
+    add_dep 'libqwindows.a', 'libQt5Gui.a'
+    add_dep 'libqwindows.a', 'libQt5EventDispatcherSupport.a'
+    add_dep 'libqwindows.a', 'libQt5FontDatabaseSupport.a'
+    add_dep 'libqwindows.a', 'libQt5ThemeSupport.a'
 
-    add_dep 'Qt5Core', 'ole32'
-    add_dep 'Qt5Core', 'uuid'
-    add_dep 'Qt5Core', 'winmm'
-    add_dep 'Qt5Core', 'ws2_32'
+    add_dep 'libQt5Core.a', '-lole32'
+    add_dep 'libQt5Core.a', '-luuid'
+    add_dep 'libQt5Core.a', '-lwinmm'
+    add_dep 'libQt5Core.a', '-lws2_32'
 
-    add_dep 'Qt5Widgets', 'uxtheme'
+    add_dep 'libQt5Widgets.a', '-luxtheme'
   end
 
   if Os == 'linux'
-    add_dep 'qlinuxfb', 'Qt5FbSupport'
-    add_dep 'qlinuxfb', 'Qt5InputSupport'
+    add_dep 'libqlinuxfb.a', 'libQt5FbSupport.a'
+    add_dep 'libqlinuxfb.a', 'libQt5InputSupport.a'
 
-    add_dep 'qxcb', 'Qt5XcbQpa'
+    add_dep 'libqxcb.a', 'libQt5XcbQpa.a'
 
-    add_dep 'Qt5DBus', 'Qt5Core'
-    add_dep 'Qt5DBus', 'Qt5Gui'
-    add_dep 'Qt5DeviceDiscoverySupport', 'libudev'
-    # add_dep 'Qt5Gui', 'qxcb'   # TODO: this can't be a "dep" because that makes it circular
-    # add_dep 'Qt5Gui', 'qlinuxfb'
-    add_dep 'Qt5InputSupport', 'Qt5DeviceDiscoverySupport'
-    add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5AccessibilitySupport'
-    add_dep 'Qt5LinuxAccessibilitySupport', 'Qt5DBus'
-    add_dep 'Qt5LinuxAccessibilitySupport', 'xcb-aux'
-    add_dep 'Qt5ThemeSupport', 'Qt5DBus'
+    add_dep 'libQt5DBus.a', 'libQt5Core.a'
+    add_dep 'libQt5DBus.a', 'libQt5Gui.a'
+    add_dep 'libQt5DeviceDiscoverySupport.a', 'libudev.pc'
+    # add_dep 'libQt5Gui', 'libqxcb.a'   # TODO: this can't be a "dep" because that makes it circular
+    # add_dep 'libQt5Gui', 'libqlinuxfb.a'
+    add_dep 'libQt5InputSupport.a', 'libQt5DeviceDiscoverySupport.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5AccessibilitySupport.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5DBus.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'xcb-aux.pc'
+    add_dep 'libQt5ThemeSupport.a', 'libQt5DBus.a'
 
-    add_dep 'Qt5XcbQpa', 'Qt5EventDispatcherSupport'
-    add_dep 'Qt5XcbQpa', 'Qt5FontDatabaseSupport'
-    add_dep 'Qt5XcbQpa', 'Qt5Gui'
-    add_dep 'Qt5XcbQpa', 'Qt5LinuxAccessibilitySupport'
-    add_dep 'Qt5XcbQpa', 'Qt5ServiceSupport'
-    add_dep 'Qt5XcbQpa', 'Qt5ThemeSupport'
-    add_dep 'Qt5XcbQpa', 'x11'
-    add_dep 'Qt5XcbQpa', 'x11-xcb'
-    add_dep 'Qt5XcbQpa', 'xcb'
-    add_dep 'Qt5XcbQpa', 'xcb-icccm'
-    add_dep 'Qt5XcbQpa', 'xcb-image'
-    add_dep 'Qt5XcbQpa', 'xcb-keysyms'
-    add_dep 'Qt5XcbQpa', 'xcb-randr'
-    add_dep 'Qt5XcbQpa', 'xcb-renderutil'
-    add_dep 'Qt5XcbQpa', 'xcb-shape'
-    add_dep 'Qt5XcbQpa', 'xcb-shm'
-    add_dep 'Qt5XcbQpa', 'xcb-sync'
-    add_dep 'Qt5XcbQpa', 'xcb-xfixes'
-    add_dep 'Qt5XcbQpa', 'xcb-xinerama'
-    add_dep 'Qt5XcbQpa', 'xcb-xkb'
-    add_dep 'Qt5XcbQpa', 'xi'
+    add_dep 'libQt5XcbQpa.a', 'libQt5EventDispatcherSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5FontDatabaseSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5Gui.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5LinuxAccessibilitySupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5ServiceSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5ThemeSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'x11.pc'
+    add_dep 'libQt5XcbQpa.a', 'x11-xcb.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-icccm.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-image.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-keysyms.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-randr.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-renderutil.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-shape.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-shm.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-sync.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xfixes.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xinerama.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xkb.pc'
+    add_dep 'libQt5XcbQpa.a', 'xi.pc'
   end
 end
 
@@ -129,14 +130,23 @@ def add_dep(library, *deps)
   end
 end
 
-def find_pkg_config_cross_file(name)
+# TODO: cache results
+def find_pkg_config_file(name)
   ENV.fetch('PKG_CONFIG_CROSS_PATH').split(':').each do |dir|
-    path = Pathname(dir) + "#{name}.pc"
-    if path.exist?
-      puts "found pc file for #{name}"
-      return path
-    end
+    path = Pathname(dir) + name
+    return path if path.exist?
   end
+  nil
+end
+
+# TODO: cache results
+def find_qt_library(name)
+  lib = OutDir + 'lib' + name
+  return lib if lib.exist?
+
+  plugin_paths = Pathname.glob(OutDir + 'plugins' + '*' + name)
+  return plugin_paths[0] if plugin_paths.size == 1
+
   nil
 end
 
@@ -145,31 +155,25 @@ end
 # - comes from a .pc file,
 # - or comes from the compiler toolchain
 def determine_lib_type(name)
-  if (OutDir + 'lib' + "lib#{name}.a").exist?
-    LibTypes[name] = :qt
-    return
+  if name.is_a?(Array)
+    raise "wtf #{name.inspect}"
   end
-
-  plugin_paths = Pathname.glob(OutDir + 'plugins' + '*' + "lib#{name}.a")
-  if plugin_paths.size == 1
-    LibTypes[name] = :qt
-    PluginGroup[name] = plugin_paths.first.dirname.basename
-    return
-  end
-
-  path = find_pkg_config_cross_file(name)
-  if path
-    LibTypes[name] = :pc
-    PcFiles[name] = path
-    return
-  end
-
-  LibTypes[name] = :compiler
-end
-
-def determine_lib_types
-  DependencyGraph.keys.each do |lib|
-    determine_lib_type(lib)
+  extension = Pathname(name).extname
+  case
+  when extension == '.a'
+    if find_qt_library(name)
+      return :qt
+    else
+      raise "Library file not found: #{name}"
+    end
+  when extension == '.pc'
+    if find_pkg_config_file(name)
+      return :pc
+    else
+      raise "pkg-config file not found: #{name}"
+    end
+  when name.start_with?('-l')
+    return :compiler
   end
 end
 
@@ -180,33 +184,44 @@ def create_pc_file_for_qt_library(name)
   libs = []
   cflags = []
 
-  DependencyGraph[name].each do |dep|
-    case LibTypes[dep]
-    when :qt then requires << dep
-    when :pc then requires << dep
-    when :compiler then libs << "-l#{dep}"
-    end
-  end
+  full_path = find_qt_library(name)
 
-  name_no_num = name.gsub(/Qt\d/, 'Qt')
+  libdir = full_path.dirname.to_s
+  libdir.sub!((OutDir + 'lib').to_s, '${libdir}')
+  libdir.sub!(OutDir.to_s, '${prefix}')
+
+  libname = full_path.basename.to_s
+  libname.sub!(/\Alib/, '')
+  libname.sub!(/.a\Z/, '')
+
+  name_no_num = libname.gsub(/Qt\d/, 'Qt')
   if (OutDir + 'include' + name_no_num).directory?
     cflags << "-I${includedir}/#{name_no_num}"
   end
   cflags << "-I${includedir}"
 
-  libdir = '${libdir}'
-  if PluginGroup[name]
-    libdir = "${prefix}/plugins/#{PluginGroup[name]}"
+  DependencyGraph[name].each do |dep|
+    case LibTypes[dep]
+    when :qt then
+      dep.sub!(/\Alib/, '')
+      dep.sub!(/.a\Z/, '')
+      requires << dep
+    when :pc then
+      dep.sub!(/.pc/, '')
+      requires << dep
+    when :compiler then
+      libs << dep
+    end
   end
 
-  path = OutPcDir + "#{name}.pc"
+  path = OutPcDir + "#{libname}.pc"
   File.open(path.to_s, 'w') do |f|
     f.write <<EOF
 prefix=#{OutDir}
 libdir=${prefix}/lib
 includedir=${prefix}/include
 Version: #{QtVersionString}
-Libs: -L#{libdir} -l#{name} #{libs.join(' ')}
+Libs: -L#{libdir} -l#{libname} #{libs.join(' ')}
 Cflags: #{cflags.join(' ')}
 Requires: #{requires.join(' ')}
 EOF
@@ -217,7 +232,7 @@ end
 # files in the same directory which might be transitive dependencies.
 def symlink_pc_file_closure(name)
   puts "Symlinking pc files for #{name}"
-  dep_pc_dir = PcFiles.fetch(name).dirname
+  dep_pc_dir = find_pkg_config_file(name).dirname
   dep_pc_dir.each_child do |target|
     link = OutPcDir + target.basename
 
@@ -235,8 +250,8 @@ end
 
 def create_pc_files
   mkdir OutPcDir
-  LibTypes.each do |name, type|
-    case type
+  DependencyGraph.each_key do |name|
+    case LibTypes[name]
     when :qt
       create_pc_file_for_qt_library(name)
     when :pc
@@ -261,8 +276,6 @@ mkdir OutDir + 'lib'
 end
 
 make_dependency_graph
-
-determine_lib_types
 
 create_pc_files
 
