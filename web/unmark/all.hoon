@@ -19,9 +19,11 @@
   =/  try  (mule |.(~(shut ap (ream (nule '---' a)))))
   ?-  -.try
     $&  p.try
-    $|  ;=  ;h3: ERROR
-            ;pre: {(wush 120 p.try)}
-  ==    ==
+    $|  ;=  ;div
+              ;h3: ERROR
+              ;pre: {(wush 120 p.try)}
+  ==    ==  ==
+::
 ++  split-on
   =|  hed/wain
   |=  {mid/@t all/wain}  ^+  [hed all]
@@ -58,8 +60,10 @@
           |-
           =+  [inp out]=(split-on '.' q.a)
           ;li
-            ;pre:"{(trip (role inp))}"
+            ;pre: {(trip (role inp))}
             ;p: =>
-            ;pre:"{(trip (role out))}"
+            ;pre: {(trip (role out))}
+            ;p: vs
+            ;pre: {(many:poxo c:(snag 0 (mads inp)) "")}
   ==      ==
 ==  ==
