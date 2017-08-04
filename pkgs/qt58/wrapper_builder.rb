@@ -12,10 +12,10 @@ QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
 OutPcDir = OutDir + 'lib' + 'pkgconfig'
 
-DependencyGraph = {}
-DependencyInfo = {}
-DependencyInfo.default_proc = proc do |hash, name|
-  hash[name] = find_dependency_info(name)
+DepGraph = {}
+DepInfo = {}
+DepInfo.default_proc = proc do |hash, name|
+  hash[name] = find_dep_info(name)
 end
 
 case Os
@@ -29,7 +29,7 @@ end
 # programs.  There are likely misisng dependencies in this graph, and there
 # might be a few dependencies that could be safely removed because they are
 # purely transitive.
-def make_dependency_graph
+def make_dep_graph
   add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
   add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
   add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
@@ -134,14 +134,14 @@ def libs_from_prl(prl)
 end
 
 def add_dep(library, *deps)
-  a = DependencyGraph[library] ||= []
+  a = DepGraph[library] ||= []
   deps.each do |dep|
-    DependencyGraph[dep] ||= []
+    DepGraph[dep] ||= []
     a << dep unless a.include? dep
   end
 end
 
-# Given a name of a depdendency in the graph, figure out what kind of dependency
+# Given a name of a dep in the graph, figure out what kind of dep
 # it use.
 def determine_dep_type(name)
   extension = Pathname(name).extname
@@ -170,7 +170,7 @@ def find_qt_library(name)
   nil
 end
 
-def find_dependency_info(name)
+def find_dep_info(name)
   case determine_dep_type(name)
   when :qt then find_qt_library(name)
   when :pc then find_pkg_config_file(name)
@@ -184,7 +184,7 @@ def create_pc_file_for_qt_library(name)
   libs = []
   cflags = []
 
-  full_path = DependencyInfo[name]
+  full_path = DepInfo[name]
 
   libdir = full_path.dirname.to_s
   libdir.sub!((OutDir + 'lib').to_s, '${libdir}')
@@ -200,7 +200,7 @@ def create_pc_file_for_qt_library(name)
   end
   cflags << "-I${includedir}"
 
-  DependencyGraph[name].each do |dep|
+  DepGraph[name].each do |dep|
     case determine_dep_type(dep)
     when :qt then
       dep.sub!(/\Alib/, '')
@@ -232,7 +232,7 @@ end
 # files in the same directory which might be transitive dependencies.
 def symlink_pc_file_closure(name)
   puts "Symlinking pc files for #{name}"
-  dep_pc_dir = DependencyInfo[name].dirname
+  dep_pc_dir = DepInfo[name].dirname
   dep_pc_dir.each_child do |target|
     link = OutPcDir + target.basename
 
@@ -250,7 +250,7 @@ end
 
 def create_pc_files
   mkdir OutPcDir
-  DependencyGraph.each_key do |name|
+  DepGraph.each_key do |name|
     case determine_dep_type(name)
     when :qt then create_pc_file_for_qt_library(name)
     when :pc then symlink_pc_file_closure(name)
@@ -273,7 +273,7 @@ mkdir OutDir + 'lib'
   cp c, OutDir + 'lib' if c.extname == '.prl'
 end
 
-make_dependency_graph
+make_dep_graph
 
 create_pc_files
 
