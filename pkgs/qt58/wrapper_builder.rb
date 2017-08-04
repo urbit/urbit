@@ -13,9 +13,9 @@ OutDir = Pathname(ENV.fetch('out'))
 OutPcDir = OutDir + 'lib' + 'pkgconfig'
 
 DependencyGraph = {}
-LibTypes = {}
-LibTypes.default_proc = proc do |hash, name|
-  hash[name] = determine_lib_type(name)
+DependencyInfo = {}
+DependencyInfo.default_proc = proc do |hash, name|
+  hash[name] = find_dependency_info(name)
 end
 
 case Os
@@ -30,6 +30,11 @@ end
 # might be a few dependencies that could be safely removed because they are
 # purely transitive.
 def make_dependency_graph
+  add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
+  add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
+  add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
+  add_dep 'Qt5Core.x', 'libQt5Core.a'
+
   add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
   add_dep 'libQt5FontDatabaseSupport.a', 'libqtfreetype.a'
   add_dep 'libQt5Gui.a', 'libQt5Core.a'
@@ -38,6 +43,9 @@ def make_dependency_graph
   add_dep 'libQt5Core.a', 'libqtpcre.a'
 
   if Os == 'windows'
+    add_dep 'Qt5Gui.x', 'qwindows.x'
+    add_dep 'qwindows.x', 'libqwindows.a'
+
     add_dep 'libqwindows.a', '-ldwmapi'
     add_dep 'libqwindows.a', '-limm32'
     add_dep 'libqwindows.a', '-loleaut32'
@@ -55,6 +63,11 @@ def make_dependency_graph
   end
 
   if Os == 'linux'
+    add_dep 'Qt5Gui.x', 'qlinuxfb.x'
+    add_dep 'Qt5Gui.x', 'qxcb.x'
+    add_dep 'qlinuxfb.x', 'libqlinuxfb.a'
+    add_dep 'qxcb.x', 'libqxcb.a'
+
     add_dep 'libqlinuxfb.a', 'libQt5FbSupport.a'
     add_dep 'libqlinuxfb.a', 'libQt5InputSupport.a'
 
@@ -63,8 +76,6 @@ def make_dependency_graph
     add_dep 'libQt5DBus.a', 'libQt5Core.a'
     add_dep 'libQt5DBus.a', 'libQt5Gui.a'
     add_dep 'libQt5DeviceDiscoverySupport.a', 'libudev.pc'
-    # add_dep 'libQt5Gui', 'libqxcb.a'   # TODO: this can't be a "dep" because that makes it circular
-    # add_dep 'libQt5Gui', 'libqlinuxfb.a'
     add_dep 'libQt5InputSupport.a', 'libQt5DeviceDiscoverySupport.a'
     add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5AccessibilitySupport.a'
     add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5DBus.a'
@@ -130,7 +141,17 @@ def add_dep(library, *deps)
   end
 end
 
-# TODO: cache results
+# Given a name of a depdendency in the graph, figure out what kind of dependency
+# it use.
+def determine_dep_type(name)
+  extension = Pathname(name).extname
+  case
+  when extension == '.a' then :qt
+  when extension == '.pc' then :pc
+  when name.start_with?('-l') then :compiler
+  end
+end
+
 def find_pkg_config_file(name)
   ENV.fetch('PKG_CONFIG_CROSS_PATH').split(':').each do |dir|
     path = Pathname(dir) + name
@@ -139,7 +160,6 @@ def find_pkg_config_file(name)
   nil
 end
 
-# TODO: cache results
 def find_qt_library(name)
   lib = OutDir + 'lib' + name
   return lib if lib.exist?
@@ -150,30 +170,10 @@ def find_qt_library(name)
   nil
 end
 
-# Determine if this library:
-# - comes from Qt,
-# - comes from a .pc file,
-# - or comes from the compiler toolchain
-def determine_lib_type(name)
-  if name.is_a?(Array)
-    raise "wtf #{name.inspect}"
-  end
-  extension = Pathname(name).extname
-  case
-  when extension == '.a'
-    if find_qt_library(name)
-      return :qt
-    else
-      raise "Library file not found: #{name}"
-    end
-  when extension == '.pc'
-    if find_pkg_config_file(name)
-      return :pc
-    else
-      raise "pkg-config file not found: #{name}"
-    end
-  when name.start_with?('-l')
-    return :compiler
+def find_dependency_info(name)
+  case determine_dep_type(name)
+  when :qt then find_qt_library(name)
+  when :pc then find_pkg_config_file(name)
   end
 end
 
@@ -184,7 +184,7 @@ def create_pc_file_for_qt_library(name)
   libs = []
   cflags = []
 
-  full_path = find_qt_library(name)
+  full_path = DependencyInfo[name]
 
   libdir = full_path.dirname.to_s
   libdir.sub!((OutDir + 'lib').to_s, '${libdir}')
@@ -201,13 +201,13 @@ def create_pc_file_for_qt_library(name)
   cflags << "-I${includedir}"
 
   DependencyGraph[name].each do |dep|
-    case LibTypes[dep]
+    case determine_dep_type(dep)
     when :qt then
       dep.sub!(/\Alib/, '')
-      dep.sub!(/.a\Z/, '')
+      dep.chomp!('.a')
       requires << dep
     when :pc then
-      dep.sub!(/.pc/, '')
+      dep.chomp!('.pc')
       requires << dep
     when :compiler then
       libs << dep
@@ -232,7 +232,7 @@ end
 # files in the same directory which might be transitive dependencies.
 def symlink_pc_file_closure(name)
   puts "Symlinking pc files for #{name}"
-  dep_pc_dir = find_pkg_config_file(name).dirname
+  dep_pc_dir = DependencyInfo[name].dirname
   dep_pc_dir.each_child do |target|
     link = OutPcDir + target.basename
 
@@ -251,11 +251,9 @@ end
 def create_pc_files
   mkdir OutPcDir
   DependencyGraph.each_key do |name|
-    case LibTypes[name]
-    when :qt
-      create_pc_file_for_qt_library(name)
-    when :pc
-      symlink_pc_file_closure(name)
+    case determine_dep_type(name)
+    when :qt then create_pc_file_for_qt_library(name)
+    when :pc then symlink_pc_file_closure(name)
     end
   end
 end
