@@ -9809,10 +9809,10 @@
         ?.  ?-  p.cur
             ::
             ::  can't(/directly) contain text
-              ?($rule $lord $list)  ~|(bad-leaf-container+p.cur !!)
+              ?($lord $list)  ~|(bad-leaf-container+p.cur !!)
             ::
-            ::  only one line in a header
-              $head  |
+            ::  only one line in a header/break
+              ?($head $rule)  |
             ::
             ::  literals need to end with a blank line
               ?($code $poem $expr)  (gte col.pic col)
