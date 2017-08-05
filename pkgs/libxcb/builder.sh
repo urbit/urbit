@@ -23,4 +23,5 @@ make install
 # Make static linking work.
 sed -i 's/Requires.private/Requires/' $out/lib/pkgconfig/*.pc
 
-ln -sv $libxau/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+ln -sf $libxau/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+

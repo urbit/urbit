@@ -2,17 +2,21 @@ require 'pathname'
 require 'fileutils'
 include FileUtils
 
+STDOUT.sync = true
+
 Os = ENV.fetch('os')
 QtVersionString = ENV.fetch('version')
 QtVersionMajor = QtVersionString.split('.').first.to_i
 
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
+OutPcDir = OutDir + 'lib' + 'pkgconfig'
 
-DependencyGraph = {}
-LibTypes = {}
-PcFiles = {}
-PluginGroup = {}
+DepGraph = {}
+DepInfo = {}
+DepInfo.default_proc = proc do |hash, name|
+  hash[name] = find_dep_info(name)
+end
 
 case Os
 when "windows"
@@ -21,16 +25,84 @@ else
   prl_prefix = 'lib'
 end
 
-def make_dependency_graph
-  add_dep 'Qt5Widgets', 'Qt5Gui'
-  add_dep 'Qt5Gui', 'Qt5Core'
-  add_dep 'Qt5Gui', 'qtlibpng', 'qtharfbuzz'
-  add_dep 'Qt5Core', 'qtpcre'
+# Note: These dependencies just came from me fixing link errors for specific
+# programs.  There are likely misisng dependencies in this graph, and there
+# might be a few dependencies that could be safely removed because they are
+# purely transitive.
+def make_dep_graph
+  add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
+  add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
+  add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
+  add_dep 'Qt5Core.x', 'libQt5Core.a'
+
+  add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
+  add_dep 'libQt5FontDatabaseSupport.a', 'libqtfreetype.a'
+  add_dep 'libQt5Gui.a', 'libQt5Core.a'
+  add_dep 'libQt5Gui.a', 'libqtlibpng.a'
+  add_dep 'libQt5Gui.a', 'libqtharfbuzz.a'
+  add_dep 'libQt5Core.a', 'libqtpcre.a'
+
+  if Os == 'windows'
+    add_dep 'Qt5Gui.x', 'qwindows.x'
+    add_dep 'qwindows.x', 'libqwindows.a'
+
+    add_dep 'libqwindows.a', '-ldwmapi'
+    add_dep 'libqwindows.a', '-limm32'
+    add_dep 'libqwindows.a', '-loleaut32'
+    add_dep 'libqwindows.a', 'libQt5Gui.a'
+    add_dep 'libqwindows.a', 'libQt5EventDispatcherSupport.a'
+    add_dep 'libqwindows.a', 'libQt5FontDatabaseSupport.a'
+    add_dep 'libqwindows.a', 'libQt5ThemeSupport.a'
+
+    add_dep 'libQt5Core.a', '-lole32'
+    add_dep 'libQt5Core.a', '-luuid'
+    add_dep 'libQt5Core.a', '-lwinmm'
+    add_dep 'libQt5Core.a', '-lws2_32'
+
+    add_dep 'libQt5Widgets.a', '-luxtheme'
+  end
 
   if Os == 'linux'
-    add_dep 'Qt5Gui', 'qxcb', 'qlinuxfb'
-    add_dep 'qxcb', 'Qt5XcbQpa'
-    add_dep 'Qt5XcbQpa', 'xcb'
+    add_dep 'Qt5Gui.x', 'qlinuxfb.x'
+    add_dep 'Qt5Gui.x', 'qxcb.x'
+    add_dep 'qlinuxfb.x', 'libqlinuxfb.a'
+    add_dep 'qxcb.x', 'libqxcb.a'
+
+    add_dep 'libqlinuxfb.a', 'libQt5FbSupport.a'
+    add_dep 'libqlinuxfb.a', 'libQt5InputSupport.a'
+
+    add_dep 'libqxcb.a', 'libQt5XcbQpa.a'
+
+    add_dep 'libQt5DBus.a', 'libQt5Core.a'
+    add_dep 'libQt5DBus.a', 'libQt5Gui.a'
+    add_dep 'libQt5DeviceDiscoverySupport.a', 'libudev.pc'
+    add_dep 'libQt5InputSupport.a', 'libQt5DeviceDiscoverySupport.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5AccessibilitySupport.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5DBus.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'xcb-aux.pc'
+    add_dep 'libQt5ThemeSupport.a', 'libQt5DBus.a'
+
+    add_dep 'libQt5XcbQpa.a', 'libQt5EventDispatcherSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5FontDatabaseSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5Gui.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5LinuxAccessibilitySupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5ServiceSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5ThemeSupport.a'
+    add_dep 'libQt5XcbQpa.a', 'x11.pc'
+    add_dep 'libQt5XcbQpa.a', 'x11-xcb.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-icccm.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-image.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-keysyms.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-randr.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-renderutil.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-shape.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-shm.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-sync.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xfixes.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xinerama.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xkb.pc'
+    add_dep 'libQt5XcbQpa.a', 'xi.pc'
   end
 end
 
@@ -62,102 +134,126 @@ def libs_from_prl(prl)
 end
 
 def add_dep(library, *deps)
-  a = DependencyGraph[library] ||= []
+  a = DepGraph[library] ||= []
   deps.each do |dep|
-    DependencyGraph[dep] ||= []
+    DepGraph[dep] ||= []
     a << dep unless a.include? dep
   end
 end
 
-def find_pkg_config_cross_file(name)
+# Given a name of a dep in the graph, figure out what kind of dep
+# it use.
+def determine_dep_type(name)
+  extension = Pathname(name).extname
+  case
+  when extension == '.a' then :qt
+  when extension == '.pc' then :pc
+  when name.start_with?('-l') then :compiler
+  end
+end
+
+def find_pkg_config_file(name)
   ENV.fetch('PKG_CONFIG_CROSS_PATH').split(':').each do |dir|
-    path = Pathname(dir) + "#{name}.pc"
-    if path.exist?
-      puts "found pc file for #{name}"
-      return name
-    end
+    path = Pathname(dir) + name
+    return path if path.exist?
   end
   nil
 end
 
-# Determine if this library:
-# - comes from Qt,
-# - comes from a .pc file,
-# - or comes from the compiler toolchain
-def determine_lib_type(name)
-  if (OutDir + 'lib' + "lib#{name}.a").exist?
-    LibTypes[name] = :qt
-    return
-  end
+def find_qt_library(name)
+  lib = OutDir + 'lib' + name
+  return lib if lib.exist?
 
-  plugin_paths = Pathname.glob(OutDir + 'plugins' + '*' + "lib#{name}.a")
-  if plugin_paths.size == 1
-    LibTypes[name] = :qt
-    PluginGroup[name] = plugin_paths.first.dirname.basename
-    return
-  end
+  plugin_paths = Pathname.glob(OutDir + 'plugins' + '*' + name)
+  return plugin_paths[0] if plugin_paths.size == 1
 
-  path = find_pkg_config_cross_file(name)
-  if path
-    LibTypes[name] = :pc
-    PcFiles[name] = path
-    return
-  end
-
-  LibTypes[name] = :compiler
+  nil
 end
 
-def determine_lib_types
-  DependencyGraph.keys.each do |lib|
-    determine_lib_type(lib)
+def find_dep_info(name)
+  case determine_dep_type(name)
+  when :qt then find_qt_library(name)
+  when :pc then find_pkg_config_file(name)
   end
 end
 
 def create_pc_file_for_qt_library(name)
+  puts "Creating pc file for Qt library #{name}"
+
   requires = []
   libs = []
   cflags = []
 
-  DependencyGraph[name].each do |dep|
-    case LibTypes[dep]
-    when :qt then requires << dep
-    when :pc then requires << dep
-    when :compiler then libs << dep
-    end
-  end
+  full_path = DepInfo[name]
 
-  name_no_num = name.gsub(/Qt\d/, 'Qt')
+  libdir = full_path.dirname.to_s
+  libdir.sub!((OutDir + 'lib').to_s, '${libdir}')
+  libdir.sub!(OutDir.to_s, '${prefix}')
+
+  libname = full_path.basename.to_s
+  libname.sub!(/\Alib/, '')
+  libname.sub!(/.a\Z/, '')
+
+  name_no_num = libname.gsub(/Qt\d/, 'Qt')
   if (OutDir + 'include' + name_no_num).directory?
     cflags << "-I${includedir}/#{name_no_num}"
   end
   cflags << "-I${includedir}"
 
-  libdir = '${libdir}'
-  if PluginGroup[name]
-    libdir = "${prefix}/plugins/#{PluginGroup[name]}"
+  DepGraph[name].each do |dep|
+    case determine_dep_type(dep)
+    when :qt then
+      dep.sub!(/\Alib/, '')
+      dep.chomp!('.a')
+      requires << dep
+    when :pc then
+      dep.chomp!('.pc')
+      requires << dep
+    when :compiler then
+      libs << dep
+    end
   end
 
-  path = OutDir + 'lib' + 'pkgconfig' + "#{name}.pc"
+  path = OutPcDir + "#{libname}.pc"
   File.open(path.to_s, 'w') do |f|
     f.write <<EOF
 prefix=#{OutDir}
 libdir=${prefix}/lib
 includedir=${prefix}/include
 Version: #{QtVersionString}
-Libs: -L#{libdir} -l#{name} #{libs.join(' ')}
+Libs: -L#{libdir} -l#{libname} #{libs.join(' ')}
 Cflags: #{cflags.join(' ')}
 Requires: #{requires.join(' ')}
 EOF
   end
 end
 
-def create_pc_files
-  pc_dir = OutDir + 'lib' + 'pkgconfig'
-  mkdir pc_dir
+# For .pc files we depend on, add symlinks to the .pc file and any other .pc
+# files in the same directory which might be transitive dependencies.
+def symlink_pc_file_closure(name)
+  puts "Symlinking pc files for #{name}"
+  dep_pc_dir = DepInfo[name].dirname
+  dep_pc_dir.each_child do |target|
+    link = OutPcDir + target.basename
 
-  LibTypes.each do |lib, type|
-    if type == :qt
-      create_pc_file_for_qt_library(lib)
+    # Skip it if we already made this link.
+    next if link.symlink?
+
+    puts "  Symlinking lib/pkgconfig/#{link.basename}"
+
+    # Link directly to the real PC file.
+    target = target.readlink while target.absolute? && target.symlink?
+
+    ln_s target, link
+  end
+end
+
+def create_pc_files
+  mkdir OutPcDir
+  DepGraph.each_key do |name|
+    case determine_dep_type(name)
+    when :qt then create_pc_file_for_qt_library(name)
+    when :pc then symlink_pc_file_closure(name)
     end
   end
 end
@@ -177,9 +273,7 @@ mkdir OutDir + 'lib'
   cp c, OutDir + 'lib' if c.extname == '.prl'
 end
 
-make_dependency_graph
-
-determine_lib_types
+make_dep_graph
 
 create_pc_files
 

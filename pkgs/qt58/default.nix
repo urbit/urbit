@@ -81,6 +81,7 @@ let
            libudev  # not sure if this helps, but Qt does look for it
            libx11
            libxcb
+           libxcb.util
            libxcb.util-image
            libxcb.util-wm
            libxcb.util-keysyms

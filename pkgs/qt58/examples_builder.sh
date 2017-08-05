@@ -20,16 +20,22 @@ Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
 #endif
 EOF
 
-set -x
-
 echo "compiling reference to plugins"
 $host-g++ \
   $(pkg-config-cross --cflags Qt5Core) \
   -c obj/plugins.cpp \
   -o obj/plugins.o
 
-CFLAGS="-I. $(pkg-config-cross --cflags Qt5Widgets)"
-LIBS="$(pkg-config-cross --libs Qt5Widgets)"
+if [ $os = "linux" ]; then
+  plugins="qxcb qlinuxfb"
+fi
+
+if [ $os = "windows" ]; then
+  plugins="qwindows"
+fi
+
+CFLAGS="-g -I. $(pkg-config-cross --cflags Qt5Widgets)"
+LIBS="$(pkg-config-cross --libs Qt5Widgets $plugins)"
 LDFLAGS="-Wl,-gc-sections"
 
 if [ $os = "windows" ]; then
