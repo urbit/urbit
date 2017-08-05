@@ -229,7 +229,7 @@ def canonical_x_file(dep)
 end
 
 # Note: It would be nice to find some solution so that Qt5Widgets.pc does not
-# depend on Qt5GuiNoPlugins, since it already depends on Qt5Gui.
+# require on Qt5GuiNoPlugins, since it already depends on Qt5Gui.
 def flatten_deps_for_pc_file(pc_file)
   flatten_deps(DepGraph[pc_file]) do |dep|
     deps = case determine_dep_type(dep)
@@ -281,17 +281,24 @@ def create_pc_file(name)
     end
   end
 
+  r = ""
+  r << "prefix=#{OutDir}\n"
+  r << "libdir=${prefix}/lib\n"
+  r << "includedir=${prefix}/include\n"
+  r << "Version: #{QtVersionString}\n"
+  if !libdirs.empty? || !ldflags.empty?
+    r << "Libs: #{libdirs.reverse.uniq.join(' ')} #{ldflags.reverse.join(' ')}\n"
+  end
+  if !cflags.empty?
+    r << "Cflags: #{cflags.join(' ')}\n"
+  end
+  if !requires.empty?
+    r << "Requires: #{requires.sort.join(' ')}\n"
+  end
+
   path = OutPcDir + Pathname(name).sub_ext(".pc")
   File.open(path.to_s, 'w') do |f|
-    f.write <<EOF
-prefix=#{OutDir}
-libdir=${prefix}/lib
-includedir=${prefix}/include
-Version: #{QtVersionString}
-Libs: #{libdirs.reverse.uniq.join(' ')} #{ldflags.reverse.join(' ')}
-Cflags: #{cflags.join(' ')}
-Requires: #{requires.sort.join(' ')}
-EOF
+    f.write r
   end
 end
 
