@@ -9548,7 +9548,9 @@
         --
     =<  apex
     |%
-    ++  apex  :(stag %xmn [%div ~] fenced)
+    ++  apex
+      =;  fel  |=(nail (fel +<))
+      :(stag %xmn [%div ~] fenced)
     ::
     ++  fenced
       ::
