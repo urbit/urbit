@@ -26,16 +26,8 @@ $host-g++ \
   -c obj/plugins.cpp \
   -o obj/plugins.o
 
-if [ $os = "linux" ]; then
-  plugins="qxcb qlinuxfb"
-fi
-
-if [ $os = "windows" ]; then
-  plugins="qwindows"
-fi
-
 CFLAGS="-g -I. $(pkg-config-cross --cflags Qt5Widgets)"
-LIBS="$(pkg-config-cross --libs Qt5Widgets $plugins)"
+LIBS="$(pkg-config-cross --libs Qt5Widgets)"
 LDFLAGS="-Wl,-gc-sections"
 
 if [ $os = "windows" ]; then

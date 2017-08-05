@@ -11,8 +11,11 @@ QtVersionMajor = QtVersionString.split('.').first.to_i
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
 OutPcDir = OutDir + 'lib' + 'pkgconfig'
+OutIncDir = OutDir + 'include'
 
 DepGraph = {}
+DepGraphBack = {}
+
 DepInfo = {}
 DepInfo.default_proc = proc do |hash, name|
   hash[name] = find_dep_info(name)
@@ -31,9 +34,14 @@ end
 # purely transitive.
 def make_dep_graph
   add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
+  add_dep 'Qt5Widgets.x', '-I' + (OutIncDir + 'QtWidgets').to_s
+  add_dep 'Qt5Widgets.x', 'Qt5Gui.x'
   add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
   add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
+  add_dep 'Qt5GuiNoPlugins.x', '-I' + (OutIncDir + 'QtGui').to_s
   add_dep 'Qt5Core.x', 'libQt5Core.a'
+  add_dep 'Qt5Core.x', '-I' + OutIncDir.to_s
+  add_dep 'Qt5Core.x', '-I' + (OutIncDir + 'QtCore').to_s
 
   add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
   add_dep 'libQt5FontDatabaseSupport.a', 'libqtfreetype.a'
@@ -135,9 +143,11 @@ end
 
 def add_dep(library, *deps)
   a = DepGraph[library] ||= []
+  DepGraphBack[library] ||= []
   deps.each do |dep|
     DepGraph[dep] ||= []
     a << dep unless a.include? dep
+    (DepGraphBack[dep] ||= []) << library
   end
 end
 
@@ -146,9 +156,11 @@ end
 def determine_dep_type(name)
   extension = Pathname(name).extname
   case
-  when extension == '.a' then :qt
+  when extension == '.a' then :a
   when extension == '.pc' then :pc
-  when name.start_with?('-l') then :compiler
+  when extension == '.x' then :x
+  when name.start_with?('-I') then :cflag
+  when name.start_with?('-l') then :ldflag
   end
 end
 
@@ -172,58 +184,113 @@ end
 
 def find_dep_info(name)
   case determine_dep_type(name)
-  when :qt then find_qt_library(name)
+  when :a then find_qt_library(name)
   when :pc then find_pkg_config_file(name)
   end
 end
 
-def create_pc_file_for_qt_library(name)
-  puts "Creating pc file for Qt library #{name}"
+# Given an array of dependencies and a block for retrieving dependencies of an
+# dependency, returns an array of dependencies with three guarantees:
+#
+# 1) Contains all the listed dependencies.
+# 2) Has no duplicates.
+# 3) For any dependency in the list, all of its dependencies before after it.
+#
+# Guarantee 3 only holds if the underlying graph has no circul dependencies.  If
+# there is a circular dependency, it will not be detected, but it will not cause
+# an infinite loop either.
+def flatten_deps(deps)
+  work = deps
+  expanded = {}
+  output = {}
+  while !work.empty?
+    dep = work.last
+    if expanded[dep]
+      output[dep] = true
+      work.pop
+    else
+      expanded[dep] = true
+      deps = yield dep
+      work.concat(deps)
+    end
+  end
+  output.keys  # relies on Ruby's ordered hashes
+end
 
+def canonical_x_file(dep)
+  return nil if determine_dep_type(dep) != :a
+  x_files = DepGraphBack.fetch(dep).select do |name|
+    determine_dep_type(name) == :x
+  end
+  if x_files.size > 2
+    raise "There is more than one .x file #{dep}."
+  end
+  x_files.first
+end
+
+# Note: It would be nice to find some solution so that Qt5Widgets.pc does not
+# depend on Qt5GuiNoPlugins, since it already depends on Qt5Gui.
+def flatten_deps_for_pc_file(pc_file)
+  flatten_deps(DepGraph[pc_file]) do |dep|
+    deps = case determine_dep_type(dep)
+           when :x then []
+           else DepGraph.fetch(dep)
+           end
+
+    # Replace .a files with a canonical .x file if there is one.
+    deps.map do |name|
+      substitute = canonical_x_file(name)
+      substitute = nil if substitute == pc_file
+      substitute || name
+    end
+  end
+end
+
+def create_pc_file(name)
   requires = []
-  libs = []
+  libdirs = []
+  ldflags = []
   cflags = []
 
-  full_path = DepInfo[name]
+  deps = flatten_deps_for_pc_file(name)
 
-  libdir = full_path.dirname.to_s
-  libdir.sub!((OutDir + 'lib').to_s, '${libdir}')
-  libdir.sub!(OutDir.to_s, '${prefix}')
-
-  libname = full_path.basename.to_s
-  libname.sub!(/\Alib/, '')
-  libname.sub!(/.a\Z/, '')
-
-  name_no_num = libname.gsub(/Qt\d/, 'Qt')
-  if (OutDir + 'include' + name_no_num).directory?
-    cflags << "-I${includedir}/#{name_no_num}"
-  end
-  cflags << "-I${includedir}"
-
-  DepGraph[name].each do |dep|
+  deps.each do |dep|
+    dep = dep.dup
     case determine_dep_type(dep)
-    when :qt then
-      dep.sub!(/\Alib/, '')
-      dep.chomp!('.a')
+    when :a then
+      full_path = DepInfo[dep]
+      libdir = full_path.dirname.to_s
+      libdir.sub!((OutDir + 'lib').to_s, '${libdir}')
+      libdir.sub!(OutDir.to_s, '${prefix}')
+      libname = full_path.basename.to_s
+      libname.sub!(/\Alib/, '')
+      libname.sub!(/.a\Z/, '')
+      libdirs << "-L#{libdir}"
+      ldflags << "-l#{libname}"
+    when :x then
+      dep.chomp!('.x')
       requires << dep
     when :pc then
       dep.chomp!('.pc')
       requires << dep
-    when :compiler then
+    when :ldflag then
       libs << dep
+    when :cflag then
+      dep.sub!(OutIncDir.to_s, '${includedir}')
+      cflags << dep
     end
   end
 
-  path = OutPcDir + "#{libname}.pc"
+  path = OutPcDir + Pathname(name).sub_ext(".pc")
   File.open(path.to_s, 'w') do |f|
     f.write <<EOF
 prefix=#{OutDir}
 libdir=${prefix}/lib
 includedir=${prefix}/include
 Version: #{QtVersionString}
-Libs: -L#{libdir} -l#{libname} #{libs.join(' ')}
+Libs: #{libdirs.reverse.uniq.join(' ')} #{ldflags.reverse.join(' ')}
 Cflags: #{cflags.join(' ')}
-Requires: #{requires.join(' ')}
+Requires: #{requires.sort.join(' ')}
 EOF
   end
 end
@@ -231,15 +298,12 @@ end
 # For .pc files we depend on, add symlinks to the .pc file and any other .pc
 # files in the same directory which might be transitive dependencies.
 def symlink_pc_file_closure(name)
-  puts "Symlinking pc files for #{name}"
   dep_pc_dir = DepInfo[name].dirname
   dep_pc_dir.each_child do |target|
     link = OutPcDir + target.basename
 
     # Skip it if we already made this link.
     next if link.symlink?
-
-    puts "  Symlinking lib/pkgconfig/#{link.basename}"
 
     # Link directly to the real PC file.
     target = target.readlink while target.absolute? && target.symlink?
@@ -252,7 +316,7 @@ def create_pc_files
   mkdir OutPcDir
   DepGraph.each_key do |name|
     case determine_dep_type(name)
-    when :qt then create_pc_file_for_qt_library(name)
+    when :x then create_pc_file(name)
     when :pc then symlink_pc_file_closure(name)
     end
   end
