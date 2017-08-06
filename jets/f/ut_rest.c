@@ -65,10 +65,13 @@
   {
     u3_noun fan = u3r_at(u3qfu_van_fan, van);
 
+#if 1
     if ( c3y == _rest_hit_fan(fan, leg) ) {
       return u3m_error("rest-loop");
     }
-    else {
+    else 
+#endif
+    {
       u3_noun naf = u3qdi_gas(fan, leg);
       u3_noun nav = u3i_molt(u3k(van), u3qfu_van_fan, u3k(naf), 0);
       u3_noun mez = _rest_in(nav, leg);
