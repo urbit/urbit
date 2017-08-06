@@ -332,15 +332,16 @@ end
 # Symlink the include, bin, and plugins directories into $out.
 
 mkdir OutDir
-symlink QtBaseDir + 'include', OutDir + 'include'
-symlink QtBaseDir + 'bin', OutDir + 'bin'
-symlink QtBaseDir + 'plugins', OutDir + 'plugins'
+ln_s QtBaseDir + 'include', OutDir + 'include'
+ln_s QtBaseDir + 'bin', OutDir + 'bin'
+ln_s QtBaseDir + 'plugins', OutDir + 'plugins'
+ln_s QtBaseDir + 'src', OutDir + 'src'
 
 # Symlink the .a files and copy the .prl files into $out/lib.
 
 mkdir OutDir + 'lib'
 (QtBaseDir + 'lib').each_child do |c|
-  symlink c, OutDir + 'lib' if c.extname == '.a'
+  ln_s c, OutDir + 'lib' if c.extname == '.a'
   cp c, OutDir + 'lib' if c.extname == '.prl'
 end
 

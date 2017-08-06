@@ -57,6 +57,10 @@ let
       # These heuristics are wrong for us, so disable them, making qt use
       # pkg-config-cross.
       ./pkg-config-cross.patch
+
+      # When the DBus session bus is not available, Qt tries to dereference a
+      # null pointer, so Linux applications can't start up.
+      ./dbus-null-pointer.patch
     ];
 
     configure_flags =
