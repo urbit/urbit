@@ -1,9 +1,6 @@
 source $setup
 
-tar -xf $src qtbase-opensource-src-$version/examples
-
-mv qtbase-opensource-src-$version/examples .
-rmdir qtbase-opensource-src-$version
+examples=$qtbase/src/examples
 
 mkdir build
 cd build
@@ -35,10 +32,10 @@ if [ $os = "windows" ]; then
 fi
 
 echo "compiling dynamiclayouts"
-$qtbase/bin/moc ../examples/widgets/layouts/dynamiclayouts/dialog.h > moc/dynamiclayouts.cpp
+$qtbase/bin/moc $examples/widgets/layouts/dynamiclayouts/dialog.h > moc/dynamiclayouts.cpp
 $host-g++ $CFLAGS $LDFLAGS \
-  ../examples/widgets/layouts/dynamiclayouts/dialog.cpp \
-  ../examples/widgets/layouts/dynamiclayouts/main.cpp \
+  $examples/widgets/layouts/dynamiclayouts/dialog.cpp \
+  $examples/widgets/layouts/dynamiclayouts/main.cpp \
   moc/dynamiclayouts.cpp \
   obj/plugins.o \
   $LIBS -o bin/dynamiclayouts$exe_suffix
@@ -46,28 +43,28 @@ $host-g++ $CFLAGS $LDFLAGS \
 mkdir $out && cp -r bin $out && exit 0  # TODO: remove this line
 
 echo "compiling rasterwindow"
-$qtbase/bin/moc ../examples/gui/rasterwindow/rasterwindow.h > moc/rasterwindow.cpp
+$qtbase/bin/moc $examples/gui/rasterwindow/rasterwindow.h > moc/rasterwindow.cpp
 $host-g++ $CFLAGS $LDFLAGS \
-  ../examples/gui/rasterwindow/rasterwindow.cpp \
-  ../examples/gui/rasterwindow/main.cpp \
+  $examples/gui/rasterwindow/rasterwindow.cpp \
+  $examples/gui/rasterwindow/main.cpp \
   moc/rasterwindow.cpp \
   obj/plugins.o \
   $LIBS -o bin/rasterwindow$exe_suffix
 
 echo "compiling analogclock"
 $host-g++ $CFLAGS $LDFLAGS \
-  -I../examples/gui/rasterwindow/ \
-  ../examples/gui/analogclock/main.cpp \
-  ../examples/gui/rasterwindow/rasterwindow.cpp \
+  -I$examples/gui/rasterwindow/ \
+  $examples/gui/analogclock/main.cpp \
+  $examples/gui/rasterwindow/rasterwindow.cpp \
   moc/rasterwindow.cpp \
   obj/plugins.o \
   $LIBS -o bin/analogclock$exe_suffix
 
 echo "compiling openglwindow"
-$qtbase/bin/moc ../examples/gui/openglwindow/openglwindow.h > moc/openglwindow.cpp
+$qtbase/bin/moc $examples/gui/openglwindow/openglwindow.h > moc/openglwindow.cpp
 $host-g++ $CFLAGS $LDFLAGS \
-  ../examples/gui/openglwindow/main.cpp \
-  ../examples/gui/openglwindow/openglwindow.cpp \
+  $examples/gui/openglwindow/main.cpp \
+  $examples/gui/openglwindow/openglwindow.cpp \
   moc/openglwindow.cpp \
   obj/plugins.o \
   $LIBS -o bin/openglwindow$exe_suffix

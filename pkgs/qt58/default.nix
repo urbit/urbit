@@ -67,7 +67,7 @@ let
       "-opensource -confirm-license " +
       "-xplatform ${platform} " +
       "-device-option CROSS_COMPILE=${crossenv.host}- " +
-      "-release " +
+      "-release " +  # change to -debug if you want debugging symbols
       "-static " +
       "-pkg-config " +
       "-nomake examples " +
@@ -112,7 +112,6 @@ let
     name = "qtbase-examples-${version}";
     inherit version;
     os = crossenv.os;
-    src = base_src;
     qtbase = base;
     cross_inputs = [ base ];
     builder = ./examples_builder.sh;
