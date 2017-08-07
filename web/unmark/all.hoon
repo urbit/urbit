@@ -56,7 +56,8 @@
   ;li
     ;h2: CommonMark
     ;ol
-      ;*  ^-  marl
+      ;*  ?:  [disabled=&]  ; DISABLED
+          ^-  marl
           %+  murn  `down`mad
           |=  a/elem:markdown
           ?:  ?=($head -.a)
