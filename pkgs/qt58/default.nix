@@ -1,4 +1,4 @@
-{ crossenv, libudev, libxcb, libx11, libxi }:
+{ crossenv, libudev, libxcb, libx11, libxi, dejavu-fonts }:
 
 let
   version = "5.8.0";
@@ -61,6 +61,16 @@ let
       # When the DBus session bus is not available, Qt tries to dereference a
       # null pointer, so Linux applications can't start up.
       ./dbus-null-pointer.patch
+
+      # Look for fonts in the same directory as the application by default if
+      # the QT_QPA_FONTDIR environment variable is not present.  Without this
+      # patch, Qt tries to look for a font directory in the nix store that does
+      # not exists, and prints warnings.
+      # You must ship a .ttf, .ttc, .pfa, .pfb, or .otf font file
+      # with your application (e.g. https://dejavu-fonts.github.io/ ).
+      # That list of extensions comes from qbasicfontdatabase.cpp.
+      # TODO: maybe disable use of fontconfig, so Qt always uses the current dir.
+      ./font-dir.patch
     ];
 
     configure_flags =
@@ -114,6 +124,7 @@ let
     os = crossenv.os;
     qtbase = base;
     cross_inputs = [ base ];
+    dejavu = dejavu-fonts;
     builder = ./examples_builder.sh;
   };
 

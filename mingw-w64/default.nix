@@ -18,7 +18,6 @@ let
     patches = [
       ./usb.patch
       ./guid-selectany.patch
-      ./ctors.patch
     ];
     configure_flags = "--enable-secure-api --enable-idl";
   };

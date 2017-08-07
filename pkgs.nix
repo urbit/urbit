@@ -120,8 +120,12 @@ rec {
     inherit libx11 libxext libxfixes;
   };
 
+  dejavu-fonts = import ./pkgs/dejavu-fonts {
+    inherit crossenv;
+  };
+
   qt = import ./pkgs/qt58 {
-    inherit crossenv libudev libxcb libx11 libxi;
+    inherit crossenv libudev libxcb libx11 libxi dejavu-fonts;
   };
   qt_examples = qt.examples;
   qt_license_fragment = qt.license_fragment;

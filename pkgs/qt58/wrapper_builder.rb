@@ -67,6 +67,8 @@ def make_dep_graph
     add_dep 'libQt5Core.a', '-lwinmm'
     add_dep 'libQt5Core.a', '-lws2_32'
 
+    add_dep 'libQt5Gui.a', '-lopengl32'
+
     add_dep 'libQt5Widgets.a', '-luxtheme'
   end
 
@@ -115,8 +117,10 @@ def make_dep_graph
 end
 
 def parse_prl_file(filename)
-  attrs = { prl_filename: Pathname(filename) }
-  File.foreach(filename) do |line|
+  filename = Pathname(filename)
+  filename = filename.sub_ext("d.prl") if !filename.exist?
+  attrs = { prl_filename: filename }
+  File.foreach(filename.to_s) do |line|
     md = line.match(/(\w+) = (.*)/)
     attrs[md[1]] = md[2]
   end
@@ -173,11 +177,20 @@ def find_pkg_config_file(name)
 end
 
 def find_qt_library(name)
-  lib = OutDir + 'lib' + name
-  return lib if lib.exist?
+  debug_name = Pathname(name).sub_ext("d.a").to_s
 
-  plugin_paths = Pathname.glob(OutDir + 'plugins' + '*' + name)
-  return plugin_paths[0] if plugin_paths.size == 1
+  search_dirs = [ OutDir + 'lib' ] +
+    (OutDir + 'plugins').children
+
+  search_dirs.each do |dir|
+    lib = dir + name
+    return lib if lib.exist?
+  end
+
+  search_dirs.each do |dir|
+    lib = dir + debug_name
+    return lib if lib.exist?
+  end
 
   nil
 end
@@ -259,6 +272,7 @@ def create_pc_file(name)
     case determine_dep_type(dep)
     when :a then
       full_path = DepInfo[dep]
+      raise "Could not find library: #{dep}" if !full_path
       libdir = full_path.dirname.to_s
       libdir.sub!((OutDir + 'lib').to_s, '${libdir}')
       libdir.sub!(OutDir.to_s, '${prefix}')
@@ -274,7 +288,7 @@ def create_pc_file(name)
       dep.chomp!('.pc')
       requires << dep
     when :ldflag then
-      libs << dep
+      ldflags << dep
     when :cflag then
       dep.sub!(OutIncDir.to_s, '${includedir}')
       cflags << dep

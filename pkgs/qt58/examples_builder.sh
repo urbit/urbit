@@ -6,6 +6,10 @@ mkdir build
 cd build
 mkdir bin moc obj
 
+if [ $os = "linux" ]; then
+  cp $dejavu/ttf/DejaVuSans.ttf bin/
+fi
+
 cat > obj/plugins.cpp <<EOF
 #include <QtPlugin>
 #ifdef _WIN32
@@ -40,8 +44,6 @@ $host-g++ $CFLAGS $LDFLAGS \
   obj/plugins.o \
   $LIBS -o bin/dynamiclayouts$exe_suffix
 
-mkdir $out && cp -r bin $out && exit 0  # TODO: remove this line
-
 echo "compiling rasterwindow"
 $qtbase/bin/moc $examples/gui/rasterwindow/rasterwindow.h > moc/rasterwindow.cpp
 $host-g++ $CFLAGS $LDFLAGS \
@@ -60,14 +62,17 @@ $host-g++ $CFLAGS $LDFLAGS \
   obj/plugins.o \
   $LIBS -o bin/analogclock$exe_suffix
 
-echo "compiling openglwindow"
-$qtbase/bin/moc $examples/gui/openglwindow/openglwindow.h > moc/openglwindow.cpp
-$host-g++ $CFLAGS $LDFLAGS \
-  $examples/gui/openglwindow/main.cpp \
-  $examples/gui/openglwindow/openglwindow.cpp \
-  moc/openglwindow.cpp \
-  obj/plugins.o \
+# We haven't gotten OpenGL support to work on Linux yet (TODO)
+if [ $os != "linux" ]; then
+  echo "compiling openglwindow"
+  $qtbase/bin/moc $examples/gui/openglwindow/openglwindow.h > moc/openglwindow.cpp
+  $host-g++ $CFLAGS $LDFLAGS \
+    $examples/gui/openglwindow/main.cpp \
+    $examples/gui/openglwindow/openglwindow.cpp \
+    moc/openglwindow.cpp \
+    obj/plugins.o \
   $LIBS -o bin/openglwindow$exe_suffix
+fi
 
 # TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
 
