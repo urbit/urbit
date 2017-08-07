@@ -6,10 +6,6 @@ mkdir build
 cd build
 mkdir bin moc obj
 
-if [ $os = "linux" ]; then
-  cp $dejavu/ttf/DejaVuSans.ttf bin/
-fi
-
 cat > obj/plugins.cpp <<EOF
 #include <QtPlugin>
 #ifdef _WIN32
@@ -79,3 +75,9 @@ fi
 mkdir $out
 
 cp -r bin $out
+
+$host-strip $out/bin/*
+
+if [ $os = "linux" ]; then
+  cp $dejavu/ttf/DejaVuSans.ttf $out/bin/
+fi
