@@ -465,6 +465,7 @@ endfunction()
 EOF
 end
 
+# TODO: create CMake files like this using the dependency graph we used for .pc files.
 File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   afile = OutDir + 'lib' + 'libQt5Widgets.a'
 
@@ -483,6 +484,10 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   ]
   if Os == "windows"
     prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
+  end
+  if Os == "linux"
+    prls << OutDir + 'plugins' + 'platforms' + 'libqlinuxfb.prl'
+    prls << OutDir + 'plugins' + 'platforms' + 'libqxcb.prl'
   end
 
   prls.each do |prl|
