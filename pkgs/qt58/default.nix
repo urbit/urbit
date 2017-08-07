@@ -81,7 +81,7 @@ let
           "-qpa xcb " +
           "-system-xcb " +
           "-no-opengl "
-        else "");
+        else "" );
 
      cross_inputs =
        if crossenv.os == "linux" then [
