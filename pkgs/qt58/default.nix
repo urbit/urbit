@@ -3,13 +3,6 @@
 let
   version = "5.8.0";
 
-  # TODO: for people doing incremental builds with this package, try
-  # to make the link step faster and not produce such a huge (400 MB)
-  # executable.  Maybe strip the static libraries in the output or
-  # disable the generation of debug symbols by GCC in the first place.
-  # Qt has built-in support for compiling both debug and release
-  # libraries and installing them side by side, which we could try.
-
   # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
   platform =
@@ -69,7 +62,6 @@ let
       # You must ship a .ttf, .ttc, .pfa, .pfb, or .otf font file
       # with your application (e.g. https://dejavu-fonts.github.io/ ).
       # That list of extensions comes from qbasicfontdatabase.cpp.
-      # TODO: maybe disable use of fontconfig, so Qt always uses the current dir.
       ./font-dir.patch
     ];
 
@@ -82,12 +74,13 @@ let
       "-pkg-config " +
       "-nomake examples " +
       "-no-icu " +
+      "-no-fontconfig " +
+      "-no-reduce-relocations " +
       ( if crossenv.os == "windows" then "-opengl desktop"
         else if crossenv.os == "linux" then
           "-qpa xcb " +
           "-system-xcb " +
-          "-opengl no " +
-          "-no-reduce-relocations"
+          "-no-opengl "
         else "");
 
      cross_inputs =
