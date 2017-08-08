@@ -7651,7 +7651,7 @@
         {$cell *}   |
         {$core *}   dext(ref repo(sut ref))
         {$face *}   dext(ref q.ref)
-        {$fork *}   (levy ~(tap in p.ref) |=(span sint(ref +<)))
+        {$fork *}   (levy ~(tap in p.ref) |=(span dext(ref +<)))
         {$hold *}   ?:  (~(has in reg) ref)  &
                     ?:  (~(has in gil) [sut ref])  &
                     %=  dext
