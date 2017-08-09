@@ -9745,9 +9745,10 @@
           ::
           ::  either a one-line header or a paragraph
           %.  [p.u.lub yex]
+          %-  full
           ?-  p.cur
-            $rule  (full ;~(pfix (punt whit) hrul)):parse
-            $expr  (full expr):parse
+            $rule  =<(;~(pfix (punt whit) hrul) parse)
+            $expr  expr:parse
             $head  head:parse
             @      para:parse
           ==
@@ -10101,7 +10102,7 @@
         --
       ::
       ++  hrul                                          ::  empty besides fence
-        (cold ~ ;~(plug hep hep hep (star hep)))
+        (cold ~ ;~(plug hep hep hep (star hep) (just '\0a')))
       ::
       ++  para                                          ::  paragraph
         %+  cook
@@ -10109,7 +10110,8 @@
         ;~(pfix (punt whit) down)  ::REVIEW does this mean comments work?
       ::
       ++  expr                                          ::  expression
-        ;~(pfix (punt whit) (cook drop-top toplevel):(sail &))
+        %+  ifix  [(punt whit) (punt whit)]
+        (cook drop-top toplevel):(sail &)
       ::
       ++  whit                                          ::  whitespace
         (cold ' ' (plus ;~(pose (just ' ') (just '\0a'))))
