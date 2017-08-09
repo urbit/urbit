@@ -10106,8 +10106,8 @@
       ::
       ++  para                                          ::  paragraph
         %+  cook
-          |=(flow [[%p ~] +<]~)
-        ;~(pfix (punt whit) down)  ::REVIEW does this mean comments work?
+          |=(a/flow ?~(a ~ [[%p ~] a]~))
+        ;~(pfix (punt whit) down)
       ::
       ++  expr                                          ::  expression
         %+  ifix  [(punt whit) (punt whit)]
