@@ -9600,13 +9600,6 @@
       ::
       ::+|
       ::
-      ++  join                                          ::  glue tapes together
-        |=  {a/char b/(list tape)}
-        ?~  b  ""
-        |-  ^-  tape
-        ?~  t.b  i.b
-        (welp i.b a $(b t.b))
-      ::
       ++  cur-indent
         ?-  p.cur
           $down  2
@@ -9744,7 +9737,8 @@
           ;/("{+<}\0a")
         ::
         ::  yex: block recomposed, with newlines
-        =/  yex/tape  (join '\0a' (flop q.u.lub))
+        =/  yex/tape
+          (zing (turn (flop q.u.lub) |=(a/tape (runt [(dec col) ' '] "{a}\0a"))))
         ::
         ::  vex: parse of paragraph
         =/  vex/(like marl:twig)
@@ -9753,7 +9747,7 @@
           %.  [p.u.lub yex]
           ?-  p.cur
             $rule  (full ;~(pfix (punt whit) hrul)):parse
-            $expr  expr:parse
+            $expr  (full expr):parse
             $head  head:parse
             @      para:parse
           ==
