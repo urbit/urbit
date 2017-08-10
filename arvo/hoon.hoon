@@ -9956,6 +9956,13 @@
         :-  p.vex
         `[p.u.q.hav q.u.q.vex]
       ::
+      ::REVIEW surely there is a less hacky "first or after space" solution
+      ++  easy-sol                                      ::  parse start of line
+        |*  a/*
+        |=  b/nail
+        ?:  =(1 q.p.b)  ((easy a) b)
+        (fail b)
+      ::
       ++  echo                                          ::  hoon literal
         |*  sab/rule
         |=  {naz/hair los/tape}
@@ -10019,15 +10026,15 @@
         ::  #twig
         ::
           ;~  plug
-            (stag %text (cold " " whit))
+            (stag %text ;~(pose (cold " " whit) (easy-sol ~)))
             (stag %code ;~(pfix hax (echo wide)))
-            (easy ~)
+            ;~(simu whit (easy ~))
           ==
         ::
         ::  direct hoon constant
         ::
           ;~  plug
-            (stag %text (cold " " whit))
+            (stag %text ;~(pose (cold " " whit) (easy-sol ~)))
           ::
             %+  stag  %code
             %-  echo
@@ -10041,7 +10048,7 @@
               ;~(pfix cen ;~(pose sym buc pam bar qut nuck:so))
             ==
           ::
-            (easy ~)
+            ;~(simu whit (easy ~))
           ==
         ::
         ::  whitespace

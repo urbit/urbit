@@ -2,6 +2,8 @@
 
 un*bearably*
 
+0b1100
+
 ---
 
 ## This is a header
