@@ -10032,7 +10032,9 @@
             %+  stag  %code
             %-  echo
             ;~  pose
-              bisk:so
+              ::REVIEW just copy in 0x... parsers directly?
+              ;~(simu ;~(plug (just '0') alp) bisk:so)
+            ::
               tash:so
               ;~(pfix dot perd:so)
               ;~(pfix sig ;~(pose twid:so (easy [%$ %n 0])))
