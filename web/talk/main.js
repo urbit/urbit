@@ -778,7 +778,10 @@ module.exports = recl({
           case speech.url == null:
             return speechArr = speech.url.txt.split(/(\s|-)/);
           case speech.fat == null:
-            return speech.fat.taf.exp.txt.split(/(\s|-)/);
+            if (typeof speech.fat.taf.exp !== 'undefined') { return speech.fat.taf.exp.txt.split(/(\s|-)/); }
+            if (typeof speech.fat.taf.app !== 'undefined') { return speech.fat.taf.app.txt; }
+            if (typeof speech.fat.taf.lin !== 'undefined') { return speech.fat.taf.lin.txt; }
+            return "unsupported fat speech";
           default:
             return [];
         }
