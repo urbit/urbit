@@ -12,12 +12,11 @@ rec {
     x86_64-w64-mingw32 = import ./mingw-w64 { inherit native; arch = "x86_64"; };
     i686-linux-musl = import ./linux { inherit native; arch = "i686"; };
     x86_64-linux-musl = import ./linux { inherit native; arch = "x86_64"; };
-    #armv6l-linux-musl = import ./linux {
-    #  inherit nixpkgs;
-    #  arch = "armv6";
-    #  fpu = "vfp";
-    #  float = "hard";  # --with-float=hard
-    #};
+    armv6-linux-musl = import ./linux {
+      inherit native;
+      arch = "armv6";
+      gcc_options = "--with-fpu=vfp --with-float=hard ";
+    };
   };
 
   pkgFun = crossenv: import ./pkgs.nix { inherit crossenv; } // crossenv;
@@ -27,14 +26,14 @@ rec {
   x86_64-w64-mingw32 = pkgFun crossenvs.x86_64-w64-mingw32;
   i686-linux-musl = pkgFun crossenvs.i686-linux-musl;
   x86_64-linux-musl = pkgFun crossenvs.x86_64-linux-musl;
-  #armv6l-linux-musl = pkgFun crossenvs.armv6l-linux-musl;
+  armv6-linux-musl = pkgFun crossenvs.armv6-linux-musl;
 
   # Handy aliases.
   win32 = i686-w64-mingw32;
   win64 = x86_64-w64-mingw32;
   linux32 = i686-linux-musl;
   linux64 = x86_64-linux-musl;
-  #rpi = armv6l-linux-musl;
+  rpi = armv6-linux-musl;
 
   # filter is a function that can be applied to a local directory to filter out
   # files that are likely to change frequently without affecting the build,

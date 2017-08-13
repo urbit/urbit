@@ -1,4 +1,4 @@
-{ nixpkgs, host, binutils, headers }:
+{ nixpkgs, host, binutils, headers, gcc_options }:
 
 let
   isl = nixpkgs.isl_0_14;
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
 
   inherit host headers;
 
-  builder = ./builder.sh;  # TODO: keep simplifying this script
+  builder = ./builder.sh;
 
   gcc_patches = [
     # These patches are from nixpkgs.
@@ -35,6 +35,7 @@ stdenv.mkDerivation rec {
 
   gcc_conf =
     "--target=${host} " +
+    gcc_options +
     "--with-gnu-as " +
     "--with-gnu-ld " +
     "--with-as=${binutils}/bin/${host}-as " +
@@ -74,4 +75,3 @@ stdenv.mkDerivation rec {
   };
 }
 
-# TODO: fix xgcc; it searches directories outside of the Nix store for libraries

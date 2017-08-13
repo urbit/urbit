@@ -1,8 +1,8 @@
-{ native, arch }:
+{ native, arch, gcc_options ? "" }:
 let
   nixpkgs = native.nixpkgs;
 
-  host = "${arch}-linux-musl";
+  host = "${arch}-linux-musleabi";
 
   os = "linux";
 
@@ -12,9 +12,14 @@ let
 
   binutils = import ./binutils { inherit nixpkgs host; };
 
+  linux_arch =
+    if arch == "i686" || arch == "x86_64" then "x86"
+    else if arch == "armv6" || arch == "armv7" then "arm"
+    else throw "not sure what Linux architecture code to use";
+
   headers = nixpkgs.stdenv.mkDerivation rec {
     name = "linux-headers-${linux_arch}-${version}";
-    linux_arch = "x86";  # TODO
+    inherit linux_arch;
     version = "4.4.10";
     src = nixpkgs.fetchurl {
       url = "https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
@@ -24,7 +29,7 @@ let
   };
 
   gcc = import ./gcc {
-    inherit nixpkgs host binutils headers;
+    inherit nixpkgs host binutils headers gcc_options;
   };
 
   cmake_toolchain = import ../cmake_toolchain {

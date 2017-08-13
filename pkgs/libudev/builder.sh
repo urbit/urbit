@@ -10,8 +10,6 @@ for patch in $patches; do
 done
 cd ..
 
-size_flags="-DSIZEOF_PID_T=4 -DSIZEOF_UID_T=4 -DSIZEOF_GID_T=4 \
--DSIZEOF_TIME_T=4 -DSIZEOF_RLIM_T=8 -DSIZEOF_INO_T=8 -DSIZEOF_DEV_T=8"
 $host-g++ -x c++ -c $size_flags - -o test.o <<EOF
 #include <type_traits>
 #include <sys/types.h>
@@ -24,8 +22,6 @@ static_assert(sizeof(rlim_t) == SIZEOF_RLIM_T);
 static_assert(sizeof(dev_t) == SIZEOF_DEV_T);
 static_assert(sizeof(ino_t) == SIZEOF_INO_T);
 EOF
-
-CFLAGS="-Werror -DHAVE_DECL_SETNS -D_GNU_SOURCE $size_flags"
 
 rm test.o
 
@@ -73,4 +69,3 @@ Version: $version
 Libs: -L\${libdir} -ludev
 Cflags: -I\${includedir}
 EOF
-
