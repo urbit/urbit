@@ -29,6 +29,10 @@ stdenv.mkDerivation rec {
     # These patches are from nixpkgs.
     ./use-source-date-epoch.patch
     ./libstdc++-target.patch
+
+    # Without this, we cannot build a simple hello world program for ARM.
+    # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=31798
+    ./link_gcc_c_sequence_spec.patch
   ];
 
   buildInputs = [ binutils ];
