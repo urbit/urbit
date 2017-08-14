@@ -13,6 +13,7 @@ crossenv.make_derivation rec {
 
   configure_flags =
     "--host=${crossenv.host} " +
+    "--disable-malloc0returnsnull " +
     "--enable-static " +
     "--disable-shared";
 
