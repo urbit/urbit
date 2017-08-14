@@ -11,6 +11,10 @@ cat >> gui/main.cpp <<END
 #ifdef _WIN32
 Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 #endif
+#ifdef __linux__
+Q_IMPORT_PLUGIN (QLinuxFbIntegrationPlugin);
+Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
+#endif
 #endif
 END
 
