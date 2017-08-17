@@ -467,7 +467,8 @@ end
 
 # TODO: create CMake files like this using the dependency graph we used for .pc files.
 File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
-  afile = OutDir + 'lib' + 'libQt5Widgets.a'
+  widgets_a = find_qt_library('libQt5Widgets.a') || raise
+  core_a = find_qt_library('libQt5Core.a') || raise
 
   includes = [
     QtBaseDir + 'include',
@@ -476,11 +477,11 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
     QtBaseDir + 'include' + 'QtGui',
   ]
 
-  libs = [ OutDir + 'lib' + 'libQt5Core.a' ]
+  libs = [ core_a ]
   prls = [
     OutDir + 'lib' + (prl_prefix + 'Qt5Widgets.prl'),
     OutDir + 'lib' + (prl_prefix + 'Qt5Gui.prl'),
-    OutDir + 'lib' + (prl_prefix +'Qt5Core.prl'),
+    OutDir + 'lib' + (prl_prefix + 'Qt5Core.prl'),
   ]
   if Os == "windows"
     prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
@@ -496,7 +497,7 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   end
 
   properties = {
-    IMPORTED_LOCATION: afile,
+    IMPORTED_LOCATION: widgets_a,
     IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
     IMPORTED_LINK_INTERFACE_LIBRARIES: libs.join(' '),
     INTERFACE_INCLUDE_DIRECTORIES: includes.join(' '),
