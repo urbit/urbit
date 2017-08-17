@@ -327,7 +327,7 @@ def symlink_pc_file_closure(name)
     next if link.symlink?
 
     # Link directly to the real PC file.
-    target = target.readlink while target.absolute? && target.symlink?
+    target = target.realpath
 
     ln_s target, link
   end
