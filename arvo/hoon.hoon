@@ -3393,8 +3393,8 @@
   |=  {sic/@t non/@t}
   ;~(pose (cold %& (jest sic)) (cold %| (jest non)))
 ::
-++  ifix
-  |*  {fel/{rule rule} hof/rule}
+++  ifix                                                ::  prefix and suffix
+  |*  {fel/{rule rule} hof/rule}                        ::  surround hof
   ~!  +<
   ~!  +<:-.fel
   ~!  +<:+.fel
@@ -3415,8 +3415,8 @@
     (stag %| b)
   ==
 ::
-++  plus  |*(fel/rule ;~(plug fel (star fel)))
-++  punt  |*({a/rule} ;~(pose (stag ~ a) (easy ~)))
+++  plus  |*(fel/rule ;~(plug fel (star fel)))          ::  ebnf plus
+++  punt  |*({a/rule} ;~(pose (stag ~ a) (easy ~)))     ::  maybe parse
 ++  slug
   |*  raq/_|*({a/* b/*} [a b])
   |*  {bus/rule fel/rule}
@@ -9526,17 +9526,17 @@
           $:  col/@ud                                   ::  start column
               sty/trig-style                            ::  style
           ==                                            ::
-        ++  trig-style                                  ::
+        ++  trig-style                                  ::  type of parsed line
           $?  $done                                     ::  end of input
               $rule                                     ::  --- horizontal ruler
               $lint                                     ::  + line item
               $lite                                     ::  - line item
               $head                                     ::  # heading
               $bloc                                     ::  > block-quote
-              $expr                                     ::  ! interpolation
+              $expr                                     ::  ;sail expression
               $text                                     ::  anything else
           ==                                            ::
-        ++  graf                                        ::  input fragment
+        ++  graf                                        ::  paragraph element
           $%  {$bold p/(list graf)}                     ::  *bold*
               {$talc p/(list graf)}                     ::  _italics_
               {$quod p/(list graf)}                     ::  "double quote"
@@ -9904,7 +9904,7 @@
     ::
     ++  parse                                           ::  individual parsers
       |%
-      ++  look
+      ++  look                                          ::  classify line
         %+  cook  |=(a/(unit trig) a)
         ;~  pfix  (star ace)
           %+  here
@@ -9917,7 +9917,7 @@
             (cold %lite ;~(plug hep ace))               ::  - line item
             (cold %lint ;~(plug lus ace))               ::  + line item
             (cold %bloc ;~(plug gar ace))               ::  > block-quote
-            (cold %expr ;~(plug zap ace))               ::  ! interpolation
+            (cold %expr sem)                            ::  ;sail expression
             (easy %text)                                ::  anything else
           ==
         ==
@@ -10119,8 +10119,10 @@
         ;~(pfix (punt whit) down)
       ::
       ++  expr                                          ::  expression
-        %+  ifix  [(punt whit) (punt whit)]
-        (cook drop-top toplevel):(sail &)
+        %+  ifix  [(punt whit) (punt whit)]             ::  whitespace surround
+        =>  (sail &)                                    ::  tall-form
+        (cook drop-top top-level)                        ::  list of tags
+        ::  
       ::
       ++  whit                                          ::  whitespace
         (cold ' ' (plus ;~(pose (just ' ') (just '\0a'))))
@@ -10178,9 +10180,9 @@
           $&  [%xmn p.tum]
           $|  [%xml p.tum]
         ==
-      toplevel
+      top-level
     ::
-    ++  toplevel                                        ::  entry-point
+    ++  top-level                                        ::  entry-point
       ;~(pfix sem ?:(in-tall-form tall-top wide-top))
     ::
     ++  inline-embed                                    ::  brace interpolation
@@ -10389,7 +10391,7 @@
         (cold ~ sem)
         ;~(pfix col wrapped-elems(in-tall-form |))
         ;~(pfix col ace (cook collapse-chars(in-tall-form |) quote-innards))
-        (cook join-tops (ifix [gap ;~(plug gap duz)] (most gap toplevel)))
+        (cook join-tops (ifix [gap ;~(plug gap duz)] (most gap top-level)))
       ==
     ::
     ++  collapse-chars                                  ::  group consec chars
