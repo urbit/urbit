@@ -1,1 +1,1 @@
-> - + ! ;div.test: nesting
+> - + ;div.test: nesting

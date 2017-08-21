@@ -1,7 +1,9 @@
 > xyz
   abc
 
-      code
+  ```
+  code at the beginning of the line
+  ```
 
   zyxxy
 
@@ -25,8 +27,10 @@
 
 ...
 
-    code
-      still code?
+```
+code
+  still code?
+```
 
 > > foo
 

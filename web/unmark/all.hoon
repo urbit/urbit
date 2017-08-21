@@ -3,6 +3,7 @@
 ::::  /hoon/all/unmark/web
   ::
 /-    down, markdown
+/+    vast2
 ::
 /=    cor    /^  (list {@ud wain})
              /:  /%%/    /_  @ud    /txt/
@@ -16,7 +17,7 @@
 ::
 ++  mads
   |=  a/wain  ^-  marl
-  =/  try  (mule |.(~(shut ap (ream (nule '---' a)))))
+  =/  try  (mule |.(~(shut ap (rash (nule '---' a) cram:vast2))))
   ?-  -.try
     $&  p.try
     $|  ;=  ;div
