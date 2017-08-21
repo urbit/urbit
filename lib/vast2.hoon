@@ -165,6 +165,7 @@
         ++  trig-style                                  ::  type of parsed line
           $?  $done                                     ::  end of input
               $rule                                     ::  --- horizontal ruler
+              $fens                                     ::  ``` code fence
               $lint                                     ::  + line item
               $lite                                     ::  - line item
               $head                                     ::  # heading
@@ -227,7 +228,7 @@
         ::
         ::  all data was consumed
         =-  [naz `[- [naz los]]]
-        =>  made
+        =>  close-item
         |-  ^-  flow
         ::
         ::  fold all the way to top
@@ -245,7 +246,7 @@
           $lime  2
           $lord  0
           $poem  8
-          $code  4
+          $code  0
           $bloc  2
         ==
       ::
@@ -324,25 +325,25 @@
         (flop nap)
       ::
       ++  skip                                          ::  discard line
-        |-  ^+  +
+        |-  ^+  ..^$
         ::
         ::  no unterminated lines
         ?~  los
           ::~& %unterminated-line
-          +(err `naz)
+          ..^$(err `naz)
         ?.  =(`@`10 i.los)
           ::
           ::  eat byte and repeat
           $(los t.los)
         ::
         ::  consume newline
-        +(los t.los, naz [+(p.naz) 1])
+        ..^$(los t.los, naz [+(p.naz) 1])
       ::
       ++  look                                          ::  inspect line
         ^-  (unit trig)
         (wonk (look:parse naz los))
       ::
-      ++  made                                          ::  compose block
+      ++  close-item                                          ::  compose block
         ^+  .
         ::
         ::  empty block, no action
@@ -350,7 +351,7 @@
         ::
         ::  if block is preformatted code
         ?:  ?=($code p.cur)
-          =-  fold(lub ~, q.cur (weld - q.cur), col (sub col 4))
+          =-  fold(lub ~, q.cur (weld - q.cur))
           %+  turn  q.u.lub
           |=  tape  ^-  mars
           ::
@@ -410,7 +411,7 @@
         ?~  pic
           ::
           ::  break section
-          line:made:skip
+          =~(skip close-item line)
         ::
         ::  line is not blank
         =>  .(pic u.pic)
@@ -423,13 +424,17 @@
         =/  bal  lub
         ::
         ::  if within section
-        ?~  bal  (new-container pic)
+        ?~  bal  (open-item pic)
         ::
         ::  detect unspaced new containers
         ?:  ?&  ?=(?($down $lime $bloc) p.cur)
                 |(!=(%text sty.pic) (gth col.pic col))
             ==
-          (new-container:made pic)
+          %-  =>(close-item open-item)  pic
+        ::
+        ::  if we see a fence at the end of a code block, complete the block
+        ?:  &(?=($fens sty.pic) ?=($code p.cur))
+          =~(skip close-item line)
         ::
         ::  first line of container is legal
         ?~  q.u.bal
@@ -470,7 +475,7 @@
           q.cur  (weld (flop `marl:twig`res) q.cur)     ::  prepend to the stack
         ==
       ::
-      ++  new-container                                 ::  enter list/quote
+      ++  open-item                                 ::  enter list/quote
         |=  pic/trig
         ::
         ::  if column has retreated, adjust stack
@@ -494,26 +499,29 @@
           ::  nap: take first line
           ..$(lub `[naz ~])
         ::
-        ++  apex  ^+  .                                 ::  by column offset
-          ?+  dif  fail                                 ::
-            $0  apse                                    ::  unindented forms
-            $4  (push %code)                            ::  code literal
-            $8  (push %poem)                            ::  verse literal
-          ==
-        ::
-        ++  apse  ^+  .                                 ::  by prefix style
-          ?-  sty.pic
-            $done  !!                                   ::  blank
-            $rule  (push %rule)                         ::  horizontal ruler
-            $head  (push %head)                         ::  heading
-            $bloc  (entr %bloc)                         ::  blockquote line
-            $lite  (lent %list)                         ::  unnumbered list
-            $lint  (lent %lord)                         ::  numbered list
-            $text  text                                 ::  anything else
+        ++  apex  ^+  .                                   ::  by column offset
+          ?+    dif  fail                                 ::
+              $8  (push %poem)                            ::  verse literal
+              $0                                          ::  unindented forms
+            ?-  sty.pic
+              $done  !!                                   ::  blank
+              $rule  (take %rule)                         ::  horizontal ruler
+              $fens  (take %code)                         ::  code bloc
+              $head  (push %head)                         ::  heading
+              $bloc  (entr %bloc)                         ::  blockquote line
+              $lite  (lent %list)                         ::  unnumbered list
+              $lint  (lent %lord)                         ::  numbered list
+              $text  text                                 ::  anything else
+            ==
           ==
         ::
         ++  fail  .(err `erp)                           ::  set error position
         ++  push  |=(mite +>(hac [cur hac], cur [+< ~]))::  push context
+        ++  take
+          |=  a/mite
+          ^+  +>
+          =.  ..skip  skip
+          (push a)
         ++  entr                                        ::  enter container
           |=  typ/mite
           ^+  +>
@@ -560,6 +568,7 @@
             (full (easy %done))                         ::  end of input
             (cold ~ (just `@`10))                       ::  blank line
             (cold %rule ;~(plug hep hep hep))           ::  --- horizontal ruler
+            (cold %fens ;~(plug tec tec tec))           ::  ``` code fence
             (cold %head ;~(plug (star hax) ace))        ::  # heading
             (cold %lite ;~(plug hep ace))               ::  - line item
             (cold %lint ;~(plug lus ace))               ::  + line item
