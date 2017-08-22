@@ -762,13 +762,14 @@
       ++  fenced-code
         |=  col/@u  ~+
         =/  ind  (stun [(dec col) (dec col)] ace)
-        %+  ifix  [tecs tecs]
+        =/  ind-tecs  ;~(plug ind tecs)
+        %+  ifix  [ind-tecs ind-tecs]
         %-  star
-        ;~  less  tecs
-          ;~  pose
-            (ifix [ind (just '\0a')] (star prn))
-            (cold "" ;~(plug (star ace) (just '\0a')))
-          ==
+        ;~  pose
+          %+  ifix  [ind (just '\0a')]
+          ;~(less tecs (star prn))
+        ::
+          (cold "" ;~(plug (star ace) (just '\0a')))
         ==
       ::
       ++  para                                          ::  paragraph

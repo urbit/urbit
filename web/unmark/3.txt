@@ -41,13 +41,12 @@ We sometimes speak in %hoon  We also say 0xdead.beef things like ~ and #`@`2.
 We don't care if we sound funny, and sometimes we !@#$%%#^? cuss.
 
 ```
-    We also sometimes put
-    in
-    code
-    looks
+We also sometimes put
+in
+code
+looks
 
-    like
-    this.
-    TODO(ted): support blank lines in quoted code
+like
+this.
 ```
 
