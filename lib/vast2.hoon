@@ -216,7 +216,7 @@
       =|  col/@ud
       =|  hac/(list item)
       =/  cur/item  [%down ~]
-      =|  lub/(unit (pair hair (list tape)))
+      =|  lub/(unit (pair hair wall))
       |_  {top/@ud naz/hair los/tape}
       ::
       ++  $                                           ::  resolve
@@ -505,7 +505,7 @@
               $0                                          ::  unindented forms
             ?-  sty.pic
               $done  !!                                   ::  blank
-              $rule  (take %rule)                         ::  horizontal ruler
+              $rule  (push %rule)                         ::  horizontal ruler
               $fens  (take %code)                         ::  code bloc
               $head  (push %head)                         ::  heading
               $bloc  (entr %bloc)                         ::  blockquote line
