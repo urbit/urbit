@@ -44,8 +44,8 @@ We don't care if we sound funny, and sometimes we !@#$%%#^? cuss.
     We also sometimes put
     in
     code
-
     looks
+
     like
     this.
     TODO(ted): support blank lines in quoted code

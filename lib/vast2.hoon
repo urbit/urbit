@@ -155,7 +155,6 @@
               $lord                                     ::  ordered list
               $poem                                     ::  verse
               $bloc                                     ::  blockquote
-              $code                                     ::  preformatted code
               $head                                     ::  heading
           ==                                            ::
         ++  trig                                        ::  line style
@@ -246,7 +245,6 @@
           $lime  2
           $lord  0
           $poem  8
-          $code  0
           $bloc  2
         ==
       ::
@@ -275,7 +273,6 @@
           $list  %ul
           $lord  %ol
           $lime  %li
-          $code  %pre
           $poem  %div ::REVIEW actual container element?
           $bloc  %blockquote
         ==
@@ -284,18 +281,8 @@
         ?~  hac  .
         %=  .
           hac  t.hac
-          cur  [p.i.hac (concat-code (weld fine q.i.hac))]
+          cur  [p.i.hac (weld fine q.i.hac)]
         ==
-      ::
-      ++  concat-code                                   ::  merge continuous pre
-        |=  a/flow
-        ?~  a  a
-        ?.  ?=({$pre *} -.i.a)  a
-        |-
-        ?~  t.a  a
-        ?.  ?=({$pre $~} -.i.t.a)  a
-        ::  add blank line between blocks
-        $(t.a t.t.a, c.i.a (welp c.i.t.a ;/("\0a") c.i.a))
       ::
       ++  snap                                          ::  capture raw line
         =|  nap/tape
@@ -348,15 +335,6 @@
         ::
         ::  empty block, no action
         ?~  lub  .
-        ::
-        ::  if block is preformatted code
-        ?:  ?=($code p.cur)
-          =-  fold(lub ~, q.cur (weld - q.cur))
-          %+  turn  q.u.lub
-          |=  tape  ^-  mars
-          ::
-          ::  each line is text data with its newline
-          ;/("{+<}\0a")
         ::
         ::  if block is verse
         ?:  ?=($poem p.cur)
@@ -432,10 +410,6 @@
             ==
           %-  =>(close-item open-item)  pic
         ::
-        ::  if we see a fence at the end of a code block, complete the block
-        ?:  &(?=($fens sty.pic) ?=($code p.cur))
-          =~(skip close-item line)
-        ::
         ::  first line of container is legal
         ?~  q.u.bal
           =^  nap  ..$  snap
@@ -452,7 +426,7 @@
               ?($head $rule)  |
             ::
             ::  literals need to end with a blank line
-              ?($code $poem $expr)  (gte col.pic col)
+              ?($poem $expr)  (gte col.pic col)
             ::
             ::  text flows must continue aligned
               ?($down $list $lime $lord $bloc)  =(col.pic col)
@@ -463,6 +437,7 @@
         ::  accept line and continue
         =^  nap  ..$  snap
         line(lub bal(q.u [nap q.u.bal]))
+      ::
       ++  parse-hoon                                    ::  hoon in markdown
         ^+  .
         =/  vex/(like marl:twig)  (expr:parse naz los)
@@ -473,6 +448,22 @@
           naz  naz
           los  los
           q.cur  (weld (flop `marl:twig`res) q.cur)     ::  prepend to the stack
+        ==
+      ::
+      ++  parse-fens
+        ^+  .
+        =/  vex/(like wall)  ((fenced-code:parse col) naz los)
+        ?~  q.vex
+          ..$(err `p.vex)
+        =+  [wal naz los]=u.q.vex
+        =/  txt/tape
+          %+  roll  `wall`wal
+          |=({a/tape b/tape} "{a}\0a{b}")
+        =/  res/manx  [[%pre ~] ;/(txt) ~]
+        %_  ..$
+          naz  naz
+          los  los
+          q.cur  [res q.cur]
         ==
       ::
       ++  open-item                                 ::  enter list/quote
@@ -491,6 +482,8 @@
         ::  execute appropriate paragraph form
         ?:  ?=($expr sty.pic)
           line:parse-hoon
+        ?:  ?=($fens sty.pic)
+          line:parse-fens
         =<  line:abet:apex
         |%
         ::
@@ -506,7 +499,6 @@
             ?-  sty.pic
               $done  !!                                   ::  blank
               $rule  (push %rule)                         ::  horizontal ruler
-              $fens  (take %code)                         ::  code bloc
               $head  (push %head)                         ::  heading
               $bloc  (entr %bloc)                         ::  blockquote line
               $lite  (lent %list)                         ::  unnumbered list
@@ -517,11 +509,6 @@
         ::
         ++  fail  .(err `erp)                           ::  set error position
         ++  push  |=(mite +>(hac [cur hac], cur [+< ~]))::  push context
-        ++  take
-          |=  a/mite
-          ^+  +>
-          =.  ..skip  skip
-          (push a)
         ++  entr                                        ::  enter container
           |=  typ/mite
           ^+  +>
@@ -768,6 +755,21 @@
       ::
       ++  hrul                                          ::  empty besides fence
         (cold ~ ;~(plug hep hep hep (star hep) (just '\0a')))
+      ::
+      ++  tecs
+        ;~(plug tec tec tec (just '\0a'))
+      ::
+      ++  fenced-code
+        |=  col/@u  ~+
+        =/  ind  (stun [(dec col) (dec col)] ace)
+        %+  ifix  [tecs tecs]
+        %-  star
+        ;~  less  tecs
+          ;~  pose
+            (ifix [ind (just '\0a')] (star prn))
+            (cold "" ;~(plug (star ace) (just '\0a')))
+          ==
+        ==
       ::
       ++  para                                          ::  paragraph
         %+  cook
