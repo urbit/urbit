@@ -17,7 +17,7 @@
 ::
 ++  mads
   |=  a/wain  ^-  marl
-  =/  try  (mule |.(~(shut ap (rash (nule '---' a) cram:vast2))))
+  =/  try  (mule |.(~(shut ap (rash (nule ';>' a) apex:(sail &):vast2))))
   ?-  -.try
     $&  p.try
     $|  ;=  ;div

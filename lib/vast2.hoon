@@ -185,16 +185,12 @@
     =<  apex
     |%
     ++  apex
-      =;  fel  |=(nail (fel +<))
-      :(stag %xmn [%div ~] fenced)
-    ::
-    ++  fenced
       ::
       ::  top: original indentation level
       ::
-      |=  {{@u top/@u} tape}
-      %+  pfix  (hrul:parse +<)
-      |=  nail  ^-  (like marl:twig)
+      |=  a/nail
+      %+  pfix  (whit:parse a)
+      |=  {{@u top/@u} tape}  ^-  (like marl:twig)
       ~($ main top +<)
     ::
     ++  main
@@ -1005,6 +1001,7 @@
         (stag %& tall-elem)
         (stag %| wide-quote)
         (stag %| ;~(pfix tis tall-tail))
+        (stag %& ;~(pfix gar (stag [%div ~] cram)))
         (stag %| ;~(plug ;~((glue gap) tuna-mode tall) (easy ~)))
         (easy %| [;/("\0a")]~)
       ==
@@ -1807,7 +1804,7 @@
             ;~(plug sym (punt ;~(pfix fas wide)))
   ++  tall                                              ::  full tall form
     %+  knee  *twig
-    |.(~+((wart ;~(pose (norm &) cram long lute apex:(sail &)))))
+    |.(~+((wart ;~(pose (norm &) long lute apex:(sail &)))))
   ::
   ++  wide                                              ::  full wide form
     %+  knee  *twig
