@@ -6,6 +6,7 @@ un*bearably*
 
 ---
 
+
 ## This is a header
 
 The quick brown fox jumped over
@@ -39,13 +40,14 @@ We sometimes speak in %hoon  We also say 0xdead.beef things like ~ and #`@`2.
 
 We don't care if we sound funny, and sometimes we !@#$%%#^? cuss.
 
+```
     We also sometimes put
     in
     code
 
-    which
     looks
     like
-    this
-
+    this.
+    TODO(ted): support blank lines in quoted code
+```
 
