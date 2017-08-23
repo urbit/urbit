@@ -170,7 +170,6 @@
               $head                                     ::  # heading
               $bloc                                     ::  > block-quote
               $expr                                     ::  ;sail expression
-              $stet                                     ::  == to end markdown
               $text                                     ::  anything else
           ==                                            ::
         ++  graf                                        ::  paragraph element
@@ -208,7 +207,6 @@
       ::  hac: stack of items under construction
       ::  cur: current item under construction
       ::  lub: current block being read in
-      ::  last-column: last column read, for backtracking
       ::  top: initial markdown indent
       ::  [naz los]: parsing state
       ::
@@ -218,7 +216,6 @@
       =|  hac/(list item)
       =/  cur/item  [%down ~]
       =|  lub/(unit (pair hair wall))
-      =|  last-column/@ud
       |_  {top/@ud naz/hair los/tape}
       ::
       ++  $                                           ::  resolve
@@ -306,13 +303,28 @@
           $(los t.los, q.naz +(q.naz), nap [i.los nap])
         ::
         ::  consume newline
-        :_  +>(los t.los, naz [+(p.naz) 1], last-column q.naz)
+        :_  +>(los t.los, naz [+(p.naz) 1])
         ::
         ::  trim trailing spaces
         |-  ^-  tape
         ?:  ?=({$' ' *} nap)
           $(nap t.nap)
         (flop nap)
+      ::
+      ++  skip                                          ::  discard line
+        |-  ^+  ..^$
+        ::
+        ::  no unterminated lines
+        ?~  los
+          ::~& %unterminated-line
+          ..^$(err `naz)
+        ?.  =(`@`10 i.los)
+          ::
+          ::  eat byte and repeat
+          $(los t.los)
+        ::
+        ::  consume newline
+        ..^$(los t.los, naz [+(p.naz) 1])
       ::
       ++  look                                          ::  inspect line
         ^-  (unit trig)
@@ -377,22 +389,14 @@
         ?~  pic
           ::
           ::  break section
-          =~(+:snap close-item line)
+          =~(skip close-item line)
         ::
         ::  line is not blank
         =>  .(pic u.pic)
         ::
         ::  if end of input, complete
-        ?:  ?=($done sty.pic)
+        ?:  |(?=($done sty.pic) (lth col.pic top))
           ..$(q.naz col.pic)
-        ::
-        ::  if == or dedent, complete and backtrack
-        ?:  |(?=($stet sty.pic) (lth col.pic top))
-          %_  ..$
-            p.naz  (dec p.naz)
-            q.naz  last-column
-            los    ['\0a' los]                          ::  put newline back
-          ==
         ::
         ::  bal: inspection copy of lub, current section
         =/  bal  lub
@@ -493,7 +497,7 @@
               $8  (push %poem)                            ::  verse literal
               $0                                          ::  unindented forms
             ?-  sty.pic
-              ?($done $stet)  !!                          ::  end of markdown
+              $done  !!                                   ::  blank
               $rule  (push %rule)                         ::  horizontal ruler
               $head  (push %head)                         ::  heading
               $bloc  (entr %bloc)                         ::  blockquote line
@@ -550,7 +554,6 @@
           ;~  pose
             (full (easy %done))                         ::  end of input
             (cold ~ (just `@`10))                       ::  blank line
-            (cold %stet duz)                            ::  == (ends markdown)
             (cold %rule ;~(plug hep hep hep))           ::  --- horizontal ruler
             (cold %fens ;~(plug tec tec tec))           ::  ``` code fence
             (cold %head ;~(plug (star hax) ace))        ::  # heading
