@@ -202,18 +202,23 @@
       ::  to be parsed and thrown in the current element.  when
       ::  the indent column retreats, the element stack rolls up.
       ::
+      ::  verbose: debug printing enabled
       ::  err: error position
       ::  col: current control column
       ::  hac: stack of items under construction
       ::  cur: current item under construction
       ::  lub: current block being read in
+      ::  last-column: last column read, for backtracking
+      ::  top: initial markdown indent
+      ::  [naz los]: parsing state
       ::
+      =/  verbose  |
       =|  err/(unit hair)
       =|  col/@ud
       =|  hac/(list item)
       =/  cur/item  [%down ~]
       =|  lub/(unit (pair hair wall))
-      =|  last-column/@ud                        ::  for backtracking
+      =|  last-column/@ud
       |_  {top/@ud naz/hair los/tape}
       ::
       ++  $                                           ::  resolve
@@ -256,7 +261,7 @@
         ?:  (gth nex (sub col luc))
           ::
           ::  indenting pattern violation
-          ::~&  indent-pattern-violation+[p.cur nex col luc]
+          ~?  verbose  indent-pattern-violation+[p.cur nex col luc]
           ..^$(col luc, err `[p.naz luc])
         =.  ..^$  fold
         $(col (sub col nex))
@@ -288,12 +293,12 @@
         ::
         ::  no unterminated lines
         ?~  los
-          ::~& %unterminated-line
+          ~?  verbose  %unterminated-line
           [~ +>(err `naz)]
         ?.  =(`@`10 i.los)
           ?:  (gth col q.naz)
             ?.  =(' ' i.los)
-              ::~&  expected-indent+[col naz los]
+              ~?  verbose  expected-indent+[col naz los]
               [~ +>(err `naz)]
             $(los t.los, q.naz +(q.naz))
           ::
@@ -422,7 +427,7 @@
             ::  text flows must continue aligned
               ?($down $list $lime $lord $bloc)  =(col.pic col)
             ==
-          ::~&  bad-block-structure+[p.cur col col.pic]
+          ~?  verbose  bad-block-structure+[p.cur col col.pic]
           ..$(err `[p.naz col.pic])
         ::
         ::  accept line and continue
