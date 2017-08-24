@@ -145,7 +145,7 @@
     =>  |%
         ++  item  (pair mite marl:twig)                 ::  xml node generator
         ++  colm  @ud                                   ::  column
-        ++  flow  marl:twig                             ::  node or generator
+        ++  tarp  marl:twig                             ::  node or generator
         ++  mite                                        ::  context
           $?  $down                                     ::  outer embed
               $rule                                     ::  horizontal ruler
@@ -205,33 +205,33 @@
       ::  col: current control column
       ::  hac: stack of items under construction
       ::  cur: current item under construction
-      ::  lub: current block being read in
+      ::  par: current "paragraph" being read in
       ::  top: initial markdown indent
-      ::  [naz los]: parsing state
+      ::  [loc txt]: parsing state
       ::
       =/  verbose  |
       =|  err/(unit hair)
       =|  col/@ud
       =|  hac/(list item)
       =/  cur/item  [%down ~]
-      =|  lub/(unit (pair hair wall))
-      |_  {top/@ud naz/hair los/tape}
+      =|  par/(unit (pair hair wall))
+      |_  {top/@ud loc/hair txt/tape}
       ::
-      ++  $                                           ::  resolve
-        ^-  (like flow)
+      ++  $                                             ::  resolve
+        ^-  (like tarp)
         =>  line
         ::
         ::  if error position is set, produce error
         ?.  =(~ err)  [+.err ~]
         ::
         ::  all data was consumed
-        =-  [naz `[- [naz los]]]
-        =>  close-item
-        |-  ^-  flow
+        =-  [loc `[- [loc txt]]]
+        =>  close-par
+        |-  ^-  tarp
         ::
         ::  fold all the way to top
-        ?~  hac  fine
-        $(..^$ fold)
+        ?~  hac  cur-to-tarp
+        $(..^$ close-item)
       ::
       ::+|
       ::
@@ -258,12 +258,12 @@
           ::
           ::  indenting pattern violation
           ~?  verbose  indent-pattern-violation+[p.cur nex col luc]
-          ..^$(col luc, err `[p.naz luc])
-        =.  ..^$  fold
+          ..^$(col luc, err `[p.loc luc])
+        =.  ..^$  close-item
         $(col (sub col nex))
       ::
-      ++  fine                                          ::  item to flow
-        ^-  flow
+      ++  cur-to-tarp                                   ::  item to tarp
+        ^-  tarp
         ?:  ?=(?($down $head $expr) p.cur)
           (flop q.cur)
         =-  [[- ~] (flop q.cur)]~
@@ -276,39 +276,39 @@
           $bloc  %blockquote
         ==
       ::
-      ++  fold  ^+  .                                   ::  complete and pop
+      ++  close-item  ^+  .                             ::  complete and pop
         ?~  hac  .
         %=  .
           hac  t.hac
-          cur  [p.i.hac (weld fine q.i.hac)]
+          cur  [p.i.hac (weld cur-to-tarp q.i.hac)]
         ==
       ::
-      ++  snap                                          ::  capture raw line
-        =|  nap/tape
-        |-  ^+  [[nap &] +>]
+      ++  read-line                                     ::  capture raw line
+        =|  lin/tape
+        |-  ^+  [[lin &] +>]
         ::
         ::  no unterminated lines
-        ?~  los
+        ?~  txt
           ~?  verbose  %unterminated-line
-          [[~ |] +>(err `naz)]
-        ?.  =(`@`10 i.los)
-          ?:  (gth col q.naz)
-            ?.  =(' ' i.los)
-              ~?  verbose  expected-indent+[col naz los]
-              [[~ |] +>(err `naz)]
-            $(los t.los, q.naz +(q.naz))
+          [[~ |] +>(err `loc)]
+        ?.  =(`@`10 i.txt)
+          ?:  (gth col q.loc)
+            ?.  =(' ' i.txt)
+              ~?  verbose  expected-indent+[col loc txt]
+              [[~ |] +>(err `loc)]
+            $(txt t.txt, q.loc +(q.loc))
           ::
           ::  save byte and repeat
-          $(los t.los, q.naz +(q.naz), nap [i.los nap])
-        =.  nap
+          $(txt t.txt, q.loc +(q.loc), lin [i.txt lin])
+        =.  lin
           ::
           ::  trim trailing spaces
           |-  ^-  tape
-          ?:  ?=({$' ' *} nap)
-            $(nap t.nap)
-          (flop nap)
+          ?:  ?=({$' ' *} lin)
+            $(lin t.lin)
+          (flop lin)
         ::
-        =/  eat-newline  +>(los t.los, naz [+(p.naz) 1])
+        =/  eat-newline  +>(txt t.txt, loc [+(p.loc) 1])
         =/  saw  look:eat-newline
         =/  cont
           ?|  ?=($~ saw)
@@ -316,26 +316,26 @@
               (gte col.u.saw col)
           ==
         ?:  cont 
-          [[nap &] eat-newline]
-        [[nap |] +>.$]
+          [[lin &] eat-newline]
+        [[lin |] +>.$]
       ::
       ++  look                                          ::  inspect line
         ^-  (unit trig)
-        (wonk (look:parse naz los))
+        (wonk (look:parse loc txt))
       ::
-      ++  close-item                                          ::  compose block
+      ++  close-par                                     ::  make block
         ^+  .
         ::
         ::  empty block, no action
-        ?~  lub  .
+        ?~  par  .
         ::
         ::  if block is verse
         ?:  ?=($poem p.cur)
           ::
           ::  add break between stanzas
           =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
-          =-  fold(lub ~, q.cur (weld - q.cur), col (sub col 8))
-          %+  turn  q.u.lub
+          =-  close-item(par ~, q.cur (weld - q.cur), col (sub col 8))
+          %+  turn  q.u.par
           |=  tape  ^-  manx
           ::
           ::  each line is a paragraph
@@ -345,13 +345,13 @@
         ::
         ::  yex: block recomposed, with newlines
         =/  yex/tape
-          (zing (turn (flop q.u.lub) |=(a/tape (runt [(dec col) ' '] "{a}\0a"))))
+          (zing (turn (flop q.u.par) |=(a/tape (runt [(dec col) ' '] "{a}\0a"))))
         ::
         ::  vex: parse of paragraph
-        =/  vex/(like marl:twig)
+        =/  vex/(like tarp)
           ::
           ::  either a one-line header or a paragraph
-          %.  [p.u.lub yex]
+          %.  [p.u.par yex]
           %-  full
           ?-  p.cur
             $rule  =<(;~(pfix (punt whit) hrul) parse)
@@ -363,10 +363,10 @@
         ?~  q.vex  ..$(err `p.vex)
         ::
         ::  finish tag if it's a header or rule
-        =<  ?:(?=(?($head $rule) p.cur) fold ..$)
+        =<  ?:(?=(?($head $rule) p.cur) close-item ..$)
         ::
         ::  save good result, clear buffer
-        ..$(lub ~, q.cur (weld p.u.q.vex q.cur))
+        ..$(par ~, q.cur (weld p.u.q.vex q.cur))
       ::
       ++  line  ^+  .                                   ::  body line loop
         ::
@@ -382,20 +382,20 @@
         ?~  pic
           ::
           ::  break section
-          =^  a/{tape cont/?}  ..$  snap
+          =^  a/{tape cont/?}  ..$  read-line
           ?.  cont.a
             ..$
-          =>(close-item line)
+          =>(close-par line)
         ::
         ::  line is not blank
         =>  .(pic u.pic)
         ::
         ::  if end of input, complete
         ?:  |(?=($done sty.pic) (lth col.pic top))
-          ..$(q.naz col.pic)
+          ..$(q.loc col.pic)
         ::
-        ::  bal: inspection copy of lub, current section
-        =/  bal  lub
+        ::  bal: inspection copy of par, current section
+        =/  bal  par
         ::
         ::  if within section
         ?~  bal  (open-item pic)
@@ -404,7 +404,7 @@
         ?:  ?&  ?=(?($down $lime $bloc) p.cur)
                 |(!=(%text sty.pic) (gth col.pic col))
             ==
-          %-  =>(close-item open-item)  pic
+          %-  =>(close-par open-item)  pic
         ::
         ::
         ::- - - foo
@@ -422,47 +422,47 @@
             ::  indented literals need to end with a blank line
               $poem  (gte col.pic col)
             ::
-            ::  text flows must continue aligned
+            ::  text tarps must continue aligned
               ?($down $list $lime $lord $bloc)  =(col.pic col)
             ==
           ~?  verbose  bad-block-structure+[p.cur col col.pic]
-          ..$(err `[p.naz col.pic])
+          ..$(err `[p.loc col.pic])
         ::
         ::  accept line and maybe continue
-        =^  a/{nap/tape cont/?}  ..$  snap
-        =.  lub  bal(q.u [nap.a q.u.bal])
+        =^  a/{lin/tape cont/?}  ..$  read-line
+        =.  par  bal(q.u [lin.a q.u.bal])
         ?:  cont.a  line
         ..$
       ::
       ++  parse-hoon                                    ::  hoon in markdown
         ^+  .
-        =/  vex/(like marl:twig)  (expr:parse naz los)
+        =/  vex/(like marl:twig)  (expr:parse loc txt)
         ?~  q.vex
           ..$(err `p.vex)
-        =+  [res naz los]=u.q.vex
+        =+  [res loc txt]=u.q.vex
         %_  ..$
-          naz  naz
-          los  los
+          loc  loc
+          txt  txt
           q.cur  (weld (flop `marl:twig`res) q.cur)     ::  prepend to the stack
         ==
       ::
       ++  parse-fens
         ^+  .
-        =/  vex/(like wall)  ((fenced-code:parse col) naz los)
+        =/  vex/(like wall)  ((fenced-code:parse col) loc txt)
         ?~  q.vex
           ..$(err `p.vex)
-        =+  [wal naz los]=u.q.vex
+        =+  [wal loc txt]=u.q.vex
         =/  txt/tape
           %+  roll  `wall`wal
           |=({a/tape b/tape} "{a}\0a{b}")
         =/  res/manx  [[%pre ~] ;/(txt) ~]
         %_  ..$
-          naz  naz
-          los  los
+          loc  loc
+          txt  txt
           q.cur  [res q.cur]
         ==
       ::
-      ++  open-item                                 ::  enter list/quote
+      ++  open-item                                     ::  enter list/quote
         |=  pic/trig
         ::
         ::  if column has retreated, adjust stack
@@ -472,7 +472,7 @@
         ::  erp: error position
         ::
         =/  dif  (sub col.pic col)
-        =/  erp  [p.naz col.pic]
+        =/  erp  [p.loc col.pic]
         =.  col  col.pic
         ::
         ::  execute appropriate paragraph form
@@ -483,28 +483,25 @@
         =<  line:abet:apex
         |%
         ::
-        ++  abet                                        ::  accept line
-          ::
-          ::  nap: take first line
-          ..$(lub `[naz ~])
+        ++  abet                                        ::  initialize para
+          ..$(par `[loc ~])
         ::
-        ++  apex  ^+  .                                   ::  by column offset
-          ?+    dif  fail                                 ::
-              $8  (push %poem)                            ::  verse literal
-              $0                                          ::  unindented forms
-            ?-  sty.pic
-              $done  !!                                   ::  blank
-              $rule  (push %rule)                         ::  horizontal ruler
-              $head  (push %head)                         ::  heading
-              $bloc  (entr %bloc)                         ::  blockquote line
-              $lite  (lent %list)                         ::  unnumbered list
-              $lint  (lent %lord)                         ::  numbered list
-              $text  text                                 ::  anything else
-            ==
+        ++  apex  ^+  .                                 ::  open container
+          ?:  =(8 dif)  (push %poem)                    ::  verse literal
+          ?.  =(0 dif)  fail                            ::  bad indentation
+          ?-  sty.pic
+            $done  !!                                   ::  blank
+            $rule  (push %rule)                         ::  horizontal ruler
+            $head  (push %head)                         ::  heading
+            $bloc  (entr %bloc)                         ::  blockquote line
+            $lite  (lent %list)                         ::  unnumbered list
+            $lint  (lent %lord)                         ::  numbered list
+            $text  text                                 ::  anything else
           ==
         ::
         ++  fail  .(err `erp)                           ::  set error position
-        ++  push  |=(mite +>(hac [cur hac], cur [+< ~]))::  push context
+        ++  push                                        ::  push context
+          |=(mite +>(hac [cur hac], cur [+< ~]))
         ++  entr                                        ::  enter container
           |=  typ/mite
           ^+  +>
@@ -513,8 +510,8 @@
           =.  col  (add 2 col)
           ::
           ::  "parse" marker
-          =.  los  (slag (sub col q.naz) los)
-          =.  q.naz  col
+          =.  txt  (slag (sub col q.loc) txt)
+          =.  q.loc  col
           ::
           (push typ)
         ::
@@ -534,9 +531,8 @@
         ++  text                                        ::  plain text
           ^+  .
           ::
-          ::  only in lists, fold
-          ?.  ?=(?($list $lord) p.cur)  .
-          .(^$ fold)
+          ?.  ?=(?($list $lord) p.cur)  .               ::  if in a list,
+          .(..^$ close-item)                            ::  close the list
         --
       --
     ::
@@ -578,18 +574,18 @@
                 fex/rule
                 sab/rule
             ==
-        |=  {naz/hair los/tape}
+        |=  {loc/hair txt/tape}
         ^+  *sab
         ::
         ::  vex: fenced span
-        =/  vex/(like tape)  (fex naz los)
+        =/  vex/(like tape)  (fex loc txt)
         ?~  q.vex  vex
         ::
         ::  hav: reparse full fenced text
-        =/  hav  ((full sab) [naz p.u.q.vex])
+        =/  hav  ((full sab) [loc p.u.q.vex])
         ::
         ::  reparsed error position is always at start
-        ?~  q.hav  [naz ~]
+        ?~  q.hav  [loc ~]
         ::
         ::  the complete span with the main product
         :-  p.vex
@@ -604,11 +600,11 @@
       ::
       ++  echo                                          ::  hoon literal
         |*  sab/rule
-        |=  {naz/hair los/tape}
+        |=  {loc/hair txt/tape}
         ^-  (like tape)
         ::
         ::  vex: result of parsing wide twig
-        =/  vex  (sab naz los)
+        =/  vex  (sab loc txt)
         ::
         ::  use result of expression parser
         ?~  q.vex  vex
@@ -616,11 +612,11 @@
         ::
         ::  but replace payload with bytes consumed
         |-  ^-  tape
-        ?:  =(q.q.u.q.vex los)  ~
-        ?~  los  ~
-        [i.los $(los +.los)]
+        ?:  =(q.q.u.q.vex txt)  ~
+        ?~  txt  ~
+        [i.txt $(txt +.txt)]
       ::
-      ++  word                                          ::  flow parser
+      ++  word                                          ::  tarp parser
         %+  knee  *(list graf)  |.  ~+
         %+  cook  |=(a/?(graf (list graf)) ?+(a a {@ *} [a]~))
         ;~  pose
@@ -703,26 +699,26 @@
           (stag %text (cook trip ;~(less ace prn)))
         ==
       ::
-      ++  work  (cook zing (star word))                 ::  indefinite flow
+      ++  work  (cook zing (star word))                 ::  indefinite tarp
       ::
-      ++  down                                          ::  parse inline flow
-        %+  knee  *flow  |.  ~+
+      ++  down                                          ::  parse inline tarp
+        %+  knee  *tarp  |.  ~+
         =-  (cook - work)
         ::
-        ::  collect raw flow into xml tags
+        ::  collect raw tarp into xml tags
         |=  gaf/(list graf)
-        ^-  flow
+        ^-  tarp
         =<  main
         |%
         ++  main
-          ^-  flow
+          ^-  tarp
           ?~  gaf  ~
           ?.  ?=($text -.i.gaf)
             (weld (item i.gaf) $(gaf t.gaf))
           ::
           ::  fip: accumulate text blocks
           =/  fip/(list tape)  [p.i.gaf]~
-          |-  ^-  flow
+          |-  ^-  tarp
           ?~  t.gaf  [;/((zing (flop fip))) ~]
           ?.  ?=($text -.i.t.gaf)
             [;/((zing (flop fip))) ^$(gaf t.gaf)]
@@ -730,7 +726,7 @@
         ::
         ++  item
           |=  nex/graf
-          ^-  flow  ::CHECK can be tuna:twig?
+          ^-  tarp  ::CHECK can be tuna:twig?
           ?-  -.nex
             $text  !!  :: handled separately
             $expr  [p.nex]~
@@ -770,7 +766,7 @@
       ::
       ++  para                                          ::  paragraph
         %+  cook
-          |=(a/flow ?~(a ~ [[%p ~] a]~))
+          |=(a/tarp ?~(a ~ [[%p ~] a]~))
         ;~(pfix (punt whit) down)
       ::
       ++  expr                                          ::  expression
@@ -810,7 +806,7 @@
             (add 32 +<)
           '-'
         ::
-        ::  collect all text in header flow
+        ::  collect all text in header tarp
         |-  ^-  tape
         ?~  a  ~
         %+  weld
