@@ -310,10 +310,10 @@
         ::
         =/  eat-newline  +>(txt t.txt, loc [+(p.loc) 1])
         =/  saw  look:eat-newline
-        =/  cont
-          ?|  ?=($~ saw)
-              ?=($done sty.u.saw)
-              (gte col.u.saw col)
+        =/  cont                                        ::  continue?
+          ?|  ?=($~ saw)                                ::  line is blan
+              ?=($done sty.u.saw)                       ::  end of input
+              (gte col.u.saw top)                       ::  no outdent
           ==
         ?:  cont 
           [[lin &] eat-newline]
