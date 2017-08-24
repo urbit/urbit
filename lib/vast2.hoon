@@ -161,10 +161,10 @@
               sty/trig-style                            ::  style
           ==                                            ::
         ++  trig-style                                  ::  type of parsed line
-          $%  $:  $end                                  :: terminator
-              $?  $done                                 ::   end of input
-                  ::$stet                                 ::   == TODO
-                  $dent                                 ::  outdent
+          $%  $:  $end                                  ::  terminator
+              $?  $done                                 ::    end of input
+                  $stet                                 ::    == end of markdown
+                  $dent                                 ::    outdent
               ==  ==                                    ::
               $:  $one                                  ::  leaf node
               $?  $rule                                 ::    --- horz rule
@@ -321,8 +321,10 @@
         =/  cont                                        ::  continue?
           ?|  ?=($~ saw)                                ::  line is blan
               ?=($done +.sty.u.saw)                     ::  end of input
-              (gte col.u.saw top)                       ::  no outdent
-          ==
+              ?!  ?|                                    ::  neither: 
+                ?=($stet +.sty.u.saw)                   ::    ==  nor
+                (lth col.u.saw top)                     ::    outdent 
+          ==  ==
         ?:  cont 
           [[lin &] eat-newline]
         [[lin |] +>.$]
@@ -501,6 +503,7 @@
           ?-  +.sty.saw
             $done  !!                                   ::  blank
             $dent  !!                                   ::  outdent
+            $stet  !!                                   ::  == 
             $rule  (push %rule)                         ::  horizontal ruler
             $head  (push %head)                         ::  heading
             $bloc  (entr %bloc)                         ::  blockquote line
@@ -554,15 +557,20 @@
           %+  here
             |=({a/pint b/?($~ trig-style)} ?~(b ~ `[q.p.a b]))
           ;~  pose
-            (full (easy [%end %done]))                  ::  end of input
             (cold ~ (just `@`10))                       ::  blank line
+          ::
+            (full (easy [%end %done]))                  ::  end of input
+            (cold [%end %stet] duz)                     ::  == end of markdown 
+          ::
             (cold [%one %rule] ;~(plug hep hep hep))    ::  --- horizontal ruler
             (cold [%one %fens] ;~(plug tec tec tec))    ::  ``` code fence
+            (cold [%one %expr] sem)                     ::  ;sail expression
+          ::
             (cold [%new %head] ;~(plug (star hax) ace)) ::  # heading
             (cold [%new %lite] ;~(plug hep ace))        ::  - line item
             (cold [%new %lint] ;~(plug lus ace))        ::  + line item
             (cold [%new %bloc] ;~(plug gar ace))        ::  > block-quote
-            (cold [%one %expr] sem)                     ::  ;sail expression
+          ::
             (easy [%old %text])                         ::  anything else
           ==
         ==
