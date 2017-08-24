@@ -1,4 +1,3 @@
-
   =+  [bug=`?`| was=*(set path) wer=*path]
   |%
   ++  gash  %+  cook
@@ -286,45 +285,39 @@
       ::
       ++  snap                                          ::  capture raw line
         =|  nap/tape
-        |-  ^+  [nap +>]
+        |-  ^+  [[nap &] +>]
         ::
         ::  no unterminated lines
         ?~  los
           ~?  verbose  %unterminated-line
-          [~ +>(err `naz)]
+          [[~ |] +>(err `naz)]
         ?.  =(`@`10 i.los)
           ?:  (gth col q.naz)
             ?.  =(' ' i.los)
               ~?  verbose  expected-indent+[col naz los]
-              [~ +>(err `naz)]
+              [[~ |] +>(err `naz)]
             $(los t.los, q.naz +(q.naz))
           ::
           ::  save byte and repeat
           $(los t.los, q.naz +(q.naz), nap [i.los nap])
-        ::
-        ::  consume newline
-        :_  +>(los t.los, naz [+(p.naz) 1])
-        ::
-        ::  trim trailing spaces
-        |-  ^-  tape
-        ?:  ?=({$' ' *} nap)
-          $(nap t.nap)
-        (flop nap)
-      ::
-      ++  skip                                          ::  discard line
-        |-  ^+  ..^$
-        ::
-        ::  no unterminated lines
-        ?~  los
-          ::~& %unterminated-line
-          ..^$(err `naz)
-        ?.  =(`@`10 i.los)
+        =.  nap
           ::
-          ::  eat byte and repeat
-          $(los t.los)
+          ::  trim trailing spaces
+          |-  ^-  tape
+          ?:  ?=({$' ' *} nap)
+            $(nap t.nap)
+          (flop nap)
         ::
-        ::  consume newline
-        ..^$(los t.los, naz [+(p.naz) 1])
+        =/  eat-newline  +>(los t.los, naz [+(p.naz) 1])
+        =/  saw  look:eat-newline
+        =/  cont
+          ?|  ?=($~ saw)
+              ?=($done sty.u.saw)
+              (gte col.u.saw col)
+          ==
+        ?:  cont 
+          [[nap &] eat-newline]
+        [[nap |] +>.$]
       ::
       ++  look                                          ::  inspect line
         ^-  (unit trig)
@@ -389,7 +382,10 @@
         ?~  pic
           ::
           ::  break section
-          =~(skip close-item line)
+          =^  a/{tape cont/?}  ..$  snap
+          ?.  cont.a
+            ..$
+          =>(close-item line)
         ::
         ::  line is not blank
         =>  .(pic u.pic)
@@ -410,14 +406,12 @@
             ==
           %-  =>(close-item open-item)  pic
         ::
-        ::  first line of container is legal
-        ?~  q.u.bal
-          =^  nap  ..$  snap
-          line(lub bal(q.u [nap q.u.bal]))
         ::
         ::- - - foo
         ::  detect bad block structure
-        ?.  ?-  p.cur
+        ?.  ::  first line of container is legal
+            ?~  q.u.bal  &
+            ?-  p.cur
             ::
             ::  can't(/directly) contain text
               ?($lord $list)  ~|(bad-leaf-container+p.cur !!)
@@ -425,8 +419,8 @@
             ::  only one line in a header/break
               ?($head $rule)  |
             ::
-            ::  literals need to end with a blank line
-              ?($poem $expr)  (gte col.pic col)
+            ::  indented literals need to end with a blank line
+              $poem  (gte col.pic col)
             ::
             ::  text flows must continue aligned
               ?($down $list $lime $lord $bloc)  =(col.pic col)
@@ -434,9 +428,11 @@
           ~?  verbose  bad-block-structure+[p.cur col col.pic]
           ..$(err `[p.naz col.pic])
         ::
-        ::  accept line and continue
-        =^  nap  ..$  snap
-        line(lub bal(q.u [nap q.u.bal]))
+        ::  accept line and maybe continue
+        =^  a/{nap/tape cont/?}  ..$  snap
+        =.  lub  bal(q.u [nap.a q.u.bal])
+        ?:  cont.a  line
+        ..$
       ::
       ++  parse-hoon                                    ::  hoon in markdown
         ^+  .
