@@ -2,5 +2,7 @@
     indented
     indented
 
+:-  ;=  ;>
+    ==
 ;=  ;>  some *markdown*
 ==

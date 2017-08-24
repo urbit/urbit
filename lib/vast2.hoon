@@ -189,17 +189,8 @@
               {$expr p/tuna:twig}                       ::  interpolated hoon
           ==
         --
-    =<  apex
+    =<  |=(nail `(like tarp)`~($ main +<))
     |%
-    ++  apex
-      ::
-      ::  top: original indentation level
-      ::
-      |=  a/nail
-      %+  pfix  (whit:parse a)
-      |=  {{@u top/@u} tape}  ^-  (like marl:twig)
-      ~($ main top +<)
-    ::
     ++  main
       ::
       ::  state of the parsing loop.  we maintain a construction
@@ -210,20 +201,19 @@
       ::
       ::  verbose: debug printing enabled
       ::  err: error position
-      ::  col: current control column
+      ::  ind: outer and inner indent level
       ::  hac: stack of items under construction
       ::  cur: current item under construction
       ::  par: current "paragraph" being read in
-      ::  top: initial markdown indent
       ::  [loc txt]: parsing state
       ::
       =/  verbose  |
       =|  err/(unit hair)
-      =|  col/@ud
+      =|  ind/{out/@ud inr/@ud}
       =|  hac/(list item)
       =/  cur/item  [%down ~]
       =|  par/(unit (pair hair wall))
-      |_  {top/@ud loc/hair txt/tape}
+      |_  {loc/hair txt/tape}
       ::
       ++  $                                             ::  resolve
         ^-  (like tarp)
@@ -258,17 +248,17 @@
       ++  back                                          ::  column retreat
         |=  luc/@ud
         ^+  +>
-        ?:  =(luc col)  +>
+        ?:  =(luc inr.ind)  +>
         ::
         ::  nex: next backward step that terminates this context
         =/  nex/@ud  cur-indent  ::REVIEW code and poem blocks are handled elsewhere
-        ?:  (gth nex (sub col luc))
+        ?:  (gth nex (sub inr.ind luc))
           ::
           ::  indenting pattern violation
-          ~?  verbose  indent-pattern-violation+[p.cur nex col luc]
-          ..^$(col luc, err `[p.loc luc])
+          ~?  verbose  indent-pattern-violation+[p.cur nex inr.ind luc]
+          ..^$(inr.ind luc, err `[p.loc luc])
         =.  ..^$  close-item
-        $(col (sub col nex))
+        $(inr.ind (sub inr.ind nex))
       ::
       ++  cur-to-tarp                                   ::  item to tarp
         ^-  tarp
@@ -300,9 +290,9 @@
           ~?  verbose  %unterminated-line
           [[~ |] +>(err `loc)]
         ?.  =(`@`10 i.txt)
-          ?:  (gth col q.loc)
+          ?:  (gth inr.ind q.loc)
             ?.  =(' ' i.txt)
-              ~?  verbose  expected-indent+[col loc txt]
+              ~?  verbose  expected-indent+[inr.ind loc txt]
               [[~ |] +>(err `loc)]
             $(txt t.txt, q.loc +(q.loc))
           ::
@@ -323,7 +313,7 @@
               ?=($done +.sty.u.saw)                     ::  end of input
               ?!  ?|                                    ::  neither: 
                 ?=($stet +.sty.u.saw)                   ::    ==  nor
-                (lth col.u.saw top)                     ::    outdent 
+                (lth col.u.saw out.ind)                 ::    outdent 
           ==  ==
         ?:  cont 
           [[lin &] eat-newline]
@@ -344,7 +334,7 @@
           ::
           ::  add break between stanzas
           =.  q.cur  ?~(q.cur q.cur [[[%br ~] ~] q.cur])
-          =-  close-item(par ~, q.cur (weld - q.cur), col (sub col 8))
+          =-  close-item(par ~, q.cur (weld - q.cur), inr.ind (sub inr.ind 8))
           %+  turn  q.u.par
           |=  tape  ^-  manx
           ::
@@ -355,7 +345,7 @@
         ::
         ::  yex: block recomposed, with newlines
         =/  yex/tape
-          (zing (turn (flop q.u.par) |=(a/tape (runt [(dec col) ' '] "{a}\0a"))))
+          (zing (turn (flop q.u.par) |=(a/tape (runt [(dec inr.ind) ' '] "{a}\0a"))))
         ::
         ::  vex: parse of paragraph
         =/  vex/(like tarp)
@@ -380,8 +370,6 @@
       ::
       ++  line  ^+  .                                   ::  body line loop
         ::
-        =.  col  ?~(col top col)
-        ::
         ::  abort after first error
         ?:  !=(~ err)  .
         ::
@@ -401,8 +389,10 @@
         =>  .(saw u.saw)
         ::
         ::  if end of input, complete
-        ?:  |(?=($end -.sty.saw) (lth col.saw top))
+        ?:  |(?=($end -.sty.saw) (lth col.saw out.ind))
           ..$(q.loc col.saw)
+        ::
+        =.  ind  ?~(out.ind [col.saw col.saw] ind)      ::  init indents
         ::
         ::  bal: inspection copy of par, current section
         =/  bal  par
@@ -412,7 +402,7 @@
         ::
         ::  detect unspaced new containers
         ?:  ?&  ?=(?($down $lime $bloc) p.cur)
-                |(!=(%old -.sty.saw) (gth col.saw col))
+                |(!=(%old -.sty.saw) (gth col.saw inr.ind))
             ==
           =>  .(..$ close-par)
           (open-item saw)
@@ -431,12 +421,12 @@
               ?($head $rule)  |
             ::
             ::  indented literals need to end with a blank line
-              $poem  (gte col.saw col)
+              $poem  (gte col.saw inr.ind)
             ::
             ::  text tarps must continue aligned
-              ?($down $list $lime $lord $bloc)  =(col.saw col)
+              ?($down $list $lime $lord $bloc)  =(col.saw inr.ind)
             ==
-          ~?  verbose  bad-block-structure+[p.cur col col.saw]
+          ~?  verbose  bad-block-structure+[p.cur inr.ind col.saw]
           ..$(err `[p.loc col.saw])
         ::
         ::  accept line and maybe continue
@@ -459,7 +449,7 @@
       ::
       ++  parse-fens
         ^+  .
-        =/  vex/(like wall)  ((fenced-code:parse col) loc txt)
+        =/  vex/(like wall)  ((fenced-code:parse inr.ind) loc txt)
         ?~  q.vex
           ..$(err `p.vex)
         =+  [wal loc txt]=u.q.vex
@@ -477,14 +467,14 @@
         |=  saw/trig
         ::
         ::  if column has retreated, adjust stack
-        =.  +>.$  ?.  (lth col.saw col)  +>.$  (back col.saw)
+        =.  +>.$  ?.  (lth col.saw inr.ind)  +>.$  (back col.saw)
         ::
         ::  dif: columns advanced
         ::  erp: error position
         ::
-        =/  dif  (sub col.saw col)
+        =/  dif  (sub col.saw inr.ind)
         =/  erp  [p.loc col.saw]
-        =.  col  col.saw
+        =.  inr.ind  col.saw
         ::
         ::  execute appropriate paragraph form
         ?:  ?=($expr +.sty.saw)
@@ -520,11 +510,11 @@
           ^+  +>
           ::
           ::  indent by 2
-          =.  col  (add 2 col)
+          =.  inr.ind  (add 2 inr.ind)
           ::
           ::  "parse" marker
-          =.  txt  (slag (sub col q.loc) txt)
-          =.  q.loc  col
+          =.  txt  (slag (sub inr.ind q.loc) txt)
+          =.  q.loc  inr.ind
           ::
           (push typ)
         ::
