@@ -189,7 +189,7 @@
               {$expr p/tuna:twig}                       ::  interpolated hoon
           ==
         --
-    =<  |=(nail `(like tarp)`~($ main +<))
+    =<  (non-empty:parse |=(nail `(like tarp)`~($ main +<)))
     |%
     ++  main
       ::
@@ -375,6 +375,7 @@
         ::
         ::  saw: profile of this line
         =/  saw  look
+        ~?  [debug=|]  [%look ind=ind saw=saw txt=txt]
         ::
         ::  if line is blank
         ?~  saw
@@ -565,6 +566,7 @@
           ==
         ==
       ::
+      ::
       ++  cash                                          ::  escaped fence
         |*  tem/rule
         %-  echo
@@ -623,6 +625,16 @@
         ?:  =(q.q.u.q.vex txt)  ~
         ?~  txt  ~
         [i.txt $(txt +.txt)]
+      ::
+      ++  non-empty
+        |*  a/rule
+        |=  tub/nail  ^+  (a)
+        =/  vex  (a tub)
+        ~!  vex
+        ?~  q.vex  vex
+        ?.  =(tub q.u.q.vex)  vex
+        (fail tub)
+      ::
       ::
       ++  word                                          ::  tarp parser
         %+  knee  *(list graf)  |.  ~+
@@ -778,9 +790,9 @@
         ;~(pfix (punt whit) down)
       ::
       ++  expr                                          ::  expression
-        %+  ifix  [(punt whit) (punt whit)]             ::  whitespace surround
         =>  (sail &)                                    ::  tall-form
-        (cook drop-top top-level)                        ::  list of tags
+        %+  ifix  [(star ace) ;~(simu gap (easy))]      ::  look-ahead for gap 
+        (cook drop-top top-level)                       ::  list of tags
         ::  
       ::
       ++  whit                                          ::  whitespace
@@ -1005,7 +1017,7 @@
         (stag %& tall-elem)
         (stag %| wide-quote)
         (stag %| ;~(pfix tis tall-tail))
-        (stag %& ;~(pfix gar (stag [%div ~] cram)))
+        (stag %& ;~(pfix gar gap (stag [%div ~] cram)))
         (stag %| ;~(plug ;~((glue gap) tuna-mode tall) (easy ~)))
         (easy %| [;/("\0a")]~)
       ==
@@ -1051,8 +1063,13 @@
         (cold ~ sem)
         ;~(pfix col wrapped-elems(in-tall-form |))
         ;~(pfix col ace (cook collapse-chars(in-tall-form |) quote-innards))
-        (cook join-tops (ifix [gap ;~(plug gap duz)] (most gap top-level)))
+        (ifix [gap ;~(plug gap duz)] tall-kids)
       ==
+    ::
+    ++  tall-kids                                       ::  child elements
+      %+  cook  join-tops
+      ::  look for sail first, or markdown if not
+      (most gap ;~(pose top-level (stag %| cram)))
     ::
     ++  collapse-chars                                  ::  group consec chars
       |=  reb/(list $@(@ tuna:twig))
