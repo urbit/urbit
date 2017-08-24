@@ -161,15 +161,23 @@
               sty/trig-style                            ::  style
           ==                                            ::
         ++  trig-style                                  ::  type of parsed line
-          $?  $done                                     ::  end of input
-              $rule                                     ::  --- horizontal ruler
-              $fens                                     ::  ``` code fence
-              $lint                                     ::  + line item
-              $lite                                     ::  - line item
-              $head                                     ::  # heading
-              $bloc                                     ::  > block-quote
-              $expr                                     ::  ;sail expression
-              $text                                     ::  anything else
+          $%  $:  $end                                  :: terminator
+              $?  $done                                 ::   end of input
+                  ::$stet                                 ::   == TODO
+                  $dent                                 ::  outdent
+              ==  ==                                    ::
+              $:  $one                                  ::  leaf node
+              $?  $rule                                 ::    --- horz rule
+                  $fens                                 ::    ``` code fence
+                  $expr                                 ::    ;sail expression
+              ==  ==                                    ::
+              $:  $new                                  ::  start a
+              $?  $lint                                 ::    + line item
+                  $lite                                 ::    - line item
+                  $head                                 ::    # heading
+                  $bloc                                 ::    > block-quote
+              ==  ==                                    ::
+              {$old $text}                              ::  anything else
           ==                                            ::
         ++  graf                                        ::  paragraph element
           $%  {$bold p/(list graf)}                     ::  *bold*
@@ -312,7 +320,7 @@
         =/  saw  look:eat-newline
         =/  cont                                        ::  continue?
           ?|  ?=($~ saw)                                ::  line is blan
-              ?=($done sty.u.saw)                       ::  end of input
+              ?=($done +.sty.u.saw)                     ::  end of input
               (gte col.u.saw top)                       ::  no outdent
           ==
         ?:  cont 
@@ -375,11 +383,11 @@
         ::  abort after first error
         ?:  !=(~ err)  .
         ::
-        ::  pic: profile of this line
-        =/  pic  look
+        ::  saw: profile of this line
+        =/  saw  look
         ::
         ::  if line is blank
-        ?~  pic
+        ?~  saw
           ::
           ::  break section
           =^  a/{tape cont/?}  ..$  read-line
@@ -388,23 +396,24 @@
           =>(close-par line)
         ::
         ::  line is not blank
-        =>  .(pic u.pic)
+        =>  .(saw u.saw)
         ::
         ::  if end of input, complete
-        ?:  |(?=($done sty.pic) (lth col.pic top))
-          ..$(q.loc col.pic)
+        ?:  |(?=($end -.sty.saw) (lth col.saw top))
+          ..$(q.loc col.saw)
         ::
         ::  bal: inspection copy of par, current section
         =/  bal  par
         ::
         ::  if within section
-        ?~  bal  (open-item pic)
+        ?~  bal  (open-item saw)
         ::
         ::  detect unspaced new containers
         ?:  ?&  ?=(?($down $lime $bloc) p.cur)
-                |(!=(%text sty.pic) (gth col.pic col))
+                |(!=(%old -.sty.saw) (gth col.saw col))
             ==
-          %-  =>(close-par open-item)  pic
+          =>  .(..$ close-par)
+          (open-item saw)
         ::
         ::
         ::- - - foo
@@ -420,13 +429,13 @@
               ?($head $rule)  |
             ::
             ::  indented literals need to end with a blank line
-              $poem  (gte col.pic col)
+              $poem  (gte col.saw col)
             ::
             ::  text tarps must continue aligned
-              ?($down $list $lime $lord $bloc)  =(col.pic col)
+              ?($down $list $lime $lord $bloc)  =(col.saw col)
             ==
-          ~?  verbose  bad-block-structure+[p.cur col col.pic]
-          ..$(err `[p.loc col.pic])
+          ~?  verbose  bad-block-structure+[p.cur col col.saw]
+          ..$(err `[p.loc col.saw])
         ::
         ::  accept line and maybe continue
         =^  a/{lin/tape cont/?}  ..$  read-line
@@ -463,22 +472,22 @@
         ==
       ::
       ++  open-item                                     ::  enter list/quote
-        |=  pic/trig
+        |=  saw/trig
         ::
         ::  if column has retreated, adjust stack
-        =.  +>.$  ?.  (lth col.pic col)  +>.$  (back col.pic)
+        =.  +>.$  ?.  (lth col.saw col)  +>.$  (back col.saw)
         ::
         ::  dif: columns advanced
         ::  erp: error position
         ::
-        =/  dif  (sub col.pic col)
-        =/  erp  [p.loc col.pic]
-        =.  col  col.pic
+        =/  dif  (sub col.saw col)
+        =/  erp  [p.loc col.saw]
+        =.  col  col.saw
         ::
         ::  execute appropriate paragraph form
-        ?:  ?=($expr sty.pic)
+        ?:  ?=($expr +.sty.saw)
           line:parse-hoon
-        ?:  ?=($fens sty.pic)
+        ?:  ?=($fens +.sty.saw)
           line:parse-fens
         =<  line:abet:apex
         |%
@@ -489,8 +498,9 @@
         ++  apex  ^+  .                                 ::  open container
           ?:  =(8 dif)  (push %poem)                    ::  verse literal
           ?.  =(0 dif)  fail                            ::  bad indentation
-          ?-  sty.pic
+          ?-  +.sty.saw
             $done  !!                                   ::  blank
+            $dent  !!                                   ::  outdent
             $rule  (push %rule)                         ::  horizontal ruler
             $head  (push %head)                         ::  heading
             $bloc  (entr %bloc)                         ::  blockquote line
@@ -544,16 +554,16 @@
           %+  here
             |=({a/pint b/?($~ trig-style)} ?~(b ~ `[q.p.a b]))
           ;~  pose
-            (full (easy %done))                         ::  end of input
+            (full (easy [%end %done]))                  ::  end of input
             (cold ~ (just `@`10))                       ::  blank line
-            (cold %rule ;~(plug hep hep hep))           ::  --- horizontal ruler
-            (cold %fens ;~(plug tec tec tec))           ::  ``` code fence
-            (cold %head ;~(plug (star hax) ace))        ::  # heading
-            (cold %lite ;~(plug hep ace))               ::  - line item
-            (cold %lint ;~(plug lus ace))               ::  + line item
-            (cold %bloc ;~(plug gar ace))               ::  > block-quote
-            (cold %expr sem)                            ::  ;sail expression
-            (easy %text)                                ::  anything else
+            (cold [%one %rule] ;~(plug hep hep hep))    ::  --- horizontal ruler
+            (cold [%one %fens] ;~(plug tec tec tec))    ::  ``` code fence
+            (cold [%new %head] ;~(plug (star hax) ace)) ::  # heading
+            (cold [%new %lite] ;~(plug hep ace))        ::  - line item
+            (cold [%new %lint] ;~(plug lus ace))        ::  + line item
+            (cold [%new %bloc] ;~(plug gar ace))        ::  > block-quote
+            (cold [%one %expr] sem)                     ::  ;sail expression
+            (easy [%old %text])                         ::  anything else
           ==
         ==
       ::
