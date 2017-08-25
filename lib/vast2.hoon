@@ -311,11 +311,11 @@
         =/  cont                                        ::  continue?
           ?|  ?=($~ saw)                                ::  line is blan
               ?=($done +.sty.u.saw)                     ::  end of input
-              ?!  ?|                                    ::  neither: 
+              ?!  ?|                                    ::  neither:
                 ?=($stet +.sty.u.saw)                   ::    ==  nor
-                (lth col.u.saw out.ind)                 ::    outdent 
+                (lth col.u.saw out.ind)                 ::    outdent
           ==  ==
-        ?:  cont 
+        ?:  cont
           [[lin &] eat-newline]
         [[lin |] +>.$]
       ::
@@ -494,7 +494,7 @@
           ?-  +.sty.saw
             $done  !!                                   ::  blank
             $dent  !!                                   ::  outdent
-            $stet  !!                                   ::  == 
+            $stet  !!                                   ::  ==
             $rule  (push %rule)                         ::  horizontal ruler
             $head  (push %head)                         ::  heading
             $bloc  (entr %bloc)                         ::  blockquote line
@@ -551,7 +551,7 @@
             (cold ~ (just `@`10))                       ::  blank line
           ::
             (full (easy [%end %done]))                  ::  end of input
-            (cold [%end %stet] duz)                     ::  == end of markdown 
+            (cold [%end %stet] duz)                     ::  == end of markdown
           ::
             (cold [%one %rule] ;~(plug hep hep hep))    ::  --- horizontal ruler
             (cold [%one %fens] ;~(plug tec tec tec))    ::  ``` code fence
@@ -791,9 +791,9 @@
       ::
       ++  expr                                          ::  expression
         =>  (sail &)                                    ::  tall-form
-        %+  ifix  [(star ace) ;~(simu gap (easy))]      ::  look-ahead for gap 
+        %+  ifix  [(star ace) ;~(simu gap (easy))]      ::  look-ahead for gap
         (cook drop-top top-level)                       ::  list of tags
-        ::  
+        ::
       ::
       ++  whit                                          ::  whitespace
         (cold ' ' (plus ;~(pose (just ' ') (just '\0a'))))
