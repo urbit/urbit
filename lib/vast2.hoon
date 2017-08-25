@@ -175,6 +175,7 @@
                   $lite                                 ::    - line item
                   $head                                 ::    # heading
                   $bloc                                 ::    > block-quote
+                  $poem                                 ::    [ ]{8} poem
               ==  ==                                    ::
               {$old $text}                              ::  anything else
           ==                                            ::
@@ -456,11 +457,13 @@
         ::  if column has retreated, adjust stack
         =.  +>.$  ?.  (lth col.saw inr.ind)  +>.$  (back col.saw)
         ::
-        ::  dif: columns advanced
-        ::  erp: error position
+        =^  val  sty.saw
+          ?+  (sub col.saw inr.ind)  [| sty.saw]        :: columns advanced
+            $0  [& sty.saw]
+            $8  [& %new %poem]
+          ==
+        ?.  val  +>.$(err `[p.loc col.saw])
         ::
-        =/  dif  (sub col.saw inr.ind)
-        =/  erp  [p.loc col.saw]
         =.  inr.ind  col.saw
         ::
         ::  execute appropriate paragraph form
@@ -477,12 +480,11 @@
           ..$(par `[loc ~])
         ::
         ++  apex  ^+  .                                 ::  open container
-          ?:  =(8 dif)  (push %poem)                    ::  verse literal
-          ?.  =(0 dif)  fail                            ::  bad indentation
           ?-  +.sty.saw
             $done  !!                                   ::  blank
             $dent  !!                                   ::  outdent
             $stet  !!                                   ::  ==
+            $poem  (push %poem)                         ::  verse literal
             $head  (push %head)                         ::  heading
             $bloc  (entr %bloc)                         ::  blockquote line
             $lite  (lent %list)                         ::  unnumbered list
@@ -490,7 +492,6 @@
             $text  text                                 ::  anything else
           ==
         ::
-        ++  fail  .(err `erp)                           ::  set error position
         ++  push                                        ::  push context
           |=(mite +>(hac [cur hac], cur [+< ~]))
         ++  entr                                        ::  enter container
@@ -511,7 +512,7 @@
           ^+  +>
           ::  can't switch list types
           ?:  =(?-(ord $list %lord, $lord %list) p.cur)
-            fail
+            +>(err `[p.loc inr.ind])                    ::  set error position
           ::
           ::  push list item
           =<  (entr %lime)
