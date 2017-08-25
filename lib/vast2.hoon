@@ -282,17 +282,17 @@
       ::
       ++  read-line                                     ::  capture raw line
         =|  lin/tape
-        |-  ^+  [[lin &] +>]
+        |-  ^+  [[lin *(unit _err)] +<.^$]  :: parsed tape and halt/error
         ::
         ::  no unterminated lines
         ?~  txt
           ~?  verbose  %unterminated-line
-          [[~ |] +>(err `loc)]
+          [[~ ``loc] +<.^$]
         ?.  =(`@`10 i.txt)
           ?:  (gth inr.ind q.loc)
             ?.  =(' ' i.txt)
               ~?  verbose  expected-indent+[inr.ind loc txt]
-              [[~ |] +>(err `loc)]
+              [[~ ``loc] +<.^$]
             $(txt t.txt, q.loc +(q.loc))
           ::
           ::  save byte and repeat
@@ -305,10 +305,10 @@
             $(lin t.lin)
           (flop lin)
         ::
-        =/  eat-newline  +>(txt t.txt, loc [+(p.loc) 1])
-        =/  saw  look:eat-newline
-        =/  cont                                        ::  continue?
-          ?~  saw  &                                    ::  eat blank lines
+        =/  eat-newline/nail  [[+(p.loc) 1] t.txt]
+        =/  saw  look(+<.$ eat-newline)
+        =/  fin                                         ::  finished?
+          ?~  saw  |                                    ::  eat blank lines
           =.  sty.u.saw
             ?:  ?=($done +.sty.u.saw)  sty.u.saw        ::  except at eof
             ::
@@ -317,11 +317,11 @@
             [%end %dent]
           ::
           :: stop on == or aforementioned outdent
-          !?=(?($stet $dent) +.sty.u.saw)
+          ?=(?($stet $dent) +.sty.u.saw)
         ::
-        ?:  cont
-          [[lin &] eat-newline]
-        [[lin |] +>.$]
+        ?:  fin
+          [[lin `~] +<.^$]
+        [[lin ~] eat-newline]
       ::
       ++  look                                          ::  inspect line
         ^-  (unit trig)
@@ -382,9 +382,9 @@
         ?~  saw
           ::
           ::  break section
-          =^  a/{tape cont/?}  ..$  read-line
-          ?.  cont.a
-            ..$
+          =^  a/{tape fin/(unit _err)}  +<.$  read-line
+          ?^  fin.a
+            ..$(err u.fin.a)
           =>(close-par line)
         ::
         ::  line is not blank
@@ -399,10 +399,7 @@
         ::
         =.  ind  ?~(out.ind [col.saw col.saw] ind)      ::  init indents
         ::
-        ::  bal: inspection copy of par, current section
-        =/  bal  par
-        ::
-        ?:  ?|  ?=($~ bal)                          :: if after a paragraph or
+        ?:  ?|  ?=($~ par)                          :: if after a paragraph or
                 ?&  ?=(?($down $lime $bloc) p.cur)  :: unspaced new container
                     |(!=(%old -.sty.saw) (gth col.saw inr.ind))
             ==  ==
@@ -432,7 +429,7 @@
         ::- - - foo
         ::  detect bad block structure
         ?.  ::  first line of container is legal
-            ?~  q.u.bal  &
+            ?~  q.u.par  &
             ?-  p.cur
             ::
             ::  can't(/directly) contain text
@@ -451,10 +448,10 @@
           ..$(err `[p.loc col.saw])
         ::
         ::  accept line and maybe continue
-        =^  a/{lin/tape cont/?}  ..$  read-line
-        =.  par  bal(q.u [lin.a q.u.bal])
-        ?:  cont.a  line
-        ..$
+        =^  a/{lin/tape fin/(unit _err)}  +<.$  read-line
+        =.  par  par(q.u [lin.a q.u.par])
+        ?^  fin.a  ..$(err u.fin.a)
+        line
       ::
       ++  parse-block                                   ::  execute parser
         |=  fel/$-(nail (like tarp))  ^+  +>
