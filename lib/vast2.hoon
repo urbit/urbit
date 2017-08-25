@@ -436,32 +436,16 @@
         ?:  cont.a  line
         ..$
       ::
-      ++  parse-hoon                                    ::  hoon in markdown
-        ^+  .
-        =/  vex/(like marl:twig)  (expr:parse loc txt)
+      ++  read-one                                      ::  read %one item
+        |=  fel/$-(nail (like tarp))  ^+  +>
+        =/  vex/(like tarp)  (fel loc txt)
         ?~  q.vex
-          ..$(err `p.vex)
+          +>.$(err `p.vex)
         =+  [res loc txt]=u.q.vex
-        %_  ..$
+        %_  +>.$
           loc  loc
           txt  txt
-          q.cur  (weld (flop `marl:twig`res) q.cur)     ::  prepend to the stack
-        ==
-      ::
-      ++  parse-fens
-        ^+  .
-        =/  vex/(like wall)  ((fenced-code:parse inr.ind) loc txt)
-        ?~  q.vex
-          ..$(err `p.vex)
-        =+  [wal loc txt]=u.q.vex
-        =/  txt/tape
-          %+  roll  `wall`wal
-          |=({a/tape b/tape} "{a}\0a{b}")
-        =/  res/manx  [[%pre ~] ;/(txt) ~]
-        %_  ..$
-          loc  loc
-          txt  txt
-          q.cur  [res q.cur]
+          q.cur  (weld (flop `tarp`res) q.cur)     ::  prepend to the stack
         ==
       ::
       ++  open-item                                     ::  enter list/quote
@@ -479,9 +463,9 @@
         ::
         ::  execute appropriate paragraph form
         ?:  ?=($expr +.sty.saw)
-          line:parse-hoon
+          line:(read-one expr:parse)
         ?:  ?=($fens +.sty.saw)
-          line:parse-fens
+          line:(read-one (fens:parse inr.ind))
         =<  line:abet:apex
         |%
         ::
@@ -771,12 +755,13 @@
       ++  tecs
         ;~(plug tec tec tec (just '\0a'))
       ::
-      ++  fenced-code
+      ++  fens
         |=  col/@u  ~+
         =/  ind  (stun [(dec col) (dec col)] ace)
         =/  ind-tecs  ;~(plug ind tecs)
+        %+  cook  |=(txt/tape `tarp`[[%pre ~] ;/(txt) ~]~)
         %+  ifix  [ind-tecs ind-tecs]
-        %-  star
+        %^  stir  ""  |=({a/tape b/tape} "{a}\0a{b}")
         ;~  pose
           %+  ifix  [ind (just '\0a')]
           ;~(less tecs (star prn))
