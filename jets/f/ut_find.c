@@ -578,7 +578,8 @@
       }
       case c3__void: {
         // fprintf(stderr, "void\r\n");
-        return _find_buck_stop(van, sut, way, p_heg, q_heg, axe, lon, gil);
+        // return _find_buck_stop(van, sut, way, p_heg, q_heg, axe, lon, gil);
+        return u3_nul;
       }
     }
     else switch ( u3h(sut) ) {
