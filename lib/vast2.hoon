@@ -170,14 +170,15 @@
                   $fens                                 ::    ``` code fence
                   $expr                                 ::    ;sail expression
               ==  ==                                    ::
-              $:  $new                                  ::  start a
-              $?  $lint                                 ::    + line item
-                  $lite                                 ::    - line item
-                  $head                                 ::    # heading
-                  $bloc                                 ::    > block-quote
-                  $poem                                 ::    [ ]{8} poem
-              ==  ==                                    ::
+              {$new p/trig-new}                         ::  open container 
               {$old $text}                              ::  anything else
+          ==                                            ::
+        ++  trig-new                                    ::  start a
+          $?  $lint                                     ::    + line item
+              $lite                                     ::    - line item
+              $head                                     ::    # heading
+              $bloc                                     ::    > block-quote
+              $poem                                     ::    [ ]{8} poem
           ==                                            ::
         ++  graf                                        ::  paragraph element
           $%  {$bold p/(list graf)}                     ::  *bold*
@@ -247,7 +248,7 @@
       ++  back                                          ::  column retreat
         |=  luc/@ud
         ^+  +>
-        ?:  =(luc inr.ind)  +>
+        ?:  (gte luc inr.ind)  +>
         ::
         ::  nex: next backward step that terminates this context
         =/  nex/@ud  cur-indent  ::REVIEW code and poem blocks are handled elsewhere
@@ -401,15 +402,31 @@
         ::  bal: inspection copy of par, current section
         =/  bal  par
         ::
-        ::  if within section
-        ?~  bal  (open-item saw)
-        ::
-        ::  detect unspaced new containers
-        ?:  ?&  ?=(?($down $lime $bloc) p.cur)
-                |(!=(%old -.sty.saw) (gth col.saw inr.ind))
-            ==
+        ?:  ?|  ?=($~ bal)                          :: if after a paragraph or
+                ?&  ?=(?($down $lime $bloc) p.cur)  :: unspaced new container
+                    |(!=(%old -.sty.saw) (gth col.saw inr.ind))
+            ==  ==
           =>  .(..$ close-par)
-          (open-item saw)
+          ::
+          ::  if column has retreated, adjust stack
+          =.  ..$  (back col.saw)
+          ::
+          =^  val  sty.saw
+            ?+  (sub col.saw inr.ind)  [| sty.saw]        :: columns advanced
+              $0  [& sty.saw]
+              $8  [& %new %poem]
+            ==
+          ?.  val  ..$(err `[p.loc col.saw])
+          ::
+          =.  inr.ind  col.saw
+          ::
+          =<  line(par `[loc ~])  ^+  ..$               ::  continue with para
+          ?-    -.sty.saw
+              $one  (read-one +.sty.saw)                ::  parse leaves
+              $new  (open-item p.sty.saw)               ::  open containers
+              $old
+            ?:(?=(?($list $lord) p.cur) close-item ..$) ::  text closes lists
+          ==
         ::
         ::
         ::- - - foo
@@ -439,7 +456,7 @@
         ?:  cont.a  line
         ..$
       ::
-      ++  read-one                                      ::  read %one item
+      ++  parse-block                                   ::  execute parser
         |=  fel/$-(nail (like tarp))  ^+  +>
         =/  vex/(like tarp)  (fel loc txt)
         ?~  q.vex
@@ -448,48 +465,28 @@
         %_  +>.$
           loc  loc
           txt  txt
-          q.cur  (weld (flop `tarp`res) q.cur)     ::  prepend to the stack
+          q.cur  (weld (flop `tarp`res) q.cur)          ::  prepend to the stack
+        ==
+      ::
+      ++  read-one                                      ::  read %one item
+        |=  sty/?($expr $rule $fens)  ^+  +>
+        ?-  sty
+          $expr  (parse-block expr:parse)
+          $rule  (parse-block hrul:parse)
+          $fens  (parse-block (fens:parse inr.ind))
         ==
       ::
       ++  open-item                                     ::  enter list/quote
-        |=  saw/trig
-        ::
-        ::  if column has retreated, adjust stack
-        =.  +>.$  ?.  (lth col.saw inr.ind)  +>.$  (back col.saw)
-        ::
-        =^  val  sty.saw
-          ?+  (sub col.saw inr.ind)  [| sty.saw]        :: columns advanced
-            $0  [& sty.saw]
-            $8  [& %new %poem]
-          ==
-        ?.  val  +>.$(err `[p.loc col.saw])
-        ::
-        =.  inr.ind  col.saw
-        ::
-        ::  execute appropriate paragraph form
-        ?:  ?=($one -.sty.saw)
-          ?-  +.sty.saw
-            $expr  line:(read-one expr:parse)
-            $rule  line:(read-one hrul:parse)
-            $fens  line:(read-one (fens:parse inr.ind))
-          ==
-        =<  line:abet:apex
+        |=  saw/trig-new
+        =<  +>.$:apex
         |%
-        ::
-        ++  abet                                        ::  initialize para
-          ..$(par `[loc ~])
-        ::
         ++  apex  ^+  .                                 ::  open container
-          ?-  +.sty.saw
-            $done  !!                                   ::  blank
-            $dent  !!                                   ::  outdent
-            $stet  !!                                   ::  ==
+          ?-  saw
             $poem  (push %poem)                         ::  verse literal
             $head  (push %head)                         ::  heading
             $bloc  (entr %bloc)                         ::  blockquote line
             $lite  (lent %list)                         ::  unnumbered list
             $lint  (lent %lord)                         ::  numbered list
-            $text  text                                 ::  anything else
           ==
         ::
         ++  push                                        ::  push context
@@ -512,19 +509,13 @@
           ^+  +>
           ::  can't switch list types
           ?:  =(?-(ord $list %lord, $lord %list) p.cur)
-            +>(err `[p.loc inr.ind])                    ::  set error position
+            +>.$(err `[p.loc inr.ind])
           ::
           ::  push list item
           =<  (entr %lime)
           ::
           ::  push list context, unless we're in list
           ?:(=(ord p.cur) ..push (push ord))
-        ::
-        ++  text                                        ::  plain text
-          ^+  .
-          ::
-          ?.  ?=(?($list $lord) p.cur)  .               ::  if in a list,
-          .(..^$ close-item)                            ::  close the list
         --
       --
     ::
