@@ -148,7 +148,6 @@
         ++  tarp  marl:twig                             ::  node or generator
         ++  mite                                        ::  context
           $?  $down                                     ::  outer embed
-              $rule                                     ::  horizontal ruler
               $list                                     ::  unordered list
               $lime                                     ::  list item
               $lord                                     ::  ordered list
@@ -236,7 +235,6 @@
       ++  cur-indent
         ?-  p.cur
           $down  2
-          $rule  0
           $head  0
           $list  0
           $lime  2
@@ -266,7 +264,6 @@
           (flop q.cur)
         =-  [[- ~] (flop q.cur)]~
         ?-  p.cur
-          $rule  %hr
           $list  %ul
           $lord  %ol
           $lime  %li
@@ -352,18 +349,15 @@
           ::
           ::  either a one-line header or a paragraph
           %.  [p.u.par yex]
-          %-  full
-          ?-  p.cur
-            $rule  =<(;~(pfix (punt whit) hrul) parse)
-            $head  head:parse
-            @      para:parse
-          ==
+          ?:  ?=($head p.cur)
+            (full head:parse)
+          (full para:parse)
         ::
         ::  if error, propagate correctly
         ?~  q.vex  ..$(err `p.vex)
         ::
-        ::  finish tag if it's a header or rule
-        =<  ?:(?=(?($head $rule) p.cur) close-item ..$)
+        ::  finish tag if it's a header
+        =<  ?:(?=($head p.cur) close-item ..$)
         ::
         ::  save good result, clear buffer
         ..$(par ~, q.cur (weld p.u.q.vex q.cur))
@@ -418,8 +412,8 @@
             ::  can't(/directly) contain text
               ?($lord $list)  ~|(bad-leaf-container+p.cur !!)
             ::
-            ::  only one line in a header/break
-              ?($head $rule)  |
+            ::  only one line in a header
+              $head  |
             ::
             ::  indented literals need to end with a blank line
               $poem  (gte col.saw inr.ind)
@@ -462,10 +456,12 @@
         =.  inr.ind  col.saw
         ::
         ::  execute appropriate paragraph form
-        ?:  ?=($expr +.sty.saw)
-          line:(read-one expr:parse)
-        ?:  ?=($fens +.sty.saw)
-          line:(read-one (fens:parse inr.ind))
+        ?:  ?=($one -.sty.saw)
+          ?-  +.sty.saw
+            $expr  line:(read-one expr:parse)
+            $rule  line:(read-one hrul:parse)
+            $fens  line:(read-one (fens:parse inr.ind))
+          ==
         =<  line:abet:apex
         |%
         ::
@@ -479,7 +475,6 @@
             $done  !!                                   ::  blank
             $dent  !!                                   ::  outdent
             $stet  !!                                   ::  ==
-            $rule  (push %rule)                         ::  horizontal ruler
             $head  (push %head)                         ::  heading
             $bloc  (entr %bloc)                         ::  blockquote line
             $lite  (lent %list)                         ::  unnumbered list
@@ -750,7 +745,8 @@
         --
       ::
       ++  hrul                                          ::  empty besides fence
-        (cold ~ ;~(plug hep hep hep (star hep) (just '\0a')))
+        %+  cold  [[%hr ~] ~]~
+        ;~(plug (star ace) hep hep hep (star hep) (just '\0a'))
       ::
       ++  tecs
         ;~(plug tec tec tec (just '\0a'))
