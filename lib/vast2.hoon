@@ -306,12 +306,17 @@
         =/  eat-newline  +>(txt t.txt, loc [+(p.loc) 1])
         =/  saw  look:eat-newline
         =/  cont                                        ::  continue?
-          ?|  ?=($~ saw)                                ::  line is blan
-              ?=($done +.sty.u.saw)                     ::  end of input
-              ?!  ?|                                    ::  neither:
-                ?=($stet +.sty.u.saw)                   ::    ==  nor
-                (lth col.u.saw out.ind)                 ::    outdent
-          ==  ==
+          ?~  saw  &                                    ::  eat blank lines
+          =.  sty.u.saw
+            ?:  ?=($done +.sty.u.saw)  sty.u.saw        ::  except at eof
+            ::
+            ::  parse column decreasing past top.ind as an outdent
+            ?.  (lth col.u.saw out.ind)  sty.u.saw
+            [%end %dent]
+          ::
+          :: stop on == or aforementioned outdent
+          !?=(?($stet $dent) +.sty.u.saw)
+        ::
         ?:  cont
           [[lin &] eat-newline]
         [[lin |] +>.$]
@@ -383,8 +388,11 @@
         ::  line is not blank
         =>  .(saw u.saw)
         ::
+        ::  parse outdent
+        =.  sty.saw  ?:((lth col.saw out.ind) [%end %dent] sty.saw)
+        ::
         ::  if end of input, complete
-        ?:  |(?=($end -.sty.saw) (lth col.saw out.ind))
+        ?:  ?=($end -.sty.saw)
           ..$(q.loc col.saw)
         ::
         =.  ind  ?~(out.ind [col.saw col.saw] ind)      ::  init indents
