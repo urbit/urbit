@@ -148,7 +148,7 @@
         ++  tarp  marl:twig                             ::  node or generator
         ++  mite                                        ::  context
           $?  $down                                     ::  outer embed
-              $list                                     ::  unordered list
+              $lunt                                     ::  unordered list
               $lime                                     ::  list item
               $lord                                     ::  ordered list
               $poem                                     ::  verse
@@ -174,8 +174,8 @@
               {$old $text}                              ::  anything else
           ==                                            ::
         ++  trig-new                                    ::  start a
-          $?  $lint                                     ::    + line item
-              $lite                                     ::    - line item
+          $?  $lite                                     ::    + line item
+              $lint                                     ::    - line item
               $head                                     ::    # heading
               $bloc                                     ::    > block-quote
               $poem                                     ::    [ ]{8} poem
@@ -238,7 +238,7 @@
         ?-  p.cur
           $down  2
           $head  0
-          $list  0
+          $lunt  0
           $lime  2
           $lord  0
           $poem  8
@@ -266,7 +266,7 @@
           (flop q.cur)
         =-  [[- ~] (flop q.cur)]~
         ?-  p.cur
-          $list  %ul
+          $lunt  %ul
           $lord  %ol
           $lime  %li
           $poem  %div ::REVIEW actual container element?
@@ -411,12 +411,19 @@
           ::
           =.  inr.ind  col.saw
           ::
+          ::  unless adding a matching item, close lists
+          =.  ..$
+            ?:  ?|  &(?=($lunt p.cur) !?=($lint +.sty.saw))
+                    &(?=($lord p.cur) !?=($lite +.sty.saw))
+                ==
+              close-item
+            ..$
+          ::
           =<  line(par `[loc ~])  ^+  ..$               ::  continue with para
           ?-    -.sty.saw
               $one  (read-one +.sty.saw)                ::  parse leaves
               $new  (open-item p.sty.saw)               ::  open containers
-              $old
-            ?:(?=(?($list $lord) p.cur) close-item ..$) ::  text closes lists
+              $old  ..$                                 ::  just text
           ==
         ::
         ::
@@ -427,7 +434,7 @@
             ?-  p.cur
             ::
             ::  can't(/directly) contain text
-              ?($lord $list)  ~|(bad-leaf-container+p.cur !!)
+              ?($lord $lunt)  ~|(bad-leaf-container+p.cur !!)
             ::
             ::  only one line in a header
               $head  |
@@ -436,7 +443,7 @@
               $poem  (gte col.saw inr.ind)
             ::
             ::  text tarps must continue aligned
-              ?($down $list $lime $lord $bloc)  =(col.saw inr.ind)
+              ?($down $lunt $lime $lord $bloc)  =(col.saw inr.ind)
             ==
           ~?  verbose  bad-block-structure+[p.cur inr.ind col.saw]
           ..$(err `[p.loc col.saw])
@@ -476,8 +483,8 @@
             $poem  (push %poem)                         ::  verse literal
             $head  (push %head)                         ::  heading
             $bloc  (entr %bloc)                         ::  blockquote line
-            $lite  (lent %list)                         ::  unnumbered list
-            $lint  (lent %lord)                         ::  numbered list
+            $lint  (lent %lunt)                         ::  unordered list
+            $lite  (lent %lord)                         ::  ordered list
           ==
         ::
         ++  push                                        ::  push context
@@ -496,17 +503,10 @@
           (push typ)
         ::
         ++  lent                                        ::  list entry
-          |=  ord/?($lord $list)
+          |=  ord/?($lord $lunt)
           ^+  +>
-          ::  can't switch list types
-          ?:  =(?-(ord $list %lord, $lord %list) p.cur)
-            +>.$(err `[p.loc inr.ind])
-          ::
-          ::  push list item
-          =<  (entr %lime)
-          ::
-          ::  push list context, unless we're in list
-          ?:(=(ord p.cur) ..push (push ord))
+          =>  ?:(=(ord p.cur) +>.$ (push ord))          ::  push list if new 
+          (entr %lime)
         --
       --
     ::
@@ -515,7 +515,7 @@
       ++  look                                          ::  classify line
         %+  cook  |=(a/(unit trig) a)
         ;~  pfix  (star ace)
-          %+  here
+          %+  here                                      ::  report indent
             |=({a/pint b/?($~ trig-style)} ?~(b ~ `[q.p.a b]))
           ;~  pose
             (cold ~ (just `@`10))                       ::  blank line
@@ -528,8 +528,8 @@
             (cold [%one %expr] sem)                     ::  ;sail expression
           ::
             (cold [%new %head] ;~(plug (star hax) ace)) ::  # heading
-            (cold [%new %lite] ;~(plug hep ace))        ::  - line item
-            (cold [%new %lint] ;~(plug lus ace))        ::  + line item
+            (cold [%new %lint] ;~(plug hep ace))        ::  - line item
+            (cold [%new %lite] ;~(plug lus ace))        ::  + line item
             (cold [%new %bloc] ;~(plug gar ace))        ::  > block-quote
           ::
             (easy [%old %text])                         ::  anything else
