@@ -307,25 +307,22 @@
         ::
         =/  eat-newline/nail  [[+(p.loc) 1] t.txt]
         =/  saw  look(+<.$ eat-newline)
-        =/  fin                                         ::  finished?
-          ?~  saw  |                                    ::  eat blank lines
-          =.  sty.u.saw
-            ?:  ?=($done +.sty.u.saw)  sty.u.saw        ::  except at eof
-            ::
-            ::  parse column decreasing past top.ind as an outdent
-            ?.  (lth col.u.saw out.ind)  sty.u.saw
-            [%end %dent]
-          ::
-          :: stop on == or aforementioned outdent
-          ?=(?($stet $dent) +.sty.u.saw)
         ::
-        ?:  fin
+        ?:  ?=({$~ @ $end ?($stet $dent)} saw)          ::  stop on == or dedent
           [[lin `~] +<.^$]
         [[lin ~] eat-newline]
       ::
       ++  look                                          ::  inspect line
         ^-  (unit trig)
-        (wonk (look:parse loc txt))
+        %+  bind  (wonk (look:parse loc txt))
+        |=  a/trig  ^+  a
+        ::
+        ::  treat a non-terminator as a terminator
+        ::  if it's outdented
+        ?:  =(%end -.sty.a)  a
+        ?:  (lth col.a out.ind)
+          a(sty [%end %dent])
+        a
       ::
       ++  close-par                                     ::  make block
         ^+  .
@@ -389,9 +386,6 @@
         ::
         ::  line is not blank
         =>  .(saw u.saw)
-        ::
-        ::  parse outdent
-        =.  sty.saw  ?:((lth col.saw out.ind) [%end %dent] sty.saw)
         ::
         ::  if end of input, complete
         ?:  ?=($end -.sty.saw)
