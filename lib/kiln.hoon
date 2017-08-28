@@ -203,6 +203,8 @@
   |=  tym/@dr
   abet:(emit %wait /kiln/overload/(scot %dr tym) (add ~s10 now))
 ::
+++  poke-wipe-ford  |=($~ abet:(emit %wipe /kiln our ~))
+::
 ++  take  |=(way/wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  {way/wire are/(each (set path) (pair term tang))}

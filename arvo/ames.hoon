@@ -172,47 +172,47 @@
         0w0                           ::   27, ~hec, Tlon Investor 8
         0w0                           ::   28, ~ryt, Tlon Investor 8
         0w0                           ::   29, ~tyv, Tlon Investor 8
-        0w0                           ::   30, ~syd, Jennifer Kollmer
+        0w0                           ::   30, ~syd, Curtis Yarvin
         0wp.BgRGJ.kslnv.PLAqb.TRKbr   ::   31, ~nex, Prakhar Goel (oldkey)
         0w0                           ::   32, ~lun, Tlon Investor 9
         0w0                           ::   33, ~mep, Tlon Investor 9
         0w0                           ::   34, ~lut, Tlon Investor 9
         0w0                           ::   35, ~sep, Tlon Investor 9
-        0w0                           ::   36, ~pes, Jennifer Kollmer
+        0w0                           ::   36, ~pes, Curtis Yarvin
         0w10.5s1K0.dv9NT.02fPe.PyDYa  ::   37, ~del, Kingdon Barrett
         0w1w.KF-J1.5I63F.khFyv.h0n4J  ::   38, ~sul, John Burnham (oldkey)
         0w1A.OcPXS.oQi8K.g-E0d.zTRph  ::   39, ~ped, Jeremy Wall
         0w2.Mr2Id.SX8xI.MAs-j.5Y-1W   ::   40, ~tem, Tlon Investor 10 (oldkey)
         0w0                           ::   41, ~led, Nick Caruso
-        0w0                           ::   42, ~tul, Susan Yarvin
-        0w0                           ::   43, ~met, Susan Yarvin
-        0w0                           ::   44, ~wen, Susan Yarvin
-        0w0                           ::   45, ~byn, Susan Yarvin 
+        0w0                           ::   42, ~tul, Curtis Yarvin
+        0w0                           ::   43, ~met, Curtis Yarvin
+        0w0                           ::   44, ~wen, Curtis Yarvin
+        0w0                           ::   45, ~byn, Curtis Yarvin 
         0w0                           ::   46, ~hex, James Torre
         0w0                           ::   47, ~feb, urbit.org
         0wK.GoKEY.rMjfn.ZcvFQ.n4BmX   ::   48, ~pyl, Michael Hartl (oldkey)
-        0w0                           ::   49, ~dul, Jennifer Kollmer
-        0w0                           ::   50, ~het, Jennifer Kollmer
-        0w0                           ::   51, ~mev, Herbert Yarvin
-        0w0                           ::   52, ~rut, Herbert Yarvin
+        0w0                           ::   49, ~dul, Curtis Yarvin
+        0w0                           ::   50, ~het, Curtis Yarvin
+        0w0                           ::   51, ~mev, Curtis Yarvin
+        0w0                           ::   52, ~rut, Curtis Yarvin
         0w2L.M6-o5.DDTFL.R4sFL.7Zuay  ::   53, ~tyl, Tlon Investor 11 (oldkey)
         0w0                           ::   54, ~wyd, Curtis Yarvin
-        0w0                           ::   55, ~tep, Sibyl Kollmer
-        0w0                           ::   56, ~bes, Sibyl Kollmer
+        0w0                           ::   55, ~tep, Curtis Yarvin
+        0w0                           ::   56, ~bes, Curtis Yarvin
         0w0                           ::   57, ~dex, Jared Hance 
         0w0                           ::   58, ~sef, Owen Rescher
         0w0                           ::   59, ~wyc, Galen Wolfe-Pauly
         0w0                           ::   60, ~bur, Galen Wolfe-Pauly
         0w0                           ::   61, ~der, Galen Wolfe-Pauly
         0w0                           ::   62, ~nep, Galen Wolfe-Pauly
-        0w0                           ::   63, ~pur, Herbert Yarvin
+        0w0                           ::   63, ~pur, Curtis Yarvin
         0w30.VtXvV.S~xIV.iMCL~.j9zTC  ::   64, ~rys, Charlie Cummings (oldkey)
-        0w0                           ::   65, ~reb, Herbert Yarvin
+        0w0                           ::   65, ~reb, Curtis Yarvin
         0wp.LslIa.IFSM9.mIp-z.KBIBh   ::   66, ~den, Michael Hartl (oldkey)
-        0w0                           ::   67, ~nut, Henry Yarvin
-        0w0                           ::   68, ~sub, Henry Yarvin
-        0w0                           ::   69, ~pet, Henry Yarvin
-        0w0                           ::   70, ~rul, Henry Yarvin
+        0w0                           ::   67, ~nut, Curtis Yarvin
+        0w0                           ::   68, ~sub, Curtis Yarvin
+        0w0                           ::   69, ~pet, Curtis Yarvin
+        0w0                           ::   70, ~rul, Curtis Yarvin
         0w0                           ::   71, ~syn, Henry Ault
         0w0                           ::   72, ~reg, Henry Ault
         0w0                           ::   73, ~tyd, Henry Ault
@@ -225,13 +225,13 @@
         0w0                           ::   80, ~sec, Curtis Yarvin
         0w0                           ::   81, ~mul, Curtis Yarvin
         0w1F.Tqroo.wyq2m.cBaTM.9MbG-  ::   82, ~nym, Max Greer (oldkey)
-        0w0                           ::   83, ~tev, Sibyl Kollmer
+        0w0                           ::   83, ~tev, Curtis Yarvin
         0w2x.~ldho.Oo7kE.QqNSx.XteFh  ::   84, ~web, Ar Vicco (oldkey)
         0w0                           ::   85, ~sum, Philip Monk
         0w0                           ::   86, ~mut, Philip Monk
         0w0                           ::   87, ~nyx, Philip Monk
         0w30.UUr19.iBPlD.wfyJD.2CWPv  ::   88, ~rex, Tlon Investor 12 (oldkey)
-        0w0                           ::   89, ~teb, Sibyl Kollmer
+        0w0                           ::   89, ~teb, Michael Vassar
         0w0                           ::   90, ~fus, Tlon Corporation
         0w0                           ::   91, ~hep, urbit.org
         0w0                           ::   92, ~ben, urbit.org
@@ -319,11 +319,11 @@
         0w0                           ::  174, ~hut, Tlon
         0w0                           ::  175, ~tun, Tlon
         0w0                           ::  176, ~byl, Tlon
-        0w0                           ::  177, ~sud, Tlon
-        0w0                           ::  178, ~pem, Tlon
+        0wq.wmRvk.V8tZ5.1lz5q.dbrYx   ::  177, ~sud, Tlon
+        0w3Q.0LYXy.LjTEu.~FjaT.OpTts  ::  178, ~pem, Tlon
         0wQ.uJzGo.M94yL.L7yw6.nGyfW   ::  179, ~dev, Tlon
-        0w0                           ::  180, ~lur, Tlon
-        0w0                           ::  181, ~def, Tlon
+        0w1B.LTLDt.3Yu~s.BuzYM.fjcS3  ::  180, ~lur, Tlon
+        0w2B.9j6g-.q9DwV.tXzPz.DKEKq  ::  181, ~def, Tlon
         0w1m.CxbiW.SKF5E.11JQ6.yW~T4  ::  182, ~bus, Tlon
         0w0                           ::  183, ~bep, Tlon
         0w0                           ::  184, ~run, Tlon
@@ -413,7 +413,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(5 vez)
+    ?>  =(6 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -433,7 +433,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 5]
+      :~  [3 6]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1018,7 +1018,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  {kay/cape ryn/lane pac/rock}                  ::  process packet
       ^-  {p/(list boon) q/fort}
-      ?.  =(5 (end 0 3 pac))  [~ fox]
+      ?.  =(6 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
