@@ -7503,26 +7503,6 @@
         *           gen
     ==
   ::
-  ++  shut                                                :: as xml constant
-    ^-  marl
-    ?+    -.gen  ~|([%bad-xml -.gen] !!)
-        $xmn
-      =/  shut-mart
-        |=({n/mane v/(list beer)} [n (turn v |=(a/beer ?^(a !! a)))])
-      ::
-      [[n.g.p.gen (turn a.g.p.gen shut-mart)] shut(gen [%xml c.p.gen])]~
-    ::
-        $xml
-      ?~  p.gen  ~
-      =-  (weld - shut(p.gen t.p.gen))
-      ?^  -.i.p.gen  shut(gen [%xmn i.p.gen])
-      ~|  [%shut-tuna -.i.p.gen]
-      ?+  -.i.p.gen  !!
-        $manx  ?>(?=($xmn -.p.i.p.gen) shut(gen p.i.p.gen))
-        $marl  ?>(?=($xml -.p.i.p.gen) shut(gen p.i.p.gen))
-      ==
-    ==
-  ::
   ++  rake  ~|(%rake-twig (need reek))
   ++  reek
     ^-  (unit wing)
