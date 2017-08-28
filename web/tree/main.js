@@ -470,8 +470,8 @@ extras = {
         "This page was made by Urbit. Feedback: ", a({
           href: "mailto:urbit@urbit.org"
         }, "urbit@urbit.org"), " ", a({
-          href: "https://twitter.com/urbit_"
-        }, "@urbit_")
+          href: "https://twitter.com/urbit"
+        }, "@urbit")
       ])
     ]);
   })
@@ -1927,6 +1927,9 @@ module.exports = query({
   },
   onSubmit: function(e) {
     var comment, path, title;
+    this.setState({
+      loading: true
+    });
     title = this.refs["in"].title.value;
     comment = this.refs["in"].comment.value;
     path = this.props.path || "/";
@@ -1939,27 +1942,26 @@ module.exports = query({
     });
   },
   render: function() {
-    var _attr, bodyTextArea, postButton, titleInput;
-    _attr = {};
-    if (this.state.loading === true) {
-      _attr.disabled = "true";
-    }
-    titleInput = input(_.create(_attr, {
+    var bodyTextArea, postButton, titleInput;
+    titleInput = input({
+      disabled: this.state.loading ? "true" : void 0,
       type: "text",
       name: "title",
       placeholder: "Title"
-    }));
-    bodyTextArea = textarea(_.create(_attr, {
+    });
+    bodyTextArea = textarea({
+      disabled: this.state.loading ? "true" : void 0,
       type: "text",
       name: "comment",
       value: this.state.value,
       onChange: this.onChange
-    }));
-    postButton = input(_.create(_attr, {
+    });
+    postButton = input({
+      disabled: this.state.loading ? "true" : void 0,
       type: "submit",
       value: "Post",
       className: "btn btn-primary"
-    }));
+    });
     return div({}, div({
       className: "add-post"
     }, form({
@@ -2051,7 +2053,7 @@ Virtual = name("Virtual", function(arg) {
   }, function(str) {
     return str;
   }, function(arg1, key) {
-    var c, e, error, ga, gn, props, ref1;
+    var c, e, ga, gn, props, ref1;
     gn = arg1.gn, ga = arg1.ga, c = arg1.c;
     props = {
       key: key
@@ -2476,7 +2478,7 @@ module.exports = query({
     if (this.props.match) {
       comp = gn === this.props.match;
     } else {
-      comp = gn && gn[0] === 'h' && parseInt(gn[1]) !== NaN;
+      comp = gn && gn[0] === 'h' && parseInt(gn[1]) !== (0/0);
     }
     if (comp) {
       ga = _.clone(ga);
@@ -3153,15 +3155,20 @@ module.exports = {
     }
   },
   dateFromAtom: function(date) {
-    var __, day, hor, min, mon, ref, sec, str, yer;
+    var __, d, day, hor, min, mon, ref, sec, yer;
     ref = date.slice(1).split("."), yer = ref[0], mon = ref[1], day = ref[2], __ = ref[3], hor = ref[4], min = ref[5], sec = ref[6];
     if (day != null) {
-      str = yer + "-" + mon + "-" + day;
-      if (hor != null) {
-        str += " " + hor + ":" + min + ":" + sec;
-      }
-      return new Date(str);
+      d = new Date();
+      d.setYear(yer);
+      d.setMonth(mon - 1);
+      d.setDate(day);
     }
+    if (hor != null) {
+      d.setHours(hor);
+      d.setMinutes(min);
+      d.setSeconds(sec);
+    }
+    return d;
   },
   getKeys: function(kids, sortBy) {
     return _.map(this.sortKids(kids, sortBy), 'name');
@@ -3341,8 +3348,12 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
