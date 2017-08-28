@@ -402,12 +402,12 @@
           ::  if column has retreated, adjust stack
           =.  ..$  (back col.saw)
           ::
-          =^  val  sty.saw
+          =^  col-ok  sty.saw
             ?+  (sub col.saw inr.ind)  [| sty.saw]        :: columns advanced
               $0  [& sty.saw]
               $8  [& %new %poem]
             ==
-          ?.  val  ..$(err `[p.loc col.saw])
+          ?.  col-ok  ..$(err `[p.loc col.saw])
           ::
           =.  inr.ind  col.saw
           ::
@@ -489,6 +489,7 @@
         ::
         ++  push                                        ::  push context
           |=(mite +>(hac [cur hac], cur [+< ~]))
+        ::
         ++  entr                                        ::  enter container
           |=  typ/mite
           ^+  +>
@@ -772,19 +773,14 @@
       ::
       ++  head                                          ::  parse heading
         %+  cook
-          |=  a/manx:twig  ^-  marl:twig
-          =.  a.g.a  :_(a.g.a [%id (sanitize-to-id c.a)])
-          [a]~
+          |=  {haxes/tape kids/tarp}  ^-  tarp
+          =/  tag  (crip 'h' <(lent haxes)>)            ::  e.g. ### -> %h3
+          =/  id  (contents-to-id kids)
+          [[tag [%id id]~] kids]~
         ::
-        ;~  plug
-          ::
-          :: # -> 1 -> %h1, ### -> 3 -> %h3, etc
-          :(cook |=(a/@u /(crip "h{<a>}")) lent (stun [1 6] hax))
-        ::
-          ;~(pfix whit down)
-        ==
+        ;~(pfix (star ace) ;~((glue whit) (stun [1 6] hax) down))
       ::
-      ++  sanitize-to-id                                ::  # text into elem id
+      ++  contents-to-id                                ::  # text into elem id
         |=  a/(list tuna:twig)  ^-  tape
         =;  raw/tape
           %+  turn  raw
