@@ -621,6 +621,10 @@
         ::
           (stag %text ;~(pfix bas (cook trip ;~(less ace prn))))
         ::
+        ::  trailing \ to add <br>
+        ::
+          (stag %expr (cold [[%br ~] ~] ;~(plug bas (just '\0a'))))
+        ::
         ::  *bold literal*
         ::
           (stag %bold (ifix [tar tar] (cool (cash tar) work)))
