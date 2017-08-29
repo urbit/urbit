@@ -17,3 +17,7 @@ make install
 if [ -d $out/bin ]; then
   find $out/bin -type f -exec $host-strip {} +
 fi
+
+if [ -n "$libudev" ]; then
+  ln -s $libudev/lib/pkgconfig/*.pc $out/lib/pkgconfig/
+fi

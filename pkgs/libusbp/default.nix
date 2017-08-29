@@ -1,11 +1,11 @@
 { crossenv, libudev }:
 
 let
-  version = "4752d45";  # 1.0.2ish
+  version = "fc28f60";  # 1.0.2ish
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://github.com/pololu/libusbp/archive/${version}.tar.gz";
-    sha256 = "1agwa0zml2vzi10mmpsymwbd20llkwkcz656q65595pi24v710si";
+    sha256 = "0661q388zhm2b0265fnnmj41zc57za82k28zwfp2j6dkr5p9x102";
   };
 
   lib = crossenv.make_derivation {
@@ -18,6 +18,8 @@ let
         [ libudev ]
       else
         [];
+
+    libudev = if crossenv.os == "linux" then libudev else null;
   };
 
   examples = crossenv.make_derivation {
