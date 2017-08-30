@@ -208,7 +208,7 @@
       ::  par: current "paragraph" being read in
       ::  [loc txt]: parsing state
       ::
-      =/  verbose  |
+      =/  verbose  &
       =|  err/(unit hair)
       =|  ind/{out/@ud inr/@ud}
       =|  hac/(list item)
@@ -221,7 +221,9 @@
         =>  line
         ::
         ::  if error position is set, produce error
-        ?.  =(~ err)  [+.err ~]
+        ?.  =(~ err)
+          ~&  err+err
+          [+.err ~]
         ::
         ::  all data was consumed
         =-  [loc `[- [loc txt]]]
@@ -358,7 +360,9 @@
           (full para:parse)
         ::
         ::  if error, propagate correctly
-        ?~  q.vex  ..$(err `p.vex)
+        ?~  q.vex
+          ~?  verbose  [%close-par p.cur yex]
+          ..$(err `p.vex)
         ::
         ::  finish tag if it's a header
         =<  ?:(?=($head p.cur) close-item ..$)
@@ -407,7 +411,9 @@
               $0  [& sty.saw]
               $8  [& %new %poem]
             ==
-          ?.  col-ok  ..$(err `[p.loc col.saw])
+          ?.  col-ok
+            ~?  verbose  [%columns-advanced col.saw inr.ind]
+            ..$(err `[p.loc col.saw])
           ::
           =.  inr.ind  col.saw
           ::
@@ -458,6 +464,7 @@
         |=  fel/$-(nail (like tarp))  ^+  +>
         =/  vex/(like tarp)  (fel loc txt)
         ?~  q.vex
+          ~?  verbose  [%parse-block txt]
           +>.$(err `p.vex)
         =+  [res loc txt]=u.q.vex
         %_  +>.$
@@ -752,7 +759,10 @@
         =/  ind  (stun [(dec col) (dec col)] ace)
         =/  ind-tecs  ;~(plug ind tecs)
         %+  cook  |=(txt/tape `tarp`[[%pre ~] ;/(txt) ~]~)
-        %+  ifix  [ind-tecs ind-tecs]
+        ::
+        ::  leading outdent is ok since container may
+        ::  have already been parsed and consumed
+        %+  ifix  [;~(plug (star ace) tecs) ind-tecs]
         %^  stir  ""  |=({a/tape b/tape} "{a}\0a{b}")
         ;~  pose
           %+  ifix  [ind (just '\0a')]
