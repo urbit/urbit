@@ -912,32 +912,34 @@
     |=  who/ship
     ~(able ~(ex ur urb) who)
   ::
-  ++  read-womb
-    =,  wired  :: XX ":eyre"
-    =,  womb
-    |=  pax/path  ^-  (unit scry:womb)
-    ?~  pax  ~
-    ?+    i.pax  ~
-        $balance
-      %+  bind  (read t.pax /[%uv])
-      |=(a/passcode [%balance a])
-    ::
-        $stats
-      %+  bind  (read t.pax /[%p])
-      |=(a/ship [%stats a])
-    ::
-        $shop
-      %+  biff  (read t.pax /[%tas]/[%ud])
-      |=  {typ/term nth/@u}
-      ?.  ?=(?($star $planet) typ)  ~
-      `[%shop typ nth]
-    ==
+  ::  ++read is currently unavailable
+::  ++  read-womb
+::    =,  wired  :: XX ":eyre"
+::    =,  womb
+::    |=  pax/path  ^-  (unit scry:womb)
+::    ?~  pax  ~
+::    ?+    i.pax  ~
+::        $balance
+::      %+  bind  (read t.pax /[%uv])
+::      |=(a/passcode [%balance a])
+::    ::
+::        $stats
+::      %+  bind  (read t.pax /[%p])
+::      |=(a/ship [%stats a])
+::    ::
+::        $shop
+::      %+  biff  (read t.pax /[%tas]/[%ud])
+::      |=  {typ/term nth/@u}
+::      ?.  ?=(?($star $planet) typ)  ~
+::      `[%shop typ nth]
+::    ==
   ::                                                    ::  ++scry:of
   ++  scry                                              ::  read
     |=  {syd/@tas pax/path}  ^-  (unit gilt)
-    ?+    syd  ~
-        $womb  (biff (read-womb pax) scry-womb:(burb our))
-    ==
+    ~
+    ::  ?+    syd  ~
+    ::    $womb  (biff (read-womb pax) scry-womb:(burb our))
+    ::    ==
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
     |=  $:  ::  hen: event cause

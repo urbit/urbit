@@ -5458,6 +5458,7 @@
     {$tune p/(pair what $@(term tune))}                 ::  minimal face
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
+    {$cool p/twig}                                      ::  enter test mode
   ::                                            ::::::  molds
     {$claw p/root q/root}                               ::  $@ depth fork
     {$shoe p/twig}                                      ::  $_ example
@@ -7675,7 +7676,8 @@
       [dox p.q]
     ?>  ?=($elm -.q)
     ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
-    =.  p.p  (redo(sut p.p) q.q.p)
+    =.  p.p  ?:(fab p.p (redo(sut p.p) q.q.p))
+    ::  =.  p.p  (redo(sut p.p) q.q.p)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
             !=(** (mull(sut p, rib (~(put in rib) sut dox p.q)) %noun dox p.q))
@@ -7820,6 +7822,7 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
+        {$cool *}  $(fab |, gen p.gen)
         {$corp *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
         {$make *}  (~(mint et p.gen q.gen) gol)
@@ -7992,6 +7995,7 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
     ::
+        {$cool *}  $(fab |, gen p.gen)
         {$corp *}  (grow %gold [%$ 1] p.gen q.gen)
         {$make *}  (~(mull et p.gen q.gen) gol dox)
         {$wish *}  =+($(gen q.gen, gol %noun) $(gen [%bunt p.gen]))
@@ -8366,6 +8370,7 @@
     ^-  span
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
+      {$cool *}  $(fab |, gen p.gen)
       {$corp *}  (core sut %gold sut p.gen [[%0 0] q.gen])
       {$make *}  ~(play et p.gen q.gen)
       {$wish *}  $(gen [%bunt p.gen])
@@ -10273,6 +10278,7 @@
                     ['~' (rune sig %burn expa)]
                     ['=' (rune tis %name expg)]
                     ['?' (rune wut %lead expa)]
+                    ['%' (rune cen %cool expa)]
                 ==
               ==
             :-  '~'

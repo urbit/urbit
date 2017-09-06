@@ -4389,7 +4389,7 @@
       =<  |=  a/cord                                    ::  expose parsers
           %+  biff  (rush a (more sepa elem))
           |=  b/(list _(wonk *elem))  ^-  (unit date)
-          =-  ?.((za:dejs -) ~ (some (zp:dejs -)))
+          =-  ?.((za:dejs:format -) ~ (some (zp:dejs:format -)))
           ^+  =+  [*date u=unit]
               *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
           :~
