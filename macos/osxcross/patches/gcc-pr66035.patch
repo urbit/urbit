@@ -1,0 +1,48 @@
+--- a/gcc/fortran/trans-expr.c	
++++ a/gcc/fortran/trans-expr.c	
+@@ -6897,6 +6897,30 @@ alloc_scalar_allocatable_for_subcomponent_assignment (stmtblock_t *block,
+ 				       TREE_TYPE (tmp), tmp,
+ 				       fold_convert (TREE_TYPE (tmp), size));
+     }
++  else if (cm->ts.type == BT_CLASS)
++    {
++      gcc_assert (expr2->ts.type == BT_CLASS || expr2->ts.type == BT_DERIVED);
++      if (expr2->ts.type == BT_DERIVED)
++	{
++	  tmp = gfc_get_symbol_decl (gfc_find_vtab (&expr2->ts));
++	  tmp = gfc_build_addr_expr (NULL_TREE, tmp);
++	  size = fold_convert (size_type_node, gfc_vptr_size_get (tmp));
++	}
++      else
++	{
++	  gfc_expr *e2vtab;
++	  gfc_se se;
++	  e2vtab = gfc_find_and_cut_at_last_class_ref (expr2);
++	  gfc_add_vptr_component (e2vtab);
++	  gfc_add_size_component (e2vtab);
++	  gfc_init_se (&se, NULL);
++	  gfc_conv_expr (&se, e2vtab);
++	  gfc_add_block_to_block (block, &se.pre);
++	  size = fold_convert (size_type_node, se.expr);
++	  gfc_free_expr (e2vtab);
++	}
++      size_in_bytes = size;
++    }
+   else
+     {
+       /* Otherwise use the length in bytes of the rhs.  */
+@@ -7068,6 +7092,14 @@ gfc_trans_subcomponent_assign (tree dest, gfc_component * cm, gfc_expr * expr,
+ 	  tmp = gfc_build_memcpy_call (tmp, se.expr, size);
+ 	  gfc_add_expr_to_block (&block, tmp);
+ 	}
++      else if (cm->ts.type == BT_CLASS && expr->ts.type == BT_CLASS)
++	{
++	  tmp = gfc_copy_class_to_class (se.expr, dest, integer_one_node,
++				   CLASS_DATA (cm)->attr.unlimited_polymorphic);
++	  gfc_add_expr_to_block (&block, tmp);
++	  gfc_add_modify (&block, gfc_class_vptr_get (dest),
++			  gfc_class_vptr_get (se.expr));
++	}
+       else
+ 	gfc_add_modify (&block, tmp,
+ 			fold_convert (TREE_TYPE (tmp), se.expr));

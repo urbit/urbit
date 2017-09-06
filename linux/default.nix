@@ -37,7 +37,7 @@ let
     inherit nixpkgs host;
   };
 
-  gyp_os = "linux";
+  gyp_os = "linux";  # TODO: remove from here and the mingw-w64 env
 
   crossenv = {
     # Target info variables.
@@ -45,6 +45,7 @@ let
 
     # Cross-compiling toolchain.
     inherit gcc binutils;
+    toolchain_inputs = [ gcc binutils ];
 
     # Build tools and variables to support them.
     inherit cmake_toolchain gyp_os;

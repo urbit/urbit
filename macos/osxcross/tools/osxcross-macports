@@ -1,0 +1,640 @@
+#!/usr/bin/env bash
+
+##
+## A minimalistic MacPorts Packet Manager for OSXCross,
+## based on: https://github.com/maci0/pmmacports.
+## Please see README.MACPORTS for more.
+## License: GPLv2.
+##
+
+set -e
+export LC_ALL=C
+pushd "${0%/*}" &>/dev/null
+
+PUBKEYURL="https://svn.macports.org/repository/"
+PUBKEYURL+="macports/trunk/base/macports-pubkey.pem"
+
+# Darwin's antique OpenSSL does not support the SHA-2 family
+PUBKEYRMD160="d3a22f5be7184d6575afcc1be6fdb82fd25562e8"
+PUBKEYSHA1="214baa965af76ff71187e6c1ac91c559547f48ab"
+
+PLATFORM=$(uname -s)
+ARCH="x86_64"
+
+if [ $PLATFORM == "FreeBSD" ]; then
+  WGETOPTS="--ca-certificate="
+  WGETOPTS+="/usr/local/share/certs/ca-root-nss.crt"
+fi
+
+if [ -z "$BASHPID" ]; then
+  BASHPID=$(sh -c 'echo $PPID')
+fi
+
+errorMsg()
+{
+  echo "$@" 1>&2
+}
+
+verboseMsg()
+{
+  if [ -n "$VERBOSE" ]; then
+    errorMsg "$@"
+  fi
+}
+
+verbosePlaceHolder()
+{
+  if [ -n "$VERBOSE" ]; then
+    errorMsg ""
+  fi
+}
+
+require()
+{
+  set +e
+  which $1 &>/dev/null
+  if [ $? -ne 0 ]; then
+    errorMsg "$1 is required"
+    exit 1
+  fi
+  set -e
+}
+
+if [ -z "$MACOSX_DEPLOYMENT_TARGET" ]; then
+  errorMsg "you must set MACOSX_DEPLOYMENT_TARGET first."
+  errorMsg "please see README.MACPORTS."
+  exit 1
+fi
+
+unsupportedDepTarget()
+{
+  errorMsg "unsupported deployment target"
+  exit 1
+}
+
+require "wget"
+require "openssl"
+
+case $MACOSX_DEPLOYMENT_TARGET in
+  10.6*  ) OSXVERSION="darwin_10" ;;
+  10.7*  ) OSXVERSION="darwin_11" ;;
+  10.8*  ) OSXVERSION="darwin_12" ;;
+  10.9*  ) OSXVERSION="darwin_13" ;;
+  10.10* ) OSXVERSION="darwin_14" ;;
+  10.11* ) OSXVERSION="darwin_15" ;;
+  10.12* ) OSXVERSION="darwin_16" ;;
+       * ) unsupportedDepTarget ;;
+esac
+
+require "osxcross-conf"
+eval $(osxcross-conf)
+
+if [ -z "$OSXCROSS_TARGET_DIR" ]; then
+  errorMsg "OSXCROSS_TARGET_DIR should be set"
+  exit 1
+fi
+
+ROOT="$OSXCROSS_TARGET_DIR/macports"
+
+if [ ! -d "$ROOT" ]; then
+  echo "creating macports directory: $ROOT"
+  mkdir -p $ROOT
+fi
+
+PUBKEY="$ROOT/mp-pubkey.pem"
+INSTALLDB="$ROOT/INSTALLED"
+SELECTEDMIRROR="$ROOT/MIRROR"
+CACHE="$ROOT/cache"
+INSTALL="$ROOT/pkgs"
+TMP="$ROOT/tmp"
+LASTPKGNAME=""
+
+LOCKDIR="/tmp/osxcross-macports-lock"
+LOCKPID="$LOCKDIR/pid"
+
+checkLock()
+{
+  if mkdir $LOCKDIR 2>/dev/null; then
+    echo $BASHPID > $LOCKPID
+  else
+    pid=$(cat $LOCKPID 2>/dev/null) || { errorMsg "remove $LOCKDIR"; exit 1; }
+    if [ $? -eq 0 -a "$(ps -p $pid -o comm=)" == "bash" ]; then
+      errorMsg "locked by pid $pid"
+    else
+      errorMsg "dead lockdir detected! please remove '$LOCKDIR' by hand."
+    fi
+    exit 1
+  fi
+}
+
+createDir()
+{
+  if [ ! -d $2 ]; then
+    echo "creating $1 directory: $2"
+    mkdir -p $2
+  fi
+}
+
+checkLock
+
+createDir "cache" $CACHE
+createDir "install" $INSTALL
+createDir "tmp" $TMP
+
+selectMirror()
+{
+  echo "available mirrors:"
+  echo ""
+  echo "1: packages.macports.org (United States)"
+  echo "2: mirrorservice.org (United Kingdom)"
+  echo "3: nue.de.packages.macports.org (Germany)"
+  echo "4: lil.fr.packages.macports.org (France)"
+  echo ""
+
+  local OK=0
+  local mirrorNumber
+
+  while [ $OK -ne 1 ]; do
+    echo -n "please enter the number of the mirror you want to use: "
+
+    if [ -n "$UNATTENDED" ]; then
+      echo "1"
+      mirrorNumber=1
+    else
+      read mirrorNumber
+    fi
+
+    case $mirrorNumber in
+      1) echo -n "http://packages.macports.org" > \
+          $SELECTEDMIRROR && OK=1 ;;
+      2) echo -n "http://www.mirrorservice.org/sites/packages.macports.org" > \
+          $SELECTEDMIRROR && OK=1 ;;
+      3) echo -n "http://nue.de.packages.macports.org/macports/packages" > \
+          $SELECTEDMIRROR && OK=1 ;;
+      4) echo -n "http://lil.fr.packages.macports.org" > \
+          $SELECTEDMIRROR && OK=1 ;;
+      *) echo "please enter a number between 1 and 4..." 1>&2 ;;
+    esac
+  done
+
+  MIRROR=$(cat $SELECTEDMIRROR)
+}
+
+getFileStdout()
+{
+  verbosePlaceHolder
+  local xargs=""
+  [ -z "$VERBOSE" ] && xargs+="--quiet"
+  wget $WGETOPTS "$1" -O- $xargs
+  #verbosePlaceHolder
+}
+
+getFile()
+{
+  verbosePlaceHolder
+  local xargs=""
+  if [ $# -ge 2 ]; then
+    xargs+="-O $2 "
+  else
+    xargs+="-P $CACHE "
+  fi
+  [ -z "$VERBOSE" ] && xargs+="--quiet"
+  wget $WGETOPTS -c "$1" $xargs
+  #verbosePlaceHolder
+}
+
+verifyFileIntegrity()
+{
+  local file="$1"
+
+  if [ ! -e "$PUBKEY" ]; then
+    echo "getting macports public key ..."
+    getFile $PUBKEYURL "$PUBKEY"
+  fi
+
+  local rmd160=$(openssl rmd160 "$PUBKEY" | awk '{print $2}')
+  local sha1=$(openssl sha1 "$PUBKEY" | awk '{print $2}')
+
+  if [ "$rmd160" != "$PUBKEYRMD160" -o "$sha1" != "$PUBKEYSHA1" ]; then
+    errorMsg "invalid macports public key (hash check failed)"
+    exit 1
+  fi
+
+  echo "verifying file integrity of $file ..."
+
+  set +e
+
+  openssl dgst -ripemd160 -verify "$PUBKEY" -signature \
+    "$CACHE/$file.rmd160" "$CACHE/$file" 1>/dev/null
+
+  if [ $? -ne 0 ]; then
+    errorMsg "file integrity check failed ($CACHE/$file)"
+    exit 2
+  fi
+
+  set -e
+}
+
+getPkgUrl()
+{
+  local pkgname="$1"
+  local pkgs
+  local pkg
+
+  set +e
+
+  pkgs=$(getFileStdout "$MIRROR/$pkgname/?C=M;O=A" | \
+         grep -o -E 'href="([^"#]+)"' | \
+         cut -d'"' -f2 | grep '.tbz2$')
+
+  local ec=$?
+
+  set -e
+
+  if [ $ec -ne 0 ]; then
+    errorMsg "no package found"
+    return
+  fi
+
+  verboseMsg " candidates for $pkgname:"
+
+  for p in $pkgs; do
+    verboseMsg "  $p"
+  done
+
+  local pkg=$(echo "$pkgs" | grep $OSXVERSION | grep $ARCH | uniq | tail -n1)
+  if [ -z "$pkg" ]; then
+    pkg=$(echo "$pkgs" | grep $OSXVERSION | grep "noarch" | uniq | tail -n1)
+  fi
+
+  verboseMsg " selected: $pkg"
+
+  if [ -z "$pkg" ]; then
+    verboseMsg -n "  "
+    errorMsg "no suitable version found for $OSXVERSION"
+    return
+  fi
+
+  echo "$MIRROR/$pkgname/$pkg"
+}
+
+pkgInstalled()
+{
+  local pkgname="$1"
+
+  if [ ! -e "$INSTALLDB" ]; then
+    echo 0
+    return
+  fi
+
+  set +e
+  grep -x "$pkgname" "$INSTALLDB" &>/dev/null
+  local status=$?
+  set -e
+
+  if [ $status -eq 0 ]; then
+    echo 1
+  else
+    echo 0
+  fi
+}
+
+installPkg()
+{
+  local pkgname="$1"
+
+  LASTPKGNAME=$pkgname
+
+  if [ $(pkgInstalled $pkgname) -eq 1 ]; then
+    return
+  fi
+
+  echo "searching package $pkgname ..."
+
+  local pkgurl=$(getPkgUrl "$pkgname")
+  local pkgfile=$(echo "$pkgurl" | awk -F'/' '{print $NF}')
+
+  if [ -z "$pkgurl" ]; then
+    local oldpkgname=$pkgname
+    local tmp=$(echo "$pkgname" | awk -F'-'  '{print $NF}')
+    [ -n "$tmp" ] && pkgname=${pkgname/-$tmp/}
+
+    if [ "$pkgname" != "$oldpkgname" ]; then
+      echo "trying $pkgname instead ..."
+    else
+      [ -n "$UPGRADE" ] && return
+      exit 3
+    fi
+
+    installPkg $pkgname
+    return
+  fi
+
+  echo "getting $pkgfile ..."
+  getFile "$pkgurl"
+
+  verboseMsg "getting $pkgname.rmd160 ..."
+  getFile "$pkgurl.rmd160"
+
+  verifyFileIntegrity "$pkgfile"
+
+  pushd $TMP &>/dev/null
+
+  echo "installing $pkgname ..."
+  verboseMsg " extracting $pkgfile ..."
+
+  bzip2 -dc "$CACHE/$pkgfile" | tar xf -
+
+  if [ -d opt/local ]; then
+    verboseMsg " fixing permissions ..."
+    find opt/local -type d -exec chmod 755 {} \;
+    find opt/local -type f -exec chmod 644 {} \;
+    if [ -d opt/local/lib ]; then
+      if [ -n "$STATIC" ]; then
+        verboseMsg " "
+        echo "removing dylibs ..."
+        find opt/local/lib -name "*.dylib" -exec rm {} \;
+      else
+        find opt/local/lib -type f -name "*.dylib" -exec chmod +x {} \;
+      fi
+    fi
+    if [ -d opt/local/bin ]; then
+      find opt/local/bin -type f -exec chmod +x {} \;
+    fi
+    set +e
+    cp -r opt $INSTALL
+    local status=$?
+    set -e
+    if [ $status -eq 1 ]; then
+      errorMsg "removing broken symlinks ..."
+      find -L . -type l -exec rm {} \;
+      cp -r opt $INSTALL
+    fi
+  fi
+
+  local pkgdeps=$(grep '@pkgdep' \+CONTENTS | cut -d\  -f2 | \
+                  rev | cut -f2-100 -d\- | rev)
+
+  popd &>/dev/null # TMP
+  rm -rf $TMP/*
+
+  for pkgdep in $pkgdeps; do
+    installPkg $pkgdep
+  done
+
+  echo "$pkgname" >> "$INSTALLDB"
+}
+
+installPkgs()
+{
+  local packages="$1"
+
+  for pkgname in $packages; do
+    if [ $(pkgInstalled $pkgname) == "1" ]; then
+      errorMsg "$pkgname is already installed"
+      continue
+    fi
+    installPkg $pkgname
+    echo "installed $pkgname"
+    rm -f $INSTALL/+*
+  done
+}
+
+updateSearchCache()
+{
+  pushd $CACHE &>/dev/null
+
+  echo "generating index cache (this may take several minutes ...)"
+  getFile $MIRROR $CACHE/packages
+
+  cat packages | grep -o -E 'href="([^"#]+)"' | cut -d'"' -f2 | \
+    sed 's/.\{1\}$//' | uniq | sort > INDEXCACHE
+
+  rm -f packages
+  echo "generated index cache for $(cat INDEXCACHE | wc -l) packages"
+
+  popd &>/dev/null
+}
+
+searchPkg()
+{
+  local pkg="$1"
+
+  pushd $CACHE &>/dev/null
+
+  if [ ! -e INDEXCACHE ]; then
+    updateSearchCache
+  fi
+
+  local packages=$(grep -i "$pkg" INDEXCACHE)
+
+  if [ -z "$packages" ]; then
+    echo "no matching packages found for $1"
+    return
+  fi
+
+  for pkg in $packages; do
+    echo $pkg
+  done
+
+  popd &>/dev/null
+}
+
+_exit()
+{
+  local ec=$?
+  if [ $ec -ne 0 ]; then
+    if [ -n "$LASTPKGNAME" ]; then
+      errorMsg "failed to install $LASTPKGNAME, try with '-v'"
+    fi
+    if [ $ec -eq 3 ]; then
+      errorMsg -n "use '$(basename $0) fake-install <pkgname>' to "
+      errorMsg "fake install non-existing packages"
+    fi
+  fi
+
+  rm -rf $LOCKDIR
+}
+
+showFlags()
+{
+  if [ -n "$OSXCROSS_TARGET" ]; then
+    PKG_CONFIG="x86_64-apple-${OSXCROSS_TARGET}-pkg-config"
+  else
+    PKG_CONFIG="pkg-config"
+  fi
+
+  $PKG_CONFIG $1 $2
+}
+
+showCFLAGS()
+{
+  showFlags "--cflags" $1
+}
+
+showLDFLAGS()
+{
+  showFlags "--libs" $1
+}
+
+upgrade()
+{
+  if [ ! -e $INSTALLDB ]; then
+    if [ -e $INSTALLDB.old ]; then
+      echo "restoring old installation database"
+      mv $INSTALLDB.old $INSTALLDB
+    else
+      errorMsg "no install database"
+      exit 1
+    fi
+  fi
+
+  local PKGS=$(cat $INSTALLDB)
+  mv $INSTALLDB $INSTALLDB.old
+
+  UPGRADE=1
+  rm -rf $INSTALL
+  createDir "" $INSTALL 1>/dev/null
+
+  for pkg in $PKGS; do
+    installPkg $pkg
+  done
+}
+
+clearCache()
+{
+  rm -rf $CACHE
+}
+
+removeDylibs()
+{
+  find $INSTALL -name "*.dylib" -exec rm {} \;
+}
+
+showHelpText()
+{
+  errorMsg "please see README.MACPORTS"
+}
+
+main()
+{
+  local args
+  local cmd
+
+  MIRROR="$OSXCROSS_MACPORTS_MIRROR"
+
+  if [ -z "$MIRROR" ] && [ -f "$SELECTEDMIRROR" ]; then
+    MIRROR=$(cat $SELECTEDMIRROR | head -n1)
+  fi
+
+  if [ -z "$MIRROR" ]; then
+    selectMirror
+  fi
+
+  for opt in $@; do
+    if [[ $opt == -* ]]; then
+      if [ $opt == "-v" -o $opt == "--verbose" ]; then
+        VERBOSE=1
+      elif [ $opt == "-v=2" -o $opt == "--verbose=2" ]; then
+        set -x
+        VERBOSE=1
+      elif [ $opt == "-s" -o $opt == "--static" ]; then
+        STATIC=1
+      elif [ $opt == "-c" -o $opt == "--cflags" ]; then
+        showCFLAGS $2
+        exit
+      elif [ $opt == "-l" -o $opt == "--ldflags" ]; then
+        showLDFLAGS $2
+        exit
+      elif [ $opt == "-32" -o $opt == "--i386" ]; then
+        ARCH="i386"
+      elif [ $opt == "-sm" -o $opt == "--select-mirror" ]; then
+        selectMirror
+        exit
+      elif [ $opt == "-h" -o $opt == "--help" ]; then
+        showHelpText
+        exit
+      else
+        errorMsg "unknown option: $opt"
+        exit 1
+      fi
+    else
+      if [ -z "$cmd" ]; then
+        cmd="$opt"
+      else
+        args+="$opt "
+      fi
+    fi
+  done
+
+  if [ -z "$cmd" ]; then
+    errorMsg "no command given"
+    showHelpText
+    exit 1
+  fi
+
+  case "$cmd" in
+    update*cache )
+      updateSearchCache
+      exit
+    ;;
+
+    upgrade )
+      upgrade
+      exit
+    ;;
+
+    clear*cache )
+      clearCache
+      echo "done"
+      exit
+    ;;
+
+    remove*dylibs )
+      removeDylibs
+      echo "done"
+      exit
+    ;;
+
+  esac
+
+  local packages="$args"
+
+  if [ -z "$packages" ]; then
+    errorMsg "no package name given"
+    exit 1
+  fi
+
+  case "$cmd" in
+    install )
+      installPkgs "$packages"
+    ;;
+
+    fake*install )
+      for pkgname in $args; do
+        if [ $(pkgInstalled $pkgname) -eq 0 ]; then
+          echo $pkgname >> $INSTALLDB
+        fi
+      done
+
+      echo "done"
+    ;;
+
+    search )
+      for pkgname in $args; do
+        searchPkg $pkgname
+      done
+    ;;
+
+    * )
+      showHelpText
+    ;;
+  esac
+}
+
+trap '' TERM
+trap '' INT
+
+trap _exit EXIT
+
+main "$@"
