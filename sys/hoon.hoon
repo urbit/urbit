@@ -1,3 +1,4 @@
+!:
 ::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
@@ -1547,6 +1548,48 @@
 ++  sy                                                  ::  set from raw noun
   |*  a/*
   (silt ^+((homo (limo a)) a))
+::
+++  nl
+  |%
+  ::                                                      ::
+  ++  le                                                  ::  construct list
+    |*  a/(list)
+    ^+  =<  $
+      |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
+      --
+    a
+  ::                                                      ::
+  ++  my                                                  ::  construct map
+    |*  a/(list (pair))
+    =>  .(a ^+((le a) a))
+    (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)
+  ::                                                      ::
+  ++  mz                                                  ::  construct map
+    |*  a/(list (pair))
+    =>  .(a ^+((le a) a))
+    (~(gas by ~) a)
+  ::                                                      ::
+  ++  si                                                  ::  construct set
+    |*  a/(list)
+    =>  .(a ^+((le a) a))
+    (~(gas in `(set _i.-.a)`~) a)
+  ::                                                      ::
+  ++  snag                                                ::  index
+    |*  {a/@ b/(list)}
+    ?~  b
+      ~_  leaf+"snag-fail"
+      !!
+    ?:  =(0 a)  i.b
+    $(b t.b, a (dec a))
+  ::                                                      ::
+  ++  weld                                                ::  concatenate
+    |*  {a/(list) b/(list)}
+    =>  .(a ^+((le a) a), b ^+((le b) b))
+    =+  42
+    |-
+    ?~  a  b
+    [i=i.a t=$(a t.a)]
+  --
 ::                                                      ::
 ::::  2n: functional hacks                              ::
   ::                                                    ::
@@ -5548,7 +5591,7 @@
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
-              {$face p/{p/what q/$@(term tune)} q/span} ::  namespace (new)
+              {$face p/{p/what q/tool} q/span}          ::  namespace (new)
               {$fork p/(set span)}                      ::  union
               {$help p/what q/span}                     ::  documentation
               {$hold p/span q/twig}                     ::  lazy evaluation
@@ -5557,6 +5600,7 @@
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
           ==                                            ::
+++  tool  $@(term tune)                                 ::  span decoration
 ++  tune                                                ::  complex
           $:  p/(map term (pair what (unit twig)))      ::  aliases
               q/(list twig)                             ::  bridges
@@ -7631,6 +7675,7 @@
       [dox p.q]
     ?>  ?=($elm -.q)
     ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
+    =.  p.p  (redo(sut p.p) q.q.p)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
             !=(** (mull(sut p, rib (~(put in rib) sut dox p.q)) %noun dox p.q))
@@ -8112,6 +8157,52 @@
       ==
     --
   ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
+  ::                                                    ::
+  ++  miss  !:                                          ::  nonintersection
+    |=  $:  ::  ref: symmetric span
+            ::
+            ref/span
+        ==
+    ::  intersection of sut and ref is empty
+    ::
+    ^-  ?
+    =|  gil/(set (set span))
+    =<  dext
+    |%
+    ++  dext
+      ^-  ?
+      ::  
+      ?:  =(ref sut)
+        (nest(sut %void) | sut)
+      ?-  sut
+        $void      &
+        $noun      (nest(sut %void) | ref)
+        {$atom *}  sint
+        {$cell *}  sint
+        {$core *}  sint(sut [%cell %noun %noun])
+        {$fork *}  %+  levy  (~(tap in p.sut))
+                   |=(span dext(sut +<))
+        {$face *}  dext(sut q.sut) 
+        {$help *}  dext(sut q.sut)
+        {$hold *}  =+  (~(gas in *(set span)) `(list span)`[sut ref ~])
+                   ?:  (~(has in gil) -)
+                      &
+                   %=  dext
+                     sut  repo
+                     gil  (~(put in gil) -)
+      ==           ==
+    ++  sint
+      ?+  ref      dext(sut ref, ref sut)
+        {$atom *}  ?.  ?=({$atom *} sut)  &
+                   ?&  ?=(^ q.ref)
+                       ?=(^ q.sut)
+                       !=(q.ref q.sut)
+                   ==
+        {$cell *}  ?.  ?=({$cell *} sut)  &
+                   ?|  dext(sut p.sut, ref p.ref)
+                       dext(sut q.sut, ref q.ref)
+      ==           ==
+    --
   ++  mite  |=(ref/span |((nest | ref) (nest(sut ref) & sut)))
   ++  nest
     ~/  %nest
@@ -8325,6 +8416,222 @@
                    ~>(%mean.[%leaf "play-open"] !!)
                  $(gen doz)
     ==
+  ::                                                    ::
+  ++  redo  !:                                          ::  refurbish faces
+    |=  $:  ::  ref: raw payload
+            ::
+            ref/span
+        ==
+    ::  :span: subject refurbished to reference namespace
+    ::
+    ^-  span
+    ::  hos: subject tool stack
+    ::  wec: reference tool stack set
+    ::  gil: repetition set
+    ::
+    =|  hos/(list tool)
+    =/  wec/(set (list tool))  [~ ~ ~]
+    =|  gil/(set (pair span span))
+    =<  ::  errors imply subject/reference mismatch
+        ::
+        ~|  %redo-match
+        ::  reduce by subject
+        ::
+        dext
+    |%
+    ::                                                  ::
+    ++  dear                                            ::  resolve tool stack
+      ::  :(unit (list tool)): unified tool stack
+      ::
+      ^-  (unit (list tool))
+      ::  empty implies void
+      ::
+      ?~  wec  `~
+      ::  any reference faces must be clear
+      ::
+      ?.  ?=({* $~ $~} wec)  
+        ~&  [%dear-many wec]
+        ~
+      :-  ~
+      ::  har: single reference tool stack
+      ::
+      =/  har  n.wec
+      ::  len: lengths of [sut ref] face stacks
+      ::
+      =/  len  [p q]=[(lent hos) (lent har)]
+      ::  lip: length of sut-ref face stack overlap
+      ::
+      ::      AB
+      ::       BC
+      ::
+      ::    +lip is (lent B), where +hay is forward AB
+      ::    and +liv is forward BC (stack BA and CB).
+      ::
+      ::    overlap is a weird corner case.  +lip is
+      ::    almost always 0.  brute force is fine.
+      :: 
+      =/  lip
+        =|  lup/(unit @ud)
+        =|  lip/@ud
+        |-  ^-  @ud
+        ?:  |((gth lip p.len) (gth lip q.len))
+          (fall lup 0)
+        ::  lep: overlap candidate: suffix of subject face stack
+        ::
+        =/  lep  (slag (sub p.len lip) hos) 
+        ::  lap: overlap candidate: prefix of reference face stack
+        ::
+        =/  lap  (scag lip har)
+        ::  save any match and continue
+        ::
+        $(lip +(lip), lup ?.(=(lep lap) lup `lip))
+      ::  ~&  [har+har hos+hos len+len lip+lip]
+      ::  produce combined face stack (forward ABC, stack CBA)
+      ::
+      (weld hos (slag lip har))
+    ::                                                  ::
+    ++  dext                                            ::  subject traverse
+      ::  :span: refurbished subject
+      ::
+      ^-  span
+      ::  check for trivial cases
+      ::
+      ?:  ?|  =(sut ref) 
+              ?=(?($noun $void {?($atom $core) *}) ref)
+          ==
+        done
+      ~_  (dunk 'redo: dext: sut')
+      ~_  (dunk(sut ref) 'redo: dext: ref')  
+      ?-    sut
+          ?($noun $void {?($atom $core) *})
+        ::  reduce reference and reassemble leaf
+        ::
+        done:(sint &)
+      ::
+          {$cell *}
+        ::  reduce reference to match subject
+        ::
+        =>  (sint &)
+        ?>  ?=({$cell *} sut)
+        ::  leaf with possible recursive descent
+        ::
+        %=    done
+            sut
+          ::  clear face stacks for descent
+          ::
+          =:  hos  ~
+              wec  [~ ~ ~]
+            ==
+          ::  descend into cell
+          ::
+          :+  %cell
+            dext(sut p.sut, ref (peek(sut ref) %free 2))
+          dext(sut q.sut, ref (peek(sut ref) %free 3))
+        ==
+      ::
+          {$face *}
+        ::  push face on subject stack, and descend
+        ::
+        dext(hos [q.p.sut hos], sut q.sut)
+      ::
+          {$help *}
+        ::  work through help
+        ::
+        [%help p.sut dext(sut q.sut)]
+      ::
+          {$fork *}
+        ::  reconstruct each case in fork 
+        ::
+        (fork (turn (~(tap in p.sut)) |=(span dext(sut +<))))
+      ::
+          {$hold *}
+        ::  reduce to hard 
+        ::
+        =>  (sint |)
+        ?>  ?=({$hold *} sut)
+        ?:  (~(has in fan) [p.sut q.sut])
+          ::  repo loop; redo depends on its own product
+          ::
+          done:(sint &)
+        ?:  (~(has in gil) [sut ref])
+          ::  type recursion, stop renaming
+          ::
+          done:(sint |)
+        ::  restore unchanged holds
+        ::
+        =+  repo
+        =-  ?:(=(- +<) sut -)
+        dext(sut -, gil (~(put in gil) sut ref))
+      ==
+    ::                                                  ::
+    ++  done                                            ::  complete assembly
+      ^-  span
+      ::  :span: subject refurbished 
+      ::
+      ::  lov: combined face stack
+      ::
+      =/  lov  
+          =/  lov  dear
+          ?~  lov
+            ~_  (dunk 'redo: dear: sut')
+            ~_  (dunk(sut ref) 'redo: dear: ref')
+            ~&  [%wec wec]
+            !!
+          (need lov)
+      ::  recompose faces
+      ::
+      |-  ^-  span
+      ?~  lov  sut
+      $(lov t.lov, sut (face [~ i.lov] sut))
+    ::                                                  ::
+    ++  sint                                            ::  reduce by reference
+      |=  $:  ::  hod: expand holds
+              ::
+              hod/?
+          ==
+      ::  ::.: reference with face/fork/hold reduced
+      ::
+      ^+  .
+      ::  =-  ~>  %slog.[0 (dunk 'sint: sut')]
+      ::      ~>  %slog.[0 (dunk(sut ref) 'sint: ref')]
+      ::      ~>  %slog.[0 (dunk(sut =>(- ref)) 'sint: pro')]
+      ::      -
+      ?+    ref  .
+          {$help *}  $(ref q.ref)
+          {$face *}
+        ::  extend all stacks in set
+        ::
+        %=  $
+          ref  q.ref
+          wec  (~(run in wec) |=((list tool) [q.p.ref +<]))
+        ==
+      ::
+          {$fork *}  
+        ::  reconstruct all relevant cases
+        ::
+        =-  ::  ~>  %slog.[0 (dunk 'fork: sut')]
+            ::  ~>  %slog.[0 (dunk(sut ref) 'fork: ref')]
+            ::  ~>  %slog.[0 (dunk(sut (fork ->)) 'fork: pro')]
+            +(wec -<, ref (fork ->))
+        =/  moy  (~(tap in p.ref))
+        |-  ^-  (pair (set (list tool)) (list span))
+        ?~  moy  [~ ~]
+        ::  head recurse
+        ::
+        =/  mor  $(moy t.moy)
+        ::  prune reference cases outside subject
+        ::
+        ?:  (miss i.moy)  mor
+        ::  unify all cases
+        ::
+        =/  dis  ^$(ref i.moy)
+        [(~(uni in p.mor) wec.dis) [ref.dis q.mor]]
+      ::
+          {$hold *}
+        ?.  hod  .
+        $(ref repo(sut ref))
+      ==
+    --
   ::
   ++  repo
     ^-  span

@@ -2906,13 +2906,11 @@
     (some (~(run by lum) need))
   ::                                                    ::  ++drop-pole:unity
   ++  drop-pole                                         ::  unit tuple
-    |*  a/(pole (unit))
-    ?-    a
-        {i/(unit) t/*}
-      ?~  t.a  i.a
-      %+  both  i.a
-      (drop-pole t.a)
-    ==
+    |*  but/(pole (unit))
+    ?~  but  !!
+    ?~  +.but  
+      u:->.but
+    [u:->.but (drop-pole +.but)]
   --
 ::                                                      ::::
 ::::                      ++format                      ::  (2d) common formats
@@ -3154,6 +3152,35 @@
     ::                                                  ::  ++ul:dejs:format
     ++  ul                                              ::  null
       |=(jon/json ?~(jon ~ !!))
+    ::
+    ++  za                                              ::  full unit pole
+      |*  pod/(pole (unit))
+      ?~  pod  &
+      ?~  -.pod  |
+      (za +.pod)
+    ::
+    ++  zl                                              ::  collapse unit list
+      |*  lut/(list (unit))
+      ?.  |-  ^-  ?
+          ?~(lut & ?~(i.lut | $(lut t.lut)))
+        ~
+      %-  some
+      |-
+      ?~  lut  ~
+      [i=u:+.i.lut t=$(lut t.lut)]
+    ::
+    ++  zp                                              ::  unit tuple
+      |*  but/(pole (unit))
+      ?~  but  !!
+      ?~  +.but  
+        u:->.but
+      [u:->.but (zp +.but)]
+    ::
+    ++  zm                                              ::  collapse unit map
+      |*  lum/(map term (unit))
+      ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
+        ~
+      (some (~(run by lum) need))
     --  ::dejs
   ::                                                    ::  ++dejs-soft:format
   ++  dejs-soft                                         ::  json reparse to unit
@@ -4154,19 +4181,19 @@
       $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw
       $s  @s  $t   @t   $ta  @ta  $tas  @tas
     ==
-  ::                                                    ::  ++read:wired
-  ++  read                                              ::  parse odored path
-    =<  |*({a/path b/{@tas (pole @tas)}} ((+> b) a))
-    |*  b/{@tas (pole @tas)}
-    |=  a/path
-    ?~  a  ~
-    =+  hed=(slaw -.b i.a)
-    =*  fog  (odo:raid -.b)
-    ?~  +.b
-      ^-  (unit fog)
-      ?^(+.a ~ hed)
-    ^-  (unit {fog _(need *(..^$ +.b))})
-    (both hed ((..^$ +.b) +.a))
+::  ::                                                    ::  ++read:wired
+::  ++  read                                              ::  parse odored path
+::    =<  |*({a/path b/{@tas (pole @tas)}} ((+> b) a))
+::    |*  b/{@tas (pole @tas)}
+::    |=  a/path
+::    ?~  a  ~
+::    =+  hed=(slaw -.b i.a)
+::    =*  fog  (odo:raid -.b)
+::    ?~  +.b
+::      ^-  (unit fog)
+::      ?^(+.a ~ hed)
+::    ^-  (unit {fog _(need *(..^$ +.b))})
+::    (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::
 ::::                      ++title                       ::  (2j) namespace
@@ -4359,10 +4386,10 @@
       "{(num h.t.yed)}:{(num m.t.yed)}:{(num s.t.yed)} +0000"
     ::                                                  ::  ++stud:chrono:
     ++  stud                                            ::  parse UTC format
-      =<  |=  a/cord
+      =<  |=  a/cord                                    ::  expose parsers
           %+  biff  (rush a (more sepa elem))
           |=  b/(list _(wonk *elem))  ^-  (unit date)
-          %-  drop-pole:unity
+          =-  ?.((za:dejs -) ~ (some (zp:dejs -)))
           ^+  =+  [*date u=unit]
               *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
           :~
