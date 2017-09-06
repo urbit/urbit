@@ -753,6 +753,16 @@
         return _mull_both(van, gol, c3__noun);
       }
 
+      case c3__cool: p_gen = u3t(gen);
+      _mull_used();
+      {
+        u3_noun von = u3i_molt(u3k(van), u3qfu_van_fab, c3n, 0);
+        u3_noun ret = _mull_in(von, sut, gol, dox, p_gen);
+
+        u3z(von);
+        return ret;
+      }
+
       case c3__spit: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {

@@ -801,6 +801,16 @@
         return u3nc(c3__noun, u3nc(1, sev));
       }
 
+      case c3__cool: p_gen = u3t(gen);
+      _mint_used();
+      {
+        u3_noun von = u3i_molt(u3k(van), u3qfu_van_fab, c3n, 0);
+        u3_noun ret = _mint_in(von, sut, gol, p_gen);
+
+        u3z(von);
+        return ret;
+      }
+
       case c3__twig: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {

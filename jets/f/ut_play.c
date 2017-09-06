@@ -456,6 +456,15 @@
         return c3__noun;
       }
 
+      case c3__cool: p_gen = u3t(gen);
+      {
+        u3_noun von = u3i_molt(u3k(van), u3qfu_van_fab, c3n, 0);
+        u3_noun ret = _play_x(von, sut, p_gen);
+
+        u3z(von);
+        return ret;
+      }
+
       case c3__twig: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
