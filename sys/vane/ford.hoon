@@ -592,8 +592,10 @@
             =<  abet
             |-  ^+  ..exec
             ?~  zuk  ..exec
-            $(zuk t.zuk, ..exec `_..exec`(camp van.i.zuk ren.i.zuk bem.i.zuk))
-      ==
+            %=  $
+              zuk     t.zuk
+              ..exec  `_..exec`(camp van.p.i.zuk ren.q.i.zuk bem.q.i.zuk)
+      ==    ==
     ::
     ++  expo                                            ::  return gift
       |=  gef/gift:able
@@ -1188,7 +1190,7 @@
       |=  {cof/cafe fro/(set mark)}  ^-  (bolt (list mark))
       ?:  (~(has in tag) p.won)
         (fine cof (flop pax))
-      =+  for=(skip (~(tap by fro)) ~(has by war))
+      =+  for=(skip (~(tap in fro)) ~(has by war))
       =.  for  (sort for aor)         ::  XX useful?
       =:  q.won  (~(gas to q.won) for)
           war  (~(gas by war) (turn for |=(mark [+< pax])))

@@ -32,7 +32,7 @@
   ?-  med
     $get  [url med *math ~]
     $post
-      =+  hed=(my content-type+['application/x-www-form-urlencoded']~ ~)
+      =+  hed=(my:nl content-type+['application/x-www-form-urlencoded']~ ~)
       [url(r ~) med hed ?~(r.url ~ (some (as-octt +:(tail:en-purl r.url))))]
   ==
 ::

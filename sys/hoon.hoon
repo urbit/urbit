@@ -1,4 +1,3 @@
-!:
 ::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
@@ -1539,15 +1538,15 @@
   ::
 ++  ly                                                  ::  list from raw noun
   |*  a/*
-  ^+((homo (limo a)) a)
+  le:nl
 ::
 ++  my                                                  ::  map from raw noun
   |*  a/*
-  (malt ^+((homo (limo a)) a))
+  my:nl
 ::
 ++  sy                                                  ::  set from raw noun
   |*  a/*
-  (silt ^+((homo (limo a)) a))
+  si:nl
 ::
 ++  nl
   ^%
@@ -7677,8 +7676,8 @@
       [dox p.q]
     ?>  ?=($elm -.q)
     ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
-    =.  p.p  ?:(fab p.p (redo(sut p.p) q.q.p))
-    ::  =.  p.p  (redo(sut p.p) q.q.p)
+    ::  =.  p.p  ?:(fab p.p (redo(sut p.p) q.q.p))
+    =.  p.p  (redo(sut p.p) q.q.p)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
             !=(** (mull(sut p, rib (~(put in rib) sut dox p.q)) %noun dox p.q))

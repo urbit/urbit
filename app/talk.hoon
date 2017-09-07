@@ -1420,7 +1420,7 @@
       [%brown ~]
     %^  ra-consume  &  our.hid
     :^    (shaf %init eny.hid)
-        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+        [[[%& our.hid (main our.hid)] *envelope %pending] ~ ~]
       now.hid
     [~ %app %tree 'receiving forum posts, ;join %posts for details']
   ::
@@ -1431,7 +1431,7 @@
     %^  ra-consume  &
       src.hid
     :*  (shaf %comt eny.hid)
-        (my [[%& our.hid man] *envelope %pending] ~)
+        [[[%& our.hid man] *envelope %pending] ~ ~]
         now.hid
         (sy /fora-post eyre+pax ~)
       :-  %mor  :~
@@ -1461,7 +1461,7 @@
       [%brown ~]
     %^  ra-consume  &  our.hid
     :^    (shaf %init eny.hid)
-        (my [[%& our.hid (main our.hid)] *envelope %pending] ~)
+        [[[%& our.hid (main our.hid)] *envelope %pending] ~ ~]
       now.hid
     [~ %app %tree 'receiving comments, ;join %comments for details']
   ::
@@ -1472,7 +1472,7 @@
     %^  ra-consume  &
       src.hid
     :*  (shaf %comt eny.hid)
-        (my [[%& our.hid man] *envelope %pending] ~)
+        [[[%& our.hid man] *envelope %pending] ~ ~]
         now.hid
         (sy /comment eyre+pax ~)
       :-  %mor  :~

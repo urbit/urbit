@@ -1,5 +1,6 @@
 !:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
+^%
 !?  150
 ::
 ::
@@ -1728,7 +1729,7 @@
     ++  as-hotel                    :: XX moveme
       |=  a/ship  ^-  (map {ship bloq} pile)
       =/  b  (xeb (xeb a))
-      =-  (my - ~)
+      =-  (my:nl - ~)
       :-  [(sein a) b]
       (put:py (rsh (dec b) 1 a))
     ::
@@ -1756,9 +1757,9 @@
         =/  pas/@p  (shaf %pass tid.taz)
         =*  inv  inv.taz
         ?<  (~(has by shy) pas)
-        =.  +>.$  (add-rite pas [%email (sy who.inv ~)])
+        =.  +>.$  (add-rite pas [%email (si:nl who.inv ~)])
         %+  mov-rite  [rex pas]
-        [%fungi (my [%upl pla.inv] [%usr sta.inv] ~)]
+        [%fungi (my:nl [%upl pla.inv] [%usr sta.inv] ~)]
       ::
       ::  increase existing balance
       ::    {$reinvite aut/passcode pla/@ud sta/@ud}
@@ -1767,7 +1768,7 @@
         =/  pas/@p  (shaf %pass tid.taz)
         ?>  (~(has by shy) pas)
         %+  mov-rite  [rex pas]
-        [%fungi (my [%upl pla.taz] [%usr sta.taz] ~)]
+        [%fungi (my:nl [%upl pla.taz] [%usr sta.taz] ~)]
       ::
       ::  split passcode balance
       ::    {$reinvite aut/passcode tid/passcode inv/{who/mail pla/@ud sta/@ud}}
@@ -1776,11 +1777,11 @@
         =/  pas/@p  (shaf %pass tid.taz)
         =*  inv  inv.taz
         ?<  (~(has by shy) pas)
-        =.  +>.$  (add-rite pas [%email (sy who.inv ~)])
+        =.  +>.$  (add-rite pas [%email (si:nl who.inv ~)])
         ::  XX history
         =/  ole/@p  (shaf %pass aut.taz)
         %+  mov-rite  [ole pas]
-        [%fungi (my [%upl pla.inv] [%usr sta.inv] ~)]
+        [%fungi (my:nl [%upl pla.inv] [%usr sta.inv] ~)]
       ::
       ::  redeem ship invitation
       ::    {$claim aut/passcode her/@p tik/ticket}
@@ -1791,7 +1792,7 @@
         =/  len  (xeb (xeb her.taz))
         =/  fun  ?+((clan her.taz) !! $duke %upl, $king %usr)
         =.  +>.$
-          (del-rite pas [%fungi (my [fun 1] ~)])
+          (del-rite pas [%fungi (my:nl [fun 1] ~)])
         =.  +>.$
           (del-rite rex [%hotel (as-hotel her.taz)])
         =/  who  (need %.(%email ~(expose up (lawn pas))))

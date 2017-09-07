@@ -1,3 +1,4 @@
+^%
 !:
 ::  dill (4d), terminal handling
 ::

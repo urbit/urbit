@@ -1,6 +1,6 @@
 ::                                                      ::
 ::::  6: layer six
-  !:
+  ::
 ~>  %slog.[0 leaf+"arvo-boot"]
 =<  |=  {now/@da ovo/*}
     ^-  *

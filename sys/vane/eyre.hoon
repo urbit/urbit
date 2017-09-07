@@ -1,4 +1,4 @@
-!:  ::  %eyre, http servant
+::  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit/vase
@@ -1476,9 +1476,16 @@
               %.(grab-json =>(dejs (ot ship+(su fed:ag) code+(mu so) ~)))
             ::
                 $delt
+              ::  XX: restored old code to fix for redo
+              ::  ~|  parsing+bod
+              ::  :-  %del
+              ::  %.(grab-json =>(dejs-soft (ot ship+(su fed:ag))))
+              ::
               ~|  parsing+bod
-              :-  %del
-              %.(grab-json =>(dejs-soft (ot ship+(su fed:ag))))
+              =+  jon=(need (de-json q:(need bod)))
+              ?>  ?=($o -.jon)
+              =+  sip=(~(get by p.jon) %ship)
+              [%del ?~(sip ~ [~ ((su:dejs fed:ag) u.sip)])]
         ==  ==
         ==
       --
