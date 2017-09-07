@@ -45,7 +45,7 @@ let
 
     # Cross-compiling toolchain.
     inherit gcc binutils;
-    toolchain_inputs = [ gcc binutils ];
+    toolchain_drvs = [ gcc binutils ];
 
     # Build tools and variables to support them.
     inherit cmake_toolchain gyp_os;

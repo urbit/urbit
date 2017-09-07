@@ -79,7 +79,7 @@ let
 
     # Cross-compiling toolchain.
     inherit gcc binutils;
-    toolchain_inputs = [ gcc binutils ];
+    toolchain_drvs = [ gcc binutils ];
     inherit mingw-w64_full;
     mingw-w64 = mingw-w64_full;
 
