@@ -1,4 +1,5 @@
 !:                                                      ::  /van/zuse
+^%
 ::                                                      ::  %reference/1
 ::  %zuse: arvo library.
 ::
@@ -3188,149 +3189,174 @@
     =>  |%  ++  grub  (unit *)                          ::  result
             ++  fist  $-(json grub)                     ::  reparser instance
         --  ::
+    ::
+    ::  XX: this is old code that replaced a rewritten dejs.
+    ::      the rewritten dejs rest-looped with ++redo.  the old
+    ::      code is still in revision control -- revise and replace.
+    ::
     |%
-    ::                                                  ::  ++ar:dejs-soft:
     ++  ar                                              ::  array as list
       |*  wit/fist
-      |=  jon/json  ^-  (unit (list _(need (wit *json))))
+      |=  jon/json
       ?.  ?=({$a *} jon)  ~
-      %-  drop-list
-      |-
+      %-  zl
+      |-  
       ?~  p.jon  ~
       [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
-    ::                                                  ::  ++at:dejs-soft:
+    ::
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
-      ((at-raw wil) p.jon)
-    ::                                                  ::  ++at-raw:dejs-soft:
+      =+  raw=((at-raw wil) p.jon)
+      ?.((za raw) ~ (some (zp raw)))
+    ::
     ++  at-raw                                          ::  array as tuple
       |*  wil/(pole fist)
       |=  jol/(list json)
-      ?~  jol  ~
-      ?-    wil                                         :: mint-vain on empty
-          :: {wit/* t/*}
-          {* t/*}
-        =>  .(wil [wit ~]=wil)
-        ?~  t.wil  ?^(t.jol ~ (wit.wil i.jol))
-        %+  both  (wit.wil i.jol)
-        ((at-raw t.wil) t.jol)
-      ==
-    ::                                                  ::  ++bo:dejs-soft:
+      ?~  wil  ~
+      :-  ?~(jol ~ (-.wil i.jol))
+      ((at-raw +.wil) ?~(jol ~ t.jol))
+    ::
     ++  bo                                              ::  boolean
       |=(jon/json ?.(?=({$b *} jon) ~ [~ u=p.jon]))
-    ::                                                  ::  ++bu:dejs-soft:
+    ::
     ++  bu                                              ::  boolean not
       |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
-    ::                                                  ::  ++ci:dejs-soft:
+    ::
     ++  ci                                              ::  maybe transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (biff (wit jon) poq)
-    ::                                                  ::  ++cu:dejs-soft:
+    ::
     ++  cu                                              ::  transform
       |*  {poq/gate wit/fist}
       |=  jon/json
       (bind (wit jon) poq)
-    ::                                                  ::  ++di:dejs-soft:
+    ::
+    ++  da                                              ::  UTC date
+      |=  jon/json
+      ?.  ?=({$s *} jon)  ~
+      (bind (stud:chrono:userlib p.jon) |=(a/date (year a)))
+    ::
     ++  di                                              ::  millisecond date
       %+  cu
         |=  a/@u  ^-  @da
         (add ~1970.1.1 (div (mul ~s1 a) 1.000))
       ni
-    ::                                                  ::  ++mu:dejs-soft:
+    ::
     ++  mu                                              ::  true unit
       |*  wit/fist
       |=  jon/json
       ?~(jon (some ~) (bind (wit jon) some))
-    ::                                                  ::  ++ne:dejs-soft:
+    ::
     ++  ne                                              ::  number as real
       |=  jon/json
       ^-  (unit @rd)
-      ::  please implement me, it's not that hard!
       !!
-    ::                                                  ::  ++ni:dejs-soft:
+    ::
     ++  ni                                              ::  number as integer
-      |=  jon/json
+      |=  jon/json 
       ?.  ?=({$n *} jon)  ~
       (rush p.jon dem)
-    ::                                                  ::  ++no:dejs-soft:
+    ::
     ++  no                                              ::  number as cord
       |=  jon/json
       ?.  ?=({$n *} jon)  ~
       (some p.jon)
-    ::                                                  ::  ++of:dejs-soft:
+    ::
     ++  of                                              ::  object as frond
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?.  ?=({$o {@ *} $~ $~} jon)  ~
       |-
-      ?-    wer                                         :: mint-vain on empty
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
-        =>  .(wer [[~ wit] ~]=wer)
-        ?:  =(key.wer p.n.p.jon)
-          ((pe key.wer wit.wer) q.n.p.jon)
-        ?~  t.wer  ~
-        ((of t.wer) jon)
-      ==
-    ::                                                  ::  ++ot:dejs-soft:
+      ?~  wer  ~
+      ?:  =(-.-.wer p.n.p.jon)  
+        ((pe -.-.wer +.-.wer) q.n.p.jon)
+      ((of +.wer) jon)
+    ::
     ++  ot                                              ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jon/json
       ?.  ?=({$o *} jon)  ~
-      ((ot-raw wer) p.jon)
-    ::                                                  ::  ++ot-raw:dejs-soft:
+      =+  raw=((ot-raw wer) p.jon)
+      ?.((za raw) ~ (some (zp raw)))
+    ::
     ++  ot-raw                                          ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jom/(map @t json)
-      ?-    wer                                         :: mint-vain on empty
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
-        =>  .(wer [[~ wit] ~]=wer)
-        =/  ten  (biff (~(get by jom) key.wer) wit.wer)
-        ?~  t.wer  ten
-        (both ten ((ot-raw t.wer) jom))
-      ==
-    ::                                                  ::  ++om:dejs-soft:
+      ?~  wer  ~
+      =+  ten=(~(get by jom) -.-.wer)
+      [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jom)]
+    ::
     ++  om                                              ::  object as map
       |*  wit/fist
       |=  jon/json
       ?.  ?=({$o *} jon)  ~
-      (drop-map (~(run by p.jon) wit))
-    ::                                                  ::  ++op:dejs-soft:
+      (zm (~(run by p.jon) wit))
+    ::
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
-      |=  jon/json  ^-  (unit (map _(wonk *fel) _*wit))
-      =/  jom  ((om wit) jon)
-      ?~  jom  ~
-      %-  drop-map
-      %-  malt
-      %+  turn  (~(tap by jom))
-      |*  {a/cord b/*}
-      (both (rush a fel) (some b))
-    ::                                                  ::  ++pe:dejs-soft:
+      %+  cu  
+        |=  a/(list _[(wonk *fel) (need *wit)])
+        (my:nl a)
+      %-  ci  :_  (om wit)
+      |=  a/(map cord _(need *wit))
+      ^-  (unit (list _[(wonk *fel) (need *wit)]))
+      %-  zl
+      %+  turn  (~(tap by a))
+      |=  {a/cord b/_(need *wit)}
+      =+  nit=(rush a fel) 
+      ?~  nit  ~
+      (some [u.nit b])
+    ::
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
       (cu |*(* [pre +<]) wit)
-    ::                                                  ::  ++sa:dejs-soft:
+    ::
     ++  sa                                              ::  string as tape
       |=  jon/json
       ?.(?=({$s *} jon) ~ (some (trip p.jon)))
-    ::                                                  ::  ++so:dejs-soft:
+    ::
     ++  so                                              ::  string as cord
       |=  jon/json
       ?.(?=({$s *} jon) ~ (some p.jon))
-    ::                                                  ::  ++su:dejs-soft:
+    ::
     ++  su                                              ::  parse string
       |*  sab/rule
       |=  jon/json
       ?.  ?=({$s *} jon)  ~
       (rush p.jon sab)
-    ::                                                  ::  ++ul:dejs-soft:
-    ++  ul                                              ::  null
-      |=(jon/json ?~(jon (some ~) ~))
+    ::
+    ++  ul  |=(jon/json ?~(jon (some ~) ~))             ::  null
+    ++  za                                              ::  full unit pole
+      |*  pod/(pole (unit))
+      ?~  pod  &
+      ?~  -.pod  |
+      (za +.pod)
+    ::
+    ++  zl                                              ::  collapse unit list
+      |*  lut/(list (unit))
+      ?.  |-  ^-  ?
+          ?~(lut & ?~(i.lut | $(lut t.lut)))
+        ~
+      %-  some
+      |-
+      ?~  lut  ~
+      [i=u:+.i.lut t=$(lut t.lut)]
+    ::
+    ++  zp                                              ::  unit tuple
+      |*  but/(pole (unit))
+      ?~  but  !!
+      ?~  +.but  
+        u:->.but
+      [u:->.but (zp +.but)]
+    ::
+    ++  zm                                              ::  collapse unit map
+      |*  lum/(map term (unit))
+      ?:  (~(rep by lum) |=({{@ a/(unit)} b/_|} |(b ?=($~ a))))
+        ~
+      (some (~(run by lum) need))
     --  ::dejs-soft
   --
 ::                                                      ::
@@ -3815,7 +3841,7 @@
     ++  enty                                            ::  entity
       %+  ifix  pam^sem
       ;~  pose
-        =+  def=^+(ent (my [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
+        =+  def=^+(ent (my:nl [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
         %+  sear  ~(get by (~(uni by def) ent))
         (cook crip ;~(plug alf (stun 1^31 aln)))
         %+  cook  |=(a/@c ?:((gth a 0x10.ffff) '�' (tuft a)))
