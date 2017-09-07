@@ -1550,6 +1550,7 @@
   (silt ^+((homo (limo a)) a))
 ::
 ++  nl
+  ^%
   |%
   ::                                                      ::
   ++  le                                                  ::  construct list
