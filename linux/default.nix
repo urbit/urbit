@@ -32,6 +32,15 @@ let
     inherit nixpkgs host binutils headers gcc_options;
   };
 
+  license = native.make_derivation {
+    name = "linux-license";
+    inherit (gcc) musl_src gcc_src;
+    linux_src = headers.src;
+    builder = ./license_builder.sh;
+  };
+
+  global_license_set = { _global = license; };
+
   cmake_toolchain = import ../cmake_toolchain {
     cmake_system_name = "Linux";
     inherit nixpkgs host;
@@ -54,6 +63,11 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
+    # License information that should be shipped with any software
+    # compiled by this environment.
+    inherit global_license_set;
+
+    # Linux headers.  These are already a part of GCC though.
     inherit headers;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;

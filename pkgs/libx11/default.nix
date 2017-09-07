@@ -1,11 +1,7 @@
 { crossenv, xorg-macros, xproto, libxcb, xtrans,
   xextproto, inputproto, kbproto }:
 
-# TODO: fix missing pkg-config packages:
-# Package 'kbproto', required by 'virtual:world', not found
-
-crossenv.make_derivation rec {
-  name = "libx11-${version}";
+let
   version = "1.6.5";
 
   src = crossenv.nixpkgs.fetchurl {
@@ -13,23 +9,47 @@ crossenv.make_derivation rec {
     sha256 = "0pa3cfp6h9rl2vxmkph65250gfqyki0ccqyaan6bl9d25gdr0f2d";
   };
 
-  builder = ./builder.sh;
+  lib = crossenv.make_derivation rec {
+    name = "libx11-${version}";
 
-  configure_flags =
-    "--host=${crossenv.host} " +
-    "--disable-malloc0returnsnull " +
-    "--enable-static " +
-    "--disable-shared";
+    inherit src version;
 
-  cross_inputs = [
-    xorg-macros
-    xproto
-    libxcb
-    xtrans
-    xextproto
-    inputproto
-    kbproto
-  ];
+    builder = ./builder.sh;
 
-  inherit kbproto xproto libxcb;
-}
+    configure_flags =
+      "--host=${crossenv.host} " +
+      "--disable-malloc0returnsnull " +
+      "--enable-static " +
+      "--disable-shared";
+
+    cross_inputs = [
+      xorg-macros
+      xproto
+      libxcb
+      xtrans
+      xextproto
+      inputproto
+      kbproto
+    ];
+
+    inherit kbproto xproto libxcb;
+  };
+
+  license = crossenv.native.make_derivation {
+    name = "${lib.name}-license";
+    inherit src;
+    builder = ./license_builder.sh;
+  };
+
+  license_set =
+    xorg-macros.license_set //
+    xproto.license_set //
+    libxcb.license_set //
+    xtrans.license_set //
+    xextproto.license_set //
+    inputproto.license_set //
+    kbproto.license_set //
+    { libx11 = license; };
+
+in lib // { inherit license_set; }
+

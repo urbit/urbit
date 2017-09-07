@@ -3,6 +3,17 @@ source $setup
 tar -xf $gcc_src
 mv gcc-* gcc
 
+tar -xf $musl_src
+mv musl-* musl
+
+tar -xf $linux_src
+mv linux-* linux
+
+set -x
+ls musl
+ls linux
+exit 2
+
 license_gcc=$(cat gcc/COPYING3.LIB)
 cd $src
 license_runtime=$(cat COPYING.MinGW-w64-runtime/COPYING.MinGW-w64-runtime.txt)

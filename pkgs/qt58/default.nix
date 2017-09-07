@@ -127,12 +127,29 @@ let
     src = base_src;
     builder = ./license_builder.sh;
   };
+
+  license_set =
+    (
+      if crossenv.os == "linux" then
+        libudev.license_set //
+        libx11.license_set //
+        libxcb.license_set //
+        libxcb.util.license_set //
+        libxcb.util-image.license_set //
+        libxcb.util-wm.license_set //
+        libxcb.util-keysyms.license_set //
+        libxcb.util-renderutil.license_set //
+        libxi.license_set
+      else
+        {}
+    ) //
+    { qt5 = license_fragment; };
 in
-base // {
-  recurseForDerivations = true;
-  inherit base_src;
-  inherit base_raw;
-  inherit base;
-  inherit examples;
-  inherit license_fragment;
-}
+  base // {
+    recurseForDerivations = true;
+    inherit base_src;
+    inherit base_raw;
+    inherit base;
+    inherit examples;
+    inherit license_set;
+  }
