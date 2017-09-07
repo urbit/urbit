@@ -37,8 +37,6 @@ let
     inherit nixpkgs host;
   };
 
-  gyp_os = "linux";  # TODO: remove from here and the mingw-w64 env
-
   crossenv = {
     # Target info variables.
     inherit host arch os compiler exe_suffix;
@@ -48,7 +46,7 @@ let
     toolchain_drvs = [ gcc binutils ];
 
     # Build tools and variables to support them.
-    inherit cmake_toolchain gyp_os;
+    inherit cmake_toolchain;
 
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;

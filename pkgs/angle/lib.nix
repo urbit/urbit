@@ -26,7 +26,7 @@ crossenv.make_derivation rec {
   GYP_GENERATORS = "ninja";
 
   gyp_flags =
-      "-D OS=${crossenv.gyp_os} " +
+      "-D OS=win " +
       "-D TARGET=${target} " +
       "-D use_ozone=0 " +
       "-D angle_enable_vulkan=0 " +   # Vulkan support is in progress

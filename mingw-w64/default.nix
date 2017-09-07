@@ -71,8 +71,6 @@ let
 
   exe_suffix = ".exe";
 
-  gyp_os = "win";
-
   crossenv = {
     # Target info variables.
     inherit host arch os compiler exe_suffix;
@@ -84,7 +82,7 @@ let
     mingw-w64 = mingw-w64_full;
 
     # Build tools and variables to support them.
-    inherit cmake_toolchain gyp_os;
+    inherit cmake_toolchain;
 
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
