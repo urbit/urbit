@@ -1,0 +1,11 @@
+--- ld64/src/ld/Snapshot.cpp	2013-10-02 20:08:31.672088145 +0200
++++ ld64/src/ld/Snapshot.cpp	2013-10-02 20:08:42.330088934 +0200
+@@ -15,7 +15,7 @@
+ #include <sys/stat.h>
+ #include <libgen.h>
+ #include <time.h>
+-#include <Block.h>
++#include <BlocksRuntime/Block.h>
+ 
+ #include "Snapshot.h"
+ #include "Options.h"

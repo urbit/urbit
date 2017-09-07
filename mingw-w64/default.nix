@@ -78,7 +78,10 @@ let
     inherit host arch os compiler exe_suffix;
 
     # Cross-compiling toolchain.
-    inherit gcc binutils mingw-w64_full;
+    inherit gcc binutils;
+    toolchain_inputs = [ gcc binutils ];
+    inherit mingw-w64_full;
+    mingw-w64 = mingw-w64_full;
 
     # Build tools and variables to support them.
     inherit cmake_toolchain gyp_os;

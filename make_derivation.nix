@@ -1,9 +1,8 @@
 nixpkgs: crossenv: attrs:
 
 let
-  cross_build_tools = if crossenv == null then [] else [
-    crossenv.gcc
-    crossenv.binutils
+  cross_build_tools = if crossenv == null then [] else
+    crossenv.toolchain_drvs ++ [
     crossenv.native.pkgconf
     crossenv.native.wrappers
   ];
