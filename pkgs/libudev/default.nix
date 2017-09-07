@@ -5,14 +5,15 @@ if crossenv.os != "linux" then "linux only" else
 let
   version = "234";
 
+  name = "libudev-${version}";
+
   src = crossenv.nixpkgs.fetchurl {
     url = "https://github.com/systemd/systemd/archive/v${version}.tar.gz";
     sha256 = "0shbv3hrmryfr22v07s2mh8v8dwhjba2ldrk739q7jd11b8njgns";
   };
 
   lib = crossenv.make_derivation rec {
-    name = "libudev-${version}";
-    inherit src version;
+    inherit version name src;
     builder = ./builder.sh;
     patches = [
       # Fix some compile-time errors caused by not using glibc.
@@ -37,11 +38,12 @@ let
   };
 
   license = crossenv.native.make_derivation {
-    name = "libusbp-${version}-license";
+    name = "${name}-license";
     inherit src;
     builder = ./license_builder.sh;
   };
 
   license_set = { libudev = license; };
 
-in lib // { inherit license_set; }
+in
+  lib // { inherit license_set; }

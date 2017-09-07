@@ -1,4 +1,5 @@
-{ crossenv, libudev, libxcb, libx11, libxi, dejavu-fonts }:
+{ crossenv, libudev, libxcb, dejavu-fonts, xcb-util, xcb-util-image,
+  xcb-util-wm, xcb-util-keysyms, xcb-util-renderutil, libx11, libxi }:
 
 let
   version = "5.8.0";
@@ -88,11 +89,11 @@ let
            libudev  # not sure if this helps, but Qt does look for it
            libx11
            libxcb
-           libxcb.util
-           libxcb.util-image
-           libxcb.util-wm
-           libxcb.util-keysyms
-           libxcb.util-renderutil
+           xcb-util
+           xcb-util-image
+           xcb-util-wm
+           xcb-util-keysyms
+           xcb-util-renderutil
            libxi
          ]
        else [];
@@ -143,7 +144,7 @@ let
       else
         {}
     ) //
-    { qt5 = license_fragment; };
+    { qt58 = license_fragment; };
 in
   base // {
     recurseForDerivations = true;

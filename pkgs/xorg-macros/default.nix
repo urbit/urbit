@@ -23,4 +23,5 @@ let
 
   license_set = { xorg-macros = license; };
 
-in lib // { inherit license_set; }
+in
+  lib // { inherit license_set; }

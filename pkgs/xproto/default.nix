@@ -34,4 +34,5 @@ let
 
   license_set = xorg-macros.license_set // { xproto = license; };
 
-in lib // { inherit license_set; }
+in
+  lib // { inherit license_set; }

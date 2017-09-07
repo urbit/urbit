@@ -4,15 +4,15 @@
 let
   version = "1.6.5";
 
+  name = "libx11-${version}";
+
   src = crossenv.nixpkgs.fetchurl {
     url = "https://xorg.freedesktop.org/releases/individual/libX11-${version}.tar.bz2";
     sha256 = "0pa3cfp6h9rl2vxmkph65250gfqyki0ccqyaan6bl9d25gdr0f2d";
   };
 
   lib = crossenv.make_derivation rec {
-    name = "libx11-${version}";
-
-    inherit src version;
+    inherit version name src;
 
     builder = ./builder.sh;
 
@@ -36,7 +36,7 @@ let
   };
 
   license = crossenv.native.make_derivation {
-    name = "${lib.name}-license";
+    name = "${name}-license";
     inherit src;
     builder = ./license_builder.sh;
   };
@@ -51,5 +51,6 @@ let
     kbproto.license_set //
     { libx11 = license; };
 
-in lib // { inherit license_set; }
+in
+  lib // { inherit license_set; }
 
