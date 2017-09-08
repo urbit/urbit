@@ -2874,23 +2874,21 @@
   ==                                                    ::
 ++  hops   {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}  ::  XX late-bound path
 ++  horn                                                ::  resource tree
-  $%  {$ape p/twig}                                     ::  /~  twig by hand
-      {$arg p/twig}                                     ::  /$  argument
-      {$alt p/(list horn)}                              ::  /|  options
-      {$dep p/horn}                                     ::  /#  insert dephash
-      {$dub p/term q/horn}                              ::  /=  apply face
-      {$fan p/(list horn)}                              ::  /.  list
-      {$for p/(list (pair path:spur horn))}             ::  /,  switch by path
-      {$hel p/horn}                                     ::  /%  propagate args
-      {$lin p/(list mark) q/horn}                       ::  /&  translates
-      {$man p/(map knot horn)}                          ::  /*  hetero map
-      {$nap p/horn}                                     ::  /_  homo map
-      {$now p/horn}                                     ::  DEPRECATED
-      {$nod p/term q/horn}                              ::  /_  @  list by odor
-      {$saw p/twig q/horn}                              ::  /;  operate on
-      {$see p/hops q/horn}                              ::  /:  relative to
-      {$sic p/twig q/horn}                              ::  /^  cast
-      {$toy p/? q/mark}                                 ::  /mark/  static/hook
+  $%  {$fssg p/twig}                                    ::  /~  twig by hand
+      {$fsbc p/twig}                                    ::  /$  argument
+      {$fsbr p/(list horn)}                             ::  /|  options
+      {$fshx p/horn}                                    ::  /#  insert dephash
+      {$fsts p/term q/horn}                             ::  /=  apply face
+      {$fsdt p/(list horn)}                             ::  /.  list
+      {$fscm p/(list (pair path:spur horn))}            ::  /,  switch by path
+      {$fscn p/horn}                                    ::  /%  propagate args
+      {$fspm p/(list mark) q/horn}                      ::  /&  translates
+      {$fscb p/horn}                                    ::  /_  homo map
+      {$fssm p/twig q/horn}                             ::  /;  operate on
+      {$fscl p/hops q/horn}                             ::  /:  relative to
+      {$fskt p/twig q/horn}                             ::  /^  cast
+      {$fszp q/mark}                                    ::  /mark/ or /!mark/
+      {$fszy q/mark}                                    ::  /mark/ or /!mark/
   ==                                                    ::
 ++  milk  (trel ship desk silk)                         ::  sourced silk
 ++  silk                                                ::  construction layer

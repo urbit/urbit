@@ -736,102 +736,88 @@
           (stag %& tall:vez)
         ==
       ::
-      ++  horn
+      ++  horn                                          ::  horn parser 
         =<  apex
-        =|  tol/?
+        =|  tol/?                                       ::  allow tall form 
         |%
         ++  apex
           %+  knee  *^horn  |.  ~+
           ;~  pfix  fas
             ;~  pose
-              (stag %ape ;~(pfix sig ape:read))
-              (stag %arg ;~(pfix buc ape:read))
-              (stag %alt ;~(pfix bar alt:read))
-              (stag %dep ;~(pfix hax day:read))
-              (stag %dub ;~(pfix tis dub:read))
-              (stag %fan ;~(pfix dot fan:read))
-              (stag %for ;~(pfix com for:read))
-              (stag %hel ;~(pfix cen day:read))
-              (stag %lin ;~(pfix pam lin:read))
-              (stag %man ;~(pfix tar man:read))
-              (stag %nap ;~(pfix cab day:read))
-              (stag %nod ;~(pfix cab now:read))
-              (stag %saw ;~(pfix sem saw:read))
-              (stag %see ;~(pfix col see:read))
-              (stag %sic ;~(pfix ket sic:read))
-              (stag %toy ;~(sfix toy:read fas))
+              (stag %fssg ;~(pfix sig twig:read))       ::  /~  twig by hand 
+              (stag %fsbc ;~(pfix buc twig:read))       ::  /$  extra arguments
+              (stag %fsbr ;~(pfix bar alts:read))       ::  /|  or (options) 
+              (stag %fshx ;~(pfix hax horn:read))       ::  /#  insert dephash 
+              (stag %fsts ;~(pfix tis name:read))       ::  /=  apply face 
+              (stag %fsdt ;~(pfix dot list:read))       ::  /.  list 
+              (stag %fscm ;~(pfix com case:read))       ::  /,  switch by path 
+              (stag %fscn ;~(pfix cen horn:read))       ::  /%  propagate args 
+              (stag %fspm ;~(pfix pam pipe:read))       ::  /&  translates 
+              (stag %fscb ;~(pfix cab horn:read))       ::  /_  homo map 
+              (stag %fssm ;~(pfix sem gate:read))       ::  /;  operate on
+              (stag %fscl ;~(pfix col path:read))       ::  /:  relative to 
+              (stag %fskt ;~(pfix ket cast:read))       ::  /^  cast 
+              (stag %fszp ;~(pfix zap ;~(sfix sym fas)))::  /!mark/ run to mark
+              (stag %fszy ;~(sfix sym fas))             ::  /mark/ render file
             ==
           ==
         ::
-        ++  rail
+        ++  rail                                        ::  wide or tall 
           |*  {wid/rule tal/rule}
-          ?.  tol  wid
+          ?.  tol  wid                                  ::  !tol -> only wide
           ;~(pose wid tal)
         ::
         ++  read
-          |%  ++  ape
+          |%  ++  twig
                 %+  rail
                   (ifix [sel ser] (stag %conp (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
           ::
-              ++  alt
-                %+  rail  (ifix [pel per] (most ace day))
-                ;~(sfix (star day) gap duz)
+              ++  alts
+                %+  rail  
+                  (ifix [pel per] (most ace horn))
+                ;~(sfix (star horn) gap duz)
           ::
-              ++  day  
+              ++  horn
                 %+  rail
                   apex(tol |) 
                 ;~(pfix gap apex)
           ::
-              ++  dub
+              ++  name
                 %+  rail  
-                  ;~(plug sym ;~(pfix tis day))
-                ;~(pfix gap ;~(plug sym day))
+                  ;~(plug sym ;~(pfix tis horn))
+                ;~(pfix gap ;~(plug sym horn))
           ::
-              ++  fan
+              ++  list
                 %+  rail  fail 
-                ;~(sfix (star day) gap duz)
+                ;~(sfix (star horn) gap duz)
           ::
-              ++  for
+              ++  case
                 %+  rail  fail
                 =-  ;~(sfix (star -) gap duz)
-                ;~(pfix gap fas ;~(plug hith day))
+                ;~(pfix gap fas ;~(plug hith horn))
           ::
-              ++  lin
+              ++  pipe
                 %+  rail
-                  ;~(plug (plus ;~(sfix sym pam)) day)
+                  ;~(plug (plus ;~(sfix sym pam)) horn)
                 =+  (cook |=(a/term [a ~]) sym)
-                ;~(pfix gap ;~(plug - day))
+                ;~(pfix gap ;~(plug - horn))
           ::
-              ++  man
-                %+  rail  fail
-                %+  cook  ~(gas by *(map term ^horn))
-                =<  ;~(sfix (star (sear . day)) gap duz)
-                |=  a/^horn  ^-  (unit {term ^horn})
-                ?+(-.a ~ $dub `[p.a q.a])
-          ::
-              ++  now
-                %+  rail  ;~((glue cab) mota day)
-                ;~(pfix gap ;~(plug mota day))
-          ::
-              ++  saw
+              ++  gate
                 %+  rail
-                  ;~(plug ;~(sfix wide:vez sem) day)
-                ;~(pfix gap ;~(plug tall:vez day))
+                  ;~(plug ;~(sfix wide:vez sem) horn)
+                ;~(pfix gap ;~(plug tall:vez horn))
           ::
-              ++  see
+              ++  path
                 %+  rail  
-                  ;~(plug ;~(sfix hive col) day)
-                ;~(pfix gap ;~(plug hive day))
+                  ;~(plug ;~(sfix hive col) horn)
+                ;~(pfix gap ;~(plug hive horn))
           ::
-              ++  sic
+              ++  cast
                 %+  rail  
-                  ;~(plug ;~(sfix wide:vez ket) day)
-                ;~(pfix gap ;~(plug tall:vez day))
-          ::
-              ++  toy  ;~(plug ;~(pose (cold | zap) (easy &)) sym)
+                  ;~(plug ;~(sfix wide:vez ket) horn)
+                ;~(pfix gap ;~(plug tall:vez horn))
           --
-        ::
         --
       --
     ::
@@ -1454,7 +1440,7 @@
         =.  ..abut  sel
         %+  cope  (maim cof pit able)
         |=  {cof/cafe bax/vase}
-        %+  cope  (chap cof bax [%fan fan.hyd])
+        %+  cope  (chap cof bax [%fsdt fan.hyd])
         |=  {cof/cafe mar/mark gox/vase}
         %+  cope  (maim cof (slop gox bax) [%tow (flop boy)])
         |=  {cof/cafe fin/vase}
@@ -1485,27 +1471,6 @@
         |=  {cof/cafe sel/_..body}
         ^$(src t.src, ..body sel, cof cof)
       ::
-      :: ++  libs  `(set term)`(silt (turn (~(tap by bil)) head.is))
-      ++  chad                                          ::  atomic list
-        |=  {cof/cafe bax/vase doe/term hon/horn}
-        ^-  (bolt vase)
-        %+  cope  (lash cof how (flux (slat doe)))
-        |=  {cof/cafe yep/(map knot @)}
-        =+  ^=  poy  ^-  (list (pair knot @))
-            %+  sort  (~(tap by yep) ~)
-            |=({{* a/@} {* b/@}} (lth a b))
-        %+  cope
-          |-  ^-  (bolt (list (pair @ vase)))
-          ?~  poy  (flue cof)
-          %+  cope  $(poy t.poy)
-          |=  {cof/cafe nex/(list (pair @ vase))}
-          %+  cope  (chap(s.how [p.i.poy s.how]) cof bax hon)
-          (flux |=({mar/mark elt/vase} [[q.i.poy elt] nex]))
-        %-  flux
-        |=  yal/(list (pair @ vase))  ^-  vase
-        ?~  yal  [[%atom %n `~] 0]
-        (slop (slop [[%atom doe ~] p.i.yal] q.i.yal) $(yal t.yal))
-      ::
       ++  chai                                          ::  atomic map
         |=  {cof/cafe bax/vase hon/horn}
         ^-  (bolt vase)
@@ -1528,8 +1493,8 @@
         |=  {cof/cafe bax/vase hon/horn}
         ^-  (bolt cage)
         ?-    -.hon
-            $ape  (cope (maim cof bax p.hon) (flux |=(a/vase [%noun a])))
-            $arg  
+            $fssg  (cope (maim cof bax p.hon) (flux |=(a/vase [%noun a])))
+            $fsbc
           %+  cope  (maim cof bax p.hon)
           |=  {cof/cafe gat/vase}
           %+  cope  (maim cof !>(~) ((jock |) arg))
@@ -1537,26 +1502,26 @@
           %+  cope  (maul cof gat (slop !>(how) val))
           (flux |=(a/vase noun+a))
         ::
-            $alt
+            $fsbr
           %.  cof
           |=  cof/cafe  ^-  (bolt cage)
           ?~  p.hon  (flaw cof leaf+"ford: out of options" ~)
           (coop ^$(cof cof, hon i.p.hon) ..$(p.hon t.p.hon))
         ::
-            $dep
+            $fshx
           =+  [dep bot]=(clad $(hon p.hon))    :: XX review
           %+  cope  bot
           %-  flux
           |=  {mark vax/vase}
           [%noun (slop [atom+['uvH' ~] dep] vax)]
         ::
-            $dub 
+            $fsts
           %+  cope  $(hon q.hon)
           %-  flux
           |=  {mar/mark vax/vase}
           [mar [%face p.hon p.vax] q.vax]
         ::
-            $fan
+            $fsdt
           %+  cope  
             %+  cope
               |-  ^-  (bolt (list vase))
@@ -1572,16 +1537,16 @@
             (slop i.tev $(tev t.tev))
           (flux |=(a/vase noun+a))
         ::
-            $for          
+            $fscm
           =+  opt=|.(>(turn p.hon |=({a/path ^} a))<)
           |-  ^-  (bolt cage)
           ?~  p.hon  (flaw cof leaf+"ford: no match" >(tope how)< *opt ~)
           ?:  =(p.i.p.hon (scag (lent p.i.p.hon) (flop s.how)))
             ^$(hon q.i.p.hon)
-          $(p.hon t.p.hon)
+         $(p.hon t.p.hon)
         ::
-            $hel  $(hon p.hon, lit |)
-            $lin
+            $fscn  $(hon p.hon, lit |)
+            $fspm
           %+  cope  $(hon q.hon)
           |=  {cof/cafe cay/cage}  ^-  (bolt cage)
           ?~  p.hon  (fine cof cay)
@@ -1589,35 +1554,11 @@
           |=  {cof/cafe cay/cage}
           (cope (make cof %cast i.p.hon $+cay) furl)
         ::
-            $man
-          %+  cope  
-            |-  ^-  (bolt vase)
-            ?~  p.hon  (fine cof [[%atom %n `~] 0])
-            %+  cope  $(p.hon l.p.hon)
-            |=  {cof/cafe lef/vase}
-            %+  cope  ^$(cof cof, p.hon r.p.hon)
-            |=  {cof/cafe rig/vase}
-            %+  cope  ^^^$(cof cof, hon q.n.p.hon)
-            |=  {cof/cafe mar/mark vax/vase}
-            %+  fine  cof
-            %+  slop
-              (slop [[%atom %tas ~] p.n.p.hon] vax)
-            (slop lef rig)
-          (flux |=(a/vase noun+a))
-        ::
-            $now
-          %+  cope  (chad cof bax %da p.hon)
-          (flux |=(a/vase noun+a))
-        ::
-            $nod
-          %+  cope  (chad cof bax p.hon q.hon)
-          (flux |=(a/vase noun+a))
-        ::
-            $nap
+            $fscb
           %+  cope  (chai cof bax p.hon)
           (flux |=(a/vase noun+a))
         ::
-            $saw  
+            $fssm
           %+  cope  $(hon q.hon)
           |=  {cof/cafe mar/mark sam/vase}
           %+  cope  (maim cof bax p.hon)
@@ -1625,7 +1566,7 @@
           %+  cope  (maul cof gat sam)
           (flux |=(a/vase noun+a))
         ::
-            $see
+            $fscl
           =+  vez=(vang & (tope how))
           =+  tuz=(posh:vez p.hon)
           ?~  tuz  (flaw cof leaf+"bad tusk: {<p.hon>}" ~)
@@ -1635,7 +1576,7 @@
           ?~  bem  (flaw cof leaf+"bad beam: {<u.pax>}" ~)
           $(hon q.hon, how u.bem)
         ::
-            $sic
+            $fskt
           %+  cope  $(hon q.hon)
           |=  {cof/cafe mar/mark vax/vase}
           %+  cope  (maim cof bax [%bunt p.hon])
@@ -1644,15 +1585,19 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [mar p.tug q.vax])
         ::
-            $toy
-          ?:  p.hon
-            =.  arg  ?.(lit arg many+~)
-            (cope (make cof %bake q.hon arg how) furl)
+            $fszp
           %+  cool  |.(leaf+"ford: hook {<q.hon>} {<(tope how)>}")
-          %+  cope  (fade cof how)
-          |=  {cof/cafe hyd/hood}
-          %+  cope  (abut:(meow how arg) cof hyd) 
-          ;~(cope (lake | q.hon) (flux |=(a/vase [q.hon a])))
+          %.  [cof how]
+          ;~  cope
+            fade
+            abut:(meow how arg)
+            (lake | q.hon)
+            (flux |=(a/vase [q.hon a]))
+          ==
+        ::
+            $fszy
+          =.  arg  ?.(lit arg many+~)
+          (cope (make cof %bake q.hon arg how) furl)
         ==
       ::
       ++  head                                          ::  consume structures
