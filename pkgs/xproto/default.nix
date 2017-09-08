@@ -32,7 +32,7 @@ let
     builder = ./license_builder.sh;
   };
 
-  license_set = xorg-macros.license_set // { xproto = license; };
+  license_set = xorg-macros.license_set // { "${name}" = license; };
 
 in
   lib // { inherit license_set; }

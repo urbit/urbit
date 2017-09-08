@@ -38,6 +38,6 @@ let
 
   license_set =
     (if crossenv.os == "linux" then libudev.license_set else {}) //
-    { libusbp = license; };
+    { "${name}" = license; };
 in
   lib // { inherit examples license_set; }

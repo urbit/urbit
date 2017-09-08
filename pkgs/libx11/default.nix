@@ -49,8 +49,7 @@ let
     xextproto.license_set //
     inputproto.license_set //
     kbproto.license_set //
-    { libx11 = license; };
+    { "${name}" = license; };
 
 in
   lib // { inherit license_set; }
-

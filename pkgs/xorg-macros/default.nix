@@ -21,7 +21,7 @@ let
     builder = ./license_builder.sh;
   };
 
-  license_set = { xorg-macros = license; };
+  license_set = { "${name}" = license; };
 
 in
   lib // { inherit license_set; }

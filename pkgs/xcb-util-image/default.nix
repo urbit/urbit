@@ -34,7 +34,7 @@ let
   license_set =
     libxcb.license_set //
     xcb-util.license_set //
-    { xcb-util-image = license; };
+    { "${name}" = license; };
 
 in
   lib // { inherit license_set; }

@@ -31,7 +31,7 @@ let
 
   license_set =
     libxcb.license_set //
-    { xcb-util-keysyms = license; };
+    { "${name}" = license; };
 
 in
   lib // { inherit license_set; }

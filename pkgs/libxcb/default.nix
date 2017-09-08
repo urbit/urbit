@@ -32,7 +32,7 @@ let
   };
 
   examples = crossenv.make_derivation rec {
-    name = "xcb-examples";
+    name = "libxcb-examples";
 
     builder = ./examples_builder.sh;
 
@@ -50,7 +50,7 @@ let
   license_set =
     xcb-proto.license_set //
     libxau.license_set //
-    { libxcb = license; };
+    { "${name}" = license; };
 
 in
   lib // { inherit examples license_set; }
