@@ -9313,18 +9313,18 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2fE, grammar                  ::
 ::
-++  vang
-  |=  {bug/? wer/path}
-  %*(. vast bug bug, wer wer)
+++  vang                                                ::  set ++vast params
+  |=  {bug/? wer/path}                                  ::  bug: debug mode
+  %*(. vast bug bug, wer wer)                           ::  wer: where we are
 ::
-++  vast  !.
+++  vast  !.                                            ::  main parsing core
   =+  [bug=`?`| was=*(set path) wer=*path]
   |%
-  ++  gash  %+  cook
+  ++  gash  %+  cook                                    ::  parse path
               |=  a/(list tyke)  ^-  tyke
               ?~(a ~ (weld i.a $(a t.a)))
             (more fas gasp)
-  ++  gasp  ;~  pose
+  ++  gasp  ;~  pose                                    ::  parse =path= etc.
               %+  cook
                 |=({a/tyke b/tyke c/tyke} :(weld a b c))
               ;~  plug
@@ -9335,7 +9335,7 @@
               (cook |=(a/(list) (turn a |=(b/* ~))) (plus tis))
             ==
   ++  glam  ~+((glue ace))
-  ++  hasp  ;~  pose
+  ++  hasp  ;~  pose                                    ::  path element
               (ifix [sel ser] wide)
               (stag %call (ifix [pel per] (most ace wide)))
               (stag %sand (stag %t qut))
@@ -9347,15 +9347,15 @@
               |=({a/tape b/tape} (rap 3 (weld a b)))
             ;~(plug (star low) (star hig))
   ::
-  ++  plex
+  ++  plex                                              ::  reparse static path
     |=  gen/twig  ^-  (unit path)
-    ?:  ?=({$dbug *} gen)
+    ?:  ?=({$dbug *} gen)                               ::  unwrap $dbug
       $(gen q.gen)
-    ?.  ?=({$conl *} gen)  ~
-    %+  reel  p.gen
-    |=  {a/twig b/_`(unit path)`[~ u=/]}
+    ?.  ?=({$conl *} gen)  ~                            ::  require :~ twig
+    %+  reel  p.gen                                     ::  build using elements
+    |=  {a/twig b/_`(unit path)`[~ u=/]}                ::  starting from just /
     ?~  b  ~
-    ?.  ?=({$sand ?($ta $tas) @} a)  ~
+    ?.  ?=({$sand ?($ta $tas) @} a)  ~                  ::  require /foo constants
     `[q.a u.b]
   ::
   ++  pray
@@ -9400,14 +9400,18 @@
     =+  zom=(poon (flop moz) q.u.pof)
     ?~(zom ~ `(weld (flop gul) u.zom))
   ::
-  ++  poof  |=(pax/path ^-((list twig) (turn pax |=(a/@ta [%sand %ta a]))))
-  ++  poon
-    |=  {pag/(list twig) goo/tyke}
-    ^-  (unit (list twig))
-    ?~  goo  `~
-    %+  both
-      ?^(i.goo i.goo ?~(pag ~ `u=i.pag))
-    $(goo t.goo, pag ?~(pag ~ t.pag))
+  ++  poof                                              ::  path -> (list twig)
+    |=(pax/path ^-((list twig) (turn pax |=(a/@ta [%sand %ta a]))))
+  ::
+  ::  tyke is =foo== as ~[~ `foo ~ ~]
+  ::  interpolate '=' path components
+  ++  poon                                              ::  try to replace '='s
+    |=  {pag/(list twig) goo/tyke}                      ::    default to pag
+    ^-  (unit (list twig))                              ::    for null goo's
+    ?~  goo  `~                                         ::  keep empty goo
+    %+  both                                            ::  otherwise head comes
+      ?^(i.goo i.goo ?~(pag ~ `u=i.pag))                ::    from goo or pag
+    $(goo t.goo, pag ?~(pag ~ t.pag))                   ::  recurse on tails
   ::
   ++  poor
     %+  sear  posh
