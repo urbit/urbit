@@ -190,7 +190,7 @@
       0w0                           ::   86, ~mut, Philip Monk
       0w0                           ::   87, ~nyx, Philip Monk
       0w0                           ::   88, ~rex, Tlon Investor 12
-      0w0                           ::   89, ~teb, Curtis Yarvin
+      0w0                           ::   89, ~teb, Michael Vassar
       0w0                           ::   90, ~fus, Tlon Corporation
       0w0                           ::   91, ~hep, urbit.org
       0w0                           ::   92, ~ben, urbit.org
