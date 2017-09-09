@@ -172,7 +172,7 @@
       0w0                           ::   68, ~sub, Curtis Yarvin
       0w0                           ::   69, ~pet, Curtis Yarvin
       0w0                           ::   70, ~rul, Curtis Yarvin
-      0w0                           ::   71, ~syn, Henry Ault
+      0w0                           ::   71, ~syn, Pantera
       0w0                           ::   72, ~reg, Henry Ault
       0w0                           ::   73, ~tyd, Henry Ault
       0w0                           ::   74, ~sup, Henry Ault
