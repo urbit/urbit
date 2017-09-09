@@ -376,7 +376,7 @@
       %_    .
           +>
         =/  typ
-          =+  (ly ~[%a-group %f-grams %x-cabal])
+          =+  (le:nl ~[%a-group %f-grams %x-cabal])
           (rap 3 (turn - encode:peer-type))
         (ra-subscribe:(ra-subscribe her.she ~) her.she [typ man.she ~])
       ==
@@ -625,7 +625,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=(~(tap in one))
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -633,7 +633,7 @@
           ret
         ret(old [i.eno old.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=(~(tap in two))
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -1433,7 +1433,7 @@
     :*  (shaf %comt eny.hid)
         [[[%& our.hid man] *envelope %pending] ~ ~]
         now.hid
-        (sy /fora-post eyre+pax ~)
+        (si:nl /fora-post eyre+pax ~)
       :-  %mor  :~
         [%fat text+(to-wain:format txt) [%url [ra-base-hart `pax ~] `fra]]
         [%app %tree (crip "forum post: '{(trip hed)}'")]
@@ -1472,13 +1472,13 @@
     %^  ra-consume  &
       src.hid
     :*  (shaf %comt eny.hid)
-        [[[%& our.hid man] *envelope %pending] ~ ~]
+        `audience`[[`partner`[%& our.hid man] *envelope %pending] ~ ~]
         now.hid
-        (sy /comment eyre+pax ~)
-      :-  %mor  :~
-        [%fat text+(to-wain:format txt) [%url [ra-base-hart `pax ~] `fra]]
-        [%app %tree (crip "comment on /{nam}")]
-      ==
+        (si:nl /comment eyre+pax ~)
+        :-  %mor  :~
+          [%fat text+(to-wain:format txt) [%url [ra-base-hart `pax ~] `fra]]
+          [%app %tree (crip "comment on /{nam}")]
+        ==
     ==
   ::
   ++  ra-know                                           ::  story monad
@@ -1779,7 +1779,7 @@
       =+  old=(sub now.hid ~d1)                         :: XX full backlog
       =+  ini=?^(num (scot %ud u.num) (scot %da old))
       =/  typ
-        =+  (ly ~[%a-group %f-grams %x-cabal])
+        =+  (le:nl ~[%a-group %f-grams %x-cabal])
         (rap 3 (turn - encode:peer-type))
       ?-  -.tay
         $|  !!

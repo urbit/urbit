@@ -8162,7 +8162,7 @@
     --
   ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
   ::                                                    ::
-  ++  miss  !:                                          ::  nonintersection
+  ++  miss                                              ::  nonintersection
     |=  $:  ::  ref: symmetric span
             ::
             ref/span
@@ -8422,7 +8422,7 @@
                  $(gen doz)
     ==
   ::                                                    ::
-  ++  redo  !:                                          ::  refurbish faces
+  ++  redo                                              ::  refurbish faces
     |=  $:  ::  ref: raw payload
             ::
             ref/span
