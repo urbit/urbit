@@ -29,7 +29,7 @@ let
     builder = ./clang_builder.sh;
     osxcross = ./osxcross;
     version = clang_version;
-    src = llvm_src;
+    src = clang_src;
     inherit llvm_src;
     native_inputs = [ nixpkgs.python2 ];
   };
