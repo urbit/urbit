@@ -32,12 +32,19 @@ let
     inherit nixpkgs host binutils headers gcc_options;
   };
 
+  license = native.make_derivation {
+    name = "linux-license";
+    inherit (gcc) musl_src gcc_src;
+    linux_src = headers.src;
+    builder = ./license_builder.sh;
+  };
+
+  global_license_set = { _global = license; };
+
   cmake_toolchain = import ../cmake_toolchain {
     cmake_system_name = "Linux";
     inherit nixpkgs host;
   };
-
-  gyp_os = "linux";  # TODO: remove from here and the mingw-w64 env
 
   crossenv = {
     # Target info variables.
@@ -45,10 +52,10 @@ let
 
     # Cross-compiling toolchain.
     inherit gcc binutils;
-    toolchain_inputs = [ gcc binutils ];
+    toolchain_drvs = [ gcc binutils ];
 
     # Build tools and variables to support them.
-    inherit cmake_toolchain gyp_os;
+    inherit cmake_toolchain;
 
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
@@ -56,6 +63,11 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
+    # License information that should be shipped with any software
+    # compiled by this environment.
+    inherit global_license_set;
+
+    # Linux headers.  These are already a part of GCC though.
     inherit headers;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;

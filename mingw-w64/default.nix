@@ -53,12 +53,14 @@ let
     inherit nixpkgs arch binutils;
   };
 
-  global_license_fragment = nixpkgs.stdenv.mkDerivation {
-    name = "${mingw-w64_info.name}-license-fragment";
+  license = native.make_derivation {
+    name = "${mingw-w64_info.name}-license";
     inherit (mingw-w64_info) version src;
     gcc_src = gcc.src;
     builder = ./license_builder.sh;
   };
+
+  global_license_set = { _global = license; };
 
   cmake_toolchain = import ../cmake_toolchain {
     cmake_system_name = "Windows";
@@ -71,20 +73,18 @@ let
 
   exe_suffix = ".exe";
 
-  gyp_os = "win";
-
   crossenv = {
     # Target info variables.
     inherit host arch os compiler exe_suffix;
 
     # Cross-compiling toolchain.
     inherit gcc binutils;
-    toolchain_inputs = [ gcc binutils ];
+    toolchain_drvs = [ gcc binutils ];
     inherit mingw-w64_full;
     mingw-w64 = mingw-w64_full;
 
     # Build tools and variables to support them.
-    inherit cmake_toolchain gyp_os;
+    inherit cmake_toolchain;
 
     # nixpkgs: a wide variety of programs and build tools.
     inherit nixpkgs;
@@ -94,7 +94,7 @@ let
 
     # License information that should be shipped with any software compiled by
     # this environment.
-    inherit global_license_fragment;
+    inherit global_license_set;
 
     # Expressions used to bootstrap the toolchain, not normally needed.
     inherit mingw-w64_info mingw-w64_headers gcc_stage_1;

@@ -78,9 +78,29 @@ rec {
   };
 
   libxcb = import ./pkgs/libxcb {
-    inherit crossenv xcb-proto libxau xproto;
+    inherit crossenv xcb-proto libxau;
   };
   libxcb_examples = libxcb.examples;
+
+  xcb-util = import ./pkgs/xcb-util {
+    inherit crossenv libxcb;
+  };
+
+  xcb-util-image = import ./pkgs/xcb-util-image {
+    inherit crossenv libxcb xcb-util;
+  };
+
+  xcb-util-keysyms = import ./pkgs/xcb-util-keysyms {
+    inherit crossenv libxcb;
+  };
+
+  xcb-util-renderutil = import ./pkgs/xcb-util-renderutil {
+    inherit crossenv libxcb;
+  };
+
+  xcb-util-wm = import ./pkgs/xcb-util-wm {
+    inherit crossenv libxcb;
+  };
 
   xtrans = import ./pkgs/xtrans {
     inherit crossenv;
@@ -125,7 +145,8 @@ rec {
   };
 
   qt = import ./pkgs/qt58 {
-    inherit crossenv libudev libxcb libx11 libxi dejavu-fonts;
+    inherit crossenv libudev libxcb dejavu-fonts xcb-util xcb-util-image
+      xcb-util-wm xcb-util-keysyms xcb-util-renderutil libx11 libxi;
   };
   qt_examples = qt.examples;
   qt_license_fragment = qt.license_fragment;

@@ -1,28 +1,28 @@
-{ crossenv, xorg-macros, xproto }:
+{ crossenv, libxcb, xcb-util }:
 
 let
-  version = "1.0.8";
+  version = "0.4.0";
 
-  name = "libxau-${version}";
+  name = "xcb-util-image-${version}";
 
   src = crossenv.nixpkgs.fetchurl {
-    url = "https://www.x.org/archive/individual/lib/libXau-${version}.tar.bz2";
-    sha256 = "1wm4pv12f36cwzhldpp7vy3lhm3xdcnp4f184xkxsp7b18r7gm7x";
+    url = "https://xcb.freedesktop.org/dist/xcb-util-image-${version}.tar.bz2";
+    sha256 = "1z1gxacg7q4cw6jrd26gvi5y04npsyavblcdad1xccc8swvnmf9d";
   };
 
   lib = crossenv.make_derivation rec {
     inherit version name src;
-
-    builder = ./builder.sh;
+    builder = ./util_image_builder.sh;
 
     configure_flags =
       "--host=${crossenv.host} " +
       "--enable-static " +
       "--disable-shared";
 
-    cross_inputs = [ xorg-macros xproto ];
+    cross_inputs = [ libxcb xcb-util ];
 
-    inherit xproto;
+    inherit libxcb;
+    libxcb_util = xcb-util;
   };
 
   license = crossenv.native.make_derivation {
@@ -32,8 +32,8 @@ let
   };
 
   license_set =
-    xorg-macros.license_set //
-    xproto.license_set //
+    libxcb.license_set //
+    xcb-util.license_set //
     { "${name}" = license; };
 
 in

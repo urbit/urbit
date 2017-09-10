@@ -17,5 +17,4 @@ license=$(cat libusbp/LICENSE.txt)
 $license
 </pre>
 EOF
-  cat $input_license_fragments
 } > $out

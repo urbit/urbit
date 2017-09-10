@@ -1,4 +1,5 @@
-{ crossenv, libudev, libxcb, libx11, libxi, dejavu-fonts }:
+{ crossenv, libudev, libxcb, dejavu-fonts, xcb-util, xcb-util-image,
+  xcb-util-wm, xcb-util-keysyms, xcb-util-renderutil, libx11, libxi }:
 
 let
   version = "5.8.0";
@@ -88,11 +89,11 @@ let
            libudev  # not sure if this helps, but Qt does look for it
            libx11
            libxcb
-           libxcb.util
-           libxcb.util-image
-           libxcb.util-wm
-           libxcb.util-keysyms
-           libxcb.util-renderutil
+           xcb-util
+           xcb-util-image
+           xcb-util-wm
+           xcb-util-keysyms
+           xcb-util-renderutil
            libxi
          ]
        else [];
@@ -127,12 +128,29 @@ let
     src = base_src;
     builder = ./license_builder.sh;
   };
+
+  license_set =
+    (
+      if crossenv.os == "linux" then
+        libudev.license_set //
+        libx11.license_set //
+        libxcb.license_set //
+        xcb-util.license_set //
+        xcb-util-image.license_set //
+        xcb-util-wm.license_set //
+        xcb-util-keysyms.license_set //
+        xcb-util-renderutil.license_set //
+        libxi.license_set
+      else
+        {}
+    ) //
+    { "${base.name}" = license_fragment; };
 in
-base // {
-  recurseForDerivations = true;
-  inherit base_src;
-  inherit base_raw;
-  inherit base;
-  inherit examples;
-  inherit license_fragment;
-}
+  base // {
+    recurseForDerivations = true;
+    inherit base_src;
+    inherit base_raw;
+    inherit base;
+    inherit examples;
+    inherit license_set;
+  }

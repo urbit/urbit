@@ -1,5 +1,7 @@
 { crossenv }:
 
+if crossenv.os != "windows" then "windows only" else
+
 crossenv.make_derivation rec {
   name = "usbview-${version}";
 

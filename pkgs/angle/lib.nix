@@ -1,9 +1,7 @@
 { crossenv, debug ? false }:
 
-let
-  target = if crossenv.os == "windows" then "win32"
-           else throw "unknown target";
-in
+if crossenv.os != "windows" then "windows only" else
+
 crossenv.make_derivation rec {
   name = "angle-${version}";
 
@@ -26,8 +24,8 @@ crossenv.make_derivation rec {
   GYP_GENERATORS = "ninja";
 
   gyp_flags =
-      "-D OS=${crossenv.gyp_os} " +
-      "-D TARGET=${target} " +
+      "-D OS=win " +
+      "-D TARGET=win32 " +
       "-D use_ozone=0 " +
       "-D angle_enable_vulkan=0 " +   # Vulkan support is in progress
       "-D angle_gl_library_type=static_library " +
