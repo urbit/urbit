@@ -12,7 +12,7 @@ let
 
   exe_suffix = "";
 
-  clang_version = "3.9.1";
+  clang_version = "3.9.1";  # TODO: use latest version
 
   clang_src = nixpkgs.fetchurl {
     url = "https://llvm.org/releases/${clang_version}/cfe-${clang_version}.src.tar.xz";
@@ -25,13 +25,15 @@ let
   };
 
   clang = native.make_derivation rec {
-    name = "mac-clang";
+    name = "clang";
     builder = ./clang_builder.sh;
-    osxcross = ./osxcross;
     version = clang_version;
     src = clang_src;
     inherit llvm_src;
     native_inputs = [ nixpkgs.python2 ];
+    cmake_flags =
+      "-DCMAKE_BUILD_TYPE=Release " +
+      "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
   toolchain = native.make_derivation rec {

@@ -1,21 +1,17 @@
 source $setup
 
-cp -r $osxcross osxcross
-chmod -R u+w osxcross
-cd osxcross
+tar -xf $llvm_src
+mv llvm-* llvm
+cd llvm/tools
+tar -xf $src
+mv cfe-* clang
+cd ../..
 
-mkdir tarballs
-cp $src tarballs/cfe-$version.src.tar.xz
-cp $llvm_src tarballs/llvm-$version.src.tar.xz
+mkdir build
+cd build
 
-ls -l tarballs
+cmake ../llvm -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
 
-export DISABLE_BOOTSTRAP=1
-export UNATTENDED=1
-export INSTALLPREFIX=$out
+make
 
-./build_clang.sh
-
-ls -l
-cd build/llvm-$version.src/build
 make install
