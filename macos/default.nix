@@ -12,6 +12,28 @@ let
 
   exe_suffix = "";
 
+  clang_version = "3.9.1";
+
+  clang_src = nixpkgs.fetchurl {
+    url = "https://llvm.org/releases/${clang_version}/cfe-${clang_version}.src.tar.xz";
+    sha256 = "0qsyyb40iwifhhlx9a3drf8z6ni6zwyk3bvh0kx2gs6yjsxwxi76";
+  };
+
+  llvm_src = nixpkgs.fetchurl {
+    url = "https://llvm.org/releases/${clang_version}/llvm-${clang_version}.src.tar.xz";
+    sha256 = "1vi9sf7rx1q04wj479rsvxayb6z740iaz3qniwp266fgp5a07n8z";
+  };
+
+  clang = native.make_derivation rec {
+    name = "mac-clang";
+    builder = ./clang_builder.sh;
+    osxcross = ./osxcross;
+    version = clang_version;
+    src = llvm_src;
+    inherit llvm_src;
+    native_inputs = [ nixpkgs.python2 ];
+  };
+
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
@@ -31,7 +53,7 @@ let
       sha256 = "0qxvzxz0pddkmswx4w09ma9gvx8a0ch4ki7pdxkwg7sg3z5z0x5n";
     };
 
-    native_inputs = [ nixpkgs.clang ];
+    native_inputs = [ clang ];
   };
 
   cmake_toolchain = import ../cmake_toolchain {
@@ -55,6 +77,8 @@ let
 
     # Some native build tools made by nixcrpkgs.
     inherit native;
+
+    inherit clang;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
