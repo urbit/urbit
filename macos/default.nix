@@ -38,6 +38,10 @@ let
     sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
   };
 
+  # TODO: prevent it from finding and using /..//bin/ld when I compile a test program
+  # TODO: prevent it from finding and using /usr/bin/i686-w64-mingw32-ld
+  #  when I use "-target i686-w64-mingw32"
+  # TODO: Disable setting the -dynamic-linker automatically (see nixpkgs purity.patch)
   clang = native.make_derivation rec {
     name = "clang";
     builder = ./clang_builder.sh;
@@ -49,8 +53,6 @@ let
     cmake_flags =
       "-DCMAKE_BUILD_TYPE=Release " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
-    # TODO: Disable setting the -dynamic-linker automatically (see nixpkgs purity.patch)
-    # TODO: Build with ninja, measuring the build time improvement.
   };
 
   toolchain = native.make_derivation rec {

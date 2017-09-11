@@ -15,7 +15,7 @@ cd ../../..
 mkdir build
 cd build
 
-cmake ../llvm -GNinja -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
+cmake ../llvm -GNinja -DDEFAULT_SYSROOT=$out -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
 
 ninja
 
