@@ -53,7 +53,7 @@
   ==                                                    ::
 ::                                                      ::
 ++  burg                                                ::  gonadic rule
-  |*  {a/mold b/mold}                             ::  from and to
+  |*  {a/mold b/mold}                                   ::  from and to
   $-({c/cafe d/a} (bolt b))                             ::
 ::                                                      ::
 ++  cafe                                                ::  live cache
@@ -79,7 +79,7 @@
 ++  deps                                                ::  depend state
   $%  {$init p/(set beam)}                              ::  given out
       {$sent p/(set duct) q/(set beam)}                 ::  listener exists
-      {$done $~}                                         ::  change seen
+      {$done $~}                                        ::  change seen
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah/duct                                          ::  cause
@@ -183,18 +183,48 @@
     ^-  {(list move) baby}
     [(flop mow) bay]
   ::
-  ++  apax                                              ::  call
-    ^+  ..apax
+  ++  dep-warps                                         ::  create %warp's
+    |=  {dep/@uvH bes/(set beam) rav/$-(beam (unit rave))}
+    ^-  (list move)
+    %+  turn  (~(tap in bes))
+    |=  bem/beam
+    :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
+    [%c [%warp [our p.bem] q.bem (rav bem)]]
+  ::
+  ++  deps-take                                         ::  take rev update
+    |=  {tea/wire dep/@uvH bem/beam sih/sign}
+    =<  abet  ^+  +>
+    ?.  ?=($writ &2.sih)
+      ~|(%bad-axun !!)
+    ?~  p.sih  +>.$                :: acknowledged
+    :: ~&  writ+tea
+    =+  dap=(~(got by deh.bay) dep)
+    =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
+    ^-  {dop/$@($~ _dap) mow/_mow}
+    ?-    -.dap
+        $done  `mow                ::  writ redundant
+        $init  ~|(never-subscribed+dep !!)
+        $sent
+      :-  [%done ~]
+      ;:  weld
+        (dep-warps dep (~(del in q.dap) bem) |=(beam ~))  ::  cancel outstanding
+        (turn (~(tap in p.dap)) |=(hen/duct [hen %give %news dep]))
+        mow
+      ==
+    ==
+  ::
+  ++  exec-cancel
+    =<  abet  ^+  .
     =+  nym=(~(get by dym.bay) hen)
     ?~  nym                                             ::  XX should never
       ~&  [%ford-mystery hen]
-      ..apax
+      ..abet
     =+  tas=(need (~(get by q.tad.bay) u.nym))
-    amok:~(camo zo [u.nym tas])
+    abut:~(decamp zo [u.nym tas])
   ::
-  ++  apex
+  ++  exec-start
     |=  kub/bilk
-    ^+  +>
+    =<  abet  ^+  +>
     =+  num=p.tad.bay
     ?<  (~(has by dym.bay) hen)
     =:  p.tad.bay  +(p.tad.bay)
@@ -202,99 +232,75 @@
       ==
     ~(exec zo [num `task`[hen kub ~ ~]])
   ::
-  ++  axon                                              ::  take
+  ++  task-take
     |=  {num/@ud {van/vane ren/care bem/beam} sih/sign}
-    ^+  +>
+    =<  abet  ^+  +>
     ?:  ?=({$unto $quit *} +.sih)
       +>.$
     =+  tus=(~(get by q.tad.bay) num)
     ?~  tus
       ~&  [%ford-lost van num]
       +>.$
-    ?-    -.+.sih
-        $writ  (~(resp zo [num u.tus]) [van ren bem] p.+.sih)
-        $made  (~(resm zo [num u.tus]) [van ren bem] [p q]:+.sih)
-        $unto
-      ?+  -.p.+.sih  ~|(ford-strange-unto+-.p.+.sih !!)
-        $diff  (~(resd zo [num u.tus]) [van ren bem] p.p.+.sih)
-        $reap  ?~  p.p.+.sih  +>.$
-               ((slog leaf+"ford-reap-fail" u.p.p.+.sih) +>.$)
-      ==
-    ==
+    (~(take zo [num u.tus]) [van ren bem] sih)
   ::
-  ++  axun                                              ::  take rev update
-    |=  {tea/wire dep/@uvH bem/beam sih/sign}
-    ^+  +>
-    ?+    -.+.sih  ~|(%bad-axun !!)
-        $writ
-      ?~  p.sih  +>.$ 
-      :: ~&  writ+tea
-      =+  dap=(~(got by deh.bay) dep)
-      =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
-      ^-  {dop/$@($~ _dap) mow/_mow}
-      ?-    -.dap
-          $done  `mow                ::  writ redundant
-          $init  ~|(never-subscribed+dep !!)
-          $sent
-        :-  [%done ~]
-        ;:  weld
-          (axap dep (~(del in q.dap) bem))              ::  cancel outstanding
-          (turn (~(tap in p.dap)) |=(hen/duct [hen %give %news dep]))
-          mow
-    ==  ==
-      ==
-  ::
-  ++  axap                                              ::  unsubscribe beams
-    |=  {dep/@uvH dap/(set beam)}
-    %+  turn  (~(tap in dap))
-    |=  bem/beam
-    :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-    [%c %warp [our p.bem] q.bem ~]
-  ::
-  ++  awap                                              ::  get next revision
+  ++  wasp                                              ::  get next revision
     ~%  %ford-w  ..is  ~
     |=  {dep/@uvH ask/?}
+    =<  abet  ^+  +>
     ?:  =(`@`0 dep)
       ~&(dep-empty+hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed+dep +>.$)  ::  XX  ~|  !!
-    ?-  -.u.dap
-      $done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
-      $sent
-        =.  p.u.dap  
-          ?:  ask  (~(put in p.u.dap) hen)
-          (~(del in p.u.dap) hen)
-        ?^  p.u.dap
-          +>.$(deh.bay (~(put by deh.bay) dep u.dap))
-        =.  mow  (weld (axap dep q.u.dap) mow)
-        +>.$(deh.bay (~(put by deh.bay) dep [%init q.u.dap]))
     ::
-      $init
-        ?.  ask  ~&(awap-kill-empty+dep +>.$)  :: crash?
-        %_    +>.$
-            deh.bay 
-          (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
-        ::
-            mow
-          =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
-          |=  bem/beam 
-          :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-          [%c [%warp [our p.bem] q.bem ~ [%next %z r.bem (flop s.bem)]]]
-    ==  ==
+    |^  =^  u-dap  .  ?:(ask start cancel)
+        +>.^$(deh.bay (~(put by deh.bay) dep u-dap))
+    ::
+    ++  cancel
+      ^+  [u.dap ..$]
+      ?-  -.u.dap
+        $done  [u.dap ..$]
+        $init  ~&(on-wasp-kill-empty+dep [u.dap ..$])  :: crash?
+        $sent
+          =.  p.u.dap  (~(del in p.u.dap) hen)
+          ?^  p.u.dap
+            [u.dap ..$]
+          =/  ded  (dep-warps dep p.u.dap |=(beam ~))
+          :-  [%init q.u.dap]
+          ..$(mow (welp ded mow))
+      ==
+    ::
+    ++  start
+      ^+  [u.dap ..$]
+      ?-  -.u.dap
+        $done  [u.dap ..$(mow :_(mow [hen %give %news dep]))]
+        $sent
+          =.  p.u.dap  (~(put in p.u.dap) hen)
+          [u.dap .]
+      ::
+        $init
+          =/  new  %^  dep-warps  dep  p.u.dap
+                   |=(bem/beam `[%next %z r.bem (flop s.bem)])
+          :-  [%sent [hen ~ ~] p.u.dap]
+          ..$(mow (welp new mow))
+      ==
+    --
   ::
   ++  zo
     ~%  %ford-z  ..is  ~
-    =|  dyv/@
+    =|  dyv/@                                           ::  recursion level
     |_  {num/@ud task}
-    ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
-    ++  amok  
+    ++  abet                                            ::  store a blocked task
+      %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
+    ::
+    ++  abut                                            ::  remove a task
       %_  ..zo  
         q.tad.bay  (~(del by q.tad.bay) num)
         dym.bay    (~(del by dym.bay) nah)
       ==
-    ++  camo                                            ::  stop requests
+    ::
+    ++  decamp                                          ::  stop requests
       ^+  .
       =+  kiz=(~(tap in kig))
       |-  ^+  +>
@@ -307,11 +313,12 @@
         $c  [%pass (camp-wire +<) van [%warp [our p.bem] q.bem ~]]
         $g  [%pass (camp-wire +<) van [%deal [our p.bem] q.bem [%pull ~]]]
       ==
+    ::
     ++  camp-wire                                       ::  encode block
       |=  {van/vane ren/care bem/beam}  ^-  wire
       [(scot %p our) (scot %ud num) van ren (tope bem)]
     ::
-    ++  camp                                            ::  request a file
+    ++  camp                                            ::  request data
       |=  {van/vane ren/care bem/beam}
       ^+  +>
       ~&  >>  [%camping van ren bem]
@@ -322,20 +329,77 @@
         :-  hen
         ?+    van  ~&(%camp-stub !!)
             $g
-          :+  %pass  (camp-wire +<)
-          =+  ^=  tyl
-              ?.  ?=($x ren)
-                s.bem
-              ?>  ?=(^ s.bem)
-              t.s.bem
-
+          =/  tyl/path
+            ?.  ?=($x ren)
+              s.bem
+            ?>  ?=(^ s.bem)
+            t.s.bem
+          ::
+          :+  %pass  (camp-wire +<.$)
           [%g [%deal [our p.bem] q.bem [%peer %scry ren (flop tyl)]]]
         ::
             $c
-          :+  %pass  (camp-wire +<)
+          :+  %pass  (camp-wire +<.$)
           [%c [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]]
         ==
       ==
+    ::
+    ++  take                                            ::  handle ^take
+      |=  {{van/vane ren/care bem/beam} sih/sign}
+      ^+  ..zo
+      ?-    &2.sih
+          $writ  (take-writ [van ren bem] p.sih)
+          $made  (take-made [van ren bem] [p q]:sih)
+          $unto
+        ?+  -.p.sih  ~|(ford-strange-unto+[-.p.sih] !!)
+          $diff  (take-diff [van ren bem] p.p.sih)
+          $reap  ?~  p.p.sih  ..zo
+                 ((slog leaf+"ford-reap-fail" u.p.p.sih) ..zo)
+        ==
+      ==
+    ::
+    ++  take-diff
+      |=  {{van/vane ren/care bem/beam} cag/cage}
+      ^+  ..zo
+      ?>  ?=($g van)
+      ?:  |(!?=($x ren) =(-.s.bem p.cag))
+        =.  kig  (~(del in kig) +<-.$)
+        =.  mow  :_(mow [hen (cancel van ren bem)])
+        =+  (cat 3 van ren)
+        exec(keg (~(put by keg) [- bem] cag))
+      =.  mow
+        :_  mow
+        :^  hen  %pass  (camp-wire van ren bem)
+        [%f %exec our ~ bek %cast ((hard mark) -.s.bem) %$ cag]
+      ..zo
+    ::
+    ++  take-made
+      |=  {{van/vane ren/care bem/beam} dep/@uvH gag/gage}  ::  XX  depends?
+      ^+  ..zo
+      ?>  ?=($g van)
+      =.  kig  (~(del in kig) +<-.$)
+      =.  mow  :_(mow [hen (cancel van ren bem)])
+      ?:  ?=($| -.gag)
+        abut:(expo [%made dep %| leaf+"ford-scry-made-fail" p.gag])
+      ?:  ?=($tabl -.gag)
+        abut:(expo [%made dep %| leaf+"ford-scry-made-strange" ~])
+      =+  (cat 3 van ren)
+      exec(keg (~(put by keg) [- bem] p.gag))
+    ::
+    ++  take-writ
+      |=  {{van/vane ren/care bem/beam} rot/riot}
+      ^+  ..zo
+      ?>  ?=($c van)
+      =.  kig  (~(del in kig) +<-.$)
+      ?~  rot
+        =^  dep  deh.bay  (daze ~ deh.bay)              ::  dependencies?
+        abut:(expo [%made dep %| (smyt ren (tope bem)) ~])
+      =+  (cat 3 van ren)
+      exec(keg (~(put by keg) [- bem] r.u.rot))
+    ::
+    ::+|
+    ::
+    ::> Exec proper
     ::
     ++  clad                                            ::  hash dependencies
       |*  hoc/(bolt)  ^+  [*@uvH hoc]
@@ -515,7 +579,7 @@
         |=  {lam/marv ram/marv nod/(unit {knot res})}
         ?^(nod [u.nod lam ram] (~(uni by lam) ram))
       ==
-    ++  dash                                          ::  process cache
+    ++  dash                                            ::  process cache
       |=  cof/cafe
       ^+  +>
       %_(+> jav.bay q.cof, deh.bay r.cof)
@@ -579,15 +643,15 @@
         [hap deh]
       [hap (~(put by deh) hap [%init dep])]
     ::
-    ++  exec                                            ::  execute app
+    ++  exec                                            ::  execute task
       ^+  ..zo
       ?:  !=(~ kig)  ..zo
       =+  bot=(make-norm-bek [~ jav.bay deh.bay] kas)
       =^  dep  bot  (clad bot)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        $0  amok:(expo [%made dep q.q.bot])
-        $2  amok:(expo [%made dep %| q.q.bot])
+        $0  abut:(expo [%made dep q.q.bot])
+        $2  abut:(expo [%made dep %| q.q.bot])
         $1  =+  zuk=(~(tap by p.q.bot) ~)
             =<  abet
             |-  ^+  ..exec
@@ -1227,7 +1291,8 @@
       ::     ==
       :: ~?  !=(%$ pre)  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
       :: =-  ~?  !=(%$ pre)  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
-      =.  dyv  +(dyv)
+      ::
+      =.  dyv  +(dyv)                                   ::  go deeper
       ^-  (bolt gage)
       ?-    -.kas
           ^
@@ -1740,45 +1805,6 @@
         (flux |=(pat/vase [%& p.cay pat]))
       ==
     ::
-    ++  resp
-      |=  {{van/vane ren/care bem/beam} rot/riot}
-      ^+  ..zo
-      ?>  ?=($c van)
-      =.  kig  (~(del in kig) +<-.$)
-      ?~  rot
-        =^  dep  deh.bay  (daze ~ deh.bay)              ::  dependencies?
-        amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
-      =+  (cat 3 van ren)
-      exec(keg (~(put by keg) [- bem] r.u.rot))
-    ::
-    ++  resd                                            ::  take %diff
-      |=  {{van/vane ren/care bem/beam} cag/cage}
-      ^+  ..zo
-      ?>  ?=($g van)
-      ?:  |(!?=($x ren) =(-.s.bem p.cag))
-        =.  kig  (~(del in kig) +<-.$)
-        =.  mow  :_(mow [hen (cancel van ren bem)])
-        =+  (cat 3 van ren)
-        exec(keg (~(put by keg) [- bem] cag))
-      =.  mow
-        :_  mow
-        :^  hen  %pass  (camp-wire van ren bem)
-        [%f %exec our ~ bek %cast ((hard mark) -.s.bem) %$ cag]
-      ..zo
-    ::
-    ++  resm                                            ::  take %made
-      |=  {{van/vane ren/care bem/beam} dep/@uvH gag/gage}  ::  XX  depends?
-      ^+  ..zo
-      ?>  ?=($g van)
-      =.  kig  (~(del in kig) +<-.$)
-      =.  mow  :_(mow [hen (cancel van ren bem)])
-      ?:  ?=($| -.gag)
-        amok:(expo [%made dep %| leaf+"ford-scry-made-fail" p.gag])
-      ?:  ?=($tabl -.gag)
-        amok:(expo [%made dep %| leaf+"ford-scry-made-strange" ~])
-      =+  (cat 3 van ren)
-      exec(keg (~(put by keg) [- bem] p.gag))
-    ::
     ++  syve
       ^-  sley
       |=  {ref/* sec/(unit (set monk)) tem/term bem/beam}
@@ -1810,10 +1836,10 @@
 ~%  %ford-d  ..is  ~
 |%                                                      ::
 ++  call                                                ::  request
-  |=  {hen/duct hic/(hypo (hobo kiss))}
+  |=  {hen/duct typ/* kyz/(hobo kiss)}
   ^+  [p=*(list move) q=..^$]
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
-  ?:  ?=($wegh -.q.hic)
+  =/  kis/kiss  ?.(?=($soft -.kyz) kyz ((hard kiss) p.kyz))
+  ?:  ?=($wegh -.kis)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
     :-  %ford
@@ -1841,19 +1867,19 @@
     ::
         tasks+[%& dym tad]
     ==
-  =+  our=p.q.hic
+  =+  our=p.kis
   =+  ^=  bay  ^-  baby
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    ?-    -.q.hic
+    ?-    -.kis
         $wipe  ~&(%ford-cache-wiped [~ bay(jav ~)])
         $wasp
-      abet:(~(awap za [our hen [now eny ski] ~] bay) q.q.hic)
+      (~(wasp za [our hen [now eny ski] ~] bay) q.kis)
         $exec
-      ?~  q.q.hic
-        abet:~(apax za [our hen [now eny ski] ~] bay)
-      abet:(~(apex za [our hen [now eny ski] ~] bay) u.q.q.hic)
+      ?~  q.kis
+        ~(exec-cancel za [our hen [now eny ski] ~] bay)
+      (~(exec-start za [our hen [now eny ski] ~] bay) u.q.kis)
     ==
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
@@ -1898,13 +1924,14 @@
     =+  dep=(slaw %uv i.t.tea)
     ?^  dep
       =+  bem=(need (tome t.t.tea))
-      abet:(~(axun za [our hen [now eny ski] ~] bay) tea u.dep bem q.hin)
+      (~(deps-take za [our hen [now eny ski] ~] bay) tea u.dep bem q.hin)
+    ::
     ?>  ?=({@ @ ^} t.t.tea)
     =+  :*  num=(slav %ud i.t.tea)
             van=((hard vane) i.t.t.tea)
             ren=((hard care) i.t.t.t.tea)
             bem=(need (tome t.t.t.t.tea))
         ==
-    abet:(~(axon za [our hen [now eny ski] ~] bay) num [van ren bem] q.hin)
+    (~(task-take za [our hen [now eny ski] ~] bay) num [van ren bem] q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --
