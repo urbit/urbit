@@ -20,3 +20,84 @@ diff -ur cfe-3.9.1.src.orig/lib/Driver/ToolChains.cpp cfe-3.9.1.src/lib/Driver/T
    }
  
    // Loop over the various components which exist and select the best GCC
+diff -ur cfe-3.9.1.src.orig/lib/Driver/Tools.cpp cfe-3.9.1.src/lib/Driver/Tools.cpp
+--- cfe-3.9.1.src.orig/lib/Driver/Tools.cpp	2016-11-23 10:00:06.000000000 -0800
++++ cfe-3.9.1.src/lib/Driver/Tools.cpp	2017-09-10 22:26:46.220744861 -0700
+@@ -8054,9 +8054,6 @@
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-shared");
+     } else {
+-      CmdArgs.push_back("--dynamic-linker");
+-      CmdArgs.push_back(
+-          Args.MakeArgString(getToolChain().GetFilePath("ld.so.1")));
+     }
+   }
+ 
+@@ -8216,8 +8213,6 @@
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-shared");
+     } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/usr/libexec/ld.so");
+     }
+   }
+ 
+@@ -8345,8 +8340,6 @@
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-shared");
+     } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/usr/libexec/ld.so");
+     }
+   }
+ 
+@@ -8561,8 +8554,6 @@
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-Bshareable");
+     } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/libexec/ld-elf.so.1");
+     }
+     if (ToolChain.getTriple().getOSMajorVersion() >= 9) {
+       if (Arch == llvm::Triple::arm || Arch == llvm::Triple::sparc ||
+@@ -8818,8 +8809,6 @@
+       CmdArgs.push_back("-Bshareable");
+     } else {
+       Args.AddAllArgs(CmdArgs, options::OPT_pie);
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/libexec/ld.elf_so");
+     }
+   }
+ 
+@@ -9420,13 +9409,6 @@
+   if (!Args.hasArg(options::OPT_static)) {
+     if (Args.hasArg(options::OPT_rdynamic))
+       CmdArgs.push_back("-export-dynamic");
+-
+-    if (!Args.hasArg(options::OPT_shared)) {
+-      const std::string Loader =
+-          D.DyldPrefix + ToolChain.getDynamicLinker(Args);
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back(Args.MakeArgString(Loader));
+-    }
+   }
+ 
+   CmdArgs.push_back("-o");
+@@ -9880,8 +9862,6 @@
+     if (Args.hasArg(options::OPT_shared))
+       CmdArgs.push_back("-Bshareable");
+     else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/usr/libexec/ld-elf.so.2");
+     }
+     CmdArgs.push_back("--hash-style=gnu");
+     CmdArgs.push_back("--enable-new-dtags");
+@@ -11066,8 +11046,6 @@
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-Bshareable");
+     } else {
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back("/libexec/ld-elf.so.1");
+     }
+     CmdArgs.push_back("--enable-new-dtags");
+   }
