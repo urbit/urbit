@@ -34,7 +34,11 @@ rec {
   win32 = i686-w64-mingw32;
   win64 = x86_64-w64-mingw32;
   linux32 = i686-linux-musl;
+  linux-x86 = i686-linux-musl;
+  linux-i686 = i686-linux-musl;
   linux64 = x86_64-linux-musl;
+  linux-x86_64 = x86_64-linux-musl;
+  linux-rpi = armv6-linux-musl;
   rpi = armv6-linux-musl;
   mac = macos;
 
