@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 pushd "${0%/*}" &>/dev/null
 pushd .. &>/dev/null
 source ./tools/tools.sh

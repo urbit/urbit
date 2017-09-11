@@ -308,7 +308,7 @@ if [ "$PLATFORM" != "Darwin" ]; then
   export OSXCROSS_LIBLTO_PATH=$LLVM_LIB_DIR
 fi
 
-$BASE_DIR/wrapper/build.sh 1>/dev/null
+$BASE_DIR/wrapper/build.sh
 
 echo ""
 
