@@ -1,9 +1,9 @@
 source $setup
 
 tar -xf $src
-mv libxau-* libxau
+mv libXau-* libxau
 
-license=$(cat xcb-proto/COPYING)
+license=$(cat libxau/COPYING)
 
 cat > $out <<EOF
 <h2>libxau</h2>

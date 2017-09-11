@@ -3,10 +3,7 @@ source $setup
 tar -xf $src
 mv systemd-* systemd
 
-ls systemd
-exit 3
-
-license=$(cat systemd/LICENSE)
+license=$(cat systemd/LICENSE.LGPL2.1)
 
 cat > $out <<EOF
 <h2>libudev (part of systemd)</h2>

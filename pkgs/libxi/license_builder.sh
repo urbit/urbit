@@ -1,7 +1,7 @@
 source $setup
 
 tar -xf $src
-mv libxi-* libxi
+mv libXi-* libxi
 
 license=$(cat libxi/COPYING)
 

@@ -1,7 +1,7 @@
 source $setup
 
 tar -xf $src
-mv libx11-* libx11
+mv libX11-* libx11
 
 license=$(cat libx11/COPYING)
 

@@ -1,7 +1,7 @@
 source $setup
 
 tar -xf $src
-mv libxext-* libxext
+mv libXext-* libxext
 
 license=$(cat libxext/COPYING)
 
