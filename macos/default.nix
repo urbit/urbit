@@ -24,37 +24,39 @@ let
     sha256 = "1vi9sf7rx1q04wj479rsvxayb6z740iaz3qniwp266fgp5a07n8z";
   };
 
+  osxcross = ./osxcross;
+
+  sdk = ./macsdk.tar.xz;
+
+  cctools_src = nixpkgs.fetchurl {
+    url = "https://github.com/tpoechtrager/osxcross/raw/474f359/tarballs/cctools-895-ld64-274.2_8e9c3f2.tar.xz";
+    sha256 = "0905qhkwismr6bjbzmjbjxgg72ib5a46lfwglw1fzsx3swmzfaqj";
+  };
+
+  xar_src = nixpkgs.fetchurl {
+    url = "https://github.com/tpoechtrager/osxcross/raw/474f359/tarballs/xar-1.6.1.tar.gz";
+    sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
+  };
+
   clang = native.make_derivation rec {
     name = "clang";
     builder = ./clang_builder.sh;
     version = clang_version;
     src = clang_src;
     inherit llvm_src;
+    patches = [ ./clang_megapatch.patch ];
     native_inputs = [ nixpkgs.python2 ];
     cmake_flags =
       "-DCMAKE_BUILD_TYPE=Release " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
+    # TODO: Disable setting the -dynamic-linker automatically (see nixpkgs purity.patch)
+    # TODO: Build with ninja, measuring the build time improvement.
   };
 
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
-    inherit host;
-
-    osxcross = ./osxcross;
-
-    sdk = ./macsdk.tar.xz;
-
-    cctools_src = nixpkgs.fetchurl {
-      url = "https://github.com/tpoechtrager/osxcross/raw/474f359/tarballs/cctools-895-ld64-274.2_8e9c3f2.tar.xz";
-      sha256 = "0905qhkwismr6bjbzmjbjxgg72ib5a46lfwglw1fzsx3swmzfaqj";
-    };
-
-    xar_src = nixpkgs.fetchurl {
-      url = "https://github.com/tpoechtrager/osxcross/raw/474f359/tarballs/xar-1.6.1.tar.gz";
-      sha256 = "0qxvzxz0pddkmswx4w09ma9gvx8a0ch4ki7pdxkwg7sg3z5z0x5n";
-    };
-
+    inherit host osxcross sdk cctools_src xar_src;
     native_inputs = [ clang ];
   };
 

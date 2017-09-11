@@ -5,13 +5,18 @@ mv llvm-* llvm
 cd llvm/tools
 tar -xf $src
 mv cfe-* clang
-cd ../..
+cd clang
+for patch in $patches; do
+  echo applying patch $patch
+  patch -p1 -i $patch
+done
+cd ../../..
 
 mkdir build
 cd build
 
-cmake ../llvm -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
+cmake ../llvm -GNinja -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
 
-make
+ninja
 
-make install
+ninja install

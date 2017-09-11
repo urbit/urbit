@@ -11,10 +11,6 @@ cp $xar_src tarballs/xar-1.6.1.tar.gz
 
 export UNATTENDED=1
 
-# TODO: build with GCC:
-# export CC=gcc
-# export CXX=g++
-
 bash -x ./build.sh
 
 cp -R target $out
