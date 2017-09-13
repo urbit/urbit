@@ -1,26 +1,21 @@
-diff -ur cfe-3.9.1.src.orig/lib/Driver/ToolChains.cpp cfe-3.9.1.src/lib/Driver/ToolChains.cpp
---- cfe-3.9.1.src.orig/lib/Driver/ToolChains.cpp	2016-11-23 13:25:50.000000000 -0800
-+++ cfe-3.9.1.src/lib/Driver/ToolChains.cpp	2017-09-13 07:08:31.831525321 -0700
-@@ -1406,18 +1406,6 @@
+diff -ur cfe-5.0.0.src.orig/lib/Driver/ToolChains/Gnu.cpp cfe-5.0.0.src/lib/Driver/ToolChains/Gnu.cpp
+--- cfe-5.0.0.src.orig/lib/Driver/ToolChains/Gnu.cpp	2017-09-13 07:15:52.419093088 -0700
++++ cfe-5.0.0.src/lib/Driver/ToolChains/Gnu.cpp	2017-09-13 07:21:58.892639000 -0700
+@@ -493,10 +493,6 @@
+       CmdArgs.push_back("-export-dynamic");
  
-     // Then look for gcc installed alongside clang.
-     Prefixes.push_back(D.InstalledDir + "/..");
--
--    // Then look for distribution supplied gcc installations.
--    if (D.SysRoot.empty()) {
--      // Look for RHEL devtoolsets.
--      Prefixes.push_back("/opt/rh/devtoolset-4/root/usr");
--      Prefixes.push_back("/opt/rh/devtoolset-3/root/usr");
--      Prefixes.push_back("/opt/rh/devtoolset-2/root/usr");
--      Prefixes.push_back("/opt/rh/devtoolset-1.1/root/usr");
--      Prefixes.push_back("/opt/rh/devtoolset-1.0/root/usr");
--      // And finally in /usr.
--      Prefixes.push_back("/usr");
--    }
+     if (!Args.hasArg(options::OPT_shared)) {
+-      const std::string Loader =
+-          D.DyldPrefix + ToolChain.getDynamicLinker(Args);
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back(Args.MakeArgString(Loader));
+     }
    }
  
-   // Loop over the various components which exist and select the best GCC
-@@ -3997,19 +3985,6 @@
+diff -ur cfe-5.0.0.src.orig/lib/Driver/ToolChains/Linux.cpp cfe-5.0.0.src/lib/Driver/ToolChains/Linux.cpp
+--- cfe-5.0.0.src.orig/lib/Driver/ToolChains/Linux.cpp	2017-09-13 07:15:52.419093088 -0700
++++ cfe-5.0.0.src/lib/Driver/ToolChains/Linux.cpp	2017-09-13 07:17:58.530311694 -0700
+@@ -195,18 +195,7 @@
    llvm::Triple::ArchType Arch = Triple.getArch();
    std::string SysRoot = computeSysRoot();
  
@@ -36,88 +31,7 @@ diff -ur cfe-3.9.1.src.orig/lib/Driver/ToolChains.cpp cfe-3.9.1.src/lib/Driver/T
 -  PPaths.push_back(Twine(GCCInstallation.getParentLibPath() + "/../" +
 -                         GCCInstallation.getTriple().str() + "/bin")
 -                       .str());
--
-   Distro Distro = DetectDistro(D, Arch);
++  // Removed some code here that found programs like ld in "/..//bin"
  
-   if (IsOpenSUSE(Distro) || IsUbuntu(Distro)) {
-diff -ur cfe-3.9.1.src.orig/lib/Driver/Tools.cpp cfe-3.9.1.src/lib/Driver/Tools.cpp
---- cfe-3.9.1.src.orig/lib/Driver/Tools.cpp	2016-11-23 10:00:06.000000000 -0800
-+++ cfe-3.9.1.src/lib/Driver/Tools.cpp	2017-09-10 22:26:46.220744861 -0700
-@@ -8054,9 +8054,6 @@
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-shared");
-     } else {
--      CmdArgs.push_back("--dynamic-linker");
--      CmdArgs.push_back(
--          Args.MakeArgString(getToolChain().GetFilePath("ld.so.1")));
-     }
-   }
+   Distro Distro(D.getVFS());
  
-@@ -8216,8 +8213,6 @@
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-shared");
-     } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/usr/libexec/ld.so");
-     }
-   }
- 
-@@ -8345,8 +8340,6 @@
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-shared");
-     } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/usr/libexec/ld.so");
-     }
-   }
- 
-@@ -8561,8 +8554,6 @@
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-Bshareable");
-     } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/libexec/ld-elf.so.1");
-     }
-     if (ToolChain.getTriple().getOSMajorVersion() >= 9) {
-       if (Arch == llvm::Triple::arm || Arch == llvm::Triple::sparc ||
-@@ -8818,8 +8809,6 @@
-       CmdArgs.push_back("-Bshareable");
-     } else {
-       Args.AddAllArgs(CmdArgs, options::OPT_pie);
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/libexec/ld.elf_so");
-     }
-   }
- 
-@@ -9420,13 +9409,6 @@
-   if (!Args.hasArg(options::OPT_static)) {
-     if (Args.hasArg(options::OPT_rdynamic))
-       CmdArgs.push_back("-export-dynamic");
--
--    if (!Args.hasArg(options::OPT_shared)) {
--      const std::string Loader =
--          D.DyldPrefix + ToolChain.getDynamicLinker(Args);
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back(Args.MakeArgString(Loader));
--    }
-   }
- 
-   CmdArgs.push_back("-o");
-@@ -9880,8 +9862,6 @@
-     if (Args.hasArg(options::OPT_shared))
-       CmdArgs.push_back("-Bshareable");
-     else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/usr/libexec/ld-elf.so.2");
-     }
-     CmdArgs.push_back("--hash-style=gnu");
-     CmdArgs.push_back("--enable-new-dtags");
-@@ -11066,8 +11046,6 @@
-     if (Args.hasArg(options::OPT_shared)) {
-       CmdArgs.push_back("-Bshareable");
-     } else {
--      CmdArgs.push_back("-dynamic-linker");
--      CmdArgs.push_back("/libexec/ld-elf.so.1");
-     }
-     CmdArgs.push_back("--enable-new-dtags");
-   }
