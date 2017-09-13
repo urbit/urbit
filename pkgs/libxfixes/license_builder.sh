@@ -1,7 +1,7 @@
 source $setup
 
 tar -xf $src
-mv libxfixes-* libxfixes
+mv libXfixes-* libxfixes
 
 license=$(cat libxfixes/COPYING)
 

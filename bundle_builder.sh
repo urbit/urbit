@@ -1,3 +1,4 @@
+source $setup
 names=($names)
 dirs=($dirs)
 mkdir $out

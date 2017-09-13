@@ -9,15 +9,9 @@ mv musl-* musl
 tar -xf $linux_src
 mv linux-* linux
 
-set -x
-ls musl
-ls linux
-exit 2
-
 license_gcc=$(cat gcc/COPYING3.LIB)
-cd $src
-license_runtime=$(cat COPYING.MinGW-w64-runtime/COPYING.MinGW-w64-runtime.txt)
-license_winpthread=$(cat mingw-w64-libraries/winpthreads/COPYING)
+license_musl=$(cat musl/COPYRIGHT)
+license_linux=$(cat linux/COPYING)
 
 cat > $out <<EOF
 <p>
@@ -36,18 +30,16 @@ cat > $out <<EOF
 $license_gcc
 </pre>
 
-<h2>MinGW-w64 runtime components</h2>
+<h2>musl libc</h2>
 
 <pre>
-$license_runtime
+$license_musl
 </pre>
 
-<p>
-  libwinpthread also comes from the mingw-w64 project and its license is below.
-</p>
+<h2>Linux headers</h2>
 
 <pre>
-$license_winpthread
+$license_linux
 </pre>
 
 EOF

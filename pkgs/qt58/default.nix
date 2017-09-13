@@ -4,6 +4,8 @@
 let
   version = "5.8.0";
 
+  name = "qtbase-${version}";
+
   # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
   platform =
@@ -104,8 +106,7 @@ let
   # linking; other projects maintian large, messy patches to fix it, but we
   # prefer to generate the CMake files in a clean way from scratch.
   base = crossenv.make_derivation {
-    name = "qtbase-${version}";
-    inherit version;
+    inherit version name;
     os = crossenv.os;
     qtbase = base_raw;
     cross_inputs = base_raw.cross_inputs;
@@ -144,7 +145,7 @@ let
       else
         {}
     ) //
-    { "${base.name}" = license_fragment; };
+    { "${name}" = license_fragment; };
 in
   base // {
     recurseForDerivations = true;
