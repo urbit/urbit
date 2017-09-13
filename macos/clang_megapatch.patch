@@ -1,59 +1,6 @@
-diff -ur cfe-3.9.1.src.orig/lib/Driver/Driver.cpp cfe-3.9.1.src/lib/Driver/Driver.cpp
---- cfe-3.9.1.src.orig/lib/Driver/Driver.cpp	2016-07-15 16:13:27.000000000 -0700
-+++ cfe-3.9.1.src/lib/Driver/Driver.cpp	2017-09-12 21:59:58.322664014 -0700
-@@ -70,6 +70,8 @@
-   Dir = llvm::sys::path::parent_path(ClangExecutable);
-   InstalledDir = Dir; // Provide a sensible default installed dir.
- 
-+  llvm::errs() << "Hey default InstalledDir = Dir = " << Dir << "\n";
-+
-   // Compute the path to the resource directory.
-   StringRef ClangResourceDir(CLANG_RESOURCE_DIR);
-   SmallString<128> P(Dir);
-@@ -567,6 +569,10 @@
-   const ToolChain &TC = getToolChain(
-       *UArgs, computeTargetTriple(*this, DefaultTargetTriple, *UArgs));
- 
-+  for (const auto & Path : TC.getProgramPaths()) {
-+    llvm::errs() << "Driver::BuildCompilation 5 " << Path << "\n";
-+  }
-+
-   // The compilation takes ownership of Args.
-   Compilation *C = new Compilation(*this, TC, UArgs.release(), TranslatedArgs);
- 
-@@ -2550,6 +2556,7 @@
- 
-   const ToolChain::path_list &List = TC.getProgramPaths();
-   for (const auto &Path : List) {
-+    llvm::errs() << "Driver::GetProgramPath 2 " << Path << "\n";
-     SmallString<128> P(Path);
-     if (ScanDirForExecutable(P, TargetSpecificExecutables))
-       return P.str();
-@@ -2640,7 +2647,10 @@
-                !Target.hasEnvironment())
-         TC = new toolchains::MipsLLVMToolChain(*this, Target, Args);
-       else
-+      {
-         TC = new toolchains::Linux(*this, Target, Args);
-+        llvm::errs() << "made a Linux toolchain\n";
-+      }
-       break;
-     case llvm::Triple::NaCl:
-       TC = new toolchains::NaClToolChain(*this, Target, Args);
-@@ -2707,7 +2717,10 @@
-         else if (Target.isOSBinFormatMachO())
-           TC = new toolchains::MachO(*this, Target, Args);
-         else
-+        {
-           TC = new toolchains::Generic_GCC(*this, Target, Args);
-+          llvm::errs() << "made a Generic GCC toolchain\n";
-+        }
-       }
-     }
-   }
 diff -ur cfe-3.9.1.src.orig/lib/Driver/ToolChains.cpp cfe-3.9.1.src/lib/Driver/ToolChains.cpp
 --- cfe-3.9.1.src.orig/lib/Driver/ToolChains.cpp	2016-11-23 13:25:50.000000000 -0800
-+++ cfe-3.9.1.src/lib/Driver/ToolChains.cpp	2017-09-12 21:34:55.470664191 -0700
++++ cfe-3.9.1.src/lib/Driver/ToolChains.cpp	2017-09-13 07:08:31.831525321 -0700
 @@ -1406,18 +1406,6 @@
  
      // Then look for gcc installed alongside clang.
@@ -73,19 +20,7 @@ diff -ur cfe-3.9.1.src.orig/lib/Driver/ToolChains.cpp cfe-3.9.1.src/lib/Driver/T
    }
  
    // Loop over the various components which exist and select the best GCC
-@@ -2639,6 +2627,11 @@
-   getProgramPaths().push_back(getDriver().getInstalledDir());
-   if (getDriver().getInstalledDir() != getDriver().Dir)
-     getProgramPaths().push_back(getDriver().Dir);
-+
-+  for (const auto &Path : getProgramPaths()) {
-+    SmallString<128> P(Path);
-+    llvm::errs() << "tmphax hey: " << P << "\n";
-+  }
- }
- 
- Generic_GCC::~Generic_GCC() {}
-@@ -3997,19 +3990,6 @@
+@@ -3997,19 +3985,6 @@
    llvm::Triple::ArchType Arch = Triple.getArch();
    std::string SysRoot = computeSysRoot();
  
@@ -186,18 +121,3 @@ diff -ur cfe-3.9.1.src.orig/lib/Driver/Tools.cpp cfe-3.9.1.src/lib/Driver/Tools.
      }
      CmdArgs.push_back("--enable-new-dtags");
    }
-diff -ur cfe-3.9.1.src.orig/tools/driver/driver.cpp cfe-3.9.1.src/tools/driver/driver.cpp
---- cfe-3.9.1.src.orig/tools/driver/driver.cpp	2016-06-08 17:53:41.000000000 -0700
-+++ cfe-3.9.1.src/tools/driver/driver.cpp	2017-09-12 22:03:13.204636138 -0700
-@@ -275,6 +275,11 @@
- 
- static void SetInstallDir(SmallVectorImpl<const char *> &argv,
-                           Driver &TheDriver, bool CanonicalPrefixes) {
-+  // Don't search for programs using argv[0].
-+  // Driver's constructor has already set good default values set for
-+  // Driver::InstalledDir and Driver::Dir (absolute installation path).
-+  return;
-+
-   // Attempt to find the original path used to invoke the driver, to determine
-   // the installed path. We do this manually, because we want to support that
-   // path being a symlink.
