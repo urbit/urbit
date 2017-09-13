@@ -5371,7 +5371,7 @@
               {$d p/twig}                               ::  take $-(marl marl)
               {$e p/twig q/(list tuna)}                 ::  element literal
           ==                                            ::
-++  chap  (pair (list term) what)                       ::  labeled help
+++  chap  (pair (unit term) what)                       ::  labeled help
 ++  chum  $?  lef/term                                  ::  jet name
               {std/term kel/@}                          ::  kelvin version
               {ven/term pro/term kel/@}                 ::  vendor and product
@@ -5592,7 +5592,7 @@
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
-              {$face p/{p/what q/tool} q/span}          ::  namespace (new)
+              {$face p/{p/what q/$@(term tune)} q/span} ::  namespace (new)
               {$fork p/(set span)}                      ::  union
               {$help p/what q/span}                     ::  documentation
               {$hold p/span q/twig}                     ::  lazy evaluation
@@ -6284,7 +6284,7 @@
         :_  wit(lab ~, boy ~)
         =-  [pif - suf]
         ^-  chap
-        :-  ?~(lab p.pac [u.lab ~])
+        :-  ?~(lab p.pac [~ u.lab])
             ?~(boy q.pac boy)
       ::
       ++  helk
@@ -9251,7 +9251,12 @@
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
       {$core *}
-    (turn (~(tap by q.s.q.typ) ~) |=({a/term *} a))
+    %-  zing
+    %+  turn  (~(tap by q.s.q.typ) ~)
+      |=  {* b/tomb}
+    %+  turn  (~(tap by q.b) ~)
+      |=  {a/term *}
+    a
   ==
 ::
 ++  slop                                                ::  cons two vases
@@ -9386,11 +9391,11 @@
     ::  fine: definition line
     ::
     ++  line  (cook crip ;~(plug prz (star prn)))
-    ++  head  ;~(pfix ;~(plug bar bar ace ace cen) sym)
+    ++  head  ;~(pfix ;~(plug hax ace ace cen) sym)
     ++  text  (pick line code)
     ++  code  (cook crip (dubs (star prn)))
     ++  null  (star ace)
-    ++  noel  ;~(pose (step ;~(sfix ;~(plug bar bar) (star ace))) null)
+    ++  noel  ;~(pose (step ;~(sfix hax (star ace))) null)
     ++  fine  ;~(plug sym (cook crip ;~(pfix ;~(plug col ace) (star prn))))
     ::
     ::  lean: line delimited
@@ -10429,7 +10434,7 @@
             ~&(duplicate-arm+p.i.q.i.a ~)
           $(q.i.a t.q.i.a, e (~(put by e) p.i.q.i.a q.i.q.i.a))
         ?~  d  ~
-        =*  hap  `chap`[?~(lab.p.i.a ~ [u.lab.p.i.a ~]) boy.p.i.a]
+        =*  hap  `chap`[?~(lab.p.i.a ~ [~ u.lab.p.i.a]) boy.p.i.a]
         $(a t.a, b (~(put by b) c [hap u.d]), c +(c))
       ;~  pose
         dun

@@ -5,26 +5,26 @@
 ::  all lines must be under 80 characters.  no blank lines.
 ::  any line longer than 60 characters is probably too long.
 ::  uppercase or non-ascii letters are strongly discouraged.
-::  
+::
 ::  informal comments (lines with {::}) should be used only for
-::  meta-discussion *about* the code.  
+::  meta-discussion *about* the code.
 ::
 ::  whenever possible, use formal decorations. {:>} decorates
 ::  the next expression; {:<} decorates the previous one.
 ::
-::  there are two places to put decorations: in line with the 
+::  there are two places to put decorations: in line with the
 ::  code, and on the right margin.
 ::
 ::  in comments and decorations, use *phrase* for emphasis
-::  and {braces} to surround code literals.  (documentation will 
+::  and {braces} to surround code literals.  (documentation will
 ::  eventually be automatically generated from formal comments.)
-::  %literal, ++literal, ~ship need no braces.  for a valid 
+::  %literal, ++literal, ~ship need no braces.  for a valid
 ::  hoon expression, `exp.
 ::
 ::  there are three conventions for naming: *ultralapidary*,
 ::  *lapidary*, and *natural*.  this file is mostly natural.
 ::
-::  when in doubt, use the *natural* naming convention.  for 
+::  when in doubt, use the *natural* naming convention.  for
 ::  both arms and faces, natural naming means long, legible,
 ::  english-language phrases, in hyphen-separated {kebab-case}.
 ::
@@ -34,7 +34,7 @@
 ::
 ::  ultralapidary conventions use single-letter names starting
 ::  with {a}.  use this convention only for one-liners, etc.
-::  
+::
 ::  the file below is a medium-sized generator, built around
 ::  a typical two-core structure.  the cores are labeled {%arch}
 ::  (structures) and {%work} (productions).  this is canonical.
@@ -46,15 +46,15 @@
 ::  a forward decoration block {:>} is either a *document block* or
 ::  a *definition block*.
 
-::  a document block has two parts, each of which is optional: 
-::  the *title* and the *body*, 
+::  a document block has two parts, each of which is optional:
+::  the *title* and the *body*,
 ::
-::  the title is a ++term preceded by {:>  ||  %}.  only cores
+::  the title is a ++term preceded by {:>  #  %}.  only cores
 ::  and core chapters (preceded by {+|}) can use titles.  titles
-::  are optionally surrounded by blank or semi-blank decorations, 
-::  {:>} or {:>  ||}.
+::  are optionally surrounded by blank or semi-blank decorations,
+::  {:>} or {:>  #}.
 ::
-::  the body is either short or long.  a short body is a *single line* 
+::  the body is either short or long.  a short body is a *single line*
 ::  preceded by {:>  } - ie, not indented.  a long body starts with
 ::  a *single line* indented by two extra spaces, {:>    }, then a
 ::  blank line, then a series of paragraphs.
@@ -78,9 +78,9 @@
 :-  %say
 |=  *
 =<  [%noun (say-hello %world)]
-=>  :>  ||
-    :>  ||  %arch
-    :>  ||
+=>  :>  #
+    :>  #  %arch
+    :>  #
     :>    structures for our imaginary hello, world generator.
     :>
     :>  nothing forces us to put structures in a separate core.
@@ -94,11 +94,9 @@
     :>  most code will not need its own patterns.  but put them
     :>  in a separate chapter (separated by {+|}).
     |%
-    :>  ||
-    :>  ||  %model
-    :>  ||
+    :>  #  %model
     :>    models (molds) are functions that normalize nouns.
-    :> 
+    :>
     :>  arms producing molds are introduced with {+=}.  for molds,
     :>  we decorate the mold rather than the arm.  the compiler
     :>  will copy the mold decoration onto the arm.
@@ -116,7 +114,10 @@
           {$pear p/@ q/@}                               :<  good for cider
           {$acai p/@}                                   :<  aztec superfood
       ==
-    :>  ||  %pattern
+    :>  #
+    :>  #  %pattern
+    :>  #
+    :>
     :>    patterns are functions that build models.
     :>
     :>  other languages might call these "type constructors"
@@ -125,16 +126,17 @@
     ++  binary-tree                                     :<  tree pattern
       |*  a/$-(* *)
       $@($~ {n/a l/(binary-tree a) r/(binary-tree a)})
-    :>  ||
-    :>  ||  %constant
-    :>  ||
+    :>  #
+    :>  #  %constant
+    :>  #
     :>    if you have constants, put them in their own chapter.
     +|
     ++  answer                                          :<  answer to everything
       42
     --
-:>  ||  %work
-:>    engines for our imaginary hello, world app. 
+:>  #  %work
+:>
+:>    engines for our imaginary hello, world app.
 :>
 :>  note that ++say-goodbye is the correct notation, even though
 :>  it's a {+-} arm.
@@ -148,12 +150,11 @@
       txt/term
   ^-  tape
   "hello, {(rip 3 txt)}"
-:>
-:>  ++say-goodbye: say a really proper goodbye
+:>    ++say-goodbye: say a really proper goodbye
 :>
 :>  some paragraphs about the goodbye algorithm, possibly
 :>  including code indented by four extra spaces:
-:>  
+:>
 :>      ?:  =(%hello %world)
 :>        %hello
 :>      %world
