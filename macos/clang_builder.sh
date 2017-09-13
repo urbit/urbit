@@ -17,6 +17,10 @@ cd build
 
 cmake ../llvm -GNinja -DDEFAULT_SYSROOT=$out -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
 
+ninja \
+  tools/clang/lib/Driver/CMakeFiles/clangDriver.dir/ToolChains.cpp.o \
+  tools/clang/lib/Driver/CMakeFiles/clangDriver.dir/Driver.cpp.o
+
 ninja
 
 ninja install

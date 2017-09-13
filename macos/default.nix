@@ -52,6 +52,7 @@ let
     native_inputs = [ nixpkgs.python2 ];
     cmake_flags =
       "-DCMAKE_BUILD_TYPE=Release " +
+      # "-DCMAKE_BUILD_TYPE=Debug " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
