@@ -29,8 +29,16 @@ let
   sdk = ./macsdk.tar.xz;
 
   cctools_src = nixpkgs.fetchurl {
-    url = "https://github.com/tpoechtrager/osxcross/raw/474f359/tarballs/cctools-895-ld64-274.2_8e9c3f2.tar.xz";
-    sha256 = "0905qhkwismr6bjbzmjbjxgg72ib5a46lfwglw1fzsx3swmzfaqj";
+    url = "https://github.com/tpoechtrager/cctools-port/archive/22ebe72.tar.gz";
+    sha256 = "1pmn2iyw00ird3ni53wl05p3lm3637jyfmq393fx59495wnyxpgf";
+  };
+
+  cctools = native.make_derivation {
+    name = "cctools";
+    builder = ./cctools_builder.sh;
+    src = cctools_src;
+    configure_flags = "--target=x86_64-apple-darwin15";
+    native_inputs = [ nixpkgs.clang ];
   };
 
   xar_src = nixpkgs.fetchurl {
@@ -38,11 +46,7 @@ let
     sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
   };
 
-  # TODO: prevent it from finding and using /..//bin/ld when I compile a test program
-  # TODO: prevent it from finding and using /usr/bin/i686-w64-mingw32-ld
-  #  when I use "-target i686-w64-mingw32"
-  # TODO: Disable setting the -dynamic-linker automatically (see nixpkgs purity.patch)
-  clang = native.make_derivation rec {
+  clang = native.make_derivation {
     name = "clang";
     builder = ./clang_builder.sh;
     version = clang_version;
@@ -56,7 +60,7 @@ let
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
-  toolchain = native.make_derivation rec {
+  toolchain = native.make_derivation {
     name = "mac-toolchain";
     builder = ./builder.sh;
     inherit host osxcross sdk cctools_src xar_src;
@@ -85,7 +89,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang;
+    inherit clang cctools;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
