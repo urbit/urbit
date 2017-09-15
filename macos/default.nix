@@ -37,13 +37,25 @@ let
     name = "cctools";
     builder = ./cctools_builder.sh;
     src = cctools_src;
-    configure_flags = "--target=x86_64-apple-darwin15";
+    configure_flags = "--target=${host}";
     native_inputs = [ nixpkgs.clang ];
   };
 
   xar_src = nixpkgs.fetchurl {
     url = "https://github.com/tpoechtrager/osxcross/raw/474f359/tarballs/xar-1.6.1.tar.gz";
     sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
+  };
+
+  xar = native.make_derivation {
+    name = "xar";
+    builder = ./xar_builder.sh;
+    src = xar_src;
+    native_inputs = [
+      nixpkgs.libxml2.dev
+      nixpkgs.openssl.dev
+      nixpkgs.zlib.dev
+      nixpkgs.pkgconfig
+    ];
   };
 
   clang = native.make_derivation {
@@ -63,8 +75,8 @@ let
   toolchain = native.make_derivation {
     name = "mac-toolchain";
     builder = ./builder.sh;
-    inherit host osxcross sdk cctools_src xar_src;
-    native_inputs = [ clang ];
+    inherit host osxcross sdk;
+    native_inputs = [ clang cctools xar ];
   };
 
   cmake_toolchain = import ../cmake_toolchain {
@@ -89,7 +101,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang cctools;
+    inherit clang cctools xar;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };

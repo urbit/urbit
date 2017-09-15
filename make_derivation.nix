@@ -7,6 +7,8 @@ let
     crossenv.native.wrappers
   ];
 
+  # TODO: we should have pkgconf here so it's available for native builds by
+  # default.
   default_native_inputs = [
     #nixpkgs.autoconf
     #nixpkgs.automake
