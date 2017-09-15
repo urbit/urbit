@@ -42,7 +42,7 @@ let
   };
 
   xar_src = nixpkgs.fetchurl {
-    url = "https://github.com/tpoechtrager/osxcross/raw/474f359/tarballs/xar-1.6.1.tar.gz";
+    url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
     sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
   };
 
