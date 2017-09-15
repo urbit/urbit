@@ -3,12 +3,13 @@
   ::                                                    ::
 ~>  %slog.[0 leaf+"hoon-assembly"]
 =<  ride
-=>  %144  =>
+=>  %143  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.144  ~  ~                                        ::
+~%  %k.143  ~  ~                                        ::
 |%
+++  foo  0
 ++  hoon  +
 --  =>
 ::                                                      ::
@@ -20,6 +21,7 @@
   ::
 ~%  %one  +  ~
 |%
+++  foo  0
 ::                                                      ::
 ::::    1a: unsigned arithmetic                         ::
   ::
@@ -205,6 +207,7 @@
   ::
 ~%  %two  +  ~
 |%
+++  foo  0
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -1764,6 +1767,7 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
+++  foo  0
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3478,6 +3482,7 @@
     %show  show
   ==
 |%
+++  foo  0
 ::
 ::::  4a: exotic bases
   ::
@@ -5679,6 +5684,7 @@
     %ut    ut
   ==
 |%
+++  foo  0
 ::
 ::::  5a: compiler utilities
   ::
