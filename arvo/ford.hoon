@@ -673,11 +673,11 @@
       =+  vez=(vang & (tope bem))
       =<  hood
       |%
-      ++  case
+      ++  case                                          ::  %clay revision
         %+  sear
-          |=  a/coin
-          ?.  ?=({$$ ?($da $ud $tas) *} a)  ~
-          [~ u=(^case a)]
+          |=  a/coin  ^-  (unit ^case)
+          ?.  ?=({$$ ^case} a)  ~
+          [~ u=p.a]
         nuck:so
       ::
       ++  mota  ;~(pfix pat mota:vez)                   ::  atom odor
