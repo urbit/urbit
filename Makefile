@@ -381,6 +381,8 @@ J_OFILES=\
        $(J_E_OFILES_ED) \
        $(J_F_OFILES) \
        $(J_F_OFILES_UT) \
+       $(J_Z_OFILES) \
+       $(J_Z_OFILES_UT) \
        $(J_G_OFILES) \
        jets/tree.o
 
