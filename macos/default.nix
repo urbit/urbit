@@ -12,15 +12,15 @@ let
 
   exe_suffix = "";
 
-  clang_version = "5.0.0";
+  llvm_version = "5.0.0";
 
   clang_src = nixpkgs.fetchurl {
-    url = "https://llvm.org/releases/${clang_version}/cfe-${clang_version}.src.tar.xz";
+    url = "https://llvm.org/releases/${llvm_version}/cfe-${llvm_version}.src.tar.xz";
     sha256 = "0w09s8fn3lkn6i04nj0cisgp821r815fk5b5fjn97xrd371277q1";
   };
 
   llvm_src = nixpkgs.fetchurl {
-    url = "https://llvm.org/releases/${clang_version}/llvm-${clang_version}.src.tar.xz";
+    url = "https://llvm.org/releases/${llvm_version}/llvm-${llvm_version}.src.tar.xz";
     sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
   };
 
@@ -61,7 +61,7 @@ let
   clang = native.make_derivation {
     name = "clang";
     builder = ./clang_builder.sh;
-    version = clang_version;
+    version = llvm_version;
     src = clang_src;
     inherit llvm_src;
     patches = [ ./clang_megapatch.patch ];
@@ -77,6 +77,11 @@ let
     builder = ./builder.sh;
     inherit host osxcross sdk;
     native_inputs = [ clang cctools xar ];
+    OSXCROSS_VERSION = "0.15";
+    SDK_VERSION = "10.11";
+    TARGET = "darwin15";
+    X86_64H_SUPPORTED = true;
+    OSX_VERSION_MIN = "10.5";
   };
 
   cmake_toolchain = import ../cmake_toolchain {
