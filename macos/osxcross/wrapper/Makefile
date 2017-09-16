@@ -1,22 +1,8 @@
-PLATFORM ?= $(shell uname -s)
 OPTIMIZE ?= 2
-LTO ?= 0
-
-OSXCROSS_VERSION ?= unknown
-OSXCROSS_TARGET ?= darwin12
-OSXCROSS_OSX_VERSION_MIN ?= 10.5
-OSXCROSS_LINKER_VERSION ?= 134.9
-OSXCROSS_LIBLTO_PATH ?=
-OSXCROSS_CXXFLAGS ?= 
 
 override CXXFLAGS=-std=c++0x -Wall -Wextra -pedantic -v -v -v -v
 override CXXFLAGS+=-Wno-missing-field-initializers
 override CXXFLAGS+=-I. -O$(OPTIMIZE) -g
-
-ifeq ($(LTO), 1)
-  override CXXFLAGS+=-flto
-endif
-
 override CXXFLAGS+=-DOSXCROSS_VERSION="\"$(OSXCROSS_VERSION)\""
 override CXXFLAGS+=-DOSXCROSS_TARGET="\"$(OSXCROSS_TARGET)\""
 override CXXFLAGS+=-DOSXCROSS_OSX_VERSION_MIN="\"$(OSXCROSS_OSX_VERSION_MIN)\""
@@ -27,26 +13,6 @@ override CXXFLAGS+=-DOSXCROSS_SDK="\"$(OSXCROSS_SDK)\""
 override CXXFLAGS+=-DOSXCROSS_SDK_VERSION="\"$(OSXCROSS_SDK_VERSION)\""
 
 override CXXFLAGS+= $(OSXCROSS_CXXFLAGS)
-
-ifneq (,$(findstring FreeBSD, $(PLATFORM)))
-  override LDFLAGS+=-lutil
-else ifneq (,$(findstring Darwin, $(PLATFORM)))
-  override CXXFLAGS+=-Wno-deprecated
-  override LDFLAGS+=-framework CoreServices -Wno-deprecated
-else ifneq (,$(findstring CYGWIN, $(PLATFORM)))
-  # -std=gnu++0x doesn't work, so work around...
-  override CXXFLAGS+=-U__STRICT_ANSI__
-else
-
-ifeq (,$(findstring Windows, $(PLATFORM)))
-ifeq (,$(findstring OpenBSD, $(PLATFORM)))
-  override LDFLAGS+=-lrt
-endif
-endif
-
-endif
-
-BIN=wrapper
 
 SRCS= \
  main.cpp \
@@ -72,6 +38,6 @@ wrapper: $(OBJS)
 .PHONY: clean
 
 clean:
-	rm -f $(BIN) $(OBJS)
+	rm -f wrapper $(OBJS)
 
 -include $(SRCS:cpp=d)
