@@ -75,25 +75,13 @@ fi
 
 $BASE_DIR/wrapper/build.sh
 
-echo ""
-
-if [ $(osxcross-cmp ${SDK_VERSION/u/} "<" $OSX_VERSION_MIN) -eq 1 ]; then
-  echo "OSX_VERSION_MIN must be <= SDK_VERSION"
-  trap "" EXIT
-  exit 1
-elif [ $(osxcross-cmp $OSX_VERSION_MIN "<" 10.4) -eq 1  ]; then
-  echo "OSX_VERSION_MIN must be >= 10.4"
-  trap "" EXIT
-  exit 1
-fi
-
-unset MACOSX_DEPLOYMENT_TARGET
-
-test_compiler o32-clang $BASE_DIR/oclang/test.c
 test_compiler o64-clang $BASE_DIR/oclang/test.c
-
-test_compiler o32-clang++ $BASE_DIR/oclang/test.cpp
 test_compiler o64-clang++ $BASE_DIR/oclang/test.cpp
+
+# NOTE: o32-clang doesn't work currently because we don't have an i386 ld on the path.
+# Probably we don't care and should just remove o32-clang.
+test_compiler o32-clang $BASE_DIR/oclang/test.c
+test_compiler o32-clang++ $BASE_DIR/oclang/test.cpp
 
 if [ $(osxcross-cmp ${SDK_VERSION/u/} ">=" 10.7) -eq 1 ]; then
   if [ ! -d "$SDK_DIR/MacOSX$SDK_VERSION.sdk/usr/include/c++/v1" ]; then
@@ -107,21 +95,3 @@ if [ $(osxcross-cmp ${SDK_VERSION/u/} ">=" 10.7) -eq 1 ]; then
   test_compiler_cxx11 o32-clang++ $BASE_DIR/oclang/test_libcxx.cpp
   test_compiler_cxx11 o64-clang++ $BASE_DIR/oclang/test_libcxx.cpp
 fi
-
-echo ""
-echo "Do not forget to add"
-echo ""
-echo -e "\x1B[32m${TARGET_DIR}/bin\x1B[0m"
-echo ""
-echo "to your PATH variable."
-echo ""
-
-echo "All done! Now you can use o32-clang(++) and o64-clang(++) like a normal compiler."
-echo ""
-echo "Example usage:"
-echo ""
-echo "Example 1: CC=o32-clang ./configure --host=i386-apple-$TARGET"
-echo "Example 2: CC=i386-apple-$TARGET-clang ./configure --host=i386-apple-$TARGET"
-echo "Example 3: o64-clang -Wall test.c -o test"
-echo "Example 4: x86_64-apple-$TARGET-strip -x test"
-echo ""

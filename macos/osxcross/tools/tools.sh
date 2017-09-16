@@ -172,7 +172,7 @@ function verbose_cmd()
 function test_compiler()
 {
   echo -ne "testing $1 ... "
-  $1 $2 -O2 -Wall -o test
+  $1 $2 -v -O2 -Wall -o test
   rm test
   echo "works"
 }
