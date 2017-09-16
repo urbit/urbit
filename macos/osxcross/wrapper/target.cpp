@@ -55,85 +55,8 @@ OSVersion Target::getSDKOSNum() const {
   return parseOSVersion(OSXCROSS_SDK_VERSION);
 }
 
-void Target::overrideDefaultSDKPath(const char *SDKSearchDir) {
-  std::string defaultSDKPath;
-
-  defaultSDKPath = SDKSearchDir;
-  defaultSDKPath += PATHDIV;
-  defaultSDKPath += "default";
-
-  struct stat st;
-
-  if (!lstat(defaultSDKPath.c_str(), &st)) {
-    if (!S_ISLNK(st.st_mode)) {
-      err << "'" << defaultSDKPath << "' must be a symlink to an SDK"
-          << err.endl();
-      exit(EXIT_FAILURE);
-    }
-
-    if (char *resolved = realpath(defaultSDKPath.c_str(), nullptr)) {
-      SDK = resolved;
-    } else {
-      err << "'" << defaultSDKPath << "' broken symlink" << err.endl();
-      exit(EXIT_FAILURE);
-    }
-  } else {
-    // Choose the latest SDK
-
-    static OSVersion latestSDKVersion;
-    static std::string latestSDK;
-
-    latestSDKVersion = OSVersion();
-    latestSDK.clear();
-
-    listFiles(SDKSearchDir, nullptr, [](const char *SDK) {
-      if (!strncasecmp(SDK, "MacOSX", 6)) {
-        OSVersion SDKVersion = parseOSVersion(SDK + 6);
-        if (SDKVersion > latestSDKVersion) {
-          latestSDKVersion = SDKVersion;
-          latestSDK = SDK;
-        }
-      }
-      return false;
-    });
-
-    if (!latestSDKVersion.Num()) {
-      err << "no SDK found in '" << SDKSearchDir << "'" << err.endl();
-      exit(EXIT_FAILURE);
-    }
-
-    std::string SDKPath;
-
-    SDKPath = SDKSearchDir;
-    SDKPath += PATHDIV;
-    SDKPath += latestSDK;
-
-    SDK = strdup(SDKPath.c_str()); // intentionally leaked
-  }
-}
-
 bool Target::getSDKPath(std::string &path) const {
-  if (SDK) {
-    path = SDK;
-  } else {
-    OSVersion SDKVer = getSDKOSNum();
-
-    path = execpath;
-    path += "/../SDK/MacOSX";
-    path += SDKVer.shortStr();
-
-    if (SDKVer <= OSVersion(10, 4))
-      path += "u";
-
-    path += ".sdk";
-  }
-
-  if (!dirExists(path)) {
-    err << "cannot find Mac OS X SDK (expected in: " << path << ")"
-        << err.endl();
-    return false;
-  }
-
+  path = SDK;
   return true;
 }
 
@@ -702,33 +625,6 @@ bool Target::setup() {
 
   for (auto &path : AdditionalCXXHeaderPaths)
     addCXXHeaderPath(path);
-
-  if (getenv("OSXCROSS_MP_INC")) {
-    std::string MacPortsIncludeDir;
-    std::string MacPortsLibraryDir;
-    std::string MacPortsFrameworksDir;
-
-    // Add them to args (instead of fargs),
-    // so the user's -I / -L / -F is prefered.
-
-    if (getMacPortsIncludeDir(MacPortsIncludeDir)) {
-      args.push_back("-isystem");
-      args.push_back(MacPortsIncludeDir);
-
-      if (getMacPortsLibDir(MacPortsLibraryDir)) {
-        if (isClang())
-          args.push_back("-Qunused-arguments");
-
-        args.push_back("-L");
-        args.push_back(MacPortsLibraryDir);
-      }
-
-      if (getMacPortsFrameworksDir(MacPortsFrameworksDir)) {
-        args.push_back("-iframework");
-        args.push_back(MacPortsFrameworksDir);
-      }
-    }
-  }
 
   if (OSNum.Num()) {
     std::string tmp;
