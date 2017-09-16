@@ -11,6 +11,16 @@ export CC=gcc
 export CXX=g++
 bash -x ./build.sh
 
-ln -s $host-cc target/bin/$host-gcc
+cd target/bin
+ln -s $host-wrapper $host-c++
+ln -s $host-wrapper $host-cc
+ln -s $host-wrapper $host-clang
+ln -s $host-wrapper $host-clang++
+ln -s $host-wrapper $host-dsymutil
+ln -s $host-wrapper $host-gcc
+ln -s $host-wrapper $host-g++
+ln -s $host-wrapper $host-sw_vers
+ln -s $host-wrapper $host-xcrun
+cd ../..
 
 mv target $out

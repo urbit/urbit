@@ -125,41 +125,6 @@ function compile_wrapper()
 
 compile_wrapper
 
-if [ -n "$BWCOMPILEONLY" ]; then
-  exit 0
-fi
-
 verbose_cmd mv wrapper "${TARGET_DIR}/bin/${TARGETTRIPLE}-wrapper${EXESUFFIX}"
 
-pushd "../target/bin" &>/dev/null
-
-if [ $TARGETCOMPILER = "clang" ]; then
-  create_wrapper_link clang 2
-  create_wrapper_link clang++ 2
-  create_wrapper_link clang++-libc++ 2
-  create_wrapper_link clang++-stdc++ 2
-  create_wrapper_link clang++-gstdc++ 2
-elif [ $TARGETCOMPILER = "gcc" ]; then
-  create_wrapper_link gcc 2
-  create_wrapper_link g++ 2
-  create_wrapper_link g++-libc++ 2
-fi
-
-create_wrapper_link cc
-create_wrapper_link c++
-
-create_wrapper_link osxcross 1
-create_wrapper_link osxcross-conf 1
-create_wrapper_link osxcross-env 1
-create_wrapper_link osxcross-cmp 1
-create_wrapper_link osxcross-man 1
-create_wrapper_link pkg-config
-
-if [ "$PLATFORM" != "Darwin" ]; then
-  create_wrapper_link sw_vers 1
-  create_wrapper_link dsymutil 1
-  create_wrapper_link xcrun 1
-fi
-
-popd &>/dev/null
 
