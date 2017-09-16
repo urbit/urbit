@@ -98,25 +98,28 @@ let
     src = ./MacOSX10.11.sdk.tar.xz;
   };
 
+  macos_version_min = "10.11";
+
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
     inherit host osxcross sdk;
     native_inputs = [ clang cctools xar ];
 
-    OSX_VERSION_MIN = "10.11";  # was 10.5
-    SDK_VERSION = sdk.version;
-    TARGET = darwin_name;
-    X86_64H_SUPPORTED = true;
-
-    OSXCROSS_VERSION = "0.15";
-    OSXCROSS_OSX_VERSION_MIN = OSX_VERSION_MIN;
-    OSXCROSS_TARGET = darwin_name;
-    OSXCROSS_SDK_VERSION = SDK_VERSION;
-    OSXCROSS_SDK = sdk;
-    OSXCROSS_CCTOOLS_PATH = "${cctools}/bin";
-    OSXCROSS_LIBLTO_PATH = "";
-    OSXCROSS_LINKER_VERSION = "274.2";
+    CXXFLAGS =
+      "-std=c++11 " +
+      "-Wall -Wextra -pedantic -Wno-missing-field-initializers " +
+      "-I. " +
+      "-O2 -g " +
+      "-DOSXCROSS_VERSION=\\\"0.15\\\" " +
+      "-DOSXCROSS_TARGET=\\\"${darwin_name}\\\" " +
+      "-DOSXCROSS_OSX_VERSION_MIN=\\\"${macos_version_min}\\\" " +
+      "-DOSXCROSS_LINKER_VERSION=\\\"274.2\\\" " +
+      "-DOSXCROSS_LIBLTO_PATH=\\\"\\\" " +
+      "-DOSXCROSS_BUILD_DIR=\\\"\\\" " +
+      "-DOSXCROSS_SDK=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
+      "-DOSXCROSS_SDK_VERSION=\\\"10.11\\\" " +
+      "-DWRAPPER_PATH=\\\"${cctools}/bin:${clang}/bin\\\"";
   };
 
   cmake_toolchain = import ../cmake_toolchain {

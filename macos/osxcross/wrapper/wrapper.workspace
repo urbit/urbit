@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="wrapper" Database="wrapper.tags">
-  <Project Name="wrapper" Path="./wrapper.project" Active="Yes"/>
-  <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
-      <Project Name="wrapper" ConfigName="Debug"/>
-    </WorkspaceConfiguration>
-  </BuildMatrix>
-</CodeLite_Workspace>
