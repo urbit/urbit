@@ -4,7 +4,9 @@ let
 
   arch = "x86_64";
 
-  host = "${arch}-apple-darwin15";
+  darwin_name = "darwin15";
+
+  host = "${arch}-apple-${darwin_name}";
 
   os = "macos";
 
@@ -25,8 +27,6 @@ let
   };
 
   osxcross = ./osxcross;
-
-  sdk = ./macsdk.tar.xz;
 
   cctools_src = nixpkgs.fetchurl {
     url = "https://github.com/tpoechtrager/cctools-port/archive/22ebe72.tar.gz";
@@ -72,14 +72,21 @@ let
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
+  sdk = native.make_derivation rec {
+    name = "macos-sdk";
+    builder = ./sdk_builder.sh;
+    version = "10.11";
+    src = ./MacOSX10.11.sdk.tar.xz;
+  };
+
   toolchain = native.make_derivation {
     name = "mac-toolchain";
     builder = ./builder.sh;
     inherit host osxcross sdk;
     native_inputs = [ clang cctools xar ];
     OSXCROSS_VERSION = "0.15";
-    SDK_VERSION = "10.11";
-    TARGET = "darwin15";
+    TARGET = darwin_name;
+    SDK_VERSION = sdk.version;
     X86_64H_SUPPORTED = true;
     OSX_VERSION_MIN = "10.11";  # was 10.5
     OSXCROSS_LINKER_VERSION = "274.2";
@@ -107,7 +114,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang cctools xar;
+    inherit clang cctools xar sdk;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };

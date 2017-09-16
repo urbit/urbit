@@ -5,10 +5,8 @@ chmod -R u+w osxcross
 cd osxcross
 
 mkdir tarballs
-cp $sdk tarballs/MacOSX$SDK_VERSION.sdk.tar.xz
 
 export UNATTENDED=1
-
 export CC=gcc
 export CXX=g++
 bash -x ./build.sh

@@ -32,27 +32,7 @@ function remove_locks()
 
 mkdir -p $TARGET_DIR/bin
 
-SDK=$(ls $TARBALL_DIR/MacOSX$SDK_VERSION*)
-
-ls $TARBALL_DIR/MacOSX$SDK_VERSION*
-
-extract $SDK 1 1
-
-rm -rf $SDK_DIR/MacOSX$SDK_VERSION*
-
-mv -f *OSX*$SDK_VERSION*sdk* $SDK_DIR
-
-pushd $SDK_DIR/MacOSX$SDK_VERSION.sdk &>/dev/null
-set +e
-create_symlink \
-  $SDK_DIR/MacOSX$SDK_VERSION.sdk/System/Library/Frameworks/Kernel.framework/Versions/A/Headers/std*.h \
-  usr/include 2>/dev/null
-[ ! -f "usr/include/float.h" ] && cp -f $BASE_DIR/oclang/quirks/float.h usr/include
-[ $PLATFORM == "FreeBSD" ] && cp -f $BASE_DIR/oclang/quirks/tgmath.h usr/include
-set -e
-popd &>/dev/null
-
-popd &>/dev/null
+ln -s $sdk $SDK_DIR/MacOSX$SDK_VERSION.sdk
 
 OSXCROSS_CONF="$TARGET_DIR/bin/osxcross-conf"
 OSXCROSS_ENV="$TARGET_DIR/bin/osxcross-env"
