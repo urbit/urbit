@@ -111,20 +111,15 @@ if [ "$PLATFORM" == "Linux" ]; then
   FLAGS+="-isystem quirks/include "
 fi
 
-function compile_wrapper()
-{
-  mkdir -p ../target ../target/bin
-  export PLATFORM
-  export CXX
+mkdir -p ../target ../target/bin
+export PLATFORM
+export CXX
 
-  verbose_cmd $MAKE clean
+verbose_cmd $MAKE clean
 
-  OSXCROSS_CXXFLAGS="$FLAGS" \
-    verbose_cmd $MAKE wrapper -j$JOBS
-}
+OSXCROSS_CXXFLAGS="$FLAGS" \
+  verbose_cmd $MAKE wrapper -j$JOBS
 
-compile_wrapper
-
-verbose_cmd mv wrapper "${TARGET_DIR}/bin/${TARGETTRIPLE}-wrapper${EXESUFFIX}"
+mv wrapper $TARGET_DIR/bin/$host-wrapper
 
 
