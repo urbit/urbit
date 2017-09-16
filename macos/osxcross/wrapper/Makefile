@@ -1,8 +1,6 @@
-OPTIMIZE ?= 2
-
-override CXXFLAGS=-std=c++0x -Wall -Wextra -pedantic -v -v -v -v
+override CXXFLAGS=-std=c++11 -Wall -Wextra -pedantic
 override CXXFLAGS+=-Wno-missing-field-initializers
-override CXXFLAGS+=-I. -O$(OPTIMIZE) -g
+override CXXFLAGS+=-I. -O2 -g
 override CXXFLAGS+=-DOSXCROSS_VERSION="\"$(OSXCROSS_VERSION)\""
 override CXXFLAGS+=-DOSXCROSS_TARGET="\"$(OSXCROSS_TARGET)\""
 override CXXFLAGS+=-DOSXCROSS_OSX_VERSION_MIN="\"$(OSXCROSS_OSX_VERSION_MIN)\""
@@ -11,8 +9,6 @@ override CXXFLAGS+=-DOSXCROSS_LIBLTO_PATH="\"$(OSXCROSS_LIBLTO_PATH)\""
 override CXXFLAGS+=-DOSXCROSS_BUILD_DIR="\"$(OSXCROSS_BUILD_DIR)\""
 override CXXFLAGS+=-DOSXCROSS_SDK="\"$(OSXCROSS_SDK)\""
 override CXXFLAGS+=-DOSXCROSS_SDK_VERSION="\"$(OSXCROSS_SDK_VERSION)\""
-
-override CXXFLAGS+= $(OSXCROSS_CXXFLAGS)
 
 SRCS= \
  main.cpp \
