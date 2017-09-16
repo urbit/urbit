@@ -1,6 +1,0 @@
-* Document 'osxcross-man'
-* Verify downloaded archive tarballs (gcc, llvm, ...) with sha256sum or similar
-* Add support for Swift
-* Implement '-lto-library' on the linker side. A test branch is available at:
-  https://github.com/tpoechtrager/cctools-port/tree/lto-test.
-* FAQ Wiki
