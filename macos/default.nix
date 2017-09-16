@@ -81,7 +81,7 @@ let
     SDK_VERSION = "10.11";
     TARGET = "darwin15";
     X86_64H_SUPPORTED = true;
-    OSX_VERSION_MIN = "10.5";
+    OSX_VERSION_MIN = "10.11";  # was 10.5
     OSXCROSS_LINKER_VERSION = "274.2";
   };
 
