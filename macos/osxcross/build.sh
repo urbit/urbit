@@ -37,7 +37,7 @@ cat > test1.c <<EOF
 int main() { printf("hello\n"); }
 EOF
 o64-clang -c test1.c -o test1.o
-o64-clang -v -v -v -v test1.o -o test1
+OCDEBUG=1 o64-clang -v -v -v -v test1.o -o test1
 
 test_compiler o64-clang $BASE_DIR/oclang/test.c
 test_compiler o64-clang++ $BASE_DIR/oclang/test.cpp

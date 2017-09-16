@@ -576,7 +576,7 @@ bool Target::setup() {
     tmp.clear();
 #endif
 
-    fargs.push_back("-isysroot");
+    fargs.push_back("--sysroot");
     fargs.push_back(SDKPath);
 
     if (isCXX()) {
