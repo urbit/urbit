@@ -26,14 +26,5 @@ SRCS= \
 
 OBJS=$(subst .cpp,.o,$(SRCS))
 
-all: wrapper
-
-wrapper: $(OBJS)
-	$(CXX) $(CXXFLAGS) -o wrapper $(OBJS) $(LDFLAGS)
-
-.PHONY: clean
-
-clean:
-	rm -f wrapper $(OBJS)
-
--include $(SRCS:cpp=d)
+all:
+	g++ $(CXXFLAGS) -o wrapper $(SRCS)
