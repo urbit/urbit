@@ -32,15 +32,20 @@ export OSXCROSS_LIBLTO_PATH=
 
 $BASE_DIR/wrapper/build.sh
 
+exit 0  # tmphax
+
 cat > test1.c <<EOF
 #include <stdio.h>
 int main() { printf("hello\n"); }
 EOF
 o64-clang -c test1.c -o test1.o
-OCDEBUG=1 o64-clang -v -v -v -v test1.o -o test1
+# OCDEBUG=1 o64-clang -v -v -v -v test1.o -o test1
+/bin/strace x86_64-apple-darwin15-ld -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -syslibroot $sdk -o test1 test1.o -lSystem
 
 test_compiler o64-clang $BASE_DIR/oclang/test.c
-test_compiler o64-clang++ $BASE_DIR/oclang/test.cpp
+test_compiler o32-clang $BASE_DIR/oclang/test.c
+
+# test_compiler o64-clang++ $BASE_DIR/oclang/test.cpp
 
 # NOTE: o32-clang doesn't work currently because we don't have an i386 ld on the path.
 # Probably we don't care and should just remove o32-clang.

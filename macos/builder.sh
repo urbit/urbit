@@ -11,4 +11,6 @@ export CC=gcc
 export CXX=g++
 bash -x ./build.sh
 
-cp -R target $out
+ln -s $host-cc target/bin/$host-gcc
+
+mv target $out

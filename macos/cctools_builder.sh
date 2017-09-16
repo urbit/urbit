@@ -2,14 +2,15 @@ source $setup
 
 tar -xf $src
 mv cctools-port-* cctools-port
-mv cctools-port/cctools .
-mv cctools-port/tools .
-# sh tools/fix_unistd_issue.sh
+
+cd cctools-port/cctools
+sh autogen.sh
+cd ../..
 
 mkdir build
 cd build
 
-../cctools/configure --prefix=$out $configure_flags
+../cctools-port/cctools/configure --prefix=$out $configure_flags
 
 make
 

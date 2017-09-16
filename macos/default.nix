@@ -14,31 +14,64 @@ let
 
   exe_suffix = "";
 
-  llvm_version = "5.0.0";
-
-  clang_src = nixpkgs.fetchurl {
-    url = "https://llvm.org/releases/${llvm_version}/cfe-${llvm_version}.src.tar.xz";
-    sha256 = "0w09s8fn3lkn6i04nj0cisgp821r815fk5b5fjn97xrd371277q1";
-  };
-
-  llvm_src = nixpkgs.fetchurl {
-    url = "https://llvm.org/releases/${llvm_version}/llvm-${llvm_version}.src.tar.xz";
-    sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
-  };
-
   osxcross = ./osxcross;
 
-  cctools_src = nixpkgs.fetchurl {
-    url = "https://github.com/tpoechtrager/cctools-port/archive/22ebe72.tar.gz";
-    sha256 = "1pmn2iyw00ird3ni53wl05p3lm3637jyfmq393fx59495wnyxpgf";
+  clang = native.make_derivation rec {
+    name = "clang";
+
+    version = "5.0.0";
+
+    src = nixpkgs.fetchurl {
+      url = "https://llvm.org/releases/${version}/cfe-${version}.src.tar.xz";
+      sha256 = "0w09s8fn3lkn6i04nj0cisgp821r815fk5b5fjn97xrd371277q1";
+    };
+
+    llvm_src = nixpkgs.fetchurl {
+      url = "https://llvm.org/releases/${version}/llvm-${version}.src.tar.xz";
+      sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
+    };
+
+    patches = [ ./clang_megapatch.patch ];
+
+    builder = ./clang_builder.sh;
+
+    native_inputs = [ nixpkgs.python2 ];
+
+    cmake_flags =
+      "-DCMAKE_BUILD_TYPE=Release " +
+      # "-DCMAKE_BUILD_TYPE=Debug " +
+      "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
+  # Note: We use nixpkgs.clang so we can compile an objective C library (which
+  # probably isn't needed).  We can't use our own clang because it doesn't
+  # quite work yet for compiling native executables.
+  #
+  # Note: cctools shows a warning about llvm-config not found so disabling LTO
+  # support.
+  #
+  # Note: We need TAPI (.tbd file) support so we can link against libraries from
+  # the Mac OS X SDK, so we use commit 8e9c3f2.  The commit after that (22ebe72
+  # on 2017-04-01) added TAPIv2 support, which adds a new external dependency on
+  # libtapi, which is meant to be built as part of llvm, which will probably
+  # increase the complexity of this build a lot.  As of 2017-09-16, there have
+  # been no commits after that one, and the osxcross project is still on commit
+  # 8e9c3f2, so this is the more-traveled route.
   cctools = native.make_derivation {
     name = "cctools";
     builder = ./cctools_builder.sh;
-    src = cctools_src;
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/tpoechtrager/cctools-port/archive/8e9c3f2.tar.gz";
+      sha256 = "04p5b1ix52yk48f09xkdv11ki8cc1zwzvm0dk2j8ylb8jk1a04y4";
+    };
     configure_flags = "--target=${host}";
-    native_inputs = [ nixpkgs.clang ];
+    native_inputs = [
+      nixpkgs.clang
+      nixpkgs.libtool
+      nixpkgs.autoconf
+      nixpkgs.automake
+      nixpkgs.m4
+    ];
   };
 
   xar_src = nixpkgs.fetchurl {
@@ -56,20 +89,6 @@ let
       nixpkgs.zlib.dev
       nixpkgs.pkgconfig
     ];
-  };
-
-  clang = native.make_derivation {
-    name = "clang";
-    builder = ./clang_builder.sh;
-    version = llvm_version;
-    src = clang_src;
-    inherit llvm_src;
-    patches = [ ./clang_megapatch.patch ];
-    native_inputs = [ nixpkgs.python2 ];
-    cmake_flags =
-      "-DCMAKE_BUILD_TYPE=Release " +
-      # "-DCMAKE_BUILD_TYPE=Debug " +
-      "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
   sdk = native.make_derivation rec {
@@ -111,7 +130,7 @@ let
 
     # Cross-compiling toolchain.
     inherit toolchain;
-    toolchain_inputs = [ toolchain ];
+    toolchain_drvs = [ toolchain clang cctools xar ];
 
     # Build tools and variables to support them.
     inherit cmake_toolchain;
