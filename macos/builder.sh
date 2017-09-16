@@ -8,12 +8,16 @@ export UNATTENDED=1
 export CC=gcc
 export CXX=g++
 
-set +u
-echo hi
+export LC_ALL="C"
 
-source tools/tools.sh
+BASE_DIR=$PWD
 
-echo hey
+TARBALL_DIR=$BASE_DIR/tarballs
+BUILD_DIR=$BASE_DIR/build
+TARGET_DIR=$BASE_DIR/target
+PATCH_DIR=$BASE_DIR/patches
+SDK_DIR=$TARGET_DIR/SDK
+export CXXFLAGS=
 
 mkdir -p $BUILD_DIR
 mkdir -p $TARGET_DIR
