@@ -79,16 +79,24 @@ let
     src = ./MacOSX10.11.sdk.tar.xz;
   };
 
-  toolchain = native.make_derivation {
+  toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
     inherit host osxcross sdk;
     native_inputs = [ clang cctools xar ];
-    OSXCROSS_VERSION = "0.15";
-    TARGET = darwin_name;
-    SDK_VERSION = sdk.version;
-    X86_64H_SUPPORTED = true;
+
     OSX_VERSION_MIN = "10.11";  # was 10.5
+    SDK_VERSION = sdk.version;
+    TARGET = darwin_name;
+    X86_64H_SUPPORTED = true;
+
+    OSXCROSS_VERSION = "0.15";
+    OSXCROSS_OSX_VERSION_MIN = OSX_VERSION_MIN;
+    OSXCROSS_TARGET = darwin_name;
+    OSXCROSS_SDK_VERSION = SDK_VERSION;
+    OSXCROSS_SDK = sdk;
+    OSXCROSS_CCTOOLS_PATH = "${cctools}/bin";
+    OSXCROSS_LIBLTO_PATH = "";
     OSXCROSS_LINKER_VERSION = "274.2";
   };
 

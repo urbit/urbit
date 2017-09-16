@@ -22,8 +22,6 @@ pushd $BUILD_DIR &>/dev/null
 
 mkdir -p $TARGET_DIR/bin
 
-ln -s $sdk $SDK_DIR/MacOSX$SDK_VERSION.sdk
-
 export OSXCROSS_TARGET=$TARGET
 export OSXCROSS_OSX_VERSION_MIN=$OSX_VERSION_MIN
 export OSXCROSS_BUILD_DIR=$BUILD_DIR
@@ -33,6 +31,13 @@ export OSXCROSS_BUILD_DIR=$BUILD_DIR
 export OSXCROSS_LIBLTO_PATH=
 
 $BASE_DIR/wrapper/build.sh
+
+cat > test1.c <<EOF
+#include <stdio.h>
+int main() { printf("hello\n"); }
+EOF
+o64-clang -c test1.c -o test1.o
+o64-clang -v -v -v -v test1.o -o test1
 
 test_compiler o64-clang $BASE_DIR/oclang/test.c
 test_compiler o64-clang++ $BASE_DIR/oclang/test.cpp

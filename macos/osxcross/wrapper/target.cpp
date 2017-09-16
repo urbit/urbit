@@ -48,32 +48,11 @@ Target::Target()
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
 
-  const char *SDKSearchDir = getSDKSearchDir();
-
-  if (!SDK && SDKSearchDir[0])
-    overrideDefaultSDKPath(SDKSearchDir);
+  SDK = OSXCROSS_SDK;
 }
 
 OSVersion Target::getSDKOSNum() const {
-  if (SDK) {
-    std::string SDKPath = SDK;
-
-    while (SDKPath.size() && SDKPath[SDKPath.size() - 1] == PATHDIV)
-      SDKPath.erase(SDKPath.size() - 1, 1);
-
-    const char *SDKName = getFileName(SDKPath);
-
-    if (strncasecmp(SDKName, "MacOSX", 6))
-      return OSVersion();
-
-    return parseOSVersion(SDKName + 6);
-  } else {
-    if (target.size() < 7)
-      return OSVersion();
-
-    int n = atoi(target.c_str() + 6);
-    return OSVersion(10, 4 + (n - 8));
-  }
+  return parseOSVersion(OSXCROSS_SDK_VERSION);
 }
 
 void Target::overrideDefaultSDKPath(const char *SDKSearchDir) {

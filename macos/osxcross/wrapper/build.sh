@@ -7,17 +7,6 @@ pushd .. &>/dev/null
 source ./tools/tools.sh
 popd &>/dev/null
 
-set +e
-if [ -z "$OSXCROSS_VERSION" ]; then
-  eval $(../target/bin/osxcross-conf 2>/dev/null)
-
-  if [ -n "$OSXCROSS_SDK_VERSION" ] &&
-     [ $(osxcross-cmp $OSXCROSS_SDK_VERSION ">=" 10.8) -eq 1 ]; then
-    X86_64H_SUPPORTED=1
-  fi
-fi
-set -e
-
 if [[ $PLATFORM == CYGWIN* ]]; then
   EXESUFFIX=".exe"
 else
