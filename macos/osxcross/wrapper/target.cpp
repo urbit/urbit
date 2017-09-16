@@ -157,10 +157,12 @@ bool Target::isGCH() {
 
 
 bool Target::isClang() const {
+  return true;
   return (compiler == Compiler::CLANG || compiler == Compiler::CLANGXX);
 }
 
 bool Target::isGCC() const {
+  return false;
   return (compiler == Compiler::GCC || compiler == Compiler::GXX);
 }
 
