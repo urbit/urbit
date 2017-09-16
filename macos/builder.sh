@@ -6,9 +6,9 @@ cd osxcross
 
 mkdir -p $out/bin
 
-make -C wrapper
+cd wrapper
 
-mv wrapper/wrapper $out/bin/$host-wrapper
+eval "g++ $CXXFLAGS *.cpp programs/*.cpp -o $out/bin/$host-wrapper"
 
 cd $out/bin
 ln -s $host-wrapper $host-c++
