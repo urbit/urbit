@@ -4,18 +4,13 @@ pushd "${0%/*}" &>/dev/null
 
 source tools/tools.sh
 
-export TARGET
-
-echo ""
 echo "Building OSXCross toolchain, Version: $OSXCROSS_VERSION"
-echo ""
 echo "OS X SDK Version: $SDK_VERSION, Target: $TARGET"
 echo "Minimum targeted OS X Version: $OSX_VERSION_MIN"
 echo "Tarball Directory: $TARBALL_DIR"
 echo "Build Directory: $BUILD_DIR"
 echo "Install Directory: $TARGET_DIR"
 echo "SDK Install Directory: $SDK_DIR"
-echo ""
 
 export PATH=$TARGET_DIR/bin:$PATH
 
@@ -25,33 +20,17 @@ mkdir -p $SDK_DIR
 
 pushd $BUILD_DIR &>/dev/null
 
-function remove_locks()
-{
-  rm -rf $BUILD_DIR/have_cctools*
-}
-
 mkdir -p $TARGET_DIR/bin
 
 ln -s $sdk $SDK_DIR/MacOSX$SDK_VERSION.sdk
-
-OSXCROSS_CONF="$TARGET_DIR/bin/osxcross-conf"
-OSXCROSS_ENV="$TARGET_DIR/bin/osxcross-env"
-
-rm -f $OSXCROSS_CONF $OSXCROSS_ENV
-
-echo "compiling wrapper ..."
 
 export OSXCROSS_TARGET=$TARGET
 export OSXCROSS_OSX_VERSION_MIN=$OSX_VERSION_MIN
 export OSXCROSS_BUILD_DIR=$BUILD_DIR
 
-if [ "$PLATFORM" != "Darwin" ]; then
-  # libLTO.so
-  set +e
-  eval $(cat $BUILD_DIR/cctools*/cctools/config.log | grep LLVM_LIB_DIR | head -n1)
-  set -e
-  export OSXCROSS_LIBLTO_PATH=$LLVM_LIB_DIR
-fi
+# NOTE: osxcross set this to LLVM_LIB_DIR from cctools config.log,
+# so maybe we should do the same
+export OSXCROSS_LIBLTO_PATH=
 
 $BASE_DIR/wrapper/build.sh
 
