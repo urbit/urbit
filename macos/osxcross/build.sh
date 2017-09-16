@@ -36,17 +36,11 @@ SDK=$(ls $TARBALL_DIR/MacOSX$SDK_VERSION*)
 
 ls $TARBALL_DIR/MacOSX$SDK_VERSION*
 
-echo extracting sdk
 extract $SDK 1 1
-echo extracted sdk
 
 rm -rf $SDK_DIR/MacOSX$SDK_VERSION*
 
-if [ "$(ls -l SDKs/*$SDK_VERSION* 2>/dev/null | wc -l | tr -d ' ')" != "0" ]; then
-  mv -f SDKs/*$SDK_VERSION* $SDK_DIR
-else
-  mv -f *OSX*$SDK_VERSION*sdk* $SDK_DIR
-fi
+mv -f *OSX*$SDK_VERSION*sdk* $SDK_DIR
 
 pushd $SDK_DIR/MacOSX$SDK_VERSION.sdk &>/dev/null
 set +e
@@ -67,12 +61,8 @@ rm -f $OSXCROSS_CONF $OSXCROSS_ENV
 
 echo "compiling wrapper ..."
 
-export X86_64H_SUPPORTED
-
-export OSXCROSS_VERSION
 export OSXCROSS_TARGET=$TARGET
 export OSXCROSS_OSX_VERSION_MIN=$OSX_VERSION_MIN
-export OSXCROSS_LINKER_VERSION=$LINKER_VERSION
 export OSXCROSS_BUILD_DIR=$BUILD_DIR
 
 if [ "$PLATFORM" != "Darwin" ]; then

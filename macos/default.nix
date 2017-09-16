@@ -82,6 +82,7 @@ let
     TARGET = "darwin15";
     X86_64H_SUPPORTED = true;
     OSX_VERSION_MIN = "10.5";
+    OSXCROSS_LINKER_VERSION = "274.2";
   };
 
   cmake_toolchain = import ../cmake_toolchain {
