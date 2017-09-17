@@ -5514,7 +5514,7 @@
     {$loop p/chap q/twig}                               ::  |-
     {$port p/chap q/twig r/twig}                        ::  |~
     {$gill p/chap q/root r/twig}                        ::  |*
-    {$gate p/chap q/root r/twig}                        ::  |=
+    {$brts p/chap q/root r/twig}                        ::  |=
     {$tray p/chap q/twig}                               ::  |?
   ::                                            ::::::  tuples
     {$scon p/twig q/twig}                                ::  :_ [q p]
@@ -6071,7 +6071,7 @@
     ==
   ++  clam  
     ^-   twig  
-    [%gate [~ ~] [%base %noun] (whip(gom 7) 6)]
+    [%brts [~ ~] [%base %noun] (whip(gom 7) 6)]
   ::
   ++  whip
     |=  axe/axis
@@ -6287,7 +6287,7 @@
           $loop   ((doof -.gen +>.gen) p.gen)
           $port   ((doof -.gen +>.gen) p.gen)
           $gill   ((doof -.gen +>.gen) p.gen)
-          $gate   ((doof -.gen +>.gen) p.gen)
+          $brts   ((doof -.gen +>.gen) p.gen)
           $tray   ((doof -.gen +>.gen) p.gen)
         ==
       ::
@@ -6539,12 +6539,12 @@
                       one(q (~(put by q.one) %$ [~ [%ash q.gen]]))
                    [%limb %$]
         {$loop *}  [%rap [%limb %$] [%trap p.gen q.gen]]
-        {$port *}  [%iron [%gate p.gen q.gen r.gen]]
+        {$port *}  [%iron [%brts p.gen q.gen r.gen]]
         {$gill *}  :+  %pin  [%bunt q.gen]
                    :+  %corp  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$gate *}  :^  %door  p.gen  q.gen 
+        {$brts *}  :^  %door  p.gen  q.gen 
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$tray *}  [%lead %trap p.gen q.gen]
@@ -6882,7 +6882,7 @@
         $loop  (lead -.gen %.(+.gen (twin noop expr)))
         $port  (lead -.gen %.(+.gen (twin noop dubs)))
         $gill  (lead -.gen %.(+.gen (twin noop dubs)))
-        $gate  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brts  (lead -.gen %.(+.gen (twin noop dubs)))
         $tray  (lead -.gen %.(+.gen (twin noop expr)))
         $scon  (lead -.gen %.(+.gen dubs))
         $conq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
@@ -10184,7 +10184,7 @@
                     ['^' (runo ket %cork [~ ~] expx)]
                     ['~' (runo sig %port [~ ~] expb)]
                     ['*' (runo tar %gill [~ ~] exqc)]
-                    ['=' (runo tis %gate [~ ~] exqc)]
+                    ['=' (runo tis %brts [~ ~] exqc)]
                     ['?' (runo wut %tray [~ ~] expa)]
                 ==
               ==
@@ -10239,7 +10239,7 @@
                   (worn %cork [~ ~] expx)
                   (worn %port [~ ~] expb)
                   (worn %gill [~ ~] expb)
-                  (worn %gate [~ ~] expb)
+                  (worn %brts [~ ~] expb)
                   (worn %tray [~ ~] expa)
                 ::
                   (word %bunt expa)

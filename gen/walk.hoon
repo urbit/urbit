@@ -73,7 +73,7 @@
           $loop   ((doof -.gen +>.gen) p.gen)
           $port   ((doof -.gen +>.gen) p.gen)
           $gill   ((doof -.gen +>.gen) p.gen)
-          $gate   ((doof -.gen +>.gen) p.gen)
+          $brts   ((doof -.gen +>.gen) p.gen)
           $tray   ((doof -.gen +>.gen) p.gen)
         ==
       ::
