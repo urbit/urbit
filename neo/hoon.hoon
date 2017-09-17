@@ -5416,7 +5416,7 @@
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
   ::                                            ::::::  molds
-    {$claw p/root q/root}                               ::  $@ depth fork
+    {$bcpt p/root q/root}                               ::  $@ depth fork
     {$shoe p/twig}                                      ::  $_ example
     {$bank p/(list root)}                               ::  $: tuple
     {$book p/(list root)}                               ::  $% tagged fork
@@ -6186,7 +6186,7 @@
           $halo   flam
           $base   runk
           $leaf   runk
-          $claw   runk
+          $bcpt   runk
           $shoe   runk
           $bank   runk
           $book   runk
@@ -6349,7 +6349,7 @@
         {$dbug *}  [%deet p.gen boil(gen q.gen)]
         {$leaf *}  [%leaf p.gen]
     ::
-        {$claw *}  [%reed boil(gen p.gen) boil(gen q.gen)]
+        {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
         {$shoe *}  [%weed p.gen]
         {$bank *}
       |-  ^-  tile
@@ -6432,7 +6432,7 @@
         {$wing *}  [%make p.gen ~]
         {$yell *}  [%call [%limb %cain] [%wrap [%conp p.gen]] ~]
     ::
-        {$claw *}  ~(clam al boil)
+        {$bcpt *}  ~(clam al boil)
         {$shoe *}  ~(clam al boil)
         {$bank *}  ~(clam al boil)
         {$book *}  ~(clam al boil)
@@ -6746,7 +6746,7 @@
         $tune  (lead -.gen %.(+.gen tung))
         $wing  (lead -.gen %.(+.gen noop))
         $yell  (lead -.gen %.(+.gen moar))
-        $claw  (lead -.gen %.(+.gen dubs))
+        $bcpt  (lead -.gen %.(+.gen dubs))
         $shoe  (lead -.gen %.(+.gen expr))
         $bank  (lead -.gen %.(+.gen moar))
         $book  (lead -.gen %.(+.gen moar))
@@ -9753,7 +9753,7 @@
                 ;~  pfix  buc
                   %-  stew
                   ^.  stet  ^.  limo
-                  :~  ['@' (rune pat %claw exqb)]
+                  :~  ['@' (rune pat %bcpt exqb)]
                       ['_' (rune cab %shoe expa)]
                       [':' (rune col %bank exqs)]
                       ['%' (rune cen %book exqs)]
@@ -9797,7 +9797,7 @@
               ;~  pfix  buc
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['@' (rune pat %claw expb)]
+                :~  ['@' (rune pat %bcpt expb)]
                     ['_' (rune cab %shoe expa)]
                     [':' (rune col %bank exps)]
                     ['%' (rune cen %book exps)]
@@ -9848,7 +9848,7 @@
                   (worn %tray [~ ~] expa)
                 ::
                   (word %bunt expa)
-                  (word %claw expb)
+                  (word %bcpt expb)
                   (word %shoe expa)
                   (word %bank exps)
                   (word %book exps)

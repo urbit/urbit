@@ -56,7 +56,7 @@
           $halo   flam
           $base   runk
           $leaf   runk
-          $claw   runk
+          $bcpt   runk
           $shoe   runk
           $bank   runk
           $book   runk
