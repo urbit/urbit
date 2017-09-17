@@ -44,7 +44,6 @@
 using namespace tools;
 using namespace target;
 
-int unittest = 0;
 int debug = 0;
 
 namespace {
@@ -457,11 +456,8 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
 } // unnamed namespace
 
-//
-// Main routine
-//
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   char bbuf[sizeof(benchmark)];
   auto b = new (bbuf) benchmark;
   Target target;
@@ -470,13 +466,6 @@ int main(int argc, char **argv) {
 
   if (char *p = getenv("OCDEBUG"))
     debug = atoi(p);
-
-  if (char *p = getenv("OSXCROSS_UNIT_TEST")) {
-    unittest = atoi(p);
-
-    if ((p = getenv("OSXCROSS_PROG_NAME")))
-      argv[0] = p;
-  }
 
   if (!detectTarget(argc, argv, target)) {
     err << "while detecting target" << err.endl();
@@ -535,8 +524,7 @@ int main(int argc, char **argv) {
       out += " ";
     }
 
-    if (!unittest)
-      dbg << "--> " << in << dbg.endl();
+    dbg << "--> " << in << dbg.endl();
 
     dbg << "<-- " << out << dbg.endl();
   };
@@ -563,9 +551,6 @@ int main(int argc, char **argv) {
     dbg << "=== time spent in wrapper: " << diff / 1000000.0 << " ms"
         << dbg.endl();
   }
-
-  if (unittest == 2)
-    return 0;
 
   if (rc == -1 && execvp(target.compilerpath.c_str(), cargs)) {
     err << "invoking compiler failed" << err.endl();
