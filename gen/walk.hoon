@@ -57,14 +57,14 @@
           $base   runk
           $leaf   runk
           $bcpt   runk
-          $shoe   runk
-          $bank   runk
-          $book   runk
-          $lamb   runk
-          $bush   runk
-          $pick   runk
-          $coat   flam 
-          $grow   runk
+          $bccb   runk
+          $bccl   runk
+          $bccn   runk
+          $bchp   runk
+          $bckt   runk
+          $bcwt   runk
+          $bcts   flam 
+          $bcsm   runk
           $door   ((doof -.gen +>.gen) p.gen)
           $gasp   ((doof -.gen +>.gen) p.gen)
           $corp   ((doof -.gen +>.gen) p.gen)
@@ -84,7 +84,7 @@
         ?:  ?=(^ -.gen)  flam
         ?+  -.gen  flam
           $name  ((helk -.gen +>.gen) p.gen)
-          $coat  ((helk -.gen +>.gen) p.gen)
+          $bcts  ((helk -.gen +>.gen) p.gen)
           $var   ((hulp -.gen +>.gen) p.gen)
           $rev   ((hulp -.gen +>.gen) p.gen)
           $sip   ((hulp -.gen +>.gen) p.gen)

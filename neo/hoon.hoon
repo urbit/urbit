@@ -5346,7 +5346,7 @@
           $%  {$& p/axis}                               ::  by geometry
               {$| p/@ud q/(unit term)}                  ::  by name
           ==                                            ::
-++  line  {p/{$leaf p/aura q/@} q/tile}                 ::  %book case
+++  line  {p/{$leaf p/aura q/@} q/tile}                 ::  %bccn case
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 ++  noun  *                                             ::  any noun
 ++  null  $~                                            ::  null, nil, etc
@@ -5367,7 +5367,7 @@
 ++  tile  $^  {p/tile q/tile}                           ::  ordered pair
           $%  {$axil p/base}                            ::  base span
               {$bark p/toga q/tile}                     ::  name
-              {$bush p/tile q/tile}                     ::  pair+tag
+              {$bckt p/tile q/tile}                     ::  pair+tag
               {$deet p/spot q/tile}                     ::  set debug
               {$fern p/{i/tile t/(list tile)}}          ::  plain selection
               {$herb p/twig}                            ::  assembly
@@ -5417,14 +5417,14 @@
     {$yell p/(list twig)}                               ::  render as tank
   ::                                            ::::::  molds
     {$bcpt p/root q/root}                               ::  $@ depth fork
-    {$shoe p/twig}                                      ::  $_ example
-    {$bank p/(list root)}                               ::  $: tuple
-    {$book p/(list root)}                               ::  $% tagged fork
-    {$lamb p/root q/root}                               ::  $- function
-    {$bush p/root q/root}                               ::  $^ pairhead fork
-    {$pick p/(list root)}                               ::  $? untagged fork
-    {$coat p/toga q/root}                               ::  $= name
-    {$grow p/twig}                                      ::  $; assembly
+    {$bccb p/twig}                                      ::  $_ example
+    {$bccl p/(list root)}                               ::  $: tuple
+    {$bccn p/(list root)}                               ::  $% tagged fork
+    {$bchp p/root q/root}                               ::  $- function
+    {$bckt p/root q/root}                               ::  $^ pairhead fork
+    {$bcwt p/(list root)}                               ::  $? untagged fork
+    {$bcts p/toga q/root}                               ::  $= name
+    {$bcsm p/twig}                                      ::  $; assembly
   ::                                            ::::::  cores
     {$door p/chap q/root r/(map @ tomb)}                ::  |_
     {$gasp p/chap q/twig r/twig}                        ::  |:
@@ -5938,7 +5938,7 @@
         {$bark *}
       [%name p.sec $(sec q.sec)]
     ::
-        {$bush *}
+        {$bckt *}
       %-  hail
       =.  wat  ~
       [%if [%bust %bean] $(sec p.sec) $(sec q.sec)]
@@ -6046,7 +6046,7 @@
         {$bark *}
       [%name p.sec $(sec q.sec)]
     ::
-        {$bush *}
+        {$bckt *}
       %-  hail
       =.  wat  ~
       %-  tun  |=  gon/*  =>  .(nag gon)  ^-  twig
@@ -6187,14 +6187,14 @@
           $base   runk
           $leaf   runk
           $bcpt   runk
-          $shoe   runk
-          $bank   runk
-          $book   runk
-          $lamb   runk
-          $bush   runk
-          $pick   runk
-          $coat   flam 
-          $grow   runk
+          $bccb   runk
+          $bccl   runk
+          $bccn   runk
+          $bchp   runk
+          $bckt   runk
+          $bcwt   runk
+          $bcts   flam 
+          $bcsm   runk
           $door   ((doof -.gen +>.gen) p.gen)
           $gasp   ((doof -.gen +>.gen) p.gen)
           $corp   ((doof -.gen +>.gen) p.gen)
@@ -6214,7 +6214,7 @@
         ?:  ?=(^ -.gen)  flam
         ?+  -.gen  flam
           $name  ((helk -.gen +>.gen) p.gen)
-          $coat  ((helk -.gen +>.gen) p.gen)
+          $bcts  ((helk -.gen +>.gen) p.gen)
           $var   ((hulp -.gen +>.gen) p.gen)
           $rev   ((hulp -.gen +>.gen) p.gen)
           $sip   ((hulp -.gen +>.gen) p.gen)
@@ -6350,14 +6350,14 @@
         {$leaf *}  [%leaf p.gen]
     ::
         {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
-        {$shoe *}  [%weed p.gen]
-        {$bank *}
+        {$bccb *}  [%weed p.gen]
+        {$bccl *}
       |-  ^-  tile
       ?~  p.gen  [%axil %null]
       ?~  t.p.gen  boil(gen i.p.gen)
       [boil(gen i.p.gen) $(p.gen t.p.gen)]
     ::
-        {$book *}
+        {$bccn *}
       ?~  p.gen
         [%axil %void]
       ?~  t.p.gen
@@ -6373,13 +6373,13 @@
         $|  ?~(end p.def [%fern p.def [%kelp end] ~])
       ==
     ::
-        {$bush *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$lamb *}  [%weed [%port [~ ~] p.gen [%bunt [%per [%$ 7] q.gen]]]]
+        {$bckt *}  [%bckt boil(gen p.gen) boil(gen q.gen)]
+        {$bchp *}  [%weed [%port [~ ~] p.gen [%bunt [%per [%$ 7] q.gen]]]]
         {$halo *}  [%plow p.gen boil(gen q.gen)]
-        {$coat *}  [%bark p.gen boil(gen q.gen)]
-        {$pick *}  =+  (turn p.gen |=(a/twig boil(gen a)))
+        {$bcts *}  [%bark p.gen boil(gen q.gen)]
+        {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
-        {$grow *}  [%herb p.gen]
+        {$bcsm *}  [%herb p.gen]
     ==
   ::
   ++  open
@@ -6433,15 +6433,15 @@
         {$yell *}  [%call [%limb %cain] [%wrap [%conp p.gen]] ~]
     ::
         {$bcpt *}  ~(clam al boil)
-        {$shoe *}  ~(clam al boil)
-        {$bank *}  ~(clam al boil)
-        {$book *}  ~(clam al boil)
-        {$lamb *}  ~(clam al boil)
-        {$bush *}  ~(clam al boil)
-        {$pick *}  ~(clam al boil)
-        {$coat *}  ~(clam al boil)
+        {$bccb *}  ~(clam al boil)
+        {$bccl *}  ~(clam al boil)
+        {$bccn *}  ~(clam al boil)
+        {$bchp *}  ~(clam al boil)
+        {$bckt *}  ~(clam al boil)
+        {$bcwt *}  ~(clam al boil)
+        {$bcts *}  ~(clam al boil)
         {$halo *}  ~(clam al boil)
-        {$grow *}  p.gen
+        {$bcsm *}  p.gen
     ::
         {$door *}  [%pin [%bunt q.gen] [%corp p.gen r.gen]]
         {$gasp *}  [%pin [%burn q.gen] [%trap p.gen r.gen]]
@@ -6617,7 +6617,7 @@
         {$var *}
       ?~  q.p.gen
         [%pin [%name p.p.gen q.gen] r.gen]
-      [%pin [%cast [%coat p.p.gen u.q.p.gen] q.gen] r.gen]
+      [%pin [%cast [%bcts p.p.gen u.q.p.gen] q.gen] r.gen]
     ::
         {$rev *}  [%var p.gen r.gen q.gen]
         {$set *}
@@ -6634,7 +6634,7 @@
                        :+  %name  p.p.gen
                        [%rap [%$ 2] [%limb %a]]
                      :+  %cast
-                        :+  %coat  p.p.gen
+                        :+  %bcts  p.p.gen
                         [%per [%limb %v] u.q.p.gen]
                      [%rap [%$ 2] [%limb %a]] 
                 [%limb %v]
@@ -6747,14 +6747,14 @@
         $wing  (lead -.gen %.(+.gen noop))
         $yell  (lead -.gen %.(+.gen moar))
         $bcpt  (lead -.gen %.(+.gen dubs))
-        $shoe  (lead -.gen %.(+.gen expr))
-        $bank  (lead -.gen %.(+.gen moar))
-        $book  (lead -.gen %.(+.gen moar))
-        $lamb  (lead -.gen %.(+.gen dubs))
-        $bush  (lead -.gen %.(+.gen dubs))
-        $pick  (lead -.gen %.(+.gen moar))
-        $coat  (lead -.gen %.(+.gen nexp))
-        $grow  (lead -.gen %.(+.gen expr))
+        $bccb  (lead -.gen %.(+.gen expr))
+        $bccl  (lead -.gen %.(+.gen moar))
+        $bccn  (lead -.gen %.(+.gen moar))
+        $bchp  (lead -.gen %.(+.gen dubs))
+        $bckt  (lead -.gen %.(+.gen dubs))
+        $bcwt  (lead -.gen %.(+.gen moar))
+        $bcts  (lead -.gen %.(+.gen nexp))
+        $bcsm  (lead -.gen %.(+.gen expr))
         $door  (lead -.gen %.(+.gen (trio noop expr arms)))
         $door  (lead -.gen %.(+.gen (trio noop expr arms)))
         $gasp  (lead -.gen %.(+.gen (twin noop dubs)))
@@ -8445,7 +8445,7 @@
                     {$face p/term q/wine}               ::
                     {$list p/term q/wine}               ::
                     {$pear p/term q/@}                  ::
-                    {$pick p/(list wine)}               ::
+                    {$bcwt p/(list wine)}               ::
                     {$plot p/(list wine)}               ::
                     {$stop p/@ud}                       ::
                     {$tree p/term q/wine}               ::
@@ -8505,7 +8505,7 @@
         =^  cox  gid  $(q.ham q.q.ham)
         :_(gid [%rose [" " (weld (trip p.q.ham) "(") ")"] cox ~])
       ::
-          {$pick *}
+          {$bcwt *}
         =^  coz  gid  (many p.q.ham)
         :_(gid [%rose [[' ' ~] ['?' '(' ~] [')' ~]] coz])
       ::
@@ -8645,7 +8645,7 @@
         ~
       [~ u.for u.aft]
     ::
-        {$pick *}
+        {$bcwt *}
       |-  ^-  (unit tank)
       ?~  p.q.ham
         ~
@@ -8734,7 +8734,7 @@
     ^=  woz
     ^-  wine
     ?.  ?=({$stop *} q.ham)
-      ?:  ?&  ?=  {$pick {$pear $n $0} {$plot {$pear $n $0} {$face *} $~} $~}
+      ?:  ?&  ?=  {$bcwt {$pear $n $0} {$plot {$pear $n $0} {$face *} $~} $~}
                 q.ham
               =(1 (met 3 p.i.t.p.i.t.p.q.ham))
           ==
@@ -8744,7 +8744,7 @@
     ?~  may
       q.ham
     =+  nul=[%pear %n 0]
-    ?.  ?&  ?=({$pick *} u.may)
+    ?.  ?&  ?=({$bcwt *} u.may)
             ?=({* * $~} p.u.may)
             |(=(nul i.p.u.may) =(nul i.t.p.u.may))
         ==
@@ -8841,7 +8841,7 @@
     ::
         {$fork *}
       =+  yed=(~(tap in p.sut))
-      =-  [p [%pick q]]
+      =-  [p [%bcwt q]]
       |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/(list wine)}
       ?~  yed
         [dex ~]
@@ -9482,7 +9482,7 @@
   ++  scab
     %+  cook
       |=  a/(list wing)  ^-  twig
-      :-  %grow
+      :-  %bcsm
       |-  ^-  twig
       ?~(a !! ?~(t.a [%wing i.a] [%rap [%wing i.a] $(a t.a)]))
     (most col rope)
@@ -9493,7 +9493,7 @@
     ^.  stet  ^.  limo
     :~
       :-  '_'
-        ;~(pfix cab (stag %shoe wide))
+        ;~(pfix cab (stag %bccb wide))
       :-  '$'
         ;~  pose
           ;~  pfix  buc
@@ -9505,7 +9505,7 @@
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==
           ==
-          (stag %grow rump)
+          (stag %bcsm rump)
         ==
       :-  '%'
         ;~  pose
@@ -9520,21 +9520,21 @@
           ==
         ==
       :-  '('
-        %+  stag  %grow
+        %+  stag  %bcsm
         %+  stag  %call
         %+  ifix  [pel per]
         ;~(plug wide ;~(pose ;~(pfix ace (most ace wyde)) (easy ~)))
       :-  '{'
-        (stag %bank (ifix [kel ker] (most ace wyde)))
+        (stag %bccl (ifix [kel ker] (most ace wyde)))
       :-  '['
-        (stag %bank (ifix [sel ser] (most ace wyde)))
+        (stag %bccl (ifix [sel ser] (most ace wyde)))
       :-  '*'
         (cold [%base %noun] tar)
       :-  '@'
         ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '?'
         ;~  pose
-          (stag %pick ;~(pfix wut (ifix [pel per] (most ace wyde))))
+          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wyde))))
           (cold [%base %bean] wut)
         ==
       :-  '^'
@@ -9546,7 +9546,7 @@
         scab
       :-  ['a' 'z']
         ;~  pose
-          (stag %coat ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
+          (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
           scab
         ==
     ==
@@ -9567,7 +9567,7 @@
           (stag %fail (cold ~ ;~(plug zap zap)))
         ==
       :-  '_'
-        ;~(pfix cab (stag %shoe wide))
+        ;~(pfix cab (stag %bccb wide))
       :-  '$'
         ;~  pose
           ;~  pfix  buc
@@ -9605,7 +9605,7 @@
       :-  '('
         (stag %call (ifix [pel per] (most ace wide)))
       :-  '{'
-        (stag %bank (ifix [kel ker] (most ace wide)))
+        (stag %bccl (ifix [kel ker] (most ace wide)))
       :-  '*'
         ;~  pose
           (stag %bunt ;~(pfix tar wide))
@@ -9657,7 +9657,7 @@
         (stag %same ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
-          (stag %pick ;~(pfix wut (ifix [pel per] (most ace wide))))
+          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wide))))
           (cold [%base %bean] wut)
         ==
       :-  '['
@@ -9754,14 +9754,14 @@
                   %-  stew
                   ^.  stet  ^.  limo
                   :~  ['@' (rune pat %bcpt exqb)]
-                      ['_' (rune cab %shoe expa)]
-                      [':' (rune col %bank exqs)]
-                      ['%' (rune cen %book exqs)]
-                      ['^' (rune ket %bush exqb)]
-                      ['-' (rune hep %lamb exqb)]
-                      ['=' (rune tis %coat exqg)]
-                      ['?' (rune wut %pick exqs)]
-                      [';' (rune sem %grow expa)]
+                      ['_' (rune cab %bccb expa)]
+                      [':' (rune col %bccl exqs)]
+                      ['%' (rune cen %bccn exqs)]
+                      ['^' (rune ket %bckt exqb)]
+                      ['-' (rune hep %bchp exqb)]
+                      ['=' (rune tis %bcts exqg)]
+                      ['?' (rune wut %bcwt exqs)]
+                      [';' (rune sem %bcsm expa)]
                   ==
                 ==
             :-  '%'
@@ -9798,14 +9798,14 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['@' (rune pat %bcpt expb)]
-                    ['_' (rune cab %shoe expa)]
-                    [':' (rune col %bank exps)]
-                    ['%' (rune cen %book exps)]
-                    ['^' (rune ket %bush expb)]
-                    ['-' (rune hep %lamb expb)]
-                    ['=' (rune tis %coat expg)]
-                    ['?' (rune wut %pick exps)]
-                    [';' (rune sem %grow expa)]
+                    ['_' (rune cab %bccb expa)]
+                    [':' (rune col %bccl exps)]
+                    ['%' (rune cen %bccn exps)]
+                    ['^' (rune ket %bckt expb)]
+                    ['-' (rune hep %bchp expb)]
+                    ['=' (rune tis %bcts expg)]
+                    ['?' (rune wut %bcwt exps)]
+                    [';' (rune sem %bcsm expa)]
                 ==
               ==
             :-  '%'
@@ -9849,14 +9849,14 @@
                 ::
                   (word %bunt expa)
                   (word %bcpt expb)
-                  (word %shoe expa)
-                  (word %bank exps)
-                  (word %book exps)
-                  (word %bush expb)
-                  (word %lamb expb)
-                  (word %coat expg)
-                  (word %pick exps)
-                  (word %grow expa)
+                  (word %bccb expa)
+                  (word %bccl exps)
+                  (word %bccn exps)
+                  (word %bckt expb)
+                  (word %bchp expb)
+                  (word %bcts expg)
+                  (word %bcwt exps)
+                  (word %bcsm expa)
                 ::
                   (word %keep exph)
                   (word %lace expb)
@@ -10342,7 +10342,7 @@
       $pel  (bind ~(reek ap ros) |=(hyp/wing [%make hyp p.vil]))
       $ket  [~ ros p.vil]
       $fas  =+  tog=~(hock ap ros)
-            ?.(?=(@ tog) ~ [~ %coat tog p.vil])
+            ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
       $tis  =+  tog=~(hock ap ros)
             ?:(=([%0 ~] tog) ~ [~ %name tog p.vil])
     ==

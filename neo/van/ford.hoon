@@ -1091,8 +1091,8 @@
       %-  flux
       |=  vax/vase  ^-  (set mark)
       %-  =-  ~(gas in `(set mark)`-)
-          ?.  (slob %grow p.vax)  ~
-          (silt (sloe p:(slap vax [%limb %grow])))
+          ?.  (slob %bcsm p.vax)  ~
+          (silt (sloe p:(slap vax [%limb %bcsm])))
       ?.  (slob %garb p.vax)  ~
       =+  (slap vax [%limb %garb])
       (fall ((soft (list mark)) q) ~)
@@ -1139,12 +1139,12 @@
       %+  cope  (fang cof for)
       |=  {cof/cafe pro/vase}  ^-  (bolt vase)
       ?:  :: =<  $  ~%  %limb-grow  link-jet  ~  |.
-          &((slob %grow p.pro) (slob too p:(slap pro [%limb %grow])))
+          &((slob %bcsm p.pro) (slob too p:(slap pro [%limb %bcsm])))
         :: ~$  link-grow
-        :: =<  $  ~%  %grow  link-jet  ~  |.
+        :: =<  $  ~%  %bcsm  link-jet  ~  |.
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
-        (maim cof pox [%per [%limb %grow] [%limb too]])
+        (maim cof pox [%per [%limb %bcsm] [%limb too]])
       %+  cope  (fang cof too)
       ~%  %grab  link-jet  ~
       |=  {cof/cafe pro/vase}
