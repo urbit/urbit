@@ -5506,16 +5506,16 @@
     {$bcts p/toga q/root}                               ::  $= name
     {$bcsm p/twig}                                      ::  $; assembly
   ::                                            ::::::  cores
-    {$door p/chap q/root r/(map @ tomb)}                ::  |_
-    {$gasp p/chap q/twig r/twig}                        ::  |:
-    {$corp p/chap q/(map @ tomb)}                       ::  |%
-    {$trap p/chap q/twig}                               ::  |.
-    {$cork p/chap q/twig r/(map @ tomb)}                ::  |^
-    {$loop p/chap q/twig}                               ::  |-
-    {$port p/chap q/twig r/twig}                        ::  |~
-    {$gill p/chap q/root r/twig}                        ::  |*
+    {$brcb p/chap q/root r/(map @ tomb)}                ::  |_
+    {$brcl p/chap q/twig r/twig}                        ::  |:
+    {$brcn p/chap q/(map @ tomb)}                       ::  |%
+    {$brdt p/chap q/twig}                               ::  |.
+    {$brkt p/chap q/twig r/(map @ tomb)}                ::  |^
+    {$brhp p/chap q/twig}                               ::  |-
+    {$brsg p/chap q/twig r/twig}                        ::  |~
+    {$brtr p/chap q/root r/twig}                        ::  |*
     {$brts p/chap q/root r/twig}                        ::  |=
-    {$tray p/chap q/twig}                               ::  |?
+    {$brwt p/chap q/twig}                               ::  |?
   ::                                            ::::::  tuples
     {$scon p/twig q/twig}                                ::  :_ [q p]
     {$conq p/twig q/twig r/twig s/twig}                  ::  :^ [p q r s]
@@ -6279,16 +6279,16 @@
           $bcwt   runk
           $bcts   flam 
           $bcsm   runk
-          $door   ((doof -.gen +>.gen) p.gen)
-          $gasp   ((doof -.gen +>.gen) p.gen)
-          $corp   ((doof -.gen +>.gen) p.gen)
-          $trap   ((doof -.gen +>.gen) p.gen)
-          $cork   ((doof -.gen +>.gen) p.gen)
-          $loop   ((doof -.gen +>.gen) p.gen)
-          $port   ((doof -.gen +>.gen) p.gen)
-          $gill   ((doof -.gen +>.gen) p.gen)
+          $brcb   ((doof -.gen +>.gen) p.gen)
+          $brcl   ((doof -.gen +>.gen) p.gen)
+          $brcn   ((doof -.gen +>.gen) p.gen)
+          $brdt   ((doof -.gen +>.gen) p.gen)
+          $brkt   ((doof -.gen +>.gen) p.gen)
+          $brhp   ((doof -.gen +>.gen) p.gen)
+          $brsg   ((doof -.gen +>.gen) p.gen)
+          $brtr   ((doof -.gen +>.gen) p.gen)
           $brts   ((doof -.gen +>.gen) p.gen)
-          $tray   ((doof -.gen +>.gen) p.gen)
+          $brwt   ((doof -.gen +>.gen) p.gen)
         ==
       ::
       ::  resolve variable issues
@@ -6458,7 +6458,7 @@
       ==
     ::
         {$bckt *}  [%bckt boil(gen p.gen) boil(gen q.gen)]
-        {$bchp *}  [%weed [%port [~ ~] p.gen [%bunt [%per [%$ 7] q.gen]]]]
+        {$bchp *}  [%weed [%brsg [~ ~] p.gen [%bunt [%per [%$ 7] q.gen]]]]
         {$halo *}  [%plow p.gen boil(gen q.gen)]
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
@@ -6478,9 +6478,9 @@
     ::
         {$knit *}                                       ::
       :+  %per  [%name %v %$ 1]                         ::  =>  v=.
-      :+  %loop  [~ ~]                                  ::  |-
+      :+  %brhp  [~ ~]                                  ::  |-
       :+  %like                                         ::  ^+
-        :+  %loop  [~ ~]                                ::  |-
+        :+  %brhp  [~ ~]                                ::  |-
         :^    %if                                       ::  ?:
             [%bust %bean]                               ::  ?
           [%bust %null]                                 ::  ~
@@ -6501,7 +6501,7 @@
             [%per [%limb %v] p.i.p.gen]                 ::  =>(v {p.i.p.gen})
         [%name %b res]                                  ::  b={res}
       ^-  twig                                          ::
-      :+  %loop  [~ ~]                                  ::  |-
+      :+  %brhp  [~ ~]                                  ::  |-
       :^    %ifat                                       ::  ?@
           [%a ~]                                        ::  a
         [%limb %b]                                      ::  b
@@ -6527,27 +6527,27 @@
         {$halo *}  ~(clam al boil)
         {$bcsm *}  p.gen
     ::
-        {$door *}  [%pin [%bunt q.gen] [%corp p.gen r.gen]]
-        {$gasp *}  [%pin [%burn q.gen] [%trap p.gen r.gen]]
-        {$trap *}  :+  %corp  p.gen
+        {$brcb *}  [%pin [%bunt q.gen] [%brcn p.gen r.gen]]
+        {$brcl *}  [%pin [%burn q.gen] [%brdt p.gen r.gen]]
+        {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
-        {$cork *}  :+  %per 
-                      :+  %corp  p.gen
+        {$brkt *}  :+  %per 
+                      :+  %brcn  p.gen
                       =+  one=(~(got by r.gen) 0)
                       %+  ~(put by r.gen)  0
                       one(q (~(put by q.one) %$ [~ [%ash q.gen]]))
                    [%limb %$]
-        {$loop *}  [%rap [%limb %$] [%trap p.gen q.gen]]
-        {$port *}  [%iron [%brts p.gen q.gen r.gen]]
-        {$gill *}  :+  %pin  [%bunt q.gen]
-                   :+  %corp  p.gen
+        {$brhp *}  [%rap [%limb %$] [%brdt p.gen q.gen]]
+        {$brsg *}  [%iron [%brts p.gen q.gen r.gen]]
+        {$brtr *}  :+  %pin  [%bunt q.gen]
+                   :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$brts *}  :^  %door  p.gen  q.gen 
+        {$brts *}  :^  %brcb  p.gen  q.gen 
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
-        {$tray *}  [%lead %trap p.gen q.gen]
+        {$brwt *}  [%lead %brdt p.gen q.gen]
     ::
         {$conq *}  [p.gen q.gen r.gen s.gen]
         {$cont *}  [p.gen q.gen r.gen]
@@ -6603,10 +6603,10 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
-        [%trap [~ ~] [%call [%limb %cain] [%wrap [%per [%$ 3] p.gen]] ~]]
+        [%brdt [~ ~] [%call [%limb %cain] [%wrap [%per [%$ 3] p.gen]] ~]]
       q.gen
     ::
-        {$lurk *}  [%hint [%mean [%trap [~ ~] p.gen]] q.gen]
+        {$lurk *}  [%hint [%mean [%brdt [~ ~] p.gen]] q.gen]
         {$fast *}
       :+  %thin
         :-  %fast
@@ -6659,7 +6659,7 @@
         $marl  =-  [%lace [p.i.p.gen $(p.gen t.p.gen)] -]
                ^-  twig
                :+  %new  [%base %cell]
-               :+  %corp  *chap
+               :+  %brcn  *chap
                ^-  (map @ tomb)
                =-  [[0 [~ ~] -] ~ ~]
                ^-  (map term (pair what foot))
@@ -6705,7 +6705,7 @@
           :+  %rap                                      ::
             [%wing [%| 0 ~] [%& 6] ~]                   ::
           [%limb %b]                                    ::
-        :+  %trap  [~ ~]                                ::  |.
+        :+  %brdt  [~ ~]                                ::  |.
         :^    %calt                                     ::  %+
             [%per [%limb %v] p.gen]                     ::      =>(v {p.gen})
           [%call [%limb %b] [%limb %c] ~]               ::    (b c)
@@ -6873,17 +6873,17 @@
         $bcwt  (lead -.gen %.(+.gen moar))
         $bcts  (lead -.gen %.(+.gen nexp))
         $bcsm  (lead -.gen %.(+.gen expr))
-        $door  (lead -.gen %.(+.gen (trio noop expr arms)))
-        $door  (lead -.gen %.(+.gen (trio noop expr arms)))
-        $gasp  (lead -.gen %.(+.gen (twin noop dubs)))
-        $corp  (lead -.gen %.(+.gen (twin noop arms)))
-        $trap  (lead -.gen %.(+.gen (twin noop expr)))
-        $cork  (lead -.gen %.(+.gen (trio noop expr arms)))
-        $loop  (lead -.gen %.(+.gen (twin noop expr)))
-        $port  (lead -.gen %.(+.gen (twin noop dubs)))
-        $gill  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brcb  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $brcb  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brcn  (lead -.gen %.(+.gen (twin noop arms)))
+        $brdt  (lead -.gen %.(+.gen (twin noop expr)))
+        $brkt  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $brhp  (lead -.gen %.(+.gen (twin noop expr)))
+        $brsg  (lead -.gen %.(+.gen (twin noop dubs)))
+        $brtr  (lead -.gen %.(+.gen (twin noop dubs)))
         $brts  (lead -.gen %.(+.gen (twin noop dubs)))
-        $tray  (lead -.gen %.(+.gen (twin noop expr)))
+        $brwt  (lead -.gen %.(+.gen (twin noop expr)))
         $scon  (lead -.gen %.(+.gen dubs))
         $conq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
         $cons  (lead -.gen %.(+.gen dubs))
@@ -7896,7 +7896,7 @@
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
         {$cool *}  $(fab |, gen p.gen)
-        {$corp *}  (grow %gold [%$ 1] p.gen q.gen)
+        {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
         {$make *}  (~(mint et p.gen q.gen) gol)
         {$wish *}
@@ -8069,7 +8069,7 @@
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
     ::
         {$cool *}  $(fab |, gen p.gen)
-        {$corp *}  (grow %gold [%$ 1] p.gen q.gen)
+        {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
         {$make *}  (~(mull et p.gen q.gen) gol dox)
         {$wish *}  =+($(gen q.gen, gol %noun) $(gen [%bunt p.gen]))
         {$bump *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
@@ -8444,7 +8444,7 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$cool *}  $(fab |, gen p.gen)
-      {$corp *}  (core sut %gold sut p.gen [[%0 0] q.gen])
+      {$brcn *}  (core sut %gold sut p.gen [[%0 0] q.gen])
       {$make *}  ~(play et p.gen q.gen)
       {$wish *}  $(gen [%bunt p.gen])
       {$bump *}  [%atom %$ ~]
@@ -10176,16 +10176,16 @@
               ;~  pfix  bar
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['_' (runo cab %door [~ ~] exqr)]
-                    ['%' (runo cen %corp [~ ~] expe)]
-                    [':' (runo col %gasp [~ ~] expb)]
-                    ['.' (runo dot %trap [~ ~] expa)]
-                    ['-' (runo hep %loop [~ ~] expa)]
-                    ['^' (runo ket %cork [~ ~] expx)]
-                    ['~' (runo sig %port [~ ~] expb)]
-                    ['*' (runo tar %gill [~ ~] exqc)]
+                :~  ['_' (runo cab %brcb [~ ~] exqr)]
+                    ['%' (runo cen %brcn [~ ~] expe)]
+                    [':' (runo col %brcl [~ ~] expb)]
+                    ['.' (runo dot %brdt [~ ~] expa)]
+                    ['-' (runo hep %brhp [~ ~] expa)]
+                    ['^' (runo ket %brkt [~ ~] expx)]
+                    ['~' (runo sig %brsg [~ ~] expb)]
+                    ['*' (runo tar %brtr [~ ~] exqc)]
                     ['=' (runo tis %brts [~ ~] exqc)]
-                    ['?' (runo wut %tray [~ ~] expa)]
+                    ['?' (runo wut %brwt [~ ~] expa)]
                 ==
               ==
             :-  '$'
@@ -10231,16 +10231,16 @@
                       ['*' (rune tar %conp exps)]
                   ==
                 ::
-                  (worn %door [~ ~] expr)
-                  (worn %corp [~ ~] expe)
-                  (worn %gasp [~ ~] expb)
-                  (worn %trap [~ ~] expa)
-                  (worn %loop [~ ~] expa)
-                  (worn %cork [~ ~] expx)
-                  (worn %port [~ ~] expb)
-                  (worn %gill [~ ~] expb)
+                  (worn %brcb [~ ~] expr)
+                  (worn %brcn [~ ~] expe)
+                  (worn %brcl [~ ~] expb)
+                  (worn %brdt [~ ~] expa)
+                  (worn %brhp [~ ~] expa)
+                  (worn %brkt [~ ~] expx)
+                  (worn %brsg [~ ~] expb)
+                  (worn %brtr [~ ~] expb)
                   (worn %brts [~ ~] expb)
-                  (worn %tray [~ ~] expa)
+                  (worn %brwt [~ ~] expa)
                 ::
                   (word %bunt expa)
                   (word %bcpt expb)

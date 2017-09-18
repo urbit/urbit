@@ -294,7 +294,7 @@
     ::
     ::  interpret top move
     ::
-    ~&  [%loop -.q.mov]
+    ~&  [%brhp -.q.mov]
     ?-    -.q.mov
     ::
     ::  %give: return move

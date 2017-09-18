@@ -1452,12 +1452,12 @@
         :+  %per
           ?:  =(~ rop)  
             [%$ 1] 
-          :+  %corp  [~ ~]
+          :+  %brcn  [~ ~]
           =-  [[0 [~ ~] -] ~ ~]
           (~(run by rop) |=({^ a/twig} [~ %ash a]))
         ?:  =(~ bil) 
           [%$ 1] 
-        :+  %corp  [~ ~]
+        :+  %brcn  [~ ~]
         =-  [[0 [~ ~] -] ~ ~]
         (~(run by bil) |=({^ a/twig} [~ %ash a]))
       ::
@@ -1771,7 +1771,7 @@
           |=  {cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
-          (fine cof sel(boy [[%corp [~ ~] [[0 [~ ~] mav] ~ ~]] boy]))
+          (fine cof sel(boy [[%brcn [~ ~] [[0 [~ ~] mav] ~ ~]] boy]))
         ==
       --
     ::

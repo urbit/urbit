@@ -65,16 +65,16 @@
           $bcwt   runk
           $bcts   flam 
           $bcsm   runk
-          $door   ((doof -.gen +>.gen) p.gen)
-          $gasp   ((doof -.gen +>.gen) p.gen)
-          $corp   ((doof -.gen +>.gen) p.gen)
-          $trap   ((doof -.gen +>.gen) p.gen)
-          $cork   ((doof -.gen +>.gen) p.gen)
-          $loop   ((doof -.gen +>.gen) p.gen)
-          $port   ((doof -.gen +>.gen) p.gen)
-          $gill   ((doof -.gen +>.gen) p.gen)
+          $brcb   ((doof -.gen +>.gen) p.gen)
+          $brcl   ((doof -.gen +>.gen) p.gen)
+          $brcn   ((doof -.gen +>.gen) p.gen)
+          $brdt   ((doof -.gen +>.gen) p.gen)
+          $brkt   ((doof -.gen +>.gen) p.gen)
+          $brhp   ((doof -.gen +>.gen) p.gen)
+          $brsg   ((doof -.gen +>.gen) p.gen)
+          $brtr   ((doof -.gen +>.gen) p.gen)
           $brts   ((doof -.gen +>.gen) p.gen)
-          $tray   ((doof -.gen +>.gen) p.gen)
+          $brwt   ((doof -.gen +>.gen) p.gen)
         ==
       ::
       ::  resolve variable issues
