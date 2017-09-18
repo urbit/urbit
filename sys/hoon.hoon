@@ -5517,12 +5517,12 @@
     {$brts p/chap q/root r/twig}                        ::  |=
     {$brwt p/chap q/twig}                               ::  |?
   ::                                            ::::::  tuples
-    {$scon p/twig q/twig}                                ::  :_ [q p]
-    {$conq p/twig q/twig r/twig s/twig}                  ::  :^ [p q r s]
+    {$clcb p/twig q/twig}                                ::  :_ [q p]
+    {$clkt p/twig q/twig r/twig s/twig}                  ::  :^ [p q r s]
     {$clhp p/twig q/twig}                                ::  :- [p q]
-    {$cont p/twig q/twig r/twig}                         ::  :+ [p q r]
-    {$conl p/(list twig)}                                ::  :~ [p ~]
-    {$conp p/(list twig)}                                ::  :* p as a tuple
+    {$clls p/twig q/twig r/twig}                         ::  :+ [p q r]
+    {$clsg p/(list twig)}                                ::  :~ [p ~]
+    {$cltr p/(list twig)}                                ::  :* p as a tuple
   ::                                            ::::::  invocations
     {$keep p/wing q/(list (pair wing twig))}            ::  %_
     {$lace p/twig q/twig}                               ::  %.
@@ -5873,7 +5873,7 @@
     ?@(p.lot [%sand %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       $many
-    [%conp (turn p.lot |=(a/coin ^$(lot a)))]
+    [%cltr (turn p.lot |=(a/coin ^$(lot a)))]
   ==
 ::
 ++  look
@@ -6393,12 +6393,12 @@
 ::  ?+  gen  ~
 ::    {^ *}       `[p.gen q.gen]
 ::    {$dbug *}   $(gen q.gen)
-::    {$scon *}   `[q.gen p.gen]
+::    {$clcb *}   `[q.gen p.gen]
 ::    {$clhp *}   `[p.gen q.gen]
-::    {$conq *}   `[p.gen %cont q.gen r.gen s.gen]
-::    {$conl *}   ?~(p.gen ~ `[i.p.gen %conl t.p.gen])
-::    {$conp *}   ?~  p.gen  ~
-::                ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %conp t.p.gen])
+::    {$clkt *}   `[p.gen %clls q.gen r.gen s.gen]
+::    {$clsg *}   ?~(p.gen ~ `[i.p.gen %clsg t.p.gen])
+::    {$cltr *}   ?~  p.gen  ~
+::                ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
 ::  ==
 ::::
   ++  hock
@@ -6512,9 +6512,9 @@
     ::
         {$leaf *}  ~(clam al boil)
         {$limb *}  [%make [p.gen ~] ~]
-        {$tell *}  [%call [%limb %noah] [%wrap [%conp p.gen]] ~]
+        {$tell *}  [%call [%limb %noah] [%wrap [%cltr p.gen]] ~]
         {$wing *}  [%make p.gen ~]
-        {$yell *}  [%call [%limb %cain] [%wrap [%conp p.gen]] ~]
+        {$yell *}  [%call [%limb %cain] [%wrap [%cltr p.gen]] ~]
     ::
         {$bcpt *}  ~(clam al boil)
         {$bccb *}  ~(clam al boil)
@@ -6549,17 +6549,17 @@
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$brwt *}  [%lead %brdt p.gen q.gen]
     ::
-        {$conq *}  [p.gen q.gen r.gen s.gen]
-        {$cont *}  [p.gen q.gen r.gen]
-        {$scon *}  [q.gen p.gen]
+        {$clkt *}  [p.gen q.gen r.gen s.gen]
+        {$clls *}  [p.gen q.gen r.gen]
+        {$clcb *}  [q.gen p.gen]
         {$clhp *}  [p.gen q.gen]
-        {$conl *}
+        {$clsg *}
       |-  ^-  twig
       ?~  p.gen
         [%rock %n ~]
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$conp *}
+        {$cltr *}
       |-  ^-  twig
       ?~  p.gen
         [%fail ~]
@@ -6573,13 +6573,13 @@
         {$calq *}  [%call p.gen q.gen r.gen s.gen ~]
         {$calt *}  [%call p.gen q.gen r.gen ~]
         {$call *}  [%open [%$ ~] p.gen q.gen]
-        {$open *}  :: [%bake p.gen q.gen (hail(gen [%conp r.gen]) 6)]
+        {$open *}  :: [%bake p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
       :^  %bake  p.gen  q.gen
       ::
       ::  the use of ++hail is probably the right language design, but
       ::  it's impractically slow without validating %=.
       ::
-::    ?:(=(~ r.gen) ~ (hail(gen [%conp r.gen]) 6))
+::    ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
       =+  axe=6
       |-  ^-  (list {wing twig})
       ?~  r.gen  ~
@@ -6610,10 +6610,10 @@
         {$fast *}
       :+  %thin
         :-  %fast
-        :-  %cont
+        :-  %clls
         :+  [%rock %$ p.gen]
           [%code q.gen]
-        :-  %conl
+        :-  %clsg
         =+  nob=`(list twig)`~
         |-  ^-  (list twig)
         ?~  r.gen
@@ -6646,7 +6646,7 @@
       =/  open-mart  
         |=  {n/mane:twig v/(list beer:twig)} 
         [(open-mane n) %knit v]
-      [[(open-mane n.g.p.gen) %conl (turn a.g.p.gen open-mart)] %xml c.p.gen]
+      [[(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] %xml c.p.gen]
     ::
         {$xml *}
       |-
@@ -6687,7 +6687,7 @@
         ==
       ==
     ::
-        {$nub *}  =+(zoy=[%rock %ta %$] [%conl [zoy [%conl [zoy p.gen] ~]] ~])
+        {$nub *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
         {$dip *}                                       ::                  ;~
       |-  ^-  twig
       ?-  q.gen
@@ -6884,12 +6884,12 @@
         $brtr  (lead -.gen %.(+.gen (twin noop dubs)))
         $brts  (lead -.gen %.(+.gen (twin noop dubs)))
         $brwt  (lead -.gen %.(+.gen (twin noop expr)))
-        $scon  (lead -.gen %.(+.gen dubs))
-        $conq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
+        $clcb  (lead -.gen %.(+.gen dubs))
+        $clkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
         $clhp  (lead -.gen %.(+.gen dubs))
-        $cont  (lead -.gen %.(+.gen trey))
-        $conl  (lead -.gen %.(+.gen moar))
-        $conp  (lead -.gen %.(+.gen moar))
+        $clls  (lead -.gen %.(+.gen trey))
+        $clsg  (lead -.gen %.(+.gen moar))
+        $cltr  (lead -.gen %.(+.gen moar))
         $keep  (lead -.gen %.(+.gen (twin noop moan)))
         $lace  (lead -.gen %.(+.gen dubs))
         $call  (lead -.gen %.(+.gen (twin expr moar)))
@@ -9525,7 +9525,7 @@
     |=  gen/twig  ^-  (unit path)
     ?:  ?=({$dbug *} gen)
       $(gen q.gen)
-    ?.  ?=({$conl *} gen)  ~
+    ?.  ?=({$clsg *} gen)  ~
     %+  reel  p.gen
     |=  {a/twig b/_`(unit path)`[~ u=/]}
     ?~  b  ~
@@ -9604,7 +9604,7 @@
   ::
   ++  rood
     ;~  pfix  fas
-      (stag %conl poor)
+      (stag %clsg poor)
     ==
   ::
   ++  rupl
@@ -9612,11 +9612,11 @@
       |=  {a/? b/(list twig) c/?}
       ?:  a
         ?:  c
-          [%conl [%conl b] ~]
-        [%conl b]
+          [%clsg [%clsg b] ~]
+        [%clsg b]
       ?:  c
-        [%conl [%conp b] ~]
-      [%conp b]
+        [%clsg [%cltr b] ~]
+      [%cltr b]
     ;~  plug
       ;~  pose
         (cold | (just '['))
@@ -9979,13 +9979,13 @@
       :-  '%'
         ;~  pfix  cen
           ;~  pose
-            (stag %conl (sear |~({a/@ud b/tyke} (posh ~ ~ a b)) porc))
+            (stag %clsg (sear |~({a/@ud b/tyke} (posh ~ ~ a b)) porc))
             (stag %rock (stag %tas (cold %$ buc)))
             (stag %rock (stag %f (cold & pam)))
             (stag %rock (stag %f (cold | bar)))
             (stag %rock (stag %t qut))
             (cook (jock &) nuck:so)
-            (stag %conl (sear |=(a/(list) (posh ~ ~ (lent a) ~)) (star cen)))
+            (stag %clsg (sear |=(a/(list) (posh ~ ~ (lent a) ~)) (star cen)))
           ==
         ==
       :-  '&'
@@ -10026,7 +10026,7 @@
         ::
           %+  cook
             |=  a/(list (list woof))
-            [%conl (phax a)]
+            [%clsg (phax a)]
           (most dog ;~(pfix hep soil))
         ::
           (cook |=(a/wing [%make a ~]) rope)
@@ -10096,7 +10096,7 @@
         ::
           ;~  pfix  sig
             ;~  pose
-              (stag %conl (ifix [sel ser] (most ace wide)))
+              (stag %clsg (ifix [sel ser] (most ace wide)))
             ::
               %+  stag  %open
               %+  ifix
@@ -10138,7 +10138,7 @@
         (stag ~ sump)
       ==
     ==
-  ++  sump  (ifix [kel ker] (stag %conp (most ace wide)))
+  ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  norm                                              ::  rune regular form
     |=  {rut/? tol/?}
     =<  ?:  rut
@@ -10223,12 +10223,12 @@
                 ;~  pose
                   %-  stew
                   ^.  stet  ^.  limo
-                  :~  ['_' (rune cab %scon expb)]
-                      ['^' (rune ket %conq expd)]
-                      ['+' (rune lus %cont expc)]
+                  :~  ['_' (rune cab %clcb expb)]
+                      ['^' (rune ket %clkt expd)]
+                      ['+' (rune lus %clls expc)]
                       ['-' (rune hep %clhp expb)]
-                      ['~' (rune sig %conl exps)]
-                      ['*' (rune tar %conp exps)]
+                      ['~' (rune sig %clsg exps)]
+                      ['*' (rune tar %cltr exps)]
                   ==
                 ::
                   (worn %brcb [~ ~] expr)
@@ -10262,12 +10262,12 @@
                   (word %bake expm)
                   (word %make exph)
                 ::
-                  (word %scon expb)
-                  (word %conq expd)
-                  (word %cont expc)
+                  (word %clcb expb)
+                  (word %clkt expd)
+                  (word %clls expc)
                   (word %clhp expb)
-                  (word %conl exps)
-                  (word %conp exps)
+                  (word %clsg exps)
+                  (word %cltr exps)
                 ::
                   (word %bump expa)
                   (word %nock expb)
@@ -10642,7 +10642,7 @@
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and root
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  twig with one root
     ++  exqr  |.(;~(gunk loan wisp))                    ::  root and core tail
-    ++  exqn  |.(;~(gunk loan (stag %conp (butt hank))))::  autoconsed twigs
+    ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed twigs
     ++  exqw  |.(;~(gunk loaf loan))                    ::  twig and root
     ++  exqx  |.(;~(gunk loaf loan loan))               ::  twig, two roots
     ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  twig, three roots
@@ -10763,7 +10763,7 @@
   ++  loon  (most ;~(plug com ace) ;~(glam wide wide))
   ++  lute                                              ::  tall [] noun
     ~+
-    %+  stag  %conp
+    %+  stag  %cltr
     %+  ifix
       [;~(plug sel gap) ;~(plug gap ser)]
     (most gap tall)

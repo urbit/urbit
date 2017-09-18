@@ -683,11 +683,11 @@
         nuck:so
       ::
       ++  mota  ;~(pfix pat mota:vez)                   ::  atom odor
-      ++  hath  (sear plex (stag %conl poor)):vez       ::  hood path
+      ++  hath  (sear plex (stag %clsg poor)):vez       ::  hood path
       ++  have  (sear de-beam ;~(pfix fas hath))           ::  hood beam
       ++  hith                                          ::  static path
         =>  vez
-        (sear plex (stag %conl (more fas hasp)))
+        (sear plex (stag %clsg (more fas hasp)))
       ::
       ++  hive                                          ::  late-bound path
         ;~  pfix  fas
@@ -779,7 +779,7 @@
         ++  read
           |%  ++  ape
                 %+  rail
-                  (ifix [sel ser] (stag %conp (most ace wide:vez)))
+                  (ifix [sel ser] (stag %cltr (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
           ::
               ++  alt
@@ -1644,7 +1644,7 @@
           =+  vez=(vang & (en-beam how))
           =+  tuz=(posh:vez p.hon)
           ?~  tuz  (flaw cof leaf+"bad tusk: {<p.hon>}" ~)
-          =+  pax=(plex:vez %conl u.tuz)
+          =+  pax=(plex:vez %clsg u.tuz)
           ?~  pax  (flaw cof leaf+"bad path: {<u.tuz>}" ~)
           =+  bem=(de-beam u.pax)
           ?~  bem  (flaw cof leaf+"bad beam: {<u.pax>}" ~)

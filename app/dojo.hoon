@@ -197,7 +197,7 @@
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
-      :(stag 0 %ex %conl (most ;~(plug com gaw) dp-hoof))
+      :(stag 0 %ex %clsg (most ;~(plug com gaw) dp-hoof))
     ::
     ++  dp-hoof                                         ::  ++ford-hoof twig
       ;~  plug
@@ -244,7 +244,7 @@
     ++  dp-beam                                         ::  ++beam
       %+  cook  |=(a/path =+((de-beam a) ?^(- u [he-beak (flop a)])))
       =+  vez=(vang | dp-path)
-      (sear plex:vez (stag %conl poor:vez))
+      (sear plex:vez (stag %clsg poor:vez))
     ::
     ++  dp-iden-url
       %+  cook
@@ -260,7 +260,7 @@
       ;~  pose
         rood
       ::
-        =-  ;~(pfix cen (stag %conl -))                 ::  XX refactor ++scat
+        =-  ;~(pfix cen (stag %clsg -))                 ::  XX refactor ++scat
         %+  sear  |=({a/@ud b/tyke} (posh ~ ~ a b))
         ;~  pose
           porc
@@ -1150,7 +1150,7 @@
       |-  ^-  dy-shown
       ?-  -.bil
         $?($ur $dv)  bil
-        $ex  ?.  ?=({$conp *} p.bil)  p.bil
+        $ex  ?.  ?=({$cltr *} p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!
                  ?~  t.p.p.bil  i.p.p.bil
@@ -1591,7 +1591,7 @@
             :-  1
             :+  %do
               :^  %brtr  [~ ~]  [%base %noun]
-              :^  %cont  [%rock %tas %post]
+              :^  %clls  [%rock %tas %post]
                 [%rock %$ endpoint.sink.com]
               [%make ~[[%.y 6]] ~]
             sor
@@ -1620,7 +1620,7 @@
           :*  %ex
               %wish
               [%wing ~[%json]]
-              :*  %conl
+              :*  %clsg
                   [%rock %tas %gx]
                   [%sand %ta (scot %p our.hid)]
                   [%sand %tas api.source.com]

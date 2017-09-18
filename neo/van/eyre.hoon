@@ -1370,7 +1370,7 @@
         =+  %-  posh:(vang & (en-beam top))             :: that the base path
             [[~ (zing u.tyk)] ~]                        :: can interpolate into
         ?~  -  ~                                        ::
-        =+  (plex:vast %conl u)                         :: staticly, and make a
+        =+  (plex:vast %clsg u)                         :: staticly, and make a
         (biff - de-beam)                                   :: valid beam
       ::
       ++  as-aux-request                                ::  /~/... req parser
