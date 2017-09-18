@@ -1608,7 +1608,7 @@
           :-  %ex
           :*  %wish
               [%base %noun]
-              :+  %cons
+              :+  %clhp
                 [%rock %tas %cx]
               %+  rash  pax.source.com
               rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))

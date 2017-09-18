@@ -23,7 +23,7 @@
   :~  login-hint+?~(lon '' (crip (rash lon suffix-email)))
       access-type+%offline
       response-type+%code
-      prompt+%consent
+      prompt+%clhpent
   ==
 ++  scopes
   :~  'https://mail.google.com'

@@ -5439,7 +5439,7 @@
   ::                                            ::::::  tuples
     {$scon p/twig q/twig}                                ::  :_ [q p]
     {$conq p/twig q/twig r/twig s/twig}                  ::  :^ [p q r s]
-    {$cons p/twig q/twig}                                ::  :- [p q]
+    {$clhp p/twig q/twig}                                ::  :- [p q]
     {$cont p/twig q/twig r/twig}                         ::  :+ [p q r]
     {$conl p/(list twig)}                                ::  :~ [p ~]
     {$conp p/(list twig)}                                ::  :* p as a tuple
@@ -5684,7 +5684,7 @@
   ==
 ::
 ++  cons                                                ::  make formula cell
-  ~/  %cons
+  ~/  %clhp
   |=  {vur/nock sed/nock}
   ^-  nock
   ?:  ?=({{$0 *} {$0 *}} +<)
@@ -6310,7 +6310,7 @@
 ::    {^ *}       `[p.gen q.gen]
 ::    {$dbug *}   $(gen q.gen)
 ::    {$scon *}   `[q.gen p.gen]
-::    {$cons *}   `[p.gen q.gen]
+::    {$clhp *}   `[p.gen q.gen]
 ::    {$conq *}   `[p.gen %cont q.gen r.gen s.gen]
 ::    {$conl *}   ?~(p.gen ~ `[i.p.gen %conl t.p.gen])
 ::    {$conp *}   ?~  p.gen  ~
@@ -6468,7 +6468,7 @@
         {$conq *}  [p.gen q.gen r.gen s.gen]
         {$cont *}  [p.gen q.gen r.gen]
         {$scon *}  [q.gen p.gen]
-        {$cons *}  [p.gen q.gen]
+        {$clhp *}  [p.gen q.gen]
         {$conl *}
       |-  ^-  twig
       ?~  p.gen
@@ -6768,7 +6768,7 @@
         $brwt  (lead -.gen %.(+.gen (twin noop expr)))
         $scon  (lead -.gen %.(+.gen dubs))
         $conq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
-        $cons  (lead -.gen %.(+.gen dubs))
+        $clhp  (lead -.gen %.(+.gen dubs))
         $cont  (lead -.gen %.(+.gen trey))
         $conl  (lead -.gen %.(+.gen moar))
         $conp  (lead -.gen %.(+.gen moar))
@@ -9831,7 +9831,7 @@
                   :~  ['_' (rune cab %scon expb)]
                       ['^' (rune ket %conq expd)]
                       ['+' (rune lus %cont expc)]
-                      ['-' (rune hep %cons expb)]
+                      ['-' (rune hep %clhp expb)]
                       ['~' (rune sig %conl exps)]
                       ['*' (rune tar %conp exps)]
                   ==
@@ -9870,7 +9870,7 @@
                   (word %scon expb)
                   (word %conq expd)
                   (word %cont expc)
-                  (word %cons expb)
+                  (word %clhp expb)
                   (word %conl exps)
                   (word %conp exps)
                 ::
