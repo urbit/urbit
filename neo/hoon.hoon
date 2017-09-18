@@ -5447,7 +5447,7 @@
     {$keep p/wing q/(list (pair wing twig))}            ::  %_
     {$lace p/twig q/twig}                               ::  %.
     {$call p/twig q/(list twig)}                        ::  %-
-    {$bake p/wing q/twig r/(list (pair wing twig))}     ::  %*
+    {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  %*
     {$calq p/twig q/twig r/twig s/twig}                 ::  %^
     {$calt p/twig q/twig r/twig}                        ::  %+
     {$open p/wing q/twig r/(list twig)}                 ::  %~
@@ -6489,8 +6489,8 @@
         {$calq *}  [%call p.gen q.gen r.gen s.gen ~]
         {$calt *}  [%call p.gen q.gen r.gen ~]
         {$call *}  [%open [%$ ~] p.gen q.gen]
-        {$open *}  :: [%bake p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
-      :^  %bake  p.gen  q.gen
+        {$open *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
+      :^  %cntr  p.gen  q.gen
       ::
       ::  the use of ++hail is probably the right language design, but
       ::  it's impractically slow without validating %=.
@@ -6503,7 +6503,7 @@
       :-  [[[%| 0 ~] [%& (peg axe 2)] ~] i.r.gen]
       $(axe (peg axe 3), r.gen t.r.gen)
     ::
-        {$bake *}
+        {$cntr *}
       ?:  =(~ r.gen)
         [%per q.gen [%wing p.gen]]
       :+  %pin
@@ -6775,7 +6775,7 @@
         $keep  (lead -.gen %.(+.gen (twin noop moan)))
         $lace  (lead -.gen %.(+.gen dubs))
         $call  (lead -.gen %.(+.gen (twin expr moar)))
-        $bake  (lead -.gen %.(+.gen (trio noop expr moan)))
+        $cntr  (lead -.gen %.(+.gen (trio noop expr moan)))
         $calq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
         $calt  (lead -.gen %.(+.gen trey))
         $open  (lead -.gen %.(+.gen (trio noop expr moar)))
@@ -9819,7 +9819,7 @@
                     ['-' (rune hep %call expk)]
                     [':' (rune col %call expi)]
                     ['~' (rune sig %open expu)]
-                    ['*' (rune tar %bake expm)]
+                    ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %make exph)]
                 ==
               ==
@@ -9864,7 +9864,7 @@
                   (word %calt expc)
                   (word %call expk)
                   (word %open expu)
-                  (word %bake expm)
+                  (word %cntr expm)
                   (word %make exph)
                 ::
                   (word %clcb expb)

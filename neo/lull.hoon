@@ -706,7 +706,7 @@
     $^  {p/silk q/silk}                                 ::  cons
     $%  {$$ p/cage}                                     ::  literal
         {$alts p/(list silk)}                           ::  options
-        {$bake p/mark q/coin r/beam}                    ::  local synthesis
+        {$cntr p/mark q/coin r/beam}                    ::  local synthesis
         {$bunt p/mark}                                  ::  example of mark
         {$call p/silk q/silk}                           ::  slam
         {$cast p/mark q/silk}                           ::  translate
