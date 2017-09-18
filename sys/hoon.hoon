@@ -5530,7 +5530,7 @@
     {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  %*
     {$calq p/twig q/twig r/twig s/twig}                 ::  %^
     {$calt p/twig q/twig r/twig}                        ::  %+
-    {$open p/wing q/twig r/(list twig)}                 ::  %~
+    {$cnsg p/wing q/twig r/(list twig)}                 ::  %~
     {$make p/wing q/(list (pair wing twig))}            ::  %=
   ::                                            ::::::  nock
     {$wish p/root q/twig}                               ::  .^  nock 11
@@ -6572,8 +6572,8 @@
         {$lace *}  [%call q.gen [p.gen ~]]
         {$calq *}  [%call p.gen q.gen r.gen s.gen ~]
         {$calt *}  [%call p.gen q.gen r.gen ~]
-        {$call *}  [%open [%$ ~] p.gen q.gen]
-        {$open *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
+        {$call *}  [%cnsg [%$ ~] p.gen q.gen]
+        {$cnsg *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
       :^  %cntr  p.gen  q.gen
       ::
       ::  the use of ++hail is probably the right language design, but
@@ -6896,7 +6896,7 @@
         $cntr  (lead -.gen %.(+.gen (trio noop expr moan)))
         $calq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
         $calt  (lead -.gen %.(+.gen trey))
-        $open  (lead -.gen %.(+.gen (trio noop expr moar)))
+        $cnsg  (lead -.gen %.(+.gen (trio noop expr moar)))
         $make  (lead -.gen %.(+.gen (twin noop moan)))
         $wish  (lead -.gen %.(+.gen dubs))
         $bump  (lead -.gen %.(+.gen expr))
@@ -9273,7 +9273,7 @@
   =+  :-  ^=  typ  ^-  span
           [%cell p.gat p.sam]
       ^=  gen  ^-  twig
-      [%open [%$ ~] [%$ 2] [%$ 3] ~]
+      [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun .*([q.gat q.sam] q.gun)]
 ::
@@ -9302,7 +9302,7 @@
 ++  slit                                                ::  span of slam
   |=  {gat/span sam/span}
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
-  (~(play ut [%cell gat sam]) [%open [%$ ~] [%$ 2] [%$ 3] ~])
+  (~(play ut [%cell gat sam]) [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
 ::
 ++  slob                                                ::  superficial arm
   |=  {cog/@tas typ/span}
@@ -10098,7 +10098,7 @@
             ;~  pose
               (stag %clsg (ifix [sel ser] (most ace wide)))
             ::
-              %+  stag  %open
+              %+  stag  %cnsg
               %+  ifix
                 [pel per]
               ;~(glam rope wide (most ace wide))
@@ -10213,7 +10213,7 @@
                     ['+' (rune lus %calt expc)]
                     ['-' (rune hep %call expk)]
                     [':' (rune col %call expi)]
-                    ['~' (rune sig %open expu)]
+                    ['~' (rune sig %cnsg expu)]
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %make exph)]
                 ==
@@ -10258,7 +10258,7 @@
                   (word %calq expd)
                   (word %calt expc)
                   (word %call expk)
-                  (word %open expu)
+                  (word %cnsg expu)
                   (word %cntr expm)
                   (word %make exph)
                 ::
