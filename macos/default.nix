@@ -45,7 +45,9 @@ let
 
   # Note: We use nixpkgs.clang so we can compile an objective C library (which
   # probably isn't needed).  We can't use our own clang because it doesn't
-  # quite work yet for compiling native executables.
+  # quite work yet for compiling native executables.  Would be nice to get
+  # rid of the dependency on nixpkgs.clang though and just build everything
+  # with the normal nixpkgs GCC toolchain.
   #
   # Note: cctools shows a warning about llvm-config not found so disabling LTO
   # support.
