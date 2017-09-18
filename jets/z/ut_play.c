@@ -417,7 +417,7 @@
         return _play_cnts(van, sut, p_gen, q_gen);
       }
 
-      case c3__corp: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__brcn: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun ruf = u3nc(u3_nul, 1);

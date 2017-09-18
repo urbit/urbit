@@ -745,7 +745,7 @@
         return _mint_cnts(van, sut, gol, p_gen, q_gen);
       }
 
-      case c3__corp: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__brcn: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun ruf = u3nc(u3_nul, 1);
