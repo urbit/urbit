@@ -490,7 +490,7 @@
         return ret;
       }
 
-      case c3__cons: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__clhp: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun hed = _mint_in(van, sut, c3__noun, p_gen);

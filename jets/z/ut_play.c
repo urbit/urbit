@@ -249,7 +249,7 @@
         return ret;
       }
 
-      case c3__cons: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__clhp: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun dis = _play_x(van, sut, p_gen);
