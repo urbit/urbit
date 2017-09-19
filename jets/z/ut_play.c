@@ -411,7 +411,7 @@
         return ret;
       }
 
-      case c3__make: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_cnts(van, sut, p_gen, q_gen);
