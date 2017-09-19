@@ -507,7 +507,7 @@
         return ret;
       }
 
-      case c3__same: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__dtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun typ = _mint_nice(van, gol, _mint_bean());
@@ -528,7 +528,7 @@
         return ret;
       }
 
-      case c3__deep: p_gen = u3t(gen);
+      case c3__dtwt: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun typ = _mint_nice(van, gol, _mint_bean());
@@ -537,7 +537,7 @@
                     u3nc(3, _mint_corn(van, sut, p_gen)));
       }
 
-      case c3__wish: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__dtkt: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun nog = u3nc(c3__bunt, u3k(p_gen));
@@ -553,7 +553,7 @@
         return ret;
       }
 
-      case c3__bump: p_gen = u3t(gen);
+      case c3__dtls: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun tom = u3nt(c3__atom, u3_blip, u3_nul);
@@ -576,7 +576,7 @@
         return ret;
       }
 
-      case c3__nock: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__dttr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun one = _mint_corn(van, sut, p_gen);
