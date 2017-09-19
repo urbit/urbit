@@ -1338,7 +1338,7 @@
       =.  gen  (ope gen)
       ?:  ?=({$cnts {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
-      ?.  ?=($wish -.gen)  ~
+      ?.  ?=($dtkt -.gen)  ~
       =.  p.gen  (ope p.gen)
       ?@  -.p.gen  ~
       ?+    ~(feck ap p.p.gen)  ~
@@ -1606,7 +1606,7 @@
         ::
             $clay
           :-  %ex
-          :*  %wish
+          :*  %dtkt
               [%base %noun]
               :+  %clhp
                 [%rock %tas %cx]
@@ -1618,7 +1618,7 @@
             $api         !!
             $get-api
           :*  %ex
-              %wish
+              %dtkt
               [%wing ~[%json]]
               :*  %clsg
                   [%rock %tas %gx]

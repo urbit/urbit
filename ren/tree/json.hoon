@@ -23,7 +23,7 @@
       {$path $t}
       {$spur $t}
   ::
-      {$bump $t}
+      {$dtls $t}
       {$beak $t}
       {$comt $j}
       {$plan $j}
@@ -60,7 +60,7 @@
     $beak  (from-type +.a (crip (spud (en-beam bem(s /)))))
     $path  (from-type +.a (crip (spud (flop s.bem))))
     $spur  (from-type +.a (crip (spud s.bem)))
-    $bump  (from-type +.a bump.dat)
+    $dtls  (from-type +.a bump.dat)
     $plan  (from-type +.a plan.dat)
     $comt  (from-type +.a comt.dat)
     $head  (from-type +.a head.dat)

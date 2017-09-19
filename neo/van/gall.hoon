@@ -1051,7 +1051,7 @@
       :-  gac
       %=    +>.$
           dub
-        :_(dub ?~(gac [%& dap ?~(vux %boot %bump) now] [%| u.gac]))
+        :_(dub ?~(gac [%& dap ?~(vux %boot %dtls) now] [%| u.gac]))
       ==
     ::
     ++  ap-prop                                         ::  install

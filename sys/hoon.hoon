@@ -5533,11 +5533,11 @@
     {$cnsg p/wing q/twig r/(list twig)}                 ::  %~
     {$cnts p/wing q/(list (pair wing twig))}            ::  %=
   ::                                            ::::::  nock
-    {$wish p/root q/twig}                               ::  .^  nock 11
-    {$bump p/twig}                                      ::  .+  nock 4
-    {$nock p/twig q/twig}                               ::  .*  nock 2
-    {$same p/twig q/twig}                               ::  .=  nock 5
-    {$deep p/twig}                                      ::  .?  nock 3
+    {$dtkt p/root q/twig}                               ::  .^  nock 11
+    {$dtls p/twig}                                      ::  .+  nock 4
+    {$dttr p/twig q/twig}                               ::  .*  nock 2
+    {$dtts p/twig q/twig}                               ::  .=  nock 5
+    {$dtwt p/twig}                                      ::  .?  nock 3
   ::                                            ::::::  span conversion
     {$iron p/twig}                                      ::  ^|
     {$ward p/twig q/twig}                               ::  ^.
@@ -6012,9 +6012,9 @@
       =.  wat  ~
       ?-  p.sec
         {$atom *}  [%sand p.p.sec 0]
-        $noun      [%nock [%rock %$ 0] [[%rock %$ 0] [%rock %$ 1]]]
+        $noun      [%dttr [%rock %$ 0] [[%rock %$ 0] [%rock %$ 1]]]
         $cell      =+(nec=$(sec [%axil %noun]) [nec nec])
-        $bean      [%same [%rock %$ 0] [%rock %$ 0]]
+        $bean      [%dtts [%rock %$ 0] [%rock %$ 0]]
         $void      [%fail ~]
         $null      [%rock %n %$]
       ==
@@ -6116,7 +6116,7 @@
       ::
           $bean
         :^    %if
-            [%same [%rock %$ |] [%$ axe]]
+            [%dtts [%rock %$ |] [%$ axe]]
           [%rock %f |]
         [%rock %f &]
       ::
@@ -6153,7 +6153,7 @@
         ^$(sec i.p.sec)
       =>  .(axe (peg 3 axe), gom (peg 3 gom))
       :^    %if
-          [%same [%$ axe] [%$ 2]]
+          [%dtts [%$ axe] [%$ 2]]
         [%$ 2]
       $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
     ::
@@ -6174,7 +6174,7 @@
         :-  [%rock +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
       :^    %if
-          [%same [%$ (peg axe 2)] [%rock +.p.i.p.sec]]
+          [%dtts [%$ (peg axe 2)] [%rock +.p.i.p.sec]]
         :-  [%rock +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
       $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
@@ -6721,7 +6721,7 @@
       :+  %pin                                          ::  =+  c=(a b)
         [%name %c [%cnhp [%limb %a] [%limb %b] ~]]      ::
       :+  %sure                                         ::  ?>(=(`*`c `*`b) c)
-        :+  %same                                       ::
+        :+  %dtts                                       ::
         [%cast [%base %noun] [%limb %c]]                ::
         [%cast [%base %noun] [%limb %b]]                ::
       [%limb %c]                                        ::
@@ -6898,11 +6898,11 @@
         $cnls  (lead -.gen %.(+.gen trey))
         $cnsg  (lead -.gen %.(+.gen (trio noop expr moar)))
         $cnts  (lead -.gen %.(+.gen (twin noop moan)))
-        $wish  (lead -.gen %.(+.gen dubs))
-        $bump  (lead -.gen %.(+.gen expr))
-        $nock  (lead -.gen %.(+.gen dubs))
-        $same  (lead -.gen %.(+.gen dubs))
-        $deep  (lead -.gen %.(+.gen expr))
+        $dtkt  (lead -.gen %.(+.gen dubs))
+        $dtls  (lead -.gen %.(+.gen expr))
+        $dttr  (lead -.gen %.(+.gen dubs))
+        $dtts  (lead -.gen %.(+.gen dubs))
+        $dtwt  (lead -.gen %.(+.gen expr))
         $iron  (lead -.gen %.(+.gen expr))
         $ward  (lead -.gen %.(+.gen dubs))
         $like  (lead -.gen %.(+.gen dubs))
@@ -7899,22 +7899,22 @@
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
-        {$wish *}
+        {$dtkt *}
       =+  nef=$(gen [%bunt p.gen])
       [p.nef [%11 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
     ::
-        {$bump *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
+        {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
         {$rock *}  [(nice (play gen)) [%1 q.gen]]
     ::
-        {$nock *}
+        {$dttr *}
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
-        {$same *}
+        {$dtts *}
       =+  [one two]=[$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)]
       [(nice bool) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
-        {$deep *}  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
+        {$dtwt *}  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         {$hand *}  [p.gen q.gen]
         {$iron *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
     ::
@@ -8071,18 +8071,18 @@
         {$cool *}  $(fab |, gen p.gen)
         {$brcn *}  (grow %gold [%$ 1] p.gen q.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
-        {$wish *}  =+($(gen q.gen, gol %noun) $(gen [%bunt p.gen]))
-        {$bump *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
+        {$dtkt *}  =+($(gen q.gen, gol %noun) $(gen [%bunt p.gen]))
+        {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
         {$rock *}  (beth (play gen))
     ::
-        {$nock *}
+        {$dttr *}
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth %noun))
     ::
-        {$same *}
+        {$dtts *}
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth bool))
     ::
-        {$deep *}  =+($(gen p.gen, gol %noun) (beth bool))    ::  XX  =|
+        {$dtwt *}  =+($(gen p.gen, gol %noun) (beth bool))    ::  XX  =|
         {$hand *}  [p.gen p.gen]
         {$iron *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
@@ -8446,8 +8446,8 @@
       {$cool *}  $(fab |, gen p.gen)
       {$brcn *}  (core sut %gold sut p.gen [[%0 0] q.gen])
       {$cnts *}  ~(play et p.gen q.gen)
-      {$wish *}  $(gen [%bunt p.gen])
-      {$bump *}  [%atom %$ ~]
+      {$dtkt *}  $(gen [%bunt p.gen])
+      {$dtls *}  [%atom %$ ~]
       {$rock *}  |-  ^-  span
                  ?@  q.gen  [%atom p.gen `q.gen]
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
@@ -8457,9 +8457,9 @@
                    ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
       {$tune *}  (face p.gen sut)
-      {$nock *}  %noun
-      {$same *}  bool
-      {$deep *}  bool
+      {$dttr *}  %noun
+      {$dtts *}  bool
+      {$dtwt *}  bool
       {$hand *}  p.gen
       {$iron *}  (wrap(sut $(gen p.gen)) %iron)
       {$like *}  $(gen p.gen)
@@ -10010,7 +10010,7 @@
         ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '+'
         ;~  pose
-          (stag %bump ;~(pfix lus (ifix [pel per] wide)))
+          (stag %dtls ;~(pfix lus (ifix [pel per] wide)))
         ::
           %+  cook
             |=  a/(list (list woof))
@@ -10049,7 +10049,7 @@
           ==
         ==
       :-  '='
-        (stag %same ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
+        (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
           (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wide))))
@@ -10269,11 +10269,11 @@
                   (word %clsg exps)
                   (word %cltr exps)
                 ::
-                  (word %bump expa)
-                  (word %nock expb)
-                  (word %same expb)
-                  (word %deep expa)
-                  (word %wish exqn)
+                  (word %dtls expa)
+                  (word %dttr expb)
+                  (word %dtts expb)
+                  (word %dtwt expa)
+                  (word %dtkt exqn)
                 ::
                   (word %iron expa)
                   (word %ward expb)
@@ -10343,11 +10343,11 @@
               ;~  pfix  dot
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['+' (rune lus %bump expa)]
-                    ['*' (rune tar %nock expb)]
-                    ['=' (rune tis %same expb)]
-                    ['?' (rune wut %deep expa)]
-                    ['^' (rune ket %wish exqn)]
+                :~  ['+' (rune lus %dtls expa)]
+                    ['*' (rune tar %dttr expb)]
+                    ['=' (rune tis %dtts expb)]
+                    ['?' (rune wut %dtwt expa)]
+                    ['^' (rune ket %dtkt exqn)]
                 ==
               ==
             :-  '^'
