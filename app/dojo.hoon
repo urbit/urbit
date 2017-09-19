@@ -1214,7 +1214,7 @@
             $get  /scar
           ==
       =+  gat=(slot 3 q.cay)
-      :+  %cnhp  (dy-silk-vase gat)
+      :+  %call  (dy-silk-vase gat)
       :+  (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
         (dy-silk-sources p.cig)
       :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
@@ -1316,7 +1316,7 @@
         $dv  [/hand [%core he-beak (flop p.bil)]]
         $ex  [/hand (dy-mare p.bil)]
         $as  [/hand [%cast p.bil [%$ (dy-cage p.q.bil)]]]
-        $do  [/hand [%cnhp (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
+        $do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
         $tu  :-  /hand
              :-  %$
              :-  %noun
