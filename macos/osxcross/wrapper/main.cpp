@@ -458,6 +458,16 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
 int main(int argc, char **argv)
 {
+  // We only want this wrapper and the compiler it invokes to access a certain
+  // set of tools that are determined at build time.  Ignore whatever is on the
+  // user's path and use the path specified by our Nix expression instead.
+  int result = setenv("PATH", WRAPPER_PATH, 1);
+  if (result)
+  {
+    std::cerr << "wrapper failed to set PATH" << std::endl;
+    return 1;
+  }
+
   char bbuf[sizeof(benchmark)];
   auto b = new (bbuf) benchmark;
   Target target;
