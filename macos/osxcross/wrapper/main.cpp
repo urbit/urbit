@@ -407,8 +407,10 @@ bool detectTarget(int argc, char **argv, Target &target) {
         return false;
 
       target.target = std::string(cmd, p - cmd);
-      target.compiler = getCompilerIdentifier(&p[1]);
       target.compilername = &p[1];
+      if (target.compilername == "g++") { target.compilername = "clang++"; }
+      if (target.compilername == "gcc") { target.compilername = "clang"; }
+      target.compiler = getCompilerIdentifier(target.compilername.c_str());
 
       if (target.compilername == "cc") {
         target.compiler = getDefaultCompilerIdentifier();
