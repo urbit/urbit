@@ -341,29 +341,6 @@ bool parse(int argc, char **argv, Target &target) {
 
 } // namespace commandopts
 
-void detectCXXLib(Target &target) {
-  if (target.compilername.size() <= 7)
-    return;
-
-  StdLib prevstdlib = target.stdlib;
-
-  if (endsWith(target.compilername, "-stdc++")) {
-    target.stdlib = StdLib::libstdcxx;
-    target.compilername.resize(target.compilername.size() - 7);
-  } else if (endsWith(target.compilername, "-gstdc++")) {
-    target.stdlib = StdLib::libstdcxx;
-    target.usegcclibs = true;
-    target.compilername.resize(target.compilername.size() - 8);
-  } else if (endsWith(target.compilername, "-libc++")) {
-    target.stdlib = StdLib::libcxx;
-    target.compilername.resize(target.compilername.size() - 7);
-  }
-
-  if (prevstdlib != StdLib::unset && prevstdlib != target.stdlib)
-    warn << "ignoring '-stdlib=" << getStdLibString(prevstdlib) << "'"
-         << warn.endl();
-}
-
 //
 // detectTarget():
 //  detect target and setup invocation command
@@ -429,7 +406,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
       if (!commandopts::parse(argc, argv, target))
         return false;
 
-      detectCXXLib(target);
       return target.setup();
     }
   }
@@ -452,7 +428,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
   if (!commandopts::parse(argc, argv, target))
     return false;
 
-  detectCXXLib(target);
   return target.setup();
 }
 
