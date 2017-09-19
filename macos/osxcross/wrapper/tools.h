@@ -230,29 +230,6 @@ size_t runcommand(const char *command, char *buf, size_t len);
 typedef unsigned long long time_type;
 time_type getNanoSeconds();
 
-class benchmark {
-public:
-  benchmark() { s = getTime(); }
-
-  time_type getDiff() { return getTime() - s; }
-
-  void halt() { h = getTime(); }
-  void resume() { s += getTime() - h; }
-
-  ~benchmark() {
-    time_type diff = getTime() - s;
-    dbg << "took: " << diff / 1000000.0 << " ms" << dbg.endl();
-  }
-
-private:
-  __attribute__((always_inline)) time_type getTime() {
-    return getNanoSeconds();
-  }
-
-  time_type h;
-  time_type s;
-};
-
 //
 // OSVersion
 //

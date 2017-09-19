@@ -456,7 +456,7 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
 } // unnamed namespace
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
   // We only want this wrapper and the compiler it invokes to access a certain
   // set of tools that are determined at build time.  Ignore whatever is on the
@@ -468,8 +468,6 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  char bbuf[sizeof(benchmark)];
-  auto b = new (bbuf) benchmark;
   Target target;
   char **cargs = nullptr;
   int rc = -1;
@@ -483,16 +481,12 @@ int main(int argc, char **argv)
   }
 
   if (debug) {
-    b->halt();
-
     if (debug >= 2) {
       dbg << "detected target triple: " << target.getTriple() << dbg.endl();
       dbg << "detected compiler: " << target.compilername << dbg.endl();
 
       dbg << "detected stdlib: " << getStdLibString(target.stdlib)
           << dbg.endl();
-
-      b->resume();
     }
   }
 
@@ -552,14 +546,9 @@ int main(int argc, char **argv)
     cargs[i] = nullptr;
   }
 
-  if (debug) {
-    time_type diff = b->getDiff();
-
-    if (rc == -1)
-      printCommand();
-
-    dbg << "=== time spent in wrapper: " << diff / 1000000.0 << " ms"
-        << dbg.endl();
+  if (debug && rc == -1)
+  {
+    printCommand();
   }
 
   if (rc == -1 && execvp(target.compilerpath.c_str(), cargs)) {
