@@ -602,33 +602,33 @@
         return u3k(u3t(gen));
       }
 
-      case c3__iron: p_gen = u3t(gen);
+      case c3__ktbr: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun ryd = _mint_in(van, sut, gol, p_gen);
-        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__iron);
+        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__ktbr);
         u3_noun pro = u3nc(tyf, u3k(u3t(ryd)));
 
         u3z(ryd);
         return pro;
       }
 
-      case c3__zinc: p_gen = u3t(gen);
+      case c3__ktpm: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun ryd = _mint_in(van, sut, gol, p_gen);
-        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__zinc);
+        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__ktpm);
         u3_noun pro = u3nc(tyf, u3k(u3t(ryd)));
 
         u3z(ryd);
         return pro;
       }
 
-      case c3__lead: p_gen = u3t(gen);
+      case c3__ktwt: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun ryd = _mint_in(van, sut, gol, p_gen);
-        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__lead);
+        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__ktwt);
         u3_noun pro = u3nc(tyf, u3k(u3t(ryd)));
 
         u3z(ryd);
@@ -646,7 +646,7 @@
         return ret;
       }
 
-      case c3__name: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__ktts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun vat = _mint_in(van, sut, gol, q_gen);
@@ -664,7 +664,7 @@
         return u3nc(u3qz_face(p_gen, sut), u3nc(0, 1));
       }
 
-      case c3__burn: p_gen = u3t(gen);
+      case c3__ktsg: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun nef = _mint_in(van, sut, gol, p_gen);
@@ -689,7 +689,7 @@
         return ret;
       }
 
-      case c3__like: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__ktls: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun huz = u3qzu_play(van, sut, p_gen);
@@ -801,7 +801,7 @@
         return u3nc(c3__noun, u3nc(1, sev));
       }
 
-      case c3__cool: p_gen = u3t(gen);
+      case c3__ktcn: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun von = u3i_molt(u3k(van), u3qzu_van_fab, c3n, 0);

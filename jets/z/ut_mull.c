@@ -555,46 +555,46 @@
         return u3nc(u3k(p_gen), u3k(p_gen));
       }
 
-      case c3__iron: p_gen = u3t(gen);
+      case c3__ktbr: p_gen = u3t(gen);
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
         u3_noun pro = u3nc(u3qzu_wrap(van, 
                                       u3h(vat),
-                                      c3__iron),
+                                      c3__ktbr),
                            u3qzu_wrap(van, 
                                       u3t(vat),
-                                      c3__iron));
+                                      c3__ktbr));
 
         u3z(vat);
         return pro;
       }
 
-      case c3__zinc: p_gen = u3t(gen);
+      case c3__ktpm: p_gen = u3t(gen);
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
         u3_noun pro = u3nc(u3qzu_wrap(van, 
                                       u3h(vat),
-                                      c3__zinc),
+                                      c3__ktpm),
                            u3qzu_wrap(van,
                                       u3t(vat),
-                                      c3__zinc));
+                                      c3__ktpm));
 
         u3z(vat);
         return pro;
       }
 
-      case c3__lead: p_gen = u3t(gen);
+      case c3__ktwt: p_gen = u3t(gen);
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
         u3_noun pro = u3nc(u3qzu_wrap(van,
                                       u3h(vat),
-                                      c3__lead),
+                                      c3__ktwt),
                            u3qzu_wrap(van,
                                       u3t(vat),
-                                      c3__lead));
+                                      c3__ktwt));
 
         u3z(vat);
         return pro;
@@ -611,7 +611,7 @@
         return ret;
       }
 
-      case c3__name: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__ktts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, q_gen);
@@ -629,13 +629,13 @@
                     u3qz_face(p_gen, dox));
       }
 
-      case c3__burn: p_gen = u3t(gen);
+      case c3__ktsg: p_gen = u3t(gen);
       _mull_used();
       {
         return _mull_in(van, sut, gol, dox, p_gen);
       }
 
-      case c3__like: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__ktls: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun p_hif = _mull_nice(van, gol, u3qzu_play(van, sut, p_gen));
@@ -753,7 +753,7 @@
         return _mull_both(van, gol, c3__noun);
       }
 
-      case c3__cool: p_gen = u3t(gen);
+      case c3__ktcn: p_gen = u3t(gen);
       _mull_used();
       {
         u3_noun von = u3i_molt(u3k(van), u3qzu_van_fab, c3n, 0);
