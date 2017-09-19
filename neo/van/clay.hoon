@@ -741,7 +741,7 @@
         |=  a/path
         ^-  (pair silk:ford silk:ford)
         :-  [%$ %path !>(a)]
-        :+  %cast  %mime
+        :+  %kthp  %mime
         =+  (need (need (read-x:ze cas a)))
         ?:  ?=($& -<)
           [%$ p.-]
@@ -952,7 +952,7 @@
               ?>  ?=($ins -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  =>((flop pax) ?~(. %$ i))
-              [%cast - [%$ p.mis]]
+              [%kthp - [%$ p.mis]]
           ==
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
@@ -967,7 +967,7 @@
               [%pact [%$ p.-] [%$ p.mis]]
           ==
           :*  hen  %pass
-              [%castifying (scot %p her) syd (scot %da wen) ~]
+              [%kthpifying (scot %p her) syd (scot %da wen) ~]
               %f  %exec  our  ~  [her syd %da wen]  %tabl
               ^-  (list (pair silk:ford silk:ford))
               %+  turn  mut
@@ -975,7 +975,7 @@
               ?>  ?=($mut -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  (lobe-to-mark:ze (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-              [%cast - [%$ p.mis]]
+              [%kthp - [%$ p.mis]]
           ==
       ==
     %_    +>.$
@@ -1113,7 +1113,7 @@
         %+  turn  (gage-to-cages res)
         |=  {pax/cage cay/cage}
         ?.  ?=($path p.pax)
-          ~|(%castify-bad-path-mark !!)
+          ~|(%kthpify-bad-path-mark !!)
         [((hard path) q.q.pax) cay]
     =.  muh.u.dok
           %-  malt
@@ -1317,7 +1317,7 @@
           [%$ %null !>(~)]
         =+  (~(get by mim.u.dok) a)
         ?^  -  [%$ %mime !>(u.-)]
-        :+  %cast  %mime
+        :+  %kthp  %mime
         =+  (need (need (read-x:ze let.dom a)))
         ?:  ?=($& -<)
           [%$ p.-]
@@ -3112,7 +3112,7 @@
             =+  b=(~(got by erg.dat) a)
             ?.  b
               [%$ %null !>(~)]
-            :+  %cast  %mime
+            :+  %kthp  %mime
             (lobe-to-silk:zez a (~(got by q.new.dat) a))
         ==
       ::
@@ -3571,7 +3571,7 @@
         abet:(take-diffing:den wen q.q.hin)
       [mos ..^$]
     ::
-        $castifying
+        $kthpifying
       ?>  ?=({@ @ @ $~} t.tea)
       =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)

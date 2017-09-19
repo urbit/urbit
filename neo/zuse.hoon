@@ -3080,7 +3080,7 @@
   ++  gnom                                              ::  ship display name
     |=  {{our/@p now/@da} him/@p}  ^-  @t
     =+  yow=(scot %p him)
-    =+  pax=[(scot %p our) %name (scot %da now) yow ~]
+    =+  pax=[(scot %p our) %ktts (scot %da now) yow ~]
     =+  woy=.^(@t %a pax)
     ?:  =(%$ woy)  yow
     (rap 3 yow ' ' woy ~)

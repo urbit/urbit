@@ -40,7 +40,7 @@
       ++  is  {$id p/lid}
       ++  la  {$lat p/lat}
       ++  lo  {$long p/lon}
-      ++  na  {$name p/lid}
+      ++  na  {$ktts p/lid}
       ++  os  {$source-screen-name p/scr}
       ++  pl  {$place-id p/pla}
       ++  qq  {$q p/@t}

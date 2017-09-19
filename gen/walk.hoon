@@ -83,7 +83,7 @@
         ^-  (pair twig whit)
         ?:  ?=(^ -.gen)  flam
         ?+  -.gen  flam
-          $name  ((helk -.gen +>.gen) p.gen)
+          $ktts  ((helk -.gen +>.gen) p.gen)
           $bcts  ((helk -.gen +>.gen) p.gen)
           $var   ((hulp -.gen +>.gen) p.gen)
           $rev   ((hulp -.gen +>.gen) p.gen)

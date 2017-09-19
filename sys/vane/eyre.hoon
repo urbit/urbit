@@ -1047,7 +1047,7 @@
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
           =+  bek=(norm-beak -:(need (de-beam (need (puck p.tee)))))
-          (exec-live ac+q.tee bek [%flag [p.sih `~] %cast %mime [%$ cay]])
+          (exec-live ac+q.tee bek [%flag [p.sih `~] %kthp %mime [%$ cay]])
         (give-mime q.tee p.sih cay)
       ::
           {$ac ^}
@@ -1110,13 +1110,13 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    (execute tea (norm-beak -.top) [%cast mar $+cay])
+    (execute tea (norm-beak -.top) [%kthp mar $+cay])
   ::
   ++  cast-thou
     |=  {mar/mark cay/cage}
     ?:  ?=($httr mar)  (give-sigh %& cay)
     %^  execute  si+~  (norm-beak -.top)
-    [%alts [%cast mar $+cay] [%cast %recoverable-error $+cay] ~]
+    [%alts [%kthp mar $+cay] [%kthp %recoverable-error $+cay] ~]
   ::
   ++  del-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$

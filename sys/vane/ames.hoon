@@ -2073,7 +2073,7 @@
     |=  {our/ship his/ship mar/@ud tyl/path}
     ^-  (unit (unit cage))
     ?~  tyl  ~
-    ?:  ?=({$name $~} tyl)
+    ?:  ?=({$ktts $~} tyl)
       =+  wul=$(tyl [%wyll ~])
       :-  ~
       :-  ~

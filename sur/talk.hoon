@@ -83,7 +83,7 @@
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
 ++  torso                                               ::  attachment
-  $%  {$name (pair @t torso)}                           ::  named attachment
+  $%  {$ktts (pair @t torso)}                           ::  named attachment
       {$text (list @t)}                                 ::  text lines
       {$tank (list tank)}                               ::  tank list
   ==                                                    ::

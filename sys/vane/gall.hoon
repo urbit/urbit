@@ -7,7 +7,7 @@
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    rest of arvo
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  volt  ?($low $high)                                 ::  voltage
-++  torc  $@(?($iron $gold) {$lead p/ship})             ::  security control
+++  torc  $@(?($ktbr $gold) {$ktwt p/ship})             ::  security control
 ++  roon                                                ::  reverse ames msg
   $%  {$d p/mark q/*}                                   ::  diff (diff)
       {$x $~}                                           ::

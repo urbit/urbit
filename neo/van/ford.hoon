@@ -546,8 +546,8 @@
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
           %+  make  cof  ^-  silk
           :+  %diff
-            [%cast u.for [%$ cay]]
-          [%cast u.for [%$ coy]]
+            [%kthp u.for [%$ cay]]
+          [%kthp u.for [%$ coy]]
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
         ?.  (slab %diff p.gar)
@@ -1302,7 +1302,7 @@
           (cope (maul cof q.gat q.sam) faun)
         ==
       ::
-          $cast
+          $kthp
         %+  cool  |.(leaf+"ford: cast {<p.kas>}")
         %+  cope  $(kas q.kas)
         %-  tabl-run
@@ -1600,7 +1600,7 @@
           ?~  p.hon  (fine cof cay)
           %+  cope  $(p.hon t.p.hon)
           |=  {cof/cafe cay/cage}
-          (cope (make cof %cast i.p.hon $+cay) flay)
+          (cope (make cof %kthp i.p.hon $+cay) flay)
         ::
             $man
           %+  cope
@@ -1797,7 +1797,7 @@
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
-          (make cof `silk`[%cast p.cay %pact [%cast u.for %$ cay] %$ coy])
+          (make cof `silk`[%kthp p.cay %pact [%kthp u.for %$ cay] %$ coy])
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
         =+  for=((soft @tas) q:(slap gar [%limb %form]))
@@ -1841,7 +1841,7 @@
       =.  mow
         :_  mow
         :^  hen  %pass  (camp-wire van ren bem)
-        [%f %exec our ~ bek %cast ((hard mark) -.s.bem) %$ cag]
+        [%f %exec our ~ bek %kthp ((hard mark) -.s.bem) %$ cag]
       ..zo
     ::
     ++  resm                                            ::  take %made
