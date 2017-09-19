@@ -177,10 +177,10 @@
             ;~  pfix  ace
               %+  cook
                 |=  a/(list term)
-                [[%help a] 0 %ex [%make p=~[[%.y p=1]] q=~]]
+                [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
               (most col sym)
             ==
-            (easy [[%help ~] 0 %ex [%make p=~[[%.y p=1]] q=~]])
+            (easy [[%help ~] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
           ==
         ==
       ::
@@ -1336,7 +1336,7 @@
           ?.(=(gen -) $(gen -) gen)
       |=  gen/twig  ^-  (unit mark)
       =.  gen  (ope gen)
-      ?:  ?=({$make {@ $~} $~} gen)
+      ?:  ?=({$cnts {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
       ?.  ?=($wish -.gen)  ~
       =.  p.gen  (ope p.gen)
@@ -1593,7 +1593,7 @@
               :^  %brtr  [~ ~]  [%base %noun]
               :^  %clls  [%rock %tas %post]
                 [%rock %$ endpoint.sink.com]
-              [%make ~[[%.y 6]] ~]
+              [%cnts ~[[%.y 6]] ~]
             sor
         ^=  sor
         |-  ^-  dojo-source
