@@ -477,7 +477,7 @@
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)
   ?:  ?=($init -.q.hic)
-    ::  ~&  [%call-init hen]
+    ::  ~&  [%cnhp-init hen]
     ?:  =(ore.all `p.q.hic)
       [[hen %give q.hic]~ ..^$]
     =:  ore.all  `p.q.hic

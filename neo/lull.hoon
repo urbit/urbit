@@ -708,7 +708,7 @@
         {$alts p/(list silk)}                           ::  options
         {$cntr p/mark q/coin r/beam}                    ::  local synthesis
         {$bunt p/mark}                                  ::  example of mark
-        {$call p/silk q/silk}                           ::  slam
+        {$cnhp p/silk q/silk}                           ::  slam
         {$cast p/mark q/silk}                           ::  translate
         {$core p/beam}                                  ::  build program
         {$diff p/silk q/silk}                           ::  diff

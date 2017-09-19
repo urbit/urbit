@@ -482,7 +482,7 @@
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)
   ?:  ?=($init -.q.hic)
-    ::  ~&  [%call-init hen]
+    ::  ~&  [%cnhp-init hen]
     ?:  =(ore.all `p.q.hic)
       [[hen %give q.hic]~ ..^$]
     =:  ore.all  `p.q.hic
@@ -583,7 +583,7 @@
             :_(+>.$ ?~(hey.all ~ [u.hey.all %slip %d p.tac]~))
           =.  hey.all  ?^(hey.all hey.all `hen)
           ?:  ?=($init -.tac)
-            ::  ~&  [%call-init hen]
+            ::  ~&  [%cnhp-init hen]
             ?:  =(ore.all `p.tac)
               [[hen %give tac]~ +>.$]
             =:  ore.all  `p.tac

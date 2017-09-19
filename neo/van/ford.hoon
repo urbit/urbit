@@ -1286,7 +1286,7 @@
         =.  typ  ?+(-.typ typ $face q.typ)
         (fine cof [%& p.kas [typ val]])
       ::
-          $call
+          $cnhp
         ::  %+  cool  |.(leaf+"ford: call {<`@p`(mug kas)>}")
         %.  [cof p.kas q.kas]
         ;~  cope

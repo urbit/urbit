@@ -582,7 +582,7 @@
                   hil/mill
               ==
           ^+  ..va
-          =^  nex  sac.hax  (~(call wa sac.hax) fox %call hil)
+          =^  nex  sac.hax  (~(call wa sac.hax) fox %cnhp hil)
           abet(fox nex)
         ::                                              ::  ++take:spin:va-plow:
         ++  take                                        ::  pass backward

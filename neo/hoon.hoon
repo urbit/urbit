@@ -5446,7 +5446,7 @@
   ::                                            ::::::  invocations
     {$cncb p/wing q/(list (pair wing twig))}            ::  %_
     {$cndt p/twig q/twig}                               ::  %.
-    {$call p/twig q/(list twig)}                        ::  %-
+    {$cnhp p/twig q/(list twig)}                        ::  %-
     {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  %*
     {$cnkt p/twig q/twig r/twig s/twig}                 ::  %^
     {$cnls p/twig q/twig r/twig}                        ::  %+
@@ -6078,7 +6078,7 @@
       =.  wat  ~
       =+  cys=~(boil ap p.sec)
       ?:  ?=($herb -.cys)
-        [%call (home p.sec) [%$ axe] ~]
+        [%cnhp (home p.sec) [%$ axe] ~]
       $(sec cys)
     ::
         {$kelp *}
@@ -6428,9 +6428,9 @@
     ::
         {$leaf *}  ~(clam al boil)
         {$limb *}  [%make [p.gen ~] ~]
-        {$tell *}  [%call [%limb %noah] [%wrap [%cltr p.gen]] ~]
+        {$tell *}  [%cnhp [%limb %noah] [%wrap [%cltr p.gen]] ~]
         {$wing *}  [%make p.gen ~]
-        {$yell *}  [%call [%limb %cain] [%wrap [%cltr p.gen]] ~]
+        {$yell *}  [%cnhp [%limb %cain] [%wrap [%cltr p.gen]] ~]
     ::
         {$bcpt *}  ~(clam al boil)
         {$bccb *}  ~(clam al boil)
@@ -6485,10 +6485,10 @@
     ::
         {$bunt *}  [%burn ~(bunt al %herb p.gen)]
         {$cncb *}  [%like [%wing p.gen] %make p.gen q.gen]
-        {$cndt *}  [%call q.gen [p.gen ~]]
-        {$cnkt *}  [%call p.gen q.gen r.gen s.gen ~]
-        {$cnls *}  [%call p.gen q.gen r.gen ~]
-        {$call *}  [%open [%$ ~] p.gen q.gen]
+        {$cndt *}  [%cnhp q.gen [p.gen ~]]
+        {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
+        {$cnls *}  [%cnhp p.gen q.gen r.gen ~]
+        {$cnhp *}  [%open [%$ ~] p.gen q.gen]
         {$open *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
       :^  %cntr  p.gen  q.gen
       ::
@@ -6512,14 +6512,14 @@
         (weld p.gen `wing`[[%& 2] ~])
       (turn r.gen |=({p/wing q/twig} [p [%per [%$ 3] q]]))
     ::
-        {$ward *}  [%like [%call p.gen q.gen ~] q.gen]
+        {$ward *}  [%like [%cnhp p.gen q.gen ~] q.gen]
         {$cast *}  [%like ~(bunt al [%herb p.gen]) q.gen]
         {$show *}
       :+  %hint
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
-        [%brdt [~ ~] [%call [%limb %cain] [%wrap [%per [%$ 3] p.gen]] ~]]
+        [%brdt [~ ~] [%cnhp [%limb %cain] [%wrap [%per [%$ 3] p.gen]] ~]]
       q.gen
     ::
         {$lurk *}  [%hint [%mean [%brdt [~ ~] p.gen]] q.gen]
@@ -6543,7 +6543,7 @@
         {$memo *}  [%hint [%memo %rock %$ p.gen] q.gen]
         {$dump *}
       :+  %hint
-        [%slog [%sand %$ p.gen] [%call [%limb %cain] [%wrap q.gen] ~]]
+        [%slog [%sand %$ p.gen] [%cnhp [%limb %cain] [%wrap q.gen] ~]]
       r.gen
     ::
         {$ddup *}  [%hint [%germ p.gen] q.gen]
@@ -6564,7 +6564,7 @@
         |-  ^-  twig
         ?-  yex
           {* $~}  [%per [%$ 3] i.yex]
-          {* ^}   [%call [%$ 2] [%per [%$ 3] i.yex] $(yex t.yex) ~]
+          {* ^}   [%cnhp [%$ 2] [%per [%$ 3] i.yex] $(yex t.yex) ~]
           $~      !!
         ==
       ==
@@ -6590,7 +6590,7 @@
         :+  %brdt  [~ ~]                                ::  |.
         :^    %cnls                                     ::  %+
             [%per [%limb %v] p.gen]                     ::      =>(v {p.gen})
-          [%call [%limb %b] [%limb %c] ~]               ::    (b c)
+          [%cnhp [%limb %b] [%limb %c] ~]               ::    (b c)
         :+  %make  [%a ~]                               ::  a(,.+6 c)
         [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
       ==                                                ::
@@ -6601,7 +6601,7 @@
                  [%per [%limb %v] p.gen]                ::  =>(v {p.gen})
       :+  %pin  [%name %b [%per [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
       :+  %pin                                          ::  =+  c=(a b)
-        [%name %c [%call [%limb %a] [%limb %b] ~]]      ::
+        [%name %c [%cnhp [%limb %a] [%limb %b] ~]]      ::
       :+  %sure                                         ::  ?>(=(`*`c `*`b) c)
         :+  %same                                       ::
         [%cast [%base %noun] [%limb %c]]                ::
@@ -6678,7 +6678,7 @@
         {$ifno *}   [%if [%fits [%base %null] p.gen] q.gen r.gen]
         {$not *}   [%if p.gen [%rock %f 1] [%rock %f 0]]
         {$wrap *}
-      [%call [%limb %onan] [%spit [%bunt [%limb %abel]] p.gen] ~]
+      [%cnhp [%limb %onan] [%spit [%bunt [%limb %abel]] p.gen] ~]
     ::
         {$need *}
       ?:  ?:  ?=(@ p.gen)
@@ -6774,7 +6774,7 @@
         $cltr  (lead -.gen %.(+.gen moar))
         $cncb  (lead -.gen %.(+.gen (twin noop moan)))
         $cndt  (lead -.gen %.(+.gen dubs))
-        $call  (lead -.gen %.(+.gen (twin expr moar)))
+        $cnhp  (lead -.gen %.(+.gen (twin expr moar)))
         $cntr  (lead -.gen %.(+.gen (trio noop expr moan)))
         $cnkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
         $cnls  (lead -.gen %.(+.gen trey))
@@ -7889,7 +7889,7 @@
       =+  vat=$(gen p.gen)
       %=    $
           gen
-        :-  [%call [%limb %onan] [%hand p:!>(*span) [%1 p.vat]] ~]
+        :-  [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 p.vat]] ~]
         [%hand p.vat q.vat]
       ==
     ::
@@ -8314,7 +8314,7 @@
       {$twig *}  (play p.gen)
       {$wrap *}  %=    $
                      gen
-                   [%call [%limb %onan] [%hand p:!>(*span) [%1 $(gen p.gen)]] ~]
+                   [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 $(gen p.gen)]] ~]
                  ==
       {$lost *}  %void
       {$spit *}  (cell $(gen p.gen) $(gen q.gen))
@@ -8993,7 +8993,7 @@
   ++  glam  ~+((glue ace))
   ++  hasp  ;~  pose
               (ifix [sel ser] wide)
-              (stag %call (ifix [pel per] (most ace wide)))
+              (stag %cnhp (ifix [pel per] (most ace wide)))
               (stag %sand (stag %t qut))
               %+  cook
                 |=(a/coin [%sand ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
@@ -9474,7 +9474,7 @@
             :^  %ifno  sug
               [%make sug [[[[%& 1] ~] [%$ 13]] ~]]
             [%make sug [[[[%& 3] ~] [%make [%$ ~] [[sug [%$ 25]] ~]]] ~]]
-        $d  [[%call p.i.lut [%cltr $(lut t.lut)] ~] ~]
+        $d  [[%cnhp p.i.lut [%cltr $(lut t.lut)] ~] ~]
         $e  [[p.i.lut ^$(lut [[%f q.i.lut] ~])] $(lut t.lut)]
         $f  $(lut (weld p.i.lut t.lut))
       ==
@@ -9521,7 +9521,7 @@
         ==
       :-  '('
         %+  stag  %bcsm
-        %+  stag  %call
+        %+  stag  %cnhp
         %+  ifix  [pel per]
         ;~(plug wide ;~(pose ;~(pfix ace (most ace wyde)) (easy ~)))
       :-  '{'
@@ -9603,7 +9603,7 @@
       :-  '\''
         (stag %sand (stag %t qut))
       :-  '('
-        (stag %call (ifix [pel per] (most ace wide)))
+        (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '{'
         (stag %bccl (ifix [kel ker] (most ace wide)))
       :-  '*'
@@ -9770,8 +9770,8 @@
                 ^.  stet  ^.  limo
                 :~  ['^' (rune ket %cnkt exqy)]
                     ['+' (rune lus %cnls exqx)]
-                    ['-' (rune hep %call exqk)]
-                    [':' (rune col %call exqz)]
+                    ['-' (rune hep %cnhp exqk)]
+                    [':' (rune col %cnhp exqz)]
                 ==
               ==
           ==
@@ -9816,8 +9816,8 @@
                     ['.' (rune dot %cndt expb)]
                     ['^' (rune ket %cnkt expd)]
                     ['+' (rune lus %cnls expc)]
-                    ['-' (rune hep %call expk)]
-                    [':' (rune col %call expi)]
+                    ['-' (rune hep %cnhp expk)]
+                    [':' (rune col %cnhp expi)]
                     ['~' (rune sig %open expu)]
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %make exph)]
@@ -9862,7 +9862,7 @@
                   (word %cndt expb)
                   (word %cnkt expd)
                   (word %cnls expc)
-                  (word %call expk)
+                  (word %cnhp expk)
                   (word %open expu)
                   (word %cntr expm)
                   (word %make exph)
