@@ -966,7 +966,7 @@
         ?~  yom  [[%atom %n ~] ~]
         (slop q.i.yom $(yom t.yom))
       ^-  twig
-      :+  %keep  [%& 2]~
+      :+  %cncb  [%& 2]~
       =+  axe=3
       |-  ^-  (list (pair wing twig))
       ?~  yom  ~

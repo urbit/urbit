@@ -5444,12 +5444,12 @@
     {$clsg p/(list twig)}                                ::  :~ [p ~]
     {$cltr p/(list twig)}                                ::  :* p as a tuple
   ::                                            ::::::  invocations
-    {$keep p/wing q/(list (pair wing twig))}            ::  %_
-    {$lace p/twig q/twig}                               ::  %.
+    {$cncb p/wing q/(list (pair wing twig))}            ::  %_
+    {$cndt p/twig q/twig}                               ::  %.
     {$call p/twig q/(list twig)}                        ::  %-
     {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  %*
-    {$calq p/twig q/twig r/twig s/twig}                 ::  %^
-    {$calt p/twig q/twig r/twig}                        ::  %+
+    {$cnkt p/twig q/twig r/twig s/twig}                 ::  %^
+    {$cnls p/twig q/twig r/twig}                        ::  %+
     {$open p/wing q/twig r/(list twig)}                 ::  %~
     {$make p/wing q/(list (pair wing twig))}            ::  %=
   ::                                            ::::::  nock
@@ -6484,10 +6484,10 @@
       [i.p.gen $(p.gen t.p.gen)]
     ::
         {$bunt *}  [%burn ~(bunt al %herb p.gen)]
-        {$keep *}  [%like [%wing p.gen] %make p.gen q.gen]
-        {$lace *}  [%call q.gen [p.gen ~]]
-        {$calq *}  [%call p.gen q.gen r.gen s.gen ~]
-        {$calt *}  [%call p.gen q.gen r.gen ~]
+        {$cncb *}  [%like [%wing p.gen] %make p.gen q.gen]
+        {$cndt *}  [%call q.gen [p.gen ~]]
+        {$cnkt *}  [%call p.gen q.gen r.gen s.gen ~]
+        {$cnls *}  [%call p.gen q.gen r.gen ~]
         {$call *}  [%open [%$ ~] p.gen q.gen]
         {$open *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
       :^  %cntr  p.gen  q.gen
@@ -6588,7 +6588,7 @@
             [%wing [%| 0 ~] [%& 6] ~]                   ::
           [%limb %b]                                    ::
         :+  %brdt  [~ ~]                                ::  |.
-        :^    %calt                                     ::  %+
+        :^    %cnls                                     ::  %+
             [%per [%limb %v] p.gen]                     ::      =>(v {p.gen})
           [%call [%limb %b] [%limb %c] ~]               ::    (b c)
         :+  %make  [%a ~]                               ::  a(,.+6 c)
@@ -6612,7 +6612,7 @@
       [%pin ~(bunt al %herb p.gen) q.gen]
     ::
         {$fix *}
-      [%per [%keep [[%& 1] ~] p.gen] q.gen]
+      [%per [%cncb [[%& 1] ~] p.gen] q.gen]
     ::
         {$var *}
       ?~  q.p.gen
@@ -6621,7 +6621,7 @@
     ::
         {$rev *}  [%var p.gen r.gen q.gen]
         {$set *}
-      [%per [%keep [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
+      [%per [%cncb [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
         {$huh *}                                        ::                  =?
       [%set p.gen [%if q.gen r.gen [%wing p.gen]] s.gen]
     ::
@@ -6772,12 +6772,12 @@
         $clls  (lead -.gen %.(+.gen trey))
         $clsg  (lead -.gen %.(+.gen moar))
         $cltr  (lead -.gen %.(+.gen moar))
-        $keep  (lead -.gen %.(+.gen (twin noop moan)))
-        $lace  (lead -.gen %.(+.gen dubs))
+        $cncb  (lead -.gen %.(+.gen (twin noop moan)))
+        $cndt  (lead -.gen %.(+.gen dubs))
         $call  (lead -.gen %.(+.gen (twin expr moar)))
         $cntr  (lead -.gen %.(+.gen (trio noop expr moan)))
-        $calq  (lead -.gen %.(+.gen (quad expr expr expr expr)))
-        $calt  (lead -.gen %.(+.gen trey))
+        $cnkt  (lead -.gen %.(+.gen (quad expr expr expr expr)))
+        $cnls  (lead -.gen %.(+.gen trey))
         $open  (lead -.gen %.(+.gen (trio noop expr moar)))
         $make  (lead -.gen %.(+.gen (twin noop moan)))
         $wish  (lead -.gen %.(+.gen dubs))
@@ -9462,7 +9462,7 @@
         $a  [[%nub p.i.lut] $(lut t.lut)]
         $b  [p.i.lut $(lut t.lut)]
         $c  :_  ~
-            :+  %lace  `twig`[p.i.lut [%cltr $(lut t.lut)]]
+            :+  %cndt  `twig`[p.i.lut [%cltr $(lut t.lut)]]
             :+  %new  [%base %cell]
             :+  %brcn  [~ ~]
             ^-  (map @ tomb)
@@ -9768,8 +9768,8 @@
               ;~  pfix  cen
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['^' (rune ket %calq exqy)]
-                    ['+' (rune lus %calt exqx)]
+                :~  ['^' (rune ket %cnkt exqy)]
+                    ['+' (rune lus %cnls exqx)]
                     ['-' (rune hep %call exqk)]
                     [':' (rune col %call exqz)]
                 ==
@@ -9812,10 +9812,10 @@
               ;~  pfix  cen
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['_' (rune cab %keep exph)]
-                    ['.' (rune dot %lace expb)]
-                    ['^' (rune ket %calq expd)]
-                    ['+' (rune lus %calt expc)]
+                :~  ['_' (rune cab %cncb exph)]
+                    ['.' (rune dot %cndt expb)]
+                    ['^' (rune ket %cnkt expd)]
+                    ['+' (rune lus %cnls expc)]
                     ['-' (rune hep %call expk)]
                     [':' (rune col %call expi)]
                     ['~' (rune sig %open expu)]
@@ -9858,10 +9858,10 @@
                   (word %bcwt exps)
                   (word %bcsm expa)
                 ::
-                  (word %keep exph)
-                  (word %lace expb)
-                  (word %calq expd)
-                  (word %calt expc)
+                  (word %cncb exph)
+                  (word %cndt expb)
+                  (word %cnkt expd)
+                  (word %cnls expc)
                   (word %call expk)
                   (word %open expu)
                   (word %cntr expm)
@@ -10502,7 +10502,7 @@
   ++  open                                              ::  assemble door
     |=  {vax/vase nam/term som/(each vase ^)}
     ^-  {vase worm}
-    =*  key  [%keep [[%& 2] ~] [[[%& 6] ~] [%$ 3]] ~]
+    =*  key  [%cncb [[%& 2] ~] [[[%& 6] ~] [%$ 3]] ~]
     =^  dor  +>+<.$  (slap vax [%limb nam])
     =^  mes  +>+<.$  (slot 6 dor)
     =^  hip  +>+<.$
