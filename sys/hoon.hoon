@@ -5598,11 +5598,11 @@
     {$wtts p/root q/wing}                               ::  ?=  if q matches p
     {$wtzp p/twig}                                       ::  ?!  loobean not
   ::                                            ::::::  special
-    {$twig p/twig q/twig}                               ::  !,
-    {$wrap p/twig}                                      ::  !>
-    {$spit p/twig q/twig}                               ::  !;
-    {$code p/twig}                                      ::  !=
-    {$need p/$@(p/@ {p/@ q/@}) q/twig}                  ::  !?
+    {$zpcm p/twig q/twig}                               ::  !,
+    {$zpgr p/twig}                                      ::  !>
+    {$zpsm p/twig q/twig}                               ::  !;
+    {$zpts p/twig}                                      ::  !=
+    {$zpwt p/$@(p/@ {p/@ q/@}) q/twig}                  ::  !?
     {$fail $~}                                          ::  !!
   ==                                                    ::
 ++  toro  (pair toga (unit root))                       ::
@@ -6512,9 +6512,9 @@
     ::
         {$leaf *}  ~(clam al boil)
         {$limb *}  [%cnts [p.gen ~] ~]
-        {$tell *}  [%cnhp [%limb %noah] [%wrap [%cltr p.gen]] ~]
+        {$tell *}  [%cnhp [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
-        {$yell *}  [%cnhp [%limb %cain] [%wrap [%cltr p.gen]] ~]
+        {$yell *}  [%cnhp [%limb %cain] [%zpgr [%cltr p.gen]] ~]
     ::
         {$bcpt *}  ~(clam al boil)
         {$bccb *}  ~(clam al boil)
@@ -6603,7 +6603,7 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
-        [%brdt [~ ~] [%cnhp [%limb %cain] [%wrap [%tsgr [%$ 3] p.gen]] ~]]
+        [%brdt [~ ~] [%cnhp [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
       q.gen
     ::
         {$sgcb *}  [%sggr [%mean [%brdt [~ ~] p.gen]] q.gen]
@@ -6612,13 +6612,13 @@
         :-  %fast
         :-  %clls
         :+  [%rock %$ p.gen]
-          [%code q.gen]
+          [%zpts q.gen]
         :-  %clsg
         =+  nob=`(list twig)`~
         |-  ^-  (list twig)
         ?~  r.gen
           nob
-        [[[%rock %$ p.i.r.gen] [%code q.i.r.gen]] $(r.gen t.r.gen)]
+        [[[%rock %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
       s.gen
     ::
         {$sgfs *}  [%sgcn p.gen [%$ 7] ~ q.gen]
@@ -6627,7 +6627,7 @@
         {$sgls *}  [%sggr [%memo %rock %$ p.gen] q.gen]
         {$sgpm *}
       :+  %sggr
-        [%slog [%sand %$ p.gen] [%cnhp [%limb %cain] [%wrap q.gen] ~]]
+        [%slog [%sand %$ p.gen] [%cnhp [%limb %cain] [%zpgr q.gen] ~]]
       r.gen
     ::
         {$sgts *}  [%sggr [%germ p.gen] q.gen]
@@ -6795,10 +6795,10 @@
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
-        {$wrap *}
-      [%cnhp [%limb %onan] [%spit [%bunt [%limb %abel]] p.gen] ~]
+        {$zpgr *}
+      [%cnhp [%limb %onan] [%zpsm [%bunt [%limb %abel]] p.gen] ~]
     ::
-        {$need *}
+        {$zpwt *}
       ?:  ?:  ?=(@ p.gen)
             (lte hoon p.gen)
           &((lte hoon p.p.gen) (gte hoon q.p.gen))
@@ -6957,11 +6957,11 @@
         $wtsg  (lead -.gen %.(+.gen trip))
         $wtts  (lead -.gen %.(+.gen (twin expr noop)))
         $wtzp   (lead -.gen %.(+.gen expr))
-        $twig  (lead -.gen %.(+.gen dubs))
-        $wrap  (lead -.gen %.(+.gen expr))
-        $spit  (lead -.gen %.(+.gen dubs))
-        $code  (lead -.gen %.(+.gen expr))
-        $need  (lead -.gen %.(+.gen nexp))
+        $zpcm  (lead -.gen %.(+.gen dubs))
+        $zpgr  (lead -.gen %.(+.gen expr))
+        $zpsm  (lead -.gen %.(+.gen dubs))
+        $zpts  (lead -.gen %.(+.gen expr))
+        $zpwt  (lead -.gen %.(+.gen nexp))
         $fail  (lead -.gen %.(+.gen noop))
       ==
     ++  arms
@@ -7119,7 +7119,7 @@
       %rest   rest
       %tack   tack
       %toss   toss
-      %wrap   wrap
+      %zpgr   wrap
     ==
   =+  :*  fan=*(set {span twig})
           rib=*(set {span span twig})
@@ -7993,20 +7993,20 @@
       =+  hum=$(gen q.gen)
       [p.hum [%10 [%spot %1 p.gen] q.hum]]
     ::
-        {$twig *}   [(nice (play p.gen)) [%1 q.gen]]   ::  XX validate!
+        {$zpcm *}   [(nice (play p.gen)) [%1 q.gen]]   ::  XX validate!
         {$lost *}
       ?:  vet
         ~_  (dunk(sut (play p.gen)) 'lost')
         ~>(%mean.[%leaf "mint-lost"] !!)
       [%void [%0 0]]
     ::
-        {$spit *}
+        {$zpsm *}
       =+  vos=$(gol %noun, gen q.gen)
       =+  ref=p:$(gol %noun, gen p.gen)
       ?>  (~(nest ut p:!>(*span)) & ref)
       [(nice (cell ref p.vos)) (cons [%1 p.vos] q.vos)]
     ::
-        {$wrap *}
+        {$zpgr *}
       =+  vat=$(gen p.gen)
       %=    $
           gen
@@ -8014,7 +8014,7 @@
         [%hand p.vat q.vat]
       ==
     ::
-        {$code *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
+        {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
         {$fail $~}  [%void [%0 0]]
         *
       =+  doz=~(open ap gen)
@@ -8155,19 +8155,19 @@
       (beth bool)
     ::
         {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
-        {$twig *}  [(nice (play p.gen)) (play(sut dox) p.gen)]
+        {$zpcm *}  [(nice (play p.gen)) (play(sut dox) p.gen)]
         {$lost *}
       ?:  vet
         ::  ~_  (dunk(sut (play p.gen)) 'also')
         ~>(%mean.[%leaf "mull-skip"] !!)
       (beth %void)
     ::
-        {$code *}  (beth %noun)
-        {$spit *}
+        {$zpts *}  (beth %noun)
+        {$zpsm *}
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
       [(nice (cell (play p.gen) p.vos)) (cell (play(sut dox) p.gen) q.vos)]
     ::
-        {$wrap *}
+        {$zpgr *}
       ?>  =(sut dox)
       =+(typ=(play gen) [typ typ])
     ::
@@ -8329,7 +8329,7 @@
       ^-  ?
       =-  ?:  -  &
           ?.  tel  |
-          ::  ~_  (dunk %need)
+          ::  ~_  (dunk %zpwt)
           ::  ~_  (dunk(sut ref) %have)
           ~>(%mean.[%leaf "nest-fail"] !!)
       ?:  =(sut ref)  &
@@ -8479,14 +8479,14 @@
                  ==
       {$wtts *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
-      {$twig *}  (play p.gen)
-      {$wrap *}  %=    $
+      {$zpcm *}  (play p.gen)
+      {$zpgr *}  %=    $
                      gen
                    [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 $(gen p.gen)]] ~]
                  ==
       {$lost *}  %void
-      {$spit *}  (cell $(gen p.gen) $(gen q.gen))
-      {$code *}  %noun
+      {$zpsm *}  (cell $(gen p.gen) $(gen q.gen))
+      {$zpts *}  %noun
       {$fail *}  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
@@ -8800,7 +8800,7 @@
     [(mate p.mox `_p.mox`[~ p.geq]) [[q.geq q.i.men] q.mox]]
   ::
   ++  wrap
-    ~/  %wrap
+    ~/  %zpgr
     |=  yoz/?($lead $iron $zinc)
     ~_  leaf+"wrap"
     ^-  span
@@ -10331,11 +10331,11 @@
                   ;~(pfix (jest %wtsg) (toad tksg))
                   (word %wtzp expa)
                 ::
-                  (word %twig expb)
-                  (word %spit expb)
-                  (word %wrap expa)
-                  (word %code expa)
-                  (word %need hinh)
+                  (word %zpcm expb)
+                  (word %zpsm expb)
+                  (word %zpgr expa)
+                  (word %zpts expa)
+                  (word %zpwt hinh)
                   moar
                 ==
               ==
@@ -10438,11 +10438,11 @@
                 ^.  stet  ^.  limo
                 :~  [':' ;~(pfix col (toad expz))]
                     ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
-                    [',' (rune com %twig expb)]
-                    [';' (rune sem %spit expb)]
-                    ['>' (rune gar %wrap expa)]
-                    ['=' (rune tis %code expa)]
-                    ['?' (rune wut %need hinh)]
+                    [',' (rune com %zpcm expb)]
+                    [';' (rune sem %zpsm expb)]
+                    ['>' (rune gar %zpgr expa)]
+                    ['=' (rune tis %zpts expa)]
+                    ['?' (rune wut %zpwt hinh)]
                 ==
               ==
         ==
