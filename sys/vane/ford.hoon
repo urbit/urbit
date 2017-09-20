@@ -1146,7 +1146,7 @@
         :: =<  $  ~%  %grow  link-jet  ~  |.
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
-        (maim cof pox [%per [%limb %grow] [%limb too]])
+        (maim cof pox [%tsgr [%limb %grow] [%limb too]])
       %+  cope  (fang cof too)
       ~%  %grab  link-jet  ~
       |=  {cof/cafe pro/vase}
@@ -1449,7 +1449,7 @@
       |%
       ++  able                                          ::  assemble preamble
         ^-  twig
-        :+  %per
+        :+  %tsgr
           ?:  =(~ rop)  
             [%$ 1] 
           :+  %brcn  [~ ~]
@@ -1471,7 +1471,7 @@
         |=  {cof/cafe bax/vase}
         %+  cope  (chap cof bax [%fan fan.hyd])
         |=  {cof/cafe mar/mark gox/vase}
-        %+  cope  (maim cof (slop gox bax) [%tow (flop boy)])
+        %+  cope  (maim cof (slop gox bax) [%tssg (flop boy)])
         |=  {cof/cafe fin/vase}
         (fine cof fin)
         ::  ~>  %slog.[0 ~(duck ut p.q.cay)]
@@ -1677,7 +1677,7 @@
           (fine cof ..head)
         =.  boy
           ?:  p.i.bir  boy
-          (welp boy [[%use [%limb q.i.bir] [%$ 1]] ~])
+          (welp boy [[%tscm [%limb q.i.bir] [%$ 1]] ~])
         =+  byf=(~(get by rop) q.i.bir)
         ?^  byf
           ?.  =(+:`hoof`i.bir +:`hoof`p.u.byf)
@@ -1695,7 +1695,7 @@
               how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
                       q.i.bir
-                   [i.bir [%tow (flop boy.sel)]]
+                   [i.bir [%tssg (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)
       ::
@@ -1713,7 +1713,7 @@
         =.  boy
           ?:  p.i.bir  boy
 ::           ~&  ford+tscm+[q.i.bir boy]
-          (welp boy [[%use [%limb q.i.bir] [%$ 1]] ~])
+          (welp boy [[%tscm [%limb q.i.bir] [%$ 1]] ~])
         =+  byf=(~(get by bil) q.i.bir)
         ?^  byf
           ?.  =(+:`hoof`i.bir +:`hoof`p.u.byf)
@@ -1730,7 +1730,7 @@
               how  how
               bil  %+  ~(put by (~(uni by bil) bil.sel))
                      q.i.bir
-                   [i.bir [%tow (flop boy.sel)]]
+                   [i.bir [%tssg (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)
       ::
@@ -1748,7 +1748,7 @@
             %+  cope  (fade cof p.hop)
             |=  {cof/cafe hyd/hood}
             %+  cope  (apex(boy ~) cof hyd)
-            (flux |=(sel/_..wilt sel(boy [[%tow boy.sel] boy])))
+            (flux |=(sel/_..wilt sel(boy [[%tssg boy.sel] boy])))
           =+  [all=(lark (slat %tas) arc) sel=..wilt]
           %+  cope
             |-  ^-  (bolt (pair (map term (pair what foot)) _..wilt))
@@ -1767,7 +1767,7 @@
             %+  fine  cof
             :_  sel
             ^-  (map term (pair what foot))
-            [[p.n.all [~ %ash [%tow boy.sel]]] lef rig]
+            [[p.n.all [~ %ash [%tssg boy.sel]]] lef rig]
           |=  {cof/cafe mav/(map term (pair what foot)) sel/_..wilt}
           ?~  mav
             (flaw cof [%leaf "source missing: {<(en-beam p.hop)>}"]~)
