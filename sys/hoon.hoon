@@ -5585,7 +5585,7 @@
   ::                                            ::::::  conditionals
     {$wtbr p/(list twig)}                                 ::  ?|  loobean or
     {$wthp p/wing q/(list (pair root twig))}            ::  ?-  pick case in q
-    {$if p/twig q/twig r/twig}                          ::  ?:  if/then/else
+    {$wtcl p/twig q/twig r/twig}                          ::  ?:  if/then/else
     {$wtdt p/twig q/twig r/twig}                        ::  ?.  ?:(p r q)
     {$wtkt p/wing q/twig r/twig}                        ::  ?^  if p is a cell
     {$wtgl p/twig q/twig}                               ::  ?<  ?:(p !! q)
@@ -6025,7 +6025,7 @@
         {$bckt *}
       %-  hail
       =.  wat  ~
-      [%if [%bust %bean] $(sec p.sec) $(sec q.sec)]
+      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
     ::
         {$deet *}
       [%dbug p.sec $(sec q.sec)]
@@ -6036,7 +6036,7 @@
       |-  ^-  twig
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%if [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
     ::
         {$herb *}
       %-  hail
@@ -6052,7 +6052,7 @@
       |-  ^-  twig
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%if [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
     ::
         {$leaf *}
       (hail [%rock p.sec q.sec])
@@ -6064,7 +6064,7 @@
         {$reed *}
       %-  hail
       =.  wat  ~
-      [%if [%bust %bean] $(sec p.sec) $(sec q.sec)]
+      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
     ::
         {$weed *}
       (hail (home p.sec))
@@ -6115,7 +6115,7 @@
         [%ktls buv [%$ axe]]
       ::
           $bean
-        :^    %if
+        :^    %wtcl
             [%dtts [%rock %$ |] [%$ axe]]
           [%rock %f |]
         [%rock %f &]
@@ -6152,7 +6152,7 @@
       :+  %tsls
         ^$(sec i.p.sec)
       =>  .(axe (peg 3 axe), gom (peg 3 gom))
-      :^    %if
+      :^    %wtcl
           [%dtts [%$ axe] [%$ 2]]
         [%$ 2]
       $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
@@ -6173,7 +6173,7 @@
       ?~  t.p.sec
         :-  [%rock +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
-      :^    %if
+      :^    %wtcl
           [%dtts [%$ (peg axe 2)] [%rock +.p.i.p.sec]]
         :-  [%rock +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
@@ -6481,7 +6481,7 @@
       :+  %brhp  [~ ~]                                  ::  |-
       :+  %ktls                                         ::  ^+
         :+  %brhp  [~ ~]                                ::  |-
-        :^    %if                                       ::  ?:
+        :^    %wtcl                                       ::  ?:
             [%bust %bean]                               ::  ?
           [%bust %null]                                 ::  ~
         :-  [%ktts %i [%sand 'tD' *@]]                  ::  :-  i=~~
@@ -6741,7 +6741,7 @@
         {$tsdt *}
       [%tsgr [%cncb [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
         {$tswt *}                                        ::                  =?
-      [%tsdt p.gen [%if q.gen r.gen [%wing p.gen]] s.gen]
+      [%tsdt p.gen [%wtcl q.gen r.gen [%wing p.gen]] s.gen]
     ::
         {$tskt *}                                        ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                 ::
@@ -6769,18 +6769,18 @@
     ::
         {$wtbr *}
       |-
-      ?~(p.gen [%rock %f 1] [%if i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
+      ?~(p.gen [%rock %f 1] [%wtcl i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
     ::
-        {$wtdt *}   [%if p.gen r.gen q.gen]
-        {$wtgl *}   [%if p.gen [%fail ~] q.gen]
-        {$wtgr *}   [%if p.gen q.gen [%fail ~]]
-        {$wtkt *}   [%if [%wtts [%base %atom %$] p.gen] r.gen q.gen]
+        {$wtdt *}   [%wtcl p.gen r.gen q.gen]
+        {$wtgl *}   [%wtcl p.gen [%fail ~] q.gen]
+        {$wtgr *}   [%wtcl p.gen q.gen [%fail ~]]
+        {$wtkt *}   [%wtcl [%wtts [%base %atom %$] p.gen] r.gen q.gen]
     ::
         {$wthp *}
       |-
       ?~  q.gen
         [%lost [%wing p.gen]]
-      :^    %if
+      :^    %wtcl
           [%wtts p.i.q.gen p.gen]
         q.i.q.gen
       $(q.gen t.q.gen)
@@ -6790,11 +6790,11 @@
     ::
         {$wtpm *}
       |-
-      ?~(p.gen [%rock %f 0] [%if i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
+      ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
-        {$wtpt *}   [%if [%wtts [%base %atom %$] p.gen] q.gen r.gen]
-        {$wtsg *}   [%if [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtzp *}   [%if p.gen [%rock %f 1] [%rock %f 0]]
+        {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
+        {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
+        {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$wrap *}
       [%cnhp [%limb %onan] [%spit [%bunt [%limb %abel]] p.gen] ~]
     ::
@@ -6946,7 +6946,7 @@
         $tscm   (lead -.gen %.(+.gen dubs))
         $wtbr    (lead -.gen %.(+.gen moar))
         $wthp  (lead -.gen %.(+.gen (twin noop (moto dubs))))
-        $if    (lead -.gen %.(+.gen trey))
+        $wtcl    (lead -.gen %.(+.gen trey))
         $wtdt  (lead -.gen %.(+.gen trey))
         $wtkt  (lead -.gen %.(+.gen trip))
         $wtgl  (lead -.gen %.(+.gen dubs))
@@ -7962,7 +7962,7 @@
         {$tscm *}
       $(gen q.gen, sut (busk p.gen))
     ::
-        {$if *}
+        {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
       =+  fex=(gain p.gen)
       =+  wux=(lose p.gen)
@@ -8120,7 +8120,7 @@
         dox  (buss(sut dox) p.gen q.gen)
       ==
     ::
-        {$if *}
+        {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
       =+  ^=  hiq  ^-  {p/span q/span}
           =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
@@ -8472,7 +8472,7 @@
       {$sggr *}  $(gen q.gen)
       {$tsgr *}   $(gen q.gen, sut $(gen p.gen))
       {$tstr *}   $(gen r.gen, sut (buss p.gen q.gen))
-      {$if *}    =+  [fex=(gain p.gen) wux=(lose p.gen)]
+      {$wtcl *}    =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %-  fork  :~
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                    ?:(=(%void wux) %void $(sut wux, gen r.gen))
@@ -10318,7 +10318,7 @@
                   (word %tscm expb)
                 ::
                   (word %wtbr exps)
-                  (word %if expc)
+                  (word %wtcl expc)
                   (word %wtdt expc)
                   (word %wtgl expb)
                   (word %wtgr expb)
@@ -10418,7 +10418,7 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %wtbr exps)]
-                    [':' (rune col %if expc)]
+                    [':' (rune col %wtcl expc)]
                     ['.' (rune dot %wtdt expc)]
                     ['<' (rune gal %wtgl expb)]
                     ['>' (rune gar %wtgr expb)]
