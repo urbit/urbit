@@ -5548,18 +5548,18 @@
     {$ktts p/toga q/twig}                               ::  ^=
     {$ktwt p/twig}                                      ::  ^?
   ::                                            ::::::  hints
-    {$show p/twig q/twig}                               ::  ~|  sell on trace
-    {$lurk p/twig q/twig}                               ::  ~_  tank on trace
-    {$fast p/chum q/twig r/tyre s/twig}                 ::  ~%  general jet hint
-    {$funk p/chum q/twig}                               ::  ~/  function j-hint
-    {$thin p/$@(term {p/term q/twig}) q/twig}           ::  ~<  backward hint
-    {$hint p/$@(term {p/term q/twig}) q/twig}           ::  ~>  forward hint
-    {$poll p/term q/twig}                               ::  ~$  profiler hit
-    {$memo p/@ q/twig}                                  ::  ~+  cache/memoize
-    {$dump p/@ud q/twig r/twig}                         ::  ~&  printf/priority
-    {$ddup p/twig q/twig}                               ::  ~=  don't duplicate
-    {$warn p/@ud q/twig r/twig s/twig}                  ::  ~?  tested printf
-    {$peep p/twig q/twig}                               ::  ~!  type on trace
+    {$sgbr p/twig q/twig}                               ::  ~|  sell on trace
+    {$sgcb p/twig q/twig}                               ::  ~_  tank on trace
+    {$sgcn p/chum q/twig r/tyre s/twig}                 ::  ~%  general jet hint
+    {$sgfs p/chum q/twig}                               ::  ~/  function j-hint
+    {$sggl p/$@(term {p/term q/twig}) q/twig}           ::  ~<  backward hint
+    {$sggr p/$@(term {p/term q/twig}) q/twig}           ::  ~>  forward hint
+    {$sgbc p/term q/twig}                               ::  ~$  profiler hit
+    {$sgls p/@ q/twig}                                  ::  ~+  cache/memoize
+    {$sgpm p/@ud q/twig r/twig}                         ::  ~&  printf/priority
+    {$sgts p/twig q/twig}                               ::  ~=  don't duplicate
+    {$sgwt p/@ud q/twig r/twig s/twig}                  ::  ~?  tested printf
+    {$sgzp p/twig q/twig}                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
     {$xmn p/manx}                                       ::  ;foo; templating
     {$xml p/marl}                                       ::  ;=  list templating
@@ -6598,18 +6598,18 @@
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(bunt al [%herb p.gen]) q.gen]
-        {$show *}
-      :+  %hint
+        {$sgbr *}
+      :+  %sggr
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%rock %tas u.fek]
         [%brdt [~ ~] [%cnhp [%limb %cain] [%wrap [%per [%$ 3] p.gen]] ~]]
       q.gen
     ::
-        {$lurk *}  [%hint [%mean [%brdt [~ ~] p.gen]] q.gen]
-        {$fast *}
-      :+  %thin
-        :-  %fast
+        {$sgcb *}  [%sggr [%mean [%brdt [~ ~] p.gen]] q.gen]
+        {$sgcn *}
+      :+  %sggl
+        :-  %sgcn
         :-  %clls
         :+  [%rock %$ p.gen]
           [%code q.gen]
@@ -6621,21 +6621,21 @@
         [[[%rock %$ p.i.r.gen] [%code q.i.r.gen]] $(r.gen t.r.gen)]
       s.gen
     ::
-        {$funk *}  [%fast p.gen [%$ 7] ~ q.gen]
-        {$thin *}  [%rap [%hint p.gen [%$ 1]] q.gen]
-        {$poll *}  [%hint [%live [%rock %$ p.gen]] q.gen]
-        {$memo *}  [%hint [%memo %rock %$ p.gen] q.gen]
-        {$dump *}
-      :+  %hint
+        {$sgfs *}  [%sgcn p.gen [%$ 7] ~ q.gen]
+        {$sggl *}  [%rap [%sggr p.gen [%$ 1]] q.gen]
+        {$sgbc *}  [%sggr [%live [%rock %$ p.gen]] q.gen]
+        {$sgls *}  [%sggr [%memo %rock %$ p.gen] q.gen]
+        {$sgpm *}
+      :+  %sggr
         [%slog [%sand %$ p.gen] [%cnhp [%limb %cain] [%wrap q.gen] ~]]
       r.gen
     ::
-        {$ddup *}  [%hint [%germ p.gen] q.gen]
-        {$warn *}
+        {$sgts *}  [%sggr [%germ p.gen] q.gen]
+        {$sgwt *}
       :+  %pin  [%lest q.gen [%bust %null] [[%bust %null] r.gen]]
       :^  %ifno  [%& 2]~
         [%per [%$ 3] s.gen]
-      [%dump p.gen [%$ 5] [%per [%$ 3] s.gen]]
+      [%sgpm p.gen [%$ 5] [%per [%$ 3] s.gen]]
     ::
         {$xmn *}
       ::
@@ -6913,19 +6913,19 @@
         $ktwt  (lead -.gen %.(+.gen expr))
         $halo  (lead -.gen %.(+.gen nexp))
         $help  (lead -.gen %.(+.gen nexp))
-        $show  (lead -.gen %.(+.gen dubs))
-        $lurk  (lead -.gen %.(+.gen dubs))
+        $sgbr  (lead -.gen %.(+.gen dubs))
+        $sgcb  (lead -.gen %.(+.gen dubs))
         $crap  (lead -.gen %.(+.gen (raid expr)))
-        $fast  (lead -.gen %.(+.gen (quad noop expr moan expr)))
-        $funk  (lead -.gen %.(+.gen nexp))
-        $thin  (lead -.gen %.(+.gen (twin toad expr)))
-        $hint  (lead -.gen %.(+.gen (twin toad expr)))
-        $poll  (lead -.gen %.(+.gen nexp))
-        $memo  (lead -.gen %.(+.gen nexp))
-        $dump  (lead -.gen %.(+.gen trip))
-        $ddup  (lead -.gen %.(+.gen dubs))
-        $warn  (lead -.gen %.(+.gen (quad noop expr expr expr)))
-        $peep  (lead -.gen %.(+.gen dubs))
+        $sgcn  (lead -.gen %.(+.gen (quad noop expr moan expr)))
+        $sgfs  (lead -.gen %.(+.gen nexp))
+        $sggl  (lead -.gen %.(+.gen (twin toad expr)))
+        $sggr  (lead -.gen %.(+.gen (twin toad expr)))
+        $sgbc  (lead -.gen %.(+.gen nexp))
+        $sgls  (lead -.gen %.(+.gen nexp))
+        $sgpm  (lead -.gen %.(+.gen trip))
+        $sgts  (lead -.gen %.(+.gen dubs))
+        $sgwt  (lead -.gen %.(+.gen (quad noop expr expr expr)))
+        $sgzp  (lead -.gen %.(+.gen dubs))
         $wad   (lead -.gen %.(+.gen (twin expr moar)))
         $nub   (lead -.gen %.(+.gen expr))
         $dip   (lead -.gen %.(+.gen (twin expr moar)))
@@ -7938,10 +7938,10 @@
       =+  hum=$(gen q.gen)
       [(help p.gen p.hum) q.hum]
     ::
-        {$peep *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
-        {$hint *}
+        {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
+        {$sggr *}
       =+  hum=$(gen q.gen)
-      :: ?:  &(huz !?=($|(@ [?(%fast %memo) ^]) p.gen))
+      :: ?:  &(huz !?=($|(@ [?(%sgcn %sgls) ^]) p.gen))
       ::  hum
       :-  p.hum
       :+  %10
@@ -8107,8 +8107,8 @@
       =+(vat=$(gen q.gen) [(help p.gen p.vat) (help p.gen q.vat)])
     ::
         {$ktsg *}  $(gen p.gen)
-        {$peep *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
-        {$hint *}  $(gen q.gen)
+        {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
+        {$sggr *}  $(gen q.gen)
         {$per *}
       =+  lem=$(gen p.gen, gol %noun)
       $(gen q.gen, sut p.lem, dox q.lem)
@@ -8468,8 +8468,8 @@
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
       {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
       {$help *}  (help p.gen $(gen q.gen))
-      {$peep *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
-      {$hint *}  $(gen q.gen)
+      {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
+      {$sggr *}  $(gen q.gen)
       {$per *}   $(gen q.gen, sut $(gen p.gen))
       {$aka *}   $(gen r.gen, sut (buss p.gen q.gen))
       {$if *}    =+  [fex=(gain p.gen) wux=(lose p.gen)]
@@ -10284,18 +10284,18 @@
                   (word %ktts expg)
                   (word %ktwt expa)
                 ::
-                  (word %show expb)
-                  (word %poll expf)
-                  (word %lurk expb)
-                  (word %fast hind)
-                  (word %funk hine)
-                  (word %thin hinb)
-                  (word %hint hinb)
-                  (word %memo hinc)
-                  (word %dump hinf)
-                  (word %warn hing)
-                  (word %ddup expb)
-                  (word %peep expb)
+                  (word %sgbr expb)
+                  (word %sgbc expf)
+                  (word %sgcb expb)
+                  (word %sgcn hind)
+                  (word %sgfs hine)
+                  (word %sggl hinb)
+                  (word %sggr hinb)
+                  (word %sgls hinc)
+                  (word %sgpm hinf)
+                  (word %sgwt hing)
+                  (word %sgts expb)
+                  (word %sgzp expb)
                 ::
                   (word %wad expi)
                   (word %nub expa)
@@ -10369,18 +10369,18 @@
               ;~  pfix  sig
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['|' (rune bar %show expb)]
-                    ['$' (rune buc %poll expg)]
-                    ['_' (rune cab %lurk expb)]
-                    ['%' (rune cen %fast hind)]
-                    ['/' (rune fas %funk hine)]
-                    ['<' (rune gal %thin hinb)]
-                    ['>' (rune gar %hint hinb)]
-                    ['+' (rune lus %memo hinc)]
-                    ['&' (rune pam %dump hinf)]
-                    ['?' (rune wut %warn hing)]
-                    ['=' (rune tis %ddup expb)]
-                    ['!' (rune zap %peep expb)]
+                :~  ['|' (rune bar %sgbr expb)]
+                    ['$' (rune buc %sgbc expg)]
+                    ['_' (rune cab %sgcb expb)]
+                    ['%' (rune cen %sgcn hind)]
+                    ['/' (rune fas %sgfs hine)]
+                    ['<' (rune gal %sggl hinb)]
+                    ['>' (rune gar %sggr hinb)]
+                    ['+' (rune lus %sgls hinc)]
+                    ['&' (rune pam %sgpm hinf)]
+                    ['?' (rune wut %sgwt hing)]
+                    ['=' (rune tis %sgts expb)]
+                    ['!' (rune zap %sgzp expb)]
                 ==
               ==
             :-  ';'
