@@ -385,7 +385,7 @@
         return ret;
       }
 
-      case c3__fits: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__wtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun heb = u3nc(c3__herb, u3k(p_gen));

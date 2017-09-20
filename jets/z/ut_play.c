@@ -227,7 +227,7 @@
     else switch ( u3h(gen) ) {
       default: goto open;
 
-      case c3__fits: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__wtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_bean();
