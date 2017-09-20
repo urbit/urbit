@@ -590,7 +590,7 @@
   _open_do_pqrs(sgcn) //  ~%
   {
     return u3nt(c3__sggl,
-                u3nq(c3__fast,
+                u3nq(c3__sgcn,
                      c3__clls,
                      u3nt(c3__dtzz, u3_blip, u3k(p_gen)),
                      u3nt(u3nc(c3__zpts, u3k(q_gen)),
@@ -609,7 +609,7 @@
   _open_do_pq(sgls)   //  ~+
   {
     return u3nt(c3__sggr,
-                u3nq(c3__memo, c3__dtzz, u3_blip, u3k(p_gen)),
+                u3nq(c3__sgls, c3__dtzz, u3_blip, u3k(p_gen)),
                 u3k(q_gen));
   }
   _open_do_pqr(sgpm)   //  ~&

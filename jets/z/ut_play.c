@@ -427,7 +427,7 @@
         return ret;
       }
 
-      case c3__peep: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__sgzp: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun typ = u3qzu_play(van, sut, p_gen);
@@ -444,7 +444,7 @@
         return ret;
       }
 
-      case c3__hint: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__sggr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_x(van, sut, q_gen);
