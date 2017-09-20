@@ -6609,7 +6609,7 @@
         {$sgcb *}  [%sggr [%mean [%brdt [~ ~] p.gen]] q.gen]
         {$sgcn *}
       :+  %sggl
-        :-  %sgcn
+        :-  %fast
         :-  %clls
         :+  [%rock %$ p.gen]
           [%code q.gen]

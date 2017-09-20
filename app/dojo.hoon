@@ -1330,7 +1330,7 @@
     ++  dy-twig-mark                                    ::  XX architect
       =+  ^=  ope
           |=  gen/twig  ^-  twig
-          ?:  ?=(?($thin $hint) -.gen)
+          ?:  ?=(?($sggl $sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
