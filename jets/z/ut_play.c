@@ -233,7 +233,7 @@
         return _play_bean();
       }
 
-      case c3__if: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      case c3__wtcl: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _play_used();
       {
         u3_noun fex = u3qzu_gain(van, sut, p_gen);

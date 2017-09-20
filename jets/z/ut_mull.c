@@ -413,7 +413,7 @@
         return _mull_both(van, gol, _mull_bean());
       }
 
-      case c3__if: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      case c3__wtcl: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _mull_used();
       {
         u3_noun bol = _mull_bean();
