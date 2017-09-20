@@ -5481,10 +5481,10 @@
     {$warn p/@ud q/twig r/twig s/twig}                  ::  ~?  tested printf
     {$peep p/twig q/twig}                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
-    {$wad p/twig q/(list twig)}                         ::  ;:  binary to nary
-    {$nub p/twig}                                       ::  ;/  [%$ [%$ p ~] ~]
-    {$dip p/twig q/(list twig)}                         ::  ;~  kleisli arrow
-    {$fry p/twig q/twig}                                ::  ;;  normalize
+    {$smcl p/twig q/(list twig)}                         ::  ;:  binary to nary
+    {$smfs p/twig}                                       ::  ;/  [%$ [%$ p ~] ~]
+    {$smsg p/twig q/(list twig)}                         ::  ;~  kleisli arrow
+    {$smsm p/twig q/twig}                                ::  ;;  normalize
   ::                                            ::::::  compositions
     {$new p/root q/twig}                                ::  =|  push bunt
     {$fix p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
@@ -6553,7 +6553,7 @@
         [%per [%$ 3] s.gen]
       [%dump p.gen [%$ 5] [%per [%$ 3] s.gen]]
     ::
-        {$wad *}
+        {$smcl *}
       ?-    q.gen
           $~      [%fail ~]
           {* $~}  i.q.gen
@@ -6569,8 +6569,8 @@
         ==
       ==
     ::
-        {$nub *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
-        {$dip *}                                       ::                  ;~
+        {$smfs *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
+        {$smsg *}                                       ::                  ;~
       |-  ^-  twig
       ?-  q.gen
           $~      ~_(leaf+"open-smsg" !!)
@@ -6595,7 +6595,7 @@
         [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
       ==                                                ::
     ::
-        {$fry *}                                        ::                  ;;
+        {$smsm *}                                        ::                  ;;
       :+  %per  [%ktts %v %$ 1]                         ::  =>  v=.
       :+  %pin  :+  %ktts  %a                           ::  =+  ^=  a
                  [%per [%limb %v] p.gen]                ::  =>(v {p.gen})
@@ -6808,10 +6808,10 @@
         $ddup  (lead -.gen %.(+.gen dubs))
         $warn  (lead -.gen %.(+.gen (quad noop expr expr expr)))
         $peep  (lead -.gen %.(+.gen dubs))
-        $wad   (lead -.gen %.(+.gen (twin expr moar)))
-        $nub   (lead -.gen %.(+.gen expr))
-        $dip   (lead -.gen %.(+.gen (twin expr moar)))
-        $fry   (lead -.gen %.(+.gen dubs))
+        $smcl   (lead -.gen %.(+.gen (twin expr moar)))
+        $smfs   (lead -.gen %.(+.gen expr))
+        $smsg   (lead -.gen %.(+.gen (twin expr moar)))
+        $smsm   (lead -.gen %.(+.gen dubs))
         $new   (lead -.gen %.(+.gen dubs))
         $fix   (lead -.gen %.(+.gen (twin moan expr)))
         $var   (lead -.gen %.(+.gen (trio tora expr expr)))
@@ -9158,7 +9158,7 @@
   ++  phax
     |=  ruw/(list (list woof))
     =+  [yun=*(list twig) cah=*(list @)]
-    =+  wod=|=({a/tape b/(list twig)} ^+(b ?~(a b [[%nub %knit (flop a)] b])))
+    =+  wod=|=({a/tape b/(list twig)} ^+(b ?~(a b [[%smfs %knit (flop a)] b])))
     |-  ^+  yun
     ?~  ruw
       (flop (wod cah yun))
@@ -9459,7 +9459,7 @@
       |-  ^-  (list twig)
       ?~  lut  [[%rock %n ~] ~]
       ?-  -.i.lut
-        $a  [[%nub p.i.lut] $(lut t.lut)]
+        $a  [[%smfs p.i.lut] $(lut t.lut)]
         $b  [p.i.lut $(lut t.lut)]
         $c  :_  ~
             :+  %cndt  `twig`[p.i.lut [%cltr $(lut t.lut)]]
@@ -9619,7 +9619,7 @@
         ::
           %+  cook
             |=  a/(list (list woof))
-            :-  %nub
+            :-  %smfs
             [%knit |-(^-((list woof) ?~(a ~ (weld i.a $(a t.a)))))]
           (most dog ;~(pfix lus soil))
         ::
@@ -9649,8 +9649,8 @@
       :-  ':'
         ;~  pfix  col
           ;~  pose
-            (stag %wad (ifix [pel per] (most ace wide)))
-            ;~(pfix fas (stag %nub wide))
+            (stag %smcl (ifix [pel per] (most ace wide)))
+            ;~(pfix fas (stag %smfs wide))
           ==
         ==
       :-  '='
@@ -9902,10 +9902,10 @@
                   (word %ddup expb)
                   (word %peep expb)
                 ::
-                  (word %wad expi)
-                  (word %nub expa)
-                  (word %dip expi)
-                  (word %fry expb)
+                  (word %smcl expi)
+                  (word %smfs expa)
+                  (word %smsg expi)
+                  (word %smsm expb)
                 ::
                   (word %new expb)
                   (word %set expq)
@@ -9991,10 +9991,10 @@
               ;~  pfix  sem
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  [':' (rune col %wad expi)]
-                    ['/' (rune fas %nub expa)]
-                    ['~' (rune sig %dip expi)]
-                    [';' (rune sem %fry expb)]
+                :~  [':' (rune col %smcl expi)]
+                    ['/' (rune fas %smfs expa)]
+                    ['~' (rune sig %smsg expi)]
+                    [';' (rune sem %smsm expb)]
                 ==
               ==
             :-  '='
