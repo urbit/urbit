@@ -5401,7 +5401,7 @@
               {ven/term pro/term kel/@}                 ::  vendor and product
               {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-++  coil  $:  p/?($gold $ktbr $ktwt $ktpm)              ::  core span
+++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core span
               q/span                                    ::  built with
               r/chap                                    ::  docs
               s/{p/?($~ ^) q/(map @ tomb)}              ::  arms
@@ -5414,7 +5414,7 @@
               {$| p/@ud q/(unit term)}                  ::  by name
           ==                                            ::
 ++  line  {p/{$leaf p/aura q/@} q/tile}                 ::  %bccn case
-++  metl  ?($gold $ktbr $ktpm $ktwt)                    ::  core variance
+++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 ++  noun  *                                             ::  any noun
 ++  null  $~                                            ::  null, nil, etc
 ++  onyx  (list (pair span foot))                       ::  arm activation
@@ -5648,7 +5648,7 @@
 ++  vase  {p/span q/*}                                  ::  span-value pair
 ++  vise  {p/typo q/*}                                  ::  old vase
 ++  vial  ?($read $rite $both $free)                    ::  co/contra/in/bi
-++  vair  ?($gold $ktbr $ktwt $ktpm)                    ::  in/contra/bi/co
+++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
 ++  vein  (list (unit axis))                            ::  search trace
 ++  sect  (list pica)                                   ::  paragraph
 ++  whit                                                ::  
@@ -7916,12 +7916,12 @@
     ::
         {$dtwt *}  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         {$hand *}  [p.gen q.gen]
-        {$ktbr *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %ktbr) q.vat])
+        {$ktbr *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) q.vat])
     ::
         {$ktls *}
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
-        {$ktpm *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %ktpm) q.vat])
+        {$ktpm *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
         {$ktsg *}
       =+  nef=$(gen p.gen)
       :-  p.nef
@@ -7932,7 +7932,7 @@
     ::
         {$ktts *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         {$tune *}  [(face p.gen sut) [%0 %1]]
-        {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %ktwt) q.vat])
+        {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
     ::
         {$help *}
       =+  hum=$(gen q.gen)
@@ -8085,14 +8085,14 @@
         {$dtwt *}  =+($(gen p.gen, gol %noun) (beth bool))    ::  XX  =|
         {$hand *}  [p.gen p.gen]
         {$ktbr *}
-      =+(vat=$(gen p.gen) [(wrap(sut p.vat) %ktbr) (wrap(sut q.vat) %ktbr)])
+      =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
         {$ktls *}
       =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
       =+($(gen q.gen, gol p.hif) hif)
     ::
         {$ktpm *}
-      =+(vat=$(gen p.gen) [(wrap(sut p.vat) %ktpm) (wrap(sut q.vat) %ktpm)])
+      =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) (wrap(sut q.vat) %zinc)])
     ::
         {$ktts *}
       =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) (conk(sut q.vat) p.gen)])
@@ -8101,7 +8101,7 @@
       [(face p.gen sut) (face p.gen dox)]
     ::
         {$ktwt *}
-      =+(vat=$(gen p.gen) [(wrap(sut p.vat) %ktwt) (wrap(sut q.vat) %ktwt)])
+      =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) (wrap(sut q.vat) %lead)])
     ::
         {$help *}
       =+(vat=$(gen q.gen) [(help p.gen p.vat) (help p.gen q.vat)])
@@ -8293,10 +8293,10 @@
     ++  deem
       |=  {mel/vair ram/vair}
       ^-  ?
-      ?.  |(=(mel ram) =(%ktwt mel) =(%gold ram))  |
-      ?:  ?=($ktwt mel)  &
+      ?.  |(=(mel ram) =(%lead mel) =(%gold ram))  |
+      ?:  ?=($lead mel)  &
       ?:  ?=($gold mel)  meet
-      =+  vay=?-(mel $ktbr %rite, $ktpm %read)
+      =+  vay=?-(mel $iron %rite, $zinc %read)
       dext(sut (peek vay 2), ref (peek(sut ref) vay 2))
     ::
     ++  deep
@@ -8426,14 +8426,14 @@
     ==
   ::
   ++  peel
-    |=  {way/vial met/?($gold $ktbr $ktwt $ktpm)}
+    |=  {way/vial met/?($gold $iron $lead $zinc)}
     ^-  {sam/? con/?}
     ?:  ?=($gold met)  [& &]
     ?-  way
       $both  [| |]
       $free  [& &]
-      $read  [?=($ktpm met) |]
-      $rite  [?=($ktbr met) |]
+      $read  [?=($zinc met) |]
+      $rite  [?=($iron met) |]
     ==
   ::
   ++  play
@@ -8461,12 +8461,12 @@
       {$dtts *}  bool
       {$dtwt *}  bool
       {$hand *}  p.gen
-      {$ktbr *}  (wrap(sut $(gen p.gen)) %ktbr)
+      {$ktbr *}  (wrap(sut $(gen p.gen)) %iron)
       {$ktls *}  $(gen p.gen)
-      {$ktpm *}  (wrap(sut $(gen p.gen)) %ktpm)
+      {$ktpm *}  (wrap(sut $(gen p.gen)) %zinc)
       {$ktsg *}  $(gen p.gen)
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
-      {$ktwt *}  (wrap(sut $(gen p.gen)) %ktwt)
+      {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
       {$help *}  (help p.gen $(gen q.gen))
       {$peep *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$hint *}  $(gen q.gen)
@@ -8801,12 +8801,12 @@
   ::
   ++  wrap
     ~/  %wrap
-    |=  yoz/?($ktwt $ktbr $ktpm)
+    |=  yoz/?($lead $iron $zinc)
     ~_  leaf+"wrap"
     ^-  span
     ?+  sut  sut
       {$cell *}  (cell $(sut p.sut) $(sut q.sut))
-      {$core *}  ?>(|(=(%gold p.q.sut) =(%ktwt yoz)) sut(p.q yoz))
+      {$core *}  ?>(|(=(%gold p.q.sut) =(%lead yoz)) sut(p.q yoz))
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn (~(tap in p.sut)) |=(span ^$(sut +<))))
       {$help *}  (help p.sut $(sut q.sut))
@@ -9209,7 +9209,7 @@
                              $(q.s.q.sut r.q.s.q.sut)
         ==  ==
       %^  cat  3
-        ?-(p.q.sut $gold '.', $ktbr '|', $ktwt '?', $ktpm '&')
+        ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
       =+  gum=(mug q.s.q.sut)
       %+  can  3
       :~  [1 (add 'a' (mod gum 26))]
