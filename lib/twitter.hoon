@@ -149,7 +149,7 @@
     :-  (hep-to-cab -.p)
     ?+  -.p  p.p  :: usually plain text
       ?($source-id $target-id)       (tid:print p.p)
-      ?($id $name $user-id)  (lid:print p.p)
+      ?($id $name $user-id)          (lid:print p.p)
       $screen-name                   (lsc:print p.p)
     ==
   --
