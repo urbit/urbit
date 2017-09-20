@@ -725,7 +725,7 @@
         return _mull_in(van, sut, gol, dox, q_gen);
       }
 
-      case c3__twig: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__zpcm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun p_ret = u3qzu_play(van, sut, p_gen);
@@ -747,7 +747,7 @@
         return ret;
       }
 
-      case c3__code: p_gen = u3t(gen);
+      case c3__zpts: p_gen = u3t(gen);
       _mull_used();
       {
         return _mull_both(van, gol, c3__noun);
@@ -763,7 +763,7 @@
         return ret;
       }
 
-      case c3__spit: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__zpsm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun p_zur = u3qzu_play(van, sut, p_gen);

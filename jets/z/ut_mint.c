@@ -791,7 +791,7 @@
         return ret;
       }
 
-      case c3__code: p_gen = u3t(gen);
+      case c3__zpts: p_gen = u3t(gen);
       _mint_used();
       {
         u3_noun von = u3i_molt(u3k(van), u3qzu_van_vet, c3n, 0);
@@ -811,7 +811,7 @@
         return ret;
       }
 
-      case c3__twig: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__zpcm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         return u3nc(_mint_nice(van,
@@ -834,7 +834,7 @@
         return ret;
       }
 
-      case c3__spit: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__zpsm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun vos   = _mint_in(van, sut, c3__noun, q_gen);
