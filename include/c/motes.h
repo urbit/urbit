@@ -1116,6 +1116,7 @@
 #   define c3__try    c3_s3('t','r','y')
 #   define c3__tsbr   c3_s4('t','s','b','r')
 #   define c3__tscl   c3_s4('t','s','c','l')
+#   define c3__tscm   c3_s4('t','s','c','m')
 #   define c3__tsdt   c3_s4('t','s','d','t')
 #   define c3__tsgl   c3_s4('t','s','g','l')
 #   define c3__tsgr   c3_s4('t','s','g','r')

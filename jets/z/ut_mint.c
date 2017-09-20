@@ -701,7 +701,7 @@
         return ret;
       }
 
-      case c3__per: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun fid = _mint_in(van, sut, c3__noun, p_gen);
@@ -719,7 +719,7 @@
         return ret;
       }
 
-      case c3__aka: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      case c3__tstr: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _mint_used();
       {
         u3_noun boc = u3qzu_buss(van, sut, p_gen, q_gen);
@@ -729,7 +729,7 @@
         return ret;
       }
 
-      case c3__use: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__tscm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun boc = u3qzu_busk(van, sut, p_gen);
