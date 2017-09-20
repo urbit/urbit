@@ -606,7 +606,7 @@
       _mint_used();
       {
         u3_noun ryd = _mint_in(van, sut, gol, p_gen);
-        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__ktbr);
+        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__iron);
         u3_noun pro = u3nc(tyf, u3k(u3t(ryd)));
 
         u3z(ryd);
@@ -617,7 +617,7 @@
       _mint_used();
       {
         u3_noun ryd = _mint_in(van, sut, gol, p_gen);
-        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__ktpm);
+        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__zinc);
         u3_noun pro = u3nc(tyf, u3k(u3t(ryd)));
 
         u3z(ryd);
@@ -628,7 +628,7 @@
       _mint_used();
       {
         u3_noun ryd = _mint_in(van, sut, gol, p_gen);
-        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__ktwt);
+        u3_noun tyf = u3qzu_wrap(van, u3h(ryd), c3__lead);
         u3_noun pro = u3nc(tyf, u3k(u3t(ryd)));
 
         u3z(ryd);

@@ -317,7 +317,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
-        u3_noun pro = u3qzu_wrap(van, boc, c3__ktbr);
+        u3_noun pro = u3qzu_wrap(van, boc, c3__iron);
 
         u3z(boc);
         return pro;
@@ -327,7 +327,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
-        u3_noun pro = u3qzu_wrap(van, boc, c3__ktpm);
+        u3_noun pro = u3qzu_wrap(van, boc, c3__zinc);
 
         u3z(boc);
         return pro;
@@ -337,7 +337,7 @@
       _play_used();
       {
         u3_noun boc = _play_x(van, sut, p_gen);
-        u3_noun pro = u3qzu_wrap(van, boc, c3__ktwt);
+        u3_noun pro = u3qzu_wrap(van, boc, c3__lead);
 
         u3z(boc);
         return pro;

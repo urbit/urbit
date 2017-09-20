@@ -146,7 +146,7 @@
     }
     else {
       if ( (pq_sut != pq_ref) && 
-           (c3__ktwt != pq_sut) &&
+           (c3__lead != pq_sut) &&
            (c3__gold != pq_ref) ) 
       {
         return c3n;
@@ -189,7 +189,7 @@
                   c3a(_nest_dext(van, qq_sut, tel, qq_ref, u3_nul, u3_nul, gil),
                       _nest_dext(van, qq_ref, tel, qq_sut, u3_nul, u3_nul, gil));
               }
-              case c3__ktbr: {
+              case c3__iron: {
                 u3_noun s_sam = u3qzu_peek(van, qq_sut, c3__rite, 2);
                 u3_noun r_sam = u3qzu_peek(van, qq_ref, c3__rite, 2);
                 u3_noun ret = _nest_dext
@@ -199,10 +199,10 @@
                 u3z(s_sam);
                 return ret;
               }
-              case c3__ktwt: {
+              case c3__lead: {
                 return c3y;
               }
-              case c3__ktpm: {
+              case c3__zinc: {
                 u3_noun s_pal = u3qzu_peek(van, qq_sut, c3__read, 2);
                 u3_noun r_pal = u3qzu_peek(van, qq_ref, c3__read, 2);
                 u3_noun ret = _nest_dext

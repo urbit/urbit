@@ -20,8 +20,8 @@
 
       case c3__both: return u3nc(c3n, c3n);
       case c3__free: return u3nc(c3y, c3y);
-      case c3__read: return u3nc(((met == c3__ktpm) ? c3y : c3n), c3n);
-      case c3__rite: return u3nc(((met == c3__ktbr) ? c3y : c3n), c3n);
+      case c3__read: return u3nc(((met == c3__zinc) ? c3y : c3n), c3n);
+      case c3__rite: return u3nc(((met == c3__iron) ? c3y : c3n), c3n);
     }
   }
 

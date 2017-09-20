@@ -561,10 +561,10 @@
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
         u3_noun pro = u3nc(u3qzu_wrap(van, 
                                       u3h(vat),
-                                      c3__ktbr),
+                                      c3__iron),
                            u3qzu_wrap(van, 
                                       u3t(vat),
-                                      c3__ktbr));
+                                      c3__iron));
 
         u3z(vat);
         return pro;
@@ -576,10 +576,10 @@
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
         u3_noun pro = u3nc(u3qzu_wrap(van, 
                                       u3h(vat),
-                                      c3__ktpm),
+                                      c3__zinc),
                            u3qzu_wrap(van,
                                       u3t(vat),
-                                      c3__ktpm));
+                                      c3__zinc));
 
         u3z(vat);
         return pro;
@@ -591,10 +591,10 @@
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
         u3_noun pro = u3nc(u3qzu_wrap(van,
                                       u3h(vat),
-                                      c3__ktwt),
+                                      c3__lead),
                            u3qzu_wrap(van,
                                       u3t(vat),
-                                      c3__ktwt));
+                                      c3__lead));
 
         u3z(vat);
         return pro;
