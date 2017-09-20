@@ -5583,20 +5583,20 @@
     {$tstr p/(pair what term) q/twig r/twig}             ::  =*  r w/alias p/q
     {$tscm p/twig q/twig}                                ::  =,  overload p in q
   ::                                            ::::::  conditionals
-    {$or p/(list twig)}                                 ::  ?|  loobean or
-    {$case p/wing q/(list (pair root twig))}            ::  ?-  pick case in q
+    {$wtbr p/(list twig)}                                 ::  ?|  loobean or
+    {$wthp p/wing q/(list (pair root twig))}            ::  ?-  pick case in q
     {$if p/twig q/twig r/twig}                          ::  ?:  if/then/else
-    {$lest p/twig q/twig r/twig}                        ::  ?.  ?:(p r q)
-    {$ifcl p/wing q/twig r/twig}                        ::  ?^  if p is a cell
-    {$deny p/twig q/twig}                               ::  ?<  ?:(p !! q)
-    {$sure p/twig q/twig}                               ::  ?>  ?:(p q !!)
-    {$deft p/wing q/twig r/(list (pair root twig))}     ::  ?+  ?-  w/default
-    {$and p/(list twig)}                                ::  ?&  loobean and
-    {$ifat p/wing q/twig r/twig}                        ::  ?@  if p is atom
-    {$ifno p/wing q/twig r/twig}                        ::  ?~  if p is null
+    {$wtdt p/twig q/twig r/twig}                        ::  ?.  ?:(p r q)
+    {$wtkt p/wing q/twig r/twig}                        ::  ?^  if p is a cell
+    {$wtgl p/twig q/twig}                               ::  ?<  ?:(p !! q)
+    {$wtgr p/twig q/twig}                               ::  ?>  ?:(p q !!)
+    {$wtls p/wing q/twig r/(list (pair root twig))}     ::  ?+  ?-  w/default
+    {$wtpm p/(list twig)}                                ::  ?&  loobean and
+    {$wtpt p/wing q/twig r/twig}                        ::  ?@  if p is atom
+    {$wtsg p/wing q/twig r/twig}                        ::  ?~  if p is null
   ::
-    {$fits p/root q/wing}                               ::  ?=  if q matches p
-    {$not p/twig}                                       ::  ?!  loobean not
+    {$wtts p/root q/wing}                               ::  ?=  if q matches p
+    {$wtzp p/twig}                                       ::  ?!  loobean not
   ::                                            ::::::  special
     {$twig p/twig q/twig}                               ::  !,
     {$wrap p/twig}                                      ::  !>
@@ -5968,15 +5968,15 @@
     ==
   ::
   ++  wthp  |=  opt/(list (pair root twig))
-            %+  gray  %case
+            %+  gray  %wthp
             [puce (turn opt |=({a/root b/twig} [a (blue b)]))]
-  ++  wtkt  |=({sic/twig non/twig} (gray [%ifcl puce (blue sic) (blue non)]))
+  ++  wtkt  |=({sic/twig non/twig} (gray [%wtkt puce (blue sic) (blue non)]))
   ++  wtls  |=  {gen/twig opt/(list (pair root twig))}
-            %+  gray  %deft
+            %+  gray  %wtls
             [puce (blue gen) (turn opt |=({a/root b/twig} [a (blue b)]))]
-  ++  wtpt  |=({sic/twig non/twig} (gray [%ifat puce (blue sic) (blue non)]))
-  ++  wtsg  |=({sic/twig non/twig} (gray [%ifno puce (blue sic) (blue non)]))
-  ++  wtts  |=(gen/twig (gray [%fits (blue gen) puce]))
+  ++  wtpt  |=({sic/twig non/twig} (gray [%wtpt puce (blue sic) (blue non)]))
+  ++  wtsg  |=({sic/twig non/twig} (gray [%wtsg puce (blue sic) (blue non)]))
+  ++  wtts  |=(gen/twig (gray [%wtts (blue gen) puce]))
   --
 ::
 ++  al                                                  ::  tile engine
@@ -6081,7 +6081,7 @@
         ?@  nag
           =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
           ?:  =(& nag)
-            [%tsgr [%ifat [[%& axe] ~] luz [%$ 1]] (noy [& &])]
+            [%tsgr [%wtpt [[%& axe] ~] luz [%$ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
         (noy nag)
     ^-  twig
@@ -6101,7 +6101,7 @@
         =+  buv=bunt
         |-  ^-  twig
         ?@  nag
-          ?:(=(& nag) [%ifat [[%& axe] ~] $(nag |) buv] [%ktls buv [%$ axe]])
+          ?:(=(& nag) [%wtpt [[%& axe] ~] $(nag |) buv] [%ktls buv [%$ axe]])
         buv
       ::
           $noun
@@ -6111,7 +6111,7 @@
         =+  buv=bunt
         |-  ^-  twig
         ?@  nag
-          ?:(=(& nag) [%ifat [[%& axe] ~] buv $(nag [& &])] buv)
+          ?:(=(& nag) [%wtpt [[%& axe] ~] buv $(nag [& &])] buv)
         [%ktls buv [%$ axe]]
       ::
           $bean
@@ -6136,7 +6136,7 @@
       %-  tun  |=  gon/*  =>  .(nag gon)  ^-  twig
       ?@  -.nag
         ?:  =(& -.nag)
-          [%ifat [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
+          [%wtpt [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
         ^$(sec q.sec)
       ^$(sec p.sec)
     ::
@@ -6189,7 +6189,7 @@
       %-  hail
       =.  wat  ~
       ?-  nag
-        $&  [%ifat [[%& axe] ~] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
+        $&  [%wtpt [[%& axe] ~] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
         $|  $(sec p.sec)
         ^   $(sec q.sec)
         *   !!
@@ -6502,7 +6502,7 @@
         [%ktts %b res]                                  ::  b={res}
       ^-  twig                                          ::
       :+  %brhp  [~ ~]                                  ::  |-
-      :^    %ifat                                       ::  ?@
+      :^    %wtpt                                       ::  ?@
           [%a ~]                                        ::  a
         [%limb %b]                                      ::  b
       :-  [%tsgl [%$ 2] [%limb %a]]                      ::  :-  -.a
@@ -6632,8 +6632,8 @@
     ::
         {$sgts *}  [%sggr [%germ p.gen] q.gen]
         {$sgwt *}
-      :+  %tsls  [%lest q.gen [%bust %null] [[%bust %null] r.gen]]
-      :^  %ifno  [%& 2]~
+      :+  %tsls  [%wtdt q.gen [%bust %null] [[%bust %null] r.gen]]
+      :^  %wtsg  [%& 2]~
         [%tsgr [%$ 3] s.gen]
       [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
     ::
@@ -6666,7 +6666,7 @@
                :_  [~ ~]
                =+  sug=[[%& 12] ~]
                :^  %$  ~  %elm
-               :^  %ifno  sug
+               :^  %wtsg  sug
                  [%cnts sug [[[[%& 1] ~] [%$ 13]] ~]]
                [%cnts sug [[[[%& 3] ~] [%cnts [%$ ~] [[sug [%$ 25]] ~]]] ~]]
       ==
@@ -6720,7 +6720,7 @@
       :+  %tsls  [%ktts %b [%tsgr [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
       :+  %tsls                                          ::  =+  c=(a b)
         [%ktts %c [%cnhp [%limb %a] [%limb %b] ~]]      ::
-      :+  %sure                                         ::  ?>(=(`*`c `*`b) c)
+      :+  %wtgr                                         ::  ?>(=(`*`c `*`b) c)
         :+  %dtts                                       ::
         [%kthp [%base %noun] [%limb %c]]                ::
         [%kthp [%base %noun] [%limb %b]]                ::
@@ -6767,34 +6767,34 @@
       ?~  t.p.gen  i.p.gen
       [%tsgr i.p.gen $(p.gen t.p.gen)]
     ::
-        {$or *}
+        {$wtbr *}
       |-
       ?~(p.gen [%rock %f 1] [%if i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
     ::
-        {$lest *}   [%if p.gen r.gen q.gen]
-        {$deny *}   [%if p.gen [%fail ~] q.gen]
-        {$sure *}   [%if p.gen q.gen [%fail ~]]
-        {$ifcl *}   [%if [%fits [%base %atom %$] p.gen] r.gen q.gen]
+        {$wtdt *}   [%if p.gen r.gen q.gen]
+        {$wtgl *}   [%if p.gen [%fail ~] q.gen]
+        {$wtgr *}   [%if p.gen q.gen [%fail ~]]
+        {$wtkt *}   [%if [%wtts [%base %atom %$] p.gen] r.gen q.gen]
     ::
-        {$case *}
+        {$wthp *}
       |-
       ?~  q.gen
         [%lost [%wing p.gen]]
       :^    %if
-          [%fits p.i.q.gen p.gen]
+          [%wtts p.i.q.gen p.gen]
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
-        {$deft *}
-      [%case p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
+        {$wtls *}
+      [%wthp p.gen (weld r.gen `_r.gen`[[[%base %noun] q.gen] ~])]
     ::
-        {$and *}
+        {$wtpm *}
       |-
       ?~(p.gen [%rock %f 0] [%if i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
-        {$ifat *}   [%if [%fits [%base %atom %$] p.gen] q.gen r.gen]
-        {$ifno *}   [%if [%fits [%base %null] p.gen] q.gen r.gen]
-        {$not *}   [%if p.gen [%rock %f 1] [%rock %f 0]]
+        {$wtpt *}   [%if [%wtts [%base %atom %$] p.gen] q.gen r.gen]
+        {$wtsg *}   [%if [%wtts [%base %null] p.gen] q.gen r.gen]
+        {$wtzp *}   [%if p.gen [%rock %f 1] [%rock %f 0]]
         {$wrap *}
       [%cnhp [%limb %onan] [%spit [%bunt [%limb %abel]] p.gen] ~]
     ::
@@ -6944,19 +6944,19 @@
         $tssg   (lead -.gen %.(+.gen moar))
         $tstr   (lead -.gen %.(+.gen trip))
         $tscm   (lead -.gen %.(+.gen dubs))
-        $or    (lead -.gen %.(+.gen moar))
-        $case  (lead -.gen %.(+.gen (twin noop (moto dubs))))
+        $wtbr    (lead -.gen %.(+.gen moar))
+        $wthp  (lead -.gen %.(+.gen (twin noop (moto dubs))))
         $if    (lead -.gen %.(+.gen trey))
-        $lest  (lead -.gen %.(+.gen trey))
-        $ifcl  (lead -.gen %.(+.gen trip))
-        $deny  (lead -.gen %.(+.gen dubs))
-        $sure  (lead -.gen %.(+.gen dubs))
-        $deft  (lead -.gen %.(+.gen (trio noop expr (moto dubs))))
-        $and   (lead -.gen %.(+.gen moar))
-        $ifat  (lead -.gen %.(+.gen trip))
-        $ifno  (lead -.gen %.(+.gen trip))
-        $fits  (lead -.gen %.(+.gen (twin expr noop)))
-        $not   (lead -.gen %.(+.gen expr))
+        $wtdt  (lead -.gen %.(+.gen trey))
+        $wtkt  (lead -.gen %.(+.gen trip))
+        $wtgl  (lead -.gen %.(+.gen dubs))
+        $wtgr  (lead -.gen %.(+.gen dubs))
+        $wtls  (lead -.gen %.(+.gen (trio noop expr (moto dubs))))
+        $wtpm   (lead -.gen %.(+.gen moar))
+        $wtpt  (lead -.gen %.(+.gen trip))
+        $wtsg  (lead -.gen %.(+.gen trip))
+        $wtts  (lead -.gen %.(+.gen (twin expr noop)))
+        $wtzp   (lead -.gen %.(+.gen expr))
         $twig  (lead -.gen %.(+.gen dubs))
         $wrap  (lead -.gen %.(+.gen expr))
         $spit  (lead -.gen %.(+.gen dubs))
@@ -7869,11 +7869,11 @@
   ++  chip
     ~/  %chip
     |=  {how/? gen/twig}  ^-  span
-    ?:  ?=({$fits *} gen)
+    ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(bunt al [%herb p.gen])))
-    ?:  ?&(how ?=({$and *} gen))
+    ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
-    ?:  ?&(!how ?=({$or *} gen))
+    ?:  ?&(!how ?=({$wtbr *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
@@ -7974,7 +7974,7 @@
       =+  ran=$(sut wux, gen r.gen)
       [(fork p.hiq p.ran ~) (cond duy q.hiq q.ran)]
     ::
-        {$fits *}
+        {$wtts *}
       :-  (nice bool)
       =+  ref=(play ~(bunt al %herb p.gen))
       =+  fid=(find %read q.gen)
@@ -8144,7 +8144,7 @@
           $(sut p.wux, dox q.wux, gen r.gen)
       [(nice (fork p.hiq p.ran ~)) (fork q.hiq q.ran ~)]
     ::
-        {$fits *}
+        {$wtts *}
       =+  nob=~(bunt al %herb p.gen)
       =+  waz=[p=(play nob) q=(play(sut dox) nob)]
       =+  ^=  syx  :-  p=(cove q:(mint %noun [%wing q.gen]))
@@ -8477,7 +8477,7 @@
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                    ?:(=(%void wux) %void $(sut wux, gen r.gen))
                  ==
-      {$fits *}  bool
+      {$wtts *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
       {$twig *}  (play p.gen)
       {$wrap *}  %=    $
@@ -9353,7 +9353,7 @@
   ?@  -.q.vax
     ^=  typ
     %-  ~(play ut p.vax)
-    [%sure [%fits [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
+    [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
 ::::  5d: parser
@@ -9958,7 +9958,7 @@
         ==
       :-  '!'
         ;~  pose
-          (stag %not ;~(pfix zap wide))
+          (stag %wtzp ;~(pfix zap wide))
           (stag %fail (cold ~ ;~(plug zap zap)))
         ==
       :-  '_'
@@ -9991,7 +9991,7 @@
       :-  '&'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %and ;~(pfix pam (ifix [pel per] (most ace wide))))
+          (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
           ;~(plug (stag %rock (stag %f (cold & pam))) ;~(pfix lus wide))
           (stag %sand (stag %f (cold & pam)))
         ==
@@ -10086,7 +10086,7 @@
       :-  '|'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %or ;~(pfix bar (ifix [pel per] (most ace wide))))
+          (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
           ;~(plug (stag %rock (stag %f (cold | bar))) ;~(pfix lus wide))
           (stag %sand (stag %f (cold | bar)))
         ==
@@ -10317,19 +10317,19 @@
                   (word %tssg expi)
                   (word %tscm expb)
                 ::
-                  (word %or exps)
+                  (word %wtbr exps)
                   (word %if expc)
-                  (word %lest expc)
-                  (word %deny expb)
-                  (word %sure expb)
-                  ;~(pfix (jest %case) (toad tkhp))
-                  ;~(pfix (jest %ifcl) (toad tkkt))
-                  ;~(pfix (jest %fits) (toad tkts))
-                  ;~(pfix (jest %deft) (toad tkls))
-                  (word %and exps)
-                  ;~(pfix (jest %ifat) (toad tkpt))
-                  ;~(pfix (jest %ifno) (toad tksg))
-                  (word %not expa)
+                  (word %wtdt expc)
+                  (word %wtgl expb)
+                  (word %wtgr expb)
+                  ;~(pfix (jest %wthp) (toad tkhp))
+                  ;~(pfix (jest %wtkt) (toad tkkt))
+                  ;~(pfix (jest %wtts) (toad tkts))
+                  ;~(pfix (jest %wtls) (toad tkls))
+                  (word %wtpm exps)
+                  ;~(pfix (jest %wtpt) (toad tkpt))
+                  ;~(pfix (jest %wtsg) (toad tksg))
+                  (word %wtzp expa)
                 ::
                   (word %twig expb)
                   (word %spit expb)
@@ -10417,19 +10417,19 @@
               ;~  pfix  wut
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['|' (rune bar %or exps)]
+                :~  ['|' (rune bar %wtbr exps)]
                     [':' (rune col %if expc)]
-                    ['.' (rune dot %lest expc)]
-                    ['<' (rune gal %deny expb)]
-                    ['>' (rune gar %sure expb)]
+                    ['.' (rune dot %wtdt expc)]
+                    ['<' (rune gal %wtgl expb)]
+                    ['>' (rune gar %wtgr expb)]
                     ['-' ;~(pfix hep (toad tkhp))]
                     ['^' ;~(pfix ket (toad tkkt))]
                     ['=' ;~(pfix tis (toad tkts))]
                     ['+' ;~(pfix lus (toad tkls))]
-                    ['&' (rune pam %and exps)]
+                    ['&' (rune pam %wtpm exps)]
                     ['@' ;~(pfix pat (toad tkpt))]
                     ['~' ;~(pfix sig (toad tksg))]
-                    ['!' (rune zap %not expa)]
+                    ['!' (rune zap %wtzp expa)]
                 ==
               ==
             :-  '!'
@@ -10969,10 +10969,10 @@
     |=  vax/vase
     ^-  {vase worm}
     =+  ^=  gen  ^-  twig
-      ?@  q.vax    [%fits [%base [%atom %$]] [%& 1]~]
-      ?@  -.q.vax  [%fits [%leaf %tas -.q.vax] [%& 2]~]
-      [%fits [%base %cell] [%& 1]~]
-    =^  typ  +>+<.$  (play p.vax [%sure gen [%$ 1]])
+      ?@  q.vax    [%wtts [%base [%atom %$]] [%& 1]~]
+      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%& 2]~]
+      [%wtts [%base %cell] [%& 1]~]
+    =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
     [[typ q.vax] +>+<.$]
   ::
   ++  spot                                              ::  slot then spec
