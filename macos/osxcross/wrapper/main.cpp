@@ -176,22 +176,6 @@ bool intrinsicpath(Target &target, const char *, const char *path, char **) {
   return true;
 }
 
-bool runprog(Target &target, const char *, const char *progname, char **cargs) {
-  auto *prog = program::getprog(progname);
-
-  if (!prog)
-    exit(EXIT_FAILURE);
-
-  std::vector<char *> args;
-  args.push_back(const_cast<char *>(progname));
-
-  while (*cargs)
-    args.push_back(*cargs++);
-  args.push_back(nullptr);
-
-  (*prog)(args.size() - 1, args.data(), target);
-}
-
 bool liblto(Target &target, const char *opt, const char *, char **) {
   target.wliblto = !strcmp(opt, "-Wliblto");
   return true;
@@ -260,7 +244,6 @@ constexpr struct Opt {
   {"-m64", arch},
   {"-x", language, true, true},
   {"-foc-use-gcc-libstdc++", usegcclibstdcxx},
-  {"-foc-run-prog", runprog, true, false, "="}, // for internal use only
   {"-Wliblto", liblto, false, true},
   {"-Wno-liblto", liblto, false, true},
   {"-isystem", checkincludepath, true, true},
@@ -355,9 +338,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
   if (p)
     cmd = &p[1];
 
-  if (auto *prog = program::getprog(cmd))
-    (*prog)(argc, argv, target);
-
   // -> x86_64 <- -apple-darwin13
   p = strchr(cmd, '-');
   len = (p ? p : cmd) - cmd;
@@ -395,8 +375,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
       } else if (target.compilername == "c++") {
         target.compiler = getDefaultCXXCompilerIdentifier();
         target.compilername = getDefaultCXXCompilerName();
-      } else if (auto *prog = program::getprog(target.compilername)) {
-        (*prog)(argc, argv, target);
       }
 
       if (target.target != getDefaultTarget())
@@ -433,82 +411,10 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
 } // unnamed namespace
 
-int main(int argc, char ** argv)
+static int compileForTarget(Target & target)
 {
-  // We only want this wrapper and the compiler it invokes to access a certain
-  // set of tools that are determined at build time.  Ignore whatever is on the
-  // user's path and use the path specified by our Nix expression instead.
-  int result = setenv("PATH", WRAPPER_PATH, 1);
-  if (result)
-  {
-    std::cerr << "wrapper failed to set PATH" << std::endl;
-    return 1;
-  }
-
-  Target target;
-  char **cargs = nullptr;
+  char ** cargs = nullptr;
   int rc = -1;
-
-  if (char *p = getenv("OCDEBUG"))
-    debug = atoi(p);
-
-  if (!detectTarget(argc, argv, target)) {
-    err << "while detecting target" << err.endl();
-    return 1;
-  }
-
-  if (debug) {
-    if (debug >= 2) {
-      dbg << "detected target triple: " << target.getTriple() << dbg.endl();
-      dbg << "detected compiler: " << target.compilername << dbg.endl();
-
-      dbg << "detected stdlib: " << getStdLibString(target.stdlib)
-          << dbg.endl();
-    }
-  }
-
-#ifdef __DragonFly__
-  // Escape DragonFlyBSD's weird PFS paths.
-  std::string escapedexecpath;
-  escapePath(target.execpath, escapedexecpath);
-  concatEnvVariable("COMPILER_PATH", escapedexecpath);
-#else
-  concatEnvVariable("COMPILER_PATH", target.execpath);
-#endif
-
-  auto printCommand = [&]() {
-    std::string in;
-    std::string out;
-
-    for (int i = 0; i < argc; ++i) {
-      in += argv[i];
-      in += " ";
-    }
-
-    out += target.compilerpath;
-
-    if (target.compilerpath != target.fargs[0]) {
-      out += " (";
-      out += target.fargs[0];
-      out += ") ";
-    } else {
-      out += " ";
-    }
-
-    for (size_t i = 1; i < target.fargs.size(); ++i) {
-      out += target.fargs[i];
-      out += " ";
-    }
-
-    for (auto &arg : target.args) {
-      out += arg;
-      out += " ";
-    }
-
-    dbg << "--> " << in << dbg.endl();
-
-    dbg << "<-- " << out << dbg.endl();
-  };
 
   if (rc == -1) {
     cargs = new char *[target.fargs.size() + target.args.size() + 1];
@@ -523,19 +429,87 @@ int main(int argc, char ** argv)
     cargs[i] = nullptr;
   }
 
-  if (debug && rc == -1)
-  {
-    printCommand();
-  }
-
   if (rc == -1 && execvp(target.compilerpath.c_str(), cargs)) {
     err << "invoking compiler failed" << err.endl();
-
-    if (!debug)
-      printCommand();
 
     return 1;
   }
 
   return rc;
+}
+
+int c_compiler_main(int argc, char ** argv)
+{
+  Target target;
+  bool success = detectTarget(argc, argv, target);
+
+  if (!success)
+  {
+    err << "while detecting target" << err.endl();
+    return 1;
+  }
+
+  compileForTarget(target);
+  return 0;
+}
+
+int cxx_compiler_main(int argc, char ** argv)
+{
+  std::cerr << "TODO finish cxx compiler main" << std::endl;
+  return 1;
+}
+
+int wrapper_main(int argc, char ** argv)
+{
+  std::cout <<
+    "host: " WRAPPER_HOST "\n"
+    "path: " WRAPPER_PATH "\n";
+  return 0;
+}
+
+struct {
+  const char * name;
+  int (*main_func)(int argc, char ** argv);
+} prgms[] = {
+  { WRAPPER_HOST "-gcc", c_compiler_main },
+  { WRAPPER_HOST "-cc", c_compiler_main },
+  { WRAPPER_HOST "-clang", c_compiler_main },
+  { WRAPPER_HOST "-g++", cxx_compiler_main },
+  { WRAPPER_HOST "-c++", cxx_compiler_main },
+  { WRAPPER_HOST "-clang++", cxx_compiler_main },
+  { WRAPPER_HOST "-wrapper", wrapper_main },
+  { nullptr, nullptr },
+};
+
+const char * get_program_name(const char * path)
+{
+  const char * p = strrchr(path, '/');
+  if (p) { path = p + 1; }
+  return path;
+}
+
+int main(int argc, char ** argv)
+{
+  // We only want this wrapper and the compiler it invokes to access a certain
+  // set of tools that are determined at build time.  Ignore whatever is on the
+  // user's path and use the path specified by our Nix expression instead.
+  int result = setenv("PATH", WRAPPER_PATH, 1);
+  if (result)
+  {
+    std::cerr << "wrapper failed to set PATH" << std::endl;
+    return 1;
+  }
+
+  std::string program_name = get_program_name(argv[0]);
+
+  for (auto * p = prgms; p->name; p++)
+  {
+    if (program_name == p->name)
+    {
+      return p->main_func(argc, argv);
+    }
+  }
+
+  std::cerr << "compiler wrapper invoked with unknown program name: " << argv[0] << std::endl;
+  return 1;
 }

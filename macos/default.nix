@@ -110,7 +110,7 @@ let
 
     CXXFLAGS =
       "-std=c++11 " +
-      "-Wall -Wextra -pedantic -Wno-missing-field-initializers " +
+      "-Wall " +
       "-I. " +
       "-O2 -g " +
       "-DOSXCROSS_VERSION=\\\"0.15\\\" " +
@@ -121,6 +121,7 @@ let
       "-DOSXCROSS_BUILD_DIR=\\\"\\\" " +
       "-DOSXCROSS_SDK=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
       "-DOSXCROSS_SDK_VERSION=\\\"10.11\\\" " +
+      "-DWRAPPER_HOST=\\\"${host}\\\" " +
       "-DWRAPPER_PATH=\\\"${cctools}/bin:${clang}/bin\\\"";
   };
 
