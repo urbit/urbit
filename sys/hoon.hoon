@@ -5494,7 +5494,7 @@
     {$tune p/(pair what $@(term tune))}                 ::  minimal face
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
-    {$ktcn p/twig}                                      ::  enter test mode
+    {$xray p/manx}                                       ::  ;foo; templating
   ::                                            ::::::  molds
     {$bcpt p/root q/root}                               ::  $@ depth fork
     {$bccb p/twig}                                      ::  $_ example
@@ -5540,6 +5540,7 @@
     {$dtwt p/twig}                                      ::  .?  nock 3
   ::                                            ::::::  span conversion
     {$ktbr p/twig}                                      ::  ^|
+    {$ktcn p/twig}                                      ::  ^%  enter test mode
     {$ktdt p/twig q/twig}                               ::  ^.
     {$ktls p/twig q/twig}                               ::  ^+
     {$kthp p/root q/twig}                               ::  ^-
@@ -5561,7 +5562,6 @@
     {$sgwt p/@ud q/twig r/twig s/twig}                  ::  ~?  tested printf
     {$sgzp p/twig q/twig}                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
-    {$xray p/manx}                                       ::  ;foo; templating
     {$smts p/marl}                                       ::  ;=  list templating
     {$smcl p/twig q/(list twig)}                         ::  ;:  binary to nary
     {$smfs p/twig}                                       ::  ;/  [%$ [%$ p ~] ~]
@@ -5603,7 +5603,7 @@
     {$zpsm p/twig q/twig}                               ::  !;
     {$zpts p/twig}                                      ::  !=
     {$zpwt p/$@(p/@ {p/@ q/@}) q/twig}                  ::  !?
-    {$fail $~}                                          ::  !!
+    {$zpzp $~}                                          ::  !!
   ==                                                    ::
 ++  toro  (pair toga (unit root))                       ::
 ++  twit  twig                                          ::  last-gen twig
@@ -6015,7 +6015,7 @@
         $noun      [%dttr [%rock %$ 0] [[%rock %$ 0] [%rock %$ 1]]]
         $cell      =+(nec=$(sec [%axil %noun]) [nec nec])
         $bean      [%dtts [%rock %$ 0] [%rock %$ 0]]
-        $void      [%fail ~]
+        $void      [%zpzp ~]
         $null      [%rock %n %$]
       ==
     ::
@@ -6562,7 +6562,7 @@
         {$cltr *}
       |-  ^-  twig
       ?~  p.gen
-        [%fail ~]
+        [%zpzp ~]
       ?~  t.p.gen
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
@@ -6673,7 +6673,7 @@
     ::
         {$smcl *}
       ?-    q.gen
-          $~      [%fail ~]
+          $~      [%zpzp ~]
           {* $~}  i.q.gen
           ^
         :+  %tsls
@@ -6772,8 +6772,8 @@
       ?~(p.gen [%rock %f 1] [%wtcl i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
     ::
         {$wtdt *}   [%wtcl p.gen r.gen q.gen]
-        {$wtgl *}   [%wtcl p.gen [%fail ~] q.gen]
-        {$wtgr *}   [%wtcl p.gen q.gen [%fail ~]]
+        {$wtgl *}   [%wtcl p.gen [%zpzp ~] q.gen]
+        {$wtgr *}   [%wtcl p.gen q.gen [%zpzp ~]]
         {$wtkt *}   [%wtcl [%wtts [%base %atom %$] p.gen] r.gen q.gen]
     ::
         {$wthp *}
@@ -6962,7 +6962,7 @@
         $zpsm  (lead -.gen %.(+.gen dubs))
         $zpts  (lead -.gen %.(+.gen expr))
         $zpwt  (lead -.gen %.(+.gen nexp))
-        $fail  (lead -.gen %.(+.gen noop))
+        $zpzp  (lead -.gen %.(+.gen noop))
       ==
     ++  arms
       (raid (twin noop (raid (twin noop heel))))
@@ -7885,7 +7885,7 @@
     ~&  %pure-mint
     |^  ^-  {p/span q/nock}
     ?:  ?&(=(%void sut) !?=({$dbug *} gen))
-      ?.  |(!vet ?=({$lost *} gen) ?=({$fail *} gen))
+      ?.  |(!vet ?=({$lost *} gen) ?=({$zpzp *} gen))
         ~>(%mean.[%leaf "mint-vain"] !!)
       [%void %0 0]
     ?-    gen
@@ -8015,7 +8015,7 @@
       ==
     ::
         {$zpts *}   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
-        {$fail $~}  [%void [%0 0]]
+        {$zpzp $~}  [%void [%0 0]]
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
@@ -8171,7 +8171,7 @@
       ?>  =(sut dox)
       =+(typ=(play gen) [typ typ])
     ::
-        {$fail *}  (beth %void)
+        {$zpzp *}  (beth %void)
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
@@ -8487,7 +8487,7 @@
       {$lost *}  %void
       {$zpsm *}  (cell $(gen p.gen) $(gen q.gen))
       {$zpts *}  %noun
-      {$fail *}  %void
+      {$zpzp *}  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
                    ~_  (show [%c 'hoon'] [%q gen])
@@ -9959,7 +9959,7 @@
       :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
-          (stag %fail (cold ~ ;~(plug zap zap)))
+          (stag %zpzp (cold ~ ;~(plug zap zap)))
         ==
       :-  '_'
         ;~(pfix cab (stag %bccb wide))
