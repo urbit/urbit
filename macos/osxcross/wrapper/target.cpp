@@ -205,89 +205,6 @@ void Target::setCompilerPath() {
   }
 }
 
-bool Target::findClangIntrinsicHeaders(std::string &path) {
-  static std::stringstream dir;
-
-  assert(isClang());
-
-  if (compilerpath.empty())
-    return false;
-
-  std::string clangbindir = compilerpath;
-  stripFileName(clangbindir);
-
-  static ClangVersion *clangversion;
-  static std::string pathtmp;
-
-  clangversion = &this->clangversion;
-
-  clear(dir);
-  *clangversion = ClangVersion();
-  pathtmp.clear();
-
-  auto tryDir = [&]()->bool {
-    listFiles(dir.str().c_str(), nullptr, [](const char *file) {
-      if (file[0] != '.' && isDirectory(file, dir.str().c_str())) {
-        ClangVersion cv = parseClangVersion(file);
-
-        if (cv != ClangVersion()) {
-          static std::stringstream tmp;
-          clear(tmp);
-
-          auto checkDir = [&](std::stringstream &dir) {
-            static std::string intrindir;
-            auto &file = dir;
-
-            intrindir = dir.str();
-            file << "/xmmintrin.h";
-
-            if (fileExists(file.str())) {
-              if (cv > *clangversion) {
-                *clangversion = cv;
-                pathtmp.swap(intrindir);
-              }
-              return true;
-            }
-
-            return false;
-          };
-
-          tmp << dir.str() << "/" << file << "/include";
-
-          if (!checkDir(tmp)) {
-            clear(tmp);
-            tmp << dir.str() << "/" << file;
-            checkDir(tmp);
-          }
-        }
-        return true;
-      }
-      return true;
-    });
-    return *clangversion != ClangVersion();
-  };
-
-#define TRYDIR(basedir, subdir)                                                \
-do {                                                                           \
-  dir << basedir << subdir;                                                    \
-  if (tryDir()) {                                                              \
-    path.swap(pathtmp);                                                        \
-    return true;                                                               \
-  }                                                                            \
-  clear(dir);                                                                  \
-} while (0)
-
-#define TRYDIR2(libdir) TRYDIR(clangbindir, libdir)
-
-  TRYDIR2("/../lib/clang");
-
-  if (!intrinsicpath.empty()) {
-    TRYDIR2(intrinsicpath);
-  }
-
-  return false;
-}
-
 void Target::setupGCCLibs(Arch arch) {
   assert(stdlib == StdLib::libstdcxx);
   fargs.push_back("-nodefaultlibs");
@@ -524,24 +441,6 @@ bool Target::setup() {
 
     fargs.push_back(tmp);
     tmp.clear();
-
-#ifndef __APPLE__
-    if (!findClangIntrinsicHeaders(tmp)) {
-      warn << "cannot find clang intrinsic headers; please report this "
-              "issue to the OSXCross project" << warn.endl();
-    } else {
-      if (haveArch(Arch::x86_64h) && clangversion < ClangVersion(3, 5)) {
-        err << "'" << getArchName(Arch::x86_64h) << "' requires clang 3.5 "
-            << "(or later)" << err.endl();
-        return false;
-      }
-
-      fargs.push_back("-isystem");
-      fargs.push_back(tmp);
-    }
-
-    tmp.clear();
-#endif
 
     fargs.push_back("--sysroot");
     fargs.push_back(SDKPath);
