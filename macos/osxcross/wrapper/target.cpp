@@ -278,49 +278,14 @@ do {                                                                           \
 } while (0)
 
 #define TRYDIR2(libdir) TRYDIR(clangbindir, libdir)
-#define TRYDIR3(libdir) TRYDIR(std::string(), libdir)
-
-#ifdef __CYGWIN__
-#ifdef __x86_64__
-  TRYDIR2("/../lib/clang/x86_64-pc-cygwin");
-#else
-  TRYDIR2("/../lib/clang/i686-pc-cygwin");
-#endif
-#endif
 
   TRYDIR2("/../lib/clang");
-
-#ifdef __linux__
-#ifdef __x86_64__
-  // opensuse uses lib64 instead of lib on x86_64
-  TRYDIR2("/../lib64/clang");
-#elif __i386__
-  TRYDIR2("/../lib32/clang");
-#endif
-#endif
-
-#ifdef __APPLE__
-  constexpr const char *OSXIntrinDirs[] = {
-    "/Library/Developer/CommandLineTools/usr/lib/clang",
-    "/Applications/Contents/Developer/Toolchains/"
-    "XcodeDefault.xctoolchain/usr/lib/clang"
-  };
-
-  for (auto intrindir : OSXIntrinDirs)
-    TRYDIR3(intrindir);
-#endif
-
-  TRYDIR2("/../include/clang");
-  TRYDIR2("/usr/include/clang");
 
   if (!intrinsicpath.empty()) {
     TRYDIR2(intrinsicpath);
   }
 
   return false;
-#undef TRYDIR
-#undef TRYDIR2
-#undef TRYDIR3
 }
 
 void Target::setupGCCLibs(Arch arch) {
