@@ -449,14 +449,21 @@ int c_compiler_main(int argc, char ** argv)
     return 1;
   }
 
-  compileForTarget(target);
-  return 0;
+  return compileForTarget(target);
 }
 
 int cxx_compiler_main(int argc, char ** argv)
 {
-  std::cerr << "TODO finish cxx compiler main" << std::endl;
-  return 1;
+  Target target;
+  bool success = detectTarget(argc, argv, target);
+
+  if (!success)
+  {
+    err << "while detecting target" << err.endl();
+    return 1;
+  }
+
+  return compileForTarget(target);
 }
 
 int wrapper_main(int argc, char ** argv)
