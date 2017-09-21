@@ -463,7 +463,9 @@ int wrapper_main(int argc, char ** argv)
 {
   std::cout <<
     "host: " WRAPPER_HOST "\n"
-    "path: " WRAPPER_PATH "\n";
+    "path: " WRAPPER_PATH "\n"
+    "sdk_path: " WRAPPER_SDK_PATH "\n"
+    "sdk_version: " WRAPPER_SDK_VERSION "\n";
   return 0;
 }
 

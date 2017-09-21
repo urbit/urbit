@@ -41,18 +41,18 @@
 namespace target {
 
 Target::Target()
-    : vendor(getDefaultVendor()), SDK(getenv("OSXCROSS_SDKROOT")),
+    : vendor(getDefaultVendor()),
       arch(Arch::x86_64), target(getDefaultTarget()), stdlib(StdLib::unset),
       usegcclibs(), wliblto(-1), compiler(getDefaultCompilerIdentifier()),
       compilername(getDefaultCompilerName()), language() {
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
 
-  SDK = OSXCROSS_SDK;
+  SDK = WRAPPER_SDK_PATH;
 }
 
 OSVersion Target::getSDKOSNum() const {
-  return parseOSVersion(OSXCROSS_SDK_VERSION);
+  return parseOSVersion(WRAPPER_SDK_VERSION);
 }
 
 bool Target::getSDKPath(std::string &path) const {

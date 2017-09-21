@@ -119,8 +119,8 @@ let
       "-DOSXCROSS_LINKER_VERSION=\\\"274.2\\\" " +
       "-DOSXCROSS_LIBLTO_PATH=\\\"\\\" " +
       "-DOSXCROSS_BUILD_DIR=\\\"\\\" " +
-      "-DOSXCROSS_SDK=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
-      "-DOSXCROSS_SDK_VERSION=\\\"10.11\\\" " +
+      "-DWRAPPER_SDK_PATH=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
+      "-DWRAPPER_SDK_VERSION=\\\"10.11\\\" " +
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
       "-DWRAPPER_PATH=\\\"${cctools}/bin:${clang}/bin\\\"";
   };
