@@ -498,6 +498,7 @@
 
       case c3__lost:
       case c3__fail:
+      case c3__zpzp:
       _play_used();
       {
         return c3__void;

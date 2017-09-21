@@ -782,6 +782,7 @@
 
       case c3__lost:
       case c3__fail:
+      case c3__zpzp:
       _mull_used();
       {
         return u3nc(c3__void, c3__void);

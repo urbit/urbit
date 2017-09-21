@@ -873,6 +873,7 @@
       }
 
       case c3__fail:
+      case c3__zpzp:
       _mint_used();
       {
         return u3nt(c3__void, 0, 0);
