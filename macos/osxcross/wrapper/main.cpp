@@ -181,45 +181,6 @@ bool liblto(Target &target, const char *opt, const char *, char **) {
   return true;
 }
 
-bool checkincludepath(Target &, const char *opt, const char *path, char **) {
-#ifndef __APPLE__
-  constexpr const char *DangerousIncludePaths[] = { "/usr/include",
-                                                    "/usr/local/include" };
-
-  static bool noinccheck = !!getenv("OSXCROSS_NO_INCLUDE_PATH_WARNINGS");
-
-  if (noinccheck)
-    return true;
-
-  char buf[PATH_MAX + 1];
-  const char *rpath = realpath(path, buf);
-
-  if (!rpath)
-    rpath = path;
-
-  for (const char *dpath : DangerousIncludePaths) {
-    if (!strncmp(rpath, dpath, strlen(dpath))) {
-      warn << "possibly dangerous include path specified: '" << opt << " "
-           << path << "'";
-
-      if (strcmp(path, rpath))
-        warn << " (" << rpath << ")";
-
-      warn << warn.endl();
-
-      warninfo << "you can silence this warning via "
-               << "'OSXCROSS_NO_INCLUDE_PATH_WARNINGS=1' (env)"
-               << warninfo.endl();
-    }
-  }
-#else
-  (void)opt;
-  (void)path;
-#endif
-
-  return true;
-}
-
 constexpr struct Opt {
   const char *name;
   const size_t namelen;
@@ -246,10 +207,6 @@ constexpr struct Opt {
   {"-foc-use-gcc-libstdc++", usegcclibstdcxx},
   {"-Wliblto", liblto, false, true},
   {"-Wno-liblto", liblto, false, true},
-  {"-isystem", checkincludepath, true, true},
-  {"-icxx-isystem", checkincludepath, true, true},
-  {"-cxx-isystem", checkincludepath, true, true},
-  {"-I", checkincludepath, true, true},
 
   // sets a custom path for the compiler
   {"-foc-compiler-path", compilerpath, true, false, "="},
@@ -324,16 +281,14 @@ bool parse(int argc, char **argv, Target &target) {
 
 } // namespace commandopts
 
-//
-// detectTarget():
-//  detect target and setup invocation command
-//
-
 bool detectTarget(int argc, char **argv, Target &target) {
   const char *cmd = argv[0];
   const char *p = strrchr(cmd, '/');
   size_t len;
   size_t i = 0;
+
+  // TODO: get rid of this enum, just use a WRAPPER_ARCH string or something
+  target.arch = Arch::x86_64;
 
   if (p)
     cmd = &p[1];
@@ -387,15 +342,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
       return target.setup();
     }
   }
-
-  if (!strncmp(cmd, "o32", 3))
-    target.arch = Arch::i386;
-  else if (!strncmp(cmd, "o64h", 4))
-    target.arch = Arch::x86_64h;
-  else if (!strncmp(cmd, "o64", 3))
-    target.arch = Arch::x86_64;
-  else
-    return false;
 
   if (const char *p = strchr(cmd, '-')) {
     const char *compilername = &cmd[p - cmd + 1];
