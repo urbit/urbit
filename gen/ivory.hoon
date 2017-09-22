@@ -31,7 +31,7 @@
 ::
 ::  whole-twig: arvo within compiler
 ::
-=+  whole-twig=`twig`[%per compiler-twig [%per [%$ 7] (ream arvo-source)]]
+=+  whole-twig=`twig`[%tsgr compiler-twig [%tsgr [%$ 7] (ream arvo-source)]]
 ::
 ::  compile the whole schmeer
 ::
