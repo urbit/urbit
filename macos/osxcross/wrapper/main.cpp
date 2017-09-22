@@ -52,9 +52,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
   size_t len;
   size_t i = 0;
 
-  // TODO: get rid of this enum, just use a WRAPPER_ARCH string or something
-  target.arch = Arch::x86_64;
-
   if (p)
     cmd = &p[1];
 
@@ -84,16 +81,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
         return false;
 
       target.target = std::string(cmd, p - cmd);
-      target.compilername = &p[1];
-      if (target.compilername == "g++") { target.compilername = "clang++"; }
-      if (target.compilername == "gcc") { target.compilername = "clang"; }
-      target.compiler = getCompilerIdentifier(target.compilername.c_str());
-
-      if (target.compilername == "cc") {
-        target.compiler = getDefaultCompilerIdentifier();
-      } else if (target.compilername == "c++") {
-        target.compiler = getDefaultCXXCompilerIdentifier();
-      }
 
       if (target.target != getDefaultTarget())
         warn << "this wrapper was built for target "
@@ -107,12 +94,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
       return true;
     }
-  }
-
-  if (const char *p = strchr(cmd, '-')) {
-    const char *compilername = &cmd[p - cmd + 1];
-    target.compiler = getCompilerIdentifier(compilername);
-    target.compilername = compilername;
   }
 
   target.args.reserve(argc);
@@ -153,7 +134,17 @@ static int do_exec(Target & target)
 int compiler_main(int argc, char ** argv, const char *compiler_name)
 {
   Target target;
+  // TODO: get rid of this enum, just use a WRAPPER_ARCH string or something
+  target.arch = Arch::x86_64;
   target.compilername = compiler_name;
+  if (target.compilername == "clang++")
+  {
+    target.compiler = Compiler::CLANGXX;
+  }
+  else
+  {
+    target.compiler = Compiler::CLANG;
+  }
 
   bool success = detectTarget(argc, argv, target);
   if (!success)
