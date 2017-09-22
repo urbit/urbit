@@ -48,103 +48,15 @@ int debug = 0;
 
 namespace {
 
-__attribute__((unused))
-void warnDeprecated(const char *flag, const char *replacement = nullptr) {
-  if (replacement)
-    warn << flag << " is deprecated; "
-         << "please use " << replacement << " instead"
-         << warn.endl();
-  else
-    warn << flag << " is deprecated and will be "
-         << "removed soon" << warn.endl();
-}
-
-//
-// Command Line Options
-//
-
 namespace commandopts {
 
-typedef bool (*optFun)(Target &target, const char *opt, const char *val,
-                      char **);
-
-constexpr struct Opt {
-  const char *name;
-  const size_t namelen;
-  const optFun fun;
-  const bool valrequired;
-  const bool pusharg;
-  const char *valseparator;
-  const size_t valseparatorlen;
-  constexpr Opt(const char *name, optFun fun, const bool valrequired = false,
-                const bool pusharg = false, const char *valseparator = nullptr)
-      :  name(name), namelen(constexprStrLen(name)), fun(fun),
-         valrequired(valrequired), pusharg(pusharg),
-         valseparator(valseparator),
-         valseparatorlen(valseparator ? constexprStrLen(valseparator) : 0) {}
-} opts[] = {
-};
-
-bool parse(int argc, char **argv, Target &target) {
+bool parse(int argc, char **argv, Target &target)
+{
   target.args.reserve(argc);
-
-  if (char *p = getenv("MACOSX_DEPLOYMENT_TARGET")) {
-    target.OSNum = parseOSVersion(p);
-    unsetenv("MACOSX_DEPLOYMENT_TARGET");
+  for (int i = 1; i < argc; ++i)
+  {
+    target.args.push_back(argv[i]);
   }
-
-  for (int i = 1; i < argc; ++i) {
-    char *arg = argv[i];
-
-    if (*arg != '-') {
-      target.args.push_back(arg);
-      continue;
-    }
-
-    bool pusharg = true;
-    int j = i;
-
-    for (const Opt &opt : opts) {
-      if (strncmp(arg, opt.name, opt.namelen))
-        continue;
-
-      pusharg = opt.pusharg;
-
-      const char *val = nullptr;
-
-      if (opt.valrequired) {
-        val = arg + opt.namelen;
-
-        if (opt.valseparator &&
-            strncmp(val, opt.valseparator, opt.valseparatorlen)) {
-          err << "expected '" << opt.name << opt.valseparator << "<val>' "
-              << "instead of '" << arg << "'" << err.endl();
-          return false;
-        } else {
-          val += opt.valseparatorlen;
-        }
-
-        if (!opt.valseparator && !*val && i < argc - 1)
-          val = argv[++i];
-
-        if (!*val) {
-          err << "missing argument for '" << opt.name << "'" << err.endl();
-          return false;
-        }
-      }
-
-      if (opt.fun && !opt.fun(target, opt.name, val, &argv[i + 1]))
-        return false;
-
-      break;
-    }
-
-    if (pusharg) {
-      for (; j <= i; ++j)
-        target.args.push_back(argv[j]);
-    }
-  }
-
   return true;
 }
 
