@@ -19,10 +19,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.      *
  ***********************************************************************/
 
-/*
- * Debug messages can be enabled by setting 'OCDEBUG' (ENV) to >= 1.
- */
-
 #include "compat.h"
 
 #include <vector>
@@ -39,12 +35,6 @@
 
 #include "tools.h"
 #include "target.h"
-#include "progs.h"
-
-using namespace tools;
-using namespace target;
-
-int debug = 0;
 
 static int do_exec(Target & target)
 {

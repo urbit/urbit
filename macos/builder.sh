@@ -8,7 +8,7 @@ mkdir -p $out/bin
 
 cd wrapper
 
-eval "g++ $CXXFLAGS *.cpp programs/*.cpp -o $out/bin/$host-wrapper"
+eval "g++ $CXXFLAGS *.cpp -o $out/bin/$host-wrapper"
 
 cd $out/bin
 

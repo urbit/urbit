@@ -21,12 +21,6 @@
 
 struct stat;
 
-namespace tools {
-
-//
-// Misc helper tools
-//
-
 typedef std::vector<std::string> string_vector;
 
 static inline void clear(std::stringstream &sstr) {
@@ -43,12 +37,6 @@ static inline bool endsWith(std::string const &str, std::string const &end) {
 size_t constexpr constexprStrLen(const char *str) {
   return *str ? 1 + constexprStrLen(str + 1) : 0;
 }
-
-//
-// Terminal text colors
-//
-
-bool isTerminal();
 
 // http://stackoverflow.com/a/17469726
 
@@ -82,8 +70,6 @@ public:
   Color(ColorCode cc) : cc(cc) {}
   friend std::ostream &
   operator<<(std::ostream &os, const Color &color) {
-    if (isTerminal())
-      return os << "\033[" << color.cc << "m";
     return os;
   }
 };
@@ -415,4 +401,3 @@ constexpr const char *getStdLibString(StdLib stdlib) {
   return StdLibNames[stdlib];
 }
 
-} // namespace tools

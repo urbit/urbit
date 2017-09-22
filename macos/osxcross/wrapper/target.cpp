@@ -38,8 +38,6 @@
 #include "tools.h"
 #include "target.h"
 
-namespace target {
-
 Target::Target()
     : vendor(getDefaultVendor()),
       arch(Arch::x86_64), target(getDefaultTarget()), stdlib(StdLib::unset),
@@ -549,4 +547,4 @@ bool Target::setup() {
 
   return true;
 }
-} // namespace target
+

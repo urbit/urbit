@@ -60,12 +60,6 @@
 
 #include "tools.h"
 
-namespace tools {
-
-//
-// Terminal text colors
-//
-
 bool isTerminal() {
   static bool first = false;
   static bool val;
@@ -77,10 +71,6 @@ bool isTerminal() {
 
   return val;
 }
-
-//
-// Executable path
-//
 
 char *getExecutablePath(char *buf, size_t len) {
   char *p;
@@ -410,14 +400,6 @@ bool realPath(const char *file, std::string &result,
   return !result.empty();
 }
 
-bool getPathOfCommand(const char *command, std::string &result,
-                              realpathcmp cmp) {
-  if (realPath(command, result, isExecutable, cmp))
-    stripFileName(result);
-
-  return !result.empty();
-}
-
 void stripFileName(std::string &path) {
   size_t lastpathdiv = path.find_last_of(PATHDIV);
   if (lastpathdiv != 0 && lastpathdiv != std::string::npos)
@@ -500,10 +482,6 @@ time_type getNanoSeconds() {
   abort();
 }
 
-//
-// OSVersion
-//
-
 OSVersion parseOSVersion(const char *OSVer) {
   const char *p = OSVer;
   OSVersion OSNum;
@@ -525,5 +503,3 @@ OSVersion parseOSVersion(const char *OSVer) {
   OSNum.patch = atoi(p);
   return OSNum;
 }
-
-} // namespace tools

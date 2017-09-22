@@ -19,14 +19,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.      *
  ***********************************************************************/
 
-namespace target {
-
-using namespace tools;
-
-//
-// Default values for the Target struct
-//
-
 constexpr const char *getDefaultVendor() { return "apple"; }
 constexpr const char *getDefaultTarget() { return OSXCROSS_TARGET; }
 
@@ -78,10 +70,6 @@ inline const char *getSDKSearchDir() {
 
   return SDKSearchDir ? SDKSearchDir : "";
 }
-
-//
-// Target
-//
 
 struct Target {
   Target();
@@ -143,5 +131,3 @@ struct Target {
   char execpath[PATH_MAX + 1];
   std::string intrinsicpath;
 };
-
-} // namespace target
