@@ -10220,123 +10220,14 @@
               ==
             :-  ':'
               ;~  pfix  col
-                ;~  pose
-                  %-  stew
-                  ^.  stet  ^.  limo
-                  :~  ['_' (rune cab %clcb expb)]
-                      ['^' (rune ket %clkt expd)]
-                      ['+' (rune lus %clls expc)]
-                      ['-' (rune hep %clhp expb)]
-                      ['~' (rune sig %clsg exps)]
-                      ['*' (rune tar %cltr exps)]
-                  ==
-                ::
-                  (worn %brcb [~ ~] expr)
-                  (worn %brcn [~ ~] expe)
-                  (worn %brcl [~ ~] expb)
-                  (worn %brdt [~ ~] expa)
-                  (worn %brhp [~ ~] expa)
-                  (worn %brkt [~ ~] expx)
-                  (worn %brsg [~ ~] expb)
-                  (worn %brtr [~ ~] expb)
-                  (worn %brts [~ ~] expb)
-                  (worn %brwt [~ ~] expa)
-                ::
-                  (word %bunt expa)
-                  (word %bcpt expb)
-                  (word %bccb expa)
-                  (word %bccl exps)
-                  (word %bccn exps)
-                  (word %bckt expb)
-                  (word %bchp expb)
-                  (word %bcts expg)
-                  (word %bcwt exps)
-                  (word %bcsm expa)
-                ::
-                  (word %cncb exph)
-                  (word %cndt expb)
-                  (word %cnkt expd)
-                  (word %cnls expc)
-                  (word %cnhp expk)
-                  (word %cnsg expu)
-                  (word %cntr expm)
-                  (word %cnts exph)
-                ::
-                  (word %clcb expb)
-                  (word %clkt expd)
-                  (word %clls expc)
-                  (word %clhp expb)
-                  (word %clsg exps)
-                  (word %cltr exps)
-                ::
-                  (word %dtls expa)
-                  (word %dttr expb)
-                  (word %dtts expb)
-                  (word %dtwt expa)
-                  (word %dtkt exqn)
-                ::
-                  (word %ktbr expa)
-                  (word %ktdt expb)
-                  (word %kthp expb)
-                  (word %ktls expb)
-                  (word %ktpm expa)
-                  (word %ktsg expa)
-                  (word %ktts expg)
-                  (word %ktwt expa)
-                ::
-                  (word %sgbr expb)
-                  (word %sgbc expf)
-                  (word %sgcb expb)
-                  (word %sgcn hind)
-                  (word %sgfs hine)
-                  (word %sggl hinb)
-                  (word %sggr hinb)
-                  (word %sgls hinc)
-                  (word %sgpm hinf)
-                  (word %sgwt hing)
-                  (word %sgts expb)
-                  (word %sgzp expb)
-                ::
-                  (word %smcl expi)
-                  (word %smfs expa)
-                  (word %smsg expi)
-                  (word %smsm expb)
-                ::
-                  (word %tsbr expb)
-                  (word %tsdt expq)
-                  (word %tswt expw)
-                  (word %tskt expt)
-                  (word %tscl expp)
-                  (word %tsgl expb)
-                  (word %tsfs expo)
-                  (word %tssm expo)
-                  (word %tsgr expb)
-                  (word %tshp expb)
-                  (word %tstr expl)
-                  (word %tsls expb)
-                  (word %tssg expi)
-                  (word %tscm expb)
-                ::
-                  (word %wtbr exps)
-                  (word %wtcl expc)
-                  (word %wtdt expc)
-                  (word %wtgl expb)
-                  (word %wtgr expb)
-                  ;~(pfix (jest %wthp) (toad tkhp))
-                  ;~(pfix (jest %wtkt) (toad tkkt))
-                  ;~(pfix (jest %wtts) (toad tkts))
-                  ;~(pfix (jest %wtls) (toad tkls))
-                  (word %wtpm exps)
-                  ;~(pfix (jest %wtpt) (toad tkpt))
-                  ;~(pfix (jest %wtsg) (toad tksg))
-                  (word %wtzp expa)
-                ::
-                  (word %zpcm expb)
-                  (word %zpsm expb)
-                  (word %zpgr expa)
-                  (word %zpts expa)
-                  (word %zpwt hinh)
-                  moar
+                %-  stew
+                ^.  stet  ^.  limo
+                :~  ['_' (rune cab %clcb expb)]
+                    ['^' (rune ket %clkt expd)]
+                    ['+' (rune lus %clls expc)]
+                    ['-' (rune hep %clhp expb)]
+                    ['~' (rune sig %clsg exps)]
+                    ['*' (rune tar %cltr exps)]
                 ==
               ==
             :-  '.'
@@ -10537,21 +10428,6 @@
     ++  runo                                            ::  rune plus
       |*  {dif/rule hil/* tuq/* har/_expa}
       ;~(pfix dif (stag hil (stag tuq (toad har))))
-    ::
-    ++  word                                            ::  build keyword
-      |*  {key/cord har/_expa}
-      ;~(pfix (jest key) (stag key (toad har)))
-    ::
-    ++  worn                                            ::  padded keyword
-      |*  {key/cord tuq/* har/_expa}
-      ;~(pfix (jest key) (stag key (stag tuq (toad har))))
-    ::
-    ++  moar                                            ::  :moar hack
-      %+  cook
-        |=  {a/(list) b/(list (pair wing twig))}
-        ^-  twig
-        [%cnts [[%| (lent a) `%$] ~] b]
-      ;~(pfix (jest %moar) ;~(plug (star (jest %r)) (toad |.((butt rick)))))
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
