@@ -420,7 +420,7 @@
       |=  aud/audience
       %-  sh-poss
       %-  ~(gas in *(set partner))
-      (turn (~(tap by aud)) |=({a/partner *} a))
+      (turn ~(tap by aud) |=({a/partner *} a))
     ::
     ++  sh-poss                                         ::  passive update
       |=  lix/(set partner)
@@ -468,7 +468,7 @@
       =+  grams=grams:(~(got by stories) man.she)
       |-  ^-  (unit (set partner))
       ?~  grams  ~
-      =+  pan=(silt (turn (~(tap by q.q.i.grams)) head))
+      =+  pan=(silt (turn ~(tap by q.q.i.grams) head))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
       ::
@@ -481,7 +481,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -491,7 +491,7 @@
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -509,7 +509,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -522,7 +522,7 @@
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -543,7 +543,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -553,7 +553,7 @@
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -573,7 +573,7 @@
       =.  two  ~(strip timed two)
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -583,7 +583,7 @@
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -600,7 +600,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -608,7 +608,7 @@
           ret
         ret(old [i.eno old.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -625,7 +625,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap in one))
+        =+  eno=~(tap in one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -633,7 +633,7 @@
           ret
         ret(old [i.eno old.ret])
       =.  ret
-        =+  owt=(~(tap in two))
+        =+  owt=~(tap in two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -696,7 +696,7 @@
         %^    sh-repo-config-exceptions
             (weld (trip man.she) ": ")
           p.cordon.loc
-        [~ (~(tap in q.cordon.loc))]
+        [~ ~(tap in q.cordon.loc)]
       %^    sh-repo-config-exceptions
           (weld (trip man.she) ": ")
         p.cordon.loc
@@ -828,7 +828,7 @@
           =.  +>.^$  $(new.day t.new.day)
           =.  +>.^$
               (sh-note (weld "new " (~(ta-show ta man.she p.i.new.day) ~)))
-          (sh-repo-group-diff-here "--" ~ (~(tap by q.i.new.day)) ~)
+          (sh-repo-group-diff-here "--" ~ ~(tap by q.i.new.day) ~)
       =.  +>.$
           |-  ^+  +>.^$
           ?~  cha.day  +>.^$
@@ -871,9 +871,9 @@
         nak  nac
         nik  %-  ~(gas by *(map (set partner) char))
              =-  (zing `(list (list {(set partner) char}))`-)
-             %+  turn  (~(tap by nac))
+             %+  turn  ~(tap by nac)
              |=  {a/char b/(set (set partner))}
-             (turn (~(tap by b)) |=(c/(set partner) [c a]))
+             (turn ~(tap by b) |=(c/(set partner) [c a]))
       ==
     ::
     ++  sh-repo                                         ::  apply report
@@ -974,7 +974,7 @@
     ++  sh-whom                                         ::  current audience
       ^-  audience
       %-  ~(gas by *audience)
-      %+  turn  (~(tap in ?~(active.she passive.she u.active.she)))
+      %+  turn  ~(tap in ?~(active.she passive.she u.active.she))
       |=(a/partner [a *envelope %pending])
     ::
     ++  sh-tell                                         ::  add command
@@ -1070,18 +1070,18 @@
         ?^  qur
           =+  cha=(~(get by nik) qur)
           (sh-fact %txt ?~(cha "none" [u.cha]~))
-        =+  pan=(~(tap in (~(get ju nak) qur)))
+        =+  pan=~(tap in (~(get ju nak) qur))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
         |=(a/(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
       ::
       ++  who                                          ::  %who
         |=  pan/(set partner)  ^+  ..sh-work
-        =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she) ~) aor) .))
+        =<  (sh-fact %mor (murn (sort ~(tap by q.owners.she) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man.she pon) ~]
-        =<  (murn (sort (~(tap by alt)) aor) .)
+        =<  (murn (sort ~(tap by alt) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank) :: XX names
         ?-  b
           $gone  ~
@@ -1132,7 +1132,7 @@
       ++  reverse-folks
         |=  nym/knot
         ^-  (list ship)
-        %+  murn  (~(tap by folks))
+        %+  murn  ~(tap by folks)
         |=  {p/ship q/human}
         ?~  hand.q  ~
         ?.  =(u.hand.q nym)  ~
@@ -1143,7 +1143,7 @@
         ^+  ..sh-work
         ?:  ?=({$~ $~} +<)
           %+  sh-fact  %mor
-          %+  turn  (~(tap by folks))
+          %+  turn  ~(tap by folks)
           |=  {p/ship q/human}
           :-  %txt
           ?~  hand.q
@@ -1172,7 +1172,7 @@
         ^+  ..sh-work
         ?~  seg
           %+  sh-fact  %mor
-          %+  turn  (~(tap in settings.she))
+          %+  turn  ~(tap in settings.she)
           |=  s/knot
           [%txt (trip s)]
         %=  ..sh-work
@@ -1347,7 +1347,7 @@
     :+  %diff  %talk-report
     :-  %house
     %-  ~(gas in *(map knot (pair posture cord)))
-    %+  turn  (~(tap by stories))
+    %+  turn  ~(tap by stories)
     |=({a/knot b/story} [a p.cordon.shape.b caption.shape.b])
   ::
   ++  ra-homes                                          ::  update partners
@@ -1601,7 +1601,7 @@
   ++  ra-consume                                        ::  consume thought
     |=  {pub/? her/ship tip/thought}
     =.  tip  (ra-normal tip)
-    =+  aud=(~(tap by q.tip) ~)
+    =+  aud=~(tap by q.tip)
     |-  ^+  +>.^$
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ra-conduct pub her p.i.aud tip))
@@ -1795,8 +1795,8 @@
     ++  pa-reform                                       ::  reconfigure, ugly
       |=  cof/config
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
-          =+  old=`(list partner)`(~(tap in sources.shape) ~)
-          =+  new=`(list partner)`(~(tap in sources.cof) ~)
+          =+  old=`(list partner)`~(tap in sources.shape)
+          =+  new=`(list partner)`~(tap in sources.cof)
           :-  (skip new |=(a/partner (~(has in sources.shape) a)))
           (skip old |=(a/partner (~(has in sources.cof) a)))
       =.  +>.$  (pa-acquire p.dif)
@@ -2069,7 +2069,7 @@
   ++  te-prom  ^-  tape                                 ::  render targets
     =.  .  te-deaf
     =+  ^=  all
-        %+  sort  `(list partner)`(~(tap in lix))
+        %+  sort  `(list partner)`~(tap in lix)
         |=  {a/partner b/partner}
         (~(ta-beat ta man a) b)
     =+  fir=&
@@ -2097,7 +2097,7 @@
     ^-  tape
     =+  cha=(~(get by nik) lix)
     ?^  cha  ~[u.cha ' ']
-    ?.  (lien (~(tap by lix)) ta-dire)
+    ?.  (lien ~(tap by lix) ta-dire)
       "* "
     ?:  ?=({{$& ^} $~ $~} lix)
       ": "
@@ -2141,9 +2141,9 @@
   ++  tr-meta  ^-  tang
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))     :: round
     =+  hed=leaf+"{(scow %uv sen)} at {(scow %da wen)}"
-    =+  =<  paz=(turn (~(tap by aud)) .)
+    =+  =<  paz=(turn ~(tap by aud) .)
         |=({a/partner *} leaf+~(ta-full ta man a))
-    =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
+    =+  bok=(turn (sort ~(tap in bou) aor) smyt)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
   ::
   ++  tr-body
@@ -2178,7 +2178,7 @@
   ++  tr-pals
     ^-  (set partner)
     %-  ~(gas in *(set partner))
-    (turn (~(tap by aud)) |=({a/partner *} a))
+    (turn ~(tap by aud) |=({a/partner *} a))
   ::
   ++  tr-chow
     |=  {len/@u txt/tape}  ^-  tape
@@ -2331,7 +2331,7 @@
         log   %-  ~(urn by log)
               |=({man/knot len/@ud} count:(~(got by stories) man))
       ==
-  %+  murn  (~(tap by log))
+  %+  murn  ~(tap by log)
   |=  {man/knot len/@ud}
   ^-  (unit move)
   ?:  (gte len count:(~(got by stories) man))

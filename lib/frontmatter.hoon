@@ -7,7 +7,7 @@
 |%
 ++  atr-lines
   |=  atr/(map cord cord)
-  %+  turn  (sort (~(tap by atr)) |=({{a/@ @} {b/@ @}} (aor a b)))
+  %+  turn  (sort ~(tap by atr) |=({{a/@ @} {b/@ @}} (aor a b)))
   |=  {k/cord v/cord}
   (rap 3 k ': ' v ~)
 ::

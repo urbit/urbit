@@ -121,7 +121,7 @@
   ?.  (~(has by ran) peer+pax)                           ::  ignore if retracted
     ~
   =+  =>  |=({a/bone @ b/path} [b a])
-      pus=(~(gas ju *(jug path bone)) (turn (~(tap by sup)) .))
+      pus=(~(gas ju *(jug path bone)) (turn ~(tap by sup) .))
   ?~  (~(get ju pus) pax)
     ~
   ~&  peer-again+[pax ran]  
@@ -308,7 +308,7 @@
 ++  spam                                                ::  send by path
   |=  {a/path b/(list gift)}  ^-  (list move)
   %-  zing  ^-  (list (list move))
-  %+  turn  (~(tap by sup))
+  %+  turn  ~(tap by sup)
   |=  {ost/bone @ pax/path}
   ?.  =(pax a)  ~
   (turn b |=(c/gift [ost c]))

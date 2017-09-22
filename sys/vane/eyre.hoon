@@ -981,7 +981,7 @@
         (get-news:(dom-vi q.tee) p.sih)
       ?.  ?=({$on $~} tee)
         ~&(e+lost+[tee hen] +>.$)
-      %+  roll  (~(tap in (~(get ju liz) p.sih)))
+      %+  roll  ~(tap in (~(get ju liz) p.sih))
       =<  .(con ..axon(liz (~(del by liz) p.sih)))
       |=  {sus/(each duct ixor) con/_..axon}
       =.  ..axon  con
@@ -1724,7 +1724,7 @@
     ++  done  .
     ++  abet  ..ix(wix (~(put by wix) ire sem))
     ++  abut
-      =+  sub=(~(tap in sus))
+      =+  sub=~(tap in sus)
       |-  ^+  ..ix
       ?^  sub  $(sub t.sub, ..ix (pul-subs i.sub))
       ..ix(wix (~(del by wix) ire))

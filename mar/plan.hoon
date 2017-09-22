@@ -18,7 +18,7 @@
     ^-  wain
     :+  (cat 3 'User ' ?~(who 'of Urbit' who))
       (cat 3 'Location ' ?~(loc %unknown loc))
-    %+  turn  (sort (~(tap by acc)) aor)
+    %+  turn  (sort ~(tap by acc) aor)
     |=  {a/knot b/plan-acct}  ^-  cord
     %+  rap  3
     :^  a  ': '  usr.b
@@ -61,10 +61,10 @@
   ++  diff
     |=  neu/_all  ^-  plan-diff                        :: XXX map functions
     :+  ?:(=(-.all -.neu) ~ (some -.neu))
-      =<  (malt `(list {knot $~})`(murn (~(tap by acc.all)) .))
+      =<  (malt `(list {knot $~})`(murn ~(tap by acc.all) .))
       |=  {a/knot *}  ^-  (unit {knot $~})
       ?:((~(has by acc.neu) a) ~ (some [a ~]))
-    =<  (malt (murn (~(tap by acc.neu)) .))
+    =<  (malt (murn ~(tap by acc.neu) .))
     |=  {a/knot b/plan-acct}  ^-  (unit {knot plan-acct})
     ?:  =([~ b] (~(get by acc.all) a))
       ~
@@ -74,7 +74,7 @@
     |=  dif/plan-diff  ^+  all                          :: XXX map functions
     :-  (fall inf.dif -.all)
     =;  neu  (~(uni by neu) put.dif)
-    =+  del=(~(tap by del.dif))
+    =+  del=~(tap by del.dif)
     |-  ^+  acc.all
     ?~  del  acc.all
     $(del t.del, acc.all (~(del by acc.all) p.i.del))

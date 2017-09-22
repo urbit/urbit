@@ -132,48 +132,48 @@
       0w0                           ::   27, ~hec, Tlon Investor 8
       0w0                           ::   28, ~ryt, Tlon Investor 8
       0w0                           ::   29, ~tyv, Tlon Investor 8
-      0w0                           ::   30, ~syd, Jennifer Kollmer
+      0w0                           ::   30, ~syd, Curtis Yarvin
       0w0                           ::   31, ~nex, Prakhar Goel
       0w0                           ::   32, ~lun, Tlon Investor 9
       0w0                           ::   33, ~mep, Tlon Investor 9
       0w0                           ::   34, ~lut, Tlon Investor 9
       0w0                           ::   35, ~sep, Tlon Investor 9
-      0w0                           ::   36, ~pes, Jennifer Kollmer
+      0w0                           ::   36, ~pes, Curtis Yarvin
       0w0                           ::   37, ~del, Kingdon Barrett
       0w0                           ::   38, ~sul, John Burnham
       0w0                           ::   39, ~ped, Jeremy Wall
       0w0                           ::   40, ~tem, Tlon Investor 10
       0w0                           ::   41, ~led, Nick Caruso
-      0w0                           ::   42, ~tul, Susan Yarvin
-      0w0                           ::   43, ~met, Susan Yarvin
-      0w0                           ::   44, ~wen, Susan Yarvin
-      0w0                           ::   45, ~byn, Susan Yarvin
+      0w0                           ::   42, ~tul, Curtis Yarvin
+      0w0                           ::   43, ~met, Curtis Yarvin
+      0w0                           ::   44, ~wen, Curtis Yarvin
+      0w0                           ::   45, ~byn, Curtis Yarvin
       0w0                           ::   46, ~hex, James Torre
       0w0                           ::   47, ~feb, urbit.org
       0w0                           ::   48, ~pyl, Michael Hartl
-      0w0                           ::   49, ~dul, Jennifer Kollmer
-      0w0                           ::   50, ~het, Jennifer Kollmer
-      0w0                           ::   51, ~mev, Herbert Yarvin
-      0w0                           ::   52, ~rut, Herbert Yarvin
+      0w0                           ::   49, ~dul, Galen Wolfe-Pauly
+      0w0                           ::   50, ~het, Galen Wolfe-Pauly
+      0w0                           ::   51, ~mev, Curtis Yarvin
+      0w0                           ::   52, ~rut, Curtis Yarvin
       0w0                           ::   53, ~tyl, Tlon Investor 11
       0w0                           ::   54, ~wyd, Curtis Yarvin
-      0w0                           ::   55, ~tep, Sibyl Kollmer
-      0w0                           ::   56, ~bes, Sibyl Kollmer
+      0w0                           ::   55, ~tep, Curtis Yarvin
+      0w0                           ::   56, ~bes, Curtis Yarvin
       0w0                           ::   57, ~dex, Jared Hance
       0w0                           ::   58, ~sef, Owen Rescher
       0w0                           ::   59, ~wyc, Galen Wolfe-Pauly
       0w0                           ::   60, ~bur, Galen Wolfe-Pauly
       0w0                           ::   61, ~der, Galen Wolfe-Pauly
       0w0                           ::   62, ~nep, Galen Wolfe-Pauly
-      0w0                           ::   63, ~pur, Herbert Yarvin
+      0w0                           ::   63, ~pur, Paul Driver
       0w0                           ::   64, ~rys, Charlie Cummings
-      0w0                           ::   65, ~reb, Herbert Yarvin
+      0w0                           ::   65, ~reb, Curtis Yarvin
       0w0                           ::   66, ~den, Michael Hartl
-      0w0                           ::   67, ~nut, Henry Yarvin
-      0w0                           ::   68, ~sub, Henry Yarvin
-      0w0                           ::   69, ~pet, Henry Yarvin
-      0w0                           ::   70, ~rul, Henry Yarvin
-      0w0                           ::   71, ~syn, Henry Ault
+      0w0                           ::   67, ~nut, Curtis Yarvin
+      0w0                           ::   68, ~sub, Curtis Yarvin
+      0w0                           ::   69, ~pet, Curtis Yarvin
+      0w0                           ::   70, ~rul, Curtis Yarvin
+      0w0                           ::   71, ~syn, Pantera
       0w0                           ::   72, ~reg, Henry Ault
       0w0                           ::   73, ~tyd, Henry Ault
       0w0                           ::   74, ~sup, Henry Ault
@@ -185,13 +185,13 @@
       0w0                           ::   80, ~sec, Curtis Yarvin
       0w0                           ::   81, ~mul, Curtis Yarvin
       0w0                           ::   82, ~nym, Max Greer
-      0w0                           ::   83, ~tev, Sibyl Kollmer
+      0w0                           ::   83, ~tev, Curtis Yarvin
       0w0                           ::   84, ~web, Ar Vicco
       0w0                           ::   85, ~sum, Philip Monk
       0w0                           ::   86, ~mut, Philip Monk
       0w0                           ::   87, ~nyx, Philip Monk
       0w0                           ::   88, ~rex, Tlon Investor 12
-      0w0                           ::   89, ~teb, Sibyl Kollmer
+      0w0                           ::   89, ~teb, Michael Vassar
       0w0                           ::   90, ~fus, Tlon Corporation
       0w0                           ::   91, ~hep, urbit.org
       0w0                           ::   92, ~ben, urbit.org
@@ -820,14 +820,14 @@
   ++  remove                                            ::  pig minus gob
     |=  gob/safe
     ^-  safe
-    =/  buv  (~(tap by gob))
+    =/  buv  ~(tap by gob)
     |-  ?~  buv  pig
         $(buv t.buv, pig (delete i.buv))
   ::                                                    ::  ++splice:up
   ++  splice                                            ::  pig plus gob
     |=  gob/safe
     ^-  safe
-    =/  buv  (~(tap by gob))
+    =/  buv  ~(tap by gob)
     |-  ?~  buv  pig
         $(buv t.buv, pig (insert i.buv))
   ::                                                    ::  ++update:up
@@ -845,7 +845,7 @@
   ++  collate                                           ::  sort by version
     |=  ord/$-({{life cert} {life cert}} ?)
     ^-  (list (pair life cert))
-    (sort (~(tap by pub)) ord)
+    (sort ~(tap by pub) ord)
   ::                                                    ::  ++current:we
   ++  current                                           ::  current number
     ^-  (unit life)
@@ -1120,7 +1120,7 @@
   ::                                                    ::  ++exec:su
   ++  exec                                              ::  mass gift
     |=  {yen/(set duct) cad/card}
-    =/  noy  (~(tap in yen))
+    =/  noy  ~(tap in yen)
     |-  ^+  ..exec
     ?~  noy  ..exec
     $(noy t.noy, moz [[i.noy cad] moz])
@@ -1215,7 +1215,7 @@
     ::                                                  ::  ++flow:su
     ++  flow                                            ::  to set of ships
       |=  tar/(set ship)
-      =+  rot=(~(tap in (~(del in tar) our)))
+      =+  rot=~(tap in (~(del in tar) our))
       |-  ^+  ..fire
       ?~  rot  ..fire
       $(rot t.rot, ..fire (home i.rot))
@@ -1241,7 +1241,7 @@
       ::  nex: all wills to add
       ::
       =/  nex
-        =/  rom  (~(tap in mor))
+        =/  rom  ~(tap in mor)
         |-  ^-  farm
         ?~  rom  ~
         %+  ~(put by $(rom t.rom))
@@ -1253,11 +1253,11 @@
       =.  sea  (~(uni in sea) mor)
       =/  wit
         =|  wit/(set ship)
-        =/  fem  (~(tap by nex))
+        =/  fem  ~(tap by nex)
         |-  ^+  wit
         ?~  fem  wit
         =.  wit  $(fem t.fem)
-        =/  naw  (~(tap by q.i.fem))
+        =/  naw  ~(tap by q.i.fem)
         |-  ^+   wit
         ?~  naw  wit
         =.  wit  $(naw t.naw)
@@ -1338,7 +1338,7 @@
       =/  fub
         ^-  (list (pair ship (unit safe)))
         %+  turn
-          (~(tap by pry.urb))
+          ~(tap by pry.urb)
         |=  (pair ship (map ship safe))
         [p (~(get by q) our)]
       =*  veg
@@ -1367,7 +1367,7 @@
       ?.  (~(has in kyz.rel) who)  cod.rel
       =-  (~(uni by cod.rel) -)
       %-  ~(gas by *farm)
-      %+  skim  (~(tap by pug.urb))
+      %+  skim  ~(tap by pug.urb)
       |=({who/ship *} (lth who 65.536))
     ::
     (~(home fire hec) who)
@@ -1562,7 +1562,7 @@
             cod/farm
         ==
     ^+  +>
-    =+  lec=(~(tap by cod))
+    =+  lec=~(tap by cod)
     |-  ^+  ..meet
     ?~  lec  ..meet
     %=  $
@@ -1986,7 +1986,7 @@
           ::
           ::  sow: all new signatures
           ::
-          =+  sow=`(list (trel ship life @))`(~(tap by syg.new))
+          =+  sow=`(list (trel ship life @))`~(tap by syg.new)
           |-  ^-  (pair (list change) cert)
           ?~  sow  [~ u.eld]
           ::

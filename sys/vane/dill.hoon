@@ -205,7 +205,7 @@
           ^-  (list @c)
           ;:  weld
               ?:  =(0 ~(wyt in p.p.a))  ~
-              `(list @c)`(zing (turn (~(tap in p.p.a)) ef))
+              `(list @c)`(zing (turn ~(tap in p.p.a) ef))
               (bg p.q.p.a)
               (fg q.q.p.a)
               q.a

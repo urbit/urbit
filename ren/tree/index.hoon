@@ -8,7 +8,7 @@
 ::
           /pub/docs/dev/hoon/runes
     /;  |=  {tip/marl sub/(map knot marl) $~}
-        (zing `(list marl)`[tip (turn (~(tap by sub)) tail)])
+        (zing `(list marl)`[tip (turn ~(tap by sub) tail)])
     /.    /;    (getall:tree %h1 ~)    /tree-elem/
           /_    /;    (getall:tree %h1 ~)    /tree-elem/
 ==  ==

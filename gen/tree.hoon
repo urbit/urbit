@@ -17,6 +17,6 @@
     [(rend pax) -]
 %-  zing
 %+  turn
-  (sort (~(tap by dir.ark)) aor)
+  (sort ~(tap by dir.ark) aor)
 |=  {a/@t $~}
 ^$(pax (welp pax /[a]))

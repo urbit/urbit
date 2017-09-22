@@ -25,7 +25,7 @@
   |=  $~
   ^-  {(list move) _+>.$}
   %-  %-  slog
-      %+  turn  (~(tap in connections))
+      %+  turn  ~(tap in connections)
       |=  {app/term source/path station/knot}
       leaf+"{(trip app)}{<`path`source>} ---> {(trip station)}"
   [~ +>.$]

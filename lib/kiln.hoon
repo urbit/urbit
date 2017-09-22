@@ -134,7 +134,7 @@
   =<  abet  %-  spam
   ?:  =(0 ~(wyt by syn))
     [%leaf "no syncs configured"]~
-  %+  turn  (~(tap in ~(key by syn)))
+  %+  turn  ~(tap in ~(key by syn))
   |=(a/kiln-sync (render "sync configured" [sud her syd]:a))
 ::
 ++  poke-init-sync
@@ -506,7 +506,7 @@
             our  ~  [our tic %da now]  %tabl
             ^-  (list (pair silk:ford silk:ford))
             :: ~&  >  kiln-mashing+[p.are syd=syd +<.abet]
-            %+  turn  (~(tap in p.are))
+            %+  turn  ~(tap in p.are)
             |=  pax/path
             ^-  (pair silk:ford silk:ford)
             :-  [%$ %path -:!>(*path) pax]

@@ -6,4 +6,4 @@
 =,  format
 |*  {a/_cord b/_json}                 ::  XX {a/$-(* cord) b/$-(* json)}
 |=  c/(map _+<.a _+<.b)
-(pairs:enjs (turn (~(tap by c)) |*(d/^ [(a -.d) (b +.d)])))
+(pairs:enjs (turn ~(tap by c) |*(d/^ [(a -.d) (b +.d)])))

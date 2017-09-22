@@ -322,7 +322,7 @@
     [~ +>.$]
   ::  ~&  response=response
   :_  +>.$
-  %+  turn  (~(tap in listeners.u.hook-data))
+  %+  turn  ~(tap in listeners.u.hook-data)
   |=  ost/bone
   [ost %diff response]
 --

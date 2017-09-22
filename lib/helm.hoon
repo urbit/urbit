@@ -132,7 +132,7 @@
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
   =/  van/(list {term $~})
     :-  zus=[%zuse ~]
-    (~(tap by dir:.^(arch %cy (welp top /sys/vane))))
+    ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
   |=  nam/@tas
     =.  nam
     ?.  =(1 (met 3 nam))

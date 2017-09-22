@@ -185,10 +185,10 @@
     ++  aver                                            ::  verify
       ?>  (lte cur.saw max.saw)
       ?>  !=(0 max.saw)
-      ?.  =(cur.saw (lent (~(tap to liv))))
-        ~&  [%aver-cur cur.saw (lent (~(tap to liv)))]
+      ?.  =(cur.saw (lent ~(tap to liv)))
+        ~&  [%aver-cur cur.saw (lent ~(tap to liv))]
         !!
-      ?>  =(rey.saw (lent (~(tap to lop))))
+      ?>  =(rey.saw (lent ~(tap to lop)))
       ?>  =+  |=  {a/coal b/coal}
               &((lth out.a out.b) (lth lod.a lod.b))
           |-  ?|  ?=($~ liv)
@@ -247,7 +247,7 @@
           [& $(liv l.liv)]
       ?~  ack  [~ ~ liv]
       =.  ded  ?:(top [n.liv ded] ded)
-      =.  ded  ?:(vig.clu.u.ack (~(tap to r.liv) ded) ded)
+      =?  ded  vig.clu.u.ack  (weld ~(tap to r.liv) ded)
       =.  lov  ?:(top [n.liv lov ~] lov)
       [ack ded lov]
     ::                                                  ::
@@ -327,7 +327,7 @@
         ::
         ::  everything in front of a dead packet is dead
         ::
-        $(liv l.liv, ded (~(tap to r.liv) [n.liv ded]))
+        $(liv l.liv, ded (welp ~(tap to r.liv) [n.liv ded]))
       =+  ryt=$(liv r.liv)
       [p.ryt [n.liv l.liv q.ryt]]
     ::                                                  ::
@@ -1165,7 +1165,7 @@
           urb.ton
         %-  ~(gas by *(map ship sufi))
         %+  turn
-          (~(tap by urb.ton.fox) ~)
+          ~(tap by urb.ton.fox)
         |=  {p/ship q/sufi}  ^-  {p/ship q/sufi}
         :-  p
         %=    q
@@ -1272,7 +1272,7 @@
     ::
     ++  kick                                            ::    kick:am
       |=  hen/duct                                      ::  refresh net
-      =+  aks=(turn (~(tap by urb.ton.fox) ~) |=({p/ship q/sufi} p))
+      =+  aks=(turn ~(tap by urb.ton.fox) |=({p/ship q/sufi} p))
       |-  ^-  {p/(list boon) q/fort}
       ?~  aks  [~ fox]
       =^  buz  fox  zork:(kick:(um i.aks) hen)

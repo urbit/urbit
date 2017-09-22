@@ -3129,7 +3129,7 @@
       |=  jon/json  ^-  (map _(wonk *fel) _*wit)
       =/  jom  ((om wit) jon)
       %-  malt
-      %+  turn  (~(tap by jom))
+      %+  turn  ~(tap by jom)
       |*  {a/cord b/*}
       =>  .(+< [a b]=+<)
       [(rash a fel) b]
@@ -3303,7 +3303,7 @@
       |=  a/(map cord _(need *wit))
       ^-  (unit (list _[(wonk *fel) (need *wit)]))
       %-  zl
-      %+  turn  (~(tap by a))
+      %+  turn  ~(tap by a)
       |=  {a/cord b/_(need *wit)}
       =+  nit=(rush a fel) 
       ?~  nit  ~
@@ -3607,7 +3607,7 @@
           $o
         :-  '{'
         =.  rez  ['}' rez]
-        =+  viz=(~(tap by p.val))
+        =+  viz=~(tap by p.val)
         ?~  viz  rez
         !.
         |-  ^+  rez
@@ -4647,7 +4647,7 @@
     ::                                                  ::  ++pale:pubsub:
     ++  pale                                            ::  filter peers
       |=  {hid/bowl fun/$-(sink ?)}
-      (skim (~(tap by sup.hid)) fun)
+      (skim ~(tap by sup.hid) fun)
     ::                                                  ::  ++prix:pubsub:
     ++  prix                                            ::  filter gate
       |=  pax/path  |=  sink  ^-  ?

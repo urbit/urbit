@@ -557,7 +557,7 @@
           $(pyz t.pyz)
         =^  vad  +>  ap-fill(ost p.i.pyz)
         $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
-      =+  ded=(~(tap in ful) ~)
+      =+  ded=~(tap in ful)
       |-  ^+  +>.^$
       ?~  ded  +>.^$
       =>  %*(. $(ded t.ded) ost i.ded)
@@ -1067,8 +1067,8 @@
       =^  tur  +>.$
           %+  ap-call  %prep
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
-      ?~  tur 
-        `+>.$ 
+      ?~  tur
+        `+>.$
       :_(+>.$ `u.tur)
     ::
     ++  ap-pule                                         ::  silent delete
@@ -1260,12 +1260,12 @@
     :^  hen  %give  %mass
     :-  %gall
     :-  %|
-    %+  turn  (~(tap by pol.all))     :: XX single-home
+    %+  turn  ~(tap by pol.all)       :: XX single-home
     |=  {our/@ mast}  ^-  mass
     :+  (scot %p our)  %|
     :~  [%foreign [%& sap]]
-        [%blocked [%| (sort (~(tap by (~(run by wub) |=(sofa [%& +<])))) aor)]]
-        [%active [%| (sort (~(tap by (~(run by bum) |=(seat [%& +<])))) aor)]]
+        [%blocked [%| (sort ~(tap by (~(run by wub) |=(sofa [%& +<]))) aor)]]
+        [%active [%| (sort ~(tap by (~(run by bum) |=(seat [%& +<]))) aor)]]
     ==
   ==
 ::
@@ -1416,15 +1416,15 @@
             :^  hen  %give  %mass
             :-  %gall
             :-  %|
-            %+  turn  (~(tap by pol.all))     :: XX single-home
+            %+  turn  ~(tap by pol.all)     :: XX single-home
             |=  {our/@ mast}  ^-  mass
             :+  (scot %p our)  %|
             :~  :-  %foreign 
                   [%& sap]
                 :-  %blocked 
-                  [%| (sort (~(tap by (~(run by wub) |=(sofa [%& +<])))) aor)]
+                  [%| (sort ~(tap by (~(run by wub) |=(sofa [%& +<]))) aor)]
                 :-  %active
-                  [%| (sort (~(tap by (~(run by bum) |=(seat [%& +<])))) aor)]
+                  [%| (sort ~(tap by (~(run by bum) |=(seat [%& +<]))) aor)]
             ==
           ==
         +>.$(moz (weld `(list move)`vam moz))

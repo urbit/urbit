@@ -163,7 +163,7 @@
   |*  {a/(map) b/$-(* (unit))}
   ^+  ?~(a !! *(map _p.n.a _(need (b q.n.a))))
   %-  malt
-  %+  murn  (~(tap by a))
+  %+  murn  ~(tap by a)
   ?~  a  $~
   |=  _c=n.a  ^-  (unit _[p.n.a (need (b q.n.a))])
   =+  d=(b q.c)

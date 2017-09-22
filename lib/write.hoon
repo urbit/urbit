@@ -70,7 +70,7 @@
   ^+  all
   :-  (fall inf.dif -.all)
   =;  neu  (~(uni by neu) put.dif)
-  =+  del=(~(tap by del.dif))                           :: XXX map functions
+  =+  del=~(tap by del.dif)                             :: XXX map functions
   |-  ^+  acc.all
   ?~  del  acc.all
   $(del t.del, acc.all (~(del by acc.all) p.i.del))

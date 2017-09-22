@@ -656,7 +656,7 @@
             =*  compiled-against  (build-inspectable-recursively p.sut)
             `[%core (trip i.topics) q.core-docs p.sut q.sut compiled-against]
           ::  search the core for chapters.
-          =/  tombs/(list (pair @ tomb))  (~(tap by q.s.q.sut))
+          =/  tombs/(list (pair @ tomb))  ~(tap by q.s.q.sut)
           |-
           ^-  (unit item)
           ?~  tombs
@@ -681,7 +681,7 @@
           (find-item-in-span t.topics q.sut)
         ::
             {$fork *}
-          =/  spans/(list span)  (~(tap in p.sut))
+          =/  spans/(list span)  ~(tap in p.sut)
           |-
           ?~  spans
             ~
@@ -726,7 +726,7 @@
           `[%face (trip q.p.sut) p.p.sut compiled-against]
         ::
             {$fork *}
-          =*  spans  (~(tap in p.sut))
+          =*  spans  ~(tap in p.sut)
           =*  items  (turn spans build-inspectable-recursively)
           (roll items join-items)
         ::
@@ -780,7 +780,7 @@
       ++  arms-as-overview
         |=  {a/(map term (pair what foot)) sut/span}
         ^-  overview
-        %+  turn  (~(tap by a))
+        %+  turn  ~(tap by a)
           |=  (pair term (pair what foot))
           =*  doc  (select-arm-docs p.q q.q sut)
           [%item (weld "++" (trip p)) -.doc]
@@ -789,7 +789,7 @@
       ++  find-arm-in-coil
         |=  {arm-name/term con/coil}
         ^-  (unit (pair what foot))
-        =/  tombs  (~(tap by q.s.con))
+        =/  tombs  ~(tap by q.s.con)
         |-
         ?~  tombs
           ~
@@ -807,7 +807,7 @@
         ^-  {overview overview}
         =|  arm-docs/overview                           :<  documented arms
         =|  chapter-docs/overview                       :<  documented chapters
-        =/  tombs  (~(tap by q.s.con))
+        =/  tombs  ~(tap by q.s.con)
         |-
         ?~  tombs
           [(sort-overview arm-docs) (sort-overview chapter-docs)]
@@ -1126,7 +1126,7 @@
       ?+  a  a
         {?($cube $face) ^}  a(q $(a q.a))
         {$cell ^}  a(p $(a p.a), q $(a q.a))
-        {$fork *}  a(p (silt (turn (~(tap in p.a)) |=(b/span ^$(a b)))))
+        {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/span ^$(a b)))))
         {$help *}  !!
         {$core ^}  `wain`/core
         {$hold *}  a(p $(a p.a))
@@ -1218,7 +1218,7 @@
       :+  (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
         (dy-silk-sources p.cig)
       :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
-      %+  turn  (~(tap by q.cig))
+      %+  turn  ~(tap by q.cig)
       |=  {a/term b/(unit dojo-source)}
       ^-  (pair wing silk:ford)
       :-  [a ~]
