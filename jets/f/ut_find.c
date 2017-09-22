@@ -413,7 +413,7 @@
                   u3_noun gil)
   {
     u3_noun p_sut = u3t(sut);
-    u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+    u3_noun yed = u3qdi_tap(p_sut);
     u3_noun wiz;
     u3_noun ret;
 

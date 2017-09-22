@@ -637,7 +637,7 @@ u3m_bail(u3_noun how)
   }
 
   if ( &(u3H->rod_u) == u3R ) {
-    //  For top-level errors, which shouln't happen often, we have no
+    //  For top-level errors, which shouldn't happen often, we have no
     //  choice but to use the signal process; and we require the flat
     //  form of how.
     //

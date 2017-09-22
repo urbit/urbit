@@ -117,3 +117,16 @@
                    u3_noun* d,
                    u3_noun* e,
                    u3_noun* f);
+
+      /* u3x_hext():
+      **
+      **   Divide `a` as a hextuple `[b c d e f g]`.
+      */
+        void
+        u3x_hext(u3_noun  a,
+                   u3_noun* b,
+                   u3_noun* c,
+                   u3_noun* d,
+                   u3_noun* e,
+                   u3_noun* f,
+                   u3_noun* g);

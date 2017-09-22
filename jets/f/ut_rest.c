@@ -26,7 +26,7 @@
                 u3_noun gar)
   {
     u3_noun gun = u3qdi_gas(u3_nul, gar);
-    u3_noun yed = u3qdi_tap(gun, u3_nul);
+    u3_noun yed = u3qdi_tap(gun);
 
     u3z(gun);
     return yed;

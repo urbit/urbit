@@ -463,9 +463,14 @@ _cttp_httr_cres(c3_l num_l, u3_cres* res_u)
 /* _cttp_httr_fail(): fail out a request by number.
 */
 static void
-_cttp_httr_fail(c3_l num_l, c3_c* msg_c)
+_cttp_httr_fail(c3_l num_l, c3_w cod_w, c3_c* msg_c)
 {
-  return _cttp_httr(num_l, 404, u3_nul, u3_nul);
+  if ( msg_c ) {
+    fprintf(stderr, "http: fail (%d, %d): %s\r\n", num_l, cod_w, msg_c);
+  } else {
+    fprintf(stderr, "http: fail (%d, %d): %s\r\n", num_l, cod_w, msg_c);
+  }
+  return _cttp_httr(num_l, cod_w, u3_nul, u3_nul);
 }
 
 /* _cttp_cres_free(): free a u3_cres.
@@ -719,7 +724,7 @@ _cttp_ccon_waste(u3_ccon* coc_u, c3_c* msg_c)
   while ( coc_u->ceq_u ) {
     u3_creq* ceq_u = coc_u->ceq_u;
 
-    _cttp_httr_fail(ceq_u->num_l, msg_c);
+    _cttp_httr_fail(ceq_u->num_l, 504, msg_c);
     coc_u->ceq_u = ceq_u->nex_u;
     if ( 0 == coc_u->ceq_u ) {
       c3_assert(ceq_u == coc_u->qec_u);
@@ -748,29 +753,10 @@ _cttp_ccon_waste(u3_ccon* coc_u, c3_c* msg_c)
   free(coc_u);
 }
 
-/* _cttp_ccon_reset(): reset a live connection.
-*/
-void
-_cttp_ccon_reset(u3_ccon* coc_u)
-{
-  if ( coc_u->ceq_u ) {
-    _cttp_bods_free(coc_u->rub_u);
-    coc_u->rub_u = coc_u->bur_u = 0;
-
-    if ( coc_u->ceq_u->res_u ) {
-      _cttp_cres_free(coc_u->ceq_u->res_u);
-      coc_u->ceq_u->res_u = 0;
-    }
-  }
-  else {
-    c3_assert(0 == coc_u->rub_u);
-  }
-}
-
-/* _cttp_ccon_reboot(): stop appropriate I/O on failure case.
+/* _cttp_ccon_stop(): stop appropriate I/O on failure case.
 */
 static void
-_cttp_ccon_reboot(u3_ccon* coc_u)
+_cttp_ccon_stop(u3_ccon* coc_u)
 {
   switch ( coc_u->sat_e ) {
     default: c3_assert(0);
@@ -796,24 +782,9 @@ _cttp_ccon_reboot(u3_ccon* coc_u)
     }
     case u3_csat_cryp:
     case u3_csat_clyr: {
-      /*  We had a connection but it broke.  Either there are no
-      **  living requests, in which case waste; otherwise reset.
+      /*  Socket broke.  Waste it.
       */
-      if ( 0 == coc_u->ceq_u ) {
-        _cttp_ccon_waste(coc_u, 0);
-      }
-      else {
-        /*  Clear any unsent data.
-        */
-        coc_u->sat_e = u3_csat_dead;
-        _cttp_ccon_reset(coc_u);
-
-        /*  Begin again.
-        */
-        uL(fprintf(uH, "ccon: rekick\r\n"));
-        _cttp_ccon_kick(coc_u);
-      }
-      break;
+      _cttp_ccon_waste(coc_u, 0);
     }
   }
 }
@@ -825,7 +796,7 @@ _cttp_ccon_fail_cb(uv_handle_t* wax_u)
 {
   u3_ccon *coc_u = _cttp_ccon_wax((uv_tcp_t*)wax_u);
 
-  _cttp_ccon_reboot(coc_u);
+  _cttp_ccon_stop(coc_u);
 }
 
 /* _cttp_ccon_fail(): report failure and reset connection.
@@ -838,9 +809,8 @@ _cttp_ccon_fail(u3_ccon* coc_u, u3_noun say)
   }
 
   if ( coc_u->sat_e < u3_csat_crop ) {
-    _cttp_ccon_reboot(coc_u);
-  }
-  else {
+    _cttp_ccon_stop(coc_u);
+  } else {
     uL(fprintf(uH, "cttp: close: %p\n", coc_u));
     uv_close((uv_handle_t*)&coc_u->wax_u, _cttp_ccon_fail_cb);
   }
@@ -1077,7 +1047,6 @@ _cttp_ccon_cryp_hurr(u3_ccon* coc_u, int rev)
 
   switch ( err ) {
     default:
-      fprintf(stderr, "cttp: wasted: %p\r\n", coc_u->ssl.ssl_u);
       _cttp_ccon_waste(coc_u, "ssl lost");
       break;
     case SSL_ERROR_NONE:
@@ -1192,9 +1161,17 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
 
   {
     if ( siz_w == UV_EOF ) {
-      // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
-      uv_close((uv_handle_t*) tcp_u, NULL);    // https://github.com/urbit/urbit/issues/254
-    } else if ( siz_w < 0 ) {
+#if 1
+      _cttp_ccon_fail(coc_u, c3n);
+#else    
+      // old workaround:
+      //
+      // https://github.com/urbit/urbit/issues/254
+      //
+      uv_close((uv_handle_t*) tcp_u, NULL);
+#endif
+    } 
+    else if ( siz_w < 0 ) {
       uL(fprintf(uH, "cttp: read 2: %s\n", uv_strerror(siz_w)));
       _cttp_ccon_fail(coc_u, c3y);
     }
@@ -1238,8 +1215,15 @@ _cttp_ccon_kick_read_clyr_cb(uv_stream_t* tcp_u,
 
   {
     if ( siz_w == UV_EOF ) {
-      // _cttp_ccon_fail(coc_u, c3n);          // replaced with uv_close() 2016-06-07
-      uv_close((uv_handle_t*) tcp_u, NULL);    // https://github.com/urbit/urbit/issues/254
+#if 1
+      _cttp_ccon_fail(coc_u, c3n);
+#else    
+      // old workaround:
+      //
+      // https://github.com/urbit/urbit/issues/254
+      //
+      uv_close((uv_handle_t*) tcp_u, NULL);
+#endif
     } else if ( siz_w < 0 ) {
       uL(fprintf(uH, "cttp: read 1: %s\n", uv_strerror(siz_w)));
       _cttp_ccon_fail(coc_u, c3y);

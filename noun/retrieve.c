@@ -610,11 +610,10 @@ _sung_one(u3_noun* a, u3_noun* b)
         c3_o bsr_o = u3a_is_senior(u3R, *b);
 
         if ( _(asr_o) && _(bsr_o) ) {
-          //
-          //  when unifying on a higher road, we can't free nouns, 
-          //  because we can't track junior nouns that point into 
+          //  when unifying on a higher road, we can't free nouns,
+          //  because we can't track junior nouns that point into
           //  that road.
-          //  
+          //
           //  this is just an implementation issue -- we could set use
           //  counts to 0 without actually freeing.  but the allocator
           //  would have to be actually designed for this.

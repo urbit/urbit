@@ -242,7 +242,7 @@
 
       /* u3r_trel():
       **
-      **   Divide `a` as a trel `[b c]`.
+      **   Divide `a` as a trel `[b c d]`.
       */
         c3_o
         u3r_trel(u3_noun  a,
@@ -252,7 +252,7 @@
 
       /* u3r_qual():
       **
-      **   Divide (a) as a qual [b c d e f].
+      **   Divide (a) as a qual [b c d e].
       */
         c3_o
         u3r_qual(u3_noun  a,
@@ -272,6 +272,19 @@
                  u3_noun* d,
                  u3_noun* e,
                  u3_noun* f);
+
+      /* u3r_hext():
+      **
+      **   Divide (a) as a hext [b c d e f g].
+      */
+        c3_o
+        u3r_hext(u3_noun  a,
+                 u3_noun* b,
+                 u3_noun* c,
+                 u3_noun* d,
+                 u3_noun* e,
+                 u3_noun* f,
+                 u3_noun* g);
 
       /* u3r_p():
       **

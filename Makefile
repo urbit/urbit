@@ -34,6 +34,13 @@ ENDIAN=little
 BIN=bin
 
 # Only include/link with this if it exists.
+# For the Nix package manager
+ifdef NIX_PROFILE
+  NIXINC=-I$(NIX_PROFILE)/include
+  NIXLIB=-L$(NIX_PROFILE)/lib
+endif
+
+# Only include/link with this if it exists.
 # (Mac OS X El Capitan clean install does not have /opt)
 ifneq (,$(wildcard /opt/local/.))
   OPTLOCALINC?=/opt/local/include
@@ -69,7 +76,7 @@ CC=cc
 LN=ln -f
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
+CLD=$(CXX) $(CFLAGS) -L/usr/local/lib $(NIXLIB) $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
@@ -106,6 +113,7 @@ endif
 CFLAGS+= $(COSFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
+	$(NIXINC) \
 	$(OPTLOCALIFLAGS) \
 	$(OPENSSLIFLAGS) \
 	$(CURLINC) \
@@ -480,6 +488,10 @@ $(BIN)/urbit: $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(
 	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
+# This should start a comet or something
+test:
+	@echo "FIXME no tests defined"
+
 tags: ctags etags gtags cscope
 
 ctags:
@@ -523,4 +535,4 @@ distclean: clean
 	$(MAKE) -C outside/scrypt clean
 	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC clean
 
-.PHONY: clean debbuild debinstalldistclean etags osxpackage tags
+.PHONY: clean debbuild debinstalldistclean etags osxpackage tags test

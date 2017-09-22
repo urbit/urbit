@@ -160,7 +160,7 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = u3kf_fork(_crop_dext_fork(van, yed, ref, bix));
 
         u3z(yed);
@@ -211,7 +211,7 @@
       }
       case c3__fork: p_ref = u3t(ref);
       {
-        u3_noun yed = u3qdi_tap(p_ref, u3_nul);
+        u3_noun yed = u3qdi_tap(p_ref);
         u3_noun ret = _crop_sint_fork(van, sut, yed, bix);
 
         u3z(yed);

@@ -46,7 +46,7 @@
   **
   **        - an event can't request a commit until it's computed.
   **        - an event can't be released until it, and all events
-  **          preceding it, are precommitted.
+  **          preceding it, are computed and precommitted.
   **
   **    event numbers are uint64 (c3_d) which start with 1.  we order
   **    events as we receive them.
@@ -62,8 +62,8 @@
   **    replace the input event with a different event).  in case of
   **    replacement, we delete the old precommit and write the new one.
   **
-  **    after crash recovery, events which were precommitted but
-  **    not yet committed have at-least-once semantics in their
+  **    after crash recovery, events precommitted and computed, but
+  **    not yet committed, have at-least-once semantics in their
   **    output effects.  (not the actual changes to the arvo state,
   **    which are of course exactly-once.)  ideally all your outputs
   **    are network packets or idempotent http requests!
@@ -661,6 +661,25 @@ _pier_disk_load_precommit_file(u3_pier* pir_u,
 
     return 0;
   }
+
+  /*  the problem with a precommit is that we don't know whether we
+  **  actually computed and acknowledged it.  the worst case is a
+  **  network packet that causes an infinite loop, which we crash
+  **  while trying to execute.
+  **
+  **  if we discard a precommit that in fact completed, we may have
+  **  sent an acknowledgment without realizing it -- creating a
+  **  network discontinuity.  but if we uniformly apply all precommits,
+  **  we may "apply" an infinite loop.  there is no perfect answer,
+  **  of course.
+  **
+  **  the correct behavior here is a consistent mapping from event
+  **  to timer.  we apply this same mapping, but quadruple the timer
+  **  expiration, while re-executing precommits.  if it still times
+  **  out, we conclude that we must not have completed the original
+  **  event, and can throw away the precommit.
+  */
+
   return wit_u;
 }
 

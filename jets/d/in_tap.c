@@ -27,31 +27,29 @@
   }
 
   u3_noun
-  u3qdi_tap(u3_noun a,
-            u3_noun b)
+  u3qdi_tap(u3_noun a)
   {
-    return _tap_in(a, u3k(b));
+    return _tap_in(a, u3_nul);
   }
   u3_noun
   u3wdi_tap(u3_noun cor)
   {
-    u3_noun a, b;
+    u3_noun a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ) {
+    if ( c3n == u3r_mean(cor, u3x_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3qdi_tap(a, b);
+      return u3qdi_tap(a);
     }
   }
   u3_noun
-  u3kdi_tap(u3_noun a,
-            u3_noun b)
+  u3kdi_tap(u3_noun a)
   {
-    u3_weak c = u3qdi_tap(a, b);
+    u3_weak b = u3qdi_tap(a);
 
-    u3z(a); u3z(b);
-    if ( u3_none == c ) {
+    u3z(a);
+    if ( u3_none == b ) {
       return u3m_bail(c3__exit);
     }
-    else return c;
+    else return b;
   }
