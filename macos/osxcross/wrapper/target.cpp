@@ -44,17 +44,10 @@ Target::Target()
       usegcclibs(), wliblto(-1), compiler(getDefaultCompilerIdentifier()), language() {
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
-
-  SDK = WRAPPER_SDK_PATH;
 }
 
 OSVersion Target::getSDKOSNum() const {
   return parseOSVersion(WRAPPER_SDK_VERSION);
-}
-
-bool Target::getSDKPath(std::string &path) const {
-  path = SDK;
-  return true;
 }
 
 bool Target::getMacPortsDir(std::string &path) const {
@@ -206,13 +199,11 @@ void Target::setupGCCLibs(Arch arch) {
   assert(stdlib == StdLib::libstdcxx);
   fargs.push_back("-nodefaultlibs");
 
-  std::string SDKPath;
+  std::string SDKPath = WRAPPER_SDK_PATH;
   std::stringstream GCCLibSTDCXXPath;
   std::stringstream GCCLibPath;
 
   const bool dynamic = !!getenv("OSXCROSS_GCC_NO_STATIC_RUNTIME");
-
-  getSDKPath(SDKPath);
 
   GCCLibPath << SDKPath << "/../../lib/gcc/" << otriple << "/"
              << gccversion.Str();
@@ -261,14 +252,11 @@ void Target::setupGCCLibs(Arch arch) {
 }
 
 bool Target::setup() {
-  std::string SDKPath;
+  std::string SDKPath = WRAPPER_SDK_PATH;
   OSVersion SDKOSNum = getSDKOSNum();
 
   if (!isKnownCompiler())
     warn << "unknown compiler '" << compilername << "'" << warn.endl();
-
-  if (!getSDKPath(SDKPath))
-    return false;
 
   if (targetarch.empty())
     targetarch.push_back(arch);

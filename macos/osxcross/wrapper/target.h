@@ -76,7 +76,6 @@ struct Target {
 
   OSVersion getSDKOSNum() const;
   void overrideDefaultSDKPath(const char *SDKSearchDir);
-  bool getSDKPath(std::string &path) const;
 
   bool getMacPortsDir(std::string &path) const;
   bool getMacPortsSysRootDir(std::string &path) const;
@@ -109,7 +108,6 @@ struct Target {
   bool setup();
 
   const char *vendor;
-  const char *SDK;
   Arch arch;
   std::vector<Arch> targetarch;
   std::string target;
