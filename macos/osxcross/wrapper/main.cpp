@@ -63,7 +63,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
     ++i;
 
     if (!strncmp(cmd, arch, len)) {
-      target.arch = static_cast<Arch>(i - 1);
       cmd += len;
 
       if (*cmd++ != '-')
@@ -79,12 +78,6 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
       if (!(p = strchr(cmd, '-')))
         return false;
-
-      target.target = std::string(cmd, p - cmd);
-
-      if (target.target != getDefaultTarget())
-        warn << "this wrapper was built for target "
-             << "'" << getDefaultTarget() << "'" << warn.endl();
 
       target.args.reserve(argc);
       for (int i = 1; i < argc; ++i)
@@ -137,6 +130,7 @@ int compiler_main(int argc, char ** argv, const char *compiler_name)
   // TODO: get rid of this enum, just use a WRAPPER_ARCH string or something
   target.arch = Arch::x86_64;
   target.compilername = compiler_name;
+  target.target = OSXCROSS_TARGET;  // e.g. "darwin15"
   if (target.compilername == "clang++")
   {
     target.compiler = Compiler::CLANGXX;
@@ -147,6 +141,7 @@ int compiler_main(int argc, char ** argv, const char *compiler_name)
   }
 
   bool success = detectTarget(argc, argv, target);
+
   if (!success)
   {
     err << "while detecting target" << err.endl();
