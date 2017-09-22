@@ -41,7 +41,7 @@
 Target::Target()
     : vendor(getDefaultVendor()),
       arch(Arch::x86_64), target(getDefaultTarget()), stdlib(StdLib::unset),
-      usegcclibs(), wliblto(-1), compiler(getDefaultCompilerIdentifier()), language() {
+      usegcclibs(), wliblto(-1), language() {
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
 }

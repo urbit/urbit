@@ -22,14 +22,6 @@
 constexpr const char *getDefaultVendor() { return "apple"; }
 constexpr const char *getDefaultTarget() { return OSXCROSS_TARGET; }
 
-constexpr Compiler getDefaultCompilerIdentifier() {
-  return Compiler::CLANG;
-}
-
-constexpr Compiler getDefaultCXXCompilerIdentifier() {
-  return Compiler::CLANGXX;
-}
-
 constexpr const char *getLinkerVersion() { return OSXCROSS_LINKER_VERSION; }
 constexpr const char *getBuildDir() { return OSXCROSS_BUILD_DIR; }
 
