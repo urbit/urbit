@@ -124,7 +124,7 @@ bool detectTarget(int argc, char **argv, Target &target) {
   return true;
 }
 
-static int compileForTarget(Target & target)
+static int do_exec(Target & target)
 {
   char ** exec_args = new char *[target.fargs.size() + target.args.size() + 1];
 
@@ -150,9 +150,11 @@ static int compileForTarget(Target & target)
   return 1;
 }
 
-int c_compiler_main(int argc, char ** argv)
+int compiler_main(int argc, char ** argv, const char *compiler_name)
 {
   Target target;
+  target.compilername = compiler_name;
+
   bool success = detectTarget(argc, argv, target);
   if (!success)
   {
@@ -160,36 +162,24 @@ int c_compiler_main(int argc, char ** argv)
     return 1;
   }
 
-  target.compilername = "clang";
-  target.setup();
+  success = target.setup();
   if (!success)
   {
     err << "while setting up target" << err.endl();
     return 1;
   }
 
-  return compileForTarget(target);
+  return do_exec(target);
+}
+
+int c_compiler_main(int argc, char ** argv)
+{
+  return compiler_main(argc, argv, "clang");
 }
 
 int cxx_compiler_main(int argc, char ** argv)
 {
-  Target target;
-  bool success = detectTarget(argc, argv, target);
-  if (!success)
-  {
-    err << "while detecting target" << err.endl();
-    return 1;
-  }
-
-  target.compilername = "clang++";
-  target.setup();
-  if (!success)
-  {
-    err << "while setting up target" << err.endl();
-    return 1;
-  }
-
-  return compileForTarget(target);
+  return compiler_main(argc, argv, "clang++");
 }
 
 int wrapper_main(int argc, char ** argv)
