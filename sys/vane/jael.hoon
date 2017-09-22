@@ -259,7 +259,7 @@
       0w0                           ::  154, ~tus, Tlon
       0w0                           ::  155, ~tyc, Tlon
       0w0                           ::  156, ~leg, Tlon
-      0w0                           ::  157, ~nem, Tlon
+      0w0                           ::  157, ~nem, Jeremy Tunnell
       0w0                           ::  158, ~fer, Tlon
       0w0                           ::  159, ~mer, Tlon
       0w0                           ::  160, ~ten, Tlon
