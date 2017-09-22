@@ -46,58 +46,6 @@ using namespace target;
 
 int debug = 0;
 
-bool detectTarget(int argc, char **argv, Target &target) {
-  const char *cmd = argv[0];
-  const char *p = strrchr(cmd, '/');
-  size_t len;
-  size_t i = 0;
-
-  if (p)
-    cmd = &p[1];
-
-  // -> x86_64 <- -apple-darwin13
-  p = strchr(cmd, '-');
-  len = (p ? p : cmd) - cmd;
-
-  for (auto arch : ArchNames) {
-    ++i;
-
-    if (!strncmp(cmd, arch, len)) {
-      cmd += len;
-
-      if (*cmd++ != '-')
-        return false;
-
-      if (strncmp(cmd, "apple-", 6))
-        return false;
-
-      cmd += 6;
-
-      if (strncmp(cmd, "darwin", 6))
-        return false;
-
-      if (!(p = strchr(cmd, '-')))
-        return false;
-
-      target.args.reserve(argc);
-      for (int i = 1; i < argc; ++i)
-      {
-        target.args.push_back(argv[i]);
-      }
-
-      return true;
-    }
-  }
-
-  target.args.reserve(argc);
-  for (int i = 1; i < argc; ++i)
-  {
-    target.args.push_back(argv[i]);
-  }
-
-  return true;
-}
-
 static int do_exec(Target & target)
 {
   char ** exec_args = new char *[target.fargs.size() + target.args.size() + 1];
@@ -140,15 +88,13 @@ int compiler_main(int argc, char ** argv, const char *compiler_name)
     target.compiler = Compiler::CLANG;
   }
 
-  bool success = detectTarget(argc, argv, target);
-
-  if (!success)
+  target.args.reserve(argc);
+  for (int i = 1; i < argc; ++i)
   {
-    err << "while detecting target" << err.endl();
-    return 1;
+    target.args.push_back(argv[i]);
   }
 
-  success = target.setup();
+  bool success = target.setup();
   if (!success)
   {
     err << "while setting up target" << err.endl();
