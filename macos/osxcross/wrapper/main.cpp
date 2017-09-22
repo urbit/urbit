@@ -413,29 +413,28 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
 static int compileForTarget(Target & target)
 {
-  char ** cargs = nullptr;
-  int rc = -1;
+  char ** exec_args = new char *[target.fargs.size() + target.args.size() + 1];
 
-  if (rc == -1) {
-    cargs = new char *[target.fargs.size() + target.args.size() + 1];
-    size_t i = 0;
+  size_t i = 0;
 
-    for (auto &arg : target.fargs)
-      cargs[i++] = const_cast<char *>(arg.c_str());
-
-    for (auto &arg : target.args)
-      cargs[i++] = const_cast<char *>(arg.c_str());
-
-    cargs[i] = nullptr;
+  for (std::string & arg : target.fargs)
+  {
+    exec_args[i++] = (char *)arg.c_str();
   }
 
-  if (rc == -1 && execvp(target.compilerpath.c_str(), cargs)) {
-    err << "invoking compiler failed" << err.endl();
-
-    return 1;
+  for (std::string & arg : target.args)
+  {
+    exec_args[i++] = (char *)arg.c_str();
   }
 
-  return rc;
+  exec_args[i] = nullptr;
+
+  execvp(target.compilerpath.c_str(), exec_args);
+
+  int result = errno;
+  std::cerr << "execvp failed: " << target.compilerpath << ": "
+            << strerror(result) << std::endl;
+  return 1;
 }
 
 int c_compiler_main(int argc, char ** argv)
