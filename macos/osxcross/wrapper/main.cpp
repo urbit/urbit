@@ -46,22 +46,6 @@ using namespace target;
 
 int debug = 0;
 
-namespace {
-
-namespace commandopts {
-
-bool parse(int argc, char **argv, Target &target)
-{
-  target.args.reserve(argc);
-  for (int i = 1; i < argc; ++i)
-  {
-    target.args.push_back(argv[i]);
-  }
-  return true;
-}
-
-} // namespace commandopts
-
 bool detectTarget(int argc, char **argv, Target &target) {
   const char *cmd = argv[0];
   const char *p = strrchr(cmd, '/');
@@ -107,20 +91,21 @@ bool detectTarget(int argc, char **argv, Target &target) {
 
       if (target.compilername == "cc") {
         target.compiler = getDefaultCompilerIdentifier();
-        target.compilername = getDefaultCompilerName();
       } else if (target.compilername == "c++") {
         target.compiler = getDefaultCXXCompilerIdentifier();
-        target.compilername = getDefaultCXXCompilerName();
       }
 
       if (target.target != getDefaultTarget())
         warn << "this wrapper was built for target "
              << "'" << getDefaultTarget() << "'" << warn.endl();
 
-      if (!commandopts::parse(argc, argv, target))
-        return false;
+      target.args.reserve(argc);
+      for (int i = 1; i < argc; ++i)
+      {
+        target.args.push_back(argv[i]);
+      }
 
-      return target.setup();
+      return true;
     }
   }
 
@@ -130,13 +115,14 @@ bool detectTarget(int argc, char **argv, Target &target) {
     target.compilername = compilername;
   }
 
-  if (!commandopts::parse(argc, argv, target))
-    return false;
+  target.args.reserve(argc);
+  for (int i = 1; i < argc; ++i)
+  {
+    target.args.push_back(argv[i]);
+  }
 
-  return target.setup();
+  return true;
 }
-
-} // unnamed namespace
 
 static int compileForTarget(Target & target)
 {
@@ -168,10 +154,17 @@ int c_compiler_main(int argc, char ** argv)
 {
   Target target;
   bool success = detectTarget(argc, argv, target);
-
   if (!success)
   {
     err << "while detecting target" << err.endl();
+    return 1;
+  }
+
+  target.compilername = "clang";
+  target.setup();
+  if (!success)
+  {
+    err << "while setting up target" << err.endl();
     return 1;
   }
 
@@ -182,10 +175,17 @@ int cxx_compiler_main(int argc, char ** argv)
 {
   Target target;
   bool success = detectTarget(argc, argv, target);
-
   if (!success)
   {
     err << "while detecting target" << err.endl();
+    return 1;
+  }
+
+  target.compilername = "clang++";
+  target.setup();
+  if (!success)
+  {
+    err << "while setting up target" << err.endl();
     return 1;
   }
 

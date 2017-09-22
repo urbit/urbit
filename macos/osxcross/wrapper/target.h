@@ -30,16 +30,8 @@ using namespace tools;
 constexpr const char *getDefaultVendor() { return "apple"; }
 constexpr const char *getDefaultTarget() { return OSXCROSS_TARGET; }
 
-constexpr const char *getDefaultCompilerName() {
-  return "clang";
-}
-
 constexpr Compiler getDefaultCompilerIdentifier() {
   return Compiler::CLANG;
-}
-
-constexpr const char *getDefaultCXXCompilerName() {
-  return "clang++";
 }
 
 constexpr Compiler getDefaultCXXCompilerIdentifier() {

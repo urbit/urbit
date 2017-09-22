@@ -43,8 +43,7 @@ namespace target {
 Target::Target()
     : vendor(getDefaultVendor()),
       arch(Arch::x86_64), target(getDefaultTarget()), stdlib(StdLib::unset),
-      usegcclibs(), wliblto(-1), compiler(getDefaultCompilerIdentifier()),
-      compilername(getDefaultCompilerName()), language() {
+      usegcclibs(), wliblto(-1), compiler(getDefaultCompilerIdentifier()), language() {
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
 
