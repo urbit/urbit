@@ -48,15 +48,6 @@ int debug = 0;
 
 namespace {
 
-void warnExtension(const char *extension) {
-  static bool noextwarnings = !!getenv("OSXCROSS_NO_EXTENSION_WARNINGS");
-  if (noextwarnings)
-    return;
-  warn << extension << " is an osxcross extension" << warn.endl();
-  warninfo << "you can silence this warning via "
-           << "'OSXCROSS_NO_EXTENSION_WARNINGS=1' (env)" << warninfo.endl();
-}
-
 __attribute__((unused))
 void warnDeprecated(const char *flag, const char *replacement = nullptr) {
   if (replacement)
@@ -77,110 +68,6 @@ namespace commandopts {
 typedef bool (*optFun)(Target &target, const char *opt, const char *val,
                       char **);
 
-bool versionmin(Target &target, const char *, const char *val, char **) {
-  target.OSNum = parseOSVersion(val);
-
-  if (target.OSNum != val)
-    warn << "'-mmacosx-version-min=' (" << target.OSNum.Str()
-         << " != " << val << ")" << warn.endl();
-
-  return true;
-}
-
-bool arch(Target &target, const char *opt, const char *val, char **) {
-  Arch arch;
-
-  if (!strcmp(opt, "-arch")) {
-    arch = parseArch(val);
-
-    if (arch == Arch::unknown)
-      warn << "'-arch': unknown architecture '" << val << "'"
-           << warn.endl();
-
-    const char *name = getArchName(arch);
-
-    if (strcmp(val, name))
-      warn << "'-arch': '" << val << "' != '" << name << "'" << warn.endl();
-  } else {
-    if (!strcmp(opt, "-m16") || !strcmp(opt, "-mx32")) {
-      err << "'" << opt << "' is not supported" << err.endl();
-      return false;
-    } else if (!strcmp(opt, "-m32")) {
-      arch = Arch::i386;
-    } else if (!strcmp(opt, "-m64")) {
-      arch = Arch::x86_64;
-    } else {
-      __builtin_unreachable();
-    }
-  }
-
-  if (target.isClang())
-    target.addArch(arch);
-  else
-    target.arch = arch;
-
-  return true;
-}
-
-bool stdlib(Target &target, const char *, const char *val, char **) {
-  if (target.isGCC())
-    warnExtension("'-stdlib='");
-
-  size_t i = 0;
-
-  for (auto stdlibname : StdLibNames) {
-    if (!strcmp(val, stdlibname)) {
-      target.stdlib = static_cast<StdLib>(i);
-      break;
-    }
-    ++i;
-  }
-
-  if (i == (sizeof(StdLibNames) / sizeof(StdLibNames[0]))) {
-    err << "value of '-stdlib=' must be ";
-
-    for (size_t j = 0; j < i; ++j) {
-      err << "'" << StdLibNames[j] << "'";
-
-      if (j == i - 2)
-        err << " or ";
-      else if (j < i - 2)
-        err << ", ";
-    }
-
-    err << err.endl();
-    return false;
-  }
-
-  return true;
-}
-
-bool language(Target &target, const char *, const char *val, char **) {
-  target.language = val;
-  return true;
-}
-
-bool usegcclibstdcxx(Target &target, const char *, const char *, char **) {
-  target.stdlib = StdLib::libstdcxx;
-  target.usegcclibs = true;
-  return true;
-}
-
-bool compilerpath(Target &target, const char *, const char *path, char **) {
-  target.compilerpath = path;
-  return true;
-}
-
-bool intrinsicpath(Target &target, const char *, const char *path, char **) {
-  target.intrinsicpath = path;
-  return true;
-}
-
-bool liblto(Target &target, const char *opt, const char *, char **) {
-  target.wliblto = !strcmp(opt, "-Wliblto");
-  return true;
-}
-
 constexpr struct Opt {
   const char *name;
   const size_t namelen;
@@ -196,24 +83,6 @@ constexpr struct Opt {
          valseparator(valseparator),
          valseparatorlen(valseparator ? constexprStrLen(valseparator) : 0) {}
 } opts[] = {
-  {"-mmacosx-version-min", versionmin, true, false, "="},
-  {"-stdlib", stdlib, true, false, "="},
-  {"-arch", arch, true},
-  {"-m16", arch},
-  {"-m32", arch},
-  {"-mx32", arch},
-  {"-m64", arch},
-  {"-x", language, true, true},
-  {"-foc-use-gcc-libstdc++", usegcclibstdcxx},
-  {"-Wliblto", liblto, false, true},
-  {"-Wno-liblto", liblto, false, true},
-
-  // sets a custom path for the compiler
-  {"-foc-compiler-path", compilerpath, true, false, "="},
-
-  // specifies an additional directory to search when looking for clang's
-  // intrinsic paths
-  {"-foc-intrinsic-path", intrinsicpath, true, false, "="}
 };
 
 bool parse(int argc, char **argv, Target &target) {
