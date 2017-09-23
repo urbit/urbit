@@ -34,68 +34,65 @@
 #include <sys/wait.h>
 
 #include "tools.h"
-#include "target.h"
 
-static int do_exec(Target & target)
+int compiler_main(int argc, char ** argv, const char * compiler_name)
 {
-  char ** exec_args = new char *[target.fargs.size() + target.args.size() + 1];
+  std::string compilerpath, compilername, compilerexecname;
+  std::vector<std::string> fargs, args;
 
-  size_t i = 0;
-
-  for (std::string & arg : target.fargs)
-  {
-    exec_args[i++] = (char *)arg.c_str();
-  }
-
-  for (std::string & arg : target.args)
-  {
-    exec_args[i++] = (char *)arg.c_str();
-  }
-
-  exec_args[i] = nullptr;
-
-  execvp(target.compilerpath.c_str(), exec_args);
-
-  int result = errno;
-  std::cerr << "execvp failed: " << target.compilerpath << ": "
-            << strerror(result) << std::endl;
-  return 1;
-}
-
-int compiler_main(int argc, char ** argv, const char *compiler_name)
-{
-  Target target;
   // TODO: get rid of this enum, just use a WRAPPER_ARCH string or something
-  target.arch = Arch::x86_64;
-  target.compilername = compiler_name;
-  target.compilerexecname = compiler_name;
-  target.compilerpath = compiler_name;
-  target.target = OSXCROSS_TARGET;  // e.g. "darwin15"
+  compilername = compiler_name;
+  compilerexecname = compiler_name;
+  compilerpath = compiler_name;
+  std::string target = OSXCROSS_TARGET;  // e.g. "darwin15"
 
-  target.args.reserve(argc);
+  args.reserve(argc);
   for (int i = 1; i < argc; ++i)
   {
-    target.args.push_back(argv[i]);
+    args.push_back(argv[i]);
   }
 
-  target.fargs.push_back(target.compilerexecname);
+  fargs.push_back(compilerexecname);
 
-  target.fargs.push_back("-target");
-  target.fargs.push_back(WRAPPER_HOST);
+  fargs.push_back("-target");
+  fargs.push_back(WRAPPER_HOST);
 
-  target.fargs.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
+  fargs.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
 
-  target.fargs.push_back("--sysroot");
-  target.fargs.push_back(WRAPPER_SDK_PATH);
+  fargs.push_back("--sysroot");
+  fargs.push_back(WRAPPER_SDK_PATH);
 
-  if (target.compilername == "clang++")
+  if (compilername == "clang++")
   {
-    target.fargs.push_back("-stdlib=libc++");
-    target.fargs.push_back("-cxx-isystem");
-    target.fargs.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
+    fargs.push_back("-stdlib=libc++");
+    fargs.push_back("-cxx-isystem");
+    fargs.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
   }
 
-  return do_exec(target);
+  {
+    char ** exec_args = new char *[fargs.size() + args.size() + 1];
+
+    size_t i = 0;
+
+    for (std::string & arg : fargs)
+    {
+      exec_args[i++] = (char *)arg.c_str();
+    }
+
+    for (std::string & arg : args)
+    {
+      exec_args[i++] = (char *)arg.c_str();
+    }
+
+    exec_args[i] = nullptr;
+
+    execvp(compilerpath.c_str(), exec_args);
+
+    int result = errno;
+    std::cerr << "execvp failed: " << compilerpath << ": "
+              << strerror(result) << std::endl;
+    return 1;
+  }
 }
 
 int c_compiler_main(int argc, char ** argv)
