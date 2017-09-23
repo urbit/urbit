@@ -79,7 +79,7 @@ bool Target::setup() {
   }
 
   std::string CXXHeaderPath = SDKPath;
-  string_vector AdditionalCXXHeaderPaths;
+  std::vector<std::string> AdditionalCXXHeaderPaths;
 
   auto addCXXPath = [&](const std::string &path) {
     std::string tmp;

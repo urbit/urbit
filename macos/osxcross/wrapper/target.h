@@ -59,11 +59,8 @@ struct Target {
   std::string target;
   StdLib stdlib;
   Compiler compiler;
-  std::string compilerpath;
-  std::string compilername;
-  std::string compilerexecname;
-  string_vector fargs;
-  string_vector args;
+  std::string compilerpath, compilername, compilerexecname;
+  std::vector<std::string> fargs, args;
   const char *language;
   char execpath[PATH_MAX + 1];
   std::string intrinsicpath;

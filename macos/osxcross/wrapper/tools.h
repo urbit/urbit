@@ -21,8 +21,6 @@
 
 struct stat;
 
-typedef std::vector<std::string> string_vector;
-
 static inline void clear(std::stringstream &sstr) {
   sstr.clear();
   sstr.str(std::string());
