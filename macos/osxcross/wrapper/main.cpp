@@ -35,61 +35,45 @@
 
 #include "tools.h"
 
-int compiler_main(int argc, char ** argv, const char * compiler_name)
+int compiler_main(int argc, char ** argv, const std::string & compiler_name)
 {
-  std::string compilerpath, compilername, compilerexecname;
-  std::vector<std::string> fargs, args;
+  std::vector<std::string> args;
 
-  // TODO: get rid of this enum, just use a WRAPPER_ARCH string or something
-  compilername = compiler_name;
-  compilerexecname = compiler_name;
-  compilerpath = compiler_name;
-  std::string target = OSXCROSS_TARGET;  // e.g. "darwin15"
+  args.push_back(compiler_name);
 
-  args.reserve(argc);
+  args.push_back("-target");
+  args.push_back(WRAPPER_HOST);
+
+  args.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
+
+  args.push_back("--sysroot");
+  args.push_back(WRAPPER_SDK_PATH);
+
+  if (compiler_name == "clang++")
+  {
+    args.push_back("-stdlib=libc++");
+    args.push_back("-cxx-isystem");
+    args.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
+  }
+
   for (int i = 1; i < argc; ++i)
   {
     args.push_back(argv[i]);
   }
 
-  fargs.push_back(compilerexecname);
-
-  fargs.push_back("-target");
-  fargs.push_back(WRAPPER_HOST);
-
-  fargs.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
-
-  fargs.push_back("--sysroot");
-  fargs.push_back(WRAPPER_SDK_PATH);
-
-  if (compilername == "clang++")
   {
-    fargs.push_back("-stdlib=libc++");
-    fargs.push_back("-cxx-isystem");
-    fargs.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
-  }
-
-  {
-    char ** exec_args = new char *[fargs.size() + args.size() + 1];
-
+    char ** exec_args = new char *[args.size() + 1];
     size_t i = 0;
-
-    for (std::string & arg : fargs)
-    {
-      exec_args[i++] = (char *)arg.c_str();
-    }
-
     for (std::string & arg : args)
     {
       exec_args[i++] = (char *)arg.c_str();
     }
-
     exec_args[i] = nullptr;
 
-    execvp(compilerpath.c_str(), exec_args);
+    execvp(compiler_name.c_str(), exec_args);
 
     int result = errno;
-    std::cerr << "execvp failed: " << compilerpath << ": "
+    std::cerr << "execvp failed: " << compiler_name << ": "
               << strerror(result) << std::endl;
     return 1;
   }
