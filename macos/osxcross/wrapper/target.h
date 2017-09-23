@@ -88,7 +88,6 @@ struct Target {
   void setCompilerPath();
   bool findClangIntrinsicHeaders(std::string &path);
 
-  void setupGCCLibs(Arch arch);
   bool setup();
 
   const char *vendor;
@@ -99,7 +98,6 @@ struct Target {
   StdLib stdlib;
   ClangVersion clangversion;
   GCCVersion gccversion;
-  bool usegcclibs;
   int wliblto;
   Compiler compiler;
   std::string compilerpath;     // /usr/bin/clang | [...]/target/bin/*-gcc

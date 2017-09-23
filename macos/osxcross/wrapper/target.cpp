@@ -41,7 +41,7 @@
 Target::Target()
     : vendor(getDefaultVendor()),
       arch(Arch::x86_64), target(getDefaultTarget()), stdlib(StdLib::unset),
-      usegcclibs(), wliblto(-1), language() {
+      wliblto(-1), language() {
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
 }
@@ -134,57 +134,6 @@ void Target::setCompilerPath() {
 
     compilerexecname += compilername;
   }
-}
-
-void Target::setupGCCLibs(Arch arch) {
-  assert(stdlib == StdLib::libstdcxx);
-  fargs.push_back("-nodefaultlibs");
-
-  std::string SDKPath = WRAPPER_SDK_PATH;
-  std::stringstream GCCLibSTDCXXPath;
-  std::stringstream GCCLibPath;
-
-  const bool dynamic = !!getenv("OSXCROSS_GCC_NO_STATIC_RUNTIME");
-
-  switch (arch) {
-  case Arch::i386:
-  case Arch::i486:
-  case Arch::i586:
-  case Arch::i686:
-    GCCLibPath << "/" << getArchName(Arch::i386);
-    GCCLibSTDCXXPath << "/" << getArchName(i386);
-  default:
-    ;
-  }
-
-  if (dynamic) {
-    fargs.push_back("-L");
-    fargs.push_back(GCCLibPath.str());
-    fargs.push_back("-L");
-    fargs.push_back(GCCLibSTDCXXPath.str());
-  }
-
-  auto addLib = [&](const std::stringstream &path, const char *lib) {
-    if (dynamic) {
-      fargs.push_back("-l");
-      fargs.push_back(lib);
-    } else {
-      static std::stringstream tmp;
-      clear(tmp);
-      tmp << path.str() << "/lib" << lib << ".a";
-      fargs.push_back(tmp.str());
-    }
-  };
-
-  fargs.push_back("-Qunused-arguments");
-
-  addLib(GCCLibSTDCXXPath, "stdc++");
-  addLib(GCCLibSTDCXXPath, "supc++");
-  addLib(GCCLibPath, "gcc");
-  addLib(GCCLibPath, "gcc_eh");
-
-  fargs.push_back("-lc");
-  fargs.push_back("-Wl,-no_compact_unwind");
 }
 
 bool Target::setup() {
@@ -293,49 +242,18 @@ bool Target::setup() {
     if (isGCC())
       break;
 
-    if (usegcclibs) {
-      // Use libs from './build_gcc.sh' installation
+    // Use SDK libs
+    std::string tmp;
 
-      CXXHeaderPath += "/../../";
-      CXXHeaderPath += otriple;
-      CXXHeaderPath += "/include/c++";
+    if (SDKOSNum <= OSVersion(10, 5))
+      CXXHeaderPath += "/usr/include/c++/4.0.0";
+    else
+      CXXHeaderPath += "/usr/include/c++/4.2.1";
 
-      static std::vector<GCCVersion> v;
-      v.clear();
-
-      listFiles(CXXHeaderPath.c_str(), nullptr, [](const char *path) {
-        if (path[0] != '.')
-          v.push_back(parseGCCVersion(path));
-        return false;
-      });
-
-      if (v.empty()) {
-        err << "'-foc-use-gcc-libstdc++' requires gcc to be installed "
-               "(./build_gcc.sh)" << err.endl();
-        return false;
-      }
-
-      std::sort(v.begin(), v.end());
-      gccversion = v[v.size() - 1];
-
-      CXXHeaderPath += "/";
-      CXXHeaderPath += gccversion.Str();
-
-      addCXXPath(otriple);
-    } else {
-      // Use SDK libs
-      std::string tmp;
-
-      if (SDKOSNum <= OSVersion(10, 5))
-        CXXHeaderPath += "/usr/include/c++/4.0.0";
-      else
-        CXXHeaderPath += "/usr/include/c++/4.2.1";
-
-      tmp = getArchName(arch);
-      tmp += "-apple-";
-      tmp += target;
-      addCXXPath(tmp);
-    }
+    tmp = getArchName(arch);
+    tmp += "-apple-";
+    tmp += target;
+    addCXXPath(tmp);
 
     addCXXPath("backward");
 
@@ -372,18 +290,6 @@ bool Target::setup() {
       tmp = "-stdlib=";
       tmp += getStdLibString(stdlib);
       fargs.push_back(tmp);
-
-      if (stdlib == StdLib::libcxx ||
-          (stdlib == StdLib::libstdcxx && usegcclibs)) {
-        fargs.push_back("-nostdinc++");
-        fargs.push_back("-Qunused-arguments");
-      }
-
-      if (stdlib == StdLib::libstdcxx && usegcclibs && targetarch.size() < 2 &&
-          !isGCH()) {
-        // Use libs from './build_gcc' installation
-        setupGCCLibs(targetarch[0]);
-      }
     }
   } else if (isGCC()) {
     if (isCXX() && stdlib == StdLib::libcxx) {
@@ -445,8 +351,6 @@ bool Target::setup() {
 
         fargs.push_back(is32bit ? "-m32" : "-m64");
       } else if (isClang()) {
-        if (usegcclibs && targetarch.size() > 1)
-          break;
         fargs.push_back("-arch");
         fargs.push_back(getArchName(arch));
       }
