@@ -92,38 +92,14 @@ const std::string &Target::getDefaultTriple(std::string &triple) const {
 bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
   OSVersion SDKOSNum = parseOSVersion(WRAPPER_SDK_VERSION);
+  OSVersion OSNum = parseOSVersion(WRAPPER_OS_VERSION_MIN);
 
   if (targetarch.empty())
   {
     targetarch.push_back(arch);
   }
 
-  std::string triple = getArchName(arch);
-  triple += "-";
-  triple += vendor;
-  triple += "-";
-  triple += target;
-
-  std::string otriple = getArchName(Arch::x86_64);
-  otriple += "-";
-  otriple += vendor;
-  otriple += "-";
-  otriple += target;
-
-  if (!OSNum.Num()) {
-    if (haveArch(Arch::x86_64h)) {
-      OSNum = OSVersion(10, 8); // Default to 10.8 for x86_64h
-      if (SDKOSNum < OSNum) {
-        err << "'" << getArchName(arch) << "' requires Mac OS X SDK "
-            << OSNum.shortStr() << " (or later)" << err.endl();
-        return false;
-      }
-    } else if (stdlib == StdLib::libcxx) {
-      OSNum = OSVersion(10, 7); // Default to 10.7 for libc++
-    } else {
-      OSNum = getDefaultMinTarget();
-    }
-  }
+  std::string triple = WRAPPER_HOST;
 
   if (haveArch(Arch::x86_64h) && OSNum < OSVersion(10, 8)) {
     // -mmacosx-version-min= < 10.8 in combination with '-arch x86_64h'

@@ -30,17 +30,6 @@ constexpr const char *getOSXCrossVersion() {
 #endif
 }
 
-#ifdef OSXCROSS_OSX_VERSION_MIN
-inline OSVersion getDefaultMinTarget() {
-  if (!strcmp(OSXCROSS_OSX_VERSION_MIN, "default"))
-    return OSVersion();
-
-  return parseOSVersion(OSXCROSS_OSX_VERSION_MIN);
-}
-#else
-constexpr OSVersion getDefaultMinTarget() { return OSVersion(); }
-#endif
-
 inline const char *getSDKSearchDir() {
   const char *SDKSearchDir = getenv("OSXCROSS_SDK_SEARCH_DIR");
 
@@ -73,7 +62,6 @@ struct Target {
   Arch arch;
   std::vector<Arch> targetarch;
   std::string target;
-  OSVersion OSNum;
   StdLib stdlib;
   ClangVersion clangversion;
   GCCVersion gccversion;
