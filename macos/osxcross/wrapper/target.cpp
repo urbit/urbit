@@ -50,52 +50,6 @@ OSVersion Target::getSDKOSNum() const {
   return parseOSVersion(WRAPPER_SDK_VERSION);
 }
 
-bool Target::getMacPortsDir(std::string &path) const {
-  path = execpath;
-  path += "/../macports";
-  return dirExists(path);
-}
-
-bool Target::getMacPortsSysRootDir(std::string &path) const {
-  if (!getMacPortsDir(path))
-    return false;
-
-  path += "/pkgs";
-  return dirExists(path);
-}
-
-bool Target::getMacPortsPkgConfigDir(std::string &path) const {
-  if (!getMacPortsDir(path))
-    return false;
-
-  path += "/pkgs/opt/local/lib/pkgconfig";
-  return dirExists(path);
-}
-
-bool Target::getMacPortsIncludeDir(std::string &path) const {
-  if (!getMacPortsDir(path))
-    return false;
-
-  path += "/pkgs/opt/local/include";
-  return dirExists(path);
-}
-
-bool Target::getMacPortsLibDir(std::string &path) const {
-  if (!getMacPortsDir(path))
-    return false;
-
-  path += "/pkgs/opt/local/lib";
-  return dirExists(path);
-}
-
-bool Target::getMacPortsFrameworksDir(std::string &path) const {
-  if (!getMacPortsDir(path))
-    return false;
-
-  path += "/pkgs/opt/local/Library/Frameworks";
-  return dirExists(path);
-}
-
 void Target::addArch(const Arch arch) {
   auto &v = targetarch;
   for (size_t i = 0; i < v.size(); ++i) {
@@ -171,27 +125,14 @@ const std::string &Target::getDefaultTriple(std::string &triple) const {
 }
 
 void Target::setCompilerPath() {
-  if (isGCC()) {
-    compilerpath = execpath;
+  if (!compilerpath.empty()) {
     compilerpath += "/";
-    compilerpath += getTriple();
-    compilerpath += "-";
-    compilerpath += "base-";
     compilerpath += compilername;
-
-    compilerexecname = getTriple();
-    compilerexecname += "-";
-    compilerexecname += compilername;
   } else {
-    if (!compilerpath.empty()) {
-      compilerpath += "/";
-      compilerpath += compilername;
-    } else {
-      if (!realPath(compilername.c_str(), compilerpath, ignoreCCACHE))
-        compilerpath = compilername;
+    if (!realPath(compilername.c_str(), compilerpath, ignoreCCACHE))
+      compilerpath = compilername;
 
-      compilerexecname += compilername;
-    }
+    compilerexecname += compilername;
   }
 }
 
@@ -204,11 +145,6 @@ void Target::setupGCCLibs(Arch arch) {
   std::stringstream GCCLibPath;
 
   const bool dynamic = !!getenv("OSXCROSS_GCC_NO_STATIC_RUNTIME");
-
-  GCCLibPath << SDKPath << "/../../lib/gcc/" << otriple << "/"
-             << gccversion.Str();
-
-  GCCLibSTDCXXPath << SDKPath << "/../../" << otriple << "/lib";
 
   switch (arch) {
   case Arch::i386:
@@ -254,6 +190,8 @@ void Target::setupGCCLibs(Arch arch) {
 bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
   OSVersion SDKOSNum = getSDKOSNum();
+  std::string triple;
+  std::string otriple;
 
   if (!isKnownCompiler())
     warn << "unknown compiler '" << compilername << "'" << warn.endl();
@@ -419,7 +357,7 @@ bool Target::setup() {
     std::string tmp;
 
     fargs.push_back("-target");
-    fargs.push_back(getTriple());
+    fargs.push_back(triple);
 
     tmp = "-mlinker-version=";
     tmp += getLinkerVersion();

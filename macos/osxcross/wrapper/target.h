@@ -69,13 +69,6 @@ struct Target {
   OSVersion getSDKOSNum() const;
   void overrideDefaultSDKPath(const char *SDKSearchDir);
 
-  bool getMacPortsDir(std::string &path) const;
-  bool getMacPortsSysRootDir(std::string &path) const;
-  bool getMacPortsPkgConfigDir(std::string &path) const;
-  bool getMacPortsIncludeDir(std::string &path) const;
-  bool getMacPortsLibDir(std::string &path) const;
-  bool getMacPortsFrameworksDir(std::string &path) const;
-
   void addArch(const Arch arch);
   bool haveArch(const Arch arch);
 
@@ -91,7 +84,6 @@ struct Target {
   bool isKnownCompiler() const;
 
   const std::string &getDefaultTriple(std::string &triple) const;
-  const std::string &getTriple() const { return triple; }
 
   void setCompilerPath();
   bool findClangIntrinsicHeaders(std::string &path);
@@ -113,8 +105,6 @@ struct Target {
   std::string compilerpath;     // /usr/bin/clang | [...]/target/bin/*-gcc
   std::string compilername;     // clang | gcc
   std::string compilerexecname; // clang | *-apple-darwin-gcc
-  std::string triple;
-  std::string otriple;
   string_vector fargs;
   string_vector args;
   const char *language;
