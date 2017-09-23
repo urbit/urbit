@@ -22,8 +22,6 @@
 constexpr const char *getDefaultVendor() { return "apple"; }
 constexpr const char *getDefaultTarget() { return OSXCROSS_TARGET; }
 
-constexpr const char *getBuildDir() { return OSXCROSS_BUILD_DIR; }
-
 constexpr const char *getLibLTOPath() {
 #ifdef OSXCROSS_LIBLTO_PATH
   return OSXCROSS_LIBLTO_PATH;
