@@ -22,14 +22,6 @@
 constexpr const char *getDefaultVendor() { return "apple"; }
 constexpr const char *getDefaultTarget() { return OSXCROSS_TARGET; }
 
-constexpr const char *getLibLTOPath() {
-#ifdef OSXCROSS_LIBLTO_PATH
-  return OSXCROSS_LIBLTO_PATH;
-#else
-  return nullptr;
-#endif
-}
-
 constexpr const char *getOSXCrossVersion() {
 #ifdef OSXCROSS_VERSION
   return OSXCROSS_VERSION[0] ? OSXCROSS_VERSION : "unknown";
@@ -86,7 +78,6 @@ struct Target {
   StdLib stdlib;
   ClangVersion clangversion;
   GCCVersion gccversion;
-  int wliblto;
   Compiler compiler;
   std::string compilerpath;     // /usr/bin/clang | [...]/target/bin/*-gcc
   std::string compilername;     // clang | gcc

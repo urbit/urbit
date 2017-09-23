@@ -41,7 +41,7 @@
 Target::Target()
     : vendor(getDefaultVendor()),
       arch(Arch::x86_64), target(getDefaultTarget()), stdlib(StdLib::unset),
-      wliblto(-1), language() {
+      language() {
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
 }
@@ -244,19 +244,6 @@ bool Target::setup() {
           << err.endl();
       return false;
     }
-  }
-
-  //
-  // Silence:
-  // warning: libLTO.dylib relative to clang installed dir not found;
-  //          using 'ld' default search path instead
-  //
-  // '-flto' will of course work nevertheless, it's just a buggy
-  // cross-compilation warning.
-  //
-  if (wliblto == -1)
-  {
-    fargs.push_back("-Wno-liblto");
   }
 
   return true;
