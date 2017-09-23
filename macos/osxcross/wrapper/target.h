@@ -72,16 +72,8 @@ struct Target {
   void addArch(const Arch arch);
   bool haveArch(const Arch arch);
 
-  bool hasLibCXX() const;
-  bool libCXXIsDefaultCXXLib() const;
-
   bool isCXX();
   bool isGCH();
-
-  bool isClang() const;
-  bool isGCC() const;
-
-  bool isKnownCompiler() const;
 
   const std::string &getDefaultTriple(std::string &triple) const;
 

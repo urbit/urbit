@@ -70,23 +70,8 @@ bool Target::haveArch(const Arch arch) {
   return false;
 }
 
-bool Target::hasLibCXX() const { return getSDKOSNum() >= OSVersion(10, 7); }
-
-bool Target::libCXXIsDefaultCXXLib() const {
-  OSVersion OSNum = this->OSNum;
-
-  if (!OSNum.Num())
-    OSNum = getSDKOSNum();
-
-  return stdlib != libstdcxx && hasLibCXX() && !isGCC() &&
-         OSNum >= OSVersion(10, 9);
-}
-
 bool Target::isCXX() {
-  if (isKnownCompiler())
-    return (compiler == Compiler::CLANGXX || compiler == Compiler::GXX);
-
-  return endsWith(compilername, "++");
+  return (compiler == Compiler::CLANGXX || compiler == Compiler::GXX);
 }
 
 bool Target::isGCH() {
@@ -98,22 +83,6 @@ bool Target::isGCH() {
          !strcmp(language, "objective-c-header") ||
          !strcmp(language, "objective-c++-header");
 }
-
-
-bool Target::isClang() const {
-  return true;
-  return (compiler == Compiler::CLANG || compiler == Compiler::CLANGXX);
-}
-
-bool Target::isGCC() const {
-  return false;
-  return (compiler == Compiler::GCC || compiler == Compiler::GXX);
-}
-
-bool Target::isKnownCompiler() const {
-  return compiler != Compiler::UNKNOWN;
-}
-
 
 const std::string &Target::getDefaultTriple(std::string &triple) const {
   triple = getArchName(Arch::x86_64);
@@ -139,22 +108,17 @@ void Target::setCompilerPath() {
 bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
   OSVersion SDKOSNum = getSDKOSNum();
-  std::string triple;
-  std::string otriple;
-
-  if (!isKnownCompiler())
-    warn << "unknown compiler '" << compilername << "'" << warn.endl();
 
   if (targetarch.empty())
     targetarch.push_back(arch);
 
-  triple = getArchName(arch);
+  std::string triple = getArchName(arch);
   triple += "-";
   triple += vendor;
   triple += "-";
   triple += target;
 
-  otriple = getArchName(Arch::x86_64);
+  std::string otriple = getArchName(Arch::x86_64);
   otriple += "-";
   otriple += vendor;
   otriple += "-";
@@ -190,24 +154,8 @@ bool Target::setup() {
   }
 
   if (stdlib == StdLib::unset) {
-    if (libCXXIsDefaultCXXLib()) {
-      stdlib = StdLib::libcxx;
-    } else {
-      stdlib = StdLib::libstdcxx;
-    }
-  } else if (stdlib == StdLib::libcxx) {
-    if (!hasLibCXX()) {
-      err << "libc++ requires Mac OS X SDK 10.7 (or later)" << err.endl();
-      return false;
-    }
-
-    if (OSNum.Num() && OSNum < OSVersion(10, 7)) {
-      err << "libc++ requires '-mmacosx-version-min=10.7' (or later)"
-          << err.endl();
-      return false;
-    }
+    stdlib = StdLib::libcxx;
   }
-
   if (OSNum > SDKOSNum) {
     err << "targeted OS X version must be <= " << SDKOSNum.Str() << " (SDK)"
         << err.endl();
@@ -239,18 +187,11 @@ bool Target::setup() {
     break;
   }
   case StdLib::libstdcxx: {
-    if (isGCC())
-      break;
-
     // Use SDK libs
-    std::string tmp;
 
-    if (SDKOSNum <= OSVersion(10, 5))
-      CXXHeaderPath += "/usr/include/c++/4.0.0";
-    else
-      CXXHeaderPath += "/usr/include/c++/4.2.1";
+    CXXHeaderPath += "/usr/include/c++/4.2.1";
 
-    tmp = getArchName(arch);
+    std::string tmp = getArchName(arch);
     tmp += "-apple-";
     tmp += target;
     addCXXPath(tmp);
@@ -271,13 +212,11 @@ bool Target::setup() {
 
   fargs.push_back(compilerexecname);
 
-  if (isClang()) {
-    std::string tmp;
-
+  {
     fargs.push_back("-target");
     fargs.push_back(triple);
 
-    tmp = "-mlinker-version=";
+    std::string tmp = "-mlinker-version=";
     tmp += getLinkerVersion();
 
     fargs.push_back(tmp);
@@ -291,28 +230,10 @@ bool Target::setup() {
       tmp += getStdLibString(stdlib);
       fargs.push_back(tmp);
     }
-  } else if (isGCC()) {
-    if (isCXX() && stdlib == StdLib::libcxx) {
-      fargs.push_back("-nostdinc++");
-      fargs.push_back("-nodefaultlibs");
-
-      if (!isGCH()) {
-        fargs.push_back("-lc");
-        fargs.push_back("-lc++");
-        fargs.push_back("-lgcc_s.10.5");
-      }
-    } else if (stdlib != StdLib::libcxx && !isGCH() &&
-               !getenv("OSXCROSS_GCC_NO_STATIC_RUNTIME")) {
-      fargs.push_back("-static-libgcc");
-      fargs.push_back("-static-libstdc++");
-    }
-
-    if (!isGCH())
-      fargs.push_back("-Wl,-no_compact_unwind");
   }
 
   auto addCXXHeaderPath = [&](const std::string &path) {
-    fargs.push_back(isClang() ? "-cxx-isystem" : "-isystem");
+    fargs.push_back("-cxx-isystem");
     fargs.push_back(path);
   };
 
@@ -329,31 +250,15 @@ bool Target::setup() {
   }
 
   for (auto arch : targetarch) {
-    bool is32bit = false;
-
     switch (arch) {
     case Arch::i386:
     case Arch::i486:
     case Arch::i586:
     case Arch::i686:
-      is32bit = true;
     case Arch::x86_64:
     case Arch::x86_64h:
-      if (isGCC()) {
-        if (arch == Arch::x86_64h) {
-          err << "gcc does not support architecture '" << getArchName(arch)
-              << "'" << err.endl();
-          return false;
-        }
-
-        if (targetarch.size() > 1)
-          break;
-
-        fargs.push_back(is32bit ? "-m32" : "-m64");
-      } else if (isClang()) {
-        fargs.push_back("-arch");
-        fargs.push_back(getArchName(arch));
-      }
+      fargs.push_back("-arch");
+      fargs.push_back(getArchName(arch));
       break;
     default:
       err << "unsupported architecture: '" << getArchName(arch) << "'"
@@ -362,17 +267,17 @@ bool Target::setup() {
     }
   }
 
-  if (isClang() && clangversion >= ClangVersion(3, 8)) {
-    //
-    // Silence:
-    // warning: libLTO.dylib relative to clang installed dir not found;
-    //          using 'ld' default search path instead
-    //
-    // '-flto' will of course work nevertheless, it's just a buggy
-    // cross-compilation warning.
-    //
-    if (wliblto == -1)
-      fargs.push_back("-Wno-liblto");
+  //
+  // Silence:
+  // warning: libLTO.dylib relative to clang installed dir not found;
+  //          using 'ld' default search path instead
+  //
+  // '-flto' will of course work nevertheless, it's just a buggy
+  // cross-compilation warning.
+  //
+  if (wliblto == -1)
+  {
+    fargs.push_back("-Wno-liblto");
   }
 
   return true;
