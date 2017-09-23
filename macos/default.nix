@@ -116,7 +116,6 @@ let
       "-DOSXCROSS_VERSION=\\\"0.15\\\" " +
       "-DOSXCROSS_TARGET=\\\"${darwin_name}\\\" " +
       "-DOSXCROSS_OSX_VERSION_MIN=\\\"${macos_version_min}\\\" " +
-      "-DOSXCROSS_LINKER_VERSION=\\\"274.2\\\" " +
       "-DOSXCROSS_LIBLTO_PATH=\\\"\\\" " +
       "-DOSXCROSS_BUILD_DIR=\\\"\\\" " +
       "-DWRAPPER_SDK_PATH=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +

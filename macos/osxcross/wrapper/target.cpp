@@ -202,17 +202,11 @@ bool Target::setup() {
     fargs.push_back("-target");
     fargs.push_back(triple);
 
-    std::string tmp = "-mlinker-version=";
-    tmp += getLinkerVersion();
-
-    fargs.push_back(tmp);
-    tmp.clear();
-
     fargs.push_back("--sysroot");
     fargs.push_back(SDKPath);
 
     if (isCXX()) {
-      tmp = "-stdlib=";
+      std::string tmp = "-stdlib=";
       tmp += getStdLibString(stdlib);
       fargs.push_back(tmp);
     }
@@ -229,8 +223,7 @@ bool Target::setup() {
     addCXXHeaderPath(path);
 
   if (OSNum.Num()) {
-    std::string tmp;
-    tmp = "-mmacosx-version-min=";
+    std::string tmp = "-mmacosx-version-min=";
     tmp += OSNum.Str();
     fargs.push_back(tmp);
   }
