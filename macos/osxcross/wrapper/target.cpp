@@ -46,10 +46,6 @@ Target::Target()
     abort();
 }
 
-OSVersion Target::getSDKOSNum() const {
-  return parseOSVersion(WRAPPER_SDK_VERSION);
-}
-
 void Target::addArch(const Arch arch) {
   auto &v = targetarch;
   for (size_t i = 0; i < v.size(); ++i) {
@@ -95,10 +91,12 @@ const std::string &Target::getDefaultTriple(std::string &triple) const {
 
 bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
-  OSVersion SDKOSNum = getSDKOSNum();
+  OSVersion SDKOSNum = parseOSVersion(WRAPPER_SDK_VERSION);
 
   if (targetarch.empty())
+  {
     targetarch.push_back(arch);
+  }
 
   std::string triple = getArchName(arch);
   triple += "-";

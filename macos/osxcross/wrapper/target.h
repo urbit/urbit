@@ -55,7 +55,6 @@ inline const char *getSDKSearchDir() {
 struct Target {
   Target();
 
-  OSVersion getSDKOSNum() const;
   void overrideDefaultSDKPath(const char *SDKSearchDir);
 
   void addArch(const Arch arch);
