@@ -1,24 +1,3 @@
-/***********************************************************************
- *  OSXCross Compiler Wrapper                                          *
- *  Copyright (C) 2014-2016 by Thomas Poechtrager                      *
- *  t.poechtrager@gmail.com                                            *
- *                                                                     *
- *  This program is free software; you can redistribute it and/or      *
- *  modify it under the terms of the GNU General Public License        *
- *  as published by the Free Software Foundation; either version 2     *
- *  of the License, or (at your option) any later version.             *
- *                                                                     *
- *  This program is distributed in the hope that it will be useful,    *
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of     *
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the      *
- *  GNU General Public License for more details.                       *
- *                                                                     *
- *  You should have received a copy of the GNU General Public License  *
- *  along with this program; if not, write to the Free Software        *
- *  Foundation, Inc.,                                                  *
- *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.      *
- ***********************************************************************/
-
 #include <vector>
 #include <string>
 #include <iostream>
@@ -26,7 +5,7 @@
 #include <cstdlib>
 #include <unistd.h>
 
-static int do_exec(const std::string & compiler_name,
+int do_exec(const std::string & compiler_name,
   const std::vector<std::string> & args)
 {
   char ** exec_args = new char *[args.size() + 1];
@@ -45,7 +24,7 @@ static int do_exec(const std::string & compiler_name,
   return 1;
 }
 
-static int compiler_main(int argc, char ** argv,
+int compiler_main(int argc, char ** argv,
   const std::string & compiler_name)
 {
   std::vector<std::string> args;
@@ -59,6 +38,11 @@ static int compiler_main(int argc, char ** argv,
 
   args.push_back("--sysroot");
   args.push_back(WRAPPER_SDK_PATH);
+
+  // Causes clang to pass -demangle,  -lto_library, -no_deduplicate, and other
+  // options that could be useful.  Version 274.2 is the version number used here:
+  // https://github.com/tpoechtrager/osxcross/blob/474f359/build.sh#L140
+  args.push_back("-mlinker-version=274.2");
 
   if (compiler_name == "clang++")
   {
@@ -137,6 +121,7 @@ int main(int argc, char ** argv)
     }
   }
 
-  std::cerr << "compiler wrapper invoked with unknown program name: " << argv[0] << std::endl;
+  std::cerr << "compiler wrapper invoked with unknown program name: "
+            << argv[0] << std::endl;
   return 1;
 }
