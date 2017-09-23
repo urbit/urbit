@@ -56,24 +56,3 @@ bool Target::isGCH() {
          !strcmp(language, "objective-c++-header");
 }
 
-bool Target::setup() {
-  fargs.push_back(compilerexecname);
-
-  fargs.push_back("-target");
-  fargs.push_back(WRAPPER_HOST);
-
-  fargs.push_back("--sysroot");
-  fargs.push_back(WRAPPER_SDK_PATH);
-
-  if (isCXX())
-  {
-    fargs.push_back("-stdlib=libc++");
-    fargs.push_back("-cxx-isystem");
-    fargs.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
-  }
-
-  fargs.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
-
-  return true;
-}
-

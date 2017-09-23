@@ -71,14 +71,6 @@ int compiler_main(int argc, char ** argv, const char *compiler_name)
   target.compilerexecname = compiler_name;
   target.compilerpath = compiler_name;
   target.target = OSXCROSS_TARGET;  // e.g. "darwin15"
-  if (target.compilername == "clang++")
-  {
-    target.compiler = Compiler::CLANGXX;
-  }
-  else
-  {
-    target.compiler = Compiler::CLANG;
-  }
 
   target.args.reserve(argc);
   for (int i = 1; i < argc; ++i)
@@ -86,11 +78,21 @@ int compiler_main(int argc, char ** argv, const char *compiler_name)
     target.args.push_back(argv[i]);
   }
 
-  bool success = target.setup();
-  if (!success)
+  target.fargs.push_back(target.compilerexecname);
+
+  target.fargs.push_back("-target");
+  target.fargs.push_back(WRAPPER_HOST);
+
+  target.fargs.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
+
+  target.fargs.push_back("--sysroot");
+  target.fargs.push_back(WRAPPER_SDK_PATH);
+
+  if (target.compilername == "clang++")
   {
-    err << "while setting up target" << err.endl();
-    return 1;
+    target.fargs.push_back("-stdlib=libc++");
+    target.fargs.push_back("-cxx-isystem");
+    target.fargs.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
   }
 
   return do_exec(target);
