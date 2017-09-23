@@ -39,9 +39,7 @@
 #include "target.h"
 
 Target::Target()
-    : stdlib(StdLib::unset), language() {
-  if (!getExecutablePath(execpath, sizeof(execpath)))
-    abort();
+{
 }
 
 bool Target::isCXX() {
@@ -60,92 +58,24 @@ bool Target::isGCH() {
 
 bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
-  OSVersion SDKOSNum = parseOSVersion(WRAPPER_SDK_VERSION);
   OSVersion OSNum = parseOSVersion(WRAPPER_OS_VERSION_MIN);
   std::string triple = WRAPPER_HOST;
 
-  if (stdlib == StdLib::unset) {
-    stdlib = StdLib::libcxx;
-  }
-  if (OSNum > SDKOSNum) {
-    err << "targeted OS X version must be <= " << SDKOSNum.Str() << " (SDK)"
-        << err.endl();
-    return false;
-  } else if (OSNum < OSVersion(10, 4)) {
-    err << "targeted OS X version must be >= 10.4" << err.endl();
-    return false;
-  }
-
-  std::string CXXHeaderPath = SDKPath;
-  std::vector<std::string> AdditionalCXXHeaderPaths;
-
-  auto addCXXPath = [&](const std::string &path) {
-    std::string tmp;
-    tmp = CXXHeaderPath;
-    tmp += "/";
-    tmp += path;
-    AdditionalCXXHeaderPaths.push_back(tmp);
-  };
-
-  switch (stdlib) {
-  case StdLib::libcxx: {
-    CXXHeaderPath += "/usr/include/c++/v1";
-    if (!dirExists(CXXHeaderPath)) {
-      err << "cannot find " << getStdLibString(stdlib) << " headers"
-          << err.endl();
-      return false;
-    }
-    break;
-  }
-  case StdLib::libstdcxx: {
-    // Use SDK libs
-
-    CXXHeaderPath += "/usr/include/c++/4.2.1";
-
-    std::string tmp = getArchName(arch);
-    tmp += "-apple-";
-    tmp += target;
-    addCXXPath(tmp);
-
-    addCXXPath("backward");
-
-    if (!dirExists(CXXHeaderPath)) {
-      err << "cannot find " << getStdLibString(stdlib) << " headers"
-          << err.endl();
-      return false;
-    }
-
-    break;
-  }
-  case StdLib::unset:
-    abort();
-  }
-
   fargs.push_back(compilerexecname);
 
+  fargs.push_back("-target");
+  fargs.push_back(triple);
+
+  fargs.push_back("--sysroot");
+  fargs.push_back(SDKPath);
+
+  if (isCXX())
   {
-    fargs.push_back("-target");
-    fargs.push_back(triple);
+    fargs.push_back("-stdlib=libc++");
 
-    fargs.push_back("--sysroot");
-    fargs.push_back(SDKPath);
-
-    if (isCXX()) {
-      std::string tmp = "-stdlib=";
-      tmp += getStdLibString(stdlib);
-      fargs.push_back(tmp);
-    }
-  }
-
-  auto addCXXHeaderPath = [&](const std::string &path) {
     fargs.push_back("-cxx-isystem");
-    fargs.push_back(path);
-  };
-
-  addCXXHeaderPath(CXXHeaderPath);
-
-  for (auto &path : AdditionalCXXHeaderPaths)
-    addCXXHeaderPath(path);
+    fargs.push_back(SDKPath + "/usr/include/c++/v1");
+  }
 
   if (OSNum.Num()) {
     std::string tmp = "-mmacosx-version-min=";

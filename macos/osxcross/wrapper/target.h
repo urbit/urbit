@@ -53,7 +53,6 @@ struct Target {
 
   Arch arch;
   std::string target;
-  StdLib stdlib;
   Compiler compiler;
   std::string compilerpath, compilername, compilerexecname;
   std::vector<std::string> fargs, args;
