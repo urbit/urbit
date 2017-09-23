@@ -72,34 +72,14 @@ bool Target::setup() {
   if (isCXX())
   {
     fargs.push_back("-stdlib=libc++");
-
     fargs.push_back("-cxx-isystem");
     fargs.push_back(SDKPath + "/usr/include/c++/v1");
   }
 
-  if (OSNum.Num()) {
-    std::string tmp = "-mmacosx-version-min=";
-    tmp += OSNum.Str();
-    fargs.push_back(tmp);
-  }
+  fargs.push_back(std::string("-mmacosx-version-min=") + OSNum.Str());
 
-  {
-    switch (arch) {
-    case Arch::i386:
-    case Arch::i486:
-    case Arch::i586:
-    case Arch::i686:
-    case Arch::x86_64:
-    case Arch::x86_64h:
-      fargs.push_back("-arch");
-      fargs.push_back(getArchName(arch));
-      break;
-    default:
-      err << "unsupported architecture: '" << getArchName(arch) << "'"
-          << err.endl();
-      return false;
-    }
-  }
+  fargs.push_back("-arch");
+  fargs.push_back(WRAPPER_ARCH);
 
   return true;
 }
