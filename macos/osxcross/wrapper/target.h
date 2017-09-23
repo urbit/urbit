@@ -52,10 +52,6 @@ struct Target {
   bool isCXX();
   bool isGCH();
 
-  const std::string &getDefaultTriple(std::string &triple) const;
-
-  bool findClangIntrinsicHeaders(std::string &path);
-
   bool setup();
 
   const char *vendor;
@@ -63,12 +59,10 @@ struct Target {
   std::vector<Arch> targetarch;
   std::string target;
   StdLib stdlib;
-  ClangVersion clangversion;
-  GCCVersion gccversion;
   Compiler compiler;
-  std::string compilerpath;     // /usr/bin/clang | [...]/target/bin/*-gcc
-  std::string compilername;     // clang | gcc
-  std::string compilerexecname; // clang | *-apple-darwin-gcc
+  std::string compilerpath;
+  std::string compilername;
+  std::string compilerexecname;
   string_vector fargs;
   string_vector args;
   const char *language;

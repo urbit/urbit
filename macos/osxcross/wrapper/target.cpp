@@ -80,15 +80,6 @@ bool Target::isGCH() {
          !strcmp(language, "objective-c++-header");
 }
 
-const std::string &Target::getDefaultTriple(std::string &triple) const {
-  triple = getArchName(Arch::x86_64);
-  triple += "-";
-  triple += getDefaultVendor();
-  triple += "-";
-  triple += getDefaultTarget();
-  return triple;
-}
-
 bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
   OSVersion SDKOSNum = parseOSVersion(WRAPPER_SDK_VERSION);
