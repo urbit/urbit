@@ -19,23 +19,34 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.      *
  ***********************************************************************/
 
-#include "compat.h"
-
 #include <vector>
 #include <string>
-#include <sstream>
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
-#include <cstdio>
-#include <climits>
-#include <cassert>
 #include <unistd.h>
-#include <sys/wait.h>
 
-#include "tools.h"
+static int do_exec(const std::string & compiler_name,
+  const std::vector<std::string> & args)
+{
+  char ** exec_args = new char *[args.size() + 1];
+  size_t i = 0;
+  for (const std::string & arg : args)
+  {
+    exec_args[i++] = (char *)arg.c_str();
+  }
+  exec_args[i] = nullptr;
 
-int compiler_main(int argc, char ** argv, const std::string & compiler_name)
+  execvp(compiler_name.c_str(), exec_args);
+
+  int result = errno;
+  std::cerr << "execvp failed: " << compiler_name << ": "
+            << strerror(result) << std::endl;
+  return 1;
+}
+
+static int compiler_main(int argc, char ** argv,
+  const std::string & compiler_name)
 {
   std::vector<std::string> args;
 
@@ -61,22 +72,7 @@ int compiler_main(int argc, char ** argv, const std::string & compiler_name)
     args.push_back(argv[i]);
   }
 
-  {
-    char ** exec_args = new char *[args.size() + 1];
-    size_t i = 0;
-    for (std::string & arg : args)
-    {
-      exec_args[i++] = (char *)arg.c_str();
-    }
-    exec_args[i] = nullptr;
-
-    execvp(compiler_name.c_str(), exec_args);
-
-    int result = errno;
-    std::cerr << "execvp failed: " << compiler_name << ": "
-              << strerror(result) << std::endl;
-    return 1;
-  }
+  return do_exec(compiler_name, args);
 }
 
 int c_compiler_main(int argc, char ** argv)
