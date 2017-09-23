@@ -46,26 +46,6 @@ Target::Target()
     abort();
 }
 
-void Target::addArch(const Arch arch) {
-  auto &v = targetarch;
-  for (size_t i = 0; i < v.size(); ++i) {
-    if (v[i] == arch) {
-      v.erase(v.begin() + i);
-      addArch(arch);
-      return;
-    }
-  }
-  v.push_back(arch);
-}
-
-bool Target::haveArch(const Arch arch) {
-  for (auto a : targetarch) {
-    if (arch == a)
-      return true;
-  }
-  return false;
-}
-
 bool Target::isCXX() {
   return (compiler == Compiler::CLANGXX || compiler == Compiler::GXX);
 }
@@ -84,25 +64,7 @@ bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
   OSVersion SDKOSNum = parseOSVersion(WRAPPER_SDK_VERSION);
   OSVersion OSNum = parseOSVersion(WRAPPER_OS_VERSION_MIN);
-
-  if (targetarch.empty())
-  {
-    targetarch.push_back(arch);
-  }
-
   std::string triple = WRAPPER_HOST;
-
-  if (haveArch(Arch::x86_64h) && OSNum < OSVersion(10, 8)) {
-    // -mmacosx-version-min= < 10.8 in combination with '-arch x86_64h'
-    // may cause linker errors.
-
-    // Erroring here is really annoying, better risk linking errors instead
-    // of enforcing '-mmacosx-version-min= >= 10.8'.
-
-    if (!getenv("OSXCROSS_NO_X86_64H_DEPLOYMENT_TARGET_WARNING"))
-      warn << "'-mmacosx-version-min=' should be '>= 10.8' for architecture "
-           << "'" << getArchName(Arch::x86_64h) << "'" << warn.endl();
-  }
 
   if (stdlib == StdLib::unset) {
     stdlib = StdLib::libcxx;
@@ -193,7 +155,7 @@ bool Target::setup() {
     fargs.push_back(tmp);
   }
 
-  for (auto arch : targetarch) {
+  {
     switch (arch) {
     case Arch::i386:
     case Arch::i486:

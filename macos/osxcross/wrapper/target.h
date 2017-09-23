@@ -56,7 +56,6 @@ struct Target {
 
   const char *vendor;
   Arch arch;
-  std::vector<Arch> targetarch;
   std::string target;
   StdLib stdlib;
   Compiler compiler;
