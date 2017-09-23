@@ -39,15 +39,13 @@
 #include "target.h"
 
 Target::Target()
-    : vendor(getDefaultVendor()),
-      arch(Arch::x86_64), target(getDefaultTarget()), stdlib(StdLib::unset),
-      language() {
+    : stdlib(StdLib::unset), language() {
   if (!getExecutablePath(execpath, sizeof(execpath)))
     abort();
 }
 
 bool Target::isCXX() {
-  return (compiler == Compiler::CLANGXX || compiler == Compiler::GXX);
+  return compiler == Compiler::CLANGXX || compiler == Compiler::GXX;
 }
 
 bool Target::isGCH() {

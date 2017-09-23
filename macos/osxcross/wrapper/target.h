@@ -19,9 +19,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.      *
  ***********************************************************************/
 
-constexpr const char *getDefaultVendor() { return "apple"; }
-constexpr const char *getDefaultTarget() { return OSXCROSS_TARGET; }
-
 constexpr const char *getOSXCrossVersion() {
 #ifdef OSXCROSS_VERSION
   return OSXCROSS_VERSION[0] ? OSXCROSS_VERSION : "unknown";
@@ -54,7 +51,6 @@ struct Target {
 
   bool setup();
 
-  const char *vendor;
   Arch arch;
   std::string target;
   StdLib stdlib;
