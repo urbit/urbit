@@ -77,7 +77,6 @@ struct Target {
 
   const std::string &getDefaultTriple(std::string &triple) const;
 
-  void setCompilerPath();
   bool findClangIntrinsicHeaders(std::string &path);
 
   bool setup();

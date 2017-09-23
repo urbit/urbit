@@ -68,6 +68,8 @@ int compiler_main(int argc, char ** argv, const char *compiler_name)
   // TODO: get rid of this enum, just use a WRAPPER_ARCH string or something
   target.arch = Arch::x86_64;
   target.compilername = compiler_name;
+  target.compilerexecname = compiler_name;
+  target.compilerpath = compiler_name;
   target.target = OSXCROSS_TARGET;  // e.g. "darwin15"
   if (target.compilername == "clang++")
   {

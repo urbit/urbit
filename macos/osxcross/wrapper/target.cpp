@@ -93,18 +93,6 @@ const std::string &Target::getDefaultTriple(std::string &triple) const {
   return triple;
 }
 
-void Target::setCompilerPath() {
-  if (!compilerpath.empty()) {
-    compilerpath += "/";
-    compilerpath += compilername;
-  } else {
-    if (!realPath(compilername.c_str(), compilerpath, ignoreCCACHE))
-      compilerpath = compilername;
-
-    compilerexecname += compilername;
-  }
-}
-
 bool Target::setup() {
   std::string SDKPath = WRAPPER_SDK_PATH;
   OSVersion SDKOSNum = getSDKOSNum();
@@ -123,8 +111,6 @@ bool Target::setup() {
   otriple += vendor;
   otriple += "-";
   otriple += target;
-
-  setCompilerPath();
 
   if (!OSNum.Num()) {
     if (haveArch(Arch::x86_64h)) {
