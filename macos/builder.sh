@@ -1,14 +1,8 @@
 source $setup
 
-cp -r $osxcross osxcross
-chmod -R u+w osxcross
-cd osxcross
-
 mkdir -p $out/bin
 
-cd wrapper
-
-eval "g++ $CXXFLAGS *.cpp -o $out/bin/$host-wrapper"
+eval "g++ $CXXFLAGS $wrapper/*.cpp -o $out/bin/$host-wrapper"
 
 cd $out/bin
 

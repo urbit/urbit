@@ -1,6 +1,0 @@
-*.o
-*gcc*.tar.*
-*MacOSX*.*
-cpucount
-build/
-target/

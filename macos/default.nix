@@ -14,8 +14,6 @@ let
 
   exe_suffix = "";
 
-  osxcross = ./osxcross;
-
   clang = native.make_derivation rec {
     name = "clang";
 
@@ -105,7 +103,8 @@ let
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
-    inherit host osxcross sdk;
+    inherit host sdk;
+    wrapper = ./wrapper;
     native_inputs = [ clang cctools xar ];
 
     CXXFLAGS =
@@ -113,8 +112,6 @@ let
       "-Wall " +
       "-I. " +
       "-O2 -g " +
-      "-DOSXCROSS_VERSION=\\\"0.15\\\" " +
-      "-DOSXCROSS_TARGET=\\\"${darwin_name}\\\" " +
       "-DWRAPPER_OS_VERSION_MIN=\\\"${macos_version_min}\\\" " +
       "-DWRAPPER_SDK_PATH=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
