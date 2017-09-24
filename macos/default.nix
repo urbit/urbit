@@ -41,6 +41,15 @@ let
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
+  # TODO: add instructions for building the SDK tarball, probably want a copy of
+  # the script from osxcross.
+  sdk = native.make_derivation rec {
+    name = "macos-sdk";
+    builder = ./sdk_builder.sh;
+    version = "10.11";
+    src = ./MacOSX10.11.sdk.tar.xz;
+  };
+
   # Note: We use nixpkgs.clang so we can compile an objective C library (which
   # probably isn't needed).  We can't use our own clang because it doesn't
   # quite work yet for compiling native executables.  Would be nice to get
@@ -57,9 +66,9 @@ let
   # increase the complexity of this build a lot.  As of 2017-09-16, there have
   # been no commits after that one, and the osxcross project is still on commit
   # 8e9c3f2, so this is the more-traveled route.
-  cctools = native.make_derivation {
-    name = "cctools";
-    builder = ./cctools_builder.sh;
+  cctools_tpoechtrager = native.make_derivation {
+    name = "cctools_tpoechtrager-${host}";
+    builder = ./cctools_tpoechtrager_builder.sh;
     src = nixpkgs.fetchurl {
       url = "https://github.com/tpoechtrager/cctools-port/archive/8e9c3f2.tar.gz";
       sha256 = "04p5b1ix52yk48f09xkdv11ki8cc1zwzvm0dk2j8ylb8jk1a04y4";
@@ -72,6 +81,29 @@ let
       nixpkgs.automake
       nixpkgs.m4
     ];
+  };
+
+  cctools = native.make_derivation rec {
+    name = "cctools-${host}";
+    version = "895";
+    builder = ./cctools_builder.sh;
+    src = nixpkgs.fetchurl {
+      url = "https://opensource.apple.com/tarballs/cctools/cctools-${version}.tar.gz";
+      sha256 = "1dsw1jhkfcm1x1vyhhpsg1bl1306v1rdvdxvfspgj5sild7h6rnf";
+    };
+    inherit host;
+    CFLAGS =
+      "-I../cctools/include " +
+      "-I${sdk}/usr/include " +
+
+      "-Wfatal-errors " +
+      "-Werror -Wno-deprecated-declarations -Wno-deprecated " +
+
+      "-D__private_extern__=extern " +
+
+      # TODO: patch sdk/usr/include/libkern/OSByteOrder.h
+      # to work with GCC instead of doing this
+      "-D__LITTLE_ENDIAN__";
   };
 
   xar_src = nixpkgs.fetchurl {
@@ -89,13 +121,6 @@ let
       nixpkgs.zlib.dev
       nixpkgs.pkgconfig
     ];
-  };
-
-  sdk = native.make_derivation rec {
-    name = "macos-sdk";
-    builder = ./sdk_builder.sh;
-    version = "10.11";
-    src = ./MacOSX10.11.sdk.tar.xz;
   };
 
   macos_version_min = "10.11";
@@ -117,6 +142,7 @@ let
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
       "-DWRAPPER_PATH=\\\"${cctools}/bin:${clang}/bin\\\"";
+    # TODO: use cctools.version for the -mlinker-version argument to clang
   };
 
   cmake_toolchain = import ../cmake_toolchain {
@@ -141,7 +167,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang cctools xar sdk;
+    inherit clang cctools cctools_tpoechtrager xar sdk;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };

@@ -1,17 +1,14 @@
 source $setup
 
 tar -xf $src
-mv cctools-port-* cctools-port
-
-cd cctools-port/cctools
-sh autogen.sh
-cd ../..
+mv cctools-* cctools
 
 mkdir build
 cd build
 
-../cctools-port/cctools/configure --prefix=$out $configure_flags
+gcc $CFLAGS -c ../cctools/libmacho/*.c
 
-make
+gcc $CFLAGS ../cctools/ld/ld.c -o $host-ld
 
-make install
+mkdir -p $out/bin
+cp $host-ld $out/bin/
