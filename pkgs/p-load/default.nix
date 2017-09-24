@@ -12,7 +12,5 @@ crossenv.make_derivation rec {
 
   builder = ./builder.sh;
 
-  patches = [ ./tmphax.patch ];
-
   cross_inputs = [ libusbp ];
 }
