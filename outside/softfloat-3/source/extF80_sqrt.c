@@ -2,32 +2,35 @@
 /*============================================================================
 
 This C source file is part of the SoftFloat IEEE Floating-Point Arithmetic
-Package, Release 3, by John R. Hauser.
+Package, Release 3c, by John R. Hauser.
 
-Copyright 2011, 2012, 2013, 2014, 2015 The Regents of the University of
-California (Regents).  All Rights Reserved.  Redistribution and use in source
-and binary forms, with or without modification, are permitted provided that
-the following conditions are met:
+Copyright 2011, 2012, 2013, 2014, 2015, 2016 The Regents of the University of
+California.  All rights reserved.
 
-Redistributions of source code must retain the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer.
-Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions, and the following two paragraphs of disclaimer in the
-documentation and/or other materials provided with the distribution.  Neither
-the name of the Regents nor the names of its contributors may be used to
-endorse or promote products derived from this software without specific prior
-written permission.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING
-OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS
-BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions, and the following disclaimer.
 
-REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED
-TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
-HEREUNDER IS PROVIDED "AS IS".  REGENTS HAS NO OBLIGATION TO PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions, and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+ 3. Neither the name of the University nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS", AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
+DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =============================================================================*/
 
@@ -112,7 +115,7 @@ extFloat80_t extF80_sqrt( extFloat80_t a )
     rem.v64 -= (uint_fast64_t) sig32Z * sig32Z;
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
-    q = ((uint_fast64_t) (uint32_t) (rem.v64>>2) * recipSqrt32)>>32;
+    q = ((uint32_t) (rem.v64>>2) * (uint_fast64_t) recipSqrt32)>>32;
     sigZ = ((uint_fast64_t) sig32Z<<32) + (q<<3);
     x64 = ((uint_fast64_t) sig32Z<<32) + sigZ;
     term = softfloat_mul64ByShifted32To128( x64, q );
@@ -120,7 +123,7 @@ extFloat80_t extF80_sqrt( extFloat80_t a )
     rem = softfloat_sub128( rem.v64, rem.v0, term.v64, term.v0 );
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
-    q = (((uint_fast64_t) (uint32_t) (rem.v64>>2) * recipSqrt32)>>32) + 2;
+    q = (((uint32_t) (rem.v64>>2) * (uint_fast64_t) recipSqrt32)>>32) + 2;
     x64 = sigZ;
     sigZ = (sigZ<<1) + (q>>25);
     sigZExtra = (uint64_t) (q<<39);
@@ -130,7 +133,7 @@ extFloat80_t extF80_sqrt( extFloat80_t a )
         q &= ~(uint_fast64_t) 0xFFFF;
         sigZExtra = (uint64_t) (q<<39);
         term = softfloat_mul64ByShifted32To128( x64 + (q>>27), q );
-        x64 = (uint_fast64_t) (uint32_t) (q<<5) * (uint32_t) q;
+        x64 = (uint32_t) (q<<5) * (uint_fast64_t) (uint32_t) q;
         term = softfloat_add128( term.v64, term.v0, 0, x64 );
         rem = softfloat_shortShiftLeft128( rem.v64, rem.v0, 28 );
         rem = softfloat_sub128( rem.v64, rem.v0, term.v64, term.v0 );
