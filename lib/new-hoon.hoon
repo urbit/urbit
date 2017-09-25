@@ -10,6 +10,7 @@
   +.a
 ::
 ++  either  |*({a/mold b/mold} $%({$& p/a} {$| p/b}))   ::  either
+::
 ++  thr
   |%
   ++  apply
@@ -49,8 +50,7 @@
     |*  a/(list (either))
     =>  .(a (homo a))
     |-
-    ::  todo: this cast is bad. how do i make it a list with the internal types
-    ^-  {(list) (list)}
+    ^-  {(list _?>(?=({{%& *} *} a) p.i.a)) (list _?>(?=({{%| *} *} a) p.i.a))}
     ?~  a
       [~ ~]
     =+  ret=$(a t.a)
@@ -263,10 +263,9 @@
   ++  intercalate
     :>  places {a} between each list in {b}, and flatten to a single list.
     |*  {a/(list) b/(list (list))}
-::    =>  .(b ^.(homo b))
-    ::  todo: this should homogenize with each sub-list in {b}, but right now,
-    ::  i can't get the ++concat/++zang gate working.
-    ^+  (homo a)
+    =>  .(a ^.(homo a), b ^.(homo b))
+    |-
+    ^+  (concat [a b])
     ?~  b
       ~
     =+  c=$(b t.b)
@@ -330,28 +329,15 @@
     ?~  a
       b
     (c $(a t.a) i.a)
-
-
-::    This is even worse; cgy's ++zang doesn't do concat on master either.
-::
-::  ++  zang                                                ::  new promote
-::    |*  a/(list (list))
-::    =>  .(a ^.(homo a))
-::    |-  ^+  i:-.a
-::    ?~  a
-::      ~
-::    (weld i.a $(a t.a))
-::    ::  TODO: this hits the |* span issue.
-::    ::
-::    ::  :>  concatenate a list of lists into a single level.
-::    ::  ++  concat
-::    ::    |*  a/(list (list))
-::    ::    ?~  a
-::    ::      ~
-::    ::    ?~  +.a
-::    ::      -.a
-::    ::    (homo (weld -.a $(a +.a)))
-
+  ::
+  ++  concat
+    :>  concatenate a list of lists into a single level.
+    |*  a/(list (list))
+    =>  .(a ^.(homo a))
+    |-  ^+  (homo i:-.a)
+    ?~  a
+      ~
+    (weld (homo i.a) $(a t.a))
   ::
   ++  any
     :>  returns yes if any element satisfies the predicate
@@ -579,6 +565,9 @@
   ++  is-prefix-of
     :>  returns %.y if the first list is a prefix of the second.
     |*  {a/(list) b/(list)}
+    =>  .(a (homo a), b (homo b))
+    |-
+    ^-  ?
     ?~  a
       %.y
     ?~  b
@@ -590,23 +579,25 @@
   ++  is-suffix-of
     :>  returns %.y if the first list is the suffix of the second.
     |*  {a/(list) b/(list)}
+    =>  .(a (homo a), b (homo b))
+    ^-  ?
     ::  todo: this is performant in haskell because of laziness but may not be
     ::  adequate in hoon.
     (is-prefix-of (reverse a) (reverse b))
   ::
-  ::  todo: figure out why ++is-infix-of never terminates, but only on the
-  ::  master branch.
-  ::
-  ::  ++  is-infix-of
-  ::    :>  returns %.y if the first list appears anywhere in the second.
-  ::    |*  {a/(list) b/(list)}
-  ::    ?~  a
-  ::      %.y
-  ::    ?~  b
-  ::      %.n
-  ::    ?:  (is-prefix-of a b)
-  ::      %.y
-  ::    $(b t.b)
+  ++  is-infix-of
+    :>  returns %.y if the first list appears anywhere in the second.
+    |*  {a/(list) b/(list)}
+    =>  .(a (homo a), b (homo b))
+    |-
+    ^-  ?
+    ?~  a
+      %.y
+    ?~  b
+      %.n
+    ?:  (is-prefix-of a b)
+      %.y
+    $(b t.b)
   ::
   :: todo: ++is-subsequence-of
   ::
@@ -908,33 +899,28 @@
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
-  ::  todo: there's something wrong with the span here.
-  ::
-::    ++  insert-lookup-with-key
-::      :>  combines insertion with lookup in one pass.
-::      |*  {a/(map) key/* value/* fun/$-({* * *} *)}
-::      ::  todo: type should reference a.
-::      |-  ^+  {*(unit value) a}
-::      ::  |-  ^+  a  ::{*(unit value) a}
-::      ?~  a
-::        [~ [[key value] ~ ~]]
-::      ?:  =(key p.n.a)
-::        ::  key already exists; use {fun} to resolve.
-::  ::      [~ q.n.a]
-::        [~ [[key (fun p.n.a q.n.a value)] l.a r.a]]
-::      ?:  (gor key p.n.a)
-::        =+  d=$(a l.a)
-::        ~!  d
-::        ?>  ?=(^ d)
-::        ?:  (vor p.n.a p.n.d)
-::          [~ [n.a d r.a]]
-::        [~ [n.d l.d [n.a r.d r.a]]]
-::      =+  d=$(a r.a)
-::      ~!  d
-::      ?>  ?=(^ d)
-::      ?:  (vor p.n.a p.n.d)
-::        [~ [n.a l.a d]]
-::      [~ [n.d [n.a l.a l.d] r.d]]
+  ++  insert-lookup-with-key
+    :>  combines insertion with lookup in one pass.
+    |*  {a/(map) key/* value/* fun/$-({* * *} *)}
+    |-  ^-  {(maybe _value) _a}
+    ?~  a
+      [~ [[key value] ~ ~]]
+    ?:  =(key p.n.a)
+      ::  key already exists; use {fun} to resolve.
+      [`q.n.a [[key (fun p.n.a q.n.a value)] l.a r.a]]
+    ?:  (gor key p.n.a)
+      =+  rec=$(a l.a)
+      =+  d=+.rec
+      ?>  ?=(^ d)
+      ?:  (vor p.n.a p.n.d)
+        [-.rec [n.a d r.a]]
+      [-.rec [n.d l.d [n.a r.d r.a]]]
+    =+  rec=$(a r.a)
+    =+  d=+.rec
+    ?>  ?=(^ d)
+    ?:  (vor p.n.a p.n.d)
+      [-.rec [n.a l.a d]]
+    [-.rec [n.d [n.a l.a l.d] r.d]]
   ::
   :>  #  %delete-update
   +|
@@ -1373,30 +1359,64 @@
       (union $(a l.a) $(a r.a))
     [[p.n.a +.res] $(a l.a) $(a r.a)]
   ::
-  ::  todo: ++transform-either is another case where the inability to decompose
-  ::  doesn't work. same with ++transform-either-with-key
+  ++  transform-either
+    :>  splits the map in two on a gate that returns an either.
+    |*  {a/(map) fun/$-(* (either))}
+    |-
+    ^-  $:  (map _,.-.,.-.a _?>(?=({{%& *} *} *fun) +:*fun))
+            (map _,.-.,.-.a _?>(?=({{%| *} *} *fun) +:*fun))
+        ==
+    ?~  a
+      [~ ~]
+    ::  todo: runtime wise, can I do better than recursive unions?
+    =+  lr=$(a l.a)
+    =+  rr=$(a r.a)
+    =+  x=(fun q.n.a)
+    ?-  -.x
+      $&  [(insert (union -.lr -.rr) p.n.a +.x) (union +.lr +.rr)]
+      $|  [(union -.lr -.rr) (insert (union +.lr +.rr) p.n.a +.x)]
+    ==
+  ::
+  ++  transform-either-with-key
+    :>  splits the map in two on a gate that returns an either.
+    |*  {a/(map) fun/$-({* *} (either))}
+    |-
+    ^-  $:  (map _,.-.,.-.a _?>(?=({{%& *} *} *fun) +:*fun))
+            (map _,.-.,.-.a _?>(?=({{%| *} *} *fun) +:*fun))
+        ==
+    ?~  a
+      [~ ~]
+    ::  todo: runtime wise, can I do better than recursive unions?
+    =+  lr=$(a l.a)
+    =+  rr=$(a r.a)
+    =+  x=(fun n.a)
+    ~!  x
+    ?-  -.x
+      $&  [(insert (union -.lr -.rr) p.n.a +.x) (union +.lr +.rr)]
+      $|  [(union -.lr -.rr) (insert (union +.lr +.rr) p.n.a +.x)]
+    ==
   ::
   ::  ++split, ++split-lookup and ++split-root do not make sense without
   ::  ordinal keys.
   ::
-  ::  todo: is-submap no longer nest fails. it now goes into an infinite loop
-  ::  like ++is-infix-of does.
-  ::  ++  is-submap
-  ::    :>  returns %.y if every element in {a} exists in {b} with the same value.
-  ::    |*  {a/(map) b/(map)}
-  ::    (is-submap-by a b |=({a/* b/*} =(a b)))
-  ::  ::
-  ::  ++  is-submap-by
-  ::    :>  returns %.y if every element in {a} exists in {b} with the same value.
-  ::    |*  {a/(map) b/(map) fun/$-({* *} ?)}
-  ::    ^-  ?
-  ::    ?~  a  %.y
-  ::    ?~  b  %.n
-  ::    ~!  b
-  ::    ~!  p.n.a
-  ::    =+  x=(get b p.n.a)
-  ::    ?~  x  %.n
-  ::    |((fun q.n.a u.x) $(a l.a) $(a r.a))
+  ++  is-submap
+    :>  returns %.y if every element in {a} exists in {b} with the same value.
+    |*  {a/(map) b/(map)}
+    ^-  ?
+    (is-submap-by a b |=({a/* b/*} =(a b)))
+  ::
+  ++  is-submap-by
+    :>  returns %.y if every element in {a} exists in {b} with the same value.
+    |*  {a/(map) b/(map) fun/$-({* *} ?)}
+    |-
+    ^-  ?
+    ?~  a  %.y
+    ?~  b  %.n
+    ~!  b
+    ~!  p.n.a
+    =+  x=(get b p.n.a)
+    ?~  x  %.n
+    |((fun q.n.a u.x) $(a l.a) $(a r.a))
   ::
   ::  all indexed methods do not make sense when keys aren't ordered.
   ::

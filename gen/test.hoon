@@ -259,7 +259,10 @@
   ::
   ++  test-foldr
     (expect-eq (foldr [1 2 3 ~] 1 |=({a/@ b/@} (add a b))) 7 "foldr")
-  ::  todo: ++concat goes here
+  ::
+  ++  test-concat
+    (expect-eq (concat ~[~[1 2] ~[3 4]]) ~[1 2 3 4] "concat")
+  ::
   ++  test-any-true
     (expect-eq (any [1 2 3 ~] |=(a/@ =(a 2))) %.y "any true")
   ::
@@ -379,13 +382,12 @@
     (is-suffix-of "bar" "foobar")
     %.y
     "is-suffix-of"
-    ::  TODO: Figure out why ++is-infix-of never terminates, but only on the
-    ::  master branch.
-  ::  ++  test-is-infix-of
-  ::    %^  expect-eq
-  ::    (is-infix-of "ob" "foobar")
-  ::    %.y
-  ::    "is-infix-of"
+  ::
+  ++  test-is-infix-of
+    %^  expect-eq
+    (is-infix-of "ob" "foobar")
+    %.y
+    "is-infix-of"
   ::
   ++  test-elem
     %^  expect-eq
@@ -497,7 +499,17 @@
     (insert-with-key four 4 "four" |=({a/@ud b/tape c/tape} (weld (scow %ud a) b)))
     (from-list [[1 "one"] [2 "two"] [3 "three"] [4 "4four"] ~])
     "insert-with-key"
-
+  ::
+  ++  test-insert-lookup-with-key
+    %^  expect-eq
+      %-  insert-lookup-with-key  :^
+        four
+        4
+        "five"
+        |=({key/@ud old/tape new/tape} new)
+    :-  `"four"
+      (from-list [[1 "one"] [2 "two"] [3 "three"] [4 "five"] ~])
+    "insert-lookup-with-key"
   ::
   ++  test-delete
     %^  expect-eq
@@ -687,7 +699,7 @@
       add
     (from-list [[1 1] [2 2] [3 3] ~])
     "from-list-with"
-  
+  ::
   ++  test-filter
     %^  expect-eq
       %+  filter
@@ -745,14 +757,38 @@
     (from-list [[1 2] [2 3] [4 5] [5 6] ~])
     "transform-maybe-with-key"
   ::
-  ::  ++  test-is-submap
-  ::    %^  expect-eq
-  ::      %^  is-submap-by
-  ::      (from-list [[1 1] [4 4] ~])
-  ::      (from-list [[1 1] [2 2] [3 3] [4 4] [5 5] ~])
-  ::      |=({a/* b/*} =(a b))
-  ::    %.y
-  ::    "is-submap"
+  ++  test-transform-either
+    %^  expect-eq
+    %+  transform-either
+      (from-list [[1 1] [2 2] [3 3] [4 4] [5 5] ~])
+      |=  value/@u
+      ?:  =(0 (mod value 2))
+        [%& "even"]
+      [%| 1]
+    :-  (from-list [[2 "even"] [4 "even"] ~])
+      (from-list [[1 1] [3 1] [5 1] ~])
+    "transform-either"
+  ::
+  ++  test-transform-either-with-key
+    %^  expect-eq
+    %+  transform-either-with-key
+      (from-list [[1 1] [2 1] [3 1] [4 1] [5 1] ~])
+      |=  {key/@u value/@u}
+      ?:  =(0 (mod key 2))
+        [%& "even"]
+      [%| 1]
+    :-  (from-list [[2 "even"] [4 "even"] ~])
+      (from-list [[1 1] [3 1] [5 1] ~])
+    "transform-either"
+  ::
+  ++  test-is-submap
+    %^  expect-eq
+      %^  is-submap-by
+      (from-list [[1 1] [4 4] ~])
+      (from-list [[1 1] [2 2] [3 3] [4 4] [5 5] ~])
+      |=({a/* b/*} =(a b))
+    %.y
+    "is-submap"
   --
 ::  ----------------------------------------------------------------------
 ::  Stays in the generator.
@@ -822,6 +858,7 @@
   --
 ::  ----------------------------------------------------------------------
 --
+
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
         $~
@@ -832,7 +869,7 @@
 ::  scry ford for the core from the hoon file. that doesn't exist yet.
 ::(perform-test-suite:local "test-core" !>(test-core) eny)
 
-:: (perform-test-suite:local "test-thr" !>(test-thr) eny)
+::  (perform-test-suite:local "test-thr" !>(test-thr) eny)
 :: (perform-test-suite:local "test-myb" !>(test-myb) eny)
-::(perform-test-suite:local "test-ls" !>(test-ls) eny)
-(perform-test-suite:local "test-mp" !>(test-mp) eny)
+(perform-test-suite:local "test-ls" !>(test-ls) eny)
+::(perform-test-suite:local "test-mp" !>(test-mp) eny)
