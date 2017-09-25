@@ -3,6 +3,13 @@ source $setup
 tar -xf $src
 mv cctools-* cctools
 
+cd cctools
+for patch in $patches; do
+  echo applying patch $patch
+  patch -p1 -i $patch
+done
+cd ..
+
 mkdir build
 cd build
 

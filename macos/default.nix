@@ -85,13 +85,16 @@ let
 
   cctools = native.make_derivation rec {
     name = "cctools-${host}";
-    version = "895";
     builder = ./cctools_builder.sh;
+    version = "895";
+    inherit host;
     src = nixpkgs.fetchurl {
       url = "https://opensource.apple.com/tarballs/cctools/cctools-${version}.tar.gz";
       sha256 = "1dsw1jhkfcm1x1vyhhpsg1bl1306v1rdvdxvfspgj5sild7h6rnf";
     };
-    inherit host;
+
+    patches = [ ./cctools_megapatch.patch ];
+
     CFLAGS =
       "-I../cctools/include " +
       "-I${sdk}/usr/include " +
@@ -99,10 +102,10 @@ let
       "-Wfatal-errors " +
       "-Werror -Wno-deprecated-declarations -Wno-deprecated " +
 
-      "-D__private_extern__=extern " +
+      "-D__private_extern__= " +
 
-      # TODO: patch sdk/usr/include/libkern/OSByteOrder.h
-      # to work with GCC instead of doing this
+      # Note: Maybe we should patch sdk/usr/include/libkern/OSByteOrder.h to
+      # work with GCC instead of defining __LITTLE_ENDIAN__ like this.
       "-D__LITTLE_ENDIAN__";
   };
 

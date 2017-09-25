@@ -1,0 +1,72 @@
+diff -ur cctools-895-orig/ld/pass1.h cctools-895/ld/pass1.h
+--- cctools-895-orig/ld/pass1.h	2016-12-09 10:02:58.000000000 -0800
++++ cctools-895/ld/pass1.h	2017-09-24 19:56:29.257049807 -0700
+@@ -33,44 +33,44 @@
+ 
+ #ifndef RLD
+ /* TRUE if -search_paths_first was specified */
+-__private_extern__ enum bool search_paths_first;
++extern enum bool search_paths_first;
+ 
+ /* the user specified directories to search for -lx filenames, and the number
+    of them */
+-__private_extern__ char **search_dirs;
+-__private_extern__ unsigned long nsearch_dirs;
++extern char **search_dirs;
++extern unsigned long nsearch_dirs;
+ 
+ /*
+  * The user specified directories to search via the environment variable
+  * LD_LIBRARY_PATH.
+  */
+-__private_extern__ char **ld_library_paths;
+-__private_extern__ unsigned long nld_library_paths;
++extern char **ld_library_paths;
++extern unsigned long nld_library_paths;
+ 
+ /* the standard directories to search for -lx filenames */
+-__private_extern__ char *standard_dirs[];
++extern char *standard_dirs[];
+ 
+ /*
+  * The user specified directories to search for "-framework Foo" names, and the
+  * number of them.  These are specified with -F options.
+  */
+-__private_extern__ char **framework_dirs;
+-__private_extern__ unsigned long nframework_dirs;
++extern char **framework_dirs;
++extern unsigned long nframework_dirs;
+ 
+ /* the standard framework directories to search for "-framework Foo" names */
+-__private_extern__ char *standard_framework_dirs[];
++extern char *standard_framework_dirs[];
+ 
+ /* the pointer to the head of the base object file's segments */
+-__private_extern__ struct merged_segment *base_obj_segments;
++extern struct merged_segment *base_obj_segments;
+ 
+ /*
+  * These are pointers to strings and symbols used to search of the table of
+  * contents of a library.  These have to be can not be local so that routines
+  * can set them and that ranlib_bsearch() and dylib_bsearch() can use them.
+  */
+-__private_extern__ char *bsearch_strings;
++extern char *bsearch_strings;
+ #ifndef RLD
+-__private_extern__ struct nlist *bsearch_symbols;
++extern struct nlist *bsearch_symbols;
+ #endif /* !defined(RLD) */
+ 
+ /*
+@@ -127,9 +127,9 @@
+  * can contain archive libraries when archive libraries appear after dynamic
+  * libraries on the link line.
+  */
+-__private_extern__ struct dynamic_library *dynamic_libs;
++extern struct dynamic_library *dynamic_libs;
+ 
+-__private_extern__ unsigned int indirect_library_ratio;
++extern unsigned int indirect_library_ratio;
+ 
+ #endif /* !defined(RLD) */
+ 
