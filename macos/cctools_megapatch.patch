@@ -1,3 +1,48 @@
+diff -ur cctools-895-orig/include/stuff/bytesex.h cctools-895/include/stuff/bytesex.h
+--- cctools-895-orig/include/stuff/bytesex.h	2016-12-09 10:02:57.000000000 -0800
++++ cctools-895/include/stuff/bytesex.h	2017-09-24 20:05:50.793381298 -0700
+@@ -70,6 +70,11 @@
+ 		      (((a) >> 8) & 0x0000ff00) | \
+ 	 ((unsigned int)(a) >> 24) )
+ 
++#define SWAP_U32(a)  ( ((a) << 24) | \
++		      (((a) << 8) & 0x00ff0000) | \
++		      (((a) >> 8) & 0x0000ff00) | \
++	((unsigned long)(a) >> 24) )
++
+ #ifndef __LP64__
+ #define SWAP_LONG(a) ( ((a) << 24) | \
+ 		      (((a) << 8) & 0x00ff0000) | \
+diff -ur cctools-895-orig/ld/pass1.c cctools-895/ld/pass1.c
+--- cctools-895-orig/ld/pass1.c	2016-12-09 10:02:58.000000000 -0800
++++ cctools-895/ld/pass1.c	2017-09-24 20:09:59.212962853 -0700
+@@ -491,7 +491,7 @@
+ 	if(fat_header->magic == FAT_MAGIC)
+ #endif /* __BIG_ENDIAN__ */
+ #ifdef __LITTLE_ENDIAN__
+-	if(fat_header->magic == SWAP_LONG(FAT_MAGIC))
++	if(fat_header->magic == SWAP_U32(FAT_MAGIC))
+ #endif /* __LITTLE_ENDIAN__ */
+ 	{
+ #ifdef RLD
+@@ -1108,7 +1108,7 @@
+ 		   fat_header->magic == FAT_MAGIC)
+ #endif
+ #ifdef __LITTLE_ENDIAN__
+-		   fat_header->magic == SWAP_LONG(FAT_MAGIC))
++		   fat_header->magic == SWAP_U32(FAT_MAGIC))
+ #endif
+ 		{
+ #ifdef __LITTLE_ENDIAN__
+@@ -3721,7 +3721,7 @@
+ 	if(fat_header->magic == FAT_MAGIC)
+ #endif /* __BIG_ENDIAN__ */
+ #ifdef __LITTLE_ENDIAN__
+-	if(fat_header->magic == SWAP_LONG(FAT_MAGIC))
++	if(fat_header->magic == SWAP_U32(FAT_MAGIC))
+ #endif /* __LITTLE_ENDIAN__ */
+ 	{
+ 	    pass1_fat(file_name, file_addr, file_size, FALSE, TRUE, FALSE,
 diff -ur cctools-895-orig/ld/pass1.h cctools-895/ld/pass1.h
 --- cctools-895-orig/ld/pass1.h	2016-12-09 10:02:58.000000000 -0800
 +++ cctools-895/ld/pass1.h	2017-09-24 19:56:29.257049807 -0700

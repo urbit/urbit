@@ -103,10 +103,17 @@ let
       "-Werror -Wno-deprecated-declarations -Wno-deprecated " +
 
       "-D__private_extern__= " +
-
-      # Note: Maybe we should patch sdk/usr/include/libkern/OSByteOrder.h to
-      # work with GCC instead of defining __LITTLE_ENDIAN__ like this.
       "-D__LITTLE_ENDIAN__";
+  };
+
+  ld = native.make_derivation rec {
+    name = "ld64-${version}-${host}";
+    version = "274.2";
+    builder = ./ld_builder.sh;
+    src = nixpkgs.fetchurl {
+      url = "https://opensource.apple.com/tarballs/ld64/ld64-${version}.tar.gz";
+      sha256 = "1mzp2sszcvg86b1jb90prhcrwk7g7inikr7plnklk7g93728jp8p";
+    };
   };
 
   xar_src = nixpkgs.fetchurl {
@@ -170,7 +177,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang cctools cctools_tpoechtrager xar sdk;
+    inherit clang ld cctools cctools_tpoechtrager xar sdk;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };

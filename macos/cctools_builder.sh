@@ -15,7 +15,7 @@ cd build
 
 gcc $CFLAGS -c ../cctools/libmacho/*.c
 
-gcc $CFLAGS ../cctools/ld/ld.c -o $host-ld
+gcc $CFLAGS ../cctools/ld/{ld,pass1}.c -o $host-ld
 
 mkdir -p $out/bin
 cp $host-ld $out/bin/
