@@ -5514,7 +5514,7 @@
     {$bcts p/toga q/root}                               ::  $= name
     {$bcsm p/twig}                                      ::  $; assembly
   ::                                            ::::::  cores
-    {$brcb p/chap q/root r/(map @ tomb)}                ::  |_
+    {$brcb p/chap q/root r/(list (pair term twig)) s/(map @ tomb)} ::  |_
     {$brcl p/chap q/twig r/twig}                        ::  |:
     {$brcn p/chap q/(map @ tomb)}                       ::  |%
     {$brdt p/chap q/twig}                               ::  |.
@@ -6535,7 +6535,14 @@
         {$halo *}  ~(clam al boil)
         {$bcsm *}  p.gen
     ::
-        {$brcb *}  [%tsls [%bunt q.gen] [%brcn p.gen r.gen]]
+        {$brcb *}  :+  %tsls  [%bunt q.gen]
+                   :+  %brcn  p.gen
+                   %-  ~(run by s.gen)
+                   |=  a/foot  ^+  a
+                   =-  ?:(?=({$ash *} a) [-.a -] [-.a -])
+                   |-  ^-  twig
+                   ?~  r.gen  p.a
+                   [%aka p.i.r.gen q.i.r.gen $(r.gen t.r.gen)]
         {$brcl *}  [%tsls [%ktsg q.gen] [%brdt p.gen r.gen]]
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
@@ -6552,8 +6559,8 @@
                    :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%elm r.gen])
-        {$brts *}  :^  %brcb  p.gen  q.gen 
-                   =-  [[0 [~ ~] -] ~ ~]
+        {$brts *}  :^  %brcb  p.gen  q.gen
+                   =-  [~ [[0 [~ ~] -] ~ ~]]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash r.gen])
         {$brwt *}  [%ktwt %brdt p.gen q.gen]
     ::
@@ -10387,6 +10394,12 @@
     ::
     ++  whap                                            ::  chapter
       (most muck boog)
+    ++  wasp                                            ::  $brcb aliases
+      ;~  pose  %+  ifix
+                  [;~(plug lus tar muck) muck]
+                (most muck ;~(gunk sym loaf))  :: XX loan?
+                (easy ~)
+      ==
     ::
     ++  wisp                                            ::  core tail
       ?.  tol  fail
@@ -10524,7 +10537,7 @@
     ++  exqs  |.((butt hunk))                           ::  closed gapped roots
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and root
     ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  twig with one root
-    ++  exqr  |.(;~(gunk loan wisp))                    ::  root and core tail
+    ++  exqr  |.(;~(gunk loan ;~(plug wasp wisp)))      ::  root/aliases?/tail
     ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed twigs
     ++  exqw  |.(;~(gunk loaf loan))                    ::  twig and root
     ++  exqx  |.(;~(gunk loaf loan loan))               ::  twig, two roots
