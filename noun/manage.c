@@ -613,11 +613,13 @@ u3m_bail(u3_noun how)
   }
 
   switch ( how ) {
-#if 1
     case c3__fail:
-    case c3__meme:
-#endif
+    case c3__meme: {
+      fprintf(stderr, "bailing out\r\n");
+      abort();
+    }
     case c3__exit: {
+
       static c3_w xuc_w = 0;
 
       {
@@ -629,7 +631,8 @@ u3m_bail(u3_noun how)
     }
     case c3__foul:
     case c3__oops:
-      abort();
+      fprintf(stderr, "bailing out\r\n");
+      assert(0);
   }
 
   if ( &(u3H->rod_u) == u3R ) {
