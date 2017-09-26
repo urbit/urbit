@@ -121,8 +121,7 @@
     |*  a/(list (maybe))
     =>  .(a (homo a))
     |-
-::    ^-  (list _u.i.a)
-    ^-  (list _,.+.,.-.a)
+    ^-  (list _u.+.i.-.a)
     ?~  a  ~
     ?~  i.a
       $(a t.a)
@@ -153,7 +152,7 @@
     :>  applies {b} to {a}.
     |*  {a/(maybe) b/$-(* (maybe))}
     ?~  a  ~
-    (b +.a)
+    (b u.a)
   ::
   ::  todo: bind, bond, both, flit, hunt, lift, mate,
   ::
@@ -1113,7 +1112,7 @@
   ++  transform
     :>  applies {fun} to each value in {a}.
     |*  {a/(map) fun/$-(* *)}
-    ^-  (map _,.-.,.-.a fun)
+    ^-  (map _p.-.n.-.a fun)
     ?~  a
       ~
     [[p.n.a (fun q.n.a)] $(a l.a) $(a r.a)]
@@ -1121,7 +1120,7 @@
   ++  transform-with-key
     :>  applies {fun} to each value in {a}.
     |*  {a/(map) fun/$-({* *} *)}
-    ^-  (map _,.-.,.-.a _*fun)
+    ^-  (map _p.-.n.-.a _*fun)
     ?~  a
       ~
     [[p.n.a (fun p.n.a q.n.a)] $(a l.a) $(a r.a)]
@@ -1136,7 +1135,7 @@
     :>
     :>  corresponds to {mapAccum} in haskell.
     |*  {a/(map) b/* fun/$-({* *} {* *})}
-    ^-  {_b (map _,.-.,.-.a _+:*fun)}
+    ^-  {_b (map _p.-.n.-.a _+:*fun)}
     ?~  a
       [b ~]
     =+  d=(fun b q.n.a)
@@ -1151,24 +1150,22 @@
     ::  wins in case of duplicates. this is currently unhandled. maybe i just
     ::  shouldn't have this gate.
     |*  {a/(map) fun/$-(* *)}
-    =+  l=(to-list a)
     %-  from-list
-    %+  transform:ls  l
-    |=  item/_,.-.a
+    %+  transform:ls  (to-list a)
+    |=  item/_n.-.a
     [(fun p.item) q.item]
   ::
   ++  transform-keys-with
     :>  applies {fun} to all keys, creating a new value with {combine} on dupes.
     |*  {a/(map) fun/$-(* *) combine/$-({* *} *)}
-    ^-  (map _*fun _,.+.,.-.a)
-    =+  l=(to-list a)
+    ^-  (map _*fun _q.+.n.-.a)
     =/  new-list
-      %+  transform:ls  l
-      |=  item/_,.-.a
+      %+  transform:ls  (to-list a)
+      |=  item/_n.-.a
       [(fun p.item) q.item]
     %^  foldl:ls  new-list
-    `(map _*fun _,.+.,.-.a)`~
-    |=  {m/(map _*fun _,.+.,.-.a) p/_,.-.new-list}
+    `(map _*fun _q.+.n.-.a)`~
+    |=  {m/(map _*fun _q.+.n.-.a) p/_i.-.new-list}
     (insert-with m -.p +.p combine)
   ::
   ++  fold
@@ -1251,7 +1248,7 @@
   ++  from-set
     :>  computes a map by running {fun} on every value in a set.
     |*  {a/(set) fun/$-(* *)}
-    ^-  (map _,.-.a _*fun)
+    ^-  (map _n.-.a _*fun)
     ?~  a
       ~
     [[n.a (fun n.a)] $(a l.a) $(a r.a)]
@@ -1265,15 +1262,20 @@
     ~(tap by a)
   ::
   ++  from-list
-    :>  todo: name or something
-    malt
+    :>  creates a tree from a list.
+    |*  a/(list (pair))
+    |-
+    %^  foldl:ls  a
+    `(map _p.-.i.-.a _q.+.i.-.a)`~
+    |=  {m/(map _p.-.i.-.a _q.+.i.-.a) p/_i.-.a}
+    (insert m p)
   ::
   ++  from-list-with
     :>  creates a map from a list, with {fun} resolving duplicates.
     |*  {a/(list (pair)) fun/$-(* *)}
     %^  foldl:ls  a
-    `(map _*fun _,.+.,.-.a)`~
-    |*  {m/(map _*fun _,.+.,.-.a) p/_,.-.a}
+    `(map _*fun _q.+.i.-.a)`~
+    |=  {m/(map _*fun _q.+.i.-.a) p/_i.-.a}
     (insert-with m -.p +.p fun)
   ::
   ::  todo: without a natural ordering, association lists and gates to operate
@@ -1288,7 +1290,7 @@
     ::  jet?
     %-  from-list
     %+  filter:ls  (to-list a)
-    |=  p/_,.-.a
+    |=  p/_n.-.a
     (fun q.p)
   ::
   ++  filter-with-key
@@ -1306,7 +1308,7 @@
     ::  jet?
     %-  from-list
     %+  filter:ls  (to-list a)
-    |=  p/_,.-.a
+    |=  p/_n.-.a
     ::  todo: replace this with a call to our set library when we advance that
     ::  far.
     (~(has in keys) p.p)
@@ -1318,7 +1320,7 @@
     ::  jet?
     %-  from-list
     %+  filter:ls  (to-list a)
-    |=  p/_,.-.a
+    |=  p/_n.-.a
     ::  todo: replace this with a call to our set library when we advance that
     ::  far.
     !(~(has in keys) p.p)
@@ -1328,7 +1330,7 @@
     |*  {a/(map) fun/$-(* ?)}
     =/  data
       %+  partition:ls  (to-list a)
-      |=  p/_,.-.a
+      |=  p/_n.-.a
       (fun q.p)
     [(from-list -.data) (from-list +.data)]
   ::
@@ -1340,7 +1342,7 @@
   ++  transform-maybe
     :>  a version of transform that can throw out items.
     |*  {a/(map) fun/$-(* (maybe))}
-    ^-  (map _,.-.,.-.a _+:*fun)
+    ^-  (map _p.-.n.-.a _+:*fun)
     ?~  a  ~
     =+  res=(fun q.n.a)
     ?~  res
@@ -1351,7 +1353,7 @@
   ++  transform-maybe-with-key
     :>  a version of transform that can throw out items.
     |*  {a/(map) fun/$-({* *} (maybe))}
-    ^-  (map _,.-.,.-.a _+:*fun)
+    ^-  (map _p.-.n.-.a _+:*fun)
     ?~  a  ~
     =+  res=(fun n.a)
     ?~  res
@@ -1363,8 +1365,8 @@
     :>  splits the map in two on a gate that returns an either.
     |*  {a/(map) fun/$-(* (either))}
     |-
-    ^-  $:  (map _,.-.,.-.a _?>(?=({{%& *} *} *fun) +:*fun))
-            (map _,.-.,.-.a _?>(?=({{%| *} *} *fun) +:*fun))
+    ^-  $:  (map _p.-.n.-.a _?>(?=({{%& *} *} *fun) +:*fun))
+            (map _p.-.n.-.a _?>(?=({{%| *} *} *fun) +:*fun))
         ==
     ?~  a
       [~ ~]
@@ -1381,8 +1383,8 @@
     :>  splits the map in two on a gate that returns an either.
     |*  {a/(map) fun/$-({* *} (either))}
     |-
-    ^-  $:  (map _,.-.,.-.a _?>(?=({{%& *} *} *fun) +:*fun))
-            (map _,.-.,.-.a _?>(?=({{%| *} *} *fun) +:*fun))
+    ^-  $:  (map _p.-.n.-.a _?>(?=({{%& *} *} *fun) +:*fun))
+            (map _p.-.n.-.a _?>(?=({{%| *} *} *fun) +:*fun))
         ==
     ?~  a
       [~ ~]
