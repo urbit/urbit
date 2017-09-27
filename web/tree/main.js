@@ -470,8 +470,8 @@ extras = {
         "This page was made by Urbit. Feedback: ", a({
           href: "mailto:urbit@urbit.org"
         }, "urbit@urbit.org"), " ", a({
-          href: "https://twitter.com/urbit_"
-        }, "@urbit_")
+          href: "https://twitter.com/urbit"
+        }, "@urbit")
       ])
     ]);
   })
@@ -2053,7 +2053,7 @@ Virtual = name("Virtual", function(arg) {
   }, function(str) {
     return str;
   }, function(arg1, key) {
-    var c, e, error, ga, gn, props, ref1;
+    var c, e, ga, gn, props, ref1;
     gn = arg1.gn, ga = arg1.ga, c = arg1.c;
     props = {
       key: key
@@ -2478,7 +2478,7 @@ module.exports = query({
     if (this.props.match) {
       comp = gn === this.props.match;
     } else {
-      comp = gn && gn[0] === 'h' && parseInt(gn[1]) !== NaN;
+      comp = gn && gn[0] === 'h' && parseInt(gn[1]) !== (0/0);
     }
     if (comp) {
       ga = _.clone(ga);
@@ -3166,8 +3166,9 @@ module.exports = {
     if (hor != null) {
       d.setHours(hor);
       d.setMinutes(min);
-      return d.setSeconds(sec);
+      d.setSeconds(sec);
     }
+    return d;
   },
   getKeys: function(kids, sortBy) {
     return _.map(this.sortKids(kids, sortBy), 'name');
