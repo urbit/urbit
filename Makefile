@@ -91,7 +91,7 @@ endif
 INCLUDE=include
 MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN)
 
-DEBUG=yes
+DEBUG=no
 
 ifeq ($(DEBUG),yes)
 CFLAGS=-g
