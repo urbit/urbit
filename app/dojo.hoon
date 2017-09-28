@@ -789,7 +789,9 @@
   ++  he-duke                                           ::  ++he-dope variant
     |=  txt/tape
     ^-  (each (unit (each dojo-command tape)) @ud)
-    =+  foy=(he-dope txt)
+    =+  trim-space=;~(pfix spac:poja (star next))        
+    =+  trimed-text=(flop (scan (flop txt) trim-space))
+    =+  foy=(he-dope trimed-text)
     ?-  -.foy
       $|  [%| q.p.foy]
       $&  [%& p.foy]
