@@ -1361,20 +1361,9 @@
   ++  transform-either
     :>  splits the map in two on a gate that returns an either.
     |*  {a/(map) fun/$-(* (either))}
-    |-
-    ^-  $:  (map _p.-.n.-.a _?>(?=({{%& *} *} *fun) +:*fun))
-            (map _p.-.n.-.a _?>(?=({{%| *} *} *fun) +:*fun))
-        ==
-    ?~  a
-      [~ ~]
-    ::  todo: runtime wise, can I do better than recursive unions?
-    =+  lr=$(a l.a)
-    =+  rr=$(a r.a)
-    =+  x=(fun q.n.a)
-    ?-  -.x
-      $&  [(insert (union -.lr -.rr) p.n.a +.x) (union +.lr +.rr)]
-      $|  [(union -.lr -.rr) (insert (union +.lr +.rr) p.n.a +.x)]
-    ==
+    %+  transform-either-with-key  a
+    |=  {key/* value/_q.+.n.-.a}
+    (fun value)
   ::
   ++  transform-either-with-key
     :>  splits the map in two on a gate that returns an either.
