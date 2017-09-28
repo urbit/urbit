@@ -982,6 +982,9 @@ _sist_rest()
         continue;
       }
 
+#if 0
+      // disable encryption for now
+      //
       if ( u3A->key ) {
         u3_noun dep;
 
@@ -995,6 +998,7 @@ _sist_rest()
           u3z(dep);
         }
       }
+#endif
       roe = u3nc(u3ke_cue(ron), roe);
     }
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);

@@ -1532,6 +1532,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
         uL(fprintf(uH, "crude: all delivery failed!\n"));
         u3_lo_punt(2, u3kb_flop(u3k(tan)));
+        uL(fprintf(uH, "crude: punted\n"));
         // c3_assert(!"crud");
       }
     }
@@ -2030,7 +2031,8 @@ u3_raft_work(void)
 
           ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
           c3_assert(u3A->key);
-          ron = u3dc("en:crua", u3k(u3A->key), ron);
+          // don't encrypt for the moment, bootstrapping
+          // ron = u3dc("en:crua", u3k(u3A->key), ron);
 
           len_w = u3r_met(5, ron);
           bob_w = c3_malloc(len_w * 4L);

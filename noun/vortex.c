@@ -40,7 +40,9 @@ u3v_jack(void)
 {
   u3_noun cor; 
 
+  fprintf(stderr, "jack: kernel %x\r\n", u3r_mug(u3A->ken));
   cor = u3n_nock_on(0, u3k(u3A->ken));
+  fprintf(stderr, "jacked\r\n");
   u3z(cor);
 }
 
