@@ -413,7 +413,7 @@
   ++  test-filter
     %^  expect-eq
     (filter [1 2 1 2 1 ~] |=(a/@ =(a 2)))
-    [2 2 ~]
+    [1 1 1 ~]
     "filter"
   ::
   ++  test-partition
@@ -716,7 +716,7 @@
     %^  expect-eq
       %+  filter
       (from-list [[1 1] [2 1] [3 2] [4 1] ~])
-      |=(a/@u =(a 1))
+      |=(a/@u !=(a 1))
     (from-list [[1 1] [2 1] [4 1] ~])
     "filter"
   ::
@@ -724,7 +724,7 @@
     %^  expect-eq
       %+  filter-with-key
       (from-list [[1 1] [2 1] [3 2] [4 1] ~])
-      |=({a/@u b/@u} !=(a 2))
+      |=({a/@u b/@u} =(a 2))
     (from-list [[1 1] [3 2] [4 1] ~])
     "filter-with-key"
   ::
@@ -882,5 +882,5 @@
 
 ::  (perform-test-suite:local "test-thr" !>(test-thr) eny)
 :: (perform-test-suite:local "test-myb" !>(test-myb) eny)
-::(perform-test-suite:local "test-ls" !>(test-ls) eny)
-(perform-test-suite:local "test-mp" !>(test-mp) eny)
+(perform-test-suite:local "test-ls" !>(test-ls) eny)
+::(perform-test-suite:local "test-mp" !>(test-mp) eny)

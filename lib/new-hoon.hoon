@@ -641,14 +641,14 @@
     $(a t.a)
   ::
   ++  filter
-    :>  returns all items in {a} which match predicate {b}.
+    :>  filter all items in {a} which match predicate {b}.
     |*  {a/(list) b/$-(* ?)}
     =>  .(a (homo a))
     |-
     ^+  a
     ?~  a
       ~
-    ?:  (b i.a)
+    ?.  (b i.a)
       [i.a $(a t.a)]
     $(a t.a)
   ::
@@ -1286,50 +1286,46 @@
   :>  #  %filters
   +|
   ++  filter
-    :>  returns a map of all values that satisfy {fun}.
+    :>  filters a map of all values that satisfy {fun}.
     |*  {a/(map) fun/$-(* ?)}
-    ::  todo: the runtime on this is bogus. does a better version go here or a
-    ::  jet?
-    %-  from-list
-    %+  filter:ls  (to-list a)
-    |=  p/_n.-.a
-    (fun q.p)
+    %+  filter-with-key  a
+    |=  {key/* value/_q.+.n.-.a}
+    (fun value)
   ::
   ++  filter-with-key
-    :>  returns a map of all values that satisfy {fun}.
-    ::  todo: the runtime on this is bogus. does a better version go here or a
-    ::  jet?
+    :>  filters a map of all values that satisfy {fun}.
     |*  {a/(map) fun/$-({* *} ?)}
-    %-  from-list
-    %+  filter:ls  (to-list a)  fun
+    |-
+    ^+  a
+    ?~  a  ~
+    ?:  (fun n.a)
+      =.  l.a  $(a l.a)
+      =.  r.a  $(a r.a)
+      (pop-top a)
+    [n.a $(a l.a) $(a r.a)]
   ::
   ++  restrict-keys
     :>  returns a map where the only allowable keys are {keys}.
     |*  {a/(map) keys/(set)}
-    ::  todo: the runtime on this is bogus. does a better version go here or a
-    ::  jet?
-    %-  from-list
-    %+  filter:ls  (to-list a)
-    |=  p/_n.-.a
+    %+  filter-with-key  a
+    |=  {key/_p.-.n.-.a value/*}
     ::  todo: replace this with a call to our set library when we advance that
     ::  far.
-    (~(has in keys) p.p)
+    !(~(has in keys) key)
   ::
   ++  without-keys
     :>  returns a map where the only allowable keys are not in {keys}.
     |*  {a/(map) keys/(set)}
-    ::  todo: the runtime on this is bogus. does a better version go here or a
-    ::  jet?
-    %-  from-list
-    %+  filter:ls  (to-list a)
-    |=  p/_n.-.a
+    %+  filter-with-key  a
+    |=  {key/_p.-.n.-.a value/*}
     ::  todo: replace this with a call to our set library when we advance that
     ::  far.
-    !(~(has in keys) p.p)
+    (~(has in keys) key)
   ::
   ++  partition
     :>  returns two lists, one whose elements match {fun}, the other doesn't.
     |*  {a/(map) fun/$-(* ?)}
+    ::  todo: is the runtime on this is bogus?
     =/  data
       %+  partition:ls  (to-list a)
       |=  p/_n.-.a
