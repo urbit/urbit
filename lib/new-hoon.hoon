@@ -1254,9 +1254,14 @@
   +|
   ::
   ++  to-list
-    :>  todo: copy over or something.
+    :>  creates a list of pairs from the tree.
     |*  a/(map)
-    ~(tap by a)
+    =|  b/(list _n.-.a)
+    |-
+    ^+  b
+    ?~  a
+      b
+    $(a r.a, b [n.a $(a l.a)])
   ::
   ++  from-list
     :>  creates a tree from a list.
