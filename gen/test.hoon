@@ -574,6 +574,15 @@
     (from-list [[1 "one"] [3 "three"] [4 "four"] ~])
     "alter (as delete)"
   ::
+  ++  test-alter-as-change
+    %^  expect-eq
+      %^  alter
+      four
+      2
+      |=(a/(maybe tape) `(maybe tape)`[~ "dos"])
+    (from-list [[1 "one"] [2 "dos"] [3 "three"] [4 "four"] ~])
+    "alter (as change)"
+  ::
   ++  test-union
     %^  expect-eq
       %+  union
@@ -861,7 +870,6 @@
   --
 ::  ----------------------------------------------------------------------
 --
-
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
         $~
@@ -874,5 +882,5 @@
 
 ::  (perform-test-suite:local "test-thr" !>(test-thr) eny)
 :: (perform-test-suite:local "test-myb" !>(test-myb) eny)
-(perform-test-suite:local "test-ls" !>(test-ls) eny)
-::(perform-test-suite:local "test-mp" !>(test-mp) eny)
+::(perform-test-suite:local "test-ls" !>(test-ls) eny)
+(perform-test-suite:local "test-mp" !>(test-mp) eny)

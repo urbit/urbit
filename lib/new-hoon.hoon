@@ -790,7 +790,6 @@
   ::
   --
 ++  mp
-  ::  todo:  why do hoon maps use double hash ordering? does this matter?
   |%
   :>  #  %query
   :>    looks up values in the map.
@@ -941,92 +940,83 @@
       ?:  (gor key p.n.a)
         [n.a $(a l.a) r.a]
       [n.a l.a $(a r.a)]
-    |-  ^-  {$?($~ _a)}
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (vor p.n.l.a p.n.r.a)
-      [n.l.a l.l.a $(l.a r.l.a)]
-    [n.r.a $(r.a l.r.a) r.r.a]
+    (pop-top a)
   ::
   ++  adjust
     :>  updates a value at {key} by passing the value to {fun}.
     |*  {a/(map) key/* fun/$-(* *)}
-    |-  ^+  a
-    ?~  a
-      ~
-    ?:  =(key p.n.a)
-      [[key (fun q.n.a)] l.a r.a]
-    ?:  (gor key p.n.a)
-      =+  d=$(a l.a)
-      ?>  ?=(^ d)
-      ?:  (vor p.n.a p.n.d)
-        [n.a d r.a]
-      [n.d l.d [n.a r.d r.a]]
-    =+  d=$(a r.a)
-    ?>  ?=(^ d)
-    ?:  (vor p.n.a p.n.d)
-      [n.a l.a d]
-    [n.d [n.a l.a l.d] r.d]
+    %^  alter-with-key  a  key
+    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    ^-  (maybe _q.+.n.-.a)
+    ?~  value  ~
+    [~ (fun u.value)]
   ::
   ++  adjust-with-key
     :>  updates a value at {key} by passing the key/value pair to {fun}.
     |*  {a/(map) key/* fun/$-({* *} *)}
-    |-  ^+  a
-    ?~  a
-      ~
-    ?:  =(key p.n.a)
-      [[key (fun key q.n.a)] l.a r.a]
-    ?:  (gor key p.n.a)
-      =+  d=$(a l.a)
-      ?>  ?=(^ d)
-      ?:  (vor p.n.a p.n.d)
-        [n.a d r.a]
-      [n.d l.d [n.a r.d r.a]]
-    =+  d=$(a r.a)
-    ?>  ?=(^ d)
-    ?:  (vor p.n.a p.n.d)
-      [n.a l.a d]
-    [n.d [n.a l.a l.d] r.d]
+    %^  alter-with-key  a  key
+    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    ^-  (maybe _q.+.n.-.a)
+    ?~  value  ~
+    [~ (fun key u.value)]
   ::
   ++  update
     :>  adjusts or deletes the value at {key} by {fun}.
     |*  {a/(map) key/* fun/$-(* (maybe *))}
-    |-  ^+  a
-    ::  todo: this implementation is inefficient and traverses the tree multiple
-    ::  times, when it can be done in O(log n). this should be solved in a jet?
-    =+  val=(get a key)
-    ?~  val
-      a
-    =+  ret=(fun u.val)
-    ?~  ret
-      (delete a key)
-    (insert a key u.ret)
+    %^  alter-with-key  a  key
+    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    ^-  (maybe _q.+.n.-.a)
+    ?~  value  ~
+    (fun u.value)
   ::
   ++  update-with-key
     :>  adjusts or deletes the value at {key} by {fun}.
     |*  {a/(map) key/* fun/$-({* *} (maybe *))}
-    |-  ^+  a
-    ::  todo: this implementation is inefficient and traverses the tree multiple
-    ::  times, when it can be done in O(log n). this should be solved in a jet?
-    =+  val=(get a key)
-    ?~  val
-      a
-    =+  ret=(fun key u.val)
-    ?~  ret
-      (delete a key)
-    (insert a key u.ret)
+    %^  alter-with-key  a  key
+    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    ^-  (maybe _q.+.n.-.a)
+    ?~  value  ~
+    (fun key u.value)
+  ::
   ::  todo:
   ::  ++update-lookup-with-key
   ::
   ++  alter
     :>  inserts, deletes, or updates a value by {fun}.
-    |*  {a/(map) key/* fun/$-(* (maybe *))}
-    ::  todo: this implementation is inefficient and traverses the tree multiple
-    ::  times, when it can be done in O(log n). this should be solved in a jet?
-    =+  ret=(fun (get a key))
-    ?~  ret
-      (delete a key)
-    (insert a key u.ret)
+    |*  {a/(map) key/* fun/$-((maybe *) (maybe *))}
+    %^  alter-with-key  a  key
+    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    (fun value)
+  ::
+  ++  alter-with-key
+    :>  inserts, deletes, or updates a value by {fun}.
+    |*  {a/(map) key/* fun/$-({* (maybe *)} (maybe *))}
+    |-  ^+  a
+    ?~  a
+      =+  ret=(fun key ~)
+      ?~  ret
+        ~
+      [[key u.ret] ~ ~]
+    ?:  =(key p.n.a)
+      =+  ret=(fun key `q.n.a)
+      ?~  ret
+        (pop-top a)
+      ?:  =(u.ret q.n.a)
+        a
+      [[key u.ret] l.a r.a]
+    ?:  (gor key p.n.a)
+      =+  d=$(a l.a)
+      ?~  d
+        [n.a ~ r.a]
+      ?:  (vor p.n.a p.n.d)
+        [n.a d r.a]
+      [n.d l.d [n.a r.d r.a]]
+    =+  d=$(a r.a)
+    ?~  d
+      [n.a l.a ~]
+    ?:  (vor p.n.a p.n.d)
+      [n.a l.a d]
+    [n.d [n.a l.a l.d] r.d]
   ::
   :>  #  %combine
   +|
@@ -1427,9 +1417,19 @@
     ?~  x  %.n
     |((fun q.n.a u.x) $(a l.a) $(a r.a))
   ::
-  ::  all indexed methods do not make sense when keys aren't ordered.
-  ::
-  ::  all the -min, -max methods are O(log n) on ordered keys, but would be
-  ::  O(n) with treaps. i can't think of what they're useful for, either.
+  :>  #  %impl
+  :>    implementation details
+  +|
+  ++  pop-top
+    :>  removes the head of the tree and rebalances the tree below.
+    |*  a/(map)
+    ^-  {$?($~ _a)}
+    ?~  a  ~
+    |-
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (vor p.n.l.a p.n.r.a)
+      [n.l.a l.l.a $(l.a r.l.a)]
+    [n.r.a $(r.a l.r.a) r.r.a]
   --
 --
