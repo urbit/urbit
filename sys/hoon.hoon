@@ -1,7 +1,6 @@
 ::                                                      ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
-~>  %slog.[0 leaf+"hoon-assembly"]
 =<  ride
 =>  %143  =>
 ::                                                      ::
@@ -1633,6 +1632,17 @@
   |=  fud/*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
+::
+++  slog                                                ::  deify printf
+  =|  pri/@                                             ::  priority level
+  |=  a/tang  ^+  same                                  ::  .=  ~&(%a 1)
+  ?~(a same ~>(%slog.[pri i.a] $(a t.a)))               ::  ((slog ~[>%a<]) 1)
+::                                                      ::  
+++  mean                                                ::  crash with trace
+  |=  a/tang
+  ^+  !!
+  ?~  a  !!
+  ~_(i.a $(a t.a))
 ::
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
@@ -10510,7 +10520,7 @@
                     %+  sear                            ::
                       |=  a/(map @ tomb)                ::
                       ^-  (unit (map @ tomb))           ::
-                      =*  fir  (~(got by a) 0)          ::
+                      =+  fir=(~(got by a) 0)           ::
                       ?:  (~(has by q.fir) %$)          ::  %$ in first chapter
                          ~                              ::
                       [~ u=a]                           ::
@@ -10716,7 +10726,6 @@
 ++  vest
   ~/  %vest
   |=  tub/nail
-  ~|  %vest
   ^-  (like twig)
   %.  tub
   %-  full

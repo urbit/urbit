@@ -1,9 +1,9 @@
-::  Compile arvo as a pill noun, without compiler changes.
+::  Compile arvo as a pill noun, for compiler changes; 
 ::  usage 
 ::
-::    .urbit/pill +solid
+::    .urbit/pill +mud
 ::
-::::  /hoon/solid/gen
+::::  /hoon/mud/gen
   ::
 /?    310
 ::
@@ -14,21 +14,37 @@
         {$~ $~}
     ==
 :-  %noun
+=+  ^=  must
+    ::  virtualize, running in a nested memory ring
+    ::  
+    |*  taq/_|.(**)
+    =+  muz=(mule taq)
+    ?-  -.muz
+      $&  p.muz
+      $|  (mean p.muz)
+    ==
 =+  top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
 =+  pax=`path`(weld top `path`[%hoon ~])
 =+  arp=`path`(weld top `path`[%ovra ~])
-~&  %solid-start
+~&  %mud-start
 =+  txt=.^(@t %cx (weld pax `path`[%hoon ~]))
 =+  rax=.^(@t %cx (weld arp `path`[%hoon ~]))
-~&  %solid-loaded
-=+  gen=(rain pax txt)
-~&  %solid-parsed
-=+  one=(~(mint ut %noun) %noun gen)
-~&  %solid-compiled
-=+  two=(~(mint ut p.one) %noun (rain arp rax))
-~&  %solid-arvo
-=+  ken=[7 q.one q.two]
-~&  [%solid-kernel `@ux`(mug ken)]
+~&  %mud-loaded
+=+  gen=(must |.((rain pax txt)))
+~&  %mud-parsed
+=+  one=(must |.((~(mint ut %noun) %noun gen)))
+~&  %mud-compiled
+=+  gat=`vase`[p.one .*(0 q.one)]
+~&  %mud-done-hoon
+=+  kyr=`(pair vase vase)`[(slap ked [%limb %p]) (slap ked [%limb %q])]
+~&  %mud-next-arvo
+=+  
+    %-  must  |.
+    (slam gat (slop p.kyr `vase`[[%atom %t ~] rax]))
+~&  %mud-done-arvo
+=+  ayr=`(pair vase vase)`[(slap arv [%limb %p]) (slap arv [%limb %q])]
+=+  ken=[7 q.q.kyr q.q.ayr]
+~&  [%mud-recompiled `@ux`(mug ken)]
 :-  ken
 =+  all=.*(0 ken)
 =+  ^=  vay  ^-  (list {p/@tas q/path})

@@ -1,3 +1,4 @@
+!:
 ::                                                      ::  ::
 ::::  /hoon/ames/arvo                                   ::::::  vane prelude
   ::                                                    ::  ::
@@ -1200,7 +1201,7 @@
       ::
       =/  fak  =(0 `@`sec)
       ~&  [%user fak sec hen]
-      =+  loy=(pit:nu:crub 512 ?:(fak our sec))
+      =+  loy=(pit:nu:crub 512 ?:(fak ~zod sec))
       =+  pub=`pass`pub:ex:loy
       ::  ?<  &(!fak !=((zeno her) fig:ex:loy))
       =+  mac=`mace`[[0 sec:ex:loy] ~]
@@ -1231,7 +1232,7 @@
       ::
       =*  bor  `loco`[%born ges pub]
       ~&  [%child-ask dad bor]
-      =^  out  fox  (~(wise am [now fox]) [our dad] hen /a bor)
+      =^  out  fox  (~(wise am [now fox]) [her dad] hen /a bor)
       [[bon out] fox]
     ::
     ++  doze
