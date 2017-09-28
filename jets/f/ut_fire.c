@@ -140,7 +140,8 @@
       }
     }
   }
-  u3_noun
+
+  static u3_noun
   _cqfu_fire(u3_noun van,
              u3_noun sut,
              u3_noun hag)

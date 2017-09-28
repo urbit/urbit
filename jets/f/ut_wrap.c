@@ -32,9 +32,9 @@
 
       case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u3_noun pq_sut, qq_sut, rq_sut;
+        u3_noun pq_sut, qq_sut, rq_sut, sq_sut;
 
-        if ( c3n == u3r_trel(q_sut, &pq_sut, &qq_sut, &rq_sut) ) {
+        if ( c3n == u3r_qual(q_sut, &pq_sut, &qq_sut, &rq_sut, &sq_sut) ) {
           return u3m_bail(c3__fail);
         }
         else if ( c3__gold != pq_sut ) {
@@ -43,14 +43,15 @@
         else {
           return u3nt(c3__core,
                       u3k(p_sut),
-                      u3nt(u3k(yoz),
+                      u3nq(u3k(yoz),
                            u3k(qq_sut),
-                           u3k(rq_sut)));
+                           u3k(rq_sut),
+                           u3k(sq_sut)));
         }
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = u3kf_fork(_wrap_fork(van, yed, yoz));
 
         u3z(yed);

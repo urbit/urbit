@@ -6,9 +6,9 @@
 #include <node.h>
 #include <buffer.h>
 
-u3_noun node_to_noun(cmark_node * nod);
+static u3_noun node_to_noun(cmark_node * nod);
 
-u3_noun list_elems_to_noun(cmark_node * nod)
+static u3_noun list_elems_to_noun(cmark_node * nod)
 {
   u3_noun elems = u3_nul;
 
@@ -20,17 +20,17 @@ u3_noun list_elems_to_noun(cmark_node * nod)
   return elems;
 }
 
-u3_noun document_to_noun(cmark_node * nod)
+static u3_noun document_to_noun(cmark_node * nod)
 {
   return list_elems_to_noun(nod);
 }
 
-u3_noun block_quote_to_noun(cmark_node * nod)
+static u3_noun block_quote_to_noun(cmark_node * nod)
 {
   return u3nc(u3nc(c3__bloq,u3_nul),list_elems_to_noun(nod));
 }
 
-u3_noun list_to_noun(cmark_node * nod)
+static u3_noun list_to_noun(cmark_node * nod)
 {
   return
     u3nc(
@@ -46,12 +46,12 @@ u3_noun list_to_noun(cmark_node * nod)
       list_elems_to_noun(nod));
 }
 
-u3_noun list_item_to_noun(cmark_node * nod)
+static u3_noun list_item_to_noun(cmark_node * nod)
 {
   return u3nc(u3nc(c3__item,u3_nul),list_elems_to_noun(nod));
 }
 
-u3_noun code_block_to_noun(cmark_node * nod)
+static u3_noun code_block_to_noun(cmark_node * nod)
 {
   u3_atom str = u3i_string((c3_c *) nod->string_content.ptr);    /*  XX  u3i_bytes  */
   u3_noun res =
@@ -70,7 +70,7 @@ u3_noun code_block_to_noun(cmark_node * nod)
   return res;
 }
 
-u3_noun html_to_noun(cmark_node * nod)
+static u3_noun html_to_noun(cmark_node * nod)
 {
   u3_atom str = u3i_string((c3_c *) nod->string_content.ptr);    /*  XX  u3i_bytes  */
   u3_noun res = u3nc(c3__html, u3qe_lore(str));
@@ -78,63 +78,63 @@ u3_noun html_to_noun(cmark_node * nod)
   return res;
 }
 
-u3_noun paragraph_to_noun(cmark_node * nod)
+static u3_noun paragraph_to_noun(cmark_node * nod)
 {
   return u3nc(c3__para, list_elems_to_noun(nod));
 }
 
-u3_noun header_to_noun(cmark_node * nod)
+static u3_noun header_to_noun(cmark_node * nod)
 {
   /* see also nod->as.header.setext */
   return u3nt(c3__head, nod->as.header.level, list_elems_to_noun(nod));
 }
 
-u3_noun hrule_to_noun(cmark_node * nod)
+static u3_noun hrule_to_noun(cmark_node * nod)
 {
   return u3nc(c3__hrul, u3_nul);
 }
 
-u3_noun reference_def_to_noun(cmark_node * nod)
+static u3_noun reference_def_to_noun(cmark_node * nod)
 {
   return u3nc(c3__defn, u3_nul);
 }
 
-u3_noun text_to_noun(cmark_node * nod)
+static u3_noun text_to_noun(cmark_node * nod)
 {
   return u3nc(u3_blip, u3i_tape((c3_c *) cmark_chunk_to_cstr(&nod->as.literal)));
 }
 
-u3_noun softbreak_to_noun(cmark_node * nod)  //  XXX
+static u3_noun softbreak_to_noun(cmark_node * nod)  //  XXX
 {
   return u3nt(0, 10, 0);
 }
 
-u3_noun linebreak_to_noun(cmark_node * nod)
+static u3_noun linebreak_to_noun(cmark_node * nod)
 {
   return u3nc(c3__line, u3_nul);
 }
 
-u3_noun inline_code_to_noun(cmark_node * nod)
+static u3_noun inline_code_to_noun(cmark_node * nod)
 {
   return u3nc(c3__code, u3i_tape((c3_c *) cmark_chunk_to_cstr(&nod->as.literal)));
 }
 
-u3_noun inline_html_to_noun(cmark_node * nod)  // XXX
+static u3_noun inline_html_to_noun(cmark_node * nod)  // XXX
 {
   return u3nc(c3__htmt, u3i_string((c3_c *) cmark_chunk_to_cstr(&nod->as.literal)));
 }
 
-u3_noun emph_to_noun(cmark_node * nod)
+static u3_noun emph_to_noun(cmark_node * nod)
 {
   return u3nc(u3nc(c3__emph, c3n), list_elems_to_noun(nod));
 }
 
-u3_noun strong_to_noun(cmark_node * nod)
+static u3_noun strong_to_noun(cmark_node * nod)
 {
   return u3nc(u3nc(c3__emph, c3y), list_elems_to_noun(nod));
 }
 
-u3_noun link_to_noun(cmark_node * nod)
+static u3_noun link_to_noun(cmark_node * nod)
 {
   return u3nc(u3nt(c3__link,
                    nod->as.link.url
@@ -146,7 +146,7 @@ u3_noun link_to_noun(cmark_node * nod)
               list_elems_to_noun(nod));
 }
 
-u3_noun image_to_noun(cmark_node * nod)
+static u3_noun image_to_noun(cmark_node * nod)
 {
   return u3nc(u3nt(c3__blot,
                    u3i_tape((c3_c *) nod->as.link.url),
@@ -156,7 +156,7 @@ u3_noun image_to_noun(cmark_node * nod)
               list_elems_to_noun(nod));
 }
 
-u3_noun node_to_noun(cmark_node * nod)
+static u3_noun node_to_noun(cmark_node * nod)
 {
   if (!nod) {
     fprintf(stderr, "markdown null node");

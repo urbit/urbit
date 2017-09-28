@@ -124,6 +124,14 @@
       {
         return _fuse_repo(van, sut, ref, bix);
       }
+      case c3__help: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+        u3_noun vot = _fuse_in(van, q_sut, ref, bix);
+        u3_noun ret = u3qf_help(p_sut, vot);
+
+        u3z(vot);
+        return ret;
+      }
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun vot = _fuse_in(van, q_sut, ref, bix);
@@ -134,7 +142,7 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = u3kf_fork(_fuse_in_fork(van, yed, ref, bix));
 
         u3z(yed);
@@ -164,7 +172,7 @@
     }
   }
 
-  u3_noun
+  static u3_noun
   _cqfu_fuse(u3_noun van,
              u3_noun sut,
              u3_noun ref)
@@ -193,7 +201,7 @@
              u3_noun sut,
              u3_noun ref)
   {
-    c3_m    fun_m = c3__fuse + !!u3r_at(u3qfu_van_vet, van);
+    c3_m    fun_m = 144 + c3__fuse + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
     if ( u3_none != pro ) {

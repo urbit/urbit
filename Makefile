@@ -175,7 +175,6 @@ N_OFILES=\
        noun/vortex.o \
        noun/zave.o
 
-
 J_A_OFILES=\
        jets/a/add.o \
        jets/a/dec.o \
@@ -275,6 +274,7 @@ J_E_OFILES=\
        jets/e/rd.o \
        jets/e/rq.o \
        jets/e/rs.o \
+       jets/e/rh.o \
        jets/e/rub.o \
        jets/e/scr.o \
        jets/e/shax.o \
@@ -302,8 +302,10 @@ J_F_OFILES=\
        jets/f/flip.o \
        jets/f/flor.o \
        jets/f/fork.o \
+       jets/f/help.o \
        jets/f/hike.o \
        jets/f/look.o \
+       jets/f/loot.o
 
 J_F_OFILES_UT=\
        jets/f/ut.o \
@@ -321,7 +323,7 @@ J_F_OFILES_UT=\
        jets/f/ut_mull.o \
        jets/f/ut_nest.o \
        jets/f/ut_peek.o \
-       jets/f/ut_perk.o \
+       jets/f/ut_peel.o \
        jets/f/ut_play.o \
        jets/f/ut_repo.o \
        jets/f/ut_rest.o \
@@ -344,178 +346,7 @@ J_OFILES=\
        $(J_G_OFILES) \
        jets/tree.o
 
-M_A_OFILES=\
-       mets/a/add.o \
-       mets/a/dec.o \
-       mets/a/div.o \
-       mets/a/gte.o \
-       mets/a/gth.o \
-       mets/a/lte.o \
-       mets/a/lth.o \
-       mets/a/mod.o \
-       mets/a/mul.o \
-       mets/a/sub.o
-
-M_B_OFILES=\
-       mets/b/bind.o \
-       mets/b/clap.o \
-       mets/b/drop.o \
-       mets/b/flop.o \
-       mets/b/lent.o \
-       mets/b/levy.o \
-       mets/b/lien.o \
-       mets/b/murn.o \
-       mets/b/need.o \
-       mets/b/reap.o \
-       mets/b/reel.o \
-       mets/b/roll.o \
-       mets/b/skid.o \
-       mets/b/skim.o \
-       mets/b/skip.o \
-       mets/b/scag.o \
-       mets/b/slag.o \
-       mets/b/snag.o \
-       mets/b/sort.o \
-       mets/b/turn.o \
-       mets/b/weld.o
-
-M_C_OFILES=\
-       mets/c/bex.o \
-       mets/c/xeb.o \
-       mets/c/can.o \
-       mets/c/cap.o \
-       mets/c/cat.o \
-       mets/c/con.o \
-       mets/c/cut.o \
-       mets/c/dor.o \
-       mets/c/dvr.o \
-       mets/c/dis.o \
-       mets/c/end.o \
-       mets/c/gor.o \
-       mets/c/hor.o \
-       mets/c/lsh.o \
-       mets/c/mas.o \
-       mets/c/met.o \
-       mets/c/mix.o \
-       mets/c/mug.o \
-       mets/c/muk.o \
-       mets/c/peg.o \
-       mets/c/po.o  \
-       mets/c/pow.o \
-       mets/c/rap.o \
-       mets/c/rep.o \
-       mets/c/rip.o \
-       mets/c/rsh.o \
-       mets/c/sqt.o \
-       mets/c/vor.o
-
-M_D_OFILES=\
-       mets/d/in_has.o \
-       mets/d/in_int.o \
-       mets/d/in_gas.o \
-       mets/d/in_mer.o \
-       mets/d/in_put.o \
-       mets/d/in_tap.o \
-       mets/d/in_uni.o \
-       mets/d/in_wyt.o \
-       mets/d/in_bif.o \
-       mets/d/in_dif.o \
-       mets/d/by_gas.o \
-       mets/d/by_get.o \
-       mets/d/by_has.o \
-       mets/d/by_int.o \
-       mets/d/by_put.o \
-       mets/d/by_uni.o \
-       mets/d/by_bif.o \
-       mets/d/by_dif.o
-
-M_E_OFILES=\
-       mets/e/aes_ecb.o \
-       mets/e/aes_cbc.o \
-       mets/e/aesc.o \
-       mets/e/cue.o \
-       mets/e/fl.o \
-       mets/e/jam.o \
-       mets/e/mat.o \
-       mets/e/mink.o \
-       mets/e/mule.o \
-       mets/e/parse.o \
-       mets/e/rd.o \
-       mets/e/rq.o \
-       mets/e/rs.o \
-       mets/e/rh.o \
-       mets/e/rub.o \
-       mets/e/scr.o \
-       mets/e/shax.o \
-       mets/e/lore.o \
-       mets/e/loss.o \
-       mets/e/lune.o \
-       mets/e/trip.o
-
-M_E_OFILES_ED=\
-       mets/e/ed_puck.o \
-       mets/e/ed_sign.o \
-       mets/e/ed_veri.o \
-       mets/e/ed_shar.o
-
-M_F_OFILES=\
-       mets/f/al.o \
-       mets/f/ap.o \
-       mets/f/cell.o \
-       mets/f/comb.o \
-       mets/f/cons.o \
-       mets/f/core.o \
-       mets/f/face.o \
-       mets/f/fitz.o \
-       mets/f/flan.o \
-       mets/f/flip.o \
-       mets/f/flor.o \
-       mets/f/fork.o \
-       mets/f/help.o \
-       mets/f/hike.o \
-       mets/f/look.o \
-       mets/f/loot.o
-
-M_F_OFILES_UT=\
-       mets/f/ut.o \
-       mets/f/ut_burn.o \
-       mets/f/ut_buss.o \
-       mets/f/ut_conk.o \
-       mets/f/ut_crop.o \
-       mets/f/ut_find.o \
-       mets/f/ut_fire.o \
-       mets/f/ut_fish.o \
-       mets/f/ut_fuse.o \
-       mets/f/ut_gain.o \
-       mets/f/ut_lose.o \
-       mets/f/ut_mint.o \
-       mets/f/ut_mull.o \
-       mets/f/ut_nest.o \
-       mets/f/ut_peek.o \
-       mets/f/ut_peel.o \
-       mets/f/ut_play.o \
-       mets/f/ut_repo.o \
-       mets/f/ut_rest.o \
-       mets/f/ut_tack.o \
-       mets/f/ut_toss.o \
-       mets/f/ut_wrap.o
-
-M_G_OFILES=\
-       mets/g/down.o
-
-M_OFILES=\
-       $(M_A_OFILES) \
-       $(M_B_OFILES) \
-       $(M_C_OFILES) \
-       $(M_D_OFILES) \
-       $(M_E_OFILES) \
-       $(M_E_OFILES_ED) \
-       $(M_F_OFILES) \
-       $(M_F_OFILES_UT) \
-       $(M_G_OFILES) \
-       mets/tree.o
-
-BASE_OFILES=$(N_OFILES) $(J_OFILES) $(M_OFILES)
+BASE_OFILES=$(N_OFILES) $(J_OFILES)
 
 OUT_OFILES=\
        outside/jhttp/http_parser.o \

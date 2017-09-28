@@ -6,7 +6,7 @@
 
 /* logic
 */
-  u3_noun
+  static u3_noun
   _cqfu_peek(u3_noun, u3_noun, u3_noun, u3_atom);
 
   static u3_noun
@@ -83,7 +83,7 @@
           u3_atom lat = u3qc_mas(axe);
 
           if ( 3 == now ) {
-            u3_noun pec = u3qfu_perk(van, sut, way, pq_sut);
+            u3_noun pec = u3qfu_peel(van, sut, way, pq_sut);
             u3_noun sam = u3h(pec);
             u3_noun con = u3t(pec);
 
@@ -128,6 +128,7 @@
           return pro;
         }
       }
+      case c3__help:
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
@@ -137,7 +138,7 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = u3kf_fork(_peek_fork(van, yed, way, axe, gil));
 
         u3z(yed);
@@ -161,7 +162,7 @@
     }
   }
 
-  u3_noun
+  static u3_noun
   _cqfu_peek(u3_noun van,
              u3_noun sut,
              u3_noun way,
@@ -199,7 +200,7 @@
              u3_noun way,
              u3_noun axe)
   {
-    c3_m    fun_m = c3__peek + !!u3r_at(u3qfu_van_vet, van);
+    c3_m    fun_m = 144 + c3__peek + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, axe);
 
     if ( u3_none != pro ) {

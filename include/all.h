@@ -31,7 +31,3 @@
 #   include "jets/k.h"         //  u3k: jets (transfer, args)
 #   include "jets/q.h"         //  u3q: jets (retain, args)
 #   include "jets/w.h"         //  u3w: jets (retain, core)
-
-#   include "jets/l.h"         //  u3k: jets (transfer, args)
-#   include "jets/g.h"         //  u3q: jets (retain, args)
-#   include "jets/y.h"         //  u3w: jets (retain, core)

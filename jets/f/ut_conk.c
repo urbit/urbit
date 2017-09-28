@@ -6,13 +6,17 @@
 
 /* logic
 */
-  u3_noun
+  static u3_noun
   _cqfu_conk(u3_noun van,
              u3_noun sut,
              u3_noun got)
   {
     if ( c3y == u3ud(got) ) {
-      return u3qf_face(got, sut);
+      u3_noun nux = u3nc(u3_nul, u3k(got));
+      u3_noun ret = u3qf_face(nux, sut);
+
+      u3z(nux);
+      return ret;
     }
     else switch ( u3h(got) ) {
       default: return u3m_bail(c3__fail);
@@ -22,8 +26,10 @@
       }
       case 1: {
         u3_noun cok = _cqfu_conk(van, sut, u3t(u3t(got)));
-        u3_noun ret = u3qf_face(u3h(u3t(got)), cok);
+        u3_noun nux = u3k(u3h(u3t(got)));
+        u3_noun ret = u3qf_face(nux, cok);
 
+        u3z(nux);
         u3z(cok);
         return ret;
       }

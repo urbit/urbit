@@ -68,7 +68,7 @@
   /* u3kdi_tap(): map/set convert to list.  (solves by_tap also.)
   */
     u3_noun
-    u3kdi_tap(u3_noun a, u3_noun b);
+    u3kdi_tap(u3_noun a);
 
   /* u3kdi_put(): put in set.
   */
@@ -80,7 +80,7 @@
     u3_noun 
     u3kdi_uni(u3_noun a, u3_noun b);
 
-#   define u3kdb_tap(a, b) u3kdi_tap(a, b)
+#   define u3kdb_tap(a) u3kdi_tap(a)
 
 /* u3ke: tier 5 functions
 */
@@ -103,6 +103,11 @@
   */
     u3_noun
     u3kf_fork(u3_noun yed);
+
+  /* u3kz_fork(): build %fork span.
+  */
+    u3_noun
+    u3kz_fork(u3_noun yed);
 
   /* u3kfu_repo(): 
   */

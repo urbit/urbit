@@ -142,6 +142,14 @@
         }
         else return _crop_sint(van, sut, ref, bix);
       }
+      case c3__help: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+        u3_noun foz = _crop_dext(van, q_sut, ref, bix);
+        u3_noun ret = u3qf_help(p_sut, foz);
+
+        u3z(foz);
+        return ret;
+      }
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun foz = _crop_dext(van, q_sut, ref, bix);
@@ -152,7 +160,7 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = u3kf_fork(_crop_dext_fork(van, yed, ref, bix));
 
         u3z(yed);
@@ -196,13 +204,14 @@
       default: return u3m_bail(c3__fail);
 
       case c3__core:
+      case c3__help:
       case c3__face: u3x_cell(u3t(ref), &p_ref, &q_ref);
       {
         return _crop_dext(van, sut, q_ref, bix);
       }
       case c3__fork: p_ref = u3t(ref);
       {
-        u3_noun yed = u3qdi_tap(p_ref, u3_nul);
+        u3_noun yed = u3qdi_tap(p_ref);
         u3_noun ret = _crop_sint_fork(van, sut, yed, bix);
 
         u3z(yed);
@@ -219,7 +228,7 @@
     }
   }
 
-  u3_noun
+  static u3_noun
   _cqfu_crop(u3_noun van,
              u3_noun sut,
              u3_noun ref)
@@ -248,7 +257,7 @@
              u3_noun sut,
              u3_noun ref)
   {
-    c3_m    fun_m = c3__crop + !!u3r_at(u3qfu_van_vet, van);
+    c3_m    fun_m = 144 + c3__crop + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
     if ( u3_none != pro ) {

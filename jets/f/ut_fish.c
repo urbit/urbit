@@ -92,6 +92,7 @@
       case c3__core: {
         return u3nc(0, 0);
       }
+      case c3__help:
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
@@ -101,7 +102,7 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = _fish_fork(van, yed, axe, vit);
 
         u3z(yed);
@@ -133,7 +134,8 @@
       }
     }
   }
-  u3_noun
+
+  static u3_noun
   _cqfu_fish(u3_noun van,
              u3_noun sut,
              u3_atom axe)
@@ -164,7 +166,7 @@
              u3_noun sut,
              u3_noun axe)
   {
-    c3_m    fun_m = c3__fish + !!u3r_at(u3qfu_van_vet, van);
+    c3_m    fun_m = 144 + c3__fish + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, axe);
 
     if ( u3_none != pro ) {
