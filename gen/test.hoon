@@ -263,6 +263,9 @@
   ++  test-concat
     (expect-eq (concat ~[~[1 2] ~[3 4]]) ~[1 2 3 4] "concat")
   ::
+  ++  test-weld
+    (expect-eq (weld:ls ~[1 2 3] ~["one" "two"]) ~[1 2 3 "one" "two"] "weld")
+  ::
   ++  test-any-true
     (expect-eq (any [1 2 3 ~] |=(a/@ =(a 2))) %.y "any true")
   ::

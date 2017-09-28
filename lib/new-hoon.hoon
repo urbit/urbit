@@ -338,6 +338,14 @@
       ~
     (weld (homo i.a) $(a t.a))
   ::
+  ++  weld
+    :>  combine two lists, possibly of different types.
+    |*  {a/(list) b/(list)}
+    =>  .(a ^.(homo a), b ^.(homo b))
+    |-  ^-  (list $?(_i.-.a _i.-.b))
+    ?~  a  b
+    [i.a $(a t.a)]
+  ::
   ++  any
     :>  returns yes if any element satisfies the predicate
     |*  {a/(list) b/$-(* ?)}
@@ -756,9 +764,8 @@
     :>  the list union of {a} and {b}.
     |*  {a/(list) b/(list)}
     =>  .(a (homo a), b (homo b))
-    ::  todo: this doesn't work on (weld [1 2 ~] ["one" "two" ~])
-    ::  ^+  (weld a b)
     |-
+    ^+  (weld a b)
     ?~  a
       b
     ?~  b
@@ -769,8 +776,8 @@
     :>  the intersection of {a} and {b}.
     |*  {a/(list) b/(list)}
     =>  .(a (homo a), b (homo b))
-    ^+  a
     |-
+    ^+  a
     ?~  a
       ~
     ?:  (elem i.a b)
