@@ -1340,13 +1340,9 @@
   ++  transform-maybe
     :>  a version of transform that can throw out items.
     |*  {a/(map) fun/$-(* (maybe))}
-    ^-  (map _p.-.n.-.a _+:*fun)
-    ?~  a  ~
-    =+  res=(fun q.n.a)
-    ?~  res
-      ::  todo: runtime wise, I can do better than a union on delete?
-      (union $(a l.a) $(a r.a))
-    [[p.n.a +.res] $(a l.a) $(a r.a)]
+    %+  transform-maybe-with-key  a
+    |=  {key/* value/_q.+.n.-.a}
+    (fun value)
   ::
   ++  transform-maybe-with-key
     :>  a version of transform that can throw out items.
@@ -1355,8 +1351,9 @@
     ?~  a  ~
     =+  res=(fun n.a)
     ?~  res
-      ::  todo: runtime wise, I can do better than a union on delete?
-      (union $(a l.a) $(a r.a))
+      =.  l.a  $(a l.a)
+      =.  r.a  $(a r.a)
+      (pop-top a)
     [[p.n.a +.res] $(a l.a) $(a r.a)]
   ::
   ++  transform-either
