@@ -109,11 +109,20 @@ let
   ld = native.make_derivation rec {
     name = "ld64-${version}-${host}";
     version = "274.2";
-    builder = ./ld_builder.sh;
+    inherit host arch;
     src = nixpkgs.fetchurl {
       url = "https://opensource.apple.com/tarballs/ld64/ld64-${version}.tar.gz";
       sha256 = "1mzp2sszcvg86b1jb90prhcrwk7g7inikr7plnklk7g93728jp8p";
     };
+    patches = [];
+    builder = ./ld_builder.sh;
+    CXXFLAGS =
+      "-std=gnu++11 " +
+      "-Iinclude " +
+      "-I../ld64/src/ld " +
+      "-I../ld64/src/abstraction " +
+      "-I${sdk}/usr/include " +
+      "-D__LITTLE_ENDIAN__";
   };
 
   xar_src = nixpkgs.fetchurl {
