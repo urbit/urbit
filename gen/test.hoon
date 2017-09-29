@@ -71,8 +71,8 @@
       ::  todo: wrap generator in mule so it can crash.
       =+  sample=(generator eny)
       ::  todo: wrap test in mule so it can crash.
-      =+  test=(test sample)
-      ?:  test
+      =+  ret=(test sample)
+      ?:  ret
         %=  $
           eny    (shaf %huh eny)                        ::  xxx: better random?
           current-iteration  (add current-iteration 1)
@@ -93,6 +93,22 @@
       |=  c/@uvJ
       ^-  @
       (add min (~(rad og c) (sub max min)))
+    ::
+    ++  generate-map
+      :>  generator which will produce a map with {count} random pairs.
+      |=  count/@u
+      :>  generate a map with entropy {c}.
+      |=  c/@uvJ
+      =/  gen  (random:new-hoon c)
+      =|  i/@u
+      =|  m/(map @ud @ud)
+      |-
+      ^-  (map @ud @ud)
+      ?:  =(i count)
+        m
+      =^  first  gen  (rads:gen 100)
+      =^  second  gen  (rads:gen 100)
+      $(m (insert:mp:new-hoon m first second), i +(i))
     ::
     ::  ||  %test
     ::
@@ -583,6 +599,33 @@
     (from-list [[1 "one"] [2 "dos"] [3 "three"] [4 "four"] ~])
     "alter (as change)"
   ::
+  ++  check-alter
+    ::  check random maps of 50 items with 40 random operations done on them
+    ::  for validity.
+    %+  check
+    (generate-map 50)
+    |=  a/(map @ud @ud)
+    ::  this is dumb, but use {a} as entropy?
+    =/  gen  (random:new-hoon (jam a))
+    =|  i/@u
+    |-
+    ?:  =(i 40)
+      %.y
+    =^  key  gen  (rads:gen 100)
+    =^  value  gen  (rads:gen 100)
+    =.  a  %^  alter-with-key  a  key
+      |=  {key/@ud current/(maybe @ud)}
+      ^-  (maybe @ud)
+      =+  action=(mod key 2)
+      ?:  =(action 0)                                   ::  return nothing
+        ~
+      ?:  =(action 1)                                   ::  add/set value
+        `value
+      ~                                                 ::  impossible
+    ?.  (valid a)
+      %.n
+    $(i +(i))
+  ::
   ++  test-union
     %^  expect-eq
       %+  union
@@ -801,6 +844,12 @@
       |=({a/* b/*} =(a b))
     %.y
     "is-submap"
+  ::
+  ++  test-valid
+    %^  expect-eq
+    (valid (from-list [[1 1] [2 2] [3 3] [4 4] [5 5] [6 6] [7 7] [8 8] [9 9] ~]))
+    %.y
+    "valid"
   --
 ::  ----------------------------------------------------------------------
 ::  Stays in the generator.
@@ -882,5 +931,5 @@
 
 ::  (perform-test-suite:local "test-thr" !>(test-thr) eny)
 :: (perform-test-suite:local "test-myb" !>(test-myb) eny)
-(perform-test-suite:local "test-ls" !>(test-ls) eny)
-::(perform-test-suite:local "test-mp" !>(test-mp) eny)
+::(perform-test-suite:local "test-ls" !>(test-ls) eny)
+(perform-test-suite:local "test-mp" !>(test-mp) eny)

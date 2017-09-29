@@ -1418,5 +1418,53 @@
     ?:  (vor p.n.l.a p.n.r.a)
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
+  ::
+  ++  valid
+    :>  returns %.y if {a} is a valid treap map.
+    |*  a/(map)
+    =|  {l/(unit) r/(unit)}
+    |-  ^-  ?
+    ?~  a   &
+    ?&  ?~(l & (gor p.n.a u.l))
+        ?~(r & (gor u.r p.n.a))
+        ?~(l.a & ?&((vor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
+        ?~(r.a & ?&((vor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
+    ==
+  --
+++  random
+  :>  produces a core which produces random numbers.
+  ::  todo: think hard about whether this interface really makes any sense;
+  ::  this is marginally better than ++og for rads usage, but still isn't good.
+  |=  a/@
+  ::  note: interior was copied verbatim from ++og.
+  |%
+  ++  rad                                               ::  random in range
+    |=  b/@  ^-  @
+    =+  c=(raw (met 0 b))
+    ?:((lth c b) c $(a +(a)))
+  ::
+  ++  rads                                              ::  random continuation
+    |=  b/@
+    =+  r=(rad b)
+    [r +>.$(a (shas %og-s (mix a r)))]
+  ::
+  ++  raw                                               ::  random bits
+    ::  ~/  %raw
+    |=  b/@  ^-  @
+    %+  can
+      0
+    =+  c=(shas %og-a (mix b a))
+    |-  ^-  (list {@ @})
+    ?:  =(0 b)
+      ~
+    =+  d=(shas %og-b (mix b (mix a c)))
+    ?:  (lth b 256)
+      [[b (end 0 b d)] ~]
+    [[256 d] $(c d, b (sub b 256))]
+  ::
+  ++  raws                                              ::  random bits
+    |=  b/@                                             ::  continuation
+    =+  r=(raw b)
+    [r +>.$(a (shas %og-s (mix a r)))]
   --
 --
