@@ -113,7 +113,7 @@
       |=  {gol/goal mod/dojo-model}  ^-  dojo-command
       [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
     ::
-    ++  dp-command-line  ;~(sfix dp-command (just '\0a'))
+    ++  dp-command-line  ;~(sfix dp-command (star ace) (just '\0a'))
     ++  dp-variable                                     ::  %verb or %brev
       |*  {sym/rule src/rule}
       %+  cook  
