@@ -113,7 +113,7 @@
       |=  {gol/goal mod/dojo-model}  ^-  dojo-command
       [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
     ::
-    ++  dp-command-line  ;~(sfix dp-command (just '\0a'))
+    ++  dp-command-line  ;~(sfix dp-command (star ace) (just '\0a'))
     ++  dp-variable                                     ::  %verb or %brev
       |*  {sym/rule src/rule}
       %+  cook  
@@ -789,9 +789,7 @@
   ++  he-duke                                           ::  ++he-dope variant
     |=  txt/tape
     ^-  (each (unit (each dojo-command tape)) @ud)
-    =+  trim-space=;~(pfix spac:poja (star next))        
-    =+  trimed-text=(flop (scan (flop txt) trim-space))
-    =+  foy=(he-dope trimed-text)
+    =+  foy=(he-dope txt)
     ?-  -.foy
       $|  [%| q.p.foy]
       $&  [%& p.foy]
