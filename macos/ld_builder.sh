@@ -20,4 +20,4 @@ mkdir include
   echo "#define ALL_SUPPORTED_ARCHS \"$arch\""
 } > include/configure.h
 
-g++ $CXXFLAGS ../ld64/src/ld/ld.cpp
+g++ $CXXFLAGS ../ld64/src/ld/{ld,Options}.cpp
