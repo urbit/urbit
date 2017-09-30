@@ -1,6 +1,6 @@
 diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
 --- ld64-274.2-orig/src/ld/ld.cpp	2017-09-29 07:44:04.316338766 -0700
-+++ ld64-274.2/src/ld/ld.cpp	2017-09-29 20:28:44.609155692 -0700
++++ ld64-274.2/src/ld/ld.cpp	2017-09-29 20:49:23.429249818 -0700
 @@ -21,12 +21,6 @@
   *
   * @APPLE_LICENSE_HEADER_END@
@@ -14,6 +14,73 @@ diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
  
  #include <stdlib.h>
  #include <sys/types.h>
+@@ -1023,10 +1017,10 @@
+ 		// sanity check size
+ 		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
+ 															  && (_options.outputKind() != Options::kStaticExecutable) )
+-			throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
++			throwf("section %s (address=0x%lX, size=%lu) would make the output executable exceed available address range", 
+ 						sect->sectionName(), address, sect->size);
+ 		
+-		if ( log ) fprintf(stderr, "  address=0x%08llX, hidden=%d, alignment=%02d, section=%s,%s\n",
++		if ( log ) fprintf(stderr, "  address=0x%08lX, hidden=%d, alignment=%02d, section=%s,%s\n",
+ 						sect->address, sect->isSectionHidden(), sect->alignment, sect->segmentName(), sect->sectionName());
+ 		// update running totals
+ 		if ( !sect->isSectionHidden() || hiddenSectionsOccupyAddressSpace )
+@@ -1057,7 +1051,7 @@
+ 				address = ( (unalignedAddress+alignment-1) & (-alignment) );
+ 				sect->alignmentPaddingBytes = (address - unalignedAddress);
+ 				sect->address = address;
+-				if ( log ) fprintf(stderr, "  address=0x%08llX, hidden=%d, alignment=%02d, section=%s,%s\n",
++				if ( log ) fprintf(stderr, "  address=0x%08lX, hidden=%d, alignment=%02d, section=%s,%s\n",
+ 									sect->address, sect->isSectionHidden(), sect->alignment, sect->segmentName(), sect->sectionName());
+ 				// update running totals
+ 				if ( !sect->isSectionHidden() || hiddenSectionsOccupyAddressSpace )
+@@ -1116,7 +1110,7 @@
+ 		// sanity check size
+ 		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
+ 															  && (_options.outputKind() != Options::kStaticExecutable) )
+-				throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
++				throwf("section %s (address=0x%08lX, size=%lu) would make the output executable exceed available address range", 
+ 						sect->sectionName(), address, sect->size);
+ 
+ 		// sanity check it does not overlap a fixed address segment
+@@ -1142,7 +1136,7 @@
+ 			}
+ 		}
+ 		
+-		if ( log ) fprintf(stderr, "  address=0x%08llX, size=0x%08llX, hidden=%d, alignment=%02d, padBytes=%d, section=%s,%s\n",
++		if ( log ) fprintf(stderr, "  address=0x%08lX, size=0x%08lX, hidden=%d, alignment=%02d, padBytes=%d, section=%s,%s\n",
+ 							sect->address, sect->size, sect->isSectionHidden(), sect->alignment, sect->alignmentPaddingBytes, 
+ 							sect->segmentName(), sect->sectionName());
+ 		// update running totals
+@@ -1156,7 +1150,7 @@
+ 			ld::Internal::FinalSection* sect = *it;
+ 			//if ( sect->isSectionHidden() )
+ 			//	continue;
+-			fprintf(stderr, "  address:0x%08llX, alignment:2^%d, size:0x%08llX, padBytes:%d, section:%s/%s\n",
++			fprintf(stderr, "  address:0x%08lX, alignment:2^%d, size:0x%08lX, padBytes:%d, section:%s/%s\n",
+ 							sect->address, sect->alignment, sect->size, sect->alignmentPaddingBytes, 
+ 							sect->segmentName(), sect->sectionName());
+ 	
+@@ -1197,7 +1191,7 @@
+ 			fileOffset += sect->size;
+ 		}
+ 		
+-		if ( log ) fprintf(stderr, "  fileoffset=0x%08llX, address=0x%08llX, hidden=%d, size=%lld, alignment=%02d, section=%s,%s\n",
++		if ( log ) fprintf(stderr, "  fileoffset=0x%08lX, address=0x%08lX, hidden=%d, size=%ld, alignment=%02d, section=%s,%s\n",
+ 				sect->fileOffset, sect->address, sect->isSectionHidden(), sect->size, sect->alignment, 
+ 				sect->segmentName(), sect->sectionName());
+ 	}
+@@ -1223,7 +1217,7 @@
+ {
+ 	char* result = out;
+ 	char rawNum[30];
+-	sprintf(rawNum, "%llu", in);
++	sprintf(rawNum, "%lu", in);
+ 	const int rawNumLen = strlen(rawNum);
+ 	for(int i=0; i < rawNumLen-1; ++i) {
+ 		*out++ = rawNum[i];
 diff -ur ld64-274.2-orig/src/ld/Options.h ld64-274.2/src/ld/Options.h
 --- ld64-274.2-orig/src/ld/Options.h	2017-09-29 07:44:04.319672117 -0700
 +++ ld64-274.2/src/ld/Options.h	2017-09-29 20:37:11.961284911 -0700
