@@ -14,3 +14,22 @@ diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
  
  #include <stdlib.h>
  #include <sys/types.h>
+diff -ur ld64-274.2-orig/src/ld/Snapshot.h ld64-274.2/src/ld/Snapshot.h
+--- ld64-274.2-orig/src/ld/Snapshot.h	2017-09-29 07:44:04.319672117 -0700
++++ ld64-274.2/src/ld/Snapshot.h	2017-09-29 20:32:25.044874041 -0700
+@@ -88,7 +88,6 @@
+ 
+     friend class SnapshotArchiveFileLog;
+     
+-    typedef std::vector<void(^)(void)> SnapshotLog;    
+ 
+     struct strcompclass {
+         bool operator() (const char *a, const char *b) const { return ::strcmp(a, b) < 0; }
+@@ -128,7 +127,6 @@
+     void addFrameworkArg(const char *framework);
+     void addDylibArg(const char *dylib);
+ 
+-    SnapshotLog fLog;           // log of events that recorded data in a snapshot prior to createSnapshot()
+     bool fRecordArgs;           // record command line 
+     bool fRecordObjects;        // record .o files 
+     bool fRecordDylibSymbols;   // record referenced dylib/framework symbols
