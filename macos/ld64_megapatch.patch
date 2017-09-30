@@ -1,0 +1,16 @@
+diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
+--- ld64-274.2-orig/src/ld/ld.cpp	2017-09-29 07:44:04.316338766 -0700
++++ ld64-274.2/src/ld/ld.cpp	2017-09-29 20:28:44.609155692 -0700
+@@ -21,12 +21,6 @@
+  *
+  * @APPLE_LICENSE_HEADER_END@
+  */
+- 
+-// start temp HACK for cross builds
+-extern "C" double log2 ( double );
+-//#define __MATH__
+-// end temp HACK for cross builds
+-
+ 
+ #include <stdlib.h>
+ #include <sys/types.h>
