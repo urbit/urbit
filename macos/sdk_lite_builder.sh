@@ -1,7 +1,14 @@
 source $setup
 
-o=$out/usr/include
-s=$sdk/usr/include
+header_dirs="
+architecture
+i386
+libkern
+mach
+machine
+mach-o
+mach_debug
+"
 
 headers="
 libunwind.h
@@ -15,16 +22,6 @@ sys/_types/_os_inline.h
 sys/appleapiopts.h
 "
 
-header_dirs="
-architecture
-i386
-libkern
-mach
-machine
-mach-o
-mach_debug
-"
-
 for dir in $header_dirs; do
   d=$out/usr/include/$(dirname $dir)/
   mkdir -p $d
@@ -36,4 +33,16 @@ for header in $headers; do
   cp $sdk/usr/include/$header $out/usr/include/$header
 done
 
-gcc -print-search-dirs
+cat > $out/usr/include/i386/_types.h <<EOF
+// Don't redefine things like __int64_t, causing a conflicting definition.
+// Just include the appropriate glibc header.
+#include <bits/types.h>
+#include <sys/cdefs.h>
+typedef long __darwin_intptr_t;
+typedef unsigned int __darwin_natural_t;
+EOF
+
+# The MacOS SDK expects sys/cdefs.h to define __unused as an attribute.  But we
+# can't have that definition here because glibc's linux/sysctl.h uses __unused as a
+# variable name.  Instead, we just fix the SDK to not use __unused.
+sed -i -r 's/\b__unused\b//g' $out/usr/include/mach/mig_errors.h

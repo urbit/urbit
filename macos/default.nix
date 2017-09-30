@@ -122,7 +122,7 @@ let
       url = "https://opensource.apple.com/tarballs/ld64/ld64-${version}.tar.gz";
       sha256 = "1mzp2sszcvg86b1jb90prhcrwk7g7inikr7plnklk7g93728jp8p";
     };
-    patches = [];
+    patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
     CXXFLAGS =
       "-Werror " +
@@ -196,7 +196,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang ld cctools cctools_tpoechtrager xar sdk;
+    inherit clang ld cctools cctools_tpoechtrager xar sdk sdk_lite;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
