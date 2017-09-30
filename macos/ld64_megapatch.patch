@@ -14,6 +14,21 @@ diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
  
  #include <stdlib.h>
  #include <sys/types.h>
+diff -ur ld64-274.2-orig/src/ld/Options.h ld64-274.2/src/ld/Options.h
+--- ld64-274.2-orig/src/ld/Options.h	2017-09-29 07:44:04.319672117 -0700
++++ ld64-274.2/src/ld/Options.h	2017-09-29 20:37:11.961284911 -0700
+@@ -502,8 +502,9 @@
+ 		bool					containsNonWildcard(const char*) const;
+ 		bool					empty() const			{ return fRegular.empty() && fWildCard.empty(); }
+ 		bool					hasWildCards() const	{ return !fWildCard.empty(); }
+-		NameSet::iterator		regularBegin() const	{ return fRegular.begin(); }
+-		NameSet::iterator		regularEnd() const		{ return fRegular.end(); }
++		// thanks to tpoechtrager's cctools-port for this fix
++		NameSet::const_iterator	regularBegin() const	{ return fRegular.begin(); }
++		NameSet::const_iterator	regularEnd() const		{ return fRegular.end(); }
+ 		void					remove(const NameSet&); 
+ 		std::vector<const char*>		data() const;
+ 	private:
 diff -ur ld64-274.2-orig/src/ld/Snapshot.h ld64-274.2/src/ld/Snapshot.h
 --- ld64-274.2-orig/src/ld/Snapshot.h	2017-09-29 07:44:04.319672117 -0700
 +++ ld64-274.2/src/ld/Snapshot.h	2017-09-29 20:32:25.044874041 -0700
