@@ -92,7 +92,9 @@
       |=  {min/@ max/@}
       |=  c/@uvJ
       ^-  @
-      (add min (~(rad og c) (sub max min)))
+      =+  gen=(random:new-hoon c)
+      =^  num  gen  (range:gen min max)
+      num
     ::
     ++  generate-map
       :>  generator which will produce a map with {count} random pairs.
@@ -106,8 +108,8 @@
       ^-  (map @ud @ud)
       ?:  =(i count)
         m
-      =^  first  gen  (rads:gen 100)
-      =^  second  gen  (rads:gen 100)
+      =^  first  gen  (range:gen 0 100)
+      =^  second  gen  (range:gen 0 100)
       $(m (insert:mp:new-hoon m first second), i +(i))
     ::
     ::  ||  %test
@@ -611,8 +613,8 @@
     |-
     ?:  =(i 40)
       %.y
-    =^  key  gen  (rads:gen 100)
-    =^  value  gen  (rads:gen 100)
+    =^  key  gen  (range:gen 0 100)
+    =^  value  gen  (range:gen 0 100)
     =.  a  %^  alter-with-key  a  key
       |=  {key/@ud current/(maybe @ud)}
       ^-  (maybe @ud)

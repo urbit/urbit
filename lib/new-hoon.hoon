@@ -1432,38 +1432,51 @@
     ==
   --
 ++  random
-  :>  produces a core which produces random numbers.
-  ::  todo: think hard about whether this interface really makes any sense;
-  ::  this is marginally better than ++og for rads usage, but still isn't good.
+  :>    produces a core which produces random numbers.
+  :>
+  :>  random numbers are generated through repeated sha-256 operations.
+  :>
+  :>  this design forces implementation details to be hidden, forces users to
+  :>  go through =^. this should be less error prone for pulling out multiple
+  :>  random numbers, at the cost of making getting a single random number
+  :>  slightly more cumbersome.
+  :>
+  :>      =+  gen=(random eny)
+  :>      =^  first  gen  (range:gen 0 10)
+  :>      =^  second  gen  (range:gen 0 10)
   |=  a/@
-  ::  note: interior was copied verbatim from ++og.
-  |%
-  ++  rad                                               ::  random in range
-    |=  b/@  ^-  @
-    =+  c=(raw (met 0 b))
-    ?:((lth c b) c $(a +(a)))
+  =>  |%
+      ++  raw                                               ::  random bits
+        |=  b/@  ^-  @
+        %+  can
+          0
+        =+  c=(shas %og-a (mix b a))
+        |-  ^-  (list {@ @})
+        ?:  =(0 b)
+          ~
+        =+  d=(shas %og-b (mix b (mix a c)))
+        ?:  (lth b 256)
+          [[b (end 0 b d)] ~]
+        [[256 d] $(c d, b (sub b 256))]
+      ::
+      ++  rad                                               ::  random in range
+        |=  b/@  ^-  @
+        =+  c=(raw (met 0 b))
+        ?:((lth c b) c $(a +(a)))
+      --
+  ^?  |%
+  ++  range
+    :>  returns a random number in the range [start, end], and generator.
+    |=  {start/@ end/@}
+    ?:  (gte start end)
+      ~_(leaf+"invalid range" !!)
+    =+  offset=(sub end start)
+    =+  r=(rad offset)
+    [(add start r) +>.$(a (shas %og-s (mix a r)))]
   ::
-  ++  rads                                              ::  random continuation
+  ++  bits
+    :>  returns {b} bits in the range, and generator.
     |=  b/@
-    =+  r=(rad b)
-    [r +>.$(a (shas %og-s (mix a r)))]
-  ::
-  ++  raw                                               ::  random bits
-    ::  ~/  %raw
-    |=  b/@  ^-  @
-    %+  can
-      0
-    =+  c=(shas %og-a (mix b a))
-    |-  ^-  (list {@ @})
-    ?:  =(0 b)
-      ~
-    =+  d=(shas %og-b (mix b (mix a c)))
-    ?:  (lth b 256)
-      [[b (end 0 b d)] ~]
-    [[256 d] $(c d, b (sub b 256))]
-  ::
-  ++  raws                                              ::  random bits
-    |=  b/@                                             ::  continuation
     =+  r=(raw b)
     [r +>.$(a (shas %og-s (mix a r)))]
   --
