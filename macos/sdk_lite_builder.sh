@@ -42,6 +42,28 @@ typedef long __darwin_intptr_t;
 typedef unsigned int __darwin_natural_t;
 EOF
 
+cat > $out/usr/include/string.h <<EOF
+// MacOS programs expect string.h to define strlcpy.
+
+#include_next <string.h>
+
+#ifndef _NIXCRPKGS_MACOS_SDK_STRING_H
+#define _NIXCRPKGS_MACOS_SDK_STRING_H
+
+static inline size_t
+strlcpy(char * __restrict__ dst, const char * __restrict__ src, size_t dstsize)
+{
+  size_t len = strlen(src);
+  if (!dstsize) { return len; }
+  if (len >= dstsize) { len = dstsize - 1; }
+  memcpy(dst, src, len);
+  dst[len] = 0;
+  return len;
+}
+
+#endif
+EOF
+
 # The MacOS SDK expects sys/cdefs.h to define __unused as an attribute.  But we
 # can't have that definition here because glibc's linux/sysctl.h uses __unused as a
 # variable name.  Instead, we just fix the SDK to not use __unused.
