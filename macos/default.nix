@@ -50,6 +50,14 @@ let
     src = ./MacOSX10.11.sdk.tar.xz;
   };
 
+  # A trimmed-down SDK without harmful headers like locale.h, which conflict
+  # with glibc's locale.h.
+  sdk_lite = native.make_derivation rec {
+    name = "macos-sdk-lite";
+    builder = ./sdk_lite_builder.sh;
+    inherit sdk;
+  };
+
   # Note: We use nixpkgs.clang so we can compile an objective C library (which
   # probably isn't needed).  We can't use our own clang because it doesn't
   # quite work yet for compiling native executables.  Would be nice to get
@@ -97,7 +105,7 @@ let
 
     CFLAGS =
       "-I../cctools/include " +
-      "-I${sdk}/usr/include " +
+      "-isystem ${sdk}/usr/include " +
 
       "-Wfatal-errors " +
       "-Werror -Wno-deprecated-declarations -Wno-deprecated " +
@@ -117,11 +125,13 @@ let
     patches = [];
     builder = ./ld_builder.sh;
     CXXFLAGS =
+      "-Werror " +
+      "-Wfatal-errors " +
       "-std=gnu++11 " +
       "-Iinclude " +
       "-I../ld64/src/ld " +
       "-I../ld64/src/abstraction " +
-      "-I${sdk}/usr/include " +
+      "-isystem ${sdk_lite}/usr/include " +
       "-D__LITTLE_ENDIAN__";
   };
 
