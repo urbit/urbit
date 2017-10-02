@@ -390,7 +390,6 @@
                      +>.$
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             $diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
-            $doff  !!
           ==
         ::
             {$c $note *}

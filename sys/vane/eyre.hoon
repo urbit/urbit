@@ -13,7 +13,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
-          $%  {$wont p/sock q/{path *}}                 ::
+          $%  {$want p/sock q/{path *}}                 ::
           ==  ==                                        ::
               $:  $b                                    ::  to  %behn
           $%  {$wait p/@da}                             ::
@@ -957,7 +957,6 @@
         ?:  ?=($le -.tee)  (~(get-ack lens ~) ack)
         (get-ack:(ire-ix p.tee) q.tee ack)
       ::
-          $doff  !!
           $diff
         ?.  ?=($json p.p.cuf)
           :: ~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
@@ -1103,7 +1102,7 @@
     (pass-note tea [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
-    |=({him/ship gam/gram} (pass-note ~ %a %wont [our him] [%e -.gam] +.gam))
+    |=({him/ship gam/gram} (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
   ::
   ++  jael-note
     |=({tea/whir kyz/mini-jael-task} (pass-note tea %e %mini-jael-task kyz))
