@@ -426,21 +426,6 @@
           (~(has in sources.shape:(~(got by stories) man.she)) `partner`n.paz)
       ==
     ::
-    ++  sh-pass                                         ::  passive from aud
-      |=  aud/audience
-      %-  sh-poss
-      %-  ~(gas in *(set partner))
-      (turn ~(tap by aud) |=({a/partner *} a))
-    ::
-    ++  sh-poss                                         ::  passive update
-      |=  lix/(set partner)
-      ?^  buf.say.she
-        +>.$
-      =+  sap=(sh-pare lix)
-      ?:  =(sap passive.she)
-        +>.$
-      sh-prod(passive.she sap)
-    ::
     ++  sh-pest                                         ::  report listen
       |=  tay/partner
       ^+  +>
@@ -453,15 +438,7 @@
     ++  sh-rend                                         ::  print on one line
       |=  gam/telegram
       =+  lin=~(tr-line tr man.she settings.she gam)
-      =+  nom=(scag 7 (cite:title our.hid))
-      %.  q.q.gam
-      =<  sh-pass
-      %.  [%txt lin]
-      ?:  ?&  (~(has in settings.she) %notify)
-              (gth (fall (find nom lin) 0) 15)
-          ==
-        sh-fact:(sh-fact %bel ~)
-      sh-fact
+      (sh-fact %txt lin)
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num/@ud
@@ -984,7 +961,7 @@
     ++  sh-whom                                         ::  current audience
       ^-  audience
       %-  ~(gas by *audience)
-      %+  turn  ~(tap in ?~(active.she passive.she u.active.she))
+      %+  turn  ~(tap in u.active.she)
       |=(a/partner [a *envelope %pending])
     ::
     ++  sh-tell                                         ::  add command
@@ -1420,8 +1397,8 @@
       ==
     =+  man=%posts
     ?:  (~(has by stories) man)
-      (ra-consume-fora-post man pax hed txt)
-    =;  new  (ra-consume-fora-post:new man pax hed txt)
+      (ra-consume-fora-post man pax sup hed txt)
+    =;  new  (ra-consume-fora-post:new man pax sup hed txt)
     =.  ..ra-apply
       %+  ra-apply  our.hid
       :+  %design  man

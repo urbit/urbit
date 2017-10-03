@@ -1541,15 +1541,12 @@
   ::                                                    ::
   ::
 ++  ly                                                  ::  list from raw noun
-  |*  a/*
   le:nl
 ::
 ++  my                                                  ::  map from raw noun
-  |*  a/*
   my:nl
 ::
 ++  sy                                                  ::  set from raw noun
-  |*  a/*
   si:nl
 ::
 ++  nl
