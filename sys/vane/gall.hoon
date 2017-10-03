@@ -409,7 +409,6 @@
         $coup  (mo-give %mack p.cuf)
         $diff  %+  mo-pass  [%sys %red t.pax]
                [%a %want [our him] [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
-        $doff  !! ::  XX
         $quit  %+  mo-pass  [%sys pax]
                [%a %want [our him] [%g %gh dap ~] [num %x ~]]
         $reap  (mo-give %mack p.cuf)
@@ -1074,7 +1073,6 @@
       ?-  -.cuf
         $coup  (ap-take q.q.pry %coup +.pax `!>(p.cuf))
         $diff  (ap-diff q.q.pry pax p.cuf)
-        $doff  !!
         $quit  (ap-take q.q.pry %quit +.pax ~)
         $reap  (ap-take q.q.pry %reap +.pax `!>(p.cuf))
       ==

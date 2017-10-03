@@ -880,7 +880,6 @@
   ++  cuft                                              ::  internal gift
     $%  {$coup p/(unit tang)}                           ::  poke result
         {$diff p/cage}                                  ::  subscription output
-        {$doff p/mark q/noun}                           ::  untyped diff
         {$quit $~}                                      ::  close subscription
         {$reap p/(unit tang)}                           ::  peer result
     ==                                                  ::

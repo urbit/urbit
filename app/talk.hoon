@@ -1538,7 +1538,7 @@
         {@ta $~}  i.pax
       ==
     =/  she/shell
-      %*(. *shell her her, man man, active `(sy [%& our.hid man] ~))
+      %*(. *shell her her, man man, active `(si:nl [%& our.hid man] ~))
     sh-abet:~(sh-peer sh ~ `shell`she)
   ::
   ++  ra-subscribe                                      ::  listen to
