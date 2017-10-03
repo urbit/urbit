@@ -7,7 +7,7 @@
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =>
-~%  %arvo  +  ~
+~%  %hex  +  ~
 |%
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
