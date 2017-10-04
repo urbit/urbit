@@ -124,7 +124,7 @@
       ?.  ?=({$hoon *} tyl)  hav
       :_(hav [(flop `path`t.tyl) [%hoon .^(@t %cx pax)]])
   ::
-  =/  all  (~(tap by dir.lon) ~)
+  =/  all  ~(tap by dir.lon)
   |-  ^+  hav
   ?~  all  hav
   $(all t.all, hav ^$(tyl [p.i.all tyl]))
