@@ -6894,8 +6894,7 @@
         $bcwt  (lead -.gen %.(+.gen moar))
         $bcts  (lead -.gen %.(+.gen nexp))
         $bcsm  (lead -.gen %.(+.gen expr))
-        $brcb  (lead -.gen %.(+.gen (trio noop expr arms)))
-        $brcb  (lead -.gen %.(+.gen (trio noop expr arms)))
+        $brcb  (lead -.gen %.(+.gen (quad noop expr exps arms)))
         $brcl  (lead -.gen %.(+.gen (twin noop dubs)))
         $brcn  (lead -.gen %.(+.gen (twin noop arms)))
         $brdt  (lead -.gen %.(+.gen (twin noop expr)))
@@ -6998,6 +6997,15 @@
     ++  expr
       |=  p/twig
       ^$(gen p)
+    ::
+    ++  exps
+      |=  p/(list (pair term twig))
+      =|  out/(list (pair term twig))
+      |-  ^+  [out vit]
+      ?~  p
+        [out vit]
+      =^  nex  vit  ^^$(gen q.i.p)
+      $(p t.p, out [[p.i.p nex] out])
     ::
     ++  heel
       |=  bud/foot
