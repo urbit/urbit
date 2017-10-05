@@ -625,7 +625,7 @@
         ==
       ::
       ++  speeches                                      ::<  lin or url msgs
-        %+  most  (jest '•')  ::TODO  why is this not breaking msgs up?
+        %+  most  (jest '•')
         ;~  pose
           (stag %url aurf:urlp)
           ::TODO  maybe reverse loobs. at least document properly! confusing.
@@ -633,8 +633,11 @@
           :(stag %lin & ;~(less sem hax text))
         ==
       ::
+      ++  text                                          ::<  msg without break
+        %+  cook  crip
+        (plus ;~(less (jest '•') next))
+      ::
       ++  nick  (cook crip (stun [1 14] low))           ::<  nickname
-      ++  text  (cook crip (plus next))                 ::<  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::<  circle postfix
       ++  setting                                       ::<  setting flag
         %-  perk  :~
