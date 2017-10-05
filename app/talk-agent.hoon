@@ -85,6 +85,7 @@
           {$say p/(list speech)}                        ::<  send message
           {$eval p/cord q/twig}                         ::<  send #-message
           {$target p/where q/(unit work)}               ::<  set active targets
+          {$reply p/$@(@ud {@u @ud}) q/(list speech)}   ::<  reply to
           ::  displaying info                           ::
           {$number p/$@(@ud {@u @ud})}                  ::<  relative/absolute
           {$who p/where}                                ::<  presence
@@ -141,6 +142,22 @@
   ^-  circle
   :_  inbox
   (true-self our.bol)
+::
+++  renum                                               ::<  gram i# by serial
+  ::>  find the grams list index for gram with serial.
+  |=  ser/serial
+  ^-  (unit @ud)
+  =+  num=(~(get by known) ser)
+  ?~  num  ~
+  `(sub count +(u.num))
+::
+++  recall                                              ::<  gram by serial
+  ::>  find a known gram with serial {ser}.
+  |=  ser/serial
+  ^-  (unit telegram)
+  =+  num=(renum ser)
+  ?~  num  ~
+  `(snag u.num grams)
 ::
 ++  nik-from-nak                                        ::<  nik from nak
   ::>
@@ -372,7 +389,7 @@
     ::
     |=  gam/telegram
     ^+  +>
-    =+  old=(~(get by known) uid.gam)
+    =+  old=(renum uid.gam)
     ?~  old
       (ta-append gam)      ::<  add
     (ta-revise u.old gam)  ::<  modify
@@ -393,10 +410,9 @@
     ::>  modify a telegram we know.
     ::
     |=  {num/@ud gam/telegram}
-    =+  way=(sub count num)
-    =+  old=(snag (dec way) grams)
+    =+  old=(snag num grams)
     ?:  =(gam old)  +>.$                                ::  no change
-    =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
+    =.  grams  (welp (scag num grams) [gam (slag +(num) grams)])
     ?:  =(sep.gam sep.old)  +>.$                        ::  no worthy change
     =<  sh-done
     (~(sh-gram sh cli) gam)
@@ -575,6 +591,9 @@
         %+  cook  ~(gas by *(map circle range))
         (most ;~(plug com (star ace)) ;~(plug circ rang))
       ::
+      ++  pick                                          ::<  message reference
+        ;~(pose nump (cook lent (star sem)))
+      ::
       ++  nump                                          ::<  number reference
         ;~  pose
           ;~(pfix hep dem:ag)
@@ -602,15 +621,16 @@
       ++  message                                       ::<  exp, lin or url msg
         ;~  pose
           ;~(plug (cold %eval hax) expr)
-        ::
-          %+  stag  %say
-          %+  most  (jest '•')  ::TODO  why is this not breaking msgs up?
-          ;~  pose
-            (stag %url aurf:urlp)
-            ::TODO  maybe reverse loobs. at least document properly! confusing.
-            :(stag %lin | ;~(pfix pat text))
-            :(stag %lin & ;~(less sem hax text))
-          ==
+          (stag %say speeches)
+        ==
+      ::
+      ++  speeches                                      ::<  lin or url msgs
+        %+  most  (jest '•')  ::TODO  why is this not breaking msgs up?
+        ;~  pose
+          (stag %url aurf:urlp)
+          ::TODO  maybe reverse loobs. at least document properly! confusing.
+          :(stag %lin | ;~(pfix pat text))
+          :(stag %lin & ;~(less sem hax text))
         ==
       ::
       ++  nick  (cook crip (stun [1 14] low))           ::<  nickname
@@ -727,10 +747,11 @@
           ::
           (stag %target ;~(plug cirs (punt ;~(pfix ace message))))
           ::
+          (stag %reply ;~(plug pick ;~(pfix ace speeches)))
+          ::
           ::  displaying info
           ::
-          (stag %number nump)
-          (stag %number (cook lent (star sem)))
+          (stag %number pick)
         ==
       --
     ::
@@ -829,6 +850,7 @@
           $say     (say +.job)
           $eval    (eval +.job)
           $target  (target +.job)
+          $reply   (reply +.job)
           ::  displaying info
           $number  (number +.job)
           $who     (who +.job)
@@ -1051,6 +1073,23 @@
         ^+  ..sh-work
         =.  ..sh-pact  (sh-pact pan)
         ?~(woe ..sh-work work(job u.woe))
+      ::
+      ++  reply                                         ::<  %reply
+        ::>  send a reply to the selected message.
+        ::
+        |=  {num/$@(@ud {p/@u q/@ud}) sep/(list speech)}
+        ^+  ..sh-work
+        ::TODO  =- (say (turn ... [%ire - s])) nest-fails on the - ???
+        ::TODO  what's friendlier, reply-to-null or error?
+        =/  ser/serial
+          ?@  num
+            ?:  (gte num count)  0v0
+            uid:(snag num grams)
+          ?:  (gth q.num count)  0v0
+          ?:  =(count 0)  0v0
+          =+  msg=(deli (dec count) num)
+          uid:(snag (sub count +(msg)) grams)
+        (say (turn sep |=(s/speech [%ire `serial`ser s])))
       ::
       ::>  ||
       ::>  ||  %displaying-info
@@ -1898,6 +1937,18 @@
         $exp
       tan+~[rose+[" " ~ ~]^[leaf+"# {(trip exp.sep)}" res.sep]]
       ::
+        $ire
+      =+  gam=(recall top.sep)
+      ?~  gam  $(sep sep.sep)
+      :-  %mor
+      =-  [- $(sep sep.sep) ~]
+      :-  %tan
+      ::TODO  in "wrong" order because they get printed in reverse...
+      :~  :+  %rose  [" " ~ ~]
+          (turn (~(tr-text tr sef u.gam) termwidth) |=(t/tape [%leaf t]))
+          [%leaf :(weld "in reply to: " (cite aut.u.gam) ": ")]
+      ==
+      ::
         $fat
       [%mor $(sep sep.sep) tan+(tr-tach tac.sep) ~]
       ::
@@ -1965,6 +2016,9 @@
       ::TODO  print truncated res on its own line.
       :_  ~
       (tr-chow wyd '#' ' ' (trip exp.sep))
+      ::
+        $ire
+      $(sep sep.sep)
       ::
         $url
       :_  ~

@@ -226,6 +226,7 @@
   $%  {$lin pat/? msg/cord}                             ::<  no/@ text line
       {$url url/purf}                                   ::<  parsed url
       {$exp exp/cord res/(list tank)}                   ::<  hoon line
+      {$ire top/serial sep/speech}                      ::<  in reply to
       {$fat tac/attache sep/speech}                     ::<  attachment
       {$inv inv/? cir/circle}                           ::<  inv/ban for circle
       {$app app/term msg/cord}                          ::<  app message
