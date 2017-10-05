@@ -147,7 +147,7 @@
     |=  msg/cord
     %^  ta-action  0  %phrase
     :-  [[our.bol (main our.bol)] ~ ~]
-    [%app %talk-guardian msg]~
+    [%app dap.bol msg]~
   ::
   ++  ta-evil                                           ::<  emit error
     ::>  tracing printf and crash.
@@ -653,7 +653,7 @@
       ^+  +>
       %+  so-act  %phrase
       :-  [[our.bol (main our.bol)] ~ ~]
-      [%app %talk-guardian msg]~
+      [%app dap.bol msg]~
     ::
     ++  so-delta                                        ::<  send delta
       ::>  store delta in ++ta core.
@@ -1135,7 +1135,7 @@
     :*  ost.bol
         %poke
         /present
-        [hos %talk-guardian]
+        [hos dap.bol]
         [%talk-command %present nos dif]
     ==
   ::
@@ -1171,7 +1171,7 @@
     :*  0
         %peer
         /burden
-        [(above our.bol) %talk-guardian]
+        [(above our.bol) dap.bol]
         /burden/(scot %p our.bol)
     ==
   ::
@@ -1185,7 +1185,7 @@
     :*  0
         %peer
         /report/(scot %p who)
-        [who %talk-guardian]
+        [who dap.bol]
         /report
     ==
   ::
@@ -1207,7 +1207,7 @@
     %+  da-emit  ost.bol
     :*  %poke
         /repeat/(scot %p hos.cir)/[nom.cir]/(scot %ud (jam ses))
-        [hos.cir %talk-guardian]
+        [hos.cir dap.bol]
         [%talk-command %publish out]
     ==
   ::
@@ -1536,7 +1536,7 @@
       :_  ~
       :*  %pull
           /circle/[nom]/(scot %p hos.cir)/[nom.cir]
-          [hos.cir %talk-guardian]
+          [hos.cir dap.bol]
           ~
       ==
     ::
@@ -1631,7 +1631,7 @@
     /(scot -.u.tal.u.wen +.u.tal.u.wen)
   :*  %peer
       (welp /circle/[nom]/(scot %p hos.cir)/[nom.cir] ran)
-      [hos.cir %talk-guardian]
+      [hos.cir dap.bol]
       (welp /circle/[nom.cir] ran)
   ==
 ::
