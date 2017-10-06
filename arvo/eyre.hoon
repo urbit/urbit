@@ -1984,6 +1984,8 @@
   ?.  ?=($$ ren)  [~ ~]
   ?.  ?=($$ -.lot)  [~ ~]
   ?+    syd  [~ ~]
+      $serv
+    ``[%path !>((tope top))]
       $host
     %-  (lift (lift |=(a/hart [%hart !>(a)])))
     ^-  (unit (unit hart))
