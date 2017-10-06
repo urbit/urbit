@@ -628,9 +628,8 @@
         %+  most  (jest '•')
         ;~  pose
           (stag %url aurf:urlp)
-          ::TODO  maybe reverse loobs. at least document properly! confusing.
-          :(stag %lin | ;~(pfix pat text))
-          :(stag %lin & ;~(less sem hax text))
+          :(stag %lin & ;~(pfix pat text))
+          :(stag %lin | ;~(less sem hax text))
         ==
       ::
       ++  text                                          ::<  msg without break
@@ -1932,7 +1931,7 @@
     |-  ^-  sole-effect
     ?-  -.sep
         $lin
-      tan+~[leaf+"{?:(pat.sep "" "@ ")}{(trip msg.sep)}"]
+      tan+~[leaf+"{?:(pat.sep "@ " "")}{(trip msg.sep)}"]
       ::
         $url
       url+(crip (earf url.sep))
@@ -2045,7 +2044,7 @@
         $lin
       ::  glyph prefix
       =/  pef
-        ?.  pat.sep  " "
+        ?:  pat.sep  " "
         %~  ar-pref  ar
           ?:  =(who our.bol)  aud
           (~(del in aud) [%& who (main who)])
