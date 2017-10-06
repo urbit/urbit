@@ -26,7 +26,7 @@
 !:
 ::::
   ::
-[. talk]  ::TODO  =,
+=,  talk
 =>  ::>  ||
     ::>  ||  %arch
     ::>  ||
@@ -63,7 +63,7 @@
       ==                                                ::
     ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::
-          {$info wire ship term nori}                   ::
+          {$info wire ship term nori:clay}              ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
           {$pull wire dock $~}                          ::
@@ -80,17 +80,17 @@
 ::>  ||
 ::>    functional cores and arms.
 ::
-|_  {bol/bowl state}
+|_  {bol/bowl:gall state}
 ::
 ++  prep                                                ::<  prepare state
   ::>  adapts state.
   ::
   |=  old/(unit state)
-  ^-  (quip move ..prep)
-  ?~  old
+  ^-  (quip move _..prep)
+  ::?~  old
     %-  pre-bake
     ta-done:ta-init:ta
-  [~ ..prep(+<+ u.old)]
+  ::[~ ..prep(+<+ u.old)]
 ::
 ::>  ||
 ::>  ||  %engines
@@ -196,9 +196,9 @@
     %-  ta-deltas
     ::  if needed, subscribe to our parent's /burden.
     =+  sen=(above our.bol)
-    ?:  ?|  !=(%czar (clan sen))
+    ?:  ?|  !=(%czar (clan:title sen))
             =(sen our.bol)
-            =(%pawn (clan our.bol))
+            =(%pawn (clan:title our.bol))
         ==
       ~
     [%init ~]~
@@ -493,7 +493,7 @@
       ~&([%ignoring-prize -.piz] +>)
       ::
         $burden
-      %+  roll  (~(tap by sos.piz))
+      %+  roll  ~(tap by sos.piz)
       |=  {{n/naem b/burden} _..ta-take}
       =<  so-done
       (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
@@ -564,7 +564,7 @@
     ::>  conducts thought {tot} to each circle in its audience.
     ::
     |=  {pub/? aut/ship tot/thought}
-    =+  aud=(~(tap in aud.tot))
+    =+  aud=~(tap in aud.tot)
     |-  ^+  +>.^$
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ta-conduct pub aut i.aud tot))
@@ -575,7 +575,7 @@
     |=  {pub/? aut/ship cir/circle tot/thought}
     ^+  +>
     ?:  pub
-      ?.  (team our.bol aut)
+      ?.  (team:title our.bol aut)
         %-  ta-note
         (crip "strange author {(scow %p aut)}")
       =.  aut  our.bol
@@ -768,19 +768,19 @@
         (so-config-full `shape loc.cos)
       ::  remote config
       =.  self
-        %+  roll  (~(tap by rem.cos))
+        %+  roll  ~(tap by rem.cos)
         |=  {{r/circle c/config} _self}
         (so-delta-our %config r %full c)
       ::  local status
       =.  self
-        %+  roll  (~(tap by loc.pes))
+        %+  roll  ~(tap by loc.pes)
         |=  {{w/ship s/status} _self}
         (so-delta-our %status so-cir w %full s)
       ::  remote status
       =.  self
-        %+  roll  (~(tap by rem.pes))
+        %+  roll  ~(tap by rem.pes)
         |=  {{c/circle g/group} _self}
-        %+  roll  (~(tap by g))
+        %+  roll  ~(tap by g)
         |=  {{w/ship s/status} _self}
         (so-delta-our %status c w %full s)
       ::  telegrams
@@ -1089,7 +1089,7 @@
         $black  !(~(has in ses.con.shape) her)          ::<  channel, blacklist
         $white  (~(has in ses.con.shape) her)           ::<  village, whitelist
         $green  &                                       ::<  journal, all
-        $brown  (team our.bol her)                      ::<  mailbox, our team
+        $brown  (team:title our.bol her)                      ::<  mailbox, our team
       ==
     --
   --
@@ -1111,7 +1111,7 @@
     ::>  ++da-emil and ++da-emit add them to the head of
     ::>  the {moves}.
     ::
-    ^-  (quip move +>)
+    ^-  (quip move _+>)
     [(flop moves) +>]
   ::
   ::>  ||
@@ -1247,7 +1247,7 @@
       ==
     =/  ole/(list (set circle))
       ?.  =(cis ~)  [cis ~]
-      (~(tap in (~(get ju binds) gyf)))
+      ~(tap in (~(get ju binds) gyf))
     |-  ^+  +>.^$
     ?~  ole  +>.^$
     %_  $
@@ -1366,7 +1366,7 @@
       ::>  apply a %remove story delta, unsubscribing
       ::>  this story from all its active sources.
       ::
-      (sa-abjure (~(tap in src.shape)))
+      (sa-abjure ~(tap in src.shape))
     ::
     ++  sa-change                                       ::<  apply circle delta
       ::>  figure out whether to apply a %story delta to
@@ -1487,8 +1487,8 @@
       |=  {sub/? cos/(map circle range)}
       ^-  (list move)
       ?:  sub
-        (sa-acquire (~(tap by cos)))
-      (sa-abjure (~(tap in (key-by cos))))
+        (sa-acquire ~(tap by cos))
+      (sa-abjure ~(tap in ~(key by cos)))
     ::
     ++  sa-permit-effects                               ::<  notify permitted
       ::>  apply side-effects for a %permit delta,
@@ -1552,7 +1552,7 @@
       ::
       |=  sis/(set ship)
       ^-  (list move)
-      %+  turn  (~(tap in (sa-unearth sis)))
+      %+  turn  ~(tap in (sa-unearth sis))
       |=  {b/bone}
       [b %quit ~]
     ::
@@ -1651,7 +1651,7 @@
   ::>  producing side-effects.
   ::
   |=  det/delta
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =^  mos  +>.$
     da-done:(da-change:da det)
   :_  +>.$
@@ -1662,7 +1662,7 @@
   ::>  bake a list of deltas.
   ::
   |=  des/(list delta)
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   %+  roll  des
   |=  {d/delta m/(list move) _+>.$}
   =^  mos  +>.^$  (bake d)
@@ -1681,7 +1681,7 @@
     :+  ~  ~
     :-  %burden
     %-  ~(gas in *(map naem burden))
-    %+  murn  (~(tap by stories))
+    %+  murn  ~(tap by stories)
     |=  {n/naem s/story}
     ^-  (unit (pair naem burden))
     ::  only auto-federate channels for now.
@@ -1821,7 +1821,7 @@
   ^-  (list move)
   ::  cache results for paths.
   =|  res/(map path (unit rumor))
-  %+  murn  (~(tap by sup.bol))
+  %+  murn  ~(tap by sup.bol)
   |=  {b/bone s/ship p/path}
   ^-  (unit move)
   =+  mur=(~(get by res) p)
@@ -1872,7 +1872,7 @@
   |=  {who/ship qer/query}
   ^-  ?
   ?-  -.qer
-    $reader   (team our.bol who)
+    $reader   (team:title our.bol who)
     $burden   ?&  =(who who.qer)
                   =(our.bol (above who))
               ==
@@ -1893,7 +1893,7 @@
   ::>  incoming talk command. process it and update logs.
   ::
   |=  cod/command
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =^  mos  +>.$
     %-  pre-bake
     ta-done:(ta-apply:ta src.bol cod)
@@ -1905,8 +1905,8 @@
   ::>  incoming talk action. process it.
   ::
   |=  act/action
-  ^-  (quip move +>)
-  ?.  (team src.bol our.bol)
+  ^-  (quip move _+>)
+  ?.  (team:title src.bol our.bol)
     %-  pre-bake
     =<  ta-done
     %-  ta-note:ta  %-  crip
@@ -1923,7 +1923,7 @@
   ::>  accept a query result.
   ::
   |=  {wir/wire piz/prize}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =^  mos  +>.$
     %-  pre-bake
     ta-done:(ta-take:ta wir piz)
@@ -1935,7 +1935,7 @@
   ::>  accept a query result change.
   ::
   |=  {wir/wire rum/rumor}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =^  mos  +>.$
     %-  pre-bake
     ta-done:(ta-hear:ta wir rum)
@@ -1947,7 +1947,7 @@
   ::>  incoming subscription on {pax}.
   ::
   |=  pax/path
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ?:  ?=({$sole *} pax)  ~&(%talk-broker-no-sole !!)
   =+  qer=(path-to-query pax)
   ?.  (leak src.bol qer)  ~&(%peer-invisible !!)
@@ -1965,7 +1965,7 @@
   ::>  unsubscribes.
   ::
   |=  pax/path
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =+  qer=(path-to-query pax)
   ?.  ?=($circle -.qer)  [~ +>.$]
   %-  pre-bake
@@ -1975,7 +1975,7 @@
   ::>  handle all remote errors.
   ::
   |=  {wir/wire fal/(unit tang)}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ?~  fal  [~ +>]
   ~|  reap-fail+wir
   (mean u.fal)
@@ -1986,7 +1986,7 @@
   ::
   ::TODO  update to handle all subscription kinds.
   |=  {wir/wire fal/(unit tang)}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   %+  etch-circle  [%circle wir]
   |=  {nom/naem cir/circle}
   ?~  fal
@@ -2002,7 +2002,7 @@
   ::
   ::TODO  update for all subscription kinds.
   |=  wir/wire
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   %+  etch-circle  [%circle wir]
   |=  {nom/naem cir/circle}
   :_  +>.^$  :_  ~
@@ -2013,7 +2013,7 @@
   ::>  received or rejected.
   ::
   |=  {wir/wire fal/(unit tang)}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   %+  etch-repeat  [%repeat wir]
   |=  {cir/circle ses/(list serial)}
   %-  pre-bake
@@ -2029,7 +2029,7 @@
   ::>  to be re-loaded by ++poke-talk-load.
   ::
   |=  nom/naem
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =/  paf/path
     /(scot %p our.bol)/home/(scot %da now.bol)/talk/[nom]/talk-telegrams
   =+  grams:(~(got by stories) nom)
@@ -2039,7 +2039,7 @@
       %info
       /jamfile
       our.bol
-      (foal paf [%talk-telegrams !>(-)])
+      (foal:space:userlib paf [%talk-telegrams !>(-)])
   ==
 ::
 ++  poke-talk-load                                      ::<  load from log
@@ -2047,7 +2047,7 @@
   ::>  as saved in ++poke-talk-save.
   ::
   |=  nom/naem
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   =/  grams
     .^  (list telegram)
         %cx
@@ -2066,7 +2066,7 @@
   ::
   |=  nom/naem
   ~&  %talk-poke-log
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   :-  [(log-to-file nom) ~]
   %=  +>.$
       log
@@ -2078,7 +2078,7 @@
   ::>  stops logging story {nom}'s messages.
   ::
   |=  nom/naem
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   :-  ~
   +>.$(log (~(del by log) nom))
 ::
@@ -2087,7 +2087,7 @@
   ::>  their grams to log files if new ones have arrived.
   ::
   ::TODO  re-enable and test.
-  ^-  (quip move .)
+  ^-  (quip move _.)
   ?:  &  [~ .]  ::  XXX!!!!
   :_  %_  .
           log
@@ -2095,7 +2095,7 @@
         |=  {nom/naem len/@ud}
         count:(~(got by stories) nom)
       ==
-  %+  murn  (~(tap by log))
+  %+  murn  ~(tap by log)
   |=  {nom/naem len/@ud}
   ^-  (unit move)
   ?:  (gte len count:(~(got by stories) nom))
@@ -2109,8 +2109,13 @@
   ^-  move
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.bol) +.t +:*tarp))
-      %+  tope  [our.bol %home da+now.bol]
+      %+  en-beam:format  [our.bol %home da+now.bol]
       /talk-telegrams/(scot %da day)/[nom]/talk
   =+  grams:(~(got by stories) nom)
-  [ost.bol %info /jamfile our.bol (foal paf [%talk-telegrams !>(-)])]
+  :*  ost.bol
+      %info
+      /jamfile
+      our.bol
+      (foal:space:userlib paf [%talk-telegrams !>(-)])
+  ==
 --

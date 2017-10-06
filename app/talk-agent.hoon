@@ -25,7 +25,8 @@
 !:
 ::::
   ::
-[. talk sole]
+=,  talk
+=,  sole
 =>  ::>  ||
     ::>  ||  %arch
     ::>  ||
@@ -109,13 +110,13 @@
 ::>  ||
 ::>    functional cores and arms.
 ::
-|_  {bol/bowl state}
+|_  {bol/bowl:gall state}
 ::
 ++  prep                                                ::<  prepare state
   ::>  adapts state.
   ::
   |=  old/(unit state)
-  ^-  (quip move ..prep)
+  ^-  (quip move _..prep)
   ?~  old
     ta-done:ta-init:ta
   [~ ..prep(+<+ u.old)]
@@ -167,9 +168,9 @@
   ^+  nik
   %-  ~(gas by *(map (set circle) char))
   =-  (zing -)
-  %+  turn  (~(tap by nek))
+  %+  turn  ~(tap by nek)
   |=  {a/char b/(set (set circle))}
-  (turn (~(tap by b)) |=(c/(set circle) [c a]))
+  (turn ~(tap by b) |=(c/(set circle) [c a]))
 ::
 ::>  ||
 ::>  ||  %engines
@@ -554,7 +555,7 @@
         ;~  pose
           (cold incir col)
           ;~(pfix cen (stag our.bol sym))
-          ;~(pfix fas (stag (sein our.bol) sym))
+          ;~(pfix fas (stag (sein:title our.bol) sym))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
@@ -627,7 +628,7 @@
       ++  speeches                                      ::<  lin or url msgs
         %+  most  (jest '•')
         ;~  pose
-          (stag %url aurf:urlp)
+          (stag %url aurf:de-purl:html)
           :(stag %lin & ;~(pfix pat text))
           :(stag %lin | ;~(less sem hax text))
         ==
@@ -933,7 +934,7 @@
         ::
         |=  nym/^nick
         ^-  (list ship)
-        %+  murn  (~(tap by nicks))
+        %+  murn  ~(tap by nicks)
         |=  {p/ship q/^nick}
         ?.  =(q nym)  ~
         [~ u=p]
@@ -957,7 +958,7 @@
         ::
         |=  pos/(map circle range)
         ^+  ..sh-work
-        =+  pas=(key-by pos)
+        =+  pas=~(key by pos)
         =.  ..sh-work
           =+  (~(get by nik) pas)
           ?^  -  (sh-note "has glyph {<u>}")
@@ -1102,11 +1103,11 @@
         ::>  prints presence lists for {pas} or all.
         ::
         |=  pas/(set circle)  ^+  ..sh-work
-        =<  (sh-fact %mor (murn (sort (~(tap by remotes) ~) aor) .))
+        =<  (sh-fact %mor (murn (sort ~(tap by remotes) aor) .))
         |=  {pon/circle gop/group}  ^-  (unit sole-effect)
         ?.  |(=(~ pas) (~(has in pas) pon))  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr pon) ~]
-        =<  (murn (sort (~(tap by gop)) aor) .)
+        =<  (murn (sort ~(tap by gop) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         =.  c
           ?.  =(han.c `(scot %p a))  c
@@ -1126,7 +1127,7 @@
         ?^  qur
           =+  cha=(~(get by nik) qur)
           (sh-fact %txt ?~(cha "none" [u.cha]~))
-        =+  pan=(~(tap in (~(get ju nak) qur)))
+        =+  pan=~(tap in (~(get ju nak) qur))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
         |=(a/(set circle) [%txt ~(ar-prom ar a)])
@@ -1187,7 +1188,7 @@
         ::>  no arguments, show all
         ?:  ?=({$~ $~} +<)
           %+  sh-fact  %mor
-          %+  turn  (~(tap by nicks))
+          %+  turn  ~(tap by nicks)
           |=  {p/ship q/^nick}
           :-  %txt
           "{<p>}: {<q>}"
@@ -1221,7 +1222,7 @@
         ^+  ..sh-work
         ?~  seg
           %+  sh-fact  %mor
-          %+  turn  (~(tap in settings.she))
+          %+  turn  ~(tap in settings.she)
           |=  s/term
           [%txt (trip s)]
         %=  ..sh-work
@@ -1294,7 +1295,7 @@
       |-  ^-  (unit (set circle))
       ?~  grams  ~
       ::>  get first circle from a telegram's audience.
-      =+  pan=(silt (~(tap in aud.i.grams)))
+      =+  pan=(silt ~(tap in aud.i.grams))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
     ::
@@ -1317,7 +1318,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -1330,7 +1331,7 @@
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -1355,7 +1356,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -1365,7 +1366,7 @@
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -1387,7 +1388,7 @@
           ==
       ^+  ret
       =.  ret
-        =+  eno=(~(tap by one))
+        =+  eno=~(tap by one)
         |-  ^+  ret
         ?~  eno  ret
         =.  ret  $(eno t.eno)
@@ -1397,7 +1398,7 @@
         ?:  =(q.i.eno u.unt)  ret
         ret(cha [[p.i.eno u.unt] cha.ret])
       =.  ret
-        =+  owt=(~(tap by two))
+        =+  owt=~(tap by two)
         |-  ^+  ret
         ?~  owt  ret
         =.  ret  $(owt t.owt)
@@ -1411,8 +1412,8 @@
       ::>  procuding lists of removed and added items.
       ::
       |*  {one/(set *) two/(set *)}
-      :-  ^=  old  (~(tap in (~(dif in one) two)))
-          ^=  new  (~(tap in (~(dif in two) one)))
+      :-  ^=  old  ~(tap in (~(dif in one) two))
+          ^=  new  ~(tap in (~(dif in two) one))
     ::
     ::>  ||
     ::>  ||  %printers
@@ -1571,7 +1572,7 @@
         %^    sh-show-permits
             (weld (trip inbox) ": ")
           sec.con.loc
-        [~ (~(tap in ses.con.loc))]
+        [~ ~(tap in ses.con.loc)]
       %^    sh-show-permits
           (weld (trip inbox) ": ")
         sec.con.loc
@@ -1664,7 +1665,7 @@
     ::
     |=  mup/?
     ^-  tape
-    =+  raw=(cite hos.one)
+    =+  raw=(cite:title hos.one)
     (runt [(sub 14 (lent raw)) ' '] raw)
   ::
   ++  cr-nick                                           ::<  nick or name in 14
@@ -1694,7 +1695,7 @@
     =+  wun=(scow %p hos.one)
     ?:  =(nom.one (main hos.one))
       wun
-    ?:  =(hos.one (sein our.bol))
+    ?:  =(hos.one (sein:title our.bol))
       ['/' (trip nom.one)]
     :(welp wun "/" (trip nom.one))
   --
@@ -1795,7 +1796,7 @@
     ^-  tape
     =.  .  ar-deaf
     =/  all
-      %+  sort  `(list circle)`(~(tap in lix))
+      %+  sort  `(list circle)`~(tap in lix)
       |=  {a/circle b/circle}
       (~(pr-beat pr a) b)
     =+  fir=&
@@ -1829,7 +1830,7 @@
     ^-  tape
     =+  cha=(~(get by nik) lix)
     ?^  cha  ~[u.cha ' ']
-    ?.  (lien (~(tap by lix)) ar-dire)
+    ?.  (lien ~(tap by lix) ar-dire)
       "* "
     ?:  ?=({^ $~ $~} lix)
       ": "
@@ -1919,7 +1920,7 @@
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))    :: round
     =+  hed=leaf+"{(scow %uv sen)} at {(scow %da wen)}"
     =/  cis
-      %+  turn  (~(tap in aud))
+      %+  turn  ~(tap in aud)
       |=  a/circle
       leaf+~(pr-full pr a)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] cis] ~]]~
@@ -1934,7 +1935,7 @@
       tan+~[leaf+"{?:(pat.sep "@ " "")}{(trip msg.sep)}"]
       ::
         $url
-      url+(crip (earf url.sep))
+      url+(crip (apix:en-purl:html url.sep))
       ::
         $exp
       tan+~[rose+[" " ~ ~]^[leaf+"# {(trip exp.sep)}" res.sep]]
@@ -1948,7 +1949,7 @@
       ::TODO  in "wrong" order because they get printed in reverse...
       :~  :+  %rose  [" " ~ ~]
           (turn (~(tr-text tr sef u.gam) termwidth) |=(t/tape [%leaf t]))
-          [%leaf :(weld "in reply to: " (cite aut.u.gam) ": ")]
+          [%leaf :(weld "in reply to: " (cite:title aut.u.gam) ": ")]
       ==
       ::
         $fat
@@ -2024,7 +2025,7 @@
       ::
         $url
       :_  ~
-      =+  ful=(earf url.sep)
+      =+  ful=(apix:en-purl:html url.sep)
       =.  wyd  (sub wyd 2)  ::  account for prefix.
       ::  if the full url fits, just render it.
       ?:  (gte wyd (lent ful))  ['/' ' ' ful]
@@ -2085,8 +2086,8 @@
   ::>  incoming subscription on pax.
   ::
   |=  pax/path
-  ^-  (quip move +>)
-  ?.  (team src.bol our.bol)
+  ^-  (quip move _+>)
+  ?.  (team:title src.bol our.bol)
     ~&  [%peer-talk-reader-stranger src.bol]
     [~ +>]
   ?.  ?=({$sole *} pax)
@@ -2098,14 +2099,14 @@
   ::>
   ::
   |=  {way/wire piz/prize}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ta-done:(ta-take:ta piz)
 ::
 ++  diff-talk-rumor                                     ::<  accept query change
   ::>
   ::
   |=  {way/wire rum/rumor}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ta-done:(ta-hear:ta rum)
 ::
 ++  poke-sole-action                                    ::<  accept console
@@ -2118,7 +2119,7 @@
   ::>
   ::
   |=  {wir/wire fal/(unit tang)}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ?~  fal  [~ +>]
   %-  (slog leaf+"action failed: " u.fal)
   [~ +>]

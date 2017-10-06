@@ -22,21 +22,13 @@
 ::TODO  add to zuse?
 ++  true-self
   |=  who/ship
-  ?.  ?=($earl (clan who))  who
-  (sein who)
+  ?.  ?=($earl (clan:title who))  who
+  (sein:title who)
 ::
 ++  above
   |=  who/ship
-  ?:  ?=($czar (clan who))  ~zod
-  (sein who)
-::
-::TODO  remove when on master, use +-  key:by instead
-++  key-by
-  |*  m/(map)
-  =|  b/(set _?>(?=(^ m) p.n.m))
-  |-  ^+  b
-  ?~  m  b
-  $(m r.m, b $(m l.m, b (~(put in b) p.n.m)))
+  ?:  ?=($czar (clan:title who))  ~zod
+  (sein:title who)
 ::
 ++  said-url                                            ::  app url
   |=  url/purl:eyre
@@ -62,7 +54,7 @@
 ::
 ++  uniq
   |=  eny/@uvJ
-  ^-  (quid serial eny)
+  ^-  {serial _eny}
   [(shaf %serial eny) (shax eny)]
 ::
 ++  change-glyphs                                       ::<  ...
@@ -168,7 +160,7 @@
     |*  typ/{@tas (pole @tas)}
     =+  [i-typ t-typ]=typ
     |=  wer/weir
-    ^-  (tup:dray i-typ t-typ)  ::< ie, (tup %p %tas ~) is {@p @tas}
+    ^-  (tup:dray:wired i-typ t-typ)  ::< ie, (tup %p %tas ~) is {@p @tas}
     ?~  wer  !!
     ?~  t-typ
       ?^  t.wer  !!
@@ -193,14 +185,15 @@
     (^$(buk t-buk) wer)
   ::
   ++  or
-    |*  typ/|-($@(@tas {@tas $}))
+    =+  tmp=|-($@(@tas {@tas $}))  ::TODO typ/that syntax-errors...
+    |*  typ/tmp
     |=  con/coin
-    ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid a)])))
+    ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid:wired a)])))
     ?>  ?=($$ -.con)
     =/  i-typ  ?@(typ typ -.typ)
     ?:  =(i-typ p.p.con)
       :-  i-typ
-      ^-  (odo:raid i-typ)
+      ^-  (odo:raid:wired i-typ)
       q.p.con
     ?@  typ  ~|(%bad-odor !!)
     (^$(typ +.typ) con)
@@ -209,7 +202,7 @@
     |*  typ/@tas
     =/  typecheck  `@tas`typ
     |=  con/coin
-    ^-  (odo:raid typ)
+    ^-  (odo:raid:wired typ)
     ?.  ?=($$ -.con)  ~|(%not-dime !!)
     ?.  =(typ p.p.con)  ~|(bad-odor+`@tas`p.p.con !!)
     q.p.con
