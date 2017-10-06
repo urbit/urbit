@@ -384,7 +384,7 @@
           {$warp p/sock q/riff}                         ::  file request
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/@ud s/*}               ::  network request
+          {$west p/sack q/path r/*}                     ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -638,7 +638,7 @@
           {$thud $~}                                    ::  inbound cancel
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/{path @ud *}}                 ::  network request
+          {$west p/sack q/{path *}}                     ::  network request
           {$mini-jael-task *}
       ==                                                ::
     --  ::able
@@ -845,7 +845,7 @@
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/path r/@ud s/*}               ::  network request
+          {$west p/sack q/path r/*}                     ::  network request
           {$wegh $~}                                    ::  report memory
       ==                                                ::
     --  ::able
