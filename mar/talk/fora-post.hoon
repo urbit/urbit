@@ -9,7 +9,7 @@
 ++  grab
   |%
   ++  noun  {path spur @t @t}
-  ++  json  
+  ++  json
     (corl need =>(jo (ot pax+(su fel:stab) sup+(su fel:stab) hed+so txt+so ~)))
   --
 --

@@ -1,90 +1,288 @@
-::  
+::
 ::::  /hoon/talk/sur
-  ::
+  !:
 |%
-++  audience  (map partner (pair envelope delivery))    ::  destination+state
-++  atlas  (map ship status)                            ::  presence map
-++  bouquet  (set flavor)                               ::  complete aroma
-++  command                                             ::  effect on party
-  $%  {$design (pair knot (unit config))}               ::  configure+destroy
-      {$publish (list thought)}                         ::  originate
-      {$review (list thought)}                          ::  deliver
+::
+::TODO  use different words for different kinds of burdens
+::
+::>  ||
+::>  ||  %wrappers
+::>  ||
+::>    wrapper molds, for semantic clarity.
+::+|
+::
+::TODO  rename
+++  naem  term                                          ::<  circle name
+++  nick  cord                                          ::<  local nickname
+::
+::>  ||
+::>  ||  %query-models
+::>  ||
+::>    models relating to queries, their results and updates.
+::+|
+::
+++  query                                               ::>  query paths
+  $%  {$reader $~}                                      ::<  shared ui state
+      {$burden who/ship}                                ::<  duties to share
+      {$report $~}                                      ::<  duty reports
+      {$circle nom/naem ran/range}                      ::<  story query
+      ::{$circle nom/naem wat/circle-data}                ::<  story query
+      ::  okay, the problem here is that we want to have
+      ::  separate subscriptions for the different kinds
+      ::  of story data. we can do that, but then if we
+      ::  want all data and a specific range for the
+      ::  messages (very common) then we need to do
+      ::  three separate subscriptions.
+      ::  possible solution would be adding range to all
+      ::  story queries, but that feels weird irt
+      ::  presence and configs.
+      ::  (also, that would make for poor query design:
+      ::   having a ~ halfway through is ugly.)
+      ::
+      ::  /circle/name/range
+      ::  /circle/name/all
+      ::  /circle/name/grams/range
+      ::  /circle/name/crowd/local
+      ::  /circle/name/grams&crowd/range/local
+      ::  /circle/name/grams
+      ::  /circle/name/crowd
+      ::
+      ::TODO  look at graphql and think about doing
+      ::      multiple queries in a single %peer.
   ==                                                    ::
-++  cabal                                               ::  metaconfiguration
-  $:  loc/config                                        ::  local config
-      ham/(map station config)                          ::  neighborhood configs
+::++  circle-data                                         ::>  queried data
+::  $%  {$all $~}                                         ::<  everything, always
+::      {$grams ran/range}                                ::<  messages (in range)
+::      {$crowd wer/where}                                ::<  presence
+::      {$lobby wer/where}                                ::<  configurations
+::  ==                                                    ::
+++  range                                               ::>  inclusive msg range
+  %-  unit                                              ::<  ~ means everything
+  $:  hed/place                                         ::<  start of range
+      tal/(unit place)                                  ::<  opt end of range
   ==                                                    ::
-++  config                                              ::  party configuration
-  $:  sources/(set partner)                             ::  pulls from
-      caption/cord                                      ::  about
-      cordon/control                                    ::  restricted to
+++  place                                               ::>  range indicators
+  $%  {$da @da}                                         ::<  date
+      {$ud @ud}                                         ::<  message number
   ==                                                    ::
-++  control  (pair posture (set ship))                  ::  access control
-++  delivery                                            ::  delivery state
-  $?  $pending                                          ::  undelivered
-      $received                                         ::  delivered
-      $rejected                                         ::  undeliverable
-      $released                                         ::  sent one-way
-      $accepted                                         ::  fully processed
+::TODO  overlaps with agent's ++where
+::++  where                                               ::>  data from
+::  %-  unit                                              ::<  ~ means everywhere
+::  ?($local $remote)                                     ::<  local or remote only
+++  prize                                               ::>  query result
+  $%  {$reader prize-reader}                            ::<  /reader
+      {$friend cis/(set circle)}                        ::<  /friend
+      {$burden sos/(map naem burden)}                   ::<  /burden
+      ::TODO  do we ever use remote things from remote circles?
+      {$circle package}                                 ::<  /circle
   ==                                                    ::
-++  envelope  (pair ? (unit partner))                   ::  visible sender
-++  flavor  path                                        ::  content flavor
-++  human                                               ::  human identifier
-  $:  true/(unit (trel @t (unit @t) @t))                ::  true name
-      hand/(unit @t)                                    ::  handle
+++  prize-reader                                        ::
+  $:  gys/(jug char (set circle))                       ::<  glyph bindings
+      nis/(map ship nick)                               ::<  local nicknames
   ==                                                    ::
-++  passport                                            ::  foreign flow
-  $%  {$twitter p/@t}                                   ::  twitter
+++  rumor                                               ::<  query result change
+  $%  {$reader rum/rumor-reader}                        ::<  /reader
+      {$friend add/? cir/circle}                        ::<  /friend
+      {$burden nom/naem rum/rumor-story}                ::<  /burden
+      {$circle rum/rumor-story}                         ::<  /circle
   ==                                                    ::
-++  posture                                             ::  security posture
-  $?  $black                                            ::  channel
-      $white                                            ::  chamber
-      $green                                            ::  journal
-      $brown                                            ::  mailbox
+++  rumor-reader                                        ::<  changed ui state
+  $%  {$glyph diff-glyph}                               ::<  un/bound glyph
+      {$nick diff-nick}                                 ::<  changed nickname
   ==                                                    ::
-++  presence   ?($gone $hear $talk)                     ::  status type
-++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
-++  shelf  (map knot (pair posture cord))               ::  ship shape
-++  report                                              ::  talk update
-  $%  {$cabal cabal}                                    ::  config neighborhood
-  ::  {$folder (list report)}                           ::  multiple
-      {$grams (pair @ud (list telegram))}               ::  beginning thoughts
-      {$group register}                                 ::  presence
-      {$house shelf}                                    ::  station set
-      {$glyph (jug char (set partner))}                 ::  relevant binding
+++  burden                                              ::<  full story state
+  $:  gaz/(list telegram)                               ::<  all messages
+      cos/lobby                                         ::<  loc & rem configs
+      pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
-++  speech                                              ::  narrative action
-  $%  {$lan p/knot q/@t}                                ::  local announce
-      {$exp p/@t}                                       ::  hoon line
-      {$non $~}                                         ::  no content (yo)
-      {$ext p/@tas q/*}                                 ::  extended action
-      {$fat p/torso q/speech}                           ::  attachment
-      ::  {$inv p/station}                              ::  invite to station
-      {$url p/purf:eyre}                               ::  parsed url
-      {$ire p/serial q/speech}                          ::  in-reply-to
-      {$lin p/? q/@t}                                   ::  no/@ text line
-      {$mor p/(list speech)}                            ::  multiplex
-      {$app p/@tas q/@t}                                ::  app message
-      $:  $api                                          ::  api message
-          service/@tas                                  ::  service name
-          id/@t                                         ::  id on the service
-          id-url/purf:eyre                             ::  link to id
-          summary/@t                                    ::  summary of event
-          body/@t                                       ::  body of event
-          url/purf:eyre                                ::  link to event
-          meta/json                                     ::  other data for web
-      ==                                                ::
+++  package                                             ::<  story state
+  $:  nes/(list envelope)                               ::<  messages
+      cos/lobby                                         ::<  loc & rem configs
+      pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
-++  serial     @uvH                                     ::  unique identity
-++  partner    (each station passport)                  ::  interlocutor
-++  status     (pair presence human)                    ::  participant
-++  statement  (trel @da bouquet speech)                ::  when this
-++  station    (pair ship knot)                         ::  domestic flow
-++  telegram   (pair ship thought)                      ::  who which whom what
-++  thought    (trel serial audience statement)         ::  which whom what
-++  torso                                               ::  attachment
-  $%  {$name (pair @t torso)}                           ::  named attachment
-      {$text (list @t)}                                 ::  text lines
-      {$tank (list tank)}                               ::  tank list
+::TODO  deltas into app
+++  delta                                               ::
+  $%  ::  messaging state                               ::
+      {$out cir/circle out/(list thought)}              ::<  send msgs to circle
+      {$done cir/circle ses/(list serial) res/delivery} ::<  set delivery state
+      ::  shared ui state                               ::
+      {$glyph diff-glyph}                               ::<  un/bound glyph
+      {$nick diff-nick}                                 ::<  changed nickname
+      ::  story state                                   ::
+      {$story nom/naem det/delta-story}                 ::<  change to story
+      ::  side-effects                                  ::
+      {$init $~}                                        ::<  initialize
+      {$observe who/ship}                               ::<  watch burden bearer
+      {$present hos/ship nos/(set naem) dif/diff-status}::<  send %present cmd
+      {$quit ost/bone}                                  ::<  force unsubscribe
+  ==                                                    ::
+++  diff-glyph  {bin/? gyf/char pas/(set circle)}       ::<  un/bound glyph
+++  diff-nick   {who/ship nic/nick}                     ::<  changed nickname
+++  delta-story                                         ::>  story delta
+  $?  diff-story                                        ::<  both in & outward
+  $%  {$inherited ihr/?}                                ::<  inherited flag
+      {$follow sub/? cos/(map circle range)}            ::<  un/subscribe
+      {$sequent cir/circle num/@ud}                     ::<  update last-heard
+      {$gram gam/telegram}                              ::<  new/changed msgs
+  ==  ==                                                ::
+++  diff-story                                          ::>  story change
+  $%  {$new cof/config}                                 ::<  new story
+      {$bear bur/burden}                                ::<  new inherited story
+      {$config cir/circle dif/diff-config}              ::<  new/changed config
+      {$status cir/circle who/ship dif/diff-status}     ::<  new/changed status
+      {$remove $~}                                      ::<  removed story
+  ==                                                    ::
+++  rumor-story                                         ::>  story rumor
+  $?  diff-story                                        ::<  both in & outward
+  $%  {$gram nev/envelope}                              ::<  new/changed msgs
+  ==  ==                                                ::
+++  diff-config                                         ::>  config change
+  ::TODO  maybe just full? think.
+  $%  {$full cof/config}                                ::<  set w/o side-effects
+      {$source add/? cir/circle}                        ::<  add/rem sources
+      {$caption cap/cord}                               ::<  changed description
+      {$filter fit/filter}                              ::<  changed filter
+      {$secure sec/security}                            ::<  changed security
+      {$permit add/? sis/(set ship)}                    ::<  add/rem to b/w-list
+      {$remove $~}                                      ::<  removed config
+  ==                                                    ::
+++  diff-status                                         ::>  status change
+  $%  {$full sat/status}                                ::<  fully changed status
+      {$presence pec/presence}                          ::<  changed presence
+      {$human dif/diff-human}                           ::<  changed name
+      {$remove $~}                                      ::<  removed config
+  ==                                                    ::
+++  diff-human                                          ::>  name change
+  $%  {$full man/human}                                 ::<  fully changed name
+      {$true tru/(unit (trel cord (unit cord) cord))}   ::<  changed true name
+      {$handle han/(unit cord)}                         ::<  changed handle
+  ==                                                    ::
+::
+::>  ||
+::>  ||  %reader-communication
+::>  ||
+::>    broker interfaces for readers.
+::+|
+::
+++  action                                              ::>  user action
+  $%  ::  circle configuration                          ::
+      {$create nom/naem des/cord sec/security}          ::<  create circle
+      {$delete nom/naem why/(unit cord)}                ::<  delete + announce
+      {$depict nom/naem des/cord}                       ::<  change description
+      {$filter nom/naem fit/filter}                     ::<  change message rules
+      {$permit nom/naem inv/? sis/(set ship)}           ::<  invite/banish
+      {$source nom/naem sub/? src/(map circle range)}   ::<  un/sub to/from src
+      ::  messaging                                     ::
+      {$convey tos/(list thought)}                      ::<  post exact
+      {$phrase aud/(set circle) ses/(list speech)}      ::<  post easy
+      ::  personal metadata                             ::
+      {$notify cis/(set circle) pes/presence}           ::<  our presence update
+      {$naming cis/(set circle) man/human}              ::<  our name update
+      ::  changing shared ui                            ::
+      {$glyph gyf/char pas/(set circle) bin/?}          ::<  un/bind a glyph
+      {$nick who/ship nic/nick}                         ::<  new identity
+  ==                                                    ::
+::
+::>  ||
+::>  ||  %broker-communication
+::>  ||
+::>    structures for communicating between brokers.
+::+|
+::
+++  command                                             ::>  effect on story
+  $%  {$publish tos/(list thought)}                     ::<  deliver
+      {$present nos/(set naem) dif/diff-status}         ::<  status update
+      {$bearing $~}                                     ::<  prompt to listen
+  ==                                                    ::
+::
+::>  ||
+::>  ||  %circles
+::>  ||
+::>    messaging targets and their metadata.
+::+|
+::
+++  circle     {hos/ship nom/naem}                      ::<  native target
+::  circle configurations.                              ::
+++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
+++  config                                              ::>  circle config
+  $:  src/(set circle)                                  ::<  active sources
+      ::TODO  ^ include range? just remove!
+      cap/cord                                          ::<  description
+      fit/filter                                        ::<  message rules
+      con/control                                       ::<  restrictions
+  ==                                                    ::
+++  filter                                              ::>  content filters
+  $:  cas/?                                             ::<  dis/allow capitals
+      utf/?                                             ::<  dis/allow non-ascii
+      ::TODO  maybe message length
+  ==                                                    ::
+++  control    {sec/security ses/(set ship)}            ::<  access control
+++  security                                            ::>  security mode
+  $?  $black                                            ::<  channel, blacklist
+      $white                                            ::<  village, whitelist
+      $green                                            ::<  journal, author list
+      $brown                                            ::<  mailbox, our r, bl w
+  ==                                                    ::
+::  participant metadata.                               ::
+::TODO  think about naming more
+++  crowd      {loc/group rem/(map circle group)}       ::<  our & srcs presences
+++  group      (map ship status)                        ::<  presence map
+++  status     {pec/presence man/human}                 ::<  participant
+++  presence                                            ::>  status type
+  $?  $gone                                             ::<  absent
+      $idle                                             ::<  idle
+      $hear                                             ::<  present
+      $talk                                             ::<  typing
+  ==                                                    ::
+++  human                                               ::>  human identifier
+  $:  han/(unit cord)                                   ::<  handle
+      tru/(unit (trel cord (unit cord) cord))           ::<  true name
+  ==                                                    ::
+::
+::>  ||
+::>  ||  %message-data
+::>  ||
+::>    structures for containing main message data.
+::+|
+::
+::TODO  some structure for extra message state
+::      local (to readers): delivery state, read flags
+::      remote (to halls): sequence nr
+++  envelope   {num/@ud gam/telegram}                   ::<  outward message
+++  telegram   {aut/ship thought}                       ::<  whose message
+++  thought                                             ::>  inner message
+  $:  uid/serial                                        ::<  unique identifier
+      aud/audience                                      ::<  destinations
+      wen/@da                                           ::<  timestamp
+      sep/speech                                        ::<  content
+  ==                                                    ::
+++  speech                                              ::>  content body
+  $%  {$lin pat/? msg/cord}                             ::<  no/@ text line
+      {$url url/purf}                                   ::<  parsed url
+      {$exp exp/cord res/(list tank)}                   ::<  hoon line
+      {$ire top/serial sep/speech}                      ::<  in reply to
+      {$fat tac/attache sep/speech}                     ::<  attachment
+      {$inv inv/? cir/circle}                           ::<  inv/ban for circle
+      {$app app/term msg/cord}                          ::<  app message
+  ==                                                    ::
+++  attache                                             ::>  attachment
+  $%  {$name nom/cord tac/attache}                      ::<  named attachment
+      {$text (list cord)}                               ::<  text lines
+      {$tank (list tank)}                               ::<  tank list
+  ==                                                    ::
+::
+::>  ||
+::>  ||  %message-metadata
+::>  ||
+::     structures for containing message metadata.
+::+|
+::
+++  serial     @uvH                                     ::<  unique identifier
+++  audience   (set circle)                             ::<  destinations
+++  tracking   (map circle delivery)                    ::>  delivery per target
+++  delivery                                            ::>  delivery state
+  $?  $pending                                          ::<  undelivered
+      $accepted                                         ::<  received
+      $rejected                                         ::<  denied
   ==                                                    ::
 --

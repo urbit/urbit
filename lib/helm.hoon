@@ -3,7 +3,6 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole
-/+    talk
 [. sole]
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -13,11 +12,11 @@
 ++  helm-pith                                           ::  helm content
   $:  bur/(unit (pair ship mace:ames))                 ::  requesting ticket
       hoc/(map bone helm-session)                       ::  consoles
-  ==                                                    ::  
+  ==                                                    ::
 ++  helm-session                                        ::
   $:  say/sole-share                                    ::  console state
       mud/(unit (sole-dialog @ud))                      ::  console dialog
-  ==                                                    ::  
+  ==                                                    ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -50,7 +49,7 @@
       $%  {$cash wire p/@p q/buck:ames}                 ::
           {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
-          {$funk wire @p @p @}                          ::   
+          {$funk wire @p @p @}                          ::
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
@@ -59,7 +58,6 @@
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
       $%  {$hood-unsync desk ship desk}                 ::
-          {$talk-command command:talk}                  ::
           {$ask-mail cord}                              ::
           {$helm-hi cord}                               ::
       ==                                                ::
@@ -70,7 +68,7 @@
 ::
 ++  emit  |=(card %_(+> moz [[ost +<] moz]))          ::  return card
 ++  emil                                              ::  return cards
-  |=  (list card) 
+  |=  (list card)
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
@@ -99,7 +97,7 @@
   |=  $~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
 ::
-++  poke-send-hi  
+++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
   %^  emit  %poke  /helm/hi/(scot %p her)
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
@@ -114,7 +112,7 @@
   (emit %serv /helm/serv top)
 ::
 ++  poke-hi  |=(mes/@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
-++  poke-atom  
+++  poke-atom
   |=  ato/@
   =+  len=(scow %ud (met 3 ato))
   =+  gum=(scow %p (mug ato))
@@ -150,24 +148,18 @@
     ?>  ?=({{@ $~} $~} zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
-  =+  zus==('z' tip) 
+  =+  zus==('z' tip)
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
 ::
-++  poke-invite                                       ::  send invite; fake
-  |=  {who/@p myl/@t}  =<  abet
-  %^  emit  %poke  /helm/invite
-  :-  [our %talk]
-  (said:talk our %helm now eny [%leaf "invited: {<who>} at {(trip myl)}"]~)
-::
 ++  poke-reset                                        ::  reset system
   |=  hood-reset  =<  abet
   %-  emil
-  %-  flop  ^-  (list card) 
+  %-  flop  ^-  (list card)
   =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
   =+  hun=.^(@ %cx (welp top /hoon/hoon))
-  =+  arv=.^(@ %cx (welp top /arvo/hoon))  
+  =+  arv=.^(@ %cx (welp top /arvo/hoon))
   :-  [%flog /reset [%velo `@t`hun `@t`arv]]
   :-  =+  way=(weld top `path`/zuse)
       [%flog /reset %veer %$ way .^(@ %cx (welp way /hoon))]
@@ -190,7 +182,7 @@
 ++  poke-wyll                                         ::  hear certificate
   |=  wil/(unit wyll:ames)
   ?>  ?=(^ bur)
-  ?>  ?=(^ wil)  
+  ?>  ?=(^ wil)
   =<  abet
   %-  emil(bur ~)
   :~  [%cash /helm p.u.bur q.u.bur u.wil]

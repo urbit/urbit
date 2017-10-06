@@ -23,21 +23,19 @@
     =>  +
     |^  %+  joba  -.rep
         ?-  -.rep
-          $cabal  (cabl +.rep)
-          $house  a+(turn ~(tap by +.rep) jose)
-          $glyph  ((jome |=(a/char a) nack) +.rep)
-          $grams  (jobe num+(jone p.rep) tele+[%a (turn q.rep gram)] ~)
-          $group  (jobe local+(grop p.rep) global+%.(q.rep (jome parn grop)) ~)
+          $lobby  (loby cab.rep)
+          $grams  (jobe num+(jone num.rep) tele+[%a (turn gaz.rep gram)] ~)
+          $crowd  %^    jobe
+                      local+(grop loc.reg.rep)
+                    global+%.(rem.reg.rep (jome parn grop))
+                  ~
         ==
     ++  joce  |=(a/knot [%s a])
-    ++  jose
-      |=  {a/knot b/posture c/cord}
-      (jobe name+[%s a] posture+[%s a] caption+[%s b] ~)
     ::
     ++  jove
       |=  {a/envelope b/delivery}
       %-  jobe  :~
-        envelope+(jobe visible+[%b p.a] sender+?~(q.a ~ s+(parn u.q.a)) ~)
+        envelope+(jobe visible+[%b vis.a] sender+?~(sen.a ~ s+(parn u.sen.a)) ~)
         delivery+[%s b]
       ==
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
@@ -56,11 +54,11 @@
     ++  nack  |=(a/(set (set partner)) [%a (turn ~(tap in a) sorc)])
     ++  grop  (jome phon stas)                          ::  (map ship status)
     ++  phon  |=(a/ship (scot %p a))
-    ++  stas  |=(status (jobe presence+(joce p) human+(huma q) ~))
-    ++  gram  |=(telegram (jobe ship+(jope p) thought+(thot q) ~))
+    ++  stas  |=(status (jobe presence+(joce pec) human+(huma man) ~))
+    ++  gram  |=(telegram (jobe ship+(jope aut) thought+(thot tot) ~))
     ++  thot
       |=  thought
-      (jobe serial+(jape <p>) audience+(audi q) statement+(stam r) ~)
+      (jobe serial+(jape <uid>) audience+(audi aud) statement+(stam sam) ~)
     ::
     ++  audi  (jome parn jove)
     ++  bouq
@@ -70,31 +68,31 @@
     ++  parn
       |=  a/partner  ^-  cord
       ?-  -.a
-        $&  (stat p.a)
+        $&  (circ p.a)
         $|  %-  crip
             ?-  -.p.a
               $twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
             ==
       ==
     ::
-    ++  stat
-      |=  a/station  ^-  cord
-      (crip "{<p.a>}/{(trip q.a)}")
+    ++  circ
+      |=  a/circle  ^-  cord
+      (crip "{<hos.a>}/{(trip nom.a)}")
     ::
     ++  stam
       |=  statement
-      (jobe date+(jode p) bouquet+(bouq q) speech+(spec r) ~)
+      (jobe date+(jode wen) bouquet+(bouq boq) speech+(spec sep) ~)
     ::
     ++  spec
       |=  a/speech
       %+  joba  -.a
       ?+  -.a  ~|(stub+-.a !!)
-        $lin  (jobe txt+[%s q.a] say+[%b p.a] ~)
-        $url  (joba txt+[%s (crip (earf p.a))])
-        $exp  (joba txt+[%s p.a])
-        $app  (jobe txt+[%s q.a] src+[%s p.a] ~)
-        $fat  (jobe tor+(tors p.a) taf+$(a q.a) ~)
-        $mor  a+(turn p.a spec)
+        $lin  (jobe txt+[%s msg.a] say+[%b pat.a] ~)
+        $url  (joba txt+[%s (crip (earf url.a))])
+        $exp  (joba txt+[%s exp.a])
+        $fat  (jobe tor+(tach tac.a) taf+$(a sep.a) ~)
+        $mor  a+(turn ses.a spec)
+        $app  (jobe txt+[%s msg.a] src+[%s app.a] ~)
         $api
           %-  jobe  :~
             service+s+service.a
@@ -108,30 +106,30 @@
         ::  %inv  (jobe ship+(jope p.a) party+[%s q.a] ~)
       ==
     ::
-    ++  tors
-      |=  a/torso
+    ++  tach
+      |=  a/attache
       %+  joba  -.a
       ?-  -.a
         $text  [%s (of-wain +.a)]
         $tank  [%a (turn +.a joke)]
-        $name  (jobe nom+s+p.a mon+$(a q.a) ~)
+        $name  (jobe nom+s+nom.a mon+$(a tac.a) ~)
       ==
     ::
     ++  huma
       |=  human
       %^  jobe
-        hand+?~(hand ~ [%s u.hand])
+        hand+?~(han ~ [%s u.han])
         :-  %true
-        ?~  true  ~
-        =+  u.true
+        ?~  tru  ~
+        =+  u.tru
         (jobe first+[%s p] middle+?~(q ~ [%s u.q]) last+[%s r] ~)
       ~
     ::
-    ++  cabl
-      |=  cabal
+    ++  loby
+      |=  lobby
       %-  jobe  :~
         loc+(conf loc)
-        ham+((jome stat conf) ham)
+        ham+((jome circ conf) rem)
       ==
     ::
     ++  sorc
@@ -141,10 +139,10 @@
     ++  conf
       |=  config
       %-  jobe  :~
-        sources+(sorc sources)
-        caption+[%s caption]
-        =-  cordon+(jobe posture+[%s -.cordon] list+[%a -] ~)
-        (turn ~(tap in q.cordon) jope)                ::  XX  jase
+        sources+(sorc src)
+        caption+[%s cap]
+        =-  control+(jobe security+[%s -.con] list+[%a -] ~)
+        (turn (~(tap in ses.con)) jope)                ::  XX  jase
       ==
   --
 --  --
