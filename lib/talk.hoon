@@ -189,7 +189,7 @@
     =+  [[tag wit] t-buk]=buk
     ?:  =(tag q.p.i.wer)
       [tag ~|(tag+`@tas`tag (wit t.wer))]
-    ?~  t-buk  ~|(bad-tag+q.p.i.wer !!)
+    ?~  t-buk  ~|(bad-tag+`@tas`q.p.i.wer !!)
     (^$(buk t-buk) wer)
   ::
   ++  or

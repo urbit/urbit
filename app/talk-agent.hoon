@@ -743,7 +743,7 @@
           ::
           ;~(plug (perk %help ~) (easy ~))
           ::
-          ::  (parsers below come last because they're easy to match)
+          ::  (parsers below come last because they match quickly)
           ::
           ::  messaging
           ::
@@ -1098,7 +1098,7 @@
       ::>  ||
       ::+|
       ::
-      ++  who                                          ::<  %who
+      ++  who                                           ::<  %who
         ::>  prints presence lists for {pas} or all.
         ::
         |=  pas/(set circle)  ^+  ..sh-work

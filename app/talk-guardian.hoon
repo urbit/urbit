@@ -5,7 +5,6 @@
 ::TODO  rename to hall
 ::TODO  master changes
 ::TODO  char57 comments as line comments when regarding code.
-::TODO  avoid lark where possible
 ::TODO  document what user-facing messages actually mean!
 ::TODO  maybe have brokers accept reactions as well, redirect them to readers.
 ::      that way we can have foreign brokers react to our requests!
@@ -48,7 +47,6 @@
           remotes/(map circle group)                    ::<  remote status
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
-          ::TODO  update & use.
           sequence/(map circle @ud)                     ::<  last-heard p circle
           known/(map serial @ud)                        ::<  messages heard
           inherited/_|                                  ::<  from parent?
@@ -717,6 +715,15 @@
       ::>  apply changes from a rumor to this story.
       ::
       |=  {bur/? src/circle rum/rumor-story}
+      ::TODO  tall-form gate comments like this for everything?
+      ::|=  $:  ::>  bur: whether the story is inherited
+      ::        ::>  src: story to change
+      ::        ::>  rum: change to this story
+      ::        ::
+      ::        bur/?
+      ::        src/circle
+      ::        rum/rumor-story
+      ::    ==
       ^+  +>
       ::  check that we're still subscribed to this story
       ::  this is a small %gall bug, we shouldn't get these
