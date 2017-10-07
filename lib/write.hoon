@@ -50,8 +50,11 @@
   |=  dif/plan-diff  ^+  abet
   ?.  =(our src)
     ~|(foreign-write+[our=our src=src] !!)
+  =/  sev
+    =+  .^(path %e /(scot %p our)/serv/(scot %da now))
+    ?>(?=({@tas @tas *} -) -)
   =;  sob/soba
-    ?~(sob abet abet:(emit %info write+~ our `toro`[q.byk %& sob]))
+    ?~(sob abet abet:(emit %info write+~ our `toro`[i.t.sev %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(tope beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
