@@ -2160,6 +2160,8 @@
   ?.  ?=($$ ren)  [~ ~]
   ?.  ?=($$ -.lot)  [~ ~]
   ?+    syd  [~ ~]
+      $serv
+    ``[%path !>((en-beam top))]
       $host
     %-  (lift (lift |=(a/hart [%hart !>(a)])))
     ^-  (unit (unit hart))
