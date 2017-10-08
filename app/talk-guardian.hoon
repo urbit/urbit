@@ -706,9 +706,16 @@
       =.  +>.$
         (so-hear | src %config src %full loc.cos)
       =.  +>.$
-        %-  ~(rep in loc.pes)
-        |=  {{w/ship s/status} _+>.$}
-        (so-hear | src %status src w %full s)
+        =+  los=~(tap by loc.pes)
+        |-
+        ?~  los  +>.^$
+        =.  +>.^$
+          (so-hear | src %status src p.i.los %full q.i.los)
+        $(los t.los)
+        ::TODO  ideally you'd just do this, but that runtime errors...
+        ::%-  ~(rep in loc.pes)
+        ::|=  {{w/ship s/status} _+>.$}
+        ::(so-hear | src %status src w %full s)
       (so-unpack src nes)
     ::
     ++  so-hear                                         ::<  accept circle rumor
@@ -1663,10 +1670,16 @@
   ::
   |=  des/(list delta)
   ^-  (quip move _+>)
-  %+  roll  des
-  |=  {d/delta m/(list move) _+>.$}
-  =^  mos  +>.^$  (bake d)
-  [(welp m mos) +>.^$]
+  =|  moz/(list move)
+  |-  ^-  (quip move _+>.^$)
+  ?~  des  [moz +>.^$]
+  =^  mos  +>.^$  (bake i.des)
+  $(moz (welp moz mos), des t.des)
+  ::TODO  ideally you'd just do this, but that runtime errors on "bake"...
+  ::%+  roll  des
+  ::|=  {d/delta m/(list move) _+>.$}
+  ::=^  mos  +>.^$  (bake d)
+  ::[(welp m mos) +>.^$]
 ::
 ++  peek                                                ::<  query on state
   ::>  find the result (if any) for a given query.
