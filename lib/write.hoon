@@ -53,8 +53,11 @@
   |=  dif/plan-diff  ^+  abet
   ?.  =(our src)
     ~|(foreign-write+[our=our src=src] !!)
+  =/  sev
+    =+  .^(path %e /(scot %p our)/serv/(scot %da now))
+    ?>(?=({@tas @tas *} -) -)
   =;  sob/soba:clay
-    ?~(sob abet abet:(emit %info write+~ our `toro:clay`[q.byk %& sob]))
+    ?~(sob abet abet:(emit %info write+~ our `toro:clay`[i.t.sev %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(en-beam beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
