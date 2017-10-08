@@ -1556,20 +1556,20 @@
       ..^$(fox old)
     ::
     ++  scry
-      |=  {fur/(unit (set monk)) ren/@tas who/ship syd/desk lot/coin tyl/path}
+      |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
       ^-  (unit (unit cage))
+      ?.  ?=($& -.why)  [~ ~]
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
       ?.  =(`@`0 ren)  ~
-      ~&  [%ames-scry tyl]
       ?+    lot  ~
           {$$ $ud @}
-        (perm who u.hun q.p.lot [syd t.tyl])
+        (perm p.why u.hun q.p.lot [syd t.tyl])
       ::
           {$$ $da @}
         ?.  =(now q.p.lot)  ~
-        (temp who u.hun [syd t.tyl])
+        (temp p.why u.hun [syd t.tyl])
       ==
     ::
     ++  stay  fox
@@ -1745,7 +1745,7 @@
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
-      ?:  ?=({$wyll $~} tyl)
+      ?:  ?=({$will $~} tyl)
         =+  fod=(~(get by hoc.saf.u.gys) his)
         ?~  fod  ~
         %+  bind  (rick mar his lew.wod.u.fod)
@@ -1761,7 +1761,7 @@
       ``[%noun !>(`buck`[u.muc u.luw])]
     ?:  ?=({$code $~} tyl)
       ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:q:sen:u.gys))))]
-    ?:  ?=({$wyll $~} tyl)
+    ?:  ?=({$will $~} tyl)
       (bind (rick mar our law.saf.u.gys) |=(a/wyll `[%noun !>(a)]))
     ~
   ::
