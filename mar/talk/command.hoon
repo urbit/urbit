@@ -3,7 +3,6 @@
   ::
 /?    310
 /-    talk
-/+    old-zuse
 ::
 =,  talk
 |_  cod/command
@@ -12,8 +11,7 @@
   |%
   ++  noun  command                                     ::  clam from %noun
   ++  json
-    =,  old-zuse
-    =,  jo
+    =,  dejs-soft:format
     |=  a/json  ^-  command
     =-  (need ((of -) a))
     =<  :~  publish+(ar thot)
@@ -80,7 +78,7 @@
       ^-  $-(json (unit speech))
       %-  of  :~
         lin+(ot say+bo txt+so ~)
-        url+(su aurf:urlp)
+        url+(su aurf:de-purl:html)
         ::  exp+(cu |=(a=cord [a ~]) so)
         ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
       ==
