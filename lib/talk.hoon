@@ -57,6 +57,35 @@
   ^-  {serial _eny}
   [(shaf %serial eny) (shax eny)]
 ::
+++  range-to-path                                       ::<  msg range to path
+  ::>  turns a range structure into a path used for
+  ::>  subscriptions.
+  ::
+  |=  ran/range
+  ^-  path
+  ?~  ran  ~
+  %+  welp
+    /(scot -.hed.u.ran +.hed.u.ran)
+  ?~  tal.u.ran  ~
+  /(scot -.u.tal.u.ran +.u.tal.u.ran)
+::
+++  path-to-range                                       ::<  path to msg range
+  ::>  turns the tail of a subscription path into a
+  ::>  range structure.
+  ::
+  |=  pax/path
+  ^-  range
+  ?~  pax  ~
+  :+  ~
+    =+  hed=(slaw %da i.pax)
+    ?^  hed  [%da u.hed]
+    [%ud (slav %ud i.pax)]
+  ?~  t.pax  ~
+  :-  ~
+  =+  tal=(slaw %da i.t.pax)
+  ?^  tal  [%da u.tal]
+  [%ud (slav %ud i.t.pax)]
+::
 ++  change-glyphs                                       ::<  ...
   ::>
   ::
@@ -93,7 +122,7 @@
       $source
     %=  cof
         src
-      %.  cir.dif
+      %.  src.dif
       ?:  add.dif
         ~(put in src.cof)
       ~(del in src.cof)

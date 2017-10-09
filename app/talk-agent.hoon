@@ -280,7 +280,7 @@
         $circle
       %.  nes.piz
       %=  ta-unpack
-        sources   src.loc.cos.piz
+        sources   (~(run in src.loc.cos.piz) head)
         mirrors   (~(put by rem.cos.piz) incir loc.cos.piz)
         remotes   (~(put by rem.pes.piz) incir loc.pes.piz)
       ==
@@ -324,7 +324,7 @@
                 =(cir.rum incir)
             ==
           sources
-        %.  cir.dif.rum
+        %.  cir.src.dif.rum
         ?:  add.dif.rum
           ~(put in sources)
         ~(del in sources)
@@ -1539,18 +1539,18 @@
     ++  sh-show-sources                                 ::<  show sources
       ::>  prints subscription changes to the cli.
       ::
-      |=  {pre/tape old/(list circle) new/(list circle)}
+      |=  {pre/tape old/(list source) new/(list source)}
       ^+  +>
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old  +>.^$
           =.  +>.^$  $(old t.old)
-          (sh-note (weld pre "off {~(pr-full pr i.old)}"))
+          (sh-note (weld pre "off {~(pr-full pr cir.i.old)}"))
       =.  +>.$
           |-  ^+  +>.^$
           ?~  new  +>.^$
           =.  +>.^$  $(new t.new)
-          (sh-note (weld pre "hey {~(pr-full pr i.new)}"))
+          (sh-note (weld pre "hey {~(pr-full pr cir.i.new)}"))
       +>.$
     ::
     ++  sh-show-config                                  ::<  show config

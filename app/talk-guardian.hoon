@@ -71,7 +71,7 @@
       ==                                                ::
     ++  weir                                            ::>  parsed wire
       $%  {$repeat cir/circle ses/(list serial)}        ::<  messaging wire
-          {$circle nom/naem cir/circle}                 ::<  subscription wire
+          {$circle nom/naem src/source}                 ::<  subscription wire
       ==                                                ::
     --
 ::
@@ -317,7 +317,7 @@
       ^+  ..ta-action
       ?.  (~(has in stories) nom)
         %^  impact  nom  %new
-        :*  [[our.bol nom] ~ ~]
+        :*  [[[our.bol nom] ~] ~ ~]
             des
             *filter
             :-  typ
@@ -364,11 +364,11 @@
     ++  action-source                                   ::<  un/sub p to/from r
       ::>  add/remove {pos} as sources for story {nom}.
       ::
-      |=  {nom/naem sub/? pos/(map circle range)}
+      |=  {nom/naem sub/? srs/(set source)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
-      so-done:(~(so-sources so nom ~ u.soy) sub pos)
+      so-done:(~(so-sources so nom ~ u.soy) sub srs)
     ::
     ::>  ||  %messaging
     ::+|
@@ -471,16 +471,16 @@
   ++  ta-greet                                          ::<  subscription success
     ::>  store a started subscription as source.
     ::
-    |=  {nom/naem cir/circle}
+    |=  {nom/naem src/source}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-greet:sor cir)
+    (so-greet:sor src)
   ::
   ++  ta-leave                                          ::<  subscription failed
-    ::>  removes {cir} from story {nom}'s followers.
+    ::>  removes {src} from story {nom}'s sources.
     ::
-    |=  {nom/naem cir/circle}
+    |=  {nom/naem src/source}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-leave:sor cir)
+    (so-leave:sor src)
   ::
   ++  ta-take                                           ::<  apply prize
     ::>  for a %burden prize, bear the burden in a new
@@ -502,7 +502,7 @@
       =+  wer=(etch wir)
       ?>  ?=($circle -.wer)
       %-  (ta-know nom.wer)  |=  sor/_so  =<  so-done
-      (so-take:sor cir.wer +.piz)
+      (so-take:sor cir.src.wer +.piz)
     ==
   ::
   ++  ta-hear                                           ::<  apply rumor
@@ -531,7 +531,7 @@
       =+  wer=(etch wir)
       ?>  ?=($circle -.wer)
       %-  (ta-know nom.wer)  |=  sor/_so  =<  so-done
-      (so-hear:sor | cir.wer rum.rum)
+      (so-hear:sor | cir.src.wer rum.rum)
     ==
   ::
   ++  ta-repeat                                         ::<  message delivered
@@ -544,6 +544,15 @@
     =-  (ta-delta %done who ses -)
     ?~  fal  %accepted
     ~>(%slog.[0 u.fal] %rejected)
+  ::
+  ++  ta-resub                                          ::<  subscription dropped
+    ::>  when a subscription gets dropped by gall, we
+    ::>  resubscribe.
+    ::
+    |=  {nom/naem src/source}
+    ^+  +>
+    %-  (ta-know nom)  |=  sor/_so  =<  so-done
+    (so-resub:sor src)
   ::
   ::>  ||
   ::>  ||  %messaging
@@ -731,12 +740,6 @@
       ::        rum/rumor-story
       ::    ==
       ^+  +>
-      ::  check that we're still subscribed to this story
-      ::  this is a small %gall bug, we shouldn't get these
-      ~?  ?!  ?|  (~(has in src.shape) src)
-                  =(src so-cir)
-              ==
-        [%unexpected-rumor-source nom -.rum src]
       ?-  -.rum
         $new      ?:  =(src so-cir)
                     (so-config-full ~ cof.rum)
@@ -833,20 +836,16 @@
       [%story nom d]
     ::
     ++  so-sources                                      ::<  change source
-      ::>  adds or removes {cos} from our sources.
+      ::>  adds or removes {srs} from our sources,
+      ::>  skipping over ones we already (don't) have.
       ::
-      ::TODO  should ++action-source make use of this,
-      ::      because of the {sus} logic?
-      |=  {add/? cos/(map circle range)}
+      |=  {add/? srs/(set source)}
       ^+  +>
-      ::TODO  for new sources, follow.
-      ::      for existing sources, unfollow and refollow
-      ::      with new range?
-      ::=/  sus/(set circle)
-      ::  %.  src.shape
-      ::  ?:(add ~(dif in pas) ~(int in pas))
-      ::?~  sus  +>.$
-      (so-delta-our %follow & cos)
+      =/  sus/(set source)
+        %.  src.shape
+        ?:(add ~(dif in srs) ~(int in srs))
+      ?~  sus  +>.$
+      (so-delta-our %follow add srs)
     ::
     ++  so-depict                                       ::<  change description
       ::>  modifies our caption.
@@ -895,18 +894,32 @@
     ++  so-greet                                        ::<  subscription started
       ::>  store a started subscription as source.
       ::
-      |=  cir/circle
+      |=  src/source
       ^+  +>
-      ?:  (~(has in src.shape) cir)  +>
-      (so-delta-our %config so-cir %source & cir)
+      ?:  (~(has in src.shape) src)  +>
+      (so-delta-our %config so-cir %source & src)
     ::
     ++  so-leave                                        ::<  subscription ended
-      ::>  delete {cir} from our sources.
+      ::>  delete {src} from our sources.
       ::
-      |=  cir/circle
+      |=  src/source
       ^+  +>
-      ?.  (~(has in src.shape) cir)  +>
-      (so-delta-our %config so-cir %source | cir)
+      ?.  (~(has in src.shape) src)  +>
+      (so-delta-our %config so-cir %source | src)
+    ::
+    ++  so-resub                                        ::<  subscription revived
+      ::>  re-subscribe to a dropped subscription.
+      ::>  if it was already active, we continue where
+      ::>  we left off.
+      ::
+      |=  src/source
+      ^+  +>
+      =-  (so-delta-our %follow & [[cir.src -] ~ ~])
+      ^-  range
+      ?.  (~(has by sequence) cir.src)  ran.src
+      =-  `[[%ud (~(got by sequence) cir.src)] -]
+      ?~  ran.src  ~
+      tal.u.ran.src
     ::
     ++  so-first-grams                                  ::<  beginning of stream
       ::>  find all grams that fall within the range.
@@ -1367,7 +1380,7 @@
       ::>  apply a %remove story delta, unsubscribing
       ::>  this story from all its active sources.
       ::
-      (sa-abjure ~(tap in src.shape))
+      (sa-abjure src.shape)
     ::
     ++  sa-change                                       ::<  apply circle delta
       ::>  figure out whether to apply a %story delta to
@@ -1394,7 +1407,7 @@
         +>(inherited ihr.det)
         ::
           $follow
-        (sa-emil (sa-follow-effects sub.det cos.det))
+        (sa-emil (sa-follow-effects sub.det srs.det))
         ::
           $sequent
         +>(sequence (~(put by sequence) cir.det num.det))
@@ -1485,11 +1498,10 @@
       ::>  apply side-effects for a %follow delta,
       ::>  un/subscribing this story to/from {cos}.
       ::
-      |=  {sub/? cos/(map circle range)}
+      |=  {sub/? srs/(set source)}
       ^-  (list move)
-      ?:  sub
-        (sa-acquire ~(tap by cos))
-      (sa-abjure ~(tap in ~(key by cos)))
+      %.  srs
+      ?:(sub sa-acquire sa-abjure)
     ::
     ++  sa-permit-effects                               ::<  notify permitted
       ::>  apply side-effects for a %permit delta,
@@ -1515,35 +1527,28 @@
     ++  sa-acquire                                      ::<  subscribe us
       ::>  subscribes this story to each circle.
       ::
-      |=  cos/(list (pair circle range))
+      |=  srs/(set source)
       %+  sa-sauce  0  ::  subscription is caused by this app
       %-  zing
-      %+  turn  cos
+      %+  turn  ~(tap in srs)
       |=  {cir/circle ran/range}
-      ^-  (list card)
+      ^-  (list card)  ::TODO  just (unit card) is enough.
       ?:  =(cir sa-cir)  ~                              ::  ignore self-subs
-      ::  unless otherwise specified, subscribe starting
-      ::  at the last message we heard.
-      =.  ran  ::TODO  =?
-        ?^  ran  ran
-        =+  num=(~(get by sequence) cir)
-        ?~  num  `[[%ud 0] ~]
-        `[[%ud u.num] ~]
-      :_  ~
-      (circle-peer nom cir ran)
+      [(circle-peer nom cir ran) ~]
     ::
     ++  sa-abjure                                       ::<  unsubscribe us
       ::>  unsubscribes this story from each circle.
       ::
-      |=  cis/(list circle)
+      |=  srs/(set source)
       %+  sa-sauce  0  ::  subscription is caused by this app
       %-  zing
-      %+  turn  cis
-      |=  cir/circle
+      %+  turn  ~(tap in srs)
+      |=  {cir/circle ran/range}
       ^-  (list card)
       :_  ~
+      =+  rap=(range-to-path ran)
       :*  %pull
-          /circle/[nom]/(scot %p hos.cir)/[nom.cir]
+          (welp /circle/[nom]/(scot %p hos.cir)/[nom.cir] rap)
           [hos.cir dap.bol]
           ~
       ==
@@ -1592,8 +1597,8 @@
     ?>  ?=({@ @ @ *} t.wir)
     :^    %circle
         i.t.wir
-      (slav %p i.t.t.wir)
-    i.t.t.t.wir
+      [(slav %p i.t.t.wir) i.t.t.t.wir]
+    (path-to-range t.t.t.t.wir)
     ::
       $repeat
     ?>  ?=({@ @ @ $~} t.wir)
@@ -1608,11 +1613,11 @@
   ::
   |=  $:  wir/wire
           $=  fun
-          $-  {nom/naem cir/circle}
+          $-  {nom/naem src/source}
               {(list move) _.}
       ==
   =+  wer=(etch wir)
-  ?>(?=($circle -.wer) (fun nom.wer cir.wer))
+  ?>(?=($circle -.wer) (fun nom.wer src.wer))
 ::
 ++  etch-repeat                                         ::<  parse /repeat wire
   ::>  parses a /repeat wire, call gate with the result.
@@ -1626,21 +1631,16 @@
   ?>(?=($repeat -.wer) (fun cir.wer ses.wer))
 ::
 ++  circle-peer                                         ::<  /circle peer card
-  ::>  constructs a %peer move to subscribe {nom} to
-  ::>  {cir}.
+  ::>  constructs a %peer move to subscribe {nom} to a
+  ::>  source.
   ::
-  |=  {nom/cord cir/circle wen/range}
+  |=  {nom/naem source}
   ^-  card
-  =/  ran
-    ?~  wen  ~
-    %+  welp
-      /(scot -.hed.u.wen +.hed.u.wen)
-    ?~  tal.u.wen  ~
-    /(scot -.u.tal.u.wen +.u.tal.u.wen)
+  =+  rap=(range-to-path ran)
   :*  %peer
-      (welp /circle/[nom]/(scot %p hos.cir)/[nom.cir] ran)
+      (welp /circle/[nom]/(scot %p hos.cir)/[nom.cir] rap)
       [hos.cir dap.bol]
-      (welp /circle/[nom.cir] ran)
+      (welp /circle/[nom.cir] rap)
   ==
 ::
 ::>  ||
@@ -2003,14 +2003,14 @@
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
   %+  etch-circle  [%circle wir]
-  |=  {nom/naem cir/circle}
+  |=  {nom/naem src/source}
   ?~  fal
     %-  pre-bake
-    ta-done:(ta-greet:ta nom cir)
-  =.  u.fal  [>%reap-circle-fail nom cir< u.fal]
+    ta-done:(ta-greet:ta nom src)
+  =.  u.fal  [>%reap-circle-fail nom src< u.fal]
   %-  (slog (flop u.fal))
   %-  pre-bake
-  ta-done:(ta-leave:ta nom cir)
+  ta-done:(ta-leave:ta nom src)
 ::
 ++  quit-circle                                         ::<  dropped subscription
   ::>  gall dropped our subscription. resubscribe.
@@ -2019,9 +2019,9 @@
   |=  wir/wire
   ^-  (quip move _+>)
   %+  etch-circle  [%circle wir]
-  |=  {nom/naem cir/circle}
-  :_  +>.^$  :_  ~
-  [0 (circle-peer nom cir `[[%da (sub now.bol ~m5)] ~])]
+  |=  {nom/naem src/source}
+  %-  pre-bake
+  ta-done:(ta-resub:ta nom src)
 ::
 ++  coup-repeat                                         ::<  message n/ack
   ::>  ack from ++ta-transmit. mark the message as

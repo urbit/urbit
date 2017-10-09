@@ -121,7 +121,7 @@
 ++  delta-story                                         ::>  story delta
   $?  diff-story                                        ::<  both in & outward
   $%  {$inherited ihr/?}                                ::<  inherited flag
-      {$follow sub/? cos/(map circle range)}            ::<  un/subscribe
+      {$follow sub/? srs/(set source)}  ::TODO  set y/n?::<  un/subscribe
       {$sequent cir/circle num/@ud}                     ::<  update last-heard
       {$gram gam/telegram}                              ::<  new/changed msgs
   ==  ==                                                ::
@@ -139,7 +139,7 @@
 ++  diff-config                                         ::>  config change
   ::TODO  maybe just full? think.
   $%  {$full cof/config}                                ::<  set w/o side-effects
-      {$source add/? cir/circle}                        ::<  add/rem sources
+      {$source add/? src/source}                        ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
       {$filter fit/filter}                              ::<  changed filter
       {$secure sec/security}                            ::<  changed security
@@ -171,7 +171,7 @@
       {$depict nom/naem des/cord}                       ::<  change description
       {$filter nom/naem fit/filter}                     ::<  change message rules
       {$permit nom/naem inv/? sis/(set ship)}           ::<  invite/banish
-      {$source nom/naem sub/? src/(map circle range)}   ::<  un/sub to/from src
+      {$source nom/naem sub/? srs/(set source)}         ::<  un/sub to/from src
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::<  post exact
       {$phrase aud/(set circle) ses/(list speech)}      ::<  post easy
@@ -205,12 +205,12 @@
 ::  circle configurations.                              ::
 ++  lobby      {loc/config rem/(map circle config)}     ::<  our & srcs configs
 ++  config                                              ::>  circle config
-  $:  src/(set circle)                                  ::<  active sources
-      ::TODO  ^ include range? just remove!
+  $:  src/(set source)                                  ::<  active sources
       cap/cord                                          ::<  description
       fit/filter                                        ::<  message rules
       con/control                                       ::<  restrictions
   ==                                                    ::
+++  source  {cir/circle ran/range}                      ::<  subscription target
 ++  filter                                              ::>  content filters
   $:  cas/?                                             ::<  dis/allow capitals
       utf/?                                             ::<  dis/allow non-ascii
