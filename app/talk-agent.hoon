@@ -1690,7 +1690,7 @@
       ?:  =(nom.one inbox)
         ":"
       ['%' (trip nom.one)]
-    =+  wun=(scow %p hos.one)
+    =+  wun=(cite:title hos.one)
     ?:  =(nom.one (main hos.one))
       wun
     ?:  =(hos.one (sein:title our.bol))
