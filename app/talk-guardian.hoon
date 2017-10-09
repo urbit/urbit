@@ -1932,8 +1932,16 @@
   |=  {wir/wire piz/prize}
   ^-  (quip move _+>)
   =^  mos  +>.$
+    ::  this shouldn't be necessary, but see the TODO below.
+    ?:  ?=($burden -.piz)
+      %-  pre-bake
+      =<  ta-done
+      %+  roll  ~(tap by sos.piz)
+      |=  {{n/naem b/burden} _ta}
+      =<  so-done
+      (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
     %-  pre-bake
-    ta-done:(ta-take:ta wir piz)
+    ta-done:(ta-take:ta wir piz)  ::TODO  %ap-lame for %burden prize...
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
