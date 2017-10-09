@@ -268,8 +268,7 @@
     ::
     |=  piz/prize
     ^+  +>
-    ?+  -.piz
-      ~&([%ignoring-prize -.piz] +>)
+    ?+  -.piz  +>
       ::
         $reader
       %=  +>
@@ -292,8 +291,7 @@
     ::
     |=  rum/rumor
     ^+  +>
-    ?+  -.rum
-      ~&([%ignoring-rumor -.rum] +>)
+    ?+  -.rum  +>
       ::
         $reader
       ?-  -.rum.rum

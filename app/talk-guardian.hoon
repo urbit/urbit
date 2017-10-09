@@ -87,10 +87,10 @@
   ::
   |=  old/(unit state)
   ^-  (quip move _..prep)
-  ::?~  old
+  ?~  old
     %-  pre-bake
     ta-done:ta-init:ta
-  ::[~ ..prep(+<+ u.old)]
+  [~ ..prep(+<+ u.old)]
 ::
 ::>  ||
 ::>  ||  %engines
@@ -541,7 +541,6 @@
     |=  {who/circle ses/(list serial) fal/(unit tang)}
     ^+  +>
     ~?  ?=(^ fal)  u.fal
-    ~&  [%outbox-was outbox]
     =-  (ta-delta %done who ses -)
     ?~  fal  %accepted
     ~>(%slog.[0 u.fal] %rejected)
@@ -742,7 +741,7 @@
         $new      ?:  =(src so-cir)
                     (so-config-full ~ cof.rum)
                   $(rum [%config src %full cof.rum])
-        $bear     ~&(%so-bear (so-bear bur.rum))
+        $bear     (so-bear bur.rum)
         $gram     (so-open src nev.rum)
         $config   ::  full changes to us need to get split up.
                   ?:  &(=(cir.rum so-cir) ?=($full -.dif.rum))
@@ -751,13 +750,10 @@
                   ?:  =(src cir.rum)
                     (so-delta-our rum)
                   ::  remotes of remotes are not.
-                  ~&  %ignoring-remote-config
                   ~?  =(src so-cir)  %but-src-is-us
                   +>
         $status   ::  ignore foreign remotes.
-                  ?.  |(=(src cir.rum) =(src so-cir))
-                    ~&  %ignoring-remote-status
-                    +>
+                  ?.  |(=(src cir.rum) =(src so-cir))  +>
                   (so-delta-our rum)
         $remove   (so-delta-our %config src %remove ~)
       ==
@@ -1194,7 +1190,6 @@
     ::>  {who} below us.
     ::
     |=  who/ship
-    ~&  [%peering-report who]
     %-  da-emit
     :*  0
         %peer
@@ -1208,7 +1203,6 @@
     ::
     |=  {cir/circle out/(list thought)}
     ^+  +>
-    ~&  [%da-change-out hos.cir]
     =+  ses=(turn out head)
     =.  outbox
       ::  for every serial, add %pending state.
