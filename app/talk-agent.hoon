@@ -1108,9 +1108,7 @@
         =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr pon) ~]
         =<  (murn (sort ~(tap by gop) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
-        =.  c
-          ?.  =(han.c `(scot %p a))  c
-          [~ tru.c]
+        =?  c  =(han.c `(scot %p a))  [~ tru.c]
         ?-  b
           $gone  ~
           $idle  `leaf+:(weld "idle " (scow %p a) " " (trip (fall han.c '')))
@@ -1771,8 +1769,8 @@
     |-  ^-  circle
     =+  lef=`(unit circle)`ar-best(lix l.lix)
     =+  rit=`(unit circle)`ar-best(lix r.lix)
-    =.  n.lix  ?~(lef n.lix (~(pr-best pr n.lix) u.lef))
-    =.  n.lix  ?~(rit n.lix (~(pr-best pr n.lix) u.rit))
+    =?  n.lix  ?=(^ lef)  (~(pr-best pr n.lix) u.lef)
+    =?  n.lix  ?=(^ rit)  (~(pr-best pr n.lix) u.rit)
     n.lix
   ::
   ++  ar-deaf                                           ::<  except for self

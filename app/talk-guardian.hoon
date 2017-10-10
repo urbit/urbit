@@ -332,8 +332,7 @@
         %-  ~(rep in cis)
         |=  {c/circle m/(jug ship naem)}
         (~(put ju m) hos.c nom.c)
-      =.  ..ta-action  ::TODO  =?
-        ?.  (~(has by cic) our.bol)  ..ta-action
+      =?  ..ta-action  (~(has by cic) our.bol)
         %-  ~(rep in (~(get ju cic) our.bol))
         |=  {n/naem _ta}
         (affect n %status [our.bol n] our.bol dif)
@@ -368,8 +367,7 @@
       ::
       |=  {nom/naem mes/(unit cord)}
       ^+  ..ta-action
-      =.  ..ta-action  ::TODO  =?
-        ?~  mes  ..ta-action
+      =?  ..ta-action  ?=(^ mes)
         %+  action-phrase
           [[our.bol nom] ~ ~]
         [%lin | u.mes]~
@@ -1273,7 +1271,7 @@
       ::  for every serial, add %pending state.
       %+  roll  ses
       |=  {s/serial o/_outbox}
-      =.  o  ?~(o outbox o)  ::TODO  =?
+      =?  o  ?=($~ o)  outbox
       =+  t=(fall (~(get by o) s) *tracking)
       %+  ~(put by o)  s
       (~(put by t) cir %pending)
