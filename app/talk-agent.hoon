@@ -641,6 +641,7 @@
         %-  perk  :~
           %nicks
           %quiet
+          %notify
           %showtime
         ==
       ++  work                                          ::<  full input
@@ -1456,8 +1457,13 @@
       %+  sh-fact  %mor
       ::TODO?  we need to cast, but not if we do =(0 (lent lis)) above instead..
       %+  turn  `(list tape)`lis
+      =+  nom=(scag 7 (cite:title our.bol))
       |=  t/tape
-      [%txt t]
+      ?.  ?&  (~(has in settings.she) %notify)
+              ?=(^ (find nom (slag 15 t)))
+          ==
+        [%txt t]
+      [%mor [%txt t] [%bel ~] ~]
     ::
     ++  sh-numb                                         ::<  print msg number
       ::>  prints a message number, left-padded by heps.
