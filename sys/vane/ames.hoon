@@ -1142,7 +1142,7 @@
         ++  cook                                        ::    cook:ho:um:am
           |=  {cop/coop cha/path ram/(unit {ryn/lane dam/flap})}
           ^-  {gud/? con/_+>}                        ::  acknowledgment
-          ::  ~&  [%cook cop num cha ram]
+          ::  ~&  [%ames-cook cop cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  lat=(~(get by mis.rum) did.rum)
           ?:  &(?=($~ lat) ?=($~ ram))
@@ -1163,6 +1163,7 @@
         ++  done                                        ::    done:ho:um:am
           |=  {cha/path num/@ud}                        ::  complete outgoing
           ^-  {(unit duct) _+>}
+          ::  ~&  [%ames-done cha num]
           =+  rol=(need (~(get by ryl.bah) cha))
           =+  rix=(~(get by san.rol) num)
           ?~  rix  [~ +>.$]
@@ -1374,7 +1375,7 @@
                   ==
               ==
             +>.$
-          (wool [/a/ping hen] /q/pi ~ |)
+          (wool [/a/ping hen] /a/pi ~ |)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup bomb
@@ -1638,6 +1639,7 @@
         $mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
         $unto  [~ +>]
+        $woot  [~ +>]
         ?($mean $nice)                                  ::  XX obsolete
       ?:  ?=({$ye $~} tea)
         [~ +>.$]
@@ -1664,6 +1666,9 @@
     ?:  ?=($crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
     ?:  ?=($west -.kyz)
+      ?:  ?=({$pi $~} q.kyz)
+        :_  +>.$
+        [[hen %give %mack ~] ~]
       ?>  ?=({$ta $~} q.kyz)
       =+  gox=((hard {p/@p q/@pG r/gens s/pass}) r.kyz)
       =+  gus=(need (~(us go ton.fox) p.p.kyz))
