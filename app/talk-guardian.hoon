@@ -33,6 +33,8 @@
     ::>    data structures
     ::
     |%
+    ::>  ||  %state                                     ::
+    ::>    state data structures                        ::
     ++  state                                           ::>  broker state
       $:  stories/(map naem story)                      ::<  conversations
           outbox/(map serial tracking)                  ::<  sent messages
@@ -51,6 +53,40 @@
           known/(map serial @ud)                        ::<  messages heard
           inherited/_|                                  ::<  from parent?
       ==                                                ::
+    ::>  ||  %deltas                                    ::
+    ::>    changes to state                             ::
+    ++  delta                                           ::
+      $%  ::  messaging state                           ::
+          {$out cir/circle out/(list thought)}          ::<  send msgs to circle
+          $:  $done                                     ::>  set delivery state
+              cir/circle                                ::
+              ses/(list serial)                         ::
+              res/delivery                              ::
+          ==                                            ::
+          ::  shared ui state                           ::
+          {$glyph diff-glyph}                           ::<  un/bound glyph
+          {$nick diff-nick}                             ::<  changed nickname
+          ::  story state                               ::
+          {$story nom/naem det/delta-story}             ::<  change to story
+          ::  side-effects                              ::
+          {$init $~}                                    ::<  initialize
+          {$observe who/ship}                           ::<  watch burden bearer
+          $:  $present                                  ::>  send %present cmd
+              hos/ship                                  ::
+              nos/(set naem)                            ::
+              dif/diff-status                           ::
+          ==                                            ::
+          {$quit ost/bone}                              ::<  force unsubscribe
+      ==                                                ::
+    ++  delta-story                                     ::>  story delta
+      $?  diff-story                                    ::<  both in & outward
+      $%  {$inherited ihr/?}                            ::<  inherited flag
+          {$follow sub/? srs/(set source)}  ::TODO  set?::<  un/subscribe
+          {$sequent cir/circle num/@ud}                 ::<  update last-heard
+          {$gram gam/telegram}                          ::<  new/changed msgs
+      ==  ==                                            ::
+    ::>  ||  %out                                       ::
+    ::>    outgoing data                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
       $%  {$talk-prize prize}                           ::

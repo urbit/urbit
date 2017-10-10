@@ -100,31 +100,8 @@
       cos/lobby                                         ::<  loc & rem configs
       pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
-::TODO  deltas into app
-++  delta                                               ::
-  $%  ::  messaging state                               ::
-      {$out cir/circle out/(list thought)}              ::<  send msgs to circle
-      {$done cir/circle ses/(list serial) res/delivery} ::<  set delivery state
-      ::  shared ui state                               ::
-      {$glyph diff-glyph}                               ::<  un/bound glyph
-      {$nick diff-nick}                                 ::<  changed nickname
-      ::  story state                                   ::
-      {$story nom/naem det/delta-story}                 ::<  change to story
-      ::  side-effects                                  ::
-      {$init $~}                                        ::<  initialize
-      {$observe who/ship}                               ::<  watch burden bearer
-      {$present hos/ship nos/(set naem) dif/diff-status}::<  send %present cmd
-      {$quit ost/bone}                                  ::<  force unsubscribe
-  ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char pas/(set circle)}       ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/nick}                     ::<  changed nickname
-++  delta-story                                         ::>  story delta
-  $?  diff-story                                        ::<  both in & outward
-  $%  {$inherited ihr/?}                                ::<  inherited flag
-      {$follow sub/? srs/(set source)}  ::TODO  set y/n?::<  un/subscribe
-      {$sequent cir/circle num/@ud}                     ::<  update last-heard
-      {$gram gam/telegram}                              ::<  new/changed msgs
-  ==  ==                                                ::
 ++  diff-story                                          ::>  story change
   $%  {$new cof/config}                                 ::<  new story
       {$bear bur/burden}                                ::<  new inherited story
