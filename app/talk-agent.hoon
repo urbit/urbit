@@ -1104,6 +1104,7 @@
         =<  (sh-fact %mor (murn (sort ~(tap by remotes) aor) .))
         |=  {pon/circle gop/group}  ^-  (unit sole-effect)
         ?.  |(=(~ pas) (~(has in pas) pon))  ~
+        ?.  (~(has in sources) pon)  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr pon) ~]
         =<  (murn (sort ~(tap by gop) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
