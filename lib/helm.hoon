@@ -43,7 +43,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall helm-part}                              ::  main helm work
+|=  {bowl:gall helm-part}                               ::  main helm work
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
@@ -54,7 +54,7 @@
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
-          {$wont wire sock path *}                      ::  send message
+          {$want wire sock path *}                      ::  send message
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -77,10 +77,11 @@
 ++  poke-begin                                        ::  make/send keypair
   |=  hood-begin  =<  abet
   ?>  ?=($~ bur)
+  ~&  [%poke-begin our his]
   =+  buz=(shaz :(mix (jam ges) eny))
   =+  loy=(pit:nu:crub:crypto 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%wont /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
+  [%want /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
 ::
 ++  poke-spawn
   |=  {him/ship key/@pG}  =<  abet

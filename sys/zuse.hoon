@@ -93,7 +93,7 @@
 ++  ames  ^?
   |%
   ::                                                    ::
-  ::::                  ++able:behn                     ::  (1a1) arvo moves
+  ::::                  ++able:ames                     ::  (1a1) arvo moves
     ::                                                  ::::
   ++  able  ^?
     |%
@@ -114,6 +114,7 @@
     ++  gift                                            ::  out result <-$
       $%  {$hear p/lane q/@}                            ::  receive packet
           {$init p/@p}                                  ::  report install
+          {$mack p/(unit tang)}                         ::  
           {$mass p/mass}                                ::  memory usage
           {$send p/lane q/@}                            ::  transmit packet
           {$woot p/ship q/coop}                         ::  reaction message
@@ -127,6 +128,7 @@
           $:  @tas                                      ::
       $%  {$crud p/@tas q/(list tank)}                  ::  by any
           {$mack p/(unit tang)}                         ::  message ack
+          {$woot p/ship q/coop}                         ::  reaction message
       ==  ==  ==                                        ::
     ++  task                                            ::  in request ->$
       $%  {$barn $~}                                    ::  new unix process
@@ -4334,7 +4336,7 @@
       $king  (end 3 1 who)
       $duke  (end 4 1 who)
       $earl  (end 5 1 who)
-      $pawn  (end 4 1 who)
+      $pawn  ~zod
     ==
   ::                                                    ::  ++team:title
   ++  team                                              ::  our / our moon
