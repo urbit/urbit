@@ -325,7 +325,7 @@
       ==                                                ::
 ++  note                                                ::  out request $->
   $%  $:  $a                                            ::  to %ames
-  $%  {$wont p/sock q/path r/*}                         ::
+  $%  {$want p/sock q/path r/*}                         ::
   ==  ==                                                ::
       $:  $c                                            ::  to %clay
   $%  {$info p/@p q/@tas r/nori}                        ::  internal edit
@@ -641,7 +641,7 @@
   ::
   ++  send-over-ames
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
-    (emit a %pass b %a %wont [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d)
+    (emit a %pass b %a %want [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
   ::  Create a request that cannot be filled immediately.
   ::
@@ -3296,15 +3296,17 @@
     [mos ..^$]
   ::
       $init
+    :_  %_    ..^$
+            fat.ruf
+          ?<  (~(has by fat.ruf) p.q.hic)
+          (~(put by fat.ruf) p.q.hic [-(hun hen)]:[*room .])
+        ==
+    =+  [bos=(sein:title p.q.hic) can=(clan:title p.q.hic)]
+    %-  zing  ^-  (list (list move))
+    :~  ?:  =(bos p.q.hic)  ~
+        [hen %pass /init-merge %c %merg p.q.hic %base bos %kids da+now %init]~
     ::
-    ::  this used to start the initial merge, which is now
-    ::  not a necessary part of the boot sequence.
-    ::
-    :-  ~
-    %_    ..^$
-        fat.ruf
-      ?<  (~(has by fat.ruf) p.q.hic)
-      (~(put by fat.ruf) p.q.hic [-(hun hen)]:[*room .])
+        ~
     ==
   ::
       $into
@@ -3665,8 +3667,8 @@
     =+  our=(slav %p i.tea)
     =+  him=(slav %p i.t.tea)
     :_  ..^$
-    :~  :*  hen  %pass  /writ-wont  %a
-            %wont  [our him]  [%c %answer t.t.tea]
+    :~  :*  hen  %pass  /writ-want  %a
+            %want  [our him]  [%c %answer t.t.tea]
             (bind p.+.q.hin rant-to-rand)
         ==
     ==
@@ -4122,8 +4124,8 @@
             =+  our=(slav %p i.tea)
             =+  him=(slav %p i.t.tea)
             :_  +>.$
-            :~  :*  hen  %pass  /writ-wont  %a
-                    %wont  [our him]  [%c %answer t.t.tea]
+            :~  :*  hen  %pass  /writ-want  %a
+                    %want  [our him]  [%c %answer t.t.tea]
                     (bind p.+.hin rant-to-rand)
                 ==
             ==
