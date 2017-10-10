@@ -639,7 +639,7 @@
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::<  circle postfix
       ++  setting                                       ::<  setting flag
         %-  perk  :~
-          %noob  ::TODO  rename to nick
+          %nicks
           %quiet
           %showtime
         ==
@@ -1879,7 +1879,7 @@
     ?~  txs  ~
     ::  render the author.
     =/  nom/tape
-      ?:  (~(has in sef) %noob)
+      ?:  (~(has in sef) %nicks)
         (~(cr-nick cr [who (main who)]))
       (~(cr-curt cr [who (main who)]) |)
     ::  regular indent.
