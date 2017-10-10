@@ -844,8 +844,24 @@
       =/  sus/(set source)
         %.  src.shape
         ?:(add ~(dif in srs) ~(int in srs))
+      ~&  [%sources src.shape]
+      ~&  [%change add sus]
+      ::  we only make a delta for removals here,
+      ::  because we don't need to wait for ++reap when
+      ::  pulling subscriptions.
+      =?  +>.$  !add
+        =+  sos=~(tap in sus)
+        |-  ^+  +>.^$
+        ?~  sos  +>.^$
+        =.  +>.^$  (so-delta-our %config so-cir %source | i.sos)
+        $(sos t.sos)
+        ::TODO  ideally below, but unexplained runtime error at `so-delta-our`
+        ::%+  roll  ~(tap in sus)
+        ::|=  {src/source _+>.$}
+        ::^+  +>.^$
+        ::(so-delta-our %config so-cir %source | src)
       ?~  sus  +>.$
-      (so-delta-our %follow add srs)
+      (so-delta-our %follow add sus)
     ::
     ++  so-depict                                       ::<  change description
       ::>  modifies our caption.
