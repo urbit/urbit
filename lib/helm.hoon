@@ -113,7 +113,14 @@
   |=  top/?(desk beam)  =<  abet
   (emit %serv /helm/serv top)
 ::
-++  poke-hi  |=(mes/@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
+++  poke-hi  
+  |=  mes/@t 
+  ~|  %poke-hi-fail
+  ?:  =(%fail mes)
+    ~&  %poke-hi-fail
+    !!
+  abet:(emit %flog /di %text "< {<src>}: {(trip mes)}")  
+::
 ++  poke-atom  
   |=  ato/@
   =+  len=(scow %ud (met 3 ato))
