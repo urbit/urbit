@@ -1,6 +1,7 @@
 source $stdenv/setup
 shopt -u nullglob
-unset CC CXX CFLAGS LDFLAGS
+
+unset CC CXX LD AR AS CFLAGS LDFLAGS
 
 tar -xf $gcc_src
 mv gcc-* gcc

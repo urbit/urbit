@@ -1,8 +1,6 @@
 source $stdenv/setup
 
-unset CC
-unset LD
-unset AR
+unset CC CXX LD AR AS CFLAGS LDFLAGS
 
 cp -r $src mingw-w64
 chmod -R u+w mingw-w64

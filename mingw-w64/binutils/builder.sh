@@ -1,6 +1,6 @@
 source $stdenv/setup
 
-unset CC CXX CFLAGS LDFLAGS
+unset CC CXX LD AR AS CFLAGS LDFLAGS
 
 tar -xf $src
 
