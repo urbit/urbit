@@ -131,8 +131,8 @@
   ==                                                    ::
 ++  diff-human                                          ::>  name change
   $%  {$full man/human}                                 ::<  fully changed name
-      {$true tru/(unit (trel cord (unit cord) cord))}   ::<  changed true name
       {$handle han/(unit cord)}                         ::<  changed handle
+      {$true tru/(unit truename)}                       ::<  changed true name
   ==                                                    ::
 ::
 ::>  ||
@@ -213,8 +213,9 @@
   ==                                                    ::
 ++  human                                               ::>  human identifier
   $:  han/(unit cord)                                   ::<  handle
-      tru/(unit (trel cord (unit cord) cord))           ::<  true name
+      tru/(unit truename)                               ::<  true name
   ==                                                    ::
+++  truename   {fir/cord mid/(unit cord) las/cord}      ::<  real-life name
 ::
 ::>  ||
 ::>  ||  %message-data
