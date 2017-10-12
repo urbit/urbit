@@ -1599,7 +1599,7 @@
       ==
     ::
         $cake
-      ~?  ?=(^ r.bon)  [%cake-woot-bad hen]
+      ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==

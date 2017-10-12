@@ -188,14 +188,14 @@
         [%e %eyre]
         [%f %ford]
         [%g %gall]
-        [%j %jael]
+    ::  [%j %jael]
     ==
   |=  {p/@tas q/@tas}
   =+  way=`path`(welp top /vane/[q])
   =+  txt=.^(@ %cx (welp way /hoon))
   [%flog /reset %veer p way txt]
 ::
-++  poke-wyll                                         ::  hear certificate
+++  poke-will                                         ::  hear certificate
   |=  wil/(unit wyll:ames)
   ?>  ?=(^ bur)
   ?>  ?=(^ wil)  
