@@ -12,7 +12,7 @@
 =,  old-zuse
 |_  gam/(list telegram)
 ::
-++  grab
+++  grab                                                ::  convert from
   |%
   ++  noun  (list telegram)
   ++  mime  |=(^mime (json (rash q.q apex:de-json)))
@@ -102,7 +102,7 @@
     --
   --
 ::
-++  grow
+++  grow                                                ::  convert to
   |%
   ++  mime  [/text/json (as-octs (crip (en-json json)))]
   ++  json

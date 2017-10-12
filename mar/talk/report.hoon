@@ -1,6 +1,6 @@
 ::
 ::::  /hoon/report/talk/mar
-  ::
+  ::TODO  deleteme
 /?    310
 /-    talk
 /+    talk, old-zuse
@@ -118,11 +118,11 @@
     ++  huma
       |=  human
       %^  jobe
-        hand+?~(han ~ [%s u.han])
+        han+?~(han ~ [%s u.han])
         :-  %true
         ?~  tru  ~
         =+  u.tru
-        (jobe first+[%s p] middle+?~(q ~ [%s u.q]) last+[%s r] ~)
+        (jobe fir+[%s fir] mid+?~(mid ~ [%s u.mid]) las+[%s las] ~)
       ~
     ::
     ++  loby
