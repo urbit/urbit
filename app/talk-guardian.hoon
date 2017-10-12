@@ -878,8 +878,6 @@
       =/  sus/(set source)
         %.  src.shape
         ?:(add ~(dif in srs) ~(int in srs))
-      ~&  [%sources src.shape]
-      ~&  [%change add sus]
       ::  we only make a delta for removals here,
       ::  because we don't need to wait for ++reap when
       ::  pulling subscriptions.
@@ -974,7 +972,6 @@
     ++  so-first-grams                                  ::<  beginning of stream
       ::>  find all grams that fall within the range.
       ::
-      ::TODO  strip unused vars.
       |=  ran/range
       ^-  (list telegram)
       =+  [num=0 gaz=grams zeg=*(list telegram)]
