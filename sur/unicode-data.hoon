@@ -5,38 +5,23 @@
 ++  line
   :>    an individual codepoint definition
   :>
-  :>  code: the codepoint in hexadecimal format
-  :>  name: the character name
-  :>  gen: the type of character this is
-  :>  can: the canonical combining class for ordering algorithms
-  :>  bidi: the bidirectional category of this character
-  :>  de: the character decomposition mapping
-  :>  decimal: the decimal digit value (or ~)
-  :>  digit: the digit value, covering non decimal radix forms
-  :>  numeric: the numeric value, including fractions
-  :>  mirrored: whether char is mirrored in bidirectional text
-  :>  old-name: unicode 1.0 compatibility name
-  :>  iso: iso 10646 comment field
-  :>  up: uppercase mapping codepoint
-  :>  low: lowercase mapping codepoint
-  :>  title: titlecase mapping codepoint
-  :>
-  $:  code/@c
-      name/tape
-      gen/general
-      can/@ud
-      bi/bidi
-      de/decomp
-      ::  todo: decimal/digit/numeric need to be parsed.
-      decimal/tape
-      digit/tape
-      numeric/tape
-      mirrored/?
-      old-name/tape
-      iso/tape
-      up/(unit @c)
-      low/(unit @c)
-      title/(unit @c)
+  $:  code/@c               :< codepoint in hexadecimal format
+      name/tape             :< character name
+      gen/general           :< type of character this is
+      :>  canonical combining class for ordering algorithms
+      can/@ud          
+      bi/bidi               :< bidirectional category of this character
+      de/decomp             :< character decomposition mapping
+      ::  todo: decimal/digit/numeric need to be parsed.                    
+      decimal/tape          :< decimal digit value (or ~)
+      digit/tape            :< digit value, covering non decimal radix forms
+      numeric/tape          :< numeric value, including fractions
+      mirrored/?            :< whether char is mirrored in bidirectional text
+      old-name/tape         :< unicode 1.0 compatibility name
+      iso/tape              :< iso 10646 comment field
+      up/(unit @c)          :< uppercase mapping codepoint
+      low/(unit @c)         :< lowercase mapping codepoint
+      title/(unit @c)       :< titlecase mapping codepoint
   ==
 ::
 ++  general
