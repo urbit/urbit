@@ -1,7 +1,6 @@
 source $setup
 
 tar -xf $src
-
 mv open-zwave-* ozw
 
 mkdir build
