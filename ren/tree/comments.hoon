@@ -5,7 +5,7 @@
 /:    /%/comments
   /;  |=  a/(map knot {ship marl})
       =-    (sort - dor)
-      %+  turn  (~(tap by a))
+      %+  turn  ~(tap by a)
       |=({b/knot c/{ship marl}} [(slav %da b) c])
   /_ 
   /;  |=  a/manx  ^-  {ship marl}

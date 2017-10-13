@@ -39,8 +39,15 @@
 ++  baby                                                ::  state by ship
   $:  tad/{p/@ud q/(map @ud task)}                      ::  tasks by number
       dym/(map duct @ud)                                ::  duct to task number
-      deh/(map @uvH deps)                               ::  depends by hash
       jav/(map * calx)                                  ::  cache
+      deh/deps                                          ::  dephash definitions
+      sup/(jug @uvH duct)                               ::  hash listeners
+      out/(set beam)                                    ::  listening beams
+      fin/(set beam)                                    ::  updated beams
+  ==                                                    ::
+++  deps                                                ::
+  $:  def/(map @uvH (set beam))                         ::  hash obligations
+      bak/(jug beam @uvH)                               ::  update to hash
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
   |*  a/mold                                            ::  product clam
@@ -50,8 +57,7 @@
           {$1 p/(set {van/vane ren/care:clay bem/beam tan/tang})}  ::  blocks
           {$2 p/(set beam) q/tang}                      ::  depends+error
       ==                                                ::
-  ==                                                    ::
-::                                                      ::
+  ==                                                  ::
 ++  burg                                                ::  gonadic rule
   |*  {a/mold b/mold}                                   ::  from and to
   $-({c/cafe d/a} (bolt b))                             ::
@@ -59,7 +65,7 @@
 ++  cafe                                                ::  live cache
   $:  p/(set calx)                                      ::  used
       q/(map * calx)                                    ::  cache
-      r/(map @uvH deps)                                 ::  dependss
+      r/deps                                            ::  depends
   ==                                                    ::
 ::                                                      ::
 ++  calm                                                ::  cache metadata
@@ -75,11 +81,6 @@
       {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
       {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
       {$slam p/calm q/{p/vase q/vase} r/vase}           ::  compute
-  ==                                                    ::
-++  deps                                                ::  depend state
-  $%  {$init p/(set beam)}                              ::  given out
-      {$sent p/(set duct) q/(set beam)}                 ::  listener exists
-      {$done $~}                                        ::  change seen
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah/duct                                          ::  cause
@@ -178,38 +179,33 @@
           bay/baby                                      ::  all owned state
       ==                                                ::
   |%
+  ++  this  .
   ++  abet                                              ::  resolve
     ^-  {(list move) baby}
     [(flop mow) bay]
   ::
-  ++  dep-warps                                         ::  create %warp's
-    |=  {dep/@uvH bes/(set beam) rav/$-(beam (unit rave:clay))}
-    ^-  (list move)
-    %+  turn  ~(tap in bes)
-    |=  bem/beam
-    :^  hen  %pass  [(scot %p our) (scot %uv dep) (en-beam bem)]
-    [%c [%warp [our p.bem] q.bem (rav bem)]]
+  ++  pass
+    |=  {wir/wire noe/note}  ^+  this
+    %_(+> mow :_(mow [hen %pass wir noe]))
   ::
   ++  deps-take                                         ::  take rev update
-    |=  {tea/wire dep/@uvH bem/beam sih/sign}
+    |=  {ren/care:clay bem/beam sih/sign}
     =<  abet  ^+  +>
     ?.  ?=($writ &2.sih)
       ~|(%bad-axun !!)
-    ?~  p.sih  +>.$                :: acknowledged
-    :: ~&  writ+tea
-    =+  dap=(~(got by deh.bay) dep)
-    =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
-    ^-  {dop/$@($~ _dap) mow/_mow}
-    ?-    -.dap
-        $done  `mow                ::  writ redundant
-        $init  ~|(never-subscribed+dep !!)
-        $sent
-      :-  [%done ~]
-      ;:  weld
-        (dep-warps dep (~(del in q.dap) bem) |=(beam ~))  ::  cancel outstanding
-        (turn ~(tap in p.dap) |=(hen/duct [hen %give %news dep]))
-        mow
-      ==
+    ?~  p.sih  +>                :: acknowledged
+    ~&  writ+(en-beam bem)
+    =.  out.bay  (~(del in out.bay) bem)
+    =.  fin.bay  (~(put in fin.bay) bem)
+    =/  des  ~(tap in (~(get ju bak.deh.bay) bem))
+    |-  ^+  ..abet
+    ?~  des  ..abet
+    %_    ..abet
+        sup.bay  (~(del by sup.bay) i.des)
+        mow 
+      =-  (weld - mow)
+      %+  turn  ~(tap in (~(get ju sup.bay) i.des))
+      |=(a/duct `move`[a %give %news i.des])
     ==
   ::
   ++  exec-cancel
@@ -242,49 +238,82 @@
       +>.$
     (~(take zo [num u.tus]) [van ren bem] sih)
   ::
+  ::+|
+  ::
   ++  wasp                                              ::  get next revision
     ~%  %ford-w  ..is  ~
     |=  {dep/@uvH ask/?}
     =<  abet  ^+  +>
+    ::
+::     =*  dop  `@uv`(div dep 0v1.00000.00000.00000.00000)
+::     =*  ren  |=  a/_dehdup.bay  ^-  (set path)
+::              (sy (turn ~(tap in ~(key by a)) en-beam))
+::     =-  ~&  :*  %wasp  dop
+::                 ole=(ren dehdup.bay.+)
+::                 new=`(set path)`(~(dif in (ren dehdup.bay.-)) (ren dehdup.bay.+))
+::             ==
+::         -
+    ::
     ?:  =(`@`0 dep)
       ~&(dep-empty+hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
-    =+  dap=(~(get by deh.bay) dep)
-    ?~  dap  ~&(dep-missed+dep +>.$)  ::  XX  ~|  !!
     ::
-    |^  =^  u-dap  .  ?:(ask start cancel)
-        +>.^$(deh.bay (~(put by deh.bay) dep u-dap))
+    ?.  (~(has by def.deh.bay) dep)
+      ~&([%wasp-unknown dep] this)
+    =/  bes  (~(got by def.deh.bay) dep)
+    ::
+    |^  ?:(ask start cancel)
+    ++  start
+      ^+  this
+      ~&  =-  start+[dep (~(gas in *(set path)) -)]
+          (turn ~(tap in bes) en-beam)
+      ?:  (~(has by sup.bay) dep)
+        this(sup.bay (~(put ju sup.bay) dep hen))
+      ?:  (~(any in bes) ~(has in fin.bay))
+        this(mow :_(mow [hen %give %news dep]))
+      =.  sup.bay  (~(put ju sup.bay) dep hen)
+      ::
+      =>  .(bes ~(tap in bes))
+      |-  ^+  this
+      ?~  bes  this
+      :: already sent
+      ?:  (~(has in out.bay) i.bes)  $(bes t.bes)
+      %_  $
+        out.bay  (~(put in out.bay) i.bes)
+        bes  t.bes
+        mow  :_(mow [hen (pass-warp %z i.bes &)])
+      ==
     ::
     ++  cancel
-      ^+  [u.dap ..$]
-      ?-  -.u.dap
-        $done  [u.dap ..$]
-        $init  ~&(on-wasp-kill-empty+dep [u.dap ..$])  :: crash?
-        $sent
-          =.  p.u.dap  (~(del in p.u.dap) hen)
-          ?^  p.u.dap
-            [u.dap ..$]
-          =/  ded  (dep-warps dep p.u.dap |=(beam ~))
-          :-  [%init q.u.dap]
-          ..$(mow (welp ded mow))
-      ==
-    ::
-    ++  start
-      ^+  [u.dap ..$]
-      ?-  -.u.dap
-        $done  [u.dap ..$(mow :_(mow [hen %give %news dep]))]
-        $sent
-          =.  p.u.dap  (~(put in p.u.dap) hen)
-          [u.dap .]
-      ::
-        $init
-          =/  new  %^  dep-warps  dep  p.u.dap
-                   |=(bem/beam `[%next %z r.bem (flop s.bem)])
-          :-  [%sent [hen ~ ~] p.u.dap]
-          ..$(mow (welp new mow))
+      ^+  this
+      =.  sup.bay  (~(del ju sup.bay) dep hen)
+      ?^  sup.bay  :: other listeners exist
+        this
+      =>  .(bes ~(tap in bes))
+      |-  ^+  this
+      ?~  bes  this
+      ?:  |(!(~(has in out.bay) i.bes) (~(has in fin.bay) i.bes))
+        :: already cancelled/received
+        ::REVIEW assert that unrecieved subs open?
+        $(bes t.bes)
+      ?:  (~(any in (~(get ju bak.deh.bay) i.bes)) ~(has by sup.bay))
+        ::REVIEW performance questionable
+        ::  if any other dep cares about this beam, stay subscribed
+        $(bes t.bes)
+      %_  $
+        out.bay  (~(del in out.bay) i.bes)
+        bes  t.bes
+        mow  :_(mow [hen (pass-warp %z i.bes |)])
       ==
     --
+  ::
+  ++  pass-warp
+    |=  {ren/care:clay bem/beam ask/?}
+    ~&  warp+[(en-beam bem) ask]
+    :+  %pass  [(scot %p our) ren (en-beam bem)]
+    [%c [%warp [our p.bem] q.bem ?.(ask ~ `[%next ren r.bem (flop s.bem)])]]
+  ::
   ::
   ++  zo
     ~%  %ford-z  ..is  ~
@@ -630,18 +659,18 @@
       ==
     ::
     ++  daze                                            ::  remember depends
-      |=  {dep/(set beam) deh/(map @uvH deps)}
-      ^+  [*@uvH deh.bay]
+      |=  {dep/(set beam) deh/deps}
+      ^+  [*@uvH deh]
       =.  dep
         =<  (silt (skip ~(tap in dep) .))
         |=  dap/beam  ^-  ?
         ?~  s.dap  |
         =>(.(s.dap t.s.dap) |((~(has in dep) dap) $))
-      ?~  dep  [0v0 deh]
+      ?:  =(~ dep)  [0v0 deh]
       =+  hap=(sham dep)
-      ?:  (~(has by deh) hap)
-        [hap deh]
-      [hap (~(put by deh) hap [%init dep])]
+      :+    hap
+        (~(put by def.deh) hap dep)
+      (~(gas ju bak.deh) (turn ~(tap in dep) |=(a/beam [a hap])))
     ::
     ++  exec                                            ::  execute task
       ^+  ..zo
@@ -1411,10 +1440,9 @@
         =.  p.q.rez  $(p.kas r.p.kas)
         ?^  n.p.kas
           (~(put in p.q.rez) n.p.kas)
-        =+  dap=(~(get by deh.bay) n.p.kas)
+        =+  dap=(~(get by def.deh.bay) n.p.kas)
         ?~  dap    ~&(flag-missed+n.p.kas p.q.rez)
-        %-  ~(uni in p.q.rez)  ^-  (set beam)
-        ?-(-.u.dap $init p.u.dap, $sent q.u.dap, $done [[bek ~] ~ ~])
+        (~(uni in p.q.rez) u.dap)
       ::                              XX revisit ^ during dependency review
           $join
         %+  cool
@@ -1898,11 +1926,12 @@
         =/  cache-for  |=(a/term [a %& (~(get ja caches) a)])
         cache+[%| (turn `(list term)`/hood/bake/slit/slim/slap/slam cache-for)]
     ::
-        =/  depends/(jar term *)
-          %-  ~(rep by deh)
-          |=({{@ a/{term *}} b/(jar term *)} (~(add ja b) -.a +.a))
-        =/  dep-for  |=(a/term [a %& (~(get ja depends) a)])
-        depends+[%| (turn `(list term)`/init/sent/done dep-for)]
+        :+  %depends  %|  :~
+          hashes+[%& deh]
+          listeners+[%& sup]
+          waiting+[%& out]
+          resolved+[%& fin]
+        ==
     ::
         tasks+[%& dym tad]
     ==
@@ -1951,7 +1980,7 @@
   [~ ~]
 ::
 ++  stay                                                ::  save w+o cache
-  `axle`+>-.$(pol (~(run by pol) |=(a/baby [tad.a dym.a deh.a ~])))
+  `axle`+>-.$(pol (~(run by pol) |=(a/baby a(jav ~))))
 ::
 ++  take                                                ::  response
   |=  {tea/wire hen/duct hin/(hypo sign)}
@@ -1960,11 +1989,15 @@
   =+  our=(slav %p i.tea)
   =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
-    =+  dep=(slaw %uv i.t.tea)
+    ~|  tea
+    =+  dep=((soft care:clay) i.t.tea)
     ?^  dep
       =+  bem=(need (de-beam t.t.tea))
-      (~(deps-take za [our hen [now eny ski] ~] bay) tea u.dep bem q.hin)
+      (~(deps-take za [our hen [now eny ski] ~] bay) u.dep bem q.hin)
     ::
+    ?^  (slaw %uv i.t.tea)
+      ~&  old-dephash+i.t.tea
+      [~ bay]
     ?>  ?=({@ @ ^} t.t.tea)
     =+  :*  num=(slav %ud i.t.tea)
             van=((hard vane) i.t.t.tea)
