@@ -1,4 +1,7 @@
 |%
+:>  #  %unicode-data
+:>    types to represent UnicdoeData.txt.
++|
 ++  line
   :>    an individual codepoint definition
   :>
@@ -127,4 +130,36 @@
       $fraction  :<  a vulgar fraction form
       $compat    :<  otherwise unspecified compatibility character
   ==
+::
+:>  #
+:>  #  %case-map
+:>  #
+:>    types to represent fast lookups of case data
++|
+++  case-offset
+  :>  case offsets can be in either direction
+  $%  :>  add {a} to get the new character
+      {$add a/@u}
+      :>  subtract {a} to get the new character
+      {$sub s/@u}
+      :>  take no action; return self
+      {$none $~}
+      :>  represents series of alternating uppercase/lowercase characters
+      {$uplo $~}
+  ==
+::
+++  case-node
+  :>    a node in a case-tree.
+  :>
+  :>  represents a range of
+  $:  start/@ux
+      end/@ux
+      upper/case-offset
+      lower/case-offset
+      title/case-offset
+  ==
+::
+++  case-tree
+  :>  a binary search tree of ++case-node items, sorted on span.
+  (tree case-node)
 --

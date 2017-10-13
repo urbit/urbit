@@ -1,24 +1,8 @@
 /-  unicode-data
 =,  eyre
 =,  format
-
-::  ok, so we can currently slurp the data in. we're having problems getting it
-::  back out. ++txt:grow is probably the next logical step here.
-
-|_  all/(list line:unicode-data)
-++  grow
-  :>  converts from unicode-data to mark.
-  |%
-  ::  ++  txt
-  ::    ^-  wain
-  ::    %+  turn  all
-  ::    |=  line:unicode-data
-  ::    ;:  weld
-  ::      ";"
-  ::      name
-  ::      ";"
-  --
 ::
+|_  all/(list line:unicode-data)
 ++  grab
   :>  converts from mark to unicode-data.
   |%
@@ -56,7 +40,6 @@
       %+  cook
         |=(a/tape a)
       (star ;~(less sem prn))
-::      (star ;~(pose hig low nud hep ace gal gar pel per))
     ::
     :>  parses a unicode general category abbreviation to symbol
     ++  general-category
