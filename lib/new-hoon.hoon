@@ -851,7 +851,7 @@
   ::
   :>  #  %insertion
   +|
-  ++  insert
+  ++  put
     :>  inserts a new key/value pair, replacing the current value if it exists.
     |*  {a/(dict) key/* value/*}
     |-  ^+  a
@@ -873,7 +873,7 @@
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
-  ++  insert-with
+  ++  put-with
     :>  inserts {key}/{value}, applying {fun} if {key} already exists.
     |*  {a/(dict) key/* value/* fun/$-({* *} *)}
     |-  ^+  a
@@ -894,7 +894,7 @@
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
-  ++  insert-with-key
+  ++  put-with-key
     :>  inserts {key}/{value}, applying {fun} if {key} already exists.
     |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
     |-  ^+  a
@@ -915,7 +915,7 @@
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
-  ++  insert-lookup-with-key
+  ++  put-lookup-with-key
     :>  combines insertion with lookup in one pass.
     |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
     |-  ^-  {(maybe _value) _a}
@@ -1174,7 +1174,7 @@
     %^  foldl:ls  new-list
     `(dict _*fun _q.+.n.-.a)`~
     |=  {m/(dict _*fun _q.+.n.-.a) p/_i.-.new-list}
-    (insert-with m -.p +.p combine)
+    (put-with m -.p +.p combine)
   ::
   ++  fold
     :>    performs a fold on all the values in {a}.
@@ -1281,7 +1281,7 @@
     %^  foldl:ls  a
     `(dict _p.-.i.-.a _q.+.i.-.a)`~
     |=  {m/(dict _p.-.i.-.a _q.+.i.-.a) p/_i.-.a}
-    (insert m p)
+    (put m p)
   ::
   ++  from-list-with
     :>  creates a dict from a list, with {fun} resolving duplicates.
@@ -1289,7 +1289,7 @@
     %^  foldl:ls  a
     `(dict _*fun _q.+.i.-.a)`~
     |=  {m/(dict _*fun _q.+.i.-.a) p/_i.-.a}
-    (insert-with m -.p +.p fun)
+    (put-with m -.p +.p fun)
   ::
   ::  todo: without a natural ordering, association lists and gates to operate
   ::  on them probably don't make sense. i'm skipping them for now.
@@ -1389,8 +1389,8 @@
     =+  x=(fun n.a)
     ~!  x
     ?-  -.x
-      $&  [(insert (union -.lr -.rr) p.n.a +.x) (union +.lr +.rr)]
-      $|  [(union -.lr -.rr) (insert (union +.lr +.rr) p.n.a +.x)]
+      $&  [(put (union -.lr -.rr) p.n.a +.x) (union +.lr +.rr)]
+      $|  [(union -.lr -.rr) (put (union +.lr +.rr) p.n.a +.x)]
     ==
   ::
   ::  ++split, ++split-lookup and ++split-root do not make sense without

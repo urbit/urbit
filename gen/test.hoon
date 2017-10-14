@@ -110,7 +110,7 @@
         m
       =^  first  gen  (range:gen 0 100)
       =^  second  gen  (range:gen 0 100)
-      $(m (insert:dct:new-hoon m first second), i +(i))
+      $(m (put:dct:new-hoon m first second), i +(i))
     ::
     ::  ||  %test
     ::
@@ -508,29 +508,29 @@
   ++  test-member
     (expect-eq (member four 4) %.y "member")
   ::
-  ++  test-insert-with
+  ++  test-put-with
     =+  ints=(from-list [["one" 1] ["two" 2] ["three" 3] ["four" 4] ~])
     %^  expect-eq
-    (insert-with ints "three" 2 add)
+    (put-with ints "three" 2 add)
     (from-list [["one" 1] ["two" 2] ["three" 5] ["four" 4] ~])
-    "insert-with"
+    "put-with"
   ::
-  ++  test-insert-with-key
+  ++  test-put-with-key
     %^  expect-eq
-    (insert-with-key four 4 "four" |=({a/@ud b/tape c/tape} (weld (scow %ud a) b)))
+    (put-with-key four 4 "four" |=({a/@ud b/tape c/tape} (weld (scow %ud a) b)))
     (from-list [[1 "one"] [2 "two"] [3 "three"] [4 "4four"] ~])
-    "insert-with-key"
+    "put-with-key"
   ::
-  ++  test-insert-lookup-with-key
+  ++  test-put-lookup-with-key
     %^  expect-eq
-      %-  insert-lookup-with-key  :^
+      %-  put-lookup-with-key  :^
         four
         4
         "five"
         |=({key/@ud old/tape new/tape} new)
     :-  `"four"
       (from-list [[1 "one"] [2 "two"] [3 "three"] [4 "five"] ~])
-    "insert-lookup-with-key"
+    "put-lookup-with-key"
   ::
   ++  test-delete
     %^  expect-eq
