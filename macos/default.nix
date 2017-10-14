@@ -159,7 +159,7 @@ let
     builder = ./builder.sh;
     inherit host sdk;
     wrapper = ./wrapper;
-    native_inputs = [ clang cctools xar ];
+    native_inputs = [ clang ld xar ];
 
     CXXFLAGS =
       "-std=c++11 " +

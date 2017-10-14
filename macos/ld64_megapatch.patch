@@ -83,15 +83,13 @@ diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
  		*out++ = rawNum[i];
 diff -ur ld64-274.2-orig/src/ld/Options.cpp ld64-274.2/src/ld/Options.cpp
 --- ld64-274.2-orig/src/ld/Options.cpp	2017-09-29 07:44:04.319672117 -0700
-+++ ld64-274.2/src/ld/Options.cpp	2017-09-29 21:00:55.453433605 -0700
-@@ -34,7 +34,9 @@
- #include <spawn.h>
++++ ld64-274.2/src/ld/Options.cpp	2017-10-13 19:19:25.612170688 -0700
+@@ -35,6 +35,8 @@
  #include <cxxabi.h>
  #include <Availability.h>
--#include <tapi/tapi.h>
+ #include <tapi/tapi.h>
 +#include <stdarg.h>
 +#include <limits.h>
-+#include <string.h>
  
  #include <vector>
  #include <map>
