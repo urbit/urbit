@@ -96,21 +96,21 @@
       =^  num  gen  (range:gen min max)
       num
     ::
-    ++  generate-map
-      :>  generator which will produce a map with {count} random pairs.
+    ++  generate-dict
+      :>  generator which will produce a dict with {count} random pairs.
       |=  count/@u
-      :>  generate a map with entropy {c}.
+      :>  generate a dict with entropy {c}.
       |=  c/@uvJ
       =/  gen  (random:new-hoon c)
       =|  i/@u
-      =|  m/(map @ud @ud)
+      =|  m/(dict:new-hoon @ud @ud)
       |-
-      ^-  (map @ud @ud)
+      ^-  (dict:new-hoon @ud @ud)
       ?:  =(i count)
         m
       =^  first  gen  (range:gen 0 100)
       =^  second  gen  (range:gen 0 100)
-      $(m (insert:mp:new-hoon m first second), i +(i))
+      $(m (insert:dct:new-hoon m first second), i +(i))
     ::
     ::  ||  %test
     ::
@@ -495,7 +495,7 @@
     "intersect"
   --
 ++  test-mp
-  =,  mp:new-hoon
+  =,  dct:new-hoon
   =+  four=(from-list [[1 "one"] [2 "two"] [3 "three"] [4 "four"] ~])
   =+  three=(from-list [[1 "one"] [2 "two"] [3 "three"] ~])
   |_  tester-type:test-lib
@@ -602,11 +602,11 @@
     "alter (as change)"
   ::
   ++  check-alter
-    ::  check random maps of 50 items with 40 random operations done on them
+    ::  check random dicts of 50 items with 40 random operations done on them
     ::  for validity.
     %+  check
-    (generate-map 50)
-    |=  a/(map @ud @ud)
+    (generate-dict 50)
+    |=  a/(dict @ud @ud)
     ::  this is dumb, but use {a} as entropy?
     =/  gen  (random:new-hoon (jam a))
     =|  i/@u
@@ -838,14 +838,14 @@
       (from-list [[1 1] [3 1] [5 1] ~])
     "transform-either"
   ::
-  ++  test-is-submap
+  ++  test-is-subdict
     %^  expect-eq
-      %^  is-submap-by
+      %^  is-subdict-by
       (from-list [[1 1] [4 4] ~])
       (from-list [[1 1] [2 2] [3 3] [4 4] [5 5] ~])
       |=({a/* b/*} =(a b))
     %.y
-    "is-submap"
+    "is-subdict"
   ::
   ++  test-valid
     %^  expect-eq

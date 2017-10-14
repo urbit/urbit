@@ -789,34 +789,45 @@
   ::  default. ++sort as is is probably the correct thing to do.
   ::
   --
-++  mp
+::
+++  dict
+  :>    a dictionary mapping keys of {a} to values of {b}.
+  :>
+  :>  a dictionary is treap ordered; it builds a treap out of the hashed key
+  :>  values.
+  |*  {a/mold b/mold}
+  %+  cork  (tree (pair a b))
+  |=  c/(tree (pair a b))  ^+  c
+  ?.((valid:dct c) ~ c)
+::
+++  dct
   |%
   :>  #  %query
-  :>    looks up values in the map.
+  :>    looks up values in the dict.
   +|
   ++  empty
-    :>  is the map empty?
-    |*  a/(map)
+    :>  is the dict empty?
+    |*  a/(dict)
     ?~  a  %.y
     %.n
   ::
   ++  size
     :>    returns the number of elements in {a}.
-    |=  a/(map)
+    |=  a/(dict)
     ^-  @u
     ?~  a  0
     :(add 1 $(a l.a) $(a r.a))
   ::
   ++  member
     :>  returns %.y if {b} is a key in {a}.
-    |=  {a/(map) key/*}
+    |=  {a/(dict) key/*}
     ^-  ?
     ?~  a  %.n
     ?|(=(key p.n.a) $(a l.a) $(a r.a))
   ::
   ++  get
     :>  grab value by key.
-    |*  {a/(map) key/*}
+    |*  {a/(dict) key/*}
     ^-  (maybe _?>(?=(^ a) q.n.a))
     ::  ^-  {$@($~ {$~ u/_?>(?=(^ a) q.n.a)})}
     ?~  a
@@ -832,7 +843,7 @@
 ::    ++  got
 ::      :>  todo: move impl here.
 ::      :>  todo: is there a way to make b/_<><>.a ?
-::      |*  {a/(map) key/*}
+::      |*  {a/(dict) key/*}
 ::      (~(got by a) key)
   ::
   ::  todo: skipping several methods which rely on the the Ord typeclass, like
@@ -842,7 +853,7 @@
   +|
   ++  insert
     :>  inserts a new key/value pair, replacing the current value if it exists.
-    |*  {a/(map) key/* value/*}
+    |*  {a/(dict) key/* value/*}
     |-  ^+  a
     ?~  a
       [[key value] ~ ~]
@@ -864,7 +875,7 @@
   ::
   ++  insert-with
     :>  inserts {key}/{value}, applying {fun} if {key} already exists.
-    |*  {a/(map) key/* value/* fun/$-({* *} *)}
+    |*  {a/(dict) key/* value/* fun/$-({* *} *)}
     |-  ^+  a
     ?~  a
       [[key value] ~ ~]
@@ -885,7 +896,7 @@
   ::
   ++  insert-with-key
     :>  inserts {key}/{value}, applying {fun} if {key} already exists.
-    |*  {a/(map) key/* value/* fun/$-({* * *} *)}
+    |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
     |-  ^+  a
     ?~  a
       [[key value] ~ ~]
@@ -906,7 +917,7 @@
   ::
   ++  insert-lookup-with-key
     :>  combines insertion with lookup in one pass.
-    |*  {a/(map) key/* value/* fun/$-({* * *} *)}
+    |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
     |-  ^-  {(maybe _value) _a}
     ?~  a
       [~ [[key value] ~ ~]]
@@ -932,7 +943,7 @@
   ::
   ++  delete
     :>  deletes entry at {key}.
-    |*  {a/(map) key/*}
+    |*  {a/(dict) key/*}
     |-  ^+  a
     ?~  a
       ~
@@ -944,7 +955,7 @@
   ::
   ++  adjust
     :>  updates a value at {key} by passing the value to {fun}.
-    |*  {a/(map) key/* fun/$-(* *)}
+    |*  {a/(dict) key/* fun/$-(* *)}
     %^  alter-with-key  a  key
     |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
     ^-  (maybe _q.+.n.-.a)
@@ -953,7 +964,7 @@
   ::
   ++  adjust-with-key
     :>  updates a value at {key} by passing the key/value pair to {fun}.
-    |*  {a/(map) key/* fun/$-({* *} *)}
+    |*  {a/(dict) key/* fun/$-({* *} *)}
     %^  alter-with-key  a  key
     |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
     ^-  (maybe _q.+.n.-.a)
@@ -962,7 +973,7 @@
   ::
   ++  update
     :>  adjusts or deletes the value at {key} by {fun}.
-    |*  {a/(map) key/* fun/$-(* (maybe *))}
+    |*  {a/(dict) key/* fun/$-(* (maybe *))}
     %^  alter-with-key  a  key
     |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
     ^-  (maybe _q.+.n.-.a)
@@ -971,7 +982,7 @@
   ::
   ++  update-with-key
     :>  adjusts or deletes the value at {key} by {fun}.
-    |*  {a/(map) key/* fun/$-({* *} (maybe *))}
+    |*  {a/(dict) key/* fun/$-({* *} (maybe *))}
     %^  alter-with-key  a  key
     |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
     ^-  (maybe _q.+.n.-.a)
@@ -983,14 +994,14 @@
   ::
   ++  alter
     :>  inserts, deletes, or updates a value by {fun}.
-    |*  {a/(map) key/* fun/$-((maybe *) (maybe *))}
+    |*  {a/(dict) key/* fun/$-((maybe *) (maybe *))}
     %^  alter-with-key  a  key
     |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
     (fun value)
   ::
   ++  alter-with-key
     :>  inserts, deletes, or updates a value by {fun}.
-    |*  {a/(map) key/* fun/$-({* (maybe *)} (maybe *))}
+    |*  {a/(dict) key/* fun/$-({* (maybe *)} (maybe *))}
     |-  ^+  a
     ?~  a
       =+  ret=(fun key ~)
@@ -1023,7 +1034,7 @@
   ::
   ++  union
     :>  returns the union of {a} and {b}, preferring the value from {a} if dupe
-    |*  {a/(map) b/(map)}
+    |*  {a/(dict) b/(dict)}
     |-  ^+  a
     ?~  b
       a
@@ -1043,7 +1054,7 @@
   ::
   ++  union-with
     :>  returns the union of {a} and {b}, running {fun} to resolve duplicates.
-    |*  {a/(map) b/(map) fun/$-({* *} *)}
+    |*  {a/(dict) b/(dict) fun/$-({* *} *)}
     |-  ^+  a
     ?~  b
       a
@@ -1063,7 +1074,7 @@
   ::
   ++  union-with-key
     :>  returns the union of {a} and {b}, running {fun} to resolve duplicates.
-    |*  {a/(map) b/(map) fun/$-({* * *} *)}
+    |*  {a/(dict) b/(dict) fun/$-({* * *} *)}
     |-  ^+  a
     ?~  b
       a
@@ -1086,7 +1097,7 @@
 ::    ++  difference
 ::      ::  todo: move real implementation here.
 ::      :>  returns elements in {a} that don't exist in {b}.
-::      |*  {a/(map) b/(map)}
+::      |*  {a/(dict) b/(dict)}
 ::      (~(dif by a) b)
 ::    ::
 ::    ::  todo:
@@ -1096,7 +1107,7 @@
 ::    ++  intersection
 ::      ::  todo: move real implementation here.
 ::      :>  returns elements in {a} that exist in {b}.
-::      |*  {a/(map) b/(map)}
+::      |*  {a/(dict) b/(dict)}
 ::      (~(int by a) b)
 ::    ::
 ::    ::  todo:
@@ -1108,16 +1119,16 @@
   ::
   ++  transform
     :>  applies {fun} to each value in {a}.
-    |*  {a/(map) fun/$-(* *)}
-    ^-  (map _p.-.n.-.a fun)
+    |*  {a/(dict) fun/$-(* *)}
+    ^-  (dict _p.-.n.-.a fun)
     ?~  a
       ~
     [[p.n.a (fun q.n.a)] $(a l.a) $(a r.a)]
   ::
   ++  transform-with-key
     :>  applies {fun} to each value in {a}.
-    |*  {a/(map) fun/$-({* *} *)}
-    ^-  (map _p.-.n.-.a _*fun)
+    |*  {a/(dict) fun/$-({* *} *)}
+    ^-  (dict _p.-.n.-.a _*fun)
     ?~  a
       ~
     [[p.n.a (fun p.n.a q.n.a)] $(a l.a) $(a r.a)]
@@ -1125,14 +1136,14 @@
   ++  transform-fold
     :>    performs a fold on all the values in {a}.
     :>
-    :>  lists have an order, but maps are treaps. this means there isn't a
+    :>  lists have an order, but dicts are treaps. this means there isn't a
     :>  horizontal ordering, and thus the distinction between left and right
     :>  folding isn't relevant. your accumulator function will be called in
     :>  treap order.
     :>
     :>  corresponds to {mapAccum} in haskell.
-    |*  {a/(map) b/* fun/$-({* *} {* *})}
-    ^-  {_b (map _p.-.n.-.a _+:*fun)}
+    |*  {a/(dict) b/* fun/$-({* *} {* *})}
+    ^-  {_b (dict _p.-.n.-.a _+:*fun)}
     ?~  a
       [b ~]
     =+  d=(fun b q.n.a)
@@ -1146,7 +1157,7 @@
     ::  todo: the haskell version specifies that the "greatest" original key
     ::  wins in case of duplicates. this is currently unhandled. maybe i just
     ::  shouldn't have this gate.
-    |*  {a/(map) fun/$-(* *)}
+    |*  {a/(dict) fun/$-(* *)}
     %-  from-list
     %+  transform:ls  (to-list a)
     |=  item/_n.-.a
@@ -1154,25 +1165,25 @@
   ::
   ++  transform-keys-with
     :>  applies {fun} to all keys, creating a new value with {combine} on dupes.
-    |*  {a/(map) fun/$-(* *) combine/$-({* *} *)}
-    ^-  (map _*fun _q.+.n.-.a)
+    |*  {a/(dict) fun/$-(* *) combine/$-({* *} *)}
+    ^-  (dict _*fun _q.+.n.-.a)
     =/  new-list
       %+  transform:ls  (to-list a)
       |=  item/_n.-.a
       [(fun p.item) q.item]
     %^  foldl:ls  new-list
-    `(map _*fun _q.+.n.-.a)`~
-    |=  {m/(map _*fun _q.+.n.-.a) p/_i.-.new-list}
+    `(dict _*fun _q.+.n.-.a)`~
+    |=  {m/(dict _*fun _q.+.n.-.a) p/_i.-.new-list}
     (insert-with m -.p +.p combine)
   ::
   ++  fold
     :>    performs a fold on all the values in {a}.
     :>
-    :>  lists have an order, but maps are treaps. this means there isn't a
+    :>  lists have an order, but dicts are treaps. this means there isn't a
     :>  horizontal ordering, and thus the distinction between left and right
     :>  folding isn't relevant. your accumulator function will be called in
     :>  treap order.
-    |*  {a/(map) b/* fun/$-({* *} *)}
+    |*  {a/(dict) b/* fun/$-({* *} *)}
     ^-  _b
     ?~  a
       b
@@ -1182,7 +1193,7 @@
   ::
   ++  fold-with-keys
     :>    performs a fold on all the values in {a}, passing keys too.
-    |*  {a/(map) b/* fun/$-({* * *} *)}
+    |*  {a/(dict) b/* fun/$-({* * *} *)}
     ^+  b
     ?~  a
       b
@@ -1192,7 +1203,7 @@
   ::
   ++  any
     :>  returns yes if any element satisfies the predicate
-    |*  {a/(map) b/$-(* ?)}
+    |*  {a/(dict) b/$-(* ?)}
     ^-  ?
     ?~  a
       %.n
@@ -1200,7 +1211,7 @@
   ::
   ++  any-with-key
     :>  returns yes if any element satisfies the predicate
-    |*  {a/(map) b/$-({* *} ?)}
+    |*  {a/(dict) b/$-({* *} ?)}
     ^-  ?
     ?~  a
       %.n
@@ -1208,7 +1219,7 @@
   ::
   ++  all
     :>  returns yes if all elements satisfy the predicate
-    |*  {a/(map) b/$-(* ?)}
+    |*  {a/(dict) b/$-(* ?)}
     ^-  ?
     ?~  a
       %.y
@@ -1216,7 +1227,7 @@
   ::
   ++  all-with-key
     :>  returns yes if all elements satisfy the predicate
-    |*  {a/(map) b/$-({* *} ?)}
+    |*  {a/(dict) b/$-({* *} ?)}
     ^-  ?
     ?~  a
       %.y
@@ -1225,13 +1236,13 @@
   :>  #  %conversion
   +|
   ++  elems
-    :>  return all values in the map.
-    |*  a/(map)
+    :>  return all values in the dict.
+    |*  a/(dict)
     %+  turn  (to-list a)  second
   ::
   ++  keys
-    :>  returns all keys in the map.
-    |*  a/(map)
+    :>  returns all keys in the dict.
+    |*  a/(dict)
     %+  turn  (to-list a)  first
   ::
   ::  todo: ++assocs probably doesn't make sense when we have ++to-list and
@@ -1239,13 +1250,13 @@
   ::
   ++  keys-set
     :>  returns all keys as a set.
-    |*  a/(map)
+    |*  a/(dict)
     (si:nl (keys a))
   ::
   ++  from-set
-    :>  computes a map by running {fun} on every value in a set.
+    :>  computes a dict by running {fun} on every value in a set.
     |*  {a/(set) fun/$-(* *)}
-    ^-  (map _n.-.a _*fun)
+    ^-  (dict _n.-.a _*fun)
     ?~  a
       ~
     [[n.a (fun n.a)] $(a l.a) $(a r.a)]
@@ -1255,7 +1266,7 @@
   ::
   ++  to-list
     :>  creates a list of pairs from the tree.
-    |*  a/(map)
+    |*  a/(dict)
     =|  b/(list _n.-.a)
     |-
     ^+  b
@@ -1268,16 +1279,16 @@
     |*  a/(list (pair))
     |-
     %^  foldl:ls  a
-    `(map _p.-.i.-.a _q.+.i.-.a)`~
-    |=  {m/(map _p.-.i.-.a _q.+.i.-.a) p/_i.-.a}
+    `(dict _p.-.i.-.a _q.+.i.-.a)`~
+    |=  {m/(dict _p.-.i.-.a _q.+.i.-.a) p/_i.-.a}
     (insert m p)
   ::
   ++  from-list-with
-    :>  creates a map from a list, with {fun} resolving duplicates.
+    :>  creates a dict from a list, with {fun} resolving duplicates.
     |*  {a/(list (pair)) fun/$-(* *)}
     %^  foldl:ls  a
-    `(map _*fun _q.+.i.-.a)`~
-    |=  {m/(map _*fun _q.+.i.-.a) p/_i.-.a}
+    `(dict _*fun _q.+.i.-.a)`~
+    |=  {m/(dict _*fun _q.+.i.-.a) p/_i.-.a}
     (insert-with m -.p +.p fun)
   ::
   ::  todo: without a natural ordering, association lists and gates to operate
@@ -1286,15 +1297,15 @@
   :>  #  %filters
   +|
   ++  filter
-    :>  filters a map of all values that satisfy {fun}.
-    |*  {a/(map) fun/$-(* ?)}
+    :>  filters a dict of all values that satisfy {fun}.
+    |*  {a/(dict) fun/$-(* ?)}
     %+  filter-with-key  a
     |=  {key/* value/_q.+.n.-.a}
     (fun value)
   ::
   ++  filter-with-key
-    :>  filters a map of all values that satisfy {fun}.
-    |*  {a/(map) fun/$-({* *} ?)}
+    :>  filters a dict of all values that satisfy {fun}.
+    |*  {a/(dict) fun/$-({* *} ?)}
     |-
     ^+  a
     ?~  a  ~
@@ -1305,8 +1316,8 @@
     [n.a $(a l.a) $(a r.a)]
   ::
   ++  restrict-keys
-    :>  returns a map where the only allowable keys are {keys}.
-    |*  {a/(map) keys/(set)}
+    :>  returns a dict where the only allowable keys are {keys}.
+    |*  {a/(dict) keys/(set)}
     %+  filter-with-key  a
     |=  {key/_p.-.n.-.a value/*}
     ::  todo: replace this with a call to our set library when we advance that
@@ -1314,8 +1325,8 @@
     !(~(has in keys) key)
   ::
   ++  without-keys
-    :>  returns a map where the only allowable keys are not in {keys}.
-    |*  {a/(map) keys/(set)}
+    :>  returns a dict where the only allowable keys are not in {keys}.
+    |*  {a/(dict) keys/(set)}
     %+  filter-with-key  a
     |=  {key/_p.-.n.-.a value/*}
     ::  todo: replace this with a call to our set library when we advance that
@@ -1324,7 +1335,7 @@
   ::
   ++  partition
     :>  returns two lists, one whose elements match {fun}, the other doesn't.
-    |*  {a/(map) fun/$-(* ?)}
+    |*  {a/(dict) fun/$-(* ?)}
     ::  todo: is the runtime on this is bogus?
     =/  data
       %+  partition:ls  (to-list a)
@@ -1335,19 +1346,19 @@
   ::  todo:  ++partition-with-key once ++partition works.
   ::
   ::  i'm going to ignore all the Antitone functions; they don't seem to be
-  ::  useful without ordering on the map.
+  ::  useful without ordering on the dict.
   ::
   ++  transform-maybe
     :>  a version of transform that can throw out items.
-    |*  {a/(map) fun/$-(* (maybe))}
+    |*  {a/(dict) fun/$-(* (maybe))}
     %+  transform-maybe-with-key  a
     |=  {key/* value/_q.+.n.-.a}
     (fun value)
   ::
   ++  transform-maybe-with-key
     :>  a version of transform that can throw out items.
-    |*  {a/(map) fun/$-({* *} (maybe))}
-    ^-  (map _p.-.n.-.a _+:*fun)
+    |*  {a/(dict) fun/$-({* *} (maybe))}
+    ^-  (dict _p.-.n.-.a _+:*fun)
     ?~  a  ~
     =+  res=(fun n.a)
     ?~  res
@@ -1357,18 +1368,18 @@
     [[p.n.a +.res] $(a l.a) $(a r.a)]
   ::
   ++  transform-either
-    :>  splits the map in two on a gate that returns an either.
-    |*  {a/(map) fun/$-(* (either))}
+    :>  splits the dict in two on a gate that returns an either.
+    |*  {a/(dict) fun/$-(* (either))}
     %+  transform-either-with-key  a
     |=  {key/* value/_q.+.n.-.a}
     (fun value)
   ::
   ++  transform-either-with-key
-    :>  splits the map in two on a gate that returns an either.
-    |*  {a/(map) fun/$-({* *} (either))}
+    :>  splits the dict in two on a gate that returns an either.
+    |*  {a/(dict) fun/$-({* *} (either))}
     |-
-    ^-  $:  (map _p.-.n.-.a _?>(?=({{%& *} *} *fun) +:*fun))
-            (map _p.-.n.-.a _?>(?=({{%| *} *} *fun) +:*fun))
+    ^-  $:  (dict _p.-.n.-.a _?>(?=({{%& *} *} *fun) +:*fun))
+            (dict _p.-.n.-.a _?>(?=({{%| *} *} *fun) +:*fun))
         ==
     ?~  a
       [~ ~]
@@ -1385,15 +1396,15 @@
   ::  ++split, ++split-lookup and ++split-root do not make sense without
   ::  ordinal keys.
   ::
-  ++  is-submap
+  ++  is-subdict
     :>  returns %.y if every element in {a} exists in {b} with the same value.
-    |*  {a/(map) b/(map)}
+    |*  {a/(dict) b/(dict)}
     ^-  ?
-    (is-submap-by a b |=({a/* b/*} =(a b)))
+    (is-subdict-by a b |=({a/* b/*} =(a b)))
   ::
-  ++  is-submap-by
+  ++  is-subdict-by
     :>  returns %.y if every element in {a} exists in {b} with the same value.
-    |*  {a/(map) b/(map) fun/$-({* *} ?)}
+    |*  {a/(dict) b/(dict) fun/$-({* *} ?)}
     |-
     ^-  ?
     ?~  a  %.y
@@ -1409,7 +1420,7 @@
   +|
   ++  pop-top
     :>  removes the head of the tree and rebalances the tree below.
-    |*  a/(map)
+    |*  a/(dict)
     ^-  {$?($~ _a)}
     ?~  a  ~
     |-
@@ -1420,8 +1431,8 @@
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
   ++  valid
-    :>  returns %.y if {a} is a valid treap map.
-    |*  a/(map)
+    :>  returns %.y if {a} if this tree is a valid treap dict.
+    |*  a/(tree (pair * *))
     =|  {l/(unit) r/(unit)}
     |-  ^-  ?
     ?~  a   &
