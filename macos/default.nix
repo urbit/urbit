@@ -29,6 +29,13 @@ let
       sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
     };
 
+    llvm_cache = ./llvm_cache.cmake;
+
+    tapi_src = nixpkgs.fetchurl {
+      url = "https://github.com/DavidEGrayson/tapi/archive/a5ebac7.tar.gz";
+      sha256 = "1mqnk5dvhf8wjz5qc3yil9k6wp47i003xjf3md241ym5cdm6gksk";
+    };
+
     patches = [ ./clang_megapatch.patch ];
 
     builder = ./clang_builder.sh;
@@ -124,6 +131,7 @@ let
     };
     patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
+    native_inputs = [ clang ];
     CXXFLAGS =
       "-Werror " +
       "-Wfatal-errors " +
