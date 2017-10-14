@@ -127,8 +127,8 @@
       $(a t.a)
     [u.i.a $(a t.a)]
   ::
-  ++  transform
-    :>    a version of transform that can throw out items.
+  ++  map
+    :>    a version of map that can throw out items.
     :>
     :>  takes a list of items and a function of the type
     :>
@@ -225,11 +225,11 @@
       b
     $(a t.a, b +(b))
   ::
-  :>  #  %transformations
+  :>  #  %mappings
   :>    functions which change a list into another list
   +|
   ::
-  ++  transform
+  ++  map
     :>  applies a gate to each item in the list.
     |*  {a/(list) b/$-(* *)}
     ^-  (list _*b)
@@ -413,8 +413,8 @@
     ?>  ?=(^ rest)
     [(c i.a i.rest) rest]
   ::
-  ++  transform-foldl
-    :>    performs both a ++transform and a ++foldl in one pass.
+  ++  map-foldl
+    :>    performs both a ++map and a ++foldl in one pass.
     :>
     :>  corresponds to {mapAccumL} in haskell.
     |*  {a/(list) b/* c/$-({* *} {* *})}
@@ -425,8 +425,8 @@
     =+  recurse=$(a t.a, b -.d)
     [-.recurse [+.d +.recurse]]
   ::
-  ++  transform-foldr
-    :>    performs both a ++transform and a ++foldr in one pass.
+  ++  map-foldr
+    :>    performs both a ++map and a ++foldr in one pass.
     :>
     :>  corresponds to {mapAccumR} in haskell.
     |*  {a/(list) b/* c/$-({* *} {* *})}
@@ -1117,7 +1117,7 @@
   :>  #  %traversal
   +|
   ::
-  ++  transform
+  ++  map
     :>  applies {fun} to each value in {a}.
     |*  {a/(dict) fun/$-(* *)}
     ^-  (dict _p.-.n.-.a fun)
@@ -1125,7 +1125,7 @@
       ~
     [[p.n.a (fun q.n.a)] $(a l.a) $(a r.a)]
   ::
-  ++  transform-with-key
+  ++  map-with-key
     :>  applies {fun} to each value in {a}.
     |*  {a/(dict) fun/$-({* *} *)}
     ^-  (dict _p.-.n.-.a _*fun)
@@ -1133,7 +1133,7 @@
       ~
     [[p.n.a (fun p.n.a q.n.a)] $(a l.a) $(a r.a)]
   ::
-  ++  transform-fold
+  ++  map-fold
     :>    performs a fold on all the values in {a}.
     :>
     :>  lists have an order, but dicts are treaps. this means there isn't a
@@ -1152,23 +1152,23 @@
     =+  f=$(a r.a, b -.e)
     [-.f [n.a +.e +.f]]
   ::
-  ++  transform-keys
+  ++  map-keys
     :>  applies {fun} to all keys.
     ::  todo: the haskell version specifies that the "greatest" original key
     ::  wins in case of duplicates. this is currently unhandled. maybe i just
     ::  shouldn't have this gate.
     |*  {a/(dict) fun/$-(* *)}
     %-  from-list
-    %+  transform:ls  (to-list a)
+    %+  map:ls  (to-list a)
     |=  item/_n.-.a
     [(fun p.item) q.item]
   ::
-  ++  transform-keys-with
+  ++  map-keys-with
     :>  applies {fun} to all keys, creating a new value with {combine} on dupes.
     |*  {a/(dict) fun/$-(* *) combine/$-({* *} *)}
     ^-  (dict _*fun _q.+.n.-.a)
     =/  new-list
-      %+  transform:ls  (to-list a)
+      %+  map:ls  (to-list a)
       |=  item/_n.-.a
       [(fun p.item) q.item]
     %^  foldl:ls  new-list
@@ -1348,15 +1348,15 @@
   ::  i'm going to ignore all the Antitone functions; they don't seem to be
   ::  useful without ordering on the dict.
   ::
-  ++  transform-maybe
-    :>  a version of transform that can throw out items.
+  ++  map-maybe
+    :>  a version of map that can throw out items.
     |*  {a/(dict) fun/$-(* (maybe))}
-    %+  transform-maybe-with-key  a
+    %+  map-maybe-with-key  a
     |=  {key/* value/_q.+.n.-.a}
     (fun value)
   ::
-  ++  transform-maybe-with-key
-    :>  a version of transform that can throw out items.
+  ++  map-maybe-with-key
+    :>  a version of map that can throw out items.
     |*  {a/(dict) fun/$-({* *} (maybe))}
     ^-  (dict _p.-.n.-.a _+:*fun)
     ?~  a  ~
@@ -1367,14 +1367,14 @@
       (pop-top a)
     [[p.n.a +.res] $(a l.a) $(a r.a)]
   ::
-  ++  transform-either
+  ++  map-either
     :>  splits the dict in two on a gate that returns an either.
     |*  {a/(dict) fun/$-(* (either))}
-    %+  transform-either-with-key  a
+    %+  map-either-with-key  a
     |=  {key/* value/_q.+.n.-.a}
     (fun value)
   ::
-  ++  transform-either-with-key
+  ++  map-either-with-key
     :>  splits the dict in two on a gate that returns an either.
     |*  {a/(dict) fun/$-({* *} (either))}
     |-

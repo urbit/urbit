@@ -225,13 +225,13 @@
     ::  doesn't compile anymore?
     (expect-eq (concat `(list (maybe @ud))`[~ [~ 1] ~ [~ 2] ~]) [1 2 ~] "concat")
   ::
-  ++  test-transform
+  ++  test-map
     %^  expect-eq
-      %+  transform
+      %+  map:myb
       [1 2 3 2 ~]
       |=(a/@u ?:(=(2 a) [~ 2] ~))
     [2 2 ~]
-    "transform"
+    "map"
   --
 ++  test-ls
   =,  ls:new-hoon
@@ -251,8 +251,8 @@
   ++  test-size
     (expect-eq (size ['a' 'b' 'c' ~]) 3 "size")
   ::
-  ++  test-transform
-    (expect-eq (transform [1 2 ~] |=(a/@ (add 1 a))) [2 3 ~] "transform")
+  ++  test-map
+    (expect-eq (map:ls [1 2 ~] |=(a/@ (add 1 a))) [2 3 ~] "map")
   ::
   ++  test-reverse
     (expect-eq (reverse [1 2 3 ~]) [3 2 1 ~] "reverse")
@@ -320,17 +320,17 @@
     ~[6 5 3]
     "scanr1"
   ::
-  ++  test-transform-foldl
+  ++  test-map-foldl
     %^  expect-eq
-    (transform-foldl ~[1 2 3] 1 |=({a/@ b/@} [(add a b) (add 1 a)]))
+    (map-foldl ~[1 2 3] 1 |=({a/@ b/@} [(add a b) (add 1 a)]))
     [7 ~[2 3 5]]
-    "transform-foldl"
+    "map-foldl"
   ::
-  ++  test-transform-foldr
+  ++  test-map-foldr
     %^  expect-eq
-    (transform-foldr ~[1 2 3] 1 |=({a/@ b/@} [(add a b) (add 1 a)]))
+    (map-foldr ~[1 2 3] 1 |=({a/@ b/@} [(add a b) (add 1 a)]))
     [7 ~[7 5 2]]
-    "transform-foldr"
+    "map-foldr"
   ::
   ++  test-unfoldr
     %^  expect-eq
@@ -654,50 +654,50 @@
     (from-list [[1 "left"] [2 "2leftright"] [3 "right"] ~])
     "union-with-key"
   ::
-  ++  test-transform
+  ++  test-map
     %^  expect-eq
-      %+  transform
+      %+  map:dct
       three
       crip
     (from-list [[1 'one'] [2 'two'] [3 'three'] ~])
-    "transform"
+    "map"
   ::
-  ++  test-transform-with-key
+  ++  test-map-with-key
     %^  expect-eq
-      %+  transform-with-key
+      %+  map-with-key
       three
       |=({a/@u b/tape} (weld (scow %ud a) b))
     (from-list [[1 "1one"] [2 "2two"] [3 "3three"] ~])
-    "transform-with-key"
+    "map-with-key"
   ::
-  ++  test-transform-fold
+  ++  test-map-fold
     %^  expect-eq
-      %^  transform-fold
+      %^  map-fold
       three
       "Everything: "
       |=  {accumulator/tape value/tape}
       [(weld accumulator value) (weld value "X")]
     :-  "Everything: twoonethree"
       (from-list [[1 "oneX"] [2 "twoX"] [3 "threeX"] ~])
-    "transform-fold"
+    "map-fold"
   ::
-  ++  test-transform-keys
+  ++  test-map-keys
     %^  expect-eq
-      %+  transform-keys
+      %+  map-keys
       three
       |=  a/@u
       (add a 10)
     (from-list [[11 "one"] [12 "two"] [13 "three"] ~])
-    "transform-keys"
+    "map-keys"
   ::
-  ++  test-transform-keys-with
+  ++  test-map-keys-with
     %^  expect-eq
-      %^  transform-keys-with
+      %^  map-keys-with
       three
       |=(a/@u 42)
       weld
     (from-list [[42 "twothreeone"] ~])
-    "transform-keys-with"
+    "map-keys-with"
   ::
   ++  test-fold
     %^  expect-eq
@@ -709,7 +709,7 @@
       ^-  tape
       (weld accumulator value)
     "Everything: twoonethree"
-    "transform-fold"
+    "map-fold"
   ::
   ++  test-fold-with-keys
     %^  expect-eq
@@ -720,7 +720,7 @@
       ^-  tape
       :(weld accumulator (scow %ud key) value)
     "Everything: 2two1one3three"
-    "transform-fold-with-keys"
+    "map-fold-with-keys"
   ::
   ++  test-elems
     %^  expect-eq
@@ -798,25 +798,25 @@
       (from-list [[2 2] [4 4] [5 5] ~])
     "partition"
   ::
-  ++  test-transform-maybe
+  ++  test-map-maybe
     %^  expect-eq
-      %+  transform-maybe
+      %+  map-maybe
       (from-list [[1 1] [2 2] [3 3] [4 4] [5 5] ~])
       |=(a/@u ?:(=(a 3) ~ `a))
     (from-list [[1 1] [2 2] [4 4] [5 5] ~])
-    "transform-maybe"
+    "map-maybe"
   ::
-  ++  test-transform-maybe-with-key
+  ++  test-map-maybe-with-key
     %^  expect-eq
-      %+  transform-maybe-with-key
+      %+  map-maybe-with-key
       (from-list [[1 2] [2 3] [3 4] [4 5] [5 6] ~])
       |=({k/@u v/@u} ?:(=(k 3) ~ `v))
     (from-list [[1 2] [2 3] [4 5] [5 6] ~])
-    "transform-maybe-with-key"
+    "map-maybe-with-key"
   ::
-  ++  test-transform-either
+  ++  test-map-either
     %^  expect-eq
-    %+  transform-either
+    %+  map-either
       (from-list [[1 1] [2 2] [3 3] [4 4] [5 5] ~])
       |=  value/@u
       ?:  =(0 (mod value 2))
@@ -824,11 +824,11 @@
       [%| 1]
     :-  (from-list [[2 "even"] [4 "even"] ~])
       (from-list [[1 1] [3 1] [5 1] ~])
-    "transform-either"
+    "map-either"
   ::
-  ++  test-transform-either-with-key
+  ++  test-map-either-with-key
     %^  expect-eq
-    %+  transform-either-with-key
+    %+  map-either-with-key
       (from-list [[1 1] [2 1] [3 1] [4 1] [5 1] ~])
       |=  {key/@u value/@u}
       ?:  =(0 (mod key 2))
@@ -836,7 +836,7 @@
       [%| 1]
     :-  (from-list [[2 "even"] [4 "even"] ~])
       (from-list [[1 1] [3 1] [5 1] ~])
-    "transform-either"
+    "map-either"
   ::
   ++  test-is-subdict
     %^  expect-eq
