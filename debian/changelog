@@ -1,0 +1,5 @@
+urbit (0.5-1) unstable; urgency=medium
+
+  * hoon %143; new boot sequence; %jael support
+
+ -- Ted Blackman <ted@tlon.io>  Thu, 12 Oct 2017 17:11:53 -0700

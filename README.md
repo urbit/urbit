@@ -45,6 +45,28 @@ configure script; `git clean` may be a better option.
 
 The `vere` binary is produced in `bin/urbit`.
 
+## Building the Debian Package
+
+To build a .deb file for installation on Debian platforms, perform the
+following steps:
++ Run `sudo apt install devscripts` to install the `debuild` utility.
++ Update the `debian/changelog` to reflect the changes in this release.
++ If necessary, update the year of the copyright in `debian/copyright`.
++ Clean any build artifacts: Run `make clean` and delete the `bin` directory,
+if it exists.
++ Run `tar -xcvf ../urbit-x.y.z.orig.tar.gz .` from the top-level folder in
+the repo.  This command will create an archive in the directory above the
+current directory, which will be used in packaging.
++ Run `debuild -us -uc`, also from the top-level folder in the repo. This
+creates a .deb file in the folder above the current directory.
+
+The resulting .deb file should now exist in the folder above the current
+directory. To test that the .deb file works properly, you can perform the
+following steps:
++ Uninstall urbit: `sudo apt remove urbit`.
++ Run `sudo dpkg -i ../urbit-x.y.z_amd64.deb` to install the new version.
++ Boot up a ship using the `urbit` command.
+
 ## Contact
 
 If you have any questions, problems, patches, or proposals for patches, please

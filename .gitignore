@@ -1,6 +1,5 @@
 # subrepositories, downloaded pills
 /arvo/
-/debian/
 *.pill
 # autoconf
 /.MAKEFILE-VERSION
