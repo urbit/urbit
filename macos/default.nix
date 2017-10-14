@@ -31,11 +31,6 @@ let
 
     llvm_cache = ./llvm_cache.cmake;
 
-    tapi_src = nixpkgs.fetchurl {
-      url = "https://github.com/DavidEGrayson/tapi/archive/704f897.tar.gz";
-      sha256 = "1fdvb7jmlbjjzpc2d2l9x0mi14s7i115gyzkbnz8d0dx8r8k1kdp";
-    };
-
     patches = [ ./clang_megapatch.patch ];
 
     builder = ./clang_builder.sh;
@@ -46,6 +41,13 @@ let
       "-DCMAKE_BUILD_TYPE=Release " +
       # "-DCMAKE_BUILD_TYPE=Debug " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
+  };
+
+  tapi = native.make_derivation rec {
+    tapi_src = nixpkgs.fetchurl {
+      url = "https://github.com/DavidEGrayson/tapi/archive/704f897.tar.gz";
+      sha256 = "1fdvb7jmlbjjzpc2d2l9x0mi14s7i115gyzkbnz8d0dx8r8k1kdp";
+    };
   };
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
