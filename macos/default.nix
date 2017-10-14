@@ -32,8 +32,8 @@ let
     llvm_cache = ./llvm_cache.cmake;
 
     tapi_src = nixpkgs.fetchurl {
-      url = "https://github.com/DavidEGrayson/tapi/archive/a5ebac7.tar.gz";
-      sha256 = "1mqnk5dvhf8wjz5qc3yil9k6wp47i003xjf3md241ym5cdm6gksk";
+      url = "https://github.com/DavidEGrayson/tapi/archive/704f897.tar.gz";
+      sha256 = "1fdvb7jmlbjjzpc2d2l9x0mi14s7i115gyzkbnz8d0dx8r8k1kdp";
     };
 
     patches = [ ./clang_megapatch.patch ];
