@@ -44,7 +44,10 @@ let
 
   tapi = native.make_derivation rec {
     name = "tapi";
-    version = "2.0.0";
+    version = "${version0}.${version1}.${version2}";
+    version0 = "2";
+    version1 = "0";
+    version2 = "0";
     src = nixpkgs.fetchurl {
       url = "https://github.com/DavidEGrayson/tapi/archive/f98d0c3.tar.gz";
       sha256 = "0jibz0fsyh47q8y3w6f0qspjh6fhs164rkhjg7x6k7qhlawcdy6g";

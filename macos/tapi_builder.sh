@@ -17,14 +17,14 @@ EOF
 cat > include/tapi/Version.inc <<EOF
 #pragma once
 #define TAPI_VERSION $version
-//#define TAPI_VERSION_MAJOR 2
-//#define TAPI_VERSION_MINOR 0
-//#define TAPI_VERSION_PATCH 0
+#define TAPI_VERSION_MAJOR $version0
+#define TAPI_VERSION_MINOR $version1
+#define TAPI_VERSION_PATCH $version2
 EOF
 
 CFLAGS="-Iinclude -I../tapi/include -I$clang/include"
 
-LDFLAGS="-L$clang/include"
+LDFLAGS="-L$clang/lib -L. -ltapi -ltapiDriver -ltapiCore -ltapiDriver -ltapiScanner -ltapiSDKDB -lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAST -lclangAnalysis -lclangEdit -lclangLex -lclangBasic -lLLVMMC -lLLVMMCParser -lLLVMBitReader -lLLVMCore -lLLVMOption -lLLVMProfileData -lLLVMSupport -lpthread"
 
 clang-tblgen -I$clang/include -gen-clang-diags-defs \
   -o include/tapi/Driver/DiagnosticTAPIKinds.inc \
@@ -35,24 +35,35 @@ llvm-tblgen -I$clang/include -gen-opt-parser-defs \
   ../tapi/include/tapi/Driver/TAPIOptions.td
 
 function build-lib() {
-  name=$1
-  mkdir $name
-  for f in ../tapi/lib/$name/*.cpp; do
+  libsrc=$1
+  lib=$2
+  mkdir $lib.o
+  for f in $libsrc/*.cpp; do
     echo "compiling $f"
-    g++ -c $CFLAGS $f -o $1/$(basename $f).o
+    g++ -c $CFLAGS $f -o $lib.o/$(basename $f).o
   done
-  echo "archiving libtapi$1.a"
-  ar cr libtapi$1.a $name/*.o
+  echo "archiving $lib"
+  ar cr $lib $lib.o/*.o
 }
 
-build-lib Config
-build-lib Core
-build-lib Driver
-build-lib Scanner
-build-lib SDKDB
+build-lib ../tapi/tools/libtapi libtapi.a
+build-lib ../tapi/lib/Config libtapiConfig.a
+build-lib ../tapi/lib/Core libtapiCore.a
+build-lib ../tapi/lib/Driver libtapiDriver.a
+build-lib ../tapi/lib/Scanner libtapiScanner.a
+build-lib ../tapi/lib/SDKDB libtapiSDKDB.a
 
-mkdir -p $out/lib/pkgconfig
+echo "building tapi"
+g++ $CFLAGS ../tapi/tools/tapi/tapi.cpp $LDFLAGS -o tapi
+
+echo "building tapi-run"
+g++ $CFLAGS ../tapi/tools/tapi-run/tapi-run.cpp $LDFLAGS -o tapi-run
+
+mkdir -p $out/lib/pkgconfig $out/bin
 cp *.a $out/lib
+cp tapi tapi-run $out/bin
+
+cp -r ../tapi/include $out/
 
 cat > $out/lib/pkgconfig/libtapi.pc <<EOF
 prefix=$out
@@ -60,6 +71,6 @@ libdir=\${prefix}/lib
 includedir=\${prefix}/include
 
 Version: $version
-Libs: -L\${libdir} -lopenzwave
+Libs: -L\${libdir} -ltapi -ltapiCore
 Cflags: -I\${includedir}
 EOF
