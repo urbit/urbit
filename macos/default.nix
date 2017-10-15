@@ -44,9 +44,10 @@ let
 
   tapi = native.make_derivation rec {
     name = "tapi";
+    version = "2.0.0";
     src = nixpkgs.fetchurl {
-      url = "https://github.com/DavidEGrayson/tapi/archive/704f897.tar.gz";
-      sha256 = "1fdvb7jmlbjjzpc2d2l9x0mi14s7i115gyzkbnz8d0dx8r8k1kdp";
+      url = "https://github.com/DavidEGrayson/tapi/archive/50cfa2b.tar.gz";
+      sha256 = "17356qy4jmpg92cb74gcccfh3prq3mvkj53yqn07krk7v1snjvc7";
     };
     builder = ./tapi_builder.sh;
     native_inputs = [ clang ];
