@@ -34,12 +34,22 @@ llvm-tblgen -I$clang/include -gen-opt-parser-defs \
   -o include/tapi/Driver/TAPIOptions.inc \
   ../tapi/include/tapi/Driver/TAPIOptions.td
 
-for n in ../tapi/lib/Driver/*.cpp; do
-  echo "compiling $n"
-  g++ -c $CFLAGS $n -o $(basename $n).o
-done
+function build-lib() {
+  name=$1
+  mkdir $name
+  for f in ../tapi/lib/$name/*.cpp; do
+    echo "compiling $f"
+    g++ -c $CFLAGS $f -o $1/$(basename $f).o
+  done
+  echo "archiving libtapi$1.a"
+  ar cr libtapi$1.a $name/*.o
+}
 
-ar cr libtapi.a *.o
+build-lib Config
+build-lib Core
+build-lib Driver
+build-lib Scanner
+build-lib SDKDB
 
 mkdir -p $out/lib/pkgconfig
 cp *.a $out/lib
