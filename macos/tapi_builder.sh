@@ -22,10 +22,6 @@ cat > include/tapi/Version.inc <<EOF
 #define TAPI_VERSION_PATCH $version2
 EOF
 
-CFLAGS="-Iinclude -I../tapi/include -I$clang/include"
-
-LDFLAGS="-L$clang/lib -L. -ltapi -ltapiDriver -ltapiCore -ltapiDriver -ltapiScanner -ltapiSDKDB -lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAST -lclangAnalysis -lclangEdit -lclangLex -lclangBasic -lLLVMMC -lLLVMMCParser -lLLVMBitReader -lLLVMCore -lLLVMOption -lLLVMProfileData -lLLVMSupport -lpthread"
-
 clang-tblgen -I$clang/include -gen-clang-diags-defs \
   -o include/tapi/Driver/DiagnosticTAPIKinds.inc \
   ../tapi/include/tapi/Driver/DiagnosticTAPIKinds.td
@@ -46,12 +42,16 @@ function build-lib() {
   ar cr $lib $lib.o/*.o
 }
 
+CFLAGS="-Iinclude -I../tapi/include -I$clang/include"
+
 build-lib ../tapi/tools/libtapi libtapi.a
 build-lib ../tapi/lib/Config libtapiConfig.a
 build-lib ../tapi/lib/Core libtapiCore.a
 build-lib ../tapi/lib/Driver libtapiDriver.a
 build-lib ../tapi/lib/Scanner libtapiScanner.a
 build-lib ../tapi/lib/SDKDB libtapiSDKDB.a
+
+LDFLAGS="-L$clang/lib -L. -ltapi -ltapiDriver -ltapiCore -ltapiDriver -ltapiScanner -ltapiSDKDB -ltapiConfig -lclangTooling -lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAST -lclangAnalysis -lclangEdit -lclangLex -lclangBasic -lLLVMDemangle -lLLVMObject -lLLVMBitReader -lLLVMMC -lLLVMMCParser -lLLVMCore -lLLVMBinaryFormat -lLLVMOption -lLLVMProfileData -lLLVMSupport -lpthread"
 
 echo "building tapi"
 g++ $CFLAGS ../tapi/tools/tapi/tapi.cpp $LDFLAGS -o tapi
