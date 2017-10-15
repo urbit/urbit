@@ -29,8 +29,6 @@ let
       sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
     };
 
-    llvm_cache = ./llvm_cache.cmake;
-
     patches = [ ./clang_megapatch.patch ];
 
     builder = ./clang_builder.sh;
@@ -40,14 +38,19 @@ let
     cmake_flags =
       "-DCMAKE_BUILD_TYPE=Release " +
       # "-DCMAKE_BUILD_TYPE=Debug " +
+      "-DLLVM_TARGETS_TO_BUILD=X86\;ARM " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
   tapi = native.make_derivation rec {
-    tapi_src = nixpkgs.fetchurl {
+    name = "tapi";
+    src = nixpkgs.fetchurl {
       url = "https://github.com/DavidEGrayson/tapi/archive/704f897.tar.gz";
       sha256 = "1fdvb7jmlbjjzpc2d2l9x0mi14s7i115gyzkbnz8d0dx8r8k1kdp";
     };
+    builder = ./tapi_builder.sh;
+    native_inputs = [ clang ];
+    inherit clang;
   };
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
@@ -206,7 +209,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang ld cctools cctools_tpoechtrager xar sdk sdk_lite;
+    inherit clang tapi ld cctools cctools_tpoechtrager xar sdk sdk_lite;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
