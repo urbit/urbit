@@ -46,8 +46,8 @@ let
     name = "tapi";
     version = "2.0.0";
     src = nixpkgs.fetchurl {
-      url = "https://github.com/DavidEGrayson/tapi/archive/50cfa2b.tar.gz";
-      sha256 = "17356qy4jmpg92cb74gcccfh3prq3mvkj53yqn07krk7v1snjvc7";
+      url = "https://github.com/DavidEGrayson/tapi/archive/f98d0c3.tar.gz";
+      sha256 = "0jibz0fsyh47q8y3w6f0qspjh6fhs164rkhjg7x6k7qhlawcdy6g";
     };
     builder = ./tapi_builder.sh;
     native_inputs = [ clang ];
