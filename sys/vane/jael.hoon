@@ -298,7 +298,7 @@
       0w0                           ::  193, ~duc, Tlon
       0w0                           ::  194, ~fur, Tlon
       0w0                           ::  195, ~fex, Tlon
-      0w0                           ::  196, ~nul, Tlon
+      0w0                           ::  196, ~nul, Matthew Liston
       0w0                           ::  197, ~luc, Tlon
       0w0                           ::  198, ~len, Tlon
       0w0                           ::  199, ~ner, Tlon
