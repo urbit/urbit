@@ -151,6 +151,10 @@ rec {
   qt_examples = qt.examples;
   qt_license_fragment = qt.license_fragment;
 
+  open-zwave = import ./pkgs/open-zwave {
+    inherit crossenv;
+  };
+
   pavr2 = import ./pkgs/pavr2 {
     inherit crossenv libusbp;
     qt = qt.base;

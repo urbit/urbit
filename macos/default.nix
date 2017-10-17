@@ -14,8 +14,6 @@ let
 
   exe_suffix = "";
 
-  osxcross = ./osxcross;
-
   clang = native.make_derivation rec {
     name = "clang";
 
@@ -40,7 +38,40 @@ let
     cmake_flags =
       "-DCMAKE_BUILD_TYPE=Release " +
       # "-DCMAKE_BUILD_TYPE=Debug " +
+      "-DLLVM_TARGETS_TO_BUILD=X86\;ARM " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
+  };
+
+  tapi = native.make_derivation rec {
+    name = "tapi";
+    version = "${version0}.${version1}.${version2}";
+    version0 = "2";
+    version1 = "0";
+    version2 = "0";
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/DavidEGrayson/tapi/archive/f98d0c3.tar.gz";
+      sha256 = "0jibz0fsyh47q8y3w6f0qspjh6fhs164rkhjg7x6k7qhlawcdy6g";
+    };
+    builder = ./tapi_builder.sh;
+    native_inputs = [ clang ];
+    inherit clang;
+  };
+
+  # TODO: add instructions for building the SDK tarball, probably want a copy of
+  # the script from osxcross.
+  sdk = native.make_derivation rec {
+    name = "macos-sdk";
+    builder = ./sdk_builder.sh;
+    version = "10.11";
+    src = ./MacOSX10.11.sdk.tar.xz;
+  };
+
+  # A trimmed-down SDK without harmful headers like locale.h, which conflict
+  # with glibc's locale.h.
+  sdk_lite = native.make_derivation rec {
+    name = "macos-sdk-lite";
+    builder = ./sdk_lite_builder.sh;
+    inherit sdk;
   };
 
   # Note: We use nixpkgs.clang so we can compile an objective C library (which
@@ -59,9 +90,9 @@ let
   # increase the complexity of this build a lot.  As of 2017-09-16, there have
   # been no commits after that one, and the osxcross project is still on commit
   # 8e9c3f2, so this is the more-traveled route.
-  cctools = native.make_derivation {
-    name = "cctools";
-    builder = ./cctools_builder.sh;
+  cctools_tpoechtrager = native.make_derivation {
+    name = "cctools_tpoechtrager-${host}";
+    builder = ./cctools_tpoechtrager_builder.sh;
     src = nixpkgs.fetchurl {
       url = "https://github.com/tpoechtrager/cctools-port/archive/8e9c3f2.tar.gz";
       sha256 = "04p5b1ix52yk48f09xkdv11ki8cc1zwzvm0dk2j8ylb8jk1a04y4";
@@ -74,6 +105,51 @@ let
       nixpkgs.automake
       nixpkgs.m4
     ];
+  };
+
+  cctools = native.make_derivation rec {
+    name = "cctools-${host}";
+    builder = ./cctools_builder.sh;
+    version = "895";
+    inherit host;
+    src = nixpkgs.fetchurl {
+      url = "https://opensource.apple.com/tarballs/cctools/cctools-${version}.tar.gz";
+      sha256 = "1dsw1jhkfcm1x1vyhhpsg1bl1306v1rdvdxvfspgj5sild7h6rnf";
+    };
+
+    patches = [ ./cctools_megapatch.patch ];
+
+    CFLAGS =
+      "-I../cctools/include " +
+      "-isystem ${sdk}/usr/include " +
+
+      "-Wfatal-errors " +
+      "-Werror -Wno-deprecated-declarations -Wno-deprecated " +
+
+      "-D__private_extern__= " +
+      "-D__LITTLE_ENDIAN__";
+  };
+
+  ld = native.make_derivation rec {
+    name = "ld64-${version}-${host}";
+    version = "274.2";
+    inherit host arch;
+    src = nixpkgs.fetchurl {
+      url = "https://opensource.apple.com/tarballs/ld64/ld64-${version}.tar.gz";
+      sha256 = "1mzp2sszcvg86b1jb90prhcrwk7g7inikr7plnklk7g93728jp8p";
+    };
+    patches = [ ./ld64_megapatch.patch ];
+    builder = ./ld_builder.sh;
+    native_inputs = [ clang ];
+    CXXFLAGS =
+      "-Werror " +
+      "-Wfatal-errors " +
+      "-std=gnu++11 " +
+      "-Iinclude " +
+      "-I../ld64/src/ld " +
+      "-I../ld64/src/abstraction " +
+      "-isystem ${sdk_lite}/usr/include " +
+      "-D__LITTLE_ENDIAN__";
   };
 
   xar_src = nixpkgs.fetchurl {
@@ -93,35 +169,26 @@ let
     ];
   };
 
-  sdk = native.make_derivation rec {
-    name = "macos-sdk";
-    builder = ./sdk_builder.sh;
-    version = "10.11";
-    src = ./MacOSX10.11.sdk.tar.xz;
-  };
-
   macos_version_min = "10.11";
 
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
-    inherit host osxcross sdk;
-    native_inputs = [ clang cctools xar ];
+    inherit host sdk;
+    wrapper = ./wrapper;
+    native_inputs = [ clang ld xar ];
 
     CXXFLAGS =
       "-std=c++11 " +
-      "-Wall -Wextra -pedantic -Wno-missing-field-initializers " +
+      "-Wall " +
       "-I. " +
       "-O2 -g " +
-      "-DOSXCROSS_VERSION=\\\"0.15\\\" " +
-      "-DOSXCROSS_TARGET=\\\"${darwin_name}\\\" " +
-      "-DOSXCROSS_OSX_VERSION_MIN=\\\"${macos_version_min}\\\" " +
-      "-DOSXCROSS_LINKER_VERSION=\\\"274.2\\\" " +
-      "-DOSXCROSS_LIBLTO_PATH=\\\"\\\" " +
-      "-DOSXCROSS_BUILD_DIR=\\\"\\\" " +
-      "-DOSXCROSS_SDK=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
-      "-DOSXCROSS_SDK_VERSION=\\\"10.11\\\" " +
+      "-DWRAPPER_OS_VERSION_MIN=\\\"${macos_version_min}\\\" " +
+      "-DWRAPPER_SDK_PATH=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
+      "-DWRAPPER_HOST=\\\"${host}\\\" " +
+      "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
       "-DWRAPPER_PATH=\\\"${cctools}/bin:${clang}/bin\\\"";
+    # TODO: use cctools.version for the -mlinker-version argument to clang
   };
 
   cmake_toolchain = import ../cmake_toolchain {
@@ -146,7 +213,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang cctools xar sdk;
+    inherit clang tapi ld cctools cctools_tpoechtrager xar sdk sdk_lite;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
