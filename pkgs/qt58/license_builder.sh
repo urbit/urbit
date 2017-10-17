@@ -12,7 +12,7 @@ mv qtbase-* qtbase
 
 # Read the license files here instead of in the big string so it is a fatal
 # error if any of them are missing.
-license_qt=$(cat qtbase/LICENSE.GPLv3)
+license_qt=$(cat qtbase/LICENSE.LGPLv3)
 cd qtbase/src/3rdparty
 license_android=$(cat android/LICENSE)
 license_angle1=$(cat angle/LICENSE)
@@ -39,8 +39,8 @@ license_zlib=$(cat zlib/README)
 
 cat > $out <<EOF
 <p>
-  The Qt Toolkit is licensed under the GNU General Public License Version 3
-  (GPLv3) as shown below.
+  The Qt Toolkit is licensed under the
+  GNU Lesser General Public License Version 3 (LGPLv3) as shown below.
 </p>
 
 <pre>
