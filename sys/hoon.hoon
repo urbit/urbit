@@ -26,7 +26,7 @@
   ::
 ++  add                                                 ::  unsigned addition
   ~/  %add
-  |=  {a/@ b/@}
+  |=  [a=@ b=@]
   ^-  @
   ?:  =(0 a)  b
   $(a (dec a), b +(b))
@@ -9946,6 +9946,8 @@
           (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wyde))))
           (cold [%base %bean] wut)
         ==
+      :-  '~'
+        (cold [%base %null] sig)  
       :-  '^'
         ;~  pose
           scab
@@ -10066,7 +10068,7 @@
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
-          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wide))))
+          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wyde))))
           (cold [%base %bean] wut)
         ==
       :-  '['
