@@ -616,7 +616,7 @@
   ::
   ++  proc-inline                                       ::  parse inline kids
     |=  pac/_pars:inli                               ::  cache
-    |=  a/elem
+    |=  a/elem  ^+  a
     ?^  -.a  a(q (flop (turn q.a ..$)))
     ?+  -.a  a
       $code  
