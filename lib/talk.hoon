@@ -8,7 +8,7 @@
 ::
 ::::
   ::
-=,  ^talk
+[. ^talk]
 |_  bol/bowl:gall
 ++  main                                                ::  main story
   |=  who/ship
