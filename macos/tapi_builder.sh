@@ -42,7 +42,7 @@ function build-lib() {
   ar cr $lib $lib.o/*.o
 }
 
-CFLAGS="-Iinclude -I../tapi/include -I$clang/include"
+CFLAGS="-fno-rtti -Iinclude -I../tapi/include -I$clang/include"
 
 build-lib ../tapi/tools/libtapi libtapi.a
 build-lib ../tapi/lib/Config libtapiConfig.a
