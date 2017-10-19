@@ -174,7 +174,7 @@
   %-  emil
   %-  flop  ^-  (list card) 
   =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
-  :-  [%flog /reset %vega (weld top /hoon) (weld top /ovra)]
+  :-  [%flog /reset %vega :(weld top /hoon top /ovra)]
   %+  turn
     ^-  (list {p/@tas q/path})
     :~  [%$ /zuse]
