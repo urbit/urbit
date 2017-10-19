@@ -174,6 +174,29 @@
   %-  emil
   %-  flop  ^-  (list card) 
   =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
+  :-  [%flog /reset %vega (weld top /hoon) (weld top /ovra)]
+  %+  turn
+    ^-  (list {p/@tas q/path})
+    :~  [%$ /zuse]
+        [%a /vane/ames]
+        [%b /vane/behn]
+        [%c /vane/clay]
+        [%d /vane/dill]
+        [%e /vane/eyre]
+        [%f /vane/ford]
+        [%g /vane/gall]
+    ==
+  |=  {p/@tas q/path}
+  =+  way=`path`(welp top q)
+  =+  txt=.^(@ %cx (welp way /hoon))
+  ~&  [%reset-veer p way]
+  [%flog /reset %veer p way txt]
+::
+++  poke-meset                                        ::  reset system (new)
+  |=  hood-reset  =<  abet
+  %-  emil
+  %-  flop  ^-  (list card) 
+  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
   =+  hun=.^(@ %cx (welp top /hoon/hoon))
   =+  arv=.^(@ %cx (welp top /arvo/hoon))  
   :-  [%flog /reset [%velo `@t`hun `@t`arv]]
@@ -188,7 +211,7 @@
         [%e %eyre]
         [%f %ford]
         [%g %gall]
-    ::  [%j %jael]
+        [%j %jael]
     ==
   |=  {p/@tas q/@tas}
   =+  way=`path`(welp top /vane/[q])
