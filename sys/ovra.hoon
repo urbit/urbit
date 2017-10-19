@@ -486,7 +486,9 @@
               ?:  ?=($veer -.q.i.ova)
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=($vega -.q.i.ova)
-                (fall (vega now t.ova (path +.q.i.ova)) [~ +>.^$])
+                %+  fall
+                  (vega now t.ova (path +<.q.i.ova) (path +>.q.i.ova))
+                [~ +>.^$]
               ?:  ?=($mass -.q.i.ova)
                 =+  avo=$(ova t.ova)
                 :_  +.avo
@@ -550,17 +552,24 @@
   [zef +>.$]
 ::
 ++  vega                                                ::  reboot kernel
-  |=  {now/@da ova/(list ovum) hap/path}
+  |=  {now/@da ova/(list ovum) hap/path zup/path}
   ^-  (unit {p/(list ovum) q/*})
   =-  ?:(?=($| -.res) ((slog p.res) ~) `p.res)
   ^=  res  %-  mule  |.
   =+  pax=(weld hap `path`[%hoon ~])
-  ~&  [%vega-start hap]
+  =+  wax=(weld zup `path`[%hoon ~])
+  ~&  [%vega-start-hoon hap]
   =+  src=((hard @t) (need (peek now cx+pax)))
-  =+  saz=(shax src)
+  =+  arv=((hard @t) (need (peek now cx+wax)))
   =+  gen=(rain hap src)
   ~&  %vega-parsed
-  =+  ken=.*(0 q:(~(mint ut %noun) %noun gen))
+  =+  one=(~(mint ut %noun) %noun gen)
+  ~&  %vega-compiled
+  ~&  [%vega-arvo zup]
+  =+  two=(~(mint ut p.one) %noun (rain zup arv))
+  ~&  %vega-minted
+  =+  ken=.*(0 [7 q.one q.two])
+  ~&  [%vega-kernel `@ux`(mug ken)] 
   =+  ^=  nex
       =+  gat=.*(ken .*(ken [0 87]))
       (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
@@ -569,7 +578,9 @@
   =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon) 86 11)]))
   =+  sam=[eny ova q.niz]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
-  [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
+  =+  yep=((list ovum) -.raw)
+  ~&  [%vega-next (lent yep)]
+  [[[~ %vega hap] yep] +.raw]
 ::
 ++  veer                                                ::  install vane/tang
   |=  {now/@da fav/curd}
