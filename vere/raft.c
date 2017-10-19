@@ -276,7 +276,7 @@ _raft_rest_name(u3_rcon* ron_u, const c3_c* nam_c)
       else nam_u = nam_u->nex_u;
     }
     if ( 0 == ron_u->nam_u ) {
-      uL(fprintf(uH, "connection from unkown peer %s\n", nam_c));
+      uL(fprintf(uH, "connection from unknown peer %s\n", nam_c));
       _raft_conn_dead(ron_u);
     }
   }
