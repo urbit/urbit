@@ -44,15 +44,15 @@
           mirrors/(map circle config)                   ::<  remote configs
           ::  ui state                                  ::
           nicks/(map ship nick)                         ::<  human identities
-          nik/(map (set circle) char)                   ::<  bound circle glyphs
-          nak/(jug char (set circle))                   ::<  circle glyph lookup
+          nik/(map audience char)                       ::<  bound circle glyphs
+          nak/(jug char audience)                       ::<  circle glyph lookup
           cli/shell                                     ::<  interaction state
       ==                                                ::
     ++  shell                                           ::>  console session
       $:  id/bone                                       ::<  identifier
           latest/@ud                                    ::<  latest shown msg num
           say/sole-share                                ::<  console state
-          active/(set circle)                           ::<  active targets
+          active/audience                               ::<  active targets
           settings/(set term)                           ::<  frontend settings
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
@@ -71,7 +71,7 @@
     ++  work                                            ::>  interface action
       $%  ::  circle management                         ::
           {$join p/(map circle range)}                  ::<  subscribe to
-          {$leave p/where}                              ::<  unsubscribe from
+          {$leave p/audience}                           ::<  unsubscribe from
           {$create p/security q/naem r/cord}            ::<  create circle
           {$delete p/naem q/(unit cord)}                ::<  delete circle
           {$depict p/naem q/cord}                       ::<  change description
@@ -80,27 +80,26 @@
           {$banish p/naem q/(set ship)}                 ::<  deny permission
           {$source p/naem q/(map circle range)}         ::<  add source
           ::  personal metadata
-          {$attend p/(set circle) q/presence}           ::<  set our presence
-          {$name p/(set circle) q/human}                ::<  set our name
+          {$attend p/audience q/presence}               ::<  set our presence
+          {$name p/audience q/human}                    ::<  set our name
           ::  messaging                                 ::
           {$say p/(list speech)}                        ::<  send message
           {$eval p/cord q/twig}                         ::<  send #-message
-          {$target p/where q/(unit work)}               ::<  set active targets
+          {$target p/audience q/(unit work)}            ::<  set active targets
           {$reply p/$@(@ud {@u @ud}) q/(list speech)}   ::<  reply to
           ::  displaying info                           ::
           {$number p/$@(@ud {@u @ud})}                  ::<  relative/absolute
-          {$who p/where}                                ::<  presence
-          {$what p/$@(char (set circle))}               ::<  show bound glyph
+          {$who p/audience}                             ::<  presence
+          {$what p/$@(char audience)}                   ::<  show bound glyph
           ::  ui settings                               ::
-          {$bind p/char q/(unit where)}                 ::<  bind glyph
-          {$unbind p/char q/(unit where)}               ::<  unbind glyph
+          {$bind p/char q/(unit audience)}              ::<  bind glyph
+          {$unbind p/char q/(unit audience)}            ::<  unbind glyph
           {$nick p/(unit ship) q/(unit cord)}           ::<  un/set/show nick
           {$set p/term}                                 ::<  enable setting
           {$unset p/term}                               ::<  disable setting
           ::  miscellaneous                             ::
           {$help $~}                                    ::<  print usage info
       ==                                                ::
-    ++  where  (set circle)                             ::<  non-empty audience
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  circle char pool '
     ++  termwidth  80  ::TODO  put in setting or something?
     --
@@ -166,11 +165,11 @@
   ::TODO  ...we really should rename these.
   |=  nek/_nak
   ^+  nik
-  %-  ~(gas by *(map (set circle) char))
+  %-  ~(gas by *(map audience char))
   =-  (zing -)
   %+  turn  ~(tap by nek)
-  |=  {a/char b/(set (set circle))}
-  (turn ~(tap by b) |=(c/(set circle) [c a]))
+  |=  {a/char b/(set audience)}
+  (turn ~(tap by b) |=(c/audience [c a]))
 ::
 ::>  ||
 ::>  ||  %engines
@@ -353,9 +352,9 @@
   ++  ta-change-glyph                                   ::<  apply changed glyphs
     ::>  applies new set of glyph bindings.
     ::
-    |=  {bin/? gyf/char pas/(set circle)}
+    |=  {bin/? gyf/char aud/audience}
     ^+  +>
-    =+  nek=(change-glyphs nak bin gyf pas)
+    =+  nek=(change-glyphs nak bin gyf aud)
     ?:  =(nek nak)  +>.$                                ::  no change
     =.  nak  nek
     =.  nik  (nik-from-nak nek)
@@ -904,21 +903,21 @@
         ::>  applies glyph binding to our state and sends
         ::>  an action.
         ::
-        |=  {cha/char pas/(set circle)}
-        =:  nik  (~(put by nik) pas cha)
-            nak  (~(put ju nak) cha pas)
+        |=  {cha/char aud/audience}
+        =:  nik  (~(put by nik) aud cha)
+            nak  (~(put ju nak) cha aud)
         ==
-        (sh-act %glyph cha pas &)
+        (sh-act %glyph cha aud &)
       ::
       ++  unset-glyph                                   ::<  old glyph binding
-        ::>  removes either {pas} or all bindings on a
+        ::>  removes either {aud} or all bindings on a
         ::>  glyph and sends an action.
         ::
-        |=  {cha/char pas/(unit (set circle))}
-        =/  ole/(set (set circle))
-          ?^  pas  [u.pas ~ ~]
+        |=  {cha/char aud/(unit audience)}
+        =/  ole/(set audience)
+          ?^  aud  [u.aud ~ ~]
           (~(get ju nak) cha)
-        =.  ..sh-work  (sh-act %glyph cha (fall pas ~) |)
+        =.  ..sh-work  (sh-act %glyph cha (fall aud ~) |)
         |-  ^+  ..sh-work
         ?~  ole  ..sh-work
         =.  ..sh-work  $(ole l.ole)
@@ -1034,18 +1033,18 @@
       ::+|
       ::
       ++  attend                                        ::<  set our presence
-        ::>  sets our presence to {pec} in circles {cis}.
+        ::>  sets our presence to {pec} for {aud}.
         ::
-        |=  {cis/(set circle) pec/presence}
+        |=  {aud/audience pec/presence}
         ^+  ..sh-work
-        (sh-act %notify cis pec)
+        (sh-act %notify aud pec)
       ::
       ++  name                                          ::<  set our name
-        ::>  sets our name to {man} in circles {cis}.
+        ::>  sets our name to {man} for {aud}.
         ::
-        |=  {cis/(set circle) man/human}
+        |=  {aud/audience man/human}
         ^+  ..sh-work
-        (sh-act %naming cis man)
+        (sh-act %naming aud man)
       ::
       ::>  ||
       ::>  ||  %messaging
@@ -1071,9 +1070,9 @@
       ++  target                                        ::<  %target
         ::>  sets messaging target, then execute {woe}.
         ::
-        |=  {pan/(set circle) woe/(unit ^work)}
+        |=  {aud/audience woe/(unit ^work)}
         ^+  ..sh-work
-        =.  ..sh-pact  (sh-pact pan)
+        =.  ..sh-pact  (sh-pact aud)
         ?~(woe ..sh-work work(job u.woe))
       ::
       ++  reply                                         ::<  %reply
@@ -1120,7 +1119,7 @@
       ++  what                                          ::<  %what
         ::>  prints binding details. goes both ways.
         ::
-        |=  qur/$@(char (set circle))
+        |=  qur/$@(char audience)
         ^+  ..sh-work
         ?^  qur
           =+  cha=(~(get by nik) qur)
@@ -1128,7 +1127,7 @@
         =+  pan=~(tap in (~(get ju nak) qur))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
-        |=(a/(set circle) [%txt ~(ar-prom ar a)])
+        |=(a/audience [%txt ~(ar-prom ar a)])
       ::
       ++  number                                        ::<  %number
         ::>  finds selected message, expand it.
@@ -1155,27 +1154,27 @@
       ::+|
       ::
       ++  bind                                          ::<  %bind
-        ::>  binds targets {pas} to the glyph {cha}.
+        ::>  binds targets {aud} to the glyph {cha}.
         ::
-        |=  {cha/char pas/(unit (set circle))}
+        |=  {cha/char aud/(unit audience)}
         ^+  ..sh-work
-        ?~  pas  $(pas `active.she)
-        =+  ole=(~(get by nik) u.pas)
+        ?~  aud  $(aud `active.she)
+        =+  ole=(~(get by nik) u.aud)
         ?:  =(ole [~ cha])  ..sh-work
-        %.  "bound {<cha>} {<u.pas>}"
-        sh-note:sh-prod:(set-glyph cha u.pas)
+        %.  "bound {<cha>} {<u.aud>}"
+        sh-note:sh-prod:(set-glyph cha u.aud)
       ::
       ++  unbind                                        ::<  %unbind
-        ::>  unbinds targets {pas} to glyph {cha}.
+        ::>  unbinds targets {aud} to glyph {cha}.
         ::
-        |=  {cha/char pan/(unit (set circle))}
+        |=  {cha/char aud/(unit audience)}
         ^+  ..sh-work
-        ?.  ?|  &(?=(^ pan) (~(has by nik) u.pan))
-                &(?=($~ pan) (~(has by nak) cha))
+        ?.  ?|  &(?=(^ aud) (~(has by nik) u.aud))
+                &(?=($~ aud) (~(has by nak) cha))
             ==
           ..sh-work
         %.  "unbound {<cha>}"
-        sh-note:sh-prod:(unset-glyph cha pan)
+        sh-note:sh-prod:(unset-glyph cha aud)
       ::
       ++  nick                                          ::<  %nick
         ::>  either shows, sets or unsets nicknames
@@ -1248,49 +1247,49 @@
       --
     ::
     ++  sh-pact                                         ::<  update active aud
-      ::>  change currently selected audience to {lix}
+      ::>  change currently selected audience to {aud}
       ::>  and update the prompt.
       ::
-      |=  lix/(set circle)
+      |=  aud/audience
       ^+  +>
       ::>  ensure we can see what we send.
-      =+  act=(sh-pare lix)
+      =+  act=(sh-pare aud)
       ?:  =(active.she act)  +>.$
       sh-prod(active.she act)
     ::
     ++  sh-pare                                         ::<  adjust target list
-      ::>  if the audience {cis} does not contain a
+      ::>  if the audience {aud} does not contain a
       ::>  circle we're subscribed to, add our mailbox
       ::>  to the audience (so that we can see our own
       ::>  message).
       ::
-      |=  cis/(set circle)
-      ?:  (sh-pear cis)  cis
-      (~(put in cis) incir)
+      |=  aud/audience
+      ?:  (sh-pear aud)  aud
+      (~(put in aud) incir)
     ::
     ++  sh-pear                                         ::<  hearback
       ::>  produces true if any circle is included in
       ::>  our subscriptions, meaning, we hear messages
-      ::>  sent to {cis}.
+      ::>  sent to {aud}.
       ::
-      |=  cis/(set circle)
-      ?~  cis  |
-      ?|  (~(has in sources) `circle`n.cis)
-          $(cis l.cis)
-          $(cis r.cis)
+      |=  aud/audience
+      ?~  aud  |
+      ?|  (~(has in sources) `circle`n.aud)
+          $(aud l.aud)
+          $(aud r.aud)
       ==
     ::
     ++  sh-glyf                                         ::<  decode glyph
       ::>  finds the circle(s) that match a glyph.
       ::
-      |=  cha/char  ^-  (unit (set circle))
+      |=  cha/char  ^-  (unit audience)
       =+  lax=(~(get ju nak) cha)
       ::>  no circle.
       ?:  =(~ lax)  ~
       ::>  single circle.
       ?:  ?=({* $~ $~} lax)  `n.lax
-      ::>  in case of multiple circles, pick the most recently active one.
-      |-  ^-  (unit (set circle))
+      ::>  in case of multiple audiences, pick the most recently active one.
+      |-  ^-  (unit audience)
       ?~  grams  ~
       ::>  get first circle from a telegram's audience.
       =+  pan=(silt ~(tap in aud.i.grams))
@@ -1440,7 +1439,7 @@
       %+  sh-fact  %pro
       :+  &  %talk-line
       ^-  tape
-      =/  rew/(pair (pair cord cord) (set circle))
+      =/  rew/(pair (pair cord cord) audience)
           [['[' ']'] active.she]
       =+  cha=(~(get by nik) q.rew)
       ?^  cha  ~[u.cha ' ']
@@ -1762,28 +1761,28 @@
   ::>  used for representing audiences (sets of circles)
   ::>  as tapes.
   ::
-  |_  ::>  lix: members of the audience.
+  |_  ::>  aud: members of the audience.
       ::
-      lix/(set circle)
+      aud/audience
   ::
   ++  ar-best                                           ::<  most relevant
     ::>  find the most relevant circle in the set.
     ::
     ^-  (unit circle)
-    ?~  lix  ~
+    ?~  aud  ~
     :-  ~
     |-  ^-  circle
-    =+  lef=`(unit circle)`ar-best(lix l.lix)
-    =+  rit=`(unit circle)`ar-best(lix r.lix)
-    =?  n.lix  ?=(^ lef)  (~(pr-best pr n.lix) u.lef)
-    =?  n.lix  ?=(^ rit)  (~(pr-best pr n.lix) u.rit)
-    n.lix
+    =+  lef=`(unit circle)`ar-best(aud l.aud)
+    =+  rit=`(unit circle)`ar-best(aud r.aud)
+    =?  n.aud  ?=(^ lef)  (~(pr-best pr n.aud) u.lef)
+    =?  n.aud  ?=(^ rit)  (~(pr-best pr n.aud) u.rit)
+    n.aud
   ::
   ++  ar-deaf                                           ::<  except for self
     ::>  remove ourselves from the audience.
     ::
     ^+  .
-    .(lix (~(del in lix) `circle`incir))
+    .(aud (~(del in aud) `circle`incir))
   ::
   ++  ar-maud                                           ::<  multiple audience
     ::>  checks if there's multiple circles in the
@@ -1791,7 +1790,7 @@
     ::
     ^-  ?
     =.  .  ar-deaf
-    !?=($@($~ {* $~ $~}) lix)
+    !?=($@($~ {* $~ $~}) aud)
   ::
   ++  ar-prom                                           ::<  render targets
     ::>  render all circles, ordered by relevance.
@@ -1799,7 +1798,7 @@
     ^-  tape
     =.  .  ar-deaf
     =/  all
-      %+  sort  `(list circle)`~(tap in lix)
+      %+  sort  `(list circle)`~(tap in aud)
       |=  {a/circle b/circle}
       (~(pr-beat pr a) b)
     =+  fir=&
@@ -1831,11 +1830,11 @@
     ::>  complex audiences, use reserved "glyphs".
     ::
     ^-  tape
-    =+  cha=(~(get by nik) lix)
+    =+  cha=(~(get by nik) aud)
     ?^  cha  ~[u.cha ' ']
-    ?.  (lien ~(tap by lix) ar-dire)
+    ?.  (lien ~(tap by aud) ar-dire)
       "* "
-    ?:  ?=({^ $~ $~} lix)
+    ?:  ?=({^ $~ $~} aud)
       ": "
     "; "
   --

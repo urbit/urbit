@@ -77,7 +77,7 @@
       {$circle package}                                 ::<  /circle
   ==                                                    ::
 ++  prize-reader                                        ::
-  $:  gys/(jug char (set circle))                       ::<  glyph bindings
+  $:  gys/(jug char audience)                           ::<  glyph bindings
       nis/(map ship nick)                               ::<  local nicknames
   ==                                                    ::
 ++  rumor                                               ::<  query result change
@@ -100,7 +100,7 @@
       cos/lobby                                         ::<  loc & rem configs
       pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
-++  diff-glyph  {bin/? gyf/char pas/(set circle)}       ::<  un/bound glyph
+++  diff-glyph  {bin/? gyf/char aud/audience}           ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/nick}                     ::<  changed nickname
 ++  diff-story                                          ::>  story change
   $%  {$new cof/config}                                 ::<  new story
@@ -151,12 +151,12 @@
       {$source nom/naem sub/? srs/(set source)}         ::<  un/sub to/from src
       ::  messaging                                     ::
       {$convey tos/(list thought)}                      ::<  post exact
-      {$phrase aud/(set circle) ses/(list speech)}      ::<  post easy
+      {$phrase aud/audience ses/(list speech)}          ::<  post easy
       ::  personal metadata                             ::
-      {$notify cis/(set circle) pes/presence}           ::<  our presence update
-      {$naming cis/(set circle) man/human}              ::<  our name update
+      {$notify aud/audience pes/presence}               ::<  our presence update
+      {$naming aud/audience man/human}                  ::<  our name update
       ::  changing shared ui                            ::
-      {$glyph gyf/char pas/(set circle) bin/?}          ::<  un/bind a glyph
+      {$glyph gyf/char aud/audience bin/?}              ::<  un/bind a glyph
       {$nick who/ship nic/nick}                         ::<  new identity
   ==                                                    ::
 ::

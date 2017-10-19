@@ -40,7 +40,7 @@
           outbox/(map serial tracking)                  ::<  sent messages
           log/(map naem @ud)                            ::<  logged to clay
           nicks/(map ship nick)                         ::<  local nicknames
-          binds/(jug char (set circle))                 ::<  circle glyph lookup
+          binds/(jug char audience)                     ::<  circle glyph lookup
       ==                                                ::
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
@@ -325,11 +325,11 @@
     ++  present                                         ::<  send status update
       ::>
       ::
-      |=  {cis/(set circle) dif/diff-status}
+      |=  {aud/audience dif/diff-status}
       ^+  ..ta-action
       =/  cic
         ^-  (jug ship naem)
-        %-  ~(rep in cis)
+        %-  ~(rep in aud)
         |=  {c/circle m/(jug ship naem)}
         (~(put ju m) hos.c nom.c)
       =?  ..ta-action  (~(has by cic) our.bol)
@@ -417,14 +417,14 @@
       ::>  action generating a serial and setting a
       ::>  timestamp.
       ::
-      |=  {cis/(set circle) ses/(list speech)}
+      |=  {aud/audience ses/(list speech)}
       ^+  ..ta-action
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
       =^  sir  eny.bol  (uniq eny.bol)
       :_  $(ses t.ses)
-      [sir cis [now.bol i.ses]]
+      [sir aud [now.bol i.ses]]
     ::
     ::>  ||  %personal-metadata
     ::+|
@@ -432,16 +432,16 @@
     ++  action-notify                                   ::<  our presence update
       ::>
       ::
-      |=  {cis/(set circle) pes/presence}
+      |=  {aud/audience pes/presence}
       ^+  ..ta-action
-      (present cis %presence pes)
+      (present aud %presence pes)
     ::
     ++  action-naming                                   ::<  our name update
       ::>
       ::
-      |=  {cis/(set circle) man/human}
+      |=  {aud/audience man/human}
       ^+  ..ta-action
-      (present cis %human %full man)
+      (present aud %human %full man)
     ::
     ::>  ||  %changing-shared-ui
     ::+|
@@ -455,10 +455,10 @@
       (ta-delta %nick who nic)
     ::
     ++  action-glyph                                    ::<  bind a glyph
-      ::>  un/bind glyph {lif} to circles {cis}.
+      ::>  un/bind glyph {lif} to audience {aud}.
       ::
-      |=  {lif/char cis/(set circle) bin/?}
-      (ta-delta %glyph bin lif cis)
+      |=  {lif/char aud/audience bin/?}
+      (ta-delta %glyph bin lif aud)
     --
   ::
   ::>  ||
@@ -1126,7 +1126,7 @@
         %-  so-act
         :-  %phrase
         %-  ~(rep in sus)
-        |=  {s/ship a/(set circle) t/(list speech)}
+        |=  {s/ship a/audience t/(list speech)}
         :-  (~(put in a) [s (main s)])
         [[%inv inv so-cir] t]
       (so-delta-our %config so-cir %permit [add sus])
@@ -1298,16 +1298,16 @@
   ::
   ++  da-change-glyph                                   ::<  un/bound glyph
     ::>  apply a %glyph delta, un/binding a glyph to/from
-    ::>  a set of circles.
+    ::>  an audience.
     ::
-    |=  {bin/? gyf/char cis/(set circle)}
+    |=  {bin/? gyf/char aud/audience}
     ^+  +>
     ?:  bin
       %_  +>
-        binds  (~(put ju binds) gyf cis)
+        binds  (~(put ju binds) gyf aud)
       ==
-    =/  ole/(list (set circle))
-      ?.  =(cis ~)  [cis ~]
+    =/  ole/(list audience)
+      ?.  =(aud ~)  [aud ~]
       ~(tap in (~(get ju binds) gyf))
     |-  ^+  +>.^$
     ?~  ole  +>.^$

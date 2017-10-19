@@ -89,14 +89,14 @@
 ++  change-glyphs                                       ::<  ...
   ::>
   ::
-  |=  {gys/(jug char (set circle)) bin/? gyf/char cis/(set circle)}
+  |=  {gys/(jug char audience) bin/? gyf/char aud/audience}
   ^+  gys
   ::  simple bind.
-  ?:  bin  (~(put ju gys) gyf cis)
+  ?:  bin  (~(put ju gys) gyf aud)
   ::  unbind all of glyph.
-  ?~  cis  (~(del by gys) gyf)
+  ?~  aud  (~(del by gys) gyf)
   ::  unbind single.
-  (~(del ju gys) gyf cis)
+  (~(del ju gys) gyf aud)
 ::
 ++  change-nicks                                        ::<  change nick map
   ::>  changes a nickname in a map, adding if it doesn't
