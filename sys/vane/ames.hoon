@@ -185,7 +185,7 @@
         0w0                           ::   68, ~sub, Curtis Yarvin
         0w0                           ::   69, ~pet, Curtis Yarvin
         0w0                           ::   70, ~rul, Curtis Yarvin
-        0w0                           ::   71, ~syn, Henry Ault
+        0w0                           ::   71, ~syn, Pantera
         0w0                           ::   72, ~reg, Henry Ault
         0w0                           ::   73, ~tyd, Henry Ault
         0w0                           ::   74, ~sup, Henry Ault
@@ -271,7 +271,7 @@
         0w0                           ::  154, ~tus, Tlon
         0w0                           ::  155, ~tyc, Tlon
         0w0                           ::  156, ~leg, Tlon
-        0w0                           ::  157, ~nem, Tlon
+        0w0                           ::  157, ~nem, Jeremy Tunnell
         0w0                           ::  158, ~fer, Tlon
         0w0                           ::  159, ~mer, Tlon
         0w1E.bDeR7.cuQmt.Uc5CS.OSyMx  ::  160, ~ten, Tlon
@@ -310,7 +310,7 @@
         0w0                           ::  193, ~duc, Tlon
         0w0                           ::  194, ~fur, Tlon
         0w0                           ::  195, ~fex, Tlon
-        0w0                           ::  196, ~nul, Tlon
+        0w0                           ::  196, ~nul, Matthew Liston
         0w0                           ::  197, ~luc, Tlon
         0w0                           ::  198, ~len, Tlon
         0w0                           ::  199, ~ner, Tlon
@@ -1599,7 +1599,7 @@
       ==
     ::
         $cake
-      ~?  ?=(^ r.bon)  [%cake-woot-bad hen]
+      ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==

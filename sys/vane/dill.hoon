@@ -56,7 +56,7 @@
       {$init p/ship}                                    ::
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/path}                                    ::  reboot by path
+      {$vega p/path q/path}                             ::  reboot by path
       {$velo p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
