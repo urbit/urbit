@@ -12,7 +12,7 @@
   $%  {$request-token oauth-token/@t token-secret/@t}   ::  intermediate
       {$access-token oauth-token/@t token-secret/@t}    ::  full
   ==
-++  quay-enc  (list tape):quay        ::  partially rendered query string
+++  quay-enc  (list tape)              ::  partially rendered query string
 --
 ::
 ::::
