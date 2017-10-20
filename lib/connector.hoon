@@ -101,7 +101,7 @@
 ::  either `read-x` or `read-y`, in `places`.
 ::
 ++  read
-  |=  {ost/bone places/(list place) ren/care pax/path}
+  |=  {ost/bone places/(list place) ren/^care pax/path}
   ^-  move
   ?~  places
     ~&  [%strange-path pax]
@@ -111,13 +111,13 @@
     $(places t.places)
   (?+(ren !! $x read-x.i.places, $y read-y.i.places) pax)
 ::
-::  Handles http responses sent in `++read` by mappig them to
+::  Handles http responses sent in `++read` by mapping them to
 ::  their handling, either `sigh-x` or `sigh-y`, in `places`.
 ::
 ++  sigh
   =,  html
   =,  eyre
-  |=  {places/(list place) ren/care pax/path res/httr}
+  |=  {places/(list place) ren/^care pax/path res/httr}
   ^-  sub-result
   =<  ?+(ren ~|([%invalid-care ren] !!) $x sigh-x, $y sigh-y)
   |%
