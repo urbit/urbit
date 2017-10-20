@@ -74,62 +74,6 @@ let
     inherit sdk;
   };
 
-  # Note: We use nixpkgs.clang so we can compile an objective C library (which
-  # probably isn't needed).  We can't use our own clang because it doesn't
-  # quite work yet for compiling native executables.  Would be nice to get
-  # rid of the dependency on nixpkgs.clang though and just build everything
-  # with the normal nixpkgs GCC toolchain.
-  #
-  # Note: cctools shows a warning about llvm-config not found so disabling LTO
-  # support.
-  #
-  # Note: We need TAPI (.tbd file) support so we can link against libraries from
-  # the Mac OS X SDK, so we use commit 8e9c3f2.  The commit after that (22ebe72
-  # on 2017-04-01) added TAPIv2 support, which adds a new external dependency on
-  # libtapi, which is meant to be built as part of llvm, which will probably
-  # increase the complexity of this build a lot.  As of 2017-09-16, there have
-  # been no commits after that one, and the osxcross project is still on commit
-  # 8e9c3f2, so this is the more-traveled route.
-  cctools_tpoechtrager = native.make_derivation {
-    name = "cctools_tpoechtrager-${host}";
-    builder = ./cctools_tpoechtrager_builder.sh;
-    src = nixpkgs.fetchurl {
-      url = "https://github.com/tpoechtrager/cctools-port/archive/8e9c3f2.tar.gz";
-      sha256 = "04p5b1ix52yk48f09xkdv11ki8cc1zwzvm0dk2j8ylb8jk1a04y4";
-    };
-    configure_flags = "--target=${host}";
-    native_inputs = [
-      nixpkgs.clang
-      nixpkgs.libtool
-      nixpkgs.autoconf
-      nixpkgs.automake
-      nixpkgs.m4
-    ];
-  };
-
-  cctools = native.make_derivation rec {
-    name = "cctools-${host}";
-    builder = ./cctools_builder.sh;
-    version = "895";
-    inherit host;
-    src = nixpkgs.fetchurl {
-      url = "https://opensource.apple.com/tarballs/cctools/cctools-${version}.tar.gz";
-      sha256 = "1dsw1jhkfcm1x1vyhhpsg1bl1306v1rdvdxvfspgj5sild7h6rnf";
-    };
-
-    patches = [ ./cctools_megapatch.patch ];
-
-    CFLAGS =
-      "-I../cctools/include " +
-      "-isystem ${sdk}/usr/include " +
-
-      "-Wfatal-errors " +
-      "-Werror -Wno-deprecated-declarations -Wno-deprecated " +
-
-      "-D__private_extern__= " +
-      "-D__LITTLE_ENDIAN__";
-  };
-
   ld = native.make_derivation rec {
     name = "ld64-${version}-${host}";
     version = "274.2";
@@ -140,11 +84,12 @@ let
     };
     patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
-    native_inputs = [ clang ];
-    CXXFLAGS =
+    native_inputs = [ tapi native.pkgconf ];
+    CFLAGS =
+      "-fno-rtti " +
+      "-O2 " +
       "-Werror " +
       "-Wfatal-errors " +
-      "-std=gnu++11 " +
       "-Iinclude " +
       "-I../ld64/src/ld " +
       "-I../ld64/src/abstraction " +
@@ -187,8 +132,8 @@ let
       "-DWRAPPER_SDK_PATH=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
-      "-DWRAPPER_PATH=\\\"${cctools}/bin:${clang}/bin\\\"";
-    # TODO: use cctools.version for the -mlinker-version argument to clang
+      "-DWRAPPER_PATH=\\\"${ld}/bin:${clang}/bin\\\"";
+    # TODO: use ld.version for the -mlinker-version argument to clang
   };
 
   cmake_toolchain = import ../cmake_toolchain {
@@ -202,7 +147,7 @@ let
 
     # Cross-compiling toolchain.
     inherit toolchain;
-    toolchain_drvs = [ toolchain clang cctools xar ];
+    toolchain_drvs = [ clang ld xar toolchain ];
 
     # Build tools and variables to support them.
     inherit cmake_toolchain;
@@ -213,7 +158,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang tapi ld cctools cctools_tpoechtrager xar sdk sdk_lite;
+    inherit clang tapi sdk sdk_lite ld xar;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
