@@ -10,25 +10,25 @@
   |%
   ++  noun  action:talk                                 ::<  from %noun
   ++  json                                              ::>  from %json
-    ::=,  de-json:talk-json
+    =>  [. dejs:talk-json]  ::TODO  =,
     =,  dejs-soft:format
     |=  a/json
     ^-  action:talk
     =-  (need ((of -) a))
-    :~  create+(ot nom+so des+so sec+secu:de-json:talk-json ~)
+    :~  create+(ot nom+so des+so sec+secu ~)
         delete+(ot nom+so why+(mu so) ~)
         depict+(ot nom+so des+so ~)
-        filter+(ot nom+so fit+filt:de-json:talk-json ~)
-        permit+(ot nom+so inv+bo sis+(as:de-json:talk-json (su fed:ag)) ~)
-        source+(ot nom+so aub+bo srs+(as:de-json:talk-json sorc:de-json:talk-json) ~)
+        filter+(ot nom+so fit+filt ~)
+        permit+(ot nom+so inv+bo sis+(as (su fed:ag)) ~)
+        source+(ot nom+so aub+bo srs+(as sorc) ~)
         ::
-        convey+(ar thot:de-json:talk-json)
-        phrase+(ot aud+audi:de-json:talk-json ses+(ar spec:de-json:talk-json) ~)
+        convey+(ar thot)
+        phrase+(ot aud+audi ses+(ar spec:dejs:talk-json) ~)
         ::
-        notify+(ot aud+audi pes+pres ~):de-json:talk-json
-        naming+(ot aud+audi man+huma ~):de-json:talk-json
+        notify+(ot aud+audi pes+pres ~)
+        naming+(ot aud+audi man+huma ~)
         ::
-        glyph+(ot gyf+so aud+audi:de-json:talk-json bin+bo ~)
+        glyph+(ot gyf+so aud+audi bin+bo ~)
         nick+(ot who+(su fed:ag) nic+so ~)
     ==
   --
@@ -36,26 +36,26 @@
 ++  grow                                                ::>  convert to
   |%
   ++  json                                              ::>  to %json
-    ::=,  en-json:talk-json
+    =>  [. enjs:talk-json]  ::TODO  =,
     =,  enjs:format
     %+  frond  -.act
     ::>  only %convey has just a single piece of data.
-    ?:  ?=($convey -.act)  a+(turn tos.act thot:en-json:talk-json)
+    ?:  ?=($convey -.act)  a+(turn tos.act thot)
     %-  pairs
     ?-  -.act
       $create  ~[nom+s+nom.act des+s+des.act sec+s+sec.act]
-      $delete  ~[nom+s+nom.act why+(mabe:en-json:talk-json why.act cord:en-json:talk-json)]
+      $delete  ~[nom+s+nom.act why+(mabe why.act cord:enjs)]
       $depict  ~[nom+s+nom.act des+s+des.act]
-      $filter  ~[nom+s+nom.act fit+(filt:en-json:talk-json fit.act)]
-      $permit  ~[nom+s+nom.act inv+b+inv.act sis+(sa:en-json:talk-json sis.act ship)]
-      $source  ~[nom+s+nom.act sub+b+sub.act srs+(sa:en-json:talk-json srs.act sorc:en-json:talk-json)]
+      $filter  ~[nom+s+nom.act fit+(filt fit.act)]
+      $permit  ~[nom+s+nom.act inv+b+inv.act sis+(sa sis.act ship)]
+      $source  ~[nom+s+nom.act sub+b+sub.act srs+(sa srs.act sorc)]
       ::
-      $phrase  ~[aud+(audi:en-json:talk-json aud.act) ses+a+(turn ses.act spec:en-json:talk-json)]
+      $phrase  ~[aud+(audi aud.act) ses+a+(turn ses.act spec:enjs)]
       ::
-      $notify  ~[aud+(audi:en-json:talk-json aud.act) pes+s+pes.act]
-      $naming  ~[aud+(audi:en-json:talk-json aud.act) man+(huma:en-json:talk-json man.act)]
+      $notify  ~[aud+(audi aud.act) pes+s+pes.act]
+      $naming  ~[aud+(audi aud.act) man+(huma man.act)]
       ::
-      $glyph   ~[gyf+s+gyf.act aud+(sa:en-json:talk-json aud.act circ:en-json:talk-json) bin+b+bin.act]
+      $glyph   ~[gyf+s+gyf.act aud+(sa aud.act circ) bin+b+bin.act]
       $nick    ~[who+(ship who.act) nic+s+nic.act]
     ==
   --

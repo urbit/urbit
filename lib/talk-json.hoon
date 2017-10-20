@@ -70,7 +70,7 @@
     ;~(plug circ rang)
   --
 ::
-++  en-json                                             ::>  sur to json
+++  enjs                                                ::>  sur to json
   =,  talk
   =,  enjs:format
   |%
@@ -186,7 +186,7 @@
     (sa a circ)
   --
 ::
-++  de-json                                             ::>  json to sur
+++  dejs                                                ::>  json to sur
   =,  talk
   =,  dejs-soft:format
   |%
