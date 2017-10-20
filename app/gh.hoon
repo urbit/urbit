@@ -176,7 +176,7 @@
 ++  peer-scry
   |=  pax/path
   ^-  {(list move) _+>.$}
-  ?>  ?=({care *} pax)
+  ?>  ?=({care:clay *} pax)
   :_  +>.$  :_  ~
   (read:connector ost.hid (places %read pax) i.pax t.pax)
 ::
@@ -186,7 +186,7 @@
 ++  sigh-httr
   |=  {way/wire res/httr}
   ^-  {(list move) _+>.$}
-  ?.  ?=({$read care @ *} way)
+  ?.  ?=({$read care:clay @ *} way)
     ~&  res=res
     [~ +>.$]
   =*  style  i.way
