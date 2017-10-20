@@ -192,12 +192,20 @@
   |%
   ::TODO  these first few should maybe make their way
   ::      into the stdlib...
+  ++  re                                                ::>  recursive reparsers
+    |*  {gar/* sef/_|.(fist)}
+    |=  jon/json
+    ^-  (unit _gar)
+    =-  ~!  gar  ~!  (need -)  -
+    ((sef) jon)
+  ::
   ++  as                                                ::>  array as set
     |*  a/fist
     (cu ~(gas in *(set _(need *a))) (ar a))
   ::
   ++  dank                                              ::>  tank
     ^-  $-(json (unit tank))
+    %+  re  *tank  |.  ~+
     %-  of  :~
       leaf+sa
       palm+(ot style+(ot mid+sa cap+sa open+sa close+sa ~) lines+(ar dank) ~)
@@ -290,6 +298,7 @@
   ::
   ++  spec                                              ::>  speech
     ^-  $-(json (unit speech))
+    %+  re  *speech  |.  ~+
     %-  of  :~
       lin+(ot pat+bo txt+so ~)
       url+(su aurf:de-purl:html)
