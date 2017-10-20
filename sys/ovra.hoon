@@ -14,7 +14,6 @@
 ++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
 ++  beak  {p/ship q/desk r/case}                        ::  garnish with beak
 ++  bone  @ud                                           ::  opaque duct
-++  care  ?($$ $u $v $w $x $y $z)                       ::  namespace mode
 ++  case                                                ::  version
           $%  {$da p/@da}                               ::  date
               {$tas p/@tas}                             ::  label
@@ -347,7 +346,7 @@
     ^-  (unit (unit (cask)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
-    =+  ren=(care (rsh 3 1 ron))
+    =+  ren=(@t (rsh 3 1 ron))
     |-  ^-  (unit (unit (cask)))
     ?~  q.niz  ~
     ?.  =(lal p.i.q.niz)  $(q.niz t.q.niz)

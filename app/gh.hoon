@@ -19,6 +19,7 @@
 ::
 ::
 =,  html
+=,  eyre
 =>  |%
     ++  move  (pair bone card)
     ++  card  

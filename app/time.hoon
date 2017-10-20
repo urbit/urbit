@@ -2,6 +2,8 @@
 ::::  /hoon/time/app
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 |%
 ++  card  {$wait wire @da}
 --
