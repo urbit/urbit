@@ -154,7 +154,7 @@
   ^-  card
   :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]  
   :-  %womb-invite
-  ^-  [cord invite]:womb
+  ^-  [cord:womb invite:womb]
   =+  inv=(scot %uv (end 7 1 eny.bow))
   [inv [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
 --
