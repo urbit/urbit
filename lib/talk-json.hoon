@@ -14,6 +14,8 @@
 ::>  3. lists and sets become arrays. maps become objects.
 ::>  4. stringify cells only when/in a way such that it benefits the majority of
 ::>     foreseen usecases.
+::>
+::>  q: should parsing be strict or forgiving? ie, accept "ship" and/or "~ship"?
 ::
 |%
 ++  en-tape                                             ::>  sur to tape
@@ -77,7 +79,7 @@
   ++  sa                                                ::>  set as array
     |*  {a/(set) b/$-(* json)}
     ^-  json
-    [%a ~(tap in (~(run in a) b))]
+    [%a ~(tap in `(set json)`(~(run in a) b))]
   ::
   ++  dank                                              ::>  tank
     |=  a/tank
@@ -106,6 +108,15 @@
       ~
     ==
   ::
+  ++  cord                                              ::>  string from cord
+    |=  a/@t
+    s+a
+  ::
+  ++  mabe                                              ::>  null or value
+    |*  {a/(unit) b/$-(* json)}
+    ^-  json
+    ?~(a ~ (b u.a))
+  ::
   ::
   ++  circ                                              ::>  circle
     |=  a/circle
@@ -121,6 +132,26 @@
     |=  a/source
     ^-  json
     s+(crip (sorc:en-tape a))
+  ::
+  ++  huma                                              ::>  human
+    |=  a/human
+    ^-  json
+    (pairs han+(mabe han.a cord) tru+(mabe tru.a trun) ~)
+  ::
+  ++  trun                                              ::>  truename
+    |=  a/truename
+    ^-  json
+    (pairs fir+s+fir.a mid+(mabe mid.a cord) las+s+las.a ~)
+  ::
+  ++  thot                                              ::>  thought
+    |=  a/thought
+    ^-  json
+    %-  pairs  :~
+      uid+s+(scot %uv uid.a)
+      aud+(audi aud.a)
+      wen+(time wen.a)
+      sep+(spec sep.a)
+    ==
   ::
   ++  spec                                              ::>  speech
     |=  a/speech
@@ -148,6 +179,11 @@
       $text  s+(of-wain:format +.a)
       $tank  a+(turn +.a dank)
     ==
+  ::
+  ++  audi                                              ::>  audience
+    |=  a/audience
+    ^-  json
+    (sa a circ)
   --
 ::
 ++  de-json                                             ::>  json to sur
@@ -206,6 +242,10 @@
     ^-  $-(json (unit filter))
     (ot cas+bo utf+bo ~)
   ::
+  ++  secu                                              ::>  security
+    ^-  $-(json (unit security))
+    (su (perk %black %white %green %brown ~))
+  ::
   ++  pres                                              ::>  presence
     ^-  $-(json (unit presence))
     (su (perk %gone %idle %hear %talk ~))
@@ -249,16 +289,15 @@
     ==
   ::
   ++  spec                                              ::>  speech
-    ::^-  $-(json (unit speech))
-    (of lin+(ot pat+bo txt+so ~) ~)
-    ::%-  of  :~
-    ::  lin+(ot pat+bo txt+so ~)
-    ::  url+(su aurf:de-purl:html)
-    ::  exp+(ot exp+so res+(ar dank) ~)
-    ::  ire+(ot top+seri sep+spec ~)
-    ::  fat+(ot tac+atta sep+spec ~)
-    ::  inv+(ot inv+bo cir+circ ~)
-    ::==
+    ^-  $-(json (unit speech))
+    %-  of  :~
+      lin+(ot pat+bo txt+so ~)
+      url+(su aurf:de-purl:html)
+      exp+(ot exp+so res+(ar dank) ~)
+      ire+(ot top+seri sep+spec ~)
+      fat+(ot tac+atta sep+spec ~)
+      inv+(ot inv+bo cir+circ ~)
+    ==
   ::
   ++  atta                                              ::>  attache
     ^-  $-(json (unit attache))
