@@ -42,7 +42,7 @@ function build-lib() {
   ar cr $lib $lib.o/*.o
 }
 
-CFLAGS="-fno-rtti -Iinclude -I../tapi/include -I$clang/include"
+CFLAGS="-fno-rtti -O2 -Iinclude -I../tapi/include -I$clang/include"
 
 build-lib ../tapi/tools/libtapi libtapi.a
 build-lib ../tapi/lib/Config libtapiConfig.a
@@ -51,7 +51,36 @@ build-lib ../tapi/lib/Driver libtapiDriver.a
 build-lib ../tapi/lib/Scanner libtapiScanner.a
 build-lib ../tapi/lib/SDKDB libtapiSDKDB.a
 
-LDFLAGS="-L$clang/lib -L. -ltapi -ltapiDriver -ltapiCore -ltapiDriver -ltapiScanner -ltapiSDKDB -ltapiConfig -lclangTooling -lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAST -lclangAnalysis -lclangEdit -lclangLex -lclangBasic -lLLVMDemangle -lLLVMObject -lLLVMBitReader -lLLVMMC -lLLVMMCParser -lLLVMCore -lLLVMBinaryFormat -lLLVMOption -lLLVMProfileData -lLLVMSupport -lpthread"
+LDFLAGS="-L$clang/lib -L.
+-ltapi
+-ltapiDriver
+-ltapiCore
+-ltapiDriver
+-ltapiScanner
+-ltapiSDKDB
+-ltapiConfig
+-lclangTooling
+-lclangFrontend
+-lclangDriver
+-lclangSerialization
+-lclangParse
+-lclangSema
+-lclangAST
+-lclangAnalysis
+-lclangEdit
+-lclangLex
+-lclangBasic
+-lLLVMDemangle
+-lLLVMObject
+-lLLVMBitReader
+-lLLVMMC
+-lLLVMMCParser
+-lLLVMCore
+-lLLVMBinaryFormat
+-lLLVMOption
+-lLLVMProfileData
+-lLLVMSupport
+-lpthread"
 
 echo "building tapi"
 g++ $CFLAGS ../tapi/tools/tapi/tapi.cpp $LDFLAGS -o tapi
