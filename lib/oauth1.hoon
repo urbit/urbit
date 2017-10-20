@@ -26,7 +26,10 @@
 ::
 ++  joint                                              ::  between every pair
   |=  {a/tape b/wall}  ^-  tape
-  ?~(b b |-(?~(t.b i.b :(weld i.b a $(b t.b)))))
+  ?~  b  b
+  |-  ^-  tape
+  ?~  t.b  i.b
+  :(weld i.b a $(b t.b)))))
 ::
 ++  join-urle  |=(a/(list tape) (joint "&" (turn a urle)))
 ::   query string in oauth1 'k1="v1", k2="v2"' form
