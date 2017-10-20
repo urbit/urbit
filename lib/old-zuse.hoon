@@ -80,7 +80,7 @@
 ++  apex        !!                                      ::  XX deprecated
 ++  ares        ares.is                                 ::  possible error
 ++  bale        bale:eyre                               ::  driver state
-++  iden        !!                                      ::  username
+++  iden        user:eyre                               ::  username
 ++  sec-move    sec-move:eyre                           ::  driver effect
 ++  ball        !!                                      ::  XX deprecated
 ++  bait        bait:ames                               ::  fmt nrecvd spec
