@@ -7,11 +7,11 @@
 ::::  ~fyr
   ::
 =,  old-zuse
-|_  {cord invite}:womb
+|_  {cord invite:womb}
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  {cord invite}:womb                ::  clam from %noun
+  ++  noun  {cord invite:womb}                ::  clam from %noun
   ++  json
     %+  corl  need
     =>  jo
