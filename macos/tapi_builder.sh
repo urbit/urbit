@@ -65,6 +65,8 @@ cp tapi tapi-run $out/bin
 
 cp -r ../tapi/include $out/
 
+cp include/tapi/Version.inc $out/include/tapi/
+
 cat > $out/lib/pkgconfig/libtapi.pc <<EOF
 prefix=$out
 libdir=\${prefix}/lib

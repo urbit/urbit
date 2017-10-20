@@ -74,6 +74,28 @@ let
     inherit sdk;
   };
 
+  ld = native.make_derivation rec {
+    name = "ld64-${version}-${host}";
+    version = "274.2";
+    inherit host arch;
+    src = nixpkgs.fetchurl {
+      url = "https://opensource.apple.com/tarballs/ld64/ld64-${version}.tar.gz";
+      sha256 = "1mzp2sszcvg86b1jb90prhcrwk7g7inikr7plnklk7g93728jp8p";
+    };
+    patches = [ ./ld64_megapatch.patch ];
+    builder = ./ld_builder.sh;
+    native_inputs = [ tapi native.pkgconf ];
+    CFLAGS =
+      "-fno-rtti " +
+      "-Werror " +
+      "-Wfatal-errors " +
+      "-Iinclude " +
+      "-I../ld64/src/ld " +
+      "-I../ld64/src/abstraction " +
+      "-isystem ${sdk_lite}/usr/include " +
+      "-D__LITTLE_ENDIAN__";
+  };
+
   # Note: We use nixpkgs.clang so we can compile an objective C library (which
   # probably isn't needed).  We can't use our own clang because it doesn't
   # quite work yet for compiling native executables.  Would be nice to get
@@ -127,28 +149,6 @@ let
       "-Werror -Wno-deprecated-declarations -Wno-deprecated " +
 
       "-D__private_extern__= " +
-      "-D__LITTLE_ENDIAN__";
-  };
-
-  ld = native.make_derivation rec {
-    name = "ld64-${version}-${host}";
-    version = "274.2";
-    inherit host arch;
-    src = nixpkgs.fetchurl {
-      url = "https://opensource.apple.com/tarballs/ld64/ld64-${version}.tar.gz";
-      sha256 = "1mzp2sszcvg86b1jb90prhcrwk7g7inikr7plnklk7g93728jp8p";
-    };
-    patches = [ ./ld64_megapatch.patch ];
-    builder = ./ld_builder.sh;
-    native_inputs = [ clang ];
-    CXXFLAGS =
-      "-Werror " +
-      "-Wfatal-errors " +
-      "-std=gnu++11 " +
-      "-Iinclude " +
-      "-I../ld64/src/ld " +
-      "-I../ld64/src/abstraction " +
-      "-isystem ${sdk_lite}/usr/include " +
       "-D__LITTLE_ENDIAN__";
   };
 
