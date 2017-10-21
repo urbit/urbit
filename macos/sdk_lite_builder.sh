@@ -95,7 +95,7 @@ strlcat(char * __restrict__ dst, const char * __restrict__ src, size_t size)
 static inline size_t
 strlcpy(char * __restrict__ dst, const char * __restrict__ src, size_t size)
 {
-  if (!size) { return strnlen(src, size); }
+  if (!size) { return 0; /** strlen is not safe **/ }
   dst[0] = 0;
   return strlcat(dst, src, size);
 
