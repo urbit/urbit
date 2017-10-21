@@ -43,22 +43,53 @@ typedef unsigned int __darwin_natural_t;
 EOF
 
 cat > $out/usr/include/string.h <<EOF
-// MacOS programs expect string.h to define strlcpy.
+// MacOS programs expect string.h to define these.
 
 #include_next <string.h>
 
 #ifndef _NIXCRPKGS_MACOS_SDK_STRING_H
 #define _NIXCRPKGS_MACOS_SDK_STRING_H
 
+#include <stdint.h>
+#include <limits.h>
+
 static inline size_t
-strlcpy(char * __restrict__ dst, const char * __restrict__ src, size_t dstsize)
+strlcat(char * __restrict__ dst, const char * __restrict__ src, size_t size)
 {
-  size_t len = strlen(src);
-  if (!dstsize) { return len; }
-  if (len >= dstsize) { len = dstsize - 1; }
-  memcpy(dst, src, len);
-  dst[len] = 0;
-  return len;
+  size_t srclen = strnlen(src, size);
+  if (!size) { return srclen; }
+  size_t dstlen = strnlen(dst, size);
+
+  size_t wantlen = SIZE_T_MAX;
+  if (SIZE_T_MAX - srclen > dstlen)
+  {
+    wantlen = dstlen + srclen;
+  }
+
+  if (dstlen > size - 1) { return wantlen; }
+
+  size_t cpylen = srclen;
+  if (wantlen > size - 1) { cpylen = size - dstlen - 1; }
+
+  memcpy(dst + dstlen, src, cpylen);
+  dst[dstlen + cpylen] = 0;
+
+  return wantlen;
+}
+
+static inline size_t
+strlcpy(char * __restrict__ dst, const char * __restrict__ src, size_t size)
+{
+  if (!size) { return strnlen(src, size); }
+  dst[0] = 0;
+  return strlcat(dst, src, size);
+
+  //size_t srclen = strlen(src);
+  //size_t cpylen = srclen;
+  //if (cpylen > size - 1) { cpylen = size - 1; }
+  //memcpy(dst, src, cpylen);
+  //dst[cpylen] = 0;
+  //return srclen;
 }
 
 #endif
