@@ -29,23 +29,23 @@
   ?~  b  b
   |-  ^-  tape
   ?~  t.b  i.b
-  :(weld i.b a $(b t.b)))))
+  :(weld i.b a $(b t.b))
 ::
-++  join-urle  |=(a/(list tape) (joint "&" (turn a urle)))
+++  join-en-urle  |=(a/(list tape) (joint "&" (turn a en-urlt:html)))
 ::   query string in oauth1 'k1="v1", k2="v2"' form
 ++  to-header
   |=  a/quay  ^-  tape
   %+  joint  ", "
   (turn a |=({k/@t v/@t} `tape`~[k '="' v '"']))        ::  normalized later
 ::
-::   partial tail:earn for sorting
+::   partial tail:en-purl:html for sorting
 ++  encode-pairs
   |=  a/quay  ^-  quay-enc
   %+  turn  a
   |=  {k/@t v/@t}  ^-  tape
-  :(weld (urle (trip k)) "=" (urle (trip v)))
+  :(weld (en-urlt:html (trip k)) "=" (en-urlt:html (trip v)))
 ::
-++  parse-pairs                                         ::  x-form-urlencoded
+++  parse-pairs                                         ::  x-form-en-urlt:htmlncoded
   |=  bod/(unit octs)  ^-  quay-enc
   ~|  %parsing-body
   ?~  bod  ~
@@ -54,21 +54,21 @@
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss
   =.  b  (quay:hep-to-cab b)
-  =-  [a %post - ?~(b ~ (some (as-octt +:(tail:earn b))))]
-  (my content-type+['application/x-www-form-urlencoded']~ ~)
+  =-  [a %post - ?~(b ~ (some (as-octt +:(tail:en-purl:html b))))]
+  (my content-type+['application/x-www-form-en-urlt:htmlncoded']~ ~)
 ::
 ::
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
   =-  (mean (flop `tang`[>a< -]))
-  (turn (to-wain (crip b)) |=(c/cord leaf+(trip c)))
+  (turn (to-wain:format (crip b)) |=(c/cord leaf+(trip c)))
 ::
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  quay-keys  |-($@(knot {$ $}))  :: improper tree
 ++  grab-quay  :: ?=({@t @t @t} (grab-quay r:*httr %key1 %key2 %key3))
   |*  {a/(unit octs) b/quay-keys}
   =+  ~|  bad-quay+a
-      c=(rash q:(need `(unit octs)`a) yquy:urlp)
+      c=(rash q:(need `(unit octs)`a) yquy:de-purl:html)
   ~|  grab-quay+[c b]
   =+  all=(malt c)
   %.  b
@@ -86,7 +86,7 @@
   ^-  {key/@t sec/@t $~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {key/@t sec/@t $~}) (to-wain key))
+    ((hard {key/@t sec/@t $~}) (to-wain:format key))
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth1 {<`path`dom>}
@@ -105,8 +105,8 @@
 ++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  oauth-callback
   ~&  [%oauth-warning "Make sure this urbit ".
-                      "is running on {(earn our-host `~ ~)}"]
-  %-    crip    %-  earn
+                      "is running on {(en-purl:html our-host `~ ~)}"]
+  %-    crip    %-  en-purl:html
   %^  into-url:interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
   :~  domain+(join '.' (flop dom))
@@ -138,7 +138,8 @@
   ?:  =(usr nam)  &
   =<  |
   %-  %*(. slog pri 1)
-  (flop p:(mule |.(~|(wrong-user+[req=usr got=nam] !!))))
+  ::  XX cgyarvin should figure out why we need to cast to $~
+  (flop p:(mule |.(~|(wrong-user+[req=usr got=nam] `$~`!!))))
 ::
 ++  check-token-quay
   |=  a/quay  ^+  %&
@@ -167,7 +168,7 @@
         (encode-pairs (weld auq quy))
     =+  bay=(base-string med url qen)
     =+  sig=(sign signing-key bay)
-    =.  auq  ['oauth_signature'^(crip (urle sig)) auq]
+    =.  auq  ['oauth_signature'^(crip (en-urlt:html sig)) auq]
     (crip "OAuth {(to-header auq)}")
   ::
   ++  computed-query
@@ -175,24 +176,24 @@
     :~  oauth-consumer-key+consumer-key
         oauth-nonce+(scot %uw (shaf %non eny))
         oauth-signature-method+'HMAC-SHA1'
-        oauth-timestamp+(rsh 3 2 (scot %ui (unt now)))
+        oauth-timestamp+(rsh 3 2 (scot %ui (unt:chrono:userlib now)))
         oauth-version+'1.0'
     ==
   ++  base-string
     |=  {med/meth url/purl qen/quay-enc}  ^-  tape
     =.  qen  (sort qen aor)
-    %-  join-urle
+    %-  join-en-urle
     :~  (cuss (trip `@t`med))
-        (earn url)
+        (en-purl:html url)
         (joint "&" qen)
     ==
   ++  sign
     |=  {key/cord bay/tape}  ^-  tape
-    (sifo (swap 3 (hmac key (crip bay))))
+    (en-base64:mimes:html (swp 3 (hmac:crypto key (crip bay))))
   ::
   ++  signing-key
     %-  crip
-    %-  join-urle  :~
+    %-  join-en-urle  :~
       (trip consumer-secret)
       (trip ?^(tok token-secret.tok ''))
     ==
@@ -202,7 +203,7 @@
   |=  {extra/quay request/{url/purl meth hed/math (unit octs)}}
   ^-  hiss
   ::  =.  url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
-  ~&  add-auth-header+(earn url.request)
+  ~&  add-auth-header+(en-purl:html url.request)
   %_    request
       hed
     (~(add ja hed.request) %authorization (header:auth extra request))
