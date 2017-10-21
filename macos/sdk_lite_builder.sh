@@ -98,13 +98,6 @@ strlcpy(char * __restrict__ dst, const char * __restrict__ src, size_t size)
   if (!size) { return 0; /** strlen is not safe **/ }
   dst[0] = 0;
   return strlcat(dst, src, size);
-
-  //size_t srclen = strlen(src);
-  //size_t cpylen = srclen;
-  //if (cpylen > size - 1) { cpylen = size - 1; }
-  //memcpy(dst, src, cpylen);
-  //dst[cpylen] = 0;
-  //return srclen;
 }
 
 #endif
