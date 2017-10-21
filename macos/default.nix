@@ -93,6 +93,7 @@ let
       "-Wfatal-errors " +
       "-Iinclude " +
       "-I../ld64/src/ld " +
+      "-I../ld64/src/ld/parsers " +
       "-I../ld64/src/abstraction " +
       "-isystem ${sdk_lite}/usr/include " +
       "-D__LITTLE_ENDIAN__ " +

@@ -1,3 +1,15 @@
+diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
+--- ld64-274.2-orig/src/ld/InputFiles.cpp	2017-09-29 07:44:04.316338766 -0700
++++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-20 21:49:40.217408984 -0700
+@@ -215,7 +215,7 @@
+ 	if ( fd == -1 )
+ 		throwf("can't open file, errno=%d", errno);
+ 	if ( info.fileLen < 20 )
+-		throwf("file too small (length=%llu)", info.fileLen);
++		throwf("file too small (length=%lu)", info.fileLen);
+ 
+ 	uint8_t* p = (uint8_t*)::mmap(NULL, info.fileLen, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
+ 	if ( p == (uint8_t*)(-1) )
 diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
 --- ld64-274.2-orig/src/ld/ld.cpp	2017-09-29 07:44:04.316338766 -0700
 +++ ld64-274.2/src/ld/ld.cpp	2017-09-29 20:49:23.429249818 -0700
