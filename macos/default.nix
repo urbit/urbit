@@ -95,7 +95,6 @@ let
       "-I../ld64/src/abstraction " +
       "-isystem ${sdk_lite}/usr/include " +
       "-D__LITTLE_ENDIAN__ " +
-      "-D__USE_BSD " +
       "-D_DARWIN_C_SOURCE";
   };
 

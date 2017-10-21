@@ -15,6 +15,7 @@ libunwind.h
 Availability.h
 AvailabilityMacros.h
 AvailabilityInternal.h
+sys/_endian.h
 sys/_types.h
 sys/_pthread/_pthread_types.h
 sys/_types/_mach_port_t.h
@@ -42,6 +43,19 @@ typedef long __darwin_intptr_t;
 typedef unsigned int __darwin_natural_t;
 EOF
 
+cat > $out/usr/include/i386/limits.h <<EOF
+// The SDK version defines MB_LEN_MAX, which causes errors.
+// We only want a few things from this header that glibc does not provide.
+#pragma once
+#include <limits.h>
+
+#if !defined(_ANSI_SOURCE)
+#if (!defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE)) || defined(_DARWIN_C_SOURCE)
+#define SIZE_T_MAX ULONG_MAX
+#endif
+#endif
+EOF
+
 cat > $out/usr/include/string.h <<EOF
 // MacOS programs expect string.h to define these.
 
@@ -52,6 +66,7 @@ cat > $out/usr/include/string.h <<EOF
 
 #include <stdint.h>
 #include <limits.h>
+#include <i386/limits.h>
 
 static inline size_t
 strlcat(char * __restrict__ dst, const char * __restrict__ src, size_t size)
