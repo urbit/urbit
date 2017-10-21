@@ -1,6 +1,6 @@
 diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
 --- ld64-274.2-orig/src/ld/InputFiles.cpp	2017-09-29 07:44:04.316338766 -0700
-+++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-21 08:44:26.779704825 -0700
++++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-21 12:44:29.538062464 -0700
 @@ -215,7 +215,7 @@
  	if ( fd == -1 )
  		throwf("can't open file, errno=%d", errno);
@@ -28,6 +28,33 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
  		if ( realpath(fullPath, realName) != NULL )
  			fullPath = realName;
  		const ld::dylib::File* dylib = dynamic_cast<const ld::dylib::File*>(file);
+@@ -472,7 +472,7 @@
+ 		// <rdar://problem/4947347> LD_TRACE_ARCHIVES should only print out when a .o is actually used from an archive
+ 		_archiveFilesLogged.insert(file);
+ 		const char* fullPath = file->path();
+-		char realName[MAXPATHLEN];
++		char realName[PATH_MAX];
+ 		if ( realpath(fullPath, realName) != NULL )
+ 			fullPath = realName;
+ 		logTraceInfo("[Logging for XBS] Used static archive: %s\n", fullPath);
+@@ -499,7 +499,7 @@
+ 		}
+ 	}
+ 
+-	char trace_buffer[MAXPATHLEN * 2];
++	char trace_buffer[PATH_MAX * 2];
+     va_list ap;
+ 	va_start(ap, format);
+ 	int length = vsnprintf(trace_buffer, sizeof(trace_buffer), format, ap);
+@@ -1457,7 +1457,7 @@
+ 			for (ld::dylib::File* dylib :  implicitDylibs) {
+ 				if ( dylib->speculativelyLoaded() && !dylib->explicitlyLinked() && dylib->providedExportAtom() ) {
+ 					const char* fullPath = dylib->path();
+-					char realName[MAXPATHLEN];
++					char realName[PATH_MAX];
+ 					if ( realpath(fullPath, realName) != NULL )
+ 						fullPath = realName;
+ 					logTraceInfo("[Logging for XBS] Used dynamic library: %s\n", fullPath);
 diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
 --- ld64-274.2-orig/src/ld/ld.cpp	2017-09-29 07:44:04.316338766 -0700
 +++ ld64-274.2/src/ld/ld.cpp	2017-09-29 20:49:23.429249818 -0700

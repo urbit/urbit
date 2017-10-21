@@ -39,6 +39,7 @@ let
       "-DCMAKE_BUILD_TYPE=Release " +
       # "-DCMAKE_BUILD_TYPE=Debug " +
       "-DLLVM_TARGETS_TO_BUILD=X86\;ARM " +
+      "-DLLVM_ENABLE_RTTI=ON " +  # ld64 uses dynamic_cast, requiring rtti
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
@@ -86,7 +87,6 @@ let
     builder = ./ld_builder.sh;
     native_inputs = [ tapi native.pkgconf ];
     CFLAGS =
-      "-fno-rtti " +
       "-O2 " +
       "-Wno-unused-result " +
       "-Werror " +
