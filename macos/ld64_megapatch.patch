@@ -1,6 +1,6 @@
 diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
 --- ld64-274.2-orig/src/ld/InputFiles.cpp	2017-09-29 07:44:04.316338766 -0700
-+++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-20 21:49:40.217408984 -0700
++++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-21 08:44:26.779704825 -0700
 @@ -215,7 +215,7 @@
  	if ( fd == -1 )
  		throwf("can't open file, errno=%d", errno);
@@ -10,6 +10,24 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
  
  	uint8_t* p = (uint8_t*)::mmap(NULL, info.fileLen, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
  	if ( p == (uint8_t*)(-1) )
+@@ -264,7 +264,7 @@
+ 					newFileLen = statBuffer.st_size;
+ 				}
+ 				if ( fileOffset+len > newFileLen ) {
+-					throwf("truncated fat file. Slice from %u to %llu is past end of file with length %llu", 
++					throwf("truncated fat file. Slice from %u to %lu is past end of file with length %lu", 
+ 						fileOffset, fileOffset+len, info.fileLen);
+ 				}
+ 			}
+@@ -422,7 +422,7 @@
+ {
+ 	if ( _options.traceDylibs() ) {
+ 		const char* fullPath = file->path();
+-		char realName[MAXPATHLEN];
++		char realName[PATH_MAX];
+ 		if ( realpath(fullPath, realName) != NULL )
+ 			fullPath = realName;
+ 		const ld::dylib::File* dylib = dynamic_cast<const ld::dylib::File*>(file);
 diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
 --- ld64-274.2-orig/src/ld/ld.cpp	2017-09-29 07:44:04.316338766 -0700
 +++ ld64-274.2/src/ld/ld.cpp	2017-09-29 20:49:23.429249818 -0700
