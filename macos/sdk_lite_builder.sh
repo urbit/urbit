@@ -35,8 +35,9 @@ for header in $headers; do
 done
 
 cat > $out/usr/include/i386/_types.h <<EOF
-// Don't redefine things like __int64_t, causing a conflicting definition.
-// Just include the appropriate glibc header.
+// The SDK version defines things like __int64_t, causing errors.
+
+#pragma once
 #include <bits/types.h>
 #include <sys/cdefs.h>
 typedef long __darwin_intptr_t;
@@ -45,7 +46,7 @@ EOF
 
 cat > $out/usr/include/i386/limits.h <<EOF
 // The SDK version defines MB_LEN_MAX, which causes errors.
-// We only want a few things from this header that glibc does not provide.
+
 #pragma once
 #include <limits.h>
 
@@ -59,11 +60,8 @@ EOF
 cat > $out/usr/include/string.h <<EOF
 // MacOS programs expect string.h to define these.
 
+#pragma once
 #include_next <string.h>
-
-#ifndef _NIXCRPKGS_MACOS_SDK_STRING_H
-#define _NIXCRPKGS_MACOS_SDK_STRING_H
-
 #include <stdint.h>
 #include <limits.h>
 #include <i386/limits.h>
@@ -99,8 +97,6 @@ strlcpy(char * __restrict__ dst, const char * __restrict__ src, size_t size)
   dst[0] = 0;
   return strlcat(dst, src, size);
 }
-
-#endif
 EOF
 
 # The MacOS SDK expects sys/cdefs.h to define __unused as an attribute.  But we

@@ -83,7 +83,7 @@ diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
  		*out++ = rawNum[i];
 diff -ur ld64-274.2-orig/src/ld/Options.cpp ld64-274.2/src/ld/Options.cpp
 --- ld64-274.2-orig/src/ld/Options.cpp	2017-09-29 07:44:04.319672117 -0700
-+++ ld64-274.2/src/ld/Options.cpp	2017-10-20 08:22:11.138814956 -0700
++++ ld64-274.2/src/ld/Options.cpp	2017-10-20 21:42:54.069243537 -0700
 @@ -35,6 +35,8 @@
  #include <cxxabi.h>
  #include <Availability.h>
@@ -102,6 +102,87 @@ diff -ur ld64-274.2-orig/src/ld/Options.cpp ld64-274.2/src/ld/Options.cpp
  		data.push_back(*it);
  	}
  	for (std::vector<const char*>::const_iterator it=fWildCard.begin(); it != fWildCard.end(); ++it) {
+@@ -2562,7 +2564,7 @@
+ 				fBaseAddress = parseAddress(address);
+ 				uint64_t temp = ((fBaseAddress+fSegmentAlignment-1) & (-fSegmentAlignment)); 
+ 				if ( fBaseAddress != temp ) {
+-					warning("-seg1addr not %lld byte aligned, rounding up", fSegmentAlignment);
++					warning("-seg1addr not %ld byte aligned, rounding up", fSegmentAlignment);
+ 					fBaseAddress = temp;
+ 				}
+ 				cannotBeUsedWithBitcode(arg);
+@@ -2826,7 +2828,7 @@
+ 				seg.address = parseAddress(argv[++i]);
+ 				uint64_t temp = ((seg.address+fSegmentAlignment-1) & (-fSegmentAlignment)); 
+ 				if ( seg.address != temp )
+-					warning("-segaddr %s not %lld byte aligned", seg.name, fSegmentAlignment);
++					warning("-segaddr %s not %ld byte aligned", seg.name, fSegmentAlignment);
+ 				fCustomSegmentAddresses.push_back(seg);
+ 				cannotBeUsedWithBitcode(arg);
+ 			}
+@@ -4501,7 +4503,7 @@
+ 			}
+ 			// range check -seg1addr for ARM
+ 			if ( fBaseAddress > fMaxAddress ) {
+-				warning("ignoring -seg1addr 0x%08llX.  Address out of range.", fBaseAddress);
++				warning("ignoring -seg1addr 0x%08lX.  Address out of range.", fBaseAddress);
+ 				fBaseAddress = 0;
+ 			}
+ 			break;
+@@ -5130,7 +5132,7 @@
+ 	// Make sure -image_base matches alignment
+ 	uint64_t alignedBaseAddress = (fBaseAddress+fSegmentAlignment-1) & (-fSegmentAlignment);
+ 	if ( alignedBaseAddress != fBaseAddress ) {
+-		warning("base address 0x%llX is not properly aligned. Changing it to 0x%llX", fBaseAddress, alignedBaseAddress);
++		warning("base address 0x%lX is not properly aligned. Changing it to 0x%lX", fBaseAddress, alignedBaseAddress);
+ 		fBaseAddress = alignedBaseAddress;
+ 	}
+ 
+@@ -5324,7 +5326,7 @@
+ 				break;
+ 		}
+ 		if ( (fStackSize & (-fSegmentAlignment)) != fStackSize )
+-			throwf("-stack_size must be multiple of segment alignment (%lldKB)", fSegmentAlignment/1024);
++			throwf("-stack_size must be multiple of segment alignment (%ldKB)", fSegmentAlignment/1024);
+ 		switch ( fOutputKind ) {
+ 			case Options::kDynamicExecutable:
+ 			case Options::kStaticExecutable:
+@@ -5339,7 +5341,7 @@
+ 				throw "-stack_size option can only be used when linking a main executable";
+ 		}
+ 		if ( fStackSize > fStackAddr )
+-			throwf("-stack_size (0x%08llX) must be smaller than -stack_addr (0x%08llX)", fStackSize, fStackAddr);
++			throwf("-stack_size (0x%08lX) must be smaller than -stack_addr (0x%08lX)", fStackSize, fStackAddr);
+ 	}
+ 
+ 	// check that -allow_stack_execute is only used with main executables
+@@ -5439,7 +5441,7 @@
+ 
+ 	// make sure all required exported symbols exist
+ 	std::vector<const char*> impliedExports;
+-	for (NameSet::iterator it=fExportSymbols.regularBegin(); it != fExportSymbols.regularEnd(); ++it) {
++	for (NameSet::const_iterator it=fExportSymbols.regularBegin(); it != fExportSymbols.regularEnd(); ++it) {
+ 		const char* name = *it;
+ 		const int len = strlen(name);
+ 		if ( (strcmp(&name[len-3], ".eh") == 0) || (strncmp(name, ".objc_category_name_", 20) == 0) ) {
+@@ -5471,7 +5473,7 @@
+ 	}
+ 
+ 	// make sure all required re-exported symbols exist
+-	for (NameSet::iterator it=fReExportSymbols.regularBegin(); it != fReExportSymbols.regularEnd(); ++it) {
++	for (NameSet::const_iterator it=fReExportSymbols.regularBegin(); it != fReExportSymbols.regularEnd(); ++it) {
+ 		fInitialUndefines.push_back(*it);
+ 	}
+ 	
+@@ -5505,7 +5507,7 @@
+ 		if ( fZeroPageSize != ULLONG_MAX ) {
+ 			for (std::vector<SegmentStart>::iterator it = fCustomSegmentAddresses.begin(); it != fCustomSegmentAddresses.end(); ++it) {
+ 				if ( it->address < fZeroPageSize )
+-					throwf("-segaddr %s 0x%llX conflicts with -pagezero_size", it->name, it->address);
++					throwf("-segaddr %s 0x%lX conflicts with -pagezero_size", it->name, it->address);
+ 			}
+ 		}
+ 		// verify no duplicates
 diff -ur ld64-274.2-orig/src/ld/Options.h ld64-274.2/src/ld/Options.h
 --- ld64-274.2-orig/src/ld/Options.h	2017-09-29 07:44:04.319672117 -0700
 +++ ld64-274.2/src/ld/Options.h	2017-09-29 20:37:11.961284911 -0700

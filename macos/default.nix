@@ -88,6 +88,7 @@ let
     CFLAGS =
       "-fno-rtti " +
       "-O2 " +
+      "-Wno-unused-result " +
       "-Werror " +
       "-Wfatal-errors " +
       "-Iinclude " +
