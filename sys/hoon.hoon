@@ -9903,6 +9903,8 @@
     :~
       :-  '_'
         ;~(pfix cab (stag %bccb wide))
+      :-  ';'
+        ;~(pfix sem (stag %bcsm wide))
       :-  '$'
         ;~  pose
           ;~  pfix  buc
@@ -9972,6 +9974,8 @@
           (stag %wing rope)
           ;~(pfix com (stag %ktsg wide))
         ==
+      :-  ';'
+        ;~(pfix sem wyde)
       :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))

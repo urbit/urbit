@@ -189,7 +189,6 @@
   |=  {p/@tas q/path}
   =+  way=`path`(welp top q)
   =+  txt=.^(@ %cx (welp way /hoon))
-  ~&  [%reset-veer p way]
   [%flog /reset %veer p way txt]
 ::
 ++  poke-meset                                        ::  reset system (new)
