@@ -4219,7 +4219,7 @@
         =>  .(b `(tup -.a +.a)`b)
         ?~  +.a  [(scot -.a b) ~]
         [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
-    :-  paf=|*(a/(pole) ?~(a $~ {,(odo:raid -.a(. %ta)) (..$ +.a)}))
+    :-  paf=|*(a/(pole) ?~(a $~ {(odo:raid -.a(. %ta)) (..$ +.a)}))
     ^=  tup
     |*  {a/@tas b/(pole @tas)}
     =+  c=(odo:raid a)
