@@ -86,8 +86,8 @@
       {$get $-((sole-args) (sole-request (cask)))}      ::  scraper
   ==                                                    ::
 ++  sole-args                                           ::  generator arguments
-  |*  _[* *]                                         ::
-  {{now/@da eny/@uvJ bek/beak} {+<- +<+}}               ::
+  |*  _[* *]                                            ::
+  {{now/@da eny/@uvJ bek/beak} {,+<- ,+<+}}             ::
 ::                                                      ::
 ::                                                      ::
 ++  sole-so                                             ::  construct result

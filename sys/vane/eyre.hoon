@@ -78,8 +78,8 @@
 ++  mend  ?($get $head)                                 ::  amend after building
 ++  whir  $@  $~                                        ::  wire subset
           $%  {$ac p/whir-ac}                           ::  finish request
-              {$at p/cord:beak q/whir-ac}               ::  build request
-              {$ay p/knot:ship q/knot:@uvH $~}          ::  remote duct
+              {$at p/cord q/whir-ac}                    ::  build request
+              {$ay p/knot q/knot $~}                    ::  remote duct
               {$hi p/knot q/mark $~}                    ::  outbound HTTP
               {$se p/whir-se q/{user (list @t)}}        ::  outbound to domain
               {$si $~}                                  ::  response done
@@ -95,7 +95,7 @@
       {$liv p/hole q/ixor $~}
   ==
 ++  whir-ac  {p/?($$ hole) q/mend r/$@($~ {p/@t $~})}   ::  auth? filter cookie?
-++  whir-of  {p/knot:ship q/term s/wire}                ::  path in dock
+++  whir-of  {p/knot q/term s/wire}                     ::  path in dock
 ++  whir-se  ?($core vi-arm)                            ::  build/call
 ++  vi-arm
   $?  $filter-request                                   ::  ++out mod request
