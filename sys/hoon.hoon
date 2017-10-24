@@ -9972,7 +9972,7 @@
       :-  ','
         ;~  pose
           (stag %wing rope)
-          ;~(pfix com (stag %ktsg wide))
+          ;~(pfix com wyde)
         ==
       :-  '!'
         ;~  pose
