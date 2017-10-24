@@ -79,7 +79,13 @@
   ++  sa                                                ::>  set as array
     |*  {a/(set) b/$-(* json)}
     ^-  json
-    [%a ~(tap in `(set json)`(~(run in a) b))]
+    [%a (turn ~(tap in a) b)]
+  ::
+  ++  mo                                                ::>  map as object
+    |*  {a/(map) b/$-(* @t) c/$-(* json)}
+    ^-  json
+    =-  (pairs (turn ~(tap by a) -))
+    |*  {k/* v/*}  [(b k) (c v)]
   ::
   ++  dank                                              ::>  tank
     |=  a/tank
@@ -118,20 +124,85 @@
     ?~(a ~ (b u.a))
   ::
   ::
+  ++  pire                                              ::>  prize-reader
+    |=  a/prize-reader
+    ^-  json
+    %-  pairs  :~
+      :-  %gys
+      =-  (pairs ~(tap by (~(run by gys.a) -)))
+      |=((set (set circle)) (sa +< audi))
+      ::
+      nis+(mo nis.a (cury scot %p) cord)
+    ==
+  ::
+  ++  pack                                              ::>  package
+    |=  a/package
+    ^-  json
+    %-  pairs  :~
+      nes+a+(turn nes.a enve)  ::TODO  maybe map
+      cos+(loby cos.a)
+      pes+(crow pes.a)
+    ==
+  ::
   ++  circ                                              ::>  circle
     |=  a/circle
     ^-  json
     s+(crip (circ:en-tape a))
+  ::
+  ++  loby                                              ::>  lobby
+    |=  a/lobby
+    %-  pairs  :~
+      loc+(conf loc.a)
+      rem+(mo rem.a (cork circ:en-tape crip) conf)
+    ==
+  ::
+  ++  conf                                              ::>  config
+    |=  a/config
+    ^-  json
+    %-  pairs  :~
+      src+(sa src.a sorc)
+      cap+s+cap.a
+      fit+(filt fit.a)
+      con+(cont con.a)
+    ==
+  ::
+  ++  sorc                                              ::>  source
+    |=  a/source
+    ^-  json
+    s+(crip (sorc:en-tape a))
   ::
   ++  filt                                              ::>  filter
     |=  a/filter
     ^-  json
     (pairs cas+b+cas.a utf+b+utf.a ~)
   ::
-  ++  sorc                                              ::>  source
-    |=  a/source
+  ++  cont                                              ::>  control
+    |=  a/control
     ^-  json
-    s+(crip (sorc:en-tape a))
+    (pairs sec+s+sec.a ses+(sa ses.a ship) ~)
+  ::
+  ++  crow                                              ::>  crowd
+    |=  a/crowd
+    ^-  json
+    %-  pairs  :~
+      loc+(grop loc.a)
+      rem+(mo rem.a tmp grop)
+    ==
+  ::
+  ++  tmp
+    |=  a/circle
+    ^-  @t
+    (crip (circ:en-tape a))
+  ::
+  ++  grop                                              ::>  group
+    |=  a/group
+    ^-  json
+    (mo a (cury scot %p) `stat)
+  ::
+  ++  stat                                              ::>  status
+    |=  a/status
+    ^-  json
+    (pairs pec+s+pec.a man+(huma man.a) ~)
   ::
   ++  huma                                              ::>  human
     |=  a/human
@@ -142,6 +213,23 @@
     |=  a/truename
     ^-  json
     (pairs fir+s+fir.a mid+(mabe mid.a cord) las+s+las.a ~)
+  ::
+  ++  enve                                              ::>  envelope
+    |=  a/envelope
+    ^-  json
+    (pairs num+(numb num.a) gam+(gram gam.a) ~)
+  ::
+  ++  gram                                              ::>  telegram
+    |=  a/telegram
+    ^-  json
+    %-  pairs  :~
+      ::aut+ship
+      ::TODO  can we avoid this code duplication somehow?
+      uid+s+(scot %uv uid.a)
+      aud+(audi aud.a)
+      wen+(time wen.a)
+      sep+(spec sep.a)
+    ==
   ::
   ++  thot                                              ::>  thought
     |=  a/thought
@@ -213,6 +301,21 @@
     ==
   ::
   ::
+  ++  pire                                              ::>  prize-reader
+    ^-  $-(json (unit prize-reader))
+    %-  ot  :~
+      gys+(om (as (as circ)))
+      nis+(op fed:ag so)
+    ==
+  ::
+  ++  pack                                              ::>  package
+    ^-  $-(json (unit package))
+    %-  ot  :~
+      nes+(ar enve)
+      cos+loby
+      pes+crow
+    ==
+  ::
   ++  dist
     ^-  $-(json (unit diff-status))
     %-  of  :~
@@ -241,6 +344,19 @@
     ^-  $-(json (unit circle))
     (su circ:de-tape)
   ::
+  ++  loby                                              ::>  lobby
+    ^-  $-(json (unit lobby))
+    (ot loc+conf rem+(op circ:de-tape conf) ~)
+  ::
+  ++  conf                                              ::>  config
+    ^-  $-(json (unit config))
+    %-  ot  :~
+      src+(as sorc)
+      cap+so
+      fit+filt
+      con+cont
+    ==
+  ::
   ::TODO  maybe just an object?
   ++  sorc                                              ::>  source
     ^-  $-(json (unit source))
@@ -250,9 +366,25 @@
     ^-  $-(json (unit filter))
     (ot cas+bo utf+bo ~)
   ::
+  ++  cont                                              ::>  control
+    ^-  $-(json (unit control))
+    (ot sec+secu ses+(as (su fed:ag)) ~)
+  ::
   ++  secu                                              ::>  security
     ^-  $-(json (unit security))
     (su (perk %black %white %green %brown ~))
+  ::
+  ++  crow                                              ::>  crowd
+    ^-  $-(json (unit crowd))
+    (ot loc+grop rem+(op circ:de-tape grop) ~)
+  ::
+  ++  grop                                              ::>  group
+    ^-  $-(json (unit group))
+    (op fed:ag stat)
+  ::
+  ++  stat                                              ::>  status
+    ^-  $-(json (unit status))
+    (ot pec+pres man+huma ~)
   ::
   ++  pres                                              ::>  presence
     ^-  $-(json (unit presence))
@@ -272,9 +404,9 @@
   ::>    structures for containing main message data.
   ::+|
   ::
-  ::++  enve                                              ::>  envelope
-  ::  ^-  $-(json (unit thought))
-  ::  (ot num+ni gam+gram ~)
+  ++  enve                                              ::>  envelope
+    ^-  $-(json (unit envelope))
+    (ot num+ni gam+gram ~)
   ::
   ++  gram                                              ::>  telegram
     ^-  $-(json (unit telegram))
