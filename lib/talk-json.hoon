@@ -14,6 +14,9 @@
 ::>  3. lists and sets become arrays. maps become objects.
 ::>  4. stringify cells only when/in a way such that it benefits the majority of
 ::>     foreseen usecases.
+::>  x. avoid dashes in json names.
+::>  x. for {$empty $~} fronds, use (frond 'empty' b+&).
+::>  x. for {$frond abc/(unit *)}, use (frond 'frond' (frond 'abc' (mabe abc)))
 ::>
 ::>  q: should parsing be strict or forgiving? ie, accept "ship" and/or "~ship"?
 ::
@@ -123,6 +126,11 @@
     ^-  json
     ?~(a ~ (b u.a))
   ::
+  ::>  ||
+  ::>  ||  %query-models
+  ::>  ||
+  ::>    models relating to queries, their results and updates.
+  ::+|
   ::
   ++  pire                                              ::>  prize-reader
     |=  a/prize-reader
@@ -142,6 +150,15 @@
     ?-  -.a
       $glyph  (digy +.a)
       $nick   (dini +.a)
+    ==
+  ::
+  ++  pack                                              ::>  package
+    |=  a/package
+    ^-  json
+    %-  pairs  :~
+      nes+a+(turn nes.a enve)  ::TODO  maybe map
+      cos+(loby cos.a)
+      pes+(crow pes.a)
     ==
   ::
   ++  digy                                              ::>  diff-glyph
@@ -210,14 +227,11 @@
       $true     (frond %tru (mabe tru.a trun))
     ==
   ::
-  ++  pack                                              ::>  package
-    |=  a/package
-    ^-  json
-    %-  pairs  :~
-      nes+a+(turn nes.a enve)  ::TODO  maybe map
-      cos+(loby cos.a)
-      pes+(crow pes.a)
-    ==
+  ::>  ||
+  ::>  ||  %circles
+  ::>  ||
+  ::>    messaging targets and their metadata
+  ::+|
   ::
   ++  circ                                              ::>  circle
     |=  a/circle
@@ -264,11 +278,6 @@
       rem+(mo rem.a tmp grop)
     ==
   ::
-  ++  tmp
-    |=  a/circle
-    ^-  @t
-    (crip (circ:en-tape a))
-  ::
   ++  grop                                              ::>  group
     |=  a/group
     ^-  json
@@ -289,6 +298,12 @@
     ^-  json
     (pairs fir+s+fir.a mid+(mabe mid.a cord) las+s+las.a ~)
   ::
+  ::>  ||
+  ::>  ||  %message-data
+  ::>  ||
+  ::>    structures for containing main message data
+  ::+|
+  ::
   ++  enve                                              ::>  envelope
     |=  a/envelope
     ^-  json
@@ -298,7 +313,7 @@
     |=  a/telegram
     ^-  json
     %-  pairs  :~
-      ::aut+ship
+      aut+(ship aut.a)
       ::TODO  can we avoid this code duplication somehow?
       uid+s+(scot %uv uid.a)
       aud+(audi aud.a)
@@ -343,6 +358,12 @@
       $tank  a+(turn +.a dank)
     ==
   ::
+  ::>  ||
+  ::>  ||  %message-metadata
+  ::>  ||
+  ::>    structures for containing message metadata
+  ::+|
+  ::
   ++  audi                                              ::>  audience
     |=  a/audience
     ^-  json
@@ -375,6 +396,11 @@
       rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
     ==
   ::
+  ::>  ||
+  ::>  ||  %query-models
+  ::>  ||
+  ::>    models relating to queries, their results and updates.
+  ::+|
   ::
   ++  pire                                              ::>  prize-reader
     ^-  $-(json (unit prize-reader))
