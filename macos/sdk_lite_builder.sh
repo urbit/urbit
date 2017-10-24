@@ -34,9 +34,9 @@ for header in $headers; do
   cp $sdk/usr/include/$header $out/include/$header
 done
 
-cat > $out/include/mach/mach_time.h <<EOF
-// We need definitions for these functions.
+cd $out/include
 
+cat > mach/mach_time.h <<EOF
 #pragma once
 
 #include <stdint.h>
@@ -66,7 +66,7 @@ static inline uint64_t mach_absolute_time(void)
 }
 EOF
 
-cat > $out/include/i386/_types.h <<EOF
+cat > i386/_types.h <<EOF
 // The SDK version defines things like __int64_t, causing errors.
 
 #pragma once
@@ -76,7 +76,7 @@ typedef long __darwin_intptr_t;
 typedef unsigned int __darwin_natural_t;
 EOF
 
-cat > $out/include/i386/limits.h <<EOF
+cat > i386/limits.h <<EOF
 // The SDK version defines MB_LEN_MAX, which causes errors.
 
 #pragma once
@@ -89,7 +89,7 @@ cat > $out/include/i386/limits.h <<EOF
 #endif
 EOF
 
-cat > $out/include/string.h <<EOF
+cat > string.h <<EOF
 // MacOS programs expect string.h to define these.
 
 #pragma once
@@ -134,4 +134,4 @@ EOF
 # The MacOS SDK expects sys/cdefs.h to define __unused as an attribute.  But we
 # can't have that definition here because glibc's linux/sysctl.h uses __unused as a
 # variable name.  Instead, we just fix the SDK to not use __unused.
-sed -i -r 's/\b__unused\b//g' $out/include/mach/mig_errors.h
+sed -i -r 's/\b__unused\b//g' mach/mig_errors.h

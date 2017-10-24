@@ -22,7 +22,7 @@ mkdir include
   echo "#define ALL_SUPPORTED_ARCHS \"$arch\""
 } > include/configure.h
 
-for f in ../ld64/src/ld/{ld,InputFiles,Options}.cpp; do
+for f in ../ld64/src/ld/{OutputFile,ld,InputFiles,Options}.cpp; do
   echo "compiling $f"
   g++ -c $CFLAGS $f -o $(basename $f).o
 done

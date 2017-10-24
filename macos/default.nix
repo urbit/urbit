@@ -85,7 +85,7 @@ let
     };
     patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
-    native_inputs = [ tapi native.pkgconf ];
+    native_inputs = [ tapi native.pkgconf nixpkgs.libuuid.dev ];
     CFLAGS =
       "-O2 " +
       "-Wno-unused-result " +
@@ -95,6 +95,7 @@ let
       "-I../ld64/src/ld " +
       "-I../ld64/src/ld/parsers " +
       "-I../ld64/src/abstraction " +
+      "-I${nixpkgs.libuuid.dev}/include " +
       "-isystem ${sdk_lite}/include " +
       "-D__LITTLE_ENDIAN__ " +
       "-D_DARWIN_C_SOURCE";

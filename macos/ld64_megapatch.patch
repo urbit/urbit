@@ -164,6 +164,234 @@ diff -ur ld64-274.2-orig/src/ld/ld.cpp ld64-274.2/src/ld/ld.cpp
  	const int rawNumLen = strlen(rawNum);
  	for(int i=0; i < rawNumLen-1; ++i) {
  		*out++ = rawNum[i];
+diff -ur ld64-274.2-orig/src/ld/LinkEdit.hpp ld64-274.2/src/ld/LinkEdit.hpp
+--- ld64-274.2-orig/src/ld/LinkEdit.hpp	2017-09-29 07:44:04.316338766 -0700
++++ ld64-274.2/src/ld/LinkEdit.hpp	2017-10-24 08:53:55.121187591 -0700
+@@ -324,39 +324,39 @@
+ 				done = true;
+ 				break;
+ 			case REBASE_OPCODE_SET_TYPE_IMM:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_TYPE_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_SET_TYPE_IMM | it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%ld, 0x%lX)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+ 				break;
+ 			case REBASE_OPCODE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_IMM_SCALED(%ld=0x%lX)\n", it->operand1, it->operand1*sizeof(pint_t));
+ 				this->_encodedData.append_byte(REBASE_OPCODE_ADD_ADDR_IMM_SCALED | it->operand1 );
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_IMM_TIMES(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_IMM_TIMES(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_IMM_TIMES | it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ULEB_TIMES);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB(%ld, %ld)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+@@ -534,16 +534,16 @@
+ 				done = true;
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | (it->operand1 & BIND_IMMEDIATE_MASK));
+ 				break;
+ 			case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+@@ -552,21 +552,21 @@
+ 				this->_encodedData.append_string(it->name);
+ 				break;
+ 			case BIND_OPCODE_SET_TYPE_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_TYPE_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_ADDEND_SLEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_ADDEND_SLEB);
+ 				this->_encodedData.append_sleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%ld, 0x%lX)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+ 				break;
+ 			case BIND_OPCODE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+@@ -575,16 +575,16 @@
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%ld=0x%lX)\n", it->operand1, it->operand1*sizeof(pint_t));
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | it->operand1 );
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%ld, %ld)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+@@ -772,16 +772,16 @@
+ 				done = true;
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | (it->operand1 & BIND_IMMEDIATE_MASK));
+ 				break;
+ 			case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+@@ -790,21 +790,21 @@
+ 				this->_encodedData.append_string(it->name);
+ 				break;
+ 			case BIND_OPCODE_SET_TYPE_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_TYPE_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_ADDEND_SLEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_ADDEND_SLEB);
+ 				this->_encodedData.append_sleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%ld, 0x%lX)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+ 				break;
+ 			case BIND_OPCODE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+@@ -813,16 +813,16 @@
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%ld=0x%lX)\n", it->operand1, it->operand1*sizeof(pint_t));
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | it->operand1 );
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%ld, %ld)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+@@ -1018,7 +1018,7 @@
+ 				entry.importName = atom->name();
+ 			}
+ 			entries.push_back(entry);
+-			//fprintf(stderr, "re-export %s from lib %llu as %s\n", entry.importName, entry.other, entry.name);
++			//fprintf(stderr, "re-export %s from lib %lu as %s\n", entry.importName, entry.other, entry.name);
+ 		}
+ 		else if ( atom->definition() == ld::Atom::definitionAbsolute ) {
+ 			entry.name = atom->name();
+@@ -1136,7 +1136,7 @@
+ 			_64bitPointerLocations.push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
+@@ -1152,7 +1152,7 @@
+ 			_32bitPointerLocations.push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
+@@ -1179,7 +1179,7 @@
+ 			_thumbHi16Locations[extra].push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
+@@ -1207,7 +1207,7 @@
+ 			_64bitPointerLocations.push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
 diff -ur ld64-274.2-orig/src/ld/Options.cpp ld64-274.2/src/ld/Options.cpp
 --- ld64-274.2-orig/src/ld/Options.cpp	2017-09-29 07:44:04.319672117 -0700
 +++ ld64-274.2/src/ld/Options.cpp	2017-10-20 21:42:54.069243537 -0700
@@ -281,6 +509,188 @@ diff -ur ld64-274.2-orig/src/ld/Options.h ld64-274.2/src/ld/Options.h
  		void					remove(const NameSet&); 
  		std::vector<const char*>		data() const;
  	private:
+diff -ur ld64-274.2-orig/src/ld/OutputFile.cpp ld64-274.2/src/ld/OutputFile.cpp
+--- ld64-274.2-orig/src/ld/OutputFile.cpp	2017-09-29 07:44:04.319672117 -0700
++++ ld64-274.2/src/ld/OutputFile.cpp	2017-10-24 08:57:57.297185692 -0700
+@@ -129,13 +129,13 @@
+ {
+ 	fprintf(stderr, "SORTED:\n");
+ 	for (std::vector<ld::Internal::FinalSection*>::iterator it = state.sections.begin(); it != state.sections.end(); ++it) {
+-		fprintf(stderr, "final section %p %s/%s %s start addr=0x%08llX, size=0x%08llX, alignment=%02d, fileOffset=0x%08llX\n", 
++		fprintf(stderr, "final section %p %s/%s %s start addr=0x%08lX, size=0x%08lX, alignment=%02d, fileOffset=0x%08lX\n", 
+ 				(*it), (*it)->segmentName(), (*it)->sectionName(), (*it)->isSectionHidden() ? "(hidden)" : "", 
+ 				(*it)->address, (*it)->size, (*it)->alignment, (*it)->fileOffset);
+ 		if ( printAtoms ) {
+ 			std::vector<const ld::Atom*>& atoms = (*it)->atoms;
+ 			for (std::vector<const ld::Atom*>::iterator ait = atoms.begin(); ait != atoms.end(); ++ait) {
+-				fprintf(stderr, "   %p (0x%04llX) %s\n", *ait, (*ait)->size(), (*ait)->name());
++				fprintf(stderr, "   %p (0x%04lX) %s\n", *ait, (*ait)->size(), (*ait)->name());
+ 			}
+ 		}
+ 	}
+@@ -216,7 +216,7 @@
+ 					break;
+ 				default:
+ 					(const_cast<ld::Atom*>(atom))->setSectionStartAddress(sect->address);
+-					if ( log ) fprintf(stderr, "    atom=%p, addr=0x%08llX, name=%s\n", atom, atom->finalAddress(), atom->name());
++					if ( log ) fprintf(stderr, "    atom=%p, addr=0x%08lX, name=%s\n", atom, atom->finalAddress(), atom->name());
+ 					break;
+ 			}
+ 		}
+@@ -432,7 +432,7 @@
+ 	switch ( atom.symbolTableInclusion() ) {
+ 		case ld::Atom::symbolTableNotIn:
+ 		case ld::Atom::symbolTableNotInFinalLinkedImages:
+-			sprintf(buffer, "%s@0x%08llX", atom.name(), atom.objectAddress());
++			sprintf(buffer, "%s@0x%08lX", atom.name(), atom.objectAddress());
+ 			break;
+ 		case ld::Atom::symbolTableIn:
+ 		case ld::Atom::symbolTableInAndNeverStrip:
+@@ -595,7 +595,7 @@
+ 	for (std::vector<ld::Internal::FinalSection*>::iterator it = state.sections.begin(); it != state.sections.end(); ++it) {
+ 		if ( (*it)->isSectionHidden() )
+ 			continue;
+-		fprintf(stderr, "    %s/%s addr=0x%08llX, size=0x%08llX, fileOffset=0x%08llX, type=%d\n", 
++		fprintf(stderr, "    %s/%s addr=0x%08lX, size=0x%08lX, fileOffset=0x%08lX, type=%d\n", 
+ 				(*it)->segmentName(), (*it)->sectionName(), 
+ 				(*it)->address, (*it)->size, (*it)->fileOffset, (*it)->type());
+ 	}
+@@ -609,7 +609,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("8-bit reference out of range (%lld max is +/-127B): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("8-bit reference out of range (%ld max is +/-127B): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -623,7 +623,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("16-bit reference out of range (%lld max is +/-32KB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("16-bit reference out of range (%ld max is +/-32KB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup),  
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -637,7 +637,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("32-bit branch out of range (%lld max is +/-2GB): from %s (0x%08llX) to %s (0x%08llX)",
++		throwf("32-bit branch out of range (%ld max is +/-2GB): from %s (0x%08lX) to %s (0x%08lX)",
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -656,7 +656,7 @@
+ 		if ( (_options.architecture() == CPU_TYPE_ARM) || (_options.architecture() == CPU_TYPE_I386) ) {
+ 			// Unlikely userland code does funky stuff like this, so warn for them, but not warn for -preload or -static
+ 			if ( (_options.outputKind() != Options::kPreload) && (_options.outputKind() != Options::kStaticExecutable) ) {
+-				warning("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to 0x%08llX", 
++				warning("32-bit absolute address out of range (0x%08lX max is 4GB): from %s + 0x%08X (0x%08lX) to 0x%08lX", 
+ 						displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), displacement);
+ 			}
+ 			return;
+@@ -666,10 +666,10 @@
+ 		
+ 		const ld::Atom* target;	
+ 		if ( fixup->binding == ld::Fixup::bindingNone )
+-			throwf("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to 0x%08llX", 
++			throwf("32-bit absolute address out of range (0x%08lX max is 4GB): from %s + 0x%08X (0x%08lX) to 0x%08lX", 
+ 				displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), displacement);
+ 		else
+-			throwf("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to %s (0x%08llX)", 
++			throwf("32-bit absolute address out of range (0x%08lX max is 4GB): from %s + 0x%08X (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -684,7 +684,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("32-bit RIP relative reference out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("32-bit RIP relative reference out of range (%ld max is +/-4GB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -697,7 +697,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("ARM ldr 12-bit displacement out of range (%lld max is +/-4096B): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("ARM ldr 12-bit displacement out of range (%ld max is +/-4096B): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -717,7 +717,7 @@
+ 	printSectionLayout(state);
+ 	
+ 	const ld::Atom* target;	
+-	throwf("b/bl/blx ARM branch out of range (%lld max is +/-32MB): from %s (0x%08llX) to %s (0x%08llX)", 
++	throwf("b/bl/blx ARM branch out of range (%ld max is +/-32MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 			displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 			addressOf(state, fixup, &target));
+ }
+@@ -749,12 +749,12 @@
+ 
+ 	const ld::Atom* target;	
+ 	if ( _options.preferSubArchitecture() && _options.archSupportsThumb2() ) {
+-		throwf("b/bl/blx thumb2 branch out of range (%lld max is +/-16MB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("b/bl/blx thumb2 branch out of range (%ld max is +/-16MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+ 	else {
+-		throwf("b/bl/blx thumb1 branch out of range (%lld max is +/-4MB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("b/bl/blx thumb1 branch out of range (%ld max is +/-4MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -769,7 +769,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("b(l) ARM64 branch out of range (%lld max is +/-128MB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("b(l) ARM64 branch out of range (%ld max is +/-128MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -783,7 +783,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("ARM64 ADRP out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("ARM64 ADRP out of range (%ld max is +/-4GB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -2844,7 +2844,7 @@
+ 		
+ 		wholeBuffer = (uint8_t *)mmap(NULL, _fileSize, PROT_WRITE|PROT_READ, MAP_SHARED, fd, 0);
+ 		if ( wholeBuffer == MAP_FAILED )
+-			throwf("can't create buffer of %llu bytes for output", _fileSize);
++			throwf("can't create buffer of %lu bytes for output", _fileSize);
+ 	} 
+ 	else {
+ 		if ( outputIsRegularFile )
+@@ -2856,7 +2856,7 @@
+ 		// try to allocate buffer for entire output file content
+ 		wholeBuffer = (uint8_t*)calloc(_fileSize, 1);
+ 		if ( wholeBuffer == NULL )
+-			throwf("can't create buffer of %llu bytes for output", _fileSize);
++			throwf("can't create buffer of %lu bytes for output", _fileSize);
+ 	}
+ 	
+ 	if ( _options.UUIDMode() == Options::kUUIDRandom ) {
+@@ -4708,7 +4708,7 @@
+ 		if ( sect->isSectionHidden() )
+ 			continue;
+ 		bool codeSection = (sect->type() == ld::Section::typeCode);
+-		if (log) fprintf(stderr, "sect: %s, address=0x%llX\n", sect->sectionName(), sect->address);
++		if (log) fprintf(stderr, "sect: %s, address=0x%lX\n", sect->sectionName(), sect->address);
+ 		for (std::vector<const ld::Atom*>::iterator ait = sect->atoms.begin(); ait != sect->atoms.end(); ++ait) {
+ 			const ld::Atom* atom = *ait;
+ 			const ld::Atom* target = NULL;
 diff -ur ld64-274.2-orig/src/ld/Snapshot.h ld64-274.2/src/ld/Snapshot.h
 --- ld64-274.2-orig/src/ld/Snapshot.h	2017-09-29 07:44:04.319672117 -0700
 +++ ld64-274.2/src/ld/Snapshot.h	2017-09-29 20:32:25.044874041 -0700
