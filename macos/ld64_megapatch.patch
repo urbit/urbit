@@ -1,7 +1,15 @@
 diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
 --- ld64-274.2-orig/src/ld/InputFiles.cpp	2017-09-29 07:44:04.316338766 -0700
-+++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-21 12:44:29.538062464 -0700
-@@ -215,7 +215,7 @@
++++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-23 20:10:32.663219382 -0700
+@@ -29,6 +29,7 @@
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+ #include <sys/sysctl.h>
++#include <sys/param.h>
+ #include <fcntl.h>
+ #include <errno.h>
+ #include <limits.h>
+@@ -215,7 +216,7 @@
  	if ( fd == -1 )
  		throwf("can't open file, errno=%d", errno);
  	if ( info.fileLen < 20 )
@@ -10,7 +18,7 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
  
  	uint8_t* p = (uint8_t*)::mmap(NULL, info.fileLen, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
  	if ( p == (uint8_t*)(-1) )
-@@ -264,7 +264,7 @@
+@@ -264,7 +265,7 @@
  					newFileLen = statBuffer.st_size;
  				}
  				if ( fileOffset+len > newFileLen ) {
@@ -19,7 +27,7 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
  						fileOffset, fileOffset+len, info.fileLen);
  				}
  			}
-@@ -422,7 +422,7 @@
+@@ -422,7 +423,7 @@
  {
  	if ( _options.traceDylibs() ) {
  		const char* fullPath = file->path();
@@ -28,7 +36,7 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
  		if ( realpath(fullPath, realName) != NULL )
  			fullPath = realName;
  		const ld::dylib::File* dylib = dynamic_cast<const ld::dylib::File*>(file);
-@@ -472,7 +472,7 @@
+@@ -472,7 +473,7 @@
  		// <rdar://problem/4947347> LD_TRACE_ARCHIVES should only print out when a .o is actually used from an archive
  		_archiveFilesLogged.insert(file);
  		const char* fullPath = file->path();
@@ -37,7 +45,7 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
  		if ( realpath(fullPath, realName) != NULL )
  			fullPath = realName;
  		logTraceInfo("[Logging for XBS] Used static archive: %s\n", fullPath);
-@@ -499,7 +499,7 @@
+@@ -499,7 +500,7 @@
  		}
  	}
  
@@ -46,7 +54,23 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
      va_list ap;
  	va_start(ap, format);
  	int length = vsnprintf(trace_buffer, sizeof(trace_buffer), format, ap);
-@@ -1457,7 +1457,7 @@
+@@ -940,14 +941,7 @@
+ 	_remainingInputFiles = files.size();
+ 	
+ 	// initialize info for parsing input files on worker threads
+-	unsigned int ncpus;
+-	int mib[2];
+-	size_t len = sizeof(ncpus);
+-	mib[0] = CTL_HW;
+-	mib[1] = HW_NCPU;
+-	if (sysctl(mib, 2, &ncpus, &len, NULL, 0) != 0) {
+-		ncpus = 1;
+-	}
++	unsigned int ncpus = 2;
+ 	_availableWorkers = MIN(ncpus, files.size()); // max # workers we permit
+ 	_idleWorkers = 0;
+ 	
+@@ -1457,7 +1451,7 @@
  			for (ld::dylib::File* dylib :  implicitDylibs) {
  				if ( dylib->speculativelyLoaded() && !dylib->explicitlyLinked() && dylib->providedExportAtom() ) {
  					const char* fullPath = dylib->path();
