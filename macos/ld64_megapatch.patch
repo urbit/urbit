@@ -1,6 +1,6 @@
 diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
 --- ld64-274.2-orig/src/ld/InputFiles.cpp	2017-09-29 07:44:04.316338766 -0700
-+++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-23 20:10:32.663219382 -0700
++++ ld64-274.2/src/ld/InputFiles.cpp	2017-10-23 20:17:14.320471795 -0700
 @@ -29,6 +29,7 @@
  #include <sys/stat.h>
  #include <sys/mman.h>
@@ -54,7 +54,7 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
      va_list ap;
  	va_start(ap, format);
  	int length = vsnprintf(trace_buffer, sizeof(trace_buffer), format, ap);
-@@ -940,14 +941,7 @@
+@@ -940,13 +941,10 @@
  	_remainingInputFiles = files.size();
  	
  	// initialize info for parsing input files on worker threads
@@ -65,12 +65,14 @@ diff -ur ld64-274.2-orig/src/ld/InputFiles.cpp ld64-274.2/src/ld/InputFiles.cpp
 -	mib[1] = HW_NCPU;
 -	if (sysctl(mib, 2, &ncpus, &len, NULL, 0) != 0) {
 -		ncpus = 1;
--	}
 +	unsigned int ncpus = 2;
++	{
++		long ret = sysconf(_SC_NPROCESSORS_ONLN);
++		if (ret > 0) { ncpus = ret; }
+ 	}
  	_availableWorkers = MIN(ncpus, files.size()); // max # workers we permit
  	_idleWorkers = 0;
- 	
-@@ -1457,7 +1451,7 @@
+@@ -1457,7 +1455,7 @@
  			for (ld::dylib::File* dylib :  implicitDylibs) {
  				if ( dylib->speculativelyLoaded() && !dylib->explicitlyLinked() && dylib->providedExportAtom() ) {
  					const char* fullPath = dylib->path();
