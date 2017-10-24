@@ -3334,7 +3334,7 @@
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
       %+  cu  
-        |=  a/(list _[(wonk *fel) (need *wit)])
+        |=  a/(list (pair _(wonk *fel) _(need *wit)))
         (my:nl a)
       %-  ci  :_  (om wit)
       |=  a/(map cord _(need *wit))
