@@ -9212,16 +9212,9 @@
       %^  cat  3
         %~  rent  co
             :+  %$  %ud
-            |-  ^-  @
-            ?-  q.s.q.sut
-              $~         0
-              {* $~ $~}  1
-              {* $~ *}   +($(q.s.q.sut r.q.s.q.sut))
-              {* * $~}   +($(q.s.q.sut l.q.s.q.sut))
-              {* * *}    .+  %+  add
-                               $(q.s.q.sut l.q.s.q.sut)
-                             $(q.s.q.sut r.q.s.q.sut)
-        ==  ==
+            %-  ~(rep by (~(run by q.s.q.sut) |=(tomb ~(wyt by q))))
+            |=([[@ a=@u] b=@u] (add a b))
+        ==
       %^  cat  3
         ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
       =+  gum=(mug q.s.q.sut)
@@ -9903,6 +9896,8 @@
     :~
       :-  '_'
         ;~(pfix cab (stag %bccb wide))
+      :-  ','
+        ;~(pfix com (stag %bcsm wide))
       :-  '$'
         ;~  pose
           ;~  pfix  buc
@@ -10016,7 +10011,7 @@
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '{'
-        (stag %bccl (ifix [kel ker] (most ace wide)))
+        (stag %bccl (ifix [kel ker] (most ace wyde)))
       :-  '*'
         ;~  pose
           (stag %bunt ;~(pfix tar wide))

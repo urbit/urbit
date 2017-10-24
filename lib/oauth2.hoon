@@ -2,10 +2,12 @@
 ::
 ::::  /hoon/oauth2/lib
   ::
-/+    hep-to-cab, interpolate
+/+    hep-to-cab, interpolate, old-zuse
+=,  old-zuse
 =,  eyre
 =,  mimes:html
 =,  html
+=,  format
 |%
 ++  parse-url  parse-url:interpolate
 ++  join
@@ -30,6 +32,21 @@
   ~|  bad-json+r.a
   ~|  (de-json q:(need r.a))
   (need (;~(biff de-json b) q:(need r.a)))
+--
+::
+::::
+  ::
+:: XX belongs back in zuse
+|%
+++  pack                                                ::  light path encoding
+  |=  {a/term b/path}  ^-  knot
+  %+  rap  3  :-  (wack a)
+  (turn b |=(c/knot (cat 3 '_' (wack c))))
+::
+++  pick                                                ::  light path decoding
+  =+  fel=(most cab (sear wick urt:ab))
+  |=(a/knot `(unit {p/term q/path})`(rush a fel))
+::
 --
 ::
 ::::

@@ -4,11 +4,14 @@
   ::
 /?  314
 /-  sole
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   ::
 =,  sole
 =,  html
+=,  format
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@($~ {jon/json $~})}
