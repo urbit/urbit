@@ -135,6 +135,81 @@
       nis+(mo nis.a (cury scot %p) cord)
     ==
   ::
+  ++  rure                                              ::>  rumor-reader
+    |=  a/rumor-reader
+    ^-  json
+    %+  frond  -.a
+    ?-  -.a
+      $glyph  (digy +.a)
+      $nick   (dini +.a)
+    ==
+  ::
+  ++  digy                                              ::>  diff-glyph
+    |=  a/diff-glyph
+    ^-  json
+    %-  pairs  :~
+      bin+b+bin.a
+      gyf+s+gyf.a
+      aud+(audi aud.a)
+    ==
+  ::
+  ++  dini                                              ::>  diff-nick
+    |=  a/diff-nick
+    ^-  json
+    (pairs who+(ship who.a) nic+s+nic.a ~)
+  ::
+  ++  ruso                                              ::>  rumor-story
+    |=  a/rumor-story
+    ^-  json
+    %+  frond  -.a
+    ?+  -.a  !!
+      $new      (conf cof.a)
+      ::  $bear not needed
+      $config   (pairs cir+(circ cir.a) dif+(dico dif.a) ~)
+      $status   %-  pairs  :~
+                  cir+(circ cir.a)
+                  who+(ship who.a)
+                  dif+(disa dif.a)
+                ==
+      $remove   b+&
+      $gram     (enve nev.a)
+    ==
+  ::
+  ++  dico                                              ::>  diff-config
+    |=  a/diff-config
+    ^-  json
+    %+  frond  -.a
+    ?-  -.a
+      $full     (conf cof.a)
+      $source   (pairs add+b+add.a src+(sorc src.a) ~)
+      $caption  s+cap.a
+      $filter   (filt fit.a)
+      $secure   s+sec.a
+      $permit   (pairs add+b+add.a sis+(sa sis.a ship) ~)
+      $remove   b+&
+    ==
+  ::
+  ++  disa                                              ::>  diff-status
+    |=  a/diff-status
+    ^-  json
+    %+  frond  -.a
+    ?-  -.a
+      $full       (stat sat.a)
+      $presence   s+pec.a
+      $human      (dihu dif.a)
+      $remove     b+&
+    ==
+  ::
+  ++  dihu                                              ::>  diff-human
+    |=  a/diff-human
+    ^-  json
+    %+  frond  -.a
+    ?-  -.a
+      $full     (huma man.a)
+      $handle   (frond %han (mabe han.a cord))
+      $true     (frond %tru (mabe tru.a trun))
+    ==
+  ::
   ++  pack                                              ::>  package
     |=  a/package
     ^-  json
@@ -308,6 +383,13 @@
       nis+(op fed:ag so)
     ==
   ::
+  ++  rure                                              ::>  rumor-reader
+    ^-  $-(json (unit rumor-reader))
+    %-  of  :~
+      glyph+digy
+      nick+dini
+    ==
+  ::
   ++  pack                                              ::>  package
     ^-  $-(json (unit package))
     %-  ot  :~
@@ -316,7 +398,38 @@
       pes+crow
     ==
   ::
-  ++  dist
+  ++  digy                                              ::>  diff-glyph
+    ^-  $-(json (unit diff-glyph))
+    (ot bin+bo gyf+so aud+audi ~)
+  ::
+  ++  dini                                              ::>  diff-nick
+    ^-  $-(json (unit diff-nick))
+    (ot who+(su fed:ag) nic+so ~)
+  ::
+  ++  ruso                                              ::>  rumor-story
+    ^-  $-(json (unit rumor-story))
+    %-  of  :~
+      new+conf
+      ::  bear not needed
+      config+(ot cir+circ dif+dico ~)
+      status+(ot cir+circ who+(su fed:ag) dif+disa ~)
+      remove+ul
+      gram+enve
+    ==
+  ::
+  ++  dico                                              ::>  diff-config
+    ^-  $-(json (unit diff-config))
+    %-  of  :~
+      full+conf
+      source+(ot add+bo src+sorc ~)
+      caption+so
+      filter+filt
+      secure+secu
+      permit+(ot add+bo sis+(as (su fed:ag)) ~)
+      remove+ul
+    ==
+  ::
+  ++  disa                                              ::>  diff-status
     ^-  $-(json (unit diff-status))
     %-  of  :~
       full+(ot pec+pres man+huma ~)
@@ -325,7 +438,7 @@
       remove+ul
     ==
   ::
-  ++  dihu
+  ++  dihu                                              ::>  diff-human
     ^-  $-(json (unit diff-human))
     %-  of  :~
       full+huma
