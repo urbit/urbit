@@ -9955,8 +9955,6 @@
           scab
           (cold [%base %cell] ket)
         ==
-      :-  '.'
-        scab
       :-  ['a' 'z']
         ;~  pose
           (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
@@ -9971,8 +9969,8 @@
     :~
       :-  ','
         ;~  pose
-          (stag %wing rope)
           ;~(pfix com wyde)
+          (stag %wing rope)
         ==
       :-  '!'
         ;~  pose

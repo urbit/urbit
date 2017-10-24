@@ -1218,7 +1218,7 @@
         ==
     ++  abet  ..handle
     ++  done  .
-    ++  teba  |*(a/$-(* ..handle) |*(b/* %_(done ..handle (a b))))
+    ++  teba  |*(a/$-(* _..handle) |*(b/* %_(done ..handle (a b))))
     ++  del-deps  (teba ^del-deps)
     ++  new-deps  (teba ^new-deps)
     ++  exec-live  (teba ^exec-live)
@@ -1728,7 +1728,7 @@
       ?^  sub  $(sub t.sub, ..ix (pul-subs i.sub))
       ..ix(wix (~(del by wix) ire))
     ::
-    ++  teba  |*(a/$-(* ..ix) |*(b/* %_(done ..ix (a b))))
+    ++  teba  |*(a/$-(* _..ix) |*(b/* %_(done ..ix (a b))))
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
     ++  hurl-note

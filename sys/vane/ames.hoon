@@ -74,7 +74,7 @@
         =+  loy=(com:nu:crub:crypto r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
         ?>  =(0 p.p.q.wed)
-        ?>  =(fig:ex:loy ?+(rac !! $czar (zeno r.p.q.wed), $pawn r.p.q.wed))
+        ?>  =(fig:ex:loy ?+(rac !! %czar (zeno r.p.q.wed), %pawn r.p.q.wed))
         ?>  =((shaf %self (sham q.wed)) (need (sure:as:loy *code p.wed)))
         %&
     %&
@@ -106,7 +106,7 @@
     ?~  law  ~
     ?:  =(mar p.p.q.i.law)  [~ law]
     ?:  (gth mar p.p.q.i.law)  ~
-    ?:  |(?=($~ q.p.q.i.law) !=(lag r.p.q.i.law))  ~
+    ?:  |(?=(~ q.p.q.i.law) !=(lag r.p.q.i.law))  ~
     $(law t.law)
   ::
   ++  zeno                                              ::  imperial keyprint
@@ -392,7 +392,7 @@
     (rsh 3 (add wix vix) bod)
   ::
   ++  kins  |=(tay/@ (snag tay `(list skin)`[%none %open %fast %full ~]))
-  ++  ksin  |=(sin/skin `@`?-(sin $none 0, $open 1, $fast 2, $full 3))
+  ++  ksin  |=(sin/skin `@`?-(sin %none 0, %open 1, %fast 2, %full 3))
   ++  spit                                              ::  cake to packet
     |=  kec/cake  ^-  @
     =+  wim=(met 3 p.p.kec)
@@ -507,10 +507,10 @@
           ^+  +>
           %=    +>
               lun.wod.dur
-            ?:  ?=({$ix *} ryn)
-              ?:  ?|  ?=($~ lun.wod.dur)
-                      ?=({$ix *} u.lun.wod.dur)
-                      ?&  ?=({$if *} u.lun.wod.dur)
+            ?:  ?=({%ix *} ryn)
+              ?:  ?|  ?=(~ lun.wod.dur)
+                      ?=({%ix *} u.lun.wod.dur)
+                      ?&  ?=({%if *} u.lun.wod.dur)
                           (gth p.ryn (add ~s10 p.u.lun.wod.dur))
                       ==
                   ==
@@ -533,7 +533,7 @@
                   ?=(^ lun.wod.dyr)
               ==
             $(waz t.waz)
-          :_  ?:  ?=($ix -.u.lun.wod.dyr)
+          :_  ?:  ?=(%ix -.u.lun.wod.dyr)
                 $(waz t.waz)
               ~
           :+  %ouzo  u.lun.wod.dyr
@@ -774,7 +774,7 @@
     ::
     ++  boom                                            ::    boom:pu
       |=  now/@da  ^-  ?                                ::  address timeout
-      |(?=($~ rue) (gte (sub now u.rue) ~m1))
+      |(?=(~ rue) (gte (sub now u.rue) ~m1))
     ::
     ++  bust                                            ::    bust:pu
       ^-  ?                                             ::  not responding
@@ -1102,7 +1102,7 @@
           |=  {cha/path rum/race}                       ::  update input race
           ^+  +>
           =+  cun=(~(get by mis.rum) did.rum)
-          ?:  |(!dod.rum ?=($~ cun))
+          ?:  |(!dod.rum ?=(~ cun))
             ::
             ::  if we have not yet received the current message,
             ::  or if we are not idle, just wait.
@@ -1145,13 +1145,13 @@
           ::  ~&  [%ames-cook cop cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  lat=(~(get by mis.rum) did.rum)
-          ?:  &(?=($~ lat) ?=($~ ram))
+          ?:  &(?=(~ lat) ?=(~ ram))
             ~&  %ack-late-or-redundant
             [%| +>.$]
           :-  %&
           =+  ^-  {ryn/lane dam/flap}
               ?^  ram  [ryn.u.ram dam.u.ram]
-              ?<  ?=($~ lat)
+              ?<  ?=(~ lat)
               [q r]:u.lat
           =.  raz.bah
             ?^  ram  raz.bah
@@ -1199,12 +1199,12 @@
             ++  east
               ^+  +>.$
               ?-    sin
-                  $none
+                  %none
                 ::  ~&  %chew-none
                 =.  puz  (bilk:puz now)
                 (chow ((hard meal) (cue msg)))
               ::
-                  $fast
+                  %fast
                 ::  ~&  %chew-fast
                 =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
                 =+  dey=(kuch:diz mag)
@@ -1215,7 +1215,7 @@
                 =^  key  diz  u.dey
                 (chow(aut sin) ((hard meal) (cue (dy:q:sen:gus key bod))))
               ::
-                  $full
+                  %full
                 ::  ~&  %chew-full
                 =+  mex=((hard {p/{p/life q/life} q/wyll r/@}) (cue msg))
                 =.  diz  (deng:diz q.mex)
@@ -1227,9 +1227,9 @@
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes))
               ::
-                  $open
+                  %open
                 ::  ~&  %chew-open
-                =+  mex=((hard {p/{$~ q/life} q/wyll r/@}) (cue msg))
+                =+  mex=((hard {p/{~ q/life} q/wyll r/@}) (cue msg))
                 =.  diz  (deng:diz q.mex)
                 =+  wug=cluy:diz
                 ?>  =(q.p.mex p.wug)
@@ -1238,7 +1238,7 @@
                 (west(msg mes))
               ==
             ++  west
-              |=  $~
+              |=  ~
               =+  vib=(cue msg)
               =+  mal=(meal vib)
               ?.  =(mal vib)
@@ -1264,7 +1264,7 @@
             |=  {cha/path num/@ud dut/(unit)}           ::  interpret message
             ^+  +>
             =+  rum=(fall (~(get by raz.bah) cha) *race)
-            ::  ~&  [%rx kay cha num [dod.rum did.rum] ?=($~ dut)]
+            ::  ~&  [%rx kay cha num [dod.rum did.rum] ?=(~ dut)]
             =*  bad  (~(has in bad.fox) her)
             =.  kay  ?.((~(has in bad.fox) her) kay ~&(%blocked %dead))
             %=    +>.$
@@ -1297,16 +1297,16 @@
             |=  fud/meal                                ::  interpret meal
             ^+  +>
             ?-    -.fud
-                $back
+                %back
               =.  +>  ?.(=(%full aut) +> cock)          ::  finish handshake
               +>(..la (tock p.fud q.fud r.fud))
             ::
-                $bond
+                %bond
               ::  ~&  [%bond q.fud r.fud]
               ?>  =(p:sen:gus p.fud)
-              (deer q.fud r.fud ?-(kay $dead ~, $good [~ s.fud]))
+              (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
             ::
-                $carp
+                %carp
               ::  =+  zol=(~(get by olz.weg) s.fud)
               ::  ?^  zol  cock(kay u.zol)
               =^  neb  nys.weg
@@ -1332,10 +1332,10 @@
               =.  +>.$  cock
               +>.$(nys.weg (~(put by nys.weg) s.fud neb))
             ::
-                $fore
+                %fore
               =+  ^=  lyn  ^-  lane
                   ?~  q.fud  ryn
-                  ?.  ?=($if -.u.q.fud)  u.q.fud
+                  ?.  ?=(%if -.u.q.fud)  u.q.fud
                   [%ix +.u.q.fud]
                   ::  u.q.fud
               ?:  =(our p.fud)
@@ -1369,7 +1369,7 @@
           ^+  +>
           ?.  ?&  =(~ puq.puz)
                   ?|  bust:puz
-                      ?=($~ rue.puz)
+                      ?=(~ rue.puz)
                       (gth now (add ~s32 u.rue.puz))
                       (lth u.rue.puz hop.fox)
                   ==
@@ -1525,7 +1525,7 @@
       =>  %=    .                                       ::  XX temporary
               q.hic
             ^-  task:able
-            ?:  ?=($soft -.q.hic)
+            ?:  ?=(%soft -.q.hic)
               ((hard task:able) p.q.hic)
             ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
             ~&  [%ames-call-flub (@tas `*`-.q.hic)]
@@ -1565,10 +1565,10 @@
       ?~  hun  [~ ~]
       ?.  =(`@`0 ren)  ~
       ?+    lot  ~
-          {$$ $ud @}
+          {$$ %ud @}
         (perm p.why u.hun q.p.lot [syd t.tyl])
       ::
-          {$$ $da @}
+          {$$ %da @}
         ?.  =(now q.p.lot)  ~
         (temp p.why u.hun [syd t.tyl])
       ==
@@ -1587,7 +1587,7 @@
     |=  {now/@da hen/duct bon/boon}
     ^-  {(list move) fort}
     ?-    -.bon
-        $beer
+        %beer
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
       :*  [hen [%slip %c %init p.bon]]
           [hen [%give %init p.bon]]
@@ -1598,26 +1598,26 @@
           ~
       ==
     ::
-        $cake
+        %cake
       ~?  ?=(^ r.bon)  [%cake-woot-bad hen r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==
     ::
-        $mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
-        $milk
+        %mead  :_(fox [[hen [%give %hear p.bon q.bon]] ~])
+        %milk
       ::  ~&  [%milk p.bon q.bon]
       ?>  ?=({@ @ *} q.q.bon)
-      ?>  ?=(?($a $c $e $g) i.q.q.bon)
+      ?>  ?=(?(%a %c %e %g) i.q.q.bon)
       =+  pax=[(scot %p p.p.bon) (scot %p q.p.bon) q.q.bon]
       :_  fox  [hen %pass pax i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
-        $ouzo
+        %ouzo
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))] 
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
-        $wine
+        %wine
       :_  fox
       =+  fom=~(rend co %$ %p q.p.bon)
       :~  :-  hen
@@ -1635,13 +1635,13 @@
     |=  {tea/wire hen/duct sih/sign:able}
     ^-  {(list move) _+>}
     ?-  +<.sih
-        $crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
-        $mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
+        %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
+        %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
-        $unto  [~ +>]
-        $woot  [~ +>]
-        ?($mean $nice)                                  ::  XX obsolete
-      ?:  ?=({$ye $~} tea)
+        %unto  [~ +>]
+        %woot  [~ +>]
+        ?(%mean %nice)                                  ::  XX obsolete
+      ?:  ?=({%ye ~} tea)
         [~ +>.$]
       ?>  ?=({@ @ @ *} tea)
       =+  soq=[(slav %p i.tea) (slav %p i.t.tea)]
@@ -1650,7 +1650,7 @@
           =<  zork  =<  zank
           %^  ~(rack am [now fox])  soq  pax
           ::  ~&  [%knap-ack ?-(+<.sih %mean `p.+.sih, %nice ~)]
-          ?-(+<.sih $mean `p.+.sih, $nice ~)
+          ?-(+<.sih %mean `p.+.sih, %nice ~)
       =>  %_(. fox q.fuy)
       =|  out/(list move)
       |-  ^-  {p/(list move) q/_+>.^$}
@@ -1663,13 +1663,13 @@
   ++  knob
     |=  {hen/duct kyz/task:able}
     ^-  {(list move) _+>}
-    ?:  ?=($crud -.kyz)
+    ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
-    ?:  ?=($west -.kyz)
-      ?:  ?=({$pi $~} q.kyz)
+    ?:  ?=(%west -.kyz)
+      ?:  ?=({%pi ~} q.kyz)
         :_  +>.$
         [[hen %give %mack ~] ~]
-      ?>  ?=({$ta $~} q.kyz)
+      ?>  ?=({%ta ~} q.kyz)
       =+  gox=((hard {p/@p q/@pG r/gens s/pass}) r.kyz)
       =+  gus=(need (~(us go ton.fox) p.p.kyz))
       =^  wyl  gus  (born:gus now gox)
@@ -1680,40 +1680,40 @@
             (scot %p q.p.kyz)
           q.kyz
       [hen %pass pax %g %deal p.kyz %hood %poke %will !>(wyl)]~
-    ?:  ?=($wegh -.kyz)
+    ?:  ?=(%wegh -.kyz)
       ~&  %ames-weighing
       [[hen %give %mass wegh]~ +>]
     =+  ^=  fuy  
         ^-  {p/(list boon) q/fort}
         ?-    -.kyz
-            $barn
+            %barn
           [~ fox(gad hen)]
-            $cash
+            %cash
           (~(have am [now fox]) p.kyz q.kyz)
         ::
-            $hear
+            %hear
           (~(gnaw am [now fox]) %good p.kyz q.kyz)
         ::
-            $halo
+            %halo
           (~(gnaw am [now fox]) %dead p.kyz q.kyz)
         ::
-            $hole
+            %hole
           (~(gnaw am [now fox]) %dead p.kyz q.kyz)
         ::
-            $junk
+            %junk
           [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
-            $kick
+            %kick
           (~(kick am [now fox(hop p.kyz)]) hen)
         ::
-            $make
+            %make
           =+  vun=(~(come am [now fox]) p.kyz (bex q.kyz) r.kyz s.kyz)
           [[[%beer p.vun] ~] q.vun]
         ::
-            $sith
+            %sith
           (~(czar am [now fox]) p.kyz q.kyz r.kyz)
         ::
-            $nuke
+            %nuke
           :-  ~
           ?:  (~(has in bad.fox) p.kyz)
             ~&  [%unblock p.kyz]
@@ -1721,10 +1721,10 @@
           ~&  [%block p.kyz]
           fox(bad (~(put in bad.fox) p.kyz))
         ::
-            $wake
+            %wake
           (~(wake am [now fox]) hen)
         ::
-            $want
+            %want
           (~(wise am [now fox]) p.kyz hen q.kyz r.kyz)
         ==
     =>  %_(. fox q.fuy)
@@ -1739,51 +1739,51 @@
     |=  {our/ship his/ship mar/@ud tyl/path}
     ^-  (unit (unit cage))
     ?~  tyl  ~
-    ?:  ?=({$name $~} tyl)
+    ?:  ?=({%name ~} tyl)
       =+  wul=$(tyl [%will ~])
       :+  ~  ~
       :-  %noun
       !>(?~(wul (scot %p his) (gnow:title his q.q.q:((hard deyd) -.u.wul))))
-    ?:  ?=({$gcos $~} tyl)
+    ?:  ?=({%gcos ~} tyl)
       =+  wul=$(tyl [%will ~])
       ?~(wul ~ ``[%noun !>(`gcos`q.q.q:((hard deyd) -.u.wul))])
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
-      ?:  ?=({$will $~} tyl)
+      ?:  ?=({%will ~} tyl)
         =+  fod=(~(get by hoc.saf.u.gys) his)
         ?~  fod  ~
         %+  bind  (rick mar his lew.wod.u.fod)
         |=(a/wyll `[%noun !>(a)])
-      ?:  ?=({$tick $~} tyl)
+      ?:  ?=({%tick ~} tyl)
         ?.  =(our (sein:title his))  ~
         ``[%noun !>((end 6 1 (shaf %tick (mix his (shax sec:ex:q:sen:u.gys)))))]
       ~
-    ?:  ?=({$buck $~} tyl)
+    ?:  ?=({%buck ~} tyl)
       =+  muc=(rice mar sex:u.gys)
       =+  luw=(rick mar our law.saf.u.gys)
       ?.  &(?=(^ muc) ?=(^ luw))  ~
       ``[%noun !>(`buck`[u.muc u.luw])]
-    ?:  ?=({$code $~} tyl)
+    ?:  ?=({%code ~} tyl)
       ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:q:sen:u.gys))))]
-    ?:  ?=({$will $~} tyl)
+    ?:  ?=({%will ~} tyl)
       (bind (rick mar our law.saf.u.gys) |=(a/wyll `[%noun !>(a)]))
     ~
   ::
   ++  temp
     |=  {our/ship his/ship tyl/path}
     ^-  (unit (unit cage))
-    ?:  ?=({?($show $tell) *} tyl)
+    ?:  ?=({?(%show %tell) *} tyl)
       ?^  t.tyl  [~ ~]
       =+  gys=(~(us go ton.fox) our)
       ?~  gys  [~ ~]
       =+  zet=zest:(ho:(~(um am [now fox]) our) his)
       ``[%noun ?:(=(%show i.tyl) !>(>zet<) !>(zet))]
-    ?:  ?=({$pals $~} tyl)
+    ?:  ?=({%pals ~} tyl)
       ?.  =(our his)
         ~
       ``[%noun !>(pals:(~(um am [now fox]) our))]
-    ?.  ?=({$life $~} tyl)
+    ?.  ?=({%life ~} tyl)
       =+  muc=$(tyl [%life ~])
       (perm our his ?~(muc 0 (@ud u.muc)) tyl)
     =+  gys=(~(us go ton.fox) our)
