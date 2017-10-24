@@ -95,7 +95,7 @@ let
       "-I../ld64/src/ld " +
       "-I../ld64/src/ld/parsers " +
       "-I../ld64/src/abstraction " +
-      "-isystem ${sdk_lite}/usr/include " +
+      "-isystem ${sdk_lite}/include " +
       "-D__LITTLE_ENDIAN__ " +
       "-D_DARWIN_C_SOURCE";
   };

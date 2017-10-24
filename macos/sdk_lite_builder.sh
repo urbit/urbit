@@ -24,17 +24,49 @@ sys/appleapiopts.h
 "
 
 for dir in $header_dirs; do
-  d=$out/usr/include/$(dirname $dir)/
+  d=$out/include/$(dirname $dir)/
   mkdir -p $d
   cp -r --no-preserve=mode $sdk/usr/include/$dir $d
 done
 
 for header in $headers; do
-  mkdir -p $out/usr/include/$(dirname $header)
-  cp $sdk/usr/include/$header $out/usr/include/$header
+  mkdir -p $out/include/$(dirname $header)
+  cp $sdk/usr/include/$header $out/include/$header
 done
 
-cat > $out/usr/include/i386/_types.h <<EOF
+cat > $out/include/mach/mach_time.h <<EOF
+// We need definitions for these functions.
+
+#pragma once
+
+#include <stdint.h>
+#include <sys/time.h>
+#include <mach/mach_types.h>
+
+struct mach_timebase_info {
+  uint32_t numer;
+  uint32_t denom;
+};
+
+typedef struct mach_timebase_info * mach_timebase_info_t;
+typedef struct mach_timebase_info mach_timebase_info_data_t;
+
+kern_return_t mach_timebase_info(mach_timebase_info_t info)
+{
+  info->numer = 1000;
+  info->denom = 1;
+  return 0;
+}
+
+static inline uint64_t mach_absolute_time(void)
+{
+  struct timeval tv;
+  if (gettimeofday(&tv, NULL)) { return 0; }
+  return (uint64_t)tv.tv_sec * 1000000 + tv.tv_usec;
+}
+EOF
+
+cat > $out/include/i386/_types.h <<EOF
 // The SDK version defines things like __int64_t, causing errors.
 
 #pragma once
@@ -44,7 +76,7 @@ typedef long __darwin_intptr_t;
 typedef unsigned int __darwin_natural_t;
 EOF
 
-cat > $out/usr/include/i386/limits.h <<EOF
+cat > $out/include/i386/limits.h <<EOF
 // The SDK version defines MB_LEN_MAX, which causes errors.
 
 #pragma once
@@ -57,7 +89,7 @@ cat > $out/usr/include/i386/limits.h <<EOF
 #endif
 EOF
 
-cat > $out/usr/include/string.h <<EOF
+cat > $out/include/string.h <<EOF
 // MacOS programs expect string.h to define these.
 
 #pragma once
@@ -102,4 +134,4 @@ EOF
 # The MacOS SDK expects sys/cdefs.h to define __unused as an attribute.  But we
 # can't have that definition here because glibc's linux/sysctl.h uses __unused as a
 # variable name.  Instead, we just fix the SDK to not use __unused.
-sed -i -r 's/\b__unused\b//g' $out/usr/include/mach/mig_errors.h
+sed -i -r 's/\b__unused\b//g' $out/include/mach/mig_errors.h
