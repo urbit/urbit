@@ -48,7 +48,7 @@ def make_dep_graph
   add_dep 'libQt5Gui.a', 'libQt5Core.a'
   add_dep 'libQt5Gui.a', 'libqtlibpng.a'
   add_dep 'libQt5Gui.a', 'libqtharfbuzz.a'
-  add_dep 'libQt5Core.a', 'libqtpcre.a'
+  add_dep 'libQt5Core.a', 'libqtpcre2.a'
 
   if Os == 'windows'
     add_dep 'Qt5Gui.x', 'qwindows.x'
