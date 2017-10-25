@@ -8594,8 +8594,8 @@
               ?=(?($noun $void {?($atom $core) *}) ref)
           ==
         done
-      ~_  (dunk 'redo: dext: sut')
-      ~_  (dunk(sut ref) 'redo: dext: ref')  
+      ::  ~_  (dunk 'redo: dext: sut')
+      ::  ~_  (dunk(sut ref) 'redo: dext: ref')  
       ?-    sut
           ?($noun $void {?($atom $core) *})
         ::  reduce reference and reassemble leaf
@@ -8667,8 +8667,8 @@
       =/  lov  
           =/  lov  dear
           ?~  lov
-            ~_  (dunk 'redo: dear: sut')
-            ~_  (dunk(sut ref) 'redo: dear: ref')
+            ::  ~_  (dunk 'redo: dear: sut')
+            ::  ~_  (dunk(sut ref) 'redo: dear: ref')
             ~&  [%wec wec]
             !!
           (need lov)
