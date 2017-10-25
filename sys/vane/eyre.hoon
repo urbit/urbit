@@ -231,7 +231,7 @@
   %+  rap  3  :-  (wack a)
   (turn b |=(c/knot (cat 3 '_' (wack c))))
 ::
-++  puck                                                ::  light path decoding
+++  pick                                                ::  light path decoding
   =+  fel=(most cab (sear wick urt:ab))
   |=(a/knot `(unit {p/term q/path})`(rush a fel))
 ::
@@ -1045,7 +1045,7 @@
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
-          =+  bek=(norm-beak -:(need (de-beam (need (puck p.tee)))))
+          =+  bek=(norm-beak -:(need (de-beam (need (pick p.tee)))))
           (exec-live ac+q.tee bek [%flag [p.sih `~] %cast %mime [%$ cay]])
         (give-mime q.tee p.sih cay)
       ::
@@ -1403,7 +1403,7 @@
           ?~  in-quy
             (slav %ta i.t.but)
           =+  src=~|(no+u.in-quy (~(got by (malt quy)) u.in-quy))
-          p:(need (puck src))  ::  allow state=usr_other-data
+          p:(need (pick src))  ::  allow state=usr_other-data
         ::
             $at  [%auth %at pok(q but)]
             $as
