@@ -1940,7 +1940,7 @@
       url+(crip (apix:en-purl:html url.sep))
       ::
         $exp
-      tan+~[rose+[" " ~ ~]^[leaf+"# {(trip exp.sep)}" res.sep]]
+      mor+~[txt+"# {(trip exp.sep)}" tan+res.sep]
       ::
         $ire
       =+  gam=(recall top.sep)
@@ -2018,9 +2018,10 @@
       ==
       ::
         $exp
-      ::TODO  print truncated res on its own line.
-      :_  ~
-      (tr-chow wyd '#' ' ' (trip exp.sep))
+      :-  (tr-chow wyd '#' ' ' (trip exp.sep))
+      ?~  res.sep  ~
+      =-  [[' ' ' ' (snag 0 -)] ~]
+      (wash [0 wyd] (snag 0 `(list tank)`res.sep))
       ::
         $ire
       $(sep sep.sep)
