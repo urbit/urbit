@@ -242,7 +242,7 @@ def canonical_x_file(dep)
 end
 
 # Note: It would be nice to find some solution so that Qt5Widgets.pc does not
-# require on Qt5GuiNoPlugins, since it already depends on Qt5Gui.
+# require Qt5GuiNoPlugins, since it already requires Qt5Gui.
 def flatten_deps_for_pc_file(pc_file)
   flatten_deps(DepGraph[pc_file]) do |dep|
     deps = case determine_dep_type(dep)
