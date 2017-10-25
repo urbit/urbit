@@ -144,7 +144,7 @@ rec {
     inherit crossenv;
   };
 
-  qt = import ./pkgs/qt58 {
+  qt = import ./pkgs/qt {
     inherit crossenv libudev libxcb dejavu-fonts xcb-util xcb-util-image
       xcb-util-wm xcb-util-keysyms xcb-util-renderutil libx11 libxi;
   };
