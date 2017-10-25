@@ -2,7 +2,7 @@
   xcb-util-wm, xcb-util-keysyms, xcb-util-renderutil, libx11, libxi }:
 
 let
-  version = "5.8.0";
+  version = "5.9.2";
 
   name = "qtbase-${version}";
 
@@ -21,8 +21,8 @@ let
     in "${os_code}-${compiler_code}";
 
   base_src = crossenv.nixpkgs.fetchurl {
-    url = https://download.qt.io/official_releases/qt/5.8/5.8.0/submodules/qtbase-opensource-src-5.8.0.tar.xz;
-    sha256 = "01f07yjly7y24njl2h4hyknmi7pf8yd9gky23szcfkd40ap12wf1";
+    url = "https://download.qt.io/official_releases/qt/5.9/${version}/submodules/qtbase-opensource-src-${version}.tar.xz";
+    sha256 = "16v0dny4rcyd5p8qsnsfg89w98k8kqk3rp9x3g3k7xjmi53bpqkz";
   };
 
   base_raw = crossenv.make_derivation {
@@ -34,10 +34,6 @@ let
     patches = [
       # The .pc files have incorrect library names without this (e.g. Qt5Cored)
       ./pc-debug-name.patch
-
-      # An #include statement in Qt contained uppercase letters, but
-      # mingw-w64 headers are all lowercase.
-      ./header-caps.patch
 
       # uxtheme.h test is broken, always returns false, and results in QtWidgets
       # apps looking bad on Windows.  https://stackoverflow.com/q/44784414/28128

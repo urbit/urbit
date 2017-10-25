@@ -1,6 +1,6 @@
-diff -ur qt58-orig/src/widgets/configure.json qt58/src/widgets/configure.json
---- qt58-orig/src/widgets/configure.json	2017-05-28 02:07:07.625626151 -0700
-+++ qt58/src/widgets/configure.json	2017-06-27 21:25:52.752628339 -0700
+diff -ur qtbase-opensource-src-5.9.2-orig/src/widgets/configure.json qtbase-opensource-src-5.9.2/src/widgets/configure.json
+--- qtbase-opensource-src-5.9.2-orig/src/widgets/configure.json	2017-10-25 13:52:49.173421900 -0700
++++ qtbase-opensource-src-5.9.2/src/widgets/configure.json	2017-10-25 13:53:42.891341214 -0700
 @@ -28,11 +28,6 @@
      },
  
@@ -19,6 +19,6 @@ diff -ur qt58-orig/src/widgets/configure.json qt58/src/widgets/configure.json
              "label": "WindowsXP",
 -            "condition": "features.style-windows && config.win32 && !config.winrt && tests.uxtheme",
 +            "condition": "features.style-windows && config.win32 && !config.winrt",
-             "output": [ "styles" ]
+             "output": [ "privateFeature", "styles" ]
          },
          "style-windowsvista": {
