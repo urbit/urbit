@@ -91,6 +91,11 @@
     =-  (pairs (turn ~(tap by a) -))
     |*  {k/* v/*}  [(b k) (c v)]
   ::
+  ++  lank                                              ::>  tank as string arr
+    |=  a/tank
+    ^-  json
+    a+(turn (wash [0 1.024] a) tape)
+  ::
   ++  dank                                              ::>  tank
     |=  a/tank
     ?:  ?=($leaf -.a)  (frond %leaf (tape p.a))
@@ -282,7 +287,7 @@
   ++  grop                                              ::>  group
     |=  a/group
     ^-  json
-    (mo a (cury scot %p) `stat)
+    (mo a (cury scot %p) stat)
   ::
   ++  stat                                              ::>  status
     |=  a/status
@@ -342,7 +347,7 @@
     %-  pairs
     ?-  -.a
       $lin  ~[pat+b+pat.a msg+s+msg.a]
-      $exp  ~[exp+s+exp.a res+a+(turn res.a dank)]
+      $exp  ~[exp+s+exp.a res+a+(turn res.a lank)]
       $ire  ~[top+s+(scot %uv top.a) sep+(spec sep.a)]  ::TODO  @uv as number?
       $fat  ~[tac+(atta tac.a) sep+(spec sep.a)]
       $inv  ~[inv+b+inv.a cir+(circ cir.a)]
@@ -356,7 +361,7 @@
     ?-  -.a
       $name  (pairs nom+s+nom.a tac+(atta tac.a) ~)
       $text  s+(of-wain:format +.a)
-      $tank  a+(turn +.a dank)
+      $tank  a+(turn +.a lank)
     ==
   ::
   ::>  ||
@@ -572,7 +577,7 @@
     ^-  $-(json (unit speech))
     %+  re  *speech  |.  ~+
     %-  of  :~
-      lin+(ot pat+bo txt+so ~)
+      lin+(ot pat+bo msg+so ~)
       url+(su aurf:de-purl:html)
       exp+eval
       ire+(ot top+seri sep+spec ~)
