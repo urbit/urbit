@@ -625,7 +625,6 @@
           {$veer p/@ta q/path r/@t}                     ::  drop-through
           {$vega p/path q/path}                         ::  drop-through
           {$velo p/@t q/@t}                             ::  drop-through
-          {$mini-jael-gift *}
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$born $~}                                    ::  new unix process
@@ -641,7 +640,6 @@
           {$wegh $~}                                    ::  report memory
           {$went p/sack q/path r/@ud s/coop}            ::  response confirm
           {$west p/sack q/{path *}}                     ::  network request
-          {$mini-jael-task *}
       ==                                                ::
     --  ::able
   ::
@@ -670,7 +668,10 @@
         but/path                                        ::  ending
     ==                                                  ::
   ++  gram                                              ::  inter-ship message
-    $?  {{$get $~} p/@uvH q/{? clip httq}}              ::  remote request
+    $?  {{$lon $~} p/hole}                              ::  login request
+        {{$aut $~} p/hole}                              ::  login reply
+        {{$hat $~} p/hole q/hart}                       ::  login redirect
+        {{$get $~} p/@uvH q/{? clip httq}}              ::  remote request
         {{$got $~} p/@uvH q/httr}                       ::  remote response
         {{$gib $~} p/@uvH}                              ::  remote cancel
     ==                                                  ::
