@@ -275,7 +275,7 @@
     ^-  json
     %-  pairs  :~
       loc+(grop loc.a)
-      rem+(mo rem.a tmp grop)
+      rem+(mo rem.a (cork circ:en-tape crip) grop)
     ==
   ::
   ++  grop                                              ::>  group
@@ -581,6 +581,7 @@
   ::
   ++  atta                                              ::>  attache
     ^-  $-(json (unit attache))
+    %+  re  *attache  |.  ~+
     %-  of  :~
       name+(ot nom+so tac+atta ~)
       text+(cu to-wain:format so)
