@@ -2,6 +2,7 @@
 ::::  /lib/talk-json/hoon
   ::
 /-    talk
+/+    old-zuse
 ::
 ::>  proposed rules for sur-json conversion, adhered to below:
 ::>  1. to save the devs from having to learn multiple interfaces, try to match
@@ -20,7 +21,7 @@
 ::>
 ::>  q: should parsing be strict or forgiving? ie, accept "ship" and/or "~ship"?
 ::
-|%
+|_  bol/bowl:gall
 ++  en-tape                                             ::>  sur to tape
   =,  talk
   |%
@@ -573,11 +574,24 @@
     %-  of  :~
       lin+(ot pat+bo txt+so ~)
       url+(su aurf:de-purl:html)
-      exp+(ot exp+so res+(ar dank) ~)
+      exp+eval
       ire+(ot top+seri sep+spec ~)
       fat+(ot tac+atta sep+spec ~)
       inv+(ot inv+bo cir+circ ~)
     ==
+  ::
+  ++  eval                                              ::>  %exp speech
+    ::>  extract contents of an %exp speech, evaluating
+    ::>  the {exp} if there is no {res} yet.
+    ::
+    |=  a/json
+    ^-  (unit {cord (list tank)})
+    =+  exp=((ot exp+so ~) a)
+    ?~  exp  ~
+    :+  ~  u.exp
+    =+  res=((ot res+(ar dank) ~) a)
+    ?^  res  u.res
+    p:(mule |.([(sell (slap !>(..zuse:old-zuse) (ream u.exp)))]~))  ::TODO  oldz
   ::
   ++  atta                                              ::>  attache
     ^-  $-(json (unit attache))
