@@ -7,7 +7,7 @@
 |%
   ++  card
     $%  {$diff $sole-effect sole-effect}
-        {$poke wire {ship $hood} $womb-invite {cord invite}:womb}
+        {$poke wire {ship $hood} $womb-invite {cord:womb invite:womb}}
     ==
   ++  invited  ?($new $sent $ignored)
   ++  email  @t
