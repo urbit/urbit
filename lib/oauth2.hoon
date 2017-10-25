@@ -18,8 +18,15 @@
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss
   =.  b  (quay:hep-to-cab b)
-  =-  [a %post - ?~(b ~ (some (as-octt +:(tail:en-purl b))))]
-  (my content-type+['application/x-www-form-urlencoded']~ ~)
+  =-  [a %post - ?~(b ~ (some (as-octt +:(tail:earn b))))]
+  %^  my
+    :+  %accept
+      'application/json'
+    ~
+    :+  %content-type
+      'application/x-www-form-urlencoded'
+    ~
+    ~
 ::
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
@@ -28,7 +35,7 @@
 ::
 ++  bad-response  |=(a/@u ?:(=(2 (div a 100)) | ~&(bad-httr+a &)))
 ++  grab-json
-  |*  {a/httr b/fist:dejs-soft:format}
+  |*  {a/httr b/fist:jo}
   ~|  bad-json+r.a
   ~|  (de-json q:(need r.a))
   (need (;~(biff de-json b) q:(need r.a)))
@@ -61,10 +68,10 @@
 ::::
   ::
 =+  state-usr=|
-|_  {(bale:eyre keys) tok/token}
+|_  {(bale keys) tok/token}
 ++  client-id      cid:decode-keys
 ++  client-secret  cis:decode-keys
-++  decode-keys                       :: XX from bale:eyre w/ typed %jael
+++  decode-keys                       :: XX from bale w/ typed %jael
   ^-  {cid/@t cis/@t $~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
@@ -79,7 +86,7 @@
 ++  auth-url
   |=  {scopes/(list @t) url/$@(@t purl)}  ^-  purl
   ~&  [%oauth-warning "Make sure this urbit ".
-                      "is running on {(en-purl our-host `~ ~)}"]
+                      "is running on {(earn our-host `~ ~)}"]
   %+  add-query:interpolate  url
   %-  quay:hep-to-cab
   :~  state+?.(state-usr '' (pack usr /''))
@@ -88,15 +95,9 @@
       scope+(join ' ' scopes)
   ==
 ::
-::  XX duplicated from eyre
-++  pack                                                ::  light path encoding
-  |=  {a/term b/path}  ^-  knot
-  %+  rap  3  :-  (wack a)
-  (turn b |=(c/knot (cat 3 '_' (wack c))))
-::
 ++  our-host  .^(hart %e /(scot %p our)/host/fake)
 ++  redirect-uri
-  %-    crip    %-  en-purl
+  %-    crip    %-  earn
   %^  into-url:interpolate  'https://our-host/~/ac/:domain/:user/in'
     `our-host
   :~  domain+(join '.' (flop dom))
@@ -120,17 +121,15 @@
 ::
 ++  grab-token
   |=  a/httr  ^-  axs/@t
-  (grab-json a (ot 'access_token'^so ~):dejs-soft:format)
+  (grab-json a (ot 'access_token'^so ~):jo)
 ::
 ++  grab-expiring-token
   |=  a/httr  ^-  {axs/@t exp/@u}
-  (grab-json a (ot 'access_token'^so 'expires_in'^ni ~):dejs-soft:format)
+  (grab-json a (ot 'access_token'^so 'expires_in'^ni ~):jo)
 ::
 ++  grab-both-tokens
   |=  a/httr  ^-  {axs/@t exp/@u ref/@t}
-  %+  grab-json  a
-  =,  dejs-soft:format
-  (ot 'access_token'^so 'expires_in'^ni 'refresh_token'^so ~)
+  (grab-json a (ot 'access_token'^so 'expires_in'^ni 'refresh_token'^so ~):jo)
 ::
 ++  auth
   ?~  tok  ~|(%no-bearer-token !!)
@@ -143,14 +142,14 @@
   |=  request/{url/purl meth hed/math (unit octs)}
   ^+  request
   ::  =.  p.url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
-  ~&  add-auth-header+(en-purl url.request)
+  ~&  add-auth-header+(earn url.request)
   request(hed (~(add ja hed.request) %authorization header:auth))
 ::
 ++  add-auth-query
   |=  {token-name/cord request/{url/purl meth math (unit octs)}}
   ^+  request
   ::  =.  p.url.request  [| `6.000 [%& /localhost]]       ::  for use with unix nc
-  ~&  add-auth-query+(en-purl url.request)
+  ~&  add-auth-query+(earn url.request)
   request(r.url [[token-name query:auth] r.url.request])
 ::
 ++  re
@@ -280,7 +279,7 @@
 ::  ::
 ::  ::::
 ::    ::
-::  |_  {bal/(bale:eyre keys:oauth2) tok/token:oauth2}
+::  |_  {bal/(bale keys:oauth2) tok/token:oauth2}
 ::  ++  aut  (~(standard oauth2 bal tok) . |=(tok/token:oauth2 +>(tok tok)))
 ::  ++  out
 ::    %+  out-add-header:aut  scope=/full
@@ -304,7 +303,7 @@
 ::  ::
 ::  ::::
 ::    ::
-::  |_  {bal/(bale:eyre keys:oauth2) tok/token:oauth2}
+::  |_  {bal/(bale keys:oauth2) tok/token:oauth2}
 ::  ++  aut  ~(. oauth2 bal tok)
 ::  ++  out  ::  add header
 ::    =+  aut
@@ -341,7 +340,7 @@
 ::  ::
 ::  ::::
 ::    ::
-::  |_  {bal/(bale:eyre keys:oauth2) tok/token:oauth2 ref/refresh:oauth2}
+::  |_  {bal/(bale keys:oauth2) tok/token:oauth2 ref/refresh:oauth2}
 ::  ++  aut
 ::    %^  ~(standard-refreshing oauth2 bal tok)  .  ref
 ::    |=({tok/token ref/refresh}:oauth2 +>(tok tok, ref ref))
@@ -368,7 +367,7 @@
 ::  ::
 ::  ::::
 ::    ::
-::  |_  {bal/(bale:eyre keys:oauth2) axs/token:oauth2 ref/refresh:oauth2}
+::  |_  {bal/(bale keys:oauth2) axs/token:oauth2 ref/refresh:oauth2}
 ::  ++  aut  ~(. oauth2 bal axs)
 ::  ++  exchange-url  'https://my-api.com/access_token'
 ::  ++  out  :: refresh or add header
