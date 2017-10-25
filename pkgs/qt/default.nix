@@ -13,7 +13,7 @@ let
       os_code =
         if crossenv.os == "windows" then "win32"
         else if crossenv.os == "macos" then "macx"
-        else if crossenv.os == "linux" then "devices/linux-musl"
+        else if crossenv.os == "linux" then "devices/linux-generic"
         else crossenv.os;
       compiler_code =
         if crossenv.compiler == "gcc" then "g++"
@@ -32,6 +32,9 @@ let
     builder = ./builder.sh;
 
     patches = [
+      # Fix the build error caused by https://bugreports.qt.io/browse/QTBUG-63637
+      ./win32-link-object-max.patch
+
       # The .pc files have incorrect library names without this (e.g. Qt5Cored)
       ./pc-debug-name.patch
 
@@ -42,7 +45,7 @@ let
       # Add a devices/linux-musl-g++ platform to Qt, copied from
       # devices/linux-arm-generic-g++.  When we upgrade to Qt 5.9, we should
       # consider using device/linux-generic-g++ instead.
-      ./mkspecs.patch
+      # ./mkspecs.patch  # TODO: remove if linux build succeeds
 
       # When cross-compiling, Qt uses some heuristics about whether to trust the
       # pkg-config executable supplied by the PKG_CONFIG environment variable.
