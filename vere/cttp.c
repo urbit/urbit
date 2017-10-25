@@ -1509,7 +1509,7 @@ _cttp_ccon_fire(u3_ccon* coc_u, u3_creq* ceq_u)
   _cttp_ccon_fire_str(coc_u, ceq_u->url_c);
   _cttp_ccon_fire_str(coc_u, " HTTP/1.1\r\n");
   _cttp_ccon_fire_str(coc_u, "User-Agent: urbit/vere.0.2\r\n");
-  _cttp_ccon_fire_str(coc_u, "Accept: */*\r\n");
+  // _cttp_ccon_fire_str(coc_u, "Accept: */*\r\n");
   //  XX it's more painful than it's worth to deal with SSL+Keepalive
   if ( c3n == coc_u->sec ) {
     _cttp_ccon_fire_str(coc_u, "Connection: Keep-Alive\r\n");
