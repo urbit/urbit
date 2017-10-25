@@ -111,7 +111,7 @@
     $(places t.places)
   (?+(ren !! $x read-x.i.places, $y read-y.i.places) pax)
 ::
-::  Handles http responses sent in `++read` by mappig them to
+::  Handles http responses sent in `++read` by mapping them to
 ::  their handling, either `sigh-x` or `sigh-y`, in `places`.
 ::
 ++  sigh
