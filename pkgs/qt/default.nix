@@ -1,3 +1,8 @@
+# TODO: look into why were compiling with this impure option on Linux:
+#   -DDFLT_XKB_CONFIG_ROOT=\"/usr/share/X11/xkb\"
+
+# TODO: patch qt to not use /bin/pwd, test building it in a sandbox
+
 { crossenv, libudev, libxcb, dejavu-fonts, xcb-util, xcb-util-image,
   xcb-util-wm, xcb-util-keysyms, xcb-util-renderutil, libx11, libxi }:
 
@@ -5,8 +10,6 @@ let
   version = "5.9.2";
 
   name = "qtbase-${version}";
-
-  # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
   platform =
     let
@@ -82,7 +85,13 @@ let
         else if crossenv.os == "linux" then
           "-qpa xcb " +
           "-system-xcb " +
-          "-no-opengl "
+          "-no-opengl " +
+          # This is our attempt to get the tests.xlib test in
+          # src/gui/configure.json to pass, but it doesn't work
+          # because x11 depends on xproto to provide the X11/X.h
+          # header.  We should teach Qt to use pkg-config to find x11,
+          # like a normal program.
+          "-device-option QMAKE_INCDIR_X11=${libx11}/include "
         else "" );
 
      cross_inputs =
