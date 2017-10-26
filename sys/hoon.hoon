@@ -9948,8 +9948,6 @@
           scab
           (cold [%base %cell] ket)
         ==
-      :-  '.'
-        scab
       :-  ['a' 'z']
         ;~  pose
           (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
@@ -9964,8 +9962,8 @@
     :~
       :-  ','
         ;~  pose
+          ;~(pfix com wyde)
           (stag %wing rope)
-          ;~(pfix com (stag %ktsg wide))
         ==
       :-  '!'
         ;~  pose
@@ -10014,7 +10012,7 @@
         (stag %bccl (ifix [kel ker] (most ace wyde)))
       :-  '*'
         ;~  pose
-          (stag %bunt ;~(pfix tar wide))
+          (stag %bunt ;~(pfix tar wyde))
           (cold [%base %noun] tar)
         ==
       :-  '@'
@@ -10082,7 +10080,7 @@
             ;~  pfix  tar
               (stag %kthp (stag [%base %noun] ;~(pfix tec wide)))
             ==
-            (stag %kthp ;~(plug wide ;~(pfix tec wide)))
+            (stag %kthp ;~(plug wyde ;~(pfix tec wide)))
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
             (cook |=(a/twig [[%rock %n ~] a]) wide)
           ==
@@ -10193,7 +10191,7 @@
                     ['.' (runo dot %brdt [~ ~] expa)]
                     ['-' (runo hep %brhp [~ ~] expa)]
                     ['^' (runo ket %brkt [~ ~] expx)]
-                    ['~' (runo sig %brsg [~ ~] expb)]
+                    ['~' (runo sig %brsg [~ ~] exqc)]
                     ['*' (runo tar %brtr [~ ~] exqc)]
                     ['=' (runo tis %brts [~ ~] exqc)]
                     ['?' (runo wut %brwt [~ ~] expa)]
@@ -10203,15 +10201,15 @@
               ;~  pfix  buc
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['@' (rune pat %bcpt expb)]
+                :~  ['@' (rune pat %bcpt exqb)]
                     ['_' (rune cab %bccb expa)]
-                    [':' (rune col %bccl exps)]
-                    ['%' (rune cen %bccn exps)]
-                    ['^' (rune ket %bckt expb)]
-                    ['-' (rune hep %bchp expb)]
-                    ['=' (rune tis %bcts expg)]
-                    ['?' (rune wut %bcwt exps)]
-                    [';' (rune sem %bcsm expa)]
+                    [':' (rune col %bccl exqs)]
+                    ['%' (rune cen %bccn exqs)]
+                    ['^' (rune ket %bckt exqb)]
+                    ['-' (rune hep %bchp exqb)]
+                    ['=' (rune tis %bcts exqg)]
+                    ['?' (rune wut %bcwt exqs)]
+                    [';' (rune sem %bcsm exqa)]
                 ==
               ==
             :-  '%'
@@ -10523,6 +10521,7 @@
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::    root contents
     ::
+    ++  exqa  |.(loan)                                  ::  one twig
     ++  exqb  |.(;~(gunk loan loan))                    ::  two roots
     ++  exqc  |.(;~(gunk loan loaf))                    ::  root then twig
     ++  exqs  |.((butt hunk))                           ::  closed gapped roots

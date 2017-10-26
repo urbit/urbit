@@ -54,6 +54,7 @@
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
           {$ex p/twig}                                  ::  hoon expression
+          {$sa p/mark}                                  ::  example mark value
           {$as p/mark q/dojo-source}                    ::  simple transmute
           {$do p/twig q/dojo-source}                    ::  gate apply
           {$tu p/(list dojo-source)}                    ::  tuple
@@ -272,6 +273,7 @@
       ;~  pose
         (stag %ex dp-twig)
         (stag %tu (ifix [sel ser] (most ace dp-source)))
+        (stag %sa ;~(pfix tar pam sym))
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
@@ -361,6 +363,7 @@
       ?-    -.bul
         $ex  [bul +>.$]
         $dv  [bul +>.$]
+        $sa  [bul +>.$]
         $as  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $do  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         $ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
@@ -1138,6 +1141,7 @@
           $^  {dy-shown dy-shown}
           $%  {$ur (unit knot) purl:eyre}
               {$dv path}
+              {$sa mark}
               {$as mark dy-shown}
               {$do twig dy-shown}
               {$ge path (list dy-shown) (map term (unit dy-shown))}
@@ -1150,7 +1154,7 @@
       =+  `{@ bil/dojo-build}`a
       |-  ^-  dy-shown
       ?-  -.bil
-        $?($ur $dv)  bil
+        $?($ur $dv $sa)  bil
         $ex  ?.  ?=({$cltr *} p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!
@@ -1316,6 +1320,7 @@
         $ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
         $dv  [/hand [%core he-beak (flop p.bil)]]
         $ex  [/hand (dy-mare p.bil)]
+        $sa  [/hand [%bunt p.bil]]
         $as  [/hand [%cast p.bil [%$ (dy-cage p.q.bil)]]]
         $do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
         $tu  :-  /hand

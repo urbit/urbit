@@ -19,7 +19,14 @@
   |=  {a/purl b/quay}  ^-  hiss
   =.  b  (quay:hep-to-cab b)
   =-  [a %post - ?~(b ~ (some (as-octt +:(tail:earn b))))]
-  (my content-type+['application/x-www-form-urlencoded']~ ~)
+  %^  my
+    :+  %accept
+      'application/json'
+    ~
+    :+  %content-type
+      'application/x-www-form-urlencoded'
+    ~
+    ~
 ::
 ++  mean-wall  !.
   |=  {a/term b/tape}  ^+  !!
