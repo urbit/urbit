@@ -272,8 +272,15 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u3_ve_usage(c3_i argc, c3_c** argv)
 {
-#if 0
-  c3_c *use_c[] = {"Usage: %s [options...] computer\n",
+  c3_c *use_c[] = {
+    "Urbit: a personal server operating function\n",
+    "https://urbit.org\n",
+    "Version " URBIT_VERSION "\n",
+    "\n",
+    "Usage: %s [options...] ship_name\n",
+    "where ship_name is a @p phonetic representation of an urbit address\n",
+    "without the leading '~', and options is some subset of the following:\n",
+    "\n",
     "-c pier       Create a new urbit in pier/\n",
     "-w name       Immediately upgrade to ~name\n",
     "-t ticket     Use ~ticket automatically\n",
@@ -298,16 +305,21 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-f            Fuzz testing\n",
     "-k stage      Start at Hoon kernel version stage\n",
     "-R            Report urbit build info\n",
-    "-Xwtf         Skip last event\n"};
-#else
-  c3_c *use_c[] = {
-    "simple usage: \n",
+    "-Xwtf         Skip last event\n",
+    "\n",
+    "Development Usage:\n",
+    "   To create a development ship, use a fakezod:\n",
+    "   %s -FI zod -A /path/to/arvo/folder -B /path/to/pill -c zod\n",
+    "\n",
+    "   For more information about developing on urbit, see:\n",
+    "   https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md\n",
+    "\n",
+    "Simple Usage: \n",
     "   %s -c <mycomet> to create a comet (anonymous urbit)\n",
     "   %s -w <myplanet> -t <myticket> if you have a ticket\n",
     "   %s <myplanet or mycomet> to restart an existing urbit\n",
     0
   };
-#endif
 
   c3_i i;
   for ( i=0; use_c[i]; i++ ) {
