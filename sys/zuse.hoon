@@ -616,32 +616,30 @@
     ::                                                  ::::
   ++  able  ^?
     |%
-    ++  gift                                            ::  out result <-$
-      $%  {$mass p/mass}                                ::  memory usage
-          {$mack p/(unit tang)}                         ::  message ack
-          {$sigh p/cage}                                ::  marked http response
-          {$thou p/httr}                                ::  raw http response
-          {$thus p/@ud q/(unit hiss)}                   ::  http request+cancel
-          {$veer p/@ta q/path r/@t}                     ::  drop-through
-          {$vega p/path q/path}                         ::  drop-through
-          {$velo p/@t q/@t}                             ::  drop-through
-          {$mini-jael-gift *}
+    +=  gift                                            ::  out result <-$
+      $%  [%mass p=mass]                                ::  memory usage
+          [%mack p=(unit tang)]                         ::  message ack
+          [%sigh p=cage]                                ::  marked http response
+          [%thou p=httr]                                ::  raw http response
+          [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
+          [%veer p=@ta q=path r=@t]                     ::  drop-through
+          [%vega p=path q=path]                         ::  drop-through
+          [%velo p=@t q=@t]                             ::  drop-through
       ==                                                ::
-    ++  task                                            ::  in request ->$
-      $%  {$born $~}                                    ::  new unix process
-          {$crud p/@tas q/(list tank)}                  ::  XX rethink
-          {$hiss p/(unit user) q/mark r/cage}           ::  outbound user req
-          {$init p/@p}                                  ::  report install
-          {$serv p/$@(desk beam)}                       ::  set serving root
-          {$them p/(unit hiss)}                         ::  outbound request
-          {$they p/@ud q/httr}                          ::  inbound response
-          {$chis p/? q/clip r/httq}                     ::  IPC inbound request
-          {$this p/? q/clip r/httq}                     ::  inbound request
-          {$thud $~}                                    ::  inbound cancel
-          {$wegh $~}                                    ::  report memory
-          {$went p/sack q/path r/@ud s/coop}            ::  response confirm
-          {$west p/sack q/{path *}}                     ::  network request
-          {$mini-jael-task *}
+    +=  task                                            ::  in request ->$
+      $%  [%born ~]                                     ::  new unix process
+          [%crud p=@tas q=(list tank)]                  ::  XX rethink
+          [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
+          [%init p=@p]                                  ::  report install
+          [%serv p=$@(desk beam)]                       ::  set serving root
+          [%them p=(unit hiss)]                         ::  outbound request
+          [%they p=@ud q=httr]                          ::  inbound response
+          [%chis p=? q=clip r=httq]                     ::  IPC inbound request
+          [%this p=? q=clip r=httq]                     ::  inbound request
+          [%thud ~]                                     ::  inbound cancel
+          [%wegh ~]                                     ::  report memory
+          [%went p=sack q=path r=@ud s=coop]            ::  response confirm
+          [%west p=sack q=[path *]]                     ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -669,10 +667,13 @@
         bem/beam                                        ::  original path
         but/path                                        ::  ending
     ==                                                  ::
-  ++  gram                                              ::  inter-ship message
-    $?  {{$get $~} p/@uvH q/{? clip httq}}              ::  remote request
-        {{$got $~} p/@uvH q/httr}                       ::  remote response
-        {{$gib $~} p/@uvH}                              ::  remote cancel
+  +=  gram                                              ::  inter-ship message
+    $?  [[%lon ~] p=hole]                               ::  login request
+        [[%aut ~] p=hole]                               ::  login reply
+        [[%hat ~] p=hole q=hart]                        ::  login redirect
+        [[%get ~] p=@uvH q=[? clip httq]]               ::  remote request
+        [[%got ~] p=@uvH q=httr]                        ::  remote response
+        [[%gib ~] p=@uvH]                               ::  remote cancel
     ==                                                  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
@@ -985,21 +986,20 @@
       %+  each  balance                                 ::  complete
       action                                            ::  change
     ::
-    ++  task                                            ::  in request ->$
-      $%  {$ktsg p/ship q/safe}                         ::  destroy rights
-          {$hail p/ship q/remote}                       ::  remote update
-          {$init p/@pG q/arms}                          ::  initialize urbit
-          {$meet p/(unit (unit ship)) q/farm}           ::  integrate pki from
-          {$mint p/ship q/safe}                         ::  create rights
-          {$move p/ship q/ship r/safe}                  ::  transfer from/to
-          {$next p/bull}                                ::  update private key
-          {$nuke $~}                                    ::  cancel tracker from
-          {$veil p/ship}                                ::  view secret channel
-          {$vein $~}                                    ::  view signing keys
-          {$vest $~}                                    ::  view public balance
-          {$vine $~}                                    ::  view secret history
-          {$jaelwomb p/task:womb}                       ::  XX not factored in
-          {$west p/ship q/path r/*}                     ::  remote request
+    +=  task                                            ::  in request ->$
+      $%  [%ktsg p=ship q=safe]                         ::  destroy rights
+          [%hail p=ship q=remote]                       ::  remote update
+          [%init p=@pG q=arms]                          ::  initialize urbit
+          [%meet p=(unit (unit ship)) q=farm]           ::  integrate pki from
+          [%mint p=ship q=safe]                         ::  create rights
+          [%move p=ship q=ship r=safe]                  ::  transfer from=to
+          [%next p=bull]                                ::  update private key
+          [%nuke ~]                                     ::  cancel tracker from
+          [%veil p=ship]                                ::  view secret channel
+          [%vein ~]                                     ::  view signing keys
+          [%vest ~]                                     ::  view public balance
+          [%vine ~]                                     ::  view secret history
+          [%west p=ship q=path r=*]                     ::  remote request
       ==                                                ::
     ++  gilt  gilt:womb
     --
