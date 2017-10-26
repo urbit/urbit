@@ -3,8 +3,7 @@
 
 # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
-{ crossenv, libudev, libxcb, dejavu-fonts, xcb-util, xcb-util-image,
-  xcb-util-wm, xcb-util-keysyms, xcb-util-renderutil, libx11, libxi }:
+{ crossenv, libudev, libxall, dejavu-fonts }:
 
 let
   version = "5.9.2";
@@ -35,16 +34,6 @@ let
     builder = ./builder.sh;
 
     patches = [
-      # Make Qt find our X libraries properly.  The "xlib" test in
-      # src/gui/configure.json was failing because its include path
-      # was not complete, so we declare that test to use the
-      # "xcb_xlib" library (really a group of three libraries).  The
-      # 'CONFIG += x11' thing was causing some extra linker arguments
-      # like '-Xext' to be added, which caused a linker error, so we
-      # removed it.
-      # TODO: understand what 'CONFIG += x11' really does and fix it
-      ./find-x-libs.patch
-
       # Fix the build error caused by https://bugreports.qt.io/browse/QTBUG-63637
       ./win32-link-object-max.patch
 
@@ -96,25 +85,14 @@ let
           "-qpa xcb " +
           "-system-xcb " +
           "-no-opengl "
-          # This is our attempt to get the tests.xlib test in
-          # src/gui/configure.json to pass, but it doesn't work
-          # because x11 depends on xproto to provide the X11/X.h
-          # header.  We should teach Qt to use pkg-config to find x11,
-          # like a normal program.
-          # "-device-option QMAKE_INCDIR_X11=${libx11}/include "
+          "-device-option QMAKE_INCDIR_X11=${libxall}/include "
+          "-device-option QMAKE_LIBDIR_X11=${libxall}/lib "
         else "" );
 
      cross_inputs =
        if crossenv.os == "linux" then [
            libudev  # not sure if this helps, but Qt does look for it
-           libx11
-           libxcb
-           xcb-util
-           xcb-util-image
-           xcb-util-wm
-           xcb-util-keysyms
-           xcb-util-renderutil
-           libxi
+           libxall
          ]
        else [];
   };
@@ -152,14 +130,7 @@ let
     (
       if crossenv.os == "linux" then
         libudev.license_set //
-        libx11.license_set //
-        libxcb.license_set //
-        xcb-util.license_set //
-        xcb-util-image.license_set //
-        xcb-util-wm.license_set //
-        xcb-util-keysyms.license_set //
-        xcb-util-renderutil.license_set //
-        libxi.license_set
+        libxall.license_set
       else
         {}
     ) //

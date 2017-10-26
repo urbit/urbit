@@ -140,13 +140,21 @@ rec {
     inherit libx11 libxext libxfixes;
   };
 
+  libxall = import ./pkgs/libxall {
+    libs = [
+      xcb-proto xorg-macros xproto libxau libxcb
+      xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm
+      xtrans xextproto inputproto kbproto fixesproto
+      libx11 libxext libxfixes libxi
+    ];
+  };
+
   dejavu-fonts = import ./pkgs/dejavu-fonts {
     inherit crossenv;
   };
 
   qt = import ./pkgs/qt {
-    inherit crossenv libudev libxcb dejavu-fonts xcb-util xcb-util-image
-      xcb-util-wm xcb-util-keysyms xcb-util-renderutil libx11 libxi;
+    inherit crossenv libudev libxall dejavu-fonts;
   };
   qt_examples = qt.examples;
   qt_license_fragment = qt.license_fragment;
