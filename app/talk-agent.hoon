@@ -8,6 +8,8 @@
 ::      ...this is a bit troublesome, because failed joins don't actually
 ::      unsubscribe us.
 ::TODO  maybe keep track of received grams per circle, too?
+::TODO  [type query] => [press tab to cycle search results, newest-first]
+::      => [escape to clear]
 ::
 ::TODO  for delta model:
 ::      3) split into delta creation and application, as with hall.
@@ -563,9 +565,19 @@
           ==
         ==
       ::
+      ++  circles-flat                                  ::<  collapse mixed list
+        |=  a/(list (each circle (set circle)))
+        ^-  (set circle)
+        ?~  a  ~
+        ?-  -.i.a
+          $&  (~(put in $(a t.a)) p.i.a)
+          $|  (~(uni in $(a t.a)) p.i.a)
+        ==
+      ::
       ++  cirs                                          ::<  non-empty circles
-        %+  cook  ~(gas in *(set circle))
-        (most ;~(plug com (star ace)) circ)
+        %+  cook  circles-flat
+        %+  most  ;~(plug com (star ace))
+        (^pick circ (sear sh-glyf glyph))
       ::
       ++  pont                                          ::<  point for range
         ;~  pose
