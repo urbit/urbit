@@ -3,7 +3,7 @@
 
 # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
-{ crossenv, libudev, libxall, dejavu-fonts }:
+{ crossenv, libudev, libxall, at-spi2-headers, dejavu-fonts }:
 
 let
   version = "5.9.2";
@@ -97,6 +97,7 @@ let
        if crossenv.os == "linux" then [
            libudev  # not sure if this helps, but Qt does look for it
            libxall
+           at-spi2-headers  # for accessibility
          ]
        else [];
   };
@@ -134,7 +135,8 @@ let
     (
       if crossenv.os == "linux" then
         libudev.license_set //
-        libxall.license_set
+        libxall.license_set //
+        at-spi2-headers.license_set
       else
         {}
     ) //

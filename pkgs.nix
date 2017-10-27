@@ -150,12 +150,16 @@ rec {
     ];
   };
 
+  at-spi2-headers = import ./pkgs/at-spi2-headers {
+    inherit crossenv;
+  };
+
   dejavu-fonts = import ./pkgs/dejavu-fonts {
     inherit crossenv;
   };
 
   qt = import ./pkgs/qt {
-    inherit crossenv libudev libxall dejavu-fonts;
+    inherit crossenv libudev libxall at-spi2-headers dejavu-fonts;
   };
   qt_examples = qt.examples;
   qt_license_fragment = qt.license_fragment;

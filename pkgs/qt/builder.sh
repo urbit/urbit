@@ -17,8 +17,6 @@ cd build
 PKG_CONFIG=pkg-config-cross \
 $out/src/configure -prefix $out $configure_flags
 
-exit 2
-
 make
 
 make install
