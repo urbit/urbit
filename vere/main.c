@@ -110,8 +110,8 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'u': {
-	u3_Host.ops_u.url_c = strdup(optarg);
-	break;
+        u3_Host.ops_u.url_c = strdup(optarg);
+        break;
       }
       case 't': {
         u3_Host.ops_u.tic_c = _main_presig(optarg);
