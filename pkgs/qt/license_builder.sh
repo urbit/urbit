@@ -39,6 +39,8 @@ license_xkbcommon=$(cat xkbcommon/COPYING)
 license_zlib=$(cat zlib/LICENSE)
 
 cat > $out <<EOF
+<h2>Qt</h2>
+
 <p>
   The Qt Toolkit is licensed under the
   GNU Lesser General Public License Version 3 (LGPLv3) as shown below.
