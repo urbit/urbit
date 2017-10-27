@@ -192,7 +192,7 @@
   |%
   ++  emit  |=(a/card +>(..autoload (^emit a)))
   ++  tracked-vanes
-    `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
+    `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
   ::
   ++  our-home  /(scot %p our)/home/(scot %da now)
   ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))
