@@ -1110,14 +1110,15 @@
       ::+|
       ::
       ++  who                                           ::<  %who
-        ::>  prints presence lists for {pas} or all.
+        ::>  prints presence lists for {cis} or all.
         ::
-        |=  pas/(set circle)  ^+  ..sh-work
+        |=  cis/(set circle)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort ~(tap by remotes) aor) .))
-        |=  {pon/circle gop/group}  ^-  (unit sole-effect)
-        ?.  |(=(~ pas) (~(has in pas) pon))  ~
-        ?.  (~(has in sources) pon)  ~
-        =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr pon) ~]
+        |=  {cir/circle gop/group}  ^-  (unit sole-effect)
+        ?.  |(=(~ cis) (~(has in cis) cir))  ~
+        ?:  =(%brown sec.con:(fall (~(get by mirrors) cir) *config))  ~
+        ?.  (~(has in sources) cir)  ~
+        =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr cir) ~]
         =<  (murn (sort ~(tap by gop) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         =?  c  =(han.c `(scot %p a))  [~ tru.c]
