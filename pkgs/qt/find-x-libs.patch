@@ -1,13 +1,12 @@
-diff -ur qtbase-opensource-src-5.9.2-orig/src/gui/configure.json qtbase-opensource-src-5.9.2/src/gui/configure.json
---- qtbase-opensource-src-5.9.2-orig/src/gui/configure.json	2017-10-26 08:10:13.045981407 -0700
-+++ qtbase-opensource-src-5.9.2/src/gui/configure.json	2017-10-26 08:34:40.528863001 -0700
-@@ -829,7 +829,8 @@
-                     "XCloseDisplay(d);"
-                 ],
-                 "qmake": "CONFIG += x11"
--            }
-+            },
-+            "use": "xcb_xlib"
-         }
-      },
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/linux.conf qtbase-opensource-src-5.9.2/mkspecs/common/linux.conf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/common/linux.conf	2017-10-26 08:10:12.922646692 -0700
++++ qtbase-opensource-src-5.9.2/mkspecs/common/linux.conf	2017-10-26 21:44:37.695088447 -0700
+@@ -28,7 +28,7 @@
  
+ QMAKE_LIBS              =
+ QMAKE_LIBS_DYNLOAD      = -ldl
+-QMAKE_LIBS_X11          = -lXext -lX11 -lm
++QMAKE_LIBS_X11          = -lXext -lX11 -lxcb -lXau
+ QMAKE_LIBS_EGL          = -lEGL
+ QMAKE_LIBS_OPENGL       = -lGL
+ QMAKE_LIBS_OPENGL_ES2   = -lGLESv2

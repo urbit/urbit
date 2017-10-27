@@ -34,6 +34,10 @@ let
     builder = ./builder.sh;
 
     patches = [
+      # libX11.a depends on libxcb.a.  This makes tests.xlib in
+      # src/gui/configure.json pass, enabling lots of X functionality in Qt.
+      ./find-x-libs.patch
+
       # Fix the build error caused by https://bugreports.qt.io/browse/QTBUG-63637
       ./win32-link-object-max.patch
 
