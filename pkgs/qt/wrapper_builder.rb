@@ -87,11 +87,15 @@ def make_dep_graph
     add_dep 'libQt5DBus.a', 'libQt5Gui.a'
     add_dep 'libQt5DeviceDiscoverySupport.a', 'libudev.pc'
     add_dep 'libQt5InputSupport.a', 'libQt5DeviceDiscoverySupport.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5AccessibilitySupport.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5DBus.a'
+    add_dep 'libQt5LinuxAccessibilitySupport.a', 'xcb-aux.pc'
     add_dep 'libQt5ThemeSupport.a', 'libQt5DBus.a'
 
     add_dep 'libQt5XcbQpa.a', 'libQt5EventDispatcherSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5Gui.a'
+    add_dep 'libQt5XcbQpa.a', 'libQt5LinuxAccessibilitySupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5ServiceSupport.a'
     add_dep 'libQt5XcbQpa.a', 'libQt5ThemeSupport.a'
     add_dep 'libQt5XcbQpa.a', 'x11.pc'
@@ -109,13 +113,6 @@ def make_dep_graph
     add_dep 'libQt5XcbQpa.a', 'xcb-xinerama.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xkb.pc'
     add_dep 'libQt5XcbQpa.a', 'xi.pc'
-
-    # Note: Unfortunately, because we don't provide Qt with the atspi-2 library
-    # (which is GPL2), it does not compile this accessibility library.
-    #add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5AccessibilitySupport.a'
-    #add_dep 'libQt5LinuxAccessibilitySupport.a', 'libQt5DBus.a'
-    #add_dep 'libQt5LinuxAccessibilitySupport.a', 'xcb-aux.pc'
-    #add_dep 'libQt5XcbQpa.a', 'libQt5LinuxAccessibilitySupport.a'
   end
 end
 
