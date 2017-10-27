@@ -84,9 +84,9 @@ let
         else if crossenv.os == "linux" then
           "-qpa xcb " +
           "-system-xcb " +
-          "-no-opengl "
-          "-device-option QMAKE_INCDIR_X11=${libxall}/include "
-          "-device-option QMAKE_LIBDIR_X11=${libxall}/lib "
+          "-no-opengl " +
+          "-device-option QMAKE_INCDIR_X11=${libxall}/include " +
+          "-device-option QMAKE_LIBDIR_X11=${libxall}/lib"
         else "" );
 
      cross_inputs =

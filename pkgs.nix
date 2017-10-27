@@ -141,6 +141,7 @@ rec {
   };
 
   libxall = import ./pkgs/libxall {
+    inherit crossenv;
     libs = [
       xcb-proto xorg-macros xproto libxau libxcb
       xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm

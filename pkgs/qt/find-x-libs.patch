@@ -1,0 +1,13 @@
+diff -ur qtbase-opensource-src-5.9.2-orig/src/gui/configure.json qtbase-opensource-src-5.9.2/src/gui/configure.json
+--- qtbase-opensource-src-5.9.2-orig/src/gui/configure.json	2017-10-26 08:10:13.045981407 -0700
++++ qtbase-opensource-src-5.9.2/src/gui/configure.json	2017-10-26 08:34:40.528863001 -0700
+@@ -829,7 +829,8 @@
+                     "XCloseDisplay(d);"
+                 ],
+                 "qmake": "CONFIG += x11"
+-            }
++            },
++            "use": "xcb_xlib"
+         }
+      },
+ 
