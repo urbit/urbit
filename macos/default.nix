@@ -39,6 +39,7 @@ let
       "-DCMAKE_BUILD_TYPE=Release " +
       # "-DCMAKE_BUILD_TYPE=Debug " +
       "-DLLVM_TARGETS_TO_BUILD=X86\;ARM " +
+      "-DLLVM_ENABLE_RTTI=ON " +  # ld64 uses dynamic_cast, requiring rtti
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
@@ -84,17 +85,20 @@ let
     };
     patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
-    native_inputs = [ tapi native.pkgconf ];
+    native_inputs = [ tapi native.pkgconf nixpkgs.libuuid.dev ];
     CFLAGS =
-      "-fno-rtti " +
       "-O2 " +
+      "-Wno-unused-result " +
       "-Werror " +
       "-Wfatal-errors " +
       "-Iinclude " +
       "-I../ld64/src/ld " +
+      "-I../ld64/src/ld/parsers " +
       "-I../ld64/src/abstraction " +
-      "-isystem ${sdk_lite}/usr/include " +
-      "-D__LITTLE_ENDIAN__";
+      "-I${nixpkgs.libuuid.dev}/include " +
+      "-isystem ${sdk_lite}/include " +
+      "-D__LITTLE_ENDIAN__ " +
+      "-D_DARWIN_C_SOURCE";
   };
 
   xar_src = nixpkgs.fetchurl {
