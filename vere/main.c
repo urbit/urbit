@@ -80,7 +80,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.veb = c3n;
-  u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/latest.pill";
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
@@ -215,10 +214,10 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   if ( u3_Host.ops_u.tic_c == 0 && u3_Host.ops_u.who_c != 0 ) {
-      c3_c tic_c[29];
-      printf("your ticket: ~");
-      scanf("%28s",tic_c);
-      u3_Host.ops_u.tic_c = _main_presig(tic_c);
+    c3_c tic_c[29];
+    printf("your ticket: ~");
+    scanf("%28s",tic_c);
+    u3_Host.ops_u.tic_c = _main_presig(tic_c);
   }
 
   if ( c3y == u3_Host.ops_u.bat ) {
@@ -234,6 +233,8 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
+  } else if ( u3_Host.ops_u.nuu == c3y && u3_Host.ops_u.url_c == 0 ) {
+    u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/latest.pill";
   }
 
   if ( u3_Host.ops_u.pil_c != 0 ) {
@@ -565,7 +566,7 @@ main(c3_i   argc,
              u3_Host.ops_u.gab,
              u3_Host.dir_c,
              u3_Host.ops_u.pil_c,
-	     u3_Host.ops_u.url_c);
+             u3_Host.ops_u.url_c);
 
     /*  Start Arvo.
     */
