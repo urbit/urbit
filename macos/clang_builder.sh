@@ -3,6 +3,10 @@ source $setup
 tar -xf $llvm_src
 mv llvm-* llvm
 
+tar -xf $lld_src
+mv lld-* lld
+mv lld llvm/tools/
+
 tar -xf $src
 mv cfe-* clang
 cd clang

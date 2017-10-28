@@ -29,6 +29,11 @@ let
       sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
     };
 
+    lld_src = nixpkgs.fetchurl {
+      url = "http://releases.llvm.org/${version}/lld-${version}.src.tar.xz";
+      sha256 = "15rqsmfw0jlsri7hszbs8l0j7v1030cy9xvvdb245397llh7k6ir";
+    };
+
     patches = [ ./clang_megapatch.patch ];
 
     builder = ./clang_builder.sh;
