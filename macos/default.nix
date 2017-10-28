@@ -75,6 +75,22 @@ let
     inherit sdk;
   };
 
+  common_crypto = native.make_derivation rec {
+    name = "common-crypto-${version}";
+    version = "60118.1.1";
+    src = nixpkgs.fetchurl {
+      url = "https://opensource.apple.com/tarballs/CommonCrypto/CommonCrypto-${version}.tar.gz";
+      sha256 = "1iw2231pw1hp66wb01vlqrhmj6gzwlkjisl1v6axgq0pwyrkq34h";
+    };
+    builder = ./common_crypto_builder.sh;
+    CFLAGS =
+      "-O2 " +
+      "-Werror " +
+      "-Wfatal-errors " +
+      "-I../cc/include " +
+      "-isystem ${sdk_lite}/include";
+  };
+
   ld = native.make_derivation rec {
     name = "ld64-${version}-${host}";
     version = "274.2";
@@ -85,7 +101,7 @@ let
     };
     patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
-    native_inputs = [ tapi native.pkgconf nixpkgs.libuuid.dev ];
+    native_inputs = [ common_crypto tapi native.pkgconf nixpkgs.libuuid.dev ];
     CFLAGS =
       "-O2 " +
       "-Wno-unused-result " +
@@ -162,7 +178,7 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang tapi sdk sdk_lite ld xar;
+    inherit clang common_crypto tapi sdk sdk_lite ld xar;
 
     make_derivation = import ../make_derivation.nix nixpkgs crossenv;
   };
