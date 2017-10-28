@@ -146,7 +146,8 @@ let
     builder = ./builder.sh;
     inherit host sdk;
     wrapper = ./wrapper;
-    native_inputs = [ clang ld xar ];
+    native_inputs = [ clang ];
+    inherit clang;
 
     CXXFLAGS =
       "-std=c++11 " +
@@ -154,11 +155,9 @@ let
       "-I. " +
       "-O2 -g " +
       "-DWRAPPER_OS_VERSION_MIN=\\\"${macos_version_min}\\\" " +
-      "-DWRAPPER_SDK_PATH=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
+      "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
-      "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
-      "-DWRAPPER_PATH=\\\"${ld}/bin:${clang}/bin\\\"";
-    # TODO: use ld.version for the -mlinker-version argument to clang
+      "-DWRAPPER_ARCH=\\\"${arch}\\\"";
   };
 
   cmake_toolchain = import ../cmake_toolchain {
@@ -172,7 +171,7 @@ let
 
     # Cross-compiling toolchain.
     inherit toolchain;
-    toolchain_drvs = [ clang ld xar toolchain ];
+    toolchain_drvs = [ clang xar toolchain ];
 
     # Build tools and variables to support them.
     inherit cmake_toolchain;
