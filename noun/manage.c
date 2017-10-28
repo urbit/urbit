@@ -1500,9 +1500,39 @@ _cm_init(c3_o chk_o)
   }
 }
 
+/* _arvo_hash(): retrieve git hash of arvo directory.
+   hax_c must be an array with length >= 41.
+*/
+static void
+_arvo_hash(c3_c *hax_c, c3_c *arv_c)
+{
+  FILE *fp;
+  c3_c *cmd[2048];
+
+  if ( 0 != system("which git >> /dev/null") ) {
+    fprintf(stderr, "Could not find git executable\n");
+    exit(1);
+  }
+
+  sprintf(cmd, "git -C %s rev-parse HEAD", arv_c);
+  fp = popen(cmd, "r");
+  if ( NULL == fp ) {
+    fprintf(stderr, "'git rev-parse HEAD' failed\n");
+    exit(1);
+  }
+
+  if ( NULL == fgets(hax_c, 41, fp) ) {
+    fprintf(stderr, "'git rev-parse HEAD' produced no output\n");
+    exit(1);
+  }
+
+  pclose(fp);
+  hax_c[strcspn(hax_c, "\r\n")] = 0;  /* strip newline */
+}
+
 /* _boot_home(): create ship directory. */
 static void
-_boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c)
+_boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
 {
   c3_c    ful_c[2048];
 
@@ -1522,7 +1552,6 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c)
     snprintf(ful_c, 2048, "%s/.urb/sis", dir_c);
     mkdir(ful_c, 0700);
   }
-
   /* Copy urbit.pill. */
   {
     {
@@ -1534,6 +1563,8 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c)
         return;
       }
     }
+
+    /* Copy local pill file. */
     if ( pil_c != 0 ) {
       snprintf(ful_c, 2048, "cp %s %s/.urb/urbit.pill",
                       pil_c, dir_c);
@@ -1542,10 +1573,15 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c)
         fprintf(stderr, "could not %s\n", ful_c);
         exit(1);
       }
-    } else {
+    }
+    /* Fetch remote pill over HTTP. */
+    else {
       CURL *curl;
       CURLcode result;
       FILE *file;
+      c3_c hax_c[41];
+
+      _arvo_hash(hax_c, arv_c);
 
       snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
       printf("fetching %s to %s\r\n", url_c, ful_c);
@@ -1574,7 +1610,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c)
 /* u3m_boot(): start the u3 system.
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c, c3_c *url_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
 {
   /* Activate the loom.
   */
@@ -1601,7 +1637,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c, c3_c *url_c)
   if ( _(nuu_o) ) {
     c3_c ful_c[2048];
 
-    _boot_home(dir_c, pil_c, url_c);
+    _boot_home(dir_c, pil_c, url_c, arv_c);
 
     snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
 

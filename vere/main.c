@@ -566,7 +566,8 @@ main(c3_i   argc,
              u3_Host.ops_u.gab,
              u3_Host.dir_c,
              u3_Host.ops_u.pil_c,
-             u3_Host.ops_u.url_c);
+             u3_Host.ops_u.url_c,
+             u3_Host.ops_u.arv_c);
 
     /*  Start Arvo.
     */
