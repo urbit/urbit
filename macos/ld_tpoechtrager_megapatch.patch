@@ -29,18 +29,6 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/3rd/qsort_r.c cctools-port-patche
  #include <sys/cdefs.h>
  
  #include <errno.h>
-diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/Options.cpp cctools-port-patched/cctools/ld64/src/ld/Options.cpp
---- cctools-port-c1cc758/cctools/ld64/src/ld/Options.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-patched/cctools/ld64/src/ld/Options.cpp	2017-10-29 10:35:16.972878780 -0700
-@@ -3971,7 +3971,7 @@
- 
- void Options::buildSearchPaths(int argc, const char* argv[])
- {
--	bool addStandardLibraryDirectories = true;
-+	bool addStandardLibraryDirectories = false;
- 	std::vector<const char*> libraryPaths;
- 	std::vector<const char*> frameworkPaths;
- 	libraryPaths.reserve(10);
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp cctools-port-patched/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp	2017-10-01 13:47:04.000000000 -0700
 +++ cctools-port-patched/cctools/ld64/src/ld/parsers/libunwind/Registers.hpp	2017-10-29 10:12:23.150301208 -0700

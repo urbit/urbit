@@ -1,3 +1,5 @@
+# TODO: remove unused things: sdk_lite, common_crypto, ld_apple, xar (?)
+
 { native }:
 let
   nixpkgs = native.nixpkgs;
@@ -69,6 +71,7 @@ let
   ld_tpoechtrager = native.make_derivation rec {
     name = "ld-tpoechtrager-${version}";
     version = "c1cc758";
+    apple_version = "274.2";  # from README.md
     inherit host;
     src = nixpkgs.fetchurl {
       url = "https://github.com/tpoechtrager/cctools-port/archive/${version}.tar.gz";
@@ -86,7 +89,6 @@ let
       "-Werror " +
       "-Wfatal-errors " +
       "-O2 -g " +
-      "-Iinclude " +
       "-I../ld64/src " +
       "-I../ld64/src/ld " +
       "-I../ld64/src/ld/parsers " +
@@ -160,15 +162,13 @@ let
       "-D_DARWIN_C_SOURCE";
   };
 
-  xar_src = nixpkgs.fetchurl {
-    url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
-    sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
-  };
-
   xar = native.make_derivation {
     name = "xar";
     builder = ./xar_builder.sh;
-    src = xar_src;
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
+      sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
+    };
     native_inputs = [
       nixpkgs.libxml2.dev
       nixpkgs.openssl.dev
@@ -195,8 +195,8 @@ let
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
       "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
       "-DWRAPPER_SDK_VERSION=\\\"${sdk.version}\\\" " +
-      "-DWRAPPER_LINKER_VERSION=\\\"${ld.version}\\\" " +
-      "-DWRAPPER_PATH=\\\"$ld/bin:$clang/bin\\\"";
+      "-DWRAPPER_LINKER_VERSION=\\\"${ld.apple_version}\\\" " +
+      "-DWRAPPER_PATH=\\\"${ld}/bin:${clang}/bin\\\"";
   };
 
   cmake_toolchain = import ../cmake_toolchain {

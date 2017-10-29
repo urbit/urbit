@@ -6,8 +6,6 @@ eval "g++ $CXXFLAGS $wrapper/*.cpp -o $out/bin/$host-wrapper"
 
 cd $out/bin
 
-ln -s $clang/bin/lld $host-ld
-
 ln -s $host-wrapper $host-cc
 ln -s $host-wrapper $host-c++
 
