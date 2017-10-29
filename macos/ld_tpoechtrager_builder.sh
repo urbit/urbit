@@ -58,6 +58,8 @@ cat > include/configure.h <<EOF
 //#define ARG_MAX 31072
 #endif
 
+#define PROGRAM_PREFIX "${host}-"
+
 #endif
 EOF
 

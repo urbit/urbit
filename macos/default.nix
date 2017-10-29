@@ -69,6 +69,7 @@ let
   ld_tpoechtrager = native.make_derivation rec {
     name = "ld-tpoechtrager-${version}";
     version = "c1cc758";
+    inherit host;
     src = nixpkgs.fetchurl {
       url = "https://github.com/tpoechtrager/cctools-port/archive/${version}.tar.gz";
       sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
@@ -81,8 +82,9 @@ let
     CXXFLAGS =
       "-Wall " +
       "-Wno-deprecated -Wno-deprecated-declarations " +
-      "-Wformat=0 " +
+      "-Wno-unused-result " +
       "-Wno-unused-but-set-variable " +
+      "-Wno-unused-function " +
       "-Werror " +
       "-Wfatal-errors " +
       "-O2 -g " +
