@@ -70,12 +70,30 @@ let
     name = "ld-tpoechtrager-${version}";
     version = "c1cc758";
     src = nixpkgs.fetchurl {
-      url = "https://github.com/tpoechtarger/cctools-port/archive/${version}.tar.gz";
+      url = "https://github.com/tpoechtrager/cctools-port/archive/${version}.tar.gz";
       sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
     };
+    patches = [
+      ./ld_tpoechtrager_format.patch
+      ./ld_tpoechtrager_megapatch.patch
+    ];
     builder = ./ld_tpoechtrager_builder.sh;
+    CXXFLAGS =
+      "-Wall " +
+      "-Wno-deprecated -Wno-deprecated-declarations " +
+      "-Wformat=0 " +
+      "-Wno-unused-but-set-variable " +
+      "-Werror " +
+      "-Wfatal-errors " +
+      "-O2 -g " +
+      "-Iinclude " +
+      "-I../ld64/src/abstraction " +
+      "-I../ld64/src/3rd " +
+      "-I../include " +
+      "-I../include/foreign " +
+      "-D__LITTLE_ENDIAN__";
   };
-  ld = ld_tpoechtraeger
+  ld = ld_tpoechtrager;
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
   # the script from osxcross.
