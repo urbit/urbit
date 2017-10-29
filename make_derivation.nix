@@ -1,39 +1,11 @@
-nixpkgs: crossenv: attrs:
+env: attrs:
 
 let
-  cross_build_tools = if crossenv == null then [] else
-    crossenv.toolchain_drvs ++ [
-    crossenv.native.pkgconf
-    crossenv.native.wrappers
-  ];
-
-  # TODO: we should have pkgconf here so it's available for native builds by
-  # default.
-  default_native_inputs = [
-    nixpkgs.bashInteractive
-    nixpkgs.binutils
-    nixpkgs.bzip2
-    nixpkgs.cmake
-    nixpkgs.coreutils
-    nixpkgs.diffutils
-    nixpkgs.findutils
-    nixpkgs.gcc
-    nixpkgs.gawk
-    nixpkgs.gnumake
-    nixpkgs.gnugrep
-    nixpkgs.gnused
-    nixpkgs.gnutar
-    nixpkgs.gzip
-    nixpkgs.ninja
-    nixpkgs.patch
-    nixpkgs.which
-    nixpkgs.xz
-  ];
+  nixpkgs = env.nixpkgs;
 
   native_inputs =
     (attrs.native_inputs or [])
-    ++ cross_build_tools
-    ++ default_native_inputs;
+    ++ env.default_native_inputs;
 
   cross_inputs = (attrs.cross_inputs or []);
 
@@ -75,11 +47,11 @@ let
     );
   };
 
-  cross_attrs = if crossenv == null then {} else {
+  cross_attrs = if !env.is_cross then {} else {
     NIXCRPKGS = true;
 
-    inherit (crossenv) host arch os exe_suffix;
-    inherit (crossenv) cmake_toolchain;
+    inherit (env) host arch os exe_suffix;
+    inherit (env) cmake_toolchain;
 
     PKG_CONFIG_CROSS_PATH = path_join (
       (if attrs ? PKG_CONFIG_CROSS_PATH then [attrs.PKG_CONFIG_CROSS_PATH] else []) ++
@@ -94,7 +66,7 @@ let
 
   name_attrs = {
     name = (attrs.name or "package")
-      + (if crossenv == null then "" else "-${crossenv.host}");
+      + (if env.is_cross then "-${env.host}" else "");
   };
 
   builder_attrs =

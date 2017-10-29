@@ -190,25 +190,28 @@ let
   };
 
   crossenv = {
-    # Target info variables.
+    is_cross = true;
+
+    # Build tools available on the PATH for every derivation.
+    default_native_inputs = native.default_native_inputs
+      ++ [ clang xar toolchain ];
+
+    # Target info environment variables.
     inherit host arch os compiler exe_suffix;
 
-    # Cross-compiling toolchain.
-    inherit toolchain;
-    toolchain_drvs = [ clang xar toolchain ];
-
-    # Build tools and variables to support them.
+    # CMake toolchain file.
     inherit cmake_toolchain;
 
-    # nixpkgs: a wide variety of programs and build tools.
+    # A wide variety of programs and build tools.
     inherit nixpkgs;
 
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang common_crypto tapi sdk sdk_lite ld xar;
+    # Make it easy to build or refer to the build tools.
+    inherit clang common_crypto tapi sdk sdk_lite ld xar toolchain;
 
-    make_derivation = import ../make_derivation.nix nixpkgs crossenv;
+    make_derivation = import ../make_derivation.nix crossenv;
   };
 in
   crossenv

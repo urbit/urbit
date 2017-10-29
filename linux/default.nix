@@ -47,17 +47,19 @@ let
   };
 
   crossenv = {
-    # Target info variables.
+    is_cross = true;
+
+    # Build tools available on the PATH for every derivation.
+    default_native_inputs = native.default_native_inputs ++
+      [ gcc binutils ];
+
+    # Target info environment variables.
     inherit host arch os compiler exe_suffix;
 
-    # Cross-compiling toolchain.
-    inherit gcc binutils;
-    toolchain_drvs = [ gcc binutils ];
-
-    # Build tools and variables to support them.
+    # CMake toolchain file.
     inherit cmake_toolchain;
 
-    # nixpkgs: a wide variety of programs and build tools.
+    # A wide variety of programs and build tools.
     inherit nixpkgs;
 
     # Some native build tools made by nixcrpkgs.
@@ -67,10 +69,10 @@ let
     # compiled by this environment.
     inherit global_license_set;
 
-    # Linux headers.  These are already a part of GCC though.
-    inherit headers;
+    # Make it easy to refer to the build tools.
+    inherit headers gcc binutils;
 
-    make_derivation = import ../make_derivation.nix nixpkgs crossenv;
+    make_derivation = import ../make_derivation.nix crossenv;
   };
 in
   crossenv
