@@ -80,17 +80,20 @@ let
     ];
     builder = ./ld_tpoechtrager_builder.sh;
     CXXFLAGS =
-      "-Wall " +
-      "-Wno-deprecated -Wno-deprecated-declarations " +
+      "-Wno-deprecated " +
+      "-Wno-deprecated-declarations " +
       "-Wno-unused-result " +
-      "-Wno-unused-but-set-variable " +
-      "-Wno-unused-function " +
       "-Werror " +
       "-Wfatal-errors " +
       "-O2 -g " +
       "-Iinclude " +
+      "-I../ld64/src " +
+      "-I../ld64/src/ld " +
+      "-I../ld64/src/ld/parsers " +
       "-I../ld64/src/abstraction " +
       "-I../ld64/src/3rd " +
+      "-I../ld64/src/3rd/include " +
+      "-I../ld64/src/3rd/BlocksRuntime " +
       "-I../include " +
       "-I../include/foreign " +
       "-D__LITTLE_ENDIAN__";

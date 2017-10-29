@@ -18,3 +18,14 @@ diff -ur cctools-port-c1cc758/cctools/include/mach-o/dyld.h cctools-port-patched
  
  #include <mach-o/loader.h>
  #include <AvailabilityMacros.h>
+diff -ur cctools-port-c1cc758/cctools/ld64/src/3rd/qsort_r.c cctools-port-patched/cctools/ld64/src/3rd/qsort_r.c
+--- cctools-port-c1cc758/cctools/ld64/src/3rd/qsort_r.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-patched/cctools/ld64/src/3rd/qsort_r.c	2017-10-29 09:48:35.660995511 -0700
+@@ -29,6 +29,7 @@
+ 
+ #define I_AM_QSORT_R
+ 
++#include <extern.h>
+ #include <sys/cdefs.h>
+ 
+ #include <errno.h>

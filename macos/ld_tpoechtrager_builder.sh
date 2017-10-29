@@ -63,7 +63,17 @@ cat > include/configure.h <<EOF
 #endif
 EOF
 
-for f in ../ld64/src/ld/Options.cpp; do
+for f in ../ld64/src/3rd/*.c; do
   echo "compiling $f"
   gcc -c $CXXFLAGS $f -o $(basename $f).o
 done
+
+for f in ../ld64/src/ld/passes/*.cpp ../ld64/src/ld/*.cpp; do
+  echo "compiling $f"
+  g++ -c $CXXFLAGS $f -o $(basename $f).o
+done
+
+g++ *.o -o $host-ld
+
+mkdir -p $out/bin
+cp $host-ld $out/bin
