@@ -79,7 +79,7 @@ let
       ./ld_tpoechtrager_megapatch.patch
     ];
     builder = ./ld_tpoechtrager_builder.sh;
-    CXXFLAGS =
+    CFLAGS =
       "-Wno-deprecated " +
       "-Wno-deprecated-declarations " +
       "-Wno-unused-result " +
@@ -96,7 +96,8 @@ let
       "-I../ld64/src/3rd/BlocksRuntime " +
       "-I../include " +
       "-I../include/foreign " +
-      "-D__LITTLE_ENDIAN__";
+      "-D__LITTLE_ENDIAN__ " +
+      "-DPROGRAM_PREFIX=\\\"${host}-\\\"";
   };
   ld = ld_tpoechtrager;
 
