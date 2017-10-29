@@ -5,7 +5,9 @@ let
   arch = "x86_64";
 
   # was darwin15, changed to darwin so that lld guesses flavor=Darwin correctly
-  darwin_name = "darwin";
+  darwin_name = "darwin15";
+
+  macos_version_min = "10.11";
 
   host = "${arch}-apple-${darwin_name}";
 
@@ -64,6 +66,17 @@ let
     inherit clang;
   };
 
+  ld_tpoechtrager = native.make_derivation rec {
+    name = "ld-tpoechtrager-${version}";
+    version = "c1cc758";
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/tpoechtarger/cctools-port/archive/${version}.tar.gz";
+      sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
+    };
+    builder = ./ld_tpoechtrager_builder.sh;
+  };
+  ld = ld_tpoechtraeger
+
   # TODO: add instructions for building the SDK tarball, probably want a copy of
   # the script from osxcross.
   sdk = native.make_derivation rec {
@@ -97,7 +110,7 @@ let
       "-isystem ${sdk_lite}/include";
   };
 
-  ld = native.make_derivation rec {
+  ld_apple = native.make_derivation rec {
     name = "ld64-${version}-${host}";
     version = "274.2";
     inherit host arch;
@@ -140,14 +153,12 @@ let
     ];
   };
 
-  macos_version_min = "10.11";
-
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
     inherit host sdk;
     wrapper = ./wrapper;
-    native_inputs = [ clang ];
+    native_inputs = [ ld clang ];
     inherit clang;
 
     CXXFLAGS =
@@ -160,7 +171,8 @@ let
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
       "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
       "-DWRAPPER_SDK_VERSION=\\\"${sdk.version}\\\" " +
-      "-DWRAPPER_LINKER_VERSION=\\\"\\\"";
+      "-DWRAPPER_LINKER_VERSION=\\\"${ld.version}\\\" " +
+      "-DWRAPPER_PATH=\\\"$ld/bin:$clang/bin\\\"";
   };
 
   cmake_toolchain = import ../cmake_toolchain {

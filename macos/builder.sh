@@ -2,8 +2,6 @@ source $setup
 
 mkdir -p $out/bin
 
-CXXFLAGS="$CXXFLAGS -DWRAPPER_PATH=\\\"$out/bin:$clang/bin\\\""
-
 eval "g++ $CXXFLAGS $wrapper/*.cpp -o $out/bin/$host-wrapper"
 
 cd $out/bin
