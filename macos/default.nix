@@ -53,6 +53,8 @@ let
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
+  # Note: There is an alternative version we could use, but it
+  # has a copy of LLVM in it: https://github.com/tpoechtrager/apple-libtapi
   tapi = native.make_derivation rec {
     name = "tapi";
     version = "${version0}.${version1}.${version2}";
@@ -82,6 +84,7 @@ let
       ./ld_tpoechtrager_megapatch.patch
     ];
     builder = ./ld_tpoechtrager_builder.sh;
+    native_inputs = [ tapi native.pkgconf ];
     CFLAGS =
       "-Wno-deprecated " +
       "-Wno-deprecated-declarations " +
@@ -98,8 +101,9 @@ let
       "-I../ld64/src/3rd/BlocksRuntime " +
       "-I../include " +
       "-I../include/foreign " +
-      "-D__LITTLE_ENDIAN__ " +
-      "-DPROGRAM_PREFIX=\\\"${host}-\\\"";
+      "-DTAPI_SUPPORT " +
+      "-DPROGRAM_PREFIX=\\\"${host}-\\\" " +
+      "-D__LITTLE_ENDIAN__ ";
   };
   ld = ld_tpoechtrager;
 

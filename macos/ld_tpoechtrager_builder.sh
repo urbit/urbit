@@ -18,6 +18,9 @@ rm -r cctools-port
 mkdir build
 cd build
 
+CFLAGS="$CFLAGS $(pkg-config --cflags libtapi)"
+LDFLAGS="$(pkg-config --libs libtapi) -ldl -lpthread"
+
 for f in ../ld64/src/ld/*.c ../ld64/src/3rd/*.c; do
   echo "compiling $f"
   eval "gcc -c $CFLAGS $f -o $(basename $f).o"
@@ -28,7 +31,7 @@ for f in $(find ../ld64/src -name \*.cpp); do
   eval "g++ -c $CFLAGS $f -o $(basename $f).o"
 done
 
-g++ *.o -ldl -lpthread -o $host-ld
+g++ *.o $LDFLAGS -o $host-ld
 
 mkdir -p $out/bin
 cp $host-ld $out/bin
