@@ -35,6 +35,7 @@ int compiler_main(int argc, char ** argv,
   args.push_back(WRAPPER_HOST);
 
   args.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
+  args.push_back("-Wl,-sdk_version," WRAPPER_SDK_VERSION);
 
   args.push_back("--sysroot");
   args.push_back(WRAPPER_SDK_PATH);
@@ -42,7 +43,10 @@ int compiler_main(int argc, char ** argv,
   // Causes clang to pass -demangle,  -lto_library, -no_deduplicate, and other
   // options that could be useful.  Version 274.2 is the version number used here:
   // https://github.com/tpoechtrager/osxcross/blob/474f359/build.sh#L140
-  args.push_back("-mlinker-version=274.2");
+  if (WRAPPER_LINKER_VERSION[0])
+  {
+    args.push_back("-mlinker-version=" WRAPPER_LINKER_VERSION);
+  }
 
   if (compiler_name == "clang++")
   {

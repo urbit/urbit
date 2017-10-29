@@ -4,7 +4,8 @@ let
 
   arch = "x86_64";
 
-  darwin_name = "darwin15";
+  # was darwin15, changed to darwin so that lld guesses flavor=Darwin correctly
+  darwin_name = "darwin";
 
   host = "${arch}-apple-${darwin_name}";
 
@@ -155,9 +156,11 @@ let
       "-I. " +
       "-O2 -g " +
       "-DWRAPPER_OS_VERSION_MIN=\\\"${macos_version_min}\\\" " +
-      "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
-      "-DWRAPPER_ARCH=\\\"${arch}\\\"";
+      "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
+      "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
+      "-DWRAPPER_SDK_VERSION=\\\"${sdk.version}\\\" " +
+      "-DWRAPPER_LINKER_VERSION=\\\"\\\"";
   };
 
   cmake_toolchain = import ../cmake_toolchain {
