@@ -37,6 +37,10 @@ int compiler_main(int argc, char ** argv,
   args.push_back("-mmacosx-version-min=" WRAPPER_OS_VERSION_MIN);
   args.push_back("-Wl,-sdk_version," WRAPPER_SDK_VERSION);
 
+  // Suppress warnings about the -Wl arguments not being used when we're just
+  // compiling and not linking.
+  args.push_back("-Wno-unused-command-line-argument");
+
   args.push_back("--sysroot");
   args.push_back(WRAPPER_SDK_PATH);
 

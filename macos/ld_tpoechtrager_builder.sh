@@ -18,7 +18,8 @@ rm -r cctools-port
 mkdir build
 cd build
 
-CFLAGS="$CFLAGS $(pkg-config --cflags libtapi)"
+CFLAGS="-Wno-deprecated -Wno-deprecated-declarations -Wno-unused-result -Werror -Wfatal-errors -O2 -g -I../ld64/src -I../ld64/src/ld -I../ld64/src/ld/parsers -I../ld64/src/abstraction -I../ld64/src/3rd -I../ld64/src/3rd/include -I../ld64/src/3rd/BlocksRuntime -I../include -I../include/foreign -DTAPI_SUPPORT -DPROGRAM_PREFIX=\\\"$host-\\\" -D__LITTLE_ENDIAN__ $(pkg-config --cflags libtapi)"
+
 LDFLAGS="$(pkg-config --libs libtapi) -ldl -lpthread"
 
 for f in ../ld64/src/ld/*.c ../ld64/src/3rd/*.c; do
