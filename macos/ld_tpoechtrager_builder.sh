@@ -8,6 +8,7 @@ for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
+rm cctools/ld64/src/other/rebase.cpp
 cd ..
 
 mv cctools-port/cctools/ld64 ld64
@@ -35,9 +36,7 @@ cat > include/configure.h <<EOF
 #include "strlcpy.h"
 #include "helper.h"
 
-#ifdef __GLIBCXX__
-//#include <algorithm>
-#endif
+#include <algorithm>
 
 //#define CPU_SUBTYPE_X86_ALL     ((cpu_subtype_t)3)
 
@@ -68,12 +67,12 @@ for f in ../ld64/src/3rd/*.c; do
   gcc -c $CXXFLAGS $f -o $(basename $f).o
 done
 
-for f in ../ld64/src/ld/passes/*.cpp ../ld64/src/ld/*.cpp; do
+for f in $(find ../ld64/src -name \*.cpp); do
   echo "compiling $f"
   g++ -c $CXXFLAGS $f -o $(basename $f).o
 done
 
-g++ *.o -o $host-ld
+g++ *.o -ldl -o $host-ld
 
 mkdir -p $out/bin
 cp $host-ld $out/bin
