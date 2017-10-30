@@ -1,7 +1,7 @@
 { nixpkgs }:
 
 let
-  native = {
+  native_base = {
     inherit nixpkgs;
 
     is_cross = false;
@@ -27,15 +27,25 @@ let
       nixpkgs.xz
     ];
 
-    pkgconf = import ./pkgconf { inherit nixpkgs; };
+    make_derivation = import ../make_derivation.nix native_base;
+  };
 
-    wrappers = import ./wrappers { inherit nixpkgs; };
+  pkgconf = import ./pkgconf { inherit nixpkgs; };
 
-    gnu_config = nixpkgs.fetchgit {
-      url = "https://git.savannah.gnu.org/git/config.git";
-      rev = "81497f5aaf50a12a9fe0cba30ef18bda46b62959";
-      sha256 = "1fq0nki2118zwbc8rdkqx5i04lbfw7gqbsyf5bscg5im6sfphq1d";
-    };
+  wrappers = import ./wrappers { inherit nixpkgs; };
+
+  gnu_config = nixpkgs.fetchgit {
+    url = "https://git.savannah.gnu.org/git/config.git";
+    rev = "81497f5aaf50a12a9fe0cba30ef18bda46b62959";
+    sha256 = "1fq0nki2118zwbc8rdkqx5i04lbfw7gqbsyf5bscg5im6sfphq1d";
+  };
+
+  native = native_base // {
+    default_native_inputs = native_base.default_native_inputs ++ [
+      # TODO: pkgconf (would cause a mass rebuild)
+    ];
+
+    inherit pkgconf wrappers gnu_config;
 
     make_derivation = import ../make_derivation.nix native;
   };
