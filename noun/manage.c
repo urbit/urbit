@@ -1554,10 +1554,7 @@ _git_branch(c3_c *out_c, c3_c *arv_c)
 static void
 _git_pill_url(c3_c *out_c, c3_c *arv_c)
 {
-  if ( NULL == arv_c ) {
-    fprintf(stderr, "Error: No arvo directory specified\n");
-    exit(1);
-  }
+  assert(NULL != arv_c);
 
   if ( 0 != system("which git >> /dev/null") ) {
     fprintf(stderr, "Could not find git executable\n");

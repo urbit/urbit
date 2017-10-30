@@ -235,10 +235,19 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
+
   } else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
+
     u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/latest.pill";
+
+  } else if ( u3_Host.ops_u.nuu == c3y
+           && u3_Host.ops_u.url_c == 0
+           && u3_Host.ops_u.arv_c == 0 ) {
+
+    fprintf(stderr, "-s only makes sense with -A\n");
+    return c3n;
   }
 
   if ( u3_Host.ops_u.pil_c != 0 ) {
