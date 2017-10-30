@@ -44,7 +44,8 @@
                 (malt (turn t.t.a |=(b/cord (rash b account))))
             ::
             ++  user  ;~(pfix (jest 'User ') (cook crip (star prn)))
-            ++  knot  (sear (flit |=(a/^knot !=('' a))) urs:ab)
+            ++  knot  %+  cook  crip
+                      (plus ;~(pose nud low hig hep dot sig cab))
             ++  location  ;~(pfix (jest 'Location ') (cook crip (star prn)))
             ++  account
               ;~  plug
