@@ -537,7 +537,7 @@
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   raf_c;                      //  -r, raft flotilla
         c3_c*   tic_c;                      //  -t, ticket value
-	c3_c*   url_c;                      //  -u, pill url
+        c3_c*   url_c;                      //  -u, pill url
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
