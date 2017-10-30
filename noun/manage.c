@@ -1500,34 +1500,79 @@ _cm_init(c3_o chk_o)
   }
 }
 
+/* _get_cmd_output(): Run a shell command and capture its output.
+   Exits with an error if the command fails or produces no output.
+   The 'out_c' parameter should be an array of sufficient length to hold
+   the command's output, up to a max of 2048 characters.
+*/
+static void
+_get_cmd_output(c3_c *cmd_c, c3_c *out_c)
+{
+  FILE *fp = popen(cmd_c, "r");
+  if ( NULL == fp ) {
+    fprintf(stderr, "'%s' failed\n", cmd_c);
+    exit(1);
+  }
+
+  if ( NULL == fgets(out_c, 2048, fp) ) {
+    fprintf(stderr, "'%s' produced no output\n", cmd_c);
+    exit(1);
+  }
+
+  pclose(fp);
+}
+
 /* _arvo_hash(): retrieve git hash of arvo directory.
    hax_c must be an array with length >= 41.
 */
 static void
-_arvo_hash(c3_c *hax_c, c3_c *arv_c)
+_arvo_hash(c3_c *out_c, c3_c *arv_c)
 {
-  FILE *fp;
-  c3_c *cmd[2048];
+  c3_c cmd_c[2048];
+
+  sprintf(cmd_c, "git -C %s rev-parse HEAD", arv_c);
+  _get_cmd_output(cmd_c, out_c);
+
+  out_c[strcspn(out_c, "\r\n")] = 0;  /* strip newline */
+}
+
+/* _git_branch(): retrieve the current git branch */
+static void
+_git_branch(c3_c *out_c, c3_c *arv_c)
+{
+  c3_c cmd_c[2048];
+
+  sprintf(cmd_c, "git -C %s rev-parse --abbrev-ref HEAD", arv_c);
+  _get_cmd_output(cmd_c, out_c);
+
+ out_c[strcspn(out_c, "\r\n")] = 0;  /* strip newline */
+}
+
+/* _pill_url(): produce a URL from which to download a pill
+   based on the location of an arvo git repository.
+*/
+static void
+_pill_url(c3_c *out_c, c3_c *arv_c)
+{
+  if ( NULL == arv_c ) {
+    fprintf(stderr, "Error: No arvo directory specified\n");
+    exit(1);
+  }
 
   if ( 0 != system("which git >> /dev/null") ) {
     fprintf(stderr, "Could not find git executable\n");
     exit(1);
   }
 
-  sprintf(cmd, "git -C %s rev-parse HEAD", arv_c);
-  fp = popen(cmd, "r");
-  if ( NULL == fp ) {
-    fprintf(stderr, "'git rev-parse HEAD' failed\n");
-    exit(1);
-  }
+  {
+    c3_c hax_c[2048];
+    c3_c bra_c[2048];
 
-  if ( NULL == fgets(hax_c, 41, fp) ) {
-    fprintf(stderr, "'git rev-parse HEAD' produced no output\n");
-    exit(1);
-  }
+    _git_branch(bra_c, arv_c);
+    _arvo_hash(hax_c, arv_c);
 
-  pclose(fp);
-  hax_c[strcspn(hax_c, "\r\n")] = 0;  /* strip newline */
+    sprintf(out_c, "https://bootstrap.urbit.org/%s-%s.pill", hax_c, bra_c);
+  }
 }
 
 /* _boot_home(): create ship directory. */
@@ -1579,9 +1624,12 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       CURL *curl;
       CURLcode result;
       FILE *file;
-      c3_c hax_c[41];
+      c3_c pil_c[2048];
 
-      _arvo_hash(hax_c, arv_c);
+      if ( NULL == url_c ) {
+        url_c = pil_c;
+        _pill_url(url_c, arv_c);
+      }
 
       snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
       printf("fetching %s to %s\r\n", url_c, ful_c);
@@ -1598,8 +1646,10 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       result = curl_easy_perform(curl);
       fclose(file);
       if ( result != CURLE_OK ) {
-        fprintf(stderr, "failed to fetch %s: %s\n", url_c, curl_easy_strerror(result));
-        fprintf(stderr, "please fetch it manually and specify the location with -B\n");
+        fprintf(stderr, "failed to fetch %s: %s\n",
+                        url_c, curl_easy_strerror(result));
+        fprintf(stderr,
+                "please fetch it manually and specify the location with -B\n");
         exit(1);
       }
       curl_easy_cleanup(curl);
@@ -1610,7 +1660,8 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
 /* u3m_boot(): start the u3 system.
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
+         c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
 {
   /* Activate the loom.
   */
