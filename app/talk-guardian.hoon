@@ -622,6 +622,8 @@
         (crip "strange author {(scow %p aut)}")
       =.  aut  our.bol
       ?:  =(aut hos.cir)
+        ?.  (~(has by stories) nom.cir)
+          (ta-note (crip "have no story {(scow %tas nom.cir)}"))
         (ta-record nom.cir hos.cir tot)
       (ta-transmit cir tot)
     ?.  =(our.bol hos.cir)  +>
