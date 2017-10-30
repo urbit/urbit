@@ -51,7 +51,7 @@ let
 
     # Build tools available on the PATH for every derivation.
     default_native_inputs = native.default_native_inputs ++
-      [ gcc binutils ];
+      [ gcc binutils native.pkgconf native.wrappers ];
 
     # Target info environment variables.
     inherit host arch os compiler exe_suffix;
