@@ -1548,11 +1548,11 @@ _git_branch(c3_c *out_c, c3_c *arv_c)
  out_c[strcspn(out_c, "\r\n")] = 0;  /* strip newline */
 }
 
-/* _pill_url(): produce a URL from which to download a pill
+/* _git_pill_url(): produce a URL from which to download a pill
    based on the location of an arvo git repository.
 */
 static void
-_pill_url(c3_c *out_c, c3_c *arv_c)
+_git_pill_url(c3_c *out_c, c3_c *arv_c)
 {
   if ( NULL == arv_c ) {
     fprintf(stderr, "Error: No arvo directory specified\n");
@@ -1626,9 +1626,10 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       FILE *file;
       c3_c pil_c[2048];
 
+      /* use arvo git hash and branch for pill url unless overridden */
       if ( NULL == url_c ) {
         url_c = pil_c;
-        _pill_url(url_c, arv_c);
+        _git_pill_url(url_c, arv_c);
       }
 
       snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
