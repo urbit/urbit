@@ -33,7 +33,7 @@ Packages collection (Nixpkgs)][nixpkgs].
   - [Ruby](https://www.ruby-lang.org/)
   - [GDB](https://www.gnu.org/software/gdb/)
 - Notable supported libraries:
-  - [Qt](https://www.qt.io/) 5.8.0
+  - [Qt](https://www.qt.io/) 5.9.2
   - [libusbp](https://github.com/pololu/libusbp)
   - [Windows API](https://en.wikipedia.org/wiki/Windows_API) (thanks to mingw-w64)
 
