@@ -74,19 +74,18 @@ let
   exe_suffix = ".exe";
 
   crossenv = {
+    is_cross = true;
+
+    default_native_inputs = native.default_native_inputs
+      ++ [ gcc binutils native.pkgconf native.wrappers ];
+
     # Target info variables.
     inherit host arch os compiler exe_suffix;
 
-    # Cross-compiling toolchain.
-    inherit gcc binutils;
-    toolchain_drvs = [ gcc binutils ];
-    inherit mingw-w64_full;
-    mingw-w64 = mingw-w64_full;
-
-    # Build tools and variables to support them.
+    # CMake toolchain file.
     inherit cmake_toolchain;
 
-    # nixpkgs: a wide variety of programs and build tools.
+    # A wide variety of programs and build tools.
     inherit nixpkgs;
 
     # Some native build tools made by nixcrpkgs.
@@ -96,10 +95,11 @@ let
     # this environment.
     inherit global_license_set;
 
-    # Expressions used to bootstrap the toolchain, not normally needed.
-    inherit mingw-w64_info mingw-w64_headers gcc_stage_1;
+    # Make it easy to build or refer to the build tools.
+    inherit gcc binutils mingw-w64_full mingw-w64_info mingw-w64_headers gcc_stage_1;
+    mingw-w64 = mingw-w64_full;
 
-    make_derivation = import ../make_derivation.nix nixpkgs crossenv;
+    make_derivation = import ../make_derivation.nix crossenv;
   };
 in
   crossenv

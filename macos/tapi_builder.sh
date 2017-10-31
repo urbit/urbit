@@ -51,36 +51,9 @@ build-lib ../tapi/lib/Driver libtapiDriver.a
 build-lib ../tapi/lib/Scanner libtapiScanner.a
 build-lib ../tapi/lib/SDKDB libtapiSDKDB.a
 
-LDFLAGS="-L$clang/lib -L.
--ltapi
--ltapiDriver
--ltapiCore
--ltapiDriver
--ltapiScanner
--ltapiSDKDB
--ltapiConfig
--lclangTooling
--lclangFrontend
--lclangDriver
--lclangSerialization
--lclangParse
--lclangSema
--lclangAST
--lclangAnalysis
--lclangEdit
--lclangLex
--lclangBasic
--lLLVMDemangle
--lLLVMObject
--lLLVMBitReader
--lLLVMMC
--lLLVMMCParser
--lLLVMCore
--lLLVMBinaryFormat
--lLLVMOption
--lLLVMProfileData
--lLLVMSupport
--lpthread"
+CLANG_LIBS="-lclangTooling -lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAST -lclangAnalysis -lclangEdit -lclangLex -lclangBasic -lLLVMDemangle -lLLVMObject -lLLVMBitReader -lLLVMMC -lLLVMMCParser -lLLVMCore -lLLVMBinaryFormat -lLLVMOption -lLLVMProfileData -lLLVMSupport"
+
+LDFLAGS="-L$clang/lib -L. -ltapi -ltapiDriver -ltapiCore -ltapiDriver -ltapiScanner -ltapiSDKDB -ltapiConfig $CLANG_LIBS -lpthread"
 
 echo "building tapi"
 g++ $CFLAGS ../tapi/tools/tapi/tapi.cpp $LDFLAGS -o tapi
@@ -102,6 +75,6 @@ libdir=\${prefix}/lib
 includedir=\${prefix}/include
 
 Version: $version
-Libs: -L\${libdir} -ltapi -ltapiCore
+Libs: -L\${libdir} -L$clang/lib -ltapi -ltapiCore $CLANG_LIBS -lpthread
 Cflags: -I\${includedir}
 EOF

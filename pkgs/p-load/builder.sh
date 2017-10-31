@@ -3,8 +3,6 @@ source $setup
 tar -xf $src
 mv p-load-* p-load
 
-cat p-load/CMakeLists.txt
-
 mkdir build
 cd build
 

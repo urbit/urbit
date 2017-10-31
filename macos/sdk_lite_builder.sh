@@ -2,25 +2,27 @@ source $setup
 
 header_dirs="
 architecture
+dispatch
 i386
 libkern
 mach
 machine
 mach-o
 mach_debug
+os
 "
 
 headers="
 libunwind.h
-Availability.h
-AvailabilityMacros.h
-AvailabilityInternal.h
 sys/_endian.h
 sys/_types.h
 sys/_pthread/_pthread_types.h
 sys/_types/_mach_port_t.h
 sys/_types/_os_inline.h
 sys/appleapiopts.h
+Availability.h
+AvailabilityMacros.h
+AvailabilityInternal.h
 "
 
 for dir in $header_dirs; do

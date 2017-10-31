@@ -1,10 +1,15 @@
+# TODO: remove unused things: sdk_lite, common_crypto, ld_apple, xar (?)
+
 { native }:
 let
   nixpkgs = native.nixpkgs;
 
   arch = "x86_64";
 
+  # was darwin15, changed to darwin so that lld guesses flavor=Darwin correctly
   darwin_name = "darwin15";
+
+  macos_version_min = "10.11";
 
   host = "${arch}-apple-${darwin_name}";
 
@@ -29,6 +34,11 @@ let
       sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
     };
 
+    lld_src = nixpkgs.fetchurl {
+      url = "http://releases.llvm.org/${version}/lld-${version}.src.tar.xz";
+      sha256 = "15rqsmfw0jlsri7hszbs8l0j7v1030cy9xvvdb245397llh7k6ir";
+    };
+
     patches = [ ./clang_megapatch.patch ];
 
     builder = ./clang_builder.sh;
@@ -43,6 +53,8 @@ let
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
+  # Note: There is an alternative version we could use, but it
+  # has a copy of LLVM in it: https://github.com/tpoechtrager/apple-libtapi
   tapi = native.make_derivation rec {
     name = "tapi";
     version = "${version0}.${version1}.${version2}";
@@ -57,6 +69,24 @@ let
     native_inputs = [ clang ];
     inherit clang;
   };
+
+  ld_tpoechtrager = native.make_derivation rec {
+    name = "ld-tpoechtrager-${version}";
+    version = "c1cc758";
+    apple_version = "274.2";  # from README.md
+    inherit host;
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/tpoechtrager/cctools-port/archive/${version}.tar.gz";
+      sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
+    };
+    patches = [
+      ./ld_tpoechtrager_format.patch
+      ./ld_tpoechtrager_megapatch.patch
+    ];
+    builder = ./ld_tpoechtrager_builder.sh;
+    native_inputs = [ tapi native.pkgconf ];
+  };
+  ld = ld_tpoechtrager;
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
   # the script from osxcross.
@@ -75,7 +105,23 @@ let
     inherit sdk;
   };
 
-  ld = native.make_derivation rec {
+  common_crypto = native.make_derivation rec {
+    name = "common-crypto-${version}";
+    version = "60118.1.1";
+    src = nixpkgs.fetchurl {
+      url = "https://opensource.apple.com/tarballs/CommonCrypto/CommonCrypto-${version}.tar.gz";
+      sha256 = "1iw2231pw1hp66wb01vlqrhmj6gzwlkjisl1v6axgq0pwyrkq34h";
+    };
+    builder = ./common_crypto_builder.sh;
+    CFLAGS =
+      "-O2 " +
+      "-Werror " +
+      "-Wfatal-errors " +
+      "-I../cc/include " +
+      "-isystem ${sdk_lite}/include";
+  };
+
+  ld_apple = native.make_derivation rec {
     name = "ld64-${version}-${host}";
     version = "274.2";
     inherit host arch;
@@ -85,7 +131,7 @@ let
     };
     patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
-    native_inputs = [ tapi native.pkgconf nixpkgs.libuuid.dev ];
+    native_inputs = [ common_crypto tapi native.pkgconf nixpkgs.libuuid.dev ];
     CFLAGS =
       "-O2 " +
       "-Wno-unused-result " +
@@ -101,15 +147,13 @@ let
       "-D_DARWIN_C_SOURCE";
   };
 
-  xar_src = nixpkgs.fetchurl {
-    url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
-    sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
-  };
-
   xar = native.make_derivation {
     name = "xar";
     builder = ./xar_builder.sh;
-    src = xar_src;
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
+      sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
+    };
     native_inputs = [
       nixpkgs.libxml2.dev
       nixpkgs.openssl.dev
@@ -118,14 +162,13 @@ let
     ];
   };
 
-  macos_version_min = "10.11";
-
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
     inherit host sdk;
     wrapper = ./wrapper;
-    native_inputs = [ clang ld xar ];
+    native_inputs = [ ld clang ];
+    inherit clang;
 
     CXXFLAGS =
       "-std=c++11 " +
@@ -133,11 +176,12 @@ let
       "-I. " +
       "-O2 -g " +
       "-DWRAPPER_OS_VERSION_MIN=\\\"${macos_version_min}\\\" " +
-      "-DWRAPPER_SDK_PATH=\\\"/nix/store/shs3mnp6j07sv2xzzs92a4ydbvb6fs0w-macos-sdk\\\" " +
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
+      "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
+      "-DWRAPPER_SDK_VERSION=\\\"${sdk.version}\\\" " +
+      "-DWRAPPER_LINKER_VERSION=\\\"${ld.apple_version}\\\" " +
       "-DWRAPPER_PATH=\\\"${ld}/bin:${clang}/bin\\\"";
-    # TODO: use ld.version for the -mlinker-version argument to clang
   };
 
   cmake_toolchain = import ../cmake_toolchain {
@@ -146,25 +190,28 @@ let
   };
 
   crossenv = {
-    # Target info variables.
+    is_cross = true;
+
+    # Build tools available on the PATH for every derivation.
+    default_native_inputs = native.default_native_inputs
+      ++ [ clang xar toolchain native.pkgconf native.wrappers ];
+
+    # Target info environment variables.
     inherit host arch os compiler exe_suffix;
 
-    # Cross-compiling toolchain.
-    inherit toolchain;
-    toolchain_drvs = [ clang ld xar toolchain ];
-
-    # Build tools and variables to support them.
+    # CMake toolchain file.
     inherit cmake_toolchain;
 
-    # nixpkgs: a wide variety of programs and build tools.
+    # A wide variety of programs and build tools.
     inherit nixpkgs;
 
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
-    inherit clang tapi sdk sdk_lite ld xar;
+    # Make it easy to build or refer to the build tools.
+    inherit clang common_crypto tapi sdk sdk_lite ld xar toolchain;
 
-    make_derivation = import ../make_derivation.nix nixpkgs crossenv;
+    make_derivation = import ../make_derivation.nix crossenv;
   };
 in
   crossenv
