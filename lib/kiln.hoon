@@ -260,6 +260,8 @@
   |=  tym/@dr
   abet:(emit %wait /kiln/overload/(scot %dr tym) (add ~s10 now))
 ::
+++  poke-wipe-ford  |=($~ abet:(emit %wipe /kiln our ~))
+::
 ++  take  |=(way/wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  {way/wire are/(each (set path) (pair term tang))}
@@ -348,11 +350,14 @@
   ++  start-sync
     |=  reset/?
     =.  +>.$  (spam (render "activated sync" sud her syd) ~)
-    %-  blab
-    :~  :*  ost  %warp
-            [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
-            [our her]  sud  ~  %sing  %w  [%da now]  /
-    ==  ==
+    =.  +>.$
+      %-  blab
+      :~  :*  ost  %warp
+              [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
+              [our her]  sud  ~  %sing  %w  [%da now]  /
+      ==  ==
+    ?.  =(%home syd)  +>.$  :: XX less hard-coding
+    (blab [ost %mont /mount syd our syd /]~) 
   ::
   ++  writ
     |=  {reset/? rot/riot}

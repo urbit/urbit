@@ -1693,6 +1693,7 @@
     ::
     ++  pa-report-group                                  ::  update presence
       |=  vew/(set bone)
+      ?:  [no-presence=&]  +>.$
       %^  pa-report  vew  %group
       :-  %-  ~(run by locals)
           |=({@ a/status} a)
@@ -1936,7 +1937,18 @@
     ++  pa-revise                                       ::  revise existing
       |=  {num/@ud gam/telegram}
       =+  way=(sub count num)
-      ?:  =(gam (snag (dec way) grams))
+      =/  ole  (snag (dec way) grams)
+      =.  q.q.gam
+        ::REVIEW  let old %received override different "new" states, in an
+        ::        attempt to stem a stale-update loop
+        ::
+        %-  ~(urn by q.q.gam)
+        |=  {a/partner b/{envelope dev/delivery}}  ^-  {envelope delivery}
+        ?:  ?=({$~ ^ $received} (~(get by q.q.ole) a))
+          b(dev %received)
+        b
+      ::
+      ?:  =(gam ole)
         +>.$                                            ::  no change
       =.  grams  (welp (scag (dec way) grams) [gam (slag way grams)])
       (pa-refresh num gam)
