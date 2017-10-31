@@ -73,7 +73,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
-  u3_Host.ops_u.loh = c3n;
+  u3_Host.ops_u.net = c3n;
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
@@ -83,7 +83,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:LabcdgqsvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -162,12 +162,8 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.rep = c3y;
         return c3y;
       }
-      case 'L': { u3_Host.ops_u.loh = c3y; break; }
-      case 'F': {
-        u3_Host.ops_u.loh = c3y;
-        u3_Host.ops_u.fak = c3y;
-        break;
-      }
+      case 'N': { u3_Host.ops_u.net = c3y; break; }
+      case 'F': { u3_Host.ops_u.fak = c3y; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
@@ -184,6 +180,13 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
+  if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3y ) {
+    fprintf(stderr, "-N only makes sense with -F\n");
+    return c3n;
+  } else if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3n ) {
+    u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
+  }
+
   if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
     fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
@@ -197,13 +200,13 @@ _main_getopt(c3_i argc, c3_c** argv)
                     "the initial sync path with -A\n");
     return c3n;
   }
-   
+
   if ( u3_Host.ops_u.gen_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
     fprintf(stderr, "-G only makes sense when creating a new galaxy\n");
     return c3n;
   }
-  
+
   if ( u3_Host.ops_u.tic_c != 0 && ( u3_Host.ops_u.imp_c != 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
     fprintf(stderr, "-t only makes sense when creating a new non-galaxy\n");
