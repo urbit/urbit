@@ -84,7 +84,7 @@ let
       ./ld_tpoechtrager_megapatch.patch
     ];
     builder = ./ld_tpoechtrager_builder.sh;
-    native_inputs = [ tapi native.pkgconf ];
+    native_inputs = [ tapi ];
   };
   ld = ld_tpoechtrager;
 
@@ -131,7 +131,7 @@ let
     };
     patches = [ ./ld64_megapatch.patch ];
     builder = ./ld_builder.sh;
-    native_inputs = [ common_crypto tapi native.pkgconf nixpkgs.libuuid.dev ];
+    native_inputs = [ common_crypto tapi nixpkgs.libuuid.dev ];
     CFLAGS =
       "-O2 " +
       "-Wno-unused-result " +
@@ -158,7 +158,6 @@ let
       nixpkgs.libxml2.dev
       nixpkgs.openssl.dev
       nixpkgs.zlib.dev
-      nixpkgs.pkgconfig
     ];
   };
 
@@ -194,7 +193,7 @@ let
 
     # Build tools available on the PATH for every derivation.
     default_native_inputs = native.default_native_inputs
-      ++ [ clang xar toolchain native.pkgconf native.wrappers ];
+      ++ [ clang xar toolchain native.wrappers ];
 
     # Target info environment variables.
     inherit host arch os compiler exe_suffix;

@@ -30,9 +30,9 @@ let
     make_derivation = import ../make_derivation.nix native_base;
   };
 
-  pkgconf = import ./pkgconf { inherit nixpkgs; };
+  pkgconf = import ./pkgconf { env = native_base; };
 
-  wrappers = import ./wrappers { inherit nixpkgs; };
+  wrappers = import ./wrappers { env = native_base; };
 
   gnu_config = nixpkgs.fetchgit {
     url = "https://git.savannah.gnu.org/git/config.git";
@@ -42,7 +42,7 @@ let
 
   native = native_base // {
     default_native_inputs = native_base.default_native_inputs ++ [
-      # TODO: pkgconf (would cause a mass rebuild)
+      pkgconf
     ];
 
     inherit pkgconf wrappers gnu_config;

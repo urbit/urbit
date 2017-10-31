@@ -1,4 +1,4 @@
-source $stdenv/setup
+source $setup
 
 mkdir -p $out/bin
 
