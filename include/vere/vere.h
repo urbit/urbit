@@ -537,7 +537,7 @@
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   raf_c;                      //  -r, raft flotilla
         c3_c*   tic_c;                      //  -t, ticket value
-	c3_c*   url_c;                      //  -u, pill url
+        c3_c*   url_c;                      //  -u, pill url
         c3_c*   who_c;                      //  -w, begin with ticket
         c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
@@ -546,6 +546,7 @@
         c3_o    fak;                        //  -F, fake carrier
         c3_o    fog;                        //  -X, skip last event
         c3_o    gab;                        //  -g, run with garbage collector
+        c3_o    git;                        //  -s, pill url from arvo git hash
         c3_o    loh;                        //  -L, local-only networking
         c3_o    mem;                        //  -M, memory madness
         c3_o    nuu;                        //  -c, new pier

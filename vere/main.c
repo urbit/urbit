@@ -72,6 +72,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.fak = c3n;
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
+  u3_Host.ops_u.git = c3n;
   u3_Host.ops_u.loh = c3n;
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.nuu = c3n;
@@ -82,7 +83,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:LabcdgqsvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -176,6 +177,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
+      case 's': { u3_Host.ops_u.git = c3y; break; }
       case '?': default: {
         return c3n;
       }
@@ -230,11 +232,22 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0) {
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
-  } else if ( u3_Host.ops_u.nuu == c3y && u3_Host.ops_u.url_c == 0 ) {
+
+  } else if ( u3_Host.ops_u.nuu == c3y
+           && u3_Host.ops_u.url_c == 0
+           && u3_Host.ops_u.git == c3n ) {
+
     u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/latest.pill";
+
+  } else if ( u3_Host.ops_u.nuu == c3y
+           && u3_Host.ops_u.url_c == 0
+           && u3_Host.ops_u.arv_c == 0 ) {
+
+    fprintf(stderr, "-s only makes sense with -A\n");
+    return c3n;
   }
 
   if ( u3_Host.ops_u.pil_c != 0 ) {
@@ -312,6 +325,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-q            Quiet\n",
     "-r host       Initial peer address\n",
     "-R            Report urbit build info\n",
+    "-s            Pill URL from arvo git hash\n",
     "-t ticket     Use ~ticket automatically\n",
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
@@ -566,7 +580,8 @@ main(c3_i   argc,
              u3_Host.ops_u.gab,
              u3_Host.dir_c,
              u3_Host.ops_u.pil_c,
-             u3_Host.ops_u.url_c);
+             u3_Host.ops_u.url_c,
+             u3_Host.ops_u.arv_c);
 
     /*  Start Arvo.
     */
