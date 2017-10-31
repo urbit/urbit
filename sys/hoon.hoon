@@ -8,8 +8,7 @@
   ::                                                    ::
 ~%  %k.143  ~  ~                                        ::
 |%
-++  foo  0
-++  hoon  +
+++  hoon-version  +
 --  =>
 ::                                                      ::
 ::::    1: layer one                                    ::
@@ -20,7 +19,6 @@
   ::
 ~%  %one  +  ~
 |%
-++  foo  0
 ::                                                      ::
 ::::    1a: unsigned arithmetic                         ::
   ::
@@ -206,7 +204,6 @@
   ::
 ~%  %two  +  ~
 |%
-++  foo  0
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -1776,7 +1773,6 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
-++  foo  0
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3497,7 +3493,6 @@
     %show  show
   ==
 |%
-++  foo  0
 ::
 ::::  4a: exotic bases
   ::
@@ -5699,7 +5694,6 @@
     %ut    ut
   ==
 |%
-++  foo  0
 ::
 ::::  5a: compiler utilities
   ::
@@ -6815,8 +6809,8 @@
     ::
         {$zpwt *}
       ?:  ?:  ?=(@ p.gen)
-            (lte hoon p.gen)
-          &((lte hoon p.p.gen) (gte hoon q.p.gen))
+            (lte hoon-version p.gen)
+          &((lte hoon-version p.p.gen) (gte hoon-version q.p.gen))
         q.gen
       ~_(leaf+"hoon-version" !!)
     ::

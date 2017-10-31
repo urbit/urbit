@@ -535,7 +535,7 @@
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
   ^-  (unit)
-  ?~  hap  [~ hoon]
+  ?~  hap  [~ hoon-version]
   =+  rob=((sloy ~(beck (is vil eny bud niz) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
@@ -572,9 +572,9 @@
   =+  ^=  nex
       =+  gat=.*(ken .*(ken [0 87]))
       (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
-  ~&  [%vega-compiled hoon nex]
-  ?>  (lte nex hoon)
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon) 86 11)]))
+  ~&  [%vega-compiled hoon-version nex]
+  ?>  (lte nex hoon-version)
+  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 86 11)]))
   =+  sam=[eny ova q.niz]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   =+  yep=((list ovum) -.raw)
