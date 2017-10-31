@@ -819,6 +819,7 @@
         %+  roll  ~(tap by loc.pes)
         |=  {{w/ship s/status} _self}
         (so-delta-our %status so-cir w %full s)
+        ::TODO  ^ runtime when accepting burden
       ::  remote status
       =.  self
         %+  roll  ~(tap by rem.pes)
@@ -1991,7 +1992,7 @@
       =<  so-done
       (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
     %-  pre-bake
-    ta-done:(ta-take:ta wir piz)  ::TODO  %ap-lame for %burden prize...
+    ta-done:(ta-take:ta wir piz)  ::TODO  runtime for %burden prize...
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
