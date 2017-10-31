@@ -2,23 +2,24 @@
 ::::  /hoon/umd/mar
   ::
 /?    310
+/+    cram
 ::
 |_  mud/@t
 ++  grow
   |%
-  ++  mime  [/text/x-unmark (taco mud)]
+  ++  mime  [/text/x-markdown (as-octs:mimes:html mud)]
   ++  txt
-    (lore mud)
+    (to-wain:format mud)
   ++  elem
     ^-  manx
-    [/div ~(shut ap %xml (rash mud fenced:cram:vast))]
+    elm:(static:cram (ream mud))
   --
 ++  grab
   |%
-  ++  mime  |=({p/mite q/octs} q.q)
+  ++  mime  |=({p/mite:eyre q/octs:eyre} q.q)
   ++  noun  @t
-  ++  txt   role
-  --
+  ++  txt   of-wain:format
+  --  
 ++  grad  %txt
 ++  garb  /down
 --
