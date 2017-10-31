@@ -274,7 +274,7 @@
   ++  cont                                              ::>  control
     |=  a/control
     ^-  json
-    (pairs sec+s+sec.a ses+(sa ses.a ship) ~)
+    (pairs sec+s+sec.a sis+(sa ses.a ship) ~)
   ::
   ++  crow                                              ::>  crowd
     |=  a/crowd
@@ -513,11 +513,11 @@
   ::
   ++  cont                                              ::>  control
     ^-  $-(json (unit control))
-    (ot sec+secu ses+(as (su fed:ag)) ~)
+    (ot sec+secu sis+(as (su fed:ag)) ~)
   ::
   ++  secu                                              ::>  security
     ^-  $-(json (unit security))
-    (su (perk %black %white %green %brown ~))
+    (su (perk %channel %village %journal %mailbox ~))
   ::
   ++  crow                                              ::>  crowd
     ^-  $-(json (unit crowd))

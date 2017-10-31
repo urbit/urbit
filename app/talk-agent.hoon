@@ -615,12 +615,7 @@
         ==
       ::
       ++  pore                                          ::<  security
-        ;~  pose
-          (cold %black (jest %channel))
-          (cold %white (jest %village))
-          (cold %green (jest %journal))
-          (cold %brown (jest %mailbox))
-        ==
+        (perk %channel %village %journal %mailbox ~)
       ::
       ++  lobe                                          ::<  y/n loob
         ;~  pose
@@ -1116,7 +1111,7 @@
         =<  (sh-fact %mor (murn (sort ~(tap by remotes) aor) .))
         |=  {cir/circle gop/group}  ^-  (unit sole-effect)
         ?.  |(=(~ cis) (~(has in cis) cir))  ~
-        ?:  =(%brown sec.con:(fall (~(get by mirrors) cir) *config))  ~
+        ?:  =(%mailbox sec.con:(fall (~(get by mirrors) cir) *config))  ~
         ?.  (~(has in sources) cir)  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr cir) ~]
         =<  (murn (sort ~(tap by gop) aor) .)
@@ -1491,12 +1486,7 @@
       ::
       |=  a/security
       ^-  tape
-      ?-  a
-        $black  "channel"
-        $brown  "mailbox"
-        $white  "village"
-        $green  "journal"
-      ==
+      (scow %tas a)
     ::
     ++  sh-scis                                         ::<  render status
       ::>  gets the presence of {saz} as a tape.
@@ -1539,8 +1529,8 @@
       ::>  prints invite/banish effects to the cli.
       ::
       |=  {pre/tape sec/security old/(list ship) new/(list ship)}
-      =+  out=?:(?=(?($black $brown) sec) "try " "cut ")
-      =+  inn=?:(?=(?($black $brown) sec) "ban " "add ")
+      =+  out=?:(?=(?($channel $mailbox) sec) "try " "cut ")
+      =+  inn=?:(?=(?($channel $mailbox) sec) "ban " "add ")
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old  +>.^$
@@ -1583,7 +1573,7 @@
             (weld (trip inbox) ": ")
           (sh-set-diff src.laz src.loc)
       ?:  !=(sec.con.loc sec.con.laz)
-        =.  +>.$  (sh-note :(weld pre "but " (sh-cure sec.con.loc)))
+        =.  +>.$  (sh-note :(weld pre "but " (scow %tas sec.con.loc)))
         %^    sh-show-permits
             (weld (trip inbox) ": ")
           sec.con.loc
@@ -1834,7 +1824,7 @@
     |=  cir/circle  ^-  ?
     ?&  =(hos.cir our.bol)
         =+  sot=(~(get by mirrors) cir)
-        &(?=(^ sot) ?=($brown sec.con.u.sot))
+        &(?=(^ sot) ?=($mailbox sec.con.u.sot))
     ==
   ::
   ++  ar-pref                                           ::<  audience glyph

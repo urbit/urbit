@@ -223,8 +223,8 @@
     ::  create default circles.
     =>  %+  roll
           ^-  (list {security naem cord})
-          :~  [%brown (main our.bol) 'default home']
-              [%green %public 'visible activity']
+          :~  [%mailbox (main our.bol) 'default home']  ::TODO  %inbox?
+              [%journal %public 'visible activity']
           ==
         |=  {{typ/security nom/naem des/cord} _ta}
         %+  ta-action  ost.bol
@@ -356,7 +356,7 @@
             des
             *filter
             :-  typ
-            ?.  ?=(?($white $green) typ)  ~
+            ?.  ?=(?($village $journal) typ)  ~
             [our.bol ~ ~]
         ==
       (ta-evil (crip "{(trip nom)}: already exists"))
@@ -623,7 +623,7 @@
       =.  aut  our.bol
       ?:  =(aut hos.cir)
         ?:  (~(has by stories) nom.cir)
-        (ta-record nom.cir hos.cir tot)
+          (ta-record nom.cir hos.cir tot)
         %-  ta-note  ::TODO  avenue for abuse?
         (crip "have no story {(scow %tas nom.cir)}")
       (ta-transmit cir tot)
@@ -861,14 +861,14 @@
           ?~  old  ~
           ::TODO?  what to do about src?
           :~  ::[%follow | src.u.old]
-              [%config so-cir %permit | ses.con.u.old]
+              [%config so-cir %permit | sis.con.u.old]
           ==
         ^-  (list delta-story)
         :~  ::[%follow & src.cof]
             [%config so-cir %caption cap.cof]
             [%config so-cir %filter fit.cof]
             [%config so-cir %secure sec.con.cof]
-            [%config so-cir %permit & ses.con.cof]
+            [%config so-cir %permit & sis.con.cof]
         ==
       |=  d/delta-story
       [%story nom d]
@@ -1121,10 +1121,10 @@
       ^+  +>
       ::>  wyt:  whitelist?
       ::>  add:  add to list?
-      =/  wyt/?  ?=(?($white $green) sec.con.shape)
+      =/  wyt/?  ?=(?($village $journal) sec.con.shape)
       =/  add/?  =(inv wyt)
       =/  sus/(set ship)
-        %.  ses.con.shape
+        %.  sis.con.shape
         ?:(add ~(dif in sis) ~(int in sis))
       =.  +>.$
         %-  so-act
@@ -1141,10 +1141,10 @@
       |=  her/ship
       ^-  ?
       ?-  sec.con.shape
-        $black  !(~(has in ses.con.shape) her)          ::<  channel, blacklist
-        $white  (~(has in ses.con.shape) her)           ::<  village, whitelist
-        $green  (~(has in ses.con.shape) her)           ::<  journal, whitelist
-        $brown  !(~(has in ses.con.shape) her)          ::<  mailbox, blacklist
+        $channel  !(~(has in sis.con.shape) her)        ::<  blacklist
+        $village  (~(has in sis.con.shape) her)         ::<  whitelist
+        $journal  (~(has in sis.con.shape) her)         ::<  author whitelist
+        $mailbox  !(~(has in sis.con.shape) her)        ::<  author blacklist
       ==
     ::
     ++  so-visible                                      ::<  display to
@@ -1153,10 +1153,10 @@
       |=  her/ship
       ^-  ?
       ?-  sec.con.shape
-        $black  !(~(has in ses.con.shape) her)          ::<  channel, blacklist
-        $white  (~(has in ses.con.shape) her)           ::<  village, whitelist
-        $green  &                                       ::<  journal, all
-        $brown  (team:title our.bol her)                      ::<  mailbox, our team
+        $channel  !(~(has in sis.con.shape) her)        ::<  blacklist
+        $village  (~(has in sis.con.shape) her)         ::<  whitelist
+        $journal  &                                     ::<  all
+        $mailbox  (team:title our.bol her)              ::<  our team
       ==
     --
   --
@@ -1540,7 +1540,7 @@
       |=  {old/config dif/diff-config}
       ^-  (list move)
       ?+  -.dif  ~
-        $permit   (sa-permit-effects sec.con.old ses.con.old +.dif)
+        $permit   (sa-permit-effects sec.con.old sis.con.old +.dif)
         ::NOTE  when doing a lone %secure, calculate the
         ::      necessary %permit deltas alongside it.
       ==
@@ -1561,11 +1561,11 @@
       ::
       |=  {sec/security old/(set ship) add/? sis/(set ship)}
       ^-  (list move)
-      =/  wyt  ?=(?($white $green) sec)
+      =/  wyt  ?=(?($village $journal) sec)
       =/  inv  =(wyt add)
       ?:  inv  ~
       =/  sus/(set ship)
-        %.  ses.con.shape
+        %.  sis.con.shape
         ?:(add ~(dif in sis) ~(int in sis))
       (sa-eject sus)
     ::
@@ -1743,7 +1743,7 @@
     |=  {n/naem s/story}
     ^-  (unit (pair naem burden))
     ::  only auto-federate channels for now.
-    ?.  ?=($black sec.con.shape.s)  ~
+    ?.  ?=($channel sec.con.shape.s)  ~
     :+  ~  n
     :+  grams.s
       [shape.s mirrors.s]
@@ -1834,7 +1834,7 @@
     ?.  ?=($story -.det)  ~
     ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
     ::  only burden channels for now.
-    ?.  =(%black sec.con.shape:(~(got by stories) nom.det))  ~
+    ?.  =(%channel sec.con.shape:(~(got by stories) nom.det))  ~
     `[%burden nom.det (dedicate who.qer nom.det det.det)]
     ::
       $report
@@ -1847,7 +1847,7 @@
     ::  and only if the story is inherited.
     ?.  inherited.soy  ~
     ::  only burden channels for now.
-    ?.  =(%black sec.con.shape.soy)  ~
+    ?.  =(%channel sec.con.shape.soy)  ~
     `[%burden nom.det (dedicate (above our.bol) nom.det det.det)]
     ::
       $circle

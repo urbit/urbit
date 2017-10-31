@@ -90,15 +90,17 @@
   $%  {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
   ==                                                    ::
-++  burden                                              ::<  full story state
-  $:  gaz/(list telegram)                               ::<  all messages
-      cos/lobby                                         ::<  loc & rem configs
+++  shipment                                            ::>  standard payload
+  $:  cos/lobby                                         ::<  loc & rem configs
       pes/crowd                                         ::<  loc & rem presences
+  ==                                                    ::
+++  burden                                              ::<  full story state
+  $:  gaz/(list telegram)  ::TODO  envelope?            ::<  all messages
+      shipment
   ==                                                    ::
 ++  package                                             ::<  story state
   $:  nes/(list envelope)                               ::<  messages
-      cos/lobby                                         ::<  loc & rem configs
-      pes/crowd                                         ::<  loc & rem presences
+      shipment
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char aud/audience}           ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/nick}                     ::<  changed nickname
@@ -193,12 +195,12 @@
       utf/?                                             ::<  dis/allow non-ascii
       ::TODO  maybe message length
   ==                                                    ::
-++  control    {sec/security ses/(set ship)}            ::<  access control
+++  control    {sec/security sis/(set ship)}            ::<  access control
 ++  security                                            ::>  security mode
-  $?  $black                                            ::<  channel, blacklist
-      $white                                            ::<  village, whitelist
-      $green                                            ::<  journal, author list
-      $brown                                            ::<  mailbox, our r, bl w
+  $?  $channel                                          ::<  channel, blacklist
+      $village                                          ::<  village, whitelist
+      $journal                                          ::<  journal, author list
+      $mailbox                                          ::<  mailbox, our r, bl w
   ==                                                    ::
 ::  participant metadata.                               ::
 ::TODO  think about naming more
