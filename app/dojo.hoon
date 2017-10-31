@@ -271,9 +271,9 @@
       ==
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
+        (stag %sa ;~(pfix tar pam sym))
         (stag %ex dp-twig)
         (stag %tu (ifix [sel ser] (most ace dp-source)))
-        (stag %sa ;~(pfix tar pam sym))
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
