@@ -357,7 +357,7 @@
               [our her]  sud  ~  %sing  %w  [%da now]  /
       ==  ==
     ?.  =(%home syd)  +>.$  :: XX less hard-coding
-    (blab [ost %mont /mount syd our syd /]~) 
+    (blab [ost %mont /mount syd [our syd da+now] /]~) 
   ::
   ++  writ
     |=  {reset/? rot/riot}
