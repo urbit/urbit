@@ -8515,7 +8515,6 @@
             ::
             ref/span
         ==
-    ~+
     ::  :span: subject refurbished to reference namespace
     ::
     ^-  span

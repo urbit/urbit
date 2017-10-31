@@ -1,4 +1,4 @@
-!:  ::  %behn, just a timer
+::  ::  %behn, just a timer
 !?  164
 ::::
 =,  behn
@@ -140,84 +140,6 @@
     |=  q/(broq key val)
     ^+  a
     (meek (uniq a) (uniq q))
-  --
-++  neon
-  |=  our/ship
-  ^-  (vane task:able gift:able $~ $~ coke coke)
-  =|  coke
-  |%
-  ++  load  |=(coke +>)
-  ++  stay  `coke`+<
-  ++  plow
-    =|  $:  now/@da
-            eny/@e
-            sky/roof
-        ==
-    |%
-    ++  doze  ~
-    ++  peek
-      |=  $:  lyc/(unit (set ship))
-              car/term
-              bem/beam
-          ==
-      ^-  (unit (unit (cask vase)))
-      ::
-      ::  XX this is old and somewhat retarded
-      ::
-      =+  ^=  liz
-          |-  ^-  (list {@da duct})
-          =.  tym  (raze tym)
-          ?~  p.tym  ~
-          [~(get up p.tym) $(p.tym ~(pop up p.tym))]
-      [~ ~ %tank !>(>liz<)]
-    ::
-    ++  spin
-      =|  $:  hen/duct
-              moz/(list (pair duct (wind $~ gift:able)))
-          ==
-      |%
-      ++  call  
-        |=  tac/task:able
-        ^+  +>
-        =^  mof  tym
-          ?-    -.tac
-              $rest
-            =.  q.tym  (~(put up q.tym) p.tac hen)
-            =.  tym  (raze tym)
-            [~ tym]
-          ::
-              $wait
-            =.  p.tym  (~(put up p.tym) p.tac hen)
-            =.  tym  (raze tym)
-            [~ tym]
-          ::
-              $wake
-            |-  ^+  [*(list move) tym]
-            =.  tym  (raze tym)
-            ?:  =([~ ~] tym)  [~ tym]                         ::  XX  TMI
-            ?:  =(~ p.tym)
-              ~&  %weird-wake  [~ tym]
-            =+  nex=~(get up p.tym)
-            ?:  (lte now p.nex)  [~ tym]
-            =^  mof  tym  $(p.tym ~(pop up p.tym))
-            [[`move`[q.nex %give %wake ~] mof] tym]
-          ::
-              $wegh
-            :_  tym  :_  ~
-            :^  hen  %give  %mass
-            :-  %behn
-            :-  %|
-            :~  tym+[%& tym]
-            ==
-          ==
-        +>.$(moz (weld `(list move)`mof moz))
-      ::
-      ++  take  
-        |=  {tea/wire $~}
-        ^+  +>
-        !!
-      --
-    --
   --
 --
 .  ==

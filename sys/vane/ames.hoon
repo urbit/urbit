@@ -1,4 +1,4 @@
-!:  ::  ames (4a), networking  
+::  ::  ames (4a), networking  
 ::
   |=  pit=vase
   =>  =~
@@ -291,11 +291,11 @@
         0w0                           ::  174, ~hut, Tlon
         0w0                           ::  175, ~tun, Tlon
         0w0                           ::  176, ~byl, Tlon
-        0w0                           ::  177, ~sud, Tlon
-        0w0                           ::  178, ~pem, Tlon
+        0wq.wmRvk.V8tZ5.1lz5q.dbrYx   ::  177, ~sud, Tlon
+        0w3Q.0LYXy.LjTEu.~FjaT.OpTts  ::  178, ~pem, Tlon
         0wQ.uJzGo.M94yL.L7yw6.nGyfW   ::  179, ~dev, Tlon
-        0w0                           ::  180, ~lur, Tlon
-        0w0                           ::  181, ~def, Tlon
+        0w1B.LTLDt.3Yu~s.BuzYM.fjcS3  ::  180, ~lur, Tlon
+        0w2B.9j6g-.q9DwV.tXzPz.DKEKq  ::  181, ~def, Tlon
         0w1m.CxbiW.SKF5E.11JQ6.yW~T4  ::  182, ~bus, Tlon
         0w0                           ::  183, ~bep, Tlon
         0w0                           ::  184, ~run, Tlon
