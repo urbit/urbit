@@ -1502,7 +1502,7 @@ _cm_init(c3_o chk_o)
 
 /* _boot_home(): create ship directory. */
 static void
-_boot_home(c3_c *dir_c, c3_c *pil_c)
+_boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c)
 {
   c3_c    ful_c[2048];
 
@@ -1543,7 +1543,6 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
         exit(1);
       }
     } else {
-      c3_c *url_c = "https://bootstrap.urbit.org/latest.pill";
       CURL *curl;
       CURLcode result;
       FILE *file;
@@ -1575,7 +1574,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c)
 /* u3m_boot(): start the u3 system.
 */
 void
-u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
+u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c, c3_c *url_c)
 {
   /* Activate the loom.
   */
@@ -1602,7 +1601,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c)
   if ( _(nuu_o) ) {
     c3_c ful_c[2048];
 
-    _boot_home(dir_c, pil_c);
+    _boot_home(dir_c, pil_c, url_c);
 
     snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
 
