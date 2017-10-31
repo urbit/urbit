@@ -530,34 +530,35 @@
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
-        c3_c*   imp_c;                      //  -I, czar name
-        c3_c*   nam_c;                      //  -n, unix hostname
-        c3_c*   raf_c;                      //  -r, raft flotilla
-        c3_c*   who_c;                      //  -w, begin with ticket
-        c3_c*   tic_c;                      //  -t, ticket value
-        c3_c*   pil_c;                      //  -B, bootstrap from
         c3_c*   arv_c;                      //  -A, initial sync from
         c3_c*   gen_c;                      //  -G, czar generator
-        c3_w    kno_w;                      //  -k, kernel version
-        c3_w    fuz_w;                      //  -f, fuzz testing
-        c3_s    por_s;                      //  -p, ames port
-        c3_s    rop_s;                      //  -l, raft port
+        c3_c*   imp_c;                      //  -I, czar name
+        c3_c*   nam_c;                      //  -n, unix hostname
+        c3_c*   pil_c;                      //  -B, bootstrap from
+        c3_c*   raf_c;                      //  -r, raft flotilla
+        c3_c*   tic_c;                      //  -t, ticket value
+	c3_c*   url_c;                      //  -u, pill url
+        c3_c*   who_c;                      //  -w, begin with ticket
         c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
-        c3_o    gab;                        //  -g
         c3_o    dem;                        //  -d, daemon
         c3_o    dry;                        //  -D, dry compute  
-        c3_o    tex;                        //  -x, exit after loading
-        c3_o    fog;                        //  -X, skip last event
         c3_o    fak;                        //  -F, fake carrier
+        c3_o    fog;                        //  -X, skip last event
+        c3_o    gab;                        //  -g, run with garbage collector
         c3_o    loh;                        //  -L, local-only networking
-        c3_o    pro;                        //  -P, profile
-        c3_o    veb;                        //  -v, verbose (inverse of -q)
-        c3_o    nuu;                        //  -c, new pier
-        c3_o    qui;                        //  -q, quiet
-        c3_o    vno;                        //  -V, replay without reboots
         c3_o    mem;                        //  -M, memory madness
+        c3_o    nuu;                        //  -c, new pier
+        c3_o    pro;                        //  -P, profile
+        c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
+        c3_o    tex;                        //  -x, exit after loading
+        c3_o    veb;                        //  -v, verbose (inverse of -q)
+        c3_o    vno;                        //  -V, replay without reboots
+        c3_s    por_s;                      //  -p, ames port
+        c3_s    rop_s;                      //  -l, raft port
+        c3_w    fuz_w;                      //  -f, fuzz testing
+        c3_w    kno_w;                      //  -k, kernel version
       } u3_opts;
 
     /* u3_host: entire host.
