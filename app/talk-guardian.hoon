@@ -1787,20 +1787,19 @@
         aud
       %-  ~(run in aud.gam.det)
       |=  c/circle
-      ::TODO  it probably isn't safe to do this for
-      ::      all audience members hosted by us, even
-      ::      if this is only called for burdens.
-      ?.  =(hos.c our.bol)  c
-      [who nom.c]
+      ?.  &(=(hos.c our.bol) =(nom.c nom))  c
+      [who nom]
     ==
     ::
       $config
-    ?.  =(hos.cir.det our.bol)  det
-    det(cir [who nom.cir.det])
+    ?.  &(=(hos.cir.det our.bol) =(nom.cir.det nom))
+      det
+    det(cir [who nom])
     ::
       $status
-    ?.  =(hos.cir.det our.bol)  det
-    det(cir [who nom.cir.det])
+    ?.  &(=(hos.cir.det our.bol) =(nom.cir.det nom))
+      det
+    det(cir [who nom])
   ==
 ::
 ++  gram-to-envelope                                   ::<  wrap gram with nr
