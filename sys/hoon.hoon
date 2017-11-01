@@ -5481,7 +5481,7 @@
       ++  mare  (each manx marl)                        ::  node or nodes
       ++  maru  (each tuna marl)                        ::  interp or nodes
       ++  tuna                                          ::  maybe interpolation
-          $^(manx {?($tape $manx $marl $cnhp) p/twig})  ::
+          $^(manx {?($tape $manx $marl $call) p/twig})  ::
       --                                                ::
   $^  {p/twig q/twig}                                   ::
   $%                                                    ::
@@ -6665,7 +6665,7 @@
         ^      [[%xray i.p.gen] $(p.gen t.p.gen)]
         $manx  [p.i.p.gen $(p.gen t.p.gen)]
         $tape  [[%smfs p.i.p.gen] $(p.gen t.p.gen)]
-        $cnhp  [%cnhp p.i.p.gen [$(p.gen t.p.gen)]~]
+        $call  [%cnhp p.i.p.gen [$(p.gen t.p.gen)]~]
         $marl  =-  [%cndt [p.i.p.gen $(p.gen t.p.gen)] -]
                ^-  twig
                :+  %tsbr  [%base %cell]
@@ -9635,13 +9635,14 @@
       ==
     ==
   ::
+  ::
   ++  sail                                              ::  xml template
     |=  in-tall-form/?  =|  lin/?
     |%
     ::
     ++  apex                                            ::  product twig
       %+  cook
-        |=  tum/mare:twig  ^-  twig
+        |=  tum/(each manx:twig marl:twig)  ^-  twig
         ?-  -.tum
           $&  [%xray p.tum]
           $|  [%smts p.tum]
@@ -9671,11 +9672,11 @@
         (cold %tape hep)
         (cold %manx lus)
         (cold %marl tar)
-        (cold %cnhp cen)
+        (cold %call cen)
       ==
     ::
     ++  wide-top                                        ::  wide outer top
-      %+  knee  *mare:twig  |.  ~+
+      %+  knee  *(each manx:twig marl:twig)  |.  ~+
       ;~  pose
         (stag %| wide-quote)
         (stag %| wide-paren-elems)
@@ -9683,7 +9684,7 @@
       ==
     ::
     ++  wide-inner-top                                  ::  wide inner top
-      %+  knee  *maru:twig  |.  ~+
+      %+  knee  *(each tuna:twig marl:twig)  |.  ~+
       ;~  pose
         wide-top
         (stag %& ;~(plug tuna-mode wide))
@@ -9713,14 +9714,14 @@
     ::+|
     ::
     ++  drop-top
-      |=  a/maru:twig  ^-  marl:twig
+      |=  a/(each tuna:twig marl:twig)  ^-  marl:twig
       ?-  -.a
         $&  [p.a]~
         $|  p.a
       ==
     ::
     ++  join-tops
-      |=  a/(list maru:twig)  ^-  marl:twig
+      |=  a/(list (each tuna:twig marl:twig))  ^-  marl:twig
       (zing (turn a drop-top))
     ::
     ::+|
@@ -9805,7 +9806,7 @@
     ::+|
     ::
     ++  tall-top                                        ::  tall top
-      %+  knee  *mare:twig  |.  ~+
+      %+  knee  *(each manx:twig marl:twig)  |.  ~+
       ;~  pose
         (stag %| ;~(pfix (plus ace) (cook collapse-chars quote-innards)))
         (stag %& ;~(plug script-or-style script-style-tail))
