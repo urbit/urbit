@@ -421,7 +421,7 @@
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
-      =^  sir  eny.bol  (uniq eny.bol)
+      =^  sir  eny.bol  ~(uniq talk bol)
       :_  $(ses t.ses)
       [sir aud [now.bol i.ses]]
     ::

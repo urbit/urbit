@@ -32,22 +32,20 @@
   [%app dap.bol (crip (en-purl:html url))]~   :: XX
 ::
 ++  said                                                ::  app message
-  |=  {our/@p dap/term now/@da eny/@uvJ mes/(list tank)}
+  |=  mes/(list tank)
   :-  %talk-action
   ^-  action
-  :-  %convey
-  |-  ^-  (list thought)
+  :-  %phrase
+  :-  [[our.bol %inbox] ~ ~]
+  |-  ^-  (list speech)
   ?~  mes  ~
-  :_  $(mes t.mes, eny (sham eny mes))
-  ^-  thought
-  :+  (shaf %thot eny)
-    [[our %inbox] ~ ~]
-  [now [%app dap (crip ~(ram re i.mes))]]
+  :_  $(mes t.mes)
+  ^-  speech
+  [%app dap.bol (crip ~(ram re i.mes))]
 ::
 ++  uniq
-  |=  eny/@uvJ
-  ^-  {serial _eny}
-  [(shaf %serial eny) (shax eny)]
+  ^-  {serial _eny.bol}
+  [(shaf %serial eny.bol) (shax eny.bol)]
 ::
 ++  range-to-path                                       ::<  msg range to path
   ::>  turns a range structure into a path used for
