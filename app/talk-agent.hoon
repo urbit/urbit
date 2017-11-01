@@ -2023,8 +2023,8 @@
         $exp
       :-  (tr-chow wyd '#' ' ' (trip exp.sep))
       ?~  res.sep  ~
-      =-  [[' ' ' ' (snag 0 -)] ~]
-      (wash [0 wyd] (snag 0 `(list tank)`res.sep))
+      =-  [' ' (tr-chow (dec wyd) ' ' -)]~
+      ~(ram re (snag 0 `(list tank)`res.sep))
       ::
         $ire
       $(sep sep.sep)
