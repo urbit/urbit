@@ -193,7 +193,7 @@ let
 
     # Build tools available on the PATH for every derivation.
     default_native_inputs = native.default_native_inputs
-      ++ [ clang xar toolchain native.wrappers ];
+      ++ [ clang toolchain native.wrappers ];
 
     # Target info environment variables.
     inherit host arch os compiler exe_suffix;
