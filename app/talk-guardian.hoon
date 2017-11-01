@@ -1854,7 +1854,6 @@
     ?.  =(nom.qer nom.det)  ~
     ?:  ?=(?($follow $burden) -.det.det)  ~             ::  internal-only delta
     =+  ren=(~(so-in-range so:ta nom.qer ~ (~(got by stories) nom.qer)) ran.qer)
-    ::TODO  if done.ren, %quit bone
     ?.  in.ren  ~
     ::TODO  move up? we also check for $follow above, why?
     ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
@@ -1870,25 +1869,30 @@
   ::>  for a given delta, send rumors to all queries it
   ::>  affects.
   ::
-  ::TODO?  %quit bones that are done with their subscription.
-  ::  ...but that would also require a ta-cancel call to remove
-  ::  them from the status list! how do?
-  ::  should there be an ++away arm for gall to call?
   |=  det/delta
   ^-  (list move)
   ::  cache results for paths.
-  =|  res/(map path (unit rumor))
-  %+  murn  ~(tap by sup.bol)
+  =|  res/(map path (list move))
+  %-  zing
+  %+  turn  ~(tap by sup.bol)
   |=  {b/bone s/ship p/path}
-  ^-  (unit move)
+  ^-  (list move)
   =+  mur=(~(get by res) p)
-  ?^  mur
-    ?~  u.mur  ~
-    `[b %diff %talk-rumor u.u.mur]
-  =+  rum=(feel (path-to-query p) det)
-  =.  res  (~(put by res) p rum)
-  ?~  rum  ~
-  `[b %diff %talk-rumor u.rum]
+  ?^  mur  u.mur
+  =-  =.  res  (~(put by res) p -)
+      -
+  =+  qer=(path-to-query p)
+  %+  welp
+    =+  rum=(feel qer det)
+    ?~  rum  ~
+    [b %diff %talk-rumor u.rum]~
+  ?.  ?=($circle -.qer)  ~
+  ::  kill the subscription if it's past its range.
+  ::TODO  does not remove subscribers from status list. need ta-cancel?
+  =-  ?:(done:- [b %quit ~]~ ~)
+  %.  ran.qer
+  =-  ~(so-in-range so:ta nom.qer ~ -)
+  (~(got by stories) nom.qer)
 ::
 ++  path-to-query                                       ::<  path, coins, query
   ::>  parse a path into a (list coin), then parse that
