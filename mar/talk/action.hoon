@@ -25,7 +25,7 @@
         convey+(ar thot)
         phrase+(ot aud+audi ses+(ar spec:dejs:talk-json) ~)
         ::
-        notify+(ot aud+audi pes+pres ~)
+        notify+(ot aud+audi pes+(mu pres) ~)
         naming+(ot aud+audi man+huma ~)
         ::
         glyph+(ot gyf+so aud+audi bin+bo ~)
@@ -52,7 +52,7 @@
       ::
       $phrase  ~[aud+(audi aud.act) ses+a+(turn ses.act spec:enjs)]
       ::
-      $notify  ~[aud+(audi aud.act) pes+s+pes.act]
+      $notify  ~[aud+(audi aud.act) pes+(mabe pes.act cord:enjs)]
       $naming  ~[aud+(audi aud.act) man+(huma man.act)]
       ::
       $glyph   ~[gyf+s+gyf.act aud+(sa aud.act circ) bin+b+bin.act]

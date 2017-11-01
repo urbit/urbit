@@ -82,7 +82,7 @@
           {$banish p/naem q/(set ship)}                 ::<  deny permission
           {$source p/naem q/(map circle range)}         ::<  add source
           ::  personal metadata
-          {$attend p/audience q/presence}               ::<  set our presence
+          {$attend p/audience q/(unit presence)}        ::<  set our presence
           {$name p/audience q/human}                    ::<  set our name
           ::  messaging                                 ::
           {$say p/(list speech)}                        ::<  send message
@@ -690,7 +690,10 @@
           ;~  (glue ace)
             (perk %attend ~)
             cirs
-            (perk %gone %idle %hear %talk ~)
+            ;~  pose
+              (cold ~ sig)
+              (cook some (perk %gone %idle %hear %talk ~))
+            ==
           ==
           ::
           ;~  plug
@@ -971,7 +974,9 @@
           (sh-note:(set-glyph cha pas) "new glyph {<cha>}")
         =.  ..sh-work
           sh-prod(active.she pas)
-        (sh-act %source inbox & pos)
+        =.  ..sh-work
+          (sh-act %source inbox & pos)
+        (sh-act %notify ~(key by pos) `%hear)
       ::
       ++  leave                                         ::<  %leave
         ::>  change local mailbox config to exclude
@@ -982,7 +987,9 @@
         =/  pos
           %-  ~(run in pas)
           |=(p/circle [p ~])
-        (sh-act %source inbox | pos)
+        =.  ..sh-work
+          (sh-act %source inbox | pos)
+        (sh-act %notify pas ~)
       ::
       ++  create                                        ::<  %create
         ::>  creates circle {nom} with specified config.
@@ -1042,7 +1049,7 @@
       ++  attend                                        ::<  set our presence
         ::>  sets our presence to {pec} for {aud}.
         ::
-        |=  {aud/audience pec/presence}
+        |=  {aud/audience pec/(unit presence)}
         ^+  ..sh-work
         (sh-act %notify aud pec)
       ::

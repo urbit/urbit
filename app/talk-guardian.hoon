@@ -429,11 +429,13 @@
     ::+|
     ::
     ++  action-notify                                   ::<  our presence update
-      ::>
+      ::>  notify the audience of our new presence state,
+      ::>  or tell them to remove us if {pes} is ~.
       ::
-      |=  {aud/audience pes/presence}
+      |=  {aud/audience pes/(unit presence)}
       ^+  ..ta-action
-      (present aud %presence pes)
+      ?~  pes  (present aud %remove ~)
+      (present aud %presence u.pes)
     ::
     ++  action-naming                                   ::<  our name update
       ::>
@@ -481,26 +483,9 @@
     ::
     |=  {her/ship qer/query}
     ^+  +>
-    ?+  -.qer
-      +>
-      ::
-        $burden
-      (ta-observe her)
-      ::
-        $circle
-      %-  (ta-know nom.qer)  |=  sor/_so  =<  so-done
-      (so-attend:sor her %hear [~ ~])
+    ?+  -.qer  +>
+      $burden  (ta-observe her)
     ==
-  ::
-  ++  ta-cancel                                         ::<  forget
-    ::>  drops {src}'s subscription. deduce the right way
-    ::>  to do this from the subscription path {pax}.
-    ::
-    |=  {src/ship nom/naem}
-    ^+  +>
-    ::  set ship status to %gone.
-    %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-absent:sor src)
   ::
   ++  ta-greet                                          ::<  subscription success
     ::>  store a started subscription as source.
@@ -918,22 +903,6 @@
       ::>  and unsubscribes from all src.
       ::
       (so-delta-our %remove ~)
-    ::
-    ++  so-attend                                       ::<  add local status
-      ::>  add {her} status to this story's status map.
-      ::
-      |=  {her/ship sat/status}
-      ^+  +>
-      ?:  =(`sat (~(get by locals) her))  +>.$
-      (so-delta-our %status so-cir her %full sat)
-    ::
-    ++  so-absent                                       ::<  del local status
-      ::>  remove {her} from our status map.
-      ::
-      |=  her/ship
-      ^+  +>
-      ?.  (~(has by locals) her)  +>
-      (so-delta-our %status so-cir her %remove ~)
     ::
     ::>  ||
     ::>  ||  %subscriptions
@@ -1885,7 +1854,6 @@
     [b %diff %talk-rumor u.rum]~
   ?.  ?=($circle -.qer)  ~
   ::  kill the subscription if it's past its range.
-  ::TODO  does not remove subscribers from status list. need ta-cancel?
   =-  ?:(done:- [b %quit ~]~ ~)
   %.  ran.qer
   =-  ~(so-in-range so:ta nom.qer ~ -)
@@ -2032,12 +2000,7 @@
   ::
   |=  pax/path
   ^-  (quip move _+>)
-  =+  qer=(path-to-query pax)
-  ?.  ?=($circle -.qer)  [~ +>.$]
-  %-  pre-bake
-  ::TODO  but we don't want to remove from group when a
-  ::      web client pulls! uncouple presence from subs?
-  ta-done:(ta-cancel:ta src.bol nom.qer)
+  [~ +>]
 ::
 ++  reap                                                ::<  catch-all reap
   ::>  handle all remote errors.

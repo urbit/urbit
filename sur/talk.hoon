@@ -158,7 +158,7 @@
       {$convey tos/(list thought)}                      ::<  post exact
       {$phrase aud/audience ses/(list speech)}          ::<  post easy
       ::  personal metadata                             ::
-      {$notify aud/audience pes/presence}               ::<  our presence update
+      {$notify aud/audience pes/(unit presence)}        ::<  our presence update
       {$naming aud/audience man/human}                  ::<  our name update
       ::  changing shared ui                            ::
       {$glyph gyf/char aud/audience bin/?}              ::<  un/bind a glyph
