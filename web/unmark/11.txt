@@ -1,0 +1,12 @@
+;+
+  ;>
+  foo *some style*
+
+outdent
+
+;=  ;div;  ==
+
+;=
+moar markdown
+==
+

@@ -350,14 +350,11 @@
   ++  start-sync
     |=  reset/?
     =.  +>.$  (spam (render "activated sync" sud her syd) ~)
-    =.  +>.$
-      %-  blab
-      :~  :*  ost  %warp
-              [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
-              [our her]  sud  ~  %sing  %w  [%da now]  /
-      ==  ==
-    ?.  =(%home syd)  +>.$  :: XX less hard-coding
-    (blab [ost %mont /mount syd our syd /]~) 
+    %-  blab
+    :~  :*  ost  %warp
+            [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
+            [our her]  sud  ~  %sing  %w  [%da now]  /
+    ==  ==
   ::
   ++  writ
     |=  {reset/? rot/riot}
