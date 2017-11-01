@@ -49,6 +49,9 @@
       ::
       ::TODO  look at graphql and think about doing
       ::      multiple queries in a single %peer.
+      ::TODO  being able to specify desired message
+      ::      types may or may not also be nice to have.
+      ::      ie just %app msgs, for a dashboard display.
   ==                                                    ::
 ::++  circle-data                                         ::>  queried data
 ::  $%  {$all $~}                                         ::<  everything, always
@@ -129,7 +132,7 @@
   $%  {$full sat/status}                                ::<  fully changed status
       {$presence pec/presence}                          ::<  changed presence
       {$human dif/diff-human}                           ::<  changed name
-      {$remove $~}                                      ::<  removed config
+      {$remove $~}                                      ::<  removed status
   ==                                                    ::
 ++  diff-human                                          ::>  name change
   $%  {$full man/human}                                 ::<  fully changed name

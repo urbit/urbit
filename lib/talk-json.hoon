@@ -274,7 +274,7 @@
   ++  cont                                              ::>  control
     |=  a/control
     ^-  json
-    (pairs sec+s+sec.a sis+(sa ses.a ship) ~)
+    (pairs sec+s+sec.a sis+(sa sis.a ship) ~)
   ::
   ++  crow                                              ::>  crowd
     |=  a/crowd
