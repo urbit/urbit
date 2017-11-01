@@ -137,7 +137,7 @@
   ::>  produces the name of the circle used by this
   ::>  reader for all its operations
   ^-  naem
-  (main our.bol)
+  %inbox
 ::
 ++  incir                                               ::<  reader's circle
   ::>  ++inbox, except a full circle.
@@ -558,7 +558,7 @@
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
-            [a ?^(b u.b (main a))]
+            [a ?^(b u.b %inbox)]
           ;~  plug
             ship
             (punt ;~(pfix fas urs:ab))
@@ -1651,8 +1651,8 @@
       ?.  =(our.bol hos.two)  %&
       ?<  =(nom.one nom.two)
       ::  if both circles are ours, the main story is better.
-      ?:  =((main hos.one) nom.one)  %&
-      ?:  =((main hos.two) nom.two)  %|
+      ?:  =(%inbox nom.one)  %&
+      ?:  =(%inbox nom.two)  %|
       ::  if neither are, pick the "larger" one.
       (lth nom.one nom.two)
     ::  if one isn't ours but two is, two is better.
@@ -1698,7 +1698,7 @@
         ":"
       ['%' (trip nom.one)]
     =+  wun=(cite:title hos.one)
-    ?:  =(nom.one (main hos.one))
+    ?:  =(nom.one %inbox)
       wun
     ?:  =(hos.one (sein:title our.bol))
       ['/' (trip nom.one)]
@@ -1888,8 +1888,8 @@
     ::  render the author.
     =/  nom/tape
       ?:  (~(has in sef) %nicks)
-        (~(cr-nick cr [who (main who)]))
-      (~(cr-curt cr [who (main who)]) |)
+        (~(cr-nick cr [who %inbox]))
+      (~(cr-curt cr [who %inbox]) |)
     ::  regular indent.
     =/  den/tape
       (reap (lent nom) ' ')
@@ -2054,7 +2054,7 @@
         ?:  pat.sep  " "
         %~  ar-pref  ar
           ?:  =(who our.bol)  aud
-          (~(del in aud) [%& who (main who)])
+          (~(del in aud) [%& who %inbox])
         ==
       =.  wyd  (sub wyd (lent pef))
       =/  txt  (tuba (trip msg.sep))

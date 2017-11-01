@@ -17,7 +17,6 @@
 ::      lists of moons (or just ships in general?) that we define as "standalone"
 ::      so that the "convert to true identity" doesn't happen for them.
 ::
-::TODO/REVIEW  rename porch/floor/court to inbox?
 ::
 /?    151                                               ::<  hoon version
 /-    talk                                              ::<  structures
@@ -180,7 +179,7 @@
     ::
     |=  msg/cord
     %^  ta-action  0  %phrase
-    :-  [[our.bol (main our.bol)] ~ ~]
+    :-  [[our.bol %inbox] ~ ~]
     [%app dap.bol msg]~
   ::
   ++  ta-evil                                           ::<  emit error
@@ -223,7 +222,7 @@
     ::  create default circles.
     =>  %+  roll
           ^-  (list {security naem cord})
-          :~  [%mailbox (main our.bol) 'default home']  ::TODO  %inbox?
+          :~  [%mailbox %inbox 'default home']
               [%journal %public 'visible activity']
           ==
         |=  {{typ/security nom/naem des/cord} _ta}
@@ -695,7 +694,7 @@
       |=  msg/cord
       ^+  +>
       %+  so-act  %phrase
-      :-  [[our.bol (main our.bol)] ~ ~]
+      :-  [[our.bol %inbox] ~ ~]
       [%app dap.bol msg]~
     ::
     ++  so-delta                                        ::<  send delta
@@ -1131,7 +1130,7 @@
         :-  %phrase
         %-  ~(rep in sus)
         |=  {s/ship a/audience t/(list speech)}
-        :-  (~(put in a) [s (main s)])
+        :-  (~(put in a) [s %inbox])
         [[%inv inv so-cir] t]
       (so-delta-our %config so-cir %permit [add sus])
     ::

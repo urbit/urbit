@@ -10,14 +10,6 @@
   ::
 [. ^talk]
 |_  bol/bowl:gall
-++  main                                                ::  main story
-  |=  who/ship
-  ^-  cord
-  =+  can=(clan:title who)
-  ?+  can  %porch
-    $czar  %court
-    $king  %floor
-  ==
 ::
 ::TODO  add to zuse?
 ++  true-self
@@ -36,7 +28,7 @@
   :+  [our.bol %talk]  %talk-action
   ^-  action
   :+  %phrase
-    [[our.bol (main our.bol)] ~ ~]
+    [[our.bol %inbox] ~ ~]
   [%app dap.bol (crip (en-purl:html url))]~   :: XX
 ::
 ++  said                                                ::  app message
@@ -49,7 +41,7 @@
   :_  $(mes t.mes, eny (sham eny mes))
   ^-  thought
   :+  (shaf %thot eny)
-    [[our (main our)] ~ ~]
+    [[our %inbox] ~ ~]
   [now [%app dap (crip ~(ram re i.mes))]]
 ::
 ++  uniq
