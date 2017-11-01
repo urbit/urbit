@@ -47,7 +47,7 @@
 ++  api-call  {response-mark $twit-req {endpoint quay}} :: full hiss payload
 ++  response-mark  ?($twit-post $twit-feed $twit-cred)  :: sigh options
 ++  app-message
-  $?  {{ship $talk} $talk-command command:talk}         ::  chat message
+  $?  {{ship $talk} $talk-action action:talk}           ::  chat message
       {{ship $hood} $write-plan-account user:eyre plan-acct} :: registration
   ==                                                    ::
 ++  sign                                                ::  arvo response
