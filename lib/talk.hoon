@@ -130,11 +130,11 @@
     ::
       $permit
     %=  cof
-        ses.con
+        sis.con
       %.  sis.dif
       ?:  add.dif
-        ~(uni in ses.con.cof)
-      ~(dif in ses.con.cof)
+        ~(uni in sis.con.cof)
+      ~(dif in sis.con.cof)
     ==
     ::
       $secure
@@ -142,11 +142,11 @@
         sec.con
       sec.dif
       ::
-        ses.con
+        sis.con
       ?.  .=  ?=(?($white $green) sec.dif)
               ?=(?($white $green) sec.con.cof)
         ~
-      ses.con.cof
+      sis.con.cof
     ==
   ==
 ::

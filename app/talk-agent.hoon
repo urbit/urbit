@@ -1577,11 +1577,11 @@
         %^    sh-show-permits
             (weld (trip inbox) ": ")
           sec.con.loc
-        [~ ~(tap in ses.con.loc)]
+        [~ ~(tap in sis.con.loc)]
       %^    sh-show-permits
           (weld (trip inbox) ": ")
         sec.con.loc
-      (sh-set-diff ses.con.laz ses.con.loc)
+      (sh-set-diff sis.con.laz sis.con.loc)
     ::
     ++  sh-config                                       ::<  do show config
       ::>  prints a circle's config changes to the cli.
