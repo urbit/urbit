@@ -34,6 +34,9 @@ let
     builder = ./builder.sh;
 
     patches = [
+      # Purity issue: Don't look at the build system using absolute paths.
+      ./absolute-paths.patch
+
       # libX11.a depends on libxcb.a.  This makes tests.xlib in
       # src/gui/configure.json pass, enabling lots of X functionality in Qt.
       ./find-x-libs.patch
@@ -47,11 +50,6 @@ let
       # uxtheme.h test is broken, always returns false, and results in QtWidgets
       # apps looking bad on Windows.  https://stackoverflow.com/q/44784414/28128
       ./dont-test-uxtheme.patch
-
-      # Add a devices/linux-musl-g++ platform to Qt, copied from
-      # devices/linux-arm-generic-g++.  When we upgrade to Qt 5.9, we should
-      # consider using device/linux-generic-g++ instead.
-      # ./mkspecs.patch  # TODO: remove if linux build succeeds
 
       # When cross-compiling, Qt uses some heuristics about whether to trust the
       # pkg-config executable supplied by the PKG_CONFIG environment variable.

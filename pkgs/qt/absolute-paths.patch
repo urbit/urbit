@@ -1,0 +1,63 @@
+diff -ur qtbase-opensource-src-5.9.2-orig/configure qtbase-opensource-src-5.9.2/configure
+--- qtbase-opensource-src-5.9.2-orig/configure	2017-10-26 08:10:12.932646805 -0700
++++ qtbase-opensource-src-5.9.2/configure	2017-11-01 08:48:44.973917507 -0700
+@@ -36,9 +36,9 @@
+ relconf=`basename $0`
+ # the directory of this script is the "source tree"
+ relpath=`dirname $0`
+-relpath=`(cd "$relpath"; /bin/pwd)`
++relpath=`(cd "$relpath"; pwd)`
+ # the current directory is the "build tree" or "object tree"
+-outpath=`/bin/pwd`
++outpath=`pwd`
+ 
+ WHICH="which"
+ 
+@@ -232,7 +232,7 @@
+ 
+     sdk=$(getSingleQMakeVariable "QMAKE_MAC_SDK" "$1")
+     if [ -z "$sdk" ]; then echo "QMAKE_MAC_SDK must be set when building on Mac" >&2; exit 1; fi
+-    sysroot=$(/usr/bin/xcrun --sdk $sdk --show-sdk-path 2>/dev/null)
++    sysroot=$(xcrun --sdk $sdk --show-sdk-path 2>/dev/null)
+     if [ -z "$sysroot" ]; then echo "Failed to resolve SDK path for '$sdk'" >&2; exit 1; fi
+ 
+     case "$sdk" in
+@@ -267,7 +267,7 @@
+                 # Prefix tool with toolchain path
+                 var=$(echo "$line" | cut -d '=' -f 1)
+                 val=$(echo "$line" | cut -d '=' -f 2-)
+-                sdk_val=$(/usr/bin/xcrun -sdk $sdk -find $(echo $val | cut -d ' ' -f 1))
++                sdk_val=$(xcrun -sdk $sdk -find $(echo $val | cut -d ' ' -f 1))
+                 val=$(echo $sdk_val $(echo $val | cut -s -d ' ' -f 2-))
+                 echo "$var=$val"
+             ;;
+@@ -305,9 +305,6 @@
+ UNAME_SYSTEM=`(uname -s) 2>/dev/null`  || UNAME_SYSTEM=unknown
+ 
+ BUILD_ON_MAC=no
+-if [ -d /System/Library/Frameworks/Carbon.framework ]; then
+-    BUILD_ON_MAC=yes
+-fi
+ if [ "$OSTYPE" = "msys" ]; then
+     relpath=`(cd "$relpath"; pwd -W)`
+     outpath=`pwd -W`
+@@ -318,7 +315,7 @@
+ #-------------------------------------------------------------------------------
+ 
+ if [ "$BUILD_ON_MAC" = "yes" ]; then
+-    if ! /usr/bin/xcode-select --print-path >/dev/null 2>&1; then
++    if ! xcode-select --print-path >/dev/null 2>&1; then
+         echo >&2
+         echo "   No Xcode selected. Please install Xcode via the App Store, " >&2
+         echo "   or the command line developer tools via xcode-select --install, " >&2
+@@ -329,8 +326,8 @@
+     fi
+ 
+     # In the else case we are probably using a Command Line Tools installation
+-    if /usr/bin/xcrun -find xcodebuild >/dev/null 2>&1; then
+-        if ! /usr/bin/xcrun xcodebuild -license check 2>/dev/null; then
++    if xcrun -find xcodebuild >/dev/null 2>&1; then
++        if ! xcrun xcodebuild -license check 2>/dev/null; then
+             echo >&2
+             echo "   Xcode setup not complete. You need to confirm the license" >&2
+             echo "   agreement by running 'sudo xcrun xcodebuild -license accept'." >&2
