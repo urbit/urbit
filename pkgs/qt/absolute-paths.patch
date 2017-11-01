@@ -61,9 +61,10 @@ diff -ur qtbase-opensource-src-5.9.2-orig/configure qtbase-opensource-src-5.9.2/
              echo >&2
              echo "   Xcode setup not complete. You need to confirm the license" >&2
              echo "   agreement by running 'sudo xcrun xcodebuild -license accept'." >&2
+Only in qtbase-opensource-src-5.9.2/mkspecs/features/mac: .#default_pre.prf
 diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_pre.prf
 --- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf	2017-10-26 08:10:12.932646805 -0700
-+++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_pre.prf	2017-11-01 08:55:52.394873430 -0700
++++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_pre.prf	2017-11-01 08:57:18.689274997 -0700
 @@ -3,7 +3,7 @@
  
  isEmpty(QMAKE_XCODE_DEVELOPER_PATH) {
@@ -78,7 +79,7 @@ diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf q
  
  isEmpty(QMAKE_XCODEBUILD_PATH): \
 -    QMAKE_XCODEBUILD_PATH = $$system("/usr/bin/xcrun -find xcodebuild 2>/dev/null")
-+    QMAKE_XCODEBUILD_PATH = $$system("/xcrun -find xcodebuild 2>/dev/null")
++    QMAKE_XCODEBUILD_PATH = $$system("xcrun -find xcodebuild 2>/dev/null")
  
  !isEmpty(QMAKE_XCODEBUILD_PATH) {
      # Make sure Xcode is set up properly
