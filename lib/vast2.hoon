@@ -828,7 +828,7 @@
     ::
     ++  apex                                            ::  product twig
       %+  cook
-        |=  tum/(each manx marl):twig  ^-  twig
+        |=  tum/(each manx:twig marl:twig)  ^-  twig
         ?-  -.tum
           $&  [%xmn p.tum]
           $|  [%xml p.tum]
@@ -862,7 +862,7 @@
       ==
     ::
     ++  wide-top                                        ::  wide outer top
-      %+  knee  *(each manx marl):twig  |.  ~+
+      %+  knee  *(each manx:twig marl:twig)  |.  ~+
       ;~  pose
         (stag %| wide-quote)
         (stag %| wide-paren-elems)
@@ -870,7 +870,7 @@
       ==
     ::
     ++  wide-inner-top                                  ::  wide inner top
-      %+  knee  *(each tuna marl):twig  |.  ~+
+      %+  knee  *(each tuna:twig marl:twig)  |.  ~+
       ;~  pose
         wide-top
         (stag %& ;~(plug tuna-mode wide))
@@ -900,14 +900,14 @@
     ::+|
     ::
     ++  drop-top
-      |=  a/(each tuna marl):twig  ^-  marl:twig
+      |=  a/(each tuna:twig marl:twig)  ^-  marl:twig
       ?-  -.a
         $&  [p.a]~
         $|  p.a
       ==
     ::
     ++  join-tops
-      |=  a/(list (each tuna marl)):twig  ^-  marl:twig
+      |=  a/(list (each tuna:twig marl:twig))  ^-  marl:twig
       (zing (turn a drop-top))
     ::
     ::+|
@@ -992,7 +992,7 @@
     ::+|
     ::
     ++  tall-top                                        ::  tall top
-      %+  knee  *(each manx marl):twig  |.  ~+
+      %+  knee  *(each manx:twig marl:twig)  |.  ~+
       ;~  pose
         (stag %| ;~(pfix (plus ace) (cook collapse-chars quote-innards)))
         (stag %& ;~(plug script-or-style script-style-tail))
