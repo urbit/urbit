@@ -42,7 +42,7 @@ function build-lib() {
   ar cr $lib $lib.o/*.o
 }
 
-CFLAGS="-O2 -Iinclude -I../tapi/include -I$clang/include"
+CFLAGS="-std=gnu++11 -O2 -Iinclude -I../tapi/include -I$clang/include"
 
 build-lib ../tapi/tools/libtapi libtapi.a
 build-lib ../tapi/lib/Config libtapiConfig.a
