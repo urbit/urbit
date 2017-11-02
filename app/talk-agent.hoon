@@ -46,8 +46,8 @@
           mirrors/(map circle config)                   ::<  remote configs
           ::  ui state                                  ::
           nicks/(map ship nick)                         ::<  human identities
-          nik/(map audience char)                       ::<  bound circle glyphs
-          nak/(jug char audience)                       ::<  circle glyph lookup
+          bound/(map audience char)                     ::<  bound circle glyphs
+          binds/(jug char audience)                     ::<  circle glyph lookup
           cli/shell                                     ::<  interaction state
       ==                                                ::
     ++  shell                                           ::>  console session
@@ -162,15 +162,15 @@
   ?~  num  ~
   `(snag u.num grams)
 ::
-++  nik-from-nak                                        ::<  nik from nak
-  ::>
+++  bound-from-binds                                    ::<  bound from binds
+  ::>  using a mapping of character to audiences, create
+  ::>  a mapping of audience to character.
   ::
-  ::TODO  ...we really should rename these.
-  |=  nek/_nak
-  ^+  nik
+  |=  bin/_binds
+  ^+  bound
   %-  ~(gas by *(map audience char))
   =-  (zing -)
-  %+  turn  ~(tap by nek)
+  %+  turn  ~(tap by bin)
   |=  {a/char b/(set audience)}
   (turn ~(tap by b) |=(c/audience [c a]))
 ::
@@ -274,8 +274,8 @@
       ::
         $reader
       %=  +>
-        nak     gys.piz
-        nik     (nik-from-nak gys.piz)
+        binds   gys.piz
+        bound   (bound-from-binds gys.piz)
         nicks   nis.piz
       ==
       ::
@@ -357,10 +357,10 @@
     ::
     |=  {bin/? gyf/char aud/audience}
     ^+  +>
-    =+  nek=(change-glyphs nak bin gyf aud)
-    ?:  =(nek nak)  +>.$                                ::  no change
-    =.  nak  nek
-    =.  nik  (nik-from-nak nek)
+    =+  nek=(change-glyphs binds bin gyf aud)
+    ?:  =(nek binds)  +>.$                              ::  no change
+    =.  binds  nek
+    =.  bound  (bound-from-binds nek)
     sh-done:~(sh-prod sh cli)
   ::
   ::>  ||
@@ -907,7 +907,7 @@
         %+  reel  glyphs
         |=  {all/tape ole/{cha/char num/@}}
         =+  new=(snag (mod idx (lent all)) all)
-        =+  num=~(wyt in (~(get ju nak) new))
+        =+  num=~(wyt in (~(get ju binds) new))
         ?~  cha.ole  [new num]
         ?:  (lth num.ole num)
           ole
@@ -918,8 +918,8 @@
         ::>  an action.
         ::
         |=  {cha/char aud/audience}
-        =:  nik  (~(put by nik) aud cha)
-            nak  (~(put ju nak) cha aud)
+        =:  bound  (~(put by bound) aud cha)
+            binds  (~(put ju binds) cha aud)
         ==
         (sh-act %glyph cha aud &)
       ::
@@ -930,15 +930,15 @@
         |=  {cha/char aud/(unit audience)}
         =/  ole/(set audience)
           ?^  aud  [u.aud ~ ~]
-          (~(get ju nak) cha)
+          (~(get ju binds) cha)
         =.  ..sh-work  (sh-act %glyph cha (fall aud ~) |)
         |-  ^+  ..sh-work
         ?~  ole  ..sh-work
         =.  ..sh-work  $(ole l.ole)
         =.  ..sh-work  $(ole r.ole)
         %=  ..sh-work
-          nik  (~(del by nik) n.ole)
-          nak  (~(del ju nak) cha n.ole)
+          bound  (~(del by bound) n.ole)
+          binds  (~(del ju binds) cha n.ole)
         ==
       ::
       ++  reverse-nicks                                 ::<  find by handle
@@ -972,7 +972,7 @@
         ^+  ..sh-work
         =+  pas=~(key by pos)
         =.  ..sh-work
-          =+  (~(get by nik) pas)
+          =+  (~(get by bound) pas)
           ?^  -  (sh-note "has glyph {<u>}")
           =+  cha=(glyph (mug pas))
           (sh-note:(set-glyph cha pas) "new glyph {<cha>}")
@@ -1141,9 +1141,9 @@
         |=  qur/$@(char audience)
         ^+  ..sh-work
         ?^  qur
-          =+  cha=(~(get by nik) qur)
+          =+  cha=(~(get by bound) qur)
           (sh-fact %txt ?~(cha "none" [u.cha]~))
-        =+  pan=~(tap in (~(get ju nak) qur))
+        =+  pan=~(tap in (~(get ju binds) qur))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
         |=(a/audience [%txt ~(ar-prom ar a)])
@@ -1178,7 +1178,7 @@
         |=  {cha/char aud/(unit audience)}
         ^+  ..sh-work
         ?~  aud  $(aud `active.she)
-        =+  ole=(~(get by nik) u.aud)
+        =+  ole=(~(get by bound) u.aud)
         ?:  =(ole [~ cha])  ..sh-work
         %.  "bound {<cha>} {<u.aud>}"
         sh-note:sh-prod:(set-glyph cha u.aud)
@@ -1188,8 +1188,8 @@
         ::
         |=  {cha/char aud/(unit audience)}
         ^+  ..sh-work
-        ?.  ?|  &(?=(^ aud) (~(has by nik) u.aud))
-                &(?=($~ aud) (~(has by nak) cha))
+        ?.  ?|  &(?=(^ aud) (~(has by bound) u.aud))
+                &(?=($~ aud) (~(has by binds) cha))
             ==
           ..sh-work
         %.  "unbound {<cha>}"
@@ -1309,7 +1309,7 @@
       ::>  finds the circle(s) that match a glyph.
       ::
       |=  cha/char  ^-  (unit audience)
-      =+  lax=(~(get ju nak) cha)
+      =+  lax=(~(get ju binds) cha)
       ::>  no circle.
       ?:  =(~ lax)  ~
       ::>  single circle.
@@ -1467,7 +1467,7 @@
       ^-  tape
       =/  rew/(pair (pair cord cord) audience)
           [['[' ']'] active.she]
-      =+  cha=(~(get by nik) q.rew)
+      =+  cha=(~(get by bound) q.rew)
       ?^  cha  ~[u.cha ' ']
       =+  por=~(ar-prom ar q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
@@ -1772,7 +1772,7 @@
     ^-  tape
     ::  render circle (as glyph if we can).
     ?~  moy
-      =+  cha=(~(get by nik) one ~ ~)
+      =+  cha=(~(get by bound) one ~ ~)
       =-  ?~(cha - "'{u.cha ~}' {-}")
       ~(cr-phat cr one)
     (~(cr-curt cr one) u.moy)
@@ -1851,7 +1851,7 @@
     ::>  complex audiences, use reserved "glyphs".
     ::
     ^-  tape
-    =+  cha=(~(get by nik) aud)
+    =+  cha=(~(get by bound) aud)
     ?^  cha  ~[u.cha ' ']
     ?.  (lien ~(tap by aud) ar-dire)
       "* "
