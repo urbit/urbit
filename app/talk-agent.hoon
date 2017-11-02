@@ -73,34 +73,34 @@
       ==                                                ::
     ++  work                                            ::>  interface action
       $%  ::  circle management                         ::
-          {$join p/(map circle range)}                  ::<  subscribe to
-          {$leave p/audience}                           ::<  unsubscribe from
-          {$create p/security q/naem r/cord}            ::<  create circle
-          {$delete p/naem q/(unit cord)}                ::<  delete circle
-          {$depict p/naem q/cord}                       ::<  change description
-          {$filter p/naem q/? r/?}                      ::<  change message rules
-          {$invite p/naem q/(set ship)}                 ::<  give permission
-          {$banish p/naem q/(set ship)}                 ::<  deny permission
-          {$source p/naem q/(map circle range)}         ::<  add source
-          ::  personal metadata
-          {$attend p/audience q/(unit presence)}        ::<  set our presence
-          {$name p/audience q/human}                    ::<  set our name
+          {$join (map circle range)}                    ::<  subscribe to
+          {$leave audience}                             ::<  unsubscribe from
+          {$create security naem cord}                  ::<  create circle
+          {$delete naem (unit cord)}                    ::<  delete circle
+          {$depict naem cord}                           ::<  change description
+          {$filter naem ? ?}                            ::<  change message rules
+          {$invite naem (set ship)}                     ::<  give permission
+          {$banish naem (set ship)}                     ::<  deny permission
+          {$source naem (map circle range)}             ::<  add source
+          ::  personal metadata                         ::
+          {$attend audience (unit presence)}            ::<  set our presence
+          {$name audience human}                        ::<  set our name
           ::  messaging                                 ::
-          {$say p/(list speech)}                        ::<  send message
-          {$eval p/cord q/twig}                         ::<  send #-message
+          {$say (list speech)}                          ::<  send message
+          {$eval cord twig}                             ::<  send #-message
           {$target p/audience q/(unit work)}            ::<  set active targets
-          {$reply p/$@(@ud {@u @ud}) q/(list speech)}   ::<  reply to
+          {$reply $@(@ud {@u @ud}) (list speech)}       ::<  reply to
           ::  displaying info                           ::
-          {$number p/$@(@ud {@u @ud})}                  ::<  relative/absolute
-          {$who p/audience}                             ::<  presence
-          {$what p/$@(char audience)}                   ::<  show bound glyph
+          {$number $@(@ud {@u @ud})}                    ::<  relative/absolute
+          {$who audience}                               ::<  presence
+          {$what $@(char audience)}                     ::<  show bound glyph
           ::  ui settings                               ::
-          {$bind p/char q/(unit audience)}              ::<  bind glyph
-          {$unbind p/char q/(unit audience)}            ::<  unbind glyph
-          {$nick p/(unit ship) q/(unit cord)}           ::<  un/set/show nick
-          {$set p/term}                                 ::<  enable setting
-          {$unset p/term}                               ::<  disable setting
-          {$width p/@ud}                                ::<  change display width
+          {$bind char (unit audience)}                  ::<  bind glyph
+          {$unbind char (unit audience)}                ::<  unbind glyph
+          {$nick (unit ship) (unit cord)}               ::<  un/set/show nick
+          {$set term}                                   ::<  enable setting
+          {$unset term}                                 ::<  disable setting
+          {$width @ud}                                  ::<  change display width
           ::  miscellaneous                             ::
           {$help $~}                                    ::<  print usage info
       ==                                                ::
@@ -846,7 +846,6 @@
       ::
       ++  work                                          ::<  call correct worker
         ?-  -.job
-          ::TODO  for inv/ban, enl/ret etc, set bools here?
           ::  circle management
           $join    (join +.job)
           $leave   (leave +.job)
@@ -854,8 +853,8 @@
           $delete  (delete +.job)
           $depict  (depict +.job)
           $filter  (filter +.job)
-          $invite  (invite +.job)
-          $banish  (banish +.job)
+          $invite  (permit & +.job)
+          $banish  (permit | +.job)
           $source  (source +.job)
           ::  personal metadata
           $attend  (attend +.job)
@@ -1019,24 +1018,18 @@
         ^+  ..sh-work
         (sh-act %depict nom txt)
       ::
-      ++  invite                                        ::<  %invite
-        ::>  invites {sis} to our circle {nom}.
+      ++  permit                                        ::<  %invite / %banish
+        ::>  invites or banishes {sis} to/from our
+        ::>  circle {nom}.
         ::
-        |=  {nom/naem sis/(set ship)}
+        |=  {inv/? nom/naem sis/(set ship)}
         ^+  ..sh-work
-        (sh-act %permit nom & sis)
+        (sh-act %permit nom inv sis)
       ::
       ++  filter
         |=  {nom/naem cus/? utf/?}
         ^+  ..sh-work
         (sh-act %filter nom cus utf)
-      ::
-      ++  banish                                        ::<  %banish
-        ::>  banish {sis} from our circle {nom}.
-        ::
-        |=  {nom/naem sis/(set ship)}
-        ^+  ..sh-work
-        (sh-act %permit nom | sis)
       ::
       ++  source                                        ::<  %source
         ::>  adds {pas} to {nom}'s src.
