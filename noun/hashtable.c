@@ -226,7 +226,9 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   // nothing stored for this 6-bit prefix
   //
   if ( _(u3h_slot_is_null(sot_w)) ) {
-    u3h_trim_to(har_p, har_u->clk_w);
+    if ( har_u->clk_w > 0 ) {
+      u3h_trim_to(har_p, har_u->clk_w - 1);
+    }
     har_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
   }
   else {
