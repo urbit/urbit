@@ -87,6 +87,11 @@
     ***
     ***  Needs: delete and merge functions; clock reclamation function.
     **/
+      /* u3h_new_cache(): create hashtable with bounded size.
+      */
+        u3p(u3h_root)
+        u3h_new_cache(c3_w clk_w);
+
       /* u3h_new(): create hashtable.
       */
         u3p(u3h_root)
