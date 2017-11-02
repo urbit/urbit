@@ -10,6 +10,8 @@ static c3_o _ch_trim_one_some(u3h_slot*, c3_w);
 static c3_o _ch_trim_one_buck(u3h_slot*);
 static c3_o _ch_trim_one_node(u3h_slot*, c3_w);
 
+/* u3h_new_cache(): create hashtable with bounded size.
+*/
 u3p(u3h_root)
 u3h_new_cache(c3_w clk_w)
 {
@@ -223,13 +225,17 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   c3_w        rem_w = (mug_w & ((1 << 25) - 1));  // TODO: macro
   c3_w        sot_w = har_u->sot_w[inx_w];
 
-  // nothing stored for this 6-bit prefix
+  //  nothing stored for this 6-bit prefix
   //
   if ( _(u3h_slot_is_null(sot_w)) ) {
-    if ( har_u->clk_w > 0 ) {
-      u3h_trim_to(har_p, har_u->clk_w - 1);
-    }
     har_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
+    har_u->use_w++;
+
+    //  make sure we don't immediately trim off the new value.
+    //
+    if ( har_u->arm_w == inx_w ) {
+      har_u->arm_w = (har_u->arm_w + 1) % 64;
+    }
   }
   else {
     u3h_node* han_u;
@@ -251,6 +257,10 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
       han_u = _ch_node_add(u3h_slot_to_node(sot_w), 25, rem_w, kev, use_w);
     }
     har_u->sot_w[inx_w] = u3h_node_to_slot(han_u);
+  }
+
+  if ( har_u->clk_w > 0 ) {
+    u3h_trim_to(har_p, har_u->clk_w);
   }
 }
 
@@ -400,7 +410,6 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
   u3h_node* han_u = (u3h_node*)u3h_slot_to_node(*hal_w);
   u3h_slot sot_w = han_u->sot_w[han_u->arm_w];
   c3_w len_w = _ch_popcount(han_u->map_w);
-
 
   c3_assert(len_w != 1);
 
