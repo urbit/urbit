@@ -580,21 +580,35 @@
         %+  most  ;~(plug com (star ace))
         (^pick circ (sear sh-glyf glyph))
       ::
+      ++  drat                                          ::<  @da or @dr
+        ::>  pas: whether @dr's are in the past or not.
+        |=  pas/?
+        =-  ;~(pfix sig (sear - crub:so))
+        |=  a/^dime
+        ^-  (unit @da)
+        ?+  p.a  ~
+          $da   `q.a
+          $dr   :-  ~
+                %.  [now.bol q.a]
+                ?:(pas sub add)
+        ==
+      ::
       ++  pont                                          ::<  point for range
+        ::>  hed: whether this is the head or tail point.
+        |=  hed/?
         ;~  pose
-          ::TODO  support entering of @da and @dr,
-          ::      convert all to @da. use sear with crub?
-          ::      also allow "now"?
+          (cold [%da now.bol] (jest 'now'))
+          (stag %da (drat hed))
           (stag %ud dem:ag)
         ==
       ::
       ++  rang                                          ::<  subscription range
         =+  ;~  pose
-              (cook some ;~(pfix fas pont))
+              (cook some ;~(pfix fas (pont |)))
               (easy ~)
             ==
         ;~  pose
-          (cook some ;~(plug ;~(pfix fas pont) -))
+          (cook some ;~(plug ;~(pfix fas (pont &)) -))
           (easy ~)
         ==
       ::
