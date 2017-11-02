@@ -2,8 +2,6 @@
 ::::  /hoon/talk-agent/app                              ::  ::
   ::                                                    ::  ::
 ::
-::TODO  master changes, incl %notify
-::TODO  guardian's todo's apply here too
 ::TODO  make sure glyphs only get bound when joins succeed
 ::      ...this is a bit troublesome, because failed joins don't actually
 ::      unsubscribe us.
@@ -833,6 +831,7 @@
           [%nex ~]
           [%det cal]
           ?.  ?=({$';' *} buf)  ~
+          ?:  ?=($reply -.u.jub)  ~
           :_  ~
           [%txt (runt [14 '-'] `tape`['|' ' ' (tufa `(list @)`buf)])]
       ==
@@ -1105,7 +1104,7 @@
         ::
         |=  {num/$@(@ud {p/@u q/@ud}) sep/(list speech)}
         ^+  ..sh-work
-        ::TODO  =- (say (turn ... [%ire - s])) nest-fails on the - ???
+        ::  =- (say (turn ... [%ire - s])) nest-fails on the - ???
         ::TODO  what's friendlier, reply-to-null or error?
         =/  ser/serial
           ?@  num
@@ -1115,7 +1114,7 @@
           ?:  =(count 0)  0v0
           =+  msg=(deli (dec count) num)
           uid:(snag (sub count +(msg)) grams)
-        (say (turn sep |=(s/speech [%ire `serial`ser s])))
+        (say (turn sep |=(s/speech [%ire ser s])))
       ::
       ::>  ||
       ::>  ||  %displaying-info
@@ -1487,7 +1486,6 @@
       =+  lis=~(tr-rend tr settings.she gam)
       ?~  lis  +>.$
       %+  sh-fact  %mor
-      ::TODO?  we need to cast, but not if we do =(0 (lent lis)) above instead..
       %+  turn  `(list tape)`lis
       =+  nom=(scag 7 (cite:title our.bol))
       |=  t/tape
@@ -1630,7 +1628,6 @@
       ::
       |=  gam/telegram
       ^+  +>
-      ::TODO  is it cool to just assume all messages we print are already stored?
       =+  num=(~(got by known) uid.gam)
       =.  +>.$
         ::  if the number isn't directly after latest, print it always.
@@ -1939,16 +1936,11 @@
         $ire
       =+  gam=(recall top.sep)
       ?~  gam  $(sep sep.sep)
-      :-  %mor
-      =-  [- $(sep sep.sep) ~]
-      :-  %tan
-      ::TODO  in "wrong" order because they get printed in reverse...
-      :~  :+  %rose  [" " ~ ~]
-          %+  turn  (~(tr-text tr sef u.gam) width.cli)
-          |=(t/tape [%leaf t])
-          ::
-          [%leaf "in reply to: {(cite:title aut.u.gam)}: "]
-      ==
+      =-  mor+[tan+- $(sep sep.sep) ~]
+      %-  flop  %+  weld
+        [%leaf "in reply to: {(cite:title aut.u.gam)}: "]~
+      %+  turn  (~(tr-text tr sef u.gam) width.cli)
+      |=(t/tape [%leaf t])
       ::
         $fat
       [%mor $(sep sep.sep) tan+(tr-tach tac.sep) ~]
