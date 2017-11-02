@@ -2067,13 +2067,13 @@
       =/  txt  (tuba (trip msg.sep))
       |-  ^-  (list tape)
       ?~  txt  ~
-      =/  end
-        ?:  (lte (lent txt) wyd)  (lent txt)
+      =+  ^-  {end/@ud nex/?}
+        ?:  (lte (lent txt) wyd)  [(lent txt) &]
         =+  ace=(find " " (flop (scag +(wyd) `(list @c)`txt)))
-        ?~  ace  wyd
-        (sub wyd u.ace)
+        ?~  ace  [wyd |]
+        [(sub wyd u.ace) &]
       :-  (weld pef (tufa (scag end `(list @c)`txt)))
-      $(txt (slag +(end) `(list @c)`txt), pef (reap (lent pef) ' '))
+      $(txt (slag ?:(nex +(end) end) `(list @c)`txt), pef (reap (lent pef) ' '))
       ::
         $inv
       :_  ~
