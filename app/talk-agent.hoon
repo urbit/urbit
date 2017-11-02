@@ -56,6 +56,7 @@
           say/sole-share                                ::<  console state
           active/audience                               ::<  active targets
           settings/(set term)                           ::<  frontend settings
+          width/@ud                                     ::<  display width
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
@@ -99,11 +100,11 @@
           {$nick p/(unit ship) q/(unit cord)}           ::<  un/set/show nick
           {$set p/term}                                 ::<  enable setting
           {$unset p/term}                               ::<  disable setting
+          {$width p/@ud}                                ::<  change display width
           ::  miscellaneous                             ::
           {$help $~}                                    ::<  print usage info
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  circle char pool '
-    ++  termwidth  80  ::TODO  put in setting or something?
     --
 ::
 ::>  ||
@@ -428,7 +429,7 @@
     ::
     ^+  .
     =/  she/shell
-      %*(. *shell id ost.bol, active (sy incir ~))
+      %*(. *shell id ost.bol, active (sy incir ~), width 80)
     sh-done:~(sh-prod sh she)
   ::
   ++  ta-sole                                           ::<  apply sole input
@@ -744,6 +745,8 @@
             ==
           ==
           ::
+          ;~(plug (cold %width (jest 'set width ')) dem:ag)
+          ::
           ;~(plug (perk %set ~) ;~(pose ;~(pfix ace setting) (easy %$)))
           ::
           ;~(plug (perk %unset ~) ;~(pfix ace setting))
@@ -872,6 +875,7 @@
           $nick    (nick +.job)
           $set     (wo-set +.job)
           $unset   (unset +.job)
+          $width   (width +.job)
           ::  miscelaneous
           $help    help
         ==
@@ -1249,6 +1253,13 @@
         %=  ..sh-work
           settings.she  (~(del in settings.she) neg)
         ==
+      ::
+      ++  width                                         ::<  ;set width
+        ::>  change the display width in cli.
+        ::
+        |=  wid/@ud
+        ^+  ..sh-work
+        ..sh-work(width.she (max 30 wid))
       ::
       ::>  ||
       ::>  ||  %miscellaneous
@@ -1887,7 +1898,7 @@
     ::
     ^-  (list tape)
     =/  wyd
-      %+  sub  termwidth                                ::  termwidth,
+      %+  sub  width.cli                                ::  termwidth,
       %+  add  14                                       ::  minus author,
       ?:((~(has in sef) %showtime) 10 0)                ::  minus timestamp.
     =+  txs=(tr-text wyd)
@@ -1960,8 +1971,10 @@
       :-  %tan
       ::TODO  in "wrong" order because they get printed in reverse...
       :~  :+  %rose  [" " ~ ~]
-          (turn (~(tr-text tr sef u.gam) termwidth) |=(t/tape [%leaf t]))
-          [%leaf :(weld "in reply to: " (cite:title aut.u.gam) ": ")]
+          %+  turn  (~(tr-text tr sef u.gam) width.cli)
+          |=(t/tape [%leaf t])
+          ::
+          [%leaf "in reply to: {(cite:title aut.u.gam)}: "]
       ==
       ::
         $fat
