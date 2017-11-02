@@ -403,6 +403,7 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
   c3_assert(len_w != 1);
 
   if ( len_w == 2 ) {
+    //  TODO: refactor, duplicated with _ch_trim_one_buck()
     u3h_slot fir_w = han_u->sot_w[0];
     u3h_slot sec_w = han_u->sot_w[1];
 
