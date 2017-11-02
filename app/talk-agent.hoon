@@ -1117,7 +1117,7 @@
         ?.  |(=(~ cis) (~(has in cis) cir))  ~
         ?:  =(%mailbox sec.con:(fall (~(get by mirrors) cir) *config))  ~
         ?.  (~(has in sources) cir)  ~
-        =-  `[%tan rose+[", " `~]^- leaf+~(pr-full pr cir) ~]
+        =-  `[%tan rose+[", " `~]^- leaf+~(cr-full cr cir) ~]
         =<  (murn (sort ~(tap by gop) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank)
         =?  c  =(han.c `(scot %p a))  [~ tru.c]
@@ -1563,12 +1563,12 @@
           |-  ^+  +>.^$
           ?~  old  +>.^$
           =.  +>.^$  $(old t.old)
-          (sh-note (weld pre "off {~(pr-full pr cir.i.old)}"))
+          (sh-note (weld pre "off {~(cr-full cr cir.i.old)}"))
       =.  +>.$
           |-  ^+  +>.^$
           ?~  new  +>.^$
           =.  +>.^$  $(new t.new)
-          (sh-note (weld pre "hey {~(pr-full pr cir.i.new)}"))
+          (sh-note (weld pre "hey {~(cr-full cr cir.i.new)}"))
       +>.$
     ::
     ++  sh-show-config                                  ::<  show config
@@ -1651,7 +1651,7 @@
       ::
       one/circle
   ::
-  ++  cr-best                                           ::<  best to show
+  ++  cr-beat                                           ::<  {one} more relevant?
     ::>  returns true if one is better to show, false
     ::>  otherwise. prioritizes: our > main > size.
     ::
@@ -1659,20 +1659,26 @@
     ^-  ?
     ::  the circle that's ours is better.
     ?:  =(our.bol hos.one)
-      ?.  =(our.bol hos.two)  %&
+      ?.  =(our.bol hos.two)  &
       ?<  =(nom.one nom.two)
       ::  if both circles are ours, the main story is better.
-      ?:  =(%inbox nom.one)  %&
-      ?:  =(%inbox nom.two)  %|
+      ?:  =(%inbox nom.one)  &
+      ?:  =(%inbox nom.two)  |
       ::  if neither are, pick the "larger" one.
       (lth nom.one nom.two)
     ::  if one isn't ours but two is, two is better.
-    ?:  =(our.bol hos.two)  %|
+    ?:  =(our.bol hos.two)  |
     ?:  =(hos.one hos.two)
       ::  if they're from the same ship, pick the "larger" one.
       (lth nom.one nom.two)
     ::  if they're from different ships, neither ours, pick hierarchically.
     (lth (xeb hos.one) (xeb hos.two))
+  ::
+  ++  cr-best                                           ::<  get most relevant
+    ::>  returns the most relevant circle.
+    ::
+    |=  two/circle
+    ?:((cr-beat two) one two)
   ::
   ++  cr-curt                                           ::<  render name in 14
     ::>  prints a ship name in 14 characters. left-pads
@@ -1714,50 +1720,10 @@
     ?:  =(hos.one (sein:title our.bol))
       ['/' (trip nom.one)]
     :(welp wun "/" (trip nom.one))
-  --
-::
-::TODO  maybe merge with cr?
-++  pr                                                  ::<  circle renderer
-  ::>  used primarily for printing circles.
   ::
-  |_  ::>  one: the circle
-      ::
-      one/circle
+  ++  cr-full  (cr-show ~)                              ::<  render full width
   ::
-  ++  pr-beat                                           ::<  more relevant
-    ::>  returns true if one is better to show, false
-    ::>  otherwise. prefers circles over passports.
-    ::>  if both are circles, ++cr-best.
-    ::>  if both are passports, pick the "larger" one.
-    ::>  if they're equal, content hash.
-    ::
-    |=  two/circle  ^-  ?
-    (~(cr-best cr one) two)
-  ::
-  ++  pr-best                                           ::<  most relevant
-    ::>  picks the most relevant circle.
-    ::
-    |=(two/circle ?:((pr-beat two) two one))
-  ::
-  ++  pr-sigh                                           ::<  assemble label
-    ::>  prepend {pre} to {yiz}, omitting characters of
-    ::>  {yiz} to stay within {len} characters.
-    ::
-    |=  {len/@ud pre/tape yiz/cord}
-    ^-  tape
-    =+  nez=(trip yiz)
-    =+  lez=(lent nez)
-    ?>  (gth len (lent pre))
-    =.  len  (sub len (lent pre))
-    ?.  (gth lez len)
-      =.  nez  (welp pre nez)
-      ?.  (lth lez len)  nez
-      (runt [(sub len lez) '-'] nez)
-    :(welp pre (scag (dec len) nez) "+")
-  ::
-  ++  pr-full  (pr-show ~)                              ::<  render full width
-  ::
-  ++  pr-show                                           ::<  render circle
+  ++  cr-show                                           ::<  render circle
     ::>  renders a circle as text.
     ::
     ::>  moy:  multiple circles in audience?
@@ -1788,8 +1754,8 @@
     |-  ^-  circle
     =+  lef=`(unit circle)`ar-best(aud l.aud)
     =+  rit=`(unit circle)`ar-best(aud r.aud)
-    =?  n.aud  ?=(^ lef)  (~(pr-best pr n.aud) u.lef)
-    =?  n.aud  ?=(^ rit)  (~(pr-best pr n.aud) u.rit)
+    =?  n.aud  ?=(^ lef)  (~(cr-best cr n.aud) u.lef)
+    =?  n.aud  ?=(^ rit)  (~(cr-best cr n.aud) u.rit)
     n.aud
   ::
   ++  ar-deaf                                           ::<  except for self
@@ -1814,20 +1780,20 @@
     =/  all
       %+  sort  `(list circle)`~(tap in aud)
       |=  {a/circle b/circle}
-      (~(pr-beat pr a) b)
+      (~(cr-beat cr a) b)
     =+  fir=&
     |-  ^-  tape
     ?~  all  ~
     ;:  welp
       ?:(fir "" " ")
-      (~(pr-show pr i.all) ~)
+      (~(cr-show cr i.all) ~)
       $(all t.all, fir |)
     ==
   ::
   ++  ar-whom                                           ::<  render sender
     ::>  render sender as the most relevant circle.
     ::
-    (~(pr-show pr (need ar-best)) ~ ar-maud)
+    (~(cr-show cr (need ar-best)) ~ ar-maud)
   ::
   ++  ar-dire                                           ::<  direct message
     ::>  returns true if circle is a mailbox of ours.
@@ -1938,7 +1904,7 @@
     =/  cis
       %+  turn  ~(tap in aud)
       |=  a/circle
-      leaf+~(pr-full pr a)
+      leaf+~(cr-full cr a)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] cis] ~]]~
   ::
   ++  tr-body                                           ::<  message content
