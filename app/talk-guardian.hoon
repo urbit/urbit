@@ -1687,7 +1687,7 @@
   ::%+  roll  des
   ::|=  {d/delta m/(list move) _+>.$}
   ::=^  mos  +>.^$  (bake d)
-  ::[:(welp m mos (affection i.des)) +>.^$]
+  ::[:(welp m mos (affection d)) +>.^$]
 ::
 ++  peek                                                ::<  query on state
   ::>  find the result (if any) for a given query.
