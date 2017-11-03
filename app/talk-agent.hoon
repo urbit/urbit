@@ -1815,19 +1815,19 @@
         &(?=(^ sot) ?=($mailbox sec.con.u.sot))
     ==
   ::
-  ++  ar-pref                                           ::<  audience glyph
-    ::>  get the glyph that corresponds to the audience,
-    ::>  with a space appended. for mailbox messages and
-    ::>  complex audiences, use reserved "glyphs".
+  ++  ar-glyf                                           ::<  audience glyph
+    ::>  get the glyph that corresponds to the audience.
+    ::>  for mailbox messages and complex audiences, use
+    ::>  reserved "glyphs".
     ::
     ^-  tape
     =+  cha=(~(get by bound) aud)
-    ?^  cha  ~[u.cha ' ']
+    ?^  cha  ~[u.cha]
     ?.  (lien ~(tap by aud) ar-dire)
-      "* "
+      "*"
     ?:  ?=({^ $~ $~} aud)
-      ": "
-    "; "
+      ":"
+    ";"
   --
 ::
 ++  tr                                                  ::<  telegram renderer
@@ -1995,6 +1995,8 @@
     ::>  message. if possible, these stay within a single
     ::>  line.
     ::
+    ::>  rep:  is reply?
+    =|  rep/_|
     |=  wyd/@ud
     ^-  (list tape)
     ?-  -.sep
@@ -2012,7 +2014,7 @@
       ~(ram re (snag 0 `(list tank)`res.sep))
       ::
         $ire
-      $(sep sep.sep)
+      $(sep sep.sep, rep &)
       ::
         $url
       :_  ~
@@ -2037,7 +2039,8 @@
       ::  glyph prefix
       =/  pef
         ?:  pat.sep  " "
-        %~  ar-pref  ar
+        =-  (weld - ?:(rep "^ " " "))
+        %~  ar-glyf  ar
           ?:  =(who our.bol)  aud
           (~(del in aud) [%& who %inbox])
         ==
