@@ -259,7 +259,7 @@
             %peer
             /
             broker
-            /circle/[inbox]
+            /circle/[inbox]/grams/config/group
         ==
     ==
   ::

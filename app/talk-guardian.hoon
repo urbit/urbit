@@ -768,15 +768,16 @@
         $config   ::  full changes to us need to get split up.
                   ?:  &(=(cir.rum so-cir) ?=($full -.dif.rum))
                     (so-config-full `shape cof.dif.rum)
-                  ::  remotes are fine.
+                  ::  we only subscribe to remotes' configs.
                   ?:  =(src cir.rum)
                     (so-delta-our rum)
-                  ::  remotes of remotes are not.
-                  ~?  =(src so-cir)  %but-src-is-us
-                  +>
-        $status   ::  ignore foreign remotes.
-                  ?.  |(=(src cir.rum) =(src so-cir))  +>
-                  (so-delta-our rum)
+                  ~!  %unexpected-remote-config-from-remote
+                  !!
+        $status   ::  we only subscribe to remotes' locals.
+                  ?:  |(=(src cir.rum) =(src so-cir))
+                    (so-delta-our rum)
+                  ~!  %unexpected-remote-status-from-remote
+                  !!
         $remove   (so-delta-our %config src %remove ~)
       ==
     ::
@@ -1551,8 +1552,9 @@
       %+  turn  ~(tap in srs)
       |=  {cir/circle ran/range}
       ^-  (unit card)
-      ?:  =(cir sa-cir)  ~                              ::  ignore self-subs
-      `(circle-peer nom cir ran)
+      ?:  =(cir sa-cir)  ~  ::  ignore self-subs
+      =+  wat=[%grams %config-l %group-l ~]
+      `(circle-peer nom wat cir ran)
     ::
     ++  sa-abjure                                       ::<  unsubscribe us
       ::>  unsubscribes this story from each circle.
@@ -1566,7 +1568,12 @@
       :_  ~
       =+  rap=(range-to-path ran)
       :*  %pull
-          (welp /circle/[nom]/(scot %p hos.cir)/[nom.cir] rap)
+          ;:  welp
+            /[nom]/(scot %p hos.cir)
+            /circle/[nom.cir]
+            /grams/config-l/group-l
+            rap
+          ==
           [hos.cir dap.bol]
           ~
       ==
@@ -1603,6 +1610,23 @@
 ::>  ||
 ::+|
 ::
+++  target                                              ::<  ship+path from wire
+  ::>  parses {wir} to obtain the target ship and the
+  ::>  query path.
+  ::
+  |=  wir/wire
+  ^-  (pair ship path)
+  ?+  wir  !!
+      {@ @ $circle *}
+    [(slav %p i.t.wir) t.t.wir]
+    ::
+      {$burden *}
+    [(above our.bol) wir]
+    ::
+      {@ $report *}
+    [(slav %p i.wir) t.wir]
+  ==
+::
 ++  etch                                                ::<  parse wire
   ::>  parses {wir} to obtain either %circle with story
   ::>  and circle or %repeat with message number, source
@@ -1610,16 +1634,15 @@
   ::
   |=  wir/wire
   ^-  weir
-  ?+    -.wir  !!
-      $circle
-    ?>  ?=({@ @ @ *} t.wir)
+  ?+    wir  !!
+      {@ @ $circle @ *}
+      :: us, host, $circle, target
     :^    %circle
-        i.t.wir
-      [(slav %p i.t.t.wir) i.t.t.t.wir]
+        i.wir
+      [(slav %p i.t.wir) i.t.t.t.wir]
     (path-to-range t.t.t.t.wir)
     ::
-      $repeat
-    ?>  ?=({@ @ @ $~} t.wir)
+      {$repeat @ @ @ $~}
     :+  %repeat
       [(slav %p i.t.wir) i.t.t.wir]
     ((list serial) (cue (slav %ud i.t.t.t.wir)))
@@ -1652,13 +1675,13 @@
   ::>  constructs a %peer move to subscribe {nom} to a
   ::>  source.
   ::
-  |=  {nom/naem source}
+  |=  {nom/naem wat/(list circle-data) source}
   ^-  card
-  =+  rap=(range-to-path ran)
+  =+  pax=:(welp /circle/[nom.cir] wat (range-to-path ran))
   :*  %peer
-      (welp /circle/[nom]/(scot %p hos.cir)/[nom.cir] rap)
+      (welp /[nom]/(scot %p hos.cir) pax)
       [hos.cir dap.bol]
-      (welp /circle/[nom.cir] rap)
+      pax
   ==
 ::
 ::>  ||
@@ -1727,8 +1750,12 @@
     :+  %+  turn
           (~(so-first-grams so:ta nom.qer ~ u.soy) ran.qer)
         (cury gram-to-envelope nom.qer)
-      [shape.u.soy mirrors.u.soy]
-    [locals.u.soy remotes.u.soy]
+      :-  shape.u.soy
+      ?.  (~(has in wat.qer) %config-r)  ~
+      mirrors.u.soy
+    :-  locals.u.soy
+    ?.  (~(has in wat.qer) %group-r)  ~
+    remotes.u.soy
   ==
 ::
 ++  dedicate                                            ::<  rumor-story to theirs
@@ -1777,6 +1804,22 @@
   %.  uid.gam
   ~(got by known:(~(got by stories) nom))
 ::
+++  circle-feel-story                                   ::<
+  ::>
+  ::
+  |=  {wat/(set circle-data) nom/naem det/delta-story}
+  ^-  ?
+  ?:  =(wat ~)  &
+  %-  ~(has in wat)
+  ?+  -.det  %hasnot
+    $gram     %grams
+    $new      %config-l
+    $config   ?:  =(cir.det [our.bol nom])
+              %config-l  %config-r
+    $status   ?:  =(cir.det [our.bol nom])
+              %group-l  %group-r
+  ==
+::
 ++  feel                                                ::<  delta to rumor
   ::>  if the given delta changes the result of the given
   ::>  query, produce the relevant rumor.
@@ -1813,22 +1856,17 @@
     `[%burden nom.det (dedicate (above our.bol) nom.det det.det)]
     ::
       $circle
-    ?.  ?=($story -.det)  ~
-    ?.  =(nom.qer nom.det)  ~
-    ?:  ?=(?($follow $burden) -.det.det)  ~             ::  internal-only delta
-    =/  ren
-      %.  ran.qer
-      =-  ~(so-in-range so:ta nom.qer ~ -)
-      (~(got by stories) nom.qer)
-    ?.  in.ren  ~
-    ::TODO  move up? we also check for $follow above, why?
-    ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
-    =/  rum/rumor-story
-      ?+  -.det.det  det.det
-          $gram
-        [%gram (gram-to-envelope nom.det gam.det.det)]
-      ==
-    `[%circle rum]
+    ?.  ?=($story -.det)                              ~
+    ?.  =(nom.qer nom.det)                            ~
+    ?.  (circle-feel-story wat.qer nom.det det.det)   ~
+    =/  sor  (~(got by stories) nom.qer)
+    ?.  in:(~(so-in-range so:ta nom.qer ~ sor))       ~
+    ?.  ?=(?($gram $new $config $status) -.det.det)   ~
+    :+  ~  %circle
+    ?+  det.det  det.det
+        {$gram *}
+      [%gram (gram-to-envelope nom.det gam.det.det)]
+    ==
   ==
 ::
 ++  affection                                           ::<  rumors to interested
@@ -1864,7 +1902,31 @@
   ::>  into a query structure.
   ::
   |=  pax/path
-  (coins-to-query (path-to-coins pax))
+  ?.  ?=({$circle @tas *} pax)
+    (coins-to-query (path-to-coins pax))
+  =/  qer/query  [%circle i.t.pax ~ ~]
+  ?>  ?=($circle -.qer)  ::  for type system.
+  =+  pax=t.t.pax
+  |-  ^+  qer
+  ?~  pax  qer
+  ::TODO  can probably do this a bit better...
+  ?+  i.pax
+    qer(ran (path-to-range pax))
+    ::
+    circle-data   %_  $  pax  t.pax
+                    wat.qer   (~(put in wat.qer) i.pax)
+                  ==
+    $group        %_  $  pax  t.pax
+                    wat.qer   %-  ~(uni in wat.qer)
+                              ^+  wat.qer
+                              (sy %group-l %group-r ~)
+                  ==
+    $config       %_  $  pax  t.pax
+                    wat.qer   %-  ~(uni in wat.qer)
+                              ^+  wat.qer
+                              (sy %config-l %config-r ~)
+                  ==
+  ==
 ::
 ++  path-to-coins                                       ::<  path to coin list
   ::>  parse a path into a list of coins.
@@ -1884,7 +1946,6 @@
           [%reader ul]
           [%burden (at /[%p])]
           [%report ul]
-          [%circle (al term rang)]
       ==
   ++  term  (do %tas)
   ++  rang  (mu (al plac (mu (un plac))))
@@ -2002,23 +2063,16 @@
   ^-  (quip move _+>)
   [~ +>]
 ::
-++  reap                                                ::<  catch-all reap
-  ::>  handle all remote errors.
-  ::
+++  reap                                                ::<  subscription n/ack
+  ::>  update state to reflect subscription success
+  :::
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
-  ?~  fal  [~ +>]
-  ~|  reap-fail+wir
-  (mean u.fal)
-::
-++  reap-circle                                         ::<  subscription n/ack
-  ::>  if subscribing failed, update state to reflect
-  ::>  that.
-  ::
-  ::TODO  update to handle all subscription kinds.
-  |=  {wir/wire fal/(unit tang)}
-  ^-  (quip move _+>)
-  %+  etch-circle  [%circle wir]
+  ?.  ?=({@ @ $circle *} wir)
+    ?~  fal  [~ +>]
+    ~|  reap-fail+wir
+    (mean u.fal)
+  %+  etch-circle  wir
   |=  {nom/naem src/source}
   ?~  fal
     %-  pre-bake
@@ -2028,10 +2082,18 @@
   %-  pre-bake
   ta-done:(ta-leave:ta nom src)
 ::
-++  quit-circle                                         ::<  dropped subscription
+++  quit                                                ::<  dropped subscription
+  ::>  gall dropped out subscription. resubscribe.
+  ::
+  |=  wir/wire
+  ^-  (quip move _+>)
+  :_  +>
+  =+  tar=(target wir)
+  [0 %peer wir [p.tar dap.bol] q.tar]~
+::
+++  quit-circle                                         ::<  dropped circle sub
   ::>  gall dropped our subscription. resubscribe.
   ::
-  ::TODO  update for all subscription kinds.
   |=  wir/wire
   ^-  (quip move _+>)
   %+  etch-circle  [%circle wir]

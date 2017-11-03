@@ -25,40 +25,17 @@
   $%  {$reader $~}                                      ::<  shared ui state
       {$burden who/ship}                                ::<  duties to share
       {$report $~}                                      ::<  duty reports
-      {$circle nom/naem ran/range}                      ::<  story query
-      ::{$circle nom/naem wat/circle-data}                ::<  story query
-      ::  okay, the problem here is that we want to have
-      ::  separate subscriptions for the different kinds
-      ::  of story data. we can do that, but then if we
-      ::  want all data and a specific range for the
-      ::  messages (very common) then we need to do
-      ::  three separate subscriptions.
-      ::  possible solution would be adding range to all
-      ::  story queries, but that feels weird irt
-      ::  presence and configs.
-      ::  (also, that would make for poor query design:
-      ::   having a ~ halfway through is ugly.)
-      ::
-      ::  /circle/name/range
-      ::  /circle/name/all
-      ::  /circle/name/grams/range
-      ::  /circle/name/crowd/local
-      ::  /circle/name/grams&crowd/range/local
-      ::  /circle/name/grams
-      ::  /circle/name/crowd
-      ::
-      ::TODO  look at graphql and think about doing
-      ::      multiple queries in a single %peer.
-      ::TODO  being able to specify desired message
-      ::      types may or may not also be nice to have.
-      ::      ie just %app msgs, for a dashboard display.
+      {$circle nom/naem wat/(set circle-data) ran/range}::<  story query
+      ::TODO  in the future, we may want much more      ::
+      ::      detailed querying abilities.              ::
   ==                                                    ::
-::++  circle-data                                         ::>  queried data
-::  $%  {$all $~}                                         ::<  everything, always
-::      {$grams ran/range}                                ::<  messages (in range)
-::      {$crowd wer/where}                                ::<  presence
-::      {$lobby wer/where}                                ::<  configurations
-::  ==                                                    ::
+++  circle-data                                         ::>  kinds of circle data
+  $?  $grams                                            ::<  messages
+      $group-l                                          ::<  local presence
+      $group-r                                          ::<  remote presences
+      $config-l                                          ::<  local config
+      $config-r                                          ::<  remote configs
+  ==                                                    ::
 ++  range                                               ::>  inclusive msg range
   %-  unit                                              ::<  ~ means everything
   $:  hed/place                                         ::<  start of range

@@ -61,11 +61,14 @@
 ::
 ++  path-to-range                                       ::<  path to msg range
   ::>  turns the tail of a subscription path into a
-  ::>  range structure.
+  ::>  range structure, skipping over non-range terms.
   ::
   |=  pax/path
   ^-  range
   ?~  pax  ~
+  ::  skip past non-number parts of path.
+  ?:  ?=({$~ $~} [(slaw %da i.pax) (slaw %ud i.pax)])
+    $(pax t.pax)
   :+  ~
     =+  hed=(slaw %da i.pax)
     ?^  hed  [%da u.hed]
