@@ -207,6 +207,10 @@ let
     # Some native build tools made by nixcrpkgs.
     inherit native;
 
+    # License information that should be shipped with any software
+    # compiled by this environment.
+    global_license_set = { };
+
     # Make it easy to build or refer to the build tools.
     inherit clang common_crypto tapi sdk sdk_lite ld xar toolchain;
 
