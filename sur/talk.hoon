@@ -24,6 +24,7 @@
 ++  query                                               ::>  query paths
   $%  {$reader $~}                                      ::<  shared ui state
       {$burden who/ship}                                ::<  duties to share
+      {$public $~}                                      ::<  public memberships
       {$report $~}                                      ::<  duty reports
       {$circle nom/naem wat/(set circle-data) ran/range}::<  story query
       ::TODO  in the future, we may want much more      ::
@@ -51,7 +52,7 @@
 ::  ?($local $remote)                                     ::<  local or remote only
 ++  prize                                               ::>  query result
   $%  {$reader prize-reader}                            ::<  /reader
-      {$friend cis/(set circle)}                        ::<  /friend
+      {$public cis/(set circle)}                        ::<  /public
       {$burden sos/(map naem burden)}                   ::<  /burden
       ::TODO  do we ever use remote things from remote circles?
       {$circle package}                                 ::<  /circle
@@ -62,7 +63,7 @@
   ==                                                    ::
 ++  rumor                                               ::<  query result change
   $%  {$reader rum/rumor-reader}                        ::<  /reader
-      {$friend add/? cir/circle}                        ::<  /friend
+      {$public add/? cir/circle}                        ::<  /public
       {$burden nom/naem rum/rumor-story}                ::<  /burden
       {$circle rum/rumor-story}                         ::<  /circle
   ==                                                    ::
@@ -140,6 +141,8 @@
       ::  changing shared ui                            ::
       {$glyph gyf/char aud/audience bin/?}              ::<  un/bind a glyph
       {$nick who/ship nic/nick}                         ::<  new identity
+      ::  misc changes                                  ::
+      {$public add/? cir/circle}                        ::<  show/hide membership
   ==                                                    ::
 ::
 ::>  ||

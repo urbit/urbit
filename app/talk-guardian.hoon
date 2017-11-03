@@ -43,6 +43,7 @@
           log/(map naem @ud)                            ::<  logged to clay
           nicks/(map ship nick)                         ::<  local nicknames
           binds/(jug char audience)                     ::<  circle glyph lookup
+          public/(set circle)                           ::<  publicly member of
       ==                                                ::
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
@@ -58,7 +59,9 @@
     ::>  ||  %deltas                                    ::
     ::>    changes to state                             ::
     ++  delta                                           ::
-      $%  ::  messaging state                           ::
+      $%  ::  public state                              ::
+          {$public add/? cir/circle}                    ::<  show/hide membership
+          ::  messaging state                           ::
           {$out cir/circle out/(list thought)}          ::<  send msgs to circle
           $:  $done                                     ::>  set delivery state
               cir/circle                                ::
@@ -304,6 +307,8 @@
         ::  changing shared ui
         $glyph   (action-glyph +.act)
         $nick    (action-nick +.act)
+        ::  misc changes
+        $public  (action-public +.act)
       ==
     ::
     ++  affect                                          ::<  delta to story
@@ -398,6 +403,20 @@
       ::>  add/remove {pos} as sources for story {nom}.
       ::
       |=  {nom/naem sub/? srs/(set source)}
+      ::  when removing sources from %inbox, we may need
+      ::  to remove them from {public} too.
+      =?  ..ta-action  &(=(nom %inbox) !sub)
+        ^+  ..ta-action
+        %-  ~(rep in srs)
+        |=  {src/source _..ta-action}
+        ^+  ..ta-action
+        ::  delete from public if it's the last source.
+        =;  last/?  ?:(last (action-public | cir.src) ..ta-action)
+        %-  ~(rep in src.shape:(~(got by stories) nom))
+        |=  {s/source l/?}
+        ?.  l  |
+        ?.  =(cir.s cir.src)  &
+        =(ran.s ran.src)
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
@@ -460,6 +479,21 @@
       ::
       |=  {lif/char aud/audience bin/?}
       (ta-delta %glyph bin lif aud)
+    ::
+    ++  action-public                                   ::<  show/hide membership
+      ::>  add or remove a circle from the public
+      ::>  membership list.
+      ::
+      |=  {add/? cir/circle}
+      =/  has/?
+        %-  ~(rep in src.shape:(~(got by stories) %inbox))
+        |=  {src/source has/?}
+        ?:  has  &
+        =(cir cir.src)
+      ?.  has
+        %-  ta-note
+        "currently not in {(scow %p hos.cir)}/{(trip nom.cir)}"
+      (ta-delta %public add cir)
     --
   ::
   ::>  ||
@@ -1193,6 +1227,7 @@
     |=  det/delta
     ^+  +>
     ?-  -.det
+      $public   (da-change-public +.det)
       $out      (da-change-out +.det)
       $done     (da-change-done +.det)
       $glyph    (da-change-glyph +.det)
@@ -1229,6 +1264,16 @@
         [who dap.bol]
         /report
     ==
+  ::
+  ++  da-change-public                                  ::<  show/hide membership
+    ::>  add/remove a circle to/from the public
+    ::>  membership list.
+    ::
+    |=  {add/? cir/circle}
+    ^+  +>
+    =-  +>.$(public -)
+    ?:  add  (~(put in public) cir)
+    (~(del in public) cir)
   ::
   ++  da-change-out                                     ::<  outgoing messages
     ::>  apply an %out delta, sending a message.
@@ -1721,6 +1766,9 @@
       $reader
     ``[%reader binds nicks]
     ::
+      $public
+    ``[%public public]
+    ::
       $burden
     :+  ~  ~
     :-  %burden
@@ -1834,6 +1882,10 @@
       $nick   `[%reader det]
     ==
     ::
+      $public
+    ?.  ?=($public -.det)  ~
+    `det
+    ::
       $burden
     ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
     ?.  ?=($story -.det)  ~
@@ -1944,6 +1996,7 @@
   =>  depa
   |^  %-  af  :~
           [%reader ul]
+          [%public ul]
           [%burden (at /[%p])]
           [%report ul]
       ==
@@ -1960,6 +2013,7 @@
   ^-  ?
   ?-  -.qer
     $reader   (team:title our.bol who)
+    $public   &
     $burden   ?&  =(who who.qer)
                   =(our.bol (above who))
               ==

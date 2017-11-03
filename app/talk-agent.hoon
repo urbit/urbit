@@ -100,6 +100,8 @@
           {$unset term}                                 ::<  disable setting
           {$width @ud}                                  ::<  change display width
           ::  miscellaneous                             ::
+          {$show circle}                                ::<  show membership
+          {$hide circle}                                ::<  hide membership
           {$help $~}                                    ::<  print usage info
       ==                                                ::
     ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::<  circle char pool '
@@ -732,6 +734,10 @@
           ::
           ;~((glue ace) (perk %what ~) ;~(pose cirs glyph))
           ::
+          ;~((glue ace) (perk %show ~) circ)
+          ::
+          ;~((glue ace) (perk %hide ~) circ)
+          ::
           ::  ui settings
           ::
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace cirs)))
@@ -889,6 +895,8 @@
           $unset   (unset +.job)
           $width   (width +.job)
           ::  miscelaneous
+          $show    (public & +.job)
+          $hide    (public | +.job)
           $help    help
         ==
       ::
@@ -1271,6 +1279,13 @@
       ::>  ||  %miscellaneous
       ::>  ||
       ::+|
+      ::
+      ++  public                                        ::< show/hide membership
+        ::>  adds or removes the circle from the public
+        ::>  membership list.
+        ::
+        |=  {add/? cir/circle}
+        (sh-act %public add cir)
       ::
       ++  help                                          ::<  %help
         ::>  prints help message
