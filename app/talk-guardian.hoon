@@ -1209,11 +1209,12 @@
     ::>  ship above us.
     ::
     %-  da-emit
+    =+  pax=/burden/(scot %p our.bol)
     :*  0
         %peer
-        /burden
+        pax
         [(above our.bol) dap.bol]
-        /burden/(scot %p our.bol)
+        pax
     ==
   ::
   ++  da-observe                                        ::<  watch burden bearer
@@ -1224,7 +1225,7 @@
     %-  da-emit
     :*  0
         %peer
-        /report/(scot %p who)
+        /(scot %p who)/report
         [who dap.bol]
         /report
     ==
