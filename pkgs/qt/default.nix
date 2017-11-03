@@ -35,8 +35,10 @@ let
 
     patches = [
       # Purity issue: Don't look at the build system using absolute paths.
-      # Also gets rid of some macOS configuration stuff.
       ./absolute-paths.patch
+
+      # Fix macOS configuration stuff.
+      ./macos-config.patch
 
       # libX11.a depends on libxcb.a.  This makes tests.xlib in
       # src/gui/configure.json pass, enabling lots of X functionality in Qt.

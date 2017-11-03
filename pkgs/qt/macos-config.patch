@@ -1,0 +1,58 @@
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf	2017-10-26 08:10:12.932646805 -0700
++++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_pre.prf	2017-11-03 08:11:24.323517335 -0700
+@@ -1,43 +1,6 @@
+ CONFIG = asset_catalogs rez $$CONFIG
+ load(default_pre)
+ 
+-isEmpty(QMAKE_XCODE_DEVELOPER_PATH) {
+-    # Get path of Xcode's Developer directory
+-    QMAKE_XCODE_DEVELOPER_PATH = $$system("/usr/bin/xcode-select --print-path 2>/dev/null")
+-    isEmpty(QMAKE_XCODE_DEVELOPER_PATH): \
+-        error("Xcode path is not set. Please use xcode-select to choose Xcode installation path.")
+-
+-    # Make sure Xcode path is valid
+-    !exists($$QMAKE_XCODE_DEVELOPER_PATH): \
+-        error("Xcode is not installed in $${QMAKE_XCODE_DEVELOPER_PATH}. Please use xcode-select to choose Xcode installation path.")
+-}
+-
+-isEmpty(QMAKE_XCODEBUILD_PATH): \
+-    QMAKE_XCODEBUILD_PATH = $$system("/usr/bin/xcrun -find xcodebuild 2>/dev/null")
+-
+-!isEmpty(QMAKE_XCODEBUILD_PATH) {
+-    # Make sure Xcode is set up properly
+-    !system("/usr/bin/xcrun xcodebuild -license check 2>/dev/null"): \
+-        error("Xcode not set up properly. You need to confirm the license agreement by running 'sudo xcrun xcodebuild -license accept'.")
+-
+-    isEmpty(QMAKE_XCODE_VERSION) {
+-        # Extract Xcode version using xcodebuild
+-        xcode_version = $$system("/usr/bin/xcrun xcodebuild -version")
+-        QMAKE_XCODE_VERSION = $$member(xcode_version, 1)
+-        isEmpty(QMAKE_XCODE_VERSION): error("Could not resolve Xcode version.")
+-        unset(xcode_version)
+-    }
+-}
+-
+-isEmpty(QMAKE_TARGET_BUNDLE_PREFIX) {
+-    QMAKE_XCODE_PREFERENCES_FILE = $$(HOME)/Library/Preferences/com.apple.dt.Xcode.plist
+-    exists($$QMAKE_XCODE_PREFERENCES_FILE): \
+-        QMAKE_TARGET_BUNDLE_PREFIX = $$system("/usr/libexec/PlistBuddy -c 'print IDETemplateOptions:bundleIdentifierPrefix' $$QMAKE_XCODE_PREFERENCES_FILE 2>/dev/null")
+-
+-    !isEmpty(_QMAKE_CACHE_):!isEmpty(QMAKE_TARGET_BUNDLE_PREFIX): \
+-        cache(QMAKE_TARGET_BUNDLE_PREFIX)
+-}
+-
+ QMAKE_ASSET_CATALOGS_APP_ICON = AppIcon
+ 
+ # Make the default debug info format for static debug builds
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf qtbase-opensource-src-5.9.2/mkspecs/features/mac/sdk.prf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf	2017-10-26 08:10:12.932646805 -0700
++++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/sdk.prf	2017-11-03 08:56:10.432199252 -0700
+@@ -18,7 +18,7 @@
+         sdk = $$QMAKE_MAC_SDK
+ 
+     isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}) {
+-        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("/usr/bin/xcrun --sdk $$sdk $$info 2>/dev/null")
++        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("xcrun --sdk $$sdk $$info 2>/dev/null")
+         # --show-sdk-platform-path won't work for Command Line Tools; this is fine
+         # only used by the XCTest backend to testlib
+         isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}):if(!isEmpty(QMAKE_XCODEBUILD_PATH)|!equals(info, "--show-sdk-platform-path")): \
