@@ -148,7 +148,7 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
         return han_u;
       }
       //  the hash is the same, but the keys are different,
-      //  so append to a bucket or node.
+      //  so create a new bucket or node.
       //
       else {
         c3_w  rom_w = u3r_mug(u3h(kov)) & ((1 << lef_w) - 1);
@@ -158,6 +158,7 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
         //
         hav_v = _ch_some_add(hav_v, lef_w, rem_w, kev, use_w);
         hav_v = _ch_some_add(hav_v, lef_w, rom_w, kov, use_w);
+        (*use_w)--;
 
         han_u->sot_w[inx_w] = u3h_node_to_slot(hav_v);
         return han_u;
@@ -250,6 +251,7 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
       han_u = _ch_node_new();
       han_u = _ch_node_add(han_u, 25, rem_w, kev, use_w);
       han_u = _ch_node_add(han_u, 25, rom_w, kov, use_w);
+      (*use_w)--;
     }
     //  more than one key-value pair for this prefix; use a node
     //
@@ -413,40 +415,78 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
 
   c3_assert(len_w != 1);
 
+  /*
   if ( len_w == 2 ) {
     //  TODO: refactor, duplicated with _ch_trim_one_buck()
     u3h_slot fir_w = han_u->sot_w[0];
     u3h_slot sec_w = han_u->sot_w[1];
 
-    if ( _(u3h_slot_is_warm(fir_w)) ) {
-      if ( _(u3h_slot_is_warm(sec_w)) ) {
-        han_u->sot_w[0] = u3h_noun_be_cold(fir_w);
-        han_u->sot_w[1] = u3h_noun_be_cold(sec_w);
-        return c3n;
-      }
-      else {
-        u3a_lose(u3h_slot_to_noun(sec_w));
-        *hal_w = u3h_noun_be_cold(u3h_slot_to_noun(fir_w));
+    //  handle fir_w
+    //
+    if ( _(u3h_slot_is_node(fir_w)) ) {
+      if ( _(_ch_trim_one_some(&fir_w, lef_w - 5)) ) {
         return c3y;
       }
+      //  move on
     }
-    else {
+    else if ( _(u3h_slot_is_warm(fir_w)) ) {
+      han_u->sot_w[0] = u3h_noun_be_cold(fir_w);
+      //  move on
+    }
+    else {  //  cold
       u3a_lose(u3h_slot_to_noun(fir_w));
-      *hal_w = u3h_slot_to_noun(sec_w);
+      *hal_w = u3h_noun_be_cold(u3h_slot_to_noun(sec_w));
+      return c3y;
+    }
+
+    //  handle sec_w
+    //
+    if ( _(u3h_slot_is_node(sec_w)) ) {
+      if ( _(_ch_trim_one_some(&sec_w, lef_w - 5)) ) {
+        return c3y;
+      }
+      return c3n;
+    }
+    else if ( _(u3h_slot_is_warm(sec_w)) ) {
+      han_u->sot_w[1] = u3h_noun_be_cold(sec_w);
+      return c3n;
+    }
+    else {  //  cold
+      u3a_lose(u3h_slot_to_noun(sec_w));
+      *hal_w = u3h_noun_be_cold(u3h_slot_to_noun(fir_w));
       return c3y;
     }
   }
-  else {
+  else */ {
     while (han_u->arm_w < len_w) {
       sot_w = han_u->sot_w[han_u->arm_w];
+
+      if ( _(u3h_slot_is_node(sot_w)) ) {
+        if ( _(_ch_trim_one_some(&sot_w, lef_w - 5)) ) {
+          return c3y;
+        }
+        //  next
+      }
       
-      if ( _(u3h_slot_is_warm(sot_w)) ) {
+      else if ( _(u3h_slot_is_warm(sot_w)) ) {
         han_u->sot_w[han_u->arm_w] = u3h_noun_be_cold(sot_w);
         han_u->arm_w++;
         //  next
       }
       else {
         c3_w bit_w, i_w, inx_w;
+
+        if ( len_w == 2) {
+          u3m_p("sot_w", u3h_slot_to_noun(sot_w));
+          c3_assert(c3n == u3h_slot_is_null(sot_w));
+          u3a_lose(u3h_slot_to_noun(sot_w));
+
+          //  if arm_w is 0, assign han_u->sot_w[1] and vice versa.
+          //  
+          *hal_w = u3h_slot_to_noun(han_u->sot_w[!han_u->arm_w]);
+          return c3y;
+        }
+
         u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) +
                                      ((len_w - 1) * c3_wiseof(u3h_slot)));
 
@@ -454,6 +494,7 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
         nah_u->map_w = han_u->map_w & ~(1 << bit_w);
         inx_w = _ch_popcount(nah_u->map_w & ((1 << bit_w) - 1));
         nah_u->arm_w = han_u->arm_w;
+
 
         for ( i_w = 0; i_w < inx_w; i_w++ ) {
           nah_u->sot_w[i_w] = han_u->sot_w[i_w];
