@@ -35,6 +35,7 @@ let
 
     patches = [
       # Purity issue: Don't look at the build system using absolute paths.
+      # Also gets rid of some macOS configuration stuff.
       ./absolute-paths.patch
 
       # libX11.a depends on libxcb.a.  This makes tests.xlib in
@@ -82,13 +83,16 @@ let
       "-no-icu " +
       "-no-fontconfig " +
       "-no-reduce-relocations " +
-      ( if crossenv.os == "windows" then "-opengl desktop"
+      ( if crossenv.os == "windows" then
+          "-opengl desktop"
         else if crossenv.os == "linux" then
           "-qpa xcb " +
           "-system-xcb " +
           "-no-opengl " +
           "-device-option QMAKE_INCDIR_X11=${libxall}/include " +
           "-device-option QMAKE_LIBDIR_X11=${libxall}/lib"
+        else if crossenv.os == "macos" then
+          "-device-option QMAKE_XCODE_VERSION=7.0"
         else "" );
 
      cross_inputs =
