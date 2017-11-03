@@ -178,10 +178,10 @@
     ::>  sends {msg} as an %app message to the user's
     ::>  inbox.
     ::
-    |=  msg/cord
+    |=  msg/tape
     %^  ta-action  0  %phrase
     :-  [[our.bol %inbox] ~ ~]
-    [%app dap.bol msg]~
+    [%app dap.bol (crip msg)]~
   ::
   ++  ta-evil                                           ::<  emit error
     ::>  tracing printf and crash.
@@ -603,14 +603,13 @@
     ^+  +>
     ?:  pub
       ?.  (team:title our.bol aut)
-        %-  ta-note
-        (crip "strange author {(scow %p aut)}")
+        (ta-note "strange author {(scow %p aut)}")
       =.  aut  our.bol
       ?:  =(aut hos.cir)
         ?:  (~(has by stories) nom.cir)
           (ta-record nom.cir hos.cir tot)
-        %-  ta-note  ::TODO  avenue for abuse?
-        (crip "have no story {(scow %tas nom.cir)}")
+        ::TODO  avenue for abuse?
+        (ta-note "have no story {(scow %tas nom.cir)}")
       (ta-transmit cir tot)
     ?.  =(our.bol hos.cir)  +>
     (ta-record nom.cir aut tot)
@@ -1996,7 +1995,7 @@
   ?.  (team:title src.bol our.bol)
     %-  pre-bake
     =<  ta-done
-    %-  ta-note:ta  %-  crip
+    %-  ta-note:ta
     "talk-action stranger {(scow %p src.bol)}"
   %-  pre-bake
   ta-done:(ta-action:ta ost.bol act)
