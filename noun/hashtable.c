@@ -9,6 +9,8 @@ static void _ch_trim_one(u3h_root*);
 static c3_o _ch_trim_one_some(u3h_slot*, c3_w);
 static c3_o _ch_trim_one_buck(u3h_slot*);
 static c3_o _ch_trim_one_node(u3h_slot*, c3_w);
+static void _ch_print_node(u3h_node*, c3_w);
+static void _ch_walk_node(u3h_node*, c3_w, void (*fun_f)(u3_noun));
 
 /* u3h_new_cache(): create hashtable with bounded size.
 */
@@ -235,6 +237,65 @@ _ch_some_add(void* han_v, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
   else return _ch_node_add((u3h_node*)han_v, lef_w, rem_w, kev, use_w);
 }
 
+/* _ch_print(): print hashtable.
+*/
+static void
+_ch_print_table(u3h_root* har_u)
+{
+  u3h_slot sot_w;
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < 64; i_w++ ) {
+    sot_w = har_u->sot_w[i_w];
+    if ( _(u3h_slot_is_null(sot_w)) ) {
+      continue;
+    }
+    if ( _(u3h_slot_is_noun(sot_w)) ) {
+      u3_noun elm = u3h_slot_to_noun(har_u->sot_w[i_w]);
+      fprintf(stderr, "sot_w[%d]: {%d: %d}\r\n", i_w, u3h(elm), u3t(elm));
+    }
+    else if ( _(u3h_slot_is_node(sot_w)) ) {
+      fprintf(stderr, "sot_w[%d]: <node>\r\n", i_w);
+      _ch_print_node(u3h_slot_to_node(sot_w), 25);
+      fprintf(stderr, "sot_w[%d]: </node>\r\n", i_w);
+    }
+  }
+}
+
+/* _ch_print_node(): print a node.
+*/
+static void
+_ch_print_node(u3h_node* han_u, c3_w lef_w)
+{
+  c3_w len_w = _ch_popcount(han_u->map_w);
+  c3_w i_w;
+  c3_c* pre;
+
+  lef_w -= 5;
+  if ( 20 == lef_w ) { pre = "  "; }
+  else if ( 15 == lef_w ) { pre = "    "; }
+  else if ( 10 == lef_w ) { pre = "      "; }
+  else if ( 5 == lef_w ) { pre = "        "; }
+  else {
+    pre = "          ";
+    fprintf(stderr, "%s<bucket/>\r\n", pre);
+  }
+
+  for ( i_w = 0; i_w < len_w; i_w++ ) {
+    c3_w sot_w = han_u->sot_w[i_w];
+
+    if ( _(u3h_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3h_slot_to_noun(sot_w);
+
+      fprintf(stderr, "%snode[%d]: {%d: %d}\r\n", pre, i_w, u3h(kev), u3t(kev));
+    }
+    else if ( _(u3h_slot_is_node(sot_w)) ) {
+      _ch_print_node(u3h_slot_to_node(sot_w), lef_w);
+    }
+  }
+}
+
+
 /* u3h_put(): insert in hashtable.
 **
 ** `key` is RETAINED; `val` is transferred.
@@ -250,8 +311,8 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   c3_w        sot_w = har_u->sot_w[inx_w];
 
   u3m_p("put", kev);
-  fprintf(stderr, "inx_w: %x\r\n", inx_w);
-  fprintf(stderr, "sot_w: %08x\r\n", sot_w);
+  fprintf(stderr, "inx_w: %d\r\n", inx_w);
+  _ch_print_table(har_u);
 
   //  nothing stored for this 6-bit prefix
   //
@@ -316,6 +377,8 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
     u3h_trim_to(har_p, har_u->clk_w);
   }
   fprintf(stderr, "put: final use_w: %d\r\n", har_u->use_w);
+
+  _ch_print_table(har_u);
 }
 
 /* u3h_trim_to(): trim to n key-value pairs
