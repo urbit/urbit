@@ -24,6 +24,25 @@ diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang-mac.conf qtbase-o
  QMAKE_AR_LTCG  = libtool -static -o
  
  QMAKE_CFLAGS_APPLICATION_EXTENSION  = -fapplication-extension
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/mac.conf qtbase-opensource-src-5.9.2-mac/mkspecs/common/mac.conf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/common/mac.conf	2017-11-03 20:37:01.001539490 -0700
++++ qtbase-opensource-src-5.9.2-mac/mkspecs/common/mac.conf	2017-11-03 22:03:30.960602142 -0700
+@@ -35,10 +35,10 @@
+ 
+ QMAKE_ACTOOL            = actool
+ 
+-QMAKE_DSYMUTIL          = dsymutil
+-QMAKE_STRIP             = strip
++QMAKE_DSYMUTIL          = $${CROSS_COMPILE}dsymutil
++QMAKE_STRIP             = $${CROSS_COMPILE}strip
+ QMAKE_STRIPFLAGS_LIB   += -S -x
+ 
+-QMAKE_AR                = ar cq
+-QMAKE_RANLIB            = ranlib -s
+-QMAKE_NM                = nm -P
++QMAKE_AR                = $${CROSS_COMPILE}ar cq
++QMAKE_RANLIB            = $${CROSS_COMPILE}ranlib -s
++QMAKE_NM                = $${CROSS_COMPILE}nm -P
 diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_post.prf
 --- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf	2017-11-03 20:37:01.008206202 -0700
 +++ qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_post.prf	2017-11-03 21:06:25.247871399 -0700
