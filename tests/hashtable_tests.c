@@ -57,7 +57,6 @@ _ch_test_cache_trimming(void)
   u3p(u3h_root) har_p = u3h_new_cache(1);
 
   for ( i_w = 0; i_w < max_w; i_w++ ) {
-    fprintf(stderr, "****putting %d: %d******\r\n", i_w, i_w + max_w);
     u3h_put(har_p, i_w, i_w + max_w);
     fprintf(stderr, "********************************\r\n");
   }
