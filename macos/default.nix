@@ -1,9 +1,7 @@
-# TODO: remove unused things: sdk_lite, common_crypto, ld_apple, xar (?)
-
 # Note: To reduce clutter here, it might be nice to move clang to
 # `native`, and also make `native` provide a function for building
-# binutils for different platforms since it doesn't take a lot of
-# platform-specific customization to build binutils properly.
+# binutils.  So clang and binutils recipes could be shared by the
+# different platforms we targets.
 
 { native }:
 let
@@ -108,70 +106,6 @@ let
     src = ./MacOSX10.11.sdk.tar.xz;
   };
 
-  # A trimmed-down SDK without harmful headers like locale.h, which conflict
-  # with glibc's locale.h.
-  sdk_lite = native.make_derivation rec {
-    name = "macos-sdk-lite";
-    builder = ./sdk_lite_builder.sh;
-    inherit sdk;
-  };
-
-  common_crypto = native.make_derivation rec {
-    name = "common-crypto-${version}";
-    version = "60118.1.1";
-    src = nixpkgs.fetchurl {
-      url = "https://opensource.apple.com/tarballs/CommonCrypto/CommonCrypto-${version}.tar.gz";
-      sha256 = "1iw2231pw1hp66wb01vlqrhmj6gzwlkjisl1v6axgq0pwyrkq34h";
-    };
-    builder = ./common_crypto_builder.sh;
-    CFLAGS =
-      "-O2 " +
-      "-Werror " +
-      "-Wfatal-errors " +
-      "-I../cc/include " +
-      "-isystem ${sdk_lite}/include";
-  };
-
-  ld_apple = native.make_derivation rec {
-    name = "ld64-${version}-${host}";
-    version = "274.2";
-    inherit host arch;
-    src = nixpkgs.fetchurl {
-      url = "https://opensource.apple.com/tarballs/ld64/ld64-${version}.tar.gz";
-      sha256 = "1mzp2sszcvg86b1jb90prhcrwk7g7inikr7plnklk7g93728jp8p";
-    };
-    patches = [ ./ld64_megapatch.patch ];
-    builder = ./ld_builder.sh;
-    native_inputs = [ common_crypto tapi nixpkgs.libuuid.dev ];
-    CFLAGS =
-      "-O2 " +
-      "-Wno-unused-result " +
-      "-Werror " +
-      "-Wfatal-errors " +
-      "-Iinclude " +
-      "-I../ld64/src/ld " +
-      "-I../ld64/src/ld/parsers " +
-      "-I../ld64/src/abstraction " +
-      "-I${nixpkgs.libuuid.dev}/include " +
-      "-isystem ${sdk_lite}/include " +
-      "-D__LITTLE_ENDIAN__ " +
-      "-D_DARWIN_C_SOURCE";
-  };
-
-  xar = native.make_derivation {
-    name = "xar";
-    builder = ./xar_builder.sh;
-    src = nixpkgs.fetchurl {
-      url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
-      sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
-    };
-    native_inputs = [
-      nixpkgs.libxml2.dev
-      nixpkgs.openssl.dev
-      nixpkgs.zlib.dev
-    ];
-  };
-
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
@@ -221,7 +155,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit binutils clang common_crypto tapi sdk sdk_lite ld xar toolchain;
+    inherit binutils clang tapi sdk ld toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
