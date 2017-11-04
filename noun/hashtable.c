@@ -51,6 +51,7 @@ _ch_buck_new(void)
   u3h_buck* hab_u = u3a_walloc(c3_wiseof(u3h_buck));
 
   hab_u->len_w = 0;
+  hab_u->arm_w = 0;
   return hab_u;
 }
 
@@ -86,7 +87,7 @@ _ch_buck_add(u3h_buck* hab_u, u3_noun kev, c3_w *use_w)
 
     // Optimize: use u3a_wealloc().
     //
-    for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) { 
+    for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
       bah_u->sot_w[i_w + 1] = hab_u->sot_w[i_w];
     }
 
@@ -104,6 +105,7 @@ _ch_node_new(void)
   u3h_node* han_u = u3a_walloc(c3_wiseof(u3h_node));
 
   han_u->map_w = 0;
+  han_u->arm_w = 0;
   return han_u;
 }
 
@@ -170,19 +172,27 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     //  Optimize: use u3a_wealloc.
     //
     c3_w      len_w = _ch_popcount(map_w);
-    u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) + 
+    u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) +
                                  ((len_w + 1) * c3_wiseof(u3h_slot)));
     nah_u->map_w = han_u->map_w | (1 << bit_w);
-    
+
     for ( i_w = 0; i_w < inx_w; i_w++ ) {
-      nah_u->sot_w[i_w] = han_u->sot_w[i_w]; 
+      nah_u->sot_w[i_w] = han_u->sot_w[i_w];
     }
-    nah_u->sot_w[inx_w] = u3h_noun_to_slot(kev); 
-    
+    nah_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
+
     for ( i_w = inx_w; i_w < len_w; i_w++ ) {
       nah_u->sot_w[i_w + 1] = han_u->sot_w[i_w];
     }
     u3a_wfree(han_u);
+
+    //  make sure we don't immediately trim off the new value.
+    //
+    nah_u->arm_w = han_u->arm_w;
+    if ( nah_u->arm_w == inx_w ) {
+      nah_u->arm_w++;
+    }
+
     *use_w += 1;
     return nah_u;
   }
@@ -247,7 +257,7 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
     if ( _(u3h_slot_is_noun(sot_w)) ) {
       u3_noun kov   = u3h_slot_to_noun(sot_w);
       c3_w    rom_w = u3r_mug(u3h(kov)) & ((1 << 25) - 1);
- 
+
       han_u = _ch_node_new();
       han_u = _ch_node_add(han_u, 25, rem_w, kev, use_w);
       han_u = _ch_node_add(han_u, 25, rom_w, kov, use_w);
@@ -301,7 +311,7 @@ _ch_trim_one(u3h_root *har_u)
     }
     else if ( _(u3h_slot_is_warm(root_sot_w)) ) {
       har_u->sot_w[har_u->arm_w] = u3h_noun_be_cold(har_u->sot_w[har_u->arm_w]);
-    } 
+    }
     else {
       c3_assert(_(u3h_slot_is_noun(root_sot_w)));
 
@@ -415,105 +425,59 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
 
   c3_assert(len_w != 1);
 
-  /*
-  if ( len_w == 2 ) {
-    //  TODO: refactor, duplicated with _ch_trim_one_buck()
-    u3h_slot fir_w = han_u->sot_w[0];
-    u3h_slot sec_w = han_u->sot_w[1];
+  while (han_u->arm_w < len_w) {
+    sot_w = han_u->sot_w[han_u->arm_w];
 
-    //  handle fir_w
-    //
-    if ( _(u3h_slot_is_node(fir_w)) ) {
-      if ( _(_ch_trim_one_some(&fir_w, lef_w - 5)) ) {
+    if ( _(u3h_slot_is_node(sot_w)) ) {
+      if ( _(_ch_trim_one_some(&sot_w, lef_w - 5)) ) {
         return c3y;
       }
-      //  move on
+      //  next
     }
-    else if ( _(u3h_slot_is_warm(fir_w)) ) {
-      han_u->sot_w[0] = u3h_noun_be_cold(fir_w);
-      //  move on
+
+    else if ( _(u3h_slot_is_warm(sot_w)) ) {
+      han_u->sot_w[han_u->arm_w] = u3h_noun_be_cold(sot_w);
+      han_u->arm_w++;
+      //  next
     }
-    else {  //  cold
-      u3a_lose(u3h_slot_to_noun(fir_w));
-      *hal_w = u3h_noun_be_cold(u3h_slot_to_noun(sec_w));
+    else {
+      c3_w bit_w, i_w, inx_w;
+
+      if ( len_w == 2) {
+        c3_assert(c3n == u3h_slot_is_null(sot_w));
+        u3a_lose(u3h_slot_to_noun(sot_w));
+
+        //  if arm_w is 0, assign han_u->sot_w[1] and vice versa.
+        //
+        *hal_w = u3h_slot_to_noun(han_u->sot_w[!han_u->arm_w]);
+        return c3y;
+      }
+
+      u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) +
+                                   ((len_w - 1) * c3_wiseof(u3h_slot)));
+
+      bit_w = han_u->arm_w;
+      nah_u->map_w = han_u->map_w & ~(1 << bit_w);
+      inx_w = _ch_popcount(nah_u->map_w & ((1 << bit_w) - 1));
+      nah_u->arm_w = han_u->arm_w;
+
+      for ( i_w = 0; i_w < inx_w; i_w++ ) {
+        nah_u->sot_w[i_w] = han_u->sot_w[i_w];
+      }
+
+      u3a_lose(u3h_slot_to_noun(han_u->sot_w[inx_w]));
+
+      for ( i_w = inx_w; i_w < len_w - 1; i_w++ ) {
+        nah_u->sot_w[i_w] = han_u->sot_w[i_w + 1];
+      }
+
+      *hal_w = u3h_node_to_slot(nah_u);
       return c3y;
     }
 
-    //  handle sec_w
-    //
-    if ( _(u3h_slot_is_node(sec_w)) ) {
-      if ( _(_ch_trim_one_some(&sec_w, lef_w - 5)) ) {
-        return c3y;
-      }
-      return c3n;
-    }
-    else if ( _(u3h_slot_is_warm(sec_w)) ) {
-      han_u->sot_w[1] = u3h_noun_be_cold(sec_w);
-      return c3n;
-    }
-    else {  //  cold
-      u3a_lose(u3h_slot_to_noun(sec_w));
-      *hal_w = u3h_noun_be_cold(u3h_slot_to_noun(fir_w));
-      return c3y;
-    }
   }
-  else */ {
-    while (han_u->arm_w < len_w) {
-      sot_w = han_u->sot_w[han_u->arm_w];
-
-      if ( _(u3h_slot_is_node(sot_w)) ) {
-        if ( _(_ch_trim_one_some(&sot_w, lef_w - 5)) ) {
-          return c3y;
-        }
-        //  next
-      }
-      
-      else if ( _(u3h_slot_is_warm(sot_w)) ) {
-        han_u->sot_w[han_u->arm_w] = u3h_noun_be_cold(sot_w);
-        han_u->arm_w++;
-        //  next
-      }
-      else {
-        c3_w bit_w, i_w, inx_w;
-
-        if ( len_w == 2) {
-          u3m_p("sot_w", u3h_slot_to_noun(sot_w));
-          c3_assert(c3n == u3h_slot_is_null(sot_w));
-          u3a_lose(u3h_slot_to_noun(sot_w));
-
-          //  if arm_w is 0, assign han_u->sot_w[1] and vice versa.
-          //  
-          *hal_w = u3h_slot_to_noun(han_u->sot_w[!han_u->arm_w]);
-          return c3y;
-        }
-
-        u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) +
-                                     ((len_w - 1) * c3_wiseof(u3h_slot)));
-
-        bit_w = han_u->arm_w;
-        nah_u->map_w = han_u->map_w & ~(1 << bit_w);
-        inx_w = _ch_popcount(nah_u->map_w & ((1 << bit_w) - 1));
-        nah_u->arm_w = han_u->arm_w;
-
-
-        for ( i_w = 0; i_w < inx_w; i_w++ ) {
-          nah_u->sot_w[i_w] = han_u->sot_w[i_w];
-        }
-
-        u3a_lose(u3h_slot_to_noun(nah_u->sot_w[inx_w]));
-
-        for ( i_w = inx_w; i_w < len_w - 1; i_w++ ) {
-          nah_u->sot_w[i_w] = han_u->sot_w[i_w + 1];
-        }
-
-        *hal_w = u3h_node_to_slot(nah_u);
-        return c3y;
-      }
-
-    }
-    han_u->arm_w = 0;
-    return c3n;
-  }
+  han_u->arm_w = 0;
+  return c3n;
 }
 
 /* _ch_buck_hum(): read in bucket.
@@ -555,7 +519,7 @@ _ch_node_hum(u3h_node* han_u, c3_w lef_w, c3_w rem_w, c3_w mug_w)
 
       if ( mug_w == u3r_mug(u3h(kev)) ) {
         return c3y;
-      } 
+      }
       else {
         return c3n;
       }
@@ -591,7 +555,7 @@ u3h_hum(u3p(u3h_root) har_p, c3_w mug_w)
 
     if ( mug_w == u3r_mug(u3h(kev)) ) {
       return c3y;
-    } 
+    }
     else {
       return c3n;
     }
@@ -643,7 +607,7 @@ _ch_node_git(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 
       if ( _(u3r_sing(key, u3h(kev))) ) {
         return u3t(kev);
-      } 
+      }
       else {
         return u3_none;
       }
@@ -681,7 +645,7 @@ u3h_git(u3p(u3h_root) har_p, u3_noun key)
     if ( _(u3r_sing(key, u3h(kev))) ) {
       har_u->sot_w[inx_w] = u3h_noun_be_warm(sot_w);
       return u3t(kev);
-    } 
+    }
     else {
       return u3_none;
     }
@@ -748,7 +712,7 @@ _ch_node_gut(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 
       if ( _(u3r_sung(key, u3h(kev))) ) {
         return u3a_gain(u3t(kev));
-      } 
+      }
       else {
         return u3_none;
       }
@@ -786,7 +750,7 @@ u3h_gut(u3p(u3h_root) har_p, u3_noun key)
     if ( _(u3r_sung(key, u3h(kev))) ) {
       har_u->sot_w[inx_w] = u3h_noun_be_warm(sot_w);
       return u3a_gain(u3t(kev));
-    } 
+    }
     else {
       return u3_none;
     }
@@ -803,7 +767,7 @@ u3h_gut(u3p(u3h_root) har_p, u3_noun key)
 static void
 _ch_free_buck(u3h_buck* hab_u)
 {
-  c3_w i_w; 
+  c3_w i_w;
 
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     u3a_lose(u3h_slot_to_noun(hab_u->sot_w[i_w]));
@@ -872,7 +836,7 @@ u3h_free(u3p(u3h_root) har_p)
 static void
 _ch_walk_buck(u3h_buck* hab_u, void (*fun_f)(u3_noun))
 {
-  c3_w i_w; 
+  c3_w i_w;
 
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     fun_f(u3h_slot_to_noun(hab_u->sot_w[i_w]));
