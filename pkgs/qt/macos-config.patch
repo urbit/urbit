@@ -1,3 +1,51 @@
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang.conf qtbase-opensource-src-5.9.2/mkspecs/common/clang.conf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang.conf	2017-10-26 08:10:12.922646692 -0700
++++ qtbase-opensource-src-5.9.2/mkspecs/common/clang.conf	2017-11-03 19:32:00.795648173 -0700
+@@ -4,8 +4,8 @@
+ 
+ QMAKE_COMPILER          = gcc clang llvm   # clang pretends to be gcc
+ 
+-QMAKE_CC                = clang
+-QMAKE_CXX               = clang++
++QMAKE_CC                = $${CROSS_COMPILE}clang
++QMAKE_CXX               = $${CROSS_COMPILE}clang++
+ 
+ QMAKE_LINK_C            = $$QMAKE_CC
+ QMAKE_LINK_C_SHLIB      = $$QMAKE_CC
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_post.prf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf	2017-10-26 08:10:12.932646805 -0700
++++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_post.prf	2017-11-03 19:03:27.651270447 -0700
+@@ -2,29 +2,6 @@
+ 
+ !no_objective_c:CONFIG += objective_c
+ 
+-qt {
+-    qtConfig(static) {
+-        # C++11 support means using libc++ instead of libstd++. As the
+-        # two libraries are incompatible we need to ensure the end user
+-        # project is built using the same C++11 support/no support as Qt.
+-        qtConfig(c++11) {
+-            CONFIG += c++11
+-        } else: c++11 {
+-            warning("Qt was not built with C++11 enabled, disabling feature")
+-            CONFIG -= c++11
+-        }
+-
+-        !c++11 {
+-            # Explicitly use libstdc++ if C++11 support is not enabled,
+-            # as otherwise the compiler will choose the standard library
+-            # based on the deployment target, which for iOS 7 and OS X 10.9
+-            # is libc++, and we can't mix and match the two.
+-            QMAKE_CXXFLAGS += -stdlib=libstdc++
+-            QMAKE_LFLAGS   += -stdlib=libstdc++
+-        }
+-    }
+-}
+-
+ # Add the same default rpaths as Xcode does for new projects.
+ # This is especially important for iOS/tvOS/watchOS where no other option is possible.
+ !no_default_rpath {
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_pre.prf
 --- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf	2017-10-26 08:10:12.932646805 -0700
 +++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/default_pre.prf	2017-11-03 08:11:24.323517335 -0700
 @@ -1,43 +1,6 @@
@@ -46,7 +94,7 @@
  # Make the default debug info format for static debug builds
 diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf qtbase-opensource-src-5.9.2/mkspecs/features/mac/sdk.prf
 --- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf	2017-10-26 08:10:12.932646805 -0700
-+++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/sdk.prf	2017-11-03 08:56:10.432199252 -0700
++++ qtbase-opensource-src-5.9.2/mkspecs/features/mac/sdk.prf	2017-11-03 18:57:53.917675139 -0700
 @@ -18,7 +18,7 @@
          sdk = $$QMAKE_MAC_SDK
  
@@ -56,3 +104,12 @@ diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf qtbase-op
          # --show-sdk-platform-path won't work for Command Line Tools; this is fine
          # only used by the XCTest backend to testlib
          isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}):if(!isEmpty(QMAKE_XCODEBUILD_PATH)|!equals(info, "--show-sdk-platform-path")): \
+@@ -50,7 +50,7 @@
+     value = $$eval($$tool)
+     isEmpty(value): next()
+ 
+-    sysrooted = $$system("/usr/bin/xcrun -sdk $$QMAKE_MAC_SDK -find $$first(value) 2>/dev/null")
++    sysrooted = $$system("xcrun -sdk $$QMAKE_MAC_SDK -find $$first(value) 2>/dev/null")
+     isEmpty(sysrooted): next()
+ 
+     $$tool = $$sysrooted $$member(value, 1, -1)
