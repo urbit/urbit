@@ -3,6 +3,9 @@
 
 # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
+# Note: The Mac version of Qt supplies redundant and possibly bad arguments
+# to x86_64-apple-darwin15-clang: -arch, -isysroot, -mmacosx-version-min
+
 { crossenv, libudev, libxall, at-spi2-headers, dejavu-fonts }:
 
 let
@@ -39,6 +42,9 @@ let
 
       # Fix macOS configuration stuff.
       ./macos-config.patch
+
+      # Fix a compilation error.
+      ./mac-font-database.patch
 
       # libX11.a depends on libxcb.a.  This makes tests.xlib in
       # src/gui/configure.json pass, enabling lots of X functionality in Qt.
