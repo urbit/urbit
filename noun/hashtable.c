@@ -102,6 +102,7 @@ _ch_buck_add(u3h_buck* hab_u, u3_noun kev, c3_w *use_w)
 static u3h_node*
 _ch_node_new(void)
 {
+  fprintf(stderr, "node_new\r\n");
   u3h_node* han_u = u3a_walloc(c3_wiseof(u3h_node));
 
   han_u->map_w = 0;
@@ -130,6 +131,7 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     //  this slot contains a node, so recurse into that node.
     //
     if ( _(u3h_slot_is_node(sot_w)) ) {
+      fprintf(stderr, "nod recurse\r\n");
       void* hav_v = u3h_slot_to_node(sot_w);
 
       hav_v = _ch_some_add(hav_v, lef_w, rem_w, kev, use_w);
@@ -145,6 +147,9 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
       //  the key is the same, so replace the value
       //
       if ( c3y == u3r_sing(u3h(kev), u3h(kov)) ) {
+        fprintf(stderr, "nod replace\r\n");
+        u3m_p("nod kev", kev);
+        u3m_p("nod kov", kov);
         u3a_lose(kov);
         han_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
         return han_u;
@@ -158,9 +163,13 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
 
         //  Optimize: need a custom collision create.
         //
+        fprintf(stderr, "nod pre-kev use_w: %d\r\n", *use_w);
         hav_v = _ch_some_add(hav_v, lef_w, rem_w, kev, use_w);
+        fprintf(stderr, "nod pre-kov use_w: %d\r\n", *use_w);
         hav_v = _ch_some_add(hav_v, lef_w, rom_w, kov, use_w);
+        fprintf(stderr, "nod post-kev use_w: %d\r\n", *use_w);
         (*use_w)--;
+        fprintf(stderr, "nod post-dec use_w: %d\r\n", *use_w);
 
         han_u->sot_w[inx_w] = u3h_node_to_slot(hav_v);
         return han_u;
@@ -184,16 +193,20 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     for ( i_w = inx_w; i_w < len_w; i_w++ ) {
       nah_u->sot_w[i_w + 1] = han_u->sot_w[i_w];
     }
+    nah_u->arm_w = han_u->arm_w;
+
     u3a_wfree(han_u);
 
+    /* TODO: remove
     //  make sure we don't immediately trim off the new value.
     //
-    nah_u->arm_w = han_u->arm_w;
     if ( nah_u->arm_w == inx_w ) {
       nah_u->arm_w++;
     }
+    */
 
     *use_w += 1;
+    fprintf(stderr, "nod post-inc use_w: %d\r\n", *use_w);
     return nah_u;
   }
 }
@@ -236,17 +249,34 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   c3_w        rem_w = (mug_w & ((1 << 25) - 1));  // TODO: macro
   c3_w        sot_w = har_u->sot_w[inx_w];
 
+  u3m_p("put", kev);
+  fprintf(stderr, "inx_w: %x\r\n", inx_w);
+  fprintf(stderr, "sot_w: %08x\r\n", sot_w);
+
   //  nothing stored for this 6-bit prefix
   //
   if ( _(u3h_slot_is_null(sot_w)) ) {
     har_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
     har_u->use_w++;
 
+    fprintf(stderr, "post-nul use_w: %d\r\n", har_u->use_w);
     //  make sure we don't immediately trim off the new value.
+    //  cycle arm_w around until it points to a non-null slot.
+    //  if it landed on a null value, the next value inserted might
+    //  be the first one to be evicted, which would break the semantics.
+    //  if we're adding the first non-null element, arm_w will end up
+    //  pointing at the new element. this is ok.
     //
+    /* TODO: remove
     if ( har_u->arm_w == inx_w ) {
-      har_u->arm_w = (har_u->arm_w + 1) % 64;
+      fprintf(stderr, "put arm_w %d -> ", har_u->arm_w);
+      do {
+        har_u->arm_w = (har_u->arm_w + 1) % 64;
+      }
+      while ( _(u3h_slot_is_null(har_u->sot_w[har_u->arm_w])) );
+      fprintf(stderr, "%d\r\n", har_u->arm_w);
     }
+    */
   }
   else {
     u3h_node* han_u;
@@ -258,15 +288,26 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
       u3_noun kov   = u3h_slot_to_noun(sot_w);
       c3_w    rom_w = u3r_mug(u3h(kov)) & ((1 << 25) - 1);
 
+        fprintf(stderr, "sot_w: %08x kev: %08x kov: %08x\r\n", sot_w, kev, kov);
+        u3m_p("put kov", u3h(kov));
+        u3m_p("put kov", u3t(kov));
+        u3m_p("put kev", u3h(kev));
+        u3m_p("put kev", u3t(kev));
+
       han_u = _ch_node_new();
+      fprintf(stderr, "put: pre-kev use_w: %d\r\n", har_u->use_w);
       han_u = _ch_node_add(han_u, 25, rem_w, kev, use_w);
+      fprintf(stderr, "put: pre-kov use_w: %d\r\n", har_u->use_w);
       han_u = _ch_node_add(han_u, 25, rom_w, kov, use_w);
+      fprintf(stderr, "put: post-kov use_w: %d\r\n", har_u->use_w);
       (*use_w)--;
+      fprintf(stderr, "put: post-dec use_w: %d\r\n", har_u->use_w);
     }
     //  more than one key-value pair for this prefix; use a node
     //
     else {
       han_u = _ch_node_add(u3h_slot_to_node(sot_w), 25, rem_w, kev, use_w);
+      fprintf(stderr, "put: single use_w: %d\r\n", har_u->use_w);
     }
     har_u->sot_w[inx_w] = u3h_node_to_slot(han_u);
   }
@@ -274,6 +315,7 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   if ( har_u->clk_w > 0 ) {
     u3h_trim_to(har_p, har_u->clk_w);
   }
+  fprintf(stderr, "put: final use_w: %d\r\n", har_u->use_w);
 }
 
 /* u3h_trim_to(): trim to n key-value pairs
@@ -323,11 +365,14 @@ _ch_trim_one(u3h_root *har_u)
       return;
     }
 
-    har_u->arm_w = (har_u->arm_w + 1) % 64;
+
+    do {
+      har_u->arm_w = (har_u->arm_w + 1) % 64;
+    }
+    while ( _(u3h_slot_is_null(har_u->sot_w[har_u->arm_w])) );
     root_sot_w = har_u->sot_w[har_u->arm_w];
   }
 }
-
 
 /* _ch_trim_one_some(): trim one key-value pair from either a node or a bucket.
 */
