@@ -17,15 +17,17 @@ Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
 #endif
 EOF
 
+CFLAGS="-std=gnu++11"
+
 echo "compiling reference to plugins"
-$host-g++ \
+$host-g++ $CFLAGS \
   $(pkg-config-cross --cflags Qt5Core) \
   -c obj/plugins.cpp \
   -o obj/plugins.o
 
-CFLAGS="-g -I. $(pkg-config-cross --cflags Qt5Widgets)"
+CFLAGS="$CFLAGS -g -I. $(pkg-config-cross --cflags Qt5Widgets)"
 LIBS="$(pkg-config-cross --libs Qt5Widgets)"
-LDFLAGS="-Wl,-gc-sections"
+LDFLAGS=""
 
 if [ $os = "windows" ]; then
   CFLAGS="-mwindows $CFLAGS"
