@@ -1,5 +1,10 @@
 # TODO: remove unused things: sdk_lite, common_crypto, ld_apple, xar (?)
 
+# Note: To reduce clutter here, it might be nice to move clang to
+# `native`, and also make `native` provide a function for building
+# binutils for different platforms since it doesn't take a lot of
+# platform-specific customization to build binutils properly.
+
 { native }:
 let
   nixpkgs = native.nixpkgs;
@@ -19,6 +24,11 @@ let
 
   exe_suffix = "";
 
+  # binutils does not seem to provide a linker for MacOS, but it does
+  # provide a strip utility that we need.  We also use its `ar`
+  # utility, though we could have chosen to use `llvm-ar` instead.
+  binutils = import ./binutils { inherit native host; };
+
   clang = native.make_derivation rec {
     name = "clang";
 
@@ -34,6 +44,7 @@ let
       sha256 = "1nin64vz21hyng6jr19knxipvggaqlkl2l9jpd5czbc4c2pcnpg3";
     };
 
+    # Note: We aren't actually using lld for anything yet.
     lld_src = nixpkgs.fetchurl {
       url = "http://releases.llvm.org/${version}/lld-${version}.src.tar.xz";
       sha256 = "15rqsmfw0jlsri7hszbs8l0j7v1030cy9xvvdb245397llh7k6ir";
@@ -164,10 +175,8 @@ let
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
-    inherit host sdk;
     wrapper = ./wrapper;
-    native_inputs = [ ld clang ];
-    inherit clang;
+    inherit host sdk ld clang binutils;
 
     CXXFLAGS =
       "-std=c++11 " +
@@ -212,7 +221,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit clang common_crypto tapi sdk sdk_lite ld xar toolchain;
+    inherit binutils clang common_crypto tapi sdk sdk_lite ld xar toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };

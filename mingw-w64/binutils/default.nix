@@ -1,3 +1,5 @@
+# TODO: build without stdenv
+
 { nixpkgs, host }:
 
 nixpkgs.stdenv.mkDerivation rec {
