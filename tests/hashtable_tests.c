@@ -50,7 +50,7 @@ _ch_test_no_cache(void)
 static void
 _ch_test_cache_trimming(void)
 {
-  c3_w max_w = 30;
+  c3_w max_w = 6;
   c3_w i_w;
 
   //u3p(u3h_root) har_p = u3h_new_cache(max_w / 2);
