@@ -3,11 +3,11 @@
 crossenv.make_derivation rec {
   name = "p-load-${version}";
 
-  version = "d063267";  # 1.0.2ish
+  version = "2041b02";  # 2.1.0ish
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://github.com/pololu/p-load/archive/${version}.tar.gz";
-    sha256 = "0yy6wzxcbjnn39dsvdrza893jjlvs45w7nclwpr17y6bjdn25i0g";
+    sha256 = "07xn0k96pkvirsh45zn9976lwliiqkfx76vy1yrbx6kp55ssp2zp";
   };
 
   builder = ./builder.sh;
