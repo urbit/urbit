@@ -3,9 +3,6 @@
 
 # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
-# Note: The Mac version of Qt supplies redundant and possibly bad arguments
-# to x86_64-apple-darwin15-clang: -arch, -isysroot, -mmacosx-version-min
-
 { crossenv, libudev, libxall, at-spi2-headers, dejavu-fonts }:
 
 let
@@ -40,7 +37,9 @@ let
       # Purity issue: Don't look at the build system using absolute paths.
       ./absolute-paths.patch
 
-      # Fix macOS configuration stuff.
+      # macOS configuration: Don't run tools from /usr/bin, use the right
+      # compiler, and don't pass redundant options to it (-arch, -isysroot,
+      # -mmacosx-version-min).
       ./macos-config.patch
 
       # Fix a compilation error.
