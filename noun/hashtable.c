@@ -107,7 +107,6 @@ _ch_buck_add(u3h_buck* hab_u, u3_noun kev, c3_w *use_w)
 static u3h_node*
 _ch_node_new(void)
 {
-  fprintf(stderr, "node_new\r\n");
   u3h_node* han_u = u3a_walloc(c3_wiseof(u3h_node));
 
   han_u->map_w = 0;
@@ -137,7 +136,6 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     //  this slot contains a node, so recurse into that node.
     //
     if ( _(u3h_slot_is_node(sot_w)) ) {
-      fprintf(stderr, "%snod recurse\r\n", pre);
       void* hav_v = u3h_slot_to_node(sot_w);
 
       hav_v = _ch_some_add(hav_v, lef_w, rem_w, kev, use_w);
@@ -153,9 +151,6 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
       //  the key is the same, so replace the value
       //
       if ( c3y == u3r_sing(u3h(kev), u3h(kov)) ) {
-        fprintf(stderr, "%snod replace\r\n", pre);
-        u3m_p("nod kev", kev);
-        u3m_p("nod kov", kov);
         u3a_lose(kov);
         han_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
         return han_u;
@@ -169,13 +164,9 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
 
         //  Optimize: need a custom collision create.
         //
-        fprintf(stderr, "%snod pre-kev use_w: %d\r\n", pre, *use_w);
         hav_v = _ch_some_add(hav_v, lef_w, rem_w, kev, use_w);
-        fprintf(stderr, "%snod pre-kov use_w: %d\r\n", pre, *use_w);
         hav_v = _ch_some_add(hav_v, lef_w, rom_w, kov, use_w);
-        fprintf(stderr, "%snod post-kev use_w: %d\r\n", pre, *use_w);
         (*use_w)--;
-        fprintf(stderr, "%snod post-dec use_w: %d\r\n", pre, *use_w);
 
         han_u->sot_w[inx_w] = u3h_node_to_slot(hav_v);
         return han_u;
@@ -190,41 +181,20 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) +
                                  ((len_w + 1) * c3_wiseof(u3h_slot)));
     nah_u->map_w = han_u->map_w | (1 << bit_w);
-    fprintf(stderr, "%snod len_w %d -> %d\r\n", pre, len_w, len_w + 1);
 
     for ( i_w = 0; i_w < inx_w; i_w++ ) {
       nah_u->sot_w[i_w] = han_u->sot_w[i_w];
-      if ( _(u3h_slot_is_noun(nah_u->sot_w[i_w])) ) {
-        fprintf(stderr, "%snod sot_w[%d]: {%d: %d}\r\n", pre,
-                        i_w, u3h(u3h_slot_to_noun(nah_u->sot_w[i_w])),
-                             u3t(u3h_slot_to_noun(nah_u->sot_w[i_w])));  
-      }
-      else {
-        fprintf(stderr, "%snod sot_w[%d]: <node>\r\n", pre, i_w);
-      }
     }
     nah_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
-    fprintf(stderr, "%snod sot_w[%d]: {%d: %d} (inx_w)\r\n", pre,
-                    inx_w, u3h(u3h_slot_to_noun(nah_u->sot_w[inx_w])),
-                           u3t(u3h_slot_to_noun(nah_u->sot_w[inx_w])));  
 
     for ( i_w = inx_w; i_w < len_w; i_w++ ) {
       nah_u->sot_w[i_w + 1] = han_u->sot_w[i_w];
-      if ( _(u3h_slot_is_noun(nah_u->sot_w[i_w + 1])) ) {
-        fprintf(stderr, "%snod sot_w[%d]: {%d: %d}\r\n", pre,
-                        i_w + 1, u3h(u3h_slot_to_noun(nah_u->sot_w[i_w + 1])),
-                                 u3t(u3h_slot_to_noun(nah_u->sot_w[i_w + 1])));  
-      }
-      else {
-        fprintf(stderr, "%snod sot_w[%d]: <node>\r\n", pre, i_w + 1);
-      }
     }
     nah_u->arm_w = han_u->arm_w;
 
     u3a_wfree(han_u);
 
     *use_w += 1;
-    fprintf(stderr, "%snod post-inc use_w: %d\r\n", pre, *use_w);
     return nah_u;
   }
 }
@@ -337,7 +307,6 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   c3_w        sot_w = har_u->sot_w[inx_w];
 
   u3m_p("put", kev);
-  fprintf(stderr, "inx_w: %d\r\n", inx_w);
   _ch_print_table(har_u);
 
   //  nothing stored for this 6-bit prefix
@@ -346,7 +315,6 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
     har_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
     har_u->use_w++;
 
-    fprintf(stderr, "post-nul use_w: %d\r\n", har_u->use_w);
   }
   else {
     u3h_node* han_u;
@@ -358,23 +326,15 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
       u3_noun kov   = u3h_slot_to_noun(sot_w);
       c3_w    rom_w = u3r_mug(u3h(kov)) & ((1 << 25) - 1);
 
-      u3m_p("put kov", kov);
-      u3m_p("put kev", kev);
-
       han_u = _ch_node_new();
-      fprintf(stderr, "put: pre-kev use_w: %d\r\n", har_u->use_w);
       han_u = _ch_node_add(han_u, 25, rem_w, kev, use_w);
-      fprintf(stderr, "put: pre-kov use_w: %d\r\n", har_u->use_w);
       han_u = _ch_node_add(han_u, 25, rom_w, kov, use_w);
-      fprintf(stderr, "put: post-kov use_w: %d\r\n", har_u->use_w);
       (*use_w)--;
-      fprintf(stderr, "put: post-dec use_w: %d\r\n", har_u->use_w);
     }
     //  more than one key-value pair for this prefix; use a node
     //
     else {
       han_u = _ch_node_add(u3h_slot_to_node(sot_w), 25, rem_w, kev, use_w);
-      fprintf(stderr, "put: single use_w: %d\r\n", har_u->use_w);
     }
     har_u->sot_w[inx_w] = u3h_node_to_slot(han_u);
   }
@@ -416,16 +376,12 @@ _ch_trim_one(u3h_root *har_u)
       c3_o trimmed = _ch_trim_one_some(root_sot_w, 25);
       if ( _(trimmed) ) {
         if ( _(u3h_slot_is_node(*root_sot_w)) ) {
-          fprintf(stderr, "post-trim root_sot_w is a node\r\n");
           _ch_print_node(root_sot_w, 25);
         }
         else {
-          fprintf(stderr, "post-trim root_sot_w is not a node\r\n");
           u3_noun kev = u3h_slot_to_noun(*root_sot_w);
-          fprintf(stderr, "post-trim root_sot_w: {%d: %d}\r\n", u3h(kev), u3t(kev));
         }
           
-        fprintf(stderr, "trimmed: c3y\r\n");
         har_u->use_w--;
         return;
       }
@@ -438,7 +394,6 @@ _ch_trim_one(u3h_root *har_u)
       c3_assert(_(u3h_slot_is_noun(*root_sot_w)));
 
       u3_noun kev = u3h_slot_to_noun(*root_sot_w);
-      fprintf(stderr, "removing sot_w[%d]: {%d: %d}\r\n", har_u->arm_w, u3h(kev), u3t(kev));
       u3a_lose(kev);
       har_u->sot_w[har_u->arm_w] = 0;
 
@@ -469,27 +424,10 @@ _ch_trim_one_some(u3h_slot* hal_w, c3_w lef_w)
   else {
     u3h_slot old_w = *hal_w;
 
-    fprintf(stderr, "%strim_one_some <node>\r\n", pre);
-    _ch_print_node(u3h_slot_to_node(*hal_w), lef_w);
-    fprintf(stderr, "%strim_one_some </node>\r\n", pre);
-
     c3_o del_o = _ch_trim_one_node(hal_w, lef_w);
 
     if ( _(del_o) ) {
       _ch_node_deflate(hal_w, lef_w);
-      c3_assert(old_w != *hal_w);
-
-      u3_noun kev = u3h_slot_to_noun(*hal_w);
-      fprintf(stderr, "%strim_one_some hal_w: %p\r\n", pre, hal_w);
-      if ( _(u3h_slot_is_noun(*hal_w)) ) {
-        fprintf(stderr, "%strim_one_some deflated: {%d: %d}\r\n", pre, u3h(kev), u3t(kev));
-      }
-      else {
-        fprintf(stderr, "%strim_one_some was not deflated\r\n", pre);
-      }
-    }
-    else {
-      fprintf(stderr, "%strim_one_some did not trim node\r\n", pre);
     }
     return del_o;
   }
@@ -579,8 +517,6 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
 
   c3_assert(len_w != 1);
 
-  fprintf(stderr, "%strim_one_node arm_w: %d\r\n", pre, han_u->arm_w);
-
   while (han_u->arm_w < len_w) {
     sot_w = han_u->sot_w[han_u->arm_w];
 
@@ -635,10 +571,7 @@ _ch_node_deflate(u3h_slot* sot_w, c3_w lef_w)
   c3_c* pre = _ch_pre(lef_w);
 
   if ( 1 == len_w ) {
-    fprintf(stderr, "%snode_deflate: deflating\r\n", pre);
-
     if ( _(u3h_slot_is_node(han_u->sot_w[0])) ) {
-      fprintf(stderr, "%snode_deflate: recursing\r\n", pre);
       _ch_node_deflate(&han_u->sot_w[0], lef_w);
     }
     
