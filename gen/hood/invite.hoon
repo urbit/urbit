@@ -7,11 +7,13 @@
 ::::
   ::
 /+  womb
+=*  invite     invite:womb
+=*  reference  reference:womb
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{who/@t $~} sta/@}
+        {{who/@t $~} ref/(unit (each ship mail:womb)) sta/@}
     ==
 :-  %womb-invite
-^-  {cord invite}:womb
+^-  {cord reference invite}
 =+  inv=(scot %uv (end 7 1 eny))
-[inv [who 10 sta "You have been invited to Urbit: {(trip inv)}" "This is an invite of 10 planets"]]
+[inv ref [who 10 sta "You have been invited to Urbit: {(trip inv)}" "This is an invite of 10 planets"]]

@@ -7,6 +7,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+!:
 =>  |%                                                  ::  module boilerplate
     ++  hood-old                                        :: 
       {?($0 $1) lac/(map @tas hood-part-old)}           :: 
@@ -60,7 +61,7 @@
 ::
 ++  ably                                                ::  save part
   |*  {(list) hood-part}
-  [(flop +<-) %_(+> lac (~(put by lac) +<+< `hood-part`+<+))]
+  [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -140,6 +141,7 @@
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
 ++  poke-helm-send-ask        (wrap poke-send-ask):from-helm
 ++  poke-helm-verb            (wrap poke-verb):from-helm
+++  poke-helm-nuke            (wrap poke-nuke):from-helm
 ++  poke-helm-begin           (wrap poke-begin):from-helm
 ++  poke-helm-spawn           (wrap poke-spawn):from-helm
 ++  poke-hood-sync            (wrap poke-sync):from-kiln
@@ -156,6 +158,7 @@
 ++  poke-kiln-sync            (wrap poke-sync):from-kiln
 ++  poke-kiln-syncs           (wrap poke-syncs):from-kiln
 ++  poke-kiln-start-autoload  (wrap poke-start-autoload):from-kiln
+++  poke-kiln-wipe-ford       (wrap poke-wipe-ford):from-kiln
 ++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
@@ -165,10 +168,15 @@
 ++  poke-womb-obey            (wrap poke-obey):from-womb
 ++  poke-womb-bonus           (wrap poke-bonus):from-womb
 ++  poke-womb-claim           (wrap poke-claim):from-womb
+++  poke-womb-do-ticket       (wrap poke-do-ticket):from-womb
+++  poke-womb-do-claim        (wrap poke-do-claim):from-womb
 ++  poke-womb-rekey           (wrap poke-rekey):from-womb
 ++  poke-womb-report          (wrap poke-report):from-womb
+++  poke-womb-manage          (wrap poke-manage):from-womb
 ++  poke-womb-recycle         (wrap poke-recycle):from-womb
 ++  poke-womb-manage-old-key  (wrap poke-manage-old-key):from-womb
+++  poke-womb-release         (wrap poke-release):from-womb
+++  poke-womb-release-ships   (wrap poke-release-ships):from-womb
 ++  poke-womb-reinvite        (wrap poke-reinvite):from-womb
 ++  poke-womb-replay-log      (wrap poke-replay-log):from-womb
 ++  poke-write-sec-atom       (wrap poke-sec-atom):from-write
@@ -179,7 +187,7 @@
 ++  poke-write-plan-account   (wrap poke-plan-account):from-write
 ++  poke-write-tree           (wrap poke-tree):from-write
 ++  poke-write-wipe           (wrap poke-wipe):from-write
-++  poke-wyll                 (wrap poke-wyll):from-helm
+++  poke-will                 (wrap poke-will):from-helm
 ++  quit-drum-phat            (wrap quit-phat):from-drum
 ++  reap-drum-phat            (wrap reap-phat):from-drum
 ++  woot-helm                 (wrap take-woot):from-helm

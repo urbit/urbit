@@ -27,11 +27,18 @@
       |=  c/json  %.  c
       ?.(=(%a -.c) b (pe -.a (ar +.a)))
     ::
-    ++  change  (ot ler+(at ni ni ~) ted+(cu |*(a/* [0v0 a]) edit) ~)
+    ++  ke                                              ::  callbacks
+      |*  {gar/* sef/(trap fist)}
+      |=  jon/json  ^-  (unit _gar)
+      =-  ~!  gar  ~!  (need -)  -
+      ((sef) jon)
+    ::
+    ++  change  (ot ler+(at ni ni ~) ted+(pe 0v0 edit) ~)
     ++  char  (cu turf so)
     ++  edit
+      %+  ke  *sole-edit  |.  ~+
       %+  fo  %nop
-      %+  ra  mor+|=(json (edit +<))
+      %+  ra  mor+edit
       (of del+ni set+(cu tuba sa) ins+(ot at+ni cha+char ~) ~)
     --
   ::

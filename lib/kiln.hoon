@@ -192,7 +192,7 @@
   |%
   ++  emit  |=(a/card +>(..autoload (^emit a)))
   ++  tracked-vanes
-    `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall %jael]
+    `(list @tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
   ::
   ++  our-home  /(scot %p our)/home/(scot %da now)
   ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))
@@ -259,6 +259,8 @@
 ++  poke-overload
   |=  tym/@dr
   abet:(emit %wait /kiln/overload/(scot %dr tym) (add ~s10 now))
+::
+++  poke-wipe-ford  |=($~ abet:(emit %wipe /kiln our ~))
 ::
 ++  take  |=(way/wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::

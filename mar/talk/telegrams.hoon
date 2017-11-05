@@ -87,6 +87,7 @@
         fat+(ot tor+tors taf+spec ~)
         ext+(ot nom+so txe+blob ~)
         non+ul
+        mor+(ar spec)
         ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
       ==
     ++  tors  
@@ -161,6 +162,10 @@
         $fat  (jobe tor+(tors p.a) taf+$(a q.a) ~)
         $ext  (jobe nom+[%s p.a] txe+(jape (sifo (jam +.a))) ~)
         $non  ~
+        $mor  :-  %a
+              |-  ^-  (list json)
+              ?~  p.a  ~
+              [^$(a i.p.a) $(p.a t.p.a)]
         ::  $inv  (jobe ship+(jope p.a) party+[%s q.a] ~)
       ==
     ::

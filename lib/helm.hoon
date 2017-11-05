@@ -30,6 +30,9 @@
 ++  hood-init                                           ::  report init
   $:  him/ship                                          ::
   ==                                                    ::
+++  hood-nuke                                           ::  block/unblock
+  $:  him/ship                                          ::
+  ==                                                    ::
 ++  hood-reset                                          ::  reset command
   $~                                                    ::
 ++  helm-verb                                           ::  reset command
@@ -40,17 +43,18 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall helm-part}                              ::  main helm work
+|=  {bowl:gall helm-part}                               ::  main helm work
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$cash wire p/@p q/buck:ames}                ::
+      $%  {$cash wire p/@p q/buck:ames}                 ::
           {$conf wire dock $load ship term}             ::
-          {$flog wire flog:dill}                       ::
+          {$flog wire flog:dill}                        ::
           {$funk wire @p @p @}                          ::   
+          {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
-          {$wont wire sock path *}                      ::  send message
+          {$want wire sock path *}                      ::  send message
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -73,10 +77,11 @@
 ++  poke-begin                                        ::  make/send keypair
   |=  hood-begin  =<  abet
   ?>  ?=($~ bur)
+  ~&  [%poke-begin our his]
   =+  buz=(shaz :(mix (jam ges) eny))
   =+  loy=(pit:nu:crub:crypto 512 buz)
   %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%wont /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
+  [%want /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
 ::
 ++  poke-spawn
   |=  {him/ship key/@pG}  =<  abet
@@ -86,6 +91,10 @@
 ++  poke-init                                         ::  initialize
   |=  him/ship  =<  abet
   (emit %flog /helm %crud %hax-init leaf+(scow %p him) ~)
+::
+++  poke-nuke                                         ::  initialize
+  |=  him/ship  =<  abet
+  (emit %nuke /helm him)
 ::
 ++  poke-mass
   |=  $~  =<  abet
@@ -105,7 +114,14 @@
   |=  top/?(desk beam)  =<  abet
   (emit %serv /helm/serv top)
 ::
-++  poke-hi  |=(mes/@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
+++  poke-hi  
+  |=  mes/@t 
+  ~|  %poke-hi-fail
+  ?:  =(%fail mes)
+    ~&  %poke-hi-fail
+    !!
+  abet:(emit %flog /di %text "< {<src>}: {(trip mes)}")  
+::
 ++  poke-atom  
   |=  ato/@
   =+  len=(scow %ud (met 3 ato))
@@ -158,6 +174,28 @@
   %-  emil
   %-  flop  ^-  (list card) 
   =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
+  :-  [%flog /reset %vega (weld top /hoon) (weld top /ovra)]
+  %+  turn
+    ^-  (list {p/@tas q/path})
+    :~  [%$ /zuse]
+        [%a /vane/ames]
+        [%b /vane/behn]
+        [%c /vane/clay]
+        [%d /vane/dill]
+        [%e /vane/eyre]
+        [%f /vane/ford]
+        [%g /vane/gall]
+    ==
+  |=  {p/@tas q/path}
+  =+  way=`path`(welp top q)
+  =+  txt=.^(@ %cx (welp way /hoon))
+  [%flog /reset %veer p way txt]
+::
+++  poke-meset                                        ::  reset system (new)
+  |=  hood-reset  =<  abet
+  %-  emil
+  %-  flop  ^-  (list card) 
+  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
   =+  hun=.^(@ %cx (welp top /hoon/hoon))
   =+  arv=.^(@ %cx (welp top /arvo/hoon))  
   :-  [%flog /reset [%velo `@t`hun `@t`arv]]
@@ -179,7 +217,7 @@
   =+  txt=.^(@ %cx (welp way /hoon))
   [%flog /reset %veer p way txt]
 ::
-++  poke-wyll                                         ::  hear certificate
+++  poke-will                                         ::  hear certificate
   |=  wil/(unit wyll:ames)
   ?>  ?=(^ bur)
   ?>  ?=(^ wil)  
@@ -205,7 +243,7 @@
   |=  {way/wire chr/@tD tan/tank}  =<  abet
   (emit %flog ~ %text chr ' ' ~(ram re tan))
 ::
-++  take-woot                                         ::  result of %wont
+++  take-woot                                         ::  result of %want
   |=  {way/wire her/ship cop/coop}  =<  abet
   (emit %flog ~ %text "woot: {<[way cop]>}")
 --

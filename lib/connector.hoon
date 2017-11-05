@@ -10,6 +10,9 @@
 ::  --  in `++sigh-httr` in the connector app, call `++sigh` in
 ::      this library to handle the response according to the
 ::      place.
+/+  old-zuse
+=,  old-zuse
+::
 |*  {move/mold sub-result/mold}
 =>  |%
     ::  A place consists of:
@@ -108,11 +111,12 @@
     $(places t.places)
   (?+(ren !! $x read-x.i.places, $y read-y.i.places) pax)
 ::
-::  Handles http responses sent in `++read` by mappig them to
+::  Handles http responses sent in `++read` by mapping them to
 ::  their handling, either `sigh-x` or `sigh-y`, in `places`.
 ::
 ++  sigh
   =,  html
+  =,  eyre
   |=  {places/(list place) ren/care pax/path res/httr}
   ^-  sub-result
   =<  ?+(ren ~|([%invalid-care ren] !!) $x sigh-x, $y sigh-y)
@@ -164,5 +168,4 @@
       arch+*arch
     arch+u.-
   --
-
 --

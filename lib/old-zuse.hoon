@@ -7,10 +7,6 @@
 ++  fu          fu:number                               ::  modulo (mul p q)
 ++  aes         aes:crypto                              ::  aes, all sizes
 ++  crua        crua:crypto                             ::  cryptosuite A (RSA)
-++  bruw        bruw:suite:crypto                       ::  create keypair
-++  haul        haul:suite:crypto                       ::  activate public key
-++  weur        weur:suite:crypto                       ::  activate secret key
-++  trua        trua:test:crypto                        ::  test rsa
 ++  crub        crub:crypto                             ::  cryptosuite B (Ed)
 ++  trub        trub:test:crypto                        ::  test crub
 ++  hmac        hmac:crypto                             ::  HMAC-SHA1
@@ -54,7 +50,6 @@
 ++  ofis        de-base64:mimes:html                    ::  64-bit decode
 ++  dray        dray:wired                              ::  load tuple into path
 ++  raid        raid:wired                              ::  demand path odors
-++  read        read:wired                              ::  parse odored path
 ++  urle        en-urlt:html                            ::  URL encode
 ++  urld        de-urlt:html                            ::  URL decode
 ++  earn        en-purl:html                            ::  purl to tape
@@ -85,7 +80,7 @@
 ++  apex        !!                                      ::  XX deprecated
 ++  ares        ares.is                                 ::  possible error
 ++  bale        bale:eyre                               ::  driver state
-++  iden        !!                                      ::  username
+++  iden        user:eyre                               ::  username
 ++  sec-move    sec-move:eyre                           ::  driver effect
 ++  ball        !!                                      ::  XX deprecated
 ++  bait        bait:ames                               ::  fmt nrecvd spec
