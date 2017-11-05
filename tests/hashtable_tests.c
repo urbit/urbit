@@ -53,12 +53,11 @@ _ch_test_cache_trimming(void)
   c3_w max_w = 1000;
   c3_w i_w, hit_w = 0, mis_w = 0;
 
-  u3p(u3h_root) har_p = u3h_new_cache(max_w / 2);
-  //u3p(u3h_root) har_p = u3h_new_cache(50);
+  //u3p(u3h_root) har_p = u3h_new_cache(max_w / 2);
+  u3p(u3h_root) har_p = u3h_new_cache(10);
 
   for ( i_w = 0; i_w < max_w; i_w++ ) {
     u3h_put(har_p, i_w, i_w + max_w);
-    fprintf(stderr, "********************************\r\n");
   }
 
   fprintf(stderr, "%d: %d\r\n", max_w - 1, u3h_get(har_p, max_w - 1));
