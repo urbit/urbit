@@ -136,6 +136,7 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     //  this slot contains a node, so recurse into that node.
     //
     if ( _(u3h_slot_is_node(sot_w)) ) {
+      fprintf(stderr, "node_add recursing\r\n");
       void* hav_v = u3h_slot_to_node(sot_w);
 
       hav_v = _ch_some_add(hav_v, lef_w, rem_w, kev, use_w);
@@ -147,10 +148,20 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
     //
     else {
       u3_noun kov = u3h_slot_to_noun(sot_w);
+      u3m_p("kov", kov);
+      u3m_p("kev", kev);
+      fprintf(stderr, "lef_w: %d\r\n", lef_w);
+      if ( _(u3h_slot_is_null(sot_w)) ) {
+        fprintf(stderr, "NULL\r\n");
+      }
+      if ( _(u3h_slot_is_node(sot_w)) ) {
+        fprintf(stderr, "WTF\r\n");
+      }
 
       //  the key is the same, so replace the value
       //
       if ( c3y == u3r_sing(u3h(kev), u3h(kov)) ) {
+        fprintf(stderr, "replacing kov with kev\r\n");
         u3a_lose(kov);
         han_u->sot_w[inx_w] = u3h_noun_to_slot(kev);
         return han_u;
@@ -306,8 +317,9 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   c3_w        rem_w = (mug_w & ((1 << 25) - 1));  // TODO: macro
   c3_w        sot_w = har_u->sot_w[inx_w];
 
-  u3m_p("put", kev);
-  _ch_print_table(har_u);
+  //  TODO: remove
+  //u3m_p("put", kev);
+  //fprintf(stderr, "put: inx_w %d\r\n", inx_w);
 
   //  nothing stored for this 6-bit prefix
   //
@@ -342,9 +354,10 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
   if ( har_u->clk_w > 0 ) {
     u3h_trim_to(har_p, har_u->clk_w);
   }
-  fprintf(stderr, "put: final use_w: %d\r\n", har_u->use_w);
+  //TODO:remove
+  //fprintf(stderr, "put: final use_w: %d\r\n", har_u->use_w);
 
-  _ch_print_table(har_u);
+  //_ch_print_table(har_u);
 }
 
 /* u3h_trim_to(): trim to n key-value pairs
@@ -376,12 +389,9 @@ _ch_trim_one(u3h_root *har_u)
       c3_o trimmed = _ch_trim_one_some(root_sot_w, 25);
       if ( _(trimmed) ) {
         if ( _(u3h_slot_is_node(*root_sot_w)) ) {
-          _ch_print_node(root_sot_w, 25);
+          //_ch_print_node(root_sot_w, 25);
         }
-        else {
-          u3_noun kev = u3h_slot_to_noun(*root_sot_w);
-        }
-          
+
         har_u->use_w--;
         return;
       }
@@ -422,8 +432,6 @@ _ch_trim_one_some(u3h_slot* hal_w, c3_w lef_w)
     return _ch_trim_one_buck(hal_w);
   }
   else {
-    u3h_slot old_w = *hal_w;
-
     c3_o del_o = _ch_trim_one_node(hal_w, lef_w);
 
     if ( _(del_o) ) {
