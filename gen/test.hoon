@@ -392,6 +392,18 @@
     [~ "bar"]
     "break"
   ::
+  ++  test-inits
+    %^  expect-eq
+    (inits "abc")
+    ["a" "ab" "abc" ~]
+    "inits"
+  ::
+  ++  test-tails
+    %^  expect-eq
+    (tails "abc")
+    ["abc" "bc" "c" ~]
+    "tails"
+  ::
   ++  test-is-prefix-of
     %^  expect-eq
     (is-prefix-of "foo" "foobar")
@@ -463,6 +475,12 @@
     (find-indices [1 2 1 2 ~] |=(a/@ =(a 2)))
     [1 3 ~]
     "find-indices"
+  ::
+  ++  test-zip
+    %^  expect-eq
+    (zip [[1 2 3 ~] [4 5 6 ~] [7 8 9 ~] ~])
+    [[1 4 7 ~] [2 5 8 ~] [3 6 9 ~] ~]
+    "zip"
   ::
   ++  test-unique
     %^  expect-eq
@@ -930,8 +948,7 @@
 ::  todo: right now, we hard code ++test-core. but eventually, we must instead
 ::  scry ford for the core from the hoon file. that doesn't exist yet.
 ::(perform-test-suite:local "test-core" !>(test-core) eny)
-
-::  (perform-test-suite:local "test-thr" !>(test-thr) eny)
-:: (perform-test-suite:local "test-myb" !>(test-myb) eny)
-::(perform-test-suite:local "test-ls" !>(test-ls) eny)
-(perform-test-suite:local "test-mp" !>(test-mp) eny)
+::(perform-test-suite:local "test-thr" !>(test-thr) eny)
+::(perform-test-suite:local "test-myb" !>(test-myb) eny)
+(perform-test-suite:local "test-ls" !>(test-ls) eny)
+::(perform-test-suite:local "test-mp" !>(test-mp) eny)

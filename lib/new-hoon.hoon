@@ -180,6 +180,7 @@
   ++  head
     :>  returns the first item in the list, which must be non-empty.
     |*  a/(list)
+    =>  .(a (homo a))
     :>  the first item in the list.
     ?~  a  ~>(%mean.[%leaf "head"] !!)
     i.a
@@ -196,12 +197,13 @@
   ++  tail
     :>  returns all items after the head of the list, which must be non-empty.
     |*  a/(list)
+    ^+  a
     ?~  a  ~>(%mean.[%leaf "tail"] !!)
     t.a
   ::
   ++  init
     :>  returns all items in the list except the last one. must be non-empty.
-    |=  a/(list)
+    |*  a/(list)
     =>  .(a (homo a))
     |-
     ^+  a
@@ -225,7 +227,7 @@
       b
     $(a t.a, b +(b))
   ::
-  :>  #  %mappings
+  :>  #  %transformations
   :>    functions which change a list into another list
   +|
   ::
@@ -561,10 +563,27 @@
     $(a +.a, b +.b)
   ::
   :: todo: ++group
-  :: todo: ++inits
-  :: todo: ++tails
   ::
-
+  ++  inits
+    :>    returns all initial segments in reverse order.
+    :>
+    :>  unlike haskell, this does not return the empty list as the first
+    :>  element, as hoon uses null as the list terminator.
+    |*  a/(list)
+    =>  .(a (homo a))
+    %-  flop
+    |-
+    ?~  a  ~
+    [a $(a (init a))]
+  ::
+  ++  tails
+    :>  returns all final segments, longest first.
+    |*  a/(list)
+    =>  .(a (homo a))
+    |-
+    ?~  a  ~
+    [a $(a t.a)]
+  ::
   :>  #  %predicates
   :>    functions which compare lists
   +|
@@ -713,8 +732,44 @@
       [i $(a t.a, i +(i))]
     $(a t.a, i +(i))
   ::
-  ::  can we do a full general zip without doing haskellesque zip3, zip4, etc?
-  ::  todo:  ++zip
+  ++  zip
+    :>  takes a list of lists, returning a list of each first items.
+    |*  a/(list (list))
+    =>  .(a (multi-homo a))
+    |^  ^+  a
+        ?~  a  ~
+        ?.  valid
+          ~
+        =+  h=heads
+        ?~  h  ~
+        [heads $(a tails)]
+    ::
+    ++  valid
+      %+  all  a
+      |=  {next/(list)}
+      ?~  a  %.n
+      %.y
+    ::
+    ++  heads
+      ^+  (homo i:-.a)
+      |-
+      ?~  a  ~
+      ?~  i.a  ~
+      [i.i.a $(a t.a)]
+    ::
+    ++  tails
+      ^+  a
+      |-
+      ?~  a  ~
+      ?~  i.a  ~
+      [t.i.a $(a t.a)]
+    --
+  ++  multi-homo
+    |*  a/(list (list))
+    ^+  =<  $
+      |%  +-  $  ?:(*? ~ [i=(homo (snag 0 a)) t=$])
+      --
+    a
   ::
   :>  #  %set
   :>    set operations on lists
@@ -852,7 +907,9 @@
   :>  #  %insertion
   +|
   ++  put
-    :>  inserts a new key/value pair, replacing the current value if it exists.
+    :>    inserts a new key/value pair, replacing the current value if it exists.
+    :>
+    :>  corresponds to {insert} in haskell.
     |*  {a/(dict) key/* value/*}
     |-  ^+  a
     ?~  a
@@ -874,7 +931,9 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   ++  put-with
-    :>  inserts {key}/{value}, applying {fun} if {key} already exists.
+    :>    inserts {key}/{value}, applying {fun} if {key} already exists.
+    :>
+    :>  corresponds to {insertWith} in haskell.
     |*  {a/(dict) key/* value/* fun/$-({* *} *)}
     |-  ^+  a
     ?~  a
@@ -895,7 +954,9 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   ++  put-with-key
-    :>  inserts {key}/{value}, applying {fun} if {key} already exists.
+    :>    inserts {key}/{value}, applying {fun} if {key} already exists.
+    :>
+    :>  corresponds to {insertWithKey} in haskell.
     |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
     |-  ^+  a
     ?~  a
@@ -916,7 +977,9 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   ++  put-lookup-with-key
-    :>  combines insertion with lookup in one pass.
+    :>    combines insertion with lookup in one pass.
+    :>
+    :>  corresponds to {insertLookupWithKey} in haskell.
     |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
     |-  ^-  {(maybe _value) _a}
     ?~  a
@@ -1433,7 +1496,7 @@
   ++  valid
     :>  returns %.y if {a} if this tree is a valid treap dict.
     |*  a/(tree (pair * *))
-    =|  {l/(unit) r/(unit)}
+    =|  {l/(maybe) r/(maybe)}
     |-  ^-  ?
     ?~  a   &
     ?&  ?~(l & (gor p.n.a u.l))
