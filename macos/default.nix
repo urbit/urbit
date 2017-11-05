@@ -27,6 +27,20 @@ let
   # utility, though we could have chosen to use `llvm-ar` instead.
   binutils = import ./binutils { inherit native host; };
 
+  xar = native.make_derivation {
+    name = "xar";
+    builder = ./xar_builder.sh;
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
+      sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
+    };
+    native_inputs = [
+      nixpkgs.libxml2.dev
+      nixpkgs.openssl.dev
+      nixpkgs.zlib.dev
+    ];
+  };
+
   clang = native.make_derivation rec {
     name = "clang";
 
@@ -110,7 +124,7 @@ let
     name = "mac-toolchain";
     builder = ./builder.sh;
     wrapper = ./wrapper;
-    inherit host sdk ld clang binutils;
+    inherit host sdk binutils xar clang ld;
 
     CXXFLAGS =
       "-std=c++11 " +
@@ -155,7 +169,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit binutils clang tapi sdk ld toolchain;
+    inherit binutils xar clang tapi sdk ld toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
