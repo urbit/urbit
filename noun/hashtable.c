@@ -210,9 +210,14 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
 
     for ( i_w = inx_w; i_w < len_w; i_w++ ) {
       nah_u->sot_w[i_w + 1] = han_u->sot_w[i_w];
-      fprintf(stderr, "%snod sot_w[%d]: {%d: %d}\r\n", pre,
-                      i_w + 1, u3h(u3h_slot_to_noun(nah_u->sot_w[i_w + 1])),
-                               u3t(u3h_slot_to_noun(nah_u->sot_w[i_w + 1])));  
+      if ( _(u3h_slot_is_noun(nah_u->sot_w[i_w + 1])) ) {
+        fprintf(stderr, "%snod sot_w[%d]: {%d: %d}\r\n", pre,
+                        i_w + 1, u3h(u3h_slot_to_noun(nah_u->sot_w[i_w + 1])),
+                                 u3t(u3h_slot_to_noun(nah_u->sot_w[i_w + 1])));  
+      }
+      else {
+        fprintf(stderr, "%snod sot_w[%d]: <node>\r\n", pre, i_w + 1);
+      }
     }
     nah_u->arm_w = han_u->arm_w;
 
