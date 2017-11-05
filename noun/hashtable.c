@@ -284,7 +284,7 @@ _ch_print_node(u3h_node* han_u, c3_w lef_w)
 
   lef_w -= 5;
 
-  fprintf(stderr, "%snode @%08x\r\n", pre, han_u);
+  fprintf(stderr, "%snode %p\r\n", pre, han_u);
   
   if ( 0 == lef_w ) {
     fprintf(stderr, "%s<bucket/>\r\n", pre);
@@ -398,31 +398,41 @@ u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w)
 static void
 _ch_trim_one(u3h_root *har_u)
 {
-  u3h_slot root_sot_w = har_u->sot_w[har_u->arm_w];
+  u3h_slot* root_sot_w = &(har_u->sot_w[har_u->arm_w]);
 
   c3_assert(har_u->use_w > 0);
 
   while ( 1 ) {
 
-    if ( _(u3h_slot_is_null(root_sot_w)) ) {
+    if ( _(u3h_slot_is_null(*root_sot_w)) ) {
       //  next
     }
-    else if ( _(u3h_slot_is_node(root_sot_w)) ) {
-      c3_o trimmed = _ch_trim_one_some(&root_sot_w, 25);
+    else if ( _(u3h_slot_is_node(*root_sot_w)) ) {
+      c3_o trimmed = _ch_trim_one_some(root_sot_w, 25);
       if ( _(trimmed) ) {
+        if ( _(u3h_slot_is_node(*root_sot_w)) ) {
+          fprintf(stderr, "post-trim root_sot_w is a node\r\n");
+          _ch_print_node(root_sot_w, 25);
+        }
+        else {
+          fprintf(stderr, "post-trim root_sot_w is not a node\r\n");
+          u3_noun kev = u3h_slot_to_noun(*root_sot_w);
+          fprintf(stderr, "post-trim root_sot_w: {%d: %d}\r\n", u3h(kev), u3t(kev));
+        }
+          
         fprintf(stderr, "trimmed: c3y\r\n");
         har_u->use_w--;
         return;
       }
       //  next
     }
-    else if ( _(u3h_slot_is_warm(root_sot_w)) ) {
+    else if ( _(u3h_slot_is_warm(*root_sot_w)) ) {
       har_u->sot_w[har_u->arm_w] = u3h_noun_be_cold(har_u->sot_w[har_u->arm_w]);
     }
     else {
-      c3_assert(_(u3h_slot_is_noun(root_sot_w)));
+      c3_assert(_(u3h_slot_is_noun(*root_sot_w)));
 
-      u3_noun kev = u3h_slot_to_noun(root_sot_w);
+      u3_noun kev = u3h_slot_to_noun(*root_sot_w);
       fprintf(stderr, "removing sot_w[%d]: {%d: %d}\r\n", har_u->arm_w, u3h(kev), u3t(kev));
       u3a_lose(kev);
       har_u->sot_w[har_u->arm_w] = 0;
@@ -436,7 +446,7 @@ _ch_trim_one(u3h_root *har_u)
       har_u->arm_w = (har_u->arm_w + 1) % 64;
     }
     while ( _(u3h_slot_is_null(har_u->sot_w[har_u->arm_w])) );
-    root_sot_w = har_u->sot_w[har_u->arm_w];
+    root_sot_w = &(har_u->sot_w[har_u->arm_w]);
   }
 }
 
@@ -465,7 +475,13 @@ _ch_trim_one_some(u3h_slot* hal_w, c3_w lef_w)
       c3_assert(old_w != *hal_w);
 
       u3_noun kev = u3h_slot_to_noun(*hal_w);
-      fprintf(stderr, "%strim_one_some deflated: {%d: %d}\r\n", pre, u3h(kev), u3t(kev));
+      fprintf(stderr, "%strim_one_some hal_w: %p\r\n", pre, hal_w);
+      if ( _(u3h_slot_is_noun(*hal_w)) ) {
+        fprintf(stderr, "%strim_one_some deflated: {%d: %d}\r\n", pre, u3h(kev), u3t(kev));
+      }
+      else {
+        fprintf(stderr, "%strim_one_some was not deflated\r\n", pre);
+      }
     }
     else {
       fprintf(stderr, "%strim_one_some did not trim node\r\n", pre);
@@ -554,10 +570,11 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
   u3h_node* han_u = (u3h_node*)u3h_slot_to_node(*hal_w);
   u3h_slot sot_w = han_u->sot_w[han_u->arm_w];
   c3_w len_w = _ch_popcount(han_u->map_w);
+  c3_c* pre = _ch_pre(lef_w);
 
   c3_assert(len_w != 1);
 
-  fprintf(stderr, "trim_one_node arm_w: %d\r\n", han_u->arm_w);
+  fprintf(stderr, "%strim_one_node arm_w: %d\r\n", pre, han_u->arm_w);
 
   while (han_u->arm_w < len_w) {
     sot_w = han_u->sot_w[han_u->arm_w];
@@ -566,13 +583,12 @@ _ch_trim_one_node(u3h_slot* hal_w, c3_w lef_w)
       if ( _(_ch_trim_one_some(&sot_w, lef_w - 5)) ) {
         return c3y;
       }
-      //  next
+      han_u->arm_w++;  //  next
     }
 
     else if ( _(u3h_slot_is_warm(sot_w)) ) {
       han_u->sot_w[han_u->arm_w] = u3h_noun_be_cold(sot_w);
-      han_u->arm_w++;
-      //  next
+      han_u->arm_w++;  //  next
     }
     else {
       c3_w bit_w, i_w, inx_w;
