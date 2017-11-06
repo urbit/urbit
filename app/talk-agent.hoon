@@ -1980,7 +1980,7 @@
     |=  a/attache
     ^-  tang
     ?-  -.a
-      $name  (welp $(a tac.a) leaf+"={(trip nom.a)}" ~)
+      $name  (welp $(a tac.a) leaf+"= {(trip nom.a)}" ~)
       $tank  +.a
       $text  (turn (flop +.a) |=(b/cord leaf+(trip b)))
     ==
@@ -2018,8 +2018,8 @@
         $fat
       %+  weld  $(sep sep.sep)
       ^-  (list tape)
-      ?+  -.tac.sep  ["attached: ..." ~]
-        $name  ["attached: {(trip nom.tac.sep)}" ~]
+      ?+  -.tac.sep  [" attached: ..." ~]
+        $name  [(scag wyd " attached: {(trip nom.tac.sep)}") ~]
       ==
       ::
         $exp
@@ -2034,13 +2034,13 @@
         $url
       :_  ~
       =+  ful=(apix:en-purl:html url.sep)
-      =.  wyd  (sub wyd 2)  ::  account for prefix.
+      =+  pef=(weld (fall pre "") "/")
+      =.  wyd  (sub wyd +((lent pef)))  ::  account for prefix.
       ::  if the full url fits, just render it.
-      ?:  (gte wyd (lent ful))  ['/' ' ' ful]
+      ?:  (gte wyd (lent ful))  :(weld pef " " ful)
       ::  if it doesn't, prefix with _ and render just (the tail of) the domain.
-      :+  '/'  '_'
+      %+  weld  (weld pef "_")
       =+  hok=r.p.p.url.sep
-      ~!  hok
       =-  (swag [a=(sub (max wyd (lent -)) wyd) b=wyd] -)
       ^-  tape
       =<  ?:  ?=($& -.hok)
@@ -2081,7 +2081,7 @@
       ~(cr-phat cr cir.sep)
       ::
         $app
-      $(sep sep.sep, pre `"[{(trip app.sep)}]: ")
+      $(sep sep.sep, pre `"[{(trip app.sep)}]:")
     ==
   --
 ::
