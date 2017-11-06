@@ -16,7 +16,7 @@
     ^-  prize:talk
     =-  (need ((of -) a))
     :~  reader+pire
-        friend+(as circ)
+        public+(as circ)
         ::  burden not needed
         circle+pack
     ==
@@ -30,7 +30,7 @@
     %+  frond  -.piz
     ?+  -.piz  !!
       $reader  (pire +.piz)
-      $friend  (sa cis.piz circ)
+      $public  (sa cis.piz circ)
       ::  burden not needed
       $circle  (pack +.piz)
     ==

@@ -16,7 +16,7 @@
     ^-  rumor:talk
     =-  (need ((of -) a))
     :~  reader+rure
-        friend+(ot add+bo cir+circ ~)
+        public+(ot add+bo cir+circ ~)
         ::  burden not needed
         circle+ruso
     ==
@@ -30,7 +30,7 @@
     %+  frond  -.rum
     ?+  -.rum  !!
       $reader  (rure rum.rum)
-      $friend  (pairs add+b+add.rum cir+(circ cir.rum) ~)
+      $public  (pairs add+b+add.rum cir+(circ cir.rum) ~)
       ::  burden not needed
       $circle  (ruso rum.rum)
     ==

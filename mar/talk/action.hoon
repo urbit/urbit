@@ -30,6 +30,8 @@
         ::
         glyph+(ot gyf+so aud+audi bin+bo ~)
         nick+(ot who+(su fed:ag) nic+so ~)
+        ::
+        public+(ot add+bo cir+circ ~)
     ==
   --
 ::
@@ -57,6 +59,8 @@
       ::
       $glyph   ~[gyf+s+gyf.act aud+(sa aud.act circ) bin+b+bin.act]
       $nick    ~[who+(ship who.act) nic+s+nic.act]
+      ::
+      $public  ~[add+b+add.act cir+(circ cir.act)]
     ==
   --
 --
