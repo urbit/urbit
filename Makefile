@@ -458,7 +458,7 @@ $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
 $(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
 
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
-	$(MAKE) -C outs$(BIN)/test_hash/$(LIBUV_VER) all-am -j1
+	$(MAKE) -C outside/$(LIBUV_VER) all-am -j1
 
 $(LIBED25519):
 	$(MAKE) -C outside/ed25519
