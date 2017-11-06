@@ -351,7 +351,7 @@
       $ire  ~[top+s+(scot %uv top.a) sep+(spec sep.a)]  ::TODO  @uv as number?
       $fat  ~[tac+(atta tac.a) sep+(spec sep.a)]
       $inv  ~[inv+b+inv.a cir+(circ cir.a)]
-      $app  ~[app+s+app.a msg+s+msg.a]
+      $app  ~[app+s+app.a sep+(spec sep.a)]
     ==
   ::
   ++  atta                                              ::>  attache
@@ -583,6 +583,7 @@
       ire+(ot top+seri sep+spec ~)
       fat+(ot tac+atta sep+spec ~)
       inv+(ot inv+bo cir+circ ~)
+      app+(ot app+so sep+spec ~)
     ==
   ::
   ++  eval                                              ::>  %exp speech

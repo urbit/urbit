@@ -225,8 +225,8 @@
       {$exp exp/cord res/(list tank)}                   ::<  hoon line
       {$ire top/serial sep/speech}                      ::<  in reply to
       {$fat tac/attache sep/speech}                     ::<  attachment
+      {$app app/term sep/speech}                        ::<  app message
       {$inv inv/? cir/circle}                           ::<  inv/ban for circle
-      {$app app/term msg/cord}                          ::<  app message
   ==                                                    ::
 ++  attache                                             ::>  attachment
   $%  {$name nom/cord tac/attache}                      ::<  named attachment

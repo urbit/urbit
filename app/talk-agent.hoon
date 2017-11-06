@@ -1971,7 +1971,7 @@
       ~(cr-phat cr cir.sep)
       ::
         $app
-      tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip app.sep)}]" leaf+(trip msg.sep)]]
+      [%mor tan+~[leaf+"[{(trip app.sep)}]: "] $(sep sep.sep) ~]
     ==
   ::
   ++  tr-tach                                           ::<  attachment
@@ -2010,8 +2010,8 @@
     ::>  message. if possible, these stay within a single
     ::>  line.
     ::
-    ::>  rep:  is reply?
-    =|  rep/_|
+    ::>  pre:  line prefix
+    =|  pre/(unit tape)
     |=  wyd/@ud
     ^-  (list tape)
     ?-  -.sep
@@ -2029,7 +2029,7 @@
       ~(ram re (snag 0 `(list tank)`res.sep))
       ::
         $ire
-      $(sep sep.sep, rep &)
+      $(sep sep.sep, pre `"^ ")
       ::
         $url
       :_  ~
@@ -2052,9 +2052,9 @@
       ::
         $lin
       ::  glyph prefix
-      =/  pef
+      =/  pef/tape
         ?:  pat.sep  " "
-        =-  (weld - ?:(rep "^ " " "))
+        =-  (weld - (fall pre " "))
         %~  ar-glyf  ar
           ?:  =(who our.bol)  aud
           (~(del in aud) [%& who %inbox])
@@ -2081,8 +2081,7 @@
       ~(cr-phat cr cir.sep)
       ::
         $app
-      :_  ~
-      (tr-chow wyd "[{(trip app.sep)}]: {(trip msg.sep)}")
+      $(sep sep.sep, pre `"[{(trip app.sep)}]: ")
     ==
   --
 ::

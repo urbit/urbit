@@ -29,7 +29,7 @@
   ^-  action
   :+  %phrase
     [[our.bol %inbox] ~ ~]
-  [%app dap.bol (crip (en-purl:html url))]~   :: XX
+  [%app dap.bol %lin | (crip (en-purl:html url))]~   :: XX
 ::
 ++  said                                                ::  app message
   |=  mes/(list tank)
@@ -41,7 +41,7 @@
   ?~  mes  ~
   :_  $(mes t.mes)
   ^-  speech
-  [%app dap.bol (crip ~(ram re i.mes))]
+  [%app dap.bol %lin | (crip ~(ram re i.mes))]
 ::
 ++  uniq
   ^-  {serial _eny.bol}

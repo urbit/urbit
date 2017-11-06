@@ -184,7 +184,7 @@
     |=  msg/tape
     %^  ta-action  0  %phrase
     :-  [[our.bol %inbox] ~ ~]
-    [%app dap.bol (crip msg)]~
+    [%app dap.bol %lin | (crip msg)]~
   ::
   ++  ta-evil                                           ::<  emit error
     ::>  tracing printf and crash.
@@ -712,7 +712,7 @@
       ^+  +>
       %+  so-act  %phrase
       :-  [[our.bol %inbox] ~ ~]
-      [%app dap.bol msg]~
+      [%app dap.bol %lin | msg]~
     ::
     ++  so-delta                                        ::<  send delta
       ::>  store delta in ++ta core.
