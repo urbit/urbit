@@ -41,14 +41,14 @@
       /* u3h_root: hash root table
       */
         typedef struct {
-          c3_w     use_w; // number of lines currently filled
-          c3_w     max_w; // number of cache lines (0 for no trimming)
+          c3_w     max_w;     // number of cache lines (0 for no trimming)
+          c3_w     use_w;     // number of lines currently filled
           struct {
-            c3_w  mug_w;  // current hash
-            c3_o  buc_o;  // yes if current hash has a bucket
-            c3_w  inx_w;  // index into current hash bucket iff buc_o
-          } arm_u;        // clock arm
-          u3h_slot sot_w[64];
+            c3_w  mug_w;      // current hash
+            c3_w  inx_w;      // index into current hash bucket iff buc_o
+            c3_o  buc_o;      // yes if in middle of hash bucket
+          } arm_u;            // clock arm
+          u3h_slot sot_w[64]; // slots
         } u3h_root;
 
       /* u3h_buck: bottom bucket.
