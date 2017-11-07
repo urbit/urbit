@@ -1515,7 +1515,7 @@
       ::  changed message
       %_  +>.$
         grams    %+  welp
-                 (scag (dec u.old) grams)
+                 (scag (dec (max u.old 1)) grams)
                  [gam (slag u.old grams)]
       ==
     ::
