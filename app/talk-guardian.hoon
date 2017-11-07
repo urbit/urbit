@@ -99,8 +99,6 @@
       ==                                                ::
     ++  pear                                            ::>  poke fruit
       $%  {$talk-command command}                       ::
-          {$write-comment spur ship cord}               ::
-          {$write-fora-post spur ship cord cord}        ::
       ==                                                ::
     ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::

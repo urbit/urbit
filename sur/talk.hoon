@@ -4,6 +4,8 @@
 |%
 ::
 ::TODO  use different words for different kinds of burdens
+::TODO  rename det/delta in most place? they may be (different kinds of) deltas,
+::      but location in control flow already indicates delta-ness.
 ::
 ::>  ||
 ::>  ||  %wrappers
@@ -23,8 +25,8 @@
 ::
 ++  query                                               ::>  query paths
   $%  {$reader $~}                                      ::<  shared ui state
-      {$burden who/ship}                                ::<  duties to share
       {$public $~}                                      ::<  public memberships
+      {$burden who/ship}  ::TODO  eventually, nom/naem. ::<  duties to share
       {$report $~}                                      ::<  duty reports
       {$circle nom/naem wat/(set circle-data) ran/range}::<  story query
       ::TODO  in the future, we may want much more      ::
@@ -34,8 +36,8 @@
   $?  $grams                                            ::<  messages
       $group-l                                          ::<  local presence
       $group-r                                          ::<  remote presences
-      $config-l                                          ::<  local config
-      $config-r                                          ::<  remote configs
+      $config-l                                         ::<  local config
+      $config-r                                         ::<  remote configs
   ==                                                    ::
 ++  range                                               ::>  inclusive msg range
   %-  unit                                              ::<  ~ means everything
@@ -46,10 +48,6 @@
   $%  {$da @da}                                         ::<  date
       {$ud @ud}                                         ::<  message number
   ==                                                    ::
-::TODO  overlaps with agent's ++where
-::++  where                                               ::>  data from
-::  %-  unit                                              ::<  ~ means everywhere
-::  ?($local $remote)                                     ::<  local or remote only
 ++  prize                                               ::>  query result
   $%  {$reader prize-reader}                            ::<  /reader
       {$public cis/(set circle)}                        ::<  /public
