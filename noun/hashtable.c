@@ -296,10 +296,10 @@ _ch_trim_node(u3h_slot* sot_w, c3_w lef_w)
         }
         u3a_wfree(han_u);
       }
-      else {
-        han_u->arm_w += 1;
-      }
       return c3y;
+    }
+    else {
+      han_u->arm_w += 1;
     }
   }
 
@@ -333,6 +333,8 @@ _ch_trim_slot(u3h_slot *sot_w, c3_w lef_w)
       }
       else {
         u3_noun kev = u3h_slot_to_noun(*sot_w);
+        fprintf(stderr, "addr: %p\r\n", kev);
+        u3m_p("losing(trim)", kev);
         u3z(kev);
         *sot_w = 0;
         return c3y;
