@@ -8,7 +8,6 @@
   ::                                                    ::
 ~%  %k.143  ~  ~                                        ::
 |%
-++  foo  0
 ++  hoon  +
 --  =>
 ::                                                      ::
@@ -20,7 +19,6 @@
   ::
 ~%  %one  +  ~
 |%
-++  foo  0
 ::                                                      ::
 ::::    1a: unsigned arithmetic                         ::
   ::
@@ -206,7 +204,6 @@
   ::
 ~%  %two  +  ~
 |%
-++  foo  0
 ::                                                      ::
 ::::  2a: unit logic                                    ::
   ::                                                    ::
@@ -1776,7 +1773,6 @@
   ::                                                    ::
 ~%  %tri  +  ~
 |%
-++  foo  0
 ::
 ::::  3a: signed and modular ints                       ::
   ::                                                    ::
@@ -3497,7 +3493,6 @@
     %show  show
   ==
 |%
-++  foo  0
 ::
 ::::  4a: exotic bases
   ::
@@ -5699,7 +5694,6 @@
     %ut    ut
   ==
 |%
-++  foo  0
 ::
 ::::  5a: compiler utilities
   ::
@@ -8515,7 +8509,6 @@
             ::
             ref/span
         ==
-    ~+
     ::  :span: subject refurbished to reference namespace
     ::
     ^-  span
@@ -11085,7 +11078,9 @@
     [(welp "events: " (pi-mumm mon.day)) ~]
   ::
     %+  turn
-      ~(tap by hit.day)
+      %+  sort  ~(tap by hit.day)
+      |=  {a/{* @} b/{* @}}
+      (lth +.a +.b)
     |=  {nam/term num/@ud}
     :(welp (trip nam) ": " (scow %ud num))
     ["" ~]
