@@ -2052,8 +2052,12 @@
     =<  ta-done
     %-  ta-note:ta
     "talk-action stranger {(scow %p src.bol)}"
-  %-  pre-bake
-  ta-done:(ta-action:ta ost.bol act)
+  =^  mos  +>.$
+    %-  pre-bake
+    ta-done:(ta-action:ta ost.bol act)
+  =^  mow  +>.$
+    log-all-to-file
+  [(welp mos mow) +>.$]
 ::
 ::>  ||
 ::>  ||  %subscription-events
@@ -2178,7 +2182,7 @@
   |=  nom/naem
   ^-  (quip move _+>)
   =/  paf/path
-    /(scot %p our.bol)/home/(scot %da now.bol)/talk/[nom]/talk-telegrams
+    /(scot %p our.bol)/home/(scot %da now.bol)/hall/[nom]/talk-telegrams
   =+  grams:(~(got by stories) nom)
   :_  +>.$
   :_  ~
@@ -2215,21 +2219,17 @@
   =/  grams
     .^  (list telegram)
         %cx
-        /(scot %p our.bol)/home/(scot %da now.bol)/talk/[nom]/talk-telegrams
+        /(scot %p our.bol)/home/(scot %da now.bol)/hall/[nom]/talk-telegrams
     ==
-  =+  soy=(~(got by stories) nom)
-  :-  ~
-  %=  +>.$
-      stories
-    %+  ~(put by stories)  nom
-    soy(grams grams, count (lent grams))
-  ==
+  %-  pre-bake
+  %+  turn  grams
+  |=  t/telegram
+  [%story nom %gram t]
 ::
 ++  poke-talk-log                                       ::<  start logging
   ::>  starts logging story {nom}'s messages.
   ::
   |=  nom/naem
-  ~&  %talk-poke-log
   ^-  (quip move _+>)
   :-  [(log-to-file nom) ~]
   %=  +>.$
@@ -2250,9 +2250,7 @@
   ::>  for every story we're logging, (over)writes all
   ::>  their grams to log files if new ones have arrived.
   ::
-  ::TODO  re-enable and test.
   ^-  (quip move _.)
-  ?:  &  [~ .]  ::  XXX!!!!
   :_  %_  .
           log
         %-  ~(urn by log)
@@ -2274,7 +2272,7 @@
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.bol) +.t +:*tarp))
       %+  en-beam:format  [our.bol %home da+now.bol]
-      /talk-telegrams/(scot %da day)/[nom]/talk
+      /talk-telegrams/(scot %da day)/[nom]/hall
   =+  grams:(~(got by stories) nom)
   :*  ost.bol
       %info

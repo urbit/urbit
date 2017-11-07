@@ -29,4 +29,13 @@
   ::
   ++  json  a+(turn gaz gram:enjs:talk-json)            ::<  to %json
   --
+::
+++  grad
+  |%
+  ++  form  %talk-telegrams
+  ++  diff  |=((list telegram:talk) +<)
+  ++  pact  |=((list telegram:talk) +<)
+  ++  join  |=  {(list telegram:talk) (list telegram:talk)}
+            `(unit mime)`~
+  --
 --
