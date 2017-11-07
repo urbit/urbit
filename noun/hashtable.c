@@ -214,8 +214,13 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
 
   lef_w -= 5;
   bit_w = (rem_w >> lef_w);
-  rem_w = (rem_w & ((1 << lef_w) - 1));
   map_w = han_u->map_w;
+
+  if ( 0 == (map_w & (1 << bit_w)) ) {
+    return c3n;
+  }
+
+  rem_w = (rem_w & ((1 << lef_w) - 1));
   inx_w = _ch_popcount(map_w & ((1 << bit_w) - 1));
   tos_w = &(han_u->sot_w[inx_w]);
 
