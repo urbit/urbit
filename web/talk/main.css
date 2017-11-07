@@ -3,8 +3,8 @@
   font-family: 'scp'; }
 
 div.input.valid-false {
-  color: #E20B0B;
-  border-color: #E20B0B; }
+  color: #FF0808;
+  border-color: #FF0808; }
 
 .grams {
   list-style-type: none;
@@ -138,7 +138,7 @@ input.action {
   font-size: .8rem; }
 
 input.action.valid-false {
-  color: #E20B0B; }
+  color: #FF0808; }
 
 input.action::-webkit-input-placeholder {
   color: #000;
@@ -196,7 +196,7 @@ input.action:focus:-ms-input-placeholder {
     margin-left: .6rem;
     font-weight: 600;
     font-size: .8rem;
-    color: #E20B0B; }
+    color: #FF0808; }
   .menu .room:hover .close {
     display: inline; }
   .menu .room.disabled {
