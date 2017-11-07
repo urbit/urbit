@@ -23,7 +23,7 @@
 ::
 /?    151                                               ::<  hoon version
 /-    talk                                              ::<  structures
-/+    talk, time-to-id                                  ::<  libraries
+/+    talk, talk-legacy                                 ::<  libraries
 /=    seed  /~  !>(.)
 !:
 ::::
@@ -2188,6 +2188,23 @@
       our.bol
       (foal:space:userlib paf [%talk-telegrams !>(-)])
   ==
+::
+++  poke-load-legacy                                    ::<  load old talk grams
+  ::>  loads legacy talk messages into the story {nom}.
+  ::
+  |=  nom/naem
+  ^-  (quip move _+>)
+  =/  jams/json
+    .^  json
+        %cx
+        /(scot %p our.bol)/home/(scot %da now.bol)/hall/legacy-telegrams/json
+    ==
+  =+  grams=(from-json:talk-legacy jams)
+  ~&  [%loaded (lent grams)]
+  %-  pre-bake
+  %+  turn  (flop grams)
+  |=  t/telegram
+  [%story nom %gram t]
 ::
 ++  poke-talk-load                                      ::<  load from log
   ::>  loads the telegrams of story {nom} into our state,
