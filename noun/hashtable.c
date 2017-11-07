@@ -173,7 +173,7 @@ _ch_some_add(void* han_v, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
   else return _ch_node_add((u3h_node*)han_v, lef_w, rem_w, kev, use_w);
 }
 
-/* store a key-value pair in a u3h_slot (root or node, bucks work differently) */
+/* _ch_slot_put(): store a key-value pair in a u3h_slot (root or node) */
 static void
 _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w)
 {
@@ -204,6 +204,7 @@ _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w)
   }
 }
 
+/* _ch_trim_node(): trim one entry from a node slot or its children */
 static c3_o
 _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
 {
@@ -254,6 +255,7 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   }
 }
 
+/* _ch_trim_node(): trim one entry from a bucket slot */
 static c3_o
 _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
 {
@@ -293,6 +295,7 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
   return c3n;
 }
 
+/* _ch_trim_some(): trim one entry from a bucket or node slot */
 static c3_o
 _ch_trim_some(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
 {
@@ -304,6 +307,7 @@ _ch_trim_some(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   }
 }
 
+/* _ch_trim_slot(): trim one entry from a slot */
 static c3_o
 _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
 {
@@ -325,6 +329,7 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
   }
 } 
 
+/* _ch_trim_slot(): trim one entry from a hashtable */
 static c3_o
 _ch_trim_root(u3h_root* har_u)
 {
