@@ -79,10 +79,10 @@
   ^-  (list well:gall)
   =+  myr=(clan:title our)
   ?:  ?=($pawn myr)
-    [[%base %talk] [%base %dojo] ~]
+    [[%base %hall] [%base %talk] [%base %dojo] ~]
   ?:  ?=($earl myr)
     [[%home %dojo] ~]
-  [[%home %talk] [%home %dojo] ~]
+  [[%home %hall] [%home %talk] [%home %dojo] ~]
 ::
 ++  deft-fish                                           ::  default connects
   |=  our/ship
