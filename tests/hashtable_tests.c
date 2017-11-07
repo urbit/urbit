@@ -11,7 +11,7 @@ main(int argc, char* argv[])
 {
   _setup();
 
-  _test_no_cache();
+  //_test_no_cache();
   _test_cache_trimming();
 
   return 0;
@@ -32,7 +32,7 @@ static void
 _test_no_cache(void)
 {
   c3_w i_w;
-  c3_w max_w = 1000;
+  c3_w max_w = 10000;
 
   u3p(u3h_root) har_p = u3h_new();
 
@@ -51,7 +51,7 @@ _test_no_cache(void)
 static void
 _test_cache_trimming(void)
 {
-  c3_w max_w = 10000;
+  c3_w max_w = 620;
   c3_w i_w, hit_w = 0, mis_w = 0;
 
   //u3p(u3h_root) har_p = u3h_new_cache(max_w / 2);
