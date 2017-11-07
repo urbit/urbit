@@ -35,17 +35,15 @@
       */
         typedef struct {
           c3_w     map_w;
-          c3_y     arm_w;
           u3h_slot sot_w[0];
         } u3h_node;
 
-      /* u3h_root: hash root table, with future-proof clock.
-       * If clk_w is greater than zero, this table is a cache.
+      /* u3h_root: hash root table
       */
         typedef struct {
-          c3_w     clk_w;
-          c3_w     use_w;
-          c3_y     arm_w;
+          c3_w     use_w; // number of lines currently filled
+          c3_w     max_w; // number of cache lines (0 for no trimming)
+          c3_w     clk_w; // clock arm, current hash
           u3h_slot sot_w[64];
         } u3h_root;
 
@@ -53,7 +51,6 @@
       */
         typedef struct {
           c3_w    len_w;
-          c3_y    arm_w;
           u3h_slot sot_w[0];
         } u3h_buck;
 
