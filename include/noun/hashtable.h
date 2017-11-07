@@ -43,7 +43,11 @@
         typedef struct {
           c3_w     use_w; // number of lines currently filled
           c3_w     max_w; // number of cache lines (0 for no trimming)
-          c3_w     clk_w; // clock arm, current hash
+          struct {
+            c3_w  mug_w;  // current hash
+            c3_o  buc_o;  // yes if current hash has a bucket
+            c3_w  inx_w;  // index into current hash bucket iff buc_o
+          } arm_u;        // clock arm
           u3h_slot sot_w[64];
         } u3h_root;
 
