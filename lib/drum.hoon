@@ -2,7 +2,7 @@
 ::::  /hoon/drum/lib                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    sole
+/-    sole, hall
 /+    sole
 [. ^sole]
 ::                                                      ::  ::
@@ -60,8 +60,8 @@
   ==                                                    ::
 ++  target                                              ::  application target
   $:  $=  blt                                           ::  curr & prev belts
-        %+  pair       
-          (unit dill-belt:dill) 
+        %+  pair
+          (unit dill-belt:dill)
         (unit dill-belt:dill)
       ris/(unit search)                                 ::  reverse-i-search
       hit/history                                       ::  all past input
@@ -105,7 +105,7 @@
   ==                                                    ::
 ::
 ++  drum-path                                           ::  encode path
-  |=  gyl/gill:gall  
+  |=  gyl/gill:gall
   ^-  wire
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
@@ -122,7 +122,7 @@
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
       $%  {$sole-action p/sole-action}                ::
-          {$talk-command command:talk}                ::
+          {$hall-command command:hall}                ::
       ==                                              ::
     ++  lime                                          ::  update
       $%  {$dill-blit dill-blit:dill}                ::
@@ -172,7 +172,7 @@
   (se-klin gyl)
 ::
 ++  poke-exit                                         ::  shutdown
-  |=  $~ 
+  |=  $~
   se-abet:(se-blit-sys `dill-blit:dill`[%qit ~])
 ::
 ++  poke-put                                          ::  write file
@@ -353,7 +353,7 @@
 ++  se-dump                                           ::  print tanks
   |=  tac/(list tank)
   ^+  +>
-  ?.  se-ably  (se-talk tac)
+  ?.  se-ably  (se-hall tac)
   =/  wol/wall
     (zing (turn (flop tac) |=(a/tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
@@ -387,7 +387,7 @@
   |=  bil/dill-blit:dill
   +>(biz [bil biz])
 ::
-++  se-blit-sys                                       ::  output to system 
+++  se-blit-sys                                       ::  output to system
   |=  bil/dill-blit:dill  ^+  +>
   ?~  sys  ~&(%se-blit-no-sys +>)
   (se-emit [u.sys %diff %dill-blit bil])
@@ -430,13 +430,13 @@
   |=  mov/move
   %_(+> moz [mov moz])
 ::
-++  se-talk
+++  se-hall
   |=  tac/(list tank)
   ^+  +>
-  :: XX talk should be usable for stack traces, see urbit#584 which this change
+  :: XX hall should be usable for stack traces, see urbit#584 which this change
   :: closed for the problems there
   ((slog (flop tac)) +>)
-  ::(se-emit 0 %poke /drum/talk [our.hid %talk] (said:talk our.hid %drum now.hid eny.hid tac))
+  ::(se-emit 0 %poke /drum/hall [our.hid %hall] (said:hall our.hid %drum now.hid eny.hid tac))
 ::
 ++  se-text                                           ::  return text
   |=  txt/tape
@@ -444,7 +444,7 @@
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  ?.  se-ably  (se-talk [%leaf txt]~)
+  ?.  se-ably  (se-hall [%leaf txt]~)
   (se-blit %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
@@ -472,7 +472,7 @@
 ::
 ++  ta                                                ::  per target
   |_  {gyl/gill:gall target}                         ::  app and state
-  ++  ta-abet                                         ::  resolve  
+  ++  ta-abet                                         ::  resolve
     ^+  ..ta
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
@@ -806,12 +806,12 @@
       %_    pom
           cad
         ;:  welp
-          ?.  ?=($earl (clan:title p.gyl)) 
-            (cite:title p.gyl) 
+          ?.  ?=($earl (clan:title p.gyl))
+            (cite:title p.gyl)
           (scow %p p.gyl)
         ::
-          ":" 
-          (trip q.gyl) 
+          ":"
+          (trip q.gyl)
           cad.pom
         ==
       ==

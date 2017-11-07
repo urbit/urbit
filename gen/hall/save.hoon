@@ -1,6 +1,6 @@
-::  Enable channel logging to clay
+::  Save channel messages to backup
 ::
-::::  /hoon/log/talk/gen
+::::  /hoon/save/hall/gen
   ::
 /?    310
 ::
@@ -10,4 +10,4 @@
 |=  $:  {now/@da eny/@uvJ byk/beak}
         {{man/knot $~} $~}
     ==
-[%talk-log man]
+[%hall-save man]

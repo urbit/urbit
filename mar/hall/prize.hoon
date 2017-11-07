@@ -1,19 +1,19 @@
 ::
-::::  /hoon/prize/talk/mar
+::::  /mar/hall/prize/hoon
   ::
-/-    talk
-/+    talk-json
+/-    hall
+/+    hall-json
 ::
-|_  piz/prize:talk
+|_  piz/prize:hall
 ::
 ++  grab                                                ::>  convert from
   |%
-  ++  noun  prize:talk                                  ::<  from %noun
+  ++  noun  prize:hall                                  ::<  from %noun
   ++  json                                              ::>  from %json
-    =>  [. dejs:talk-json]  ::TODO  =,
+    =>  [. dejs:hall-json]  ::TODO  =,
     =,  dejs-soft:format
     |=  a/json
-    ^-  prize:talk
+    ^-  prize:hall
     =-  (need ((of -) a))
     :~  reader+pire
         public+(as circ)
@@ -25,7 +25,7 @@
 ++  grow                                                ::>  convert to
   |%
   ++  json                                              ::>  to %json
-    =>  [. enjs:talk-json]  ::TODO  =,
+    =>  [. enjs:hall-json]  ::TODO  =,
     =,  enjs:format
     %+  frond  -.piz
     ?+  -.piz  !!

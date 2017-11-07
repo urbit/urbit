@@ -1,8 +1,7 @@
 ::                                                      ::  ::
-::::  /hoon/talk/app                                    ::  ::
+::::  /app/hall/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
-::TODO  rename to hall
 ::TODO  char57 comments as line comments when regarding code.
 ::TODO  document what user-facing messages actually mean!
 ::TODO  maybe have hall accept reactions as well, redirect them to readers.
@@ -22,13 +21,13 @@
 ::      don't make the target source do that.
 ::
 /?    151                                               ::<  hoon version
-/-    talk                                              ::<  structures
-/+    talk, talk-legacy                                 ::<  libraries
+/-    hall                                              ::<  structures
+/+    hall, hall-legacy                                 ::<  libraries
 /=    seed  /~  !>(.)
 !:
 ::::
   ::
-=,  talk
+=,  hall
 =>  ::>  ||
     ::>  ||  %arch
     ::>  ||
@@ -94,11 +93,11 @@
     ::>    outgoing data                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
-      $%  {$talk-prize prize}                           ::
-          {$talk-rumor rumor}                           ::
+      $%  {$hall-prize prize}                           ::
+          {$hall-rumor rumor}                           ::
       ==                                                ::
     ++  pear                                            ::>  poke fruit
-      $%  {$talk-command command}                       ::
+      $%  {$hall-command command}                       ::
       ==                                                ::
     ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::
@@ -188,7 +187,7 @@
     ::>  tracing printf and crash.
     ::
     |=  msg/cord
-    ~|  [%talk-ta-evil msg]
+    ~|  [%hall-ta-evil msg]
     !!
   ::
   ::>  ||
@@ -438,7 +437,7 @@
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
-      =^  sir  eny.bol  ~(uniq talk bol)
+      =^  sir  eny.bol  ~(uniq hall bol)
       :_  $(ses t.ses)
       [sir aud [now.bol i.ses]]
     ::
@@ -670,7 +669,7 @@
     ::>  story core, used for doing work on a story.
     ::
     |_  ::>  nom: story name in {stories}.
-        ::>  acs: talk actions issued due to changes.
+        ::>  acs: hall actions issued due to changes.
         ::>  story is faceless to ease data access.
         ::
         $:  nom/naem
@@ -696,7 +695,7 @@
     ::+|
     ::
     ++  so-act                                          ::<  send action
-      ::>  stores a talk action.
+      ::>  stores a hall action.
       ::
       |=  act/action
       ^+  +>
@@ -1209,7 +1208,7 @@
         %poke
         /present
         [hos dap.bol]
-        [%talk-command %present nos dif]
+        [%hall-command %present nos dif]
     ==
   ::
   ::>  ||
@@ -1291,7 +1290,7 @@
     :*  %poke
         /repeat/(scot %p hos.cir)/[nom.cir]/(scot %ud (jam ses))
         [hos.cir dap.bol]
-        [%talk-command %publish out]
+        [%hall-command %publish out]
     ==
   ::
   ++  da-change-done                                    ::<  delivered messages
@@ -1939,7 +1938,7 @@
   %+  welp
     =+  rum=(feel qer det)
     ?~  rum  ~
-    [b %diff %talk-rumor u.rum]~
+    [b %diff %hall-rumor u.rum]~
   ?.  ?=($circle -.qer)  ~
   ::  kill the subscription if it's past its range.
   =-  ?:(done:- [b %quit ~]~ ~)
@@ -2028,8 +2027,8 @@
 ::>  ||
 ::+|
 ::
-++  poke-talk-command                                   ::<  accept command
-  ::>  incoming talk command. process it and update logs.
+++  poke-hall-command                                   ::<  accept command
+  ::>  incoming hall command. process it and update logs.
   ::
   |=  cod/command
   ^-  (quip move _+>)
@@ -2040,8 +2039,8 @@
     log-all-to-file
   [(welp mos mow) +>.$]
 ::
-++  poke-talk-action                                    ::<  accept action
-  ::>  incoming talk action. process it.
+++  poke-hall-action                                    ::<  accept action
+  ::>  incoming hall action. process it.
   ::
   |=  act/action
   ^-  (quip move _+>)
@@ -2049,7 +2048,7 @@
     %-  pre-bake
     =<  ta-done
     %-  ta-note:ta
-    "talk-action stranger {(scow %p src.bol)}"
+    "hall-action stranger {(scow %p src.bol)}"
   =^  mos  +>.$
     %-  pre-bake
     ta-done:(ta-action:ta ost.bol act)
@@ -2062,7 +2061,7 @@
 ::>  ||
 ::+|
 ::
-++  diff-talk-prize                                     ::<  accept prize
+++  diff-hall-prize                                     ::<  accept prize
   ::>  accept a query result.
   ::
   |=  {wir/wire piz/prize}
@@ -2082,7 +2081,7 @@
     log-all-to-file
   [(welp mos mow) +>.$]
 ::
-++  diff-talk-rumor                                     ::<  accept rumor
+++  diff-hall-rumor                                     ::<  accept rumor
   ::>  accept a query result change.
   ::
   |=  {wir/wire rum/rumor}
@@ -2099,7 +2098,7 @@
   ::
   |=  pax/path
   ^-  (quip move _+>)
-  ?:  ?=({$sole *} pax)  ~&(%talk-broker-no-sole !!)
+  ?:  ?=({$sole *} pax)  ~&(%hall-no-sole !!)
   =+  qer=(path-to-query pax)
   ?.  (leak src.bol qer)  ~&(%peer-invisible !!)
   =^  mos  +>.$
@@ -2110,7 +2109,7 @@
   ?~  piz  ~&([%query-unavailable pax] mos)
   ?~  u.piz  ~&([%query-invalid pax] mos)
   :_  mos
-  [ost.bol %diff %talk-prize u.u.piz]
+  [ost.bol %diff %hall-prize u.u.piz]
 ::
 ++  pull                                                ::<  unsubscribe
   ::>  unsubscribes.
@@ -2173,14 +2172,14 @@
 ::>  ||
 ::+|
 ::
-++  poke-talk-save                                      ::<  save as log
+++  poke-hall-save                                      ::<  save as log
   ::>  stores the telegrams of story {nom} in a log file,
-  ::>  to be re-loaded by ++poke-talk-load.
+  ::>  to be re-loaded by ++poke-hall-load.
   ::
   |=  nom/naem
   ^-  (quip move _+>)
   =/  paf/path
-    /(scot %p our.bol)/home/(scot %da now.bol)/hall/[nom]/talk-telegrams
+    /(scot %p our.bol)/home/(scot %da now.bol)/hall/[nom]/hall-telegrams
   =+  grams:(~(got by stories) nom)
   :_  +>.$
   :_  ~
@@ -2188,11 +2187,11 @@
       %info
       /jamfile
       our.bol
-      (foal:space:userlib paf [%talk-telegrams !>(-)])
+      (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
-++  poke-load-legacy                                    ::<  load old talk grams
-  ::>  loads legacy talk messages into the story {nom}.
+++  poke-load-legacy                                    ::<  load legacy grams
+  ::>  loads legacy messages into the story {nom}.
   ::
   |=  nom/naem
   ^-  (quip move _+>)
@@ -2201,30 +2200,30 @@
         %cx
         /(scot %p our.bol)/home/(scot %da now.bol)/hall/legacy-telegrams/json
     ==
-  =+  grams=(from-json:talk-legacy jams)
+  =+  grams=(from-json:hall-legacy jams)
   ~&  [%loaded (lent grams)]
   %-  pre-bake
   %+  turn  (flop grams)
   |=  t/telegram
   [%story nom %gram t]
 ::
-++  poke-talk-load                                      ::<  load from log
+++  poke-hall-load                                      ::<  load from log
   ::>  loads the telegrams of story {nom} into our state,
-  ::>  as saved in ++poke-talk-save.
+  ::>  as saved in ++poke-hall-save.
   ::
   |=  nom/naem
   ^-  (quip move _+>)
   =/  grams
     .^  (list telegram)
         %cx
-        /(scot %p our.bol)/home/(scot %da now.bol)/hall/[nom]/talk-telegrams
+        /(scot %p our.bol)/home/(scot %da now.bol)/hall/[nom]/hall-telegrams
     ==
   %-  pre-bake
   %+  turn  grams
   |=  t/telegram
   [%story nom %gram t]
 ::
-++  poke-talk-log                                       ::<  start logging
+++  poke-hall-log                                       ::<  start logging
   ::>  starts logging story {nom}'s messages.
   ::
   |=  nom/naem
@@ -2236,7 +2235,7 @@
     count:(~(got by stories) nom)
   ==
 ::
-++  poke-talk-unlog                                     ::<  stop logging
+++  poke-hall-unlog                                     ::<  stop logging
   ::>  stops logging story {nom}'s messages.
   ::
   |=  nom/naem
@@ -2270,12 +2269,12 @@
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.bol) +.t +:*tarp))
       %+  en-beam:format  [our.bol %home da+now.bol]
-      /talk-telegrams/(scot %da day)/[nom]/hall
+      /hall-telegrams/(scot %da day)/[nom]/hall
   =+  grams:(~(got by stories) nom)
   :*  ost.bol
       %info
       /jamfile
       our.bol
-      (foal:space:userlib paf [%talk-telegrams !>(-)])
+      (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 --

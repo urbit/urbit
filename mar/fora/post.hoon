@@ -1,5 +1,5 @@
 ::
-::::  /hoon/fora-post/talk/mar
+::::  /mar/fora/post/hoon
   ::
 /?    310
 /+    old-zuse

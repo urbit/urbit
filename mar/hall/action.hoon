@@ -1,29 +1,29 @@
 ::
-::::  /mar/talk/action/hoon
+::::  /mar/hall/action/hoon
   ::
-/-    talk
-/+    talk-json
+/-    hall
+/+    hall-json
 ::
-|_  act/action:talk
+|_  act/action:hall
 ::
 ++  grab                                                ::>  convert from
   |%
-  ++  noun  action:talk                                 ::<  from %noun
+  ++  noun  action:hall                                 ::<  from %noun
   ++  json                                              ::>  from %json
-    =>  [. dejs:talk-json]  ::TODO  =,
+    =>  [. dejs:hall-json]  ::TODO  =,
     =,  dejs-soft:format
     |=  a/json
-    ^-  action:talk
+    ^-  action:hall
     =-  (need ((of -) a))
     :~  create+(ot nom+so des+so sec+secu ~)
         delete+(ot nom+so why+(mu so) ~)
         depict+(ot nom+so des+so ~)
         filter+(ot nom+so fit+filt ~)
         permit+(ot nom+so inv+bo sis+(as (su fed:ag)) ~)
-        source+(ot nom+so aub+bo srs+(as sorc) ~)
+        source+(ot nom+so sub+bo srs+(as sorc) ~)
         ::
         convey+(ar thot)
-        phrase+(ot aud+audi ses+(ar spec:dejs:talk-json) ~)
+        phrase+(ot aud+audi ses+(ar spec:dejs:hall-json) ~)
         ::
         notify+(ot aud+audi pes+(mu pres) ~)
         naming+(ot aud+audi man+huma ~)
@@ -38,7 +38,7 @@
 ++  grow                                                ::>  convert to
   |%
   ++  json                                              ::>  to %json
-    =>  [. enjs:talk-json]  ::TODO  =,
+    =>  [. enjs:hall-json]  ::TODO  =,
     =,  enjs:format
     %+  frond  -.act
     ::>  only %convey has just a single piece of data.

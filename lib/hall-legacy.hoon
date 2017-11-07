@@ -1,6 +1,6 @@
 ::
 /?    310
-/-  talk
+/-  hall
 /+  old-zuse
 [old-zuse .]
 =>
@@ -56,7 +56,7 @@
 |%
 ++  from-json
   =>  [jo ..telegram]
-  |=  a/^json  ^-  (list telegram:talk)
+  |=  a/^json  ^-  (list telegram:hall)
   =-  %-  zing
       %+  turn
         (need ((ar (ot ship+(su fed:ag) thought+thot ~)) a))
@@ -153,20 +153,20 @@
   ::
   ++  convert-telegram
     |=  t/telegram
-    ^-  (list telegram:talk)
+    ^-  (list telegram:hall)
     =+  aud=(convert-audience q.q.t)
     %+  turn  (convert-speech r.r.q.t)
-    |=  s/speech:talk
+    |=  s/speech:hall
     [p.t p.q.t aud p.r.q.t s]
   ::
   ++  convert-audience
     |=  a/audience
-    ^-  audience:talk
+    ^-  audience:hall
     %-  sy
-    ^-  (list circle:talk)
+    ^-  (list circle:hall)
     %+  murn  ~(tap in ~(key by a))
     |=  p/partner
-    ^-  (unit circle:talk)
+    ^-  (unit circle:hall)
     ?-  -.p
       $&  :+  ~  p.p.p
           ?:  ?|  =(q.p.p 'porch')
@@ -180,13 +180,13 @@
   ::
   ++  convert-speech
     |=  s/speech
-    ^-  (list speech:talk)
+    ^-  (list speech:hall)
     ?+  -.s  ~&([%ignoring -.s] ~)
       $lin  [%lin !p.s q.s]~
       $url  [%url p.s]~
       $exp  [%exp p.s ~]~
       $ire  %+  turn  (convert-speech q.s)
-            |=  i/speech:talk
+            |=  i/speech:hall
             [%ire p.s i]
       $app  [%app p.s [%lin | q.s]]~
       $fat  ?:  &(?=($exp -.q.s) ?=($tank -.p.s))

@@ -1,14 +1,14 @@
 ::
-::::  /hoon/talk/lib
+::::  /lib/hall/hoon
   ::
   ::  This file is in the public domain.
   ::
 /?    310
-/-    talk
+/-    hall
 ::
 ::::
   ::
-[. ^talk]
+[. ^hall]
 |_  bol/bowl:gall
 ::
 ::TODO  add to zuse?
@@ -25,7 +25,7 @@
 ++  said-url                                            ::  app url
   |=  url/purl:eyre
   :^  ost.bol  %poke  /said-url
-  :+  [our.bol %talk]  %talk-action
+  :+  [our.bol %hall]  %hall-action
   ^-  action
   :+  %phrase
     [[our.bol %inbox] ~ ~]
@@ -33,7 +33,7 @@
 ::
 ++  said                                                ::  app message
   |=  mes/(list tank)
-  :-  %talk-action
+  :-  %hall-action
   ^-  action
   :-  %phrase
   :-  [[our.bol %inbox] ~ ~]

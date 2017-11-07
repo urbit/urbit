@@ -1,6 +1,6 @@
-::  Save channel messages to backup
+::  Load legacy messages from backup
 ::
-::::  /hoon/save/talk/gen
+::::  /gen/hall/load-old/hoon
   ::
 /?    310
 ::
@@ -10,4 +10,4 @@
 |=  $:  {now/@da eny/@uvJ byk/beak}
         {{man/knot $~} $~}
     ==
-[%talk-save man]
+[%load-legacy man]

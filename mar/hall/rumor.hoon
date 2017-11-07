@@ -1,19 +1,19 @@
 ::
-::::  /hoon/rumor/talk/mar
+::::  /mar/hall/rumor/hoon
   ::
-/-    talk
-/+    talk-json
+/-    hall
+/+    hall-json
 ::
-|_  rum/rumor:talk
+|_  rum/rumor:hall
 ::
 ++  grab                                                ::>  convert from
   |%
-  ++  noun  rumor:talk                                  ::<  from %noun
+  ++  noun  rumor:hall                                  ::<  from %noun
   ++  json                                              ::>  from %json
-    =>  [. dejs:talk-json]  ::TODO  =,
+    =>  [. dejs:hall-json]  ::TODO  =,
     =,  dejs-soft:format
     |=  a/json
-    ^-  rumor:talk
+    ^-  rumor:hall
     =-  (need ((of -) a))
     :~  reader+rure
         public+(ot add+bo cir+circ ~)
@@ -25,7 +25,7 @@
 ++  grow                                                ::>  convert to
   |%
   ++  json                                              ::>  to %json
-    =>  [. enjs:talk-json]  ::TODO  =,
+    =>  [. enjs:hall-json]  ::TODO  =,
     =,  enjs:format
     %+  frond  -.rum
     ?+  -.rum  !!

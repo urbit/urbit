@@ -1,6 +1,6 @@
 ::  Disable channel logging to clay
 ::
-::::  /hoon/unlog/talk/gen
+::::  /hoon/unlog/hall/gen
   ::
 /?    310
 ::
@@ -10,4 +10,4 @@
 |=  $:  {now/@da eny/@uvJ byk/beak}
         {{man/knot $~} $~}
     ==
-[%talk-unlog man]
+[%hall-unlog man]

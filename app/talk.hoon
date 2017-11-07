@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/talk-agent/app                              ::  ::
+::::  /app/talk/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
 ::TODO  make sure glyphs only get bound when joins succeed
@@ -19,13 +19,13 @@
 ::>  subscribes to.
 ::
 /?    151                                               ::<  hoon version
-/-    talk, sole                                        ::<  structures
-/+    talk, sole                                        ::<  libraries
+/-    hall, sole                                        ::<  structures
+/+    hall, sole                                        ::<  libraries
 /=    seed  /~  !>(.)
 !:
 ::::
   ::
-=,  talk
+=,  hall
 =,  sole
 =>  ::>  ||
     ::>  ||  %arch
@@ -61,8 +61,8 @@
       $%  {$sole-effect sole-effect}                    ::
       ==                                                ::
     ++  pear                                            ::>  poke fruit
-      $%  {$talk-command command}                       ::
-          {$talk-action action}                         ::
+      $%  {$hall-command command}                       ::
+          {$hall-action action}                         ::
       ==                                                ::
     ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::
@@ -131,7 +131,7 @@
 ::
 ++  broker                                              ::<  broker ship + name
   ^-  dock
-  :_  %talk-guardian
+  :_  %hall
   (true-self our.bol)
 ::
 ++  inbox                                               ::<  reader's circle name
@@ -182,7 +182,7 @@
 ::
 ++  ta                                                  ::  per transaction
   ::>  for every transaction/event (poke, peer etc.)
-  ::>  talk-agent receives, the ++ta transaction core is
+  ::>  talk receives, the ++ta transaction core is
   ::>  called.
   ::>  in processing transactions, ++ta may modify app
   ::>  state, or create moves. these moves get produced
@@ -483,7 +483,7 @@
             %poke
             /reader/action
             broker
-            [%talk-action act]
+            [%hall-action act]
         ==
       ==
     ::
@@ -2096,21 +2096,21 @@
   |=  pax/path
   ^-  (quip move _+>)
   ?.  (team:title src.bol our.bol)
-    ~&  [%peer-talk-reader-stranger src.bol]
+    ~&  [%peer-talk-stranger src.bol]
     [~ +>]
   ?.  ?=({$sole *} pax)
-    ~&  [%peer-talk-reader-strange pax]
+    ~&  [%peer-talk-strange pax]
     [~ +>]
   ta-done:ta-console:ta
 ::
-++  diff-talk-prize                                     ::<  accept query answer
+++  diff-hall-prize                                     ::<  accept query answer
   ::>
   ::
   |=  {way/wire piz/prize}
   ^-  (quip move _+>)
   ta-done:(ta-take:ta piz)
 ::
-++  diff-talk-rumor                                     ::<  accept query change
+++  diff-hall-rumor                                     ::<  accept query change
   ::>
   ::
   |=  {way/wire rum/rumor}

@@ -1,12 +1,12 @@
 ::  Converts the result of an 'issues' event into a issues:gh.
 /-  gh
-/+  gh-parse, talk, old-zuse
+/+  gh-parse, hall, old-zuse
 =,  old-zuse
 |_  issue-comment/issue-comment:gh
 ++  grow
   |%
-  ++  talk-speeches
-    ^-  (list speech:talk)
+  ++  hall-speeches
+    ^-  (list speech:hall)
     :_  ~
     =+  ^=  txt
         ;:  (cury cat 3)

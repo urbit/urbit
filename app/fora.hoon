@@ -3,8 +3,8 @@
 ::
 ::TODO  maybe stop relying on %hood one day.
 ::
-/-  talk
-/+  talk, write, time-to-id
+/-  hall
+/+  hall, write, time-to-id
 =,  format
 =,  title
 ::
@@ -16,7 +16,7 @@
       {$info wire @p toro:clay}
   ==
 ++  poke
-  $%  {$talk-action action:talk}
+  $%  {$hall-action action:hall}
       {$write-fora-post spur ship cord cord}
       {$write-comment spur ship cord}
   ==
@@ -34,9 +34,9 @@
   ==
 ::
 ++  act
-  |=  a/action:talk
+  |=  a/action:hall
   ^-  move
-  [ost.bol %poke / [our.bol %talk-guardian] %talk-action a]
+  [ost.bol %poke / [our.bol %hall] %hall-action a]
 ::
 ++  ra-base-hart  .^(hart:eyre %e /(scot %p our.bol)/host/(scot %da now.bol))
 ::
@@ -72,7 +72,7 @@
       :+  %phrase  [[our.bol %fora-comments] ~ ~]
       :_  ~
       :+  %app  dap.bol
-      ^-  speech:talk
+      ^-  speech:hall
       :+  %fat
         :+  %name
           =+  nam=?~(sup "" (trip i.sup))

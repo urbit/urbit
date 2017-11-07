@@ -1,6 +1,6 @@
-::  Load legacy messages from backup
+::  Load channel messages from backup
 ::
-::::  /gen/talk/load-old/hoon
+::::  /hoon/load/hall/gen
   ::
 /?    310
 ::
@@ -10,4 +10,4 @@
 |=  $:  {now/@da eny/@uvJ byk/beak}
         {{man/knot $~} $~}
     ==
-[%load-legacy man]
+[%hall-load man]

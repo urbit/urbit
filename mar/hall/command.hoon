@@ -1,11 +1,11 @@
 ::
-::::  /hoon/command/talk/mar
+::::  /mar/hall/command/hoon
   ::
 /?    310
-/-    talk
-/+    talk-json
+/-    hall
+/+    hall-json
 ::
-=,  talk
+=,  hall
 |_  cod/command
 ::
 ++  grab                                                ::  convert from

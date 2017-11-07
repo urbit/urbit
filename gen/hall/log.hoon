@@ -1,6 +1,6 @@
-::  Load channel messages from backup
+::  Enable channel logging to clay
 ::
-::::  /hoon/load/talk/gen
+::::  /hoon/log/hall/gen
   ::
 /?    310
 ::
@@ -10,4 +10,4 @@
 |=  $:  {now/@da eny/@uvJ byk/beak}
         {{man/knot $~} $~}
     ==
-[%talk-load man]
+[%hall-log man]

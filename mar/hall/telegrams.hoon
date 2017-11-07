@@ -1,14 +1,14 @@
 ::
-::::  /hoon/telegrams/talk/mar
+::::  /mar/hall/telegrams/hoon
   ::
-/-    talk
-/+    talk-json
+/-    hall
+/+    hall-json
 ::
-|_  gaz/(list telegram:talk)
+|_  gaz/(list telegram:hall)
 ::
 ++  grab                                                ::>  convert from
   |%
-  ++  noun  (list telegram:talk)                        ::<  from %noun
+  ++  noun  (list telegram:hall)                        ::<  from %noun
   ::
   ++  mime                                              ::>  from %mime
     |=  ^mime
@@ -17,8 +17,8 @@
   ++  json                                              ::>  from %json
     =,  dejs-soft:format
     |=  a/json
-    ^-  (list telegram:talk)
-    (need ((ar gram:dejs:talk-json) a))
+    ^-  (list telegram:hall)
+    (need ((ar gram:dejs:hall-json) a))
   --
 ::
 ++  grow                                                ::>  convert to
@@ -27,15 +27,15 @@
     :-  /text/json
     (as-octs:mimes:html (crip (en-json:html json)))
   ::
-  ++  json  a+(turn gaz gram:enjs:talk-json)            ::<  to %json
+  ++  json  a+(turn gaz gram:enjs:hall-json)            ::<  to %json
   --
 ::
 ++  grad
   |%
-  ++  form  %talk-telegrams
-  ++  diff  |=((list telegram:talk) +<)
-  ++  pact  |=((list telegram:talk) +<)
-  ++  join  |=  {(list telegram:talk) (list telegram:talk)}
+  ++  form  %hall-telegrams
+  ++  diff  |=((list telegram:hall) +<)
+  ++  pact  |=((list telegram:hall) +<)
+  ++  join  |=  {(list telegram:hall) (list telegram:hall)}
             `(unit mime)`~
   --
 --

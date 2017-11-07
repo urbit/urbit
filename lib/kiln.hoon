@@ -73,7 +73,7 @@
           {$warp wire sock riff}                        ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
-      $%  {$talk-command command:talk}                  ::
+      $%  {$hall-command command:hall}                  ::
           {$kiln-merge kiln-merge}                      ::
           {$helm-reload (list term)}                    ::
           {$helm-reset $~}                              ::
@@ -315,7 +315,7 @@
   |=  mes/(list tank)
   ((slog mes) ..spam)
 ::     %-  emit :: XX not displayed/immediately
-::     [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
+::     [%poke /kiln/spam [our %hall] (said our %kiln now eny mes)]
 ::
 ++  auto
   |=  kiln-sync

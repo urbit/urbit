@@ -2,15 +2,15 @@
 ::::  /hoon/hood/app                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
-/+  sole, talk, helm, kiln, drum, write, womb           ::  libraries
-[. helm kiln drum]                                      
+/+  sole, helm, kiln, drum, write, womb                 ::  libraries
+[. helm kiln drum]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 !:
 =>  |%                                                  ::  module boilerplate
-    ++  hood-old                                        :: 
-      {?($0 $1) lac/(map @tas hood-part-old)}           :: 
+    ++  hood-old                                        ::
+      {?($0 $1) lac/(map @tas hood-part-old)}           ::
     ++  hood-1                                          ::
       {$1 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::

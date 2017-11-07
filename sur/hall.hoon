@@ -1,6 +1,6 @@
 ::
-::::  /hoon/talk/sur
-  !:
+::::  /sur/hall/hoon
+  ::
 |%
 ::
 ::TODO  use different words for different kinds of burdens
@@ -52,7 +52,6 @@
   $%  {$reader prize-reader}                            ::<  /reader
       {$public cis/(set circle)}                        ::<  /public
       {$burden sos/(map naem burden)}                   ::<  /burden
-      ::TODO  do we ever use remote things from remote circles?
       {$circle package}                                 ::<  /circle
   ==                                                    ::
 ++  prize-reader                                        ::

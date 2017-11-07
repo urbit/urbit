@@ -1,7 +1,7 @@
 ::
-::::  /lib/talk-json/hoon
+::::  /lib/hall-json/hoon
   ::
-/-    talk
+/-    hall
 /+    old-zuse
 ::
 ::>  proposed rules for sur-json conversion, adhered to below:
@@ -23,7 +23,7 @@
 ::
 |_  bol/bowl:gall
 ++  en-tape                                             ::>  sur to tape
-  =,  talk
+  =,  hall
   |%
   ++  circ                                              ::>  circle
     |=  a/circle
@@ -44,7 +44,7 @@
   --
 ::
 ++  de-tape                                             ::>  tape to sur (parse)
-  =,  talk
+  =,  hall
   |%
   ++  circ                                              ::>  circle
     ;~((glue fas) ;~(pfix sig fed:ag) urt:ab)
@@ -75,7 +75,7 @@
   --
 ::
 ++  enjs                                                ::>  sur to json
-  =,  talk
+  =,  hall
   =,  enjs:format
   |%
   ::TODO  these first few should probably make their way
@@ -377,7 +377,7 @@
   --
 ::
 ++  dejs                                                ::>  json to sur
-  =,  talk
+  =,  hall
   =,  dejs-soft:format
   |%
   ::TODO  these first few should maybe make their way
