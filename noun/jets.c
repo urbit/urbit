@@ -378,9 +378,27 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
     return u3_none;
   }
   else {
+#ifdef U3_MEMORY_DEBUG
+    c3_w cod_w;
+
+    {
+      char soc_c[6];
+
+      memset(soc_c, 0, 6);
+      strncpy(soc_c, cop_u->cos_c, 5);
+      soc_c[5] = 0;
+      cod_w = u3i_string(soc_c);
+
+      cod_w = u3a_lush(cod_w);
+    }
+#endif
+
     if ( _(ham_u->ice) ) {
       u3_weak pro = ham_u->fun_f(cor);
 
+#ifdef U3_MEMORY_DEBUG
+      u3a_lop(cod_w);
+#endif
       if ( u3_none != pro ) {
         u3z(cor);
         return pro;
@@ -393,6 +411,9 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
       pro = ham_u->fun_f(u3k(cor));
       ham_u->ice = c3n;
 
+#ifdef U3_MEMORY_DEBUG
+      u3a_lop(cod_w);
+#endif
       if ( u3_none == pro ) {
         u3z(cor);
         return pro;
@@ -413,6 +434,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
         return u3m_bail(c3__fail);
       }
       else {
+
 #if 0
         fprintf(stderr, "test: %s %s\r\n",
                cop_u->cos_c,
