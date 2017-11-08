@@ -3,6 +3,7 @@
 static void _setup(void);
 static void _test_cache_trimming(void);
 static void _test_no_cache(void);
+static void _test_skip_slot(void);
 
 /* main(): run all test cases.
 */
@@ -12,7 +13,8 @@ main(int argc, char* argv[])
   _setup();
 
   //_test_no_cache();
-  _test_cache_trimming();
+  _test_skip_slot();
+  //_test_cache_trimming();
 
   return 0;
 }
@@ -46,6 +48,38 @@ _test_no_cache(void)
   printf("test_no_cache: ok\n");
 }
 
+/* _test_skip_slot():
+*/
+static void
+_test_skip_slot(void)
+{
+  //  root table
+  {
+    c3_w mug_w = 0x17 << 25;
+    c3_w res_w = _ch_skip_slot(mug_w, 25);
+    c3_assert((0x18 << 25) == res_w);
+  }
+
+  {
+    c3_w mug_w = 63 << 25; //  6 bits, all ones
+    c3_w res_w = _ch_skip_slot(mug_w, 25);
+    c3_assert(0 == res_w);
+  }
+
+  //  child nodes
+  {
+    c3_w mug_w = 17 << 20;
+    c3_w res_w = _ch_skip_slot(mug_w, 20);
+    c3_assert((18 << 20) == res_w);
+  }
+
+  {
+    c3_w mug_w = 31 << 20; //  5 bits, all ones
+    c3_w res_w = _ch_skip_slot(mug_w, 20);
+    c3_assert((1 << 25) == res_w);
+  }
+}
+
 /* _test_cache_trimming(): ensure a caching hashtable removes stale items.
 */
 static void
@@ -62,7 +96,13 @@ _test_cache_trimming(void)
     u3h_put(har_p, i_w, i_w + max_w);
   }
 
-  c3_assert( ( max_w + max_w - 1) == u3h_get(har_p, max_w - 1) );
-  c3_assert( ( max_w / 10 ) == har_u->use_w );
-  printf("test_cache_trimming: ok\n");
+  if ( ( max_w + max_w - 1) != u3h_get(har_p, max_w - 1) ) {
+    fprintf(stderr, "fail\r\n");
+    exit(1);
+  }
+  if ( ( max_w / 10 ) != har_u->use_w ) {
+    fprintf(stderr, "fail\r\n");
+    exit(1);
+  }
+  fprintf(stderr, "test_cache_trimming: ok\n");
 }

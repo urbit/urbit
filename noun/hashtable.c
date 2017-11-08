@@ -9,6 +9,9 @@ _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w);
 static c3_o
 _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w);
 
+c3_w
+_ch_skip_slot(c3_w mug_w, c3_w lef_w);
+
 /* u3h_new_cache(): create hashtable with bounded size.
 */
 u3p(u3h_root)
@@ -217,6 +220,7 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   map_w = han_u->map_w;
 
   if ( 0 == (map_w & (1 << bit_w)) ) {
+    fprintf(stderr, "empty slot, lef_w: %d rem_w: %d\r\n", lef_w, rem_w);
     return c3n;
   }
 
@@ -297,6 +301,7 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
   }
 
   har_u->arm_u.buc_o = c3n;
+  har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & 0x7FFFFFFF; // modulo 2^31
   return c3n;
 }
 
@@ -312,24 +317,45 @@ _ch_trim_some(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   }
 }
 
+/* _ch_skip_slot(): increment arm over hash prefix.
+*/
+c3_w
+_ch_skip_slot(c3_w mug_w, c3_w lef_w)
+{
+  c3_w hig_w = mug_w >> lef_w;
+  c3_w new_w = (hig_w + 1) & ((1 << (31 - lef_w)) - 1); // modulo 2^(31 - lef_w)
+  return new_w << lef_w;
+}
+
 /* _ch_trim_slot(): trim one entry from a slot */
 static c3_o
 _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
 {
+  fprintf(stderr, "trim_slot lef_w: %d\r\n", lef_w);
   if ( _(u3h_slot_is_null(*sot_w)) ) {
+    fprintf(stderr, "skipping null slot\r\n");
+    har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3n;
   }
   else if ( _(u3h_slot_is_node(*sot_w)) ) {
+    fprintf(stderr, "recurse into table\r\n");
     return _ch_trim_some(har_u, sot_w, lef_w, rem_w);
   }
   else if ( _(u3h_slot_is_warm(*sot_w)) ) {
+    fprintf(stderr, "mark cold and increment\r\n");
     *sot_w = u3h_noun_be_cold(*sot_w);
+    if ( c3n == har_u->arm_u.buc_o ) {
+      har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & 0x7FFFFFFF; // modulo 2^31
+    }
     return c3n;
   }
   else {
+    fprintf(stderr, "remove slot\r\n");
     u3_noun kev = u3h_slot_to_noun(*sot_w);
     *sot_w = 0;
     u3z(kev);
+
+    har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3y;
   }
 } 
@@ -355,13 +381,16 @@ u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w)
 
   while ( har_u->use_w > n_w ) {
     if ( c3y == _ch_trim_root(har_u) ) {
+      fprintf(stderr, "use_w %d -> %d\r\n", har_u->use_w, har_u->use_w - 1);
       har_u->use_w -= 1;
     }
+    /* TODO: remove
     if ( c3n == har_u->arm_u.buc_o ) {
       // lower 31 bits of increment (next mug)
-      har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & ((1 << 31) - 1);
+      har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & 0x7FFFFFFF;
       har_u->arm_u.inx_w = 0;
     }
+    */
   }
 }
 
