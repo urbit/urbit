@@ -67,22 +67,23 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
-  u3_Host.ops_u.gab = c3n;
-  u3_Host.ops_u.loh = c3n;
   u3_Host.ops_u.dem = c3n;
-  u3_Host.ops_u.fog = c3n;
-  u3_Host.ops_u.fak = c3n;
-  u3_Host.ops_u.tex = c3n;
-  u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.veb = c3n;
-  u3_Host.ops_u.qui = c3n;
-  u3_Host.ops_u.nuu = c3n;
+  u3_Host.ops_u.fak = c3n;
+  u3_Host.ops_u.fog = c3n;
+  u3_Host.ops_u.gab = c3n;
+  u3_Host.ops_u.git = c3n;
+  u3_Host.ops_u.net = c3n;
   u3_Host.ops_u.mem = c3n;
+  u3_Host.ops_u.nuu = c3n;
+  u3_Host.ops_u.pro = c3n;
+  u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.rep = c3n;
+  u3_Host.ops_u.tex = c3n;
+  u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDXR")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"G:B:A:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -107,6 +108,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'w': {
         u3_Host.ops_u.who_c = _main_presig(optarg);
         u3_Host.ops_u.nuu = c3y;
+        break;
+      }
+      case 'u': {
+        u3_Host.ops_u.url_c = strdup(optarg);
         break;
       }
       case 't': {
@@ -157,12 +162,8 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.rep = c3y;
         return c3y;
       }
-      case 'L': { u3_Host.ops_u.loh = c3y; break; }
-      case 'F': {
-        u3_Host.ops_u.loh = c3y;
-        u3_Host.ops_u.fak = c3y;
-        break;
-      }
+      case 'N': { u3_Host.ops_u.net = c3y; break; }
+      case 'F': { u3_Host.ops_u.fak = c3y; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
@@ -172,10 +173,18 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
+      case 's': { u3_Host.ops_u.git = c3y; break; }
       case '?': default: {
         return c3n;
       }
     }
+  }
+
+  if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3y ) {
+    fprintf(stderr, "-N only makes sense with -F\n");
+    return c3n;
+  } else if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3n ) {
+    u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
   }
 
   if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
@@ -191,13 +200,13 @@ _main_getopt(c3_i argc, c3_c** argv)
                     "the initial sync path with -A\n");
     return c3n;
   }
-   
+
   if ( u3_Host.ops_u.gen_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
     fprintf(stderr, "-G only makes sense when creating a new galaxy\n");
     return c3n;
   }
-  
+
   if ( u3_Host.ops_u.tic_c != 0 && ( u3_Host.ops_u.imp_c != 0 ||
                                      u3_Host.ops_u.nuu   == c3n ) ) {
     fprintf(stderr, "-t only makes sense when creating a new non-galaxy\n");
@@ -210,10 +219,10 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   if ( u3_Host.ops_u.tic_c == 0 && u3_Host.ops_u.who_c != 0 ) {
-      c3_c tic_c[29];
-      printf("your ticket: ~");
-      scanf("%28s",tic_c);
-      u3_Host.ops_u.tic_c = _main_presig(tic_c);
+    c3_c tic_c[29];
+    printf("your ticket: ~");
+    scanf("%28s",tic_c);
+    u3_Host.ops_u.tic_c = _main_presig(tic_c);
   }
 
   if ( c3y == u3_Host.ops_u.bat ) {
@@ -223,6 +232,24 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.pil_c != 0) {
     fprintf(stderr, "-B only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
+    fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
+    return c3n;
+
+  } else if ( u3_Host.ops_u.nuu == c3y
+           && u3_Host.ops_u.url_c == 0
+           && u3_Host.ops_u.git == c3n ) {
+
+    u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/latest.pill";
+
+  } else if ( u3_Host.ops_u.nuu == c3y
+           && u3_Host.ops_u.url_c == 0
+           && u3_Host.ops_u.arv_c == 0 ) {
+
+    fprintf(stderr, "-s only makes sense with -A\n");
     return c3n;
   }
 
@@ -272,42 +299,56 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u3_ve_usage(c3_i argc, c3_c** argv)
 {
-#if 0
-  c3_c *use_c[] = {"Usage: %s [options...] computer\n",
-    "-c pier       Create a new urbit in pier/\n",
-    "-w name       Immediately upgrade to ~name\n",
-    "-t ticket     Use ~ticket automatically\n",
-    "-I galaxy     Start as ~galaxy\n",
+  c3_c *use_c[] = {
+    "Urbit: a personal server operating function\n",
+    "https://urbit.org\n",
+    "Version " URBIT_VERSION "\n",
+    "\n",
+    "Usage: %s [options...] ship_name\n",
+    "where ship_name is a @p phonetic representation of an urbit address\n",
+    "without the leading '~', and options is some subset of the following:\n",
+    "\n",
     "-A dir        Use dir for initial galaxy sync\n",
-    "-F            Fake keys\n",
-    "-L            Local-only network\n",
-    "-B pill       Bootstrap from this pill\n",
-    "-n host       Set unix hostname\n",
-    "-p ames_port  Set the HTTP port to bind to\n",
-    "-v            Verbose\n",
-    "-q            Quiet\n",
-    "-D            Recompute from events\n",
-    "-P            Profiling\n",
     "-b            Batch create\n",
+    "-B pill       Bootstrap from this pill\n",
+    "-c pier       Create a new urbit in pier/\n",
     "-d            Daemon mode\n",
+    "-D            Recompute from events\n",
+    "-F            Fake keys\n",
+    "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
-    "-x            Exit immediately\n",
-    "-r host       Initial peer address\n",
+    "-I galaxy     Start as ~galaxy\n",
+    "-k stage      Start at Hoon kernel version stage\n",
+    "-L            Local-only network\n",
     "-l port       Initial peer port\n",
     "-M            Memory madness\n",
-    "-f            Fuzz testing\n",
-    "-k stage      Start at Hoon kernel version stage\n",
+    "-n host       Set unix hostname\n",
+    "-p ames_port  Set the HTTP port to bind to\n",
+    "-P            Profiling\n",
+    "-q            Quiet\n",
+    "-r host       Initial peer address\n",
     "-R            Report urbit build info\n",
-    "-Xwtf         Skip last event\n"};
-#else
-  c3_c *use_c[] = {
-    "simple usage: \n",
+    "-s            Pill URL from arvo git hash\n",
+    "-t ticket     Use ~ticket automatically\n",
+    "-u url        URL from which to download pill\n",
+    "-v            Verbose\n",
+    "-w name       Immediately upgrade to ~name\n",
+    "-x            Exit immediately\n",
+    "-Xwtf         Skip last event\n",
+    "\n",
+    "Development Usage:\n",
+    "   To create a development ship, use a fakezod:\n",
+    "   %s -FI zod -A /path/to/arvo/folder -B /path/to/pill -c zod\n",
+    "\n",
+    "   For more information about developing on urbit, see:\n",
+    "   https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md\n",
+    "\n",
+    "Simple Usage: \n",
     "   %s -c <mycomet> to create a comet (anonymous urbit)\n",
     "   %s -w <myplanet> -t <myticket> if you have a ticket\n",
     "   %s <myplanet or mycomet> to restart an existing urbit\n",
     0
   };
-#endif
 
   c3_i i;
   for ( i=0; use_c[i]; i++ ) {
@@ -541,7 +582,9 @@ main(c3_i   argc,
     u3m_boot(u3_Host.ops_u.nuu,
              u3_Host.ops_u.gab,
              u3_Host.dir_c,
-             u3_Host.ops_u.pil_c);
+             u3_Host.ops_u.pil_c,
+             u3_Host.ops_u.url_c,
+             u3_Host.ops_u.arv_c);
 
     /*  Start Arvo.
     */

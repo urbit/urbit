@@ -50,8 +50,9 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  if ( c3y == u3_Host.ops_u.loh ) {
+  if ( c3n == u3_Host.ops_u.net ) {
     *por_s = 31337 + imp_y;
+    uL(fprintf(uH, "ames: czar: localhost-only mode\n"));
     return 0x7f000001;
   }
   else {
