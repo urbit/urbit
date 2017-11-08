@@ -79,6 +79,26 @@
     return ret;
   }
 
+#if 0
+  static u3_noun 
+  _play_loc_term(u3_noun van,
+                 u3_noun loc)
+  {
+    u3_noun fop = u3kb_flop(u3k(u3h(loc)));
+    u3_noun nam = ((0 == fop) ? c3__none : u3k(u3h(fop)));
+    u3_noun lys = u3nt(u3k(u3h(u3t(loc))), u3k(u3t(u3t(loc))), u3_nul);
+    u3_noun rup = u3nc(nam, lys);
+    c3_c*   pre_c = u3m_pretty(rup);
+    u3_noun pro   = u3i_string(pre_c);
+
+    u3z(fop);
+    u3z(rup);
+    free(pre_c);
+
+    return pro;
+  }
+#endif
+
 #if 1
   static u3_noun
   _play_cnts(u3_noun van,
@@ -475,6 +495,14 @@
       {
         u3_noun ret;
 
+#if 0
+        {
+          u3_noun cog = _play_loc_term(van, p_gen);
+
+          u3t_heck(cog);
+          u3z(cog);
+        }
+#endif
         u3t_push(u3nc(c3__mean, _play_loc(van, p_gen)));
         {
           ret = _play_x(van, sut, q_gen);
@@ -539,5 +567,20 @@
              u3_noun sut,
              u3_noun gen)
   {
+#if 1
+    c3_m    fun_m = 144 + c3__play;
+    u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
+    u3_noun pro   = u3z_find_3(fun_m, vrf, sut, gen);
+
+    if ( u3_none != pro ) {
+      return pro;
+    }
+    else {
+      pro = _cqfu_play(van, sut, gen);
+
+      return u3z_save_3(fun_m, vrf, sut, gen, pro);
+    }
+#else
     return _cqfu_play(van, sut, gen);
+#endif
   }
