@@ -111,6 +111,13 @@ let
   };
   ld = ld_tpoechtrager;
 
+  ranlib = native.make_derivation rec {
+    name = "ranlib";
+    inherit host;
+    src = ld.src;
+    builder = ./ranlib_builder.sh;
+  };
+
   # TODO: add instructions for building the SDK tarball, probably want a copy of
   # the script from osxcross.
   sdk = native.make_derivation rec {
@@ -169,7 +176,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit binutils xar clang tapi sdk ld toolchain;
+    inherit binutils xar clang tapi sdk ld ranlib toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };

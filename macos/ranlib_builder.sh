@@ -4,16 +4,15 @@ tar -xf $src
 mv cctools-port-* cctools-port
 
 cd cctools-port
-for patch in $patches; do
-  echo applying patch $patch
-  patch -p1 -i $patch
-done
+#for patch in $patches; do
+#  echo applying patch $patch
+#  patch -p1 -i $patch
+#done
 cd ..
 
-mv cctools-port/cctools/ld64 ld64
-mv cctools-port/cctools/include include
+mv cctools-port/cctools/misc misc
+# mv cctools-port/ccltools/include include
 rm -r cctools-port
-rm -r ld64/src/other
 
 mkdir build
 cd build

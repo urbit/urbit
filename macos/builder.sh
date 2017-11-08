@@ -2,9 +2,9 @@ source $setup
 
 mkdir -p $out/bin
 
-eval "g++ $CXXFLAGS $wrapper/*.cpp -o $out/bin/$host-wrapper"
-
 cd $out/bin
+
+eval "g++ $CXXFLAGS $wrapper/*.cpp -o $host-wrapper"
 
 # TODO: why does incorporating binutils ar or ranlib result in
 # linker errors in macos.p-load?  Maybe ar does a bad job at
@@ -16,11 +16,14 @@ cd $out/bin
 ln -s $clang/bin/llvm-ar llvm-ar
 ln -s $binutils/bin/$host-ar gnu-ar
 ln -s $xar/bin/xar xar
-# ln -s xar $host-ar
+ln -s llvm-ar $host-ar
+
+ln -s $binutils/bin/$host-ranlib gnu-ranlib
+# ln -s $binutils/bin/$host-ranlib $host-ranlib
 
 ln -s $binutils/bin/$host-strip $host-strip
+
 ln -s $binutils/bin/$host-nm $host-nm
-ln -s $binutils/bin/$host-ranlib $host-ranlib
 
 ln -s $host-wrapper $host-cc
 ln -s $host-wrapper $host-c++
