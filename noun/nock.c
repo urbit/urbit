@@ -119,7 +119,7 @@ _n_hint(u3_noun zep,
       return _n_nock_on(bus, nex);
 #else
       {
-        u3_noun pro = u3z_find_2(c3__nock, bus, nex);
+        u3_noun pro = u3z_find_2(144 + c3__nock, bus, nex);
 
         if ( pro != u3_none ) {
           u3z(bus); u3z(nex);
@@ -128,7 +128,7 @@ _n_hint(u3_noun zep,
         pro = _n_nock_on(u3k(bus), u3k(nex));
 
         if ( &(u3H->rod_u) != u3R ) {
-          u3z_save_2(c3__nock, bus, nex, pro);
+          u3z_save_2(144 + c3__nock, bus, nex, pro);
         }
 
         u3z(bus); u3z(nex);
