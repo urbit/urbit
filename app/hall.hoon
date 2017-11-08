@@ -543,10 +543,23 @@
       ~&([%ignoring-prize -.piz] +>)
       ::
         $burden
-      %+  roll  ~(tap by sos.piz)
-      |=  {{n/naem b/burden} _..ta-take}
-      =<  so-done
-      (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
+      =+  sos=~(tap by sos.piz)
+      |-  ^+  ..ta-take
+      ?~  sos  ..ta-take
+      =.  ..ta-take
+        =+  (fall (~(get by stories) p.i.sos) *story)
+        =>  (~(so-bear so p.i.sos ~ -) q.i.sos)
+        =.  acs  (flop acs)
+        |-  ^+  ..ta-take
+        ?~  acs  ..ta-take
+        =.  ..ta-take  (ta-action ost.bol i.acs)
+        $(acs t.acs)
+      $(sos t.sos)
+      ::TODO  runtime error
+      ::%+  roll  ~(tap by sos.piz)
+      ::|=  {{n/naem b/burden} _..ta-take}
+      ::=+  (fall (~(get by stories) n) *story)
+      ::so-done:(~(so-bear so n ~ -) b)
       ::
         $circle
       =+  wer=(etch wir)
@@ -572,9 +585,18 @@
         (so-hear:sor & [our.bol nom.rum] rum.rum)
         ::
           $new
-        =<  so-done
-        %-  ~(so-bear so nom.rum ~ (fall (~(get by stories) nom.rum) *story))
-        [~ [cof.rum.rum ~] [~ ~]]
+        =>  =+  (fall (~(get by stories) nom.rum) *story)
+            %-  ~(so-bear so nom.rum ~ -)
+            [~ [cof.rum.rum ~] [~ ~]]
+        =.  acs  (flop acs)
+        |-  ^+  +>+
+        ?~  acs  +>+
+        =.  +>+  (ta-action ost.bol i.acs)
+        $(acs t.acs)
+        ::TODO  runtime error
+        ::=<  so-done
+        ::%-  ~(so-bear so nom.rum ~ (fall (~(get by stories) nom.rum) *story))
+        ::[~ [cof.rum.rum ~] [~ ~]]
       ==
       ::
         $circle
@@ -829,10 +851,18 @@
         (so-delta-our %config r %full c)
       ::  local status
       =.  self
-        %+  roll  ~(tap by loc.pes)
-        |=  {{w/ship s/status} _self}
-        (so-delta-our %status so-cir w %full s)
-        ::TODO  ^ runtime when accepting burden
+        =+  sas=~(tap by loc.pes)
+        |-  ^+  self
+        ?~  sas  self
+        =.  deltas
+          :_  deltas
+          :^  %story  nom  %status
+          [[our.bol nom] p.i.sas %full q.i.sas]
+        $(sas t.sas)
+        ::TODO  ideally do below, but runtime error at so-delta-our
+        ::%+  roll  ~(tap by loc.pes)
+        ::|=  {{w/ship s/status} _self}
+        ::(so-delta-our %status so-cir w %full s)
       ::  remote status
       =.  self
         %+  roll  ~(tap by rem.pes)
@@ -842,17 +872,34 @@
         (so-delta-our %status c w %full s)
       ::  telegrams
       =.  self
-        %-  so-deltas-our
-        %+  turn  gaz
-        |=  t/telegram
-        ^-  delta-story
-        :-  %gram
-        ::  in audience, replace above with us.
-        =-  t(aud -)
-        =+  (~(del in aud.t) [(above our.bol) nom])
-        (~(put in -) so-cir)
+        %_  self
+            deltas
+          %+  welp  deltas
+          %-  flop
+          %+  turn  gaz
+          |=  t/telegram
+          ^-  delta
+          :+  %story  nom
+          :-  %gram
+          ::  in audience, replace above with us.
+          =-  t(aud -)
+          =+  (~(del in aud.t) [(above our.bol) nom])
+          (~(put in -) so-cir)
+        ==
+        ::TODO  ideally do below, but runtime error
+        ::%-  so-deltas-our
+        ::%+  turn  gaz
+        ::|=  t/telegram
+        ::^-  delta-story
+        :::-  %gram
+        ::::  in audience, replace above with us.
+        ::=-  t(aud -)
+        ::=+  (~(del in aud.t) [(above our.bol) nom])
+        ::(~(put in -) so-cir)
       ::  inherited flag
-      (so-delta-our %inherited &)
+      %_(self deltas [[%story nom %inherited &] deltas])
+      ::TODO  runtime error
+      ::(so-delta-our %inherited &)
     ::
     ::>  ||
     ::>  ||  %changes
@@ -2067,16 +2114,12 @@
   |=  {wir/wire piz/prize}
   ^-  (quip move _+>)
   =^  mos  +>.$
-    ::  this shouldn't be necessary, but see the TODO below.
-    ?:  ?=($burden -.piz)
-      %-  pre-bake
-      =<  ta-done
-      %+  roll  ~(tap by sos.piz)
-      |=  {{n/naem b/burden} _ta}
-      =<  so-done
-      (~(so-bear so n ~ (fall (~(get by stories) n) *story)) b)
     %-  pre-bake
-    ta-done:(ta-take:ta wir piz)  ::TODO  runtime for %burden prize...
+    =>  (ta-take:ta wir piz)
+    (flop deltas)
+    ::TODO  ideally this, but runtime error for %burden prize
+    ::%-  pre-bake
+    ::ta-done:(ta-take:ta wir piz)
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
@@ -2088,7 +2131,10 @@
   ^-  (quip move _+>)
   =^  mos  +>.$
     %-  pre-bake
-    ta-done:(ta-hear:ta wir rum)
+    =>  (ta-hear:ta wir rum)
+    (flop deltas)
+    ::TODO  runtime error for %burden rumors.
+    ::ta-done:(ta-hear:ta wir rum)
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
