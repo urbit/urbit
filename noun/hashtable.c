@@ -359,7 +359,7 @@ u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w)
     }
     if ( c3n == har_u->arm_u.buc_o ) {
       // lower 31 bits of increment (next mug)
-      har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & 0x80000000;
+      har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & ((1 << 31) - 1);
       har_u->arm_u.inx_w = 0;
     }
   }
