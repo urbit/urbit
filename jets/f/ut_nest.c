@@ -539,6 +539,23 @@
              u3_noun tel,
              u3_noun ref)
   {
+#if 1
+    c3_m    fun_m = 144 + c3__nest;
+    u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
+    u3_noun pro   = u3z_find_4(fun_m, vrf, sut, tel, ref);
+
+    if ( u3_none != pro ) {
+      // u3t_heck(c3__good);
+      return pro;
+    }
+    else {
+      pro = _cqfu_nest(van, sut, tel, ref);
+
+      // u3t_heck(c3__nest);
+      return u3z_save_4(fun_m, vrf, sut, tel, ref, pro);
+    }
+#else
     return _cqfu_nest(van, sut, tel, ref);
+#endif
   }
 
