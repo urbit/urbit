@@ -1495,3 +1495,57 @@ u3_term_io_loja(int x)
     }
   }
 }
+
+/* u3_term_tape_to(): dump a tape to a file.
+*/
+void
+u3_term_tape_to(FILE *fil_f, u3_noun tep)
+{
+  u3_noun tap = tep;
+
+  while ( u3_nul != tap ) {
+    c3_c car_c;
+
+    if ( u3h(tap) >= 127 ) {
+      car_c = '?';
+    } else car_c = u3h(tap);
+
+    putc(car_c, fil_f);
+    tap = u3t(tap);
+  }
+  u3z(tep);
+}
+
+/* u3_term_tape(): dump a tape to stdout.
+*/
+void
+u3_term_tape(u3_noun tep)
+{
+  FILE* fil_f = u3_term_io_hija();
+
+  u3_term_tape_to(fil_f, tep);
+
+  u3_term_io_loja(0);
+}
+
+/* u3_term_wall(): dump a wall to stdout.
+*/
+void
+u3_term_wall(u3_noun wol)
+{
+  FILE* fil_f = u3_term_io_hija();
+  u3_noun wal = wol;
+
+  while ( u3_nul != wal ) {
+    u3_term_tape_to(fil_f, u3k(u3h(wal)));
+
+    putc(13, fil_f);
+    putc(10, fil_f);
+
+    wal = u3t(wal);
+  }
+  u3_term_io_loja(0);
+
+  u3z(wol);
+}
+
