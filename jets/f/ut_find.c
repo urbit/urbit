@@ -439,7 +439,6 @@
                        u3_noun gil)
   {
     if ( u3_nul == qp_sut ) {
-    // if ( 1 ) {
       u3_noun nol = u3nc(u3_nul, u3k(lon));
       u3_noun ret = _find_buck(van, q_sut, way, p_heg, q_heg, axe, nol, gil);
       u3z(nol);
@@ -473,6 +472,7 @@
         u3_noun vat;                      //  (pair span nock)
         u3_noun ret;
         u3_noun dog = u3nc(0, u3k(axe));  //  nock
+        u3_noun cob = u3qf_comb(dog, q_tiv);
         u3_noun wan;
 
         if ( c3y == u3h(fid) ) {
@@ -491,10 +491,11 @@
           (c3n, 
            c3n, 
            wan,
-           u3nc(u3k(u3h(vat)), u3qf_comb(u3qf_comb(dog, q_tiv), u3t(vat))));
+           u3nc(u3k(u3h(vat)), u3qf_comb(cob, u3t(vat))));
 
         u3z(vat);
         u3z(dog);
+        u3z(cob);
         u3z(tiv);
 
         return ret;
