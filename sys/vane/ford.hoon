@@ -194,7 +194,6 @@
     ?.  ?=($writ &2.sih)
       ~|(%bad-axun !!)
     ?~  p.sih  +>                :: acknowledged
-    ~&  writ+(en-beam bem)
     =.  out.bay  (~(del in out.bay) bem)
     =.  fin.bay  (~(put in fin.bay) bem)
     =/  des  ~(tap in (~(get ju bak.deh.bay) bem))
@@ -245,14 +244,6 @@
     |=  {dep/@uvH ask/?}
     =<  abet  ^+  +>
     ::
-::     =*  dop  `@uv`(div dep 0v1.00000.00000.00000.00000)
-::     =*  ren  |=  a/_dehdup.bay  ^-  (set path)
-::              (sy (turn ~(tap in ~(key by a)) en-beam))
-::     =-  ~&  :*  %wasp  dop
-::                 ole=(ren dehdup.bay.+)
-::                 new=`(set path)`(~(dif in (ren dehdup.bay.-)) (ren dehdup.bay.+))
-::             ==
-::         -
     ::
     ?:  =(`@`0 dep)
       ~&(dep-empty+hen +>.$)
@@ -266,8 +257,6 @@
     |^  ?:(ask start cancel)
     ++  start
       ^+  this
-      ~&  =-  start+[dep (~(gas in *(set path)) -)]
-          (turn ~(tap in bes) en-beam)
       ?:  (~(has by sup.bay) dep)
         this(sup.bay (~(put ju sup.bay) dep hen))
       ?:  (~(any in bes) ~(has in fin.bay))
@@ -310,7 +299,7 @@
   ::
   ++  pass-warp
     |=  {ren/care:clay bem/beam ask/?}
-    ~&  warp+[(en-beam bem) ask]
+    :: ~&  warp+[(en-beam bem) ask]
     :+  %pass  [(scot %p our) ren (en-beam bem)]
     [%c [%warp [our p.bem] q.bem ?.(ask ~ `[%next ren r.bem (flop s.bem)])]]
   ::
