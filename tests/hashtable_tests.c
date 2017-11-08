@@ -14,7 +14,7 @@ main(int argc, char* argv[])
 
   //_test_no_cache();
   _test_skip_slot();
-  //_test_cache_trimming();
+  _test_cache_trimming();
 
   return 0;
 }
@@ -78,6 +78,8 @@ _test_skip_slot(void)
     c3_w res_w = _ch_skip_slot(mug_w, 20);
     c3_assert((1 << 25) == res_w);
   }
+
+  fprintf(stderr, "test_skip_slot: ok\n");
 }
 
 /* _test_cache_trimming(): ensure a caching hashtable removes stale items.

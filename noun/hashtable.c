@@ -220,7 +220,7 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   map_w = han_u->map_w;
 
   if ( 0 == (map_w & (1 << bit_w)) ) {
-    fprintf(stderr, "empty slot, lef_w: %d rem_w: %d\r\n", lef_w, rem_w);
+    har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3n;
   }
 
