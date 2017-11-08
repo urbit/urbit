@@ -211,6 +211,7 @@ _cv_nock_poke(u3_noun ovo)
 {
   u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(42, u3A->roc)));
   u3_noun sam, pro;
+  u3_noun cod_w;
 
   sam = u3nc(u3k(u3A->now), ovo);
 #if 0
@@ -224,9 +225,9 @@ _cv_nock_poke(u3_noun ovo)
   }
 #endif
 
-  u3a_lush(u3h(u3t(ovo)));
+  cod_w = u3a_lush(u3h(u3t(ovo)));
   pro = u3n_slam_on(fun, sam);
-  u3a_lop(0);
+  u3a_lop(cod_w);
 
 #if 0
   {
