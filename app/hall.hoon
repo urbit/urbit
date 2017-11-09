@@ -404,16 +404,29 @@
       ::  to remove them from {public} too.
       =?  ..ta-action  &(=(nom %inbox) !sub)
         ^+  ..ta-action
-        %-  ~(rep in srs)
-        |=  {src/source _..ta-action}
-        ^+  ..ta-action
-        ::  delete from public if it's the last source.
-        =;  last/?  ?:(last (action-public | cir.src) ..ta-action)
+        =+  srs=~(tap in srs)
+        |-  ^+  ..ta-action
+        ?~  srs  ..ta-action
+        =;  last/?
+          =?  ..ta-action  last
+            (action-public | cir.i.srs)
+          $(srs t.srs)
         %-  ~(rep in src.shape:(~(got by stories) nom))
         |=  {s/source l/?}
         ?.  l  |
-        ?.  =(cir.s cir.src)  &
-        =(ran.s ran.src)
+        ?.  =(cir.s cir.i.srs)  &
+        =(ran.s ran.i.srs)
+        ::  below eats state
+        ::%-  ~(rep in srs)
+        ::|=  {src/source _..ta-action}
+        ::^+  ..ta-action
+        ::::  delete from public if it's the last source.
+        ::=;  last/?  ?:(last (action-public | cir.src) ..ta-action)
+        ::%-  ~(rep in src.shape:(~(got by stories) nom))
+        ::|=  {s/source l/?}
+        ::?.  l  |
+        ::?.  =(cir.s cir.src)  &
+        ::=(ran.s ran.src)
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
