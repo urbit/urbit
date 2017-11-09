@@ -780,7 +780,7 @@
   ++  hops                                              ::  XX late-bound path
     $:  pre/(unit tyke)                                 ::
         pof/(unit {p/@ud q/tyke})                       ::
-      ==                                                ::
+    ==                                                  ::
   ++  horn                                              ::  resource tree
     $%  {$fssg p/twig}                                  ::  /~  twig by hand
         {$fsbc p/twig}                                  ::  /$  argument

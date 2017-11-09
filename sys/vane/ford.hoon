@@ -57,7 +57,7 @@
           {$1 p/(set {van/vane ren/care:clay bem/beam tan/tang})}  ::  blocks
           {$2 p/(set beam) q/tang}                      ::  depends+error
       ==                                                ::
-  ==                                                  ::
+  ==                                                    ::
 ++  burg                                                ::  gonadic rule
   |*  {a/mold b/mold}                                   ::  from and to
   $-({c/cafe d/a} (bolt b))                             ::
@@ -192,17 +192,18 @@
     |=  {ren/care:clay bem/beam sih/sign}
     =<  abet  ^+  +>
     ?.  ?=($writ &2.sih)
-      ~|(%bad-axun !!)
-    ?~  p.sih  +>                :: acknowledged
+      ~|([%bad-dep &2.sih] !!)
+    ?~  p.sih  +>                                       :: acknowledged
     =.  out.bay  (~(del in out.bay) bem)
     =.  fin.bay  (~(put in fin.bay) bem)
     =/  des  ~(tap in (~(get ju bak.deh.bay) bem))
-    |-  ^+  ..abet
-    ?~  des  ..abet
-    %_    ..abet
+    |-  ^+  this
+    ?~  des  this
+    %_    $
         sup.bay  (~(del by sup.bay) i.des)
+        des  t.des
         mow 
-      =-  (weld - mow)
+      %-  weld  :_  mow
       %+  turn  ~(tap in (~(get ju sup.bay) i.des))
       |=(a/duct `move`[a %give %news i.des])
     ==
@@ -212,7 +213,7 @@
     =+  nym=(~(get by dym.bay) hen)
     ?~  nym                                             ::  XX should never
       ~&  [%ford-mystery hen]
-      ..abet
+      this
     =+  tas=(need (~(get by q.tad.bay) u.nym))
     abut:~(decamp zo [u.nym tas])
   ::
