@@ -6079,8 +6079,15 @@
       (hail (home p.sec))
     ==
   ++  clam  
-    ^-   twig  
-    [%brts [~ ~] [%base %noun] (whip(gom 7) 6)]
+    ^-  twig
+    =/  raw  [%brts [~ ~] [%base %noun] (whip(gom 7) 6)]
+    ::
+    ::  this performance fix should unify a bunch of trivial functions,
+    ::  but breaks on horrible dogshit hacks in ++raid:zuse.
+    ::
+    ::  ?.  ?=(?($axil $leaf) -.sec)  raw
+    ::  [%tsgr [%rock %n ] raw]
+    raw
   ::
   ++  whip
     |=  axe/axis
@@ -6702,32 +6709,32 @@
       ?-  q.gen
           $~      ~_(leaf+"open-smsg" !!)
           ^
-        :+  %tsgr  [%ktts %v %$ 1]                       ::  =>  v=.
+        :+  %tsgr  [%ktts %v %$ 1]                      ::  =>  v=.
         |-  ^-  twig                                    ::
         ?:  ?=($~ t.q.gen)                              ::
-          [%tsgr [%limb %v] i.q.gen]                     ::  =>(v {i.q.gen})
-        :+  %tsls  [%ktts %a $(q.gen t.q.gen)]           ::  =+  ^=  a
-        :+  %tsls                                        ::    {$(q.gen t.q.gen)}
-          [%ktts %b [%tsgr [%limb %v] i.q.gen]]          ::  =+  ^=  b
-        :+  %tsls                                        ::    =>(v {i.q.gen})
+          [%tsgr [%limb %v] i.q.gen]                    ::  =>(v {i.q.gen})
+        :+  %tsls  [%ktts %a $(q.gen t.q.gen)]          ::  =+  ^=  a
+        :+  %tsls                                       ::    {$(q.gen t.q.gen)}
+          [%ktts %b [%tsgr [%limb %v] i.q.gen]]         ::  =+  ^=  b
+        :+  %tsls                                       ::    =>(v {i.q.gen})
           :+  %ktts  %c                                 ::  =+  c=,.+6.b
-          :+  %tsgl                                      ::
+          :+  %tsgl                                     ::
             [%wing [%| 0 ~] [%& 6] ~]                   ::
           [%limb %b]                                    ::
         :+  %brdt  [~ ~]                                ::  |.
         :^    %cnls                                     ::  %+
-            [%tsgr [%limb %v] p.gen]                     ::      =>(v {p.gen})
+            [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
           [%cnhp [%limb %b] [%limb %c] ~]               ::    (b c)
         :+  %cnts  [%a ~]                               ::  a(,.+6 c)
         [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
       ==                                                ::
     ::
-        {$smsm *}                                        ::                  ;;
-      :+  %tsgr  [%ktts %v %$ 1]                         ::  =>  v=.
-      :+  %tsls  :+  %ktts  %a                           ::  =+  ^=  a
-                 [%tsgr [%limb %v] p.gen]                ::  =>(v {p.gen})
-      :+  %tsls  [%ktts %b [%tsgr [%limb %v] q.gen]]      ::  =+  b==>(v {q.gen})
-      :+  %tsls                                          ::  =+  c=(a b)
+        {$smsm *}                                       ::                  ;;
+      :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
+      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
+                 [%tsgr [%limb %v] p.gen]               ::  =>(v {p.gen})
+      :+  %tsls  [%ktts %b [%tsgr [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
+      :+  %tsls                                         ::  =+  c=(a b)
         [%ktts %c [%cnhp [%limb %a] [%limb %b] ~]]      ::
       :+  %wtgr                                         ::  ?>(=(`*`c `*`b) c)
         :+  %dtts                                       ::
