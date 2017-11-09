@@ -331,18 +331,14 @@ _ch_skip_slot(c3_w mug_w, c3_w lef_w)
 static c3_o
 _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
 {
-  fprintf(stderr, "trim_slot lef_w: %d\r\n", lef_w);
   if ( _(u3h_slot_is_null(*sot_w)) ) {
-    fprintf(stderr, "skipping null slot\r\n");
     har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3n;
   }
   else if ( _(u3h_slot_is_node(*sot_w)) ) {
-    fprintf(stderr, "recurse into table\r\n");
     return _ch_trim_some(har_u, sot_w, lef_w, rem_w);
   }
   else if ( _(u3h_slot_is_warm(*sot_w)) ) {
-    fprintf(stderr, "mark cold and increment\r\n");
     *sot_w = u3h_noun_be_cold(*sot_w);
     if ( c3n == har_u->arm_u.buc_o ) {
       har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & 0x7FFFFFFF; // modulo 2^31
@@ -350,7 +346,6 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
     return c3n;
   }
   else {
-    fprintf(stderr, "remove slot\r\n");
     u3_noun kev = u3h_slot_to_noun(*sot_w);
     *sot_w = 0;
     u3z(kev);
@@ -381,7 +376,6 @@ u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w)
 
   while ( har_u->use_w > n_w ) {
     if ( c3y == _ch_trim_root(har_u) ) {
-      fprintf(stderr, "use_w %d -> %d\r\n", har_u->use_w, har_u->use_w - 1);
       har_u->use_w -= 1;
     }
     /* TODO: remove
