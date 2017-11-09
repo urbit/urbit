@@ -498,7 +498,7 @@
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
   ^-  (unit)
-  ?~  hap  [~ hoon]
+  ?~  hap  [~ hoon-version]
   =+  rob=((sloy ~(beck (is vil eny mast niz) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
@@ -573,7 +573,7 @@
   ::
   ::  find the hoon version number of the new kernel
   ::
-  =+  nex=(@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon])))
+  =+  nex=(@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon-version])))
   ?>  |(=(nex hoon) =(+(nex) hoon))
   ::
   ::  if we're upgrading language versions, recompile the compiler

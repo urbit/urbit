@@ -128,7 +128,7 @@
       |=  {gol/goal mod/dojo-model}  ^-  dojo-command
       [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
     ::
-    ++  dp-command-line  ;~(sfix dp-command (just '\0a'))
+    ++  dp-command-line  ;~(sfix dp-command (star ace) (just '\0a'))
     ++  dp-variable                                     ::  %verb or %brev
       |*  {sym/rule src/rule}
       %+  cook  
@@ -271,9 +271,9 @@
       ==
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
+        (stag %sa ;~(pfix tar pam sym))
         (stag %ex dp-twig)
         (stag %tu (ifix [sel ser] (most ace dp-source)))
-        (stag %sa ;~(pfix tar pam sym))
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
