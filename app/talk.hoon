@@ -11,8 +11,6 @@
 ::TODO  [type query] => [press tab to cycle search results, newest-first]
 ::      => [escape to clear]
 ::
-::TODO  ;what without args
-::
 ::>  This reader implementation makes use of the %inbox
 ::>  for all its subscriptions and messaging. All
 ::>  rumors received are exclusively about the %inbox,
@@ -23,7 +21,7 @@
 /-    hall, sole                                        ::<  structures
 /+    hall, sole                                        ::<  libraries
 /=    seed  /~  !>(.)
-!:
+::
 ::::
   ::
 =,  hall

@@ -19,7 +19,7 @@
 /-    hall                                              ::<  structures
 /+    hall, hall-legacy                                 ::<  libraries
 /=    seed  /~  !>(.)
-!:
+::
 ::::
   ::
 =,  hall
