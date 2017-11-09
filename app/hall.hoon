@@ -1850,11 +1850,9 @@
     [locals.s remotes.s]
     ::
       $report
-    ::REVIEW  we just don't have a prize... but do have rumors.
-    ::        or do we need [%report ~] ?
     ::TODO  gall note: need to be able to subscirbe to just changes... or just
     ::      data etc.
-    ~
+    ``[%report ~]
     ::
       $circle  ::REVIEW  should we send precs & config to out of range subs?
     =+  soy=(~(get by stories) nom.qer)

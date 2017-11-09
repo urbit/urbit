@@ -18,6 +18,7 @@
     :~  reader+pire
         public+(as circ)
         ::  burden not needed
+        ::  report not needed
         circle+pack
     ==
   --
@@ -32,6 +33,7 @@
       $reader  (pire +.piz)
       $public  (sa cis.piz circ)
       ::  burden not needed
+      ::  report not needed
       $circle  (pack +.piz)
     ==
   --

@@ -52,6 +52,7 @@
   $%  {$reader prize-reader}                            ::<  /reader
       {$public cis/(set circle)}                        ::<  /public
       {$burden sos/(map naem burden)}                   ::<  /burden
+      {$report ~}                                       ::<  /report
       {$circle package}                                 ::<  /circle
   ==                                                    ::
 ++  prize-reader                                        ::
