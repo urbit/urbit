@@ -43,7 +43,6 @@
       deh/deps                                          ::  dephash definitions
       sup/(jug @uvH duct)                               ::  hash listeners
       out/(set beam)                                    ::  listening beams
-      fin/(set beam)                                    ::  updated beams
   ==                                                    ::
 ++  deps                                                ::
   $:  def/(map @uvH (set beam))                         ::  hash obligations
@@ -195,7 +194,6 @@
       ~|([%bad-dep &2.sih] !!)
     ?~  p.sih  +>                                       :: acknowledged
     =.  out.bay  (~(del in out.bay) bem)
-    =.  fin.bay  (~(put in fin.bay) bem)
     =/  des  ~(tap in (~(get ju bak.deh.bay) bem))
     |-  ^+  this
     ?~  des  this
@@ -260,8 +258,6 @@
       ^+  this
       ?:  (~(has by sup.bay) dep)
         this(sup.bay (~(put ju sup.bay) dep hen))
-      ?:  (~(any in bes) ~(has in fin.bay))
-        this(mow :_(mow [hen %give %news dep]))
       =.  sup.bay  (~(put ju sup.bay) dep hen)
       ::
       =>  .(bes ~(tap in bes))
@@ -283,9 +279,9 @@
       =>  .(bes ~(tap in bes))
       |-  ^+  this
       ?~  bes  this
-      ?:  |(!(~(has in out.bay) i.bes) (~(has in fin.bay) i.bes))
-        :: already cancelled/received
-        ::REVIEW assert that unrecieved subs open?
+      ?.  (~(has in out.bay) i.bes)
+        :: already cancelled
+        ::REVIEW assert instead?
         $(bes t.bes)
       ?:  (~(any in (~(get ju bak.deh.bay) i.bes)) ~(has by sup.bay))
         ::REVIEW performance questionable
@@ -1917,10 +1913,9 @@
         cache+[%| (turn `(list term)`/hood/bake/slit/slim/slap/slam cache-for)]
     ::
         :+  %depends  %|  :~
-          hashes+[%& deh]
+          definitions+[%& deh]
           listeners+[%& sup]
           waiting+[%& out]
-          resolved+[%& fin]
         ==
     ::
         tasks+[%& dym tad]
