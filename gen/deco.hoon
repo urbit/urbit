@@ -101,7 +101,7 @@
     :>  we decorate the mold rather than the arm.  the compiler
     :>  will copy the mold decoration onto the arm.
     +|
-    +=  spot  {p/@ q/@}                                 :<  a coordinate
+    +=  spot  [p=@ q=@]                                 :<  a coordinate
     +=  tops                                            :>  also a coordinate
       {p/@ q/@}
     +=  goof                                            :>  a simple tuple
