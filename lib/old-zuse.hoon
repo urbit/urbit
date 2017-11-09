@@ -286,4 +286,5 @@
 ++  sign-arvo   sign-arvo                               ::  in result $<-
 ++  nule        nule:unix:userlib                       ::  lines to unix cord
 ++  lore        to-wain:format                          ::  atom to line list
+++  role        of-wain:format                          ::  line list to atom
 --
