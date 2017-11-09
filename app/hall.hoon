@@ -335,7 +335,7 @@
         (~(put ju m) hos.c nom.c)
       =?  ..ta-action  (~(has by cic) our.bol)
         %-  ~(rep in (~(get ju cic) our.bol))
-        |=  {n/naem _ta}
+        |=  {n/naem _ta}  ::  beware, urbit/arvo#447
         (affect n %status [our.bol n] our.bol dif)
       =.  cic  (~(del by cic) our.bol)
       %-  ta-deltas
@@ -899,12 +899,12 @@
           =.  l  [[%story nom %status p.i.rem p.i.gop %full q.i.gop] l]
           $(gop t.gop)
         $(rem t.rem)
-        ::
+        ::TODO  below eats state?
         ::%+  roll  ~(tap by rem.pes)
         ::|=  {{c/circle g/group} _self}
         ::%+  roll  ~(tap by g)
         ::|=  {{w/ship s/status} _self}
-        ::(so-delta-our %status c w %full s)  ::TODO  fixme
+        ::(so-delta-our %status c w %full s)
       ::  telegrams
       =.  self
         %_  self
