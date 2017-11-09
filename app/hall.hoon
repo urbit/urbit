@@ -585,6 +585,8 @@
         (so-hear:sor & [our.bol nom.rum] rum.rum)
         ::
           $new
+        =?  +>  !(~(has by stories) nom.rum)
+          (ta-delta %story +.rum)
         =>  =+  (fall (~(get by stories) nom.rum) *story)
             %-  ~(so-bear so nom.rum ~ -)
             [~ [cof.rum.rum ~] [~ ~]]
@@ -846,9 +848,16 @@
         (so-config-full `shape loc.cos)
       ::  remote config
       =.  self
-        %+  roll  ~(tap by rem.cos)
-        |=  {{r/circle c/config} _self}
-        (so-delta-our %config r %full c)
+        =+  rem=~(tap by rem.cos)
+        |-  ^+  self
+        ?~  rem  self
+        =.  self
+          (so-delta-our %config p.i.rem %full q.i.rem)
+        $(rem t.rem)
+        ::TODO  eats previous change?
+        ::%+  roll  ~(tap by rem.cos)
+        ::|=  {{r/circle c/config} _self}
+        ::(so-delta-our %config r %full c)
       ::  local status
       =.  self
         =+  sas=~(tap by loc.pes)
@@ -865,11 +874,24 @@
         ::(so-delta-our %status so-cir w %full s)
       ::  remote status
       =.  self
-        %+  roll  ~(tap by rem.pes)
-        |=  {{c/circle g/group} _self}
-        %+  roll  ~(tap by g)
-        |=  {{w/ship s/status} _self}
-        (so-delta-our %status c w %full s)
+        =+  rem=~(tap by rem.pes)
+        |-  ^+  self
+        ?~  rem  self
+        =.  deltas
+          %+  welp  deltas
+          =+  gop=~(tap by q.i.rem)
+          =|  l/(list delta)
+          |-  ^+  l
+          ?~  gop  l
+          =.  l  [[%story nom %status p.i.rem p.i.gop %full q.i.gop] l]
+          $(gop t.gop)
+        $(rem t.rem)
+        ::
+        ::%+  roll  ~(tap by rem.pes)
+        ::|=  {{c/circle g/group} _self}
+        ::%+  roll  ~(tap by g)
+        ::|=  {{w/ship s/status} _self}
+        ::(so-delta-our %status c w %full s)  ::TODO  fixme
       ::  telegrams
       =.  self
         %_  self
@@ -1943,7 +1965,7 @@
     ?:  =(src.bol (above our.bol))  ~
     ::  only send story reports about grams and status.
     ?.  ?=($story -.det)  ~
-    ?.  ?=(?($grams $status) -.det.det)  ~
+    ?.  ?=(?($gram $status) -.det.det)  ~
     =+  soy=(~(got by stories) nom.det)
     ::  and only if the story is inherited.
     ?.  inherited.soy  ~
