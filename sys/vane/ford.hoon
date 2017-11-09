@@ -279,12 +279,8 @@
       =>  .(bes ~(tap in bes))
       |-  ^+  this
       ?~  bes  this
-      ?.  (~(has in out.bay) i.bes)
-        :: already cancelled
-        ::REVIEW assert instead?
-        $(bes t.bes)
+      ?>  (~(has in out.bay) i.bes)  :: already cancelled
       ?:  (~(any in (~(get ju bak.deh.bay) i.bes)) ~(has by sup.bay))
-        ::REVIEW performance questionable
         ::  if any other dep cares about this beam, stay subscribed
         $(bes t.bes)
       %_  $
