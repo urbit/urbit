@@ -93,7 +93,7 @@
           ::  displaying info                           ::
           {$number $@(@ud {@u @ud})}                    ::<  relative/absolute
           {$who audience}                               ::<  presence
-          {$what $@(char audience)}                     ::<  show bound glyph
+          {$what (unit $@(char audience))}              ::<  show bound glyph
           ::  ui settings                               ::
           {$bind char (unit audience)}                  ::<  bind glyph
           {$unbind char (unit audience)}                ::<  unbind glyph
@@ -737,7 +737,13 @@
           ::
           ;~(plug (perk %who ~) ;~(pose ;~(pfix ace cirs) (easy ~)))
           ::
-          ;~((glue ace) (perk %what ~) ;~(pose cirs glyph))
+          ;~  plug
+            (perk %what ~)
+            ;~  pose
+              ;~(pfix ace (cook some ;~(pose glyph cirs)))
+              (easy ~)
+            ==
+          ==
           ::
           ;~((glue ace) (perk %show ~) circ)
           ::
@@ -1158,15 +1164,28 @@
       ++  what                                          ::<  %what
         ::>  prints binding details. goes both ways.
         ::
-        |=  qur/$@(char audience)
+        |=  qur/(unit $@(char audience))
         ^+  ..sh-work
         ?^  qur
-          =+  cha=(~(get by bound) qur)
-          (sh-fact %txt ?~(cha "none" [u.cha]~))
-        =+  pan=~(tap in (~(get ju binds) qur))
-        ?:  =(~ pan)  (sh-fact %txt "~")
-        =<  (sh-fact %mor (turn pan .))
-        |=(a/audience [%txt ~(ar-prom ar a)])
+          ?^  u.qur
+            =+  cha=(~(get by bound) u.qur)
+            (sh-fact %txt ?~(cha "none" [u.cha]~))
+          =+  pan=~(tap in (~(get ju binds) u.qur))
+          ?:  =(~ pan)  (sh-fact %txt "~")
+          =<  (sh-fact %mor (turn pan .))
+          |=(a/audience [%txt ~(ar-phat ar a)])
+        %+  sh-fact  %mor
+        %-  ~(rep by binds)
+        |=  $:  {gyf/char aus/(set audience)}
+                lis/(list sole-effect)
+            ==
+        %+  weld  lis
+        ^-  (list sole-effect)
+        %-  ~(rep in aus)
+        |=  {a/audience l/(list sole-effect)}
+        %+  weld  l
+        ^-  (list sole-effect)
+        [%txt [gyf ' ' ~(ar-phat ar a)]]~
       ::
       ++  number                                        ::<  %number
         ::>  finds selected message, expand it.
@@ -1803,6 +1822,16 @@
     ^-  ?
     =.  .  ar-deaf
     !?=($@($~ {* $~ $~}) aud)
+  ::
+  ++  ar-phat                                           ::<  render full-size
+    ::>  render all circles, no glyphs.
+    ::
+    ^-  tape
+    %-  ~(rep in aud)
+    |=  {c/circle t/tape}
+    =?  t  ?=(^ t)
+      (weld t ", ")
+    (weld t ~(cr-phat cr c))
   ::
   ++  ar-prom                                           ::<  render targets
     ::>  render all circles, ordered by relevance.
