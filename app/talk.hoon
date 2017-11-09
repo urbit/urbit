@@ -80,6 +80,7 @@
           {$invite naem (set ship)}                     ::<  give permission
           {$banish naem (set ship)}                     ::<  deny permission
           {$source naem (map circle range)}             ::<  add source
+          {$unsource naem (map circle range)}           ::<  remove source
           ::  personal metadata                         ::
           {$attend audience (unit presence)}            ::<  set our presence
           {$name audience human}                        ::<  set our name
@@ -700,6 +701,9 @@
           ::
           ;~((glue ace) (perk %source ~) cire sorz)
           ::
+          ;~((glue ace) (perk %unsource ~) cire sorz)
+          ::TODO  why do these nest-fail when doing perk with multiple?
+          ::
           ::  personal metadata
           ::
           ;~  (glue ace)
@@ -874,7 +878,8 @@
           $filter  (filter +.job)
           $invite  (permit & +.job)
           $banish  (permit | +.job)
-          $source  (source +.job)
+          $source  (source & +.job)
+          $unsource  (source | +.job)
           ::  personal metadata
           $attend  (attend +.job)
           $name    (name +.job)
@@ -1055,9 +1060,9 @@
       ++  source                                        ::<  %source
         ::>  adds {pas} to {nom}'s src.
         ::
-        |=  {nom/naem pos/(map circle range)}
+        |=  {sub/? nom/naem pos/(map circle range)}
         ^+  ..sh-work
-        (sh-act %source nom & pos)
+        (sh-act %source nom sub pos)
       ::
       ::>  ||
       ::>  ||  %personal-metadata
