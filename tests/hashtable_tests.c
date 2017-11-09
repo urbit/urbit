@@ -1,6 +1,7 @@
 #include "all.h"
 
 static void _setup(void);
+static void _test_cache_replace_value(void);
 static void _test_cache_trimming(void);
 static void _test_no_cache(void);
 static void _test_skip_slot(void);
@@ -12,9 +13,10 @@ main(int argc, char* argv[])
 {
   _setup();
 
-  //_test_no_cache();
+  _test_no_cache();
   _test_skip_slot();
   _test_cache_trimming();
+  _test_cache_replace_value();
 
   return 0;
 }
@@ -34,7 +36,7 @@ static void
 _test_no_cache(void)
 {
   c3_w i_w;
-  c3_w max_w = 10000;
+  c3_w max_w = 1000;
 
   u3p(u3h_root) har_p = u3h_new();
 
@@ -88,7 +90,7 @@ static void
 _test_cache_trimming(void)
 {
   c3_w max_w = 620;
-  c3_w i_w, hit_w = 0, mis_w = 0;
+  c3_w i_w;
 
   //u3p(u3h_root) har_p = u3h_new_cache(max_w / 2);
   u3p(u3h_root) har_p = u3h_new_cache(max_w / 10 );
@@ -107,4 +109,32 @@ _test_cache_trimming(void)
     exit(1);
   }
   fprintf(stderr, "test_cache_trimming: ok\n");
+}
+
+static void
+_test_cache_replace_value(void)
+{
+  c3_w max_w = 100;
+  c3_w i_w;
+
+  u3p(u3h_root) har_p = u3h_new_cache(max_w);
+  u3h_root*     har_u = u3to(u3h_root, har_p);
+
+  for ( i_w = 0; i_w < max_w; i_w++ ) {
+    u3h_put(har_p, i_w, i_w + max_w);
+  }
+
+  for ( i_w = 0; i_w < max_w; i_w++ ) {
+    u3h_put(har_p, i_w, i_w + max_w + 1);
+  }
+
+  if ( (2 * max_w) != u3h_get(har_p, max_w - 1) ) {
+    fprintf(stderr, "fail\r\n");
+    exit(1);
+  }
+  if ( max_w != har_u->use_w ) {
+    fprintf(stderr, "fail\r\n");
+    exit(1);
+  }
+  fprintf(stderr, "test_cache_replace_value: ok\r\n");
 }
