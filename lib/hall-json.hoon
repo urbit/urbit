@@ -4,23 +4,6 @@
 /-    hall
 /+    old-zuse
 ::
-::>  proposed rules for sur-json conversion, adhered to below:
-::>  1. to save the devs from having to learn multiple interfaces, try to match
-::>     the hoon structure as closely as possible, including attribute names.
-::>  2. if these names are p/q/r, ~slightly more semantic naming is preferred~
-::>     fix that in the sur file.
-::>  2. when dealing with $%, the tag is the variable name. ie `{$x ...}` -> `x`
-::>     for tagged unions with one piece of data, `x` holds that value.
-::>     for tagged unions with multiple pieces of data, `x` is an object.
-::>  3. lists and sets become arrays. maps become objects.
-::>  4. stringify cells only when/in a way such that it benefits the majority of
-::>     foreseen usecases.
-::>  x. avoid dashes in json names.
-::>  x. for {$empty $~} fronds, use (frond 'empty' b+&).
-::>  x. for {$frond abc/(unit *)}, use (frond 'frond' (frond 'abc' (mabe abc)))
-::>
-::>  q: should parsing be strict or forgiving? ie, accept "ship" and/or "~ship"?
-::
 |_  bol/bowl:gall
 ++  en-tape                                             ::>  sur to tape
   =,  hall

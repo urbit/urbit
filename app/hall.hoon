@@ -2,15 +2,10 @@
 ::::  /app/hall/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
-::TODO  char57 comments as line comments when regarding code.
-::TODO  document what user-facing messages actually mean!
 ::TODO  maybe have hall accept reactions as well, redirect them to readers.
 ::      that way we can have foreign halls react to our requests!
-::TODO  document gate samples fully.
-::TODO  ::> to :> etc.
 ::
-::TODO  crash on pokes/peers we do not expect
-::TODO  ++poke-reset. first call: warning. second call: reset state.
+::TODO  document gate samples fully.
 ::
 ::TODO  for using moons as tmp identities for friends: stories may want to keep
 ::      lists of moons (or just ships in general?) that we define as "standalone"

@@ -5,16 +5,17 @@
 ::TODO  make sure glyphs only get bound when joins succeed
 ::      ...this is a bit troublesome, because failed joins don't actually
 ::      unsubscribe us.
+::
 ::TODO  maybe keep track of received grams per circle, too?
+::
 ::TODO  [type query] => [press tab to cycle search results, newest-first]
 ::      => [escape to clear]
 ::
-::TODO  for delta model:
-::      3) split into delta creation and application, as with hall.
+::TODO  ;what without args
 ::
-::>  This reader implementation makes use of the mailbox
+::>  This reader implementation makes use of the %inbox
 ::>  for all its subscriptions and messaging. All
-::>  rumors received are exclusively about the mailbox,
+::>  rumors received are exclusively about the %inbox,
 ::>  since that's the only thing the reader ever
 ::>  subscribes to.
 ::
