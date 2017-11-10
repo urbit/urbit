@@ -6,6 +6,8 @@
 ::::  /hoon/mud/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   !:

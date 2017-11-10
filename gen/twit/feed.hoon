@@ -2,7 +2,10 @@
 ::
 ::::  /hoon/feed/twit/gen
   ::
+/?    310
 /-    twitter
+/+  old-zuse
+=,  old-zuse
 ::
 ::::  ~fyr
   ::
