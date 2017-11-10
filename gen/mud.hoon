@@ -1,3 +1,4 @@
+::BROKEN
 ::  Compile arvo as a pill noun, for compiler changes; 
 ::  usage 
 ::
