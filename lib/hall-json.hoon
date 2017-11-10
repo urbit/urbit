@@ -3,10 +3,10 @@
   ::
 /-    hall
 /+    old-zuse
+=,    hall
 ::
 |_  bol/bowl:gall
 ++  en-tape                                             ::>  sur to tape
-  =,  hall
   |%
   ++  circ                                              ::>  circle
     |=  a/circle
@@ -27,7 +27,6 @@
   --
 ::
 ++  de-tape                                             ::>  tape to sur (parse)
-  =,  hall
   |%
   ++  circ                                              ::>  circle
     ;~((glue fas) ;~(pfix sig fed:ag) urt:ab)
@@ -58,7 +57,6 @@
   --
 ::
 ++  enjs                                                ::>  sur to json
-  =,  hall
   =,  enjs:format
   |%
   ::TODO  these first few should probably make their way
@@ -360,7 +358,6 @@
   --
 ::
 ++  dejs                                                ::>  json to sur
-  =,  hall
   =,  dejs-soft:format
   |%
   ::TODO  these first few should maybe make their way
