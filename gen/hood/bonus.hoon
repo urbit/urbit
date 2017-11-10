@@ -3,6 +3,8 @@
 ::::  /hoon/bonus/hood/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   ::
@@ -13,4 +15,4 @@
 ?~  opt  $(opt [planets=1]~)
 ?~  +.opt  $(+.opt [stars=0]~)
 :-  %womb-bonus
-[(scot %uv pas) planets stars]
+[(scot %uv pas) planets.opt stars.opt]
