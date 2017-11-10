@@ -2,20 +2,20 @@
 |%
 ::
 ++  first
-  |*  a/^
+  |*  a=^
   -.a
 ::
 ++  second
-  |*  a/^
+  |*  a=^
   +.a
 ::
-++  either  |*({a/mold b/mold} $%({$& p/a} {$| p/b}))   ::  either
+++  either  |*([a=mold b=mold] $%({$& p/a} {$| p/b}))   ::  either
 ::
 ++  thr
   |%
   ++  apply
     :>  applies {b} {a} is first, or {b} to {a} is second.
-    |*  {a/(either) b/$-(* *) c/$-(* *)}
+    |*  [a=(either) b=$-(* *) c=$-(* *)]
     ?-  -.a
       $&  (b p.a)
       $|  (c p.a)
@@ -23,7 +23,7 @@
   ::
   ++  firsts
     :>  returns a list of all first elements in {a}.
-    |*  a/(list (either))
+    |*  a=(list (either))
     =>  .(a (homo a))
     |-
     ?~  a
@@ -35,7 +35,7 @@
   ::
   ++  seconds
     :>  returns a list of all second elements in {a}.
-    |*  a/(list (either))
+    |*  a=(list (either))
     =>  .(a (homo a))
     |-
     ?~  a
@@ -47,7 +47,7 @@
   ::
   ++  partition
     :>  splits the list of eithers into two lists based on first or second.
-    |*  a/(list (either))
+    |*  a=(list (either))
     =>  .(a (homo a))
     |-
     ^-  {(list _?>(?=({{%& *} *} a) p.i.a)) (list _?>(?=({{%| *} *} a) p.i.a))}
@@ -59,14 +59,14 @@
       $|  [-.ret [p.i.a +.ret]]
     ==
   --
-++  maybe  |*(a/mold $@($~ {$~ u/a}))                   ::  maybe
+++  maybe  |*(a=mold $@($~ {$~ u/a}))                   ::  maybe
 ++  myb
   |%
   ++  is-null
     :>    returns %.y if maybe is null.
     :>
     :>  corresponds to {isJust} in haskell.
-    |*  a/(maybe)
+    |*  a=(maybe)
     :>  whether {a} is null.
     ?~  a  %.y
     %.n
@@ -75,7 +75,7 @@
     :>    returns %.y if maybe contains a real value.
     :>
     :>  corresponds to {isNothing} in haskell.
-    |*  a/(maybe)
+    |*  a=(maybe)
     :>  whether {a} is not null.
     ?~  a  %.n
     %.y
@@ -84,7 +84,7 @@
     :>    returns the value or crashes.
     :>
     :>  corresponds to {fromJust} in haskell.
-    |*  a/(maybe)
+    |*  a=(maybe)
     ?~  a  ~>(%mean.[%leaf "need"] !!)
     :>  the value from the maybe.
     u.a
@@ -93,14 +93,14 @@
     :>    returns the value in the maybe, or a default value on null.
     :>
     :>  corresponds to {fromMaybe} in haskell.
-    |*  {a/(maybe) b/*}
+    |*  [a=(maybe) b=*]
     ?~(a b u.a)
   ::
   ++  from-list
     :>    returns the first value of the list, or null on empty list.
     :>
     :>  corresponds to {listToMaybe} in haskell.
-    |*  a/(list)
+    |*  a=(list)
     ^-  (maybe _i.a)
     ?~  a  ~
     [~ i.a]
@@ -109,7 +109,7 @@
     :>    converts the maybe to a list.
     :>
     :>  corresponds to {maybeToList} in haskell.
-    |*  a/(maybe)
+    |*  a=(maybe)
     ^-  (list _u.a)
     ?~  a  ~
     [u.a ~]
@@ -118,7 +118,7 @@
     :>    converts a list of maybes to a list of non-null values.
     :>
     :>  corresponds to {catMaybes} in haskell.
-    |*  a/(list (maybe))
+    |*  a=(list (maybe))
     =>  .(a (homo a))
     |-
     ^-  (list _u.+.i.-.a)
@@ -136,7 +136,7 @@
     :>  logically be put in our list class? murn is.
     :>
     :>  corresponds to {mapMaybes} in haskell.
-    |*  {a/(list) b/$-(* (maybe))}
+    |*  [a=(list) b=$-(* (maybe))]
     =>  .(a (homo a))
     |-
     ^-  (list _,.+:*b)
@@ -150,7 +150,7 @@
   ::
   ++  apply
     :>  applies {b} to {a}.
-    |*  {a/(maybe) b/$-(* (maybe))}
+    |*  [a=(maybe) b=$-(* (maybe))]
     ?~  a  ~
     (b u.a)
   ::
@@ -179,7 +179,7 @@
   ::
   ++  head
     :>  returns the first item in the list, which must be non-empty.
-    |*  a/(list)
+    |*  a=(list)
     =>  .(a (homo a))
     :>  the first item in the list.
     ?~  a  ~>(%mean.[%leaf "head"] !!)
@@ -187,7 +187,7 @@
   ::
   ++  last
     :>  returns the final item in the list, which must be non-empty.
-    |*  a/(list)
+    |*  a=(list)
     :>  the last item in a list.
     ?~  a  ~>(%mean.[%leaf "last"] !!)
     ?~  t.a
@@ -196,14 +196,14 @@
   ::
   ++  tail
     :>  returns all items after the head of the list, which must be non-empty.
-    |*  a/(list)
+    |*  a=(list)
     ^+  a
     ?~  a  ~>(%mean.[%leaf "tail"] !!)
     t.a
   ::
   ++  init
     :>  returns all items in the list except the last one. must be non-empty.
-    |*  a/(list)
+    |*  a=(list)
     =>  .(a (homo a))
     |-
     ^+  a
@@ -219,8 +219,8 @@
     :>    returns the number of items in {a}.
     :>
     :>  corresponds to {length} in haskell.
-    |=  a/(list)
-    =|  b/@u
+    |=  a=(list)
+    =|  b=@u
     ^-  @u
     |-
     ?~  a
@@ -233,14 +233,14 @@
   ::
   ++  map
     :>  applies a gate to each item in the list.
-    |*  {a/(list) b/$-(* *)}
+    |*  [a=(list) b=$-(* *)]
     ^-  (list _*b)
     ?~  a  ~
     [(b i.a) $(a t.a)]
   ::
   ++  reverse
     :>  reverses the order of the items in the list.
-    |*  a/(list)
+    |*  a=(list)
     =>  .(a (homo a))
     ^+  a
     =+  b=`_a`~
@@ -250,7 +250,7 @@
   ::
   ++  intersperse
     :>  places {a} between each element in {b}.
-    |*  {a/* b/(list)}
+    |*  [a=* b=(list)]
     =>  .(b (homo b))
     |-
     ^+  (homo [a b])
@@ -263,7 +263,7 @@
   ::
   ++  intercalate
     :>  places {a} between each list in {b}, and flatten to a single list.
-    |*  {a/(list) b/(list (list))}
+    |*  [a=(list) b=(list (list))]
     =>  .(a ^.(homo a), b ^.(homo b))
     |-
     ^+  (concat [a b])
@@ -276,7 +276,7 @@
   ::
   ++  transpose
     :>  transposes rows and columns of a 2d list structure.
-    |*  input/(list (list))
+    |*  input=(list (list))
     ::  todo: this should homogenize with each sublist.
     ^-  (list (list))
     =/  items
@@ -295,14 +295,14 @@
     [(reverse -.items) $(input (reverse +.items))]
   ::
 ::    ::  ++  subsequences
-::    ::    |=  a/(list)
+::    ::    |=  a=(list)
 ::    ::    ?~  a
 ::    ::      ~
 ::    ::    :-  -.a
 ::    ::    %^  foldr
 ::    ::    $(a +.a)
 ::    ::    `(list)`~
-::    ::    |=  {ys/(list) r/(list)}
+::    ::    |=  [ys=(list) r=(list)]
 ::    ::    ~ ::[ys [-.a ys] r ~]
 ::    ::  TODO:
 ::    ::  ++subsequences
@@ -317,7 +317,7 @@
     :>    left associative fold
     :>
     :>  this follows haskell giving an explicit starting value instead of {roll}.
-    |*  {a/(list) b/* c/$-({* *} *)}
+    |*  [a=(list) b=* c=$-({* *} *)]
     ^+  b
     ?~  a
       b
@@ -325,7 +325,7 @@
   ::
   ++  foldr
     :>  right associative fold
-    |*  {a/(list) b/* c/$-({* *} *)}
+    |*  [a=(list) b=* c=$-({* *} *)]
     ^+  b
     ?~  a
       b
@@ -333,7 +333,7 @@
   ::
   ++  concat
     :>  concatenate a list of lists into a single level.
-    |*  a/(list (list))
+    |*  a=(list (list))
     =>  .(a ^.(homo a))
     |-  ^+  (homo i:-.a)
     ?~  a
@@ -342,7 +342,7 @@
   ::
   ++  weld
     :>  combine two lists, possibly of different types.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     =>  .(a ^.(homo a), b ^.(homo b))
     |-  ^-  (list $?(_i.-.a _i.-.b))
     ?~  a  b
@@ -350,14 +350,14 @@
   ::
   ++  any
     :>  returns yes if any element satisfies the predicate
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     ?~  a
       %.n
     ?|((b i.a) $(a t.a))
   ::
   ++  all
     :>  returns yes if all elements satisfy the predicate
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     ?~  a
       %.y
     ?&((b i.a) $(a t.a))
@@ -371,7 +371,7 @@
   +|
   ++  scanl
     :>  returns a list of successive reduced values from the left.
-    |*  {a/(list) b/* c/$-({* *} *)}
+    |*  [a=(list) b=* c=$-({* *} *)]
     =>  .(a (homo a))
     |-
     ?~  a
@@ -380,7 +380,7 @@
   ::
   ++  scanl1
     :>  a variant of ++scanl that has no starting value.
-    |*  {a/(list) c/$-({* *} *)}
+    |*  [a=(list) c=$-({* *} *)]
     =>  .(a (homo a))
     |-
     ?~  a
@@ -391,7 +391,7 @@
   ::
   ++  scanr
     :>  the right-to-left version of scanl.
-    |*  {a/(list) b/* c/$-({* *} *)}
+    |*  [a=(list) b=* c=$-({* *} *)]
     =>  .(a (homo a))
     |-
     ^-  (list _b)
@@ -403,7 +403,7 @@
   ::
   ++  scanr1
     :>  a variant of ++scanr that has no starting value.
-    |*  {a/(list) c/$-({* *} *)}
+    |*  [a=(list) c=$-({* *} *)]
     =>  .(a (homo a))
     |-
     ^+  a
@@ -419,7 +419,7 @@
     :>    performs both a ++map and a ++foldl in one pass.
     :>
     :>  corresponds to {mapAccumL} in haskell.
-    |*  {a/(list) b/* c/$-({* *} {* *})}
+    |*  [a=(list) b=* c=$-({* *} {* *})]
     ^-  {_b (list _+:*c)}
     ?~  a
       [b ~]
@@ -431,7 +431,7 @@
     :>    performs both a ++map and a ++foldr in one pass.
     :>
     :>  corresponds to {mapAccumR} in haskell.
-    |*  {a/(list) b/* c/$-({* *} {* *})}
+    |*  [a=(list) b=* c=$-({* *} {* *})]
     ^-  {_b (list _+:*c)}
     ?~  a
       [b ~]
@@ -441,7 +441,7 @@
   ::
   ++  unfoldr
     :>  generates a list from a seed value and a function.
-    |*  {b/* c/$-(* (maybe {* *}))}
+    |*  [b=* c=$-(* (maybe {* *}))]
     |-
     ^-  (list _b)
     =+  current=(c b)
@@ -457,7 +457,7 @@
   ::
   ++  take
     :>  returns the first {a} elements of {b}.
-    |*  {a/@ b/(list)}
+    |*  [a=@ b=(list)]
     =>  .(b (homo b))
     |-
     ^+  b
@@ -469,7 +469,7 @@
   ::
   ++  drop
     :>  returns {b} without the first {a} elements.
-    |*  {a/@ b/(list)}
+    |*  [a=@ b=(list)]
     ?:  =(0 a)
       b
     ?~  b
@@ -478,7 +478,7 @@
   ::
   ++  split-at
     :>  returns {b} split into two lists at the {a}th element.
-    |*  {a/@ b/(list)}
+    |*  [a=@ b=(list)]
     =>  .(b (homo b))
     |-
     ^+  [b b]
@@ -491,7 +491,7 @@
   ::
   ++  take-while
     :>  returns elements from {a} until {b} returns %.no.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     =>  .(a (homo a))
     |-
     ^+  a
@@ -503,7 +503,7 @@
   ::
   ++  drop-while
     :>  returns elements form {a} once {b} returns %.no.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     =>  .(a (homo a))
     |-
     ?~  a
@@ -514,7 +514,7 @@
   ::
   ++  drop-while-end
     :>  drops the largest suffix of {a} which matches {b}.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     =>  .(a (homo a))
     |-
     ?~  a
@@ -528,7 +528,7 @@
     :>    returns [the longest prefix of {b}, the rest of the list].
     :>
     :>  corresponds to {span} in haskell. renamed to not conflict with hoon.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     =>  .(a (homo a))
     |-
     ^+  [a a]
@@ -541,7 +541,7 @@
   ::
   ++  break
     :>  like {split-on}, but reverses the return code of {b}.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     =>  .(a (homo a))
     |-
     ^+  [a a]
@@ -554,7 +554,7 @@
   ::
   ++  strip-prefix
     :>  returns a {maybe} of {b} with the prefix {a} removed, or ~ if no match.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     ^-  (maybe _b)
     ?~  a
       `b
@@ -569,7 +569,7 @@
     :>
     :>  unlike haskell, this does not return the empty list as the first
     :>  element, as hoon uses null as the list terminator.
-    |*  a/(list)
+    |*  a=(list)
     =>  .(a (homo a))
     %-  flop
     |-
@@ -578,7 +578,7 @@
   ::
   ++  tails
     :>  returns all final segments, longest first.
-    |*  a/(list)
+    |*  a=(list)
     =>  .(a (homo a))
     |-
     ?~  a  ~
@@ -590,7 +590,7 @@
   ::
   ++  is-prefix-of
     :>  returns %.y if the first list is a prefix of the second.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     =>  .(a (homo a), b (homo b))
     |-
     ^-  ?
@@ -604,7 +604,7 @@
   ::
   ++  is-suffix-of
     :>  returns %.y if the first list is the suffix of the second.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     =>  .(a (homo a), b (homo b))
     ^-  ?
     ::  todo: this is performant in haskell because of laziness but may not be
@@ -613,7 +613,7 @@
   ::
   ++  is-infix-of
     :>  returns %.y if the first list appears anywhere in the second.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     =>  .(a (homo a), b (homo b))
     |-
     ^-  ?
@@ -632,7 +632,7 @@
   ::
   ++  elem
     :>  does {a} occur in list {b}?
-    |*  {a/* b/(list)}
+    |*  [a=* b=(list)]
     ?~  b
       %.n
     ?:  =(a i.b)
@@ -641,7 +641,7 @@
   ::
   ++  lookup
     :>  looks up the key {a} in the association list {b}
-    |*  {a/* b/(list (pair))}
+    |*  [a=* b=(list (pair))]
     ^-  (maybe _+.-.b)
     ?~  b
       ~
@@ -651,7 +651,7 @@
   ::
   ++  find
     :>  returns the first element of {a} which matches predicate {b}.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     ^-  (maybe _-.a)
     ?~  a
       ~
@@ -661,7 +661,7 @@
   ::
   ++  filter
     :>  filter all items in {a} which match predicate {b}.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     =>  .(a (homo a))
     |-
     ^+  a
@@ -673,7 +673,7 @@
   ::
   ++  partition
     :>  returns two lists, one whose elements match {b}, the other which doesn't.
-    |*  {a/(list) b/$-(* ?)}
+    |*  [a=(list) b=$-(* ?)]
     =>  .(a (homo a))
     |-
     ^+  [a a]
@@ -690,8 +690,8 @@
   ::
   ++  elem-index
     :>  returns {maybe} the first occurrence of {a} occur in list {b}.
-    =|  i/@u
-    |=  {a/* b/(list)}
+    =|  i=@u
+    |=  [a=* b=(list)]
     ^-  (maybe @ud)
     ?~  b
       ~
@@ -702,7 +702,7 @@
   ++  elem-indices
     :>  returns a list of indices of all occurrences of {a} in {b}.
     =|  i/@u
-    |=  {a/* b/(list)}
+    |=  [a=* b=(list)]
     ^-  (list @ud)
     ?~  b
       ~
@@ -712,8 +712,8 @@
   ::
   ++  find-index
     :>  returns {maybe} the first occurrence which matches {b} in {a}.
-    =|  i/@u
-    |*  {a/(list) b/$-(* ?)}
+    =|  i=@u
+    |*  [a=(list) b=$-(* ?)]
     ^-  (maybe @ud)
     ?~  a
       ~
@@ -723,8 +723,8 @@
   ::
   ++  find-indices
     :>  returns a list of indices of all items in {a} which match {b}.
-    =|  i/@u
-    |*  {a/(list) b/$-(* ?)}
+    =|  i=@u
+    |*  [a=(list) b=$-(* ?)]
     ^-  (list @ud)
     ?~  a
       ~
@@ -734,7 +734,7 @@
   ::
   ++  zip
     :>  takes a list of lists, returning a list of each first items.
-    |*  a/(list (list))
+    |*  a=(list (list))
     =>  .(a (multi-homo a))
     |^  ^+  a
         ?~  a  ~
@@ -746,7 +746,7 @@
     ::
     ++  valid
       %+  all  a
-      |=  {next/(list)}
+      |=  next=(list)
       ?~  a  %.n
       %.y
     ::
@@ -765,7 +765,7 @@
       [t.i.a $(a t.a)]
     --
   ++  multi-homo
-    |*  a/(list (list))
+    |*  a=(list (list))
     ^+  =<  $
       |%  +-  $  ?:(*? ~ [i=(homo (snag 0 a)) t=$])
       --
@@ -778,7 +778,7 @@
     :>    removes duplicates elements from {a}
     :>
     :>  corresponds to {nub} in haskell.
-    |*  a/(list)
+    |*  a=(list)
     =>  .(a (homo a))
     =|  seen/(list)
     ^+  a
@@ -791,7 +791,7 @@
   ::
   ++  delete
     :>  removes the first occurrence of {a} in {b}
-    |*  {a/* b/(list)}
+    |*  [a=* b=(list)]
     =>  .(b (homo b))
     ^+  b
     |-
@@ -803,7 +803,7 @@
   ::
   ++  delete-firsts
     :>  deletes the first occurrence of each element in {b} from {a}.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     =>  .(a (homo a), b (homo b))
     |-
     ^+  a
@@ -817,7 +817,7 @@
   ::
   ++  union
     :>  the list union of {a} and {b}.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     =>  .(a (homo a), b (homo b))
     |-
     ^+  (weld a b)
@@ -829,7 +829,7 @@
   ::
   ++  intersect
     :>  the intersection of {a} and {b}.
-    |*  {a/(list) b/(list)}
+    |*  [a=(list) b=(list)]
     =>  .(a (homo a), b (homo b))
     |-
     ^+  a
@@ -850,7 +850,7 @@
   :>
   :>  a dictionary is treap ordered; it builds a treap out of the hashed key
   :>  values.
-  |*  {a/mold b/mold}
+  |*  [a=mold b=mold]
   %+  cork  (tree (pair a b))
   |=  c/(tree (pair a b))  ^+  c
   ?.((valid:dct c) ~ c)
@@ -862,27 +862,27 @@
   +|
   ++  empty
     :>  is the dict empty?
-    |*  a/(dict)
+    |*  a=(dict)
     ?~  a  %.y
     %.n
   ::
   ++  size
     :>    returns the number of elements in {a}.
-    |=  a/(dict)
+    |=  a=(dict)
     ^-  @u
     ?~  a  0
     :(add 1 $(a l.a) $(a r.a))
   ::
   ++  member
     :>  returns %.y if {b} is a key in {a}.
-    |=  {a/(dict) key/*}
+    |=  [a=(dict) key=*]
     ^-  ?
     ?~  a  %.n
     ?|(=(key p.n.a) $(a l.a) $(a r.a))
   ::
   ++  get
     :>  grab value by key.
-    |*  {a/(dict) key/*}
+    |*  [a=(dict) key=*]
     ^-  (maybe _?>(?=(^ a) q.n.a))
     ::  ^-  {$@($~ {$~ u/_?>(?=(^ a) q.n.a)})}
     ?~  a
@@ -898,7 +898,7 @@
 ::    ++  got
 ::      :>  todo: move impl here.
 ::      :>  todo: is there a way to make b/_<><>.a ?
-::      |*  {a/(dict) key/*}
+::      |*  [a=(dict) key=*]
 ::      (~(got by a) key)
   ::
   ::  todo: skipping several methods which rely on the the Ord typeclass, like
@@ -910,7 +910,7 @@
     :>    inserts a new key/value pair, replacing the current value if it exists.
     :>
     :>  corresponds to {insert} in haskell.
-    |*  {a/(dict) key/* value/*}
+    |*  [a=(dict) key=* value=*]
     |-  ^+  a
     ?~  a
       [[key value] ~ ~]
@@ -934,7 +934,7 @@
     :>    inserts {key}/{value}, applying {fun} if {key} already exists.
     :>
     :>  corresponds to {insertWith} in haskell.
-    |*  {a/(dict) key/* value/* fun/$-({* *} *)}
+    |*  [a=(dict) key=* value=* fun=$-({* *} *)]
     |-  ^+  a
     ?~  a
       [[key value] ~ ~]
@@ -957,7 +957,7 @@
     :>    inserts {key}/{value}, applying {fun} if {key} already exists.
     :>
     :>  corresponds to {insertWithKey} in haskell.
-    |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
+    |*  [a=(dict) key=* value=* fun=$-({* * *} *)]
     |-  ^+  a
     ?~  a
       [[key value] ~ ~]
@@ -980,7 +980,7 @@
     :>    combines insertion with lookup in one pass.
     :>
     :>  corresponds to {insertLookupWithKey} in haskell.
-    |*  {a/(dict) key/* value/* fun/$-({* * *} *)}
+    |*  [a=(dict) key=* value=* fun=$-({* * *} *)]
     |-  ^-  {(maybe _value) _a}
     ?~  a
       [~ [[key value] ~ ~]]
@@ -1006,7 +1006,7 @@
   ::
   ++  delete
     :>  deletes entry at {key}.
-    |*  {a/(dict) key/*}
+    |*  [a=(dict) key=*]
     |-  ^+  a
     ?~  a
       ~
@@ -1018,36 +1018,36 @@
   ::
   ++  adjust
     :>  updates a value at {key} by passing the value to {fun}.
-    |*  {a/(dict) key/* fun/$-(* *)}
+    |*  [a=(dict) key=* fun=$-(* *)]
     %^  alter-with-key  a  key
-    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    |=  [key=_p.-.n.-.a value=(maybe _q.+.n.-.a)]
     ^-  (maybe _q.+.n.-.a)
     ?~  value  ~
     [~ (fun u.value)]
   ::
   ++  adjust-with-key
     :>  updates a value at {key} by passing the key/value pair to {fun}.
-    |*  {a/(dict) key/* fun/$-({* *} *)}
+    |*  [a=(dict) key=* fun=$-({* *} *)]
     %^  alter-with-key  a  key
-    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    |=  [key=_p.-.n.-.a value=(maybe _q.+.n.-.a)]
     ^-  (maybe _q.+.n.-.a)
     ?~  value  ~
     [~ (fun key u.value)]
   ::
   ++  update
     :>  adjusts or deletes the value at {key} by {fun}.
-    |*  {a/(dict) key/* fun/$-(* (maybe *))}
+    |*  [a=(dict) key=* fun=$-(* (maybe *))]
     %^  alter-with-key  a  key
-    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    |=  [key=_p.-.n.-.a value=(maybe _q.+.n.-.a)]
     ^-  (maybe _q.+.n.-.a)
     ?~  value  ~
     (fun u.value)
   ::
   ++  update-with-key
     :>  adjusts or deletes the value at {key} by {fun}.
-    |*  {a/(dict) key/* fun/$-({* *} (maybe *))}
+    |*  [a=(dict) key=* fun=$-({* *} (maybe *))]
     %^  alter-with-key  a  key
-    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    |=  [key=_p.-.n.-.a value=(maybe _q.+.n.-.a)]
     ^-  (maybe _q.+.n.-.a)
     ?~  value  ~
     (fun key u.value)
@@ -1057,14 +1057,14 @@
   ::
   ++  alter
     :>  inserts, deletes, or updates a value by {fun}.
-    |*  {a/(dict) key/* fun/$-((maybe *) (maybe *))}
+    |*  [a=(dict) key=* fun=$-((maybe *) (maybe *))]
     %^  alter-with-key  a  key
-    |=  {key/_p.-.n.-.a value/(maybe _q.+.n.-.a)}
+    |=  [key=_p.-.n.-.a value=(maybe _q.+.n.-.a)]
     (fun value)
   ::
   ++  alter-with-key
     :>  inserts, deletes, or updates a value by {fun}.
-    |*  {a/(dict) key/* fun/$-({* (maybe *)} (maybe *))}
+    |*  [a=(dict) key=* fun=$-({* (maybe *)} (maybe *))]
     |-  ^+  a
     ?~  a
       =+  ret=(fun key ~)
@@ -1097,7 +1097,7 @@
   ::
   ++  union
     :>  returns the union of {a} and {b}, preferring the value from {a} if dupe
-    |*  {a/(dict) b/(dict)}
+    |*  [a=(dict) b=(dict)]
     |-  ^+  a
     ?~  b
       a
@@ -1117,7 +1117,7 @@
   ::
   ++  union-with
     :>  returns the union of {a} and {b}, running {fun} to resolve duplicates.
-    |*  {a/(dict) b/(dict) fun/$-({* *} *)}
+    |*  [a=(dict) b=(dict) fun=$-({* *} *)]
     |-  ^+  a
     ?~  b
       a
@@ -1137,7 +1137,7 @@
   ::
   ++  union-with-key
     :>  returns the union of {a} and {b}, running {fun} to resolve duplicates.
-    |*  {a/(dict) b/(dict) fun/$-({* * *} *)}
+    |*  [a=(dict) b=(dict) fun=$-({* * *} *)]
     |-  ^+  a
     ?~  b
       a
@@ -1160,7 +1160,7 @@
 ::    ++  difference
 ::      ::  todo: move real implementation here.
 ::      :>  returns elements in {a} that don't exist in {b}.
-::      |*  {a/(dict) b/(dict)}
+::      |*  [a=(dict) b=(dict)]
 ::      (~(dif by a) b)
 ::    ::
 ::    ::  todo:
@@ -1170,7 +1170,7 @@
 ::    ++  intersection
 ::      ::  todo: move real implementation here.
 ::      :>  returns elements in {a} that exist in {b}.
-::      |*  {a/(dict) b/(dict)}
+::      |*  [a=(dict) b=(dict)]
 ::      (~(int by a) b)
 ::    ::
 ::    ::  todo:
@@ -1182,7 +1182,7 @@
   ::
   ++  map
     :>  applies {fun} to each value in {a}.
-    |*  {a/(dict) fun/$-(* *)}
+    |*  [a=(dict) fun=$-(* *)]
     ^-  (dict _p.-.n.-.a fun)
     ?~  a
       ~
@@ -1190,7 +1190,7 @@
   ::
   ++  map-with-key
     :>  applies {fun} to each value in {a}.
-    |*  {a/(dict) fun/$-({* *} *)}
+    |*  [a=(dict) fun=$-({* *} *)]
     ^-  (dict _p.-.n.-.a _*fun)
     ?~  a
       ~
@@ -1205,7 +1205,7 @@
     :>  treap order.
     :>
     :>  corresponds to {mapAccum} in haskell.
-    |*  {a/(dict) b/* fun/$-({* *} {* *})}
+    |*  [a=(dict) b=* fun=$-({* *} {* *})]
     ^-  {_b (dict _p.-.n.-.a _+:*fun)}
     ?~  a
       [b ~]
@@ -1220,7 +1220,7 @@
     ::  todo: the haskell version specifies that the "greatest" original key
     ::  wins in case of duplicates. this is currently unhandled. maybe i just
     ::  shouldn't have this gate.
-    |*  {a/(dict) fun/$-(* *)}
+    |*  [a=(dict) fun=$-(* *)]
     %-  from-list
     %+  map:ls  (to-list a)
     |=  item/_n.-.a
@@ -1228,7 +1228,7 @@
   ::
   ++  map-keys-with
     :>  applies {fun} to all keys, creating a new value with {combine} on dupes.
-    |*  {a/(dict) fun/$-(* *) combine/$-({* *} *)}
+    |*  [a=(dict) fun=$-(* *) combine=$-({* *} *)]
     ^-  (dict _*fun _q.+.n.-.a)
     =/  new-list
       %+  map:ls  (to-list a)
@@ -1236,7 +1236,7 @@
       [(fun p.item) q.item]
     %^  foldl:ls  new-list
     `(dict _*fun _q.+.n.-.a)`~
-    |=  {m/(dict _*fun _q.+.n.-.a) p/_i.-.new-list}
+    |=  [m=(dict _*fun _q.+.n.-.a) p=_i.-.new-list]
     (put-with m -.p +.p combine)
   ::
   ++  fold
@@ -1246,7 +1246,7 @@
     :>  horizontal ordering, and thus the distinction between left and right
     :>  folding isn't relevant. your accumulator function will be called in
     :>  treap order.
-    |*  {a/(dict) b/* fun/$-({* *} *)}
+    |*  [a=(dict) b=* fun=$-({* *} *)]
     ^-  _b
     ?~  a
       b
@@ -1256,7 +1256,7 @@
   ::
   ++  fold-with-keys
     :>    performs a fold on all the values in {a}, passing keys too.
-    |*  {a/(dict) b/* fun/$-({* * *} *)}
+    |*  [a=(dict) b=* fun=$-({* * *} *)]
     ^+  b
     ?~  a
       b
@@ -1266,7 +1266,7 @@
   ::
   ++  any
     :>  returns yes if any element satisfies the predicate
-    |*  {a/(dict) b/$-(* ?)}
+    |*  [a=(dict) b=$-(* ?)]
     ^-  ?
     ?~  a
       %.n
@@ -1274,7 +1274,7 @@
   ::
   ++  any-with-key
     :>  returns yes if any element satisfies the predicate
-    |*  {a/(dict) b/$-({* *} ?)}
+    |*  [a=(dict) b=$-({* *} ?)]
     ^-  ?
     ?~  a
       %.n
@@ -1282,7 +1282,7 @@
   ::
   ++  all
     :>  returns yes if all elements satisfy the predicate
-    |*  {a/(dict) b/$-(* ?)}
+    |*  [a=(dict) b=$-(* ?)]
     ^-  ?
     ?~  a
       %.y
@@ -1290,7 +1290,7 @@
   ::
   ++  all-with-key
     :>  returns yes if all elements satisfy the predicate
-    |*  {a/(dict) b/$-({* *} ?)}
+    |*  [a=(dict) b=$-({* *} ?)]
     ^-  ?
     ?~  a
       %.y
@@ -1300,12 +1300,12 @@
   +|
   ++  elems
     :>  return all values in the dict.
-    |*  a/(dict)
+    |*  a=(dict)
     %+  turn  (to-list a)  second
   ::
   ++  keys
     :>  returns all keys in the dict.
-    |*  a/(dict)
+    |*  a=(dict)
     %+  turn  (to-list a)  first
   ::
   ::  todo: ++assocs probably doesn't make sense when we have ++to-list and
@@ -1313,12 +1313,12 @@
   ::
   ++  keys-set
     :>  returns all keys as a set.
-    |*  a/(dict)
+    |*  a=(dict)
     (si:nl (keys a))
   ::
   ++  from-set
     :>  computes a dict by running {fun} on every value in a set.
-    |*  {a/(set) fun/$-(* *)}
+    |*  [a=(set) fun=$-(* *)]
     ^-  (dict _n.-.a _*fun)
     ?~  a
       ~
@@ -1329,8 +1329,8 @@
   ::
   ++  to-list
     :>  creates a list of pairs from the tree.
-    |*  a/(dict)
-    =|  b/(list _n.-.a)
+    |*  a=(dict)
+    =|  b=(list _n.-.a)
     |-
     ^+  b
     ?~  a
@@ -1339,19 +1339,19 @@
   ::
   ++  from-list
     :>  creates a tree from a list.
-    |*  a/(list (pair))
+    |*  a=(list (pair))
     |-
     %^  foldl:ls  a
     `(dict _p.-.i.-.a _q.+.i.-.a)`~
-    |=  {m/(dict _p.-.i.-.a _q.+.i.-.a) p/_i.-.a}
+    |=  [m=(dict _p.-.i.-.a _q.+.i.-.a) p=_i.-.a]
     (put m p)
   ::
   ++  from-list-with
     :>  creates a dict from a list, with {fun} resolving duplicates.
-    |*  {a/(list (pair)) fun/$-(* *)}
+    |*  [a=(list (pair)) fun=$-(* *)]
     %^  foldl:ls  a
     `(dict _*fun _q.+.i.-.a)`~
-    |=  {m/(dict _*fun _q.+.i.-.a) p/_i.-.a}
+    |=  [m=(dict _*fun _q.+.i.-.a) p=_i.-.a]
     (put-with m -.p +.p fun)
   ::
   ::  todo: without a natural ordering, association lists and gates to operate
@@ -1361,14 +1361,14 @@
   +|
   ++  filter
     :>  filters a dict of all values that satisfy {fun}.
-    |*  {a/(dict) fun/$-(* ?)}
+    |*  [a=(dict) fun=$-(* ?)]
     %+  filter-with-key  a
-    |=  {key/* value/_q.+.n.-.a}
+    |=  [key=* value=_q.+.n.-.a]
     (fun value)
   ::
   ++  filter-with-key
     :>  filters a dict of all values that satisfy {fun}.
-    |*  {a/(dict) fun/$-({* *} ?)}
+    |*  [a=(dict) fun=$-({* *} ?)]
     |-
     ^+  a
     ?~  a  ~
@@ -1380,25 +1380,25 @@
   ::
   ++  restrict-keys
     :>  returns a dict where the only allowable keys are {keys}.
-    |*  {a/(dict) keys/(set)}
+    |*  [a=(dict) keys=(set)]
     %+  filter-with-key  a
-    |=  {key/_p.-.n.-.a value/*}
+    |=  [key=_p.-.n.-.a value=*]
     ::  todo: replace this with a call to our set library when we advance that
     ::  far.
     !(~(has in keys) key)
   ::
   ++  without-keys
     :>  returns a dict where the only allowable keys are not in {keys}.
-    |*  {a/(dict) keys/(set)}
+    |*  [a=(dict) keys=(set)]
     %+  filter-with-key  a
-    |=  {key/_p.-.n.-.a value/*}
+    |=  [key=_p.-.n.-.a value=*]
     ::  todo: replace this with a call to our set library when we advance that
     ::  far.
     (~(has in keys) key)
   ::
   ++  partition
     :>  returns two lists, one whose elements match {fun}, the other doesn't.
-    |*  {a/(dict) fun/$-(* ?)}
+    |*  [a=(dict) fun=$-(* ?)]
     ::  todo: is the runtime on this is bogus?
     =/  data
       %+  partition:ls  (to-list a)
@@ -1413,14 +1413,14 @@
   ::
   ++  map-maybe
     :>  a version of map that can throw out items.
-    |*  {a/(dict) fun/$-(* (maybe))}
+    |*  [a=(dict) fun=$-(* (maybe))]
     %+  map-maybe-with-key  a
-    |=  {key/* value/_q.+.n.-.a}
+    |=  [key=* value=_q.+.n.-.a]
     (fun value)
   ::
   ++  map-maybe-with-key
     :>  a version of map that can throw out items.
-    |*  {a/(dict) fun/$-({* *} (maybe))}
+    |*  [a=(dict) fun=$-({* *} (maybe))]
     ^-  (dict _p.-.n.-.a _+:*fun)
     ?~  a  ~
     =+  res=(fun n.a)
@@ -1432,14 +1432,14 @@
   ::
   ++  map-either
     :>  splits the dict in two on a gate that returns an either.
-    |*  {a/(dict) fun/$-(* (either))}
+    |*  [a=(dict) fun=$-(* (either))]
     %+  map-either-with-key  a
-    |=  {key/* value/_q.+.n.-.a}
+    |=  [key=* value=_q.+.n.-.a]
     (fun value)
   ::
   ++  map-either-with-key
     :>  splits the dict in two on a gate that returns an either.
-    |*  {a/(dict) fun/$-({* *} (either))}
+    |*  [a=(dict) fun=$-({* *} (either))]
     |-
     ^-  $:  (dict _p.-.n.-.a _?>(?=({{%& *} *} *fun) +:*fun))
             (dict _p.-.n.-.a _?>(?=({{%| *} *} *fun) +:*fun))
@@ -1461,13 +1461,13 @@
   ::
   ++  is-subdict
     :>  returns %.y if every element in {a} exists in {b} with the same value.
-    |*  {a/(dict) b/(dict)}
+    |*  [a=(dict) b=(dict)]
     ^-  ?
-    (is-subdict-by a b |=({a/* b/*} =(a b)))
+    (is-subdict-by a b |=([a=* b=*] =(a b)))
   ::
   ++  is-subdict-by
     :>  returns %.y if every element in {a} exists in {b} with the same value.
-    |*  {a/(dict) b/(dict) fun/$-({* *} ?)}
+    |*  [a=(dict) b=(dict) fun=$-({* *} ?)]
     |-
     ^-  ?
     ?~  a  %.y
@@ -1483,7 +1483,7 @@
   +|
   ++  pop-top
     :>  removes the head of the tree and rebalances the tree below.
-    |*  a/(dict)
+    |*  a=(dict)
     ^-  {$?($~ _a)}
     ?~  a  ~
     |-
@@ -1495,8 +1495,8 @@
   ::
   ++  valid
     :>  returns %.y if {a} if this tree is a valid treap dict.
-    |*  a/(tree (pair * *))
-    =|  {l/(maybe) r/(maybe)}
+    |*  a=(tree (pair * *))
+    =|  [l=(maybe) r=(maybe)]
     |-  ^-  ?
     ?~  a   &
     ?&  ?~(l & (gor p.n.a u.l))
@@ -1518,10 +1518,10 @@
   :>      =+  gen=(random eny)
   :>      =^  first  gen  (range:gen 0 10)
   :>      =^  second  gen  (range:gen 0 10)
-  |=  a/@
+  |=  a=@
   =>  |%
       ++  raw                                               ::  random bits
-        |=  b/@  ^-  @
+        |=  b=@  ^-  @
         %+  can
           0
         =+  c=(shas %og-a (mix b a))
@@ -1534,14 +1534,14 @@
         [[256 d] $(c d, b (sub b 256))]
       ::
       ++  rad                                               ::  random in range
-        |=  b/@  ^-  @
+        |=  b=@  ^-  @
         =+  c=(raw (met 0 b))
         ?:((lth c b) c $(a +(a)))
       --
   ^?  |%
   ++  range
     :>  returns a random number in the range [start, end], and generator.
-    |=  {start/@ end/@}
+    |=  [start=@ end=@]
     ?:  (gte start end)
       ~_(leaf+"invalid range" !!)
     =+  offset=(sub end start)
@@ -1550,7 +1550,7 @@
   ::
   ++  bits
     :>  returns {b} bits in the range, and generator.
-    |=  b/@
+    |=  b=@
     =+  r=(raw b)
     [r +>.$(a (shas %og-s (mix a r)))]
   --
