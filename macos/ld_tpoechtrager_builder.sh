@@ -18,7 +18,7 @@ rm -r ld64/src/other
 mkdir build
 cd build
 
-CFLAGS="-Wno-deprecated -Wno-deprecated-declarations -Wno-unused-result -Werror -Wfatal-errors -O2 -g -I../ld64/src -I../ld64/src/ld -I../ld64/src/ld/parsers -I../ld64/src/abstraction -I../ld64/src/3rd -I../ld64/src/3rd/include -I../ld64/src/3rd/BlocksRuntime -I../include -I../include/foreign -DTAPI_SUPPORT -DPROGRAM_PREFIX=\\\"$host-\\\" -D__LITTLE_ENDIAN__ $(pkg-config --cflags libtapi)"
+CFLAGS="-Wno-deprecated -Wno-deprecated-declarations -Wno-unused-result -Werror -Wfatal-errors -O2 -g -I../ld64/src -I../ld64/src/ld -I../ld64/src/ld/parsers -I../ld64/src/abstraction -I../ld64/src/3rd -I../ld64/src/3rd/include -I../ld64/src/3rd/BlocksRuntime -I../include -I../include/foreign -DTAPI_SUPPORT -DPROGRAM_PREFIX=\\\"$host-\\\" -D__LITTLE_ENDIAN__ -D__private_extern__= $(pkg-config --cflags libtapi)"
 
 CXXFLAGS="-std=gnu++11 $CFLAGS"
 
