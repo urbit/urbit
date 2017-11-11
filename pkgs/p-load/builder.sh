@@ -9,6 +9,6 @@ cd build
 cmake-cross ../p-load \
   -DCMAKE_INSTALL_PREFIX=$out
 
-make VERBOSE=Y
+make
 
 make install
