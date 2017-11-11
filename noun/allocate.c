@@ -1613,9 +1613,11 @@ u3a_sweep(void)
     u3a_print_memory("maximum", u3R->all.max_w);
   }
 #else
+#if 0
   u3a_print_memory("available", (tot_w - pos_w));
   u3a_print_memory("allocated", pos_w);
   u3a_print_memory("volatile", caf_w);
+#endif
 #endif
 #endif
   u3a_print_memory("leaked", leq_w);
