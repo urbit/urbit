@@ -8,6 +8,8 @@ for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
+# Similar but not the same as the other _structs.h.
+rm cctools/include/foreign/mach/i386/_structs.h
 cd ..
 
 mv cctools-port/cctools/misc misc
@@ -17,7 +19,7 @@ rm -r cctools-port
 mkdir build
 cd build
 
-CFLAGS="-Wno-deprecated -Wno-deprecated-declarations -Wno-unused-result -Werror -Wfatal-errors -O2 -g -I../ld64/src -I../ld64/src/ld -I../ld64/src/ld/parsers -I../ld64/src/abstraction -I../ld64/src/3rd -I../ld64/src/3rd/include -I../ld64/src/3rd/BlocksRuntime -I../include -I../include/foreign -DTAPI_SUPPORT -DPROGRAM_PREFIX=\\\"$host-\\\" -D__LITTLE_ENDIAN__ -D__private_extern__="
+CFLAGS="-Wno-deprecated -Wno-deprecated-declarations -Wno-unused-result -Werror -Wfatal-errors -O2 -g -I../include -I../include/foreign -DPROGRAM_PREFIX=\\\"$host-\\\" -D__LITTLE_ENDIAN__ -D__private_extern__= -D__DARWIN_UNIX03"
 
 CXXFLAGS="-std=gnu++11 $CFLAGS"
 

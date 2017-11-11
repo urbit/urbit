@@ -1,6 +1,6 @@
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/debugline.c cctools-port-format/cctools/ld64/src/ld/debugline.c
 --- cctools-port-c1cc758/cctools/ld64/src/ld/debugline.c	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/debugline.c	2017-10-29 09:13:35.459523966 -0700
++++ cctools-port-format/cctools/ld64/src/ld/debugline.c	2017-11-10 19:13:05.914926185 -0800
 @@ -396,11 +396,11 @@
  	      case DW_LNE_set_address:
  		if (sz == 9) {
@@ -31,7 +31,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/debugline.c cctools-port-forma
  	  if (verbose) fprintf(stderr, "DW_LNS_set_file\n");
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/InputFiles.cpp cctools-port-format/cctools/ld64/src/ld/InputFiles.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/InputFiles.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/InputFiles.cpp	2017-10-29 09:13:05.995896285 -0700
++++ cctools-port-format/cctools/ld64/src/ld/InputFiles.cpp	2017-11-10 19:13:05.914926185 -0800
 @@ -226,7 +226,7 @@
  	if ( fd == -1 )
  		throwf("can't open file, errno=%d", errno);
@@ -52,7 +52,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/InputFiles.cpp cctools-port-fo
  			}
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/ld.cpp cctools-port-format/cctools/ld64/src/ld/ld.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/ld.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/ld.cpp	2017-10-29 09:11:27.114906755 -0700
++++ cctools-port-format/cctools/ld64/src/ld/ld.cpp	2017-11-10 19:13:05.914926185 -0800
 @@ -1026,10 +1026,10 @@
  		// sanity check size
  		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
@@ -122,7 +122,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/ld.cpp cctools-port-format/cct
  		*out++ = rawNum[i];
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/LinkEdit.hpp cctools-port-format/cctools/ld64/src/ld/LinkEdit.hpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/LinkEdit.hpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/LinkEdit.hpp	2017-10-29 09:10:12.190821371 -0700
++++ cctools-port-format/cctools/ld64/src/ld/LinkEdit.hpp	2017-11-10 19:13:05.914926185 -0800
 @@ -324,39 +324,39 @@
  				done = true;
  				break;
@@ -366,7 +366,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/LinkEdit.hpp cctools-port-form
  		// uleb128 encode
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/Options.cpp cctools-port-format/cctools/ld64/src/ld/Options.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/Options.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/Options.cpp	2017-10-29 09:12:16.252065510 -0700
++++ cctools-port-format/cctools/ld64/src/ld/Options.cpp	2017-11-10 19:13:05.914926185 -0800
 @@ -2622,7 +2622,7 @@
  				fBaseAddress = parseAddress(address);
  				uint64_t temp = ((fBaseAddress+fSegmentAlignment-1) & (-fSegmentAlignment)); 
@@ -432,7 +432,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/Options.cpp cctools-port-forma
  		// verify no duplicates
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/OutputFile.cpp cctools-port-format/cctools/ld64/src/ld/OutputFile.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/OutputFile.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/OutputFile.cpp	2017-10-29 09:25:49.365076079 -0700
++++ cctools-port-format/cctools/ld64/src/ld/OutputFile.cpp	2017-11-10 19:13:05.918259550 -0800
 @@ -132,13 +132,13 @@
  {
  	fprintf(stderr, "SORTED:\n");
@@ -1021,7 +1021,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/OutputFile.cpp cctools-port-fo
  			}
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/archive_file.cpp cctools-port-format/cctools/ld64/src/ld/parsers/archive_file.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/archive_file.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/parsers/archive_file.cpp	2017-10-29 09:23:21.296657858 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/archive_file.cpp	2017-11-10 19:13:05.918259550 -0800
 @@ -601,7 +601,7 @@
  		const char* entryName = &_tableOfContentStrings[E::get32(entry->ran_un.ran_strx)];
  		uint64_t offset = E::get32(entry->ran_off);
@@ -1047,7 +1047,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/archive_file.cpp cctoo
  }
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp	2017-10-29 09:22:52.229639346 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp	2017-11-10 19:13:05.918259550 -0800
 @@ -245,7 +245,7 @@
  			pint_t offsetOfFunctionAddress = p-currentCFI;
  			pint_t pcStart = addressSpace.getEncodedP(p, nextCFI, cieInfo.pointerEncoding);
@@ -1271,7 +1271,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfInstruc
  
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp	2017-10-29 09:20:57.091547782 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp	2017-11-10 19:13:05.918259550 -0800
 @@ -212,12 +212,12 @@
  template <typename A>
  bool CFI_Parser<A>::findFDE(A& addressSpace, pint_t pc, pint_t ehSectionStart, uint32_t sectionLength, pint_t fdeHint, FDE_Info* fdeInfo, CIE_Info* cieInfo)
@@ -1515,7 +1515,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.
  						if ( logDwarf ) fprintf(stderr, "unknown CFA opcode 0x%02X\n", opcode);
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp cctools-port-format/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp	2017-10-29 09:18:30.039640071 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp	2017-11-10 19:13:05.918259550 -0800
 @@ -902,7 +902,7 @@
  {
  	const macho_section<P>* sct = this->sect().machoSection();
@@ -1746,7 +1746,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/macho_relocatable_file
  			}
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/branch_island.cpp cctools-port-format/cctools/ld64/src/ld/passes/branch_island.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/passes/branch_island.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/passes/branch_island.cpp	2017-10-29 09:15:02.087055048 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/branch_island.cpp	2017-11-10 19:13:05.918259550 -0800
 @@ -451,7 +451,7 @@
  	uint64_t totalTextSize = offset + stubCount*16;
  	if ( (totalTextSize < textSizeWhenMightNeedBranchIslands(opts, hasThumbBranches)) && !haveCrossSectionBranches )
@@ -1812,7 +1812,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/branch_island.cpp cctoo
  			offset += atom->size();
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/code_dedup.cpp cctools-port-format/cctools/ld64/src/ld/passes/code_dedup.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/passes/code_dedup.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/passes/code_dedup.cpp	2017-10-29 09:14:06.569834562 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/code_dedup.cpp	2017-11-10 19:13:05.918259550 -0800
 @@ -296,7 +296,7 @@
              continue;
          if ( verbose )  {
@@ -1851,7 +1851,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/code_dedup.cpp cctools-
     //fprintf(stderr, "hash-count=%lu, fixup-compares=%lu, atom-count=%u\n", sHashCount, sFixupCompareCount, atomsBeingComparedCount);
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/dtrace_dof.cpp cctools-port-format/cctools/ld64/src/ld/passes/dtrace_dof.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/passes/dtrace_dof.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/passes/dtrace_dof.cpp	2017-10-29 09:15:35.120770787 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/dtrace_dof.cpp	2017-11-10 19:13:05.918259550 -0800
 @@ -308,9 +308,9 @@
  			f->reserveFixups(3*probeCount);
  			for (uint32_t i=0; i < probeCount; ++i) {
@@ -1866,7 +1866,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/dtrace_dof.cpp cctools-
  				f->addSectionFixup(ld::Fixup(offset, ld::Fixup::k3of4, ld::Fixup::kindSubtractTargetAddress, &f->atom()));
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/huge.cpp cctools-port-format/cctools/ld64/src/ld/passes/huge.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/passes/huge.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/passes/huge.cpp	2017-10-29 09:16:06.271173536 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/huge.cpp	2017-11-10 19:13:05.921592917 -0800
 @@ -115,7 +115,7 @@
  			const ld::Atom* atom = *ait;
  			if ( (address > 0x7FFFFFFFLL) && !sect->isSectionHidden() ) {
@@ -1887,7 +1887,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/huge.cpp cctools-port-f
  				}
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/SymbolTable.cpp cctools-port-format/cctools/ld64/src/ld/SymbolTable.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/ld/SymbolTable.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/ld/SymbolTable.cpp	2017-10-29 09:24:01.473806229 -0700
++++ cctools-port-format/cctools/ld64/src/ld/SymbolTable.cpp	2017-11-10 19:13:05.921592917 -0800
 @@ -324,7 +324,7 @@
  						if ( _atomB.size() > _atomA.size() ) {
  							const char* atomApath = (_atomA.file() != NULL) ? _atomA.file()->path() : "<internal>";
@@ -1908,7 +1908,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/SymbolTable.cpp cctools-port-f
  						pickAtomB();
 diff -ur cctools-port-c1cc758/cctools/ld64/src/other/dyldinfo.cpp cctools-port-format/cctools/ld64/src/other/dyldinfo.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/other/dyldinfo.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/other/dyldinfo.cpp	2017-10-29 09:29:07.687503810 -0700
++++ cctools-port-format/cctools/ld64/src/other/dyldinfo.cpp	2017-11-10 19:13:05.921592917 -0800
 @@ -587,7 +587,7 @@
  			return i;
  		}
@@ -2265,7 +2265,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/other/dyldinfo.cpp cctools-port-f
  				}
 diff -ur cctools-port-c1cc758/cctools/ld64/src/other/machochecker.cpp cctools-port-format/cctools/ld64/src/other/machochecker.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/other/machochecker.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/other/machochecker.cpp	2017-10-29 09:31:33.255994158 -0700
++++ cctools-port-format/cctools/ld64/src/other/machochecker.cpp	2017-11-10 19:13:05.921592917 -0800
 @@ -639,12 +639,12 @@
  	if ( threadInfo != NULL ) {
  		pint_t initialPC = getEntryPoint(threadInfo);
@@ -2376,7 +2376,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/other/machochecker.cpp cctools-po
  					break;
 diff -ur cctools-port-c1cc758/cctools/ld64/src/other/ObjectDump.cpp cctools-port-format/cctools/ld64/src/other/ObjectDump.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/other/ObjectDump.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/other/ObjectDump.cpp	2017-10-29 09:30:58.438897271 -0700
++++ cctools-port-format/cctools/ld64/src/other/ObjectDump.cpp	2017-11-10 19:13:05.921592917 -0800
 @@ -630,7 +630,7 @@
  			}
  			else {
@@ -2410,7 +2410,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/other/ObjectDump.cpp cctools-port
  	if ( sShowDefinitionKind ) 
 diff -ur cctools-port-c1cc758/cctools/ld64/src/other/rebase.cpp cctools-port-format/cctools/ld64/src/other/rebase.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/other/rebase.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/other/rebase.cpp	2017-10-29 09:30:14.098342880 -0700
++++ cctools-port-format/cctools/ld64/src/other/rebase.cpp	2017-11-10 19:13:05.921592917 -0800
 @@ -454,7 +454,7 @@
  template <typename A>
  void Rebaser<A>::rebaseAt(int segIndex, uint64_t offset, uint8_t type)
@@ -2440,7 +2440,7 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/other/rebase.cpp cctools-port-for
  		}
 diff -ur cctools-port-c1cc758/cctools/ld64/src/other/unwinddump.cpp cctools-port-format/cctools/ld64/src/other/unwinddump.cpp
 --- cctools-port-c1cc758/cctools/ld64/src/other/unwinddump.cpp	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/ld64/src/other/unwinddump.cpp	2017-10-29 09:29:39.441237443 -0700
++++ cctools-port-format/cctools/ld64/src/other/unwinddump.cpp	2017-11-10 19:13:05.924926282 -0800
 @@ -250,7 +250,7 @@
  				value |= 1;
  			if ( value == addr ) {
@@ -2503,3 +2503,15 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/other/unwinddump.cpp cctools-port
  				archName(), fUnwindSection->addr(), fUnwindSection->size(), fUnwindSection->offset());
  	printf("\tversion=0x%08X\n", sectionHeader->version());
  	printf("\tcommonEncodingsArraySectionOffset=0x%08X\n", sectionHeader->commonEncodingsArraySectionOffset());
+diff -ur cctools-port-c1cc758/cctools/misc/libtool.c cctools-port-format/cctools/misc/libtool.c
+--- cctools-port-c1cc758/cctools/misc/libtool.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/misc/libtool.c	2017-11-10 19:13:45.515313018 -0800
+@@ -2545,7 +2545,7 @@
+ 	    if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
+ 				library_size, TRUE)) != KERN_SUCCESS)
+ 		mach_fatal(r, "can't vm_allocate() buffer for output file: %s "
+-			   "of size %llu", output, library_size);
++			   "of size %lu", output, library_size);
+ 
+ 
+ 	    /* put in the archive magic string in the buffer */

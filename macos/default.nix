@@ -93,8 +93,8 @@ let
     inherit clang;
   };
 
-  ld_tpoechtrager = native.make_derivation rec {
-    name = "ld-tpoechtrager-${version}";
+  ld = native.make_derivation rec {
+    name = "macos-ld64-${version}";
     version = "c1cc758";
     apple_version = "274.2";  # from README.md
     inherit host;
@@ -103,20 +103,22 @@ let
       sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
     };
     patches = [
-      ./ld_tpoechtrager_format.patch
-      ./ld_tpoechtrager_megapatch.patch
+      ./cctools-format.patch
+      ./cctools-ld64-registers.patch
     ];
     builder = ./ld_tpoechtrager_builder.sh;
     native_inputs = [ tapi ];
   };
-  ld = ld_tpoechtrager;
 
   ranlib = native.make_derivation rec {
     name = "ranlib";
     inherit host;
     src = ld.src;
     builder = ./ranlib_builder.sh;
-    patches = [ ];
+    patches = [
+      ./cctools-format.patch
+      ./cctools-bytesex.patch
+    ];
   };
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
