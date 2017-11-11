@@ -22,25 +22,6 @@ let
 
   exe_suffix = "";
 
-  # binutils does not seem to provide a linker for MacOS, but it does
-  # provide a strip utility that we need.  We also use its `ar`
-  # utility, though we could have chosen to use `llvm-ar` instead.
-  binutils = import ./binutils { inherit native host; };
-
-  xar = native.make_derivation {
-    name = "xar";
-    builder = ./xar_builder.sh;
-    src = nixpkgs.fetchurl {
-      url = "https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz";
-      sha256 = "0ghmsbs6xwg1092v7pjcibmk5wkyifwxw6ygp08gfz25d2chhipf";
-    };
-    native_inputs = [
-      nixpkgs.libxml2.dev
-      nixpkgs.openssl.dev
-      nixpkgs.zlib.dev
-    ];
-  };
-
   clang = native.make_derivation rec {
     name = "clang";
 
@@ -94,12 +75,11 @@ let
   };
 
   cctools_commit = "c1cc758";
+  cctools_apple_version = "274.2";  # from README.md
   cctools_port_src = nixpkgs.fetchurl {
     url = "https://github.com/tpoechtrager/cctools-port/archive/${cctools_commit}.tar.gz";
     sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
   };
-
-  cctools_apple_version = "274.2";  # from README.md
 
   ld = native.make_derivation rec {
     name = "cctools-ld64";
@@ -109,7 +89,7 @@ let
       ./cctools-format.patch
       ./cctools-ld64-registers.patch
     ];
-    builder = ./ld_tpoechtrager_builder.sh;
+    builder = ./ld_builder.sh;
     native_inputs = [ tapi ];
     inherit host;
   };
@@ -196,7 +176,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit binutils xar clang tapi sdk ld ranlib ar toolchain;
+    inherit clang tapi ld ranlib ar sdk toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
