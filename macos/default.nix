@@ -128,8 +128,8 @@ let
   };
 
   toolchain = native.make_derivation rec {
-    name = "mac-toolchain";
-    builder = ./builder.sh;
+    name = "macos-toolchain";
+    builder = ./toolchain_builder.sh;
     src_file = ./wrapper.cpp;
     inherit host clang ld ranlib ar sdk;
 
