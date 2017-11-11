@@ -1,3 +1,33 @@
+diff -ur cctools-port-c1cc758/cctools/ar/archive.h cctools-port-format/cctools/ar/archive.h
+--- cctools-port-c1cc758/cctools/ar/archive.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ar/archive.h	2017-11-10 21:42:36.315713255 -0800
+@@ -112,11 +112,11 @@
+ } CHDR;
+ 
+ /* Header format strings. */
+-#define	HDR1	"%s%-13d%-12ld%-6u%-6u%-8o%-10qd%2s"
+-#define	HDR2	"%-16.16s%-12ld%-6u%-6u%-8o%-10qd%2s"
++#define	HDR1	"%s%-13d%-12ld%-6u%-6u%-8o%-10ld%2s"
++#define	HDR2	"%-16.16s%-12ld%-6u%-6u%-8o%-10ld%2s"
+ 
+ #define	OLDARMAXNAME	15
+-#define	HDR3	"%-16.15s%-12ld%-6u%-6u%-8o%-10qd%2s"
++#define	HDR3	"%-16.15s%-12ld%-6u%-6u%-8o%-10ld%2s"
+ 
+ 
+ #include <sys/cdefs.h>
+diff -ur cctools-port-c1cc758/cctools/ar/contents.c cctools-port-format/cctools/ar/contents.c
+--- cctools-port-c1cc758/cctools/ar/contents.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ar/contents.c	2017-11-10 21:43:06.022707300 -0800
+@@ -107,7 +107,7 @@
+ 			goto next;
+ 		if (options & AR_V) {
+ 			(void)strmode(chdr.mode, buf);
+-			(void)printf("%s %6d/%-6d %8qd ",
++			(void)printf("%s %6d/%-6d %8ld ",
+ 			    buf + 1, chdr.uid, chdr.gid, chdr.size);
+ 			tp = localtime(&chdr.date);
+ 			(void)strftime(buf, sizeof(buf), "%b %e %H:%M %Y", tp);
 diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/debugline.c cctools-port-format/cctools/ld64/src/ld/debugline.c
 --- cctools-port-c1cc758/cctools/ld64/src/ld/debugline.c	2017-10-01 13:47:04.000000000 -0700
 +++ cctools-port-format/cctools/ld64/src/ld/debugline.c	2017-11-10 19:13:05.914926185 -0800

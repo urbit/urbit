@@ -114,17 +114,6 @@ let
     inherit host;
   };
 
-  ar = native.make_derivation rec {
-    name = "cctools-ar";
-    apple_version = cctools_apple_version;
-    src = cctools_port_src;
-    builder = ./ar_builder.sh;
-    patches = [
-      ./cctools-format.patch
-    ];
-    inherit host;
-  };
-
   ranlib = native.make_derivation rec {
     name = "cctools-ranlib";
     apple_version = cctools_apple_version;
@@ -135,6 +124,18 @@ let
       ./cctools-bytesex.patch
     ];
     inherit host;
+  };
+
+  ar = native.make_derivation rec {
+    name = "cctools-ar";
+    apple_version = cctools_apple_version;
+    src = cctools_port_src;
+    builder = ./ar_builder.sh;
+    patches = [
+      ./cctools-format.patch
+      ./cctools-libstuff-no-error.patch
+    ];
+    inherit host ranlib;
   };
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
@@ -150,7 +151,7 @@ let
     name = "mac-toolchain";
     builder = ./builder.sh;
     wrapper = ./wrapper;
-    inherit host clang ld ranlib sdk;
+    inherit host clang ld ranlib ar sdk;
 
     CXXFLAGS =
       "-std=c++11 " +
@@ -195,7 +196,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit binutils xar clang tapi sdk ld ar ranlib toolchain;
+    inherit binutils xar clang tapi sdk ld ranlib ar toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
