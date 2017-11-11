@@ -4,10 +4,15 @@ tar -xf $src
 mv cctools-port-* cctools-port
 
 cd cctools-port
+
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
+
+# Similar to but not the same as the other _structs.h.
+rm cctools/include/foreign/mach/i386/_structs.h
+
 cd ..
 
 mv cctools-port/cctools/ld64 ld64
