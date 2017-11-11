@@ -2504,8 +2504,8 @@ diff -ur cctools-port-c1cc758/cctools/ld64/src/other/unwinddump.cpp cctools-port
  	printf("\tversion=0x%08X\n", sectionHeader->version());
  	printf("\tcommonEncodingsArraySectionOffset=0x%08X\n", sectionHeader->commonEncodingsArraySectionOffset());
 diff -ur cctools-port-c1cc758/cctools/misc/libtool.c cctools-port-format/cctools/misc/libtool.c
---- cctools-port-c1cc758/cctools/misc/libtool.c	2017-10-01 13:47:04.000000000 -0700
-+++ cctools-port-format/cctools/misc/libtool.c	2017-11-10 19:13:45.515313018 -0800
+--- cctools-port-c1cc758/cctools/misc/libtool.c	2017-11-10 19:22:01.790476705 -0800
++++ cctools-port-format/cctools/misc/libtool.c	2017-11-10 19:24:48.435607249 -0800
 @@ -2545,7 +2545,7 @@
  	    if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
  				library_size, TRUE)) != KERN_SUCCESS)
@@ -2515,3 +2515,75 @@ diff -ur cctools-port-c1cc758/cctools/misc/libtool.c cctools-port-format/cctools
  
  
  	    /* put in the archive magic string in the buffer */
+@@ -2581,7 +2581,7 @@
+ 	if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
+ 			    library_size, TRUE)) != KERN_SUCCESS)
+ 	    mach_fatal(r, "can't vm_allocate() buffer for output file: %s of "
+-		       "size %llu", output, library_size);
++		       "size %lu", output, library_size);
+ 
+ 	/*
+ 	 * Create the output file.  The unlink() is done to handle the problem
+@@ -2635,7 +2635,7 @@
+ 		if(cmd_flags.fat64 == FALSE && offset > UINT32_MAX)
+ 		    error("file too large to create as a fat file because "
+ 			  "offset field in struct fat_arch is only 32-bits and "
+-			  "offset (%llu) to architecture %s exceeds that",
++			  "offset (%lu) to architecture %s exceeds that",
+ 			  offset, archs[i].arch_flag.name);
+ 		if(archs[i].arch_flag.cputype & CPU_ARCH_ABI64){
+ 		    if(cmd_flags.fat64 == TRUE)
+@@ -2660,7 +2660,7 @@
+ 		if(cmd_flags.fat64 == FALSE && archs[i].size > UINT32_MAX)
+ 		    error("file too large to create as a fat file because "
+ 			  "size field in struct fat_arch is only 32-bits and "
+-			  "size (%llu) of architecture %s exceeds that",
++			  "size (%lu) of architecture %s exceeds that",
+ 			  archs[i].size, archs[i].arch_flag.name);
+ 		if(cmd_flags.fat64 == TRUE)
+ 		    fat_arch64[i].size = archs[i].size;
+@@ -3043,15 +3043,15 @@
+ 	    return;
+ 
+ 	if(offset + size > library_size)
+-	    fatal("internal error: output_flush(offset = %llu, size = %llu) "
+-		  "out of range for library_size = %llu", offset, size,
++	    fatal("internal error: output_flush(offset = %lu, size = %lu) "
++		  "out of range for library_size = %lu", offset, size,
+ 		  library_size);
+ 
+ #ifdef DEBUG
+ 	if(cmd_flags.debug & (1 << 2))
+ 	    print_block_list();
+ 	if(cmd_flags.debug & (1 << 1))
+-	    printf("output_flush(offset = %llu, size %llu)", offset, size);
++	    printf("output_flush(offset = %lu, size %lu)", offset, size);
+ #endif /* DEBUG */
+ 
+ 	if(size == 0){
+@@ -3087,9 +3087,9 @@
+ 	 */
+ 	if(before != NULL){
+ 	    if(before->offset + before->size > offset){
+-		warning("internal error: output_flush(offset = %llu, size = "
+-			"%llu) overlaps with flushed block(offset = %llu, "
+-			"size = %llu)", offset, size, before->offset,
++		warning("internal error: output_flush(offset = %lu, size = "
++			"%lu) overlaps with flushed block(offset = %lu, "
++			"size = %lu)", offset, size, before->offset,
+ 			before->size);
+ 		printf("calling abort()\n");	
+ 		abort();
+@@ -3097,9 +3097,9 @@
+ 	}
+ 	if(after != NULL){
+ 	    if(offset + size > after->offset){
+-		warning("internal error: output_flush(offset = %llu, size = "
+-			"%llu) overlaps with flushed block(offset = %llu, "
+-			"size = %llu)", offset, size, after->offset,
++		warning("internal error: output_flush(offset = %lu, size = "
++			"%lu) overlaps with flushed block(offset = %lu, "
++			"size = %lu)", offset, size, after->offset,
+ 			after->size);
+ 		printf("calling abort()\n");	
+ 		abort();
