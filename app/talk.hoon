@@ -2067,7 +2067,11 @@
         $url
       :_  ~
       =+  ful=(apix:en-purl:html url.sep)
-      =+  pef=(weld (fall pre "") "/")
+      =+  pef=(fall pre "")
+      ::  clean up prefix if needed.
+      =?  pef  =((scag 1 (flop pef)) " ")
+        (scag (dec (lent pef)) pef)
+      =.  pef  (weld "/" pef)
       =.  wyd  (sub wyd +((lent pef)))  ::  account for prefix.
       ::  if the full url fits, just render it.
       ?:  (gte wyd (lent ful))  :(weld pef " " ful)
