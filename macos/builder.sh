@@ -6,10 +6,9 @@ cd $out/bin
 
 eval "g++ $CXXFLAGS $wrapper/*.cpp -o $host-wrapper"
 
-ln -s $clang/bin/llvm-ar $host-ar
-
-ln -s $ranlib/bin/$host-ranlib $host-ranlib
-ln -s $ranlib/bin/$host-libtool $host-libtool
+ln -s $ar/bin/$host-ar
+ln -s $ranlib/bin/$host-ranlib
+ln -s $ranlib/bin/$host-libtool
 
 ln -s $host-wrapper $host-cc
 ln -s $host-wrapper $host-c++

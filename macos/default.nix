@@ -93,32 +93,48 @@ let
     inherit clang;
   };
 
+  cctools_commit = "c1cc758";
+  cctools_port_src = nixpkgs.fetchurl {
+    url = "https://github.com/tpoechtrager/cctools-port/archive/${cctools_commit}.tar.gz";
+    sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
+  };
+
+  cctools_apple_version = "274.2";  # from README.md
+
   ld = native.make_derivation rec {
-    name = "macos-ld64-${version}";
-    version = "c1cc758";
-    apple_version = "274.2";  # from README.md
-    inherit host;
-    src = nixpkgs.fetchurl {
-      url = "https://github.com/tpoechtrager/cctools-port/archive/${version}.tar.gz";
-      sha256= "11bfcndzbdmjp2piabyqs34da617fh5fhirqvb9w87anfan15ffa";
-    };
+    name = "cctools-ld64";
+    apple_version = cctools_apple_version;
+    src = cctools_port_src;
     patches = [
       ./cctools-format.patch
       ./cctools-ld64-registers.patch
     ];
     builder = ./ld_tpoechtrager_builder.sh;
     native_inputs = [ tapi ];
+    inherit host;
+  };
+
+  ar = native.make_derivation rec {
+    name = "cctools-ar";
+    apple_version = cctools_apple_version;
+    src = cctools_port_src;
+    builder = ./ar_builder.sh;
+    patches = [
+      ./cctools-format.patch
+    ];
+    inherit host;
   };
 
   ranlib = native.make_derivation rec {
-    name = "ranlib";
-    inherit host;
+    name = "cctools-ranlib";
+    apple_version = cctools_apple_version;
     src = ld.src;
     builder = ./ranlib_builder.sh;
     patches = [
       ./cctools-format.patch
       ./cctools-bytesex.patch
     ];
+    inherit host;
   };
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
@@ -179,7 +195,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit binutils xar clang tapi sdk ld ranlib toolchain;
+    inherit binutils xar clang tapi sdk ld ar ranlib toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };

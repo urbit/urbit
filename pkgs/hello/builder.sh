@@ -18,20 +18,24 @@ int main(int argc, char ** argv)
 EOF
 
 $host-gcc -c hello.c -o hello.o
+$host-ar qc hello.a hello.o
 
-gnu-ar qc gnu-hello.a hello.o
-llvm-ar qc llvm-hello.a hello.o
-xar -c -f xar-hello.a hello.o
+ls -l hello.a
+# /usr/bin/sha256sum hello.a
 
-ls -l *.a
+# cp hello.a /home/david/nixcrpkgs/hello_good.a
 
-echo ranlib
-gnu-ranlib llvm-hello.a
-gnu-ranlib gnu-hello.a
+# MYRANLIB=/home/david/osxcross1/osxcross/target/bin/x86_64-apple-darwin15-ranlib
+# $MYRANLIB hello.a
+$host-ranlib hello.a
 
-ls -l *.a
+# cp hello.a /home/david/nixcrpkgs/hello_bad.a
 
-$host-gcc main.c llvm-hello.a -o hello$exe_suffix
+# /usr/bin/sha256sum hello.a
+
+ls -l hello.a
+
+$host-gcc main.c hello.a -o hello$exe_suffix
 
 mkdir -p $out/bin
 
