@@ -116,6 +116,7 @@ let
     inherit host;
     src = ld.src;
     builder = ./ranlib_builder.sh;
+    patches = [ ];
   };
 
   # TODO: add instructions for building the SDK tarball, probably want a copy of
@@ -131,7 +132,7 @@ let
     name = "mac-toolchain";
     builder = ./builder.sh;
     wrapper = ./wrapper;
-    inherit host sdk binutils xar clang ld;
+    inherit host clang ld ranlib sdk;
 
     CXXFLAGS =
       "-std=c++11 " +

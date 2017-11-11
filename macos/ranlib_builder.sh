@@ -4,26 +4,26 @@ tar -xf $src
 mv cctools-port-* cctools-port
 
 cd cctools-port
-#for patch in $patches; do
-#  echo applying patch $patch
-#  patch -p1 -i $patch
-#done
+for patch in $patches; do
+  echo applying patch $patch
+  patch -p1 -i $patch
+done
 cd ..
 
 mv cctools-port/cctools/misc misc
-# mv cctools-port/ccltools/include include
+mv cctools-port/cctools/include include
 rm -r cctools-port
 
 mkdir build
 cd build
 
-CFLAGS="-Wno-deprecated -Wno-deprecated-declarations -Wno-unused-result -Werror -Wfatal-errors -O2 -g -I../ld64/src -I../ld64/src/ld -I../ld64/src/ld/parsers -I../ld64/src/abstraction -I../ld64/src/3rd -I../ld64/src/3rd/include -I../ld64/src/3rd/BlocksRuntime -I../include -I../include/foreign -DTAPI_SUPPORT -DPROGRAM_PREFIX=\\\"$host-\\\" -D__LITTLE_ENDIAN__ $(pkg-config --cflags libtapi)"
+CFLAGS="-Wno-deprecated -Wno-deprecated-declarations -Wno-unused-result -Werror -Wfatal-errors -O2 -g -I../ld64/src -I../ld64/src/ld -I../ld64/src/ld/parsers -I../ld64/src/abstraction -I../ld64/src/3rd -I../ld64/src/3rd/include -I../ld64/src/3rd/BlocksRuntime -I../include -I../include/foreign -DTAPI_SUPPORT -DPROGRAM_PREFIX=\\\"$host-\\\" -D__LITTLE_ENDIAN__ -D__private_extern__="
 
 CXXFLAGS="-std=gnu++11 $CFLAGS"
 
-LDFLAGS="$(pkg-config --libs libtapi) -ldl -lpthread"
+LDFLAGS="-ldl -lpthread"
 
-for f in ../ld64/src/ld/*.c ../ld64/src/3rd/*.c; do
+for f in ../misc/libtool.c; do
   echo "compiling $f"
   eval "gcc -c $CFLAGS $f -o $(basename $f).o"
 done
