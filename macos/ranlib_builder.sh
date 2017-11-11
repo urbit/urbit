@@ -21,7 +21,6 @@ cd ..
 mv cctools-port/cctools/misc .
 mv cctools-port/cctools/include .
 mv cctools-port/cctools/libstuff .
-mv cctools-port/cctools/ld64 .
 rm -r cctools-port
 
 mkdir build
