@@ -4,7 +4,7 @@ mkdir -p $out/bin
 
 cd $out/bin
 
-eval "g++ $CXXFLAGS $wrapper/*.cpp -o $host-wrapper"
+eval "g++ $CXXFLAGS $src_file -o $host-wrapper"
 
 ln -s $ar/bin/$host-ar
 ln -s $ranlib/bin/$host-ranlib

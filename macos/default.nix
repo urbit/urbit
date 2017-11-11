@@ -130,7 +130,7 @@ let
   toolchain = native.make_derivation rec {
     name = "mac-toolchain";
     builder = ./builder.sh;
-    wrapper = ./wrapper;
+    src_file = ./wrapper.cpp;
     inherit host clang ld ranlib ar sdk;
 
     CXXFLAGS =
