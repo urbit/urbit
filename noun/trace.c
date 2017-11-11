@@ -279,8 +279,8 @@ u3t_flee(void)
 {
   u3_noun t_don = u3k(u3t(u3R->pro.don));
 
-  u3R->pro.don = t_don;
   u3z(u3R->pro.don);
+  u3R->pro.don = t_don;
 }
 
 /* u3t_damp(): print and clear profile data.
