@@ -4,12 +4,18 @@ tar -xf $src
 mv cctools-port-* cctools-port
 
 cd cctools-port
+
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
-# Similar but not the same as the other _structs.h.
+
+# Similar to but not the same as the other _structs.h.
 rm cctools/include/foreign/mach/i386/_structs.h
+
+# Causes a troublesome undefined reference.
+rm cctools/libstuff/vm_flush_cache.c
+
 cd ..
 
 mv cctools-port/cctools/misc .
@@ -27,12 +33,14 @@ CXXFLAGS="-std=gnu++11 $CFLAGS"
 
 LDFLAGS="-ldl -lpthread"
 
-for f in ../misc/libtool.c ../libstuff/*.c ; do
+for f in ../libstuff/*.c ; do
   echo "compiling $f"
   eval "gcc -c $CFLAGS $f -o $(basename $f).o"
 done
 
-g++ *.o $LDFLAGS -o $host-ld
+eval "gcc $CFLAGS ../misc/libtool.c *.o $LDFLAGS -o $host-libtool"
+eval "gcc $CFLAGS -DRANLIB ../misc/libtool.c *.o $LDFLAGS -o $host-ranlib"
 
 mkdir -p $out/bin
-cp $host-ld $out/bin
+cp $host-libtool $host-ranlib $out/bin/
+
