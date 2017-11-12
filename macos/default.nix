@@ -118,6 +118,17 @@ let
     inherit host ranlib;
   };
 
+  strip = native.make_derivation rec {
+    name = "cctools-strip";
+    apple_version = cctools_apple_version;
+    src = cctools_port_src;
+    builder = ./strip_builder.sh;
+    patches = [
+      ./cctools-format.patch
+    ];
+    inherit host;
+  };
+
   # TODO: add instructions for building the SDK tarball, probably want a copy of
   # the script from osxcross.
   sdk = native.make_derivation rec {
@@ -131,7 +142,7 @@ let
     name = "macos-toolchain";
     builder = ./toolchain_builder.sh;
     src_file = ./wrapper.cpp;
-    inherit host clang ld ranlib ar sdk;
+    inherit host clang ld ranlib ar strip sdk;
 
     CXXFLAGS =
       "-std=c++11 " +

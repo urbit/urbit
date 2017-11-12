@@ -18,7 +18,7 @@ rm cctools/libstuff/vm_flush_cache.c
 
 cd ..
 
-mv cctools-port/cctools/ar .
+mv cctools-port/cctools/misc .
 mv cctools-port/cctools/include .
 mv cctools-port/cctools/libstuff .
 rm -r cctools-port
@@ -32,15 +32,12 @@ CXXFLAGS="-std=gnu++11 $CFLAGS"
 
 LDFLAGS="-ldl -lpthread"
 
-for f in ../ar/*.c ../libstuff/*.c; do
+for f in ../misc/strip.c ../libstuff/*.c; do
   echo "compiling $f"
   eval "gcc -c $CFLAGS $f -o $(basename $f).o"
 done
 
-gcc *.o $LDFLAGS -o $host-ar
+gcc *.o $LDFLAGS -o $host-strip
 
 mkdir -p $out/bin
-cp $host-ar $out/bin/
-
-# ar looks for ranlib in this directory
-ln -s $ranlib/bin/$host-ranlib $out/bin/
+cp $host-strip $out/bin/
