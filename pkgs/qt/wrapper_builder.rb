@@ -120,6 +120,7 @@ def make_dep_graph
     add_dep 'libQt5Core.a', '-framework CoreServices'
     add_dep 'libQt5Core.a', '-framework CoreText'
     add_dep 'libQt5Gui.a', '-framework CoreGraphics'
+    add_dep 'libQt5Gui.a', '-framework OpenGL'
     add_dep 'libQt5Widgets.a', '-framework Carbon'
     add_dep 'libQt5Widgets.a', '-framework AppKit'
     add_dep 'libqtlibpng.a', '-lz'
