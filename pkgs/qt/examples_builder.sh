@@ -74,11 +74,12 @@ fi
 
 # TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
 
-mkdir $out
+mkdir -p $out/bin
 
-cp -r bin $out
-
-$host-strip $out/bin/*
+for prog in analogclock dynamiclayouts openglwindow rasterwindow; do
+  $host-strip bin/$prog
+  cp bin/$prog $out/bin/
+done
 
 if [ $os = "linux" ]; then
   cp $dejavu/ttf/DejaVuSans.ttf $out/bin/
