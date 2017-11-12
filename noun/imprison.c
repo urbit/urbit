@@ -200,6 +200,7 @@ c3_w BAD;
 u3_noun
 u3i_cell(u3_noun a, u3_noun b)
 {
+  u3t_on(mal_o);
   c3_assert(u3_none != a);
   c3_assert(u3_none != b);
 
@@ -228,6 +229,7 @@ u3i_cell(u3_noun a, u3_noun b)
     }
 #endif
 #if 1
+    u3t_off(mal_o);
     return pro;
 #else
     if ( !FOO ) return u3a_to_pom(u3a_outa(nov_w));
