@@ -143,8 +143,7 @@ let
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
       "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
       "-DWRAPPER_SDK_VERSION=\\\"${sdk.version}\\\" " +
-      "-DWRAPPER_LINKER_VERSION=\\\"${ld.apple_version}\\\" " +
-      "-DWRAPPER_PATH=\\\"${ld}/bin:${clang}/bin\\\"";
+      "-DWRAPPER_LINKER_VERSION=\\\"${ld.apple_version}\\\"";
   };
 
   cmake_toolchain = import ../cmake_toolchain {
