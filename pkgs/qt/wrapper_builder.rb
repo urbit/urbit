@@ -114,6 +114,16 @@ def make_dep_graph
     add_dep 'libQt5XcbQpa.a', 'xcb-xkb.pc'
     add_dep 'libQt5XcbQpa.a', 'xi.pc'
   end
+
+  if Os == 'macos'
+    add_dep 'libQt5Core.a', '-lobjc'
+    add_dep 'libQt5Core.a', '-framework CoreServices'
+    add_dep 'libQt5Core.a', '-framework CoreText'
+    add_dep 'libQt5Gui.a', '-framework CoreGraphics'
+    add_dep 'libQt5Widgets.a', '-framework Carbon'
+    add_dep 'libQt5Widgets.a', '-framework AppKit'
+    add_dep 'libqtlibpng.a', '-lz'
+  end
 end
 
 def parse_prl_file(filename)
@@ -165,6 +175,7 @@ def determine_dep_type(name)
   when extension == '.x' then :x
   when name.start_with?('-I') then :cflag
   when name.start_with?('-l') then :ldflag
+  when name.start_with?('-framework') then :ldflag
   end
 end
 
