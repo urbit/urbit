@@ -362,9 +362,7 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
   void* ptr_v;
   
-  u3t_on(mal_o);
   ptr_v = _ca_willoc(len_w, ald_w, alp_w);
-  u3t_off(mal_o);
 
 #if 0
   if ( SUB ) {
@@ -399,7 +397,7 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
   return ptr_v;
 }
 
-/* u3a_walloc(): allocate storage words on hat.
+/* u3a_walloc(): allocate storage words on hat heap.
 */
 void*
 u3a_walloc(c3_w len_w)
@@ -582,23 +580,82 @@ u3a_malloc(size_t len_i)
   return out_w;
 }
 
+/* u3a_cellblock(): allocate a block of cells on the hat.
+*/
+c3_t
+u3a_cellblock(c3_w num_w)
+{
+  u3a_box*      box_u;
+  u3p(u3a_fbox) fre_p;
+  c3_w          i_w;
+
+  if ( c3y == u3a_is_north(u3R) ) {
+    if ( u3R->cap_p <= (u3R->hat_p + (num_w * u3a_minimum)) ) {
+      return c3n;
+    } 
+    else {
+      for ( i_w = 0; i_w < num_w; i_w++) {
+        u3_post all_p = u3R->hat_p;
+
+        box_u = _box_make(u3a_into(all_p), u3a_minimum, 1);
+        u3R->hat_p += u3a_minimum;
+
+        fre_p = u3of(u3a_fbox, box_u);
+        u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
+        u3R->all.cel_p = fre_p;
+      }
+    }
+  }
+  else {
+    if ( (u3R->cap_p + (num_w * u3a_minimum)) >= u3R->hat_p ) {
+      return c3n;
+    } 
+    else {
+      for ( i_w = 0; i_w < num_w; i_w++ ) {
+        u3_post all_p = (u3R->hat_p -= u3a_minimum);
+
+        box_u = _box_make(u3a_into(all_p), u3a_minimum, 1);
+
+        fre_p = u3of(u3a_fbox, box_u);
+        u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
+        u3R->all.cel_p = fre_p;
+      }
+    }
+  }
+  return c3y;
+}
+  
 /* u3a_celloc(): allocate a cell.
 */
 c3_w*
 u3a_celloc(void)
 {
-#ifdef U3_CELLOC_TOGGLE
+#ifdef U3_MEMORY_DEBUG
   if ( u3C.wag_w & u3o_debug_ram ) {
     return u3a_walloc(c3_wiseof(u3a_cell));
   }
 #endif
-
   u3p(u3a_fbox) cel_p;
 
-  if ( (u3R == &(u3H->rod_u)) || !(cel_p = u3R->all.cel_p) ) {
-    return u3a_walloc(c3_wiseof(u3a_cell));
+  if ( !(cel_p = u3R->all.cel_p) ) {
+    if ( u3R == &(u3H->rod_u) ) {
+      // no cell allocator on home road
+      return u3a_walloc(c3_wiseof(u3a_cell));
+    } 
+    else {
+#if 1
+      if ( c3n == u3a_cellblock(1024) ) 
+#else
+      if ( 1 ) 
+#endif
+      {
+        return u3a_walloc(c3_wiseof(u3a_cell));
+      }
+      else cel_p = u3R->all.cel_p;
+    }
   }
-  else {
+
+  {
     u3a_box* box_u = &(u3to(u3a_fbox, cel_p)->box_u);
 
     box_u->use_w = 1;
@@ -613,7 +670,7 @@ u3a_celloc(void)
 void
 u3a_cfree(c3_w* cel_w)
 {
-#ifdef U3_CELLOC_TOGGLE
+#ifdef U3_MEMORY_DEBUG
   if ( u3C.wag_w & u3o_debug_ram ) {
     return u3a_wfree(cel_w);
   }
@@ -1260,7 +1317,7 @@ top:
 u3_noun
 u3a_gain(u3_noun som)
 {
-  // u3t_on(mal_o);
+  u3t_on(mal_o);
   c3_assert(u3_none != som);
 
   if ( !_(u3a_is_cat(som)) ) {
@@ -1268,7 +1325,7 @@ u3a_gain(u3_noun som)
               ? _me_gain_north(som)
               : _me_gain_south(som);
   }
-  // u3t_off(mal_o);
+  u3t_off(mal_o);
 
   return som;
 }
@@ -1278,7 +1335,7 @@ u3a_gain(u3_noun som)
 void
 u3a_lose(u3_noun som)
 {
-  // u3t_on(mal_o);
+  //  u3t_on(mal_o);
   if ( !_(u3a_is_cat(som)) ) {
     if ( _(u3a_is_north(u3R)) ) {
       _me_lose_north(som);
