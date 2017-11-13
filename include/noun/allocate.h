@@ -128,9 +128,7 @@
           u3p(u3a_fbox) fre_p[u3a_fbox_no];   //  heap by node size log
           u3p(u3a_fbox) cel_p;                //  custom cell allocator
           c3_w fre_w;                         //  number of free words
-#ifdef U3_MEMORY_DEBUG
           c3_w max_w;                         //  maximum allocated
-#endif
         } all;
 
         struct {                              //  jet dashboard
@@ -149,6 +147,7 @@
 
         struct {                              //  profile stack
           c3_d    nox_d;                      //  nock steps
+          c3_d    cel_d;                      //  cell allocations
           u3_noun don;                        //  (list batt)
           u3_noun day;                        //  doss, only in u3H (moveme)
         } pro;

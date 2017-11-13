@@ -5,7 +5,7 @@
 
 /* _box_count(): adjust memory count.
 */
-#ifdef  U3_MEMORY_DEBUG
+#ifdef  U3_CPU_DEBUG
 static void
 _box_count(c3_ws siz_ws)
 {
@@ -456,12 +456,9 @@ u3a_wfree(void* tox_v)
   u3a_box* box_u = u3a_botox(tox_v);
   c3_w*      box_w = (c3_w *)(void *)box_u;
 
-  u3t_on(mal_o);
-
   c3_assert(box_u->use_w != 0);
   box_u->use_w -= 1;
   if ( 0 != box_u->use_w ) {
-    u3t_off(mal_o);
     return;
   }
 
@@ -537,7 +534,6 @@ u3a_wfree(void* tox_v)
       _box_attach(box_u);
     }
   }
-  u3t_off(mal_o);
 }
 
 /* u3a_calloc(): allocate and zero-initialize array
@@ -622,6 +618,7 @@ u3a_cellblock(c3_w num_w)
       }
     }
   }
+  _box_count(-(num_w * u3a_minimum));
   return c3y;
 }
   
@@ -635,20 +632,20 @@ u3a_celloc(void)
     return u3a_walloc(c3_wiseof(u3a_cell));
   }
 #endif
+
   u3p(u3a_fbox) cel_p;
 
   if ( !(cel_p = u3R->all.cel_p) ) {
     if ( u3R == &(u3H->rod_u) ) {
       // no cell allocator on home road
+      //
       return u3a_walloc(c3_wiseof(u3a_cell));
     } 
     else {
-#if 1
-      if ( c3n == u3a_cellblock(1024) ) 
-#else
-      if ( 1 ) 
+#ifdef U3_CPU_DEBUG
+        u3R->pro.cel_d++;
 #endif
-      {
+      if ( c3n == u3a_cellblock(1024) ) {
         return u3a_walloc(c3_wiseof(u3a_cell));
       }
       else cel_p = u3R->all.cel_p;
@@ -657,6 +654,7 @@ u3a_celloc(void)
 
   {
     u3a_box* box_u = &(u3to(u3a_fbox, cel_p)->box_u);
+
 
     box_u->use_w = 1;
     u3R->all.cel_p = u3to(u3a_fbox, cel_p)->nex_p;
@@ -1335,7 +1333,7 @@ u3a_gain(u3_noun som)
 void
 u3a_lose(u3_noun som)
 {
-  //  u3t_on(mal_o);
+  u3t_on(mal_o);
   if ( !_(u3a_is_cat(som)) ) {
     if ( _(u3a_is_north(u3R)) ) {
       _me_lose_north(som);
@@ -1343,7 +1341,7 @@ u3a_lose(u3_noun som)
       _me_lose_south(som);
     }
   }
-  // u3t_off(mal_o);
+  u3t_off(mal_o);
 }
 
 /* u3a_use(): reference count.

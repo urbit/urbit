@@ -287,23 +287,67 @@ u3t_flee(void)
   u3R->pro.don = t_don;
 }
 
+extern FILE*
+u3_term_io_hija(void);
+
+extern void
+u3_term_io_loja(int x);
+
+extern void
+u3_term_tape(u3_noun tep);
+
+extern void
+u3_term_wall(u3_noun wol);
+
+/* u3t_print_steps: print step counter.
+*/
+void
+u3t_print_steps(c3_c* cap_c, c3_d sep_d)
+{
+  FILE* fil_f = u3_term_io_hija();
+
+  c3_w gib_w = (sep_d / 1000000000ULL);
+  c3_w mib_w = (sep_d % 1000000000ULL) / 1000000ULL;
+  c3_w kib_w = (sep_d % 1000000ULL) / 1000ULL;
+  c3_w bib_w = (sep_d % 1000ULL);
+
+  if ( sep_d ) {
+    if ( gib_w ) {
+      fprintf(fil_f, "%s: G/%d.%03d.%03d.%03d\r\n", 
+          cap_c, gib_w, mib_w, kib_w, bib_w);
+    }
+    else if ( mib_w ) {
+      fprintf(fil_f, "%s: M/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+    }
+    else if ( kib_w ) {
+      fprintf(fil_f, "%s: K/%d.%03d\r\n", cap_c, kib_w, bib_w);
+    }
+    else if ( bib_w ) {
+      fprintf(fil_f, "%s: %d\r\n", cap_c, bib_w);
+    }
+  }
+  u3_term_io_loja(0);
+}
+
 /* u3t_damp(): print and clear profile data.
 */
 void
 u3t_damp(void)
 {
+  fprintf(stderr, "\r\n");
+
   if ( 0 != u3R->pro.day ) {
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
-    u3m_wall(wol);
+    u3_term_wall(wol);
 
     u3R->pro.day = u3v_do("doss", 0);
   }
-#if 0
-  if ( 0 != u3R->pro.nox_d ) {
-    printf("knox: %llu\r\n", (u3R->pro.nox_d / 1000ULL));
-    u3R->pro.nox_d = 0;
-  }
-#endif
+
+  u3t_print_steps("nocks", u3R->pro.nox_d);
+  u3t_print_steps("cells", u3R->pro.cel_d);
+
+  u3R->pro.nox_d = 0;
+  u3R->pro.cel_d = 0;
 }
 
 /* _ct_sigaction(): profile sigaction callback.
