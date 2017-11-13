@@ -772,6 +772,11 @@ u3m_fall()
           u3R->rut_w);
 #endif
 
+#ifdef U3_CPU_DEBUG
+  u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
+  u3to(u3_road, u3R->par_p)->pro.cel_d += u3R->pro.cel_d;
+#endif
+
   /* The new cap is the old hat - it's as simple as that.
   */
   u3to(u3_road, u3R->par_p)->cap_p = u3R->hat_p;
@@ -1000,7 +1005,7 @@ u3m_soft_run(u3_noun gul,
 
 #ifdef U3_PRINT_WATERMARK
     if ( u3R->all.max_w > 1000000 ) {
-      fprintf(stderr, "soft_run: max %dMB\r\n", u3R->all.max_w / 256000);
+      uL(fprintf(uH, "soft_run: max %dMB\r\n", u3R->all.max_w / 256000));
     }
 #endif
     /* Produce success, on the old road.

@@ -201,12 +201,10 @@ u3_noun
 u3i_cell(u3_noun a, u3_noun b)
 {
   u3t_on(mal_o);
-  c3_assert(u3_none != a);
-  c3_assert(u3_none != b);
 
-  c3_assert(!_(u3a_is_junior(u3R, a)));
-  c3_assert(!_(u3a_is_junior(u3R, b)));
-
+#ifdef U3_CPU_DEBUG
+  u3R->pro.cel_d++;
+#endif
   {
     // c3_w*       nov_w = u3a_walloc(c3_wiseof(u3a_cell));
     c3_w*       nov_w = u3a_celloc();

@@ -196,7 +196,9 @@ _n_nock_on(u3_noun bus, u3_noun fol)
     hib = u3h(fol);
     gal = u3t(fol);
 
+#ifdef U3_CPU_DEBUG
     u3R->pro.nox_d += 1;
+#endif
 
     if ( c3y == u3r_du(hib) ) {
       u3_noun poz, riv;

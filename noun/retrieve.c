@@ -850,7 +850,13 @@ u3r_sing(u3_noun a, u3_noun b)
 {
 #ifndef U3_MEMORY_DEBUG
   if ( u3R->par_p ) {
-    return u3r_sang(a, b);
+    c3_o ret_o;
+
+    u3t_on(euq_o);
+    ret_o = u3r_sang(a, b);
+    u3t_off(euq_o);
+
+    return ret_o;
   } 
 #endif
   {
