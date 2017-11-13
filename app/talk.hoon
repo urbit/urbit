@@ -1570,15 +1570,15 @@
       ?:  (~(has in settings.she) %quiet)  +>
       =.  +>
         %-  sh-note
-        %+  weld  "for "
+        %+  weld  " in "
         (~(cr-show cr cir) ~)
       %-  sh-note
       ?-  -.dif
           $full
-        "met {(scow %p who)} {(scow %tas pec.sat.dif)}"
+        "hey {(scow %p who)} {(scow %tas pec.sat.dif)}"
         ::
           $presence
-        "set {(scow %p who)} {(scow %tas pec.dif)}"
+        "see {(scow %p who)} {(scow %tas pec.dif)}"
         ::
           $human
         %+  weld  "nom {(scow %p who)}"
@@ -1600,12 +1600,13 @@
       ::
       |=  {cir/circle cur/config dif/diff-config}
       ^+  +>
+      ?:  (~(has in settings.she) %quiet)  +>
       ?:  ?=($full -.dif)
         (sh-note (weld "new " (~(cr-show cr cir) ~)))
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
       =.  +>
-        (sh-note (weld "for " (~(cr-show cr cir) ~)))
+        (sh-note (weld " in " (~(cr-show cr cir) ~)))
       %-  sh-note
       ?-  -.dif
           $source
