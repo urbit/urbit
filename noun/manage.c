@@ -583,14 +583,6 @@ u3m_bail(u3_noun how)
     abort();
   }
 
-#ifdef U3_PRINT_WATERMARK
-  if ( c3__meme == how ) {
-    fprintf(stderr, "u3R %p, parent %x\n", u3R, u3R->par_p);
-    fprintf(stderr, "max %dMB\r\n", u3R->all.max_w / 256000);
-    abort();
-  }
-#endif
-
   /* Printf some metadata.
   */
   if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
