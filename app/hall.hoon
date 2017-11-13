@@ -1201,10 +1201,11 @@
       =/  sus/(set ship)
         %.  sis.con.shape
         ?:(add ~(dif in sis) ~(int in sis))
+      ?~  sus  +>.$
       =.  +>.$
         %-  so-act
         :-  %phrase
-        %-  ~(rep in sus)
+        %-  ~(rep in `(set ship)`sus)
         |=  {s/ship a/audience t/(list speech)}
         :-  (~(put in a) [s %inbox])
         [[%inv inv so-cir] t]
