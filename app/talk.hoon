@@ -634,8 +634,8 @@
       ::
       ++  lobe                                          ::<  y/n loob
         ;~  pose
-          (cold %& ;~(pose (jest 'y') (jest '&')))
-          (cold %| ;~(pose (jest 'n') (jest '|')))
+          (cold %& ;~(pose (jest 'y') (jest '&') (just 'true')))
+          (cold %| ;~(pose (jest 'n') (jest '|') (just 'false')))
         ==
       ::
       ++  message                                       ::<  exp, lin or url msg
