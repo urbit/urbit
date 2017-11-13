@@ -23,7 +23,7 @@ _box_count(c3_ws siz_ws)
 }
 #else
 static void
-_box_count(c3_ws siz_ws) { u3R->all.fre_w += siz_ws; }
+_box_count(c3_ws siz_ws) { }
 #endif
 
 /* _box_slot(): select the right free list to search for a block.
@@ -307,9 +307,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
           ** from the free list.
           */
           siz_w += pad_w;
-#ifdef U3_MEMORY_DEBUG
-          _box_count(-(box_u->siz_w)); /* XX should this be ifdefed? */
-#endif
+          _box_count(-(box_u->siz_w));
           {
             {
               c3_assert((0 == u3to(u3a_fbox, *pfr_p)->pre_p) || 
@@ -618,7 +616,7 @@ u3a_cellblock(c3_w num_w)
       }
     }
   }
-  _box_count(-(num_w * u3a_minimum));
+  _box_count(num_w * u3a_minimum);
   return c3y;
 }
   
@@ -659,6 +657,8 @@ u3a_celloc(void)
     box_u->use_w = 1;
     u3R->all.cel_p = u3to(u3a_fbox, cel_p)->nex_p;
 
+    _box_count(-(u3a_minimum));
+
     return u3a_boxto(box_u);
   }
 }
@@ -680,6 +680,8 @@ u3a_cfree(c3_w* cel_w)
   else {
     u3a_box*      box_u = u3a_botox(cel_w);
     u3p(u3a_fbox) fre_p = u3of(u3a_fbox, box_u); 
+
+    _box_count(u3a_minimum);
 
     u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
     u3R->all.cel_p = fre_p;
@@ -1487,6 +1489,8 @@ u3a_mark_noun(u3_noun som)
 void
 u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 {
+  FILE *fil_f = u3_term_io_hija();
+
   c3_w byt_w = (wor_w * 4);
   c3_w gib_w = (byt_w / 1000000000);
   c3_w mib_w = (byt_w % 1000000000) / 1000000;
@@ -1495,19 +1499,20 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 
   if ( byt_w ) {
     if ( gib_w ) {
-      fprintf(stderr, "%s: GB/%d.%03d.%03d.%03d\r\n", 
+      fprintf(fil_f, "%s: GB/%d.%03d.%03d.%03d\r\n", 
           cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
-      fprintf(stderr, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+      fprintf(fil_f, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
     }
     else if ( kib_w ) {
-      fprintf(stderr, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
+      fprintf(fil_f, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
     }
     else if ( bib_w ) {
-      fprintf(stderr, "%s: B/%d\r\n", cap_c, bib_w);
+      fprintf(fil_f, "%s: B/%d\r\n", cap_c, bib_w);
     }
   }
+  u3_term_io_loja(0);
 }
 
 /* u3a_sweep(): sweep a fully marked road.
@@ -1541,7 +1546,7 @@ u3a_sweep(void)
         fre_p = fre_u->nex_p;
       }
     }
-#ifdef U3_PRINT_WATERMARK
+#ifdef U3_CPU_DEBUG
     if ( fre_w != u3R->all.fre_w ) {
       fprintf(stderr, "fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
           fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));

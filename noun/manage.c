@@ -1005,7 +1005,7 @@ u3m_soft_run(u3_noun gul,
 
 #ifdef U3_PRINT_WATERMARK
     if ( u3R->all.max_w > 1000000 ) {
-      uL(fprintf(uH, "soft_run: max %dMB\r\n", u3R->all.max_w / 256000));
+      u3a_print_memory("execute", u3R->all.max_w);
     }
 #endif
     /* Produce success, on the old road.
