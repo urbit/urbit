@@ -2094,7 +2094,7 @@
         =-  (weld - (fall pre " "))
         %~  ar-glyf  ar
           ?:  =(who our.bol)  aud
-          (~(del in aud) [%& who %inbox])
+          (~(del in aud) [who %inbox])
         ==
       =.  wyd  (sub wyd (lent pef))
       =/  txt  (tuba (trip msg.sep))
