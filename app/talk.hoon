@@ -656,7 +656,7 @@
         %+  cook  crip
         (plus ;~(less (jest '•') next))
       ::
-      ++  nick  (cook crip (stun [1 14] low))           ::<  nickname
+      ++  nick  (cook crip (plus next))                 ::<  nickname
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::<  circle postfix
       ++  setting                                       ::<  setting flag
         %-  perk  :~
@@ -1747,7 +1747,7 @@
     =+  nym=(~(get by nicks) hos.one)
     ?~  nym
       (cr-curt |)
-    =+  raw=(trip u.nym)
+    =+  raw=(scag 14 (trip u.nym))
     =+  len=(sub 14 (lent raw))
     (weld (reap len ' ') raw)
   ::
