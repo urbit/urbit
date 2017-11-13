@@ -13,6 +13,7 @@
 /outside/re2/obj
 # build
 /bin/urbit
+/bin/test_hash
 /vere.pkg
 .tags
 .etags
