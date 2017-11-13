@@ -2017,8 +2017,11 @@
     ?~  rum  ~
     [b %diff %hall-rumor u.rum]~
   ?.  ?=($circle -.qer)  ~
+  =+  qit=[b %quit ~]~
+  ::  kill the subscription if we forgot the story.
+  ?.  (~(has by stories) nom.qer)  qit
   ::  kill the subscription if it's past its range.
-  =-  ?:(done:- [b %quit ~]~ ~)
+  =-  ?:(done:- qit ~)
   %.  ran.qer
   =-  ~(so-in-range so:ta nom.qer ~ -)
   (~(got by stories) nom.qer)
