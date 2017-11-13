@@ -171,26 +171,44 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
 {
   c3_w    pad_w;
   u3_post all_p;
-     
+
   if ( c3y == u3a_is_north(u3R) ) {
+
+    //  if allocation would fail, halve the cache until we have enough space.
+    while ( u3R->hat_p + len_w + _me_align_pad(u3R->hat_p, ald_w, alp_w)
+            >= u3R->cap_p ) {
+
+      //  if we can't trim any more and we're still out of loom, give up.
+      if ( 0 == u3R->cax.har_p ) {
+        u3m_bail(c3__meme); return 0;
+      }
+
+      u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
+    }
+
     all_p = u3R->hat_p;
     pad_w = _me_align_pad(all_p, ald_w, alp_w);
 
     u3R->hat_p += (len_w + pad_w);
-
-    if ( u3R->hat_p >= u3R->cap_p ) {
-      u3m_bail(c3__meme); return 0;
-    }
   }  
   else {
+
+    //  if allocation would fail, halve the cache until we have enough space.
+    while ( u3R->hat_p - len_w - _me_align_dap(u3R->hat_p - len_w, ald_w, alp_w)
+            <= u3R->cap_p ) {
+
+      //  if we can't trim any omre and we're still out of loom, give up.
+      if ( 0 == u3R->cax.har_p ) {
+        u3m_bail(c3__meme); return 0;
+      }
+
+      u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
+    }
+
     all_p = (u3R->hat_p - len_w);
     pad_w = _me_align_dap(all_p, ald_w, alp_w);
     all_p -= pad_w;
     u3R->hat_p = all_p;
-
-    if ( u3R->hat_p <= u3R->cap_p ) {
-      u3m_bail(c3__meme); return 0;
-    }
   }
   return _box_make(u3a_into(all_p), (len_w + pad_w), use_w);
 }

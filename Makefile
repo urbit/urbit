@@ -380,6 +380,19 @@ VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
 
 -include $(VERE_DFILES)
 
+TEST_HASH_MAIN_FILE =\
+       tests/hashtable_tests.o
+
+TEST_HASH_OFILES=\
+       $(OUT_OFILES) \
+       $(BASE_OFILES) \
+       $(TEST_HASH_MAIN_FILE) \
+       $(V_OFILES)
+
+TEST_HASH_DFILES=$(TEST_HASH_OFILES:%.o=.d/%.d)
+
+-include $(TEST_HASH_DFILES)
+
 # This is a silly hack necessitated by the fact that libuv uses configure
 #
 #    * Making 'all' obviously requires outside/libuv,
@@ -478,6 +491,20 @@ endif
 # This should start a comet or something
 test:
 	@echo "FIXME no tests defined"
+
+test_hash: $(BIN)/test_hash
+
+ifdef NO_SILENT_RULES
+$(BIN)/test_hash: $(LIBCOMMONMARK) $(TEST_HASH_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	mkdir -p $(BIN)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/test_hash $(TEST_HASH_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+else
+$(BIN)/test_hash: $(LIBCOMMONMARK) $(TEST_HASH_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+	@echo "VERE_DFILES=$(VERE_DFILES)"
+	@echo "    CCLD  $(BIN)/test_hash"
+	@mkdir -p $(BIN)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/test_hash $(TEST_HASH_OFILES) $(LIBUV) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
+endif
 
 tags: ctags etags gtags cscope
 

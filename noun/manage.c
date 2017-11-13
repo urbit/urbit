@@ -479,10 +479,10 @@ u3m_mark(void)
   return tot_w;
 }
 
-/* _cm_pave(): instantiate or activate image.
+/* u3m_pave(): instantiate or activate image.
 */
-static void
-_cm_pave(c3_o nuu_o, c3_o bug_o)
+void
+u3m_pave(c3_o nuu_o, c3_o bug_o)
 {
   if ( c3y == nuu_o ) {
     u3H = (void *)_pave_north(u3_Loom + 1, 
@@ -1461,10 +1461,10 @@ _cm_signals(void)
   }
 }
 
-/* _cm_init(): start the environment, with/without checkpointing.
+/* u3m_init(): start the environment, with/without checkpointing.
 */
 void
-_cm_init(c3_o chk_o)
+u3m_init(c3_o chk_o)
 {
   _cm_limits();
   _cm_signals();
@@ -1668,7 +1668,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 {
   /* Activate the loom.
   */
-  _cm_init(nuu_o);
+  u3m_init(nuu_o);
 
   /* Activate the storage system.
   */
@@ -1680,7 +1680,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 
   /* Construct or activate the allocator.
   */
-  _cm_pave(nuu_o, bug_o);
+  u3m_pave(nuu_o, bug_o);
 
   /* Initialize the jet system.
   */
