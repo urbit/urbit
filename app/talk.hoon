@@ -320,7 +320,12 @@
       (ta-learn gam.nev.rum)
       ::
         $config
-      %=  +>
+      =+  cur=(fall (~(get by mirrors) cir.rum) *config)
+      =.  +>.$
+        =<  sh-done
+        %-  ~(sh-show-config sh cli)
+        [cir.rum cur dif.rum]
+      %=  +>.$
           sources
         ?.  ?&  ?=($source -.dif.rum)
                 =(cir.rum incir)
@@ -334,9 +339,7 @@
           mirrors
         ?:  ?=($remove -.dif.rum)  (~(del by mirrors) cir.rum)
         %+  ~(put by mirrors)  cir.rum
-        %+  change-config
-          (fall (~(get by mirrors) cir.rum) *config)
-        dif.rum
+        (change-config cur dif.rum)
       ==
       ::
         $status
@@ -1592,79 +1595,49 @@
         "bye {(scow %p who)}"
       ==
     ::
-    ++  sh-show-permits                                 ::<  show permits
-      ::>  prints invite/banish effects to the cli.
-      ::
-      |=  {pre/tape sec/security old/(list ship) new/(list ship)}
-      =+  out=?:(?=(?($channel $mailbox) sec) "try " "cut ")
-      =+  inn=?:(?=(?($channel $mailbox) sec) "ban " "add ")
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  old  +>.^$
-          =.  +>.^$  $(old t.old)
-          (sh-note :(weld pre out " " (scow %p i.old)))
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  new  +>.^$
-          =.  +>.^$  $(new t.new)
-          (sh-note :(weld pre out " " (scow %p i.new)))
-      +>.$
-    ::
-    ++  sh-show-sources                                 ::<  show sources
-      ::>  prints subscription changes to the cli.
-      ::
-      |=  {pre/tape old/(list source) new/(list source)}
-      ^+  +>
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  old  +>.^$
-          =.  +>.^$  $(old t.old)
-          (sh-note (weld pre "off {~(cr-full cr cir.i.old)}"))
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  new  +>.^$
-          =.  +>.^$  $(new t.new)
-          (sh-note (weld pre "hey {~(cr-full cr cir.i.new)}"))
-      +>.$
-    ::
     ++  sh-show-config                                  ::<  show config
       ::>  prints config changes to the cli.
       ::
-      |=  {pre/tape laz/config loc/config}
+      |=  {cir/circle cur/config dif/diff-config}
       ^+  +>
-      =.  +>.$
-        ?:  =(cap.loc cap.laz)  +>.$
-        (sh-note :(weld pre "cap " (trip cap.loc)))
-      =.  +>.$
-          %+  sh-show-sources
-            (weld (trip inbox) ": ")
-          (sh-set-diff src.laz src.loc)
-      ?:  !=(sec.con.loc sec.con.laz)
-        =.  +>.$  (sh-note :(weld pre "but " (scow %tas sec.con.loc)))
-        %^    sh-show-permits
-            (weld (trip inbox) ": ")
-          sec.con.loc
-        [~ ~(tap in sis.con.loc)]
-      %^    sh-show-permits
-          (weld (trip inbox) ": ")
-        sec.con.loc
-      (sh-set-diff sis.con.laz sis.con.loc)
-    ::
-    ++  sh-config                                       ::<  do show config
-      ::>  prints a circle's config changes to the cli.
-      ::
-      |=  {cir/circle old/(unit config) new/(unit config)}
-      ^+  +>
-      ::  new circle
-      ?~  old
-        ::  ++sh-show-rempe will notice a new circle.
-        +>
-      ::  removed circle
-      ?~  new
-        (sh-note (weld "rip " ~(cr-phat cr cir)))
-      %^  sh-show-config
-        (weld ~(cr-phat cr cir) ": ")
-      u.old  u.new
+      ?:  ?=($full -.dif)
+        (sh-note (weld "new " (~(cr-show cr cir) ~)))
+      ?:  ?=($remove -.dif)
+        (sh-note (weld "rip " (~(cr-show cr cir) ~)))
+      =.  +>
+        (sh-note (weld "for " (~(cr-show cr cir) ~)))
+      %-  sh-note
+      ?-  -.dif
+          $source
+        %+  weld  ?:(add.dif "onn " "off ")
+        ~(cr-full cr cir.src.dif)
+        ::
+          $caption
+        "cap {(trip cap.dif)}"
+        ::
+          $filter
+        ;:  weld
+          "fit: caps:"
+          ?:(cas.fit.dif "Y" "n")
+          " unic:"
+          ?:(utf.fit.dif "✔" "n")
+        ==
+        ::
+          $secure
+        "sec {(trip sec.con.cur)} -> {(trip sec.dif)}"
+        ::
+          $permit
+        %+  weld
+          =?  add.dif
+              ?=(?($channel $mailbox) sec.con.cur)
+            !add.dif
+          ?:(add.dif "inv " "ban ")
+        ^-  tape
+        %-  ~(rep in sis.dif)
+        |=  {s/ship t/tape}
+        =?  t  ?=(^ t)  (weld t ", ")
+        (weld t (cite:title s))
+      ==
     ::
     ++  sh-gram                                         ::<  show telegram
       ::>  prints the telegram. every fifth message,
