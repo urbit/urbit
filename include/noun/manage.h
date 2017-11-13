@@ -26,6 +26,16 @@
         c3_i
         u3m_bail(c3_m how_m) __attribute__((noreturn));
 
+      /* u3m_init(): start the environment, with/without checkpointing.
+      */
+        void
+        u3m_init(c3_o chk_o);
+
+      /* u3m_pave(): instantiate or activate image.
+      */
+        void
+        u3m_pave(c3_o nuu_o, c3_o bug_o);
+
       /* u3m_file(): load file, as atom, or bail.
       */
         u3_noun
