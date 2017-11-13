@@ -1743,11 +1743,19 @@
     ::>  get nick for ship, or shortname if no nick.
     ::>  left-pads with spaces.
     ::
-    |.  ^-  tape
-    =+  nym=(~(get by nicks) hos.one)
-    ?~  nym
-      (cr-curt |)
-    =+  raw=(scag 14 (trip u.nym))
+    |=  aud/audience
+    ^-  tape
+    =/  nic/(unit cord)
+      ?:  (~(has by nicks) hos.one)
+        (~(get by nicks) hos.one)
+      %-  ~(rep in aud)
+      |=  {cir/circle han/(unit cord)}
+      ?^  han  han
+      =+  gop=(~(get by remotes) cir)
+      ?~  gop  ~
+      han.man:(fall (~(get by u.gop) hos.one) *status)
+    ?~  nic  (cr-curt |)
+    =+  raw=(scag 14 (trip u.nic))
     =+  len=(sub 14 (lent raw))
     (weld (reap len ' ') raw)
   ::
@@ -1924,7 +1932,7 @@
     ::  render the author.
     =/  nom/tape
       ?:  (~(has in sef) %nicks)
-        (~(cr-nick cr [who %inbox]))
+        (~(cr-nick cr [who %inbox]) aud)
       (~(cr-curt cr [who %inbox]) |)
     ::  regular indent.
     =/  den/tape
