@@ -38,6 +38,7 @@
           nicks/(map ship nick)                         ::<  local nicknames
           binds/(jug char audience)                     ::<  circle glyph lookup
           public/(set circle)                           ::<  publicly member of
+          rir/wire                                      ::<  current rumor wire
       ==                                                ::
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
@@ -1960,7 +1961,7 @@
     `det
     ::
       $burden
-    ::?:  &(=(who.qer src.bol) did-they-send-a-burden)  ~
+    ?:  &(=(who.qer src.bol) =(rir /(scot %p src.bol)/report))  ~
     ?.  ?=($story -.det)  ~
     ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
     ::  only burden channels for now.
@@ -2158,6 +2159,14 @@
   ::
   |=  {wir/wire rum/rumor}
   ^-  (quip move _+>)
+  ::NOTE  to keep us from echoing changes back to their
+  ::      sender, we want to know (in ++feel) if a delta
+  ::      was caused by a rumor from a /report.
+  ::      if gall worked as advertised, we'd use ost.bol
+  ::      and wex.bol to find out, but wex is never set,
+  ::      so we just keep track of the "current rumor
+  ::      wire" instead.
+  =.  rir  wir
   =^  mos  +>.$
     %-  pre-bake
     =>  (ta-hear:ta wir rum)
