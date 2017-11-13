@@ -340,15 +340,18 @@
       ==
       ::
         $status
-      %=  +>
+      =+  rem=(fall (~(get by remotes) cir.rum) *group)
+      =+  cur=(fall (~(get by rem) who.rum) *status)
+      =.  +>.$
+        =<  sh-done
+        %-  ~(sh-show-status sh cli)
+        [cir.rum who.rum cur dif.rum]
+      %=  +>.$
           remotes
         %+  ~(put by remotes)  cir.rum
-        =+  rem=(fall (~(get by remotes) cir.rum) *group)
         ?:  ?=($remove -.dif.rum)  (~(del by rem) who.rum)
         %+  ~(put by rem)  who.rum
-        %+  change-status
-          (fall (~(get by rem) who.rum) *status)
-        dif.rum
+        (change-status cur dif.rum)
       ==
     ==
   ::
@@ -1556,35 +1559,38 @@
       ^-  tape
       ['%' (trip pec.sat)]
     ::
-    ++  sh-show-precs                                   ::<  print group diff
+    ++  sh-show-status                                  ::<  print status diff
       ::>  prints presence changes to the cli.
       ::
-      |=  $:  pre/tape
-            $=  cul
-            $:  old/(list (pair ship status))
-                new/(list (pair ship status))
-                cha/(list (pair ship status))
-            ==
-          ==
-      ?:  (~(has in settings.she) %quiet)
-        +>.$
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  old.cul  +>.^$
-          =.  +>.^$  $(old.cul t.old.cul)
-          (sh-note (weld pre "bye {(scow %p p.i.old.cul)}"))
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  new.cul  +>.^$
-          =.  +>.^$  $(new.cul t.new.cul)
-          %-  sh-note
-          (weld pre "met {(scow %p p.i.new.cul)} {(sh-scis q.i.new.cul)}")
-      =.  +>.$
-          |-  ^+  +>.^$
-          ?~  cha.cul  +>.^$
-          %-  sh-note
-          (weld pre "set {(scow %p p.i.cha.cul)} {(sh-scis q.i.cha.cul)}")
-      +>.$
+      |=  {cir/circle who/ship cur/status dif/diff-status}
+      ^+  +>
+      ?:  (~(has in settings.she) %quiet)  +>
+      =.  +>
+        %-  sh-note
+        %+  weld  "for "
+        (~(cr-show cr cir) ~)
+      %-  sh-note
+      ?-  -.dif
+          $full
+        "met {(scow %p who)} {(scow %tas pec.sat.dif)}"
+        ::
+          $presence
+        "set {(scow %p who)} {(scow %tas pec.dif)}"
+        ::
+          $human
+        %+  weld  "nom {(scow %p who)}"
+        ?:  ?=($true -.dif.dif)  ~
+        =-  " '{(trip (fall han.man.cur ''))}' -> '{-}'"
+        %-  trip
+        =-  (fall - '')
+        ?-  -.dif.dif
+          $full     han.man.dif.dif
+          $handle   han.dif.dif
+        ==
+        ::
+          $remove
+        "bye {(scow %p who)}"
+      ==
     ::
     ++  sh-show-permits                                 ::<  show permits
       ::>  prints invite/banish effects to the cli.
