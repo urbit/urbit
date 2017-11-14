@@ -2,11 +2,10 @@
 ::
 ::::  /hoon/all/unmark/web
   ::
-/-    down, markdown
+/+    cram
 ::
 /=    cor    /^  (list {@ud wain})
              /:  /%%/    /_  @ud    /txt/
-/=    mad    /:  /%%/cm-spec    /down/
 ::
 |%
 ++  rolt  |=(a/wall `tape`?~(a ~ ?~(t.a i.a :(weld i.a "\0a" $(a t.a)))))
@@ -45,7 +44,6 @@
 ^-  manx
 ;ul
   ;li
-    ;h2: Core
     ;ul
       ;*  ^-  marl
           %+  turn  cor
@@ -53,36 +51,4 @@
           ;li: ;{p -[<num>]} *{(mads txt)} ;{hr}
     ==
   ==
-  ;li
-    ;h2: CommonMark
-    ;ol
-      ;*  ?:  [disabled=&]  ; DISABLED
-          ^-  marl
-          %+  murn  `down`mad
-          |=  a/elem:markdown
-          ?:  ?=($head -.a)
-            ?.  ?=({{$$ *} $~} q.a)
-              ~
-            (some /(crip "h{<p.a>}") ;"{p.i.q.a}")
-          ?.  ?=({$code ^ *} a)  ~
-          ?.  =("example" r.u.p.a)  ~
-          %-  some
-          ^-  manx
-          |-
-          =+  [inp out]=(split-on '.' q.a)
-          =/  mar  c:(snag 0 (mads inp))
-          ;li
-            ;pre: {(trip (role inp))}
-            ;p: =>
-            ;pre: {(trip (role out))}
-            ;p: vs
-            ;pre: {(many:poxo mar "")}
-            ;p
-              ;-  =/  pox  (rush (role out) many:poxa)
-                  ?~  pox  "INVALID"
-                  ?:  =(u.pox mar)  "EQUIVALENT"
-                  ?:  =(u.pox (turn mar strip))  "COMPATIBLE"
-                  "DIVERGE"
-            ==
-  ==      ==
-==  ==
+==
