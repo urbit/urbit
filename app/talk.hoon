@@ -2030,9 +2030,10 @@
     ::>  renders just the most important data of the
     ::>  message. if possible, these stay within a single
     ::>  line.
+    ::TODO  this should probably be redone someday.
     ::
-    ::>  pre:  line prefix
-    =|  pre/(unit tape)
+    ::>  pre:  replace/append line prefix
+    =|  pre/(unit (pair ? tape))
     |=  wyd/@ud
     ^-  (list tape)
     ?-  -.sep
@@ -2050,12 +2051,12 @@
       ~(ram re (snag 0 `(list tank)`res.sep))
       ::
         $ire
-      $(sep sep.sep, pre `"^ ")
+      $(sep sep.sep, pre `[| "^ "])
       ::
         $url
       :_  ~
       =+  ful=(apix:en-purl:html url.sep)
-      =+  pef=(fall pre "")
+      =+  pef=q:(fall pre [p=| q=""])
       ::  clean up prefix if needed.
       =?  pef  =((scag 1 (flop pef)) " ")
         (scag (dec (lent pef)) pef)
@@ -2078,8 +2079,9 @@
         $lin
       ::  glyph prefix
       =/  pef/tape
+        ?:  &(?=(^ pre) p.u.pre)  q.u.pre
         ?:  pat.sep  " "
-        =-  (weld - (fall pre " "))
+        =-  (weld - q:(fall pre [p=| q=" "]))
         %~  ar-glyf  ar
           ?:  =(who our.bol)  aud
           (~(del in aud) [who %inbox])
@@ -2106,7 +2108,7 @@
       ~(cr-phat cr cir.sep)
       ::
         $app
-      $(sep sep.sep, pre `"[{(trip app.sep)}]:")
+      $(sep sep.sep, pre `[& "[{(trip app.sep)}]: "])
     ==
   --
 ::
