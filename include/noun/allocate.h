@@ -6,11 +6,11 @@
   **/
     /* U3_MEMORY_DEBUG: add debugging information to heap.  Breaks image.
     */
-#     undef U3_MEMORY_DEBUG
+#     define U3_MEMORY_DEBUG
 
     /* U3_PRINT_WATERMARK: print watermark information for each road
     */
-#     undef U3_PRINT_WATERMARK
+#     define U3_PRINT_WATERMARK
 
   /**  Constants.
   **/
