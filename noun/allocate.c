@@ -28,7 +28,7 @@ _box_count(c3_ws siz_ws) { }
 
 /* _box_slot(): select the right free list to search for a block.
 */
-c3_w
+static c3_w
 _box_slot(c3_w siz_w)
 {
   if ( siz_w < 8 ) {
@@ -52,7 +52,7 @@ _box_slot(c3_w siz_w)
 
 /* _box_make(): construct a box.
 */
-u3a_box*
+static u3a_box*
 _box_make(void* box_v, c3_w siz_w, c3_w use_w)
 {
   u3a_box* box_u = box_v;
@@ -75,7 +75,7 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
 
 /* _box_attach(): attach a box to the free list.
 */
-void
+static void
 _box_attach(u3a_box* box_u)
 {
   c3_assert(box_u->siz_w >= (1 + c3_wiseof(u3a_fbox)));
@@ -95,7 +95,7 @@ _box_attach(u3a_box* box_u)
 
   _box_count(box_u->siz_w);
   {
-    c3_w             sel_w = _box_slot(box_u->siz_w);
+    c3_w           sel_w = _box_slot(box_u->siz_w);
     u3p(u3a_fbox)  fre_p = u3of(u3a_fbox, box_u);
     u3p(u3a_fbox)* pfr_p = &u3R->all.fre_p[sel_w];
     u3p(u3a_fbox)  nex_p = *pfr_p;
@@ -111,7 +111,7 @@ _box_attach(u3a_box* box_u)
 
 /* _box_detach(): detach a box from the free list.
 */
-void
+static void
 _box_detach(u3a_box* box_u)
 {
   u3p(u3a_fbox) fre_p = u3of(u3a_fbox, box_u);
@@ -133,6 +133,93 @@ _box_detach(u3a_box* box_u)
 
     c3_assert(fre_p == u3R->all.fre_p[sel_w]);
     u3R->all.fre_p[sel_w] = nex_p;
+  }
+}
+
+/* _box_free(): free and coalesce.
+*/
+static void
+_box_free(u3a_box* box_u)
+{
+  c3_w* box_w = (c3_w *)(void *)box_u;
+
+  c3_assert(box_u->use_w != 0);
+  box_u->use_w -= 1;
+  if ( 0 != box_u->use_w ) {
+    return;
+  }
+
+#if 0
+  /* Clear the contents of the block, for debugging.
+  */
+  {
+    c3_w i_w;
+
+    for ( i_w = c3_wiseof(u3a_box); (i_w + 1) < box_u->siz_w; i_w++ ) {
+      box_w[i_w] = 0xdeadbeef;
+    }
+  }
+#endif
+
+  if ( c3y == u3a_is_north(u3R) ) {
+    /* Try to coalesce with the block below.
+    */
+    if ( box_w != u3a_into(u3R->rut_p) ) {
+      c3_w       laz_w = *(box_w - 1);
+      u3a_box* pox_u = (u3a_box*)(void *)(box_w - laz_w);
+
+      if ( 0 == pox_u->use_w ) {
+        _box_detach(pox_u);
+        _box_make(pox_u, (laz_w + box_u->siz_w), 0);
+
+        box_u = pox_u;
+        box_w = (c3_w*)(void *)pox_u;
+      }
+    }
+
+    /* Try to coalesce with the block above, or the wilderness.
+    */
+    if ( (box_w + box_u->siz_w) == u3a_into(u3R->hat_p) ) {
+      u3R->hat_p = u3a_outa(box_w);
+    }
+    else {
+      u3a_box* nox_u = (u3a_box*)(void *)(box_w + box_u->siz_w);
+
+      if ( 0 == nox_u->use_w ) {
+        _box_detach(nox_u);
+        _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
+      }
+      _box_attach(box_u);
+    }
+  }
+  else {
+    /* Try to coalesce with the block above.
+    */
+    if ( (box_w + box_u->siz_w) != u3a_into(u3R->rut_p) ) {
+      u3a_box* nox_u = (u3a_box*)(void *)(box_w + box_u->siz_w);
+
+      if ( 0 == nox_u->use_w ) {
+        _box_detach(nox_u);
+        _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
+      }
+    }
+
+    /* Try to coalesce with the block below, or with the wilderness.
+    */
+    if ( box_w == u3a_into(u3R->hat_p) ) {
+      u3R->hat_p = u3a_outa(box_w + box_u->siz_w);
+    }
+    else {
+      c3_w laz_w = *(box_w - 1);
+      u3a_box* pox_u = (u3a_box*)(void *)(box_w - laz_w);
+
+      if ( 0 == pox_u->use_w ) {
+        _box_detach(pox_u);
+        _box_make(pox_u, (laz_w + box_u->siz_w), 0);
+        box_u = pox_u;
+      }
+      _box_attach(box_u);
+    }
   }
 }
 
@@ -302,12 +389,14 @@ u3a_reflux(void)
     u3_post  cel_p = u3R->all.cel_p;
     u3a_box* box_u = &(u3to(u3a_fbox, cel_p)->box_u);
 
-    box_u->use_w = 0;
     u3R->all.cel_p = u3to(u3a_fbox, cel_p)->nex_p;
 
-    _box_attach(box_u);
+    // otherwise _box_free() will double-count it
+    //
+    _box_count(-(u3a_minimum));
+    _box_free(box_u);
+
   }
-  uL(fprintf(uH, "allocate: reflux: %d cells\r\n", i_w));
 }
 
 /* u3a_reclaim(): reclaim from memoization cache.
@@ -333,12 +422,6 @@ u3a_reclaim(void)
   */
   u3h_free(u3R->cax.har_p);
   u3R->cax.har_p = u3h_new();
-#endif
-
-#ifdef U3_CPU_DEBUG
-  u3a_print_memory("allocate: memo cache reclaim: was open", old_w);
-  u3a_print_memory("allocate: memo cache reclaim: now open", 
-                   u3a_open(u3R) + u3R->all.fre_w);
 #endif
 }
 
@@ -375,9 +458,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
        
           //  memory nearly empty; reclaim; should not be needed
           //
-          if ( (u3a_open(u3R) + u3R->all.fre_w) < 65536 ) {
-            u3a_reclaim();
-          }
+          // if ( (u3a_open(u3R) + u3R->all.fre_w) < 65536 ) { u3a_reclaim(); }
           box_u = _ca_box_make_hat(siz_w, ald_w, alp_w, 1);
 
           /* Flush a bunch of cell cache, then try again.
@@ -388,7 +469,10 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 
               return _ca_willoc(len_w, ald_w, alp_w);
             }
-            else return 0;
+            else {
+              u3a_reclaim();
+              return _ca_willoc(len_w, ald_w, alp_w);
+            }
           }
           else return u3a_boxto(box_u);
         }
@@ -534,87 +618,7 @@ u3a_wealloc(void* lag_v, c3_w len_w)
 void
 u3a_wfree(void* tox_v)
 {
-  u3a_box* box_u = u3a_botox(tox_v);
-  c3_w*      box_w = (c3_w *)(void *)box_u;
-
-  c3_assert(box_u->use_w != 0);
-  box_u->use_w -= 1;
-  if ( 0 != box_u->use_w ) {
-    return;
-  }
-
-#if 0
-  /* Clear the contents of the block, for debugging.
-  */
-  {
-    c3_w i_w;
-
-    for ( i_w = c3_wiseof(u3a_box); (i_w + 1) < box_u->siz_w; i_w++ ) {
-      box_w[i_w] = 0xdeadbeef;
-    }
-  }
-#endif
-
-  if ( c3y == u3a_is_north(u3R) ) {
-    /* Try to coalesce with the block below.
-    */
-    if ( box_w != u3a_into(u3R->rut_p) ) {
-      c3_w       laz_w = *(box_w - 1);
-      u3a_box* pox_u = (u3a_box*)(void *)(box_w - laz_w);
-
-      if ( 0 == pox_u->use_w ) {
-        _box_detach(pox_u);
-        _box_make(pox_u, (laz_w + box_u->siz_w), 0);
-
-        box_u = pox_u;
-        box_w = (c3_w*)(void *)pox_u;
-      }
-    }
-
-    /* Try to coalesce with the block above, or the wilderness.
-    */
-    if ( (box_w + box_u->siz_w) == u3a_into(u3R->hat_p) ) {
-      u3R->hat_p = u3a_outa(box_w);
-    }
-    else {
-      u3a_box* nox_u = (u3a_box*)(void *)(box_w + box_u->siz_w);
-
-      if ( 0 == nox_u->use_w ) {
-        _box_detach(nox_u);
-        _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
-      }
-      _box_attach(box_u);
-    }
-  }
-  else {
-    /* Try to coalesce with the block above.
-    */
-    if ( (box_w + box_u->siz_w) != u3a_into(u3R->rut_p) ) {
-      u3a_box* nox_u = (u3a_box*)(void *)(box_w + box_u->siz_w);
-
-      if ( 0 == nox_u->use_w ) {
-        _box_detach(nox_u);
-        _box_make(box_u, (box_u->siz_w + nox_u->siz_w), 0);
-      }
-    }
-
-    /* Try to coalesce with the block below, or with the wilderness.
-    */
-    if ( box_w == u3a_into(u3R->hat_p) ) {
-      u3R->hat_p = u3a_outa(box_w + box_u->siz_w);
-    }
-    else {
-      c3_w laz_w = *(box_w - 1);
-      u3a_box* pox_u = (u3a_box*)(void *)(box_w - laz_w);
-
-      if ( 0 == pox_u->use_w ) {
-        _box_detach(pox_u);
-        _box_make(pox_u, (laz_w + box_u->siz_w), 0);
-        box_u = pox_u;
-      }
-      _box_attach(box_u);
-    }
-  }
+  _box_free(u3a_botox(tox_v));
 }
 
 /* u3a_calloc(): allocate and zero-initialize array
