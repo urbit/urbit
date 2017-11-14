@@ -3,12 +3,24 @@
 */
 #include "all.h"
 
+int RECLAIM;
+int RECLAIMED;
+int RECLAIMED_CELLS;
+int DECLAIMED;
+
 /* _box_count(): adjust memory count.
 */
 #ifdef  U3_CPU_DEBUG
 static void
 _box_count(c3_ws siz_ws)
 {
+  if ( RECLAIM ) {
+    if ( siz_ws < 0 ) {
+      DECLAIMED += -(siz_ws);
+    } else {
+      RECLAIMED += siz_ws;
+    }
+  }
   u3R->all.fre_w += siz_ws;
   {
     c3_w end_w = _(u3a_is_north(u3R))
@@ -164,6 +176,7 @@ _me_align_dap(u3_post pos_p, c3_w ald_w, c3_w alp_w)
   return pad_w;
 }
 
+#if 0
 /* _ca_box_make_hat(): in u3R, allocate directly on the hat.
 */
 static u3a_box*
@@ -171,47 +184,62 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
 {
   c3_w    pad_w;
   u3_post all_p;
-
+     
   if ( c3y == u3a_is_north(u3R) ) {
-
-    //  if allocation would fail, halve the cache until we have enough space.
-    while ( u3R->hat_p + len_w + _me_align_pad(u3R->hat_p, ald_w, alp_w)
-            >= u3R->cap_p ) {
-
-      //  if we can't trim any more and we're still out of loom, give up.
-      if ( 0 == u3R->cax.har_p ) {
-        u3m_bail(c3__meme); return 0;
-      }
-
-      u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
-    }
-
     all_p = u3R->hat_p;
     pad_w = _me_align_pad(all_p, ald_w, alp_w);
 
     u3R->hat_p += (len_w + pad_w);
+
+    if ( u3R->hat_p >= u3R->cap_p ) {
+      u3m_bail(c3__meme); return 0;
+    }
   }  
   else {
-
-    //  if allocation would fail, halve the cache until we have enough space.
-    while ( u3R->hat_p - len_w - _me_align_dap(u3R->hat_p - len_w, ald_w, alp_w)
-            <= u3R->cap_p ) {
-
-      //  if we can't trim any omre and we're still out of loom, give up.
-      if ( 0 == u3R->cax.har_p ) {
-        u3m_bail(c3__meme); return 0;
-      }
-
-      u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
-    }
-
     all_p = (u3R->hat_p - len_w);
     pad_w = _me_align_dap(all_p, ald_w, alp_w);
     all_p -= pad_w;
     u3R->hat_p = all_p;
+
+    if ( u3R->hat_p <= u3R->cap_p ) {
+      u3m_bail(c3__meme); return 0;
+    }
   }
   return _box_make(u3a_into(all_p), (len_w + pad_w), use_w);
 }
+#else
+/* _ca_box_make_hat(): in u3R, allocate directly on the hat.
+*/
+static u3a_box*
+_ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
+{
+  c3_w    pad_w, siz_w;
+  u3_post all_p;
+     
+  if ( c3y == u3a_is_north(u3R) ) {
+    all_p = u3R->hat_p;
+    pad_w = _me_align_pad(all_p, ald_w, alp_w);
+    siz_w = (len_w + pad_w);
+
+    if ( (siz_w >= (u3R->cap_p - u3R->hat_p)) ) {
+      return 0;
+    }
+    u3R->hat_p = (all_p + siz_w);
+  }  
+  else {
+    all_p = (u3R->hat_p - len_w);
+    pad_w = _me_align_dap(all_p, ald_w, alp_w);
+    siz_w = (len_w + pad_w);
+    all_p -= pad_w;
+
+    if ( siz_w >= (u3R->hat_p - u3R->cap_p) ) {
+      return 0;
+    }
+    u3R->hat_p = all_p;
+  }
+  return _box_make(u3a_into(all_p), siz_w, use_w);
+}
+#endif
 
 #if 0
 /* _me_road_all_hat(): in u3R, allocate directly on the hat.
@@ -275,6 +303,43 @@ u3a_sane(void)
 }
 #endif
 
+/* u3a_reclaim(): find other places in the system to reclaim memory, or bail.
+*/
+void
+u3a_reclaim(void)
+{
+  if ( 0 == u3R->cax.har_p ) {
+    u3m_bail(c3__meme);
+  }
+  uL(fprintf(uH, "allocate: cache reclaim (road %p): %d entries\r\n",
+                  u3R, u3to(u3h_root, u3R->cax.har_p)->use_w));
+
+#ifdef U3_CPU_DEBUG
+  u3a_print_memory("free before", u3a_open(u3R) + u3R->all.fre_w);
+#endif
+  assert(!RECLAIM);
+  RECLAIM = 1;
+  RECLAIMED = 0;
+  RECLAIMED_CELLS = 0;
+  DECLAIMED = 0;
+#if 1
+  u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
+#else
+  u3h_free(u3R->cax.har_p);
+  u3R->cax.har_p = u3h_new();
+#endif
+  u3a_print_memory("reclaimed", RECLAIMED);
+  u3a_print_memory("declaimed", DECLAIMED);
+  uL(fprintf(uH, "reclaimed cells: %d\r\n", RECLAIMED_CELLS));
+  RECLAIMED = 0;
+  DECLAIMED = 0;
+  RECLAIM = 0; 
+
+#ifdef U3_CPU_DEBUG
+  u3a_print_memory("free after", u3a_open(u3R) + u3R->all.fre_w);
+#endif
+}
+
 /* _ca_willoc(): u3a_walloc() internals.
 */
 static void*
@@ -304,7 +369,14 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
         else {
           /* Nothing in top free list.  Chip away at the hat.
           */
-          return u3a_boxto(_ca_box_make_hat(siz_w, ald_w, alp_w, 1));
+          u3a_box* box_u;
+         
+          box_u = _ca_box_make_hat(siz_w, ald_w, alp_w, 1);
+
+          if ( 0 == box_u ) {
+            return 0;
+          }
+          else return u3a_boxto(box_u);
         }
       }
       else {
@@ -377,39 +449,17 @@ static void*
 _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
   void* ptr_v;
-  
-  ptr_v = _ca_willoc(len_w, ald_w, alp_w);
-
-#if 0
-  if ( SUB ) {
-    fprintf(stderr, "sub: at %p; kid %p\r\n", 
-            ptr_v, 
-            u3R->kid_u);
-
-    fprintf(stderr, "this: hat %p, cap %p, rut %p, mat %p\r\n",
-                    u3a_into(u3R->hat_p),
-                    u3a_into(u3R->cap_p),
-                    u3a_into(u3R->rut_p),
-                    u3a_into(u3R->mat_p));
-    
-    if ( u3R->kid_u ) {
-      fprintf(stderr, "kids: hat %p, cap %p, rut %p, mat %p\r\n\n",
-                      u3a_into(u3R->kid_u->hat_p),
-                      u3a_into(u3R->kid_u->cap_p),
-                      u3a_into(u3R->kid_u->rut_p),
-                      u3a_into(u3R->kid_u->mat_p));
+ 
+  while ( 1 ) {
+    ptr_v = _ca_willoc(len_w, ald_w, alp_w);
+    if ( 0 != ptr_v ) {
+      break;
     }
+    //  we can't reclaim here because reclamation allocates
+    //
+    u3m_bail(c3__meme);
+    u3a_reclaim();
   }
-#endif
-#if 0
-  if ( u3a_botox(ptr_v) == (u3a_box*)(void *)0x27f50a02c ) {
-    static int xuc_i;
-
-    printf("xuc_i %d\r\n", xuc_i);
-    // if ( 2 == xuc_i ) { abort(); }
-    xuc_i++;
-  }
-#endif
   return ptr_v;
 }
 
@@ -449,8 +499,8 @@ u3a_wealloc(void* lag_v, c3_w len_w)
   } 
   else {
     u3a_box* box_u = u3a_botox(lag_v);
-    c3_w*      old_w = lag_v;
-    c3_w       tiz_w = c3_min(box_u->siz_w, len_w);
+    c3_w*    old_w = lag_v;
+    c3_w     tiz_w = c3_min(box_u->siz_w, len_w);
     {
       c3_w* new_w = u3a_walloc(len_w);
       c3_w  i_w;
@@ -660,11 +710,20 @@ u3a_celloc(void)
     else {
 #ifdef U3_CPU_DEBUG
         u3R->pro.cel_d++;
-#endif
+#endif  
       if ( c3n == u3a_cellblock(1024) ) {
         return u3a_walloc(c3_wiseof(u3a_cell));
       }
-      else cel_p = u3R->all.cel_p;
+      
+      //  this is a hack that's in place because the reclaimer
+      //  allocates memory - so we need to reclaim preemptively.
+      //
+      {
+        if ( u3a_open(u3R) <= 65536 ) {
+          u3a_reclaim();
+        }
+      }
+      cel_p = u3R->all.cel_p;
     }
   }
 
@@ -692,6 +751,9 @@ u3a_cfree(c3_w* cel_w)
   }
 #endif
 
+  if ( RECLAIM ) {
+    RECLAIMED_CELLS++;
+  }
   if ( u3R == &(u3H->rod_u) ) {
     return u3a_wfree(cel_w);
   } 

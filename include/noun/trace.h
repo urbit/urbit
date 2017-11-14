@@ -6,7 +6,7 @@
   **/
     /* U3_CPU_DEBUG: activate profiling.
     */
-#     undef U3_CPU_DEBUG
+#     define U3_CPU_DEBUG
 
   /** Data structures.
   **/
