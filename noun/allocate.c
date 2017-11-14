@@ -3,24 +3,12 @@
 */
 #include "all.h"
 
-int RECLAIM;
-int RECLAIMED;
-int RECLAIMED_CELLS;
-int DECLAIMED;
-
 /* _box_count(): adjust memory count.
 */
 #ifdef  U3_CPU_DEBUG
 static void
 _box_count(c3_ws siz_ws)
 {
-  if ( RECLAIM ) {
-    if ( siz_ws < 0 ) {
-      DECLAIMED += -(siz_ws);
-    } else {
-      RECLAIMED += siz_ws;
-    }
-  }
   u3R->all.fre_w += siz_ws;
   {
     c3_w end_w = _(u3a_is_north(u3R))
@@ -303,40 +291,54 @@ u3a_sane(void)
 }
 #endif
 
-/* u3a_reclaim(): find other places in the system to reclaim memory, or bail.
+/* u3a_reflux(): dump 1K cells from the cell list into regular memory.
+*/
+void
+u3a_reflux(void)
+{
+  c3_w i_w;
+
+  for ( i_w = 0; u3R->all.cel_p && (i_w < 1024); i_w++ ) {
+    u3_post  cel_p = u3R->all.cel_p;
+    u3a_box* box_u = &(u3to(u3a_fbox, cel_p)->box_u);
+
+    box_u->use_w = 0;
+    u3R->all.cel_p = u3to(u3a_fbox, cel_p)->nex_p;
+
+    _box_attach(box_u);
+  }
+  uL(fprintf(uH, "allocate: reflux: %d cells\r\n", i_w));
+}
+
+/* u3a_reclaim(): reclaim from memoization cache.
 */
 void
 u3a_reclaim(void)
 {
-  if ( 0 == u3R->cax.har_p ) {
-    u3m_bail(c3__meme);
-  }
-  uL(fprintf(uH, "allocate: cache reclaim (road %p): %d entries\r\n",
-                  u3R, u3to(u3h_root, u3R->cax.har_p)->use_w));
+  c3_w old_w;
 
-#ifdef U3_CPU_DEBUG
-  u3a_print_memory("free before", u3a_open(u3R) + u3R->all.fre_w);
-#endif
-  assert(!RECLAIM);
-  RECLAIM = 1;
-  RECLAIMED = 0;
-  RECLAIMED_CELLS = 0;
-  DECLAIMED = 0;
-#if 1
+  if ( (0 == u3R->cax.har_p) ||
+       (0 == u3to(u3h_root, u3R->cax.har_p)->use_w) ) 
+  {
+    fprintf(stderr, "allocate: reclaim: memo cache: empty\r\n");
+  }
+  old_w = u3a_open(u3R) + u3R->all.fre_w;
+
+  //  suspected bug: infinite loop when cache is almost empty
+  //
+#if 1 
   u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
 #else
+  /*  brutal and guaranteed effective
+  */
   u3h_free(u3R->cax.har_p);
   u3R->cax.har_p = u3h_new();
 #endif
-  u3a_print_memory("reclaimed", RECLAIMED);
-  u3a_print_memory("declaimed", DECLAIMED);
-  uL(fprintf(uH, "reclaimed cells: %d\r\n", RECLAIMED_CELLS));
-  RECLAIMED = 0;
-  DECLAIMED = 0;
-  RECLAIM = 0; 
 
 #ifdef U3_CPU_DEBUG
-  u3a_print_memory("free after", u3a_open(u3R) + u3R->all.fre_w);
+  u3a_print_memory("allocate: memo cache reclaim: was open", old_w);
+  u3a_print_memory("allocate: memo cache reclaim: now open", 
+                   u3a_open(u3R) + u3R->all.fre_w);
 #endif
 }
 
@@ -367,14 +369,26 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
           break;
         }
         else {
-          /* Nothing in top free list.  Chip away at the hat.
-          */
+          //  nothing in top free list; chip away at the hat
+          //
           u3a_box* box_u;
-         
+       
+          //  memory nearly empty; reclaim; should not be needed
+          //
+          if ( (u3a_open(u3R) + u3R->all.fre_w) < 65536 ) {
+            u3a_reclaim();
+          }
           box_u = _ca_box_make_hat(siz_w, ald_w, alp_w, 1);
 
+          /* Flush a bunch of cell cache, then try again.
+          */
           if ( 0 == box_u ) {
-            return 0;
+            if ( u3R->all.cel_p ) {
+              u3a_reflux();
+
+              return _ca_willoc(len_w, ald_w, alp_w);
+            }
+            else return 0;
           }
           else return u3a_boxto(box_u);
         }
@@ -455,7 +469,8 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
     if ( 0 != ptr_v ) {
       break;
     }
-    //  we can't reclaim here because reclamation allocates
+    //  we can't reclaim here, yet, because reclamation allocates;
+    //  but this is the right place to do it
     //
     u3m_bail(c3__meme);
     u3a_reclaim();
@@ -714,15 +729,6 @@ u3a_celloc(void)
       if ( c3n == u3a_cellblock(1024) ) {
         return u3a_walloc(c3_wiseof(u3a_cell));
       }
-      
-      //  this is a hack that's in place because the reclaimer
-      //  allocates memory - so we need to reclaim preemptively.
-      //
-      {
-        if ( u3a_open(u3R) <= 65536 ) {
-          u3a_reclaim();
-        }
-      }
       cel_p = u3R->all.cel_p;
     }
   }
@@ -751,9 +757,6 @@ u3a_cfree(c3_w* cel_w)
   }
 #endif
 
-  if ( RECLAIM ) {
-    RECLAIMED_CELLS++;
-  }
   if ( u3R == &(u3H->rod_u) ) {
     return u3a_wfree(cel_w);
   } 
