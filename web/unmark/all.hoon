@@ -14,14 +14,17 @@
   (rolt (zing (turn tan |=(a/tank (wash 0^wid a)))))
 ::
 ++  mads
-  |=  a/wain  ^-  marl
-  =/  try  (mule |.(~(shut ap (rash (nule ';>' a) apex:(sail &):vast))))
+  =,    userlib
+  |=  a/wain  ^-  manx
+  =/  try/(each manx tang)
+    %-  mule  |.
+    elm:(static:cram (rash (nule:unix ';>' a) apex:(sail &):vast))
   ?-  -.try
     $&  p.try
-    $|  ;=  ;div
-              ;h3: ERROR
-              ;pre: {(wush 120 p.try)}
-  ==    ==  ==
+    $|  ;div
+          ;h3: ERROR
+          ;pre: {(wush 120 p.try)}
+  ==    ==
 ::
 ++  split-on
   =|  hed/wain
@@ -48,7 +51,7 @@
       ;*  ^-  marl
           %+  turn  cor
           |=  {num/@u txt/wain}
-          ;li: ;{p -[<num>]} *{(mads txt)} ;{hr}
+          ;li: ;{p -[<num>]} +{(mads txt)} ;{hr}
     ==
   ==
 ==
