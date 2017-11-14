@@ -1228,6 +1228,7 @@
     ~/  %get
     |=  b/*
     ^-  {$@($~ {$~ u/_?>(?=(^ a) q.n.a)})}
+    =+  42
     ?~  a
       ~
     ?:  =(b p.n.a)
@@ -5445,7 +5446,6 @@
 ++  tile  $^  {p/tile q/tile}                           ::  ordered pair
           $%  {$axil p/base}                            ::  base span
               {$bark p/toga q/tile}                     ::  name
-              {$bckt p/tile q/tile}                     ::  pair+tag
               {$deet p/spot q/tile}                     ::  set debug
               {$fern p/{i/tile t/(list tile)}}          ::  plain selection
               {$herb p/twig}                            ::  assembly
@@ -5453,6 +5453,7 @@
               {$leaf p/term q/@}                        ::  constant atom
               {$plow p/what q/tile}                     ::  apply help
               {$reed p/tile q/tile}                     ::  atom+cell
+              {$vine p/tile q/tile}                     ::  pair+tag
               {$weed p/twig}                            ::  example
           ==                                            ::
 ++  toga                                                ::  face control
@@ -6032,11 +6033,6 @@
         {$bark *}
       [%ktts p.sec $(sec q.sec)]
     ::
-        {$bckt *}
-      %-  hail
-      =.  wat  ~
-      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
-    ::
         {$deet *}
       [%dbug p.sec $(sec q.sec)]
     ::
@@ -6046,11 +6042,13 @@
       |-  ^-  twig
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%wtcl [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
     ::
         {$herb *}
       %-  hail
       =.  wat  ~
+      ::  reduce excess model/value transitions
+      ::
       =+  cys=~(boil ap p.sec)
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.sec])
@@ -6062,7 +6060,7 @@
       |-  ^-  twig
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%wtcl [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
     ::
         {$leaf *}
       (hail [%rock p.sec q.sec])
@@ -6076,6 +6074,11 @@
       =.  wat  ~
       [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
     ::
+        {$vine *}
+      %-  hail
+      =.  wat  ~
+      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
+    ::
         {$weed *}
       (hail (home p.sec))
     ==
@@ -6083,11 +6086,11 @@
     ^-  twig
     =/  raw  [%brts [~ ~] [%base %noun] (whip(gom 7) 6)]
     ::
-    ::  this performance fix should unify a bunch of trivial functions,
-    ::  but breaks on horrible dogshit hacks in ++raid:zuse.
+    ::  this performance fix should unify a bunch of trivial formulas,
+    ::  but breaks on certain hacks in ++raid:zuse.
     ::
     ::  ?.  ?=(?($axil $leaf) -.sec)  raw
-    ::  [%tsgr [%rock %n ] raw]
+    ::  [%tsgr [%rock %n ~] raw]
     raw
   ::
   ++  whip
@@ -6147,7 +6150,7 @@
         {$bark *}
       [%ktts p.sec $(sec q.sec)]
     ::
-        {$bckt *}
+        {$vine *}
       %-  hail
       =.  wat  ~
       %-  tun  |=  gon/*  =>  .(nag gon)  ^-  twig
@@ -6474,7 +6477,7 @@
         $|  ?~(end p.def [%fern p.def [%kelp end] ~])
       ==
     ::
-        {$bckt *}  [%bckt boil(gen p.gen) boil(gen q.gen)]
+        {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
         {$bchp *}  [%weed [%brsg [~ ~] p.gen [%bunt [%tsgr [%$ 7] q.gen]]]]
         {$halo *}  [%plow p.gen boil(gen q.gen)]
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
