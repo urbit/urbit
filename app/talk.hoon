@@ -2086,7 +2086,7 @@
           ?:  =(who our.bol)  aud
           (~(del in aud) [who %inbox])
         ==
-      =.  wyd  (sub wyd (lent pef))
+      =.  wyd  (sub wyd (min (div wyd 2) (lent pef)))
       =/  txt  (tuba (trip msg.sep))
       |-  ^-  (list tape)
       ?~  txt  ~
