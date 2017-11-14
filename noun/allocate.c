@@ -1751,7 +1751,7 @@ u3a_sweep(void)
                 ? u3R->mat_p - u3R->cap_p
                 : u3R->cap_p - u3R->mat_p;
 
-#ifdef U3_PRINT_WATERMARK
+#ifdef U3_CPU_DEBUG
   if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
     u3a_print_memory("available", (tot_w - pos_w));
     u3a_print_memory("allocated", pos_w);

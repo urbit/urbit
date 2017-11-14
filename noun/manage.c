@@ -899,9 +899,9 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     /* Make sure the inner routine did not create garbage.
     */
     if ( u3C.wag_w & u3o_debug_ram ) {
-#ifdef U3_PRINT_WATERMARK
+#ifdef U3_CPU_DEBUG
       if ( u3R->all.max_w > 1000000 ) {
-        fprintf(stderr, "soft_top: max %dMB\r\n", u3R->all.max_w / 256000);
+        u3a_print_memory("execute: top", u3R->all.max_w);
       }
 #endif
       u3m_grab(pro, u3_none);
@@ -995,9 +995,9 @@ u3m_soft_run(u3_noun gul,
     u3t_off(coy_o);
     pro = fun_f(aga, agb);
 
-#ifdef U3_PRINT_WATERMARK
+#ifdef U3_CPU_DEBUG
     if ( u3R->all.max_w > 1000000 ) {
-      u3a_print_memory("execute", u3R->all.max_w);
+      u3a_print_memory("execute: run", u3R->all.max_w);
     }
 #endif
     /* Produce success, on the old road.
