@@ -1,3 +1,4 @@
+::  todo: think about using horns to import all tests in %/tests?
 /+  new-hoon
 |%
 ::  ----------------------------------------------------------------------
@@ -5,6 +6,11 @@
 ::  ----------------------------------------------------------------------
 ++  test-lib
   |%
+  ++  init-test-vase
+    |=  {cookie/@uvJ}
+    ^-  vase
+    !>((init-test cookie))
+  ::
   ++  init-test
     |=  {cookie/@uvJ}
     ~(. tester `(list tape)`~ cookie 10 0)
@@ -17,48 +23,6 @@
             check-iterations/@u                         ::  # of check trials
             current-iteration/@u                        ::  current iteration
         ==
-    ::
-    ::  ||  %examples
-    ::
-    ::  +|
-    ++  example  !.
-      ::  TODO: this doesn't deal with |*.
-      ::
-      ::  specifies an example and its expected value.
-      ::
-      ::  the examples in the hoon documentation used to go out of date very
-      ::  quickly, since they were never compiled. so make compiling them a
-      ::  test.
-      ::
-      ::  source: a hoon expression
-      ::  expected: the expected result of {source}.
-      |=  {source/cord expected/cord}
-      ^+  +>
-      ::  todo: deal with expected not compiling.
-      =+  exp=(slap !>(.) (ream expected))
-      =+  run=(mule |.((slap !>(.) (ream source))))
-      =/  result/vase  ?-  -.run
-        $|  !>(p.run)
-        $&  p.run
-      ==
-      ?:  =(q.result q.exp)
-        +>.$
-      %=  +>.$
-        error-lines  :*
-          "failure in '{(trip source)}':"
-          "  actual:   '{(noah result)}'"
-          "  expected: '{(noah exp)}'"
-          error-lines
-        ==
-      ==
-    ++  examples
-      ::
-      |=  a/(list {cord cord})
-      ?~  a
-        +>.$
-      =.  +>.$  (example i.a)
-      $(a t.a)
-    ::
     ::  ||  %check
     ::
     ::  +|
@@ -134,27 +98,17 @@
       ::  returns results.
       ::
       ::  returns the test run's identity cookie and the list of failures.
-      |.
       ^-  {@uvJ (list tape)}
       [eny error-lines]
     --
   --
+--
+|%
 ::  ----------------------------------------------------------------------
 ::  Eventually should be in %/test/basic/hoon.
 ::  ----------------------------------------------------------------------
 ++  test-core
   |_  tester-type:test-lib
-  ++  example-add
-    %-  examples  :~
-      ['(add 2 2)' '4']
-      ['(add 1 1.000.000)' '1.000.001']
-      ['(add 1.333 (mul 2 2))' '1.337']
-    ==
-  ++  example-dec
-    %-  examples  :~
-      ['(dec 7)' '6']
-      ['(dec 0)' '~[[%leaf p="decrement-underflow"]]']
-    ==
   ++  check-decrement
     %+  check
       (generate-range 0 100)
@@ -168,6 +122,8 @@
   ++  test-crash
     !!
   --
+--
+|%
 ::  ----------------------------------------------------------------------
 ::  Eventually should be in %/test/basic/hoon.
 ::  ----------------------------------------------------------------------
@@ -202,6 +158,8 @@
     [[1 2 ~] ["one" "two" ~]]
     "partition"
   --
+--
+|%
 ++  test-myb
   =,  myb:new-hoon
   |_  tester-type:test-lib
@@ -233,6 +191,8 @@
     [2 2 ~]
     "map"
   --
+--
+|%
 ++  test-ls
   =,  ls:new-hoon
   |_  tester-type:test-lib
@@ -512,6 +472,8 @@
     [6 6 8 ~]
     "intersect"
   --
+--
+|%
 ++  test-mp
   =,  dct:new-hoon
   =+  four=(from-list [[1 "one"] [2 "two"] [3 "three"] [4 "four"] ~])
@@ -623,7 +585,7 @@
     ::  check random dicts of 50 items with 40 random operations done on them
     ::  for validity.
     %+  check
-    (generate-dict 50)
+      (generate-dict 50)
     |=  a/(dict @ud @ud)
     ::  this is dumb, but use {a} as entropy?
     =/  gen  (random:new-hoon (jam a))
@@ -871,6 +833,8 @@
     %.y
     "valid"
   --
+--
+|%
 ::  ----------------------------------------------------------------------
 ::  Stays in the generator.
 ::  ----------------------------------------------------------------------
@@ -881,9 +845,7 @@
     |=  {name/tape v/vase eny/@uvJ}
     ^-  tang
     =+  core-arms=(sort (sloe p.v) aor)
-    ::  todo: work around mint-vain
-    =+  null-check=core-arms
-    ?~  null-check
+    ?:  =(~ core-arms)
       [[%leaf :(weld "error: " name " is not a valid testing core.")] ~]
     =|  out/tang
     |-
@@ -928,14 +890,13 @@
     ::  appropriately.
     |=  {arm-name/term v/vase eny/@uvJ}
     ^-  (each {@uvJ (list tape)} (list tank))
-    =/  t  (init-test:test-lib eny)
+    =/  t  (init-test-vase:test-lib eny)
     ::  run the tests in the interpreter so we catch crashes.
     %-  mule  |.
-    ::  ~(t v arm-name)
-    =/  r  (slap (slop !>(t) v) [%cnsg [arm-name ~] [%$ 3] [[%$ 2] ~]])
+    =/  r  (slap (slop t v) [%cnsg [arm-name ~] [%$ 3] [[%$ 2] ~]])
     ::  return just the results or we will be here forever while we try to copy
     ::  the entire kernel.
-    ((hard {@uvJ (list tape)}) q:(slym (slap r [%limb %results]) r))
+    ((hard {@uvJ (list tape)}) q:(slap r [%limb %results]))
   --
 ::  ----------------------------------------------------------------------
 --
