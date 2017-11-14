@@ -250,23 +250,18 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
     if ( 2 == len_w ) {
       // only one left, pick the other
       *sot_w = han_u->sot_w[ 0 == inx_w ? 1 : 0 ];
+
+      u3a_wfree(han_u);
     }
     else {
-      // make smaller node
-      c3_w nel_w      = len_w - 1;
-      u3h_node* nah_u = u3a_walloc(c3_wiseof(u3h_node) +
-                                   (nel_w * c3_wiseof(u3h_slot)));
-      nah_u->map_w    = han_u->map_w & ~(1 << bit_w);
+      // shrink node in place; don't reallocate, we could be low on memory
+      //
+      han_u->map_w = han_u->map_w & ~(1 << bit_w);
 
-      for ( i_w = 0; i_w < inx_w; ++i_w ) {
-        nah_u->sot_w[i_w] = han_u->sot_w[i_w];
+      for ( i_w = inx_w; i_w < (len_w - 1); i_w++ ) {
+        han_u->sot_w[i_w] = han_u->sot_w[i_w + 1];
       }
-      for ( i_w = inx_w; i_w < nel_w; ++i_w ) {
-        nah_u->sot_w[i_w] = han_u->sot_w[i_w + 1];
-      }
-      *sot_w = u3h_node_to_slot(nah_u);
     }
-    u3a_wfree(han_u);
     return c3y;
   }
 }
@@ -276,7 +271,7 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
 static c3_o
 _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
 {
-  c3_w len_w;
+  c3_w i_w, len_w;
   u3h_buck* hab_u = u3h_slot_to_node(*sot_w);
 
   for ( har_u->arm_u.buc_o = c3y, len_w = hab_u->len_w; 
@@ -287,23 +282,19 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
     if ( c3y == _ch_trim_slot(har_u, tos_w, 0, 0) ) {
       if ( 2 == len_w ) {
         // 2 things in bucket: pick the other and promote
+        //
         *sot_w = hab_u->sot_w[ (0 == har_u->arm_u.inx_w) ? 1 : 0 ];
+        u3a_wfree(hab_u);
       }
       else {
-        // make a smaller bucket
-        c3_w i_w, nel_w = len_w - 1;
-        u3h_buck* bah_u = u3a_walloc(c3_wiseof(u3h_buck) +
-                                     nel_w * c3_wiseof(u3h_slot));
-        bah_u->len_w    = nel_w;
-        for ( i_w = 0; i_w < har_u->arm_u.inx_w; ++i_w ) {
-          bah_u->sot_w[i_w] = hab_u->sot_w[i_w];
+        // shrink bucket in place; don't reallocate, we could be low on memory
+        //
+        hab_u->len_w = len_w - 1;
+
+        for ( i_w = har_u->arm_u.inx_w; i_w < (len_w - 1); ++i_w ) {
+          hab_u->sot_w[i_w] = hab_u->sot_w[i_w + 1];
         }
-        for ( i_w = har_u->arm_u.inx_w; i_w < nel_w; ++i_w ) {
-          bah_u->sot_w[i_w] = hab_u->sot_w[i_w + 1];
-        }
-        *sot_w = u3h_node_to_slot(bah_u);
       }
-      u3a_wfree(hab_u);
       return c3y;
     }
   }
