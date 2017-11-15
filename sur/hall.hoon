@@ -28,7 +28,11 @@
       {$public $~}                                      ::<  public memberships
       {$burden who/ship}  ::TODO  eventually, nom/naem. ::<  duties to share
       {$report $~}                                      ::<  duty reports
-      {$circle nom/naem wat/(set circle-data) ran/range}::<  story query
+      $:  $circle                                       ::>  story query
+          nom/naem                                      ::<  circle name
+          wat/(set circle-data)                         ::<  data to get
+          ran/range                                     ::<  query duration
+      ==                                                ::
       ::TODO  in the future, we may want much more      ::
       ::      detailed querying abilities.              ::
   ==                                                    ::
@@ -73,13 +77,13 @@
   $:  cos/lobby                                         ::<  loc & rem configs
       pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
-++  burden                                              ::<  full story state
+++  burden                                              ::>  full story state
   $:  gaz/(list telegram)  ::TODO  envelope?            ::<  all messages
-      shipment
+      shipment                                          ::<  metadata
   ==                                                    ::
 ++  package                                             ::<  story state
   $:  nes/(list envelope)                               ::<  messages
-      shipment
+      shipment                                          ::<  metadata
   ==                                                    ::
 ++  diff-glyph  {bin/? gyf/char aud/audience}           ::<  un/bound glyph
 ++  diff-nick   {who/ship nic/nick}                     ::<  changed nickname
@@ -178,10 +182,10 @@
   ==                                                    ::
 ++  control    {sec/security sis/(set ship)}            ::<  access control
 ++  security                                            ::>  security mode
-  $?  $channel                                          ::<  channel, blacklist
-      $village                                          ::<  village, whitelist
-      $journal                                          ::<  journal, author list
-      $mailbox                                          ::<  mailbox, our r, bl w
+  $?  $channel                                          ::<  blacklist
+      $village                                          ::<  whitelist
+      $journal                                          ::<  pub r, whitelist w
+      $mailbox                                          ::<  our r, blacklist w
   ==                                                    ::
 ::  participant metadata.                               ::
 ::TODO  think about naming more

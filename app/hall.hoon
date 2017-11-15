@@ -2,9 +2,6 @@
 ::::  /app/hall/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
-::TODO  maybe have hall accept reactions as well, redirect them to readers.
-::      that way we can have foreign halls react to our requests!
-::
 ::TODO  document gate samples fully.
 ::
 ::TODO  for using moons as tmp identities for friends: stories may want to keep
