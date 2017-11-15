@@ -11,10 +11,10 @@
 ::TODO  [type query] => [press tab to cycle search results, newest-first]
 ::      => [escape to clear]
 ::
-::>  This reader implementation makes use of the %inbox
+::>  This client implementation makes use of the %inbox
 ::>  for all its subscriptions and messaging. All
 ::>  rumors received are exclusively about the %inbox,
-::>  since that's the only thing the reader ever
+::>  since that's the only thing the client ever
 ::>  subscribes to.
 ::
 /?    151                                               ::<  hoon version
@@ -32,7 +32,7 @@
     ::>    data structures
     ::
     |%
-    ++  state                                           ::>  reader state
+    ++  state                                           ::>  application state
       $:  ::  messaging state                           ::
           count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all history
@@ -129,18 +129,18 @@
 ::>    small utility functions.
 ::+|
 ::
-++  broker                                              ::<  broker ship + name
+++  server                                              ::<  our hall instance
   ^-  dock
   :_  %hall
   (true-self our.bol)
 ::
-++  inbox                                               ::<  reader's circle name
+++  inbox                                               ::<  client's circle name
   ::>  produces the name of the circle used by this
-  ::>  reader for all its operations
+  ::>  client for all its operations
   ^-  naem
   %inbox
 ::
-++  incir                                               ::<  reader's circle
+++  incir                                               ::<  client's circle
   ::>  ++inbox, except a full circle.
   ^-  circle
   :_  inbox
@@ -218,7 +218,7 @@
       `[%mor (flop q.yop)]                              ::<  more sole-effects
     ::  produce moves or sole-effects and moves.
     ?~  foc  moz
-    ?~  id.cli  ~&(%reader-no-sole moz)
+    ?~  id.cli  ~&(%client-no-sole moz)
     [[id.cli %diff %sole-effect u.foc] moz]
   ::
   ::>  ||
@@ -247,20 +247,20 @@
   ::+|
   ::
   ++  ta-init                                           ::<  initialize app
-    ::>  subscribes to our broker.
+    ::>  subscribes to our hall.
     ::
     %-  ta-emil
     ^-  (list move)
     :~  :*  ost.bol
             %peer
             /
-            broker
-            /reader
+            server
+            /client
         ==
         :*  ost.bol
             %peer
             /
-            broker
+            server
             /circle/[inbox]/grams/config/group
         ==
     ==
@@ -272,7 +272,7 @@
     ^+  +>
     ?+  -.piz  +>
       ::
-        $reader
+        $client
       %=  +>
         binds   gys.piz
         bound   (bound-from-binds gys.piz)
@@ -295,7 +295,7 @@
     ^+  +>
     ?+  -.rum  +>
       ::
-        $reader
+        $client
       ?-  -.rum.rum
           $glyph
         (ta-change-glyph +.rum.rum)
@@ -376,7 +376,7 @@
   ::+|
   ::
   ++  ta-unpack                                         ::<  open envelopes
-    ::>  the reader currently doesn't care about nums.
+    ::>  the client currently doesn't care about nums.
     ::
     |=  nes/(list envelope)
     ^+  +>
@@ -431,7 +431,7 @@
   ::+|
   ::
   ++  ta-console                                        ::<  initialize shell
-    ::>  initialize the shell of this reader.
+    ::>  initialize the shell of this client.
     ::
     ^+  .
     =/  she/shell
@@ -487,8 +487,8 @@
         :_  moves
         :*  ost.bol
             %poke
-            /reader/action
-            broker
+            /client/action
+            server
             [%hall-action act]
         ==
       ==
@@ -2150,7 +2150,7 @@
   |=  act/sole-action
   ta-done:(ta-sole:ta act)
 ::
-++  coup-reader-action                                                ::<  accept n/ack
+++  coup-client-action                                                ::<  accept n/ack
   ::>
   ::
   |=  {wir/wire fal/(unit tang)}

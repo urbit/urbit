@@ -24,7 +24,7 @@
 ::+|
 ::
 ++  query                                               ::>  query paths
-  $%  {$reader $~}                                      ::<  shared ui state
+  $%  {$client $~}                                      ::<  shared ui state
       {$public $~}                                      ::<  public memberships
       {$burden who/ship}  ::TODO  eventually, nom/naem. ::<  duties to share
       {$report $~}                                      ::<  duty reports
@@ -53,23 +53,23 @@
       {$ud @ud}                                         ::<  message number
   ==                                                    ::
 ++  prize                                               ::>  query result
-  $%  {$reader prize-reader}                            ::<  /reader
+  $%  {$client prize-client}                            ::<  /client
       {$public cis/(set circle)}                        ::<  /public
       {$burden sos/(map naem burden)}                   ::<  /burden
       {$report ~}                                       ::<  /report
       {$circle package}                                 ::<  /circle
   ==                                                    ::
-++  prize-reader                                        ::
+++  prize-client                                        ::
   $:  gys/(jug char audience)                           ::<  glyph bindings
       nis/(map ship nick)                               ::<  local nicknames
   ==                                                    ::
 ++  rumor                                               ::<  query result change
-  $%  {$reader rum/rumor-reader}                        ::<  /reader
+  $%  {$client rum/rumor-client}                        ::<  /client
       {$public add/? cir/circle}                        ::<  /public
       {$burden nom/naem rum/rumor-story}                ::<  /burden
       {$circle rum/rumor-story}                         ::<  /circle
   ==                                                    ::
-++  rumor-reader                                        ::<  changed ui state
+++  rumor-client                                        ::<  changed ui state
   $%  {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
   ==                                                    ::
@@ -121,9 +121,9 @@
   ==                                                    ::
 ::
 ::>  ||
-::>  ||  %reader-communication
+::>  ||  %client-communication
 ::>  ||
-::>    broker interfaces for readers.
+::>    hall interfaces for clients.
 ::+|
 ::
 ++  action                                              ::>  user action
@@ -148,9 +148,9 @@
   ==                                                    ::
 ::
 ::>  ||
-::>  ||  %broker-communication
+::>  ||  %hall-communication
 ::>  ||
-::>    structures for communicating between brokers.
+::>    structures for communicating between halls.
 ::+|
 ::
 ++  command                                             ::>  effect on story
@@ -211,7 +211,7 @@
 ::+|
 ::
 ::TODO  some structure for extra message state
-::      local (to readers): delivery state, read flags
+::      local (to clients): delivery state, read flags
 ::      remote (to halls): sequence nr
 ++  envelope   {num/@ud gam/telegram}                   ::<  outward message
 ++  telegram   {aut/ship thought}                       ::<  whose message

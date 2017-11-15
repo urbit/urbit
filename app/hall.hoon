@@ -28,7 +28,7 @@
     |%
     ::>  ||  %state                                     ::
     ::>    state data structures                        ::
-    ++  state                                           ::>  broker state
+    ++  state                                           ::>  application state
       $:  stories/(map naem story)                      ::<  conversations
           outbox/(map serial tracking)                  ::<  sent messages
           log/(map naem @ud)                            ::<  logged to clay
@@ -261,8 +261,8 @@
     :_  l
     [%story n %status [our.bol n] who dif]
   ::
-  ++  ta-action                                         ::<  apply reader action
-    ::>  performs action sent by a reader.
+  ++  ta-action                                         ::<  apply client action
+    ::>  performs action sent by a client.
     ::
     |=  {red/bone act/action}
     ^+  +>
@@ -1836,8 +1836,8 @@
   |=  qer/query
   ^-  (unit (unit prize))
   ?-  -.qer
-      $reader
-    ``[%reader binds nicks]
+      $client
+    ``[%client binds nicks]
     ::
       $public
     ``[%public public]
@@ -1946,11 +1946,11 @@
   |=  {qer/query det/delta}
   ^-  (unit rumor)
   ?-  -.qer
-      $reader
+      $client
     ::  changes to shared ui state apply.
     ?+  -.det  ~
-      $glyph  `[%reader det]
-      $nick   `[%reader det]
+      $glyph  `[%client det]
+      $nick   `[%client det]
     ==
     ::
       $public
@@ -2069,7 +2069,7 @@
   ^-  $-((list coin) query)
   =>  depa
   |^  %-  af  :~
-          [%reader ul]
+          [%client ul]
           [%public ul]
           [%burden (at /[%p])]
           [%report ul]
@@ -2086,7 +2086,7 @@
   |=  {who/ship qer/query}
   ^-  ?
   ?-  -.qer
-    $reader   (team:title our.bol who)
+    $client   (team:title our.bol who)
     $public   &
     $burden   ?&  =(who who.qer)
                   =(our.bol (above who))
