@@ -11002,34 +11002,32 @@
         [b boy.e d]
       ;~  plug
         apex:docs
-        ;~  pfix  lus
-          ;~  pose
-            %+  cook
-              |=({a/$ash b/term c/whit d/twig} [b c a d])
-            ;~  plug
-              (cold %ash (just '+'))
-              ;~(pfix gap ;~(pose (cold %$ buc) sym))
-              apse:docs
-              ;~(pfix gap loaf)
-            ==
-          ::
-            %+  cook
-              |=({a/$elm b/term c/whit d/twig} [b c a d])
-            ;~  plug
-              (cold %elm (just '-'))
-              ;~(pfix gap ;~(pose (cold %$ buc) sym))
-              apse:docs
-              ;~(pfix gap loaf)
-            ==
-          ::
-            %+  cook
-              |=({a/$ash b/term c/whit d/root} [b c a d])
-            ;~  plug
-              (cold %ash (just '='))
-              ;~(pfix gap sym)
-              apse:docs
-              ;~(pfix gap loan)
-            ==
+        ;~  pose
+          %+  cook
+            |=({a/$ash b/term c/whit d/twig} [b c a d])
+          ;~  plug
+            (cold %ash (jest '++'))
+            ;~(pfix gap ;~(pose (cold %$ buc) sym))
+            apse:docs
+            ;~(pfix gap loaf)
+          ==
+        ::
+          %+  cook
+            |=({a/$elm b/term c/whit d/twig} [b c a d])
+          ;~  plug
+            (cold %elm (jest '+-'))
+            ;~(pfix gap ;~(pose (cold %$ buc) sym))
+            apse:docs
+            ;~(pfix gap loaf)
+          ==
+        ::
+          %+  cook
+            |=({a/$ash b/term c/whit d/root} [b c a d])
+          ;~  plug
+            (cold %ash (jest '+='))
+            ;~(pfix gap sym)
+            apse:docs
+            ;~(pfix gap loan)
           ==
         ==
       ==
