@@ -4612,7 +4612,6 @@
 ++  nix  (boss 256 (star ;~(pose aln cab)))             ::
 ++  nud  (shim '0' '9')                                 ::  numeric
 ++  prn  ;~(less (just `@`127) (shim 32 256))           ::  non-control
-++  prz  ;~(less (just `@`127) (shim 33 256))           ::  non-trivial
 ++  qat  ;~  pose                                       ::  chars in blockcord
              prn
              ;~(less ;~(plug (just `@`10) soz) (just `@`10))
@@ -9410,112 +9409,94 @@
     ==
   ++  docs
     |%
+    ::
     ::  above core
     ::
     ++  apex
-      %+  cook  beer
       ;~  plug
-        =/  ron  (punt (into noel))
-        (punt (ifix [ron ron] (into (step head))))
-        ;~(pfix (punt (into null)) (punt body))
-        (star fill)
+        =/  ron  (punt (indo noel))
+        (punt (ifix [ron ron] (into head)))             ::  label
+      ::
+        =/  ron  (punt (indo null))
+        (ifix [ron ron] (punt body))                    ::  body
+      ::
+        (cook malt (star fill))                         ::  definitions
+        (easy ~)                                        ::  defs used (none)
       ==
+    ::
     ::  backward line
     ::
     ++  apse
       ;~  pose
-        %+  cook
-          |=  a/(each (pair term cord) cord)
-          ^-  whit
-          ?-  -.a
-            $&  [~ ~ [[p.p.a [q.p.a ~]] ~ ~] ~]
-            $|  [~ `[p.a ~] ~ ~]
-          ==
-        (exit (step (pick fine line)))
+        %+  cook  |=({a/term b/cord} %*(. *whit def (my [a b ~] ~)))
+        (exit fine)
+      ::
+        %+  cook  |=(a/cord %*(. *whit boy `[a ~]))
+        (exit line)
+      ::
         (easy *whit)
       ==
     ::
     ::
     ++  beer
-      |=  $:  a/(unit term)
-              b/(unit (pair cord (list sect)))
-              c/(list (pair (pair term cord) (list sect)))
+      |=  $:  lab/(unit term)
+              boy/(unit (pair cord (list sect)))
+              def/(list (pair (pair term cord) (list sect)))
           ==
       ^-  whit
-      =/  d
-        |-  ^-  (map term (pair cord (list sect)))
-        ?~  c  ~
-        =/  e  $(c t.c)
-        (~(put by e) p.p.i.c [q.p.i.c q.i.c])
-      [a b d ~]
+      =;  def  [lab boy (malt def) ~]
+      (turn def |=({{a/term b/cord} c/(list sect)} [a [b c]]))
     ::
     ::
     ++  body
-      ;~  sfix
-        ;~  pose
-          ;~  plug
-            (into ;~(pfix (punt ;~(plug (star ace) col gar)) (step line)))
-            (easy ~)
-          ==
-          ;~  plug
-            (into (dubs line))
-            (rant text)
-          ==
+      ;~  pose
+        ;~  plug                                        :: can duplicate :>
+          (into ;~(pfix (punt ;~(plug null col gar step)) line))
+          (easy ~)
         ==
-        (punt (into null))
+        ;~  plug
+          (into ;~(pfix step line))
+          (rant text)
+        ==
       ==
     ::
-    ::  null: blank line
-    ::  line: prose line
-    ::  code: code line
-    ::  text: text line
-    ::  fine: definition line
+    ++  text  (pick line code)                          ::  text line
+    ++  line  ;~(less ace (cook crip (star prn)))       ::  prose line
+    ++  code  ;~(pfix step step (cook crip (star prn))) ::  code line
+    ++  noel  ;~(plug (punt ;~(pfix step hax)) null)    ::  header padding
+    ++  head  ;~(pfix hax step cen sym)                 ::  header line
+    ++  null  (cold ~ (star ace))                       ::  blank line
+    ++  fine                                            ::  definition line
+      ;~  (glue ;~(plug col ace))
+        sym
+        (cook crip (star prn))
+      ==
     ::
-    ++  line  (cook crip ;~(plug prz (star prn)))
-    ++  head  ;~(pfix ;~(plug hax ace ace cen) sym)
-    ++  text  (pick line code)
-    ++  code  (cook crip (dubs (star prn)))
-    ++  null  (star ace)
-    ++  noel  ;~(pose (step ;~(sfix hax (star ace))) null)
-    ++  fine  ;~(plug sym (cook crip ;~(pfix ;~(plug col ace) (star prn))))
-    ::
-    ::  lean: line delimited
-    ::
-    ++  lean
-      |*  gyf/rule
-      |*  bod/rule
-      ;~(pfix ;~(plug col gyf) bod)
     ::
     ::  step: indent
-    ::
-    ++  step
-      |*  fel/rule
-      ;~(pfix ;~(plug ace ace) fel)
-    ::
-    ::  dubs: double-indent
-    ::
-    ++  dubs
-      |*  fel/rule
-      ;~(pfix ;~(plug ace ace ace ace) fel)
-    ::
-    ::  into: :> to end of line, consuming following space.
-    ::
-    ++  into  
-      |*  bod/rule
-      ;~(sfix ((lean gar) bod) ;~(plug (just `@`10) (punt gap)))
-    ::
+    ::  into: :> and indent to end of line, consuming following space.
+    ::  indo: :> to end of line, consuming following space.
     ::  exit: :< to end of line, not consuming following space.
+    ::
+    ++  step  ;~(plug ace ace)
+    ++  into  |*(bod/rule (indo ;~(pfix step bod)))
+    ::
+    ++  indo
+      |*  bod/rule
+      ;~(pfix col gar ;~(sfix bod (just `@`10) (punt gap)))
     ::
     ++  exit
       |*  bod/rule
-      ;~(pfix (star ace) ((lean gal) bod))
+      ;~(pfix (star ace) col gal step bod)
     ::
     ::  fill: full definition
     ::
     ++  fill
-      ;~  sfix 
-        ;~(plug (into (step fine)) (rant (step text))) 
-        (punt (into null))
+      %+  cook  |=({{a/term b/cord} c/(list sect) (unit $~)} [a b c])
+      ;~  plug
+        (into fine)
+        (rant ;~(pfix step text))
+        (punt (indo null))
       ==
     ::
     ::  rant: series of sections.
@@ -9524,8 +9505,8 @@
       |*  sec/rule
       %-  star
       ;~  pfix  
-        (into null)
-        (plus (into (step sec)))
+        (indo null)
+        (plus (into sec))
       ==
     --
   ::
