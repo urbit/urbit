@@ -9521,19 +9521,6 @@
     ?.  ?=({$sand ?($ta $tas) @} a)  ~
     `[q.a u.b]
   ::
-  ++  pray
-    |=  gen/twig  ~|  %pray  ^-  (unit twig)
-    ~&  [%pray-disabled gen]
-    !!
-  ::
-  ++  prey
-    |=  gun/(list twig)  ^-  (unit twig)
-    ?~  gun  `[%$ 1]
-    =+  gup=(pray i.gun)
-    ?~  gup  ~
-    ?~  t.gun  gup
-    (bind $(gun t.gun) |=(a/twig [%tsgr u.gup a]))
-  ::
   ++  phax
     |=  ruw/(list (list woof))
     =+  [yun=*(list twig) cah=*(list @)]
@@ -11033,32 +11020,33 @@
       ==
     ::
     ++  whap                                            ::  chapter
+      %+  cook
+        |=  a=(list (trel term what foot))
+        %+  roll  a
+        |=  [b=(trel term what foot) c=(map term [what foot])]
+        ^+  c
+        =?  p.r.b  (~(has by c) p.b)  [%eror "duplicate arm {<p.b>}"]
+        (~(put by c) b)
       (most muck boog)
     ::
     ++  wisp                                            ::  core tail
       ?.  tol  fail
-      %+  sear
-        |=  a/(list (pair whit (list (pair term (pair what foot)))))
-        =|  {b/(map @ tomb) c/@}
-        |-  ^-  (unit (map @ tomb))
-        ?~  a  `b
-        =/  d
-          =|  e/(map term (pair what foot))
-          |-  ^-  (unit (map term (pair what foot)))
-          ?~  q.i.a  `e
-          ?:  ?|  (~(has by e) p.i.q.i.a)
-                  |-  ^-  ?
-                  ?:  =(0 c)  |
-                  =.  c  (dec c)
-                  |((~(has by q:(~(got by b) c)) p.i.q.i.a) $)
-              ==
-            ::  XX hokey, refactor this to produce %eror
-            ::
-            ~&(duplicate-arm+p.i.q.i.a ~)
-          $(q.i.a t.q.i.a, e (~(put by e) p.i.q.i.a q.i.q.i.a))
-        ?~  d  ~
-        =*  hap  `chap`[?~(lab.p.i.a ~ [~ u.lab.p.i.a]) boy.p.i.a]
-        $(a t.a, b (~(put by b) c [hap u.d]), c +(c))
+      %+  cook
+        |=  a=(list (pair whit (map term [what foot])))  ^-  (map @ tomb)
+        =<  tos
+        %+  roll  a
+        |=  $:  [wit=whit wap=(map term (pair what foot))]
+                [all=(map term *) num=@ tos=(map @ tomb)]
+            ==
+        =.  wap
+          %-  ~(urn by wap)
+          |=  b=(trel term what foot)  ^+  +.b
+          ?.  (~(has by all) p.b)  +.b
+          +.b(p.r [%eror "duplicate arm {<p.b>}"])
+        ::
+        =.  all  (~(uni by all) `(map term *)`wap)
+        [all +(num) (~(put by tos) num [[lab boy]:wit wap])]
+      ::
       ;~  pose
         dun
         ;~  sfix
