@@ -724,13 +724,11 @@
       ++  hoot
         ;~  plug
           sym
-          ;~  pose
-            %+  stag  ~
-            ;~(plug ;~(pfix fas case) ;~(pfix ;~(plug fas sig) fed:ag))
-            (easy ~)
-          ==
+          %-  punt
+          ;~(pfix fas ;~((glue fas) case ship))
         ==
       ::
+      ++  ship  ;~(pfix sig fed:ag)
       ++  hoof
         %+  cook  |=(a/^hoof a)
         ;~  pose
@@ -740,7 +738,7 @@
       ::
       ++  hoop
         ;~  pose
-          (stag %| ;~(pfix ;~(plug fas fas gap) have))
+          (stag %| ;~(pfix fas fas gap have))
           (stag %& tall:vez)
         ==
       ::

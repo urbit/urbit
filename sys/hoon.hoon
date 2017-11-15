@@ -11063,10 +11063,11 @@
         dun
         ;~  sfix
           ;~  pose
-            (most muck ;~(plug apex:docs ;~(pfix ;~(plug lus bar gap) whap)))
-            ;~(plug ;~(plug (easy *whit) whap) (easy ~))
+            (most muck ;~(plug apex:docs ;~(pfix (jest '+|') gap whap)))
+            ;~(plug (stag *whit whap) (easy ~))
           ==
-          ;~(plug gap dun)
+          gap
+          dun
         ==
       ==
     ::
@@ -11142,7 +11143,7 @@
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [tile twig]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more twigs
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two twigs
-    ++  expl  |.(;~(gunk ;~(plug (easy ~) sym) loaf loaf))  ::  term, two twigs
+    ++  expl  |.(;~(gunk (stag ~ sym) loaf loaf))       ::  term, two twigs
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
@@ -11204,7 +11205,7 @@
     ::
     ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and twig
     ++  hinc  |.                                        ::  optional =en, twig
-              ;~(pose ;~(gunk bony loaf) ;~(plug (easy ~) loaf))
+              ;~(pose ;~(gunk bony loaf) (stag ~ loaf))
     ++  hind  |.(;~(gunk bonk loaf bonz loaf))          ::  jet twig "bon"s twig
     ++  hine  |.(;~(gunk bonk loaf))                    ::  jet-hint and twig
     ++  hinf  |.                                        ::  0-3 >s, two twigs
