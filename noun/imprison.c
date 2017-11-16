@@ -204,7 +204,7 @@ u3i_cell(u3_noun a, u3_noun b)
 
 #ifdef U3_CPU_DEBUG
   u3R->pro.cel_d++;
-#endif
+#endif  
   {
     // c3_w*       nov_w = u3a_walloc(c3_wiseof(u3a_cell));
     c3_w*       nov_w = u3a_celloc();

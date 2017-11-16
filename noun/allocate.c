@@ -662,7 +662,7 @@ u3a_malloc(size_t len_i)
 
 /* u3a_cellblock(): allocate a block of cells on the hat.
 */
-c3_o
+static c3_o
 u3a_cellblock(c3_w num_w)
 {
   u3p(u3a_fbox) fre_p;
@@ -758,10 +758,7 @@ u3a_celloc(void)
       return u3a_walloc(c3_wiseof(u3a_cell));
     } 
     else {
-#ifdef U3_CPU_DEBUG
-        u3R->pro.cel_d++;
-#endif  
-      if ( c3n == u3a_cellblock(1024) ) {
+      if ( c3n == u3a_cellblock(256 << 10) ) {
         return u3a_walloc(c3_wiseof(u3a_cell));
       }
       cel_p = u3R->all.cel_p;
