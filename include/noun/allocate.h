@@ -400,6 +400,11 @@
           void
           u3a_print_memory(c3_c* cap_c, c3_w wor_w);
 
+        /* u3a_deadbeef(): write 0xdeadbeef from hat to cap.
+        */
+          void
+          u3a_deadbeef(void);
+
       /* Atoms from proto-atoms.
       */
         /* u3a_slab(): create a length-bounded proto-atom.
