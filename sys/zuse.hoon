@@ -39,7 +39,7 @@
 ++  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
   |*  vase/mold                                         ::  vase or maze
-  $-  $:  ref/*                                         ::  reference span
+  $-  $:  ref/*                                         ::  reference type
           lyc/(unit (set ship))                         ::  leakset
           car/term                                      ::  perspective
           bem/beam                                      ::  path

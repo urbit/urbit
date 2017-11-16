@@ -25,6 +25,7 @@
   ::
 ++  add                                                 ::  unsigned addition
   ~/  %add
+  :>  produce the sum of a and b
   |=  [a=@ b=@]
   ^-  @
   ?:  =(0 a)  b
@@ -1598,7 +1599,7 @@
 ++  cork  |*({a/_|=(* **) b/gate} (corl b a))           ::  compose forward
 ++  corl                                                ::  compose backwards
   |*  {a/gate b/_|=(* **)}
-  =<  +:|.((a (b)))      ::  span check
+  =<  +:|.((a (b)))      ::  type check
   |*  c/_+<.b
   (a (b c))
 ::
@@ -5385,7 +5386,7 @@
 ::
 ::::  4o: molds and mold builders
   ::
-++  abel  typo                                          ::  original sin: span
+++  abel  typo                                          ::  original sin: type
 ++  atom  @                                             ::  just an atom
 ++  aura  @ta                                           ::  atom format
 ++  axis  @                                             ::  tree address
@@ -5413,8 +5414,8 @@
               {ven/term pro/term kel/@}                 ::  vendor and product
               {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core span
-              q/span                                    ::  built with
+++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core type
+              q/type                                    ::  built with
               r/chap                                    ::  docs
               s/{p/?($~ ^) q/(map @ tomb)}              ::  arms
           ==                                            ::
@@ -5429,22 +5430,22 @@
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 ++  noun  *                                             ::  any noun
 ++  null  $~                                            ::  null, nil, etc
-++  onyx  (list (pair span foot))                       ::  arm activation
+++  onyx  (list (pair type foot))                       ::  arm activation
 ++  opal                                                ::  limb match
-          $%  {$& p/span}                               ::  leg
-              {$| p/axis q/(set {p/span q/foot})}       ::  arm
+          $%  {$& p/type}                               ::  leg
+              {$| p/axis q/(set {p/type q/foot})}       ::  arm
           ==                                            ::
 ++  pica  (pair ? cord)                                 ::  & prose, | code
 ++  palo  (pair vein opal)                              ::  wing trace, match
 ++  pock  (pair axis nock)                              ::  changes
-++  port  (each palo (pair span nock))                  ::  successful match
+++  port  (each palo (pair type nock))                  ::  successful match
 ++  root  twig                                          ::  produce model
 ++  tiki                                                ::  test case
           $%  {$& p/(unit term) q/wing}                 ::  simple wing
               {$| p/(unit term) q/twig}                 ::  named wing
           ==                                            ::
 ++  tile  $^  {p/tile q/tile}                           ::  ordered pair
-          $%  {$axil p/base}                            ::  base span
+          $%  {$axil p/base}                            ::  base type
               {$bark p/toga q/tile}                     ::  name
               {$deet p/spot q/tile}                     ::  set debug
               {$fern p/{i/tile t/(list tile)}}          ::  plain selection
@@ -5493,7 +5494,7 @@
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
-    {$hand p/span q/nock}                               ::  premade result
+    {$hand p/type q/nock}                               ::  premade result
     {$help p/what q/twig}                               ::  annotate image
     {$halo p/what q/root}                               ::  annotate model
     {$knit p/(list woof)}                               ::  assemble string
@@ -5550,7 +5551,7 @@
     {$dttr p/twig q/twig}                               ::  .*  nock 2
     {$dtts p/twig q/twig}                               ::  .=  nock 5
     {$dtwt p/twig}                                      ::  .?  nock 3
-  ::                                            ::::::  span conversion
+  ::                                            ::::::  type conversion
     {$ktbr p/twig}                                      ::  ^|
     {$ktcn p/twig}                                      ::  ^%  enter test mode
     {$ktdt p/twig q/twig}                               ::  ^.
@@ -5636,28 +5637,28 @@
               {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
               {$11 p/nock q/nock}                       ::  grab data from sky
           ==                                            ::
-++  span  $@  $?  $noun                                 ::  any nouns
+++  type  $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
               ==                                        ::
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
-              {$cell p/span q/span}                     ::  ordered pair
-              {$core p/span q/coil}                     ::  object
-              {$face p/{p/what q/$@(term tune)} q/span} ::  namespace (new)
-              {$fork p/(set span)}                      ::  union
-              {$help p/what q/span}                     ::  documentation
-              {$hold p/span q/twig}                     ::  lazy evaluation
+              {$cell p/type q/type}                     ::  ordered pair
+              {$core p/type q/coil}                     ::  object
+              {$face p/{p/what q/$@(term tune)} q/type} ::  namespace (new)
+              {$fork p/(set type)}                      ::  union
+              {$help p/what q/type}                     ::  documentation
+              {$hold p/type q/twig}                     ::  lazy evaluation
           ==                                            ::
 ++  tone  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
           ==                                            ::
-++  tool  $@(term tune)                                 ::  span decoration
+++  tool  $@(term tune)                                 ::  type decoration
 ++  tune                                                ::  complex
           $:  p/(map term (pair what (unit twig)))      ::  aliases
               q/(list twig)                             ::  bridges
           ==                                            ::
-++  typo  span                                          ::  old span
-++  vase  {p/span q/*}                                  ::  span-value pair
+++  typo  type                                          ::  old type
+++  vase  {p/type q/*}                                  ::  type-value pair
 ++  vise  {p/typo q/*}                                  ::  old vase
 ++  vial  ?($read $rite $both $free)                    ::  co/contra/in/bi
 ++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
@@ -5673,8 +5674,8 @@
 ++  wing  (list limb)                                   ::  search path
 ++  worm                                                ::  compiler cache
   $:  nes/(set ^)                                       ::  ++nest
-      pay/(map (pair span twig) span)                   ::  ++play
-      mit/(map (pair span twig) (pair span nock))       ::  ++mint
+      pay/(map (pair type twig) type)                   ::  ++play
+      mit/(map (pair type twig) (pair type nock))       ::  ++mint
   ==                                                    ::
 --
 ::                                                      ::
@@ -5699,40 +5700,40 @@
 ::
 ::::  5a: compiler utilities
   ::
-++  bool  `span`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
-++  cell                                                ::  make %cell span
+++  bool  `type`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
+++  cell                                                ::  make %cell type
   ~/  %cell
-  |=  {hed/span tal/span}
-  ^-  span
+  |=  {hed/type tal/type}
+  ^-  type
   ?:(=(%void hed) %void ?:(=(%void tal) %void [%cell hed tal]))
 ::
-++  core                                                ::  make %core span
+++  core                                                ::  make %core type
   ~/  %core
-  |=  {pac/span con/coil}
-  ^-  span
+  |=  {pac/type con/coil}
+  ^-  type
   ?:(=(%void pac) %void [%core pac con])
 ::
 ++  help
   ~/  %help
-  |=  {p/what q/span}
-  ^-  span
+  |=  {p/what q/type}
+  ^-  type
   ?:  =(%void q)
     %void
   [%help p q]
 ::
-++  face                                                ::  make %face span
+++  face                                                ::  make %face type
   ~/  %face
-  |=  {giz/{what $@(term tune)} der/span}
-  ^-  span
+  |=  {giz/{what $@(term tune)} der/type}
+  ^-  type
   ?:  =(%void der)
     %void
   [%face giz der]
 ::
-++  fork                                                ::  make %fork span
+++  fork                                                ::  make %fork type
   ~/  %fork
-  |=  yed/(list span)
-  =|  lez/(set span)
-  |-  ^-  span
+  |=  yed/(list type)
+  =|  lez/(set type)
+  |-  ^-  type
   ?~  yed
     ?~  lez  %void
     ?:  ?=({* $~ $~} lez)  n.lez
@@ -6066,7 +6067,6 @@
       (hail [%rock p.sec q.sec])
     ::
         {$plow *}
-      ?>  =(*what wat)
       $(sec q.sec, wat p.sec)
     ::
         {$reed *}
@@ -7141,15 +7141,15 @@
       %toss   toss
       %zpgr   wrap
     ==
-  =+  :*  fan=*(set {span twig})
-          rib=*(set {span span twig})
+  =+  :*  fan=*(set {type twig})
+          rib=*(set {type type twig})
           vet=`?`&
           fab=`?`&
       ==
-  =+  sut=`span`%noun
+  =+  sut=`type`%noun
   |%
   ++  burn
-    =+  gil=*(set span)
+    =+  gil=*(set type)
     |-  ^-  (unit)
     ?-    sut
         {$atom *}   q.sut
@@ -7177,18 +7177,18 @@
   ++  busk
     ~/  %busk
     |=  gen/twig
-    ^-  span
+    ^-  type
     [%face [~ ~ [gen ~]] sut]
   ::
   ++  buss
     ~/  %buss
     |=  {{wat/what cog/term} gen/twig}
-    ^-  span
+    ^-  type
     [%face [wat [[cog ~ ~ gen] ~ ~] ~] sut]
   ::
   ++  conk
     |=  got/toga
-    ^-  span
+    ^-  type
     ?@  got  [%face [~ got] sut]
     ?-  -.got
       $0  sut
@@ -7201,12 +7201,12 @@
   ::
   ++  crop
     ~/  %crop
-    |=  ref/span
-    =+  bix=*(set {span span})
+    |=  ref/type
+    =+  bix=*(set {type type})
     =<  dext
     |%
     ++  dext
-      ^-  span
+      ^-  type
       ~_  leaf+"crop"
       ::  ~_  (dunk 'dext: sut')
       ::  ~_  (dunk(sut ref) 'dext: ref')
@@ -7232,7 +7232,7 @@
       ::
           {$core *}  ?:(?=(?({$atom *} {$cell *}) ref) sut sint)
           {$face *}  (face p.sut dext(sut q.sut))
-          {$fork *}  (fork (turn ~(tap in p.sut) |=(span dext(sut +<))))
+          {$fork *}  (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
           {$help *}  (help p.sut dext(sut q.sut))
           {$hold *}  ?<  (~(has in bix) [sut ref])
                      dext(sut repo, bix (~(put in bix) [sut ref]))
@@ -7241,12 +7241,12 @@
       ==
     ::
     ++  sint
-      ^-  span
+      ^-  type
       ?+    ref    !!
         {$core *}  sut
         {$face *}  dext(ref repo(sut ref))
         {$fork *}  =+  yed=~(tap in p.ref)
-                   |-  ^-  span
+                   |-  ^-  type
                    ?~  yed  sut
                    $(yed t.yed, sut dext(ref i.yed))
         {$hold *}  dext(ref repo(sut ref))
@@ -7254,14 +7254,14 @@
     --
   ::
   ++  cool
-    |=  {pol/? hyp/wing ref/span}
-    ^-  span
+    |=  {pol/? hyp/wing ref/type}
+    ^-  type
     =+  fid=(find %both hyp)
     ?-  -.fid
       $|  sut
       $&  =<  q
           %+  take  p.p.fid
-          |=(a/span ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
+          |=(a/type ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
     ==
   ::
   ++  duck  ^-(tank ~(duck us sut))
@@ -7274,9 +7274,9 @@
   ::
   ++  elbo
     |=  {lop/palo rig/(list (pair wing twig))}
-    ^-  span
+    ^-  type
     ?:  ?=($& -.q.lop)
-      |-  ^-  span
+      |-  ^-  type
       ?~  rig
         p.q.lop
       =+  zil=(play q.i.rig)
@@ -7299,12 +7299,12 @@
   ::
   ++  ergo
     |=  {lop/palo rig/(list (pair wing twig))}
-    ^-  (pair span nock)
+    ^-  (pair type nock)
     =+  axe=(tend p.lop)
     =|  hej/(list (pair axis nock))
     ?:  ?=($& -.q.lop)
       =-  [p.- (hike axe q.-)]
-      |-  ^-  (pair span (list (pair axis nock)))
+      |-  ^-  (pair type (list (pair axis nock)))
       ?~  rig
         [p.q.lop hej]
       =+  zil=(mint %noun q.i.rig)
@@ -7316,7 +7316,7 @@
       ==
     =+  hag=~(tap in q.q.lop)
     =-  [(fire p.-) [%9 p.q.lop (hike axe q.-)]]
-    |-  ^-  (pair (list (pair span foot)) (list (pair axis nock)))
+    |-  ^-  (pair (list (pair type foot)) (list (pair axis nock)))
     ?~  rig
       [hag hej]
     =+  zil=(mint %noun q.i.rig)
@@ -7328,11 +7328,11 @@
     ==
   ::
   ++  endo
-    |=  {lop/(pair palo palo) dox/span rig/(list (pair wing twig))}
-    ^-  (pair span span)
+    |=  {lop/(pair palo palo) dox/type rig/(list (pair wing twig))}
+    ^-  (pair type type)
     ?:  ?=($& -.q.p.lop)
       ?>  ?=($& -.q.q.lop)
-      |-  ^-  (pair span span)
+      |-  ^-  (pair type type)
       ?~  rig
         [p.q.p.lop p.q.q.lop]
       =+  zil=(mull %noun dox q.i.rig)
@@ -7349,7 +7349,7 @@
     ?>  =(p.q.p.lop p.q.q.lop)
     =+  hag=[p=~(tap in q.q.p.lop) q=~(tap in q.q.q.lop)]
     =-  [(fire p.-) (fire(vet |) q.-)]
-    |-  ^-  (pair (list (pair span foot)) (list (pair span foot)))
+    |-  ^-  (pair (list (pair type foot)) (list (pair type foot)))
     ?~  rig
       hag
     =+  zil=(mull %noun dox q.i.rig)
@@ -7368,15 +7368,15 @@
       |%
       ++  deft                                          ::  generic
         |%
-        ++  bath  *                                     ::  leg match span
-        ++  claw  *                                     ::  arm match span
+        ++  bath  *                                     ::  leg match type
+        ++  claw  *                                     ::  arm match type
         ++  form  |*({* *} p=+<-)                       ::  attach build state
         ++  skin  |*(p/* p)                             ::  reveal build state
         ++  meat  |*(p/* p)                             ::  remove build state
         --
       ++  make                                          ::  for mint
         |%
-        ++  bath  span                                  ::  leg match span
+        ++  bath  type                                  ::  leg match type
         ++  claw  onyx                                  ::  arm
         ++  form  |*({* *} [p=+<- q=+<+])               ::
         ++  skin  |*({p/* q/*} q)                       ::  unwrap baggage
@@ -7420,10 +7420,10 @@
                   ^-  fleg
                   (mint %noun a)
         ++  vant
-          |%  ++  trep  |=  {a/span b/wing c/span}
-                        ^-  {axis span}
+          |%  ++  trep  |=  {a/type b/wing c/type}
+                        ^-  {axis type}
                         (tack(sut a) b c)
-              ++  tasp  |=  {a/(pair axis span) b/fleg c/foat}
+              ++  tasp  |=  {a/(pair axis type) b/fleg c/foat}
                         ^-  foat
                         [q.a [[p.a (skin b)] (skin c)]]
               ++  tyle  |=(foat +<)
@@ -7490,7 +7490,7 @@
   ::
   ++  etco
     |=  {lop/palo rig/(list (pair wing twig))}
-    ^-  (pair span nock)
+    ^-  (pair type nock)
     =+  cin=(oc (bin:ad make:lib:ad))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =+  axe=(tend p.lop)
@@ -7504,22 +7504,22 @@
     |_  {hyp/wing rig/(list (pair wing twig))}
     ::
     ++  play
-      ^-  span
+      ^-  type
       =+  lug=(find %read hyp)
       ?:  ?=($| -.lug)  ~>(%mean.[%leaf "twig"] ?>(?=($~ rig) p.p.lug))
       (elbo p.lug rig)
     ::
     ++  mint
-      |=  gol/span
-      ^-  (pair span nock)
+      |=  gol/type
+      ^-  (pair type nock)
       =+  lug=(find %read hyp)
       ?:  ?=($| -.lug)  ~>(%mean.[%leaf "twig"] ?>(?=($~ rig) p.lug))
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (etco p.lug rig)
     ::
     ++  mull
-      |=  {gol/span dox/span}
-      ^-  {span span}
+      |=  {gol/type dox/type}
+      ^-  {type type}
       =+  lug=[p=(find %read hyp) q=(find(sut dox) %read hyp)]
       ?:  ?=($| -.p.lug)
         ?>   &(?=($| -.q.lug) ?=($~ rig))
@@ -7532,30 +7532,30 @@
   ++  epla
     ~/  %epla
     |=  {hyp/wing rig/(list (pair wing twig))}
-    ^-  span
+    ^-  type
     ~(play et hyp rig)
   ::
   ++  emin
     ~/  %emin
-    |=  {gol/span hyp/wing rig/(list (pair wing twig))}
-    ^-  (pair span nock)
+    |=  {gol/type hyp/wing rig/(list (pair wing twig))}
+    ^-  (pair type nock)
     (~(mint et hyp rig) gol)
   ::
   ++  emul
     ~/  %emul
-    |=  {gol/span dox/span hyp/wing rig/(list (pair wing twig))}
-    ^-  (pair span span)
+    |=  {gol/type dox/type hyp/wing rig/(list (pair wing twig))}
+    ^-  (pair type type)
     (~(mull et hyp rig) gol dox)
   ::
   ++  felt
     ~/  %felt
     |=  lap/opal
-    ^-  span
+    ^-  type
     ?-  -.lap
       $&  p.lap
       $|  %-  fire
           %+  turn  ~(tap in q.lap)
-          |=  {a/span b/foot}
+          |=  {a/type b/foot}
           [a [%ash %$ 1]]
     ==
   ::
@@ -7569,7 +7569,7 @@
                     (pair what palo)                    ::  arm or leg
                   %+  each                              ::  abnormal
                     @ud                                 ::  unmatched
-                  (pair what (pair span nock))          ::  synthetic
+                  (pair what (pair type nock))          ::  synthetic
         --
     ^-  pony
     ?~  hyp
@@ -7593,7 +7593,7 @@
           ==
       ?:  ?=($& -.heg)
         [%& ~ [`p.heg lon] %& (peek way p.heg)]
-      =|  gil/(set span)
+      =|  gil/(set type)
       =<  $
       |%  ++  here  ?:  =(0 p.heg)
                       [%& ~ [~ `axe lon] %& sut]
@@ -7691,7 +7691,7 @@
                 ?~  fid  ~
                 ?:  ?=({$| $& *} fid)
                   $(q.zot t.q.zot, p.heg p.p.fid)
-                =+  ^-  {wat/what vat/(pair span nock)}
+                =+  ^-  {wat/what vat/(pair type nock)}
                     ?-    -.fid
                       $&  [p.p.fid (fine %& q.p.fid)]
                       $|  [p.p.p.fid (fine %| q.p.p.fid)]
@@ -7700,7 +7700,7 @@
               --
             ::
                 {$fork *}
-              =+  wiz=(turn ~(tap in p.sut) |=(a/span ^$(sut a)))
+              =+  wiz=(turn ~(tap in p.sut) |=(a/type ^$(sut a)))
               ?~  wiz  ~
               |-  ^-  pony
               ?~  t.wiz  i.wiz
@@ -7740,27 +7740,27 @@
   ++  fine
     ~/  %fine
     |=  tor/port
-    ^-  (pair span nock)
+    ^-  (pair type nock)
     ?-  -.tor
       $|  p.tor
       $&  =+  axe=(tend p.p.tor)
           ?-  -.q.p.tor
-            $&  [`span`p.q.p.tor %0 axe]
+            $&  [`type`p.q.p.tor %0 axe]
             $|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
     ==    ==
   ::
   ++  fire
-    |=  hag/(list {p/span q/foot})
-    ^-  span
+    |=  hag/(list {p/type q/foot})
+    ^-  type
     ?:  ?=({{* {$elm $~ $1}} $~} hag)
       p.i.hag
     %-  fork
     %+  turn
       hag.$
-    |=  {p/span q/foot}
+    |=  {p/type q/foot}
     :-  %hold
     ?.  ?=({$core *} p)
-      ~_  (dunk %fire-span)
+      ~_  (dunk %fire-type)
       ~>(%mean.[%leaf "fire-core"] !!)
     =+  dox=[%core q.q.p q.p]
     ?:  ?=($ash -.q)
@@ -7780,7 +7780,7 @@
   ++  fish
     ~/  %fish
     |=  axe/axis
-    =+  vot=*(set span)
+    =+  vot=*(set type)
     |-  ^-  nock
     ?-  sut
         $void       [%1 1]
@@ -7808,9 +7808,9 @@
   ::
   ++  fuse
     ~/  %fuse
-    |=  ref/span
-    =+  bix=*(set {span span})
-    |-  ^-  span
+    |=  ref/type
+    =+  bix=*(set {type type})
+    |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
     ?-    sut
@@ -7835,7 +7835,7 @@
     ::
         {$core *}  $(sut repo)
         {$face *}  (face p.sut $(sut q.sut))
-        {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+        {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$help *}  (help p.sut $(sut q.sut))
         {$hold *}
       ?:  (~(has in bix) [sut ref])
@@ -7848,7 +7848,7 @@
   ::
   ++  gain
     ~/  %gain
-    |=  gen/twig  ^-  span
+    |=  gen/twig  ^-  type
     (chip & gen)
   ::
   ++  harp
@@ -7883,12 +7883,12 @@
   ::
   ++  lose
     ~/  %lose
-    |=  gen/twig  ^-  span
+    |=  gen/twig  ^-  type
     (chip | gen)
   ::
   ++  chip
     ~/  %chip
-    |=  {how/? gen/twig}  ^-  span
+    |=  {how/? gen/twig}  ^-  type
     ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(bunt al [%herb p.gen])))
     ?:  ?&(how ?=({$wtpm *} gen))
@@ -7900,10 +7900,10 @@
   ::
   ++  mint
     ~/  %mint
-    |=  {gol/span gen/twig}
-    ^-  {p/span q/nock}
+    |=  {gol/type gen/twig}
+    ^-  {p/type q/nock}
     ~&  %pure-mint
-    |^  ^-  {p/span q/nock}
+    |^  ^-  {p/type q/nock}
     ?:  ?&(=(%void sut) !?=({$dbug *} gen))
       ?.  |(!vet ?=({$lost *} gen) ?=({$zpzp *} gen))
         ~>(%mean.[%leaf "mint-vain"] !!)
@@ -8023,14 +8023,14 @@
         {$zpsm *}
       =+  vos=$(gol %noun, gen q.gen)
       =+  ref=p:$(gol %noun, gen p.gen)
-      ?>  (~(nest ut p:!>(*span)) & ref)
+      ?>  (~(nest ut p:!>(*type)) & ref)
       [(nice (cell ref p.vos)) (cons [%1 p.vos] q.vos)]
     ::
         {$zpgr *}
       =+  vat=$(gen p.gen)
       %=    $
           gen
-        :-  [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 p.vat]] ~]
+        :-  [%cnhp [%limb %onan] [%hand p:!>(*type) [%1 p.vat]] ~]
         [%hand p.vat q.vat]
       ==
     ::
@@ -8045,14 +8045,14 @@
     ==
     ::
     ++  nice
-      |=  typ/span
+      |=  typ/type
       ~_  leaf+"mint-nice"
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
     ++  grow
       |=  {mel/vair ruf/twig wad/chap dom/(map @ tomb)}
-      ^-  {p/span q/nock}
+      ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
       =+  toc=(core p.dan [%gold p.dan wad [~ dom]])
       =+  dez=(hope(sut toc) dom)
@@ -8061,14 +8061,14 @@
     --
   ::
   ++  moot
-    =+  gil=*(set span)
+    =+  gil=*(set type)
     |-  ^-  ?
     ?-  sut
       {$atom *}  |
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
       {$face *}  $(sut q.sut)
-      {$fork *}  (lien ~(tap in p.sut) |=(span ^$(sut +<)))
+      {$fork *}  (lien ~(tap in p.sut) |=(type ^$(sut +<)))
       {$help *}  $(sut q.sut)
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
       $noun      |
@@ -8077,8 +8077,8 @@
   ::
   ++  mull
     ~/  %mull
-    |=  {gol/span dox/span gen/twig}
-    |^  ^-  {p/span q/span}
+    |=  {gol/type dox/type gen/twig}
+    |^  ^-  {p/type q/type}
     ?:  =(%void sut)
       ~>(%mean.[%leaf "mull-none"] !!)
     ?-    gen
@@ -8142,7 +8142,7 @@
     ::
         {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
-      =+  ^=  hiq  ^-  {p/span q/span}
+      =+  ^=  hiq  ^-  {p/type q/type}
           =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
           ?:  =(%void p.fex)
             :-  %void
@@ -8152,7 +8152,7 @@
           ?:  =(%void q.fex)
             ~>(%mean.[%leaf "mull-bonk-b"] !!)
           $(sut p.fex, dox q.fex, gen q.gen)
-      =+  ^=  ran  ^-  {p/span q/span}
+      =+  ^=  ran  ^-  {p/type q/type}
           =+  wux=[p=(lose p.gen) q=(lose(sut dox) p.gen)]
           ?:  =(%void p.wux)
             :-  %void
@@ -8201,11 +8201,11 @@
     ==
     ::
     ++  beth
-      |=  typ/span
+      |=  typ/type
       [(nice typ) typ]
     ::
     ++  nice
-      |=  typ/span
+      |=  typ/type
       ::  ~_  (dunk(sut gol) 'need')
       ::  ~_  (dunk(sut typ) 'have')
       ~_  leaf+"mull-nice"
@@ -8215,7 +8215,7 @@
     ++  grow
       |=  {mel/vair ruf/twig wad/chap dom/(map @ tomb)}
       ~_  leaf+"mull-grow"
-      ^-  {p/span q/span}
+      ^-  {p/type q/type}
       =+  dan=^$(gen ruf, gol %noun)
       =+  ^=  toc  :-  p=(core p.dan [%gold p.dan wad [~ dom]])
                    q=(core q.dan [%gold q.dan wad [~ dom]])
@@ -8253,17 +8253,17 @@
         {* * *}     [dov $(dom l.dom) $(dom r.dom)]
       ==
     --
-  ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
+  ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
   ::                                                    ::
   ++  miss                                              ::  nonintersection
-    |=  $:  ::  ref: symmetric span
+    |=  $:  ::  ref: symmetric type
             ::
-            ref/span
+            ref/type
         ==
     ::  intersection of sut and ref is empty
     ::
     ^-  ?
-    =|  gil/(set (set span))
+    =|  gil/(set (set type))
     =<  dext
     |%
     ++  dext
@@ -8278,10 +8278,10 @@
         {$cell *}  sint
         {$core *}  sint(sut [%cell %noun %noun])
         {$fork *}  %+  levy  ~(tap in p.sut)
-                   |=(span dext(sut +<))
+                   |=(type dext(sut +<))
         {$face *}  dext(sut q.sut) 
         {$help *}  dext(sut q.sut)
-        {$hold *}  =+  (~(gas in *(set span)) `(list span)`[sut ref ~])
+        {$hold *}  =+  (~(gas in *(set type)) `(list type)`[sut ref ~])
                    ?:  (~(has in gil) -)
                       &
                    %=  dext
@@ -8300,13 +8300,13 @@
                        dext(sut q.sut, ref q.ref)
       ==           ==
     --
-  ++  mite  |=(ref/span |((nest | ref) (nest(sut ref) & sut)))
+  ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
   ++  nest
     ~/  %nest
-    |=  {tel/? ref/span}
-    =|  $:  seg/(set span)                              ::  degenerate sut
-            reg/(set span)                              ::  degenerate ref
-            gil/(set {p/span q/span})                   ::  assume nest
+    |=  {tel/? ref/type}
+    =|  $:  seg/(set type)                              ::  degenerate sut
+            reg/(set type)                              ::  degenerate ref
+            gil/(set {p/type q/type})                   ::  assume nest
         ==
     =<  dext
     |%
@@ -8379,7 +8379,7 @@
                    ==
         {$face *}  dext(sut q.sut)
         {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
-                   (lien ~(tap in p.sut) |=(span dext(tel |, sut +<)))
+                   (lien ~(tap in p.sut) |=(type dext(tel |, sut +<)))
         {$help *}  dext(sut q.sut)
         {$hold *}  ?:  (~(has in seg) sut)  |
                    ?:  (~(has in gil) [sut ref])  &
@@ -8399,7 +8399,7 @@
         {$cell *}   |
         {$core *}   dext(ref repo(sut ref))
         {$face *}   dext(ref q.ref)
-        {$fork *}   (levy ~(tap in p.ref) |=(span sint(ref +<)))
+        {$fork *}   (levy ~(tap in p.ref) |=(type sint(ref +<)))
         {$help *}   dext(ref q.ref)
         {$hold *}   ?:  (~(has in reg) ref)  &
                     ?:  (~(has in gil) [sut ref])  &
@@ -8413,12 +8413,12 @@
   ++  peek
     ~/  %peek
     |=  {way/?($read $rite $both $free) axe/axis}
-    ^-  span
+    ^-  type
     ?:  =(1 axe)
       sut
     =+  [now=(cap axe) lat=(mas axe)]
-    =+  gil=*(set span)
-    |-  ^-  span
+    =+  gil=*(set type)
+    |-  ^-  type
     ?-    sut
         {$atom *}   %void
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
@@ -8434,7 +8434,7 @@
         ?.(con.pec %noun ^$(sut p.sut, axe 3))
       ==
     ::
-        {$fork *}   (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+        {$fork *}   (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$hold *}
       ?:  (~(has in gil) sut)
         %void
@@ -8460,7 +8460,7 @@
     ~/  %play
     =>  .(vet |)
     |=  gen/twig
-    ^-  span
+    ^-  type
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$ktcn *}  $(fab |, gen p.gen)
@@ -8468,10 +8468,10 @@
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  $(gen [%bunt p.gen])
       {$dtls *}  [%atom %$ ~]
-      {$rock *}  |-  ^-  span
+      {$rock *}  |-  ^-  type
                  ?@  q.gen  [%atom p.gen `q.gen]
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
-      {$sand *}  |-  ^-  span
+      {$sand *}  |-  ^-  type
                  ?@  q.gen
                    ?:  =(%n p.gen)  ?>(=(0 q.gen) [%atom p.gen ~ q.gen])
                    ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
@@ -8502,7 +8502,7 @@
       {$zpcm *}  (play p.gen)
       {$zpgr *}  %=    $
                      gen
-                   [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 $(gen p.gen)]] ~]
+                   [%cnhp [%limb %onan] [%hand p:!>(*type) [%1 $(gen p.gen)]] ~]
                  ==
       {$lost *}  %void
       {$zpsm *}  (cell $(gen p.gen) $(gen q.gen))
@@ -8518,18 +8518,18 @@
   ++  redo                                              ::  refurbish faces
     |=  $:  ::  ref: raw payload
             ::
-            ref/span
+            ref/type
         ==
-    ::  :span: subject refurbished to reference namespace
+    ::  :type: subject refurbished to reference namespace
     ::
-    ^-  span
+    ^-  type
     ::  hos: subject tool stack
     ::  wec: reference tool stack set
     ::  gil: repetition set
     ::
     =|  hos/(list tool)
     =/  wec/(set (list tool))  [~ ~ ~]
-    =|  gil/(set (pair span span))
+    =|  gil/(set (pair type type))
     =<  ::  errors imply subject/reference mismatch
         ::
         ~|  %redo-match
@@ -8589,9 +8589,9 @@
       (weld hos (slag lip har))
     ::                                                  ::
     ++  dext                                            ::  subject traverse
-      ::  :span: refurbished subject
+      ::  :type: refurbished subject
       ::
-      ^-  span
+      ^-  type
       ::  check for trivial cases
       ::
       ?:  ?|  =(sut ref) 
@@ -8640,7 +8640,7 @@
           {$fork *}
         ::  reconstruct each case in fork 
         ::
-        (fork (turn ~(tap in p.sut) |=(span dext(sut +<))))
+        (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
       ::
           {$hold *}
         ::  reduce to hard 
@@ -8663,8 +8663,8 @@
       ==
     ::                                                  ::
     ++  done                                            ::  complete assembly
-      ^-  span
-      ::  :span: subject refurbished 
+      ^-  type
+      ::  :type: subject refurbished 
       ::
       ::  lov: combined face stack
       ::
@@ -8678,7 +8678,7 @@
           (need lov)
       ::  recompose faces
       ::
-      |-  ^-  span
+      |-  ^-  type
       ?~  lov  sut
       $(lov t.lov, sut (face [~ i.lov] sut))
     ::                                                  ::
@@ -8712,7 +8712,7 @@
             ::  ~>  %slog.[0 (dunk(sut (fork ->)) 'fork: pro')]
             +(wec -<, ref (fork ->))
         =/  moy  ~(tap in p.ref)
-        |-  ^-  (pair (set (list tool)) (list span))
+        |-  ^-  (pair (set (list tool)) (list type))
         ?~  moy  [~ ~]
         ::  head recurse
         ::
@@ -8732,7 +8732,7 @@
     --
   ::
   ++  repo
-    ^-  span
+    ^-  type
     ?-  sut
       {$core *}   [%cell %noun p.sut]
       {$face *}   q.sut
@@ -8744,33 +8744,33 @@
   ::
   ++  rest
     ~/  %rest
-    |=  leg/(list {p/span q/twig})
-    ^-  span
-    ?:  (lien leg |=({p/span q/twig} (~(has in fan) [p q])))
+    |=  leg/(list {p/type q/twig})
+    ^-  type
+    ?:  (lien leg |=({p/type q/twig} (~(has in fan) [p q])))
       ~>(%mean.[%leaf "rest-loop"] !!)
     =>  .(fan (~(gas in fan) leg))
     %-  fork
     %~  tap  in
-      %-  ~(gas in *(set span))
-      (turn leg |=({p/span q/twig} (play(sut p) q)))
+      %-  ~(gas in *(set type))
+      (turn leg |=({p/type q/twig} (play(sut p) q)))
     ==
   ::
   ++  take
-    |=  {vit/vein duz/$-(span span)}
-    ^-  (pair axis span)
+    |=  {vit/vein duz/$-(type type)}
+    ^-  (pair axis type)
     :-  (tend vit)
     =.  vit  (flop vit)
-    |-  ^-  span
+    |-  ^-  type
     ?~  vit  (duz sut)
     ?~  i.vit
-      |-  ^-  span
+      |-  ^-  type
       ?+  sut      ^$(vit t.vit)
         {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
-        {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+        {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$hold *}  $(sut repo)
       ==
-    =+  vil=*(set span)
-    |-  ^-  span
+    =+  vil=*(set type)
+    |-  ^-  type
     ?:  =(1 u.i.vit)
       ^$(vit t.vit)
     =+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
@@ -8785,7 +8785,7 @@
                    $(sut repo)
                  (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
-      {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+      {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$help *}  (help p.sut $(sut q.sut))
       {$hold *}  ?:  (~(has in vil) sut)
                    %void
@@ -8793,11 +8793,11 @@
     ==
   ::
   ++  tack
-    |=  {hyp/wing mur/span}
+    |=  {hyp/wing mur/type}
     ~_  (show [%c %tack] %l hyp)
     =+  fid=(find %rite hyp)
     ?>  ?=($& -.fid)
-    (take p.p.fid |=(span mur))
+    (take p.p.fid |=(type mur))
   ::
   ++  tend
     |=  vit/vein
@@ -8806,11 +8806,11 @@
   ::
   ++  toss
     ~/  %toss
-    |=  {hyp/wing mur/span men/(list {p/span q/foot})}
-    ^-  {p/axis q/(list {p/span q/foot})}
+    |=  {hyp/wing mur/type men/(list {p/type q/foot})}
+    ^-  {p/axis q/(list {p/type q/foot})}
     =-  [(need p.wib) q.wib]
     ^=  wib
-    |-  ^-  {p/(unit axis) q/(list {p/span q/foot})}
+    |-  ^-  {p/(unit axis) q/(list {p/type q/foot})}
     ?~  men
       [*(unit axis) ~]
     =+  geq=(tack(sut p.i.men) hyp mur)
@@ -8821,12 +8821,12 @@
     ~/  %zpgr
     |=  yoz/?($lead $iron $zinc)
     ~_  leaf+"wrap"
-    ^-  span
+    ^-  type
     ?+  sut  sut
       {$cell *}  (cell $(sut p.sut) $(sut q.sut))
       {$core *}  ?>(|(=(%gold p.q.sut) =(%lead yoz)) sut(p.q yoz))
       {$face *}  (face p.sut $(sut q.sut))
-      {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+      {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$help *}  (help p.sut $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
@@ -8837,7 +8837,7 @@
       ++  wine                                          ::
                 $@  $?  $noun                           ::
                         $path                           ::
-                        $span                           ::
+                        $type                           ::
                         $void                           ::
                         $wall                           ::
                         $wool                           ::
@@ -8855,7 +8855,7 @@
                     {$unit p/term q/wine}               ::
                 ==                                      ::
       --
-  |_  sut/span
+  |_  sut/type
   ++  dash
       |=  {mil/tape lim/char}  ^-  tape
       :-  lim
@@ -8885,7 +8885,7 @@
       ?-    q.ham
           $noun      :_(gid [%leaf '*' ~])
           $path      :_(gid [%leaf '/' ~])
-          $span      :_(gid [%leaf '#' 't' ~])
+          $type      :_(gid [%leaf '#' 't' ~])
           $void      :_(gid [%leaf '#' '!' ~])
           $wool      :_(gid [%leaf '*' '"' '"' ~])
           $wall      :_(gid [%leaf '*' '\'' '\'' ~])
@@ -8969,7 +8969,7 @@
       ?>  ?=(@ -.lum)
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
-        $span
+        $type
       =+  tyr=|.((dial dole))
       =+  vol=tyr(sut lum)
       =+  cis=((hard tank) .*(vol -:vol))
@@ -9183,15 +9183,15 @@
   ::
   ++  dole
     ^-  cape
-    =+  gil=*(set span)
-    =+  dex=[p=*(map span @) q=*(map @ wine)]
+    =+  gil=*(set type)
+    =+  dex=[p=*(map type @) q=*(map @ wine)]
     =<  [q.p q]
-    |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
+    |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
-    ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
-    ?:  (~(meet ut sut) -:!>(*span))
-      [dex %span]
+    ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
+    ?:  (~(meet ut sut) -:!>(*type))
+      [dex %type]
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
@@ -9238,7 +9238,7 @@
         {$fork *}
       =+  yed=~(tap in p.sut)
       =-  [p [%bcwt q]]
-      |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/(list wine)}
+      |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/(list wine)}
       ?~  yed
         [dex ~]
       =+  mor=$(yed t.yed)
@@ -9268,20 +9268,20 @@
   |=  vax/vase  ^-  tape
   ~(ram re (sell vax))
 ::
-++  seem  |=(toy/typo `span`toy)                        ::  promote typo
+++  seem  |=(toy/typo `type`toy)                        ::  promote typo
 ++  seer  |=(vix/vise `vase`vix)                        ::  promote vise
 ++  sell                                                ::  tank pretty-print
   |=  vax/vase  ^-  tank
   ~|  %sell
   (~(deal us p.vax) q.vax)
 ::
-++  skol                                                ::  $-(span tank) for ~!
-  |=  typ/span  ^-  tank
+++  skol                                                ::  $-(type tank) for ~!
+  |=  typ/type  ^-  tank
   ~(duck ut typ)
 ::
 ++  slam                                                ::  slam a gate
   |=  {gat/vase sam/vase}  ^-  vase
-  =+  :-  ^=  typ  ^-  span
+  =+  :-  ^=  typ  ^-  type
           [%cell p.gat p.sam]
       ^=  gen  ^-  twig
       [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
@@ -9289,7 +9289,7 @@
   [p.gun .*([q.gat q.sam] q.gun)]
 ::
 ++  slab                                                ::  test if contains
-  |=  {cog/@tas typ/span}
+  |=  {cog/@tas typ/type}
   =(& -:(~(find ut typ) %free [cog ~]))
 ::
 ++  slap
@@ -9310,13 +9310,13 @@
   |=  old/vise  ^-  vase
   old
 ::
-++  slit                                                ::  span of slam
-  |=  {gat/span sam/span}
+++  slit                                                ::  type of slam
+  |=  {gat/type sam/type}
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
   (~(play ut [%cell gat sam]) [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
 ::
 ++  slob                                                ::  superficial arm
-  |=  {cog/@tas typ/span}
+  |=  {cog/@tas typ/type}
   ^-  ?
   ?+  typ  |
       {$hold *}  $(typ ~(repo ut typ))
@@ -9330,7 +9330,7 @@
   ==
 ::
 ++  sloe                                                ::  get arms in core
-  |=  typ/span
+  |=  typ/type
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
@@ -9352,11 +9352,11 @@
   |=  {axe/@ vax/vase}  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
-++  slym                                                ::  slam w+o sample-span
+++  slym                                                ::  slam w+o sample-type
   |=  {gat/vase sam/*}  ^-  vase
   (slap gat(+<.q sam) [%limb %$])
 ::
-++  spec                                                ::  reconstruct span
+++  spec                                                ::  reconstruct type
   |=  vax/vase
   ^-  vase
   :_  q.vax
@@ -9395,6 +9395,7 @@
   ++  hasp  ;~  pose
               (ifix [sel ser] wide)
               (stag %cnhp (ifix [pel per] (most ace wide)))
+              (stag %sand (stag %tas (cold %$ buc)))
               (stag %sand (stag %t qut))
               %+  cook
                 |=(a/coin [%sand ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
@@ -10323,7 +10324,7 @@
         |=  {naz/hair los/tape}
         ^+  *sab
         ::
-        ::  vex: fenced span
+        ::  vex: fenced type
         =/  vex/(like tape)  (fex naz los)
         ?~  q.vex  vex
         ::
@@ -10333,7 +10334,7 @@
         ::  reparsed error position is always at start
         ?~  q.hav  [naz ~]
         ::
-        ::  the complete span with the main product
+        ::  the complete type with the main product
         :-  p.vex
         `[p.u.q.hav q.u.q.vex]
       ::
@@ -11423,17 +11424,17 @@
   (rain bon .^(@t %cx (weld bon `path`[%hoon ~])))
 ::
 ++  ride                                                ::  end-to-end compiler
-  |=  {typ/span txt/@}
-  ^-  (pair span nock)
+  |=  {typ/type txt/@}
+  ^-  (pair type nock)
   (~(mint ut typ) %noun (ream txt))
 ::
 ::::  5e: caching compiler
   ::
 ++  wa  !:                                              ::  cached compile
   |_  worm
-  ++  nell  |=(ref/span (nest [%cell %noun %noun] ref)) ::  nest in cell
+  ++  nell  |=(ref/type (nest [%cell %noun %noun] ref)) ::  nest in cell
   ++  nest                                              ::  nest:ut
-    |=  {sut/span ref/span}
+    |=  {sut/type ref/type}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     ?.  (~(nest ut sut) | ref)
@@ -11468,7 +11469,7 @@
     [[p.dor q.dor(+6 +7.som)] +>+<.$] 
   ::
   ++  neat                                              ::  type compliance
-    |=  {typ/span som/(each vase ^)}
+    |=  {typ/type som/(each vase ^)}
     ^-  worm
     =^  hip  +>+<.$
       ?-  -.som
@@ -11478,11 +11479,11 @@
     ?>  hip
     +>+<.$
   ::
-  ++  nets                                              ::  spanless nest
+  ++  nets                                              ::  typeless nest
     |=  {sut/* ref/*}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
-    =+  gat=|=({a/span b/span} (~(nest ut a) | b))
+    =+  gat=|=({a/type b/type} (~(nest ut a) | b))
     ?.  (? .*(gat(+< [sut ref]) -.gat))
       ~&  %nets-failed
       =+  tag=`*`skol
@@ -11496,16 +11497,16 @@
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
   ++  play                                              ::  play:ut
-    |=  {sut/span gen/twig}
-    ^-  {span worm}
+    |=  {sut/type gen/twig}
+    ^-  {type worm}
     =+  old=(~(get by pay) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(play ut sut) gen)
     [new +>+<.$(pay (~(put by pay) [sut gen] new))]
   ::
   ++  mint                                              ::  mint:ut to noun
-    |=  {sut/span gen/twig}
-    ^-  {(pair span nock) worm}
+    |=  {sut/type gen/twig}
+    ^-  {(pair type nock) worm}
     =+  old=(~(get by mit) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(mint ut sut) %noun gen)
@@ -11567,10 +11568,10 @@
           $:  p/(unit (set monk))                       ::  can be read by
               q/(set monk)                              ::  caused or created by
           ==                                            ::
-++  curd  {p/@tas q/*}                                  ::  spanless card
+++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  dock  (pair @p term)                                ::  message target
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/$-(* *) (pair span a))                   ::  span associated
+++  hypo  |*(a/$-(* *) (pair type a))                   ::  type associated
 ++  hobo  |*  a/$-(* *)                                 ::  task wrapper
           $?  $%  {$soft p/*}                           ::
               ==                                        ::
@@ -11600,7 +11601,7 @@
   $@  mark                                              ::  plain mark
   $%  {$tabl p/(list (pair marc marc))}                 ::  map
   ==                                                    ::
-++  mark  @tas                                          ::  content span
+++  mark  @tas                                          ::  content type
 ++  marl  (list manx)                                   ::  XML node list
 ++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/$~}} c/$~}      ::  XML cdata
 ++  mart  (list {n/mane v/tape})                        ::  XML attributes
@@ -11615,7 +11616,7 @@
 ++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
 ++  move  {p/duct q/arvo}                               ::  arvo move
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
-++  ovum  {p/wire q/curd}                               ::  spanless ovum
+++  ovum  {p/wire q/curd}                               ::  typeless ovum
 ++  pane  (list {p/@tas q/vase})                        ::  kernel modules
 ++  pass  @                                             ::  public key
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
@@ -11638,10 +11639,10 @@
 ++  spur  path                                          ::  ship desk case spur
 ++  time  @da                                           ::  galactic time
 ++  vile                                                ::  reflexive constants
-          $:  typ/span                                  ::  -:!>(*span)
-              duc/span                                  ::  -:!>(*duct)
-              pah/span                                  ::  -:!>(*path)
-              mev/span                                  ::  -:!>([%meta *vase])
+          $:  typ/type                                  ::  -:!>(*type)
+              duc/type                                  ::  -:!>(*duct)
+              pah/type                                  ::  -:!>(*path)
+              mev/type                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wind                                                ::  new kernel action
           |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse

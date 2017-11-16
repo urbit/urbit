@@ -26,9 +26,9 @@
           $:  p/(unit (set monk))                       ::  can be read by
               q/(set monk)                              ::  caused or created by
           ==                                            ::
-++  curd  {p/@tas q/*}                                  ::  spanless card
+++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/mold (pair span a))                      ::  span associated
+++  hypo  |*(a/mold (pair type a))                      ::  type associated
 ++  hobo  |*  a/mold                                    ::  kiss wrapper
           $?  $%  {$soft p/*}                           ::
               ==                                        ::
@@ -48,7 +48,7 @@
   $@  mark                                              ::  plain mark
   $%  {$tabl p/(list (pair marc marc))}                 ::  map
   ==                                                    ::
-++  mark  @tas                                          ::  content span
+++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
 ++  mass  (pair cord (each noun (list mash)))           ::  memory usage  
 ++  mill  (each vase milt)                              ::  vase+metavase
@@ -56,7 +56,7 @@
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
 ++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
 ++  move  {p/duct q/arvo}                               ::  arvo move
-++  ovum  {p/wire q/curd}                               ::  spanless ovum
+++  ovum  {p/wire q/curd}                               ::  typeless ovum
 ++  pane  (list {p/@tas q/vase})                        ::  kernel modules
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 ++  ship  @p                                            ::  network identity
@@ -67,10 +67,10 @@
           (unit (unit (cask)))                          ::
 ++  slyt  $-({* *} (unit (unit)))                       ::  old namespace
 ++  vile                                                ::  reflexive constants
-          $:  typ/span                                  ::  -:!>(*span)
-              duc/span                                  ::  -:!>(*duct)
-              pah/span                                  ::  -:!>(*path)
-              mev/span                                  ::  -:!>([%meta *vase])
+          $:  typ/type                                  ::  -:!>(*type)
+              duc/type                                  ::  -:!>(*duct)
+              pah/type                                  ::  -:!>(*path)
+              mev/type                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wind                                                ::  new kernel action
           |*  {a/mold b/mold}                           ::  forward+reverse
@@ -192,9 +192,9 @@
       ?.  hip  ~                                        ::  a vase is a cell
       =^  vax  p.sew  (~(slot wa p.sew) 2 tiv)          ::
       =^  hip  p.sew  (~(nest wa p.sew) typ.vil p.vax)  ::
-      ?.  hip  ~                                        ::  vase head is span
+      ?.  hip  ~                                        ::  vase head is type
       %+  biff                                          ::
-        =+  mut=(milt q.tiv)                            ::  card span, value
+        =+  mut=(milt q.tiv)                            ::  card type, value
         |-  ^-  (unit (pair milt worm))                 ::
         ?.  ?=({$meta p/* q/milt} q.mut)  `[mut p.sew]  ::  ordinary metacard
         =^  hip  p.sew  (~(nets wa p.sew) mev.vil p.mut)::
@@ -328,10 +328,10 @@
   (vent lal vil bud *worm (slym (slap bud (rain pax txt)) bud))
 ::
 ++  viol                                                ::  vane tools
-  |=  but/span
+  |=  but/type
   ^-  vile
-  =+  pal=|=(a/@t ^-(span (~(play ut but) (vice a))))
-  :*  typ=(pal '*span')
+  =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
+  :*  typ=(pal '*type')
       duc=(pal '*duct')
       pah=(pal '*path')
       mev=(pal '*{$meta $vase}')

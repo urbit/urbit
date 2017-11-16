@@ -71,8 +71,8 @@
       {$bake p/calm q/(pair mark beam) r/(unit vase)}   ::  load
       {$boil p/calm q/(trel coin beam beam) r/vase}     ::  execute
       {$path p/calm q/beam r/(unit beam)}               ::  -to/ transformation
-      {$slit p/calm q/{p/span q/span} r/span}           ::  slam type
-      {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
+      {$slit p/calm q/{p/type q/type} r/type}           ::  slam type
+      {$slim p/calm q/{p/type q/twig} r/(pair type nock)}::  mint
       {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
       {$slam p/calm q/{p/vase q/vase} r/vase}           ::  compute
   ==                                                    ::
@@ -92,7 +92,7 @@
 --                                                      ::
 |%                                                      ::
 ++  calf                                                ::  reduce calx
-  |*  sem/*                                             ::  a spansystem hack
+  |*  sem/*                                             ::  a typesystem hack
   |=  cax/calx
   ?+  sem  !!
     $hood  ?>(?=($hood -.cax) r.cax)
@@ -953,7 +953,7 @@
         =<  |.  ^-  tank
             :+  %palm  [" " ~ ~ ~]
             ~[leaf+"ford: keel" rose+[" " ~ ~]^(murn yom +)]
-        |=  {a/wing b/span *}  ^-  (unit tank)
+        |=  {a/wing b/type *}  ^-  (unit tank)
         =+  typ=(mule |.(p:(slap suh wing+a)))
         ?:  ?=($| -.typ)
           (some (show [%c %pull] %l a))
@@ -1035,10 +1035,10 @@
       ?~  von  [p=cof q=[%1 [%c %w bem ~] ~ ~]]
       (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
     ::
-    ++  lane                                            ::  span infer
-      |=  {cof/cafe typ/span gen/twig}
+    ++  lane                                            ::  type infer
+      |=  {cof/cafe typ/type gen/twig}
       %+  (cowl cof)  (mule |.((~(play ut typ) gen)))
-      |=(ref/span ref)
+      |=(ref/type ref)
     ::
     ++  lash                                            ::  filter at beam
       |*  {cof/cafe bem/beam fun/(burg knot (unit))}
@@ -1211,10 +1211,10 @@
     ::
     ++  mail                                            ::  cached mint
       ~/  %mail
-      |=  {cof/cafe sut/span gen/twig}
-      ^-  (bolt (pair span nock))
+      |=  {cof/cafe sut/type gen/twig}
+      ^-  (bolt (pair type nock))
       %+  (clef %slim)  (fine cof sut gen)
-      |=  {cof/cafe sut/span gen/twig}
+      |=  {cof/cafe sut/type gen/twig}
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
       ?-  -.puz
         $|  (flaw cof p.puz)
@@ -1226,7 +1226,7 @@
       |=  {cof/cafe vax/vase gen/twig}
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
-      |=  {cof/cafe typ/span fol/nock}
+      |=  {cof/cafe typ/type fol/nock}
       %+  (coup cof)  (mock [q.vax fol] (sloy syve))
       |=(val/* `vase`[typ val])
     ::
@@ -1416,10 +1416,10 @@
     ::
     ++  malt                                            ::  cached slit
       ~/  %slit
-      |=  {cof/cafe gat/span sam/span}
-      ^-  (bolt span)
+      |=  {cof/cafe gat/type sam/type}
+      ^-  (bolt type)
       %+  (clef %slit)  (fine cof gat sam)
-      |=  {cof/cafe gat/span sam/span}
+      |=  {cof/cafe gat/type sam/type}
       %+  cool  |.(%.(%have ~(dunk ut sam)))
       %+  cool  |.(%.(%want ~(dunk ut (~(peek ut gat) %free 6))))
       =+  top=(mule |.((slit gat sam)))
@@ -1433,7 +1433,7 @@
       |=  {cof/cafe gat/vase sam/vase}
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
-      |=  {cof/cafe typ/span}
+      |=  {cof/cafe typ/type}
       %+  (coup cof)  (mong [q.gat q.sam] (sloy syve))
       |=(val/* `vase`[typ val])
     ::
@@ -1867,9 +1867,9 @@
       %-  %-  lift  |=  (unit cage)                     :: ignore block
           %+  biff  +<
           |=  cay/cage  ^-  (unit cage)
-          ?.  -:(nets:wa +.ref `span`p.q.cay)           :: error if bad type
+          ?.  -:(nets:wa +.ref `type`p.q.cay)           :: error if bad type
             ~&  :^  %ford-syve-lost  `path`[tem (en-beam bem)]
-                  want=;;(span +.ref)
+                  want=;;(type +.ref)
                 have=p.q.cay
             ~
           `cay
