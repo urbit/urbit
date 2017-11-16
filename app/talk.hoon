@@ -1566,11 +1566,9 @@
       |=  {cir/circle who/ship cur/status dif/diff-status}
       ^+  +>
       ?:  (~(has in settings.she) %quiet)  +>
-      =.  +>
-        %-  sh-note
-        %+  weld  " in "
-        (~(cr-show cr cir) ~)
       %-  sh-note
+      %+  weld
+        (weld ~(cr-phat cr cir) ": ")
       ?-  -.dif
           $full
         "hey {(scow %p who)} {(scow %tas pec.sat.dif)}"
