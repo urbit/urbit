@@ -671,7 +671,7 @@
           ?:  !=(i.t.topics u.p.p.q.i.tombs)
             ::  this isn't the topic.
             $(tombs t.tombs)
-          `[%chapter (trip i.t.topics) q.p.q.i.tombs p.sut q.sut p.i.tombs]
+          `[%chapter (trip i.t.topics) q.p.q.i.tombs sut q.sut p.i.tombs]
         ::
             {$face *}
           ?.  ?=(term q.p.sut)
@@ -909,7 +909,7 @@
         :>  the computed arm documentation and the product documentation.
         ^-  {what what}
         =+  foot-span=(~(play ut sut) p.f)
-        =+  raw-product=(what-from-span foot-span)
+        =/  raw-product/what  (what-from-span foot-span)
         =/  product-product/what
           ?.  ?=({$core *} foot-span)
             ~
@@ -917,6 +917,8 @@
           (what-from-span inner-span)
         :-
           ?~  arm-doc
+            ?~  raw-product
+              product-product
             raw-product
           arm-doc
         ?~  arm-doc
