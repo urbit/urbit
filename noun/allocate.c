@@ -63,7 +63,6 @@ _box_make(void* box_v, c3_w siz_w, c3_w use_w)
   box_w[0] = siz_w;
   box_w[siz_w - 1] = siz_w;
   box_u->use_w = use_w;
-  c3_assert(2 != use_w);
 
 # ifdef  U3_MEMORY_DEBUG
     box_u->cod_w = u3_Code;
@@ -663,10 +662,9 @@ u3a_malloc(size_t len_i)
 
 /* u3a_cellblock(): allocate a block of cells on the hat.
 */
-c3_t
+c3_o
 u3a_cellblock(c3_w num_w)
 {
-  u3a_box*      box_u;
   u3p(u3a_fbox) fre_p;
   c3_w          i_w;
 
@@ -675,16 +673,33 @@ u3a_cellblock(c3_w num_w)
       return c3n;
     } 
     else {
-      for ( i_w = 0; i_w < num_w; i_w++) {
-        u3_post all_p = u3R->hat_p;
+      u3_post hat_p = u3R->hat_p;
+      u3_post cel_p = u3R->all.cel_p;
 
-        box_u = _box_make(u3a_into(all_p), u3a_minimum, 1);
-        u3R->hat_p += u3a_minimum;
+      for ( i_w = 0; i_w < num_w; i_w++) {
+        u3_post  all_p = hat_p;
+        void*    box_v = u3a_into(all_p);
+        u3a_box* box_u = box_v;
+        c3_w*    box_w = box_v;
+
+        //  hand inline of _box_make(u3a_into(all_p), u3a_minimum, 1)
+        {
+          box_w[0] = u3a_minimum;
+          box_w[u3a_minimum - 1] = u3a_minimum;
+          box_u->use_w = 1;
+#ifdef U3_MEMORY_DEBUG
+            box_u->cod_w = 0;
+            box_u->eus_w = 0;
+#endif
+        }
+        hat_p += u3a_minimum;
 
         fre_p = u3of(u3a_fbox, box_u);
-        u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
-        u3R->all.cel_p = fre_p;
+        u3to(u3a_fbox, fre_p)->nex_p = cel_p;
+        cel_p = fre_p;
       }
+      u3R->hat_p = hat_p;
+      u3R->all.cel_p = cel_p;
     }
   }
   else {
@@ -692,15 +707,31 @@ u3a_cellblock(c3_w num_w)
       return c3n;
     } 
     else {
+      u3_post hat_p = u3R->hat_p;
+      u3_post cel_p = u3R->all.cel_p;
+
       for ( i_w = 0; i_w < num_w; i_w++ ) {
-        u3_post all_p = (u3R->hat_p -= u3a_minimum);
+        u3_post  all_p = (hat_p -= u3a_minimum);
+        void*    box_v = u3a_into(all_p);
+        u3a_box* box_u = box_v;
+        c3_w*    box_w = box_v;
 
-        box_u = _box_make(u3a_into(all_p), u3a_minimum, 1);
-
+        //  hand inline of _box_make(u3a_into(all_p), u3a_minimum, 1);
+        {
+          box_w[0] = u3a_minimum;
+          box_w[u3a_minimum - 1] = u3a_minimum;
+          box_u->use_w = 1;
+# ifdef U3_MEMORY_DEBUG
+            box_u->cod_w = 0;
+            box_u->eus_w = 0;
+# endif
+        }
         fre_p = u3of(u3a_fbox, box_u);
-        u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
-        u3R->all.cel_p = fre_p;
+        u3to(u3a_fbox, fre_p)->nex_p = cel_p;
+        cel_p = fre_p;
       }
+      u3R->hat_p = hat_p;
+      u3R->all.cel_p = cel_p;
     }
   }
   _box_count(num_w * u3a_minimum);
