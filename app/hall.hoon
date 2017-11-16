@@ -542,11 +542,13 @@
     ::>  for a %burden prize, bear the burden in a new
     ::>  or existing story.
     ::>  for a %circle prize, use ++so to accept it.
+    ::>  for a %report prize, silently ignore.
     ::
     |=  {wir/wire piz/prize}
     ^+  +>
-    ?+  -.piz
-      ~&([%ignoring-prize -.piz] +>)
+    ?+  -.piz  ~&([%ignoring-prize -.piz] +>)
+        $report
+      +>
     ::
         $burden
       =+  sos=~(tap by sos.piz)
