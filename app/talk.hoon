@@ -271,14 +271,13 @@
     |=  piz/prize
     ^+  +>
     ?+  -.piz  +>
-      ::
         $client
       %=  +>
         binds   gys.piz
         bound   (bound-from-binds gys.piz)
         nicks   nis.piz
       ==
-      ::
+    ::
         $circle
       %.  nes.piz
       %=  ta-unpack
@@ -294,16 +293,15 @@
     |=  rum/rumor
     ^+  +>
     ?+  -.rum  +>
-      ::
         $client
       ?-  -.rum.rum
           $glyph
         (ta-change-glyph +.rum.rum)
-        ::
+      ::
           $nick
         +>(nicks (change-nicks nicks who.rum.rum nic.rum.rum))
       ==
-      ::
+    ::
         $circle
       (ta-change-circle rum.rum)
     ==
@@ -315,10 +313,10 @@
     ^+  +>
     ?+  -.rum
         ~&([%unexpected-circle-rumor -.rum] +>)
-      ::
+    ::
         $gram
       (ta-learn gam.nev.rum)
-      ::
+    ::
         $config
       =+  cur=(fall (~(get by mirrors) cir.rum) *config)
       =.  +>.$
@@ -335,13 +333,13 @@
         ?:  add.dif.rum
           ~(put in sources)
         ~(del in sources)
-        ::
+      ::
           mirrors
         ?:  ?=($remove -.dif.rum)  (~(del by mirrors) cir.rum)
         %+  ~(put by mirrors)  cir.rum
         (change-config cur dif.rum)
       ==
-      ::
+    ::
         $status
       =+  rem=(fall (~(get by remotes) cir.rum) *group)
       =+  cur=(fall (~(get by rem) who.rum) *status)
@@ -816,7 +814,7 @@
       |-  ^-  (list sole-edit)
       ?+  -.wok
         ~
-        ::
+      ::
           $target
         ?~(q.wok ~ $(wok u.q.wok))
       ==
@@ -1576,10 +1574,10 @@
       ?-  -.dif
           $full
         "hey {(scow %p who)} {(scow %tas pec.sat.dif)}"
-        ::
+      ::
           $presence
         "see {(scow %p who)} {(scow %tas pec.dif)}"
-        ::
+      ::
           $human
         %+  weld  "nom {(scow %p who)}"
         ?:  ?=($true -.dif.dif)  ~
@@ -1590,7 +1588,7 @@
           $full     han.man.dif.dif
           $handle   han.dif.dif
         ==
-        ::
+      ::
           $remove
         "bye {(scow %p who)}"
       ==
@@ -1612,10 +1610,10 @@
           $source
         %+  weld  ?:(add.dif "onn " "off ")
         ~(cr-full cr cir.src.dif)
-        ::
+      ::
           $caption
         "cap {(trip cap.dif)}"
-        ::
+      ::
           $filter
         ;:  weld
           "fit: caps:"
@@ -1623,10 +1621,10 @@
           " unic:"
           ?:(utf.fit.dif "✔" "n")
         ==
-        ::
+      ::
           $secure
         "sec {(trip sec.con.cur)} -> {(trip sec.dif)}"
-        ::
+      ::
           $permit
         %+  weld
           =?  add.dif
@@ -1962,13 +1960,13 @@
     ?-  -.sep
         $lin
       tan+~[leaf+"{?:(pat.sep "@ " "")}{(trip msg.sep)}"]
-      ::
+    ::
         $url
       url+(crip (apix:en-purl:html url.sep))
-      ::
+    ::
         $exp
       mor+~[txt+"# {(trip exp.sep)}" tan+res.sep]
-      ::
+    ::
         $ire
       =+  gam=(recall top.sep)
       ?~  gam  $(sep sep.sep)
@@ -1977,10 +1975,10 @@
         [%leaf "in reply to: {(cite:title aut.u.gam)}: "]~
       %+  turn  (~(tr-text tr sef u.gam) width.cli)
       |=(t/tape [%leaf t])
-      ::
+    ::
         $fat
       [%mor $(sep sep.sep) tan+(tr-tach tac.sep) ~]
-      ::
+    ::
         $inv
       :-  %tan
       :_  ~
@@ -1990,7 +1988,7 @@
           "you have been invited to "
         "you have been banished from "
       ~(cr-phat cr cir.sep)
-      ::
+    ::
         $app
       [%mor tan+~[leaf+"[{(trip app.sep)}]: "] $(sep sep.sep) ~]
     ==
@@ -2043,16 +2041,16 @@
       ?+  -.tac.sep  [" attached: ..." ~]
         $name  [(scag wyd " attached: {(trip nom.tac.sep)}") ~]
       ==
-      ::
+    ::
         $exp
       :-  (tr-chow wyd '#' ' ' (trip exp.sep))
       ?~  res.sep  ~
       =-  [' ' (tr-chow (dec wyd) ' ' -)]~
       ~(ram re (snag 0 `(list tank)`res.sep))
-      ::
+    ::
         $ire
       $(sep sep.sep, pre `[| "^ "])
-      ::
+    ::
         $url
       :_  ~
       =+  ful=(apix:en-purl:html url.sep)
@@ -2075,7 +2073,7 @@
       |=  {a/knot b/tape}
       ?~  b  (trip a)
       (welp b '.' (trip a))
-      ::
+    ::
         $lin
       ::  glyph prefix
       =/  pef/tape
@@ -2097,7 +2095,7 @@
         [(sub wyd u.ace) &]
       :-  (weld pef (tufa (scag end `(list @c)`txt)))
       $(txt (slag ?:(nex +(end) end) `(list @c)`txt), pef (reap (lent pef) ' '))
-      ::
+    ::
         $inv
       :_  ~
       %+  tr-chow  wyd
@@ -2106,7 +2104,7 @@
           " invited you to "
         " banished you from "
       ~(cr-phat cr cir.sep)
-      ::
+    ::
         $app
       $(sep sep.sep, pre `[& "[{(trip app.sep)}]: "])
     ==

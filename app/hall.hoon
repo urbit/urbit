@@ -547,7 +547,7 @@
     ^+  +>
     ?+  -.piz
       ~&([%ignoring-prize -.piz] +>)
-      ::
+    ::
         $burden
       =+  sos=~(tap by sos.piz)
       |-  ^+  ..ta-take
@@ -566,7 +566,7 @@
       ::|=  {{n/naem b/burden} _..ta-take}
       ::=+  (fall (~(get by stories) n) *story)
       ::so-done:(~(so-bear so n ~ -) b)
-      ::
+    ::
         $circle
       =+  wer=(etch wir)
       ?>  ?=($circle -.wer)
@@ -584,12 +584,12 @@
     ^+  +>
     ?+  -.rum
       ~&([%ignoring-rumor -.rum] +>)
-      ::
+    ::
         $burden
       ?+  -.rum.rum
         %-  (ta-know nom.rum)  |=  sor/_so  =<  so-done
         (so-hear:sor & [our.bol nom.rum] rum.rum)
-        ::
+      ::
           $new
         =?  +>  !(~(has by stories) nom.rum)
           (ta-delta %story +.rum)
@@ -606,7 +606,7 @@
         ::%-  ~(so-bear so nom.rum ~ (fall (~(get by stories) nom.rum) *story))
         ::[~ [cof.rum.rum ~] [~ ~]]
       ==
-      ::
+    ::
         $circle
       =+  wer=(etch wir)
       ?>  ?=($circle -.wer)
@@ -1433,7 +1433,7 @@
       %.  det
       =+  (fall (~(get by stories) nom) *story)
       ~(sa-change sa nom -)
-      ::
+    ::
       $new      (da-create nom +.det)
       $bear     ~&(%unexpected-unsplit-bear +>)
       $remove   (da-delete nom)
@@ -1539,26 +1539,25 @@
       ^+  +>
       ?+  -.det
         ~&([%unexpected-delta-local -.det] !!)
-        ::
+      ::
           $inherited
         +>(inherited ihr.det)
-        ::
+      ::
           $follow
         (sa-emil (sa-follow-effects sub.det srs.det))
-        ::
+      ::
           $sequent
         +>(sequence (~(put by sequence) cir.det num.det))
-        ::
-        ::
+      ::
           $gram
         (sa-change-gram gam.det)
-        ::
+      ::
           $config
         =.  +>
           %-  sa-emil
           (sa-config-effects shape dif.det)
         +>(shape (change-config shape dif.det))
-        ::
+      ::
           $status
         %_  +>
             locals
@@ -1599,7 +1598,7 @@
       ^+  +>
       ?+  -.det
         ~&([%unexpected-delta-remote -.det] !!)
-        ::
+      ::
           $config
         ?:  ?=($remove -.dif.det)
           +>(mirrors (~(del by mirrors) cir.det))
@@ -1608,7 +1607,7 @@
           (fall (~(get by mirrors) cir.det) *config)
           dif.det
         +>.$(mirrors (~(put by mirrors) cir.det new))
-        ::
+      ::
           $status
         %_  +>.$
             remotes
@@ -1737,10 +1736,10 @@
   ?+  wir  !!
       {@ @ $circle *}
     [(slav %p i.t.wir) t.t.wir]
-    ::
+  ::
       {$burden *}
     [(above our.bol) wir]
-    ::
+  ::
       {@ $report *}
     [(slav %p i.wir) t.wir]
   ==
@@ -1759,7 +1758,7 @@
         i.wir
       [(slav %p i.t.wir) i.t.t.t.wir]
     (path-to-range t.t.t.t.wir)
-    ::
+  ::
       {$repeat @ @ @ $~}
     :+  %repeat
       [(slav %p i.t.wir) i.t.t.wir]
@@ -1838,10 +1837,10 @@
   ?-  -.qer
       $client
     ``[%client binds nicks]
-    ::
+  ::
       $public
     ``[%public public]
-    ::
+  ::
       $burden
     :+  ~  ~
     :-  %burden
@@ -1855,12 +1854,12 @@
     :+  grams.s
       [shape.s mirrors.s]
     [locals.s remotes.s]
-    ::
+  ::
       $report
     ::TODO  gall note: need to be able to subscirbe to just changes... or just
     ::      data etc.
     ``[%report ~]
-    ::
+  ::
       $circle  ::REVIEW  should we send precs & config to out of range subs?
     =+  soy=(~(get by stories) nom.qer)
     ?~  soy  ~
@@ -1889,7 +1888,7 @@
     $follow     !!
     $inherited  !!
     $sequent    !!
-    ::
+  ::
       $gram
     :-  %gram
     %+  gram-to-envelope  nom
@@ -1900,12 +1899,12 @@
       ?.  &(=(hos.c our.bol) =(nom.c nom))  c
       [who nom]
     ==
-    ::
+  ::
       $config
     ?.  &(=(hos.cir.det our.bol) =(nom.cir.det nom))
       det
     det(cir [who nom])
-    ::
+  ::
       $status
     ?.  &(=(hos.cir.det our.bol) =(nom.cir.det nom))
       det
@@ -1952,11 +1951,11 @@
       $glyph  `[%client det]
       $nick   `[%client det]
     ==
-    ::
+  ::
       $public
     ?.  ?=($public -.det)  ~
     `det
-    ::
+  ::
       $burden
     ?:  &(=(who.qer src.bol) =(rir /(scot %p src.bol)/report))  ~
     ?.  ?=($story -.det)  ~
@@ -1964,7 +1963,7 @@
     ::  only burden channels for now.
     ?.  =(%channel sec.con.shape:(~(got by stories) nom.det))  ~
     `[%burden nom.det (dedicate who.qer nom.det det.det)]
-    ::
+  ::
       $report
     ::  only send changes we didn't get from above.
     ?:  =(src.bol (above our.bol))  ~
@@ -1977,7 +1976,7 @@
     ::  only burden channels for now.
     ?.  =(%channel sec.con.shape.soy)  ~
     `[%burden nom.det (dedicate (above our.bol) nom.det det.det)]
-    ::
+  ::
       $circle
     ?.  ?=($story -.det)                              ~
     ?.  =(nom.qer nom.det)                            ~
@@ -2038,7 +2037,7 @@
   ::TODO  can probably do this a bit better...
   ?+  i.pax
     qer(ran (path-to-range pax))
-    ::
+  ::
     circle-data   %_  $  pax  t.pax
                     wat.qer   (~(put in wat.qer) i.pax)
                   ==
@@ -2092,7 +2091,7 @@
                   =(our.bol (above who))
               ==
     $report   =(who (above our.bol))
-    ::
+  ::
       $circle
     ?.  (~(has by stories) nom.qer)  |
     %.  who

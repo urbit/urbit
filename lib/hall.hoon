@@ -111,7 +111,7 @@
     $caption  cof(cap cap.dif)
     $filter   cof(fit fit.dif)
     $remove   cof
-    ::
+  ::
       $source
     %=  cof
         src
@@ -120,7 +120,7 @@
         ~(put in src.cof)
       ~(del in src.cof)
     ==
-    ::
+  ::
       $permit
     %=  cof
         sis.con
@@ -129,12 +129,12 @@
         ~(uni in sis.con.cof)
       ~(dif in sis.con.cof)
     ==
-    ::
+  ::
       $secure
     %=  cof
         sec.con
       sec.dif
-      ::
+    ::
         sis.con
       ?.  .=  ?=(?($white $green) sec.dif)
               ?=(?($white $green) sec.con.cof)
@@ -152,7 +152,7 @@
     $full       sat.dif
     $presence   sat(pec pec.dif)
     $remove     sat
-    ::
+  ::
       $human
     %=  sat
         man
