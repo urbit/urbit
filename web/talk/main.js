@@ -1688,14 +1688,14 @@ module.exports = function(arg) {
     listen: function() {
       var date;
       date = window.urb.util.toDate(new Date());
-      return window.urb.bind('/reader', function(err, res) {
+      return window.urb.bind('/client', function(err, res) {
         var gys, nis, ref;
         if (err || !res.data) {
           console.log('sp err');
           console.log(err);
           return;
         }
-        ref = res.data.reader, gys = ref.gys, nis = ref.nis;
+        ref = res.data.client, gys = ref.gys, nis = ref.nis;
         return StationActions.loadGlyphs(gys);
       });
     },

@@ -15,7 +15,7 @@
     |=  a/json
     ^-  rumor:hall
     =-  (need ((of -) a))
-    :~  reader+rure
+    :~  client+ruci
         public+(ot add+bo cir+circ ~)
         ::  burden not needed
         circle+ruso
@@ -29,7 +29,7 @@
     =,  enjs:format
     %+  frond  -.rum
     ?+  -.rum  !!
-      $reader  (rure rum.rum)
+      $client  (ruci rum.rum)
       $public  (pairs add+b+add.rum cir+(circ cir.rum) ~)
       ::  burden not needed
       $circle  (ruso rum.rum)

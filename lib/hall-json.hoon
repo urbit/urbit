@@ -119,8 +119,8 @@
   ::>    models relating to queries, their results and updates.
   ::+|
   ::
-  ++  pire                                              ::>  prize-reader
-    |=  a/prize-reader
+  ++  pici                                              ::>  prize-client
+    |=  a/prize-client
     ^-  json
     %-  pairs  :~
       :-  %gys
@@ -130,8 +130,8 @@
       nis+(mo nis.a (cury scot %p) cord)
     ==
   ::
-  ++  rure                                              ::>  rumor-reader
-    |=  a/rumor-reader
+  ++  ruci                                              ::>  rumor-client
+    |=  a/rumor-client
     ^-  json
     %+  frond  -.a
     ?-  -.a
@@ -388,15 +388,15 @@
   ::>    models relating to queries, their results and updates.
   ::+|
   ::
-  ++  pire                                              ::>  prize-reader
-    ^-  $-(json (unit prize-reader))
+  ++  pici                                              ::>  prize-client
+    ^-  $-(json (unit prize-client))
     %-  ot  :~
       gys+(om (as (as circ)))
       nis+(op fed:ag so)
     ==
   ::
-  ++  rure                                              ::>  rumor-reader
-    ^-  $-(json (unit rumor-reader))
+  ++  ruci                                              ::>  rumor-client
+    ^-  $-(json (unit rumor-client))
     %-  of  :~
       glyph+digy
       nick+dini

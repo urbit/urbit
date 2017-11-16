@@ -15,7 +15,7 @@
     |=  a/json
     ^-  prize:hall
     =-  (need ((of -) a))
-    :~  reader+pire
+    :~  client+pici
         public+(as circ)
         ::  burden not needed
         ::  report not needed
@@ -30,7 +30,7 @@
     =,  enjs:format
     %+  frond  -.piz
     ?+  -.piz  !!
-      $reader  (pire +.piz)
+      $client  (pici +.piz)
       $public  (sa cis.piz circ)
       ::  burden not needed
       ::  report not needed
