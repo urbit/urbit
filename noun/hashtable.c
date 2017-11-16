@@ -299,8 +299,9 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
     }
   }
 
-  har_u->arm_u.buc_o = c3n;
   har_u->arm_u.mug_w = (har_u->arm_u.mug_w + 1) & 0x7FFFFFFF; // modulo 2^31
+  har_u->arm_u.inx_w = 0;
+  har_u->arm_u.buc_o = c3n;
   return c3n;
 }
 
