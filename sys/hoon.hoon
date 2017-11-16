@@ -10986,11 +10986,17 @@
       %+  cook
         |=  {a/whit b/term c/whit d/foot}
         =+  e=(glom a c)
-        =^  boy/what  p.d
-          ?.  ?=(?(%halo %help) -.p.d)
-            [boy.e ?~(boy.e p.d [%help boy.e p.d])]     ::REVIEW %halo for mold?
-          [?^(boy.e boy.e p.p.d) p.d(p ?^(p.p.d p.p.d boy.e))]
-        [b boy d]
+        =?  boy.e  =(~ boy.e)
+          |-(?+(-.p.d ~ $dbug $(p.d q.p.d), ?(%halo %help) p.p.d))
+        =.  p.d
+          |-
+          ?+  p.d  p.d
+            [$dbug ^]  p.d(q $(p.d q.p.d))
+            [%help p=~ *]  p.d(p boy.e)
+            [%halo p=~ *]  p.d(p boy.e)
+          ==
+        [b boy.e d]
+      ::
       ;~  plug
         apex:docs
         ;~  pose
