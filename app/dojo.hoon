@@ -41,7 +41,7 @@
               r/purl:eyre
           ==
           {$poke p/goal}                                ::  poke app
-          {$show p/?($0 $1 $2 $3)}                      ::  print val+type+twig
+          {$show p/?($0 $1 $2 $3)}                      ::  print val+type+hoon
           {$verb p/term}                                ::  store variable
           {$help p/(list term)}                         ::  look up help
       ==                                                ::
@@ -53,10 +53,10 @@
       $%  {$ur p/(unit knot) q/purl:eyre}              ::  http GET request
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
-          {$ex p/twig}                                  ::  hoon expression
+          {$ex p/hoon}                                  ::  hoon expression
           {$sa p/mark}                                  ::  example mark value
           {$as p/mark q/dojo-source}                    ::  simple transmute
-          {$do p/twig q/dojo-source}                    ::  gate apply
+          {$do p/hoon q/dojo-source}                    ::  gate apply
           {$tu p/(list dojo-source)}                    ::  tuple
       ==                                                ::
     ++  dojo-model                                      ::  data construction 
@@ -201,22 +201,22 @@
     ++  dp-hooves                                       ::  hoof list
       :(stag 0 %ex %clsg (most ;~(plug com gaw) dp-hoof))
     ::
-    ++  dp-hoof                                         ::  ++ford-hoof twig
+    ++  dp-hoof                                         ::  ++ford-hoof hoon
       ;~  plug
         :(stag %sand %f ;~(pose (cold %| tar) (easy %&)))
         :(stag %sand %tas sym)
-        %-  dp-twig-punt
+        %-  dp-hoon-punt
         ;~  (glue fas) 
-          ;~(pfix fas (sear dp-case-twig nuck:so))
+          ;~(pfix fas (sear dp-case-hoon nuck:so))
           (stag %sand ;~(plug (cold %p sig) fed:ag))
         ==
       ==
     ::
-    ++  dp-twig-punt                                   ::  twig of unit
+    ++  dp-hoon-punt                                   ::  hoon of unit
       |*(a/rule ;~(pose (stag [%bust %null] a) (easy [%bust %null])))
     ::
-    ++  dp-case-twig
-      |=  a/coin  ^-  (unit twig)
+    ++  dp-case-hoon
+      |=  a/coin  ^-  (unit hoon)
       ?.  ?=({$~ case} a)  ~
       %+  some
         [%rock %tas p.p.a]
@@ -229,7 +229,7 @@
         ;~(plug (cold %ur lus) dp-iden-url)
         ;~(plug (cold %ge lus) dp-model)
         ;~(plug (cold %as pam) sym ;~(pfix ace dp-source))
-        ;~(plug (cold %do cab) dp-twig ;~(pfix ace dp-source))
+        ;~(plug (cold %do cab) dp-hoon ;~(pfix ace dp-source))
         dp-value
       ==
     :: 
@@ -256,8 +256,8 @@
     ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
     ++  dp-path    (en-beam he-beam)                       ::  ++path
     ++  dp-server  (stag 0 (most fas sym))              ::  ++dojo-server
-    ++  dp-twig    tall:(vang | dp-path)                ::  ++twig
-    ++  dp-rood                                         ::  'dir' twig
+    ++  dp-hoon    tall:(vang | dp-path)                ::  ++hoon
+    ++  dp-rood                                         ::  'dir' hoon
       =>  (vang | (en-beam dir))
       ;~  pose
         rood
@@ -272,7 +272,7 @@
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
         (stag %sa ;~(pfix tar pam sym))
-        (stag %ex dp-twig)
+        (stag %ex dp-hoon)
         (stag %tu (ifix [sel ser] (most ace dp-source)))
       ==
     ::
@@ -1122,7 +1122,7 @@
                       {$cube * _$}
                       {$face {what $@(term tune)} _$}
                       {$fork (set _$)}
-                      {$hold _$ twig}
+                      {$hold _$ hoon}
                   ==
                   wain                :: "<|core|>"
                   $?($noun $void)
@@ -1137,13 +1137,13 @@
       ==
     ::
     ++  dy-shown
-      $?  twig
+      $?  hoon
           $^  {dy-shown dy-shown}
           $%  {$ur (unit knot) purl:eyre}
               {$dv path}
               {$sa mark}
               {$as mark dy-shown}
-              {$do twig dy-shown}
+              {$do hoon dy-shown}
               {$ge path (list dy-shown) (map term (unit dy-shown))}
           ==
       ==
@@ -1156,7 +1156,7 @@
       ?-  -.bil
         $?($ur $dv $sa)  bil
         $ex  ?.  ?=({$cltr *} p.bil)  p.bil
-                 |-  ^-  twig
+                 |-  ^-  hoon
                  ?~  p.p.bil  !!
                  ?~  t.p.p.bil  i.p.p.bil
                  [i.p.p.bil $(p.p.bil t.p.p.bil)]
@@ -1230,7 +1230,7 @@
       %-  dy-silk-vase
       ?~(b !>([~ ~]) (dy-vase p.u.b))
     ::
-    ++  dy-twig-head                                    ::  dynamic state
+    ++  dy-hoon-head                                    ::  dynamic state
       ::  todo: how do i separate the toplevel 'dojo state' comment?
       :>  dojo state
       :>
@@ -1286,7 +1286,7 @@
         (dy-meal (slot 7 vax))
       ::
           $|
-        =>  .(vax (slap vax !,(*twig ?>(?=($| -) .))))  :: XX working spec  #72
+        =>  .(vax (slap vax !,(*hoon ?>(?=($| -) .))))  :: XX working spec  #72
         =+  typ={$| (unit knot) hiss:eyre *}
         =+  [~ usr hiz ~]=((dy-cast typ !>(*typ)) vax)
         =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
@@ -1333,14 +1333,14 @@
              (slop hed $(p.bil t.p.bil))
       ==
     ::
-    ++  dy-twig-mark                                    ::  XX architect
+    ++  dy-hoon-mark                                    ::  XX architect
       =+  ^=  ope
-          |=  gen/twig  ^-  twig
+          |=  gen/hoon  ^-  hoon
           ?:  ?=(?($sggl $sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
-      |=  gen/twig  ^-  (unit mark)
+      |=  gen/hoon  ^-  (unit mark)
       =.  gen  (ope gen)
       ?:  ?=({$cnts {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
@@ -1361,12 +1361,12 @@
       ==
     ::
     ++  dy-mare                                         ::  build expression
-      |=  gen/twig
+      |=  gen/hoon
       ^-  silk:ford
-      =+  too=(dy-twig-mark gen)
+      =+  too=(dy-hoon-mark gen)
       =-  ?~(too - [%cast u.too -])
       :+  %ride  gen
-      :-  [%$ dy-twig-head]
+      :-  [%$ dy-hoon-head]
       [%plan he-beam blob+** [zuse sur lib ~ ~]]
     ::
     ++  dy-step                                         ::  advance project

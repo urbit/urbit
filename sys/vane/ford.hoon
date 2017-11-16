@@ -72,8 +72,8 @@
       {$boil p/calm q/(trel coin beam beam) r/vase}     ::  execute
       {$path p/calm q/beam r/(unit beam)}               ::  -to/ transformation
       {$slit p/calm q/{p/type q/type} r/type}           ::  slam type
-      {$slim p/calm q/{p/type q/twig} r/(pair type nock)}::  mint
-      {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
+      {$slim p/calm q/{p/type q/hoon} r/(pair type nock)}::  mint
+      {$slap p/calm q/{p/vase q/hoon} r/vase}           ::  compute
       {$slam p/calm q/{p/vase q/vase} r/vase}           ::  compute
   ==                                                    ::
 ++  deps                                                ::  depend state
@@ -965,10 +965,10 @@
         |-  ^-  vase
         ?~  yom  [[%atom %n ~] ~]
         (slop q.i.yom $(yom t.yom))
-      ^-  twig
+      ^-  hoon
       :+  %cncb  [%& 2]~
       =+  axe=3
-      |-  ^-  (list (pair wing twig))
+      |-  ^-  (list (pair wing hoon))
       ?~  yom  ~
       :-  [p.i.yom [%$ (peg axe 2)]]
       $(yom t.yom, axe (peg axe 3))
@@ -1036,7 +1036,7 @@
       (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
     ::
     ++  lane                                            ::  type infer
-      |=  {cof/cafe typ/type gen/twig}
+      |=  {cof/cafe typ/type gen/hoon}
       %+  (cowl cof)  (mule |.((~(play ut typ) gen)))
       |=(ref/type ref)
     ::
@@ -1211,10 +1211,10 @@
     ::
     ++  mail                                            ::  cached mint
       ~/  %mail
-      |=  {cof/cafe sut/type gen/twig}
+      |=  {cof/cafe sut/type gen/hoon}
       ^-  (bolt (pair type nock))
       %+  (clef %slim)  (fine cof sut gen)
-      |=  {cof/cafe sut/type gen/twig}
+      |=  {cof/cafe sut/type gen/hoon}
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
       ?-  -.puz
         $|  (flaw cof p.puz)
@@ -1223,7 +1223,7 @@
     ::
     ++  maim                                            ::  slap
       ~/  %maim
-      |=  {cof/cafe vax/vase gen/twig}
+      |=  {cof/cafe vax/vase gen/hoon}
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  {cof/cafe typ/type fol/nock}
@@ -1440,26 +1440,26 @@
     ++  meow                                            ::  assemble
       :: =+  dyv=0
       |=  {how/beam arg/coin}
-      =|  $:  rop/(map term (pair hoof twig))           ::  structures
-              bil/(map term (pair hoof twig))           ::  libraries
-              boy/(list twig)                           ::  body stack
+      =|  $:  rop/(map term (pair hoof hoon))           ::  structures
+              bil/(map term (pair hoof hoon))           ::  libraries
+              boy/(list hoon)                           ::  body stack
               lit/?                                     ::  drop arguments
           ==
       ~%  %meow  ..meow  ~
       |%
       ++  able                                          ::  assemble preamble
-        ^-  twig
+        ^-  hoon
         :+  %tsgr
           ?:  =(~ rop)  
             [%$ 1] 
           :+  %brcn  [~ ~]
           =-  [[0 [~ ~] -] ~ ~]
-          (~(run by rop) |=({^ a/twig} [~ %ash a]))
+          (~(run by rop) |=({^ a/hoon} [~ %ash a]))
         ?:  =(~ bil) 
           [%$ 1] 
         :+  %brcn  [~ ~]
         =-  [[0 [~ ~] -] ~ ~]
-        (~(run by bil) |=({^ a/twig} [~ %ash a]))
+        (~(run by bil) |=({^ a/hoon} [~ %ash a]))
       ::
       ++  abut                                          ::  generate
         |=  {cof/cafe hyd/hood}

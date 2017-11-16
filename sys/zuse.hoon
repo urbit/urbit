@@ -774,7 +774,7 @@
     ==                                                  ::
   ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
   ++  hoop                                              ::  source in hood
-    $%  {$& p/twig}                                     ::  direct twig
+    $%  {$& p/hoon}                                     ::  direct hoon
         {$| p/beam}                                     ::  resource location
     ==                                                  ::
   ++  hops                                              ::  XX late-bound path
@@ -782,8 +782,8 @@
         pof/(unit {p/@ud q/tyke})                       ::
     ==                                                  ::
   ++  horn                                              ::  resource tree
-    $%  {$ape p/twig}                                   ::  /~  twig by hand
-        {$arg p/twig}                                   ::  /$  argument
+    $%  {$ape p/hoon}                                   ::  /~  hoon by hand
+        {$arg p/hoon}                                   ::  /$  argument
         {$alt p/(list horn)}                            ::  /|  options
         {$dep p/horn}                                   ::  /#  insert dephash
         {$dub p/term q/horn}                            ::  /=  apply face
@@ -795,9 +795,9 @@
         {$nap p/horn}                                   ::  /_  homo map
         {$now p/horn}                                   ::  deprecated
         {$nod p/term q/horn}                            ::  /_  @  list by odor
-        {$saw p/twig q/horn}                            ::  /;  operate on
+        {$saw p/hoon q/horn}                            ::  /;  operate on
         {$see p/hops q/horn}                            ::  /:  relative to
-        {$sic p/twig q/horn}                            ::  /^  cast
+        {$sic p/hoon q/horn}                            ::  /^  cast
         {$toy p/? q/mark}                               ::  /mark/  static/hook
     ==                                                  ::
   ++  milk  (trel ship desk silk)                       ::  sourced silk
@@ -820,7 +820,7 @@
         {$pact p/silk q/silk}                           ::  patch
         {$plan p/beam q/coin r/hood}                    ::  structured assembly
         {$reef $~}                                      ::  kernel reef
-        {$ride p/twig q/silk}                           ::  silk thru twig
+        {$ride p/hoon q/silk}                           ::  silk thru hoon
         {$tabl p/(list (pair silk silk))}               ::  list
         {$vale p/mark q/*}                              ::  validate
         {$volt p/(cask *)}                              ::  unsafe add type
