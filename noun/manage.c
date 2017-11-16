@@ -1440,7 +1440,7 @@ _cm_signals(void)
   //  Block SIGPROF, so that if/when we reactivate it on the
   //  main thread for profiling, we won't get hits in parallel
   //  on other threads.
-  {
+  if ( u3C.wag_w & u3o_debug_cpu ) { 
     sigset_t set;
                                  
     sigemptyset(&set);
