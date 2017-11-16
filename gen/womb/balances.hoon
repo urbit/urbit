@@ -11,4 +11,5 @@
     ==
 :-  %womb-balance-all
 =+  [him=(scot %p ?^(who u.who p.bec)) cas=(scot %da now)]
-.^((set {passhash mail}:womb) %gx /[him]/hood/[cas]/womb/balance/womb-balance-all)
+=/  balances  =>(womb ,(set [passhash mail]))
+.^(balances %gx /[him]/hood/[cas]/womb/balance/womb-balance-all)

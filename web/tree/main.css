@@ -1287,6 +1287,9 @@ ol > li:before {
   content: "—";
   margin-right: .6rem; }
 
+#body.post img {
+  max-width: 100%; }
+
 .urbit .post h1.title,
 .urbit .post p.preview,
 .urbit.post h1.title,
@@ -1308,6 +1311,15 @@ ol > li:before {
 .urbit .post img,
 .urbit.post img {
   border: 12px solid #000; }
+
+.urbit .post img.full-width,
+.urbit.post img.full-width {
+  width: 100%;
+  border: 0; }
+
+.urbit .post img.inline,
+.urbit.post img.inline {
+  margin-bottom: 0; }
 
 .urbit .post p.preview,
 .urbit.post p.preview {
@@ -1360,6 +1372,9 @@ ol > li:before {
 
 .sections h1:first-of-type {
   padding-bottom: 1rem; }
+
+.sections .list h1 {
+  padding-bottom: 0; }
 
 .sections li h1 {
   font-size: 1.2rem; }

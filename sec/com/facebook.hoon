@@ -13,7 +13,7 @@
 ::
 ::::
   ::
-|_  {bal/(bale keys:oauth2) access-token/token:oauth2}
+|_  {bal/(bale:eyre keys:oauth2) access-token/token:oauth2}
 ::  ++aut is a "standard oauth2" core, which implements the
 ::  most common handling of oauth2 semantics. see lib/oauth2 for more details,
 ::  and examples at the bottom of the file.
@@ -29,12 +29,12 @@
 ++  receive-auth-query-string  (in-code-to-token:aut exchange-url)
 ::
 ++  receive-auth-response
-  |=  a/httr  ^-  core-move:aut
+  |=  a/httr:eyre  ^-  core-move:aut
   ?:  (bad-response:aut p.a)
     [%give a]  :: [%redo ~]  ::  handle 4xx?
   =+  `{access-token/@t expires-in/@u}`(grab-expiring-token:aut a)
   ?.  (lth expires-in ^~((div ~d7 ~s1)))  ::  short-lived token
-    [[%redo ~] ..bak(access-token access-token)]
+    [[%redo ~] +>.$(access-token access-token)]
   :-  %send
   %^  request-token:aut  exchange-url
     grant-type='fb_exchange_token'

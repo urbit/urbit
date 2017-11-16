@@ -22,7 +22,7 @@
 ::
 ++  add-auth-header
   |=  a/hiss  ^-  hiss
-  ~&  auth+(earn p.a)
+  ~&  auth+(en-purl:html p.a)
   %_(a q.q (~(add ja q.q.a) %authorization header:auth))
 ::
 ++  standard

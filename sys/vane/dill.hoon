@@ -1,5 +1,5 @@
 ^%
-!:
+::
 ::  dill (4d), terminal handling
 ::
 |=  pit/vase
@@ -44,7 +44,7 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note-ames                                           ::  weird ames move
   $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
-      {$sith p/@p q/@uw r/@uw}                          ::
+      {$sith p/@p q/@uw r/?}                          ::
   ==                                                    ::
 ++  note-clay                                           ::
   $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
@@ -56,7 +56,7 @@
       {$init p/ship}                                    ::
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/path}                                    ::  reboot by path
+      {$vega p/path q/path}                             ::  reboot by path
       {$velo p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
@@ -390,7 +390,6 @@
                      +>.$
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             $diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
-            $doff  !!
           ==
         ::
             {$c $note *}
@@ -539,90 +538,4 @@
   =^  moz  all
     abet:(~(take as [~ hen our] (~(got by dug.all) hen)) q.hin)
   [moz ..^$]
-::
-++  neon
-  |=  our/ship
-  ^-  (vane task:able gift:able sign note axle axle)
-  =|  all/axle
-  |%
-  ++  load  |=(axle +>)
-  ++  stay  `axle`+<
-  ++  plow
-    =|  $:  now/@da
-            eny/@e
-            sky/roof
-        ==
-    |%
-    ++  doze  ~
-    ++  peek
-      |=  $:  lyc/(unit (set ship))
-              car/term
-              bem/beam
-          ==
-      ^-  (unit (unit (cask vase)))
-      [~ ~]
-    ::
-    ++  spin
-      =|  $:  hen/duct
-              moz/(list (pair duct (wind note gift:able)))
-          ==
-      |%
-      ++  call  
-        |=  tac/task:able
-        ^+  +>
-        =^  vam  +>
-          ?:  ?=($boot -.tac)
-            :_(+>.$ [hen %pass ~ (note %a p.tac)]~)
-          ?:  ?=($flog -.tac)
-            ::  ~&  [%dill-flog +.tac]
-            ?:  ?=({$crud $hax-init {$leaf *} $~} p.tac)
-              =+  him=(slav %p (crip p.i.q.p.tac))
-              :_(+>.$ ?~(hey.all ~ [u.hey.all %give %init him]~))
-            ?:  ?=({$crud $hax-heft $~} p.tac)
-              :_(+>.$ ?~(hey.all ~ [u.hey.all %slip %d %heft ~]~))
-            :_(+>.$ ?~(hey.all ~ [u.hey.all %slip %d p.tac]~))
-          =.  hey.all  ?^(hey.all hey.all `hen)
-          ?:  ?=($init -.tac)
-            ::  ~&  [%cnhp-init hen]
-            ?:  =(ore.all `p.tac)
-              [[hen %give tac]~ +>.$]
-            =:  ore.all  `p.tac
-                dug.all   ~
-              ==
-            =^  moz  all  abet:(need (ax (need hey.all) [%flow %hood ~]))
-            ?:  |((lth p.tac 256) (gte p.tac (bex 64)))  
-              [moz +>.$] ::  XX HORRIBLE
-            [:_(moz [(need hey.all) %give %init p.tac]) +>.$]
-          =+  nus=(ax hen tac)
-          ?~  nus
-            ~&  [%dill-no-flow tac]
-            [~ +>.$]
-          =^  moz  all  abet:(call:u.nus tac)
-          [moz +>.$]
-        +>.$(moz (weld `(list move)`vam moz))
-      ::
-      ++  take  
-        |=  {tea/wire hin/sign}
-        ^+  +>
-        =^  vam  +>
-          ?:  =(~ ore.all)
-            ?:  ?=({$a $init *} hin)
-              ::  ~&  [%take-init hen]
-              =.  hey.all  ?^(hey.all hey.all `hen)
-              [[[hen %give +.hin] ~] +>.$]
-              ::  [~ +>.$]
-            ~&  [%take-back hin]
-            [~ +>.$]
-          ?.  (~(has by dug.all) hen)
-            ~&  [%take-weird-sign hin]
-            ~&  [%take-weird-hen hen]
-            [~ +>.$]
-          =+  our=?>(?=(^ ore.all) u.ore.all)
-          =^  moz  all
-            abet:(~(take as [~ hen our] (~(got by dug.all) hen)) hin)
-          [moz +>.$]
-        +>.$(moz (weld `(list move)`vam moz))
-      --
-    --
-  --
 --

@@ -2,6 +2,8 @@
 ::::  /hoon/curl/app
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 ::
 |_  {{^ ^ ost/@ ^} $~}
 ++  poke  |*(a/{mark *} :_(+> [ost %hiss / `~ %wain a]~))

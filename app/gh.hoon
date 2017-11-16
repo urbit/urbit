@@ -19,6 +19,7 @@
 ::
 ::
 =,  html
+=,  eyre
 =>  |%
     ++  move  (pair bone card)
     ++  card  
@@ -175,7 +176,7 @@
 ++  peer-scry
   |=  pax/path
   ^-  {(list move) _+>.$}
-  ?>  ?=({care *} pax)
+  ?>  ?=({care:clay *} pax)
   :_  +>.$  :_  ~
   (read:connector ost.hid (places %read pax) i.pax t.pax)
 ::
@@ -185,7 +186,7 @@
 ++  sigh-httr
   |=  {way/wire res/httr}
   ^-  {(list move) _+>.$}
-  ?.  ?=({$read care @ *} way)
+  ?.  ?=({$read care:clay @ *} way)
     ~&  res=res
     [~ +>.$]
   =*  style  i.way
@@ -278,14 +279,14 @@
     :*  %+  scan
           =+  [(trip i.pax) (trip i.t.pax)]
           "https://api.github.com/repos/{-<}/{->}/hooks"
-        auri:urlp
+        auri:de-purl
         %post  ~  ~
-        %-  as-octt  %-  en-json  %-  pairs:enjs  :~
+        %-  as-octt:mimes  %-  en-json  %-  pairs:enjs:format  :~
           name+s+%web
           active+b+&
           events+a+~[s+event] ::(turn `(list ,@t)`t.t.pax |=(a=@t s/a))
           :-  %config
-          %-  jobe  :~
+          %-  pairs:enjs:format  :~
             =+  =+  clean-event
                 "http://107.170.195.5:8443/~/to/gh/gh-{-}.json?anon&wire=/"
             [%url s+(crip -)]
