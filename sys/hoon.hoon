@@ -25,6 +25,7 @@
   ::
 ++  add                                                 ::  unsigned addition
   ~/  %add
+  :>  produce the sum of a and b
   |=  [a=@ b=@]
   ^-  @
   ?:  =(0 a)  b
@@ -1228,6 +1229,7 @@
     ~/  %get
     |=  b/*
     ^-  {$@($~ {$~ u/_?>(?=(^ a) q.n.a)})}
+    =+  42
     ?~  a
       ~
     ?:  =(b p.n.a)
@@ -1597,7 +1599,7 @@
 ++  cork  |*({a/_|=(* **) b/gate} (corl b a))           ::  compose forward
 ++  corl                                                ::  compose backwards
   |*  {a/gate b/_|=(* **)}
-  =<  +:|.((a (b)))      ::  span check
+  =<  +:|.((a (b)))      ::  type check
   |*  c/_+<.b
   (a (b c))
 ::
@@ -5384,7 +5386,7 @@
 ::
 ::::  4o: molds and mold builders
   ::
-++  abel  typo                                          ::  original sin: span
+++  abel  typo                                          ::  original sin: type
 ++  atom  @                                             ::  just an atom
 ++  aura  @ta                                           ::  atom format
 ++  axis  @                                             ::  tree address
@@ -5398,13 +5400,13 @@
   {$atom p/aura}                                        ::  atom
 ::
 ++  bean  ?                                             ::  0=&=yes, 1=|=no
-++  woof  $@(@ {$~ p/twig})                             ::  simple embed
+++  woof  $@(@ {$~ p/hoon})                             ::  simple embed
 ++  beet  $@  @                                         ::  advanced embed
-          $%  {$a p/twig}                               ::  take tape
-              {$b p/twig}                               ::  take manx
-              {$c p/twig}                               ::  take marl
-              {$d p/twig}                               ::  take $-(marl marl)
-              {$e p/twig q/(list tuna)}                 ::  element literal
+          $%  {$a p/hoon}                               ::  take tape
+              {$b p/hoon}                               ::  take manx
+              {$c p/hoon}                               ::  take marl
+              {$d p/hoon}                               ::  take $-(marl marl)
+              {$e p/hoon q/(list tuna)}                 ::  element literal
           ==                                            ::
 ++  chap  (pair (unit term) what)                       ::  labeled help
 ++  chum  $?  lef/term                                  ::  jet name
@@ -5412,13 +5414,13 @@
               {ven/term pro/term kel/@}                 ::  vendor and product
               {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core span
-              q/span                                    ::  built with
+++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core type
+              q/type                                    ::  built with
               r/chap                                    ::  docs
               s/{p/?($~ ^) q/(map @ tomb)}              ::  arms
           ==                                            ::
-++  foot  $%  {$ash p/twig}                             ::  dry arm, geometric
-              {$elm p/twig}                             ::  wet arm, generic
+++  foot  $%  {$ash p/hoon}                             ::  dry arm, geometric
+              {$elm p/hoon}                             ::  wet arm, generic
           ==                                            ::
 ++  limb  $@  term                                      ::  wing element
           $%  {$& p/axis}                               ::  by geometry
@@ -5428,32 +5430,32 @@
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 ++  noun  *                                             ::  any noun
 ++  null  $~                                            ::  null, nil, etc
-++  onyx  (list (pair span foot))                       ::  arm activation
+++  onyx  (list (pair type foot))                       ::  arm activation
 ++  opal                                                ::  limb match
-          $%  {$& p/span}                               ::  leg
-              {$| p/axis q/(set {p/span q/foot})}       ::  arm
+          $%  {$& p/type}                               ::  leg
+              {$| p/axis q/(set {p/type q/foot})}       ::  arm
           ==                                            ::
 ++  pica  (pair ? cord)                                 ::  & prose, | code
 ++  palo  (pair vein opal)                              ::  wing trace, match
 ++  pock  (pair axis nock)                              ::  changes
-++  port  (each palo (pair span nock))                  ::  successful match
-++  root  twig                                          ::  produce model
+++  port  (each palo (pair type nock))                  ::  successful match
+++  root  hoon                                          ::  produce model
 ++  tiki                                                ::  test case
           $%  {$& p/(unit term) q/wing}                 ::  simple wing
-              {$| p/(unit term) q/twig}                 ::  named wing
+              {$| p/(unit term) q/hoon}                 ::  named wing
           ==                                            ::
 ++  tile  $^  {p/tile q/tile}                           ::  ordered pair
-          $%  {$axil p/base}                            ::  base span
+          $%  {$axil p/base}                            ::  base type
               {$bark p/toga q/tile}                     ::  name
-              {$bckt p/tile q/tile}                     ::  pair+tag
               {$deet p/spot q/tile}                     ::  set debug
               {$fern p/{i/tile t/(list tile)}}          ::  plain selection
-              {$herb p/twig}                            ::  assembly
+              {$herb p/hoon}                            ::  assembly
               {$kelp p/{i/line t/(list line)}}          ::  tag selection
               {$leaf p/term q/@}                        ::  constant atom
               {$plow p/what q/tile}                     ::  apply help
               {$reed p/tile q/tile}                     ::  atom+cell
-              {$weed p/twig}                            ::  example
+              {$vine p/tile q/tile}                     ::  pair+tag
+              {$weed p/hoon}                            ::  example
           ==                                            ::
 ++  toga                                                ::  face control
           $@  p/term                                    ::  two togas
@@ -5463,16 +5465,16 @@
           ==                                            ::
 ++  tomb  (pair chap (map term (pair what foot)))       ::  core chapter
 ++  tuna                                                ::  tagflow
-          $%  {$a p/twig}                               ::  plain text
-              {$b p/twig}                               ::  single tag
-              {$c p/twig}                               ::  simple list
-              {$d p/twig}                               ::  dynamic list
-              {$e p/twig q/(list tuna)}                 ::  element
+          $%  {$a p/hoon}                               ::  plain text
+              {$b p/hoon}                               ::  single tag
+              {$c p/hoon}                               ::  simple list
+              {$d p/hoon}                               ::  dynamic list
+              {$e p/hoon q/(list tuna)}                 ::  element
               {$f p/(list tuna)}                        ::  subflow
           ==                                            ::
-++  twig                                                ::
+++  hoon                                                ::
   =>  |%                                                ::REVIEW
-      ++  beer  $@(char {$~ p/twig})                    ::  simple embed
+      ++  beer  $@(char {$~ p/hoon})                    ::  simple embed
       ++  mane  $@(@tas {@tas @tas})                    ::  XML name+space
       ++  manx  {g/marx c/marl}                         ::  dynamic XML node
       ++  marl  (list tuna)                             ::  dynamic XML nodes
@@ -5481,145 +5483,145 @@
       ++  mare  (each manx marl)                        ::  node or nodes
       ++  maru  (each tuna marl)                        ::  interp or nodes
       ++  tuna                                          ::  maybe interpolation
-          $^(manx {?($tape $manx $marl $cnhp) p/twig})  ::
+          $^(manx {?($tape $manx $marl $cnhp) p/hoon})  ::
       --                                                ::
-  $^  {p/twig q/twig}                                   ::
+  $^  {p/hoon q/hoon}                                   ::
   $%                                                    ::
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
     {$bunt p/root}                                      ::  mold default value
     {$bust p/base}                                      ::  bunt base
-    {$dbug p/spot q/twig}                               ::  debug info in trace
+    {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
-    {$hand p/span q/nock}                               ::  premade result
-    {$help p/what q/twig}                               ::  annotate image
+    {$hand p/type q/nock}                               ::  premade result
+    {$help p/what q/hoon}                               ::  annotate image
     {$halo p/what q/root}                               ::  annotate model
     {$knit p/(list woof)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
     {$limb p/term}                                      ::  pulls limb p
-    {$lost p/twig}                                      ::  not to be taken
+    {$lost p/hoon}                                      ::  not to be taken
     {$rock p/term q/*}                                  ::  fixed constant
     {$sand p/term q/*}                                  ::  unfixed constant
-    {$tell p/(list twig)}                               ::  render as tape
+    {$tell p/(list hoon)}                               ::  render as tape
     {$tune p/(pair what $@(term tune))}                 ::  minimal face
     {$wing p/wing}                                      ::  pulls p
-    {$yell p/(list twig)}                               ::  render as tank
+    {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx}                                       ::  ;foo; templating
   ::                                            ::::::  molds
     {$bcpt p/root q/root}                               ::  $@ depth fork
-    {$bccb p/twig}                                      ::  $_ example
+    {$bccb p/hoon}                                      ::  $_ example
     {$bccl p/(list root)}                               ::  $: tuple
     {$bccn p/(list root)}                               ::  $% tagged fork
     {$bchp p/root q/root}                               ::  $- function
     {$bckt p/root q/root}                               ::  $^ pairhead fork
     {$bcwt p/(list root)}                               ::  $? untagged fork
     {$bcts p/toga q/root}                               ::  $= name
-    {$bcsm p/twig}                                      ::  $; assembly
+    {$bcsm p/hoon}                                      ::  $; assembly
   ::                                            ::::::  cores
     {$brcb p/chap q/root r/(map @ tomb)}                ::  |_
-    {$brcl p/chap q/twig r/twig}                        ::  |:
+    {$brcl p/chap q/hoon r/hoon}                        ::  |:
     {$brcn p/chap q/(map @ tomb)}                       ::  |%
-    {$brdt p/chap q/twig}                               ::  |.
-    {$brkt p/chap q/twig r/(map @ tomb)}                ::  |^
-    {$brhp p/chap q/twig}                               ::  |-
-    {$brsg p/chap q/twig r/twig}                        ::  |~
-    {$brtr p/chap q/root r/twig}                        ::  |*
-    {$brts p/chap q/root r/twig}                        ::  |=
-    {$brwt p/chap q/twig}                               ::  |?
+    {$brdt p/chap q/hoon}                               ::  |.
+    {$brkt p/chap q/hoon r/(map @ tomb)}                ::  |^
+    {$brhp p/chap q/hoon}                               ::  |-
+    {$brsg p/chap q/hoon r/hoon}                        ::  |~
+    {$brtr p/chap q/root r/hoon}                        ::  |*
+    {$brts p/chap q/root r/hoon}                        ::  |=
+    {$brwt p/chap q/hoon}                               ::  |?
   ::                                            ::::::  tuples
-    {$clcb p/twig q/twig}                                ::  :_ [q p]
-    {$clkt p/twig q/twig r/twig s/twig}                  ::  :^ [p q r s]
-    {$clhp p/twig q/twig}                                ::  :- [p q]
-    {$clls p/twig q/twig r/twig}                         ::  :+ [p q r]
-    {$clsg p/(list twig)}                                ::  :~ [p ~]
-    {$cltr p/(list twig)}                                ::  :* p as a tuple
+    {$clcb p/hoon q/hoon}                                ::  :_ [q p]
+    {$clkt p/hoon q/hoon r/hoon s/hoon}                  ::  :^ [p q r s]
+    {$clhp p/hoon q/hoon}                                ::  :- [p q]
+    {$clls p/hoon q/hoon r/hoon}                         ::  :+ [p q r]
+    {$clsg p/(list hoon)}                                ::  :~ [p ~]
+    {$cltr p/(list hoon)}                                ::  :* p as a tuple
   ::                                            ::::::  invocations
-    {$cncb p/wing q/(list (pair wing twig))}            ::  %_
-    {$cndt p/twig q/twig}                               ::  %.
-    {$cnhp p/twig q/(list twig)}                        ::  %-
-    {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  %*
-    {$cnkt p/twig q/twig r/twig s/twig}                 ::  %^
-    {$cnls p/twig q/twig r/twig}                        ::  %+
-    {$cnsg p/wing q/twig r/(list twig)}                 ::  %~
-    {$cnts p/wing q/(list (pair wing twig))}            ::  %=
+    {$cncb p/wing q/(list (pair wing hoon))}            ::  %_
+    {$cndt p/hoon q/hoon}                               ::  %.
+    {$cnhp p/hoon q/(list hoon)}                        ::  %-
+    {$cntr p/wing q/hoon r/(list (pair wing hoon))}     ::  %*
+    {$cnkt p/hoon q/hoon r/hoon s/hoon}                 ::  %^
+    {$cnls p/hoon q/hoon r/hoon}                        ::  %+
+    {$cnsg p/wing q/hoon r/(list hoon)}                 ::  %~
+    {$cnts p/wing q/(list (pair wing hoon))}            ::  %=
   ::                                            ::::::  nock
-    {$dtkt p/root q/twig}                               ::  .^  nock 11
-    {$dtls p/twig}                                      ::  .+  nock 4
-    {$dttr p/twig q/twig}                               ::  .*  nock 2
-    {$dtts p/twig q/twig}                               ::  .=  nock 5
-    {$dtwt p/twig}                                      ::  .?  nock 3
-  ::                                            ::::::  span conversion
-    {$ktbr p/twig}                                      ::  ^|
-    {$ktcn p/twig}                                      ::  ^%  enter test mode
-    {$ktdt p/twig q/twig}                               ::  ^.
-    {$ktls p/twig q/twig}                               ::  ^+
-    {$kthp p/root q/twig}                               ::  ^-
-    {$ktpm p/twig}                                      ::  ^&
-    {$ktsg p/twig}                                      ::  ^~
-    {$ktts p/toga q/twig}                               ::  ^=
-    {$ktwt p/twig}                                      ::  ^?
+    {$dtkt p/root q/hoon}                               ::  .^  nock 11
+    {$dtls p/hoon}                                      ::  .+  nock 4
+    {$dttr p/hoon q/hoon}                               ::  .*  nock 2
+    {$dtts p/hoon q/hoon}                               ::  .=  nock 5
+    {$dtwt p/hoon}                                      ::  .?  nock 3
+  ::                                            ::::::  type conversion
+    {$ktbr p/hoon}                                      ::  ^|
+    {$ktcn p/hoon}                                      ::  ^%  enter test mode
+    {$ktdt p/hoon q/hoon}                               ::  ^.
+    {$ktls p/hoon q/hoon}                               ::  ^+
+    {$kthp p/root q/hoon}                               ::  ^-
+    {$ktpm p/hoon}                                      ::  ^&
+    {$ktsg p/hoon}                                      ::  ^~
+    {$ktts p/toga q/hoon}                               ::  ^=
+    {$ktwt p/hoon}                                      ::  ^?
   ::                                            ::::::  hints
-    {$sgbr p/twig q/twig}                               ::  ~|  sell on trace
-    {$sgcb p/twig q/twig}                               ::  ~_  tank on trace
-    {$sgcn p/chum q/twig r/tyre s/twig}                 ::  ~%  general jet hint
-    {$sgfs p/chum q/twig}                               ::  ~/  function j-hint
-    {$sggl p/$@(term {p/term q/twig}) q/twig}           ::  ~<  backward hint
-    {$sggr p/$@(term {p/term q/twig}) q/twig}           ::  ~>  forward hint
-    {$sgbc p/term q/twig}                               ::  ~$  profiler hit
-    {$sgls p/@ q/twig}                                  ::  ~+  cache/memoize
-    {$sgpm p/@ud q/twig r/twig}                         ::  ~&  printf/priority
-    {$sgts p/twig q/twig}                               ::  ~=  don't duplicate
-    {$sgwt p/@ud q/twig r/twig s/twig}                  ::  ~?  tested printf
-    {$sgzp p/twig q/twig}                               ::  ~!  type on trace
+    {$sgbr p/hoon q/hoon}                               ::  ~|  sell on trace
+    {$sgcb p/hoon q/hoon}                               ::  ~_  tank on trace
+    {$sgcn p/chum q/hoon r/tyre s/hoon}                 ::  ~%  general jet hint
+    {$sgfs p/chum q/hoon}                               ::  ~/  function j-hint
+    {$sggl p/$@(term {p/term q/hoon}) q/hoon}           ::  ~<  backward hint
+    {$sggr p/$@(term {p/term q/hoon}) q/hoon}           ::  ~>  forward hint
+    {$sgbc p/term q/hoon}                               ::  ~$  profiler hit
+    {$sgls p/@ q/hoon}                                  ::  ~+  cache/memoize
+    {$sgpm p/@ud q/hoon r/hoon}                         ::  ~&  printf/priority
+    {$sgts p/hoon q/hoon}                               ::  ~=  don't duplicate
+    {$sgwt p/@ud q/hoon r/hoon s/hoon}                  ::  ~?  tested printf
+    {$sgzp p/hoon q/hoon}                               ::  ~!  type on trace
   ::                                            ::::::  miscellaneous
     {$smts p/marl}                                       ::  ;=  list templating
-    {$smcl p/twig q/(list twig)}                         ::  ;:  binary to nary
-    {$smfs p/twig}                                       ::  ;/  [%$ [%$ p ~] ~]
-    {$smsg p/twig q/(list twig)}                         ::  ;~  kleisli arrow
-    {$smsm p/twig q/twig}                                ::  ;;  normalize
+    {$smcl p/hoon q/(list hoon)}                         ::  ;:  binary to nary
+    {$smfs p/hoon}                                       ::  ;/  [%$ [%$ p ~] ~]
+    {$smsg p/hoon q/(list hoon)}                         ::  ;~  kleisli arrow
+    {$smsm p/hoon q/hoon}                                ::  ;;  normalize
   ::                                            ::::::  compositions
-    {$tsbr p/root q/twig}                                ::  =|  push bunt
-    {$tscl p/(list (pair wing twig)) q/twig}             ::  =:  q with p changes
-    {$tsfs p/toro q/twig r/twig}                         ::  =/  typed variable
-    {$tssm p/toro q/twig r/twig}                         ::  =;  =/(q p r)
-    {$tsdt p/wing q/twig r/twig}                         ::  =.  r with p as q
-    {$tswt p/wing q/twig r/twig s/twig}                  ::  =?  conditional =.
-    {$tsgl p/twig q/twig}                                ::  =<  =>(q p)
-    {$tshp p/twig q/twig}                                ::  =-  =+(q p)
-    {$tsgr p/twig q/twig}                                ::  =>  q w/subject p
-    {$tskt p/toro q/wing r/twig s/twig}                  ::  =^  state machine
-    {$tsls p/twig q/twig}                                ::  =+  q w/[p subject]
-    {$tssg p/(list twig)}                                ::  =~  twig stack
-    {$tstr p/(pair what term) q/twig r/twig}             ::  =*  r w/alias p/q
-    {$tscm p/twig q/twig}                                ::  =,  overload p in q
+    {$tsbr p/root q/hoon}                                ::  =|  push bunt
+    {$tscl p/(list (pair wing hoon)) q/hoon}             ::  =:  q with p changes
+    {$tsfs p/toro q/hoon r/hoon}                         ::  =/  typed variable
+    {$tssm p/toro q/hoon r/hoon}                         ::  =;  =/(q p r)
+    {$tsdt p/wing q/hoon r/hoon}                         ::  =.  r with p as q
+    {$tswt p/wing q/hoon r/hoon s/hoon}                  ::  =?  conditional =.
+    {$tsgl p/hoon q/hoon}                                ::  =<  =>(q p)
+    {$tshp p/hoon q/hoon}                                ::  =-  =+(q p)
+    {$tsgr p/hoon q/hoon}                                ::  =>  q w/subject p
+    {$tskt p/toro q/wing r/hoon s/hoon}                  ::  =^  state machine
+    {$tsls p/hoon q/hoon}                                ::  =+  q w/[p subject]
+    {$tssg p/(list hoon)}                                ::  =~  hoon stack
+    {$tstr p/(pair what term) q/hoon r/hoon}             ::  =*  r w/alias p/q
+    {$tscm p/hoon q/hoon}                                ::  =,  overload p in q
   ::                                            ::::::  conditionals
-    {$wtbr p/(list twig)}                                 ::  ?|  loobean or
-    {$wthp p/wing q/(list (pair root twig))}            ::  ?-  pick case in q
-    {$wtcl p/twig q/twig r/twig}                          ::  ?:  if/then/else
-    {$wtdt p/twig q/twig r/twig}                        ::  ?.  ?:(p r q)
-    {$wtkt p/wing q/twig r/twig}                        ::  ?^  if p is a cell
-    {$wtgl p/twig q/twig}                               ::  ?<  ?:(p !! q)
-    {$wtgr p/twig q/twig}                               ::  ?>  ?:(p q !!)
-    {$wtls p/wing q/twig r/(list (pair root twig))}     ::  ?+  ?-  w/default
-    {$wtpm p/(list twig)}                                ::  ?&  loobean and
-    {$wtpt p/wing q/twig r/twig}                        ::  ?@  if p is atom
-    {$wtsg p/wing q/twig r/twig}                        ::  ?~  if p is null
+    {$wtbr p/(list hoon)}                                 ::  ?|  loobean or
+    {$wthp p/wing q/(list (pair root hoon))}            ::  ?-  pick case in q
+    {$wtcl p/hoon q/hoon r/hoon}                          ::  ?:  if/then/else
+    {$wtdt p/hoon q/hoon r/hoon}                        ::  ?.  ?:(p r q)
+    {$wtkt p/wing q/hoon r/hoon}                        ::  ?^  if p is a cell
+    {$wtgl p/hoon q/hoon}                               ::  ?<  ?:(p !! q)
+    {$wtgr p/hoon q/hoon}                               ::  ?>  ?:(p q !!)
+    {$wtls p/wing q/hoon r/(list (pair root hoon))}     ::  ?+  ?-  w/default
+    {$wtpm p/(list hoon)}                                ::  ?&  loobean and
+    {$wtpt p/wing q/hoon r/hoon}                        ::  ?@  if p is atom
+    {$wtsg p/wing q/hoon r/hoon}                        ::  ?~  if p is null
   ::
     {$wtts p/root q/wing}                               ::  ?=  if q matches p
-    {$wtzp p/twig}                                       ::  ?!  loobean not
+    {$wtzp p/hoon}                                       ::  ?!  loobean not
   ::                                            ::::::  special
-    {$zpcm p/twig q/twig}                               ::  !,
-    {$zpgr p/twig}                                      ::  !>
-    {$zpsm p/twig q/twig}                               ::  !;
-    {$zpts p/twig}                                      ::  !=
-    {$zpwt p/$@(p/@ {p/@ q/@}) q/twig}                  ::  !?
+    {$zpcm p/hoon q/hoon}                               ::  !,
+    {$zpgr p/hoon}                                      ::  !>
+    {$zpsm p/hoon q/hoon}                               ::  !;
+    {$zpts p/hoon}                                      ::  !=
+    {$zpwt p/$@(p/@ {p/@ q/@}) q/hoon}                  ::  !?
     {$zpzp $~}                                          ::  !!
   ==                                                    ::
 ++  toro  (pair toga (unit root))                       ::
-++  twit  twig                                          ::  last-gen twig
-++  tyre  (list {p/term q/twig})                        ::
-++  tyke  (list (unit twig))                            ::
+++  twit  hoon                                          ::  last-gen hoon
+++  tyre  (list {p/term q/hoon})                        ::
+++  tyke  (list (unit hoon))                            ::
 ::                                                      ::::::  virtual nock
 ++  nock  $^  {p/nock q/nock}                           ::  autocons
           $%  {$0 p/@}                                  ::  axis select
@@ -5635,28 +5637,28 @@
               {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
               {$11 p/nock q/nock}                       ::  grab data from sky
           ==                                            ::
-++  span  $@  $?  $noun                                 ::  any nouns
+++  type  $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
               ==                                        ::
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
-              {$cell p/span q/span}                     ::  ordered pair
-              {$core p/span q/coil}                     ::  object
-              {$face p/{p/what q/$@(term tune)} q/span} ::  namespace (new)
-              {$fork p/(set span)}                      ::  union
-              {$help p/what q/span}                     ::  documentation
-              {$hold p/span q/twig}                     ::  lazy evaluation
+              {$cell p/type q/type}                     ::  ordered pair
+              {$core p/type q/coil}                     ::  object
+              {$face p/{p/what q/$@(term tune)} q/type} ::  namespace (new)
+              {$fork p/(set type)}                      ::  union
+              {$help p/what q/type}                     ::  documentation
+              {$hold p/type q/hoon}                     ::  lazy evaluation
           ==                                            ::
 ++  tone  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
           ==                                            ::
-++  tool  $@(term tune)                                 ::  span decoration
+++  tool  $@(term tune)                                 ::  type decoration
 ++  tune                                                ::  complex
-          $:  p/(map term (pair what (unit twig)))      ::  aliases
-              q/(list twig)                             ::  bridges
+          $:  p/(map term (pair what (unit hoon)))      ::  aliases
+              q/(list hoon)                             ::  bridges
           ==                                            ::
-++  typo  span                                          ::  old span
-++  vase  {p/span q/*}                                  ::  span-value pair
+++  typo  type                                          ::  old type
+++  vase  {p/type q/*}                                  ::  type-value pair
 ++  vise  {p/typo q/*}                                  ::  old vase
 ++  vial  ?($read $rite $both $free)                    ::  co/contra/in/bi
 ++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
@@ -5672,8 +5674,8 @@
 ++  wing  (list limb)                                   ::  search path
 ++  worm                                                ::  compiler cache
   $:  nes/(set ^)                                       ::  ++nest
-      pay/(map (pair span twig) span)                   ::  ++play
-      mit/(map (pair span twig) (pair span nock))       ::  ++mint
+      pay/(map (pair type hoon) type)                   ::  ++play
+      mit/(map (pair type hoon) (pair type nock))       ::  ++mint
   ==                                                    ::
 --
 ::                                                      ::
@@ -5698,40 +5700,40 @@
 ::
 ::::  5a: compiler utilities
   ::
-++  bool  `span`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
-++  cell                                                ::  make %cell span
+++  bool  `type`(fork [%atom %f `0] [%atom %f `1] ~)    ::  make loobean
+++  cell                                                ::  make %cell type
   ~/  %cell
-  |=  {hed/span tal/span}
-  ^-  span
+  |=  {hed/type tal/type}
+  ^-  type
   ?:(=(%void hed) %void ?:(=(%void tal) %void [%cell hed tal]))
 ::
-++  core                                                ::  make %core span
+++  core                                                ::  make %core type
   ~/  %core
-  |=  {pac/span con/coil}
-  ^-  span
+  |=  {pac/type con/coil}
+  ^-  type
   ?:(=(%void pac) %void [%core pac con])
 ::
 ++  help
   ~/  %help
-  |=  {p/what q/span}
-  ^-  span
+  |=  {p/what q/type}
+  ^-  type
   ?:  =(%void q)
     %void
   [%help p q]
 ::
-++  face                                                ::  make %face span
+++  face                                                ::  make %face type
   ~/  %face
-  |=  {giz/{what $@(term tune)} der/span}
-  ^-  span
+  |=  {giz/{what $@(term tune)} der/type}
+  ^-  type
   ?:  =(%void der)
     %void
   [%face giz der]
 ::
-++  fork                                                ::  make %fork span
+++  fork                                                ::  make %fork type
   ~/  %fork
-  |=  yed/(list span)
-  =|  lez/(set span)
-  |-  ^-  span
+  |=  yed/(list type)
+  =|  lez/(set type)
+  |-  ^-  type
   ?~  yed
     ?~  lez  %void
     ?:  ?=({* $~ $~} lez)  n.lez
@@ -5872,7 +5874,7 @@
 ::
 ++  jock
   |=  rad/?
-  |=  lot/coin  ^-  twig
+  |=  lot/coin  ^-  hoon
   ?-    -.lot
       $~
     ?:(rad [%rock p.lot] [%sand p.lot])
@@ -5957,14 +5959,14 @@
 ++  ah                                                  ::  tiki engine
   |_  tik/tiki
   ++  blue
-    |=  gen/twig
-    ^-  twig
+    |=  gen/hoon
+    ^-  hoon
     ?.  &(?=($| -.tik) ?=($~ p.tik))  gen
     [%tsgr [%$ 3] gen]
   ::
   ++  gray
-    |=  gen/twig
-    ^-  twig
+    |=  gen/hoon
+    ^-  hoon
     ?-  -.tik
       $&  ?~(p.tik gen [%tstr [~ u.p.tik] [%wing q.tik] gen])
       $|  [%tsls ?~(p.tik q.tik [%ktts u.p.tik q.tik]) gen]
@@ -5977,16 +5979,16 @@
       $|  [[%& 2] ~]
     ==
   ::
-  ++  wthp  |=  opt/(list (pair root twig))
+  ++  wthp  |=  opt/(list (pair root hoon))
             %+  gray  %wthp
-            [puce (turn opt |=({a/root b/twig} [a (blue b)]))]
-  ++  wtkt  |=({sic/twig non/twig} (gray [%wtkt puce (blue sic) (blue non)]))
-  ++  wtls  |=  {gen/twig opt/(list (pair root twig))}
+            [puce (turn opt |=({a/root b/hoon} [a (blue b)]))]
+  ++  wtkt  |=({sic/hoon non/hoon} (gray [%wtkt puce (blue sic) (blue non)]))
+  ++  wtls  |=  {gen/hoon opt/(list (pair root hoon))}
             %+  gray  %wtls
-            [puce (blue gen) (turn opt |=({a/root b/twig} [a (blue b)]))]
-  ++  wtpt  |=({sic/twig non/twig} (gray [%wtpt puce (blue sic) (blue non)]))
-  ++  wtsg  |=({sic/twig non/twig} (gray [%wtsg puce (blue sic) (blue non)]))
-  ++  wtts  |=(gen/twig (gray [%wtts (blue gen) puce]))
+            [puce (blue gen) (turn opt |=({a/root b/hoon} [a (blue b)]))]
+  ++  wtpt  |=({sic/hoon non/hoon} (gray [%wtpt puce (blue sic) (blue non)]))
+  ++  wtsg  |=({sic/hoon non/hoon} (gray [%wtsg puce (blue sic) (blue non)]))
+  ++  wtts  |=(gen/hoon (gray [%wtts (blue gen) puce]))
   --
 ::
 ++  al                                                  ::  tile engine
@@ -6003,14 +6005,14 @@
   |_  sec/tile
   ::::
   ++  hail
-    |=  gen/twig
-    ^-  twig
+    |=  gen/hoon
+    ^-  hoon
     ?~(wat gen [%help wat gen])
   ::
-  ++  home  |=(gen/twig ^-(twig ?:(=(1 gom) gen [%tsgr [%$ gom] gen])))
+  ++  home  |=(gen/hoon ^-(hoon ?:(=(1 gom) gen [%tsgr [%$ gom] gen])))
   ::::
   ++  bunt
-    |-  ^-  twig
+    |-  ^-  hoon
     ?-    sec
         {^ *}
       %-  hail
@@ -6032,25 +6034,22 @@
         {$bark *}
       [%ktts p.sec $(sec q.sec)]
     ::
-        {$bckt *}
-      %-  hail
-      =.  wat  ~
-      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
-    ::
         {$deet *}
       [%dbug p.sec $(sec q.sec)]
     ::
         {$fern *}
       %-  hail
       =.  wat  ~
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%wtcl [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
     ::
         {$herb *}
       %-  hail
       =.  wat  ~
+      ::  reduce excess model/value transitions
+      ::
       =+  cys=~(boil ap p.sec)
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.sec])
@@ -6059,19 +6058,23 @@
         {$kelp *}
       %-  hail
       =.  wat  ~
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%wtcl [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%bust %bean] $(p.sec t.p.sec) ^$(sec i.p.sec)]
     ::
         {$leaf *}
       (hail [%rock p.sec q.sec])
     ::
         {$plow *}
-      ?>  =(*what wat)
       $(sec q.sec, wat p.sec)
     ::
         {$reed *}
+      %-  hail
+      =.  wat  ~
+      [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
+    ::
+        {$vine *}
       %-  hail
       =.  wat  ~
       [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
@@ -6080,33 +6083,33 @@
       (hail (home p.sec))
     ==
   ++  clam  
-    ^-  twig
+    ^-  hoon
     =/  raw  [%brts [~ ~] [%base %noun] (whip(gom 7) 6)]
     ::
-    ::  this performance fix should unify a bunch of trivial functions,
-    ::  but breaks on horrible dogshit hacks in ++raid:zuse.
+    ::  this performance fix should unify a bunch of trivial formulas,
+    ::  but breaks on certain hacks in ++raid:zuse.
     ::
     ::  ?.  ?=(?($axil $leaf) -.sec)  raw
-    ::  [%tsgr [%rock %n ] raw]
+    ::  [%tsgr [%rock %n ~] raw]
     raw
   ::
   ++  whip
     |=  axe/axis
     =+  ^=  tun
-        |=  noy/$-(* twig)
-        ^-  twig
+        |=  noy/$-(* hoon)
+        ^-  hoon
         ?@  nag
           =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
           ?:  =(& nag)
             [%tsgr [%wtpt [[%& axe] ~] luz [%$ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
         (noy nag)
-    ^-  twig
+    ^-  hoon
     ?-    sec
         {^ *}
       %-  hail
       =.  wat  ~
-      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  twig
+      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  hoon
       :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
       ^$(sec +.sec, nag +.nag, axe (peg axe 3))
     ::
@@ -6116,7 +6119,7 @@
       ?-    p.sec
           {$atom *}
         =+  buv=bunt
-        |-  ^-  twig
+        |-  ^-  hoon
         ?@  nag
           ?:(=(& nag) [%wtpt [[%& axe] ~] $(nag |) buv] [%ktls buv [%$ axe]])
         buv
@@ -6126,7 +6129,7 @@
       ::
           $cell
         =+  buv=bunt
-        |-  ^-  twig
+        |-  ^-  hoon
         ?@  nag
           ?:(=(& nag) [%wtpt [[%& axe] ~] buv $(nag [& &])] buv)
         [%ktls buv [%$ axe]]
@@ -6147,10 +6150,10 @@
         {$bark *}
       [%ktts p.sec $(sec q.sec)]
     ::
-        {$bckt *}
+        {$vine *}
       %-  hail
       =.  wat  ~
-      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  twig
+      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  hoon
       ?@  -.nag
         ?:  =(& -.nag)
           [%wtpt [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
@@ -6163,7 +6166,7 @@
         {$fern *}
       %-  hail
       =.  wat  ~
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~  t.p.sec
         ^$(sec i.p.sec)
       :+  %tsls
@@ -6186,7 +6189,7 @@
       %-  hail
       =.  wat  ~
       %-  tun  |=  gon/*  =>  .(nag gon)
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~  t.p.sec
         :-  [%rock +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
@@ -6217,7 +6220,7 @@
     ==
   --
 ::
-++  ap                                                  ::  twig engine
+++  ap                                                  ::  hoon engine
   ~%    %ap
       +>
     ==
@@ -6225,7 +6228,7 @@
       %open  open
       %rake  rake
     ==
-  |_  gen/twig
+  |_  gen/hoon
   ++  etch
     ~_  leaf+"etch"
     |-  ^-  term
@@ -6259,11 +6262,11 @@
       ::  ==
     ::
     ++  grad
-      |=  $:  gen/twig 
+      |=  $:  gen/hoon 
               wit/whit 
-              aid/$-({? twig whit} {twig whit})
+              aid/$-({? hoon whit} {hoon whit})
           ==
-      ^-  (unit (pair twig whit))
+      ^-  (unit (pair hoon whit))
       =:  ^gen  gen
           ^wit  wit
         ==
@@ -6271,7 +6274,7 @@
       =<  apex
       |%
       ++  apex
-        ^-  (unit (pair twig whit))
+        ^-  (unit (pair hoon whit))
         =^  one  wit  prim
         =^  two  wit  senc(gen one)
         ?:  =(gen two) 
@@ -6281,7 +6284,7 @@
       ::  resolve body and label issues
       ::
       ++  prim
-        ^-  (pair twig whit)
+        ^-  (pair hoon whit)
         ?:  ?=(^ -.gen)  flam
         ?+  -.gen  flam
           $halo   flam
@@ -6311,7 +6314,7 @@
       ::  resolve variable issues
       ::
       ++  senc
-        ^-  (pair twig whit)
+        ^-  (pair hoon whit)
         ?:  ?=(^ -.gen)  flam
         ?+  -.gen  flam
           $ktts  ((helk -.gen +>.gen) p.gen)
@@ -6336,7 +6339,7 @@
       ++  doof
         |*  {pif/@tas suf/*}
         |=  pac/chap
-        ^-  (pair twig whit)
+        ^-  (pair hoon whit)
         :_  wit(lab ~, boy ~)
         =-  [pif - suf]
         ^-  chap
@@ -6346,26 +6349,26 @@
       ++  helk
         |*  {pif/@tas suf/*}
         |=  got/toga
-        ^-  (pair twig whit)
+        ^-  (pair hoon whit)
         =^  gef  wit  (tong got)
         [[pif gef suf] wit]
       ::
       ++  hulp
         |*  {pif/@tas suf/*}
         |=  hot/toro
-        ^-  (pair twig whit)
+        ^-  (pair hoon whit)
         =^  tog  wit  (tong p.hot)
         [[pif [tog q.hot] suf] wit] 
       ::
       ++  humm
         |*  {pif/@tas suf/*}
         |=  {wat/what cog/term}
-        ^-  (pair twig whit)
+        ^-  (pair hoon whit)
         =^  taw  wit  (grif cog wat)
         [[pif [taw cog] suf] wit] 
       ::
       ++  runk
-        ^-  (pair twig whit)
+        ^-  (pair hoon whit)
         ?~  boy  flam
         [[%halo boy gen] wit(boy ~)]
       ::
@@ -6388,7 +6391,7 @@
       --
     ::
     ++  graf
-      ::  ^-  (unit twig)
+      ::  ^-  (unit hoon)
       ::  =^  nex  wit  ((walk whit) wit grad)
       ::  ?:(gray ~ `nex)
       =^  nex  wit  ((walk whit) wit grad)
@@ -6399,14 +6402,14 @@
 ::::
 ::++  hail
 ::  |=  axe/axis
-::  =|  air/(list (pair wing twig))
+::  =|  air/(list (pair wing hoon))
 ::  |-  ^+  air
 ::  =+  hav=half
 ::  ?~  hav  [[[[%| 0 ~] [%& axe] ~] gen] air]
 ::  $(gen p.u.hav, axe (peg axe 2), air $(gen q.u.hav, axe (peg axe 3)))
 ::::
 ::++  half
-::  |-  ^-  (unit (pair twig twig))
+::  |-  ^-  (unit (pair hoon hoon))
 ::  ?+  gen  ~
 ::    {^ *}       `[p.gen q.gen]
 ::    {$dbug *}   $(gen q.gen)
@@ -6466,25 +6469,25 @@
       =+  :*  def=bile(gen i.p.gen)
               ^=  end  ^-  (list line)
               ~_  leaf+"book-foul"
-              %+  turn  `(list twig)`t.p.gen
-              |=(a/twig =+(bile(gen a) ?>(?=($& -<) ->)))
+              %+  turn  `(list hoon)`t.p.gen
+              |=(a/hoon =+(bile(gen a) ?>(?=($& -<) ->)))
           ==
       ?-  -.def
         $&  [%kelp p.def end]
         $|  ?~(end p.def [%fern p.def [%kelp end] ~])
       ==
     ::
-        {$bckt *}  [%bckt boil(gen p.gen) boil(gen q.gen)]
+        {$bckt *}  [%vine boil(gen p.gen) boil(gen q.gen)]
         {$bchp *}  [%weed [%brsg [~ ~] p.gen [%bunt [%tsgr [%$ 7] q.gen]]]]
         {$halo *}  [%plow p.gen boil(gen q.gen)]
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
-        {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
+        {$bcwt *}  =+  (turn p.gen |=(a/hoon boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
         {$bcsm *}  [%herb p.gen]
     ==
   ::
   ++  open
-    ^-  twig
+    ^-  hoon
     ?-    gen
         {$~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
@@ -6503,11 +6506,11 @@
           [%bust %null]                                 ::  ~
         :-  [%ktts %i [%sand 'tD' *@]]                  ::  :-  i=~~
         [%ktts %t [%limb %$]]                           ::  t=$
-      |-  ^-  twig                                      ::
+      |-  ^-  hoon                                      ::
       ?~  p.gen                                         ::
         [%bust %null]                                   ::  ~
       =+  res=$(p.gen t.p.gen)                          ::
-      ^-  twig                                          ::
+      ^-  hoon                                          ::
       ?@  i.p.gen                                       ::
         [[%sand 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
       :+  %tsls                                          ::
@@ -6517,7 +6520,7 @@
               [%limb %$]                                ::  $
             [%tsgr [%limb %v] p.i.p.gen]                 ::  =>(v {p.i.p.gen})
         [%ktts %b res]                                  ::  b={res}
-      ^-  twig                                          ::
+      ^-  hoon                                          ::
       :+  %brhp  [~ ~]                                  ::  |-
       :^    %wtpt                                       ::  ?@
           [%a ~]                                        ::  a
@@ -6571,13 +6574,13 @@
         {$clcb *}  [q.gen p.gen]
         {$clhp *}  [p.gen q.gen]
         {$clsg *}
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~  p.gen
         [%rock %n ~]
       [i.p.gen $(p.gen t.p.gen)]
     ::
         {$cltr *}
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~  p.gen
         [%zpzp ~]
       ?~  t.p.gen
@@ -6598,7 +6601,7 @@
       ::
 ::    ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
       =+  axe=6
-      |-  ^-  (list {wing twig})
+      |-  ^-  (list {wing hoon})
       ?~  r.gen  ~
       ?~  t.r.gen  [[[[%| 0 ~] [%& axe] ~] i.r.gen] ~]
       :-  [[[%| 0 ~] [%& (peg axe 2)] ~] i.r.gen]
@@ -6611,7 +6614,7 @@
         q.gen
       :+  %cnts
         (weld p.gen `wing`[[%& 2] ~])
-      (turn r.gen |=({p/wing q/twig} [p [%tsgr [%$ 3] q]]))
+      (turn r.gen |=({p/wing q/hoon} [p [%tsgr [%$ 3] q]]))
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(bunt al [%herb p.gen]) q.gen]
@@ -6631,8 +6634,8 @@
         :+  [%rock %$ p.gen]
           [%zpts q.gen]
         :-  %clsg
-        =+  nob=`(list twig)`~
-        |-  ^-  (list twig)
+        =+  nob=`(list hoon)`~
+        |-  ^-  (list hoon)
         ?~  r.gen
           nob
         [[[%rock %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
@@ -6658,10 +6661,10 @@
       ::
       ::REVIEW separate ap arms?
       =/  open-mane
-        |=  a/mane:twig
+        |=  a/mane:hoon
         ?@(a [%rock %tas a] [[%rock %tas -.a] [%rock %tas +.a]])
       =/  open-mart  
-        |=  {n/mane:twig v/(list beer:twig)} 
+        |=  {n/mane:hoon v/(list beer:hoon)} 
         [(open-mane n) %knit v]
       [[(open-mane n.g.p.gen) %clsg (turn a.g.p.gen open-mart)] %smts c.p.gen]
     ::
@@ -6674,7 +6677,7 @@
         $tape  [[%smfs p.i.p.gen] $(p.gen t.p.gen)]
         $cnhp  [%cnhp p.i.p.gen [$(p.gen t.p.gen)]~]
         $marl  =-  [%cndt [p.i.p.gen $(p.gen t.p.gen)] -]
-               ^-  twig
+               ^-  hoon
                :+  %tsbr  [%base %cell]
                :+  %brcn  *chap
                ^-  (map @ tomb)
@@ -6695,8 +6698,8 @@
           ^
         :+  %tsls
           p.gen
-        =+  yex=`(list twig)`q.gen
-        |-  ^-  twig
+        =+  yex=`(list hoon)`q.gen
+        |-  ^-  hoon
         ?-  yex
           {* $~}  [%tsgr [%$ 3] i.yex]
           {* ^}   [%cnhp [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
@@ -6706,12 +6709,12 @@
     ::
         {$smfs *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
         {$smsg *}                                       ::                  ;~
-      |-  ^-  twig
+      |-  ^-  hoon
       ?-  q.gen
           $~      ~_(leaf+"open-smsg" !!)
           ^
         :+  %tsgr  [%ktts %v %$ 1]                      ::  =>  v=.
-        |-  ^-  twig                                    ::
+        |-  ^-  hoon                                    ::
         ?:  ?=($~ t.q.gen)                              ::
           [%tsgr [%limb %v] i.q.gen]                    ::  =>(v {i.q.gen})
         :+  %tsls  [%ktts %a $(q.gen t.q.gen)]          ::  =+  ^=  a
@@ -6779,7 +6782,7 @@
         {$tsls *}  [%tsgr [p.gen [%$ 1]] q.gen]
         {$tshp *}  [%tsls q.gen p.gen]
         {$tssg *}
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~  p.gen    [%$ 1]
       ?~  t.p.gen  i.p.gen
       [%tsgr i.p.gen $(p.gen t.p.gen)]
@@ -6825,7 +6828,7 @@
         *           gen
     ==
   ::
-  ++  rake  ~>(%mean.[%leaf "rake-twig"] (need reek))
+  ++  rake  ~>(%mean.[%leaf "rake-hoon"] (need reek))
   ++  reek
     ^-  (unit wing)
     ?+  gen  ~
@@ -6839,26 +6842,26 @@
     ^-  term
     =+  wig=rake
     ?.  ?=({@ $~} wig)
-      ~>(%mean.[%leaf "rusk-twig"] !!)
+      ~>(%mean.[%leaf "rusk-hoon"] !!)
     i.wig
   ::
   ++  walk                                              ::  forward traverse
     |*  life/mold
     |=  $:  vit/life
             $=  mac
-            $-  $:  twig
+            $-  $:  hoon
                     life
-                    $-({? twig life} {twig life})
+                    $-({? hoon life} {hoon life})
                 ==
-            (unit (pair twig life))
+            (unit (pair hoon life))
         ==
-    ^-  {twig life}
+    ^-  {hoon life}
     =/  use  &
     =<  apex 
     |%  
     ++  apex
-      |-  ^-  {twig life}
-      =*  aid  |=  {use/? gen/twig vit/life} 
+      |-  ^-  {hoon life}
+      =*  aid  |=  {use/? gen/hoon vit/life} 
                ^$(use use, gen gen, vit vit)
       =/  gun  ?:(use (mac gen vit aid) ~)
       ?^  gun  u.gun
@@ -6992,7 +6995,7 @@
       (twin expr expr)
     ::
     ++  expr
-      |=  p/twig
+      |=  p/hoon
       ^$(gen p)
     ::
     ++  heel
@@ -7069,7 +7072,7 @@
       (trio noop expr expr)
     ::
     ++  toad
-      |=  bud/$@(term {p/term q/twig})
+      |=  bud/$@(term {p/term q/hoon})
       ?@  bud  [bud vit]
       (lead p.bud (expr q.bud))
     ::
@@ -7082,7 +7085,7 @@
       (lead p.bud %.(q.bud (twin (raid (twin noop twee)) (moto expr))))
     ::
     ++  twee
-      |=  bud/(unit twig)
+      |=  bud/(unit hoon)
       ?~  bud  [~ vit]
       (lead ~ (expr u.bud))
     ::
@@ -7138,15 +7141,15 @@
       %toss   toss
       %zpgr   wrap
     ==
-  =+  :*  fan=*(set {span twig})
-          rib=*(set {span span twig})
+  =+  :*  fan=*(set {type hoon})
+          rib=*(set {type type hoon})
           vet=`?`&
           fab=`?`&
       ==
-  =+  sut=`span`%noun
+  =+  sut=`type`%noun
   |%
   ++  burn
-    =+  gil=*(set span)
+    =+  gil=*(set type)
     |-  ^-  (unit)
     ?-    sut
         {$atom *}   q.sut
@@ -7173,19 +7176,19 @@
   ::
   ++  busk
     ~/  %busk
-    |=  gen/twig
-    ^-  span
+    |=  gen/hoon
+    ^-  type
     [%face [~ ~ [gen ~]] sut]
   ::
   ++  buss
     ~/  %buss
-    |=  {{wat/what cog/term} gen/twig}
-    ^-  span
+    |=  {{wat/what cog/term} gen/hoon}
+    ^-  type
     [%face [wat [[cog ~ ~ gen] ~ ~] ~] sut]
   ::
   ++  conk
     |=  got/toga
-    ^-  span
+    ^-  type
     ?@  got  [%face [~ got] sut]
     ?-  -.got
       $0  sut
@@ -7198,12 +7201,12 @@
   ::
   ++  crop
     ~/  %crop
-    |=  ref/span
-    =+  bix=*(set {span span})
+    |=  ref/type
+    =+  bix=*(set {type type})
     =<  dext
     |%
     ++  dext
-      ^-  span
+      ^-  type
       ~_  leaf+"crop"
       ::  ~_  (dunk 'dext: sut')
       ::  ~_  (dunk(sut ref) 'dext: ref')
@@ -7229,7 +7232,7 @@
       ::
           {$core *}  ?:(?=(?({$atom *} {$cell *}) ref) sut sint)
           {$face *}  (face p.sut dext(sut q.sut))
-          {$fork *}  (fork (turn ~(tap in p.sut) |=(span dext(sut +<))))
+          {$fork *}  (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
           {$help *}  (help p.sut dext(sut q.sut))
           {$hold *}  ?<  (~(has in bix) [sut ref])
                      dext(sut repo, bix (~(put in bix) [sut ref]))
@@ -7238,12 +7241,12 @@
       ==
     ::
     ++  sint
-      ^-  span
+      ^-  type
       ?+    ref    !!
         {$core *}  sut
         {$face *}  dext(ref repo(sut ref))
         {$fork *}  =+  yed=~(tap in p.ref)
-                   |-  ^-  span
+                   |-  ^-  type
                    ?~  yed  sut
                    $(yed t.yed, sut dext(ref i.yed))
         {$hold *}  dext(ref repo(sut ref))
@@ -7251,14 +7254,14 @@
     --
   ::
   ++  cool
-    |=  {pol/? hyp/wing ref/span}
-    ^-  span
+    |=  {pol/? hyp/wing ref/type}
+    ^-  type
     =+  fid=(find %both hyp)
     ?-  -.fid
       $|  sut
       $&  =<  q
           %+  take  p.p.fid
-          |=(a/span ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
+          |=(a/type ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
     ==
   ::
   ++  duck  ^-(tank ~(duck us sut))
@@ -7270,10 +7273,10 @@
     [[%leaf (mesc (trip paz))] duck ~]
   ::
   ++  elbo
-    |=  {lop/palo rig/(list (pair wing twig))}
-    ^-  span
+    |=  {lop/palo rig/(list (pair wing hoon))}
+    ^-  type
     ?:  ?=($& -.q.lop)
-      |-  ^-  span
+      |-  ^-  type
       ?~  rig
         p.q.lop
       =+  zil=(play q.i.rig)
@@ -7295,13 +7298,13 @@
     ==
   ::
   ++  ergo
-    |=  {lop/palo rig/(list (pair wing twig))}
-    ^-  (pair span nock)
+    |=  {lop/palo rig/(list (pair wing hoon))}
+    ^-  (pair type nock)
     =+  axe=(tend p.lop)
     =|  hej/(list (pair axis nock))
     ?:  ?=($& -.q.lop)
       =-  [p.- (hike axe q.-)]
-      |-  ^-  (pair span (list (pair axis nock)))
+      |-  ^-  (pair type (list (pair axis nock)))
       ?~  rig
         [p.q.lop hej]
       =+  zil=(mint %noun q.i.rig)
@@ -7313,7 +7316,7 @@
       ==
     =+  hag=~(tap in q.q.lop)
     =-  [(fire p.-) [%9 p.q.lop (hike axe q.-)]]
-    |-  ^-  (pair (list (pair span foot)) (list (pair axis nock)))
+    |-  ^-  (pair (list (pair type foot)) (list (pair axis nock)))
     ?~  rig
       [hag hej]
     =+  zil=(mint %noun q.i.rig)
@@ -7325,11 +7328,11 @@
     ==
   ::
   ++  endo
-    |=  {lop/(pair palo palo) dox/span rig/(list (pair wing twig))}
-    ^-  (pair span span)
+    |=  {lop/(pair palo palo) dox/type rig/(list (pair wing hoon))}
+    ^-  (pair type type)
     ?:  ?=($& -.q.p.lop)
       ?>  ?=($& -.q.q.lop)
-      |-  ^-  (pair span span)
+      |-  ^-  (pair type type)
       ?~  rig
         [p.q.p.lop p.q.q.lop]
       =+  zil=(mull %noun dox q.i.rig)
@@ -7346,7 +7349,7 @@
     ?>  =(p.q.p.lop p.q.q.lop)
     =+  hag=[p=~(tap in q.q.p.lop) q=~(tap in q.q.q.lop)]
     =-  [(fire p.-) (fire(vet |) q.-)]
-    |-  ^-  (pair (list (pair span foot)) (list (pair span foot)))
+    |-  ^-  (pair (list (pair type foot)) (list (pair type foot)))
     ?~  rig
       hag
     =+  zil=(mull %noun dox q.i.rig)
@@ -7365,15 +7368,15 @@
       |%
       ++  deft                                          ::  generic
         |%
-        ++  bath  *                                     ::  leg match span
-        ++  claw  *                                     ::  arm match span
+        ++  bath  *                                     ::  leg match type
+        ++  claw  *                                     ::  arm match type
         ++  form  |*({* *} p=+<-)                       ::  attach build state
         ++  skin  |*(p/* p)                             ::  reveal build state
         ++  meat  |*(p/* p)                             ::  remove build state
         --
       ++  make                                          ::  for mint
         |%
-        ++  bath  span                                  ::  leg match span
+        ++  bath  type                                  ::  leg match type
         ++  claw  onyx                                  ::  arm
         ++  form  |*({* *} [p=+<- q=+<+])               ::
         ++  skin  |*({p/* q/*} q)                       ::  unwrap baggage
@@ -7398,7 +7401,7 @@
       ++  deft
         =>  (def deft:arc)
         |%
-        ++  halp  $-(twig fleg)
+        ++  halp  $-(hoon fleg)
         ++  vant
           |%  ++  trep  $-({bath wing bath} {axis bath})
               ++  tasp  $-({{axis bath} fleg foat} foat)
@@ -7413,14 +7416,14 @@
       ++  make
         =>  (def make:arc)
         |%
-        ++  halp  |~  a/twig
+        ++  halp  |~  a/hoon
                   ^-  fleg
                   (mint %noun a)
         ++  vant
-          |%  ++  trep  |=  {a/span b/wing c/span}
-                        ^-  {axis span}
+          |%  ++  trep  |=  {a/type b/wing c/type}
+                        ^-  {axis type}
                         (tack(sut a) b c)
-              ++  tasp  |=  {a/(pair axis span) b/fleg c/foat}
+              ++  tasp  |=  {a/(pair axis type) b/fleg c/foat}
                         ^-  foat
                         [q.a [[p.a (skin b)] (skin c)]]
               ++  tyle  |=(foat +<)
@@ -7460,7 +7463,7 @@
         =+  rame
         |%  +-  $
         =>  +<
-        |=  {rum/clom rig/(list (pair wing twig))}
+        |=  {rum/clom rig/(list (pair wing hoon))}
         ^-  foat
         %-  tyle
         |-  ^-  ceut
@@ -7477,17 +7480,17 @@
     =>  inc
     |%
     ++  echo
-      |=  {rum/bath rig/(list (pair wing twig))}
+      |=  {rum/bath rig/(list (pair wing hoon))}
       (ecbo rum rig)
     ::
     ++  ecmo
-      |=  {hag/claw rig/(list (pair wing twig))}
+      |=  {hag/claw rig/(list (pair wing hoon))}
       (eclo hag rig)
     --  --
   ::
   ++  etco
-    |=  {lop/palo rig/(list (pair wing twig))}
-    ^-  (pair span nock)
+    |=  {lop/palo rig/(list (pair wing hoon))}
+    ^-  (pair type nock)
     =+  cin=(oc (bin:ad make:lib:ad))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =+  axe=(tend p.lop)
@@ -7498,25 +7501,25 @@
     (ecmo:cin ~(tap in q.q.lop) rig)
   ::
   ++  et
-    |_  {hyp/wing rig/(list (pair wing twig))}
+    |_  {hyp/wing rig/(list (pair wing hoon))}
     ::
     ++  play
-      ^-  span
+      ^-  type
       =+  lug=(find %read hyp)
-      ?:  ?=($| -.lug)  ~>(%mean.[%leaf "twig"] ?>(?=($~ rig) p.p.lug))
+      ?:  ?=($| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=($~ rig) p.p.lug))
       (elbo p.lug rig)
     ::
     ++  mint
-      |=  gol/span
-      ^-  (pair span nock)
+      |=  gol/type
+      ^-  (pair type nock)
       =+  lug=(find %read hyp)
-      ?:  ?=($| -.lug)  ~>(%mean.[%leaf "twig"] ?>(?=($~ rig) p.lug))
+      ?:  ?=($| -.lug)  ~>(%mean.[%leaf "hoon"] ?>(?=($~ rig) p.lug))
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (etco p.lug rig)
     ::
     ++  mull
-      |=  {gol/span dox/span}
-      ^-  {span span}
+      |=  {gol/type dox/type}
+      ^-  {type type}
       =+  lug=[p=(find %read hyp) q=(find(sut dox) %read hyp)]
       ?:  ?=($| -.p.lug)
         ?>   &(?=($| -.q.lug) ?=($~ rig))
@@ -7528,31 +7531,31 @@
   ::
   ++  epla
     ~/  %epla
-    |=  {hyp/wing rig/(list (pair wing twig))}
-    ^-  span
+    |=  {hyp/wing rig/(list (pair wing hoon))}
+    ^-  type
     ~(play et hyp rig)
   ::
   ++  emin
     ~/  %emin
-    |=  {gol/span hyp/wing rig/(list (pair wing twig))}
-    ^-  (pair span nock)
+    |=  {gol/type hyp/wing rig/(list (pair wing hoon))}
+    ^-  (pair type nock)
     (~(mint et hyp rig) gol)
   ::
   ++  emul
     ~/  %emul
-    |=  {gol/span dox/span hyp/wing rig/(list (pair wing twig))}
-    ^-  (pair span span)
+    |=  {gol/type dox/type hyp/wing rig/(list (pair wing hoon))}
+    ^-  (pair type type)
     (~(mull et hyp rig) gol dox)
   ::
   ++  felt
     ~/  %felt
     |=  lap/opal
-    ^-  span
+    ^-  type
     ?-  -.lap
       $&  p.lap
       $|  %-  fire
           %+  turn  ~(tap in q.lap)
-          |=  {a/span b/foot}
+          |=  {a/type b/foot}
           [a [%ash %$ 1]]
     ==
   ::
@@ -7566,7 +7569,7 @@
                     (pair what palo)                    ::  arm or leg
                   %+  each                              ::  abnormal
                     @ud                                 ::  unmatched
-                  (pair what (pair span nock))          ::  synthetic
+                  (pair what (pair type nock))          ::  synthetic
         --
     ^-  pony
     ?~  hyp
@@ -7590,7 +7593,7 @@
           ==
       ?:  ?=($& -.heg)
         [%& ~ [`p.heg lon] %& (peek way p.heg)]
-      =|  gil/(set span)
+      =|  gil/(set type)
       =<  $
       |%  ++  here  ?:  =(0 p.heg)
                       [%& ~ [~ `axe lon] %& sut]
@@ -7688,7 +7691,7 @@
                 ?~  fid  ~
                 ?:  ?=({$| $& *} fid)
                   $(q.zot t.q.zot, p.heg p.p.fid)
-                =+  ^-  {wat/what vat/(pair span nock)}
+                =+  ^-  {wat/what vat/(pair type nock)}
                     ?-    -.fid
                       $&  [p.p.fid (fine %& q.p.fid)]
                       $|  [p.p.p.fid (fine %| q.p.p.fid)]
@@ -7697,7 +7700,7 @@
               --
             ::
                 {$fork *}
-              =+  wiz=(turn ~(tap in p.sut) |=(a/span ^$(sut a)))
+              =+  wiz=(turn ~(tap in p.sut) |=(a/type ^$(sut a)))
               ?~  wiz  ~
               |-  ^-  pony
               ?~  t.wiz  i.wiz
@@ -7727,7 +7730,7 @@
   ::
   ++  fund
     ~/  %fund
-    |=  {way/vial gen/twig}
+    |=  {way/vial gen/hoon}
     ^-  port
     =+  hup=~(reek ap gen)
     ?~  hup
@@ -7737,27 +7740,27 @@
   ++  fine
     ~/  %fine
     |=  tor/port
-    ^-  (pair span nock)
+    ^-  (pair type nock)
     ?-  -.tor
       $|  p.tor
       $&  =+  axe=(tend p.p.tor)
           ?-  -.q.p.tor
-            $&  [`span`p.q.p.tor %0 axe]
+            $&  [`type`p.q.p.tor %0 axe]
             $|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
     ==    ==
   ::
   ++  fire
-    |=  hag/(list {p/span q/foot})
-    ^-  span
+    |=  hag/(list {p/type q/foot})
+    ^-  type
     ?:  ?=({{* {$elm $~ $1}} $~} hag)
       p.i.hag
     %-  fork
     %+  turn
       hag.$
-    |=  {p/span q/foot}
+    |=  {p/type q/foot}
     :-  %hold
     ?.  ?=({$core *} p)
-      ~_  (dunk %fire-span)
+      ~_  (dunk %fire-type)
       ~>(%mean.[%leaf "fire-core"] !!)
     =+  dox=[%core q.q.p q.p]
     ?:  ?=($ash -.q)
@@ -7777,7 +7780,7 @@
   ++  fish
     ~/  %fish
     |=  axe/axis
-    =+  vot=*(set span)
+    =+  vot=*(set type)
     |-  ^-  nock
     ?-  sut
         $void       [%1 1]
@@ -7805,9 +7808,9 @@
   ::
   ++  fuse
     ~/  %fuse
-    |=  ref/span
-    =+  bix=*(set {span span})
-    |-  ^-  span
+    |=  ref/type
+    =+  bix=*(set {type type})
+    |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
     ?-    sut
@@ -7832,7 +7835,7 @@
     ::
         {$core *}  $(sut repo)
         {$face *}  (face p.sut $(sut q.sut))
-        {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+        {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$help *}  (help p.sut $(sut q.sut))
         {$hold *}
       ?:  (~(has in bix) [sut ref])
@@ -7845,7 +7848,7 @@
   ::
   ++  gain
     ~/  %gain
-    |=  gen/twig  ^-  span
+    |=  gen/hoon  ^-  type
     (chip & gen)
   ::
   ++  harp
@@ -7880,12 +7883,12 @@
   ::
   ++  lose
     ~/  %lose
-    |=  gen/twig  ^-  span
+    |=  gen/hoon  ^-  type
     (chip | gen)
   ::
   ++  chip
     ~/  %chip
-    |=  {how/? gen/twig}  ^-  span
+    |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
       (cool how q.gen (play ~(bunt al [%herb p.gen])))
     ?:  ?&(how ?=({$wtpm *} gen))
@@ -7897,10 +7900,10 @@
   ::
   ++  mint
     ~/  %mint
-    |=  {gol/span gen/twig}
-    ^-  {p/span q/nock}
+    |=  {gol/type gen/hoon}
+    ^-  {p/type q/nock}
     ~&  %pure-mint
-    |^  ^-  {p/span q/nock}
+    |^  ^-  {p/type q/nock}
     ?:  ?&(=(%void sut) !?=({$dbug *} gen))
       ?.  |(!vet ?=({$lost *} gen) ?=({$zpzp *} gen))
         ~>(%mean.[%leaf "mint-vain"] !!)
@@ -8020,14 +8023,14 @@
         {$zpsm *}
       =+  vos=$(gol %noun, gen q.gen)
       =+  ref=p:$(gol %noun, gen p.gen)
-      ?>  (~(nest ut p:!>(*span)) & ref)
+      ?>  (~(nest ut p:!>(*type)) & ref)
       [(nice (cell ref p.vos)) (cons [%1 p.vos] q.vos)]
     ::
         {$zpgr *}
       =+  vat=$(gen p.gen)
       %=    $
           gen
-        :-  [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 p.vat]] ~]
+        :-  [%cnhp [%limb %onan] [%hand p:!>(*type) [%1 p.vat]] ~]
         [%hand p.vat q.vat]
       ==
     ::
@@ -8042,14 +8045,14 @@
     ==
     ::
     ++  nice
-      |=  typ/span
+      |=  typ/type
       ~_  leaf+"mint-nice"
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/twig wad/chap dom/(map @ tomb)}
-      ^-  {p/span q/nock}
+      |=  {mel/vair ruf/hoon wad/chap dom/(map @ tomb)}
+      ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
       =+  toc=(core p.dan [%gold p.dan wad [~ dom]])
       =+  dez=(hope(sut toc) dom)
@@ -8058,14 +8061,14 @@
     --
   ::
   ++  moot
-    =+  gil=*(set span)
+    =+  gil=*(set type)
     |-  ^-  ?
     ?-  sut
       {$atom *}  |
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
       {$face *}  $(sut q.sut)
-      {$fork *}  (lien ~(tap in p.sut) |=(span ^$(sut +<)))
+      {$fork *}  (lien ~(tap in p.sut) |=(type ^$(sut +<)))
       {$help *}  $(sut q.sut)
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
       $noun      |
@@ -8074,8 +8077,8 @@
   ::
   ++  mull
     ~/  %mull
-    |=  {gol/span dox/span gen/twig}
-    |^  ^-  {p/span q/span}
+    |=  {gol/type dox/type gen/hoon}
+    |^  ^-  {p/type q/type}
     ?:  =(%void sut)
       ~>(%mean.[%leaf "mull-none"] !!)
     ?-    gen
@@ -8139,7 +8142,7 @@
     ::
         {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
-      =+  ^=  hiq  ^-  {p/span q/span}
+      =+  ^=  hiq  ^-  {p/type q/type}
           =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
           ?:  =(%void p.fex)
             :-  %void
@@ -8149,7 +8152,7 @@
           ?:  =(%void q.fex)
             ~>(%mean.[%leaf "mull-bonk-b"] !!)
           $(sut p.fex, dox q.fex, gen q.gen)
-      =+  ^=  ran  ^-  {p/span q/span}
+      =+  ^=  ran  ^-  {p/type q/type}
           =+  wux=[p=(lose p.gen) q=(lose(sut dox) p.gen)]
           ?:  =(%void p.wux)
             :-  %void
@@ -8198,11 +8201,11 @@
     ==
     ::
     ++  beth
-      |=  typ/span
+      |=  typ/type
       [(nice typ) typ]
     ::
     ++  nice
-      |=  typ/span
+      |=  typ/type
       ::  ~_  (dunk(sut gol) 'need')
       ::  ~_  (dunk(sut typ) 'have')
       ~_  leaf+"mull-nice"
@@ -8210,9 +8213,9 @@
       typ
     ::
     ++  grow
-      |=  {mel/vair ruf/twig wad/chap dom/(map @ tomb)}
+      |=  {mel/vair ruf/hoon wad/chap dom/(map @ tomb)}
       ~_  leaf+"mull-grow"
-      ^-  {p/span q/span}
+      ^-  {p/type q/type}
       =+  dan=^$(gen ruf, gol %noun)
       =+  ^=  toc  :-  p=(core p.dan [%gold p.dan wad [~ dom]])
                    q=(core q.dan [%gold q.dan wad [~ dom]])
@@ -8250,17 +8253,17 @@
         {* * *}     [dov $(dom l.dom) $(dom r.dom)]
       ==
     --
-  ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
+  ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
   ::                                                    ::
   ++  miss                                              ::  nonintersection
-    |=  $:  ::  ref: symmetric span
+    |=  $:  ::  ref: symmetric type
             ::
-            ref/span
+            ref/type
         ==
     ::  intersection of sut and ref is empty
     ::
     ^-  ?
-    =|  gil/(set (set span))
+    =|  gil/(set (set type))
     =<  dext
     |%
     ++  dext
@@ -8275,10 +8278,10 @@
         {$cell *}  sint
         {$core *}  sint(sut [%cell %noun %noun])
         {$fork *}  %+  levy  ~(tap in p.sut)
-                   |=(span dext(sut +<))
+                   |=(type dext(sut +<))
         {$face *}  dext(sut q.sut) 
         {$help *}  dext(sut q.sut)
-        {$hold *}  =+  (~(gas in *(set span)) `(list span)`[sut ref ~])
+        {$hold *}  =+  (~(gas in *(set type)) `(list type)`[sut ref ~])
                    ?:  (~(has in gil) -)
                       &
                    %=  dext
@@ -8297,13 +8300,13 @@
                        dext(sut q.sut, ref q.ref)
       ==           ==
     --
-  ++  mite  |=(ref/span |((nest | ref) (nest(sut ref) & sut)))
+  ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
   ++  nest
     ~/  %nest
-    |=  {tel/? ref/span}
-    =|  $:  seg/(set span)                              ::  degenerate sut
-            reg/(set span)                              ::  degenerate ref
-            gil/(set {p/span q/span})                   ::  assume nest
+    |=  {tel/? ref/type}
+    =|  $:  seg/(set type)                              ::  degenerate sut
+            reg/(set type)                              ::  degenerate ref
+            gil/(set {p/type q/type})                   ::  assume nest
         ==
     =<  dext
     |%
@@ -8376,7 +8379,7 @@
                    ==
         {$face *}  dext(sut q.sut)
         {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
-                   (lien ~(tap in p.sut) |=(span dext(tel |, sut +<)))
+                   (lien ~(tap in p.sut) |=(type dext(tel |, sut +<)))
         {$help *}  dext(sut q.sut)
         {$hold *}  ?:  (~(has in seg) sut)  |
                    ?:  (~(has in gil) [sut ref])  &
@@ -8396,7 +8399,7 @@
         {$cell *}   |
         {$core *}   dext(ref repo(sut ref))
         {$face *}   dext(ref q.ref)
-        {$fork *}   (levy ~(tap in p.ref) |=(span sint(ref +<)))
+        {$fork *}   (levy ~(tap in p.ref) |=(type sint(ref +<)))
         {$help *}   dext(ref q.ref)
         {$hold *}   ?:  (~(has in reg) ref)  &
                     ?:  (~(has in gil) [sut ref])  &
@@ -8410,12 +8413,12 @@
   ++  peek
     ~/  %peek
     |=  {way/?($read $rite $both $free) axe/axis}
-    ^-  span
+    ^-  type
     ?:  =(1 axe)
       sut
     =+  [now=(cap axe) lat=(mas axe)]
-    =+  gil=*(set span)
-    |-  ^-  span
+    =+  gil=*(set type)
+    |-  ^-  type
     ?-    sut
         {$atom *}   %void
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
@@ -8431,7 +8434,7 @@
         ?.(con.pec %noun ^$(sut p.sut, axe 3))
       ==
     ::
-        {$fork *}   (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+        {$fork *}   (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$hold *}
       ?:  (~(has in gil) sut)
         %void
@@ -8456,8 +8459,8 @@
   ++  play
     ~/  %play
     =>  .(vet |)
-    |=  gen/twig
-    ^-  span
+    |=  gen/hoon
+    ^-  type
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$ktcn *}  $(fab |, gen p.gen)
@@ -8465,10 +8468,10 @@
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  $(gen [%bunt p.gen])
       {$dtls *}  [%atom %$ ~]
-      {$rock *}  |-  ^-  span
+      {$rock *}  |-  ^-  type
                  ?@  q.gen  [%atom p.gen `q.gen]
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
-      {$sand *}  |-  ^-  span
+      {$sand *}  |-  ^-  type
                  ?@  q.gen
                    ?:  =(%n p.gen)  ?>(=(0 q.gen) [%atom p.gen ~ q.gen])
                    ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
@@ -8499,7 +8502,7 @@
       {$zpcm *}  (play p.gen)
       {$zpgr *}  %=    $
                      gen
-                   [%cnhp [%limb %onan] [%hand p:!>(*span) [%1 $(gen p.gen)]] ~]
+                   [%cnhp [%limb %onan] [%hand p:!>(*type) [%1 $(gen p.gen)]] ~]
                  ==
       {$lost *}  %void
       {$zpsm *}  (cell $(gen p.gen) $(gen q.gen))
@@ -8515,18 +8518,18 @@
   ++  redo                                              ::  refurbish faces
     |=  $:  ::  ref: raw payload
             ::
-            ref/span
+            ref/type
         ==
-    ::  :span: subject refurbished to reference namespace
+    ::  :type: subject refurbished to reference namespace
     ::
-    ^-  span
+    ^-  type
     ::  hos: subject tool stack
     ::  wec: reference tool stack set
     ::  gil: repetition set
     ::
     =|  hos/(list tool)
     =/  wec/(set (list tool))  [~ ~ ~]
-    =|  gil/(set (pair span span))
+    =|  gil/(set (pair type type))
     =<  ::  errors imply subject/reference mismatch
         ::
         ~|  %redo-match
@@ -8586,9 +8589,9 @@
       (weld hos (slag lip har))
     ::                                                  ::
     ++  dext                                            ::  subject traverse
-      ::  :span: refurbished subject
+      ::  :type: refurbished subject
       ::
-      ^-  span
+      ^-  type
       ::  check for trivial cases
       ::
       ?:  ?|  =(sut ref) 
@@ -8637,7 +8640,7 @@
           {$fork *}
         ::  reconstruct each case in fork 
         ::
-        (fork (turn ~(tap in p.sut) |=(span dext(sut +<))))
+        (fork (turn ~(tap in p.sut) |=(type dext(sut +<))))
       ::
           {$hold *}
         ::  reduce to hard 
@@ -8660,8 +8663,8 @@
       ==
     ::                                                  ::
     ++  done                                            ::  complete assembly
-      ^-  span
-      ::  :span: subject refurbished 
+      ^-  type
+      ::  :type: subject refurbished 
       ::
       ::  lov: combined face stack
       ::
@@ -8675,7 +8678,7 @@
           (need lov)
       ::  recompose faces
       ::
-      |-  ^-  span
+      |-  ^-  type
       ?~  lov  sut
       $(lov t.lov, sut (face [~ i.lov] sut))
     ::                                                  ::
@@ -8709,7 +8712,7 @@
             ::  ~>  %slog.[0 (dunk(sut (fork ->)) 'fork: pro')]
             +(wec -<, ref (fork ->))
         =/  moy  ~(tap in p.ref)
-        |-  ^-  (pair (set (list tool)) (list span))
+        |-  ^-  (pair (set (list tool)) (list type))
         ?~  moy  [~ ~]
         ::  head recurse
         ::
@@ -8729,7 +8732,7 @@
     --
   ::
   ++  repo
-    ^-  span
+    ^-  type
     ?-  sut
       {$core *}   [%cell %noun p.sut]
       {$face *}   q.sut
@@ -8741,33 +8744,33 @@
   ::
   ++  rest
     ~/  %rest
-    |=  leg/(list {p/span q/twig})
-    ^-  span
-    ?:  (lien leg |=({p/span q/twig} (~(has in fan) [p q])))
+    |=  leg/(list {p/type q/hoon})
+    ^-  type
+    ?:  (lien leg |=({p/type q/hoon} (~(has in fan) [p q])))
       ~>(%mean.[%leaf "rest-loop"] !!)
     =>  .(fan (~(gas in fan) leg))
     %-  fork
     %~  tap  in
-      %-  ~(gas in *(set span))
-      (turn leg |=({p/span q/twig} (play(sut p) q)))
+      %-  ~(gas in *(set type))
+      (turn leg |=({p/type q/hoon} (play(sut p) q)))
     ==
   ::
   ++  take
-    |=  {vit/vein duz/$-(span span)}
-    ^-  (pair axis span)
+    |=  {vit/vein duz/$-(type type)}
+    ^-  (pair axis type)
     :-  (tend vit)
     =.  vit  (flop vit)
-    |-  ^-  span
+    |-  ^-  type
     ?~  vit  (duz sut)
     ?~  i.vit
-      |-  ^-  span
+      |-  ^-  type
       ?+  sut      ^$(vit t.vit)
         {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
-        {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+        {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         {$hold *}  $(sut repo)
       ==
-    =+  vil=*(set span)
-    |-  ^-  span
+    =+  vil=*(set type)
+    |-  ^-  type
     ?:  =(1 u.i.vit)
       ^$(vit t.vit)
     =+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
@@ -8782,7 +8785,7 @@
                    $(sut repo)
                  (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
-      {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+      {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$help *}  (help p.sut $(sut q.sut))
       {$hold *}  ?:  (~(has in vil) sut)
                    %void
@@ -8790,11 +8793,11 @@
     ==
   ::
   ++  tack
-    |=  {hyp/wing mur/span}
+    |=  {hyp/wing mur/type}
     ~_  (show [%c %tack] %l hyp)
     =+  fid=(find %rite hyp)
     ?>  ?=($& -.fid)
-    (take p.p.fid |=(span mur))
+    (take p.p.fid |=(type mur))
   ::
   ++  tend
     |=  vit/vein
@@ -8803,11 +8806,11 @@
   ::
   ++  toss
     ~/  %toss
-    |=  {hyp/wing mur/span men/(list {p/span q/foot})}
-    ^-  {p/axis q/(list {p/span q/foot})}
+    |=  {hyp/wing mur/type men/(list {p/type q/foot})}
+    ^-  {p/axis q/(list {p/type q/foot})}
     =-  [(need p.wib) q.wib]
     ^=  wib
-    |-  ^-  {p/(unit axis) q/(list {p/span q/foot})}
+    |-  ^-  {p/(unit axis) q/(list {p/type q/foot})}
     ?~  men
       [*(unit axis) ~]
     =+  geq=(tack(sut p.i.men) hyp mur)
@@ -8818,12 +8821,12 @@
     ~/  %zpgr
     |=  yoz/?($lead $iron $zinc)
     ~_  leaf+"wrap"
-    ^-  span
+    ^-  type
     ?+  sut  sut
       {$cell *}  (cell $(sut p.sut) $(sut q.sut))
       {$core *}  ?>(|(=(%gold p.q.sut) =(%lead yoz)) sut(p.q yoz))
       {$face *}  (face p.sut $(sut q.sut))
-      {$fork *}  (fork (turn ~(tap in p.sut) |=(span ^$(sut +<))))
+      {$fork *}  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       {$help *}  (help p.sut $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
@@ -8834,7 +8837,7 @@
       ++  wine                                          ::
                 $@  $?  $noun                           ::
                         $path                           ::
-                        $span                           ::
+                        $type                           ::
                         $void                           ::
                         $wall                           ::
                         $wool                           ::
@@ -8852,7 +8855,7 @@
                     {$unit p/term q/wine}               ::
                 ==                                      ::
       --
-  |_  sut/span
+  |_  sut/type
   ++  dash
       |=  {mil/tape lim/char}  ^-  tape
       :-  lim
@@ -8882,7 +8885,7 @@
       ?-    q.ham
           $noun      :_(gid [%leaf '*' ~])
           $path      :_(gid [%leaf '/' ~])
-          $span      :_(gid [%leaf '#' 't' ~])
+          $type      :_(gid [%leaf '#' 't' ~])
           $void      :_(gid [%leaf '#' '!' ~])
           $wool      :_(gid [%leaf '*' '"' '"' ~])
           $wall      :_(gid [%leaf '*' '\'' '\'' ~])
@@ -8966,7 +8969,7 @@
       ?>  ?=(@ -.lum)
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
-        $span
+        $type
       =+  tyr=|.((dial dole))
       =+  vol=tyr(sut lum)
       =+  cis=((hard tank) .*(vol -:vol))
@@ -9180,15 +9183,15 @@
   ::
   ++  dole
     ^-  cape
-    =+  gil=*(set span)
-    =+  dex=[p=*(map span @) q=*(map @ wine)]
+    =+  gil=*(set type)
+    =+  dex=[p=*(map type @) q=*(map @ wine)]
     =<  [q.p q]
-    |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
+    |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
-    ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
-    ?:  (~(meet ut sut) -:!>(*span))
-      [dex %span]
+    ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
+    ?:  (~(meet ut sut) -:!>(*type))
+      [dex %type]
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
@@ -9235,7 +9238,7 @@
         {$fork *}
       =+  yed=~(tap in p.sut)
       =-  [p [%bcwt q]]
-      |-  ^-  {p/{p/(map span @) q/(map @ wine)} q/(list wine)}
+      |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/(list wine)}
       ?~  yed
         [dex ~]
       =+  mor=$(yed t.yed)
@@ -9265,32 +9268,32 @@
   |=  vax/vase  ^-  tape
   ~(ram re (sell vax))
 ::
-++  seem  |=(toy/typo `span`toy)                        ::  promote typo
+++  seem  |=(toy/typo `type`toy)                        ::  promote typo
 ++  seer  |=(vix/vise `vase`vix)                        ::  promote vise
 ++  sell                                                ::  tank pretty-print
   |=  vax/vase  ^-  tank
   ~|  %sell
   (~(deal us p.vax) q.vax)
 ::
-++  skol                                                ::  $-(span tank) for ~!
-  |=  typ/span  ^-  tank
+++  skol                                                ::  $-(type tank) for ~!
+  |=  typ/type  ^-  tank
   ~(duck ut typ)
 ::
 ++  slam                                                ::  slam a gate
   |=  {gat/vase sam/vase}  ^-  vase
-  =+  :-  ^=  typ  ^-  span
+  =+  :-  ^=  typ  ^-  type
           [%cell p.gat p.sam]
-      ^=  gen  ^-  twig
+      ^=  gen  ^-  hoon
       [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun .*([q.gat q.sam] q.gun)]
 ::
 ++  slab                                                ::  test if contains
-  |=  {cog/@tas typ/span}
+  |=  {cog/@tas typ/type}
   =(& -:(~(find ut typ) %free [cog ~]))
 ::
 ++  slap
-  |=  {vax/vase gen/twig}  ^-  vase                     ::  untyped vase .*
+  |=  {vax/vase gen/hoon}  ^-  vase                     ::  untyped vase .*
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
@@ -9307,13 +9310,13 @@
   |=  old/vise  ^-  vase
   old
 ::
-++  slit                                                ::  span of slam
-  |=  {gat/span sam/span}
+++  slit                                                ::  type of slam
+  |=  {gat/type sam/type}
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
   (~(play ut [%cell gat sam]) [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
 ::
 ++  slob                                                ::  superficial arm
-  |=  {cog/@tas typ/span}
+  |=  {cog/@tas typ/type}
   ^-  ?
   ?+  typ  |
       {$hold *}  $(typ ~(repo ut typ))
@@ -9327,7 +9330,7 @@
   ==
 ::
 ++  sloe                                                ::  get arms in core
-  |=  typ/span
+  |=  typ/type
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
@@ -9349,11 +9352,11 @@
   |=  {axe/@ vax/vase}  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
-++  slym                                                ::  slam w+o sample-span
+++  slym                                                ::  slam w+o sample-type
   |=  {gat/vase sam/*}  ^-  vase
   (slap gat(+<.q sam) [%limb %$])
 ::
-++  spec                                                ::  reconstruct span
+++  spec                                                ::  reconstruct type
   |=  vax/vase
   ^-  vase
   :_  q.vax
@@ -9383,7 +9386,7 @@
                 |=({a/tyke b/tyke c/tyke} :(weld a b c))
               ;~  plug
                 (cook |=(a/(list) (turn a |=(b/* ~))) (star tis))
-                (cook |=(a/twig [[~ a] ~]) hasp)
+                (cook |=(a/hoon [[~ a] ~]) hasp)
                 (cook |=(a/(list) (turn a |=(b/* ~))) (star tis))
               ==
               (cook |=(a/(list) (turn a |=(b/* ~))) (plus tis))
@@ -9392,6 +9395,7 @@
   ++  hasp  ;~  pose
               (ifix [sel ser] wide)
               (stag %cnhp (ifix [pel per] (most ace wide)))
+              (stag %sand (stag %tas (cold %$ buc)))
               (stag %sand (stag %t qut))
               %+  cook
                 |=(a/coin [%sand ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
@@ -9530,33 +9534,33 @@
     --
   ::
   ++  plex
-    |=  gen/twig  ^-  (unit path)
+    |=  gen/hoon  ^-  (unit path)
     ?:  ?=({$dbug *} gen)
       $(gen q.gen)
     ?.  ?=({$clsg *} gen)  ~
     %+  reel  p.gen
-    |=  {a/twig b/_`(unit path)`[~ u=/]}
+    |=  {a/hoon b/_`(unit path)`[~ u=/]}
     ?~  b  ~
     ?.  ?=({$sand ?($ta $tas) @} a)  ~
     `[q.a u.b]
   ::
   ++  pray
-    |=  gen/twig  ~|  %pray  ^-  (unit twig)
+    |=  gen/hoon  ~|  %pray  ^-  (unit hoon)
     ~&  [%pray-disabled gen]
     !!
   ::
   ++  prey
-    |=  gun/(list twig)  ^-  (unit twig)
+    |=  gun/(list hoon)  ^-  (unit hoon)
     ?~  gun  `[%$ 1]
     =+  gup=(pray i.gun)
     ?~  gup  ~
     ?~  t.gun  gup
-    (bind $(gun t.gun) |=(a/twig [%tsgr u.gup a]))
+    (bind $(gun t.gun) |=(a/hoon [%tsgr u.gup a]))
   ::
   ++  phax
     |=  ruw/(list (list woof))
-    =+  [yun=*(list twig) cah=*(list @)]
-    =+  wod=|=({a/tape b/(list twig)} ^+(b ?~(a b [[%smfs %knit (flop a)] b])))
+    =+  [yun=*(list hoon) cah=*(list @)]
+    =+  wod=|=({a/tape b/(list hoon)} ^+(b ?~(a b [[%smfs %knit (flop a)] b])))
     |-  ^+  yun
     ?~  ruw
       (flop (wod cah yun))
@@ -9567,25 +9571,25 @@
   ::
   ++  posh
     |=  {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}
-    ^-  (unit (list twig))
+    ^-  (unit (list hoon))
     =-  ?^(- - ~&(%posh-fail -))
     =+  wom=(poof wer)
     %+  biff
       ?~  pre  `u=wom
       %+  bind  (poon wom u.pre)
-      |=  moz/(list twig)
+      |=  moz/(list hoon)
       ?~(pof moz (weld moz (slag (lent u.pre) wom)))
-    |=  yez/(list twig)
+    |=  yez/(list hoon)
     ?~  pof  `yez
     =+  zey=(flop yez)
     =+  [moz=(scag p.u.pof zey) gul=(slag p.u.pof zey)]
     =+  zom=(poon (flop moz) q.u.pof)
     ?~(zom ~ `(weld (flop gul) u.zom))
   ::
-  ++  poof  |=(pax/path ^-((list twig) (turn pax |=(a/@ta [%sand %ta a]))))
+  ++  poof  |=(pax/path ^-((list hoon) (turn pax |=(a/@ta [%sand %ta a]))))
   ++  poon
-    |=  {pag/(list twig) goo/tyke}
-    ^-  (unit (list twig))
+    |=  {pag/(list hoon) goo/tyke}
+    ^-  (unit (list hoon))
     ?~  goo  `~
     %+  both
       ?^(i.goo i.goo ?~(pag ~ `u=i.pag))
@@ -9606,7 +9610,7 @@
   ::
   ++  rump
     %+  sear
-      |=  {a/wing b/(unit twig)}  ^-  (unit twig)
+      |=  {a/wing b/(unit hoon)}  ^-  (unit hoon)
       ?~(b [~ %wing a] ?.(?=({@ $~} a) ~ [~ [%rock %tas i.a] u.b]))
     ;~(plug rope ;~(pose (stag ~ ;~(pfix lus wide)) (easy ~)))
   ::
@@ -9617,7 +9621,7 @@
   ::
   ++  rupl
     %+  cook
-      |=  {a/? b/(list twig) c/?}
+      |=  {a/? b/(list hoon) c/?}
       ?:  a
         ?:  c
           [%clsg [%clsg b] ~]
@@ -9646,9 +9650,9 @@
     |=  in-tall-form/?  =|  lin/?
     |%
     ::
-    ++  apex                                            ::  product twig
+    ++  apex                                            ::  product hoon
       %+  cook
-        |=  tum/mare:twig  ^-  twig
+        |=  tum/mare:hoon  ^-  hoon
         ?-  -.tum
           $&  [%xray p.tum]
           $|  [%smts p.tum]
@@ -9659,7 +9663,7 @@
       ;~(pfix sem ?:(in-tall-form tall-top wide-top))
     ::
     ++  inline-embed                                    ::  brace interpolation
-      %+  cook  |=(a/tuna:twig a)
+      %+  cook  |=(a/tuna:hoon a)
       ;~  pose
         ;~(pfix sem bracketed-elem(in-tall-form |))
         ;~(plug tuna-mode sump)
@@ -9667,7 +9671,7 @@
       ==
     ::
     ++  script-or-style                                 ::  script or style
-      %+  cook  |=(a/marx:twig a)
+      %+  cook  |=(a/marx:hoon a)
       ;~  plug
         ;~(pose (jest %script) (jest %style))
         wide-attrs
@@ -9682,7 +9686,7 @@
       ==
     ::
     ++  wide-top                                        ::  wide outer top
-      %+  knee  *mare:twig  |.  ~+
+      %+  knee  *mare:hoon  |.  ~+
       ;~  pose
         (stag %| wide-quote)
         (stag %| wide-paren-elems)
@@ -9690,50 +9694,50 @@
       ==
     ::
     ++  wide-inner-top                                  ::  wide inner top
-      %+  knee  *maru:twig  |.  ~+
+      %+  knee  *maru:hoon  |.  ~+
       ;~  pose
         wide-top
         (stag %& ;~(plug tuna-mode wide))
       ==
     ::
     ++  wide-attrs                                      ::  wide attributes
-      %+  cook  |=(a/(unit mart:twig) (fall a ~))
+      %+  cook  |=(a/(unit mart:hoon) (fall a ~))
       %-  punt
       %+  ifix  [pel per]
       %+  more  (jest ', ')
       ;~((glue ace) a-mane hopefully-quote)
     ::
     ++  wide-tail                                       ::  wide elements
-      %+  cook  |=(a/marl:twig a)
+      %+  cook  |=(a/marl:hoon a)
       ;~(pose ;~(pfix col wrapped-elems) (cold ~ sem) (easy ~))
     ::
     ++  wide-elems                                      ::  wide elements
-      %+  cook  |=(a/marl:twig a)
+      %+  cook  |=(a/marl:hoon a)
       %+  cook  join-tops
       (star ;~(pfix ace wide-inner-top))
     ::
     ++  wide-paren-elems                                ::  wide flow
-      %+  cook  |=(a/marl:twig a)
+      %+  cook  |=(a/marl:hoon a)
       %+  cook  join-tops
       (ifix [pel per] (more ace wide-inner-top))
     ::
     ::+|
     ::
     ++  drop-top
-      |=  a/maru:twig  ^-  marl:twig
+      |=  a/maru:hoon  ^-  marl:hoon
       ?-  -.a
         $&  [p.a]~
         $|  p.a
       ==
     ::
     ++  join-tops
-      |=  a/(list maru:twig)  ^-  marl:twig
+      |=  a/(list maru:hoon)  ^-  marl:hoon
       (zing (turn a drop-top))
     ::
     ::+|
     ::
     ++  wide-quote                                      ::  wide quote
-      %+  cook  |=(a/marl:twig a)
+      %+  cook  |=(a/marl:hoon a)
       ;~  pose
         ;~  less  (jest '"""')
           (ifix [doq doq] (cook collapse-chars quote-innards))
@@ -9745,7 +9749,7 @@
       ==
     ::
     ++  quote-innards                                   ::  wide+tall flow
-      %+  cook  |=(a/(list $@(@ tuna:twig)) a)
+      %+  cook  |=(a/(list $@(@ tuna:hoon)) a)
       %-  star
       ;~  pose
         ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
@@ -9759,7 +9763,7 @@
       ;~(plug tag-head wide-elems)
     ::
     ++  wrapped-elems                                   ::  wrapped tuna
-      %+  cook  |=(a/marl:twig a)
+      %+  cook  |=(a/marl:hoon a)
       ;~  pose
         wide-paren-elems
         (cook |=(@t `marl`[;/((trip +<))]~) qut)
@@ -9768,7 +9772,7 @@
     ::
     ::+|
     ::
-    ++  a-mane                                          ::  mane as twig
+    ++  a-mane                                          ::  mane as hoon
       %+  cook
         |=  {a/@tas b/(unit @tas)}
         ?~(b a [a u.b])
@@ -9787,7 +9791,7 @@
     ::
     ++  tag-head                                        ::  tag head
       %+  cook
-        =+  twig  ::REVIEW rename dynamic xml types
+        =+  hoon  ::REVIEW rename dynamic xml types
         |=  {a/mane b/mart c/mart}
         ^-  marx
         [a (weld b c)]
@@ -9795,8 +9799,8 @@
         a-mane
       ::
         %+  cook
-          |=  a/(list (unit {term (list beer:twig)}))
-          ^-  (list {term (list beer:twig)})
+          |=  a/(list (unit {term (list beer:hoon)}))
+          ^-  (list {term (list beer:hoon)})
           :: discard nulls
           (murn a same)
         ;~  plug
@@ -9812,7 +9816,7 @@
     ::+|
     ::
     ++  tall-top                                        ::  tall top
-      %+  knee  *mare:twig  |.  ~+
+      %+  knee  *mare:hoon  |.  ~+
       ;~  pose
         (stag %| ;~(pfix (plus ace) (cook collapse-chars quote-innards)))
         (stag %& ;~(plug script-or-style script-style-tail))
@@ -9831,7 +9835,7 @@
     ::
     ++  tall-elem                                       ::  tall preface
       %+  cook
-        =+  twig  ::REVIEW rename dynamic xml types
+        =+  hoon  ::REVIEW rename dynamic xml types
         |=  {a/{p/mane q/mart} b/mart c/marl}
         ^-  manx
         [[p.a (weld q.a b)] c]
@@ -9841,12 +9845,12 @@
     ::
     ::REVIEW is there a better way to do this?
     ++  hopefully-quote                                 :: prefer "quote" form
-      %+  cook  |=(a/(list beer:twig) a)
-      %+  cook  |=(a/twig ?:(?=($knit -.a) p.a [~ a]~))
+      %+  cook  |=(a/(list beer:hoon) a)
+      %+  cook  |=(a/hoon ?:(?=($knit -.a) p.a [~ a]~))
       wide
     ::
     ++  script-style-tail                               ::  unescaped tall tail
-      %+  cook  |=(a/marl:twig a)
+      %+  cook  |=(a/marl:hoon a)
       %+  ifix  [gap ;~(plug gap duz)]
       %+  most  gap
       ;~  pfix  sem
@@ -9859,7 +9863,7 @@
     ::
     ++  tall-tail                                       ::  tall tail
       ?>  in-tall-form
-      %+  cook  |=(a/marl:twig a)
+      %+  cook  |=(a/marl:hoon a)
       ;~  pose
         (cold ~ sem)
         ;~(pfix col wrapped-elems(in-tall-form |))
@@ -9868,10 +9872,10 @@
       ==
     ::
     ++  collapse-chars                                  ::  group consec chars
-      |=  reb/(list $@(@ tuna:twig))
-      ^-  marl:twig
-      =|  {sim/(list @) tuz/marl:twig}
-      |-  ^-  marl:twig
+      |=  reb/(list $@(@ tuna:hoon))
+      ^-  marl:hoon
+      =|  {sim/(list @) tuz/marl:hoon}
+      |-  ^-  marl:hoon
       ?~  reb
         =.  sim
           ?.  in-tall-form   sim
@@ -9885,9 +9889,9 @@
   ::
   ++  cram                                              ::  parse unmark
     =>  |%
-        ++  item  (pair mite marl:twig)                 ::  xml node generator
+        ++  item  (pair mite marl:hoon)                 ::  xml node generator
         ++  colm  @ud                                   ::  column
-        ++  flow  marl:twig                             ::  node or generator
+        ++  flow  marl:hoon                             ::  node or generator
         ++  mite                                        ::  context
           $?  $down                                     ::  outer embed
               $rule                                     ::  horizontal ruler
@@ -9921,7 +9925,7 @@
               {$code p/tape}                            ::  code literal
               {$text p/tape}                            ::  text symbol
               {$link p/(list graf) q/tape}              ::  URL
-              {$expr p/tuna:twig}                       ::  interpolated hoon
+              {$expr p/tuna:hoon}                       ::  interpolated hoon
           ==
         --
     =<  apex
@@ -9936,7 +9940,7 @@
       ::
       |=  {{@u top/@u} tape}
       %+  pfix  (hrul:parse +<)
-      |=  nail  ^-  (like marl:twig)
+      |=  nail  ^-  (like marl:hoon)
       ~($ main top +<)
     ::
     ++  main
@@ -10119,7 +10123,7 @@
           (zing (turn (flop q.u.lub) |=(a/tape (runt [(dec col) ' '] "{a}\0a"))))
         ::
         ::  vex: parse of paragraph
-        =/  vex/(like marl:twig)
+        =/  vex/(like marl:hoon)
           ::
           ::  either a one-line header or a paragraph
           %.  [p.u.lub yex]
@@ -10320,7 +10324,7 @@
         |=  {naz/hair los/tape}
         ^+  *sab
         ::
-        ::  vex: fenced span
+        ::  vex: fenced type
         =/  vex/(like tape)  (fex naz los)
         ?~  q.vex  vex
         ::
@@ -10330,7 +10334,7 @@
         ::  reparsed error position is always at start
         ?~  q.hav  [naz ~]
         ::
-        ::  the complete span with the main product
+        ::  the complete type with the main product
         :-  p.vex
         `[p.u.q.hav q.u.q.vex]
       ::
@@ -10346,7 +10350,7 @@
         |=  {naz/hair los/tape}
         ^-  (like tape)
         ::
-        ::  vex: result of parsing wide twig
+        ::  vex: result of parsing wide hoon
         =/  vex  (sab naz los)
         ::
         ::  use result of expression parser
@@ -10401,7 +10405,7 @@
             (ifix [pel per] (cash per))
           ==
         ::
-        ::  #twig
+        ::  #hoon
         ::
           ;~  plug
             (stag %text ;~(pose (cold " " whit) (easy-sol ~)))
@@ -10469,7 +10473,7 @@
         ::
         ++  item
           |=  nex/graf
-          ^-  flow  ::CHECK can be tuna:twig?
+          ^-  flow  ::CHECK can be tuna:hoon?
           ?-  -.nex
             $text  !!  :: handled separately
             $expr  [p.nex]~
@@ -10507,7 +10511,7 @@
       ::
       ++  head                                          ::  parse heading
         %+  cook
-          |=  a/manx:twig  ^-  marl:twig
+          |=  a/manx:hoon  ^-  marl:hoon
           =.  a.g.a  :_(a.g.a [%id (sanitize-to-id c.a)])
           [a]~
         ::
@@ -10520,7 +10524,7 @@
         ==
       ::
       ++  sanitize-to-id                                ::  # text into elem id
-        |=  a/(list tuna:twig)  ^-  tape
+        |=  a/(list tuna:hoon)  ^-  tape
         =;  raw/tape
           %+  turn  raw
           |=  @tD
@@ -10540,7 +10544,7 @@
           ^-  tape
           ?-    i.a
               {{$$ {$$ *} $~} $~}                       ::  text node contents
-            (murn v.i.a.g.i.a |=(a/beer:twig ?^(a ~ (some a))))
+            (murn v.i.a.g.i.a |=(a/beer:hoon ?^(a ~ (some a))))
               {^ *}  $(a c.i.a)                         ::  concatenate children
               {@ *}  ~                                  ::  ignore interpolation
           ==
@@ -10549,9 +10553,9 @@
     --
   ++  scab
     %+  cook
-      |=  a/(list wing)  ^-  twig
+      |=  a/(list wing)  ^-  hoon
       :-  %bcsm
-      |-  ^-  twig
+      |-  ^-  hoon
       ?~(a !! ?~(t.a [%wing i.a] [%tsgl [%wing i.a] $(a t.a)]))
     (most col rope)
   ::
@@ -10622,7 +10626,7 @@
     ==
   ::
   ++  scat  !:
-    %+  knee  *twig  |.  ~+
+    %+  knee  *hoon  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
     :~
@@ -10713,7 +10717,7 @@
         ==
       :-  ['0' '9']
         %+  cook
-          |=  {a/dime b/(unit twig)}
+          |=  {a/dime b/(unit hoon)}
           ?~(b [%sand a] [[%rock a] u.b])
         ;~(plug bisk:so (punt ;~(pfix lus wide)))
       :-  ':'
@@ -10741,14 +10745,14 @@
         ;~  pfix  tec
           ;~  pose
             %+  cook
-              |=({a/@ta b/twig} [%ktls [%sand a 0] [%ktls [%sand %$ 0] b]])
+              |=({a/@ta b/hoon} [%ktls [%sand a 0] [%ktls [%sand %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             ;~  pfix  tar
               (stag %kthp (stag [%base %noun] ;~(pfix tec wide)))
             ==
             (stag %kthp ;~(plug wyde ;~(pfix tec wide)))
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
-            (cook |=(a/twig [[%rock %n ~] a]) wide)
+            (cook |=(a/hoon [[%rock %n ~] a]) wide)
           ==
         ==
       :-  '"'
@@ -11024,7 +11028,7 @@
         ;~  pfix  lus
           ;~  pose
             %+  cook
-              |=({a/$ash b/term c/whit d/twig} [b c a d])
+              |=({a/$ash b/term c/whit d/hoon} [b c a d])
             ;~  plug
               (cold %ash (just '+'))
               ;~(pfix gap ;~(pose (cold %$ buc) sym))
@@ -11033,7 +11037,7 @@
             ==
           ::
             %+  cook
-              |=({a/$elm b/term c/whit d/twig} [b c a d])
+              |=({a/$elm b/term c/whit d/hoon} [b c a d])
             ;~  plug
               (cold %elm (just '-'))
               ;~(pfix gap ;~(pose (cold %$ buc) sym))
@@ -11110,15 +11114,15 @@
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
     ++  ulva  |*  zor/rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
-    ++  hank  (most muck loaf)                          ::  gapped twigs
+    ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped roots
-    ++  loaf  ?:(tol tall wide)                         ::  tall/wide twig
+    ++  loaf  ?:(tol tall wide)                         ::  tall/wide hoon
     ++  loan  ?:(tol till wyde)                         ::  tall/wide root
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
     ++  muck  ?:(tol gap ace)                           ::  general separator
-    ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or twig
+    ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
               =+  ^=  gub
-                  |=  {a/term b/$%({$& p/wing} {$| p/twig})}
+                  |=  {a/term b/$%({$& p/wing} {$| p/hoon})}
                   ^-  tiki
                   ?-(-.b $& [%& [~ a] p.b], $| [%| [~ a] p.b])
               =+  ^=  wyp
@@ -11147,34 +11151,34 @@
               ::
                 (stag %| (stag ~ tall))
               ==
-    ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [twig twig]
-    ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [root twig]
-    ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing twig]
+    ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [hoon hoon]
+    ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [root hoon]
+    ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing hoon]
     ::
-    ::    twig contents
+    ::    hoon contents
     ::
-    ++  expa  |.(loaf)                                  ::  one twig
-    ++  expb  |.(;~(gunk loaf loaf))                    ::  two twigs
-    ++  expc  |.(;~(gunk loaf loaf loaf))               ::  three twigs
-    ++  expd  |.(;~(gunk loaf loaf loaf loaf))          ::  four twigs
+    ++  expa  |.(loaf)                                  ::  one hoon
+    ++  expb  |.(;~(gunk loaf loaf))                    ::  two hoons
+    ++  expc  |.(;~(gunk loaf loaf loaf))               ::  three hoons
+    ++  expd  |.(;~(gunk loaf loaf loaf loaf))          ::  four hoons
     ++  expe  |.(wisp)                                  ::  core tail
-    ++  expf  |.(;~(gunk ;~(pfix cen sym) loaf))        ::  %term and twig
-    ++  expg  |.(;~(gunk sym loaf))                     ::  term and twig
-    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [tile twig]s
-    ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more twigs
-    ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two twigs
-    ++  expl  |.(;~(gunk ;~(plug (easy ~) sym) loaf loaf))  ::  term, two twigs
-    ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
+    ++  expf  |.(;~(gunk ;~(pfix cen sym) loaf))        ::  %term and hoon
+    ++  expg  |.(;~(gunk sym loaf))                     ::  term and hoon
+    ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [tile hoon]s
+    ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
+    ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two hoons
+    ++  expl  |.(;~(gunk ;~(plug (easy ~) sym) loaf loaf))  ::  term, two hoons
+    ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile hoon]s
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
-    ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
-    ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
-    ++  expr  |.(;~(gunk loaf wisp))                    ::  twig and core tail
-    ++  exps  |.((butt hank))                           ::  closed gapped twigs
+    ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing hoon]s, hoon
+    ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two hoons
+    ++  expr  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
+    ++  exps  |.((butt hank))                           ::  closed gapped hoons
     ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
-    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
+    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, hoon, hoons
     ++  expv  |.((butt rick))                           ::  just changes
-    ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three twigs
-    ++  expx  |.  ;~  gunk  loaf                        ::  twig and core tail
+    ++  expw  |.(;~(gunk rope loaf loaf loaf))          ::  wing and three hoons
+    ++  expx  |.  ;~  gunk  loaf                        ::  hoon and core tail
                     %+  sear                            ::
                       |=  a/(map @ tomb)                ::
                       ^-  (unit (map @ tomb))           ::
@@ -11184,37 +11188,37 @@
                       [~ u=a]                           ::
                     wisp                                ::
                   ==                                    ::
-    ++  expz  |.(loaf(bug &))                           ::  twig with tracing
+    ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
     ::    root contents
     ::
-    ++  exqa  |.(loan)                                  ::  one twig
+    ++  exqa  |.(loan)                                  ::  one hoon
     ++  exqb  |.(;~(gunk loan loan))                    ::  two roots
-    ++  exqc  |.(;~(gunk loan loaf))                    ::  root then twig
+    ++  exqc  |.(;~(gunk loan loaf))                    ::  root then hoon
     ++  exqs  |.((butt hunk))                           ::  closed gapped roots
     ++  exqg  |.(;~(gunk sym loan))                     ::  term and root
-    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  twig with one root
+    ++  exqk  |.(;~(gunk loaf ;~(plug loan (easy ~))))  ::  hoon with one root
     ++  exqr  |.(;~(gunk loan wisp))                    ::  root and core tail
-    ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed twigs
-    ++  exqw  |.(;~(gunk loaf loan))                    ::  twig and root
-    ++  exqx  |.(;~(gunk loaf loan loan))               ::  twig, two roots
-    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  twig, three roots
-    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  twig, n roots
+    ++  exqn  |.(;~(gunk loan (stag %cltr (butt hank))))::  autoconsed hoons
+    ++  exqw  |.(;~(gunk loaf loan))                    ::  hoon and root
+    ++  exqx  |.(;~(gunk loaf loan loan))               ::  hoon, two roots
+    ++  exqy  |.(;~(gunk loaf loan loan loan))          ::  hoon, three roots
+    ++  exqz  |.(;~(gunk loaf (butt hunk)))             ::  hoon, n roots
     ::
     ::    tiki expansion for %wt runes
     ::
-    ++  tkhp  |.  %+  cook  |=  {a/tiki b/(list (pair root twig))}
+    ++  tkhp  |.  %+  cook  |=  {a/tiki b/(list (pair root hoon))}
                             (~(wthp ah a) b)
                   (butt ;~(gunk teak ruck))
-    ++  tkkt  |.  %+  cook  |=  {a/tiki b/twig c/twig}
+    ++  tkkt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtkt ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  tkls  |.  %+  cook  |=  {a/tiki b/twig c/(list (pair root twig))}
+    ++  tkls  |.  %+  cook  |=  {a/tiki b/hoon c/(list (pair root hoon))}
                             (~(wtls ah a) b c)
                   (butt ;~(gunk teak loaf ruck))
-    ++  tkpt  |.  %+  cook  |=  {a/tiki b/twig c/twig}
+    ++  tkpt  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtpt ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  tksg  |.  %+  cook  |=  {a/tiki b/twig c/twig}
+    ++  tksg  |.  %+  cook  |=  {a/tiki b/hoon c/hoon}
                             (~(wtsg ah a) b c)
                   ;~(gunk teak loaf loaf)
     ++  tkts  |.  %+  cook  |=  {a/root b/tiki}
@@ -11223,17 +11227,17 @@
     ::
     ::    hint syntax
     ::
-    ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and twig
-    ++  hinc  |.                                        ::  optional =en, twig
+    ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and hoon
+    ++  hinc  |.                                        ::  optional =en, hoon
               ;~(pose ;~(gunk bony loaf) ;~(plug (easy ~) loaf))
-    ++  hind  |.(;~(gunk bonk loaf bonz loaf))          ::  jet twig "bon"s twig
-    ++  hine  |.(;~(gunk bonk loaf))                    ::  jet-hint and twig
-    ++  hinf  |.                                        ::  0-3 >s, two twigs
+    ++  hind  |.(;~(gunk bonk loaf bonz loaf))          ::  jet hoon "bon"s hoon
+    ++  hine  |.(;~(gunk bonk loaf))                    ::  jet-hint and hoon
+    ++  hinf  |.                                        ::  0-3 >s, two hoons
       ;~  pose
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf)
         (stag 0 ;~(gunk loaf loaf))
       ==
-    ++  hing  |.                                        ::  0-3 >s, three twigs
+    ++  hing  |.                                        ::  0-3 >s, three hoons
       ;~  pose
         ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf loaf)
         (stag 0 ;~(gunk loaf loaf loaf))
@@ -11247,7 +11251,7 @@
           sym
         ==
       ==
-    ++  hinh  |.                                        ::  1/2 numbers, twig
+    ++  hinh  |.                                        ::  1/2 numbers, hoon
         ;~  gunk
           ;~  pose
             dem
@@ -11255,12 +11259,12 @@
           ==
           loaf
         ==
-    ++  bont  ;~  (bend)                                ::  term, optional twig
+    ++  bont  ;~  (bend)                                ::  term, optional hoon
                 ;~(pfix cen sym)
                 ;~(pfix dot ;~(pose wide ;~(pfix muck loaf)))
               ==
     ++  bony  (cook |=(a/(list) (lent a)) (plus tis))   ::  base 1 =en count
-    ++  bonz                                            ::  term-labelled twigs
+    ++  bonz                                            ::  term-labelled hoons
       ;~  pose
         (cold ~ sig)
         %+  ifix
@@ -11270,13 +11274,13 @@
     --
   ::
   ++  lang                                              ::  lung sample
-    $:  ros/twig
+    $:  ros/hoon
         $=  vil
-        $%  {$tis p/twig}
-            {$col p/twig}
-            {$ket p/twig}
-            {$fas p/twig}
-            {$pel p/(list (pair wing twig))}
+        $%  {$tis p/hoon}
+            {$col p/hoon}
+            {$ket p/hoon}
+            {$fas p/hoon}
+            {$pel p/(list (pair wing hoon))}
         ==
     ==
   ::
@@ -11284,7 +11288,7 @@
     ~+
     %-  bend
     |=  lang
-    ^-  (unit twig)
+    ^-  (unit hoon)
     ?-    -.vil
       $col  ?:(=([%base %bean] ros) ~ [~ %tsgl ros p.vil])
       $pel  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
@@ -11296,7 +11300,7 @@
     ==
   ::
   ++  long
-    %+  knee  *twig  |.  ~+
+    %+  knee  *hoon  |.  ~+
     ;~  lung
       scat
       ;~  pose
@@ -11346,8 +11350,8 @@
   ++  wrap
     |*  fel/rule
     %+  cook
-      |=  {a/whit b/twig c/whit}
-      ^-  twig
+      |=  {a/whit b/hoon c/whit}
+      ^-  hoon
       ~(graf ~(gi ap b) (glom a c))
     ::
     ::  XX performance: this makes the parser about 50% slower.
@@ -11367,13 +11371,13 @@
       apse:docs
     ==  
   ++  tall                                              ::  full tall form
-    %+  knee  *twig
+    %+  knee  *hoon
     |.(~+((wart (wrap ;~(pose (norm | &) cram long lute apex:(sail &))))))
   ++  till                                              ::  mold tall form
     %+  knee  *root
     |.(~+((wart (wrap ;~(pose (norm & &) scad)))))
   ++  wide                                              ::  full wide form
-    %+  knee  *twig
+    %+  knee  *hoon
     |.(~+((wart ;~(pose (norm | |) long apex:(sail |)))))
   ++  wyde                                              ::  mold wide form
     %+  knee  *root
@@ -11381,7 +11385,7 @@
   ++  wart
     |*  zor/rule
     %+  here
-      |=  {a/pint b/twig}
+      |=  {a/pint b/hoon}
       ?:(bug [%dbug [wer a] b] b)
     zor
   --
@@ -11389,14 +11393,14 @@
 ++  vest
   ~/  %vest
   |=  tub/nail
-  ^-  (like twig)
+  ^-  (like hoon)
   %.  tub
   %-  full
   (ifix [gay gay] tall:vast)
 ::
 ++  vice
   |=  txt/@ta
-  ^-  twig
+  ^-  hoon
   (rash txt wide:vast)
 ::
 ++  make                                                ::  compile cord to nock
@@ -11405,14 +11409,14 @@
 ::
 ++  rain                                                ::  parse with % path
   |=  {bon/path txt/@}
-  ^-  twig
+  ^-  hoon
   =+  vaz=vast
   ~|  bon
   (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon))))
 ::
-++  ream                                                ::  parse cord to twig
+++  ream                                                ::  parse cord to hoon
   |=  txt/@
-  ^-  twig
+  ^-  hoon
   (rash txt vest)
 ::
 ++  reck                                                ::  parse hoon file
@@ -11420,17 +11424,17 @@
   (rain bon .^(@t %cx (weld bon `path`[%hoon ~])))
 ::
 ++  ride                                                ::  end-to-end compiler
-  |=  {typ/span txt/@}
-  ^-  (pair span nock)
+  |=  {typ/type txt/@}
+  ^-  (pair type nock)
   (~(mint ut typ) %noun (ream txt))
 ::
 ::::  5e: caching compiler
   ::
 ++  wa  !:                                              ::  cached compile
   |_  worm
-  ++  nell  |=(ref/span (nest [%cell %noun %noun] ref)) ::  nest in cell
+  ++  nell  |=(ref/type (nest [%cell %noun %noun] ref)) ::  nest in cell
   ++  nest                                              ::  nest:ut
-    |=  {sut/span ref/span}
+    |=  {sut/type ref/type}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     ?.  (~(nest ut sut) | ref)
@@ -11465,7 +11469,7 @@
     [[p.dor q.dor(+6 +7.som)] +>+<.$] 
   ::
   ++  neat                                              ::  type compliance
-    |=  {typ/span som/(each vase ^)}
+    |=  {typ/type som/(each vase ^)}
     ^-  worm
     =^  hip  +>+<.$
       ?-  -.som
@@ -11475,11 +11479,11 @@
     ?>  hip
     +>+<.$
   ::
-  ++  nets                                              ::  spanless nest
+  ++  nets                                              ::  typeless nest
     |=  {sut/* ref/*}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
-    =+  gat=|=({a/span b/span} (~(nest ut a) | b))
+    =+  gat=|=({a/type b/type} (~(nest ut a) | b))
     ?.  (? .*(gat(+< [sut ref]) -.gat))
       ~&  %nets-failed
       =+  tag=`*`skol
@@ -11493,23 +11497,23 @@
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
   ++  play                                              ::  play:ut
-    |=  {sut/span gen/twig}
-    ^-  {span worm}
+    |=  {sut/type gen/hoon}
+    ^-  {type worm}
     =+  old=(~(get by pay) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(play ut sut) gen)
     [new +>+<.$(pay (~(put by pay) [sut gen] new))]
   ::
   ++  mint                                              ::  mint:ut to noun
-    |=  {sut/span gen/twig}
-    ^-  {(pair span nock) worm}
+    |=  {sut/type gen/hoon}
+    ^-  {(pair type nock) worm}
     =+  old=(~(get by mit) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(mint ut sut) %noun gen)
     [new +>+<.$(mit (~(put by mit) [sut gen] new))]
   ::
   ++  slap                                              ::  ++slap, cached
-    |=  {vax/vase gen/twig}
+    |=  {vax/vase gen/hoon}
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax gen)
     [[p.gun .*(q.vax q.gun)] +>+<.$]
@@ -11523,7 +11527,7 @@
   ++  spec                                              ::  specialize vase
     |=  vax/vase
     ^-  {vase worm}
-    =+  ^=  gen  ^-  twig
+    =+  ^=  gen  ^-  hoon
       ?@  q.vax    [%wtts [%base [%atom %$]] [%& 1]~]
       ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%& 2]~]
       [%wtts [%base %cell] [%& 1]~]
@@ -11564,10 +11568,10 @@
           $:  p/(unit (set monk))                       ::  can be read by
               q/(set monk)                              ::  caused or created by
           ==                                            ::
-++  curd  {p/@tas q/*}                                  ::  spanless card
+++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  dock  (pair @p term)                                ::  message target
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/$-(* *) (pair span a))                   ::  span associated
+++  hypo  |*(a/$-(* *) (pair type a))                   ::  type associated
 ++  hobo  |*  a/$-(* *)                                 ::  task wrapper
           $?  $%  {$soft p/*}                           ::
               ==                                        ::
@@ -11597,7 +11601,7 @@
   $@  mark                                              ::  plain mark
   $%  {$tabl p/(list (pair marc marc))}                 ::  map
   ==                                                    ::
-++  mark  @tas                                          ::  content span
+++  mark  @tas                                          ::  content type
 ++  marl  (list manx)                                   ::  XML node list
 ++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/$~}} c/$~}      ::  XML cdata
 ++  mart  (list {n/mane v/tape})                        ::  XML attributes
@@ -11612,7 +11616,7 @@
 ++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
 ++  move  {p/duct q/arvo}                               ::  arvo move
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
-++  ovum  {p/wire q/curd}                               ::  spanless ovum
+++  ovum  {p/wire q/curd}                               ::  typeless ovum
 ++  pane  (list {p/@tas q/vase})                        ::  kernel modules
 ++  pass  @                                             ::  public key
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
@@ -11635,10 +11639,10 @@
 ++  spur  path                                          ::  ship desk case spur
 ++  time  @da                                           ::  galactic time
 ++  vile                                                ::  reflexive constants
-          $:  typ/span                                  ::  -:!>(*span)
-              duc/span                                  ::  -:!>(*duct)
-              pah/span                                  ::  -:!>(*path)
-              mev/span                                  ::  -:!>([%meta *vase])
+          $:  typ/type                                  ::  -:!>(*type)
+              duc/type                                  ::  -:!>(*duct)
+              pah/type                                  ::  -:!>(*path)
+              mev/type                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wind                                                ::  new kernel action
           |*  {a/$-(* *) b/$-(* *)}                     ::  forward+reverse
