@@ -250,38 +250,6 @@ _me_align_dap(u3_post pos_p, c3_w ald_w, c3_w alp_w)
   return pad_w;
 }
 
-#if 0
-/* _ca_box_make_hat(): in u3R, allocate directly on the hat.
-*/
-static u3a_box*
-_ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
-{
-  c3_w    pad_w;
-  u3_post all_p;
-     
-  if ( c3y == u3a_is_north(u3R) ) {
-    all_p = u3R->hat_p;
-    pad_w = _me_align_pad(all_p, ald_w, alp_w);
-
-    u3R->hat_p += (len_w + pad_w);
-
-    if ( u3R->hat_p >= u3R->cap_p ) {
-      u3m_bail(c3__meme); return 0;
-    }
-  }  
-  else {
-    all_p = (u3R->hat_p - len_w);
-    pad_w = _me_align_dap(all_p, ald_w, alp_w);
-    all_p -= pad_w;
-    u3R->hat_p = all_p;
-
-    if ( u3R->hat_p <= u3R->cap_p ) {
-      u3m_bail(c3__meme); return 0;
-    }
-  }
-  return _box_make(u3a_into(all_p), (len_w + pad_w), use_w);
-}
-#else
 /* _ca_box_make_hat(): in u3R, allocate directly on the hat.
 */
 static u3a_box*
@@ -313,7 +281,6 @@ _ca_box_make_hat(c3_w len_w, c3_w ald_w, c3_w alp_w, c3_w use_w)
   }
   return _box_make(u3a_into(all_p), siz_w, use_w);
 }
-#endif
 
 #if 0
 /* _me_road_all_hat(): in u3R, allocate directly on the hat.
@@ -409,6 +376,7 @@ u3a_reclaim(void)
        (0 == u3to(u3h_root, u3R->cax.har_p)->use_w) ) 
   {
     fprintf(stderr, "allocate: reclaim: memo cache: empty\r\n");
+    u3m_bail(c3__meme);
   }
   old_w = u3a_open(u3R) + u3R->all.fre_w;
 
@@ -552,10 +520,6 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
     if ( 0 != ptr_v ) {
       break;
     }
-    //  we can't reclaim here, yet, because reclamation allocates;
-    //  but this is the right place to do it
-    //
-    u3m_bail(c3__meme);
     u3a_reclaim();
   }
   return ptr_v;
