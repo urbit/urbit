@@ -1041,6 +1041,19 @@
       ::
       |=  src/source
       ^+  +>
+      =+  seq=(~(get by sequence) cir.src)
+      ::  if we're past the range, don't resubscribe.
+      ?:  ?&  ?=(^ ran.src)
+              ?=(^ tal.u.ran.src)
+            ::
+              ?-  -.u.tal.u.ran.src
+                $da   (gte now.bol +.u.tal.u.ran.src)
+                $ud   ?&  ?=(^ seq)
+                          (gte u.seq +.u.tal.u.ran.src)
+                      ==
+              ==
+          ==
+        (so-delta-our %follow | [src ~ ~])
       =-  (so-delta-our %follow & [[cir.src -] ~ ~])
       ^-  range
       ?.  (~(has by sequence) cir.src)  ran.src
@@ -1318,27 +1331,14 @@
     ::>  apply %init delta, querying the /burden of the
     ::>  ship above us.
     ::
-    %-  da-emit
-    =+  pax=/burden/(scot %p our.bol)
-    :*  0
-        %peer
-        pax
-        [(above our.bol) dap.bol]
-        pax
-    ==
+    (da-emit (wire-to-peer /burden))
   ::
   ++  da-observe                                        ::<  watch burden bearer
     ::>  apply %observe delta, querying the /report of
     ::>  {who} below us.
     ::
     |=  who/ship
-    %-  da-emit
-    :*  0
-        %peer
-        /(scot %p who)/report
-        [who dap.bol]
-        /report
-    ==
+    (da-emit (wire-to-peer /report/(scot %p who)))
   ::
   ++  da-change-public                                  ::<  show/hide membership
     ::>  add/remove a circle to/from the public
@@ -1666,36 +1666,26 @@
       ::>  subscribes this story to each circle.
       ::
       |=  srs/(set source)
-      %+  sa-sauce  0  ::  subscription is caused by this app
       =-  (murn - same)
       %+  turn  ~(tap in srs)
       |=  {cir/circle ran/range}
-      ^-  (unit card)
+      ^-  (unit move)
       ?:  =(cir sa-cir)  ~  ::  ignore self-subs
-      =+  wat=[%grams %config-l %group-l ~]
-      `(circle-peer nom wat cir ran)
+      =+  wat=~[%grams %config-l %group-l]
+      `(wire-to-peer (sa-circle-wire wat cir ran))
     ::
     ++  sa-abjure                                       ::<  unsubscribe us
       ::>  unsubscribes this story from each circle.
       ::
       |=  srs/(set source)
-      %+  sa-sauce  0  ::  subscription is caused by this app
-      %-  zing
       %+  turn  ~(tap in srs)
       |=  {cir/circle ran/range}
-      ^-  (list card)
-      :_  ~
-      =+  rap=(range-to-path ran)
-      :*  %pull
-          ;:  welp
-            /[nom]/(scot %p hos.cir)
-            /circle/[nom.cir]
-            /grams/config-l/group-l
-            rap
-          ==
-          [hos.cir dap.bol]
-          ~
-      ==
+      ^-  move
+      =/  wir
+        %+  sa-circle-wire
+          ~[%grams %config-l %group-l]
+        [cir ran]
+      [0 %pull wir [hos.cir dap.bol] ~]
     ::
     ++  sa-eject                                        ::<  unsubscribe ships
       ::>  removes ships {sis} from {followers}.
@@ -1720,30 +1710,53 @@
           ==
         c
       (~(put in c) b)
+    ::
+    ++  sa-circle-wire                                  ::<  /circle peer wire
+      ::>  constructs a /circle %peer path for subscribing
+      ::>  {nom} to a source.
+      ::
+      |=  {wat/(list circle-data) source}
+      ^-  wire
+      ;:  weld
+        /circle/[nom]/(scot %p hos.cir)/[nom.cir]
+        wat
+        (range-to-path ran)
+      ==
     --
 --
 ::
 ::
 ::>  ||
-::>  ||  %wire-parsing
+::>  ||  %wire-utility
 ::>  ||
 ::+|
 ::
-++  target                                              ::<  ship+path from wire
+++  wire-to-peer                                        ::<  peer move from wire
+  ::>  builds the peer move associated with the wire.
+  ::
+  |=  wir/wire
+  ^-  move
+  =+  tar=(wire-to-target wir)
+  [0 %peer wir [p.tar dap.bol] q.tar]
+::
+++  wire-to-target                                      ::<  ship+path from wire
   ::>  parses {wir} to obtain the target ship and the
   ::>  query path.
   ::
   |=  wir/wire
   ^-  (pair ship path)
-  ?+  wir  !!
-      {@ @ $circle *}
-    [(slav %p i.t.wir) t.t.wir]
+  ?+  wir  ~&(wir !!)
+      {$circle @ @ *}
+    :-  (slav %p i.t.t.wir)
+    (welp /circle t.t.t.wir)
   ::
       {$burden *}
-    [(above our.bol) wir]
+    :-  (above our.bol)
+    /burden/(scot %p our.bol)
   ::
-      {@ $report *}
-    [(slav %p i.wir) t.wir]
+      {$report @ *}
+    :-  (slav %p i.t.wir)
+    /report
   ==
 ::
 ++  etch                                                ::<  parse wire
@@ -1754,11 +1767,11 @@
   |=  wir/wire
   ^-  weir
   ?+    wir  !!
-      {@ @ $circle @ *}
-      :: us, host, $circle, target
+      {$circle @ @ @ *}
+      :: $circle, us, host, target
     :^    %circle
-        i.wir
-      [(slav %p i.t.wir) i.t.t.t.wir]
+        i.t.wir
+      [(slav %p i.t.t.wir) i.t.t.t.wir]
     (path-to-range t.t.t.t.wir)
   ::
       {$repeat @ @ @ $~}
@@ -1789,19 +1802,6 @@
       ==
   =+  wer=(etch wir)
   ?>(?=($repeat -.wer) (fun cir.wer ses.wer))
-::
-++  circle-peer                                         ::<  /circle peer card
-  ::>  constructs a %peer move to subscribe {nom} to a
-  ::>  source.
-  ::
-  |=  {nom/naem wat/(list circle-data) source}
-  ^-  card
-  =+  pax=:(welp /circle/[nom.cir] wat (range-to-path ran))
-  :*  %peer
-      (welp /[nom]/(scot %p hos.cir) pax)
-      [hos.cir dap.bol]
-      pax
-  ==
 ::
 ::>  ||
 ::>  ||  %new-events
@@ -2208,7 +2208,7 @@
   :::
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
-  ?.  ?=({@ @ $circle *} wir)
+  ?.  ?=($circle -.wir)
     ?~  fal  [~ +>]
     ~|  reap-fail+wir
     (mean u.fal)
@@ -2228,8 +2228,7 @@
   |=  wir/wire
   ^-  (quip move _+>)
   :_  +>
-  =+  tar=(target wir)
-  [0 %peer wir [p.tar dap.bol] q.tar]~
+  [(wire-to-peer wir) ~]
 ::
 ++  quit-circle                                         ::<  dropped circle sub
   ::>  gall dropped our subscription. resubscribe.
