@@ -54,6 +54,7 @@
           active/audience                               ::<  active targets
           settings/(set term)                           ::<  frontend settings
           width/@ud                                     ::<  display width
+          timez/(pair ? @ud)                            ::<  timezone adjustment
       ==                                                ::
     ++  move  (pair bone card)                          ::<  all actions
     ++  lime                                            ::>  diff fruit
@@ -99,6 +100,7 @@
           {$set term}                                   ::<  enable setting
           {$unset term}                                 ::<  disable setting
           {$width @ud}                                  ::<  change display width
+          {$timez ? @ud}                                ::<  adjust shown times
           ::  miscellaneous                             ::
           {$show circle}                                ::<  show membership
           {$hide circle}                                ::<  hide membership
@@ -778,6 +780,22 @@
         ::
           ;~(plug (cold %width (jest 'set width ')) dem:ag)
         ::
+          ;~  plug
+            (cold %timez (jest 'set timezone '))
+          ::
+            ;~  pose
+              (cold %| (just '-'))
+              (cold %& (just '+'))
+            ==
+          ::
+            %+  sear
+              |=  a/@ud
+              ^-  (unit @ud)
+              ?:  &((gte a 0) (lte a 14))
+              `a  ~
+            dem:ag
+          ==
+        ::
           ;~(plug (perk %set ~) ;~(pose ;~(pfix ace setting) (easy %$)))
         ::
           ;~(plug (perk %unset ~) ;~(pfix ace setting))
@@ -908,6 +926,7 @@
           $set     (wo-set +.job)
           $unset   (unset +.job)
           $width   (width +.job)
+          $timez   (timez +.job)
           ::  miscelaneous
           $show    (public & +.job)
           $hide    (public | +.job)
@@ -1301,6 +1320,13 @@
         |=  wid/@ud
         ^+  ..sh-work
         ..sh-work(width.she (max 30 wid))
+      ::
+      ++  timez                                         ::<  ;set timezone
+        ::>  adjust the displayed timestamp.
+        ::
+        |=  tim/(pair ? @ud)
+        ^+  ..sh-work
+        ..sh-work(timez.she tim)
       ::
       ::>  ||
       ::>  ||  %miscellaneous
@@ -1916,7 +1942,10 @@
     ::  timestamp, if desired.
     =/  tam/tape
       ?.  (~(has in sef) %showtime)  ""
-      =+  dat=(yore now.bol)
+      =.  wen
+        %.  [wen (mul q.timez.cli ~h1)]
+        ?:(p.timez.cli add sub)
+      =+  dat=(yore wen)
       =/  t
         |=  a/@
         %+  weld
