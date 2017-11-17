@@ -57,7 +57,7 @@
   $%  {$client prize-client}                            ::<  /client
       {$public cis/(set circle)}                        ::<  /public
       {$burden sos/(map naem burden)}                   ::<  /burden
-      {$report ~}                                       ::<  /report
+      {$report $~}                                      ::<  /report
       {$peers pes/(jar ship query)}                     ::<  /peers
       {$circle package}                                 ::<  /circle
   ==                                                    ::
@@ -81,7 +81,7 @@
       pes/crowd                                         ::<  loc & rem presences
   ==                                                    ::
 ++  burden                                              ::>  full story state
-  $:  gaz/(list telegram)  ::TODO  envelope?            ::<  all messages
+  $:  gaz/(list telegram)                               ::<  all messages
       shipment                                          ::<  metadata
   ==                                                    ::
 ++  package                                             ::<  story state
@@ -103,7 +103,6 @@
   $%  {$gram nev/envelope}                              ::<  new/changed msgs
   ==  ==                                                ::
 ++  diff-config                                         ::>  config change
-  ::TODO  maybe just full? think.
   $%  {$full cof/config}                                ::<  set w/o side-effects
       {$source add/? src/source}                        ::<  add/rem sources
       {$caption cap/cord}                               ::<  changed description
@@ -192,7 +191,6 @@
       $mailbox                                          ::<  our r, blacklist w
   ==                                                    ::
 ::  participant metadata.                               ::
-::TODO  think about naming more
 ++  crowd      {loc/group rem/(map circle group)}       ::<  our & srcs presences
 ++  group      (map ship status)                        ::<  presence map
 ++  status     {pec/presence man/human}                 ::<  participant

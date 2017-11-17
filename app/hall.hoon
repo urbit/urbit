@@ -40,12 +40,12 @@
     ++  story                                           ::>  wire content
       $:  count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all messages
+          known/(map serial @ud)                        ::<  messages heard
+          sequence/(map circle @ud)                     ::<  last-heard p circle
           locals/group                                  ::<  local status
           remotes/(map circle group)                    ::<  remote status
           shape/config                                  ::<  configuration
           mirrors/(map circle config)                   ::<  remote config
-          sequence/(map circle @ud)                     ::<  last-heard p circle
-          known/(map serial @ud)                        ::<  messages heard
           peers/(jar ship query)                        ::<  subscribers
           inherited/_|                                  ::<  from parent?
       ==                                                ::
