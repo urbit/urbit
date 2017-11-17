@@ -28,6 +28,7 @@
       {$public $~}                                      ::<  public memberships
       {$burden who/ship}  ::TODO  eventually, nom/naem. ::<  duties to share
       {$report $~}                                      ::<  duty reports
+      {$peers nom/naem}                                 ::<  readers of story
       $:  $circle                                       ::>  story query
           nom/naem                                      ::<  circle name
           wat/(set circle-data)                         ::<  data to get
@@ -57,6 +58,7 @@
       {$public cis/(set circle)}                        ::<  /public
       {$burden sos/(map naem burden)}                   ::<  /burden
       {$report ~}                                       ::<  /report
+      {$peers pes/(jar ship query)}                     ::<  /peers
       {$circle package}                                 ::<  /circle
   ==                                                    ::
 ++  prize-client                                        ::
@@ -67,6 +69,7 @@
   $%  {$client rum/rumor-client}                        ::<  /client
       {$public add/? cir/circle}                        ::<  /public
       {$burden nom/naem rum/rumor-story}                ::<  /burden
+      {$peers add/? who/ship qer/query}                 ::<  /peers
       {$circle rum/rumor-story}                         ::<  /circle
   ==                                                    ::
 ++  rumor-client                                        ::<  changed ui state
@@ -90,6 +93,7 @@
 ++  diff-story                                          ::>  story change
   $%  {$new cof/config}                                 ::<  new story
       {$bear bur/burden}                                ::<  new inherited story
+      {$peer add/? who/ship qer/query}                  ::<  gain/lose subscriber
       {$config cir/circle dif/diff-config}              ::<  new/changed config
       {$status cir/circle who/ship dif/diff-status}     ::<  new/changed status
       {$remove $~}                                      ::<  removed story

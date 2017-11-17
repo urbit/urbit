@@ -46,6 +46,7 @@
           mirrors/(map circle config)                   ::<  remote config
           sequence/(map circle @ud)                     ::<  last-heard p circle
           known/(map serial @ud)                        ::<  messages heard
+          peers/(jar ship query)                        ::<  subscribers
           inherited/_|                                  ::<  from parent?
       ==                                                ::
     ::>  ||  %deltas                                    ::
@@ -516,12 +517,14 @@
     (ta-delta %observe who)
   ::
   ++  ta-subscribe                                      ::<  listen to
-    ::>  add her to a status list if applicable.
+    ::>  reaction to incoming subscriptions.
     ::
     |=  {her/ship qer/query}
     ^+  +>
     ?+  -.qer  +>
-      $burden  (ta-observe her)
+      $burden   (ta-observe her)
+      $circle   %+  ta-delta  %story
+                [nom.qer %peer & her qer]
     ==
   ::
   ++  ta-greet                                          ::<  subscription success
@@ -826,6 +829,7 @@
                     (so-config-full ~ cof.rum)
                   $(rum [%config src %full cof.rum])
         $bear     (so-bear bur.rum)
+        $peer     (so-delta-our rum)
         $gram     (so-open src nev.rum)
         $config   ::  full changes to us need to get split up.
                   ?:  &(=(cir.rum so-cir) ?=($full -.dif.rum))
@@ -1545,6 +1549,17 @@
           $inherited
         +>(inherited ihr.det)
       ::
+          $peer
+        ?:  add.det
+          +>(peers (~(add ja peers) who.det qer.det))
+        =+  qes=(~(get ja peers) who.det)
+        =.  qes
+          =+  res=(find ~[qer.det] qes)
+          ?~  res  qes
+          (oust [u.res 1] qes)
+        ?~  qes  +>.$(peers (~(del by peers) who.det))
+        +>.$(peers (~(put in peers) who.det qes))
+      ::
           $follow
         (sa-emil (sa-follow-effects sub.det srs.det))
       ::
@@ -1862,6 +1877,11 @@
     ::      data etc.
     ``[%report ~]
   ::
+      $peers
+    =+  soy=(~(get by stories) nom.qer)
+    ?~  soy  ~
+    ``[%peers peers.u.soy]
+  ::
       $circle  ::REVIEW  should we send precs & config to out of range subs?
     =+  soy=(~(get by stories) nom.qer)
     ?~  soy  ~
@@ -1969,15 +1989,21 @@
       $report
     ::  only send changes we didn't get from above.
     ?:  =(src.bol (above our.bol))  ~
-    ::  only send story reports about grams and status.
+    ::  only send story reports about grams, status and peers.
     ?.  ?=($story -.det)  ~
-    ?.  ?=(?($gram $status) -.det.det)  ~
+    ?.  ?=(?($gram $status $peer) -.det.det)  ~
     =+  soy=(~(got by stories) nom.det)
     ::  and only if the story is inherited.
     ?.  inherited.soy  ~
     ::  only burden channels for now.
     ?.  =(%channel sec.con.shape.soy)  ~
     `[%burden nom.det (dedicate (above our.bol) nom.det det.det)]
+  ::
+      $peers
+    ?.  ?=($story -.det)      ~
+    ?.  =(nom.qer nom.det)    ~
+    ?.  ?=($peer -.det.det)   ~
+    `[%peers +.det.det]
   ::
       $circle
     ?.  ?=($story -.det)                              ~
@@ -2092,6 +2118,7 @@
     $burden   ?&  =(who who.qer)
                   =(our.bol (above who))
               ==
+    $peers    =(who our.bol)  ::TODO  or so-visible?
     $report   =(who (above our.bol))
   ::
       $circle
@@ -2202,6 +2229,19 @@
   |=  pax/path
   ^-  (quip move _+>)
   [~ +>]
+::
+++  pull-circle                                         ::<  circle unsubscribe
+  ::>  someone ends a /circle subscription.
+  ::
+  |=  pax/path
+  ~&  [%got-pull-circle pax]
+  ^-  (quip move _+>)
+  %-  pre-bake
+  :_  ~
+  =+  qer=(path-to-query %circle pax)
+  ?>  ?=($circle -.qer)
+  :+  %story  nom.qer
+  [%peer | src.bol qer]
 ::
 ++  reap                                                ::<  subscription n/ack
   ::>  update state to reflect subscription success
