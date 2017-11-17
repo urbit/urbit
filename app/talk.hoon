@@ -1601,9 +1601,9 @@
         (sh-note (weld "new " (~(cr-show cr cir) ~)))
       ?:  ?=($remove -.dif)
         (sh-note (weld "rip " (~(cr-show cr cir) ~)))
-      =.  +>
-        (sh-note (weld " in " (~(cr-show cr cir) ~)))
       %-  sh-note
+      %+  weld
+        (weld ~(cr-phat cr cir) ": ")
       ?-  -.dif
           $source
         %+  weld  ?:(add.dif "onn " "off ")
