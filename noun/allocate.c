@@ -380,9 +380,10 @@ u3a_reclaim(void)
   }
   old_w = u3a_open(u3R) + u3R->all.fre_w;
 
-  //  suspected bug: infinite loop when cache is almost empty
-  //
 #if 1 
+  fprintf(stderr, "allocate: reclaim: half of %d entries\r\n", 
+                   u3to(u3h_root, u3R->cax.har_p)->use_w);
+
   u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
 #else
   /*  brutal and guaranteed effective
