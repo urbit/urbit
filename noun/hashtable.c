@@ -281,10 +281,12 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
     u3h_slot* tos_w = &(hab_u->sot_w[har_u->arm_u.inx_w]);
     if ( c3y == _ch_trim_slot(har_u, tos_w, 0, 0) ) {
       if ( 2 == len_w ) {
-        // 2 things in bucket: pick the other and promote
-        //
+        // 2 things in bucket: debucketize to key-value pair, the next
+        // run will point at this pair (same mug_w, no longer in bucket)
         *sot_w = hab_u->sot_w[ (0 == har_u->arm_u.inx_w) ? 1 : 0 ];
         u3a_wfree(hab_u);
+        har_u->arm_u.inx_w = 0;
+        har_u->arm_u.buc_o = c3n;
       }
       else {
         // shrink bucket in place; don't reallocate, we could be low on memory
