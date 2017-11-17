@@ -673,19 +673,19 @@
         %+  knee  *^work  |.  ~+
         =-  ;~(pose ;~(pfix sem -) message)
         ;~  pose
-          ::
-          ::  circle management
-          ::
+        ::
+        ::  circle management
+        ::
           ;~((glue ace) (perk %join ~) sorz)
-          ::
+        ::
           ;~((glue ace) (perk %leave ~) cirs)
-          ::
+        ::
           ;~  (glue ace)  (perk %create ~)
             pore
             cire
             qut
           ==
-          ::
+        ::
           ;~  plug  (perk %delete ~)
             ;~(pfix ;~(plug ace cen) sym)
             ;~  pose
@@ -693,22 +693,22 @@
               (easy ~)
             ==
           ==
-          ::
+        ::
           ;~((glue ace) (perk %depict ~) cire qut)
-          ::
+        ::
           ;~((glue ace) (perk %filter ~) cire lobe lobe)
-          ::
+        ::
           ;~((glue ace) (perk %invite ~) cire shiz)
-          ::
+        ::
           ;~((glue ace) (perk %banish ~) cire shiz)
-          ::
+        ::
           ;~((glue ace) (perk %source ~) cire sorz)
-          ::
+        ::
           ;~((glue ace) (perk %unsource ~) cire sorz)
           ::TODO  why do these nest-fail when doing perk with multiple?
-          ::
-          ::  personal metadata
-          ::
+        ::
+        ::  personal metadata
+        ::
           ;~  (glue ace)
             (perk %attend ~)
             cirs
@@ -717,7 +717,7 @@
               (cook some (perk %gone %idle %hear %talk ~))
             ==
           ==
-          ::
+        ::
           ;~  plug
             (perk %name ~)
             ;~(pfix ace cirs)
@@ -734,11 +734,11 @@
               (easy ~)
             ==
           ==
-          ::
-          ::  displaying info
-          ::
+        ::
+        ::  displaying info
+        ::
           ;~(plug (perk %who ~) ;~(pose ;~(pfix ace cirs) (easy ~)))
-          ::
+        ::
           ;~  plug
             (perk %what ~)
             ;~  pose
@@ -746,17 +746,17 @@
               (easy ~)
             ==
           ==
-          ::
+        ::
           ;~((glue ace) (perk %show ~) circ)
-          ::
+        ::
           ;~((glue ace) (perk %hide ~) circ)
-          ::
-          ::  ui settings
-          ::
+        ::
+        ::  ui settings
+        ::
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace cirs)))
-          ::
+        ::
           ;~(plug (perk %unbind ~) ;~(pfix ace glyph) (punt ;~(pfix ace cirs)))
-          ::
+        ::
           ;~  plug  (perk %nick ~)
             ;~  pose
               ;~  plug
@@ -775,27 +775,27 @@
               ==
             ==
           ==
-          ::
+        ::
           ;~(plug (cold %width (jest 'set width ')) dem:ag)
-          ::
+        ::
           ;~(plug (perk %set ~) ;~(pose ;~(pfix ace setting) (easy %$)))
-          ::
+        ::
           ;~(plug (perk %unset ~) ;~(pfix ace setting))
-          ::
-          ::  miscellaneous
-          ::
+        ::
+        ::  miscellaneous
+        ::
           ;~(plug (perk %help ~) (easy ~))
-          ::
-          ::  (parsers below come last because they match quickly)
-          ::
-          ::  messaging
-          ::
+        ::
+        ::  (parsers below come last because they match quickly)
+        ::
+        ::  messaging
+        ::
           (stag %target ;~(plug cirs (punt ;~(pfix ace message))))
-          ::
+        ::
           (stag %reply ;~(plug pick ;~(pfix ace speeches)))
-          ::
-          ::  displaying info
-          ::
+        ::
+        ::  displaying info
+        ::
           (stag %number pick)
         ==
       --
