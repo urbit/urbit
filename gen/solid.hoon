@@ -20,14 +20,17 @@
 ~&  %solid-start
 =+  txt=.^(@t %cx (weld pax `path`[%hoon ~]))
 =+  rax=.^(@t %cx (weld arp `path`[%hoon ~]))
-~&  %solid-loaded
-=+  gen=(rain pax txt)
-~&  %solid-parsed
-=+  one=(~(mint ut %noun) %noun gen)
-~&  %solid-compiled
-=+  two=(~(mint ut p.one) %noun (rain arp rax))
-~&  %solid-arvo
-=+  ken=[7 q.one q.two]
+=+  ^=  ken
+    =-  ?>(?=($& -.res) p.res)
+    ^=  res  %-  mule  |.
+    ~&  %solid-loaded
+    =+  gen=(rain pax txt)
+    ~&  %solid-parsed
+    =+  one=(~(mint ut %noun) %noun gen)
+    ~&  %solid-compiled
+    =+  two=(~(mint ut p.one) %noun (rain arp rax))
+    ~&  %solid-arvo
+    [7 q.one q.two]
 ~&  [%solid-kernel `@ux`(mug ken)]
 :-  ken
 =+  all=.*(0 ken)

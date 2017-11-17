@@ -549,11 +549,11 @@
   =^  zef  niz
     (~(hurl (is vil eny bud niz) now) lac ovo)
   [zef +>.$]
-::
-++  vega                                                ::  reboot kernel
-  |=  {now/@da ova/(list ovum) hap/path zup/path}
-  ^-  (unit {p/(list ovum) q/*})
-  =-  ?:(?=($| -.res) ((slog p.res) ~) `p.res)
+::                                                
+++  veke                                                ::  build new kernel
+  |=  {now/@da hap/path zup/path}
+  ^-  *
+  =-  ?>(?=($& -.res) p.res)
   ^=  res  %-  mule  |.
   =+  pax=(weld hap `path`[%hoon ~])
   =+  wax=(weld zup `path`[%hoon ~])
@@ -567,7 +567,14 @@
   ~&  [%vega-arvo zup]
   =+  two=(~(mint ut p.one) %noun (rain zup arv))
   ~&  %vega-minted
-  =+  ken=.*(0 [7 q.one q.two])
+  .*(0 [7 q.one q.two])
+::
+++  vega                                                ::  reboot kernel
+  |=  {now/@da ova/(list ovum) hap/path zup/path}
+  ^-  (unit {p/(list ovum) q/*})
+  =-  ?:(?=($| -.res) ((slog p.res) ~) `p.res)
+  ^=  res  %-  mule  |.
+  =+  ken=(veke now hap zup)
   ~&  [%vega-kernel `@ux`(mug ken)] 
   =+  ^=  nex
       =+  gat=.*(ken .*(ken [0 87]))
