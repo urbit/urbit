@@ -11,10 +11,13 @@ QtVersionString = ENV.fetch('version')
 QtVersionMajor = QtVersionString.split('.').first.to_i
 
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
+
 OutDir = Pathname(ENV.fetch('out'))
 OutPcDir = OutDir + 'lib' + 'pkgconfig'
 CMakeDir = OutDir + 'lib' + 'cmake'
 OutIncDir = OutDir + 'include'
+MocExe = OutDir + 'bin' + 'moc'
+RccExe = OutDir + 'bin' + 'rcc'
 
 DepGraph = {}
 DepGraphBack = {}
@@ -395,97 +398,19 @@ def create_cmake_core_files
     f.puts "set(QT_VERSION_MAJOR #{QtVersionMajor})"
     f.puts
 
-    moc_exe = OutDir + 'bin' + 'moc'
-    f.puts "set(QT_MOC_EXECUTABLE #{moc_exe})"
+    f.puts "set(QT_MOC_EXECUTABLE #{MocExe})"
     f.puts "add_executable(Qt5::moc IMPORTED)"
     f.puts "set_target_properties(Qt5::moc PROPERTIES " \
            "IMPORTED_LOCATION ${QT_MOC_EXECUTABLE})"
     f.puts
 
-    rcc_exe = OutDir + 'bin' + 'rcc'
     f.puts "add_executable(Qt5::rcc IMPORTED)"
     f.puts "set_target_properties(Qt5::rcc PROPERTIES " \
-           "IMPORTED_LOCATION #{rcc_exe})"
+           "IMPORTED_LOCATION #{RccExe})"
     f.puts "set(Qt5Core_RCC_EXECUTABLE Qt5::rcc)"
     f.puts
 
-    # These macros come from src/corelib/Qt5CoreMacros.cmake originally.
-    # Perhaps we should just copy that file from Qt's source directly if
-    # it doesn't need any patches.
-    f.puts <<EOF
-macro(QT5_MAKE_OUTPUT_FILE infile prefix ext outfile )
-  string(LENGTH ${CMAKE_CURRENT_BINARY_DIR} _binlength)
-  string(LENGTH ${infile} _infileLength)
-  set(_checkinfile ${CMAKE_CURRENT_SOURCE_DIR})
-  if(_infileLength GREATER _binlength)
-    string(SUBSTRING "${infile}" 0 ${_binlength} _checkinfile)
-    if(_checkinfile STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
-      file(RELATIVE_PATH rel ${CMAKE_CURRENT_BINARY_DIR} ${infile})
-    else()
-      file(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${infile})
-    endif()
-  else()
-    file(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${infile})
-  endif()
-  if(WIN32 AND rel MATCHES "^([a-zA-Z]):(.*)$") # absolute path
-    set(rel "${CMAKE_MATCH_1}_${CMAKE_MATCH_2}")
-  endif()
-  set(_outfile "${CMAKE_CURRENT_BINARY_DIR}/${rel}")
-  string(REPLACE ".." "__" _outfile ${_outfile})
-  get_filename_component(outpath ${_outfile} PATH)
-  get_filename_component(_outfile ${_outfile} NAME_WE)
-  file(MAKE_DIRECTORY ${outpath})
-  set(${outfile} ${outpath}/${prefix}${_outfile}.${ext})
-endmacro()
-
-function(_QT5_PARSE_QRC_FILE infile _out_depends _rc_depends)
-  get_filename_component(rc_path ${infile} PATH)
-  if(EXISTS "${infile}")
-    file(READ "${infile}" RC_FILE_CONTENTS)
-    string(REGEX MATCHALL "<file[^<]+" RC_FILES "${RC_FILE_CONTENTS}")
-    foreach(RC_FILE ${RC_FILES})
-      string(REGEX REPLACE "^<file[^>]*>" "" RC_FILE "${RC_FILE}")
-      if(NOT IS_ABSOLUTE "${RC_FILE}")
-        set(RC_FILE "${rc_path}/${RC_FILE}")
-      endif()
-      set(RC_DEPENDS ${RC_DEPENDS} "${RC_FILE}")
-    endforeach()
-    qt5_make_output_file("${infile}" "" "qrc.depends" out_depends)
-    configure_file("${infile}" "${out_depends}" COPYONLY)
-  else()
-    set(out_depends)
-  endif()
-  set(${_out_depends} ${out_depends} PARENT_SCOPE)
-  set(${_rc_depends} ${RC_DEPENDS} PARENT_SCOPE)
-endfunction()
-
-function(QT5_ADD_RESOURCES outfiles )
-  set(options)
-  set(oneValueArgs)
-  set(multiValueArgs OPTIONS)
-  cmake_parse_arguments(_RCC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  set(rcc_files ${_RCC_UNPARSED_ARGUMENTS})
-  set(rcc_options ${_RCC_OPTIONS})
-
-  if("${rcc_options}" MATCHES "-binary")
-    message(WARNING "Use qt5_add_binary_resources for binary option")
-  endif()
-
-  foreach(it ${rcc_files})
-    get_filename_component(outfilename ${it} NAME_WE)
-    get_filename_component(infile ${it} ABSOLUTE)
-    set(outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${outfilename}.cpp)
-    _QT5_PARSE_QRC_FILE(${infile} _out_depends _rc_depends)
-    add_custom_command(OUTPUT ${outfile}
-                       COMMAND ${Qt5Core_RCC_EXECUTABLE}
-                       ARGS ${rcc_options} --name ${outfilename} --output ${outfile} ${infile}
-                       MAIN_DEPENDENCY ${infile}
-                       DEPENDS ${_rc_depends} "${out_depends}" VERBATIM)
-    list(APPEND ${outfiles} ${outfile})
-  endforeach()
-  set(${outfiles} ${${outfiles}} PARENT_SCOPE)
-endfunction()
-EOF
+    f.write File.read(ENV.fetch('core_macros'))
   end
 end
 

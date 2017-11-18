@@ -127,6 +127,7 @@ let
     qtbase = base_raw;
     cross_inputs = base_raw.cross_inputs;
     builder.ruby = ./wrapper_builder.rb;
+    core_macros = ./core_macros.cmake;
   };
 
   examples = crossenv.make_derivation {
