@@ -4,6 +4,8 @@ include FileUtils
 
 STDOUT.sync = true
 
+ENV['PATH'] = ENV.fetch('_PATH')
+
 Os = ENV.fetch('os')
 QtVersionString = ENV.fetch('version')
 QtVersionMajor = QtVersionString.split('.').first.to_i
@@ -126,9 +128,26 @@ def make_dep_graph
     add_dep 'libQt5Widgets.a', '-framework AppKit'
     add_dep 'libqtlibpng.a', '-lz'
   end
+
+  add_deps_of_pc_files
 end
 
-def parse_prl_file(filename)
+# Qt depends on some system libraries with .pc files.  It tends to only depend
+# on these things at link time, not compile time.  So use pkg-config with --libs
+# to get those dependencies, for use in .cmake files.
+def add_deps_of_pc_files
+  DepGraph.keys.each do |dep|
+    next if determine_dep_type(dep) != :pc
+    name = dep.chomp('.pc')
+    new_deps = `pkg-config-cross --libs #{name}`.split(' ')
+    raise "Failed to #{dep} libs" if $?.exitstatus != 0
+    new_deps.each do |new_dep|
+      add_dep dep, new_dep
+    end
+  end
+end
+
+def parse_prl_file(filename)  # TODO: remove prl stuff
   filename = Pathname(filename)
   filename = filename.sub_ext("d.prl") if !filename.exist?
   attrs = { prl_filename: filename }
@@ -186,6 +205,7 @@ def determine_dep_type(name)
   when extension == '.x' then :x
   when name.start_with?('-I') then :cflag
   when name.start_with?('-l') then :ldflag
+  when name.start_with?('-L') then :libdir
   when name.start_with?('-framework') then :ldflag
   end
 end
@@ -268,7 +288,10 @@ end
 def flatten_deps_for_pc_file(pc_file)
   flatten_deps(DepGraph[pc_file]) do |dep|
     deps = case determine_dep_type(dep)
-           when :x then []
+           when :x, :pc then
+             # Don't expand dependencies for a .pc file because we can just
+             # refer to them with the Requires line in our .pc file.
+             []
            else DepGraph.fetch(dep)
            end
 
@@ -283,19 +306,7 @@ end
 
 def flatten_deps_for_cmake_file(cmake_file)
   flatten_deps(DepGraph[cmake_file]) do |dep|
-    next DepGraph.fetch(dep)
-
-    deps = case determine_dep_type(dep)
-           when :x then []
-           else DepGraph.fetch(dep)
-           end
-
-    # Replace .a files with a canonical .x file if there is one.
-    deps.map do |name|
-      substitute = canonical_x_file(name)
-      substitute = nil if substitute == cmake_file
-      substitute || name
-    end
+    DepGraph.fetch(dep)
   end
 end
 
@@ -556,9 +567,8 @@ def create_cmake_qt5widgets
       ldflags << "-l#{libname}"
     when :ldflag then
       ldflags << dep
-    #when :cflag then
-    #  dep.sub!(OutIncDir.to_s, '${includedir}')
-    #  cflags << dep
+    when :libdir then
+      libdirs << dep
     end
   end
 
