@@ -153,7 +153,16 @@ def libs_from_prl(prl)
   listed_libs.gsub!(/\$\$\[QT_INSTALL_LIBS\]/, (OutDir + 'lib').to_s)
   libs.concat listed_libs.split(' ')
 
-  libs
+  # Combine '-framework' with the library after it.
+  libs2 = []
+  libs_enum = libs.each
+  loop do
+    lib = libs_enum.next
+    lib += ' ' + libs_enum.next if lib == '-framework'
+    libs2 << lib
+  end
+
+  libs2
 end
 
 def add_dep(library, *deps)
@@ -511,7 +520,6 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   properties = {
     IMPORTED_LOCATION: widgets_a,
     IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
-    INTERFACE_LINK_LIBRARIES: libs.join(' '),
     INTERFACE_INCLUDE_DIRECTORIES: includes.join(' '),
     INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC',
   }
@@ -520,6 +528,11 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   properties.each do |name, value|
     f.puts "set_property(TARGET Qt5::Widgets PROPERTY #{name} #{value})"
   end
+
+  libs.each do |lib|
+    f.puts "list (APPEND Qt5Widgets_libs \"#{lib}\")"
+  end
+  f.puts "set_property(TARGET Qt5::Widgets PROPERTY INTERFACE_LINK_LIBRARIES ${Qt5Widgets_libs})"
 
   f.puts "include(#{CMakeDir + 'core.cmake'})"
 end
