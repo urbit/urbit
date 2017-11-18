@@ -281,6 +281,24 @@ def flatten_deps_for_pc_file(pc_file)
   end
 end
 
+def flatten_deps_for_cmake_file(cmake_file)
+  flatten_deps(DepGraph[cmake_file]) do |dep|
+    next DepGraph.fetch(dep)
+
+    deps = case determine_dep_type(dep)
+           when :x then []
+           else DepGraph.fetch(dep)
+           end
+
+    # Replace .a files with a canonical .x file if there is one.
+    deps.map do |name|
+      substitute = canonical_x_file(name)
+      substitute = nil if substitute == cmake_file
+      substitute || name
+    end
+  end
+end
+
 def create_pc_file(name)
   requires = []
   libdirs = []
@@ -491,37 +509,65 @@ EOF
 end
 
 def create_cmake_qt5widgets
-  # TODO: create CMake files like this using the dependency graph we used for .pc files.
+  widgets_a = find_qt_library('libQt5Widgets.a') || raise
+  core_a = find_qt_library('libQt5Core.a') || raise
+
+  includes = [
+    QtBaseDir + 'include',
+    QtBaseDir + 'include' + 'QtWidgets',
+    QtBaseDir + 'include' + 'QtCore',
+    QtBaseDir + 'include' + 'QtGui',
+  ]
+
+  libs = [ core_a ]
+  prls = [
+    OutDir + 'lib' + (PrlPrefix + 'Qt5Widgets.prl'),
+    OutDir + 'lib' + (PrlPrefix + 'Qt5Gui.prl'),
+    OutDir + 'lib' + (PrlPrefix + 'Qt5Core.prl'),
+  ]
+  if Os == "windows"
+    prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
+  end
+  if Os == "linux"
+    prls << OutDir + 'plugins' + 'platforms' + 'libqlinuxfb.prl'
+    prls << OutDir + 'plugins' + 'platforms' + 'libqxcb.prl'
+  end
+
+  prls.each do |prl|
+    prl_libs = libs_from_prl(parse_prl_file(prl))
+    libs.concat(prl_libs)
+  end
+
+  deps = flatten_deps_for_cmake_file('Qt5Widgets.x')
+
+  libdirs = []
+  ldflags = []
+  deps.each do |dep|
+    dep = dep.dup
+    case determine_dep_type(dep)
+    when :a then
+      full_path = DepInfo[dep]
+      raise "Could not find library: #{dep}" if !full_path
+      libdir = full_path.dirname.to_s
+      libname = full_path.basename.to_s
+      libname.sub!(/\Alib/, '')
+      libname.sub!(/.a\Z/, '')
+      libdirs << "-L#{libdir}"
+      ldflags << "-l#{libname}"
+    when :ldflag then
+      ldflags << dep
+    #when :cflag then
+    #  dep.sub!(OutIncDir.to_s, '${includedir}')
+    #  cflags << dep
+    end
+  end
+
+  puts "deps: #{deps.inspect}"
+  puts "ldflags: #{ldflags.inspect}"
+
+  libs = libdirs.reverse.uniq + ldflags.reverse
+
   File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
-    widgets_a = find_qt_library('libQt5Widgets.a') || raise
-    core_a = find_qt_library('libQt5Core.a') || raise
-
-    includes = [
-      QtBaseDir + 'include',
-      QtBaseDir + 'include' + 'QtWidgets',
-      QtBaseDir + 'include' + 'QtCore',
-      QtBaseDir + 'include' + 'QtGui',
-    ]
-
-    libs = [ core_a ]
-    prls = [
-      OutDir + 'lib' + (PrlPrefix + 'Qt5Widgets.prl'),
-      OutDir + 'lib' + (PrlPrefix + 'Qt5Gui.prl'),
-      OutDir + 'lib' + (PrlPrefix + 'Qt5Core.prl'),
-    ]
-    if Os == "windows"
-      prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
-    end
-    if Os == "linux"
-      prls << OutDir + 'plugins' + 'platforms' + 'libqlinuxfb.prl'
-      prls << OutDir + 'plugins' + 'platforms' + 'libqxcb.prl'
-    end
-
-    prls.each do |prl|
-      prl_libs = libs_from_prl(parse_prl_file(prl))
-      libs.concat(prl_libs)
-    end
-
     import_static_lib f, 'Qt5::Widgets',
       IMPORTED_LOCATION: widgets_a,
       IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
@@ -549,6 +595,12 @@ def main
   end
 
   make_dep_graph
+
+  #DepGraph.each do |k, v|
+  #  next if v.empty?
+  #  puts "#{k.inspect} => "
+  #  puts "  #{v.inspect}"
+  #end
 
   create_pc_files
 
