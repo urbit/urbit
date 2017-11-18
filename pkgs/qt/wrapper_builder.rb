@@ -37,21 +37,21 @@ end
 # purely transitive.
 def make_dep_graph
   add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
-  add_dep 'Qt5Widgets.x', '-I' + (OutIncDir + 'QtWidgets').to_s
   add_dep 'Qt5Widgets.x', 'Qt5Gui.x'
   add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
   add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
-  add_dep 'Qt5GuiNoPlugins.x', '-I' + (OutIncDir + 'QtGui').to_s
   add_dep 'Qt5Core.x', 'libQt5Core.a'
-  add_dep 'Qt5Core.x', '-I' + OutIncDir.to_s
-  add_dep 'Qt5Core.x', '-I' + (OutIncDir + 'QtCore').to_s
 
   add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
+  add_dep 'libQt5Widgets.a', '-I' + (OutIncDir + 'QtWidgets').to_s
   add_dep 'libQt5FontDatabaseSupport.a', 'libqtfreetype.a'
   add_dep 'libQt5Gui.a', 'libQt5Core.a'
   add_dep 'libQt5Gui.a', 'libqtlibpng.a'
   add_dep 'libQt5Gui.a', 'libqtharfbuzz.a'
+  add_dep 'libQt5Gui.a', '-I' + (OutIncDir + 'QtGui').to_s
   add_dep 'libQt5Core.a', 'libqtpcre2.a'
+  add_dep 'libQt5Core.a', '-I' + OutIncDir.to_s
+  add_dep 'libQt5Core.a', '-I' + (OutIncDir + 'QtCore').to_s
 
   if Os == 'windows'
     add_dep 'Qt5Gui.x', 'qwindows.x'
@@ -166,9 +166,9 @@ def determine_dep_type(name)
   when extension == '.a' then :a
   when extension == '.pc' then :pc
   when extension == '.x' then :x
-  when name.start_with?('-I') then :cflag
+  when name.start_with?('-I') then :incdirflag
+  when name.start_with?('-L') then :libdirflag
   when name.start_with?('-l') then :ldflag
-  when name.start_with?('-L') then :libdir
   when name.start_with?('-framework') then :ldflag
   end
 end
@@ -303,7 +303,9 @@ def create_pc_file(name)
       requires << dep
     when :ldflag then
       ldflags << dep
-    when :cflag then
+    when :libdirflag then
+      libdirs << dep
+    when :incdirflag then
       dep.sub!(OutIncDir.to_s, '${includedir}')
       cflags << dep
     end
@@ -484,18 +486,11 @@ end
 
 def create_cmake_qt5widgets
   widgets_a = find_qt_library('libQt5Widgets.a') || raise
-  core_a = find_qt_library('libQt5Core.a') || raise
-
-  includes = [
-    QtBaseDir + 'include',
-    QtBaseDir + 'include' + 'QtWidgets',
-    QtBaseDir + 'include' + 'QtCore',
-    QtBaseDir + 'include' + 'QtGui',
-  ]
 
   deps = flatten_deps_for_cmake_file('Qt5Widgets.x')
 
-  libdirs = []
+  incdirs = []
+  libdirflags = []
   ldflags = []
   deps.each do |dep|
     dep = dep.dup
@@ -507,23 +502,24 @@ def create_cmake_qt5widgets
       libname = full_path.basename.to_s
       libname.sub!(/\Alib/, '')
       libname.sub!(/.a\Z/, '')
-      libdirs << "-L#{libdir}"
+      libdirflags << "-L#{libdir}"
       ldflags << "-l#{libname}"
     when :ldflag then
       ldflags << dep
-    when :libdir then
-      libdirs << dep
+    when :libdirflag then
+      libdirflags << dep
+    when :incdirflag then
+      incdir = dep.sub(/\A-I/, '')
+      incdirs << incdir
     end
   end
-
-  libs = libdirs.reverse.uniq + ldflags.reverse
 
   File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
     import_static_lib f, 'Qt5::Widgets',
       IMPORTED_LOCATION: widgets_a,
       IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
-      INTERFACE_LINK_LIBRARIES: libs,
-      INTERFACE_INCLUDE_DIRECTORIES: includes,
+      INTERFACE_LINK_LIBRARIES: libdirflags.reverse.uniq + ldflags.reverse,
+      INTERFACE_INCLUDE_DIRECTORIES: incdirs,
       INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC'
 
     f.puts "include(#{CMakeDir + 'core.cmake'})"
