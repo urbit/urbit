@@ -67,6 +67,7 @@ def make_dep_graph
 
     add_dep 'libQt5Core.a', '-lole32'
     add_dep 'libQt5Core.a', '-luuid'
+    add_dep 'libQt5Core.a', '-lversion'
     add_dep 'libQt5Core.a', '-lwinmm'
     add_dep 'libQt5Core.a', '-lws2_32'
 
