@@ -511,7 +511,7 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
   properties = {
     IMPORTED_LOCATION: widgets_a,
     IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
-    IMPORTED_LINK_INTERFACE_LIBRARIES: libs.join(' '),
+    INTERFACE_LINK_LIBRARIES: libs.join(' '),
     INTERFACE_INCLUDE_DIRECTORIES: includes.join(' '),
     INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC',
   }
