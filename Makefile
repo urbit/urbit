@@ -72,7 +72,7 @@ CLD=c++ $(CFLAGS) -L/usr/local/lib $(OPTLOCALLFLAGS) $(OPENSSLLFLAGS)
 
 ifeq ($(OS),osx)
   CLDOSFLAGS=-bind_at_load
-  OSLIBS=-lprofiler -framework CoreServices -framework CoreFoundation
+  OSLIBS=-framework CoreServices -framework CoreFoundation
 endif
 ifeq ($(OS),linux)
   OSLIBS=-lpthread -lrt -lcurses
