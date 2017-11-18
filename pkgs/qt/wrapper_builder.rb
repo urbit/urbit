@@ -31,27 +31,32 @@ else
   PrlPrefix = 'lib'
 end
 
-# Note: These dependencies just came from me fixing link errors for specific
+# Note: These dependencies just came from me fixing errors for specific
 # programs.  There are likely misisng dependencies in this graph, and there
 # might be a few dependencies that could be safely removed because they are
 # purely transitive.
 def make_dep_graph
+  # High-level dependencies.
   add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
   add_dep 'Qt5Widgets.x', 'Qt5Gui.x'
   add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
   add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
+  add_dep 'Qt5GuiNoPlugins.x', 'Qt5Core.x'
   add_dep 'Qt5Core.x', 'libQt5Core.a'
 
+  # Include directories.
+  add_dep 'Qt5Core.x', '-I' + OutIncDir.to_s
+  add_dep 'Qt5Core.x', '-I' + (OutIncDir + 'QtCore').to_s
+  add_dep 'Qt5Gui.x', '-I' + (OutIncDir + 'QtGui').to_s
+  add_dep 'Qt5Widgets.x', '-I' + (OutIncDir + 'QtWidgets').to_s
+
+  # Libraries that Qt depends on.
   add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
-  add_dep 'libQt5Widgets.a', '-I' + (OutIncDir + 'QtWidgets').to_s
   add_dep 'libQt5FontDatabaseSupport.a', 'libqtfreetype.a'
   add_dep 'libQt5Gui.a', 'libQt5Core.a'
   add_dep 'libQt5Gui.a', 'libqtlibpng.a'
   add_dep 'libQt5Gui.a', 'libqtharfbuzz.a'
-  add_dep 'libQt5Gui.a', '-I' + (OutIncDir + 'QtGui').to_s
   add_dep 'libQt5Core.a', 'libqtpcre2.a'
-  add_dep 'libQt5Core.a', '-I' + OutIncDir.to_s
-  add_dep 'libQt5Core.a', '-I' + (OutIncDir + 'QtCore').to_s
 
   if Os == 'windows'
     add_dep 'Qt5Gui.x', 'qwindows.x'
