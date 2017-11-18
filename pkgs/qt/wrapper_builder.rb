@@ -148,44 +148,6 @@ def add_deps_of_pc_files
   end
 end
 
-def parse_prl_file(filename)  # TODO: remove prl stuff
-  filename = Pathname(filename)
-  filename = filename.sub_ext("d.prl") if !filename.exist?
-  attrs = { prl_filename: filename }
-  File.foreach(filename.to_s) do |line|
-    md = line.match(/(\w+) = (.*)/)
-    attrs[md[1]] = md[2]
-  end
-  attrs
-end
-
-def libs_from_prl(prl)
-  libs = []
-
-  target = prl.fetch('QMAKE_PRL_TARGET')
-  if !Pathname(target).absolute?
-    libs << "-L#{prl.fetch(:prl_filename).dirname}"
-  end
-  if md = target.match(/lib(\w+).a/)
-    libs << target
-  end
-
-  listed_libs = prl.fetch('QMAKE_PRL_LIBS')
-  listed_libs.gsub!(/\$\$\[QT_INSTALL_LIBS\]/, (OutDir + 'lib').to_s)
-  libs.concat listed_libs.split(' ')
-
-  # Combine '-framework' with the library after it.
-  libs2 = []
-  libs_enum = libs.each
-  loop do
-    lib = libs_enum.next
-    lib += ' ' + libs_enum.next if lib == '-framework'
-    libs2 << lib
-  end
-
-  libs2
-end
-
 def add_dep(library, *deps)
   a = DepGraph[library] ||= []
   DepGraphBack[library] ||= []
@@ -531,25 +493,6 @@ def create_cmake_qt5widgets
     QtBaseDir + 'include' + 'QtGui',
   ]
 
-  libs = [ core_a ]
-  prls = [
-    OutDir + 'lib' + (PrlPrefix + 'Qt5Widgets.prl'),
-    OutDir + 'lib' + (PrlPrefix + 'Qt5Gui.prl'),
-    OutDir + 'lib' + (PrlPrefix + 'Qt5Core.prl'),
-  ]
-  if Os == "windows"
-    prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
-  end
-  if Os == "linux"
-    prls << OutDir + 'plugins' + 'platforms' + 'libqlinuxfb.prl'
-    prls << OutDir + 'plugins' + 'platforms' + 'libqxcb.prl'
-  end
-
-  prls.each do |prl|
-    prl_libs = libs_from_prl(parse_prl_file(prl))
-    libs.concat(prl_libs)
-  end
-
   deps = flatten_deps_for_cmake_file('Qt5Widgets.x')
 
   libdirs = []
@@ -572,9 +515,6 @@ def create_cmake_qt5widgets
       libdirs << dep
     end
   end
-
-  puts "deps: #{deps.inspect}"
-  puts "ldflags: #{ldflags.inspect}"
 
   libs = libdirs.reverse.uniq + ldflags.reverse
 
@@ -606,12 +546,6 @@ def main
   end
 
   make_dep_graph
-
-  #DepGraph.each do |k, v|
-  #  next if v.empty?
-  #  puts "#{k.inspect} => "
-  #  puts "  #{v.inspect}"
-  #end
 
   create_pc_files
 
