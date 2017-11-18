@@ -11,6 +11,7 @@ QtVersionMajor = QtVersionString.split('.').first.to_i
 QtBaseDir = Pathname(ENV.fetch('qtbase'))
 OutDir = Pathname(ENV.fetch('out'))
 OutPcDir = OutDir + 'lib' + 'pkgconfig'
+CMakeDir = OutDir + 'lib' + 'cmake'
 OutIncDir = OutDir + 'include'
 
 DepGraph = {}
@@ -390,28 +391,29 @@ def import_static_lib(f, target_name, properties)
   set_properties(f, target_name, properties)
 end
 
-# Symlink the include, bin, and plugins directories into $out.
+def main
+  # Symlink the include, bin, and plugins directories into $out.
+  mkdir OutDir
+  ln_s QtBaseDir + 'include', OutDir + 'include'
+  ln_s QtBaseDir + 'bin', OutDir + 'bin'
+  ln_s QtBaseDir + 'plugins', OutDir + 'plugins'
+  ln_s QtBaseDir + 'src', OutDir + 'src'
 
-mkdir OutDir
-ln_s QtBaseDir + 'include', OutDir + 'include'
-ln_s QtBaseDir + 'bin', OutDir + 'bin'
-ln_s QtBaseDir + 'plugins', OutDir + 'plugins'
-ln_s QtBaseDir + 'src', OutDir + 'src'
+  # Symlink the .a files and copy the .prl files into $out/lib.
+  mkdir OutDir + 'lib'
+  (QtBaseDir + 'lib').each_child do |c|
+    ln_s c, OutDir + 'lib' if c.extname == '.a'
+    cp c, OutDir + 'lib' if c.extname == '.prl'
+  end
 
-# Symlink the .a files and copy the .prl files into $out/lib.
+  make_dep_graph
 
-mkdir OutDir + 'lib'
-(QtBaseDir + 'lib').each_child do |c|
-  ln_s c, OutDir + 'lib' if c.extname == '.a'
-  cp c, OutDir + 'lib' if c.extname == '.prl'
+  create_pc_files
+
+  mkdir CMakeDir
 end
 
-make_dep_graph
-
-create_pc_files
-
-CMakeDir = OutDir + 'lib' + 'cmake'
-mkdir CMakeDir
+main
 
 mkdir CMakeDir + 'Qt5Widgets'
 
