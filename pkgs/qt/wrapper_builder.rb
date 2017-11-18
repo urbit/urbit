@@ -364,6 +364,27 @@ def create_pc_files
   end
 end
 
+def set_properties(f, target_name, properties)
+  properties.each do |property_name, value|
+    if value.is_a?(Array)
+      value = value.map do |entry|
+        if entry.to_s.include?(' ')
+          "\"#{entry}\""
+        else
+          entry
+        end
+      end.join(' ')
+    end
+    f.puts "set_property(TARGET #{target_name} " \
+      "PROPERTY #{property_name} #{value})"
+  end
+end
+
+def import_static_lib(f, target_name, properties)
+  f.puts "add_library(#{target_name} STATIC IMPORTED)"
+  set_properties(f, target_name, properties)
+end
+
 # Symlink the include, bin, and plugins directories into $out.
 
 mkdir OutDir
@@ -517,22 +538,12 @@ File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
     libs.concat(prl_libs)
   end
 
-  properties = {
+  import_static_lib f, 'Qt5::Widgets',
     IMPORTED_LOCATION: widgets_a,
     IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
-    INTERFACE_INCLUDE_DIRECTORIES: includes.join(' '),
-    INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC',
-  }
-
-  f.puts "add_library(Qt5::Widgets STATIC IMPORTED)"
-  properties.each do |name, value|
-    f.puts "set_property(TARGET Qt5::Widgets PROPERTY #{name} #{value})"
-  end
-
-  libs.each do |lib|
-    f.puts "list (APPEND Qt5Widgets_libs \"#{lib}\")"
-  end
-  f.puts "set_property(TARGET Qt5::Widgets PROPERTY INTERFACE_LINK_LIBRARIES ${Qt5Widgets_libs})"
+    INTERFACE_LINK_LIBRARIES: libs,
+    INTERFACE_INCLUDE_DIRECTORIES: includes,
+    INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC'
 
   f.puts "include(#{CMakeDir + 'core.cmake'})"
 end
