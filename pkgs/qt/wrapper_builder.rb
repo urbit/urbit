@@ -364,19 +364,24 @@ def create_pc_files
   end
 end
 
+def set_property(f, target_name, property_name, value)
+  if value.is_a?(Array)
+    value = value.map do |entry|
+      if entry.to_s.include?(' ')
+        "\"#{entry}\""
+      else
+        entry
+      end
+    end.join(' ')
+  end
+
+  f.puts "set_property(TARGET #{target_name} " \
+         "PROPERTY #{property_name} #{value})"
+end
+
 def set_properties(f, target_name, properties)
   properties.each do |property_name, value|
-    if value.is_a?(Array)
-      value = value.map do |entry|
-        if entry.to_s.include?(' ')
-          "\"#{entry}\""
-        else
-          entry
-        end
-      end.join(' ')
-    end
-    f.puts "set_property(TARGET #{target_name} " \
-      "PROPERTY #{property_name} #{value})"
+    set_property(f, target_name, property_name, value)
   end
 end
 
