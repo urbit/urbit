@@ -24,9 +24,9 @@ end
 
 case Os
 when "windows"
-  prl_prefix = ''
+  PrlPrefix = ''
 else
-  prl_prefix = 'lib'
+  PrlPrefix = 'lib'
 end
 
 # Note: These dependencies just came from me fixing link errors for specific
@@ -391,54 +391,29 @@ def import_static_lib(f, target_name, properties)
   set_properties(f, target_name, properties)
 end
 
-def main
-  # Symlink the include, bin, and plugins directories into $out.
-  mkdir OutDir
-  ln_s QtBaseDir + 'include', OutDir + 'include'
-  ln_s QtBaseDir + 'bin', OutDir + 'bin'
-  ln_s QtBaseDir + 'plugins', OutDir + 'plugins'
-  ln_s QtBaseDir + 'src', OutDir + 'src'
+def create_cmake_core_files
+  File.open(CMakeDir + 'core.cmake', 'w') do |f|
+    f.puts "set(QT_VERSION_MAJOR #{QtVersionMajor})"
+    f.puts
 
-  # Symlink the .a files and copy the .prl files into $out/lib.
-  mkdir OutDir + 'lib'
-  (QtBaseDir + 'lib').each_child do |c|
-    ln_s c, OutDir + 'lib' if c.extname == '.a'
-    cp c, OutDir + 'lib' if c.extname == '.prl'
-  end
+    moc_exe = OutDir + 'bin' + 'moc'
+    f.puts "set(QT_MOC_EXECUTABLE #{moc_exe})"
+    f.puts "add_executable(Qt5::moc IMPORTED)"
+    f.puts "set_target_properties(Qt5::moc PROPERTIES " \
+           "IMPORTED_LOCATION ${QT_MOC_EXECUTABLE})"
+    f.puts
 
-  make_dep_graph
+    rcc_exe = OutDir + 'bin' + 'rcc'
+    f.puts "add_executable(Qt5::rcc IMPORTED)"
+    f.puts "set_target_properties(Qt5::rcc PROPERTIES " \
+           "IMPORTED_LOCATION #{rcc_exe})"
+    f.puts "set(Qt5Core_RCC_EXECUTABLE Qt5::rcc)"
+    f.puts
 
-  create_pc_files
-
-  mkdir CMakeDir
-end
-
-main
-
-mkdir CMakeDir + 'Qt5Widgets'
-
-File.open(CMakeDir + 'core.cmake', 'w') do |f|
-  f.puts "set(QT_VERSION_MAJOR #{QtVersionMajor})"
-  f.puts
-
-  moc_exe = OutDir + 'bin' + 'moc'
-  f.puts "set(QT_MOC_EXECUTABLE #{moc_exe})"
-  f.puts "add_executable(Qt5::moc IMPORTED)"
-  f.puts "set_target_properties(Qt5::moc PROPERTIES " \
-         "IMPORTED_LOCATION ${QT_MOC_EXECUTABLE})"
-  f.puts
-
-  rcc_exe = OutDir + 'bin' + 'rcc'
-  f.puts "add_executable(Qt5::rcc IMPORTED)"
-  f.puts "set_target_properties(Qt5::rcc PROPERTIES " \
-         "IMPORTED_LOCATION #{rcc_exe})"
-  f.puts "set(Qt5Core_RCC_EXECUTABLE Qt5::rcc)"
-  f.puts
-
-  # These macros come from src/corelib/Qt5CoreMacros.cmake originally.
-  # Perhaps we should just copy that file from Qt's source directly if
-  # it doesn't need any patches.
-  f.puts <<EOF
+    # These macros come from src/corelib/Qt5CoreMacros.cmake originally.
+    # Perhaps we should just copy that file from Qt's source directly if
+    # it doesn't need any patches.
+    f.puts <<EOF
 macro(QT5_MAKE_OUTPUT_FILE infile prefix ext outfile )
   string(LENGTH ${CMAKE_CURRENT_BINARY_DIR} _binlength)
   string(LENGTH ${infile} _infileLength)
@@ -512,45 +487,75 @@ function(QT5_ADD_RESOURCES outfiles )
   set(${outfiles} ${${outfiles}} PARENT_SCOPE)
 endfunction()
 EOF
+  end
 end
 
-# TODO: create CMake files like this using the dependency graph we used for .pc files.
-File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
-  widgets_a = find_qt_library('libQt5Widgets.a') || raise
-  core_a = find_qt_library('libQt5Core.a') || raise
+def create_cmake_qt5widgets
+  # TODO: create CMake files like this using the dependency graph we used for .pc files.
+  File.open(CMakeDir + 'Qt5Widgets' + 'Qt5WidgetsConfig.cmake', 'w') do |f|
+    widgets_a = find_qt_library('libQt5Widgets.a') || raise
+    core_a = find_qt_library('libQt5Core.a') || raise
 
-  includes = [
-    QtBaseDir + 'include',
-    QtBaseDir + 'include' + 'QtWidgets',
-    QtBaseDir + 'include' + 'QtCore',
-    QtBaseDir + 'include' + 'QtGui',
-  ]
+    includes = [
+      QtBaseDir + 'include',
+      QtBaseDir + 'include' + 'QtWidgets',
+      QtBaseDir + 'include' + 'QtCore',
+      QtBaseDir + 'include' + 'QtGui',
+    ]
 
-  libs = [ core_a ]
-  prls = [
-    OutDir + 'lib' + (prl_prefix + 'Qt5Widgets.prl'),
-    OutDir + 'lib' + (prl_prefix + 'Qt5Gui.prl'),
-    OutDir + 'lib' + (prl_prefix + 'Qt5Core.prl'),
-  ]
-  if Os == "windows"
-    prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
+    libs = [ core_a ]
+    prls = [
+      OutDir + 'lib' + (PrlPrefix + 'Qt5Widgets.prl'),
+      OutDir + 'lib' + (PrlPrefix + 'Qt5Gui.prl'),
+      OutDir + 'lib' + (PrlPrefix + 'Qt5Core.prl'),
+    ]
+    if Os == "windows"
+      prls << OutDir + 'plugins' + 'platforms' + 'qwindows.prl'
+    end
+    if Os == "linux"
+      prls << OutDir + 'plugins' + 'platforms' + 'libqlinuxfb.prl'
+      prls << OutDir + 'plugins' + 'platforms' + 'libqxcb.prl'
+    end
+
+    prls.each do |prl|
+      prl_libs = libs_from_prl(parse_prl_file(prl))
+      libs.concat(prl_libs)
+    end
+
+    import_static_lib f, 'Qt5::Widgets',
+      IMPORTED_LOCATION: widgets_a,
+      IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
+      INTERFACE_LINK_LIBRARIES: libs,
+      INTERFACE_INCLUDE_DIRECTORIES: includes,
+      INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC'
+
+    f.puts "include(#{CMakeDir + 'core.cmake'})"
   end
-  if Os == "linux"
-    prls << OutDir + 'plugins' + 'platforms' + 'libqlinuxfb.prl'
-    prls << OutDir + 'plugins' + 'platforms' + 'libqxcb.prl'
-  end
-
-  prls.each do |prl|
-    prl_libs = libs_from_prl(parse_prl_file(prl))
-    libs.concat(prl_libs)
-  end
-
-  import_static_lib f, 'Qt5::Widgets',
-    IMPORTED_LOCATION: widgets_a,
-    IMPORTED_LINK_INTERFACE_LANGUAGES: 'CXX',
-    INTERFACE_LINK_LIBRARIES: libs,
-    INTERFACE_INCLUDE_DIRECTORIES: includes,
-    INTERFACE_COMPILE_DEFINITIONS: 'QT_STATIC'
-
-  f.puts "include(#{CMakeDir + 'core.cmake'})"
 end
+
+def main
+  # Symlink the include, bin, and plugins directories into $out.
+  mkdir OutDir
+  ln_s QtBaseDir + 'include', OutDir + 'include'
+  ln_s QtBaseDir + 'bin', OutDir + 'bin'
+  ln_s QtBaseDir + 'plugins', OutDir + 'plugins'
+  ln_s QtBaseDir + 'src', OutDir + 'src'
+
+  # Symlink the .a files and copy the .prl files into $out/lib.
+  mkdir OutDir + 'lib'
+  (QtBaseDir + 'lib').each_child do |c|
+    ln_s c, OutDir + 'lib' if c.extname == '.a'
+    cp c, OutDir + 'lib' if c.extname == '.prl'
+  end
+
+  make_dep_graph
+
+  create_pc_files
+
+  mkdir CMakeDir
+  mkdir CMakeDir + 'Qt5Widgets'
+  create_cmake_core_files
+  create_cmake_qt5widgets
+end
+
+main
