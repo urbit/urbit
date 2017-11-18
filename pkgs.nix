@@ -169,8 +169,11 @@ rec {
   };
 
   pavr2 = import ./pkgs/pavr2 {
-    inherit crossenv libusbp;
-    qt = qt.base;
+    inherit crossenv libusbp qt;
+  };
+
+  tic = import ./pkgs/tic {
+    inherit crossenv libusbp qt;
   };
 };
 in pkgs
