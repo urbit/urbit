@@ -229,13 +229,13 @@ end
 #
 # 1) Contains all the listed dependencies.
 # 2) Has no duplicates.
-# 3) For any dependency in the list, all of its dependencies before after it.
+# 3) For any dependency in the list, all of its dependencies are before it.
 #
 # Guarantee 3 only holds if the underlying graph has no circul dependencies.  If
 # there is a circular dependency, it will not be detected, but it will not cause
 # an infinite loop either.
 def flatten_deps(deps)
-  work = deps
+  work = [].concat(deps)
   expanded = {}
   output = {}
   while !work.empty?
