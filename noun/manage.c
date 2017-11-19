@@ -1619,6 +1619,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       CURLcode result;
       FILE *file;
       c3_c pil_c[2048];
+      long cod_l;
 
       /* use arvo git hash and branch for pill url unless overridden */
       if ( NULL == url_c ) {
@@ -1639,10 +1640,17 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       curl_easy_setopt(curl, CURLOPT_URL, url_c);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
       result = curl_easy_perform(curl);
+      curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
       fclose(file);
-      if ( result != CURLE_OK ) {
+      if ( CURLE_OK != result ) {
         fprintf(stderr, "failed to fetch %s: %s\n",
                         url_c, curl_easy_strerror(result));
+        fprintf(stderr,
+                "please fetch it manually and specify the location with -B\n");
+        exit(1);
+      }
+      if ( 300 <= cod_l ) {
+        fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
         fprintf(stderr,
                 "please fetch it manually and specify the location with -B\n");
         exit(1);
