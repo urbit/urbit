@@ -7154,18 +7154,10 @@
     ?-    sut
         {$atom *}   q.sut
         {$cell *}   %+  biff  $(sut p.sut)
-                    |=(* (biff ^$(sut q.sut) |=(* `[+>+< +<])))
+                    |=(a/* (biff ^$(sut q.sut) |=(b/* `[a b])))
         {$core *}   (biff $(sut p.sut) |=(* `[p.s.q.sut +<]))
         {$face *}   $(sut repo)
-        {$fork *}   =+  yed=~(tap in p.sut)
-                    |-  ^-  (unit)
-                    ?~  yed  ~
-                    =+  [dis=^$(sut i.yed) mor=$(yed t.yed)]
-                    ?~  dis  mor
-                    ?~  mor  dis
-                    ?:  =(.?(u.mor) .?(u.dis))
-                      ?:((gor u.mor u.dis) mor dis)
-                    ?@(u.mor mor dis)
+        {$fork *}   ~
         {$help *}   $(sut repo)
         {$hold *}   ?:  (~(has in gil) sut)
                       ~
