@@ -1060,8 +1060,8 @@
         (so-delta-our %follow | [src ~ ~])
       =-  (so-delta-our %follow & [[cir.src -] ~ ~])
       ^-  range
-      ?.  (~(has by sequence) cir.src)  ran.src
-      =-  `[[%ud (~(got by sequence) cir.src)] -]
+      ?~  seq  ran.src
+      =-  `[[%ud u.seq] -]
       ?~  ran.src  ~
       tal.u.ran.src
     ::
