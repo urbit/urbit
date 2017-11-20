@@ -1918,17 +1918,17 @@
         aud
       %-  ~(run in aud.gam.det)
       |=  c/circle
-      ?.  &(=(hos.c our.bol) =(nom.c nom))  c
+      ?.  =(c [our.bol nom])  c
       [who nom]
     ==
   ::
       $config
-    ?.  &(=(hos.cir.det our.bol) =(nom.cir.det nom))
+    ?.  =(cir.det [our.bol nom])
       det
     det(cir [who nom])
   ::
       $status
-    ?.  &(=(hos.cir.det our.bol) =(nom.cir.det nom))
+    ?.  =(cir.det [our.bol nom])
       det
     det(cir [who nom])
   ==
