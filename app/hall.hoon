@@ -2010,7 +2010,8 @@
     ?.  =(nom.qer nom.det)                            ~
     ?.  (circle-feel-story wat.qer nom.det det.det)   ~
     =/  sor  (~(got by stories) nom.qer)
-    ?.  in:(~(so-in-range so:ta nom.qer ~ sor))       ~
+    ?.  =<  in  %.  ran.qer
+        ~(so-in-range so:ta nom.qer ~ sor)            ~
     ?.  ?=(?($gram $new $config $status) -.det.det)   ~
     :+  ~  %circle
     ?+  det.det  det.det
