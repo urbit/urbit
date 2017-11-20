@@ -2,6 +2,7 @@
 ::::  /hoon/umd/mar
   ::
 /?    310
+/+    cram
 ::
 |_  mud/@t
 ++  grow
@@ -11,14 +12,17 @@
     (to-wain:format mud)
   ++  elem
     ^-  manx
-    [/div ~(shut ap %xml (rash mud fenced:cram:vast))]
+    elm:(static:cram (ream mud))
+  ++  front  :: XX performance, types
+    ^-  (map term knot)  
+    (~(run by inf:(static:cram (ream mud))) scot)
   --
 ++  grab
   |%
-  ++  mime  |=({p/mite q/octs} q.q)
+  ++  mime  |=({p/mite:eyre q/octs:eyre} q.q)
   ++  noun  @t
   ++  txt   of-wain:format
-  --
+  --  
 ++  grad  %txt
 ++  garb  /down
 --
