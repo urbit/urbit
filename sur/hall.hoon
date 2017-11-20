@@ -31,6 +31,7 @@
       {$peers nom/naem}                                 ::<  readers of story
       $:  $circle                                       ::>  story query
           nom/naem                                      ::<  circle name
+          wer/(unit circle)                             ::<  including target
           wat/(set circle-data)                         ::<  data to get
           ran/range                                     ::<  query duration
       ==                                                ::
@@ -100,7 +101,7 @@
   ==                                                    ::
 ++  rumor-story                                         ::>  story rumor
   $?  diff-story                                        ::<  both in & outward
-  $%  {$gram nev/envelope}                              ::<  new/changed msgs
+  $%  {$gram src/circle nev/envelope}                   ::<  new/changed message
   ==  ==                                                ::
 ++  diff-config                                         ::>  config change
   $%  {$full cof/config}                                ::<  set w/o side-effects

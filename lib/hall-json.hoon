@@ -426,7 +426,7 @@
       config+(ot cir+circ dif+dico ~)
       status+(ot cir+circ who+(su fed:ag) dif+disa ~)
       remove+ul
-      gram+enve
+      gram+(ot src+circ nev+enve ~)
     ==
   ::
   ++  dico                                              ::>  diff-config

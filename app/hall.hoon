@@ -41,6 +41,7 @@
       $:  count/@ud                                     ::<  (lent grams)
           grams/(list telegram)                         ::<  all messages
           known/(map serial @ud)                        ::<  messages heard
+          sourced/(map circle (list @ud))               ::<  messages by circle
           sequence/(map circle @ud)                     ::<  last-heard p circle
           locals/group                                  ::<  local status
           remotes/(map circle group)                    ::<  remote status
@@ -81,7 +82,7 @@
       $%  {$inherited ihr/?}                            ::<  inherited flag
           {$follow sub/? srs/(set source)}              ::<  un/subscribe
           {$sequent cir/circle num/@ud}                 ::<  update last-heard
-          {$gram gam/telegram}                          ::<  new/changed msgs
+          {$gram src/circle gam/telegram}               ::<  new/changed msgs
       ==  ==                                            ::
     ::>  ||  %out                                       ::
     ::>    outgoing data                                ::
@@ -685,7 +686,7 @@
     ::
     |=  {nom/naem gam/telegram}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
-    (so-learn:sor gam)
+    (so-learn:sor [our.bol nom] gam)
   ::
   ++  ta-transmit                                       ::<  send message
     ::>  sends thought {tot} to {cir}.
@@ -914,7 +915,9 @@
           |=  t/telegram
           ^-  delta
           :+  %story  nom
-          :-  %gram
+          ::TODO  this really should have sent us the message
+          ::      src as well but that's not an easy fix.
+          :+  %gram  [(above our.bol) nom]
           ::  in audience, replace above with us.
           =-  t(aud -)
           =+  (~(del in aud.t) [(above our.bol) nom])
@@ -1160,7 +1163,7 @@
       ::
       |=  {src/circle nes/(list envelope)}
       ^+  +>
-      =.  +>  (so-lesson (turn nes tail))
+      =.  +>  (so-lesson src (turn nes tail))
       =/  num
         %+  roll  nes
         |=  {nev/envelope max/@ud}
@@ -1175,7 +1178,7 @@
       ::
       |=  {src/circle nev/envelope}
       ^+  +>
-      =.  +>  (so-learn gam.nev)
+      =.  +>  (so-learn src gam.nev)
       ?.  (gth num.nev (fall (~(get by sequence) src) 0))
         +>
       (so-delta-our %sequent src num.nev)
@@ -1183,22 +1186,22 @@
     ++  so-lesson                                       ::<  learn messages
       ::>  learn all telegrams in a list.
       ::
-      |=  gaz/(list telegram)
+      |=  {src/circle gaz/(list telegram)}
       ^+  +>
       ?~  gaz  +>
-      $(gaz t.gaz, +> (so-learn i.gaz))
+      $(gaz t.gaz, +> (so-learn src i.gaz))
     ::
     ++  so-learn                                        ::<  save/update message
       ::>  store an incoming telegram, updating if it
       ::>  already exists.
       ::
-      |=  gam/telegram
+      |=  {src/circle gam/telegram}
       ^+  +>
       ::  check for write permissions.
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
-      (so-delta-our %gram gam)
+      (so-delta-our %gram src gam)
     ::
     ::>  ||
     ::>  ||  %permissions
@@ -1567,7 +1570,7 @@
         +>(sequence (~(put by sequence) cir.det num.det))
       ::
           $gram
-        (sa-change-gram gam.det)
+        (sa-change-gram +.det)
       ::
           $config
         =.  +>
@@ -1589,11 +1592,18 @@
       ::>  apply a %gram delta, either appending or
       ::>  updating a message.
       ::
-      |=  gam/telegram
+      |=  {src/circle gam/telegram}
       ^+  +>
       ::TODO  move "known" logic up into ++so? that way,
       ::      we can attach message numbers to changes.
       =+  old=(~(get by known) uid.gam)
+      =.  sourced
+        =+  sed=(fall (~(get by sourced) src) ~)
+        ?~  old  (~(put by sourced) src [count sed])
+        ?^  (find ~[u.old] sed)  sourced
+        %+  ~(put by sourced)  src
+        :-  count
+        (fall (~(get by sourced) src) ~)
       ?~  old
         ::  new message
         %_  +>.$
@@ -1888,7 +1898,16 @@
     :+  ~  ~
     :-  %circle
     :+  %+  turn
-          (~(so-first-grams so:ta nom.qer ~ u.soy) ran.qer)
+          =-  (~(so-first-grams so:ta nom.qer ~ -) ran.qer)
+          ::TODO  this can be done more efficiently.
+          ?~  wer.qer  u.soy
+          %_  u.soy
+              grams
+            ?.  (~(has by sourced.u.soy) u.wer.qer)  ~
+            %+  turn  (~(got by sourced.u.soy) u.wer.qer)
+            |=  n/@ud
+            (snag (sub count.u.soy +(n)) grams.u.soy)
+          ==
         (cury gram-to-envelope nom.qer)
       :-  shape.u.soy
       ?.  (~(has in wat.qer) %config-r)  ~
@@ -1912,7 +1931,10 @@
     $sequent    !!
   ::
       $gram
-    :-  %gram
+    :+  %gram
+      ?.  =(src.det [our.bol nom])
+        src.det
+      [who nom]
     %+  gram-to-envelope  nom
     %_  gam.det
         aud
@@ -1947,17 +1969,30 @@
 ++  circle-feel-story                                   ::<
   ::>
   ::
-  |=  {wat/(set circle-data) nom/naem det/delta-story}
+  |=  $:  wer/(unit circle)
+          wat/(set circle-data)
+          nom/naem
+          det/delta-story
+      ==
   ^-  ?
-  ?:  =(wat ~)  &
-  %-  ~(has in wat)
-  ?+  -.det  %hasnot
-    $gram     %grams
-    $new      %config-l
-    $config   ?:  =(cir.det [our.bol nom])
-              %config-l  %config-r
-    $status   ?:  =(cir.det [our.bol nom])
-              %group-l  %group-r
+  ?&
+    ?~  wer  &
+    ?+  -.det  &
+      $gram     =(src.det u.wer)
+      $config   =(cir.det u.wer)
+      $status   =(cir.det u.wer)
+    ==
+  ::
+    ?:  =(wat ~)  &
+    %-  ~(has in wat)
+    ?+  -.det  %hasnot
+      $gram     %grams
+      $new      %config-l
+      $config   ?:  =(cir.det [our.bol nom])
+                %config-l  %config-r
+      $status   ?:  =(cir.det [our.bol nom])
+                %group-l  %group-r
+    ==
   ==
 ::
 ++  feel                                                ::<  delta to rumor
@@ -2008,7 +2043,8 @@
       $circle
     ?.  ?=($story -.det)                              ~
     ?.  =(nom.qer nom.det)                            ~
-    ?.  (circle-feel-story wat.qer nom.det det.det)   ~
+    ?.  %-  circle-feel-story
+        [wer.qer wat.qer nom.det det.det]             ~
     =/  sor  (~(got by stories) nom.qer)
     ?.  =<  in  %.  ran.qer
         ~(so-in-range so:ta nom.qer ~ sor)            ~
@@ -2016,7 +2052,8 @@
     :+  ~  %circle
     ?+  det.det  det.det
         {$gram *}
-      [%gram (gram-to-envelope nom.det gam.det.det)]
+      :+  %gram  src.det.det
+      (gram-to-envelope nom.det gam.det.det)
     ==
   ==
 ::
@@ -2058,9 +2095,16 @@
   |=  pax/path
   ?.  ?=({$circle @tas *} pax)
     (coins-to-query (path-to-coins pax))
-  =/  qer/query  [%circle i.t.pax ~ ~]
+  =/  qer/query  [%circle i.t.pax ~ ~ ~]
   ?>  ?=($circle -.qer)  ::  for type system.
   =+  pax=t.t.pax
+  =+  ^-  {qer/query pax/path}
+    ?.  ?=({@ @ *} pax)  [qer pax]
+    =+  hos=(slaw %p i.pax)
+    ?~  hos  [qer pax]
+    :_  t.t.pax
+    qer(wer `[u.hos i.t.pax])
+  ?>  ?=($circle -.qer)
   |-  ^+  qer
   ?~  pax  qer
   ::TODO  can probably do this a bit better...
@@ -2300,6 +2344,7 @@
 ++  poke-hall-save                                      ::<  save as log
   ::>  stores the telegrams of story {nom} in a log file,
   ::>  to be re-loaded by ++poke-hall-load.
+  ::TODO  maybe update to also store sourced list.
   ::
   |=  nom/naem
   ^-  (quip move _+>)
@@ -2330,7 +2375,7 @@
   %-  pre-bake
   %+  turn  (flop grams)
   |=  t/telegram
-  [%story nom %gram t]
+  [%story nom %gram [our.bol nom] t]
 ::
 ++  poke-hall-load                                      ::<  load from log
   ::>  loads the telegrams of story {nom} into our state,
@@ -2346,7 +2391,7 @@
   %-  pre-bake
   %+  turn  grams
   |=  t/telegram
-  [%story nom %gram t]
+  [%story nom %gram [our.bol nom] t]
 ::
 ++  poke-hall-log                                       ::<  start logging
   ::>  starts logging story {nom}'s messages.
