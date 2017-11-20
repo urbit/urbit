@@ -128,6 +128,21 @@ def make_dep_graph
   end
 
   if Os == 'macos'
+    add_dep 'Qt5Gui.x', 'qcocoa.x'
+    add_dep 'qcocoa.x', 'libqcocoa.a'
+
+    add_dep 'libqcocoa.a', 'libcocoaprintersupport.a'
+    add_dep 'libqcocoa.a', '-lcups'  # Also available: -lcups.2
+    add_dep 'libqcocoa.a', 'libQt5AccessibilitySupport.a'
+    add_dep 'libqcocoa.a', 'libQt5ClipboardSupport.a'
+    add_dep 'libqcocoa.a', 'libQt5CglSupport.a'
+    add_dep 'libqcocoa.a', 'libQt5GraphicsSupport.a'
+    add_dep 'libqcocoa.a', 'libQt5FontDatabaseSupport.a'
+    add_dep 'libqcocoa.a', 'libQt5ThemeSupport.a'
+    add_dep 'libqcocoa.a', 'libQt5PrintSupport.a'
+
+    add_dep 'libqtlibpng.a', '-lz'
+
     add_dep 'libQt5Core.a', '-lobjc'
     add_dep 'libQt5Core.a', '-framework CoreServices'
     add_dep 'libQt5Core.a', '-framework CoreText'
@@ -135,7 +150,6 @@ def make_dep_graph
     add_dep 'libQt5Gui.a', '-framework OpenGL'
     add_dep 'libQt5Widgets.a', '-framework Carbon'
     add_dep 'libQt5Widgets.a', '-framework AppKit'
-    add_dep 'libqtlibpng.a', '-lz'
   end
 
   add_deps_of_pc_files
