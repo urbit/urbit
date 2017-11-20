@@ -395,33 +395,6 @@
       ::>  add/remove {pos} as sources for story {nom}.
       ::
       |=  {nom/naem sub/? srs/(set source)}
-      ::  when removing sources from %inbox, we may need
-      ::  to remove them from {public} too.
-      =?  ..ta-action  &(=(nom %inbox) !sub)
-        ^+  ..ta-action
-        =+  srs=~(tap in srs)
-        |-  ^+  ..ta-action
-        ?~  srs  ..ta-action
-        =;  last/?
-          =?  ..ta-action  last
-            (action-public | cir.i.srs)
-          $(srs t.srs)
-        %-  ~(rep in src.shape:(~(got by stories) nom))
-        |=  {s/source l/?}
-        ?.  l  |
-        ?.  =(cir.s cir.i.srs)  &
-        =(ran.s ran.i.srs)
-        ::  below eats state
-        ::%-  ~(rep in srs)
-        ::|=  {src/source _..ta-action}
-        ::^+  ..ta-action
-        ::::  delete from public if it's the last source.
-        ::=;  last/?  ?:(last (action-public | cir.src) ..ta-action)
-        ::%-  ~(rep in src.shape:(~(got by stories) nom))
-        ::|=  {s/source l/?}
-        ::?.  l  |
-        ::?.  =(cir.s cir.src)  &
-        ::=(ran.s ran.src)
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
@@ -490,14 +463,6 @@
       ::>  membership list.
       ::
       |=  {add/? cir/circle}
-      =/  has/?
-        %-  ~(rep in src.shape:(~(got by stories) %inbox))
-        |=  {src/source has/?}
-        ?:  has  &
-        =(cir cir.src)
-      ?.  has
-        %-  ta-note
-        "currently not in {(scow %p hos.cir)}/{(trip nom.cir)}"
       (ta-delta %public add cir)
     --
   ::
