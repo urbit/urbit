@@ -15,7 +15,11 @@
     elm:(static:cram (ream mud))
   ++  front  :: XX performance, types
     ^-  (map term knot)  
-    (~(run by inf:(static:cram (ream mud))) scot)
+    %-  ~(run by inf:(static:cram (ream mud)))
+    |=  a=dime  ^-  cord
+    ?+  (end 3 1 a)  (scot a)
+      %t  q.a
+    ==
   --
 ++  grab
   |%
