@@ -6,9 +6,9 @@
 |_  mud/@t
 ++  grow
   |%
-  ++  mime  [/text/x-unmark (taco mud)]
+  ++  mime  [/text/x-unmark (as-octs:mimes:html mud)]
   ++  txt
-    (lore mud)
+    (to-wain:format mud)
   ++  elem
     ^-  manx
     [/div ~(shut ap %xml (rash mud fenced:cram:vast))]
@@ -17,7 +17,7 @@
   |%
   ++  mime  |=({p/mite q/octs} q.q)
   ++  noun  @t
-  ++  txt   role
+  ++  txt   of-wain:format
   --
 ++  grad  %txt
 ++  garb  /down

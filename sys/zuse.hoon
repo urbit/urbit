@@ -39,7 +39,7 @@
 ++  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
   |*  vase/mold                                         ::  vase or maze
-  $-  $:  ref/*                                         ::  reference span
+  $-  $:  ref/*                                         ::  reference type
           lyc/(unit (set ship))                         ::  leakset
           car/term                                      ::  perspective
           bem/beam                                      ::  path
@@ -774,7 +774,7 @@
     ==                                                  ::
   ++  hoof  (trel ? term (unit (pair case ship)))       ::  resource reference
   ++  hoop                                              ::  source in hood
-    $%  {$& p/twig}                                     ::  direct twig
+    $%  {$& p/hoon}                                     ::  direct hoon
         {$| p/beam}                                     ::  resource location
     ==                                                  ::
   ++  hops                                              ::  XX late-bound path
@@ -782,8 +782,8 @@
         pof/(unit {p/@ud q/tyke})                       ::
     ==                                                  ::
   ++  horn                                              ::  resource tree
-    $%  {$fssg p/twig}                                  ::  /~  twig by hand
-        {$fsbc p/twig}                                  ::  /$  argument
+    $%  {$fssg p/hoon}                                  ::  /~  twig by hand
+        {$fsbc p/hoon}                                  ::  /$  argument
         {$fsbr p/(list horn)}                           ::  /|  options
         {$fshx p/horn}                                  ::  /#  insert dephash
         {$fsts p/term q/horn}                           ::  /=  apply face
@@ -792,9 +792,9 @@
         {$fscn p/horn}                                  ::  /%  propagate args
         {$fspm p/(list mark) q/horn}                    ::  /&  translates
         {$fscb p/horn}                                  ::  /_  homo map
-        {$fssm p/twig q/horn}                           ::  /;  operate on
+        {$fssm p/hoon q/horn}                           ::  /;  operate on
         {$fscl p/hops q/horn}                           ::  /:  relative to
-        {$fskt p/twig q/horn}                           ::  /^  cast
+        {$fskt p/hoon q/horn}                           ::  /^  cast
         {$fszp q/mark}                                  ::  /!mark/ eval value
         {$fszy q/mark}                                  ::  /mark/ static/grow
     ==                                                  ::
@@ -818,7 +818,7 @@
         {$pact p/silk q/silk}                           ::  patch
         {$plan p/beam q/coin r/hood}                    ::  structured assembly
         {$reef $~}                                      ::  kernel reef
-        {$ride p/twig q/silk}                           ::  silk thru twig
+        {$ride p/hoon q/silk}                           ::  silk thru hoon
         {$tabl p/(list (pair silk silk))}               ::  list
         {$vale p/mark q/*}                              ::  validate
         {$volt p/(cask *)}                              ::  unsafe add type
