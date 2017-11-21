@@ -782,23 +782,21 @@
         pof/(unit {p/@ud q/tyke})                       ::
     ==                                                  ::
   ++  horn                                              ::  resource tree
-    $%  {$ape p/hoon}                                   ::  /~  hoon by hand
-        {$arg p/hoon}                                   ::  /$  argument
-        {$alt p/(list horn)}                            ::  /|  options
-        {$dep p/horn}                                   ::  /#  insert dephash
-        {$dub p/term q/horn}                            ::  /=  apply face
-        {$fan p/(list horn)}                            ::  /.  list
-        {$for p/(list (pair spur horn))}                ::  /,  switch by path
-        {$hel p/horn}                                   ::  /%  propagate args
-        {$lin p/(list mark) q/horn}                     ::  /&  translates
-        {$man p/(map knot horn)}                        ::  /*  hetero map
-        {$nap p/horn}                                   ::  /_  homo map
-        {$now p/horn}                                   ::  deprecated
-        {$nod p/term q/horn}                            ::  /_  @  list by odor
-        {$saw p/hoon q/horn}                            ::  /;  operate on
-        {$see p/hops q/horn}                            ::  /:  relative to
-        {$sic p/hoon q/horn}                            ::  /^  cast
-        {$toy p/? q/mark}                               ::  /mark/  static/hook
+    $%  {$fssg p/hoon}                                  ::  /~  twig by hand
+        {$fsbc p/hoon}                                  ::  /$  argument
+        {$fsbr p/(list horn)}                           ::  /|  options
+        {$fshx p/horn}                                  ::  /#  insert dephash
+        {$fsts p/term q/horn}                           ::  /=  apply face
+        {$fsdt p/(list horn)}                           ::  /.  list
+        {$fscm p/(list (pair spur horn))}               ::  /,  switch by path
+        {$fscn p/horn}                                  ::  /%  propagate args
+        {$fspm p/(list mark) q/horn}                    ::  /&  translates
+        {$fscb p/horn}                                  ::  /_  homo map
+        {$fssm p/hoon q/horn}                           ::  /;  operate on
+        {$fscl p/hops q/horn}                           ::  /:  relative to
+        {$fskt p/hoon q/horn}                           ::  /^  cast
+        {$fszp q/mark}                                  ::  /!mark/ eval value
+        {$fszy q/mark}                                  ::  /mark/ static/grow
     ==                                                  ::
   ++  milk  (trel ship desk silk)                       ::  sourced silk
   ++  silk                                              ::  construction layer
