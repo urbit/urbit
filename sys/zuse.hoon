@@ -36,6 +36,26 @@
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
 |%
+::REVIEW where do these actually go
+++  ares  (unit {p/term q/(list tank)})                 ::  possible error
+++  coop  (unit ares)                                   ::  possible error
+::
+++  json                                                ::  normal json value
+  $@  $~                                                ::  null
+  $%  {$a p/(list json)}                                ::  array
+      {$b p/?}                                          ::  boolean
+      {$o p/(map @t json)}                              ::  object
+      {$n p/@ta}                                        ::  number
+      {$s p/@t}                                         ::  string
+  ==                                                    ::
+++  mime  {p/mite q/octs}                               ::  mimetyped data
+++  octs  {p/@ud q/@t}                                  ::  octet-stream
+::
+++  sack  {p/ship q/ship}                               ::  incoming [our his]
+++  sock  {p/ship q/ship}                               ::  outgoing [our his]
+::
+::+|
+::
 ++  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
   |*  vase/mold                                         ::  vase or maze
@@ -893,6 +913,11 @@
   ++  cush  (pair term club)                            ::  internal task
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
+  ++  scar                                              ::  opaque duct
+    $:  p/@ud                                           ::  bone sequence
+        q/(map duct bone)                               ::  by duct
+        r/(map bone duct)                               ::  by bone
+    ==                                                  ::
   ++  scup  (pair ship desk)                            ::  autoupdate
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::

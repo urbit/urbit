@@ -202,7 +202,6 @@
 ++  rout        rout:eyre                               ::  http route (new)
 ++  rump        rump:clay                               ::  relative path
 ++  saba        saba:clay                               ::  patch+merge
-++  sack        sack.is                                 ::  incoming [our his]
 ++  sufi        sufi:ames                               ::  domestic host
 ++  salt        !!                                      ::  XX deprecated
 ++  seal        !!                                      ::  XX deprecated
