@@ -827,8 +827,8 @@
           %+  knee  *^horn  |.  ~+
           ;~  pfix  fas
             ;~  pose
-              (stag %fssg ;~(pfix sig twig:read))       ::  /~  twig by hand
-              (stag %fsbc ;~(pfix buc twig:read))       ::  /$  extra arguments
+              (stag %fssg ;~(pfix sig hoon:read))       ::  /~  hoon by hand
+              (stag %fsbc ;~(pfix buc hoon:read))       ::  /$  extra arguments
               (stag %fsbr ;~(pfix bar alts:read))       ::  /|  or (options)
               (stag %fshx ;~(pfix hax horn:read))       ::  /#  insert dephash
               (stag %fsts ;~(pfix tis name:read))       ::  /=  apply face
@@ -851,7 +851,7 @@
           ;~(pose wid tal)
         ::
         ++  read
-          |%  ++  twig
+          |%  ++  hoon
                 %+  rail
                   (ifix [sel ser] (stag %cltr (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
@@ -1096,8 +1096,8 @@
       ?~  von  [p=cof q=[%1 [%c %w bem ~] ~ ~]]
       (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
     ::
-    ++  infer-product-span
-      |=  {cof/cafe typ/span gen/hoon}
+    ++  infer-product-type
+      |=  {cof/cafe typ/type gen/hoon}
       %+  (cowl cof)  (mule |.((~(play ut typ) gen)))
       |=(ref/type ref)
     ::
@@ -1279,8 +1279,8 @@
     ::
     ++  mint-cached
       ~/  %mint-cached
-      |=  {cof/cafe sut/span gen/hoon}
-      ^-  (bolt (pair span nock))
+      |=  {cof/cafe sut/type gen/hoon}
+      ^-  (bolt (pair type nock))
       %+  (clef %slim)  (fine cof sut gen)
       |=  {cof/cafe sut/type gen/hoon}
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
@@ -1294,7 +1294,7 @@
       |=  {cof/cafe vax/vase gen/hoon}
       ^-  (bolt vase)
       %+  cope  (mint-cached cof p.vax gen)
-      |=  {cof/cafe typ/span fol/nock}
+      |=  {cof/cafe typ/type fol/nock}
       %+  (coup cof)  (mock [q.vax fol] (sloy syve))
       |=(val/* `vase`[typ val])
     ::
