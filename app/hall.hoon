@@ -1191,12 +1191,15 @@
       =/  sus/(set ship)
         %.  sis.con.shape
         ?:(add ~(dif in sis) ~(int in sis))
-      ?~  sus  +>.$
       =.  +>.$
+        ::  if banishing: notify only those affected.
+        ::  if inviting: notify all targets.
+        =?  sis  !inv  sus
         =-  (so-act [%phrase - [%inv inv so-cir]~])
-        %-  ~(rep in `(set ship)`sus)
+        %-  ~(rep in `(set ship)`sis)
         |=  {s/ship a/audience}
         (~(put in a) [s %inbox])
+      ?~  sus  +>.$
       (so-delta-our %config so-cir %permit [add sus])
     ::
     ++  so-admire                                       ::<  accept from
