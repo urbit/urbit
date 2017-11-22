@@ -826,6 +826,12 @@ static void on_accept(uv_stream_t *listener, c3_i sas_i)
 
     h2o_socket_t* sok_u = h2o_uv_socket_create((uv_stream_t*)con_u, (uv_close_cb)free);
     h2o_accept(&accept_ctx, sok_u);
+
+    struct sockaddr_in sa;
+    h2o_socket_getpeername(sok_u, (struct sockaddr*)&sa);
+
+    c3_w ip = ( sa.sin_family != AF_INET ) ? 0 : ntohl(sa.sin_addr.s_addr);
+    uL(fprintf(uH, "http: accept ip %d\n", ip));
 }
 
 /* _http_conn_new(): create http connection.
