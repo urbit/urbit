@@ -4,6 +4,8 @@
   ::
 /?  314
 /-  sole
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   ::
@@ -31,4 +33,4 @@
 %+  sole-go  (boss 256 (star prn))
 |=  sec/@t
 %+  sole-so  %write-sec-atom    :: XX typed pair
-[hot (of-wain key sec ~)]
+[hot (of-wain:format key sec ~)]

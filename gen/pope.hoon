@@ -5,6 +5,8 @@
 /?    310
 ::  Input twitter keys
 /-    sole
+/+  old-zuse
+=,  old-zuse
 ::
 =+  cryp=crub
 =+  [sole]

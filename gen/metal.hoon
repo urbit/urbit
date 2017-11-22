@@ -2,6 +2,8 @@
 ::::  /hoon/metal/gen
   ::
 /?    310
+/+  old-zuse
+=,  old-zuse
 ::
 ::::
   !:
@@ -277,7 +279,7 @@
             =/  dat  .^(@t %cx pax)
             [(met 3 dat) dat]
           ==
-      =/  all  (~(tap by dir.lon) ~)
+      =/  all  ~(tap by dir.lon)
       |-  ^-  mode:clay
       ?~  all  hav
       $(all t.all, hav ^$(tyl [p.i.all tyl]))

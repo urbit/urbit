@@ -3,7 +3,8 @@
 ::::  /hoon/load/hood/gen
   ::
 /?    310
-/+    womb
+/+    womb,  old-zuse
+=,  old-zuse
 ::
 ::::
   ::
