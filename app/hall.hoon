@@ -1193,12 +1193,10 @@
         ?:(add ~(dif in sis) ~(int in sis))
       ?~  sus  +>.$
       =.  +>.$
-        %-  so-act
-        :-  %phrase
+        =-  (so-act [%phrase - [%inv inv so-cir]~])
         %-  ~(rep in `(set ship)`sus)
-        |=  {s/ship a/audience t/(list speech)}
-        :-  (~(put in a) [s %inbox])
-        [[%inv inv so-cir] t]
+        |=  {s/ship a/audience}
+        (~(put in a) [s %inbox])
       (so-delta-our %config so-cir %permit [add sus])
     ::
     ++  so-admire                                       ::<  accept from
