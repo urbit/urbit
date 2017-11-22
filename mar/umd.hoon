@@ -7,7 +7,7 @@
 |_  mud/@t
 ++  grow
   |%
-  ++  mime  [/text/x-markdown (as-octs:mimes:html mud)]
+  ++  mime  [/text/x-unmark (as-octs:mimes:html mud)]
   ++  txt
     (to-wain:format mud)
   ++  elem
