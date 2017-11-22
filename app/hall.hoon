@@ -253,15 +253,20 @@
     ==
   ::
   ++  ta-present                                        ::<  update a status
-    ::>
+    ::>  sets status for the indicated stories,
+    ::>  but only if they have write permission there.
     ::
     |=  {who/ship nos/(set naem) dif/diff-status}
     ^+  +>
     %-  ta-deltas
-    %-  ~(rep in nos)
-    |=  {n/naem l/(list delta)}
-    :_  l
-    [%story n %status [our.bol n] who dif]
+    %+  murn  ~(tap in nos)
+    |=  n/naem
+    ^-  (unit delta)
+    ?.  (~(has by stories) n)  ~
+    ::  only have presence if you have write permission.
+    ?.  (~(so-admire so n ~ (~(got by stories) n)) who)
+      ~
+    `[%story n %status [our.bol n] who dif]
   ::
   ++  ta-action                                         ::<  apply client action
     ::>  performs action sent by a client.
