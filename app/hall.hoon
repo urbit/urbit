@@ -1200,6 +1200,13 @@
         |=  {s/ship a/audience}
         (~(put in a) [s %inbox])
       ?~  sus  +>.$
+      ::  if banished, remove their presences.
+      =?  +>.$  !inv
+        %-  so-deltas-our
+        %+  turn  ~(tap in `(set ship)`sus)
+        |=  s/ship
+        :+  %status  so-cir
+        [s %remove ~]
       (so-delta-our %config so-cir %permit [add sus])
     ::
     ++  so-admire                                       ::<  accept from
