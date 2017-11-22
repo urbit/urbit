@@ -21,7 +21,7 @@
 =+  txt=.^(@t %cx (weld pax `path`[%hoon ~]))
 =+  rax=.^(@t %cx (weld arp `path`[%hoon ~]))
 =+  ^=  ken
-    =-  ?>(?=($& -.res) p.res)
+    =-  ?:(?=($& -.res) p.res ((slog p.res) ~))
     ^=  res  %-  mule  |.
     ~&  %solid-loaded
     =+  gen=(rain pax txt)
