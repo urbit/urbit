@@ -23,10 +23,191 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include "h2o.h"
+
 static void _http_request(u3_hreq* req_u);
 static void _http_request_dead(u3_hreq* req_u);
 static void _http_conn_dead(u3_hcon *hon_u);
 static u3_hreq* _http_req_new(u3_hcon* hon_u);
+
+// XX put these somewhere
+static h2o_globalconf_t config;
+static h2o_context_t ctx;
+static h2o_accept_ctx_t accept_ctx;
+
+//
+//  H2O -> +=httq
+//
+
+/* _h2o_to_meth(): convert h2o_iovec_t to meth
+*/
+static u3_noun
+_h2o_to_meth(h2o_iovec_t vec_u)
+{
+  u3_noun med;
+
+  if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("GET"))) {
+    med = c3__get;
+  }
+  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("PUT"))) {
+    med = c3__put;
+  }
+  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("POST"))) {
+    med = c3__post;
+  }
+  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("HEAD"))) {
+    med = c3__head;
+  }
+  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("CONNECT"))) {
+    med = c3__conn;
+  }
+  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("DELETE"))) {
+    med = c3__delt;
+  }
+  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("OPTIONS"))) {
+    med = c3__opts;
+  }
+  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("TRACE"))) {
+    med = c3__trac;
+  }
+  // TODO: PATCH?
+  else {
+    med = u3_none;
+  }
+
+  return med;
+}
+
+/* _h2o_to_atom(): convert h2o_iovec_t to atom (cord)
+*/
+static u3_noun
+_h2o_to_atom(h2o_iovec_t vec_u)
+{
+  // XX portable? c3_c* vs c3_y*
+  return u3i_bytes(vec_u.len, (const c3_y*)vec_u.base);
+}
+
+/* _h2o_to_octs(): convert h2o_iovec_t to (unit octs)
+*/
+static u3_noun
+_h2o_to_octs(h2o_iovec_t vec_u)
+{
+  if ( 0 == vec_u.len ) {
+    return u3_nul;
+  }
+
+  // XX correct size_t -> atom?
+  return u3nt(u3_nul, u3i_chubs(1, (const c3_d*)&vec_u.len),
+                      _h2o_to_atom(vec_u));
+}
+
+/* _h2o_to_heds(): convert h2o_headers_t to (list (pair @t @t))
+*/
+static u3_noun
+_h2o_to_heds(h2o_headers_t* hed_u)
+{
+  u3_noun hed = u3_nul;
+  size_t dex = hed_u->size;
+
+  h2o_header_t deh;
+
+  while ( 0 < dex ) {
+    deh = hed_u->entries[--dex];
+    hed = u3nc(u3nc(_h2o_to_atom(*deh.name),
+                    _h2o_to_atom(deh.value)), hed);
+  }
+
+  return hed;
+}
+
+/* _h2o_to_httq(): convert h2o_req_t to +=httq
+*/
+static u3_noun
+_h2o_to_httq(h2o_req_t* req_u)
+{
+  u3_noun med = _h2o_to_meth(req_u->method);
+
+  if ( u3_none == med ) {
+    uL(fprintf(uH, "strange request\n"));
+    return u3_none;
+  }
+
+  u3_noun url = _h2o_to_atom(req_u->path_normalized);
+  u3_noun hed = _h2o_to_heds(&req_u->headers);
+  u3_noun bod = _h2o_to_octs(req_u->entity);
+
+  return u3nq(med, url, hed, bod);
+}
+
+//
+//  +=httr -> H2O
+//
+
+/* _octs_to_h2o(): convert (unit octs) to h2o_iovec_t
+*/
+static h2o_iovec_t*
+_octs_to_h2o(u3_noun oct)
+{
+  h2o_iovec_t* vec_u;
+
+  if ( u3_nul == oct ) {
+    vec_u = h2o_mem_alloc(sizeof(*vec_u));
+    vec_u->len = 0;
+  }
+  else {
+    c3_w len_w = u3h(u3t(oct));
+
+    if ( !_(u3a_is_cat(len_w)) ) {
+      //  2GB max
+      u3m_bail(c3__fail); return 0;
+    }
+
+    vec_u =  h2o_mem_alloc(len_w + sizeof(*vec_u));
+    vec_u->len = len_w;
+    u3r_bytes(0, len_w, (c3_y*)vec_u->base, u3t(oct));
+  }
+
+  u3z(oct);
+  return vec_u;
+}
+
+
+/* _xx_write_response(): write +=httr to h2o_req_t->res and send
+*/
+static void
+_xx_write_response(u3_noun rep, h2o_req_t* req_u)
+{
+  u3_noun p_rep, q_rep, r_rep;
+
+  if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
+    uL(fprintf(uH, "strange response\n"));
+  }
+  else {
+    u3_noun hed;
+    c3_c* nam;
+    c3_c* val;
+
+    req_u->res.status = p_rep;
+
+    while ( u3_nul != q_rep) {
+      hed = u3h(q_rep);
+      nam = u3r_string(u3h(hed));
+      val = u3r_string(u3t(hed));
+      h2o_add_header(&req_u->pool, &req_u->res.headers,
+                    h2o_lookup_token(nam, u3r_met(3, u3h(hed))), NULL, H2O_STRLIT(val));
+
+      free(nam);
+      free(val);
+      q_rep = u3t(q_rep);
+    }
+
+    static h2o_generator_t generator = {NULL, NULL};
+    h2o_start_response(req_u, &generator);
+    h2o_send(req_u, _octs_to_h2o(u3k(u3t(r_rep))), 1, 1);
+  }
+
+  u3z(rep);
+}
 
 /* _http_alloc(): libuv buffer allocator.
 */
@@ -587,7 +768,7 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
   u3_lo_open();
   {
     if ( siz_w == UV_EOF ) {
-      _http_conn_dead(hon_u);      
+      _http_conn_dead(hon_u);
     } else if ( siz_w < 0 ) {
       uL(fprintf(uH, "http: read: %s\n", uv_strerror(siz_w)));
       _http_conn_dead(hon_u);
@@ -607,6 +788,44 @@ _http_conn_read_cb(uv_stream_t* tcp_u,
     }
   }
   u3_lo_shut(c3y);
+}
+
+static int on_request(h2o_handler_t *self, h2o_req_t *req)
+{
+  uL(fprintf(uH, "new request\n"));
+
+  u3_noun recq = _h2o_to_httq(req);
+  u3_noun span = u3v_wish("-:!>(*{@t @t (list {p/@t q/@t}) (unit {p/@ q/@})})");
+  u3m_tape(u3dc("text", span, recq));
+  uL(fprintf(uH, "\n"));
+
+  static h2o_generator_t generator = {NULL, NULL};
+
+  req->res.status = 200;
+  req->res.reason = "OK";
+  h2o_add_header(&req->pool, &req->res.headers, H2O_TOKEN_CONTENT_TYPE, NULL, H2O_STRLIT("text/plain; charset=utf-8"));
+  h2o_start_response(req, &generator);
+  h2o_send(req, &req->entity, 1, 1);
+  return 0;
+}
+
+static void on_accept(uv_stream_t *listener, c3_i sas_i)
+{
+    // TODO: retrieve and print error
+    if (sas_i != 0) {
+      return;
+    }
+
+    uv_tcp_t* con_u = h2o_mem_alloc(sizeof(*con_u));
+    uv_tcp_init(u3L, con_u);
+
+    if ( 0 != uv_accept(listener, (uv_stream_t*)con_u) ) {
+      uv_close((uv_handle_t*)con_u, (uv_close_cb)free);
+      return;
+    }
+
+    h2o_socket_t* sok_u = h2o_uv_socket_create((uv_stream_t*)con_u, (uv_close_cb)free);
+    h2o_accept(&accept_ctx, sok_u);
 }
 
 /* _http_conn_new(): create http connection.
@@ -891,7 +1110,7 @@ _http_request(u3_hreq* req_u)
       _(req_u->hon_u->htp_u->lop) ?
         c3__chis :
       c3__this;
-    
+
     u3v_plan(pox,
                u3nq(typ,
                     req_u->hon_u->htp_u->sec,
@@ -1070,7 +1289,8 @@ _http_start(u3_http* htp_u)
         uL(fprintf(uH, "http: bind: %s\n", uv_strerror(ret)));
       }
     }
-    if ( 0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u, 16, _http_listen_cb)) ) {
+    // if ( 0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u, 16, _http_listen_cb)) ) {
+    if ( 0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u, 16, on_accept)) ) {
       if ( UV_EADDRINUSE == ret ) {
         htp_u->por_w++;
         continue;
@@ -1205,6 +1425,18 @@ u3_http_io_talk()
   }
 
   _http_write_ports_file(u3_Host.dir_c);
+
+
+  h2o_config_init(&config);
+
+  h2o_hostconf_t* hostconf = h2o_config_register_host(&config, h2o_iovec_init(H2O_STRLIT("default")), 65535);
+  h2o_pathconf_t *pathconf = h2o_config_register_path(hostconf, "/", 0);
+  h2o_handler_t *handler = h2o_create_handler(pathconf, sizeof(*handler));
+  handler->on_req = on_request;
+
+  h2o_context_init(&ctx, u3L, &config);
+  accept_ctx.ctx = &ctx;
+  accept_ctx.hosts = config.hosts;
 }
 
 /* u3_http_io_poll(): poll kernel for http I/O.
