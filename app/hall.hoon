@@ -1695,8 +1695,8 @@
       %-  ~(rep in sup.bol)
       |=  {{b/bone s/ship p/path} c/(set bone)}
       ?.  ?&  (~(has in sis) s)
-              ?=({@tas *} p)
-              =(i.p nom)
+              ?=({$circle @tas *} p)
+              =(i.t.p nom)
           ==
         c
       (~(put in c) b)
