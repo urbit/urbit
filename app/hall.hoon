@@ -2297,7 +2297,6 @@
   ::>  someone ends a /circle subscription.
   ::
   |=  pax/path
-  ~&  [%got-pull-circle pax]
   ^-  (quip move _+>)
   %-  pre-bake
   :_  ~
@@ -2308,7 +2307,7 @@
 ::
 ++  reap                                                ::<  subscription n/ack
   ::>  update state to reflect subscription success
-  :::
+  ::
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
   ?.  ?=($circle -.wir)
@@ -2320,7 +2319,7 @@
   ?~  fal
     %-  pre-bake
     ta-done:(ta-greet:ta nom src)
-  =.  u.fal  [>%reap-circle-fail nom src< u.fal]
+  =.  u.fal  [>%failed-subscribe nom src< u.fal]
   %-  (slog (flop u.fal))
   %-  pre-bake
   ta-done:(ta-leave:ta nom src)

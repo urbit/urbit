@@ -31,7 +31,7 @@
       {$peers nom/naem}                                 ::<  readers of story
       $:  $circle                                       ::>  story query
           nom/naem                                      ::<  circle name
-          wer/(unit circle)                             ::<  including target
+          wer/(unit circle)                             ::<  from source
           wat/(set circle-data)                         ::<  data to get
           ran/range                                     ::<  query duration
       ==                                                ::
@@ -62,18 +62,18 @@
       {$peers pes/(jar ship query)}                     ::<  /peers
       {$circle package}                                 ::<  /circle
   ==                                                    ::
-++  prize-client                                        ::
+++  prize-client                                        ::>  shared ui state
   $:  gys/(jug char audience)                           ::<  glyph bindings
       nis/(map ship nick)                               ::<  local nicknames
   ==                                                    ::
-++  rumor                                               ::<  query result change
+++  rumor                                               ::>  query result change
   $%  {$client rum/rumor-client}                        ::<  /client
       {$public add/? cir/circle}                        ::<  /public
       {$burden nom/naem rum/rumor-story}                ::<  /burden
       {$peers add/? who/ship qer/query}                 ::<  /peers
       {$circle rum/rumor-story}                         ::<  /circle
   ==                                                    ::
-++  rumor-client                                        ::<  changed ui state
+++  rumor-client                                        ::>  changed ui state
   $%  {$glyph diff-glyph}                               ::<  un/bound glyph
       {$nick diff-nick}                                 ::<  changed nickname
   ==                                                    ::
@@ -85,7 +85,7 @@
   $:  gaz/(list telegram)                               ::<  all messages
       shipment                                          ::<  metadata
   ==                                                    ::
-++  package                                             ::<  story state
+++  package                                             ::>  story state
   $:  nes/(list envelope)                               ::<  messages
       shipment                                          ::<  metadata
   ==                                                    ::
