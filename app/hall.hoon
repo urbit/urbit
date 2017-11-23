@@ -92,6 +92,7 @@
       ==                                                ::
     ++  pear                                            ::>  poke fruit
       $%  {$hall-command command}                       ::
+          {$hall-action action}                         ::TODO  see ++gentle-quit
       ==                                                ::
     ++  card                                            ::>  general card
       $%  {$diff lime}                                  ::
@@ -1502,7 +1503,9 @@
       ::>  apply a %remove story delta, unsubscribing
       ::>  this story from all its active sources.
       ::
-      (sa-abjure src.shape)
+      %+  weld
+        (sa-abjure src.shape)
+      (sa-eject ~(key by peers))
     ::
     ++  sa-change                                       ::<  apply circle delta
       ::>  figure out whether to apply a %story delta to
@@ -1673,17 +1676,18 @@
       ^-  (unit move)
       ?:  =(cir sa-cir)  ~  ::  ignore self-subs
       =+  wat=~[%grams %config-l %group-l]
-      `(wire-to-peer (sa-circle-wire wat cir ran))
+      `(wire-to-peer (circle-wire nom wat cir ran))
     ::
     ++  sa-abjure                                       ::<  unsubscribe us
       ::>  unsubscribes this story from each circle.
       ::
       |=  srs/(set source)
+      ^-  (list move)
       %+  turn  ~(tap in srs)
       |=  {cir/circle ran/range}
       ^-  move
       =/  wir
-        %+  sa-circle-wire
+        %^  circle-wire  nom
           ~[%grams %config-l %group-l]
         [cir ran]
       [0 %pull wir [hos.cir dap.bol] ~]
@@ -1693,9 +1697,16 @@
       ::
       |=  sis/(set ship)
       ^-  (list move)
-      %+  turn  ~(tap in (sa-unearth sis))
-      |=  {b/bone}
-      [b %quit ~]
+      %-  zing
+      %+  turn  ~(tap in sup.bol)
+      |=  {b/bone s/ship p/path}
+      ^-  (list move)
+      ?.  ?&  (~(has in sis) s)
+              ?=({$circle @tas *} p)
+              =(i.t.p nom)
+          ==
+        ~
+      (gentle-quit b s (path-to-query p))
     ::
     ++  sa-unearth                                      ::<  ships' bones
       ::>  find the bones in {sup.bol} that belong to
@@ -1711,18 +1722,6 @@
           ==
         c
       (~(put in c) b)
-    ::
-    ++  sa-circle-wire                                  ::<  /circle peer wire
-      ::>  constructs a /circle %peer path for subscribing
-      ::>  {nom} to a source.
-      ::
-      |=  {wat/(list circle-data) source}
-      ^-  wire
-      ;:  weld
-        /circle/[nom]/(scot %p hos.cir)/[nom.cir]
-        wat
-        (range-to-path ran)
-      ==
     --
 --
 ::
@@ -1731,6 +1730,18 @@
 ::>  ||  %wire-utility
 ::>  ||
 ::+|
+::
+++  circle-wire                                         ::<  /circle peer wire
+  ::>  constructs a /circle %peer path for subscribing
+  ::>  {nom} to a source.
+  ::
+  |=  {nom/naem wat/(list circle-data) source}
+  ^-  wire
+  ;:  weld
+    /circle/[nom]/(scot %p hos.cir)/[nom.cir]
+    (sort wat gth)  ::  consistence
+    (range-to-path ran)
+  ==
 ::
 ++  wire-to-peer                                        ::<  peer move from wire
   ::>  builds the peer move associated with the wire.
@@ -1803,6 +1814,38 @@
       ==
   =+  wer=(etch wir)
   ?>(?=($repeat -.wer) (fun cir.wer ses.wer))
+::
+++  gentle-quit                                         ::<  quit other, pull us
+  ::>  we want to gently pull our own subscriptions,
+  ::>  rather than quitting them, so that we may
+  ::>  differentiate between a gall/ames quit and a
+  ::>  foreign quit. but since wex.bol isn't filled,
+  ::>  we'll have to just guess at what the correct wire
+  ::>  wire is. this is truly terrible, but will have to
+  ::>  do for now.
+  ::TODO  get rid of this once gall improves.
+  ::      it needs to tell us the difference between
+  ::      an app-caused quit and a queue-caused one.
+  ::      (aka connected/disconnected/rejected state)
+  ::
+  |=  {bon/bone who/ship qer/query}
+  ^-  (list move)
+  ?.  ?=($circle -.qer)  ~
+  ?.  =(who our.bol)  [bon %quit ~]~
+  %-  zing
+  %+  turn  ~(tap in ~(key by stories))
+  |=  n/naem
+  ^-  (list move)
+  :~  :^  0  %poke  /
+      :+  [our.bol dap.bol]  %hall-action
+      :^  %source  n  |
+      [[[our.bol nom.qer] ran.qer] ~ ~]
+    ::
+      :^  0  %pull
+        %^  circle-wire  n  ~(tap in wat.qer)
+        [[our.bol nom.qer] ran.qer]
+      [[our.bol dap.bol] ~]
+  ==
 ::
 ::>  ||
 ::>  ||  %new-events
@@ -1994,6 +2037,7 @@
     ?.  ?=($story -.det)  ~
     ?:  ?=(?($follow $inherited $sequent) -.det.det)  ~
     ::  only burden channels for now.
+    ?.  (~(has by stories) nom.det)  ~
     ?.  =(%channel sec.con.shape:(~(got by stories) nom.det))  ~
     `[%burden nom.det (dedicate who.qer nom.det det.det)]
   ::
@@ -2055,11 +2099,10 @@
     ?~  rum  ~
     [b %diff %hall-rumor u.rum]~
   ?.  ?=($circle -.qer)  ~
-  =+  qit=[b %quit ~]~
   ::  kill the subscription if we forgot the story.
-  ?.  (~(has by stories) nom.qer)  qit
+  ?.  (~(has by stories) nom.qer)  (gentle-quit b s qer)
   ::  kill the subscription if it's past its range.
-  =-  ?:(done:- qit ~)
+  =-  ?:(done:- (gentle-quit b s qer) ~)
   %.  ran.qer
   =-  ~(so-in-range so:ta nom.qer ~ -)
   (~(got by stories) nom.qer)
@@ -2289,6 +2332,7 @@
   |=  wir/wire
   ^-  (quip move _+>)
   :_  +>
+  ?.  =(src.bol our.bol)  ~
   [(wire-to-peer wir) ~]
 ::
 ++  quit-circle                                         ::<  dropped circle sub
@@ -2299,6 +2343,9 @@
   %+  etch-circle  [%circle wir]
   |=  {nom/naem src/source}
   %-  pre-bake
+  ::  when we got kicked, don't resub, remove source.
+  ?.  =(src.bol our.bol)
+    ta-done:(ta-action:ta 0 %source nom | [src ~ ~])
   ta-done:(ta-resub:ta nom src)
 ::
 ++  coup-repeat                                         ::<  message n/ack
