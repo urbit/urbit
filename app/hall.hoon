@@ -75,7 +75,6 @@
               nos/(set naem)                            ::
               dif/diff-status                           ::
           ==                                            ::
-          {$quit ost/bone}                              ::<  force unsubscribe
       ==                                                ::
     ++  delta-story                                     ::>  story delta
       $?  diff-story                                    ::<  both in & outward
@@ -1309,7 +1308,6 @@
       $init     da-init
       $observe  (da-observe +.det)
       $present  (da-present +.det)
-      $quit     (da-emit [ost.det %quit ~])
     ==
   ::
   ++  da-init                                           ::<  startup side-effects
