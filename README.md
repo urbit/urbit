@@ -111,12 +111,12 @@ Now you should be able to build your software for macOS.
 ## Integrating Nixcrpkgs into your project
 
 The instructions above show how to cross-compile a "Hello, World!" program that
-is included with Nixcrpkgs.  Instead of adding your project to Nixcrpkgs, you
-will probably want to just use Nixcrpkgs as a tool in your project.  To get an
-idea of how to do that, you can look at other projects that have done the same.
-In the projects listed below, you should look for a file named `default.nix` in
-the top-level directory and look for build instructions that explain what
-`nix-build` commands to run.
+is included with Nixcrpkgs.  Instead of including your project in Nixcrpkgs like
+the hello program, you will probably want to just use Nixcrpkgs as a tool in
+your project.  To get an idea of how to do that, you can look at other projects
+that have done the same.  In the projects listed below, you should look for a
+file named `default.nix` in the top-level directory and look for build
+instructions that explain what `nix-build` commands to run.
 
 * The [Pololu Tic Stepper Motor Controller software](https://github.com/pololu/pololu-tic-software) is a C/C++ project that uses CMake and Nixcrpkgs.
 * The [Pololu USB AVR Programmer v2 software](https://github.com/pololu/pololu-usb-avr-programmer-v2) is a C++ project that uses CMake and Nixcrpkgs.
