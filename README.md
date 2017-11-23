@@ -19,6 +19,7 @@ Packages collection (Nixpkgs)][nixpkgs].
 - Supported target platforms:
   - Windows (32-bit or 64-bit) using [mingw-w64](https://mingw-w64.org/) and [GCC](https://gcc.gnu.org/) 6.3.0
   - Linux (32-bit, 64-bit, and ARM) using [musl](https://www.musl-libc.org/) and [GCC](https://gcc.gnu.org/) 6.3.0
+  - macOS
 - Supported languages for cross-compiling:
   - C
   - C++
@@ -82,7 +83,32 @@ change any of the build recipes for `hello` or its dependencies and then run the
 anything that depends on them, ensuring that you always get a consistent build.
 
 
-### Integrating Nixcrpkgs into your project
+### Obtaining the macOS SDK
+
+If you are trying to build software for macOS, you will need to get
+macOS SDK tarball and put it in the the right place.  Otherwise, you
+will get an error like this:
+
+    error: getting attributes of path '/home/yourname/nixcrpkgs/macos/MacOSX10.11.sdk.tar.xz': No such file or directory
+
+To generate the tarball, follow these steps:
+
+# On a macOS machine, install [Xcode](https://developer.apple.com/xcode/).
+# Download this repository to the machine.
+# In a Terminal window, run the `macos/gen_sdk_package.sh` script from this repository.
+# After several minutes, the current directory should have a tarball with a name like
+  `MacOSX10.12.sdk.tar.xz` and a size of about 25 MB.
+# Copy the SDK tarball file to the machine where you will be building software,
+  and put it in the `macos` directory.
+# The Nixcrpkgs build recipe for the SDK is hardcoded to look for a file named
+  `MacOSX10.11.sdk.tar.xz`, so rename the tarball to match that.
+# Consider keeping a backup of the tarball so you can always rebuild any software you
+  made with it.
+
+Now you should be able to build your software for macOS.
+
+
+## Integrating Nixcrpkgs into your project
 
 The instructions above show how to cross-compile a "Hello, World!" program that
 is included with Nixcrpkgs.  Instead of adding your project to Nixcrpkgs, you
@@ -94,12 +120,13 @@ the top-level directory and look for build instructions that explain what
 
 * The [Pololu Tic Stepper Motor Controller software](https://github.com/pololu/pololu-tic-software) is a C/C++ project that uses CMake and Nixcrpkgs.
 * The [Pololu USB AVR Programmer v2 software](https://github.com/pololu/pololu-usb-avr-programmer-v2) is a C++ project that uses CMake and Nixcrpkgs.
+* The [Pololu USB Bootloader Utility (p-load)](https://github.com/pololu/p-load) is a C++ project that uses CMake and Nixcrpkgs.
 
 [nix]: http://nixos.org/nix/
 [nixpkgs]: http://nixos.org/nixpkgs/
 
 
-### Maintaining the Nixcrpkgs system
+## Maintaining the Nixcrpkgs system
 
 You should occasionally run `nix-collect-garbage` to remove items that are no
 longer needed and reclaim your disk space.  However, note that Nix will
@@ -123,4 +150,3 @@ of Nix when compared to other package management systems: you will never be
 forced to upgrade your build tools, and using old tools is just as easy as using
 new ones.  You can use the `NIX_PATH` environment variable to tell `nix-build`
 to use your forked versions.
-
