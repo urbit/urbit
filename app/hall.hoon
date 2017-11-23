@@ -174,7 +174,7 @@
     ::>  inbox.
     ::
     |=  msg/tape
-    %^  ta-action  0  %phrase
+    %+  ta-action  %phrase
     :-  [[our.bol %inbox] ~ ~]
     [%app dap.bol %lin | (crip msg)]~
   ::
@@ -222,8 +222,7 @@
               [%journal %public 'visible activity']
           ==
         |=  {{typ/security nom/naem des/cord} _ta}
-        %+  ta-action  ost.bol
-        [%create nom des typ]
+        (ta-action [%create nom des typ])
     %-  ta-deltas
     ::  if needed, subscribe to our parent's /burden.
     =+  sen=(above our.bol)
@@ -271,7 +270,7 @@
   ++  ta-action                                         ::<  apply client action
     ::>  performs action sent by a client.
     ::
-    |=  {red/bone act/action}
+    |=  act/action
     ^+  +>
     =<  work
     ::>  ||
@@ -534,7 +533,7 @@
         =.  acs  (flop acs)
         |-  ^+  ..ta-take
         ?~  acs  ..ta-take
-        =.  ..ta-take  (ta-action ost.bol i.acs)
+        =.  ..ta-take  (ta-action i.acs)
         $(acs t.acs)
       $(sos t.sos)
       ::TODO  runtime error
@@ -575,7 +574,7 @@
         =.  acs  (flop acs)
         |-  ^+  +>+
         ?~  acs  +>+
-        =.  +>+  (ta-action ost.bol i.acs)
+        =.  +>+  (ta-action i.acs)
         $(acs t.acs)
         ::TODO  runtime error
         ::=<  so-done
@@ -691,7 +690,7 @@
       =.  acs  (flop acs)
       |-  ^+  +>+
       ?~  acs  +>+
-      =.  +>+  (ta-action ost.bol i.acs)
+      =.  +>+  (ta-action i.acs)
       $(acs t.acs)
     ::
     ::>  ||
@@ -2220,7 +2219,7 @@
     "hall-action stranger {(scow %p src.bol)}"
   =^  mos  +>.$
     %-  pre-bake
-    ta-done:(ta-action:ta ost.bol act)
+    ta-done:(ta-action:ta act)
   =^  mow  +>.$
     log-all-to-file
   [(welp mos mow) +>.$]
@@ -2345,7 +2344,7 @@
   %-  pre-bake
   ::  when we got kicked, don't resub, remove source.
   ?.  =(src.bol our.bol)
-    ta-done:(ta-action:ta 0 %source nom | [src ~ ~])
+    ta-done:(ta-action:ta %source nom | [src ~ ~])
   ta-done:(ta-resub:ta nom src)
 ::
 ++  coup-repeat                                         ::<  message n/ack
