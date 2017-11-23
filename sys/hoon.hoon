@@ -5270,8 +5270,8 @@
     $(fol =>(fol [2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]))
   ::
       {$7 b/* c/*}       $(fol =>(fol [2 b 1 c]))
-      {$8 b/* c/*}       $(fol =>(fol [7 [[0 1] b] c]))
-      {$9 b/* c/*}       $(fol =>(fol [7 c 0 b]))
+      {$8 b/* c/*}       $(fol =>(fol [7 [[7 [0 1] b] 0 1] c]))
+      {$9 b/* c/*}       $(fol =>(fol [7 c 2 [0 1] 0 b]))
       {$10 @ c/*}        $(fol c.fol)
       {$10 {b/* c/*} d/*}
     =+  ben=$(fol c.fol)
@@ -5487,14 +5487,14 @@
         {$8 b/* c/*}       
       ::  use standard macro expansion (slow)
       ::
-      $(fol =>(fol [7 [[0 1] b] c]))
+      $(fol =>(fol [7 [[7 [0 1] b] 0 1] c]))
     ::
     ::  9; invocation
     ::
         {$9 b/* c/*}       
       ::  use standard macro expansion (slow)
       ::
-      $(fol =>(fol [7 c 0 b]))
+      $(fol =>(fol [7 c 2 [0 1] 0 b]))
     ::
     ::  10; static hint
     ::
@@ -5526,6 +5526,33 @@
             hed/seminoun 
             tal/seminoun
         ==
+    ^-  seminoun
+    ?.  ?&  &(?=($& -.mask.hed) ?=($& -.mask.tal))
+            =(=(~ blocks.mask.hed) =(~ blocks.mask.tal))
+        ==
+      ::  default merge
+      ::
+      [|+[mask.hed mask.tal] [data.hed data.tal]]
+    ::  both sides total
+    ::
+    ?:  =(~ blocks.mask.hed)
+      ::  both sides are complete
+      ::
+      [&+~ data.hed data.tal]
+    ::  both sides are blocked
+    ::
+    [&+(~(uni in blocks.mask.hed) blocks.mask.tal) ~]
+  ::
+  ++  combine
+    ::  combine a pair of seminouns
+    ::
+    |=  $:  ::  hed: head of pair
+            ::  tal: tail of pair
+            ::
+            hed/seminoun 
+            tal/seminoun
+        ==
+    ^-  seminoun
     ?:  &(?=($& -.mask.hed) ?=($& -.mask.tal))
       ::  yin: merged block set
       ::
@@ -5533,7 +5560,7 @@
       :-  &+yin
       ::  don't accumulate stubs
       ::
-      ?~(yin ~ [data.hed data.tal])
+      ?~(yin [data.hed data.tal] ~)
     ::  partial cell
     ::
     [|+[mask.hed mask.tal] [data.hed data.tal]]
@@ -7454,6 +7481,7 @@
     |=  {gol/type gen/hoon}
     ^-  {type nock}
     =+  pro=(mint gol gen)
+    ~>  %slog.[%0 (dunk 'blow-subject')]
     =+  bus=bran
     ~|  mask.bus
     =+  jon=(apex:musk bus q.pro)
@@ -7491,9 +7519,9 @@
       {$atom *}  ?~(q.sut [&+[~ ~ ~] ~] [&+~ u.q.sut])
       {$cell *}  (combine:musk $(sut p.sut) $(sut q.sut))
       {$core *}  %+  combine:musk 
-                   $(sut p.sut) 
-                 ?~  p.s.q.sut  [&+[~ ~ ~] ~]
-                 [&+~ p.s.q.sut]
+                   ?~  p.s.q.sut  [&+[~ ~ ~] ~]
+                   [&+~ p.s.q.sut]
+                 $(sut p.sut) 
       {$face *}  $(sut repo)
       {$fork *}  [&+[~ ~ ~] ~]
       {$help *}  $(sut repo)

@@ -553,7 +553,7 @@
 ++  veke                                                ::  build new kernel
   |=  {now/@da hap/path zup/path}
   ^-  *
-  =-  ?>(?=($& -.res) p.res)
+  =-  ?:(?=($& -.res) p.res ((slog p.res) ~))
   ^=  res  %-  mule  |.
   =+  pax=(weld hap `path`[%hoon ~])
   =+  wax=(weld zup `path`[%hoon ~])
