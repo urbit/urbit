@@ -104,7 +104,7 @@ let
           "-device-option QMAKE_MAC_SDK.macosx.--show-sdk-platform-path=" +
             "${crossenv.sdk}/does-not-exist " +
           "-device-option QMAKE_MAC_SDK.macosx.--show-sdk-version=" +
-            "${crossenv.sdk.version} " +
+            "${crossenv.macos_version_min} " +
           "-device-option QMAKE_XCODE_VERSION=7.0"
         else "" );
 

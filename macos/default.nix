@@ -134,8 +134,7 @@ let
   sdk = native.make_derivation rec {
     name = "macos-sdk";
     builder = ./sdk_builder.sh;
-    version = "10.11";
-    src = ./MacOSX10.11.sdk.tar.xz;
+    src = ./MacOSX.sdk.tar.xz;
   };
 
   toolchain = native.make_derivation rec {
@@ -153,7 +152,6 @@ let
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
       "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
-      "-DWRAPPER_SDK_VERSION=\\\"${sdk.version}\\\" " +
       "-DWRAPPER_LINKER_VERSION=\\\"${ld.apple_version}\\\"";
   };
 
@@ -170,7 +168,7 @@ let
       ++ [ clang toolchain native.wrappers ];
 
     # Target info environment variables.
-    inherit host arch os compiler exe_suffix;
+    inherit host arch os compiler exe_suffix macos_version_min;
 
     # CMake toolchain file.
     inherit cmake_toolchain;

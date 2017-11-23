@@ -89,7 +89,7 @@ If you are trying to build software for macOS, you will need to get
 macOS SDK tarball and put it in the the right place.  Otherwise, you
 will get an error like this:
 
-    error: getting attributes of path '/home/yourname/nixcrpkgs/macos/MacOSX10.11.sdk.tar.xz': No such file or directory
+    error: getting attributes of path '/home/yourname/nixcrpkgs/macos/MacOSX.sdk.tar.xz': No such file or directory
 
 To generate the tarball, follow these steps:
 
@@ -101,7 +101,7 @@ To generate the tarball, follow these steps:
 5. Copy the SDK tarball file to the machine where you will be building software,
   and put it in the `macos` directory.
 6. The nixcrpkgs build recipe for the SDK is hardcoded to look for a file named
-  `MacOSX10.11.sdk.tar.xz`, so rename the tarball to match that.
+  `MacOSX.sdk.tar.xz`, so rename the tarball to that.
 7. Consider keeping a backup of the tarball so you can always rebuild any software you
   made with it.
 
