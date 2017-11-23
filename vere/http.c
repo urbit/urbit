@@ -171,6 +171,25 @@ _octs_to_h2o(u3_noun oct)
   return vec_u;
 }
 
+static void
+_xx_write_header(u3_noun hed, h2o_req_t* req_u)
+{
+  u3_noun nam   = u3h(hed);
+  u3_noun val   = u3t(hed);
+  c3_w    nam_w = u3r_met(3, nam);
+  c3_w    val_w = u3r_met(3, val);
+  c3_c*   nam_c = c3_malloc(nam_w);
+  c3_c*   val_c = c3_malloc(val_w);
+
+  u3r_bytes(0, nam_w, (c3_y*)nam_c, nam);
+  u3r_bytes(0, val_w, (c3_y*)val_c, val);
+
+  h2o_add_header_by_str(&req_u->pool, &req_u->res.headers,
+                        nam_c, nam_w, 0, NULL, val_c, val_w);
+
+  free(nam_c);
+  free(val_c);
+}
 
 /* _xx_write_response(): write +=httr to h2o_req_t->res and send
 */
@@ -183,21 +202,10 @@ _xx_write_response(u3_noun rep, h2o_req_t* req_u)
     uL(fprintf(uH, "strange response\n"));
   }
   else {
-    u3_noun hed;
-    c3_c* nam;
-    c3_c* val;
-
     req_u->res.status = p_rep;
 
-    while ( u3_nul != q_rep) {
-      hed = u3h(q_rep);
-      nam = u3r_string(u3h(hed));
-      val = u3r_string(u3t(hed));
-      h2o_add_header(&req_u->pool, &req_u->res.headers,
-                    h2o_lookup_token(nam, u3r_met(3, u3h(hed))), NULL, H2O_STRLIT(val));
-
-      free(nam);
-      free(val);
+    while ( u3_nul != q_rep ) {
+      _xx_write_header(u3h(q_rep), req_u);
       q_rep = u3t(q_rep);
     }
 
