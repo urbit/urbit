@@ -1,15 +1,15 @@
-# Nixcrpkgs
+# nixcrpkgs
 
 [www.pololu.com](https://www.pololu.com/)
 
-*Nixcrpkgs* is a collection of tools for cross-compiling statically-linked,
-standalone software applications.  With Nixcrpkgs, you can specify what
+*nixcrpkgs* is a collection of tools for cross-compiling statically-linked,
+standalone software applications.  With nixcrpkgs, you can specify what
 platforms you want to target, what libraries and build tools you depend on, and
-the commands that build your software.  When you build your software, Nixcrpkgs
+the commands that build your software.  When you build your software, nixcrpkgs
 will automatically take care of building or retrieving everything you need,
 including cross-compilers and libraries.
 
-Nixcrpkgs primarily consists of *Nix expressions*, which are recipes for
+nixcrpkgs primarily consists of *Nix expressions*, which are recipes for
 building software with [Nix, the purely functional package
 manager][nix].  These recipes build on top of the [Nix
 Packages collection (Nixpkgs)][nixpkgs].
@@ -75,7 +75,7 @@ If you run `nix-build -A win32.hello` a second time, Nix will detect that
 nothing about the build recipes has changed, so it will simply print the
 directory name and remake the symbolic link.
 
-To see how the `hello` package is specified in Nixcrpkgs, you can look in
+To see how the `hello` package is specified in nixcrpkgs, you can look in
 `pkgs.nix` and the `pkgs/hello` directory.  To see how the GCC cross-compiler
 for Windows was specified, you can look in the `mingw-w64` directory.  If you
 change any of the build recipes for `hello` or its dependencies and then run the
@@ -100,7 +100,7 @@ To generate the tarball, follow these steps:
   `MacOSX10.12.sdk.tar.xz` and a size of about 25 MB.
 5. Copy the SDK tarball file to the machine where you will be building software,
   and put it in the `macos` directory.
-6. The Nixcrpkgs build recipe for the SDK is hardcoded to look for a file named
+6. The nixcrpkgs build recipe for the SDK is hardcoded to look for a file named
   `MacOSX10.11.sdk.tar.xz`, so rename the tarball to match that.
 7. Consider keeping a backup of the tarball so you can always rebuild any software you
   made with it.
@@ -108,25 +108,25 @@ To generate the tarball, follow these steps:
 Now you should be able to build your software for macOS.
 
 
-## Integrating Nixcrpkgs into your project
+## Integrating nixcrpkgs into your project
 
 The instructions above show how to cross-compile a "Hello, World!" program that
-is included with Nixcrpkgs.  Instead of including your project in Nixcrpkgs like
-the hello program, you will probably want to just use Nixcrpkgs as a tool in
+is included with nixcrpkgs.  Instead of including your project in nixcrpkgs like
+the hello program, you will probably want to just use nixcrpkgs as a tool in
 your project.  To get an idea of how to do that, you can look at other projects
 that have done the same.  In the projects listed below, you should look for a
 file named `default.nix` in the top-level directory and look for build
 instructions that explain what `nix-build` commands to run.
 
-* The [Pololu Tic Stepper Motor Controller software](https://github.com/pololu/pololu-tic-software) is a C/C++ project that uses CMake and Nixcrpkgs.
-* The [Pololu USB AVR Programmer v2 software](https://github.com/pololu/pololu-usb-avr-programmer-v2) is a C++ project that uses CMake and Nixcrpkgs.
-* The [Pololu USB Bootloader Utility (p-load)](https://github.com/pololu/p-load) is a C++ project that uses CMake and Nixcrpkgs.
+* The [Pololu Tic Stepper Motor Controller software](https://github.com/pololu/pololu-tic-software) is a C/C++ project that uses CMake and nixcrpkgs.
+* The [Pololu USB AVR Programmer v2 software](https://github.com/pololu/pololu-usb-avr-programmer-v2) is a C++ project that uses CMake and nixcrpkgs.
+* The [Pololu USB Bootloader Utility (p-load)](https://github.com/pololu/p-load) is a C++ project that uses CMake and nixcrpkgs.
 
 [nix]: http://nixos.org/nix/
 [nixpkgs]: http://nixos.org/nixpkgs/
 
 
-## Maintaining the Nixcrpkgs system
+## Maintaining the nixcrpkgs system
 
 You should occasionally run `nix-collect-garbage` to remove items that are no
 longer needed and reclaim your disk space.  However, note that Nix will
@@ -139,12 +139,12 @@ You should occasionally run `nix-channel --update` to update to the latest
 version of Nixpkgs.  However, when doing this, be aware that the new version of
 Nixpkgs might require you to do a mass rebuild.
 
-You should occasionally update your checkout of the Nixcrpkgs repository to get
+You should occasionally update your checkout of the nixcrpkgs repository to get
 the latest versions of build tools, new features, and bug fixes.  Once again,
 this might require a mass rebuild.
 
 If you want your builds to be very stable and reliable, you could make forks of
-Nixcrpkgs and/or Nixpkgs and update them at your own pace, carefully considering
+nixcrpkgs and/or Nixpkgs and update them at your own pace, carefully considering
 any changes made by others before merging them in.  That's one of the beauties
 of Nix when compared to other package management systems: you will never be
 forced to upgrade your build tools, and using old tools is just as easy as using
