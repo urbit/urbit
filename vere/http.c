@@ -809,29 +809,36 @@ static int on_request(h2o_handler_t *self, h2o_req_t *req)
   return 0;
 }
 
-static void on_accept(uv_stream_t *listener, c3_i sas_i)
+/* on_listen(): uv_connection_cb for uv_listen
+*/
+static void
+on_listen(uv_stream_t *listener, c3_i sas_i)
 {
-    // TODO: retrieve and print error
-    if (sas_i != 0) {
-      return;
-    }
+  // TODO: retrieve and print error
+  if (sas_i != 0) {
+    return;
+  }
 
-    uv_tcp_t* con_u = h2o_mem_alloc(sizeof(*con_u));
-    uv_tcp_init(u3L, con_u);
+  // u3_lo_open();
 
-    if ( 0 != uv_accept(listener, (uv_stream_t*)con_u) ) {
-      uv_close((uv_handle_t*)con_u, (uv_close_cb)free);
-      return;
-    }
+  uv_tcp_t* con_u = h2o_mem_alloc(sizeof(*con_u));
+  uv_tcp_init(u3L, con_u);
 
-    h2o_socket_t* sok_u = h2o_uv_socket_create((uv_stream_t*)con_u, (uv_close_cb)free);
-    h2o_accept(&accept_ctx, sok_u);
+  if ( 0 != uv_accept(listener, (uv_stream_t*)con_u) ) {
+    uv_close((uv_handle_t*)con_u, (uv_close_cb)free);
+    return;
+  }
 
-    struct sockaddr_in sa;
-    h2o_socket_getpeername(sok_u, (struct sockaddr*)&sa);
+  h2o_socket_t* sok_u = h2o_uv_socket_create((uv_stream_t*)con_u, (uv_close_cb)free);
+  h2o_accept(&accept_ctx, sok_u);
 
-    c3_w ip = ( sa.sin_family != AF_INET ) ? 0 : ntohl(sa.sin_addr.s_addr);
-    uL(fprintf(uH, "http: accept ip %d\n", ip));
+  struct sockaddr_in sa;
+  h2o_socket_getpeername(sok_u, (struct sockaddr*)&sa);
+
+  c3_w ip = ( sa.sin_family != AF_INET ) ? 0 : ntohl(sa.sin_addr.s_addr);
+  uL(fprintf(uH, "http: accept ip %d\n", ip));
+
+  // u3_lo_shut(c3y);
 }
 
 /* _http_conn_new(): create http connection.
@@ -1296,7 +1303,7 @@ _http_start(u3_http* htp_u)
       }
     }
     // if ( 0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u, 16, _http_listen_cb)) ) {
-    if ( 0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u, 16, on_accept)) ) {
+    if ( 0 != (ret = uv_listen((uv_stream_t*)&htp_u->wax_u, 16, on_listen)) ) {
       if ( UV_EADDRINUSE == ret ) {
         htp_u->por_w++;
         continue;
