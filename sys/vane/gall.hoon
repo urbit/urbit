@@ -801,7 +801,7 @@
     ++  ap-move-quit                                    ::  give quit move
       |=  {sto/bone vax/vase}
       ^-  {(each cove tang) _+>}
-      :_  +>
+      :_  +>(sup.ged (~(del by sup.ged) sto))
       ?^  q.vax  [%| (ap-suck "quit: improper give")]
       [%& `cove`[sto %give `cuft`[%quit ~]]]
     ::
