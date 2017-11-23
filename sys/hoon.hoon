@@ -5543,28 +5543,6 @@
     ::
     [&+(~(uni in blocks.mask.hed) blocks.mask.tal) ~]
   ::
-  ++  combine
-    ::  combine a pair of seminouns
-    ::
-    |=  $:  ::  hed: head of pair
-            ::  tal: tail of pair
-            ::
-            hed/seminoun 
-            tal/seminoun
-        ==
-    ^-  seminoun
-    ?:  &(?=($& -.mask.hed) ?=($& -.mask.tal))
-      ::  yin: merged block set
-      ::
-      =/  yin  (~(uni in blocks.mask.hed) blocks.mask.tal)
-      :-  &+yin
-      ::  don't accumulate stubs
-      ::
-      ?~(yin [data.hed data.tal] ~)
-    ::  partial cell
-    ::
-    [|+[mask.hed mask.tal] [data.hed data.tal]]
-  ::
   ++  fragment
     ::  seek to an axis in a seminoun
     ::
@@ -6876,7 +6854,7 @@
         {$bcsm *}  p.gen
     ::
         {$brcb *}  [%tsls [%bunt q.gen] [%brcn p.gen r.gen]]
-        {$brcl *}  [%tsls [%ktsg q.gen] [%brdt p.gen r.gen]]
+        {$brcl *}  [%tsls [%ktcn q.gen] [%brdt p.gen r.gen]]
         {$brdt *}  :+  %brcn  p.gen
                    =-  [[0 [~ ~] -] ~ ~]
                    (~(put by *(map term (pair what foot))) %$ ~ [%ash q.gen])
@@ -6915,7 +6893,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$bunt *}  [%ktsg ~(bunt al %herb p.gen)]
+        {$bunt *}  [%ktcn ~(bunt al %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
@@ -7481,16 +7459,16 @@
     |=  {gol/type gen/hoon}
     ^-  {type nock}
     =+  pro=(mint gol gen)
-    ~>  %slog.[%0 (dunk 'blow-subject')]
+    ::  ~>  %slog.[%0 (dunk 'blow-subject')]
     =+  bus=bran
-    ~|  mask.bus
+    ::  ~|  mask.bus
     =+  jon=(apex:musk bus q.pro)
     ?~  jon
       ~&  %constant-stopped
-      !!
-    ?.  ?=($& -.u.jon)
+      pro
+    ?:  ?=($| -.u.jon)
       ~&  %constant-blocked
-      !!
+      pro
     [p.pro [%1 p.u.jon]]
   ::
   ++  burn

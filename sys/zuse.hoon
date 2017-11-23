@@ -29,7 +29,7 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
-::
+!:
 ~%  %zuse  +>  ~
 =>
 ::                                                      ::  ::
@@ -59,7 +59,7 @@
   $_  =|  mind
   ^|  |%
   ++  load  |~(seed ^|(+>))
-  ++  stay  *mind                                       ::  preserve
+  ++  stay  $:mind                                      ::  preserve
   ++  plow                                              ::  work in time
     =|  $:  now/@da                                     ::  date
             eny/@e                                      ::  entropy
