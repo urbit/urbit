@@ -1883,6 +1883,14 @@
       $client
     ``[%client binds nicks]
   ::
+      $circles
+    =-  ``[%circles -]
+    %-  ~(gas in *(set naem))
+    %+  murn  ~(tap by stories)
+    |=  {n/naem s/story}
+    ^-  (unit naem)
+    ?:((~(so-visible so:ta n ~ s) who.qer) `n ~)
+  ::
       $public
     ``[%public public]
   ::
@@ -2027,6 +2035,28 @@
       $nick   `[%client det]
     ==
   ::
+      $circles
+    ::NOTE  this is another case where having access to
+    ::      the pre-delta state would be nice to have.
+    ?.  ?=($story -.det)  ~
+    =;  add/(unit ?)
+      ?~  add  ~
+      `[%circles u.add nom.det]
+    ::REVIEW  this could be considered leaky, since it
+    ::        doesn't check if {who} ever knew of {nom},
+    ::        but does that matter? can't really check..
+    ?:  ?=($remove -.det.det)  `|
+    =+  soy=(~(got by stories) who.qer)
+    ?.  ?|  ?=($new -.det.det)
+            ?&  ?=($config -.det.det)
+                ?=($permit -.dif.det.det)
+                ?=(?($channel $village) sec.con.shape.soy)
+                (~(has in sis.dif.det.det) who.qer)
+            ==
+        ==
+      ~
+    `(~(so-visible so:ta nom.det ~ soy) who.qer)
+  ::
       $public
     ?.  ?=($public -.det)  ~
     `det
@@ -2160,6 +2190,7 @@
   =>  depa
   |^  %-  af  :~
           [%client ul]
+          [%circles (at /[%p])]
           [%public ul]
           [%burden (at /[%p])]
           [%report ul]
@@ -2177,6 +2208,7 @@
   ^-  ?
   ?-  -.qer
     $client   (team:title our.bol who)
+    $circles  =(who who.qer)
     $public   &
     $burden   ?&  =(who who.qer)
                   =(our.bol (above who))

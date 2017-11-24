@@ -16,6 +16,7 @@
     ^-  prize:hall
     =-  (need ((of -) a))
     :~  client+pici
+        circles+(as so)
         public+(as circ)
         ::  burden not needed
         ::  report not needed
@@ -30,11 +31,12 @@
     =,  enjs:format
     %+  frond  -.piz
     ?+  -.piz  !!
-      $client  (pici +.piz)
-      $public  (sa cis.piz circ)
+      $client   (pici +.piz)
+      $circles  (sa cis.piz cord:enjs:hall-json)
+      $public   (sa cis.piz circ)
       ::  burden not needed
       ::  report not needed
-      $circle  (pack +.piz)
+      $circle   (pack +.piz)
     ==
   --
 --

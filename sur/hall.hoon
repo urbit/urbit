@@ -25,6 +25,7 @@
 ::
 ++  query                                               ::>  query paths
   $%  {$client $~}                                      ::<  shared ui state
+      {$circles who/ship}                               ::<  readable circles
       {$public $~}                                      ::<  public memberships
       {$burden who/ship}  ::TODO  eventually, nom/naem. ::<  duties to share
       {$report $~}                                      ::<  duty reports
@@ -56,6 +57,7 @@
   ==                                                    ::
 ++  prize                                               ::>  query result
   $%  {$client prize-client}                            ::<  /client
+      {$circles cis/(set naem)}                         ::<  /circles
       {$public cis/(set circle)}                        ::<  /public
       {$burden sos/(map naem burden)}                   ::<  /burden
       {$report $~}                                      ::<  /report
@@ -68,6 +70,7 @@
   ==                                                    ::
 ++  rumor                                               ::>  query result change
   $%  {$client rum/rumor-client}                        ::<  /client
+      {$circles add/? cir/naem}                         ::<  /circles
       {$public add/? cir/circle}                        ::<  /public
       {$burden nom/naem rum/rumor-story}                ::<  /burden
       {$peers add/? who/ship qer/query}                 ::<  /peers
