@@ -31,6 +31,9 @@ static void _http_request_dead(u3_hreq* req_u);
 static void _http_conn_dead(u3_hcon *hon_u);
 static u3_hreq* _http_req_new(u3_hcon* hon_u);
 
+// TODO: use this
+static const c3_i TCP_BACKLOG = 16;
+
 // XX put these somewhere
 static h2o_globalconf_t config;
 static h2o_context_t ctx;
@@ -48,38 +51,17 @@ static h2o_req_t* the_req_u;
 static u3_noun
 _h2o_to_meth(h2o_iovec_t vec_u)
 {
-  u3_noun med;
-
-  if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("GET"))) {
-    med = c3__get;
-  }
-  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("PUT"))) {
-    med = c3__put;
-  }
-  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("POST"))) {
-    med = c3__post;
-  }
-  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("HEAD"))) {
-    med = c3__head;
-  }
-  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("CONNECT"))) {
-    med = c3__conn;
-  }
-  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("DELETE"))) {
-    med = c3__delt;
-  }
-  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("OPTIONS"))) {
-    med = c3__opts;
-  }
-  else if (h2o_memis(vec_u.base, vec_u.len, H2O_STRLIT("TRACE"))) {
-    med = c3__trac;
-  }
-  // TODO: PATCH?
-  else {
-    med = u3_none;
-  }
-
-  return med;
+  return ( 0 == strncmp(vec_u.base, "GET",     vec_u.len) ) ? c3__get  :
+         ( 0 == strncmp(vec_u.base, "PUT",     vec_u.len) ) ? c3__put  :
+         ( 0 == strncmp(vec_u.base, "POST",    vec_u.len) ) ? c3__post :
+         ( 0 == strncmp(vec_u.base, "HEAD",    vec_u.len) ) ? c3__head :
+         ( 0 == strncmp(vec_u.base, "CONNECT", vec_u.len) ) ? c3__conn :
+         ( 0 == strncmp(vec_u.base, "DELETE",  vec_u.len) ) ? c3__delt :
+         ( 0 == strncmp(vec_u.base, "OPTIONS", vec_u.len) ) ? c3__opts :
+         ( 0 == strncmp(vec_u.base, "TRACE",   vec_u.len) ) ? c3__trac :
+         // TODO ??
+         // ( 0 == strncmp(vec_u.base, "PATCH",   vec_u.len) ) ? c3__patc :
+         u3_none;
 }
 
 /* _h2o_to_atom(): convert h2o_iovec_t to atom (cord)
