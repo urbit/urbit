@@ -25,6 +25,7 @@
 
 #include "h2o.h"
 
+static u3_noun _http_pox_to_noun(c3_w sev_l, c3_w coq_l, c3_w seq_l);
 static void _http_request(u3_hreq* req_u);
 static void _http_request_dead(u3_hreq* req_u);
 static void _http_conn_dead(u3_hcon *hon_u);
@@ -34,6 +35,9 @@ static u3_hreq* _http_req_new(u3_hcon* hon_u);
 static h2o_globalconf_t config;
 static h2o_context_t ctx;
 static h2o_accept_ctx_t accept_ctx;
+
+// XX nope
+static h2o_req_t* the_req_u;
 
 //
 //  H2O -> +=httq
@@ -148,23 +152,24 @@ _h2o_to_httq(h2o_req_t* req_u)
 static h2o_iovec_t*
 _octs_to_h2o(u3_noun oct)
 {
-  h2o_iovec_t* vec_u;
+  h2o_iovec_t* vec_u = c3_malloc(sizeof(*vec_u));
 
   if ( u3_nul == oct ) {
-    vec_u = h2o_mem_alloc(sizeof(*vec_u));
+    vec_u->base = 0;
     vec_u->len = 0;
   }
   else {
-    c3_w len_w = u3h(u3t(oct));
+    // XX bails
+    // if ( !_(u3a_is_cat(u3t(oct))) ) {
+    //   //  2GB max
+    //   u3m_bail(c3__fail); return 0;
+    // }
 
-    if ( !_(u3a_is_cat(len_w)) ) {
-      //  2GB max
-      u3m_bail(c3__fail); return 0;
-    }
+    // uL(fprintf(uH, "oct %s\n", u3m_pretty(u3k(oct))));
 
-    vec_u =  h2o_mem_alloc(len_w + sizeof(*vec_u));
-    vec_u->len = len_w;
-    u3r_bytes(0, len_w, (c3_y*)vec_u->base, u3t(oct));
+    vec_u->len = u3h(u3t(oct));
+    vec_u->base = c3_malloc(vec_u->len);
+    u3r_bytes(0, vec_u->len, (c3_y*)vec_u->base, u3t(u3t(oct)));
   }
 
   u3z(oct);
@@ -184,11 +189,15 @@ _xx_write_header(u3_noun hed, h2o_req_t* req_u)
   u3r_bytes(0, nam_w, (c3_y*)nam_c, nam);
   u3r_bytes(0, val_w, (c3_y*)val_c, val);
 
-  h2o_add_header_by_str(&req_u->pool, &req_u->res.headers,
-                        nam_c, nam_w, 0, NULL, val_c, val_w);
+  // uL(fprintf(uH, "adding header %.*s: %.*s\n", nam_w, nam_c, val_w, val_c));
 
-  free(nam_c);
-  free(val_c);
+  h2o_add_header_by_str(&req_u->pool, &req_u->res.headers,
+                        nam_c, nam_w, 0, nam_c, val_c, val_w);
+
+  // XX leaks, can't free here
+  // free(nam_c);
+  // free(val_c);
+  u3z(hed);
 }
 
 /* _xx_write_response(): write +=httr to h2o_req_t->res and send
@@ -198,6 +207,8 @@ _xx_write_response(u3_noun rep, h2o_req_t* req_u)
 {
   u3_noun p_rep, q_rep, r_rep;
 
+  // uL(fprintf(uH, "resp %s\n", u3m_pretty(u3k(rep))));
+
   if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
     uL(fprintf(uH, "strange response\n"));
   }
@@ -205,13 +216,18 @@ _xx_write_response(u3_noun rep, h2o_req_t* req_u)
     req_u->res.status = p_rep;
 
     while ( u3_nul != q_rep ) {
-      _xx_write_header(u3h(q_rep), req_u);
+      _xx_write_header(u3k(u3h(q_rep)), req_u);
       q_rep = u3t(q_rep);
     }
 
+    h2o_iovec_t* bod_u = _octs_to_h2o(u3k(r_rep));
+
     static h2o_generator_t generator = {NULL, NULL};
     h2o_start_response(req_u, &generator);
-    h2o_send(req_u, _octs_to_h2o(u3k(u3t(r_rep))), 1, 1);
+    h2o_send(req_u, bod_u, 1, 1);
+
+    free(bod_u->base);
+    free(bod_u);
   }
 
   u3z(rep);
@@ -804,16 +820,34 @@ static int on_request(h2o_handler_t *self, h2o_req_t *req)
 
   u3_noun recq = _h2o_to_httq(req);
   u3_noun span = u3v_wish("-:!>(*{@t @t (list {p/@t q/@t}) (unit {p/@ q/@})})");
-  u3m_tape(u3dc("text", span, recq));
+  u3m_tape(u3dc("text", span, u3k(recq)));
   uL(fprintf(uH, "\n"));
 
-  static h2o_generator_t generator = {NULL, NULL};
+  // XX nope
+  the_req_u = req;
 
-  req->res.status = 200;
-  req->res.reason = "OK";
-  h2o_add_header(&req->pool, &req->res.headers, H2O_TOKEN_CONTENT_TYPE, NULL, H2O_STRLIT("text/plain; charset=utf-8"));
-  h2o_start_response(req, &generator);
-  h2o_send(req, &req->entity, 1, 1);
+  if ( u3_none != recq ) {
+    struct sockaddr_in adr_u;
+    inet_pton(AF_INET, "127.0.0.1", &adr_u.sin_addr);
+    c3_l ip = ntohl(adr_u.sin_addr.s_addr);
+    c3_l sev = 1;
+    c3_l coq = 1;
+    c3_l seq = 1;
+
+    u3_noun pox = _http_pox_to_noun(sev, coq, seq);
+    u3_noun eip = u3nc(c3y, u3i_words(1, &ip));
+    u3_noun card = u3nq(c3__this, c3n, eip, recq);
+
+    u3v_plan(pox, card);
+  }
+
+  // static h2o_generator_t generator = {NULL, NULL};
+
+  // req->res.status = 200;
+  // req->res.reason = "OK";
+  // h2o_add_header(&req->pool, &req->res.headers, H2O_TOKEN_CONTENT_TYPE, NULL, H2O_STRLIT("text/plain; charset=utf-8"));
+  // h2o_start_response(req, &generator);
+  // h2o_send(req, &req->entity, 1, 1);
   return 0;
 }
 
@@ -1251,6 +1285,10 @@ u3_http_ef_thou(c3_l     sev_l,
                 c3_l     seq_l,
                 u3_noun  rep)
 {
+  // XX nope
+  _xx_write_response(rep, the_req_u);
+  return;
+
   u3_hrep* rep_u = _http_new_response(sev_l, coq_l, seq_l, rep);
 
   if ( !rep_u ) {
