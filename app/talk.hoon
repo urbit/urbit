@@ -2,10 +2,6 @@
 ::::  /app/talk/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
-::TODO  make sure glyphs only get bound when joins succeed
-::      ...this is a bit troublesome, because failed joins don't actually
-::      unsubscribe us.
-::
 ::TODO  maybe keep track of received grams per circle, too?
 ::
 ::TODO  [type query] => [press tab to cycle search results, newest-first]
@@ -176,6 +172,20 @@
   |=  {a/char b/(set audience)}
   (turn ~(tap by b) |=(c/audience [c a]))
 ::
+++  glyph                                               ::<  grab a glyph
+  ::>  finds a new glyph for assignment.
+  ::
+  |=  idx/@
+  =<  cha
+  %+  reel  glyphs
+  |=  {all/tape ole/{cha/char num/@}}
+  =+  new=(snag (mod idx (lent all)) all)
+  =+  num=~(wyt in (~(get ju binds) new))
+  ?~  cha.ole  [new num]
+  ?:  (lth num.ole num)
+    ole
+  [new num]
+::
 ::>  ||
 ::>  ||  %engines
 ::>  ||
@@ -325,11 +335,24 @@
         =<  sh-done
         %-  ~(sh-show-config sh cli)
         [cir.rum cur dif.rum]
+      =?  +>.$  &(?=($source -.dif.rum) add.dif.rum)
+        =*  cir  cir.src.dif.rum
+        =+  ren=~(cr-phat cr cir)
+        =+  gyf=(~(get by bound) [cir ~ ~])
+        =<  sh-done
+        =>  :_  .
+            %-  ~(sh-act sh cli)
+            [%notify [cir ~ ~] `%hear]
+        ?^  gyf
+          (sh-note "has glyph {[u.gyf ~]} for {ren}")
+        ::  we use the rendered circle name to determine
+        ::  the glyph for higher glyph consistency when
+        ::  federating.
+        =+  cha=(glyph (mug ren))
+        (sh-work %bind cha `[cir ~ ~])
       %=  +>.$
           sources
-        ?.  ?&  ?=($source -.dif.rum)
-                =(cir.rum incir)
-            ==
+        ?.  &(?=($source -.dif.rum) =(cir.rum incir))
           sources
         %.  cir.src.dif.rum
         ?:  add.dif.rum
@@ -952,20 +975,6 @@
         =-  ?:((lte - max) - (sub - dog))
         (add fin (sub max (mod max dog)))
       ::
-      ++  glyph                                         ::<  grab a glyph
-        ::>  finds a new glyph for assignment.
-        ::
-        |=  idx/@
-        =<  cha
-        %+  reel  glyphs
-        |=  {all/tape ole/{cha/char num/@}}
-        =+  new=(snag (mod idx (lent all)) all)
-        =+  num=~(wyt in (~(get ju binds) new))
-        ?~  cha.ole  [new num]
-        ?:  (lth num.ole num)
-          ole
-        [new num]
-      ::
       ++  set-glyph                                     ::<  new glyph binding
         ::>  applies glyph binding to our state and sends
         ::>  an action.
@@ -974,7 +983,7 @@
         =:  bound  (~(put by bound) aud cha)
             binds  (~(put ju binds) cha aud)
         ==
-        (sh-act %glyph cha aud &)
+        sh-prod:(sh-act %glyph cha aud &)
       ::
       ++  unset-glyph                                   ::<  old glyph binding
         ::>  removes either {aud} or all bindings on a
@@ -1025,15 +1034,8 @@
         ^+  ..sh-work
         =+  pas=~(key by pos)
         =.  ..sh-work
-          =+  (~(get by bound) pas)
-          ?^  -  (sh-note "has glyph {<u>}")
-          =+  cha=(glyph (mug pas))
-          (sh-note:(set-glyph cha pas) "new glyph {<cha>}")
-        =.  ..sh-work
           sh-prod(active.she pas)
-        =.  ..sh-work
-          (sh-act %source inbox & pos)
-        (sh-act %notify ~(key by pos) `%hear)
+        (sh-act %source inbox & pos)
       ::
       ++  leave                                         ::<  %leave
         ::>  change local mailbox config to exclude
