@@ -42,6 +42,15 @@ static h2o_accept_ctx_t accept_ctx;
 // XX nope
 static h2o_req_t* the_req_u;
 
+// XX rename and move
+typedef struct _h2hed {
+  struct _h2hed* nex_u;
+  c3_w           nam_w;
+  c3_c*          nam_c;
+  c3_w           val_w;
+  c3_c*          val_c;
+} h2hed;
+
 //
 //  H2O -> +=httq
 //
@@ -158,29 +167,34 @@ _octs_to_h2o(u3_noun oct)
   return vec_u;
 }
 
-static void
-_xx_write_header(u3_noun hed, h2o_req_t* req_u)
+static h2hed*
+_xx_list_to_heds(u3_noun hed)
 {
-  u3_noun nam   = u3h(hed);
-  u3_noun val   = u3t(hed);
-  c3_w    nam_w = u3r_met(3, nam);
-  c3_w    val_w = u3r_met(3, val);
-  c3_c*   nam_c = c3_malloc(nam_w);
-  c3_c*   val_c = c3_malloc(val_w);
+  u3_noun deh = hed;
+  h2hed* hed_u = 0;
 
-  u3r_bytes(0, nam_w, (c3_y*)nam_c, nam);
-  u3r_bytes(0, val_w, (c3_y*)val_c, val);
+  while ( u3_nul != hed ) {
+    u3_noun nam = u3h(u3h(hed));
+    u3_noun val = u3t(u3h(hed));
 
-  // uL(fprintf(uH, "adding header %.*s: %.*s\n", nam_w, nam_c, val_w, val_c));
+    h2hed* nex_u = c3_malloc(sizeof(*nex_u));
+    nex_u->nam_w = u3r_met(3, nam);
+    nex_u->val_w = u3r_met(3, val);
+    nex_u->nam_c = c3_malloc(nex_u->nam_w);
+    nex_u->val_c = c3_malloc(nex_u->val_w);
 
-  h2o_add_header_by_str(&req_u->pool, &req_u->res.headers,
-                        nam_c, nam_w, 0, nam_c, val_c, val_w);
+    u3r_bytes(0, nex_u->nam_w, (c3_y*)nex_u->nam_c, nam);
+    u3r_bytes(0, nex_u->val_w, (c3_y*)nex_u->val_c, val);
 
-  // XX leaks, can't free here
-  // free(nam_c);
-  // free(val_c);
-  u3z(hed);
+    nex_u->nex_u = hed_u;
+    hed_u = nex_u;
+    hed = u3t(hed);
+  }
+
+  u3z(deh);
+  return hed_u;
 }
+
 
 /* _xx_write_response(): write +=httr to h2o_req_t->res and send
 */
@@ -197,19 +211,31 @@ _xx_write_response(u3_noun rep, h2o_req_t* req_u)
   else {
     req_u->res.status = p_rep;
 
-    while ( u3_nul != q_rep ) {
-      _xx_write_header(u3k(u3h(q_rep)), req_u);
-      q_rep = u3t(q_rep);
-    }
+    h2hed* hed_u = _xx_list_to_heds(u3k(q_rep));
+    h2hed* deh_u = hed_u;
 
-    h2o_iovec_t* bod_u = _octs_to_h2o(u3k(r_rep));
+    while ( 0 != hed_u ) {
+      h2o_add_header_by_str(&req_u->pool, &req_u->res.headers,
+                            hed_u->nam_c, hed_u->nam_w, 0,
+                            hed_u->nam_c, hed_u->val_c, hed_u->val_w);
+      hed_u = hed_u->nex_u;
+    }
 
     static h2o_generator_t generator = {NULL, NULL};
     h2o_start_response(req_u, &generator);
+
+    h2o_iovec_t* bod_u = _octs_to_h2o(u3k(r_rep));
     h2o_send(req_u, bod_u, 1, 1);
 
     free(bod_u->base);
     free(bod_u);
+    while ( 0 != deh_u ) {
+      h2hed* duh_u = deh_u;
+      deh_u = deh_u->nex_u;
+      free(duh_u->nam_c);
+      free(duh_u->val_c);
+      free(duh_u);
+    }
   }
 
   u3z(rep);
