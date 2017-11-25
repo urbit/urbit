@@ -7464,10 +7464,8 @@
     ::  ~|  mask.bus
     =+  jon=(apex:musk bus q.pro)
     ?~  jon
-      ~&  %constant-stopped
       pro
     ?:  ?=($| -.u.jon)
-      ~&  %constant-blocked
       pro
     [p.pro [%1 p.u.jon]]
   ::

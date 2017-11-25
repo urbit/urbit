@@ -1642,7 +1642,7 @@
             $fscm
           =+  opt=|.(>(turn p.hon |=({a/path ^} a))<)
           |-  ^-  (bolt cage)
-          ?~  p.hon  (flaw cof leaf+"ford: no match" >(en-beam how)< *opt ~)
+          ?~  p.hon  (flaw cof leaf+"ford: no match" >(en-beam how)< $:opt ~)
           ?:  =(p.i.p.hon (scag (lent p.i.p.hon) (flop s.how)))
             ^$(hon q.i.p.hon)
          $(p.hon t.p.hon)
