@@ -803,6 +803,7 @@
 
       case c3__ktcn: p_gen = u3t(gen);
       _mint_used();
+#if 0
       {
         u3_noun von = u3i_molt(u3k(van), u3qfu_van_fab, c3n, 0);
         u3_noun ret = _mint_in(von, sut, gol, p_gen);
@@ -810,6 +811,37 @@
         u3z(von);
         return ret;
       }
+#else
+      {
+        u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+        u3_noun gat = u3j_hook(von, "blow");
+        u3_noun pro;
+#if 1
+        u3_noun haj;
+        {
+          haj = u3nt(u3k(sut), u3k(gol), u3k(p_gen));
+
+          if ( 0x22d1e58f == u3r_mug(haj) ) {
+            uL(fprintf(uH, "hotdog\r\n")); 
+
+            return u3m_bail(c3__exit);
+          }
+        }
+#endif
+        pro = u3n_kick_on(u3i_molt(gat, 
+                          u3x_sam_2, 
+                          u3k(gol), 
+                          u3x_sam_3, 
+                          u3k(p_gen),
+                          0));
+#if 1
+        {
+          u3z(haj);
+        }
+#endif
+        return pro;
+      } 
+#endif
 
       case c3__zpcm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
