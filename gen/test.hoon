@@ -1,168 +1,22 @@
 ::  todo: think about using horns to import all tests in %/tests?
-/+  new-hoon
-|%
-::  ----------------------------------------------------------------------
-::  Eventually should be in %/lib/tester/hoon.
-::  ----------------------------------------------------------------------
-++  test-lib
-  |%
-  ++  init-test-vase
-    |=  {cookie/@uvJ}
-    ^-  vase
-    !>((init-test cookie))
-  ::
-  ++  init-test
-    |=  {cookie/@uvJ}
-    ~(. tester `(list tape)`~ cookie 10 0)
-  ::
-  ++  tester-type  _(init-test `@uvJ`0)
-  ::
-  ++  tester
-    |_  $:  error-lines/(list tape)                     ::  output messages
-            eny/@uvJ                                    ::  entropy
-            check-iterations/@u                         ::  # of check trials
-            current-iteration/@u                        ::  current iteration
-        ==
-    ::  ||  %check
-    ::
-    ::  +|
-    +-  check
-      |*  {generator/$-(@uvJ *) test/$-(* ?)}
-      |-                                                ::  why do i have to |-?
-      ^+  +>.$
-      ?:  (gth current-iteration check-iterations)
-        +>.$
-      ::  todo: wrap generator in mule so it can crash.
-      =+  sample=(generator eny)
-      ::  todo: wrap test in mule so it can crash.
-      =+  ret=(test sample)
-      ?:  ret
-        %=  $
-          eny    (shaf %huh eny)                        ::  xxx: better random?
-          current-iteration  (add current-iteration 1)
-        ==
-      =+  case=(add 1 current-iteration)
-      =+  case-plural=?:(=(case 1) "case" "cases")
-      %=  +>.$
-        error-lines  :*
-          "falsified after {(noah !>(case))} {case-plural} by '{(noah !>(sample))}'"
-          error-lines
-        ==
-      ==
-    ::
-    ::  todo: a generate function that takes an arbitrary span.
-    ::
-    ++  generate-range
-      |=  {min/@ max/@}
-      |=  c/@uvJ
-      ^-  @
-      =+  gen=(random:new-hoon c)
-      =^  num  gen  (range:gen min max)
-      num
-    ::
-    ++  generate-dict
-      :>  generator which will produce a dict with {count} random pairs.
-      |=  count/@u
-      :>  generate a dict with entropy {c}.
-      |=  c/@uvJ
-      =/  gen  (random:new-hoon c)
-      =|  i/@u
-      =|  m/(dict:new-hoon @ud @ud)
-      |-
-      ^-  (dict:new-hoon @ud @ud)
-      ?:  =(i count)
-        m
-      =^  first  gen  (range:gen 0 100)
-      =^  second  gen  (range:gen 0 100)
-      $(m (put:dct:new-hoon m first second), i +(i))
-    ::
-    ::  ||  %test
-    ::
-    ::  +|
-    ::  todo: unit testing libraries have a lot more to them than just eq.
-    ++  expect-eq
-      |*  {a/* b/* c/tape}
-      ^+  +>
-      ?:  =(a b)
-        +>.$
-      %=  +>.$
-        error-lines  :*
-          "failure: '{c}'"
-          "  actual:   '{(noah !>(a))}'"
-          "  expected: '{(noah !>(b))}'"
-          error-lines
-        ==
-      ==
-    ::
-    ++  results
-      ::  returns results.
-      ::
-      ::  returns the test run's identity cookie and the list of failures.
-      ^-  {@uvJ (list tape)}
-      [eny error-lines]
-    --
-  --
---
-|%
+::
+::  i should be able to use /: ?
+/+  new-hoon, tester
+
+::  random thought: should I lift most of test execution into the build system?
+::  trade off: if you do a wide ranging change and then only want to run one
+::  test, you must pay the execution time for all tests, while otherwise, you
+::  only pay the compile time.
+//  /===/tests/thr
+[test-thr=. +]
+
 ::  ----------------------------------------------------------------------
 ::  Eventually should be in %/test/basic/hoon.
 ::  ----------------------------------------------------------------------
-++  test-core
-  |_  tester-type:test-lib
-  ++  check-decrement
-    %+  check
-      (generate-range 0 100)
-      |=(a/@ =(a (dec (add 2 a))))
-  ++  test-decrement
-    (expect-eq (dec 5) 4 "decrement failure")
-  ++  test-freedom
-    (expect-eq (add 2 2) 4 "freedom is the freedom to say...")
-  ++  test-a-failure
-    (expect-eq (add 2 2) 5 "freedom is the freedom to say...")
-  ++  test-crash
-    !!
-  --
---
-|%
-::  ----------------------------------------------------------------------
-::  Eventually should be in %/test/basic/hoon.
-::  ----------------------------------------------------------------------
-++  test-thr
-  =,  thr:new-hoon
-  =/  data/(list (either @u tape))  [[%& 1] [%| "one"] [%& 2] [%| "two"] ~]
-  |_  tester-type:test-lib
-  ++  test-apply
-    %^  expect-eq
-      %^  apply
-      `(either @u tape)`[%| "one"]
-      |=(a/@u "left")
-      |=(b/tape "right")
-    "right"
-    "apply"
-  ::
-  ++  test-firsts
-    %^  expect-eq
-    (firsts data)
-    [1 2 ~]
-    "firsts"
-  ::
-  ++  test-seconds
-    %^  expect-eq
-    (seconds data)
-    ["one" "two" ~]
-    "seconds"
-  ::
-  ++  test-partition
-    %^  expect-eq
-    (partition data)
-    [[1 2 ~] ["one" "two" ~]]
-    "partition"
-  --
---
 |%
 ++  test-myb
   =,  myb:new-hoon
-  |_  tester-type:test-lib
+  |_  tester-type:tester
   ++  test-from-list-null
     (expect-eq (from-list ~) ~ "from-list")
   ::
@@ -195,7 +49,7 @@
 |%
 ++  test-ls
   =,  ls:new-hoon
-  |_  tester-type:test-lib
+  |_  tester-type:tester
   ++  test-head
     (expect-eq (head [1 ~]) 1 "head")
   ::
@@ -478,7 +332,7 @@
   =,  dct:new-hoon
   =+  four=(from-list [[1 "one"] [2 "two"] [3 "three"] [4 "four"] ~])
   =+  three=(from-list [[1 "one"] [2 "two"] [3 "three"] ~])
-  |_  tester-type:test-lib
+  |_  tester-type:tester
   ++  test-empty
     (expect-eq (empty four) %.n "empty")
   ::
@@ -846,6 +700,7 @@
     ^-  tang
     =+  core-arms=(sort (sloe p.v) aor)
     ?:  =(~ core-arms)
+      ~&  p.v
       [[%leaf :(weld "error: " name " is not a valid testing core.")] ~]
     =|  out/tang
     |-
@@ -890,7 +745,7 @@
     ::  appropriately.
     |=  {arm-name/term v/vase eny/@uvJ}
     ^-  (each {@uvJ (list tape)} (list tank))
-    =/  t  (init-test-vase:test-lib eny)
+    =/  t  (init-test-vase:tester eny)
     ::  run the tests in the interpreter so we catch crashes.
     %-  mule  |.
     =/  r  (slap (slop t v) [%cnsg [arm-name ~] [%$ 3] [[%$ 2] ~]])
@@ -908,8 +763,7 @@
 :-  %tang
 ::  todo: right now, we hard code ++test-core. but eventually, we must instead
 ::  scry ford for the core from the hoon file. that doesn't exist yet.
-::(perform-test-suite:local "test-core" !>(test-core) eny)
-::(perform-test-suite:local "test-thr" !>(test-thr) eny)
+(perform-test-suite:local "test-thr" !>(test-thr) eny)
 ::(perform-test-suite:local "test-myb" !>(test-myb) eny)
-(perform-test-suite:local "test-ls" !>(test-ls) eny)
+::(perform-test-suite:local "test-ls" !>(test-ls) eny)
 ::(perform-test-suite:local "test-mp" !>(test-mp) eny)
