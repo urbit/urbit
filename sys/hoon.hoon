@@ -170,7 +170,7 @@
 ++  each  |*({a/mold b/mold} $%({$& p/a} {$| p/b}))     ::  a or b, a default
 ++  gate  $-(* *)                                       ::  generic mold
 ++  list  |*(a/mold $@($~ {i/a t/(list a)}))            ::  nullterminated list
-++  lone  |*(a/mold p/a)                                ::  1-tuple
+++  lone  |*(a/mold {p/a})                              ::  1-tuple
 ++  mold  gate                                          ::  normalizing gate
 ++  pair  |*({a/mold b/mold} {p/a q/b})                 ::  2-tuple
 ++  pole  |*(a/mold $@($~ {a (pole a)}))                ::  faceless list
